@@ -248,7 +248,7 @@ void KRandRModule::populateRefreshRates()
 
 	m_refreshRates->setEnabled(rr.count());
 
-	for (QStringList::Iterator it = rr.begin(); it != rr.end(); it++)
+	for (QStringList::Iterator it = rr.begin(); it != rr.end(); ++it)
 		m_refreshRates->insertItem(*it);
 }
 

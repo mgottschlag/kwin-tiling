@@ -122,7 +122,7 @@ extern "C"
             const QStringList          &list=CGlobal::cfg().getRealTopDirs(id->path);
             QStringList::ConstIterator it;
 
-            for(it=list.begin(); it!=list.end(); it++)
+            for(it=list.begin(); it!=list.end(); ++it)
                 if((err=FT_New_Face(lib, QFile::encodeName(*it+CMisc::getSub(id->path)), id->faceNo, face)))
                     break;
         }
@@ -216,7 +216,7 @@ bool CFontEngine::openFont(const KURL &url, unsigned short mask, bool force, int
         QStringList::ConstIterator it;
 
 
-        for(it=list.begin(); it!=list.end(); it++)
+        for(it=list.begin(); it!=list.end(); ++it)
         {
             QString fname(*it+CMisc::getSub(url.path()));
 

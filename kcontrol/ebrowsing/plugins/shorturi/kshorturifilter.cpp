@@ -398,7 +398,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   if ( !isMalformed && !isLocalFullPath )
   {
     QStringList protocols = KProtocolInfo::protocols();
-    for( QStringList::ConstIterator it = protocols.begin(); it != protocols.end(); it++ )
+    for( QStringList::ConstIterator it = protocols.begin(); it != protocols.end(); ++it )
     {
       if( (url.protocol() == *it) )
       {

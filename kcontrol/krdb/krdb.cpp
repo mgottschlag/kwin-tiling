@@ -208,7 +208,7 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
 
   QStringList paths;
   for (QMap <QString, bool>::ConstIterator it = pathDb.begin();
-         it != pathDb.end(); it++)
+         it != pathDb.end(); ++it)
   {
     QString path = it.key();
     bool fromKDE = it.data();
@@ -445,7 +445,7 @@ void runRdb( uint flags )
     QStringList list;
 
     QStringList adPaths = KGlobal::dirs()->findDirs("appdefaults", "");
-    for (QStringList::ConstIterator it = adPaths.begin(); it != adPaths.end(); it++) {
+    for (QStringList::ConstIterator it = adPaths.begin(); it != adPaths.end(); ++it) {
       QDir dSys( *it );
 
       if ( dSys.exists() ) {

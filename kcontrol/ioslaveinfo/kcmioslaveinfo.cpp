@@ -68,7 +68,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
    hbox->setStretchFactor(m_info,5);
 
    QStringList protocols=KProtocolInfo::protocols();
-   for (QStringList::Iterator it=protocols.begin(); it!=protocols.end(); it++)
+   for (QStringList::Iterator it=protocols.begin(); it!=protocols.end(); ++it)
    {
       QString proto = *it;
       m_ioslavesLb->insertItem( SmallIcon( KProtocolInfo::icon( proto )), 

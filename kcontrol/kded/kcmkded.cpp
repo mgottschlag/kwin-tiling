@@ -145,7 +145,7 @@ void KDEDConfig::load() {
 
 	QListViewItem* item = 0L;
 	CheckListItem* clitem;
-	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); it++ ) {
+	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); ++it ) {
 
 		if ( KDesktopFile::isDesktopFile( *it ) ) {
 			KDesktopFile file( *it, true, "services" );
@@ -199,7 +199,7 @@ void KDEDConfig::save() {
 
 	KConfig kdedrc("kdedrc", false, false);
 
-	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); it++ ) {
+	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); ++it ) {
 
 		if ( KDesktopFile::isDesktopFile( *it ) ) {
 

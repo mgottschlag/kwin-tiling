@@ -747,7 +747,7 @@ void KCMStyle::loadStyle( KConfig& config )
 
 	QString strWidgetStyle;
 	QStringList list = KGlobal::dirs()->findAllResources("themes", "*.themerc", true, true);
-	for (QStringList::iterator it = list.begin(); it != list.end(); it++)
+	for (QStringList::iterator it = list.begin(); it != list.end(); ++it)
 	{
 		KSimpleConfig config( *it, true );
 		if ( !(config.hasGroup("KDE") && config.hasGroup("Misc")) )

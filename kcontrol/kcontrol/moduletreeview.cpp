@@ -182,7 +182,7 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
 
   ModuleTreeItem *item = 0;
   QStringList::ConstIterator it;
-  for (it=groups.begin(); it != groups.end(); it++)
+  for (it=groups.begin(); it != groups.end(); ++it)
   {
      if (item)
         item = static_cast<ModuleTreeItem*>(item->firstChild());

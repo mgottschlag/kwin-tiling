@@ -181,7 +181,7 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 		menu->insertTitle(SmallIcon("clock"), i18n("Refresh Rate"));
 
 	int i = 0;
-	for (QStringList::Iterator it = rr.begin(); it != rr.end(); it++, i++) {
+	for (QStringList::Iterator it = rr.begin(); it != rr.end(); ++it, i++) {
 		lastIndex = menu->insertItem(*it);
 
 		if (currentScreen()->proposedRefreshRate() == i)

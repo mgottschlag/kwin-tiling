@@ -133,7 +133,7 @@ void IconThemesConfig::loadThemes()
   QString name;
   QString tname;
   QStringList::Iterator it;
-  for (it=themelist.begin(); it != themelist.end(); it++)
+  for (it=themelist.begin(); it != themelist.end(); ++it)
   {
     KIconTheme icontheme(*it);
     if (!icontheme.isValid()) kdDebug() << "notvalid\n";

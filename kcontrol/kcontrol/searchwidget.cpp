@@ -126,7 +126,7 @@ void SearchWidget::populateKeywordList(ConfigModuleList *list)
       QStringList kw = module->keywords();
 
       // loop through the keyword list to populate _keywords
-      for(QStringList::ConstIterator it = kw.begin(); it != kw.end(); it++)
+      for(QStringList::ConstIterator it = kw.begin(); it != kw.end(); ++it)
         {
           QString name = (*it).lower();
           bool found = false;

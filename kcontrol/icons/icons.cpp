@@ -167,7 +167,7 @@ void KIconConfig::initDefaults()
 
     KIcon::Group i;
     QStringList::ConstIterator it;
-    for(it=mGroups.begin(), i=KIcon::FirstGroup; it!=mGroups.end(); it++, i++)
+    for(it=mGroups.begin(), i=KIcon::FirstGroup; it!=mGroups.end(); ++it, i++)
     {
 	mbDP[i] = false;
 	mbChanged[i] = true;
@@ -229,7 +229,7 @@ void KIconConfig::read()
 
     int i, j, effect;
     QStringList::ConstIterator it, it2;
-    for (it=mGroups.begin(), i=0; it!=mGroups.end(); it++, i++)
+    for (it=mGroups.begin(), i=0; it!=mGroups.end(); ++it, i++)
     {
         mbChanged[i] = false;
 
@@ -238,7 +238,7 @@ void KIconConfig::read()
 	mbDP[i] = mpConfig->readBoolEntry("DoublePixels", mbDP[i]);
 	mbAnimated[i] = mpConfig->readBoolEntry("Animated", mbAnimated[i]);
 
-	for (it2=mStates.begin(), j=0; it2!=mStates.end(); it2++, j++)
+	for (it2=mStates.begin(), j=0; it2!=mStates.end(); ++it2, j++)
 	{
 	    QString tmp = mpConfig->readEntry(*it2 + "Effect");
 	    if (tmp == "togray")
@@ -268,7 +268,7 @@ void KIconConfig::apply()
     QValueList<int>::Iterator it;
     mpSizeBox->clear();
     if (mUsage < KIcon::LastGroup) {
-        for (it=mAvSizes[mUsage].begin(), i=0; it!=mAvSizes[mUsage].end(); it++, i++)
+        for (it=mAvSizes[mUsage].begin(), i=0; it!=mAvSizes[mUsage].end(); ++it, i++)
         {
             mpSizeBox->insertItem(QString().setNum(*it));
             dw = abs(mSizes[mUsage] - *it);
@@ -335,13 +335,13 @@ void KIconConfig::save()
 {
     int i, j;
     QStringList::ConstIterator it, it2;
-    for (it=mGroups.begin(), i=0; it!=mGroups.end(); it++, i++)
+    for (it=mGroups.begin(), i=0; it!=mGroups.end(); ++it, i++)
     {
 	mpConfig->setGroup(*it + "Icons");
 	mpConfig->writeEntry("Size", mSizes[i], true, true);
 	mpConfig->writeEntry("DoublePixels", mbDP[i], true, true);
 	mpConfig->writeEntry("Animated", mbAnimated[i], true, true);
-	for (it2=mStates.begin(), j=0; it2!=mStates.end(); it2++, j++)
+	for (it2=mStates.begin(), j=0; it2!=mStates.end(); ++it2, j++)
 	{
 	    QString tmp;
 	    switch (mEffects[i][j].type)

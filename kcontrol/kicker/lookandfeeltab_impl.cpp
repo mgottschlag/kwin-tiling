@@ -423,7 +423,7 @@ void LookAndFeelTab::fillTileCombos()
     // Transform tile to words with title case
     // The same is done when generating messages for translation
     QStringList words = QStringList::split(QRegExp("[_ ]"), tile);
-    for (QStringList::iterator w = words.begin(); w != words.end(); w++)
+    for (QStringList::iterator w = words.begin(); w != words.end(); ++w)
       (*w)[0] = (*w)[0].upper();
     tile = i18n(words.join(" ").utf8());
 

@@ -851,7 +851,7 @@ void KColorScheme::readSchemeNames()
             "kdisplay/color-schemes/*.kcsrc", false, true);
 
     // And add them
-    for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++) {
+    for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it) {
        KSimpleConfig *config = new KSimpleConfig(*it);
        config->setGroup("Color Scheme");
        QString str = config->readEntry("Name");

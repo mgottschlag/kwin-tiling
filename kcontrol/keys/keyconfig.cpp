@@ -442,7 +442,7 @@ void KKeyModule::readScheme( int index )
   nSysSchemes = 2;
 
   // This for system files
-  for ( QStringList::ConstIterator it = schemes.begin(); it != schemes.end(); it++) {
+  for ( QStringList::ConstIterator it = schemes.begin(); it != schemes.end(); ++it) {
     // KPersonalizer relies on .kksrc files containing all the keyboard shortcut
     //  schemes for various setups.  It also requires the KDE defaults to be in
     //  a .kksrc file.  The KDE defaults shouldn't be listed here.
