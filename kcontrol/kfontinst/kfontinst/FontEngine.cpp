@@ -45,6 +45,7 @@
 #include <netinet/in.h>
 #include <qimage.h>
 #include <qregexp.h>
+#include <qfile.h>
 
 //
 // NOTE: The FreeType headers are in quotes and not brackets, as the path is supplied in the compile line
