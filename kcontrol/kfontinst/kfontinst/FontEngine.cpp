@@ -830,7 +830,17 @@ static QString createNames(const QString &familyName, QString &fullName)
         removeString(family, CFontEngine::widthStr((CFontEngine::EWidth)prop), removed);
  
     removeString(family, "Cond", removed);  // Some fonts just have Cond and not Condensed!
- 
+
+    //
+    // Remvoe any "Plain:1.0", etc, strings...
+    int plPos;
+
+    if(-1!=(plPos=family.find("Plain:")))
+    {
+        int spPos=family.find(QChar(' '), plPos);
+        family.remove(plPos, -1==spPos ? family.length()-plPos : spPos-plPos);
+    }
+
     //
     // Add the family name back on...
     if(removedFamily && QString::null!=familyName)
