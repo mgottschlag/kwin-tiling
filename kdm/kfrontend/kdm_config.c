@@ -1577,10 +1577,13 @@ int main(int argc, char **argv)
 	    CopyValues (&va, allSects + 0, 0, C_CONFIG);
 	    CopyValues (&va, allSects + 1, 0, C_CONFIG);
 	    GSendInt ((VXservers.ptr[0] == '/') ? 3 : 2);
-	    GSendStr (kdmrc); GSendInt (-1);
-	    GSendNStr (VXaccess.ptr, VXaccess.len); GSendInt (0);
+	    GSendStr (kdmrc);
+		GSendInt (-1);
+	    GSendNStr (VXaccess.ptr, VXaccess.len - 1);
+		GSendInt (0);
 	    if (VXservers.ptr[0] == '/') {
-		GSendNStr (VXservers.ptr, VXservers.len); GSendInt (0);
+		GSendNStr (VXservers.ptr, VXservers.len - 1);
+		    GSendInt (0);
 	    }
 	    for (; (what = GRecvInt ()) != -1; )
 		switch (what) {
