@@ -137,7 +137,6 @@ protected:
     QSlider     *mPrioritySlider;
     QCheckBox   *mLockCheckBox;
     QCheckBox   *mStarsCheckBox;
-    QCheckBox   *mEnableCheckBox;
     QLabel      *mMonitorLabel;
     QStringList mSaverFileList;
     SaverList   mSaverList;

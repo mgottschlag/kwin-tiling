@@ -179,16 +179,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
 
 
     QBoxLayout *topLayout = new QVBoxLayout(this, 10, 10);
-
-    mEnableCheckBox = new QCheckBox( i18n("&Enable screensaver"), this );
-    mEnableCheckBox->setChecked( mEnabled );
-    connect( mEnableCheckBox, SIGNAL( toggled( bool ) ),
-         this, SLOT( slotEnable( bool ) ) );
-    topLayout->addWidget(mEnableCheckBox);
-    QWhatsThis::add( mEnableCheckBox, i18n("Check this box if you would like"
-      " to enable a screen saver. If you have power saving features enabled"
-      " for your display, you may still enable a screen saver.") );
-
+    
     QBoxLayout *helperLayout = new QHBoxLayout(topLayout, 10);
 
     // left column
@@ -201,7 +192,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
 
     mSaverListBox = new QListBox( mSaverGroup );
     mSelected = -1;
-    mSaverListBox->setEnabled(false);
     groupLayout->addWidget( mSaverListBox, 10 );
     QWhatsThis::add( mSaverListBox, i18n("This is a list of the available"
       " screen savers. Select the one you want to use.") );
@@ -239,18 +229,20 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
 
     QBoxLayout *hbox = new QHBoxLayout();
     groupLayout->addLayout(hbox);
-    QLabel *lbl = new QLabel(i18n("&Wait for:"), mSettingsGroup);
+    QLabel *lbl = new QLabel(i18n("Acti&vate after:"), mSettingsGroup);
     hbox->addWidget(lbl);
     mWaitEdit = new QSpinBox(mSettingsGroup);
     mWaitEdit->setSteps(1, 10);
-    mWaitEdit->setRange(1, 120);
+    mWaitEdit->setRange(0, 120);
     mWaitEdit->setSuffix(i18n(" min"));
+    mWaitEdit->setSpecialValueText(i18n("Never"));
     mWaitEdit->setValue(mTimeout/60);
     connect(mWaitEdit, SIGNAL(valueChanged(int)), SLOT(slotTimeoutChanged(int)));
     lbl->setBuddy(mWaitEdit);
     hbox->addWidget(mWaitEdit);
     QString wtstr = i18n("Choose the period of inactivity (from 1"
-      " to 120 minutes) after which the screen saver should start.");
+      " to 120 minutes) after which the screen saver should start."
+      "To prevent the screensaver from automatically starting, choose zero minutes.");
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( mWaitEdit, wtstr );
 
@@ -306,8 +298,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     //groupLayout->addStretch(1);
 
     vLayout->addStretch();
-
-    mSettingsGroup->setEnabled( mEnabled );
 
     // finding the savers can take some time, so defer loading until
     // we've started up.
@@ -395,14 +385,23 @@ void KScreenSaver::readSettings()
     config->setGroup( "ScreenSaver" );
 
     mEnabled = config->readBoolEntry("Enabled", false);
+    
+    if (mEnabled)
+    {
+        mTimeout = config->readNumEntry("Timeout", 300);
+    }
+    else
+    {
+        mTimeout = 0;
+    }
+    
     mLock = config->readBoolEntry("Lock", false);
-    mTimeout = config->readNumEntry("Timeout", 300);
     mPriority = config->readNumEntry("Priority", 19);
     mSaver = config->readEntry("Saver");
 
     if (mPriority < 0) mPriority = 0;
     if (mPriority > 19) mPriority = 19;
-    if (mTimeout < 60) mTimeout = 60;
+    if (mTimeout < 0) mTimeout = 0;
 
     mChanged = false;
     delete config;
@@ -412,10 +411,17 @@ void KScreenSaver::readSettings()
 //
 void KScreenSaver::updateValues()
 {
-    mWaitEdit->setValue(mTimeout/60);
+    if (mEnabled)
+    {
+        mWaitEdit->setValue(mTimeout/60);
+    }
+    else
+    {
+        mWaitEdit->setValue(0);
+    }
+
     mLockCheckBox->setChecked(mLock);
     mPrioritySlider->setValue(19-mPriority);
-    mEnableCheckBox->setChecked( mEnabled );
 }
 
 //---------------------------------------------------------------------------
@@ -425,8 +431,7 @@ void KScreenSaver::defaults()
     slotScreenSaver( 0 );
     mSaverListBox->setCurrentItem( 0 );
     mSaverListBox->centerCurrentItem();
-    slotEnable( false );
-    slotTimeoutChanged( 1 );
+    slotTimeoutChanged( 15 );
     slotPriorityChanged( 0 );
     slotLock( false );
     updateValues();
@@ -439,7 +444,7 @@ void KScreenSaver::defaults()
 void KScreenSaver::save()
 {
     if ( !mChanged )
-    return;
+        return;
 
     KConfig *config = new KConfig( "kdesktoprc");
     config->setGroup( "ScreenSaver" );
@@ -501,14 +506,12 @@ void KScreenSaver::findSavers()
                 mSelected = mSaverListBox->count()-1;
         }
 
-        if ( mSelected >= 0 )
+        if ( mSelected > -1 )
         {
             mSaverListBox->setCurrentItem(mSelected);
             mSaverListBox->ensureCurrentVisible();
-            mSaverListBox->setEnabled(mEnabled);
-            mSetupBt->setEnabled(mEnabled &&
-                                 !mSaverList.at(mSelected)->setup().isEmpty());
-            mTestBt->setEnabled(mEnabled);
+            mSetupBt->setEnabled(!mSaverList.at(mSelected)->setup().isEmpty());
+            mTestBt->setEnabled(!mSaverList.at(mSelected)->setup().isEmpty());
         }
 
         connect( mSaverListBox, SIGNAL( highlighted( int ) ),
@@ -523,8 +526,6 @@ void KScreenSaver::findSavers()
             mSaverListBox->insertItem(s->name());
         }
     }
-
-    mSaverListBox->setEnabled(mEnabled);
 }
 
 //---------------------------------------------------------------------------
@@ -562,7 +563,7 @@ void KScreenSaver::slotPreviewExited(KProcess *)
                           (mMonitorLabel->height()-186)/2+14, 151, 115);
     mMonitor->show();
 
-    if (mEnabled && mSelected >= 0) {
+    if (mSelected >= 0) {
         mPreviewProc->clearArguments();
 
         QString saver = mSaverList.at(mSelected)->saver();
@@ -595,48 +596,15 @@ void KScreenSaver::slotPreviewExited(KProcess *)
 
 //---------------------------------------------------------------------------
 //
-void KScreenSaver::slotEnable(bool e)
-{
-    if ( !e ) {
-      mSetupBt->setEnabled( false );
-    } else {
-      if (!mSetupProc->isRunning() && mSelected >= 0)
-      {
-         SaverConfig * saverConfig = mSaverList.at(mSelected);
-         if ( saverConfig )
-           mSetupBt->setEnabled(!saverConfig->setup().isEmpty());
-         else
-           kdWarning() << "Nothing in mSaverList at position " << mSelected << "... This is not supposed to happen!" << endl;
-      }
-    }
-    mEnabled=e;
-
-    mSaverGroup->setEnabled( e );
-    mSettingsGroup->setEnabled( e );
-    mSaverListBox->setEnabled( e );
-    mTestBt->setEnabled( e && (mSelected>=0) );
-
-    mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
-    setMonitor();
-    mChanged = true;
-    emit changed(true);
-}
-
-//---------------------------------------------------------------------------
-//
 void KScreenSaver::slotScreenSaver(int indx)
 {
-    if (!mEnabled)
-        return;
-
     bool bChanged = (indx != mSelected);
 
     if (!mSetupProc->isRunning())
         mSetupBt->setEnabled(!mSaverList.at(indx)->setup().isEmpty());
     mTestBt->setEnabled(true);
     mSaver = mSaverList.at(indx)->file();
-    mEnabled = true;
-
+    
     mSelected = indx;
     setMonitor();
     if (bChanged)
@@ -650,7 +618,7 @@ void KScreenSaver::slotScreenSaver(int indx)
 //
 void KScreenSaver::slotSetup()
 {
-    if ( !mEnabled || mSelected < 0 )
+    if ( mSelected < 0 )
     return;
 
     if (mSetupProc->isRunning())
@@ -675,7 +643,7 @@ void KScreenSaver::slotSetup()
             (*mSetupProc) << word;
         }
 
-        mSetupBt->setEnabled( FALSE );
+        mSetupBt->setEnabled( false );
         kapp->flushX();
 
         mSetupProc->start();
@@ -757,6 +725,7 @@ void KScreenSaver::slotStopTest()
 void KScreenSaver::slotTimeoutChanged(int to )
 {
     mTimeout = to * 60;
+    mEnabled = (to > 0);
     mChanged = true;
     emit changed(true);
 }
