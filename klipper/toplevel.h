@@ -68,6 +68,7 @@ private:
     URLGrabber *myURLGrabber;
     int pSelectedItem;
     int maxClipItems;
+    int URLGrabItem;
 
     void trimClipHistory(int);
 };

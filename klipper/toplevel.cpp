@@ -33,7 +33,6 @@
 
 #define QUIT_ITEM    50
 #define CONFIG_ITEM  60
-#define URLGRAB_ITEM 70
 #define EMPTY_ITEM   80
 
 #define MENU_ITEMS   7
@@ -219,8 +218,8 @@ void TopLevel::clickedMenu(int id)
         saveProperties();
         kapp->quit();
         break;
-    case URLGRAB_ITEM: // handled with an extra slot
-	break;
+//    case URLGRAB_ITEM: // handled with an extra slot
+//	break;
     case EMPTY_ITEM:
 	if ( !bClipEmpty )
 	{
@@ -236,7 +235,11 @@ void TopLevel::clickedMenu(int id)
 	}
 	break;
     default:
-	if ( !bClipEmpty )
+	if ( id == URLGrabItem ) 
+	{
+	    break; // handled by its own slot
+	}
+	else if ( !bClipEmpty )
 	{
 	    pQTcheck->stop();
 	    //CT mark up the currently put into clipboard - so that user can see later
@@ -311,14 +314,13 @@ void TopLevel::readProperties(KConfig *kc)
   bClipEmpty = ((QString)clip->text()).simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
 
   pQPMmenu->insertSeparator();
-  toggleURLGrabAction->plug( pQPMmenu, URLGRAB_ITEM );
+  toggleURLGrabAction->plug( pQPMmenu, -1 );
+  URLGrabItem = pQPMmenu->idAt( pQPMmenu->count() - 1 );
+  
   pQPMmenu->insertItem( SmallIcon("fileclose"), 
 			i18n("&Clear Clipboard History"), EMPTY_ITEM );
   pQPMmenu->insertItem(SmallIcon("configure"), i18n("&Preferences..."), 
 		       CONFIG_ITEM);
-  // we can't specify the id in plug(), just the index. So we set the right
-  // id aftwards for the given index.
-  pQPMmenu->setId( URLGRAB_ITEM, URLGRAB_ITEM );
   pQPMmenu->insertSeparator();
   pQPMmenu->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
 
