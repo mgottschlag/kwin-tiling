@@ -96,9 +96,9 @@ static char PA_NAME[PARISC_PA_LAST][12]
 	"PA8000", "PA8200",   "PA8500" };
 
 struct _type_LOOKUPTABLE {
-	 char 			Name[8]; 
-	 enum V_ENTRIES 	parisc_rev; 
-	 enum PA_ENTRIES 	parisc_name; 
+	 char 		Name[8]; 
+	 unsigned short	parisc_rev;	// = enum V_ENTRIES 
+	 unsigned short	parisc_name;	// = enum PA_ENTRIES 
 };
 	 
 
@@ -300,7 +300,7 @@ static struct _type_LOOKUPTABLE PA_LOOKUPTABLE[] = {
 { "V2250"	,V_2x0	,PA8200		},
 { "V2500"	,V_2x0	,PA8500		},
 
-{ ""		,V_LAST	,PARISC_PA_LAST	}  /* Last Entry has to be empty. */
+{ ""		,0	,0		}  /* Last Entry has to be empty. */
 };
 
 
@@ -363,8 +363,14 @@ bool GetInfo_CPU( KTabListBox *lBox )
   QString TAB(SEPERATOR);
   QString str,str2;
   QFontMetrics fm(lBox->tableFont());
-  int	maxwidth,m;
+  int	maxwidth,m,i;
 			
+  if((pstat_getstatic(&pst, sizeof(pst), (size_t)1, 0) == -1) ||
+     (pstat_getdynamic(&psd, sizeof(psd), (size_t)1, 0)== -1)) {
+     GetInfo_ErrorString = i18n("Could not get Information !"); // set Error !
+     return FALSE;
+  }
+
   lBox->setNumCols(2);		// Table-Headers....
   maxwidth = 0;
   I18N_MAX(str,i18n("Information"),fm,maxwidth);
@@ -376,7 +382,6 @@ bool GetInfo_CPU( KTabListBox *lBox )
   I18N_MAX(str,i18n("Machine"),fm,maxwidth);
   str += TAB + QString(info.machine);
   lBox->insertItem( str );
-  if (psd.psd_proc_cnt<=0) psd.psd_proc_cnt = 1;
   
   model = new QFile(INFO_CPU_MODEL);  
   if (model->exists()) 
