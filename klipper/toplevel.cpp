@@ -18,14 +18,14 @@
 #include <kaboutdata.h>
 #include <kaccelaction.h>
 #include <kaction.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <kkeydialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 #include <kstringhandler.h>
 #include <kwin.h>

@@ -19,7 +19,7 @@
 #include <kdesktopfile.h>
 #include <ksimpleconfig.h>
 #include <kurifilter.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kdebug.h>
 
 #include "khotkeys.h"

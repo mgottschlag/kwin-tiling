@@ -26,12 +26,12 @@
 #include <qdragobject.h>
 #include <qpainter.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kimageio.h>
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kbuttonbox.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>

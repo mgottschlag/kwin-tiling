@@ -30,7 +30,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdialog.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <klistview.h>
 #include <kdebug.h>
 

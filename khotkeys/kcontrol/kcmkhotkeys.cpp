@@ -22,7 +22,7 @@
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kmessagebox.h>

@@ -26,7 +26,7 @@
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kdesktopfile.h>
 #include <kdebug.h>
 

@@ -16,8 +16,8 @@
 
 #include <qtextstream.h>
 
-#include <kapp.h>
-#include <kstddirs.h>
+#include <kapplication.h>
+#include <kstandarddirs.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdesktopfile.h>

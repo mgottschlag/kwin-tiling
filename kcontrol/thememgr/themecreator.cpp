@@ -22,12 +22,12 @@
  */
 
 #include "themecreator.h"
-#include <kapp.h>
+#include <kapplication.h>
 #include <klocale.h>
 #include <kdebug.h>
 #include <kconfigbackend.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kconfig.h>
 
 #include <qstring.h>

@@ -26,7 +26,7 @@
 #include <qhbox.h>
 
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kglobal.h>
 #include <kdialog.h>
 #include <klineedit.h>

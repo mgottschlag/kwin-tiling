@@ -35,13 +35,13 @@
 
 #include <dcopclient.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <ktrader.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kdebug.h>
 
 #include "ikwsopts.h"

@@ -24,7 +24,7 @@
 #include <qframe.h>
 #include <qscrollview.h>
 #include <klocale.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kcmodule.h>
 #include <kseparator.h>
 #include <kglobal.h>

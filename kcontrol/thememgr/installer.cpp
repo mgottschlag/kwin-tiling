@@ -46,7 +46,7 @@
 #include <kglobal.h>
 #include <kglobalsettings.h>
 #include <kdebug.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kurldrag.h>
 #include <kio/netaccess.h>

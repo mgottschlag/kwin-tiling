@@ -32,7 +32,7 @@
 #include <qpushbutton.h>
 #include <qvbox.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <klocale.h>
 #include <kwin.h>
 

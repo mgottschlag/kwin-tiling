@@ -12,7 +12,7 @@
 
 #include <qtimer.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kdialogbase.h>
 #include <keditcl.h>

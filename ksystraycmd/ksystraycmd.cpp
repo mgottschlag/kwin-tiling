@@ -3,7 +3,7 @@
 #include <qimage.h>
 #include <qregexp.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <klocale.h>

@@ -39,11 +39,11 @@
 #include <qtextcodec.h>	//XXX
 #include <qsettings.h> 
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kcharsets.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 
 #include "kdmconfig.h"
 #include "kdm_greet.h"

@@ -23,10 +23,10 @@
 #include <qtimer.h>
 #include <qpainter.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kglobal.h>
 #include <kdebug.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kpixmap.h>
 #include <kpixmapeffect.h>
 #include <kimageeffect.h>

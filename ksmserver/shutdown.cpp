@@ -20,7 +20,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qcursor.h>
 
 #include <klocale.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kwin.h>
 

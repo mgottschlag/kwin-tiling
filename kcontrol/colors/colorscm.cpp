@@ -33,10 +33,10 @@
 #include <kcursor.h>
 #include <kglobal.h>
 #include <kglobalsettings.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kipc.h>
 #include <kcolordlg.h>
-#include <kcolorbtn.h>
+#include <kcolorbutton.h>
 #include <kbuttonbox.h>
 #include <kgenericfactory.h>
 

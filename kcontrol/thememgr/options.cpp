@@ -8,7 +8,7 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>

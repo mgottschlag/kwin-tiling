@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #include "DXdmcp.h"
-#include <kapp.h>
+#include <kapplication.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <X11/Xlib.h>

@@ -16,7 +16,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qmessagebox.h>
 #include <qdir.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <kdebug.h>

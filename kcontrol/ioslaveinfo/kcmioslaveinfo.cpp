@@ -34,7 +34,7 @@
 #include <qwhatsthis.h>
 
 #include <kprotocolinfo.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kdialog.h>

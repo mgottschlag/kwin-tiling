@@ -21,7 +21,7 @@
 
 #include <qpainter.h>
 #include <qtimer.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kconfig.h>
 
 #include "kdmclock.h"

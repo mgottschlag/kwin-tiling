@@ -19,10 +19,10 @@
 #include <qlayout.h>
 #include <qradiobutton.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <klocale.h>
 #include <kimageio.h>
 

@@ -24,7 +24,7 @@
 #include <kservicegroup.h>
 #include <ksycoca.h>
 #include <kdebug.h>
-#include <kapp.h>
+#include <kapplication.h>
 
 #include <qobjectlist.h>
 #include <qaccel.h>

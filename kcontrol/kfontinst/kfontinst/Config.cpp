@@ -33,7 +33,7 @@
 #include <qdir.h>
 #include <qfileinfo.h>
 #include <kconfig.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kstandarddirs.h>
 #include <stdlib.h>
 #include <unistd.h>

@@ -15,7 +15,7 @@
 #include <kcmdlineargs.h>
 #include <kwin.h>
 #include <kaboutdata.h>
-#include <kuniqueapp.h>
+#include <kuniqueapplication.h>
 
 #include "toplevel.h"
 

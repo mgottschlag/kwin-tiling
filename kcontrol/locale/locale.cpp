@@ -36,7 +36,7 @@
 
 #include <kdialog.h>
 #include <kcharsets.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <kglobal.h>

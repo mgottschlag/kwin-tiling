@@ -34,12 +34,12 @@
 #include <qtextstream.h>
 #include <qwhatsthis.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kprocess.h>
 #include <ksimpleconfig.h>
 #include <knuminput.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <klocale.h>
 #include <kdesktopfile.h>
 #include <kcolordlg.h>

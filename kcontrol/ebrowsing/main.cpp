@@ -25,11 +25,11 @@
 
 #include <qlayout.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <dcopclient.h>
 #include <klocale.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kconfig.h>
 #include <kdialog.h>

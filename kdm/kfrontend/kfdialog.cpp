@@ -29,7 +29,7 @@
 #include <qlayout.h>
 #include <qhbox.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kdialogbase.h>
 #include <klocale.h>
 

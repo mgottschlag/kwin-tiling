@@ -24,7 +24,7 @@
 #include <kstdaction.h>
 #include <kdebug.h>
 #include <dcopclient.h>
-#include <kapp.h>
+#include <kapplication.h>
 
 #include "menueditview.h"
 #include "kmenuedit.h"

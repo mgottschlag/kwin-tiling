@@ -35,7 +35,7 @@
 #include <klocale.h>
 #include <kdebug.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kapplication.h>
 #include <kgenericfactory.h>
 

@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kcolordlg.h>

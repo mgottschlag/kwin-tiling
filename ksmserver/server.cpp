@@ -66,9 +66,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kglobal.h>
 #include <kconfig.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <unistd.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <knotifyclient.h>
 #include <kstaticdeleter.h>
 #include <dcopclient.h>

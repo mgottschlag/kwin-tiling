@@ -20,7 +20,7 @@
 */
 
 #include <klocale.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kwin.h>
 #include <global.h>
 

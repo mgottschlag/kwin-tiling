@@ -40,7 +40,7 @@
 #include <qsplitter.h>
 #include <qpalette.h>
 #include <kprogress.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <klocale.h>
 #include <stdlib.h>
 

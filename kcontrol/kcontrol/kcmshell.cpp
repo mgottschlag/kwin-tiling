@@ -24,11 +24,11 @@
 
 #include <dcopclient.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kglobal.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kcmdlineargs.h>
 #include <kservice.h>
 #include <kdesktopfile.h>

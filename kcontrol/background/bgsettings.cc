@@ -23,10 +23,10 @@
 #include <qdir.h>
 
 #include <netwm.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kglobal.h>
 #include <kdebug.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
 

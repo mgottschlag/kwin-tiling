@@ -22,7 +22,7 @@
 #include <qcursor.h>
 
 #include <klocale.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kiconloader.h>

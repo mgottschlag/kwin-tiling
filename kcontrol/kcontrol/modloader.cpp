@@ -21,10 +21,10 @@
 #include <qstringlist.h>
 #include <qfile.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kdebug.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <klibloader.h>
 #include <kparts/componentfactory.h>
 

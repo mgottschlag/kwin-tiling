@@ -36,11 +36,11 @@
 
 #include <klocale.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kcmdlineargs.h>
 #include <kseparator.h>
-#include <kapp.h>
+#include <kapplication.h>
 
 #include "kgreeter.h"
 #include "kdmconfig.h"

@@ -17,7 +17,7 @@
 #include <qregexp.h>
 
 
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 
 
 #include "usbdb.h"

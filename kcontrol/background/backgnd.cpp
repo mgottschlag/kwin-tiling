@@ -38,13 +38,13 @@
 #include <qspinbox.h>
 #include <qhbuttongroup.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kiconloader.h>
 #include <kdebug.h>
-#include <kcolorbtn.h>
+#include <kcolorbutton.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>

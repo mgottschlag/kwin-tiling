@@ -113,7 +113,7 @@ extern "C" {
 
 #include "CXdmcp.h"
 #include <kcmdlineargs.h>
-#include <kapp.h>
+#include <kapplication.h>
 
 ARRAY8Ptr xdmAddress;
 ARRAY8Ptr clientAddress;

@@ -30,8 +30,8 @@
 #include <kprotocolinfo.h>
 #include <kconfig.h>
 #include <ksimpleconfig.h>
-#include <kapp.h>
-#include <kstddirs.h>
+#include <kapplication.h>
+#include <kstandarddirs.h>
 #include <kstaticdeleter.h>
 
 #include "kuriikwsfiltereng.h"

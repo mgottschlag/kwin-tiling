@@ -22,7 +22,7 @@
 #include <qspinbox.h>
 #include <qlabel.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kconfig.h>
 #include <kdialog.h>
 #include <kglobal.h>

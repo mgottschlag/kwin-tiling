@@ -28,7 +28,7 @@
 #include <qvbuttongroup.h>
 #include <qstyle.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <klocale.h>
 #include <kseparator.h>
 

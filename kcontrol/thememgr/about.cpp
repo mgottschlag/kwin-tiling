@@ -7,7 +7,7 @@
 #include <qlayout.h>
 #include <qfont.h>
 
-#include <kapp.h>
+#include <kapplication.h>
 #include <kconfig.h>
 #include <klocale.h>
 #include <kseparator.h>

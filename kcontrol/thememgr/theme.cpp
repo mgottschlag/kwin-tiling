@@ -33,7 +33,7 @@
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qfileinfo.h>
-#include <kapp.h>
+#include <kapplication.h>
 #include <qpixmap.h>
 #include <qbitmap.h>
 #include <qpainter.h>
@@ -47,7 +47,7 @@
 #include <klocale.h>
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kstddirs.h>
+#include <kstandarddirs.h>
 #include <kdesktopfile.h>
 #include <kicontheme.h>
 #include <kipc.h>
