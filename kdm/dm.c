@@ -775,7 +775,7 @@ int StorePid ()
     int		oldpid;
 
     if (pidFile[0] != '\0') {
-	pidFd = open (pidFile, 2);
+	pidFd = open (pidFile, O_RDWR);
 	if (pidFd == -1 && errno == ENOENT)
 	    pidFd = open (pidFile, O_RDWR|O_CREAT, 0666);
 	if (pidFd == -1 || !(pidFilePtr = fdopen (pidFd, "r+")))
