@@ -17,6 +17,8 @@
    Boston, MA 02111-1307, USA.
 */
 
+#include <config.h>
+
 #include <kcmdlineargs.h>
 #include <ksimpleconfig.h>
 #include <klocale.h>
