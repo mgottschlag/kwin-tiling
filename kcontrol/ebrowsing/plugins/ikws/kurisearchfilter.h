@@ -1,6 +1,7 @@
 /*  This file is part of the KDE project
     Copyright (C) 1999 Simon Hausmann <hausmann@kde.org>
     Copyright (C) 2000 Yves Arrouye <yves@realnames.com>
+    Copyright (C) 2002, 2003 Dawit Alemayehu <adawit@kde.org>    
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,8 +36,8 @@ class KURISearchFilter : public KURIFilterPlugin, public DCOPObject
     Q_OBJECT
     K_DCOP
 public:
-    KURISearchFilter(QObject *parent = 0, const char *name = 0,
-	             const QStringList &args = QStringList() );
+    KURISearchFilter(QObject *parent = 0, const char *name = 0, 
+                     const QStringList &args = QStringList() );
     ~KURISearchFilter();
 
     virtual bool filterURI( KURIFilterData& ) const;
@@ -46,8 +47,6 @@ public:
 k_dcop:
     virtual void configure();
 };
-
-typedef KGenericFactory<KURISearchFilter> KURISeachFilterFactory;
 
 #endif
 

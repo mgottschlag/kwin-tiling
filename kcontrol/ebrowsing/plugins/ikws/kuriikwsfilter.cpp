@@ -1,7 +1,8 @@
 /*  This file is part of the KDE project
     Copyright (C) 1999 Simon Hausmann <hausmann@kde.org>
     Copyright (C) 2000 Yves Arrouye <yves@realnames.com>
-
+    Copyright (C) 2002, 2003 Dawit Alemayehu <adawit@kde.org>
+    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -30,47 +31,45 @@
 #include "kuriikwsfiltereng.h"
 #include "kuriikwsfilter.h"
 
-#define searcher KURISearchFilterEngine::self()
+typedef KGenericFactory<KAutoWebSearch> KAutoWebSearchFactory;
+K_EXPORT_COMPONENT_FACTORY (libkuriikwsfilter, KAutoWebSearchFactory("kuriikwsfilter"));
 
-KURIIKWSFilter::KURIIKWSFilter(QObject *parent, const char *name,
-	                       const QStringList & /*args*/ )
-                 :KURIFilterPlugin(parent, name ? name : "kuriikwsfilter", 1.0),
-                  DCOPObject("KURIIKWSFilterIface")
+KAutoWebSearch::KAutoWebSearch(QObject *parent, const char *name, const QStringList&)
+               :KURIFilterPlugin(parent, name ? name : "kuriikwsfilter", 1.0),
+                DCOPObject("KURIIKWSFilterIface")
 {
 }
 
-KURIIKWSFilter::~KURIIKWSFilter()
+KAutoWebSearch::~KAutoWebSearch()
 {
 }
 
-void KURIIKWSFilter::configure()
+void KAutoWebSearch::configure()
 {
-    kdDebug() << "(" << getpid() << ") " << "Internet Keywords: Sending a config reload request..." << endl;
-    searcher->loadConfig();
+  kdDebug() << "KAutoWebSearch::configure: Config reload requested..." << endl;
+  KURISearchFilterEngine::self()->loadConfig();
 }
 
-bool KURIIKWSFilter::filterURI( KURIFilterData &data ) const
+bool KAutoWebSearch::filterURI( KURIFilterData &data ) const
 {
-    if (searcher->verbose())
-        kdDebug() << "KURIIKWSFilter: filtering " <<  data.uri().url() << endl;
+  if (KURISearchFilterEngine::self()->verbose())
+    kdDebug() << "KAutoWebSearch::filterURI: " <<  data.uri().url() << endl;
 
-    KURL u = data.uri();
-    if ( u.pass().isEmpty() )
+  KURL u = data.uri();
+  if ( u.pass().isEmpty() )
+  {
+    QString result = KURISearchFilterEngine::self()->autoWebSearchQuery( u );
+    if( !result.isEmpty() )
     {
-      QString result = searcher->ikwsQuery( u );
-      if( !result.isEmpty() )
-      {
-        setFilteredURI( data, result );
-        setURIType( data, KURIFilterData::NET_PROTOCOL );
-        return true;
-      }
+      if ( KURISearchFilterEngine::self()->verbose() )
+        kdDebug () << "Filtered URL: " << result << endl;
+      
+      setFilteredURI( data, result );
+      setURIType( data, KURIFilterData::NET_PROTOCOL );
+      return true;
     }
-    return false;
+  }
+  return false;
 }
-
-K_EXPORT_COMPONENT_FACTORY( libkuriikwsfilter, 
-	                    KGenericFactory<KURIIKWSFilter>( "kuriikwsfilter" )  );
 
 #include "kuriikwsfilter.moc"
-
-

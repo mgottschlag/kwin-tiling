@@ -27,6 +27,7 @@ Comment[is]=LeitarvÃ©l
 Comment[it]=Motore di ricerca
 Comment[ja]=検索エンジン
 Comment[ko]=찾는 엔진
+Comment[lo]=ກົນໄກການຄົ້ນຫາ
 Comment[lt]=Paieškos tarnyba
 Comment[lv]=Meklēšanas Mašīna
 Comment[mt]=Magna tat-Tfittxija
@@ -54,6 +55,7 @@ Comment[xh]=Phendla Injini
 Comment[zh_CN]=搜索引擎
 Comment[zh_TW]=搜索引擎
 Comment[zu]=Injini Yokusesha
+InitialPreference=1
 
 [PropertyDef::Keys]
 Type=QStringList

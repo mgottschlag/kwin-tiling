@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2000 Yves Arrouye <yves@realnames.com>
- *
- * Requires the Qt widget libraries, available at no cost at
- * http://www.troll.no/
+ * Copyright (c) 2002, 2003 Dawit Alemayehu <adawit@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,74 +17,69 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
 #ifndef __IKWSOPTS_H___
 #define __IKWSOPTS_H___
 
-#include <qtabwidget.h>
 #include <qlayout.h>
+#include <qtabwidget.h>
 
 #include <kcmodule.h>
-
 #include <kservice.h>
 
+class QLabel;
+class QLineEdit;
 class QCheckBox;
 class QComboBox;
 class QGroupBox;
-class QPushButton;
-class QLabel;
-class QLineEdit;
 class QListView;
+class QPushButton;
 class QListViewItem;
 class SearchProvider;
 class SearchProviderItem;
 
-class InternetKeywordsOptions : public KCModule {
+class FilterOptions : public KCModule
+{
     Q_OBJECT
 
 public:
-    InternetKeywordsOptions(KInstance *instance, QWidget *parent = 0, const char *name = 0);
+    FilterOptions(KInstance *instance, QWidget *parent = 0, const char *name = 0);
 
     void load();
     void save();
     void defaults();
-
     QString quickHelp() const;
 
 protected slots:
     void moduleChanged();
 
-    void changeInternetKeywordsEnabled();
-    void changeSearchKeywordsEnabled();
+    void setAutoWebSearchState();
+    void setWebShortcutState();
 
     void addSearchProvider();
     void changeSearchProvider();
     void deleteSearchProvider();
-    void importSearchProvider();
-    void exportSearchProvider();
     void updateSearchProvider();
 
 private:
     SearchProviderItem *displaySearchProvider(SearchProvider *p, bool fallback = false);
 
     // The names of the providers that the user deleted,
-    // these are marked as deleted in the user's homedirectory on save
-    // if a global service file exists for it.
+    // these are marked as deleted in the user's homedirectory
+    // on save if a global service file exists for it.
     QStringList m_deletedProviders;
 
-    // Internet Keywords.
-    /*
-    QGroupBox *gb_keywords;
-    QCheckBox *cb_enableInternetKeywords;
-    QComboBox *cmb_searchFallback;
-    QLabel *lb_searchFallback;
-    */
+    QGroupBox *gb_autoWebSearch;
 
-    //Search Engine keywords.
-    QCheckBox *cb_enableSearchKeywords;
-    QGroupBox *gb_search;
+    // Default Search Engine
+    QLabel *lb_defaultSearchEngine;
+    QComboBox *cmb_defaultSearchEngine;
+
+    // Web Shortcuts
+    QGroupBox *gb_webShortcuts;
+    QCheckBox *cb_enableWebShortcuts;
     QListView *lv_searchProviders;
 
+    // Search providers
     QLabel *lb_searchProviderName;
     QLineEdit *le_searchProviderName;
 
@@ -101,6 +94,8 @@ private:
     QPushButton *pb_delSearchProvider;
     QPushButton *pb_impSearchProvider;
     QPushButton *pb_expSearchProvider;
+
+    QMap <QString, QString> m_defaultEngineMap;
 };
 
 #endif

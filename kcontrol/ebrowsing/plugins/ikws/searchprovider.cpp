@@ -21,7 +21,7 @@
 #include "searchprovider.h"
 
 SearchProvider::SearchProvider(const KService::Ptr service)
-    : m_dirty(false)
+               : m_dirty(false)
 {
     m_desktopEntryName = service->desktopEntryName();
     m_name = service->name();

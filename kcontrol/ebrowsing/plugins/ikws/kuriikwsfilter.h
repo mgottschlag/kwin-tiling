@@ -1,7 +1,8 @@
 /*  This file is part of the KDE project
     Copyright (C) 1999 Simon Hausmann <hausmann@kde.org>
     Copyright (C) 2000 Yves Arrouye <yves@realnames.com>
-
+    Copyright (C) 2002, 2003 Dawit Alemayehu <adawit@kde.org>
+    
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -30,14 +31,14 @@
 
 class KInstance;
 
-class KURIIKWSFilter : public KURIFilterPlugin, public DCOPObject
+class KAutoWebSearch : public KURIFilterPlugin, public DCOPObject
 {
     K_DCOP
     Q_OBJECT
 public:
-    KURIIKWSFilter(QObject *parent = 0, const char *name = 0,
-	           const QStringList &args = QStringList() );
-    ~KURIIKWSFilter();
+    KAutoWebSearch(QObject *parent = 0, const char *name = 0,
+                   const QStringList &args = QStringList() );
+    ~KAutoWebSearch();
 
     virtual bool filterURI( KURIFilterData& ) const;
 
