@@ -116,6 +116,7 @@ KModuleListEntry::~KModuleListEntry()
 void KModuleListEntry::parseKdelnkFile(const QString &fn)
 {
   KSimpleConfig config(fn, true);
+  config.setDesktopGroup();
 
   exec =     config.readEntry("Exec");
   icon =     config.readEntry("Icon");
