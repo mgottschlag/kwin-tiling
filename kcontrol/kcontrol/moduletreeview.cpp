@@ -71,7 +71,7 @@ ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const c
   header()->hide();
 
   new ModuleTreeWhatsThis( this );
-
+  
   connect(this, SIGNAL(clicked(QListViewItem*)),
 		  this, SLOT(slotItemSelected(QListViewItem*)));
 }

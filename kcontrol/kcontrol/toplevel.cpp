@@ -28,6 +28,7 @@
 
 #include <qsplitter.h>
 #include <qtabwidget.h>
+#include <qwhatsthis.h>
 
 #include <kaction.h>
 #include <kstdaction.h>
@@ -86,6 +87,8 @@ TopLevel::TopLevel(const char* name)
 
   // create the left hand side (the tab view)
   _tab = new QTabWidget(_splitter);
+  
+  QWhatsThis::add( _tab, i18n("Choose between Index, Search and Quick Help") );
 
   // index tab
   _indextab = new IndexWidget(_modules, _tab);

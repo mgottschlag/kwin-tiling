@@ -27,8 +27,30 @@
 #include <kapp.h>
 #include <kcmodule.h>
 
+#include <qwhatsthis.h>
+
 #include "proxywidget.h"
 #include "proxywidget.moc"
+
+
+class WhatsThis : public QWhatsThis
+{
+public:
+    WhatsThis( ProxyWidget* parent )
+	: QWhatsThis( parent ), proxy( parent ) {}
+    ~WhatsThis(){};
+
+
+    QString text( const QPoint &  ) {
+	if ( !proxy->quickHelp().isEmpty() )
+	    return proxy->quickHelp();
+	else
+	    return i18n("The currently loaded configuration module.");
+    }
+
+private:
+    ProxyWidget* proxy;
+};
 
 static void setVisible(QPushButton *btn, bool vis)
 {
@@ -44,6 +66,8 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   , _client(client)
 {
   setCaption(title);
+  
+  (void) new WhatsThis( this );
 
   client->reparent(this,0,QPoint(0,0),true);
   connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
