@@ -622,31 +622,26 @@ void // private
 KGreeter::pluginSetup()
 {
     int field = 0;
-    QString ent;
+    QString ent, pn( verify->pluginName() ), dn( dName + '_' + pn );
 
-    if (verify->isPluginLocal()) {
-        if (_preselUser != PRESEL_PREV)
-	    stsFile->deleteEntry( dName, false );
-	if (_preselUser != PRESEL_NONE) {
+    if (_preselUser != PRESEL_PREV)
+	stsFile->deleteEntry( verify->entitiesLocal() ? dName : dn, false );
+    if (_preselUser != PRESEL_NONE) {
+	if (verify->entitiesLocal())
 	    ent = _preselUser == PRESEL_PREV ?
-		    stsFile->readEntry( dName ) : _defaultUser;
-	    field = _focusPasswd;
-	}
-    } else {
-	QString pn( verify->pluginName() ), dn( dName + '_' + pn );
-        if (_preselUser != PRESEL_PREV)
-	    stsFile->deleteEntry( dn, false );
-	if (_preselUser != PRESEL_NONE) {
+		stsFile->readEntry( dName ) : _defaultUser;
+	else
 	    ent = _preselUser == PRESEL_PREV ?
-		    stsFile->readEntry( dn ) :
-		    verify->getConf( 0, (pn + ".DefaultEntity").latin1(), QVariant( "" ) ).toString();
-	    field = verify->getConf( 0, (pn + ".FocusField").latin1(), QVariant( 0 ) ).toInt();
-	}
+		stsFile->readEntry( dn ) :
+		verify->getConf( 0, (pn + ".DefaultEntity").latin1(), QVariant() ).toString();
+	field = verify->entitiesFielded() ?
+	    verify->getConf( 0, (pn + ".FocusField").latin1(), QVariant( 0 ) ).toInt() :
+	   _focusPasswd;
     }
     if (!ent.isEmpty())
 	verify->presetEntity( ent, field );
     if (userView) {
-	if (verify->isPluginLocal())
+	if (verify->entitiesLocal())
 	    userView->show();
 	else
 	    userView->hide();
@@ -668,7 +663,7 @@ KGreeter::verifyOk()
 {
     if (_preselUser == PRESEL_PREV)
 	stsFile->writeEntry(
-		verify->isPluginLocal() ?
+		verify->entitiesLocal() ?
 			dName :
 			dName + '_' + verify->pluginName(),
 		verify->getEntity() );

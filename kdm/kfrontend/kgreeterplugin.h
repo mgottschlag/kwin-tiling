@@ -300,7 +300,12 @@ struct kgreeterplugin_info {
 	 * Effectively means that setUser/gplugSetUser can be used and a
 	 * userlist can be shown at all.
 	 */
-	Local = 1
+	Local = 1,
+	/**
+	 * The entities consist of multiple fields.
+	 * PluginOptions/<plugin>.FocusField is used instead of FocusPasswd.
+	 */
+	Fielded = 2
     };
     /*
      * Capability flags.

@@ -110,9 +110,15 @@ KGVerify::getPlugMenu()
 }
 
 bool // public
-KGVerify::isPluginLocal() const
+KGVerify::entitiesLocal() const
 {
     return greetPlugins[pluginList[curPlugin]].info->flags & kgreeterplugin_info::Local;
+}
+
+bool // public
+KGVerify::entitiesFielded() const
+{
+    return greetPlugins[pluginList[curPlugin]].info->flags & kgreeterplugin_info::Fielded;
 }
 
 QString // public

@@ -100,7 +100,8 @@ public:
     QString getEntity() const;
     void setUser( const QString &user );
     void selectPlugin( int id );
-    bool isPluginLocal() const;
+    bool entitiesLocal() const;
+    bool entitiesFielded() const;
     QString pluginName() const;
     void setEnabled( bool on );
     void abort();
