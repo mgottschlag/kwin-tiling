@@ -69,7 +69,7 @@ void SessionExit(void*,void*,void*);
 #include <shadow.h>
 #endif
 
-#ifdef HAVE_LOGIN_CAP_H
+#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
 #include <login_cap.h>
 #endif
 
@@ -529,7 +529,7 @@ KGreeter::restrict()
      memset(swd->sp_pwdp, 0, strlen(swd->sp_pwdp));
 #endif
 
-#ifdef HAVE_LOGIN_CAP_H
+#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
      lc = login_getpwclass(pwd);
 #endif
 
@@ -539,7 +539,7 @@ KGreeter::restrict()
 	 restrict_time())
        rval = true;
 
-#ifdef HAVE_LOGIN_CAP_H
+#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
      login_close(lc);
      lc = NULL;
 #endif
@@ -547,7 +547,7 @@ KGreeter::restrict()
      return rval;
 }
 
-#ifdef HAVE_LOGIN_CAP_H
+#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
 bool
 KGreeter::restrict_time()
 {
@@ -587,7 +587,7 @@ KGreeter::restrict_nologin()
 #define _PATH_NOLOGIN "/etc/nologin"
 #endif
 
-#ifdef HAVE_LOGIN_CAP_H
+#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
      /* Do we ignore a nologin file? */
      if (login_getcapbool(lc, "ignorenologin", 0))
        return false;
@@ -602,7 +602,7 @@ KGreeter::restrict_nologin()
 
      QFile f;
 
-#ifdef HAVE_LOGIN_CAP_H
+#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
      if (!file.isNull()) {
        f.setName(file);
        f.open(IO_ReadOnly);
@@ -637,7 +637,7 @@ KGreeter::restrict_expired(){
      // don't deny root to log in
      if (!pwd->pw_uid) return false;
 
-#ifdef HAVE_LOGIN_CAP_H
+#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
      bool quietlog = login_getcapbool(lc, "hushlogin", 0);
      time_t warntime = login_getcaptime(lc, "warnexpire",
 				 DEFAULT_WARN, DEFAULT_WARN);
@@ -691,7 +691,7 @@ KGreeter::restrict_expired()
 }
 #endif
 
-#ifdef HAVE_LOGIN_CAP_H
+#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
 bool
 KGreeter::restrict_nohome(){
      // don't deny root to log in
