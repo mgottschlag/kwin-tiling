@@ -194,10 +194,12 @@ KGreeter::KGreeter(QWidget *parent, const char *t)
 
     QGridLayout* grid = new QGridLayout( 5, 4, 5);
 
-    QLabel* welcomeLabel = new QLabel( kdmcfg->_greetString, this);
-    welcomeLabel->setAlignment(AlignCenter);
-    welcomeLabel->setFont( *kdmcfg->_greetFont);
-    vbox->addWidget( welcomeLabel);
+    if( kdmcfg->_greetString.length()>0 ) {
+	QLabel* welcomeLabel = new QLabel( kdmcfg->_greetString, this);
+	welcomeLabel->setAlignment(AlignCenter);
+	welcomeLabel->setFont( *kdmcfg->_greetFont);
+	vbox->addWidget( welcomeLabel);
+    }
     if( kdmcfg->_showUsers != KDMConfig::UsrNone) {
 	user_view = new QIconView( this);
 	user_view->setSelectionMode( QIconView::Single );
