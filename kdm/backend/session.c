@@ -135,7 +135,7 @@ AutoLogon ()
 	td->hstent->npass = 0;
 	newdmrc = td->hstent->nargs;
 	td->hstent->nargs = 0;
-    } else if (*td->autoUser && !(tdiff <= 0 && td->hstent->goodExit)) {
+    } else if (*td->autoUser && tdiff > 0) {
 	StrDup (&curuser, td->autoUser);
 	StrDup (&curpass, td->autoPass);
     } else
