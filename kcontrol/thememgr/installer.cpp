@@ -409,7 +409,7 @@ void Installer::slotThemeChanged()
 
 
 //-----------------------------------------------------------------------------
-int Installer::findItem(const QString aText) const
+int Installer::findItem(const QString &aText) const
 {
   int id = mThemesList->count()-1;
 

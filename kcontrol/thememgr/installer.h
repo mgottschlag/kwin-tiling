@@ -46,7 +46,7 @@ public:
   virtual void defaults();
 
   /** Find item in listbox. Returns item index or -1 if not found */
-  virtual int findItem(const QString text) const;
+  virtual int findItem(const QString &text) const;
 
 signals:
   void changed( bool state );
