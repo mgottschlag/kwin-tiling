@@ -24,6 +24,7 @@
 #include <kbugreport.h>
 #include <kaboutapplication.h>
 #include <kmessagebox.h>
+#include <kinstance.h>
 
 #include <qtabwidget.h>
 #include <qwhatsthis.h>
