@@ -10,13 +10,15 @@
 #include <kaudioplayer.h>
 #include <kconfig.h>
 #include <kglobal.h>
+#include <kwinmodule.h>
+#include <netwm.h>
 
 
 #include "kaccess.moc"
 
 
 KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
-  : KUniqueApplication(allowStyles, GUIenabled), overlay(0)
+  : KUniqueApplication(allowStyles, GUIenabled), overlay(0), wm(0)
 {
   // verify the Xlib has matching XKB extension
   int major = XkbMajorVersion;
@@ -41,6 +43,9 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   kdDebug() << "X server XKB extension major=" << major << " minor=" << minor << endl;
 
   readSettings();
+
+  _activeWindow = wm.activeWindow();
+  connect(&wm, SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
 }
 
 
@@ -70,11 +75,6 @@ void KAccessApp::readSettings()
   else
     XkbChangeEnabledControls(qt_xdisplay(), XkbUseCoreKbd, XkbAudibleBellMask, XkbAudibleBellMask);
   
-  // do not forget to turn it back on if kaccess exits!
-  uint ctrls=XkbAudibleBellMask;
-  uint values=XkbAudibleBellMask;
-  XkbSetAutoResetControls(qt_xdisplay(), XkbAudibleBellMask, &ctrls, &values);
-
   // keyboard -------------------------------------------------------------
 
   config->setGroup("Keyboard");
@@ -139,8 +139,8 @@ void KAccessApp::readSettings()
   XkbSetControls(qt_xdisplay(), XkbControlsEnabledMask | XkbMouseKeysAccelMask, xkb);
 
   // reset them after program exit
-  ctrls = XkbStickyKeysMask | XkbSlowKeysMask | XkbBounceKeysMask | XkbMouseKeysMask;
-  values = 0;
+  uint ctrls = XkbStickyKeysMask | XkbSlowKeysMask | XkbBounceKeysMask | XkbMouseKeysMask | XkbAudibleBellMask;
+  uint values = XkbAudibleBellMask;
   XkbSetAutoResetControls(qt_xdisplay(), ctrls, &ctrls, &values);
 }
 
@@ -170,6 +170,12 @@ void VisualBell::paintEvent(QPaintEvent *event)
 }
 
 
+void KAccessApp::activeWindowChanged(WId wid)
+{
+  _activeWindow = wid;
+}
+
+
 void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
 {
   // bail out if we should not really ring
@@ -181,17 +187,21 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
     {
       // create overlay widget
       if (!overlay)
-	{
-	  overlay = new VisualBell(_visibleBellPause);
-	  overlay->setGeometry(0,0,desktop()->width(),desktop()->height());
-	}
+        overlay = new VisualBell(_visibleBellPause);
 
-      // if requested, invert the screen
+      WId id = _activeWindow;
+
+      NETRect frame, window;
+      NETWinInfo net(qt_xdisplay(), id, desktop()->winId(), 0);
+      
+      net.kdeGeometry(frame, window);
+
+      overlay->setGeometry(window.pos.x, window.pos.y, window.size.width, window.size.height);
+
       if (_visibleBellInvert)
-	{
-	  QPixmap screen = QPixmap::grabWindow(desktop()->winId(),
-					       0, 0, desktop()->width(), desktop()->height());
-	  QPixmap invert(desktop()->width(), desktop()->height());
+        {
+	  QPixmap screen = QPixmap::grabWindow(id, 0, 0, window.size.width, window.size.height);
+	  QPixmap invert(window.size.width, window.size.height);
 	  QPainter p(&invert);
 	  p.setRasterOp(QPainter::NotCopyROP);
 	  p.drawPixmap(0, 0, screen);

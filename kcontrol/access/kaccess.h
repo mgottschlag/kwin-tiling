@@ -7,6 +7,7 @@
 
 
 #include <kuniqueapp.h>
+#include <kwinmodule.h>
 
 
 #include <X11/Xlib.h>
@@ -34,6 +35,11 @@ protected:
   void xkbBellNotify(XkbBellNotifyEvent *event);
 
 
+private slots:
+
+  void activeWindowChanged(WId wid);
+
+
 private:
 
   int xkb_opcode;
@@ -45,6 +51,9 @@ private:
 
   QWidget *overlay;
 
+  KWinModule wm;
+
+  WId _activeWindow;
 };
 
 
