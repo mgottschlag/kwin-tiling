@@ -183,9 +183,9 @@ Dtime::Dtime(QWidget * parent, const char *name)
       cal->setEnabled(false);
       month->setEnabled(false);
       year->setEnabled(false);
-      hour->setEnabled(false);
-      minute->setEnabled(false);
-      second->setEnabled(false);
+      hour->setReadOnly(true);
+      minute->setReadOnly(true);
+      second->setReadOnly(true);
       kclock->setEnabled(false);      
     }
 }
