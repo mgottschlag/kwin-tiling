@@ -213,7 +213,7 @@ void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
 {
   KServiceGroup::Ptr group = KServiceGroup::group(path);
 
-  if (!group->isValid()) return;
+  if (!group || !group->isValid()) return;
 
   KServiceGroup::List list = group->entries();
 
