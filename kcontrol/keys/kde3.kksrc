@@ -1,5 +1,8 @@
 [Settings]
 Name=KDE Standard
+Name[da]=KDE-standard
+Name[lv]=KDE Standarta
+Name[sv]=KDE-förinställt
 
 [Global Shortcuts]
 Desktop Screenshot=Ctrl+Print

@@ -1,5 +1,8 @@
 [Settings]
 Name=KDE Extended
+Name[da]=KDE-udvidet
+Name[lv]=KDE Paplašināta
+Name[sv]=KDE-utökad
 
 [Global Shortcuts]
 Execute Command=Meta+Return
