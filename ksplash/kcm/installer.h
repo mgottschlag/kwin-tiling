@@ -64,7 +64,7 @@ class ThemeListBox: public KListBox
   Q_OBJECT
 public:
   ThemeListBox(QWidget *parent);
-    QMap<QString, QString> text2path;
+  QMap<QString, QString> text2path;
 
 signals:
   void filesDropped(const KURL::List &urls);

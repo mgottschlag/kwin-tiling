@@ -147,15 +147,15 @@ SplashInstaller::~SplashInstaller()
 int SplashInstaller::addTheme(const QString &path, const QString &name)
 {
   //kdDebug() << "SplashInstaller::addTheme: " << path << " " << name << endl;
-    QString tmp(i18n( name.utf8() ));
-    int i = mThemesList->count();
-    while((i > 0) && (mThemesList->text(i-1) > tmp))
-        i--;
-    if ((i > 0) && (mThemesList->text(i-1) == tmp))
-        return i-1;
-    mThemesList->insertItem(tmp, i);
-    mThemesList->text2path.insert( tmp, path+"/"+name );
-    return i;
+  QString tmp(i18n( name.utf8() ));
+  int i = mThemesList->count();
+  while((i > 0) && (mThemesList->text(i-1) > tmp))
+    i--;
+  if ((i > 0) && (mThemesList->text(i-1) == tmp))
+    return i-1;
+  mThemesList->insertItem(tmp, i);
+  mThemesList->text2path.insert( tmp, path+"/"+name );
+  return i;
 }
 
 // Copy theme package into themes directory
@@ -190,6 +190,20 @@ void SplashInstaller::addNewTheme(const KURL &srcURL)
     return;
   }
   KArchiveDirectory const *ad = tarFile.directory();
+  // Find first directory entry.
+  QStringList entries = ad->entries();
+  QString themeName( entries.first() );
+#if 0
+  // The isDirectory() call always returns false; why?
+  for ( QStringList::Iterator it = entries.begin(); it != entries.end(); ++it )
+  {
+    if ( ad->entry( *it )->isDirectory() )
+    {
+      themeName = *it;
+      break;
+    }
+  }
+#endif
   // TODO: Make sure we put the entries into a subdirectory if the tarball does not.
   // TODO: Warn the user if we overwrite something.
   ad->copyTo(locateLocal("ksplashthemes","/"));
@@ -198,6 +212,8 @@ void SplashInstaller::addNewTheme(const KURL &srcURL)
 
   // TODO: Update only the entries from this installation.
   readThemesList();
+  mThemesList->setCurrentItem(findTheme(themeName));
+  mThemesList->setSelected(mThemesList->currentItem(), true);
 }
 
 //-----------------------------------------------------------------------------
@@ -207,7 +223,7 @@ void SplashInstaller::readThemesList()
 
   // Read local themes
   QStringList entryList = KGlobal::dirs()->resourceDirs("ksplashthemes");
-  kdDebug() << entryList << endl;
+  //kdDebug() << "readThemesList: " << entryList << endl;
   QDir dir;
   QStringList subdirs;
   QStringList::ConstIterator name;
@@ -217,11 +233,15 @@ void SplashInstaller::readThemesList()
     if (!dir.exists())
       continue;
     subdirs = dir.entryList( QDir::Dirs );
-    kdDebug() << subdirs << endl;
+    // kdDebug() << "readThemesList: " << subdirs << endl;
     // TODO: Make sure it contains a *.rc file.
     for (QStringList::Iterator l = subdirs.begin(); l != subdirs.end(); l++ )
       if ( !(*l).startsWith(QString(".")) )
+      {
+        mThemesList->blockSignals( true ); // Don't activate any theme until all themes are loaded.
         addTheme(dir.path(),*l);
+        mThemesList->blockSignals( false );
+      }
   }
 }
 
