@@ -40,7 +40,9 @@ public:
 protected slots:
   void changed();
   
-      
+private slots:
+  void showDetails (void);
+
 private:
   KConfig *g_pConfig;
   QString groupname;
@@ -48,6 +50,8 @@ private:
   QCheckBox *cbEnable;
   QCheckBox *cbAllowBugReporting;
   QComboBox *cmPresets;
+
+  QListBox  *lb_Presets;
 };
 
 #endif
