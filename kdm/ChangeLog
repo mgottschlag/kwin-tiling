@@ -1,3 +1,8 @@
+2001-02-04  Simon Hausmann <simon@kde.org>
+
+        * patch by Joachim Plack <jack@caldera.de> to make dead keys work when
+          they keyboard is grabbed.
+
 2001-03-19  Oswald Buddenhagen <ossi@kde.org>
 
 	* External config parser: kdm_getcfg
