@@ -71,7 +71,7 @@ void ModuleIconView::makeSelected(ConfigModule *m)
 void ModuleIconView::makeVisible(ConfigModule *m)
 {
   if (!m) return;
-  _path = m->groups().join(QString::null);
+  _path = m->groups().join("/");
   fill();
 }
 
@@ -84,104 +84,117 @@ void ModuleIconView::fill()
   // build a list of subdirs
   ConfigModule *module;
   for (module=_modules->first(); module != 0; module=_modules->next())
+  {
+    if (module->library().isEmpty())
+      continue;
+
+    QString path = module->groups().join("/");
+    // get the top level subdirs
+    if (_path == QString::null)
     {
-      if (module->library().isEmpty())
-		continue;
-
-	  QString path = module->groups().join(QString::null);
-
-	  if(!subdirs.contains(path))
-		subdirs.append(path);
-	}
+      QString top_level(module->groups()[0]);
+      if (!subdirs.contains(top_level))
+        subdirs.append(top_level);
+    }
+    else
+    {
+      if ((path != _path) && (path.left(_path.length()) == _path) &&
+           !subdirs.contains(path))
+        subdirs.append(path);
+    }
+  }
   subdirs.sort();
 
-  //kdDebug() << "path: " << _path << endl;
+  // some defines for code readibility
+  #define LoadSmall(x) KGlobal::iconLoader()->loadIcon(x, KIcon::Desktop, KIcon::SizeSmall)
+  #define LoadLarge(x) KGlobal::iconLoader()->loadIcon(x, KIcon::Desktop, KIcon::SizeLarge)
+  #define LoadMedium(x) KGlobal::iconLoader()->loadIcon(x, KIcon::Desktop, KIcon::SizeMedium)
 
-  if (_path == QString::null)
-	{
-	  for (QStringList::Iterator it = subdirs.begin(); it != subdirs.end(); ++it )
-		{
-		  QString subdir = (*it);
-		  
- 		  KDesktopFile directory(locate("apps", "Settings/"
-										+ subdir
-										+ "/.directory"));
-          
-          QPixmap icon;
-          if (KCGlobal::iconSize() == Small)
-            {
-              icon = KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"), 
-			KIcon::Desktop, KIcon::SizeSmall);
-              if(icon.isNull())
-                icon = KGlobal::iconLoader()->loadIcon("folder", KIcon::Desktop, KIcon::SizeSmall);
-            }
-          else if (KCGlobal::iconSize() == Large)
-            {
-              icon = KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"), 
-			KIcon::Desktop, KIcon::SizeLarge);
-              if(icon.isNull())
-                icon = KGlobal::iconLoader()->loadIcon("folder", KIcon::Desktop, KIcon::SizeLarge);
-            }
-          else
-            {
-              icon = KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"), 
-			KIcon::Desktop, KIcon::SizeMedium);
-              if(icon.isNull())
-                icon = KGlobal::iconLoader()->loadIcon("folder", KIcon::Desktop, KIcon::SizeMedium);
-            }
-          
-		  ModuleIconItem *i = new ModuleIconItem(this, directory.readEntry("Name", subdir), icon);
-		  i->setTag(subdir);
-		}
-	}
-  else
-	{
-      QPixmap icon;
-      if (KCGlobal::iconSize() == Small)
-        {
-          icon = KGlobal::iconLoader()->loadIcon("up", KIcon::Desktop, KIcon::SizeSmall);
-          if(icon.isNull())
-            icon = KGlobal::iconLoader()->loadIcon("folder", KIcon::Desktop, KIcon::SizeSmall);
-        }
-      else if (KCGlobal::iconSize() == Large)
-        {
-          icon = KGlobal::iconLoader()->loadIcon("up", KIcon::Desktop, KIcon::SizeLarge);
-          if(icon.isNull())
-            icon = KGlobal::iconLoader()->loadIcon("folder", KIcon::Desktop, KIcon::SizeLarge);
-        }
-      else
-        {
-          icon = KGlobal::iconLoader()->loadIcon("up", KIcon::Desktop, KIcon::SizeMedium);
-          if(icon.isNull())
-            icon = KGlobal::iconLoader()->loadIcon("folder", KIcon::Desktop, KIcon::SizeMedium);
-        }
-
-	  // go-up node
-	  ModuleIconItem *i = new ModuleIconItem(this, i18n("Go up"), icon);
-	  i->setTag(QString::null);
-
-	  ConfigModule *module;
-	  for (module=_modules->first(); module != 0; module=_modules->next())
-		{
-		  if (module->library().isEmpty())
-			continue;
-				  
-		  QString path = module->groups().join(QString::null);
-		  if(path != _path)
-            continue;
-
-		  QPixmap icon;
-		  if (KCGlobal::iconSize() == Small)
-			icon = KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall);
-          else if (KCGlobal::iconSize() == Large)
-			icon = KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeLarge);
-		  else
-			icon = KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeMedium);
-
-		  (void) new ModuleIconItem(this, module->name(), icon, module);
-		}
+  QPixmap icon;
+  // add our "up" icon if we aren't top level
+  if (_path != QString::null)
+  {
+    if (KCGlobal::iconSize() == Small)
+    {
+      icon = LoadSmall("up");
+      if(icon.isNull())
+        icon = LoadSmall("folder");
+    }
+    else if (KCGlobal::iconSize() == Large)
+    {
+      icon = LoadLarge("up");
+      if(icon.isNull())
+        icon = LoadLarge("folder");
+    }
+    else
+    {
+      icon = LoadMedium("up");
+      if(icon.isNull())
+        icon = LoadMedium("folder");
     }
 
+    // go-up node
+    ModuleIconItem *i = new ModuleIconItem(this, i18n("Go up"), icon);
+    int last_slash = _path.findRev('/');
+    if (last_slash == -1)
+      i->setTag(QString::null);
+    else
+      i->setTag(_path.left(last_slash));
+  }
+
+  for (QStringList::Iterator it = subdirs.begin(); it != subdirs.end(); ++it )
+  {
+    QString subdir = (*it);
+
+    KDesktopFile directory(locate("apps", "Settings/"
+          + subdir
+          + "/.directory"));
+
+    if (KCGlobal::iconSize() == Small)
+    {
+      icon = LoadSmall(directory.readEntry("Icon"));
+      if(icon.isNull())
+        icon = LoadSmall("folder");
+    }
+    else if (KCGlobal::iconSize() == Large)
+    {
+      icon = LoadLarge(directory.readEntry("Icon"));
+      if(icon.isNull())
+        icon = LoadLarge("folder");
+    }
+    else
+    {
+      icon = LoadMedium(directory.readEntry("Icon"));
+      if(icon.isNull())
+        icon = LoadMedium("folder");
+    }
+
+    ModuleIconItem *i = new ModuleIconItem(this, directory.readEntry("Name", subdir), icon);
+    i->setTag(subdir);
+  }
+
+  // we don't ever have any modules on the top level
+  if (_path == QString::null)
+    return;
+
+  for (module=_modules->first(); module != 0; module=_modules->next())
+  {
+    if (module->library().isEmpty())
+      continue;
+
+    QString path = module->groups().join("/");
+    if (path != _path)
+      continue;
+
+    if (KCGlobal::iconSize() == Small)
+      icon = LoadSmall(module->icon());
+    else if (KCGlobal::iconSize() == Large)
+      icon = LoadLarge(module->icon());
+    else
+      icon = LoadMedium(module->icon());
+
+    (void) new ModuleIconItem(this, module->name(), icon, module);
+  }
 }
 
 void ModuleIconView::slotItemSelected(QIconViewItem* item)
