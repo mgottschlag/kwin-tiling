@@ -523,6 +523,8 @@ ManageSession (struct display *d)
     (void)XSetErrorHandler (ErrorHandler);
     (void)Signal (SIGTERM, catchTerm);
 
+    (void)Signal (SIGHUP, SIG_IGN);
+
     if (Setjmp (grttalk.errjmp))
 	Longjmp (abortSession, EX_RESERVER_DPY);	/* EX_RETRY_ONCE */
 
