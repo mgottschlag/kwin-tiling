@@ -44,7 +44,7 @@ public:
   QString quickHelp();
 
 
-private slots:
+public slots:
 
   void helpClicked();
   void defaultClicked();

@@ -20,6 +20,7 @@
 #include <kmessagebox.h>
 #include <kglobal.h>
 #include <klocale.h>
+#include <kcmodule.h>
 
 #include "dockcontainer.h"
 #include "dockcontainer.moc"
@@ -46,43 +47,44 @@ void DockContainer::setBaseWidget(QWidget *widget)
 void DockContainer::dockModule(ConfigModule *module)
 {
   if (_module == module)
-	return;
-
+    return;
+  
   ProxyWidget *widget = module->module();
-
+  
   if (widget)
     {
-	  if (_module && _module->isChanged())
-		{
+      if (_module && _module->isChanged())
+	{	  	  
+	  int res = KMessageBox::warningYesNo(0, i18n("There are unsaved changes in the active module.\n"
+							    "Do you want to apply the changes before running\n"
+							    "the new module or forget the changes?"),
+					      i18n("Unsaved changes"), i18n("&Apply"), i18n("&Forget"));
+	  if (res == KMessageBox::Yes)
+	    _module->module()->applyClicked();
 
-		  int res = KMessageBox::questionYesNo(0, i18n("There are unsaved changes in the active module.\n"
-													   "Do you want to lose your changes and close it anyway?")
-											   , i18n("Warning"));
-		  if (res != KMessageBox::Yes)
-			return;
-		  _module->deleteClient();
-		}
-	  else if (_module)
-		_module->deleteClient();
-
-	  _module = module;
-	  connect(_module, SIGNAL(childClosed()),
-			  this, SLOT(removeModule()));
-	  
-	  widget->reparent(this, 0 , QPoint(0,0), true);
-	  resize(widget->sizeHint());
-	  updateGeometry();
-
-	  QString quickhelp = "";
-	  if (_module && _module->module())
-		quickhelp = _module->module()->quickHelp();
-		
-	  emit newModule(widget->caption(), quickhelp);
+	  _module->deleteClient();
+	}
+      else if (_module)
+	_module->deleteClient();
+      
+      _module = module;
+      connect(_module, SIGNAL(childClosed()),
+	      this, SLOT(removeModule()));
+      
+      widget->reparent(this, 0 , QPoint(0,0), true);
+      resize(widget->sizeHint());
+      updateGeometry();
+      
+      QString quickhelp = "";
+      if (_module && _module->module())
+	quickhelp = _module->module()->quickHelp();
+      
+      emit newModule(widget->caption(), quickhelp);
     }
   else
-	KMessageBox::sorry(0, i18n("Sorry, the control module \"%1\" could not be loaded.\n"
-							   "Perhaps it is not installed.").arg(module->name())
-					   , i18n("Could not load control module."));
+    KMessageBox::sorry(0, i18n("Sorry, the control module \"%1\" could not be loaded.\n"
+			       "Perhaps it is not installed.").arg(module->name())
+		       , i18n("Could not load control module."));
 }
 
 void DockContainer::removeModule()
