@@ -20,6 +20,7 @@ kcmroot_SOURCES = kcmroot.cpp KCModuleIface.skel moduleinfo.cpp modloader.cpp \
 			proxymodule.cpp
 
 modloader.cpp: proxymodule.h
+main.cpp: KCModuleIface_stub.h 
 toplevel.cpp: proxymodule.h
 proxymodule.h: KCModuleIface_stub.h
 
