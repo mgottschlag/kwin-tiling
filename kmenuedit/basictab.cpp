@@ -56,10 +56,15 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
                                         KDialog::spacingHint());
     _isDeleted = true;
 
+	general_group->setAcceptDrops(false);
+	
     // setup line inputs
     _nameEdit = new KLineEdit(general_group);
+	_nameEdit->setAcceptDrops(false);
     _commentEdit = new KLineEdit(general_group);
+	_commentEdit->setAcceptDrops(false);
     _execEdit = new KURLRequester(general_group);
+	_execEdit->lineEdit()->setAcceptDrops(false);
     _typeEdit = new KComboBox(general_group);
 
     // setup labels
@@ -113,6 +118,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     _pathEdit = new KURLRequester(hbox);
     _pathEdit->setMode(KFile::Directory | KFile::LocalOnly);
+	_pathEdit->lineEdit()->setAcceptDrops(false);
 
     _pathLabel->setBuddy(_pathEdit);
 
@@ -134,6 +140,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     hbox->setSpacing(KDialog::spacingHint());
     _termOptLabel = new QLabel(i18n("Terminal &options:"), hbox);
     _termOptEdit = new KLineEdit(hbox);
+	_termOptEdit->setAcceptDrops(false);
     _termOptLabel->setBuddy(_termOptEdit);
 
     connect(_termOptEdit, SIGNAL(textChanged(const QString&)),
@@ -156,6 +163,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     hbox->setSpacing(KDialog::spacingHint());
     _uidLabel = new QLabel(i18n("&Username:"), hbox);
     _uidEdit = new KLineEdit(hbox);
+	_uidEdit->setAcceptDrops(false);
     _uidLabel->setBuddy(_uidEdit);
 
     connect(_uidEdit, SIGNAL(textChanged(const QString&)),
