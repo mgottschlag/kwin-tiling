@@ -1104,7 +1104,7 @@ void KGlobalBackgroundSettings::readSettings()
     m_pConfig->setGroup("FMSettings");
     m_TextColor = m_pConfig->readColorEntry("NormalTextColor", &m_TextColor);
     m_TextBackgroundColor = m_pConfig->readColorEntry("ItemTextBackground");
-    m_shadowEnabled = m_pConfig->readBoolEntry("ShadowEnabled");
+    m_shadowEnabled = m_pConfig->readBoolEntry("ShadowEnabled", true);
 
     m_Names.clear();
     NETRootInfo info( qt_xdisplay(), NET::DesktopNames | NET::NumberOfDesktops );
