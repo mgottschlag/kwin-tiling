@@ -113,8 +113,9 @@ bool KTheme::load( const KURL & url )
 
 QString KTheme::createYourself( bool pack )
 {
-    // start with empty dir
-    KTheme::remove( name() );
+    // start with empty dir for orig theme
+    if ( !pack )
+        KTheme::remove( name() );
 
     // 1. General stuff set by methods setBlah()
 
@@ -312,7 +313,9 @@ QString KTheme::createYourself( bool pack )
         KTar tar( m_kgd->saveLocation( "themes" ) + m_name + ".kth", "application/x-gzip" );
         tar.open( IO_WriteOnly );
 
-        if ( tar.addLocalDirectory( m_kgd->saveLocation( "themes", m_name + "/" ), "" ) )
+        kdDebug() << "Packing everything under: " << m_kgd->saveLocation( "themes", m_name + "/" ) << endl;
+
+        if ( tar.addLocalDirectory( m_kgd->saveLocation( "themes", m_name + "/" ), QString::null ) )
             result = tar.fileName();
 
         tar.close();
@@ -632,22 +635,22 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
 
     if ( section == "desktop" )
     {
-        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/desktop/" ) ) )
+        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/desktop/" ) + "/" + fi.fileName() ) )
             return "theme:/wallpapers/desktop/" + fi.fileName();
     }
     else if ( section == "sounds" )
     {
-        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/sounds/" ) ) )
+        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/sounds/" ) + "/" + fi.fileName() ) )
             return "theme:/sounds/" + fi.fileName();
     }
     else if ( section == "konqueror" )
     {
-        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/konqueror/" ) ) )
+        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/konqueror/" ) + "/" + fi.fileName() ) )
             return "theme:/wallpapers/konqueror/" + fi.fileName();
     }
     else if ( section == "panel" )
     {
-        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/panel/" ) ) )
+        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/panel/" ) + "/" + fi.fileName() ) )
             return "theme:/wallpapers/panel/" + fi.fileName();
     }
     else
@@ -703,9 +706,12 @@ void KTheme::addPreview()
 bool KTheme::copyFile( const QString & from, const QString & to )
 {
     // we overwrite b/c of restoring the "original" theme
+    return KIO::NetAccess::file_copy( from, to, -1, true /*overwrite*/ );
+#if 0
     KIO::copy( from, to, false /*progress*/ );
     struct stat buf;
     return ( ( stat( QFile::encodeName( to ), &buf ) == 0 ) && ( S_IRUSR & buf.st_mode ) );
+#endif
 }
 
 QString KTheme::findResource( const QString & section, const QString & path )
