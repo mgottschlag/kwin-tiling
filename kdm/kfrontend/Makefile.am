@@ -6,7 +6,7 @@ SUBDIRS = pics sessions
 
 INCLUDES = -I$(srcdir)/../backend -I$(top_srcdir)/kcontrol/background $(all_includes)
 
-bin_PROGRAMS = kdm_config kdm_greet krootimage
+bin_PROGRAMS = kdm_config kdm_greet krootimage genkdmconf
 
 kdm_config_SOURCES = kdm_config.c
 kdm_config_LDADD = $(LIBRESOLV) $(LIBSOCKET)
@@ -33,7 +33,6 @@ krootimage_LDADD = $(top_builddir)/kcontrol/background/libbgnd.la $(LIB_KIO)
 
 METASOURCES = AUTO
 
-bin_PROGRAMS = genkdmconf
 genkdmconf_SOURCES = genkdmconf.c
 genkdmconf_LDFLAGS = $(X_LDFLAGS) $(X_RPATH)
 genkdmconf_LDADD = $(LIB_X11)
