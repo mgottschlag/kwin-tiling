@@ -230,8 +230,13 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent, bool modal )
     volumeSlider->setOrientation( Horizontal );
     volumeSlider->setRange( 0, 100 );
     l->setBuddy( volumeSlider );
-
     load();
+    dataChanged = false;
+    enableButton(Apply, false);
+    connect( cbExternal, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
+    connect( volumeSlider, SIGNAL( valueChanged ( int ) ), this, SLOT( slotChanged() ) );
+    connect( reqExternal, SIGNAL( urlSelected( const QString& ) ), this, SLOT( slotChanged() ) );
+    connect( reqExternal, SIGNAL( textChanged( const QString& ) ), this, SLOT( slotChanged() ) );
 }
 
 void PlayerSettingsDialog::load()
@@ -261,6 +266,8 @@ void PlayerSettingsDialog::save()
 void PlayerSettingsDialog::slotApply()
 {
     save();
+    dataChanged = false;
+    enableButton(Apply, false);
     kapp->dcopClient()->send("knotify", "", "reconfigure()", "");
 
     KDialogBase::slotApply();
@@ -269,8 +276,14 @@ void PlayerSettingsDialog::slotApply()
 // reimplements KDialogBase::slotOk()
 void PlayerSettingsDialog::slotOk()
 {
-    slotApply();
+    if( dataChanged )
+        slotApply();
     KDialogBase::slotOk();
+}
+void PlayerSettingsDialog::slotChanged()
+{
+    dataChanged = true;
+    enableButton(Apply, true);
 }
 
 void PlayerSettingsDialog::externalToggled( bool on )

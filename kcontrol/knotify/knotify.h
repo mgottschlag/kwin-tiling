@@ -87,11 +87,13 @@ protected slots:
     virtual void slotApply();
     virtual void slotOk();
     void externalToggled( bool on );
+    void slotChanged();
 
 private:
     QCheckBox *cbExternal;
     KURLRequester *reqExternal;
     QSlider *volumeSlider;
+    bool dataChanged;
 
 };
 
