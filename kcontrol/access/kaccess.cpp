@@ -1,5 +1,5 @@
 #include <unistd.h>
-#include <stream.h>
+#include <iostream.h>
 
 
 #include <qtimer.h>
