@@ -191,24 +191,6 @@ void IconThemesConfig::installNewTheme()
 
   KIO::NetAccess::removeTempFile(themeTmpFile);
   
-
-/*
-  QString cmd;
-
-  cmd.sprintf("cd \"%s\"; gzip -c -d \"%s\" | tar xf -",	//lukas: FIXME
-	QFile::encodeName(iconThemesDir).data(),
-	QFile::encodeName(themeTmpFile).data());
-  kdDebug() << cmd << endl;
-  int rc = system(cmd.ascii());	//lukas: FIXME
-  if (rc != 0)
-  {
-    QString sorryText = i18n("Unable to install the icon theme.");
-    KMessageBox::sorry(this, sorryText);
-    return;
-  }
-*/
-
-
   KGlobal::instance()->newIconLoader();
   loadThemes();
 
