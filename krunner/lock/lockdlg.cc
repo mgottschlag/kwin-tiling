@@ -103,7 +103,9 @@ void PasswordDlg::timerEvent(QTimerEvent *ev)
         killTimer(mFailedTimerId);
         mFailedTimerId = 0;
         // Show the normal password prompt.
+	mLabel->setEnabled(true);
         mLabel->setText(labelText());
+	mLabelFailed->clear();
         mEntry->erase();
         mEntry->setEnabled(true);
         ok->setEnabled(true);
@@ -152,6 +154,7 @@ void PasswordDlg::startCheckPassword()
     const char *passwd = mEntry->password();
     if (passwd && *passwd)
     {
+	mLabel->setEnabled(false);
         mButton->setEnabled(false);
         mEntry->setEnabled(false);
         ok->setEnabled(false);
@@ -227,7 +230,7 @@ XXX this needs to go into a separate routine at startup time
 	}
         else
         {
-            mLabel->setText(i18n("Failed"));
+            mLabelFailed->setText(i18n("<b>Unlocking failed</b>"));
             mFailedTimerId = startTimer(1500);
         }
     }

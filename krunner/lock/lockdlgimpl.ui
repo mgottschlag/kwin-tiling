@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>407</width>
-            <height>231</height>
+            <height>186</height>
         </rect>
     </property>
     <property name="caption">
@@ -45,43 +45,7 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QLabel" row="0" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&lt;b&gt;The screen is locked&lt;/b&gt;</string>
-                    </property>
-                    <property name="alignment">
-                        <set>WordBreak|AlignTop</set>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>mLabel</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Enter the password for user %1 (%2) below.</string>
-                    </property>
-                    <property name="alignment">
-                        <set>WordBreak|AlignVCenter</set>
-                    </property>
-                </widget>
-                <widget class="Line" row="5" column="0" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>line1</cstring>
-                    </property>
-                    <property name="frameShape">
-                        <enum>HLine</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Sunken</enum>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                </widget>
-                <widget class="QLayoutWidget" row="0" column="0" rowspan="5" colspan="1">
+                <widget class="QLayoutWidget" row="0" column="0" rowspan="4" colspan="1">
                     <property name="name">
                         <cstring>layout9</cstring>
                     </property>
@@ -127,65 +91,71 @@
                         </spacer>
                     </vbox>
                 </widget>
-                <spacer row="4" column="1" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>spacer9</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>MinimumExpanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>313</width>
-                            <height>40</height>
-                        </size>
-                    </property>
-                </spacer>
                 <widget class="QLabel" row="3" column="1">
                     <property name="name">
-                        <cstring>password</cstring>
+                        <cstring>mLabelFailed</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Password:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>mEntry</cstring>
+                        <string></string>
                     </property>
                 </widget>
-                <widget class="KPasswordEdit" row="3" column="2">
+                <widget class="QLayoutWidget" row="2" column="1">
                     <property name="name">
-                        <cstring>mEntry</cstring>
+                        <cstring>layout3</cstring>
                     </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>7</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>password</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Password:</string>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>mEntry</cstring>
+                            </property>
+                        </widget>
+                        <widget class="KPasswordEdit">
+                            <property name="name">
+                                <cstring>mEntry</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>7</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QLabel" row="0" column="1">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&lt;b&gt;The screen is locked&lt;/b&gt;</string>
+                    </property>
+                    <property name="alignment">
+                        <set>WordBreak|AlignTop</set>
                     </property>
                 </widget>
-                <spacer row="2" column="2">
+                <widget class="QLabel" row="1" column="1">
                     <property name="name">
-                        <cstring>spacer11</cstring>
+                        <cstring>mLabel</cstring>
                     </property>
-                    <property name="orientation">
-                        <enum>Vertical</enum>
+                    <property name="text">
+                        <string></string>
                     </property>
-                    <property name="sizeType">
-                        <enum>Fixed</enum>
+                    <property name="alignment">
+                        <set>WordBreak|AlignVCenter</set>
                     </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>16</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QLayoutWidget" row="6" column="0" rowspan="1" colspan="3">
+                </widget>
+                <widget class="QLayoutWidget" row="5" column="0" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>layout13</cstring>
                     </property>
@@ -238,6 +208,20 @@
                             </property>
                         </widget>
                     </hbox>
+                </widget>
+                <widget class="Line" row="4" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>line1</cstring>
+                    </property>
+                    <property name="frameShape">
+                        <enum>HLine</enum>
+                    </property>
+                    <property name="frameShadow">
+                        <enum>Sunken</enum>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
                 </widget>
             </grid>
         </widget>
