@@ -268,8 +268,8 @@ QStringList IconThemesConfig::findThemeDirs(QString archiveName)
     possibleDir = const_cast<KArchiveEntry*>(themeDir->entry(*it));
     if (possibleDir->isDirectory()) {
       subDir = dynamic_cast<KArchiveDirectory*>( possibleDir );
-      if (subDir->entry("index.theme") != NULL ||
-          subDir->entry("index.desktop") != NULL)
+      if (subDir && (subDir->entry("index.theme") != NULL ||
+                     subDir->entry("index.desktop") != NULL))
         foundThemes.append(subDir->name());
     }
   }
