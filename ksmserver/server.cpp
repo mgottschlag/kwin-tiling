@@ -925,10 +925,7 @@ void KSMServer::processData( int /*socket*/ )
 	QPtrListIterator<KSMClient> it ( clients );
 	while ( it.current() &&SmsGetIceConnection( it.current()->connection() ) != iceConn )
 	    ++it;
-
 	if ( it.current() ) {
-	    const char *name = it.current()->program().latin1();
-	    kdDebug() << "IO error for client " << QString( name ? name : "<unknown>" ) << endl;
 	    SmsConn smsConn = it.current()->connection();
 	    deleteClient( it.current() );
 	    SmsCleanUp( smsConn );
