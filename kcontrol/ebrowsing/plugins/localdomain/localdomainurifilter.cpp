@@ -112,7 +112,7 @@ bool LocalDomainURIFilter::isLocalDomainHost( const QString& cmd ) const
 	//tm.tv_nsec = 20 * 1000 * 1000; // 20ms
 	usleep( 20000 );
 	}
-    kill( pid, SIGTERM );
+    if ( pid > 0 ) kill( pid, SIGTERM );
     last_result = false;
     return false;
     }
