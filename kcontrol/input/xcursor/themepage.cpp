@@ -107,6 +107,7 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	// Disable the install button if ~/.icons isn't writable
 	if ( !QFileInfo( QDir::homeDirPath() + "/.icons" ).isWritable() )
 		installButton->setEnabled( false );
+        selectionChanged( listview->currentItem() );
 }
 
 
@@ -168,6 +169,11 @@ void ThemePage::defaults()
 
 void ThemePage::selectionChanged( QListViewItem *item )
 {
+    if (  !item )
+    {
+        removeButton->setEnabled( false );
+        return;
+    }
 	selectedTheme = item->text( DirColumn );
 
 	// Update the preview widget
