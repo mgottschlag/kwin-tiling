@@ -18,27 +18,41 @@
 # 
 
 INCLUDES= $(all_includes)
-LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 METASOURCES = AUTO
 
 SUBDIRS = . pics
 
 bin_PROGRAMS = kcontrol kcmshell kcminit
+lib_LTLIBRARIES = kcontrol.la kcmshell.la kcminit.la
 
-kcontrol_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
+kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
 	helpwidget.cpp moduleinfo.cpp utils.cpp modules.cpp proxywidget.cpp \
 	modloader.cpp dockcontainer.cpp aboutwidget.cpp global.cpp \
 	quickhelp.cpp moduletreeview.cpp moduleiconview.cpp modulemenu.cpp
-kcontrol_LDADD   = $(LIB_KDEUI) $(LIB_KSYCOCA)
+kcontrol_la_LIBADD  = $(LIB_KDEUI) $(LIB_KSYCOCA)
+kcontrol_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
-
-kcmshell_SOURCES = kcmshell.cpp moduleinfo.cpp modloader.cpp \
+kcmshell_la_SOURCES = kcmshell.cpp moduleinfo.cpp modloader.cpp \
 			utils.cpp proxywidget.cpp kcdialog.cpp global.cpp
-kcmshell_LDADD = $(LIB_KDEUI) $(LIB_KSYCOCA)
+kcmshell_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA)
+kcmshell_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 
-kcminit_SOURCES = kcminit.cpp
-kcminit_LDADD   = $(LIB_KDEUI)
+kcminit_la_SOURCES = kcminit.cpp
+kcminit_la_LIBADD   = $(LIB_KDEUI) $(LIB_KSYCOCA)
+kcminit_la_LDFLAGS = $(all_libraries) -module -avoid-version
+
+kcontrol_SOURCES = dummy.C
+kcontrol_LDADD = kcontrol.la
+kcontrol_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
+
+kcmshell_SOURCES = dummy.C
+kcmshell_LDADD = kcmshell.la
+kcmshell_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
+
+kcminit_SOURCES = dummy.C
+kcminit_LDADD = kcminit.la
+kcminit_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 
 rcdir = $(kde_datadir)/kcontrol
 rc_DATA = kcontrolui.rc
@@ -52,3 +66,6 @@ messages:
 	$(XGETTEXT) $(kcontrol_SOURCES) -o $(podir)/kcontrol.pot
 	$(XGETTEXT) $(kcmshell_SOURCES) -o $(podir)/kcmshell.pot
 	$(XGETTEXT) $(kcminit_SOURCES) -o $(podir)/kcminit.pot
+
+dummy.C:
+	echo > dummy.C

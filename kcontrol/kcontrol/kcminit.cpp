@@ -1,7 +1,6 @@
 /*
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
-  Copyright (c) 2000 Matthias Elter <elter@kde.org>
-
+ 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
@@ -19,10 +18,8 @@
 */                                                                            
 
 #include <kapp.h>
-#include <kglobal.h>
-#include <kstddirs.h>
 #include <kcmodule.h>
-#include <kdesktopfile.h>
+#include <kservice.h>
 #include <klibloader.h>
 #include <kdebug.h>
 
@@ -31,59 +28,39 @@ int main(int argc, char *argv[])
 {
   KApplication app(argc, argv, "kcminit");
 
-  QStringList libs;
-  QString     libname, funcname, call;
-  
   // locate the desktop files
-  QStringList files;
-  files = KGlobal::dirs()->findAllResources("apps", "Settings/*.desktop", true);
-
-  // look for X-KDE-Init=... entries
-  QStringList::Iterator it;
-  for (it = files.begin(); it != files.end(); ++it) 
-    {
-      KDesktopFile desktop(*it);
-
-      libname = desktop.readEntry("X-KDE-Library");
-      funcname = desktop.readEntry("X-KDE-Init");
-      call = funcname+"@"+libname;
-      if (!funcname.isEmpty() && !libname.isEmpty() && !libs.contains(call)) 
-		libs.append(call);
-    }
+  KService::List list = KService::allInitServices();
 
   // get the library loader instance
   KLibLoader *loader = KLibLoader::self();
 
-  for (it = libs.begin(); it != libs.end(); ++it) 
-    {
-      int pos = (*it).find("@");
-      funcname = (*it).left(pos);
-      libname = (*it).mid(pos+1);
+  // look for X-KDE-Init=... entries
+  for(KService::List::Iterator it = list.begin();
+      it != list.end();
+      ++it)
+  {
+     KService::Ptr service = (*it);
+     if (service->library().isEmpty() || service->init().isEmpty())
+        continue; // Skip
+     // try to load the library
+     QString libName = QString("libkcm_%1").arg(service->library());
+     KLibrary *lib = loader->library(libName);
+     if (lib)
+     {
+        // get the init_ function
+	QString factory = QString("init_%1").arg(service->init());
+	void *init = lib->symbol(factory);
+        if (init)
+	{
+	   // initialize the module
+	   kdDebug() << "Initializing " << libName << ": " << factory << endl;
 
-      // try to load the library
-      QString ln("libkcm_%1");
-      KLibrary *lib = loader->library(ln.arg(libname));
-      if (lib)
-		{
-		  // get the init_ function
-		  QString factory("init_%1");
-		  void *init = lib->symbol(factory.arg(funcname));
-		  if (init)
-			{
-			  // initialize the module
-			  kdDebug() << "Initializing control module "
-						<< libname
-						<< ": "
-						<< funcname
-						<< endl;
+	   void (*func)() = (void(*)())init;
+	   func();
+	}
+        loader->unloadLibrary(libName);
+     }
+  }
 
-			  void (*func)() = (void(*)())init;
-			  func();
-			}
-		  // clean up
-		  loader->unloadLibrary(ln.arg(libname));
-		}
-    }
-  
   return 0;
 }
