@@ -748,6 +748,8 @@ main (int argc ATTR_UNUSED, char **argv)
 
     signal( SIGTERM, sigterm );
 
+    dname = getenv( "DISPLAY" );
+
     init_config();
 
     /* for QSettings */
@@ -772,8 +774,6 @@ main (int argc ATTR_UNUSED, char **argv)
     fprintf( f, "[General]\nuseXft=%s\n",
 		_antiAliasing ? "true" : "false" );
     fclose( f );
-
-    dname = getenv( "DISPLAY" );
 
     setenv( "LC_ALL", _language, 1 );
 
