@@ -29,6 +29,8 @@
  ** a constructor, and a destroy() slot in place of a destructor.
  *****************************************************************************/
 
+#include <qobjectlist.h>
+
 void StylePreview::init()
 {
     // Ensure that the user can't toy with the child widgets.
