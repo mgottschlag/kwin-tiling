@@ -554,7 +554,7 @@ void CConfig::checkAndModifyFontmapFile()
 
             if("Fontmap"==file)
             {
-                ifstream f(itsGhostscriptFile.local8Bit());
+                std::ifstream f(itsGhostscriptFile.local8Bit());
 
                 if(f)
                 {
@@ -605,7 +605,7 @@ void CConfig::checkAndModifyXConfigFile()
 
             if(file.find("XF86Config")!=-1)
             {
-                ifstream f(itsXConfigFile.local8Bit());
+                std::ifstream f(itsXConfigFile.local8Bit());
 
                 if(f)
                 {
