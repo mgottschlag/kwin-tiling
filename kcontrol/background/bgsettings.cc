@@ -9,17 +9,20 @@
  * Public License. See the file "COPYING.LIB" for the exact licensing terms.
  */
 
+#include <netwm.h>
 #include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+// Clean up after X.h/Xlib.h
+#undef Bool
+#undef Unsorted
 
 #include <qdir.h>
 #include <qpixmap.h>
 
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
-
-#include <netwm.h>
 
 #include "bgdefaults.h"
 #include "bgsettings.h"

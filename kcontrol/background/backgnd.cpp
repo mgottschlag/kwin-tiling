@@ -47,6 +47,10 @@
 #include <kwin.h>
 #include <X11/Xlib.h>
 
+// Clean up after X.h/Xlib.h
+#undef Bool
+#undef Unsorted
+
 /**** KBGMonitor ****/
 
 KBGMonitor::KBGMonitor(QWidget *parent, const char *name)
