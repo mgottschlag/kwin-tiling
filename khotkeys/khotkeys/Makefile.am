@@ -17,7 +17,7 @@ autostartdir = $(prefix)/share/autostart
 
 noinst_HEADERS = khotkeys.h khkglobalaccel.h
 
-INCLUDES= $(all_includes) -I$(srcdir)/../shared
+INCLUDES= -I$(srcdir)/../shared $(all_includes)
 
 METASOURCES = AUTO
 

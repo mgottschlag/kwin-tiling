@@ -9,7 +9,7 @@ libkcm_kdm_la_SOURCES = ktagcombobox.cpp \
 libkcm_kdm_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_kdm_la_LIBADD = -lkdeui -lkio -lkfile $(top_builddir)/kcontrol/background/libbgnd.la
 
-INCLUDES= $(all_includes) -I$(top_srcdir)/kcontrol/background -I$(top_srcdir)/kdesktop
+INCLUDES= -I$(top_srcdir)/kcontrol/background -I$(top_srcdir)/kdesktop $(all_includes)
 
 libkcm_kdm_la_METASOURCES = backgnd.moc kdm-conv.moc kdm-users.moc \
 	ktagcombobox.moc bgdialogs.moc kdm-font.moc kdropsite.moc main.moc \

@@ -5,7 +5,7 @@ libkcm_arts_la_SOURCES = arts.cpp artsconfig.ui
 libkcm_arts_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 libkcm_arts_la_LIBADD = -lkdeui
 
-INCLUDES = $(all_includes) -I$(kde_includes)/arts 
+INCLUDES = -I$(kde_includes)/arts  $(all_includes)
 
 libkcm_arts_la_METASOURCES = AUTO
 
