@@ -148,7 +148,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 
   _sep = new KSeparator(KSeparator::HLine, this);
 
-  _help = new QPushButton(i18n("&Help"), this);
+  _help = new QPushButton(i18n("Hel&p"), this);
   _default = new QPushButton(i18n("Use &Defaults"), this);
   _apply = new QPushButton(i18n("&Apply"), this);
   _reset = new QPushButton(i18n("&Reset"), this);
