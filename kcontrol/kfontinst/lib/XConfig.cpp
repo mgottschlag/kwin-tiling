@@ -543,7 +543,7 @@ bool CXConfig::processXf86(bool read)
         bool closed=false;
 
         xf86.seekg(0, ios::end);
-        unsigned int size=xf86.tellg();
+        unsigned int size=(streamoff) xf86.tellg();
 
         if(read)
             itsPaths.clear();
@@ -756,7 +756,7 @@ bool CXConfig::processXfs(bool read)
         bool closed=false;
  
         xfs.seekg(0, ios::end);
-        unsigned int size=xfs.tellg();
+        unsigned int size= (streamoff) xfs.tellg();
 
         if(read)
             itsPaths.clear();

@@ -404,7 +404,7 @@ void CFontmap::createTopLevel()
                 if(-1==kfiLine || kfiLine>gsLine)
                 {
                     in.seekg(0, ios::end);
-                    int size=in.tellg();
+                    int size= (streamoff) in.tellg();
                     in.seekg(0, ios::beg);
 
                     char *buffer=new char[size+strlen(fmap)+strlen(constRLF)+5];
