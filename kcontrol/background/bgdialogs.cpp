@@ -765,9 +765,9 @@ KMultiWallpaperDialog::KMultiWallpaperDialog(KBackgroundSettings *setts,
     QLabel *lbl = new QLabel(i18n("&Interval"), this);
     hbox->addWidget(lbl);
     m_pIntervalEdit = new QSpinBox(this);
-    m_pIntervalEdit->setRange(5, 240);
-    m_pIntervalEdit->setSteps(5, 15);
-    m_pIntervalEdit->setValue(QMAX(5,m_Interval));
+    m_pIntervalEdit->setRange(1, 240);
+    m_pIntervalEdit->setSteps(1, 15);
+    m_pIntervalEdit->setValue(QMAX(1,m_Interval));
     m_pIntervalEdit->setSuffix(i18n(" minutes"));
     lbl->setBuddy(m_pIntervalEdit);
     hbox->addWidget(m_pIntervalEdit);
