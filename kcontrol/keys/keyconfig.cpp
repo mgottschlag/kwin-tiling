@@ -255,7 +255,7 @@ void KKeyModule::readScheme( int index )
 
 void KKeyModule::slotAdd()
 {
-  SaveScm *ss = new SaveScm( 0,  "save scheme" );
+  SaveScm ss( 0,  "save scheme" );
 
   bool nameValid;
   QString sName;
@@ -265,8 +265,8 @@ void KKeyModule::slotAdd()
 
     nameValid = TRUE;
 
-    if ( ss->exec() ) {
-      sName = ss->nameLine->text();
+    if ( ss.exec() ) {
+      sName = ss.nameLine->text();
       if ( sName.stripWhiteSpace().isEmpty() )
         return;
 
