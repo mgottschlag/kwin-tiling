@@ -2,12 +2,12 @@
 Encoding=UTF-8
 Type=Service
 Name=AustroNaut
-Name[af]=ruimtevaarder
+Name[af]=Ruimtevaarder
 Name[eo]=Aŭstronaŭto
 Name[ko]=오스트로 노트
 Name[lv]=Astronauts
 Name[sv]=Astronaut
-Name[xx]=xx
+Name[zu]=Umuntu wasemkhathini
 ServiceTypes=SearchProvider
 Keys=austro,austronaut
 Query=http://AustroNaut.at/query.ims?wo=at&suche=\\{@}
