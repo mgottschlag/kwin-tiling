@@ -17,6 +17,7 @@
    Boston, MA 02111-1307, USA.
 */
 
+#include <math.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -29,6 +30,11 @@
 #include "kxftconfig.h"
 
 using namespace std;
+
+static bool equal(double d1, double d2)
+{
+    return (fabs(d1 - d2) < 0.0001);
+}
 
 static QString dirSyntax(const QString &d)
 {
@@ -535,7 +541,7 @@ void KXftConfig::setSubPixelType(SubPixel::Type type)
     if((SubPixel::None==type && !m_subPixel.toBeRemoved) ||
        (SubPixel::None!=type && (type!=m_subPixel.type || m_subPixel.toBeRemoved)) )
     {
-        m_subPixel.toBeRemoved=SubPixel::None==type;
+        m_subPixel.toBeRemoved=(SubPixel::None==type);
         m_subPixel.type=type;
         m_madeChanges=true;
     }
@@ -543,7 +549,7 @@ void KXftConfig::setSubPixelType(SubPixel::Type type)
 
 bool KXftConfig::getExcludeRange(double &from, double &to)
 {
-    if((0!=m_excludeRange.from || 0!=m_excludeRange.to) && !m_excludeRange.toBeRemoved)
+    if(!equal(0, m_excludeRange.from) || !equal(0,m_excludeRange.to))
     {
         from=m_excludeRange.from;
         to=m_excludeRange.to;
@@ -553,17 +559,16 @@ bool KXftConfig::getExcludeRange(double &from, double &to)
         return false;
 }
 
+
 void KXftConfig::setExcludeRange(double from, double to)
 {
     double f=from<to ? from : to,
            t=from<to ? to   : from;
 
-    if((0==f && 0==t && !m_excludeRange.toBeRemoved) ||
-       ((0!=f || 0!=t) && (f!=m_excludeRange.from || t!=m_excludeRange.to || m_excludeRange.toBeRemoved)))
+    if(!equal(f, m_excludeRange.from) || !equal(t,m_excludeRange.to))
     {
         m_excludeRange.from=f;
         m_excludeRange.to=t;
-        m_excludeRange.toBeRemoved=0==f && 0==t;
         m_madeChanges=true;
     }
 }
@@ -967,7 +972,7 @@ void KXftConfig::applySubPixelType()
 
 void KXftConfig::applyExcludeRange()
 {
-    if((m_excludeRange.from<=0 && m_excludeRange.to<=0) || m_excludeRange.toBeRemoved)
+    if(equal(m_excludeRange.from,0) && equal(m_excludeRange.to,0))
     {
         if(!m_excludeRange.node.isNull())
         {
@@ -1068,8 +1073,8 @@ void KXftConfig::outputSubPixelType(ofstream &f, bool ifNew)
 
 void KXftConfig::outputExcludeRange(ofstream &f, bool ifNew)
 {
-    if(!m_excludeRange.toBeRemoved && ((ifNew && NULL==m_excludeRange.end) || (!ifNew && NULL!=m_excludeRange.end)) &&
-       (m_excludeRange.from!=0 || m_excludeRange.to!=0))
+    if(((ifNew && NULL==m_excludeRange.end) || (!ifNew && NULL!=m_excludeRange.end)) &&
+       (!equal(m_excludeRange.from,0) || !equal(m_excludeRange.to,0)))
         f << "match any size > " << m_excludeRange.from << " any size < " << m_excludeRange.to << " edit antialias = false;" << endl;
 }
 #endif
