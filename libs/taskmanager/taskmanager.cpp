@@ -263,12 +263,12 @@ void TaskManager::killStartup(Startup* s)
     delete s;
 }
 
-QString TaskManager::desktopName(int desk)
+QString TaskManager::desktopName(int desk) const
 {
     return kwin_module->desktopName(desk);
 }
 
-int TaskManager::numberOfDesktops()
+int TaskManager::numberOfDesktops() const
 {
     return kwin_module->numberOfDesktops();
 }
@@ -394,12 +394,12 @@ bool Task::isModified() const
   return ( modStrPos != -1 );
 }
 
-QString Task::iconName()
+QString Task::iconName() const
 {
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMIconName);
     return QString::fromUtf8(ni.iconName());
 }
-QString Task::visibleIconName()
+QString Task::visibleIconName() const
 {
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMVisibleIconName);
     return QString::fromUtf8(ni.visibleIconName());
@@ -677,7 +677,7 @@ Startup::~Startup()
 
 }
 
-int TaskManager::currentDesktop()
+int TaskManager::currentDesktop() const
 {
     return kwin_module->currentDesktop();
 }
