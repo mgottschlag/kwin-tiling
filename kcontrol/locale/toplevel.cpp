@@ -248,7 +248,7 @@ void KLocaleApplication::slotTranslate()
   m_tab->changeTab(m_localemain, m_locale->translate("&Locale"));
   m_tab->changeTab(m_localenum, m_locale->translate("&Numbers"));
   m_tab->changeTab(m_localemon, m_locale->translate("&Money"));
-  m_tab->changeTab(m_localetime, m_locale->translate("&Time && dates"));
+  m_tab->changeTab(m_localetime, m_locale->translate("&Time && Dates"));
   m_tab->changeTab(m_localeother, m_locale->translate("&Other"));
 
   // FIXME: All widgets are done now. However, there are
