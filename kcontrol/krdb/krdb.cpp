@@ -68,103 +68,14 @@ static void applyGtkStyles(bool active)
    kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
 }
 
+// -----------------------------------------------------------------------------
+
 static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
 {
   QStringList actcg, inactcg, discg;
 
-  kglobals.setGroup("KDE");
-  int contrast = kglobals.readNumEntry("contrast", 7);
-
-  /* build up the KDE palette, and save it to qtrc. */
-
-  /*
-     * WARNING WARNING WARNING
-     *
-     * For reasons I do not understand the code below is duplicated from
-     * kdelibs/kdecore/kapplication.cpp
-     *
-     * If you change it here, change it there as well
-     */
-
-  QColor kde2Gray(220, 220, 220);
-  QColor kde2Blue;
-  if (QPixmap::defaultDepth() > 8)
-    kde2Blue.setRgb(84, 112, 152);
-  else
-    kde2Blue.setRgb(0, 0, 192);
-
-  kglobals.setGroup("General");
-  QColor background = kglobals.readColorEntry( "background", &kde2Gray );
-  QColor foreground = kglobals.readColorEntry( "foreground", &Qt::black );
-  QColor button = kglobals.readColorEntry( "buttonBackground", &background );
-  QColor buttonText = kglobals.readColorEntry( "buttonForeground", &foreground );
-  QColor highlight = kglobals.readColorEntry( "selectBackground", &kde2Blue);
-  QColor highlightedText = kglobals.readColorEntry( "selectForeground", &Qt::white );
-  QColor base = kglobals.readColorEntry( "windowBackground", &Qt::white );
-  QColor baseText = kglobals.readColorEntry( "windowForeground", &Qt::black );
-  QColor link = kglobals.readColorEntry( "linkColor", &Qt::blue );
-  QColor visitedLink = kglobals.readColorEntry( "visitedLinkColor", &Qt::magenta );
-
-  int highlightVal, lowlightVal;
-  highlightVal = 100 + (2*contrast+4)*16/10;
-  lowlightVal = 100 + (2*contrast+4)*10;
-
-  QColor disfg = foreground;
-
-  int h, s, v;
-  disfg.hsv( &h, &s, &v );
-  if (v > 128)
-    // dark bg, light fg - need a darker disabled fg
-    disfg = disfg.dark(lowlightVal);
-  else if (disfg != Qt::black)
-    // light bg, dark fg - need a lighter disabled fg - but only if !black
-    disfg = disfg.light(highlightVal);
-  else
-    // black fg - use darkgrey disabled fg
-    disfg = Qt::darkGray;
-
-  QColorGroup disabledgrp(disfg, background,
-                          background.light(highlightVal),
-                          background.dark(lowlightVal),
-                          background.dark(120),
-                          background.dark(120), base);
-  QColorGroup colgrp(foreground, background, background.light(highlightVal),
-                     background.dark(lowlightVal),
-                     background.dark(120),
-                     baseText, base);
-
-  int inlowlightVal = lowlightVal-25;
-  if(inlowlightVal < 120)
-    inlowlightVal = 120;
-
-  colgrp.setColor(QColorGroup::Highlight, highlight);
-  colgrp.setColor(QColorGroup::HighlightedText, highlightedText);
-  colgrp.setColor(QColorGroup::Button, button);
-  colgrp.setColor(QColorGroup::ButtonText, buttonText);
-  colgrp.setColor(QColorGroup::Midlight, background.light(110));
-  colgrp.setColor(QColorGroup::Link, link);
-  colgrp.setColor(QColorGroup::LinkVisited, visitedLink);
-
-  disabledgrp.setColor(QColorGroup::Button, button);
-  QColor disbtntext = buttonText;
-  disbtntext.hsv( &h, &s, &v );
-  if (v > 128)
-      // dark button, light buttonText - need a darker disabled buttonText
-      disbtntext = disbtntext.dark(lowlightVal);
-  else if (disbtntext != Qt::black)
-      // light buttonText, dark button - need a lighter disabled buttonText - but only if !black
-      disbtntext = disbtntext.light(highlightVal);
-  else
-      // black button - use darkgrey disabled buttonText
-      disbtntext = Qt::darkGray;
-
-  disabledgrp.setColor(QColorGroup::ButtonText, disbtntext);
-  disabledgrp.setColor(QColorGroup::Midlight, background.light(110));
-  disabledgrp.setColor(QColorGroup::Link, link);
-  disabledgrp.setColor(QColorGroup::LinkVisited, visitedLink);
-
-  QPalette newPal(colgrp, disabledgrp, colgrp);
-  /* --- end of kapplication.cpp palette code --- */
+  // Rebuild the application palette that is about to be set.
+  QPalette newPal = KApplication::createApplicationPalette();
 
   /* export kde color settings */
   int i;
@@ -182,7 +93,7 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
   settings.writeEntry("/qt/Palette/inactive", inactcg);
   settings.writeEntry("/qt/Palette/disabled", discg);
 
-  /* export kwin's colors to qtrc for kstyle to use */
+  // export kwin's colors to qtrc for kstyle to use
   kglobals.setGroup("WM");
 
   // active colors
@@ -219,8 +130,11 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
   clr = kglobals.readColorEntry("inactiveTitleBtnBg", &clr);
   settings.writeEntry("/qt/KWinPalette/inactiveTitleBtnBg", clr.name());
 
-  settings.writeEntry("/qt/KDE/contrast", contrast);
+  kglobals.setGroup("KDE");
+  settings.writeEntry("/qt/KDE/contrast", kglobals.readNumEntry("contrast", 7));
 }
+
+// -----------------------------------------------------------------------------
 
 static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
 {
@@ -233,13 +147,13 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
     // users. So we need to know whether a path being added is from KApp, and in this case
     // end it with.. So keep a QMap to bool, specifying whether the path is KDE-specified..
     
-  QStringList kdeAdded;
-  
-  kdeAdded  = settings.readListEntry("/qt/KDE/kdeAddedLibraryPaths");
-  
+  QStringList kdeAdded = 
+    settings.readListEntry("/qt/KDE/kdeAddedLibraryPaths");
+  QString libPathKey = 
+    QString("/qt/%1.%2/libraryPath").arg( QT_VERSION >> 16 ).arg( (QT_VERSION & 0xff00 ) >> 8 );
   
   //Read qt library path..
-  QStringList plugins = settings.readListEntry("/qt/libraryPath", ':');
+  QStringList plugins = settings.readListEntry(libPathKey, ':');
   for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it)
   {
     QString path = *it;
@@ -273,17 +187,14 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
       path.truncate(path.length()-1);  
   
     pathDb[path]=true;  
-    
   }
   
-  
   QStringList paths;
-  
   for (QMap <QString, bool>::ConstIterator it = pathDb.begin();
          it != pathDb.end(); it++)
   {
     QString path = it.key();
-    bool      fromKDE = it.data();
+    bool fromKDE = it.data();
     
     char new_path[PATH_MAX+1];
     if (realpath(QFile::encodeName(path), new_path))
@@ -291,9 +202,9 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
 
     if (fromKDE)
     {
-        if (!path.endsWith("/"))
-            path += "/";
-       kdeAdded.push_back(path); //Add for the new list -- do it here to have it in the right form..
+      if (!path.endsWith("/"))
+        path += "/";
+      kdeAdded.push_back(path); //Add for the new list -- do it here to have it in the right form..
     }
     
     paths.append(path);
@@ -301,9 +212,7 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
   
    //Write the list out..
   settings.writeEntry("/qt/KDE/kdeAddedLibraryPaths", kdeAdded);
-
-  
-  settings.writeEntry("/qt/libraryPath", paths, ':');
+  settings.writeEntry(libPathKey, paths, ':');
 
   /* export widget style */
   kglobals.setGroup("General");
