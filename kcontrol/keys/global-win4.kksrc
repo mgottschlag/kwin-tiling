@@ -41,7 +41,6 @@ Name[uk]=Типовий для Windows (з клавішею Meta/Win)
 Name[xh]=Windows Ezingagqibekanga (Nge Meta/Win-key)
 Name[xx]=xx
 Name[zh_CN]=Windows 默认 (有 Meta/Win-Key)
-Name[zh_TW]=Windows 預設 (有 Meta/Win-Key)
 Name[zu]=Amawindi Okungaqedekanga (Nge Meta/Win-key)
 Execute command=Meta+R
 Kill Window=none

@@ -40,7 +40,6 @@ Name[uk]=Типовий для Windows (без клавіші Meta/Win)
 Name[xh]=Windows Ezingagqibekanga (Ngaphandle kwe Meta/Win-key)
 Name[xx]=xx
 Name[zh_CN]=Windows 默认 (没有 Meta/Win-Key)
-Name[zh_TW]=Windows 預設 (沒有 Meta/Win-Key)
 Name[zu]=Amawindi Angaqedekanga (Without Meta/Win-Key)
 Execute command=none
 Kill Window=none

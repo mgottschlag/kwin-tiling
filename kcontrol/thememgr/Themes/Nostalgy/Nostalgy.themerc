@@ -36,7 +36,6 @@ Name[tr]=Nostalji
 Name[uk]=Ностальгія
 Name[xx]=xx
 Name[zh_CN]=怀旧
-Name[zh_TW]=懷舊
 author=Robert Flemming & Daniel M. Duley
 email=mosfet@kde.org
 Comment=A simple original theme that tries to combine the best aspects of familiar interfaces.
@@ -79,7 +78,6 @@ Comment[vi]=Một theme gốc phối hợp tất cả các mặt tốt nhất c�
 Comment[xh]=Umxholo wokuxoxwa olula ozama ukudibanisa imiba engcono wezinto zangaphakathi eziqhelekileyo.
 Comment[xx]=xx
 Comment[zh_CN]=一个简单将熟悉的界面的最好方面结合在一起的的主题。
-Comment[zh_TW]=一個簡單將熟悉的界面的最好方面結合在一起的的主題。
 Comment[zu]=Elula ithimu yangempela ezama ukuhlanganisa ezizezingeni eliphambiliizinkulumo zangaphakathi kwamakhomputha ajwayelekile
 version=0.1
 #-----------------------------------------------------------------------------
