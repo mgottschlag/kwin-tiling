@@ -43,7 +43,7 @@ install-data-local: genkdmconf
 	./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm --face-src $(srcdir)/pics $(GENKDMCONF_FLAGS)
 
 messages:
-	$(XGETTEXT) $(kdm_greet_SOURCES) -o $(podir)/kdmgreet.pot
+	$(XGETTEXT) `find . -name "*.cpp"` -o $(podir)/kdmgreet.pot
 
 noinst_HEADERS = \
     kdm_greet.h \
