@@ -1,7 +1,6 @@
 # $Id$
 # kdebase/kcontrol/kwm
 
-SUBDIRS = pics
 METASOURCES = AUTO
 INCLUDES = $(all_includes)
 
