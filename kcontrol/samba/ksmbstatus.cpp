@@ -69,13 +69,13 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
 
     list->setAllColumnsShowFocus(true);
     list->setMinimumSize(425,200);
-    list->addColumn(i18n("Type"), 50);
-    list->addColumn(i18n("Service"), 80);
-    list->addColumn(i18n("Accessed from"),100);
-    list->addColumn(i18n("UID"), 70);
-    list->addColumn(i18n("GID"), 70);
-    list->addColumn(i18n("PID"), 50);
-    list->addColumn(i18n("Open Files"),70);
+    list->addColumn(i18n("Type"));
+    list->addColumn(i18n("Service"));
+    list->addColumn(i18n("Accessed from"));
+    list->addColumn(i18n("UID"));
+    list->addColumn(i18n("GID"));
+    list->addColumn(i18n("PID"));
+    list->addColumn(i18n("Open Files"));
 
     timer = new QTimer(this);
     timer->start(10000);
