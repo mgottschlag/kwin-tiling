@@ -192,7 +192,7 @@ LiloMap=/boot/map
 # Default is @XBINDIR@/xterm
 #FailsafeClient=
 # The PATH for the Session program. The default is system-specific.
-#UserPath=
+UserPath=/usr/local/bin:/usr/bin:/bin:@KDE_BINDIR@:@XBINDIR@
 # The PATH for Setup, Startup and Reset, etc. The default is system-specific.
 #SystemPath=
 # The default system shell. Default is /bin/sh
