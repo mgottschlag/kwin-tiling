@@ -81,7 +81,11 @@ KFMsgBox::box(QWidget *parent, QMessageBox::Icon type, const QString &text)
 
     lay->addStretch(1);
     QLabel *label1 = new QLabel( contents);
+#if QT_VERSION < 300
     label1->setPixmap(QMessageBox::standardIcon(type, kapp->style().guiStyle()));
+#else
+    label1->setPixmap(QMessageBox::standardIcon(type));
+#endif
     lay->add( label1 );
     lay->add( new QLabel(text, contents) );
     lay->addStretch(1);

@@ -98,6 +98,7 @@ QFont KDMConfig::Str2Font (QString aValue)
     aRetFont.setFixedPitch( nFontBits & 0x08 != 0 );
     aRetFont.setRawMode( nFontBits & 0x20 != 0 );
 
+#if QT_VERSION < 300
     QFont::CharSet chId = (QFont::CharSet)sl[3].toUInt(&chOldEntry);
     if (chOldEntry)
         aRetFont.setCharSet( chId );
@@ -108,6 +109,7 @@ QFont KDMConfig::Str2Font (QString aValue)
 	    chStr = sl[3];
         KGlobal::charsets()->setQFont(aRetFont, chStr);
     }
+#endif
 
     return aRetFont;
 }
@@ -143,12 +145,21 @@ KDMConfig::KDMConfig()
 	_greeterPosX = -1;
 
     switch (GetCfgInt (C_GUIStyle)) {
+#if QT_VERSION < 300
     case GUI_Windows: kapp->setStyle (new QWindowsStyle); break;
     case GUI_Platinum: kapp->setStyle (new QPlatinumStyle); break;
     case GUI_Motif: kapp->setStyle (new QMotifStyle); break;
     case GUI_MotifPlus: kapp->setStyle (new QMotifPlusStyle); break;
     case GUI_CDE: kapp->setStyle (new QCDEStyle); break;
     case GUI_SGI: kapp->setStyle (new QSGIStyle); break;
+#else
+    case GUI_Windows: kapp->setStyle ("windows"); break;
+    case GUI_Platinum: kapp->setStyle ("platinum"); break;
+    case GUI_Motif: kapp->setStyle ("motif"); break;
+    case GUI_MotifPlus: kapp->setStyle ("motifplus"); break;
+    case GUI_CDE: kapp->setStyle ("cde"); break;
+    case GUI_SGI: kapp->setStyle ("sgi"); break;
+#endif
     }
 
     _logoArea = GetCfgInt (C_LogoArea);
