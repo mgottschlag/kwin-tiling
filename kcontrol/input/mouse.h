@@ -65,7 +65,7 @@ public:
  bool handedEnabled;
  bool m_handedNeedsApply;
  int handed;
- int accelRate;
+ double accelRate;
  int thresholdMove;
  int doubleClickInterval;
  int dragStartTime;
@@ -102,17 +102,17 @@ private slots:
 
 private:
 
-  int getAccel();
+  double getAccel();
   int getThreshold();
   int getHandedness();
 
-  void setAccel(int);
+  void setAccel(double);
   void setThreshold(int);
   void setHandedness(int);
 
   void fixCursorFile();
 
-  KIntNumInput *accel;
+  KDoubleNumInput *accel;
   KIntNumInput *thresh;
   KIntNumInput *doubleClickInterval;
   KIntNumInput *dragStartTime;

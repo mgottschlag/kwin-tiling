@@ -48,6 +48,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include <qfileinfo.h>
 #include <qlayout.h>
@@ -173,13 +174,13 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     QBoxLayout *lay = new QVBoxLayout(tab2, KDialog::marginHint(),
               KDialog::spacingHint());
 
-    accel = new KIntNumInput(20, tab2);
+    accel = new KDoubleNumInput(2, tab2);
     accel->setLabel(i18n("Pointer acceleration:"));
-    accel->setRange(1,20,2);
+    accel->setPrecision(1);
+    accel->setRange(1,20);
     accel->setSuffix("x");
-    accel->setSteps(1,1);
     lay->addWidget(accel);
-    connect(accel, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+    connect(accel, SIGNAL(valueChanged(double)), this, SLOT(changed()));
 
     wtstr = i18n("This option allows you to change the relationship"
          " between the distance that the mouse pointer moves on the"
@@ -190,15 +191,12 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
          " movements of the mouse pointer on the screen even when"
          " you only make a small movement with the physical device."
          " Selecting very high values may result in the mouse pointer"
-         " flying across the screen, making it hard to control!<p>"
-         " You can set the acceleration value by dragging the slider"
-         " button or by clicking the up/down arrows on the spin-button"
-         " to the left of the slider.");
+         " flying across the screen, making it hard to control!");
     QWhatsThis::add( accel, wtstr );
 
     thresh = new KIntNumInput(accel, 20, tab2);
     thresh->setLabel(i18n("Pointer threshold:"));
-    thresh->setRange(1,20,2);
+    thresh->setRange(0,20,2);
     thresh->setSuffix(i18n(" pixels"));
     thresh->setSteps(1,1);
     lay->addWidget(thresh);
@@ -212,10 +210,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
          " there is no acceleration at all, giving you a greater degree"
          " of control over the mouse pointer. With larger movements of"
          " the physical device, you can move the mouse pointer"
-         " rapidly to different areas on the screen.<p>"
-         " You can set the threshold value by dragging the slider button"
-         " or by clicking the up/down arrows on the spin-button to the"
-         " left of the slider.");
+         " rapidly to different areas on the screen.");
     QWhatsThis::add( thresh, wtstr );
 
     // It would be nice if the user had a test field.
@@ -364,12 +359,12 @@ MouseConfig::~MouseConfig()
     delete settings;
 }
 
-int MouseConfig::getAccel()
+double MouseConfig::getAccel()
 {
   return accel->value();
 }
 
-void MouseConfig::setAccel(int val)
+void MouseConfig::setAccel(double val)
 {
   accel->setValue(val);
 }
@@ -613,9 +608,10 @@ void MouseConfig::slotHandedChanged(int val){
 void MouseSettings::load(KConfig *config)
 {
   int accel_num, accel_den, threshold;
+  double accel;
   XGetPointerControl( kapp->getDisplay(),
               &accel_num, &accel_den, &threshold );
-  accel_num /= accel_den;   // integer acceleration only
+  accel = float(accel_num) / float(accel_den);
 
   // get settings from X server
   int h = RIGHT_HANDED;
@@ -660,9 +656,9 @@ void MouseSettings::load(KConfig *config)
     }
 
   config->setGroup("Mouse");
-  int a = config->readNumEntry("Acceleration",-1);
+  double a = config->readDoubleNumEntry("Acceleration",-1);
   if (a == -1)
-    accelRate = accel_num;
+    accelRate = accel;
   else
     accelRate = a;
 
@@ -699,7 +695,7 @@ void MouseSettings::load(KConfig *config)
 void MouseSettings::apply()
 {
   XChangePointerControl( kapp->getDisplay(),
-                         true, true, accelRate, 1, thresholdMove);
+                         true, true, int(round(accelRate*10)), 10, thresholdMove);
 
 
   unsigned char map[5];
