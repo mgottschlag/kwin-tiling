@@ -75,8 +75,7 @@ void NetMon::processLine(char *bufline, int linelen)
 // called when we get some data from smbstatus
 //   can be called for any size of buffer (one line, several lines,
 //     half of one ...)
-void NetMon::slotReceivedData(KProcess *, char *buffer, int
-                              buflen)
+void NetMon::slotReceivedData(KProcess *, char *buffer, int )
 {
     char s[250],*start,*end;
     size_t len;
@@ -136,7 +135,7 @@ void NetMon::Kill()
   update();
 }
 
-void NetMon::Killmenu(int Index, int column)
+void NetMon::Killmenu(int Index, int )
 {
    killrow=Index;
    menu->setTitle("//"+list->text(Index,4)+"/"+list->text(Index,0));
