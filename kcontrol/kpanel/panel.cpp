@@ -25,6 +25,7 @@
 #include "panel.h"
 #include "panel.moc"
 #include <qlayout.h>
+#include <kconfig.h>
 #include <kconfigbase.h>
 #include <klocale.h>
 
