@@ -25,6 +25,7 @@
 
 #include <klineedit.h>
 
+class KKeyButton;
 class KLineEdit;
 class KIconButton;
 class QCheckBox;
@@ -53,10 +54,12 @@ protected slots:
     void slotChanged();
     void termcb_clicked();
     void uidcb_clicked();
-    void keyButtonPressed();
+    //void keyButtonPressed();
+    void slotCapturedShortcut(const KShortcut&);
 
 protected:
-    KLineEdit    *_nameEdit, *_commentEdit, *_typeEdit, *_keyEdit;
+    KLineEdit    *_nameEdit, *_commentEdit, *_typeEdit;
+    KKeyButton   *_keyEdit;
     KURLRequester *_execEdit, *_pathEdit;
     KLineEdit    *_termOptEdit, *_uidEdit;
     QCheckBox    *_terminalCB, *_uidCB;

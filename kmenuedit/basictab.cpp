@@ -29,6 +29,7 @@
 #include <kstandarddirs.h>
 #include <kglobal.h>
 #include <kdialog.h>
+#include <kkeybutton.h>
 #include <klineedit.h>
 #include <kicondialog.h>
 #include <kdesktopfile.h>
@@ -159,14 +160,17 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 					KDialog::spacingHint());
 
     grid_keybind->addWidget(new QLabel(i18n("Current key"), general_group_keybind), 0, 0);
-    _keyEdit = new KLineEdit(general_group_keybind);
-    _keyEdit->setReadOnly( true );
-    _keyEdit->setText( "" );
-    QPushButton* _keyButton = new QPushButton( i18n( "Change" ),
-                                               general_group_keybind );
-    connect( _keyButton, SIGNAL( clicked()), this, SLOT( keyButtonPressed()));
+    //_keyEdit = new KLineEdit(general_group_keybind);
+    //_keyEdit->setReadOnly( true );
+    //_keyEdit->setText( "" );
+    //QPushButton* _keyButton = new QPushButton( i18n( "Change" ),
+    //                                           general_group_keybind );
+    //connect( _keyButton, SIGNAL( clicked()), this, SLOT( keyButtonPressed()));
+    _keyEdit = new KKeyButton(general_group_keybind);
+    connect( _keyEdit, SIGNAL(capturedShortcut(const KShortcut&)),
+             this, SLOT(slotCapturedShortcut(const KShortcut&)));
     grid_keybind->addWidget(_keyEdit, 0, 1);
-    grid_keybind->addWidget(_keyButton, 0, 2 );
+    //grid_keybind->addWidget(_keyButton, 0, 2 );
     _khotkeysNeedsSave = false;
 
 
@@ -215,14 +219,14 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
         if( KHotKeys::present())
         {
             general_group_keybind->setEnabled( true );
-            _keyEdit->setText( KHotKeys::getMenuEntryShortcut(
+            _keyEdit->setShortcut( KHotKeys::getMenuEntryShortcut(
                 _desktopFile ));
         }
     }
     else
     {
         general_group_keybind->setEnabled( false ); // not a menu entry - no shortcut
-        _keyEdit->setText("");
+        _keyEdit->setShortcut(0);
     }
    // clean all disabled fields and return if it is not a .desktop file
     if (!isDF) {
@@ -258,7 +262,7 @@ void BasicTab::apply( bool desktopFileNeedsSave )
     // key binding part
     if( KHotKeys::present() && _khotkeysNeedsSave )
         {
-        KHotKeys::changeMenuEntryShortcut( _desktopFile, _keyEdit->text());
+        KHotKeys::changeMenuEntryShortcut( _desktopFile, _keyEdit->shortcut().toStringInternal());
         }
     _khotkeysNeedsSave = false;
 
@@ -325,7 +329,7 @@ void BasicTab::uidcb_clicked()
 }
 
 // key bindign method
-void BasicTab::keyButtonPressed()
+/*void BasicTab::keyButtonPressed()
 {
     if( !KHotKeys::present())
         return;
@@ -334,6 +338,13 @@ void BasicTab::keyButtonPressed()
     if( new_shortcut == _keyEdit->text())
         return;
     _keyEdit->setText( new_shortcut );
+    emit changed( false );
+    _khotkeysNeedsSave = true;
+}*/
+
+void BasicTab::slotCapturedShortcut(const KShortcut& cut)
+{
+    _keyEdit->setShortcut(cut);
     emit changed( false );
     _khotkeysNeedsSave = true;
 }
