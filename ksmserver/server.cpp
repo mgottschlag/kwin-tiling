@@ -40,6 +40,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
+#include <sys/socket.h>
+#include <sys/un.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -689,6 +691,40 @@ static Status KSMNewClientProc ( SmsConn conn, SmPointer manager_data,
 }
 
 
+static char *
+kdmExec( const char *cmd )
+{
+    char *ctl, *dpy, *ptr;
+    int fd, len;
+    struct sockaddr_un sa;
+    char buf[1024];
+
+    if ((dpy = getenv( "DISPLAY" )) &&
+        (ctl = getenv( "DM_CONTROL" )) &&
+        (fd = socket( PF_UNIX, SOCK_STREAM, 0 )) >= 0)
+    {
+        sa.sun_family = AF_UNIX;
+        if ((ptr = strchr( dpy, ':' )))
+            ptr = strchr( ptr, '.' );
+        snprintf( sa.sun_path, sizeof(sa.sun_path),
+                  "%s/dmctl-%.*s/socket", ctl, ptr ? ptr - dpy : 512, dpy );
+        if (!connect( fd, (struct sockaddr *)&sa, sizeof(sa) ) &&
+            write( fd, cmd, (len = strlen( cmd )) ) == len)
+        {
+            len = read( fd, buf, sizeof(buf) );
+            close( fd );
+            if (len > 0) {
+                ptr = (char *)malloc( len + 1 );
+                memcpy( ptr, buf, len );
+                ptr[len] = 0;
+                return ptr;
+            }
+        }
+        close( fd );
+    }
+    return 0;
+}
+
 #ifdef HAVE__ICETRANSNOLISTEN
 extern "C" int _IceTransNoListen(const char * protocol);
 #endif
@@ -822,18 +858,16 @@ void KSMServer::cleanUp()
     signal(SIGINT, SIG_DFL);
 
     if ( shutdownType != KApplication::ShutdownTypeNone ) {
-        QFile fifo( fifoName );
-        if ( fifo.open( IO_WriteOnly | IO_Raw ) ) {
-            QCString cmd( "shutdown\t" );
-            cmd.append( shutdownType == KApplication::ShutdownTypeReboot ?
-                        "reboot\t" : "halt\t" );
-            cmd.append( shutdownMode == KApplication::ShutdownModeForceNow ?
-                        "forcenow\n" :
-                        shutdownMode == KApplication::ShutdownModeTryNow ?
-                        "trynow\n" : "schedule\n" );
-            fifo.writeBlock( cmd.data(), cmd.length() );
-            fifo.close();
-        }
+        QCString cmd( "shutdown\t" );
+        cmd.append( shutdownType == KApplication::ShutdownTypeReboot ?
+                    "reboot\t" : "halt\t" );
+        cmd.append( shutdownMode == KApplication::ShutdownModeInteractive ?
+                    "ask\n" :
+                    shutdownMode == KApplication::ShutdownModeForceNow ?
+                    "forcenow\n" :
+                    shutdownMode == KApplication::ShutdownModeTryNow ?
+                    "trynow\n" : "schedule\n" );
+        free( kdmExec( cmd.data() ) );
     }
 }
 
@@ -927,26 +961,6 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
         return;
     dialogActive = true;
 
-    bool maysd, maynuke;
-    KApplication::ShutdownMode defsdmode;
-    QStringList dmopt =
-        QStringList::split( QChar( ',' ),
-                            QString::fromLatin1( ::getenv( "XDM_MANAGED" ) ) );
-    if ( dmopt.isEmpty() || dmopt.first()[0] != QChar( '/' ) ) {
-        maysd = maynuke = false;
-        defsdmode = KApplication::ShutdownModeSchedule;
-    } else {
-        fifoName = dmopt.first();
-        maysd = dmopt.contains( QString::fromLatin1( "maysd" ) ) != 0;
-        maynuke = dmopt.contains( QString::fromLatin1( "mayfn" ) ) != 0;
-        if ( dmopt.contains( QString::fromLatin1( "fn" ) ) != 0 )
-            defsdmode = KApplication::ShutdownModeForceNow;
-        else if ( dmopt.contains( QString::fromLatin1( "tn" ) ) != 0 )
-            defsdmode = KApplication::ShutdownModeTryNow;
-        else
-            defsdmode = KApplication::ShutdownModeSchedule;
-    }
-
     KConfig *config = KGlobal::config();
     config->reparseConfiguration(); // config may have changed in the KControl module
 
@@ -956,19 +970,20 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
         (confirm == KApplication::ShutdownConfirmYes) ? false :
        (confirm == KApplication::ShutdownConfirmNo) ? true :
                   !config->readBoolEntry( "confirmLogout", true );
-    if (!config->readBoolEntry( "offerShutdown", true ))
-        maysd = false;
-    if (sdtype == KApplication::ShutdownTypeDefault)
+    bool maysd = false;
+    char *re;
+    if (config->readBoolEntry( "offerShutdown", true ) && (re = kdmExec( "caps\n" ))) {
+	if (strstr( re, "\tshutdown" ))
+	    maysd = true;
+	free( re );
+    }
+    if (!maysd)
+        sdtype = KApplication::ShutdownTypeNone;
+    else if (sdtype == KApplication::ShutdownTypeDefault)
         sdtype = (KApplication::ShutdownType)
                  config->readNumEntry( "shutdownType", (int)KApplication::ShutdownTypeNone );
     if (sdmode == KApplication::ShutdownModeDefault)
-        sdmode = (KApplication::ShutdownMode)
-                 config->readNumEntry( "shutdownMode", (int)defsdmode );;
-
-    if (!maysd)
-        sdtype = KApplication::ShutdownTypeNone;
-    if (!maynuke && sdmode == KApplication::ShutdownModeForceNow)
-        sdmode = KApplication::ShutdownModeSchedule;
+        sdmode = KApplication::ShutdownModeInteractive;
 
     if ( !logoutConfirmed ) {
         KSMShutdownFeedback::start(); // make the screen gray
