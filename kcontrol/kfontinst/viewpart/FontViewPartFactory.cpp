@@ -38,7 +38,7 @@ extern "C"
     {
 	return new CFontViewPartFactory;
     }
-};
+}
 
 KInstance * CFontViewPartFactory::theirInstance=NULL;
 KAboutData * CFontViewPartFactory::theirAbout=NULL;

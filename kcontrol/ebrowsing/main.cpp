@@ -33,7 +33,7 @@
 #include "main.h"
 
 typedef KGenericFactory<KURIFilterModule, QWidget> KURIFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kurifilt, KURIFactory("kcmkurifilt") );
+K_EXPORT_COMPONENT_FACTORY( kcm_kurifilt, KURIFactory("kcmkurifilt") )
 
 class FilterOptions;
 

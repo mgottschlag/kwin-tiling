@@ -46,7 +46,7 @@ namespace KHotKeys_shared
     QString get_menu_entry_from_path( const QString& path_P );
     // config file
     const char* const CONFIG_FILE = "khotkeysrc";
-    };
+    }
     
 using namespace KHotKeys_shared;
     

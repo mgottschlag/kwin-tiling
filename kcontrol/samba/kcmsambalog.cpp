@@ -128,7 +128,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
    showFileOpen.setMinimumSize(showFileOpen.sizeHint());
    showFileClose.setMinimumSize(showFileClose.sizeHint());
    updateButton.setFixedSize(updateButton.sizeHint());
-};
+}
 
 void LogView::loadSettings()
 {
@@ -142,7 +142,7 @@ void LogView::loadSettings()
    showConnClose.setChecked(configFile->readBoolEntry( "ShowConnectionClose", FALSE));
    showFileOpen.setChecked(configFile->readBoolEntry( "ShowFileOpen", TRUE));
    showFileClose.setChecked(configFile->readBoolEntry( "ShowFileClose", FALSE));
-};
+}
 
 void LogView::saveSettings()
 {
@@ -154,7 +154,7 @@ void LogView::saveSettings()
    configFile->writeEntry( "ShowConnectionClose", showConnClose.isChecked());
    configFile->writeEntry( "ShowFileOpen", showFileOpen.isChecked());
    configFile->writeEntry( "ShowFileClose", showFileClose.isChecked());
-};
+}
 
 #define CONN_OPEN " connect to service "
 #define CONN_CLOSE " closed connection to service "
@@ -254,5 +254,5 @@ void LogView::updateList()
       QString tmp = i18n("Could not open file %1").arg(logFileName.url());
       KMessageBox::error(this,tmp);
    };
-};
+}
 

@@ -43,7 +43,7 @@
 static const int COL_FILENAME = 1;
 
 typedef KGenericFactory<KCMKNotify, QWidget> NotifyFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_knotify, NotifyFactory("kcmnotify") );
+K_EXPORT_COMPONENT_FACTORY( kcm_knotify, NotifyFactory("kcmnotify") )
 
 using namespace KNotify;
 
@@ -71,7 +71,7 @@ KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
 
     load();
 
-};
+}
 
 KCMKNotify::~KCMKNotify()
 {

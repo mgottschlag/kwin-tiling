@@ -376,7 +376,7 @@ extern "C"
         KGlobal::dirs()->addResourceType("extensions", KStandardDirs::kde_default("data") +
                                          "kicker/extensions");
         return new KickerConfig(parent, "kcmkicker");
-    };
+    }
 
     KCModule *create_kicker_behaviour(QWidget *parent, const char *)
     {
@@ -386,5 +386,5 @@ extern "C"
         KGlobal::dirs()->addResourceType("hb_pics", KStandardDirs::kde_default("data") +
                                          "kcmkicker/pics");
         return new LookAndFeelConfig(parent, "kcmkicker");
-    };
+    }
 }

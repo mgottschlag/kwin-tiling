@@ -119,7 +119,7 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    connect(clearButton,SIGNAL(clicked()),this,SLOT(clearStatistics()));
    connect(calcButton,SIGNAL(clicked()),this,SLOT(calculate()));
    setListInfo(0,0,0);
-};
+}
 
 void StatisticsView::setListInfo(QListView *list, int nrOfFiles, int nrOfConnections)
 {
@@ -129,7 +129,7 @@ void StatisticsView::setListInfo(QListView *list, int nrOfFiles, int nrOfConnect
    connectionsL->setText(i18n("Connections: %1").arg(KGlobal::locale()->formatNumber(connectionsCount, 0)));
    filesL->setText(i18n("File accesses: %1").arg(KGlobal::locale()->formatNumber(filesCount, 0)));
    clearStatistics();
-};
+}
 
 void StatisticsView::calculate()
 {
@@ -220,13 +220,13 @@ void StatisticsView::calculate()
       new QListViewItem(viewStatistics,number,eventCb->currentText(),serviceLe->text(),hostLe->text(),hits);
    };
    QApplication::restoreOverrideCursor();
-};
+}
 
 void StatisticsView::clearStatistics()
 {
    viewStatistics->clear();
    calcCount=0;
-};
+}
 
 void SambaLog::printItems()
 {
@@ -238,7 +238,7 @@ void SambaLog::printItems()
          kdDebug() << "      accessed by: " << tmpLog->name << "  " << tmpLog->count << endl;
    };
    kdDebug() << "------ end of printing ------" << endl << endl;
-};
+}
 
 LogItem* SambaLog::itemInList(QString name)
 {
@@ -250,7 +250,7 @@ LogItem* SambaLog::itemInList(QString name)
       tmpItem=items.next();
    };
    return foundItem;
-};
+}
 
 void SambaLog::addItem(QString share, QString user)
 {
@@ -265,7 +265,7 @@ void SambaLog::addItem(QString share, QString user)
    {
       items.append(new LogItem(share,user));
    };
-};
+}
 
 SmallLogItem* LogItem::itemInList(QString name)
 {
@@ -277,7 +277,7 @@ SmallLogItem* LogItem::itemInList(QString name)
       tmpItem=accessed.next();
    };
    return foundItem;
-};
+}
 
 void LogItem::addItem (QString host)
 {
@@ -286,4 +286,4 @@ void LogItem::addItem (QString host)
       tmp->count++;
    else
       accessed.append(new SmallLogItem(host));
-};
+}

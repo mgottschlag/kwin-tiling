@@ -31,7 +31,7 @@
 #include "kcmtaskbar.moc"
 
 typedef KGenericFactory<TaskbarConfig, QWidget > TaskBarFactory;
-K_EXPORT_COMPONENT_FACTORY (kcm_taskbar, TaskBarFactory("kcmtaskbar") );
+K_EXPORT_COMPONENT_FACTORY (kcm_taskbar, TaskBarFactory("kcmtaskbar") )
 
 // These are the strings that are actually stored in the config file.
 const QStringList& TaskbarConfig::actionList()

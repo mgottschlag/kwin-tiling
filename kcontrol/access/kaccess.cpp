@@ -53,7 +53,7 @@ int KAccessApp::newInstance()
   KGlobal::config()->reparseConfiguration();
   readSettings();
   return 0;
-};
+}
 
 void KAccessApp::readSettings()
 {

@@ -125,7 +125,7 @@ Privacy::Privacy(QWidget *parent, const char *name)
   connect(cleaningDialog->selectNoneButton, SIGNAL(clicked()), SLOT(selectNone()));
 
   load();
-};
+}
 
 
 Privacy::~Privacy()

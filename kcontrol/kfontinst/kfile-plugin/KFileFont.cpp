@@ -38,7 +38,7 @@
 #include <kio/netaccess.h>
 
 typedef KGenericFactory<KFileFontPlugin> KFileFontPluginFactory;
-K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfile_font"));
+K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfile_font"))
 
 KFileFontPlugin::KFileFontPlugin(QObject *parent, const char *name, const QStringList& args)
                : KFilePlugin(parent, name, args)

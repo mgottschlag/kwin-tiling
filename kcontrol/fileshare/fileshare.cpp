@@ -27,7 +27,7 @@
 #include <kstandarddirs.h>
 
 typedef KGenericFactory<KFileShareConfig, QWidget > ShareFactory;
-K_EXPORT_COMPONENT_FACTORY (kcm_fileshare, ShareFactory("kcmfileshare") );
+K_EXPORT_COMPONENT_FACTORY (kcm_fileshare, ShareFactory("kcmfileshare") )
 
 
 KFileShareConfig::KFileShareConfig(QWidget *parent, const char *name, const QStringList &):

@@ -58,7 +58,7 @@ ImportsView::ImportsView(QWidget * parent, KConfig *config, const char * name )
     timer.start(10000);
     QObject::connect(&timer, SIGNAL(timeout()), this, SLOT(updateList()));
     updateList();
-};
+}
 
 void ImportsView::updateList()
 {
@@ -91,5 +91,5 @@ void ImportsView::updateList()
    }
    while (!feof(f));
    pclose(f);
-};
+}
 

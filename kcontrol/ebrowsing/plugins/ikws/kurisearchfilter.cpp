@@ -31,7 +31,7 @@
 #include "kurisearchfilter.h"
 
 typedef KGenericFactory<KURISearchFilter> KURISearchFilterFactory;
-K_EXPORT_COMPONENT_FACTORY(libkurisearchfilter, KURISearchFilterFactory("kuriikwsfilter"));
+K_EXPORT_COMPONENT_FACTORY(libkurisearchfilter, KURISearchFilterFactory("kuriikwsfilter"))
 
 KURISearchFilter::KURISearchFilter(QObject *parent, const char *name, 
                                    const QStringList &)

@@ -380,6 +380,6 @@ void KShortURIFilter::configure()
 }
 
 K_EXPORT_COMPONENT_FACTORY( libkshorturifilter,
-	                    KGenericFactory<KShortURIFilter>( "kshorturifilter" ) );
+	                    KGenericFactory<KShortURIFilter>( "kshorturifilter" ) )
 
 #include "kshorturifilter.moc"

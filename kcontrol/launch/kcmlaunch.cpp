@@ -31,7 +31,7 @@
 #include "kcmlaunch.h"
 
 typedef KGenericFactory<LaunchConfig, QWidget> LaunchFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_launch, LaunchFactory("kcmlaunch") );
+K_EXPORT_COMPONENT_FACTORY( kcm_launch, LaunchFactory("kcmlaunch") )
 
 
 LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringList &)

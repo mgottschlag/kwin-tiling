@@ -26,7 +26,7 @@
 #include "kcmusb.moc"
 
 typedef KGenericFactory<USBViewer, QWidget > USBFactory;
-K_EXPORT_COMPONENT_FACTORY (kcm_usb, USBFactory("kcmusb") );
+K_EXPORT_COMPONENT_FACTORY (kcm_usb, USBFactory("kcmusb") )
 
 USBViewer::USBViewer(QWidget *parent, const char *name, const QStringList &)
   : KCModule(USBFactory::instance(), parent, name)

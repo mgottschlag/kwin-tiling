@@ -33,7 +33,7 @@
 #include <qtabwidget.h>
 
 typedef KGenericFactory<KCMKonsole, QWidget> ModuleFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_konsole, ModuleFactory("kcmkonsole") );
+K_EXPORT_COMPONENT_FACTORY( kcm_konsole, ModuleFactory("kcmkonsole") )
 
 KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
 :KCModule(ModuleFactory::instance(), parent, name)

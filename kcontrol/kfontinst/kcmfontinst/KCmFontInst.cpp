@@ -59,7 +59,7 @@
 #define CFG_PREVIEWSIZE "PreviewSize"
 
 typedef KGenericFactory<CKCmFontInst, QWidget> FontInstallFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory);
+K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory)
 
 CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
             : KCModule(parent, "fontinst"),

@@ -702,7 +702,7 @@ static Status KSMNewClientProc ( SmsConn conn, SmPointer manager_data,
                 SmsDeletePropertiesProcMask |
                 SmsGetPropertiesProcMask;
     return 1;
-};
+}
 
 
 #ifdef HAVE__ICETRANSNOLISTEN

@@ -67,7 +67,7 @@
 #endif
 
 typedef KGenericFactory<KCMNic, QWidget> KCMNicFactory;
-K_EXPORT_COMPONENT_FACTORY (kcm_nic, KCMNicFactory("kcmnic"));
+K_EXPORT_COMPONENT_FACTORY (kcm_nic, KCMNicFactory("kcmnic"))
 
 struct MyNIC
 {
@@ -118,7 +118,7 @@ KCMNic::KCMNic(QWidget *parent, const char * name, const QStringList &)
    connect(m_updateButton,SIGNAL(clicked()),this,SLOT(update()));
    connect(timer,SIGNAL(timeout()),this,SLOT(update()));
    update();
-};
+}
 
 void KCMNic::update()
 {
@@ -128,7 +128,7 @@ void KCMNic::update()
    for (MyNIC* tmp=nics->first(); tmp!=0; tmp=nics->next())
       new QListViewItem(m_list,tmp->name, tmp->addr, tmp->netmask, tmp->type, tmp->state);
    delete nics;
-};
+}
 
 
 NICList* findNICs()
@@ -250,7 +250,7 @@ NICList* findNICs()
   freeifaddrs(ifap);
 #endif
    return nl;
-};
+}
 
 
 #if defined(HAVE_GETNAMEINFO) && defined(HAVE_GETIFADDRS)

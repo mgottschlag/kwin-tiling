@@ -44,7 +44,7 @@
 #include "kcmkded.moc"
 
 typedef KGenericFactory<KDEDConfig, QWidget> KDEDFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kded, KDEDFactory( "kcmkded" ) );
+K_EXPORT_COMPONENT_FACTORY( kcm_kded, KDEDFactory( "kcmkded" ) )
 
 static const QCString KXMLRPCD("kxmlrpcd");
 static const bool KXMLRPCD_DEFAULT = false;
@@ -247,7 +247,7 @@ void KDEDConfig::save() {
 		config.setGroup("General");
 		config.writeEntry("Autostart", item->isOn());
 	}
-};
+}
 
 
 void KDEDConfig::defaults()

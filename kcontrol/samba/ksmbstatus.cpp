@@ -77,14 +77,14 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
     QObject::connect(list,SIGNAL(rightButtonPressed(QListViewItem *,const QPoint &,int)),
 		    SLOT(Killmenu(QListViewItem *,const QPoint &,int)));*/
     update();
-};
+}
 
 void NetMon::processNFSLine(char *bufline, int)
 {
    QCString line(bufline);
    if (line.contains(":/"))
       new QListViewItem(list,"NFS",After(":",line),Before(":/",line));
-};
+}
 
 void NetMon::processSambaLine(char *bufline, int)
 {
@@ -237,7 +237,7 @@ void NetMon::killShowmount()
       //cerr<<"succeeded"<<endl;
    };
 
-};
+}
 
 /*void NetMon::Kill()
 {

@@ -436,7 +436,7 @@ extern "C"
   KCModule *create_access(QWidget *parent, const char *name)
   {
     return new KAccessConfig(parent, name);
-  };
+  }
 
   /* This one gets called by kcminit
 

@@ -26,7 +26,7 @@ extern "C" {
     KLocale::setMainCatalogue("kcmlocale");
     return new KLocaleFactory("kcmlocale");
   }
-};
+}
 
 /*
 extern "C" {

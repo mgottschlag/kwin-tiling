@@ -43,7 +43,7 @@ namespace KNotify
 {
     class Application;
     class KNotifyWidget;
-};
+}
 
 class KCMKNotify : public KCModule
 {

@@ -34,22 +34,4 @@ bool khotkeys_menu_entry_moved( const QString& new_P, const QString& old_P );
 void khotkeys_menu_entry_deleted( const QString& entry_P );
     } // extern "C"
 
-/*class desktop_shortcut_dialog
-    : public KDialogBase
-    {
-    Q_OBJECT
-    public:
-        desktop_shortcut_dialog( const QString& action_name_P,
-            KHotData* item_P, KHotData_dict& data_P, QString shortcut_P );
-        bool dlg_exec();
-    protected slots:
-        void key_changed();
-    protected:
-        KAccelActions map;
-        KHotData_dict& data;
-        KHotData* item;
-        QString action_name;
-        KKeyChooser* keychooser;
-    };*/
-
 #endif

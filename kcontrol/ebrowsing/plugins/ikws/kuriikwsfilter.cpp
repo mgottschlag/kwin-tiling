@@ -32,7 +32,7 @@
 #include "kuriikwsfilter.h"
 
 typedef KGenericFactory<KAutoWebSearch> KAutoWebSearchFactory;
-K_EXPORT_COMPONENT_FACTORY (libkuriikwsfilter, KAutoWebSearchFactory("kuriikwsfilter"));
+K_EXPORT_COMPONENT_FACTORY (libkuriikwsfilter, KAutoWebSearchFactory("kuriikwsfilter"))
 
 KAutoWebSearch::KAutoWebSearch(QObject *parent, const char *name, const QStringList&)
                :KURIFilterPlugin(parent, name ? name : "kuriikwsfilter", 1.0),
