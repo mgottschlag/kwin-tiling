@@ -81,19 +81,17 @@ void Tzone::fillTimeZones()
 {
     QStringList	list;
 
-    currentzone->setText(getCurrentZone());
-
     tzonelist->insertItem(i18n("[No selection]"));
 
     QFile f("/usr/share/zoneinfo/zone.tab");
     if (f.open(IO_ReadOnly))
     {
         QTextStream ts(&f);
+        QRegExp spaces("[ \t]");
         for (QString line = ts.readLine(); !line.isNull(); line = ts.readLine())
         {
             if (line.isEmpty() || line[0] == '#')
                 continue;
-            static QRegExp spaces("[ \t]");
             QStringList fields = QStringList::split(spaces, line);
             if (fields.count() >= 3)
                 list << fields[2];
@@ -104,24 +102,20 @@ void Tzone::fillTimeZones()
     tzonelist->insertStringList(list);
 }
 
-QString Tzone::getCurrentZone() const
+QString Tzone::currentZone() const
 {
     QCString result(100);
     time_t now = time(0);
     tzset();
     strftime(result.data(), result.size(), "%Z", localtime(&now));
-kdDebug() << "strftime returned: " << result << endl;
+    kdDebug() << "strftime returned: " << result << endl;
     return QString::fromLatin1(result);
 }
 
 void Tzone::load()
 {
-    KConfig *config = KGlobal::config();
-    config->setGroup("tzone");
-    int nCurrentlySet = 0;
     QString sCurrentlySet(i18n("Unknown"));
-
-    currentzone->setText(getCurrentZone());
+    currentzone->setText(currentZone());
 
     // read the currently set time zone
     QFile f("/etc/timezone");
@@ -136,14 +130,11 @@ void Tzone::load()
     {
         if (tzonelist->text(i) == sCurrentlySet)
         {
-            nCurrentlySet = i;
+            tzonelist->setCurrentItem(i);
             break;
         }
     }
-
-    tzonelist->setCurrentItem(nCurrentlySet);
 }
-
 
 void Tzone::save()
 {
@@ -176,24 +167,13 @@ void Tzone::save()
         setenv("TZ", val.ascii(), 1);
         tzset();
 
-        // write some stuff
-        KConfig *config = KGlobal::config();
-        config->setGroup("tzone");
-        config->writeEntry("TZ", tzonelist->currentItem() );
-        config->sync();
     } else {
         unlink( "/etc/timezone" );
         unlink( "/etc/localtime" );
 
-        QString val = ":" + tz;
-        setenv("TZ", val.ascii(), 1);
+        setenv("TZ", "", 1);
         tzset();
-
-        KConfig *config = KGlobal::config();
-        config->setGroup("tzone");
-        config->deleteEntry("TZ");
-        config->sync();
     }
-
-    currentzone->setText(getCurrentZone());
+    
+    currentzone->setText(currentZone());
 }

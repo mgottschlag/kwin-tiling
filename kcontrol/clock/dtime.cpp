@@ -80,53 +80,56 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
 //  v3->setColStretch( 0, 1 );
 
+  QSpacerItem *spacer1 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+  v3->addMultiCell(spacer1, 0, 1, 1, 1);
+
   hour = new QLineEdit( timeBox, "LineEdit_1" );
   connect( hour, SIGNAL(textChanged(const QString&)), SLOT(set_time()) );
   hour->setMaxLength( 2 );
   hour->setFrame( TRUE );
   hour->setValidator(new KStrictIntValidator(0, 23, hour));
-  v3->addMultiCellWidget(hour, 0, 1, 1, 1 );
+  v3->addMultiCellWidget(hour, 0, 1, 2, 2 );
 
   QLabel *dots1 = new QLabel(":", timeBox);
   dots1->setMinimumWidth( 7 );
   dots1->setAlignment( QLabel::AlignCenter );
-  v3->addMultiCellWidget(dots1, 0, 1, 2, 2 );
+  v3->addMultiCellWidget(dots1, 0, 1, 3, 3 );
 
   minute = new QLineEdit( timeBox, "LineEdit_2" );
   connect( minute, SIGNAL(textChanged(const QString&)), SLOT(set_time()) );
   minute->setMaxLength( 2 );
   minute->setFrame( TRUE );
   minute->setValidator(new KStrictIntValidator(0, 59, minute));
-  v3->addMultiCellWidget(minute, 0, 1, 3, 3 );
+  v3->addMultiCellWidget(minute, 0, 1, 4, 4 );
 
   QLabel *dots2 = new QLabel(":", timeBox);
   dots2->setMinimumWidth( 7 );
   dots2->setAlignment( QLabel::AlignCenter );
-  v3->addMultiCellWidget(dots2, 0, 1, 4, 4 );
+  v3->addMultiCellWidget(dots2, 0, 1, 5, 5 );
 
   second = new QLineEdit( timeBox, "LineEdit_3" );
   connect( second, SIGNAL(textChanged(const QString&)), SLOT(set_time()) );
   second->setMaxLength( 2 );
   second->setFrame( TRUE );
   second->setValidator(new KStrictIntValidator(0, 59, second));
-  v3->addMultiCellWidget(second, 0, 1, 5, 5 );
+  v3->addMultiCellWidget(second, 0, 1, 6, 6 );
 
   int w = 2*hour->fontMetrics().width("00");
   hour->setMaximumWidth(w);
   minute->setMaximumWidth(w);
   second->setMaximumWidth(w);
 
-  v3->addColSpacing( 6, 5 );
+  v3->addColSpacing(7, 7);
 
   QPushButton* plusPB = new QPushButton( "+", timeBox, "plusPB" );
   connect( plusPB, SIGNAL(pressed()), this, SLOT(inc_time()) );
   plusPB->setAutoRepeat( TRUE );
-  v3->addWidget(plusPB, 0, 7 );
+  v3->addWidget(plusPB, 0, 8 );
 
   QPushButton* minusPB = new QPushButton( "-", timeBox, "minusPB" );
   connect( minusPB, SIGNAL(pressed()), this, SLOT(dec_time()) );
   minusPB->setAutoRepeat( TRUE );
-  v3->addWidget(minusPB, 1, 7 );
+  v3->addWidget(minusPB, 1, 8 );
 
   QString wtstr = i18n("Here you can change the system time. Click into the"
     " hours, minutes or seconds field to change the relevant value, either"
@@ -136,6 +139,9 @@ Dtime::Dtime(QWidget * parent, const char *name)
   QWhatsThis::add( hour, wtstr );
   QWhatsThis::add( minute, wtstr );
   QWhatsThis::add( second, wtstr );
+
+  QSpacerItem *spacer3 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+  v3->addMultiCell(spacer3, 0, 1, 9, 9);
 
   plusPB->setFixedSize( 20, hour->height()/2 );
   minusPB->setFixedSize( 20, hour->height()/2 );
