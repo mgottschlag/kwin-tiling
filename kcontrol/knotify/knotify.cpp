@@ -104,3 +104,4 @@ QString KNotifyWidget::quickHelp()
 		    "</ul>");
 }
 
+
