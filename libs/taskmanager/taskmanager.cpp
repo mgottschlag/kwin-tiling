@@ -51,6 +51,7 @@ KWinModule* kwin_module = new KWinModule();
 TaskManager::TaskManager(QObject *parent, const char *name)
     : QObject(parent, name), _active(0), _startup_info( NULL )
 {
+    KGlobal::locale()->insertCatalogue("libtaskmanager");
     connect(kwin_module, SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)));
     connect(kwin_module, SIGNAL(windowRemoved(WId)), SLOT(windowRemoved(WId)));
     connect(kwin_module, SIGNAL(activeWindowChanged(WId)), SLOT(activeWindowChanged(WId)));
