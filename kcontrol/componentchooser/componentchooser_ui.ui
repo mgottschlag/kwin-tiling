@@ -43,7 +43,7 @@
                 <string>Default Component</string>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>Here you can change the component program. Components are programs that handle basic tasks, like the terminal emulator, the text editor and the e-mail client. Different KDE applications need sometimes to invoke a console emulator, send a mail or display some text. To do so consistently, these applications call allways the same components. You can choose here which programs these components are.</string>
+                <string>Here you can change the component program. Components are programs that handle basic tasks, like the terminal emulator, the text editor and the email client. Different KDE applications sometimes need to invoke a console emulator, send a mail or display some text. To do so consistently, these applications always call the same components. You can choose here which programs these components are.</string>
             </property>
             <vbox>
                 <property name="name">
@@ -114,8 +114,8 @@
             </property>
             <property name="whatsThis" stdset="0">
                 <string>&lt;qt&gt;
-&lt;p&gt;This list shows the configurable components types. Click the component you want to configure.&lt;/p&gt;
-&lt;p&gt;On this dialog you can change KDE default components. Components are programs that handle basic tasks, like the terminal emulator, the text editor and the e-mail client. Different KDE applications need sometimes to invoke a console emulator, send a mail or display some text. To do so consistently, these applications call allways the same components. Here you can select which programs these components are.&lt;/p&gt;
+&lt;p&gt;This list shows the configurable component types. Click the component you want to configure.&lt;/p&gt;
+&lt;p&gt;In this dialog you can change KDE default components. Components are programs that handle basic tasks, like the terminal emulator, the text editor and the email client. Different KDE applications sometimes need to invoke a console emulator, send a mail or display some text. To do so consistently, these applications always call the same components. Here you can select which programs these components are.&lt;/p&gt;
 &lt;/qt&gt;</string>
             </property>
         </widget>
