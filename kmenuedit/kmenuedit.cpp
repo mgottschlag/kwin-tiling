@@ -23,6 +23,8 @@
 #include <kaction.h>
 #include <kstdaction.h>
 #include <kdebug.h>
+#include <dcopclient.h>
+#include <kapp.h>
 
 #include "menueditview.h"
 #include "kmenuedit.h"
@@ -65,7 +67,7 @@ void KMenuEdit::setupActions()
     (void)new KAction(i18n("New &Item"), "filenew", 0, actionCollection(), "newitem");
     (void)new KAction(i18n("&Delete"), "editdelete", 0, actionCollection(), "delete");
 
-    KStdAction::quit(this, SLOT( close() ), actionCollection());
+    KStdAction::quit(this, SLOT( slotClose() ), actionCollection());
     KStdAction::cut(0, 0, actionCollection());
     KStdAction::copy(0, 0, actionCollection());
     KStdAction::paste(0, 0, actionCollection());
@@ -75,4 +77,13 @@ void KMenuEdit::setupView()
 {
     _view = new MenuEditView(actionCollection(), this);
     setCentralWidget(_view);
+}
+
+void KMenuEdit::slotClose()
+{
+    DCOPClient *dcc = kapp->dcopClient();
+    if ( !dcc->isAttached() )
+        dcc->attach();
+    dcc->send("kded", "kbuildsycoca", "recreate()", QByteArray());
+    close();
 }

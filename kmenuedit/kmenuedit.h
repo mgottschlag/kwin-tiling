@@ -36,6 +36,9 @@ protected:
     void setupView();
     void setupActions();
 
+protected slots:
+    void slotClose();
+
 protected:
     MenuEditView *_view;
 };
