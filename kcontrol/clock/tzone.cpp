@@ -184,26 +184,26 @@ void Tzone::save()
             t << selectedzone;
             fTimezoneFile.close();
         }
+
+        tz = "/usr/share/zoneinfo/" + tzonelist->currentText();
+        tz.truncate(tz.length()-1);
+
+        kdDebug() << "Set time zone " << tz << endl;
+
+        // This is extremely ugly. Who knows the better way?
+        unlink( "/etc/localtime" );
+        if (symlink( QFile::encodeName(tz), "/etc/localtime" ) != 0)
+            KMessageBox::error( 0,  i18n("Error setting new Time Zone!"),
+                                i18n("Timezone Error"));
+
+        QString val = ":" + tz;
+        setenv("TZ", val.ascii(), 1);
+        tzset();
+
+        // write some stuff
+        KConfig *config = KGlobal::config();
+        config->setGroup("tzone");
+        config->writeEntry("TZ", tzonelist->currentItem() );
+        config->sync();
     }
-
-    tz = "/usr/share/zoneinfo/" + tzonelist->currentText();
-    tz.truncate(tz.length()-1);
-
-    kdDebug() << "Set time zone " << tz << endl;
-
-    // This is extremely ugly. Who knows the better way?
-    unlink( "/etc/localtime" );
-    if (symlink( QFile::encodeName(tz), "/etc/localtime" ) != 0)
-        KMessageBox::error( 0,  i18n("Error setting new Time Zone!"),
-                            i18n("Timezone Error"));
-
-    QString val = ":" + tz;
-    setenv("TZ", val.ascii(), 1);
-    tzset();
-
-    // write some stuff
-    KConfig *config = KGlobal::config();
-    config->setGroup("tzone");
-    config->writeEntry("TZ", tzonelist->currentItem() );
-    config->sync();
 }
