@@ -54,6 +54,7 @@ public slots:
 protected slots:
     void slotChanged(const QString&);
     void slotChanged();
+    void launchcb_clicked();
     void termcb_clicked();
     void uidcb_clicked();
     //void keyButtonPressed();
@@ -65,7 +66,7 @@ protected:
     KKeyButton   *_keyEdit;
     KURLRequester *_execEdit, *_pathEdit;
     KLineEdit    *_termOptEdit, *_uidEdit;
-    QCheckBox    *_terminalCB, *_uidCB;
+    QCheckBox    *_terminalCB, *_uidCB, *_launchCB;
     KIconButton  *_iconButton;
     QGroupBox    *_path_group, *_term_group, *_uid_group, *general_group_keybind;
     QLabel *_termOptLabel, *_uidLabel, *_pathLabel, *_nameLabel, *_commentLabel, *_execLabel, *_typeLabel;

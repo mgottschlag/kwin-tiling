@@ -51,7 +51,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     // general group
     QGroupBox *general_group = new QGroupBox(this);
-    QGridLayout *grid = new QGridLayout(general_group, 4, 2,
+    QGridLayout *grid = new QGridLayout(general_group, 5, 2,
                                         KDialog::marginHint(),
                                         KDialog::spacingHint());
     _isDeleted = true;
@@ -66,6 +66,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _execEdit = new KURLRequester(general_group);
 	_execEdit->lineEdit()->setAcceptDrops(false);
     _typeEdit = new KComboBox(general_group);
+    _launchCB = new QCheckBox(i18n("Enable &launch feedback"), general_group);
 
     // setup labels
     _nameLabel = new QLabel(_nameEdit, i18n("&Name:"), general_group);
@@ -86,12 +87,14 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
             SLOT(slotChanged(const QString&)));
     connect(_typeEdit, SIGNAL(activated(const QString&)),
             SLOT(slotChanged(const QString&)));
+    connect(_launchCB, SIGNAL(clicked()), SLOT(launchcb_clicked()));
 
     // add line inputs to the grid
     grid->addMultiCellWidget(_nameEdit, 0, 0, 1, 1);
     grid->addMultiCellWidget(_commentEdit, 1, 1, 1, 1);
     grid->addMultiCellWidget(_execEdit, 2, 2, 1, 1);
     grid->addMultiCellWidget(_typeEdit, 3, 3, 1, 1);
+    grid->addMultiCellWidget(_launchCB, 4, 4, 0, 1);
 
 	// add values to the Type Combobox
 	_typeEdit->insertItem(i18n("Application")); //has to match the DesktopType enum!
@@ -206,6 +209,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _commentEdit->setEnabled(false);
     _execEdit->setEnabled(false);
     _typeEdit->setEnabled(false);
+    _launchCB->setEnabled(false);
     _nameLabel->setEnabled(false);
     _commentLabel->setEnabled(false);
     _execLabel->setEnabled(false);
@@ -243,6 +247,7 @@ void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, b
     _iconButton->setEnabled(!isDeleted);
     _execEdit->setEnabled(isDF && !isDeleted);
     _typeEdit->setEnabled(isDF && !isDeleted);
+    _launchCB->setEnabled(isDF && !isDeleted);
     _nameLabel->setEnabled(!isDeleted);
     _commentLabel->setEnabled(!isDeleted);
     _execLabel->setEnabled(isDF && !isDeleted);
@@ -275,6 +280,7 @@ void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, b
         _pathEdit->lineEdit()->setText("");
         _termOptEdit->setText("");
         _uidEdit->setText("");
+        _launchCB->setChecked(false);
         _terminalCB->setChecked(false);
         _uidCB->setChecked(false);
         return;
@@ -286,6 +292,8 @@ void BasicTab::setDesktopFile(const QString& desktopFile, const QString &name, b
     _termOptEdit->setText(df.readEntry("TerminalOptions"));
     _uidEdit->setText(df.readEntry("X-KDE-Username"));
 
+    _launchCB->setChecked(df.readBoolEntry("X-KDE-StartupNotify", true));
+      
     if(df.readNumEntry("Terminal", 0) == 1)
         _terminalCB->setChecked(true);
     else
@@ -334,6 +342,7 @@ void BasicTab::apply( bool desktopFileNeedsSave )
     df.writeEntry("TerminalOptions", _termOptEdit->text());
     df.writeEntry("X-KDE-SubstituteUID", _uidCB->isChecked());
     df.writeEntry("X-KDE-Username", _uidEdit->text());
+    df.writeEntry("X-KDE-StartupNotify", _launchCB->isChecked());
 
     df.sync();
 }
@@ -355,6 +364,11 @@ void BasicTab::slotChanged(const QString&)
 void BasicTab::slotChanged()
 {
     emit changed( true );
+}
+
+void BasicTab::launchcb_clicked()
+{
+    emit changed();
 }
 
 void BasicTab::termcb_clicked()
