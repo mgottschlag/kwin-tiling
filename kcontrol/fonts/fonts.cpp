@@ -187,7 +187,6 @@ void FontUseItem::writeFont()
     config = KGlobal::config();
     config->setGroup(_rcgroup);
     config->writeEntry(_rckey, _font, true, true);
-    config->sync();
   } else {
     config = new KSimpleConfig(locateLocal("config", _rcfile));
     config->setGroup(_rcgroup);
@@ -502,6 +501,8 @@ void KFonts::save()
 
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() )
       i->writeFont();
+  
+  KGlobal::config()->sync();
 
   // KDE-1.x support
   KSimpleConfig* config = new KSimpleConfig( QCString(::getenv("HOME")) + "/.kderc" );
