@@ -376,7 +376,7 @@ void Task::iconify()
 
 void Task::deiconify()
 {
-    KWin::setActiveWindow( _win );
+    activate();
 }
 
 void Task::close()
@@ -392,7 +392,8 @@ void Task::raise()
 
 void Task::activate()
 {
-    KWin::setActiveWindow(_win);
+    NETRootInfo ri( qt_xdisplay(), 0 );
+    ri.setActiveWindow( _win );
 }
 
 void Task::toDesktop(int desk)
