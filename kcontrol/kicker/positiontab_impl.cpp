@@ -74,7 +74,16 @@ void PositionTab::load()
 
     c->setGroup("General");
 
-    m_sizeGroup->setButton(c->readNumEntry("Size", 2));
+    // Magic numbers stolen from kdebase/kicker/core/global.cpp
+    // PGlobal::sizeValue()
+    switch(c->readNumEntry("Size", 46)) {
+    case 24: m_sizeGroup->setButton(0); break;
+    case 30: m_sizeGroup->setButton(1); break;
+    case 46: m_sizeGroup->setButton(2); break;
+    case 58: m_sizeGroup->setButton(3); break;
+    default: m_sizeGroup->setButton(4); break;
+    }
+
     m_locationGroup->setButton(c->readNumEntry("Position", 3));
     m_alignGroup->setButton(c->readNumEntry("Alignment",
 		    QApplication::reverseLayout() ? 2 : 0));
@@ -122,7 +131,16 @@ void PositionTab::save()
 
     c->setGroup("General");
 
-    c->writeEntry("Size", m_sizeGroup->id(m_sizeGroup->selected()));
+    // Magic numbers stolen from kdebase/kicker/core/global.cpp
+    // PGlobal::sizeValue()
+    switch( m_sizeGroup->id(m_sizeGroup->selected()) ) {
+    case 0: c->writeEntry("Size",24); break;
+    case 1: c->writeEntry("Size",30); break;
+    case 2: c->writeEntry("Size",46); break;
+    case 3: c->writeEntry("Size",58); break;
+    default: break; // Just leave the old entry
+    }
+
     c->writeEntry("Position", m_locationGroup->id(m_locationGroup->selected()));
     c->writeEntry("Alignment", m_alignGroup->id(m_alignGroup->selected()));
     c->writeEntry( "SizePercentage", m_percentSlider->value() );
