@@ -600,12 +600,14 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, QWidget *_parent )
 	for (; sess; sess = sess->next, ns++ )
 	    itm = new QListViewItem( lv,
 		*sess->user ?
-		    QString::fromLatin1( sess->user ) + ": " +  sess->session :
+		    i18n("user: session type", "%1: %2")
+			.arg( sess->user ).arg( sess->session ) :
 		    i18n("Remote Login"),
 		sess->vt ?
-		    QString::fromLatin1( sess->display ) +
-			", vt" + QString::number( sess->vt ) :
+		    i18n("display, virtual terminal", "%1, vt%2")
+			.arg( sess->display ).arg( sess->vt ) :
 		    QString::fromLatin1( sess->display ) );
+	lv->header()->adjustHeaderSize();
 	int fw = lv->frameWidth() * 2;
 	QSize hds( lv->header()->sizeHint() );
 	lv->setMinimumWidth( fw + hds.width() +
