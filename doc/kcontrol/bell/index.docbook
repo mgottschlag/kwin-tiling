@@ -5,7 +5,7 @@
 ]>
 
 <article lang="&language;">
-<articleinfo>	
+<articleinfo>
 <authorgroup>
 <author>
 <firstname>Pat</firstname>
@@ -24,8 +24,8 @@
 
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
-<date>2002-10-14</date>
-<releaseinfo>3.1</releaseinfo>
+<date>2003-10-16</date>
+<releaseinfo>3.2</releaseinfo>
 <keywordset>
 <keyword>KDE</keyword>
 <keyword>KControl</keyword>
