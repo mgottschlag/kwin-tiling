@@ -49,7 +49,7 @@ class CKioFonts : public KIO::SlaveBase
 
     void listDir(const KURL &url);
     int  getSize(const QStringList &top, const QString &sub, bool sys=true);
-    void listDir(const QStringList &top, const QString &sub, bool sys=true);
+    void listDir(const QStringList &top, const QString &sub, const KURL &url, bool sys=true);
     void stat(const KURL &url);
     bool createStatEntry(KIO::UDSEntry &entry, const KURL &url, bool sys=true);
     void get(const KURL &url);
