@@ -47,6 +47,32 @@ KPrivacyManager::~KPrivacyManager()
 {
 }
 
+bool KPrivacyManager::clearThumbnails()
+{
+  // http://freedesktop.org/Standards/Home
+  // http://triq.net/~jens/thumbnail-spec/index.html
+
+  QDir thumbnailDir( QDir::homeDirPath() + "/.thumbnails/normal");
+  thumbnailDir.setFilter( QDir::Files );
+  QStringList entries = thumbnailDir.entryList();
+  for( QStringList::Iterator it = entries.begin() ; it != entries.end() ; ++it)
+    if(!thumbnailDir.remove(*it)) m_error = true;
+  if(m_error) return m_error;
+
+  thumbnailDir.setPath(QDir::homeDirPath() + "/.thumbnails/large");
+  entries = thumbnailDir.entryList();
+  for( QStringList::Iterator it = entries.begin() ; it != entries.end() ; ++it)
+    if(!thumbnailDir.remove(*it)) m_error = true;
+  if(m_error) return m_error;
+
+  thumbnailDir.setPath(QDir::homeDirPath() + "/.thumbnails/fail");
+  entries = thumbnailDir.entryList();
+  for( QStringList::Iterator it = entries.begin() ; it != entries.end() ; ++it)
+    if(!thumbnailDir.remove(*it)) m_error = true;
+  
+  return m_error;
+}
+
 bool KPrivacyManager::clearRunCommandHistory() const
 {
   return kapp->dcopClient()->send( "kdesktop", "KDesktopIface", "clearCommandHistory()", "" );
@@ -118,13 +144,13 @@ bool KPrivacyManager::clearWebHistory()
 bool KPrivacyManager::clearFavIcons()
 {
   QDir favIconDir(KGlobal::dirs()->saveLocation( "cache", "favicons/" ));
-
+  favIconDir.setFilter( QDir::Files );
+  
   QStringList entries = favIconDir.entryList();
 
   // erase all files in favicon directory
   for( QStringList::Iterator it = entries.begin() ; it != entries.end() ; ++it)
     if(!favIconDir.remove(*it)) m_error = true;
-
   return m_error;
 }
 

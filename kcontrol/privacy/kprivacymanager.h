@@ -37,6 +37,7 @@ public:
 
     bool clearAllCookies() const;
     bool clearSavedClipboardContents();
+    bool clearThumbnails();
     bool clearRunCommandHistory() const;
     bool clearFormCompletion() const;
     bool clearWebHistory();

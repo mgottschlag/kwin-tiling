@@ -59,6 +59,7 @@ private:
     KListViewItem *generalCLI;
     KListViewItem *webbrowsingCLI;
 
+    QCheckListItem *clearThumbnails;	
     QCheckListItem *clearRunCommandHistory;
     QCheckListItem *clearAllCookies;
     QCheckListItem *clearSavedClipboardContents;

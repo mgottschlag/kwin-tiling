@@ -85,6 +85,8 @@ Privacy::Privacy(QWidget *parent, const char *name)
   generalCLI->setOpen(true);
   webbrowsingCLI->setOpen(true);
 
+  clearThumbnails = new QCheckListItem(generalCLI,
+      i18n("Thumbnail Cache"),QCheckListItem::CheckBox);
   clearRunCommandHistory = new QCheckListItem(generalCLI,
       i18n("Run Command History"),QCheckListItem::CheckBox);
   clearAllCookies = new QCheckListItem(webbrowsingCLI,
@@ -107,6 +109,7 @@ Privacy::Privacy(QWidget *parent, const char *name)
   QWhatsThis::add(sw, i18n("Check all cleanup actions you would like to perform. These will be executed by pressing the button below"));
   QWhatsThis::add(cleaningDialog->cleanupButton, i18n("Immediately performs the cleanup actions selected above"));
 
+  clearThumbnails->setText(1, i18n("Clears all cached thumbnails"));
   clearRunCommandHistory->setText(1, i18n("Clears the history of commands run through the Run Command tool on the desktop"));
   clearAllCookies->setText(1, i18n("Clears all stored cookies set by websites"));
   clearWebHistory->setText(1, i18n("Clears the history of visited websites"));
@@ -120,6 +123,7 @@ Privacy::Privacy(QWidget *parent, const char *name)
   connect(sw, SIGNAL(selectionChanged()), SLOT(configChanged()));
 
   // store all entries in a list for easy access later on
+  checklist.append(clearThumbnails);
   checklist.append(clearRunCommandHistory);
   checklist.append(clearAllCookies);
   checklist.append(clearSavedClipboardContents);
@@ -152,6 +156,7 @@ void Privacy::load()
   {
     KConfigGroupSaver saver(c, "Cleaning");
 
+    clearThumbnails->setOn(c->readBoolEntry("ClearThumbnails", true));
     clearRunCommandHistory->setOn(c->readBoolEntry("ClearRunCommandHistory", true));
     clearAllCookies->setOn(c->readBoolEntry("ClearAllCookies", true));
     clearSavedClipboardContents->setOn(c->readBoolEntry("ClearSavedClipboardContents", true));
@@ -188,6 +193,7 @@ void Privacy::save()
   {
     KConfigGroupSaver saver(c, "Cleaning");
 
+    c->writeEntry("ClearThumbnails", clearThumbnails->isOn());
     c->writeEntry("ClearRunCommandHistory", clearRunCommandHistory->isOn());
     c->writeEntry("ClearAllCookies", clearAllCookies->isOn());
     c->writeEntry("ClearSavedClipboardContents", clearSavedClipboardContents->isOn());
@@ -262,6 +268,9 @@ void Privacy::cleanup()
       QString statusText = i18n("Clearing %1...").arg(item->text());
       cleaningDialog->statusTextEdit->append(statusText);
 
+      if(item == clearThumbnails)
+        error = m_privacymanager->clearThumbnails();
+
       if(item == clearRunCommandHistory)
         error = !m_privacymanager->clearRunCommandHistory();
 
@@ -287,7 +296,7 @@ void Privacy::cleanup()
         error = !m_privacymanager->clearQuickStartMenu();
 
       if(item == clearFavIcons)
-        error = !m_privacymanager->clearFavIcons();
+        error = m_privacymanager->clearFavIcons();
 
       if(error)
       {
