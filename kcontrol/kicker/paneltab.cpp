@@ -265,6 +265,8 @@ void PanelTab::load()
 
   bool showHBs = c->readBoolEntry("ShowHideButtons", true);
   show_hbs->setChecked(showHBs);
+  if ( !showHBs )
+      hb_preview->setPixmap(hb_disabled);
 
   highlight_hbs->setChecked(c->readBoolEntry("HighlightHideButtons", true));
   hb_input->setValue(c->readNumEntry("HideButtonSize", 10));
