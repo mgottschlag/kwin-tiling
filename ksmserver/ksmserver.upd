@@ -1,0 +1,6 @@
+# Move session config files from $KDEHOME/share/config to $KDEHOME/share/config/session
+Id=kde3
+File=ksmserverrc
+Group=Session
+Options=overwrite
+Script=move_session_config.sh,sh

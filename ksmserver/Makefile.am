@@ -36,6 +36,10 @@ ksmserver_LDADD = ksmserver.la
 picsdir = $(kde_datadir)/ksmserver/pics
 pics_DATA = shutdownkonq.png
 
+update_DATA = ksmserver.upd move_session_config.sh
+updatedir = $(kde_datadir)/kconf_update
+
+
 check_PROGRAMS = testsh
 testsh_SOURCES = test.cpp shutdown.cpp
 
