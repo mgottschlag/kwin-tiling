@@ -526,7 +526,9 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 			if (!ar[1])
 				goto miss;
 			sdr.force = SHUT_CANCEL;
-			if (fd >= 0 && !strcmp( ar[1], "status" )) {
+			if (!strcmp( ar[1], "status" )) {
+				if (fd < 0)
+					goto bust;
 				if (ar[2])
 					goto exce;
 				bp = cbuf;
@@ -682,7 +684,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					sdRec = sdr;
 				}
 			}
-		} else if (!strcmp( ar[0], "listbootoptions" )) {
+		} else if (fd >= 0 && !strcmp( ar[0], "listbootoptions" )) {
 			char **opts;
 			int def, cur, i, j;
 
