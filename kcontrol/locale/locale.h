@@ -26,14 +26,14 @@
 #define __KLOCALECONFIG_H__
 
 
-#include <kcmodule.h>
+#include <qwidget.h>
 
 class QLabel;
 class KLocale;
 class KLanguageCombo;
 class KLocaleSample;
 
-class KLocaleConfig : public KCModule
+class KLocaleConfig : public QWidget
 {
   Q_OBJECT
 
@@ -48,22 +48,17 @@ public:
   void defaults();
 
 public slots:
-  void updateSample();
   void reTranslateLists();
-    
+
+signals:
+  void translate();
+  void resample();
+
 private:
   KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate;
 
-  // samples for how things will display w/selected locale
-  QLabel *textSample;
-  QLabel *numberSample;
-  QLabel *moneySample;
-  QLabel *timeSample;
-  QLabel *dateSample;
-
   bool changedFlag;
   KLocale *locale;
-  KLocaleSample *sample;
 
 private slots:
   void changedCountry(int);

@@ -44,14 +44,8 @@
 
 #define i18n(a) (a)
 
-extern "C" {
-  KCModule *create_localemon(QWidget *parent, const char *name) {
-    return new KLocaleConfigMoney(parent, name);
-  }
-}
-
 KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
- : KCModule(parent, name)
+ : QWidget(parent, name)
 {
   QLabel *label;
   QGroupBox *gbox;
@@ -128,11 +122,6 @@ KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
   cmbMonNegMonSignPos->insertItem("4");
 
   tl1->activate();
-
-  // Examples
-  gbox = new QGroupBox("1", this, i18n("Examples"));
-  tl->addWidget(gbox);
-  sample = new KLocaleSample(gbox);
 
   tl->addStretch(1);
   tl->activate();
@@ -218,57 +207,52 @@ void KLocaleConfigMoney::defaults()
 {
 }
 
-void KLocaleConfigMoney::updateSample()
-{
-  sample->update();
-}
-
 void KLocaleConfigMoney::slotMonCurSymChanged(const QString &t)
 {
   KGlobal::locale()->_currencySymbol = t;
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfigMoney::slotMonDecSymChanged(const QString &t)
 {
   KGlobal::locale()->_monetaryDecimalSymbol = t;
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfigMoney::slotMonThoSepChanged(const QString &t)
 {
   KGlobal::locale()->_monetaryThousandsSeparator = t;
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfigMoney::slotMonFraDigChanged(const QString &t)
 {
   KGlobal::locale()->_fracDigits = (int)KGlobal::locale()->readNumber(t);
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfigMoney::slotMonPosPreCurSymChanged()
 {
   KGlobal::locale()->_positivePrefixCurrencySymbol = chMonPosPreCurSym->isChecked();
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfigMoney::slotMonNegPreCurSymChanged()
 {
   KGlobal::locale()->_negativePrefixCurrencySymbol = chMonNegPreCurSym->isChecked();
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfigMoney::slotMonPosMonSignPosChanged(int i)
 {
   KGlobal::locale()->_positiveMonetarySignPosition = (KLocale::SignPosition)i;
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfigMoney::slotMonNegMonSignPosChanged(int i)
 {
   KGlobal::locale()->_negativeMonetarySignPosition = (KLocale::SignPosition)i;
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfigMoney::reset()

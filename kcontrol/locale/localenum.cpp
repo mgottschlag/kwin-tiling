@@ -26,6 +26,7 @@
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
+#include <qlayout.h>
 
 #include <kglobal.h>
 
@@ -37,21 +38,14 @@
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
 
-#include "klocalesample.h"
 #include "main.h"
 #include "localenum.h"
 #include "localenum.moc"
 
 #define i18n(a) (a)
 
-extern "C" {
-  KCModule *create_localenum(QWidget *parent, const char *name) {
-    return new KLocaleConfigNumber(parent, name);
-  }
-}
-
 KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
- : KCModule(parent, name)
+ : QWidget(parent, name)
 {
   QLabel *label;
   QGroupBox *gbox;
@@ -94,11 +88,6 @@ KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
   tl1->addWidget(edMonNegSign, 4, 2);
 
   tl1->activate();
-
-  // Examples
-  gbox = new QGroupBox("1", this, i18n("Examples"));
-  tl->addWidget(gbox);
-  sample = new KLocaleSample(gbox);
 
   tl->addStretch(1);
   tl->activate();
@@ -146,34 +135,28 @@ void KLocaleConfigNumber::defaults()
 {
 }
 
-void KLocaleConfigNumber::updateSample()
-{
-  if (sample)
-    sample->update();
-}
-
 void KLocaleConfigNumber::slotDecSymChanged(const QString &t)
 {
   KGlobal::locale()->_decimalSymbol = t;
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfigNumber::slotThoSepChanged(const QString &t)
 {
   KGlobal::locale()->_thousandsSeparator = t;
-  sample->update();
+  emit resample();
 }
 
 void KLocaleConfigNumber::slotMonPosSignChanged(const QString &t)
 {
   KGlobal::locale()->_positiveSign = t;
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfigNumber::slotMonNegSignChanged(const QString &t)
 {
   KGlobal::locale()->_negativeSign = t;
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 

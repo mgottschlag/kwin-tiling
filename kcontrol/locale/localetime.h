@@ -25,16 +25,15 @@
 #ifndef __KLOCALECONFIGTIME_H__
 #define __KLOCALECONFIGTIME_H__
 
-#include <kcmodule.h>
+#include <qwidget.h>
 
 class QCheckBox;
 class QComboBox;
 class QLineEdit;
 
 class KLanguageCombo;
-class KLocaleSample;
 
-class KLocaleConfigTime : public KCModule
+class KLocaleConfigTime : public QWidget
 {
   Q_OBJECT
 
@@ -48,7 +47,6 @@ public:
 
 public slots:
   void reset();
-  void updateSample();
 
 private slots:
   // Time & dates
@@ -56,9 +54,11 @@ private slots:
   void slotDateFmtChanged(const QString &t);
   void slotDateFmtShortChanged(const QString &t);
 
-private:
-  KLocaleSample *sample;
+signals:
+  void translate();
+  void resample();
 
+private:
   // Time & dates
   QLineEdit *edTimeFmt;
   QLineEdit *edDateFmt;

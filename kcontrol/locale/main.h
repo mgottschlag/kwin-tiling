@@ -19,34 +19,42 @@
    
   */
 
-#include <kcontrol.h>
+#include <qtabwidget.h>
+#include <qgroupbox.h>
+
+#include <kcmodule.h>
+
 
 class KLocaleConfig;
 class KLocaleConfigMoney;
 class KLocaleConfigNumber;
 class KLocaleConfigTime;
+class KLocaleSample;
 
-class KLocaleApplication : public KControlApplication
+class KLocaleApplication : public KCModule
 {
 public:
-  KLocaleApplication(int &argc, char **arg, const char *name);
+  KLocaleApplication(QWidget *parent, const char *name);
 
-  void init();
-  void apply();
-  void defaultValues();
+  void load();
+  void save();
+  void defaults();
 
-  void reTranslate();
   void reTranslate(QObjectListIt it);
 
+public slots:
+  void reTranslate();
   void reset();
-  void resetNum();
-  void resetMon();
-  void resetTime();
   void updateSample();
+  void update() { reset(); reTranslate(); updateSample(); };
 
 private:
-  KLocaleConfig *locale;
+  QTabWidget          *tab;
+  KLocaleConfig       *locale;
   KLocaleConfigNumber *localenum;
-  KLocaleConfigMoney *localemon;
-  KLocaleConfigTime *localetime;
+  KLocaleConfigMoney  *localemon;
+  KLocaleConfigTime   *localetime;
+
+  QGroupBox           *gbox;
+  KLocaleSample       *sample;
 };

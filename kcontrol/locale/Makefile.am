@@ -5,16 +5,15 @@ LDADD    = $(LIB_KDEUI) $(LIB_KDECORE)
 
 SUBDIRS = pics default
 
-bin_PROGRAMS = kcmlocale
+lib_LTLIBRARIES = libkcm_locale.la
+libkcm_locale_la_SOURCES = main.cpp locale.cpp klangcombo.cpp klocalesample.cpp localenum.cpp localemon.cpp localetime.cpp
 
-kcmlocale_SOURCES = main.cpp locale.cpp klangcombo.cpp klocalesample.cpp localenum.cpp localemon.cpp localetime.cpp
 METASOURCES = locale.moc klangcombo.moc localenum.moc localemon.moc localetime.moc
-noinst_HEADERS = locale.h klangcombo.h klocalesample.h localenum.h localemon.h localetime.h
+noinst_HEADERS = main.h locale.h klangcombo.h klocalesample.h localenum.h localemon.h localetime.h
 EXTRA_DIST = kcmlocalerc 
 
-lib_LTLIBRARIES = libkcm_locale.la
-libkcm_locale_la_SOURCES = locale.cpp klangcombo.cpp klocalesample.cpp localenum.cpp localemon.cpp localetime.cpp
 libkcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries) $(KDE_RPATH)
+
 KDE_ICON = locale
 
 messages:

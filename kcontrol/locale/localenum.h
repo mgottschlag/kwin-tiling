@@ -25,16 +25,15 @@
 #ifndef __KLOCALECONFIGNUM_H__
 #define __KLOCALECONFIGNUM_H__
 
-#include <kcmodule.h>
+#include <qwidget.h>
 
 class QCheckBox;
 class QComboBox;
 class QLineEdit;
 
 class KLanguageCombo;
-class KLocaleSample;
 
-class KLocaleConfigNumber : public KCModule
+class KLocaleConfigNumber : public QWidget
 {
   Q_OBJECT
 
@@ -48,7 +47,6 @@ public:
 
 public slots:
   void reset();
-  void updateSample();
 
 private slots:
   // Numbers
@@ -57,9 +55,11 @@ private slots:
   void slotDecSymChanged(const QString &t);
   void slotThoSepChanged(const QString &t);
 
-private:
-  KLocaleSample *sample;
+signals:
+  void translate();
+  void resample();
 
+private:
   // Numbers
   QLineEdit *edDecSym;
   QLineEdit *edThoSep;

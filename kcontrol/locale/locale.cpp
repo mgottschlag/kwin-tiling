@@ -47,14 +47,8 @@
 
 #define i18n(a) (a)
 
-extern "C" {
-  KCModule *create_locale(QWidget *parent, const char *name) {
-    return new KLocaleConfig(parent, name);
-  }
-}
-
 KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
-  : KCModule (parent, name)
+  : QWidget (parent, name)
 {
     locale =  KGlobal::locale();
 
@@ -112,10 +106,6 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     tl1->addWidget(comboDate, 5, 2);
 
     tl1->activate();
-
-    gbox = new QGroupBox(this, i18n("Examples"));
-    tl->addWidget(gbox);
-    sample = new KLocaleSample(gbox);
 
     tl->addStretch(1);
     tl->activate();
@@ -260,10 +250,8 @@ void KLocaleConfig::defaults()
   comboNumber->setCurrentItem("C");
   comboMoney->setCurrentItem("C");
   comboDate->setCurrentItem("C");
-
-  ((KLocaleApplication*)kapp)->reset();
-  ((KLocaleApplication*)kapp)->updateSample();
-  ((KLocaleApplication*)kapp)->reTranslate();
+  
+  emit resample();
 }
 
 void KLocaleConfig::changedCountry(int i)
@@ -291,9 +279,7 @@ void KLocaleConfig::changedCountry(int i)
   comboMoney->setCurrentItem(country);
   comboDate->setCurrentItem(country);
 
-  ((KLocaleApplication*)kapp)->reset();
-  ((KLocaleApplication*)kapp)->updateSample();
-  ((KLocaleApplication*)kapp)->reTranslate();
+  emit resample();
 }
 
 void KLocaleConfig::changedLanguage(int i)
@@ -307,8 +293,7 @@ void KLocaleConfig::changedLanguage(int i)
                       QString::null);
   reTranslateLists();
 
-  ((KLocaleApplication*)kapp)->updateSample();
-  ((KLocaleApplication*)kapp)->reTranslate();
+  emit resample();
 }
 
 void KLocaleConfig::changedNumber(int i)
@@ -320,8 +305,7 @@ void KLocaleConfig::changedNumber(int i)
                       comboMoney->tag(i),
                       QString::null,
                       QString::null);
-  ((KLocaleApplication*)kapp)->resetNum();
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfig::changedMoney(int i)
@@ -333,8 +317,7 @@ void KLocaleConfig::changedMoney(int i)
                       QString::null,
                       comboDate->tag(i),
                       QString::null);
-  ((KLocaleApplication*)kapp)->resetMon();
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfig::changedTime(int i)
@@ -346,13 +329,7 @@ void KLocaleConfig::changedTime(int i)
                       QString::null,
                       QString::null,
                       comboDate->tag(i));
-  ((KLocaleApplication*)kapp)->resetTime();
-  ((KLocaleApplication*)kapp)->updateSample();
-}
-
-void KLocaleConfig::updateSample()
-{
-  sample->update();
+  emit resample();
 }
 
 void KLocaleConfig::reTranslateLists()

@@ -32,9 +32,8 @@ class QComboBox;
 class QLineEdit;
 
 class KLanguageCombo;
-class KLocaleSample;
 
-class KLocaleConfigMoney : public KCModule
+class KLocaleConfigMoney : public QWidget
 {
   Q_OBJECT
 
@@ -48,7 +47,6 @@ public:
 
 public slots:
   void reset();
-  void updateSample();
 
 private slots:
   // Money
@@ -60,6 +58,10 @@ private slots:
   void slotMonNegPreCurSymChanged();
   void slotMonPosMonSignPosChanged(int i);
   void slotMonNegMonSignPosChanged(int i);
+
+signals:
+  void translate();
+  void resample();
 
 private:
   KLocaleSample *sample;

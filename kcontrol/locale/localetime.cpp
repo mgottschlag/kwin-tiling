@@ -26,6 +26,7 @@
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
+#include <qlayout.h>
 
 #include <kglobal.h>
 
@@ -37,21 +38,14 @@
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
 
-#include "klocalesample.h"
 #include "main.h"
 #include "localetime.h"
 #include "localetime.moc"
 
 #define i18n(a) (a)
 
-extern "C" {
-  KCModule *create_localetime(QWidget *parent, const char *name) {
-    return new KLocaleConfigTime(parent, name);
-  }
-}
-
 KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
- : KCModule(parent, name)
+ : QWidget(parent, name)
 {
   QLabel *label;
   QGroupBox *gbox;
@@ -88,11 +82,6 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   tl1->addWidget(edDateFmtShort, 3, 2);
 
   tl1->activate();
-
-  // Examples
-  gbox = new QGroupBox("1", this, i18n("Examples"));
-  tl->addWidget(gbox);
-  sample = new KLocaleSample(gbox);
 
   tl->addStretch(1);
   tl->activate();
@@ -144,28 +133,22 @@ void KLocaleConfigTime::defaults()
 {
 }
 
-void KLocaleConfigTime::updateSample()
-{
-  if (sample)
-    sample->update();
-}
-
 void KLocaleConfigTime::slotTimeFmtChanged(const QString &t)
 {
   KGlobal::locale()->_timefmt = t;
-  ((KLocaleApplication*)kapp)->updateSample();
+  emit resample();
 }
 
 void KLocaleConfigTime::slotDateFmtChanged(const QString &t)
 {
   KGlobal::locale()->_datefmt = t;
-  sample->update();
+  emit resample();
 }
 
 void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
 {
   KGlobal::locale()->_datefmtshort = t;
-  sample->update();
+  emit resample();
 }
 
 void KLocaleConfigTime::reset()
