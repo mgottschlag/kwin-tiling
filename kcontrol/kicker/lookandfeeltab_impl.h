@@ -15,40 +15,34 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#ifndef __main_h__
-#define __main_h__
+#ifndef __lookandfeeltab_impl_h__
+#define __lookandfeeltab_impl_h__
 
-#include <kcmodule.h>
+#include <qstring.h>
+#include <qpixmap.h>
 
-class QTabWidget;
-class GeneralTab;
-class LookAndFeelTab;
-class MenuTab;
-class ButtonTab;
-class AppletTab;
+#include "lookandfeeltab.h"
 
-class KickerConfig : public KCModule
+class LookAndFeelTab : public LookAndFeelTabBase
 {
     Q_OBJECT
 
 public:
-    KickerConfig(QWidget *parent = 0L, const char *name = 0L);
+    LookAndFeelTab( QWidget *parent=0, const char* name=0 );
 
     void load();
     void save();
     void defaults();
-    QString quickHelp() const;
 
-public slots:
-    void configChanged();
+signals:
+    void changed();
+
+protected slots:
+    void browse_theme();
 
 private:
-    QTabWidget     *tab;
-    GeneralTab     *generaltab;
-    LookAndFeelTab *lnftab;
-    MenuTab        *menutab;
-    ButtonTab      *buttontab;
-    AppletTab      *applettab;
+    QString theme;
+    QPixmap theme_preview;
 };
 
-#endif // __main_h__
+#endif

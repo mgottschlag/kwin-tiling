@@ -15,40 +15,26 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#ifndef __main_h__
-#define __main_h__
 
-#include <kcmodule.h>
+#ifndef __generaltab_impl_h__
+#define __generaltab_impl_h__
 
-class QTabWidget;
-class GeneralTab;
-class LookAndFeelTab;
-class MenuTab;
-class ButtonTab;
-class AppletTab;
+#include "generaltab.h"
 
-class KickerConfig : public KCModule
+class GeneralTab : public GeneralTabBase
 {
     Q_OBJECT
 
 public:
-    KickerConfig(QWidget *parent = 0L, const char *name = 0L);
+    GeneralTab( QWidget *parent=0, const char* name=0 );
 
     void load();
     void save();
     void defaults();
-    QString quickHelp() const;
 
-public slots:
-    void configChanged();
-
-private:
-    QTabWidget     *tab;
-    GeneralTab     *generaltab;
-    LookAndFeelTab *lnftab;
-    MenuTab        *menutab;
-    ButtonTab      *buttontab;
-    AppletTab      *applettab;
+signals:
+    void changed();
 };
 
-#endif // __main_h__
+#endif
+
