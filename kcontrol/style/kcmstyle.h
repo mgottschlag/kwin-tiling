@@ -6,11 +6,11 @@
  * Copyright (C) 2002 Daniel Molkentin <molkentin@kde.org>
  *
  * Portions Copyright (C) TrollTech AS.
- * 
+ *
  * Based on kcmdisplay
  * Copyright (C) 1997-2002 kcmdisplay Authors.
  * (see Help -> About Style Settings)
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
  * License version 2 as published by the Free Software Foundation.
@@ -44,7 +44,7 @@ class QListBox;
 class QListViewItem;
 class QStyle;
 class QTabWidget;
-class QVBoxLayout; 
+class QVBoxLayout;
 class WidgetPreview;
 class QSettings;
 class QSpacerItem;
@@ -59,7 +59,7 @@ struct StyleEntry {
 };
 
 class KCMStyle : public KCModule
-{ 
+{
 	Q_OBJECT
 
 public:
@@ -83,8 +83,6 @@ protected:
 	void addWhatsThis();
 
 protected slots:
-//	void setDirty();
-	void setMacDirty();
 	void setEffectsDirty();
 	void setToolbarsDirty();
 	void setStyleDirty();
@@ -95,7 +93,7 @@ protected slots:
 	void menuEffectTypeChanged();
 
 private:
-	bool m_bMacDirty, m_bEffectsDirty, m_bStyleDirty, m_bToolbarsDirty;
+	bool m_bEffectsDirty, m_bStyleDirty, m_bToolbarsDirty;
 	QDict<StyleEntry> styleEntries;
 
 	QVBoxLayout* mainLayout;
@@ -147,15 +145,14 @@ private:
 	// Page3 widgets
 	QGroupBox* gbToolbarSettings;
 	QGroupBox* gbVisualAppearance;
-	
+
 	QCheckBox* cbHoverButtons;
 	QCheckBox* cbTransparentToolbars;
 	QCheckBox* cbEnableTooltips;
 	QComboBox* comboToolbarIcons;
-	
+
 	QCheckBox* cbIconsOnButtons;
 	QCheckBox* cbTearOffHandles;
-	QCheckBox* cbMacMenubar;
 };
 
 #endif // __KCMSTYLE_H

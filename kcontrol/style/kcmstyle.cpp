@@ -133,7 +133,6 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kcmstyle, GeneralFactory );
 KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	: KCModule( parent, name ), appliedStyle(NULL)
 {
-	m_bMacDirty = false;
 	m_bEffectsDirty = false;
 	m_bStyleDirty= false;
 	m_bToolbarsDirty = false;
@@ -185,9 +184,6 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	cbTearOffHandles = new QCheckBox( i18n("Show tear-off handles in &popup menus"), gbWidgetStyle );
 	gbWidgetStyleLayout->addWidget( cbTearOffHandles );
 	cbTearOffHandles->hide(); // reenable when the corresponding Qt method is virtual and properly reimplemented
-
-	cbMacMenubar = new QCheckBox( i18n("&Menubar on top of the screen in the style of MacOS"), gbWidgetStyle );
-	gbWidgetStyleLayout->addWidget( cbMacMenubar );
 
 	stylePreview = new StylePreview( page1 );
 
@@ -358,7 +354,6 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	connect( cbIconsOnButtons,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
 	connect( cbTearOffHandles,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
 	connect( comboToolbarIcons,     SIGNAL(highlighted(int)), this, SLOT(setToolbarsDirty()));
-	connect( cbMacMenubar,          SIGNAL(toggled(bool)),    this, SLOT(setMacDirty()));
 
 	addWhatsThis();
 
@@ -390,7 +385,6 @@ void KCMStyle::load()
 	// Page3 - Misc.
 	loadMisc( config );
 
-	m_bMacDirty = false;
 	m_bEffectsDirty = false;
 	m_bStyleDirty= false;
 	m_bToolbarsDirty = false;
@@ -400,8 +394,7 @@ void KCMStyle::load()
 void KCMStyle::save()
 {
 	// Don't do anything if we don't need to.
-	if ( !(m_bToolbarsDirty | m_bMacDirty |
-		   m_bEffectsDirty  | m_bStyleDirty ) )
+	if ( !(m_bToolbarsDirty | m_bEffectsDirty | m_bStyleDirty ) )
 		return;
 
 	bool allowMenuTransparency = false;
@@ -487,7 +480,6 @@ void KCMStyle::save()
 	// Misc page
 	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), true, true );
 	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), true, true );
-	config.writeEntry( "macStyle", cbMacMenubar->isChecked(), true, true );
 
 	config.setGroup("General");
 	config.writeEntry( "widgetStyle", currentStyle );
@@ -525,10 +517,7 @@ void KCMStyle::save()
 	if ( m_bStyleDirty )
 		KIPC::sendMessageAll(KIPC::StyleChanged);
 
-	if (m_bMacDirty)
-		kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", QByteArray());
-
-	if ( m_bToolbarsDirty || m_bMacDirty )
+	if ( m_bToolbarsDirty )
 		// ##### FIXME - Doesn't apply all settings correctly due to bugs in
 		// KApplication/KToolbar
 		KIPC::sendMessageAll(KIPC::ToolbarStyleChanged);
@@ -543,7 +532,6 @@ void KCMStyle::save()
         kapp->dcopClient()->send( "kicker", "kicker", "configure()", data );
 
 	// Clean up
-	m_bMacDirty      = false;
 	m_bEffectsDirty  = false;
 	m_bToolbarsDirty = false;
 	m_bStyleDirty    = false;
@@ -608,7 +596,6 @@ void KCMStyle::defaults()
 	comboToolbarIcons->setCurrentItem(0);
 	cbIconsOnButtons->setChecked(false);
 	cbTearOffHandles->setChecked(false);
-	cbMacMenubar->setChecked(false);
 }
 
 
@@ -633,13 +620,6 @@ QString KCMStyle::quickHelp() const
 			"This module allows you to modify the visual appearance "
 			"of user interface elements, such as the widget style "
 			"and effects.");
-}
-
-
-void KCMStyle::setMacDirty()
-{
-	m_bMacDirty = true;
-	emit changed(true);
 }
 
 void KCMStyle::setEffectsDirty()
@@ -730,8 +710,8 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 	// Select the current style
 	// Do not use cbStyle->listBox() as this may be NULL for some styles when
 	// they use QPopupMenus for the drop-down list!
-	
-	// ##### Since Trolltech likes to seemingly copy & paste code, 
+
+	// ##### Since Trolltech likes to seemingly copy & paste code,
 	// QStringList::findItem() doesn't have a Qt::StringComparisonMode field.
 	// We roll our own (yuck)
 	cfgStyle = cfgStyle.lower();
@@ -744,7 +724,7 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 		if ( txt == cfgStyle )	// ExactMatch
 			break;
 		else if ( txt.contains( cfgStyle ) )
-			break; 
+			break;
 		else if ( txt.contains( QApplication::style().className() ) )
 			break;
 		item = 0;
@@ -959,9 +939,7 @@ void KCMStyle::loadMisc( KSimpleConfig& config )
 	cbIconsOnButtons->setChecked(config.readBoolEntry("ShowIconsOnPushButtons", false));
 	cbEnableTooltips->setChecked(!config.readBoolEntry("EffectNoTooltip", false));
 	cbTearOffHandles->setChecked(config.readBoolEntry("InsertTearOffHandle", false));
-	cbMacMenubar->setChecked(config.readBoolEntry("macStyle", false));
 
-	m_bMacDirty = false;
 	m_bToolbarsDirty = false;
 }
 
@@ -1021,12 +999,6 @@ void KCMStyle::addWhatsThis()
 							"show so called tear-off handles. If you click them, you get the menu "
 							"inside a widget. This can be very helpful when performing "
 							"the same action multiple times.") );
-	QWhatsThis::add( cbMacMenubar, i18n("If this option is selected, applications"
-							" won't have their menubar attached to their own window anymore."
-							" Instead, there is one menu bar at the top of the screen which shows"
-							" the menu of the currently active application. You might recognize"
-							" this behavior from MacOS.") );
-
 }
 
 #include "kcmstyle.moc"
