@@ -22,8 +22,6 @@
  */
 
 #include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qlayout.h>

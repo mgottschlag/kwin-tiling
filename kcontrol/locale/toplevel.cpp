@@ -20,8 +20,6 @@
    
   */
 
-#include <qcombobox.h>
-#include <qgroupbox.h>
 #include <qlabel.h>
 #include <qvgroupbox.h>
 #include <qobjectlist.h>
@@ -36,7 +34,6 @@
 #include <kmessagebox.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <kapp.h>
 #include <kprocess.h>
 
 #include "klocaleadv.h"
