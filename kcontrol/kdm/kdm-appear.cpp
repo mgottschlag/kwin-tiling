@@ -32,6 +32,7 @@
 #include <qradiobutton.h>
 #include <qwhatsthis.h>
 #include <qvalidator.h>
+#include <qstylefactory.h> 
 
 #include <klocale.h>
 #include <klineedit.h>
@@ -41,15 +42,11 @@
 #include <kio/netaccess.h>
 #include <kiconloader.h>
 
-#include "kdm-appear.moc"
+#include "kdm-appear.h"
 
 
 extern KSimpleConfig *c;
 
-const char *styles[] = {
-	"KDE", "Windows", "Platinum", 
-	"Motif", "Motif+", "CDE", "SGI"
-};
 
 KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   : KCModule(parent, name)
@@ -74,7 +71,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QLabel *label = new QLabel(greetstr_lined, i18n("&Greeting:"), hlp);
   hlay->addWidget(label);
   connect(greetstr_lined, SIGNAL(textChanged(const QString&)),
-      this, SLOT(changed()));
+      SLOT(changed()));
   hlay->addWidget(greetstr_lined);
   wtstr = i18n("This is the string KDM will display in the login window. "
            "You may want to put here some nice greeting or information "
@@ -100,10 +97,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   logoRadio = new QRadioButton( i18n("Sho&w logo"), helper );
   QButtonGroup *buttonGroup = new QButtonGroup( helper );
   label->setBuddy( buttonGroup );
-  connect( buttonGroup, SIGNAL(clicked(int)),
-       this, SLOT(slotAreaRadioClicked(int)) );
-  connect( buttonGroup, SIGNAL(clicked(int)),
-       this, SLOT(changed()) );
+  connect( buttonGroup, SIGNAL(clicked(int)), SLOT(slotAreaRadioClicked(int)) );
+  connect( buttonGroup, SIGNAL(clicked(int)), SLOT(changed()) );
   buttonGroup->hide();
   buttonGroup->insert(noneRadio, KdmNone);
   buttonGroup->insert(clockRadio, KdmClock);
@@ -125,8 +120,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   logobutton->installEventFilter(this); // for drag and drop
   logobutton->setMinimumSize(24, 24);
   logobutton->setMaximumSize(108, 108);
-  connect(logobutton, SIGNAL(clicked()),
-	  this, SLOT(slotLogoButtonClicked()));
+  connect(logobutton, SIGNAL(clicked()), SLOT(slotLogoButtonClicked()));
   hglay->addWidget(logoLabel, 1, 0);
   hglay->addWidget(logobutton, 1, 1, AlignCenter);
   hglay->addRowSpacing(1, 110);
@@ -152,10 +146,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   posSpecifyRadio = new QRadioButton( i18n("Spec&ify"), helper );
   buttonGroup = new QButtonGroup( helper );
   label->setBuddy( buttonGroup );
-  connect( buttonGroup, SIGNAL(clicked(int)),
-	   this, SLOT(slotPosRadioClicked(int)) );
-  connect( buttonGroup, SIGNAL(clicked(int)),
-	   this, SLOT(changed()) );
+  connect( buttonGroup, SIGNAL(clicked(int)), SLOT(slotPosRadioClicked(int)) );
+  connect( buttonGroup, SIGNAL(clicked(int)), SLOT(changed()) );
   buttonGroup->hide();
   buttonGroup->insert(posCenterRadio, 0);
   buttonGroup->insert(posSpecifyRadio, 1);
@@ -196,12 +188,10 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay = new QGridLayout( hlp, 2, 3, KDialog::spacingHint() );
   hglay->setColStretch(2, 1);
 
-  label = new QLabel(i18n("GUI S&tyle:"), hlp);
   guicombo = new QComboBox(false, hlp);
-  label->setBuddy( guicombo );
-  for (unsigned i = 0; i < sizeof(styles) / sizeof(styles[0]); i++)
-    guicombo->insertItem(QString::fromLatin1(styles[i]), i);
-  connect(guicombo, SIGNAL(activated(int)), this, SLOT(changed()));
+  guicombo->insertStringList(QStyleFactory::keys());
+  label = new QLabel(guicombo, i18n("GUI S&tyle:"), hlp);
+  connect(guicombo, SIGNAL(activated(int)), SLOT(changed()));
   hglay->addWidget(label, 0, 0);
   hglay->addWidget(guicombo, 0, 1);
   wtstr = i18n("You can choose a basic GUI style here that will be "
@@ -215,7 +205,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   echocombo->insertItem(i18n("No echo"));
   echocombo->insertItem(i18n("One Star"));
   echocombo->insertItem(i18n("Three Stars"));
-  connect(echocombo, SIGNAL(activated(int)), this, SLOT(changed()));
+  connect(echocombo, SIGNAL(activated(int)), SLOT(changed()));
   hglay->addWidget(label, 1, 0);
   hglay->addWidget(echocombo, 1, 1);
   wtstr = i18n("You can choose whether and how KDM shows your password when you type it.");
@@ -237,7 +227,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   label->setBuddy( langcombo );
   langcombo->setFixedHeight( langcombo->sizeHint().height() );
   hbox->addWidget(langcombo, 1, 1);
-  connect(langcombo, SIGNAL(activated(int)), this, SLOT(changed()));
+  connect(langcombo, SIGNAL(activated(int)), SLOT(changed()));
 
   wtstr = i18n("Here you can choose the language used by KDM. This setting doesn't affect"
     " a user's personal settings that will take effect after login.");
@@ -380,7 +370,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 	    KIO::NetAccess::del(pixurl);
 	    QString msg = i18n("There was an error loading the image:\n"
 			       "%1\n"
-			       "It will not be saved...")
+			       "It will not be saved.")
 			       .arg(pixurl.path());
 	    KMessageBox::sorry(this, msg);
 	}
@@ -401,7 +391,7 @@ void KDMAppearanceWidget::save()
 
   c->writeEntry("LogoPixmap", KGlobal::iconLoader()->iconPath(logopath, KIcon::Desktop, true));
 
-  c->writeEntry("GUIStyle", styles[guicombo->currentItem()]);
+  c->writeEntry("GUIStyle", guicombo->currentText());
 
   c->writeEntry("EchoMode", echocombo->currentItem() == 0 ? "NoEcho" :
 			    echocombo->currentItem() == 1 ? "OneStar" :
@@ -439,12 +429,7 @@ void KDMAppearanceWidget::load()
   setLogo( c->readEntry("LogoPixmap", ""));
 
   // Check the GUI type
-  QString guistr = c->readEntry("GUIStyle", "KDE");
-  for (unsigned i = 0; i < sizeof(styles) / sizeof(styles[0]); i++)
-    if (guistr == QString::fromLatin1(styles[i])) {
-      guicombo->setCurrentItem(i);
-      break;
-    }
+  guicombo->setCurrentText (c->readEntry("GUIStyle", "Default"));
 
   // Check the echo mode
   QString echostr = c->readEntry("EchoMode", "OneStar");
@@ -497,3 +482,5 @@ void KDMAppearanceWidget::changed()
 {
   emit KCModule::changed(true);
 }
+
+#include "kdm-appear.moc"
