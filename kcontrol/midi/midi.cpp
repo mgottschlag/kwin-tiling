@@ -78,6 +78,7 @@ KMidConfig::KMidConfig(QWidget *parent, const char *name, const QStringList &)
 
 KMidConfig::~KMidConfig()
 {
+  delete devman;
 }
 
 void KMidConfig::configChanged()

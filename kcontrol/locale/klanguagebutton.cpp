@@ -33,6 +33,7 @@
 
 KLanguageButton::~KLanguageButton()
 {
+  delete m_tags;
 }
 
 KLanguageButton::KLanguageButton( QWidget * parent, const char *name )
