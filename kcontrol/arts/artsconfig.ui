@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>422</width>
+            <width>414</width>
             <height>465</height>
         </rect>
     </property>
@@ -59,22 +59,37 @@
                         <name>spacing</name>
                         <number>6</number>
                     </property>
-                    <widget row="0"  column="0"  rowspan="1"  colspan="2" >
+                    <widget row="2"  column="0"  rowspan="1"  colspan="4" >
                         <class>QCheckBox</class>
                         <property stdset="1">
                             <name>name</name>
-                            <cstring>startServer</cstring>
+                            <cstring>networkTransparent</cstring>
                         </property>
                         <property stdset="1">
                             <name>text</name>
-                            <string>&amp;Start aRts soundserver on KDE startup</string>
+                            <string>Enable &amp;network transparency</string>
                         </property>
                         <property>
                             <name>whatsThis</name>
-                            <string>If this option is enabled, the arts soundserver will be started on KDE startup. Recommended if you want sound.</string>
+                            <string>This option allows sound requests coming in from over the network to be accepted, instead of just limiting the server to the local computer.</string>
                         </property>
                     </widget>
-                    <widget row="7"  column="1" >
+                    <widget row="5"  column="0" >
+                        <class>QCheckBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>autoSuspend</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>&amp;Autosuspend if idle for</string>
+                        </property>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>The sound server will suspend itself if idle for this period of time.</string>
+                        </property>
+                    </widget>
+                    <widget row="7"  column="3" >
                         <class>QPushButton</class>
                         <property stdset="1">
                             <name>name</name>
@@ -85,7 +100,7 @@
                             <string>&amp;Test sound</string>
                         </property>
                     </widget>
-                    <spacer row="7"  column="0" >
+                    <spacer row="7"  column="0"  rowspan="1"  colspan="3" >
                         <property>
                             <name>name</name>
                             <cstring>Spacer1</cstring>
@@ -106,52 +121,22 @@
                             </size>
                         </property>
                     </spacer>
-                    <widget row="3"  column="0"  rowspan="1"  colspan="2" >
+                    <widget row="0"  column="0"  rowspan="1"  colspan="4" >
                         <class>QCheckBox</class>
                         <property stdset="1">
                             <name>name</name>
-                            <cstring>x11Comm</cstring>
+                            <cstring>startServer</cstring>
                         </property>
                         <property stdset="1">
                             <name>text</name>
-                            <string>Exchange security and reference info over the &amp;X11 server</string>
+                            <string>&amp;Start aRts soundserver on KDE startup</string>
                         </property>
                         <property>
                             <name>whatsThis</name>
-                            <string>If you want network transparency or if you use the soundserver only when you use X11, enable this option.</string>
+                            <string>If this option is enabled, the arts soundserver will be started on KDE startup. Recommended if you want sound.</string>
                         </property>
                     </widget>
-                    <widget row="4"  column="0"  rowspan="1"  colspan="2" >
-                        <class>QCheckBox</class>
-                        <property stdset="1">
-                            <name>name</name>
-                            <cstring>startRealtime</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>text</name>
-                            <string>Run soundserver with &amp;realtime priority</string>
-                        </property>
-                        <property>
-                            <name>whatsThis</name>
-                            <string>On systems which support realtime scheduling, if you have sufficient permissions, this option will enable a very high priority for processing sound requests.</string>
-                        </property>
-                    </widget>
-                    <widget row="2"  column="0"  rowspan="1"  colspan="2" >
-                        <class>QCheckBox</class>
-                        <property stdset="1">
-                            <name>name</name>
-                            <cstring>networkTransparent</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>text</name>
-                            <string>Enable &amp;network transparency</string>
-                        </property>
-                        <property>
-                            <name>whatsThis</name>
-                            <string>This option allows sound requests coming in from over the network to be accepted, instead of just limiting the server to the local computer.</string>
-                        </property>
-                    </widget>
-                    <widget row="1"  column="0"  rowspan="1"  colspan="2" >
+                    <widget row="1"  column="0"  rowspan="1"  colspan="4" >
                         <class>Line</class>
                         <property stdset="1">
                             <name>name</name>
@@ -162,7 +147,22 @@
                             <enum>Horizontal</enum>
                         </property>
                     </widget>
-                    <spacer row="5"  column="1" >
+                    <widget row="5"  column="1" >
+                        <class>QSpinBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>suspendTime</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>maxValue</name>
+                            <number>9999</number>
+                        </property>
+                        <property stdset="1">
+                            <name>value</name>
+                            <number>60</number>
+                        </property>
+                    </widget>
+                    <spacer row="6"  column="3" >
                         <property>
                             <name>name</name>
                             <cstring>Spacer2</cstring>
@@ -183,6 +183,47 @@
                             </size>
                         </property>
                     </spacer>
+                    <widget row="3"  column="0"  rowspan="1"  colspan="4" >
+                        <class>QCheckBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>x11Comm</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>Exchange security and reference info over the &amp;X11 server</string>
+                        </property>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>If you want network transparency or if you use the soundserver only when you use X11, enable this option.</string>
+                        </property>
+                    </widget>
+                    <widget row="4"  column="0"  rowspan="1"  colspan="4" >
+                        <class>QCheckBox</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>startRealtime</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>Run soundserver with &amp;realtime priority</string>
+                        </property>
+                        <property>
+                            <name>whatsThis</name>
+                            <string>On systems which support realtime scheduling, if you have sufficient permissions, this option will enable a very high priority for processing sound requests.</string>
+                        </property>
+                    </widget>
+                    <widget row="5"  column="2"  rowspan="1"  colspan="2" >
+                        <class>QLabel</class>
+                        <property stdset="1">
+                            <name>name</name>
+                            <cstring>TextLabel1</cstring>
+                        </property>
+                        <property stdset="1">
+                            <name>text</name>
+                            <string>seconds</string>
+                        </property>
+                    </widget>
                 </grid>
             </widget>
             <widget>
@@ -380,15 +421,15 @@
                                     <cstring>latencySlider</cstring>
                                 </property>
                                 <property stdset="1">
-                                    <name>orientation</name>
-                                    <enum>Horizontal</enum>
+                                    <name>minValue</name>
+                                    <number>10</number>
                                 </property>
                                 <property stdset="1">
                                     <name>maxValue</name>
                                     <number>500</number>
                                 </property>
                                 <property stdset="1">
-                                    <name>minValue</name>
+                                    <name>pageStep</name>
                                     <number>10</number>
                                 </property>
                                 <property stdset="1">
@@ -396,12 +437,12 @@
                                     <number>150</number>
                                 </property>
                                 <property stdset="1">
-                                    <name>tickmarks</name>
-                                    <enum>Right</enum>
+                                    <name>orientation</name>
+                                    <enum>Horizontal</enum>
                                 </property>
                                 <property stdset="1">
-                                    <name>pageStep</name>
-                                    <number>10</number>
+                                    <name>tickmarks</name>
+                                    <enum>Right</enum>
                                 </property>
                                 <property stdset="1">
                                     <name>tickInterval</name>

@@ -36,6 +36,7 @@
 
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
+#include <qspinbox.h>
 #include <artsconfig.h>
 
 class KArtsModule : public KCModule
@@ -67,9 +68,10 @@ private:
   void GetSettings( void );
 
   QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm,
-  			*fullDuplex, *customDevice, *customRate;
+  			*fullDuplex, *customDevice, *customRate, *autoSuspend;
   QLineEdit *deviceName;
   QLineEdit *samplingRate;
+  QSpinBox *suspendTime;
   ArtsConfig *artsConfig;
   KConfig *config;
   int fragmentCount;

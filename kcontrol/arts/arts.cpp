@@ -66,7 +66,7 @@ extern "C" {
 
 QString createArgs(bool netTrans, bool duplex, int fragmentCount, int fragmentSize,
 					QString deviceName, int rate, int bits, QString audioIO,
-					QString addOptions)
+					QString addOptions, bool autoSuspend, int suspendTime)
 {
     QString args;
 
@@ -93,6 +93,9 @@ QString createArgs(bool netTrans, bool duplex, int fragmentCount, int fragmentSi
 
 	if (bits)
 	  args += QString(" -b %1").arg(bits);
+
+	if (autoSuspend)
+		args += QString(" -s %1").arg(suspendTime);
 
 	if (addOptions.length() > 0)
       args += " " + addOptions;
@@ -169,6 +172,8 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 	deviceName = artsConfig->deviceName;
 	customRate = artsConfig->customRate;
 	samplingRate = artsConfig->samplingRate;
+	autoSuspend = artsConfig->autoSuspend;
+	suspendTime = artsConfig->suspendTime;
 
    	QString deviceHint = i18n("Normally, the sound server defaults to using the device called <b>/dev/dsp</b> for sound output. That should work in most cases. An exception is for instance if you are using devfs, then you should use <b>/dev/sound/dsp</b> instead. Other alternatives are things like <b>/dev/dsp0</b> or <b>/dev/dsp1</b> if you have a soundcard that supports multiple outputs, or you have multiple soundcards.");
 
@@ -204,6 +209,8 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     connect(artsConfig->addOptions,SIGNAL(textChanged(const QString&)),SLOT(slotChanged()));
     connect(artsConfig->soundQuality,SIGNAL(highlighted(int)),SLOT(slotChanged()));
 	connect(artsConfig->latencySlider,SIGNAL(sliderMoved(int)),SLOT(slotChanged()));
+	connect(artsConfig->autoSuspend,SIGNAL(clicked()),SLOT(slotChanged()));
+	connect(artsConfig->suspendTime,SIGNAL(valueChanged(const QString &)),SLOT(slotChanged()));
 
 	connect(artsConfig->testSound,SIGNAL(clicked()),SLOT(slotTestSound()));
 }
@@ -216,6 +223,8 @@ void KArtsModule::GetSettings( void )
     networkTransparent->setChecked(config->readBoolEntry("NetworkTransparent",false));
     x11Comm->setChecked(config->readBoolEntry("X11GlobalComm",false));
     fullDuplex->setChecked(config->readBoolEntry("FullDuplex",false));
+    autoSuspend->setChecked(config->readBoolEntry("AutoSuspend",true));
+    suspendTime->setValue(config->readNumEntry("SuspendTime",60));
 	deviceName->setText(config->readEntry("DeviceName",""));
 	customDevice->setChecked(deviceName->text() != "");
 	artsConfig->addOptions->setText(config->readEntry("AddOptions",""));
@@ -284,6 +293,8 @@ void KArtsModule::saveParams( void )
     config->writeEntry("AddOptions",addOptions);
 	config->writeEntry("Latency",latency);
 	config->writeEntry("Bits",bits);
+	config->writeEntry("AutoSuspend", autoSuspend->isChecked());
+	config->writeEntry("SuspendTime", suspendTime->value());
 
 	calculateLatency();
 	// Save arguments string in case any other process wants to restart artsd.
@@ -291,7 +302,7 @@ void KArtsModule::saveParams( void )
 	config->writeEntry("Arguments",
 		createArgs(networkTransparent->isChecked(), fullDuplex->isChecked(),
 					fragmentCount, fragmentSize, dev, rate, bits,
-					audioIO, addOptions));
+					audioIO, addOptions, autoSuspend->isChecked(), suspendTime->value()));
 
 	config->sync();
 }
@@ -356,6 +367,8 @@ void KArtsModule::defaults()
     networkTransparent->setChecked(false);
     x11Comm->setChecked(false);
     fullDuplex->setChecked(false);
+	autoSuspend->setChecked(true);
+	suspendTime->setValue(60);
 	customDevice->setChecked(false);
 	deviceName->setText("");
 	customRate->setChecked(false);
@@ -427,6 +440,7 @@ void KArtsModule::updateWidgets()
 
 	artsConfig->soundIO->setEnabled(startServer->isChecked());
 	artsConfig->testSound->setEnabled(startServer->isChecked());
+    autoSuspend->setEnabled(startServer->isChecked());
 
 	calculateLatency();
 }
