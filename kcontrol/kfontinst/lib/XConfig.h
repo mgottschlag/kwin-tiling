@@ -51,8 +51,8 @@ class CXConfig
             // NOTE: In future X11 config may allow "fontconfig" to be specified as a path!
         };
 
-        TPath(const QString &d, bool u, EType t, bool o)
-           : dir(CMisc::dirSyntax(d)), unscaled(u), toBeRemoved(false), orig(o), type(t) {}
+        TPath(const QString &d, bool u=false, EType t=DIR, bool o=true)
+           : dir(DIR==t ? CMisc::dirSyntax(d) : d), unscaled(u), toBeRemoved(false), orig(o), type(t) {}
 
         static EType getType(const QString &d);
 
