@@ -406,7 +406,7 @@ void KArtsModule::slotTestSound()
 
 	KProcess test;
 	test << "artsplay";
-	test << locate("sound", "KDE_Startup.wav");
+	test << locate("sound", "KDE_Startup_1.ogg");
 	test.start(KProcess::DontCare);
 }
 
@@ -417,7 +417,7 @@ void KArtsModule::slotTestMIDI()
 
 	//KProcess test;
 	//test << "artsplay";
-	//test << locate("sound", "KDE_Startup.wav");
+	//test << locate("sound", "KDE_Startup_1.ogg");
 	//test.start(KProcess::DontCare);
 }
 
