@@ -700,6 +700,8 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     clean = false;
     wm = windowManager;
 
+    shutdownType = KApplication::ShutdownTypeNone;
+
     state = Idle;
     dialogActive = false;
     saveSession = false;
@@ -818,6 +820,21 @@ void KSMServer::cleanUp()
     FreeAuthenticationData(numTransports, authDataEntries);
     signal(SIGTERM, SIG_DFL);
     signal(SIGINT, SIG_DFL);
+
+    if ( shutdownType != KApplication::ShutdownTypeNone ) {
+        QFile fifo( fifoName );
+        if ( fifo.open( IO_WriteOnly | IO_Raw ) ) {
+            QCString cmd( "shutdown\t" );
+            cmd.append( shutdownType == KApplication::ShutdownTypeReboot ?
+                        "reboot\t" : "halt\t" );
+            cmd.append( shutdownMode == KApplication::ShutdownModeForceNow ?
+                        "forcenow\n" :
+                        shutdownMode == KApplication::ShutdownModeTryNow ?
+                        "trynow\n" : "schedule\n" );
+            fifo.writeBlock( cmd.data(), cmd.length() );
+            fifo.close();
+        }
+    }
 }
 
 
@@ -912,16 +929,14 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
 
     bool maysd, maynuke;
     KApplication::ShutdownMode defsdmode;
-    QString fifoname;
     QStringList dmopt =
         QStringList::split( QChar( ',' ),
                             QString::fromLatin1( ::getenv( "XDM_MANAGED" ) ) );
     if ( dmopt.isEmpty() || dmopt.first()[0] != QChar( '/' ) ) {
-        fifoname = QString::null;
         maysd = maynuke = false;
         defsdmode = KApplication::ShutdownModeSchedule;
     } else {
-        fifoname = dmopt.first();
+        fifoName = dmopt.first();
         maysd = dmopt.contains( QString::fromLatin1( "maysd" ) ) != 0;
         maynuke = dmopt.contains( QString::fromLatin1( "mayfn" ) ) != 0;
         if ( dmopt.contains( QString::fromLatin1( "fn" ) ) != 0 )
@@ -965,6 +980,9 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
     }
 
     if ( logoutConfirmed ) {
+
+	shutdownType = sdtype;
+	shutdownMode = sdmode;
 
         // shall we save the session on logout?
         saveSession = ( config->readEntry( "loginMode", "restorePreviousLogout" ) == "restorePreviousLogout" );
@@ -1013,20 +1031,6 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
         }
         if ( clients.isEmpty() )
             completeShutdownOrCheckpoint();
-        if ( sdtype != KApplication::ShutdownTypeNone ) {
-            QFile fifo( fifoname );
-            if ( fifo.open( IO_WriteOnly | IO_Raw ) ) {
-                QCString cmd( "shutdown\t" );
-                cmd.append( sdtype == KApplication::ShutdownTypeReboot ?
-                            "reboot\t" : "halt\t" );
-                cmd.append( sdmode == KApplication::ShutdownModeForceNow ?
-                            "forcenow\n" :
-                            sdmode == KApplication::ShutdownModeTryNow ?
-                            "trynow\n" : "schedule\n" );
-                fifo.writeBlock( cmd.data(), cmd.length() );
-                fifo.close();
-            }
-        }
     }
     dialogActive = false;
 }

@@ -180,6 +180,10 @@ private:
     int wmPhase1WaitingCount;
     int saveType;
 
+    QString fifoName;
+    KApplication::ShutdownType shutdownType;
+    KApplication::ShutdownMode shutdownMode;
+
     bool clean;
     KSMClient* clientInteracting;
     QString wm;
