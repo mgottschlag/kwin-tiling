@@ -88,6 +88,8 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
 
   connect(_resultList, SIGNAL(selected(const QString&)),
           this, SLOT(slotModuleSelected(const QString&)));
+  connect(_resultList, SIGNAL(clicked(QListBoxItem *)),
+          this, SLOT(slotModuleClicked(QListBoxItem *)));
 }
 
 void SearchWidget::populateKeywordList(ConfigModuleList *list)
@@ -202,4 +204,11 @@ void SearchWidget::slotModuleSelected(const QString & s)
 {
   emit moduleSelected(s);
 }
+
+
+void SearchWidget::slotModuleClicked(QListBoxItem *item)
+{
+  emit moduleSelected(item->text());
+}
+
 

@@ -23,6 +23,8 @@
 #include <qwidget.h>
 #include <qlist.h>
 #include <qstring.h>
+#include <qlistbox.h>
+
 
 #include "modules.h"
 
@@ -65,6 +67,7 @@ protected slots:
   void slotSearchTextChanged(const QString &);
   void slotKeywordSelected(const QString &);
   void slotModuleSelected(const QString &);
+  void slotModuleClicked(QListBoxItem *item);
 
 private:
   QListBox  *_keyList, *_resultList;
