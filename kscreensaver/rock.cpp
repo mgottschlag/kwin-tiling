@@ -675,8 +675,8 @@ void kRockSetup::slotOkPressed()
 	snumber.setNum( number );
 	config->writeEntry( "Number", snumber );
 
-	config->writeEntry( "Move", move ? QString("yes") : QString("no") );
-	config->writeEntry( "Rotate", rotate ? QString("yes") : QString("no") );
+	config->writeEntry( "Move", move );
+	config->writeEntry( "Rotate", rotate );
 
 	config->sync();
 	delete config;

@@ -30,10 +30,10 @@ private:
 	void readSettings();
 
 protected:
-	QTimer		timer;
-	int			number;
-	bool		cloud;
-	int			colorContext;
+	QTimer	timer;
+	int	number;
+	bool	cloud;
+	int	colorContext;
 };
 
 

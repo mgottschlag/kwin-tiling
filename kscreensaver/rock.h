@@ -33,11 +33,11 @@ private:
 
 protected:
 	QTimer		timer;
-	int			speed;
-	int			number;
+	int		speed;
+	int		number;
 	bool		move;
 	bool		rotate;
-	int			colorContext;
+	int		colorContext;
 };
 
 class kRockSetup : public QDialog

@@ -608,7 +608,7 @@ void kPyroSetup::slotOkPressed()
 	snumber.setNum( number );
 	config->writeEntry( "Number", snumber );
 
-	config->writeEntry( "Cloud", cloud ? "yes" : "no");
+	config->writeEntry( "Cloud", cloud );
 
 	config->sync();
 	delete config;
