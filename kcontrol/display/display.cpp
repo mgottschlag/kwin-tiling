@@ -93,3 +93,4 @@ void KCMDisplay::save()
     m_energy->save();
 }
 
+#include "display.moc"
