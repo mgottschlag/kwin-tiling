@@ -788,17 +788,34 @@ bool KlipperWidget::ignoreClipboardChanges() const
     return false;
 }
 
-// QClipboard uses qt_x_user_time as the timestamp for selection operations.
+// QClipboard uses qt_x_time as the timestamp for selection operations.
 // It is updated mainly from user actions, but Klipper polls the clipboard
-// without any user action triggering it, so qt_x_user_time may be old,
+// without any user action triggering it, so qt_x_time may be old,
 // which could possibly lead to QClipboard reporting empty clipboard.
-// Therefore, qt_x_user_time needs to be updated to current X server timestamp.
+// Therefore, qt_x_time needs to be updated to current X server timestamp.
 
 // Call KApplication::updateUserTime() only from functions that are
 // called from outside (DCOP), or from QTimer timeout !
+
+extern Time qt_x_time;
+extern Time qt_x_user_time;
+
 void KlipperWidget::updateTimestamp()
-{
-    kapp->updateUserTimestamp( 0 );
+{ // Qt3.3.0 and 3.3.1 use qt_x_user_time for clipboard operations
+    Time& time = ( strcmp( qVersion(), "3.3.1" ) == 0
+                || strcmp( qVersion(), "3.3.0" ) == 0 )
+                ? qt_x_user_time : qt_x_time;
+    // get current X timestamp
+    Window w = XCreateSimpleWindow( qt_xdisplay(), qt_xrootwin(), 0, 0, 1, 1, 0, 0, 0 );
+    XSelectInput( qt_xdisplay(), w, PropertyChangeMask );
+    unsigned char data[ 1 ];
+    XChangeProperty( qt_xdisplay(), w, XA_ATOM, XA_ATOM, 8, PropModeAppend, data, 1 );
+    XEvent ev;
+    XWindowEvent( qt_xdisplay(), w, PropertyChangeMask, &ev );
+    Time current_time = ev.xproperty.time;
+    XDestroyWindow( qt_xdisplay(), w );
+    if( time == 0 || current_time - time < 1000000000U ) // check current_time > time, handle wrapping
+        time = current_time;
 }
 
 static const char * const description =
