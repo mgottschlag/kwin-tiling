@@ -38,6 +38,9 @@ from The Open Group.
 
 #include <X11/Xlib.h>
 #include <X11/Xos.h>
+#ifdef HAVE_X11_XKBLIB_H
+#include <X11/XKBlib.h>
+#endif
 
 #include <stdio.h>
 #include <signal.h>
@@ -357,6 +360,19 @@ WaitForServer (struct display *d)
 #endif
 	    	RegisterCloseOnFork (ConnectionNumber (dpy));
 		(void) fcntl (ConnectionNumber (dpy), F_SETFD, 0);
+#ifdef HAVE_X11_XKBLIB_H
+                {
+                    int opcode, evbase, errbase, majret, minret;
+                    unsigned int value = XkbPCF_GrabsUseXKBStateMask;
+                    if (XkbQueryExtension (dpy, &opcode, &evbase,
+                                           &errbase, &majret, &minret))
+                    {
+                        if (!XkbSetPerClientControls (dpy,
+                                       XkbPCF_GrabsUseXKBStateMask, &value))
+                        (void) fprintf(stderr, "XkbSetPerClientControls failed\n");
+                    }
+                }
+#endif
 	    	return 1;
 	    } else {
 	    	Debug ("OpenDisplay failed %d (%s) on \"%s\"\n",

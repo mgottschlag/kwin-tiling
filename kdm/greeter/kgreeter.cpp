@@ -46,6 +46,9 @@
 #include "miscfunc.h"
 
 #include <X11/Xlib.h>
+#ifdef HAVE_X11_XKBLIB_H
+#include <X11/XKBlib.h>
+#endif
 
 #include <sys/types.h>
 #include <sys/param.h>
@@ -709,6 +712,21 @@ kg_main(const char *dname)
     // Hack! Kdm looses keyboard focus unless
     // the keyboard is ungrabbed during setup
     TempUngrab_Run(creat_greet, 0);
+#ifdef HAVE_X11_XKBLIB_H
+    //
+    //  Activate the correct mapping for modifiers in XKB extension as
+    //  grabbed keyboard has its own mapping by default
+    //
+    int opcode, evbase, errbase, majret, minret;
+    unsigned int value = XkbPCF_GrabsUseXKBStateMask;
+    if (XkbQueryExtension (*dpy, &opcode, &evbase,
+                           &errbase, &majret, &minret))
+    {
+        if (!XkbSetPerClientControls (*dpy,
+                                      XkbPCF_GrabsUseXKBStateMask, &value))
+            (void) fprintf(stderr, "XkbSetPerClientControls failed\n");
+   }
+#endif
     int retval = qApp->exec();
     // Give focus to root window:
     QApplication::desktop()->setActiveWindow();
