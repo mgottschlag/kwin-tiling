@@ -119,65 +119,65 @@ void createGtkrc( const QFont& font, const QColorGroup& cg )
     filename += "/.gtkrc";
     QFile f( filename );
     if ( f.open( IO_ReadOnly ) ) {
-	QTextStream t( &f );
-	QString s = t.readLine();
-	if ( !s.startsWith( "# created by KDE" ) ) {
-	    QFile backup( filename + "-save" );
-	    if ( backup.open( IO_WriteOnly ) ) {
-		QTextStream tbackup( &backup );
-		tbackup << s << endl;
-		while ( !t.eof() )
-		    tbackup << t.readLine() << endl;
-		backup.close();
-	    }
-	}
-	f.close();
+        QTextStream t( &f );
+        QString s = t.readLine();
+        if ( !s.startsWith( "# created by KDE" ) ) {
+            QFile backup( filename + "-save" );
+            if ( backup.open( IO_WriteOnly ) ) {
+                QTextStream tbackup( &backup );
+                tbackup << s << endl;
+                while ( !t.eof() )
+                    tbackup << t.readLine() << endl;
+                backup.close();
+            }
+        }
+        f.close();
     }
-    
-    
+
+
     if ( f.open( IO_WriteOnly) ) {
-	QTextStream t( &f );
-	t << "# created by KDE, " << QDateTime::currentDateTime().toString() << endl;
-	t << "#" << endl;
-	t << "# If you do not want KDE to override your GTK settings, select" << endl;
-	t << "# Themes/Styles in the control center and disable the checkbox " << endl;
-	t << "# \"Apply fonts and colors to non-KDE apps\"" << endl;
-	t << "#" << endl;
-	t << "# If you had a ~/.gtkrc before starting KDE, its contents are" << endl;
-	t << "# preserved in ~/.gtkrc-save" << endl;
-	t << "#" << endl;
-	t << endl;
-	t << "style \"default\"" << endl;
-	t << "{" << endl;
-	t << "  " << "fontset = \"" << font.rawName() << "\"" << endl;
-	t << endl;
-	t << "  bg[NORMAL] = " << color( cg.background() ) << endl;
-	t << "  bg[SELECTED] = " << color( cg.highlight() ) << endl;
-	t << "  bg[INSENSITIVE] = " << color( cg.background() ) << endl;
-	t << "  bg[ACTIVE] = " << color( cg.mid() ) << endl;
-	t << "  bg[PRELIGHT] = " << color( cg.background() ) << endl;
-	t << endl;
-	t << "  base[NORMAL] = " << color( cg.base() ) << endl;
-	t << "  base[SELECTED] = " << color( cg.highlight() ) << endl;
-	t << "  base[INSENSITIVE] = " << color( cg.background() ) << endl;
-	t << "  base[ACTIVE] = " << color( cg.base() ) << endl;
-	t << "  base[PRELIGHT] = " << color( cg.base() ) << endl;
-	t << endl;
-	t << "  text[NORMAL] = " << color( cg.text() ) << endl;
-	t << "  text[SELECTED] = " << color( cg.highlightedText() ) << endl;
-	t << "  text[INSENSITIVE] = " << color( cg.mid() ) << endl;
-	t << "  text[ACTIVE] = " << color( cg.text() ) << endl;
-	t << "  text[PRELIGHT] = " << color( cg.text() ) << endl;
-	t << endl;
-	t << "  fg[NORMAL] = " << color( cg.foreground() ) << endl;
-	t << "  fg[SELECTED] = " << color( cg.highlightedText() ) << endl;
-	t << "  fg[INSENSITIVE] = " << color( cg.mid() ) << endl;
-	t << "  fg[ACTIVE] = " << color( cg.foreground() ) << endl;
-	t << "  fg[PRELIGHT] = " << color( cg.foreground() ) << endl;
-	t << "}" << endl;
-	t << endl;
-	t << "class \"*\" style \"default\"" << endl;	
-	t << endl;
+        QTextStream t( &f );
+        t << "# created by KDE, " << QDateTime::currentDateTime().toString() << endl;
+        t << "#" << endl;
+        t << "# If you do not want KDE to override your GTK settings, select" << endl;
+        t << "# Themes/Styles in the control center and disable the checkbox " << endl;
+        t << "# \"Apply fonts and colors to non-KDE apps\"" << endl;
+        t << "#" << endl;
+        t << "# If you had a ~/.gtkrc before starting KDE, it's content is" << endl;
+        t << "# preserved in ~/.gtkrc-save" << endl;
+        t << "#" << endl;
+        t << endl;
+        t << "style \"default\"" << endl;
+        t << "{" << endl;
+        t << "  " << "fontset = \"" << font.rawName() << "\"" << endl;
+        t << endl;
+        t << "  bg[NORMAL] = " << color( cg.background() ) << endl;
+        t << "  bg[SELECTED] = " << color( cg.highlight() ) << endl;
+        t << "  bg[INSENSITIVE] = " << color( cg.background() ) << endl;
+        t << "  bg[ACTIVE] = " << color( cg.mid() ) << endl;
+        t << "  bg[PRELIGHT] = " << color( cg.background() ) << endl;
+        t << endl;
+        t << "  base[NORMAL] = " << color( cg.base() ) << endl;
+        t << "  base[SELECTED] = " << color( cg.highlight() ) << endl;
+        t << "  base[INSENSITIVE] = " << color( cg.background() ) << endl;
+        t << "  base[ACTIVE] = " << color( cg.base() ) << endl;
+        t << "  base[PRELIGHT] = " << color( cg.base() ) << endl;
+        t << endl;
+        t << "  text[NORMAL] = " << color( cg.text() ) << endl;
+        t << "  text[SELECTED] = " << color( cg.highlightedText() ) << endl;
+        t << "  text[INSENSITIVE] = " << color( cg.mid() ) << endl;
+        t << "  text[ACTIVE] = " << color( cg.text() ) << endl;
+        t << "  text[PRELIGHT] = " << color( cg.text() ) << endl;
+        t << endl;
+        t << "  fg[NORMAL] = " << color( cg.foreground() ) << endl;
+        t << "  fg[SELECTED] = " << color( cg.highlightedText() ) << endl;
+        t << "  fg[INSENSITIVE] = " << color( cg.mid() ) << endl;
+        t << "  fg[ACTIVE] = " << color( cg.foreground() ) << endl;
+        t << "  fg[PRELIGHT] = " << color( cg.foreground() ) << endl;
+        t << "}" << endl;
+        t << endl;
+        t << "class \"*\" style \"default\"" << endl;
+        t << endl;
     }
 }
 
@@ -186,8 +186,8 @@ void createGtkrc( const QFont& font, const QColorGroup& cg )
 int main( int argc, char ** argv )
 {
   KAboutData aboutData( "krdb", I18N_NOOP("Krdb"),
-	"$Id$",
-	I18N_NOOP("Krdb - applies KDE colors and styles to X and GTK settings."));
+        "$Id$",
+        I18N_NOOP("Krdb - applies KDE colors and styles to X and GTK settings."));
   KCmdLineArgs::init(argc, argv, &aboutData);
 
   KApplication a;
