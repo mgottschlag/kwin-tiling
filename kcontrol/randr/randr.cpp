@@ -176,15 +176,15 @@ QString RandRScreen::rotationName(int rotation, bool pastTense, bool capitalised
 		case RR_Rotate_90:
 			return i18n("Left (90 degrees)");
 		case RR_Rotate_180:
-			return i18n("Upside-Down (180 degrees)");
+			return i18n("Upside-down (180 degrees)");
 		case RR_Rotate_270:
 			return i18n("Right (270 degrees)");
 		case RR_Reflect_X:
-			return i18n("Mirror Horizontally");
+			return i18n("Mirror horizontally");
 		case RR_Reflect_Y:
-			return i18n("Mirror Vertically");
+			return i18n("Mirror vertically");
 		default:
-			return i18n("Unknown Orientation");
+			return i18n("Unknown orientation");
 	}
 	
 	switch (rotation) {

@@ -69,7 +69,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 		m_screenSelector->setEnabled(false);
 	
 	QHBox* sizeBox = new QHBox(this);
-	new QLabel(i18n("Screen Size"), sizeBox);
+	new QLabel(i18n("Screen size:"), sizeBox);
 	m_sizeCombo = new KComboBox(sizeBox);
 	connect(m_sizeCombo, SIGNAL(activated(int)), SLOT(slotSizeChanged(int)));
 
