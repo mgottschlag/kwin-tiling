@@ -1351,25 +1351,24 @@ void CKioFonts::syncDirs()
 
     if(inX11NotXft.count())
     {
-#ifdef HAVE_FONTCONFIG
         for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
         {
             KDE_DBUG << *it << " in x11 but not xft" << endl;
             CGlobal::userXft().addDir(*it);
         }
         CGlobal::userXft().apply();
+#ifdef HAVE_FONTCONFIG
         CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(CGlobal::cfg().getUserFontsDir()));
-        for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
-            CMisc::setTimeStamps(*it);
 #else
         for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
-            CGlobal::userXft().addDir(*it);
-        CGlobal::userXft().apply();
-        for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
             CMisc::doCmd(XFT_CACHE_CMD, CMisc::xDirSyntax(*it));
-        for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
-            CMisc::setTimeStamps(*it);
 #endif
+        for(it=inX11NotXft.begin(); it!=inX11NotXft.end(); ++it)
+        {
+            CFontmap::createLocal(*it);
+            CMisc::setTimeStamps(*it);
+        }
+        CFontmap::createTopLevel();
     }
 
     if(CGlobal::userXcfg().madeChanges())
