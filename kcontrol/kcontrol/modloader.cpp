@@ -27,7 +27,7 @@
 #include "global.h"
 #include "modloader.h"
 
-KCModule *ModuleLoader::module(const ModuleInfo &mod)
+KCModule *ModuleLoader::loadModule(const ModuleInfo &mod)
 {
   // check, if we require root privileges we don't have
   //if ( mod.onlyRoot() && (!KCGlobal::root()))
@@ -58,4 +58,14 @@ KCModule *ModuleLoader::module(const ModuleInfo &mod)
   KCModule* (*func)(QWidget *, const char *);
   func = (KCModule* (*)(QWidget *, const char *)) create;
   return  func(0,"");
+}
+
+void ModuleLoader::unloadModule(const ModuleInfo &mod)
+{
+  // get the library loader instance
+  KLibLoader *loader = KLibLoader::self();
+
+  // try to unload the library
+  QString libname("libkcm_%1");
+  loader->unloadLibrary(libname.arg(mod.library()));
 }

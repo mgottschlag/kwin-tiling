@@ -54,7 +54,7 @@ ProxyWidget *ConfigModule::module()
   if (_module)
     return _module;
 
-  KCModule *modWidget = ModuleLoader::module(*this);
+  KCModule *modWidget = ModuleLoader::loadModule(*this);
 
   if (modWidget)
     {
@@ -74,15 +74,17 @@ ProxyWidget *ConfigModule::module()
 
 void ConfigModule::deleteClient()
 {
-  clientClosed();
+  delete _module;
+  _module = 0;
+
+  ModuleLoader::unloadModule(*this);
+  _changed = false;
 }
 
 void ConfigModule::clientClosed()
 {
-  delete _module;
-  _module = 0;
+  deleteClient();
 
-  _changed = false;
   emit changed(this);
   emit childClosed();
 }

@@ -79,13 +79,13 @@ void DockContainer::dockModule(ConfigModule *module)
         _module->module()->applyClicked();
     }
 
+  deleteModule();
+
   if (module->needsRootPrivileges() && !KCGlobal::root() && !module->hasReadOnlyMode())
 	{
 	  _rootOnly->raise();
 	  _rootOnly->show();
 	  _rootOnly->repaint();
-      if (_module) _module->deleteClient();
-	  _module = 0;
 	  return;
 	}
   
@@ -93,14 +93,12 @@ void DockContainer::dockModule(ConfigModule *module)
   _busy->show();
   _busy->repaint();
   QApplication::setOverrideCursor( waitCursor );
-  ProxyWidget *widget = module->module();
 
+  ProxyWidget *widget = module->module();
+  
   if (widget)
     {
-      if (_module)
-        _module->deleteClient();
-
-      _module = module;
+	  _module = module;
       connect(_module, SIGNAL(childClosed()),
               this, SLOT(removeModule()));
       
@@ -124,7 +122,8 @@ void DockContainer::dockModule(ConfigModule *module)
 
 void DockContainer::removeModule()
 {
-  _module = 0L;
+  deleteModule();
+  
   resizeEvent(0L);
   
   if (_basew)
@@ -132,6 +131,14 @@ void DockContainer::removeModule()
   else
 	emit newModule("", "");
 }
+
+void DockContainer::deleteModule()
+{
+  if(_module) {
+	_module->deleteClient();
+	_module = 0;
+  }
+}  
 
 void DockContainer::resizeEvent(QResizeEvent *)
 {

@@ -28,8 +28,8 @@
 class ModuleLoader
 {
 public:
-  static KCModule *module(const ModuleInfo &mod);
-
+  static KCModule *loadModule(const ModuleInfo &mod);
+  static void unloadModule(const ModuleInfo &mod);
 };
 
 #endif

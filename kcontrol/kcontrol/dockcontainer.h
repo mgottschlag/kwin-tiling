@@ -40,6 +40,7 @@ protected slots:
 
 protected:
   void resizeEvent (QResizeEvent *);
+  void deleteModule();
 
 signals:
   void newModule(const QString &name, const QString &quickhelp);

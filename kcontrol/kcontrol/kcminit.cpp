@@ -1,6 +1,7 @@
 /*
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
- 
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
@@ -17,12 +18,8 @@
  
 */                                                                            
 
-#include <iostream.h>
-#include <unistd.h>
-
 #include <kapp.h>
 #include <kglobal.h>
-#include <klocale.h>
 #include <kstddirs.h>
 #include <kcmodule.h>
 #include <kdesktopfile.h>
@@ -41,7 +38,7 @@ int main(int argc, char *argv[])
   QStringList files;
   files = KGlobal::dirs()->findAllResources("apps", "Settings/*.desktop", true);
 
-  // look for Init=... entries
+  // look for X-KDE-Init=... entries
   QStringList::Iterator it;
   for (it = files.begin(); it != files.end(); ++it) 
     {
@@ -51,7 +48,7 @@ int main(int argc, char *argv[])
       funcname = desktop.readEntry("X-KDE-Init");
       call = funcname+"@"+libname;
       if (!funcname.isEmpty() && !libname.isEmpty() && !libs.contains(call)) 
-	libs.append(call);
+		libs.append(call);
     }
 
   // get the library loader instance
@@ -67,19 +64,25 @@ int main(int argc, char *argv[])
       QString ln("libkcm_%1");
       KLibrary *lib = loader->library(ln.arg(libname));
       if (lib)
-	{
-	  // get the init_ function
-	  QString factory("init_%1");
-	  void *init = lib->symbol(factory.arg(funcname));
-	  if (init)
-	    {
-	      // initialize the module
-	      kdDebug() << "Initializing " << libname << ": " << funcname << endl;
+		{
+		  // get the init_ function
+		  QString factory("init_%1");
+		  void *init = lib->symbol(factory.arg(funcname));
+		  if (init)
+			{
+			  // initialize the module
+			  kdDebug() << "Initializing control module "
+						<< libname
+						<< ": "
+						<< funcname
+						<< endl;
 
-	      void (*func)() = (void(*)())init;
-	      func();
-	    }
-	}
+			  void (*func)() = (void(*)())init;
+			  func();
+			}
+		  // clean up
+		  loader->unloadLibrary(ln.arg(libname));
+		}
     }
   
   return 0;

@@ -1,5 +1,6 @@
 /*
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -111,17 +112,6 @@ int main(int _argc, char *_argv[])
     path += arg;
     path += ".desktop";
 
-    /*
-    else
-	files = KGlobal::dirs()->
-	    findAllResources("apps",
-			     QString("Settings/%1.desktop").arg(args->arg(0)),
-			     true);
-    // check the matches
-    if (files.count() > 1)
-    	cerr << i18n("Module name not unique. Taking the first match.") << endl;
-    */
-
     if (!KService::serviceByDesktopPath( path ))
     {
         // Path didn't work. Trying as a name
@@ -140,7 +130,7 @@ int main(int _argc, char *_argv[])
     // load the module
     ModuleInfo info(path);
 
-    KCModule *module = ModuleLoader::module(info);
+    KCModule *module = ModuleLoader::loadModule(info);
 
     if (module) {
 	// create the dialog
@@ -152,7 +142,9 @@ int main(int _argc, char *_argv[])
 	dlg.setAcceptDrops(true);
 
 	// run the dialog
-	return dlg.exec();
+	int ret = dlg.exec();
+	ModuleLoader::unloadModule(info);
+	return ret;
     }
 
     return 0;
