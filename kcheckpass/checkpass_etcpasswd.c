@@ -51,13 +51,10 @@ int Authenticate(const char *login, const char *passwd)
   /* Are they the same? */
   result = strcmp(pw->pw_passwd, crpt_passwd);
 
-  /* Close the password file (or database) */
-  endpwent();
-
   if (result == 0)
-    return 1; /* success */
+    return 1; /* Success */
   else
-    return 0; /* Oops something went wrong, perhaps no user was found? */
+    return 0; /* Password wrong or account locked */
 }
 
 #endif
