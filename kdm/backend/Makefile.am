@@ -15,7 +15,6 @@ kdm_SOURCES = \
     dm.c \
     dpylist.c \
     error.c \
-    file.c \
     genauth.c \
     krb5auth.c \
     mitauth.c \

@@ -30,10 +30,9 @@ in this Software without prior written authorization from The Open Group.
  * and (potentially) a list of hosts to send ForwardQuery packets to
  */
 
-#include "dm.h"
-
 #ifdef XDMCP
 
+#include "dm.h"
 #include "dm_error.h"
 #include "dm_socket.h"
 
@@ -50,49 +49,42 @@ in this Software without prior written authorization from The Open Group.
 # include <net/gen/netdb.h>
 #endif /* !MINIX */
 
-#define ALIAS_CHARACTER	    '%'
-#define NEGATE_CHARACTER    '!'
-#define CHOOSER_STRING	    "CHOOSER"
-#define BROADCAST_STRING    "BROADCAST"
-#define NOBROADCAST_STRING  "NOBROADCAST"
-
-#define HOST_ALIAS	    0
-#define HOST_ADDRESS	    1
-#define HOST_BROADCAST	    2
-#define HOST_CHOOSER	    3
-#define HOST_NOBROADCAST    4
-
-typedef struct _hostEntry {
-    struct _hostEntry	*next;
-    int	    type;
+typedef struct {
+    short int	type;
     union _hostOrAlias {
-	char	*aliasName;
-	ARRAY8	hostAddress;
+	char	*aliasPattern;
+	char	*hostPattern;
+	struct _display {
+	    CARD16	connectionType;
+	    ARRAY8	hostAddress;
+	} displayAddress;
     } entry;
 } HostEntry;
 
-#define DISPLAY_ALIAS	    0
-#define DISPLAY_PATTERN	    1
-#define DISPLAY_ADDRESS	    2
+typedef struct {
+    char	*name;
+    short int	hosts;
+    short int	nhosts;
+} AliasEntry;
 
-typedef struct _displayEntry {
-    struct _displayEntry    *next;
-    int			    type;
-    int			    notAllowed;
-    int			    notBroadcast;
-    int			    chooser;
-    union _displayType {
-	char		    *aliasName;
-	char		    *displayPattern;
-	struct _display {
-	    ARRAY8	    clientAddress;
-	    CARD16	    connectionType;
-	} displayAddress;
-    } entry;
-    HostEntry		    *hosts;
-} DisplayEntry;
+typedef struct {
+    short int	entries;
+    short int	nentries;
+    short int	hosts;
+    short int	nhosts;
+    short int	flags;
+} AclEntry;
 
-static DisplayEntry	*database;
+typedef struct {
+    HostEntry		*hostList;
+    AliasEntry		*aliasList;
+    AclEntry		*acList;
+    short int		nHosts, nAliases, nAcls;
+    CfgDep		dep;
+} AccArr;
+
+static AccArr		accData[1];
+
 
 static ARRAY8		localAddress;
 
@@ -112,381 +104,87 @@ getLocalAddress (void)
     return &localAddress;
 }
 
-static void
-FreeHostEntry (HostEntry *h)
-{
-    switch (h->type) {
-    case HOST_ALIAS:
-	free (h->entry.aliasName);
-	break;
-    case HOST_ADDRESS:
-	XdmcpDisposeARRAY8 (&h->entry.hostAddress);
-	break;
-    case HOST_CHOOSER:
-	break;
-    }
-    free ((char *) h);
-}
 
-static void
-FreeDisplayEntry (DisplayEntry *d)
+void
+ScanAccessDatabase (int force)
 {
-    HostEntry	*h, *next;
-    switch (d->type) {
-    case DISPLAY_ALIAS:
-	free (d->entry.aliasName);
-	break;
-    case DISPLAY_PATTERN:
-	free (d->entry.displayPattern);
-	break;
-    case DISPLAY_ADDRESS:
-	XdmcpDisposeARRAY8 (&d->entry.displayAddress.clientAddress);
-	break;
-    }
-    for (h = d->hosts; h; h = next) {
-	next = h->next;
-	FreeHostEntry (h);
-    }
-    free ((char *) d);
-}
+    struct _display *da;
+    char *cptr;
+    int nChars, i;
 
-static void
-FreeAccessDatabase (void)
-{
-    DisplayEntry    *d, *next;
-
-    for (d = database; d; d = next)
+Debug("ScanAccessDatabase\n");
+    if (!startConfig (GC_gXaccess, &accData->dep, force))
+        return;
+    if (accData->hostList)
+	free (accData->hostList);
+    accData->nHosts = GRecvInt ();
+    accData->nAliases = GRecvInt ();
+    accData->nAcls = GRecvInt ();
+    nChars = GRecvInt ();
+    if (!(accData->hostList = (HostEntry *)
+	    malloc (accData->nHosts * sizeof(HostEntry) +
+		    accData->nAliases * sizeof(AliasEntry) +
+		    accData->nAcls * sizeof(AclEntry) +
+		    nChars)))
     {
-	next = d->next;
-	FreeDisplayEntry (d);
+	LogOutOfMem ("ScanAccessDatabase");
+	CloseGetter ();
+	return;
     }
-    database = 0;
-}
-
-#define WORD_LEN    256
-static char	wordBuffer[WORD_LEN];
-static int	nextIsEOF;
-
-static char *
-ReadWord (FILE *file, int EOFatEOL)
-{
-    int	    c;
-    char    *wordp;
-    int	    quoted;
-
-    wordp = wordBuffer;
-    if (nextIsEOF)
-    {
-	nextIsEOF = FALSE;
-	return NULL;
-    }
-    quoted = FALSE;
-    for (;;) {
-	c = getc (file);
-	switch (c) {
-	case '#':
-	    if (quoted)
-	    {
-		*wordp++ = c;
-		break;
-	    }
-	    while ((c = getc (file)) != EOF && c != '\n')
-		;
-	case '\n':
-	case EOF:
-	    if (c == EOF || (EOFatEOL && !quoted))
-	    {
-		ungetc (c, file);
-		if (wordp == wordBuffer)
-		    return NULL;
-		*wordp = '\0';
-		nextIsEOF = TRUE;
-		return wordBuffer;
-	    }
-	case ' ':
-	case '\t':
-	    if (wordp != wordBuffer)
-	    {
-		ungetc (c, file);
-		*wordp = '\0';
-		return wordBuffer;
-	    }
+    accData->aliasList = (AliasEntry *)(accData->hostList + accData->nHosts);
+    accData->acList = (AclEntry *)(accData->aliasList + accData->nAliases);
+    cptr = (char *)(accData->acList + accData->nAcls);
+    for (i = 0; i < accData->nHosts; i++) {
+	switch ((accData->hostList[i].type = GRecvInt ())) {
+	case HOST_ALIAS:
+	    accData->hostList[i].entry.aliasPattern = cptr;
+	    cptr += GRecvStrBuf (cptr);
 	    break;
-	case '\\':
-	    if (!quoted)
-	    {
-		quoted = TRUE;
-		continue;
-	    }
-	default:
-	    *wordp++ = c;
+	case HOST_PATTERN:
+	    accData->hostList[i].entry.hostPattern = cptr;
+	    cptr += GRecvStrBuf (cptr);
 	    break;
-	}
-	quoted = FALSE;
-    }
-}
-
-static HostEntry *
-ReadHostEntry (FILE *file)
-{
-    char	    *hostOrAlias;
-    HostEntry	    *h;
-    struct hostent  *hostent;
-
-tryagain:
-    hostOrAlias = ReadWord (file, TRUE);
-    if (!hostOrAlias)
-	return NULL;
-    h = (HostEntry *) malloc (sizeof (DisplayEntry));
-    if (*hostOrAlias == ALIAS_CHARACTER)
-    {
-	h->type = HOST_ALIAS;
-	if (!StrDup (&h->entry.aliasName, hostOrAlias)) {
-	    free ((char *) h);
-	    return NULL;
-	}
-    }
-    else if (!strcmp (hostOrAlias, CHOOSER_STRING))
-    {
-	h->type = HOST_CHOOSER;
-    }
-    else if (!strcmp (hostOrAlias, BROADCAST_STRING))
-    {
-	h->type = HOST_BROADCAST;
-    }
-    else if (!strcmp (hostOrAlias, NOBROADCAST_STRING))
-    {
-	h->type = HOST_NOBROADCAST;
-    }
-    else
-    {
-	h->type = HOST_ADDRESS;
-	hostent = gethostbyname (hostOrAlias);
-	if (!hostent)
-	{
-	    Debug ("No such host %s\n", hostOrAlias);
-	    LogError ("Access file \"%s\", host \"%s\" not found\n", accessFile, hostOrAlias);
-	    free ((char *) h);
-	    goto tryagain;
-	}
-	if (!XdmcpAllocARRAY8 (&h->entry.hostAddress, hostent->h_length))
-	{
-	    LogOutOfMem ("ReadHostEntry");
-	    free ((char *) h);
-	    return NULL;
-	}
-	memmove( h->entry.hostAddress.data, hostent->h_addr, hostent->h_length);
-    }
-    return h;
-}
-
-static int
-HasGlobCharacters (char *s)
-{
-    for (;;)
-	switch (*s++) {
-	case '?':
-	case '*':
-	    return 1;
-	case '\0':
-	    return 0;
-	}
-}
-
-static DisplayEntry *
-ReadDisplayEntry (FILE *file)
-{
-    char	    *displayOrAlias;
-    DisplayEntry    *d;
-    struct _display *display;
-    HostEntry	    *h, **prev;
-    struct hostent  *hostent;
-    
-    displayOrAlias = ReadWord (file, FALSE);
-    if (!displayOrAlias)
-    	return NULL;
-    d = (DisplayEntry *) malloc (sizeof (DisplayEntry));
-    d->notAllowed = 0;
-    d->notBroadcast = 0;
-    d->chooser = 0;
-    if (*displayOrAlias == ALIAS_CHARACTER)
-    {
-	d->type = DISPLAY_ALIAS;
-	if (!StrDup (&d->entry.aliasName, displayOrAlias))
-	{
-	    free ((char *) d);
-	    return NULL;
-	}
-    }
-    else
-    {
-	if (*displayOrAlias == NEGATE_CHARACTER)
-	{
-	    d->notAllowed = 1;
-	    ++displayOrAlias;
-	}
-    	if (HasGlobCharacters (displayOrAlias))
-    	{
-	    d->type = DISPLAY_PATTERN;
-	    if (!StrDup (&d->entry.displayPattern, displayOrAlias))
+	case HOST_ADDRESS:
+	    da = &accData->hostList[i].entry.displayAddress;
+	    da->hostAddress.data = cptr;
+	    cptr += (da->hostAddress.length = GRecvStrBuf (cptr));
+	    switch (GRecvInt ())
 	    {
-	    	free ((char *) d);
-	    	return NULL;
-	    }
-    	}
-    	else
-    	{
-	    if ((hostent = gethostbyname (displayOrAlias)) == NULL)
-	    {
-		LogError ("Access file %s, display %s unknown\n", accessFile, displayOrAlias);
-		free ((char *) d);
-		return NULL;
-	    }
-	    d->type = DISPLAY_ADDRESS;
-	    display = &d->entry.displayAddress;
-	    if (!XdmcpAllocARRAY8 (&display->clientAddress, hostent->h_length))
-	    {
-	    	free ((char *) d);
-	    	return NULL;
-	    }
-	    memmove( display->clientAddress.data, hostent->h_addr, hostent->h_length);
-	    switch (hostent->h_addrtype)
-	    {
-#ifdef AF_UNIX
-	    case AF_UNIX:
-	    	display->connectionType = FamilyLocal;
-	    	break;
-#endif
 #ifdef AF_INET
 	    case AF_INET:
-	    	display->connectionType = FamilyInternet;
-	    	break;
+		da->connectionType = FamilyInternet;
+		break;
 #endif
 #ifdef AF_DECnet
 	    case AF_DECnet:
-	    	display->connectionType = FamilyDECnet;
-	    	break;
+		da->connectionType = FamilyDECnet;
+		break;
 #endif
+/*#ifdef AF_UNIX
+	    case AF_UNIX:
+#endif*/
 	    default:
-	    	display->connectionType = FamilyLocal;
-	    	break;
+		da->connectionType = FamilyLocal;
+		break;
 	    }
-    	}
-    }
-    prev = &d->hosts;
-    while ((h = ReadHostEntry (file)))
-    {
-	if (h->type == HOST_CHOOSER)
-	{
-	    FreeHostEntry (h);
-	    d->chooser = 1;
-	} else if (h->type == HOST_NOBROADCAST) {
-	    FreeHostEntry (h);
-	    d->notBroadcast = 1;
-	} else {
-	    *prev = h;
-	    prev = &h->next;
 	}
     }
-    *prev = NULL;
-    return d;
-}
-
-static void
-ReadAccessDatabase (FILE *file)
-{
-    DisplayEntry    *d, **prev;
-
-    prev = &database;
-    while ((d = ReadDisplayEntry (file)))
-    {
-	*prev = d;
-	prev = &d->next;
+    for (i = 0; i < accData->nAliases; i++) {
+	accData->aliasList[i].name = cptr;
+	cptr += GRecvStrBuf (cptr);
+	accData->aliasList[i].hosts = GRecvInt ();
+	accData->aliasList[i].nhosts = GRecvInt ();
     }
-    *prev = NULL;
-}
-
-int
-ScanAccessDatabase (void)
-{
-    FILE	*datafile;
-
-    FreeAccessDatabase ();
-    if (*accessFile)
-    {
-    	datafile = fopen (accessFile, "r");
-    	if (!datafile)
-	{
-	    LogError ("Cannot open access control file %s, no XDMCP reqeusts will be granted\n", accessFile);
-	    return 0;
-	}
-	ReadAccessDatabase (datafile);
-	fclose (datafile);
+    for (i = 0; i < accData->nAcls; i++) {
+	accData->acList[i].entries = GRecvInt ();
+	accData->acList[i].nentries = GRecvInt ();
+	accData->acList[i].hosts = GRecvInt ();
+	accData->acList[i].nhosts = GRecvInt ();
+	accData->acList[i].flags = GRecvInt ();
     }
-    return 1;
 }
 
-/*
- * calls the given function for each valid indirect entry.  Returns TRUE if
- * the local host exists on any of the lists, else FALSE
- */
 
-#define MAX_DEPTH   32
-
-static int indirectAlias (
-    char	*alias,
-    ARRAY8Ptr	clientAddress,
-    CARD16	connectionType,
-    ChooserFunc	function,
-    char	*closure,
-    int		depth,
-    int		broadcast);
-
-
-static int
-scanHostlist (
-    HostEntry	*h,
-    ARRAY8Ptr	clientAddress,
-    CARD16	connectionType,
-    ChooserFunc	function,
-    char	*closure,
-    int		depth,
-    int		broadcast)
-{
-    int	haveLocalhost = 0;
-
-    for (; h; h = h->next)
-    {
-	switch (h->type) {
-	case HOST_ALIAS:
-	    if (indirectAlias (h->entry.aliasName, clientAddress,
-			       connectionType, function, closure, depth,
-			       broadcast))
-		haveLocalhost = 1;
-	    break;
-	case HOST_ADDRESS:
-	    if (XdmcpARRAY8Equal (getLocalAddress(), &h->entry.hostAddress))
-		haveLocalhost = 1;
-	    else if (function)
-		(*function) (connectionType, &h->entry.hostAddress, closure);
-	    break;
-	case HOST_BROADCAST:
-	    if (broadcast)
-	    {
-		ARRAY8	temp;
-
-		if (function)
-		{
-		    temp.data = (BYTE *) BROADCAST_STRING;
-		    temp.length = strlen ((char *)temp.data);
-		    (*function) (connectionType, &temp, closure);
-		}
-	    }
-	    break;
-	}
-    }
-    return haveLocalhost;
-}
 
 /* Returns non-0 if string is matched by pattern.  Does case folding.
  */
@@ -519,40 +217,145 @@ patternMatch (char *string, char *pattern)
 	    p = *pattern++;
 	    /* fall through */
 	default:
-	    if (isupper(p)) p = tolower(p);	/* XXX */
-	    if (isupper(s)) s = tolower(s);
-	    if (p != s)
+	    if (tolower(p) != tolower(s))
 		return 0;
 	}
     }
 }
 
-static int
-indirectAlias (
-    char	*alias,
+
+/*
+ * calls the given function for each valid indirect entry.  Returns TRUE if
+ * the local host exists on any of the lists, else FALSE
+ */
+
+#define MAX_DEPTH   32
+
+static void
+scanHostlist (
+    int		fh,
+    int		nh,
     ARRAY8Ptr	clientAddress,
     CARD16	connectionType,
     ChooserFunc	function,
     char	*closure,
     int		depth,
-    int		broadcast)
+    int		broadcast,
+    int		*haveLocalhost)
 {
-    DisplayEntry    *d;
-    int		    haveLocalhost = 0;
+    HostEntry	*h;
+    AliasEntry	*a;
+    int		na;
 
-    if (depth == MAX_DEPTH)
-	return 0;
-    for (d = database; d; d = d->next)
+    for (h = accData->hostList + fh; nh; nh--, h++)
     {
-	if (d->type != DISPLAY_ALIAS || !patternMatch (alias, d->entry.aliasName))
-	    continue;
-	if (scanHostlist (d->hosts, clientAddress, connectionType,
-			  function, closure, depth + 1, broadcast))
-	{
-	    haveLocalhost = 1;
+	switch (h->type) {
+	case HOST_ALIAS:
+Debug ("scanHostist: alias pattern %s\n", h->entry.aliasPattern);
+	    if (depth == MAX_DEPTH) {
+		LogError ("Alias recursion in XDMCP access control list\n");
+		break;
+	    }
+	    for (a = accData->aliasList, na = accData->nAliases; na; na--, a++)
+{Debug ("alias name %s\n", a->name);
+		if (patternMatch (a->name, h->entry.aliasPattern))	/* XXX originally swapped, no wildcards in alias name matching */
+{Debug (" matches\n");
+		    scanHostlist (a->hosts, a->nhosts,
+				  clientAddress, connectionType,
+				  function, closure, depth + 1, broadcast,
+				  haveLocalhost);
+}}	    break;
+	case HOST_ADDRESS:
+Debug ("scanHostlist: host address %02[*hhx\n", h->entry.displayAddress.hostAddress.length, h->entry.displayAddress.hostAddress.data);
+	    if (XdmcpARRAY8Equal (getLocalAddress(), &h->entry.displayAddress.hostAddress))
+		*haveLocalhost = 1;
+	    else if (function)
+		(*function) (connectionType, &h->entry.displayAddress.hostAddress, closure);
+	    break;
+	case HOST_BROADCAST:
+Debug ("scanHostlist: broadcast\n");
+	    if (broadcast && function)
+	    {
+		ARRAY8	temp;
+		temp.data = (BYTE *) "BROADCAST";
+		temp.length = 9;
+		(*function) (connectionType, &temp, closure);
+	    }
+	    break;
 	}
     }
-    return haveLocalhost;
+}
+
+static int
+scanEntrylist(
+    int		fh,
+    int		nh,
+    ARRAY8Ptr	clientAddress,
+    CARD16	connectionType,
+    char	**clientName,
+    int		depth)
+{
+    HostEntry	*h;
+    AliasEntry	*a;
+    int		na;
+
+    for (h = accData->hostList + fh; nh; nh--, h++)
+    {
+	switch (h->type) {
+	case HOST_ALIAS:
+Debug ("scanEntrylist: alias pattern %s\n", h->entry.aliasPattern);
+	    if (depth == MAX_DEPTH) {
+		LogError ("Alias recursion in XDMCP access control list\n");
+		break;
+	    }
+	    for (a = accData->aliasList, na = accData->nAliases; na; na--, a++)
+{Debug ("alias name %s\n", a->name);
+		if (patternMatch (a->name, h->entry.aliasPattern))
+{Debug (" matches\n");
+		    if (scanEntrylist (a->hosts, a->nhosts, 
+				       clientAddress, connectionType,
+				       clientName, depth + 1))
+			return 1;
+}}	    break;
+	case HOST_PATTERN:
+Debug ("scanEntrylist: host pattern %s\n", h->entry.hostPattern);
+	    if (!*clientName)
+		*clientName = NetworkAddressToHostname (connectionType,
+							clientAddress);
+	    if (patternMatch (*clientName, h->entry.hostPattern))
+		return 1;
+	    break;
+	case HOST_ADDRESS:
+Debug ("scanEntrylist: host address %02[*hhx\n", h->entry.displayAddress.hostAddress.length, h->entry.displayAddress.hostAddress.data);
+	    if (h->entry.displayAddress.connectionType == connectionType &&
+	    	XdmcpARRAY8Equal (&h->entry.displayAddress.hostAddress,
+				  clientAddress))
+		return 1;
+	    break;
+	}
+    }
+    return 0;
+}
+
+static AclEntry *
+matchAclEntry (
+    ARRAY8Ptr	clientAddress,
+    CARD16	connectionType,
+    int		direct)
+{
+    AclEntry	*e;
+    char	*clientName = 0;
+    int		ne;
+
+    for (e = accData->acList, ne = accData->nAcls; ne; ne--, e++)
+	if (!e->nhosts == direct)
+	    if (scanEntrylist (e->entries, e->nentries, 
+			       clientAddress, connectionType, 
+			       &clientName, 0))
+		break;
+    if (clientName)
+	free (clientName);
+    return e;
 }
 
 int ForEachMatchingIndirectHost (
@@ -561,36 +364,12 @@ int ForEachMatchingIndirectHost (
     ChooserFunc	function,
     char	*closure)
 {
-    int		    haveLocalhost = 0;
-    DisplayEntry    *d;
-    char	    *clientName = NULL;
+    AclEntry	*e;
+    int		haveLocalhost = 0;
 
-    for (d = database; d; d = d->next)
-    {
-    	switch (d->type) {
-    	case DISPLAY_ALIAS:
-	    continue;
-    	case DISPLAY_PATTERN:
-	    if (!clientName)
-		clientName = NetworkAddressToHostname (connectionType,
-						       clientAddress);
-	    if (!patternMatch (clientName, d->entry.displayPattern))
-		continue;
-	    break;
-    	case DISPLAY_ADDRESS:
-	    if (d->entry.displayAddress.connectionType != connectionType ||
-	    	!XdmcpARRAY8Equal (&d->entry.displayAddress.clientAddress,
-				  clientAddress))
-	    {
-		continue;
-	    }
-	    break;
-    	}
-	if (!d->hosts)
-	    continue;
-	if (d->notAllowed)
-	    break;
-	if (d->chooser)
+    e = matchAclEntry (clientAddress, connectionType, 0);
+    if (e && !(e->flags & a_notAllowed)) {
+	if (e->flags & a_useChooser)
 	{
 	    ARRAY8Ptr	choice;
 
@@ -600,15 +379,10 @@ int ForEachMatchingIndirectHost (
 	    else
 		(*function) (connectionType, choice, closure);
 	}
-	else if (scanHostlist (d->hosts, clientAddress, connectionType,
-			  function, closure, 0, FALSE))
-	{
-	    haveLocalhost = 1;
-	}
-	break;
+	else
+	    scanHostlist (e->hosts, e->nhosts, clientAddress, connectionType,
+			  function, closure, 0, FALSE, &haveLocalhost);
     }
-    if (clientName)
-	free (clientName);
     return haveLocalhost;
 }
 
@@ -616,44 +390,11 @@ int UseChooser (
     ARRAY8Ptr	clientAddress,
     CARD16	connectionType)
 {
-    DisplayEntry    *d;
-    char	    *clientName = NULL;
+    AclEntry	*e;
 
-    for (d = database; d; d = d->next)
-    {
-    	switch (d->type) {
-    	case DISPLAY_ALIAS:
-	    continue;
-    	case DISPLAY_PATTERN:
-	    if (!clientName)
-		clientName = NetworkAddressToHostname (connectionType,
-						       clientAddress);
-	    if (!patternMatch (clientName, d->entry.displayPattern))
-		continue;
-	    break;
-    	case DISPLAY_ADDRESS:
-	    if (d->entry.displayAddress.connectionType != connectionType ||
-	    	!XdmcpARRAY8Equal (&d->entry.displayAddress.clientAddress,
-				  clientAddress))
-	    {
-		continue;
-	    }
-	    break;
-    	}
-	if (!d->hosts)
-	    continue;
-	if (d->notAllowed)
-	    break;
-	if (d->chooser && !IndirectChoice (clientAddress, connectionType)) {
-	    if (clientName)
-		free (clientName);
-	    return 1;
-	}
-	break;
-    }
-    if (clientName)
-	free (clientName);
-    return 0;
+    e = matchAclEntry (clientAddress, connectionType, 0);
+    return e && !(e->flags & a_notAllowed) && (e->flags & a_useChooser) && 
+	!IndirectChoice (clientAddress, connectionType);
 }
 
 void ForEachChooserHost (
@@ -662,46 +403,13 @@ void ForEachChooserHost (
     ChooserFunc	function,
     char	*closure)
 {
-    int		    haveLocalhost = 0;
-    DisplayEntry    *d;
-    char	    *clientName = NULL;
+    AclEntry	*e;
+    int		haveLocalhost = 0;
 
-    for (d = database; d; d = d->next)
-    {
-    	switch (d->type) {
-    	case DISPLAY_ALIAS:
-	    continue;
-    	case DISPLAY_PATTERN:
-	    if (!clientName)
-		clientName = NetworkAddressToHostname (connectionType,
-						       clientAddress);
-	    if (!patternMatch (clientName, d->entry.displayPattern))
-		continue;
-	    break;
-    	case DISPLAY_ADDRESS:
-	    if (d->entry.displayAddress.connectionType != connectionType ||
-	    	!XdmcpARRAY8Equal (&d->entry.displayAddress.clientAddress,
-				  clientAddress))
-	    {
-		continue;
-	    }
-	    break;
-    	}
-	if (!d->hosts)
-	    continue;
-	if (d->notAllowed)
-	    break;
-	if (!d->chooser)
-	    break;
-	if (scanHostlist (d->hosts, clientAddress, connectionType,
-			  function, closure, 0, TRUE))
-	{
-	    haveLocalhost = 1;
-	}
-	break;
-    }
-    if (clientName)
-	free (clientName);
+    e = matchAclEntry (clientAddress, connectionType, 0);
+    if (e && !(e->flags & a_notAllowed) && (e->flags & a_useChooser))
+	scanHostlist (e->hosts, e->nhosts, clientAddress, connectionType,
+		      function, closure, 0, TRUE, &haveLocalhost);
     if (haveLocalhost)
 	(*function) (connectionType, getLocalAddress(), closure);
 }
@@ -711,47 +419,20 @@ void ForEachChooserHost (
  * given display client is acceptable if it occurs without a host list.
  */
 
-int AcceptableDisplayAddress (
+int
+AcceptableDisplayAddress (
     ARRAY8Ptr	clientAddress,
     CARD16	connectionType,
     xdmOpCode	type)
 {
-    DisplayEntry    *d;
-    char	    *clientName = NULL;
+    AclEntry	*e;
 
-    if (!*accessFile)
-	return 1;
     if (type == INDIRECT_QUERY)
 	return 1;
-    for (d = database; d; d = d->next)
-    {
-	if (d->hosts)
-	    continue;
-    	switch (d->type) {
-    	case DISPLAY_ALIAS:
-	    continue;
-    	case DISPLAY_PATTERN:
-	    if (!clientName)
-		clientName = NetworkAddressToHostname (connectionType,
-						       clientAddress);
-	    if (!patternMatch (clientName, d->entry.displayPattern))
-		continue;
-	    break;
-    	case DISPLAY_ADDRESS:
-	    if (d->entry.displayAddress.connectionType != connectionType ||
-	    	!XdmcpARRAY8Equal (&d->entry.displayAddress.clientAddress,
-				  clientAddress))
-	    {
-		continue;
-	    }
-	    break;
-    	}
-	break;
-    }
-    if (clientName)
-	free (clientName);
-    return (d != 0) && (d->notAllowed == 0)
-	&& (type == BROADCAST_QUERY ? d->notBroadcast == 0 : 1);
+
+    e = matchAclEntry (clientAddress, connectionType, 1);
+    return e && !(e->flags & a_notAllowed) && 
+	(type != BROADCAST_QUERY || !(e->flags & a_notBroadcast));
 }
 
 #endif /* XDMCP */

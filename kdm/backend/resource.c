@@ -136,7 +136,7 @@ typedef struct CfgFile {
 static int numCfgFiles;
 static CfgFile *cfgFiles;
 
-static int cfgMapT[] = { GC_gGlobal, GC_gDisplay /*, GC_gXaccess, GC_gXservers*/ };
+static int cfgMapT[] = { GC_gGlobal, GC_gDisplay, GC_gXaccess, GC_gXservers };
 static int cfgMap[as(cfgMapT)];
 
 static int
@@ -218,14 +218,12 @@ needsReScan (int what, CfgDep *dep)
 	return 0;
 }
 
-static int
+int
 startConfig (int what, CfgDep *dep, int force)
 {
-Debug ("startConfig\n");
     if (!needsReScan (what, dep) && !force)
 	return 0;
     OpenGetter ();
-Debug ("requesting config %d\n", what);
     GSendInt (GC_GetConf);
     GSendInt (what);
     GSendStr (dep->name->str);
@@ -238,7 +236,6 @@ LoadResources (CfgArr *conf)
     char **vptr, **pptr, *cptr;
     int *iptr, i, id, nu, j, nptr, nint, nchr;
 
-Debug ("LoadResources\n");
     if (conf->data)
 	free (conf->data);
     conf->numCfgEnt = GRecvInt ();
@@ -370,7 +367,6 @@ char	*authDir;
 int	autoRescan;
 int	removeDomainname;
 char	*keyFile;
-char	*accessFile;
 char	**exportList;
 #if !defined(ARC4_RANDOM) && !defined(DEV_RANDOM)
 char	*randomFile;
@@ -409,8 +405,6 @@ struct globVals {
 #ifdef USE_PAM
 { C_PAMService,		&PAMService },
 #endif
- { C_servers,		&servers },	/* XXX */
- { C_accessFile,	&accessFile },
 };
 
 int

@@ -172,9 +172,6 @@ from The Open Group.
 
 #define C_PAMService		(C_TYPE_STR | 0x012)
 
-#define C_servers		(C_TYPE_STR | 0x0fe)	/* XXX kill! */
-#define C_accessFile		(C_TYPE_STR | 0x0ff)
-
 /* per-display config */
 
 #define C_serverAttempts	(C_TYPE_INT | 0x100)
@@ -234,29 +231,39 @@ from The Open Group.
 #define C_console		(C_TYPE_STR | 0x20c)
 
 /**
- ** Various parts of struct display
+ ** for struct display
+ **/
+
+#define d_location	1
+#define Local		1	/* server runs on local host */
+#define Foreign		0	/* server runs on remote host */
+
+#define d_lifetime	2
+#define Permanent	2	/* session restarted when it exits */
+#define Transient	0	/* session not restarted when it exits */
+
+#define d_origin	4
+#define FromFile	4	/* started via entry in servers file */
+#define FromXDMCP	0	/* started with XDMCP */
+
+/**
+ ** for xdmcp acls
  **/
 
 /*
- * local     - server runs on local host
- * foreign   - server runs on remote host
- * permanent - session restarted when it exits
- * transient - session not restarted when it exits
- * fromFile  - started via entry in servers file
- * fromXDMCP - started with XDMCP
+ * flags in acl entries
  */
+#define a_notAllowed	1	/* both direct and indirect */
+#define a_notBroadcast	2	/* only direct */
+#define a_useChooser	2	/* only indirect */
 
-#define d_location	1
-#define Local		1
-#define Foreign		0
-
-#define d_lifetime	2
-#define Permanent	2
-#define Transient	0
-
-#define d_origin	4
-#define FromFile	4
-#define FromXDMCP	0
+/*
+ * type of host entries
+ */
+#define HOST_ALIAS	0
+#define HOST_ADDRESS	1
+#define HOST_PATTERN	2
+#define HOST_BROADCAST	3
 
 
 #endif /* GREET_H */

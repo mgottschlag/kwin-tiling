@@ -317,7 +317,6 @@ extern char	*authDir;
 extern int	autoRescan;
 extern int	removeDomainname;
 extern char	*keyFile;
-extern char	*accessFile;
 extern char	**exportList;
 extern char	*randomFile;
 extern char	*willing;
@@ -361,6 +360,7 @@ extern int InitResources (char **argv);
 extern int LoadDMResources (int force);
 extern int LoadDisplayResources (struct display *d);
 extern void CloseGetter (void);
+extern int startConfig (int what, CfgDep *dep, int force);
 extern RcStr *newStr (char *str);
 extern void delStr (RcStr *str);
 
@@ -486,7 +486,7 @@ typedef void (*ChooserFunc)(CARD16 connectionType, ARRAY8Ptr addr, char *closure
 extern ARRAY8Ptr getLocalAddress (void);
 extern int AcceptableDisplayAddress (ARRAY8Ptr clientAddress, CARD16 connectionType, xdmOpCode type);
 extern int ForEachMatchingIndirectHost (ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure);
-extern int ScanAccessDatabase (void);
+extern void ScanAccessDatabase (int force);
 extern int UseChooser (ARRAY8Ptr clientAddress, CARD16 connectionType);
 extern void ForEachChooserHost (ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure);
 

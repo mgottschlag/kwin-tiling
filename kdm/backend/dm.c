@@ -115,8 +115,7 @@ extern FILE    *fdopen();
 static SIGVAL	StopAll (int n), UtmpNotify (int n), RescanNotify (int n);
 static void	RescanConfigs (void);
 static void	RestartDisplay (struct display *d, int forceReserver);
-static void	ScanServers (void);
-static void	SetAccessFileTime (void);	/* XXX kill! */
+static void	ScanServers (int force);
 static void	StartDisplays (void);
 static void	ExitDisplay (struct display *d, int doRestart, int forceReserver, int goodExit);
 static int	CheckUtmp (void);
@@ -124,7 +123,6 @@ static void	SwitchToTty (struct display *d);
 
 int	Rescan;
 int	ChkUtmp;
-long	ServersModTime, AccessFileModTime;	/* XXX kill! */
 
 #define nofork_session (debugLevel & DEBUG_NOFORK)
 
@@ -291,11 +289,10 @@ main (int argc, char **argv)
     /*
      * Step 2 - run a sub-daemon for each entry
      */
-    SetAccessFileTime ();
 #ifdef XDMCP
-    ScanAccessDatabase ();
+    ScanAccessDatabase (0);
 #endif
-    ScanServers ();
+    ScanServers (0);
     StartDisplays ();
     (void) Signal (SIGHUP, RescanNotify);
 #ifndef UNRELIABLE_SIGNALS
@@ -562,33 +559,50 @@ RescanNotify (int n ATTR_UNUSED)
 #endif
 }
 
-static void
-ScanServers (void)
-{
-    char	lineBuf[10240];
-    FILE	*serversFile;
-    struct stat	statb;
+static CfgDep xsDep;
 
-    if (servers[0] == '/')
-    {
-	serversFile = fopen (servers, "r");
-	if (serversFile == NULL)
- 	{
-	    LogError ("cannot access servers file %s\n", servers);
-	    return;
-	}
-	if (ServersModTime == 0)
+static void
+ScanServers (int force)
+{
+    char		*name, *class2, *console, **argv, *dtx;
+    struct display	*d;
+    int			nserv, type;
+
+Debug("ScanServers\n");
+    if (!startConfig (GC_gXservers, &xsDep, force))
+        return;
+    nserv = GRecvInt ();
+    while (nserv--) {
+	name = GRecvStr ();
+	class2 = GRecvStr ();
+	console = GRecvStr ();
+	type = GRecvInt ();
+	argv = GRecvArgv ();
+	if ((d = FindDisplayByName (name)))
 	{
-	    fstat (fileno (serversFile), &statb);
-	    ServersModTime = statb.st_mtime;
+	    d->stillThere = 1;
+	    ReStr (&d->class2, class2);
+	    ReStr (&d->console, console);
+	    freeStrArr (d->serverArgv);
+	    dtx = "existing";
 	}
-	while (fgets (lineBuf, sizeof (lineBuf)-1, serversFile))
-	    ParseDisplay (lineBuf);
-	fclose (serversFile);
-    }
-    else
-    {
-	ParseDisplay (servers);
+	else
+	{
+	    d = NewDisplay (name, class2);
+	    StrDup (&d->console, console);
+	    dtx = "new";
+	}
+	Debug ("Found %s display: %s %s %s %[s\n",
+	       dtx, d->name, d->class2, 
+	       ((type & d_location) == Local) ? "local" : "foreign", argv);
+	d->hstent->startTries = 0;
+	d->displayType = type;
+	d->serverArgv = argv;
+	free (name);
+	if (class2)
+	    free (class2);
+	if (console)
+	    free (console);
     }
 }
 
@@ -601,55 +615,23 @@ MarkDisplay (struct display *d)
 static void
 RescanConfigs (void)
 {
-    Debug ("rescanning servers\n");
-    LogInfo ("Rescanning both config and servers files\n");
-    LoadDMResources (TRUE);
+    LogInfo ("Rescanning all config files\n");
+    LoadDMResources (1);
     ForEachDisplay (MarkDisplay);
-    ScanServers ();
-    SetAccessFileTime ();
+    ScanServers (1);
 #ifdef XDMCP
-    ScanAccessDatabase ();
+    ScanAccessDatabase (1);
 #endif
     StartDisplays ();
 }
 
 static void
-SetAccessFileTime (void)
-{
-    struct stat	statb;
-
-    if (stat (accessFile, &statb) != -1)
-	AccessFileModTime = statb.st_mtime;
-}
-
-static void
 RescanIfMod (void)
 {
-    struct stat	statb;
-
-    LoadDMResources (FALSE);
-    if (servers[0] == '/' && stat(servers, &statb) != -1)
-    {
-	if (statb.st_mtime != ServersModTime)
-	{
-	    Debug ("Servers file %s has changed, rescanning\n", servers);
-	    LogInfo ("Rereading servers file %s\n", servers);
-	    ServersModTime = statb.st_mtime;
-	    ForEachDisplay (MarkDisplay);
-	    ScanServers ();
-	}
-    }
+    LoadDMResources (0);
+    ScanServers (0);
 #ifdef XDMCP
-    if (accessFile && accessFile[0] && stat (accessFile, &statb) != -1)
-    {
-	if (statb.st_mtime != AccessFileModTime)
-	{
-	    Debug ("Access file %s has changed, rereading\n", accessFile);
-	    LogInfo ("Rereading access file %s\n", accessFile);
-	    AccessFileModTime = statb.st_mtime;
-	    ScanAccessDatabase ();
-	}
-    }
+    ScanAccessDatabase (0);
 #endif
 }
 

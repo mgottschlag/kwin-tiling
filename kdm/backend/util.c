@@ -248,10 +248,10 @@ parseArgs (char **argv, char *string)
     argv = initStrArr (argv);
     for (word = string; ; ++string) {
 	ch = *string;
-	if (!ch || ch == '\n' || ch == '#' || ch == ' ' || ch == '\t') {
+	if (!ch || ch == ' ' || ch == '\t') {
 	    if (word != string)
 		argv = addStrArr (argv, word, string - word);
-	    if (!ch || ch == '\n' || ch == '#')
+	    if (!ch)
 		return argv;
 	    word = string + 1;
 	}
