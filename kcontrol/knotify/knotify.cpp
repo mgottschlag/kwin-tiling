@@ -84,3 +84,15 @@ void KNotifyWidget::loadAll()
 	applications->show();
 }
 
+void KNotifyWidget::save()
+{
+	if (applications)
+		applications->save();
+
+}
+
+QString KNotifyWidget::quickHelp()
+{
+	return i18n("Configure system notifications.  Set what happens when a certain event is triggered.");
+}
+

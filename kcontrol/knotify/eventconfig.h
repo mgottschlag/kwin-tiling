@@ -20,6 +20,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.10  2000/04/14 19:35:17  charles
+    CVS_SILENT
+
     Revision 1.9  2000/04/14 08:04:59  charles
     Need to do an rm -rf so have to save this :)
 
@@ -103,6 +106,8 @@ public:
 	void set(const EventConfig *old);
 
 	void load(KConfig &conf);
+	void save(KConfig &conf);
+	
 	/**
 	 * When I was selected to get shown with the EventView
 	 **/
@@ -111,6 +116,13 @@ public:
 	 * reload the data from the configuration file
 	 **/
 	void reload();
+	
+	/**
+	 * Get the config locale string.  This means that, you
+	 * pass a "description" and the config file, and it'l
+	 * translation closest to the locale.
+	 **/
+	static QString localeVersion(const QString &key, KConfig conf);
 	
 	const ProgramConfig *application;
 	int present;
@@ -143,6 +155,7 @@ public:
 	 * Load the data for this class, and it's child Events
 	 */
 	void load(KConfig &conf);
+	void save();
 	
 	/**
 	 * shows it to the GUI
@@ -182,6 +195,11 @@ public:
 	 * To the GUI!!!!
 	 **/
 	void show();
+	
+	/**
+	 * Store everything
+	 **/
+	void save();
 	
 	/**
 	 * Turns /some/random/path/appname/bleh into

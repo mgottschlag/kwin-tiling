@@ -111,11 +111,18 @@ Programs::Programs(EventView *_eventview, QListView *_programs,
 		events=_events;
 	
 	QStringList dirs("eventsrc"); // load system-wide eventsrc
-	dirs+=KGlobal::dirs()->findAllResources("data", "*/eventsrc");
+	{
+		QStringList fullpaths(KGlobal::dirs()->findAllResources("data", "*/eventsrc"));
+		for (QStringList::Iterator it=fullpaths.begin(); it!=fullpaths.end(); ++it)
+		{
+			QString s=Programs::getFileWithOnlyOneSlash(*it);
+			dirs+=s;
+		}
+	}
 	
 	for (QStringList::Iterator it=dirs.begin(); it!=dirs.end(); ++it)
 	{
-		KConfig conf(*it, false, false);
+		KConfig conf(*it, false, false, (*it == "eventsrc") ? "config" : "data");
 		conf.setGroup("!Global!");
 		ProgramConfig *prog=new ProgramConfig;
 		programlist.append(prog);
@@ -205,6 +212,39 @@ QString Programs::getFileWithOnlyOneSlash(const QString &path)
 {
 	int pos=path.findRev('/');
 	pos=path.findRev('/', pos-1);
-	return path.right(path.length()-pos);
+	return path.right(path.length()-pos-1);
 }
+
+void EventConfig::save(KConfig &conf)
+{
+	conf.setGroup(internalname);
+	conf.writeEntry("presentation", present);
+	conf.writeEntry("soundfile", soundfile);
+	conf.writeEntry("logfile",logfile);
+}
+
+void ProgramConfig::save()
+{
+	KConfig conf(configfile, false, false, (configfile == "eventsrc") ? "config" : "data");
+
+	for (EventConfig *ev=eventlist.first(); ev != 0; ev=eventlist.next())
+		ev->save(conf);
+	
+	conf.sync();
+}
+
+void Programs::save()
+{
+	for (ProgramConfig *prog=programlist.first(); prog != 0; prog=programlist.next())
+		prog->save();
+}
+
+
+QString EventConfig::localeVersion(const QString &key, KConfig conf)
+{
+
+
+}
+
+
 

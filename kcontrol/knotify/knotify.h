@@ -20,6 +20,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.7  2000/04/11 05:33:13  charles
+    Milestone 5.  Can't even remember how it's better, but it is (trust me).
+
     Revision 1.6  2000/04/09 05:57:05  charles
     Major milestone in progress of the new version of this applet.
 
@@ -91,6 +94,8 @@ public:
 	virtual ~KNotifyWidget();
 
 	void defaults();
+	virtual void save();
+	virtual QString quickHelp();
 
 private slots:
 	void changed();
