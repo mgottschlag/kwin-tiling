@@ -24,22 +24,33 @@
 #include <qpixmap.h>
 #include <qlistview.h>
 
+class ModuleInfo;
+
 class AboutWidget : public QWidget
 {  
   Q_OBJECT    
   
 public:   
-  AboutWidget(QWidget *parent, const char *name=0, QListViewItem* category=0);	
-  
+  AboutWidget(QWidget *parent, const char *name=0, QListViewItem* category=0);
+
+signals:
+    void moduleSelected(const QString &);
+
 protected:
     void paintEvent(QPaintEvent*);
     void resizeEvent(QResizeEvent*);
+    void mouseMoveEvent(QMouseEvent*);
+    void mouseReleaseEvent(QMouseEvent*);
 
 private:
     QPixmap _part1, _part2, _part3;
-    QPixmap _buffer;
+    QPixmap _buffer, _linkBuffer;
+    QRect _linkArea;
     bool    _moduleList;
     QListViewItem* _category;
+    struct ModuleLink;
+    QList<ModuleLink> _moduleLinks;
+    ModuleLink *_activeLink;
 };
 
 #endif

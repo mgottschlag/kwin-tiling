@@ -339,6 +339,7 @@ void TopLevel::categorySelected(QListViewItem *category)
   
   // insert the about widget
   AboutWidget *aw = new AboutWidget(this, 0, category);
+  connect(aw, SIGNAL(moduleSelected(const QString &)), SLOT(activateModule(const QString &)));
   _dock->setBaseWidget(aw);
 }
 

@@ -27,6 +27,7 @@
 #include <kdebug.h>
 #include <kpixmap.h>
 #include <kpixmapeffect.h>
+#include <kcursor.h>
 
 #include "global.h"
 #include "aboutwidget.h"
@@ -55,15 +56,23 @@ const char * system_text = I18N_NOOP("System:");
 const char * release_text = I18N_NOOP("Release:");
 const char * machine_text = I18N_NOOP("Machine:");
 
+struct AboutWidget::ModuleLink
+{
+    ModuleInfo *module;
+    QRect linkArea;
+};
+
 AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* category)
    : QWidget(parent, name),
       _moduleList(false),
-      _category(category)
+      _category(category),
+      _activeLink(0)
 {
     if (_category)
     {
       _moduleList = true;
     }
+    _moduleLinks.setAutoDelete(true);
     
     setMinimumSize(400, 400);
 
@@ -91,7 +100,16 @@ void AboutWidget::paintEvent(QPaintEvent* e)
     if(_buffer.isNull())
         p.fillRect(0, 0, width(), height(), QBrush(QColor(49,121,172)));
     else
+    {
         p.drawPixmap(QPoint(e->rect().x(), e->rect().y()), _buffer, e->rect());
+        if (_activeLink)
+        {
+            QRect src = e->rect() & _activeLink->linkArea;
+            QPoint dest = src.topLeft();
+            src.moveBy(-_linkArea.left(), -_linkArea.top());
+            p.drawPixmap(dest, _linkBuffer, src);
+        }
+    }
 }
 
 void AboutWidget::resizeEvent(QResizeEvent*)
@@ -244,9 +262,15 @@ void AboutWidget::resizeEvent(QResizeEvent*)
     }
     else
     {
+      // Need to set this here, not in the ctor. Otherwise Qt resets
+      // it to false when this is reparented (malte)
+      setMouseTracking(true);
       QFont headingFont = f2;
       headingFont.setPointSize(headingFont.pointSize()+5);
       headingFont.setUnderline(true);
+      QFont lf1 = f1, lf2 = f2;
+      lf1.setUnderline(true);
+      lf2.setUnderline(true);
 
       p.setFont(headingFont);
       p.drawText(xoffset, yoffset, static_cast<ModuleTreeItem*>(_category)->caption());
@@ -254,26 +278,48 @@ void AboutWidget::resizeEvent(QResizeEvent*)
       xadd = 200;
 
       // traverse the list
+      _moduleLinks.clear();
+      _linkBuffer.resize(bwidth, bheight);
+      _linkArea = p.viewport();
+      QPainter lp(&_linkBuffer);
+      lp.drawPixmap(0, 0, box);
+      lp.setPen(QColor(0x19, 0x19, 0x70)); // same as about:konqueror
       QListViewItem* pEntry = _category->firstChild();
       while (pEntry != NULL)
         {
           QString szName;
           QString szComment;
-          if (static_cast<ModuleTreeItem*>(pEntry)->module())
+          ModuleInfo *module = static_cast<ModuleTreeItem*>(pEntry)->module();
+          if (module)
             {
-              szName = static_cast<ModuleTreeItem*>(pEntry)->module()->name();
-              szComment = static_cast<ModuleTreeItem*>(pEntry)->module()->comment();
+              szName = module->name();
+              szComment = module->comment();
               p.setFont(f2);
+              lp.setFont(lf2);
               QRect bounds;
               p.drawText(xoffset, yoffset,
                 xadd - xoffset, bheight - yoffset,
                 AlignLeft | AlignTop | WordBreak, szName, -1, &bounds);
+              lp.drawText(xoffset, yoffset,
+                xadd - xoffset, bheight - yoffset,
+                AlignLeft | AlignTop | WordBreak, szName);
               int height = bounds.height();
               p.setFont(f1);
+              lp.setFont(lf1);
               p.drawText(xoffset + xadd, yoffset,
                 bwidth - xadd - xoffset, bheight - yoffset,
                 AlignLeft | AlignTop | WordBreak, szComment, -1, &bounds);
-              yoffset += QMAX(height, bounds.height()) + 5;
+              lp.drawText(xoffset + xadd, yoffset,
+                bwidth - xadd - xoffset, bheight - yoffset,
+                AlignLeft | AlignTop | WordBreak, szComment);
+              height = QMAX(height, bounds.height());
+              ModuleLink *linkInfo = new ModuleLink;
+              linkInfo->module = module;
+              linkInfo->linkArea = QRect(xoffset + p.viewport().left(),
+                                         yoffset + p.viewport().top(),
+                                         bwidth, height);
+              _moduleLinks.append(linkInfo);
+              yoffset += height + 5;
             }
           else
             {
@@ -288,4 +334,37 @@ void AboutWidget::resizeEvent(QResizeEvent*)
           pEntry = pEntry->nextSibling();
         }
       }
+}
+
+void AboutWidget::mouseMoveEvent(QMouseEvent *e)
+{
+    if (!_moduleList)
+        return;
+    ModuleLink *newLink = 0;
+    if (_linkArea.contains(e->pos()))
+    {
+        for (QListIterator<ModuleLink> it(_moduleLinks); it.current(); ++it)
+        {
+            if (it.current()->linkArea.contains(e->pos()))
+            {
+                newLink = it.current();
+                break;
+            }
+        }
+    }
+    if (newLink != _activeLink)
+    {
+        _activeLink = newLink;
+        if (_activeLink)
+            setCursor(KCursor::handCursor());
+        else
+            unsetCursor();
+        repaint(_linkArea);
+    }
+}
+
+void AboutWidget::mouseReleaseEvent(QMouseEvent*)
+{
+    if (_activeLink)
+        emit moduleSelected(_activeLink->module->fileName());
 }
