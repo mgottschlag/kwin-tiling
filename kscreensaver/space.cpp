@@ -82,7 +82,7 @@ extern KLocale *glocale;
 enum {
     NORMAL = 0,
     WEIRD = 1
-};
+} flag = NORMAL;
 
 enum {
     STREAK = 0,
@@ -105,7 +105,6 @@ typedef struct _starRec {
 GLenum doubleBuffer, directRender;
 GLint windW, windH;
 
-GLenum flag = NORMAL;
 GLint starCount = MAXSTARS / 2;
 float speed = 1.0;
 float warpinterval = 30000.0;
