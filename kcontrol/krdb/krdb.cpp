@@ -32,6 +32,7 @@
 #include <kstandarddirs.h>
 #include <kprocess.h>
 #include <ktempfile.h>
+#include <klocale.h>
 #include <ksimpleconfig.h>
 #include <kglobalsettings.h>
 
@@ -74,7 +75,7 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
   /* build up the KDE palette, and save it to qtrc. */
 
   /*
-     * WARNING WARNING WARNING 
+     * WARNING WARNING WARNING
      *
      * For reasons I do not understand the code below is duplicated from
      * kdelibs/kdecore/kapplication.cpp
@@ -153,7 +154,7 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
   else
       // black button - use darkgrey disabled buttonText
       disbtntext = Qt::darkGray;
-    
+
   disabledgrp.setColor(QColorGroup::ButtonText, disbtntext);
   disabledgrp.setColor(QColorGroup::Midlight, background.light(110));
   disabledgrp.setColor(QColorGroup::Link, link);
@@ -335,14 +336,17 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg )
         QTextStream t( &f );
         t.setEncoding( QTextStream::Latin1 );
 
-        t << "# created by KDE, " << QDateTime::currentDateTime().toString() << endl;
-        t << "#" << endl;
-        t << "# If you do not want KDE to override your GTK settings, select" << endl;
-        t << "# Look and Feel/Styles in the control center and disable the checkbox " << endl;
-        t << "# \"Apply fonts and colors to non-KDE apps\"" << endl;
-        t << "#" << endl;
-        t << endl;
+        t << i18n(
+            "# created by KDE, %1\n"
+            "#\n"
+            "# If you do not want KDE to override your GTK settings, select\n"
+            "# Look and Feel/Colors in the control center and disable the checkbox\n"
+            "# \"Apply colors to non-KDE apps\"\n"
+            "#\n"
+            "#\n").arg(QDateTime::currentDateTime().toString());
+
         t << "style \"default\"" << endl;
+
         t << "{" << endl;
         if (exportColors)
         {
@@ -387,6 +391,7 @@ void runRdb( uint flags )
 
     KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
     QColorGroup cg = kapp->palette().active();
+    KGlobal::locale()->insertCatalogue("krdb");
     createGtkrc( true, cg );
 
     QString preproc;
