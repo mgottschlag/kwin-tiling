@@ -106,17 +106,17 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     // SC/DC/AutoSelect/ChangeCursor
 
-    singleClick = new QCheckBox(i18n("Single &click activates/opens"), tab1);
+    singleClick = new QCheckBox(i18n("Use double-click to activate or open"), tab1);
     connect(singleClick, SIGNAL(clicked()), SLOT(changed()));
     lay->addSpacing(15);
     lay->addWidget(singleClick);
 
-    wtstr = i18n("Checking this option allows you to select and activate"
+    wtstr = i18n("The default behaviour in KDE is to select and activate"
          " icons with a single click of the left button on your pointing"
          " device. This behavior is consistent with what you would expect"
          " when you click links in most web browsers. If you would prefer"
          " to select with a single click, and activate with a double click,"
-         " uncheck this option.");
+         " check this option.");
     QWhatsThis::add( singleClick, wtstr );
 
     cbAutoSelect = new QCheckBox(i18n("&Automatically select icons"), tab1);
