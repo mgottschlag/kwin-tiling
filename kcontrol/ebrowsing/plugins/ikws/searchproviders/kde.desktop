@@ -17,7 +17,7 @@ Name[el]=Τεκμηρίωση KDE API
 Name[eo]=KDE API Dokumentaro
 Name[es]=Documentación de la API de KDE
 Name[et]=KDE API dokumentatsioon
-Name[eu]=KDE API Dokumentazioa
+Name[eu]=KDEren API dokumentazioa
 Name[fa]=مستندات KDE API
 Name[fi]=KDE API:n dokumentaatio
 Name[fr]=Documentation de l'API de KDE
@@ -29,6 +29,7 @@ Name[hu]=A KDE API dokumentációja
 Name[is]=KDE forritunarviðmótsleiðbeiningar
 Name[it]=Documentazione della API di KDE
 Name[ja]=KDE API 文書
+Name[mk]=KDE API документација
 Name[mn]=KDE API баримтжуулалт
 Name[mt]=Dokumentazzjoni tal-API ta' KDE
 Name[nb]=KDE API-dokumentasjon
@@ -58,5 +59,6 @@ Name[xx]=xxKDE API Documentationxx
 Name[zh_CN]=KDE API 文档
 Name[zh_TW]=KDE API 文件
 Query=http://developer.kde.org/documentation/library/classmapper.php?class=\\{@}
+Query[bg]=http://developer.kde.org/documentation/library/classmapper.php?class=\
 ServiceTypes=SearchProvider
 Type=Service
