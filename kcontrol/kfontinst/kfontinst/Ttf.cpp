@@ -105,7 +105,7 @@ CTtf::EStatus CTtf::fixPsNames(const QString &nameAndPath)
 
                     if(madeChange)
                     {
-                         if((status=checksum())==SUCCESS);
+                         if((status=checksum())==SUCCESS)
                              status=writeFile(nameAndPath);
                     }
                     else
