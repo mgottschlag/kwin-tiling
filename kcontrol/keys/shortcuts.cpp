@@ -68,6 +68,10 @@ void ShortcutsModule::save()
 	m_actionsSequence.writeActions( "Global Shortcuts", 0, true, true );
 	m_actionsApplication.writeActions( "Shortcuts", 0, true, true );
 
+	// TODO: Add the widget for this
+	//KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
+	//KGlobal::config()->writeEntry( "Use Four Modifier Keys", m_pchkUseFourModifierKeys, true, true );
+
 	KIPC::sendMessageAll( KIPC::SettingsChanged, KApplication::SETTINGS_SHORTCUTS );
 }
 
@@ -110,7 +114,7 @@ void ShortcutsModule::initGUI()
 	kdDebug(125) << "D-----------" << endl;
 	createActionsSequence();
 	kdDebug(125) << "E-----------" << endl;
-	createActionsApplication();
+	KStdAccel::createAccelActions( m_actionsApplication );
 
 	kdDebug(125) << "F-----------" << endl;
 	QVBoxLayout* pVLayout = new QVBoxLayout( this, KDialog::marginHint() );
@@ -129,7 +133,7 @@ void ShortcutsModule::initGUI()
 	pHLayout->addWidget( m_prbPre );
 
 	m_pcbSchemes = new KComboBox( this );
-	connect( m_pcbSchemes, SIGNAL(activated(int)), SLOT(slotSelectScheme()) );
+	connect( m_pcbSchemes, SIGNAL(activated(int)), SLOT(slotSelectScheme(int)) );
 	pHLayout->addWidget( m_pcbSchemes );
 
 	pHLayout->addSpacing( KDialog::marginHint() );
@@ -159,15 +163,15 @@ void ShortcutsModule::initGUI()
 	m_pTab = new QTabWidget( this );
 	pVLayout->addWidget( m_pTab );
 
-	m_pkcGeneral = new KKeyChooser( m_actionsGeneral, this, true, false, true );
+	m_pkcGeneral = new KKeyChooser( m_actionsGeneral, this, KKeyChooser::Global, false );
 	m_pTab->addTab( m_pkcGeneral, i18n("&Global Shortcuts") );
 	connect( m_pkcGeneral, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
-	m_pkcSequence = new KKeyChooser( m_actionsSequence, this, true, false, true );
+	m_pkcSequence = new KKeyChooser( m_actionsSequence, this, KKeyChooser::Global, false );
 	m_pTab->addTab( m_pkcSequence, i18n("Shortcut Se&quences") );
 	connect( m_pkcGeneral, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
-	m_pkcApplication = new KKeyChooser( m_actionsApplication, this, true, false, false );
+	m_pkcApplication = new KKeyChooser( m_actionsApplication, this, KKeyChooser::Standard, false );
 	m_pTab->addTab( m_pkcApplication, i18n("&Application Shortcuts") );
 	connect( m_pkcApplication, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
@@ -184,7 +188,7 @@ void ShortcutsModule::createActionsGeneral()
 {
 	KAccelActions& actions = m_actionsGeneral;
 
-	for( uint i = 0; i < actions.size(); i++ ) {
+	for( uint i = 0; i < actions.count(); i++ ) {
 		QString sConfigKey = actions[i].name();
 		//kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
 		int iLastSpace = sConfigKey.findRev( ' ' );
@@ -205,7 +209,7 @@ void ShortcutsModule::createActionsSequence()
 {
 	KAccelActions& actions = m_actionsSequence;
 
-	for( uint i = 0; i < actions.size(); i++ ) {
+	for( uint i = 0; i < actions.count(); i++ ) {
 		QString sConfigKey = actions[i].name();
 		//kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
 		int iLastSpace = sConfigKey.findRev( ' ' );
@@ -219,18 +223,6 @@ void ShortcutsModule::createActionsSequence()
 			actions[i].setConfigurable( false );
 			actions[i].setName( QString::null );
 		}
-	}
-}
-
-void ShortcutsModule::createActionsApplication()
-{
-	for( uint i=0; i < KStdAccel::NB_STD_ACCELS; i++ ) {
-		KStdAccel::StdAccel id = (KStdAccel::StdAccel) i;
-		m_actionsApplication.insertAction( KStdAccel::action(id),
-			KStdAccel::description(id),
-			QString::null, // sHelp
-			KStdAccel::shortcutDefault3(id),
-			KStdAccel::shortcutDefault4(id) );
 	}
 }
 
@@ -257,8 +249,6 @@ void ShortcutsModule::readSchemeNames()
 		//   continue;
 
 		KSimpleConfig config( *it, true );
-		// TODO: Put 'Name' in "Settings" group
-		//config.setGroup( KeyScheme );
 		config.setGroup( "Settings" );
 		QString str = config.readEntry( "Name" );
 
@@ -288,7 +278,7 @@ void ShortcutsModule::slotKeyChange()
 	emit changed( true );
 }
 
-void ShortcutsModule::slotSelectScheme()
+void ShortcutsModule::slotSelectScheme( int )
 {
 	kdDebug(125) << "ShortcutsModule::slotSelectScheme( " << m_pcbSchemes->currentItem() << " )" << endl;
 	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentItem() ];
@@ -372,7 +362,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 			return;
 	} while( !bNameValid );
 
-	disconnect( m_pcbSchemes, SIGNAL(activated(int)), this, SLOT(slotSelectScheme()) );
+	disconnect( m_pcbSchemes, SIGNAL(activated(int)), this, SLOT(slotSelectScheme(int)) );
 
 	QString kksPath = KGlobal::dirs()->saveLocation( "data", "kcmkeys/" );
 
@@ -402,7 +392,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 
 	saveScheme();
 
-	connect( m_pcbSchemes, SIGNAL(activated(int)), SLOT(slotSelectScheme()) );
+	connect( m_pcbSchemes, SIGNAL(activated(int)), SLOT(slotSelectScheme(int)) );
 	slotSelectScheme();
 }
 

@@ -31,6 +31,7 @@
 #include <qregexp.h>
 #include <qwhatsthis.h>
 
+#include <kaccelaction.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kglobal.h>
@@ -70,6 +71,7 @@ void KeyModule::initGUI()
 
 	m_pModifiers = new ModifiersModule( this );
 	m_pTab->addTab( m_pModifiers, i18n("Modifier Keys") );
+	connect( m_pModifiers, SIGNAL(changed(bool)), SLOT(slotModuleChanged(bool)) );
 }
 
 // Called when [Reset] is pressed
@@ -84,24 +86,29 @@ void KeyModule::load()
 void KeyModule::save()
 {
 	kdDebug(125) << "KeyModule::save()" << endl;
-	if( m_pTab->currentPageIndex() == 0 )
-		m_pShortcuts->save();
+	switch( m_pTab->currentPageIndex() ) {
+		case 0: m_pShortcuts->save(); break;
+		case 1: m_pModifiers->save(); break;
+	}
 }
 
 void KeyModule::defaults()
 {
-	if( m_pTab->currentPageIndex() == 0 )
-		m_pShortcuts->defaults();
+	kdDebug(125) << "KeyModule::defaults()" << endl;
+	switch( m_pTab->currentPageIndex() ) {
+		case 0: m_pShortcuts->defaults(); break;
+		case 1: m_pModifiers->defaults(); break;
+	}
 }
 
 QString KeyModule::quickHelp() const
 {
-  return i18n("<h1>Key Bindings</h1> Using key bindings you can configure certain actions to be"
-    " triggered when you press a key or a combination of keys, e.g. CTRL-C is normally bound to"
-    " 'Copy'. KDE allows you to store more than one 'scheme' of key bindings, so you might want"
+  return i18n("<h1>Shortcuts</h1> Using shortcuts you can configure certain actions to be"
+    " triggered when you press a key or a combination of keys, e.g. Ctrl+C is normally bound to"
+    " 'Copy'. KDE allows you to store more than one 'scheme' of shortcuts, so you might want"
     " to experiment a little setting up your own scheme while you can still change back to the"
-    " KDE defaults.<p> In the tab 'Global shortcuts' you can configure non-application specific"
-    " bindings like how to switch desktops or maximize a window. In the tab 'Application shortcuts'"
+    " KDE defaults.<p> In the tab 'Global Shortcuts' you can configure non-application specific"
+    " bindings like how to switch desktops or maximize a window. In the tab 'Application Shortcuts'"
     " you'll find bindings typically used in applications, such as copy and paste.");
 }
 
@@ -116,17 +123,27 @@ void KeyModule::slotModuleChanged( bool bState )
 }
 
 //----------------------------------------------------
-#include <kshortcut.h>
 
 extern "C"
 {
   KCModule *create_keys(QWidget *parent, const char *name)
   {
-    KGlobal::locale()->insertCatalogue("kcmkeys");
-    KGlobal::locale()->insertCatalogue("kwin");
-    KGlobal::locale()->insertCatalogue("kdesktop");
-    KGlobal::locale()->insertCatalogue("kicker");
-    return new KeyModule(parent, name);
+	// What does this do?  Why not insert klipper and kxkb, too? --ellis, 2002/01/15
+	KGlobal::locale()->insertCatalogue("kcmkeys");
+	KGlobal::locale()->insertCatalogue("kwin");
+	KGlobal::locale()->insertCatalogue("kdesktop");
+	KGlobal::locale()->insertCatalogue("kicker");
+	return new KeyModule(parent, name);
+  }
+
+  void initModifiers()
+  {
+	kdDebug(125) << "KeyModule::initModifiers()" << endl;
+
+	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
+	bool bMacSwap = KGlobal::config()->readBoolEntry( "Mac Modifier Swap", false );
+	if( bMacSwap )
+		ModifiersModule::setupMacModifierKeys();
   }
 
   // write all the global keys to kdeglobals
@@ -156,19 +173,23 @@ extern "C"
 #include "../../kxkb/kxkbbindings.cpp"
 
 	kdDebug(125) << "KeyModule::init() - Read Config Bindings\n";
-	keys->readActions( "Global Keys" );
+	// Check for old group,
+	if( KGlobal::config()->hasGroup( "Global Keys" ) ) {
+		keys->readActions( "Global Keys" );
+		KGlobal::config()->deleteGroup( "Global Keys" );
+	}
 	keys->readActions( "Global Shortcuts" );
 
 	// Why are the braces here? -- ellis
 	{
 	KSimpleConfig cfg( "kdeglobals" );
 	cfg.deleteGroup( "Global Shortcuts" );
-	// Get rid of old group
-	cfg.deleteGroup( "Global Keys" );
 	}
 
 	kdDebug(125) << "KeyModule::init() - Write Config Bindings\n";
 	keys->writeActions( "Global Shortcuts", 0, true, true );
+
+	initModifiers();
   }
 }
 

@@ -47,7 +47,6 @@ class ShortcutsModule : public QWidget
 	void initGUI();
 	void createActionsGeneral();
 	void createActionsSequence();
-	void createActionsApplication();
 	void readSchemeNames();
 	void saveScheme();
 	void resizeEvent(QResizeEvent *e);
@@ -58,7 +57,7 @@ class ShortcutsModule : public QWidget
  protected slots:
 	void slotSchemeCur();
 	void slotKeyChange();
-	void slotSelectScheme();
+	void slotSelectScheme( int = 0 );
 	void slotSaveSchemeAs();
 	void slotRemoveScheme();
 

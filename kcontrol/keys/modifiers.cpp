@@ -1,10 +1,21 @@
 #include "modifiers.h"
 
+#include <qbuttongroup.h>
+#include <qcheckbox.h>
+#include <qfont.h>
+#include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <qwhatsthis.h>
 
+#include <kapplication.h>
 #include <kcombobox.h>
+#include <kconfig.h>
+#include <kdebug.h>
 #include <kdialog.h>
+#include <kglobal.h>
+#include <kkeynative.h>
+#include <klistview.h>
 #include <klocale.h>
 
 #define XK_MISCELLANY
@@ -39,47 +50,112 @@ Extra1		[]		[] User definable
 	Mod5	Scroll_Lock
 */
 
+//For Mac keyboards:
+//1) labels: Shift | Ctrl | Option | Command
+//2) swap Ctrl & Command
+
 ModifiersModule::ModifiersModule( QWidget *parent, const char *name )
 :	QWidget( parent, name )
 {
-	QGridLayout* pLayoutTop = new QGridLayout( this, 4, 2, KDialog::marginHint() );
+	m_sLabelCtrlOrig = KGlobal::config()->readEntry( "Label Ctrl", "Ctrl" );
+	m_sLabelAltOrig = KGlobal::config()->readEntry( "Label Alt", "Alt" );
+	m_sLabelWinOrig = KGlobal::config()->readEntry( "Label Win", "Win" );
+
+	m_bMacKeyboardOrig = (m_sLabelWinOrig != "Win");
+	m_bMacSwapOrig = m_bMacKeyboardOrig && KGlobal::config()->readBoolEntry( "Mac Modifier Swap", false );
+
+	initGUI();
+}
+
+// When [Apply] or [OK] are clicked.
+void ModifiersModule::save()
+{
+	kdDebug(125) << "ModifiersModule::save()" << endl;
+
+	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
+
+	KGlobal::config()->writeEntry( "Label Ctrl", m_plblCtrl->text(), true, true );
+	KGlobal::config()->writeEntry( "Label Alt", m_plblAlt->text(), true, true );
+	KGlobal::config()->writeEntry( "Label Win", m_plblWin->text(), true, true );
+
+	bool bMacSwap = m_pchkMacKeyboard->isChecked() && m_pchkMacSwap->isChecked();
+	KGlobal::config()->writeEntry( "Mac Modifier Swap", bMacSwap, true, true );
+	if( m_bMacSwapOrig != bMacSwap ) {
+		if( bMacSwap )
+			setupMacModifierKeys();
+		else
+			kapp->kdeinitExec("kxkb");
+		updateWidgets();
+	}
+}
+
+void ModifiersModule::defaults()
+{
+}
+
+#define SET_CODE_SYM( iCode, sym ) \
+	if( iCode >= keyCodeMin && iCode <= keyCodeMax ) \
+		rgKeySyms[(iCode-keyCodeMin) * nSymsPerCode] = sym;
+#define SET_MOD_CODE( iMod, code1, code2 ) \
+	xmk->modifiermap[iMod * xmk->max_keypermod + 0] = code1; \
+	xmk->modifiermap[iMod * xmk->max_keypermod + 1] = code2;
+void ModifiersModule::setupMacModifierKeys()
+{
+	const int CODE_Ctrl_L = 0x25, CODE_Ctrl_R = 0x6d;
+	const int CODE_Win_L  = 0x73, CODE_Win_R  = 0x74;
+	const int CODE_Alt_L  = 0x40, CODE_Alt_R  = 0x71;
+	int keyCodeMin, keyCodeMax, nKeyCodes, nSymsPerCode;
+
+	XDisplayKeycodes( qt_xdisplay(), &keyCodeMin, &keyCodeMax );
+	nKeyCodes = keyCodeMax - keyCodeMin + 1;
+	KeySym* rgKeySyms = XGetKeyboardMapping( qt_xdisplay(), keyCodeMin, nKeyCodes, &nSymsPerCode );
+	XModifierKeymap* xmk = XGetModifierMapping( qt_xdisplay() );
+
+	SET_CODE_SYM( CODE_Ctrl_L, XK_Super_L )
+	SET_CODE_SYM( CODE_Ctrl_R, XK_Super_R )
+	SET_CODE_SYM( CODE_Win_L,  XK_Alt_L )
+	SET_CODE_SYM( CODE_Win_R,  XK_Alt_R )
+	SET_CODE_SYM( CODE_Alt_L,  XK_Control_L )
+	SET_CODE_SYM( CODE_Alt_R,  XK_Control_R )
+
+	SET_MOD_CODE( ControlMapIndex, CODE_Alt_L, CODE_Alt_R );
+	SET_MOD_CODE( Mod1MapIndex,    CODE_Win_L, CODE_Win_R );
+	SET_MOD_CODE( Mod4MapIndex,    CODE_Ctrl_L, CODE_Ctrl_R );
+
+	XSetModifierMapping( qt_xdisplay(), xmk );
+	XChangeKeyboardMapping( qt_xdisplay(), keyCodeMin, nSymsPerCode, rgKeySyms, nKeyCodes );
+	XFree( rgKeySyms );
+	XFreeModifiermap( xmk );
+}
+#undef SET_CODE_SYM
+
+void ModifiersModule::initGUI()
+{
+	QGridLayout* pLayoutTop = new QGridLayout( this, 6, 2, KDialog::marginHint() );
 	pLayoutTop->setColStretch( 1, 1 );
-	pLayoutTop->setRowStretch( 3, 1 );
 
-	I18N_NOOP("KDE Modifier Labels");
+	QGroupBox* pGroup = new QGroupBox( 2, Qt::Horizontal, i18n("KDE Modifiers"), this );
+	pLayoutTop->addWidget( pGroup, 0, 0 );
 
-	QGridLayout* grid = new QGridLayout( this, 5, 3, KDialog::marginHint(), KDialog::spacingHint() );
-	grid->setColStretch( 0, 1 );
-	grid->setColStretch( 1, 1 );
-	grid->setColStretch( 2, 1 );
-	pLayoutTop->addLayout( grid, 0, 0 );
+	QLabel* plbl = new QLabel( i18n("Modifier"), pGroup );
+	QFont font = plbl->font();
+	font.setUnderline( true );
+	font.setWeight( QFont::Bold );
+	plbl->setFont( font );
+	plbl = new QLabel( i18n("X11-Mod"), pGroup );
+	plbl->setFont( font );
 
-	grid->addWidget( new QLabel( i18n("Modifier"), this ), 0, 0 );
-	grid->addWidget( new QLabel( i18n("X11-Mod"), this ), 0, 1 );
-	grid->addWidget( new QLabel( i18n("Label"), this ), 0, 2 );
+	new QLabel( i18n("QAccel", "Shift"), pGroup );
+	new QLabel( i18n("QAccel", "shift"), pGroup );
 
-	grid->addWidget( new QLabel( i18n("QAccel", "Shift"), this ), 1, 0 );
-	grid->addWidget( new QLabel( i18n("QAccel", "Shift"), this ), 1, 1 );
-	m_pcbShift = new KComboBox( this );
-	m_pcbShift->insertItem( i18n("QAccel", "Shift") );
-	grid->addWidget( m_pcbShift, 1, 2 );
+	m_plblCtrl = new QLabel( i18n("QAccel", "Ctrl"), pGroup );
+	new QLabel( i18n("control"), pGroup );
 
-	grid->addWidget( new QLabel( i18n("QAccel", "Ctrl"), this ), 2, 0 );
-	grid->addWidget( new QLabel( i18n("Control"), this ), 2, 1 );
-	m_pcbCtrl = new KComboBox( this );
-	m_pcbCtrl->insertItem( i18n("QAccel", "Ctrl") );
-	//m_pcbCtrl->insertItem( i18n("Option") );
-	grid->addWidget( m_pcbCtrl, 2, 2 );
+	m_plblAlt = new QLabel( i18n("QAccel", "Alt"), pGroup );
+	new QLabel( i18n("mod1"), pGroup );
 
-	grid->addWidget( new QLabel( i18n("QAccel", "Alt"), this ), 3, 0 );
-	grid->addWidget( new QLabel( "Mod1", this ), 3, 1 );
-	m_pcbAlt = new KComboBox( this );
-	m_pcbAlt->insertItem( i18n("QAccel", "Alt") );
-	m_pcbAlt->insertItem( i18n("Command") );
-	grid->addWidget( m_pcbAlt, 3, 2 );
-
-	grid->addWidget( new QLabel( i18n("Win"), this ), 4, 0 );
-	m_pcbWinX = newModXComboBox();
+	m_plblWin = new QLabel( i18n("Win"), pGroup );
+	m_pcbWinX = newModXComboBox( pGroup );
 	int i;
 	switch( KKeyNative::modX(KKey::WIN) ) {
 		case Mod2Mask: i = 1; break;
@@ -90,61 +166,122 @@ ModifiersModule::ModifiersModule( QWidget *parent, const char *name )
 	}
 	m_pcbWinX->setCurrentItem( i );
 
-	grid->addWidget( m_pcbWinX, 4, 1 );
-	m_pcbWin = new KComboBox( this );
-	m_pcbWin->insertItem( i18n("Win") );
-	m_pcbWin->insertItem( i18n("Option") );
-	m_pcbWin->insertItem( i18n("Meta") );
-	m_pcbWin->insertItem( i18n("Super") );
-	m_pcbWin->insertItem( i18n("Hyper") );
-	grid->addWidget( m_pcbWin, 4, 2 );
+	m_pchkMacKeyboard = new QCheckBox( "Macintosh keyboard", this );
+	m_pchkMacKeyboard->setChecked( m_bMacKeyboardOrig );
+	connect( m_pchkMacKeyboard, SIGNAL(clicked()), SLOT(slotMacKeyboardClicked()) );
+	pLayoutTop->addWidget( m_pchkMacKeyboard, 1, 0 );
+
+	m_pchkMacSwap = new QCheckBox( "MacOS-style modifier usage", this );
+	m_pchkMacSwap->setChecked( m_bMacSwapOrig );
+	QWhatsThis::add( m_pchkMacSwap,
+		i18n("Use <b>Command</b> for application and console commands, Option as a "
+			"command modifier and for navigating menus and dialogs, and "
+			"Control for window manager commands.") );
+	connect( m_pchkMacSwap, SIGNAL(clicked()), SLOT(slotMacSwapClicked()) );
+	pLayoutTop->addWidget( m_pchkMacSwap, 2, 0 );
 
 	//------------------
-	pLayoutTop->addRowSpacing( 1, KDialog::spacingHint() * 3 );
+	pLayoutTop->addRowSpacing( 3, KDialog::spacingHint() * 3 );
 
-	grid = new QGridLayout( this, 9, 2, KDialog::marginHint(), 0 );
-	pLayoutTop->addLayout( grid, 2, 0 );
+	pGroup = new QGroupBox( 1, Qt::Horizontal, i18n("X Modifier Mapping"), this );
+	pLayoutTop->addWidget( pGroup, 4, 0 );
 
-	I18N_NOOP("X Modifier Mapping");
+	m_plstXMods = new KListView( pGroup );
+	m_plstXMods->setSorting( -1 );
+	m_plstXMods->setSelectionMode( QListView::NoSelection );
+	m_plstXMods->setAllColumnsShowFocus( true );
+	m_plstXMods->addColumn( i18n("X11-Mod") );
 
-	grid->addWidget( new QLabel( i18n("X11-Mod"), this ), 0, 0 );
-	grid->addWidget( new QLabel( i18n("Keys"), this ), 0, 1 );
+	new KListViewItem( m_plstXMods, "mod5" );
+	new KListViewItem( m_plstXMods, "mod4" );
+	new KListViewItem( m_plstXMods, "mod3" );
+	new KListViewItem( m_plstXMods, "mod2" );
+	new KListViewItem( m_plstXMods, "mod1" );
+	new KListViewItem( m_plstXMods, "control" );
+	new KListViewItem( m_plstXMods, "lock" );
+	new KListViewItem( m_plstXMods, "shift" );
 
-	grid->addWidget( new QLabel( "shift", this ), 1, 0 );
-	grid->addWidget( new QLabel( "lock", this ), 2, 0 );
-	grid->addWidget( new QLabel( "control", this ), 3, 0 );
-	grid->addWidget( new QLabel( "mod1", this ), 4, 0 );
-	grid->addWidget( new QLabel( "mod2", this ), 5, 0 );
-	grid->addWidget( new QLabel( "mod3", this ), 6, 0 );
-	grid->addWidget( new QLabel( "mod4", this ), 7, 0 );
-	grid->addWidget( new QLabel( "mod5", this ), 8, 0 );
+	//------------------
+	pLayoutTop->setRowStretch( 5, 1 );
+
+	updateWidgets();
+}
+
+KComboBox* ModifiersModule::newModXComboBox( QWidget* parent )
+{
+	KComboBox* pcb = new KComboBox( parent );
+	pcb->insertItem( "" );
+	pcb->insertItem( "mod2" );
+	pcb->insertItem( "mod3" );
+	pcb->insertItem( "mod4" );
+	pcb->insertItem( "mod5" );
+	return pcb;
+}
+
+void ModifiersModule::updateWidgets()
+{
+	if( m_pchkMacKeyboard->isChecked() ) {
+		// If keys are swapped around to reflect MacOS norms:
+		if( m_pchkMacSwap->isChecked() ) {
+			m_plblCtrl->setText( i18n("Command") ); // Ctrl in Alt's place
+			m_plblAlt->setText( i18n("Option") );   // Alt in Win's place
+			m_plblWin->setText( i18n("Control") );  // Win in Ctrl's place
+		} else {
+			m_plblCtrl->setText( i18n("Control") ); // Ctrl labeled Control
+			m_plblAlt->setText( i18n("Command") );  // Alt labeled Command
+			m_plblWin->setText( i18n("Option") );   // Win labeled Option
+		}
+		m_pchkMacSwap->setEnabled( true );
+	} else {
+		m_plblCtrl->setText( i18n("QAccel", "Ctrl") );
+		m_plblAlt->setText( i18n("QAccel", "Alt") );
+		m_plblWin->setText( i18n("Win") );
+		m_pchkMacSwap->setEnabled( false );
+	}
 
 	XModifierKeymap* xmk = XGetModifierMapping( qt_xdisplay() );
 
+	for( int iKey = m_plstXMods->columns()-1; iKey < xmk->max_keypermod; iKey++ )
+		m_plstXMods->addColumn( i18n("Key %1").arg(iKey+1) );
+
 	for( int iMod = 0; iMod < 8; iMod++ ) {
-		QString s;
 		for( int iKey = 0; iKey < xmk->max_keypermod; iKey++ ) {
 			uint symX = XKeycodeToKeysym( qt_xdisplay(), xmk->modifiermap[xmk->max_keypermod * iMod + iKey], 0 );
-			if( symX && !s.isEmpty() )
-				s += ", ";
-			s += XKeysymToString( symX );
+			m_plstXMods->itemAtIndex( iMod )->setText( 1 + iKey, XKeysymToString( symX ) );
 		}
-		grid->addWidget( new QLabel( s, this ), iMod+1, 1 );
 	}
 
-	XFreeModifiermap(xmk);
+	XFreeModifiermap( xmk );
+}
+/*
+// Called when [Reset] is pressed
+void ModifiersModule::load()
+{
+	kdDebug(125) << "ModifiersModule::load()" << endl;
+
+	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard Layout" );
+	bool b = KGlobal::config()->readBoolEntry( "Use Four Modifier Keys",  false );
+	QString sLabel;
+	sLabel = KGlobal::config()->readEntry( "Label Ctrl" );
+	sLabel = KGlobal::config()->readEntry( "Label Alt" );
+	sLabel = KGlobal::config()->readEntry( "Label Win" );
 
 }
 
-KComboBox* ModifiersModule::newModXComboBox()
+	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard Layout" );
+	KGlobal::config()->writeEntry( "Use Four Modifier Keys", KAccelAction::g_bUseFourModifierKeys, true, true);
+*/
+
+void ModifiersModule::slotMacKeyboardClicked()
 {
-	KComboBox* pcb = new KComboBox( this );
-	pcb->insertItem( "" );
-	pcb->insertItem( "Mod2" );
-	pcb->insertItem( "Mod3" );
-	pcb->insertItem( "Mod4" );
-	pcb->insertItem( "Mod5" );
-	return pcb;
+	updateWidgets();
+	emit changed( true );
+}
+
+void ModifiersModule::slotMacSwapClicked()
+{
+	updateWidgets();
+	emit changed( true );
 }
 
 #include "modifiers.moc"
