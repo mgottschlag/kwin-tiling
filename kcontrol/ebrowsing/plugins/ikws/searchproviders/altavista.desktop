@@ -19,3 +19,4 @@ ServiceTypes=SearchProvider
 Keys=av,altavista
 Query=http://www.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\{@}
 Query[de]=http://de.altavista.com/cgi-bin/query?pg=q&sc=on&kl=XX&what=web&q=\\{@}
+Query[sv]=http://se.altavista.com/cgi-bin/query?pg=q&sc=on&kl=XX&what=web&q=\\{@}

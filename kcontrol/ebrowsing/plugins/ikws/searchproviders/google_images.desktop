@@ -17,7 +17,7 @@ Name[el]=Αναζήτηση εικόνων του Google
 Name[eo]=Bildoserĉo ce "Google"
 Name[es]=Búsqueda de imágenes de Google
 Name[et]=Google piltide otsing
-Name[eu]=Google Irudi Bilaketa
+Name[eu]=Google irudi bilaketa
 Name[fa]=جستجوی عکس گوگل
 Name[fi]=Google kuvahaku
 Name[fo]=Google (myndaleiting)
@@ -32,6 +32,7 @@ Name[ja]=Google 画像検索
 Name[ko]=구글 그림 찾기
 Name[lt]=Google paveikslėlių paieška
 Name[lv]=Google Attēlu Meklēšana
+Name[mk]=Google пребарување на слики
 Name[mn]=Гооглэ-Зураг хайлт
 Name[mt]=Fittex stampi fuq Google
 Name[nb]=Bildesøk i Google
@@ -70,3 +71,5 @@ Keys=ggi,images
 Query=http://images.google.com/images?q=\\{@}
 Query[en_GB]=http://images.google.co.uk/images?q=\\{@}
 Query[fi]=http://images.google.fi/images?q=\\{@}
+Query[fr]=http://images.google.fr/images?q=\\{@}
+Query[sv]=http://images.google.se/images?q=\\{@}

@@ -17,6 +17,7 @@ Name[de]=Python-Handbuch
 Name[el]=Εγχειρίδιο αναφοράς Python
 Name[eo]=Pitono-manlibro
 Name[es]=Manual de referencia de Python
+Name[eu]=Python-en erreferentzia eskuliburua
 Name[fa]=مرجع دستی پایتون
 Name[fi]=Python referenssimanuaali
 Name[fr]=Manuel de référence de Python
@@ -28,6 +29,7 @@ Name[it]=Manuale di riferimento di Python
 Name[ja]=Pythonリファレンスマニュアル
 Name[lt]=Python vadovas-žinynas
 Name[lv]=Pitona Atsauču Rokasgrāmata
+Name[mk]=Python референтен прирачник
 Name[mn]=Python-Гарын авлага
 Name[mt]=Manwal tal-Python
 Name[nb]=Python referansehåndbok
@@ -59,5 +61,8 @@ Name[zh_CN]=Python 参考手册
 Name[zh_TW]=Python 參考手冊
 Name[zu]=Incwadi yokuqondiwe ye-Python
 Query=http://www.google.com/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
+Query[en_GB]=http://www.google.co.uk/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
+Query[fr]=http://www.google.fr/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
+Query[sv]=http://www.google.se/search?sourceid=python-search&q=\{@}&submit=Search&q=site%3Apython.org
 ServiceTypes=SearchProvider
 Type=Service

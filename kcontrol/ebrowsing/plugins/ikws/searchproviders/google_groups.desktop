@@ -18,7 +18,7 @@ Name[el]=Ομάδες του Google
 Name[eo]=Forumserĉo ĉe "Google"
 Name[es]=Grupos de Google
 Name[et]=Google uudisegrupid
-Name[eu]=Google Taldeak
+Name[eu]=Google taldeak
 Name[fa]=گروه‌های گوگل
 Name[fi]=Google ryhmät
 Name[fr]=Groupes Google
@@ -31,6 +31,7 @@ Name[ja]=Google グループ
 Name[ko]=구글 그룹
 Name[lt]=Google grupės
 Name[lv]=Google Grupas
+Name[mk]=Google Групи
 Name[mn]=Гооглэ-Мэдээлэл
 Name[mt]=Gruppi Google
 Name[nb]=Google grupper
@@ -64,3 +65,5 @@ Keys=ggg,groups,dj,deja
 Query=http://groups.google.com/groups?oi=djq&as_q=\\{@}
 Query[en_GB]=http://groups.google.co.uk/groups?oi=djq&as_q=\\{@}
 Query[fi]=http://groups.google.fi/groups?oi=djq&as_q=\\{@}
+Query[fr]=http://groups.google.fr/groups?oi=djq&as_q=\\{@}
+Query[sv]=http://groups.google.se/groups?oi=djq&as_q=\\{@}

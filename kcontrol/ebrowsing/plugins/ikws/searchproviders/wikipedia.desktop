@@ -16,6 +16,7 @@ Name[el]=Wikipedia - Η ελεύθερη εγκυκλοπαίδεια
 Name[eo]=Vikipedio - la libera enciklopedio
 Name[es]=Wikipedia - La enciclopedia libre
 Name[et]=Wikipedia - Vaba entsüklopeedia
+Name[eu]=Wikipedia - Entziklopedia librea
 Name[fi]=Wikipedia - Vapaa tietosanakirja
 Name[fr]=Wikipedia - L'encyclopédie libre
 Name[gl]=Wikipedia - A Enciclopedia Ceibe
@@ -25,6 +26,7 @@ Name[hu]=Wikipedia - egy szabadon hozzáférhető enciklopédia
 Name[is]=Wikipedia - Frítt alfræðiorðasafn
 Name[it]=Wikipedia - L'enciclopedia libera
 Name[ja]=Wikipedia - フリーな辞書
+Name[mk]=Wikipedia - Слободната енциклопедија
 Name[mn]=Wikipedia - Чөлөөт толь бичиг
 Name[mt]=Wikipedia - L-Enċiklopedija Ħielsa
 Name[nb]=Wikipedia - det frie leksikonet
@@ -55,6 +57,5 @@ Name[zh_TW]=Wikipedia - 免費的 Encyclopedia
 ServiceTypes=SearchProvider
 Keys=wp
 Query=http://en.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go 
-Query[de]=http://de.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go 
-Query[fi]=http://fi.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go
+Query[sv]=http://sv.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go 
 Charset=utf8
