@@ -38,6 +38,7 @@ public:
 private:
 	void fillMenu(Task*);
 	void fillMenu(TaskList*);
+    QPopupMenu* makeAdvancedMenu(Task*);
 	QPopupMenu* makeDesktopsMenu(Task*);
 	QPopupMenu* makeDesktopsMenu(TaskList*);
 

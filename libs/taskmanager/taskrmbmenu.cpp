@@ -58,8 +58,7 @@ void TaskRMBMenu::fillMenu(Task *t)
     int id;
     setCheckable(true);
 
-    id = insertItem(i18n("&Always on Top"), t, SLOT(toggleAlwaysOnTop()));
-    setItemChecked(id, t->isAlwaysOnTop());
+    insertItem(i18n("Ad&vanced"), makeAdvancedMenu(t));
 
     if (TaskManager::the()->numberOfDesktops() > 1)
     {
@@ -67,10 +66,14 @@ void TaskRMBMenu::fillMenu(Task *t)
 
         if (showAll)
         {
-            id = insertItem(i18n("&To Current Desktop"), t, SLOT(toCurrentDesktop()));
+            id = insertItem(i18n("&To Current Desktop"),
+                            t, SLOT(toCurrentDesktop()));
             setItemEnabled( id, !t->isOnCurrentDesktop() );
         }
     }
+
+    id = insertItem(SmallIconSet("move"), i18n("&Move"), t, SLOT(move()));
+    id = insertItem(i18n("Re&size"), t, SLOT(resize()));
 
     id = insertItem(i18n("Mi&nimize"), t, SLOT(toggleIconified()));
     setItemChecked(id, t->isIconified());
@@ -168,6 +171,31 @@ void TaskRMBMenu::fillMenu(TaskList *tasks)
 	*/
 
 	insertItem( SmallIcon( "remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
+}
+
+QPopupMenu* TaskRMBMenu::makeAdvancedMenu(Task* t)
+{
+    int id;
+    QPopupMenu* menu = new QPopupMenu(this);
+
+    menu->setCheckable(true);
+
+    id = menu->insertItem(SmallIconSet("up"),
+                          i18n("Keep &Above Others"),
+                          t, SLOT(toggleAlwaysOnTop()));
+    menu->setItemChecked(id, t->isAlwaysOnTop());
+
+    id = menu->insertItem(SmallIconSet("down"),
+                          i18n("Keep &Below Others"),
+                          t, SLOT(toggleKeptBelowOthers()));
+    menu->setItemChecked(id, t->isKeptBelowOthers());
+
+    id = menu->insertItem(SmallIconSet("window_fullscreen"),
+                          i18n("&Fullscreen"),
+                          t, SLOT(toggleFullScreen()));
+    menu->setItemChecked(id, t->isFullScreen());
+
+    return menu;
 }
 
 QPopupMenu* TaskRMBMenu::makeDesktopsMenu(Task* t)

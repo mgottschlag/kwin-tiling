@@ -190,6 +190,17 @@ public:
     bool isAlwaysOnTop() const;
 
     /**
+     * Returns true if the task's window will remain at the bottom of the
+     * stacking order.
+     */
+    bool isKeptBelowOthers() const;
+
+    /**
+     * Returns true if the task's window is in full screen mode
+     */
+    bool isFullScreen() const;
+
+    /**
      * Returns true if the document the task is editing has been modified.
      * This is currently handled heuristically by looking for the string
      * '[i18n_modified]' in the window title where i18n_modified is the
@@ -269,6 +280,16 @@ public slots:
     void restore();
 
     /**
+     * Move the window of this task.
+     */
+    void move();
+
+    /**
+     * Resize the window of this task.
+     */
+    void resize();
+
+    /**
      * Iconify the task.
      */
     void setIconified(bool);
@@ -306,6 +327,18 @@ public slots:
      */
     void setAlwaysOnTop(bool);
     void toggleAlwaysOnTop();
+
+    /**
+     * If true, the task's window will remain at the bottom of the stacking order.
+     */
+    void setKeptBelowOthers(bool);
+    void toggleKeptBelowOthers();
+
+    /**
+     * If true, the task's window will enter full screen mode.
+     */
+    void setFullScreen(bool);
+    void toggleFullScreen();
 
     /**
      * If true then the task's window will be shaded. Most window managers

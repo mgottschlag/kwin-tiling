@@ -22,6 +22,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include <qapplication.h>
+#include <qcursor.h>
 #include <qimage.h>
 #include <qtimer.h>
 
@@ -493,6 +494,16 @@ bool Task::isAlwaysOnTop() const
     return _info.valid() && (_info.state() & NET::StaysOnTop);
 }
 
+bool Task::isKeptBelowOthers() const
+{
+    return _info.valid() && (_info.state() & NET::KeepBelow);
+}
+
+bool Task::isFullScreen() const
+{
+    return _info.valid() && (_info.state() & NET::FullScreen);
+}
+
 bool Task::isShaded() const
 {
     return _info.valid() && (_info.state() & NET::Shaded);
@@ -704,6 +715,52 @@ bool Task::idMatch( const QString& id1, const QString& id2 )
 }
 
 
+void Task::move()
+{
+    bool on_current = _info.isOnCurrentDesktop();
+
+    if (!on_current)
+    {
+        KWin::setCurrentDesktop(_info.desktop());
+        KWin::forceActiveWindow(_win);
+    }
+
+    if (_info.isMinimized())
+    {
+        KWin::deIconifyWindow(_win);
+    }
+
+    QRect geom = _info.geometry();
+    QCursor::setPos(geom.center());
+
+    NETRootInfo ri(qt_xdisplay(), NET::WMMoveResize);
+    ri.moveResizeRequest(_win, geom.center().x(),
+                         geom.center().y(), NET::Move);
+}
+
+void Task::resize()
+{
+    bool on_current = _info.isOnCurrentDesktop();
+
+    if (!on_current)
+    {
+        KWin::setCurrentDesktop(_info.desktop());
+        KWin::forceActiveWindow(_win);
+    }
+
+    if (_info.isMinimized())
+    {
+        KWin::deIconifyWindow(_win);
+    }
+
+    QRect geom = _info.geometry();
+    QCursor::setPos(geom.bottomRight());
+
+    NETRootInfo ri(qt_xdisplay(), NET::WMMoveResize);
+    ri.moveResizeRequest(_win, geom.bottomRight().x(),
+                         geom.bottomRight().y(), NET::BottomRight);
+}
+
 void Task::setMaximized(bool maximize)
 {
     KWin::WindowInfo info = KWin::windowInfo(_win, NET::WMState | NET::XAWMState | NET::WMDesktop);
@@ -877,6 +934,44 @@ void Task::setAlwaysOnTop(bool stay)
 void Task::toggleAlwaysOnTop()
 {
     setAlwaysOnTop( !isAlwaysOnTop() );
+}
+
+void Task::setKeptBelowOthers(bool below)
+{
+    NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMState);
+
+    if (below)
+    {
+        ni.setState(NET::KeepBelow, NET::KeepBelow);
+    }
+    else
+    {
+        ni.setState(0, NET::KeepBelow);
+    }
+}
+
+void Task::toggleKeptBelowOthers()
+{
+    setKeptBelowOthers(!isKeptBelowOthers());
+}
+
+void Task::setFullScreen(bool fullscreen)
+{
+    NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMState);
+
+    if (fullscreen)
+    {
+        ni.setState(NET::FullScreen, NET::FullScreen);
+    }
+    else
+    {
+        ni.setState(0, NET::FullScreen);
+    }
+}
+
+void Task::toggleFullScreen()
+{
+    setFullScreen(!isFullScreen());
 }
 
 void Task::setShaded(bool shade)
