@@ -77,6 +77,7 @@ class CMisc
     static bool         root() { return getuid()==0 ? true : false; }
     static int          stricmp(const char *s1, const char *s2);
     static bool         find(const QStringList &list, const QString &str) { return list.end()!=qFind(list.begin(), list.end(), str); }
+    static void         createBackup(const QString &f);
 };
 
 #endif

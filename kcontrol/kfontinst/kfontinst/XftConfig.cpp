@@ -468,6 +468,8 @@ bool CXftConfig::read(const QString &f)
 
 bool CXftConfig::save(const QString &f, const QStringList &dirs)
 {
+    CMisc::createBackup(f);
+
     ofstream of(f.local8Bit());
 
     if(of)

@@ -549,7 +549,9 @@ void CFontmapCreator::emptyList(TListEntry **entry)
 bool CFontmapCreator::go(const QString &dir)
 {
     bool status=false;
- 
+
+    CMisc::createBackup(CKfiGlobal::cfg().getGhostscriptFile());
+
     CBufferedFile file(CKfiGlobal::cfg().getGhostscriptFile().local8Bit(), CBufferedFile::createGuard(constGSGuardStr, dir.local8Bit(), false), NULL, true, true);
 
     if(file)

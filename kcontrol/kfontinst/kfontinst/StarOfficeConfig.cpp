@@ -66,13 +66,19 @@ CStarOfficeConfig::EStatus CStarOfficeConfig::go(const QString &path)
 
     if(dir.isReadable())
     {
-        QString       xp3Dir(xp3Directory()),
-                      ppdFileName(xp3Dir+"ppds/"+CKfiGlobal::cfg().getSOPpd());
+        QString xp3Dir(xp3Directory()),
+                ppdFileName(xp3Dir+"ppds/"+CKfiGlobal::cfg().getSOPpd());
+
+        CMisc::createBackup(ppdFileName);
+
         CBufferedFile ppdFile(ppdFileName.local8Bit(), CBufferedFile::createGuard(constSOGuardStr, path.local8Bit()), "*Font ");
 
         if(ppdFile)
         {
-            QString       psStdFontsFileName(xp3Dir+"psstd.fonts");
+            QString psStdFontsFileName(xp3Dir+"psstd.fonts");
+
+            CMisc::createBackup(psStdFontsFileName);
+
             CBufferedFile psStdFontsFile(psStdFontsFileName.local8Bit(), CBufferedFile::createGuard(constSOGuardStr, path.local8Bit(), false), NULL, true, true);
 
             if(psStdFontsFile)

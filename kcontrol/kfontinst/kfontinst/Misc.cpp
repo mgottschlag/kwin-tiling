@@ -306,3 +306,11 @@ int CMisc::stricmp(const char *s1, const char *s2)
     }
     return (int)c2-(int)c1;
 }
+
+void CMisc::createBackup(const QString &f)
+{
+    const QString constExt(".bak");
+
+    if(!fExists(f+constExt) && fExists(f) && dWritable(getDir(f)))
+        doCmd("cp", "-f", f, f+constExt);
+}

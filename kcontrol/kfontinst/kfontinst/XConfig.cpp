@@ -384,6 +384,8 @@ bool CXConfig::writeXF86Config()
 
     if(changed)
     {
+        CMisc::createBackup(CKfiGlobal::cfg().getXConfigFile().local8Bit());
+
         CBufferedFile cfg(CKfiGlobal::cfg().getXConfigFile().local8Bit(), "FontPath", itsInsertPos.latin1(), false);
        
         if(cfg)
@@ -608,6 +610,8 @@ bool CXConfig::processXfs(const QString &fname, bool read)
  
                                                     if(!read) // then must be write...
                                                     {
+                                                        CMisc::createBackup(fname);
+
                                                         ofstream of(fname.local8Bit());
  
                                                         if(of)
