@@ -29,7 +29,7 @@ class KActionCollection;
 
 class MenuEditView : public QVBox
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     MenuEditView( KActionCollection*, QWidget *parent=0, const char *name=0 );

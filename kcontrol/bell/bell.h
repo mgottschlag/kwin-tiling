@@ -28,7 +28,7 @@ class QPushButton;
 
 class KBellConfig : public KCModule
 {
-  Q_OBJECT;
+  Q_OBJECT
 
  public:
   KBellConfig(QWidget *parent, const char *name);

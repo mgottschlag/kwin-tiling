@@ -31,7 +31,7 @@ class ModuleIconView;
 
 class IndexWidget : public QWidget
 {
-  Q_OBJECT;
+  Q_OBJECT
   
 public:   
   IndexWidget(ConfigModuleList *list, QWidget *parent, const char *name=0);

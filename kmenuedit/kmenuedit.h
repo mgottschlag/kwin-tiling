@@ -26,7 +26,7 @@ class MenuEditView;
 
 class KMenuEdit : public KTMainWindow
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     KMenuEdit( QWidget *parent=0, const char *name=0 );

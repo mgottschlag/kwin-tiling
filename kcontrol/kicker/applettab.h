@@ -33,7 +33,7 @@ class QListViewItem;
 
 class AppletTab : public QWidget
 {
-  Q_OBJECT;
+  Q_OBJECT
   
  public:
   AppletTab( QWidget *parent=0, const char* name=0 );

@@ -36,7 +36,7 @@ class ConfigModuleList;
 
 class ModuleMenu : public KPopupMenu
 {
-  Q_OBJECT;
+  Q_OBJECT
 
 public:
 

@@ -27,7 +27,7 @@ class KLineEdit;
 
 class KDesktopConfig : public KCModule
 {
-  Q_OBJECT;
+  Q_OBJECT
   
  public:
   KDesktopConfig(QWidget *parent = 0L, const char *name = 0L);

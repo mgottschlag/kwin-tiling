@@ -45,7 +45,7 @@ private:
 
 class TreeView : public KListView
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     TreeView(KActionCollection *ac,QWidget *parent=0, const char *name=0);

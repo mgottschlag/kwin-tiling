@@ -36,7 +36,7 @@ class KIntNumInput;
 
 class HBPreview : public QWidget
 {
-  Q_OBJECT;
+  Q_OBJECT
   
  public:
   HBPreview(QWidget *parent=0, const char* name=0);
@@ -56,7 +56,7 @@ class HBPreview : public QWidget
 
 class PanelTab : public QWidget
 {
-  Q_OBJECT;
+  Q_OBJECT
 
  public:
   PanelTab( QWidget *parent=0, const char* name=0 );

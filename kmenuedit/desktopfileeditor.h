@@ -30,7 +30,7 @@ class QFrame;
 
 class DesktopFileEditor : public QWidget
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     DesktopFileEditor( QWidget *parent=0, const char *name=0 );

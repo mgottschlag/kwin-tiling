@@ -53,7 +53,7 @@ private:
 
 class ModuleTreeView : public KListView
 {
-  Q_OBJECT;
+  Q_OBJECT
 
 public:
   ModuleTreeView(ConfigModuleList *list, QWidget * parent = 0, const char * name = 0);
