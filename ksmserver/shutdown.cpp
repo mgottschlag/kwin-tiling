@@ -71,11 +71,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     QVBoxLayout* vbox = new QVBoxLayout( this );
     QFrame* frame = new QFrame( this );
     frame->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
-#if QT_VERSION < 300
-    frame->setLineWidth( style().defaultFrameWidth() );
-#else
     frame->setLineWidth( style().pixelMetric( QStyle::PM_DefaultFrameWidth, frame ) );
-#endif
     vbox->addWidget( frame );
     vbox = new QVBoxLayout( frame, 15, 11 );
 
