@@ -190,9 +190,11 @@ KScreenSaver::KScreenSaver( QWidget *parent, int mode, int desktop )
 	ssList->setMinimumSize(ssList->size());
 	ssList->insertStringList( saverNames );
 
-	for (QStringList::Iterator it = saverList.begin(); it != saverList.end(); ++it )
+	int i = 0;
+	for (QStringList::Iterator it = saverList.begin(); it != saverList.end(); ++it ) {
 		if ( saverFile == *it )
 			ssList->setCurrentItem( i );
+		i++;
 	}
 
 	ssList->setTopItem( ssList->currentItem() );
