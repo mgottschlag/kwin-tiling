@@ -60,17 +60,8 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	layout->addWidget(eventview, 1);
 	//layout->setStretchFactor(events, 1);
 	
-	connect(apps, SIGNAL(selectionChanged(QListViewItem*)),
-	        SLOT(appSelected(QListViewmItem*)));
-	connect(apps, SIGNAL(selectionChanged(QListViewItem*)), 
-		SLOT(appSelected(QListViewItem*)));
-	connect(events, SIGNAL(selectionChanged(QListViewItem*)),
-		SLOT(eventSelected(QListViewItem*)));
-	
-	
 	applications = new Programs(eventview, apps, events);
 	applications->show();
-	loadAll();
 };
 
 KNotifyWidget::~KNotifyWidget()

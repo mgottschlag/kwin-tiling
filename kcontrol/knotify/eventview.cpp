@@ -29,12 +29,12 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kinstance.h>
-
+#include "eventconfig.h"
 
 
 
 EventView::EventView(QWidget *parent, const char *name):
-	QWidget(parent, name)
+	QWidget(parent, name), event(0)
 {
 	QGridLayout *layout=new QGridLayout(this,2,3);
 	
@@ -69,31 +69,76 @@ void EventView::defaults()
 
 void EventView::textChanged(const QString &str)
 {
+	(void)str;
 }
 void EventView::itemSelected(int item)
 {
+	if (event->present & enumNum(item))
+		enabled->setChecked(true);
+	
+	if (enumNum(item) & KNotifyClient::Sound)
+		file->show(), file->setText(event->soundfile);
+	
+	if (enumNum(item) & KNotifyClient::Logfile)
+		file->show(), file->setText(event->logfile);
+		
 }
 
 void EventView::itemToggled(bool on)
 {
-
+	(void)on;
 }
 
-void EventView::load(KConfig *config, const QString &section)
+void EventView::load(EventConfig *_event)
 {
-
+	unload();
+	event=_event;
+	setEnabled(true);
+	
+	setPixmaps();
+	eventslist->setSelected(0, true);
+	kapp->processEvents();
+	eventslist->setContentsPos(0,0); // go to the top
 }
 
-void EventView::setPixmap(int item, bool on)
-{
-
+void EventView::setPixmaps()
+{ // Handle all of 'dem at once
+	int i=0;
+	for (int c=1; c <=8; c*=2)
+	{
+		if ( event && (event->present & c))
+			eventslist->changeItem(SmallIcon("flag"), eventslist->text(i), i);
+		else
+			eventslist->changeItem(eventslist->text(i), i);
+		i++;
+	}
 }
 
-void EventView::save()
+void EventView::unload(bool save)
 {
+	(void)save;
 }
 
-void EventView::unload()
+int EventView::listNum(int enumNum)
 {
+	switch (enumNum)
+	{
+	case (1): return 0;
+	case (2): return 1;
+	case (4): return 2;
+	case (8): return 3;
+	default: return 1;
+	}
+}
 
+int EventView::enumNum(int listNum)
+{
+	switch (listNum)
+	{
+	case (0): return 1;
+	case (1): return 2;
+	case (2): return 4;
+	case (3): return 8;
+	default: return 0;
+	}
 }

@@ -20,6 +20,14 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.8  2000/04/08 22:50:45  charles
+    Totally broken for a change in design.
+    I'll start doing some "object oriented programming" now! Who would've
+    thought? :)
+
+    eventconfig.h will load up everything into memory, and then put it into
+    the lists box, and even do the rest of the goop.  ohh yeah.
+
     Revision 1.7  2000/04/01 00:08:03  faure
     first half of the fix
 
@@ -63,6 +71,8 @@
 #include <kconfig.h>
 #include <qpushbutton.h>
 
+class EventConfig;
+
 class EventView : public QWidget
 {
 Q_OBJECT
@@ -71,15 +81,17 @@ public:
 	EventView(QWidget *parent, const char *name=0);
 	virtual ~EventView();
 
+	static int listNum(int enumNum);
+	static int enumNum(int listNum);
+	
 public slots:
 	void defaults();
-	void load(KConfig *config, const QString &section);
-	void save();
-	void unload();
+	void load(EventConfig *_event);
+	void unload(bool save=true);
 	void itemSelected(int item);
-
+	
 protected slots:
-	void setPixmap(int item, bool on);
+	void setPixmaps();
 	void itemToggled(bool on);
 
 	void textChanged(const QString &str);
@@ -92,6 +104,8 @@ private:
 	QCheckBox *enabled;
 	QLineEdit *file;
 	QPushButton *todefault;
+	
+	EventConfig *event;
 
 };
 

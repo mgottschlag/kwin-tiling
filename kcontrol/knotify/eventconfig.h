@@ -20,6 +20,11 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.5  2000/04/09 19:06:40  charles
+    another milestone.
+    rwilliam: it compiles here fine after a distclean, perhaps you have a stale
+    Makefile?
+
     Revision 1.4  2000/04/09 05:57:05  charles
     Major milestone in progress of the new version of this applet.
 
@@ -72,7 +77,10 @@ public:
 	EventConfig(const ProgramConfig *parent=0) {application=parent;}
 	
 	void load(KConfig &conf);
-	
+	/**
+	 * When I was selected to get shown with the EventView
+	 **/
+	void selected();
 	
 	const ProgramConfig *application;
 	int present;
@@ -97,7 +105,7 @@ public:
 		ProgramConfig *program;
 	};
 
-	ProgramConfig() {}
+	ProgramConfig();
 	~ProgramConfig();
 	/**
 	 * Load the data for this class, and it's child Events
@@ -109,7 +117,14 @@ public:
 	 **/
 	void show();
 public slots:
+	/**
+	 * Get myself shown
+	 **/
 	void selected();
+	/**
+	 * My chillens want to be shown :)
+	 **/
+	void selected(QListViewItem *_i);
 
 public:
 	QString configfile;
@@ -137,6 +152,9 @@ public:
 	void show();
 
 public slots:
+	/**
+	 * One of the programs was selected
+	 **/
 	void selected(QListViewItem *_i);
 
 public:

@@ -163,3 +163,22 @@ void ProgramConfig::selected()
 
 }
 
+void ProgramConfig::selected(QListViewItem *_i)
+{
+	(static_cast<EventConfig::EventListViewItem*>(_i))->event->selected();
+	
+}
+
+void EventConfig::selected()
+{
+	// Clean up after the previous ProgramConfig
+	
+	// Load the new events
+	Programs::eventview->load(this);
+
+}
+
+ProgramConfig::ProgramConfig()
+{
+	connect(Programs::events, SIGNAL(selectionChanged(QListViewItem*)), SLOT(selected(QListViewItem*)));
+}
