@@ -174,6 +174,7 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
 
   soundlist = new QListBox(this);
   soundlist->setAcceptDrops(true);
+  setAcceptDrops(true);
   soundlist->installEventFilter(this);
 
   soundlist->insertItem(i18n("(none)"));
