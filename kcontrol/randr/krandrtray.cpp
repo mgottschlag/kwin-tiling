@@ -116,13 +116,13 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 
 		if (currentScreen()->proposedSize() == i) {
 			menu->setItemChecked(lastIndex, true);
-			menu->setItemEnabled(lastIndex, false);
+			//menu->setItemEnabled(lastIndex, false);
 		}
 
 		menu->setItemParameter(lastIndex, i);
 		menu->connectItem(lastIndex, this, SLOT(slotResolutionChanged(int)));
 
-		if (currentScreen()->numSizes() == 1) menu->setItemEnabled(lastIndex, false);
+		//if (currentScreen()->numSizes() == 1) menu->setItemEnabled(lastIndex, false);
 	}
 
 	// Don't display the rotation options if there is no point (ie. none are supported)
@@ -136,12 +136,12 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 
 				if (currentScreen()->proposedRotation() & (1 << i)) {
 					menu->setItemChecked(lastIndex, true);
-					if (i < 4)
-						menu->setItemEnabled(lastIndex, false);
+					/*if (i < 4)
+						menu->setItemEnabled(lastIndex, false);*/
 				}
 
 				menu->setItemParameter(lastIndex, 1 << i);
-				menu->connectItem(lastIndex, this, SLOT(slotOrientationChanged(int)));
+				//menu->connectItem(lastIndex, this, SLOT(slotOrientationChanged(int)));
 			}
 		}
 	}
@@ -156,15 +156,15 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 
 		if (currentScreen()->proposedRefreshRate() == i) {
 			menu->setItemChecked(lastIndex, true);
-			menu->setItemEnabled(lastIndex, false);
+			//menu->setItemEnabled(lastIndex, false);
 		}
 
 		menu->setItemParameter(lastIndex, i);
 		menu->connectItem(lastIndex, this, SLOT(slotRefreshRateChanged(int)));
 	}
 
-	if (rr.count() < 2)
-		menu->setItemEnabled(lastIndex, false);
+	/*if (rr.count() < 2)
+		menu->setItemEnabled(lastIndex, false);*/
 }
 
 void KRandRSystemTray::slotSwitchScreen()
@@ -172,7 +172,7 @@ void KRandRSystemTray::slotSwitchScreen()
 	if (sender() == contextMenu()) return;
 
 	for (int i = 0; i < (int)contextMenu()->count(); i++) {
-		kdDebug() << contextMenu()->find(contextMenu()->idAt(i)) << endl;
+		//kdDebug() << contextMenu()->find(contextMenu()->idAt(i)) << endl;
 		if (sender() == contextMenu()->find(contextMenu()->idAt(i))) {
 			setCurrentScreen(i);
 			return;
@@ -184,6 +184,9 @@ void KRandRSystemTray::slotSwitchScreen()
 
 void KRandRSystemTray::slotResolutionChanged(int parameter)
 {
+	if (currentScreen()->currentSize() == parameter)
+		return;
+
 	currentScreen()->proposeSize(parameter);
 
 	currentScreen()->proposeRefreshRate(0);
@@ -197,6 +200,9 @@ void KRandRSystemTray::slotResolutionChanged(int parameter)
 
 void KRandRSystemTray::slotOrientationChanged(int parameter)
 {
+	if (currentScreen()->currentRotation() == parameter)
+		return;
+
 	currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ parameter);
 
 	if (currentScreen()->applyProposedAndConfirm()) {
@@ -208,6 +214,9 @@ void KRandRSystemTray::slotOrientationChanged(int parameter)
 
 void KRandRSystemTray::slotRefreshRateChanged(int parameter)
 {
+	if (currentScreen()->currentRefreshRate() == parameter)
+		return;
+
 	currentScreen()->proposeRefreshRate(parameter);
 
 	if (currentScreen()->applyProposedAndConfirm()) {
