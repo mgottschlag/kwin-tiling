@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2002 Craig Drummond <cpdrummond@uklinux.net>
+   Copyright (c) 2002 Craig Drummond <Craig.Drummond@gmx.net>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
