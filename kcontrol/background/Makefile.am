@@ -8,7 +8,7 @@ kde_module_LTLIBRARIES = kcm_background.la
 
 kcm_background_la_SOURCES = backgnd.cpp bgdialogs.cpp 
 kcm_background_la_LDFLAGS = $(KDE_RPATH) -module -avoid-version $(all_libraries) -no-undefined
-kcm_background_la_LIBADD = $(LIB_KFILE) libbgnd.la
+kcm_background_la_LIBADD = libbgnd.la $(LIB_KFILE)
 
 METASOURCES = AUTO
 
