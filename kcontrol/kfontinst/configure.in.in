@@ -32,6 +32,7 @@ if test $FOUND_FREETYPE -eq 1; then
     FONTINST_SUBDIR="kfontinst"
 else
     AC_MSG_WARN([Missing FreeType2 - disabling kfontinst!])
+    FONTINST_SUBDIR=""
 fi
 
 AM_CONDITIONAL(include_kcontrol_kfontinst, test -n "$FONTINST_SUBDIR")
