@@ -1,4 +1,5 @@
-/*
+/*  -*- c-basic-offset: 2 -*-
+
     kshorturifilter.h
 
     This file is part of the KDE project
@@ -222,13 +223,24 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   else
   {
     if (url.isLocalFile())
-     {
+    {
+      // Split path from ref/query if the path exists
+      // but not for "/tmp/a#b", if "a#b" is an existing file,
+      // or for "/tmp/a?b" (#58990)
+      if ( ( url.hasRef() || !url.query().isEmpty() ) // avoid the calling exists() when not needed
+           && QFile::exists(url.path()) )
+      {
         path = url.path();
         ref = url.ref();
         query = url.query();
         if (path.isEmpty() && url.hasHost())
-           path = '/';
-     }
+          path = '/';
+      }
+      else
+      {
+        path = cmd;
+      }
+    }
   }
 
   if( path[0] == '~' )
@@ -317,23 +329,15 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     // Check if it exists
     if( stat( QFile::encodeName(abs).data(), &buff ) == 0 )
     {
-        path = abs; // yes -> store as the new cmd
-        exists = true;
-        isLocalFullPath = true;
+      path = abs; // yes -> store as the new cmd
+      exists = true;
+      isLocalFullPath = true;
     }
   }
 
   if( isLocalFullPath && !exists )
   {
     exists = ( stat( QFile::encodeName(path).data() , &buff ) == 0 );
-    if ( !exists && !query.isEmpty() ) { // maybe what we thought was a 'query', is part of the path (#58990)
-        QString pathWithQuery = path + KURL::decode_string(query, 106 /* utf-8 */);
-        if ( stat( QFile::encodeName(pathWithQuery).data() , &buff ) == 0 ) {
-            path = pathWithQuery;
-            exists = true;
-            query = QString::null;
-        }
-    }
   }
 
   //kdDebug() << "path =" << path << " isLocalFullPath=" << isLocalFullPath << " exists=" << exists << endl;
