@@ -368,11 +368,11 @@ void kthememanager::queryLNFModules()
 
     // For now use a static list
     KIconLoader * il = KGlobal::iconLoader();
-    dlg->btnBackground->setIconSet( il->loadIconSet( "background", KIcon::Desktop ) );
-    dlg->btnColors->setIconSet( il->loadIconSet( "colorscm", KIcon::Desktop ) );
-    dlg->btnStyle->setIconSet( il->loadIconSet( "style", KIcon::Desktop ) );
-    dlg->btnIcons->setIconSet( il->loadIconSet( "icons", KIcon::Desktop ) );
-    dlg->btnSaver->setIconSet( il->loadIconSet( "kscreensaver", KIcon::Desktop ) );
+    dlg->btnBackground->setIconSet( il->loadIconSet( "background", KIcon::Desktop, 32 ) );
+    dlg->btnColors->setIconSet( il->loadIconSet( "colorscm", KIcon::Desktop, 32 ) );
+    dlg->btnStyle->setIconSet( il->loadIconSet( "style", KIcon::Desktop, 32 ) );
+    dlg->btnIcons->setIconSet( il->loadIconSet( "icons", KIcon::Desktop, 32 ) );
+    dlg->btnSaver->setIconSet( il->loadIconSet( "kscreensaver", KIcon::Desktop, 32 ) );
 }
 
 void kthememanager::updatePreview( const QString & pixFile )
