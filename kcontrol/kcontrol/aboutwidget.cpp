@@ -343,7 +343,7 @@ void AboutWidget::updatePixmap()
       lf.setUnderline(true);
 
       p.setFont(headingFont);
-      p.drawText(xoffset, yoffset, static_cast<ModuleTreeItem*>(_category)->caption());
+      p.drawText(xoffset, yoffset, static_cast<ModuleTreeItem*>(_category)->caption(), -1, hAlign);
       yoffset += fheight + 10;
       xadd = 200;
 
@@ -370,18 +370,34 @@ void AboutWidget::updatePixmap()
               szComment = module->comment();
               p.setFont(f2);
               QRect bounds;
-              p.drawText(xoffset, yoffset,
-                xadd - xoffset, bheight - yoffset,
-                AlignLeft | AlignTop | WordBreak, szName, -1, &bounds);
-              lp.drawText(xoffset, yoffset,
-                xadd - xoffset, bheight - yoffset,
-                AlignLeft | AlignTop | WordBreak, szName);
-              int height = bounds.height();
-              p.setFont(f1);
-              p.drawText(xoffset + xadd, yoffset,
-                bwidth - xadd - xoffset, bheight - yoffset,
-                AlignLeft | AlignTop | WordBreak, szComment, -1, &bounds);
-              height = QMAX(height, bounds.height());
+	      int height;
+              if (! QApplication::reverseLayout() ) {
+	          p.drawText(xoffset, yoffset,
+                      xadd - xoffset, bheight - yoffset,
+                      hAlign | AlignTop | WordBreak, szName, -1, &bounds);
+                  lp.drawText(xoffset, yoffset,
+                      xadd - xoffset, bheight - yoffset,
+                      hAlign | AlignTop | WordBreak, szName);
+                  height = bounds.height();
+                  p.setFont(f1);
+                  p.drawText(xoffset + xadd, yoffset,
+                      bwidth - xadd - xoffset, bheight - yoffset,
+                      hAlign | AlignTop | WordBreak, szComment, -1, &bounds);
+              } else {
+	          p.drawText(xoffset+xadd, yoffset,
+                      bwidth - xadd - xoffset, bheight - yoffset,
+                      hAlign | AlignTop | WordBreak, szName, -1, &bounds);
+                  lp.drawText(xoffset+xadd, yoffset,
+                      bwidth - xadd - xoffset, bheight - yoffset,
+                      hAlign | AlignTop | WordBreak, szName);
+                  height = bounds.height();
+                  p.setFont(f1);
+                  p.drawText(xoffset, yoffset,
+                      xadd - xoffset, bheight - yoffset,
+                      hAlign | AlignTop | WordBreak, szComment, -1, &bounds);
+ 	      }	
+	      
+	      height = QMAX(height, bounds.height());
               ModuleLink *linkInfo = new ModuleLink;
               linkInfo->module = module;
               linkInfo->linkArea = QRect(xoffset + p.viewport().left(),
@@ -396,10 +412,10 @@ void AboutWidget::updatePixmap()
               p.setFont(f2);
               QRect bounds;
               p.drawText(xoffset, yoffset, xadd - xoffset, bheight - yoffset,
-                AlignLeft | AlignTop | WordBreak, szName, -1, &bounds);
+                hAlign | AlignTop | WordBreak, szName, -1, &bounds);
               lp.drawText(xoffset, yoffset,
                 xadd - xoffset, bheight - yoffset,
-                AlignLeft | AlignTop | WordBreak, szName);
+                hAlign | AlignTop | WordBreak, szName);
               yoffset += bounds.height() + 5;
             }
 
