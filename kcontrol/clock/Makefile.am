@@ -3,7 +3,7 @@ kde_module_LTLIBRARIES = kcm_clock.la
 kcm_clock_la_SOURCES = dtime.cpp tzone.cpp main.cpp 
 
 kcm_clock_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
-kcm_clock_la_LIBADD = -lkdeui -lkio
+kcm_clock_la_LIBADD = $(LIB_KIO)
 
 INCLUDES= $(all_includes)
  
