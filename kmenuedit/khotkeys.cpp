@@ -37,7 +37,7 @@ static bool khotkeys_inited = false;
 bool KHotKeys::init()
 {
     khotkeys_inited = true;
-    KLibrary* lib = KLibLoader::self()->library( "libkcm_khotkeys.la" );
+    KLibrary* lib = KLibLoader::self()->library( "kcm_khotkeys.la" );
     if( lib == NULL ) return false;
 
     khotkeys_init_2 = ( void (*)(void)) ( lib->symbol( "khotkeys_init" ));
