@@ -558,7 +558,7 @@ ManageSession (struct display *d)
 	}
     }
 
-    if (CloseGreeter (FALSE))
+    if (CloseGreeter (FALSE) != EX_NORMAL)
 	goto regreet;
 
     DeleteXloginResources ();
