@@ -30,5 +30,5 @@ font_DATA = cursor_large_black.pcf.gz cursor_large_white.pcf.gz cursor_small_whi
 EXTRA_DIST = $(font_DATA)
 
 install-data-hook:
-	$(mkinstalldirs) $(DESTDIR)$(prefix)/share/fonts/override
-	-mkfontdir $(DESTDIR)$(prefix)/share/fonts/override
+	$(mkinstalldirs) $(DESTDIR)$(datadir)/fonts/override
+	-mkfontdir $(DESTDIR)$(datadir)/fonts/override
