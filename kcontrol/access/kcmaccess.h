@@ -19,6 +19,7 @@ class QPushButton;
 class QRadioButton;
 class KColorButton;
 class QSlider;
+class KNumInput;
 
 
 class KAccessConfig : public KCModule
@@ -52,8 +53,12 @@ private:
   QLineEdit *soundEdit;
   QPushButton *soundButton;
   KColorButton *colorButton;
-  QSlider *durationSlider;
-  QLabel *durationLabel, *durationMin, *durationMax;
+  KIntNumInput *durationSlider;
+
+  QCheckBox *stickyKeys, *stickyKeysLock;
+
+  QCheckBox *slowKeys, *bounceKeys;    
+  KIntNumInput *slowKeysDelay, *bounceKeysDelay;
 
 };
 

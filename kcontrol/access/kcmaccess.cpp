@@ -29,6 +29,7 @@
 #include <kinstance.h>
 #include <kcolorbtn.h>
 #include <kfiledialog.h>
+#include <knuminput.h>
 
 
 #include "kcmaccess.moc"
@@ -74,7 +75,6 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   connect(customBell, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(soundEdit, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
   
-  tab->addTab(bell, i18n("&Bell"));
   // -----------------------------------------------------
 
   // visible bell ----------------------------------------
@@ -104,14 +104,11 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   hbox = new QHBoxLayout(vvbox, 6);
   hbox->addSpacing(24);
 
-  durationSlider = new QSlider(100,2000,100,500,Qt::Horizontal,grp);
-  durationLabel = new QLabel(durationSlider, i18n("&Duration: "), grp);
-  durationMax= new QLabel(i18n("2000 ms"), grp);
-  durationMin = new QLabel(i18n("100 ms"), grp);
-  hbox->addWidget(durationLabel);
-  hbox->addWidget(durationMin);
+  durationSlider = new KIntNumInput(grp);
+  durationSlider->setRange(100, 2000, 100);
+  durationSlider->setLabel(i18n("&Duration:"));
+  durationSlider->setSuffix(i18n("ms"));
   hbox->addWidget(durationSlider);
-  hbox->addWidget(durationMax);
   
   connect(invertScreen, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(flashScreen, SIGNAL(clicked()), this, SLOT(configChanged()));
@@ -125,6 +122,80 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   connect(durationSlider, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
 
   // -----------------------------------------------------
+
+  tab->addTab(bell, i18n("&Bell"));
+
+
+  // keys settings ---------------------------------------
+  QWidget *keys = new QWidget(this);
+
+  vbox = new QVBoxLayout(keys, 6,6);
+  
+  grp = new QGroupBox(i18n("Sticky Keys"), keys);
+  vbox->addWidget(grp);
+
+  vvbox = new QVBoxLayout(grp, 6,6);
+  vvbox->addSpacing(grp->fontMetrics().height());
+  
+  stickyKeys = new QCheckBox(i18n("Use &sticky keys"), grp);
+  vvbox->addWidget(stickyKeys);
+
+  hbox = new QHBoxLayout(vvbox, 6);
+  hbox->addSpacing(24);
+  stickyKeysLock = new QCheckBox(i18n("&Lock sticky keys"), grp);
+  hbox->addWidget(stickyKeysLock);
+
+  grp = new QGroupBox(i18n("Slow Keys"), keys);
+  vbox->addWidget(grp);
+
+  vvbox = new QVBoxLayout(grp, 6,6);
+  vvbox->addSpacing(grp->fontMetrics().height());
+  
+  slowKeys = new QCheckBox(i18n("Use s&low keys"), grp);
+  vvbox->addWidget(slowKeys);
+
+  hbox = new QHBoxLayout(vvbox, 6);
+  hbox->addSpacing(24);
+  slowKeysDelay = new KIntNumInput(grp);
+  slowKeysDelay->setSuffix(i18n("ms"));
+  slowKeysDelay->setRange(100, 2000, 100);
+  slowKeysDelay->setLabel(i18n("Delay:"));
+  hbox->addWidget(slowKeysDelay);
+
+
+  grp = new QGroupBox(i18n("Bounce Keys"), keys);
+  vbox->addWidget(grp);
+
+  vvbox = new QVBoxLayout(grp, 6,6);
+  vvbox->addSpacing(grp->fontMetrics().height());
+  
+  bounceKeys = new QCheckBox(i18n("Use s&low keys"), grp);
+  vvbox->addWidget(bounceKeys);
+
+  hbox = new QHBoxLayout(vvbox, 6);
+  hbox->addSpacing(24);
+  bounceKeysDelay = new KIntNumInput(grp);
+  bounceKeysDelay->setSuffix(i18n("ms"));
+  bounceKeysDelay->setRange(100, 2000, 100);
+  bounceKeysDelay->setLabel(i18n("Delay:"));
+  hbox->addWidget(bounceKeysDelay);
+
+
+  connect(stickyKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(stickyKeysLock, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(slowKeysDelay, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
+  connect(slowKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(slowKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
+  connect(stickyKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
+
+  connect(bounceKeysDelay, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
+  connect(bounceKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(bounceKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
+  
+  // -----------------------------------------------------
+
+  tab->addTab(keys, i18n("&Keyboard"));
+
 
   vbox->addStretch();
   
@@ -174,6 +245,17 @@ void KAccessConfig::load()
   
   durationSlider->setValue(config->readNumEntry("VisibleBellPause", 500));
 
+
+  config->setGroup("Keyboard");
+  
+  stickyKeys->setChecked(config->readBoolEntry("StickyKeys", false));
+  stickyKeysLock->setChecked(config->readBoolEntry("StickyKeysLatch", true));
+  slowKeys->setChecked(config->readBoolEntry("SlowKeys", false));
+  slowKeysDelay->setValue(config->readNumEntry("SlowKeysDelay", 500));
+  bounceKeys->setChecked(config->readBoolEntry("BounceKeys", false));
+  bounceKeysDelay->setValue(config->readNumEntry("BounceKeysDelay", 500));
+
+
   delete config;
 
   checkAccess();
@@ -198,6 +280,18 @@ void KAccessConfig::save()
 
   config->writeEntry("VisibleBellPause", durationSlider->value());
 
+  
+  config->setGroup("Keyboard");
+
+  config->writeEntry("StickyKeys", stickyKeys->isChecked());
+  config->writeEntry("StickyKeysLatch", stickyKeysLock->isChecked());
+
+  config->writeEntry("SlowKeys", slowKeys->isChecked());
+  config->writeEntry("SlowKeysDelay", slowKeysDelay->value());
+
+  config->writeEntry("BounceKeys", bounceKeys->isChecked());
+  config->writeEntry("BounceKeysDelay", bounceKeysDelay->value());
+
   config->sync();
   delete config;
 
@@ -221,6 +315,15 @@ void KAccessConfig::defaults()
   colorButton->setColor(QColor(Qt::red));
   
   durationSlider->setValue(500);
+
+  slowKeys->setChecked(false);
+  slowKeysDelay->setValue(500);
+
+  bounceKeys->setChecked(false);
+  bounceKeysDelay->setValue(500);
+
+  stickyKeys->setChecked(true);
+  stickyKeysLock->setChecked(true);
 
   checkAccess();
 
@@ -253,9 +356,13 @@ void KAccessConfig::checkAccess()
   colorButton->setEnabled(visible);
 
   durationSlider->setEnabled(visible);
-  durationLabel->setEnabled(visible);
-  durationMin->setEnabled(visible);
-  durationMax->setEnabled(visible);
+
+  stickyKeysLock->setEnabled(stickyKeys->isChecked());
+
+  slowKeysDelay->setEnabled(slowKeys->isChecked());
+
+  bounceKeysDelay->setEnabled(bounceKeys->isChecked());
+ 
 }
 
 
