@@ -44,6 +44,14 @@ KDE3.1 -> KDE3.2
 21. When adding/removing an unscaled dir from X font path, ensure ":unscaled" is
     part of the path!
 22. Call fc-cache on top-level dir, not on each dir.
+23. Use "~" in Xft config and user X config files -> e.g. /home/user/.fonts -> ~/.fonts
+24. Remove top-level dir spec from top-level fontmap, e.g.
+
+    TimesNewRomanPSMT (/home/user/.fonts/wibble/times.ttf);
+
+    ...becomes...
+
+    TimesNewRomanPSMT (wibble/times.ttf);
 
 
 0.11-> KDE3.1
