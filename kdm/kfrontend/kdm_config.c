@@ -509,8 +509,8 @@ Ent entsCore[] = {
 
 Ent entsGreeter[] = {
 { "SessionTypes",	C_SessionTypes,		0,	"default,failsafe" },
-{ "GUIStyle",		C_GUIStyle, 		0,	"KDE" },
-{ "ColorScheme",	C_ColorScheme,		0,	"Default" },
+{ "GUIStyle",		C_GUIStyle, 		0,	"" },
+{ "ColorScheme",	C_ColorScheme,		0,	"" },
 { "LogoArea",		C_LogoArea | C_ENUM, logoarea,	"Logo" },
 { "LogoPixmap",		C_LogoPixmap,		0,	"" },
 { "GreeterPosFixed",	C_GreeterPosFixed | C_BOOL, 0,	"false" },

@@ -137,8 +137,12 @@ KDMConfig::KDMConfig()
 	_greeterPosX = -1;
     _greeterScreen = GetCfgInt (C_GreeterScreen);
 
-    kapp->setStyle (GetCfgStr (C_GUIStyle));
-    kapp->setPalette (Str2Palette (GetCfgStr (C_ColorScheme)));
+    QString tmp = GetCfgStr (C_GUIStyle);
+    if (!tmp.isEmpty())
+	kapp->setStyle (tmp);
+    tmp = GetCfgStr (C_ColorScheme);
+    if (!tmp.isEmpty())
+	kapp->setPalette (Str2Palette (tmp));
 
     _logoArea = GetCfgInt (C_LogoArea);
 

@@ -1880,12 +1880,11 @@ static Ent entsGreeter[] = {
 "# \"failsafe\" listed herein, which is also the default.\n"
 "# Note, that the meaning of this value is entirely up to your Session program.\n" },
 { "GUIStyle",		0, upd_guistyle, 
-"# Widget Style of the greeter:\n"
-"# Default, Windows, Platinum, Motif, MotifPlus, CDE, SGI, and any styles you\n"
-"# may have installed, e.g., HighColor; Default is \"Default\"\n" },
+"# Widget style of the greeter. \"\" means the built-in default which currently\n"
+"# is \"Keramik\". Default is \"\"\n" },
 { "ColorScheme",		0, 0, 
-"# Widget Colors of the greeter:\n"
-"# Default, and any color schemes you may have installed. Default is \"Default\"\n" },
+"# Widget color scheme of the greeter. \"\" means the built-in default which\n"
+"# currently is quite greyish. Default is \"\"\n" },
 { "LogoArea",		0, upd_logoarea, 
 "# What should be shown righthand of the input lines:\n"
 "# \"Logo\" - the image specified by LogoPixmap (Default)\n"
