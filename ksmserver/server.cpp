@@ -1391,11 +1391,19 @@ void KSMServer::restoreSession( QString sessionName )
 
     sessionGroup = "Session: " + sessionName;
 
-    QStringList wmCommand;
     config->setGroup( sessionGroup );
-    appsToStart = config->readNumEntry( "count" );
-    if ( !wm.isEmpty() && appsToStart > 0 && wm == config->readEntry( "program1" ) )
-        wmCommand << config->readEntry( "restartCommand1");
+    int count =  config->readNumEntry( "count" );
+    appsToStart = count;
+
+    QStringList wmCommand;
+    if ( !wm.isEmpty() ) {
+	for ( int i = 1; i <= count; i++ ) {
+	    QString n = QString::number(i);
+	    if ( wm == config->readEntry( QString("program")+n ) ) {
+		wmCommand << config->readEntry( QString("restartCommand")+n );
+	    }
+	}
+    }
     if ( wmCommand.isEmpty() )
         wmCommand << wm;
 
