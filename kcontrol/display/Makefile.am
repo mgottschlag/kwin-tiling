@@ -12,7 +12,7 @@ libkrdb_la_LIBADD = $(LIB_KDECORE)
 libkrdb_la_LDFLAGS = -no-undefined $(all_libraries) 
 
 kcm_style_la_SOURCES = general.cpp
-kcm_style_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
+kcm_style_la_LDFLAGS = $(KDE_RPATH) -module -avoid-version $(all_libraries) -no-undefined
 kcm_style_la_LIBADD = $(LIB_KFILE) libkrdb.la
 kcm_style_la_METASOURCES = general.moc
 
