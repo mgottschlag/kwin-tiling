@@ -4,6 +4,8 @@
  * Copyright (c) 1999, 2000 Preston Brown <pbrown@kde.org>
  * Copyright (c) 2000 Frerich Raabe <raabe@kde.org>
  *
+ * $Id$
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -19,11 +21,12 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <unistd.h>
-#include <pwd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <malloc.h>
+
+#include <stdlib.h>
+#include <pwd.h>
+#include <unistd.h>
 
 #include <qlayout.h>
 #include <qvbox.h>
