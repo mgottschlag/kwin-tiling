@@ -52,7 +52,7 @@
 
 
 //-----------------------------------------------------------------------------
-Theme::Theme(): ThemeInherited(0), mInstFiles(true)
+Theme::Theme(): ThemeInherited(QString::null), mInstFiles(true)
 {
   int len;
 
@@ -246,7 +246,7 @@ bool Theme::load(const QString aPath)
   }
 
   // Let's see if the theme is stored in a subdirectory.
-  QDir dir(workDir(), 0, QDir::Name, QDir::Files|QDir::Dirs);
+  QDir dir(workDir(), QString::null, QDir::Name, QDir::Files|QDir::Dirs);
   for (i=0, mThemePath=0, num=0; dir[i]!=0; i++)
   {
     if (dir[i][0]=='.') continue;
@@ -655,7 +655,7 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
   }
   else if (cmd == "setWallpaperMode")
   {
-    value = aCfg->readEntry("wallpaper",0);
+    value = aCfg->readEntry("wallpaper",QString::null);
     aCfg->writeEntry("UseWallpaper", !value.isEmpty());
   }
   else if (cmd == "oneDesktopMode")
@@ -809,7 +809,7 @@ int Theme::installIcons(void)
     }
 
     // test if there is a 1:1 mapping in the mappings file
-    destName = mMappings->readEntry(key,0);
+    destName = mMappings->readEntry(key,QString::null);
     destNameMini = 0;
 
     // if not we have to search for the proper kdelnk file
@@ -828,7 +828,7 @@ int Theme::installIcons(void)
       {
 	cfg = new KSimpleConfig(fpath, true);
 	cfg->setGroup("KDE Desktop Entry");
-	destName = cfg->readEntry("Icon", 0);
+	destName = cfg->readEntry("Icon", QString::null);
 	delete cfg;
       }
     }
@@ -1140,7 +1140,7 @@ void Theme::writeConfig(void)
 void Theme::writeColorEntry(KConfigBase* cfg, const char* aKey, 
 			    const QColor& aColor)
 {
-  QString str(32);
+  QString str;   // !!! Changed from QString(32). It should be safe with Qt2.0 (ce) 
   str.sprintf("#%02x%02x%02x", aColor.red(), aColor.green(), aColor.blue());
   cfg->writeEntry(aKey, str);
 }
@@ -1151,7 +1151,7 @@ const QColor& Theme::readColorEntry(KConfigBase* cfg, const char* aKey,
 				    const QColor* aDefault) const
 {
   static QColor col;
-  QString str = cfg->readEntry(aKey, 0);
+  QString str = cfg->readEntry(aKey, QString::null);
 
   if (!str.isEmpty()) col.setNamedColor(str);
   else if (aDefault) col = *aDefault;
