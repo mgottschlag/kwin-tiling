@@ -21,10 +21,11 @@
 #define __aboutwidget_h__
 
 #include <qwidget.h>
-#include <qpixmap.h>
 #include <qlistview.h>
 
 class ModuleInfo;
+class QPixmap;
+class KPixmap;
 
 class AboutWidget : public QWidget
 {  
@@ -32,6 +33,25 @@ class AboutWidget : public QWidget
   
 public:   
   AboutWidget(QWidget *parent, const char *name=0, QListViewItem* category=0);
+
+    /**
+     * initialize the pixmaps and preprocess the PixmapEffect
+     */
+    static void initPixmaps();
+
+    /**
+     * Free the pixmaps again. They will be reloaded on the next use.
+     * make sure to free them or you will lose QPixmaps to the X server
+     * on exit!
+     * This function is safe to call is init() hasn't been called or failed
+     */
+    static void freePixmaps();
+
+    /**
+     * Set a new category without creating a new AboutWidget if there is
+     * one visible already (reduces flicker)
+     */
+    void setCategory( QListViewItem* category = 0 );
 
 signals:
     void moduleSelected(const QString &);
@@ -43,7 +63,21 @@ protected:
     void mouseReleaseEvent(QMouseEvent*);
 
 private:
-    QPixmap _part1, _part2, _part3;
+    /**
+     * Update the pixmap to be shown. Called from resizeEvent and from
+     * setCategory.
+     */
+    void updatePixmap();
+    
+    // For performance reasons we make the pixmaps static so they won't
+    // be reloaded every time again!
+    static QPixmap *_part1;
+    static QPixmap *_part2;
+    static QPixmap *_part3;
+
+    // Also for performance reasons we apply the KPixmapEffect only once
+    static KPixmap *_part3Effect;
+    
     QPixmap _buffer, _linkBuffer;
     QRect _linkArea;
     bool    _moduleList;

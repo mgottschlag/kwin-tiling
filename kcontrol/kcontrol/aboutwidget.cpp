@@ -65,6 +65,11 @@ struct AboutWidget::ModuleLink
     QRect linkArea;
 };
 
+QPixmap *AboutWidget::_part1 = 0L;
+QPixmap *AboutWidget::_part2 = 0L;
+QPixmap *AboutWidget::_part3 = 0L;
+KPixmap *AboutWidget::_part3Effect = 0L;
+
 AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* category)
    : QWidget(parent, name),
       _moduleList(false),
@@ -72,21 +77,25 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* cate
       _activeLink(0)
 {
     if (_category)
-    {
       _moduleList = true;
-    }
+      
     _moduleLinks.setAutoDelete(true);
     
     setMinimumSize(400, 400);
 
     // load images
-    _part1 = QPixmap(locate("data", "kcontrol/pics/part1.png"));
-    _part2 = QPixmap(locate("data", "kcontrol/pics/part2.png"));
-    _part3 = QPixmap(locate("data", "kcontrol/pics/part3.png"));
+    if( !_part1 )
+    {
+      kdDebug() << "AboutWidget: pixmaps were not initialized! Please call initPixmaps() before the constructor and freePixmaps() after deleting the last instance!" << endl;
+      _part1 = new QPixmap;
+      _part2 = new QPixmap;
+      _part3 = new QPixmap;
+      _part3Effect = new KPixmap;
+    }
 
     // sanity check
-    if(_part1.isNull() || _part2.isNull() || _part3.isNull()) {
-        kdError() << "AboutWidget::paintEvent: Image loading error!" << endl;
+    if(_part1->isNull() || _part2->isNull() || _part3->isNull()) {
+        kdError() << "AboutWidget::AboutWidget: Image loading error!" << endl;
         setBackgroundColor(QColor(49,121,172));
     }
     else
@@ -94,6 +103,50 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* cate
 
     // set qwhatsthis help
     QWhatsThis::add(this, i18n(intro_text));
+}
+
+void AboutWidget::setCategory( QListViewItem* category )
+{
+  _category = category;
+  _activeLink = 0;
+  if ( _category )
+    _moduleList = true;
+  else
+    _moduleList = true;
+
+  // Update the pixmap to be shown:
+  updatePixmap();
+  repaint();
+}
+
+void AboutWidget::initPixmaps()
+{
+  _part1 = new QPixmap( locate( "data", "kcontrol/pics/part1.png" ) );
+  _part2 = new QPixmap( locate( "data", "kcontrol/pics/part2.png" ) );
+  _part3 = new QPixmap( locate( "data", "kcontrol/pics/part3.png" ) );
+    
+  _part3Effect = new KPixmap( _part3->size() );
+
+  QPainter pb;
+  pb.begin( _part3Effect );
+  pb.fillRect( 0, 0, _part3->width(), _part3->height(),
+               QBrush( QColor( 49, 121, 172 ) ) );
+  pb.drawPixmap( 0, 0, *_part3 );
+  pb.end();
+
+  KPixmapEffect::fade( *_part3Effect, 0.75, white );
+}
+
+void AboutWidget::freePixmaps()
+{
+  delete _part1;
+  delete _part2;
+  delete _part3;
+  delete _part3Effect;
+  _part1 = 0L;
+  _part2 = 0L;
+  _part3 = 0L;
+  _part3 = 0L;
 }
 
 void AboutWidget::paintEvent(QPaintEvent* e)
@@ -117,7 +170,12 @@ void AboutWidget::paintEvent(QPaintEvent* e)
 
 void AboutWidget::resizeEvent(QResizeEvent*)
 {
-    if(_part1.isNull() || _part2.isNull() || _part3.isNull())
+  updatePixmap();
+}
+
+void AboutWidget::updatePixmap()
+{
+    if(_part1->isNull() || _part2->isNull() || _part3->isNull())
         return;
 
     _buffer.resize(width(), height());
@@ -125,15 +183,15 @@ void AboutWidget::resizeEvent(QResizeEvent*)
     QPainter p(&_buffer);
 
     // draw part1
-    p.drawPixmap(0, 0, _part1);
+    p.drawPixmap(0, 0, *_part1);
 
-    int xoffset = _part1.width();
-    int yoffset = _part1.height();
+    int xoffset = _part1->width();
+    int yoffset = _part1->height();
 
     // draw part2 tiled
     int xpos = xoffset;
     if(width() > xpos)
-        p.drawTiledPixmap(xpos, 0, width() - xpos, _part2.height(), _part2);
+        p.drawTiledPixmap(xpos, 0, width() - xpos, _part2->height(), *_part2);
 
     QFont f1 = font();
     QFont f2 = f1;
@@ -161,41 +219,35 @@ void AboutWidget::resizeEvent(QResizeEvent*)
     // draw part3
     if (height() <= 184) return;
 
-    int yoffset3 = height() - _part3.height();
-    int xoffset3 = width() - _part3.width();
-    if (xoffset3 < 0) xoffset3 = 0;
-    if (height() < 184 + _part3.height()) yoffset3 = 184;
+    int part3EffectY = height() - _part3->height();
+    int part3EffectX = width()  - _part3->width();
+    if ( part3EffectX < 0)
+      part3EffectX = 0;
+    if ( height() < 184 + _part3->height() )
+      part3EffectY = 184;
 
-    p.drawPixmap(xoffset3, yoffset3, _part3);
+    p.drawPixmap( part3EffectX, part3EffectY, *_part3 );
 
     // draw textbox
     if (height() <= 184 + 50) return;
 
-    xoffset = 25;
-    yoffset = 184 + 50;
+    int boxX = 25;
+    int boxY = 184 + 50;
     int bheight = height() - 184 - 50 - 40;
-    int bwidth = width() - _part3.width() + 60;
+    int bwidth = width() - _part3->width() + 60;
 
     if (bheight < 0) bheight = 0;
     if (bwidth < 0) bheight = 0;
     if (bheight > 400) bheight = 400;
     if (bwidth > 500) bwidth = 500;
 
-    KPixmap box(QSize(bwidth, bheight));
-
-    QPainter pb;
-    pb.begin(&box);
-    pb.fillRect(0, 0, bwidth, bheight, QBrush(QColor(49,121,172)));
-    pb.drawPixmap(xoffset3 - xoffset, yoffset3 - yoffset, _part3);
-    pb.end();
-
-    box = KPixmapEffect::fade(box, 0.75, white);
-
-    p.drawPixmap(xoffset, yoffset, box);
-
-    p.setViewport(xoffset, yoffset, bwidth, bheight);
+    p.setClipRect(boxX, boxY, bwidth, bheight);
+    p.fillRect( boxX, boxY, bwidth, bheight,
+                QBrush( QColor( 204, 222, 234 ) ) );
+    p.drawPixmap( part3EffectX, part3EffectY, *_part3Effect );
+    
+    p.setViewport( boxX, boxY, bwidth, bheight);
     p.setWindow(0, 0, bwidth, bheight);
-    p.setClipRect(xoffset, yoffset, bwidth, bheight);
 
     // draw info text
     xoffset = 10;
@@ -209,69 +261,69 @@ void AboutWidget::resizeEvent(QResizeEvent*)
     
     if (!_moduleList)
     {
-    // kde version
-    p.setFont(f1);
-    p.drawText(xoffset, yoffset, i18n(version_text));
-    p.setFont(f2);
-    p.drawText(xoffset + xadd, yoffset, KCGlobal::kdeVersion());
-    yoffset += fheight + 5;
-    if(yoffset > bheight) return;
+      // kde version
+      p.setFont(f1);
+      p.drawText(xoffset, yoffset, i18n(version_text));
+      p.setFont(f2);
+      p.drawText(xoffset + xadd, yoffset, KCGlobal::kdeVersion());
+      yoffset += fheight + 5;
+      if(yoffset > bheight) return;
 
-    // user name
-    p.setFont(f1);
-    p.drawText(xoffset, yoffset, i18n(user_text));
-    p.setFont(f2);
-    p.drawText(xoffset + xadd, yoffset, KCGlobal::userName());
-    yoffset += fheight + 5;
-    if(yoffset > bheight) return;
+      // user name
+      p.setFont(f1);
+      p.drawText(xoffset, yoffset, i18n(user_text));
+      p.setFont(f2);
+      p.drawText(xoffset + xadd, yoffset, KCGlobal::userName());
+      yoffset += fheight + 5;
+      if(yoffset > bheight) return;
 
-    // host name
-    p.setFont(f1);
-    p.drawText(xoffset, yoffset, i18n(host_text));
-    p.setFont(f2);
-    p.drawText(xoffset + xadd, yoffset, KCGlobal::hostName());
-    yoffset += fheight + 5;
-    if(yoffset > bheight) return;
+      // host name
+      p.setFont(f1);
+      p.drawText(xoffset, yoffset, i18n(host_text));
+      p.setFont(f2);
+      p.drawText(xoffset + xadd, yoffset, KCGlobal::hostName());
+      yoffset += fheight + 5;
+      if(yoffset > bheight) return;
 
-    // system
-    p.setFont(f1);
-    p.drawText(xoffset, yoffset, i18n(system_text));
-    p.setFont(f2);
-    p.drawText(xoffset + xadd, yoffset, KCGlobal::systemName());
-    yoffset += fheight + 5;
-    if(yoffset > bheight) return;
+      // system
+      p.setFont(f1);
+      p.drawText(xoffset, yoffset, i18n(system_text));
+      p.setFont(f2);
+      p.drawText(xoffset + xadd, yoffset, KCGlobal::systemName());
+      yoffset += fheight + 5;
+      if(yoffset > bheight) return;
 
-    // release
-    p.setFont(f1);
-    p.drawText(xoffset, yoffset, i18n(release_text));
-    p.setFont(f2);
-    p.drawText(xoffset + xadd, yoffset, KCGlobal::systemRelease());
-    yoffset += fheight + 5;
-    if(yoffset > bheight) return;
+      // release
+      p.setFont(f1);
+      p.drawText(xoffset, yoffset, i18n(release_text));
+      p.setFont(f2);
+      p.drawText(xoffset + xadd, yoffset, KCGlobal::systemRelease());
+      yoffset += fheight + 5;
+      if(yoffset > bheight) return;
 
-    // machine
-    p.setFont(f1);
-    p.drawText(xoffset, yoffset, i18n(machine_text));
-    p.setFont(f2);
-    p.drawText(xoffset + xadd, yoffset, KCGlobal::systemMachine());
-    if(yoffset > bheight) return;
+      // machine
+      p.setFont(f1);
+      p.drawText(xoffset, yoffset, i18n(machine_text));
+      p.setFont(f2);
+      p.drawText(xoffset + xadd, yoffset, KCGlobal::systemMachine());
+      if(yoffset > bheight) return;
 
-    yoffset += 10;
+      yoffset += 10;
 
-    if(width() < 450 || height() < 450) return;
+      if(width() < 450 || height() < 450) return;
 
-    // draw use text
-    bheight = bheight - yoffset - 10;
-    bwidth = bwidth - xoffset - 10;
+      // draw use text
+      bheight = bheight - yoffset - 10;
+      bwidth = bwidth - xoffset - 10;
 
-    p.setFont(f1);
+      p.setFont(f1);
 
-    QString ut = i18n(use_text);
-    // do not break message freeze
-    ut.replace(QRegExp("<b>"), "");
-    ut.replace(QRegExp("</b>"), "");
+      QString ut = i18n(use_text);
+      // do not break message freeze
+      ut.replace(QRegExp("<b>"), "");
+      ut.replace(QRegExp("</b>"), "");
 
-    p.drawText(xoffset, yoffset, bwidth, bheight, AlignLeft | AlignVCenter | WordBreak, ut);
+      p.drawText(xoffset, yoffset, bwidth, bheight, AlignLeft | AlignVCenter | WordBreak, ut);
     }
     else
     {
@@ -290,11 +342,13 @@ void AboutWidget::resizeEvent(QResizeEvent*)
 
       // traverse the list
       _moduleLinks.clear();
-      _linkBuffer.resize(xadd, bheight);
+      _linkBuffer.resize(xadd - 10, bheight);
       _linkArea = p.viewport();
       _linkArea.setWidth(xadd);
       QPainter lp(&_linkBuffer);
-      lp.drawPixmap(0, 0, box);
+      lp.fillRect( 0, 0, xadd - 10, bheight,
+                  QBrush( QColor( 204, 222, 234 ) ) );
+      lp.drawPixmap( part3EffectX - boxX, part3EffectY - boxY, *_part3Effect );
       lp.setPen(QColor(0x19, 0x19, 0x70)); // same as about:konqueror
       lp.setFont(lf);
       QListViewItem* pEntry = _category->firstChild();
