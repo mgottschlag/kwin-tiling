@@ -39,7 +39,7 @@ KclockModule::KclockModule(QWidget *parent, const char *name)
 { 
   QVBoxLayout *layout = new QVBoxLayout(this);
   tab = new QTabWidget(this);
-  layout->addWidget(tab);
+  layout->addWidget(tab, 1);
   
   dtime = new Dtime(this);
   tab->addTab(dtime, i18n("Date && Time"));
