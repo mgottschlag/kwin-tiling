@@ -110,6 +110,9 @@ bool KTheme::load( const KURL & url )
 
 QString KTheme::createYourself( bool pack )
 {
+    // start with empty dir
+    KTheme::remove( name() );
+
     // 1. General stuff set by methods setBlah()
 
     // 2. Background theme
@@ -455,7 +458,7 @@ void KTheme::apply()
         colorConf->sync();
         delete colorScheme;
 
-        KIPC::sendMessageAll(KIPC::PaletteChanged);
+        KIPC::sendMessageAll( KIPC::PaletteChanged );
     }
 
     // 6.Cursors

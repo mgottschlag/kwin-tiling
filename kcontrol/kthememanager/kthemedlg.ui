@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>494</width>
-            <height>376</height>
+            <height>378</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -79,6 +79,9 @@
                     </property>
                     <property name="tipText">
                         <string>Go to the KDE themes website</string>
+                    </property>
+                    <property name="useTips">
+                        <bool>true</bool>
                     </property>
                 </widget>
             </hbox>
@@ -168,6 +171,9 @@
                     </property>
                     <property name="showSortIndicator">
                         <bool>true</bool>
+                    </property>
+                    <property name="resizeMode">
+                        <enum>AllColumns</enum>
                     </property>
                 </widget>
             </grid>

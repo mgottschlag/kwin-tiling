@@ -398,11 +398,10 @@ const KAboutData* kthememanager::aboutData() const
 {
 
     KAboutData *about = new KAboutData("kthemenanager", I18N_NOOP("KDE Theme Manager"),
-                                       VERSION, I18N_NOOP("This control module handles installing, removing and "
-                                                          "creating visual KDE themes."),
-                                       KAboutData::License_GPL, "(c) 2003 Lukáš Tinkl", 0,
+                                       "0.4", I18N_NOOP("This control module handles installing, removing and "
+                                                        "creating visual KDE themes."),
+                                       KAboutData::License_GPL, "(c) 2003, 2004 Lukáš Tinkl", 0,
                                        "http://developer.kde.org/~lukas/kthememanager");
-
     return about;
 }
 
