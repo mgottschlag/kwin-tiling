@@ -1,6 +1,6 @@
 /* vi: ts=8 sts=4 sw=4
  *
- * $Id: $
+ * $Id$
  *
  * This file is part of the KDE project, module kcontrol.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
@@ -39,6 +39,8 @@ public:
     virtual void load();
     virtual void save();
     virtual void defaults();
+
+    QString quickHelp();
 
 signals:
     void changed(bool);
