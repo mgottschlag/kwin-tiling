@@ -745,6 +745,7 @@ extern "C" int _IceTransNoListen(const char * protocol);
 #endif
 
 KSMServer::KSMServer( const QString& windowManager, bool _only_local )
+  : DCOPObject("ksmserver")
 {
     the_server = this;
     clean = false;
@@ -766,7 +767,6 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     only_local = false;
 #endif
 
-    kapp->dcopClient()->attach();
     launcher = KApplication::launcher();
 
     char 	errormsg[256];
@@ -1224,37 +1224,40 @@ void KSMServer::restoreSession()
     config->setGroup("Session" );
     int count =  config->readNumEntry( "count" );
     bool wmFound = false;
-    progress = count;
+    appsToStart = count;
 
     QStringList wmCommand;
     if ( !wm.isEmpty() ) {
 	// when we have a window manager, we start it first and give
 	// it some time before launching other processes. Results in a
 	// visually more appealing startup.
-	progress++;
+	appsToStart++;
 	for ( int i = 1; i <= count; i++ ) {
 	    QString n = QString::number(i);
 	    if ( wm == config->readEntry( QString("program")+n ) ) {
 		wmFound = true;
-		progress--;
+		appsToStart--;
 		wmCommand = config->readListEntry( QString("restartCommand")+n );
 	        startApplication( wmCommand );
 	    }
 	}
     }
 
-    publishProgress( progress, true );
+    publishProgress( appsToStart, true );
+
+    connectDCOPSignal( "klauncher", "klauncher", "autoStartDone()", 
+                       "restoreSessionInternal()", true);
 
     if (wmFound) {
-	QTimer::singleShot( 2000, this, SLOT( restoreSessionInternal() ) );
+	QTimer::singleShot( 2000, this, SLOT( autoStart() ) );
     } else if (! wm.isEmpty()) {
 	// window manager not found, but we have a default window manager...
 	// run it and restore the session
 	wmCommand = wm;
 	startApplication(wmCommand);
-        restoreSessionInternal();
+        autoStart();
     } else
-	restoreSessionInternal();
+	autoStart();
 }
 
 /*!
@@ -1268,11 +1271,31 @@ void KSMServer::startDefaultSession()
     progress = 1;
     publishProgress( progress, true );
     startApplication( wm );
+    autoStart();
 }
 
+bool KSMServer::process(const QCString &fun, const QByteArray &data, 
+                        QCString& replyType, QByteArray &replyData)
+{
+    if (fun == "restoreSessionInternal()")
+    {
+       restoreSessionInternal();
+       replyType = "void";
+       return true;
+    }
+    return DCOPObject::process(fun, data, replyType, replyData);    
+}
+
+void KSMServer::autoStart()
+{
+    kapp->dcopClient()->send("klauncher", "klauncher", "autoStart()", QByteArray());
+}
 
 void KSMServer::restoreSessionInternal()
 {
+    disconnectDCOPSignal( "klauncher", "klauncher", "autoStartDone()", 
+                          "restoreSessionInternal()");
+    progress = appsToStart;
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
     int count =  config->readNumEntry( "count" );

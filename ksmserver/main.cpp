@@ -53,6 +53,8 @@ int main( int argc, char* argv[] )
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
+    kapp->dcopClient()->registerAs("ksmserver");
+
     QCString wm = args->getOption("windowmanager");
     if ( wm.isEmpty() )
 	wm = "kwin";

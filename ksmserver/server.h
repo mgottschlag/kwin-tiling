@@ -33,6 +33,7 @@ extern "C" {
 #include <X11/SM/SMlib.h>
 }
 
+#include "dcopobject.h"
 
 typedef QValueList<QCString> QCStringList;
 class KSMListener;
@@ -66,7 +67,7 @@ private:
     SmsConn smsConn;
 };
 
-class KSMServer : public QObject
+class KSMServer : public QObject, DCOPObject
 {
 Q_OBJECT
 public:
@@ -88,6 +89,10 @@ public:
     // error handling
     void ioError( IceConn iceConn );
 
+    // DCOP processing
+    bool process(const QCString &, const QByteArray &,
+                 QCString&, QByteArray &);
+
     // public API
     void restoreSession();
     void startDefaultSession();
@@ -104,6 +109,7 @@ private slots:
 
     void protectionTimeout();
     void cancelShutdown();
+    void autoStart();
 
 private:
     void handlePendingInteractions();
@@ -139,6 +145,7 @@ private:
     void publishProgress( int progress, bool max  = false  );
 
     int progress;
+    int appsToStart;
 };
 
 #endif
