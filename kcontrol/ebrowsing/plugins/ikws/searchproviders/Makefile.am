@@ -5,6 +5,7 @@ services_DATA = \
 		alexa_url.desktop \
 		alltheweb.desktop \
 		altavista.desktop \
+		amg.desktop \
 		appsy.desktop \
 		austronaut.desktop \
 		backports.desktop \
