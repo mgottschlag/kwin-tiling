@@ -23,6 +23,7 @@
 #ifndef INSTALLER_H
 #define INSTALLER_H
 
+#include <qpoint.h>
 #include <kcmodule.h>
 #include <klistbox.h>
 #include <kurl.h>
@@ -83,6 +84,12 @@ signals:
 protected:
   void dragEnterEvent(QDragEnterEvent* event);
   void dropEvent(QDropEvent* event);
+  void mouseMoveEvent(QMouseEvent *e);
+protected slots:
+  void slotMouseButtonPressed(int button, QListBoxItem *item, const QPoint &p);
+private:
+  QString mDragFile;
+  QPoint mOldPos;
 };
 
 

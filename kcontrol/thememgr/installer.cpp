@@ -44,6 +44,7 @@
 #include <kfiledialog.h>
 #include <klocale.h>
 #include <kglobal.h>
+#include <kglobalsettings.h>
 #include <kdebug.h>
 #include <kstddirs.h>
 #include <kmessagebox.h>
@@ -66,11 +67,13 @@ ThemeListBox::ThemeListBox(QWidget *parent)
   : KListBox(parent)
 {
    setAcceptDrops(true);
+   connect(this, SIGNAL(mouseButtonPressed(int, QListBoxItem *, const QPoint &)),
+           this, SLOT(slotMouseButtonPressed(int, QListBoxItem *, const QPoint &)));
 }
 
 void ThemeListBox::dragEnterEvent(QDragEnterEvent* event)
 {
-   event->accept(QUriDrag::canDecode(event));
+   event->accept((event->source() != this) && QUriDrag::canDecode(event));
 }
 
 void ThemeListBox::dropEvent(QDropEvent* event)
@@ -81,6 +84,39 @@ void ThemeListBox::dropEvent(QDropEvent* event)
       emit filesDropped(urls);
    }
 } 
+
+void ThemeListBox::slotMouseButtonPressed(int button, QListBoxItem *item, const QPoint &p)
+{
+   if ((button & LeftButton) == 0) return;
+   mOldPos = p;
+   mDragFile = QString::null;
+   int cur = index(item);
+   if (cur >= 0)
+   {
+      QString themeName = text(cur);
+      mDragFile = findThemePath(themeName);
+   }
+}
+
+void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
+{
+   if (((e->state() & LeftButton) != 0) && !mDragFile.isEmpty())
+   {
+      int delay = KGlobalSettings::dndEventDelay();
+      QPoint newPos = e->globalPos();
+      if(newPos.x() > mOldPos.x()+delay || newPos.x() < mOldPos.x()-delay ||
+         newPos.y() > mOldPos.y()+delay || newPos.y() < mOldPos.y()-delay)
+      {
+         KURL url;
+         url.setPath(mDragFile);
+         KURL::List urls;
+         urls.append(url);
+         QUriDrag *d = KURLDrag::newDrag(urls, this);
+         d->dragCopy();
+      }
+   }
+   KListBox::mouseMoveEvent(e);
+}
 
 //-----------------------------------------------------------------------------
 Installer::Installer (QWidget *aParent, const char *aName, bool aInit)
