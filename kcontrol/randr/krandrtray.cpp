@@ -18,13 +18,15 @@
 
 #include <qtimer.h>
 
-#include <kdebug.h>
-#include <klocale.h>
-#include <kpopupmenu.h>
-#include <kiconloader.h>
 #include <kaction.h>
 #include <kapplication.h>
+#include <kcmultidialog.h>
+#include <kdebug.h>
 #include <khelpmenu.h>
+#include <kiconloader.h>
+#include <klocale.h>
+#include <kpopupmenu.h>
+#include <kstdaction.h>
 
 #include "krandrtray.h"
 #include "krandrpassivepopup.h"
@@ -60,7 +62,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 
 	menu->clear();
 	menu->setCheckable(true);
-	menu->insertTitle(SmallIcon("kscreensaver"), i18n("Display Configuration"), 0, 0);
+	menu->insertTitle(SmallIcon("kscreensaver"), i18n("Size & Rotation"), 0, 0);
 
 	if (!isValid()) {
 		lastIndex = menu->insertItem(i18n("Required X Extension Not Available"));
@@ -85,6 +87,11 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 	}
 
 	menu->insertSeparator();
+
+	KAction *actPrefs = KStdAction::preferences( this, SLOT( slotPrefs() ),
+		actionCollection() );
+	actPrefs->plug( menu );
+
 	menu->insertItem(i18n("&Help"), m_help->menu());
 	KAction *quitAction = actionCollection()->action(KStdAction::name(KStdAction::Quit));
 	quitAction->plug(menu);
@@ -224,4 +231,13 @@ void KRandRSystemTray::slotRefreshRateChanged(int parameter)
 		if (syncTrayApp(config))
 			currentScreen()->save(config);
 	}
+}
+
+void KRandRSystemTray::slotPrefs()
+{
+	KCMultiDialog *kcm = new KCMultiDialog( KDialogBase::Plain,
+		i18n( "Configure" ), this );
+
+	kcm->addModule( "randr" );
+	kcm->exec();
 }

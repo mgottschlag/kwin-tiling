@@ -41,6 +41,7 @@ protected slots:
 	void slotResolutionChanged(int parameter);
 	void slotOrientationChanged(int parameter);
 	void slotRefreshRateChanged(int parameter);
+	void slotPrefs();
 
 protected:
 	void mousePressEvent( QMouseEvent *e );
