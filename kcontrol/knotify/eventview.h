@@ -20,6 +20,10 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.6  2000/03/25 17:27:14  charles
+    It's going.  It's also very messy :|
+    At least it works...
+
     Revision 1.5  2000/03/25 06:37:24  charles
     Slight rework so this isn't a pain in the butt to code :)
 
@@ -88,7 +92,7 @@ protected:
 	KLineEdit *file;
 	QPushButton *todefault;
 	
-	KNotifyClient::Presentation present;
+	int present;
 	
 	QString soundfile;
 	QString logfile;

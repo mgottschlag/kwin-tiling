@@ -143,7 +143,7 @@ void EventView::itemToggled(bool on)
 	file->blockSignals(true);
 	eventslist->blockSignals(true);
 	
-	KNotifyClient::Presentation p;
+	int p;
 	switch(eventslist->currentItem())
 	{
 	case (0):
@@ -185,12 +185,11 @@ void EventView::load(KConfig *config, const QString &section)
 	conf=config;
 	this->section=section;
 	setEnabled(true);
-	typedef KNotifyClient::Presentation Presentation;
 	
 	{ // Load the presentation
-		present=(Presentation)conf->readNumEntry("presentation", -1);
+		present=conf->readNumEntry("presentation", -1);
 		if (present==KNotifyClient::Default)
-			present=(Presentation)conf->readNumEntry("default_presentation", 0);
+			present=conf->readNumEntry("default_presentation", 0);
 	}
 
 	{ // Load the files
