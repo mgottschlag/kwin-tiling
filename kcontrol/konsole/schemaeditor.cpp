@@ -220,7 +220,7 @@ void SchemaEditor::imageSelect()
     {
         QStringList list=KGlobal::dirs()->resourceDirs("wallpaper");
         if(list.count()>0)
-            start= KGlobal::dirs()->resourceDirs("wallpaper").last();
+            start= list.last();
     }
 
     KURL url = KFileDialog::getImageOpenURL(start, 0, i18n("Select a Background Image"));
