@@ -42,13 +42,6 @@
             <property name="title">
                 <string>General</string>
             </property>
-            <property name="alignment">
-                <set>AlignTop|AlignLeft</set>
-            </property>
-            <property name="layoutMargin" stdset="0">
-            </property>
-            <property name="vAlign" stdset="0">
-            </property>
             <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
