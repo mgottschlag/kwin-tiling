@@ -1,8 +1,8 @@
 /* vi: ts=8 sts=4 sw=4
  *
- * $Id: $
+ * $Id$
  *
- * This file is part of the KDE project, module kdesktop.
+ * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
  * 
  * You can Freely distribute this program under the GNU General Public
