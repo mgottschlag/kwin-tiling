@@ -3,7 +3,7 @@ SUBDIRS= pics
 kde_module_LTLIBRARIES = kcm_input.la
 
 # Put main.cc last for --enable-final, it contains ugly X includes.
-kcm_input_la_SOURCES = mouse.cpp kmousedlg.ui main.cpp
+kcm_input_la_SOURCES = kmousedlg.ui mouse.cpp main.cpp
 
 kcm_input_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
 kcm_input_la_LIBADD = $(XTESTLIB) $(LIB_KIO)
