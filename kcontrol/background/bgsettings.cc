@@ -805,15 +805,6 @@ bool KBackgroundSettings::needWallpaperChange()
 
 QString KBackgroundSettings::fingerprint()
 {
-    // Desktop filling wallpaper modes:
-    if ( (m_BlendMode == NoBlending) &&
-	((m_WallpaperMode == Tiled) ||
-	 (m_WallpaperMode == CenterTiled) ||
-	 (m_WallpaperMode == Scaled))
-       )
-	return QString("wm:%1;wp:%2;").arg(m_WallpaperMode)
-	       .arg(currentWallpaper());
-
     QString s = QString("bm:%1;").arg(m_BackgroundMode);
     switch (m_BackgroundMode) {
     case Flat:

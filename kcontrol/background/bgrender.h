@@ -71,6 +71,7 @@ private:
 
     QString buildCommand();
     void tile(QImage *dst, QRect rect, QImage *src);
+    void blend(QImage *dst, QRect dr, QImage *src, QPoint soffs = QPoint(0, 0));
 
     int doBackground(bool quit=false);
     int doWallpaper(bool quit=false);

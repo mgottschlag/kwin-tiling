@@ -143,18 +143,8 @@ int KBackgroundRenderer::doBackground(bool quit)
     if (m_State & BackgroundDone)
         return Done;
 
-    int wpmode = wallpaperMode();
-    int blmode = blendMode();
     int bgmode = backgroundMode();
 
-    if ( (blmode == NoBlending) &&
-	 ((wpmode == Tiled) ||
-	  (wpmode == Scaled) ||
-	  (wpmode == CenterTiled)) ) {
-      // full screen wallpaper modes: background is not visible
-      m_State |= BackgroundDone;
-      return Done;
-    }
     if (quit) {
 	if (bgmode == Program)
 	    m_pProc->kill();
@@ -259,10 +249,9 @@ int KBackgroundRenderer::doWallpaper(bool quit)
     int wpmode = wallpaperMode();
     int blmode = blendMode();
 
-    // Tiling is only possible if there's no blending
     bool bTile = m_bTile;
-    if ((wpmode != NoWallpaper) && (blmode != NoBlending))
-      bTile = false;
+    if (wpmode != NoWallpaper)
+	bTile = false;
 
     QImage wp;
     if (wpmode != NoWallpaper) {
@@ -302,9 +291,6 @@ wp_out:
       m_pBackground->fill(colorA().rgb());
     }
 
-    if (wpmode != Centred) // only implemented transparency for that mode
-        wp.setAlphaBuffer(false);
-
     int ww = wp.width();
     int wh = wp.height();
     int retval = Done;
@@ -321,54 +307,80 @@ wp_out:
 	}
 	break;
     }
+
     case Tiled:
+    case CenterTiled:
     {
 	int w = m_Size.width();
 	int h = m_Size.height();
-        int y;
+	int x, y, xa, ya;
 
-	if (bTile && (ww <= w) && (wh <= h))
-	    *m_pImage = wp;
-	else {
-	    m_pImage->create(m_Size, 32);
-	    tile(m_pImage, QRect(0, 0, w, QMIN(wh,h)), &wp);
-
-	    if (h > wh)
-		for (y=wh; y<h; y++)
-		    memcpy(m_pImage->scanLine(y), m_pImage->scanLine(y % wh),
-			   m_pImage->bytesPerLine());
+	if (wpmode == CenterTiled) {
+	    xa = -ww + ((w - ww) / 2) % ww;
+	    ya = -wh + ((h - wh) / 2) % wh;
+	} else {
+	    xa = 0;
+	    ya = 0;
 	}
-        break;
-    }
+	
+	if (m_pBackground->size() == m_Size) {
 
-    case CenterTiled:
-    {
-	QSize size = m_Size;
-	if (bTile)
-	    size = QSize(QMIN(m_Size.width(), wp.width()),
-		    QMIN(m_Size.height(), wp.height()));
-	m_pImage->create(size, 32);
-
-	int w = size.width();
-	int h = size.height();
-        int xa = ww - ((m_Size.width() - ww) / 2) % ww;
-        int ya = wh - ((m_Size.height() - wh) / 2) % wh;
-        int x, y;
-
-        for (y=0; y < QMIN(wh,h); y++)
-            for (x=0; x < w; x++)
-                m_pImage->setPixel(x, y, wp.pixel((xa + x) % ww, (ya + y) % wh));
-
-        if (h > wh)
-            for (y=wh; y < h; y++)
-                memcpy(m_pImage->scanLine(y), m_pImage->scanLine(y % wh),
-                       m_pImage->bytesPerLine());
-        break;
+	  if (blmode != NoBlending)
+	    *m_pImage = m_pBackground->copy();
+	  else
+	    *m_pImage = *m_pBackground;
+	  if (m_pImage->depth() < 32)
+	    *m_pImage = m_pImage->convertDepth(32, DiffuseAlphaDither);
+	}
+	else {
+	    int tw = w, th = h;
+	    int bw = m_pBackground->width(), bh = m_pBackground->height();
+	    if (bTile) {
+		tw = QMIN(bw * ((ww + bw - 1) / bw), w);
+		th = QMIN(bh * ((wh + bh - 1) / bh), h);
+	    }
+	    m_pImage->create(tw, th, 32);
+            tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
+	}
+	
+	for (y = ya; y < h; y += wh) {
+	    for (x = xa; x < w; x += ww) {
+		blend(m_pImage, QRect(x, y, ww, wh), &wp,
+			QPoint(-QMIN(x, 0), -QMIN(y, 0)));
+	    }
+	}
+	break;
     }
 
     case Scaled:
-        *m_pImage = wp.smoothScale(m_Size.width(), m_Size.height());
+    {	
+	int w = m_Size.width();
+	int h = m_Size.height();
+	wp = wp.smoothScale(w, h);
+
+        if (m_pBackground->size() == m_Size) {
+
+	    if (blmode != NoBlending)
+	        *m_pImage = m_pBackground->copy();
+	    else
+	        *m_pImage = *m_pBackground;
+	    if (m_pImage->depth() < 32)
+	        *m_pImage = m_pImage->convertDepth(32, DiffuseAlphaDither);
+	}
+	else {
+	    int tw = w, th = h;
+	    int bw = m_pBackground->width(), bh = m_pBackground->height();
+	    if (bTile) {
+		tw = QMIN(bw * ((ww + bw - 1) / bw), w);
+		th = QMIN(bh * ((wh + bh - 1) / bh), h);
+	    }
+	    m_pImage->create(tw, th, 32);
+            tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
+	}
+
+	blend(m_pImage, QRect(0, 0, w, h), &wp);
         break;
+    }
 
     case Centred:
     {
@@ -376,7 +388,7 @@ wp_out:
 	int h = m_Size.height();
         int xa = (w - ww) / 2;
         int ya = (h - wh) / 2;
-        int y, offx, offy;
+        int offx, offy;
 
         // Check if anchor point is not outside the screen
         if (xa <= 0) {
@@ -396,7 +408,7 @@ wp_out:
 	    *m_pImage = m_pBackground->copy();
 	  else
 	    *m_pImage = *m_pBackground;
-	  if (m_pImage->depth()<32)
+	  if (m_pImage->depth() < 32)
 	    *m_pImage = m_pImage->convertDepth(32, DiffuseAlphaDither);
 	}
 	else {
@@ -407,25 +419,11 @@ wp_out:
 		th = QMIN(bh * ((ya + wh + bh - 1) / bh), h);
 	    }
 	    m_pImage->create(tw, th, 32);
-
             tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
 	}
 
 	// And copy the centred image
-        for (y=0; y<wh; y++) {
-	    if (m_pImage->scanLine(ya+y) && wp.scanLine(y+offy)) {
-                QRgb *b, *d;
-                int a;
-                for (int x = 0; x < ww; x++) {
-                    b = reinterpret_cast<QRgb*>(m_pImage->scanLine(ya+y) + (xa + x) * sizeof(QRgb));
-                    d = reinterpret_cast<QRgb*>(wp.scanLine(y+offy) + (offx + x) * sizeof(QRgb));
-                    a = qAlpha(*d);
-                    *b = qRgb(qRed(*b) - (((qRed(*b) - qRed(*d)) * a) >> 8),
-                              qGreen(*b) - (((qGreen(*b) - qGreen(*d)) * a) >> 8),
-                              qBlue(*b) - (((qBlue(*b) - qBlue(*d)) * a) >> 8));
-                }
-            }
-	}
+	blend(m_pImage, QRect(xa, ya, ww, wh), &wp, QPoint(offx, offy));
         break;
     }
 
@@ -447,18 +445,16 @@ wp_out:
 
         int xa = (w - ww) / 2;
         int ya = (h - wh) / 2;
-        int y;
 
 	if (m_pBackground->size() == m_Size) {
 
-	  // if we blend, we need a deep copy
 	  if (blmode != NoBlending)
 	    *m_pImage = m_pBackground->copy();
 	  else
 	    *m_pImage = *m_pBackground;
 
-	  if (m_pImage->depth()<32)
-	    *m_pImage = m_pImage->convertDepth(32);
+	  if (m_pImage->depth() < 32)
+	    *m_pImage = m_pImage->convertDepth(32, DiffuseAlphaDither);
 
 	}
 	else {
@@ -469,19 +465,10 @@ wp_out:
 		th = QMIN(bh * ((ya + wh + bh - 1) / bh), h);
 	    }
 	    m_pImage->create(tw, th, 32);
-
-	    if (ya) {
-		tile(m_pImage, QRect(0, 0, tw, ya), m_pBackground);
-		tile(m_pImage, QRect(0, ya+wh, tw, th-ya-wh), m_pBackground);
-	    } else {
-		tile(m_pImage, QRect(0, 0, xa, th), m_pBackground);
-		tile(m_pImage, QRect(xa+ww, 0, tw-xa-ww, th), m_pBackground);
-	    }
+            tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
 	}
 
-        for (y=0; y<wh; y++)
-            memcpy(m_pImage->scanLine(ya+y) + xa * sizeof(QRgb),
-                   wp.scanLine(y), wp.bytesPerLine());
+	blend(m_pImage, QRect(xa, ya, ww, wh), &wp);
         break;
     }
 
@@ -548,6 +535,34 @@ wp_out:
 
     return retval;
 }
+
+
+
+/* Alpha blend an area from <src> with offset <soffs> to rectangle <dr> of <dst> 
+ * Default offset is QPoint(0, 0).
+ */
+void KBackgroundRenderer::blend(QImage *dst, QRect dr, QImage *src, QPoint soffs)
+{   
+    int x, y, a;
+    dr &= dst->rect();
+ 
+    for (y = 0; y < dr.height(); y++) {
+	if (dst->scanLine(dr.y() + y) && src->scanLine(soffs.y() + y)) {
+	    QRgb *b, *d;
+	    for (x = 0; x < dr.width(); x++) {
+		b = reinterpret_cast<QRgb*>(dst->scanLine(dr.y() + y)
+			+ (dr.x() + x) * sizeof(QRgb));
+                d = reinterpret_cast<QRgb*>(src->scanLine(soffs.y() + y)
+			+ (soffs.x() + x) * sizeof(QRgb));
+                a = qAlpha(*d);
+                *b = qRgb(qRed(*b) - (((qRed(*b) - qRed(*d)) * a) >> 8),
+                          qGreen(*b) - (((qGreen(*b) - qGreen(*d)) * a) >> 8),
+                          qBlue(*b) - (((qBlue(*b) - qBlue(*d)) * a) >> 8));
+            }
+        }
+    }
+}
+
 
 
 void KBackgroundRenderer::slotBackgroundDone(KProcess *)
