@@ -6,7 +6,6 @@ Exec=kcmshell kcmkonsole
 DocPath=kcontrol/kcmkonsole/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=konsole
-Hidden=true
 Name=Konsole
 Name[af/messages/kdebase/desktop_kdebase.po]=konsole
 Name[ar/messages/kdebase/desktop_kdebase.po]=سطر الأوامر
