@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.7  2000/01/08 18:59:26  kulow
+    some sparcCC fixes
+
     Revision 1.6  1999/11/15 14:29:45  hoelzer
     Ported to the new module concept.
 
@@ -48,14 +51,14 @@
 
 #include "kcmodule.h"
 
-#include <qlist.h>
+#include <qstringlist.h>
 #include <qstring.h>
 #include <qlistbox.h>
 #include <qcheckbox.h>
 
 #include <mediatool.h>
 #include <kaudio.h>
-
+#include <knuminput.h>
 
 class KSoundWidget : public KCModule{
 
@@ -81,17 +84,35 @@ private slots:
         void soundSelected(const QString &filename);
 	void playCurrentSound();
 	void changed();
+    
+        void ringBell();
 
 private:
 
-	bool addToSoundList(QString sound);
+    bool addToSoundList(QString sound);
+    
+    int getBellVolume();
+    int getBellPitch();
+    int getBellDuration();
+    
+    void setBellVolume(int);
+    void setBellPitch(int);
+    void setBellDuration(int);
 	
-	int selected_event;
-	QList<QString> soundnames;
-	KAudio audio;
-        QCheckBox *sounds_enabled;
-	QListBox *eventlist, *soundlist;
-	QPushButton *btn_test;
+    int selected_event;
+    QStringList soundnames;
+    KAudio audio;
+    QCheckBox *sounds_enabled;
+    QListBox *eventlist, *soundlist;
+    QPushButton *btn_test;
+
+
+    KIntNumInput *volume, *pitch, *duration;
+    
+    QPushButton *test;
+    
+    KConfig *config;
+    int bellVolume, bellPitch, bellDuration;
 };
 
 #endif
