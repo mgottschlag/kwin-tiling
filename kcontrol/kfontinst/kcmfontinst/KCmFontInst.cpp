@@ -185,11 +185,15 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     itsViewMenuAct=dynamic_cast<KActionMenu *>(itsDirOp->actionCollection()->action("view menu"));
     topMnu->popupMenu()->clear();
+    connect(topMnu->popupMenu(), SIGNAL(aboutToShow()), SLOT(setupMenu()));
     if((act=itsDirOp->actionCollection()->action("up")))
         act->disconnect(SIGNAL(activated()), itsDirOp, SLOT(cdUp()));
-
     if((act=itsDirOp->actionCollection()->action("home")))
         act->disconnect(SIGNAL(activated()), itsDirOp, SLOT(home()));
+    if((act=itsDirOp->actionCollection()->action("back")))
+        act->disconnect(SIGNAL(activated()), itsDirOp, SLOT(back()));
+    if((act=itsDirOp->actionCollection()->action("forward")))
+        act->disconnect(SIGNAL(activated()), itsDirOp, SLOT(forward()));
 
     if((act=itsDirOp->actionCollection()->action("reload")))
         act->plug(toolbar);
@@ -262,7 +266,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     itsDirOp->dirLister()->setShowingDotFiles(true);
 
-    connect(itsDirOp, SIGNAL(urlEntered(const KURL &)), SLOT(urlEntered(const KURL &)));
     connect(itsDirOp, SIGNAL(fileHighlighted(const KFileItem *)), SLOT(fileHighlighted(const KFileItem *)));
     connect(itsDirOp, SIGNAL(finishedLoading()), SLOT(loadingFinished()));
     connect(itsDirOp, SIGNAL(dropped(const KFileItem *, QDropEvent *, const KURL::List &)),
@@ -346,6 +349,11 @@ void CKCmFontInst::iconView()
     if(itsEmbeddedAdmin)
         itsConfig.sync();
     itsDirOp->setAcceptDrops(true);
+}
+
+void CKCmFontInst::setupMenu()
+{
+    itsDirOp->setupMenu(KDirOperator::SortActions|/*KDirOperator::FileActions|*/KDirOperator::ViewActions);
 }
 
 void CKCmFontInst::setupViewMenu()

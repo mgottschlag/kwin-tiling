@@ -72,6 +72,7 @@ class CKCmFontInst : public KCModule
     QString quickHelp() const;
     void    listView();
     void    iconView();
+    void    setupMenu();
     void    setupViewMenu();
     void    fileHighlighted(const KFileItem *item);
     void    loadingFinished();
