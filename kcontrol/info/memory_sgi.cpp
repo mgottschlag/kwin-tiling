@@ -3,7 +3,11 @@
 #include <unistd.h>
 #include <sys/sysmp.h>
 #include <sys/ipc.h>
+
+// The following define is needed for SGI IRIX 6.2
+#define _KMEMUSER
 #include <sys/shm.h>
+
 #include <sys/param.h>
 #include <sys/swap.h>
 
