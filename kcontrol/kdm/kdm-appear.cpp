@@ -48,7 +48,10 @@
 
 extern KSimpleConfig *c;
 
-const char *styles[] = {"KDE", "Motif", "Windows", /* "Platinum", "CDE", */};
+const char *styles[] = {
+	"KDE", "Windows", "Platinum", 
+	"Motif", "Motif+", "CDE", "SGI"
+};
 
 KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   : KCModule(parent, name)

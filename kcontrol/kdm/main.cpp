@@ -136,6 +136,7 @@ void KDModule::save()
   users->save();
   sessions->save();
   convenience->save();
+  c->sync();
 }
 
 
