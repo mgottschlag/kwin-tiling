@@ -939,7 +939,7 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	    addr.family = FamilyNetname;
 	    addr.length = strlen (netname);
 	    addr.address = netname;
-	    XAddHost (*dpy, &addr);
+	    XAddHost (d, &addr);
 	}
 # endif
 # ifdef K5AUTH
