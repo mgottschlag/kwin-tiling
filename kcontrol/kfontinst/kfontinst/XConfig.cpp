@@ -32,7 +32,7 @@
 #include "FontEngine.h"
 #include "BufferedFile.h"
 #include "Config.h"
-#include <fstream.h>
+#include <fstream>
 #include <qdir.h>
 #include <qcstring.h>
 #include <klocale.h>

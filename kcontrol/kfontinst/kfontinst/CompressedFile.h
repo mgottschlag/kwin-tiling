@@ -43,7 +43,7 @@ class CCompressedFile
         NORM
     };
 
-    CCompressedFile(const char *fname) : itsType(NORM), itsFile(NULL), itsFName(fname) { if(NULL!=fname) open(fname); }
+    CCompressedFile(const char *fname) : itsType(NORM), itsFName(fname), itsFile(NULL) { if(NULL!=fname) open(fname); }
     virtual ~CCompressedFile()                                                         { close(); }
 
     operator bool()                                                                    { return GZIP==itsType ? NULL!=itsDev : NULL!=itsFile; }
