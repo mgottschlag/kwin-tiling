@@ -1,7 +1,7 @@
 /*
  * kcmsambalog.cpp
  *
- * Copyright (c) 2000 Alexander Neundorf <alexander.neundorf@rz.tu-ilmenau.de>
+ * Copyright (c) 2000 Alexander Neundorf <neundorf@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -43,7 +43,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
 ,configFile(config)
 ,filesCount(0)
 ,connectionsCount(0)
-,logFileName(this)
+,logFileName("/var/log/samba.log",this)
 ,label(&logFileName,i18n("Samba log file: "),this)
 ,viewHistory(this)
 ,showConnOpen(i18n("Show opened connections"),this)
@@ -98,7 +98,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
    subLayout->setMargin(SCREEN_XY_OFFSET);
    subLayout->setSpacing(10);
 
-   logFileName.setText("/var/log/samba.log");
+   logFileName.setURL("/var/log/samba.log");
 
    viewHistory.setAllColumnsShowFocus(TRUE);
    viewHistory.setFocusPolicy(QWidget::ClickFocus);
@@ -135,18 +135,13 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
    updateButton.setFixedSize(updateButton.sizeHint());
 };
 
-void LogView::setLogFile(const char* name)
-{
-   logFileName.setText(name);
-};
-
 void LogView::load()
 {
    cout<<"LogView::load starts"<<endl;
    if (configFile==0) return;
    cout<<"LogView::load reading..."<<endl;
    configFile->setGroup(LOGGROUPNAME);
-   logFileName.setText(configFile->readEntry( "SambaLogFile", "/var/samba.log"));
+   logFileName.setURL(configFile->readEntry( "SambaLogFile", "/var/log/samba.log"));
 
    showConnOpen.setChecked(configFile->readBoolEntry( "ShowConnectionOpen", TRUE));
    showConnClose.setChecked(configFile->readBoolEntry( "ShowConnectionClose", FALSE));
@@ -158,7 +153,7 @@ void LogView::save()
 {
    if (configFile==0) return;
    configFile->setGroup(LOGGROUPNAME);
-   configFile->writeEntry( "SambaLogFile", logFileName.text());
+   configFile->writeEntry( "SambaLogFile", logFileName.url());
 
    configFile->writeEntry( "ShowConnectionOpen", showConnOpen.isChecked());
    configFile->writeEntry( "ShowConnectionClose", showConnClose.isChecked());
@@ -174,7 +169,7 @@ void LogView::save()
 //caution ! high optimized code :-)
 void LogView::updateList()
 {
-   ifstream logFile(QFile::encodeName(logFileName.text()));
+   ifstream logFile(QFile::encodeName(logFileName.url()));
    if (logFile.good())
    {
       QApplication::setOverrideCursor(waitCursor);
@@ -187,9 +182,6 @@ void LogView::updateList()
       int fileOpenLen(strlen(FILE_OPEN));
       int fileCloseLen(strlen(FILE_CLOSE));
 
-//   cout<<"opening file: "<<logFileName.text()<<endl;
-
-//      cout<<"opening succeeded"<<endl;
       char buf[400];
       char *c1, *c2, *c3, *c4, *c, time[25];
       int timeRead(0);
@@ -263,7 +255,7 @@ void LogView::updateList()
    }
    else
    {
-      QString tmp = i18n("Could not open file %1").arg(logFileName.text());
+      QString tmp = i18n("Could not open file %1").arg(logFileName.url());
       KMessageBox::error(this,tmp);
    };
 };

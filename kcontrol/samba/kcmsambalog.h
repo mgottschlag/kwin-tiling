@@ -1,7 +1,7 @@
 /*
  * kcmsambalog.h
  *
- * Copyright (c) 2000 Alexander Neundorf <alexander.neundorf@rz.tu-ilmenau.de>
+ * Copyright (c) 2000 Alexander Neundorf <neundorf@kde.org>
 *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -25,12 +25,13 @@
  
 #include <qlabel.h>
 #include <qcstring.h>
-#include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
 #include <qlistview.h>
 #include <qevent.h>
 #include <kconfig.h>
+
+#include <kurlrequester.h>
 
 #define LOGGROUPNAME "SambaLogFileSettings"
 
@@ -40,13 +41,12 @@ class LogView: public QWidget
    public:
       LogView(QWidget *parent=0, KConfig *config=0, const char *name=0);
       virtual ~LogView() {};
-      void setLogFile(const char* name);
       void save();
       void load();
    private:
       KConfig *configFile;
       int filesCount, connectionsCount;
-      QLineEdit logFileName;
+      KURLRequester logFileName;
       QLabel label;
       QListView viewHistory;
       QCheckBox showConnOpen, showConnClose, showFileOpen, showFileClose;
