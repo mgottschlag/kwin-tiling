@@ -6,6 +6,8 @@
 //
 
 #include <kcolordrag.h>
+#include <kpixmapeffect.h>
+
 #include "widgetcanvas.h"
 #include "widgetcanvas.moc"
 #include <kglobal.h>
@@ -115,7 +117,8 @@ void WidgetCanvas::drawSampleWidgets()
 	
 	KPixmap pmTitle;
 	pmTitle.resize( width()-60, 20 );
-        pmTitle.gradientFill( iaTitle, iaBlend, KPixmap::Horizontal );
+	KPixmapEffect::gradient(pmTitle, iaTitle, iaBlend, 
+				KPixmapEffect::HorizontalGradient);
 	paint.drawPixmap( 20, 10, pmTitle ); 
    
 	QFont fnt = KGlobal::generalFont();
@@ -144,7 +147,8 @@ void WidgetCanvas::drawSampleWidgets()
     paint.drawRect( 25, 30+5, width()-52, 20 );
 	
 	pmTitle.resize( width()-52, 20 );
-        pmTitle.gradientFill( aTitle, aBlend, KPixmap::Vertical );
+	KPixmapEffect::gradient(pmTitle, aTitle, aBlend, 
+				KPixmapEffect::VerticalGradient);
 	paint.drawPixmap( 25, 35, pmTitle ); 
     
     paint.setFont( fnt );

@@ -20,7 +20,7 @@
 #include <qframe.h>
 #include <qlayout.h>
 #include <qdragobject.h>
-#include <kpixmap.h>
+#include <kpixmapeffect.h>
 #include "utils.h"
 #include "kdropsite.h"
 #include "kdm-bgnd.moc"
@@ -411,10 +411,12 @@ int KDMBackgroundWidget::loadWallpaper( const QString& name, bool useContext )
           wpPixmap.fill( color1 );
           break;
         case Horizontal:
-          wpPixmap.gradientFill(color1, color2, false);
+	  KPixmapEffect::gradient(wpPixmap, color1, color2,
+				  KPixmapEffect::HorizontalGradient);
           break;
         case Vertical:
-          wpPixmap.gradientFill(color1, color2, true);
+	  KPixmapEffect::gradient(wpPixmap, color1, color2,
+				  KPixmapEffect::VerticalGradient);
           break;
       } // switch..
     } // if..

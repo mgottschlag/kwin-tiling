@@ -34,7 +34,7 @@
 #include <kwm.h>
 #include <kiconloader.h>
 #include <kbuttonbox.h>
-#include <kpixmap.h>
+#include <kpixmapeffect.h>
 #include <kimgio.h>
 #include <klocale.h>
 #include <kconfig.h>
@@ -857,11 +857,13 @@ void KBackground::setMonitor()
     } else if ( currentItem.stMode == Gradient ) {
 		
       if( currentItem.orMode == Portrait ) 
-          preview.gradientFill( currentItem.color2, currentItem.color1,
-                                KPixmap::Vertical);
+	KPixmapEffect::gradient(preview, currentItem.color2, 
+				currentItem.color1, 
+				KPixmapEffect::VerticalGradient);
       else
-          preview.gradientFill( currentItem.color2, currentItem.color1,
-                                KPixmap::Horizontal);
+	KPixmapEffect::gradient(preview, currentItem.color2, 
+				currentItem.color1, 
+				KPixmapEffect::HorizontalGradient);
 			
     } else
       preview.patternFill(currentItem.color1,currentItem.color2, currentItem.pattern);
