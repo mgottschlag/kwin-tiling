@@ -5,66 +5,206 @@ Please help keep this file up-to-date. Thanks.
 
 Programmers: please mark those modules as "Ready" which are not still
 facing changes to the UI, i.e. those modules we can start documenting.
-Please delete modules from the list if they are going to be obsolete.
+Please delete modules from the list if they are going to be obsolete
+as well as files that don't need QWhatsThis or quickHelp.
 
 Please start translating QWhatsThis only when it is marked
 as proof-read. Thanks.
 
-
                         Ready   WhatsThis   proof-read    Manual
-arts                     [ ]        [ ]         [ ]         [ ]
-bell                     [ ]        [ ]         [ ]         [ ]
-clock                    [ ]        [s]         [ ]         [ ]
-display                    
+arts:
+  arts.cpp               [ ]        [ ]         [ ]         [ ]
+
+clock:
+  dtime.cpp              [ ]        [s]         [ ]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+  tzone.cpp              [ ]        [ ]         [ ]         [ ]
+
+display:
   advanced.cpp           [ ]        [ ]         [ ]         [ ]
   backgnd.cpp            [ ]        [x]         [ ]         [ ]
+  bgdialogs.cpp          [ ]        [ ]         [ ]         [ ]
+  bgrender.cc            [ ]        [ ]         [ ]         [ ]
+  bgsettings.cc          [ ]        [ ]         [ ]         [ ]
   colorscm.cpp           [ ]        [x]         [x]         [ ]
   energy.cpp             [ ]        [x]         [ ]         [ ]
   fonts.cpp              [ ]        [x]         [ ]         [ ]
   general.cpp            [ ]        [s]         [ ]         [ ]
-  icons.cpp              [ ]        [ ]         [ ]         [ ]
+  icngeneral.cpp         [ ]        [ ]         [ ]         [ ]
+  icnlabel.cpp           [ ]        [ ]         [ ]         [ ]
+  icnmain.cpp            [ ]        [ ]         [ ]         [ ]
   scrnsave.cpp           [ ]        [x]         [ ]         [ ]
-drkonqi                  [ ]        [ ]         [ ]         [ ]
-ebrowsing                [ ]        [ ]         [ ]         [ ]
-email                      
+  testicons.cpp          [ ]        [ ]         [ ]         [ ]
+  widgetcanvas.cpp       [ ]        [ ]         [ ]         [ ]
+
+drkonqi:
+  customize.cpp          [ ]        [ ]         [ ]         [ ]
+  general.cpp            [ ]        [ ]         [ ]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+
+ebrowsing:
+  filteropts.cpp         [ ]        [ ]         [ ]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+
+email:
   email.cpp              [ ]        [x]         [x]         [ ]
-filetypes                  
+
+filetypes:
+  extensiondlg.cpp       [ ]        [ ]         [ ]         [ ]
   filetypesview.cpp      [ ]        [x]         [x]         [ ]
   newtypedlg.cpp         [ ]        [x]         [x]         [ ]
-info                     [ ]        [ ]         [ ]         [ ]
-input                      
+
+info:
+  info.cpp               [ ]        [ ]         [ ]         [ ]
+  info_fbsd.cpp          [ ]        [ ]         [ ]         [ ]
+  info_generic.cpp       [ ]        [ ]         [ ]         [ ]
+  info_hpux.cpp          [ ]        [ ]         [ ]         [ ]
+  info_linux.cpp         [ ]        [ ]         [ ]         [ ]
+  info_netbsd.cpp        [ ]        [ ]         [ ]         [ ]
+  info_sgi.cpp           [ ]        [ ]         [ ]         [ ]
+  info_svr4.cpp          [ ]        [ ]         [ ]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+  memory.cpp             [ ]        [ ]         [ ]         [ ]
+  memory_fbsd.cpp        [ ]        [ ]         [ ]         [ ]
+  memory_hpux.cpp        [ ]        [ ]         [ ]         [ ]
+  memory_linux.cpp       [ ]        [ ]         [ ]         [ ]
+  memory_netbsd.cpp      [ ]        [ ]         [ ]         [ ]
+  memory_sgi.cpp         [ ]        [ ]         [ ]         [ ]
+
+input:
   keyboard.cpp           [ ]        [x]         [x]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
   mouse.cpp              [ ]        [x]         [x]         [ ]
-kdm                      [ ]        [s]         [ ]         [ ]
-keys                     [ ]        [ ]         [ ]         [ ]
-kicker                   [ ]        [s]         [ ]         [ ]
-kio
-  kcookiesdlg.cpp        [ ]        [s]         [ ]         [ ]
-  kproxydlg.cpp          [ ]        [ ]         [ ]         [ ]
+
+kcontrol:
+  helpwidget.cpp         [ ]        [ ]         [ ]         [ ]
+  indexwidget.cpp        [ ]        [ ]         [ ]         [ ]
+  kcdialog.cpp           [ ]        [ ]         [ ]         [ ]
+  proxywidget.cpp        [ ]        [ ]         [ ]         [ ]
+  searchwidget.cpp       [ ]        [ ]         [ ]         [ ]
+  toplevel.cpp           [ ]        [ ]         [ ]         [ ]
+
+kdm:
+  backgnd.cpp            [ ]        [s]         [ ]         [ ]
+  bgdialogs.cpp          [ ]        [ ]         [ ]         [ ]
+  kdm-appear.cpp         [ ]        [s]         [ ]         [ ]
+  kdm-font.cpp           [ ]        [s]         [ ]         [ ]
+  kdm-lilo.cpp           [ ]        [ ]         [ ]         [ ]
+  kdm-sess.cpp           [ ]        [s]         [ ]         [ ]
+  kdm-users.cpp          [ ]        [s]         [ ]         [ ]
+  klangcombo.cpp         [ ]        [ ]         [ ]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+
+keys:
+  keyconfig.cpp          [ ]        [ ]         [ ]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+  savescm.cpp            [ ]        [ ]         [ ]         [ ]
+
+kicker:
+  buttontab.cpp          [ ]        [s]         [ ]         [ ]
+  lnftab.cpp             [ ]        [s]         [ ]         [ ]
+  main.cpp               [ ]        [x]         [ ]         [ ]
+  menutab.cpp            [ ]        [s]         [ ]         [ ]
+  paneltab.cpp           [ ]        [s]         [ ]         [ ]
+
+kio:
+  kcookiesmain.cpp       [ ]        [ ]         [ ]         [ ]
+  kcookiesmanagement.cpp [ ]        [ ]         [ ]         [ ]
+  kcookiespolicies.cpp   [ ]        [ ]         [ ]         [ ]
+  kproxydlg.cpp          [ ]        [s]         [ ]         [ ]
   ksmboptdlg.cpp         [ ]        [s]         [ ]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
   useragentdlg.cpp       [ ]        [s]         [ ]         [ ]
-knotify                  [ ]        [ ]         [ ]         [ ]
-konq
-  behavior.cpp           [ ]        [x]         [x]         [ ]
+
+knotify:
+  eventconfig.cpp        [ ]        [ ]         [ ]         [ ]
+  eventview.cpp          [ ]        [ ]         [ ]         [ ]
+  knotify.cpp            [ ]        [ ]         [ ]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+
+konq:
+  behaviour.cpp          [ ]        [x]         [x]         [ ]
   fontopts.cpp           [ ]        [x]         [x]         [ ]
   main.cpp               [ ]        [x]         [x]         [ ]
   miscopts.cpp           [ ]        [x]         [x]         [ ]
   rootopts.cpp           [ ]        [x]         [ ]         [ ]
   trashopts.cpp          [ ]        [x]         [x]         [ ]
-konqhtml                 [ ]        [s]         [ ]         [ ]
-kwm                      [ ]        [ ]         [ ]         [ ]
-locale                   [ ]        [s]         [ ]         [ ]
-midi                     [ ]        [ ]         [ ]         [ ]
-odbc                     [ ]        [ ]         [ ]         [ ]
-passwords
+
+konqhtml:
+  htmlopts.cpp           [ ]        [s]         [ ]         [ ]
+  khttpoptdlg.cpp        [ ]        [ ]         [ ]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+  miscopts.cpp           [ ]        [s]         [ ]         [ ]
+ 
+// Is the kwm module obsolete or is it gonna be ported to kwin?
+
+kwm:
+  advanced.cpp           [ ]        [ ]         [ ]         [ ]
+  desktop.cpp            [ ]        [ ]         [ ]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+  mouse.cpp              [ ]        [ ]         [ ]         [ ]
+  titlebar.cpp           [ ]        [ ]         [ ]         [ ]
+  windows.cpp            [ ]        [ ]         [ ]         [ ]
+
+locale:
+  klocaleadv.cpp         [ ]        [ ]         [ ]         [ ]
+  klocalesample.cpp      [ ]        [s]         [ ]         [ ]
+  locale.cpp             [ ]        [s]         [ ]         [ ]
+  localemon.cpp          [ ]        [s]         [ ]         [ ]
+  localenum.cpp          [ ]        [s]         [ ]         [ ]
+  localetime.cpp         [ ]        [s]         [ ]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+  toplevel.cpp           [ ]        [ ]         [ ]         [ ]
+
+midi:
+  midi.cpp               [ ]        [ ]         [ ]         [ ]
+
+// odbc:
+//  KODBCConfig.cpp        [ ]        [ ]         [ ]         [ ]
+//  classAbout.cpp         [ ]        [ ]         [ ]         [ ]
+//  classDLL.cpp           [ ]        [ ]         [ ]         [ ]
+//  classDSNList.cpp       [ ]        [ ]         [ ]         [ ]
+//  classDriverPrompt.cpp  [ ]        [ ]         [ ]         [ ]
+//  classDrivers.cpp       [ ]        [ ]         [ ]         [ ]
+//  classFileSelector.cpp  [ ]        [ ]         [ ]         [ ]
+//  classProperties.cpp    [ ]        [ ]         [ ]         [ ]
+//  classSystemDSN.cpp     [ ]        [ ]         [ ]         [ ]
+//  classTracing.cpp       [ ]        [ ]         [ ]         [ ]
+//  classUserDSN.cpp       [ ]        [ ]         [ ]         [ ]
+
+passwords:
   passwords.cpp          [ ]        [x]         [x]         [ ]
-root                     [ ]        [ ]         [ ]         [ ]
-samba
+
+root:
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+
+samba:
   kcmsambaimports.cpp    [ ]        [x]         [ ]         [ ]
   kcmsambalog.cpp        [ ]        [x]         [ ]         [ ]
   kcmsambastatistics.cpp [ ]        [ ]         [ ]         [ ]
   ksmbstatus.cpp         [ ]        [ ]         [ ]         [ ]
   main.cpp               [ ]        [x]         [ ]         [ ]
-syssound                 [ ]        [ ]         [ ]         [ ]
-themes                   [ ]        [ ]         [ ]         [ ]
 
+syssound:
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+  syssound.cpp           [ ]        [ ]         [ ]         [ ]
+
+// I think Mosfet said the themes thing will be redone and partly
+// be a standalone app rather than a kcmodule.
+
+themes:
+  about.cpp              [ ]        [ ]         [ ]         [ ]
+  colors.cpp             [ ]        [ ]         [ ]         [ ]
+  colorscm.cpp           [ ]        [ ]         [ ]         [ ]
+  display.cpp            [ ]        [ ]         [ ]         [ ]
+  groupdetails.cpp       [ ]        [ ]         [ ]         [ ]
+  installer.cpp          [ ]        [ ]         [ ]         [ ]
+  kwmcom.cpp             [ ]        [ ]         [ ]         [ ]
+  main.cpp               [ ]        [ ]         [ ]         [ ]
+  newthemedlg.cpp        [ ]        [ ]         [ ]         [ ]
+  options.cpp            [ ]        [ ]         [ ]         [ ]
+  savescm.cpp            [ ]        [ ]         [ ]         [ ]
+  theme.cpp              [ ]        [ ]         [ ]         [ ]
+  theme.mappings         [ ]        [ ]         [ ]         [ ]
+  themecreator.cpp       [ ]        [ ]         [ ]         [ ]
+  widgetcanvas.cpp       [ ]        [ ]         [ ]         [ ]
