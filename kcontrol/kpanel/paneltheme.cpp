@@ -182,7 +182,7 @@ KPanelTheme::KPanelTheme(QWidget *parent, const char *name)
     QStringList pixDirList;
     pixDirList.append(kapp->kde_datadir()+"/kpanel/pics");
     pixDirList.append(kapp->localkdedir()+"/share/apps/kpanel/pics");
-    pixBtn->iconLoaderDialog()->setDir(pixDirList);
+    pixBtn->iconLoaderDialog()->changeDirs(pixDirList);
     wCombo = new QComboBox(optionBox);
     wCombo->insertItem(i18n("Panel"), WidgetCanvas::C_Panel);
     wCombo->insertItem(i18n("Icon Background"), WidgetCanvas::C_Icon);
