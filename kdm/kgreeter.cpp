@@ -45,6 +45,7 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kmessagebox.h>
+#include <kcmdlineargs.h>
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
@@ -84,6 +85,12 @@ int source(void*,void*) {}
 void SessionExit(void*,void*,void*) {}
 #endif
 
+static const char *description = 
+	I18N_NOOP("KDE Display Manager");
+
+static const char *version = "v0.0.1";
+
+
 // Global vars
 KGreeter* kgreeter = 0;
 
@@ -102,16 +109,8 @@ KLoginLineEdit::focusOutEvent( QFocusEvent *e)
 
 class MyApp:public KApplication {
 public:
-     MyApp( int &argc, char **argv );
-     virtual ~MyApp();
      virtual bool x11EventFilter( XEvent * );
 };
-
-MyApp::MyApp(int &argc, char **argv ) : KApplication(argc, argv, "kdm")
-{}
-
-MyApp::~MyApp()
-{}
 
 bool 
 MyApp::x11EventFilter( XEvent * ev){
@@ -789,7 +788,9 @@ DoIt()
 
 int main(int argc, char **argv)
 {
-     MyApp app(argc, argv);
+     KCmdLineArgs::init(argc, argv, "kdm", description, version);
+
+     MyApp app;
      KGlobal::dirs()->addResourceType("user_pic", KStandardDirs::kde_default("data") + "kdm/pics/users/");
 
      kdmcfg = new KDMConfig();
@@ -836,7 +837,9 @@ GreetUser(
      sigaction(SIGCHLD, NULL, &sig);
  
      argv[2] = d->name;
-     MyApp myapp( argc, const_cast<char**>(argv) );
+     KCmdLineArgs::init(argc, (char **) argv, "kdm", description, version);
+
+     MyApp myapp;
      KGlobal::dirs()->addResourceType("user_pic", KStandardDirs::kde_default("data") + "kdm/pics/users/");
      QApplication::setOverrideCursor( Qt::waitCursor );
      kdmcfg = new KDMConfig( );

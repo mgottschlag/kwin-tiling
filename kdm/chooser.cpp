@@ -16,23 +16,24 @@
  ***************************************************************************/
 #include "DXdmcp.h"
 #include <kapp.h>
+#include <kcmdlineargs.h>
+#include <klocale.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
+
+#warning TODO: Fill in this description
+static const char *description = 
+	I18N_NOOP("What does this do?.");
+
+static const char *version = "v0.0.1";
+
 
 static ChooserDlg *kchooser = 0;
 
 class MyApp:public KApplication {
 public:
-     MyApp( int &argc, char **argv );
-     virtual ~MyApp();
      virtual bool x11EventFilter( XEvent * );
 };
-
-MyApp::MyApp(int &argc, char **argv ) : KApplication(argc, argv, "chooser")
-{}
-
-MyApp::~MyApp()
-{}
 
 bool
 MyApp::x11EventFilter( XEvent * ev){
@@ -60,16 +61,18 @@ MyApp::x11EventFilter( XEvent * ev){
 
 int main( int argc, char **argv )
 {
-	CXdmcp *cxdmcp = new CXdmcp(argc, argv);
+  CXdmcp *cxdmcp = new CXdmcp(argc, argv);
 
-  MyApp app( argc, argv);
+  KCmdLineArgs::init(argc, argv, "chooser", description, version );
 
-	kchooser = new ChooserDlg(cxdmcp);
+  MyApp app;
 
-	app.setMainWidget(kchooser);
+  kchooser = new ChooserDlg(cxdmcp);
 
-	kchooser->show();
-	kchooser->ping();
+  app.setMainWidget(kchooser);
+
+  kchooser->show();
+  kchooser->ping();
   app.exec();
 
   exit(0);
