@@ -57,8 +57,6 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
     connect(dialog->allowResizeCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->blinkingCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->frameCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
-    connect(dialog->terminalLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
-    connect(dialog->terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->startKwritedCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->line_spacingSB,SIGNAL(valueChanged(int)),this,SLOT(configChanged()));
     connect(dialog->silence_secondsSB,SIGNAL(valueChanged(int)),this,SLOT(configChanged()));
@@ -89,21 +87,6 @@ void KCMKonsole::load()
 
     dialog->SchemaEditor1->setSchema(config->readEntry("schema"));
 
-    delete config;
-
-    config = new KConfig("kdeglobals", true);
-    config->setGroup("General");
-    QString terminal = config->readEntry("TerminalApplication","konsole");
-    if (terminal == "konsole")
-    {
-       dialog->terminalLE->setText("xterm");
-       dialog->terminalCB->setChecked(true);
-    }
-    else
-    {
-       dialog->terminalLE->setText(terminal);
-       dialog->terminalCB->setChecked(false);
-    }
     delete config;
 
     config = new KConfig("kwritedrc", true);
@@ -154,10 +137,6 @@ void KCMKonsole::save()
 
     config->writeEntry("schema", dialog->SchemaEditor1->schema());
 
-    // that one into kdeglobals
-    config->setGroup("General");
-    config->writeEntry("TerminalApplication",dialog->terminalCB->isChecked()?"konsole":dialog->terminalLE->text(), true, true);
-
     delete config;
 
     config = new KConfig("kwritedrc");
@@ -182,15 +161,12 @@ void KCMKonsole::defaults()
     dialog->allowResizeCB->setChecked(true);
     dialog->blinkingCB->setChecked(false);
     dialog->frameCB->setChecked(true);
-    dialog->terminalCB->setChecked(true);
+    dialog->startKwritedCB->setChecked(true);
     dialog->line_spacingSB->setValue(0);
     dialog->silence_secondsSB->setValue(10);
 
     dialog->word_connectorLE->setText(":@-./_~");
 
-    // Check if -e is needed, I do not think so
-    dialog->terminalLE->setText("xterm");  //No need for i18n
-    dialog->startKwritedCB->setChecked(true);
     configChanged();
 
 }

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>462</width>
-            <height>471</height>
+            <width>507</width>
+            <height>490</height>
         </rect>
     </property>
     <property name="caption">
@@ -57,83 +57,6 @@
                     <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget class="QGroupBox" row="0" column="0">
-                        <property name="name">
-                            <cstring>GroupBox1</cstring>
-                        </property>
-                        <property name="title">
-                            <string>Default Terminal Application</string>
-                        </property>
-                        <grid>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <property name="margin">
-                                <number>11</number>
-                            </property>
-                            <property name="spacing">
-                                <number>6</number>
-                            </property>
-                            <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="3">
-                                <property name="name">
-                                    <cstring>terminalCB</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>&amp;Use Konsole as default terminal application</string>
-                                </property>
-                                <property name="checked">
-                                    <bool>true</bool>
-                                </property>
-                            </widget>
-                            <spacer row="1" column="0">
-                                <property name="name">
-                                    <cstring>Spacer1</cstring>
-                                </property>
-                                <property name="orientation">
-                                    <enum>Horizontal</enum>
-                                </property>
-                                <property name="sizeType">
-                                    <enum>Fixed</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>20</height>
-                                    </size>
-                                </property>
-                            </spacer>
-                            <widget class="QLabel" row="1" column="1">
-                                <property name="name">
-                                    <cstring>TextLabel1_2</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                                <property name="text">
-                                    <string>Default &amp;Terminal:</string>
-                                </property>
-                                <property name="buddy" stdset="0">
-                                    <cstring>terminalLE</cstring>
-                                </property>
-                            </widget>
-                            <widget class="QLineEdit" row="1" column="2">
-                                <property name="name">
-                                    <cstring>terminalLE</cstring>
-                                </property>
-                                <property name="enabled">
-                                    <bool>false</bool>
-                                </property>
-                                <property name="sizePolicy">
-                                    <sizepolicy>
-                                        <hsizetype>1</hsizetype>
-                                        <vsizetype>5</vsizetype>
-                                        <horstretch>1</horstretch>
-                                        <verstretch>0</verstretch>
-                                    </sizepolicy>
-                                </property>
-                            </widget>
-                        </grid>
-                    </widget>
                     <widget class="QGroupBox" row="1" column="0">
                         <property name="name">
                             <cstring>GroupBox2</cstring>
@@ -255,12 +178,6 @@
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
                                 </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>0</height>
-                                    </size>
-                                </property>
                             </spacer>
                             <widget class="QLabel" row="8" column="0">
                                 <property name="name">
@@ -306,12 +223,6 @@
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
-                                </property>
-                                <property name="sizeHint">
-                                    <size>
-                                        <width>20</width>
-                                        <height>0</height>
-                                    </size>
                                 </property>
                             </spacer>
                         </grid>
@@ -368,12 +279,6 @@
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>0</width>
-                                <height>20</height>
-                            </size>
                         </property>
                     </spacer>
                 </grid>
@@ -464,12 +369,6 @@
                         <property name="sizeType">
                             <enum>Expanding</enum>
                         </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>0</width>
-                                <height>20</height>
-                            </size>
-                        </property>
                     </spacer>
                 </vbox>
             </widget>
@@ -519,18 +418,6 @@
     </image>
 </images>
 <connections>
-    <connection>
-        <sender>terminalCB</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>terminalLE</receiver>
-        <slot>setDisabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>terminalCB</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>TextLabel1_2</receiver>
-        <slot>setDisabled(bool)</slot>
-    </connection>
 </connections>
 <includes>
     <include location="global" impldecl="in declaration">kcolorbutton.h</include>
