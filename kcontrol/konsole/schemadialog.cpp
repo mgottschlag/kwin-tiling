@@ -83,7 +83,7 @@ SchemaDialog::SchemaDialog( QWidget* parent,  const char* name, WFlags fl )
 
     colorCombo = new QComboBox( FALSE, GroupBox1, "colorCombo" );
     colorCombo->insertItem( i18n( "0 -Foreground color" ) );
-    colorCombo->insertItem( i18n( "1 -Backgorund color" ) );
+    colorCombo->insertItem( i18n( "1 -Background color" ) );
     colorCombo->insertItem( i18n( "2 - Color 0 (black)" ) );
     colorCombo->insertItem( i18n( "3 - Color 1 (red)" ) );
     colorCombo->insertItem( i18n( "4 - Color 2 (green)" ) );
@@ -151,7 +151,7 @@ SchemaDialog::SchemaDialog( QWidget* parent,  const char* name, WFlags fl )
     SchemaDialogLayout->addMultiCellWidget( titleLine, 0, 0, 1, 2 );
 
     GroupBox13 = new QGroupBox( this, "GroupBox13" );
-    GroupBox13->setTitle( i18n( "Backgorund" ) );
+    GroupBox13->setTitle( i18n( "Background" ) );
     GroupBox13->setColumnLayout(0, Qt::Vertical );
     GroupBox13->layout()->setSpacing( 0 );
     GroupBox13->layout()->setMargin( 0 );
