@@ -1072,12 +1072,10 @@ ReadWord (File *file, int *len, int EOFatEOL)
     {
       doeow:
 	if (wordp == wordBuffer)
-{Debug ("read empty word\n");
 	    return 0;
-}      retw:
+      retw:
 	*wordp = '\0';
 	*len = wordp - wordBuffer;
-Debug ("read word '%s'\n", wordBuffer);
 	return wordBuffer;
     }
     c = *file->cur++;
@@ -1097,6 +1095,12 @@ Debug ("read word '%s'\n", wordBuffer);
 	    file->cur--;
 	    goto doeow;
 	}
+	if (wordp != wordBuffer)
+	{
+	    file->cur--;
+	    goto retw;
+	}
+	goto rest;
     case ' ':
     case '\t':
 	if (wordp != wordBuffer)
