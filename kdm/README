@@ -164,7 +164,7 @@ KDM accepts two command line options related to logging:
     /var/log/debug.log and /var/log/daemon.log; make sure, that daemon.*
     is logged (look at /etc/syslog.conf).
 
-Send me the logs together with a detailed description what you did and
+Send me the logs together with a detailed description of what you did and
 what happened. If your problem is related to a specific configuration,
 you should also attach a tar.gz archive of your kdm config directory.
 
@@ -177,7 +177,7 @@ Version 0.1 of kdm is copyright
 All later versions copyright:
 	(C) 1997-2000 Steffen Hansen <hansen@kde.org>
 Since version 0.90 (KDE 2.1) copyright:
-	(C) 2000-2002 Oswald Buddenhagen <ossi@kde.org>
+	(C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
 
 The files in the backend directory are licensed under the X licence
 (see www.xfree86.org for more info).
@@ -188,7 +188,7 @@ Michael Bach Jensen and Torsten Rahn for drawing icons.
 Duncan Haldane for investigation of PAM issues.
 Stephan Kulow for helping with the autoconf stuff.
 Martin Baehr for intensive testing and writing the sample Xsession scripts.
-Harald Hoyer <Harald.Hoyer@redhat.de> for the (now obsoleted) chooser
+Harald Hoyer <Harald.Hoyer@redhat.de> for the (now obsoleted) chooser.
 ... and _many_ others ...
 
 
