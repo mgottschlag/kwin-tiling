@@ -30,8 +30,8 @@
 #include "config.h"
 #endif
 
-#ifndef KFI_THUMBNAIL
 #include "FontEngine.h"
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
 #include "KfiGlobal.h"
 #include "Config.h"
 #endif
@@ -340,6 +340,8 @@ CFontEngine::~CFontEngine()
 
 bool CFontEngine::openFont(const QString &file, unsigned short mask)
 {
+    bool ok;
+
     closeFont();
 
     itsType=getType(QFile::encodeName(file));
@@ -500,7 +502,7 @@ QString CFontEngine::spacingStr(enum ESpacing s)
     }
 }
 
-#ifndef KFI_THUMBNAIL
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
 QStringList CFontEngine::getEncodings()
 {
     switch(itsType)
@@ -601,7 +603,7 @@ CFontEngine::EWidth CFontEngine::strToWidth(const QString &str)
         return WIDTH_NORMAL;
 }
 
-#ifndef KFI_THUMBNAIL
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Metric accsessing functions...  (only work for TrueType & Type1)
@@ -752,6 +754,7 @@ static QString createNames(const QString &familyName, QString &fullName)
     //
     // NOTE: Can't simply use FullName and remove style info - as this would convert "Times New Roman" to "Times New"!!
     //
+
     QString  family(fullName);
     QCString removed;
     bool     removedFamily=true;
@@ -832,9 +835,9 @@ static QString createNames(const QString &familyName, QString &fullName)
     // Remvoe any "Plain:1.0", etc, strings...
     int plPos;
 
-    if(-1!=(plPos=family.find("Plain:")))
+    if(-1!=(plPos=family.find(" Plain:")))
     {
-        int spPos=family.find(QChar(' '), plPos);
+        int spPos=family.find(QChar(' '), plPos+1);
         family.remove(plPos, -1==spPos ? family.length()-plPos : spPos-plPos);
     }
 
@@ -848,7 +851,8 @@ static QString createNames(const QString &familyName, QString &fullName)
     family.replace(QRegExp("&"), "And");
     family=CMisc::removeSymbols(family);
 
-    family.simplifyWhiteSpace();
+    family=family.simplifyWhiteSpace();
+    family=family.stripWhiteSpace();
 
     if(removed.length())
     {
@@ -1146,7 +1150,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
     return status;
 }
 
-#ifndef KFI_THUMBNAIL
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
 QStringList CFontEngine::getEncodingsT1()
 {
     QStringList enc;
@@ -1255,8 +1259,8 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
 
 		if((NULL==(table=FT_Get_Sfnt_Table(itsFt.face, ft_sfnt_os2))) || (0xFFFF==((TT_OS2*)table)->version) )
 		{
-			itsWeight=WEIGHT_UNKNOWN;
-			if(!gotItalic)
+                    itsWeight=WEIGHT_UNKNOWN;
+                    if(!gotItalic)
                     {
                         itsItalicAngle=0;
                         itsItalic=ITALIC_NONE;
@@ -1265,6 +1269,8 @@ bool CFontEngine::openFontTT(const QString &file, unsigned short mask)
                 else
                 {
                     itsWeight=mapWeightTT(((TT_OS2*)table)->usWeightClass);
+                    if(WEIGHT_UNKNOWN==itsWeight)
+                        itsWeight=((TT_OS2*)table)->fsSelection&(1 << 5) ? WEIGHT_BOLD : WEIGHT_UNKNOWN;
                     if(!gotItalic)
                     {
                         itsItalic=((TT_OS2*)table)->fsSelection&(1 << 0) ? ITALIC_ITALIC : ITALIC_NONE;
@@ -1442,7 +1448,7 @@ QCString CFontEngine::lookupNameTT(int index)  // Code copied from freetype/ftdu
     return buffer;
 }
 
-#ifndef KFI_THUMBNAIL
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
 bool CFontEngine::has16BitEncodingFt(const QString &enc)
 {
     if(enc=="jisx0208.1983-0" || enc=="jisx0201.1976-0")

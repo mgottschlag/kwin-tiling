@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Misc.h"
-#ifndef KFI_THUMBNAIL
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
 #include "KfiGlobal.h"
 #include "Config.h"
 #include "FontEngine.h"
@@ -294,7 +294,7 @@ QString CMisc::removeSymbols(const QString &str)
     return modified;
 }
 
-#ifndef KFI_THUMBNAIL
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
 QString CMisc::shortName(const QString &dir)
 {
     QString sn(dir);

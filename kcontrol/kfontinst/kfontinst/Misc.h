@@ -74,7 +74,7 @@ class CMisc
     static QString      locate(QString file) { return KGlobal::instance()->dirs()->findResource("data", "kcmfontinst/"+file); }
     static QStringList  locateAll(QString dir, QString type) { return KGlobal::instance()->dirs()->findAllResources("data", "kcmfontinst/"+dir+"/"+"*."+type); }
     static QString      removeSymbols(const QString &str);
-#ifndef KFI_THUMBNAIL
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
     static QString      shortName(const QString &dir);
 #endif
     static int          findIndex(const QComboBox *box, const QString &str);

@@ -29,7 +29,7 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef KFI_THUMBNAIL
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
 #include "Encodings.h"
 #endif
 #include <freetype/freetype.h>
@@ -185,7 +185,7 @@ class CFontEngine
 
     EType           getType()         { return itsType; }
 
-#ifndef KFI_THUMBNAIL
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
     QStringList     getEncodings();
     QStringList     get8BitEncodings();
 #endif
@@ -193,7 +193,7 @@ class CFontEngine
     EWeight         strToWeight(const char *str);
     EWidth          strToWidth(const QString &str);
 
-#ifndef KFI_THUMBNAIL
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
     //
     // Metric accsessing functions...  (only work for TrueType & Type1)
     //
@@ -236,7 +236,7 @@ class CFontEngine
     unsigned int    getGlyphIndexFt(unsigned short code) { return FT_Get_Char_Index(itsFt.face, code); }
     bool            setCharmapUnicodeFt()                { return FT_Select_Charmap(itsFt.face, ft_encoding_unicode) ? false : true; }
     bool            setCharmapSymbolFt()                 { return FT_Select_Charmap(itsFt.face, ft_encoding_symbol) ? false : true; } 
-#ifndef KFI_THUMBNAIL
+#if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
     bool            hasEncodingFt(FT_UShort enc);
     bool            has16BitEncodingFt(const QString &enc);
     bool            has8BitEncodingFt(CEncodings::T8Bit *data);
