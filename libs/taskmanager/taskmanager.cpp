@@ -285,7 +285,7 @@ bool TaskManager::isOnTop(Task* task)
         t = findTask(*it);
         if ( t == task )
             return true;
-        if ( t && (t->isAlwaysOnTop() == task->isAlwaysOnTop()) )
+        if ( t && !t->isIconified() && (t->isAlwaysOnTop() == task->isAlwaysOnTop()) )
             return false;
     }
     return false;
