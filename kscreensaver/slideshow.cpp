@@ -64,6 +64,7 @@ kSlideShowSaver::kSlideShowSaver(Drawable drawable): kScreenSaver(drawable)
 
   mEffect = NULL;
   mNumEffects = 0;
+  mIntArray = NULL;
   registerEffects();
 
   readConfig();
@@ -87,26 +88,6 @@ kSlideShowSaver::~kSlideShowSaver()
   mTimer.stop();
   QColor::leaveAllocContext();
   QColor::destroyAllocContext(mColorContext);
-}
-
-
-//----------------------------------------------------------------------------
-void kSlideShowSaver::registerEffects()
-{
-  int i = 0;
-
-  mEffectList = new EffectMethod[64];
-  mEffectList[i++] = &kSlideShowSaver::effectSweep;
-  mEffectList[i++] = &kSlideShowSaver::effectCircleOut;
-  mEffectList[i++] = &kSlideShowSaver::effectBlobs;
-  mEffectList[i++] = &kSlideShowSaver::effectIncomingEdges;
-  mEffectList[i++] = &kSlideShowSaver::effectHorizLines;
-  mEffectList[i++] = &kSlideShowSaver::effectVertLines;
-  mEffectList[i++] = &kSlideShowSaver::effectRandom;
-  mEffectList[i++] = &kSlideShowSaver::effectGrowing;
-
-  //mNumEffects = 1;  //...for testing
-  mNumEffects = i;
 }
 
 
@@ -135,6 +116,70 @@ void kSlideShowSaver::readConfig()
 
   loadDirectory();
   // loadFileList("slideshow.list");
+}
+
+
+//----------------------------------------------------------------------------
+void kSlideShowSaver::registerEffects()
+{
+  int i = 0;
+
+  mEffectList = new EffectMethod[64];
+  mEffectList[i++] = &kSlideShowSaver::effectMeltdown;
+  mEffectList[i++] = &kSlideShowSaver::effectSweep;
+  mEffectList[i++] = &kSlideShowSaver::effectCircleOut;
+  mEffectList[i++] = &kSlideShowSaver::effectBlobs;
+  mEffectList[i++] = &kSlideShowSaver::effectIncomingEdges;
+  mEffectList[i++] = &kSlideShowSaver::effectHorizLines;
+  mEffectList[i++] = &kSlideShowSaver::effectVertLines;
+  mEffectList[i++] = &kSlideShowSaver::effectRandom;
+  mEffectList[i++] = &kSlideShowSaver::effectGrowing;
+
+  mNumEffects = i;
+
+  mNumEffects = 1;  //...for testing
+}
+
+
+//----------------------------------------------------------------------------
+int kSlideShowSaver::effectMeltdown(bool aInit)
+{
+  int i, x, y;
+  bool done;
+
+  if (aInit)
+  {
+    if (mIntArray) delete mIntArray;
+    mw = mWidget.width();
+    mh = mWidget.height();
+    mdx = 4;
+    mdy = 16;
+    mix = mw / mdx;
+    mIntArray = new int[mix];
+    for (i=mix-1; i>=0; i--)
+      mIntArray[i] = 0;
+  }
+
+  done = true;
+  for (i=0,x=0; i<mix; i++,x+=mdx)
+  {
+    y = mIntArray[i];
+    if (y >= mh) continue;
+    done = false;
+    if ((rand()&15) < 6) continue;
+    bitBlt(&mWidget, x, y+mdy, &mWidget, x, y, mdx, mh-y-mdy, CopyROP, true);
+    bitBlt(&mWidget, x, y, &mNextScreen, x, y, mdx, mdy, CopyROP, true);
+    mIntArray[i] += mdy;
+  }
+
+  if (done)
+  {
+    delete mIntArray;
+    mIntArray = NULL;
+    return -1;
+  }
+
+  return 15;
 }
 
 

@@ -75,6 +75,8 @@ protected:
   int effectBlobs(bool doInit);
   int effectCircleOut(bool doInit);
   int effectSweep(bool doInit);
+  int effectMeltdown(bool doInit);
+  int effectPuzzle(bool doInit);
 
 protected:
   /** Init mPainter with next-screen's pixmap and call
@@ -107,6 +109,7 @@ protected:
   // values for state of various effects:
   int mx, my, mw, mh, mdx, mdy, mix, miy, mi, mSubType;
   double mfx, mfy, mAlpha;
+  int* mIntArray;
 };
 
 
