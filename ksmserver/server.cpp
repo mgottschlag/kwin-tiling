@@ -1508,9 +1508,10 @@ void KSMServer::restoreNextInternal()
         }
         if ( wm == config->readEntry( QString("program")+n ) )
             continue;
-        lastIdStarted = config->readEntry( QString("clientId")+n );
         startApplication( restartCommand );
-        return;
+        lastIdStarted = config->readEntry( QString("clientId")+n );
+        if ( !lastIdStarted.isEmpty() )
+            return; // we get called again from the clientRegistered handler
     }
 
     appsToStart = 0;
