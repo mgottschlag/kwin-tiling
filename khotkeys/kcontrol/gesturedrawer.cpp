@@ -20,7 +20,7 @@ namespace KHotKeys
 GestureDrawer::GestureDrawer(QWidget *parent, const char *name)
   : QFrame(parent, name), _data(QString::null)
     {
-    setBackgroundColor(white);
+    setBackgroundColor( colorGroup().base());
     setFrameStyle(QFrame::Panel | QFrame::Sunken);
     setMinimumSize(30, 30);
     }

@@ -20,7 +20,7 @@ namespace KHotKeys
 GestureRecorder::GestureRecorder(QWidget *parent, const char *name)
   : QFrame(parent, name), _mouseButtonDown(false)
     {
-    setBackgroundColor(white);
+    setBackgroundColor( colorGroup().base());
     setFrameStyle(QFrame::Sunken | QFrame::Panel);
     setLineWidth(2);
     setMidLineWidth(0);
