@@ -20,6 +20,11 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.6  2000/04/09 22:33:56  charles
+    Milestone 3 :)
+
+    This is going a LOT faster than mozilla!
+
     Revision 1.5  2000/04/09 19:06:40  charles
     another milestone.
     rwilliam: it compiles here fine after a distclean, perhaps you have a stale
@@ -75,7 +80,10 @@ public:
 	};
 
 	EventConfig(const ProgramConfig *parent=0) {application=parent;}
+	EventConfig(const EventConfig *old) {set(old);}
 	
+	void set(const EventConfig *old);
+
 	void load(KConfig &conf);
 	/**
 	 * When I was selected to get shown with the EventView

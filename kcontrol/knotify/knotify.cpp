@@ -25,8 +25,9 @@
 #include <klocale.h>
 #include <kstddirs.h>
 #include <kiconloader.h>
-#include <qdir.h>
+#include <kmessagebox.h>
 
+#include <qdir.h>
 #include <qlayout.h>
 
 #include "eventconfig.h"
@@ -71,7 +72,11 @@ KNotifyWidget::~KNotifyWidget()
 
 void KNotifyWidget::defaults()
 {
-
+	if (KMessageBox::warningContinueCancel(this,
+		i18n("This will cause the notifications for *All Applications* "
+		     "to be reset to their defaults!"), i18n("Are you sure?!"), i18n("Continue"))
+		== KMessageBox::Continue)
+		KMessageBox::sorry(this, "Not implemented yet :)  Who wants to?  (nudge nudge, wink wink)", "Oops!");
 }
 
 void KNotifyWidget::changed()

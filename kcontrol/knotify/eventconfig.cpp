@@ -54,6 +54,16 @@ void EventConfig::load(KConfig &conf)
 	}
 }
 
+void EventConfig::set(const EventConfig *old)
+{
+	application=old->application;
+	present=old->present;
+	logfile=old->logfile;
+	soundfile=old->soundfile;
+	description=old->description;
+	friendly=old->friendly;
+}
+
 ProgramConfig::~ProgramConfig()
 {
 	eventlist.setAutoDelete(true);

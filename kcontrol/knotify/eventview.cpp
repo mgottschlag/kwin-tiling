@@ -32,9 +32,9 @@
 #include "eventconfig.h"
 
 
-
+#include <iostream.h>
 EventView::EventView(QWidget *parent, const char *name):
-	QWidget(parent, name), event(0)
+	QWidget(parent, name), event(0), localEvent(0)
 {
 	QGridLayout *layout=new QGridLayout(this,2,3);
 	
@@ -73,15 +73,18 @@ void EventView::textChanged(const QString &str)
 }
 void EventView::itemSelected(int item)
 {
-	if (event->present & enumNum(item))
+// außer dem alten Einzelteil
+//	TODO
+
+// charger le nouvelle chose
+	if (localEvent->present & enumNum(item))
 		enabled->setChecked(true);
 	
 	if (enumNum(item) & KNotifyClient::Sound)
-		file->show(), file->setText(event->soundfile);
+		file->show(), file->setText(localEvent->soundfile);
 	
 	if (enumNum(item) & KNotifyClient::Logfile)
-		file->show(), file->setText(event->logfile);
-		
+		file->show(), file->setText(localEvent->logfile);		
 }
 
 void EventView::itemToggled(bool on)
@@ -93,8 +96,8 @@ void EventView::load(EventConfig *_event)
 {
 	unload();
 	event=_event;
+	localEvent=new EventConfig(_event);
 	setEnabled(true);
-	
 	setPixmaps();
 	eventslist->setSelected(0, true);
 	kapp->processEvents();
@@ -103,10 +106,11 @@ void EventView::load(EventConfig *_event)
 
 void EventView::setPixmaps()
 { // Handle all of 'dem at once
+	if (!localEvent) return;
 	int i=0;
 	for (int c=1; c <=8; c*=2)
 	{
-		if ( event && (event->present & c))
+		if (localEvent->present & c)
 			eventslist->changeItem(SmallIcon("flag"), eventslist->text(i), i);
 		else
 			eventslist->changeItem(eventslist->text(i), i);
@@ -116,7 +120,17 @@ void EventView::setPixmaps()
 
 void EventView::unload(bool save)
 {
-	(void)save;
+	if (save && localEvent)
+		event->set(localEvent);
+	if (localEvent)
+		delete localEvent;
+
+	localEvent=0;
+	
+	event=0;
+	enabled->setChecked(false);
+	setPixmaps();
+	file->setText("");
 }
 
 int EventView::listNum(int enumNum)

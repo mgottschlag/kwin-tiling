@@ -20,6 +20,11 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.9  2000/04/09 22:33:57  charles
+    Milestone 3 :)
+
+    This is going a LOT faster than mozilla!
+
     Revision 1.8  2000/04/08 22:50:45  charles
     Totally broken for a change in design.
     I'll start doing some "object oriented programming" now! Who would've
@@ -106,6 +111,7 @@ private:
 	QPushButton *todefault;
 	
 	EventConfig *event;
+	EventConfig *localEvent;
 
 };
 
