@@ -35,6 +35,8 @@
 #include <qlayout.h>
 #include <qwidget.h>
 #include <qvbuttongroup.h>
+#include <qhbox.h>
+#include <qlineedit.h>
 #include <qdir.h>
 #include <qwhatsthis.h>
 
@@ -58,7 +60,7 @@ bool artswrapper_check()
 extern "C" {
 
   QString
-createArgs(bool netTrans, bool duplex, int responseTime)
+createArgs(bool netTrans, bool duplex, int responseTime, QString deviceName)
 {
     QString args;
 
@@ -74,6 +76,9 @@ createArgs(bool netTrans, bool duplex, int responseTime)
 
     if (netTrans)
       args += " -n";
+
+	if (deviceName.length() > 0)
+	  args += " -D "+deviceName;
 
     return args;
 }
@@ -139,6 +144,20 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 
     layout->addWidget(responseGroup);
 
+	// the Use custom sound device: [     ] section
+
+	QHBox *hbox = new QHBox(this);
+	hbox->setSpacing(6);
+	layout->addWidget(hbox);
+
+    QWhatsThis::add(hbox, i18n("Normally, the sound server defaults to using the device called <b>/dev/dsp</b> for sound output. That should work in most cases. An exception is for instance if you are using devfs, then you should use <b>/dev/sound/dsp</b> instead. Other alternatives are things like <b>/dev/dsp0</b> or <b>/dev/dsp1</b> if you have a soundcard that supports multiple outputs, or you have multiple soundcards."));
+
+	customDevice = new QCheckBox(hbox);
+    customDevice->setText(i18n("&Use custom sound device:"));
+    connect(customDevice, SIGNAL(clicked()), SLOT(slotChanged()));
+
+	deviceName = new QLineEdit(hbox);
+
     // options end
 
     QLabel *restartHint = new QLabel(this);
@@ -166,6 +185,8 @@ void KArtsModule::GetSettings( void )
     networkTransparent->setChecked(config->readBoolEntry("NetworkTransparent",false));
     x11Comm->setChecked(config->readBoolEntry("X11GlobalComm",false));
     fullDuplex->setChecked(config->readBoolEntry("FullDuplex",false));
+	deviceName->setText(config->readEntry("DeviceName",""));
+	customDevice->setChecked(deviceName->text() != "");
     int responseTime=config->readNumEntry("ResponseTime",2);
     responseButton[ (responseTime<4) ? responseTime : 2 ]->setChecked(true);
 
@@ -174,30 +195,33 @@ void KArtsModule::GetSettings( void )
 
 void KArtsModule::saveParams( void )
 {
+	QString dev = customDevice->isChecked()?deviceName->text():"";
+
     config->setGroup("Arts");
     config->writeEntry("StartServer",startServer->isChecked());
     config->writeEntry("StartRealtime",startRealtime->isChecked());
     config->writeEntry("NetworkTransparent",networkTransparent->isChecked());
     config->writeEntry("X11GlobalComm",x11Comm->isChecked());
     config->writeEntry("FullDuplex",fullDuplex->isChecked());
+    config->writeEntry("DeviceName",dev);
 
-    int t;
+    int t = 2;
 
     for (int i = 0; i < 4; i++) {
-
         if (responseButton[i]->isChecked()) {
           t = i;
           config->writeEntry("ResponseTime", t);
           break;
         }
-    }
+	}
 
-   // Save arguments string in case any other process wants to restart artsd.
+	// Save arguments string in case any other process wants to restart artsd.
 
-   config->writeEntry("Arguments",
-     createArgs(networkTransparent->isChecked(), fullDuplex->isChecked(), t));
+	config->writeEntry("Arguments",
+		createArgs(networkTransparent->isChecked(), fullDuplex->isChecked(),
+					t, dev));
 
-   config->sync();
+	config->sync();
 }
 
 void KArtsModule::load()
@@ -231,6 +255,8 @@ void KArtsModule::defaults()
     x11Comm->setChecked(false);
     fullDuplex->setChecked(false);
     responseButton[1]->setChecked(true);
+	customDevice->setChecked(false);
+	deviceName->setText("");
 }
 
 QString KArtsModule::quickHelp() const
@@ -249,6 +275,9 @@ void KArtsModule::updateWidgets()
     x11Comm->setEnabled(startServer->isChecked());
     fullDuplex->setEnabled(startServer->isChecked());
     responseGroup->setEnabled(startServer->isChecked());
+    customDevice->setEnabled(startServer->isChecked());
+    deviceName->setEnabled(startServer->isChecked()
+							&& customDevice->isChecked());
 }
 
 void KArtsModule::slotChanged()
@@ -278,6 +307,7 @@ extern "C"
         bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
         bool fullDuplex = config->readBoolEntry("FullDuplex",false);
         int responseTime = config->readNumEntry("ResponseTime",2);
+		QString deviceName = config->readEntry("DeviceName","");
 
         delete config;
 
@@ -301,7 +331,8 @@ extern "C"
                 cmdline += "artsd";
 
             QString args =
-              createArgs(networkTransparent, fullDuplex, responseTime);
+              createArgs(networkTransparent, fullDuplex, responseTime,
+			  				deviceName);
 
             cmdline += args.utf8();
 

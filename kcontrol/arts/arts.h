@@ -29,6 +29,7 @@
 #include <kapp.h>
 
 #include <qlabel.h>
+#include <qlineedit.h>
 #include <qcheckbox.h>
 
 #include <kcmodule.h>
@@ -64,9 +65,10 @@ private:
   void GetSettings( void );
 
   QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm,
-  			*fullDuplex;
+  			*fullDuplex, *customDevice;
   QButtonGroup *responseGroup;
   QRadioButton *responseButton[4];
+  QLineEdit *deviceName;
 
   KConfig *config;
 };
