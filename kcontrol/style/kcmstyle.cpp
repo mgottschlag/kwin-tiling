@@ -28,34 +28,25 @@
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
-#include <qdict.h>
-#include <qframe.h>
 #include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qlistbox.h>
 #include <qslider.h>
 #include <qstylefactory.h>
 #include <qtabwidget.h>
 #include <qvbox.h>
 #include <qsettings.h>
-#include <qstyle.h>
-#include <qapplication.h>
 #include <qobjectlist.h>
 #include <qpixmapcache.h>
 #include <qwhatsthis.h>
 
 #include <dcopclient.h>
 #include <kapplication.h>
-#include <kconfig.h>
-#include <kglobal.h>
 #include <kglobalsettings.h>
 #include <kdebug.h>
-#include <klocale.h>
 #include <kipc.h>
 #include <kaboutdata.h>
 #include <kdialog.h>
-#include <kgenericfactory.h>
 #include <klistview.h>
 #include <kmessagebox.h>
 #include <ksimpleconfig.h>
@@ -65,7 +56,6 @@
 #include "../krdb/krdb.h"
 
 #include "kcmstyle.h"
-#include "stylepreview.h"
 
 #include <X11/Xlib.h>
 // X11 namespace cleanup

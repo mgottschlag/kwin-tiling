@@ -22,13 +22,10 @@
 #include "menupreview.h"
 
 #include <qpainter.h>
-#include <qpixmap.h>
 #include <qimage.h>
 
 #include <kpixmap.h>
 #include <kpixmapeffect.h>
-#include <kdialog.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <kimageeffect.h>
 #include <kiconloader.h>
