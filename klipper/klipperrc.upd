@@ -1,0 +1,7 @@
+Id=25082001
+File=klipperrc
+Script=klipper-1-2.pl,perl
+Group=General
+AllKeys
+Group=Global Keys
+AllKeys

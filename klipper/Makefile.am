@@ -34,3 +34,6 @@ messages:
 dummy.cpp:
 	echo > dummy.cpp
 
+# update script:
+updatedir = $(kde_datadir)/kconf_update
+update_DATA = klipperrc.upd klipper-1-2.pl

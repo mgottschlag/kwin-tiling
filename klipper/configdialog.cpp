@@ -155,23 +155,23 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     listView->setRenameable(0);
     listView->setRenameable(1);
     listView->setItemsRenameable( true );
-    listView->setItemsMovable( true );
-    listView->setAcceptDrops( true );
-    listView->setDropVisualizer( true );
-    listView->setDragEnabled( true );
+    listView->setItemsMovable( false );
+//     listView->setAcceptDrops( true );
+//     listView->setDropVisualizer( true );
+//     listView->setDragEnabled( true );
 
     listView->setRootIsDecorated( true );
     listView->setMultiSelection( false );
     listView->setAllColumnsShowFocus( true );
     listView->setSelectionMode( QListView::Single );
-    connect( listView, SIGNAL( selectionChanged ( QListViewItem * )),
-             SLOT(selectionChanged ( QListViewItem * )));
-    connect( listView, SIGNAL( rightButtonPressed( QListViewItem *,
-                                                   const QPoint&, int) ),
-             SLOT( slotRightPressed( QListViewItem *, const QPoint&, int )));
     connect( listView, SIGNAL(executed( QListViewItem*, const QPoint&, int )),
              SLOT( slotItemChanged( QListViewItem*, const QPoint& , int ) ));
-
+    connect( listView, SIGNAL( selectionChanged ( QListViewItem * )),
+             SLOT(selectionChanged ( QListViewItem * )));
+    connect(listView, 
+            SIGNAL(contextMenu(KListView *, QListViewItem *, const QPoint&)),
+            SLOT( slotContextMenu(KListView*, QListViewItem*, const QPoint&)));
+    
     ClipAction *action   = 0L;
     ClipCommand *command = 0L;
     QListViewItem *item  = 0L;
@@ -222,7 +222,6 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     (void) new QWidget( box ); // spacer
 
     delActionButton->setEnabled(listView->currentItem () !=0);
-
     setOrientation( Horizontal );
 }
 
@@ -235,11 +234,12 @@ void ActionWidget::selectionChanged ( QListViewItem * item)
     delActionButton->setEnabled(item!=0);
 }
 
-void ActionWidget::slotRightPressed( QListViewItem *item, const QPoint&, int )
+void ActionWidget::slotContextMenu( KListView *, QListViewItem *item, 
+                                    const QPoint& pos )
 {
     if ( !item )
         return;
-
+    
     int addCmd = 0, rmCmd = 0;
     KPopupMenu *menu = new KPopupMenu;
     addCmd = menu->insertItem( i18n("Add Command") );
@@ -249,7 +249,7 @@ void ActionWidget::slotRightPressed( QListViewItem *item, const QPoint&, int )
         item->setOpen( true );
     }
 
-    int id = menu->exec( QCursor::pos() );
+    int id = menu->exec( pos );
     if ( id == addCmd ) {
         QListViewItem *p = item->parent() ? item->parent() : item;
         QListViewItem *cmdItem = new QListViewItem( p, item,

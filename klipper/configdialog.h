@@ -60,11 +60,11 @@ public:
 
     void setWMClasses( const QStringList& items );
     QStringList wmClasses() const { return editListBox->items(); }
-        
+
 private:
     KEditListBox *editListBox;
 };
-    
+
 class ActionWidget : public QVGroupBox
 {
     Q_OBJECT
@@ -88,10 +88,11 @@ public:
 private slots:
     void slotAddAction();
     void slotDeleteAction();
-    void slotRightPressed( QListViewItem *, const QPoint&, int col );
     void slotItemChanged( QListViewItem *, const QPoint& , int );
     void slotAdvanced();
+    void slotContextMenu( KListView *, QListViewItem *, const QPoint& );
     void selectionChanged ( QListViewItem *);
+
 private:
     KListView *listView;
     QStringList m_wmClasses;

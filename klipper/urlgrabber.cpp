@@ -11,6 +11,7 @@
  ------------------------------------------------------------- */
 
 #include <qtimer.h>
+
 #include <kapp.h>
 #include <kconfig.h>
 #include <kdialogbase.h>
@@ -163,7 +164,8 @@ void URLGrabber::actionMenu( bool wm_class_check )
         // add an edit-possibility
         myMenu->insertSeparator();
         myMenu->insertSeparator();
-        myMenu->insertItem( SmallIcon("edit"), i18n("&Edit contents..."), URL_EDIT_ITEM );
+        myMenu->insertItem( SmallIcon("edit"), i18n("&Edit contents..."), 
+                            URL_EDIT_ITEM );
         myMenu->insertItem( i18n("&Cancel"), DO_NOTHING_ITEM );
 
         if ( myPopupKillTimer > 0 )
@@ -355,15 +357,16 @@ void URLGrabber::slotKillPopupMenu()
 ///////////////////////////////////////////////////////////////////////////
 ////////
 
-ClipCommand::ClipCommand(const QString &_command, const QString &_description, bool _isEnabled)
+ClipCommand::ClipCommand(const QString &_command, const QString &_description,
+                         bool _isEnabled)
     : command(_command),
       description(_description),
       isEnabled(_isEnabled)
 {
-    int len = _command.find(" ");
+    int len = command.find(" ");
     if (len == -1)
-        len = _command.length();
-    KService::Ptr service= KService::serviceByDesktopName(_command.left(len));
+        len = command.length();
+    KService::Ptr service= KService::serviceByDesktopName(command.left(len));
     if (service)
         pixmap = service->icon();
     else
@@ -397,18 +400,19 @@ ClipAction::ClipAction( const ClipAction& action )
 ClipAction::ClipAction( KConfig *kc )
 {
     myCommands.setAutoDelete( true );
-    myRegExp      = kc->readEntry( "Action regexp" );
-    myDescription = kc->readEntry( "Action description" );
+    myRegExp      = kc->readEntry( "Regexp" );
+    myDescription = kc->readEntry( "Description" ); // i18n'ed
     int num = kc->readNumEntry( "Number of commands" );
 
     // read the commands
-    QString prefix;
+    QString actionGroup = kc->group();
     for ( int i = 0; i < num; i++ ) {
-        prefix = QString("Command_%1: ").arg( i );
+        QString group = actionGroup + "/Command_%1";
+        kc->setGroup( group.arg( i ) );
 
-        addCommand( kc->readEntry( prefix + "commandline" ),
-                    kc->readEntry( prefix + "description" ),
-                    kc->readBoolEntry( prefix + "enabled" ) );
+        addCommand( kc->readEntry( "Commandline" ),
+                    kc->readEntry( "Description" ), // i18n'ed
+                    kc->readBoolEntry( "Enabled" ) );
     }
 }
 
@@ -433,22 +437,23 @@ void ClipAction::addCommand( const QString& command,
 // precondition: we're in the correct action's group of the KConfig object
 void ClipAction::save( KConfig *kc ) const
 {
-    kc->writeEntry( "Action description", description() );
-    kc->writeEntry( "Action regexp", regExp() );
+    kc->writeEntry( "Description", description() );
+    kc->writeEntry( "Regexp", regExp() );
     kc->writeEntry( "Number of commands", myCommands.count() );
 
-    QString prefix;
+    QString actionGroup = kc->group();
     struct ClipCommand *cmd;
     QListIterator<struct ClipCommand> it( myCommands );
 
     // now iterate over all commands of this action
     int i = 0;
     while ( (cmd = it.current()) ) {
-        prefix = QString("Command_%1: ").arg( i );
+        QString group = actionGroup + "/Command_%1";
+        kc->setGroup( group.arg( i ) );
 
-        kc->writeEntry( prefix + "commandline", cmd->command );
-        kc->writeEntry( prefix + "description", cmd->description );
-        kc->writeEntry( prefix + "enabled", cmd->isEnabled );
+        kc->writeEntry( "Commandline", cmd->command );
+        kc->writeEntry( "Description", cmd->description );
+        kc->writeEntry( "Enabled", cmd->isEnabled );
 
         ++i;
         ++it;
