@@ -88,6 +88,5 @@ void KCDialog::slotHelp()
 
 void KCDialog::activate()
 {
-    KWin::setOnDesktop(winId(), KWin::currentDesktop());
     KWin::setActiveWindow(winId());
 }
