@@ -136,6 +136,8 @@ void Command_url_action::execute()
             }
         case KURIFilterData::EXECUTABLE:
             {
+            if (!kapp->authorize("shell_access"))
+		return;
             if( !uri.hasArgsAndOptions())
                 {
                 KService::Ptr service = KService::serviceByDesktopName( cmd );
@@ -149,6 +151,8 @@ void Command_url_action::execute()
             }
         case KURIFilterData::SHELL:
             {
+            if (!kapp->authorize("shell_access"))
+		return;
             if( !KRun::runCommand( cmd,
                 cmd + ( uri.hasArgsAndOptions() ? uri.argsAndOptions() : "" ), uri.iconName()))
                 // CHECKME ?
