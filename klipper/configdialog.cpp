@@ -419,7 +419,7 @@ AdvancedWidget::AdvancedWidget( QWidget *parent, const char *name )
     editListBox = new KEditListBox( i18n("D&isable Actions for Windows of Type WM_CLASS"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
 
     QWhatsThis::add( editListBox,
-          i18n("<qt>This lets you specify windows in which klipper should "
+          i18n("<qt>This lets you specify windows in which Klipper should "
 	       "not invoke \"actions\". Use<br><br>"
 	       "<center><b>xprop | grep WM_CLASS</b></center><br>"
 	       "in a terminal to find out the WM_CLASS of a window. "
