@@ -1,5 +1,3 @@
-SUBDIRS = modules
-
 bin_PROGRAMS = kcontrol2 kcmshell kcmroot
 
 kcontrol2_SOURCES = main.cpp toplevel.cpp modules.cpp index.cpp utils.cpp \
@@ -24,7 +22,7 @@ kcmroot_LDADD   = -lkdeui -lkdecore -lqt -lXext -lX11
 
 INCLUDES= $(all_includes)
 
-METASOURCES = USE_AUTOMOC
+METASOURCES = AUTO
 
 LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 
