@@ -6,16 +6,24 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include <config.h>
 
+#include <unistd.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <errno.h>
+
+#include <dcopclient.h>
+#include <qmessagebox.h>
+#include <qdir.h>
+
 #include <kapp.h>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
+#include <kdebug.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kconfig.h>
-#include <dcopclient.h>
 #include "server.h"
-#include <stdlib.h>
-#include <fcntl.h>
+
 
 static const char *version = "0.4";
 static const char *description = I18N_NOOP( "The reliable KDE session manager that talks the standard X11R6 \nsession management protocol (XSMP)." );
@@ -37,8 +45,72 @@ void IoErrorHandler ( IceConn iceConn)
     the_server->ioError( iceConn );
 }
 
+void sanity_check( int argc, char* argv[] )
+{
+  const char *msg = 0;
+  QCString path = getenv("HOME");
+  if (path.isEmpty())
+  {
+     msg = "$HOME not set!";
+  }
+  else
+  {
+     if (access(path.data(), W_OK))
+     {
+       if (errno == ENOENT)
+          msg = "$HOME directory (%s) does not exist.";
+       else
+          msg = "No write access to $HOME directory (%s).";
+     }
+     else if (access(path.data(), R_OK))
+     {
+       if (errno == ENOENT)
+          msg = "$HOME directory (%s) does not exist.";
+       else
+          msg = "No read access to $HOME directory (%s).";
+     }
+     else
+     {
+        path += "/.ICEauthority";
+        if (access(path.data(), W_OK) && (errno != ENOENT))
+           msg = "No write access to '%s'.";
+        else if (access(path.data(), R_OK) && (errno != ENOENT))
+           msg = "No read access to '%s'.";
+        else
+        {
+           path = "/tmp/.ICE-unix";
+           if (access(path.data(), W_OK) && (errno != ENOENT))
+              msg = "No write access to '%s'.";
+           else if (access(path.data(), R_OK) && (errno != ENOENT))
+              msg = "No read access to '%s'.";
+        }
+     }
+  }
+  if (msg)
+  {
+    const char *msg_pre = 
+             "The following installation problem was detected\n"
+             "while trying to start KDE:"
+             "\n\n    ";
+    const char *msg_post = "\n\nKDE is unable to start.\n";
+    fprintf(stderr, msg_pre);
+    fprintf(stderr, msg, path.data());
+    fprintf(stderr, msg_post);
+ 
+    QApplication a(argc, argv);
+    QCString qmsg(256+path.length());
+    qmsg.sprintf(msg, path.data());
+    qmsg = msg_pre+qmsg+msg_post; 
+    QMessageBox::critical(0, "KDE Installation Problem!",
+        QString::fromLatin1(qmsg.data()));
+    exit(255);
+  }
+}
+
 int main( int argc, char* argv[] )
 {
+    sanity_check(argc, argv);
+
     KAboutData aboutData( "ksmserver", I18N_NOOP("The KDE Session Manager"),
        version, description, KAboutData::License_BSD,
        "(C) 2000, The KDE Developers");
@@ -50,6 +122,7 @@ int main( int argc, char* argv[] )
     putenv((char*)"SESSION_MANAGER=");
     KApplication a(false, true); // Disable styles until we need them.
     fcntl(ConnectionNumber(qt_xdisplay()), F_SETFD, 1);
+
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
