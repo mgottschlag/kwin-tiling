@@ -76,7 +76,7 @@ private:
     QString buildCommand();
     void createTempFile();
     void tile(QImage *dst, QRect rect, QImage *src);
-    void blend(QImage *dst, QRect dr, QImage *src, QPoint soffs = QPoint(0, 0));
+    void blend(QImage *dst, QRect dr, QImage *src, QPoint soffs = QPoint(0, 0), int blendFactor=100);
 
     void wallpaperBlend( const QRect& d, QImage& wp, int ww, int wh );
     void fastWallpaperBlend( const QRect& d, QImage& wp, int ww, int wh );

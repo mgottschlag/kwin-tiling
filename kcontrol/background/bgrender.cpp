@@ -468,12 +468,17 @@ void KBackgroundRenderer::fullWallpaperBlend( const QRect& d, QImage& wp, int ww
 
     // blend wallpaper to destination rectangle of m_pImage
     if (d.isValid())
+    {
+        int blendFactor = 100;
+        if (blendMode() == FlatBlending)
+            blendFactor = (blendBalance()+200)/4;
         for (int y = d.top(); y < d.bottom(); y += wh) {
 	    for (int x = d.left(); x < d.right(); x += ww) {
 		blend(m_pImage, QRect(x, y, ww, wh), &wp,
-			QPoint(-QMIN(x, 0), -QMIN(y, 0)));
+			QPoint(-QMIN(x, 0), -QMIN(y, 0)), blendFactor);
 	    }
 	}
+    }
 
 
     // blend whole desktop
@@ -530,14 +535,19 @@ void KBackgroundRenderer::fullWallpaperBlend( const QRect& d, QImage& wp, int ww
 	KImageEffect::modulate( *m_pImage, *m_pBackground, reverseBlending(),
 		    KImageEffect::HueShift, bal, KImageEffect::Gray );
 	break;
+
+      case FlatBlending:
+        // Already handled
+	break;
       }
     }
 }
 
 /* Alpha blend an area from <src> with offset <soffs> to rectangle <dr> of <dst>
  * Default offset is QPoint(0, 0).
+ * blendfactor = [0, 100%]
  */
-void KBackgroundRenderer::blend(QImage *dst, QRect dr, QImage *src, QPoint soffs)
+void KBackgroundRenderer::blend(QImage *dst, QRect dr, QImage *src, QPoint soffs, int blendFactor)
 {
     int x, y, a;
     dr &= dst->rect();
@@ -550,7 +560,7 @@ void KBackgroundRenderer::blend(QImage *dst, QRect dr, QImage *src, QPoint soffs
 			+ (dr.x() + x) * sizeof(QRgb));
                 d = reinterpret_cast<QRgb*>(src->scanLine(soffs.y() + y)
 			+ (soffs.x() + x) * sizeof(QRgb));
-                a = qAlpha(*d);
+                a = (qAlpha(*d) * blendFactor) / 100;
                 *b = qRgb(qRed(*b) - (((qRed(*b) - qRed(*d)) * a) >> 8),
                           qGreen(*b) - (((qGreen(*b) - qGreen(*d)) * a) >> 8),
                           qBlue(*b) - (((qBlue(*b) - qBlue(*d)) * a) >> 8));

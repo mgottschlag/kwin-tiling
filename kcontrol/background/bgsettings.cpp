@@ -467,6 +467,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     // Blend modes
     #define ADD_STRING(ID) m_BlMMap[#ID] = ID; m_BlMRevMap[ID] = (char *) #ID;
     ADD_STRING(NoBlending)
+    ADD_STRING(FlatBlending)
     ADD_STRING(HorizontalBlending)
     ADD_STRING(VerticalBlending)
     ADD_STRING(PyramidBlending)

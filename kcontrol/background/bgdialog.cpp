@@ -378,6 +378,7 @@ void BGDialog::initUI()
 
    // Blend modes: make sure these match with kdesktop/bgrender.cc !!
    m_comboBlend->insertItem(i18n("No Blending"));
+   m_comboBlend->insertItem(i18n("Flat"));
    m_comboBlend->insertItem(i18n("Horizontal"));
    m_comboBlend->insertItem(i18n("Vertical"));
    m_comboBlend->insertItem(i18n("Pyramid"));

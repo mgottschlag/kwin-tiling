@@ -174,7 +174,7 @@ public:
     int backgroundMode() const { return m_BackgroundMode; }
 
     enum BlendMode {
-        NoBlending,
+        NoBlending, FlatBlending,
 	HorizontalBlending, VerticalBlending, PyramidBlending,
 	PipeCrossBlending, EllipticBlending,
 	IntensityBlending, SaturateBlending, ContrastBlending,
