@@ -16,20 +16,10 @@
  */
 
 #include <qcheckbox.h>
-#include <qslider.h>
-#include <qwhatsthis.h>
-#include <qlineedit.h>
-#include <qlistview.h>
-#include <qbuttongroup.h>
 #include <qradiobutton.h>
-#include <qvalidator.h>
-#include <qtoolbutton.h>
 #include <qdir.h>
-#include <qtooltip.h>
 #include <qlayout.h>
 
-#include <kconfig.h>
-#include <kglobal.h>
 #include <knuminput.h>
 #include <klocale.h>
 #include <klistview.h>

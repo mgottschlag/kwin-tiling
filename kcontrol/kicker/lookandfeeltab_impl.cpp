@@ -18,33 +18,16 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <qlayout.h>
-#include <qgroupbox.h>
-#include <qwhatsthis.h>
 #include <qcheckbox.h>
-#include <qframe.h>
-#include <qvbox.h>
-#include <qhbox.h>
-#include <qpixmap.h>
-#include <qpainter.h>
-#include <qfileinfo.h>
 #include <qlabel.h>
-#include <qpushbutton.h>
-#include <qimage.h>
 #include <qregexp.h>
 
-#include <kconfig.h>
-#include <kdialog.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
-#include <kcombobox.h>
 #include <kimageio.h>
-#include <knuminput.h>
 #include <kiconeffect.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
-#include <kurlrequester.h>
 #include <klineedit.h>
 
 #include "main.h"

@@ -16,22 +16,13 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <qwhatsthis.h>
 #include <qcheckbox.h>
 #include <qheader.h>
-#include <qlabel.h>
-#include <qstring.h>
 #include <qslider.h>
 #include <qradiobutton.h>
-#include <qgroupbox.h>
-#include <qbuttongroup.h>
 
-#include <kconfig.h>
 #include <kcombobox.h>
-#include <kglobal.h>
 #include <knuminput.h>
-#include <klocale.h>
-#include <kstandarddirs.h>
 
 #include "main.h"
 #include "hidingtab_impl.h"

@@ -17,8 +17,6 @@
  */
 
 #include <qapplication.h>
-#include <kconfig.h>
-#include <kstandarddirs.h>
 #include <kdesktopfile.h>
 #include <klocale.h>
 

@@ -23,24 +23,18 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
-#include <qwhatsthis.h>
 #include <qslider.h>
-#include <qspinbox.h>
 #include <qcombobox.h>
 #include <qtooltip.h>
 
 #include <kapplication.h>
-#include <kconfig.h>
-#include <kglobal.h>
 #include <klocale.h>
-#include <klineedit.h>
 #include <knuminput.h>
 #include <kpixmap.h>
 #include <kstandarddirs.h>
 #include <kwin.h>
 
 #include "../background/bgrender.h"
-#include "extensionInfo.h"
 #include "positiontab_impl.h"
 #include "positiontab_impl.moc"
 

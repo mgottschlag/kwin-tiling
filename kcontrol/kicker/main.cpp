@@ -17,14 +17,10 @@
 
 #include <qtabwidget.h>
 #include <qlayout.h>
-#include <qradiobutton.h>
 
 #include <kapplication.h>
-#include <kconfig.h>
 #include <kdirwatch.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
-#include <klocale.h>
 #include <kimageio.h>
 
 #include <dcopclient.h>

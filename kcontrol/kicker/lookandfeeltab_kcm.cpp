@@ -17,13 +17,6 @@
 
 #include <qlayout.h>
 
-#include <kapplication.h>
-#include <kconfig.h>
-#include <kglobal.h>
-#include <kstandarddirs.h>
-#include <klocale.h>
-#include <kimageio.h>
-#include <qcombobox.h>
 
 #include <dcopclient.h>
 

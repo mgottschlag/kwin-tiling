@@ -18,13 +18,10 @@
  */
 
 #include <qcheckbox.h>
-#include <qframe.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 
-#include <kconfig.h>
 #include <klocale.h>
-#include <knuminput.h>
 
 #include "advancedDialog.h"
 #include "advancedOptions.h"
