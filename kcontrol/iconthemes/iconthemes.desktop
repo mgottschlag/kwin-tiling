@@ -1,0 +1,13 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/Themes/iconThemes
+Icon=iconthemes
+Type=Application
+DocPath=kcontrol/kcmiconthemes/iconthemes-1.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=iconthemes
+X-KDE-Init=iconthemes
+
+Name=Icon
+Comment=Icon Themes
+Keywords=icon,themes,styles
