@@ -64,7 +64,9 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
 
     connect(m_addMenuBtn, SIGNAL(clicked()), SLOT(slotAddMenuClicked()));
     connect(m_removeMenuBtn, SIGNAL(clicked()), SLOT(slotRemoveMenuClicked()));\
+    connect(m_availableMenus,SIGNAL(selectionChanged ()),SLOT(slotSelectionChanged()));
 
+    connect(m_selectedMenus,SIGNAL(selectionChanged ()),SLOT(slotSelectionChanged()));
 
     // whats this help
     QWhatsThis::add(m_clearCache, i18n("The panel can cache information about menu entries instead "
@@ -120,6 +122,9 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
                                           "to the KDE menu. Use the buttons to add or remove items. "));
 
     load();
+    //at the beginning we didn't select a item
+    m_addMenuBtn->setEnabled(false);
+    m_removeMenuBtn->setEnabled(false);
 }
 
 void MenuTab::load()
@@ -276,4 +281,13 @@ void MenuTab::slotRemoveMenuClicked()
 
         emit changed();
     }
+}
+
+void MenuTab::slotSelectionChanged()
+{
+    QListViewItem *item = m_selectedMenus->currentItem();
+    m_removeMenuBtn->setEnabled(item);
+
+    item=m_availableMenus->currentItem();
+    m_addMenuBtn->setEnabled(item);
 }

@@ -37,6 +37,7 @@ signals:
 protected slots:
     void slotAddMenuClicked();
     void slotRemoveMenuClicked();
+    void slotSelectionChanged();
 };
 
 #endif
