@@ -4,6 +4,9 @@
 #if __NetBSD_Version__ > 103080000
 #define UVM
 #endif
+#if defined(__OpenBSD__)
+#define UVM
+#endif
 
 #include <stdlib.h>
 #include <unistd.h>
