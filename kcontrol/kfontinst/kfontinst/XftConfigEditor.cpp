@@ -44,7 +44,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xft/Xft.h>
 
-static const QString constOther ("Other...");
+static const QString constOther(i18n("Other..."));
 
 static XftOp strToOp(const QString &op)
 {
@@ -88,70 +88,79 @@ CXftConfigEditor::CXftConfigEditor(QWidget *parent, const char *name)
 {
     itsMatchQualCombo->insertItem("all");
     itsMatchQualCombo->insertItem("any");
-    itsMatchFieldNameCombo->insertItem("foundry");
-    itsMatchFieldNameCombo->insertItem("encoding");
-    itsMatchFieldNameCombo->insertItem("spacing");
-    itsMatchFieldNameCombo->insertItem("bold");
-    itsMatchFieldNameCombo->insertItem("italic");
+
     itsMatchFieldNameCombo->insertItem("antialias");
+    itsMatchFieldNameCombo->insertItem("bold");
+    itsMatchFieldNameCombo->insertItem("encoding");
     itsMatchFieldNameCombo->insertItem("family");
-    itsMatchFieldNameCombo->insertItem("size");
-    itsMatchFieldNameCombo->insertItem("style");
-    itsMatchFieldNameCombo->insertItem("slant");
-    itsMatchFieldNameCombo->insertItem("weight");
+    itsMatchFieldNameCombo->insertItem("foundry");
+    itsMatchFieldNameCombo->insertItem("italic");
     itsMatchFieldNameCombo->insertItem("outline");
+    itsMatchFieldNameCombo->insertItem("size");
+    itsMatchFieldNameCombo->insertItem("slant");
+    itsMatchFieldNameCombo->insertItem("spacing");
+    itsMatchFieldNameCombo->insertItem("style");
+    itsMatchFieldNameCombo->insertItem("weight");
+
     itsMatchCompareCombo->insertItem("==");
     itsMatchCompareCombo->insertItem(">");
     itsMatchCompareCombo->insertItem("<");
-    itsEditFieldNameCombo->insertItem("foundry");
-    itsEditFieldNameCombo->insertItem("encoding");
-    itsEditFieldNameCombo->insertItem("spacing");
-    itsEditFieldNameCombo->insertItem("bold");
-    itsEditFieldNameCombo->insertItem("italic");
+
     itsEditFieldNameCombo->insertItem("antialias");
+    itsEditFieldNameCombo->insertItem("bold");
+    itsEditFieldNameCombo->insertItem("charheight");
+    itsEditFieldNameCombo->insertItem("charspace");
+    itsEditFieldNameCombo->insertItem("charwidth");
+    itsEditFieldNameCombo->insertItem("core");
+    itsEditFieldNameCombo->insertItem("encoding");
     itsEditFieldNameCombo->insertItem("family");
-    itsEditFieldNameCombo->insertItem("size");
-    itsEditFieldNameCombo->insertItem("style");
-    itsEditFieldNameCombo->insertItem("slant");
-    itsEditFieldNameCombo->insertItem("weight");
+    itsEditFieldNameCombo->insertItem("file");
+    itsEditFieldNameCombo->insertItem("foundry");
+    itsEditFieldNameCombo->insertItem("index");
+    itsEditFieldNameCombo->insertItem("italic");
+    itsEditFieldNameCombo->insertItem("matrix");
+    itsEditFieldNameCombo->insertItem("minspace");
     itsEditFieldNameCombo->insertItem("outline");
     itsEditFieldNameCombo->insertItem("pixelsize");
-    itsEditFieldNameCombo->insertItem("charspace");
-    itsEditFieldNameCombo->insertItem("minspace");
-    itsEditFieldNameCombo->insertItem("rgba");
-    itsEditFieldNameCombo->insertItem("xlfd");
-    itsEditFieldNameCombo->insertItem("file");
-    itsEditFieldNameCombo->insertItem("core");
     itsEditFieldNameCombo->insertItem("render");
-    itsEditFieldNameCombo->insertItem("index");
+    itsEditFieldNameCombo->insertItem("rgba");
     itsEditFieldNameCombo->insertItem("scalable");
     itsEditFieldNameCombo->insertItem("scale");
-    itsEditFieldNameCombo->insertItem("charwidth");
-    itsEditFieldNameCombo->insertItem("charheight");
-    itsEditFieldNameCombo->insertItem("matrix");
+    itsEditFieldNameCombo->insertItem("size");
+    itsEditFieldNameCombo->insertItem("slant");
+    itsEditFieldNameCombo->insertItem("spacing");
+    itsEditFieldNameCombo->insertItem("style");
+    itsEditFieldNameCombo->insertItem("weight");
+    itsEditFieldNameCombo->insertItem("xlfd");
+
     itsEditAssignCombo->insertItem("=");
     itsEditAssignCombo->insertItem("+=");
     itsEditAssignCombo->insertItem("=+");
-    itsBooleans.append("true");
+
     itsBooleans.append("false");
-    itsRgbs.append("rgb");
+    itsBooleans.append("true");
+
     itsRgbs.append("bgr");
+    itsRgbs.append("rgb");
+
 //    itsRgbs.append("vrgb");
 //    itsRgbs.append("vbgr");
     itsRgbs.append(constOther);
+
     itsSlants.append("italic");
     itsSlants.append("oblique");
     itsSlants.append("roman");
+
     itsSpacings.append("proportional");
     itsSpacings.append("mono");
     itsSpacings.append("charcell");
     itsSpacings.append(constOther);
+
     itsWeights.append("light");
     itsWeights.append("medium");
     itsWeights.append("demibold");
     itsWeights.append("bold");
     itsWeights.append("black");
-
     itsWeights.append(constOther);
 
     itsMatchOther->setValidator(itsMatchValidators.otherInt);
