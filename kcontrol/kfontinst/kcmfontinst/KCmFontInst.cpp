@@ -61,6 +61,15 @@
 #define CFG_DIRSIZE     "DirSize"
 #define CFG_PREVIEWSIZE "PreviewSize"
 
+//
+// Remove any fonts:/ status information added to name
+static QString formatName(const QString &name)
+{
+    QString n(name);
+
+    return n.remove(KIO_FONTS_DISABLED);
+}
+
 typedef KGenericFactory<CKCmFontInst, QWidget> FontInstallFactory;
 K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory)
 
@@ -70,6 +79,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
               itsTop(CMisc::root() ? "fonts:/" : QString("fonts:/")+i18n(KIO_FONTS_USER)),
               itsConfig("kcmfontinstuirc")
 {
+    KGlobal::locale()->insertCatalogue("kfontinst");
+
     KConfigGroupSaver cfgSaver(&itsConfig, CFG_GROUP);
     const char *appName=KCmdLineArgs::appName();
 
@@ -125,7 +136,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     QString previousPath=itsConfig.readEntry(CFG_PATH);
     KURL    url(itsTop);
 
-    if(!previousPath.isNull())
+    if(!previousPath.isEmpty())
     {
         KIO::UDSEntry uds;
 
@@ -264,7 +275,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         connect(act, SIGNAL(activated()), this, SLOT(createFolder()));
     }
 
-    act=new KAction(i18n("Add Fonts..."), "filenew2", 0, this, SLOT(addFonts()), itsDirOp->actionCollection(), "addfonts");
+    act=new KAction(i18n("Add Fonts..."), "newfont", 0, this, SLOT(addFonts()), itsDirOp->actionCollection(), "addfonts");
     act->plug(toolbar);
     topMnu->insert(act);
 
@@ -588,7 +599,7 @@ void CKCmFontInst::removeFonts()
 
         for(; it.current(); ++it)
         {
-            files.append((*it)->url().prettyURL());
+            files.append(formatName((*it)->text()));
             urls.append((*it)->url());
         }
 
@@ -764,7 +775,7 @@ void CKCmFontInst::enableItems(bool enable)
             if((enable && disabled) || (!enable && !disabled))
             {
                 urls.append(url);
-                files.append(url.prettyURL());
+                files.append(formatName((*it)->text()));
             }
         }
     }

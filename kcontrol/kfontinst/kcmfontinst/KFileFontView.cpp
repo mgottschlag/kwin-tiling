@@ -52,9 +52,8 @@
 #include "FontEngine.h"
 //#include "config-kfile.h"
 
-#define COL_NAME    0
-#define COL_ENABLED 1
-#define COL_FONT    2
+#define COL_NAME 0
+#define COL_FILE 1
 
 class CKFileFontView::CKFileFontViewPrivate
 {
@@ -76,8 +75,7 @@ CKFileFontView::CKFileFontView(QWidget *parent, const char *name)
     setViewName(i18n("Detailed View"));
 
     addColumn(i18n("Name"));
-    addColumn("", 24);
-    addColumn(i18n("Font"));
+    addColumn(i18n("File"));
     setShowSortIndicator(true);
     setAllColumnsShowFocus(true);
     setDragEnabled(true);
@@ -317,8 +315,7 @@ void CKFileFontView::slotSortingChanged(int col)
             break;
         // the following columns have no equivalent in QDir, so we set it
         // to QDir::Unsorted and remember the column (itsSortingCol)
-        case COL_FONT:
-        case COL_ENABLED:
+        case COL_FILE:
             // grmbl, QDir::Unsorted == SortByMask.
             sortSpec = (sort & ~QDir::SortByMask);// | QDir::Unsorted;
             break;
@@ -623,22 +620,7 @@ void CFontListViewItem::init()
     CFontListViewItem::setPixmap(COL_NAME, itsInf->pixmap(KIcon::SizeSmall));
 
     setText(COL_NAME, itsInf->text());
-
-    if(itsInf->isDir())
-        setText(COL_FONT, "");
-    else
-    {
-        if(CFontEngine::isAAfm(QFile::encodeName(itsInf->url().path())))
-            setText(COL_FONT, i18n("Font metrics file"));
-        else
-        {
-            QString name(CGlobal::fe().createName(itsInf->url().path()));
-
-            setText(COL_FONT, name.isNull() ? i18n("Could not read font name!") : name);
-        }
-    }
-
-    setPixmap(COL_ENABLED, QChar('.')==itsInf->text()[0] ? QPixmap() : KGlobal::iconLoader()->loadIcon("ok", KIcon::Small));
+    setText(COL_FILE, itsInf->isDir() ? "" : itsInf->url().filename());
 }
 
 void CKFileFontView::virtual_hook(int id, void *data)

@@ -21,4 +21,4 @@ EXTRA_DIST = \
 
 noinst_HEADERS = $(EXTRA_DIST)
 
-KDE_ICON = kcmfontinst
+KDE_ICON = kcmfontinst newfont
