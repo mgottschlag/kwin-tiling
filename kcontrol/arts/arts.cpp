@@ -147,7 +147,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 
 	QString rateHint = i18n("Normally, the sound server defaults to using a sampling rate of 44100 Hz (CD quality), which is supported on almost any hardware. If you are using certain <b>Yamaha soundcards</b>, you might need to configure this to 48000 Hz here, if you are using <b>old SoundBlaster cards</b>, like SoundBlaster Pro, you might need to change this to 22050 Hz. All other values are possible, too, and may make sense in certain contexts (i.e. professional studio equipment).");
 
-	QString optionsHint = i18n("This configuration module is intended to cover almost every aspect of the aRts sound server that you can configure. However, there are some things which may not be available here, so you can add <b>command line options</b> here which will directly be passed to <b>artsd</b>. The options will be appended, so they will no doubt override the choices made in the GUI. To see the possible choices, open a konsole window, and type <b>artsd -h</b>.");
+	QString optionsHint = i18n("This configuration module is intended to cover almost every aspect of the aRts sound server that you can configure. However, there are some things which may not be available here, so you can add <b>command line options</b> here which will be passed directly to <b>artsd</b>. The options will be appended, so they will no doubt override the choices made in the GUI. To see the possible choices, open a Konsole window, and type <b>artsd -h</b>.");
 
 	QWhatsThis::add(customDevice, deviceHint);
 	QWhatsThis::add(deviceName, deviceHint);
