@@ -108,6 +108,8 @@ void KickerConfig::load()
 
     QString configname = configName();
     QString configpath = KGlobal::dirs()->findResource("config", configname);
+    if (configpath.isEmpty())
+       configpath = locateLocal("config", configname);
     KSharedConfig::Ptr c = KSharedConfig::openConfig(configname);
 
     if (m_extensionInfo.isEmpty())
@@ -271,7 +273,7 @@ void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists, bool reloadI
         for (; extIt != oldExtensions.end(); ++extIt)
         {
             // don't remove the kickerrc!
-            if ((*extIt)->_configPath.right(8) != "kickerrc")
+            if (!(*extIt)->_configPath.endsWith(configName()))
             {
                 hidingtab->removeExtension(*extIt);
                 positiontab->removeExtension(*extIt);
@@ -283,7 +285,7 @@ void KickerConfig::setupExtensionInfo(KConfig& c, bool checkExists, bool reloadI
 
 void KickerConfig::configChanged(const QString& config)
 {
-    if (config.right(8) == "kickerrc")
+    if (config.endsWith(configName()))
     {
         KSharedConfig::Ptr c = KSharedConfig::openConfig(configName());
         setupExtensionInfo(*c, true);

@@ -499,6 +499,8 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     {
         m_panelList->setSelected(m_panelList->firstChild(), true);
         listItem = reinterpret_cast<extensionInfoItem*>(m_panelList->firstChild());
+        if (!listItem)
+            return;
     }
 
     if (m_panelInfo)
