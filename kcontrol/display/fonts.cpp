@@ -284,11 +284,8 @@ QString KFonts::quickHelp()
       " the font family (for example, <em>helvetica</em> or <em>times</em>),"
       " but also the attributes that make up a specific font (for example,"
       " <em>bold</em> style and <em>12 points</em> in height.)<p>"
-      " Just select the type of text (for example, <em>menu text</em>) and"
-      " then change the font settings. Note that some fonts, such as those"
-      " used to display text in a word-processor, cannot be specified here."
-      " Those fonts must be specified within the relevant application.<p>"
-      " All KDE applications will use the font settings specified here."
+      " Just click the \"Choose\" button that next to the font you want to"
+      " change."
       " You can ask KDE to try and apply font and color settings to non-KDE"
       " applications as well. See the \"Style\" control module under"
       " \"Themes\" for more information.");

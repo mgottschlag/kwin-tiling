@@ -21,6 +21,7 @@
 #include <qlistview.h>
 #include <qframe.h>
 #include <qsizepolicy.h>
+#include <qwhatsthis.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -162,7 +163,10 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     themeList = new KThemeListBox(themeBox);
     connect(themeList, SIGNAL(currentChanged(QListViewItem*)),
             SLOT(slotChangeStylePlugin(QListViewItem*)));
-
+    QWhatsThis::add( themeBox, i18n("Here you can choose from a list of"
+      " predefined widget styles (the way e.g. buttons are drawn) which"
+      " may or may not be combined with a theme (additional information"
+      " like a marble texture or a gradient).") );
 
     // Drawing settings
     styles = new QGroupBox ( i18n( "Other settings for drawing:" ), this );
@@ -173,12 +177,23 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
 
     cbMac = new QCheckBox( i18n( "&Menubar on top of the screen in "
                                  "the style of MacOS" ), styles);
+    QWhatsThis::add( cbMac, i18n("If this option is selected, applications"
+      " won't have their menubar attached to their own window anymore."
+      " Instead, there is one menu bar at the top of the screen which shows"
+      " the menu of the currently active application. Maybe you know this"
+      " behavior from MacOS.") );
+
     connect( cbMac, SIGNAL( clicked() ), SLOT( slotMacStyle()  )  );
     vlay->addWidget( cbMac, 10 );
 
     cbRes = new QCheckBox( i18n( "&Apply fonts and colors to non-KDE apps" ), styles);
     connect( cbRes, SIGNAL( clicked() ), SLOT( slotUseResourceManager()  )  );
     vlay->addWidget( cbRes, 10 );
+
+    QWhatsThis::add( cbRes, i18n("If this option is selected, KDE will try"
+      " to force your preferences regarding colors and fonts even on non-KDE"
+      " applications. While this works fine with most applications, it <em>may</em>"
+      " give strange results sometimes.") );
 
     tbStyle = new QButtonGroup( i18n( "Style options for toolbars:" ), this);
     topLayout->addWidget(tbStyle, 10);
@@ -194,9 +209,19 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     tbAside  = new QRadioButton( i18n( "Text a&side icons" ), tbStyle);
     tbUnder  = new QRadioButton( i18n( "Text &under icons" ), tbStyle);
 
+    QWhatsThis::add( tbIcon, i18n("Shows only icons on toolbar buttons. Best option for low resolutions.") );
+    QWhatsThis::add( tbText, i18n("Shows only text on toolbar buttons.") );
+    QWhatsThis::add( tbAside, i18n("Shows icons and text on toolbar buttons. Text is aligned aside the icon.") );
+    QWhatsThis::add( tbUnder, i18n("Shows icons and text on toolbar buttons. Text is aligned below the icon.") );
+
     tbHilite = new QCheckBox( i18n( "&Highlight buttons under mouse" ), tbStyle);
     tbTransp = new QCheckBox( i18n( "Tool&bars are transparent when"
 				" moving" ), tbStyle);
+
+    QWhatsThis::add( tbHilite, i18n("If this option is selected, toolbar buttons"
+      " will change their color when the mouse cursor is moved over them.") );
+    QWhatsThis::add( tbTransp, i18n("If this option is selected, only the skeleton of"
+      " a toolbar will be shown when moving that toolbar.") );
 
     connect( tbIcon , SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
     connect( tbText , SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
@@ -330,6 +355,19 @@ void KGeneral::defaults()
     emit changed(true);
 }
 
+QString KGeneral::quickHelp()
+{
+    return i18n("<h1>Style</h1> In this module you can configure how"
+      " your KDE applications will look.<p>"
+      " Styles and themes affect the way buttons, menus etc. are drawn"
+      " in KDE.  Think of styles as plugins that provide a general look"
+      " for KDE and of themes as a way to fine-tune those styles. E.g."
+      " you might use the \"System\" style but use a theme that provides"
+      " a color gradient or a marble texture.<p>"
+      " Apart from styles and themes you can here configure the behavior"
+      " of menubars and toolbars.");
+}
+
 
 void KGeneral::load()
 {
@@ -349,7 +387,7 @@ void KGeneral::save()
 
     if (!m_bChanged)
 	return;
-		
+
     config->setGroup("KDE");
     config->writeEntry("macStyle", macStyle, true, true);
     config->setGroup("Toolbar style");

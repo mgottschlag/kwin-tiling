@@ -16,8 +16,8 @@ display
   backgnd.cpp              [x]         [ ]         [ ]
   colorscm.cpp             [x]         [x]         [ ]
   energy.cpp               [x]         [ ]         [ ]
-  fonts.cpp                [s]         [ ]         [ ]
-  general.cpp              [ ]         [ ]         [ ]
+  fonts.cpp                [x]         [ ]         [ ]
+  general.cpp              [s]         [ ]         [ ]
   icons.cpp                [ ]         [ ]         [ ]
   scrnsave.cpp             [x]         [ ]         [ ]
 drkonqi                    [ ]         [ ]         [ ]
@@ -63,3 +63,4 @@ samba
   main.cpp                 [x]         [ ]         [ ]
 syssound                   [ ]         [ ]         [ ]
 themes                     [ ]         [ ]         [ ]
+
