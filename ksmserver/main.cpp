@@ -79,7 +79,12 @@ int main( int argc, char* argv[] )
     KSMServer *server = new KSMServer( QString::fromLatin1(wm), only_local);
     IceSetIOErrorHandler (IoErrorHandler );
 
-    if ( args->isSet("restore") )
+    KConfig *config = KGlobal::config();
+
+    bool screenCountChanged =
+         (config->readNumEntry("screenCount") != ScreenCount(qt_xdisplay()));
+
+    if ( args->isSet("restore") && ! screenCountChanged )
 	server->restoreSession();
     else
 	server->startDefaultSession();

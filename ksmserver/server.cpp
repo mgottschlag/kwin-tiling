@@ -1227,6 +1227,10 @@ void KSMServer::storeSesssion()
         config->writeEntry( QString("userId")+n, c->userId() );
     }
     config->writeEntry( "count", count );
+
+    config->setGroup("General");
+    config->writeEntry( "screenCount", ScreenCount(qt_xdisplay()));
+
     config->sync();
 }
 
@@ -1249,12 +1253,12 @@ void KSMServer::restoreSession()
 	    QString n = QString::number(i);
 	    if ( wm == config->readEntry( QString("program")+n ) ) {
 		appsToStart--;
-		wmCommand = config->readListEntry( QString("restartCommand")+n );
+		wmCommand << config->readEntry( QString("restartCommand")+n );
 	    }
 	}
     }
     if ( wmCommand.isEmpty() )
-	wmCommand = wm;
+	wmCommand << wm;
 
     publishProgress( appsToStart, true );
 
@@ -1265,7 +1269,8 @@ void KSMServer::restoreSession()
 	// when we have a window manager, we start it first and give
 	// it some time before launching other processes. Results in a
 	// visually more appealing startup.
-	startApplication( wmCommand );
+        for (uint i = 0; i < wmCommand.count(); i++)
+	    startApplication( QStringList::split(',', wmCommand[i]) );
 	QTimer::singleShot( 4000, this, SLOT( autoStart() ) );
     } else {
 	autoStart();
