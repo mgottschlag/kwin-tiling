@@ -186,14 +186,11 @@ private:
  int getTitleAnim( void );
  void setTitleAnim(int);
 
- //CT 02Dec1998 macStyle
  QCheckBox *cbFrame, *cbPixedText;
  QGroupBox *appearBox;
 
- //CT 06Nov1998
  QButtonGroup *alignBox;
  QRadioButton *leftAlign, *midAlign, *rightAlign;
- //CT
  QButtonGroup *titlebarBox;
  QRadioButton *bShaded, *plain, *pixmap;
 
@@ -203,19 +200,18 @@ private:
  KPixmap gradPix; // used to preview the gradients
  QFrame *gradPreview;
 
+ QColor cTitle;
+ QColor cBlend;
 
- //CT 11feb98
  int getDCTBAction();
  void setDCTBAction(int);
 
  QGroupBox *titlebarDblClickBox;
  QLabel * lDblClick;
  QComboBox * dblClickCombo;
- //CT ---
 
- QGroupBox *animBox; //CT 21Oct1998
+ QGroupBox *animBox;
  KSlider *titleAnim;
- //CT  QLabel *tlabel;
  QLCDNumber *t;
  QLabel *sec;
 

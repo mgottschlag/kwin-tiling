@@ -54,7 +54,6 @@ extern KConfig *config;
 //CT 02Dec1998 - weird hacks
 #define KWM_TITLEFRAME     "TitleFrameShaded"
 #define KWM_PIXMAP_TEXT    "PixmapUnderTitleText"
-//CT
 
 //  buttons 1 2 3 are on left, 4 5 6 on right
 #define KWM_B1 "ButtonA"
@@ -159,7 +158,6 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
   lay->setColStretch( 8,  1);
   lay->setColStretch( 9,  0);
   lay->setColStretch(10,  0);
-  //CT
 
   titlebarFrame = new QFrame(this, "testframe");
   titlebarFrame ->setFrameStyle(QFrame::WinPanel | QFrame::Raised );
@@ -906,12 +904,10 @@ void TitlebarPreview::paintEvent( QPaintEvent * )
 }
 
 // appearance dialog
-//CT 21Oct1998 - voided
 KTitlebarAppearance::~KTitlebarAppearance ()
 {
 }
 
-//CT 21Oct1998 - rewritten
 KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   : KConfigWidget (parent, name)
 {
@@ -943,7 +939,6 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   pixLay->activate();
 
   lay->addMultiCellWidget(alignBox,0,0,0,1);
-  //CT
 
   //CT 02Dec1998 - foul changes for some weird options
   appearBox = new QGroupBox(i18n("Appearance"), 
@@ -956,7 +951,6 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   titlebarBox->setFrameStyle(QFrame::NoFrame);
 
   QBoxLayout *pushLay = new QVBoxLayout (titlebarBox,10,5);
-  //CT
 
   bShaded = new QRadioButton(i18n("Gradient"), titlebarBox);
   pushLay->addWidget(bShaded);
@@ -1079,19 +1073,12 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   lDblClick->setMinimumSize(lDblClick->size());
   pixLay->addWidget(lDblClick,1,0);
 
-  //CT 11feb98 - Title double click
-  
   // I commented some stuff out, since it does not make sense (Matthias 23okt98)
   dblClickCombo = new QComboBox(FALSE, titlebarDblClickBox);
   dblClickCombo->insertItem(i18n("(Un)Maximize"),DCTB_MAXIMIZE);
   dblClickCombo->insertItem(i18n("(Un)Shade"),DCTB_SHADE);
   dblClickCombo->insertItem(i18n("Iconify"),DCTB_ICONIFY);
   dblClickCombo->insertItem(i18n("(Un)Sticky"),DCTB_STICKY);
-//   dblClickCombo->insertItem(i18n("Move"),DCTB_MOVE);
-//   dblClickCombo->insertItem(i18n("Resize"),DCTB_RESIZE);
-//   dblClickCombo->insertItem(i18n("Restore"),DCTB_RESTORE);
-//   dblClickCombo->insertItem(i18n("Operations Menu"),
-// 			    DCTB_OPERATIONS);
   dblClickCombo->insertItem(i18n("Close"),DCTB_CLOSE);
   dblClickCombo->setCurrentItem( DCTB_MAXIMIZE );
 
@@ -1102,8 +1089,6 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   pixLay->activate();
 
   lay->addMultiCellWidget(titlebarDblClickBox,2,2,0,1);
-
-  //CT ---
 
   // titlebar animation
   animBox = new QGroupBox(i18n("Title animation"),
@@ -1258,26 +1243,22 @@ void KTitlebarAppearance::setDCTBAction(int action)
 {
   dblClickCombo->setCurrentItem(action);
 }
-//CT ---
 
 void KTitlebarAppearance::SaveSettings( void )
 {
 
   config->setGroup( "General" );
 
-  //CT 06Nov1998
   int t = getAlign();
   if (t == AT_MIDDLE) config->writeEntry(KWM_TITLEALIGN, "middle");
   else if (t == AT_RIGHT) config->writeEntry(KWM_TITLEALIGN, "right");
   else config->writeEntry(KWM_TITLEALIGN, "left");
-  //CT
 
   //CT 02Dec1998 - optional shaded frame on titlebar
   config->writeEntry(KWM_TITLEFRAME, getFramedTitle()?"yes":"no");
 
   //CT 02Dec1998 - optional pixmap under the title text
   config->writeEntry(KWM_PIXMAP_TEXT, getPixedText()?"yes":"no");
-  //CT
 
   t = getTitlebar();
   if (t == TITLEBAR_SHADED)
@@ -1303,11 +1284,6 @@ void KTitlebarAppearance::SaveSettings( void )
     config->writeEntry(KWM_TITLEBARLOOK, "pixmap");
   else
     config->writeEntry(KWM_TITLEBARLOOK, "plain");
-
-  /*CT 18Oct1998 - these are no more needed
-  config->writeEntry("TitlebarPixmapActive", sPixmapActive);
-  config->writeEntry("TitlebarPixmapInactive", sPixmapInactive);
-  */
 
   //CT 18Oct1998 - save the pixmaps
   if (t == TITLEBAR_PIXMAP ) {
@@ -1354,27 +1330,15 @@ void KTitlebarAppearance::SaveSettings( void )
 			    i18n("&Ok"));
     }
   }
-  //CT
 
   int a = getTitleAnim();
   config->writeEntry(KWM_TITLEANIMATION, a);
 
-  //CT 11feb98 action on double click on titlebar
   a = getDCTBAction();
   switch (a) {
-    //CT 23Oct1998 took out useless checks
-    /*  case DCTB_MOVE:
-    config->writeEntry(KWM_DCTBACTION, "winMove");
-    break;
-  case DCTB_RESIZE:
-    config->writeEntry(KWM_DCTBACTION, "winResize");
-    break;*/
   case DCTB_MAXIMIZE:
     config->writeEntry(KWM_DCTBACTION, "winMaximize");
     break;
-    /*  case DCTB_RESTORE:
-    config->writeEntry(KWM_DCTBACTION, "winRestore");
-    break;*/
   case DCTB_ICONIFY:
     config->writeEntry(KWM_DCTBACTION, "winIconify");
     break;
@@ -1387,13 +1351,9 @@ void KTitlebarAppearance::SaveSettings( void )
   case DCTB_SHADE:
     config->writeEntry(KWM_DCTBACTION, "winShade");
     break;
-    /*  case DCTB_OPERATIONS:
-    config->writeEntry(KWM_DCTBACTION, "winOperations");
-    break;*/
   //CT should never get here
   default:     config->writeEntry(KWM_DCTBACTION, "winMaximize");
   }
-  //CT ---
 
   config->sync();
 
@@ -1407,49 +1367,49 @@ void KTitlebarAppearance::setGradient(const QString & grad_name)
   if (grad_name == i18n("Vertical"))
   {
     gradient = VERT;
-    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
 			    KPixmapEffect::VerticalGradient);
   }
   else if (grad_name == i18n("Horizontal"))
   {
     gradient = HORIZ;
-    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
 			    KPixmapEffect::HorizontalGradient);
   }
   else if (grad_name == i18n("Diagonal"))
   {
     gradient = DIAG;
-    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
 			    KPixmapEffect::DiagonalGradient);
   }
   else if (grad_name == i18n("CrossDiagonal"))
   {
     gradient = CROSSDIAG;
-    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
 			    KPixmapEffect::CrossDiagonalGradient);
   }
   else if (grad_name == i18n("Pyramid"))
   {
     gradient = PYRAM;
-    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
 			    KPixmapEffect::PyramidGradient);
   }
   else if (grad_name == i18n("Rectangle"))
   {
     gradient = RECT;
-    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
 			    KPixmapEffect::RectangleGradient);
   }
   else if (grad_name == i18n("PipeCross"))
   {
     gradient = PIPE;
-    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
 			    KPixmapEffect::PipeCrossGradient);
   }
   else if (grad_name == i18n("Elliptic"))
   {
     gradient = ELLIP;
-    KPixmapEffect::gradient(gradPix, Qt::black, Qt::blue, 
+    KPixmapEffect::gradient(gradPix, cTitle, cBlend, 
 			    KPixmapEffect::EllipticGradient);
   }
 
@@ -1467,19 +1427,12 @@ void KTitlebarAppearance::GetSettings( void )
   if( key == "middle" ) setAlign(AT_MIDDLE);
   else if ( key == "right" ) setAlign(AT_RIGHT);
   else setAlign(AT_LEFT);
-  //CT
 
   //CT 02Dec1998 - optional shaded frame on titlebar
-  key = config->readEntry(KWM_TITLEFRAME);
-  if (key == "no") setFramedTitle(false);
-  else setFramedTitle(true);
-  //CT
+  setFramedTitle(config->readBoolEntry(KWM_TITLEFRAME, true));
 
   //CT 02Dec1998 - optional pixmap under the title text
-  key = config->readEntry(KWM_PIXMAP_TEXT);
-  if (key == "no") setPixedText(false);
-  else setPixedText (true);
-  //CT
+  setPixedText(config->readBoolEntry(KWM_PIXMAP_TEXT, true));
 
   key = config->readEntry(KWM_TITLEBARLOOK);
   if( key.find("shaded") != -1)
@@ -1514,24 +1467,21 @@ void KTitlebarAppearance::GetSettings( void )
   pbPixmapInactive->setPixmap(pixmapInactiveOld =
 			      Icon( sPixmapInactive ));
 
-
-  int k = config->readNumEntry(KWM_TITLEANIMATION,0);
-  setTitleAnim(k);
+  setTitleAnim(config->readNumEntry(KWM_TITLEANIMATION,0));
 
   key = config->readEntry(KWM_DCTBACTION);
-  //CT 23Oct1998 continue what Matthias started 
-  //   took out useless checks
-  //  if (key == "winMove") setDCTBAction(DCTB_MOVE);
-  //  else if (key == "winResize") setDCTBAction(DCTB_RESIZE);
-  /*else*/ if (key == "winMaximize") setDCTBAction(DCTB_MAXIMIZE);
-  //  else if (key == "winRestore") setDCTBAction(DCTB_RESTORE);
+  if (key == "winMaximize") setDCTBAction(DCTB_MAXIMIZE);
   else if (key == "winIconify") setDCTBAction(DCTB_ICONIFY);
   else if (key == "winClose") setDCTBAction(DCTB_CLOSE);
   else if (key == "winSticky") setDCTBAction(DCTB_STICKY);
   else if (key == "winShade") setDCTBAction(DCTB_SHADE);
-  //  else if (key == "winOperations") setDCTBAction(DCTB_OPERATIONS);
   else setDCTBAction(DCTB_MAXIMIZE);
 
+  // load titleBar colors
+  config->setGroup("WM");
+
+  cTitle = config->readColorEntry("activeBackground", &darkBlue);
+  cBlend = config->readColorEntry("activeBlend", &black);
 }
 
 void KTitlebarAppearance::loadSettings()
