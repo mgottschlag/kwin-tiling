@@ -99,7 +99,6 @@ void KLocaleSample::slotUpdateTime()
 
 void KLocaleSample::slotLocaleChanged()
 {
-  printf("sample::slotLocaleChanged\n");
   m_numberSample->setText(m_locale->formatNumber(1234567.89) +
 			QString::fromLatin1(" / ") +
 			m_locale->formatNumber(-1234567.89));

@@ -1,3 +1,4 @@
+#undef NDEBUG
 /*
  * klanguagebutton.cpp - Adds some methods for inserting languages.
  *
@@ -34,14 +35,12 @@
 static inline void checkInsertPos( QPopupMenu *popup, const QString & str,
                                    int &index )
 {
-  if ( index == -2 )
-    index = popup->count();
-  if ( index != -1 )
+  if ( index == -1 )
     return;
 
   int a = 0;
   int b = popup->count();
-  while ( a <= b )
+  while ( a < b )
   {
     int w = ( a + b ) / 2;
 
@@ -51,10 +50,12 @@ static inline void checkInsertPos( QPopupMenu *popup, const QString & str,
     if ( j > 0 )
       a = w + 1;
     else
-      b = w - 1;
+      b = w;
   }
 
   index = a; // it doesn't really matter ... a == b here.
+
+  ASSERT( a == b );
 }
 
 static inline QPopupMenu * checkInsertIndex( QPopupMenu *popup,

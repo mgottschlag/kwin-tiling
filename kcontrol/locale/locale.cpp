@@ -121,8 +121,8 @@ void KLocaleConfig::loadLanguageList()
 	  m_comboLanguage->insertSeparator();
 	  submenu = QString::fromLatin1("other");
 	  m_comboLanguage->insertSubmenu(m_locale->translate("Other"),
-					 submenu, QString::null, -2);
-          menu_index = -1; // first entries should _not_ be sorted
+					 submenu, QString::null, -1);
+          menu_index = -2; // first entries should _not_ be sorted
           continue;
         }
       KSimpleConfig entry(*it);
@@ -175,7 +175,7 @@ void KLocaleConfig::loadCountryList()
     QString name = entry.readEntry(QString::fromLatin1("Name"),
 				   m_locale->translate("without name"));
 
-    m_comboCountry->insertSubmenu( name, '-' + tag, sub );
+    m_comboCountry->insertSubmenu( name, tag, sub, -2 );
   }
 
   // add all languages to the list
@@ -190,14 +190,14 @@ void KLocaleConfig::loadCountryList()
       entry.setGroup(QString::fromLatin1("KCM Locale"));
       QString name = entry.readEntry(QString::fromLatin1("Name"),
 				     m_locale->translate("without name"));
-      QString submenu = '-' + entry.readEntry(QString::fromLatin1("Region"));
+      QString submenu = entry.readEntry(QString::fromLatin1("Region"));
       
       QString tag = *it;
       int index = tag.findRev('/');
       tag.truncate(index);
       index = tag.findRev('/');
       tag = tag.mid(index+1);
-      int menu_index = m_comboCountry->containsTag(tag) ? -1 : -2;
+      int menu_index = submenu.isEmpty() ? -1 : -2;
 
       QPixmap flag( locate( "locale",
 			    QString::fromLatin1( "l10n/%1/flag.png" )
@@ -218,11 +218,7 @@ void KLocaleConfig::readLocale(const QString &path, QString &name,
   KGlobal::_locale = m_locale;
 
   // read the name
-  QString filepath = sub;
-  if (path.at(0) == '-')
-    filepath += path.mid(1) + QString::fromLatin1(".desktop");
-  else
-    filepath += path + QString::fromLatin1("/entry.desktop");
+  QString filepath = sub + path + QString::fromLatin1(".desktop");
 
   KSimpleConfig entry(locate("locale", filepath));
   entry.setGroup(QString::fromLatin1("KCM Locale"));
@@ -289,8 +285,6 @@ QStringList KLocaleConfig::languageList() const
 			    QString::fromLatin1("l10n/%1/entry.desktop")
 			    .arg(m_locale->country()));
 
-  kdDebug() << "fileName: " << fileName << endl;
-  
   KSimpleConfig entry(fileName);
   entry.setGroup(QString::fromLatin1("KCM Locale"));
 

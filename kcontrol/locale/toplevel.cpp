@@ -181,7 +181,7 @@ void KLocaleApplication::save()
 void KLocaleApplication::defaults()
 {
   // #### HPB: Do not use user config here..
-  m_locale->setLanguage(QString::fromLatin1("C"));
+  m_locale->setLanguage(QString::fromLatin1("en_US"));
   m_locale->setCountry(QString::fromLatin1("C"));
   m_locale->setDefaultsOnly( true );
 
@@ -201,8 +201,6 @@ QString KLocaleApplication::quickHelp() const
 
 void KLocaleApplication::slotTranslate()
 {
-  printf("KLocaleApp::slotTranslate\n");
-
   // The untranslated string for QLabel are stored in
   // the name() so we use that when retranslating
   QObject *wc;
