@@ -438,5 +438,6 @@ void KKeyModule::init()
 #include "../../kxkb/kxkbbindings.cpp"
   keys->setConfigGlobal( true );
   keys->setConfigGroup( "Global Keys" );
+  keys->readSettings();
   keys->writeSettings();
 }
