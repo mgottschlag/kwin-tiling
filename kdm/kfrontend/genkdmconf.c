@@ -380,16 +380,15 @@ const char def_startup[] =
 "#! /bin/sh\n"
 "# Xstartup - run as root before session starts\n"
 "\n"
+"PIDFILE=/var/run/kdmdesktop-$DISPLAY.pid\n"
+"test -f $PIDFILE && kill `cat $PIDFILE`\n"
+"\n"
 "# By convention, both xconsole and xterm -C check that the\n"
 "# console is owned by the invoking user and is readable before attaching\n"
 "# the console output.  This way a random user can invoke xterm -C without\n"
 "# causing serious grief.\n"
 "# This is not required if you use PAM, as pam_console should handle it.\n"
 "#\n"
-"\n"
-"PIDFILE=/var/run/kdmdesktop-$DISPLAY.pid\n"
-"test -f $PIDFILE && kill `cat $PIDFILE`\n"
-"\n"
 #ifdef HAVE_PAM
 "#chown $USER /dev/console\n"
 #else
@@ -1358,8 +1357,8 @@ handFile (Entry *ce)
 	return;
     sprintf (nname, "%s/%s", newdir, bname + 1);
 
-    if (stat (fname, &st)) {
-	if (ce->written)
+    if (no_old || stat (fname, &st)) {
+	if (!no_old && ce->written)
 	    fprintf (stderr, "Warning: file %s not found\n", fname);
 	if (ce->spec->param) {
 	    f = Create (nname, mode);
