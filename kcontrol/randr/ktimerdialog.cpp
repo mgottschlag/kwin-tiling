@@ -112,7 +112,7 @@ void KTimerDialog::setRefreshInterval( int msec )
         updateTimer->changeInterval( updateInterval );
 }
 
-int KTimerDialog::timeoutButton()
+int KTimerDialog::timeoutButton() const
 {
     return buttonOnTimeout;
 }
@@ -122,7 +122,7 @@ void KTimerDialog::setTimeoutButton( const ButtonCode newButton )
     buttonOnTimeout = newButton;
 }
 
-int KTimerDialog::timerStyle()
+int KTimerDialog::timerStyle() const
 {
     return tStyle;
 }

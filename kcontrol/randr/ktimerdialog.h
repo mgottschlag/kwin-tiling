@@ -95,7 +95,7 @@ class KTimerDialog : public KDialogBase
      * Retrieves the @ref ButtonCode which will be activated once the timer
      * times out. @see setTimeoutButton
      */
-    int timeoutButton();
+    int timeoutButton() const;
 
     /**
      * Sets the @ref ButtonCode to determine which button will be activated
@@ -106,7 +106,7 @@ class KTimerDialog : public KDialogBase
     /**
      * Retrieves the current @ref TimerStyle. @see setTimerStyle
      */
-    int timerStyle();
+    int timerStyle() const;
 
     /**
      * Sets the @ref TimerStyle. @see timerStyle
