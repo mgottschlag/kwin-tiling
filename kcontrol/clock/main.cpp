@@ -24,6 +24,8 @@
 #include <qlabel.h>
 #include <qlayout.h>
 
+#include <dcopclient.h>
+#include <kapp.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kcmodule.h>
@@ -36,34 +38,44 @@
 
 KclockModule::KclockModule(QWidget *parent, const char *name)
   : KCModule(parent, name)
-{ 
+{
   QVBoxLayout *layout = new QVBoxLayout(this);
   tab = new QTabWidget(this);
   layout->addWidget(tab, 1);
-  
+
   dtime = new Dtime(this);
   tab->addTab(dtime, i18n("Date && Time"));
   connect(dtime, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  // TODO: Time Zone is badly broken right now
-  // Just disable
-  //  tzone = new Tzone(this);
-  //  tab->addTab(tzone, i18n("Time Zone"));
-  //  connect(tzone, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+  tzone = new Tzone(this);
+  tab->addTab(tzone, i18n("Time Zone"));
+  connect(tzone, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  setButtons(Help|Reset|Cancel|Apply|Ok);
+//	removing the Apply button to fix the time sync problem:CFR
+//  setButtons(Help|Reset|Cancel|Apply|Ok);
+  setButtons(Help|Reset|Cancel|Ok);
 }
 
 void KclockModule::save()
 {
   dtime->save();
-  //  tzone->save();
+  tzone->save();
+
+	// restart kicker to sync up the time
+	if (!kapp->dcopClient()->isAttached())
+	{
+		kapp->dcopClient()->attach();
+	}
+
+	QByteArray data;
+	kapp->dcopClient()->send( "kicker", "Panel", "restart()", data );
+
 }
 
 void KclockModule::load()
 {
   dtime->load();
-  //  tzone->load();
+  tzone->load();
 }
 
 QString KclockModule::quickHelp()

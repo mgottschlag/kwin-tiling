@@ -39,8 +39,11 @@ protected slots:
   
 private:
   void  fillTimeZones();
-  
+	void	getCurrentZone(char* szString);
+
   QComboBox       *tzonelist;
+	QLabel					*currentzonetitle;
+	QLabel          *currentzone;
   QString         BufS;
   int             pos;
 };
