@@ -100,6 +100,7 @@ void LookAndFeelTab::launchAdvancedDialog()
 {
     advancedDialog* dialog = new advancedDialog(this, "advancedDialog");
     dialog->exec();
+    delete dialog;
 }
 
 void LookAndFeelTab::enableTransparency( bool enable )
