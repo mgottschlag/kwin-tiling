@@ -36,7 +36,7 @@
 
 /**** DLL Interface ****/
 typedef KGenericFactory<KFonts, QWidget> FontFactory;
-K_EXPORT_COMPONENT_FACTORY( libkcm_fonts, FontFactory("kcmfonts") );
+K_EXPORT_COMPONENT_FACTORY( kcm_fonts, FontFactory("kcmfonts") );
 
 /**** FontUseItem ****/
 

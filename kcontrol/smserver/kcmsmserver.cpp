@@ -33,7 +33,7 @@
 #include "smserverconfigimpl.h"
 
 typedef KGenericFactory<SMServerConfig, QWidget > SMSFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_smserver, SMSFactory("kcmsmserver") );
+K_EXPORT_COMPONENT_FACTORY (kcm_smserver, SMSFactory("kcmsmserver") );
 
 SMServerConfig::SMServerConfig( QWidget *parent, const char* name, const QStringList & )
   : KCModule (SMSFactory::instance(), parent, name)

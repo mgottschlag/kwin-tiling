@@ -29,7 +29,7 @@
 #include "spellchecking.h"
 
 typedef KGenericFactory<KSpellCheckingConfig, QWidget > SpellFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_spellchecking, SpellFactory("kcmspellchecking") );
+K_EXPORT_COMPONENT_FACTORY (kcm_spellchecking, SpellFactory("kcmspellchecking") );
 
 
 KSpellCheckingConfig::KSpellCheckingConfig(QWidget *parent, const char *name, const QStringList &):

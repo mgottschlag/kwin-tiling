@@ -46,7 +46,7 @@
 #include <sys/ioctl.h>
 
 typedef KGenericFactory<KCMNic, QWidget > KCMNicFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_nic, KCMNicFactory("kcmnic") );
+K_EXPORT_COMPONENT_FACTORY (kcm_nic, KCMNicFactory("kcmnic") );
 
 struct MyNIC
 {

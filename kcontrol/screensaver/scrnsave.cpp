@@ -59,7 +59,7 @@ template class QPtrList<SaverConfig>;
 //===========================================================================
 // DLL Interface for kcontrol
 typedef KGenericFactory<KScreenSaver, QWidget > KSSFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_screensaver, KSSFactory("kcmscreensaver") );
+K_EXPORT_COMPONENT_FACTORY (kcm_screensaver, KSSFactory("kcmscreensaver") );
 
 
 static QString findExe(const QString &exe) {

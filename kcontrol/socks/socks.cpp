@@ -38,7 +38,7 @@
 #include <kaboutdata.h>
 
 typedef KGenericFactory<KSocksConfig, QWidget > SocksFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_socks, SocksFactory("kcmsocks") );
+K_EXPORT_COMPONENT_FACTORY (kcm_socks, SocksFactory("kcmsocks") );
 
 KSocksConfig::KSocksConfig(QWidget *parent, const char *name, const QStringList &)
   : KCModule(SocksFactory::instance(), parent, name)

@@ -67,7 +67,7 @@ extern "C" {
 }
 
 typedef KGenericFactory<KArtsModule, QWidget> KArtsModuleFactory;
-K_EXPORT_COMPONENT_FACTORY( libkcm_arts, KArtsModuleFactory( "kcmarts" ) );
+K_EXPORT_COMPONENT_FACTORY( kcm_arts, KArtsModuleFactory( "kcmarts" ) );
 
 /*
  * This function uses artsd -A to init audioIOList with the possible audioIO

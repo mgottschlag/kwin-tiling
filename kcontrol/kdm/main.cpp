@@ -45,7 +45,7 @@
 #include <kgenericfactory.h>
 
 typedef KGenericFactory<KDModule, QWidget> KDMFactory;
-K_EXPORT_COMPONENT_FACTORY( libkcm_kdm, KDMFactory("kdmconfig") );
+K_EXPORT_COMPONENT_FACTORY( kcm_kdm, KDMFactory("kdmconfig") );
 
 KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 {

@@ -32,7 +32,7 @@
 #include "midi.h"
 
 typedef KGenericFactory<KMidConfig, QWidget > KMidFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_midi, KMidFactory("kcmmidi") );
+K_EXPORT_COMPONENT_FACTORY (kcm_midi, KMidFactory("kcmmidi") );
 
 KMidConfig::KMidConfig(QWidget *parent, const char *name, const QStringList &)
   : KCModule(KMidFactory::instance(), parent, name)

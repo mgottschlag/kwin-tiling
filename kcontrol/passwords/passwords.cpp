@@ -31,7 +31,7 @@
  * DLL interface.
  */
 typedef KGenericFactory<KPasswordConfig, QWidget > PassFactory;
-K_EXPORT_COMPONENT_FACTORY (libkcm_passwords, PassFactory("passwords") );
+K_EXPORT_COMPONENT_FACTORY (kcm_passwords, PassFactory("passwords") );
 
 
 

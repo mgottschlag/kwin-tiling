@@ -22,7 +22,7 @@
 #include "toplevel.h"
 #include <klocale.h>
 
-K_EXPORT_COMPONENT_FACTORY (libkcm_locale, KLocaleFactory("kcmlocale") );
+K_EXPORT_COMPONENT_FACTORY (kcm_locale, KLocaleFactory("kcmlocale") );
 /*
 extern "C" {
   KCModule *create_locale(QWidget *parent, const char* name) {

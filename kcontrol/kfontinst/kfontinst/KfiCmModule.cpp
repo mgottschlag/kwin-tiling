@@ -43,7 +43,7 @@
 #include <kgenericfactory.h>
 
 typedef KGenericFactory<CKfiCmModule, QWidget> FontInstallFactory;
-K_EXPORT_COMPONENT_FACTORY( libkcm_fontinst, FontInstallFactory );
+K_EXPORT_COMPONENT_FACTORY( kcm_fontinst, FontInstallFactory );
 #endif
 
 static bool firstTime=true;

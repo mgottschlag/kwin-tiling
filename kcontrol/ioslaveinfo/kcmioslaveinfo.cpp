@@ -45,7 +45,7 @@
 #include <kgenericfactory.h>
 
 typedef KGenericFactory<KCMIOSlaveInfo, QWidget> SlaveFactory;
-K_EXPORT_COMPONENT_FACTORY( libkcm_ioslaveinfo, SlaveFactory("kcmioslaveinfo") );
+K_EXPORT_COMPONENT_FACTORY( kcm_ioslaveinfo, SlaveFactory("kcmioslaveinfo") );
 
 KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringList &)
                :KCModule(SlaveFactory::instance(), parent,name),m_ioslavesLb(0)
