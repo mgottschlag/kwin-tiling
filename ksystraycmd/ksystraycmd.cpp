@@ -3,6 +3,7 @@
 #include <qimage.h>
 #include <qregexp.h>
 
+#include <kdebug.h>
 #include <kapplication.h>
 #include <kglobal.h>
 #include <kiconloader.h>
@@ -40,9 +41,6 @@ KSysTrayCmd::~KSysTrayCmd()
 
 bool KSysTrayCmd::start()
 {
-  if ( !window.isEmpty() )
-    kwinmodule->doNotManage( window );
-
   // If we have no command we must catching an existing window
   if ( !command ) {
       if ( win ) {
