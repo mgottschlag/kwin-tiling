@@ -3,6 +3,7 @@ Encoding=UTF-8
 Exec=kcmshell nic
 Type=Application
 DocPath=kcontrol/net-interfaces.html
+Icon=network
 
 X-KDE-ModuleType=Library
 X-KDE-Library=nic
@@ -12,6 +13,7 @@ Name=Network interfaces
 Name[af]=netwerk koppelvlakke
 Name[ar]=واجهات الشبكة
 Name[az]=Şəbəkə ara üzləri
+Name[be]=Сеткавыя інтэрфэйсы
 Name[bg]=Мрежови интерфейси
 Name[cs]=Síťová rozhraní
 Name[da]=Netværksgrænseflader
