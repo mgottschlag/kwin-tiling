@@ -423,11 +423,6 @@ void Task::restore()
 void Task::iconify()
 {
     XIconifyWindow( qt_xdisplay(), _win, qt_xscreen() );
-
-    if (_info.state & NET::Max) {
-        NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
-        ni.setState( 0, NET::Max );
-    }
 }
 
 void Task::close()
