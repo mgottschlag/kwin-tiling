@@ -24,7 +24,6 @@
 #include <qimage.h>
 #include <qfileinfo.h>
 #include <kcolorbtn.h>
-#include <kfm.h>
 #include <kurl.h>
 #include <drag.h>
 

@@ -28,7 +28,6 @@
 #include <qradiobutton.h>
 #include <qcheckbox.h>
 
-#include <kfm.h>
 #include <drag.h>
 #include <kcolorbtn.h>
 #include <kurl.h>
