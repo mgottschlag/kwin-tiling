@@ -373,6 +373,25 @@ QString CFontEngine::spacingStr(enum ESpacing s)
     }
 }
 
+bool CFontEngine::isScaleable()
+{
+    switch(itsType)
+    {
+        case TRUE_TYPE:
+        case TT_COLLECTION:
+        case OPEN_TYPE:
+        case TYPE_1:
+            return itsFt.open && FT_IS_SCALABLE(itsFt.face);
+        case SPEEDO:
+            return true;
+        case PCF:
+        case BDF:
+        case SNF:
+        default:
+            return false;
+    }
+}
+
 QStringList CFontEngine::getEncodings()
 {
     switch(itsType)
@@ -544,8 +563,10 @@ void CFontEngine::setPreviewString(const QString &str)
 
 #define FONT_CHAR_SIZE_MOD 0.75
 
-void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo, int fSize, bool thumb)
+void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo, int fSize, bool thumb, bool waterfall)
 {
+    static const int constWaterFallSizes[]={ 12, 18, 24, 36, 48, 60, 72, 84, 96, 108, 120, 0 };
+
     FT_Size          size;
     FT_Face          face;
 #if KFI_FT_IS_GE(2, 1, 8)
@@ -555,7 +576,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
     FTC_Image_Desc   font;
 #endif
     bool             isBitmap=isABitmap(itsType);
-    int              fontSize=fSize<0 || thumb ? 28 : fSize,
+    int              fontSize=waterfall ? constWaterFallSizes[0] : fSize<0 || thumb ? 28 : fSize,
                      offset=4,
                      space=8,
                      fontHeight;
@@ -619,10 +640,10 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
             info=name.mid(pos);
             name=name.left(pos);
         }
-        else if(fSize>0)
-            name+=i18n(", %1pt / %2pt").arg(fSize).arg((int)(fSize*FONT_CHAR_SIZE_MOD));
+        else if(!waterfall && fSize>0)
+            name=i18n("%3, %1pt / %2pt").arg(fSize).arg((int)(fSize*FONT_CHAR_SIZE_MOD)).arg(name);
 
-        title.setPixelSize(12);
+        // title.setPixelSize(12);
         painter.setFont(title);
         painter.setPen(Qt::black);
         y=painter.fontMetrics().height();
@@ -639,6 +660,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
         y+=2;
         y+=startY;
     }
+
 #if KFI_FT_IS_GE(2, 1, 8)
     if(!FTC_Manager_LookupFace(itsFt.cacheManager, scaler.face_id, &face) &&
        !FTC_Manager_LookupSize(itsFt.cacheManager, &scaler, &size))
@@ -646,7 +668,6 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
     if(!FTC_Manager_Lookup_Size(itsFt.cacheManager, &(font.font), &face, &size))
 #endif
     {
-        int        i;
         FT_F26Dot6 stepY=size->metrics.y_ppem+offset;
 
         if(thumb)
@@ -663,7 +684,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
                         break;
             }
             else
-                for(i=1; i<face->num_glyphs; ++i)  // Glyph 0 is the NULL glyph
+                for(int i=1; i<face->num_glyphs; ++i)  // Glyph 0 is the NULL glyph
                     if(drawGlyph(pix, font, i, x, y, width, height, startX, stepY))
                         break;
         }
@@ -676,10 +697,54 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
             {
                 unsigned int ch;
 
-                for(ch=0; ch<quote.length(); ++ch)
-                    if(drawGlyph(pix, font, FT_Get_Char_Index(face, quote[ch].unicode()), x, y, width, height, startX,
-                                 stepY, space))
-                        break;
+                if(waterfall)
+                {
+                    painter.setFont(KGlobalSettings::generalFont());
+                    painter.setPen(Qt::black);
+
+                    for(int s=0; constWaterFallSizes[s]; ++s)
+                    {
+                        QString txt(i18n("%1pt ").arg(constWaterFallSizes[s]));
+                        bool    ok=true;
+
+                        drawText(painter, x, y, width, txt);
+                        x+=painter.fontMetrics().width(txt);
+
+                        if(s)
+                        {
+#if KFI_FT_IS_GE(2, 1, 8)
+                            font.width=font.height=point2Pixel(constWaterFallSizes[s]);
+                            scaler.width=scaler.height=font.width;
+#else
+                            font.font.pix_width=font.font.pix_height=point2Pixel(constWaterFallSizes[s]);
+#endif
+
+#if KFI_FT_IS_GE(2, 1, 8)
+                            ok=(!FTC_Manager_LookupFace(itsFt.cacheManager, scaler.face_id, &face) &&
+                                !FTC_Manager_LookupSize(itsFt.cacheManager, &scaler, &size));
+#else
+                            ok=!FTC_Manager_Lookup_Size(itsFt.cacheManager, &(font.font), &face, &size);
+#endif
+                            stepY=size->metrics.y_ppem+offset;
+                        }
+                        if(ok)
+                        {
+                            for(ch=0; ch<quote.length(); ++ch)
+                                if(drawGlyph(pix, font, FT_Get_Char_Index(face, quote[ch].unicode()), x, y, width, height,
+                                             startX, stepY, space, false))
+                                    break;
+                            if(y>=height)
+                                break;
+                            x=startX;
+                            y+=stepY*2;
+                        }
+                    }
+                }
+                else
+                    for(ch=0; ch<quote.length(); ++ch)
+                        if(drawGlyph(pix, font, FT_Get_Char_Index(face, quote[ch].unicode()), x, y, width, height, startX,
+                                     stepY, space))
+                            break;
             }
 
             if(!isBitmap)
@@ -699,7 +764,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
                !FTC_Manager_Lookup_Size(itsFt.cacheManager, &(font.font), &face, &size))
 #endif
             {
-                FT_F26Dot6 stepY=size->metrics.y_ppem+offset;
+                stepY=size->metrics.y_ppem+offset;
 
                 if(foundCmap)
                 {
@@ -716,7 +781,7 @@ void CFontEngine::createPreview(int width, int height, QPixmap &pix, int faceNo,
 #endif
                 }
 
-                for(i=1; i<face->num_glyphs; ++i)  // Glyph 0 is the NULL glyph
+                for(int i=1; i<face->num_glyphs; ++i)  // Glyph 0 is the NULL glyph
                     if(drawGlyph(pix, font, i, x, y, width, height, startX, stepY))
                         break;
             }
@@ -2638,11 +2703,11 @@ void CFontEngine::align32(Bitmap &bmp)
 #if KFI_FT_IS_GE(2, 1, 8)
 bool CFontEngine::drawGlyph(QPixmap &pix, FTC_ImageTypeRec &font, int glyphNum,
                             FT_F26Dot6 &x, FT_F26Dot6 &y, FT_F26Dot6 width, FT_F26Dot6 height,
-                            FT_F26Dot6 startX, FT_F26Dot6 stepY, int space)
+                            FT_F26Dot6 startX, FT_F26Dot6 stepY, int space, bool multiLine)
 #else
 bool CFontEngine::drawGlyph(QPixmap &pix, FTC_Image_Desc &font, int glyphNum,
                             FT_F26Dot6 &x, FT_F26Dot6 &y, FT_F26Dot6 width, FT_F26Dot6 height,
-                            FT_F26Dot6 startX, FT_F26Dot6 stepY, int space)
+                            FT_F26Dot6 startX, FT_F26Dot6 stepY, int space, bool multiLine)
 #endif
 {
     int        left,
@@ -2655,6 +2720,9 @@ bool CFontEngine::drawGlyph(QPixmap &pix, FTC_Image_Desc &font, int glyphNum,
     {
         if(x+xAdvance+1>width)
         {
+            if(!multiLine)
+                return true;
+
             x=startX;
             y+=stepY;
 

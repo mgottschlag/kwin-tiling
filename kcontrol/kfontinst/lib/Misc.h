@@ -35,7 +35,6 @@
 #include <time.h>
 #include <qstring.h>
 #include <qstringlist.h>
-#include <kstandarddirs.h>
 
 class CMisc
 {
@@ -58,7 +57,7 @@ class CMisc
     static QString xDirSyntax(const QString &d);
     static QString getDir(const QString &f);
     static QString getFile(const QString &f);
-    static bool    createDir(const QString &dir) { return KStandardDirs::makeDir(dir); }
+    static bool    createDir(const QString &dir);
     static bool    doCmd(const QString &cmd, const QString &p1=QString::null, const QString &p2=QString::null, const QString &p3=QString::null);
     static QString changeExt(const QString &f, const QString &newExt);
     static QString afmName(const QString &f)     { return changeExt(f, "afm"); }

@@ -52,9 +52,10 @@
 #endif
 
 // Config file...
-#define KFI_PREVIEW_GROUP      "Preview Settings"
-#define KFI_PREVIEW_STRING_KEY "String"
-#define KFI_PREVIEW_SIZE_KEY   "Size"
+#define KFI_PREVIEW_GROUP         "Preview Settings"
+#define KFI_PREVIEW_STRING_KEY    "String"
+#define KFI_PREVIEW_SIZE_KEY      "Size"
+#define KFI_PREVIEW_WATERFALL_KEY "Waterfall"
 
 // OK - some macros to make determining the FreeType version easier...
 #define KFI_FREETYPE_VERSION      KDE_MAKE_VERSION(FREETYPE_MAJOR, FREETYPE_MINOR, FREETYPE_PATCH)
@@ -253,6 +254,7 @@ class CFontEngine
     bool            hasAfmInfo()      { return itsType<TYPE_1_AFM; }
     static bool     hasAfmInfo(const char *fname) { return getType(fname)<TYPE_1_AFM; }
 
+    bool            isScaleable();
     QStringList     getEncodings();
 
     static EWeight  strToWeight(const char *str);
@@ -264,7 +266,8 @@ class CFontEngine
     QString         getPreviewString();
     void            setPreviewString(const QString &str);
 
-    void            createPreview(int width, int height, QPixmap &pix, int faceNo=0, int fSize=-1, bool thumb=true);
+    void            createPreview(int width, int height, QPixmap &pix, int faceNo=0, int fSize=-1, bool thumb=true,
+                                  bool waterfall=false);
     static int      point2Pixel(int point)
     {
         return (point* /*QPaintDevice::x11AppDpiX()*/ 75 +36)/72;
@@ -348,10 +351,12 @@ class CFontEngine
 
 #if KFI_FT_IS_GE(2, 1, 8)
     bool       drawGlyph(QPixmap &pix, FTC_ImageTypeRec &font, int glyphNum, FT_F26Dot6 &x, FT_F26Dot6 &y,
-                         FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, int space=0);
+                         FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, int space=0,
+                         bool multiLine=true);
 #else
     bool       drawGlyph(QPixmap &pix, FTC_Image_Desc &font, int glyphNum, FT_F26Dot6 &x, FT_F26Dot6 &y,
-                         FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, int space=0);
+                         FT_F26Dot6 width, FT_F26Dot6 height, FT_F26Dot6 startX, FT_F26Dot6 stepY, int space=0,
+                         bool multiLine=true);
 #endif
 
 #endif

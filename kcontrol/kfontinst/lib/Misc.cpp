@@ -29,13 +29,13 @@
 #include "Misc.h"
 #include <kprocess.h>
 #include <klargefile.h>
+#include <kstandarddirs.h>
 #include <qdir.h>
 #include <qfile.h>
 #include <qcombobox.h>
 #include <qregexp.h>
 #include <ctype.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <utime.h>
 
 QString CMisc::linkedTo(const QString &i)
@@ -113,6 +113,17 @@ QString CMisc::getFile(const QString &f)
         d.remove(0, slashPos+1);
 
     return d;
+}
+
+bool CMisc::createDir(const QString &dir)
+{
+    //
+    // Clear any umask before dir is created
+    mode_t oldMask=umask(0000);
+    bool   status=KStandardDirs::makeDir(dir, DIR_PERMS);
+    // Reset umask
+    ::umask(oldMask);
+    return status;
 }
 
 bool CMisc::doCmd(const QString &cmd, const QString &p1, const QString &p2, const QString &p3)

@@ -932,7 +932,8 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                             fscale;
         const QStringList   *origfd=NULL,
                             *origfs=NULL;
-        bool                added=false;
+        bool                addedFd=false,
+                            addedFs=false;
  
         if(files)
         {
@@ -1037,7 +1038,7 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                                                  fscale.append(entry);
                                              if(-1==fdir.findIndex(entry))
                                                  fdir.append(entry);
-                                             added=true;
+                                             addedFd=addedFs=true;
 #ifndef HAVE_FONTCONFIG
                                              if(CFontEngine::isATtf(QFile::encodeName(fInfo->fileName())) &&
                                                 CEncodings::constTTSymbol==*it &&
@@ -1060,7 +1061,7 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                                  entry+=CGlobal::fe().getXlfdBmp().latin1();
                                  fdir.append(entry);
                                  CGlobal::fe().closeFont();
-                                 added=true;
+                                 addedFd=true;
                              }
                       }
                 }
@@ -1070,9 +1071,9 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
         //
         // Only output if we have added something, or the enumber of Xlfds is different (would mean a font was
         // removed)
-        if(added || fdir.count()!=fd.xlfdCount())
+        if(addedFd || fdir.count()!=fd.xlfdCount() || 0==fdir.count())
         {
-            KFI_DBUG << "Ouput fonts.dir, " << added << ' ' << fdir.count() << ' ' << fd.xlfdCount() << endl;
+            KFI_DBUG << "Ouput fonts.dir, " << addedFd << ' ' << fdir.count() << ' ' << fd.xlfdCount() << endl;
 
             ofstream fontsDotDir(QFile::encodeName(QString(dir+"fonts.dir")));
 
@@ -1089,9 +1090,9 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
             status=true;
         }
 
-        if(added || fscale.count()!=fs.xlfdCount())
+        if(addedFs || fscale.count()!=fs.xlfdCount())
         {
-            KFI_DBUG << "Ouput fonts.scale, " << added << ' ' << fscale.count() << ' ' << fs.xlfdCount() << endl;
+            KFI_DBUG << "Ouput fonts.scale, " << addedFs << ' ' << fscale.count() << ' ' << fs.xlfdCount() << endl;
 
             ofstream fontsDotScale(QFile::encodeName(QString(dir+"fonts.scale")));
 
