@@ -34,7 +34,7 @@ public:
     KExtendedCDialog(QWidget *parent=0, const char *name=0, bool modal=false);
     virtual ~KExtendedCDialog();
 
-    void addModule(const QString& module);
+    void addModule(const QString& module, bool withfallback=true);
 
 protected slots:
     virtual void slotDefault();

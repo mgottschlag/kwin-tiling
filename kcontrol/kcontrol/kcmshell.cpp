@@ -34,6 +34,7 @@
 #include <qxembed.h>
 #include <kiconloader.h>
 #include <kmessagebox.h>
+#include <klibloader.h>
 
 #include "kcdialog.h"
 #include "kecdialog.h"
@@ -178,8 +179,9 @@ int main(int _argc, char *_argv[])
             return ret;
         }
 
-        KMessageBox::error(0, i18n("There was an error loading the module. Please check console output"));
-
+        KMessageBox::error(0,
+                           i18n("There was an error loading the module.\nThe diagnostics is:\n%1")
+                           .arg(KLibLoader::self()->lastErrorMessage()));
         return 0;
     }
 
@@ -202,7 +204,7 @@ int main(int _argc, char *_argv[])
 
     // add modules
     for (QStringList::ConstIterator it = modules.begin(); it != modules.end(); ++it)
-        dlg->addModule(*it);
+        dlg->addModule(*it, false);
 
     // if we are going to be embedded, embed
     QCString embed = args->getOption("embed");

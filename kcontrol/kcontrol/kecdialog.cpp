@@ -25,6 +25,8 @@
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kiconloader.h>
+#include <kmessagebox.h>
+#include <klibloader.h>
 
 #include "kecdialog.h"
 #include "kecdialog.moc"
@@ -82,15 +84,20 @@ void KExtendedCDialog::clientChanged(bool state)
     enableButton(Apply, state);
 }
 
-void KExtendedCDialog::addModule(const QString& path)
+void KExtendedCDialog::addModule(const QString& path, bool withfallback)
 {
     kdDebug() << "KExtendedCDialog::addModule" << endl;
 
     // load the module
     ModuleInfo info(path);
-    KCModule *module = ModuleLoader::loadModule(info);
+    KCModule *module = ModuleLoader::loadModule(info, withfallback);
 
-    if (!module) return;
+    if (!module)
+    {
+        KMessageBox::error(this, i18n("There was an error loading module\n'%1'\nThe diagnostics is:\n%2")
+                           .arg(path).arg(KLibLoader::self()->lastErrorMessage()));
+        return;
+    }
     QHBox* page = addHBoxPage(info.name(), info.comment(),
                               KGlobal::iconLoader()->loadIcon(info.icon(), KIcon::Desktop, KIcon::SizeMedium));
     if(!page) {
