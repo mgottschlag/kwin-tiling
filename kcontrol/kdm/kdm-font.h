@@ -38,6 +38,8 @@ public:
 	void defaults();
 	void set_def();
 
+protected slots:
+    void configChanged();
 
 private slots:
         void slotGetFont();

@@ -76,6 +76,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   aacb = new QCheckBox (i18n("Use Anti-Aliasing for fonts"), mGroup);
   QWhatsThis::add( aacb, i18n("If you check this box and your X-Server has the Xft extension, "
 	"fonts will be antialiased (smoothed) in the login dialog.") );
+  connect(aacb, SIGNAL(toggled ( bool )),this,SLOT(configChanged()));
 
   QBoxLayout *ml = new QVBoxLayout(this, 10);
   ml->addWidget(tGroup);
@@ -92,6 +93,11 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
       fontcombo->setEnabled(false);
       aacb->setEnabled(false);
     }
+}
+
+void KDMFontWidget::configChanged()
+{
+    emit KCModule::changed(true);
 }
 
 

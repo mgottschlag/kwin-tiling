@@ -117,9 +117,9 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     userbutton->setAcceptDrops(true);
     userbutton->installEventFilter(this); // for drag and drop
     userbutton->setFixedSize(80, 80);
-    connect(userbutton, SIGNAL(iconChanged(QString)), 
+    connect(userbutton, SIGNAL(iconChanged(QString)),
 	    SLOT(slotUserPixChanged(QString)));
-    connect(userbutton, SIGNAL(iconChanged(QString)), 
+    connect(userbutton, SIGNAL(iconChanged(QString)),
 	    SLOT(slotChanged()));
 
     QToolTip::add(userbutton, i18n("Click or drop an image here"));
@@ -157,6 +157,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     QValidator *valid = new QIntValidator(0, 999999, minGroup);
     QLabel *minlab = new QLabel (i18n("below"), minGroup);
     leminuid = new QLineEdit(minGroup);
+    connect(leminuid,SIGNAL(textChanged ( const QString & )),this,SLOT(slotChanged()));
     minlab->setBuddy(leminuid);
     leminuid->setSizePolicy(sp_ign_fix);
     leminuid->setValidator(valid);
@@ -165,7 +166,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *s
     maxlab->setBuddy(lemaxuid);
     lemaxuid->setSizePolicy(sp_ign_fix);
     lemaxuid->setValidator(valid);
-
+    connect(lemaxuid,SIGNAL(textChanged ( const QString & )),this,SLOT(slotChanged()));
 
     QHBoxLayout *main = new QHBoxLayout(this, 10);
 
@@ -370,7 +371,7 @@ void KDMUsersWidget::save()
 
     c->writeEntry( "SortUsers", cbusrsrt->isChecked() );
 
-    c->writeEntry( "ShowUsers", 
+    c->writeEntry( "ShowUsers",
 	rballusr->isChecked() ? "NotHidden" :
 	rbselusr->isChecked() ? "Selected" : "None");
 
