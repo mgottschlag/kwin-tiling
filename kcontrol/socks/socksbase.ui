@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>595</width>
+            <width>587</width>
             <height>478</height>
         </rect>
     </property>
@@ -19,10 +19,16 @@
         <name>caption</name>
         <string>Socks</string>
     </property>
+    <property>
+        <name>layoutMargin</name>
+    </property>
+    <property>
+        <name>layoutSpacing</name>
+    </property>
     <vbox>
         <property stdset="1">
             <name>margin</name>
-            <number>11</number>
+            <number>0</number>
         </property>
         <property stdset="1">
             <name>spacing</name>
@@ -48,6 +54,10 @@
             <property stdset="1">
                 <name>name</name>
                 <cstring>bg</cstring>
+            </property>
+            <property stdset="1">
+                <name>enabled</name>
+                <bool>false</bool>
             </property>
             <property stdset="1">
                 <name>title</name>
@@ -225,6 +235,10 @@
                 <cstring>_c_addPaths</cstring>
             </property>
             <property stdset="1">
+                <name>enabled</name>
+                <bool>false</bool>
+            </property>
+            <property stdset="1">
                 <name>sizePolicy</name>
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
@@ -239,139 +253,122 @@
                 <name>whatsThis</name>
                 <string>Here you can specify additional directories to search for the SOCKS libraries.  /usr/lib, /usr/local/lib, /usr/local/socks5/lib and /opt/socks5/lib are already searched by default.</string>
             </property>
-            <widget>
-                <class>QLayoutWidget</class>
+            <vbox>
                 <property stdset="1">
-                    <name>name</name>
-                    <cstring>Layout1</cstring>
+                    <name>margin</name>
+                    <number>11</number>
                 </property>
                 <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>11</x>
-                        <y>188</y>
-                        <width>552</width>
-                        <height>28</height>
-                    </rect>
+                    <name>spacing</name>
+                    <number>6</number>
                 </property>
-                <hbox>
-                    <property stdset="1">
-                        <name>margin</name>
-                        <number>0</number>
-                    </property>
-                    <property stdset="1">
-                        <name>spacing</name>
-                        <number>6</number>
-                    </property>
-                    <widget>
-                        <class>QPushButton</class>
-                        <property stdset="1">
-                            <name>name</name>
-                            <cstring>_c_add</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>text</name>
-                            <string>&amp;Add</string>
-                        </property>
-                    </widget>
-                    <widget>
-                        <class>QPushButton</class>
-                        <property stdset="1">
-                            <name>name</name>
-                            <cstring>_c_remove</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>text</name>
-                            <string>&amp;Remove</string>
-                        </property>
-                    </widget>
-                    <spacer>
+                <widget>
+                    <class>QListView</class>
+                    <column>
                         <property>
-                            <name>name</name>
-                            <cstring>Spacer1</cstring>
-                        </property>
-                        <property stdset="1">
-                            <name>orientation</name>
-                            <enum>Horizontal</enum>
-                        </property>
-                        <property stdset="1">
-                            <name>sizeType</name>
-                            <enum>MinimumExpanding</enum>
+                            <name>text</name>
+                            <string>Path</string>
                         </property>
                         <property>
-                            <name>sizeHint</name>
-                            <size>
-                                <width>20</width>
-                                <height>20</height>
-                            </size>
+                            <name>clickable</name>
+                            <bool>true</bool>
                         </property>
-                    </spacer>
-                </hbox>
-            </widget>
-            <widget>
-                <class>QListView</class>
-                <column>
-                    <property>
-                        <name>text</name>
-                        <string>Path</string>
+                        <property>
+                            <name>resizeable</name>
+                            <bool>true</bool>
+                        </property>
+                    </column>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>_c_libs</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>sizePolicy</name>
+                        <sizepolicy>
+                            <hsizetype>3</hsizetype>
+                            <vsizetype>3</vsizetype>
+                        </sizepolicy>
                     </property>
                     <property>
-                        <name>clickable</name>
-                        <bool>true</bool>
+                        <name>whatsThis</name>
+                        <string>This is the list of additional paths that will be searched.</string>
                     </property>
-                    <property>
-                        <name>resizeable</name>
-                        <bool>true</bool>
+                </widget>
+                <widget>
+                    <class>KURLRequester</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>_c_newPath</cstring>
                     </property>
-                </column>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>_c_libs</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>9</x>
-                        <y>18</y>
-                        <width>552</width>
-                        <height>137</height>
-                    </rect>
-                </property>
-                <property stdset="1">
-                    <name>sizePolicy</name>
-                    <sizepolicy>
-                        <hsizetype>3</hsizetype>
-                        <vsizetype>3</vsizetype>
-                    </sizepolicy>
-                </property>
-                <property>
-                    <name>whatsThis</name>
-                    <string>This is the list of additional paths that will be searched.</string>
-                </property>
-            </widget>
-            <widget>
-                <class>KURLRequester</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>_c_newPath</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>10</x>
-                        <y>160</y>
-                        <width>552</width>
-                        <height>25</height>
-                    </rect>
-                </property>
-                <property stdset="1">
-                    <name>minimumSize</name>
-                    <size>
-                        <width>0</width>
-                        <height>25</height>
-                    </size>
-                </property>
-            </widget>
+                    <property stdset="1">
+                        <name>minimumSize</name>
+                        <size>
+                            <width>0</width>
+                            <height>25</height>
+                        </size>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QLayoutWidget</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>Layout1</cstring>
+                    </property>
+                    <hbox>
+                        <property stdset="1">
+                            <name>margin</name>
+                            <number>0</number>
+                        </property>
+                        <property stdset="1">
+                            <name>spacing</name>
+                            <number>6</number>
+                        </property>
+                        <widget>
+                            <class>QPushButton</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>_c_add</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>&amp;Add</string>
+                            </property>
+                        </widget>
+                        <widget>
+                            <class>QPushButton</class>
+                            <property stdset="1">
+                                <name>name</name>
+                                <cstring>_c_remove</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>text</name>
+                                <string>&amp;Remove</string>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property>
+                                <name>name</name>
+                                <cstring>Spacer1</cstring>
+                            </property>
+                            <property stdset="1">
+                                <name>orientation</name>
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property stdset="1">
+                                <name>sizeType</name>
+                                <enum>MinimumExpanding</enum>
+                            </property>
+                            <property>
+                                <name>sizeHint</name>
+                                <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </hbox>
+                </widget>
+            </vbox>
         </widget>
         <widget>
             <class>QLayoutWidget</class>
@@ -416,6 +413,10 @@
                         <cstring>_c_test</cstring>
                     </property>
                     <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
                         <name>text</name>
                         <string>&amp;Test</string>
                     </property>
@@ -442,12 +443,33 @@
             <verdata>5</verdata>
         </sizepolicy>
         <pixmap>image0</pixmap>
+        <signal>textChanged(const QString &amp;)</signal>
     </customwidget>
 </customwidgets>
 <images>
     <image>
         <name>image0</name>
-        <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1be245fc04c5a3201e4615f430059d0711ff5ddb2e6bb236ec90eed134cb5a19d8ef36602af5ecdbfeeac05dda0798d3abebde87e3faa374d3807fa0d633a52d38d8de6f679fe33fc776e196f53cd010188256a3600a292882096246517815ca99884606e18044a3a40d91824820924265a7923a2e8bcd05f33db1173e002913175f2a6be6d3294871a2d95fa00e8a94ee017b69d339d90df1e77c57ea072ede6758</data>
+        <data format="XPM.GZ" length="45">789cd3d7528808f055d0d2e72a2e492cc94c5648ce482c52d04a29cdcdad8c8eb5ade6523250004143a55a6b2e0026630c4f</data>
     </image>
 </images>
+<connections>
+    <connection>
+        <sender>_c_enableSocks</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>bg</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>_c_enableSocks</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>_c_addPaths</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>_c_enableSocks</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>_c_test</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
 </UI>
