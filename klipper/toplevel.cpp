@@ -315,7 +315,7 @@ void TopLevel::readProperties(KConfig *kc)
   toggleURLGrabAction->plug( m_popup, -1 );
   URLGrabItem = m_popup->idAt( m_popup->count() - 1 );
 
-  m_popup->insertItem( SmallIcon("fileclose"),
+  m_popup->insertItem( SmallIcon("locationbar_erase"),
 			i18n("&Clear Clipboard History"), EMPTY_ITEM );
   m_popup->insertItem( SmallIcon("configure"), i18n("&Preferences..."),
                        CONFIG_ITEM);
