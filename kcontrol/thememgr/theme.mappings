@@ -79,6 +79,7 @@
 #   These commands handle special settings for the config files. 
 #   The commands depend very much on the proper settings in this file.
 #   Known commands are:
+#   - setColorScheme: create a color scheme out of the themes color settings.
 #   - oneDesktopMode: activates oneDesktopMode if exactly one wallpaper
 #   - setWallPaperMode: corrects wallpaper settings.
 #   - setSound: enable sound notification
@@ -106,6 +107,7 @@ ConfigNextGroup=Colors-3
 contrast=!
 #
 [Colors-3]
+ConfigInstallCmd=setColorScheme
 ConfigGroup=General
 ConfigNextGroup=
 foreground=!
@@ -141,6 +143,7 @@ contrast=!
 #
 [Control Panel/Colors-3]
 ConfigGroup=General
+ConfigInstallCmd=setColorScheme
 ConfigNextGroup=
 ButtonText=foreground!
 HilightText=selectForeground!

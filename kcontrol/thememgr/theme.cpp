@@ -822,7 +822,11 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
   QString grp = aCfg->group();
   QString cmd = aCmd.stripWhiteSpace();
 
-  if (cmd == "setWallpaperMode")
+  if (cmd == "setColorScheme")
+  {
+    updateColorScheme(aCfg);
+  }
+  else if (cmd == "setWallpaperMode")
   {
     QString value = aCfg->readEntry("wallpaper",QString::null);
     aCfg->writeEntry("UseWallpaper", !value.isEmpty());
@@ -1252,6 +1256,99 @@ void Theme::colorSchemeApply(void)
   KIPC::sendMessageAll(KIPC::PaletteChanged);
 }
 
+
+void Theme::updateColorScheme(KSimpleConfig *config)
+{
+    // define some KDE2 default colors
+    QColor kde2Blue;
+    if (QPixmap::defaultDepth() > 8)
+      kde2Blue.setRgb(10, 95, 137);
+    else
+      kde2Blue.setRgb(0, 0, 192);
+
+    QColor widget(220, 220, 220);
+
+    QColor button;
+    if (QPixmap::defaultDepth() > 8)
+      button.setRgb(228, 228, 228);
+    else
+      button.setRgb(220, 220, 220);
+
+    QColor link(0, 0, 192);
+    QColor visitedLink(128, 0,128);
+
+    // Current scheme
+    config->setGroup("General");
+
+    bool isDefault = config->readEntry( "background").isEmpty(); 
+    if (isDefault)
+    {
+       QString sCurrentScheme = locateLocal("data", "kdisplay/color-schemes/thememgr.kcsrc");
+       unlink(QFile::encodeName(sCurrentScheme));
+       config->setGroup("KDE");
+       config->writeEntry("colorScheme", "<default>", true, true);
+       return;
+    }
+
+    // note: defaults should be the same as the KDE default
+    QColor txt = config->readColorEntry( "foreground", &black );
+    QColor back = config->readColorEntry( "background", &widget );
+    QColor select = config->readColorEntry( "selectBackground", &kde2Blue );
+    QColor selectTxt = config->readColorEntry( "selectForeground", &white );
+    QColor window = config->readColorEntry( "windowBackground", &white );
+    QColor windowTxt = config->readColorEntry( "windowForeground", &black );
+    button = config->readColorEntry( "buttonBackground", &button );
+    QColor buttonTxt = config->readColorEntry( "buttonForeground", &black );
+    link = config->readColorEntry( "linkColor", &link );
+    visitedLink = config->readColorEntry( "visitedLinkColor", &visitedLink );
+
+    config->setGroup( "WM" );
+
+    QColor iaTitle = config->readColorEntry("inactiveBackground", &widget);
+    QColor iaTxt = config->readColorEntry("inactiveForeground", &black);
+    QColor iaBlend = config->readColorEntry("inactiveBlend", &widget);
+    QColor aTitle = config->readColorEntry("activeBackground", &kde2Blue);
+    QColor aTxt = config->readColorEntry("activeForeground", &white);
+    QColor aBlend = config->readColorEntry("activeBlend", &kde2Blue);
+    // hack - this is all going away. For now just set all to button bg
+    QColor aTitleBtn = config->readColorEntry("activeTitleBtnBg", &back);
+    QColor iTitleBtn = config->readColorEntry("inactiveTitleBtnBg", &back);
+
+    config->setGroup( "KDE" );
+    int contrast = config->readNumEntry( "contrast", 7 );
+
+    QString sCurrentScheme = locateLocal("data", "kdisplay/color-schemes/thememgr.kcsrc");
+    KSimpleConfig *colorScheme = new KSimpleConfig(sCurrentScheme );
+    int i = sCurrentScheme.findRev('/');
+    if (i >= 0)
+      sCurrentScheme = sCurrentScheme.mid(i+1);
+    config->setGroup("KDE");
+    config->writeEntry("colorScheme", sCurrentScheme, true, true);
+
+    colorScheme->setGroup("Color Scheme" );
+    colorScheme->writeEntry("Name", "Theme Colors");
+    colorScheme->writeEntry("background", back );
+    colorScheme->writeEntry("selectBackground", select );
+    colorScheme->writeEntry("foreground", txt );
+    colorScheme->writeEntry("activeForeground", aTxt );
+    colorScheme->writeEntry("inactiveBackground", iaTitle );
+    colorScheme->writeEntry("inactiveBlend", iaBlend );
+    colorScheme->writeEntry("activeBackground", aTitle );
+    colorScheme->writeEntry("activeBlend", aBlend );
+    colorScheme->writeEntry("inactiveForeground", iaTxt );
+    colorScheme->writeEntry("windowForeground", windowTxt );
+    colorScheme->writeEntry("windowBackground", window );
+    colorScheme->writeEntry("selectForeground", selectTxt );
+    colorScheme->writeEntry("contrast", contrast );
+    colorScheme->writeEntry("buttonForeground", buttonTxt );
+    colorScheme->writeEntry("buttonBackground", button );
+    colorScheme->writeEntry("activeTitleBtnBg", aTitleBtn);
+    colorScheme->writeEntry("inactiveTitleBtnBg", iTitleBtn);
+    colorScheme->writeEntry("linkColor", link);
+    colorScheme->writeEntry("visitedLinkColor", visitedLink);
+
+    delete colorScheme;
+}
 
 //-----------------------------------------------------------------------------
 const QString Theme::fileOf(const QString& aName) const

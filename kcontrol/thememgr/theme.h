@@ -145,6 +145,8 @@ protected:
   /** Apply color scheme change to all open windows. Taken from
       kdisplay / colorscm.cpp */
   virtual void colorSchemeApply(void);
+  /** Create color scheme from current settings. **/
+  void updateColorScheme(KSimpleConfig *);
 
   /** Load mappings file. */
   virtual void loadMappings(void);
