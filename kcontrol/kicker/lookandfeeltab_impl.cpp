@@ -317,7 +317,7 @@ void LookAndFeelTab::load()
   wl_group->setEnabled(tiles);
   desktop_group->setEnabled(tiles);
 
-  bool zoom = c->readBoolEntry("EnableIconZoom", true);
+  bool zoom = c->readBoolEntry("EnableIconZoom", false);
   zoom_cb->setChecked(zoom);
 
   c->setGroup("button_tiles");
@@ -489,7 +489,7 @@ void LookAndFeelTab::defaults()
   exe_cb->setChecked(true);
   wl_cb->setChecked(true);
   desktop_cb->setChecked(true);
-  zoom_cb->setChecked(true);
+  zoom_cb->setChecked(false);
 
   theme = QString::null;
 
