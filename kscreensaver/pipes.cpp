@@ -23,7 +23,7 @@
  * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
- * Some overall stuff taken from space.c, which is 
+ * Some overall stuff taken from space.c, which is
  * Copyright (c) 1998 Bernd Johannes Wuebben.
  *
  * The initGL routine might originate from Silicon Graphics
@@ -57,7 +57,7 @@
 // - Some additional parameters could be added to the setup
 // - check FIXMEs below
 
-/* Outline of the algorithm ----------------------------------------------- -- 
+/* Outline of the algorithm ----------------------------------------------- --
 
    The overall geometry is organized by a cube consisting of (2*CUBESIZE+1)^3
    cells. The even number for it's length in each direction guaranties the
@@ -101,7 +101,7 @@ FIXME: this could be clearer done by a calculation on the position.
    The choose basically consists of examining the surrounding within the
    cube for being occupied and choosing randomly among them. If no such
    cell exists, the trapped pipe stops running.
-   
+
    As soon as less then half of the original pipes are left, the whole
    procedure starts over.
 
@@ -148,7 +148,7 @@ FIXME: this could be clearer done by a calculation on the position.
 #ifdef HAVE_GL_GLUT_H
 // We don't need GLUT, but some BROKEN GLU implemenations, such as the one
 // used in SuSE Linux 6.3, do. :(
-#include <GL/glut.h>  
+#include <GL/glut.h>
 #endif
 #include <GL/glu.h>
 #include <GL/glx.h>
@@ -224,7 +224,7 @@ void initGL(Window window)
   int         n;
   XVisualInfo *wantVis, vTemplate;
   int  VisualClassWanted=-1;
-  
+
   vTemplate.screen = screen;
   vTemplate.depth = xwa.depth;
 
@@ -330,14 +330,14 @@ int setupScreenSaver()
 
 #ifdef HAVE_GL
 
-static GLfloat base[2][4] = 
-{ 
+static GLfloat base[2][4] =
+{
   {0.3, 0.3, 0.3, 0.0 }, // red
   {0.1, 0.1, 0.8, 0.0 }  // brown
 };
 
-static GLfloat color[MAXPIPES][4] = 
-{ 
+static GLfloat color[MAXPIPES][4] =
+{
   {0.8, 0.8, 0.0, 0.0 }, // red
   {0.3, 0.3, 0.1, 0.0 }, // blue
   {0.2, 0.1, 0.4, 0.0 }, // green
@@ -504,12 +504,12 @@ void kPipesSaver::paintGL()
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); // clear
 
   glLoadIdentity();
-    
+
   glTranslatef( 0.0, 0.0, -10.0 );
   glScalef( scale, scale, scale );
 
-  glRotatef( xRot, 1.0, 0.0, 0.0 ); 
-  glRotatef( yRot, 0.0, 1.0, 0.0 ); 
+  glRotatef( xRot, 1.0, 0.0, 0.0 );
+  glRotatef( yRot, 0.0, 1.0, 0.0 );
   glRotatef( zRot, 0.0, 0.0, 1.0 );
 
 //glCallList( coord ); // show coordinate system
@@ -528,7 +528,7 @@ void kPipesSaver::makeStep()
 { int i;
   for (i = 0; i < pipes; i++)
   if (pipe[i]->running)
-  { Pipe* p = pipe[i]; 
+  { Pipe* p = pipe[i];
     Direction* d = &direct[p->dir];
     p->x += d->x; p->y += d->y; p->z += d->z;
   }
@@ -545,10 +545,10 @@ void kPipesSaver::paintStep()
 
 
     glScalef( scale, scale, scale );
-    glRotatef( xRot, 1.0, 0.0, 0.0 ); 
-    glRotatef( yRot, 0.0, 1.0, 0.0 ); 
+    glRotatef( xRot, 1.0, 0.0, 0.0 );
+    glRotatef( yRot, 0.0, 1.0, 0.0 );
     glRotatef( zRot, 0.0, 0.0, 1.0 );
-    
+
     glTranslatef( RADIUS*p->x, RADIUS*p->y, RADIUS*p->z );
     glRotatef( 90.0*d->deg90, 1.0*d->rx, 1.0*d->ry, 0.0 );
     glMaterialfv( GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color[pipe[i]->col] );
@@ -572,7 +572,7 @@ void kPipesSaver::tick()
 {
   if (steps % SUBCELLS == 0)
   {
-    for (int i = 0; i < pipes; i++) 
+    for (int i = 0; i < pipes; i++)
       if (pipe[i]->running)
       if (!pipe[i]->chooseDir(TRUE))
       {
@@ -590,7 +590,7 @@ void kPipesSaver::tick()
   if (initial)
   {
     paintGL();
-    for (int i = 0; i < pipes; i++) 
+    for (int i = 0; i < pipes; i++)
       pipe[i]->prev_dir = pipe[i]->dir;
     initial = FALSE;
   }
@@ -634,7 +634,7 @@ GLuint kPipesSaver::makeCoord()
 */
 
 GLuint kPipesSaver::makeArrow()
-{        
+{
   GLUquadricObj *quadric = gluNewQuadric();  /* Initialize the Sphere */
   gluQuadricNormals(quadric, (GLenum) GLU_SMOOTH); /* we want normals */
   gluQuadricTexture(quadric, GL_FALSE); /* we want texture */
@@ -649,7 +649,7 @@ GLuint kPipesSaver::makeArrow()
 }
 
 GLuint kPipesSaver::makeSphere(float f, float trans)
-{        
+{
   GLUquadricObj *quadric = gluNewQuadric();  /* Initialize the Sphere */
   gluQuadricNormals(quadric, (GLenum) GLU_SMOOTH); /* we want normals */
   gluQuadricTexture(quadric, GL_FALSE); /* we want texture */
@@ -699,7 +699,7 @@ kPipesSaver::kPipesSaver( Drawable drawable ) : kScreenSaver( drawable )
   glShadeModel( GL_SMOOTH );
 //glClearColor( 0.0, 0.0, 0.0, 0.0 ); // Let OpenGL clear to black
 
-  int i; for (i = 0; i<MAXPIPES; i++) pipe[i] = new Pipe(this, i%MAXPIPES); 
+  int i; for (i = 0; i<MAXPIPES; i++) pipe[i] = new Pipe(this, i%MAXPIPES);
 
   readSettings();
   reinit();
@@ -713,7 +713,7 @@ kPipesSaver::~kPipesSaver()
   timer.stop();
 //FIXME: delete display lists
   doneGL();
-  int i; for (i = 0; i<MAXPIPES; i++) delete pipe[i]; 
+  int i; for (i = 0; i<MAXPIPES; i++) delete pipe[i];
   delete rnd; rnd = 0;
 }
 
@@ -731,8 +731,6 @@ void kPipesSaver::readSettings()
 {
   KConfig *config = klock_config();
   config->setGroup( "Settings" );
-
-  QString str;
 
   pipes = config->readNumEntry( "Pipes", DEFPIPES );
   if (pipes < 2) pipes = 2;

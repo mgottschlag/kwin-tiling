@@ -42,7 +42,7 @@ static char sccsid[] = "@(#)rock.c	3.3 95/09/24 xlockmore";
 #define MAX_DEP 0.3             /* how far the displacement can be (percents)*/
 #define DIRECTION_CHANGE_RATE 50 /* 0 is always */
 #define MOVE_STYLE 0            /* Only 0 and 1. Distinguishes the fact that
-				   these are the rocks that are moving (1) 
+				   these are the rocks that are moving (1)
 				   or the rocks source (0). */
 
 static int maxDepSpeed = MAX_DEP_SPEED;
@@ -203,19 +203,19 @@ init_pixmaps(Window win)
       bg_gc = XCreateGC (dsp, p, GCForeground, &gcv);
     }
     XFillRectangle(dsp, p, bg_gc, 0, 0, w, h);
-    points[0].x = (short int)(i * 0.15); 
+    points[0].x = (short int)(i * 0.15);
     points[0].y = (short int)(i * 0.85);
-    points[1].x = (short int)(i * 0.00); 
+    points[1].x = (short int)(i * 0.00);
     points[1].y = (short int)(i * 0.20);
-    points[2].x = (short int)(i * 0.30); 
+    points[2].x = (short int)(i * 0.30);
     points[2].y = (short int)(i * 0.00);
-    points[3].x = (short int)(i * 0.40); 
+    points[3].x = (short int)(i * 0.40);
     points[3].y = (short int)(i * 0.10);
-    points[4].x = (short int)(i * 0.90); 
+    points[4].x = (short int)(i * 0.90);
     points[4].y = (short int)(i * 0.10);
-    points[5].x = (short int)(i * 1.00); 
+    points[5].x = (short int)(i * 1.00);
     points[5].y = (short int)(i * 0.55);
-    points[6].x = (short int)(i * 0.45); 
+    points[6].x = (short int)(i * 0.45);
     points[6].y = (short int)(i * 1.00);
     XFillPolygon(dsp, p, fg_gc, points, 7, Nonconvex, CoordModeOrigin);
   }
@@ -290,7 +290,7 @@ compute_move(int axe)
   static int limit[2]       = {0,0};
   rockstruct *rp = &rocks[screen];
   int change = 0;
-  
+
   limit[0] = rp->midx;
   limit[1] = rp->midy;
 
@@ -442,7 +442,7 @@ int setupScreenSaver()
 
 kRockSaver::kRockSaver( Drawable drawable ) : kScreenSaver( drawable )
 {
-	rnd = new KRandomSequence();	
+	rnd = new KRandomSequence();
 	readSettings();
 
 	colorContext = QColor::enterAllocContext();
@@ -484,7 +484,7 @@ void kRockSaver::setNumber( int num )
 	number = num;
 	rock_setNumber( number );
 	initrock( mDrawable );
-	
+
 	rock_setMove( move );
 	rock_setRotate( rotate );
 }
@@ -552,7 +552,7 @@ kRockSetup::kRockSetup( QWidget *parent, const char *name )
 	slider->setMinimumSize( 90, 20 );
     slider->setTickmarks(QSlider::Below);
     slider->setTickInterval(10);
-	connect( slider, SIGNAL( valueChanged( int ) ), 
+	connect( slider, SIGNAL( valueChanged( int ) ),
 		 SLOT( slotSpeed( int ) ) );
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
@@ -565,7 +565,7 @@ kRockSetup::kRockSetup( QWidget *parent, const char *name )
 	slider->setMinimumSize( 90, 20 );
     slider->setTickmarks(QSlider::Below);
     slider->setTickInterval(24);
-	connect( slider, SIGNAL( valueChanged( int ) ), 
+	connect( slider, SIGNAL( valueChanged( int ) ),
 		 SLOT( slotNumber( int ) ) );
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
@@ -590,12 +590,12 @@ kRockSetup::kRockSetup( QWidget *parent, const char *name )
 	saver = new kRockSaver( preview->winId() );
 	tl1->addWidget(preview);
 
-	KButtonBox *bbox = new KButtonBox(this);	
+	KButtonBox *bbox = new KButtonBox(this);
 	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( i18n("OK"));	
+	button = bbox->addButton( i18n("OK"));
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
 	button = bbox->addButton(i18n("Cancel"));
@@ -610,8 +610,6 @@ void kRockSetup::readSettings()
 {
 	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
-
-	QString str;
 
 	speed = config->readNumEntry( "Speed", speed );
 	if ( speed > 100 )

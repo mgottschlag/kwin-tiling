@@ -63,7 +63,7 @@ Lines::~Lines(){
 };
 
 inline void Lines::reset(){	akt=start;	};
-	
+
 inline void Lines::getKoord(int& a, int& b, int& c, int& d){
 	a=akt->x1; b=akt->y1;
 	c=akt->x2; d=akt->y2;
@@ -105,7 +105,7 @@ void startScreenSaver(Drawable d){
 
 void stopScreenSaver(){
 	if(saver) delete saver;
-	saver=NULL; 
+	saver=NULL;
 }
 
 int setupScreenSaver(){
@@ -198,12 +198,12 @@ kLinesSetup::kLinesSetup(QWidget *parent, const char *name):QDialog(parent, name
 	saver=new kLinesSaver(preview->winId());
 	tl1->addWidget(preview);
 
-	KButtonBox *bbox = new KButtonBox(this);	
+	KButtonBox *bbox = new KButtonBox(this);
 	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( i18n("OK"));	
+	button = bbox->addButton( i18n("OK"));
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
 	button = bbox->addButton(i18n("Cancel"));
@@ -356,8 +356,6 @@ void kLinesSaver::setColor(const QColor& cs, const QColor& cm, const QColor& ce)
 
 // read configuration settings from config file
 void kLinesSaver::readSettings(){
-    QString str;
-
     KConfig *config=klock_config();
     config->setGroup("Settings");
 

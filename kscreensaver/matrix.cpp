@@ -3,16 +3,16 @@
  *
  * Based on xmatrix, xscreensaver by Jamie Zawinski <jwz@jwz.org> Copyright (c) 1999
  * ported to KDE 1.1.2 by Dmitry DELTA Malykhanov <d.malykhanov@iname.com> in August 1999
- * ported to KDE 2.0 and setup dialog fixup by Thorsten Westheider 
+ * ported to KDE 2.0 and setup dialog fixup by Thorsten Westheider
  * <thorsten.westheider@teleos-web.de> in March 2000
- * 
+ *
  * Additional contributors:
  *
  * kblankscrn - Basic screen saver for KDE Copyright (c)  Martin R. Jones 1996
  * layout management added 1998/04/19 by Mario Weilguni <mweilguni@kde.org>
  *
  */
- 
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -115,7 +115,7 @@ void exposeScreenSaver( int x, int y, int width, int height ) {
   if ( saver ) {
   //  saver->expose( x, y, width, height );
   }
-} 
+}
 
 //--------------------------------------------------------------------
 // KMatrixSaver code
@@ -216,7 +216,7 @@ void KMatrixSaver::shutdown_matrix() {
  * the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
  * documentation.  No representations are made about the suitability of this
- * software for any purpose.  It is provided "as is" without express or 
+ * software for any purpose.  It is provided "as is" without express or
  * implied warranty.
  *
  * Matrix -- simulate the text scrolls from the movie "The Matrix".
@@ -551,8 +551,8 @@ KMatrixSetup::KMatrixSetup( QWidget *parent, const char *name )
 #undef Below
   densitySld = new QSlider(0, 100, 1, cfg.density, QSlider::Horizontal,
 			   this, "Density");
-  densitySld->setTickmarks(QSlider::Below);                   
-  densitySld->setTickInterval(10);                   
+  densitySld->setTickmarks(QSlider::Below);
+  densitySld->setTickInterval(10);
   densitySld->setFixedHeight(densitySld->sizeHint().height());
   connect( densitySld, SIGNAL(valueChanged(int)), SLOT(slotDensity(int)));
   tl11->addWidget(densitySld);
@@ -576,8 +576,8 @@ KMatrixSetup::KMatrixSetup( QWidget *parent, const char *name )
   */
   speedSld = new QSlider(0, 100, 1, SPEED2SL(cfg.speed), QSlider::Horizontal,
 			 this, "Speed");
-  speedSld->setTickmarks(QSlider::Below);                    
-  speedSld->setTickInterval(10);                   
+  speedSld->setTickmarks(QSlider::Below);
+  speedSld->setTickInterval(10);
   speedSld->setFixedHeight(speedSld->sizeHint().height());
   connect( speedSld, SIGNAL(valueChanged(int)), SLOT(slotSpeed(int)));
   tl11->addWidget(speedSld);
@@ -630,7 +630,7 @@ KMatrixSetup::KMatrixSetup( QWidget *parent, const char *name )
   connect(button, SIGNAL(clicked()), SLOT(slotAbout()));
   bbox->addStretch(1);
 
-  button = bbox->addButton( i18n("OK"));	
+  button = bbox->addButton( i18n("OK"));
   connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
   button = bbox->addButton(i18n("Cancel"));
@@ -672,7 +672,6 @@ void KMatrixSetup::slotForegrColor() {
 }
 
 void KMatrixSetup::slotDensity(int val) {
-  QString tmp;
   setDensity(val);
   // update edit control
   // tmp.setNum(val);
@@ -686,7 +685,6 @@ void KMatrixSetup::setDensity(int val) {
 }
 
 void KMatrixSetup::slotSpeed(int val) {
-  QString tmp;
   setSpeed(val);
   // update edit control
   // tmp.setNum(val);
@@ -726,7 +724,7 @@ void KMatrixSetup::slotOkPressed() {
 }
 
 void KMatrixSetup::slotAbout() {
-  KMessageBox::about(0, 
+  KMessageBox::about(0,
 		       i18n("KMatrix\n\n"
 "based on xmatrix\n"
 "Copyright (C) 1999 by Jamie Zawinski <jwz@jwz.org>\n"

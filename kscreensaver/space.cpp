@@ -1,10 +1,10 @@
-/* 
+/*
  *
  *            kStart OpenGL screensave for KDE
  *
  * $Id$
- * 
- *            Copyright (C) 1998 Bernd Johannes Wuebben 
+ *
+ *            Copyright (C) 1998 Bernd Johannes Wuebben
  *                   wuebben@math.cornell.edu
  *
  * This program is free software; you can redistribute it and/or
@@ -393,7 +393,7 @@ initSpace(Window window)
 	int         n;
 	XVisualInfo *wantVis, vTemplate;
 	int  VisualClassWanted=-1;
-	
+
 	vTemplate.screen = screen;
 	vTemplate.depth = xwa.depth;
 
@@ -508,7 +508,7 @@ kSpaceSaver::kSpaceSaver( Drawable drawable ) : kScreenSaver( drawable )
 
 	initXLock( mGc );
 	initSpace( mDrawable );
-	
+
 	timer.start( speed );
 	connect( &timer, SIGNAL( timeout() ), SLOT( slotTimeout() ) );
 }
@@ -561,7 +561,7 @@ void kSpaceSaver::slotTimeout()
   if(warpinterval != MAXWARP){
      if(nitro == 0)
      counter -= speed +1;
-     
+
      if(counter <= 0){
        nitro = 1;
        counter = (int) warpinterval *WARPFACTOR;
@@ -569,7 +569,7 @@ void kSpaceSaver::slotTimeout()
   }
   else
     nitro = 0;
-  
+
   drawSpace( mDrawable );
 }
 
@@ -627,8 +627,6 @@ void kSpaceSetup::readSettings()
 {
 	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
-
-	QString str;
 
 	speed = config->readNumEntry( "Speed", speed );
 

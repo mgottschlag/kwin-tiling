@@ -52,7 +52,7 @@ static KBlobSaver *saver = NULL;
 static KRandomSequence *rnd = 0;
 
 QString alg_str[5];
-void initAlg() 
+void initAlg()
 {
   alg_str[0] = i18n("Random Linear");
   alg_str[1] = i18n("Horizonal Sine");
@@ -74,7 +74,7 @@ KBlobSaver::KBlobSaver
  initAlg();
  QColor color;
 	float ramp = (256.0-64.0)/(float)RAMP;
-	QString msg = 
+	QString msg =
 	  i18n("Sorry. This screensaver needs a color display");
 
 	// needs colors to work this one
@@ -95,7 +95,7 @@ KBlobSaver::KBlobSaver
 	if (QPixmap::defaultDepth() == 8)
 	{
 		memset(lookup, 0, 256*sizeof(uint));
-                int i; 
+                int i;
 		for (i = 0; i < RAMP; i++)
 		{
 			color.setRgb(64+(int)(ramp*(float)i), 0, 0);
@@ -135,7 +135,7 @@ KBlobSaver::KBlobSaver
 	xhalf = mWidth/2;
 	yhalf = mHeight/2;
 
-	// means a new algorithm should be set at entrance of timer 
+	// means a new algorithm should be set at entrance of timer
 	newalg = newalgp = 1;
 
 	// init algorithm space
@@ -412,7 +412,6 @@ void KBlobSaver::blank()
 
 void KBlobSaver::readSettings()
 {
-    QString str;
     KConfig *config = klock_config();
     config->setGroup("Settings");
 
@@ -421,7 +420,7 @@ void KBlobSaver::readSettings()
 
     // algorithm to use. if not set then use random
     alg = config->readNumEntry("Algorithm", ALG_RANDOM);
-    if (alg == ALG_RANDOM)	
+    if (alg == ALG_RANDOM)
 	newalg = 1;
     else
 	newalg = 2;
@@ -462,7 +461,7 @@ KBlobSetup::KBlobSetup
 	tl1->addLayout(tl11);
 
 	// seconds to generate on a frame
-	label = new QLabel(i18n("Frame Show sec."), 
+	label = new QLabel(i18n("Frame Show sec."),
 		    this);
 	min_size(label);
 	stime = new QLineEdit(this);
@@ -499,7 +498,7 @@ KBlobSetup::KBlobSetup
 		saver->setColorInc(4);
 
 	// so selecting an algorithm will start previewing that alg
-	connect(algs, SIGNAL(highlighted(int)), saver, 
+	connect(algs, SIGNAL(highlighted(int)), saver,
 		SLOT(setAlgorithm(int)));
 
 	KButtonBox *bbox = new KButtonBox(this);
@@ -510,7 +509,7 @@ KBlobSetup::KBlobSetup
 	bbox->addStretch(1);
 
 	// means attempt to register settings with kde registry
-	button = bbox->addButton( i18n("OK"));	
+	button = bbox->addButton( i18n("OK"));
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
 	// ignore changes
@@ -524,7 +523,6 @@ KBlobSetup::KBlobSetup
 
 void KBlobSetup::readSettings()
 {
-    QString str;
     KConfig *config = klock_config();
     config->setGroup("Settings");
 

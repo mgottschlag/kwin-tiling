@@ -329,7 +329,7 @@ kSwarmSetup::kSwarmSetup( QWidget *parent, const char *name )
 	QHBoxLayout *tl1 = new QHBoxLayout;
 	tl->addLayout(tl1);
 	QVBoxLayout *tl11 = new QVBoxLayout(5);
-	tl1->addLayout(tl11);	
+	tl1->addLayout(tl11);
 
 	label = new QLabel( i18n("Speed:"), this );
 	min_size(label);
@@ -340,7 +340,7 @@ kSwarmSetup::kSwarmSetup( QWidget *parent, const char *name )
 	slider->setMinimumSize( 90, 20 );
     slider->setTickmarks(QSlider::Below);
     slider->setTickInterval(10);
-	connect( slider, SIGNAL( valueChanged( int ) ), 
+	connect( slider, SIGNAL( valueChanged( int ) ),
 		 SLOT( slotSpeed( int ) ) );
 	tl11->addWidget(slider);
 	tl11->addSpacing(5);
@@ -354,7 +354,7 @@ kSwarmSetup::kSwarmSetup( QWidget *parent, const char *name )
 	slider->setMinimumSize( 90, 20 );
     slider->setTickmarks(QSlider::Below);
     slider->setTickInterval(20);
-	connect( slider, SIGNAL( valueChanged( int ) ), 
+	connect( slider, SIGNAL( valueChanged( int ) ),
 		 SLOT( slotLevels( int ) ) );
 	tl11->addWidget(slider);
 	tl11->addStretch(1);
@@ -366,12 +366,12 @@ kSwarmSetup::kSwarmSetup( QWidget *parent, const char *name )
 	saver = new kSwarmSaver( preview->winId() );
 	tl1->addWidget(preview);
 
-	KButtonBox *bbox = new KButtonBox(this);	
+	KButtonBox *bbox = new KButtonBox(this);
 	button = bbox->addButton( i18n("About"));
 	connect( button, SIGNAL( clicked() ), SLOT(slotAbout() ) );
 	bbox->addStretch(1);
 
-	button = bbox->addButton( i18n("OK"));	
+	button = bbox->addButton( i18n("OK"));
 	connect( button, SIGNAL( clicked() ), SLOT( slotOkPressed() ) );
 
 	button = bbox->addButton(i18n("Cancel"));
@@ -386,8 +386,6 @@ void kSwarmSetup::readSettings()
 {
 	KConfig *config = klock_config();
 	config->setGroup( "Settings" );
-
-	QString str;
 
 	speed = config->readNumEntry( "Speed", speed );
 

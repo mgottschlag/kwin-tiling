@@ -181,8 +181,7 @@ int vm_srandom (unsigned int seed,
   kc *= 10;
   while (--kc >= 0)
     {
-      int32_t discard;
-      discard = vm_random (buf);
+      vm_random (buf);
     }
 
  done:
