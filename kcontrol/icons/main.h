@@ -40,6 +40,7 @@ public:
   void save();
   void defaults();
   QString quickHelp() const;
+  const KAboutData *aboutData() const;
 
 protected slots:
   void moduleChanged(bool state);

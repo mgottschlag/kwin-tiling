@@ -23,6 +23,7 @@
 
 #include <qlayout.h>
 
+#include <kaboutdata.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
@@ -86,6 +87,24 @@ QString IconModule::quickHelp() const
     "This module allows you to choose the icons for your desktop.\n"
     "You can also specify effects that should be applied to the icons.\n"
     "Use the \"Whats This?\" (Shift+F1) to get help on specific options.");
+}
+
+
+const KAboutData *IconModule::aboutData() const
+{
+    static KAboutData* ab = 0;
+
+    if (!ab)
+    {
+        ab = new KAboutData("kcmicons", I18N_NOOP("Icons"), "3.0",
+                            I18N_NOOP("Icons Control Panel Module"),
+                            KAboutData::License_GPL,
+                            I18N_NOOP("(c) 2000-2003 Geert Jansen"), 0, 0);
+        ab->addAuthor("Geert Jansen", 0, "jansen@kde.org");
+        ab->addCredit("Torsten Rahn", 0, "torsten@kde.org");
+    }
+
+    return ab;
 }
 
 
