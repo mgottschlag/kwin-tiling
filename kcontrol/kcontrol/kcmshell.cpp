@@ -67,7 +67,17 @@ static KService::Ptr locateModule(const QCString& module)
     if (!path.endsWith(".desktop"))
         path += ".desktop";
 
-    return KService::serviceByStorageId( path );
+    KService::Ptr service = KService::serviceByStorageId( path );
+    if (!service)
+    {
+        kdWarning() << "Could not find module '" << module << "'." << endl;
+        return 0;
+    }
+
+    if (!kapp->authorizeControlModule(service->menuId()))
+        return 0;
+        
+    return service;
 }
 
 void
@@ -202,10 +212,7 @@ extern "C" int kdemain(int _argc, char *_argv[])
 
         KService::Ptr service = locateModule(args->arg(0));
         if (!service)
-	{
-	   kdWarning() << "Could not find module '" << args->arg(0) << "'." << endl;
            return 1; // error
-	}
 
         // load the module
         KCModuleInfo info(service);
@@ -267,12 +274,11 @@ extern "C" int kdemain(int _argc, char *_argv[])
     KService::List modules;
     for (int i = 0; i < args->count(); i++) {
         KService::Ptr service = locateModule(args->arg(i));
-        if (service )
+        if (service)
 	{
 		modules.append(service);
 		continue;
 	}
-	kdWarning() << "Could not find module '" << args->arg(i) << "'." << endl;
     }
 
     if (modules.count() < 1) return -1;

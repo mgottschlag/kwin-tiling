@@ -272,7 +272,11 @@ void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
      KSycocaEntry *p = (*it);
      if (p->isType(KST_KService))
      {
-        ConfigModule *module = new ConfigModule(static_cast<KService*>(p));
+        KService *s = static_cast<KService*>(p);
+        if (!kapp->authorizeControlModule(s->menuId()))
+           continue;
+           
+        ConfigModule *module = new ConfigModule(s);
         if (module->library().isEmpty())
         {
            delete module;
