@@ -177,6 +177,9 @@ KdmItem::setWidget( QWidget *widget )
 		myWidget->hide();
 	else
 		myWidget->show();
+
+	myWidget->setGeometry(area);
+
 	connect( myWidget, SIGNAL(destroyed()), SLOT(widgetGone()) );
 }
 
