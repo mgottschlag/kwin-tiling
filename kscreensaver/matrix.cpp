@@ -156,13 +156,13 @@ KMatrixSaver::KMatrixSaver( Drawable drawable ) : kScreenSaver( drawable ) {
 void KMatrixSaver::slotTimeout() {
   draw_matrix();
   XSync(qt_xdisplay(), False);
-  delete rnd; rnd = 0;
 }
 
 KMatrixSaver::~KMatrixSaver() {
   //fprintf(stderr, "System shutdown... :)\n");
   timer.stop();
   shutdown_matrix();
+  delete rnd; rnd = 0;
 }
 
 //--------------------------------------------------------------------
