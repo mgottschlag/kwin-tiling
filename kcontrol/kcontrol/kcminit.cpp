@@ -27,6 +27,7 @@
 #include <kcmodule.h>
 #include <kdesktopfile.h>
 #include <klibloader.h>
+#include <kdebug.h>
 
 
 int main(int argc, char *argv[])
@@ -73,6 +74,8 @@ int main(int argc, char *argv[])
 	  if (init)
 	    {
 	      // initialize the module
+	      kdDebug() << "Initializing " << libname << ": " << funcname << endl;
+
 	      void (*func)() = (void(*)())init;
 	      func();
 	    }
