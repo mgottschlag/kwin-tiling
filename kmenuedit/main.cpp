@@ -34,8 +34,9 @@ extern "C" int kdemain( int argc, char **argv )
 {
     KAboutData aboutData("kmenuedit", I18N_NOOP("KDE Menu Editor"),
 			 version, description, KAboutData::License_GPL,
-			 "(C) 2002, Raffaele Sandrini");
-    aboutData.addAuthor("Raffaele Sandrini", I18N_NOOP("Maintainer"), "sandrini@kde.org");
+			 "(C) 2000-2003, Waldo Bastian, Raffaele Sandrini, Matthias Elter");
+    aboutData.addAuthor("Waldo Bastian", I18N_NOOP("Maintainer"), "bastian@kde.org");
+    aboutData.addAuthor("Raffaele Sandrini", I18N_NOOP("Previous Maintainer"), "sandrini@kde.org");
     aboutData.addAuthor("Matthias Elter", I18N_NOOP("Original Author"), "elter@kde.org");
 
     KCmdLineArgs::init( argc, argv, &aboutData );
