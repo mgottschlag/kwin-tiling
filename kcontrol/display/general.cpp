@@ -215,8 +215,8 @@ void KThemeListBox::readThemeDir(const QString &directory)
 
     KConfig *kconfig = KGlobal::config();
     QString oldGroup = kconfig->group();
-    kconfig->setGroup("Misc");
-    curName = kconfig->readEntry("Name", "");
+    kconfig->setGroup("KDE");
+    QString curName = kconfig->readEntry("widgetStyleName", "Qt Platinum");
     kconfig->setGroup(oldGroup);
 
     QDir dir(directory, "*.themerc");
@@ -229,7 +229,7 @@ void KThemeListBox::readThemeDir(const QString &directory)
             config.setGroup("Misc");
             name = config.readEntry("Name", fi->baseName());
             desc = config.readEntry("Comment", i18n("No description available."));
-            QListViewItem* item = new QListViewItem(this, name, desc, fi->absFilePath());
+            QListViewItem *item = new QListViewItem(this, name, desc, fi->absFilePath());
             if(name == curName) {
                 setSelected(item, true);
                 ensureItemVisible(item);
