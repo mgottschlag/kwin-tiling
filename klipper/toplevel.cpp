@@ -33,6 +33,7 @@
 #include <kglobalsettings.h>
 #include <dcopclient.h>
 #include <kiconloader.h>
+#include <khelpmenu.h>
 
 #include "configdialog.h"
 #include "toplevel.h"
@@ -44,7 +45,7 @@
 #define CONFIG_ITEM  60
 #define EMPTY_ITEM   80
 
-#define MENU_ITEMS   (( isApplet() ? 5 : 7 ) + ( bTearOffHandle ? 1 : 0 ))
+#define MENU_ITEMS   (( isApplet() ? 6 : 8 ) + ( bTearOffHandle ? 1 : 0 ))
 // the <clipboard empty> item
 #define EMPTY (m_popup->count() - MENU_ITEMS)
 
@@ -86,8 +87,7 @@ TopLevel::TopLevel( QWidget *parent, bool applet )
 
     m_lastString = "";
     m_popup = new KPopupMenu(0L, "main_menu");
-    connect(m_popup, SIGNAL(activated(int)),
-            this, SLOT(clickedMenu(int)));
+    connect(m_popup, SIGNAL(activated(int)), SLOT(clickedMenu(int)));
 
     readProperties(m_config);
     connect(kapp, SIGNAL(saveYourself()), SLOT(saveSession()));
@@ -303,7 +303,11 @@ void TopLevel::readProperties(KConfig *kc)
       for (QStringList::ConstIterator it = dataList.begin();
            it != dataList.end(); ++it)
       {
-          long id = m_popup->insertItem( KStringHandler::csqueeze(*it, 45), -2, -1);
+          QString data( *it );
+          data.replace( QRegExp( "&" ), "&&" );
+
+          long id = m_popup->insertItem( KStringHandler::csqueeze(data, 45), 
+                  -2, -1);
           m_clipDict.insert( id, *it );
       }
   }
@@ -319,6 +323,11 @@ void TopLevel::readProperties(KConfig *kc)
 			i18n("&Clear Clipboard History"), EMPTY_ITEM );
   m_popup->insertItem( SmallIcon("configure"), i18n("&Preferences..."),
                        CONFIG_ITEM);
+
+  KHelpMenu *help = new KHelpMenu( this, KGlobal::instance()->aboutData(), 
+            false );
+  m_popup->insertItem( i18n( "&Help" ), help->menu() );
+
   if( !isApplet()) {
     m_popup->insertSeparator();
     m_popup->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
@@ -457,7 +466,7 @@ void TopLevel::slotRepeatAction()
 void TopLevel::setURLGrabberEnabled( bool enable )
 {
     bURLGrabber = enable;
-    toggleURLGrabAction->setChecked( enable );
+    //toggleURLGrabAction->setChecked( enable );
     KConfig *kc = m_config;
     kc->setGroup("General");
     kc->writeEntry("URLGrabberEnabled", bURLGrabber);

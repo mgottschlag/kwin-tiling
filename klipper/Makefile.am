@@ -7,8 +7,8 @@ kde_module_LTLIBRARIES = klipper_panelapplet.la
 CLEANFILES = dummy.cpp
 
 klipper_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) 
-klipper_la_SOURCES = main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp toplevel.skel \
-	aboutwidget.cpp
+klipper_la_SOURCES = main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp \
+    toplevel.skel
 
 klipper_la_METASOURCES = AUTO
 klipper_la_LDFLAGS = $(all_libraries) -module -avoid-version
