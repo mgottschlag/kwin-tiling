@@ -211,11 +211,11 @@ KFonts::KFonts(QWidget *parent, const char *name)
   QFont f3("helvetica", 12, QFont::Bold);
   QFont f4("helvetica", 11);
 
-  f0.setPixelSize(12);
-  f1.setPixelSize(10);
-  f2.setPixelSize(12);
-  f3.setPixelSize(12);
-  f4.setPixelSize(11);
+  f0.setPointSize(12);
+  f1.setPointSize(10);
+  f2.setPointSize(12);
+  f3.setPointSize(12);
+  f4.setPointSize(11);
 
   defaultFontList << f0 << f1 << f2 << f2 << f2 << f0 << f3 << f4;
 
