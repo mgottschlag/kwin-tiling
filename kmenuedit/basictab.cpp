@@ -255,7 +255,7 @@ void BasicTab::setFolderInfo(MenuFolderInfo *folderInfo)
     _launchCB->setChecked(false);
     _terminalCB->setChecked(false);
     _uidCB->setChecked(false);
-    _keyEdit->setShortcut(0);
+    _keyEdit->setShortcut(0, false);
 
     enableWidgets(false, folderInfo->hidden);
     blockSignals(false);
@@ -276,7 +276,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     // key binding part
     if( KHotKeys::present())
     {
-        _keyEdit->setShortcut( entryInfo->shortcut() );
+        _keyEdit->setShortcut( entryInfo->shortcut(), false );
     }
 
     _execEdit->lineEdit()->setText(df->readPathEntry("Exec"));
@@ -363,7 +363,7 @@ void BasicTab::slotCapturedShortcut(const KShortcut& cut)
     if (signalsBlocked())
        return;
 
-    _keyEdit->setShortcut(cut);
+    _keyEdit->setShortcut(cut, false);
 
     if ( KHotKeys::present() )
     {
