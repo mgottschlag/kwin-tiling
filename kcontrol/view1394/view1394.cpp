@@ -36,6 +36,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <libraw1394/csr.h>
 #define CONFIGROM_BASE 0x00
@@ -278,6 +279,7 @@ void View1394::generateBusReset()
       raw1394_reset_bus(*it);
 }
 
+
 OuiDb::OuiDb()
 {
    QString filename=locate("data","kcmview1394/oui.db");
@@ -287,13 +289,23 @@ OuiDb::OuiDb()
    if (!f.open(IO_ReadOnly))
       return;
 
-   QString line;
-   QTextStream ts(&f);
-   while(!ts.eof())
+   QByteArray ba=f.readAll();
+   int bytesLeft=ba.size();
+   char* data=ba.data();
+   while(bytesLeft>8)
    {
-      line=ts.readLine();
-      m_vendorIds.insert(line.left(6).upper(), line.mid(7));
+      char *eol=memchr(data, '\n',bytesLeft);
+      if (eol==0)
+         break;
+      if ((eol-data)<8)
+         break;
+      data[6]='\0';
+      *eol='\0';
+      m_vendorIds.insert(data, data+7);
+      bytesLeft-=(eol+1-data);
+      data=eol+1;
    }
+
    f.close();
 }
 
