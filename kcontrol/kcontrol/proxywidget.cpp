@@ -88,7 +88,7 @@ RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
     QLabel *pixmap = new QLabel(this);
     pixmap->setPixmap(KGlobal::iconLoader()->loadIcon("info", KIcon::Desktop, KIcon::SizeMedium ));
     QLabel *text = new QLabel(i18n("<qt><h3>Changes on this module require root access!</h3>"
-                                   "<p>Click the &quot;modify&quot; button to allow "
+                                   "<p>Click the &quot;Modify&quot; button to allow "
                                    "modifications on this module.</p></qt>"), this);
 
 	QWhatsThis::add(this, i18n("This module requires special permissions, probably "
