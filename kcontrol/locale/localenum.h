@@ -31,6 +31,7 @@ class QCheckBox;
 class QComboBox;
 class QLineEdit;
 
+class KLocaleAdvanced;
 class KLanguageCombo;
 
 class KLocaleConfigNumber : public QWidget
@@ -38,7 +39,8 @@ class KLocaleConfigNumber : public QWidget
   Q_OBJECT
 
 public:
-  KLocaleConfigNumber( QWidget *parent=0, const char *name=0);
+  KLocaleConfigNumber( KLocaleAdvanced *_locale,
+		       QWidget *parent=0, const char *name=0);
   ~KLocaleConfigNumber( );
 
   void load();
@@ -61,6 +63,8 @@ signals:
   void resample();
 
 private:
+  KLocaleAdvanced *locale;
+
   // Numbers
   QLabel *labDecSym;
   QLineEdit *edDecSym;

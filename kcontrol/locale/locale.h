@@ -28,7 +28,7 @@
 
 #include <qwidget.h>
 
-class KLocale;
+class KLocaleAdvanced;
 class KLanguageCombo;
 class KLocaleSample;
 
@@ -37,7 +37,8 @@ class KLocaleConfig : public QWidget
   Q_OBJECT
 
 public:
-  KLocaleConfig( QWidget *parent=0, const char *name=0);
+  KLocaleConfig( KLocaleAdvanced *_locale,
+		 QWidget *parent=0, const char *name=0);
   ~KLocaleConfig( );
 
   void loadLanguageList(KLanguageCombo *combo, const QStringList &first);
@@ -60,6 +61,8 @@ signals:
   void chsetChanged();
 
 private:
+  KLocaleAdvanced *locale;
+
   KLanguageCombo *comboCountry,
     *comboLang,
     *comboChset;

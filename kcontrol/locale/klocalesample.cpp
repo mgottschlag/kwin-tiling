@@ -41,10 +41,10 @@
 #include "klocalesample.h"
 #include "klocalesample.moc"
 
-extern KLocaleAdvanced *locale;
-
-KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
-  : QWidget(parent, name)
+KLocaleSample::KLocaleSample(KLocaleAdvanced *_locale,
+			     QWidget *parent, const char*name)
+  : QWidget(parent, name),
+    locale(_locale)
 {
   QGridLayout *lay = new QGridLayout(this, 5, 2);
   lay->setAutoAdd(TRUE);

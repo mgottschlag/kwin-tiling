@@ -31,6 +31,7 @@ class QCheckBox;
 class QComboBox;
 class QLineEdit;
 
+class KLocaleAdvanced;
 class KLanguageCombo;
 
 class KLocaleConfigMoney : public QWidget
@@ -38,7 +39,7 @@ class KLocaleConfigMoney : public QWidget
   Q_OBJECT
 
 public:
-  KLocaleConfigMoney( QWidget *parent=0, const char *name=0);
+  KLocaleConfigMoney( KLocaleAdvanced *_locale, QWidget *parent=0, const char *name=0);
   ~KLocaleConfigMoney( );
 
   void load();
@@ -65,6 +66,7 @@ signals:
   void resample();
 
 private:
+  KLocaleAdvanced *locale;
   KLocaleSample *sample;
 
   // Money

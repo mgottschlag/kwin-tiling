@@ -44,10 +44,10 @@
 #include "localemon.h"
 #include "localemon.moc"
 
-extern KLocaleAdvanced *locale;
-
-KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
- : QWidget(parent, name)
+KLocaleConfigMoney::KLocaleConfigMoney(KLocaleAdvanced *_locale,
+				       QWidget *parent, const char*name)
+ : QWidget(parent, name),
+   locale(_locale)
 {
   // Money
   QGridLayout *lay = new QGridLayout(this, 5, 2,

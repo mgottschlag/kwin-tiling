@@ -41,10 +41,10 @@
 #include "localetime.h"
 #include "localetime.moc"
 
-extern KLocaleAdvanced *locale;
-
-KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
- : QWidget(parent, name)
+KLocaleConfigTime::KLocaleConfigTime(KLocaleAdvanced *_locale,
+				     QWidget *parent, const char*name)
+ : QWidget(parent, name),
+   locale(_locale)
 {
   // Time
   QGridLayout *lay = new QGridLayout(this, 5, 2, 

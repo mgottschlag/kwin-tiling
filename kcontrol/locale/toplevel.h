@@ -30,6 +30,7 @@
 class QTabWidget;
 class QGroupBox;
 
+class KLocaleAdvanced;
 class KLocaleConfig;
 class KLocaleConfigMoney;
 class KLocaleConfigNumber;
@@ -58,6 +59,8 @@ public slots:
   void update() { reTranslate(); updateSample(); };
 
 private:
+  KLocaleAdvanced *locale;
+
   QTabWidget          *tab;
   KLocaleConfig       *localemain;
   KLocaleConfigNumber *localenum;

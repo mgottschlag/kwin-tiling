@@ -46,10 +46,10 @@
 #include "locale.moc"
 #include "toplevel.h"
 
-extern KLocaleAdvanced *locale;
-
-KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
-  : QWidget (parent, name)
+KLocaleConfig::KLocaleConfig(KLocaleAdvanced *_locale,
+			     QWidget *parent, const char *name)
+  : QWidget (parent, name),
+    locale(_locale)
 {
     QGridLayout *lay = new QGridLayout(this, 7, 2,
 				       KDialog::marginHint(),

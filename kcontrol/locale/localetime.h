@@ -31,6 +31,7 @@ class QCheckBox;
 class QComboBox;
 class QLineEdit;
 
+class KLocaleAdvanced;
 class KLanguageCombo;
 
 class KLocaleConfigTime : public QWidget
@@ -38,7 +39,7 @@ class KLocaleConfigTime : public QWidget
   Q_OBJECT
 
 public:
-  KLocaleConfigTime( QWidget *parent=0, const char *name=0);
+  KLocaleConfigTime( KLocaleAdvanced *_locale, QWidget *parent=0, const char *name=0);
   ~KLocaleConfigTime( );
 
   void load();
@@ -61,6 +62,8 @@ signals:
   void resample();
 
 private:
+  KLocaleAdvanced *locale;
+
   // Time & dates
   QLabel *labTimeFmt;
   QLineEdit *edTimeFmt;

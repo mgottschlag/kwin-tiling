@@ -31,11 +31,14 @@
 class QLabel;
 class QResizeEvent;
 
+class KLocaleAdvanced;
+
 class KLocaleSample : public QWidget
 {
   Q_OBJECT
 public:
-  KLocaleSample(QWidget *parent=0, const char*name=0);
+  KLocaleSample(KLocaleAdvanced *_locale,
+		QWidget *parent=0, const char*name=0);
   ~KLocaleSample();
 
 public slots:
@@ -49,6 +52,7 @@ protected:
   void setBackground(const QPixmap&);
 
 private:
+  KLocaleAdvanced *locale;
   QLabel *numberSample, *labNumber;
   QLabel *moneySample, *labMoney;
   QLabel *timeSample, *labTime;

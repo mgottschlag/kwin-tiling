@@ -40,10 +40,10 @@
 #include "localenum.h"
 #include "localenum.moc"
 
-extern KLocaleAdvanced *locale;
-
-KLocaleConfigNumber::KLocaleConfigNumber(QWidget *parent, const char*name)
- : QWidget(parent, name)
+KLocaleConfigNumber::KLocaleConfigNumber(KLocaleAdvanced *_locale,
+					 QWidget *parent, const char*name)
+ : QWidget(parent, name),
+   locale(_locale)
 {
   QGridLayout *lay = new QGridLayout(this, 5, 2,
 				     KDialog::marginHint(),
