@@ -430,13 +430,13 @@ void CKCmFontInst::removeFonts()
             case 1:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
                            i18n("<qt>Do you really want to delete\n <b>'%1'</b>?</qt>").arg(files.first()),
-                           i18n("Delete Font"), KGuiItem(i18n("Delete"), "editdelete"));
+			   i18n("Delete Font"), KStdGuiItem::del());
             break;
             default:
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
                            i18n("translators: not called for n == 1", "Do you really want to delete these %n fonts?",
                                 files.count()),
-                           files, i18n("Delete Fonts"), KGuiItem(i18n("Delete"), "editdelete"));
+			   files, i18n("Delete Fonts"), KStdGuiItem::del());
         }
 
         if(doIt)
