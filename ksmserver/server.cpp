@@ -1106,7 +1106,32 @@ void KSMServer::restoreSession()
 		break;
 	    }
 	}
+        
+        // windowmanager *MUST* have kmapnotify disabled!
+        {
+            QByteArray params;
+            QDataStream stream(params, IO_WriteOnly);
+            QCString replyType;
+            QByteArray replyData;
+            stream << QCString("KDE_DISABLE_KMAPNOTIFY") << "1";
+            kapp->dcopClient()->call(launcher, launcher,
+             "setLaunchEnv(QCString,QCString)", params, replyType,
+             replyData);
+        } 
+
 	startApplication( wmCommand );
+
+        // re-enable kmapnotify for other apps
+        {
+            QByteArray params;
+            QDataStream stream(params, IO_WriteOnly);
+            QCString replyType;
+            QByteArray replyData;
+            stream << QCString("KDE_DISABLE_KMAPNOTIFY") << "0";
+            kapp->dcopClient()->call(launcher, launcher,
+             "setLaunchEnv(QCString,QCString)", params, replyType,
+             replyData);
+        } 
 	QTimer::singleShot( 2000, this, SLOT( restoreSessionInternal() ) );
 	return;
     }
@@ -1121,7 +1146,31 @@ void KSMServer::restoreSession()
  */
 void KSMServer::startDefaultSession()
 {
+    // windowmanager *MUST* have kmapnotify disabled!
+    {
+        QByteArray params;
+        QDataStream stream(params, IO_WriteOnly);
+        QCString replyType;
+        QByteArray replyData;
+        stream << QCString("KDE_DISABLE_KMAPNOTIFY") << "1";
+        kapp->dcopClient()->call(launcher, launcher,
+        "setLaunchEnv(QCString,QCString)", params, replyType,
+         replyData);
+    } 
+
     startApplication( wm );
+
+    // re-enable kmapnotify for other apps
+    {
+        QByteArray params;
+        QDataStream stream(params, IO_WriteOnly);
+        QCString replyType;
+        QByteArray replyData;
+        stream << QCString("KDE_DISABLE_KMAPNOTIFY") << "0";
+        kapp->dcopClient()->call(launcher, launcher,
+        "setLaunchEnv(QCString,QCString)", params, replyType,
+         replyData);
+    } 
 }
 
 
