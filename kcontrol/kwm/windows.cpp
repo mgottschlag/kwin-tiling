@@ -472,7 +472,8 @@ void KWindowConfig::load( void )
 //     config->writeEntry(KWIN_RESIZE_ANIM, 1);
 //   }
 
-  key = config->readEntry(KWIN_RESIZE_OPAQUE, "Transparent");
+  // DF: please keep the default consistent with kwin (options.cpp line 145)
+  key = config->readEntry(KWIN_RESIZE_OPAQUE, "Opaque");
   if( key == "Opaque")
     setResizeOpaque(RESIZE_OPAQUE);
   else if ( key == "Transparent")
