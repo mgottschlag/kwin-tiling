@@ -1,5 +1,6 @@
 [General]
 Name=Default
+Name[az]=Əsas
 Name[bg]=Ïîäðàçáèðàíå
 Name[ca]=Omissió
 Name[cs]=Implicitní
@@ -45,6 +46,7 @@ author=Stefan Taferner
 email=taferner@kde.org
 info=
 Comment=Reset to default theme-less Kde desktop
+Comment[az]=Örtüsüz KDE masa üstünə geri dön
 Comment[cs]=Obnovit na výchozí téma KDE
 Comment[da]=Nulstil til standard temaløs K skrivebord
 Comment[de]=Auf Standard-Design zurücksetzen

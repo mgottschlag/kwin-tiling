@@ -17,6 +17,7 @@ inactiveTitleBtnBg=255,255,255
 inactiveTitleBtnBlend=128,128,128
 inactiveTitleBtnFg=43,45,62
 Name=System
+Name[az]=Sistem
 Name[bg]=Ñèñòåìà
 Name[ca]=Sistema
 Name[cs]=Systém

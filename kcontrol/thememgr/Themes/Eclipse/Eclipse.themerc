@@ -1,5 +1,6 @@
 [General]
 Name=Eclipse
+Name[az]=Tutulma
 Name[cs]=Zatmění
 Name[da]=Eklipse
 Name[eo]=Eklipso
@@ -22,6 +23,7 @@ author=Hagen Hoepfner
 email=
 info=
 Comment=An icon theme by Hagen Hoepfner
+Comment[az]=Hagen Hoepfner tərəfindən bir timsal örtüsü
 Comment[cs]=Téma ikon od Hagena Hoepfnera
 Comment[da]=Et ikontema ved Hagen Hoepfner
 Comment[de]=Symbol-Design von Hagen Hoepfner
