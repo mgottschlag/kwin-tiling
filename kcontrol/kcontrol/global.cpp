@@ -88,7 +88,7 @@ QString KCGlobal::baseGroup()
     // Compatibility with old behaviour, in case of missing .directory files.
     if (_baseGroup.isEmpty())
     {
-      kdWarning() << "No K menu group with X-KDE-KControl-Base=true found ! Defaulting to Settings/" << endl;
+      kdWarning() << "No K menu group with X-KDE-BaseGroup=settings found ! Defaulting to Settings/" << endl;
       _baseGroup = QString::fromLatin1("Settings");
     }
   }
