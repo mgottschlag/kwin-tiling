@@ -108,9 +108,11 @@ extern "C"
 			flags |= KRdbExportColors;
 		runRdb( flags );
 
-		applyMultiHead( KGlobalSettings::isMultiHead() );
+		bool isActive = !config.readBoolEntry( "disableMultihead", false) && 
+			                                      (ScreenCount(qt_xdisplay()) > 1);
+		applyMultiHead( isActive );
 
-                config.setGroup("KDE");
+        config.setGroup("KDE");
 
         // Write some Qt root property.
 #ifndef __osf__      // this crashes under Tru64 randomly -- will fix later
