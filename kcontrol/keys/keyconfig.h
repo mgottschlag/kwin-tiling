@@ -27,11 +27,17 @@ class KKeyModule : public KCModule
 public:
 	KAccel *keys;
         KKeyEntryMap dict;
+	KKeyMapOrder mapOrder;
         KeyChooserSpec *kc;
 
+	KKeyModule( QWidget *parent, bool isGlobal, bool bSeriesOnly, bool bSeriesNone, const char *name = 0 );
 	KKeyModule( QWidget *parent, bool isGlobal, const char *name = 0 );
 	~KKeyModule ();
 
+protected:
+	void init( bool isGlobal, bool bSeriesOnly, bool bSeriesNone );
+
+public:
         virtual void load();
         virtual void save();
         virtual void defaults();
@@ -43,6 +49,7 @@ public slots:
 	void slotSave();
 	void slotRemove();
 	void slotChanged();
+	void slotPreferMeta();
         void updateKeys( const KKeyEntryMap* map_P );
 
 signals:
@@ -69,6 +76,8 @@ class KeyChooserSpec : public KKeyChooser
 {
         Q_OBJECT
 public:
+	KeyChooserSpec( KKeyEntryMap *aKeyDict, KKeyMapOrder *pKeyOrder,
+		QWidget* parent, bool global );
         KeyChooserSpec( KKeyEntryMap *aKeyDict, QWidget* parent,
                  bool global );
         void updateKeys( const KKeyEntryMap* map_P );

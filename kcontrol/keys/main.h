@@ -61,7 +61,7 @@ private:
 
   QTabWidget          *tab;
 
-  KKeyModule *global, *standard;
+  KKeyModule *global, *series, *standard;
 };
 
 #endif

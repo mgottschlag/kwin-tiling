@@ -39,8 +39,19 @@
 
 //----------------------------------------------------------------------------
 
+KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, bool bSeriesOnly, bool bSeriesNone, const char *name )
+  : KCModule( parent, name )
+{
+	init( isGlobal, bSeriesOnly, bSeriesNone );
+}
+
 KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   : KCModule( parent, name )
+{
+	init( isGlobal, false, false );
+}
+
+void KKeyModule::init( bool isGlobal, bool bSeriesOnly, bool bSeriesNone )
 {
   QString wtstr;
 
@@ -50,21 +61,42 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
 
   if ( KeyType == "global" ) {
 // see also KKeyModule::init() below !!!
-#include "../../klipper/klipperbindings.cpp"
+#define WITH_LABELS
 #include "../../kwin/kwinbindings.cpp"
 #include "../../kicker/core/kickerbindings.cpp"
 #include "../../kdesktop/kdesktopbindings.cpp"
+#include "../../klipper/klipperbindings.cpp"
 #include "../../kxkb/kxkbbindings.cpp"
+#undef WITH_LABELS
     KeyScheme = "Global Key Scheme " ;
     KeySet    = "Global Keys" ;
+    // Sorting Hack: I'll re-write the module once feature-adding begins again.
+    if( bSeriesOnly || bSeriesNone ) {
+	KKeyMapOrder *pMapOrder = &keys->keyInsertOrder();
+	int j = 0;
+	for( int i = 0; i < (int)pMapOrder->count(); i++ ) {
+		QString sConfigKey = (*pMapOrder)[i];
+		kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
+		int iLastSpace = sConfigKey.findRev( ' ' );
+		bool bIsNum = false;
+		if( iLastSpace >= 0 )
+			sConfigKey.mid( iLastSpace+1 ).toInt( &bIsNum );
+
+		if( (bSeriesOnly && bIsNum) || (bSeriesNone && !bIsNum) || sConfigKey.contains( ':' ) )
+			mapOrder[j++] = sConfigKey;
+	}
+    }
   }
 
   if ( KeyType == "standard" ) {
+    // Bug: the useFourModifierKeys hasn't been set yet, so it defaults
+    //  to the 3-modifier key settings no matter what.
     for(uint i=0; i<KStdAccel::NB_STD_ACCELS; i++) {
       KStdAccel::StdAccel id = (KStdAccel::StdAccel)i;
       keys->insertItem( KStdAccel::description(id),
                         KStdAccel::action(id),
-                        KStdAccel::defaultKey(id),
+                        KStdAccel::defaultKey3(id),
+                        KStdAccel::defaultKey4(id),
                         true );
     }
 
@@ -124,7 +156,10 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
 
   dict = keys->keyDict();
 
-  kc =  new KeyChooserSpec( &dict, this, isGlobal );
+  if ( KeyType == "global" )
+    kc = new KeyChooserSpec( &dict, mapOrder.count() ? &mapOrder : &keys->keyInsertOrder(), this, isGlobal );
+  else
+    kc =  new KeyChooserSpec( &dict, this, isGlobal );
   connect( kc, SIGNAL( keyChange() ), this, SLOT( slotChanged() ) );
 
   readScheme();
@@ -151,7 +186,7 @@ KKeyModule::~KKeyModule (){
 
 void KKeyModule::load()
 {
-  for (KKeyEntryMap::Iterator it = dict.begin(); it != dict.end(); ++it) 
+  for (KKeyEntryMap::Iterator it = dict.begin(); it != dict.end(); ++it)
   {
       (*it).aConfigKeyCode = (*it).aCurrentKeyCode;
   }
@@ -217,6 +252,11 @@ void KKeyModule::slotSave( )
 {
     KSimpleConfig config(*sFileList->at( sList->currentItem() ) );
     KAccel::writeKeyMap( dict, KeyScheme, &config );
+}
+
+void KKeyModule::slotPreferMeta()
+{
+	// *** yet to be filled in / let children know -- ellis
 }
 
 void KKeyModule::readScheme( int index )
@@ -390,6 +430,59 @@ void KKeyModule::updateKeys( const KKeyEntryMap* map_P )
     kc->updateKeys( map_P );
     }
 
+// write all the global keys to kdeglobals
+// this is needed to be able to check for conflicts with global keys in app's keyconfig
+// dialogs, kdeglobals is empty as long as you don't apply any change in controlcenter/keys
+void KKeyModule::init()
+{
+  kdDebug(125) << "KKeyModule::init()\n";
+
+    {
+    KSimpleConfig cfg( "kdeglobals" );
+    cfg.deleteGroup( "Global Keys" );
+    }
+
+  kdDebug(125) << "KKeyModule::init() - Initialize # Modifier Keys Settings\n";
+  KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
+  QString fourMods = KGlobal::config()->readEntry( "Use Four Modifier Keys", KAccel::keyboardHasMetaKey() ? "true" : "false" );
+  KAccel::useFourModifierKeys( fourMods == "true" );
+  bool bUseFourModifierKeys = KAccel::useFourModifierKeys();
+  KGlobal::config()->writeEntry( "User Four Modifier Keys", bUseFourModifierKeys ? "true" : "false", true, true );
+
+  QWidget workaround;
+  KAccel* keys = new KAccel( &workaround );
+
+  kdDebug(125) << "KKeyModule::init() - Load Included Bindings\n";
+// this should match the included files above
+#include "../../klipper/klipperbindings.cpp"
+#include "../../kwin/kwinbindings.cpp"
+#include "../../kicker/core/kickerbindings.cpp"
+#include "../../kdesktop/kdesktopbindings.cpp"
+#include "../../kxkb/kxkbbindings.cpp"
+
+  kdDebug(125) << "KKeyModule::init() - Read Modifier Mapping\n";
+  KAccel::readModifierMapping();
+
+  kdDebug(125) << "KKeyModule::init() - Read Config Bindings\n";
+  keys->setConfigGlobal( true );
+  keys->setConfigGroup( "Global Keys" );
+  keys->readSettings();
+
+  kdDebug(125) << "KKeyModule::init() - Write Config Bindings\n";
+  keys->writeSettings();
+}
+
+//-----------------------------------------------------------------
+// KeyChooserSpec
+//-----------------------------------------------------------------
+
+KeyChooserSpec::KeyChooserSpec( KKeyEntryMap *aKeyDict, KKeyMapOrder *pKeyOrder, QWidget* parent, bool global_P )
+    : KKeyChooser( aKeyDict, pKeyOrder, parent, global_P, false, true ), global( global_P )
+    {
+    if( global )
+        globalDict()->clear(); // don't check against global keys twice
+    }
+
 KeyChooserSpec::KeyChooserSpec( KKeyEntryMap *aKeyDict, QWidget* parent, bool global_P )
     : KKeyChooser( aKeyDict, parent, global_P, false, true ), global( global_P )
     {
@@ -425,34 +518,3 @@ void KeyChooserSpec::updateKeys( const KKeyEntryMap* map_P )
         }
     }
 
-// write all the global keys to kdeglobals
-// this is needed to be able to check for conflicts with global keys in app's keyconfig
-// dialogs, kdeglobals is empty as long as you don't apply any change in controlcenter/keys
-void KKeyModule::init()
-{
-    {
-    KSimpleConfig cfg( "kdeglobals" );
-    cfg.deleteGroup( "Global Keys" );
-    }
-  QWidget workaround;
-  KAccel* keys = new KAccel( &workaround );
-// this should match the included files above
-#include "../../klipper/klipperbindings.cpp"
-#include "../../kwin/kwinbindings.cpp"
-#include "../../kicker/core/kickerbindings.cpp"
-#include "../../kdesktop/kdesktopbindings.cpp"
-#include "../../kxkb/kxkbbindings.cpp"
-
-  keys->setConfigGlobal( true );
-
-  KAccel::readModifierMapping();
-
-  KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
-  QString fourMods = KGlobal::config()->readEntry( "Use Four Modifier Keys", KAccel::keyboardHasMetaKey() ? "true" : "false" );
-  KAccel::useFourModifierKeys( fourMods == "true" );
-  KGlobal::config()->writeEntry( "User Four Modifier Keys", KAccel::useFourModifierKeys() ? "true" : "false", true, true );
-
-  keys->setConfigGroup( "Global Keys" );
-  keys->readSettings();
-  keys->writeSettings();
-}
