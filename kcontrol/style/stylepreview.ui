@@ -90,7 +90,7 @@
                             <widget class="QComboBox" row="3" column="1" rowspan="1" colspan="2">
                                 <item>
                                     <property name="text">
-                                        <string>ComboBox</string>
+                                        <string>Combobox</string>
                                     </property>
                                 </item>
                                 <property name="name">
@@ -127,7 +127,7 @@
                                             <cstring>RadioButton1</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>RadioButton</string>
+                                            <string>Radio button</string>
                                         </property>
                                         <property name="checked">
                                             <bool>true</bool>
@@ -138,7 +138,7 @@
                                             <cstring>RadioButton2</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>RadioButton</string>
+                                            <string>Radio button</string>
                                         </property>
                                     </widget>
                                     <widget class="Line">
@@ -160,7 +160,7 @@
                                             <cstring>CheckBox1</cstring>
                                         </property>
                                         <property name="text">
-                                            <string>CheckBox</string>
+                                            <string>Checkbox</string>
                                         </property>
                                         <property name="checked">
                                             <bool>true</bool>

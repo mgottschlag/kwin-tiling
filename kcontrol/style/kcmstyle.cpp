@@ -217,7 +217,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	comboComboEffect = new QComboBox( FALSE, containerFrame );
 	comboComboEffect->insertItem( i18n("Disable") );
 	comboComboEffect->insertItem( i18n("Animate") );
-	lblComboEffect = new QLabel( i18n("ComboBo&x effect:"), containerFrame );
+	lblComboEffect = new QLabel( i18n("Combobo&x effect:"), containerFrame );
 	lblComboEffect->setBuddy( comboComboEffect );
 	containerLayout->addWidget( lblComboEffect, 0, 0 );
 	containerLayout->addWidget( comboComboEffect, 0, 1 );
@@ -226,7 +226,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	comboTooltipEffect->insertItem( i18n("Disable") );
 	comboTooltipEffect->insertItem( i18n("Animate") );
 	comboTooltipEffect->insertItem( i18n("Fade") );
-	lblTooltipEffect = new QLabel( i18n("&ToolTip effect:"), containerFrame );
+	lblTooltipEffect = new QLabel( i18n("&Tool tip effect:"), containerFrame );
 	lblTooltipEffect->setBuddy( comboTooltipEffect );
 	containerLayout->addWidget( lblTooltipEffect, 1, 0 );
 	containerLayout->addWidget( comboTooltipEffect, 1, 1 );
