@@ -40,12 +40,12 @@
 #include "kshorturifilter.moc"
 
 #define FQDN_PATTERN    "[a-zA-Z][a-zA-Z0-9-]*\\.[a-zA-Z]"
+#define IPv4_PATTERN    "[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?:[[0-9][0-9]?[0-9]?]?/?"
+
 #define ENV_VAR_PATTERN "$[a-zA-Z_][a-zA-Z0-9_]*"
-#define IPv4_PATTERN    "[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?\\.[0-9][0-9]?[0-9]?:?[0-9]?[0-9]?[0-9]?/?"
+#define QFL1(x) QString::fromLatin1(x)
 
 KInstance *KShortURIFilterFactory::s_instance = 0;
-
-#define QFL1(x) QString::fromLatin1(x)
 
 KShortURIFilter::KShortURIFilter( QObject *parent, const char *name )
                 :KURIFilterPlugin( parent, name ? name : "shorturi", 1.0),
@@ -55,207 +55,217 @@ KShortURIFilter::KShortURIFilter( QObject *parent, const char *name )
     m_urlHints.insert(QFL1("www"), QFL1("http://"));
     m_urlHints.insert(QFL1("ftp"), QFL1("ftp://"));
     m_urlHints.insert(QFL1("news"), QFL1("news://"));
+    m_urlHints.insert(QFL1(IPv4_PATTERN), QFL1("http://"));
+    m_urlHints.insert(QFL1(FQDN_PATTERN), QFL1("http://"));
+    m_strDefaultProtocol = QFL1("http://");
 }
 
 bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
 {
   // TODO: configurability like always treat foobar/XXX as a shortURL
-  if ( QRegExp( QFL1("[ ;<>]") ).match( cmd ) >= 0
-    || QRegExp( QFL1("||") ).match( cmd ) >= 0
-    || QRegExp( QFL1("&&") ).match( cmd ) >= 0
-    || cmd.at( cmd.length()-1 ) == '&' ) return false;
+  if ( QRegExp( QFL1("[ ;<>]") ).match( cmd ) >= 0 ||
+       QRegExp( QFL1("||") ).match( cmd ) >= 0 ||
+       QRegExp( QFL1("&&") ).match( cmd ) >= 0 ||
+       cmd.at( cmd.length()-1 ) == '&' )
+        return false;
 
   return true;
 }
 
 bool KShortURIFilter::expandEnivVar( QString& cmd ) const
 {
-    // ENVIRONMENT variable expansion
-    int env_len = 0;
-    int env_loc = 0;
-    while( 1 )
-    {
-        env_loc = QRegExp( QFL1(ENV_VAR_PATTERN) ).match( cmd, env_loc, &env_len );
-        if( env_loc == -1 ) break;
-        const char* exp = getenv( cmd.mid( env_loc + 1, env_len - 1 ).local8Bit().data() );
-	cmd.replace( env_loc, env_len, QString::fromLocal8Bit(exp) );
-    }
-    return ( env_len ) ? true : false;
+  // ENVIRONMENT variable expansion
+  int env_len = 0;
+  int env_loc = 0;
+  while( 1 )
+  {
+    env_loc = QRegExp( QFL1(ENV_VAR_PATTERN) ).match( cmd, env_loc, &env_len );
+    if( env_loc == -1 ) break;
+    const char* exp = getenv( cmd.mid( env_loc + 1, env_len - 1 ).local8Bit().data() );
+    cmd.replace( env_loc, env_len, QString::fromLocal8Bit(exp) );
+  }
+  return ( env_len ) ? true : false;
 }
 
 bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 {
-    QString cmd = data.uri().url();
-    //kdDebug() << "KShortURIFilter::filterURI " << cmd << endl;
+  KURL url = data.uri();
+  QString cmd = url.url();
 
-    // We process SMB first because it can be
-    // represented with a special format.
-    int match = cmd.lower().find( QFL1("smb:") );
-    if (  match == 0 || cmd.find( QFL1("\\\\") ) == 0 )
+ /*
+  * Here is a description of how the shortURI deals with the supplied
+  * data.  First it expands any environment variable settings and then
+  * deals with special shortURI cases. These special cases are the "smb:"
+  * URL scheme which is very specific to KDE and not a standard, "#" and
+  * "##" which are shortcuts for man:/ and info:/ protocols respectively
+  * and local files.  It then checks if KDE supports the URL and whether
+  * or not it is valid.  If it fails this test, it checks to see if there
+  * is any specific
+  */
+  if ( expandEnivVar( cmd ) )
+    url = cmd;  // Update the url
+
+  // Handle SMB Protocol shortcuts ...
+  int loc = cmd.lower().find( QFL1("smb:") );
+  if (  loc == 0 || cmd.find( QFL1("\\\\") ) == 0 )
+  {
+    if( loc == 0 )
+      cmd = QDir::cleanDirPath( cmd.mid( 4 ) );
+    else
     {
-        if( match == 0 )
-            cmd = QDir::cleanDirPath( cmd.mid( 4 ) );
-        else
-        {
-            match = 0;
-            while( cmd[match] == '\\' ) match++;
-            cmd = cmd.mid( match );
-        }
-        for (uint i=0; i < cmd.length(); i++)
-        {
-            if (cmd[i]=='\\')
-                cmd[i]='/';
-        }
-        cmd[0] == '/' ? cmd.prepend( QFL1("smb:") ) : cmd.prepend( QFL1("smb:/") );
-        setFilteredURI( data, cmd );
-        setURIType( data, KURIFilterData::NET_PROTOCOL );
-        return data.hasBeenFiltered();
+      loc = 0;
+      while( cmd[loc] == '\\' ) loc++;
+      cmd = cmd.mid( loc );
     }
 
-    // Process the url for known and supported protocols. If it is
-    // a match and a valid url, we return immediately w/o filtering
-    // except if the protocol is "file".  The reason for this is that
-    // more filtering such as environment expansion might be required.
-    QStringList protocols = KProtocolManager::self().protocols();
-    for( QStringList::ConstIterator it = protocols.begin(); it != protocols.end(); it++ )
+    for (uint i=0; i < cmd.length(); i++)
     {
-        if( (cmd.left((*it).length()).lower() == *it) &&
-            !data.uri().isMalformed() && !data.uri().isLocalFile() )
-        {
-            setFilteredURI( data, cmd );
-            if ( *it == QFL1("man") || *it == QFL1("help") )
-                setURIType( data, KURIFilterData::HELP );
-            else
-                setURIType( data, KURIFilterData::NET_PROTOCOL );
-            return data.hasBeenFiltered();
-        }
+      if (cmd[i]=='\\')
+        cmd[i]='/';
     }
-
-    // See if the beginning of cmd looks like a valid FQDN.
-    QString host;
-    if( QRegExp( QFL1(FQDN_PATTERN) ).match(cmd) == 0 )
-    {
-        host = cmd.left(cmd.find('.'));
-        //kdDebug() << "host=" << host << endl;
-        // Check if it's one of the urlHints and qualify the URL
-        QString proto = m_urlHints[host.lower()];
-        if( !proto.isEmpty() )
-        {
-            cmd.insert(0, proto);
-            //kdDebug() << "Inserting protocol " << proto << " result=" << cmd << endl;
-            setFilteredURI( data, cmd );
-            setURIType( data, KURIFilterData::NET_PROTOCOL );
-            return data.hasBeenFiltered();
-        }
-    }
-    // Assume http if cmd starts with <IP>/
-    // Will QRegExp support ([0-9]{1,3}\.){3}[0-9]{1,3} some time?
-    // TODO : ADD LITERAL IPv6 support - See RFC 2373 Appendix B
-    if ( QRegExp( QFL1(IPv4_PATTERN) ).match(cmd) == 0 )
-    {
-        cmd.insert(0, QFL1("http://"));
-        setFilteredURI( data, cmd );
-        setURIType( data, KURIFilterData::NET_PROTOCOL );
-        return data.hasBeenFiltered();
-    }
-
-    if( cmd[0] == '#' )
-    {
-        if( cmd.left(2) == QFL1("##") )
-            cmd = QFL1("info:/") + ( cmd.length() == 2 ? QString::fromLatin1("dir" ) : cmd.mid(2));
-        else if ( cmd[0] == '#' )
-            cmd = QFL1("man:/") + cmd.mid(1);
-        setFilteredURI( data, cmd );
-        setURIType( data, KURIFilterData::HELP );
-        return data.hasBeenFiltered();
-    }
-
-    if( !data.uri().isMalformed() && data.uri().isLocalFile() )
-    {
-      // Local file and directory processing.
-      // Strip off "file:/" in order to expand local
-      // URLs if necessary.
-      // Use KURL::path, which does the right thing.
-      // The previous hack made "/" an empty string. (David)
-      cmd = QDir::cleanDirPath( data.uri().path() );
-      // cleanDirPath removes the trailing slash
-      if ( data.uri().path().right(1) == QFL1("/") )
-        cmd += '/';
-    }
-
-    // HOME directory ?
-    if( cmd[0] == '~' )
-    {
-        int len = cmd.find('/');
-        if( len == -1 )
-            len = cmd.length();
-        if( len == 1 )
-            cmd.replace ( 0, 1, QDir::homeDirPath() );
-        else
-        {
-            QString user = cmd.mid( 1, len-1 );
-            struct passwd *dir = getpwnam(user.local8Bit().data());
-            if( dir && strlen(dir->pw_dir) )
-                cmd.replace (0, len, QString::fromLocal8Bit(dir->pw_dir));
-            else
-            {
-                QString msg = dir ? i18n("<qt><b>%1</b> doesn't have a home directory!</qt>").arg(user) :
-                                    i18n("<qt>There is no user called <b>%1</b>.</qt>").arg(user);
-                setErrorMsg( data, msg );
-                setURIType( data, KURIFilterData::ERROR );
-                return data.hasBeenFiltered();
-            }
-        }
-    }
-
-    // Expand any environment variables
-    expandEnivVar( cmd );
-
-    // Now check for local resource match
-    struct stat buff;
-
-    // Determine if "uri" is an absolute path to a local resource
-    if( (cmd[0] == '/') && ( stat( cmd.local8Bit().data() , &buff ) == 0 ) )
-    {
-        bool isDir = S_ISDIR( buff.st_mode );
-        if( !isDir && access (cmd.local8Bit().data(), X_OK) == 0 )
-        {
-            setFilteredURI( data, cmd );
-            setURIType( data, KURIFilterData::EXECUTABLE );
-            return data.hasBeenFiltered();
-        }
-        // Open "uri" as file:/xxx if it is a non-executable local resource.
-        if( isDir || S_ISREG( buff.st_mode ) )
-        {
-            cmd.insert( 0, QFL1("file:") );
-            setFilteredURI( data, cmd );
-            setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
-            return data.hasBeenFiltered();
-        }
-    }
-
-    // If "uri" is not the absolute path to a file or a directory,
-    // see if it is executable under the user's $PATH variable.
-    if( !KStandardDirs::findExe( cmd ).isNull() )
-    {
-        setFilteredURI( data, cmd );
-        setURIType( data, KURIFilterData::EXECUTABLE );
-        return data.hasBeenFiltered();
-    }
-
-    // If cmd is NOT a local resource, check for a valid "shortURL"
-    // candidate and append "http://" as the default protocol.
-    // FIXME: Make this option configurable !! (Dawit A.)
-    if( (!host.isEmpty() && isValidShortURL ( cmd )) || cmd == QFL1("localhost") )
-    {
-        cmd.insert( 0, QFL1("http://") );
-        setFilteredURI( data, cmd );
-        setURIType( data, KURIFilterData::NET_PROTOCOL );
-        return data.hasBeenFiltered();
-    }
-    // TODO: Detect executables when arguments are given
-    setURIType( data, KURIFilterData::UNKNOWN );
+    cmd[0] == '/' ? cmd.prepend( QFL1("smb:") ) : cmd.prepend( QFL1("smb:/") );
+    setFilteredURI( data, cmd );
+    setURIType( data, KURIFilterData::NET_PROTOCOL );
     return data.hasBeenFiltered();
+  }
+
+  // Handle MAN & INFO pages shortcuts...
+  if( cmd[0] == '#' ||
+      cmd.find( QFL1("man:"), 0, true ) == 0 ||
+      cmd.find( QFL1("info:"), 0, true ) == 0 )
+  {
+    if( cmd.left(2) == QFL1("##") )
+      cmd = QFL1("info:/") + ( cmd.length() == 2 ? QString::fromLatin1("dir" ) : cmd.mid(2));
+    else if ( cmd[0] == '#' )
+      cmd = QFL1("man:/") + cmd.mid(1);
+    setFilteredURI( data, cmd );
+    setURIType( data, KURIFilterData::HELP );
+    return data.hasBeenFiltered();
+  }
+
+  // Handle all LOCAL URLs cases...
+  // Clean up the URL. That is remove "file:" and
+  // any excess slashes from it.
+  if( !url.isMalformed() && url.isLocalFile() )
+  {
+    bool hasEndSlash = ( cmd[cmd.length()-1] == '/' );
+    cmd = QDir::cleanDirPath( url.path() );
+    if ( hasEndSlash )
+      cmd += '/';
+  }
+
+  // Expanding shortcut to HOME URL...
+  if( cmd[0] == '~' )
+  {
+    int len = cmd.find('/');
+    if( len == -1 )
+      len = cmd.length();
+    if( len == 1 )
+      cmd.replace ( 0, 1, QDir::homeDirPath() );
+    else
+    {
+      QString user = cmd.mid( 1, len-1 );
+      struct passwd *dir = getpwnam(user.local8Bit().data());
+      if( dir && strlen(dir->pw_dir) )
+        cmd.replace (0, len, QString::fromLocal8Bit(dir->pw_dir));
+      else
+      {
+        QString msg = dir ? i18n("<qt><b>%1</b> doesn't have a home directory!</qt>").arg(user) :
+                            i18n("<qt>There is no user called <b>%1</b>.</qt>").arg(user);
+        setErrorMsg( data, msg );
+        setURIType( data, KURIFilterData::ERROR );
+        return data.hasBeenFiltered();
+      }
+    }
+  }
+
+  // Checking for local resource match...
+  struct stat buff;
+  // Determine if "uri" is an absolute path to a local resource
+  if( (cmd[0] == '/') && ( stat( cmd.local8Bit().data() , &buff ) == 0 ) )
+  {
+    bool isDir = S_ISDIR( buff.st_mode );
+    if( !isDir && access (cmd.local8Bit().data(), X_OK) == 0 )
+    {
+      setFilteredURI( data, cmd );
+      setURIType( data, KURIFilterData::EXECUTABLE );
+      return data.hasBeenFiltered();
+    }
+    // Open "uri" as file:/xxx if it is a non-executable local resource.
+    if( isDir || S_ISREG( buff.st_mode ) )
+    {
+      cmd.insert( 0, QFL1("file:") );
+      setFilteredURI( data, cmd );
+      setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
+      return data.hasBeenFiltered();
+    }
+  }
+
+  // If "uri" is not the absolute path to a file or
+  // a directory, see if it is executable under the
+  // user's $PATH variable.
+  if( !KStandardDirs::findExe( cmd ).isNull() )
+  {
+    setFilteredURI( data, cmd );
+    setURIType( data, KURIFilterData::EXECUTABLE );
+    return data.hasBeenFiltered();
+  }
+
+  // Process URLs of known and supported protocols so we don't have
+  // to resort to the pattern matching scheme below which can possibly
+  // be slow things down...
+  QStringList protocols = KProtocolManager::self().protocols();
+  for( QStringList::ConstIterator it = protocols.begin(); it != protocols.end(); it++ )
+  {
+    if( (cmd.left((*it).length()).lower() == *it) &&
+        !url.isMalformed() && !url.isLocalFile() )
+    {
+      setFilteredURI( data, cmd );
+      if ( *it == QFL1("man") || *it == QFL1("help") )
+        setURIType( data, KURIFilterData::HELP );
+      else
+        setURIType( data, KURIFilterData::NET_PROTOCOL );
+      return data.hasBeenFiltered();
+    }
+  }
+
+  // Okay this is the code that allows users to supply custom
+  // matches for specific URLs using Qt's regexp class.  This
+  // is hard-coded for now in the constructor, but will soon be
+  // moved to the config dialog so that people can configure this
+  // stuff.  This is perhaps one of those unecessary but somewhat
+  // useful features that usually makes people go WHOO and WHAAA.
+  QRegExp match;
+  URLHintsMap::ConstIterator it;
+  for( it = m_urlHints.begin(); it != m_urlHints.end(); ++it )
+  {
+    int len = 0;
+    match = it.key(); // Pattern is stored as key...
+    if( match.match( cmd, 0, &len ) == 0 )
+    {
+      cmd.prepend( it.data() );
+      setFilteredURI( data, cmd );
+      setURIType( data, KURIFilterData::NET_PROTOCOL );
+      return data.hasBeenFiltered();
+    }
+  }
+
+  // If cmd is NOT a local resource, check if it
+  // is a valid "shortURL" candidate and append
+  // the default protocol the user supplied. (DA)
+  if( isValidShortURL( cmd ) )
+  {
+    cmd.insert( 0, m_strDefaultProtocol );
+    setFilteredURI( data, cmd );
+    setURIType( data, KURIFilterData::NET_PROTOCOL );
+    return data.hasBeenFiltered();
+  }
+
+  // If we reach this point, we cannot filter
+  // this thing so simply return the default
+  // value of the filter data object which is
+  // false...
+  return data.hasBeenFiltered();
 }
 
 KCModule* KShortURIFilter::configModule( QWidget*, const char* ) const

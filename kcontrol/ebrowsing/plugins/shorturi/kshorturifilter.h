@@ -30,6 +30,8 @@
 #include <klibloader.h>
 #include <kurifilter.h>
 
+typedef QMap<QString,QString> URLHintsMap;
+
 class KInstance;
 
 /**
@@ -81,7 +83,7 @@ public:
      * @return the name of the config module.
      */
     virtual QString configName() const;
-    
+
     /**
      * Returns an instance of the module used to configure
      * this object.
@@ -119,7 +121,8 @@ protected:
     bool expandEnivVar( QString& ) const;
 
 private:
-    QMap<QString, QString> m_urlHints;
+    URLHintsMap m_urlHints;
+    QString m_strDefaultProtocol;
 };
 
 
