@@ -1044,7 +1044,6 @@ void TreeView::del()
     m_ac->action("edit_cut")->setEnabled(false);
     m_ac->action("edit_copy")->setEnabled(false);
     m_ac->action("delete")->setEnabled(false);
-    kdDebug()<<"currentItem() :"<<currentItem()<<endl;
     // Select new current item
     setSelected( currentItem(), true );
     // Switch the UI to show that item
