@@ -62,9 +62,8 @@ TopLevel::TopLevel (ConfigList *cl)
   mwidget = new mainWidget(splitter);
   connect(mwidget, SIGNAL(resized()), this, SLOT(doResize()));
 
-//   connect(treelist, SIGNAL(selectionChanged(QListViewItem*)), this, SLOT(itemSelected(QListViewItem*)));
+  connect(treelist, SIGNAL(selectionChanged(QListViewItem*)), this, SLOT(itemSelected(QListViewItem*)));
   connect(treelist, SIGNAL(returnPressed(QListViewItem*)), this, SLOT(itemSelected(QListViewItem*)));
-  connect(treelist, SIGNAL(doubleClicked(QListViewItem*)), this, SLOT(itemSelected(QListViewItem*)));
 
   setView(splitter);
   setMinimumSize(450,200);
