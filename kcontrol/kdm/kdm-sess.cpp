@@ -39,7 +39,7 @@
 #include "kdm-sess.h"
 
 
-extern KSimpleConfig *c;
+extern KSimpleConfig *config;
 
 KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
   : QWidget(parent, name)
@@ -320,39 +320,39 @@ void KDMSessionsWidget::writeSD(QComboBox *combo)
     case SdRoot: what = "Root"; break;
     default: what = "None"; break;
     }
-    c->writeEntry( "AllowShutdown", what);
+    config->writeEntry( "AllowShutdown", what);
 }
 
 void KDMSessionsWidget::save()
 {
-    c->setGroup("X-:*-Core");
+    config->setGroup("X-:*-Core");
     writeSD(sdlcombo);
 
-    c->setGroup("X-*-Core");
+    config->setGroup("X-*-Core");
     writeSD(sdrcombo);
 
-    c->setGroup("X-*-Greeter");
+    config->setGroup("X-*-Greeter");
     QString sesstr;
     for(uint i = 0; i < sessionslb->count(); i++)
     {
       sesstr.append(sessionslb->text(i));
       sesstr.append(",");
     }
-    c->writeEntry( "SessionTypes", sesstr );
+    config->writeEntry( "SessionTypes", sesstr );
 
-    c->setGroup("Shutdown");
-    c->writeEntry("HaltCmd", shutdown_lined->url(), true);
-    c->writeEntry("RebootCmd", restart_lined->url(), true);
+    config->setGroup("Shutdown");
+    config->writeEntry("HaltCmd", shutdown_lined->url(), true);
+    config->writeEntry("RebootCmd", restart_lined->url(), true);
 #if defined(__linux__) && defined(__i386__)
-    c->writeEntry("UseLilo", lilo_check->isChecked());
-    c->writeEntry("LiloCmd", lilocmd_lined->url());
-    c->writeEntry("LiloMap", lilomap_lined->url());
+    config->writeEntry("UseLilo", lilo_check->isChecked());
+    config->writeEntry("LiloCmd", lilocmd_lined->url());
+    config->writeEntry("LiloMap", lilomap_lined->url());
 #endif
 }
 
 void KDMSessionsWidget::readSD(QComboBox *combo, QString def)
 {
-  QString str = c->readEntry("AllowShutdown", def);
+  QString str = config->readEntry("AllowShutdown", def);
   SdModes sdMode;
   if(str == "All")
     sdMode = SdAll;
@@ -367,28 +367,28 @@ void KDMSessionsWidget::load()
 {
   QString str;
 
-  c->setGroup("X-:*-Core");
+  config->setGroup("X-:*-Core");
   readSD(sdlcombo, "All");
 
-  c->setGroup("X-*-Core");
+  config->setGroup("X-*-Core");
   readSD(sdrcombo, "Root");
 
-  c->setGroup("X-*-Greeter");
-  QStringList sessions = c->readListEntry( "SessionTypes");
+  config->setGroup("X-*-Greeter");
+  QStringList sessions = config->readListEntry( "SessionTypes");
   if (sessions.isEmpty())
     sessions << "default" << "kde" << "failsafe";
   sessionslb->clear();
   sessionslb->insertStringList(sessions);
 
-  c->setGroup("Shutdown");
-  restart_lined->setURL(c->readEntry("RebootCmd", "/sbin/reboot"));
-  shutdown_lined->setURL(c->readEntry("HaltCmd", "/sbin/halt"));
+  config->setGroup("Shutdown");
+  restart_lined->setURL(config->readEntry("RebootCmd", "/sbin/reboot"));
+  shutdown_lined->setURL(config->readEntry("HaltCmd", "/sbin/halt"));
 #if defined(__linux__) && defined(__i386__)
-  bool lien = c->readBoolEntry("UseLilo", false);
+  bool lien = config->readBoolEntry("UseLilo", false);
   lilo_check->setChecked(lien);
   slotLiloCheckToggled(lien);
-  lilocmd_lined->setURL(c->readEntry("LiloCmd", "/sbin/lilo"));
-  lilomap_lined->setURL(c->readEntry("LiloMap", "/boot/map"));
+  lilocmd_lined->setURL(config->readEntry("LiloCmd", "/sbin/lilo"));
+  lilomap_lined->setURL(config->readEntry("LiloMap", "/boot/map"));
 #endif
 }
 

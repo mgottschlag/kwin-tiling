@@ -37,7 +37,7 @@
 #include "kdm-users.h"
 
 
-extern KSimpleConfig *c;
+extern KSimpleConfig *config;
 
 KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *show_users)
     : QWidget(parent, name)
@@ -382,11 +382,11 @@ void KDMUsersWidget::slotUserSelected(const QString &user)
 
 void KDMUsersWidget::save()
 {
-    c->setGroup("X-*-Greeter");
+    config->setGroup("X-*-Greeter");
 
-    c->writeEntry( "SortUsers", cbusrsrt->isChecked() );
+    config->writeEntry( "SortUsers", cbusrsrt->isChecked() );
 
-    c->writeEntry( "ShowUsers",
+    config->writeEntry( "ShowUsers",
 	rballusr->isChecked() ? "NotHidden" :
 	rbselusr->isChecked() ? "Selected" : "None");
 
@@ -395,17 +395,17 @@ void KDMUsersWidget::save()
         nousrstr.append(nouserlb->text(i));
         nousrstr.append(",");
     }
-    c->writeEntry( "HiddenUsers", nousrstr );
+    config->writeEntry( "HiddenUsers", nousrstr );
 
     QString usrstr;
     for(uint i = 0, j = userlb->count(); i < j; i++) {
         usrstr.append(userlb->text(i));
         usrstr.append(",");
     }
-    c->writeEntry( "SelectedUsers", usrstr );
+    config->writeEntry( "SelectedUsers", usrstr );
 
-    c->writeEntry( "MinShowUID", leminuid->text());
-    c->writeEntry( "MaxShowUID", lemaxuid->text());
+    config->writeEntry( "MinShowUID", leminuid->text());
+    config->writeEntry( "MaxShowUID", lemaxuid->text());
 }
 
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
@@ -415,17 +415,17 @@ void KDMUsersWidget::load(QStringList *show_users)
     iconloader = KGlobal::iconLoader();
     QString str;
 
-    c->setGroup("X-*-Greeter");
+    config->setGroup("X-*-Greeter");
 
     // Read users from kdmrc and /etc/passwd
-    QStringList users = c->readListEntry( "SelectedUsers");
+    QStringList users = config->readListEntry( "SelectedUsers");
     userlb->clear();
-    for (QStringList::ConstIterator it = users.begin(), et = users.end(); 
+    for (QStringList::ConstIterator it = users.begin(), et = users.end();
 	 it != et; ++it)
 	if (getpwnam((*it).local8Bit()))
 	    userlb->insertItem(*it);
 
-    QStringList no_users = c->readListEntry( "HiddenUsers");
+    QStringList no_users = config->readListEntry( "HiddenUsers");
     nouserlb->clear();
     nouserlb->insertStringList(no_users);
 
@@ -451,12 +451,12 @@ void KDMUsersWidget::load(QStringList *show_users)
     remuserlb->clear();
     remuserlb->insertStringList(rem_users);
 
-    cbusrsrt->setChecked(c->readBoolEntry("SortUsers", true));
+    cbusrsrt->setChecked(config->readBoolEntry("SortUsers", true));
 
-    leminuid->setText(c->readEntry("MinShowUID", "0"));
-    lemaxuid->setText(c->readEntry("MaxShowUID", "65535"));
+    leminuid->setText(config->readEntry("MinShowUID", "0"));
+    lemaxuid->setText(config->readEntry("MaxShowUID", "65535"));
 
-    QString su = c->readEntry( "ShowUsers");
+    QString su = config->readEntry( "ShowUsers");
     if (su == QString::fromLatin1("None")) {
 	rbnoneusr->setChecked(true);
 	slotShowUsers(0);

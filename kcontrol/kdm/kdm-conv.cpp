@@ -36,7 +36,7 @@
 #include "kdm-conv.h"
 
 
-extern KSimpleConfig *c;
+extern KSimpleConfig *config;
 
 KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name, QStringList *show_users)
     : QWidget(parent, name)
@@ -281,29 +281,29 @@ void KDMConvenienceWidget::slotEnPLChanged()
 
 void KDMConvenienceWidget::save()
 {
-    c->setGroup("X-:0-Core");
-    c->writeEntry( "AutoLoginEnable", cbalen->isChecked() );
-    c->writeEntry( "AutoLoginUser", userlb->currentText() );
-    c->writeEntry( "AutoLogin1st", cbal1st->isChecked() );
+    config->setGroup("X-:0-Core");
+    config->writeEntry( "AutoLoginEnable", cbalen->isChecked() );
+    config->writeEntry( "AutoLoginUser", userlb->currentText() );
+    config->writeEntry( "AutoLogin1st", cbal1st->isChecked() );
 
-    c->setGroup("X-:*-Core");
-    c->writeEntry( "NoPassEnable", cbplen->isChecked() );
+    config->setGroup("X-:*-Core");
+    config->writeEntry( "NoPassEnable", cbplen->isChecked() );
     QString npusrstr;
     for(uint i = 0, j = npuserlb->count(); i < j; i++) {
         npusrstr.append(npuserlb->text(i));
         npusrstr.append(",");
     }
-    c->writeEntry( "NoPassUsers", npusrstr );
+    config->writeEntry( "NoPassUsers", npusrstr );
 
-    c->setGroup("X-*-Core");
-    c->writeEntry( "AutoReLogin", cbarlen->isChecked() );
+    config->setGroup("X-*-Core");
+    config->writeEntry( "AutoReLogin", cbarlen->isChecked() );
 
-    c->setGroup("X-*-Greeter");
-    c->writeEntry( "PreselectUser", npRadio->isChecked() ? "None" :
+    config->setGroup("X-*-Greeter");
+    config->writeEntry( "PreselectUser", npRadio->isChecked() ? "None" :
 				    ppRadio->isChecked() ? "Previous" :
 							   "Default" );
-    c->writeEntry( "DefaultUser", puserlb->currentText() );
-    c->writeEntry( "FocusPasswd", cbjumppw->isChecked() );
+    config->writeEntry( "DefaultUser", puserlb->currentText() );
+    config->writeEntry( "FocusPasswd", cbjumppw->isChecked() );
 }
 
 
@@ -314,33 +314,33 @@ void KDMConvenienceWidget::load(QStringList *show_users)
 
     userlb->clear();
     userlb->insertStringList(*show_users);
-    c->setGroup("X-:0-Core");
-    cbalen->setChecked(c->readBoolEntry( "AutoLoginEnable", false) );
-    QString user = c->readEntry( "AutoLoginUser" );
+    config->setGroup("X-:0-Core");
+    cbalen->setChecked(config->readBoolEntry( "AutoLoginEnable", false) );
+    QString user = config->readEntry( "AutoLoginUser" );
     for (uint i = 0, j = userlb->count(); i < j; i++)
 	if (userlb->text(i) == user)
 	    userlb->setCurrentItem(i);
-    cbal1st->setChecked(c->readBoolEntry( "AutoLogin1st", true) );
+    cbal1st->setChecked(config->readBoolEntry( "AutoLogin1st", true) );
 
-    c->setGroup("X-:*-Core");
-    cbplen->setChecked(c->readBoolEntry( "NoPassEnable", false) );
-    QStringList npusers = c->readListEntry( "NoPassUsers");
+    config->setGroup("X-:*-Core");
+    cbplen->setChecked(config->readBoolEntry( "NoPassEnable", false) );
+    QStringList npusers = config->readListEntry( "NoPassUsers");
     wpuserlb->clear();
     for (QStringList::ConstIterator it = show_users->begin(),
 	    et = show_users->end(); it != et; ++it)
 	if (!npusers.contains(*it))
 	    wpuserlb->insertItem(*it);
     npuserlb->clear();
-    for (QStringList::ConstIterator it = npusers.begin(), et = npusers.end(); 
+    for (QStringList::ConstIterator it = npusers.begin(), et = npusers.end();
 	 it != et; ++it)
 	if (show_users->contains(*it))
 	    npuserlb->insertItem(*it);
 
-    c->setGroup("X-*-Core");
-    cbarlen->setChecked(c->readBoolEntry( "AutoReLogin", false) );
+    config->setGroup("X-*-Core");
+    cbarlen->setChecked(config->readBoolEntry( "AutoReLogin", false) );
 
-    c->setGroup("X-*-Greeter");
-    QString presstr = c->readEntry( "PreselectUser", "None" );
+    config->setGroup("X-*-Greeter");
+    QString presstr = config->readEntry( "PreselectUser", "None" );
     if (presstr == "Previous")
 	ppRadio->setChecked(true);
     else if (presstr == "Default")
@@ -349,11 +349,11 @@ void KDMConvenienceWidget::load(QStringList *show_users)
 	npRadio->setChecked(true);
     puserlb->clear();
     puserlb->insertStringList(*show_users);
-    user = c->readEntry( "DefaultUser" );
+    user = config->readEntry( "DefaultUser" );
     for (uint i = 0, j = puserlb->count(); i < j; i++)
 	if (puserlb->text(i) == user)
 	    puserlb->setCurrentItem(i);
-    cbjumppw->setChecked(c->readBoolEntry( "FocusPasswd", false) );
+    cbjumppw->setChecked(config->readBoolEntry( "FocusPasswd", false) );
 
     slotEnALChanged();
     slotPresChanged();

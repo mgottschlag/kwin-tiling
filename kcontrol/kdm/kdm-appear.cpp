@@ -32,7 +32,7 @@
 #include <qradiobutton.h>
 #include <qwhatsthis.h>
 #include <qvalidator.h>
-#include <qstylefactory.h> 
+#include <qstylefactory.h>
 
 #include <klocale.h>
 #include <klineedit.h>
@@ -46,7 +46,7 @@
 #include "kdm-appear.h"
 
 
-extern KSimpleConfig *c;
+extern KSimpleConfig *config;
 
 
 KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
@@ -281,7 +281,7 @@ void KDMAppearanceWidget::loadLanguageList(KLanguageButton *combo)
 
 bool KDMAppearanceWidget::setLogo(QString logo)
 {
-    QString flogo = logo.isEmpty() ? 
+    QString flogo = logo.isEmpty() ?
 	locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") ) :
 	logo;
     QPixmap p(flogo);
@@ -298,7 +298,7 @@ bool KDMAppearanceWidget::setLogo(QString logo)
 void KDMAppearanceWidget::slotLogoButtonClicked()
 {
     KImageIO::registerFormats();
-    QString fileName = KFileDialog::getOpenFileName( 
+    QString fileName = KFileDialog::getOpenFileName(
 	locate("data", QString::fromLatin1("kdm/pics/") ),
 	KImageIO::pattern());
     if (!fileName.isEmpty())
@@ -356,8 +356,8 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 
 	// we gotta check if it is a non-local file and make a tmp copy at the hd.
 	if(!url->isLocalFile()) {
-	    pixurl = "file:" + 
-		     KGlobal::dirs()->resourceDirs("data").last() + 
+	    pixurl = "file:" +
+		     KGlobal::dirs()->resourceDirs("data").last() +
 		     "kdm/pics/" + url->fileName();
 	    KIO::NetAccess::copy(*url, pixurl);
 	    istmp = true;
@@ -383,38 +383,38 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 
 void KDMAppearanceWidget::save()
 {
-  c->setGroup("X-*-Greeter");
+  config->setGroup("X-*-Greeter");
 
-  c->writeEntry("GreetString", greetstr_lined->text());
+  config->writeEntry("GreetString", greetstr_lined->text());
 
-  c->writeEntry("LogoArea", noneRadio->isChecked() ? "None" : 
+  config->writeEntry("LogoArea", noneRadio->isChecked() ? "None" :
 			    logoRadio->isChecked() ? "Logo" : "Clock" );
 
-  c->writeEntry("LogoPixmap", KGlobal::iconLoader()->iconPath(logopath, KIcon::Desktop, true));
+  config->writeEntry("LogoPixmap", KGlobal::iconLoader()->iconPath(logopath, KIcon::Desktop, true));
 
-  c->writeEntry("GUIStyle", guicombo->currentText());
+  config->writeEntry("GUIStyle", guicombo->currentText());
 
-  c->writeEntry("EchoMode", echocombo->currentItem() == 0 ? "NoEcho" :
+  config->writeEntry("EchoMode", echocombo->currentItem() == 0 ? "NoEcho" :
 			    echocombo->currentItem() == 1 ? "OneStar" :
 							    "ThreeStars");
 
-  c->writeEntry("GreeterPosFixed", posSpecifyRadio->isChecked());
-  c->writeEntry("GreeterPosX", xLineEdit->text());
-  c->writeEntry("GreeterPosY", yLineEdit->text());
+  config->writeEntry("GreeterPosFixed", posSpecifyRadio->isChecked());
+  config->writeEntry("GreeterPosX", xLineEdit->text());
+  config->writeEntry("GreeterPosY", yLineEdit->text());
 
-  c->writeEntry("Language", langcombo->currentTag());
+  config->writeEntry("Language", langcombo->currentTag());
 }
 
 
 void KDMAppearanceWidget::load()
 {
-  c->setGroup("X-*-Greeter");
+  config->setGroup("X-*-Greeter");
 
   // Read the greeting string
-  greetstr_lined->setText(c->readEntry("GreetString", i18n("Welcome to %s at %n")));
+  greetstr_lined->setText(config->readEntry("GreetString", i18n("Welcome to %s at %n")));
 
   // Regular logo or clock
-  QString logoArea = c->readEntry("LogoArea", "Logo" );
+  QString logoArea = config->readEntry("LogoArea", "Logo" );
   if (logoArea == "Clock") {
     clockRadio->setChecked(true);
     slotAreaRadioClicked(KdmClock);
@@ -427,13 +427,13 @@ void KDMAppearanceWidget::load()
   }
 
   // See if we use alternate logo
-  setLogo( c->readEntry("LogoPixmap", ""));
+  setLogo( config->readEntry("LogoPixmap", ""));
 
   // Check the GUI type
-  guicombo->setCurrentItem (c->readEntry("GUIStyle", "Default"), true, 0);
+  guicombo->setCurrentItem (config->readEntry("GUIStyle", "Default"), true, 0);
 
   // Check the echo mode
-  QString echostr = c->readEntry("EchoMode", "OneStar");
+  QString echostr = config->readEntry("EchoMode", "OneStar");
   if (echostr == "ThreeStars")
     echocombo->setCurrentItem(2);
   else if (echostr == "OneStar")
@@ -441,18 +441,18 @@ void KDMAppearanceWidget::load()
   else  // "NoEcho"
     echocombo->setCurrentItem(0);
 
-  if (c->readBoolEntry("GreeterPosFixed", false)) {
+  if (config->readBoolEntry("GreeterPosFixed", false)) {
     posSpecifyRadio->setChecked(true);
     slotPosRadioClicked(1);
   } else {
     posCenterRadio->setChecked(true);
     slotPosRadioClicked(0);
   }
-  xLineEdit->setText( c->readEntry("GreeterPosX", "100"));
-  yLineEdit->setText( c->readEntry("GreeterPosY", "100"));
+  xLineEdit->setText( config->readEntry("GreeterPosX", "100"));
+  yLineEdit->setText( config->readEntry("GreeterPosY", "100"));
 
   // get the language
-  langcombo->setCurrentItem(c->readEntry("Language", "C"));
+  langcombo->setCurrentItem(config->readEntry("Language", "C"));
 }
 
 

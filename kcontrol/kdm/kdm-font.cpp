@@ -38,7 +38,7 @@
 #include "kdm-font.h"
 
 
-extern KSimpleConfig *c;
+extern KSimpleConfig *config;
 
 KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   : QWidget(parent, name)
@@ -103,13 +103,13 @@ void KDMFontWidget::configChanged()
 
 void KDMFontWidget::save()
 {
-  c->setGroup("X-*-Greeter");
+  config->setGroup("X-*-Greeter");
 
   // write font
-  c->writeEntry("StdFont", stdfont);
-  c->writeEntry("GreetFont", greetfont);
-  c->writeEntry("FailFont", failfont);
-  c->writeEntry("AntiAliasing", aacb->isChecked());
+  config->writeEntry("StdFont", stdfont);
+  config->writeEntry("GreetFont", greetfont);
+  config->writeEntry("FailFont", failfont);
+  config->writeEntry("AntiAliasing", aacb->isChecked());
 }
 
 
@@ -125,16 +125,16 @@ void KDMFontWidget::load()
 {
   set_def();
 
-  c->setGroup("X-*-Greeter");
+  config->setGroup("X-*-Greeter");
 
   // Read the fonts
-  stdfont = c->readFontEntry("StdFont", &stdfont);
-  failfont = c->readFontEntry("FailFont", &failfont);
-  greetfont = c->readFontEntry("GreetFont", &greetfont);
+  stdfont = config->readFontEntry("StdFont", &stdfont);
+  failfont = config->readFontEntry("FailFont", &failfont);
+  greetfont = config->readFontEntry("GreetFont", &greetfont);
 
   slotSetFont(fontcombo->currentItem());
 
-  aacb->setChecked(c->readBoolEntry("AntiAliasing"));
+  aacb->setChecked(config->readBoolEntry("AntiAliasing"));
 }
 
 

@@ -48,7 +48,7 @@
 #include <backgnd.h>
 
 
-extern KSimpleConfig *c;
+extern KSimpleConfig *config;
 
 
 /**** KBGMonitor ****/
@@ -242,7 +242,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pCBMulti->hide();
     m_pMSetupBut->hide();
 
-    m_Renderer = new KBackgroundRenderer(0, c);
+    m_Renderer = new KBackgroundRenderer(0, config);
     connect(m_Renderer, SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
 
     init();
@@ -327,52 +327,52 @@ void KBackground::apply()
     m_pColor1But->setColor(r->colorA());
     m_pColor2But->setColor(r->colorB());
     switch (r->backgroundMode()) {
-    case KBackgroundSettings::Program:
-    m_pColor1But->setEnabled(false);
-    m_pColor2But->setEnabled(false);
-    m_pBGSetupBut->setEnabled(true);
-    break;
-    case KBackgroundSettings::Flat:
-    m_pColor1But->setEnabled(true);
-    m_pColor2But->setEnabled(false);
-    m_pBGSetupBut->setEnabled(false);
-    break;
-    case KBackgroundSettings::Pattern:
-    m_pColor1But->setEnabled(true);
-    m_pColor2But->setEnabled(true);
-    m_pBGSetupBut->setEnabled(true);
-    break;
-    default:
-    m_pColor1But->setEnabled(true);
-    m_pColor2But->setEnabled(true);
-    m_pBGSetupBut->setEnabled(false);
-    break;
+        case KBackgroundSettings::Program:
+            m_pColor1But->setEnabled(false);
+            m_pColor2But->setEnabled(false);
+            m_pBGSetupBut->setEnabled(true);
+            break;
+        case KBackgroundSettings::Flat:
+            m_pColor1But->setEnabled(true);
+            m_pColor2But->setEnabled(false);
+            m_pBGSetupBut->setEnabled(false);
+            break;
+        case KBackgroundSettings::Pattern:
+            m_pColor1But->setEnabled(true);
+            m_pColor2But->setEnabled(true);
+            m_pBGSetupBut->setEnabled(true);
+            break;
+        default:
+            m_pColor1But->setEnabled(true);
+            m_pColor2But->setEnabled(true);
+            m_pBGSetupBut->setEnabled(false);
+            break;
     }
 
     // Wallpaper mode
     QString wp = r->wallpaper();
     if (wp.isEmpty())
-    wp = QString(" ");
+        wp = QString(" ");
     if (!m_Wallpaper.contains(wp)) {
-    int count = m_Wallpaper.count();
-    m_Wallpaper[wp] = count;
-    m_pWallpaperBox->insertItem(wp);
-    m_pWallpaperBox->setCurrentItem(count);
+        int count = m_Wallpaper.count();
+        m_Wallpaper[wp] = count;
+        m_pWallpaperBox->insertItem(wp);
+        m_pWallpaperBox->setCurrentItem(count);
     }
     m_pWallpaperBox->setCurrentItem(m_Wallpaper[wp]);
     m_pArrangementBox->setCurrentItem(r->wallpaperMode());
 
     // Multi mode
     if (r->multiWallpaperMode() == KBackgroundSettings::NoMulti) {
-    m_pCBMulti->setChecked(false);
-    m_pWallpaperBox->setEnabled(true);
-    m_pBrowseBut->setEnabled(true);
-    m_pMSetupBut->setEnabled(false);
+        m_pCBMulti->setChecked(false);
+        m_pWallpaperBox->setEnabled(true);
+        m_pBrowseBut->setEnabled(true);
+        m_pMSetupBut->setEnabled(false);
     } else {
-    m_pCBMulti->setChecked(true);
-    m_pWallpaperBox->setEnabled(false);
-    m_pBrowseBut->setEnabled(false);
-    m_pMSetupBut->setEnabled(true);
+        m_pCBMulti->setChecked(true);
+        m_pWallpaperBox->setEnabled(false);
+        m_pBrowseBut->setEnabled(false);
+        m_pMSetupBut->setEnabled(true);
     }
 
     // Start preview render
@@ -448,7 +448,7 @@ void KBackground::slotBGSetup()
     dlg.setCurrent(cur);
     if ((dlg.exec() == QDialog::Accepted) && !dlg.pattern().isEmpty()) {
         r->stop();
-        r->setPattern(dlg.pattern());
+        r->setPatternName(dlg.pattern());
         r->start();
         emit changed(true);
     }

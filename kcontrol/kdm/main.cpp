@@ -73,14 +73,14 @@ KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
     return 0;
 }
 
-KSimpleConfig *c;
+KSimpleConfig *config;
 
 KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   : KCModule(KDMFactory::instance(), parent, name)
 {
   QStringList show_users;
 
-  c = new KSimpleConfig( QString::fromLatin1( KDE_CONFDIR "/kdm/kdmrc" ) );
+  config = new KSimpleConfig( QString::fromLatin1( KDE_CONFDIR "/kdm/kdmrc" ));
 
   QVBoxLayout *top = new QVBoxLayout(this);
   tab = new QTabWidget(this);
@@ -117,7 +117,7 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
 
 KDModule::~KDModule()
 {
-  delete c;
+  delete config;
 }
 
 QString KDModule::quickHelp() const
@@ -155,11 +155,11 @@ const KAboutData* KDModule::aboutData() const
    new KAboutData(I18N_NOOP("kcmkdm"), I18N_NOOP("KDE Login Manager Config Module"),
                   0, 0, KAboutData::License_GPL,
                   I18N_NOOP("(c) 1996 - 2001 The KDM Authors"));
- 
+
    about->addAuthor("Thomas Tanghus", I18N_NOOP("Original author"), "tanghus@earthling.net");
 	about->addAuthor("Steffen Hansen", 0, "hansen@kde.org");
 	about->addAuthor("Oswald Buddenhagen", I18N_NOOP("Current maintainer"), "ossi@kde.org");
- 
+
    return about;
 }
 
@@ -184,7 +184,7 @@ void KDModule::save()
   users->save();
   sessions->save();
   convenience->save();
-  c->sync();
+  config->sync();
   chmod( KDE_CONFDIR "/kdm/kdmrc", 0644 );
 }
 
