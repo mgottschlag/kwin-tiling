@@ -94,6 +94,10 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
                                 this );
     cbSaveContents = new QCheckBox( i18n("Save clipboard contents on e&xit"),
                                     this );
+    cbStripWhitespace = new QCheckBox( i18n("Remove whitespace when executing actions"), this );
+    QWhatsThis::add( cbStripWhitespace,
+                     i18n("Sometimes, the selected text has some whitespace at the end, which, if loaded as URL in a browser would cause an error. Enabling this option removes any whitespace at the beginning or end of the selected string (the original clipboard contents will not be modified).") );
+    
     cbReplayAIH = new QCheckBox( i18n("&Replay actions on an item selected from history"),
                                     this );
 

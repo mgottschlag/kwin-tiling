@@ -60,6 +60,9 @@ public:
   const QStringList& avoidWindows() const { return myAvoidWindows; }
   void setAvoidWindows( const QStringList& list ) { myAvoidWindows = list; }
 
+  bool stripWhiteSpace() const { return m_stripWhiteSpace; }
+  void setStripWhiteSpace( bool enable ) { m_stripWhiteSpace = enable; }
+    
 private:
   const ActionList& matchingActions( const QString& );
   void execute( const struct ClipCommand *command ) const;
@@ -76,6 +79,7 @@ private:
   KPopupMenu *myMenu;
   QTimer *myPopupKillTimer;
   int myPopupKillTimeout;
+  bool m_stripWhiteSpace;
   KConfig* m_config;
 
 private slots:

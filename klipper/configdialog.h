@@ -51,7 +51,7 @@ private slots:
 
 private:
     QCheckBox *cbMousePos, *cbSaveContents, *cbReplayAIH, *cbNoNull;
-    QCheckBox *cbIgnoreSelection;
+    QCheckBox *cbIgnoreSelection, *cbStripWhitespace;
     QRadioButton *cbSynchronize, *cbImplicitSelection, *cbSeparate;
     KIntNumInput *popupTimeout, *maxItems;
 
@@ -141,6 +141,9 @@ public:
     bool popupAtMousePos() const {
 	return generalWidget->cbMousePos->isChecked();
     }
+    bool stripWhiteSpace() const {
+        return generalWidget->cbStripWhitespace->isChecked();
+    }
     bool replayActionInHistory() const {
 	return generalWidget->cbReplayAIH->isChecked();
     }
@@ -181,6 +184,9 @@ public:
     }
     void setPopupAtMousePos( bool enable ) {
 	generalWidget->cbMousePos->setChecked( enable );
+    }
+    void setStripWhiteSpace( bool enable ) {
+        generalWidget->cbStripWhitespace->setChecked( enable );
     }
     void setReplayActionInHistory( bool enable ) {
 	generalWidget->cbReplayAIH->setChecked( enable );

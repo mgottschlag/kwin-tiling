@@ -43,6 +43,7 @@ URLGrabber::URLGrabber( KConfig* config )
     myCurrentAction = 0L;
     myMenu = 0L;
     myPopupKillTimeout = 8;
+    m_stripWhiteSpace = true;
 
     myActions = new ActionList();
     myActions->setAutoDelete( true );
@@ -87,6 +88,8 @@ void URLGrabber::invokeAction( const QString& clip )
 {
     if ( !clip.isEmpty() )
 	myClipData = clip;
+    if ( m_stripWhiteSpace )
+        myClipData = myClipData.stripWhiteSpace();
 
     actionMenu( false );
 }
@@ -117,6 +120,9 @@ bool URLGrabber::checkNewData( const QString& clipData )
 {
     // kdDebug() << "** checking new data: " << clipData << endl;
     myClipData = clipData;
+    if ( m_stripWhiteSpace )
+        myClipData = myClipData.stripWhiteSpace();
+
     if ( myActions->isEmpty() )
         return false;
 
@@ -225,7 +231,7 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
         // the quotes have to be replaced as well as they might
         // be part of config files from older klipper versions
         // replace \%s to %s
-        int pos;
+        int pos = 0;
         while ( (pos = cmdLine.find("%s", pos)) >= 0 ) {
             if ( pos > 0 && cmdLine.at( pos - 1 ) == '\\' ) {
                 cmdLine.remove( pos -1, 1 ); // \%s -> %s
@@ -235,7 +241,7 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
                      pos + 2 < cmdLine.length() && cmdLine[pos + 2] == cmdLine[pos - 1]) {
                 cmdLine.replace ( pos - 1, 4, escClipData );
                 pos += escClipData.length();
-            } 
+            }
             else {
                 cmdLine.replace( pos, 2, escClipData );
                 pos += escClipData.length();
@@ -290,7 +296,7 @@ void URLGrabber::readConfiguration( KConfig *kc )
     int num = kc->readNumEntry("Number of Actions", 0);
     myAvoidWindows = kc->readListEntry("No Actions for WM_CLASS");
     myPopupKillTimeout = kc->readNumEntry( "Timeout for Action popups (seconds)", 8 );
-
+    m_stripWhiteSpace = kc->readBoolEntry("Strip Whitespace before exec", true);
     QString group;
     for ( int i = 0; i < num; i++ ) {
         group = QString("Action_%1").arg( i );
@@ -306,6 +312,7 @@ void URLGrabber::writeConfiguration( KConfig *kc )
     kc->writeEntry( "Number of Actions", myActions->count() );
     kc->writeEntry( "Timeout for Action popups (seconds)", myPopupKillTimeout);
     kc->writeEntry( "No Actions for WM_CLASS", myAvoidWindows );
+    kc->writeEntry( "Strip Whitespace before exec", m_stripWhiteSpace );
 
     ActionListIterator it( *myActions );
     ClipAction *action;

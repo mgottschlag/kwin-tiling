@@ -408,6 +408,7 @@ void KlipperWidget::slotConfigure()
                                           globalKeys, isApplet() );
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
+    dlg->setStripWhiteSpace( myURLGrabber->stripWhiteSpace() );
     dlg->setReplayActionInHistory( bReplayActionInHistory );
     dlg->setNoNullClipboard( bNoNullClipboard );
     dlg->setUseGUIRegExpEditor( bUseGUIRegExpEditor );
@@ -434,6 +435,7 @@ void KlipperWidget::slotConfigure()
 
         myURLGrabber->setActionList( dlg->actionList() );
         myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
+        myURLGrabber->setStripWhiteSpace( dlg->stripWhiteSpace() );
 	myURLGrabber->setAvoidWindows( dlg->noActionsFor() );
 
 	maxClipItems = dlg->maxItems();
