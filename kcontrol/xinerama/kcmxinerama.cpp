@@ -22,18 +22,21 @@
 #include "kcmxinerama.h"
 #include <klocale.h>
 #include <kglobal.h>
-#include <dcopclient.h>
 #include <kaboutdata.h>
-#include <qcheckbox.h>
 #include <kconfig.h>
 #include <kdialog.h>
+#include <kapplication.h>
+#include <kwin.h>
+#include <kmessagebox.h>
+
+#include <dcopclient.h>
+
+#include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qcombobox.h>
-#include <kapplication.h>
 #include <qtable.h>
 #include <qcolor.h>
-#include <kwin.h>
 #include <qpushbutton.h>
 
 
@@ -162,6 +165,9 @@ void KCMXinerama::save() {
 		ksplashrc->writeEntry("KSplashScreen", xw->_enableXinerama->isChecked() ? xw->_ksplashDisplay->currentItem() : -2 /* ignore Xinerama */);
 		ksplashrc->sync();
 	}
+
+	KMessageBox::information(this, i18n("Your settings will only affect newly started applications."), i18n("KDE Multiple Monitors"), "nomorexineramaplease");
+
 	emit changed(false);
 }
 
@@ -247,9 +253,10 @@ QString KCMXinerama::quickHelp() const {
 const KAboutData* KCMXinerama::aboutData() const {
  
 	KAboutData *about =
-	new KAboutData(I18N_NOOP("kcmxinerama"), I18N_NOOP("KDE Multiple Monitor Configurator"),
-		0, 0, KAboutData::License_GPL,
-		I18N_NOOP("(c) 2002-2003 George Staikos"));
+	new KAboutData(I18N_NOOP("kcmxinerama"),
+			I18N_NOOP("KDE Multiple Monitor Configurator"),
+			0, 0, KAboutData::License_GPL,
+			I18N_NOOP("(c) 2002-2003 George Staikos"));
  
 	about->addAuthor("George Staikos", 0, "staikos@kde.org");
  
@@ -263,6 +270,9 @@ KCModule *create_xinerama(QWidget *parent, const char *name) {
 }
 
 void init_xinerama() {
+	// Should we disable Xinerama support here if they boot without
+	// Xinerama?  or not?  I imagine there are some nice things we could
+	// do here anyways.
 }
 }
 
