@@ -62,6 +62,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <kstddirs.h>
 #include <unistd.h>
 #include <kapp.h>
 #include <kstaticdeleter.h>
@@ -779,8 +780,9 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 
     {
 	// publish available transports.
-	QCString fName = ::getenv("HOME");
-	fName += "/.KSMserver";
+	QCString fName = QFile::encodeName(locateLocal("socket", "KSMserver"));
+        QCString display = ::getenv("DISPLAY");
+        fName += "-"+display;
 	FILE *f;
 	f = ::fopen(fName.data(), "w+");
 	char* session_manager = IceComposeNetworkIdList(numTransports, listenObjs);
@@ -837,8 +839,9 @@ void KSMServer::cleanUp()
     clean = true;
     IceFreeListenObjs (numTransports, listenObjs);
 
-    QCString fName = ::getenv("HOME");
-    fName += "/.KSMserver";
+    QCString fName = QFile::encodeName(locateLocal("socket", "KSMserver"));
+    QCString display = ::getenv("DISPLAY");
+    fName += "-"+display;
     ::unlink(fName.data());
 
     FreeAuthenticationData(numTransports, authDataEntries);
