@@ -77,7 +77,7 @@ class Gesture
     private slots:
         void stroke_timeout();
     signals:
-        void handle_gesture( const QString &gesture );
+        void handle_gesture( const QString &gesture, WId window );
     private:
         void update_grab();
         void grab_mouse( bool grab_P );
@@ -89,6 +89,7 @@ class Gesture
         bool recording;
         unsigned int button;
         int timeout;
+        WId gesture_window;
         QMap< QObject*, bool > handlers; // bool is just a dummy
     };
 

@@ -34,6 +34,7 @@
 #include <kkeynative.h>
 
 #include "input.h"
+#include "windows.h"
 
 namespace KHotKeys
 {
@@ -85,7 +86,7 @@ void Gesture::register_handler( QObject* receiver_P, const char* slot_P )
     if( handlers.contains( receiver_P ))
         return;
     handlers[ receiver_P ] = true;
-    connect( this, SIGNAL( handle_gesture( const QString& )),
+    connect( this, SIGNAL( handle_gesture( const QString&, WId )),
         receiver_P, slot_P );
     if( handlers.count() == 1 )
         update_grab();
@@ -96,7 +97,7 @@ void Gesture::unregister_handler( QObject* receiver_P, const char* slot_P )
     if( !handlers.contains( receiver_P ))
         return;
     handlers.remove( receiver_P );
-    disconnect( this, SIGNAL( handle_gesture( const QString& )),
+    disconnect( this, SIGNAL( handle_gesture( const QString&, WId )),
         receiver_P, slot_P );
     if( handlers.count() == 0 )
         update_grab();
@@ -131,7 +132,7 @@ bool Gesture::x11Event( XEvent* ev_P )
             return true;
             }
         kdDebug( 1217 ) << "GESTURE: got: " << gesture << endl;
-        emit handle_gesture( gesture );
+        emit handle_gesture( gesture, windows_handler->window_at_position( start_x, start_y ));
         return true;
         }
     else if( ev_P->type == MotionNotify && recording )

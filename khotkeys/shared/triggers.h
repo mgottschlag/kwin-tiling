@@ -134,7 +134,7 @@ class Gesture_trigger
         const QString& gesturecode() const;
         virtual void activate( bool activate_P );
     protected slots:
-        void handle_gesture( const QString& gesture_P );
+        void handle_gesture( const QString& gesture_P, WId window_P );
     private:
         QString _gesturecode;
     };

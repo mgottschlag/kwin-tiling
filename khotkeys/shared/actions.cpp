@@ -314,10 +314,14 @@ Keyboard_input_action::Keyboard_input_action( KConfig& cfg_P, Action_data* data_
         QString save_cfg_group = cfg_P.group();
         cfg_P.setGroup( save_cfg_group + "DestinationWindow" );
         _dest_window = new Windowdef_list( cfg_P );
+        _active_window = false; // ignored with _dest_window set anyway
         cfg_P.setGroup( save_cfg_group );
         }
     else
+        {
         _dest_window = NULL;
+        _active_window = cfg_P.readBoolEntry( "ActiveWindow" );
+        }
     }
 
 Keyboard_input_action::~Keyboard_input_action()
@@ -340,6 +344,7 @@ void Keyboard_input_action::cfg_write( KConfig& cfg_P ) const
         }
     else
         cfg_P.writeEntry( "IsDestinationWindow", false );
+    cfg_P.writeEntry( "ActiveWindow", _active_window );
     }
     
 void Keyboard_input_action::execute()
@@ -350,6 +355,13 @@ void Keyboard_input_action::execute()
     if( dest_window() != NULL )
         {
         w = windows_handler->find_window( dest_window());
+        if( w == None )
+            w = InputFocus;
+        }
+    else
+        {
+        if( !_active_window )
+            w = windows_handler->action_window();
         if( w == None )
             w = InputFocus;
         }
@@ -381,7 +393,7 @@ const QString Keyboard_input_action::description() const
 Action* Keyboard_input_action::copy( Action_data* data_P ) const
     {
     return new Keyboard_input_action( data_P, input(),
-        dest_window() ? dest_window()->copy() : NULL );
+        dest_window() ? dest_window()->copy() : NULL, _active_window );
     }
 
 // Activate_window_action

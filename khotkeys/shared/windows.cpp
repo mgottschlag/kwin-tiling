@@ -39,7 +39,7 @@ namespace KHotKeys
 
 Windows::Windows( bool enable_signal_P, QObject* parent_P )
     : QObject( parent_P ), signals_enabled( enable_signal_P ),
-        kwin_module( new KWinModule( this ))
+        kwin_module( new KWinModule( this )), _action_window( 0 )
     {
     assert( windows_handler == NULL );
     windows_handler = this;
@@ -69,6 +69,8 @@ void Windows::window_removed_slot( WId window_P )
     {
     if( signals_enabled )
         emit window_removed( window_P );
+    if( window_P == _action_window )
+        _action_window = 0;
     }
 
 void Windows::active_window_changed_slot( WId window_P )
@@ -113,6 +115,16 @@ WId Windows::active_window()
     return kwin_module->activeWindow();
     }
 
+WId Windows::action_window()
+    {
+    return _action_window;
+    }
+
+void Windows::set_action_window( WId window_P )
+    {
+    _action_window = window_P;
+    }
+
 WId Windows::find_window( const Windowdef_list* window_P )
     {
     for( QValueList< WId >::ConstIterator it = kwin_module->windows().begin();
@@ -124,6 +136,43 @@ WId Windows::find_window( const Windowdef_list* window_P )
             return *it;
         }
     return None;
+    }
+
+WId Windows::window_at_position( int x, int y )
+    {
+    Window child, dummy;
+    Window parent = qt_xrootwin();
+    Atom wm_state = XInternAtom( qt_xdisplay(), "WM_STATE", False );
+    for( int i = 0;
+         i < 10;
+         ++i )
+        {
+        int destx, desty;
+        // find child at that position
+        if( !XTranslateCoordinates( qt_xdisplay(), parent, parent, x, y, &destx, &desty, &child )
+            || child == None )
+            return 0;
+        // and now transform coordinates to the child
+        if( !XTranslateCoordinates( qt_xdisplay(), parent, child, x, y, &destx, &desty, &dummy ))
+            return 0;
+        x = destx;
+        y = desty;
+        Atom type;
+        int format;
+        unsigned long nitems, after;
+        unsigned char* prop;
+        if( XGetWindowProperty( qt_xdisplay(), child, wm_state, 0, 0, False, AnyPropertyType,
+	    &type, &format, &nitems, &after, &prop ) == Success )
+            {
+	    if( prop != NULL )
+	        XFree( prop );
+	    if( type != None )
+	        return child;
+            }
+        parent = child;
+        }
+    return 0;
+    
     }
 
 void Windows::activate_window( WId id_P )

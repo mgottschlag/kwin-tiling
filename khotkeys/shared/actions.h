@@ -123,18 +123,23 @@ class Keyboard_input_action
     typedef Action base;
     public:
         Keyboard_input_action( Action_data* data_P, const QString& input_P, 
-            const Windowdef_list* dest_window_P );
+            const Windowdef_list* dest_window_P, bool active_window_P );
         Keyboard_input_action( KConfig& cfg_P, Action_data* data_P );
         virtual ~Keyboard_input_action();
         virtual void cfg_write( KConfig& cfg_P ) const;
         virtual void execute();
         const QString& input() const;
+        // send to specific window: dest_window != NULL
+        // send to active window: dest_window == NULL && activeWindow() == true
+        // send to action window: dest_window == NULL && activeWindow() == false
         const Windowdef_list* dest_window() const;
+        bool activeWindow() const;
         virtual const QString description() const;
         virtual Action* copy( Action_data* data_P ) const;
     private:
         QString _input;
         const Windowdef_list* _dest_window;
+        bool _active_window;
     };
 
 class Activate_window_action
@@ -257,8 +262,8 @@ const QString& Dcop_action::arguments() const
 
 inline
 Keyboard_input_action::Keyboard_input_action( Action_data* data_P, const QString& input_P,
-    const Windowdef_list* dest_window_P )
-    : Action( data_P ), _input( input_P ), _dest_window( dest_window_P )
+    const Windowdef_list* dest_window_P, bool active_window_P )
+    : Action( data_P ), _input( input_P ), _dest_window( dest_window_P ), _active_window( active_window_P )
     {
     }
     
@@ -272,6 +277,12 @@ inline
 const Windowdef_list* Keyboard_input_action::dest_window() const
     {
     return _dest_window;
+    }
+
+inline
+bool Keyboard_input_action::activeWindow() const
+    {
+    return _active_window;
     }
 
 // Activate_window_action

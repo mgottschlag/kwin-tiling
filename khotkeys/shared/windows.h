@@ -44,8 +44,11 @@ class Windows
         QString get_window_class( WId id_P );
         QString get_window_role( WId id_P );
         WId active_window();
+        void set_action_window( WId window );
+        WId action_window();
         WId find_window( const Windowdef_list* window_P );
-        void activate_window( WId id_P );
+        static WId window_at_position( int x, int y );
+        static void activate_window( WId id_P );
     signals:
         void window_added( WId window_P );
         void window_removed( WId window_P );
@@ -61,6 +64,7 @@ class Windows
     private:
         bool signals_enabled;
         KWinModule* kwin_module;
+        WId _action_window;
     };
     
 struct Window_data

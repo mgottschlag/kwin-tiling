@@ -18,7 +18,7 @@
 
 #include <qgroupbox.h>
 #include <qpushbutton.h>
-#include <qcheckbox.h>
+#include <qradiobutton.h>
 
 #include <ktextedit.h>
 
@@ -36,7 +36,11 @@ Keyboard_input_widget::Keyboard_input_widget( QWidget* parent_P, const char* nam
     {
     clear_data();
     // KHotKeys::Module::changed()
-    connect( specific_window_checkbox, SIGNAL( clicked()),
+    connect( action_window_radio, SIGNAL( clicked()),
+        module, SLOT( changed()));
+    connect( active_window_radio, SIGNAL( clicked()),
+        module, SLOT( changed()));
+    connect( specific_window_radio, SIGNAL( clicked()),
         module, SLOT( changed()));
     connect( keyboard_input_multilineedit, SIGNAL( textChanged()),
         module, SLOT( changed()));
@@ -47,7 +51,9 @@ Keyboard_input_widget::Keyboard_input_widget( QWidget* parent_P, const char* nam
 void Keyboard_input_widget::clear_data()
     {
     keyboard_input_multilineedit->clear();
-    specific_window_checkbox->setChecked( false );
+    action_window_radio->setChecked( true );
+    active_window_radio->setChecked( false );
+    specific_window_radio->setChecked( false );
     window_groupbox->setEnabled( false );
     windowdef_list_widget->clear_data();
     }
@@ -61,20 +67,27 @@ void Keyboard_input_widget::set_data( const Keyboard_input_action* data_P )
         }
     keyboard_input_multilineedit->setText( data_P->input());
     const Windowdef_list* dest_window = data_P->dest_window();
-    specific_window_checkbox->setChecked( dest_window != NULL );
+    specific_window_radio->setChecked( dest_window != NULL );
     window_groupbox->setEnabled( dest_window != NULL );
     if( dest_window != NULL )
         windowdef_list_widget->set_data( dest_window );
     else
+        {
         windowdef_list_widget->clear_data();
+        if( data_P->activeWindow())
+            active_window_radio->setChecked( true );
+        else
+            action_window_radio->setChecked( true );
+        }
     }
 
 Keyboard_input_action* Keyboard_input_widget::get_data( Action_data* data_P ) const
     {
     const Windowdef_list* windows = NULL;
-    if( specific_window_checkbox->isChecked())
+    if( specific_window_radio->isChecked())
         windows = windowdef_list_widget->get_data();
-    return new Keyboard_input_action( data_P, keyboard_input_multilineedit->text(), windows );
+    return new Keyboard_input_action( data_P, keyboard_input_multilineedit->text(),
+        windows, active_window_radio->isChecked());
     }
 
 void Keyboard_input_widget::modify_pressed()

@@ -31,6 +31,7 @@
 #include "action_data.h"
 #include "input.h"
 #include "gestures.h"
+#include "windows.h"
 
 namespace KHotKeys
 {
@@ -153,6 +154,7 @@ bool Shortcut_trigger::handle_key( const KShortcut& shortcut_P )
     {
     if( shortcut() == shortcut_P )
         {
+        windows_handler->set_action_window( 0 ); // use active window
         data->execute();
         return true;
         }
@@ -211,7 +213,10 @@ void Window_trigger::window_added( WId window_P )
     existing_windows[ window_P ] = matches;
     kdDebug( 1217 ) << "Window_trigger::w_added() : " << matches << endl;
     if( active && matches && ( window_actions & WINDOW_APPEARS ))
+        {
+        windows_handler->set_action_window( window_P );
         data->execute();
+        }
     }
 
 void Window_trigger::window_removed( WId window_P )
@@ -221,7 +226,10 @@ void Window_trigger::window_removed( WId window_P )
         bool matches = existing_windows[ window_P ];
         kdDebug( 1217 ) << "Window_trigger::w_removed() : " << matches << endl;
         if( active && matches && ( window_actions & WINDOW_DISAPPEARS ))
+            {
+            windows_handler->set_action_window( window_P );
             data->execute();
+            }
         existing_windows.remove( window_P );
         // CHECKME jenze co kdyz se window_removed zavola pred active_window_changed ?
         }
@@ -235,13 +243,19 @@ void Window_trigger::active_window_changed( WId window_P )
     if( existing_windows.contains( last_active_window ))
         was_match = existing_windows[ last_active_window ];
     if( active && was_match && ( window_actions & WINDOW_DEACTIVATES ))
+        {
+        windows_handler->set_action_window( window_P );
         data->execute();
+        }
 /*    bool matches = windows()->match( Window_data( window_P ));
     existing_windows[ window_P ] = matches;*/
     bool matches = existing_windows.contains( window_P )
         ? existing_windows[ window_P ] : false;
     if( active && matches && ( window_actions & WINDOW_ACTIVATES ))
+        {
+        windows_handler->set_action_window( window_P );
         data->execute();
+        }
     kdDebug( 1217 ) << "Window_trigger::a_w_changed() : " << was_match << "|" << matches << endl;
     last_active_window = window_P;
     }
@@ -260,9 +274,15 @@ void Window_trigger::window_changed( WId window_P, unsigned int dirty_P )
     existing_windows[ window_P ] = matches;
     if( active && matches && !was_match )
         if( window_actions & WINDOW_APPEARS )
+            {
+            windows_handler->set_action_window( window_P );
             data->execute();
+            }
         else if( window_actions & WINDOW_ACTIVATES && window_P == windows_handler->active_window())
+            {
+            windows_handler->set_action_window( window_P );
             data->execute();
+            }
     kdDebug( 1217 ) << "Window_trigger::w_changed() : " << was_match << "|" << matches << endl;
     }
 
@@ -309,7 +329,7 @@ Gesture_trigger::Gesture_trigger( KConfig& cfg_P, Action_data* data_P )
 
 Gesture_trigger::~Gesture_trigger()
     {
-    gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString & )));
+    gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString&, WId )));
     }
 
 void Gesture_trigger::cfg_write( KConfig& cfg_P ) const
@@ -330,18 +350,21 @@ const QString Gesture_trigger::description() const
     return i18n( "Gesture trigger: " ) + gesturecode();
     }
 
-void Gesture_trigger::handle_gesture( const QString &gesture_P )
+void Gesture_trigger::handle_gesture( const QString &gesture_P, WId window_P )
     {
     if( gesturecode() == gesture_P )
+        {
+        windows_handler->set_action_window( window_P );
         data->execute();
+        }
     }
 
 void Gesture_trigger::activate( bool activate_P )
     {
     if( activate_P )
-        gesture_handler->register_handler( this, SLOT( handle_gesture( const QString & )));
+        gesture_handler->register_handler( this, SLOT( handle_gesture( const QString&, WId )));
     else
-        gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString & )));
+        gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString&, WId )));
     }
 
 } // namespace KHotKeys

@@ -131,7 +131,7 @@ void Action_list_widget::new_selected( int type_P )
           break;
         case TYPE_KEYBOARD_INPUT_ACTION: // Keyboard_input_action_dialog
             dlg = new Keyboard_input_action_dialog(
-                new Keyboard_input_action( NULL, "", NULL )); // CHECKME NULL ?
+                new Keyboard_input_action( NULL, "", NULL, false )); // CHECKME NULL ?
           break;
         case TYPE_ACTIVATE_WINDOW_ACTION: // Activate_window_action_dialog
             dlg = new Activate_window_action_dialog(
