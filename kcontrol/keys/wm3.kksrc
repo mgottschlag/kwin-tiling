@@ -1,5 +1,6 @@
 [Settings]
 Name=WindowMaker (3 Modifier Keys)
+Name[sv]=WindowMaker (3 väljartangenter)
 
 [Global Shortcuts]
 Desktop Screenshot=Ctrl+Print
