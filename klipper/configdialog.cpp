@@ -106,7 +106,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
 
     cbIgnoreSelection = new QCheckBox( i18n("&Ignore selection"), this );
     QWhatsThis::add( cbIgnoreSelection,
-                     i18n("This options prevents the selection being recorded "
+                     i18n("This option prevents the selection being recorded "
                           "in the clipboard history. Only explicit clipboard "
                           "changes are recorded.") );
 
