@@ -160,23 +160,23 @@ add_entropy (unsigned const in[16])
 static int
 sumFile (const char *name, int len, int whence, long offset)
 {
-    int fd, i, cnt;
+    int fd, i, cnt, readlen = 0;
     unsigned char buf[1024];
 
     if ((fd = open (name, O_RDONLY)) < 0) {
 	Debug("Cannot open entropy source %\"s: %s\n", name, SysErrorMsg());
-	return 0;
+	return -1;
     }
     lseek (fd, offset, whence);
-    while (len > 0) {
+    while (readlen < len) {
 	if (!(cnt = read (fd, buf, sizeof (buf))))
 	    break;
 	if (cnt < 0) {
 	    close (fd);
 	    Debug("Cannot read entropy source %\"s: %s\n", name, SysErrorMsg());
-	    return 0;
+	    return -1;
 	}
-	len -= cnt;
+	readlen += cnt;
 	for (i = 0; i < cnt; i += 64)
 	    if (sizeof(unsigned) == 4)
 		add_entropy((unsigned*)(buf + i));
@@ -189,7 +189,7 @@ sumFile (const char *name, int len, int whence, long offset)
 	    }
     }
     close (fd);
-    return 1;
+    return readlen;
 }
 
 #ifndef X_GETTIMEOFDAY
@@ -197,6 +197,8 @@ sumFile (const char *name, int len, int whence, long offset)
 /* if this breaks on your system, we need to have a configure test.     */
 # define X_GETTIMEOFDAY(t) gettimeofday(t, NULL)
 #endif
+
+#define BSIZ 0x10000
 
 static void
 UpdateEntropyPool()
@@ -213,55 +215,51 @@ UpdateEntropyPool()
 	longs[3] = getppid();
 	/* rest unitialized ... so what? */
 	add_entropy(longs);
-	sumFile ("/proc/partitions", 0x10000, SEEK_SET, 0);
+	sumFile ("/proc/partitions", BSIZ, SEEK_SET, 0);
     }
     /* XXX -- these will work only on linux and similar, but those already have urandom ... */
-    if (sumFile ("/proc/stat", 0x10000, SEEK_SET, 0))
+    if (sumFile ("/proc/stat", BSIZ, SEEK_SET, 0) > 0)
 	hit++;
-    if (sumFile ("/proc/interrupts", 0x10000, SEEK_SET, 0))
+    if (sumFile ("/proc/interrupts", BSIZ, SEEK_SET, 0) > 0)
 	hit++;
-    if (sumFile ("/proc/loadavg", 0x10000, SEEK_SET, 0))
+    if (sumFile ("/proc/loadavg", BSIZ, SEEK_SET, 0) > 0)
 	hit++;
-    if (sumFile ("/proc/net/dev", 0x10000, SEEK_SET, 0))
+    if (sumFile ("/proc/net/dev", BSIZ, SEEK_SET, 0) > 0)
 	hit++;
     if (!hit) {
-	static long offset = ~0, length;
-	if (!length) {
-	    struct stat st;
-	    stat (randomFile, &st);
-	    length = st.st_size;
-	}
-	if (offset > length)
-	    offset = 0x4000;
-	if (sumFile (randomFile, 0x10000, SEEK_SET, offset)) {
-	    hit++;
-	    offset += 0x10000;
+	static long offset;
+	long readlen;
+	if ((readlen = sumFile (randomFile, BSIZ, SEEK_SET, offset)) == BSIZ) {
+	    offset += readlen;
 #ifdef FRAGILE_DEV_MEM
-	    if (offset == 0xa0000)	/* skip rom mappings */
+	    if (offset == 0xa0000) /* skip 640kB-1MB ROM mappings */
 		offset = 0x100000;
 	    else if (offset == 0xf00000) /* skip 15-16MB memory hole */
 		offset = 0x1000000;
 #endif
+	    goto gotit;
+	} else if (readlen >= 0 && offset) {
+	    if ((offset = sumFile (randomFile, BSIZ, SEEK_SET, 0)) == BSIZ)
+		goto gotit;
 	}
+	if (sumFile ("/var/log/messages", 0x1000, SEEK_END, -0x1000) > 0)
+	    hit++;
+	if (sumFile ("/var/spool/mail/root", 0x1000, SEEK_END, -0x1000) > 0)
+	    hit++;
 	if (!hit) {
-	    if (sumFile ("/var/log/messages", 0x1000, SEEK_END, -0x1000))
-		hit++;
-	    if (sumFile ("/var/spool/mail/root", 0x1000, SEEK_END, -0x1000))
-		hit++;
-	    if (!hit) {
-		if (!epoolinited)
-		    LogError("No entropy sources found; X cookies may be easily guessable\n");
-		else {
-		    struct timeval now;
-		    unsigned longs[16];
-		    X_GETTIMEOFDAY (&now);
-		    longs[0] = now.tv_usec;
-		    longs[1] = now.tv_sec;
-		    add_entropy(longs);
-		}
+	    if (!epoolinited)
+		LogError("No entropy sources found; X cookies may be easily guessable\n");
+	    else {
+		struct timeval now;
+		unsigned longs[16];
+		X_GETTIMEOFDAY (&now);
+		longs[0] = now.tv_usec;
+		longs[1] = now.tv_sec;
+		add_entropy(longs);
 	    }
 	}
     }
+  gotit:
     epoolinited = 1;
 }
 #endif
