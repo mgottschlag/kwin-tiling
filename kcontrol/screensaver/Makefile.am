@@ -8,7 +8,7 @@ lib_LTLIBRARIES = libkcm_screensaver.la
 
 libkcm_screensaver_la_SOURCES = scrnsave.cpp
 libkcm_screensaver_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-libkcm_screensaver_la_LIBADD = $(LIB_KDEUI) $(DPMSLIB)
+libkcm_screensaver_la_LIBADD = $(LIB_KSYCOCA) $(DPMSLIB)
 libkcm_screensaver_la_METASOURCES = scrnsave.moc
 
 noinst_HEADERS = scrnsave.h

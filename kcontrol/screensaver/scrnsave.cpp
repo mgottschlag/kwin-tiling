@@ -35,6 +35,7 @@
 #include <qwhatsthis.h>
 
 #include <kapp.h>
+#include <kdebug.h>
 #include <kprocess.h>
 #include <ksimpleconfig.h>
 #include <knuminput.h>
@@ -46,6 +47,7 @@
 #include <kcmodule.h>
 #include <kglobal.h>
 #include <dcopclient.h>
+#include <kservicegroup.h>
 
 #include <X11/Xlib.h>
 
@@ -147,9 +149,14 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
                                      "apps/ScreenSavers/");
 
     // Add KDE specific screensaver path
+    QString relPath="System/ScreenSavers/";
+    KServiceGroup::Ptr servGroup = KServiceGroup::baseGroup( "screensavers" );
+    if (servGroup)
+      relPath=servGroup->relPath();
+
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
-                                     "System/ScreenSavers/");
+                                     relPath);
 
     readSettings();
 
@@ -422,7 +429,7 @@ void KScreenSaver::save()
     config->writeEntry("Lock", mLock);
     config->writeEntry("Priority", mPriority);
     if ( !mSaver.isEmpty() )
-	config->writeEntry("Saver", mSaver);
+        config->writeEntry("Saver", mSaver);
     config->sync();
     delete config;
 
@@ -441,55 +448,55 @@ void KScreenSaver::save()
 void KScreenSaver::findSavers()
 {
     if ( !mNumLoaded ) {
-	mSaverFileList = KGlobal::dirs()->findAllResources("scrsav",
-			    "*.desktop", false, true);
-	if ( mSaverFileList.isEmpty() )
-	    mLoadTimer->stop();
-	else
-	    mLoadTimer->start( 50 );
+        mSaverFileList = KGlobal::dirs()->findAllResources("scrsav",
+                            "*.desktop", false, true);
+        if ( mSaverFileList.isEmpty() )
+            mLoadTimer->stop();
+        else
+            mLoadTimer->start( 50 );
     }
 
     for ( int i = 0; i < 5 &&
-	    (unsigned)mNumLoaded < mSaverFileList.count();
-	    i++, mNumLoaded++ ) {
-	QString file = mSaverFileList[mNumLoaded];
-	SaverConfig *saver = new SaverConfig;
-	if (saver->read(file)) {
-	    mSaverList.append(saver);
-	} else
-	    delete saver;
+            (unsigned)mNumLoaded < mSaverFileList.count();
+            i++, mNumLoaded++ ) {
+        QString file = mSaverFileList[mNumLoaded];
+        SaverConfig *saver = new SaverConfig;
+        if (saver->read(file)) {
+            mSaverList.append(saver);
+        } else
+            delete saver;
     }
 
     if ( (unsigned)mNumLoaded == mSaverFileList.count() ) {
-	mLoadTimer->stop();
-	delete mLoadTimer;
-	mSaverList.sort();
+        mLoadTimer->stop();
+        delete mLoadTimer;
+        mSaverList.sort();
 
-	mSelected = 0;
-	mSaverListBox->clear();
-	for ( SaverConfig *s = mSaverList.first(); s != 0; s = mSaverList.next())
-	{
-	    mSaverListBox->insertItem(s->name());
-	    if (s->file() == mSaver)
-		mSelected = mSaverListBox->count()-1;
-	}
+        mSelected = 0;
+        mSaverListBox->clear();
+        for ( SaverConfig *s = mSaverList.first(); s != 0; s = mSaverList.next())
+        {
+            mSaverListBox->insertItem(s->name());
+            if (s->file() == mSaver)
+                mSelected = mSaverListBox->count()-1;
+        }
 
-	mSaverListBox->setCurrentItem(mSelected);
-	mSaverListBox->ensureCurrentVisible();
-	mSaverListBox->setEnabled(mEnabled);
-	connect( mSaverListBox, SIGNAL( highlighted( int ) ),
-		 this, SLOT( slotScreenSaver( int ) ) );
-	mSetupBt->setEnabled(mEnabled &&
-			     !mSaverList.at(mSelected)->setup().isEmpty());
-	mTestBt->setEnabled(mEnabled);
-	setMonitor();
+        mSaverListBox->setCurrentItem(mSelected);
+        mSaverListBox->ensureCurrentVisible();
+        mSaverListBox->setEnabled(mEnabled);
+        connect( mSaverListBox, SIGNAL( highlighted( int ) ),
+                 this, SLOT( slotScreenSaver( int ) ) );
+        mSetupBt->setEnabled(mEnabled &&
+                             !mSaverList.at(mSelected)->setup().isEmpty());
+        mTestBt->setEnabled(mEnabled);
+        setMonitor();
     } else {
-	mSaverList.sort();
-	mSaverListBox->clear();
-	for (SaverConfig *s= mSaverList.first(); s!= 0; s= mSaverList.next())
-	{
-	    mSaverListBox->insertItem(s->name());
-	}
+        mSaverList.sort();
+        mSaverListBox->clear();
+        for (SaverConfig *s= mSaverList.first(); s!= 0; s= mSaverList.next())
+        {
+            mSaverListBox->insertItem(s->name());
+        }
     }
 }
 
