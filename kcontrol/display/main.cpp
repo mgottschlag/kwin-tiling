@@ -36,6 +36,7 @@
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kprocess.h>
+#include <dcopclient.h>
 #include <X11/Xlib.h>
 
 
@@ -227,12 +228,19 @@ int main(int argc, char **argv)
   kimgioRegister();
 
   if (app.runGUI())
-    return app.exec();
+  {
+    DCOPClient *client = app.dcopClient();
+    client->attach();
+    client->registerAs(app.name());
+    int rv = app.exec();
+    client->detach();
+    return rv;
+  }
   else
-    {
-      app.init();
-      return 0;
-    }
+  {
+    app.init();
+    return 0;
+  }
 }
 
 

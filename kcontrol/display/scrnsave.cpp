@@ -30,7 +30,7 @@
 #include <knuminput.h>
 #include <kstddirs.h>
 #include <kglobal.h>
-#include <kwm.h>
+#include <dcopclient.h>
 #include <stdlib.h>
 #include <X11/Xlib.h>
 
@@ -616,7 +616,7 @@ void KScreenSaver::slotPriorityChanged( int val )
 //
 void KScreenSaver::slotSetupDone(KProcess *)
 {
-    mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
+  mPrevSelected = -1;  // see ugly hack in slotPreviewExited()
 	setMonitor();
 	mSetupBt->setEnabled( true );
 }
@@ -625,11 +625,12 @@ void KScreenSaver::slotSetupDone(KProcess *)
 //
 void KScreenSaver::applySettings()
 {
-    if (mChanged)
-    {
-        writeSettings();
-        KWM::sendKWMCommand("kss_reconfigure");
-        mChanged = false;
-    }
+  if (mChanged)
+  {
+    writeSettings();
+    DCOPClient *client = kapp->dcopClient();
+    client->send("kdesktop", "KScreensaverIface", "configure()", "");
+    mChanged = false;
+  }
 }
 
