@@ -124,11 +124,11 @@ extern "C" {
         {
           applyMultiHead(true);
         }
-        else 
+        else
         {
           applyMultiHead(false);
         }
- 
+
         config.setGroup("KDE");
         // Enable/disable Qt anti-aliasing
         applyQtXFT(config.readBoolEntry( "AntiAliasing", false ));
@@ -176,8 +176,6 @@ KThemeListBox::KThemeListBox(QWidget *parent, const char *name)
     localThemeDir = locateLocal("themes","");
     KDirWatch::self()->addDir(localThemeDir);
     KDirWatch::self()->startScan();
-
-    setFixedHeight(120);
 
     rescan();
 }
@@ -437,7 +435,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     grid->addWidget( effAnimateMenu, 2, 0 );
     grid->addWidget( effAnimateCombo, 0, 1 );
     grid->addWidget( effFadeTooltip, 1, 1 );
-    
+
     topLayout->addStretch( 100 );
     load();
 }
@@ -633,7 +631,7 @@ void KGeneral::save()
     config->writeEntry("EffectFadeMenu", effectFadeMenu, true, true);
     config->writeEntry("EffectAnimateCombo", effectAnimateCombo, true, true);
     config->writeEntry("EffectFadeTooltip", effectFadeTooltip, true, true);
-    
+
     config->setGroup("Toolbar style");
     config->writeEntry("IconText", tbUseText, true, true);
     config->writeEntry("Highlighting", (int) tbUseHilite, true, true);
