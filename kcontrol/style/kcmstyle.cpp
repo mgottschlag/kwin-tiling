@@ -333,6 +333,9 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	QSpacerItem* sp3 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
 	page3Layout->addItem( sp3 );
 
+	// Load settings
+	load();
+
 	// Do all the setDirty connections.
 	connect(cbStyle, SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
 	// Page2
@@ -354,9 +357,6 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	connect( comboToolbarIcons,     SIGNAL(highlighted(int)), this, SLOT(setToolbarsDirty()));
 
 	addWhatsThis();
-
-	// Load settings
-	load();
 
 	// Insert the pages into the tabWidget
 	tabWidget->insertTab( page1, i18n("&Style"));
@@ -386,6 +386,8 @@ void KCMStyle::load()
 	m_bEffectsDirty = false;
 	m_bStyleDirty= false;
 	m_bToolbarsDirty = false;
+
+	setChanged( false );
 }
 
 
