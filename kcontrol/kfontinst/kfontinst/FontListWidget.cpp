@@ -35,6 +35,7 @@
 #include "ErrorDialog.h"
 #include "StarOfficeConfig.h"
 #include "Ttf.h"
+#include "UiConfig.h"
 #include <klocale.h>
 #include <kglobal.h>
 #include <kiconloader.h>
@@ -225,7 +226,8 @@ class CDirectoryItem : public CFontListWidget::CListViewItem
             setPixmap(0, KGlobal::iconLoader()->loadIcon(icon, KIcon::Small));
 
         listView()->setUpdatesEnabled(false);
-        setOpen(true);
+        setOpen(0==CKfiGlobal::uicfg().getOpenInstDirs().count() ||
+                -1!=CKfiGlobal::uicfg().getOpenInstDirs().findIndex(fullName()) ? true : false);
         setupDisplay();
         listView()->setUpdatesEnabled(true);
     }
@@ -249,7 +251,7 @@ class CDirectoryItem : public CFontListWidget::CListViewItem
 
     void open()
     {
-        if(QDir(fullName()).isReadable() && -1!=itsListWidget->getAdvancedOpenDirs().findIndex(fullName()))
+        if(QDir(fullName()).isReadable() && -1!=CKfiGlobal::uicfg().getOpenInstDirs().findIndex(fullName()))
             setOpen(true);
     }
 
@@ -407,7 +409,7 @@ void CDirectoryItem::setOpen(bool open)
     {
         QDir dir(fullName());
 
-        itsListWidget->getAdvancedOpenDirs().append(fullName());
+        CKfiGlobal::uicfg().addOpenInstDir(fullName());
 
         if(dir.isReadable())
         {
@@ -482,7 +484,7 @@ void CDirectoryItem::setOpen(bool open)
         readable = true;
         QListViewItem *item=firstChild();
 
-        itsListWidget->getAdvancedOpenDirs().remove(fullName());
+        CKfiGlobal::uicfg().removeOpenInstDir(fullName());
 
         while(NULL!=item)
         {
@@ -600,7 +602,7 @@ void CFontItem::setEnabled(bool enabled)
 //#define ENABLE_DRAG
 CFontListWidget::CFontListWidget(QWidget *parent)
                : KListView(parent),
-                 itsAdvancedMode(CKfiGlobal::cfg().getAdvancedMode()),
+                 itsAdvancedMode(CKfiGlobal::uicfg().isAdvancedMode()),
                  itsShowingProgress(false)
 {
     addColumn(i18n("Folder/File"));
@@ -632,6 +634,7 @@ CFontListWidget::CFontListWidget(QWidget *parent)
     connect(this, SIGNAL(clicked(QListViewItem *, const QPoint &, int)), SLOT(listClicked(QListViewItem *, const QPoint &, int)));
 
     itsFontsPopup=new QPopupMenu(this);
+    itsFontsPopup->insertItem(i18n("Show Meta Data..."), this, SLOT(showMeta()));
     itsFixTtfPsNamesME=itsFontsPopup->insertItem(i18n("Fix TTF postscript names..."), this, SLOT(fixTtfPsNames()));
 
     itsDirsPopup=new QPopupMenu(this);
@@ -647,6 +650,18 @@ CFontListWidget::CFontListWidget(QWidget *parent)
     viewport()->setAcceptDrops(true);
     setDropHighlighter(true);
 #endif
+    setRootIsDecorated(itsAdvancedMode);
+}
+
+void CFontListWidget::storeSettings()
+{
+    if(itsAdvancedMode)
+    {
+        QListViewItem *item=itemAt(QPoint(0, 0));
+
+        if(item)
+            CKfiGlobal::uicfg().setInstTopItem(((CListViewItem*)item)->fullName());
+    }
 }
 
 void CFontListWidget::reset()
@@ -720,6 +735,7 @@ void CFontListWidget::setAdvanced(bool on)
         setDragEnabled(on);
 #endif
         itsAdvancedMode=on;
+        setRootIsDecorated(itsAdvancedMode);
         scan();
     }
 }
@@ -836,6 +852,18 @@ void CFontListWidget::scan()
 
         setEnabled(true);
         restore(firstChild());
+
+        QListViewItem *item=firstChild();
+
+        while(NULL!=item)
+        {
+            if(((CListViewItem *)item)->fullName()==CKfiGlobal::uicfg().getInstTopItem())
+            {
+                ensureItemVisible(item);
+                break;
+            }
+            item=item->itemBelow();
+        }
     }
     else
     {
@@ -1062,6 +1090,13 @@ void CFontListWidget::updateConfig()
 
 void CFontListWidget::install()
 {
+    KURL::List nullList;
+
+    installFonts(nullList);
+}
+
+void CFontListWidget::installFonts(const KURL::List &suppliedList)
+{
     CListViewItem *citem=NULL;
     QString       selectedDir=itsAdvancedMode && (NULL!=(citem=getFirstSelectedItem())) ? citem->dir() : QString::null;
 
@@ -1073,7 +1108,9 @@ void CFontListWidget::install()
                             "application/x-font-ttf application/x-font-type1 application/x-font-bdf application/x-font-pcf "
                             "application/x-font-snf application/x-font-speedo" :
                             "application/x-font-ttf application/x-font-type1";
-        KURL::List list   = KFileDialog::getOpenFileNames(QString::null, filter, topLevelWidget(), i18n("Install Fonts"));
+        KURL::List list   = suppliedList.isEmpty() ?
+                                KFileDialog::getOpenFileNames(QString::null, filter, topLevelWidget(), i18n("Install Fonts")) :
+                                suppliedList;
 
         if(!list.isEmpty())
         {
@@ -1674,6 +1711,22 @@ void CFontListWidget::fixTtfPsNames()
         if(failures)
             CKfiGlobal::errorDialog().open(i18n("The following files could not be modified:"));
     }
+}
+
+void CFontListWidget::showMeta()
+{
+    QStringList list;
+
+    CListViewItem *item=(CListViewItem *)firstChild();
+
+    while(NULL!=item)
+    {
+        if(item->isSelected())
+            list.append(item->fullName());
+        item=(CListViewItem *)(item->itemBelow());
+    }
+
+    emit showMetaData(list);
 }
 
 void CFontListWidget::toggleUnscaled()

@@ -11,10 +11,10 @@ desktopdir = $(kde_appsdir)/Settings/System/
 kcm_fontinst_la_SOURCES = \
         AfmCreator.cpp BufferedFile.cpp CompressedFile.cpp Config.cpp \
         Encodings.cpp ErrorDialog.cpp FontEngine.cpp FontListWidget.cpp \
-        FontPreview.cpp FontmapCreator.cpp FontsWidget.cpp \
+        FontPreview.cpp FontmapCreator.cpp FontSelectorWidget.cpp FontsWidget.cpp \
         Kfi.cpp KfiCmModule.cpp KfiGlobal.cpp KfiMainWidget.cpp \
-        Misc.cpp SettingsWidget.cpp SettingsWizard.cpp StarOfficeConfig.cpp \
-        SysConfigurer.cpp Ttf.cpp XConfig.cpp \
+        MetaDialog.cpp Misc.cpp SettingsWidget.cpp SettingsWizard.cpp StarOfficeConfig.cpp \
+        SysConfigurer.cpp Ttf.cpp UiConfig.cpp XConfig.cpp \
         ErrorDialogData.ui \
         KfiMainWidgetData.ui \
         SettingsWidgetData.ui SettingsWizardData.ui
@@ -27,10 +27,12 @@ EXTRA_DIST = \
 	Encodings.h \
 	FontEngine.h \
 	FontListWidget.h\
+        FontSelectorWidget.h \
 	FontsWidget.h \
 	Kfi.h \
 	KfiGlobal.h \
 	KfiMainWidget.h \
+	MetaDialog.h \
 	Misc.h \
 	SettingsWidget.h \
 	ErrorDialog.h \
@@ -44,6 +46,7 @@ EXTRA_DIST = \
 	SettingsWizard.h \
 	FontPreview.h \
 	CompressedFile.h \
+	UiConfig.h \
 	hi32-app-kcmfontinst.png \
 	hi48-app-kcmfontinst.png \
 	lo16-app-kcmfontinst.png \

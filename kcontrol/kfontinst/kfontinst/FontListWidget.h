@@ -33,6 +33,7 @@
 #include "Misc.h"
 
 #include <klistview.h>
+#include <kurl.h>
 #include <qptrlist.h>
 
 class QPainter;
@@ -120,8 +121,9 @@ class CFontListWidget : public KListView
     public:
 
     CFontListWidget(QWidget *parent);
-    virtual ~CFontListWidget()          { }
+    virtual ~CFontListWidget() {}
 
+    void          storeSettings();
     void          reset();
     void          clearLists();
     void          restore(QListViewItem *item, bool checkOpen=true);
@@ -143,6 +145,7 @@ class CFontListWidget : public KListView
     void          addFont(const QString &from, const QString &path, const QString &file, bool checkOpen=true);
     void          addSubDir(const QString &top, const QString &sub);
     void          changeStatus(bool status);
+    void          installFonts(const KURL::List &list);
 
     public slots:
 
@@ -156,6 +159,7 @@ class CFontListWidget : public KListView
     void          popupMenu(QListViewItem *item, const QPoint &point, int column);
     void          listClicked(QListViewItem *item, const QPoint &point, int column);
     void          fixTtfPsNames();
+    void          showMeta();
     void          createDir();
     void          toggleUnscaled();
     void          selectionChanged();
@@ -170,6 +174,7 @@ class CFontListWidget : public KListView
     void          fontMoved(const QString &font, const QString &from, const QString &to);
     void          dirMoved(const QString &top, const QString &sub);
     void          madeChanges();
+    void          showMetaData(QStringList files);
 
     private:
 

@@ -48,6 +48,11 @@ void CKfiMainWidget::scanFonts()
     itsFonts->scanDirs();
 }
 
+void CKfiMainWidget::storeSettings()
+{
+    itsFonts->storeSettings();
+}
+
 void CKfiMainWidget::configureSystem()
 {
     itsTab->showPage(itsFontsTab);

@@ -32,6 +32,7 @@
 #include "Config.h"
 #include "ErrorDialog.h"
 #include "Ttf.h"
+#include "UiConfig.h"
 #include "XConfig.h"
 #include <qwidget.h>
 #include <stdio.h>
@@ -41,6 +42,7 @@ CConfig      * CKfiGlobal::theirConfig=NULL;
 CEncodings   * CKfiGlobal::theirEncodings=NULL;
 CErrorDialog * CKfiGlobal::theirErrorDialog=NULL;
 CTtf         * CKfiGlobal::theirTtf=NULL;
+CUiConfig    * CKfiGlobal::theirUiConfig=NULL;
 CXConfig     * CKfiGlobal::theirXCfg=NULL;
 
 void CKfiGlobal::create(QWidget *parent)
@@ -50,6 +52,7 @@ void CKfiGlobal::create(QWidget *parent)
     enc();
     ttf();
     xcfg();
+    uicfg();
     if(NULL==theirErrorDialog)
         theirErrorDialog=new CErrorDialog(parent);
 }
@@ -71,6 +74,10 @@ void CKfiGlobal::destroy()
     if(theirTtf)
         delete theirTtf;
     theirTtf=NULL;
+
+    if(theirUiConfig)
+        delete theirUiConfig;
+    theirUiConfig=NULL;
 
     if(theirXCfg)
         delete theirXCfg;
@@ -119,6 +126,14 @@ CTtf & CKfiGlobal::ttf()
         theirTtf=new CTtf;
 
     return *theirTtf;
+}
+
+CUiConfig & CKfiGlobal::uicfg()
+{
+    if(NULL==theirUiConfig)
+        theirUiConfig=new CUiConfig;
+
+    return *theirUiConfig;
 }
 
 CXConfig & CKfiGlobal::xcfg()

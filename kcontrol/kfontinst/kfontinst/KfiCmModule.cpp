@@ -71,6 +71,7 @@ CKfiCmModule::CKfiCmModule(QWidget *parent, const char *name, const QStringList&
 
 CKfiCmModule::~CKfiCmModule()
 {
+    itsMainWidget->storeSettings();
     theirInstance=NULL;
     CKfi::destroy();
 

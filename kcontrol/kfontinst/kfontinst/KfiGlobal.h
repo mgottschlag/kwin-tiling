@@ -34,6 +34,7 @@ class CConfig;
 class CEncodings;
 class CErrorDialog;
 class CTtf;
+class CUiConfig;
 class CXConfig;
 class QWidget;
 
@@ -49,6 +50,7 @@ class CKfiGlobal
     static CEncodings &   enc();
     static CErrorDialog & errorDialog();
     static CTtf &         ttf();
+    static CUiConfig &    uicfg();
     static CXConfig &     xcfg();
 
     private:
@@ -58,6 +60,7 @@ class CKfiGlobal
     static CEncodings   *theirEncodings;
     static CErrorDialog *theirErrorDialog;
     static CTtf         *theirTtf;
+    static CUiConfig    *theirUiConfig;
     static CXConfig     *theirXCfg;
 };
 

@@ -1,12 +1,12 @@
-#ifndef __KFI_MAIN_WIDGET_H__
-#define __KFI_MAIN_WIDGET_H__
+#ifndef __META_DIALOG_H__
+#define __META_DIALOG_H__
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : CKfiMainWindow
+// Class Name    : CMetaDialog
 // Author        : Craig Drummond
 // Project       : K Font Installer (kfontinst-kcontrol)
-// Creation Date : 29/04/2001
+// Creation Date : 19/06/2002
 // Version       : $Revision$ $Date$
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,32 +26,36 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2001
+// (C) Craig Drummond, 2002
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "KfiMainWidgetData.h"
+#include <kdialog.h>
+#include <kfileitem.h>
+#include <kio/metainfojob.h>
 
-class CKfiMainWidget : public CKfiMainWidgetData
+class QListView;
+class QStringList;
+class KFileItem;
+
+class CMetaDialog : public KDialog
 {
     Q_OBJECT
 
     public:
 
-    CKfiMainWidget(QWidget *parent, const char *name=NULL);
-    virtual ~CKfiMainWidget() {}
+    CMetaDialog(QWidget *parent);
+    ~CMetaDialog() {}
 
-    void scanFonts();
-    void configureSystem();
-    void reset();
-    void storeSettings();
+    void showFiles(const QStringList &files);
 
     public slots:
 
-    void wMadeChanges();
+    void gotMetaInfo(const KFileItem *item);
 
-    signals:
+    private:
 
-    void madeChanges();
+    QListView        *itsList;
+    KIO::MetaInfoJob *itsJob;
 };
 
 #endif

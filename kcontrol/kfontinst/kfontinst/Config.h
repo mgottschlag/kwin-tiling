@@ -58,7 +58,6 @@ class CConfig : public KConfig
 
     bool              firstTime()                   { return !itsConfigured; }
     void              configured()                  { itsConfigured=true; }
-    bool              getAdvancedMode()             { return itsAdvancedMode; }
  
     const QString &   getFontsDir()                 { return itsFontsDir; }
     const QString &   getTTSubDir()                 { return itsTTSubDir; }
@@ -85,8 +84,6 @@ class CConfig : public KConfig
 
     const QStringList getModifiedDirs()             { return itsModifiedDirs; }
 
-    void setAdvancedMode(bool b);
- 
     void setFontsDir(const QString &s)              { itsFontsDir=s; }
     void setTTSubDir(const QString &s)              { itsTTSubDir=s; }
     void setT1SubDir(const QString &s)              { itsT1SubDir=s; }
@@ -151,7 +148,6 @@ class CConfig : public KConfig
                       itsCustomXRefreshCmd;
     bool              itsDoGhostscript,
                       itsDoCups,
-                      itsAdvancedMode,
                       itsSOConfigure,
                       itsDoAfm,
                       itsDoTtAfms,

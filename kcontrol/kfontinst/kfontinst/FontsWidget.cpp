@@ -29,9 +29,11 @@
 #include "FontsWidget.h"
 #include "KfiGlobal.h"
 #include "FontEngine.h"
+#include "FontSelectorWidget.h"
 #include "Config.h"
 #include "SysConfigurer.h"
 #include "FontPreview.h"
+#include "MetaDialog.h"
 #include "Misc.h"
 #include "KfiCmModule.h"
 
@@ -46,45 +48,81 @@
 #include <qpalette.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qsplitter.h>
 
 #include <stdlib.h>
 
 CFontsWidget::CFontsWidget(QWidget *parent, const char *)
             : QWidget(parent),
-              itsSysConfigurer(NULL)
+              itsSysConfigurer(NULL),
+              itsMetaDialog(NULL)
 {
-    QSplitter   *splitter=new QSplitter(this);
-    QGroupBox   *fontsBox=new QGroupBox(splitter, "fontsBox"),
-                *previewBox=new QGroupBox(splitter, "previewBox");
+    itsMainSplitter=new QSplitter(this);
+
+    QGroupBox   *fontsBox=new QGroupBox(itsMainSplitter, "fontsBox"),
+                *previewBox=new QGroupBox(itsMainSplitter, "previewBox");
+    QSplitter   *listSplitter=new QSplitter(fontsBox);
+
+    itsSelectorBox=new QGroupBox(listSplitter);
+
+    QGroupBox   *installedBox=new QGroupBox(listSplitter);
 
     itsProgressBox=new QGroupBox(fontsBox, "itsProgressBox");
 
     QGridLayout *fontsLayout=new QGridLayout(fontsBox, 3, 3, 11, 6),
                 *progressLayout=new QGridLayout(itsProgressBox, 2, 2, 11, 6),
                 *previewLayout=new QGridLayout(previewBox, 1, 1, 6, 6),
-                *layout=new QGridLayout(this, 1, 1, 11, 6);
-    KButtonBox  *buttonBox=new KButtonBox(fontsBox, Qt::Horizontal);
+                *layout=new QGridLayout(this, 1, 1, 11, 6),
+                *installedLayout=new QGridLayout(installedBox, 3, 2),
+                *selectorLayout=new QGridLayout(itsSelectorBox, 3, 2);
+    QPushButton *fsAdd=new QPushButton(i18n("Add"), itsSelectorBox);
+ 
+    KButtonBox  *buttonBox=new KButtonBox(installedBox, Qt::Horizontal);
     QPalette    pal(itsProgressBox->palette());
     QColorGroup dis(pal.disabled());
+
+    listSplitter->setResizeMode(itsSelectorBox, QSplitter::Stretch);
+    listSplitter->setResizeMode(installedBox, QSplitter::Stretch);
 
     dis.setColor(QColorGroup::Text, pal.active().text());
     pal.setDisabled(dis);
     itsProgressBox->setPalette(pal);
 
-    itsFontList=new CFontListWidget(fontsBox);
-    itsFontList->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0, itsFontList->sizePolicy().hasHeightForWidth()));
+    itsSelectorBox->setFrameShape(QFrame::NoFrame);
+    installedBox->setFrameShape(QFrame::NoFrame);
+
+    listSplitter->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0,
+                                listSplitter->sizePolicy().hasHeightForWidth()));
+
+    itsSelector=new CFontSelectorWidget(itsSelectorBox);
+    selectorLayout->addMultiCellWidget(new QLabel(i18n("<B>Install from:</B>"), itsSelectorBox), 0, 0, 0, 1);
+    selectorLayout->addMultiCellWidget(itsSelector, 1, 1, 0, 1);
+    selectorLayout->addWidget(fsAdd, 2, 0);
+    selectorLayout->addItem(new QSpacerItem(5, 5, QSizePolicy::Expanding, QSizePolicy::Minimum), 2, 1);
+
+    itsFontList=new CFontListWidget(installedBox);
+    itsFontList->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0, 
+                              itsFontList->sizePolicy().hasHeightForWidth()));
+    itsFontListLabel=new QLabel(i18n("<B>Install to:</B>"), installedBox);
+    installedLayout->addMultiCellWidget(itsFontListLabel, 0, 0, 0, 1);
+    installedLayout->addMultiCellWidget(itsFontList, 1, 1, 0, 1);
+    installedLayout->addItem(new QSpacerItem(5, 5, QSizePolicy::Expanding, QSizePolicy::Minimum), 2, 0);
+    installedLayout->addWidget(buttonBox, 2, 1);
 
     itsButtonAdd = buttonBox->addButton(i18n("Add..."));
     itsButtonRemove = buttonBox->addButton(i18n("Remove"));
     itsButtonDisable = buttonBox->addButton(i18n("Disable"));
     itsButtonEnable = buttonBox->addButton(i18n("Enable"));
-    itsAdvancedCB = new QCheckBox( i18n("Advanced Mode"), fontsBox);
-    itsAdvancedCB->setChecked(CKfiGlobal::cfg().getAdvancedMode());
+    itsModeCombo=new QComboBox(fontsBox);
+
+    itsModeCombo->insertItem(i18n("Basic Mode"));
+    itsModeCombo->insertItem(i18n("Advanced Mode"));
+    itsModeCombo->insertItem(i18n("Advanced Mode (With Embedded Font Selector)"));
 
     itsLabel=new QLabel(itsProgressBox, "itsLabel");
-    itsLabel->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)1, 0, 0, itsLabel->sizePolicy().hasHeightForWidth()));
+    itsLabel->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)1, 0, 0,
+                            itsLabel->sizePolicy().hasHeightForWidth()));
     itsLabel->setText("Label...");
     itsProgress=new KProgress(itsProgressBox, "itsProgress");
     itsProgress->setMinimumSize(QSize(160, 0));
@@ -94,36 +132,60 @@ CFontsWidget::CFontsWidget(QWidget *parent, const char *)
     itsProgressBox->hide();
     itsProgressBox->setTitle("Title...");
 
-    fontsLayout->addMultiCellWidget(itsFontList, 0, 0, 0, 2);
-    fontsLayout->addWidget(buttonBox, 1, 2);
-    fontsLayout->addWidget(itsAdvancedCB, 1, 0);
+    fontsLayout->addMultiCellWidget(itsModeCombo, 0, 0, 0, 2);
+    fontsLayout->addMultiCellWidget(listSplitter, 1, 1, 0, 2);
     fontsLayout->addItem(new QSpacerItem(10, 10, QSizePolicy::Expanding, QSizePolicy::Minimum), 1, 1);
     fontsLayout->addMultiCellWidget(itsProgressBox, 2, 2, 0, 2);
 
     itsPreview = new CFontPreview(previewBox, "itsPreview");
-    itsPreview->setSizePolicy(QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0, itsPreview->sizePolicy().hasHeightForWidth()));
+    itsPreview->setSizePolicy(QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0, 
+                              itsPreview->sizePolicy().hasHeightForWidth()));
     itsPreview->setMinimumSize(QSize(96, 64));
     previewLayout->addWidget(itsPreview, 0, 0);
 
-    layout->addWidget(splitter, 0, 0);
+    layout->addWidget(itsMainSplitter, 0, 0);
 
+    connect(itsSelector, SIGNAL(installSelected()), this, SLOT(installFs()));
+    connect(itsModeCombo, SIGNAL(activated(int)), this, SLOT(setMode(int)));
+    connect(fsAdd, SIGNAL(clicked()), this, SLOT(installFs()));
     connect(itsButtonAdd, SIGNAL(clicked()), itsFontList, SLOT(install()));
     connect(itsButtonRemove, SIGNAL(clicked()), itsFontList, SLOT(uninstall()));
     connect(itsButtonDisable, SIGNAL(clicked()), itsFontList, SLOT(disable()));
     connect(itsButtonEnable, SIGNAL(clicked()), itsFontList, SLOT(enable()));
-    connect(itsAdvancedCB, SIGNAL(toggled(bool)), this, SLOT(setAdvanced(bool)));
+    connect(itsSelector, SIGNAL(fontSelected(const QString &)), itsPreview, SLOT(showFont(const QString &)));
+    connect(itsSelector, SIGNAL(initProgress(const QString &, int)), SLOT(initProgress(const QString &, int)));
+    connect(itsSelector, SIGNAL(progress(const QString &)), SLOT(progress(const QString &)));
+    connect(itsSelector, SIGNAL(stopProgress()), SLOT(stopProgress()));
+    connect(itsSelector, SIGNAL(showMetaData(QStringList)), SLOT(showMetaData(QStringList)));
     connect(itsFontList, SIGNAL(fontSelected(const QString &)), itsPreview, SLOT(showFont(const QString &)));
     connect(itsFontList, SIGNAL(configureSystem()), this, SLOT(configureSystem()));
     connect(itsFontList, SIGNAL(initProgress(const QString &, int)), SLOT(initProgress(const QString &, int)));
     connect(itsFontList, SIGNAL(progress(const QString &)), SLOT(progress(const QString &)));
     connect(itsFontList, SIGNAL(stopProgress()), SLOT(stopProgress()));
     connect(itsFontList, SIGNAL(madeChanges()), SLOT(flMadeChanges()));
+    connect(itsFontList, SIGNAL(showMetaData(QStringList)), SLOT(showMetaData(QStringList)));
+    setMode(CKfiGlobal::uicfg().getMode(), false);
+    itsModeCombo->setCurrentItem((int)CKfiGlobal::uicfg().getMode());
 }
 
 CFontsWidget::~CFontsWidget()
 {
     if(itsSysConfigurer)
         delete itsSysConfigurer;
+}
+
+void CFontsWidget::scanDirs()
+{
+    itsFontList->scan();
+    if(CUiConfig::ADVANCED_PLUS_FS==CKfiGlobal::uicfg().getMode())
+        itsSelector->showContents();
+}
+
+void CFontsWidget::storeSettings()
+{
+    itsFontList->storeSettings();
+    if(CUiConfig::ADVANCED_PLUS_FS==CKfiGlobal::uicfg().getMode())
+        itsSelector->storeSettings();
 }
 
 void CFontsWidget::initProgress(const QString &title, int numSteps)
@@ -202,15 +264,63 @@ void CFontsWidget::systemConfigured()
     CKfiGlobal::cfg().clearModifiedDirs();
 }
 
-void CFontsWidget::setAdvanced(bool b)
-{
-    CKfiGlobal::cfg().setAdvancedMode(b);
-    itsFontList->setAdvanced(b);
-}
-
 void CFontsWidget::flMadeChanges()
 {
     emit madeChanges();
+}
+
+void CFontsWidget::installFs()
+{
+    KURL::List fonts=itsSelector->getSelectedFonts();
+
+    if(fonts.count())
+        itsFontList->installFonts(fonts);
+}
+
+void CFontsWidget::setMode(int mode)
+{
+    if(mode>=CUiConfig::BASIC && mode<=CUiConfig::ADVANCED_PLUS_FS)
+        setMode((CUiConfig::EMode)mode, true);
+}
+
+void CFontsWidget::setMode(CUiConfig::EMode mode, bool canShowFsDirs)
+{
+    CKfiGlobal::uicfg().setMode(mode);
+
+    switch(mode)
+    {
+        case CUiConfig::BASIC:
+            itsSelectorBox->hide();
+            itsFontListLabel->hide();
+            itsFontList->setAdvanced(false);
+            itsButtonAdd->show();
+            itsMainSplitter->setOrientation(Qt::Horizontal);
+            break;
+        case CUiConfig::ADVANCED:
+            itsSelectorBox->hide();
+            itsFontListLabel->hide();
+            itsFontList->setAdvanced(true);
+            itsButtonAdd->show();
+            itsMainSplitter->setOrientation(Qt::Horizontal);
+            break;
+        case CUiConfig::ADVANCED_PLUS_FS:
+            itsSelectorBox->show();
+            itsFontListLabel->show();
+            itsFontList->setAdvanced(true);
+            itsButtonAdd->hide();
+            itsMainSplitter->setOrientation(Qt::Vertical);
+            if(canShowFsDirs)
+                itsSelector->showContents();
+            break;
+    }
+}
+
+void CFontsWidget::showMetaData(QStringList files)
+{
+    if(NULL==itsMetaDialog)
+        itsMetaDialog=new CMetaDialog(this);
+
+    itsMetaDialog->showFiles(files);
 }
 
 #include "FontsWidget.moc"

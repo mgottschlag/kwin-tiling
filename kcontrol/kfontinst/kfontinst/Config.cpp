@@ -290,8 +290,6 @@ void CConfig::load()
     setGroup("Misc");
     itsConfigured=readBoolEntry("Configured");
 
-    setGroup("Appearance");
-    itsAdvancedMode=readBoolEntry("AdvancedMode");
     setGroup("FoldersAndFiles");
     val=readEntry("FontsDir");
     itsFontsDir=val.length()>0 ? val : defaultFontsDir;
@@ -441,8 +439,6 @@ void CConfig::save()
     setGroup("Misc");
     writeEntry("Configured", itsConfigured);
 
-    setGroup("Appearance");
-    writeEntry("AdvancedMode", itsAdvancedMode);
     setGroup("FoldersAndFiles");
     writeEntry("FontsDir", itsFontsDir);
     writeEntry("TTSubDir", itsTTSubDir);
@@ -483,18 +479,6 @@ void CConfig::setSOConfigure(bool b)
     itsSOConfigure=b;
     if(b)
         setDoAfm(true);
-}
-
-void CConfig::setAdvancedMode(bool b)
-{
-    QString origGroup=group();
-
-    itsAdvancedMode=b;
-    setGroup("Appearance");
-    writeEntry("AdvancedMode", itsAdvancedMode);
-    setGroup(origGroup);
-    if(CMisc::root())
-        sync();
 }
 
 void CConfig::setDoAfm(bool b)

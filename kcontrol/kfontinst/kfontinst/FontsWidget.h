@@ -32,6 +32,7 @@
 #include "FontListWidget.h"
 #include "KfiGlobal.h"
 #include "Config.h"
+#include "UiConfig.h"
 #include <qnamespace.h>
 #include <qstring.h>
 #include <qpixmap.h>
@@ -39,11 +40,14 @@
 
 class CSysConfigurer;
 class CFontPreview;
+class CFontSelectorWidget;
+class CMetaDialog;
 class KProgress;
 class QPushButton;
 class QGroupBox;
-class QCheckBox;
+class QComboBox;
 class QLabel;
+class QSplitter;
 
 class CFontsWidget : public QWidget
 {
@@ -55,7 +59,8 @@ class CFontsWidget : public QWidget
     virtual ~CFontsWidget();
 
     void reset()    { itsFontList->reset(); }
-    void scanDirs() { itsFontList->scan(); }
+    void scanDirs();
+    void storeSettings();
 
     signals:
 
@@ -65,27 +70,38 @@ class CFontsWidget : public QWidget
 
     public slots:
 
-    void setAdvanced(bool b);
     void initProgress(const QString &title, int numSteps);
     void progress(const QString &str);
     void stopProgress();
     void configureSystem();
     void systemConfigured();
     void flMadeChanges();
+    void installFs();
+    void setMode(int mode);
+    void showMetaData(QStringList files);
 
     private:
 
-    CFontListWidget *itsFontList;
-    KProgress       *itsProgress;
-    QLabel          *itsLabel;
-    CFontPreview    *itsPreview;
-    QGroupBox       *itsProgressBox;
-    QPushButton     *itsButtonAdd,
-                    *itsButtonRemove,
-                    *itsButtonDisable,
-                    *itsButtonEnable;
-    QCheckBox       *itsAdvancedCB;
-    CSysConfigurer  *itsSysConfigurer;
+    void setMode(CUiConfig::EMode mode, bool canShowFsDirs);
+
+    private:
+
+    CFontListWidget     *itsFontList;
+    KProgress           *itsProgress;
+    QLabel              *itsLabel;
+    CFontPreview        *itsPreview;
+    QGroupBox           *itsProgressBox,
+                        *itsSelectorBox;
+    QPushButton         *itsButtonAdd,
+                        *itsButtonRemove,
+                        *itsButtonDisable,
+                        *itsButtonEnable;
+    QComboBox           *itsModeCombo;
+    CSysConfigurer      *itsSysConfigurer;
+    QLabel              *itsFontListLabel;
+    CFontSelectorWidget *itsSelector;
+    CMetaDialog         *itsMetaDialog;
+    QSplitter           *itsMainSplitter;
 };
 
 #endif
