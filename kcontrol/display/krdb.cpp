@@ -87,18 +87,14 @@ static void addFontDef(QString& s, const char* n, const QFont& f, FontStyle fs)
 static void copyFile(QFile& tmp, QString const& filename)
 {
   QFile f( filename );
-  QString s;
-
-  if ( f.open(IO_ReadOnly) ) {
-
-    QTextStream t( &f );
-
-    while ( !t.eof() ) {
-      s += t.readLine() + "\n";
-    }
-    f.close();
+  if ( f.open(IO_ReadOnly|IO_Raw) ) {
+      QCString buf( 8192 );
+      while ( !f.atEnd() ) {
+          int read = f.readBlock( buf.data(), buf.size() );
+          if ( read > 0 )
+              tmp.writeBlock( buf.data(), read );
+      }
   }
-  tmp.writeBlock( s.latin1(), s.length() );
 }
 
 
@@ -121,6 +117,8 @@ static void createGtkrc( const QFont& font, const QColorGroup& cg )
 
     if ( f.open( IO_WriteOnly) ) {
         QTextStream t( &f );
+        t.setEncoding( QTextStream::Latin1 );
+
         t << "# created by KDE, " << QDateTime::currentDateTime().toString() << endl;
         t << "#" << endl;
         t << "# If you do not want KDE to override your GTK settings, select" << endl;
