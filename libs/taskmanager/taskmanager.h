@@ -356,8 +356,14 @@ public:
      * The name of the icon to be used for the starting task.
      */
     QString icon() const { return _data.findIcon(); }
-    void update( const KStartupInfoData& data ) { _data.update( data ); }
+    void update( const KStartupInfoData& data );
     const KStartupInfoId& id() const { return _id; }
+
+signals:
+    /**
+     * Indicates that this startup has changed in some way.
+     */
+    void changed();
 
 private:
     KStartupInfoId _id;

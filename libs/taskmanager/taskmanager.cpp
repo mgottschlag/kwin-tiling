@@ -229,8 +229,8 @@ void TaskManager::gotStartupChange( const KStartupInfoId& id, const KStartupInfo
 {
     for( Startup* s = _startups.first(); s != 0; s = _startups.next()) {
         if ( s->id() == id ) {
-        s->update( data );
-        return;
+            s->update( data );
+            return;
         }
     }
 }
@@ -675,6 +675,12 @@ Startup::Startup( const KStartupInfoId& id, const KStartupInfoData& data,
 Startup::~Startup()
 {
 
+}
+
+void Startup::update( const KStartupInfoData& data )
+{
+    _data.update( data );
+    emit changed();
 }
 
 int TaskManager::currentDesktop() const
