@@ -407,7 +407,7 @@ void KBannerSaver::setTimeDisplay()
     p.setPen( black );
     p.drawText( xpos, ypos, message );
     showTime=TRUE;
-    message = QTime::currentTime().toString();
+    message=KGlobal::locale()->formatTime(QTime::currentTime(), true);
     fwidth = -1;
 }
 
