@@ -50,19 +50,24 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *)
 
     itsFrame=new QFrame(parent, "frame");
 
-    QGridLayout *layout=new QGridLayout(itsFrame, 2, 2, 11, 6);
+    QFrame      *previewFrame=new QFrame(itsFrame);
+    QGridLayout *layout=new QGridLayout(itsFrame, 2, 2, 11, 6),
+                *previewLayout=new QGridLayout(previewFrame, 1, 1, 1, 1);
 
     itsFrame->setFrameShape(QFrame::NoFrame);
     itsFrame->setFocusPolicy(QWidget::ClickFocus);
+    previewFrame->setFrameShadow(QFrame::Raised);
+    previewFrame->setFrameShape(QFrame::Panel);
     setInstance(new KInstance("kfontviewpart"));
-    itsPreview=new CFontPreview(itsFrame, "FontViewPart::Preview", i18n("Loading file..."));
+    itsPreview=new CFontPreview(previewFrame, "FontViewPart::Preview", i18n("Loading file..."));
     itsPreview->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0,
                               itsPreview->sizePolicy().hasHeightForWidth()));
     itsFaceLabel=new QLabel(i18n("Face:"), itsFrame);
     itsFaceSelector=new KIntNumInput(1, itsFrame);
     itsInstallButton=new QPushButton(i18n("Install..."), itsFrame, "button");
     itsInstallButton->hide();
-    layout->addMultiCellWidget(itsPreview, 0, 0, 0, 3);
+    previewLayout->addWidget(itsPreview, 0, 0);
+    layout->addMultiCellWidget(previewFrame, 0, 0, 0, 3);
     layout->addWidget(itsFaceLabel, 1, 0);
     layout->addWidget(itsFaceSelector, 1, 1);
     itsFaceLabel->hide();
