@@ -2,7 +2,7 @@
 
     chooser widget for KDM
 
-    Copyright (C) 2002 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2002-2003 Oswald Buddenhagen <ossi@kde.org>
     based on the chooser (C) 1999 by Harald Hoyer <Harald.Hoyer@RedHat.de>
 
     This program is free software; you can redistribute it and/or modify

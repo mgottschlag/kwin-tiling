@@ -1,9 +1,9 @@
     /*
 
-    Dialog class to handle input focus -- see headerfile
+    Dialog class that handles input focus in absence of a wm
 
     Copyright (C) 1997, 1998 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000-2002 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify

@@ -3,7 +3,7 @@
     Front-end to Lilo's boot options
 
     Copyright (C) 1999 Stefan van den Oord <oord@cs.utwente.nl>
-    Copyright (C) 2001 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2001,2003 Oswald Buddenhagen <ossi@kde.org>
 
     NOTE: this is a heavily cut-down version of the liloinfo class.
     Check out kde 2.1 for the full version.

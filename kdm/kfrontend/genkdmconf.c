@@ -3,7 +3,7 @@
     Create a suitable configuration for kdm taking old xdm/kdm 
     installations into account
 
-    Copyright (C) 2001-2002 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2001-2003 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify

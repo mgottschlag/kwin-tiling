@@ -3,7 +3,7 @@
     Shutdown dialog
 
     Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
-    Copyright (C) 2000-2002 Oswald Buddenhagen <ossi@kde.org>
+    Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
 
 
     This program is free software; you can redistribute it and/or modify
