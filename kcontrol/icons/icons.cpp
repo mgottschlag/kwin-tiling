@@ -311,6 +311,7 @@ void KIconConfig::load()
     emit changed(false);
     for (int i=0; i<KIcon::LastGroup; i++)
 	mbChanged[i] = false;
+    preview();
 }
 
 
