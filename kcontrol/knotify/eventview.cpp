@@ -41,14 +41,8 @@ EventView::EventView(QWidget *parent, const char *name):
 					    KDialog::marginHint(),
 					    KDialog::spacingHint());
 	
-	static QStringList presentation;
-	presentation << i18n("Sound")
-	             << i18n("MessageBox")
-	             << i18n("Log File")
-	             << i18n("Standard Error");
 
 	eventslist=new QListBox(this);
-	eventslist->insertStringList(presentation);
 	
 	layout->addMultiCellWidget(eventslist, 0,3, 0,0);
 	layout->addWidget(enabled=new QCheckBox(i18n("&Enabled"),this), 0,1);
@@ -65,7 +59,6 @@ EventView::EventView(QWidget *parent, const char *name):
 
 EventView::~EventView()
 {
-	eventslist->clear();
 
 }
 
@@ -116,6 +109,21 @@ void EventView::itemToggled(bool on)
 void EventView::load(EventConfig *_event, bool save)
 {
 	unload(save);
+	
+	// I load the _event (e.g., showing all the cute little flags)
+	
+	// Handle the nopresent thing
+	QStringList presentation;
+//	if (_event->nopresent && ~KNotifyClient::Sound)
+		presentation << i18n("Sound");
+//	if (_event->nopresent && ~KNotifyClient::Messagebox)
+		presentation << i18n("MessageBox");
+//	if (_event->nopresent && ~KNotifyClient::Logfile)
+		presentation << i18n("Log File");
+//	if (_event->nopresent && ~KNotifyClient::Stderr)
+		presentation << i18n("Standard Error");
+	eventslist->insertStringList(presentation);
+	
 	event=_event;
 	setEnabled(true);
 	setPixmaps();
@@ -145,6 +153,8 @@ void EventView::setPixmaps()
 
 void EventView::unload(bool)
 {
+	eventslist->clear();
+
 	event=0;
 	enabled->setChecked(false);
 	setPixmaps();

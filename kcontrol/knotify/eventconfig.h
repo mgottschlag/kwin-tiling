@@ -20,6 +20,18 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.12  2000/04/16 03:35:49  charles
+    All Done (finally)
+
+    Translators:
+    You need to inspect all the eventsrc files and translate the description
+    and friendly fields in the .desktop way
+
+    description=Hi
+    description[fr]=Salut
+
+    There's only one at the moment... But there'll be more...
+
     Revision 1.11  2000/04/15 19:46:05  charles
     Here's a commit. Happy David? :)
 
@@ -125,6 +137,7 @@ public:
 	
 	const ProgramConfig *application;
 	int present;
+	int nopresent;
 	QString internalname;
 	
 	QString logfile;

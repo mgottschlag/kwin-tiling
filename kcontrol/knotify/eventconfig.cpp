@@ -41,7 +41,10 @@ void EventConfig::load(KConfig &conf)
 		if (present==-1)
 			present=conf.readNumEntry("default_presentation", 0);
 	}
-
+	
+	// load the nopresent
+	nopresent=conf.readNumEntry("nopresentation", 0);
+		
 	{ // Load the files
 		soundfile=conf.readEntry("soundfile");
 		if (soundfile.isNull())
