@@ -261,25 +261,21 @@ void KKeyConfig::readScheme( int index )
 		config = 
 			new KSimpleConfig( sFileList->at( index ), true );
 	}
-	KEntryIterator *gIt=0;
-	
+
+	QMap<QString, QString> tmpMap;
 	if ( index == 0 )
-		gIt = config->entryIterator( KeySet );
+	  tmpMap = config->entryMap(KeySet);
 	else
-		gIt = config->entryIterator( KeyScheme );
+	  tmpMap = config->entryMap(KeyScheme);
+	QMap<QString, QString>::Iterator gIt(tmpMap.begin());
 		
 	int *keyCode;
-	
  
-	if (gIt){
-		gIt->toFirst();
-		while ( gIt->current() ) {
-		  keyCode = new int;
-		  *keyCode = stringToKey( gIt->current()->aValue );
-		  globalDict->insert( gIt->currentKey(), keyCode);
-		  //debug( " %s, %d", gIt->currentKey(), *keyCode );
-		  ++(*gIt);
-		}
+	for (; gIt != tmpMap.end(); ++gIt) {
+	  keyCode = new int;
+	  *keyCode = stringToKey( *gIt );
+	  globalDict->insert( gIt.key(), keyCode);
+	  //debug( " %s, %d", gIt->currentKey(), *keyCode );
 	}
 	
 	kc->aIt->toFirst();

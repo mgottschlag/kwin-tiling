@@ -20,8 +20,8 @@
   */
 
 
-//#include <kapp.h>
-//#include <qobject.h>
+#include <stdio.h>
+
 #include <kslider.h>
 
 #include <kcontrol.h>

@@ -5,6 +5,7 @@
 // Copyright (c)  Rene Beutler 1998
 //
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <sys/types.h>

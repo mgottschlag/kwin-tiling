@@ -19,17 +19,19 @@
 
   */
 
+#include <stdio.h>
 
 #include <kwm.h>
 #include <kcontrol.h>
+#include <ksimpleconfig.h>
+#include <klocale.h>
+#include <kconfig.h>
+
 #include "panel.h"
 #include "desktops.h"
 #include "options.h"
 #include "disknav.h"
 #include "paneltheme.h"
-#include <ksimpleconfig.h>
-#include <klocale.h>
-#include <kconfig.h>
 
 KConfigBase *config;
 

@@ -1,11 +1,12 @@
 // (c) Torben Weis 1998
 // (c) David Faure 1998
 
+#include <stdio.h>
+#include <unistd.h>
+
 #include <kwm.h>
 #include <kcontrol.h>
 #include <ksimpleconfig.h>
-
-#include <unistd.h>
 
 #include "htmlopts.h"
 #include "miscopts.h"
