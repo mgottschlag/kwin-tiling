@@ -58,14 +58,18 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
     QString url = kurl.url();
 
     if (KURISearchFilterEngine::self()->verbose())
-	kdDebug() << "filtering " << url << endl;
+	kdDebug() << "KURISearchFilter: filtering " << url << endl;
 
     // Is this URL a candidate for filtering?
-    if (kurl.isMalformed())
+    if (!kurl.isMalformed())
+    {
         return false;
+    }
+    kdDebug() << "Ok, malformed " << url << endl;
 
     if (!KProtocolInfo::isKnownProtocol(kurl.protocol())) {
-	QString query = QString::null;
+        kdDebug() << "not known " << url << endl;
+	QString query;
 	int pos = -1;
 
 	// See if it's a searcher prefix. If not, use Internet Keywords
@@ -75,16 +79,14 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
 	
 	pos = url.find(':');
 	if (pos >= 0) {
-		QString key = url.left(pos);
-		query = KURISearchFilterEngine::self()->searchQuery(key);
-		if (query == QString::null) {
-		    return false;
-		}
-	}
+            QString key = url.left(pos);
+            query = KURISearchFilterEngine::self()->searchQuery(key);
+	} else
+            query = KURISearchFilterEngine::self()->navQuery();
 	
 	// Substitute the variable part in the query we found.
 	
-	if (query != QString::null) {
+	if (!query.isEmpty()) {
 	    QString newurl = query;
 	
 	    int pct;
@@ -107,11 +109,12 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
 	    if (KURISearchFilterEngine::self()->verbose())
 		kdDebug() << "filtered " << url << " to " << newurl << "\n";
 
-        setFilteredURI( data, newurl );
-        setURIType( data, KURIFilterData::NET_PROTOCOL );
+            setFilteredURI( data, newurl );
+            setURIType( data, KURIFilterData::NET_PROTOCOL );
 	    return true;
 	}
     }
+    kdDebug() << "return false" << endl;
     return false;
 }
 
@@ -130,7 +133,7 @@ KURISearchFilterFactory::KURISearchFilterFactory(QObject *parent, const char *na
 }
 
 KURISearchFilterFactory::~KURISearchFilterFactory() {
-    KURISearchFilterEngine::decRef(); 
+    KURISearchFilterEngine::decRef();
     delete s_instance;
 }
 

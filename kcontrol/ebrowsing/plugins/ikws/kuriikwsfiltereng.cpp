@@ -91,7 +91,7 @@ KURISearchFilterEngine::SearchEntry KURISearchFilterEngine::searchEntryByName(co
 QString KURISearchFilterEngine::navQuery() const {
     if (m_bInternetKeywordsEnabled) {
 	QString search = m_currInternetKeywordsSearchEngine.m_strQuery;
-	if (search != QString::null) {
+	if (!search.isEmpty()) {
 	    int pct = m_currInternetKeywordsNavEngine.m_strQueryWithSearch.find("\\|");
 	    if (pct >= 0) {
 		search = KURL::encode_string(search);
@@ -141,7 +141,7 @@ QCString KURISearchFilterEngine::name() const {
 
 void KURISearchFilterEngine::incRef()
 {
-  s_refCnt++; 
+  s_refCnt++;
 }
 
 void KURISearchFilterEngine::decRef()
@@ -152,7 +152,7 @@ void KURISearchFilterEngine::decRef()
     delete s_pSelf;
     s_pSelf = 0;
   }
-} 
+}
 
 KURISearchFilterEngine* KURISearchFilterEngine::self() {
     if (!s_pSelf) {
@@ -204,7 +204,7 @@ void KURISearchFilterEngine::loadConfig() {
     }
 
     NavEntry rn = navEntryByName(IKW_REALNAMES);
-    if (rn.m_strName == QString::null) {
+    if (rn.m_strName.isEmpty()) {
 	rn.m_strName = IKW_REALNAMES;
 	rn.m_strQuery = "http://navigation.realnames.com/resolver.dll?realname=\\1&charset=\\2&providerid=180";
 	rn.m_strQueryWithSearch = "http://navigation.realnames.com/resolver.dll?action=navigation&realname=\\1&charset=\\2&providerid=180&fallbackuri=\\|";
@@ -275,7 +275,7 @@ void KURISearchFilterEngine::saveConfig() const {
 	engines.append((*nit).m_strName);
 	config.setGroup((*nit).m_strName + IKW_SUFFIX);
 	config.writeEntry("Query", (*nit).m_strQuery);
-	if ((*nit).m_strQueryWithSearch != QString::null) {
+	if (!(*nit).m_strQueryWithSearch.isEmpty()) {
 	    config.writeEntry("QueryWithSearch", (*nit).m_strQueryWithSearch);
 	}
     }
