@@ -1348,19 +1348,23 @@ KickDisplay (struct display *d)
 #ifdef HAVE_VTS
 static int active_vts;
 
-static void
+static int
 GetBusyVTs (void)
 {
     struct vt_stat vtstat;
     int con;
 
-    vtstat.v_active = 0;
-    if ((con = open ("/dev/console", O_RDONLY)) >= 0)
+    if (active_vts == -1)
     {
-	ioctl (con, VT_GETSTATE, &vtstat);
-	close (con);
+	vtstat.v_state = 0;
+	if ((con = open ("/dev/console", O_RDONLY)) >= 0)
+	{
+	    ioctl (con, VT_GETSTATE, &vtstat);
+	    close (con);
+	}
+	active_vts = vtstat.v_state;
     }
-    active_vts = vtstat.v_active;
+    return active_vts;
 }
 
 static void
@@ -1413,7 +1417,7 @@ AllocateVT (struct display *d)
 			}
 		    }
 		}
-		if (!volun || !((1 << tvt) & active_vts))
+		if (!volun || !((1 << tvt) & GetBusyVTs ()))
 		{
 		    d->serverVT = tvt;
 		    return;
@@ -1430,7 +1434,7 @@ StartDisplays (void)
 {
     ForEachDisplay (CheckDisplayStatus);
 #ifdef HAVE_VTS
-    GetBusyVTs ();
+    active_vts = -1;
     ForEachDisplayRev (AllocateVT);
 #endif
     ForEachDisplay (KickDisplay);
