@@ -27,7 +27,8 @@
 #include "CXdmcp.h"
 
 class HostView : public QListView {
-Q_OBJECT
+    Q_OBJECT
+
 public:
   HostView( CXdmcp *cxdmcp, QWidget *parent = 0, const char *name = 0, WFlags f = 0);
 
@@ -65,7 +66,8 @@ private:
 
 
 class ChooserDlg : public FDialog {
-Q_OBJECT
+    Q_OBJECT
+
 public:
 	ChooserDlg( CXdmcp *cxdmcp, QWidget *parent = 0, const char *name=0, bool modal=false,
 		WFlags f=0);

@@ -145,6 +145,7 @@ static XrmOptionDescRec options[] = {
       XrmoptionSepArg,	NULL },
 };
 
+
 /* Converts the hex string s of length len into the byte array d.
    Returns 0 if s was a legal hex string, 1 otherwise.
    */
@@ -236,24 +237,24 @@ CXdmcp::pingHosts()
 void
 CXdmcp::doPingHosts()
 {
-  HostAddr	*hosts;
-  for (hosts = hostAddrdb; hosts; hosts = hosts->next)
-  {
-  	if (hosts->type == QUERY)
+    HostAddr	*hosts;
+    for (hosts = hostAddrdb; hosts; hosts = hosts->next)
+    {
+	if (hosts->type == QUERY)
 #ifdef XIMStringConversionRetrival
-			XdmcpFlush (socketFD, &directBuffer, hosts->addr, hosts->addrlen);
+	    _XdmcpFlush (socketFD, &directBuffer, hosts->addr, hosts->addrlen);
 #else
-			XdmcpFlush (socketFD, &directBuffer, (char*)hosts->addr, hosts->addrlen);
+	    _XdmcpFlush (socketFD, &directBuffer, (char*)hosts->addr, hosts->addrlen);
 #endif	
-    else
+	else
 #ifdef XIMStringConversionRetrival
-			XdmcpFlush (socketFD, &broadcastBuffer, hosts->addr, hosts->addrlen);
+	    _XdmcpFlush (socketFD, &broadcastBuffer, hosts->addr, hosts->addrlen);
 #else
-			XdmcpFlush (socketFD, &broadcastBuffer, (char*)hosts->addr, hosts->addrlen);
+	    _XdmcpFlush (socketFD, &broadcastBuffer, (char*)hosts->addr, hosts->addrlen);
 #endif	
     }
-	  if (++pingTry < TRIES)
-  	  t->start( PING_INTERVAL, true);
+    if (++pingTry < TRIES)
+	t->start( PING_INTERVAL, true);
 }
 
 int
@@ -284,9 +285,9 @@ CXdmcp::addHostname (ARRAY8Ptr hostname, ARRAY8Ptr status,
     {
       name = *names;
       if (connectionType == name->connectionType &&
-	  XdmcpARRAY8Equal (&hostAddr, &name->hostaddr))
+	  _XdmcpARRAY8Equal (&hostAddr, &name->hostaddr))
 	{
-	  if (XdmcpARRAY8Equal (status, &name->status))
+	  if (_XdmcpARRAY8Equal (status, &name->status))
 	    {
 	      return 0;
 	    }
@@ -310,15 +311,15 @@ CXdmcp::addHostname (ARRAY8Ptr hostname, ARRAY8Ptr status,
 		hostent = gethostbyaddr ((char *)hostAddr.data, hostAddr.length, AF_INET);
 		if (hostent)
 		  {
-		    XdmcpDisposeARRAY8 (hostname);
+		    _XdmcpDisposeARRAY8 (hostname);
 		    host = hostent->h_name;
-		    XdmcpAllocARRAY8 (hostname, strlen (host));
+		    _XdmcpAllocARRAY8 (hostname, strlen (host));
 		    memmove( hostname->data, host, hostname->length);
 		  }
 	      }
 	    }
 	}
-      if (!XdmcpAllocARRAY8 (&newname->hostaddr, hostAddr.length))
+      if (!_XdmcpAllocARRAY8 (&newname->hostaddr, hostAddr.length))
     	{
 	  free ((char *) newname->fullname);
 	  free ((char *) newname);
@@ -342,8 +343,8 @@ CXdmcp::addHostname (ARRAY8Ptr hostname, ARRAY8Ptr status,
        ******************************/
       newname = *names;
       oldname = newname->fullname;
-      XdmcpDisposeARRAY8 (&newname->status);
-      XdmcpDisposeARRAY8 (hostname);
+      _XdmcpDisposeARRAY8 (&newname->status);
+      _XdmcpDisposeARRAY8 (hostname);
     }
 
 
@@ -371,7 +372,7 @@ CXdmcp::addHostname (ARRAY8Ptr hostname, ARRAY8Ptr status,
   }
 
   if(oldname) {
-    emit changeHost(oldname, newname);
+    emit changeHost(QString::fromLatin1(oldname), newname);
     free (oldname);
   } else {
 	  emit addHost(newname);
@@ -383,9 +384,9 @@ CXdmcp::addHostname (ARRAY8Ptr hostname, ARRAY8Ptr status,
 void
 CXdmcp::disposeHostname (HostName *host)
 {
-  XdmcpDisposeARRAY8 (&host->hostname);
-  XdmcpDisposeARRAY8 (&host->hostaddr);
-  XdmcpDisposeARRAY8 (&host->status);
+  _XdmcpDisposeARRAY8 (&host->hostname);
+  _XdmcpDisposeARRAY8 (&host->hostaddr);
+  _XdmcpDisposeARRAY8 (&host->status);
   free ((char *) host->fullname);
   free ((char *) host);
 }
@@ -408,7 +409,7 @@ CXdmcp::removeHostname (HostName *host)
 
   disposeHostname (host);
 
-  emit deleteHost(host->fullname);
+  emit deleteHost(QString::fromLatin1(host->fullname));
 
 }
 
@@ -471,10 +472,10 @@ CXdmcp::slotReceivePacket (int socketFD)
     }
   read_size= 0;
 #else
-  if (!XdmcpFill (socketFD, &buffer, (XdmcpNetaddr) &addr, &addrlen))
+  if (!_XdmcpFill (socketFD, &buffer, (XdmcpNetaddr) &addr, &addrlen))
     return;
 #endif
-  if (!XdmcpReadHeader (&buffer, &header))
+  if (!_XdmcpReadHeader (&buffer, &header))
     return;
   if (header.version != XDM_PROTOCOL_VERSION)
     return;
@@ -483,9 +484,9 @@ CXdmcp::slotReceivePacket (int socketFD)
   authenticationName.data = 0;
   switch (header.opcode) {
   case WILLING:
-    if (XdmcpReadARRAY8 (&buffer, &authenticationName) &&
-	XdmcpReadARRAY8 (&buffer, &hostname) &&
-	XdmcpReadARRAY8 (&buffer, &status))
+    if (_XdmcpReadARRAY8 (&buffer, &authenticationName) &&
+	_XdmcpReadARRAY8 (&buffer, &hostname) &&
+	_XdmcpReadARRAY8 (&buffer, &status))
       {
 	if (header.length == 6 + authenticationName.length +
 	    hostname.length + status.length)
@@ -494,11 +495,11 @@ CXdmcp::slotReceivePacket (int socketFD)
 	      saveHostname = 1;
 	  }
       }
-    XdmcpDisposeARRAY8 (&authenticationName);
+    _XdmcpDisposeARRAY8 (&authenticationName);
     break;
   case UNWILLING:
-    if (XdmcpReadARRAY8 (&buffer, &hostname) &&
-	XdmcpReadARRAY8 (&buffer, &status))
+    if (_XdmcpReadARRAY8 (&buffer, &hostname) &&
+	_XdmcpReadARRAY8 (&buffer, &status))
       {
 	if (header.length == 4 + hostname.length + status.length)
 	  {
@@ -513,8 +514,8 @@ CXdmcp::slotReceivePacket (int socketFD)
   }
   if (!saveHostname)
     {
-      XdmcpDisposeARRAY8 (&hostname);
-      XdmcpDisposeARRAY8 (&status);
+      _XdmcpDisposeARRAY8 (&hostname);
+      _XdmcpDisposeARRAY8 (&status);
     }
 }
 
@@ -747,11 +748,11 @@ static void
 RegisterAuthenticationName (char *name, int namelen)
     {
       ARRAY8Ptr	authName;
-      if (!XdmcpReallocARRAYofARRAY8 (&AuthenticationNames,
+      if (!_XdmcpReallocARRAYofARRAY8 (&AuthenticationNames,
 				      AuthenticationNames.length + 1))
 	return;
       authName = &AuthenticationNames.data[AuthenticationNames.length-1];
-      if (!XdmcpAllocARRAY8 (authName, namelen))
+      if (!_XdmcpAllocARRAY8 (authName, namelen))
 	return;
       memmove( authName->data, name, namelen);
     }
@@ -775,16 +776,16 @@ CXdmcp::initXDMCP (char **argv)
   header.length = 1;
   for (i = 0; i < (int)AuthenticationNames.length; i++)
 		header.length += 2 + AuthenticationNames.data[i].length;
-  XdmcpWriteHeader (&broadcastBuffer, &header);
-  XdmcpWriteARRAYofARRAY8 (&broadcastBuffer, &AuthenticationNames);
+  _XdmcpWriteHeader (&broadcastBuffer, &header);
+  _XdmcpWriteARRAYofARRAY8 (&broadcastBuffer, &AuthenticationNames);
 
   header.version = XDM_PROTOCOL_VERSION;
   header.opcode = (CARD16) QUERY;
   header.length = 1;
   for (i = 0; i < (int)AuthenticationNames.length; i++)
 		header.length += 2 + AuthenticationNames.data[i].length;
-  XdmcpWriteHeader (&directBuffer, &header);
-  XdmcpWriteARRAYofARRAY8 (&directBuffer, &AuthenticationNames);
+  _XdmcpWriteHeader (&directBuffer, &header);
+  _XdmcpWriteARRAYofARRAY8 (&directBuffer, &AuthenticationNames);
 #if defined(STREAMSCONN)
   if ((socketFD = t_open ("/dev/udp", O_RDWR, 0)) < 0)
 		return 0;
@@ -985,9 +986,9 @@ CXdmcp::chooseHost (const char *r)
 	  buffer.size = sizeof (buf);
 	  buffer.pointer = 0;
 	  buffer.count = 0;
-	  XdmcpWriteARRAY8 (&buffer, app_resources.clientAddress);
-	  XdmcpWriteCARD16 (&buffer, (CARD16) app_resources.connectionType);
-	  XdmcpWriteARRAY8 (&buffer, &h->hostaddr);
+	  _XdmcpWriteARRAY8 (&buffer, app_resources.clientAddress);
+	  _XdmcpWriteCARD16 (&buffer, (CARD16) app_resources.connectionType);
+	  _XdmcpWriteARRAY8 (&buffer, &h->hostaddr);
 #if defined(STREAMSCONN)
 	  if( t_snd (fd, (char *)buffer.data, buffer.pointer, 0) < 0 )
 	    {
@@ -1029,7 +1030,7 @@ CvtStringToARRAY8 (XrmValuePtr, Cardinal *, XrmValuePtr fromVal, XrmValuePtr toV
   dest = (ARRAY8Ptr) XtMalloc (sizeof (ARRAY8));
   len = fromVal->size;
   s = (char *) fromVal->addr;
-  if (!XdmcpAllocARRAY8 (dest, len >> 1))
+  if (!_XdmcpAllocARRAY8 (dest, len >> 1))
 		XtStringConversionWarning ((char *) fromVal->addr, XtRARRAY8);
   else
 	{

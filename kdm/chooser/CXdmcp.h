@@ -41,14 +41,14 @@ extern "C" {
 
 // this macro is only defined in XFree < 4.0
 #ifdef XIMStringConversionRetrival
-#include "dm.h"
+# include "dm.h"
 #endif
 
 extern "C" {
 #ifndef XIMStringConversionRetrival
-#include "dm.h"
+# include "dm.h"
 #endif
-#include    <X11/Xdmcp.h>
+#include "CXdmcp_c.h"
 }
 
 #include    <sys/types.h>
@@ -79,31 +79,6 @@ struct _app_resources {
   int		connectionType;
 };
 
-/*  Huuuh? This is already declared in Xdmcp.h - at least in XFree 4
-extern "C" {
-#ifndef XIMStringConversionRetrival
-extern int XdmcpARRAY8Equal(ARRAY8 *, ARRAY8 *);
-#endif
-extern int XdmcpAllocARRAY8 (ARRAY8 *, int);
-extern void XdmcpDisposeARRAY8(ARRAY8 *);
-extern int XdmcpFill(int , XdmcpBuffer *, char *, int *);
-#ifdef XIMStringConversionRetrival
-extern int XdmcpFlush(int, XdmcpBuffer *, void *, int );
-#else
-extern int XdmcpFlush(int, XdmcpBuffer *, char *, int );
-#endif
-extern int XdmcpReadARRAY8(XdmcpBuffer *, ARRAY8 *);
-extern int XdmcpReadHeader(XdmcpBuffer *, XdmcpHeader *);
-extern int XdmcpWriteARRAY8(XdmcpBuffer *, ARRAY8 *);
-extern int XdmcpWriteARRAYofARRAY8(XdmcpBuffer *, ARRAYofARRAY8 *);
-#ifdef XIMStringConversionRetrival
-#ifndef _AIX
-extern int XdmcpWriteCARD16(XdmcpBuffer *, CARD16);
-#endif
-#endif
-extern int XdmcpWriteHeader(XdmcpBuffer *, XdmcpHeader *);
-}
-*/
 
 class CXdmcp : public QObject {
     Q_OBJECT
@@ -149,7 +124,7 @@ signals:
 
   /* Remove host from list.
 	 */
-  void deleteHost(char *name);
+  void deleteHost(const QString & hn);
 
 	/* Add host to list.
 	 */
@@ -157,7 +132,7 @@ signals:
 
 	/* Change hosts name in list.
 	 */
-  void changeHost(char *oldname, CXdmcp::HostName *newname);
+  void changeHost(const QString & hn, CXdmcp::HostName *newname);
 
 public slots:
 	/* To call when socket is ready.
