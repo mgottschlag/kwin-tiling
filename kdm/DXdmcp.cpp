@@ -22,7 +22,7 @@
 #include <qtimer.h>
 #include <klocale.h>
 #include <qfont.h>
-#include <qmessagebox.h>
+#include <kmessagebox.h>
 #include <stdlib.h>
 
 HostView::HostView( CXdmcp *cxdmcp, QWidget *parent, const char *name, WFlags)
@@ -200,14 +200,11 @@ ChooserDlg::ChooserDlg( CXdmcp *cxdmcp, QWidget *parent, const char *name,
 
 void ChooserDlg::slotHelp()
 {
-	QMessageBox mb( i18n("Info"),
+	KMessageBox::information(0, 
 		i18n("Choose a host, you want to work on,\n"
 		"in the list or add one.\n\n"
 		"After this box, you must press cancel\n"
-		"in the Host Menu to enter a host. :("),
-		QMessageBox::Information,
-		QMessageBox::Ok, 0, 0);
-	mb.exec();
+		"in the Host Menu to enter a host. :("));
 	iline->setFocus();
 }
 
