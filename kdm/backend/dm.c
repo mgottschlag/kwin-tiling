@@ -83,9 +83,21 @@ from The Open Group.
 # endif
 #endif
 
-#include <utmp.h>
-#ifndef UTMP_FILE
-# define UTMP_FILE _PATH_UTMP
+#if defined(CSRG_BASED) || !defined(sun)
+# include <utmp.h>
+# ifndef UTMP_FILE
+#  define UTMP_FILE _PATH_UTMP
+# endif
+# define LOGSTAT_FILE UTMP_FILE
+#else
+# include <utmpx.h>
+# ifndef ut_time
+#  define ut_time ut_tv.tv_sec
+# endif
+# ifndef UTMPX_FILE
+#  define UTMPX_FILE _PATH_UTMPX
+# endif
+# define LOGSTAT_FILE UTMPX_FILE
 #endif
 #ifdef linux
 # include <sys/ioctl.h>
@@ -372,15 +384,21 @@ static int
 CheckUtmp (void)
 {
     static time_t modtim;
-    int cnt, nck, nextChk;
+    int nck, nextChk;
     time_t now;
     struct utmps *utp, **utpp;
     struct stat st;
-    struct utmp ut;
+#ifdef CSRG_BASED
+    struct utmp ut[1];
+#elif defined(sun)
+    struct utmpx *ut;
+#else
+    struct utmp *ut;
+#endif
 
-    if (stat(UTMP_FILE, &st))
+    if (stat(LOGSTAT_FILE, &st))
     {
-	LogError (UTMP_FILE " not found - cannot use console mode\n");
+	LogError (LOGSTAT_FILE " not found - cannot use console mode\n");
 	return 0;
     }
     if (!utmpList)
@@ -388,27 +406,35 @@ CheckUtmp (void)
     time(&now);
     if (modtim != st.st_mtime)
     {
+#ifdef CSRG_BASED
 	int fd;
+#endif
 
-	Debug ("Rescanning " UTMP_FILE "\n");
+	Debug ("Rescanning " LOGSTAT_FILE "\n");
 #ifdef CSRG_BASED
 	for (utp = utmpList; utp; utp = utp->next)
 	    utp->checked = 0;
-#endif
 	if ((fd = open (UTMP_FILE, O_RDONLY)) < 0)
 	{
 	    LogError ("Cannot open " UTMP_FILE " - cannot use console mode\n");
 	    return 0;
 	}
-	while ((cnt = Reader (fd, &ut, sizeof(ut))) == sizeof(ut))
+	while (Reader (fd, ut, sizeof(ut[0])) == sizeof(ut[0]))
+#elif defined(sun)
+	setutxent();
+	while ((ut = getutxent()))
+#else
+	setutent();
+	while ((ut = getutent()))
+#endif
 	{
 	    for (utp = utmpList; utp; utp = utp->next)
-		if (!strncmp(utp->line, ut.ut_line, UT_LINESIZE))
+		if (!strncmp(utp->line, ut->ut_line, UT_LINESIZE))
 		{
 #ifdef CSRG_BASED
 		    utp->checked = 1;
 #else
-		    if (ut.ut_type != USER_PROCESS)
+		    if (ut->ut_type != USER_PROCESS)
 		    {
 			Debug ("utmp entry for %s marked waiting\n", utp->line);
 			utp->state = UtWait;
@@ -420,13 +446,13 @@ CheckUtmp (void)
 			Debug ("utmp entry for %s marked active\n", utp->line);
 			utp->state = UtActive;
 		    }
-		    if (utp->time < ut.ut_time)
-			utp->time = ut.ut_time;
+		    if (utp->time < ut->ut_time)
+			utp->time = ut->ut_time;
 		    break;
 		}
 	}
-	close (fd);
 #ifdef CSRG_BASED
+	close (fd);
 	for (utp = utmpList; utp; utp = utp->next)
 	    if (!utp->checked && utp->state == UtActive)
 	    {
@@ -434,6 +460,10 @@ CheckUtmp (void)
 		utp->time = now;
 		Debug ("utmp entry for %s marked waiting\n", utp->line);
 	    }
+#elif defined(sun)
+	endutxent();
+#else
+	endutent();
 #endif
 	modtim = st.st_mtime;
     }
