@@ -132,7 +132,7 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 	}
     }
     w = QMAX( restart_rb->width()
-	      + (targets==0 ? 0 : targets->sizeHint().width()), w);
+	      + (targets==0 ? 0 : targets->sizeHint().width()+10), w);
 
     btGroup->insert( restart_rb);
 
