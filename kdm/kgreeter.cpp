@@ -653,7 +653,7 @@ KGreeter::restrict_expired(){
 	       return true;
 	  } else if (pwd->pw_expire - time(NULL) < warntime && !quietlog) {
 	       QString str = i18n("Warning: your account expires on %1").
-			   .arg(ctime(&pwd->pw_expire));  // use locales
+			   arg(ctime(&pwd->pw_expire));  // use locales
 	       QMessageBox::critical(this, QString::null,
 				     str,
 				     i18n("&OK"));
