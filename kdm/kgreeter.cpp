@@ -860,6 +860,13 @@ GreetUser(
      
      int argc = 3;
      const char* argv[5] = {"kdm", "-display", NULL};
+     /*
+      * Fix $HOME (if kdm is run by init)
+      */
+     const char* home = getenv("HOME");
+     if( home == 0 || !strcmp("/",home)) {
+	  putenv(strdup("HOME=/root"));
+     }
  
      struct sigaction sig;
  
