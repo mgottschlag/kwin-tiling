@@ -155,7 +155,7 @@ void AboutWidget::freePixmaps()
   _part1 = 0L;
   _part2 = 0L;
   _part3 = 0L;
-  _part3 = 0L;
+  _part3Effect = 0L;
 }
 
 void AboutWidget::paintEvent(QPaintEvent* e)
@@ -228,7 +228,7 @@ void AboutWidget::updatePixmap()
     p.drawText(217, 57, caption);
     p.setFont(f1);
 
-    int hAlign = QApplication::reverseLayout() ? AlignRight : AlignLeft;
+    const int hAlign = QApplication::reverseLayout() ? AlignRight : AlignLeft;
     
     
     // draw title text
@@ -246,7 +246,7 @@ void AboutWidget::updatePixmap()
     if (height() <= 184) return;
 
     int part3EffectY = height() - _part3->height();
-    int part3EffectX = width()  - _part3->width();
+    int part3EffectX = (hAlign == AlignLeft) ? (width()  - _part3->width()) : 0;
     if ( part3EffectX < 0)
       part3EffectX = 0;
     if ( height() < 184 + _part3->height() )
@@ -257,8 +257,6 @@ void AboutWidget::updatePixmap()
     // draw textbox
     if (height() <= 184 + 50) return;
 
-    int boxX = 25;
-    int boxY = 184 + 50;
     int bheight = height() - 184 - 50 - 40;
     int bwidth = width() - 50;
 
@@ -266,6 +264,9 @@ void AboutWidget::updatePixmap()
     if (bwidth < 0) bheight = 0;
     if (bheight > 400) bheight = 400;
     if (bwidth > 500) bwidth = 500;
+
+    int boxX = (hAlign == AlignLeft) ? 25 : width()-bwidth-25;
+    int boxY = 184 + 50;
 
     p.setClipRect(boxX, boxY, bwidth, bheight);
     p.fillRect( boxX, boxY, bwidth, bheight,
@@ -280,7 +281,6 @@ void AboutWidget::updatePixmap()
     yoffset = 30;
 
     int fheight = fontMetrics().height();
-//  int xadd = 120;
 
     f2.setBold(true);
 
@@ -344,7 +344,7 @@ void AboutWidget::updatePixmap()
         // draw use text
         xoffset = 10;
         bheight = bheight - yoffset;
-        bwidth = bwidth - xoffset;
+        bwidth = bwidth - (xoffset *2); // both left and right margin
 
         p.setFont(f1);
 
@@ -369,27 +369,31 @@ void AboutWidget::updatePixmap()
         QFont lf = f2;
         lf.setUnderline(true);
 
-        const int alxadd = 200; // AlignLeft xadd
-        int xoffset = (hAlign == AlignLeft) ? 10 : bwidth-10-alxadd;
-        int xadd = (hAlign == AlignLeft) ? alxadd : 10-xoffset;
-        int yoffset = 20;
-       
+        const int alxadd = 200; // name-field width
+
+ 	const int nameoffset = (hAlign == AlignLeft) ? 10 : bwidth-alxadd;
+	const int namewidth = alxadd -10;
+ 	const int commentoffset = (hAlign == AlignLeft) ? alxadd : 0;
+ 	const int commentwidth = bwidth-alxadd;
+
+ 	int yoffset = 15;
+
         p.setFont(headingFont);
         if (!_caption.isEmpty())
         {
-           p.drawText(xoffset, yoffset, p.fontMetrics().width(_caption), fheight+10, hAlign, _caption );
+           p.drawText(10, yoffset, bwidth-20, bheight - yoffset, hAlign | AlignTop, _caption );
            yoffset += fheight + 15;
         }
 
         // traverse the list
         _moduleLinks.clear();
-        _linkBuffer.resize(alxadd - 10, bheight);
-        _linkArea = p.viewport();
-        _linkArea.setWidth(alxadd);
+        _linkBuffer.resize(namewidth, bheight);
+	_linkArea = QRect(p.viewport().left()+nameoffset, p.viewport().top(), 
+	                  namewidth, p.viewport().height());
         QPainter lp(&_linkBuffer);
-        lp.fillRect( 0, 0, alxadd - 10, bheight,
+        lp.fillRect( 0, 0, namewidth, bheight,
                     QBrush( QColor( 204, 222, 234 ) ) );
-        lp.drawPixmap( part3EffectX - boxX, part3EffectY - boxY, *_part3Effect );
+        lp.drawPixmap( part3EffectX - boxX - nameoffset, part3EffectY - boxY, *_part3Effect );
         lp.setPen(QColor(0x19, 0x19, 0x70)); // same as about:konqueror
         lp.setFont(lf);
         QListViewItem* pEntry = _category;
@@ -405,24 +409,25 @@ void AboutWidget::updatePixmap()
                 p.setFont(f2);
                 QRect bounds;
 	        int height;
-	        p.drawText(xoffset, yoffset,
-                           alxadd, bheight - yoffset,
+	        p.drawText(nameoffset, yoffset,
+                           namewidth, bheight - yoffset,
                            hAlign | AlignTop | WordBreak, szName, -1, &bounds);
-                lp.drawText(xoffset, yoffset,
-                            alxadd, bheight - yoffset,
+                lp.drawText(0, yoffset,
+                            namewidth, bheight - yoffset,
                             hAlign | AlignTop | WordBreak, szName);
                 height = bounds.height();
                 p.setFont(f1);
-                p.drawText(xoffset + xadd, yoffset,
-                           bwidth - alxadd - 10, bheight - yoffset,
+                p.drawText(commentoffset, yoffset,
+                           commentwidth, bheight - yoffset,
                            hAlign | AlignTop | WordBreak, szComment, -1, &bounds);
 	      
 	        height = QMAX(height, bounds.height());
+
                 ModuleLink *linkInfo = new ModuleLink;
                 linkInfo->module = module;
-                linkInfo->linkArea = QRect(xoffset + p.viewport().left(),
+                linkInfo->linkArea = QRect(nameoffset + p.viewport().left(),
                                            yoffset + p.viewport().top(),
-                                           alxadd, height);
+                                           namewidth, height);
                 _moduleLinks.append(linkInfo);
                 yoffset += height + 5;
             }
@@ -431,10 +436,10 @@ void AboutWidget::updatePixmap()
                 szName = static_cast<ModuleTreeItem*>(pEntry)->caption();
                 p.setFont(f2);
                 QRect bounds;
-                p.drawText(xoffset, yoffset, xadd - xoffset, bheight - yoffset,
+                p.drawText(nameoffset, yoffset, namewidth, bheight - yoffset,
                            hAlign | AlignTop | WordBreak, szName, -1, &bounds);
-                lp.drawText(xoffset, yoffset,
-                            xadd - xoffset, bheight - yoffset,
+                lp.drawText(nameoffset, yoffset,
+                            namewidth, bheight - yoffset,
                             hAlign | AlignTop | WordBreak, szName);
                 yoffset += bounds.height() + 5;
             }
