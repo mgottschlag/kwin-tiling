@@ -25,6 +25,7 @@
 
 #include <kapp.h> 
 #include <kglobal.h>
+#include <kglobalsettings.h>
 #include <kmessagebox.h> 
 #include <kbuttonbox.h>
 #include <klocale.h>
@@ -133,7 +134,7 @@ KPrepareDlg::KPrepareDlg( QWidget *parent ) : QWidget( parent )
         frame->setFrameStyle( QFrame::Panel | QFrame::Raised );
         frame->setLineWidth( 2 );
 
-	QFont font = KGlobal::generalFont();
+	QFont font = KGlobalSettings::generalFont();
 	font.setPointSize(18);
 
 	label = new QLabel( QString(), frame );

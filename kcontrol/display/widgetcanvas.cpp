@@ -8,6 +8,7 @@
 #include <kcolordrag.h>
 #include <kpixmapeffect.h>
 #include <kglobal.h>
+#include <kglobalsettings.h>
 #include <qbitmap.h>
 
 #include "widgetcanvas.h"
@@ -307,7 +308,7 @@ void WidgetCanvas::drawSampleWidgets()
                             KPixmapEffect::HorizontalGradient);
     paint.drawPixmap( 60, 10, pmTitle );
 
-    QFont fnt = KGlobal::generalFont();
+    QFont fnt = KGlobalSettings::generalFont();
     paint.setFont( fnt );
     paint.setPen( iaTxt );
     paint.drawText( 65, 25, i18n("Inactive window") );

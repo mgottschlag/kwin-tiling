@@ -12,6 +12,7 @@
 
 #include <qgroupbox.h>
 #include <qlabel.h>
+#include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qslider.h>
 #include <qcombobox.h>
@@ -27,6 +28,7 @@
 #include <kmessagebox.h>
 #include <kcursor.h>
 #include <kglobal.h>
+#include <kglobalsettings.h>
 #include <kstddirs.h>
 #include <kipc.h>
 #include <kcolordlg.h>
@@ -275,7 +277,7 @@ void KColorScheme::save()
     // Write some Qt root property.
     QByteArray properties;
     QDataStream d(properties, IO_WriteOnly);
-    d << createPalette() << KGlobal::generalFont();
+    d << createPalette() << KGlobalSettings::generalFont();
     Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
     XChangeProperty(qt_xdisplay(),  qt_xrootwin(), a, a, 8, PropModeReplace,
 		    (unsigned char*) properties.data(), properties.size());

@@ -22,6 +22,7 @@
 
 #include <kapp.h>
 #include <kglobal.h>
+#include <kglobalsettings.h>
 #include <kstddirs.h>
 #include <kprocess.h>
 
@@ -114,17 +115,15 @@ int main( int argc, char ** argv )
   addColorDef(preproc, "SELECT_FOREGROUND"  , cg.highlightedText());
   addColorDef(preproc, "WINDOW_BACKGROUND"  , cg.base());
   addColorDef(preproc, "WINDOW_FOREGROUND"  , cg.foreground());
-  addColorDef(preproc, "INACTIVE_BACKGROUND", a.inactiveTitleColor());
-  addColorDef(preproc, "INACTIVE_FOREGROUND", a.inactiveTitleColor());
-  //addColorDef(preproc, "INACTIVE_BLEND"     , a.inactiveBlend());
-  addColorDef(preproc, "ACTIVE_BACKGROUND"  , a.activeTitleColor());
-  addColorDef(preproc, "ACTIVE_FOREGROUND"  , a.activeTitleColor());
-  //addColorDef(preproc, "ACTIVE_BLEND"       , a.activeBlend()); 
+  addColorDef(preproc, "INACTIVE_BACKGROUND", KGlobalSettings::inactiveTitleColor());
+  addColorDef(preproc, "INACTIVE_FOREGROUND", KGlobalSettings::inactiveTitleColor());
+  addColorDef(preproc, "ACTIVE_BACKGROUND"  , KGlobalSettings::activeTitleColor());
+  addColorDef(preproc, "ACTIVE_FOREGROUND"  , KGlobalSettings::activeTitleColor());
   
-  addFontDef(preproc, "FONT"                , KGlobal::generalFont(), Normal);
-  addFontDef(preproc, "BOLD_FONT"           , KGlobal::generalFont(), Bold);
-  addFontDef(preproc, "ITALIC_FONT"         , KGlobal::generalFont(), Italic);
-  addFontDef(preproc, "FIXED_FONT"          , KGlobal::fixedFont(), Fixed);
+  addFontDef(preproc, "FONT"                , KGlobalSettings::generalFont(), Normal);
+  addFontDef(preproc, "BOLD_FONT"           , KGlobalSettings::generalFont(), Bold);
+  addFontDef(preproc, "ITALIC_FONT"         , KGlobalSettings::generalFont(), Italic);
+  addFontDef(preproc, "FIXED_FONT"          , KGlobalSettings::fixedFont(), Fixed);
   // TITLE_FONT...
   
   // Fontlist

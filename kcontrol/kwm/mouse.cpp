@@ -60,9 +60,11 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   QLabel* label;
 
   label = new QLabel(i18n("Active"), this);
+  label->setFixedSize(label->sizeHint());
   layout->addWidget(label, 0,2, AlignHCenter);
 
   label = new QLabel(i18n("Inactive"), this);
+  label->setFixedSize(label->sizeHint());
   layout->addWidget(label, 0,3, AlignHCenter);
 
   label = new QLabel(i18n("Titlebar and frame:"), this);

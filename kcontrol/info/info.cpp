@@ -33,6 +33,7 @@
 
 #include <kapp.h>
 #include <kglobal.h>
+#include <kglobalsettings.h>
 #include <kcharsets.h>
 #include <kiconloader.h>
 #include <klocale.h>
@@ -334,7 +335,7 @@ void KInfoListWidget::defaults()
     lBox  = new QListView(this);
 
     if (lBox) {
-	lBox->setFont(KGlobal::generalFont()); /* default font */
+	lBox->setFont(KGlobalSettings::generalFont()); /* default font */
         lBox->setAllColumnsShowFocus(true);
         setMinimumSize( 200,6*SCREEN_XY_OFFSET );
         lBox->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
