@@ -1,4 +1,13 @@
 /*
+ * Wed Jan 27 14:25:45 MET 1999
+ *
+ * This is a modified version of checkpass_shadow.cpp
+ *
+ * Modifications made by Thorsten Kukuk <kukuk@suse.de>
+ *                       Mathias kettner <kettner@suse.de>
+ *
+ * ------------------------------------------------------------
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation; either
@@ -16,45 +25,43 @@
  *      Copyright (C) 1998, Christian Esken <esken@kde.org>
  */
 #include "kcheckpass.h"
-#ifdef HAVE_SHADOW
-
 
 /*******************************************************************
  * This is the authentication code for Shadow-Passwords
  *******************************************************************/
 
 #include <string.h>
+#include <pwd.h>
 
 #ifndef __hpux
 #include <shadow.h>
 #endif
 
-int authenticate(const char *login, const char *passwd)
+int authenticate(const char *login, const char *typed_in_password)
 {
-  struct passwd *pw;
-  char* crpt_passwd;
-  char* cp;
-  struct spwd *sp;
-  int result;
+  char          *crpt_passwd;
+  char          *password;
 
-  pw = getpwnam(login);
-  if ( pw == 0 ) {
-    endspent();
-    return 2; // cannot read password database
-  }
+  struct passwd *pw= getpwnam(login);
+  if ( pw == 0 )
+    return 2;
+  
+  if (strcmp(pw->pw_passwd, "x") == 0) // look up shadow
+    {
+      struct spwd *spw = getspnam(login);
+      if ( spw == 0 ) 
+	return 2;
+      else password = spw->sp_pwdp;
+    }
   else
-   sp = getspnam(pw->pw_name);
-   if (sp)
-     cp = sp->sp_pwdp;
-   else
-     cp = pw->pw_passwd;
-
+    password = pw->pw_passwd;
+  
 #if defined( __linux__ ) && defined( HAVE_PW_ENCRYPT )
-  crpt_passwd = pw_encrypt(passwd, cp);  // (1)
+  crpt_passwd = pw_encrypt(typed_in_password, password);  // (1)
 #else  
-  crpt_passwd = crypt(passwd, cp);
+  crpt_passwd = crypt(typed_in_password, password);
 #endif
-  result = strcmp(cp, crpt_passwd);
+  int result = strcmp(password, crpt_passwd );
   endspent();
   if (result == 0)
     return 1; // success
@@ -69,4 +76,3 @@ int authenticate(const char *login, const char *passwd)
      the standard (ELF) libc.
  */
 
-#endif
