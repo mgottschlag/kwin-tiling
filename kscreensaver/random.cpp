@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
                                      "apps/ScreenSavers/");
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
-                                     "ScreenSavers/");
+                                     "System/ScreenSavers/");
     QStringList saverFileList = KGlobal::dirs()->findAllResources("scrsav",
                                                    "*.desktop", false, true);
 

@@ -18,6 +18,7 @@
 #include <kapp.h>
 #include "demowin.h"
 #include "saver.h"
+#include "vroot.h"
 
 KLocale *glocale = 0;
 
@@ -67,7 +68,7 @@ int main(int argc, char *argv[])
                 saveWin = atol(argv[++i]);
                 break;
             case Root:
-                saveWin = kapp->desktop()->winId();
+                saveWin = RootWindow(qt_xdisplay(), qt_xscreen());
                 break;
             case Help:
                 usage(argv[0]);

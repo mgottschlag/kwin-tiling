@@ -90,7 +90,7 @@ noinst_HEADERS = saver.h demowin.h polygon.h banner.h\
 		xlockmore.h mode.h helpers.h morph3d.h pipes.h \
 		attraction.h xs_colors.h xs_hsv.h xs_yarandom.h xs_utils.h \
 		slidescreen.h amiga.xpm atari.xbm bsod.h mac.xbm xs_visual.h \
-		slideshow.h
+		slideshow.h vroot.h
 
 messages:
 	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot *.cpp *.h && mv messages.po ../po/klock.pot
