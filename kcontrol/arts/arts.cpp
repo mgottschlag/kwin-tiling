@@ -780,14 +780,14 @@ QString KArtsModule::createArgs(bool netTrans,
 
 #ifdef I18N_ONLY
 	//lukas: these are hacks to allow translation of the following
-	I18N_NOOP("No audio input/output");
+	I18N_NOOP("No Audio Input/Output");
 	I18N_NOOP("Advanced Linux Sound Architecture");
 	I18N_NOOP("Open Sound System");
 	I18N_NOOP("Threaded Open Sound System");
 	I18N_NOOP("Network Audio System");
 	I18N_NOOP("Personal Audio Device");
-	I18N_NOOP("SGI dmedia audio i/o");
-	I18N_NOOP("Sun audio input/output");
+	I18N_NOOP("SGI dmedia Audio I/O");
+	I18N_NOOP("Sun Audio Input/Output");
 	I18N_NOOP("Portable Audio Library");
 #endif
 
