@@ -1,18 +1,15 @@
 
 dnl this is for kdm:
 
-savex="$exec_prefix"
-test "x$exec_prefix" = xNONE && exec_prefix="$prefix"
+savex=$exec_prefix
+test "x$exec_prefix" = xNONE && exec_prefix=$prefix
 KDE_CONFDIR=`eval echo $kde_confdir`
 AC_DEFINE_UNQUOTED(KDE_CONFDIR, "$KDE_CONFDIR", [KDE's configuration directory])
-AC_SUBST(KDE_CONFDIR)
 KDE_BINDIR=`eval echo $kde_bindir`
 AC_DEFINE_UNQUOTED(KDE_BINDIR, "$KDE_BINDIR", [KDE's binaries directory])
-AC_SUBST(KDE_BINDIR)
-exec_prefix="$savex"
+exec_prefix=$savex
 
 KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please make sure it's in PATH!])])
-AC_SUBST(XMKMF)
 
 dnl ask imake about various X settings
 AC_MSG_CHECKING([various X settings])
@@ -148,7 +145,7 @@ no)
   ;;
 *)
   AC_MSG_RESULT(yes)
-  AC_DEFINE_UNQUOTED(KRB4, 1, [ define if you have Kerberos IV ])
+  AC_DEFINE_UNQUOTED(KRB4, 1, [define if you have Kerberos IV])
   KERBEROS_ROOT="$with_krb4"
   KERBEROS_INCS="-I${KERBEROS_ROOT}/include"
   KERBEROS_LIBS="-L${KERBEROS_ROOT}/lib -lkrb -ldes"
@@ -166,7 +163,7 @@ no)
   AC_TRY_LINK([#include <krb.h>], [ krb_life_to_time(10, 10);],
               [AC_MSG_RESULT(yes)
                AC_DEFINE_UNQUOTED(HAVE_KRB_LIFE_TO_TIME, 1, 
-	         [ define if libkrb has krb_life_to_time() ])],
+	         [define if libkrb has krb_life_to_time()])],
               [AC_MSG_RESULT(no)])
   LIBS="$keeplibs"
   CFLAGS="$keepcflags"
@@ -186,7 +183,7 @@ else
     with_afs=no
   else
     AC_MSG_RESULT(yes)
-    AC_DEFINE_UNQUOTED(AFS, 1, [ define if you have KTH Kerberos IV and AFS ])
+    AC_DEFINE_UNQUOTED(AFS, 1, [define if you have KTH Kerberos IV and AFS])
     KERBEROS_LIBS="${KERBEROS_LIBS} -lkafs"
     if test -n "$os_aix"; then
       KERBEROS_LIBS="${KERBEROS_LIBS} -lld"
