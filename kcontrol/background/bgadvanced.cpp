@@ -171,6 +171,16 @@ void BGAdvancedDialog::setTextBackgroundColor(QColor color)
     dlg->m_cbSolidTextBackground->blockSignals(false);
 }
 
+bool BGAdvancedDialog::shadowEnabled()
+{
+    return dlg->m_cbShadow->isChecked();
+}
+
+void BGAdvancedDialog::setShadowEnabled(bool enabled)
+{
+    dlg->m_cbShadow->setChecked(enabled);
+}
+
 void BGAdvancedDialog::updateUI()
 {
     QString prog = r->KBackgroundProgram::name();

@@ -316,6 +316,9 @@ public:
     void setTextBackgroundColor(QColor _color);
     QColor textBackgroundColor() const { return m_TextBackgroundColor; }
 
+    void setShadowEnabled(bool enabled);
+    bool shadowEnabled() const { return m_shadowEnabled; }
+
     void readSettings();
     void writeSettings();
 
@@ -328,6 +331,7 @@ private:
 
     QColor m_TextColor;
     QColor m_TextBackgroundColor;
+    bool m_shadowEnabled;
 
     KConfig *m_pConfig;
     bool m_bDeleteConfig;

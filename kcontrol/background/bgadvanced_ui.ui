@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>510</width>
-            <height>310</height>
+            <height>361</height>
         </rect>
     </property>
     <property name="caption">
@@ -179,14 +179,6 @@
                         <string></string>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="1" column="0">
-                    <property name="name">
-                        <cstring>m_cbSolidTextBackground</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Use solid color behind text:</string>
-                    </property>
-                </widget>
                 <widget class="KColorButton" row="0" column="1">
                     <property name="name">
                         <cstring>m_colorText</cstring>
@@ -220,6 +212,28 @@
                         </size>
                     </property>
                 </spacer>
+                <widget class="QCheckBox" row="1" column="0">
+                    <property name="name">
+                        <cstring>m_cbSolidTextBackground</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Use solid color behind text:</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+U</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="2" column="0">
+                    <property name="name">
+                        <cstring>m_cbShadow</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Enable shadow</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+E</string>
+                    </property>
+                </widget>
             </grid>
         </widget>
         <widget class="QButtonGroup">
@@ -337,6 +351,7 @@
     <tabstop>m_colorText</tabstop>
     <tabstop>m_cbSolidTextBackground</tabstop>
     <tabstop>m_colorTextBackground</tabstop>
+    <tabstop>m_cbShadow</tabstop>
     <tabstop>m_spinCache</tabstop>
 </tabstops>
 <includes>
@@ -344,8 +359,4 @@
 </includes>
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-<includehints>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-</includehints>
 </UI>

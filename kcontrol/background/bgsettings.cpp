@@ -1078,6 +1078,14 @@ void KGlobalBackgroundSettings::setTextBackgroundColor(QColor _color)
     m_TextBackgroundColor = _color;
 }
 
+void KGlobalBackgroundSettings::setShadowEnabled(bool enabled)
+{
+    if (enabled == m_shadowEnabled)
+        return;
+    dirty = true;
+    m_shadowEnabled = enabled;
+}
+
 void KGlobalBackgroundSettings::readSettings()
 {
     m_pConfig->setGroup("Background Common");
@@ -1091,6 +1099,7 @@ void KGlobalBackgroundSettings::readSettings()
     m_pConfig->setGroup("FMSettings");
     m_TextColor = m_pConfig->readColorEntry("NormalTextColor", &m_TextColor);
     m_TextBackgroundColor = m_pConfig->readColorEntry("ItemTextBackground");
+    m_shadowEnabled = m_pConfig->readBoolEntry("ShadowEnabled");
 
     m_Names.clear();
     NETRootInfo info( qt_xdisplay(), NET::DesktopNames | NET::NumberOfDesktops );
@@ -1115,6 +1124,7 @@ void KGlobalBackgroundSettings::writeSettings()
     m_pConfig->setGroup("FMSettings");
     m_pConfig->writeEntry("NormalTextColor", m_TextColor);
     m_pConfig->writeEntry("ItemTextBackground", m_TextBackgroundColor);
+    m_pConfig->writeEntry("ShadowEnabled", m_shadowEnabled);
     m_pConfig->sync();
     dirty = false;
 

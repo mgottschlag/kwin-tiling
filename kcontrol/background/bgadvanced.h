@@ -48,6 +48,8 @@ public:
    void setTextColor(QColor color);
    QColor textBackgroundColor();
    void setTextBackgroundColor(QColor color);
+   bool shadowEnabled();
+   void setShadowEnabled(bool enabled);
 
    void updateUI();
 
