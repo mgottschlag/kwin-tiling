@@ -456,6 +456,7 @@ struct dpyVals {
 } dpyVal[] = {
 /* server resources */
 { C_serverAttempts,	boffset(serverAttempts) },
+{ C_serverTimeout,	boffset(serverTimeout) },
 { C_openDelay,		boffset(openDelay) },
 { C_openRepeat,		boffset(openRepeat) },
 { C_openTimeout,	boffset(openTimeout) },
