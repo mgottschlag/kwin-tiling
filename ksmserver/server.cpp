@@ -790,6 +790,9 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 	// publish available transports.
 	QCString fName = QFile::encodeName(locateLocal("socket", "KSMserver"));
         QCString display = ::getenv("DISPLAY");
+	// strip the screen number from the display
+	display.replace(QRegExp("\\.[0-9]+$"), "");
+
         fName += "-"+display;
 	FILE *f;
 	f = ::fopen(fName.data(), "w+");
@@ -857,6 +860,9 @@ void KSMServer::cleanUp()
 
     QCString fName = QFile::encodeName(locateLocal("socket", "KSMserver"));
     QCString display = ::getenv("DISPLAY");
+    // strip the screen number from the display
+    display.replace(QRegExp("\\.[0-9]+$"), "");
+
     fName += "-"+display;
     ::unlink(fName.data());
 
