@@ -1,6 +1,6 @@
-SUBDIRS = shared kcontrol app
+SUBDIRS = shared kcontrol app data update
 
-autostart_DATA = khotkeys.desktop
-autostartdir = $(prefix)/share/autostart
+khotkeys_autostart_DATA = khotkeys.desktop
+khotkeys_autostartdir = $(prefix)/share/autostart
 
-EXTRA_DIST = $(autostart_DATA) COPYING AUTHORS
+EXTRA_DIST = $(khotkeys_autostart_DATA) COPYING AUTHORS

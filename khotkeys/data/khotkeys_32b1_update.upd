@@ -1,0 +1,8 @@
+Id=kde32b1
+# the file is intentionally a dummy, as the binary will update khotkeysrc,
+# the khotkeys_update will just remember it has been done
+File=khotkeys_update
+Group=Dummy
+Options=overwrite
+ScriptArguments=--id kde32b1
+Script=khotkeys_update
