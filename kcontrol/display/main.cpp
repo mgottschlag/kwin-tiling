@@ -128,10 +128,10 @@ void KDisplayApplication::apply()
     fonts->applySettings();
   if (general)
     general->applySettings();
-  
+
   if (colors || fonts) {
       QPalette pal = colors?colors->createPalette():*qApp->palette();
-      
+
       KConfig *config = kapp->getConfig();
       config->reparseConfiguration();
       config->setGroup( "General" );
@@ -157,14 +157,14 @@ void KDisplayApplication::defaultValues()
 
 void KDisplayApplication::writeQDesktopProperties( QPalette pal, QFont font)
 {
-    
+
     QByteArray properties;
     QDataStream d( properties, IO_WriteOnly );
 
     d << pal << font;
 
-    Atom a = XInternAtom(qt_xdisplay(), "QT_DESKTOP_PROPERTIES", FALSE );
-    
+    Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", FALSE );
+
     XChangeProperty(qt_xdisplay(),  qt_xrootwin(),
 		    a, a, 8, PropModeReplace,
 		    (unsigned char*) properties.data(), properties.size());
