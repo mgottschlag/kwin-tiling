@@ -963,6 +963,9 @@ void TreeView::paste()
          {
             folderInfo->setCaption(newCaption);
          }
+         // create the TreeItem
+         if(parentItem)
+             parentItem->setOpen(true);
 
          folderInfo->fullId = parentFolderInfo->fullId + folderInfo->id;
          parentFolderInfo->add(folderInfo);
