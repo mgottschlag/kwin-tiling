@@ -90,6 +90,8 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
   QColor highlightedText = kglobals.readColorEntry( "selectForeground", &Qt::white );
   QColor base = kglobals.readColorEntry( "windowBackground", &Qt::white );
   QColor baseText = kglobals.readColorEntry( "windowForeground", &Qt::black );
+  QColor link = kglobals.readColorEntry( "linkColor", &Qt::blue );
+  QColor visitedLink = kglobals.readColorEntry( "visitedLinkColor", &Qt::magenta );
 
   int highlightVal, lowlightVal;
   highlightVal = 100 + (2*contrast+4)*16/10;
@@ -128,10 +130,15 @@ static void applyQtColors( KSimpleConfig& kglobals, QSettings& settings )
   colgrp.setColor(QColorGroup::Button, button);
   colgrp.setColor(QColorGroup::ButtonText, buttonText);
   colgrp.setColor(QColorGroup::Midlight, background.light(110));
+  colgrp.setColor(QColorGroup::Link, link);
+  colgrp.setColor(QColorGroup::LinkVisited, visitedLink);
 
   disabledgrp.setColor(QColorGroup::Button, button);
   disabledgrp.setColor(QColorGroup::ButtonText, buttonText);
   disabledgrp.setColor(QColorGroup::Midlight, background.light(110));
+  disabledgrp.setColor(QColorGroup::Link, link);
+  disabledgrp.setColor(QColorGroup::LinkVisited, visitedLink);
+
   QPalette newPal(colgrp, disabledgrp, colgrp);
   /* --- end of kapplication.cpp palette code --- */
   
