@@ -109,6 +109,7 @@ QString fontString( QFont rFont, FontStyle style )
 main( int argc, char ** argv )
 {
 	KApplication a( argc, argv );
+	QColorGroup cg = a.palette()->normal();
 	
 	int contrast = 7;
 	
@@ -119,110 +120,101 @@ main( int argc, char ** argv )
 	
 	QFont fnt( "helvetica", 12 );
 	
-	KConfig *config = kapp->getConfig();
-	
-	config->setGroup( "General" );
-
-	col = config->readColorEntry( "foreground", &Qt::black );
+	col = cg.foreground();
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define FOREGROUND " );
 	preproc += s;
 	
-	backCol = config->readColorEntry( "background", &Qt::lightGray );
+	backCol = cg.background();
 	s.sprintf("#%02x%02x%02x\n", backCol.red(), backCol.green(), backCol.blue());
 	s.prepend( "#define BACKGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "selectBackground", &Qt::darkBlue);
+	col = cg.highlight();
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define SELECT_BACKGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "selectForeground", &Qt::white );
+	col = cg.highlightedText();
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define SELECT_FOREGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "windowBackground", &Qt::white );
+	col = cg.base();
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define WINDOW_BACKGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "windowForeground", &Qt::black );
+	col = cg.foreground();
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define WINDOW_FOREGROUND " );
 	preproc += s;
 	
-	fnt = config->readFontEntry( "font", new QFont( fnt ) );
+	fnt = a.generalFont();
 	s = fontString( fnt, Normal );
 	s += "\n";
 	s.prepend( "#define FONT " );
 	preproc += s;
 	
-	fnt = config->readFontEntry( "font", new QFont( fnt ) );
 	s = fontString( fnt, Bold );
 	s += "\n";
 	s.prepend( "#define BOLD_FONT " );
 	preproc += s;
 
-	fnt = config->readFontEntry( "font", new QFont( fnt ) );
 	s = fontString( fnt, Italic );
 	s += "\n";
 	s.prepend( "#define ITALIC_FONT " );
 	preproc += s;
 
-	fnt = config->readFontEntry( "fixedFont", new QFont( "fixed", 12 ) );
+	fnt = a.fixedFont();
 	s = fontString( fnt, Fixed );
 	s += "\n";
 	s.prepend( "#define FIXED_FONT " );
 	preproc += s;
 	
-	config->setGroup( "WM" );
-	
-	col = config->readColorEntry( "inactiveBackground", &Qt::darkGray);
+	col = a.inactiveTitleColor();
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define INACTIVE_BACKGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "inactiveForeground", &Qt::lightGray );
+	col = a.inactiveTitleColor();
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define INACTIVE_FOREGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "inactiveBlend", &Qt::lightGray );
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define INACTIVE_BLEND " );
-	preproc += s;
+// 	col = a.inactiveBlend();
+// 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
+// 	s.prepend( "#define INACTIVE_BLEND " );
+// 	preproc += s;
 
-	col = config->readColorEntry( "activeBackground", &Qt::darkBlue );
+	col = a.activeTitleColor();
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define ACTIVE_BACKGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "activeForeground", &Qt::white );
+	col = a.activeTitleColor();
 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
 	s.prepend( "#define ACTIVE_FOREGROUND " );
 	preproc += s;
 
-	col = config->readColorEntry( "activeBlend", &Qt::black );
-	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
-	s.prepend( "#define ACTIVE_BLEND " );
-	preproc += s;
-	
-	fnt = config->readFontEntry( "titleFont", new QFont( fnt ) );
-	s = fontString( fnt, Title );
-	s += "\n";
-	s.prepend( "#define TITLE_FONT " );
-	preproc += s;
+// 	col = a.activeBlend();
+// 	s.sprintf("#%02x%02x%02x\n", col.red(), col.green(), col.blue());
+// 	s.prepend( "#define ACTIVE_BLEND " );
+// 	preproc += s;
+
+// 	fnt = ???
+// 	s = fontString( fnt, Title );
+// 	s += "\n";
+// 	s.prepend( "#define TITLE_FONT " );
+// 	preproc += s;
 
 	s = "FONT,BOLD_FONT=BOLD,ITALIC_FONT=ITALIC";
 	s += "\n";
         s.prepend( "#define FONTLIST ");
 	preproc += s;
 
-	config->setGroup( "KDE" );
 
-	contrast = config->readNumEntry( "contrast", 7 );
+	contrast = a.contrast();
 	
 	int highlightVal=100+(2*contrast+4)*16/10;
 	int lowlightVal=100+(2*contrast+4)*10;
