@@ -255,12 +255,20 @@ freeFile (File *file)
 
 #ifdef __linux__
 # define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X vt7"
+# define DEF_SERVER_LINES DEF_SERVER_LINE "\n" \
+			 ":1 local@tty2 reserve " XBINDIR "/X :1 vt8\n" \
+			 ":2 local@tty3 reserve " XBINDIR "/X :2 vt9\n" \
+			 "#:3 local@tty4 reserve " XBINDIR "/X :3 vt10\n" \
+			 "#:4 local@tty5 reserve " XBINDIR "/X :4 vt11\n"
 #elif defined(sun)
 # define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X"
 #elif defined(_AIX)
 # define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X"
 #else
 # define DEF_SERVER_LINE ":0 local " XBINDIR "/X"
+#endif
+#ifndef DEF_SERVER_LINES
+# define DEF_SERVER_LINES DEF_SERVER_LINE "\n"
 #endif
 
 const char def_xaccess[] = 
@@ -343,7 +351,7 @@ const char def_xservers[] =
 "# managing them. Each X terminal line should look like:\n"
 "#       XTerminalName:0 foreign\n"
 "#\n"
-"\n" DEF_SERVER_LINE "\n\n";
+"\n" DEF_SERVER_LINES "\n";
 
 const char def_willing[] = 
 "#!/bin/sh\n"
@@ -553,8 +561,9 @@ static Ent entsGeneral[] = {
 "# Whether KDM should automatically re-read configuration files, if it\n"
 "# finds them having changed. Just keep it \"true\".\n" },
 { "ExportList",		0, 0, 
-"# Additional environment variables KDM should pass on to the Xsetup, Xstartup,\n"
-"# Xsession, and Xreset programs. This shouldn't be necessary very often.\n" },
+"# Additional environment variables KDM should pass on to kdm_config, kdm_greet,\n"
+"# Xsetup, Xstartup, Xsession, and Xreset. LD_LIBRARY_PATH is a good candidate;\n"
+"# otherwise it shouldn't be necessary very often.\n" },
 #if !defined(__linux__) && !defined(__OpenBSD__)
 { "RandomFile",		0, 0, 
 "# Where KDM should fetch entropy from. Default is /dev/mem.\n" },
@@ -888,7 +897,11 @@ static DEnt dEntsGeneral[] = {
 { "LockPidFile",	"false", 0 },
 { "AuthDir",		"/tmp", 0 },
 { "AutoRescan",		"false", 0 },
+#ifdef sun
+{ "ExportList",		"LD_LIBRARY_PATH", 1 },
+#else
 { "ExportList",		"SOME_VAR,ANOTHER_IMPORTANT_VAR", 0 },
+#endif
 #if !defined(__linux__) && !defined(__OpenBSD__)
 { "RandomFile",		"", 0 },
 #endif
@@ -911,6 +924,7 @@ static DEnt dEntsShutdown[] = {
 { "HaltCmd",		"", 0 },
 { "RebootCmd",		"", 0 },
 { "AllowFifo",		"true", 0 },
+{ "AllowFifoNow",	"false", 0 },
 #if defined(__linux__) && defined(__i386__)
 { "UseLilo",		"true", 0 },
 { "LiloCmd",		"", 0 },
