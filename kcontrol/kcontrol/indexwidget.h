@@ -20,7 +20,7 @@
 #ifndef __indexwidget_h__
 #define __indexwidget_h__
 
-#include <qwidget.h>
+#include <qwidgetstack.h>
 
 #include "global.h"
 
@@ -29,7 +29,7 @@ class ConfigModule;
 class ModuleTreeView;
 class ModuleIconView;
 
-class IndexWidget : public QWidget
+class IndexWidget : public QWidgetStack
 {
   Q_OBJECT
   
@@ -50,7 +50,7 @@ signals:
   void moduleActivated(ConfigModule *module);
 
 protected:
-  void resizeEvent(QResizeEvent *);
+  void resizeEvent(QResizeEvent *e);
 
 private:
   ModuleTreeView   *_tree;

@@ -30,7 +30,7 @@
 #include "modules.h"
 
 IndexWidget::IndexWidget(ConfigModuleList *modules, QWidget *parent ,const char *name)
-  : QWidget(parent, name)
+  : QWidgetStack(parent, name)
   , _modules(modules)
   , viewMode(Icon)
 {
@@ -55,13 +55,9 @@ void IndexWidget::reload()
   _icon->fill();
 }
 
-void IndexWidget::resizeEvent(QResizeEvent *)
+void IndexWidget::resizeEvent(QResizeEvent *e)
 {
-  _tree->move(0,0);
-  _tree->resize(width(), height());
-
-  _icon->move(0,0);
-  _icon->resize(width(), height());
+  QWidgetStack::resizeEvent( e );
   _icon->setGridX(width()-26);
   _icon->fill();
 }
@@ -118,15 +114,7 @@ void IndexWidget::activateView(IndexViewMode mode)
   viewMode = mode;
 
   if (mode == Icon)
-    {
-      _tree->hide();
-      _icon->show();
-      _icon->setFocus();
-    }
+        raiseWidget( _icon );
   else
-    {
-      _tree->show();
-      _tree->setFocus();
-      _icon->hide();
-    }
+        raiseWidget( _tree );
 }
