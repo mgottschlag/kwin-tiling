@@ -21,7 +21,7 @@
   */
 
 #include <qcombobox.h>
-#include <qgroupbox.h>
+#include <qvgroupbox.h>
 #include <qlabel.h>
 #include <qobjectlist.h>
 #include <qtabwidget.h>
@@ -77,9 +77,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   connect(localemain, SIGNAL(chsetChanged()),              SLOT(newChset()) );
 
   // Examples
-  gbox = new QGroupBox(this);
-  l = new QVBoxLayout(gbox, 10);
-  l->setAutoAdd(TRUE);
+  gbox = new QVGroupBox(this);
   sample = new KLocaleSample(gbox);
 
   load();
