@@ -97,6 +97,11 @@ void KDMConfig::getConfig()
     
     QString greet_string = kc->readEntry( QString::fromLatin1("GreetString"));
     _sessionTypes = kc->readListEntry( QString::fromLatin1("SessionTypes"));
+
+    QString logoArea = kc->readEntry( QString::fromLatin1("LogoArea"), 
+				      QString::fromLatin1("KdmLogo") );
+    _useLogo = logoArea == QString::fromLatin1("KdmLogo");
+
     QString logo_string = kc->readEntry( QString::fromLatin1("LogoPixmap") );
     if( kc->hasKey( QString::fromLatin1("ShutdownButton") ) ) {
 	QString tmp = kc->readEntry( QString::fromLatin1("ShutdownButton") );

@@ -185,7 +185,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      pixLabel = 0;
      clock    = 0;
 
-     if( 1 )
+     if( !kdmcfg->useLogo() )
      {
          clock = new KdmClock( this, "clock" );
      }

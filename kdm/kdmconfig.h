@@ -59,6 +59,7 @@ public:
      int             shutdownButton()  { return _shutdownButton;}
      QString         shutdown()        { return _shutdown;}
      QString         restart()         { return _restart;}
+     bool            useLogo()         { return _useLogo;}
      QString         logo()            { return _logo;}
      bool            users()           { return _show_users;}
      void           insertUsers( QIconView*, QStringList, bool);
@@ -89,6 +90,7 @@ private:
      QString        _shutdown;
      QString        _restart;
      QString        _logo;
+     bool           _useLogo;
      QStringList    _users;
      bool           _show_users;
      bool           _sorted;
