@@ -6,12 +6,17 @@ SUBDIRS = . kcs ad pics
 
 kde_module_LTLIBRARIES = libkcm_style.la
 
-libkcm_style_la_SOURCES = general.cpp krdb.cpp
+noinst_LTLIBRARIES = libkrdb.la
+libkrdb_la_SOURCES = krdb.cpp
+libkrdb_la_LIBADD = $(LIB_KDECORE)
+libkrdb_la_LDFLAGS = -no-undefined $(all_libraries) 
+
+libkcm_style_la_SOURCES = general.cpp
 libkcm_style_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-libkcm_style_la_LIBADD = $(LIB_KFILE)
+libkcm_style_la_LIBADD = $(LIB_KFILE) libkrdb.la
 libkcm_style_la_METASOURCES = general.moc
 
-noinst_HEADERS = general.h
+noinst_HEADERS = general.h krdb.h
 
 messages:
 	$(XGETTEXT) -kni18n $(libkcm_style_la_SOURCES) -o $(podir)/kcmstyle.pot
