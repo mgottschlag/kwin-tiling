@@ -29,7 +29,7 @@
 #include "kmenuedit.moc"
 
 KMenuEdit::KMenuEdit (QWidget *, const char *name)
-  : KTMainWindow (name)
+  : KMainWindow (0, name)
 {
     setCaption(i18n("Edit K Menu"));
 
@@ -74,5 +74,5 @@ void KMenuEdit::setupActions()
 void KMenuEdit::setupView()
 {
     _view = new MenuEditView(actionCollection(), this);
-    setView(_view);
+    setCentralWidget(_view);
 }

@@ -20,11 +20,11 @@
 #ifndef __kmenuedit_h__
 #define __kmenuedit_h__
 
-#include <ktmainwindow.h>
+#include <kmainwindow.h>
 
 class MenuEditView;
 
-class KMenuEdit : public KTMainWindow
+class KMenuEdit : public KMainWindow
 {
     Q_OBJECT
 
