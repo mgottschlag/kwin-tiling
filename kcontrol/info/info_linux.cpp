@@ -61,7 +61,7 @@
 
 #define MAXCOLUMNWIDTH 600
 
-bool GetInfo_ReadfromFile( KTabListBox *lBox, char *Name, char splitchar  )
+bool GetInfo_ReadfromFile( KTabListBox *lBox, const char *Name, char splitchar  )
 {
   QString str;
   char buf[512];

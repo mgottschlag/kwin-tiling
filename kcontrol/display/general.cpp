@@ -35,6 +35,7 @@
 #include <kapp.h>
 #include <kglobal.h>
 #include <kthemebase.h>
+#include <kstddirs.h>
 #include <kcharsets.h>
 #include <kconfigbase.h>
 #include <ksimpleconfig.h>

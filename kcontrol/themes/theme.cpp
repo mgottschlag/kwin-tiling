@@ -54,6 +54,8 @@
 #include <X11/Xos.h>
 #include <klocale.h>
 #include <kconfig.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 
 extern int dropError(Display *, XErrorEvent *);
 

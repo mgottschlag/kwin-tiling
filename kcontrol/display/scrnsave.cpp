@@ -38,6 +38,7 @@
 #include "scrnsave.h"
 #include <klocale.h>
 #include <kconfig.h>
+#include <kglobal.h>
 #include "scrnsave.moc"
 
 #define SCREENSAVER_DIR	"/usr/local/kde/bin"

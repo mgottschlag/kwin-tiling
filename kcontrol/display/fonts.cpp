@@ -18,6 +18,7 @@
 #include <qlabel.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <kstddirs.h>
 
 #include "fonts.moc"
 

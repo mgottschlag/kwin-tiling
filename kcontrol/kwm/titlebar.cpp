@@ -66,18 +66,6 @@ extern KConfig *config;
 //CT 11feb98
 #define KWM_DCTBACTION "TitlebarDoubleClickCommand"
 
-// this function grabbed from kwm/client.C
-static QPixmap* loadIcon(const char* name)
-{
-  QPixmap *result = new QPixmap;
-  QString fn = "/share/apps/kwm/pics/";
-  fn.append(name);
-  QString s = KApplication::findFile(fn);
-  if (!s.isEmpty())
-    result->load(s.data());
-  return result;
-}
-
 KTitlebarButtons::~KTitlebarButtons ()
 {
   delete minB;
@@ -200,44 +188,33 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
   lay->addWidget( menuB, 13, 1, 10);
 
   // pixmap labels to show which button is which
-  QPixmap *pm;
-  pm = loadIcon("iconify.xpm");
   minP = new QLabel("", this);
-  minP->setPixmap( *pm );
+  minP->setPixmap( ICON("iconify.xpm") );
   minP->adjustSize();
-  delete pm;
 
   lay->addWidget( minP, 5, 3, 10);
 
-  pm = loadIcon("maximize.xpm");
   maxP = new QLabel("", this);
-  maxP->setPixmap( *pm );
+  maxP->setPixmap( ICON("maximize.xpm") );
   maxP->adjustSize();
-  delete pm;
 
   lay->addWidget( maxP, 7, 3, 10);
 
-  pm = loadIcon("pinup.xpm");
   stickyP = new QLabel("", this);
-  stickyP->setPixmap( *pm );
+  stickyP->setPixmap( ICON("pinup.xpm"));
   stickyP->adjustSize();
-  delete pm;
 
   lay->addWidget( stickyP, 9, 3, 10);
 
-  pm = loadIcon("close.xpm");
   closeP = new QLabel("", this);
-  closeP->setPixmap( *pm );
+  closeP->setPixmap( ICON("close.xpm") );
   closeP->adjustSize();
-  delete pm;
 
   lay->addWidget( closeP, 11, 3, 10);
 
-  pm = loadIcon("menu.xpm");
   menuP = new QLabel("", this);
-  menuP->setPixmap( *pm );
+  menuP->setPixmap( ICON("menu.xpm") );
   menuP->adjustSize();
-  delete pm;
 
   lay->addWidget( menuP, 13, 3, 10);
 
