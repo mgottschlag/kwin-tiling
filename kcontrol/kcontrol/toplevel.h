@@ -65,7 +65,9 @@ protected slots:
 
   void slotHelpRequest();
 
-    void changedModule(ConfigModule *changed);
+  void changedModule(ConfigModule *changed);
+  
+  bool queryClose();
 
 private:
   QTabWidget     *_tab;

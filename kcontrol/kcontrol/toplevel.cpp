@@ -180,9 +180,15 @@ TopLevel::~TopLevel()
   config->sync();
 }
 
+bool TopLevel::queryClose()
+{
+  _dock->dockModule(0);
+  return true;
+}
+
 void TopLevel::setupActions()
 {
-  KStdAction::quit(kapp, SLOT(quit()), actionCollection());
+  KStdAction::quit(this, SLOT(close()), actionCollection());
 
   icon_view = new KRadioAction
     (i18n("&Icon View"), 0, this, SLOT(activateIconView()),

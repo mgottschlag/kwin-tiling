@@ -67,15 +67,23 @@ void DockContainer::setBaseWidget(QWidget *widget)
 
 void DockContainer::dockModule(ConfigModule *module)
 {
-  if (!module) return;
+  if (module == _module) return;
 
   if (_module && _module->isChanged())
     {
-      int res = KMessageBox::warningYesNo(this,i18n("There are unsaved changes in the "
-                                                 "active module.\n"
-                                                 "Do you want to apply the changes "
-                                                 "before running\n"
-                                                 "the new module or forget the changes?"),
+      
+      int res = KMessageBox::warningYesNo(this,
+module ?
+i18n("There are unsaved changes in the "
+     "active module.\n"
+     "Do you want to apply the changes "
+     "before running\n"
+     "the new module or forget the changes?") :
+i18n("There are unsaved changes in the "
+     "active module.\n"
+     "Do you want to apply the changes "
+     "before exiting\n"
+     "the Control Center or forget the changes?"),
                                           i18n("Unsaved changes"),
                                           i18n("&Apply"),
                                           i18n("&Forget"));
@@ -84,6 +92,7 @@ void DockContainer::dockModule(ConfigModule *module)
     }
 
   deleteModule();
+  if (!module) return;
 
   _busy->raise();
   _busy->show();
