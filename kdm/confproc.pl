@@ -255,6 +255,47 @@ while (<INFILE>) {
       last if (/^<\/docu>\n$/);
       $doc .= $_;
     }
+  } elsif (/^<legacy>$/) {
+    while (<INFILE>) {
+      next if (/^($|#)/);
+      my ($proc, $kif);
+      if (/^If: (.+)$/) {
+        $kif = $1;
+        getl();
+      } else {
+        $kif = "";
+      }
+      if (/^Proc: (.+)$/) {
+        $proc = $1;
+	getl();
+      } else {
+        pegout("expecting Proc keyword in legacy section");
+      }
+      my $nsrc = 0;
+      my $mcnt = 0;
+      while (/^Source: (.+)$/) {
+        my $src = $1;
+        if ($src =~ /^xdm:(.*)$/) {
+          my $what = $1;
+	  my $dsp = ($what =~ s/^\*\.//);
+          my @oa = ([ "{ \"".$what."\", (char *)-1, 0, ".$proc." },", "XMO" ]);
+          add_cond($kif, $what, \@oa, \%ov_xm_conds);
+          $ov_xm[$dsp] .= $oa[0][0]." \\\n";
+        } elsif ($src =~ /^kdm:(.*)\/(.*)$/) {
+          my ($sec, $key) = ($1, $2);
+          my @oa = ([ "{ \"".$key."\", (char *)-1, 0, ".$proc." },", "KMO".($mcnt++) ]);
+          add_cond($kif, $key, \@oa, \%ov_km_conds);
+          $ov_km{$sec} .= $oa[0][0]." \\\n";
+        } else {
+          pegout("invalid legacy option '$_'");
+        }
+        $nsrc++;
+        getl();
+      }
+      $nsrc || pegout("no sources for legacy processor ".$proc);
+      last if (/^<\/legacy>$/);
+      pegout("unidentified section body '".$_."' in legacy section") if ($_);
+    }
   } else {
     next if (/^($|#)/);
     if (/^Key: (.+)$/) {

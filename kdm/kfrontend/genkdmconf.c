@@ -3,7 +3,7 @@
 Create a suitable configuration for kdm taking old xdm/kdm
 installations into account
 
-Copyright (C) 2001-2003 Oswald Buddenhagen <ossi@kde.org>
+Copyright (C) 2001-2005 Oswald Buddenhagen <ossi@kde.org>
 
 
 This program is free software; you can redistribute it and/or modify
@@ -1951,7 +1951,7 @@ mkdefconf( void )
 typedef struct REntry {
 	struct REntry *next;
 	const char *key;
-	const char *value;
+	char *value;
 } REntry;
 
 typedef struct RSection {
@@ -2192,7 +2192,7 @@ is22conf( const char *path )
 
 typedef struct KUpdEnt {
 	const char *okey, *nsec, *nkey;
-	void (*func)( const char *sect, const char **value );
+	void (*func)( const char *sect, char **value );
 } KUpdEnt;
 
 typedef struct KUpdSec {
@@ -2203,9 +2203,9 @@ typedef struct KUpdSec {
 
 #ifdef XDMCP
 static void
-P_EnableChooser( const char *sect ATTR_UNUSED, const char **value )
+P_EnableChooser( const char *sect ATTR_UNUSED, char **value )
 {
-	*value = isTrue( *value ) ? "DefaultLocal" : "LocalOnly";
+	*value = (char *)(isTrue( *value ) ? "DefaultLocal" : "LocalOnly");
 }
 #endif
 
@@ -2245,6 +2245,10 @@ mergeKdmRcNewer( const char *path )
 					for (ce = cs->ents; ce; ce = ce->next) {
 						for (j = 0; j < kupsects[i].nents; j++)
 							if (!strcmp( ce->key, kupsects[i].ents[j].okey )) {
+								if (kupsects[i].ents[j].nsec == (char *)-1) {
+									kupsects[i].ents[j].func( 0, &ce->value );
+									goto gotkey;
+								}
 								if (!kupsects[i].ents[j].nsec)
 									sec = cs->name;
 								else {
@@ -2322,6 +2326,10 @@ handleXdmVal( const char *dpy, const char *key, char *value,
 		    (key[0] == toupper( ents[i].xname[0] ) &&
 		     !strcmp( key + 1, ents[i].xname + 1 )))
 		{
+			if (ents[i].ksec == (char *)-1) {
+				ents[i].func (0, &value);
+				break;
+			}
 			sprintf( sname, ents[i].ksec, dpy );
 			if (ents[i].kname)
 				kname = ents[i].kname;
