@@ -682,7 +682,7 @@ KSMServer::KSMServer( const QString& windowManager )
     saveSession = config->readBoolEntry( "saveSession", FALSE );
     clientInteracting = 0;
 
-    kapp->dcopClient()->registerAs("KSMServer");
+    kapp->dcopClient()->attach();
     launcher = KApplication::launcher();
 
     char 	errormsg[256];
@@ -846,7 +846,7 @@ void KSMServer::newConnection( int /*socket*/ )
     while ((cstatus = IceConnectionStatus (iceConn))==IceConnectPending) {
 	(void) IceProcessMessages( iceConn, 0, 0 );
     }
-    
+
     if (cstatus != IceConnectAccepted) {
 	if (cstatus == IceConnectIOError)
 	    qWarning ("IO error opening ICE Connection!\n");
