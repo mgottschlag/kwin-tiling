@@ -65,7 +65,6 @@
 #include <kstddirs.h>
 #include <kio/netaccess.h>
 #include <kmessagebox.h>
-#include <kalphapainter.h>
 
 #include "mouse.h"
 
