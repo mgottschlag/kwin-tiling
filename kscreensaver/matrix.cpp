@@ -278,7 +278,7 @@ void KMatrixSaver::load_images () {
       xpmattrs.colormap = state->xgwa.colormap;
 # endif
 
-      result = XpmCreatePixmapFromData (state->dpy, state->window, matrix_font,
+      result = XpmCreatePixmapFromData (state->dpy, state->window, (char **)matrix_font,
                                         &state->images, 0 /* mask */,
                                         &xpmattrs);
       if (!state->images || (result != XpmSuccess && result != XpmColorError))
