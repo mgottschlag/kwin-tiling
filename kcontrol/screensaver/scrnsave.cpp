@@ -368,6 +368,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
 
     mSaverListView = new QListView( mSaverGroup );
     mSaverListView->setMinimumHeight( 120 );
+    mSaverListView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     mSaverListView->addColumn("");
     mSaverListView->header()->hide();
     mSelected = -1;
@@ -495,12 +496,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     QWhatsThis::add( mDPMSDependentCheckBox, i18n(
         "Enable this option if you want to disable the screen saver while "
         "watching TV or movies.") );
-
-    QWidget* vspacer = new QWidget( this );
-    vspacer->setMinimumSize( 10, 1 );
-    vspacer->setSizePolicy( QSizePolicy::Preferred,
-        QSizePolicy::MinimumExpanding );
-    leftColumnLayout->addWidget( vspacer );
 
     // right column
     QBoxLayout* rightColumnLayout =
