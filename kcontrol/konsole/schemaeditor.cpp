@@ -332,6 +332,7 @@ void SchemaEditor::saveCurrent()
 {
 
     //This is to update the color table
+    colorCombo->setCurrentItem(0);
     slotColorChanged(0);
 
     QString fullpath;
