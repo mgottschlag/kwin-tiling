@@ -299,7 +299,7 @@ void KKeyModule::slotAdd()
       }
       
       for ( int i = 0; i < (int) sList->count(); i++ ) {
-        if ( sName == sList->text( i ) ) {
+        if ( sName.lower() == (sList->text(i)).lower() ) {
           nameValid = FALSE;
           KMessageBox::error( 0,
                               i18n( "Please choose a unique name for the new key\n"\
