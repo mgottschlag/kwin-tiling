@@ -80,8 +80,8 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   _default = new QPushButton(i18n("&Default"), this);
   _reset = new QPushButton(i18n("&Reset"), this);
   _cancel = new QPushButton(i18n("&Cancel"), this);
-  _apply = new QPushButton(i18n("&Apply"), this);
   _ok = new QPushButton(i18n("&OK"), this);
+  _apply = new QPushButton(i18n("&Apply"), this);
   _root = new QPushButton(i18n("R&un as root"), this);
 
   // only enable the requested buttons
@@ -116,11 +116,11 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   top->addWidget(_help, 3, 0);
   top->addWidget(_default, 3, 1);
   top->addWidget(_reset, 3, 2);
+  top->addWidget(_ok, 3, 4);
   if (run_as_root)
-    top->addWidget(_root, 3, 4);
+    top->addWidget(_root, 3, 5);
   else
-    top->addWidget(_apply, 3, 4);
-  top->addWidget(_ok, 3, 5);
+    top->addWidget(_apply, 3, 5);
   top->addWidget(_cancel, 3, 6);
 
   top->setRowStretch(1, 1);
