@@ -67,7 +67,7 @@ from The Open Group.
  * Exit codes for fork()ed session process and greeter
  */
 #define EX_NORMAL		0	/* do whatever seems appropriate */
-#define EX_REMANAGE_DPY		1	/* force remanage */
+#define EX_REMANAGE_DPY		1	/* force remanage; same as EX_NORMAL, but cannot return to reserve mode immediately */
 #define EX_UNMANAGE_DPY		2	/* force deletion */
 #define EX_RESERVER_DPY		3	/* force server termination */
 #define EX_AL_RESERVER_DPY	4	/* reserver; maybe, auto-(re-)login */

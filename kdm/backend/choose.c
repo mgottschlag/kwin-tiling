@@ -837,12 +837,13 @@ chooseHost(struct display *d, int hid)
 		GSendInt (d->connectionType);	/* maybe h->connectionType? */
 		GSendArr (h->hostaddr.length, (char *)h->hostaddr.data);
 		/* CloseGreeter (d, 0); not really necessary, init will reap it */
-		SessionExit (d, EX_REMANAGE_DPY);
+		goto bout;
 	    }
 	    break;
 	}
 /*    LogError ("Internal error: choosed unexisting host\n"); */
-    SessionExit (d, EX_REMANAGE_DPY);
+  bout:
+    SessionExit (d, EX_NORMAL);
 }
 
 static void
@@ -866,7 +867,7 @@ directChooseHost(struct display *d, const char *name)
 	GSendInt (d->connectionType);	/* maybe h->connectionType? */
 	GSendArr (4, (char *)&in_addr.sin_addr);	/* XXX AF_INET-specific */
 	/* CloseGreeter (d, 0); not really necessary, init will reap it */
-	SessionExit (d, EX_REMANAGE_DPY);
+	SessionExit (d, EX_NORMAL);
     }
 }
 

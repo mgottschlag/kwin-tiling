@@ -1122,6 +1122,7 @@ WaitForChild (void)
 		Debug ("Display exited on SIGTERM\n");
 		ExitDisplay (d, DS_RESTART, TRUE, FALSE);
 		break;
+#if 0
 	    case EX_REMANAGE_DPY:
 		Debug ("Display exited with EX_REMANAGE_DPY\n");
 		/*
@@ -1130,6 +1131,7 @@ WaitForChild (void)
 		 */
 		ExitDisplay (d, DS_RESTART, FALSE, TRUE);
 		break;
+#endif
 	    }
 	}
 	/* SUPPRESS 560 */
@@ -1187,9 +1189,9 @@ int	WellKnownSocketsCount;
 void
 RegisterInput (int fd)
 {
-/*
+    /* can be omited, as it is always called right after opening a socket
     if (!FD_ISSET (fd, &WellKnownSocketsMask))
-*/
+    */
     {
 	FD_SET (fd, &WellKnownSocketsMask);
 	if (fd > WellKnownSocketsMax)
@@ -1201,6 +1203,9 @@ RegisterInput (int fd)
 void
 UnregisterInput (int fd)
 {
+    /* the check _is_ necessary, as some handles are unregistered before
+       the regular close sequence.
+    */
     if (FD_ISSET (fd, &WellKnownSocketsMask))
     {
 	FD_CLR (fd, &WellKnownSocketsMask);
@@ -1392,7 +1397,7 @@ StartDisplay (struct display *d)
 	if (!WaitForServer (d))
 	    exit (EX_OPENFAILED_DPY);
 	ManageSession (d);
-	exit (EX_REMANAGE_DPY);
+	/* NOTREACHED */
     case -1:
 	break;
     default:
@@ -1410,7 +1415,7 @@ StartDisplay (struct display *d)
 }
 
 /*
- * transition from running to [r,t]zombie, textmode, reserve or deleted
+ * transition from running to zombie, textmode, reserve or deleted
  */
 
 static void

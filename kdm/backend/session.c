@@ -510,7 +510,7 @@ ManageSession (struct display *d)
 	    sleep (10);
 	SessionExit (d, EX_AL_RESERVER_DPY);
     }
-    SessionExit (d, EX_NORMAL);
+    SessionExit (d, EX_NORMAL); /* XXX maybe EX_REMANAGE_DPY? -- enable in dm.c! */
 }
 
 void
