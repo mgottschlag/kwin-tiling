@@ -450,7 +450,7 @@ bool Theme::installDirectory(const QString& aSrc, const QString& aDest)
 //-----------------------------------------------------------------------------
 int Theme::installGroup(const char* aGroupName)
 {
-  QString value, oldValue, cfgFile, cfgGroup, appDir, group, emptyValue;
+  QString value, oldValue, cfgFile, cfgGroup, appDir, group;
   QString oldCfgFile, key, cfgKey, cfgValue, themeValue, instCmd, baseDir;
   QString preInstCmd;
   bool absPath = false;
@@ -494,8 +494,8 @@ kdDebug() << ":: baseDir = " << baseDir << endl;
       if (len > 0 && appDir[len-1]!='/') appDir += '/';
     }
     absPath = mMappings->readBoolEntry("ConfigAbsolutePaths", absPath);
-    value = mMappings->readEntry("ConfigEmpty");
-    if (!value.isEmpty()) emptyValue = value;
+    QString emptyValue = mMappings->readEntry("ConfigEmpty");
+
     value = mMappings->readEntry("ConfigActivateCmd");
     if (!value.isEmpty() && (mCmdList.findIndex(value) < 0))
       mCmdList.append(value);
@@ -611,17 +611,22 @@ kdDebug() << ":: baseDir = " << baseDir << endl;
 	}
       }
 
+      bool bDeleteKey = false;
       // Determine config value
       if (cfgValue.isEmpty()) 
+      {
          cfgValue = emptyValue;
+         if (cfgValue.isEmpty())
+           bDeleteKey = true;
+      }
       else if ((bInstallFile || bInstallDir) && absPath) 
          cfgValue = appDir + cfgValue;
  
       // Set config entry
       kdDebug() << cfgKey << "=" << cfgValue << endl;
-      if (cfgKey == "-") 
-         cfg->deleteEntry(key, false);
-      else 
+      if (bDeleteKey)
+         cfg->deleteEntry(cfgKey, false);
+      else
          cfg->writeEntry(cfgKey, cfgValue);
     }
 
@@ -735,16 +740,13 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
 
 void Theme::applyIcons()
 {
-  KSimpleConfig *config = new KSimpleConfig("kdeglobals", false);
-
-  config->setGroup("Icons");
-
-  QString theme = config->readEntry("Theme");
+  QString theme = KIconTheme::current();
 
   KIconTheme icontheme(theme);
 
   const char *groups[] = { "Desktop", "Toolbar", "MainToolbar", "Small", 0L };
 
+  KSimpleConfig *config = new KSimpleConfig("kdeglobals", false);
   for (int i=0; i<KIcon::LastGroup; i++)
   {
     if (groups[i] == 0L)
@@ -758,7 +760,6 @@ void Theme::applyIcons()
   {
     KIPC::sendMessageAll(KIPC::IconChanged, i);
   } 
-
 }
 
 

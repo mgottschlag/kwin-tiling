@@ -29,8 +29,7 @@
 # the key of the config entries in this file.
 #
 # If configKey is given then it is the name of the key in the config file.
-# If configKey is '-' then no key is written.  Otherwise the same key as 
-# in the theme is used.
+# Otherwise the same key as in the theme is used.
 #
 # If fileName is given it must be preceded with a ':' and is used as
 # a fixed file name. Then the corresponding file of the theme will be renamed
