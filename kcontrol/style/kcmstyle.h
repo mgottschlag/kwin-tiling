@@ -95,7 +95,6 @@ protected slots:
 
 private:
 	bool m_bMacDirty, m_bEffectsDirty, m_bStyleDirty, m_bToolbarsDirty;
-	int styleChangeDelay; 
 	QDict<StyleEntry> styleEntries;
 
 	QVBoxLayout* mainLayout;
@@ -107,13 +106,14 @@ private:
 
 	// Page1 widgets
 	QGroupBox* gbWidgetStyle;
+	QVBoxLayout* gbWidgetStyleLayout;
+	QHBoxLayout* hbLayout;
 	KComboBox* cbStyle;
 	QPushButton* pbConfigStyle;
-	QLabel *lblStyleDesc;
+	QLabel* lblStyleDesc;
 	StylePreview* stylePreview;
 	QStyle* appliedStyle;
 	QPalette palette;
-	QTimer switchStyleTimer;
 	QString currentStyle;
 
 	// Page2 widgets

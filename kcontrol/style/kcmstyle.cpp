@@ -159,37 +159,35 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	gbWidgetStyle->setColumnLayout( 0, Qt::Vertical );
 	gbWidgetStyle->layout()->setMargin( KDialog::marginHint() );
 	gbWidgetStyle->layout()->setSpacing( KDialog::spacingHint() );
-	QVBoxLayout *gbWidgetStyleLayout = new QVBoxLayout(gbWidgetStyle->layout());
-	gbWidgetStyleLayout->setAlignment( Qt::AlignTop );
 
-	QHBoxLayout *hbLayout = new QHBoxLayout( KDialog::spacingHint(), "hbLayout" );
+	gbWidgetStyleLayout = new QVBoxLayout( gbWidgetStyle->layout() );
+	gbWidgetStyleLayout->setAlignment( Qt::AlignTop );
+	hbLayout = new QHBoxLayout( KDialog::spacingHint(), "hbLayout" );
 
 	cbStyle = new KComboBox( gbWidgetStyle, "cbStyle" );
 	cbStyle->setEditable( FALSE );
 	hbLayout->addWidget( cbStyle );
 
-	pbConfigStyle = new QPushButton("Configure...", gbWidgetStyle);
-	pbConfigStyle->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+	pbConfigStyle = new QPushButton( i18n("Con&figure..."), gbWidgetStyle );
+	pbConfigStyle->setSizePolicy( QSizePolicy::Maximum, QSizePolicy::Minimum );
 	pbConfigStyle->setEnabled( FALSE );
-	hbLayout->addWidget(pbConfigStyle);
+	hbLayout->addWidget( pbConfigStyle );
 
-	gbWidgetStyleLayout->addLayout(hbLayout);
+	gbWidgetStyleLayout->addLayout( hbLayout );
 
 	lblStyleDesc = new QLabel( gbWidgetStyle );
-	gbWidgetStyleLayout->addWidget(lblStyleDesc);
+	gbWidgetStyleLayout->addWidget( lblStyleDesc );
 
 	cbIconsOnButtons = new QCheckBox( i18n("Sho&w icons on buttons"), gbWidgetStyle );
-	gbWidgetStyleLayout->addWidget(cbIconsOnButtons);
-
+	gbWidgetStyleLayout->addWidget( cbIconsOnButtons );
 	cbEnableTooltips = new QCheckBox( i18n("E&nable tooltips"), gbWidgetStyle );
-	gbWidgetStyleLayout->addWidget(cbEnableTooltips);
-
+	gbWidgetStyleLayout->addWidget( cbEnableTooltips );
 	cbTearOffHandles = new QCheckBox( i18n("Show tear-off handles in &popup menus"), gbWidgetStyle );
-	gbWidgetStyleLayout->addWidget(cbTearOffHandles);
+	gbWidgetStyleLayout->addWidget( cbTearOffHandles );
 	cbTearOffHandles->hide(); // reenable when the corresponding Qt method is virtual and properly reimplemented
 
 	cbMacMenubar = new QCheckBox( i18n("&Menubar on top of the screen in the style of MacOS"), gbWidgetStyle );
-	gbWidgetStyleLayout->addWidget(cbMacMenubar);
+	gbWidgetStyleLayout->addWidget( cbMacMenubar );
 
 	stylePreview = new StylePreview( page1 );
 
@@ -197,7 +195,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	page1Layout->addWidget( stylePreview );
 
 	// Connect all required stuff
-	connect(cbStyle, SIGNAL(activated(int)), this, SLOT(styleChanged()));
+	connect( cbStyle, SIGNAL(activated(int)), this, SLOT(styleChanged()) );
 
 	// Add Page2 (Effects)
 	// -------------------
@@ -556,20 +554,25 @@ void KCMStyle::defaults()
 {
 	// Select default style
 	QListBoxItem *item;
-	if ( (item = cbStyle->listBox()->findItem( KStyle::defaultStyle(), Qt::ExactMatch)) )
-		cbStyle->setCurrentText(item->text());
-	else if ( (item = cbStyle->listBox()->findItem("HighColor", Qt::ExactMatch)) )
-		cbStyle->setCurrentText(item->text());
-	else if ( (item = cbStyle->listBox()->findItem("Default", Qt::ExactMatch)) )
-		cbStyle->setCurrentText(item->text());
-	else if ( (item = cbStyle->listBox()->findItem("Windows", Qt::ExactMatch)) )
-		cbStyle->setCurrentText(item->text());
-	else if ( (item = cbStyle->listBox()->findItem("Platinum", Qt::ExactMatch)) )
-		cbStyle->setCurrentText(item->text());
-	else if ( (item = cbStyle->listBox()->findItem("Motif", Qt::ExactMatch)) )
-		cbStyle->setCurrentText(item->text());
+	QListBox *cbListBox = cbStyle->listBox();
+	if ( (item = cbListBox->findItem( KStyle::defaultStyle(), Qt::ExactMatch)) )
+		cbStyle->setCurrentText( item->text() );
+	else if ( (item = cbListBox->findItem( "HighColor", Qt::ExactMatch) ) )
+		cbStyle->setCurrentText( item->text() );
+	else if ( (item = cbListBox->findItem( "Default", Qt::ExactMatch) ) )
+		cbStyle->setCurrentText( item->text()) ;
+	else if ( (item = cbListBox->findItem( "Windows", Qt::ExactMatch) ) )
+		cbStyle->setCurrentText( item->text() );
+	else if ( (item = cbListBox->findItem( "Platinum", Qt::ExactMatch) ) )
+		cbStyle->setCurrentText( item->text() );
+	else if ( (item = cbListBox->findItem( "Motif", Qt::ExactMatch) ) )
+		cbStyle->setCurrentText( item->text() );
 	else
-		cbStyle->setCurrentText(cbStyle->listBox()->firstItem()->text());	// Use any available style
+		cbStyle->setCurrentText( cbListBox->firstItem()->text() );	// Use any available style
+
+	m_bStyleDirty = true;
+	currentStyle = cbStyle->currentText();
+	switchStyle( currentStyle );	// make resets visible
 
 	// Effects..
 	cbEnableEffects->setChecked(false);
@@ -679,22 +682,40 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 		styleEntries.insert(strWidgetStyle, entry);
 	}
 
-	// This has slightly different behavior than the old method, but it's faster
-	// and cleaner.
-	QStringList styles = QStyleFactory::keys();
-	cbStyle->insertStringList(styles);
+	// Obtain all style names
+	QStringList allStyles = QStyleFactory::keys();
+
+	// Remove all hidden style entries
+	QStringList styles;
+	StyleEntry* entry;
+	for (QStringList::iterator it = allStyles.begin(); it != allStyles.end(); it++)
+	{
+		// Find the entry.
+		if ( (entry = styleEntries.find(*it)) != 0 )
+		{
+			// Do not add hidden entries
+			if (entry->hidden)
+				continue;
+
+			styles += (*it);
+		}
+	}
+
+	// Sort the style list, and add it to the combobox
+	styles.sort();
+	cbStyle->insertStringList( styles );
 
 	// Find out which style is currently being used
-	config.setGroup("General");
+	config.setGroup( "General" );
 	QString defaultStyle = KStyle::defaultStyle();
-	QString cfgStyle = config.readEntry("widgetStyle", defaultStyle);
+	QString cfgStyle = config.readEntry( "widgetStyle", defaultStyle );
 
 	// Find the current style in the list
-	QListBoxItem* current = cbStyle->listBox()->findItem( cfgStyle, Qt::ExactMatch);
+	QListBoxItem* current = cbStyle->listBox()->findItem( cfgStyle, Qt::ExactMatch );
 	if (!current)
-		current = cbStyle->listBox()->findItem( cfgStyle, Qt::Contains);
+		current = cbStyle->listBox()->findItem( cfgStyle, Qt::Contains );
 	if (!current)
-		current = cbStyle->listBox()->findItem( QApplication::style().className(), Qt::Contains);
+		current = cbStyle->listBox()->findItem( QApplication::style().className(), Qt::Contains );
 	if (!current)
 		current = cbStyle->listBox()->firstItem();	// Last fallback
 
@@ -724,12 +745,17 @@ void KCMStyle::switchStyle(const QString& styleName)
 
 	setStyleRecursive( stylePreview, style );
 
-	// this flickers, but reliably draws the widgets corretly.
+	// this flickers, but reliably draws the widgets correctly.
 	stylePreview->resize( stylePreview->sizeHint() );
 
 	delete appliedStyle;
 	appliedStyle = style;
-	lblStyleDesc->setText(i18n("Description: ") + styleEntries[styleName]->desc);
+
+	// Set the correct style description
+	StyleEntry* entry = styleEntries.find( styleName );
+	QString desc;
+	desc = i18n("Description: %1").arg( entry ? entry->desc : i18n("No description available.") );
+	lblStyleDesc->setText( desc );
 }
 
 
