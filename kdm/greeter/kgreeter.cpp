@@ -76,14 +76,8 @@
 #endif
 
 #if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
-#	define USE_LOGIN_CAP 1
-#	include <login_cap.h>
-#ifdef __bsdi__
-	// This only works / is needed on BSDi
-	struct login_cap_t *lc;
-#else
-	struct login_cap *lc;
-#endif
+# define USE_LOGIN_CAP 1
+# include <login_cap.h>
 #endif
 
 #ifdef GREET_LIB
@@ -91,39 +85,39 @@
  * Function pointers filled in by the initial call into the library
  */
 
-int     (*__xdm_PingServer)(struct display *d, Display *alternateDpy) = NULL;
-void    (*__xdm_SessionPingFailed)(struct display *d) = NULL;
-void    (*__xdm_Debug)(char * fmt, ...) = NULL;
-void    (*__xdm_RegisterCloseOnFork)(int fd) = NULL;
-void    (*__xdm_SecureDisplay)(struct display *d, Display *dpy) = NULL;
-void    (*__xdm_UnsecureDisplay)(struct display *d, Display *dpy) = NULL;
-void    (*__xdm_ClearCloseOnFork)(int fd) = NULL;
-void    (*__xdm_SetupDisplay)(struct display *d) = NULL;
-void    (*__xdm_LogError)(char * fmt, ...) = NULL;
-void    (*__xdm_SessionExit)(struct display *d, int status, int removeAuth) = NULL;
-void    (*__xdm_DeleteXloginResources)(struct display *d, Display *dpy) = NULL;
-int     (*__xdm_source)(char **environ, char *file) = NULL;
-char    **(*__xdm_defaultEnv)(void) = NULL;
-char    **(*__xdm_setEnv)(char **e, char *name, char *value) = NULL;
-char    **(*__xdm_putEnv)(const char *string, char **env) = NULL;
-char    **(*__xdm_parseArgs)(char **argv, char *string) = NULL;
-void    (*__xdm_printEnv)(char **e) = NULL;
-char    **(*__xdm_systemEnv)(struct display *d, char *user, char *home) = NULL;
-void    (*__xdm_LogOutOfMem)(char * fmt, ...) = NULL;
-SETGRENT_TYPE (*__xdm_setgrent)(void) = NULL;
-struct group    *(*__xdm_getgrent)(void) = NULL;
-void    (*__xdm_endgrent)(void) = NULL;
+int	(*__xdm_PingServer)(struct display *d, Display *alternateDpy) = NULL;
+void	(*__xdm_SessionPingFailed)(struct display *d) = NULL;
+void	(*__xdm_Debug)(char * fmt, ...) = NULL;
+void	(*__xdm_RegisterCloseOnFork)(int fd) = NULL;
+void	(*__xdm_SecureDisplay)(struct display *d, Display *dpy) = NULL;
+void	(*__xdm_UnsecureDisplay)(struct display *d, Display *dpy) = NULL;
+void	(*__xdm_ClearCloseOnFork)(int fd) = NULL;
+void	(*__xdm_SetupDisplay)(struct display *d) = NULL;
+void	(*__xdm_LogError)(char * fmt, ...) = NULL;
+void	(*__xdm_SessionExit)(struct display *d, int status, int removeAuth) = NULL;
+void	(*__xdm_DeleteXloginResources)(struct display *d, Display *dpy) = NULL;
+int	(*__xdm_source)(char **environ, char *file) = NULL;
+char	**(*__xdm_defaultEnv)(void) = NULL;
+char	**(*__xdm_setEnv)(char **e, char *name, char *value) = NULL;
+char	**(*__xdm_putEnv)(const char *string, char **env) = NULL;
+char	**(*__xdm_parseArgs)(char **argv, char *string) = NULL;
+void	(*__xdm_printEnv)(char **e) = NULL;
+char	**(*__xdm_systemEnv)(struct display *d, char *user, char *home) = NULL;
+void	(*__xdm_LogOutOfMem)(char * fmt, ...) = NULL;
+SETGRENT_TYPE	(*__xdm_setgrent)(void) = NULL;
+struct group	*(*__xdm_getgrent)(void) = NULL;
+void	(*__xdm_endgrent)(void) = NULL;
 #ifdef USESHADOW
-struct spwd   *(*__xdm_getspnam)(GETSPNAM_ARGS) = NULL;
-void   (*__xdm_endspent)(void) = NULL;
+struct spwd	*(*__xdm_getspnam)(GETSPNAM_ARGS) = NULL;
+void	(*__xdm_endspent)(void) = NULL;
 #endif
-struct passwd   *(*__xdm_getpwnam)(GETPWNAM_ARGS) = NULL;
+struct passwd	*(*__xdm_getpwnam)(GETPWNAM_ARGS) = NULL;
 #ifdef linux
-void   (*__xdm_endpwent)(void) = NULL;
+void	(*__xdm_endpwent)(void) = NULL;
 #endif
-char     *(*__xdm_crypt)(CRYPT_ARGS) = NULL;
+char	*(*__xdm_crypt)(CRYPT_ARGS) = NULL;
 #ifdef USE_PAM
-pam_handle_t **(*__xdm_thepamh)(void) = NULL;
+pam_handle_t	**(*__xdm_thepamh)(void) = NULL;
 #endif
 
 #endif
@@ -504,7 +498,7 @@ KGreeter::shutdown_button_clicked()
 static inline gid_t* switch_to_user( int *gidset_size, 
 				     const struct passwd *pwd)
 {
-    *gidset_size = getgroups(0,0);
+    *gidset_size = getgroups(0, 0);
     gid_t *gidset = new gid_t[*gidset_size];
     if( getgroups( *gidset_size, gidset) == -1 ||
 	initgroups(pwd->pw_name, pwd->pw_gid) != 0 ||
@@ -623,8 +617,6 @@ KGreeter::save_wm()
 bool
 KGreeter::restrict()
 {
-    bool rval = false;
-
     struct passwd *pwd = getpwnam(greet->name);
     endpwent();
     if (!pwd)
@@ -632,85 +624,52 @@ KGreeter::restrict()
     // we don't need the password
     memset(pwd->pw_passwd, 0, strlen(pwd->pw_passwd));
 
+    // don't deny root to log in
+    if (!pwd->pw_uid)
+	return false;
+
 #ifdef USESHADOW
     struct spwd *swd = getspnam(greet->name);
     endspent();
     if (!swd)
 	return false;
+    // we don't need the password
+    memset(swd->sp_pwdp, 0, strlen(swd->sp_pwdp));
 #endif
 
 #ifdef USE_LOGIN_CAP
 #ifdef __bsdi__
-    lc = login_getclass(pwd->pw_class);
+    // This only works / is needed on BSDi
+    struct login_cap_t *lc = login_getclass(pwd->pw_class);
 #else
-    lc = login_getpwclass(pwd);
+    struct login_cap *lc = login_getpwclass(pwd);
 #endif
 #endif
 
-    if (restrict_nologin() ||
-	restrict_nohome() ||
-	restrict_expired() ||
-	restrict_time()
-    )
-	rval = true;
 
-#ifdef USE_LOGIN_CAP
-    login_close(lc);
-    lc = NULL;
-#endif
-
-    return rval;
-}
-
-bool
-KGreeter::restrict_time()
-{
-#ifdef USE_LOGIN_CAP
-    // don't deny a root log in
-    if (!pwd->pw_uid)
-	return false;
-
-    if(!auth_timeok(lc, time(NULL))) {
-	KMessageBox::sorry(this, i18n("Logins not available right now."));
-	return true;
-    }
-#endif
-    return false;
-}
-
-
-bool
-KGreeter::restrict_nologin()
-{
-#ifdef USE_PAM
-    // PAM handles /etc/nologin itself.
-    return false;
-#else /* !USE_PAM */
-
-    // don't deny root to log in
-    if (pwd && !pwd->pw_uid) return false;
+// restrict_nologin
+#ifndef USE_PAM
 
 #ifndef _PATH_NOLOGIN
 # define _PATH_NOLOGIN "/etc/nologin"
 #endif
 
+{
+    QFile f;
+
 #ifdef USE_LOGIN_CAP
     /* Do we ignore a nologin file? */
     if (login_getcapbool(lc, "ignorenologin", 0))
-	return false;
+	goto nolog_succ;
 
     QString file;
     /* Note that <file> will be "" if there is no nologin capability */
     file = QFile::decodeName(login_getcapstr(lc, "nologin", "", NULL));
     if (file.isNull()) {
 	KMessageBox::error(this, i18n("Could not access the login capabilities database or out of memory."));
-	return true;
+	goto fail;
     }
-#endif
 
-    QFile f;
-
-#ifdef USE_LOGIN_CAP
     if (!file.isNull()) {
 	f.setName(file);
 	f.open(IO_ReadOnly);
@@ -736,21 +695,36 @@ KGreeter::restrict_nologin()
 	f.close();
 	KMessageBox::sorry(this, s);
 
-	return true;
+	goto fail;
     }
 
-    return false;
-#endif /* !USE_PAM */
 }
+nolog_succ:
+#endif /* !USE_PAM */
+// restrict_nologin
+
+
+// restrict_nohome
+#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
+
+    seteuid(pwd->pw_uid);
+    if (!*pwd->pw_dir || chdir(pwd->pw_dir) < 0) {
+	if (login_getcapbool(lc, "requirehome", 0)) {
+	    KMessageBox::sorry(this, i18n("Home directory not available"));
+	    goto fail;
+	}
+    }
+    seteuid(0);
+
+#endif
+// restrict_nohome
+
+
+// restrict_expired
+#define DEFAULT_WARN  (2L * 7L * 86400L)  /* Two weeks */
 
 #ifdef HAVE_PW_EXPIRE
-bool
-KGreeter::restrict_expired(){
-#define DEFAULT_WARN  (2L * 7L * 86400L)  /* Two weeks */
-    // don't deny root to log in
-    if (!pwd->pw_uid)
-	return false;
-
+{
 #if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
     bool quietlog = login_getcapbool(lc, "hushlogin", 0);
     time_t warntime = login_getcaptime(lc, "warnexpire",
@@ -762,7 +736,7 @@ KGreeter::restrict_expired(){
     if (pwd->pw_expire)
 	if (pwd->pw_expire <= time(NULL)) {
 	    KMessageBox::sorry(this, i18n("Your account has expired."));
-	    return true;
+	    goto fail;
 	} else if (pwd->pw_expire - time(NULL) < warntime && !quietlog) {
 	    QDateTime dat;
 	    dat.setTime_t(pwd->pw_expire);
@@ -770,24 +744,16 @@ KGreeter::restrict_expired(){
 				.arg(KGlobal::locale()->formatDateTime(dat));
 	    KMessageBox::sorry(this, str);
 	}
-
-    return false;
 }
 #elif defined(USESHADOW)
-bool
-KGreeter::restrict_expired(){
-#define DEFAULT_WARN  (2L * 7L * 86400L)  /* Two weeks */
-    // don't deny root to log in
-    if (!pwd->pw_uid)
-	return false;
-
+{
     time_t warntime = DEFAULT_WARN;
     time_t expiresec = swd->sp_expire*86400L; //sven: ctime uses seconds
      
     if (swd->sp_expire != -1)
 	if (expiresec <= time(NULL)) {
 	    KMessageBox::sorry(this, i18n("Your account has expired."));
-	    return true;
+	    goto fail;
 	} else if (expiresec - time(NULL) < warntime) {
 	    QDateTime dat;
 	    dat.setTime_t(expiresec);
@@ -795,42 +761,30 @@ KGreeter::restrict_expired(){
 				.arg(KGlobal::locale()->formatDateTime(dat));
 	    KMessageBox::sorry(this, str);
 	}
-
-    return false;
 }
-#else /* !defined(USESHADOW) */
-bool
-KGreeter::restrict_expired()
-{
-    return false;
-}
-#endif
+#endif /* !defined(USESHADOW) */
+// restrict_expired
 
-#if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
-bool
-KGreeter::restrict_nohome(){
-    // don't deny root to log in
-    if (!pwd->pw_uid)
-	return false;
 
-    seteuid(pwd->pw_uid);
-    if (!*pwd->pw_dir || chdir(pwd->pw_dir) < 0) {
-	if (login_getcapbool(lc, "requirehome", 0)) {
-	    KMessageBox::sorry(this, i18n("Home directory not available"));
-	    return true;
-	}
+// restrict_time
+#ifdef USE_LOGIN_CAP
+    if (!auth_timeok(lc, time(NULL))) {
+	KMessageBox::sorry(this, i18n("Logins not available right now."));
+	goto fail;
     }
-    seteuid(0);
+// restrict_time
 
-    return false;
-}
-#else
-bool
-KGreeter::restrict_nohome()
-{
-    return false;
-}
+
+    login_close(lc);
 #endif
+    return false;
+    
+fail:
+#ifdef USE_LOGIN_CAP
+    login_close(lc);
+#endif
+    return true;
+}
 
 
 void 

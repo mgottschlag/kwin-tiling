@@ -51,21 +51,23 @@ class QComboBox;
 
 class KdmClock;
 
+
 class KLoginLineEdit : public QLineEdit {
-     Q_OBJECT
+    Q_OBJECT
 
 public:
-     KLoginLineEdit( QWidget *parent = 0) : QLineEdit(parent) {}
+    KLoginLineEdit( QWidget *parent = 0) : QLineEdit(parent) {}
 
 signals:
-     void lost_focus();
+    void lost_focus();
 
 protected:
-     void focusOutEvent( QFocusEvent *e);
+    void focusOutEvent( QFocusEvent *e);
 };
 
+
 class KGreeter : public QFrame {
-     Q_OBJECT
+    Q_OBJECT
 
 public:
     KGreeter(QWidget *parent, const char *t);
@@ -73,49 +75,39 @@ public:
     void SetTimer();
 
 public slots:
-     void go_button_clicked();
-     void cancel_button_clicked();
-     void quit_button_clicked();
-     void shutdown_button_clicked();
-     void timerDone();
-     void slot_user_name( QIconViewItem*);
-     bool restrict();
-     bool restrict_nologin();
-     bool restrict_expired();
-     bool restrict_nohome();
-     bool restrict_time();
-     void load_wm();
-     void save_wm();
+    void go_button_clicked();
+    void cancel_button_clicked();
+    void quit_button_clicked();
+    void shutdown_button_clicked();
+    void timerDone();
+    void slot_user_name( QIconViewItem*);
+    bool restrict();
+    void load_wm();
+    void save_wm();
 
 protected:
-     void timerEvent( QTimerEvent * ) {};
+    void timerEvent( QTimerEvent * ) {};
 
 private:
-     QTimer*        timer;
-     QIconView*     user_view;
-     KdmClock*      clock;
-     QLabel*        pixLabel;
-     QLabel*        loginLabel;
-     QLabel*        sessionargLabel;
-     QLabel*        passwdLabel;
-     QLabel*        failedLabel;
-     KLoginLineEdit*     loginEdit;
-     KPasswordEdit*     passwdEdit; 
-     QFrame*        separator;
-     QPushButton*   goButton;
-     QPushButton*   chooserButton;
-     QPushButton*   quitButton;
-     QPushButton*   cancelButton;
-     QPushButton*   shutdownButton;
-     QComboBox*     sessionargBox;
+    void insertUsers( QIconView *);
 
-//     struct passwd *pwd;
-
-//#ifdef USESHADOW
-//     struct spwd *swd;
-//#endif
-
-    void	insertUsers( QIconView *);
+    QTimer*		timer;
+    QIconView*		user_view;
+    KdmClock*		clock;
+    QLabel*		pixLabel;
+    QLabel*		loginLabel;
+    QLabel*		sessionargLabel;
+    QLabel*		passwdLabel;
+    QLabel*		failedLabel;
+    KLoginLineEdit*	loginEdit;
+    KPasswordEdit*	passwdEdit; 
+    QFrame*		separator;
+    QPushButton*	goButton;
+    QPushButton*	chooserButton;
+    QPushButton*	quitButton;
+    QPushButton*	cancelButton;
+    QPushButton*	shutdownButton;
+    QComboBox*		sessionargBox;
 
 };
 
