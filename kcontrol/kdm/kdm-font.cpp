@@ -110,9 +110,9 @@ void KDMFontWidget::save()
 
 void KDMFontWidget::set_def()
 {
-  stdfont = QFont("helvetica", 12);
-  failfont = QFont("helvetica", 12, QFont::Bold);
-  greetfont = QFont("charter", 24);
+  stdfont = QFont("helvetica", 10);
+  failfont = QFont("helvetica", 10, QFont::Bold);
+  greetfont = QFont("charter", 20);
 }
 
 
