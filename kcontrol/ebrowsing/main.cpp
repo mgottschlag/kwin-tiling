@@ -49,8 +49,8 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name)
     tab = new QTabWidget(this);
     layout->addWidget(tab);
 
-    opts = new FilterOptions(this);
 #if 0
+    opts = new FilterOptions(this);
     tab->addTab(opts, i18n("&Filters"));
     connect(opts, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 #endif
