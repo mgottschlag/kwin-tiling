@@ -19,28 +19,20 @@
    
   */
 
-
-#include <kcontrol.h>
-#include "locale.h"
-#include <klocale.h>
 #include <stdio.h>
 
+#include <qgroupbox.h>
+#include <qlabel.h>
+#include <qobjectlist.h>
 
-class KLocaleApplication : public KControlApplication
-{
-public:
+#include <kcontrol.h>
+#include <klocale.h>
 
-  KLocaleApplication(int &argc, char **arg, const char *name);
+#include <kglobal.h>
 
-  void init();
-  void apply();
-  void defaultValues();
-
-private:
-
-  KLocaleConfig *locale;
-};
-
+#include "locale.h"
+#include "localeadv.h"
+#include "main.h"
 
 KLocaleApplication::KLocaleApplication(int &argc, char **argv, const char *name)
   : KControlApplication(argc, argv, name)
@@ -52,6 +44,11 @@ KLocaleApplication::KLocaleApplication(int &argc, char **argv, const char *name)
       if (!pages || pages->contains("language"))
         addPage(locale = new KLocaleConfig(dialog, "locale"), 
 		i18n("&Locale"), "locale-1.html");
+      if (!pages || pages->contains("advanced"))
+        addPage(localeadv = new KLocaleConfigAdvanced(dialog, "advanced"), 
+		i18n("&Numbers && Money"), "locale-2.html");
+
+      reTranslate();
 
       if (locale)
         dialog->show();
@@ -68,19 +65,54 @@ void KLocaleApplication::init()
 {
 }
 
-
 void KLocaleApplication::apply()
 {
   if (locale)
     locale->applySettings();
+  if (locale)
+    localeadv->applySettings();
 }
 
 void KLocaleApplication::defaultValues()
 {
   if (locale)
     locale->defaultSettings();
+  if (localeadv)
+    localeadv->defaultSettings();
 }
 
+void KLocaleApplication::reTranslate()
+{
+  QObjectList it;
+  it.append(kapp-> mainWidget());
+  reTranslate(it);
+}
+
+void KLocaleApplication::reTranslate(QObjectListIt it)
+{
+    QObject *wc;
+    while( (wc = it.current()) != 0 ) {
+      ++it;
+      if (wc->children())
+        reTranslate(QObjectListIt(*wc->children()));
+
+      if ( !qstrcmp(wc->name(), "unnamed") )
+         continue;
+      if ( !wc->isWidgetType() )
+         continue;
+
+      if ( !qstrcmp(wc->className(), "QGroupBox"))
+      {
+        ((QGroupBox *)wc)->setTitle(i18n(wc->name()));
+        ((QGroupBox *)wc)->setMinimumSize(((QGroupBox *)wc)->sizeHint());
+      }
+      else if ( !qstrcmp(wc->className(), "QLabel"))
+      {
+        ((QLabel *)wc)->setText(i18n(wc->name()));
+        ((QLabel *)wc)->setMinimumSize(((QLabel *)wc)->sizeHint());
+      }
+    }
+}
 
 int main(int argc, char **argv)
 {

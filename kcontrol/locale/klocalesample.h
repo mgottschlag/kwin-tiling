@@ -1,7 +1,8 @@
 /*
- * locale.h
+ * locale.cpp
  *
  * Copyright (c) 1998 Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
+ * Copyright (c) 1999 Hans Petter Bieker <bieker@pvv.ntnu.no>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -21,55 +22,28 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#ifndef __KLOCALESAMPLE_H__
+#define __KLOCALESAMPLE_H__
 
-#ifndef __KLOCALECONFIG_H__
-#define __KLOCALECONFIG_H__
-
-
-#include <kcontrol.h>
+#include <qlayout.h>
 
 class QLabel;
-class KLocale;
-class KLanguageCombo;
-class KLocaleSample;
 
-class KLocaleConfig : public KConfigWidget
+class KLocaleSample : public QGridLayout
 {
-  Q_OBJECT
-
 public:
-  KLocaleConfig( QWidget *parent=0, const char *name=0);
-  ~KLocaleConfig( );
-
-  void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
+  KLocaleSample(QWidget *parent=0, const char*name=0);
+  ~KLocaleSample();
 
 public slots:
-  void loadSettings();
-  void applySettings();
-  void defaultSettings();
-    
-private:
-  KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate;
+  void update();
 
-  // samples for how things will display w/selected locale
+private:
   QLabel *textSample;
   QLabel *numberSample;
   QLabel *moneySample;
   QLabel *timeSample;
   QLabel *dateSample;
-
-  bool changedFlag;
-  KLocale *locale;
-  KLocaleSample *sample;
-
-private slots:
-  void changedCountry(int);
-  void changedLanguage(int);
-  void changedNumber(int);
-  void changedMoney(int);
-  void changedTime(int);
-  void update();
-  void readLocale(const QString &path, QString &name, const QString &sub) const;
 };
 
 #endif

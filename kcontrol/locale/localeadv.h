@@ -1,7 +1,7 @@
 /*
- * locale.h
+ * localeadv.h
  *
- * Copyright (c) 1998 Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
+ * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -22,54 +22,56 @@
  */
 
 
-#ifndef __KLOCALECONFIG_H__
-#define __KLOCALECONFIG_H__
-
+#ifndef __KLOCALECONFIGADV_H__
+#define __KLOCALECONFIGADV_H__
 
 #include <kcontrol.h>
 
-class QLabel;
-class KLocale;
+class QLineEdit;
+
 class KLanguageCombo;
 class KLocaleSample;
 
-class KLocaleConfig : public KConfigWidget
+class KLocaleConfigAdvanced : public KConfigWidget
 {
   Q_OBJECT
 
 public:
-  KLocaleConfig( QWidget *parent=0, const char *name=0);
-  ~KLocaleConfig( );
-
-  void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
+  KLocaleConfigAdvanced( QWidget *parent=0, const char *name=0);
+  ~KLocaleConfigAdvanced( );
 
 public slots:
   void loadSettings();
   void applySettings();
   void defaultSettings();
-    
-private:
-  KLanguageCombo *comboCountry, *comboLang, *comboNumber, *comboMoney, *comboDate;
-
-  // samples for how things will display w/selected locale
-  QLabel *textSample;
-  QLabel *numberSample;
-  QLabel *moneySample;
-  QLabel *timeSample;
-  QLabel *dateSample;
-
-  bool changedFlag;
-  KLocale *locale;
-  KLocaleSample *sample;
 
 private slots:
-  void changedCountry(int);
-  void changedLanguage(int);
-  void changedNumber(int);
-  void changedMoney(int);
-  void changedTime(int);
-  void update();
-  void readLocale(const QString &path, QString &name, const QString &sub) const;
+  // Numbers
+  void slotDecSymChanged(const QString &t);
+  void slotThoSepChanged(const QString &t);
+
+  // Money
+  void slotMonCurSymChanged(const QString &t);
+  void slotMonDecSymChanged(const QString &t);
+  void slotMonThoSepChanged(const QString &t);
+  void slotMonPosSignChanged(const QString &t);
+  void slotMonNegSignChanged(const QString &t);
+  void slotMonFraDigChanged(const QString &t);
+
+private:
+  KLocaleSample *sample;
+
+  // Numbers
+  QLineEdit *edDecSym;
+  QLineEdit *edThoSep;
+
+  // Money
+  QLineEdit *edMonCurSym;
+  QLineEdit *edMonDecSym;
+  QLineEdit *edMonThoSep;
+  QLineEdit *edMonPosSign;
+  QLineEdit *edMonNegSign;
+  QLineEdit *edMonFraDig;
 };
 
 #endif

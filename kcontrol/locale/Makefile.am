@@ -7,9 +7,9 @@ SUBDIRS = pics default
 
 bin_PROGRAMS = kcmlocale
 
-kcmlocale_SOURCES = main.cpp locale.cpp klangcombo.cpp
-METASOURCES = locale.moc klangcombo.moc
-noinst_HEADERS = locale.h klangcombo.h
+kcmlocale_SOURCES = main.cpp locale.cpp klangcombo.cpp klocalesample.cpp localeadv.cpp
+METASOURCES = locale.moc klangcombo.moc localeadv.moc
+noinst_HEADERS = locale.h klangcombo.h klocalesample.h localeadv.h
 EXTRA_DIST = kcmlocalerc 
 
 KDE_ICON = locale
