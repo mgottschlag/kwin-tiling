@@ -164,7 +164,7 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 void AddIRQLine(QListView *lBox, QCString s, void **opaque, bool ending)
 {
 	QStrList *strlist = (QStrList *) *opaque;
-	const char *str;
+	const char *str, *p = s.data();
 	int pos, irqnum=0;
 
 	if (!strlist) {
@@ -181,14 +181,14 @@ void AddIRQLine(QListView *lBox, QCString s, void **opaque, bool ending)
 	}
 
 	pos = s.find(" irq ");
-	irqnum = (pos < 0) ? 0 : atoi(&((s.latin1())[pos+5]));
+	irqnum = (pos < 0) ? 0 : atoi(p+pos+5);
 	if (irqnum) {
-		s.sprintf("%02d%s", irqnum, s.latin1());
+		s.sprintf("%02d%s", irqnum, p);
 	}
 	else {
-		s.sprintf("??%s", s.latin1());
+		s.sprintf("??%s", p);
 	}
-	strlist->inSort(s.latin1());
+	strlist->inSort(s.data());
 }
 
 bool GetInfo_IRQ (QListView *lBox)
@@ -283,20 +283,15 @@ bool GetInfo_Partitions (QListView *lbox)
 	lbox->addColumn(i18n("Mount Options"));
 
 	QListViewItem *olditem = 0;
-<<<<<<< info_netbsd.cpp
-	while ((s = t->readLine()) != "") {
-		orig_line = line = strdup(s.latin1());
-=======
 	while (!(s = t->readLine().latin1()).isEmpty()) {
 		orig_line = line = strdup(s);
->>>>>>> 1.3
 
 		device = strsep(&line, " ");
 
-		(void) strsep(&line, " "); // cosume word "on"
+		(void) strsep(&line, " "); // consume word "on"
 		mountpoint = strsep(&line, " ");
 
-		(void) strsep(&line, " "); // cosume word "type"
+		(void) strsep(&line, " "); // consume word "type"
 		type = strsep(&line, " ");
 
 		flags = line;
