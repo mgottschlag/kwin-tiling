@@ -51,13 +51,37 @@ class QCheckBox;
 class QSlider;
 class QTabWidget;
 
+class MouseSettings
+{
+public:
+  void save(KConfig *);
+  void load(KConfig *);
+  void apply();
+public:
+ int num_buttons;
+ int middle_button;
+ bool handedEnabled;
+ int handed;
+ int accelRate;
+ int thresholdMove;
+ int doubleClickInterval;
+ int dragStartTime;
+ int dragStartDist;
+ bool singleClick;
+ int autoSelectDelay;
+ int visualActivate;
+ bool changeCursor;
+ bool largeCursor;
+};
+
 class MouseConfig : public KCModule
 {
   Q_OBJECT
 public:
   MouseConfig(QWidget *parent=0, const char* name=0);
-
-  void save( void );
+  ~MouseConfig();
+  
+  void save();
   void load();
   void defaults();
 
@@ -86,12 +110,6 @@ private:
 
   QButtonGroup *handedBox;
   QRadioButton *leftHanded, *rightHanded;
-  int num_buttons;
-  int middle_button;
-  bool handedEnabled;
-
-  int accelRate, thresholdMove, handed;
-
   QCheckBox *singleClick;
   QCheckBox *cbAutoSelect;
   QLabel *lDelay;
@@ -100,8 +118,12 @@ private:
   QCheckBox *cbCursor;
   QCheckBox *cbLargeCursor;
     
-    QTabWidget *tabwidget;
-    QWidget *tab1, *tab2;
+  QTabWidget *tabwidget;
+  QWidget *tab1, *tab2;
+
+  MouseSettings *settings;
+    
+  KConfig *config;
 };
 
 #endif

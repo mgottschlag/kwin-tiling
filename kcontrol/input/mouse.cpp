@@ -96,8 +96,6 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     lay->addSpacing(15);
     lay->addWidget(handedBox);
 
-    handedEnabled = true;
-
     wtstr = i18n("If you are left-handed, you may prefer to swap the"
          " functions of the left and right buttons on your pointing device"
          " by choosing the 'left-handed' option. If your pointing device"
@@ -287,7 +285,15 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     lay->addStretch(1);
 
+    config = new KConfig("kcminputrc");
+    settings = new MouseSettings;
     load();
+}
+
+MouseConfig::~MouseConfig()
+{
+    delete config;
+    delete settings;
 }
 
 int MouseConfig::getAccel()
@@ -331,8 +337,102 @@ void MouseConfig::setHandedness(int val)
 
 void MouseConfig::load()
 {
-  KConfig *config = new KConfig("kcminputrc");
+  settings->load(config);
+  rightHanded->setEnabled(settings->handedEnabled);
+  leftHanded->setEnabled(settings->handedEnabled);
+  setAccel(settings->accelRate);
+  setThreshold(settings->thresholdMove);
+  setHandedness(settings->handed);
 
+  doubleClickInterval->setValue(settings->doubleClickInterval);
+  dragStartTime->setValue(settings->dragStartTime);
+  dragStartDist->setValue(settings->dragStartDist);
+
+  singleClick->setChecked(settings->singleClick);
+
+  cbAutoSelect->setChecked( settings->autoSelectDelay >= 0 );
+  if ( settings->autoSelectDelay < 0 ) 
+     slAutoSelect->setValue( 0 );
+  else
+     slAutoSelect->setValue( settings->autoSelectDelay );
+  cbVisualActivate->setChecked( settings->visualActivate );
+  cbCursor->setChecked( settings->changeCursor );
+  cbLargeCursor->setChecked( settings->largeCursor );
+  slotClick();
+}
+
+void MouseConfig::save()
+{
+  settings->accelRate = getAccel();
+  settings->thresholdMove = getThreshold();
+  settings->handed = getHandedness();
+
+  settings->doubleClickInterval = doubleClickInterval->value();
+  settings->dragStartTime = dragStartTime->value();
+  settings->dragStartDist = dragStartDist->value();
+  settings->singleClick = singleClick->isChecked();
+  settings->autoSelectDelay = cbAutoSelect->isChecked()?slAutoSelect->value():-1;
+  settings->visualActivate = cbVisualActivate->isChecked();
+  settings->changeCursor = cbCursor->isChecked();
+  settings->largeCursor = cbLargeCursor->isChecked();
+
+  // Check if the user has asked us not to remind them that KDE needs
+  // restarting after a cursor size change.
+  bool wasLargeCursor =
+      config->readBoolEntry(
+        QString::fromLatin1("LargeCursor"), KDE_DEFAULT_LARGE_CURSOR
+                           );
+
+  settings->apply();
+  settings->save(config);
+  if (settings->largeCursor != wasLargeCursor) {
+    KMessageBox::information(this, i18n("KDE must be restarted for the cursor size change to take effect"), QString::null, "DoNotRemindCursor");
+  }
+}
+
+void MouseConfig::defaults()
+{
+    setThreshold(2);
+    setAccel(2);
+    setHandedness(RIGHT_HANDED);
+    doubleClickInterval->setValue(400);
+    dragStartTime->setValue(500);
+    dragStartDist->setValue(4);
+    singleClick->setChecked( KDE_DEFAULT_SINGLECLICK );
+    cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
+    slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
+    cbCursor->setChecked( KDE_DEFAULT_CHANGECURSOR );
+    cbLargeCursor->setChecked( KDE_DEFAULT_LARGE_CURSOR );
+    slotClick();
+}
+
+
+QString MouseConfig::quickHelp() const
+{
+  return i18n("<h1>Mouse</h1> This module allows you to choose various"
+     " options for the way in which your pointing device works. Your"
+     " pointing device may be a mouse, trackball, or some other hardware"
+     " that performs a similar function.");
+}
+
+
+void MouseConfig::slotClick()
+{
+  // Autoselect has a meaning only in single-click mode
+  cbAutoSelect->setEnabled(singleClick->isChecked());
+  // Delay has a meaning only for autoselect
+  bool bDelay = cbAutoSelect->isChecked() && singleClick->isChecked();
+  slAutoSelect->setEnabled( bDelay );
+  lDelay->setEnabled( bDelay );
+}
+
+void MouseConfig::changed()
+{
+  emit KCModule::changed(true);
+}
+
+void MouseSettings::load(KConfig *config)
+{
   int accel_num, accel_den, threshold;
   XGetPointerControl( kapp->getDisplay(),
               &accel_num, &accel_den, &threshold );
@@ -343,25 +443,22 @@ void MouseConfig::load()
   unsigned char map[5];
   num_buttons = XGetPointerMapping(kapp->getDisplay(), map, 5);
 
+  handedEnabled = true;
+
   switch (num_buttons)
     {
     case 1:
       /* disable button remapping */
-      rightHanded->setEnabled(false);
-      leftHanded->setEnabled(false);
       handedEnabled = false;
       break;
     case 2:
       if ( (int)map[0] == 1 && (int)map[1] == 2 )
-    h = RIGHT_HANDED;
+        h = RIGHT_HANDED;
       else if ( (int)map[0] == 2 && (int)map[1] == 1 )
-    h = LEFT_HANDED;
+        h = LEFT_HANDED;
       else
-    {
-      /* custom button setup: disable button remapping */
-      rightHanded->setEnabled(false);
-      leftHanded->setEnabled(false);
-    }
+        /* custom button setup: disable button remapping */
+        handedEnabled = false;
       break;
     case 3:
       middle_button = (int)map[1];
@@ -372,15 +469,11 @@ void MouseConfig::load()
       else
     {
       /* custom button setup: disable button remapping */
-      rightHanded->setEnabled(false);
-      leftHanded->setEnabled(false);
       handedEnabled = false;
     }
       break;
     default:
       /* custom setup with > 3 buttons: disable button remapping */
-      rightHanded->setEnabled(false);
-      leftHanded->setEnabled(false);
       handedEnabled = false;
       break;
     }
@@ -406,47 +499,21 @@ void MouseConfig::load()
   else if (key == NULL)
     handed = h;
 
-  setAccel(accelRate);
-  setThreshold(thresholdMove);
-  setHandedness(handed);
-
   // SC/DC/AutoSelect/ChangeCursor
   config->setGroup(QString::fromLatin1("KDE"));
-  int v;
-  v = config->readNumEntry("DoubleClickInterval", 400);
-  doubleClickInterval->setValue(v);
-  v = config->readNumEntry("StartDragTime", 500);
-  dragStartTime->setValue(v);
-  v = config->readNumEntry("StartDragDist", 4);
-  dragStartDist->setValue(v);
+  doubleClickInterval = config->readNumEntry("DoubleClickInterval", 400);
+  dragStartTime = config->readNumEntry("StartDragTime", 500);
+  dragStartDist = config->readNumEntry("StartDragDist", 4);
 
-  bool b = config->readBoolEntry(QString::fromLatin1("SingleClick"), KDE_DEFAULT_SINGLECLICK);
-  singleClick->setChecked(b);
-  int  autoSelect = config->readNumEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
-  bool visualActivate = config->readBoolEntry("VisualActivate", KDE_DEFAULT_VISUAL_ACTIVATE);
-  bool changeCursor = config->readBoolEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
-
-  bool largeCursor = config->readBoolEntry(QString::fromLatin1("LargeCursor"), KDE_DEFAULT_LARGE_CURSOR);
-
-  cbAutoSelect->setChecked( autoSelect >= 0 );
-  if ( autoSelect < 0 ) autoSelect = 0;
-  slAutoSelect->setValue( autoSelect );
-  cbVisualActivate->setChecked(visualActivate);
-  cbCursor->setChecked( changeCursor );
-  cbLargeCursor->setChecked(largeCursor);
-  slotClick();
-
-  delete config;
+  singleClick = config->readBoolEntry(QString::fromLatin1("SingleClick"), KDE_DEFAULT_SINGLECLICK);
+  autoSelectDelay = config->readNumEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
+  visualActivate = config->readBoolEntry("VisualActivate", KDE_DEFAULT_VISUAL_ACTIVATE);
+  changeCursor = config->readBoolEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
+  largeCursor = config->readBoolEntry(QString::fromLatin1("LargeCursor"), KDE_DEFAULT_LARGE_CURSOR);
 }
 
-void MouseConfig::save()
+void MouseSettings::apply()
 {
-  KConfig *config = new KConfig("kcminputrc");
-
-  accelRate = getAccel();
-  thresholdMove = getThreshold();
-  handed = getHandedness();
-
   XChangePointerControl( kapp->getDisplay(),
                          true, true, accelRate, 1, thresholdMove);
 
@@ -514,42 +581,6 @@ void MouseConfig::save()
           { };
   }
 
-  config->setGroup("Mouse");
-  config->writeEntry("Acceleration",accelRate);
-  config->writeEntry("Threshold",thresholdMove);
-  if (handed == RIGHT_HANDED)
-      config->writeEntry("MouseButtonMapping",QString("RightHanded"));
-  else
-      config->writeEntry("MouseButtonMapping",QString("LeftHanded"));
-
-  config->setGroup(QString::fromLatin1("KDE"));
-  config->writeEntry("DoubleClickInterval", doubleClickInterval->value(), true, true);
-  config->writeEntry("StartDragIime", dragStartTime->value(), true, true);
-  config->writeEntry("StartDragDist", dragStartDist->value(), true, true);
-  config->writeEntry(QString::fromLatin1("SingleClick"), singleClick->isChecked(), true, true);
-  config->writeEntry( "AutoSelectDelay", cbAutoSelect->isChecked()?slAutoSelect->value():-1, true, true );
-  config->writeEntry("VisualActivate", cbVisualActivate->isChecked(), true, true);
-  config->writeEntry( "ChangeCursor", cbCursor->isChecked(), true, true );
-
-  bool largeCursor = cbLargeCursor->isChecked();
-
-  // Check if the user has asked us not to remind them that KDE needs
-  // restarting after a cursor size change.
-
-  if (!config->readBoolEntry("DoNotRemindCursor", false)) {
-
-    bool wasLargeCursor =
-      config->readBoolEntry(
-        QString::fromLatin1("LargeCursor"), KDE_DEFAULT_LARGE_CURSOR
-                           );
-
-    if (largeCursor != wasLargeCursor) {
-      KMessageBox::information(this, i18n("KDE must be restarted for the cursor size change to take effect"), QString::null, "DoNotRemindCursor");
-    }
-  }
-
-  config->writeEntry( "LargeCursor", largeCursor, true, true );
-
   // Make sure we have the 'font' resource dir registered and can find the
   // override dir.
   //
@@ -565,58 +596,34 @@ void MouseConfig::save()
   QString installedFont = overrideDir + "/cursor.pcf.gz";
 
   if (!largeCursor)
-    KIO::NetAccess::del(installedFont);
+    unlink(QFile::encodeName(installedFont));
   else if (!!font)
     KIO::NetAccess::copy(font, installedFont);
 
   system(QString("mkfontdir " + overrideDir).ascii());
+}
 
+void MouseSettings::save(KConfig *config)
+{
+  config->setGroup("Mouse");
+  config->writeEntry("Acceleration",accelRate);
+  config->writeEntry("Threshold",thresholdMove);
+  if (handed == RIGHT_HANDED)
+      config->writeEntry("MouseButtonMapping",QString("RightHanded"));
+  else
+      config->writeEntry("MouseButtonMapping",QString("LeftHanded"));
+
+  config->setGroup(QString::fromLatin1("KDE"));
+  config->writeEntry("DoubleClickInterval", doubleClickInterval, true, true);
+  config->writeEntry("StartDragIime", dragStartTime, true, true);
+  config->writeEntry("StartDragDist", dragStartDist, true, true);
+  config->writeEntry(QString::fromLatin1("SingleClick"), singleClick, true, true);
+  config->writeEntry( "AutoSelectDelay", autoSelectDelay, true, true );
+  config->writeEntry("VisualActivate", visualActivate, true, true);
+  config->writeEntry( "ChangeCursor", changeCursor, true, true );
+  config->writeEntry( "LargeCursor", largeCursor, true, true );
   config->sync();
-
   KIPC::sendMessageAll(KIPC::SettingsChanged, KApplication::SETTINGS_MOUSE);
-  delete config;
 }
-
-void MouseConfig::defaults()
-{
-    setThreshold(2);
-    setAccel(2);
-    setHandedness(RIGHT_HANDED);
-    doubleClickInterval->setValue(400);
-    dragStartTime->setValue(500);
-    dragStartDist->setValue(4);
-    singleClick->setChecked( KDE_DEFAULT_SINGLECLICK );
-    cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
-    slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
-    cbCursor->setChecked( KDE_DEFAULT_CHANGECURSOR );
-    cbLargeCursor->setChecked( KDE_DEFAULT_LARGE_CURSOR );
-    slotClick();
-}
-
-
-QString MouseConfig::quickHelp() const
-{
-  return i18n("<h1>Mouse</h1> This module allows you to choose various"
-     " options for the way in which your pointing device works. Your"
-     " pointing device may be a mouse, trackball, or some other hardware"
-     " that performs a similar function.");
-}
-
-
-void MouseConfig::slotClick()
-{
-  // Autoselect has a meaning only in single-click mode
-  cbAutoSelect->setEnabled(singleClick->isChecked());
-  // Delay has a meaning only for autoselect
-  bool bDelay = cbAutoSelect->isChecked() && singleClick->isChecked();
-  slAutoSelect->setEnabled( bDelay );
-  lDelay->setEnabled( bDelay );
-}
-
-void MouseConfig::changed()
-{
-  emit KCModule::changed(true);
-}
-
 
 #include "mouse.moc"

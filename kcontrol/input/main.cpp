@@ -52,7 +52,7 @@ extern "C"
 
   void init_keyboard()
   {
-    KConfig *config = new KConfig("kcminputrc");
+    KConfig *config = new KConfig("kcminputrc", true); // Read-only, no globals
     config->setGroup("Keyboard");
 
     XKeyboardState   kbd;
@@ -66,16 +66,10 @@ extern "C"
                            KBKeyClickPercent | KBAutoRepeatMode,
                            &kbdc);
 
+    MouseSettings settings;
+    settings.load(config);
+    settings.apply();
     delete config;
-  }
-
-  void init_mouse()
-  {
-    // TODO: avoid construction of gui
-    MouseConfig cfg(0,0);
-
-    cfg.load();
-    cfg.save();
   }
 
 }
