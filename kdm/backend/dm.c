@@ -612,7 +612,7 @@ StartRemoteLogin (struct display *d)
 static void
 StopInactiveDisplay (struct display *d)
 {
-    if (d->userSess < 0)
+    if (d->status != remoteLogin && d->userSess < 0)
 	StopDisplay (d);
 }
 

@@ -367,7 +367,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	} else if (fd >= 0 && !strcmp (ar[0], "list")) {
 	    Reply ("ok");
 	    for (di = displays; di; di = di->next) {
-		if (di->status != running || (!ar[1] && di->userSess < 0))
+		if (di->status != remoteLogin && di->userSess < 0 && !ar[1])
 		    continue;
 		bp = cbuf;
 		*bp++ = '\t';
@@ -386,6 +386,8 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		if (di->userName)
 		    str_cat (&bp, di->userName, sizeof(cbuf)/5);
 		*bp++ = ',';
+		if (di->status == remoteLogin)
+		    str_cat (&bp, "<remote>", 8);
 		Writer (fd, cbuf, bp - cbuf);
 	    }
 	    Reply ("\n");
@@ -480,6 +482,7 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    }
 	} else {
 	    if (!strcmp (ar[0], "login")) {
+		int nuke;
 		if (arrLen (ar) < 5) {
 		    fLog (d, fd, "bad", "missing argument(s)");
 		    goto bust;
@@ -493,15 +496,27 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 		    free (args);
 		} else
 		    setNLogin (di, ar[3], ar[4], 0, 2);
-		if (di->status == running && di->pid != -1) {
-		    if (di->userSess < 0 || !strcmp (ar[2], "now")) {
+		nuke = !strcmp (ar[2], "now");
+		switch (di->status) {
+		case running:
+		    if (di->pid != -1 && (di->userSess < 0 || nuke)) {
 			TerminateProcess (di->pid, SIGTERM);
 			di->status = raiser;
 		    }
-		} else if (di->status == reserve)
+		    break;
+		case remoteLogin:
+		    if (di->serverPid != -1 && nuke)
+			TerminateProcess (di->serverPid, d->termSignal);
+		    break;
+		case reserve:
 		    di->status = notRunning;
-		else if (di->status == textMode && !strcmp (ar[2], "now"))
+		    break;
+		case textMode:
 		    SwitchToX (di);
+		    break;
+		default:
+		    break;
+		}
 	    } else {
 		fLog (d, fd, "nosys", "unknown command");
 		goto bust;

@@ -54,7 +54,7 @@ AnyActiveDisplays (void)
 
 Debug("AnyActiveDisplays?\n");
     for (d = displays; d; d = d->next)
-	if (d->userSess >= 0)
+	if (d->status == remoteLogin || d->userSess >= 0)
 {Debug(" yes\n");
 	    return 1;
 }Debug(" no\n");
