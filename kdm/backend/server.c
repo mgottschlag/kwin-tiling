@@ -332,7 +332,7 @@ WaitForServer (struct display *d)
 	    Debug ("After XOpenDisplay(%s)\n", d->name);
 	    if (d->dpy) {
 #ifdef XDMCP
-	    	if ((d->displayType & location) == Foreign)
+	    	if ((d->displayType & d_location) == Foreign)
 		    GetRemoteAddress (d, ConnectionNumber (d->dpy));
 #endif
 	    	RegisterCloseOnFork (ConnectionNumber (d->dpy));
@@ -357,7 +357,7 @@ WaitForServer (struct display *d)
 void
 ResetServer (struct display *d)
 {
-    if (d->dpy && (d->displayType & origin) != FromXDMCP)
+    if (d->dpy && (d->displayType & d_origin) != FromXDMCP)
 	pseudoReset (d->dpy);
 }
 

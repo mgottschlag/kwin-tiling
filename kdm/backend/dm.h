@@ -365,7 +365,8 @@ extern RcStr *newStr (char *str);
 extern void delStr (RcStr *str);
 
 /* in session.c */
-extern char **defaultEnv (void);
+extern char **defaultEnv (char *user);
+extern char **inheritEnv (char **env, char **what);
 extern char **systemEnv (struct display *d, char *user, char *home);
 extern int source (char **environ, char *file);
 extern void DeleteXloginResources (struct display *d);
@@ -432,7 +433,7 @@ extern void mergeStrArrs (char ***darr, char **arr);
 extern void freeStrArr (char **arr);
 extern char **parseArgs (char **argv, char *string);
 extern char **setEnv (char **e, char *name, char *value);
-extern char **putEnv(const char *string, char **env);
+extern char **putEnv (const char *string, char **env);
 extern char *getEnv (char **e, char *name);
 extern char *localHostname (void);
 

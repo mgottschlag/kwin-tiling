@@ -434,11 +434,13 @@ CheckUtmp (void)
 #ifdef CSRG_BASED
 		    utp->checked = 1;
 #else
-		    if (ut->ut_type != USER_PROCESS)
+		    if (ut->ut_type == LOGIN_PROCESS)
 		    {
 			Debug ("utmp entry for %s marked waiting\n", utp->line);
 			utp->state = UtWait;
 		    }
+		    else if (ut->ut_type != USER_PROCESS)
+			break;
 		    else
 #endif
 		    {
@@ -780,7 +782,7 @@ WaitForChild (void)
 		 * terminal that the open attempt failed
  		 */
 #ifdef XDMCP
-		if ((d->displayType & origin) == FromXDMCP)
+		if ((d->displayType & d_origin) == FromXDMCP)
 		    SendFailed (d, "cannot open display");
 #endif
 		ExitDisplay (d, TRUE, TRUE, FALSE);
@@ -851,7 +853,7 @@ WaitForChild (void)
 static void
 CheckDisplayStatus (struct display *d)
 {
-    if ((d->displayType & origin) == FromFile)
+    if ((d->displayType & d_origin) == FromFile)
     {
 	if (d->stillThere) {
 	    if (d->status == notRunning)
@@ -903,7 +905,7 @@ StartDisplay (struct display *d)
     }
     d->hstent->lastStart = curtime;
 
-    if ((d->displayType & location) == Local)
+    if ((d->displayType & d_location) == Local)
     {
 	/* don't bother pinging local displays; we'll
 	 * certainly notice when they exit
@@ -1076,7 +1078,7 @@ ExitDisplay (
 	ReadnLog (d, d->fifofd);
 
     if (!doRestart ||
-	(d->displayType & lifetime) != Permanent ||
+	(d->displayType & d_lifetime) != Permanent ||
 	d->status == zombie)
 	StopDisplay (d);
     else

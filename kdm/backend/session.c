@@ -410,7 +410,7 @@ ManageSession (struct display *d)
 	     */
 	    if (!PingServer (d)) {
 		Debug("X-Server dead upon session exit.\n");
-		if ((d->displayType & origin) == Local)
+		if ((d->displayType & d_origin) == Local)
 		    sleep (10);
 		exitCode = EX_AL_RESERVER_DPY;
 	    }
@@ -486,6 +486,7 @@ source (char **environ, char *file)
 	    args = args_safe;
 	    args[0] = file;
 	    args[1] = NULL;
+	    return runAndWait (args, environ);
 	}
 	ret = runAndWait (args, environ);
 	freeStrArr (args);
@@ -495,17 +496,43 @@ source (char **environ, char *file)
 }
 
 char **
-defaultEnv (void)
+inheritEnv (char **env, char **what)
 {
-    char    **env, **exp, *value;
+    char	*value;
+
+    for (; *what; ++what)
+	if ((value = getenv (*what)))
+	    env = setEnv (env, *what, value);
+    return env;
+}
+
+char **
+defaultEnv (char *user)
+{
+    char	**env;
 
     env = 0;
-    for (exp = exportList; exp && *exp; ++exp)
-    {
-	value = getenv (*exp);
-	if (value)
-	    env = setEnv (env, *exp, value);
+
+#ifdef AIXV3
+    /* we need the tags SYSENVIRON: and USRENVIRON: in the call to setpenv() */
+    env = setEnv(env, "SYSENVIRON:", "");
+#endif
+
+    if (user) {
+	env = setEnv (env, "USER", user);
+#ifdef AIXV3
+	env = setEnv (env, "LOGIN", user);
+#endif
+	env = setEnv (env, "LOGNAME", user);
     }
+
+#ifdef AIXV3
+    env = setEnv(env, "USRENVIRON:", "");
+#endif
+
+    if (exportList)
+	env = inheritEnv (env, exportList);
+
     return env;
 }
 
@@ -513,15 +540,11 @@ char **
 systemEnv (struct display *d, char *user, char *home)
 {
     char	**env;
-    
-    env = defaultEnv ();
-    env = setEnv (env, "DISPLAY", d->name);
+
+    env = defaultEnv (user);
     if (home)
 	env = setEnv (env, "HOME", home);
-    if (user) {
-	env = setEnv (env, "USER", user);
-	env = setEnv (env, "LOGNAME", user);
-    }
+    env = setEnv (env, "DISPLAY", d->name);
     env = setEnv (env, "PATH", d->systemPath);
     env = setEnv (env, "SHELL", d->systemShell);
     if (d->authFile)

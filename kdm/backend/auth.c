@@ -1139,7 +1139,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 		!memcmp (auths[i]->name, "MIT-MAGIC-COOKIE-1", 18))
 	    {
 		magicCookie = i;
-	    	if ((d->displayType & location) == Local)
+	    	if ((d->displayType & d_location) == Local)
 	    	    writeLocalAuth (new, auths[i], d->name);
 #ifdef XDMCP
 	    	else
@@ -1160,7 +1160,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 		if (auths[i]->name_length == 14 &&
 		    !strncmp (auths[i]->name, "MIT-KERBEROS-5", 14))
 		    auths[i]->data_length = 0;
-	    	if ((d->displayType & location) == Local)
+	    	if ((d->displayType & d_location) == Local)
 	    	    writeLocalAuth (new, auths[i], d->name);
 #ifdef XDMCP
 	    	else
@@ -1242,7 +1242,7 @@ RemoveUserAuthorization (struct display *d, struct verify_info *verify)
 	doWrite = 0;
 	for (i = 0; i < d->authNum; i++)
 	{
-	    if ((d->displayType & location) == Local)
+	    if ((d->displayType & d_location) == Local)
 	    	writeLocalAuth (new, auths[i], d->name);
 #ifdef XDMCP
 	    else

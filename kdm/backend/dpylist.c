@@ -107,7 +107,7 @@ FindDisplayByAddress (XdmcpNetaddr addr, int addrlen, CARD16 displayNumber)
     struct display  *d;
 
     for (d = displays; d; d = d->next)
-	if ((d->displayType & origin) == FromXDMCP &&
+	if ((d->displayType & d_origin) == FromXDMCP &&
 	    d->displayNumber == displayNumber &&
 	    addressEqual (d->from.data, d->from.length, addr, addrlen))
 	{

@@ -246,15 +246,15 @@ from The Open Group.
  * fromXDMCP - started with XDMCP
  */
 
-#define location	1
+#define d_location	1
 #define Local		1
 #define Foreign		0
 
-#define lifetime	2
+#define d_lifetime	2
 #define Permanent	2
 #define Transient	0
 
-#define origin		4
+#define d_origin	4
 #define FromFile	4
 #define FromXDMCP	0
 

@@ -1556,6 +1556,8 @@ genSuppFiles (void)
 ":0 local@tty1 " XBINDIR "/X vt7"
 #elif defined(sun)
 ":0 local@console " XBINDIR "/X"
+#elif defined(_AIX)
+":0 local@lft0 " XBINDIR "/X"
 #else
 ":0 local " XBINDIR "/X"
 #endif

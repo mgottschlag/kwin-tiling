@@ -393,7 +393,7 @@ main (int argc, char **argv)
     dgrabTimeout = GetCfgInt (C_grabTimeout);
 /*    dpingInterval = GetCfgInt (C_pingInterval);*/	/* XXX not here */
     dpingTimeout = GetCfgInt (C_pingTimeout);
-    disLocal = (GetCfgInt (C_displayType) & location) == Local;
+    disLocal = (GetCfgInt (C_displayType) & d_location) == Local;
     if ((ci = GetCfgStr (C_console))) {
 	dhasConsole = ci[0] != 0;
 	free (ci);

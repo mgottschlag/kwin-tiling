@@ -363,7 +363,7 @@ init_vrf(struct display *d, const char *name, const char *password)
 
 #elif defined(AIXV3)
 
-    if (d->displayType & location == Foreign) {
+    if ((d->displayType & d_location) == Foreign) {
 	strncpy(hostname, d->name, sizeof(hostname) - 1);
 	hostname[sizeof(hostname)-1] = '\0';
 	if ((tmpch = strchr(hostname, ':')))
@@ -540,7 +540,7 @@ Restrict (struct display *d)
     char		*name;
 #ifndef USE_PAM
 # ifdef AIXV3
-    char		*msg
+    char		*msg;
 # else /* AIXV3 */
     struct stat		st;
     char		*nolg;
@@ -611,7 +611,7 @@ Restrict (struct display *d)
 
     msg = NULL;
     if (loginrestrictions(p->pw_name,
-		((d->displayType & location) == Foreign) ? S_RLOGIN : S_LOGIN,
+		((d->displayType & d_location) == Foreign) ? S_RLOGIN : S_LOGIN,
 		tty, &msg) == -1)
     {
 	Debug("loginrestrictions() - %s\n", msg ? msg : "Error\n");
@@ -818,26 +818,17 @@ static char **
 userEnv (struct display *d, int useSystemPath, char *user, char *home, char *shell)
 {
     char	**env;
-    char	**envvar;
-    char	*str;
 
-    env = defaultEnv ();
+    env = defaultEnv (user);
     env = setEnv (env, "DISPLAY", d->name);
     env = setEnv (env, "HOME", home);
-    env = setEnv (env, "LOGNAME", user); /* POSIX, System V */
-    env = setEnv (env, "USER", user);    /* BSD */
     env = setEnv (env, "PATH", useSystemPath ? d->systemPath : d->userPath);
     env = setEnv (env, "SHELL", shell);
 #if !defined(USE_PAM) && !defined(AIXV3) && defined(KERBEROS)
     if (krbtkfile[0] != '\0')
         env = setEnv (env, "KRBTKFILE", krbtkfile);
 #endif
-    for (envvar = envvars; *envvar; envvar++)
-    {
-	str = getenv(*envvar);
-	if (str)
-	    env = setEnv (env, *envvar, str);
-    }
+    env = inheritEnv (env, envvars);
     return env;
 }
 
@@ -1104,7 +1095,7 @@ StartClient(struct display *d, char *name, char *pass, char **sessargs)
 	     * Free old userEnviron and replace with newenv from setpenv().
 	     */
 	    free(theenv);
-	    freeEnv(verify->userEnviron);
+	    freeStrArr(verify->userEnviron);
 	    verify->userEnviron = newenv;
 	}
 #endif /* AIXV3 */
