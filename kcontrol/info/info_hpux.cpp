@@ -1,16 +1,18 @@
 /* 	$Id$
 	
 	!!!!! this file will be included by info.cpp !!!!!
+	
+	Mostly written by Helge Deller (deller@gmx.de),
+	with some pieces of code from Aubert Pierre.
 
-	Last modified:	by:
-	04.05.1999	added audio(alib)-support (deller)
-	27.04.1999	Helge Deller (deller@gmx.de)
-			[tested with HP-UX 10.20 (HP9000/715/64-EISA)]
+	Last modified:	done:
+	1999-06-18	added support for 64-Bit HP-UX in CPU-detection (deller)
+	1999-05-04	added audio(alib)-support (deller)
+	1999-04-27	[tested with HP-UX 10.20 (HP9000/715/64-EISA)]
 			added support for nearly all categories 
 			    (means: not finished!)
-	01.11.1998	first (nearly empty) version [Helge Deller]
+	1998-11-01	first, nearly empty version (deller)
 			with a little source for CPU from Aubert Pierre
-
 */
 
 #include <unistd.h>
@@ -95,7 +97,7 @@ struct _type_LOOKUPTABLE {
 };
 	 
 static struct _type_LOOKUPTABLE PA_LOOKUPTABLE[] = {	
-/* VERSION A.00.07    (/usr/lib/sched.models) */
+/* VERSION A.00.07    (taken from file: /usr/lib/sched.models) */
 { "600"		,V_1x0	,PA7000		},
 { "635"		,V_1x0	,PA7000		},
 { "645"		,V_1x0	,PA7000		},
@@ -297,7 +299,6 @@ bool GetInfo_CPU( KTabListBox *lBox )
   QString str,str2;
   QFontMetrics fm(lBox->tableFont());
   int	maxwidth,m;
-  int	i;
 			
   lBox->setNumCols(2);		// Table-Headers....
   maxwidth = 0;
@@ -318,7 +319,7 @@ bool GetInfo_CPU( KTabListBox *lBox )
 	{	QTextStream *t = new QTextStream(pipe, IO_ReadOnly);
 		str = t->readLine();
                 m = fm.width(str); if (m>maxwidth) maxwidth=m;
-		str = i18n("Model") + TAB + str;
+		str = i18n("Model") + TAB + str;	// Machine Model...
 		lBox->insertItem(str);
 		delete t;
 	}
@@ -341,16 +342,24 @@ bool GetInfo_CPU( KTabListBox *lBox )
   str += TAB + Value(pro.psp_iticksperclktick/10000) 
              + QString(" ") + i18n("MHz");
   lBox->insertItem(str);
-  
-  i = sysconf(_SC_CPU_VERSION);
-  switch( i )
+
+  switch(sysconf(_SC_CPU_VERSION))
   {	case CPU_HP_MC68020:	str2 = "Motorola 68020";	break;
 	case CPU_HP_MC68030:	str2 = "Motorola 68030";	break;
 	case CPU_HP_MC68040:	str2 = "Motorola 68040";	break;
 	case CPU_PA_RISC1_0:	str2 = "PA-RISC 1.0";		break;
 	case CPU_PA_RISC1_1:	str2 = "PA-RISC 1.1";		break;
 	case CPU_PA_RISC1_2:	str2 = "PA-RISC 1.2";		break;
-	case CPU_PA_RISC2_0:	str2 = "PA-RISC 2.0";		break;
+	case CPU_PA_RISC2_0:	
+#if defined(_SC_KERNEL_BITS)
+              			switch (sysconf(_SC_KERNEL_BITS)) {
+              			    case 64: str2 = "PA-RISC 2.0w (64 bit)";	break;
+              			    case 32: str2 = "PA-RISC 2.0n (32 bit)";	break;
+              			    default: str2 = "PA-RISC 2.0"; 		break;
+              			};				break;
+#else  /* !defined(_SC_KERNEL_BITS) */
+				str2 = "PA-RISC 2.0";		break;
+#endif
 	default:		str2 = i18n("(unknown)"); 	break;
   }
   I18N_MAX(str,i18n("CPU Architecture"),fm,maxwidth);
@@ -380,7 +389,7 @@ bool GetInfo_CPU( KTabListBox *lBox )
       + i18n("MB");	// Mega-Byte
   lBox->insertItem(str);
 
-  I18N_MAX(str,i18n("Size of one Page"),fm,maxwidth);
+  I18N_MAX(str,i18n("Size of one Page"),fm,maxwidth);	// ..of one Memory Page.
   str += TAB + Value(pst.page_size) + QString(" ") + i18n("Bytes");
   lBox->insertItem(str);
 
