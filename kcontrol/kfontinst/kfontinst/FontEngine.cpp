@@ -568,7 +568,7 @@ int CFontEngine::scaleMetric(int metric)
         case TRUE_TYPE:
             return (int)(((metric*1000.0)/((double)itsFt.face->units_per_EM))+0.5);
         case TYPE_1:
-            return metric;
+            return metric && !(metric&0xFFFF) ? metric>>16 : metric;
         default:
             return 0;
     }
