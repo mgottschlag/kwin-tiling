@@ -111,6 +111,7 @@ private:
     bool        mSuspended;
     QTimer      mSuspendTimer;
     bool        mVisibility;
+    bool        mDPMSDepend;
     QTimer      mCheckDPMS;
     QValueStack< QWidget* > mDialogs;
     bool        mRestoreXF86Lock;

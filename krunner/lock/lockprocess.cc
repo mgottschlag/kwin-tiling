@@ -137,17 +137,6 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
 
     connect(&mSuspendTimer, SIGNAL(timeout()), SLOT(suspend()));
 
-#ifdef HAVE_DPMS
-    BOOL on;
-    CARD16 state;
-    DPMSInfo(qt_xdisplay(), &state, &on);
-    if (on)
-    {
-        connect(&mCheckDPMS, SIGNAL(timeout()), SLOT(checkDPMSActive()));
-        mCheckDPMS.start(60000);
-    }
-#endif
-
     QStringList dmopt =
         QStringList::split(QChar(','),
                             QString::fromLatin1( ::getenv( "XDM_MANAGED" )));
@@ -159,6 +148,19 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
 
     configure();
     
+#ifdef HAVE_DPMS
+    if (mDPMSDepend) {
+        BOOL on;
+        CARD16 state;
+        DPMSInfo(qt_xdisplay(), &state, &on);
+        if (on)
+        {
+            connect(&mCheckDPMS, SIGNAL(timeout()), SLOT(checkDPMSActive()));
+            mCheckDPMS.start(60000);
+        }
+    }
+#endif
+
     greetPlugin.library = 0;
 }
 
@@ -285,8 +287,7 @@ void LockProcess::configure()
 #ifdef HAVE_DPMS
     //if the user  decided that the screensaver should run independent from
     //dpms, we shouldn't check for it, aleXXX
-    if (config.readBoolEntry("DPMS-dependent", false)==false)
-       mCheckDPMS.stop();
+    mDPMSDepend = config.readBoolEntry("DPMS-dependent", false);
 #endif
 
     mPriority = config.readNumEntry("Priority", 19);
