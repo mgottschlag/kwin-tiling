@@ -12,6 +12,8 @@
 #include <qlayout.h>
 #include <qframe.h>
 #include <qpushbutton.h>
+#include <qmessagebox.h>
+#include <qsimplerichtext.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kglobalsettings.h>
@@ -69,7 +71,7 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
     if (nsess) {
 	mButton = new QPushButton(i18n("\nStart\n&New\nSession\n"), winFrame, "button");
 	layout->addMultiCellWidget(mButton, 0,1, 3,3, AlignCenter);
-	connect(mButton, SIGNAL(clicked()), SIGNAL(startNewSession()));
+	connect(mButton, SIGNAL(clicked()), SLOT(slotStartNewSession()));
 	mButton->installEventFilter(this);
     } else
 	mButton = 0;
@@ -226,11 +228,12 @@ void PasswordDlg::passwordChecked(KProcess *proc)
 	    */
         if (mPassProc.normalExit() && !mPassProc.exitStatus())
         {
+	    accept();
+        }
+        else if ( mPassProc.exitStatus() == 2 )
+	{
 /*
 XXX this needs to go into a separate routine at startup time
-            stopSaver();
-	    if ( mPassProc.exitStatus() == 2 )
-	    {
 		KMessageBox::error(0,
 		  i18n( "<h1>Screen Locking Failed!</h1>"
 		  "Your screen was not locked because the <i>kcheckpass</i> "
@@ -240,11 +243,11 @@ XXX this needs to go into a separate routine at startup time
 		  "kcheckpass as root. If you are using a pre-compiled "
 		  "package, contact the packager." ),
 		  i18n( "Screen Locking Failed" ) );
-	    }
-	    kapp->quit();
 */
-	    accept();
-        }
+            kdDebug(1204) << "kcheckpass cannot verify password. not setuid root?" << endl;
+            mLabel->setText(i18n("Verification failed\nKill kdesktop_lock"));
+            mFailedTimerId = startTimer(10000);
+	}
         else
         {
             mLabel->setText(i18n("Failed"));
@@ -272,4 +275,109 @@ void PasswordDlg::show()
     }
     setActiveWindow();
     setFocus();
+}
+
+void PasswordDlg::slotStartNewSession()
+{
+    killTimer(mTimeoutTimerId);
+
+    QDialog *dialog = new QDialog( this, "warnbox", true, WStyle_Customize | WStyle_NoBorder );
+    QFrame *winFrame = new QFrame( dialog );
+    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
+    winFrame->setLineWidth( 2 );
+    QVBoxLayout *vbox = new QVBoxLayout( dialog );
+    vbox->addWidget( winFrame );
+
+    QLabel *label1 = new QLabel( winFrame );
+    label1->setPixmap( QMessageBox::standardIcon( QMessageBox::Warning ) );
+    QString qt_text = 
+          i18n("You have chosen to open another desktop session "
+               "instead of resuming the current one.<br>"
+               "The current session will be hidden "
+               "and a new login screen will be displayed.<br>"
+               "An F-key is assigned to each session; "
+               "F%1 is usually assigned to the first session, "
+               "F%2 to the second session and so on. "
+               "You can switch between sessions by pressing "
+               "CTRL, ALT and the appropriate F-key at the same time.")
+            .arg(7).arg(8);
+    QLabel *label2 = new QLabel( qt_text, winFrame );
+    QPushButton *okbutton = new QPushButton( KStdGuiItem::cont().text(), winFrame );
+    okbutton->setDefault( true );
+    connect( okbutton, SIGNAL( clicked() ), dialog, SLOT( accept() ) );
+    QPushButton *cbutton = new QPushButton( KStdGuiItem::cancel().text(), winFrame );
+    connect( cbutton, SIGNAL( clicked() ), dialog, SLOT( reject() ) );
+
+    QBoxLayout *hbox = new QHBoxLayout( 0 );
+    hbox->addStretch( 1 );
+    hbox->addWidget( okbutton );
+    hbox->addStretch( 1 );
+    hbox->addWidget( cbutton );
+    hbox->addStretch( 1 );
+
+    QGridLayout *grid = new QGridLayout( winFrame, 2, 2, 10 );
+    grid->addWidget( label1, 0, 0, Qt::AlignCenter );
+    grid->addWidget( label2, 0, 1, Qt::AlignCenter );
+    grid->addMultiCellLayout( hbox, 1,1, 0,1 );
+
+    // stolen from kmessagebox
+    int pref_width = 0;
+    int pref_height = 0;
+    // Calculate a proper size for the text.
+    {
+       QSimpleRichText rt(qt_text, dialog->font());
+       int scr = QApplication::desktop()->screenNumber(dialog);
+
+       pref_width = QApplication::desktop()->screenGeometry(scr).width() / 3;
+       rt.setWidth(pref_width);
+       int used_width = rt.widthUsed();
+       pref_height = rt.height();
+       if (used_width <= pref_width)
+       {
+          while(true)
+          {
+             int new_width = (used_width * 9) / 10;
+             rt.setWidth(new_width);
+             int new_height = rt.height();
+             if (new_height > pref_height)
+                break;
+             used_width = rt.widthUsed();
+             if (used_width > new_width)
+                break;
+          }
+          pref_width = used_width;
+       }
+       else
+       {
+          if (used_width > (pref_width *2))
+             pref_width = pref_width *2;
+          else
+             pref_width = used_width;
+       }
+    }
+    label2->setFixedSize(QSize(pref_width+10, pref_height));
+
+    dialog->show();
+    QApplication::flushX();
+    for(;;)
+    { // wait for the window to get mapped
+        XWindowAttributes attrs;
+        if( XGetWindowAttributes( qt_xdisplay(), dialog->winId(), &attrs )
+            && attrs.map_state != IsUnmapped )
+            break;
+    }
+    dialog->setActiveWindow();
+    dialog->setFocus();
+
+    int ret = dialog->exec();
+
+    delete dialog;
+
+    setActiveWindow();
+    mEntry->setFocus();
+
+    if (ret == QDialog::Accepted)
+	emit startNewSession();
+
+    mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
 }

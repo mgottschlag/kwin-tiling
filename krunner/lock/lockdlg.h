@@ -38,6 +38,7 @@ protected:
 
 protected slots:
     void passwordChecked(KProcess *);
+    void slotStartNewSession();
 
 private:
     void startCheckPassword();
