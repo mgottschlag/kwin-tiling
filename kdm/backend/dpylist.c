@@ -35,6 +35,8 @@ from The Open Group.
 #include "dm.h"
 #include "dm_error.h"
 
+#include <signal.h>
+
 static struct display	*displays;
 static struct disphist	*disphist;
 
