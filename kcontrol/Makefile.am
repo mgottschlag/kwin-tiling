@@ -1,5 +1,4 @@
-#SUBDIRS = kio konq desktop samba bell display input kwm info kdm kcontrol kpanel locale syssound keys sample themes
-SUBDIRS = samba bell display input kwm info kdm kcontrol kpanel locale syssound keys sample odbc
+SUBDIRS = samba bell display input kwm info kdm kcontrol kpanel locale syssound keys sample odbc kio konq desktop
 
 messages:
 	@set fnord $(MAKEFLAGS); amf=$$2; \
