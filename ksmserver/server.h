@@ -124,7 +124,8 @@ private:
     void completeKilling();
 
     void discardSession();
-    void storeSesssion();
+    void storeSession();
+    void discardStoredSession();
 
     void startProtection();
     void endProtection();

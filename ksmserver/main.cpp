@@ -98,7 +98,7 @@ void sanity_check( int argc, char* argv[] )
   if (msg.isEmpty())
   {
      path += "/.ICEauthority";
- 
+
      if (access(path.data(), W_OK) && (errno != ENOENT))
         msg = "No write access to '%s'.";
      else if (access(path.data(), R_OK) && (errno != ENOENT))
@@ -107,7 +107,7 @@ void sanity_check( int argc, char* argv[] )
   if (msg.isEmpty())
   {
      path = getenv("KDETMP");
-     if (path.isEmpty()) 
+     if (path.isEmpty())
         path = "/tmp";
      if (!writeTest(path))
      {
@@ -140,7 +140,7 @@ void sanity_check( int argc, char* argv[] )
   }
   if (!msg.isEmpty())
   {
-    const char *msg_pre = 
+    const char *msg_pre =
              "The following installation problem was detected\n"
              "while trying to start KDE:"
              "\n\n    ";
@@ -148,11 +148,11 @@ void sanity_check( int argc, char* argv[] )
     fprintf(stderr, msg_pre);
     fprintf(stderr, msg.data(), path.data());
     fprintf(stderr, msg_post);
- 
+
     QApplication a(argc, argv);
     QCString qmsg(256+path.length());
     qmsg.sprintf(msg.data(), path.data());
-    qmsg = msg_pre+qmsg+msg_post; 
+    qmsg = msg_pre+qmsg+msg_post;
     QMessageBox::critical(0, "KDE Installation Problem!",
         QString::fromLatin1(qmsg.data()));
     exit(255);
@@ -202,7 +202,7 @@ int main( int argc, char* argv[] )
 #endif
 
     KSMServer *server = new KSMServer( QString::fromLatin1(wm), only_local);
-    IceSetIOErrorHandler (IoErrorHandler );
+    IceSetIOErrorHandler( IoErrorHandler );
 
     KConfig *config = KGlobal::config();
 

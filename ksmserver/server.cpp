@@ -313,17 +313,20 @@ void KSMSaveYourselfRequestProc (
     SmsConn		/* smsConn */,
     SmPointer		/* managerData */,
     int  		/* saveType */,
-    Bool		/* shutdown */,
+    Bool		shutdown,
     int			/* interactStyle */,
     Bool		fast,
-    Bool		/* global */
+    Bool		global
 )
 {
-    the_server->shutdown( fast ?
-                            KApplication::ShutdownConfirmNo :
-                            KApplication::ShutdownConfirmDefault,
-                          KApplication::ShutdownTypeDefault,
-                          KApplication::ShutdownModeDefault );
+    if ( shutdown && global  )
+	the_server->shutdown( fast ?
+			      KApplication::ShutdownConfirmNo :
+			      KApplication::ShutdownConfirmDefault,
+			      KApplication::ShutdownTypeDefault,
+			      KApplication::ShutdownModeDefault );
+    // else one app only or checkpoint only, ksmserver does not yet
+    // support those modes
 }
 
 void KSMSaveYourselfPhase2RequestProc (
@@ -369,8 +372,10 @@ void KSMSetPropertiesProc (
     KSMClient* client = ( KSMClient* ) managerData;
     for ( int i = 0; i < numProps; i++ ) {
 	SmProp *p = client->property( props[i]->name );
-	if ( p )
+	if ( p ) {
 	    client->properties.removeRef( p );
+	    SmFreeProperty( p );
+	}
 	client->properties.append( props[i] );
 	if ( !qstrcmp( props[i]->name, SmProgram ) )
 	    the_server->clientSetProgram( client );
@@ -391,8 +396,10 @@ void KSMDeletePropertiesProc (
     KSMClient* client = ( KSMClient* ) managerData;
     for ( int i = 0; i < numProps; i++ ) {
 	SmProp *p = client->property( propNames[i] );
-	if ( p )
+	if ( p ) {
 	    client->properties.removeRef( p );
+	    SmFreeProperty( p );
+	}
     }
 }
 
@@ -905,8 +912,15 @@ void KSMServer::removeConnection( KSMConnection* conn )
 /*!
   Called from our IceIoErrorHandler
  */
-void KSMServer::ioError( IceConn /* iceConn */ )
+void KSMServer::ioError( IceConn iceConn  )
 {
+    QPtrListIterator<KSMClient> it ( clients );
+    while ( it.current() &&SmsGetIceConnection( it.current()->connection() ) != iceConn )
+	++it;
+
+    if ( it.current() ) {
+	printf("IO error for client %s\n", it.current()->program().latin1() );
+    }
 }
 
 void KSMServer::processData( int /*socket*/ )
@@ -976,74 +990,75 @@ void KSMServer::newConnection( int /*socket*/ )
     }
 }
 
-void KSMServer::shutdown( KApplication::ShutdownConfirm confirm, 
+
+void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
     KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode )
 {
     if ( state != Idle )
 	return;
     if ( dialogActive )
-        return;
+	return;
     dialogActive = true;
 
     bool maysd, maynuke;
     KApplication::ShutdownMode defsdmode;
     QString fifoname;
     QStringList dmopt =
-        QStringList::split( QChar( ',' ),
-                            QString::fromLatin1( ::getenv( "XDM_MANAGED" ) ) );
+	QStringList::split( QChar( ',' ),
+			    QString::fromLatin1( ::getenv( "XDM_MANAGED" ) ) );
     if ( dmopt.isEmpty() || dmopt.first()[0] != QChar( '/' ) ) {
-        fifoname = QString::null;
-        maysd = maynuke = false;
-        defsdmode = KApplication::ShutdownModeSchedule;
+	fifoname = QString::null;
+	maysd = maynuke = false;
+	defsdmode = KApplication::ShutdownModeSchedule;
     } else {
-        fifoname = dmopt.first();
-        maysd = dmopt.contains( QString::fromLatin1( "maysd" ) ) != 0;
-        maynuke = dmopt.contains( QString::fromLatin1( "mayfn" ) ) != 0;
-        if ( dmopt.contains( QString::fromLatin1( "fn" ) ) != 0 )
-            defsdmode = KApplication::ShutdownModeForceNow;
-        else if ( dmopt.contains( QString::fromLatin1( "tn" ) ) != 0 )
-            defsdmode = KApplication::ShutdownModeTryNow;
-        else
-            defsdmode = KApplication::ShutdownModeSchedule;
+	fifoname = dmopt.first();
+	maysd = dmopt.contains( QString::fromLatin1( "maysd" ) ) != 0;
+	maynuke = dmopt.contains( QString::fromLatin1( "mayfn" ) ) != 0;
+	if ( dmopt.contains( QString::fromLatin1( "fn" ) ) != 0 )
+	    defsdmode = KApplication::ShutdownModeForceNow;
+	else if ( dmopt.contains( QString::fromLatin1( "tn" ) ) != 0 )
+	    defsdmode = KApplication::ShutdownModeTryNow;
+	else
+	    defsdmode = KApplication::ShutdownModeSchedule;
     }
 
     // don't use KGlobal::config here! config may have changed!
     KConfig *cfg = new KConfig("ksmserverrc", false, false);
     cfg->setGroup("General" );
     bool old_saveSession = saveSession =
-        cfg->readBoolEntry( "saveSession", FALSE );
+			   cfg->readBoolEntry( "saveSession", FALSE );
     bool logoutConfirmed =
-        (confirm == KApplication::ShutdownConfirmYes) ? false :
-        (confirm == KApplication::ShutdownConfirmNo) ? true :
-        !cfg->readBoolEntry( "confirmLogout", TRUE );
+	(confirm == KApplication::ShutdownConfirmYes) ? false :
+       (confirm == KApplication::ShutdownConfirmNo) ? true :
+		  !cfg->readBoolEntry( "confirmLogout", TRUE );
     KApplication::ShutdownType old_sdtype = (KApplication::ShutdownType)
-        cfg->readNumEntry( "shutdownType",
-                           (int)KApplication::ShutdownModeSchedule );
+					    cfg->readNumEntry( "shutdownType",
+							       (int)KApplication::ShutdownModeSchedule );
     if (sdtype == KApplication::ShutdownTypeDefault)
-        sdtype = old_sdtype;
+	sdtype = old_sdtype;
     KApplication::ShutdownMode old_sdmode = (KApplication::ShutdownMode)
-        cfg->readNumEntry( "shutdownMode", (int)defsdmode );
+					    cfg->readNumEntry( "shutdownMode", (int)defsdmode );
     if (sdmode == KApplication::ShutdownModeDefault)
-        sdmode = old_sdmode;
+	sdmode = old_sdmode;
     delete cfg;
 
     if (!maysd)
-        sdtype = KApplication::ShutdownTypeNone;
+	sdtype = KApplication::ShutdownTypeNone;
     if (!maynuke && sdmode == KApplication::ShutdownModeForceNow)
-        sdmode = KApplication::ShutdownModeSchedule;
+	sdmode = KApplication::ShutdownModeSchedule;
 
     if ( !logoutConfirmed ) {
-        KSMShutdownFeedback::start(); // make the screen gray
-        connect( KSMShutdownFeedback::self(), SIGNAL( aborted() ), 
-                 SLOT( cancelShutdown() ) );
-        logoutConfirmed =
-            KSMShutdownDlg::confirmShutdown( saveSession, 
-                                             maysd, maynuke, sdtype, sdmode );
-    // ###### We can't make the screen remain gray while talking to the apps,
-    // because this prevents interaction ("do you want to save", etc.)
-    // TODO: turn the feedback widget into a list of apps to be closed,
-    // with an indicator of the current status for each.
-        KSMShutdownFeedback::stop(); // make the screen become normal again
+	KSMShutdownFeedback::start(); // make the screen gray
+	connect( KSMShutdownFeedback::self(), SIGNAL( aborted() ),
+		 SLOT( cancelShutdown() ) );
+	logoutConfirmed =
+	    KSMShutdownDlg::confirmShutdown( saveSession,
+					     maysd, maynuke, sdtype, sdmode );
+	// ###### We can't make the screen remain gray while talking to the apps,
+	// because this prevents interaction ("do you want to save", etc.)
+	// TODO: turn the feedback widget into a list of apps to be closed,
+	// with an indicator of the current status for each.
+	KSMShutdownFeedback::stop(); // make the screen become normal again
     }
 
     if ( logoutConfirmed ) {
@@ -1060,34 +1075,34 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
 	    config->writeEntry( "shutdownMode", (int)sdmode);
 	}
 	if ( saveSession )
-	    discardSession();
+	    discardStoredSession();
 	state = Shutdown;
 	startProtection();
 	for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	    c->resetState();
 	    SmsSaveYourself( c->connection(), saveSession?SmSaveBoth: SmSaveGlobal,
 			     TRUE, SmInteractStyleAny, FALSE );
+	
 	}
 	if ( clients.isEmpty() )
 	    completeShutdown();
 	if ( sdtype != KApplication::ShutdownTypeNone ) {
-            QFile fifo( fifoname );
-            if ( fifo.open( IO_WriteOnly | IO_Raw ) ) {
-                QCString cmd( "shutdown\t" );
-                cmd.append( sdtype == KApplication::ShutdownTypeReboot ? 
+	    QFile fifo( fifoname );
+	    if ( fifo.open( IO_WriteOnly | IO_Raw ) ) {
+		QCString cmd( "shutdown\t" );
+		cmd.append( sdtype == KApplication::ShutdownTypeReboot ?
 			    "reboot\t" : "halt\t" );
-                cmd.append( sdmode == KApplication::ShutdownModeForceNow ?
-                            "forcenow\n" :
-                            sdmode == KApplication::ShutdownModeTryNow ?
-                            "trynow\n" : "schedule\n" );
-                fifo.writeBlock( cmd.data(), cmd.length() );
-                fifo.close();
-            }
+		cmd.append( sdmode == KApplication::ShutdownModeForceNow ?
+			    "forcenow\n" :
+			    sdmode == KApplication::ShutdownModeTryNow ?
+			    "trynow\n" : "schedule\n" );
+		fifo.writeBlock( cmd.data(), cmd.length() );
+		fifo.close();
+	    }
 	}
     }
     dialogActive = false;
 }
-
 
 // callbacks
 void KSMServer::saveYourselfDone( KSMClient* client, bool success )
@@ -1220,7 +1235,9 @@ void KSMServer::completeShutdown()
 	return;
 
     if ( saveSession )
-	storeSesssion();
+	storeSession();
+    else
+	discardSession();
 
     // kill all clients
     state = Killing;
@@ -1255,8 +1272,9 @@ void KSMServer::completeKilling()
 		return;
 	}
 	// the wm was not killed yet, do it
-	for (KSMClient *c = clients.first(); c; c = clients.next())
+	for (KSMClient *c = clients.first(); c; c = clients.next()) {
 	    SmsDie( c->connection() );
+	}
     }
 }
 
@@ -1265,7 +1283,7 @@ void KSMServer::timeoutQuit()
     qApp->quit();
 }
 
-void KSMServer::discardSession()
+void KSMServer::discardStoredSession()
 {
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
@@ -1277,7 +1295,17 @@ void KSMServer::discardSession()
     config->deleteGroup("Session");
 }
 
-void KSMServer::storeSesssion()
+void KSMServer::discardSession()
+{
+    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	QStringList discardCommand = c->discardCommand();
+	if ( discardCommand.isEmpty())
+	    continue;
+	executeCommand( discardCommand );
+    }
+}
+
+void KSMServer::storeSession()
 {
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
@@ -1383,7 +1411,7 @@ bool KSMServer::process(const QCString &fun, const QByteArray &data,
         shutdown( (KApplication::ShutdownConfirm)confirm,
                   (KApplication::ShutdownType)sdtype,
                   (KApplication::ShutdownMode)sdmode );
-	replyType = "void"; 
+	replyType = "void";
         return true;
     }
     return DCOPObject::process(fun, data, replyType, replyData);
