@@ -116,7 +116,7 @@ void TaskbarConfig::save()
     if (!kapp->dcopClient()->isAttached())
         kapp->dcopClient()->attach();
     QByteArray data;
-    kapp->dcopClient()->send( "kicker", "Panel", "configure()", data );
+    kapp->dcopClient()->send( "kicker", "Panel", "restart()", data );
 }
 
 void TaskbarConfig::defaults()
