@@ -11,4 +11,4 @@ kdelnkdir = $(kde_servicesdir)
 
 kde_services_DATA = fontthumbnail.desktop
 
-INCLUDES= $(LIBFREETYPE_CFLAGS) $(all_includes) -I$(srcdir)/../kfontinst
+INCLUDES= $(LIBFREETYPE_CFLAGS) -I$(srcdir)/../kfontinst $(all_includes)

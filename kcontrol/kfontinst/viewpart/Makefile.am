@@ -8,7 +8,7 @@ noinst_HEADERS  = kfontviewpart.h kfontviewpart_factory.h
 
 kde_services_DATA = kfontviewpart.desktop
 
-INCLUDES = $(all_includes) -I$(srcdir)/../kfontinst
+INCLUDES = -I$(srcdir)/../kfontinst $(all_includes)
 METASOURCES = AUTO
 
 bin_SCRIPTS = kcmfontinst_install_fonts.sh
