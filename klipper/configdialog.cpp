@@ -15,7 +15,6 @@
 #include <qlistview.h>
 #include <qpushbutton.h>
 #include <qtooltip.h>
-#include <qvbox.h>
 #include <qwhatsthis.h>
 
 #include <kaboutdialog.h>
@@ -138,15 +137,16 @@ GeneralWidget::~GeneralWidget()
 
 ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
                             const char *name )
-    : QVGroupBox( parent, name )
+    : QVGroupBox( parent, name ),
+      advancedWidget( 0L )
 {
     ASSERT( list != 0L );
 
     setTitle( i18n("Action settings") );
 
-    QLabel *lblAction = new QLabel( 
+    QLabel *lblAction = new QLabel(
 	  i18n("Action &list (right click to add/remove commands):"), this );
-    
+
     listView = new ListView( this, "list view" );
     lblAction->setBuddy( listView );
     listView->addColumn( i18n("Regular expression (see http://doc.trolltech.com/qregexp.html#details)") );
@@ -212,18 +212,13 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
     label->setAlignment( WordBreak | AlignLeft | AlignVCenter );
 
     box->setStretchFactor( label, 5 );
-    
-    editListBox = new KEditListBox( i18n("D&isable actions for windows of type WM_CLASS:"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
-    
-    QWhatsThis::add( editListBox,
-          i18n("<qt>This lets you specify windows in which klipper should<br>"
-	       "not invoke \"actions\". Use"
-	       "<center><b>xprop | grep WM_CLASS</b></center>"
-	       "in a terminal to find out the WM_CLASS of a window.<br>"
-	       "Next, click on the window you want to examine. The<br>"
-	       "first string it outputs after the equal sign is the one<br>"
-	       "you need to enter here.</qt>"));
 
+    box = new QHBox( this );
+    QPushButton *advanced = new QPushButton( i18n("Advanced..."), box );
+    advanced->setFixedSize( advanced->sizeHint() );
+    connect( advanced, SIGNAL( clicked() ), SLOT( slotAdvanced() ));
+    (void) new QWidget( box ); // spacer
+    
     setOrientation( Horizontal );
 }
 
@@ -310,6 +305,51 @@ ActionList * ActionWidget::actionList()
 
     return list;
 }
+
+void ActionWidget::slotAdvanced()
+{
+    KDialogBase dlg( 0L, "advanced dlg", true, 
+                     i18n("Advanced Settings"),
+                     KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok );
+    QVBox *box = dlg.makeVBoxMainWidget();
+    AdvancedWidget *widget = new AdvancedWidget( box );
+    widget->setWMClasses( m_wmClasses );
+
+    dlg.resize( dlg.sizeHint().width(), 
+                dlg.sizeHint().height() +40); // or we get an ugly scrollbar :(
+    
+    if ( dlg.exec() == QDialog::Accepted ) {
+        m_wmClasses = widget->wmClasses();
+    }
+}
+
+AdvancedWidget::AdvancedWidget( QWidget *parent, const char *name )
+    : QVBox( parent, name )
+{
+    editListBox = new KEditListBox( i18n("D&isable actions for windows of type WM_CLASS:"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
+
+    QWhatsThis::add( editListBox,
+          i18n("<qt>This lets you specify windows in which klipper should<br>"
+	       "not invoke \"actions\". Use"
+	       "<center><b>xprop | grep WM_CLASS</b></center>"
+	       "in a terminal to find out the WM_CLASS of a window.<br>"
+	       "Next, click on the window you want to examine. The<br>"
+	       "first string it outputs after the equal sign is the one<br>"
+	       "you need to enter here.</qt>"));
+    
+    editListBox->setFocus();
+}
+
+AdvancedWidget::~AdvancedWidget()
+{
+}
+
+void AdvancedWidget::setWMClasses( const QStringList& items )
+{
+    editListBox->clear();
+    editListBox->insertStringList( items );
+}
+
 
 
 ///////////////////////////////////////////////////////

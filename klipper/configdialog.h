@@ -17,6 +17,7 @@
 #include <qevent.h>
 #include <qgroupbox.h>
 #include <qheader.h>
+#include <qvbox.h>
 #include <qvgroupbox.h>
 
 #include <kdialogbase.h>
@@ -46,6 +47,23 @@ private:
 
 };
 
+
+// only for use inside ActionWidget
+class AdvancedWidget : public QVBox
+{
+    Q_OBJECT
+
+public:
+    AdvancedWidget( QWidget *parent = 0L, const char *name = 0L );
+    ~AdvancedWidget();
+
+    void setWMClasses( const QStringList& items );
+    QStringList wmClasses() const { return editListBox->items(); }
+        
+private:
+    KEditListBox *editListBox;
+};
+    
 class ActionWidget : public QVGroupBox
 {
     Q_OBJECT
@@ -63,15 +81,20 @@ public:
      */
     ActionList * actionList();
 
+    void setWMClasses( const QStringList& items ) { m_wmClasses = items; }
+    QStringList wmClasses() const                 { return m_wmClasses; }
+
 private slots:
     void slotAddAction();
     void slotDeleteAction();
     void slotRightPressed( QListViewItem *, const QPoint&, int col );
     void slotItemChanged( QListViewItem *, const QPoint& , int );
+    void slotAdvanced();
 
 private:
     KListView *listView;
-    KEditListBox *editListBox;
+    QStringList m_wmClasses;
+    AdvancedWidget *advancedWidget;
 };
 
 class KeysWidget : public QVGroupBox
@@ -116,7 +139,7 @@ public:
 	return generalWidget->maxItems->value();
     }
     QStringList noActionsFor() const {
-	return actionWidget->editListBox->items();
+	return actionWidget->wmClasses();
     }
 
     void setKeepContents( bool enable ) {
@@ -135,7 +158,7 @@ public:
 	generalWidget->maxItems->setValue( items );
     }
     void setNoActionsFor( const QStringList& items ) {
-	actionWidget->editListBox->insertStringList( items );
+	actionWidget->setWMClasses( items );
     }
 
     virtual void show();
@@ -165,7 +188,6 @@ public:
 	    item = item->nextSibling();
 	}
 
-	qDebug("*** w, h: %i, %i", w, h);	
 	return QSize( w, h );
     }
 
