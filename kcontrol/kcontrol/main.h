@@ -36,9 +36,8 @@ class MyApplication : public KUniqueApplication
 
 public:
   
-  MyApplication(int argc, char *argv[], const QCString &appName);
-
-  virtual int newInstance(QValueList<QCString> params);
+  MyApplication();
+  virtual int newInstance();
 
 private:
 

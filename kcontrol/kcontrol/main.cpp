@@ -35,16 +35,23 @@
 
 
 #include <kapp.h>
+#include <kcmdlineargs.h>
 #include <dcopclient.h>
+#include <klocale.h>
 
 
 #include "main.h"
 #include "main.moc"
 #include "toplevel.h"
 
+static KCmdLineOptions options[] =
+{
+   { "+module", I18N_NOOP("Configuration module to open."), 0 },
+   { 0,0,0 }
+};
 
-MyApplication::MyApplication(int argc, char *argv[], const QCString &appName)
-  : KUniqueApplication(argc, argv, appName), toplevel(0)
+MyApplication::MyApplication()
+  : KUniqueApplication(), toplevel(0)
 {
   if (isRestored())
     RESTORE(TopLevel)
@@ -56,15 +63,13 @@ MyApplication::MyApplication(int argc, char *argv[], const QCString &appName)
 }
 
 
-int MyApplication::newInstance(QValueList<QCString> params)
+int MyApplication::newInstance()
 {
-  QValueList<QCString>::Iterator it = params.begin();
-  it++; // skip program name
-  for (; it != params.end(); it++)
-    {
-      toplevel->showModule(*it);
-    }
-
+  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+  for (int i=0; i < args->count(); i++)
+  {
+     toplevel->showModule(args->arg(i));
+  }
   toplevel->raise();
 
   return 0;
@@ -73,10 +78,16 @@ int MyApplication::newInstance(QValueList<QCString> params)
 
 int main(int argc, char *argv[])
 {
-  //if (!MyApplication::start(argc, argv, "kcontrol"))
-  //    exit(0); // Don't do anything if we are already running
+  KCmdLineArgs::init(argc, argv, "kcontrol", 
+	I18N_NOOP("KDE Control Centre - configuration manager for KDE."),
+        "v2.0pre");
+  KCmdLineArgs::addCmdLineOptions( options );
 
-  MyApplication app(argc, argv, "kcontrol");
+
+  if (!MyApplication::start())
+      exit(0); // Don't do anything if we are already running
+
+  MyApplication app;
 
   // show the whole stuff
   app.mainWidget()->show();
