@@ -51,6 +51,7 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	events->addColumn(i18n("Description"));
 	layout->setStretchFactor(events, 1);
 	eventview=new EventView(this);
+	eventview->setEnabled(false);
 	loadAll();
 	connect(apps, SIGNAL(selectionChanged(QListViewItem*)), 
 		SLOT(appSelected(QListViewItem*)));
@@ -89,12 +90,18 @@ void KNotifyWidget::loadAll()
 				KIconLoader::Small));
 		kapp->processEvents();
 	}
+	if (!apps->firstChild()) apps->setEnabled(false);
 	apps->setSelected(apps->firstChild(), true);
 	appSelected(apps->firstChild());
 }
 
 void KNotifyWidget::appSelected(QListViewItem *_i)
 {
+	if (!_i)
+	{
+		events->setEnabled(false);
+		return;
+	}
 	events->clear();
 	// Set the rest of the dialog to show the proper info
 	printf("appSelected : %s\n\n", (const char*)((ListViewItem*)_i)->file) ;
@@ -119,6 +126,12 @@ void KNotifyWidget::appSelected(QListViewItem *_i)
 
 void KNotifyWidget::eventSelected(QListViewItem *_i)
 {
+	if (!_i)
+	{
+		eventview->setEnabled(false);
+		return;
+	}
+	
 	QString file=((EventListViewItem*)_i)->file;
 	QString event=((EventListViewItem*)_i)->event;
 	

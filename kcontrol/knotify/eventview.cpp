@@ -80,7 +80,6 @@ void EventView::unload()
 {
 	
 	delete conf;
-	eventslist->clear();
 	enabled->setChecked(false);
 	file->setText("");
 	setEnabled(false);
