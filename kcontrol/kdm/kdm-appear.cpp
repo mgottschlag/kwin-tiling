@@ -166,12 +166,14 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   xLineLabel = new QLabel(i18n("&X:"), helper);
   glay->addWidget(xLineLabel, 0, 0);
   xLineEdit = new QLineEdit (helper);
+  connect( xLineEdit, SIGNAL( textChanged(const QString&) ), SLOT( changed() ));
   glay->addWidget(xLineEdit, 0, 1);
   xLineLabel->setBuddy(xLineEdit);
   xLineEdit->setValidator(posValidator);
   yLineLabel = new QLabel(i18n("&Y:"), helper);
   glay->addWidget(yLineLabel, 1, 0);
   yLineEdit = new QLineEdit (helper);
+  connect( yLineEdit, SIGNAL( textChanged(const QString&) ), SLOT( changed() ));
   glay->addWidget(yLineEdit, 1, 1);
   yLineLabel->setBuddy(yLineEdit);
   yLineEdit->setValidator(posValidator);
