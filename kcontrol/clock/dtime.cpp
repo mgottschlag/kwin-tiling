@@ -24,6 +24,7 @@
 
 #include <qmessagebox.h>
 #include <qcombobox.h>
+#include <qgroupbox.h>
 #include <qtimer.h>
 #include <qpushbutton.h>
 #include <qpainter.h>
@@ -49,20 +50,18 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // Start Dialog
   // *************************************************************
 
-  // Date frame
+  // Date box
+  QGroupBox* dateBox = new QGroupBox( this, "dateBox" );
 
-  QFrame* frame1 = new QFrame( this, "Frame_1" );
-  frame1->setFrameStyle( QFrame::Sunken | QFrame::Box );
+  QGridLayout *l1 = new QGridLayout( dateBox, 2, 3, 10 );
 
-  QGridLayout *l1 = new QGridLayout( frame1, 2, 3, 10 );
-
-  month = new QComboBox( FALSE, frame1, "ComboBox_1" );
+  month = new QComboBox( FALSE, dateBox, "ComboBox_1" );
   connect( month, SIGNAL(activated(int)), SLOT(set_month(int)) );
   month->setSizeLimit( 12 );
   l1->addWidget( month, 0, 0 );
   QWhatsThis::add( month, i18n("Here you can change the system date's month.") );
 
-  year = new QSpinBox( 1970, 3000, 1, frame1 );
+  year = new QSpinBox( 1970, 3000, 1, dateBox );
   year->setButtonSymbols( QSpinBox::PlusMinus );
   connect(year, SIGNAL(valueChanged(int)), this, SLOT(set_year(int)) );
   l1->addWidget( year, 0, 2 );
@@ -73,46 +72,44 @@ Dtime::Dtime(QWidget * parent, const char *name)
   QWhatsThis::add( cal, i18n("Here you can change the system date's day of the month.") );
 
   // Time frame
+  QGroupBox* timeBox = new QGroupBox( this, "timeBox" );
 
-  QFrame* frame2 = new QFrame( this, "Frame_2" );
-  frame2->setFrameStyle( QFrame::Sunken | QFrame::Box );
+  QVBoxLayout *v2 = new QVBoxLayout( timeBox, 10 );
 
-  QVBoxLayout *v2 = new QVBoxLayout( frame2, 10 );
-
-  kclock = new Kclock( frame2, "kclock" );
+  kclock = new Kclock( timeBox, "kclock" );
   kclock->setMinimumHeight(150);
   v2->addWidget( kclock );
 //  QWhatsThis::add( kclock, i18n("") );
 
   QGridLayout *v3 = new QGridLayout( 2, 9 );
 
-  v3->setColStretch( 0, 1 );
+//  v3->setColStretch( 0, 1 );
 
-  hour = new QLineEdit( frame2, "LineEdit_1" );
+  hour = new QLineEdit( timeBox, "LineEdit_1" );
   connect( hour, SIGNAL(textChanged(const QString&)), SLOT(set_time()) );
   hour->setMaxLength( 2 );
   hour->setFrame( TRUE );
   hour->setValidator(new KStrictIntValidator(0, 23, hour));
   v3->addMultiCellWidget(hour, 0, 1, 1, 1 );
 
-  QLabel *dots1 = new QLabel(":", frame2);
+  QLabel *dots1 = new QLabel(":", timeBox);
   dots1->setMinimumWidth( 7 );
   dots1->setAlignment( QLabel::AlignCenter );
   v3->addMultiCellWidget(dots1, 0, 1, 2, 2 );
 
-  minute = new QLineEdit( frame2, "LineEdit_2" );
+  minute = new QLineEdit( timeBox, "LineEdit_2" );
   connect( minute, SIGNAL(textChanged(const QString&)), SLOT(set_time()) );
   minute->setMaxLength( 2 );
   minute->setFrame( TRUE );
   minute->setValidator(new KStrictIntValidator(0, 59, minute));
   v3->addMultiCellWidget(minute, 0, 1, 3, 3 );
 
-  QLabel *dots2 = new QLabel(":", frame2);
+  QLabel *dots2 = new QLabel(":", timeBox);
   dots2->setMinimumWidth( 7 );
   dots2->setAlignment( QLabel::AlignCenter );
   v3->addMultiCellWidget(dots2, 0, 1, 4, 4 );
 
-  second = new QLineEdit( frame2, "LineEdit_3" );
+  second = new QLineEdit( timeBox, "LineEdit_3" );
   connect( second, SIGNAL(textChanged(const QString&)), SLOT(set_time()) );
   second->setMaxLength( 2 );
   second->setFrame( TRUE );
@@ -126,12 +123,12 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
   v3->addColSpacing( 6, 5 );
 
-  QPushButton* plusPB = new QPushButton( "+", frame2, "plusPB" );
+  QPushButton* plusPB = new QPushButton( "+", timeBox, "plusPB" );
   connect( plusPB, SIGNAL(pressed()), this, SLOT(inc_time()) );
   plusPB->setAutoRepeat( TRUE );
   v3->addWidget(plusPB, 0, 7 );
 
-  QPushButton* minusPB = new QPushButton( "-", frame2, "minusPB" );
+  QPushButton* minusPB = new QPushButton( "-", timeBox, "minusPB" );
   connect( minusPB, SIGNAL(pressed()), this, SLOT(dec_time()) );
   minusPB->setAutoRepeat( TRUE );
   v3->addWidget(minusPB, 1, 7 );
@@ -148,13 +145,13 @@ Dtime::Dtime(QWidget * parent, const char *name)
   plusPB->setFixedSize( 20, hour->height()/2 );
   minusPB->setFixedSize( 20, hour->height()/2 );
 
-  v3->setColStretch( 8, 1 );
+//  v3->setColStretch( 8, 1 );
 
   v2->addItem( v3 );
 
   QHBoxLayout *top = new QHBoxLayout( this, 5 );
-  top->addWidget(frame1, 1);
-  top->addWidget(frame2, 1);
+  top->addWidget(dateBox, 1);
+  top->addWidget(timeBox, 1);
 
   // *************************************************************
   // End Dialog
@@ -191,6 +188,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
       plusPB->setEnabled(false);
       minusPB->setEnabled(false);
     }
+
 }
 
 void Dtime::set_year(int y)

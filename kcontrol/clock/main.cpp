@@ -42,18 +42,21 @@ KclockModule::KclockModule(QWidget *parent, const char *name)
   QVBoxLayout *layout = new QVBoxLayout(this);
 
   dtime = new Dtime(this);
-  layout->addWidget(dtime, 1);
-
+  layout->addWidget(dtime);
   connect(dtime, SIGNAL(timeChanged(bool)), this, SLOT(moduleChanged(bool)));
 
   tzone = new Tzone(this);
-  layout->addWidget(tzone, 1);
+  layout->addWidget(tzone);
   connect(tzone, SIGNAL(zoneChanged(bool)), this, SLOT(moduleChanged(bool)));
+
+  layout->addStretch();
 
   if(getuid() == 0)
     setButtons(Help|Apply);
   else
     setButtons(Help);
+
+
 }
 
 void KclockModule::save()

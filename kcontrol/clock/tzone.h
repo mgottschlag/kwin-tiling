@@ -39,7 +39,7 @@ signals:
 
 protected slots:
   void handleZoneChange() {emit zoneChanged( TRUE );}
-  
+
 private:
   void  fillTimeZones();
 	void	getCurrentZone(char* szString);

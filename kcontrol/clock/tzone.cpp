@@ -27,6 +27,7 @@
 
 #include <qlabel.h>
 #include <qcombobox.h>
+#include <qgroupbox.h>
 #include <qpixmap.h>
 #include <qlayout.h>
 #include <qfile.h>
@@ -46,31 +47,28 @@
 Tzone::Tzone(QWidget * parent, const char *name)
   : QWidget (parent, name)
 {
-    QFrame* frame1 = new QFrame( this );
-    frame1->setFrameStyle( QFrame::Sunken | QFrame::Box );
+    QGroupBox* gBox = new QGroupBox ( this );
 
-    QBoxLayout *top_lay = new QVBoxLayout( frame1, 10 );
+    QBoxLayout *top_lay = new QVBoxLayout( gBox, 10 );
     QBoxLayout *lay = new QHBoxLayout(top_lay);
 
-    top_lay->addSpacing(20);
-    currentzonetitle = new QLabel(i18n("Current time zone: "), frame1);
+    currentzonetitle = new QLabel(i18n("Current time zone: "), gBox);
     currentzonetitle->setAutoResize(true);
     lay->addWidget(currentzonetitle);
 
-    currentzone = new QLabel(frame1);
-    lay->addWidget(currentzone, 3);
+    currentzone = new QLabel(gBox);
+    lay->addWidget(currentzone);
     currentzone->setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
 
-    QLabel* instructions = new QLabel(i18n("To change the time zone, select your area from the list below:"), frame1);
+    QLabel* instructions = new QLabel(i18n("To change the time zone, select your area from the list below:"), gBox);
     top_lay->addWidget(instructions);
 
-    tzonelist = new QComboBox( FALSE, frame1, "ComboBox_1" );
+    tzonelist = new QComboBox( FALSE, gBox, "ComboBox_1" );
     connect( tzonelist, SIGNAL(activated(int)), SLOT(handleZoneChange()) );
     top_lay->addWidget( tzonelist );
-    top_lay->addStretch(2);
 
-    QHBoxLayout *top = new QHBoxLayout( this, 5 );
-    top->addWidget(frame1, 1);
+    QBoxLayout *top = new QVBoxLayout( this, 5 );
+    top->addWidget(gBox);
 
     fillTimeZones();
 
@@ -78,6 +76,7 @@ Tzone::Tzone(QWidget * parent, const char *name)
 
     if (getuid() != 0)
         tzonelist->setEnabled(false);
+
 }
 
 void Tzone::fillTimeZones()
