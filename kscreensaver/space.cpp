@@ -637,7 +637,7 @@ void kSpaceSetup::readSettings()
 	else if ( speed < MINSPEED )
 		speed = MINSPEED;
 
-	warpinterval = config->readEntry( "WarpInterval", 15 );
+	warpinterval = config->readNumEntry( "WarpInterval", 15 );
 
 	delete config;
 }

@@ -734,7 +734,7 @@ void kPipesSaver::readSettings()
 
   QString str;
 
-  pipes = config->readEntry( "Pipes", DEFPIPES );
+  pipes = config->readNumEntry( "Pipes", DEFPIPES );
   if (pipes < 2) pipes = 2;
   if (pipes > MAXPIPES) pipes = MAXPIPES;
   delete config;
