@@ -23,6 +23,7 @@ class QTimer;
 
 class KConfig;
 class KProcess;
+class KTempFile;
 class KShellProcess;
 class KStandardDirs;
 
@@ -70,6 +71,7 @@ private:
 	WallpaperDone = 0x10, AllDone = 0x20 };
 
     QString buildCommand();
+    void createTempFile();
     void tile(QImage *dst, QRect rect, QImage *src);
     void blend(QImage *dst, QRect dr, QImage *src, QPoint soffs = QPoint(0, 0));
 
@@ -80,7 +82,7 @@ private:
     int m_State;
     pid_t m_Pid;
 
-    QString m_Tempfile;
+    KTempFile* m_Tempfile;
     QSize m_Size, m_rSize;
     QImage *m_pImage, *m_pBackground;
     QTimer *m_pTimer;

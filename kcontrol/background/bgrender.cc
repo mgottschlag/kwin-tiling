@@ -31,6 +31,7 @@
 #include <kimageeffect.h>
 #include <kprocess.h>
 #include <kimageio.h>
+#include <ktempfile.h>
 
 #include <bgdefaults.h>
 #include <bgsettings.h>
@@ -65,6 +66,7 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
     m_rSize = m_Size = QApplication::desktop()->size();
     m_pBackground = 0L; m_pImage = 0L;
     m_pProc = 0L;
+    m_Tempfile = 0L;
     m_bPreview = false;
     m_bTile = false;
 
@@ -76,6 +78,7 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
 KBackgroundRenderer::~KBackgroundRenderer()
 {
     delete m_pImage;
+    delete m_Tempfile;
 }
 
 
@@ -119,8 +122,9 @@ QString KBackgroundRenderer::buildCommand()
 
         switch (cmd.at(pos+1).latin1()) {
         case 'f':
-            cmd.replace(pos, 2, m_Tempfile);
-            pos += m_Tempfile.length() - 2;
+            createTempFile();
+            cmd.replace(pos, 2, m_Tempfile->name());
+            pos += m_Tempfile->name().length() - 2;
             break;
 
         case 'x':
@@ -196,7 +200,7 @@ int KBackgroundRenderer::doBackground(bool quit)
         if (m_State & BackgroundStarted)
             break;
         m_State |= BackgroundStarted;
-        m_Tempfile = tmpnam(0L);
+        createTempFile();        
 
 	file = buildCommand();
 	if (file.isEmpty())
@@ -472,9 +476,9 @@ void KBackgroundRenderer::slotBackgroundDone(KProcess *)
     m_State |= BackgroundDone;
 
     if (m_pProc->normalExit() && !m_pProc->exitStatus())
-        m_pBackground->load(m_Tempfile);
+        m_pBackground->load(m_Tempfile->name());
 
-    unlink(m_Tempfile.latin1());
+    m_Tempfile->unlink();
     m_pTimer->start(0, true);
 }
 
@@ -592,6 +596,12 @@ void KBackgroundRenderer::load(int desk, bool reparseConfig)
     m_Size = m_rSize;
 
     KBackgroundSettings::load(desk, reparseConfig);
+}
+
+void KBackgroundRenderer::createTempFile()
+{
+   if( !m_Tempfile )
+     m_Tempfile = new KTempFile();
 }
 
 
