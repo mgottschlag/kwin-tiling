@@ -45,7 +45,6 @@ public:
 
 signals:
     void changed();
-    void hideIdentify();
     void panelPositionChanged(int);
 
 protected slots:

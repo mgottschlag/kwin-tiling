@@ -19,13 +19,14 @@
 
 #include <qbuttongroup.h>
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qheader.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qslider.h>
-#include <qcombobox.h>
 #include <qtooltip.h>
+#include <qtimer.h>
 
 #include <kapplication.h>
 #include <klocale.h>
@@ -108,8 +109,7 @@ PositionTab::PositionTab(KickerConfig *kcmKicker, const char* name)
     connect(m_locationGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
     connect(m_xineramaScreenComboBox, SIGNAL(highlighted(int)), SIGNAL(changed()));
 
-    connect(m_identifyButton,SIGNAL(pressed()),SLOT(showIdentify()));
-    connect(m_identifyButton,SIGNAL(released()),SIGNAL(hideIdentify()));
+    connect(m_identifyButton,SIGNAL(clicked()),SLOT(showIdentify()));
 
     for(int s=0; s < QApplication::desktop()->numScreens(); s++)
     {   /* populate the combobox for the available screens */
@@ -624,7 +624,9 @@ void PositionTab::showIdentify()
 
         screenLabel->setAlignment(Qt::AlignCenter);
         screenLabel->setNum(s + 1);
-        connect(this,SIGNAL(hideIdentify()),screenLabel,SLOT(close()));
+	// BUGLET: we should not allow the identification to be entered again
+	//         until the timer fires.
+	QTimer::singleShot(1500, screenLabel, SLOT(close()));
 
         QPoint screenCenter(QApplication::desktop()->screenGeometry(s).center());
         QRect targetGeometry(QPoint(0,0),screenLabel->sizeHint());
