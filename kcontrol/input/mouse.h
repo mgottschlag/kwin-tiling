@@ -40,7 +40,7 @@
 
 #include <kapp.h>
 #include <knuminput.h>
-#include "mousedefaults.h"
+#include <kglobalsettings.h>
 
 #include <kcmodule.h>
 

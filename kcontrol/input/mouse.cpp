@@ -257,10 +257,10 @@ void MouseConfig::load()
 
   // SC/DC/AutoSelect/ChangeCursor
   config->setGroup(QString::fromLatin1("KDE"));
-  bool b = config->readBoolEntry(QString::fromLatin1("SingleClick"), DEFAULT_SINGLECLICK);
+  bool b = config->readBoolEntry(QString::fromLatin1("SingleClick"), KDE_DEFAULT_SINGLECLICK);
   singleClick->setChecked(b);
-  int  autoSelect = config->readNumEntry("AutoSelectDelay", DEFAULT_AUTOSELECTDELAY);
-  bool changeCursor = config->readBoolEntry("ChangeCursor", DEFAULT_CHANGECURSOR);
+  int  autoSelect = config->readNumEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
+  bool changeCursor = config->readBoolEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
 
   cbAutoSelect->setChecked( autoSelect >= 0 );
   if ( autoSelect < 0 ) autoSelect = 0;
@@ -372,10 +372,10 @@ void MouseConfig::defaults()
     setThreshold(2);
     setAccel(2);
     setHandedness(RIGHT_HANDED);
-    singleClick->setChecked( DEFAULT_SINGLECLICK );
-    cbAutoSelect->setChecked( DEFAULT_AUTOSELECTDELAY != -1 );
-    slAutoSelect->setValue( DEFAULT_AUTOSELECTDELAY == -1 ? 50 : DEFAULT_AUTOSELECTDELAY );
-    cbCursor->setChecked( DEFAULT_CHANGECURSOR );
+    singleClick->setChecked( KDE_DEFAULT_SINGLECLICK );
+    cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
+    slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
+    cbCursor->setChecked( KDE_DEFAULT_CHANGECURSOR );
     slotClick();
 }
 
