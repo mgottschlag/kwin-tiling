@@ -648,6 +648,7 @@
 	3084  EOS 300D
 	3085  PowerShot G5
 	309a  PowerShot A80
+	30ba  PowerShot S410 Digital Elph
 04aa  DaeWoo Telecom, Ltd
 04ab  Chromatic Research
 04ac  Micro Audiometrics Corp.
@@ -933,6 +934,7 @@
 	1080  NET1080 USB-USB Bridge
 	a4a0  Linux-USB "Gadget Zero"
 	a4a1  Linux-USB Ethernet Gadget
+	a4a2  Linux-USB Ethernet/RNDIS Gadget
 	a4a3  Linux-USB user-mode isochronous source/sink
 	a4a4  Linux-USB user-mode bulk source/sink
 	a4a5  Linux-USB File Storage Gadget
@@ -1561,6 +1563,7 @@
 06a2  Topro Technology, Inc.
 06a3  Saitek PLC
 	0006  Cyborg Gold Joystick
+	0422  ST90 Joystick
 	052d  P750 Gamepad
 	053f  X36F Flightstick
 	100a  SP550 Pad and Joystick Combo
@@ -1603,10 +1606,10 @@
 06be  AME Optimedia Technology Co., Ltd
 06bf  Leoco Corp.
 06c2  GLAB Chester
-	0030  RFID VID/PID
-	0038  PhidgetServo 4 Servo Controller
-	0039  PhidgetServo 1 Servo Controller
-	003b  PhidgetServo 8 Servo Controller
+	0030  RFID Reader
+	0038  4-Motor PhidgetServo v3.0
+	0039  1-Motor PhidgetServo v3.0
+	003b  8-Motor PhidgetServo
 	0040  Interface Kit 884
 	0041  Interface Kit 088
 	0042  Interface Kit 32-32-0
@@ -2140,6 +2143,8 @@
 	010f  SIIG MobileCam
 0924  Xerox
 0925  Wisegroup, Ltd
+	8101  1-Motor PhidgetServo v2.0
+	8104  4-Motor PhidgetServo v2.0
 	8866  MP-8866 Dual USB Joypad
 0927  Summus, Ltd
 0928  Oxford Semiconductor, Ltd
@@ -2579,6 +2584,7 @@
 0c44  Motorola iDEN
 0c45  Microdia
 	1060  iFlash SM-Direct Card Reader
+	6001  Genius VideoCAM NB
 	6029  Triplex i-mini PC Camera
 	602a  Meade ETX-105EC Camera
 0c46  WaveRider Communications, Inc.
