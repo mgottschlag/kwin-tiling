@@ -22,16 +22,11 @@
 #include <unistd.h>
 
 #include <qlayout.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
 #include <qgroupbox.h>
 #include <qhbox.h>
 #include <qlabel.h>
-#include <qlineedit.h>
-#include <qmessagebox.h>
-#include <qpushbutton.h>
 #include <qlistbox.h>
-#include <qlistview.h>
+#include <qtabwidget.h>
 
 #include <kapp.h>
 #include <kbuttonbox.h>
@@ -39,34 +34,39 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstddirs.h>
-#include <kmessagebox.h>
 #include <kconfig.h>
-#include <kdialog.h>
 
 #include "filteropts.h"
 
 FilterOptions::FilterOptions(QWidget *parent, const char *name)
-    : KCModule(parent, name) {
+    		  :KCModule(parent, name)
+{
 
     QGridLayout *lay = new QGridLayout(this, 1, 1, 10, 5);
+    //QGroupBox =
 
     lay->addWidget(new QLabel(i18n("Under Construction..."), this), 0, 0);
     lay->activate();
 
+    // load();
+}
+
+void FilterOptions::load()
+{
+	
+}
+
+void FilterOptions::save()
+{
+}
+
+void FilterOptions::defaults()
+{
     load();
 }
 
-void FilterOptions::load() {
-}
-
-void FilterOptions::save() {
-}
-
-void FilterOptions::defaults() {
-    load();
-}
-
-void FilterOptions::moduleChanged(bool state) {
+void FilterOptions::moduleChanged(bool state)
+{
     emit changed(state);
 }
 

@@ -35,7 +35,7 @@
 KInstance *KURISearchFilterFactory::s_instance = 0L;
 
 KURISearchFilter::KURISearchFilter(QObject *parent, const char *name)
-                 :KURIFilterPlugin(parent, name ? name : "search", 1.0),
+                 :KURIFilterPlugin(parent, name ? name : "kurisearchfilter", 1.0),
                   DCOPObject("KURISearchFilterIface")
 {
   KURISearchFilterEngine::incRef();

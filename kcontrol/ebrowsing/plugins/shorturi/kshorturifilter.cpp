@@ -34,6 +34,7 @@
 #include <kinstance.h>
 #include <kglobal.h>
 #include <kstddirs.h>
+#include <kconfig.h>
 
 //#include "kshorturiopts.h"
 #include "kshorturifilter.h"
@@ -45,19 +46,15 @@
 #define ENV_VAR_PATTERN "$[a-zA-Z_][a-zA-Z0-9_]*"
 #define QFL1(x) QString::fromLatin1(x)
 
+typedef QMap<QString,QString> EntryMap;
+
 KInstance *KShortURIFilterFactory::s_instance = 0;
 
 KShortURIFilter::KShortURIFilter( QObject *parent, const char *name )
-                :KURIFilterPlugin( parent, name ? name : "shorturi", 1.0),
+                :KURIFilterPlugin( parent, name ? name : "kshorturifilter", 1.0),
                  DCOPObject("KShortURIFilterIface")
 {
-    // TODO: Make this configurable.  Should go into control module...
-    // Note: the order is important (FQDN_PATTERN should be last)
-    m_urlHints.append(URLHint(QFL1("www"), QFL1("http://")));
-    m_urlHints.append(URLHint(QFL1("ftp"), QFL1("ftp://")));
-    m_urlHints.append(URLHint(QFL1("news"), QFL1("news://")));
-    m_urlHints.append(URLHint(QFL1(IPv4_PATTERN), QFL1("http://")));
-    m_urlHints.append(URLHint(QFL1(FQDN_PATTERN), QFL1("http://")));
+    configure();
     m_strDefaultProtocol = QFL1("http://");
 }
 
@@ -90,8 +87,6 @@ bool KShortURIFilter::expandEnvVar( QString& cmd ) const
 
 bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 {
-  KURL url = data.uri();
-  QString cmd = url.url();
 
  /*
   * Here is a description of how the shortURI deals with the supplied
@@ -105,8 +100,13 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   * In the future versions, we might want to make it so that everything
   * with the exception of ENV expansion is configurable by the user.
   */
+
+  // Environment variable expansion.
+  QString cmd = data.uri().url();
   if ( expandEnvVar( cmd ) )
-    url = cmd;  // Update the url
+    setFilteredURI( data, cmd );
+
+  KURL url = data.uri();
 
   // Handle SMB Protocol shortcuts ...
   int loc = cmd.lower().find( QFL1("smb:") );
@@ -129,7 +129,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     cmd[0] == '/' ? cmd.prepend( QFL1("smb:") ) : cmd.prepend( QFL1("smb:/") );
     setFilteredURI( data, cmd );
     setURIType( data, KURIFilterData::NET_PROTOCOL );
-    return data.hasBeenFiltered();
+    return true;
   }
 
   // Handle MAN & INFO pages shortcuts...
@@ -147,7 +147,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       cmd += QFL1( "/dir" );
     setFilteredURI( data, cmd );
     setURIType( data, KURIFilterData::HELP );
-    return data.hasBeenFiltered();
+    return true;
   }
 
   // Handle all LOCAL URLs cases...
@@ -188,7 +188,9 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
                             i18n("<qt>There is no user called <b>%1</b>.</qt>").arg(user);
         setErrorMsg( data, msg );
         setURIType( data, KURIFilterData::ERROR );
-        return data.hasBeenFiltered();
+        // Always return true for error conditions so
+        // that other filters will not be invoked !!
+        return true;
       }
     }
   }
@@ -203,7 +205,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     {
       setFilteredURI( data, cmd );
       setURIType( data, KURIFilterData::EXECUTABLE );
-      return data.hasBeenFiltered();
+      return true;
     }
     // Open "uri" as file:/xxx if it is a non-executable local resource.
     if( isDir || S_ISREG( buff.st_mode ) )
@@ -211,7 +213,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       cmd.insert( 0, QFL1("file:") );
       setFilteredURI( data, cmd );
       setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
-      return data.hasBeenFiltered();
+      return true;
     }
   }
 
@@ -222,7 +224,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   {
     setFilteredURI( data, cmd );
     setURIType( data, KURIFilterData::EXECUTABLE );
-    return data.hasBeenFiltered();
+    return true;
   }
 
   // Process URLs of known and supported protocols so we don't have
@@ -239,7 +241,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
         setURIType( data, KURIFilterData::HELP );
       else
         setURIType( data, KURIFilterData::NET_PROTOCOL );
-      return data.hasBeenFiltered();
+      return true;
     }
   }
 
@@ -262,7 +264,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       cmd.prepend( (*it).prepend );
       setFilteredURI( data, cmd );
       setURIType( data, KURIFilterData::NET_PROTOCOL );
-      return data.hasBeenFiltered();
+      return true;
     }
   }
 
@@ -274,14 +276,14 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     cmd.insert( 0, m_strDefaultProtocol );
     setFilteredURI( data, cmd );
     setURIType( data, KURIFilterData::NET_PROTOCOL );
-    return data.hasBeenFiltered();
+    return true;
   }
 
   // If we reach this point, we cannot filter
-  // this thing so simply return the default
-  // value of the filter data object which is
-  // false...
-  return data.hasBeenFiltered();
+  // this thing so simply return false so that
+  // other filters, if present, can take a crack
+  // at it.
+  return false;
 }
 
 KCModule* KShortURIFilter::configModule( QWidget*, const char* ) const
@@ -296,6 +298,22 @@ QString KShortURIFilter::configName() const
 
 void KShortURIFilter::configure()
 {
+    KConfig config( name() + QFL1("rc") );
+    EntryMap map = config.entryMap( QFL1("Pattern Matching") );
+    if( !map.isEmpty() )
+    {
+        EntryMap::Iterator it = map.begin();
+        for( ; it != map.end(); ++it )
+            m_urlHints.append( URLHint(it.key(), it.data()) );
+    }
+
+    // Include some basic defaults.  Note these will always be
+    // overridden by the users enteries.
+    // TODO: Make this configurable from the dialog box.  Should
+    // go into control module.  NOTE: the order is important
+    // (FQDN_PATTERN should be last)
+    m_urlHints.append( URLHint(QFL1(IPv4_PATTERN), QFL1("http://")) );
+    m_urlHints.append( URLHint(QFL1(FQDN_PATTERN), QFL1("http://")) );
 }
 
 /***************************************** KShortURIFilterFactory *******************************************/

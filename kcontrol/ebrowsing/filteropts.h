@@ -23,12 +23,12 @@
 #ifndef __FILTEROPTS_H___
 #define __FILTEROPTS_H___
 
-#include <qtabwidget.h>
-#include <qlayout.h>
-
 #include <kcmodule.h>
 
-class FilterOptions : public KCModule {
+class QListBox;
+
+class FilterOptions : public KCModule
+{
     Q_OBJECT
 
 public:
@@ -40,6 +40,9 @@ public:
 
 protected slots:
     void moduleChanged(bool state);
+
+private:
+	QListBox* m_lbFilterList;
 };
 
 #endif

@@ -41,7 +41,8 @@
 class FilterOptions;
 
 KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name)
-    : KCModule(parent, name) {
+                 :KCModule(parent, name)
+{
 
     filter = KURIFilter::self();
 
@@ -58,57 +59,56 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name)
     modules.setAutoDelete(true);
 
     QListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
-    for (; it.current(); ++it) {
-	KCModule *module = it.current()->configModule(this, 0);
-	if (module) {
+    for (; it.current(); ++it)
+    {
+	  KCModule *module = it.current()->configModule(this, 0);
+      if (module)
+      {
 	    modules.append(module);
-
 	    tab->addTab(module, it.current()->configName());
 	    connect(module, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
-	}
+	  }
     }
 
     // Since there's nothing in the options tab yet, show the first plugin.
-
     KCModule *first = modules.first();
-    if (first) {
-	tab->showPage(first);
-    }
+    if (first) { tab->showPage(first); }
 
-    load();
+    // load();
 }
 
-void KURIFilterModule::load() {
+void KURIFilterModule::load()
+{
     QListIterator<KCModule> it(modules);
-    for (; it.current(); ++it) {
-	KCModule *module = it.current();
-	if (module) {
-	    module->load();
-	}
+    for (; it.current(); ++it)
+    {
+	  KCModule *module = it.current();
+	  if (module) { module->load(); }
     }
 }
 
-void KURIFilterModule::save() {
+void KURIFilterModule::save()
+{
     QListIterator<KCModule> it(modules);
-    for (; it.current(); ++it) {
-	KCModule *module = it.current();
-	if (module) {
-	    module->save();
-	}
+    for (; it.current(); ++it)
+    {
+	  KCModule *module = it.current();
+	  if (module) { module->save(); }
     }
 }
 
-void KURIFilterModule::defaults() {
+void KURIFilterModule::defaults()
+{
     QListIterator<KCModule> it(modules);
-    for (; it.current(); ++it) {
-	KCModule *module = it.current();
-	if (module) {
-	    module->defaults();
-	}
+    for (; it.current(); ++it)
+    {
+	  KCModule *module = it.current();
+	  if (module) { module->defaults(); }
     }
 }
 
-void KURIFilterModule::moduleChanged(bool state) {
+void KURIFilterModule::moduleChanged(bool state)
+{
     emit changed(state);
 }
 
@@ -123,20 +123,19 @@ QString KURIFilterModule::quickHelp() const
 }
 
 #if 0
-
-void KURIFilterModule::resizeEvent(QResizeEvent *) {
+void KURIFilterModule::resizeEvent(QResizeEvent *)
+{
     tab->setGeometry(0,0,width(),height());
 }
-
 #endif
 
-extern "C" {
-
-KCModule *create_kurifilt(QWidget *parent, const char *name) {
+extern "C"
+{
+  KCModule *create_kurifilt(QWidget *parent, const char *name)
+  {
     KGlobal::locale()->insertCatalogue("kcmkurifilt");
     return new KURIFilterModule(parent, name);
-}
-
+  }
 }
 
 #include "main.moc"

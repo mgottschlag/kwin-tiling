@@ -1,0 +1,4 @@
+[Pattern Matching]
+^www=http://
+^ftp=ftp://
+^news=news://

@@ -36,7 +36,7 @@
 KInstance *KURIIKWSFilterFactory::s_instance = 0L;
 
 KURIIKWSFilter::KURIIKWSFilter(QObject *parent, const char *name)
-                 :KURIFilterPlugin(parent, name ? name : "ikws", 1.0),
+                 :KURIFilterPlugin(parent, name ? name : "kuriikwsfilter", 1.0),
                   DCOPObject("KURIIKWSFilterIface")
 {
   KURISearchFilterEngine::incRef();

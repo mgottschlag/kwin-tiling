@@ -99,8 +99,9 @@ QString KURISearchFilterEngine::searchQuery( const KURL &url ) const
     if (pos >= 0)
         key = _url.left(pos);
 
-    if( KProtocolInfo::isKnownProtocol( key ) )
-        return QString::null;  // Do not touch known protocols
+    // Do not touch known protocols or search for empty keys ;)
+    if( KProtocolInfo::isKnownProtocol( key ) || key.isEmpty() )
+        return QString::null;
 
     QValueList<SearchEntry>::ConstIterator it = m_lstSearchEngine.begin();
     QValueList<SearchEntry>::ConstIterator end = m_lstSearchEngine.end();
@@ -118,11 +119,15 @@ QString KURISearchFilterEngine::ikwsQuery( const KURL& url ) const
 {
   if (m_bInternetKeywordsEnabled)
   {
-    // If the URL is not Malformed and is a known protocol by KIO,
-    // don't process it at all.  This stops accidental typos from
-    // resulting in a redirection to realnames... (DA)
-    if( !url.isMalformed() && KProtocolInfo::isKnownProtocol( url.protocol() ) )
-            return QString::null;
+    QString key;
+    QString _url = url.url();
+    if( url.isMalformed() && _url[0] == '/' )
+        key = QString::fromLatin1( "file" );
+    else
+        key = url.protocol();
+
+    if( KProtocolInfo::isKnownProtocol(key) )
+        return QString::null;
 
     QString search = m_currSearchKeywordsEngine.m_strQuery;
 	if (!search.isEmpty())
@@ -132,10 +137,10 @@ QString KURISearchFilterEngine::ikwsQuery( const KURL& url ) const
       {
 		search = KURL::encode_string( search );
 		QString res = m_currInternetKeywordsEngine.m_strQueryWithSearch;
-		return formatResult( res.replace(pct, 2, search), url.url(), url.isMalformed() );
+		return formatResult( res.replace(pct, 2, search), _url, url.isMalformed() );
       }
 	}
-	return formatResult( m_currInternetKeywordsEngine.m_strQuery, url.url(), url.isMalformed() );
+	return formatResult( m_currInternetKeywordsEngine.m_strQuery, _url, url.isMalformed() );
   }
   return QString::null;
 }
@@ -235,7 +240,7 @@ QString KURISearchFilterEngine::formatResult( const QString& query, const QStrin
             newurl = newurl.replace(pct, 2, userquery);
 
         if ( m_bVerbose )
-            kdDebug() << "(" << getpid() << ") filtered " << url << " to " << newurl << "\n";
+            kdDebug(7023) << "(" << getpid() << ") filtered " << url << " to " << newurl << "\n";
 
         return newurl;
     }
@@ -245,20 +250,21 @@ QString KURISearchFilterEngine::formatResult( const QString& query, const QStrin
 
 void KURISearchFilterEngine::loadConfig()
 {
-    kdDebug() << "(" << getpid() << ") Keywords Engine: Loading config..." << endl;
+    kdDebug(7023) << "(" << getpid() << ") Keywords Engine: Loading config..." << endl;
     // First empty any current config we have.
     m_lstSearchEngine.clear();
     m_lstInternetKeywordsEngine.clear();
 
     // Load the config.
-    KConfig config( name() + "rc");
+    KConfig config( name() + "rc", false, false );
     QStringList engines;
     QString selIKWSEngine, selIKWSFallback;
 
-    if( config.hasGroup(IKW_KEY) )
+    if( !config.hasKey("InternetKeywordsEnabled") &&
+        config.hasKey("NavEnabled") )
     {
         // Read the old settings
-        kdDebug() << "(" << getpid() << ") Config file has the OLD format..." << endl;
+        kdDebug(7023) << "(" << getpid() << ") Config file has the OLD format..." << endl;
         config.setGroup(IKW_KEY);
         m_bInternetKeywordsEnabled = config.readBoolEntry("NavEnabled", true);
         selIKWSEngine = config.readEntry("NavSelectedEngine", IKW_REALNAMES);
@@ -267,7 +273,7 @@ void KURISearchFilterEngine::loadConfig()
     }
     else
     {
-        kdDebug() << "(" << getpid() << ") Config file has the NEW format..." << endl;
+        kdDebug(7023) << "(" << getpid() << ") Config file has the NEW format..." << endl;
         config.setGroup("General");
         m_bInternetKeywordsEnabled = config.readBoolEntry("InternetKeywordsEnabled", true);
         selIKWSEngine = config.readEntry("InternetKeywordsSelectedEngine", IKW_REALNAMES);
@@ -275,9 +281,9 @@ void KURISearchFilterEngine::loadConfig()
         engines = config.readListEntry("InternetKeywordsEngines");
     }
 
-    kdDebug() << "(" << getpid() << ") Internet Keyword Enabled: " << m_bInternetKeywordsEnabled << endl;
-    kdDebug() << "(" << getpid() << ") Selected IKWS Engine(s): " << selIKWSEngine << endl;
-    kdDebug() << "(" << getpid() << ") Internet Keywords Fallback Search Engine: " << selIKWSFallback << endl;
+//    kdDebug(7023) << "(" << getpid() << ") Internet Keyword Enabled: " << m_bInternetKeywordsEnabled << endl;
+//    kdDebug(7023) << "(" << getpid() << ") Selected IKWS Engine(s): " << selIKWSEngine << endl;
+//    kdDebug(7023) << "(" << getpid() << ") Internet Keywords Fallback Search Engine: " << selIKWSFallback << endl;
 
     QStringList::ConstIterator gIt = engines.begin();
     QStringList::ConstIterator gEnd = engines.end();
@@ -315,8 +321,8 @@ void KURISearchFilterEngine::loadConfig()
     m_bVerbose = config.readBoolEntry("Verbose");
     engines = config.readListEntry("SearchEngines");
     m_bSearchKeywordsEnabled = config.readBoolEntry("SearchEngineShortcutsEnabled", true);
-    kdDebug() << "(" << getpid() << ") Search Engine Keywords Enabled: " << m_bSearchKeywordsEnabled << endl;
-    kdDebug() << "(" << getpid() << ") Number of search engine keywords found: " << engines.count() << endl;
+    kdDebug(7023) << "(" << getpid() << ") Search Engine Keywords Enabled: " << m_bSearchKeywordsEnabled << endl;
+    kdDebug(7023) << "(" << getpid() << ") Number of search engine keywords found: " << engines.count() << endl;
     gIt = engines.begin();
     gEnd = engines.end();
     for (; gIt != gEnd; ++gIt)
@@ -326,7 +332,7 @@ void KURISearchFilterEngine::loadConfig()
 	    grpName = *gIt;
 	  else
 	    grpName = *gIt + SEARCH_SUFFIX;
-	  kdDebug() << "(" << getpid() << ") Search Engine Group name: " << grpName << endl;
+	  kdDebug(7023) << "(" << getpid() << ") Search Engine Group name: " << grpName << endl;
 	  config.setGroup( grpName );
 	  SearchEntry e;
 	  e.m_strName = *gIt;
@@ -340,7 +346,7 @@ void KURISearchFilterEngine::loadConfig()
 
 void KURISearchFilterEngine::saveConfig() const
 {
-    kdDebug() << "(" << getpid() << ") Keywords Engine: Saving config..." << endl;
+    kdDebug(7023) << "(" << getpid() << ") Keywords Engine: Saving config..." << endl;
 
     KSimpleConfig config(name() + "rc");
     QStringList search_engines, ikws_engines;
@@ -374,6 +380,8 @@ void KURISearchFilterEngine::saveConfig() const
 	    config.writeEntry("QueryWithSearch", (*nit).m_strQueryWithSearch);
     }
 
+    config.sync();  // Flush to disk the search engine stuff
+
     config.setGroup("General");
     config.writeEntry("InternetKeywordsEnabled", m_bInternetKeywordsEnabled);
     config.writeEntry("InternetKeywordsEngines", ikws_engines);
@@ -384,5 +392,5 @@ void KURISearchFilterEngine::saveConfig() const
     if (m_bVerbose)
 	  config.writeEntry("Verbose", m_bVerbose);
 
-    config.sync();
+    config.sync(); // Dump out the general config stuff
 }

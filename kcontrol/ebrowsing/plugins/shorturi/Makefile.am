@@ -15,7 +15,7 @@ libkshorturifilter_la_SOURCES = kshorturifilter.cpp kshorturifilter.skel
 service_DATA = kshorturifilter.desktop
 servicedir = $(kde_servicesdir)
 
-#rc_DATA = kshorturifilterrc
-#rcdir = $(kde_confdir)
+rc_DATA = kshorturifilterrc
+rcdir = $(kde_confdir)
 
 METASOURCES = AUTO
