@@ -19,7 +19,7 @@
 
 #include <qlayout.h>
 #include <qgroupbox.h>
-#include <qbuttongroup.h>
+#include <qvbuttongroup.h>
 #include <qwhatsthis.h>
 #include <qradiobutton.h>
 #include <qpushbutton.h>
@@ -44,29 +44,20 @@ extern int kickerconfig_screen_number;
 AppletTab::AppletTab( QWidget *parent, const char* name )
   : QWidget (parent, name)
 {
-  layout = new QGridLayout(this, 2, 1, 6, 11);
+  QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
+					   KDialog::spacingHint() );
 
   // security level group
-  level_group = new QButtonGroup(i18n("Security Level"), this);
-  level_group->setRadioButtonExclusive(true);
+  level_group = new QVButtonGroup(i18n("Security Level"), this);
+  level_group->layout()->setSpacing( KDialog::spacingHint() );
   connect(level_group, SIGNAL(clicked(int)), SLOT(level_changed(int)));
 
-  level_group->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5,(QSizePolicy::SizeType)0,level_group->sizePolicy().hasHeightForWidth() ) );   level_group->setColumnLayout(0, Qt::Vertical );
-  level_group->layout()->setSpacing( 0 );
-  level_group->layout()->setMargin( 0 );
-  QVBoxLayout *vbox = new QVBoxLayout( level_group->layout() );
-  vbox->setAlignment( Qt::AlignTop );
-  vbox->setSpacing(KDialog::marginHint() );
-  vbox->setMargin(  KDialog::spacingHint() );
-
   trusted_rb = new QRadioButton(i18n("Load only trusted applets internal"), level_group);
-  vbox->addWidget(trusted_rb);
 
   new_rb = new QRadioButton(i18n("Load startup config applets internal"), level_group);
-  vbox->addWidget(new_rb);
 
   all_rb = new QRadioButton(i18n("Load all applets internal"), level_group);
-  vbox->addWidget(all_rb);
+
   QWhatsThis::add( level_group, i18n("Panel applets can be started in two different ways:"
     " internal or external. While 'internal' is the preferred way to load applets, this can"
     " raise stability or security problems when you are using poorly programmed third-party applets."
@@ -77,8 +68,7 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
     " <li><em>Load startup config applets internal:</em> The applets shown on KDE startup"
     " will be loaded internally, others will be loaded using an external wrapper application.</li>"
     " <li><em>Load all applets internal</em></li></ul>") );
-
-  layout->addWidget(level_group,0,0);
+  topLayout->addWidget(level_group);
 
   // trusted list group
   list_group = new QGroupBox(i18n("List of Trusted Applets"), this);
@@ -87,7 +77,7 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
                                        KDialog::spacingHint());
   vbox1->addSpacing(fontMetrics().lineSpacing());
 
-  QHBoxLayout *hbox = new QHBoxLayout(vbox1, KDialog::spacingHint());
+  QHBoxLayout *hbox = new QHBoxLayout(vbox1); // inherits spacing
 
   lb_trusted = new KListView(list_group);
   lb_trusted->addColumn(i18n("Trusted Applets"));
@@ -123,10 +113,7 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
     " from the list of available applets to the trusted ones or vice versa, select it and"
     " press the left or right buttons.") );
 
-  layout->addWidget(list_group,1,0);
-
-  layout->setRowStretch(0, 1);
-  layout->setRowStretch(1, 2);
+  topLayout->addWidget(list_group,1);
 
   load();
 }

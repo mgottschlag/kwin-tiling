@@ -24,7 +24,6 @@
 #include <qwidget.h>
 
 class QGroupBox;
-class QGridLayout;
 class QButtonGroup;
 class QRadioButton;
 class QPushButton;
@@ -59,8 +58,6 @@ class AppletTab : public QWidget
   void updateAvailable();
   void updateAddRemoveButton();
  private:
-  QGridLayout *layout;
-
   // security level group
   QButtonGroup  *level_group;
   QRadioButton  *trusted_rb, *new_rb, *all_rb;
