@@ -88,6 +88,10 @@ View1394::View1394(QWidget *parent, const char *name)
    rescanBus();
 }
 
+View1394::~View1394()
+{
+}
+
 bool View1394::readConfigRom(raw1394handle_t handle, nodeid_t nodeid, quadlet_t& firstQuad, quadlet_t& cap, octlet_t& guid)
 {
    quadlet_t q=0;
