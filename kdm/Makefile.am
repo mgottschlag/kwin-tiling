@@ -10,3 +10,7 @@ kdmdoc_DATA = README
 
 install-data-local:
 	-@test -n "$(DESTDIR)" || test -z "$(PAM)" || { $(top_srcdir)/mkpamserv $(PAM) && $(top_srcdir)/mkpamserv -P $(PAM)-np; }
+
+### this is *only* for the kdm home page maintainer! ###
+hp:
+	scp README ChangeLog TODO devel-home:files/kdm
