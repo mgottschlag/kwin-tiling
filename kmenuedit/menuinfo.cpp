@@ -358,9 +358,19 @@ KShortcut MenuEntryInfo::shortcut()
    return shortCut;
 }
 
+static bool isEmpty(const KShortcut &shortCut)
+{
+   for(int i = shortCut.count(); i--;)
+   {
+      if (!shortCut.seq(i).isNull())
+         return false;
+   }
+   return true;
+}
+
 static void freeShortcut(const KShortcut &shortCut)
 {
-   if (!shortCut.isNull())
+   if (!isEmpty(shortCut))
    {
       QString shortcutKey = shortCut.toString();
       if (s_newShortcuts)
@@ -375,7 +385,7 @@ static void freeShortcut(const KShortcut &shortCut)
 
 static void allocateShortcut(const KShortcut &shortCut)
 {
-   if (!shortCut.isNull())
+   if (!isEmpty(shortCut))
    {
       QString shortcutKey = shortCut.toString();
       if (s_freeShortcuts)
@@ -397,6 +407,9 @@ void MenuEntryInfo::setShortcut(const KShortcut &_shortcut)
    allocateShortcut(_shortcut);
 
    shortCut = _shortcut;
+   if (isEmpty(shortCut))
+      shortCut = KShortcut(); // Normalize
+
    shortcutLoaded = true;
    shortcutDirty = true;
    dirty = true;
