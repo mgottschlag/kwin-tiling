@@ -39,12 +39,13 @@
 #include <kconfig.h>
 #include <kdialog.h>
 #include <kglobal.h>
+#include <kdialog.h>
 
 
 KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name)
                :KCModule(parent,name),m_ioslavesLb(0)
 {
-   QVBoxLayout *layout=new QVBoxLayout(this,10,15);
+   QVBoxLayout *layout=new QVBoxLayout(this,KDialog::marginHint(),KDialog::spacingHint());
 
    QLabel* label=new QLabel(i18n("Available IOSlaves"),this);
    QHBox *hbox=new QHBox(this);
@@ -52,7 +53,7 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name)
    m_ioslavesLb->setMinimumSize(fontMetrics().width("blahfaselwhatever----"),10);
    //TODO make something useful after 2.1 is released
    m_info=new KTextBrowser(hbox);
-   hbox->setSpacing(15);
+   hbox->setSpacing(KDialog::spacingHint());
 
    layout->addWidget(label);
    layout->addWidget(hbox);
