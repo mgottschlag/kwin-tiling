@@ -309,11 +309,10 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // TODO: Make configurable at some point...
   if ( !cmd.contains( ' ' ) )
   {
-    QRegExp match;
     QValueList<URLHint>::ConstIterator it;
     for( it = m_urlHints.begin(); it != m_urlHints.end(); ++it )
     {
-      match = (*it).regexp;
+      QRegExp match( (*it).regexp );
       if ( match.search( cmd, 0 ) == 0 )
       {
         //kdDebug() << "match - prepending " << (*it).prepend << endl;
