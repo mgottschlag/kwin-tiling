@@ -11,12 +11,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <mykapp.h>
 #include <ktmainwindow.h>
 #include <klocale.h>
 #include <kcmdlineargs.h>
 #include <kwin.h>
 #include <kaboutdata.h>
+#include <kuniqueapp.h>
 
 #include "toplevel.h"
 
@@ -40,10 +40,9 @@ int main(int argc, char *argv[])
        fprintf(stderr, "%s is already running!\n", aboutData.appName());
        exit(0);
   }
-  MyKApplication app;
+  KApplication app;
 
   TopLevel *toplevel = new TopLevel();
-  app.setGlobalKeys( toplevel->globalKeys );
 
   KWin::setSystemTrayWindowFor( toplevel->winId(), 0 );
   toplevel->setGeometry(-100, -100, 42, 42 );
