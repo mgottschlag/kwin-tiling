@@ -141,6 +141,9 @@ void KBackgroundPattern::writeSettings()
     if (m_bReadOnly)
         init(true);
 
+    if ( !m_pConfig )
+        return; // better safe than sorry
+    
     m_pConfig->writeEntry("File", m_Pattern);
     m_pConfig->writeEntry("Comment", m_Comment);
     m_pConfig->sync();
@@ -325,6 +328,9 @@ void KBackgroundProgram::writeSettings()
     if (m_bReadOnly)
         init(true);
 
+    if ( !m_pConfig )
+        return; // better safe than sorry
+    
     m_pConfig->writeEntry("Comment", m_Comment);
     m_pConfig->writeEntry("Executable", m_Executable);
     m_pConfig->writeEntry("Command", m_Command);
@@ -403,6 +409,8 @@ QStringList KBackgroundProgram::list()
 
 
 KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
+    : KBackgroundPattern(),
+      KBackgroundProgram()
 {
     dirty = false; hashdirty = true;
     m_Desk = desk;
@@ -688,6 +696,7 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     m_BackgroundMode = defBackgroundMode;
     s = m_pConfig->readEntry("BackgroundMode", "invalid");
+
     if (m_BMMap.contains(s)) {
         int mode = m_BMMap[s];
         // consistency check
