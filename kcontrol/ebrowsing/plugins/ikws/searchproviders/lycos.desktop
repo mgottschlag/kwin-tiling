@@ -13,3 +13,4 @@ Name[xx]=xxLycosxx
 ServiceTypes=SearchProvider
 Keys=lycos,ly
 Query=http://www.lycos.com/cgi-bin/pursuit?cat=dir&query=\\{@}
+Query[xx]=xxhttp://www.lycos.com/cgi-bin/pursuit?cat=dir&query=\\{@}xx

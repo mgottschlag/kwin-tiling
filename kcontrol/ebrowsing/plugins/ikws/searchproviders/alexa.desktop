@@ -14,3 +14,4 @@ Name[xx]=xxAlexaxx
 ServiceTypes=SearchProvider
 Keys=al,alexa
 Query=http://info.alexa.com/search?q=\\{@}
+Query[xx]=xxhttp://info.alexa.com/search?q=\\{@}xx

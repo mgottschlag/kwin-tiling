@@ -9,7 +9,7 @@ Name[ko]=날고기(프레시미트)
 Name[mn]=Шинэмах
 Name[nso]=Nama ye Botse
 Name[pa]=ਤਾਜ਼ਾ
-Name[pl]=Freshmeat - wyszukiwarka aplikacji
+Name[pl]=Freshmeat - wyszukiwarka programów
 Name[ta]=புது இறைச்சி
 Name[ven]=Namathethe
 Name[xx]=xxFreshmeatxx
@@ -17,3 +17,4 @@ Name[zu]=Inyama yamanje
 ServiceTypes=SearchProvider
 Keys=fm,freshmeat
 Query=http://freshmeat.net/search/?q=\\{@}
+Query[xx]=xxhttp://freshmeat.net/search/?q=\\{@}xx

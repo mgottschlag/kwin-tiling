@@ -15,9 +15,10 @@ Name[es]=Sinónimos Merriam-Webster
 Name[et]=Merriam-Websteri tesaurus
 Name[eu]=Merriam-Webster thesaurus-a
 Name[fa]=گنج‌های ویستر-مریم
-Name[fi]=Merriam-Webster synonyymit
+Name[fi]=Merriam-Webster-synonyymit
 Name[fr]=Thésaurus Merriam-Webster
 Name[ga]=Teasáras Merriam-Webster
+Name[he]=מילים נרדפות Merriam-Webster 
 Name[hi]=मरियम-वेबस्टर शब्दकोश
 Name[hr]=Merriam-Webster Tezaurus
 Name[hu]=Merriam-Webster szinonimaszótár
@@ -50,3 +51,4 @@ Name[zu]=Incawdi yamagama afanayo ye-Merriam-Webster
 ServiceTypes=SearchProvider
 Keys=ths,thesaurus
 Query=http://www.m-w.com/cgi-bin/thesaurus?book=Thesaurus&va=\\{@}
+Query[xx]=xxhttp://www.m-w.com/cgi-bin/thesaurus?book=Thesaurus&va=\\{@}xx

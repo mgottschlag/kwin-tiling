@@ -11,7 +11,9 @@ Name[eo]=Aleksa ligo
 Name[es]=URL de Alexa
 Name[fa]=آلکسا URL
 Name[fr]=URL Alexa
+Name[fy]=Alexa URL-adres
 Name[ga]=URL Alexa
+Name[he]=כתובת של Alexa
 Name[hi]=एलेक्सा यूआरएल
 Name[hr]=Aleksa URL
 Name[is]=Alexa slóð
@@ -35,3 +37,4 @@ Name[zu]=I-URL ye-Alexa
 ServiceTypes=SearchProvider
 Keys=alu,url
 Query=http://info.alexa.com/data/details?url=\\{@}
+Query[xx]=xxhttp://info.alexa.com/data/details?url=\\{@}xx

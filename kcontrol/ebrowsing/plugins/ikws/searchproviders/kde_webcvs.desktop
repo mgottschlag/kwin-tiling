@@ -28,4 +28,5 @@ Name[xx]=xxKDE WebCVSxx
 ServiceTypes=SearchProvider
 Keys=webcvs,kdecvs,kcvs,kvs
 Query=http://webcvs.kde.org/\\{@}
+Query[xx]=xxhttp://webcvs.kde.org/\\{@}xx
 

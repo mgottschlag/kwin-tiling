@@ -13,3 +13,4 @@ ServiceTypes=SearchProvider
 Keys=froogle
 Query=http://froogle.google.com/froogle?q=\\{@}
 Query[en_GB]=http://froogle.google.co.uk/froogle?q=\\{@}
+Query[xx]=xxhttp://froogle.google.com/froogle?q=\\{@}xx

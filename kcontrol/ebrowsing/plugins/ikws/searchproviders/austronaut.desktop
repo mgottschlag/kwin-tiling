@@ -16,3 +16,4 @@ Name[zu]=Umuntu wasemkhathini
 ServiceTypes=SearchProvider
 Keys=austro,austronaut
 Query=http://austronaut.at/page.php?begriff=\{@}&wo=at
+Query[xx]=xxhttp://austronaut.at/page.php?begriff=\{@}&wo=atxx

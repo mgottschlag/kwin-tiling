@@ -4,6 +4,7 @@ Type=Service
 Name=Netcraft
 Name[ar]=نتكرافت
 Name[bn]=নেট-ক্রাফ্ট
+Name[fy]=Netcraft 
 Name[hi]=नेटक्राफ्ट
 Name[mn]=Нэтскафе
 Name[pa]=ਨੈੱਟਕਰਾਫਟ
@@ -13,3 +14,4 @@ Name[xx]=xxNetcraftxx
 ServiceTypes=SearchProvider
 Keys=nc,netcraft
 Query=http://uptime.netcraft.com/up/graph?site=\\{@}
+Query[xx]=xxhttp://uptime.netcraft.com/up/graph?site=\\{@}xx

@@ -18,7 +18,7 @@ Name[es]=Diccionario Merriam-Webster
 Name[et]=Merriam-Websteri sõnaraamat
 Name[eu]=Merriam-Webster hiztegia
 Name[fa]=فرهنگ لغت وبستر-مریم
-Name[fi]=Merriam-Webster sanakirja
+Name[fi]=Merriam-Webster-sanakirja
 Name[fr]=Dictionnaire Merriam-Webster
 Name[ga]=Foclóir Merriam-Webster
 Name[hi]=मरियम-वेबस्टर शब्दकोश
@@ -61,3 +61,4 @@ Name[zu]=Isichazamagama se-Merriam-Webster
 ServiceTypes=SearchProvider
 Keys=dict,webster
 Query=http://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\{@}
+Query[xx]=xxhttp://www.m-w.com/cgi-bin/dictionary?book=Dictionary&va=\\{@}xx

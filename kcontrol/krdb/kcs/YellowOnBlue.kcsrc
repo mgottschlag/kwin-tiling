@@ -1,5 +1,6 @@
 [Color Scheme]
 Name=High Contrast Yellow on Blue
+Name[ca]=Groc sobre blau d'alt contrast
 Name[da]=Gult på blåt med høj kontrast
 Name[es]=Amarillo sobre azul de alto contraste
 Name[fr]=Jaune sur bleu avec contraste élevé
@@ -12,6 +13,7 @@ Name[pt_BR]=Alto Contraste do Texto Amarelo ou Azul
 Name[ru]=Высококонтрастный желтый на синем
 Name[sv]=Gul på blå med hög kontrast
 Name[uk]=Високо-контрастний чорний жовтий на синьому
+Name[xx]=xxHigh Contrast Yellow on Bluexx
 Name[zh_CN]=高对比蓝底黄字
 activeBackground=0,0,180
 activeBlend=0,0,180

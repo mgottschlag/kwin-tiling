@@ -31,5 +31,6 @@ Name[tr]=Müzik Kılavuzu
 Name[xx]=xxAll Music Guidexx
 Name[zh_CN]=全音乐指南
 Query=http://www.allmusic.com/cg/amg.dll?p=amg&opt1=1&sql=\\{@}
+Query[xx]=xxhttp://www.allmusic.com/cg/amg.dll?p=amg&opt1=1&sql=\\{@}xx
 ServiceTypes=SearchProvider
 Type=Service

@@ -12,4 +12,5 @@ Name[xx]=xxKataTudoxx
 ServiceTypes=SearchProvider
 Keys=kt,katatudo
 Query=http://www.katatudo.com.br/busca/resultado.php?q=\\{@}&onde=&b=Buscar
+Query[xx]=xxhttp://www.katatudo.com.br/busca/resultado.php?q=\\{@}&onde=&b=Buscarxx
 Charset=utf8

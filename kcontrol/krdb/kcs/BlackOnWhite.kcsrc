@@ -1,5 +1,6 @@
 [Color Scheme]
 Name=High Contrast Black Text
+Name[ca]=Text negre d'alt contrast
 Name[da]=Sort tekst med høj kontrast
 Name[es]=Texto negro de alto contraste
 Name[fr]=Texte en noir avec contraste élevé
@@ -12,6 +13,7 @@ Name[pt_BR]=Alto Contraste do Texto Preto
 Name[ru]=Высококонтрастный черный текст
 Name[sv]=Svart text med hög kontrast
 Name[uk]=Високо-контрастний чорний текст
+Name[xx]=xxHigh Contrast Black Textxx
 Name[zh_CN]=高对比黑字
 activeBackground=165,165,255
 activeBlend=165,165,255

@@ -43,5 +43,6 @@ Name[xh]=CPAN - Enomxholo Perl Indawo yokugcina Yomsebenzi womnatha
 Name[xx]=xxCPAN - Comprehensive Perl Archive Networkxx
 Name[zh_TW]=CPAN - 全面的 Perl 收集網路
 Query=http://search.cpan.org/search?mode=\\{mode,2,"dist"}&query=\\{query,q,1}
+Query[xx]=xxhttp://search.cpan.org/search?mode=\\{mode,2,"dist"}&query=\\{query,q,1}xx
 ServiceTypes=SearchProvider
 Type=Service
