@@ -194,6 +194,14 @@ Select the search engine to use for input boxes that provide automatic lookup se
                     <property name="name">
                         <cstring>lvSearchProviders</cstring>
                     </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>5</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>1</horstretch>
+                            <verstretch>1</verstretch>
+                        </sizepolicy>
+                    </property>
                     <property name="showSortIndicator">
                         <bool>true</bool>
                     </property>
