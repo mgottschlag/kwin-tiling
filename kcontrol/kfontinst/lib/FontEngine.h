@@ -70,11 +70,11 @@ class CFontEngine
         OPEN_TYPE,
         TYPE_1,
 
+        TYPE_1_AFM,  // Not really a font type, but can be returned by getType()
+
         // These do not...
         SPEEDO,
         BITMAP,
-
-        TYPE_1_AFM,  // Not really a font type, but can be returned by getType()
 
         ANY,
         NONE
@@ -239,13 +239,13 @@ class CFontEngine
     EType           getType()         { return itsType; }
     int             getNumFaces()     { return itsNumFaces; }
 
-    bool            hasPsInfo()       { return itsType<=TYPE_1; }
-    static bool     hasPsInfo(const char *fname) { return getType(fname)<=TYPE_1; }
+    bool            hasPsInfo()       { return itsType<=TYPE_1_AFM; }
+    static bool     hasPsInfo(const char *fname) { return getType(fname)<=TYPE_1_AFM; }
 
     QStringList     getEncodings();
 
-    EWeight         strToWeight(const char *str);
-    EWidth          strToWidth(const QString &str);
+    static EWeight  strToWeight(const char *str);
+    static EWidth   strToWidth(const QString &str);
 
     QString         createName(const QString &file, bool force=false);
 
@@ -284,6 +284,12 @@ class CFontEngine
     QStringList     getEncodingsT1();
     bool            getIsArrayEncodingT1();
     QString &       getAfmEncodingT1()                   { return itsAfmEncoding; }
+
+    //
+    // AFM...
+    //
+
+    bool            openFontAfm(const QString &file);
 
     //
     // TrueType functions...

@@ -43,7 +43,7 @@ class KFileFontPlugin : public KFilePlugin
 
     private:
 
-    void addMimeType(const char *mime);
+    void addMimeType(const char *mime, bool hasPs=true);
 };
 
 #endif

@@ -46,12 +46,13 @@ KFileFontPlugin::KFileFontPlugin(QObject *parent, const char *name, const QStrin
 {
     addMimeType("application/x-font-ttf"),
     addMimeType("application/x-font-type1");
-    addMimeType("application/x-font-speedo");
-    addMimeType("application/x-font-bdf");
-    addMimeType("application/x-font-pcf");
-    addMimeType("application/x-font-snf");
+    addMimeType("application/x-font-speedo", false);
+    addMimeType("application/x-font-bdf", false);
+    addMimeType("application/x-font-pcf", false);
+    addMimeType("application/x-font-snf", false);
     addMimeType("application/x-font-otf");
     addMimeType("application/x-font-ttc");
+    addMimeType("application/x-afm");
 }
 
 KFileFontPlugin::~KFileFontPlugin()
@@ -59,14 +60,15 @@ KFileFontPlugin::~KFileFontPlugin()
     CGlobal::destroy();
 }
 
-void KFileFontPlugin::addMimeType(const char *mime)
+void KFileFontPlugin::addMimeType(const char *mime, bool hasPs)
 {
     KFileMimeTypeInfo            *info=addMimeTypeInfo(mime);
     KFileMimeTypeInfo::GroupInfo *group=addGroupInfo(info, "General", i18n("General"));
 
     addItemInfo(group, "Full", i18n("Full Name"), QVariant::String);
     addItemInfo(group, "Family", i18n("Family"), QVariant::String);
-    addItemInfo(group, "PostScript", i18n("PostScript Name"), QVariant::String);
+    if(hasPs)
+        addItemInfo(group, "PostScript", i18n("PostScript Name"), QVariant::String);
     addItemInfo(group, "Foundry", i18n("Foundry"), QVariant::String);
     addItemInfo(group, "Weight", i18n("Weight"),  QVariant::String);
     addItemInfo(group, "Width", i18n("Width"), QVariant::String);
@@ -230,7 +232,8 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                 if(KFileMetaInfo::Fastest!=what)
                 {
                     addEntry(face, family, CGlobal::fe().getFamilyName());
-                    addEntry(face, ps, CGlobal::fe().hasPsInfo() ? CGlobal::fe().getPsName() : i18n("Not Applicable"));
+                    if(CGlobal::fe().hasPsInfo())  
+                        addEntry(face, ps, CGlobal::fe().getPsName());
                     if(0==face)
                         foundry=CGlobal::fe().getFoundry();
                     addEntry(face, weight, toStr(CGlobal::fe().getWeight()));

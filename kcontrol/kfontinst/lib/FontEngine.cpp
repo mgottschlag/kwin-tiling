@@ -148,6 +148,8 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force,
             return openFontSpd(file, mask);
         case BITMAP:
             return openFontBmp(file);
+        case TYPE_1_AFM:
+            return openFontAfm(file);
         default:
             if(force)
             {
@@ -159,7 +161,7 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force,
                 {
                     ok=openFontTT(file, mask, face);
                     if(ok)
-                        itsType=TRUE_TYPE;
+                        itsType=itsNumFaces>1 ? TT_COLLECTION : TRUE_TYPE;
                     else
                     {
                         ok=openFontSpd(file, mask);
@@ -170,6 +172,12 @@ bool CFontEngine::openFont(const QString &file, unsigned short mask, bool force,
                             ok=openFontBmp(file, force);
                             if(ok)
                                 itsType=BITMAP;
+                            else
+                            {
+                                ok=openFontAfm(file);
+                                if(ok)
+                                    itsType=TYPE_1_AFM;
+                            }
                         }
                     }
                 }
@@ -1486,11 +1494,13 @@ QStringList CFontEngine::getEncodingsT1()
 
     if(getIsArrayEncodingT1())
     {
+        if(!itsAfmEncoding.isNull() &&
 #ifdef HAVE_FONT_ENC
-        if(!itsAfmEncoding.isNull() && -1!=CGlobal::enc().getList().findIndex(itsAfmEncoding))
+           -1!=CGlobal::enc().getList().findIndex(itsAfmEncoding) &&
 #else
-        if(!itsAfmEncoding.isNull() && NULL!=CGlobal::enc().get8Bit(itsAfmEncoding))
+           NULL!=CGlobal::enc().get8Bit(itsAfmEncoding) &&
 #endif
+           CEncodings::constT1Symbol!=itsAfmEncoding && 1==itsAfmEncoding.contains('-'))
             enc.append(itsAfmEncoding);
 
         enc.append(CEncodings::constT1Symbol);
@@ -1504,6 +1514,83 @@ QStringList CFontEngine::getEncodingsT1()
 bool CFontEngine::getIsArrayEncodingT1()
 {
     return itsType==TYPE_1 && itsEncoding.find("array")!=-1 ? true : false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//    AFM
+//
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool CFontEngine::openFontAfm(const QString &file)
+{
+    QFile f(file);
+    bool  foundName=false,
+          foundFamily=false,
+          foundPs=false,
+          familyIsFull=false;
+
+    if(f.open(IO_ReadOnly))
+    {
+        QTextStream stream(&f);
+        QString     line;
+        bool        inMetrics=false;
+
+        while(!stream.atEnd())
+        {
+            line=stream.readLine();
+            line=line.simplifyWhiteSpace();
+
+            if(inMetrics)
+            {
+                if(0==line.find("FontName "))
+                {
+                    itsPsName=line.mid(9);
+                    foundPs=true;
+                }
+                else if(0==line.find("FullName "))
+                {
+                    itsFullName=line.mid(9);
+                    itsWidth=strToWidth(itsFullName);
+                    foundName=true;
+                }
+                else if(0==line.find("FamilyName "))
+                {
+                    itsFamily=line.mid(11);
+                    foundFamily=true;
+                }
+                else if(0==line.find("Weight "))
+                    itsWeight=strToWeight(line.mid(7).latin1());
+                else if(0==line.find("ItalicAngle "))
+                    itsItalic=0.0f==line.mid(12).toFloat() ? ITALIC_NONE : ITALIC_ITALIC;
+                else if(0==line.find("IsFixedPitch "))
+                    itsSpacing=0==line.mid(13).find("false", 0, false) ? SPACING_PROPORTIONAL : SPACING_MONOSPACED;
+                else if(0==line.find("Notice "))
+                    itsFoundry=::getFoundry(line.mid(7).latin1());
+                else if(0==line.find("StartCharMetrics"))
+                    break;
+                itsItalic=checkItalic(itsItalic, itsFullName);
+            }
+            else
+                if(0==line.find("StartFontMetrics"))
+                    inMetrics=true;
+        };
+        f.close();
+
+        if(!foundFamily && foundName)
+        {
+            itsFamily=itsFullName;
+            familyIsFull=true;
+            foundFamily=true;
+        }
+
+        if(foundName)
+            itsItalic=checkItalic(itsItalic, itsFullName);
+
+        if(foundName && foundFamily)
+            itsFamily=createNames(familyIsFull ? QString::null : itsFamily, itsFullName);
+    }
+
+    return foundPs && foundName && foundFamily;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
