@@ -102,14 +102,14 @@ QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
     {
     return change_shortcut_internal( entry_P, shortcut_P, true, false );
     }
-    
+
 QString khotkeys_edit_menu_entry_shortcut( const QString& entry_P,
     const QString& shortcut_P, bool save_if_edited_P )
     {
     return change_shortcut_internal( entry_P, shortcut_P, save_if_edited_P,
         true );
     }
-    
+
 QString change_shortcut_internal( const QString& entry_P,
     const QString& shortcut_P, bool save_if_edited_P, bool edit_P )
     {
@@ -143,14 +143,14 @@ QString change_shortcut_internal( const QString& entry_P,
         if( !edit_shortcut( name, pos, data, shortcut_P ))
             return shortcut_P;
         }
-    else    
+    else
         //pos->shortcut = KKey::keyToString(    // make sure the shortcut
         //    KKey::stringToKeyQt( shortcut_P ), false); // is valid
 	pos->shortcut = (KKeySequence( shortcut_P )).toString( KKeySequence::I18N_No );
     if( !save_if_edited_P )
         return pos->shortcut;
     if( pos->shortcut.isEmpty())
-        {            
+        {
         delete pos;
         if( !new_data ) // remove from config file
             write_conf( data );
@@ -172,7 +172,7 @@ void write_conf( KHotData_dict& data_P )
     client->send( "khotkeys", "khotkeys", "reread_configuration()", data );
       // tell daemon to reread cfg file
     }
-    
+
 bool edit_shortcut( const QString& action_name_P, KHotData* item_P,
     KHotData_dict& data_P, const QString& shortcut_P )
     {
@@ -187,7 +187,7 @@ bool edit_shortcut( const QString& action_name_P, KHotData* item_P,
 desktop_shortcut_dialog::desktop_shortcut_dialog(
     const QString& action_name_P, KHotData* item_P, KHotData_dict& data_P,
     QString shortcut_P )
-    : KDialogBase( NULL, NULL, true, i18n( "Select shortcut" ), Ok | Cancel ),
+    : KDialogBase( NULL, NULL, true, i18n( "Select Shortcut" ), Ok | Cancel ),
         data( data_P ), item( item_P ), action_name( action_name_P )
     {
     for( KHotData_dict::Iterator it( data );
@@ -222,6 +222,7 @@ bool desktop_shortcut_dialog::dlg_exec()
     {
     if( exec() == Accepted )
         {
+        keychooser->commitChanges();
         KAccelAction* pAction = map.actionPtr( action_name );
         if( pAction )
             {
