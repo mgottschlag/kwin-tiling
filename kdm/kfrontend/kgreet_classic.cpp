@@ -31,6 +31,21 @@
 #include <qlayout.h>
 #include <qlabel.h>
 
+class KDMPasswordEdit : public KPasswordEdit {
+public:
+    KDMPasswordEdit( QWidget *parent ) : KPasswordEdit( parent, 0 ) {}
+    KDMPasswordEdit( KPasswordEdit::EchoModes echoMode, QWidget *parent ) : KPasswordEdit( echoMode, parent, 0 ) {}
+protected:
+    virtual void contextMenuEvent( QContextMenuEvent * ) {}
+};
+
+class KDMLineEdit : public QLineEdit {
+public:
+    KDMLineEdit( QWidget *parent ) : QLineEdit( parent ) {}
+protected:
+    virtual void contextMenuEvent( QContextMenuEvent * ) {}
+};
+
 static int echoMode;
 
 KClassicGreeter::KClassicGreeter(
@@ -56,7 +71,7 @@ KClassicGreeter::KClassicGreeter(
 	fixedUser = KUser().loginName();
     if (func != ChAuthTok) {
 	if (fixedUser.isEmpty()) {
-	    loginEdit = new QLineEdit( parent );
+	    loginEdit = new KDMLineEdit( parent );
 	    loginLabel = new QLabel( loginEdit, i18n("&Username:"), parent );
 	    connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotLoginLostFocus()) );
 	    if (pred) {
@@ -71,9 +86,9 @@ KClassicGreeter::KClassicGreeter(
 	    grid->addWidget( new QLabel( fixedUser, parent ), line++, 1 );
 	}
 	if (echoMode == -1)
-	    passwdEdit = new KPasswordEdit( parent, 0 );
+	    passwdEdit = new KDMPasswordEdit( parent );
 	else
-	    passwdEdit = new KPasswordEdit( (KPasswordEdit::EchoModes)echoMode, parent, 0 );
+	    passwdEdit = new KDMPasswordEdit( (KPasswordEdit::EchoModes)echoMode, parent );
 	passwdLabel = new QLabel( passwdEdit,
 	    func == Authenticate ? i18n("&Password:") : i18n("Current &password:"), parent );
 	if (pred) {
@@ -85,11 +100,11 @@ KClassicGreeter::KClassicGreeter(
     }
     if (func != Authenticate) {
 	if (echoMode == -1) {
-	    passwd1Edit = new KPasswordEdit( (KPasswordEdit::EchoModes)echoMode, parent, 0 );
-	    passwd2Edit = new KPasswordEdit( (KPasswordEdit::EchoModes)echoMode, parent, 0 );
+	    passwd1Edit = new KDMPasswordEdit( (KPasswordEdit::EchoModes)echoMode, parent );
+	    passwd2Edit = new KDMPasswordEdit( (KPasswordEdit::EchoModes)echoMode, parent );
 	} else {
-	    passwd1Edit = new KPasswordEdit( parent, 0 );
-	    passwd2Edit = new KPasswordEdit( parent, 0 );
+	    passwd1Edit = new KDMPasswordEdit( parent );
+	    passwd2Edit = new KDMPasswordEdit( parent );
 	}
 	passwd1Label = new QLabel( passwd1Edit, i18n("&New password:"), parent );
 	passwd2Label = new QLabel( passwd2Edit, i18n("Con&firm password:"), parent );
