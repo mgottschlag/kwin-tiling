@@ -67,6 +67,7 @@
 #include "FcEngine.h"
 #include "Misc.h"
 #include <X11/Xlib.h>
+#include <ctype.h>
 
 #define KFI_DBUG kdDebug()
 #undef KFI_DBUG
