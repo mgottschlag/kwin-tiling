@@ -43,8 +43,8 @@ protected:
 	int			speed;
 	QColor		colors[64];
     int         currentColor;
-	QList<QPointArray> polygons;
-	QArray<QPoint> directions;
+	QPtrList<QPointArray> polygons;
+	QMemArray<QPoint> directions;
 	KRandomSequence rnd;
 };
 

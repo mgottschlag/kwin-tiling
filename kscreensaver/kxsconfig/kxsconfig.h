@@ -50,7 +50,7 @@ protected:
   KProcess  *mPreviewProc;
   QWidget   *mPreview;
   QTimer    *mPreviewTimer;
-  QList<KXSConfigItem> mConfigItemList;
+  QPtrList<KXSConfigItem> mConfigItemList;
 };
 
 #endif

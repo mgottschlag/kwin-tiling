@@ -32,7 +32,7 @@
 #define MAXLENGTH	65
 #define MAXVERTICES	19
 
-template class QArray<QPoint>;
+template class QMemArray<QPoint>;
 
 // libkscreensaver interface
 extern "C"
