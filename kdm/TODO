@@ -104,8 +104,6 @@ the greeter's own setting. explicitly setting it sets it for both the greeter
 and the session. .dmrc later affects only the session, not the greeter.
 
 - handle failsafe internally, take care of focus. see #32973
-- handle setting up .xsession-errors internally. as a possible extreme
-  measure, pipe it through the daemon and put a size limit on it.
 
 - TryExec for "custom" session type. always show the entry, but disable it
   if it is unavailable for the selected user.
@@ -133,7 +131,7 @@ and the session. .dmrc later affects only the session, not the greeter.
 - write a separate configurator application, as kcontrol does not scale well
   enough to cover all of kdm's options.
 
-- Different logos for each session type
+- Different logos for each session type (see #74500)
 - User pictures in logo field
 - display user's .plan/.project (or .person? .userinfo?) in the greeter?
   text area/label would suck -> tooltip?
@@ -196,9 +194,6 @@ internal stuff:
   related: ReadAccessDatabase() should be called in some reasonable location.
   also related: reserve status change in Xservers is still wrong (userSess).
 - kill warning on AIX - see bug #13628 (really present?)
-- clean up OOM handling, particularily get rid of LogOutOfMem, and make sure
-  an error is not masked by following functions (e.g., addStrArr).
-- put %m support into dopr(), nuke SysErrorMsg().
 - implement auto-re-login by keeping the display subdaemon alive instead
   of starting a new one and feeding it the old auth data.
 - move OS selection code to the core. the greeter could finally run
@@ -223,3 +218,4 @@ thoughts (not really todo):
   in a separate directory.
 - consider making the menu an actions-only menu again and put an "options >>"
   button somewhere. relates #63401, #61492
+- pipe .xsession-errors through the daemon and put a size limit on it
