@@ -161,7 +161,7 @@ extern "C"
 {
   KCModule *create_taskbar(QWidget *parent, const char *name)
   {
-    KGlobal::locale()->insertCatalogue("taskbar");
+    KGlobal::locale()->insertCatalogue("kcmtaskbar");
     return new TaskbarConfig(parent, name);
   };
 }

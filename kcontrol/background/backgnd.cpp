@@ -2,7 +2,7 @@
  *
  * $Id$
  *
- * This file is part of the KDE project, module kcmdisplay.
+ * This file is part of the KDE project, module kcmbackground.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
  *
  * Based on old backgnd.cpp:
@@ -64,7 +64,7 @@
 
 extern "C" {
     KCModule *create_background(QWidget *parent, const char *name) {
-    KGlobal::locale()->insertCatalogue("kcmdisplay");
+    KGlobal::locale()->insertCatalogue("kcmbackground");
     return new KBackground(parent, name);
     }
 }
