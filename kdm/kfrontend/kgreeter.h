@@ -88,7 +88,7 @@ private:
     KdmClock		*clock;
     QLabel		*pixLabel;
     KGVerify    	*verify;
-    QPushButton		*goButton, *clearButton;
+    QPushButton		*goButton;
     QPopupMenu		*sessMenu;
     QValueVector<SessType> sessionTypes;
     int			nNormals, nSpecials;

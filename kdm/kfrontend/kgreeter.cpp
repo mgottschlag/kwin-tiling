@@ -187,8 +187,6 @@ KGreeter::KGreeter()
     goButton = new QPushButton( i18n("L&ogin"), winFrame );
     goButton->setDefault( true );
     connect( goButton, SIGNAL( clicked()), SLOT(accept()) );
-    clearButton = new QPushButton( i18n("&Clear"), winFrame );
-    connect( clearButton, SIGNAL(clicked()), SLOT(reject()) );
     QPushButton *menuButton = new QPushButton( i18n("&Menu"), winFrame );
     //helpButton
 
@@ -215,7 +213,6 @@ KGreeter::KGreeter()
 
     QBoxLayout* hbox2 = new QHBoxLayout( inner_box, 10 );
     hbox2->addWidget( goButton );
-    hbox2->addWidget( clearButton );
     hbox2->addStretch( 1 );
     hbox2->addWidget( menuButton );
     hbox2->addStretch( 1 );
