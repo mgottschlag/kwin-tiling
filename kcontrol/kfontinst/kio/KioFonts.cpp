@@ -75,6 +75,8 @@
 
 #define KDE_DBUG kdDebug(7124)
 
+#include <iostream>
+
 extern "C"
 {
     int kdemain(int argc, char **argv);
@@ -144,7 +146,7 @@ static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QStr
     entry.clear();
     if(-1!=KDE_lstat(cPath, &buff ))
     {
-        if(CFontEngine::isAFont(cPath))
+        if(CFontEngine::isAFont(cPath) || CFontEngine::isAAfm(cPath))
         {
             if(CGlobal::fe().openFont(path))
             {
@@ -525,6 +527,7 @@ void CKioFonts::listDir(const QStringList &top, const QString &sub, const KURL &
 void CKioFonts::stat(const KURL &url)
 {
     KDE_DBUG << "stat " << url.path() << endl;
+std::cerr << "stat " << url.path().latin1() << std::endl;
     CHECK_URL_ROOT_OK(url)
 
     QStringList   path(QStringList::split('/', url.path(-1), false));
@@ -684,6 +687,7 @@ static bool writeAll(int fd, const char *buf, size_t len)
 void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
 {
     KDE_DBUG << "put " << u.path() << endl;
+std::cerr << "put " << u.path().latin1() << std::endl;
 
     QString  destOrig(convertUrl(u, false));
     QCString destOrigC(QFile::encodeName(destOrig));
@@ -917,6 +921,8 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
     KDE_struct_stat buffSrc;
 
     KDE_DBUG << "REAL:" << realSrc << " TO REAL:" << realDest << endl;
+
+std::cerr << "REAL:" << realSrc.data() << " TO REAL:" << realDest.data() << std::endl;
     if(S_ISDIR(buffSrc.st_mode))
     {
         error(KIO::ERR_IS_DIRECTORY, src.path());
@@ -1070,7 +1076,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
 
 void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
 {
-    KDE_DBUG << "rename " << src.path() << " to " << dest.path() << endl;
+    KDE_DBUG << "rename[1] " << src.path() << " to " << dest.path() << endl;
 
     CHECK_URL(src)
     CHECK_ALLOWED(src)
@@ -1107,7 +1113,7 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
 
     QCString destPath(QFile::encodeName(CMisc::getDir(srcPath)+CMisc::getFile(dest.path())));
 
-    KDE_DBUG << "rename " << srcPath << " to " << destPath << endl;
+    KDE_DBUG << "rename[2] " << srcPath << " to " << destPath << endl;
 
     ExistsType destExists=checkIfExists(CGlobal::cfg().getRealTopDirs(dest.path()), dSub);
 
@@ -1163,7 +1169,7 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
         for(it=list.begin(); it!=list.end(); ++it)
             if(dir ? CMisc::dExists(*it+sSub) : CMisc::fExists(*it+sSub) || CMisc::isLink(*it+sSub))
             {
-                KDE_DBUG << "rename " << *it+sSub << " to " << *it+dSub << endl;
+                KDE_DBUG << "rename[3] " << *it+sSub << " to " << *it+dSub << endl;
 
                 if(::rename(QFile::encodeName(*it+sSub).data(), QFile::encodeName(*it+dSub).data()))
                 {
