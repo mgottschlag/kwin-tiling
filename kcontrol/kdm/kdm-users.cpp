@@ -222,6 +222,7 @@ void KDMUsersWidget::slotShowOpts()
     wstack->raiseWidget( rbselusr->isChecked() ? optinlv : optoutlv );
     faceGroup->setEnabled( en );
     if (!en) {
+	usercombo->setEnabled( false );
 	userbutton->setEnabled( false );
 	rstuserbutton->setEnabled( false );
     } else
@@ -231,6 +232,7 @@ void KDMUsersWidget::slotShowOpts()
 void KDMUsersWidget::slotFaceOpts()
 {
     bool en = !rbusronly->isChecked();
+    usercombo->setEnabled( en );
     userbutton->setEnabled( en );
     if (en)
 	slotUserSelected();
