@@ -10,10 +10,10 @@ b) change KDE specific system settings
 c) change system settings
 
 The functionality is provided by a great number of "modules" 
-that are embedded into a framework appliaction called "kcontrol".
+that are embedded into a framework application called "kcontrol".
 
 
-How to write a control center module?
+How to write a control center module(kcm)?
 -------------------------------------
 
 The mechanism to implement kcontrol modules changed quite a bit since 
@@ -131,7 +131,7 @@ Don't call it libkcm_xyz as that is deprecated since KDE 3.0.
 Initialize things on startup
 ----------------------------
 
-If your module needs to initialize things on startup, you have have a 
+If your module needs to initialize things on startup, you must have a 
 construct like:
 
 extern "C"
@@ -155,7 +155,7 @@ $KDEDIR/applnk/Settings/...
 
 so put it in kdebase/applnk/Settings... to have it installed.
 
-just as the old control center modules. There are a number of special
+Just as the old control center modules. There are a number of special
 entries in the .desktop file for the modules:
 
 X-KDE-ModuleType
@@ -212,6 +212,13 @@ X-KDE-Init
 	if X-KDE-Init is "bell", for example, the function
 	"init_bell" is called in the library indicated by
 	X-KDE-Library.
+
+NoDisplay
+	If this is set to true the module will not show up in
+	kcontrol or when viewed with kcmshell. This is usable when
+	you need to do something at startup(X-KDE-Init etc.) but 
+	don't want the module to show up in kcontrol, eg. the module
+	has no GUI.
 
 
 Don't forget the usual entries :
