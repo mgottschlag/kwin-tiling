@@ -119,9 +119,9 @@ const char *eventNames[2][29] = {
 KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   KConfigWidget(parent, name), selected_event(0){
 
-  QBoxLayout *col1, *col2, *col3, *columns, *top_layout;
+  QBoxLayout *top_layout, *status_layout;
+  QGridLayout *grid_layout;
 
-  int delta;
   QString path;
   QDir dir;
   QStringList list;
@@ -164,6 +164,7 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   eventlist->insertItem(i18n(    "Window Resize Start"));
   eventlist->insertItem(i18n(    "Window Resize End"));
 
+  eventlist->setMinimumSize(25+eventlist->fontMetrics().width(i18n("Change to Desktop 1")), 150);
   //
   // CC: Now set up the list of known WAV Files
   //
@@ -179,62 +180,42 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   soundlist->insertStringList(list);
   
   sounds_enabled = new QCheckBox(this);
-  sounds_enabled->setText(i18n("e&nable system sounds"));
-  sounds_enabled->setMinimumSize(sounds_enabled->sizeHint());
-  sounds_enabled->setMaximumSize(sounds_enabled->sizeHint());
+  sounds_enabled->setText(i18n("E&nable system sounds"));
 
   btn_test = new QPushButton(this);
   btn_test->setText(i18n("&Test"));
-  btn_test->setMinimumSize(btn_test->sizeHint());
-  btn_test->setMaximumSize(btn_test->sizeHint());  
 
   eventlabel = new QLabel(eventlist, i18n("&Events:"), this);
-  eventlabel->setMinimumSize(eventlabel->sizeHint());
-  eventlabel->setMaximumSize(eventlabel->sizeHint());
-
   soundlabel = new QLabel(soundlist, i18n("&Sounds:"), this);
-  soundlabel->setMinimumSize(soundlabel->sizeHint());
-  soundlabel->setMaximumSize(soundlabel->sizeHint());
-
   statustext = new QLabel(i18n(
 	       "Additional WAV files can be dropped onto the sound list."
 	       ),this);
+  eventlabel->setAlignment(QLabel::AlignLeft);
+  soundlabel->setAlignment(QLabel::AlignLeft);
+  statustext->setAlignment(QLabel::AlignLeft);
+  
+  grid_layout = new QGridLayout(2, 2);
+  grid_layout->addWidget(eventlabel, 0, 0);
+  grid_layout->addWidget(eventlist, 1, 0);
+  grid_layout->addWidget(soundlabel, 0, 1);
+  grid_layout->addWidget(soundlist, 1, 1);
+  grid_layout->setRowStretch(1, 1);
+  grid_layout->setColStretch(0, 30);
+  grid_layout->setColStretch(1, 70);
 
-  statustext->setMinimumSize(statustext->sizeHint());
-  statustext->setMaximumSize(statustext->sizeHint());
-
-  delta = eventlabel->height();
+  status_layout = new QHBoxLayout();
+  status_layout->addWidget(statustext, 1);
+  status_layout->addWidget(btn_test);
 
   top_layout = new QVBoxLayout(this, 10);
-
-  columns = new QHBoxLayout(10);
-
   top_layout->addWidget(sounds_enabled,0,AlignLeft);
-  top_layout->addLayout(columns,1);
-  top_layout->addWidget(statustext,0,AlignLeft);
-
-  col1 = new QVBoxLayout();
-  col2 = new QVBoxLayout();
-  col3 = new QVBoxLayout();
-
-  columns->addLayout(col1, 3);
-  columns->addLayout(col2, 4);
-  columns->addLayout(col3, 0); 
-
-  col1->addWidget(eventlabel,0,AlignLeft);
-  col1->addWidget(eventlist,1);
-
-  col2->addWidget(soundlabel,0,AlignLeft);
-  col2->addWidget(soundlist,1);
-
-  col3->addSpacing(delta);
-  col3->addWidget(btn_test,0);
-  // CC: add more buttons here
-  col3->addStretch(1);
-
+  top_layout->addLayout(grid_layout, 1);
+  top_layout->addLayout(status_layout);
+  
   top_layout->activate();
+  
   setUpdatesEnabled(TRUE);
-
+  
   readConfig();
 
   connect(eventlist, SIGNAL(highlighted(int)), this, SLOT(eventSelected(int)));
