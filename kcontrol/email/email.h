@@ -45,7 +45,7 @@ private:
 
  QLineEdit *userName, *password, *inServer, *outServer;
  QButtonGroup *bGrp;
- QRadioButton *pop3Button, *imapButton;
+ QRadioButton *pop3Button, *imapButton, *localButton;
  
 };
 

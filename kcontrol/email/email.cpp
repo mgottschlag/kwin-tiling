@@ -97,6 +97,7 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   
   imapButton = new QRadioButton(i18n("&IMAP"), bGrp);
   pop3Button = new QRadioButton(i18n("P&OP3"), bGrp);
+  localButton = new QRadioButton(i18n("&Local mailbox"), bGrp);
 
   topLayout->addSpacing(SPACE);
 
@@ -148,7 +149,14 @@ void KEmailConfig::applySettings()
   config->writeEntry("Password", password->text());
   config->writeEntry("Incoming", inServer->text());
   config->writeEntry("Outgoing", outServer->text());
-  config->writeEntry("ServerType", imapButton->isChecked() ? 0 : 1);
+  int sType;
+  if (imapButton->isChecked())
+    sType = 0;
+  else if (pop3Button->isChecked())
+    sType = 1;
+  else
+    sType = 2;
+  config->writeEntry("ServerType", sType);
 
   config->sync();
 
