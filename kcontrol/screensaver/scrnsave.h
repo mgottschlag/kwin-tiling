@@ -88,9 +88,6 @@ public:
 
     QString quickHelp() const;
 
-signals:
-    void changed(bool);
-
 protected slots:
     void slotEnable( bool );
     void slotScreenSaver( int );
