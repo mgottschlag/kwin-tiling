@@ -140,7 +140,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
        " to the current scheme, those changes will be lost if you select"
        " another color scheme.") );
 
-    addBt = new QPushButton(i18n("&Save scheme..."), group);
+    addBt = new QPushButton(i18n("&Save Scheme..."), group);
     connect(addBt, SIGNAL(clicked()), SLOT(slotAdd()));
     groupLayout->addWidget(addBt, 10);
 
@@ -148,7 +148,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
        " the current color settings as a color scheme. You will be"
        " prompted for a name.") );
 
-    removeBt = new QPushButton(i18n("&Remove scheme"), group);
+    removeBt = new QPushButton(i18n("&Remove Scheme"), group);
     removeBt->setEnabled(FALSE);
     connect(removeBt, SIGNAL(clicked()), SLOT(slotRemove()));
 

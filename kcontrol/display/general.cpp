@@ -283,7 +283,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     QWidget *dummy = new QWidget(themeBox);
     QHBoxLayout *btnLay = new QHBoxLayout(dummy);
 
-    QPushButton *btnImport = new QPushButton(i18n("&Import GTK themes..."), dummy);
+    QPushButton *btnImport = new QPushButton(i18n("&Import GTK Themes..."), dummy);
     btnImport->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum));
     QWhatsThis::add(btnImport, i18n("This launches KDE GTK style importer "
         "which allows you to convert legacy GTK pixmap themes to KDE widget styles."));
