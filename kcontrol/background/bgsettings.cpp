@@ -869,6 +869,20 @@ void KBackgroundSettings::updateWallpaperFiles()
 }
 
 
+QStringList KBackgroundSettings::wallpaperList() const
+{
+    if ( m_WallpaperMode == NoWallpaper )
+        return QStringList();
+    return m_WallpaperList;
+}
+
+QStringList KBackgroundSettings::wallpaperFiles() const
+{
+    if ( m_WallpaperMode == NoWallpaper )
+        return QStringList();
+    return m_WallpaperFiles;
+}
+
 /*
  * Select a new wallpaper from the list.
  */

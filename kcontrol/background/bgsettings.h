@@ -200,7 +200,8 @@ public:
     int wallpaperMode() const { return m_WallpaperMode; }
 
     void setWallpaperList(QStringList);
-    QStringList wallpaperList() const { return m_WallpaperList; }
+    QStringList wallpaperList() const;
+    QStringList wallpaperFiles() const;
 
     void setWallpaperChangeInterval(int);
     int wallpaperChangeInterval() const { return m_Interval; }
