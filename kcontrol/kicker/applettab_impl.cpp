@@ -61,15 +61,15 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
   pb_remove->setEnabled(false);
 
   QWhatsThis::add( level_group, i18n("Panel applets can be started in two different ways:"
-    " internal or external. While 'internal' is the preferred way to load applets, this can"
+    " internally or externally. While 'internally' is the preferred way to load applets, this can"
     " raise stability or security problems when you are using poorly programmed third-party applets."
     " To address these problems, applets can be marked 'trusted'. You might want to configure"
     " kicker to treat trusted applets different from untrusted ones. Your options are:"
-    " <ul><li><em>Load only trusted applets internal:</em> All applets but the ones marked 'trusted'"
+    " <ul><li><em>Load only trusted applets internally:</em> All applets but the ones marked 'trusted'"
     " will be loaded using an external wrapper application.</li>"
-    " <li><em>Load startup config applets internal:</em> The applets shown on KDE startup"
+    " <li><em>Load startup config applets internally:</em> The applets shown on KDE startup"
     " will be loaded internally, others will be loaded using an external wrapper application.</li>"
-    " <li><em>Load all applets internal</em></li></ul>") );
+    " <li><em>Load all applets internally</em></li></ul>") );
 
   QWhatsThis::add( lb_trusted, i18n("Here you can see a list of applets that are marked"
     " 'trusted', i.e. will be loaded internally by kicker in any case. To move an applet"
