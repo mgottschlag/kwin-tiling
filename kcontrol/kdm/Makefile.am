@@ -5,7 +5,7 @@ kcm_kdm_la_SOURCES = kdm-appear.cpp kdm-font.cpp kdm-sess.cpp \
 	klanguagebutton.cpp main.cpp bgdialogs.cpp
 
 kcm_kdm_la_LDFLAGS  = $(KDE_RPATH) $(all_libraries) -module -avoid-version -no-undefined
-kcm_kdm_la_LIBADD = $(LIB_KIO) $(top_builddir)/kcontrol/background/libbgnd.la
+kcm_kdm_la_LIBADD = $(top_builddir)/kcontrol/background/libbgnd.la $(LIB_KIO)
 
 INCLUDES= -I$(top_srcdir)/kcontrol/background -I$(top_srcdir)/kdesktop $(all_includes)
 
