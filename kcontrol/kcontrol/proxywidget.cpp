@@ -120,8 +120,10 @@ ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, bool ru
     : QScrollView(parent, name), client(_client)
 {
   setResizePolicy(QScrollView::AutoOneFit);
+  /*
   setVScrollBarMode(AlwaysOff);
   setHScrollBarMode(AlwaysOff);
+  */
   contentWidget = new QVBox(viewport());
   if (run_as_root && _client->useRootOnlyMsg()) // notify the user
   {
@@ -146,6 +148,7 @@ ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, bool ru
 
 void ProxyView::resizeEvent(QResizeEvent *e)
 {
+    /*
     int x = width();
     int y = height();
     int hs = horizontalScrollBar()->sizeHint().height();
@@ -181,6 +184,7 @@ void ProxyView::resizeEvent(QResizeEvent *e)
     resizeContents(dx, dy);
     setVScrollBarMode(showv ? AlwaysOn : AlwaysOff);
     setHScrollBarMode(showh ? AlwaysOn : AlwaysOff);
+    */
 
     QScrollView::resizeEvent(e);
 }
