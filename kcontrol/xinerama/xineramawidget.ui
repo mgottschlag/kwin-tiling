@@ -9,7 +9,7 @@
             <x>0</x>
             <y>0</y>
             <width>658</width>
-            <height>484</height>
+            <height>342</height>
         </rect>
     </property>
     <property name="caption">
@@ -172,15 +172,7 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QComboBox" row="0" column="1">
-                    <property name="name">
-                        <cstring>_kdmDisplay</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="1" column="0">
+                <widget class="QLabel" row="0" column="0">
                     <property name="name">
                         <cstring>TextLabel2</cstring>
                     </property>
@@ -194,7 +186,7 @@
                         <cstring>_unmanagedDisplay</cstring>
                     </property>
                 </widget>
-                <widget class="QComboBox" row="2" column="1">
+                <widget class="QComboBox" row="1" column="1">
                     <property name="name">
                         <cstring>_ksplashDisplay</cstring>
                     </property>
@@ -202,21 +194,7 @@
                         <bool>false</bool>
                     </property>
                 </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>TextLabel1</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>Show KDE Display Manager On:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>_kdmDisplay</cstring>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="2" column="0">
+                <widget class="QLabel" row="1" column="0">
                     <property name="name">
                         <cstring>TextLabel2_2</cstring>
                     </property>
@@ -230,7 +208,7 @@
                         <cstring>_unmanagedDisplay</cstring>
                     </property>
                 </widget>
-                <widget class="QComboBox" row="1" column="1">
+                <widget class="QComboBox" row="0" column="1">
                     <property name="name">
                         <cstring>_unmanagedDisplay</cstring>
                     </property>
@@ -264,19 +242,7 @@
     <connection>
         <sender>_enableXinerama</sender>
         <signal>toggled(bool)</signal>
-        <receiver>TextLabel1</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>_enableXinerama</sender>
-        <signal>toggled(bool)</signal>
         <receiver>TextLabel2</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>_enableXinerama</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>_kdmDisplay</receiver>
         <slot>setEnabled(bool)</slot>
     </connection>
     <connection>
@@ -306,12 +272,6 @@
     <connection>
         <sender>_enableMaximize</sender>
         <signal>clicked()</signal>
-        <receiver>XineramaWidget</receiver>
-        <slot>emitConfigChanged()</slot>
-    </connection>
-    <connection>
-        <sender>_kdmDisplay</sender>
-        <signal>activated(int)</signal>
         <receiver>XineramaWidget</receiver>
         <slot>emitConfigChanged()</slot>
     </connection>

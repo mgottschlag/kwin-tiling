@@ -63,7 +63,6 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 		for (int i = 0; i < _displays; i++) {
 			QString l = label.arg(i+1);
 			QRect geom = QApplication::desktop()->screenGeometry(i);
-			xw->_kdmDisplay->insertItem(l);
 			xw->_unmanagedDisplay->insertItem(l);
 			xw->_ksplashDisplay->insertItem(l);
 			dpyList.append(l);
@@ -78,8 +77,6 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 		xw->headTable->setRowLabels(dpyList);
 
 		connect(xw->_ksplashDisplay, SIGNAL(activated(int)),
-			this, SLOT(windowIndicator(int)));
-		connect(xw->_kdmDisplay, SIGNAL(activated(int)),
 			this, SLOT(windowIndicator(int)));
 		connect(xw->_unmanagedDisplay, SIGNAL(activated(int)),
 			this, SLOT(windowIndicator(int)));
@@ -174,8 +171,6 @@ void KCMXinerama::defaults() {
 		xw->_enableResistance->setChecked(true);
 		xw->_enablePlacement->setChecked(true);
 		xw->_enableMaximize->setChecked(true);
-		xw->_kdmDisplay->setCurrentItem(
-				QApplication::desktop()->primaryScreen());
 		xw->_unmanagedDisplay->setCurrentItem(
 				QApplication::desktop()->primaryScreen());
 		xw->_ksplashDisplay->setCurrentItem(
