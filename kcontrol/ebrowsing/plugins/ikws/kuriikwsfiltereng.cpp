@@ -207,6 +207,17 @@ QStringList KURISearchFilterEngine::modifySubstitutionMap(SubstMap& map,
   return l;
 }
 
+static QString encodeString(const QString &s, int mib)
+{
+  QStringList l = QStringList::split(" ", s, true);
+  for(QStringList::Iterator it = l.begin();
+      it != l.end(); ++it)
+  {
+     *it = KURL::encode_string(*it, mib);
+  }
+  return l.join("+");
+}
+
 QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &map, const QString& userquery, const int encodingMib) const
 {
   QString newurl = url;
@@ -282,14 +293,14 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
             found = true;
 
           PDVAR ("    range", QString::number(first) + "-" + QString::number(last) + " => '" + v + "'");
-          v = KURL::encode_string(v, encodingMib);
+          v = encodeString(v, encodingMib);
         }
         else if ( rlitem.startsWith("\"") && rlitem.endsWith("\"") )
         {
           // Use default string from query definition:
           found = true;
           QString s = rlitem.mid(1, rlitem.length() - 2);
-          v = KURL::encode_string(s, encodingMib);
+          v = encodeString(s, encodingMib);
           PDVAR ("    default", s);
         }
         else if (map.contains(rlitem))
@@ -297,7 +308,7 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
           // Use value from substitution map:
           found = true;
           PDVAR ("    map['" + rlitem + "']", map[rlitem]);
-          v = KURL::encode_string(map[rlitem], encodingMib);
+          v = encodeString(map[rlitem], encodingMib);
 
           // Remove used value from ql (needed for \{@}):
           QString c = rlitem.left(1);
@@ -351,7 +362,7 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
       }
       v = v.simplifyWhiteSpace();
       PDVAR ("    rest", v);
-      v = KURL::encode_string(v, encodingMib);
+      v = encodeString(v, encodingMib);
 
       // Substitute \{@} with list of unmatched query strings
       int vpos = 0;
