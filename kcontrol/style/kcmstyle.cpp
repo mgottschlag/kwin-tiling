@@ -353,11 +353,11 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	// Page2
 	connect( cbEnableEffects,     SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
 	connect( cbEnableEffects,     SIGNAL(toggled(bool)),    this, SLOT(setStyleDirty()));
-	connect( comboTooltipEffect,  SIGNAL(highlighted(int)), this, SLOT(setEffectsDirty()));
-	connect( comboComboEffect,    SIGNAL(highlighted(int)), this, SLOT(setEffectsDirty()));
-	connect( comboMenuEffect,     SIGNAL(highlighted(int)), this, SLOT(setStyleDirty()));
-	connect( comboMenuHandle,     SIGNAL(highlighted(int)), this, SLOT(setStyleDirty()));
-	connect( comboMenuEffectType, SIGNAL(highlighted(int)), this, SLOT(setStyleDirty()));
+	connect( comboTooltipEffect,  SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
+	connect( comboComboEffect,    SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
+	connect( comboMenuEffect,     SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
+	connect( comboMenuHandle,     SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
+	connect( comboMenuEffectType, SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
 	connect( slOpacity,           SIGNAL(valueChanged(int)),this, SLOT(setStyleDirty()));
 	connect( cbMenuShadow,        SIGNAL(toggled(bool)),    this, SLOT(setStyleDirty()));
 	// Page3
@@ -366,7 +366,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	connect( cbEnableTooltips,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
 	connect( cbIconsOnButtons,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
 	connect( cbTearOffHandles,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
-	connect( comboToolbarIcons,     SIGNAL(highlighted(int)), this, SLOT(setToolbarsDirty()));
+	connect( comboToolbarIcons,     SIGNAL(activated(int)), this, SLOT(setToolbarsDirty()));
 
 	addWhatsThis();
 
@@ -374,7 +374,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	tabWidget->insertTab( page1, i18n("&Style"));
 	tabWidget->insertTab( page2, i18n("&Effects"));
 	tabWidget->insertTab( page3, i18n("&Miscellaneous"));
-	
+
 	//Enable/disable the button for the initial style
 	updateConfigButton();
 }
@@ -430,16 +430,16 @@ void KCMStyle::styleSpecificConfig()
 	//Create the container dialog
 	StyleConfigDialog* dial = new StyleConfigDialog(this, styleEntries[currentStyle()]->name);
 	dial->enableButtonSeparator(true);
-	
+
 	typedef QWidget*(* factoryRoutine)( QWidget* parent );
 
 	//Get the factory, and make the widget.
 	factoryRoutine factory      = (factoryRoutine)(allocPtr); //Grmbl. So here I am on my
 	//"never use C casts" moralizing streak, and I find that one can't go void* -> function ptr
 	//even with a reinterpret_cast.
-	
+
 	QWidget*       pluginConfig = factory( dial );
-	
+
 	//Insert it in...
 	dial->setMainWidget( pluginConfig );
 
@@ -451,14 +451,14 @@ void KCMStyle::styleSpecificConfig()
 	if (dial->exec() == QDialog::Accepted  && dial->isDirty() ) {
 		// Force re-rendering of the preview, to apply settings
 		switchStyle(currentStyle());
-		
+
 		//For now, ask all KDE apps to recreate their styles to apply the setitngs
 		KIPC::sendMessageAll(KIPC::StyleChanged);
-		
+
 		// We call setStyleDirty here to make sure we force style re-creation
 		setStyleDirty();
 	}
-	
+
 	delete dial;
 }
 
@@ -633,9 +633,9 @@ void KCMStyle::save()
 bool KCMStyle::findStyle( const QString& str, int& combobox_item )
 {
 	StyleEntry* se   = styleEntries.find(str.lower());
-	
+
 	QString     name = se ? se->name : str;
-	
+
 	combobox_item = 0;
 
 	//look up name
@@ -795,7 +795,7 @@ void KCMStyle::loadStyle( KConfig& config )
 				continue;
 
 			styles += entry->name;
-			
+
 			nameToStyleKey[entry->name] = id;
 		}
 		else
@@ -863,12 +863,12 @@ void KCMStyle::switchStyle(const QString& styleName)
 
 	// Prevent Qt from wrongly caching radio button images
 	QPixmapCache::clear();
-	
+
 	setStyleRecursive( stylePreview, style );
-	
+
 	// this flickers, but reliably draws the widgets correctly.
 	stylePreview->resize( stylePreview->sizeHint() );
-	
+
 	delete appliedStyle;
 	appliedStyle = style;
 
