@@ -21,3 +21,5 @@ selectBackground=92,179,255
 selectForeground=0,0,0
 windowBackground=0,42,78
 windowForeground=220,220,220
+linkColor=#00ffff
+visitedLinkColor=#c0c0ff

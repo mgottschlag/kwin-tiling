@@ -16,3 +16,5 @@ inactiveForeground=#ffffff
 windowForeground=#ffffff
 windowBackground=#374d4e
 selectForeground=#ffffff
+linkColor=#00ffff
+visitedLinkColor=#c0c0ff
