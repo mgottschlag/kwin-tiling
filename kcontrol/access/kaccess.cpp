@@ -145,6 +145,8 @@ void KAccessApp::readSettings()
   uint ctrls = XkbStickyKeysMask | XkbSlowKeysMask | XkbBounceKeysMask | XkbMouseKeysMask | XkbAudibleBellMask;
   uint values = XkbAudibleBellMask;
   XkbSetAutoResetControls(qt_xdisplay(), ctrls, &ctrls, &values);
+  
+  delete config; // don't forget to delete it
 }
 
 
