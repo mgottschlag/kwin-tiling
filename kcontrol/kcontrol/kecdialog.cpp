@@ -86,7 +86,7 @@ void KExtendedCDialog::clientChanged(bool state)
 
 void KExtendedCDialog::addModule(const QString& path, bool withfallback)
 {
-    kdDebug() << "KExtendedCDialog::addModule" << endl;
+    kdDebug() << "KExtendedCDialog::addModule " << path << endl;
 
     // load the module
     ModuleInfo info(path);
