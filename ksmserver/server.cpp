@@ -1319,6 +1319,11 @@ void KSMServer::restoreSessionInternal()
 	    startApplication( config->readListEntry( QString("restartCommand")+n ) );
 	}
     }
+    if (progress == 0)
+    {
+       publishProgress( progress );
+       upAndRunning( "session ready" );
+    }
 }
 
 void KSMServer::publishProgress( int progress, bool max  )
