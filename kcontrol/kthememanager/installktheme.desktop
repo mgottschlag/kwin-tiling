@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Install KDE Theme
+MimeType=application/x-ktheme
+Icon=kthememgr
+Type=Application
+NoDisplay=true
+Exec=kdeinstallktheme %f

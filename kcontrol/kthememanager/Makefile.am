@@ -9,15 +9,11 @@ kcm_kthememanager_la_LDFLAGS = $(all_libraries) $(KDE_PLUGIN) -module
 
 noinst_HEADERS = kthememanager.h ktheme.h knewthemedlg.h kthemedlg.ui.h
 
-xdg_apps_DATA = kthememanager.desktop
+xdg_apps_DATA = kthememanager.desktop installktheme.desktop
 
 # MIME type
 kthememime_DATA = x-ktheme.desktop
 kthememimedir = $(kde_mimedir)/application
-
-# Service menu for installing themes
-konqservice_DATA = kthemeservice.desktop
-konqservicedir = $(kde_datadir)/konqueror/servicemenus
 
 bin_SCRIPTS = kdeinstallktheme
 
