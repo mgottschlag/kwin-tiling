@@ -96,10 +96,11 @@ Per-display Fifo commands:
  - Reverse the effects of "lock". Re-enable auto-relogin and remove the 
    reserve login screen, if it's not used.
 
-"reserve"
- - Start a reserve login screen. If nobody logs in within one minute, the 
-   display is removed again. When the session on the display exits and there 
-   are other non-locked local displays, the display is removed.
+"reserve" [timeout in seconds]
+ - Start a reserve login screen. If nobody logs in within the specified amount
+   of time (one minute by default), the display is removed again. When the
+   session on the display exits and there are other non-locked local displays,
+   the display is removed.
 
 "suicide"
  - The currently running session is forcibly terminated. No auto-relogin is
