@@ -427,7 +427,7 @@ static const char
     *showusers[] = { "All", "Selected", "None", 0 },
     *preseluser[] = { "None", "Previous", "Default", 0 },
     *echomode[] = { "OneStar", "ThreeStars", "NoEcho", 0 },
-    *shutdown[] = { "None", "Root", "All", 0 };
+    *shut_down[] = { "None", "Root", "All", 0 };
 
 Ent entsGeneral[] = {
 { "DaemonMode",		C_daemonMode | C_BOOL,	(void *)PdaemonMode,	"true" },
@@ -532,7 +532,7 @@ Ent entsGreeter[] = {
 { "DefaultUser",	C_DefaultUser,		0,	"" },
 { "FocusPasswd",	C_FocusPasswd | C_BOOL, 0,	"false" },
 { "EchoMode",		C_EchoMode | C_ENUM, echomode, "OneStar" },
-{ "AllowShutdown",	C_AllowShutdown | C_ENUM, shutdown, "All" },
+{ "AllowShutdown",	C_AllowShutdown | C_ENUM, shut_down, "All" },
 { "GrabServer",		C_grabServer | C_BOOL,	0,	"false" },
 { "GrabTimeout",	C_grabTimeout,		0,	"3" },
 { "AuthComplain",	C_authComplain | C_BOOL, 0,	"true" },
