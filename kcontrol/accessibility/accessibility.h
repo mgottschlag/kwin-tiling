@@ -23,7 +23,8 @@
 #ifndef _ACCESSIBILITY_H_
 #define _ACCESSIBILITY_H_
 
-#include <kcmodule.h>
+// #include <kcmodule.h>
+#include <kdebug.h>
 
 #include "accessibilityconfigwidget.h"
 
@@ -93,18 +94,18 @@ class AccessibilityConfig : public AccessibilityConfigWidget {
       void changeFlashScreenColor();
 
    private:
-      QCheckBox *systemBell, *customBell, *visibleBell;
-      QRadioButton *invertScreen, *flashScreen;
-      QLabel    *soundLabel, *colorLabel;
-      QLineEdit *soundEdit;
-      QPushButton *soundButton;
-      KColorButton *colorButton;
-      KIntNumInput *durationSlider;
-
-      QCheckBox *stickyKeys, *stickyKeysLock;
-
-      QCheckBox *slowKeys, *bounceKeys;    
-      KIntNumInput *slowKeysDelay, *bounceKeysDelay;
+//       QCheckBox *systemBell, *customBell, *visibleBell;
+//       QRadioButton *invertScreen, *flashScreen;
+//       QLabel    *soundLabel, *colorLabel;
+//       QLineEdit *soundEdit;
+//       QPushButton *soundButton;
+//       KColorButton *colorButton;
+//       KIntNumInput *durationSlider;
+// 
+//       QCheckBox *stickyKeys, *stickyKeysLock;
+// 
+//       QCheckBox *slowKeys, *bounceKeys;    
+//       KIntNumInput *slowKeysDelay, *bounceKeysDelay;
 
    private slots:
       /**

@@ -20,34 +20,34 @@
  
 // $Id$
 
-#include <stdlib.h>
-
-#include <dcopref.h>
-
-#include <qtabwidget.h>
-#include <qlayout.h>
-#include <qgroupbox.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qslider.h>
-#include <qwhatsthis.h>
-
-#include <kconfig.h>
-#include <kglobal.h>
-#include <kstandarddirs.h>
-#include <klocale.h>
-#include <krun.h>
-#include <kurl.h>
-#include <kinstance.h>
-#include <kcolorbutton.h>
-#include <kfiledialog.h>
-#include <knuminput.h>
-#include <kapplication.h>
+// #include <stdlib.h>
+// 
+// #include <dcopref.h>
+// 
+// #include <qtabwidget.h>
+// #include <qlayout.h>
+// #include <qgroupbox.h>
+// #include <qlabel.h>
+// #include <qcheckbox.h>
+// #include <qlineedit.h>
+// #include <qpushbutton.h>
+// #include <qradiobutton.h>
+// #include <qslider.h>
+// #include <qwhatsthis.h>
+// 
+// #include <kconfig.h>
+// #include <kglobal.h>
+// #include <kstandarddirs.h>
+// #include <klocale.h>
+// #include <krun.h>
+// #include <kurl.h>
+// #include <kinstance.h>
+// #include <kcolorbutton.h>
+// #include <kfiledialog.h>
+// #include <knuminput.h>
+// #include <kapplication.h>
 #include <kaboutdata.h>
-#include <kdebug.h>
+// #include <kdebug.h>
 #include <kgenericfactory.h>
 
 #include "accessibilityconfigwidget.h"
@@ -78,6 +78,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_accessibility, AccessibilityFactory("kcmaccessib
 
 AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)
   : AccessibilityConfigWidget( parent, name){
+   kdDebug() << "Running: AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)" << endl;
 // Can't be used with the Designer hack
 //  : AccessibilityConfigWidget(AccessibilityFactory::instance(), parent, name){
 
@@ -265,15 +266,18 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, cons
 
 
 AccessibilityConfig::~AccessibilityConfig(){
+   kdDebug() << "Running: AccessibilityConfig::~AccessibilityConfig()" << endl;
 }
 
 void AccessibilityConfig::changeFlashScreenColor(){
+   kdDebug() << "Running: AccessibilityConfig::~changeFlashScreenColor()" << endl;
 //    invertScreen->setChecked(false);
 //    flashScreen->setChecked(true);
 //    configChanged();
 }
 
 void AccessibilityConfig::selectSound(){
+   kdDebug() << "Running: AccessibilityConfig::selectSound()" << endl;
 //    QStringList list = KGlobal::dirs()->findDirs("sound", "");
 //    QString start;
 //    if (list.count()>0){
@@ -286,13 +290,8 @@ void AccessibilityConfig::selectSound(){
 //    }
 }
 
-
-// void AccessibilityConfig::configChanged(){
-//    emit changed(true);
-// }
-
-
 void AccessibilityConfig::load(){
+   kdDebug() << "Running: AccessibilityConfig::load()" << endl;
 //    KConfig *config = new KConfig("kaccessrc", true);
 // 
 //    config->setGroup("Bell");
@@ -329,6 +328,7 @@ void AccessibilityConfig::load(){
 
 
 void AccessibilityConfig::save(){
+   kdDebug() << "Running: AccessibilityConfig::save()" << endl;
 //    KConfig *config= new KConfig("kaccessrc", false);
 // 
 //    config->setGroup("Bell");
@@ -381,6 +381,7 @@ void AccessibilityConfig::save(){
 
 
 void AccessibilityConfig::defaults(){
+   kdDebug() << "Running: AccessibilityConfig::defaults()" << endl;
 //    systemBell->setChecked(true);
 //    customBell->setChecked(false);
 //    soundEdit->setText("");
@@ -408,16 +409,19 @@ void AccessibilityConfig::defaults(){
 
 
 void AccessibilityConfig::invertClicked(){
+   kdDebug() << "Running: AccessibilityConfig::invertClicked()" << endl;
 //   flashScreen->setChecked(false);
 }
 
 
 void AccessibilityConfig::flashClicked(){
+   kdDebug() << "Running: AccessibilityConfig::flashClicked()" << endl;
 //   invertScreen->setChecked(false);
 }
 
 
 void AccessibilityConfig::checkAccess(){
+   kdDebug() << "Running: AccessibilityConfig::checkAccess()" << endl;
 //    bool custom = customBell->isChecked();
 //    soundEdit->setEnabled(custom);
 //    soundButton->setEnabled(custom);
@@ -443,6 +447,7 @@ QString AccessibilityConfig::quickHelp() const{
 }
 
 const KAboutData* AccessibilityConfig::aboutData() const{
+   kdDebug() << "Running: AccessibilityConfig::aboutData() const"<< endl;
     KAboutData *about =
     new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
                    0, 0, KAboutData::License_GPL,

@@ -1,5 +1,6 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>AccessibilityConfigWidget</class>
+<author>José Pablo Ezequiel Fernández &lt;pupeno@kde.org&gt;</author>
 <widget class="KCModule">
     <property name="name">
         <cstring>AccessibilityConfigWidget</cstring>
@@ -8,8 +9,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>585</width>
-            <height>480</height>
+            <width>552</width>
+            <height>419</height>
         </rect>
     </property>
     <property name="caption">
@@ -364,7 +365,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                         <property name="sizeHint">
                             <size>
                                 <width>20</width>
-                                <height>30</height>
+                                <height>0</height>
                             </size>
                         </property>
                     </spacer>
@@ -1208,7 +1209,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
         <signal>toggled(bool)</signal>
         <receiver>flashScreenColor</receiver>
         <slot>setEnabled(bool)</slot>
-    </connection>    
+    </connection>
     <connection>
         <sender>stickyKeys</sender>
         <signal>toggled(bool)</signal>
@@ -1403,21 +1404,171 @@ Please note that on slow machines this may cause a "lag" between the event causi
     </connection>
     <connection>
         <sender>systemBell</sender>
-        <signal>clicked()</signal>
+        <signal>toggled(bool)</signal>
         <receiver>AccessibilityConfigWidget</receiver>
-        <slot>configChaged()</slot>
+        <slot>configChanged()</slot>
     </connection>
     <connection>
         <sender>customBell</sender>
-        <signal>clicked()</signal>
+        <signal>toggled(bool)</signal>
         <receiver>AccessibilityConfigWidget</receiver>
-        <slot>configChaged()</slot>
+        <slot>configChanged()</slot>
     </connection>
     <connection>
         <sender>soundToPlay</sender>
         <signal>textChanged(const QString&amp;)</signal>
         <receiver>AccessibilityConfigWidget</receiver>
-        <slot>configChaged()</slot>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>visibleBell</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>invertScreen</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>flashScreen</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>flashScreenColor</sender>
+        <signal>changed(const QColor&amp;)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>visibleBellDuration</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>visibleBellDurationSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>stickyKeys</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>lockWithStickyKeys</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>slowKeys</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>slowKeysDelay</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>slowKeysDelaySlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>bounceKeys</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>bounceKeysDelay</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>bounceKeysDelaySlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>moveWithKeyboard</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>accelerationDelay</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>accelerationDelaySlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>repeatInterval</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>repeatInternalSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>accelerationTime</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>accelerationTimeSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>maximumSpeed</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>maximumSpeedSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>accelerationProfile</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
+    </connection>
+    <connection>
+        <sender>accelerationProfileSlider</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>AccessibilityConfigWidget</receiver>
+        <slot>configChanged()</slot>
     </connection>
 </connections>
 <tabstops>
@@ -1455,8 +1606,8 @@ Please note that on slow machines this may cause a "lag" between the event causi
     <include location="local" impldecl="in implementation">accessibilityconfigwidget.ui.h</include>
 </includes>
 <slots>
-    <slot access="private">configChaged()</slot>
     <slot access="private" specifier="non virtual">updateFlashScreenColor()</slot>
+    <slot access="private">configChanged()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
 <includehints>
