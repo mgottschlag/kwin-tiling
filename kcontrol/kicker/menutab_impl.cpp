@@ -53,13 +53,13 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     connect(m_showRecent, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_showQuickBrowser, SIGNAL(clicked()), SIGNAL(changed()));
 
-		m_pEditNum2Show->setMaxLength(2);
-		m_pEditNum2Show->setValidator(
-				new QIntValidator(knMinNum2Show, knMaxNum2Show, m_pEditNum2Show));
-		connect(m_pEditNum2Show, SIGNAL(textChanged(const QString &)), SIGNAL(changed()));
+    m_pEditNum2Show->setMaxLength(2);
+    m_pEditNum2Show->setValidator(
+        new QIntValidator(knMinNum2Show, knMaxNum2Show, m_pEditNum2Show));
+    connect(m_pEditNum2Show, SIGNAL(textChanged(const QString &)), SIGNAL(changed()));
 
-		m_pRecentOrderGroup->setRadioButtonExclusive(true);
-		connect(m_pRecentOrderGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
+    m_pRecentOrderGroup->setRadioButtonExclusive(true);
+    connect(m_pRecentOrderGroup, SIGNAL(clicked(int)), SIGNAL(changed()));
 
 
     // whats this help
@@ -112,80 +112,75 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
 
 void MenuTab::load()
 {
-  QCString configname;
-  if (kickerconfig_screen_number == 0)
-      configname = "kickerrc";
-  else
-      configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-  KConfig *c = new KConfig(configname, false, false);
+    QCString configname;
+    if (kickerconfig_screen_number == 0)
+        configname = "kickerrc";
+    else
+        configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+    KConfig *c = new KConfig(configname, false, false);
 
-  c->setGroup("menus");
+    c->setGroup("menus");
 
-  bool cc = c->readBoolEntry("ClearMenuCache", true);
-  m_clearCache->setChecked(cc);
-  m_clearSlider->setValue(c->readNumEntry("MenuCacheTime", 60000) / 1000);
-  m_clearSlider->setEnabled(cc);
-  m_clearSpinBox->setValue(c->readNumEntry("MenuCacheTime", 60000) / 1000);
-  m_clearSpinBox->setEnabled(cc);
+    bool cc = c->readBoolEntry("ClearMenuCache", true);
+    m_clearCache->setChecked(cc);
+    m_clearSlider->setValue(c->readNumEntry("MenuCacheTime", 60000) / 1000);
+    m_clearSlider->setEnabled(cc);
+    m_clearSpinBox->setValue(c->readNumEntry("MenuCacheTime", 60000) / 1000);
+    m_clearSpinBox->setEnabled(cc);
 
-  m_maxSlider->setValue(c->readNumEntry("MaxEntries", 200));
-  m_maxSpinBox->setValue(c->readNumEntry("MaxEntries", 200));
+    m_maxSlider->setValue(c->readNumEntry("MaxEntries", 30));
+    m_maxSpinBox->setValue(c->readNumEntry("MaxEntries", 30));
 
-  m_mergeLocations->setChecked(c->readBoolEntry("MergeKDEDirs", true));
-  m_showBookmarks->setChecked(c->readBoolEntry("UseBookmarks", true));
-  m_showRecent->setChecked(c->readBoolEntry("UseRecent", true));
-  m_showQuickBrowser->setChecked(c->readBoolEntry("UseBrowser", true));
+    m_mergeLocations->setChecked(c->readBoolEntry("MergeKDEDirs", true));
+    m_showBookmarks->setChecked(c->readBoolEntry("UseBookmarks", true));
+    m_showRecent->setChecked(c->readBoolEntry("UseRecent", true));
+    m_showQuickBrowser->setChecked(c->readBoolEntry("UseBrowser", true));
 
-  m_hiddenFiles->setChecked(c->readBoolEntry("ShowHiddenFiles", true));
+    m_hiddenFiles->setChecked(c->readBoolEntry("ShowHiddenFiles", false));
 
-	m_pEditNum2Show->setText(c->readEntry("NumVisibleEntries", "5"));
+    m_pEditNum2Show->setText(c->readEntry("NumVisibleEntries", "5"));
 
-	bool bRecentVsOften = c->readBoolEntry("RecentVsOften", false);
-	if (bRecentVsOften)
-	{
-		m_pRecent->setChecked(true);
-	}
-	else
-	{
-		m_pOften->setChecked(true);
-	}
-
-  delete c;
+    bool bRecentVsOften = c->readBoolEntry("RecentVsOften", false);
+    if (bRecentVsOften)
+        m_pRecent->setChecked(true);
+    else
+        m_pOften->setChecked(true);
+    delete c;
 }
 
 void MenuTab::save()
 {
-  QCString configname;
-  if (kickerconfig_screen_number == 0)
-      configname = "kickerrc";
-  else
-      configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
-  KConfig *c = new KConfig(configname, false, false);
+    QCString configname;
+    if (kickerconfig_screen_number == 0)
+        configname = "kickerrc";
+    else
+        configname.sprintf("kicker-screen-%drc", kickerconfig_screen_number);
+    KConfig *c = new KConfig(configname, false, false);
 
-  c->setGroup("menus");
+    c->setGroup("menus");
 
-  c->writeEntry("ClearMenuCache", m_clearCache->isChecked());
-  c->writeEntry("MenuCacheTime", m_clearSlider->value() * 1000);
-  c->writeEntry("MaxEntries", m_maxSlider->value());
-  c->writeEntry("MergeKDEDirs", m_mergeLocations->isChecked());
-  c->writeEntry("UseBookmarks", m_showBookmarks->isChecked());
-  c->writeEntry("UseRecent", m_showRecent->isChecked());
-  c->writeEntry("UseBrowser", m_showQuickBrowser->isChecked());
-  c->writeEntry("ShowHiddenFiles", m_hiddenFiles->isChecked());
+    c->writeEntry("ClearMenuCache", m_clearCache->isChecked());
+    c->writeEntry("MenuCacheTime", m_clearSlider->value() * 1000);
+    c->writeEntry("MaxEntries", m_maxSlider->value());
+    c->writeEntry("MergeKDEDirs", m_mergeLocations->isChecked());
+    c->writeEntry("UseBookmarks", m_showBookmarks->isChecked());
+    c->writeEntry("UseRecent", m_showRecent->isChecked());
+    c->writeEntry("UseBrowser", m_showQuickBrowser->isChecked());
+    c->writeEntry("ShowHiddenFiles", m_hiddenFiles->isChecked());
 
-	QString str(m_pEditNum2Show->text());
-	bool bOK;
-	int nNum = str.toInt(&bOK);
-	if (bOK && nNum >= knMinNum2Show && nNum <= knMaxNum2Show)
-	{
-		c->writeEntry("NumVisibleEntries", nNum);
-	}
-	bool bRecentVsOften = m_pRecent->isChecked();
-	c->writeEntry("RecentVsOften", bRecentVsOften);
+    QString str(m_pEditNum2Show->text());
+    bool bOK;
+    int nNum = str.toInt(&bOK);
+    if (bOK && nNum >= knMinNum2Show && nNum <= knMaxNum2Show)
+    {
+        c->writeEntry("NumVisibleEntries", nNum);
+    }
+    bool bRecentVsOften = m_pRecent->isChecked();
+    c->writeEntry("RecentVsOften", bRecentVsOften);
 
-  c->sync();
+    c->sync();
 
-  delete c;
+    delete c;
 }
 
 void MenuTab::defaults()
@@ -195,12 +190,12 @@ void MenuTab::defaults()
   m_clearSlider->setEnabled(true);
   m_clearSpinBox->setValue(60);
   m_clearSpinBox->setEnabled(true);
-  m_maxSlider->setValue(200);
-  m_maxSpinBox->setValue(200);
+  m_maxSlider->setValue(30);
+  m_maxSpinBox->setValue(30);
   m_mergeLocations->setChecked(true);
   m_showRecent->setChecked(true);
   m_showQuickBrowser->setChecked(true);
-  m_hiddenFiles->setChecked(true);
+  m_hiddenFiles->setChecked(false);
 
   m_pOften->setChecked(true);
 	m_pEditNum2Show->setText(QString().setNum(5));
