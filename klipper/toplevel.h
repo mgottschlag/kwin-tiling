@@ -44,7 +44,7 @@ public:
 
 public slots:
     void saveSession();
-
+    void slotSettingsChanged( int category );
 
 protected:
     void paintEvent(QPaintEvent *);

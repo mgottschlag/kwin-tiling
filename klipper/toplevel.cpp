@@ -80,6 +80,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 
     readProperties(m_config);
     connect(kapp, SIGNAL(saveYourself()), SLOT(saveSession()));
+    connect(kapp, SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
 
     m_checkTimer = new QTimer(this, "timer");
     m_checkTimer->start(1000, FALSE);
@@ -376,6 +377,15 @@ void KlipperWidget::saveSession()
       m_config->writeEntry("ClipboardData", dataList);
       m_config->sync();
   }
+}
+
+void KlipperWidget::slotSettingsChanged( int category )
+{
+    if ( category == (int) KApplication::SETTINGS_SHORTCUTS ) {
+        globalKeys->readSettings();
+        globalKeys->updateConnections();
+        toggleURLGrabAction->setShortcut(globalKeys->shortcut("Enable/Disable Clipboard Actions"));
+    }
 }
 
 void KlipperWidget::disableURLGrabber()
