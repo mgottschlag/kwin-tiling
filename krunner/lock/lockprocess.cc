@@ -48,7 +48,7 @@
 #include <X11/Xatom.h>
 
 #define PASSDLG_HIDE_TIMEOUT        10000
-#define LOCK_GRACE_TIMEOUT          5000
+#define LOCK_GRACE_DEFAULT          5000
 
 int ignoreXError(Display *, XErrorEvent *);
 static Window gVRoot = 0;
@@ -224,10 +224,20 @@ void LockProcess::configure()
     config.setGroup("ScreenSaver");
 
 //    bool e  = config->readBoolEntry("Enabled", false);
-
     if(config.readBoolEntry("Lock", false))
     {
-        QTimer::singleShot(LOCK_GRACE_TIMEOUT, this, SLOT(actuallySetLock()));
+        int lockGrace = config.readNumEntry("LockGrace", LOCK_GRACE_DEFAULT);
+
+        if (lockGrace < 0)
+        {
+            lockGrace = 0;
+        }
+        else if (lockGrace > 300000)
+        {
+            lockGrace = 300000; // 5 minutes, keep the value sane
+        }
+                                          
+        QTimer::singleShot(lockGrace, this, SLOT(actuallySetLock()));
     }
     else
     {
