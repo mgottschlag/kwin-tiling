@@ -1,9 +1,3 @@
 
 KDE_CHECK_HEADER(kcarddb.h, FOUND_KSMCARD="yes", FOUND_KSMCARD="no")
-
-if test "$FOUND_KSMCARD" = "yes"; then
-  KSMCARD_SUBDIR=smartcard
-else
-  KSMCARD_SUBDIR=
-fi
-AC_SUBST(KSMCARD_SUBDIR) 
+AM_CONDITIONAL(include_kcontrol_smartcard, test "$FOUND_KSMCARD" = "yes")

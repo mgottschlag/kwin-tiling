@@ -51,7 +51,7 @@ else
     FONTINST_SUBDIR="kfontinst" 
 fi
 
-AC_SUBST(FONTINST_SUBDIR)
+AM_CONDITIONAL(include_kcontrol_kfontinst, test -n "$FONTINST_SUBDIR")
 
 dnl -- Xft/XRender --------------------------------------------------------------
 AC_MSG_CHECKING([for Xft/XRender X11/Xft/Xft.h])
