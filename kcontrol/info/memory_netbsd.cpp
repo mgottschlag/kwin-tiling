@@ -19,7 +19,7 @@
 
 void KMemoryWidget::update()
 {
-  int mib[2], memory;
+  int mib[2];
   size_t len;
 #ifdef UVM
   struct  uvmexp uvmexp;
@@ -27,10 +27,20 @@ void KMemoryWidget::update()
   struct swapent *swaplist;
   int64_t nswap, rnswap, totalswap, freeswap, usedswap;
 #endif
+#if __NetBSD_Version__ > 106170000 /* 1.6Q+ */
+  quad_t memory;
+#else
+  int memory;
+#endif
   
   /* memory */
+#if __NetBSD_Version__ > 106170000 /* 1.6Q+ */
+  mib[0] = CTL_HW;
+  mib[1] = HW_PHYSMEM64; 
+#else 
   mib[0] = CTL_HW;
   mib[1] = HW_PHYSMEM;
+#endif
   len = sizeof(memory);
   if( sysctl(mib,2,&memory,&len,NULL,0)< 0 )
     Memory_Info[TOTAL_MEM]    = NO_MEMORY_INFO;
