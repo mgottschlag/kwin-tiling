@@ -762,7 +762,7 @@ SaveScm::SaveScm( QWidget *parent, const char *name )
     
     QLabel* tmpQLabel;
     tmpQLabel = new QLabel( nameLine, 
-	 i18n( "&Enter a name for the new color scheme\n"\
+	 i18n( "Enter a name for the new color scheme\n"\
 	    "to be added to your personal list.\n\n"\
 	    "The colors currently used in the preview will\n"\
 	    "be copied into this scheme to begin with." ), this );
