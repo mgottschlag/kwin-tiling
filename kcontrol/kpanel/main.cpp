@@ -119,7 +119,9 @@ void KKPanelApplication::apply()
 
 int main(int argc, char **argv)
 {
+    KInstance *tmp = new KInstance( "kcmkpanel" );
     config = new KConfig("kpanelrc");
+    delete tmp;
     KKPanelApplication app(argc, argv, "kcmkpanel");
 
     app.setTitle(i18n("KPanel Configuration"));
