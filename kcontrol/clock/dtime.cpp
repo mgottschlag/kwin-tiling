@@ -179,10 +179,10 @@ Dtime::Dtime(QWidget * parent, const char *name)
       hour->setEnabled(false);
       minute->setEnabled(false);
       second->setEnabled(false);
-      kclock->setEnabled(false);
       timeServerList->setEnabled(false);
       setDateTimeAuto->setEnabled(false);
     }
+  kclock->setEnabled(false);
 }
 
 void Dtime::serverTimeCheck() {
@@ -191,7 +191,7 @@ void Dtime::serverTimeCheck() {
   hour->setEnabled(enabled);
   minute->setEnabled(enabled);
   second->setEnabled(enabled);
-  kclock->setEnabled(enabled);
+  //kclock->setEnabled(enabled);
 }
 
 void Dtime::findNTPutility(){
