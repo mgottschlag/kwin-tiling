@@ -952,9 +952,10 @@ ReapChildren( void )
 				d->status = notRunning;
 				break;
 			case remoteLogin:
-				Debug( "remote login X server for display %s exited,"
-				       " restarting display\n", d->name );
-				d->status = notRunning;
+				Debug( "remote login X server for display %s exited\n",
+				       d->name );
+				d->status = ((d->displayType & d_lifetime) == dReserve) ?
+				            reserve : notRunning;
 				break;
 			case raiser:
 				LogError( "X server for display %s terminated unexpectedly\n",
@@ -1183,6 +1184,9 @@ CheckDisplayStatus( struct display *d )
 {
 	if ((d->displayType & d_origin) == dFromFile && !d->stillThere)
 		StopDisplay( d );
+	else if ((d->displayType & d_lifetime) == dReserve &&
+	         d->status == running && d->userSess < 0 && !d->idleTimeout)
+		rStopDisplay( d, DS_RESERVE );
 }
 
 static void
@@ -1386,6 +1390,7 @@ rStopDisplay( struct display *d, int endState )
 {
 	Debug( "stopping display %s to state %d\n", d->name, endState );
 	AbortStartServer( d );
+	d->idleTimeout = 0;
 	if (d->serverPid != -1 || d->pid != -1) {
 		if (d->pid != -1)
 			TerminateProcess( d->pid, SIGTERM );
