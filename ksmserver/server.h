@@ -50,6 +50,7 @@ public:
     uint saveYourselfDone : 1;
     uint pendingInteraction : 1;
     uint waitForPhase2 : 1;
+    uint wasPhase2 : 1;
 
     QList<SmProp> properties;
     SmProp* property( const char* name ) const;

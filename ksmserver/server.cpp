@@ -126,6 +126,7 @@ void KSMClient::resetState()
     saveYourselfDone = FALSE;
     pendingInteraction = FALSE;
     waitForPhase2 = FALSE;
+    wasPhase2 = FALSE;
 }
 
 /*
@@ -1045,6 +1046,7 @@ void KSMServer::interactDone( KSMClient* client, bool cancelShutdown_ )
 void KSMServer::phase2Request( KSMClient* client )
 {
     client->waitForPhase2 = TRUE;
+    client->wasPhase2 = TRUE;
     completeShutdown();
 }
 
@@ -1136,30 +1138,39 @@ void KSMServer::completeShutdown()
     // kill all clients
     state = Killing;
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
-	// do not kill the wm yet, we do that in completeKilling()
-	// below.
-	if ( !wm.isEmpty() && c->program() == wm )
+        kdDebug() << "completeShutdown: client " << c->program() << endl;
+	if (c->wasPhase2)
 	    continue;
-	SmsDie( c->connection() );
+       	SmsDie( c->connection() );
     }
-    if ( clients.isEmpty() )
-	completeKilling();
-    else
-	QTimer::singleShot( 4000, this, SLOT( timeoutQuit() ) );
+    kdDebug() << " We killed all clients. We have now clients.count()=" <<
+	clients.count() << endl;
+
+    completeKilling();
+    QTimer::singleShot( 4000, this, SLOT( timeoutQuit() ) );
 }
 
 void KSMServer::completeKilling()
 {
-    if ( state != Killing )
-	return;
-    if ( !wm.isEmpty() && clients.count() == 1 && clients.first()->program() == wm ) {
-	// the wm was not killed yet, do it
-	SmsDie( clients.first()->connection() );
+    kdDebug(0) << "KSMServer::completeKilling clients.count()=" <<
+	clients.count() << endl;
+    if ( state != Killing ) {
+	kdWarning() << "Not Killing !!! state=" << state << endl;
 	return;
     }
 
-    if ( clients.isEmpty() )
+    if ( clients.isEmpty() ) {
+	kdDebug(0) << "Calling qApp->quit()" << endl;
 	qApp->quit();
+    } else {
+	for (KSMClient *c = clients.first(); c; c = clients.next()) {
+	    if (! c->wasPhase2)
+		return;
+	}
+	// the wm was not killed yet, do it
+	for (KSMClient *c = clients.first(); c; c = clients.next())
+	    SmsDie( c->connection() );
+    }
 }
 
 void KSMServer::timeoutQuit()
@@ -1207,13 +1218,15 @@ void KSMServer::storeSesssion()
  */
 void KSMServer::restoreSession()
 {
+    kdDebug(0) << "KSMServer::restoreSession" << endl;
     upAndRunning( "restore session");
     KConfig* config = KGlobal::config();
     config->setGroup("Session" );
     int count =  config->readNumEntry( "count" );
+    bool wmFound = false;
     progress = count;
 
-    QStringList wmCommand = wm;
+    QStringList wmCommand;
     if ( !wm.isEmpty() ) {
 	// when we have a window manager, we start it first and give
 	// it some time before launching other processes. Results in a
@@ -1222,21 +1235,26 @@ void KSMServer::restoreSession()
 	for ( int i = 1; i <= count; i++ ) {
 	    QString n = QString::number(i);
 	    if ( wm == config->readEntry( QString("program")+n ) ) {
+		wmFound = true;
 		progress--;
 		wmCommand = config->readListEntry( QString("restartCommand")+n );
-	break;
+	        startApplication( wmCommand );
 	    }
 	}
     }
 
     publishProgress( progress, true );
 
-    if ( wmCommand.isEmpty() ) {
-	restoreSessionInternal();
-    } else {
-	startApplication( wmCommand );
+    if (wmFound) {
 	QTimer::singleShot( 2000, this, SLOT( restoreSessionInternal() ) );
-    }
+    } else if (! wm.isEmpty()) {
+	// window manager not found, but we have a default window manager...
+	// run it and restore the session
+	wmCommand = wm;
+	startApplication(wmCommand);
+        restoreSessionInternal();
+    } else
+	restoreSessionInternal();
 }
 
 /*!
