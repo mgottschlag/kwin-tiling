@@ -34,9 +34,7 @@ K_EXPORT_COMPONENT_FACTORY (kcm_spellchecking, SpellFactory("kcmspellchecking") 
 KSpellCheckingConfig::KSpellCheckingConfig(QWidget *parent, const char *name, const QStringList &):
     KCModule(SpellFactory::instance(), parent, name)
 {
-  QBoxLayout *layout = new QVBoxLayout(this,
-				       KDialog::marginHint(),
-				       KDialog::spacingHint());
+  QBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
   QGroupBox *box = new QVGroupBox( i18n("Spell Checking Settings"), this );
   box->layout()->setSpacing( KDialog::spacingHint() );
   layout->addWidget(box);
