@@ -2,13 +2,6 @@
 /* This file is part of the KDE project
 
    Copyright (C) 2003 by Lubos Lunak <l.lunak@kde.org>
-   clipboardpoll.cpp (part of Klipper - Cut & paste history for KDE)
-
-   (C) 2003 by Lubos Lunak <l.lunak@kde.org>
-
-   Licensed under the Artistic License
-
- -------------------------------------------------------------
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
