@@ -44,7 +44,8 @@ public:
     ~GeneralWidget();
 
 private:
-    QCheckBox *cbMousePos, *cbSaveContents, *cbReplayAIH;
+    QCheckBox *cbMousePos, *cbSaveContents, *cbReplayAIH, *cbSynchronize;
+    QCheckBox *cbNoNull;
     KIntNumInput *popupTimeout, *maxItems;
 
 };
@@ -133,10 +134,16 @@ public:
     bool popupAtMousePos() const {
 	return generalWidget->cbMousePos->isChecked();
     }
-
     bool replayActionInHistory() const {
 	return generalWidget->cbReplayAIH->isChecked();
     }
+    bool synchronize() const {
+        return generalWidget->cbSynchronize->isChecked();
+    }
+    bool noNullClipboard() const {
+        return generalWidget->cbNoNull->isChecked();
+    }
+
     int popupTimeout() const {
 	return generalWidget->popupTimeout->value();
     }
@@ -160,6 +167,12 @@ public:
     void setReplayActionInHistory( bool enable ) {
 	generalWidget->cbReplayAIH->setChecked( enable );
     }
+    void setSynchronize( bool enable ) {
+	generalWidget->cbSynchronize->setChecked( enable );
+    }
+    void setNoNullClipboard( bool enable ) {
+        generalWidget->cbNoNull->setChecked( enable );
+    }
     void setPopupTimeout( int timeout ) {
 	generalWidget->popupTimeout->setValue( timeout );
     }
@@ -169,7 +182,7 @@ public:
     void setNoActionsFor( const QStringList& items ) {
 	actionWidget->setWMClasses( items );
     }
-    void setUseGUIRegExpEditor( bool enabled ) 
+    void setUseGUIRegExpEditor( bool enabled )
     {
 	// the checkbox is only hidden explicitly when there's no
 	// regexp editor component available.

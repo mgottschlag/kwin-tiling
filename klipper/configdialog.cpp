@@ -98,7 +98,26 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
                                     this );
     cbReplayAIH = new QCheckBox( i18n("&Replay actions on an item selected from history"),
                                     this );
+    cbSynchronize = new QCheckBox( i18n("Sy&nchronize contents of the clipboard and the selection."),
+                                    this );
+    QWhatsThis::add( cbSynchronize,
+     i18n("<qt>There are two different clipboard buffers available:<br><br>"
+          "The <b>Clipboard</b>, that you fill by selecting something<br>"
+          "and pressing Ctrl-C or by pressing \"Copy\" in a tool- or<br>"
+          "menubar.<br><br>"
+          "And the <b>Selection</b>, that is available immediately after<br>"
+          "selecting some text. The only way to access the selection<br>"
+          "is to press the middle mouse button.<br><br>"
+          "Selecting this option synchronizes those two buffers, so they<br>"
+          "work the same way as in KDE 1.x and 2.x</qt>") );
 
+    cbNoNull = new QCheckBox( i18n("Pre&vent empty clipboard"), this );
+    QWhatsThis::add( cbNoNull, 
+                     i18n("Selecting this option has the effect, that the "
+                          "clipboard can never be emptied. E.g. when an "
+                          "application exits, the clipboard would usually be "
+                          "emptied.") );
+    
     // make a QLabel because using popupTimeout->setLabel messes up layout
     QLabel *lblTimeout = new QLabel( i18n("Tim&eout for Action popups:" ), this );
     // workaround for KIntNumInput making a huge QSpinBox
@@ -144,7 +163,7 @@ void ListView::rename( QListViewItem* item, int c )
       gui = true;
     }
   }
-  
+
   if ( gui ) {
     if ( ! _regExpEditor )
       _regExpEditor = KParts::ComponentFactory::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor", QString::null, this );
@@ -155,7 +174,7 @@ void ListView::rename( QListViewItem* item, int c )
     bool ok = _regExpEditor->exec();
     if ( ok )
       item->setText( 0, iface->regExp() );
-    
+
   }
   else
     KListView::rename( item ,c );
@@ -193,10 +212,10 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
              SLOT( slotItemChanged( QListViewItem*, const QPoint& , int ) ));
     connect( listView, SIGNAL( selectionChanged ( QListViewItem * )),
              SLOT(selectionChanged ( QListViewItem * )));
-    connect(listView, 
+    connect(listView,
             SIGNAL(contextMenu(KListView *, QListViewItem *, const QPoint&)),
             SLOT( slotContextMenu(KListView*, QListViewItem*, const QPoint&)));
-    
+
     ClipAction *action   = 0L;
     ClipCommand *command = 0L;
     QListViewItem *item  = 0L;
@@ -267,12 +286,12 @@ void ActionWidget::selectionChanged ( QListViewItem * item)
     delActionButton->setEnabled(item!=0);
 }
 
-void ActionWidget::slotContextMenu( KListView *, QListViewItem *item, 
+void ActionWidget::slotContextMenu( KListView *, QListViewItem *item,
                                     const QPoint& pos )
 {
     if ( !item )
         return;
-    
+
     int addCmd = 0, rmCmd = 0;
     KPopupMenu *menu = new KPopupMenu;
     addCmd = menu->insertItem( i18n("Add Command") );

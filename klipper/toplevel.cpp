@@ -82,7 +82,7 @@ TopLevel::TopLevel()
 {
     clip = kapp->clipboard();
     m_selectedItem = -1;
-    
+
     QSempty = i18n("<empty clipboard>");
 
     toggleURLGrabAction = new KToggleAction( this );
@@ -156,16 +156,44 @@ void TopLevel::newClipData()
 
     clip->setSelectionMode( false );
     QString clipContents = clip->text().stripWhiteSpace();
+    clip->setSelectionMode( true );
+    QString selectContents = clip->text().stripWhiteSpace();
+
     if ( clipContents != m_lastClipboard ) {
+        // keep old clipboard after someone set it to null
+        if ( clipContents.isNull() && bNoNullClipboard ) {
+            clipContents = m_lastClipboard;
+            clip->setSelectionMode( false );
+            clip->setText( clipContents );
+        }
+        
         clipData        = clipContents;
         m_lastClipboard = clipContents;
+        // sync clipboard and selection?
+        if( bSynchronize && clipContents != selectContents ) {
+            m_lastSelection = clipContents;
+            clip->setSelectionMode( true );
+            clip->setText(clipContents);
+        }
+
     }
     else {
-        clip->setSelectionMode( true );
-        clipContents = clip->text().stripWhiteSpace();
-        if ( clipContents != m_lastSelection ) {
-            clipData        = clipContents;
-            m_lastSelection = clipContents;
+        if ( selectContents != m_lastSelection ) {
+            // keep old selection after someone set it to null
+            if ( selectContents.isNull() && bNoNullClipboard ) {
+                selectContents = m_lastSelection;
+                clip->setSelectionMode( true );
+                clip->setText( selectContents );
+            }
+            
+            clipData        = selectContents;
+            m_lastSelection = selectContents;
+            // sync clipboard and selection?
+            if( bSynchronize && selectContents != clipContents ) {
+                m_lastClipboard = selectContents;
+                clip->setSelectionMode( false );
+                clip->setText(selectContents);
+            }
         }
         else
             clipData = m_lastString;
@@ -344,6 +372,8 @@ void TopLevel::readConfiguration( KConfig *kc )
     bKeepContents = kc->readBoolEntry("KeepClipboardContents", true);
     bURLGrabber = kc->readBoolEntry("URLGrabberEnabled", true);
     bReplayActionInHistory = kc->readBoolEntry("ReplayActionInHistory", false);
+    bSynchronize = kc->readBoolEntry("SynchronizeClipboards", false);
+    bNoNullClipboard = kc->readBoolEntry("NoEmptyClipboard", true);
     bUseGUIRegExpEditor = kc->readBoolEntry("UseGUIRegExpEditor", true );
     maxClipItems = kc->readNumEntry("MaxClipItems", 7);
 }
@@ -354,6 +384,8 @@ void TopLevel::writeConfiguration( KConfig *kc )
     kc->writeEntry("PopupAtMousePosition", bPopupAtMouse);
     kc->writeEntry("KeepClipboardContents", bKeepContents);
     kc->writeEntry("ReplayActionInHistory", bReplayActionInHistory);
+    kc->writeEntry("SynchronizeClipboards", bSynchronize);
+    kc->writeEntry("NoEmptyClipboard", bNoNullClipboard);
     kc->writeEntry("UseGUIRegExpEditor", bUseGUIRegExpEditor);
     kc->writeEntry("MaxClipItems", maxClipItems);
     kc->writeEntry("Version", kapp->aboutData()->version());
@@ -400,7 +432,9 @@ void TopLevel::slotConfigure()
                                           map );
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
-    dlg->setReplayActionInHistory( bReplayActionInHistory);
+    dlg->setReplayActionInHistory( bReplayActionInHistory );
+    dlg->setSynchronize( bSynchronize );
+    dlg->setNoNullClipboard( bNoNullClipboard );
     dlg->setUseGUIRegExpEditor( bUseGUIRegExpEditor );
     dlg->setPopupTimeout( myURLGrabber->popupTimeout() );
     dlg->setMaxItems( maxClipItems );
@@ -411,6 +445,8 @@ void TopLevel::slotConfigure()
         bKeepContents = dlg->keepContents();
         bPopupAtMouse = dlg->popupAtMousePos();
         bReplayActionInHistory = dlg->replayActionInHistory();
+        bSynchronize = dlg->synchronize();
+        bNoNullClipboard = dlg->noNullClipboard();
         bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
         globalKeys->actions().updateShortcuts( map );
         globalKeys->writeSettings();
@@ -568,7 +604,7 @@ void TopLevel::slotMoveSelectedToTop()
 {
     m_popup->removeItem( m_selectedItem );
     m_clipDict->remove( m_selectedItem );
-    
+
     m_selectedItem = m_popup->insertItem( KStringHandler::csqueeze(m_lastString.simplifyWhiteSpace(), 45), -2, 1 );
     m_popup->setItemChecked( m_selectedItem, true );
     m_clipDict->insert( m_selectedItem, new QString( m_lastString ) );
