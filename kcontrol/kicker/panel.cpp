@@ -251,9 +251,9 @@ void PanelTab::load()
   theme_input->setEnabled(use_theme);
   browse_button->setEnabled(use_theme);
 
-  QImage tmpImg(theme);
-  if(!tmpImg.isNull())
-    {
+  if (theme != QString::null) {
+    QImage tmpImg(theme);
+    if(!tmpImg.isNull()) {
       tmpImg = tmpImg.smoothScale(theme_label->contentsRect().width(),
                                   theme_label->contentsRect().height());
       theme_preview.convertFromImage(tmpImg);
@@ -264,9 +264,10 @@ void PanelTab::load()
       else
         theme_input->setText(i18n("Error loading theme image file."));
     }
-  else
-    theme_input->setText(i18n("Error loading theme image file."));
-
+    else
+      theme_input->setText(i18n("Error loading theme image file."));
+  }
+  
   delete c;
 }
 
