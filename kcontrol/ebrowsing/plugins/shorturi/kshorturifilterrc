@@ -1,9 +1,7 @@
 [Pattern]
-kdehttp=^www ^localhost ^(\w+)@localhost
-kdeftp=^ftp
-kdemailto=(\w+)@(\w+)\.(\w+)
+kdemailto=^(\w+)@(\w+)\.(\w+)[^0-9]$
+kdeftp=^ftp(?:\.\w+)?\.\D{2,}(?:[0-9]{1,5})?
 
 [Protocol]
-kdehttp=http://
-kdeftp=ftp://
 kdemailto=mailto:
+kdeftp=ftp://

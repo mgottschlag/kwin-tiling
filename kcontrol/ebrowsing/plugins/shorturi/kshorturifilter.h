@@ -90,19 +90,6 @@ public:
 k_dcop:
     virtual void configure();
 
-protected:
-
-    /**
-     * Validates whether the string contians a possible
-     * "short URI" signature.
-     *
-     * @param str url to be test for validity
-     * @return true if the string is a possible short uri
-     */
-    bool isValidShortURL( const QString& /*str*/ ) const;
-
-    QString removeArgs( const QString& cmd ) const;
-
 private:
 
     struct URLHint
@@ -115,6 +102,7 @@ private:
 
     QValueList<URLHint> m_urlHints;
     QString m_strDefaultProtocol;
+    bool m_bVerbose;
 };
 
 #endif

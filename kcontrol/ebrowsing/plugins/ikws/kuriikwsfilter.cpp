@@ -16,7 +16,6 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
 */
 
 #include <unistd.h>
@@ -31,6 +30,11 @@
 #include "kuriikwsfiltereng.h"
 #include "kuriikwsfilter.h"
 
+/**
+ * IMPORTANT: If you change anything here, please run the regression test
+ * kdelibs/kio/tests/kurifiltertest
+ */
+ 
 typedef KGenericFactory<KAutoWebSearch> KAutoWebSearchFactory;
 K_EXPORT_COMPONENT_FACTORY (libkuriikwsfilter, KAutoWebSearchFactory("kcmkurifilt"))
 
@@ -58,7 +62,7 @@ bool KAutoWebSearch::filterURI( KURIFilterData &data ) const
   KURL u = data.uri();
   if ( u.pass().isEmpty() )
   {
-    QString result = KURISearchFilterEngine::self()->autoWebSearchQuery( u.protocol(), data.typedString() );
+    QString result = KURISearchFilterEngine::self()->autoWebSearchQuery( data.typedString() );
     if( !result.isEmpty() )
     {
       if ( KURISearchFilterEngine::self()->verbose() )

@@ -29,9 +29,13 @@
 #include <qregexp.h>
 #include <qfile.h>
 
-#define HOSTPORT_PATTERN "[a-zA-Z][a-zA-Z0-9-]*:[0-9]+"
+#define HOSTPORT_PATTERN "[a-zA-Z][a-zA-Z0-9-+]*(?:\\:[0-9]{1,5})?"
 
-
+/**
+ * IMPORTANT: If you change anything here, please run the regression test
+ * kdelibs/kio/tests/kurifiltertest
+ */
+ 
 LocalDomainURIFilter::LocalDomainURIFilter( QObject *parent, const char *name,
                                             const QStringList & /*args*/ )
     : KURIFilterPlugin( parent, name ? name : "localdomainurifilter", 1.0 ),
@@ -46,22 +50,17 @@ bool LocalDomainURIFilter::filterURI( KURIFilterData& data ) const
 {
     KURL url = data.uri();
     QString cmd = url.url();
-
-    if( cmd[ 0 ] != '#' && cmd[ 0 ] != '~' && cmd[ 0 ] != '/'
-        && cmd.find( ' ' ) < 0 && cmd.find( '.' ) < 0
-        && cmd.find( '$' ) < 0  // env. vars could resolve to anything
-        // most of these are taken from KShortURIFilter
-        && cmd[ cmd.length() - 1 ] != '&'
-        && cmd.find( QString::fromLatin1("||") ) < 0
-        && cmd.find( QString::fromLatin1("&&") ) < 0 // must not look like shell
-        && cmd.find( QRegExp( QString::fromLatin1("[ ;<>]") )) < 0
-        && KStandardDirs::findExe( cmd ).isNull()
-        && ( !url.isValid() || m_hostPortPattern.exactMatch( cmd ) )
-        && isLocalDomainHost( cmd ))
+    
+    kdDebug() << "LocalDomainURIFilter::filterURI: " << url << endl;
+    
+    if( m_hostPortPattern.exactMatch( cmd ) && 
+        isLocalDomainHost( cmd ) )
     {
         cmd.prepend( QString::fromLatin1("http://") );
         setFilteredURI( data, KURL( cmd ) );
         setURIType( data, KURIFilterData::NET_PROTOCOL );
+        
+        kdDebug() << "FilteredURI: " << data.uri() << endl;
         return true;
     }
 

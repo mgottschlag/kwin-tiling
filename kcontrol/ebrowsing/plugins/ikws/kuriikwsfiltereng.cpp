@@ -41,11 +41,16 @@
 #include "kuriikwsfiltereng.h"
 #include "searchprovider.h"
 
-KURISearchFilterEngine *KURISearchFilterEngine::s_pSelf = 0;
-static KStaticDeleter<KURISearchFilterEngine> kurisearchfilterengsd;
-
 #define PIDDBG kdDebug(7023) << "(" << getpid() << ") "
 #define PDVAR(n,v) PIDDBG << n << " = '" << v << "'\n"
+
+/**
+ * IMPORTANT: If you change anything here, please run the regression test
+ * kdelibs/kio/tests/kurifiltertest
+ */
+
+KURISearchFilterEngine *KURISearchFilterEngine::s_pSelf = 0;
+static KStaticDeleter<KURISearchFilterEngine> kurisearchfilterengsd;
 
 KURISearchFilterEngine::KURISearchFilterEngine()
 {
@@ -82,22 +87,26 @@ QString KURISearchFilterEngine::webShortcutQuery( const QString& typedString ) c
 }
 
 
-QString KURISearchFilterEngine::autoWebSearchQuery( const QString& protocol,
-                                                    const QString& typedString ) const
+QString KURISearchFilterEngine::autoWebSearchQuery( const QString& typedString ) const
 {
   QString result;
-
-  if (m_bWebShortcutsEnabled && !m_defaultSearchEngine.isEmpty() &&
-      !KProtocolInfo::isKnownProtocol(protocol))
+    
+  if (m_bWebShortcutsEnabled && !m_defaultSearchEngine.isEmpty())
   {
-      SearchProvider *provider = SearchProvider::findByDesktopName(m_defaultSearchEngine);
+    // Make sure we ignore supported protocols, e.g. "smb:", "http:"
+    int pos = typedString.find(':');
 
+    if (pos == -1 || !KProtocolInfo::isKnownProtocol(typedString.left(pos)))
+    {
+      SearchProvider *provider = SearchProvider::findByDesktopName(m_defaultSearchEngine);
+    
       if (provider)
       {
         result = formatResult (provider->query(), provider->charset(),
                                QString::null, typedString, true);
         delete provider;
       }
+    }
   }
 
   return result;
@@ -105,7 +114,7 @@ QString KURISearchFilterEngine::autoWebSearchQuery( const QString& protocol,
 
 QCString KURISearchFilterEngine::name() const
 {
-    return "kuriikwsfilter";
+  return "kuriikwsfilter";
 }
 
 KURISearchFilterEngine* KURISearchFilterEngine::self()

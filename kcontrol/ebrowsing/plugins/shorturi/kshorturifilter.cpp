@@ -36,37 +36,66 @@
 
 #include "kshorturifilter.h"
 
-
-#define FQDN_PATTERN    "[a-zA-Z][a-zA-Z0-9-+]*\\.[a-zA-Z]"
-#define IPv4_PATTERN    "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{0,3}\\.[0-9]{0,3}:?[[0-9]{1,3}]?/?"
+#define FQDN_PATTERN    "([a-zA-Z][a-zA-Z0-9-+]*\\.[a-zA-Z]+)+(?:\\:[0-9]{1,5})?"
+#define IPv4_PATTERN    "[0-9]{1,3}\\.[0-9]{1,3}(?:\\.[0-9]{0,3})?(?:\\.[0-9]{0,3})?(?:\\:[0-9]{1,5})?"
+#define IPv6_PATTERN    "^\\[.*\\]$"
 #define ENV_VAR_PATTERN "\\$[a-zA-Z_][a-zA-Z0-9_]*"
 
 #define QFL1(x) QString::fromLatin1(x)
-
+ 
+ /**
+  * IMPORTANT: if you change anything here, please run the regression test
+  * kdelibs/kio/tests/kurifiltertest
+  */
+  
 typedef QMap<QString,QString> EntryMap;
 
-KShortURIFilter::KShortURIFilter( QObject *parent, const char *name,
-                                  const QStringList & /*args*/ )
-                :KURIFilterPlugin( parent, name ? name : "kshorturifilter", 1.0),
-                 DCOPObject("KShortURIFilterIface")
+static bool isValidShortURL( const QString& cmd, bool verbose = false )
 {
-    configure();
+  // Examples of valid short URLs:
+  // "kde.org", "foo.bar:8080", "user@foo.bar:3128"
+  // "192.168.1.0", "127.0.0.1:3128"
+  // "[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]"
+  QRegExp exp;
+  
+  // Match FQDN_PATTERN
+  exp.setPattern( QFL1(FQDN_PATTERN) );
+  if ( cmd.contains( exp ) )
+  {
+    if (verbose)
+      kdDebug() << "KShortURIFilter::isValidShortURL: " << cmd 
+                << " matches FQDN_PATTERN" << endl;
+    return true;  
+  }
+  
+  // Match IPv4 addresses
+  exp.setPattern( QFL1(IPv4_PATTERN) );
+  if ( cmd.contains( exp ) )
+  {
+    if (verbose)
+      kdDebug() << "KShortURIFilter::isValidShortURL: " << cmd 
+                << " matches IPv4_PATTERN" << endl;  
+    return true;
+  }
+    
+  // Match IPv6 addresses
+  exp.setPattern( QFL1(IPv6_PATTERN) );
+  if ( cmd.contains( exp ) )
+  {
+    if (verbose)
+      kdDebug() << "KShortURIFilter::isValidShortURL: " << cmd 
+                << " matches IPv6_PATTERN" << endl;
+    return true;
+  }
+  
+  if (verbose)
+    kdDebug() << "KShortURIFilter::isValidShortURL: '" << cmd 
+              << "' is not a short URL." << endl;
+  
+  return false;
 }
 
-bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
-{
-  // Loose many of the QRegExp matches as they tend
-  // to slow things down.  They are also unnecessary!! (DA)
-    if ( cmd[cmd.length()-1] == '&' ||     // must not end with '&'
-         (!cmd.contains('.') && !cmd.contains(':') ||  // must contain either '.' or ':'
-          cmd.contains(QFL1("||")) || cmd.contains(QFL1("&&")) ||   // must not look like shell
-          cmd.contains(QRegExp(QFL1("[ ;<>]")))) ) // must not contain space, ;, < or >
-       return false;
-
-  return true;
-}
-
-QString KShortURIFilter::removeArgs( const QString& _cmd ) const
+static QString removeArgs( const QString& _cmd )
 {
   QString cmd( _cmd );
 
@@ -86,8 +115,16 @@ QString KShortURIFilter::removeArgs( const QString& _cmd ) const
       //kdDebug() << k_funcinfo << "spacePos=" << spacePos << " returning " << cmd << endl;
     }
   }
-
+  
   return cmd;
+}
+
+KShortURIFilter::KShortURIFilter( QObject *parent, const char *name,
+                                  const QStringList & /*args*/ )
+                :KURIFilterPlugin( parent, name ? name : "kshorturifilter", 1.0),
+                 DCOPObject("KShortURIFilterIface")
+{
+    configure();
 }
 
 bool KShortURIFilter::filterURI( KURIFilterData& data ) const
@@ -103,9 +140,6 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   * lookups the URL in the user-defined list and returns without filtering
   * if it is not found. TODO: the user-defined table is currently only manually
   * hackable and is missing a config dialog.
-  *
-  * IMPORTANT: if you change anything here, please run the regression test
-  * kdelibs/kio/tests/kurifiltertest
   */
 
   KURL url = data.uri();
@@ -231,7 +265,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   }
 
 
-  bool isLocalFullPath = !path.isEmpty() && (path[0] == '/');
+  bool isLocalFullPath = (!path.isEmpty() && path[0] == '/');
 
   // Checking for local resource match...
   // Determine if "uri" is an absolute path to a local resource  OR
@@ -243,7 +277,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   bool exists = false;
 
   /*kdDebug() << "abs_path=" << abs_path << " malformed=" << isMalformed
-              << " canBeLocalAbsolute=" << canBeLocalAbsolute << endl;*/
+            << " canBeLocalAbsolute=" << canBeLocalAbsolute << endl;*/
 
   struct stat buff;
   if ( canBeLocalAbsolute )
@@ -304,6 +338,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       setURIType( data, KURIFilterData::EXECUTABLE );
       return true;
     }
+    
     // Open "uri" as file:/xxx if it is a non-executable local resource.
     if( isDir || S_ISREG( buff.st_mode ) )
     {
@@ -312,6 +347,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
       setURIType( data, ( isDir ) ? KURIFilterData::LOCAL_DIR : KURIFilterData::LOCAL_FILE );
       return true;
     }
+    
     // Should we return LOCAL_FILE for non-regular files too?
     kdDebug() << "File found, but not a regular file nor dir... socket?" << endl;
   }
@@ -374,9 +410,12 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 
     // If cmd is NOT a local resource, check if it is a valid "shortURL"
     // candidate and append the default protocol the user supplied. (DA)
-    if ( isMalformed && isValidShortURL(cmd) )
+    if ( isMalformed && isValidShortURL(cmd, m_bVerbose) )
     {
-      //kdDebug() << "valid short url, from malformed url -> using default proto=" << m_strDefaultProtocol << endl;
+      if (m_bVerbose)
+        kdDebug() << "Valid short url, from malformed url -> using default proto=" 
+                  << m_strDefaultProtocol << endl;
+      
       cmd.insert( 0, m_strDefaultProtocol );
       setFilteredURI( data, KURL( cmd ));
       setURIType( data, KURIFilterData::NET_PROTOCOL );
@@ -425,29 +464,21 @@ void KShortURIFilter::configure()
 {
   KConfig config( name() + QFL1("rc"), false, false );
   m_strDefaultProtocol = config.readEntry( "DefaultProtocol", QFL1("http://") );
+  m_bVerbose = config.readBoolEntry( "Verbose", false );
   QChar sep = config.readNumEntry( "PatternSeparator", ' ' );
   EntryMap patterns = config.entryMap( QFL1("Pattern") );
   const EntryMap protocols = config.entryMap( QFL1("Protocol") );
   
-  if (!patterns.isEmpty())
-  {      
-    for( EntryMap::Iterator it = patterns.begin(); it != patterns.end(); ++it )
+  for( EntryMap::Iterator it = patterns.begin(); it != patterns.end(); ++it )
+  {
+    QStringList regexps = QStringList::split (sep, it.data());
+    for (QStringList::Iterator exp = regexps.begin(); exp != regexps.end(); ++exp)
     {
-      QStringList regexps = QStringList::split (sep, it.data());
-      for (QStringList::Iterator exp = regexps.begin(); exp != regexps.end(); ++exp)
-      {
-        QString protocol = protocols[it.key()];
-        if (!protocol.isEmpty())
-          m_urlHints.append( URLHint(*exp, protocol) );
-      }
+      QString protocol = protocols[it.key()];
+      if (!protocol.isEmpty())
+        m_urlHints.append( URLHint(*exp, protocol) );
     }
   }
-
-  // Include some basic defaults.  Note these will always be
-  // overridden by a users entries. TODO: Make this configurable
-  // from the control panel.
-  m_urlHints.append( URLHint(QFL1(IPv4_PATTERN), QFL1("http://")) );
-  m_urlHints.append( URLHint(QFL1(FQDN_PATTERN), QFL1("http://")) );
 }
 
 K_EXPORT_COMPONENT_FACTORY( libkshorturifilter,

@@ -45,7 +45,7 @@ public:
   
   QString webShortcutQuery (const QString&) const;
   
-  QString autoWebSearchQuery (const QString&, const QString&) const;
+  QString autoWebSearchQuery (const QString&) const;
   
   bool verbose() const { return m_bVerbose; }
 

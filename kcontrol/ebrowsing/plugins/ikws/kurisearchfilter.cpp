@@ -30,6 +30,11 @@
 #include "kuriikwsfiltereng.h"
 #include "kurisearchfilter.h"
 
+/**
+ * IMPORTANT: If you change anything here, please run the regression test
+ * kdelibs/kio/tests/kurifiltertest
+ */
+
 typedef KGenericFactory<KURISearchFilter> KURISearchFilterFactory;
 K_EXPORT_COMPONENT_FACTORY(libkurisearchfilter, KURISearchFilterFactory("kcmkurifilt"))
 
@@ -59,6 +64,9 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
 
   if ( !result.isEmpty() )
   {
+    if ( KURISearchFilterEngine::self()->verbose() )
+      kdDebug() << "Filtered URL: " << result << endl;
+      
     setFilteredURI( data, KURL( result ) );
     setURIType( data, KURIFilterData::NET_PROTOCOL );
     return true;
