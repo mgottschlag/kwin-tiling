@@ -162,8 +162,8 @@ void URLGrabber::actionMenu( bool wm_class_check )
         // add an edit-possibility
         myMenu->insertSeparator();
         myMenu->insertSeparator();
-        myMenu->insertItem( SmallIcon("edit"), i18n("&Edit and process again"), URL_EDIT_ITEM );
-        myMenu->insertItem( i18n("Do &Nothing"), DO_NOTHING_ITEM );
+        myMenu->insertItem( SmallIcon("edit"), i18n("&Edit contents..."), URL_EDIT_ITEM );
+        myMenu->insertItem( i18n("&Cancel"), DO_NOTHING_ITEM );
 
         if ( myPopupKillTimer > 0 )
             myPopupKillTimer->start( 1000 * myPopupKillTimeout, true );
@@ -241,7 +241,7 @@ void URLGrabber::editData()
 {
     myPopupKillTimer->stop();
     KDialogBase *dlg = new KDialogBase( 0, 0, true,
-                                        i18n("Edit text before processing"),
+                                        i18n("Edit contents"),
                                         KDialogBase::Ok | KDialogBase::Cancel);
     KEdit *edit = new KEdit( dlg );
     edit->setText( myClipData );

@@ -27,19 +27,19 @@
 #include "configdialog.h"
 
 ConfigDialog::ConfigDialog( const ActionList *list, KKeyEntryMap *keyMap )
-    : KDialogBase( KDialogBase::Tabbed, i18n("Klipper configuration"),
+    : KDialogBase( KDialogBase::Tabbed, i18n("Klipper preferences"),
                     KDialogBase::Ok | KDialogBase::Cancel | KDialogBase::Help,
                     KDialogBase::Ok, 0L, "config dialog" )
 {
     QFrame *w = 0L; // the parent for the widgets
 
-    w = addVBoxPage( i18n("General") );
+    w = addVBoxPage( i18n("&General") );
     generalWidget = new GeneralWidget( w, "general widget" );
 
-    w = addVBoxPage( i18n("Actions") );
+    w = addVBoxPage( i18n("Ac&tions") );
     actionWidget = new ActionWidget( list, w, "actions widget" );
 
-    w = addVBoxPage( i18n("Shortcuts") );
+    w = addVBoxPage( i18n("&Shortcuts") );
     keysWidget = new KeysWidget( keyMap, w, "shortcuts widget" );
 
 
@@ -73,25 +73,29 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
 {
     setTitle( i18n("General settings" ));
 
-    cbMousePos = new QCheckBox( i18n("Popup menu at mouse-cursor position"),
+    cbMousePos = new QCheckBox( i18n("&Popup menu at mouse-cursor position"),
                                 this );
-    cbSaveContents = new QCheckBox( i18n("Save clipboard contents on exit"),
+    cbSaveContents = new QCheckBox( i18n("Sa&ve clipboard contents on exit"),
                                     this );
-    cbReplayAIH = new QCheckBox( i18n("Replay actions on an item selected from history"),
+    cbReplayAIH = new QCheckBox( i18n("&Replay actions on an item selected from history"),
                                     this );
-
+    // make a QLabel because using popupTimeout->setLabel messes up layout
+    QLabel *lblTimeout = new QLabel( i18n("Tim&eout for Action popups:" ), this );
     // workaround for KIntNumInput making a huge QSpinBox
     QHBox *box = new QHBox( this );
     popupTimeout = new KIntNumInput( box );
+    lblTimeout->setBuddy( popupTimeout );
     popupTimeout->setRange( 0, 200, 1, false );
-    popupTimeout->setSuffix( i18n(" seconds") );
-    popupTimeout->setLabel( i18n("Timeout for Action popups:"),
-                            AlignVCenter);
+//    popupTimeout->setSuffix( i18n(" seconds") );
+//    popupTimeout->setLabel( i18n("Timeout for Action popups:"),
+//                            AlignVCenter);
     QToolTip::add( popupTimeout, i18n("A value of 0 disables the timeout") );
-    QWidget * dummy = new QWidget( box );
-    box->setStretchFactor( dummy, 10 );
-
-    editListBox = new KEditListBox( i18n("Disable actions for windows of type WM_CLASS:"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
+    QLabel *lblSeconds = new QLabel( "seconds", box );
+    box->setStretchFactor( lblSeconds, 10 );
+    box->setSpacing(6);
+//    QWidget * dummy = new QWidget( box );
+//    box->setStretchFactor( dummy, 10 );
+    editListBox = new KEditListBox( i18n("&Disable actions for windows of type WM_CLASS:"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
     QWhatsThis::add( editListBox,
           i18n("<qt>This lets you specify windows in which klipper should<br>"
 	       "not invoke \"actions\". Use"
@@ -123,9 +127,12 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
 {
     ASSERT( list != 0L );
 
-    setTitle( i18n("Action settings (right-click to add/remove commands)") );
-
+    setTitle( i18n("Action settings") );
+    
+    QLabel *lblAction = new QLabel( "Action &list (right click to add/remove commands):",
+				    this );
     listView = new KListView( this, "list view" );
+    lblAction->setBuddy( listView );
     listView->addColumn( i18n("Regular expression (see http://doc.trolltech.com/qregexp.html#details)") );
     listView->addColumn( i18n("Description") );
 
@@ -218,7 +225,7 @@ void ActionWidget::slotRightPressed( QListViewItem *item, const QPoint&, int )
         QListViewItem *p = item->parent() ? item->parent() : item;
         QListViewItem *cmdItem = new QListViewItem( p, item,
                          i18n("Click here to set the command to be executed"),
-                         i18n("describe the command") );
+                         i18n("<new command>") );
         cmdItem->setPixmap( 0, SmallIcon( "exec" ) );
     }
     else if ( id == rmCmd )
@@ -241,7 +248,7 @@ void ActionWidget::slotAddAction()
     QListViewItem *item = new QListViewItem( listView );
     item->setPixmap( 0, SmallIcon( "misc" ));
     item->setText( 0, i18n("Click here to set the regexp"));
-    item->setText( 1, i18n("describe the action"));
+    item->setText( 1, i18n("<new action>"));
 }
 
 

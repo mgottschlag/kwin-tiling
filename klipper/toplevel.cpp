@@ -16,6 +16,8 @@
 #include <qpainter.h>
 #include <qstrlist.h>
 
+#include <kdebug.h> // pld
+
 #include <kaction.h>
 #include <kapp.h>
 #include <kconfig.h>
@@ -33,9 +35,13 @@
 #define QUIT_ITEM    50
 #define CONFIG_ITEM  60
 #define URLGRAB_ITEM 70
+#define EMPTY_ITEM   80
 
 // the <clipboard empty> item
-#define EMPTY 6
+#define MAX_MENU_ITEMS 14
+#define MAX_CLIP_ITEMS 7
+#define EMPTY (pQPMmenu->count() - MAX_MENU_ITEMS + MAX_CLIP_ITEMS)
+
 
 /* XPM */
 static const char*mouse[]={
@@ -152,6 +158,7 @@ void TopLevel::newClipData()
     // If the string is null bug out
     if(clipData.isEmpty()) {
 	if (pSelectedItem != -1) {
+	    kdDebug(3000) << "unchecking pSelectedItem: " << pSelectedItem << endl;
             pQPMmenu->setItemChecked(pSelectedItem, false);
 	    pSelectedItem = -1;
 	}
@@ -168,7 +175,6 @@ void TopLevel::newClipData()
                 return; // don't add into the history
         }
 
-
         if (bClipEmpty) { // remove <clipboard empty> from popupmenu and dict
             if (*data != QSempty) {
                 bClipEmpty = false;
@@ -177,22 +183,25 @@ void TopLevel::newClipData()
             }
         }
 
-        while(pQPMmenu->count() > 12){
+        while(pQPMmenu->count() >= MAX_MENU_ITEMS){
             int id = pQPMmenu->idAt(EMPTY);
             pQIDclipData->remove(id);
             pQPMmenu->removeItemAt(EMPTY);
-
         }
         if(clipData.length() > 50){
             clipData.truncate(47);
             clipData.append("...");
         }
-        long int id = pQPMmenu->insertItem(KStringHandler::csqueeze(clipData.simplifyWhiteSpace(), 45), -2, -1); // -2 means unique id, -1 means at end
+        long int id = pQPMmenu->insertItem(KStringHandler::csqueeze(clipData.simplifyWhiteSpace(), 45), -2, 1); // -2 means unique id, 1 means first location
         pQIDclipData->insert(id, data);
 
         if (pSelectedItem != -1)
+	{
+	    kdDebug(3000) << "unchecking pSelectedItem: " << pSelectedItem << endl;
             pQPMmenu->setItemChecked(pSelectedItem, false);
+	}
         pSelectedItem = id;
+	kdDebug(3000) << "checking pSelectedItem: " << pSelectedItem << endl;
         pQPMmenu->setItemChecked(pSelectedItem, true);
     }
 }
@@ -210,6 +219,23 @@ void TopLevel::clickedMenu(int id)
         kapp->quit();
         break;
     case URLGRAB_ITEM: // handled with an extra slot
+	break;
+    case EMPTY_ITEM:
+	if ( !bClipEmpty ) 
+	{
+	    pQTcheck->stop();
+
+	    while( pQPMmenu->count() > MAX_MENU_ITEMS - MAX_CLIP_ITEMS ) {
+		pQPMmenu->removeItemAt(EMPTY);
+	    }
+	    pQIDclipData->clear();
+	    
+	    QSempty = i18n("<empty clipboard>");
+	    bClipEmpty = true;
+	    clip->setText(QSempty);
+	    newClipData();
+	    pQTcheck->start(1000);
+	}
 	break;
     default:
         pQTcheck->stop();
@@ -264,17 +290,10 @@ void TopLevel::showPopupMenu( QPopupMenu *menu )
 void TopLevel::readProperties(KConfig *kc)
 {
   QStringList dataList;
+  long int id;
+
   pQPMmenu->clear();
   pQPMmenu->insertTitle(kapp->miniIcon(), i18n("Klipper - Clipboard Tool"));
-  pQPMmenu->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
-  pQPMmenu->insertSeparator();
-  pQPMmenu->insertItem(SmallIcon("configure"), i18n("&Preferences..."), CONFIG_ITEM);
-  // we can't specify the id in plug(), just the index. So we set the right
-  // id aftwards for the given index.
-  toggleURLGrabAction->plug( pQPMmenu, URLGRAB_ITEM );
-  pQPMmenu->setId( URLGRAB_ITEM, URLGRAB_ITEM );
-  pQPMmenu->insertSeparator();
-  long int id;
 
   if (bKeepContents) { // load old clipboard if configured
       KConfigGroupSaver groupSaver(kc, "General");
@@ -291,8 +310,19 @@ void TopLevel::readProperties(KConfig *kc)
   QSempty = i18n("<empty clipboard>");
   bClipEmpty = ((QString)clip->text()).simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
 
+  pQPMmenu->insertSeparator();
+  toggleURLGrabAction->plug( pQPMmenu, URLGRAB_ITEM );
+  pQPMmenu->insertItem( i18n("&Clear Clipboard"), EMPTY_ITEM );
+  pQPMmenu->insertItem(SmallIcon("configure"), i18n("&Preferences..."), CONFIG_ITEM);
+  // we can't specify the id in plug(), just the index. So we set the right
+  // id aftwards for the given index.
+  pQPMmenu->setId( URLGRAB_ITEM, URLGRAB_ITEM );
+  pQPMmenu->insertSeparator();
+  pQPMmenu->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
+
   if(bClipEmpty)
     clip->setText(QSempty);
+
   newClipData();
 }
 
