@@ -20,6 +20,7 @@
 #ifndef __treeview_h__
 #define __treeview_h__
 
+#include <qstring.h>
 #include <klistview.h>
 
 class TreeItem : public QListViewItem
@@ -46,9 +47,16 @@ public:
     TreeView(QWidget *parent=0, const char *name=0);
 
 public slots:
-    void slotCurrentChanged();
-    void slotDeleteCurrent();
+    void currentChanged();
+    
+    void newsubmenu();
+    void newitem();
 
+    void cut();
+    void copy();
+    void paste();
+    void del();
+    
 signals:
     void entrySelected(const QString&);
 
@@ -65,12 +73,17 @@ protected:
 
     void deleteFile(const QString& deskfile);
     void deleteDir(const QString& dir);
+    
+    void cleanupClipboard();
 
     QStringList fileList(const QString& relativePath);
     QStringList dirList(const QString& relativePath);
 
     bool acceptDrag(QDropEvent* event) const;
     QDragObject *dragObject() const;
+    
+private:
+    QString _clipboard;
 };
 
 #endif

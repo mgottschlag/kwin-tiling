@@ -43,6 +43,9 @@ KMenuEdit::KMenuEdit (QWidget *, const char *name)
     // setup GUI
     setupView();
     setupActions();
+    
+    // make it look nice
+    toolBar(0)->setIconText(KToolBar::IconTextBottom);
 }
 
 KMenuEdit::~KMenuEdit()
@@ -53,39 +56,26 @@ KMenuEdit::~KMenuEdit()
     config->writeEntry("Width", width());
     config->writeEntry("Height", height());
     config->sync();
-
-    // clean up
-    delete _view;
 }
 
 void KMenuEdit::setupActions()
 {
-    // setup file menu
     (void)new KAction(i18n("&New Submenu"), "filenew", 0 , _view, SLOT(file_newsubmenu()),
 		      actionCollection(), "newsubmenu");
-
+    
     (void)new KAction(i18n("New &Item"), "filenew", 0, _view, SLOT(file_newitem()),
 		      actionCollection(), "newitem");
-
+    
     KStdAction::quit(this, SLOT(close()), actionCollection());
-
-    // setup edit menu
+    
     KStdAction::cut(_view, SLOT(edit_cut()), actionCollection());
     KStdAction::copy(_view, SLOT(edit_copy()), actionCollection());
     KStdAction::paste(_view, SLOT(edit_paste()), actionCollection());
 
     (void)new KAction(i18n("&Delete"), "editdelete", 0, _view, SLOT(edit_delete()),
 		      actionCollection(), "delete");
-
-    (void)new KAction(i18n("Move &Up"), "up", 0, _view, SLOT(edit_moveup()),
-		      actionCollection(), "moveup");
-
-    (void)new KAction(i18n("Move &Down"), "down", 0, _view, SLOT(edit_movedown()),
-		      actionCollection(), "movedown");
-
+    
     createGUI("kmenueditui.rc");
-
-    toolBar(0)->setIconText(KToolBar::IconTextBottom);
 }
 
 void KMenuEdit::setupView()

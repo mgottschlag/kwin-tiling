@@ -43,8 +43,6 @@ public slots:
     void edit_paste();
 
     void edit_delete();
-    void edit_moveup();
-    void edit_movedown();
 
 signals:
     void pathChanged(const QString&);

@@ -17,6 +17,7 @@
  *
  */
 
+#include <stdlib.h>
 #include <iostream.h>
 
 #include <qdir.h>
@@ -38,6 +39,8 @@
 
 #include "treeview.h"
 #include "treeview.moc"
+
+const char* clipboard_prefix = ".kmenuedit_clipboard/";
 
 TreeItem::TreeItem(QListViewItem *parent, const QString& file)
   :QListViewItem(parent)
@@ -174,7 +177,7 @@ void TreeView::itemSelected(QListViewItem *item)
     emit entrySelected(((TreeItem*)item)->file());
 }
 
-void TreeView::slotCurrentChanged()
+void TreeView::currentChanged()
 {
     TreeItem *item = (TreeItem*)selectedItem();
     if (item == 0) return;
@@ -183,28 +186,6 @@ void TreeView::slotCurrentChanged()
     item->setText(0, df.readName());
     item->setPixmap(0, KGlobal::iconLoader()
 		    ->loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
-}
-
-void TreeView::slotDeleteCurrent()
-{
-    TreeItem *item = (TreeItem*)selectedItem();
-
-    // nothing selected? -> nothing to delete
-    if (item == 0) return;
-
-    QString file = item->file();
-
-    // is file a .directory or a .desktop file
-    if(file.find(".directory") > 0)
-	{
-	    deleteDir(file.mid(0, file.find("/.directory")));
-	    delete item;
-	}
-    else if (file.find(".desktop"))
-	{
-	    deleteFile(file);
-	    delete item;
-	}
 }
 
 void TreeView::copyFile(const QString& src, const QString& dest)
@@ -217,10 +198,12 @@ void TreeView::copyFile(const QString& src, const QString& dest)
 
     if (src == dest) return;
 
+    cout << "copyFile: " << src.local8Bit() << " to " << dest.local8Bit() << endl;		
+
     // read-only + don't merge in kdeglobals
     KConfig s(locate("apps", src), true, false);
     KSimpleConfig d(locateLocal("apps", dest));
-    
+
     // don't copy hidden files
     if(s.readBoolEntry("Hidden", false) == true)
 	return;
@@ -258,7 +241,7 @@ void TreeView::copyDir(const QString& s, const QString& d)
     // We create the destination directory in a writeable prefix returned
     // by locateLocal(), copy the .directory and the .desktop files over.
     // Then process the subdirs.
-
+    
     QString src = s;
     QString dest = d;
 
@@ -292,7 +275,7 @@ void TreeView::copyDir(const QString& s, const QString& d)
 	    QString file = (*it).mid((*it).findRev('/'), (*it).length());
 	    copyDir(src + "/" + file, dest + "/" + file);
 	}
-    
+
     // unset hidden flag
     KSimpleConfig c(locateLocal("apps", dest + "/.directory"));
     c.setDesktopGroup();
@@ -558,4 +541,187 @@ QDragObject *TreeView::dragObject() const
     QTextDrag *d = new QTextDrag(item->file(), (QWidget*)this);
     d->setPixmap(*item->pixmap(0));
     return d;
+}
+
+void TreeView::newsubmenu()
+{
+
+}
+
+void TreeView::newitem()
+{
+
+}
+
+void TreeView::cut()
+{
+    return;
+    
+    copy();
+    del();
+}
+
+void TreeView::copy()
+{
+    TreeItem *item = (TreeItem*)selectedItem();
+
+    // nil selected? -> nil to copy
+     if (item == 0) return;
+
+    // clean up old stuff
+    cleanupClipboard();
+
+    QString file = item->file();
+
+    // is file a .directory or a .desktop file
+    if(file.find(".directory") > 0)
+	{
+	    _clipboard = file; 
+		
+	    // truncate path
+	    int pos = _clipboard.findRev('/');
+	    int pos2 = _clipboard.findRev('/', pos-1);
+	    if (pos2 >= 0)
+		pos = pos2+1;
+	    else
+		pos = 0;
+	    
+	    if (pos > 0)
+		_clipboard = _clipboard.mid(pos, _clipboard.length());
+	    
+	    copyDir(file, QString(clipboard_prefix) + _clipboard);
+	}
+    else if (file.find(".desktop"))
+	{
+	    _clipboard = file;
+		
+	    // truncate path
+	    int pos = _clipboard.findRev('/');
+	    if (pos >= 0)
+		_clipboard = _clipboard.mid(pos+1, _clipboard.length());
+	    
+	    copyFile(file, QString(clipboard_prefix) + _clipboard);
+	}
+}
+
+void TreeView::paste()
+{
+    TreeItem *item = (TreeItem*)selectedItem();
+
+    // nil selected? -> nil to paste to
+    if (item == 0) return;
+
+    // is there content in the clipboard?
+    if (_clipboard.isEmpty()) return;
+
+    // get dest
+    QString dest = item->file();
+
+    // truncate ".directory"
+    int pos = dest.findRev(".directory");
+    if (pos > 0) dest.truncate(pos);
+
+    // truncate '/'
+    pos = dest.findRev('/');
+    if (pos > 0) dest.truncate(pos);
+
+    // truncate ".desktop" and file name
+    pos = dest.findRev(".desktop");
+    if (pos > 0)
+	{
+	    dest.truncate(pos);
+	
+	    // truncate file name
+	    pos = dest.findRev('/');
+	    if (pos < 0) pos = 0;
+	    dest.truncate(pos);
+	}
+
+    cout << "### clip: " << _clipboard.local8Bit() << " dest: " << dest.local8Bit() << " ###" << endl;
+    
+    // is _clipboard a .directory or a .desktop file
+    if(_clipboard.find(".directory") > 0)
+	{
+	    copyDir(QString(clipboard_prefix) + _clipboard, dest + '/' + _clipboard);
+	}
+    else if (_clipboard.find(".desktop"))
+	{
+	    copyFile(QString(clipboard_prefix) + _clipboard, dest + '/' + _clipboard);
+	}
+
+    fill();
+    return;
+
+    // create the TreeItems:
+
+    // file or dir?
+    if(_clipboard.find(".desktop") > 0)
+	{
+	    QListViewItem* parent = 0;
+
+	    if(item){
+		if(item->childCount() > 0) {
+		    parent = item;
+		    item = 0;
+		}
+		else
+		    parent = item->parent();
+			
+	    }
+	
+	    TreeItem* newitem;
+	    if (!parent)
+		newitem = new TreeItem(this, item, "");
+	    else
+		newitem = new TreeItem(parent, item, "");
+	
+	    KDesktopFile df(locateLocal("apps", dest + '/' + _clipboard));
+	
+	    newitem->setText(0, df.readName());
+	    if(dest != "")
+		newitem->setFile(dest + '/' + _clipboard);
+	    else
+		newitem->setFile(_clipboard);
+	    newitem->setPixmap(0, KGlobal::iconLoader()->
+			    loadIcon(df.readIcon(),KIcon::Desktop, KIcon::SizeSmall));
+	}
+    else
+	{
+	    TreeItem* parent = 0;
+
+	    if(item){
+		if(item->childCount() > 0)
+		    parent = item;
+		else
+		    parent = (TreeItem*) item->parent();
+	    }
+	    fillBranch(dest + '/' + _clipboard, parent);
+	}
+}
+
+void TreeView::del()
+{	
+    TreeItem *item = (TreeItem*)selectedItem();
+
+    // nil selected? -> nil to delete
+    if (item == 0) return;
+
+    QString file = item->file();
+
+    // is file a .directory or a .desktop file
+    if(file.find(".directory") > 0)
+	{
+	    deleteDir(file.mid(0, file.find("/.directory")));
+	    delete item;
+	}
+    else if (file.find(".desktop"))
+	{
+	    deleteFile(file);
+	    delete item;
+	}
+}
+
+void TreeView::cleanupClipboard()
+{
+    // TODO
 }

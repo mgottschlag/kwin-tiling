@@ -39,7 +39,7 @@ MenuEditView::MenuEditView( QWidget *parent, const char *name )
 	    _editor, SLOT(setDesktopFile(const QString&)));
     connect(_tree, SIGNAL(entrySelected(const QString&)),
 	    SIGNAL(pathChanged(const QString&)));
-    connect(_editor, SIGNAL(changed()), _tree, SLOT(slotCurrentChanged()));
+    connect(_editor, SIGNAL(changed()), _tree, SLOT(currentChanged()));
 
     // restore splitter sizes
     KConfig* config = KGlobal::config();
@@ -62,33 +62,30 @@ MenuEditView::~MenuEditView()
 
 void MenuEditView::file_newsubmenu()
 {
+    _tree->newsubmenu();
 }
 
 void MenuEditView::file_newitem()
 {
+    _tree->newitem();
 }
 
 void MenuEditView::edit_cut()
 {
+    _tree->cut();
 }
 
 void MenuEditView::edit_copy()
 {
+    _tree->copy();
 }
 
 void MenuEditView::edit_paste()
 {
+    _tree->paste();
 }
 
 void MenuEditView::edit_delete()
 {
-    _tree->slotDeleteCurrent();
-}
-
-void MenuEditView::edit_moveup()
-{
-}
-
-void MenuEditView::edit_movedown()
-{
+    _tree->del();
 }
