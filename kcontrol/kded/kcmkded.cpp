@@ -48,8 +48,6 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kded, KDEDFactory( "kcmkded" ) )
 
 static const QCString KALARMD("kalarmd");
 static const bool KALARMD_DEFAULT = true;
-static const QCString KWRITED("kwrited");
-static const bool KWRITED_DEFAULT = true;
 
 
 KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
@@ -180,23 +178,6 @@ void KDEDConfig::load() {
 		item->setText(4, QString::fromLatin1(KALARMD));
 	}
 
-	// Special case: kwrited
-	if (KService::serviceByDesktopName("kwrited"))
-	{
-		clitem = new CheckListItem(_lvStartup, QString::null);
-		connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
-        {
-			KConfig config("kwritedrc", true);
-			config.setGroup("General");
-			clitem->setOn(config.readBoolEntry("Autostart", KWRITED_DEFAULT));
-        }
-		item = clitem;
-		item->setText(1, i18n("KWrite Daemon"));
-		item->setText(2, i18n("Watch for messages from local users sent with \"write\""));
-		item->setText(3, NOT_RUNNING);
-		item->setText(4, QString::fromLatin1(KWRITED));
-	}
-
 	getServiceStatus();
 }
 
@@ -228,14 +209,6 @@ void KDEDConfig::save() {
 		}
 	}
 
-	// Special case: kwrited
-	item = static_cast<QCheckListItem *>(_lvStartup->findItem(KWRITED,4));
-	if (item) {
-		KConfig config("kwritedrc", false, false);
-		config.setGroup("General");
-		config.writeEntry("Autostart", item->isOn());
-	}
-
 	// Special case: kalarmd
 	item = static_cast<QCheckListItem *>(_lvStartup->findItem(KALARMD,4));
 	if (item) {
@@ -264,12 +237,6 @@ void KDEDConfig::defaults()
 	getServiceStatus();
 
         QCheckListItem* item;
-	// Special case: kwrited
-	item = static_cast<QCheckListItem *>(_lvStartup->findItem(KWRITED,4));
-	if (item) {
-		item->setOn(KWRITED_DEFAULT);
-	}
-
 	// Special case: kalarmd
 	item = static_cast<QCheckListItem *>(_lvStartup->findItem(KALARMD,4));
 	if (item) {
@@ -328,15 +295,6 @@ void KDEDConfig::getServiceStatus()
 		item->setText(3, (running ? RUNNING : NOT_RUNNING));
 	}
 
-	// Special case: kwrited
-	if (kapp->dcopClient()->isApplicationRegistered(KWRITED))
-	{
-		QListViewItem *item = _lvStartup->findItem(QString::fromLatin1(KWRITED), 4);
-		if ( item )
-		{
-			item->setText(3, RUNNING);
-		}
-	}
 }
 
 void KDEDConfig::slotReload()
@@ -388,14 +346,6 @@ void KDEDConfig::slotStartService()
 		return;
 	}
 
-	// Special case: kwrited
-	if (service == KWRITED)
-	{
-		KApplication::startServiceByDesktopName(KWRITED);
-		slotServiceRunningToggled();
-		return;
-	}
-
 	QByteArray data;
 	QDataStream arg( data, IO_WriteOnly );
 	arg << service;
@@ -418,14 +368,6 @@ void KDEDConfig::slotStopService()
 	if (service == KALARMD)
 	{
 		kapp->dcopClient()->send(KALARMD, "qt/"+KALARMD, "quit()", data);
-		QTimer::singleShot(200, this, SLOT(slotServiceRunningToggled()));
-		return;
-	}
-
-	// Special case: kwrited
-	if (service == KWRITED)
-	{
-		kapp->dcopClient()->send(KWRITED, "qt/"+KWRITED, "quit()", data);
 		QTimer::singleShot(200, this, SLOT(slotServiceRunningToggled()));
 		return;
 	}
