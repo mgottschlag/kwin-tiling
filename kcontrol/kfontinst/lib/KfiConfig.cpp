@@ -321,22 +321,17 @@ CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
         // If found xfs, but not X - then assume that xfs is being used...
         if(!itsSysXfsConfigFile.isNull() && itsSysXConfigFile.isNull())
             itsSysXfs=true;
-        else
-            itsSysXfs=false;
+
         //
         // Check to see whether user has switched from X to xfs, or vice versa...
         if(configured && checkX && CMisc::fExists(itsSysXConfigFile))
         {
-            int ts=CMisc::getTimeStamp(itsSysXConfigFile);
-
             //
             // The X config file is where the system will specify whether xfs is being used or not,
             // so check if the timestamp of this has changed. If so, then set xfs to false - so that
             // a re-check of the X config file will be performed.
 
-            if(sysXConfigFileTs!=ts)
-                itsSysXfs=false;
-            else   // OK, file has not been modified, therefore no reason to force a check
+            if(sysXConfigFileTs==CMisc::getTimeStamp(itsSysXConfigFile)) // File has not been modified, therefore no reason to force a check
                 checkX=false;
         }
 
@@ -440,7 +435,7 @@ void CKfiConfig::checkAndModifyXConfigFile()
     //
     // Check if XF86Config has been selected by CKfiConfig, and if so, have a look to see wether it has
     // 'unix/<hostname>:<port>' as the fontpath - if so then look for the fontserver 'config' file instead...
-    if(!itsSysXfs)
+    if(!itsSysXConfigFile.isEmpty())
     {
         int slashPos=itsSysXConfigFile.findRev('/');
 
@@ -453,23 +448,18 @@ void CKfiConfig::checkAndModifyXConfigFile()
                 CXConfig    xcfg(CXConfig::XF86, itsSysXConfigFile);
                 QStringList dirs;
 
+                itsSysXfs=false;
                 if(xcfg.getDirs(dirs, false) && dirs.count()>0)
                 {
                     QStringList::Iterator it;
-                    bool                  useXfs=false;
 
-                    for(it=dirs.begin(); it!=dirs.end() && !useXfs; ++it)
+                    for(it=dirs.begin(); it!=dirs.end(); ++it)
                         if((*it).replace(QRegExp("\\s*"), "").find("unix/:")==0)
-                            useXfs=true;
-
-                    if(useXfs)
-                        for(int i=0; !constXfsConfigFiles[i].isNull(); ++i)
-                            if(CMisc::fExists(constXfsConfigFiles[i]))
-                            {
-                                itsSysXfsConfigFile=constXfsConfigFiles[i];
+                        {
+                            if(!itsSysXfsConfigFile.isEmpty())
                                 itsSysXfs=true;
-                                break;
-                            }
+                            break;
+                        }
                 }
             }
         }
@@ -485,12 +475,15 @@ const QStringList & CKfiConfig::getRealTopDirs(const QString &f)
 
 void CKfiConfig::storeSysXConfigFileTs()
 {
-    int ts=CMisc::getTimeStamp(itsSysXConfigFile);
-
-    if(0!=ts)
+    if(!itsSysXfs)
     {
-        KConfigGroupSaver saver(this, KCONFIG_GROUP);
+        int ts=CMisc::getTimeStamp(itsSysXConfigFile);
 
-        writeEntry("SysXConfigFileTs", ts);
+        if(0!=ts)
+        {
+            KConfigGroupSaver saver(this, KCONFIG_GROUP);
+
+            writeEntry("SysXConfigFileTs", ts);
+        }
     }
 }
