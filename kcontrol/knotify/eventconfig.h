@@ -34,11 +34,13 @@
 #ifndef _EVENTCONFIG_H
 #define _EVENTCONFIG_H
 
+#include <kconfig.h>
 #include <knotifyclient.h>
 #include <qobject.h>
 #include <qlist.h>
 #include <qlistview.h>
 #include <eventview.h>
+
 
 class ProgramConfig;
 
@@ -49,9 +51,11 @@ class EventConfig : public QObject
 {
 Q_OBJECT
 public:
-	EventConfig(const ProgramConfig *parent=0) {app=parent;}
+	EventConfig(const ProgramConfig *parent=0) {application=parent;}
 	
-	const ProgramConfig *app;
+	void load(KConfig &conf);
+	
+	const ProgramConfig *application;
 	int present;
 	QString logfile;
 	QString soundfile;
@@ -60,26 +64,41 @@ public:
 	QString friendly;
 };
 
+/**
+ * Contains a single program
+ **/
 class ProgramConfig
 {
 public:
 	ProgramConfig() {}
 	~ProgramConfig();
-	
+	/**
+	 * Load the data for this class, and it's child Events
+	 */
+	void load(KConfig &conf);
+		
 	QString configfile;
 	QString appname;
 	QString description;
+
 	
-	QList<EventConfig> events;
+	QList<EventConfig> eventlist;
 };
 
+/**
+ * Contains all the programs
+ **/
 class Programs
 {
-	Programs() {};
+public:
+	Programs();
+	~Programs();
 	
 	static EventView *eventview;
 	static QListView *programs;
 	static QListView *events;
+	
+	QList<ProgramConfig> programlist;
 
 };
 
