@@ -95,7 +95,7 @@
                         <cstring>rightHanded</cstring>
                     </property>
                     <property name="text">
-                        <string>R&amp;ight handed</string>
+                        <string>Righ&amp;t handed</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -202,7 +202,7 @@
                                 <cstring>cb_pointershape</cstring>
                             </property>
                             <property name="text">
-                                <string>Change pointer sha&amp;pe over icons</string>
+                                <string>Cha&amp;nge pointer shape over icons</string>
                             </property>
                             <property name="checked">
                                 <bool>true</bool>
@@ -336,7 +336,7 @@
                         <cstring>cbVisualActivate</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Visual feedback on activation</string>
+                        <string>Visual f&amp;eedback on activation</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox">

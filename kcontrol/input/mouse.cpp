@@ -302,7 +302,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   hbox = new QHBoxLayout(vvbox, 6);
   hbox->addSpacing(24);
   mk_interval = new KIntNumInput(mk_delay, 0, grp);
-  mk_interval->setLabel(i18n("&Repeat interval:"), AlignVCenter);
+  mk_interval->setLabel(i18n("R&epeat interval:"), AlignVCenter);
   mk_interval->setSuffix(i18n(" msec"));
   mk_interval->setRange(1, 1000, 10);
   hbox->addWidget(mk_interval);
