@@ -40,9 +40,9 @@ KMidConfig::KMidConfig(QWidget *parent, const char *name)
   QVBoxLayout *topLayout = new QVBoxLayout(this,5);
 
   label=new QLabel(i18n("Select the midi device you want to use :"),this);
-  label->adjustSize();
+//  label->adjustSize();
   mididevices=new QListBox(this,"midideviceslist");
-  connect(mididevices,SIGNAL(highlighted(int)),SLOT(deviceselected(int)));
+  connect(mididevices,SIGNAL(highlighted(int)),SLOT(deviceSelected(int)));
   devman=new DeviceManager();
   int r=devman->initManager();
   
@@ -56,49 +56,55 @@ KMidConfig::KMidConfig(QWidget *parent, const char *name)
 
     mididevices->insertItem(s,i);
   };
-//  selecteddevice=devman->defaultDevice();
-  mididevices->setCurrentItem(devman->defaultDevice());
-  QString mapurl(devman->midiMapFilename());
-  KURL::encode(mapurl);
   
   usemap=new QCheckBox(i18n("Use Midi Mapper"),this,"usemidimapper");
+  
+  connect(usemap,SIGNAL(toggled(bool)),SLOT(useMap(bool)));
 
   maprequester=new KURLRequester(this,"maprequester");
-
-  maprequester->setURL(mapurl);
-
-//  ->show();
 
   topLayout->addWidget(label);
   topLayout->addWidget(mididevices);
   topLayout->addWidget(usemap);
   topLayout->addWidget(maprequester);
-/*
-  button1 = new QRadioButton(i18n("&Some option"), bGrp);
-  button2 = new QRadioButton(i18n("Some &other option"), bGrp);
-  button3 = new QRadioButton(i18n("&Yet another option"), bGrp);
-*/
-//  load();
+
+  load();
+  
+  mididevices->setFocus();
 }
 
-KMidConfig::~KMidConfig() {}
+KMidConfig::~KMidConfig() 
+{
+}
 
 void KMidConfig::configChanged()
 {
   emit changed(true);
 }
 
-void KMidConfig::deviceSelected(int idx)
+void KMidConfig::useMap(bool i)
 {
+  maprequester->setEnabled(i); 
   
+  emit changed(true);
+}
+
+void KMidConfig::deviceSelected(int)
+{
+  emit changed(true);
 }
 
 void KMidConfig::load()
 {
-  KConfig *config = new KConfig("kcmsamplerc", true);
+  KConfig *config = new KConfig("kcmmidirc", true);
   
-  config->setGroup("blahgroup");
-//  bGrp->setButton(config->readNumEntry("blahoption", 0));
+  config->setGroup("Configuration");
+  mididevices->setCurrentItem(config->readNumEntry("midiDevice",0));
+  QString mapurl(config->readEntry("mapFilename",""));
+//  KURL::encode(mapurl);
+  maprequester->setURL(mapurl);
+  usemap->setChecked(config->readBoolEntry("useMidiMapper", false));
+  maprequester->setEnabled(usemap->isChecked());
   delete config;
 
   emit changed(false);
@@ -107,17 +113,14 @@ void KMidConfig::load()
 void KMidConfig::save()
 {
 
-  KConfig *config= new KConfig("midirc", false);
+  KConfig *config= new KConfig("kcmmidirc", false);
 
   config->setGroup("Configuration");
 
-/*  if (button1->isChecked())
-	config->writeEntry("blahoption", 0);
-  else if (button2->isChecked())
-    config->writeEntry("blahoption", 1);
-  else
-	config->writeEntry("blahoption", 2);
-  */
+  config->writeEntry("midiDevice", mididevices->currentItem());
+  config->writeEntry("useMidiMapper", usemap->isChecked());
+  config->writeEntry("mapFilename", maprequester->url().decodedURL());
+  
   config->sync();
   delete config;
 
@@ -126,7 +129,7 @@ void KMidConfig::save()
 
 void KMidConfig::defaults()
 {
-//  bGrp->setButton(0);
+  usemap->setChecked(false);
   
   emit changed(true);
 }

@@ -49,7 +49,7 @@ public:
 protected slots:
   void configChanged();
   void deviceSelected(int idx);
-
+  void useMap(bool i);
       
 private:
   KURLRequester *maprequester;
