@@ -32,15 +32,11 @@ double KURIFilterPlugin::priority() const {
     return m_dblPriority;
 }
 
-bool KURIFilterPlugin::filterURI(QString &uri) const {
+bool KURIFilterPlugin::filterURI( QString &uri ) {
     KURL kuri(uri);
     bool filtered = filterURI(kuri);
     uri = kuri.url();
     return filtered;
-}
-
-KCModule *KURIFilterPlugin::configModule(QWidget *, const char *) const {
-    return 0;
 }
 
 QString KURIFilterPlugin::configName() const {

@@ -37,6 +37,7 @@ class KURIFilterPlugin : public QObject {
     Q_OBJECT
 
 public:
+
     /**
      * Constructor to create a filter plugin with a given name and
      * priority.
@@ -66,14 +67,14 @@ public:
      * @return A boolean indicating whether the URI has been changed
      * or not.
      */
-    virtual bool filterURI(KURL &uri) const = 0;
+    virtual bool filterURI( KURL& ) { return false; }
     /**
      * Filter a string representing a URI.
      * @param uri The URI to be filtered.
      * @return A boolean indicating whether the URI has been changed
      * or not.
      */
-    virtual bool filterURI(QString &uri) const;
+    virtual bool filterURI( QString &uri );
 
     /**
      * Return a configuration module for the filter.
@@ -82,7 +83,7 @@ public:
      * @return A configuration module, or 0 if the filter isn't
      * configurable.
      */
-    virtual KCModule *configModule(QWidget *parent = 0, const char *name = 0) const;
+    virtual KCModule *configModule(QWidget *parent = 0, const char *name = 0) const=0;
 
     /**
      * Return a configuration module for the filter.
