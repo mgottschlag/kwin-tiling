@@ -4,7 +4,7 @@
 #if defined(HAVE_GL)
 
 #include <qtimer.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <kdialogbase.h>
 #include <qlineedit.h>
 #include "saver.h"

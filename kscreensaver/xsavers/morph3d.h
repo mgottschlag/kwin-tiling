@@ -7,7 +7,7 @@
 #define __MORPH3D_H__
 
 #include <qtimer.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <kdialogbase.h>
 #include <qlineedit.h>
 #include "saver.h"

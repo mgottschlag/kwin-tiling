@@ -9,7 +9,7 @@
 #define __BANNER_H__
 
 #include <qtimer.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qdialog.h>
 #include <qlineedit.h>
 #include <kscreensaver.h>

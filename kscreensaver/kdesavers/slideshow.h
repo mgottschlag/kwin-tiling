@@ -7,7 +7,7 @@
 #define SLIDESHOW_H
 
 #include <qtimer.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qdialog.h>
 #include <qstringlist.h>
 #include <qpixmap.h>

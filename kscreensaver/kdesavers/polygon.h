@@ -9,7 +9,7 @@
 #define __POLYGON_H__
 
 #include <qtimer.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qdialog.h>
 #include <kscreensaver.h>
 #include <krandomsequence.h>

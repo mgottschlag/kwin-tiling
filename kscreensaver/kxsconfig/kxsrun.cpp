@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qtextstream.h>
 
 #include <kdebug.h>
