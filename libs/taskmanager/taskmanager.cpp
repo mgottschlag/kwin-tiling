@@ -424,6 +424,15 @@ void Task::toCurrentDesktop()
     toDesktop(kwin_module->currentDesktop());
 }
 
+void Task::stayOnTop(bool stay)
+{
+    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
+    if(stay)
+        ni.setState( NET::StaysOnTop, NET::StaysOnTop );
+    else
+        ni.setState( 0, NET::StaysOnTop );
+}
+
 void Task::publishIconGeometry(QRect rect)
 {
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMIconGeometry);

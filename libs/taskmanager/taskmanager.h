@@ -65,6 +65,7 @@ public:
     void close();
     void raise();
     void activate();
+    void stayOnTop(bool);
     void toDesktop(int);
     void toCurrentDesktop();
     void publishIconGeometry(QRect);
