@@ -38,9 +38,6 @@ from The Open Group.
 # include	"dm_error.h"
 
 #include	<pwd.h>
-#ifdef NGROUPS_MAX
-# include	<grp.h>
-#endif
 #ifdef USE_PAM
 # include	<security/pam_appl.h>
 # ifdef KDE_PAM_SERVICE
@@ -148,56 +145,6 @@ userEnv (struct display *d, int useSystemPath, char *user, char *home, char *she
     }
     return env;
 }
-
-#ifdef NGROUPS_MAX
-static int
-groupMember (name, members)
-    char *name;
-    char **members;
-{
-	while (*members) {
-		if (!strcmp (name, *members))
-			return 1;
-		++members;
-	}
-	return 0;
-}
-
-static void
-getGroups (name, verify, gid)
-    char		*name;
-    struct verify_info	*verify;
-    int			gid;
-{
-	int		ngroups;
-	struct group	*g;
-	int		i;
-
-	ngroups = 0;
-	verify->groups[ngroups++] = gid;
-	setgrent ();
-	/* SUPPRESS 560 */
-	while ( (g = getgrent())) {
-		/*
-		 * make the list unique
-		 */
-		for (i = 0; i < ngroups; i++)
-			if (verify->groups[i] == g->gr_gid)
-				break;
-		if (i != ngroups)
-			continue;
-		if (groupMember (name, g->gr_mem)) {
-			if (ngroups >= NGROUPS_MAX)
-				LogError ("%s belongs to more than %d groups, %s ignored\n",
-					name, NGROUPS_MAX, g->gr_name);
-			else
-				verify->groups[ngroups++] = g->gr_gid;
-		}
-	}
-	verify->ngroups = ngroups;
-	endgrent ();
-}
-#endif /* NGROUPS_MAX */
 
 #ifdef USE_PAM
 static char *PAM_password;
@@ -641,11 +588,7 @@ norestr:
     /* The password is passed to StartClient() for use by user-based
        authorization schemes.  It is zeroed there. */
     verify->uid = p->pw_uid;
-#ifdef NGROUPS_MAX
-    getGroups (greet->name, verify, p->pw_gid);
-#else
     verify->gid = p->pw_gid;
-#endif
     home = p->pw_dir;
     shell = p->pw_shell;
     argv = 0;

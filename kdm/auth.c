@@ -41,7 +41,6 @@ from The Open Group.
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
-#include "dm_socket.h"
 
 #include <errno.h>
 #ifdef X_NOT_STDC_ENV
@@ -52,6 +51,9 @@ extern int errno;
 # include <sys/ioctl.h>
 #endif /* !ESIX */
 
+#if defined(TCPCONN) || defined(STREAMSCONN)
+# include "dm_socket.h"
+#endif
 #ifdef DNETCONN
 # include <netdnet/dn.h>
 # include <netdnet/dnetdb.h>
@@ -1245,11 +1247,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 	}
 	XauUnlockAuth (name);
 	if (envname)
-#ifdef NGROUPS_MAX	/* really need this? xdm does not have it */
-	    chown (envname, verify->uid, verify->groups[0]);
-#else
 	    chown (envname, verify->uid, verify->gid);
-#endif
     }
     Debug ("done SetUserAuthorization\n");
 }

@@ -648,11 +648,7 @@ SessionExit (struct display *d, int status, int dummy /* we know better */)
 	    *pamh = NULL;
 	}
 #endif
-#ifdef NGROUPS_MAX
-	setgid (verify.groups[0]);
-#else
 	setgid (verify.gid);
-#endif
 	setuid (verify.uid);
 	RemoveUserAuthorization (d, &verify);
 #ifdef K5AUTH
@@ -765,26 +761,12 @@ StartClient (
 
 #ifndef AIXV3
 # ifndef HAS_SETUSERCONTEXT
-#  ifdef NGROUPS_MAX
-	if (setgid(verify->groups[0]) < 0)
-	{
-	    LogError("setgid %d (user \"%s\") failed, errno=%d\n",
-		     verify->groups[0], name, errno);
-	    return (0);
-	}
-	if (setgroups(verify->ngroups, verify->groups) < 0)
-	{
-	    LogError("setgroups for \"%s\" failed, errno=%d\n", name, errno);
-	    return (0);
-	}
-#  else
 	if (setgid(verify->gid) < 0)
 	{
 	    LogError("setgid %d (user \"%s\") failed, errno=%d\n",
 		     verify->gid, name, errno);
 	    return (0);
 	}
-#  endif
 #  if defined(BSD) && (BSD >= 199103)
 	if (setlogin(name) < 0)
 	{
@@ -793,13 +775,7 @@ StartClient (
 	}
 #  endif
 #  ifndef QNX4
-	if (initgroups(name, 
-#   ifdef NGROUPS_MAX
-	    verify->groups[0]
-#   else
-	    verify->gid
-#   endif
-	    ) < 0)
+	if (initgroups(name, verify->gid) < 0)
 	{
 	    LogError("initgroups for \"%s\" failed, errno=%d\n", name, errno);
 	    return (0);

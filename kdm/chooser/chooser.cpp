@@ -36,27 +36,20 @@ public:
 };
 
 bool
-MyApp::x11EventFilter( XEvent * ev){
-/*
-	if( ev->type == KeyPress && kchooser){
-	  // This should go away
-	  KeySym ks = XLookupKeysym(&(ev->xkey),0);
-	  if (ks == XK_Return ||
-	      ks == XK_KP_Enter)
-	       kchooser->ReturnPressed();
-  }
-*/
-
-  // Hack to tell dialogs to take focus
-  if( ev->type == ConfigureNotify) {
-	  QWidget* target = QWidget::find( (( XConfigureEvent *) ev)->window);
-	  target = target->topLevelWidget();
-	 	if( target->isVisible() && !target->isPopup())
-		 	XSetInputFocus( qt_xdisplay(), target->winId(),
-		RevertToParent, CurrentTime);
+MyApp::x11EventFilter( XEvent * ev)
+{
+    // Hack to tell dialogs to take focus
+    if( ev->type == ConfigureNotify) {
+	QWidget* target = QWidget::find( (( XConfigureEvent *) ev)->window);
+	if (target) {
+	    target = target->topLevelWidget();
+	    if( target->isVisible() && !target->isPopup())
+		XSetInputFocus( qt_xdisplay(), target->winId(),
+	    RevertToParent, CurrentTime);
 	}
+    }
 
-  return FALSE;
+    return FALSE;
 }
 
 int main( int argc, char **argv )

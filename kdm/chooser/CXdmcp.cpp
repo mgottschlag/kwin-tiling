@@ -1063,12 +1063,12 @@ CXdmcp::~CXdmcp()
 	emptyHostnames();
 }
 
-CXdmcp::CXdmcp( int argc, char **argv )
+CXdmcp::CXdmcp( int *argc, char **argv )
 {
 	Widget toplevel;
 
-  toplevel = XtInitialize (argv[0], "Chooser", options, XtNumber(options), &argc, argv);
-  
+  toplevel = XtInitialize (argv[0], "Chooser", options, XtNumber(options), argc, argv);
+
   XtAddConverter(XtRString, XtRARRAY8, &CvtStringToARRAY8, NULL, 0);
 
 	XtGetApplicationResources (toplevel, (XtPointer) &app_resources, resources,

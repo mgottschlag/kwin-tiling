@@ -83,11 +83,6 @@ extern Time_t time ();
 # include <X11/Xdmcp.h>
 #endif
 
-#ifndef NGROUPS_MAX
-# include <sys/param.h>
-# define NGROUPS_MAX NGROUPS
-#endif
-
 #ifdef pegasus
 # undef dirty		/* Some bozo put a macro called dirty in sys/param.h */
 #endif /* pegasus */
@@ -133,10 +128,11 @@ typedef union wait	waitType;
 
 typedef enum displayStatus { running, notRunning, zombie, phoenix } DisplayStatus;
 
-/* XXX really needed? */
+/* XXX uncomment this, if it's really needed!!!!!
 #ifdef HAVE_SYS_SELECT_H
-# include <sys/select.h>                /* Defines fd_set on some systems */
+# include <sys/select.h>                / * Defines fd_set on some systems * /
 #endif
+*/
 
 #ifndef FD_ZERO
 typedef	struct	my_fd_set { int fds_bits[1]; } my_fd_set;
@@ -326,12 +322,7 @@ struct greet_info {
 
 struct verify_info {
 	int		uid;		/* user id */
-#ifdef NGROUPS_MAX
-	GID_T		groups[NGROUPS_MAX];/* group list */
-	int		ngroups;        /* number of elements in groups */
-#else
 	int		gid;		/* group id */
-#endif
 	char		**argv;		/* arguments to session */
 	char		**userEnviron;	/* environment for session */
 	char		**systemEnviron;/* environment for startup/reset */
