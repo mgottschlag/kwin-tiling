@@ -27,6 +27,7 @@ void  KWidgetSettingsModule::init()
 	connect(cbMenuEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
 	connect(cbComboEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
 	connect(cbTooltipEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
+	connect(cboxIconSupport, SIGNAL(toggled(bool)), SLOT(setDirty()));
 }
 
 void  KWidgetSettingsModule::setDirty()
@@ -43,6 +44,7 @@ void  KWidgetSettingsModule::defaults()
 	cbMenuEffect->setCurrentItem(0);
 	cbComboEffect->setCurrentItem(0);
 	cbTooltipEffect->setCurrentItem(0);
+	cboxIconSupport->setChecked(true );
 }
 
 void  KWidgetSettingsModule::load()
@@ -86,6 +88,9 @@ void  KWidgetSettingsModule::load()
 		cbToolbarIcons->setCurrentItem(2);
 	else if (tbIcon == "IconTextBottom")
 		cbToolbarIcons->setCurrentItem(3);
+
+	config.setGroup(QString::fromLatin1("KDE"));
+        cboxIconSupport->setChecked( config.readBoolEntry(QString::fromLatin1("showIcons"), true ));
 
 }
 
@@ -148,7 +153,8 @@ void  KWidgetSettingsModule::save()
 	}
 
 	config.writeEntry(QString::fromLatin1("IconText"), tbIcon, true, true);
-
+        config.setGroup(QString::fromLatin1("KDE"));
+        config.writeEntry(QString::fromLatin1("showIcons"), cboxIconSupport->isChecked() );
 
 	// Notify all KApplications && KWin about the updated style stuff
 	KIPC::sendMessageAll(KIPC::StyleChanged);
