@@ -23,6 +23,7 @@
 #include <qwidget.h>
 
 class ConfigModule;
+class QLabel;
 
 class DockContainer : public QWidget
 {
@@ -45,6 +46,7 @@ signals:
 
 private:
   QWidget      *_basew;
+  QLabel       *_busy;
   ConfigModule *_module;
 
 };

@@ -18,6 +18,7 @@
 */
 
 #include <qapp.h>
+#include <qlabel.h>
 
 #include <kmessagebox.h>
 #include <kglobal.h>
@@ -34,7 +35,12 @@ DockContainer::DockContainer(QWidget *parent, const char *name)
   : QWidget(parent, name)
   , _basew(0L)
   , _module(0L)
-{}
+{
+  _busy = new QLabel(i18n("Loading..."), this);
+  _busy->setAlignment(AlignCenter);
+  _busy->setGeometry(0,0, width(), height());
+  _busy->hide();
+}
 
 void DockContainer::setBaseWidget(QWidget *widget)
 {
@@ -51,6 +57,9 @@ void DockContainer::dockModule(ConfigModule *module)
   if (_module == module)
     return;
   
+  _busy->raise();
+  _busy->show();
+  _busy->repaint();
   QApplication::setOverrideCursor( waitCursor );
   ProxyWidget *widget = module->module();
   QApplication::restoreOverrideCursor();
@@ -79,9 +88,9 @@ void DockContainer::dockModule(ConfigModule *module)
       connect(_module, SIGNAL(childClosed()),
               this, SLOT(removeModule()));
       
-      widget->reparent(this, 0 , QPoint(0,0), true);
-      resize(widget->sizeHint());
-      updateGeometry();
+      widget->reparent(this, 0 , QPoint(0,0), false);
+      widget->resize(width(), height());
+      //updateGeometry();
       
       QString quickhelp = "";
       if (_module && _module->module())
@@ -93,6 +102,9 @@ void DockContainer::dockModule(ConfigModule *module)
     KMessageBox::sorry(0, i18n("Sorry, the control module \"%1\" could not be loaded.\n"
                                "Perhaps it is not installed.").arg(module->name())
                        , i18n("Could not load control module."));
+  _busy->raise();
+  if (widget) widget->show();
+  _busy->hide();
 }
 
 void DockContainer::removeModule()
@@ -108,6 +120,7 @@ void DockContainer::removeModule()
 
 void DockContainer::resizeEvent(QResizeEvent *)
 {
+  _busy->resize(width(), height());
   if (_module)
 	{
 	  _basew->hide();
