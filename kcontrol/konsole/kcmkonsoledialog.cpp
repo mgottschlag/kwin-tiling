@@ -158,7 +158,7 @@ KCMKonsoleDialog::KCMKonsoleDialog( QWidget* parent,  const char* name, WFlags f
 
     terminalLE = new QLineEdit( GroupBox2, "terminalLE" );
     terminalLE->setEnabled( FALSE );
-    terminalLE->setText( i18n( "xterm -e " ) );
+    terminalLE->setText( i18n( "xterm" ) );
 
     GroupBox2Layout->addWidget( terminalLE, 1, 3 );
 

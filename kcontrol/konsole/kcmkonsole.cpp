@@ -32,6 +32,7 @@ void KCMKonsole::load()
     KConfig *config = new KConfig("konsolerc", false, true);
     config->setGroup("options");
 
+
     dialog->fullScreenCB->setChecked(config->readBoolEntry("Fullscreen",false));
     dialog->showMenuBarCB->setChecked(config->readEntry("MenuBar","Enabled") == "Enabled");
     dialog->warnCB->setChecked(config->readBoolEntry("WarnQuit",true));
@@ -42,7 +43,11 @@ void KCMKonsole::load()
 
     dialog->SchemaEditor1->setSchema(config->readEntry("schema"));
 
-
+    config = new KConfig("kdeglobals", false, true);
+    config->setGroup("General");
+    dialog->terminalLE->setText(config->readEntry("TerminalApplication","konsole"));
+    dialog->terminalCB->setChecked(config->readEntry("TerminalApplication","konsole")!="konsole");
+    
 }
 
 void KCMKonsole::load(const QString & s)
@@ -82,7 +87,12 @@ void KCMKonsole::save()
 
     config->writeEntry("schema", dialog->SchemaEditor1->schema());
 
+    config->sync();		//is it necessary ?
 
+    config = new KConfig("kdeglobals", false, true);
+    config->setGroup("General");
+    config->writeEntry("TerminalApplication",dialog->terminalCB->isChecked()?dialog->terminalLE->text():"konsole");
+    
     config->sync();		//is it necessary ?
 
 }
