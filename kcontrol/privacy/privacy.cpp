@@ -48,11 +48,11 @@ Privacy::Privacy(QWidget *parent, const char *name)
 
   // add this once the P3P stuff is finished
   //QTabWidget *privacyTabs = new QTabWidget(this, "privacytabs");
-  
+
   cleaningDialog = new KCMPrivacyDialog(this);
   //p3pSettings    = new KPrivacySettings(this);
 
-  top->addWidget(cleaningDialog); 
+  top->addWidget(cleaningDialog);
 
   //top->addWidget(privacyTabs);
   //privacyTabs->addTab(cleaningDialog, i18n("Cleanup"));
@@ -131,15 +131,16 @@ Privacy::Privacy(QWidget *parent, const char *name)
 
 Privacy::~Privacy()
 {
+    delete m_privacymanager;
 }
 
 
 void Privacy::load()
 {
   KConfig *c = new KConfig("kprivacyrc", false, false);
-  
+
   // get general privacy settings
-  { 
+  {
     KConfigGroupSaver saver(c, "Cleaning");
 
     clearRunCommandHistory->setOn(c->readBoolEntry("ClearRunCommandHistory", true));
@@ -153,7 +154,7 @@ void Privacy::load()
     clearFavIcons->setOn(c->readBoolEntry("ClearFavIcons", true));
   }
 
-  { 
+  {
     KConfigGroupSaver saver(c, "P3P");
 
     // TODO: add P3P settings here
@@ -192,7 +193,7 @@ void Privacy::save()
   {
     KConfigGroupSaver saver(c, "P3P");
 
-    // TODO: add settings for P3P 
+    // TODO: add settings for P3P
   }
 
   c->sync();
@@ -230,7 +231,7 @@ void Privacy::selectNone()
 
   for ( item  = checklist.first(); item; item = checklist.next() )
     item->setOn(false);
-  
+
   emit changed(true);
 }
 
