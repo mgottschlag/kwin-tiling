@@ -15,7 +15,7 @@ bin_PROGRAMS = kpolygon.kss kswarm.kss kbanner.kss \
 	kslidescreen.kss krandom.kss \
 	kslideshow.kss kbsod.kss klorenz.kss
 
-EXTRA_PROGRAMS = kbat.kss kmorph3d.kss kspace.kss kpipes.kss kmatrix.kss kvm.kss
+EXTRA_PROGRAMS = kmorph3d.kss kspace.kss kpipes.kss kmatrix.kss kvm.kss
 
 KDE_ICON = kscreensaver
 
@@ -41,9 +41,6 @@ kblankscrn_kss_SOURCES = $(BASE_SRCS) blankscrn.cpp
 
 kslideshow_kss_SOURCES = $(BASE_SRCS) slideshow.cpp
 kslideshow_kss_LDADD = $(LIB_KFILE) $(LDADD) $(LIB_KSYCOCA) $(XPMLIB)
-
-kbat_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) bat.cpp
-kbat_kss_LDADD = $(LDADD) $(XPMLIB)
 
 krock_kss_SOURCES = $(BASE_SRCS) $(XL_SRCS) rock.cpp
 
@@ -76,7 +73,7 @@ kvm_kss_LDADD= $(LDADD) $(XPMLIB) -lm
 
 METASOURCES = saver.moc demowin.moc polygon.moc banner.moc\
 		blankscrn.moc rock.moc lines.moc\
-		pyro.moc hop.moc swarm.moc bat.moc \
+		pyro.moc hop.moc swarm.moc \
 		morph3d.moc blob.moc space.moc bouboule.moc \
 		science.moc pipes.moc \
 		slidescreen.moc bsod.moc slideshow.moc matrix.moc \
@@ -84,7 +81,7 @@ METASOURCES = saver.moc demowin.moc polygon.moc banner.moc\
 
 noinst_HEADERS = saver.h demowin.h polygon.h banner.h\
 		blankscrn.h xlock.h rock.h lines.h\
-		pyro.h hop.h swarm.h bat.h \
+		pyro.h hop.h swarm.h \
 		blob.h space.h bouboule.h  science.h \
 		xlockmore.h mode.h helpers.h morph3d.h pipes.h \
 		xs_colors.h xs_hsv.h xs_yarandom.h xs_utils.h \
@@ -99,7 +96,7 @@ messages:
 data_DATA = kscience.gif kscience-small.gif
 datadir = $(kde_datadir)/kscreensaver
 
-desktop_DATA = KAttration.desktop KBanner.desktop KBat.desktop KBlankscreen.desktop \
+desktop_DATA = KAttration.desktop KBanner.desktop KBlankscreen.desktop \
 	KBlob.desktop KBouboule.desktop KBsod.desktop KFlame.desktop \
 	KForest.desktop KHop.desktop KLaser.desktop KLines.desktop \
 	KLissie.desktop KMatrix.desktop KMorph3D.desktop KPipes.desktop \
