@@ -1,4 +1,7 @@
-#include <qmsgbox.h>       
+#include <qlayout.h>
+#include <qlistview.h>
+#include <qmsgbox.h>
+#include <qpoint.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,9 +16,9 @@
 #include "ksmbstatus.h"
 #include "ksmbstatus.moc"
 
-#include "ktablistbox.h"
 #include <klocale.h>
 #include <stdio.h>
+
 
 void NetMon::help()
 {
@@ -27,31 +30,26 @@ void NetMon::processLine(char *bufline, int linelen)
 {
     char *tok;
     int pid;
+    QListViewItem *row;
+    int column;
 
     rownumber++;
     if (rownumber == 2)
         version->setText(bufline); // second line = samba version
     else if ((rownumber >= 5) && (readingpart==connexions))
     {
-        char li[255];
 
         if (linelen<=1)
             readingpart=locked_files; // stop after first empty line.
         else {
-            tok= strtok(bufline," ");
-            sprintf(li,"%s\n",tok);
-            tok= strtok(NULL," ");
-            sprintf(li,"%s%s\n",li,tok);      
-            tok= strtok(NULL," ");
-            sprintf(li,"%s%s\n",li,tok);      
-            tok= strtok(NULL," ");
-            pid= atoi(tok);
-            pids[nrpid++]=pid;
-            sprintf(li,"%s%s\n",li,tok);      
-            tok= strtok(NULL," ");
-            sprintf(li,"%s%s\n",li,tok);      
-            
-            list->insertItem(li);
+	    row = new QListViewItem(list);
+	    column=0;
+	    tok=strtok(bufline," ");
+	    row->setText(column++,tok);
+            while (column<5) {
+		tok=strtok(NULL," ");
+		row->setText(column++,tok);
+	    }
         }
       }
     else if (readingpart==locked_files)
@@ -67,7 +65,7 @@ void NetMon::processLine(char *bufline, int linelen)
           {
             tok=strtok(bufline," ");
             pid=atoi(tok);
-            lo[pid]++; 
+            (lo)[pid]++; 
           }        
     }
 }
@@ -95,10 +93,11 @@ void NetMon::slotReceivedData(KProcess *, char *buffer, int )
 
 void NetMon::update()
 {
-    int n;
+    int pid,n;
+    QListViewItem *row;
     KProcess * process = new KProcess();
 
-    for(n=0;n<=65536;n++) lo[n]=0;
+    for (n=0;n<65536;n++) lo[n]=0;
     list->clear();
     /* Re-read the Contents ... */
 
@@ -115,68 +114,61 @@ void NetMon::update()
     else if (rownumber==0) // empty result
         version->setText(i18n("Error: Unable to open configuration file \"smb.conf\""));
     else { // ok -> count the number of locked files for each pid
-        int m;
-        char tmp[255];
-        for (m=0;m<nrpid;m++) 
-        {
-            sprintf(tmp,"%d",lo[pids[m]]);
-            list->changeItemPart(tmp,m,5);
+        for (row=list->firstChild();row!=0;row=row->itemBelow()) {
+	    pid=atoi(row->text(3));
+	    row->setText(5,QString("%1").arg((lo)[pid]));
         }
     }
     version->adjustSize();
     delete process;
+    list->show();
 }
 
 
 void NetMon::Kill()
 {
   QString a;
-  a = list->text(killrow,3);
+  a = killrow->text(3);
   kill(a.toUInt(),15);
   update();
 }
 
-void NetMon::Killmenu(int Index, int )
+void NetMon::Killmenu(QListViewItem * row, const QPoint& pos, int /* column */)
 {
-   killrow=Index;
-   menu->setTitle("//"+list->text(Index,4)+"/"+list->text(Index,0));
-   menu->show();
+   // WABA: column not used, is this ok?
+   if (row!=0) {
+       killrow=row;
+       menu->setTitle("//"+row->text(4)+"/"+row->text(0));
+       menu->popup(pos);
+   }
 }
 
 NetMon::NetMon( QWidget * parent, const char * name )
         : KConfigWidget (parent, name)
 {
-
-    list=new KTabListBox (this,"Hello",6);
+    QBoxLayout *topLayout = new QVBoxLayout(this);
+    topLayout->setAutoAdd(true);
+    topLayout->setMargin(SCREEN_XY_OFFSET);
+    topLayout->setSpacing(10);
+    
+    list=new QListView(this,"Hello");
     version=new QLabel(this);
-    list->setGeometry(20,20,430,320);
-    list->clearTableFlags(Tbl_hScrollBar);
-    list->clearTableFlags(Tbl_autoHScrollBar);
-    list->setTableFlags(Tbl_autoVScrollBar);
-    list->setSeparator('\n');
-    list->setColumn(0, i18n("Service"), 80);
-
-    list->setColumn(1, i18n("UID"), 70);
-    list->setColumn(2, i18n("GID"), 70);     
-    list->setColumn(3, i18n("PID"), 50);
-    list->setColumn(4, i18n("Machine"),80);
-    list->setColumn(5, i18n("Open Files"),60);
+    
+    list->setAllColumnsShowFocus(true);
+    list->setMinimumSize(425,200);
+    list->addColumn(i18n("Service"), 80);
+    list->addColumn(i18n("UID"), 70);
+    list->addColumn(i18n("GID"), 70);     
+    list->addColumn(i18n("PID"), 50);
+    list->addColumn(i18n("Machine"),80);
+    list->addColumn(i18n("Open Files"),70);
  
     timer = new QTimer(this);
     timer->start(5000);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     menu = new KPopupMenu();
     menu->insertItem("&Kill",this,SLOT(Kill()));
-    connect(list,SIGNAL(popupMenu(int,int)),SLOT(Killmenu(int,int)));
+    QObject::connect(list,SIGNAL(rightButtonPressed(QListViewItem *,const QPoint &,int)),
+		    SLOT(Killmenu(QListViewItem *,const QPoint &,int)));
     update();
-
 }
-
-void NetMon::resizeEvent( QResizeEvent *re )
-{   QSize size = re->size();
-    if (list)
-        list->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
-                    size.width() -2*SCREEN_XY_OFFSET,
-                    size.height()-10-version->height()-2*SCREEN_XY_OFFSET);
-    version->move(SCREEN_XY_OFFSET, SCREEN_XY_OFFSET+list->height()+10);
-}                                                                               

@@ -14,3 +14,7 @@ Added Window and Column resizing:
   
   Harald Koschinski <Harald.Koschinski@arcormail.de>
 
+KTabListBox to QListView conversion and use of QLayout:
+
+  Wilco Greven <j.w.greven@student.utwente.nl>
+
