@@ -61,8 +61,6 @@ signals:
 
 private slots:
 	void slotPresChanged();
-	void slotALChanged();
-	void slotNPChanged();
 	void slotChanged();
 	void slotSetAutoUser( const QString &user );
 	void slotSetPreselUser( const QString &user );
@@ -70,15 +68,13 @@ private slots:
 
 private:
 	QGroupBox	*alGroup, *puGroup, *npGroup, *btGroup;
-	QCheckBox	*cbalen, *cbplen, *cbarlen, *cbjumppw;
+	QCheckBox	*cbarlen, *cbjumppw;
 	QRadioButton	*npRadio, *ppRadio, *spRadio;
 	KComboBox	*userlb, *puserlb;
 	KListView	*npuserlv;
 	QLabel		*u_label, *pu_label, *w_label, *n_label, *pl_label;
 	QString		autoUser, preselUser;
 	QStringList	noPassUsers;
-
-	void updateEnables();
 };
 
 #endif

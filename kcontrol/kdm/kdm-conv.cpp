@@ -25,6 +25,7 @@
 
 #include <qlayout.h>
 #include <qlabel.h>
+#include <qhgroupbox.h>
 #include <qvgroupbox.h>
 #include <qvbuttongroup.h>
 #include <qwhatsthis.h>
@@ -47,27 +48,25 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
     QSizePolicy vpref( QSizePolicy::Minimum, QSizePolicy::Fixed );
 
-    alGroup = new QVGroupBox(i18n("Automatic Login"), this );
+    alGroup = new QHGroupBox( i18n("Enable au&to-login"), this );
+    alGroup->setInsideSpacing( KDialog::spacingHint() );
+    alGroup->setCheckable( true );
     alGroup->setSizePolicy( vpref );
 
-    cbalen = new QCheckBox(i18n("Enable au&to-login"), alGroup);
-    QWhatsThis::add( cbalen, i18n("Turn on the auto-login feature."
+    QWhatsThis::add( alGroup, i18n("Turn on the auto-login feature."
 	" This applies only to KDM's graphical login."
 	" Think twice before enabling this!") );
-    connect(cbalen, SIGNAL(toggled(bool)), SLOT(slotALChanged()));
-    connect(cbalen, SIGNAL(toggled(bool)), SLOT(slotChanged()));
+    connect(alGroup, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
-    QWidget *hlpw = new QWidget(alGroup);
-    userlb = new KComboBox(hlpw);
-    u_label = new QLabel(userlb, i18n("Use&r:"), hlpw);
+    u_label = new QLabel(i18n("Use&r:"), alGroup);
+    userlb = new KComboBox(alGroup);
+    u_label->setBuddy( userlb );
+    QWidget *filler = new QWidget( alGroup );
+    filler->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Fixed, 1, 0 ) );
     connect(userlb, SIGNAL(highlighted(int)), SLOT(slotChanged()));
     wtstr = i18n("Select the user to be logged in automatically.");
     QWhatsThis::add( u_label, wtstr );
     QWhatsThis::add( userlb, wtstr );
-    QBoxLayout *hlpl = new QHBoxLayout(hlpw);
-    hlpl->addWidget(u_label, 0);
-    hlpl->addSpacing(KDialog::spacingHint());
-    hlpl->addWidget(userlb, 1);
 
 
     puGroup = new QVButtonGroup(i18n("Preselect User"), this );
@@ -82,7 +81,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     spRadio = new QRadioButton(i18n("Specif&y"), puGroup);
     QWhatsThis::add( spRadio, i18n("Preselect the user specified in the combo box below. "
 	"Use this if this computer is predominantly used by a certain user.") );
-    hlpw = new QWidget(puGroup);
+    QWidget *hlpw = new QWidget(puGroup);
     puserlb = new KComboBox(true, hlpw);
     pu_label = new QLabel(puserlb, i18n("Us&er:"), hlpw);
     connect(puserlb, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
@@ -91,10 +90,10 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 	"user to mislead possible attackers.");
     QWhatsThis::add( pu_label, wtstr );
     QWhatsThis::add( puserlb, wtstr );
-    hlpl = new QHBoxLayout(hlpw);
-    hlpl->addWidget(pu_label, 0);
-    hlpl->addSpacing(KDialog::spacingHint());
-    hlpl->addWidget(puserlb, 1);
+    QBoxLayout *hlpl = new QHBoxLayout(hlpw, 0, KDialog::spacingHint());
+    hlpl->addWidget(pu_label);
+    hlpl->addWidget(puserlb);
+    hlpl->addStretch( 1 );
     cbjumppw = new QCheckBox(i18n("Focus pass&word"), puGroup);
     QWhatsThis::add( cbjumppw, i18n("When this option is on, KDM will place the cursor "
 	"in the password field instead of the user field after preselecting a user. "
@@ -102,16 +101,15 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 	"be changed.") );
     connect(cbjumppw, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
-    npGroup = new QVGroupBox(i18n("Password-Less Login"), this );
+    npGroup = new QVGroupBox(i18n("Enable password-&less logins"), this );
+    npGroup->setCheckable( true );
 
-    cbplen = new QCheckBox(i18n("Enable password-&less logins"), npGroup);
-    QWhatsThis::add( cbplen, i18n("When this option is checked, the checked users from"
+    QWhatsThis::add( npGroup, i18n("When this option is checked, the checked users from"
 	" the list below will be allowed to log in without entering their"
 	" password. This applies only to KDM's graphical login."
 	" Think twice before enabling this!") );
 
-    connect(cbplen, SIGNAL(toggled(bool)), SLOT(slotNPChanged()));
-    connect(cbplen, SIGNAL(toggled(bool)), SLOT(slotChanged()));
+    connect(npGroup, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
     pl_label = new QLabel(i18n("No password re&quired for:"), npGroup);
     npuserlv = new KListView(npGroup);
@@ -155,10 +153,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
 void KDMConvenienceWidget::makeReadOnly()
 {
-    cbalen->setEnabled(false);
-    userlb->setEnabled(false);
-    cbplen->setEnabled(false);
-    npuserlv->setEnabled(false);
+    alGroup->setEnabled(false);
+    npGroup->setEnabled(false);
     pl_label->setEnabled(false);
     cbarlen->setEnabled(false);
     npRadio->setEnabled(false);
@@ -176,33 +172,14 @@ void KDMConvenienceWidget::slotPresChanged()
     cbjumppw->setEnabled(!npRadio->isChecked());
 }
 
-void KDMConvenienceWidget::slotALChanged()
-{
-    userlb->setEnabled(cbalen->isChecked());
-}
-
-void KDMConvenienceWidget::slotNPChanged()
-{
-    bool en = cbplen->isChecked();
-    npuserlv->setEnabled(en);
-    pl_label->setEnabled(en);
-}
-
-void KDMConvenienceWidget::updateEnables()
-{
-    slotALChanged();
-    slotPresChanged();
-    slotNPChanged();
-}
-
 void KDMConvenienceWidget::save()
 {
     config->setGroup("X-:0-Core");
-    config->writeEntry( "AutoLoginEnable", cbalen->isChecked() );
+    config->writeEntry( "AutoLoginEnable", alGroup->isChecked() );
     config->writeEntry( "AutoLoginUser", userlb->currentText() );
 
     config->setGroup("X-:*-Core");
-    config->writeEntry( "NoPassEnable", cbplen->isChecked() );
+    config->writeEntry( "NoPassEnable", npGroup->isChecked() );
     config->writeEntry( "NoPassUsers", noPassUsers );
 
     config->setGroup("X-*-Core");
@@ -220,11 +197,11 @@ void KDMConvenienceWidget::save()
 void KDMConvenienceWidget::load()
 {
     config->setGroup("X-:0-Core");
-    cbalen->setChecked(config->readBoolEntry( "AutoLoginEnable", false) );
+    alGroup->setChecked(config->readBoolEntry( "AutoLoginEnable", false) );
     autoUser = config->readEntry( "AutoLoginUser" );
 
     config->setGroup("X-:*-Core");
-    cbplen->setChecked(config->readBoolEntry( "NoPassEnable", false) );
+    npGroup->setChecked(config->readBoolEntry( "NoPassEnable", false) );
     noPassUsers = config->readListEntry( "NoPassUsers");
 
     config->setGroup("X-*-Core");
@@ -241,22 +218,22 @@ void KDMConvenienceWidget::load()
     preselUser = config->readEntry( "DefaultUser" );
     cbjumppw->setChecked(config->readBoolEntry( "FocusPasswd", false) );
 
-    updateEnables();
+    slotPresChanged();
 }
 
 
 void KDMConvenienceWidget::defaults()
 {
-    cbalen->setChecked(false);
+    alGroup->setChecked(false);
     npRadio->setChecked(true);
-    cbplen->setChecked(false);
+    npGroup->setChecked(false);
     cbarlen->setChecked(false);
     cbjumppw->setChecked(false);
     autoUser = "";
     preselUser = "";
     noPassUsers.clear();
 
-    updateEnables();
+    slotPresChanged();
 }
 
 
