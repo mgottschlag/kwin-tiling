@@ -143,9 +143,9 @@ const KAboutData* KThemeMgr::aboutData() const
     about->addAuthor("Stefan Taferner", 0, "taferner@kde.org");
     about->addAuthor("Waldo Bastian", 0, "bastian@kde.org");
     about->addAuthor("Lukáš Tinkl", 0, "lukas@kde.org");
-    about->addCredit("Divide by Zero",
+    about->addCredit("Rafa�\202 Rzepecki",
                      I18N_NOOP("Support for MS Windows' Themes"),
-						   "divide@priv.onet.pl" );
+						   "divide@users.sourceforge.net" );
 
     return about;
 }
