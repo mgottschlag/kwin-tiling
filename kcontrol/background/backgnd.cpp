@@ -570,12 +570,18 @@ void KBackground::defaults()
 
     if (r->isActive())
         r->stop();
-    r->setBackgroundMode(KBackgroundSettings::Flat);
+
+    if (QPixmap::defaultDepth() > 8) {
+        r->setBackgroundMode(_defBackgroundMode);
+    }
+    else
+        r->setBackgroundMode(KBackgroundSettings::Flat);
+ 
     r->setColorA(_defColorA);
     r->setColorB(_defColorB);
-    r->setWallpaperMode(KBackgroundSettings::NoWallpaper);
-    r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
-    r->setBlendMode(KBackgroundSettings::NoBlending);
+    r->setWallpaperMode(_defWallpaperMode);
+    r->setMultiWallpaperMode(_defMultiMode);
+    r->setBlendMode(_defBlendMode);
     r->setBlendBalance(_defBlendBalance);
     r->setReverseBlending(_defReverseBlending);
     m_pGlobals->setCommonBackground(_defCommon);
