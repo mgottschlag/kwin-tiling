@@ -91,14 +91,9 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     connect(mpDPCheck, SIGNAL(toggled(bool)), SLOT(slotDPCheck(bool)));
     grid->addMultiCellWidget(mpDPCheck, 1, 1, 0, 1, Qt::AlignLeft);
 
-    mpAlphaBCheck = new QCheckBox(i18n("Blend alpha channel"), m_pTab1);
-    connect(mpAlphaBCheck, SIGNAL(toggled(bool)), SLOT(slotAlphaBCheck(bool)));
-    grid->addMultiCellWidget(mpAlphaBCheck, 2, 2, 0, 1, Qt::AlignLeft);
-    disableAlphaBlending = (QPixmap::defaultDepth()<=8);
-
     mpAnimatedCheck = new QCheckBox(i18n("Animate icons"), m_pTab1);
     connect(mpAnimatedCheck, SIGNAL(toggled(bool)), SLOT(slotAnimatedCheck(bool)));
-    grid->addMultiCellWidget(mpAnimatedCheck, 3, 3, 0, 1, Qt::AlignLeft);
+    grid->addMultiCellWidget(mpAnimatedCheck, 2, 2, 0, 1, Qt::AlignLeft);
 
     top->activate();
 
@@ -170,7 +165,6 @@ void KIconConfig::initDefaults()
     for(it=mGroups.begin(), i=KIcon::FirstGroup; it!=mGroups.end(); it++, i++)
     {
 	mbDP[i] = false;
-	mbAlphaB[i] = false;
 	mbChanged[i] = true;
 	mbAnimated[i] = false;
 	mSizes[i] = mpTheme->defaultSize(i);
@@ -223,7 +217,6 @@ void KIconConfig::read()
 	mpConfig->setGroup(*it + "Icons");
 	mSizes[i] = mpConfig->readNumEntry("Size", mSizes[i]);
 	mbDP[i] = mpConfig->readBoolEntry("DoublePixels", mbDP[i]);
-	mbAlphaB[i] = mpConfig->readBoolEntry("AlphaBlending", mbAlphaB[i]);
 	mbAnimated[i] = mpConfig->readBoolEntry("Animated", mbAnimated[i]);
 
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); it2++, j++)
@@ -273,7 +266,6 @@ void KIconConfig::apply()
 	mSizes[mUsage] = size; // best or exact match
     }
     mpDPCheck->setChecked(mbDP[mUsage]);
-    mpAlphaBCheck->setChecked(mbAlphaB[mUsage]);
     mpAnimatedCheck->setChecked(mbAnimated[mUsage]);
 }
 
@@ -324,7 +316,6 @@ void KIconConfig::save()
 	mpConfig->setGroup(*it + "Icons");
 	mpConfig->writeEntry("Size", mSizes[i], true, true);
 	mpConfig->writeEntry("DoublePixels", mbDP[i], true, true);
-	mpConfig->writeEntry("AlphaBlending", mbAlphaB[i], true, true);
 	mpConfig->writeEntry("Animated", mbAnimated[i], true, true);
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); it2++, j++)
 	{
@@ -384,20 +375,14 @@ void KIconConfig::slotUsage(int index)
     {
         mpSizeBox->setEnabled(false);
         mpDPCheck->setEnabled(false);
-	if (!disableAlphaBlending)
-	    mpAlphaBCheck->setEnabled(true);
 	mpAnimatedCheck->setEnabled(false);
     } 
     else
     {
         mpSizeBox->setEnabled(true);
         mpDPCheck->setEnabled(true);
-	if (!disableAlphaBlending)
-	    mpAlphaBCheck->setEnabled( mUsage==KIcon::Desktop );
 	mpAnimatedCheck->setEnabled( mUsage==KIcon::Desktop );
     }
-    if (disableAlphaBlending)
-	mpAlphaBCheck->setEnabled(false);
 
     apply();
     preview();
@@ -444,17 +429,6 @@ void KIconConfig::slotDPCheck(bool check)
 {
     mbDP[mUsage] = check;
     preview();
-    emit changed(true);
-    mbChanged[mUsage] = true;
-}
-
-void KIconConfig::slotAlphaBCheck(bool check)
-{
-    mbAlphaB[mUsage] = check;
- // XXX Should warning the user that this change will only
- // take effect when restarting KDE.
-
- //    preview();
     emit changed(true);
     mbChanged[mUsage] = true;
 }

@@ -74,7 +74,6 @@ private slots:
     void slotUsage(int index);
     void slotSize(int index);
     void slotDPCheck(bool check);
-    void slotAlphaBCheck(bool check);
     void slotAnimatedCheck(bool check);
 
 private:
@@ -87,7 +86,7 @@ private:
     void apply();
 
 
-    bool mbDP[6], mbAlphaB[6], mbChanged[6], mbAnimated[6];
+    bool mbDP[6], mbChanged[6], mbAnimated[6];
     int mSizes[6];
     QValueList<int> mAvSizes[6];
 
@@ -108,8 +107,7 @@ private:
 
     QListBox *mpUsageList;
     QComboBox *mpSizeBox;
-    QCheckBox *mpDPCheck, *wordWrapCB, *underlineCB, *mpAlphaBCheck, *mpAnimatedCheck;
-    bool disableAlphaBlending;
+    QCheckBox *mpDPCheck, *wordWrapCB, *underlineCB, *mpAnimatedCheck;
     QTabWidget *m_pTabWidget;
     QWidget *m_pTab1;                                    
 };
