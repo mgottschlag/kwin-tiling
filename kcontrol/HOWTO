@@ -32,7 +32,7 @@ simple shared libraries that are loaded, at runtime, into the process
 of the frame application. This solves all of the disadvantages.
 To allow modules to run "standalone", there is a wrapper application
 "kcmshell". What is left is the problem of segfaulting modules; the
-solution is simple: avoid that your modules segfault! :-)
+solution is simple: don't let your modules segfault! :-)
 
 
 Now to the practical side of things: Modules have to inherit from the
@@ -94,7 +94,7 @@ Ok, now that you have implemented your class with the module, you
 must make sure it can be accessed from the control center. 
 
 To achieve this, the preferred way since KDE 3.0 is to simply use 
-KGenericFactory. Don't forget to #include <kgenerifactory.h>!
+KGenericFactory. Don't forget to #include <kgenericfactory.h>!
 
 typedef KGenericFactory<MyKCModule, QWidget> KDEDFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_xyz, KDEDFactory( "kcmxyz" ) );
