@@ -63,7 +63,8 @@ private:
   void updateWidgets(void);
   void GetSettings( void );
 
-  QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm;
+  QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm,
+  			*fullDuplex;
   QButtonGroup *responseGroup;
   QRadioButton *responseButton[3];
 

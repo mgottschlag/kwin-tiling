@@ -97,6 +97,13 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
     
     QWhatsThis::add(startRealtime, i18n("On systems which support realtime scheduling, if you have sufficient permissions, this option will enable a very high priority for processing sound requests."));
     
+    fullDuplex = new QCheckBox(this);
+    fullDuplex->setText(i18n("Enable full &duplex operation"));
+    layout->addWidget(fullDuplex);
+    connect(fullDuplex,SIGNAL(clicked()),this,SLOT(slotChanged()));
+
+    QWhatsThis::add(fullDuplex, i18n("This enables the soundserver to record and play sound at the same time. If you use applications like internet telephony, voice recognition or similar, you probably want this."));
+
     responseGroup = new QButtonGroup(i18n("Response time"), this);
     QWhatsThis::add(responseGroup, i18n("If you increase the response time, the aRts soundserver will be able to keep up with playing incoming requests more easily, but CPU load will increase."));
 
@@ -136,6 +143,7 @@ void KArtsModule::GetSettings( void )
 	startRealtime->setChecked(config->readBoolEntry("StartRealtime",false));
 	networkTransparent->setChecked(config->readBoolEntry("NetworkTransparent",false));
 	x11Comm->setChecked(config->readBoolEntry("X11GlobalComm",false));
+	fullDuplex->setChecked(config->readBoolEntry("FullDuplex",false));
 	for(int i=0;i<3;i++)
 	{
 		if(config->readNumEntry("ResponseTime",1) == i)
@@ -151,6 +159,7 @@ void KArtsModule::saveParams( void )
 	config->writeEntry("StartRealtime",startRealtime->isChecked());
 	config->writeEntry("NetworkTransparent",networkTransparent->isChecked());
 	config->writeEntry("X11GlobalComm",x11Comm->isChecked());
+	config->writeEntry("FullDuplex",fullDuplex->isChecked());
 	for(int i=0;i<3;i++)
 	{
 		if(responseButton[i]->isChecked())
@@ -188,6 +197,7 @@ void KArtsModule::defaults()
 	startRealtime->setChecked(false);
 	networkTransparent->setChecked(false);
 	x11Comm->setChecked(false);
+	fullDuplex->setChecked(false);
 	responseButton[1]->setChecked(true);
 }
 
@@ -205,6 +215,7 @@ void KArtsModule::updateWidgets()
 	startRealtime->setEnabled(startServer->isChecked());
 	networkTransparent->setEnabled(startServer->isChecked());
 	x11Comm->setEnabled(startServer->isChecked());
+	fullDuplex->setEnabled(startServer->isChecked());
 	responseGroup->setEnabled(startServer->isChecked());
 }
 
@@ -233,6 +244,7 @@ extern "C"
 		bool startRealtime = config->readBoolEntry("StartRealtime",false);
 		bool networkTransparent = config->readBoolEntry("NetworkTransparent",false);
 		bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
+		bool fullDuplex = config->readBoolEntry("FullDuplex",false);
 		int responseTime = config->readNumEntry("ResponseTime",1);
 
 		/* put the value of x11Comm into .mcoprc */
@@ -256,6 +268,9 @@ extern "C"
 
 			if(networkTransparent)
 				cmdline += " -n";
+
+			if(fullDuplex)
+				cmdline += " -d";
 
 			switch(responseTime)
 			{
