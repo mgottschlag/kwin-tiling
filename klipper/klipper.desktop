@@ -1,16 +1,6 @@
 [Desktop Entry]
-Name=Klipper (Cut & Paste History)
-Name[da]=Klipper (klippe- & klistrehistorik)
-Name[de]=Klipper (Auschneiden/Einfügen: Verlauf)
-Name[es]=Klipper (Historial de cortar y pegar)
-Name[he]=היסטוריית גזירה והדבקה (Klipper)
-Name[lv]=Klippers (Izgriešanas un Ielīmēšanas Vēsture)
-Name[pt]=Klipper (Historial da Área de Transferência)
-Name[pt_BR]=Klipper (Historial da Área de Transferência)
-Name[sk]=Klipper (História schránky)
-Name[sl]=Klipper (zgodovina rezanja in lepljenja)
-Name[sv]=Klipper (urklippshistorik)
-Name[xx]=xx
+Name=Klipper
+Comment=Clipboard Tool
 Exec=klipper %i %m
 Icon=klipper
 Type=Application
