@@ -125,7 +125,7 @@ process will be recursive.</string>
                         <string>Wide area network</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Advertise services on Internet domain using public IP. To have this option working you need to configurehostname, zone and secret for this domain in /etc/mdnsd.conf</string>
+                        <string>Advertise services on Internet domain using public IP. To have this option working you need to configure hostname, zone and secret for this domain in /etc/mdnsd.conf</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget">
