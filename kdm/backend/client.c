@@ -1076,7 +1076,6 @@ mergeSessionArgs (int cansave)
 }
 
 static int removeAuth;
-static int sourceReset;
 
 int
 StartClient ()
@@ -1219,15 +1218,6 @@ StartClient ()
 #endif
     }
 
-    /*
-     * Run system-wide initialization file
-     */
-    sourceReset = 1;
-    if (source (systemEnviron, td->startup, td_setup) != 0) {
-	LogError ("Cannot execute startup script %\"s\n", td->startup);
-	SessionExit (EX_NORMAL);
-    }
-
     if (*dmrcDir)
 	mergeSessionArgs (TRUE);
 
@@ -1250,6 +1240,12 @@ StartClient ()
     ClearCloseOnFork (mstrtalk.pipe->wfd);
     switch (pid = Fork ()) {
     case 0:
+
+	if (source (systemEnviron, td->startup, td_setup)) {
+	    LogError ("Cannot execute startup script %\"s\n", td->startup);
+	    exit (1);
+	}
+
 	if (Setjmp (mstrtalk.errjmp))
 	    exit (1);
 	GSet (&mstrtalk);
@@ -1527,13 +1523,6 @@ SessionExit (int status)
 	    TerminateProcess (td->serverPid, td->resetSignal);
     } else
 	ResetServer (td);
-    if (sourceReset) {
-	/*
-	 * run system-wide reset file
-	 */
-	Debug ("source reset program %s\n", td->reset);
-	source (systemEnviron, td->reset, td_setup);
-    }
     if (removeAuth)
     {
 #ifdef USE_PAM
@@ -1549,6 +1538,10 @@ SessionExit (int status)
 	    ReInitErrorLog ();
 	}
 #endif
+
+	if (source (systemEnviron, td->reset, td_setup))
+	    LogError ("Cannot execute reset script %\"s\n", td->reset);
+
 	SetUser (curuser, curuid, curgid);
 	RemoveUserAuthorization (td);
 #ifdef K5AUTH
