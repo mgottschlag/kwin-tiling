@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/stat.h>
+#include <config.h>
 
 static const char *description = I18N_NOOP("Login chooser for Xdmcp");
 
