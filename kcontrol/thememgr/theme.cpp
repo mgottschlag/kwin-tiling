@@ -933,6 +933,7 @@ void Theme::applyIcons()
 //-----------------------------------------------------------------------------
 void Theme::doCmdList(void)
 {
+  bool krdb = false;
   QString cmd, str, appName;
   //  int rc;
   for (QStringList::ConstIterator it = mCmdList.begin();
@@ -947,12 +948,25 @@ void Theme::doCmdList(void)
     }
     else if (cmd == "applyColors")
     {
-      runKrdb();
-      colorSchemeApply();
+      if (!krdb)
+      {
+         runKrdb();
+         krdb = true;
+      }
+      KIPC::sendMessageAll(KIPC::PaletteChanged);
+    }
+    else if (cmd == "applyFonts")
+    {
+      if (!krdb)
+      {
+         runKrdb();
+         krdb = true;
+      }
+      KIPC::sendMessageAll(KIPC::FontChanged);
     }
     else if (cmd == "applyStyle")
     {
-      styleApply();
+      KIPC::sendMessageAll(KIPC::StyleChanged);
     }
     else if (cmd == "applyWallpaper")
     {
@@ -1104,6 +1118,7 @@ void Theme::install(void)
 
   // Colors, Style & WM are installed behind each other to get a smoother update.
   if (instColors) installGroup("Colors");
+  if (instFonts) installGroup("Fonts");
   if (instStyle) installGroup("Style");
   if (instWM)
   {
@@ -1287,17 +1302,6 @@ void Theme::runKrdb(void) const
 
 
 //-----------------------------------------------------------------------------
-void Theme::colorSchemeApply(void)
-{
-  KIPC::sendMessageAll(KIPC::PaletteChanged);
-}
-
-void Theme::styleApply(void)
-{
-  KIPC::sendMessageAll(KIPC::StyleChanged);
-}
-
-
 void Theme::updateColorScheme(KSimpleConfig *config)
 {
     // define some KDE2 default colors

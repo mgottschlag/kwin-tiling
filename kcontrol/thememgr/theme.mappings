@@ -70,6 +70,7 @@
 #   installed. Case does matter. Known commands are:
 #   - kfmclient <arg>: Calls kfmclient with <arg> as the argument.
 #   - applyColors: Sends a color-scheme-changed signal to all windows.
+#   - applyFonts: Sends a font-changed signal to all windows.
 #   - applyStyle: Sends a style-changed signal to all windows.
 #   - applyWallpaper: Changes wallpaper.
 #	- applyIcons: Changes icons
@@ -592,3 +593,25 @@ ConfigFile=kdeglobals
 ConfigGroup=General
 ConfigActivateCmd=applyStyle
 widgetStyle=!
+
+[Fonts]
+ConfigFile=kdeglobals
+ConfigGroup=General
+ConfigNextGroup=Fonts-2
+ConfigActivateCmd=applyFonts
+font=!
+fixed=!
+toolBarFont=!
+menuFont=!
+taskbarFont=!
+
+[Fonts-2]
+ConfigFile=kdeglobals
+ConfigGroup=WM
+ConfigNextGroup=Fonts-3
+activeFont=!
+
+[Fonts-3]
+ConfigFile=kdesktoprc
+ConfigGroup=FMSettings
+StandardFont=!

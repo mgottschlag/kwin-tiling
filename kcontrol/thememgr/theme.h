@@ -65,6 +65,7 @@ public:
 
   /** Theme packet installation options */
   bool instColors;
+  bool instFonts;
   bool instStyle;
   bool instWallpapers;
   bool instSounds;
@@ -147,13 +148,6 @@ protected:
 
   /** Install theme group. Returns number of installed files. */
   virtual int installGroup(const char* groupName);
-
-  /** Apply color scheme change to all open windows. Taken from
-      kdisplay / colorscm.cpp */
-  virtual void colorSchemeApply(void);
-
-  /** Apply style change to all open windows. **/
-  virtual void styleApply(void);
 
   /** Create color scheme from current settings. **/
   void updateColorScheme(KSimpleConfig *);

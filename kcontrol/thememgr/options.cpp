@@ -53,6 +53,7 @@ Options::Options (QWidget * aParent, const char *aName, bool aInit)
   // will not be able to determine the translation for the
   // details dialog.
   mCbxColors = newLine("Colors", i18n("Colors"), &mStatColors);
+  mCbxFonts = newLine("Fonts", i18n("Fonts"), &mStatFonts);
   mCbxStyle = newLine("Style", i18n("Style"), &mStatStyle);
   mCbxWallpapers = newLine("Display", i18n("Wallpapers"), &mStatWallpapers);
   mCbxSounds = newLine("Sounds", i18n("Sound effects"), &mStatSounds);
@@ -133,6 +134,7 @@ void Options::load()
 void Options::save()
 {
   theme->instColors = mCbxColors->isChecked();
+  theme->instFonts = mCbxFonts->isChecked();
   theme->instStyle = mCbxStyle->isChecked();
   theme->instWallpapers = mCbxWallpapers->isChecked();
   theme->instSounds = mCbxSounds->isChecked();
@@ -148,6 +150,7 @@ void Options::save()
 void Options::slotInvert()
 {
   mCbxColors->setChecked(!mCbxColors->isChecked());
+  mCbxFonts->setChecked(!mCbxFonts->isChecked());
   mCbxStyle->setChecked(!mCbxStyle->isChecked());
   mCbxWallpapers->setChecked(!mCbxWallpapers->isChecked());
   mCbxSounds->setChecked(!mCbxSounds->isChecked());
@@ -163,6 +166,7 @@ void Options::slotInvert()
 void Options::slotClear()
 {
   mCbxColors->setChecked(false);
+  mCbxFonts->setChecked(false);
   mCbxStyle->setChecked(false);
   mCbxWallpapers->setChecked(false);
   mCbxSounds->setChecked(false);
@@ -236,6 +240,7 @@ void Options::updateStatus(const char* aGroupName, QLabel* aLblStatus)
 void Options::updateStatus(void)
 {
   updateStatus("Colors", mStatColors);
+  updateStatus("Fonts", mStatFonts);
   updateStatus("Style", mStatStyle);
   updateStatus("Display", mStatWallpapers);
   updateStatus("Sounds", mStatSounds);
@@ -254,6 +259,7 @@ void Options::writeConfig()
   cfg->setGroup("Options");
   cfg->writeEntry("overwrite", !mCbxOverwrite->isChecked());
   cfg->writeEntry("colors", mCbxColors->isChecked());
+  cfg->writeEntry("fonts", mCbxFonts->isChecked());
   cfg->writeEntry("style", mCbxStyle->isChecked());
   cfg->writeEntry("wallpapers", mCbxWallpapers->isChecked());
   cfg->writeEntry("sounds", mCbxSounds->isChecked());
@@ -272,6 +278,7 @@ void Options::readConfig()
   cfg->setGroup("Options");
   mCbxOverwrite->setChecked(!cfg->readBoolEntry("overwrite", false));
   mCbxColors->setChecked(cfg->readBoolEntry("colors", true));
+  mCbxFonts->setChecked(cfg->readBoolEntry("fonts", true));
   mCbxStyle->setChecked(cfg->readBoolEntry("style", true));
   mCbxWallpapers->setChecked(cfg->readBoolEntry("wallpapers", true));
   mCbxSounds->setChecked(cfg->readBoolEntry("sounds", true));
