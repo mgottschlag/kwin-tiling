@@ -13,7 +13,7 @@ KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please mak
 
 dnl ask imake about various X settings
 AC_MSG_CHECKING([X paths])
-imkv=7
+imkv=8
 test "$kde_cv_defines_imake_version" = $imkv || unset kde_cv_defines_imake
 AC_CACHE_VAL(kde_cv_defines_imake, [
   rm -fr conftestdir
@@ -26,7 +26,7 @@ acimake:
 
 ]EOF
     if $XMKMF >&5 2>&1 && test -f Makefile; then
-	kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null`
+	kde_cv_defines_imake=`${MAKE-make} acimake 2> /dev/null | grep -v "^make"`
 	kde_cv_defines_imake_version=$imkv
     else
         AC_MSG_RESULT([failed])
