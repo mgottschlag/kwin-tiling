@@ -17,6 +17,7 @@
 #include "groupdetails.h"
 
 #include <assert.h>
+#include <klocale.h>
 
 
 //-----------------------------------------------------------------------------

@@ -30,6 +30,7 @@
 #include "newthemedlg.h"
 #include "themecreator.h"
 #include "global.h"
+#include <klocale.h>
 
 
 //-----------------------------------------------------------------------------

@@ -49,6 +49,7 @@
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
+#include <klocale.h>
 
 
 //-----------------------------------------------------------------------------
@@ -247,7 +248,7 @@ bool Theme::load(const QString aPath)
 
   // Let's see if the theme is stored in a subdirectory.
   QDir dir(workDir(), QString::null, QDir::Name, QDir::Files|QDir::Dirs);
-  for (i=0, mThemePath=0, num=0; dir[i]!=0; i++)
+  for (i=0, mThemePath=QString::null, num=0; dir[i]!=0; i++)
   {
     if (dir[i][0]=='.') continue;
     finfo.setFile(workDir() + dir[i]);
@@ -452,7 +453,7 @@ int Theme::installGroup(const char* aGroupName)
     {
       appDir = value.copy();
       if (appDir[0] != '/') baseDir = kapp->localkdedir() + "/share/";
-      else baseDir = 0;
+      else baseDir = QString::null;
 
       mkdirhier(appDir, baseDir);
       appDir = baseDir + appDir;

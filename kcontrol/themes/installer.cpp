@@ -43,6 +43,7 @@
 #include "themecreator.h"
 #include "global.h"
 #include "newthemedlg.h"
+#include <klocale.h>
 
 static bool sSettingTheme = false;
 
@@ -114,30 +115,29 @@ Installer::~Installer()
 void Installer::readThemesList(void)
 {
   QDir d(Theme::themesDir(), QString::null, QDir::Name, QDir::Files|QDir::Dirs);
-  QStrList* entryList;
-  QString name;
-
   //d.setNameFilter("*.themerc");
   mThemesList->clear();
 
   // Read local themes
-  entryList = (QStrList*)d.entryList();
-  if (entryList) for(name=entryList->first(); name; name=entryList->next())
+  QStringList entryList = d.entryList();
+  QStringList::ConstIterator name;
+  for(name = entryList.begin(); 
+      name != entryList.end(); name++)
   {
-    if (name[0]=='.') continue;
-    if (name=="CVS" || name.right(8)==".themerc") continue;
-    mThemesList->inSort(name);
+    if ((*name)[0]=='.') continue;
+    if ((*name)=="CVS" || (*name).right(8)==".themerc") continue;
+    mThemesList->inSort(*name);
   }
 
   // Read global themes
   d.setPath(Theme::globalThemesDir());
-  entryList = (QStrList*)d.entryList();
-  if (entryList) for(name=entryList->first(); name; name=entryList->next())
+  entryList = d.entryList();
+  for(name=entryList.begin(); name != entryList.end(); name++)
   {
-    if (name[0]=='.') continue;
-    if (name=="CVS" || name.right(8)==".themerc") continue;
+    if ((*name)[0]=='.') continue;
+    if ((*name)=="CVS" || (*name).right(8)==".themerc") continue;
     // Dirty hack: the trailing space marks global themes ;-)
-    mThemesList->inSort(name + " ");
+    mThemesList->inSort(*name + " ");
   }
 }
 
@@ -288,7 +288,6 @@ void Installer::slotExport()
   if (cur < 0) return;
 
   themeFile = mThemesList->text(cur);
-  themeFile.detach();
   if (themeFile.isEmpty()) return;
 
   isGlobal = (themeFile[themeFile.length()-1]==' ');

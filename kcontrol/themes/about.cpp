@@ -17,6 +17,7 @@
 #include "themecreator.h"
 #include "global.h"
 #include "version.h"
+#include <klocale.h>
 
 
 //-----------------------------------------------------------------------------

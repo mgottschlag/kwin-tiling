@@ -38,6 +38,7 @@
 
 #include "kwmcom.h"
 #include "widgetcanvas.h"
+#include <klocale.h>
 #include "widgetcanvas.moc"
 
 #define SUPPLIED_SCHEMES 5

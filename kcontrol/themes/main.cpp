@@ -34,6 +34,8 @@
 #include "global.h"
 #include "options.h"
 #include "about.h"
+#include <klocale.h>
+#include <kdebug.h>
 
 
 ThemeCreator* theme = NULL;
@@ -131,7 +133,6 @@ static void msgHandler(QtMsgType aType, const char* aMsg)
 {
   QString appName = kapp->appName();
   QString msg = aMsg;
-  msg.detach();
 
   switch (aType)
   {

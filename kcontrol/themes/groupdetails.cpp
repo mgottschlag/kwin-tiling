@@ -5,6 +5,7 @@
 #include "groupdetails.h"
 #include "theme.h"
 #include "global.h"
+#include <klocale.h>
 
 //-----------------------------------------------------------------------------
 GroupDetails::GroupDetails(const char* aGroupName):
@@ -16,7 +17,6 @@ GroupDetails::GroupDetails(const char* aGroupName):
   QBoxLayout *buttonLayout = new QHBoxLayout();
 
   mGroupName = aGroupName;
-  mGroupName.detach();
   tlBox = new KTabListBox(this, "tlBox",2);
   tlBox->setColumn(0,"key", 150);
   tlBox->setColumn(1,"value", 140);

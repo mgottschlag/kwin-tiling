@@ -382,5 +382,4 @@ void ThemeCreator::setGroupGeneral(void)
 }
 
 
-//-----------------------------------------------------------------------------
-#include "themecreator.moc"
+
