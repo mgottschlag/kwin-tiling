@@ -82,11 +82,22 @@ void KeyModule::resizeEvent(QResizeEvent *)
   tab->setGeometry(0,0,width(),height());
 }
 
+QString KeyModule::quickHelp()
+{
+  return i18n("<h1>Key Bindings</h1> Using key bindings you can configure certain actions to be"
+    " triggered when you press a key or a combination of keys, e.g. CTRL-C is normally bound to"
+    " 'Copy'. KDE allows you to store more than one 'scheme' of key bindings, so you might want"
+    " to experiment a little setting up your own scheme while you can still change back to the"
+    " KDE defaults.<p> In the tab 'Global shortcuts' you can configure non-application specific"
+    " bindings like how to switch desktops or maximize a window. In the tab 'Application shortcuts'"
+    " you'll find bindings typically used in applications, such as copy and paste.");
+}
+
 
 extern "C"
 {
-  KCModule *create_keys(QWidget *parent, const char *name) 
-  { 
+  KCModule *create_keys(QWidget *parent, const char *name)
+  {
     KGlobal::locale()->insertCatalogue("kcmkeys");
     return new KeyModule(parent, name);
   }

@@ -17,6 +17,7 @@
 #include <qdir.h> 
 #include <qlayout.h>
 #include <qtabwidget.h>
+#include <qwhatsthis.h>
 
 #include <kconfig.h>
 #include <kglobal.h>
@@ -37,23 +38,24 @@
 KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   : KCModule( parent, name )
 {
+  QString wtstr;
   bool check_against_std_keys  = false ;
-  
+
   KeyType = isGlobal ? "global" : "standard";
-  
+
   globalDict = new QDict<int> ( 37, false );
   globalDict->setAutoDelete( true );
-  
+
   dict.setAutoDelete( false );
   keys = new KAccel( this );
-  
+
   if ( KeyType == "global" ) {
 #include "../../kwin/kwinbindings.cpp"
     KeyScheme = "Global Key Scheme " ;
     KeySet    = "Global Keys" ;
     check_against_std_keys  = true ;
   }
-  
+
   if ( KeyType == "standard" ) {
 	  for(uint i=0; i<KStdAccel::NB_STD_ACCELS; i++)
 		  keys->insertStdItem((KStdAccel::StdAccel)i);
@@ -61,14 +63,14 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
 	  KeySet    = "Keys" ;
 	  check_against_std_keys  = false ;
   }
-  
+
   keys->setConfigGlobal( true );
   keys->setConfigGroup( KeySet );
   keys->readSettings();
-  
+
   sFileList = new QStringList();
   sList = new QListBox( this );
-  
+
   sList->clear();
   sFileList->clear();
   sList->insertItem( i18n("Current scheme"), 0 );
@@ -79,20 +81,31 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   sList->setCurrentItem( 0 );
   connect( sList, SIGNAL( highlighted( int ) ),
            SLOT( slotPreviewScheme( int ) ) );
-  
+
   QLabel *label = new QLabel( sList, i18n("&Key scheme"), this );
+
+  wtstr = i18n("Here you can see a list of the existing key binding schemes with 'Current scheme'"
+    " referring to the settings you are using right now. Select a scheme to use it, remove or change"
+    " it.");
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( sList, wtstr );
 
   addBt = new QPushButton(  i18n("&Add ..."), this );
   connect( addBt, SIGNAL( clicked() ), SLOT( slotAdd() ) );
-  
+  QWhatsThis::add(addBt, i18n("Click here to add a new key bindings scheme. You will be prompted for a name."));
+
   removeBt = new QPushButton(  i18n("&Remove"), this );
   removeBt->setEnabled(FALSE);
   connect( removeBt, SIGNAL( clicked() ), SLOT( slotRemove() ) );
-  
+  QWhatsThis::add( removeBt, i18n("Click here to remove the selected key bindings scheme. You can not"
+    " remove the standard system wide schemes, 'Current scheme' and 'KDE default'.") );
+
   saveBt = new QPushButton(  i18n("&Save changes"), this );
   saveBt->setEnabled(FALSE);
   connect( saveBt, SIGNAL( clicked() ), SLOT( slotSave() ) );
-  
+  QWhatsThis::add( saveBt, i18n("Click here to save your changes to the selected key bindings scheme. You can"
+    " not save changes to the standard system wide schemes, 'Current scheme' and 'KDE default'.") );
+
   QFrame* tmpQFrame = new QFrame( this );
   tmpQFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken );
   tmpQFrame->setMinimumHeight(15);

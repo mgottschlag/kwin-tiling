@@ -27,6 +27,7 @@ display:
   colorscm.cpp           [ ]        [x]         [x]         [ ]
   energy.cpp             [ ]        [x]         [ ]         [ ]
   fonts.cpp              [ ]        [x]         [ ]         [ ]
+  fontchooser in kdeui!  [ ]        [ ]         [ ]         [ ]
   general.cpp            [ ]        [x]         [ ]         [ ]
   icngeneral.cpp         [ ]        [ ]         [ ]         [ ]   Thorsten
   icnlabel.cpp           [ ]        [ ]         [ ]         [ ]   Thorsten
@@ -93,9 +94,9 @@ kdm:
   main.cpp               [ ]        [ ]         [ ]         [ ]
 
 keys:
-  keyconfig.cpp          [ ]        [ ]         [ ]         [ ]
-  main.cpp               [ ]        [ ]         [ ]         [ ]
-  savescm.cpp            [ ]        [ ]         [ ]         [ ]
+  keyconfig.cpp          [ ]        [x]         [ ]         [ ]
+  main.cpp               [ ]        [x]         [ ]         [ ]
+  kkeydialog in kdeui!   [ ]        [ ]         [ ]         [ ]
 
 kicker:
   buttontab.cpp          [ ]        [s]         [ ]         [ ]
@@ -132,7 +133,7 @@ konqhtml:
   khttpoptdlg.cpp        [ ]        [ ]         [ ]         [ ]
   main.cpp               [ ]        [ ]         [ ]         [ ]
   miscopts.cpp           [ ]        [s]         [ ]         [ ]
- 
+
 // Is the kwm module obsolete or is it gonna be ported to kwin?
 
 kwm:
