@@ -53,7 +53,10 @@ class KLoginLineEdit : public QLineEdit {
     Q_OBJECT
 
 public:
-    KLoginLineEdit( QWidget *parent = 0) : QLineEdit(parent) {}
+    KLoginLineEdit( QWidget *parent = 0) : QLineEdit(parent)
+    {
+	setMaxLength(100);
+    }
 
 signals:
     void lost_focus();
