@@ -214,61 +214,121 @@ void PositionTab::movePanel(int whichButton)
 
     if (pushed == locationTopLeft)
     {
+	if (!(m_panelInfo->_allowedPosition[PosTop])) 
+	{
+	   setPositionButtons();
+	   return;
+	}
         m_panelAlign = kapp->reverseLayout() ? AlignRight : AlignLeft;
         m_panelPos = PosTop;
     }
     else if (pushed == locationTop)
     {
+	if (!(m_panelInfo->_allowedPosition[PosTop]))
+	{
+	   setPositionButtons();
+	   return;
+	}
         m_panelAlign = AlignCenter;
         m_panelPos = PosTop;
     }
     else if (pushed == locationTopRight)
     {
+	if (!(m_panelInfo->_allowedPosition[PosTop]))
+	{
+	   setPositionButtons();
+	   return;
+	}
         m_panelAlign = kapp->reverseLayout() ? AlignLeft : AlignRight;
         m_panelPos = PosTop;
     }
     else if (pushed == locationLeftTop)
     {
+	if (!(m_panelInfo->_allowedPosition[kapp->reverseLayout() ? PosRight : PosLeft]))
+	{
+	   setPositionButtons();
+	   return;
+	}
         m_panelAlign = AlignLeft;
         m_panelPos = kapp->reverseLayout() ? PosRight : PosLeft;
     }
     else if (pushed == locationLeft)
     {
+	if (!(m_panelInfo->_allowedPosition[kapp->reverseLayout() ? PosRight : PosLeft]))
+	{
+	   setPositionButtons();
+	   return;
+	}
         m_panelAlign = AlignCenter;
         m_panelPos = kapp->reverseLayout() ? PosRight : PosLeft;
     }
     else if (pushed == locationLeftBottom)
     {
+	if (!(m_panelInfo->_allowedPosition[kapp->reverseLayout() ? PosRight : PosLeft]))
+	{
+	   setPositionButtons();
+	   return;
+	}
         m_panelAlign = AlignRight;
         m_panelPos = kapp->reverseLayout() ? PosRight : PosLeft;
     }
     else if (pushed == locationBottomLeft)
     {
+	if (!(m_panelInfo->_allowedPosition[PosBottom]))
+	{
+	   setPositionButtons();
+	   return;
+	}
         m_panelAlign = kapp->reverseLayout() ? AlignRight : AlignLeft;
         m_panelPos = PosBottom;
     }
     else if (pushed == locationBottom)
     {
+	if (!(m_panelInfo->_allowedPosition[PosBottom]))
+	{
+	   setPositionButtons();
+	   return;
+	}
         m_panelAlign = AlignCenter;
         m_panelPos = PosBottom;
     }
     else if (pushed == locationBottomRight)
     {
+	if (!(m_panelInfo->_allowedPosition[PosBottom]))
+	{
+	   setPositionButtons();
+	   return;
+	}
         m_panelAlign = AlignRight;
         m_panelPos = PosBottom;
     }
     else if (pushed == locationRightTop)
     {
+	if (!(m_panelInfo->_allowedPosition[kapp->reverseLayout() ? PosLeft : PosRight]))
+	{
+	   setPositionButtons();
+	   return;
+	}
         m_panelAlign = AlignLeft;
         m_panelPos = kapp->reverseLayout() ? PosLeft : PosRight;
     }
     else if (pushed == locationRight)
     {
+	if (!(m_panelInfo->_allowedPosition[kapp->reverseLayout() ? PosLeft : PosRight]))
+	{
+	   setPositionButtons();
+	   return;
+	}
         m_panelAlign = AlignCenter;
         m_panelPos = kapp->reverseLayout() ? PosLeft : PosRight;
     }
     else if (pushed == locationRightBottom)
     {
+	if (!(m_panelInfo->_allowedPosition[kapp->reverseLayout() ? PosLeft : PosRight]))
+	{
+	   setPositionButtons();
+	   return;
+	}
         m_panelAlign = AlignRight;
         m_panelPos = kapp->reverseLayout() ? PosLeft : PosRight;
     }
@@ -495,6 +555,19 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
     else
         m_xineramaScreenComboBox->setCurrentItem(QApplication::desktop()->primaryScreen());
 
+    setPositionButtons();
+
+    m_percentSlider->setValue(m_panelInfo->_sizePercentage);
+    m_percentSpinBox->setValue(m_panelInfo->_sizePercentage);
+
+    m_expandCheckBox->setChecked(m_panelInfo->_expandSize);
+
+    lengthenPanel(m_panelInfo->_sizePercentage);
+    blockSignals(false);
+}
+
+
+void PositionTab::setPositionButtons() {
     if (m_panelPos == PosTop)
     {
         if (m_panelAlign == AlignLeft)
@@ -542,13 +615,6 @@ void PositionTab::switchPanel(QListViewItem* panelItem)
                                     locationLeftBottom->setOn(true);
     }
 
-    m_percentSlider->setValue(m_panelInfo->_sizePercentage);
-    m_percentSpinBox->setValue(m_panelInfo->_sizePercentage);
-
-    m_expandCheckBox->setChecked(m_panelInfo->_expandSize);
-
-    lengthenPanel(m_panelInfo->_sizePercentage);
-    blockSignals(false);
 }
 
 void PositionTab::infoUpdated()

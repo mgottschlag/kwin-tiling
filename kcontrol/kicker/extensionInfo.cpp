@@ -19,7 +19,7 @@
 #include <qapplication.h>
 #include <kdesktopfile.h>
 #include <klocale.h>
-
+#include <kdebug.h>
 #include "extensionInfo.h"
 
 
@@ -47,6 +47,7 @@ void extensionInfo::load()
         _customSize = 58;
         _showLeftHB     = false;
         _showRightHB    = true;
+	for (int i=0;i<4;i++) _allowedPosition[i]=true;
     }
     else
     {
@@ -62,6 +63,17 @@ void extensionInfo::load()
             _customSizeMax = df.readNumEntry("X-KDE-PanelExt-CustomSizeMax", _customSizeMax);
             _customSize = df.readNumEntry("X-KDE-PanelExt-CustomSizeDefault", _customSize);
         }
+	QStringList allowedPos=QStringList::split(",",df.readEntry("X-KDE-PanelExt-Positions","Left,Top,Right,Bottom").upper());
+	for (int i=0;i<4;i++) _allowedPosition[i]=false;
+	kdDebug()<<"BEFORE X-KDE-PanelExt-Positions parsing"<<endl;
+	for (int i=0;i<allowedPos.count();i++) {
+		kdDebug()<<allowedPos[i]<<endl;
+		if (allowedPos[i]=="LEFT") _allowedPosition[KPanelExtension::Left]=true;
+		if (allowedPos[i]=="RIGHT") _allowedPosition[KPanelExtension::Right]=true;
+		if (allowedPos[i]=="TOP") _allowedPosition[KPanelExtension::Top]=true;
+		if (allowedPos[i]=="BOTTOM") _allowedPosition[KPanelExtension::Bottom]=true;
+	}	
+
     }
 
     // sanitize

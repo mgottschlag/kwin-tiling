@@ -70,6 +70,7 @@ private:
 
     unsigned int m_panelPos;
     unsigned int m_panelAlign;
+    void setPositionButtons();
 };
 
 #endif

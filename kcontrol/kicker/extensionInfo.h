@@ -21,6 +21,7 @@
  
 #include <qptrlist.h>
 #include <qlistview.h>
+#include <kpanelextension.h>
 
 class extensionInfo;
 
@@ -75,6 +76,9 @@ class extensionInfo
         bool    _useStdSizes;
         int     _customSizeMin;
         int     _customSizeMax;
+
+	// position handling
+	bool	_allowedPosition[4];
 };
 
 class extensionInfoItem : public QListViewItem
