@@ -34,6 +34,7 @@ services_DATA = \
 		freedb.desktop \
 		freshmeat.desktop \
 		froogle.desktop \
+		fsd \
 		google_advanced.desktop \
 		google.desktop \
 		google_groups.desktop \
