@@ -414,7 +414,7 @@ CloseGreeter (int force)
     int ret;
 
     if (!greeter)
-	return 0;
+	return EX_NORMAL;
     greeter = 0;
     ret = GClose (&grtproc, force);
     Debug ("greeter for %s stopped\n", td->name);
