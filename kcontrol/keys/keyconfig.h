@@ -45,7 +45,6 @@ protected:
 	QListBox *sList;
 	QStringList *sFileList;
 	QDict<int> *globalDict;
-	QPushButton *saveBt;
 	QPushButton *addBt;
 	QPushButton *removeBt;
 	int nSysSchemes;

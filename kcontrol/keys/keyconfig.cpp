@@ -98,21 +98,15 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( sList, wtstr );
 
-  addBt = new QPushButton(  i18n("&Add ..."), this );
+  addBt = new QPushButton(  i18n("&Save scheme..."), this );
   connect( addBt, SIGNAL( clicked() ), SLOT( slotAdd() ) );
   QWhatsThis::add(addBt, i18n("Click here to add a new key bindings scheme. You will be prompted for a name."));
 
-  removeBt = new QPushButton(  i18n("&Remove"), this );
+  removeBt = new QPushButton(  i18n("&Remove scheme"), this );
   removeBt->setEnabled(FALSE);
   connect( removeBt, SIGNAL( clicked() ), SLOT( slotRemove() ) );
   QWhatsThis::add( removeBt, i18n("Click here to remove the selected key bindings scheme. You can not"
     " remove the standard system wide schemes, 'Current scheme' and 'KDE default'.") );
-
-  saveBt = new QPushButton(  i18n("&Save changes"), this );
-  saveBt->setEnabled(FALSE);
-  connect( saveBt, SIGNAL( clicked() ), SLOT( slotSave() ) );
-  QWhatsThis::add( saveBt, i18n("Click here to save your changes to the selected key bindings scheme. You can"
-    " not save changes to the standard system wide schemes, 'Current scheme' and 'KDE default'.") );
 
   QFrame* tmpQFrame = new QFrame( this );
   tmpQFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken );
@@ -132,9 +126,8 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
                                             KDialog::spacingHint());
   topLayout->addWidget(label, 0, 0);
   topLayout->addMultiCellWidget(sList, 1, 2, 0, 0);
-  topLayout->addWidget(addBt, 1, 1);
-  topLayout->addWidget(removeBt, 1, 2);
-  topLayout->addMultiCellWidget(saveBt, 2, 2, 1, 2);
+  topLayout->addMultiCellWidget(addBt, 1, 1, 1, 2);
+  topLayout->addMultiCellWidget(removeBt, 2, 2, 1, 2);
   topLayout->addMultiCellWidget(tmpQFrame, 3, 3, 0, 2);
   topLayout->addMultiCellWidget(kc, 4, 4, 0, 2);
 
@@ -205,10 +198,6 @@ void KKeyModule::slotRemove()
 
 void KKeyModule::slotChanged( )
 {
-  if ( removeBt->isEnabled() )
-    saveBt->setEnabled( TRUE );
-  else
-    saveBt->setEnabled( FALSE );
   emit changed(true);
 }
 
@@ -222,8 +211,6 @@ void KKeyModule::slotSave( )
         config.writeEntry( it.key(),
                            KAccel::keyToString( (*it).aConfigKeyCode, false ) );
     }
-
-    saveBt->setEnabled( FALSE );
 }
 
 void KKeyModule::readScheme( int index )
@@ -269,11 +256,15 @@ void KKeyModule::readScheme( int index )
 
 void KKeyModule::slotAdd()
 {
-  SaveScm ss( 0,  "save scheme" );
+  QString sName;
+
+  if ( sList->currentItem() >= nSysSchemes ) 
+     sName = sList->currentText();
+  SaveScm ss( 0,  "save scheme", sName );
 
   bool nameValid;
-  QString sName;
   QString sFile;
+  int exists = -1;
 
   do {
 
@@ -310,13 +301,20 @@ void KKeyModule::slotAdd()
 
       }
 
+      exists = -1;
       for ( int i = 0; i < (int) sList->count(); i++ ) {
         if ( sName.lower() == (sList->text(i)).lower() ) {
-          nameValid = FALSE;
-          KMessageBox::error( 0,
-                              i18n( "Please choose a unique name for the new key\n"\
-                                    "scheme. The one you entered already appears\n"\
-                                    "in the key scheme list." ));
+          exists = i;
+
+          int result = KMessageBox::warningContinueCancel( 0,
+               i18n("A key scheme with the name '%1' already exists.\n"
+                    "Do you want to overwrite it?\n").arg(sName),
+		   i18n("Save key scheme"),
+                   i18n("Overwrite"));
+          if (result == KMessageBox::Continue)
+             nameValid = true;
+          else
+             nameValid = false;
         }
       }
     } else return;
@@ -326,9 +324,6 @@ void KKeyModule::slotAdd()
   disconnect( sList, SIGNAL( highlighted( int ) ), this,
               SLOT( slotPreviewScheme( int ) ) );
 
-  sList->insertItem( sName );
-  sList->setFocus();
-  sList->setCurrentItem( sList->count()-1 );
 
   QString kksPath = KGlobal::dirs()->saveLocation("data", "kcmkeys/");
 
@@ -351,7 +346,18 @@ void KKeyModule::slotAdd()
 
   sFile.prepend( kksPath );
   sFile += ".kksrc";
-  sFileList->append( sFile );
+  if (exists == -1)
+  {
+     sList->insertItem( sName );
+     sList->setFocus();
+     sList->setCurrentItem( sList->count()-1 );
+     sFileList->append( sFile );
+  }
+  else
+  {
+     sList->setFocus();
+     sList->setCurrentItem( exists );
+  }
 
   KSimpleConfig *config =
     new KSimpleConfig( sFile );
@@ -376,10 +382,8 @@ void KKeyModule::slotPreviewScheme( int indx )
 
   if ( indx < nSysSchemes ) {
     removeBt->setEnabled( FALSE );
-    saveBt->setEnabled( FALSE );
   } else {
     removeBt->setEnabled( TRUE );
-    saveBt->setEnabled( FALSE );
   }
 }
 

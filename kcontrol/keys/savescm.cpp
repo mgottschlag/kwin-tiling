@@ -4,64 +4,34 @@
 #include "savescm.h"
 #include "savescm.moc"
 
-#include <qaccel.h>
 #include <kapp.h>
-#include <kbuttonbox.h>
 #include <qlayout.h>
-#include <qframe.h>
 #include <qlabel.h>
 #include <klocale.h>
 
-SaveScm::SaveScm( QWidget *parent, const char *name )
-	: QDialog( parent, name, TRUE )
+SaveScm::SaveScm( QWidget *parent, const char *name, const QString &def )
+    : KDialogBase( parent, name, true, i18n("Save key scheme"), Ok|Cancel, Ok, true )
 {
-	setFocusPolicy(QWidget::StrongFocus);
-	setCaption( i18n("Add a key scheme"));
-	
-	QBoxLayout *topLayout = new QVBoxLayout( this, 10 );
+    QWidget *page = new QWidget(this);
+    setMainWidget(page);
+    QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );
 
-	QBoxLayout *stackLayout = new QVBoxLayout( 3 );
-	topLayout->addLayout( stackLayout );
+    nameLine = new KLineEdit( page );
+    nameLine->setFocus();
+    nameLine->setMaxLength(18);
+    nameLine->setFixedHeight( nameLine->sizeHint().height() );
+    nameLine->setText(def);
+    nameLine->selectAll();
 
-	nameLine = new QLineEdit( this );
-	nameLine->setFocus();
-	nameLine->setMaxLength(18);
-	nameLine->setFixedHeight( nameLine->sizeHint().height() );
-	
-	QLabel* tmpQLabel;
-	tmpQLabel = new QLabel( nameLine, 
-			i18n( "&Enter a name for the new key scheme\n"\
-					"to be added to your personal list.\n\n"\
-					"The keys currently used in the preview will\n"\
-					"be copied into this scheme to begin with." ), this );
-	tmpQLabel->setAlignment( AlignLeft | AlignBottom | ShowPrefix );
-	tmpQLabel->setFixedHeight( tmpQLabel->sizeHint().height() );
-	tmpQLabel->setMinimumWidth( tmpQLabel->sizeHint().width() );
-	
-	stackLayout->addStretch( 10 );
-	stackLayout->addWidget( tmpQLabel );
-	stackLayout->addWidget( nameLine );
-	
-	QFrame* tmpQFrame;
-	tmpQFrame = new QFrame( this );
-	tmpQFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken );
-	tmpQFrame->setMinimumHeight( tmpQFrame->sizeHint().height() );
-	
-	topLayout->addWidget( tmpQFrame );
-	
-	KButtonBox *bbox = new KButtonBox( this );
-	bbox->addStretch( 10 );
-	
-	QPushButton *ok = bbox->addButton( i18n( "&OK" ) );
-	connect( ok, SIGNAL( clicked() ), SLOT( accept() ) );
-	
-	QPushButton *cancel = bbox->addButton( i18n( "&Cancel" ) );
-	connect( cancel, SIGNAL( clicked() ), SLOT( reject() ) );
-	
-	bbox->layout();
-	topLayout->addWidget( bbox );
+    QLabel* tmpQLabel;
+    tmpQLabel = new QLabel( nameLine,
+     i18n( "Enter a name for the key scheme:\n"), page);
 
-    topLayout->activate();
-	
-	resize( 250, 0 );
+    tmpQLabel->setAlignment( AlignLeft | AlignBottom | ShowPrefix );
+    tmpQLabel->setFixedHeight( tmpQLabel->sizeHint().height() );
+    tmpQLabel->setMinimumWidth( tmpQLabel->sizeHint().width() );
+
+    topLayout->addWidget( tmpQLabel );
+    topLayout->addWidget( nameLine );
+    topLayout->addStretch( 10 );
 }

@@ -1,19 +1,15 @@
 #ifndef SAVESCM_H
 #define SAVESCM_H
 
-#include <qdialog.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
+#include <kdialogbase.h>
+#include <klineedit.h>
 
-class SaveScm : public QDialog {
+class SaveScm : public KDialogBase {
 	Q_OBJECT
 public:
-
-	SaveScm( QWidget *parent, const char *name );
+	SaveScm( QWidget *parent, const char *name, const QString &def );
 	
-	QLineEdit* nameLine;
-	QPushButton* ok;
-	QPushButton* cancel;
+	KLineEdit* nameLine;
 };
 
 #endif
