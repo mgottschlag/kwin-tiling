@@ -38,7 +38,6 @@
 
 #include <qbitmap.h>
 #include <qmessagebox.h>
-#include <kstring.h>
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
@@ -438,7 +437,7 @@ KGreeter::save_wm()
      memset(pwd->pw_passwd, 0, strlen(pwd->pw_passwd));
 
      QString file;
-     ksprintf(&file, "%s/"WMRC, pwd->pw_dir);
+     file.sprintf("%s/"WMRC, pwd->pw_dir);
      QString sesstype (sessiontags.at( sessionargBox->currentItem()));
 
      // open file as user which is loging in
@@ -468,7 +467,7 @@ KGreeter::load_wm()
      memset(pwd->pw_passwd, 0, strlen(pwd->pw_passwd));
 
      QString file;
-     ksprintf(&file, "%s/"WMRC, pwd->pw_dir);
+     file.sprintf( "%s/"WMRC, pwd->pw_dir);
      
      int wm = -1;
      int gidset_size;
@@ -653,9 +652,8 @@ KGreeter::restrict_expired(){
 				     i18n("&OK"));
 	       return true;
 	  } else if (pwd->pw_expire - time(NULL) < warntime && !quietlog) {
-	       QString str;
-	       ksprintf(&str, i18n("Warning: your account expires on %s"), 
-			   ctime(&pwd->pw_expire));  // use locales
+	       QString str = i18n("Warning: your account expires on %1").
+			   .arg(ctime(&pwd->pw_expire));  // use locales
 	       QMessageBox::critical(this, QString::null,
 				     str,
 				     i18n("&OK"));
@@ -680,9 +678,8 @@ KGreeter::restrict_expired(){
 				   i18n("&OK"));
 	     return true;
 	 } else if (expiresec - time(NULL) < warntime) {
-             QString str;
-	     ksprintf(&str, i18n("Warning: your account expires on %s"),
-			 ctime(&expiresec));  // use locales
+             QString str = i18n("Warning: your account expires on %1").
+			 arg(ctime(&expiresec));  // use locales
 	     QMessageBox::critical(this, QString::null,
 				   str,
 				   i18n("&OK"));
@@ -876,8 +873,7 @@ GreetUser(
      if (source (verify->systemEnviron, d->startup) != 0)
      {
           QString buf;
-	  ksprintf(&buf,
-		  "Startup program %s exited with non-zero status.\n"
+          buf.sprintf("Startup program %s exited with non-zero status.\n"
 		  "Please contact your system administrator.\n",
 		 d->startup);
 	  qApp->restoreOverrideCursor();
