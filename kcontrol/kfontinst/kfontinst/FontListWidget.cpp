@@ -1458,11 +1458,15 @@ CFontListWidget::EStatus CFontListWidget::uninstall(const QString &path, bool de
 
     status=CMisc::removeFile(fontFile) ? SUCCESS : PERMISSION_DENIED;
 
-    if(SUCCESS==status && deleteAfm)
+    if(SUCCESS==status)
     {
-        if(CMisc::fExists(CMisc::afmName(fontFile)))
-            status=uninstall(dir+CMisc::afmName(file), false);
-        CStarOfficeConfig::removeAfm(fontFile);
+        CKfiGlobal::cfg().addModifiedDir(path);
+        if(deleteAfm)
+        {
+            if(CMisc::fExists(CMisc::afmName(fontFile)))
+                status=uninstall(dir+CMisc::afmName(file), false);
+            CStarOfficeConfig::removeAfm(fontFile);
+        }
     }
     return status;
 }

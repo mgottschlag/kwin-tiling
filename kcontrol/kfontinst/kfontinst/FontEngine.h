@@ -89,7 +89,8 @@ class CFontEngine
     enum ESpacing
     {
         SPACING_MONOSPACED,
-        SPACING_PROPORTIONAL
+        SPACING_PROPORTIONAL,
+        SPACING_CHARCELL
     };
 
     enum EItalic
@@ -181,7 +182,7 @@ class CFontEngine
     EItalic         getItalic()       { return itsItalic; }
     ESpacing        getSpacing()      { return itsSpacing; }
 
-    const char *    getFoundry()      { return itsFoundry; }
+    const QString & getFoundry()      { return itsFoundry; }
 
     EType           getType()         { return itsType; }
 
@@ -226,8 +227,8 @@ class CFontEngine
     //
     bool            openFontTT(const QString &file, unsigned short mask=NAME);
     void            closeFontTT();
-    EWeight         mapWeightTT(FT_UShort os2Weight);
-    EWidth          mapWidthTT(FT_UShort os2Width);
+    static EWeight  mapWeightTT(FT_UShort os2Weight);
+    static EWidth   mapWidthTT(FT_UShort os2Width);
     QCString        lookupNameTT(int index);
         //
         //  TrueType & Type1 shared functionality (FreeType2)
@@ -254,20 +255,19 @@ class CFontEngine
     //
     // Bitmap functions...
     //
-    bool            openFontBmp(const QString &file, unsigned short mask=NAME);
+    bool            openFontBmp(const QString &file);
     void            createNameBmp(int pointSize, int res, const QString &enc);
-    void            createNameFromXlfdBmp();
-    bool            getFileEncodingBmp(const char *str);
+    void            parseXlfdBmp();
     QString &       getXlfdBmp()                          { return itsXlfd; }
 
     // Bdf...
-    bool            openFontBdf(const QString &file, unsigned short mask=NAME);
+    bool            openFontBdf(const QString &file);
 
     // Snf...
-    bool            openFontSnf(const QString &file, unsigned short mask=NAME);
+    bool            openFontSnf(const QString &file);
 
     // Pcf...
-    bool            openFontPcf(const QString &file, unsigned short mask=NAME);
+    bool            openFontPcf(const QString &file);
 
     private:
 
@@ -279,12 +279,12 @@ class CFontEngine
     QString        itsFullName,
                    itsFamily,
                    itsPsName,
-                   itsEncoding,    // Used for Bitmap & Type1 fonts
+                   itsEncoding,    // Used only for Type1 fonts
                    itsAfmEncoding, // Used only for Type1 fonts
-                   itsXlfd;        // Used for Bitmap fonts
+                   itsXlfd,        // Used for Bitmap fonts
+                   itsFoundry;
     float          itsItalicAngle;
     TFtData        itsFt;
-    const char     *itsFoundry;
 
     friend class   CFontThumbnail;
 };

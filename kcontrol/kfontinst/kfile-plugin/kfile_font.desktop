@@ -4,5 +4,5 @@ Type=Service
 Name=Font Information
 ServiceTypes=KFilePlugin
 X-KDE-Library=kfile_font
-MimeType=application/x-font-ttf;application/x-font-type1
+MimeType=application/x-font-ttf;application/x-font-type1;application/x-font-speedo;application/x-font-bdf;application/x-font-pcf;application/x-font-snf
 PreferredItems=Full,Family,Postscript,Foundry,Weight,Width,Spacing,Slant

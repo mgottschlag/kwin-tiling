@@ -13,22 +13,24 @@ K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfile_font"));
 KFileFontPlugin::KFileFontPlugin(QObject *parent, const char *name, const QStringList& args)
                : KFilePlugin(parent, name, args)
 {
-    static const int constNumTypes=2;
+    static const int constNumTypes=6;
 
     KFileMimeTypeInfo *info[constNumTypes];
 
     info[0] = addMimeTypeInfo("application/x-font-ttf"),
     info[1] = addMimeTypeInfo("application/x-font-type1");
+    info[2] = addMimeTypeInfo("application/x-font-speedo");
+    info[3] = addMimeTypeInfo("application/x-font-bdf");
+    info[4] = addMimeTypeInfo("application/x-font-pcf");
+    info[5] = addMimeTypeInfo("application/x-font-snf");
 
     for(int t=0; t<constNumTypes; ++t)
     {
         KFileMimeTypeInfo::GroupInfo *group;
         group=addGroupInfo(info[t], "General", i18n("General"));
         addItemInfo(group, "Full", i18n("Full Name"), QVariant::String);
-        //addItemInfo(group, "KFile::MetaSummary", QString::null, QVariant::String);
         addItemInfo(group, "Family", i18n("Family"), QVariant::String);
         addItemInfo(group, "PostScript", i18n("PostScript Name"), QVariant::String);
-        addItemInfo(group, "KFile::Summary", i18n("Summary"), QVariant::String);
         addItemInfo(group, "Foundry", i18n("Foundry"), QVariant::String);
         addItemInfo(group, "Weight", i18n("Weight"),  QVariant::String);
         addItemInfo(group, "Width", i18n("Width"), QVariant::String);
@@ -49,6 +51,10 @@ static QString toStr(CFontEngine::ESpacing v)
             return i18n("Monospaced");
         case CFontEngine::SPACING_PROPORTIONAL:
             return i18n("Proportional");
+        case CFontEngine::SPACING_CHARCELL:
+            return i18n("Charcell");
+        default:
+            return i18n("<ERROR>");
     }
 }
 
@@ -62,6 +68,8 @@ static QString toStr(CFontEngine::EItalic v)
             return i18n("Italic");
         case CFontEngine::ITALIC_OBLIQUE:
             return i18n("Oblique");
+        default:
+            return i18n("<ERROR>");
     }
 }
 
@@ -132,7 +140,7 @@ QString toStr(CFontEngine::EWidth v)
     }
 }
 
-bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what = KFileMetaInfo::Fastest)
+bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
 {
     what=0;
 
@@ -144,12 +152,14 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what = KFileMetaInfo::F
 
         group=appendGroup(info, "General");
         appendItem(group, "Full", itsFontEngine.getFullName());
-        //appendItem(group, "KFile::MetaSummary", itsFontEngine.getFullName());
 
         if(KFileMetaInfo::Fastest!=what)
         {
             appendItem(group, "Family", itsFontEngine.getFamilyName());
-            appendItem(group, "PostScript", itsFontEngine.getPsName());
+            if(CFontEngine::isAType1(QFile::encodeName(info.path())) || CFontEngine::isATtf(QFile::encodeName(info.path())))
+                appendItem(group, "PostScript", itsFontEngine.getPsName());
+            else
+                appendItem(group, "PostScript", i18n("Not Applicable"));
             appendItem(group, "Foundry", itsFontEngine.getFoundry());
             appendItem(group, "Weight", toStr(itsFontEngine.getWeight()));
             appendItem(group, "Width", toStr(itsFontEngine.getWidth()));
@@ -162,5 +172,3 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what = KFileMetaInfo::F
     }
     return false;
 }
-
-//#include "kfontmetainfo.moc"

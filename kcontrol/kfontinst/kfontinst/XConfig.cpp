@@ -724,7 +724,7 @@ bool CXConfig::createFontsDotDir(const QString &dir, QStringList &symbolFamilies
                                     QString  family=CKfiGlobal::fe().getFamilyName();
 
                                     xlfd+=" -";
-                                    xlfd+=CKfiGlobal::fe().getFoundry();
+                                    xlfd+=CKfiGlobal::fe().getFoundry().latin1();
                                     xlfd+="-";
                                     xlfd+=family.latin1();
                                     xlfd+="-";
