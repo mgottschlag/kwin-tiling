@@ -54,9 +54,6 @@ extern "C"
 
 //-----------------------------------------------------------------------------
 
-static const char *fonts[] = { "Courier", "Helvetica", "Times", NULL };
-static int  sizes[] = { 12, 14, 18, 24, 48, 96, 0 };
-
 KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	: QDialog( parent, name, TRUE )
 ,ed(0)
@@ -89,7 +86,8 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 
 	combo = new QComboBox( FALSE, group);
 	int i = 0;
-	while ( fonts[i] )
+	QStringList fonts = QFontDatabase::families();
+	while ( !fonts[i].isNull() )
 	{
 		combo->insertItem( fonts[i], i );
 		if ( fontFamily == fonts[i] )
@@ -105,6 +103,8 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 
 	combo = new QComboBox( FALSE, group );
 	i = 0;
+	sizes = QFontDatabase::pointSizes( fontFamily );
+	sizes << 96 << 0;
 	while ( sizes[i] )
 	{
 		QString num;
@@ -213,7 +213,7 @@ void KBannerSetup::readSettings()
 
    showTime=config->readBoolEntry("ShowTime",FALSE);
 
-   fontFamily=config->readEntry("FontFamily","Times");
+   fontFamily=config->readEntry("FontFamily",(QApplication::font()).family());
 
    fontSize=config->readNumEntry("FontSize",48);
 
@@ -423,7 +423,7 @@ void KBannerSaver::readSettings()
 
    showTime=config->readBoolEntry("ShowTime",FALSE);
 
-   fontFamily=config->readEntry("FontFamily","Times");
+   fontFamily=config->readEntry("FontFamily",(QApplication::font()).family());
 
    fontSize=config->readNumEntry("FontSize",48);
 
@@ -454,7 +454,7 @@ void KBannerSaver::initialize()
 
 	size = fontSize * height() / QApplication::desktop()->height();
 
-    font = QFont( fontFamily, size, bold ? QFont::Bold : QFont::Normal, italic );
+	font = QFont( fontFamily, size, bold ? QFont::Bold : QFont::Normal, italic );
 
 	fwidth = -1;
 
