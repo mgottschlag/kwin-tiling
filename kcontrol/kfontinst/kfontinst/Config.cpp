@@ -356,6 +356,12 @@ CConfig::CConfig()
     val=readEntry("InstallDir");
     itsInstallDir=val.length()>0 && CMisc::dExists(val) ? val : (QString(getenv("HOME"))+"/");
 
+    setGroup("AdvancedMode");
+    itsAdvanced[DISK].dirs=readListEntry("DiskDirs");
+    itsAdvanced[DISK].topItem=readEntry("DiskTopItem");
+    itsAdvanced[INSTALLED].dirs=readListEntry("InstalledDirs");
+    itsAdvanced[INSTALLED].topItem=readEntry("InstalledTopItem");
+
     setGroup("StarOffice");
     itsSOConfigure=readBoolEntry("SOConfigure");
     val=readEntry("SODir");
@@ -373,6 +379,7 @@ CConfig::CConfig()
     itsDoAfm=readBoolEntry("DoAfm");
     itsDoTtAfms=readBoolEntry("DoTtAfms", true);
     itsDoT1Afms=readBoolEntry("DoT1Afms", true);
+    itsOverwriteAfms=readBoolEntry("OverwriteAfms", false);
     itsAfmEncoding=readEntry("AfmEncoding", "iso8859-1"); // QFont::encodingName(QFont::charSetForLocale()));
     intVal=readNumEntry("XRefreshCmd", XREFRESH_XSET_FP_REHASH);
     itsXRefreshCmd=intVal>=0 && intVal <=XREFRESH_CUSTOM ? (EXFontListRefresh)intVal : XREFRESH_XSET_FP_REHASH;
@@ -625,6 +632,22 @@ void CConfig::setInstallDir(const QString &s)
     itsInstallDir=s;
 }
 
+void CConfig::setAdvancedDirs(EListWidget w, const QStringList &l)
+{
+    KConfigGroupSaver cfgSaver(this, "AdvancedMode");
+
+    itsAdvanced[w].dirs=l;
+    write(DISK==w ? "DiskDirs" : "InstalledDirs", itsAdvanced[w].dirs);
+}
+
+void CConfig::setAdvancedTopItem(EListWidget w, const QString &s)
+{
+    KConfigGroupSaver cfgSaver(this, "AdvancedMode");
+
+    itsAdvanced[w].topItem=s;
+    write(DISK==w ? "DiskTopItem" : "InstalledTopItem", s);
+}
+
 void CConfig::setSOConfigure(bool b)
 {
     KConfigGroupSaver cfgSaver(this, "StarOffice");
@@ -711,6 +734,14 @@ void CConfig::setDoT1Afms(bool b)
             setDoAfm(true);
 }
 
+void CConfig::setOverwriteAfms(bool b)
+{
+    KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
+
+    write("OverwriteAfms", b);
+    itsOverwriteAfms=b;
+}
+
 void CConfig::setAfmEncoding(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
@@ -737,7 +768,7 @@ void CConfig::setCustomXRefreshCmd(const QString &s)
 
 void CConfig::addModifiedDir(const QString &d)
 {
-    if(itsModifiedDirs.findIndex(d)==-1)
+    if(-1==itsModifiedDirs.findIndex(d))
     {
         KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
         itsModifiedDirs.append(d);
@@ -747,7 +778,7 @@ void CConfig::addModifiedDir(const QString &d)
 
 void CConfig::removeModifiedDir(const QString &d)
 {
-    if(itsModifiedDirs.findIndex(d)!=-1)
+    if(-1!=itsModifiedDirs.findIndex(d))
     {
         KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
         itsModifiedDirs.remove(d);

@@ -49,6 +49,18 @@ class CConfig : public KConfig
         XREFRESH_CUSTOM
     };
 
+    enum EListWidget
+    {
+        DISK      =0,
+        INSTALLED =1
+    };
+
+    struct TAdvanced
+    {
+        QStringList dirs;
+        QString     topItem;
+    };
+
     CConfig();
     virtual ~CConfig()                              { }
 
@@ -75,7 +87,9 @@ class CConfig : public KConfig
     bool              getFixTtfPsNamesUponInstall() { return itsFixTtfPsNamesUponInstall; }
     const QString &   getUninstallDir()             { return itsUninstallDir; }
     const QString &   getInstallDir()               { return itsInstallDir; }
- 
+
+    const QStringList & getAdvancedDirs(EListWidget w) { return itsAdvanced[w].dirs; } 
+    const QString &   getAdvancedTopItem(EListWidget w) { return itsAdvanced[w].topItem; }
     bool              getSOConfigure()              { return itsSOConfigure; }
     const QString &   getSODir()                    { return itsSODir; }
     const QString &   getSOPpd()                    { return itsSOPpd; }
@@ -85,6 +99,7 @@ class CConfig : public KConfig
     bool              getDoAfm()                    { return itsDoAfm; }
     bool              getDoTtAfms()                 { return itsDoTtAfms; }
     bool              getDoT1Afms()                 { return itsDoT1Afms; }
+    bool              getOverwriteAfms()            { return itsOverwriteAfms; }
     const QString &   getAfmEncoding()              { return itsAfmEncoding; }
     EXFontListRefresh getXRefreshCmd()              { return itsXRefreshCmd; }
     const QString &   getCustomXRefreshCmd()        { return itsCustomXRefreshCmd; }
@@ -112,6 +127,9 @@ class CConfig : public KConfig
     void setFixTtfPsNamesUponInstall(bool b);
     void setUninstallDir(const QString &s);
     void setInstallDir(const QString &s);
+
+    void setAdvancedDirs(EListWidget w, const QStringList &l);
+    void setAdvancedTopItem(EListWidget w, const QString &s);
  
     void setSOConfigure(bool b);
     void setSODir(const QString &s);
@@ -122,6 +140,7 @@ class CConfig : public KConfig
     void setDoAfm(bool b);
     void setDoTtAfms(bool b);
     void setDoT1Afms(bool b); 
+    void setOverwriteAfms(bool b);
     void setAfmEncoding(const QString &s);
     void setXRefreshCmd(EXFontListRefresh cmd);
     void setCustomXRefreshCmd(const QString &s);
@@ -184,10 +203,12 @@ class CConfig : public KConfig
                       itsDoAfm,
                       itsDoTtAfms,
                       itsDoT1Afms,
+                      itsOverwriteAfms,
                       itsConfigured;
     EXFontListRefresh itsXRefreshCmd;
     Qt::Orientation   itsFontListsOrientation;
     QStringList       itsModifiedDirs;
+    TAdvanced         itsAdvanced[2];
 };
 
 #endif

@@ -42,7 +42,7 @@
 #include <qpushbutton.h>
 
 CDiskFontListWidget::CDiskFontListWidget(QWidget *parent, const char *)
-                   : CFontListWidget(parent, false, false, i18n("Install From:"), i18n("&Install"), i18n("Cha&nge Folder"),
+                   : CFontListWidget(parent, CConfig::DISK, false, false, i18n("Install From:"), i18n("&Install"), i18n("Cha&nge Folder"),
                                      CKfiGlobal::cfg().getInstallDir(),
                                      QString(getenv("HOME"))+"/", i18n("Home Directory"), "folder_home",
                                      "/", i18n("Root Directory"), "folder"),
@@ -272,16 +272,22 @@ CDiskFontListWidget::EStatus CDiskFontListWidget::install(const QString &sourceD
         status=ALREADY_INSTALLED;
     else
     {
-        status=CMisc::copyFile(sourceDir, fname, destDir) ? SUCCESS : PERMISSION_DENIED;
+        // Only install fonts that can be opened
+        // ...this is needed because OpenOffice will fail to start if an invalid font is located in one of its font directories!
+        status=CKfiGlobal::fe().openFont(sourceDir+fname, CFontEngine::TEST) ? SUCCESS : INVALID_FONT;
         if(SUCCESS==status)
         {
-            QString afm=CMisc::afmName(fname);
+            status=CMisc::copyFile(sourceDir, fname, destDir) ? SUCCESS : PERMISSION_DENIED;
+            if(SUCCESS==status)
+            {
+                QString afm=CMisc::afmName(fname);
 
-            if(CMisc::fExists(sourceDir+afm))
-                CMisc::copyFile(sourceDir, afm, destDir);
+                if(CMisc::fExists(sourceDir+afm))
+                    CMisc::copyFile(sourceDir, afm, destDir);
  
-            if(CFontEngine::isATtf(fname.local8Bit()) && CKfiGlobal::cfg().getFixTtfPsNamesUponInstall())
-                CKfiGlobal::ttf().fixPsNames(destDir+fname);
+                if(CFontEngine::isATtf(fname.local8Bit()) && CKfiGlobal::cfg().getFixTtfPsNamesUponInstall())
+                    CKfiGlobal::ttf().fixPsNames(destDir+fname);
+            }
         }
     }
  
@@ -345,6 +351,8 @@ QString CDiskFontListWidget::statusToStr(EStatus status)
             return i18n("Contains sub-folders");
         case COULD_NOT_CREATE_DIR:
             return i18n("Could not create folder");
+        case INVALID_FONT:
+            return i18n("Invalid font - or font file corrupt");
         default:
             return i18n("Unknown");
     }
