@@ -32,17 +32,15 @@ GestureRecordPage::GestureRecordPage(const QString &gesture,
     {
     QString message;
 
-    message += i18n("Draw the gesture you would like to record below. Press ");
-    message += i18n("and hold the left mouse button while drawing, and release ");
-    message += i18n("when your done.\n\n");
-
-    message += i18n("You will be required to draw the gesture 3 times. After ");
-    message += i18n("each drawing, if they match, the indicators below will ");
-    message += i18n("change to represent which step you are on.\n\n");
-
-    message += i18n("If at any point they do not match, you will be required to ");
-    message += i18n("restart. If you want to force a restart, use the reset ");
-    message += i18n("button below.\n\nDraw here:");
+    message = i18n("Draw the gesture you would like to record below. Press "
+                   "and hold the left mouse button while drawing, and release "
+                   "when you have finished.\n\n"
+                   "You will be required to draw the gesture 3 times. After "
+                   "each drawing, if they match, the indicators below will "
+                   "change to represent which step you are on.\n\n"
+                   "If at any point they do not match, you will be required to "
+                   "restart. If you want to force a restart, use the reset "
+                   "button below.\n\nDraw here:");
 
     QLabel *label = new QLabel(message, this, "label");
     label->setAlignment(QLabel::AlignLeft | QLabel::WordBreak |
