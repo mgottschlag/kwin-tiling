@@ -52,9 +52,9 @@ KclockModule::KclockModule(QWidget *parent, const char *name)
   connect(tzone, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
   if(getuid() == 0)
-    setButtons(Help|Reset|Cancel|Apply|Ok);
+    setButtons(Help|Apply);
   else
-    setButtons(Help|Cancel);
+    setButtons(Help);
 }
 
 void KclockModule::save()
