@@ -407,8 +407,15 @@ void runRdb( uint flags )
     for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
       copyFile(tmp, locate("appdefaults", *it ), true);
 
-    // very primitive support for  ~/.Xdefaults by appending it
-    copyFile(tmp, QDir::homeDirPath() + "/.Xdefaults", true);
+    // Merge ~/.Xresources or fallback to ~/.Xdefaults
+    QString homeDir = QDir::homeDirPath();
+    QString xResources = homeDir + "~/.Xresources";
+
+    // very primitive support for ~/.Xresources by appending it
+    if ( QFile::exists( xResources ) )
+	copyFile(tmp, xResources, true);
+    else
+	copyFile(tmp, homeDir + "/.Xdefaults", true);
 
     tmpFile.close();
 
