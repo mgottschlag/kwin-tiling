@@ -151,11 +151,8 @@ Willing_msg( char *mbuf )
 	if (!(f = fopen( "/proc/cpuinfo", "r" )))
 		return;
 
-	while (!feof( f )) {
+	while (fGets( buf, sizeof(buf), f ) != -1) {
 		float m;
-		fgets( buf, sizeof(buf), f );
-		buf[sizeof(buf) - 1] = 0;
-
 		if (sscanf( buf, "cpu MHz : %f", &m )) {
 			numcpu++;
 			mhz = m;
@@ -203,13 +200,10 @@ Willing( ARRAY8Ptr addr, CARD16 connectionType,
 	else {
 		if (*willing) {
 			FILE *fd;
-			int ok = 0;
+			int len, ok = 0;
 			if ((fd = popen( willing, "r" ))) {
 				for (;;) {
-					if (fgets( statusBuf, sizeof(statusBuf), fd )) {
-						int len = strlen( statusBuf );
-						if (len && statusBuf[len - 1] == '\n')
-							statusBuf[--len] = 0; /* chop newline */
+					if ((len = fGets( statusBuf, sizeof(statusBuf), fd )) != -1) {
 						if (len) {
 							ok = 1;
 							break;
