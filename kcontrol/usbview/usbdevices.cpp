@@ -72,9 +72,9 @@ void USBDevice::parseLine(QString line)
     }
   else if (line.left(2) == "D:")
     {
-      char buffer[10];
+      char buffer[11];
       sscanf(line.local8Bit().data(),
-	     "D:  Ver=%x.%x Cls=%x(%s) Sub=%x Prot=%x MxPS=%d #Cfgs=%d",
+	     "D:  Ver=%x.%x Cls=%x(%10s) Sub=%x Prot=%x MxPS=%d #Cfgs=%d",
 	     &_verMajor, &_verMinor, &_class, buffer, &_sub, &_prot, &_maxPacketSize, &_configs);
       _className = buffer;
     }
