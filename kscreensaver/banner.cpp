@@ -66,7 +66,7 @@ QString getScreenSaverName()
 
 //-----------------------------------------------------------------------------
 
-static char *fonts[] = { "Courier", "Helvetica", "Times", NULL };
+static const char *fonts[] = { "Courier", "Helvetica", "Times", NULL };
 static int  sizes[] = { 12, 14, 18, 24, 48, 96, 0 };
 
 KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
