@@ -628,7 +628,7 @@ void CEncodings::reset()
 bool CEncodings::createEncodingsDotDir(const QString &dir)
 {
     bool     status=false;
-    ofstream of(QString(dir+"encodings.dir").local8Bit());
+    std::ofstream of(QString(dir+"encodings.dir").local8Bit());
 
     if(of)
     {
