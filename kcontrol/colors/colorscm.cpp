@@ -15,10 +15,10 @@
 #include <qgroupbox.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
-#include <klineedit.h>
 #include <qpushbutton.h>
 #include <qslider.h>
 #include <qpixmap.h>
+#include <qpainter.h>
 #include <qcombobox.h>
 #include <klistbox.h>
 #include <qlayout.h>
@@ -90,6 +90,8 @@ QPixmap mkColorPreview(const WidgetCanvas *cs)
    block.fill(cs->back);   bitBlt(&group,0*SIZE,0,&block,0,0,SIZE,SIZE);
    block.fill(cs->window); bitBlt(&group,1*SIZE,0,&block,0,0,SIZE,SIZE);
    block.fill(cs->aTitle); bitBlt(&group,2*SIZE,0,&block,0,0,SIZE,SIZE);
+   QPainter p(&group);
+   p.drawRect(0,0,3*SIZE,SIZE);
    return group;
 }
 
