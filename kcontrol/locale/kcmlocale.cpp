@@ -211,7 +211,8 @@ void KLocaleConfig::loadLanguageList()
 
   // add all languages to the list
   QStringList alllang = KGlobal::dirs()->findAllResources("locale",
-                               QString::fromLatin1("*/entry.desktop"));
+                               QString::fromLatin1("*/entry.desktop"), 
+                               false, true);
   QStringList langlist = prilang;
   if (langlist.count() > 0)
     langlist << QString::null; // separator
@@ -260,7 +261,8 @@ void KLocaleConfig::loadCountryList()
   m_comboCountry->clear();
 
   QStringList regionlist = KGlobal::dirs()->findAllResources("locale",
-                                 sub + QString::fromLatin1("*.desktop"));
+                                 sub + QString::fromLatin1("*.desktop"), 
+                                 false, true );
 
   for ( QStringList::ConstIterator it = regionlist.begin();
     it != regionlist.end();
@@ -293,7 +295,7 @@ void KLocaleConfig::loadCountryList()
 
   // add all languages to the list
   QStringList countrylist = KGlobal::dirs()->findAllResources
-    ("locale", sub + QString::fromLatin1("*/entry.desktop"));
+    ("locale", sub + QString::fromLatin1("*/entry.desktop"), false, true);
 
   for ( QStringList::ConstIterator it = countrylist.begin();
         it != countrylist.end(); ++it )
