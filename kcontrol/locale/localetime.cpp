@@ -78,8 +78,38 @@ KLocaleConfigTime::~KLocaleConfigTime()
 {
 }
 
+/**
+ * Load stored configuration.
+ */
 void KLocaleConfigTime::load()
 {
+  KConfig *config = KGlobal::config();
+  KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
+
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->time() + QString::fromLatin1("/entry.desktop")), true);
+  ent.setGroup(QString::fromLatin1("KCM Locale"));
+
+  // different tmp variables
+  QString str;
+
+  // TimeFormat
+  str = config->readEntry(QString::fromLatin1("TimeFormat"));
+  if (str.isNull())
+    str = ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p"));
+  locale->setTimeFormat(str);
+  // DateFormat
+  str = config->readEntry(QString::fromLatin1("DateFormat"));
+  if (str.isNull())
+    str = ent.readEntry(QString::fromLatin1("DateFormat"), QString::fromLatin1("%A %d %B %Y"));
+  locale->setDateFormat(str);
+
+  // DateFormatShort
+  str = config->readEntry(QString::fromLatin1("DateFormatShort"));
+  if (str.isNull())
+    str = ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%m/%d/%y"));
+  locale->setDateFormatShort(str);
+
+  // update the widgets
   edTimeFmt->setText(locale->timeFormat());
   edDateFmt->setText(locale->dateFormat());
   edDateFmtShort->setText(locale->dateFormatShort());
@@ -155,7 +185,9 @@ void KLocaleConfigTime::reset()
   locale->setDateFormat(ent.readEntry(QString::fromLatin1("DateFormat"), QString::fromLatin1("%A %d %B %Y")));
   locale->setDateFormatShort(ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%m/%d/%y")));
 
-  load();
+  edTimeFmt->setText(locale->timeFormat());
+  edDateFmt->setText(locale->dateFormat());
+  edDateFmtShort->setText(locale->dateFormatShort());
 }
 
 void KLocaleConfigTime::reTranslate()

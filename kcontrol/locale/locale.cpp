@@ -177,44 +177,42 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
 
 void KLocaleConfig::load()
 {
-  loadLocaleList(comboCountry, QString::fromLatin1("l10n/"), QStringList());
-  loadLocaleList(comboNumber, QString::fromLatin1("l10n/"), QStringList());
-  loadLocaleList(comboMoney, QString::fromLatin1("l10n/"), QStringList());
-  loadLocaleList(comboDate, QString::fromLatin1("l10n/"), QStringList());
-
   KConfig *config = KGlobal::config();
   config->setGroup(QString::fromLatin1("Locale"));
 
-  QString str = config->readEntry(QString::fromLatin1("Country"));
-  comboCountry->setCurrentItem(str);
+  QString country = config->readEntry(QString::fromLatin1("Country"));
 
-  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + str + QString::fromLatin1("/entry.desktop")), true);
+  QString lang = config->readEntry(QString::fromLatin1("Language"));
+  lang = lang.left(lang.find(':')); // only use  the first lang
+  locale->setLanguage(lang);
+
+  QString number = config->readEntry(QString::fromLatin1("Numeric"));
+  QString money = config->readEntry(QString::fromLatin1("Monetary"));
+  QString time = config->readEntry(QString::fromLatin1("Time"));
+  locale->setCountry(number, money, time);
+
+  QString charset = config->readEntry(QString::fromLatin1("Charset"), QString::fromLatin1("iso-8859-1"));
+  emit chsetChanged();
+
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + country + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
   QStringList langs = ent.readListEntry(QString::fromLatin1("Languages"));
   if (langs.isEmpty()) langs = QString::fromLatin1("C");
 
+  // load lists into widgets
   loadLocaleList(comboLang, QString::null, langs);
+  loadLocaleList(comboCountry, QString::fromLatin1("l10n/"), QStringList());
+  loadLocaleList(comboNumber, QString::fromLatin1("l10n/"), QStringList());
+  loadLocaleList(comboMoney, QString::fromLatin1("l10n/"), QStringList());
+  loadLocaleList(comboDate, QString::fromLatin1("l10n/"), QStringList());  
 
-  // Language
-  str = config->readEntry(QString::fromLatin1("Language"));
-  str = str.left(str.find(':')); // only use  the first lang
-  comboLang->setCurrentItem(str);
-
-  // Numeric
-  str = config->readEntry(QString::fromLatin1("Numeric"));
-  comboNumber->setCurrentItem(str);
-
-  // Money
-  str = config->readEntry(QString::fromLatin1("Monetary"));
-  comboMoney->setCurrentItem(str);
-
-  // Date and time
-  str = config->readEntry(QString::fromLatin1("Time"));
-  comboDate->setCurrentItem(str);
-
-  // Charset
-  str = config->readEntry(QString::fromLatin1("Charset"), QString::fromLatin1("iso-8859-1"));
-  comboChset->setCurrentItem(str);
+  // update widgets
+  comboLang->setCurrentItem(lang);
+  comboNumber->setCurrentItem(number);
+  comboMoney->setCurrentItem(money);
+  comboDate->setCurrentItem(time);
+  comboCountry->setCurrentItem(country);
+  comboChset->setCurrentItem(charset);
 }
 
 void KLocaleConfig::readLocale(const QString &path, QString &name, const QString &sub) const

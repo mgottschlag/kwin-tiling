@@ -80,8 +80,45 @@ KLocaleConfigNumber::~KLocaleConfigNumber()
 {
 }
 
+/**
+ * Load stored configuration.
+ */
 void KLocaleConfigNumber::load()
 {
+  KConfig *config = KGlobal::config();
+  KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
+
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->number() + QString::fromLatin1("/entry.desktop")), true);
+  ent.setGroup(QString::fromLatin1("KCM Locale"));
+
+  // different tmp variables
+  QString str;
+
+  // DecimalSymbol
+  str = config->readEntry(QString::fromLatin1("DecimalSymbol"));
+  if (str.isNull())
+    str = ent.readEntry(QString::fromLatin1("DecimalSymbol"), QString::fromLatin1("."));
+  locale->setDecimalSymbol(str);
+
+  // ThousandsSeparator
+  str = config->readEntry(QString::fromLatin1("ThousandsSeparator"));
+  if (str.isNull())
+    str = ent.readEntry(QString::fromLatin1("ThousandsSeparator"), QString::fromLatin1(","));
+  locale->setThousandsSeparator(str);
+ 
+  // PositiveSign
+  str = config->readEntry(QString::fromLatin1("PositiveSign"));
+  if (str.isNull())
+    str = ent.readEntry(QString::fromLatin1("PositiveSign"));
+  locale->setPositiveSign(str);
+
+  // NegativeSign
+  str = config->readEntry(QString::fromLatin1("NegativeSign"));
+  if (str.isNull())
+    str = ent.readEntry(QString::fromLatin1("NegativeSign"), QString::fromLatin1("-"));
+  locale->setNegativeSign(str);
+
+  // update the widgets
   edDecSym->setText(locale->decimalSymbol());
   edThoSep->setText(locale->thousandsSeparator());
   edMonPosSign->setText(locale->positiveSign());
@@ -161,7 +198,10 @@ void KLocaleConfigNumber::reset()
   locale->setPositiveSign(ent.readEntry(QString::fromLatin1("PositiveSign")));
   locale->setNegativeSign(ent.readEntry(QString::fromLatin1("NegativeSign"), QString::fromLatin1("-")));
 
-  load();
+  edDecSym->setText(locale->decimalSymbol());
+  edThoSep->setText(locale->thousandsSeparator());
+  edMonPosSign->setText(locale->positiveSign());
+  edMonNegSign->setText(locale->negativeSign());
 }
 
 void KLocaleConfigNumber::reTranslate()
