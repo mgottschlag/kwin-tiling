@@ -35,7 +35,7 @@ double KURIFilterPlugin::priority() const {
 bool KURIFilterPlugin::filterURI(QString &uri) const {
     KURL kuri(uri);
     bool filtered = filterURI(kuri);
-    //uri = kuri.isMalformed() ? kuri.malformedUrl() : kuri.url();
+    uri = kuri.url();
     return filtered;
 }
 
