@@ -1,5 +1,6 @@
 [Global Key Scheme ]
 Name=Windows Default (With Meta/Win-Key)
+Name[af]=VENSTERS VERSTEK (MET META/Win-Key)
 Name[az]=Windows Əsas (Meta/Win-Key ilə)
 Name[cs]=Výchozí pro Windows (s Meta/Win klávesou)
 Name[da]=Windows standard (Med Meta/Win-Key)
@@ -19,6 +20,7 @@ Name[lv]=Windows Noklusētais (Ar Meta/Win-Taustiņu)
 Name[mt]=Standard tal-Windows (bil-buttuna Meta/Win)
 Name[nl]=Windows-standaard (met Meta-/Win-toets)
 Name[no_NY]=Windows-standard (med Meta-/Win-tast)
+Name[pl]=Domyślne Windows (z klawiszem Meta/Windows)
 Name[pt_BR]=Windows por Omissão (Com a tecla Meta/Windows)
 Name[pt]=Windows por Omissão (Com a tecla Meta/Windows)
 Name[ru]=Как в Windows (с клавишей Meta/Win)
@@ -27,6 +29,7 @@ Name[sl]=Privzeto za Windows (s tipko Meta/Windows)
 Name[sv]=Windows-förinställt (med Meta/Windows-tangent)
 Name[ta]=Windows Default (Meta/Win-Key ¯¼ý)
 Name[uk]=Типовий для Windows (з клавішою Meta/Win)
+Name[zh_CN.GB2312]=Windows 默认 (有 Meta/Win-Key)
 Execute command=Meta+R
 Kill Window=none
 Lock screen=none

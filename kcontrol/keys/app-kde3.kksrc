@@ -1,5 +1,6 @@
 [Standard Key Scheme ]
 Name=KDE Default for 3 Modifiers (Alt/Ctrl/Shift)
+Name[af]=KDE VERSTEK VIR 3 AANPASSERS (ALT/CTRL/VERSKUIWENDE)
 Name[az]=3 Modifayr üçün (Alt/Ctrl/Shift) KDE Əsasları
 Name[cs]=Výchozí pro KDE, 3 modifikátory (Alt/Ctrl/Shift)
 Name[da]=KDE standard for 3 modifikatorer (Alt/Ctrl/Shift)
@@ -18,6 +19,7 @@ Name[lv]=KDE Noklusētais priekš 3 Modifikatoriem (Alt/Ctrl/Shift)
 Name[mt]=Standard KDE għal 3 modifikaturi (Alt/Ctrl/Shift)
 Name[nl]=KDE-standaard voor 3 wijzigers (Alt/Ctrl/Shift)
 Name[no_NY]=KDE-standard for tre modifikatorar (Alt/Ctrl/Shift)
+Name[pl]=Domyślne KDE z 3 modyfikatorami (Alt/Ctrl/Shift)
 Name[pt_BR]=KDE por Omissão para 3 Modificadores (Alt/Ctrl/Shift)
 Name[pt]=KDE por Omissão para 3 Modificadores (Alt/Ctrl/Shift)
 Name[ru]=Как в KDE с 3 управляющими клавишами (Meta/Alt/Ctrl/Shift)
@@ -25,6 +27,7 @@ Name[sk]=KDE štandardná pre 3 modifikátory (Alt/Ctrl/Shift)
 Name[sl]=Privzeti KDE za 3 modifikatorje (Alt/Ctrl/Shift)
 Name[sv]=KDE-förinställt för 3 väljare (Alt/Ctrl/Skift)
 Name[uk]=Типовий для KDE для 3 модифікаторів (Alt/Ctrl/Shift)
+Name[zh_CN.GB2312]=有 3 个修饰符的 KDE 默认(Alt/Ctrl/Shift)
 AddBookmark=Ctrl+B
 Back=Alt+Left
 Close=Ctrl+W

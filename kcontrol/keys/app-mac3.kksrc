@@ -1,5 +1,6 @@
 [Standard Key Scheme ]
 Name=Mac Default
+Name[af]=MAC VERSTEK
 Name[az]=Mac Əsas
 Name[bg]=По подразбиране Макинтош
 Name[cs]=Výchozí pro Mac
@@ -28,6 +29,7 @@ Name[sl]=Privzeto za Mac
 Name[sv]=Mac-förinställt
 Name[ta]=Mac ¦¸¡¼¡¿¢¨Ä
 Name[uk]=Типовий для Mac
+Name[zh_CN.GB2312]=Mac 默认
 AddBookmark=Ctrl+B
 Back=Alt+Left
 Close=Ctrl+W

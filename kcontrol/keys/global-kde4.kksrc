@@ -1,6 +1,8 @@
 [Global Key Scheme ]
 Name=KDE Default for 4 Modifiers (Meta/Alt/Ctrl/Shift)
+Name[af]=KDE VERSTEK VIR 4 AANPASSERS (META/ALT/CTRL/VERSKUIWENDE)
 Name[az]=4 Modifayr üçün (Meta/Alt/Ctrl/Shift) KDE Əsasları
+Name[cs]=Standardní pro KDE, 4 modifikátory (Meta/Alt/Ctrl/Shift)
 Name[da]=KDE standard for 4 modifikatorer (Meta/Alt/Ctrl/Shift)
 Name[de]=KDE-Voreinstellung für vier Modifikationstasten (Meta/Alt/Strg/Umschalt)
 Name[eo]=KDE-apriora por 4 ŝaltklavoj (Meta/Alt/Ktrl/Majuskl)
@@ -17,6 +19,7 @@ Name[lv]=KDE Noklusētais priekš 4 Modifikatoriem (Meta/Alt/Ctrl/Shift)
 Name[mt]=Standard KDE għal 4 modifikaturi (Meta/Alt/Ctrl/Shift)
 Name[nl]=KDE-standaard voor 4 wijzigers (Meta/Alt/Ctrl/Shift)
 Name[no_NY]=KDE-standard for fire modifikatorar (Meta/Alt/Ctrl/Shift)
+Name[pl]=Domyślne KDE z 4 modyfikatorami (Alt/Ctrl/Shift)
 Name[pt_BR]=KDE por Omissão para 4 Modificadores (Meta/Alt/Ctrl/Shift)
 Name[pt]=KDE por Omissão para 4 Modificadores (Meta/Alt/Ctrl/Shift)
 Name[ru]=Как в KDE с 4 управляющими клавишами (Meta/Alt/Ctrl/Shift)
@@ -24,6 +27,7 @@ Name[sk]=KDE štandardná pre 4 modifikátory (Meta/Alt/Ctrl/Shift)
 Name[sl]=Privzeti KDE za 4 modifikatorje (Meta/Alt/Ctrl/Shift)
 Name[sv]=KDE-förinställt för 4 väljare (Meta/Alt/Ctrl/Skift)
 Name[uk]=Типовий для KDE для 4 модифікаторів (Meta/Alt/Ctrl/Shift)
+Name[zh_CN.GB2312]=有 4 个修饰符的 KDE 默认(Meta/Alt/Ctrl/Shift)
 Execute command=Meta+Return
 Kill Window=Meta+Ctrl+Delete
 Lock screen=Meta+ScrollLock
