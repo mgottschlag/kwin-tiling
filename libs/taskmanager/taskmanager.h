@@ -71,8 +71,8 @@ public:
     void close();
     void raise();
     void activate();
-    void stayOnTop(bool);
-    void shade(bool);
+    void setAlwaysOnTop(bool);
+    void setShaded(bool);
     void toDesktop(int);
     void toCurrentDesktop();
     void publishIconGeometry(QRect);

@@ -491,7 +491,7 @@ void Task::toCurrentDesktop()
     toDesktop(kwin_module->currentDesktop());
 }
 
-void Task::stayOnTop(bool stay)
+void Task::setAlwaysOnTop(bool stay)
 {
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
     if(stay)
@@ -500,7 +500,7 @@ void Task::stayOnTop(bool stay)
         ni.setState( 0, NET::StaysOnTop );
 }
 
-void Task::shade(bool shade)
+void Task::setShaded(bool shade)
 {
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
     if(shade)
