@@ -50,7 +50,7 @@ void KLanguageCombo::insertLanguage(const QString& lang)
 {
   QPainter p;
 
-  QString output = i18n(language(lang).ascii()) + " ("+tag(lang)+")";
+  QString output = language(lang) + " ("+tag(lang)+")";
 
   int w = fontMetrics().width(output) + 24;
   QPixmap pm(w, 16);
@@ -130,7 +130,7 @@ void KLanguageCombo::loadLanguageList()
       else
         languages.append(i18n("without name!"));
              
-     insertLanguage((*it+";"+name).ascii());
+     insertLanguage(*it+";"+name);
 
      if (*it == "C")
        setCurrentItem(count()-1);

@@ -49,7 +49,7 @@ void KLanguageCombo::insertLanguage(const QString& lang)
 {
   QPainter p;
 
-  QString output = i18n(language(lang).ascii()) + " ("+tag(lang)+")";
+  QString output = language(lang) + " ("+tag(lang)+")";
 
   int w = fontMetrics().width(output) + 24;
   QPixmap pm(w, 16);
