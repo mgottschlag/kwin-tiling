@@ -40,7 +40,6 @@ USBDB::USBDB()
 
       QString line, name;
       int id=0, subid=0, protid=0;
-      int len;
       QRegExp vendor("[0-9a-fA-F]+ ");
       QRegExp product("\\s+[0-9a-fA-F]+ ");
       QRegExp cls("C [0-9a-fA-F][0-9a-fA-F]");

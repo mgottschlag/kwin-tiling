@@ -55,10 +55,10 @@ private:
   int _bwTotal, _bwUsed, _bwPercent, _bwIntr, _bwIso;
   bool _hasBW;
 
-  int _verMajor, _verMinor, _class, _sub, _prot, _maxPacketSize, _configs;
+  unsigned int _verMajor, _verMinor, _class, _sub, _prot, _maxPacketSize, _configs;
   QString _className;
 
-  int _vendorID, _prodID, _revMajor, _revMinor;
+  unsigned int _vendorID, _prodID, _revMajor, _revMinor;
 
 };
 
