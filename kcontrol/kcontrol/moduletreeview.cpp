@@ -24,16 +24,20 @@
 #include <qpoint.h>
 #include <qcursor.h>
 
+
 #include <klocale.h>
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <kiconloader.h>
 #include <kdesktopfile.h>
+#include <kdebug.h>
+
 
 #include "moduletreeview.h"
 #include "moduletreeview.moc"
 #include "modules.h"
 #include "global.h"
+
 
 ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const char * name)
   : KListView(parent, name)
@@ -138,49 +142,50 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
     ensureItemVisible(item);
 }
 
+
+extern QString menuPath(const QStringList& groups);
+
+
 ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStringList& groups)
 {
-  QString path;
-  
-  ModuleTreeItem *item = parent;
-  
-  QStringList::ConstIterator it;
-  for (it=groups.begin(); it != groups.end(); it++)
-    {
-      path += *it + "/";
-	  
-      parent = item;
-      item = static_cast<ModuleTreeItem*>(firstChild());
+  // break recursion if path is empty
+  if (groups.count() == 0)
+    return parent;
 
-      while (item)
-		{
-		  if (static_cast<ModuleTreeItem*>(item)->tag() == *it)
-			break;
-		  
-		  item = static_cast<ModuleTreeItem*>(item->nextSibling());
-		}
+  // calculate path
+  QString path = menuPath(groups);
+  kdDebug() << "Path " << path << endl;
 
-      if (!item)
-		{
-		  // create new branch
-          ModuleTreeItem *iitem;
-          if (parent == 0)
-            iitem = new ModuleTreeItem(this);
-          else
-            iitem = new ModuleTreeItem(parent);
-		  iitem->setTag(*it);
-		  
-		  // now decorate the branch
-		  KDesktopFile directory(locate("apps", "Settings/"+path+".directory"));
-		  iitem->setText(0, directory.readEntry("Name", *it));
-		  QPixmap icon = KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"), KIcon::Small, KIconLoader::Small);
-		  iitem->setPixmap(0, icon);
-		  
-		  return iitem;
-		}
-    }
-  return item;
+  // look if menu already exists
+  if (_menuDict[path])
+    return _menuDict[path];
+  
+  // find parent menu
+  QStringList parGroup;
+  for (unsigned int i=0; i<groups.count()-1; i++)
+    parGroup.append(groups[i]);
+  ModuleTreeItem *mparent = getGroupItem(parent, parGroup);
+
+  // create new menu
+  ModuleTreeItem *menu;
+  if (mparent)
+    menu = new ModuleTreeItem(mparent);
+  else
+    menu = new ModuleTreeItem(this);
+  KDesktopFile directory(locate("apps", "Settings/"+path+".directory"));
+  QString defName = path.left(path.length()-1);
+  int pos = defName.findRev('/');
+  if (pos >= 0)
+    defName = defName.mid(pos+1);
+  menu->setPixmap(0, SmallIcon(directory.readEntry("Icon")));
+  menu->setText(0, directory.readEntry("Name", defName));
+  menu->setTag(defName);
+
+  _menuDict.insert(path, menu);
+
+  return menu;
 }
+
 
 void ModuleTreeView::slotItemSelected(QListViewItem* item)
 {

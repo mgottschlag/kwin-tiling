@@ -20,9 +20,12 @@
 #ifndef __moduletreeview_h__
 #define __moduletreeview_h__
 
+
 #include <qlist.h>
 #include <qlistview.h>
 #include <klistview.h>
+#include <qdict.h>
+
 
 class ConfigModule;
 class ConfigModuleList;
@@ -73,6 +76,9 @@ protected:
   
 private:
   ConfigModuleList *_modules;
+
+  QDict<ModuleTreeItem> _menuDict;
+
 };
 
 #endif
