@@ -1,0 +1,53 @@
+[Desktop Entry]
+Exec=kcmshell Information/partitions
+Icon=kcmpartitions
+Type=Application
+DocPath=kcontrol/kcminfo/info-10.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=info
+X-KDE-FactoryName=partitions
+X-KDE-ControlModuleType=Info
+X-KDE-HideFromPanel=true
+
+Name=Partitions
+Name[ca]=Particions
+Name[cs]=Disky
+Name[de]=Partitionen
+Name[eo]=Subdiskoj
+Name[fi]=Partitiot
+Name[hu]=Particiók
+Name[it]=Partizioni
+Name[ja]=パーティション
+Name[no]=Partisjoner
+Name[no_NY]=Partisjonar
+Name[pt]=Partições
+Name[ro]=Partiţii
+Name[sl]=Particije
+Name[sv]=Partitioner
+Name[ta]=À¢Ã¢ôÒ¸û
+
+Comment=Partition information
+Comment[ca]=Informació de particions
+Comment[cs]=Informace o discích
+Comment[de]=Informationen zur Partitionierung
+Comment[eo]=Informo pri subdiskoj
+Comment[fi]=Partitiotiedot
+Comment[fr]=Informations sur les partitions
+Comment[hu]=Információk a particiókról
+Comment[it]=Informazioni sulle partizioni
+Comment[ja]=パーティションの情報
+Comment[no]=Partisjoninformasjon
+Comment[no_NY]=Partisjonsinformasjon
+Comment[pt]=Informações sobre partições
+Comment[ro]=Informaţii despre partiţii
+Comment[sl]=Informacija o particijah
+Comment[sv]=Information om partitioner
+Comment[ta]=À¢Ã¢ôÒ ¾¸Åø
+
+Keywords=Partitions,Harddrive,HD,System Information
+Keywords[hu]=particiók,merevlemez,HD,rendszerinformáció
+Keywords[no]=Partitioner,Platelager,Harddisk,HD,Systeminformasjon
+Keywords[no_NY]=partisjonar,harddisk,HD,systeminformasjon
+Keywords[pt]=partições,disco rígido,HD,informações do sistema
+Keywords[ro]=Partiţii,harddisk,hard-disk,HD,hdd,Informaţii sistem

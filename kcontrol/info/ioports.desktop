@@ -1,0 +1,55 @@
+[Desktop Entry]
+Exec=kcmshell Information/ioports
+Icon=kcmmemory
+Type=Application
+DocPath=kcontrol/kcminfo/info-5.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=info
+X-KDE-FactoryName=ioports
+X-KDE-ControlModuleType=Info
+X-KDE-HideFromPanel=true
+
+Name=IO-Ports
+Name[ca]=Ports E/S
+Name[cs]=IO-porty
+Name[de]=Ports für Ein-/Ausgabe
+Name[eo]=En/el-pordoj
+Name[fi]=IO-portit
+Name[fr]=Ports d'entrée/sortie
+Name[hu]=IO-Portok
+Name[it]=Porte di IO
+Name[ja]=IO ポート
+Name[no]=IO-porter
+Name[no_NY]=IU-portar
+Name[pt]=Portas de I/O
+Name[ro]=Porturi I/O
+Name[sl]=V/I vrata
+Name[sv]=I/O-portar
+Name[ta]=¯/¦Å-Ð¨È¸û
+
+Comment=IO-port information
+Comment[ca]=Informació dels ports E/S
+Comment[cs]=Informace o IO-portech
+Comment[de]=Informationen zu benutzten Ein-/Ausgabe-Ports
+Comment[eo]=Informo pri En/el-pordoj
+Comment[fi]=IO-porttitiedot
+Comment[fr]=Informations sur les ports d'entrée/sortie
+Comment[hu]=Információk a ki/bemeneti portokról
+Comment[it]=Informazioni sulle porte di IO
+Comment[ja]=IO ポートの情報
+Comment[no]=IO-portinformasjon
+Comment[no_NY]=IU-port-informasjon
+Comment[pt]=Informação sobre portas de I/O
+Comment[ro]=Informaţii despre porturile I/O
+Comment[sl]=Informacija o vhodno/izhodnih vratih
+Comment[sv]=Information om I/O-portar
+Comment[ta]=¯/¦Å-Ð¨È ¾¸Åø
+
+Keywords=IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,System Information
+Keywords[hu]=IO,I/O,IO portok,I/O portok,portok,IO tartomány,I/O tartomány,rendszerinformáció
+Keywords[no]=IO,I/O,IO-porter,I/O-porter,port,IO-område,I/O-område,IU,I/U,IU-porter,I/U-porter,port,IU-område,I/U-område,Systeminformasjon
+Keywords[no_NY]=IU,I/U,IO,I/O,IU-portar,I/U-portar,portar,IU-område,I/U-område,systeminformasjon
+Keywords[pt]=IO,I/O,portos IO,portos,gama de IO,informações de sistema
+Keywords[ro]=IO,I/O,IO-Ports,I/O-Ports,Ports,IO-Range,I/O-Range,Informaţii sistem
+

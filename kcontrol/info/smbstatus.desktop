@@ -1,0 +1,54 @@
+[Desktop Entry]
+Exec=kcmshell Information/smb
+Icon=samba
+Type=Application
+DocPath=kcontrol/kcmsamba/smbstatus-1.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=samba
+X-KDE-FactoryName=samba
+X-KDE-ControlModuleType=Info
+X-KDE-HideFromPanel=true
+
+Name=Samba Status
+Name[ca]=Estat de Samba
+Name[cs]=Stav Samby
+Name[de]=Samba-Status
+Name[eo]=Sambo-stato
+Name[fi]=Samban tila
+Name[fr]=Etat de Samba
+Name[hu]=Samba állapota
+Name[it]=Stato Samba
+Name[ja]=Samba
+Name[no]=Samba-status
+Name[no_NY]=Samba-status
+Name[pt]=Samba
+Name[ro]=Monitorizare Samba
+Name[sl]=Status Sambe
+Name[sv]=Samba-status
+Name[ta]=Samba ¿¢¸ú¿¢¨Ä
+
+Comment=Samba status monitor
+Comment[ca]=Monitor de l'estat de Samba
+Comment[cs]=Monitor stavu Samby
+Comment[de]=Samba-Statusmonitor
+Comment[eo]=Rigardilo por la stato de Sambo
+Comment[fi]=Samban tilanvalvonta
+Comment[fr]=Indicateur d'état de Samba
+Comment[hu]=Samba állapotkijelzés
+Comment[it]=Monitor dello stato di Samba
+Comment[ja]=Sambaの状態をモニターします
+Comment[no]=Monitor for Samba-status
+Comment[no_NY]=Overvakar Samba-status
+Comment[pt]=Informações sobre o estado do Samba
+Comment[ro]=Monitorizează servicii Samba
+Comment[sl]=Nadzornik statusa Sambe
+Comment[sv]=Monitor för Samba-status
+Comment[ta]=Samba ¿¢¸ú¿¢¨Ä ¾¢¨ÃÂ¸õ
+
+Keywords=SMB,SAMBA,Windows network,LAN,System Information
+Keywords[hu]=SMB,SAMBA,windows hálózat,LAN,rendszerinformáció
+Keywords[no]=SMB,SAMBA,Windows-nettverk,LAN,Systeminformasjon
+Keywords[no_NY]=SMB,SAMBA,Windows-nettverk,LAN,systeminformasjon
+Keywords[pt]=SMB,SAMBA,rede Windows,LAN,informações de sistema
+Keywords[ro]=SMB,SAMBA,Reţea Windows,LAN,Informaţii sistem

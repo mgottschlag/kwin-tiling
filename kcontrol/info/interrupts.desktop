@@ -1,0 +1,53 @@
+[Desktop Entry]
+Exec=kcmshell Information/interrupts
+Icon=kcmmemory
+Type=Application
+DocPath=kcontrol/kcminfo/info-3.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=info
+X-KDE-FactoryName=irq
+X-KDE-ControlModuleType=Info
+X-KDE-HideFromPanel=true
+
+Name=Interrupts
+Name[ca]=Interrupcions
+Name[cs]=Přerušení
+Name[eo]=Iterrompoj
+Name[fi]=Keskeytykset
+Name[fr]=Interruptions
+Name[hu]=Megszakítások
+Name[it]=Interrupt
+Name[ja]=割り込み
+Name[no]=Avbruddslinjer
+Name[no_NY]=Avbrot
+Name[pt]=Interrupções
+Name[ro]=Întreruperi
+Name[sl]=Prekinitve
+Name[sv]=Avbrott
+Name[ta]=­¨¼ÁÈ¢¸û
+
+Comment=Interrupt information
+Comment[ca]=Informació de les interrupcions
+Comment[cs]=Informace o přerušeních
+Comment[de]=Informationen zu Interrupts
+Comment[eo]=Informo pri interrompoj
+Comment[fi]=Keskeytystietoja
+Comment[fr]=Informations sur les interruptions
+Comment[hu]=Információk a megszakításokról
+Comment[it]=Informazioni sugli interrupt
+Comment[ja]=割り込みの情報
+Comment[no]=Avbruddslinjeinformasjon
+Comment[no_NY]=Avbrotsinformasjon
+Comment[pt]=Informação sobre interrupções
+Comment[ro]=Informaţii despre întreruperile alocate
+Comment[sl]=Informacija o prekinitvah
+Comment[sv]=Information om avbrott
+Comment[ta]=­¨¼ÁÈ¢ ¾¸Åø
+
+Keywords=Interrupts,IRQ,System Information
+Keywords[hu]=Megszakítások,IRQ,rendszerinformáció
+Keywords[no]=Avbrudd,IRQ,Systeminformasjon
+Keywords[no_NY]=Avbrot,IRQ,systeminformasjon
+Keywords[ro]=Întreruperi,IRQ,Informaţii sistem
+Keywords[sl]=prekinitve,IRQ,sistemski podatki

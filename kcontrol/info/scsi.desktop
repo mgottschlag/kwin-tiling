@@ -1,0 +1,39 @@
+[Desktop Entry]
+Exec=kcmshell Information/scsi
+Icon=kcmscsi
+Type=Application
+DocPath=kcontrol/kcminfo/info-9.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=info
+X-KDE-FactoryName=scsi
+X-KDE-ControlModuleType=Info
+X-KDE-HideFromPanel=true
+
+Name=SCSI
+Name[ro]=Magistrala SCSI
+
+Comment=SCSI information
+Comment[ca]=Informació de SCSI
+Comment[cs]=Informace o SCSI
+Comment[de]=Informationen zu SCSI-Geräten
+Comment[eo]=Informo pri SCSI
+Comment[fi]=SCSI-tietoja
+Comment[fr]=Informations SCSI
+Comment[hu]=SCSI információk
+Comment[it]=Informazioni SCSI
+Comment[ja]=SCSIの情報
+Comment[no]=SCSI-informasjon
+Comment[no_NY]=SCSI-informasjon
+Comment[pt]=Informações sobre dispositivos SCSI
+Comment[ro]=Informaţii despre magistrala SCSI
+Comment[sl]=Informacija o vodilu SCSI
+Comment[sv]=Information om SCSI
+Comment[ta]=SCSI ¾¸Åø
+
+Keywords=SCSI,SCSI-Bus,System Information
+Keywords[hu]=SCSI,SCSI busz,rendszerinformáció
+Keywords[no]=SCSI,SCSI-buss,Systeminformasjon
+Keywords[no_NY]=SCSI,SCSI-buss,systeminformasjon
+Keywords[pt]=SCSI,bus SCSI,informações do sistema
+Keywords[ro]=SCSI,Bus SCSI,Informaţii sistem

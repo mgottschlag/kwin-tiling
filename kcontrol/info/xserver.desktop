@@ -1,0 +1,51 @@
+[Desktop Entry]
+Exec=kcmshell Information/xserver
+Icon=kcmx
+Type=Application
+DocPath=kcontrol/kcminfo/info-11.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=info
+X-KDE-FactoryName=xserver
+X-KDE-ControlModuleType=Info
+X-KDE-HideFromPanel=true
+
+Name=X-Server
+Name[ca]=Servidor X
+Name[eo]=X-servilo
+Name[fi]=X-palvelin
+Name[fr]=Serveur X
+Name[hu]=X-Szerver
+Name[it]=Server X
+Name[ja]=Xサーバー
+Name[no]=X-tjener
+Name[no_NY]=X-tenar
+Name[pt]=Servidor X
+Name[ro]=Server X
+Name[sl]=Strežnik X
+Name[ta]=X-§º¨ÅÂ¸õ
+
+Comment=X-Server information
+Comment[ca]=Informació del servidor X
+Comment[cs]=Informace o X-Serveru
+Comment[de]=Informationen zum X-Server
+Comment[eo]=Informo pri X-servilo
+Comment[fi]=X-palvelimen tiedot
+Comment[fr]=Informations sur le serveur X
+Comment[hu]=X-Szerver információk
+Comment[it]= Informazioni sul server X
+Comment[ja]=Xサーバーの情報
+Comment[no]=X-tjernerinformasjon
+Comment[no_NY]=X-tenarinformasjon
+Comment[pt]=Informações sobre o servidor X
+Comment[ro]=Informaţii despre server-ul X
+Comment[sl]=Informacija o strežniku X
+Comment[sv]=Information om X-Servern
+Comment[ta]=X-§º¨ÅÂ¸õ ¾¸Åø
+
+Keywords=X,X-Server,XServer,XFree86,Display,System Information
+Keywords[hu]=X,X kiszolgáló,XServer,XFree86,képernyő,rendszerinformáció
+Keywords[no]=X,X-tjener,XTjener,XFree86,skjerm,Systeminformasjon
+Keywords[no_NY]=X,X-tenar,XServer,XFree86,Skjerm,systeminformasjon
+Keywords[pt]=X,servidor X,XServer,XFree86,ecrã,informações de sistema
+Keywords[ro]=X,server X,XServer,XFree86,ecran,afişare,Informaţii sistem

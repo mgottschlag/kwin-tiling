@@ -1,0 +1,40 @@
+[Desktop Entry]
+Exec=kcmshell Information/pci
+Icon=kcmpci
+Type=Application
+DocPath=kcontrol/kcminfo/info-5.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=info
+X-KDE-FactoryName=pci
+X-KDE-ControlModuleType=Info
+X-KDE-HideFromPanel=true
+
+Name=PCI
+Name[cs]=PCI sběrnice
+Name[ro]=Magistrala PCI
+
+Comment=PCI information
+Comment[ca]=Informació de PCI
+Comment[cs]=Informace o PCI
+Comment[de]=Informationen zu PCI
+Comment[eo]=Informo pri PCI
+Comment[fi]=PCI-tietoja
+Comment[fr]=Informations PCI
+Comment[hu]=PCI információk
+Comment[it]=Informazioni PCI
+Comment[ja]=PCIの情報
+Comment[no]=PCI-informasjon
+Comment[no_NY]=PCI-informasjon
+Comment[pt]=Informações sobre dispositivos PCI
+Comment[ro]=Informaţii despre magistrala PCI
+Comment[sl]=Informacija o vodilu PCI
+Comment[sv]=Information om PCI
+Comment[ta]=PCI ¾¸Åø
+
+Keywords=PCI,PCI-Devices,PCI-Bus,System Information
+Keywords[hu]=PCI,PCI eszközök,PCI busz,rendszerinformáció
+Keywords[no]=PCI,PCI-enheter,PCI-buss,Systeminformasjon
+Keywords[no_NY]=PCI,PCI-einingar,PCI-buss,systeminformasjon
+Keywords[pt]=PCI,dispositivos PCI,bus PCI,informações do sistema
+Keywords[ro]=PCI,Dispozitive PCI,Bus PCI,Informaţii sistem

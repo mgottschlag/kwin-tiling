@@ -1,0 +1,53 @@
+[Desktop Entry]
+Exec=kcmshell Information/sound
+Icon=kcmsound
+Type=Application
+DocPath=kcontrol/kcminfo/info-6.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=info
+X-KDE-FactoryName=sound
+X-KDE-ControlModuleType=Info
+X-KDE-HideFromPanel=true
+
+Name=Sound
+Name[ca]=So
+Name[cs]=Zvuk
+Name[eo]=Sonoro
+Name[fi]=Ääni
+Name[fr]=Son
+Name[hu]=Hang
+Name[it]=Suono
+Name[ja]=サウンド
+Name[no]=Lyd
+Name[no_NY]=Lyd
+Name[pt]=Som
+Name[ro]=Sunet
+Name[sl]=Zvok
+Name[sv]=Ljud
+Name[ta]=´Ä¢
+
+Comment=Sound information
+Comment[ca]=Informació del so
+Comment[cs]=Informace o zvuku
+Comment[de]=Informationen zur Soundkarte
+Comment[eo]=Informo pri Sonoro
+Comment[fi]=Äänitiedot
+Comment[fr]=Informations sur le son
+Comment[hu]=Hang információk
+Comment[it]=Informazioni sul suono
+Comment[ja]=サウンドの情報
+Comment[no]=Lydinformasjon
+Comment[no_NY]=Lydinformasjon
+Comment[pt]=Informações sobre o som
+Comment[ro]=Informaţii despre sunet
+Comment[sl]=Informacija o zvoku
+Comment[sv]=Information om ljud
+Comment[ta]=´Ä¢ ¾¸Åø
+
+Keywords=Sound,Audio,Soundcard,Midi,OSS,System Information
+Keywords[hu]=hang,audió,hangkártya,midi,OSS,rendszerinformáció
+Keywords[no]=Lyd,Lydkort,Midi,OSS,Systeminformasjon
+Keywords[no_NY]=lyd,lydkort,midi,OSS,systeminformasjon
+Keywords[pt]=som,audio,placa de som,midi,OSS,informações de sistema
+Keywords[ro]=sunet,Audio,placă de sunet,card de sunet,Midi,OSS,Informaţii sistem

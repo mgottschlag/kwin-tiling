@@ -1,0 +1,54 @@
+[Desktop Entry]
+Exec=kcmshell Information/devices
+Icon=kcmdevices
+Type=Application
+DocPath=kcontrol/kcminfo/info-8.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=info
+X-KDE-FactoryName=devices
+X-KDE-ControlModuleType=Info
+X-KDE-HideFromPanel=true
+
+Name=Devices
+Name[ca]=Dispositius
+Name[cs]=Zařízení
+Name[de]=Geräte
+Name[eo]=Aparatoj
+Name[fi]=Laitteet
+Name[fr]=Périphériques
+Name[hu]=Eszközök
+Name[it]=Periferiche
+Name[ja]=デバイス
+Name[no]=Enheter
+Name[no_NY]=Einingar
+Name[pt]=Dispositivos
+Name[ro]=Dispozitive
+Name[sl]=Enote
+Name[sv]=Enheter
+Name[ta]=º¡¾Éí¸û
+
+Comment=Attached devices information
+Comment[ca]=Informació dels dispositius connectats
+Comment[cs]=Informace o připojených zařízeních
+Comment[de]=Informationen zu angeschlossenen Geräten
+Comment[eo]=Informo pir alligitaj aparatoj
+Comment[fi]=Tietoja liitetyistä laitteista
+Comment[fr]=Informations sur les périphériques attachés
+Comment[hu]=Információk a rendszerhez kapcsolódó eszközökről
+Comment[it]=Informazioni sulle periferiche connesse
+Comment[ja]=接続されているデバイスの情報
+Comment[no]=Informasjon om tilkoblede enheter
+Comment[no_NY]=Informasjon om tilkopla einingar
+Comment[pt]=Informação sobre dispositivos
+Comment[ro]=Informaţii despre dispozitivele instalate
+Comment[sl]=Informacije o priklopljenih enotah
+Comment[sv]=Information om anslutna enheter
+Comment[ta]=­¨Éì¸Àð¼ º¡¾Éí¸Ç¢ý ¾¸Åø
+
+Keywords=dev,Devices,System Information,Information
+Keywords[hu]=dev,eszköz,eszközök,rendszerinformáció,információ
+Keywords[no]=dev,enheter,Systeminformasjon,Informasjon
+Keywords[no_NY]=dev,eining,einingar,systeminformasjon,informasjon
+Keywords[pt]=dev,dispositivos,informações de sistema,informação
+Keywords[ro]=dev,Dispozitive,Informaţii sistem,Informaţii

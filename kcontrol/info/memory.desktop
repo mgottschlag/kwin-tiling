@@ -1,0 +1,54 @@
+[Desktop Entry]
+Exec=kcmshell Information/memory
+Icon=kcmmemory
+Type=Application
+DocPath=kcontrol/kcminfo/info-1.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=info
+X-KDE-FactoryName=memory
+X-KDE-ControlModuleType=Info
+X-KDE-HideFromPanel=true
+
+Name=Memory
+Name[ca]=Memòria
+Name[cs]=Paměť
+Name[de]=Speicher
+Name[eo]=Memoro
+Name[fi]=Muisti
+Name[fr]=Mémoire
+Name[hu]=Memória
+Name[it]=Memoria
+Name[ja]=メモリー
+Name[no]=Minne
+Name[no_NY]=Minne
+Name[pt]=Memória
+Name[ro]=Memorie
+Name[sl]=Pomnilnik
+Name[sv]=Minne
+Name[ta]=¿¢¨ÉÅ¸õ
+
+Comment=Memory information
+Comment[ca]=Informació de la memòria
+Comment[cs]=Informace o paměti
+Comment[de]=Informationen zum Speicher
+Comment[eo]=Informo pri memoro
+Comment[fi]=Tietoja muistista
+Comment[fr]=Informations sur la mémoire
+Comment[hu]=Információ a memóriáról
+Comment[it]=Informazioni sulla memoria
+Comment[ja]=メモリーの情報
+Comment[no]=Informasjon om minnet
+Comment[no_NY]=Minneinformasjon
+Comment[pt]=Informações sobre a memória
+Comment[ro]=Informaţii despre memorie
+Comment[sl]=Informacija o pomnilniku
+Comment[sv]=Information om minnet
+Comment[ta]=¿¢¨ÉÅ¸ ¾¸Åø
+
+Keywords=Memory,RAM,Virtual memory,Physical memory,Shared memory,Swap,System Information
+Keywords[hu]=memória,RAM,virtuális memória,fizikai memória,megosztott memória,lapozó memória,lapozó,swap,rendszerinformáció
+Keywords[no]=Minne,RAM,Kunstig minne,Fysisk minne,Delt minne,Vekselsminne,Systeminformasjon
+Keywords[no_NY]=minne,RAM,virtuelt minne,fysisk minne,delt minne,veksleminne,systeminformasjon
+Keywords[pt]=memória,RAM,memória virtual,memória física,memória partilhada,swap,informações do sistema
+Keywords[ro]=Memory,RAM,Virtual memory,Physical memory,Shared memory,Swap,Informaţii sistem

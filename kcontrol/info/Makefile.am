@@ -13,3 +13,12 @@ libkcm_info_la_METASOURCES = AUTO
 
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/kcminfo.pot
+
+
+data_DATA = memory.desktop processor.desktop dma.desktop \
+	interrupts.desktop ioports.desktop pci.desktop sound.desktop \
+	devices.desktop scsi.desktop partitions.desktop xserver.desktop \
+	smbstatus.desktop
+
+datadir = $(kde_appsdir)/Settings/Information
+
