@@ -72,8 +72,7 @@ void KSMShutdownFeedback::slotPaintEffect()
 //////
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
-                                bool maysd, bool /*maynuke*/,
-                                KApplication::ShutdownType sdtype, KApplication::ShutdownMode /*sdmode*/ )
+                                bool maysd, KApplication::ShutdownType sdtype )
     : QDialog( parent, 0, TRUE, WType_Popup )
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
@@ -172,13 +171,12 @@ void KSMShutdownDlg::slotHalt()
 }
 
 
-bool KSMShutdownDlg::confirmShutdown( bool maysd, bool maynuke,
-                                      KApplication::ShutdownType& sdtype, KApplication::ShutdownMode& sdmode )
+bool KSMShutdownDlg::confirmShutdown( bool maysd, KApplication::ShutdownType& sdtype )
 {
     kapp->enableStyles();
     KSMShutdownDlg* l = new KSMShutdownDlg( 0,
                                             //KSMShutdownFeedback::self(),
-                                            maysd, maynuke, sdtype, sdmode );
+                                            maysd, sdtype );
 
     // Show dialog (will save the background in showEvent)
     QSize sh = l->sizeHint();
