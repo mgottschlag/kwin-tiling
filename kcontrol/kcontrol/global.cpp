@@ -48,15 +48,13 @@ QString KCGlobal::_baseGroup = "";
 
 void KCGlobal::init()
 {
-  QString hostname, username;
   char buf[128];
-  char *user = getlogin();
-  struct utsname info;
-
   gethostname(buf, 128);
-  if (strlen(buf)) hostname = QString("%1").arg(buf); else hostname = "";
-  if (!user) user = getenv("LOGNAME");
-  if (!user) username = ""; else username = QString("%1").arg(user);
+  QString hostname(buf);
+  
+  char *user = getlogin();
+  if (user == 0) user = getenv("LOGNAME");
+  QString username(user);
 
   setHostName(hostname);
   setUserName(username);
@@ -64,6 +62,7 @@ void KCGlobal::init()
 
   setKDEVersion(KDE_VERSION_STRING);
 
+  struct utsname info;
   uname(&info);
 
   setSystemName(info.sysname);
