@@ -25,7 +25,7 @@ klipper_panelapplet_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 xdg_apps_DATA = klipper.desktop
 
-autostartdir = $(prefix)/share/autostart
+autostartdir = $(datadir)/autostart
 autostart_DATA = klipper.desktop
 
 appldir = $(kde_datadir)/kicker/applets
