@@ -17,8 +17,6 @@
    Boston, MA 02111-1307, USA.
 */
 
-#include <unistd.h> // for getuid()
-
 #include <qlayout.h>
 #include <qwhatsthis.h>
 #include <qvgroupbox.h>
@@ -51,8 +49,11 @@ typedef KGenericFactory<KDEDConfig, QWidget> KDEDFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kded, KDEDFactory( "kcmkded" ) );
 
 static const QCString KXMLRPCD("kxmlrpcd");
+static const bool KXMLRPCD_DEFAULT = false;
 static const QCString KALARMD("kalarmd");
+static const bool KALARMD_DEFAULT = true;
 static const QCString KWRITED("kwrited");
+static const bool KWRITED_DEFAULT = true;
 
 
 KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
@@ -96,12 +97,10 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	_pbStop->setEnabled( false );
 	_pbOptions->setEnabled( false );
 
-	if (getuid()!=0) {
-		connect(_pbStart, SIGNAL(clicked()), SLOT(slotStartService()));
-		connect(_pbStop,  SIGNAL(clicked()), SLOT(slotStopService()));
-		connect(_pbOptions, SIGNAL(clicked()), SLOT(configureService()));
-		connect(_lvStartup, SIGNAL(selectionChanged(QListViewItem*)), SLOT(slotEvalItem(QListViewItem*)) );
-	}
+	connect(_pbStart, SIGNAL(clicked()), SLOT(slotStartService()));
+	connect(_pbStop,  SIGNAL(clicked()), SLOT(slotStopService()));
+	connect(_pbOptions, SIGNAL(clicked()), SLOT(configureService()));
+	connect(_lvStartup, SIGNAL(selectionChanged(QListViewItem*)), SLOT(slotEvalItem(QListViewItem*)) );
 
 	load();
 }
@@ -115,9 +114,7 @@ void KDEDConfig::load() {
 	KGlobal::dirs()->findAllResources( "services",
 			QString::fromLatin1( "kded/*.desktop" ),
 			true, true, files );
-	bool root = (getuid() == 0);
 
-	bool useHeading = root;
 	QListViewItem* item = 0L;
 	CheckListItem* clitem;
 	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); it++ ) {
@@ -126,14 +123,10 @@ void KDEDConfig::load() {
 			KDesktopFile file( *it, true, "services" );
 
 			if ( file.readBoolEntry("X-KDE-Kded-autoload") ) {
-				if (root) { // only allow check if user has permissions
-					clitem = new CheckListItem(_lvStartup, QString::null);
-					connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
-					item = clitem;
-				}
-				else {
-				   item = new QListViewItem(_lvStartup, QString::null);
-				}
+				clitem = new CheckListItem(_lvStartup, QString::null);
+				connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
+				clitem->setOn(!file.readBoolEntry("X-KDE-Kded-nostart",false));
+				item = clitem;
 				item->setText(1, file.readName());
 				item->setText(2, file.readComment());
 				item->setText(3, i18n("Not running"));
@@ -144,20 +137,19 @@ void KDEDConfig::load() {
 				item->setText(1, file.readComment());
 				item->setText(2, i18n("Not running"));
 				item->setText(4, file.readEntry("X-KDE-Library"));
-				item->setText(5, file.readEntry("X-KDE-Kded-nostart"));
 			}
 		}
 	}
 
 	// Special case: kxmlrpcd
-	if (root) { // only allow check if user has permissions
-		clitem = new CheckListItem(_lvStartup, QString::null);
-		connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
-		item = clitem;
-	}
-	else {
-		item = new QListViewItem(_lvStartup, QString::null);
-	}
+	clitem = new CheckListItem(_lvStartup, QString::null);
+	connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
+        {
+		KConfig config("kxmlrpcdrc", true);
+		config.setGroup("General");
+		clitem->setOn(config.readBoolEntry("StartServer", KXMLRPCD_DEFAULT));
+        }
+	item = clitem;
 	item->setText(1, i18n("XML-RPC Daemon"));
 	item->setText(2, QString::null);
 	item->setText(3, i18n("Not running"));
@@ -165,8 +157,12 @@ void KDEDConfig::load() {
 
 	// Special case: kalarmd
 	clitem = new CheckListItem(_lvStartup, QString::null);
-	useHeading = true;
 	connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
+        {
+		KConfig config("kalarmdrc", true);
+		config.setGroup("General");
+		clitem->setOn(config.readBoolEntry("Autostart", KALARMD_DEFAULT));
+        }
 	item = clitem;
 	item->setText(1, i18n("Alarm Daemon"));
 	item->setText(2, QString::null);
@@ -174,72 +170,67 @@ void KDEDConfig::load() {
 	item->setText(4, QString::fromLatin1(KALARMD));
 
 	// Special case: kwrited
-	if (root) { // only allow check if user has permissions
-		clitem = new CheckListItem(_lvStartup, QString::null);
-		connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
-		item = clitem;
-	}
-	else {
-		item = new QListViewItem(_lvStartup, QString::null);
-	}
+	clitem = new CheckListItem(_lvStartup, QString::null);
+	connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
+        {
+		KConfig config("kwritedrc", true);
+		config.setGroup("General");
+		clitem->setOn(config.readBoolEntry("Autostart", KWRITED_DEFAULT));
+        }
+	item = clitem;
 	item->setText(1, i18n("KWrite Daemon"));
 	item->setText(2, QString::null);
 	item->setText(3, i18n("Not running"));
 	item->setText(4, QString::fromLatin1(KWRITED));
 
-	if (!useHeading) {
-		_lvStartup->header()->setLabel(0, QString::null, 0);
-	}
 	getServiceStatus();
 }
 
 void KDEDConfig::save() {
 	QCheckListItem* item = 0L;
-	if (getuid()==0) {
 
-		QStringList files;
-		KGlobal::dirs()->findAllResources( "services",
-				QString::fromLatin1( "kded/*.desktop" ),
-				true, true, files );
+	QStringList files;
+	KGlobal::dirs()->findAllResources( "services",
+			QString::fromLatin1( "kded/*.desktop" ),
+			true, true, files );
 
 
-		for ( QStringList::ConstIterator it = files.begin(); it != files.end(); it++ ) {
+	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); it++ ) {
 
-			if ( KDesktopFile::isDesktopFile( *it ) ) {
+		if ( KDesktopFile::isDesktopFile( *it ) ) {
 
-				KConfig file(locate( "services", *it ));
-				file.setGroup("Desktop Entry");
+			KConfig file( *it, false, false, "services" );
+			file.setGroup("Desktop Entry");
 
-				if (file.readBoolEntry("X-KDE-Kded-autoload")){
+			if (file.readBoolEntry("X-KDE-Kded-autoload")){
 
-					item = static_cast<QCheckListItem *>(_lvStartup->findItem(file.readEntry("X-KDE-Library"),4));
-					if (item) {
-						// we found a match, now compare and see what changed
-						if (item->isOn())
-							file.writeEntry("X-KDE-Kded-nostart", false);
-						else
-							file.writeEntry("X-KDE-Kded-nostart", true);
+				item = static_cast<QCheckListItem *>(_lvStartup->findItem(file.readEntry("X-KDE-Library"),4));
+				if (item) {
+					// we found a match, now compare and see what changed
+					if (item->isOn())
+						file.writeEntry("X-KDE-Kded-nostart", false);
+					else
+						file.writeEntry("X-KDE-Kded-nostart", true);
 
-					}
 				}
 			}
 		}
+	}
 
-		// Special case: kxmlrpcd
-		item = static_cast<QCheckListItem *>(_lvStartup->findItem(QString::fromLatin1(KXMLRPCD),4));
-		if (item) {
-			KConfig config("kxmlrpcdrc", false, false);
-			config.setGroup("General");
-			config.writeEntry("StartServer", item->isOn());
-		}
+	// Special case: kxmlrpcd
+	item = static_cast<QCheckListItem *>(_lvStartup->findItem(QString::fromLatin1(KXMLRPCD),4));
+	if (item) {
+		KConfig config("kxmlrpcdrc", false, false);
+		config.setGroup("General");
+		config.writeEntry("StartServer", item->isOn());
+	}
 
-		// Special case: kwrited
-		item = static_cast<QCheckListItem *>(_lvStartup->findItem(KWRITED,4));
-		if (item) {
-			KConfig config("kwritedrc", false, false);
-			config.setGroup("General");
-			config.writeEntry("Autostart", item->isOn());
-		}
+	// Special case: kwrited
+	item = static_cast<QCheckListItem *>(_lvStartup->findItem(KWRITED,4));
+	if (item) {
+		KConfig config("kwritedrc", false, false);
+		config.setGroup("General");
+		config.writeEntry("Autostart", item->isOn());
 	}
 
 	// Special case: kalarmd
@@ -249,8 +240,6 @@ void KDEDConfig::save() {
 		config.setGroup("General");
 		config.writeEntry("Autostart", item->isOn());
 	}
-
-	_userChecked.clear();
 };
 
 
@@ -261,13 +250,30 @@ void KDEDConfig::defaults()
 		if (it.current()->rtti()==1) {
 			QCheckListItem *item = static_cast<QCheckListItem *>(it.current());
 			item->setOn(false);
-			_userChecked[item->text(4).latin1()] = false;
 		}
 		++it;
 	}
 
 	getServiceStatus();
 
+        QCheckListItem* item;
+	// Special case: kxmlrpcd
+	item = static_cast<QCheckListItem *>(_lvStartup->findItem(QString::fromLatin1(KXMLRPCD),4));
+	if (item) {
+		item->setOn(KXMLRPCD_DEFAULT);
+	}
+
+	// Special case: kwrited
+	item = static_cast<QCheckListItem *>(_lvStartup->findItem(KWRITED,4));
+	if (item) {
+		item->setOn(KWRITED_DEFAULT);
+	}
+
+	// Special case: kalarmd
+	item = static_cast<QCheckListItem *>(_lvStartup->findItem(KALARMD,4));
+	if (item) {
+		item->setOn(KALARMD_DEFAULT);
+	}
 }
 
 
@@ -294,6 +300,10 @@ void KDEDConfig::getServiceStatus()
 		}
 	}
 
+	for( QListViewItemIterator it( _lvLoD); it.current() != 0; ++it )
+                it.current()->setText(2, i18n("Not running"));
+	for( QListViewItemIterator it( _lvStartup); it.current() != 0; ++it )
+                it.current()->setText(3, i18n("Not running"));
 	for ( QCStringList::Iterator it = modules.begin(); it != modules.end(); ++it )
 	{
 		QListViewItem *item = _lvLoD->findItem(*it, 4);
@@ -306,11 +316,6 @@ void KDEDConfig::getServiceStatus()
 		if ( item )
 		{
 			item->setText(3, i18n("Running"));
-			if (item->rtti()==1) {
-				QCheckListItem *ci = static_cast<QCheckListItem *>(item);
-				bool check = _userChecked.contains(*it) ? _userChecked[*it] : true;
-				ci->setOn(check);
-			}
 		}
 	}
 
@@ -321,11 +326,6 @@ void KDEDConfig::getServiceStatus()
 		if ( item )
 		{
 			item->setText(3, i18n("Running"));
-			if (item->rtti()==1) {
-				QCheckListItem *ci = static_cast<QCheckListItem *>(item);
-				bool check = _userChecked.contains(KXMLRPCD) ? _userChecked[KXMLRPCD] : true;
-				ci->setOn(check);
-			}
 		}
 	}
 
@@ -335,18 +335,6 @@ void KDEDConfig::getServiceStatus()
 	{
 		bool running = kapp->dcopClient()->isApplicationRegistered(KALARMD);
 		item->setText(3, (running ? i18n("Running") : i18n("Not running")));
-		if (item->rtti()==1) {
-			QCheckListItem *ci = static_cast<QCheckListItem *>(item);
-			bool check;
-			if (_userChecked.contains(KALARMD))
-				check = _userChecked[KALARMD];
-			else {
-				KConfig config("kalarmdrc", false, false);
-				config.setGroup("General");
-				check = config.readBoolEntry("Autostart", false);
-			}
-			ci->setOn(check);
-		}
 	}
 
 	// Special case: kwrited
@@ -356,11 +344,6 @@ void KDEDConfig::getServiceStatus()
 		if ( item )
 		{
 			item->setText(3, i18n("Running"));
-			if (item->rtti()==1) {
-				QCheckListItem *ci = static_cast<QCheckListItem *>(item);
-				bool check = _userChecked.contains(KWRITED) ? _userChecked[KWRITED] : true;
-				ci->setOn(check);
-			}
 		}
 	}
 }
@@ -492,9 +475,8 @@ void KDEDConfig::configureService()
 	}
 }
 
-void KDEDConfig::slotItemChecked(QCheckListItem *item)
+void KDEDConfig::slotItemChecked(QCheckListItem*)
 {
-	_userChecked[item->text(4).latin1()] = item->isOn();
 	emit changed(true);
 }
 

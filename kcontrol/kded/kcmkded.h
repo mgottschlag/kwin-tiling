@@ -60,7 +60,6 @@ private:
 	QPushButton *_pbStart;
 	QPushButton *_pbStop;
 	QPushButton *_pbOptions;
-	QMap<QCString, bool> _userChecked;
 };
 
 class CheckListItem : public QObject, public QCheckListItem
