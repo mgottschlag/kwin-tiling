@@ -21,6 +21,11 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+// X11 headers
+#undef Above
+#undef Below
+#undef None
+
 #include <qbuttongroup.h>
 #include <qlabel.h>
 #include <qpixmap.h>

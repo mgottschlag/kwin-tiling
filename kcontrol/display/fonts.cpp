@@ -9,9 +9,14 @@
 /* $Id$ */
 
 #include <qlayout.h>
+#undef index
 #include <qlistbox.h>
 #include <qlabel.h>
 #include <qapplication.h>
+
+// X11 headers
+#undef Bool
+#undef Unsorted
 
 #include <kconfig.h>
 #include <ksimpleconfig.h>
@@ -23,7 +28,6 @@
 
 #include "fonts.h"
 #include "fonts.moc"
-
 
 /**** DLL Interface ****/
 
