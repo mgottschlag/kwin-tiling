@@ -3,7 +3,7 @@
 AM_CPPFLAGS = -DQT_NO_CAST_ASCII
 
 INCLUDES  =  $(all_includes)
-LDFLAGS   = $(all_libraries)
+AM_LDFLAGS   = $(all_libraries)
 
 kde_module_LTLIBRARIES = libkshorturifilter.la
 
