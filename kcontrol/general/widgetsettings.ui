@@ -10,7 +10,7 @@
             <x>0</x>
             <y>0</y>
             <width>534</width>
-            <height>360</height>
+            <height>496</height>
         </rect>
     </property>
     <property name="caption">
@@ -299,13 +299,29 @@
                 <property name="geometry">
                     <rect>
                         <x>10</x>
-                        <y>20</y>
+                        <y>30</y>
                         <width>340</width>
                         <height>20</height>
                     </rect>
                 </property>
                 <property name="text">
                     <string>Sho&amp;w icons on buttons</string>
+                </property>
+            </widget>
+            <widget class="QCheckBox">
+                <property name="name">
+                    <cstring>cboxTearOffHandles</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>10</x>
+                        <y>60</y>
+			<width>680</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Show &amp;Tear-Off Handles in Pop-Up menus</string>
                 </property>
             </widget>
         </widget>

@@ -29,6 +29,7 @@ void  KWidgetSettingsModule::init()
 	connect(cbComboEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
 	connect(cbTooltipEffect, SIGNAL(highlighted(int)), SLOT(setDirty()));
 	connect(cboxIconSupport, SIGNAL(toggled(bool)), SLOT(setDirty()));
+	connect(cboxTearOffHandles, SIGNAL(toggles(bool)), SLOT(setDirty()));
 }
 
 void  KWidgetSettingsModule::setDirty()
@@ -47,6 +48,7 @@ void  KWidgetSettingsModule::defaults()
 	cbComboEffect->setCurrentItem(0);
 	cbTooltipEffect->setCurrentItem(0);
 	cboxIconSupport->setChecked(false);
+	cboxTearOffHandles->setChecked(true);
 }
 
 void  KWidgetSettingsModule::load()
@@ -95,8 +97,8 @@ void  KWidgetSettingsModule::load()
 	config.setGroup("KDE");
 	cboxIconSupport->setChecked(config.readBoolEntry("ShowIconsOnPushButtons", true));
 	cboxEnableTooltips->setChecked(!config.readBoolEntry("EffectNoTooltip", false));
-
-
+	cboxTearOffHandles->setChecked(config.readBoolEntry("InsertTearOffHandle",true));
+	
 }
 
 void  KWidgetSettingsModule::save()
@@ -137,7 +139,7 @@ void  KWidgetSettingsModule::save()
 	config->setGroup("Toolbar style");
 	config->writeEntry("Highlighting", cboxHoverButtons->isChecked(), true, true);
 	config->writeEntry("TransparentMoving", cboxToolbarsHighlight->isChecked(), true, true);
-
+	
 	QString tbIcon;
 
 	switch (cbToolbarIcons->currentItem()) {
@@ -162,7 +164,7 @@ void  KWidgetSettingsModule::save()
 	config->setGroup("KDE");
 	config->writeEntry("ShowIconsOnPushButtons", cboxIconSupport->isChecked(), true, true);
 	config->writeEntry("EffectNoTooltip", !cboxEnableTooltips->isChecked(), true, true);
-
+	config->writeEntry("InsertTearOffHandle", cboxTearOffHandles->isChecked(),true, true);
 
 	config->sync();
 
