@@ -1,0 +1,47 @@
+[Desktop Entry]
+Icon=mouse
+Type=Application
+Exec=kcmshell LookNFeel/Windows/mouse
+DocPath=kcontrol/kcmkwm/kwm-5.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=kwinmouse
+X-KDE-FactoryName=kwinmouse
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Mouse
+Name[ca]=Ratolí
+Name[cs]=Myš
+Name[de]=Maus
+Name[eo]=Muso
+Name[fi]=Hiiri
+Name[fr]=Souris
+Name[he]=רבכע
+Name[hu]=Egér
+Name[ja]=マウス
+Name[no]=Mus
+Name[no_NY]=Mus
+Name[pt]=Rato
+Name[sl]=Mi�ka
+Name[sv]=Mus
+Name[ta]=±Ä¢
+
+Comment=Configure mouse bindings
+Comment[ca]=Configuració del ratolí
+Comment[cs]=Nastavení funkcí myši
+Comment[de]=Konfiguration der Maustasten
+Comment[eo]=Agordaĵo de la musfunkcioj
+Comment[fi]=Hiiritoimintojen asetukset
+Comment[fr]=Configuration des boutons de la souris
+Comment[he]=רבכעה ינצחל יופימ תורדגה
+Comment[hu]=Egér kötések beállítása
+Comment[it]=Configura azioni del mouse
+Comment[ja]=マウスの設定
+Comment[no]=Konfigurasjon av muskoblinger
+Comment[no_NY]=Sett opp musebindingar
+Comment[pt]=Configuração do rato
+Comment[ro]=Configurează acţiunile mouse-ului
+Comment[sl]=Prikroji delovanje mi�ke
+Comment[sv]=Anpassning av musbindningar
+Comment[ta]=±Ä¢ À¢¨ÉôÒ¸Ç¢ý À¨¼ôÒ

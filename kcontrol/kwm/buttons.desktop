@@ -1,0 +1,46 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/Windows/buttons
+Icon=buttons
+Type=Application
+DocPath=kcontrol/kcmkwm/kwm-1.html
+
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Buttons
+Name[ca]=Botons
+Name[cs]=Dekorace oken
+Name[de]=Fensterknöpfe
+Name[eo]=Simboloj
+Name[fi]=Napit
+Name[fr]=Boutons
+Name[he]=םירותפכ
+Name[hu]=Gombok
+Name[it]=Pulsanti
+Name[ja]=ボタン
+Name[no]=Trykknapper
+Name[no_NY]=Knappar
+Name[pt]=Botões
+Name[ro]=Butoane
+Name[sl]=Gumbi
+Name[sv]=Knappar
+Name[ta]=¦À¡ò¾¡ý¸û
+
+Comment=Arrangement of window buttons
+Comment[ca]=Col·locació dels botons de finestra
+Comment[cs]=Uspořádání dekorací oken
+Comment[de]=Anordnung der Fensterknöpfe
+Comment[eo]=Ordo de la fenestro-simboloj
+Comment[fi]=Ikkunan nappien järjestys
+Comment[fr]=Emplacement des boutons des fenêtres
+Comment[he]=תונולחה ירותפכ רודיס
+Comment[hu]=Az ablak gombjainak elrendezése
+Comment[it]=Disposizione dei pulsanti delle finestre
+Comment[ja]=ウィンドウボタンの設定
+Comment[no]=Plassering av vindustrykknapper
+Comment[no_NY]=Oppsett av vindaugsknappane
+Comment[pt]=Colocação dos botões das janelas
+Comment[ro]=Configurează aranjarea butoanelor din bara de titlu
+Comment[sl]=Razporeditev okenskih gumbov
+Comment[sv]=Placering av fönsterknappar
+Comment[ta]=º¡ÇÃ ¦À¡ò¾¡ý¸Ç¢ý ÅÃ¢¨ºÂ¡ì¸õ

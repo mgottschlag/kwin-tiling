@@ -1,0 +1,46 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/Windows/advanced
+Icon=winprops
+Type=Application
+DocPath=kcontrol/kcmkwm/kwm-3.html
+
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Advanced
+Name[ca]=Avançat
+Name[cs]=Doplňková
+Name[de]=Erweitert
+Name[eo]=Pli
+Name[fi]=Lisäasetukset
+Name[fr]=Avancé
+Name[he]=םדקתמ
+Name[hu]=Haladóknak
+Name[it]=Avanzate
+Name[ja]=詳細
+Name[no]=Avansert
+Name[no_NY]=Avansert
+Name[pt]=Avançado
+Name[ro]=Avansat
+Name[sl]=Napredno
+Name[sv]=Avancerat
+Name[ta]=¯Â÷ó¾
+
+Comment=Advanced window properties
+Comment[ca]=Propietats avançades de les finestres
+Comment[cs]=Další nastavení vlastností oken
+Comment[de]=Erweiterte Fenstereigenschaften
+Comment[eo]=Pliaj ecoj de fenestroj
+Comment[fi]=Ikkunoiden lisäasetukset
+Comment[fr]=Propriétés avancées des fenêtres
+Comment[he]=תונולח לש תומדקתמ תורדגה
+Comment[hu]=Hozzáértést igénylő ablak beállítások
+Comment[it]=Proprietà avanzate delle finestre
+Comment[ja]=詳細なウィンドウの設定
+Comment[no]=Avanserte vinduegenskaper
+Comment[no_NY]=Avanserte vindaugseigenskapar
+Comment[pt]=Configuração de propriedades avançadas
+Comment[ro]=Configurează proprietăţi avansate ale ferestrelor
+Comment[sl]=Napredne lastnosti oken
+Comment[sv]=Avancerade fönsterinställningar
+Comment[ta]=¯Â÷ó¾ º¡ÇÃ ¦º¡òÐ¸û

@@ -1,0 +1,46 @@
+[Desktop Entry]
+Exec=kcmshell LookNFeel/Windows/titlebar
+Icon=titlebar
+Type=Application
+DocPath=kcontrol/kcmkwm/kwm-2.html
+
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Titlebar
+Name[ca]=Barra de títol
+Name[cs]=Titulek
+Name[de]=Titelleiste
+Name[eo]=Titollistelo
+Name[fi]=Otsikkorivi
+Name[fr]=Barre de titre
+Name[he]=תרתוכ תרוש
+Name[hu]=Címsor
+Name[it]=Barra del titolo
+Name[ja]=タイトルバー
+Name[no]=Tittellinjen
+Name[no_NY]=Tittellinje
+Name[pt]=Barra de título
+Name[ro]=Bara de titlu
+Name[sl]=Naslovna letev
+Name[sv]=Namnlist
+Name[ta]=¾¨ÄôÒôÀð¨¼
+
+Comment=Titlebar appearance
+Comment[ca]=Aparença del la barra de títol
+Comment[cs]=Nastavení vzhledu titulku okna
+Comment[de]=Erscheinungsbild der Titelleiste
+Comment[eo]=Aspekto de la titollistelo
+Comment[fi]=Otsikkorivin ulkonäkö
+Comment[fr]=Apparence de la barre de titre
+Comment[he]=תרתוכה תרוש הארמ
+Comment[hu]=Címsor megjelenése
+Comment[it]=Aspetto della barra del titolo
+Comment[ja]=タイトルバーの外見
+Comment[no]=Innstill tittellinjen
+Comment[no_NY]=Utsjånad for tittellinja
+Comment[pt]=Aparência da barra de título
+Comment[ro]=Configurează modul de afişare al titlului
+Comment[sl]=Izgled naslovne letve
+Comment[sv]=Namnlistens utseende
+Comment[ta]=¾¨ÄôÒôÀð¨¼Â¢ý §¾¡üÈõ

@@ -1,0 +1,48 @@
+[Desktop Entry]
+Icon=winprops
+Type=Application
+Exec=kcmshell LookNFeel/Windows/actions
+DocPath=kcontrol/kcmkwm/kwm-1.html
+
+X-KDE-ModuleType=Library
+X-KDE-LibraryName=kwinoptions
+X-KDE-FactoryName=kwinoptions
+X-KDE-ControlModuleType=User
+X-KDE-HideFromPanel=true
+
+Name=Actions
+Name[ca]=Accions
+Name[cs]=Akce
+Name[de]=Aktionen
+Name[eo]=Agoj
+Name[fi]=Toiminnot
+Name[he]=תולועפ
+Name[hu]=Események
+Name[it]=Azioni
+Name[ja]=動作
+Name[no]=Hendelser
+Name[no_NY]=Hendingar
+Name[pt]=Acções
+Name[ro]=Acţiuni
+Name[sl]=Dejanja
+Name[sv]=Operationer
+Name[ta]=¦ºÂø¸û
+
+Comment=Configure window manager actions
+Comment[ca]=Configuració de les accions del gestor de finestres
+Comment[cs]=Nastavení akcí správce oken
+Comment[de]=Fenstermanager einstellen
+Comment[eo]=Agordaĵo de fenestroadministrilaj agoj
+Comment[fi]=Aseta ikkunamanagerin toimintoja
+Comment[fr]=Configuration des actions du gestionnaire de fenêtres
+Comment[he]=תונולחה להנמ תולועפ תרדגה
+Comment[hu]=Ablakkezelő események beállítása
+Comment[it]=Configurazione azioni del window manager
+Comment[ja]=ウィンドウマネージャの動作の設定
+Comment[no]=Konfigurasjon hendelsene til vindubehandleren
+Comment[no_NY]=Set opp hendingar for vindaugshandsamaren
+Comment[pt]=Configuração de acções do gestor de janelas
+Comment[ro]=Configurează acţiunile managerului de ferestre
+Comment[sl]=Nastavitev dejanj okenskega upravljalnika
+Comment[sv]=Anpassa fönsterhanterarens operationer
+Comment[ta]=º¡ÇÃ §ÁÄ¡Ç÷ ¦ºÂø¸¨Ç ÅÊÅ¨Áì¸×õ
