@@ -48,6 +48,8 @@ QListViewItem *IndexWidget::firstTreeViewItem()
 {
   if (_tree)
     return _tree->firstChild();
+  else
+	return 0L;
 }
 
 
@@ -68,7 +70,7 @@ void IndexWidget::moduleSelected(ConfigModule *m)
 
   emit moduleActivated(m);
 
-  if (obj->inherits("ModuleIconView") && _tree)
+  if (obj->inherits("ModuleIconView") && _icon)
 	{
 	  _tree->makeVisible(m);
 
@@ -77,7 +79,7 @@ void IndexWidget::moduleSelected(ConfigModule *m)
 	  connect(_tree, SIGNAL(moduleSelected(ConfigModule*)),
 			  this, SLOT(moduleSelected(ConfigModule*)));
 	}
-  else if (obj->inherits("ModuleTreeView") && _icon)
+  else if (obj->inherits("ModuleTreeView") && _tree)
 	{
 	  _icon->makeVisible(m);
 
