@@ -25,35 +25,17 @@
 
 #include <qapplication.h>
 #include <qmenubar.h>
+#include <qlistview.h>
+#include <qsplitter.h>
+#include <qwidgetstack.h>
+
 #include <kapp.h>
 #include <ktoolbar.h>
-#include <qlistview.h>
 #include <kstatusbar.h>
-#include <qsplitter.h>
 #include <ktmainwindow.h>
 
 #include "mainwidget.h"
 #include "configlist.h"
-
-
-class MySplitter : public QSplitter
-{
-  Q_OBJECT
-
-public:
-
-  MySplitter(QWidget *parent) : QSplitter(parent) {};
-
-protected:
-
-  void resizeEvent(QResizeEvent *event);
-
-signals:
-
-  void resized();
-
-};
-
 
 class TopLevel : public KTMainWindow
 {
@@ -62,7 +44,6 @@ class TopLevel : public KTMainWindow
 public:
 
   TopLevel(ConfigList *cl);
-
 
 private:
 
@@ -74,28 +55,19 @@ protected:
   void setupMenuBar();
   void setupStatusBar();
 
-  virtual void resizeEvent(QResizeEvent *event);
-
 private:
 
   KMenuBar   *menubar;
   KToolBar   *toolbar;
   QListView  *treelist;
   KStatusBar *statusbar;
-  MySplitter *splitter;
+  QSplitter *splitter;
   ConfigList *configList;
-  mainWidget *mwidget;
+  QWidgetStack *widgetStack;
 
   const int ID_GENERAL;
 
-  KModuleListEntry *current;
-
-
   void updateMenu();
-
-private slots:
-
-  void doResize();
 
 public slots:
 
@@ -103,7 +75,7 @@ public slots:
 
   void itemSelected(QListViewItem*);
 
-  void ensureSize(int w, int h);
+  void aboutToShow(QWidget *);
 
 };
 

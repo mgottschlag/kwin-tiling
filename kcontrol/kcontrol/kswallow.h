@@ -42,14 +42,6 @@ public:
 
   void swallowWindow(Window w);
 
-  QSize getOrigSize() { return orig; };
-
-
-private:
-
-  Window  window;
-  QSize orig;
-
 };
 
 #endif

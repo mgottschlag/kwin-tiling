@@ -30,6 +30,7 @@ mainWidget::mainWidget(QWidget *parent , const char *name)
   heading->move(120,10);
 
   uname(&info);
+  setMinimumSize(450, 400);
 }
 
 
@@ -94,10 +95,3 @@ void mainWidget::paintEvent(QPaintEvent *)
 
 }
 
-
-void mainWidget::resizeEvent(QResizeEvent *event)
-{
-  QWidget::resizeEvent(event);
-
-  emit resized();
-}

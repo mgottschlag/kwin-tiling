@@ -29,13 +29,13 @@
 #include <qstring.h>
 #include <qtabdialog.h>
 #include <qlistview.h>
+#include <qwidgetstack.h>
 #include <qlist.h>
+
 #include <kprocess.h>
 #include <kwm.h>
-#include <qlistview.h>
 
 #include "kswallow.h"
-
 
 class KModuleListEntry : QObject
 {
@@ -60,12 +60,8 @@ public:
   bool    isDirectory()  { return (children != 0) && (children->count() > 0); };
   bool    isSwallow()    { return swallowingEnabled && swallow; };
 
-  bool    execute(QWidget *parent);
+  bool    execute(QWidgetStack *parent);
 
-  KSwallowWidget *getSwallowWidget() { return swallowWidget; };
-
-  static KSwallowWidget *visibleWidget;
-	
   static bool swallowingEnabled;
 
   void insertInit(QStrList *list);
@@ -87,8 +83,7 @@ private:
   bool swallow;
 
   KProcess       *process;
-  KSwallowWidget *swallowWidget;
-  QWidget        *swallowParent;
+  QWidgetStack   *widgetStack;
 
   void parseKdelnkFile(const QString &fn);
 
@@ -97,10 +92,6 @@ private slots:
   void processExit(KProcess *proc);
 
   void addWindow(Window w);
-
-signals:
-
-  void ensureSize(int w, int h);
 
 };
 
@@ -133,8 +124,6 @@ public:
   void fillTreeList(QListView *list);
 
   void doInit();
-
-  void raiseWidget(KSwallowWidget *widget);
 
 private:
 

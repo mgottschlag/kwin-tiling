@@ -49,9 +49,7 @@ static QListView* listview = 0;
 // class KModuleList
 
 
-KSwallowWidget *KModuleListEntry::visibleWidget = 0;
 bool KModuleListEntry::swallowingEnabled = TRUE;
-
 
 KModuleListEntry::KModuleListEntry(const QString& filen_)
 {
@@ -60,9 +58,8 @@ KModuleListEntry::KModuleListEntry(const QString& filen_)
 
   children = 0;
   process = 0;
-  swallowWidget = 0;
-  swallowParent = 0;
   swallow = true;
+  widgetStack = 0;
 
   if (!info.isReadable())
     return;
@@ -151,14 +148,14 @@ QPixmap KModuleListEntry::getIcon()
 }
 
 
-bool KModuleListEntry::execute(QWidget *parent)
+bool KModuleListEntry::execute(QWidgetStack *parent)
 {
   if (exec.isEmpty())
     return FALSE;
   if (isDirectory())
     return FALSE;
 
-  swallowParent = parent;
+  widgetStack = parent;
 
   if (!process)
     {
@@ -234,35 +231,16 @@ bool KModuleListEntry::execute(QWidget *parent)
       if (!par.isEmpty())
         *process << par;
 
-      QObject::connect(process, SIGNAL(processExited(KProcess *)), this, SLOT(processExit(KProcess *)));
+      QObject::connect(process, SIGNAL(processExited(KProcess *)), 
+		       this, SLOT(processExit(KProcess *)));
 
       // start process
       process->start();
     }
-  else
-    if (swallowWidget)
-      {
-	if (visibleWidget && visibleWidget != swallowWidget)
-	  visibleWidget->hide();
-
-        // let the toplevel widget resize if necessary
-        connect(this, SIGNAL(ensureSize(int,int)),
-          qApp->mainWidget(), SLOT(ensureSize(int,int)));
-        emit ensureSize(swallowWidget->getOrigSize().width(),
-          swallowWidget->getOrigSize().height());
-        disconnect(this, SIGNAL(ensureSize(int,int)),
-          qApp->mainWidget(), SLOT(ensureSize(int,int)));
-
-        swallowWidget->resize(swallowParent->width(), swallowParent->height());
-
-	swallowParent->setMinimumSize(swallowWidget->minimumSize());
-
-	swallowWidget->raise();
-	swallowWidget->show();
-
-
-	KModuleListEntry::visibleWidget = swallowWidget;
-      }
+  else 
+    {
+      widgetStack->raiseWidget((int)process->getPid());
+    }
 
   return TRUE;
 }
@@ -272,17 +250,16 @@ void KModuleListEntry::processExit(KProcess *proc)
 {
   if (proc == process)
     {
+      QWidget* swallow = widgetStack->widget((int)process->getPid());
+      if(swallow != NULL) {
+	widgetStack->removeWidget(swallow);
+	delete swallow;
+      }
+      
       delete process;
       process = 0;
-
-      if (visibleWidget && visibleWidget == swallowWidget){
-	  if (listview)
-	      listview->setFocus();
-	  visibleWidget = 0;
-      }
-
-      delete swallowWidget;
-      swallowWidget = 0;
+    
+      widgetStack->raiseWidget(1);
     }
 }
 
@@ -292,26 +269,14 @@ void KModuleListEntry::addWindow(Window w)
 
    if (getSwallowTitle() == KWM::title(w))
     {
-      if (!swallowWidget)
-	{
-	  swallowWidget = new KSwallowWidget(swallowParent);
-
-	  if (visibleWidget && visibleWidget != swallowWidget)
-	    visibleWidget->hide();
-	  visibleWidget = swallowWidget;
-	}
-
-      QApplication::restoreOverrideCursor();
+      KSwallowWidget* swallowWidget = new KSwallowWidget(widgetStack);
       swallowWidget->swallowWindow(w);
+      
+      QApplication::restoreOverrideCursor();
 
-      // let the toplevel widget resize if necessary
-      connect(this, SIGNAL(ensureSize(int,int)),
-        qApp->mainWidget(), SLOT(ensureSize(int,int)));
-      emit ensureSize(swallowWidget->width(), swallowWidget->height());
-      disconnect(this, SIGNAL(ensureSize(int,int)),
-        qApp->mainWidget(), SLOT(ensureSize(int,int)));
-
-      swallowWidget->resize(swallowParent->size());
+      widgetStack->addWidget(swallowWidget, (int)process->getPid());
+      widgetStack->raiseWidget((int)process->getPid());
+      
       // disconnect from KWM events
       disconnect(kapp, SIGNAL(windowAdd(Window)), this, SLOT(addWindow(Window)));
     }

@@ -34,11 +34,6 @@ class mainWidget : public QWidget
 protected:   
 
   virtual void paintEvent(QPaintEvent *);	  
-  virtual void resizeEvent(QResizeEvent *);
-    
-signals:
-    
-  void resized();
     
 };
 

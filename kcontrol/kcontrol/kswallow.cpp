@@ -29,32 +29,11 @@
 KSwallowWidget::KSwallowWidget(QWidget *parent, const char *name)
   : QXEmbed(parent, name)
 {
-  window = 0;
   setFocusPolicy(StrongFocus);
-  setMinimumSize(480,480);
 }
-
-
 
 void KSwallowWidget::swallowWindow(Window w)
 {
-  window = w;
-
-  // let the swallowd window set the size
-  int x, y;
-  unsigned int width, height, dummy;
-  Window root;
-
-  XGetGeometry(qt_xdisplay(), window, &root, &x, &y, &width, &height, &dummy, &dummy);
-  if ((int)width < parentWidget()->width())
-    width = parentWidget()->width();
-  if ((int)height < parentWidget()->height())
-    height = parentWidget()->height();
-  parentWidget()->resize(width,height);
-  resize(width,height);
-
-  orig = QSize(width,height);
-
   // Define minimum size for the widged 
   // from the hints provided by window 
   XSizeHints hints;
@@ -64,7 +43,9 @@ void KSwallowWidget::swallowWindow(Window w)
     setMinimumSize(hints.min_width, hints.min_height);
     parentWidget()->setMinimumSize(hints.min_width, hints.min_height); 
   }
-  
+
+  setMinimumSize(hints.min_width, hints.min_height);
+
   QXEmbed::embed( w );
   show();
 }

@@ -33,25 +33,15 @@
 
 #include "toplevel.moc"
 
-void MySplitter::resizeEvent(QResizeEvent *event)
-{
-  QSplitter::resizeEvent(event);
-
-  emit resized();
-}
-
-
 TopLevel::TopLevel (ConfigList *cl)
   : KTMainWindow(), ID_GENERAL(1)
 {
   configList = cl;
-  current = 0;
 
   setupMenuBar();
   setupStatusBar();
 
-  splitter = new MySplitter(this);
-  connect(splitter, SIGNAL(resized()), this, SLOT(doResize()));
+  splitter = new QSplitter(this);
 
   treelist = new QListView(splitter);
   treelist->setFrameStyle( QFrame::WinPanel | QFrame::Sunken );
@@ -60,24 +50,28 @@ TopLevel::TopLevel (ConfigList *cl)
   treelist->header()->hide();
   configList->fillTreeList(treelist);
   treelist->setMinimumSize(200, 400);
-  splitter->setResizeMode(treelist,QSplitter::KeepSize);
+  splitter->setResizeMode(treelist, QSplitter::KeepSize);
 
-  mwidget = new mainWidget(splitter);
-  mwidget->setMinimumSize(450, 400);
+  widgetStack = new QWidgetStack(splitter);
+  widgetStack->addWidget(new mainWidget(widgetStack), 1);
+  widgetStack->raiseWidget(1);
+  widgetStack->setMinimumSize(widgetStack->visibleWidget()->minimumSize());
 
-  connect(mwidget, SIGNAL(resized()), this, SLOT(doResize()));
-
-  connect(treelist, SIGNAL(selectionChanged(QListViewItem*)), this, SLOT(itemSelected(QListViewItem*)));
-  connect(treelist, SIGNAL(returnPressed(QListViewItem*)), this, SLOT(itemSelected(QListViewItem*)));
-
+  connect(treelist, SIGNAL(selectionChanged(QListViewItem*)), 
+	  this, SLOT(itemSelected(QListViewItem*)));
+  connect(treelist, SIGNAL(returnPressed(QListViewItem*)), 
+	  this, SLOT(itemSelected(QListViewItem*)));
+  connect(widgetStack, SIGNAL(aboutToShow(QWidget*)), 
+	  this, SLOT(aboutToShow(QWidget*)));
+  
   setView(splitter);
-
+  
   show();
-  resizeEvent(NULL);
 
   KConfig *config = kapp->config();
   config->setGroup("Options");
-  KModuleListEntry::swallowingEnabled = config->readNumEntry("SwallowEnabled", TRUE);
+  KModuleListEntry::swallowingEnabled = 
+    config->readNumEntry("SwallowEnabled", TRUE);
   options->setItemChecked(swallowID, KModuleListEntry::swallowingEnabled);
 }
 
@@ -123,30 +117,15 @@ void TopLevel::setupStatusBar()
 }
 
 
-void TopLevel::resizeEvent(QResizeEvent *)
-{
-  updateRects();
-
-  doResize();
-}
-
-
-void TopLevel::doResize()
-{
-  if (KModuleListEntry::visibleWidget)
-    KModuleListEntry::visibleWidget->resize(mwidget->width(), mwidget->height());
-}
-
-
 void TopLevel::itemSelected( QListViewItem *listEntry)
 {
     if (!listEntry)
 	return;
+    
     ConfigTreeItem* cti = (ConfigTreeItem*)listEntry;
-    cti->moduleListEntry->execute(mwidget);
+    cti->moduleListEntry->execute(widgetStack);
+    statusbar->changeItem(cti->moduleListEntry->getComment(), ID_GENERAL);
 }
-
-
 
 
 void TopLevel::swallowChanged()
@@ -163,28 +142,7 @@ void TopLevel::swallowChanged()
 }
 
 
-void TopLevel::ensureSize(int w, int h)
+void TopLevel::aboutToShow(QWidget *widget)
 {
-  int width=w, height=h;
-
-  if (w < mwidget->width())
-    width = mwidget->width();
-  if (h < mwidget->height())
-    height = mwidget->height();
-
-  width += treelist->width() + 6; // 6 ~= width of QSplitter slider
-  // Markus W. : If we are in macStyle we dont need to add the height of
-  // the menubar
-  KConfig* config = kapp->config();
-  config->setGroup("KDE");
-  if (config->readEntry("macStyle") == "on")
-     height += statusbar->height();
-  else
-    height += menubar->height()+statusbar->height();
-  if (width < this->width())
-    width = this->width();
-  if (height < this->height())
-    height = this->height();
-
-  resize(width, height);
+  widgetStack->setMinimumSize(widget->minimumSize());
 }
