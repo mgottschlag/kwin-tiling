@@ -3,8 +3,10 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/vmmeter.h>
+
 #include <vm/vm_param.h>
-#include <stdlib.h>	// For atoi()
+
+#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -12,7 +14,8 @@ void KMemoryWidget::update()
 {
     char blah[10], buf[80], *used_str, *total_str;
     /* Stuff for sysctl */
-    int memory;size_t len;
+    int memory;
+    size_t len;
     /* Stuff for swap display */
     int used, total, _free;
     FILE *pipe;
@@ -22,18 +25,23 @@ void KMemoryWidget::update()
   
     snprintf(blah, 10, "%d", memory);
     // Numerical values
-    Memory_Info[TOTAL_MEM]    = MEMORY(memory); // total physical memory (without swaps)
-    /*	To: questions@freebsd.org
-	Anyone have any ideas on how to calculate this */
-    
+
+    // total physical memory (without swap space)
+    Memory_Info[TOTAL_MEM] = MEMORY(memory);
+
     // added by Brad Hughes bhughes@trolltech.com
     struct vmtotal vmem;
     
-#warning "FIXME: Memory_Info[CACHED_MEM]"
+    #warning "FIXME: Memory_Info[CACHED_MEM]"
     Memory_Info[CACHED_MEM] = NO_MEMORY_INFO;
-    
+
+    // The sysctls don't work in a nice manner under FreeBSD v2.2.x
+    // so we assume that if sysctlbyname doesn't return what we
+    // prefer, assume it's the old data types.   FreeBSD prior
+    // to 4.0-R isn't supported by the rest of KDE, so what is
+    // this code doing here.
+
     len = sizeof(vmem);
-    
     if (sysctlbyname("vm.vmmeter", &vmem, &len, NULL, 0) == 0) 
 	Memory_Info[SHARED_MEM]   = MEMORY((vmem.t_armshr * PAGE_SIZE));
     else 
@@ -42,18 +50,19 @@ void KMemoryWidget::update()
     int buffers;
     len = sizeof (buffers);
     if ((sysctlbyname("vfs.bufspace", &buffers, &len, NULL, 0) == -1) || !len)
-	Memory_Info[BUFFER_MEM]   = NO_MEMORY_INFO;  // Doesn't work under FreeBSD v2.2.x
+	Memory_Info[BUFFER_MEM]   = NO_MEMORY_INFO;
     else
 	Memory_Info[BUFFER_MEM]   = MEMORY(buffers);
 
+    // total free physical memory (without swap space)
     int free;
     len = sizeof (buffers);
     if ((sysctlbyname("vm.stats.vm.v_free_count", &free, &len, NULL, 0) == -1) || !len)
-	Memory_Info[FREE_MEM]     = NO_MEMORY_INFO;	// Doesn't work under FreeBSD v2.2.x
+	Memory_Info[FREE_MEM]     = NO_MEMORY_INFO;
     else
-	Memory_Info[FREE_MEM]     = MEMORY(free*getpagesize());// total free physical memory (without swaps)
+	Memory_Info[FREE_MEM]     = MEMORY(free*getpagesize());
 
-    /* Q&D hack for swap display. Borrowed from xsysinfo-1.4 */
+    // Q&D hack for swap display. Borrowed from xsysinfo-1.4
     if ((pipe = popen("/usr/sbin/pstat -ks", "r")) == NULL) {
 	used = total = 1;
 	return;
@@ -72,6 +81,10 @@ void KMemoryWidget::update()
     total = atoi(total_str);
 
     _free=total-used;
-    Memory_Info[SWAP_MEM]     = MEMORY(1024*total); // total size of all swap-partitions
-    Memory_Info[FREESWAP_MEM] = MEMORY(1024*_free); // free memory in swap-partitions
+
+    // total size of all swap-partitions
+    Memory_Info[SWAP_MEM] = MEMORY(1024*total);
+
+    // free memory in swap-partitions
+    Memory_Info[FREESWAP_MEM] = MEMORY(1024*_free);
 }
