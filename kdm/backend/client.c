@@ -133,7 +133,7 @@ static char krbtkfile[MAXPATHLEN];
 
 #ifdef USE_PAM
 
-# ifdef sun
+# if defined(sun) || defined(AIXV3)
 typedef struct pam_message pam_message_type;
 typedef void ** pam_gi_type;
 # else
@@ -1146,6 +1146,8 @@ StartClient ()
 # endif
 #endif
 
+    /* Memory leaks are ok here as we exec() soon. */
+
 #if defined(USE_PAM) || !defined(AIXV3)
 
 # ifndef HAS_SETUSERCONTEXT
@@ -1153,6 +1155,12 @@ StartClient ()
 	    exit (1);
 # endif
 # ifdef USE_PAM
+#  ifdef AIXV3
+	if (!(environ = initStrArr (0))) {
+	    LogOutOfMem("StartSession");
+	    exit (1);
+	}
+#  endif
 	if ((pretc = pam_setcred (pamh, 0)) != PAM_SUCCESS) {
 	    ReInitErrorLog ();
 	    LogError ("pam_setcred() for %s failed: %s\n",
@@ -1160,10 +1168,12 @@ StartClient ()
 	    exit (1);
 	}
 	/* pass in environment variables set by libpam and modules it called */
-#ifndef _AIX
+#  ifdef AIXV3
+	pam_env = environ;
+#  else
 	pam_env = pam_getenvlist(pamh);
-#endif
 	ReInitErrorLog ();
+#  endif
 	if (pam_env)
 	    for(; *pam_env; pam_env++)
 		userEnviron = putEnv(*pam_env, userEnviron);
@@ -1217,31 +1227,16 @@ StartClient ()
 	}
 
 	/*
-	 * Make a copy of the environment, because setpenv will trash it.
-	 */
-	if (!(theenv = xCopyStrArr (0, userEnviron)))
-	{
-	    LogOutOfMem("StartSession");
-	    exit (1);
-	}
-
-	/*
 	 * Set the users process environment. Store protected variables and
 	 * obtain updated user environment list. This call will initialize
 	 * global 'newenv'. 
 	 */
 	if (setpenv(curuser, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
-		    theenv, NULL) != 0)
+		    userEnviron, NULL) != 0)
 	{
 	    LogError("Can't set %s's process environment\n", curuser);
 	    exit (1);
 	}
-
-	/*
-	 * Free old userEnviron and replace with newenv from setpenv().
-	 */
-	free(theenv);
-	freeStrArr(userEnviron);
 	userEnviron = newenv;
 
 #endif /* AIXV3 */
