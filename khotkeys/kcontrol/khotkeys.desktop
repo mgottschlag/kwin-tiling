@@ -10,9 +10,8 @@ Name=KHotKeys
 Name[pt_BR]=Teclas de atalho
 Name[sv]=Khotkeys
 
-Comment=
-
 Keywords=Keys,Global key bindings,Key sheme,Key bindings
+Keywords[ca]=Tecles,lligams de tecles globals,Esquema de tecla,Lligams de tecles
 Keywords[da]=Taster,Globale tastebindinger,Tasteskema,Tastebindinger
 Keywords[hu]=billentyűk,globális billentyűhozzárendelés,billentyűkiosztás,billentyűparancsok
 Keywords[pt_BR]=Teclas,Teclas de atalho globais,esquema de teclado,teclas de atalho
