@@ -88,7 +88,7 @@ KPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
 
   // calculate path
   QString path = menuPath(groups);
-  //kdDebug() << "Path " << path << endl;
+  //kdDebug(1208) << "Path " << path << endl;
 
   // look if menu already exists
   if (_menuDict[path])
@@ -127,7 +127,7 @@ KPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
 
 void ModuleMenu::moduleSelected(int id)
 {
-  kdDebug() << "Item " << id << " selected" << endl;
+  kdDebug(1208) << "Item " << id << " selected" << endl;
   ConfigModule *module = _moduleDict[id];
   if (module)
     emit moduleActivated(module);

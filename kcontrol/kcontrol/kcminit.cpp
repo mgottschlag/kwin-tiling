@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
 	  if (init)
 	    {
 	      // initialize the module
-	      kdDebug() << "Initializing " << libName << ": " << factory << endl;
+	      kdDebug(1208) << "Initializing " << libName << ": " << factory << endl;
 
 	      void (*func)() = (void(*)())init;
 	      func();

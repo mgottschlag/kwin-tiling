@@ -87,7 +87,7 @@ QString KCGlobal::baseGroup()
     if (group)
     {
       _baseGroup = group->relPath();
-      kdDebug() << "Found basegroup = " << _baseGroup << endl;
+      kdDebug(1208) << "Found basegroup = " << _baseGroup << endl;
       return _baseGroup;
     }
     // Compatibility with old behaviour, in case of missing .directory files.

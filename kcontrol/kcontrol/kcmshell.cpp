@@ -59,7 +59,7 @@ static QString locateModule(const QCString module)
     //QStringList files;
     if (module[0] == '/')
     {
-        kdDebug() << "Full path given to kcmshell - not supported yet" << endl;
+        kdDebug(1208) << "Full path given to kcmshell - not supported yet" << endl;
         // (because of KService::findServiceByDesktopPath)
         //files.append(args->arg(0));
     }

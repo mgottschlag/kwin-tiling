@@ -180,7 +180,7 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
 
   // calculate path
   QString path = menuPath(groups);
-  //kdDebug() << "Path " << path << endl;
+  //kdDebug(1208) << "Path " << path << endl;
 
   // look if menu already exists
   if (_menuDict[path])

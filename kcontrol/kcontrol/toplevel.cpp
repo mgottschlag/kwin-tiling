@@ -389,7 +389,7 @@ void TopLevel::showModule(QString desktopFile)
 
 void TopLevel::activateModule(const QString& name)
 {
-  kdDebug() << "activate: " << name << endl;
+  kdDebug(1208) << "activate: " << name << endl;
   for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
         {
           if (mod->fileName() == name)

@@ -86,7 +86,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* cate
     // load images
     if( !_part1 )
     {
-      kdDebug() << "AboutWidget: pixmaps were not initialized! Please call initPixmaps() before the constructor and freePixmaps() after deleting the last instance!" << endl;
+      kdDebug(1208) << "AboutWidget: pixmaps were not initialized! Please call initPixmaps() before the constructor and freePixmaps() after deleting the last instance!" << endl;
       _part1 = new QPixmap;
       _part2 = new QPixmap;
       _part3 = new QPixmap;

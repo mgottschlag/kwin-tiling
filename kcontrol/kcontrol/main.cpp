@@ -44,6 +44,7 @@
 #include "main.moc"
 #include "toplevel.h"
 #include "global.h"
+#include "moduleIface.h"
 
 KControlApp::KControlApp()
   : KUniqueApplication()
@@ -52,6 +53,11 @@ KControlApp::KControlApp()
   toplevel = new TopLevel();
 
   setMainWidget(toplevel);
+
+  // KUniqueApplication does dcop regitration for us
+  ModuleIface *modIface = new ModuleIface(toplevel, "moduleIface");
+
+  connect (modIface, SIGNAL(helpClicked()), toplevel, SLOT(slotHelpRequest()));
 
   KConfig *config = KGlobal::config();
   config->setGroup("General");
@@ -82,6 +88,7 @@ int main(int argc, char *argv[])
     I18N_NOOP("(c) 1998-2000, The KDE Control Center Developers"));
   aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
   aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
+  aboutData.addAuthor("Daniel Molkentin", I18N_NOOP("Current Maintainer"), "molkentin@kde.org");
 
   KCmdLineArgs::init( argc, argv, &aboutData );
   KUniqueApplication::addCmdLineOptions();
@@ -89,7 +96,7 @@ int main(int argc, char *argv[])
   KCGlobal::init();
 
   if (!KControlApp::start()) {
-	kdDebug() << "kcontrol is already running!\n" << endl;
+	kdDebug(1208) << "kcontrol is already running!\n" << endl;
 	return (0);
   }
 

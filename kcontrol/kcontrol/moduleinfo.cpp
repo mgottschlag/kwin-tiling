@@ -36,7 +36,7 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 {
   _allLoaded = false;
 
-  //kdDebug() << "desktopFile = " << desktopFile << endl;
+  //kdDebug(1208) << "desktopFile = " << desktopFile << endl;
   _service = KService::serviceByDesktopPath(desktopFile);
   assert(_service != 0L);
 
