@@ -47,6 +47,11 @@ KeyModule::KeyModule(QWidget *parent, const char *name)
   standard = new KKeyModule(this, false);
   tab->addTab(standard, i18n("&Application shortcuts"));
   connect(standard, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
+  
+  connect(standard, SIGNAL(keysChanged( const KKeyEntryMap* )),
+      global, SLOT( updateKeys( const KKeyEntryMap* )));
+  connect(global, SIGNAL(keysChanged( const KKeyEntryMap* )),
+      standard, SLOT( updateKeys( const KKeyEntryMap* )));
 }
 
 

@@ -17,13 +17,15 @@
 #include <qdict.h>
 #include "savescm.h"
 
+class KeyChooserSpec;
+
 class KKeyModule : public KCModule
 {
 	Q_OBJECT
 public:
 	KAccel *keys;
         KKeyEntryMap dict;
-        KKeyChooser *kc;
+        KeyChooserSpec *kc;
 
 	KKeyModule( QWidget *parent, bool isGlobal, const char *name = 0 );
 	~KKeyModule ();
@@ -39,12 +41,14 @@ public slots:
 	void slotSave();
 	void slotRemove();
 	void slotChanged();
+        void updateKeys( const KKeyEntryMap* map_P );
 
+signals:
+        void keysChanged( const KKeyEntryMap* map_P );
 
 protected:
 	QListBox *sList;
 	QStringList *sFileList;
-	QDict<int> *globalDict;
 	QPushButton *addBt;
 	QPushButton *removeBt;
 	int nSysSchemes;
@@ -57,14 +61,17 @@ protected:
         QString KeySet ;
 
 };
+
+class KeyChooserSpec : public KKeyChooser
+{
+        Q_OBJECT
+public:
+        KeyChooserSpec( KKeyEntryMap *aKeyDict, QWidget* parent,
+                 bool global );
+        void updateKeys( const KKeyEntryMap* map_P );
+protected:
+        bool global;
+};
+
 #endif
-
-
-
-
-
-
-
-
-
 

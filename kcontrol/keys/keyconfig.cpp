@@ -40,12 +40,8 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   : KCModule( parent, name )
 {
   QString wtstr;
-  bool check_against_std_keys  = false ;
 
   KeyType = isGlobal ? "global" : "standard";
-
-  globalDict = new QDict<int> ( 37, false );
-  globalDict->setAutoDelete( true );
 
   keys = new KAccel( this );
 
@@ -57,7 +53,6 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
 #include "../../kxkb/kxkbbindings.cpp"
     KeyScheme = "Global Key Scheme " ;
     KeySet    = "Global Keys" ;
-    check_against_std_keys  = true ;
   }
 
   if ( KeyType == "standard" ) {
@@ -71,7 +66,6 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
 
     KeyScheme = "Standard Key Scheme " ;
     KeySet    = "Keys" ;
-    check_against_std_keys  = false ;
   }
 
   keys->setConfigGlobal( true );
@@ -118,7 +112,7 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
 
   //kdDebug() << "got key dict" << endl;
 
-  kc =  new KKeyChooser( &dict, this, check_against_std_keys );
+  kc =  new KeyChooserSpec( &dict, this, isGlobal );
   connect( kc, SIGNAL( keyChange() ), this, SLOT( slotChanged() ) );
 
   readScheme();
@@ -205,6 +199,7 @@ void KKeyModule::slotRemove()
 void KKeyModule::slotChanged( )
 {
   emit changed(true);
+  emit keysChanged( &dict );
 }
 
 void KKeyModule::slotSave( )
@@ -240,24 +235,30 @@ void KKeyModule::readScheme( int index )
     tmpMap = config->entryMap(KeyScheme);
   QMap<QString, QString>::Iterator gIt(tmpMap.begin());
 
+  QDict< int >* newDict = new QDict<int> ( 37, false );
+  newDict->setAutoDelete( true );
+
   int *keyCode;
 
   for (; gIt != tmpMap.end(); ++gIt) {
+    if( gIt.key() == "SchemeName" )
+        continue;
     keyCode = new int;
     *keyCode = KAccel::stringToKey( *gIt );
-    globalDict->insert( gIt.key(), keyCode);
+    newDict->insert( gIt.key(), keyCode);
     //kdDebug() << gIt->currentKey() << ", " << *keyCode << endl;
   }
 
   for (KKeyEntryMap::Iterator it = dict.begin(); it != dict.end(); ++it) {
-      if ( globalDict->find( it.key() ) ) {
-      (*it).aConfigKeyCode = *globalDict->find( it.key() );
+      if ( newDict->find( it.key() ) ) {
+      (*it).aConfigKeyCode = *newDict->find( it.key() );
       (*it).aCurrentKeyCode = (*it).aConfigKeyCode;
       // kdDebug() << "Change: " << kc->aIt->currentKey() << endl;
     }
   }
 
   kc->listSync();
+  delete newDict;
 }
 
 void KKeyModule::slotAdd()
@@ -416,3 +417,43 @@ void KKeyModule::readSchemeNames( )
   }
 
 }
+
+void KKeyModule::updateKeys( const KKeyEntryMap* map_P )
+    {
+    kc->updateKeys( map_P );
+    }
+
+KeyChooserSpec::KeyChooserSpec( KKeyEntryMap *aKeyDict, QWidget* parent, bool global_P )
+    : KKeyChooser( aKeyDict, parent, global_P ), global( global_P )
+    {
+    if( global )
+        globalDict()->clear(); // don't check against global keys twice
+    }
+    
+void KeyChooserSpec::updateKeys( const KKeyEntryMap* map_P )
+    {
+    if( global )
+        {
+        stdDict()->clear();
+        for( KKeyEntryMap::ConstIterator gIt( map_P->begin());
+             gIt != map_P->end();
+             ++gIt )
+            {
+            int* keyCode = new int;
+            *keyCode = ( *gIt ).aConfigKeyCode;
+            stdDict()->insert( gIt.key(), keyCode);
+            }
+        }
+    else
+        {
+        globalDict()->clear();
+        for( KKeyEntryMap::ConstIterator gIt( map_P->begin());
+             gIt != map_P->end();
+             ++gIt )
+            {
+            int* keyCode = new int;
+            *keyCode = ( *gIt ).aConfigKeyCode;
+            globalDict()->insert( gIt.key(), keyCode);
+            }
+        }
+    }
