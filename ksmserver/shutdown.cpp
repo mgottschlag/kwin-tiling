@@ -93,100 +93,61 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     label->setFont( fnt );
     vbox->addWidget( label, 0, AlignHCenter );
 
-    if (maysd)
-    {
-        QHBoxLayout* hbox = new QHBoxLayout( vbox, 2 * KDialog::spacingHint() );
+    QHBoxLayout* hbox = new QHBoxLayout( vbox, 2 * KDialog::spacingHint() );
 
-        // konqy
-        QFrame* lfrm = new QFrame( frame );
-        lfrm->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-        lfrm->setPaletteBackgroundColor( lfrm->colorGroup().midlight() );
-        hbox->addWidget( lfrm, AlignCenter );
-        QVBoxLayout* iconlay = new QVBoxLayout(
-            lfrm, KDialog::marginHint(), KDialog::spacingHint() );
-        QLabel* icon = new QLabel( lfrm );
-        icon->setPixmap( UserIcon( "shutdownkonq" ) );
-        iconlay->addWidget( icon );
+    // konqy
+    QFrame* lfrm = new QFrame( frame );
+    lfrm->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    lfrm->setPaletteBackgroundColor( lfrm->colorGroup().midlight() );
+    hbox->addWidget( lfrm, AlignCenter );
+    QVBoxLayout* iconlay = new QVBoxLayout(
+        lfrm, KDialog::marginHint(), KDialog::spacingHint() );
+    QLabel* icon = new QLabel( lfrm );
+    icon->setPixmap( UserIcon( "shutdownkonq" ) );
+    iconlay->addWidget( icon );
 
-        // right column (buttons)
-        QVBoxLayout* buttonlay = new QVBoxLayout( hbox, 2 * KDialog::spacingHint() );
-        buttonlay->setAlignment( Qt::AlignHCenter );
+    // right column (buttons)
+    QVBoxLayout* buttonlay = new QVBoxLayout( hbox, 2 * KDialog::spacingHint() );
+    buttonlay->setAlignment( Qt::AlignHCenter );
 
-        QSpacerItem* item1 = new QSpacerItem(
-            0, KDialog::marginHint(), QSizePolicy::MinimumExpanding );
-        buttonlay->addItem( item1 );
+    buttonlay->addStretch( 1 );
 
-        // End session
-        KPushButton* btnLogout = new KPushButton( KGuiItem( i18n("&End Current Session"), "undo"), frame );
-        QFont btnFont = btnLogout->font();
-        buttonlay->addWidget( btnLogout );
+    // End session
+    KPushButton* btnLogout = new KPushButton( KGuiItem( i18n("&End Current Session"), "undo"), frame );
+    QFont btnFont = btnLogout->font();
+    buttonlay->addWidget( btnLogout );
+    connect(btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
+
+    if (maysd) {
 
         // Shutdown
         KPushButton* btnHalt = new KPushButton( KGuiItem( i18n("&Turn Off Computer"), "exit"), frame );
         btnHalt->setFont( btnFont );
         buttonlay->addWidget( btnHalt );
+        connect(btnHalt, SIGNAL(clicked()), SLOT(slotHalt()));
+        if ( sdtype == KApplication::ShutdownTypeHalt )
+            btnHalt->setFocus();
 
         // Reboot
         KPushButton* btnReboot = new KPushButton( KGuiItem( i18n("&Restart Computer"), "reload"), frame );
         btnReboot->setFont( btnFont );
         buttonlay->addWidget( btnReboot );
-
-        // Separator
-        QSpacerItem* item2 = new QSpacerItem( 0, KDialog::spacingHint(), QSizePolicy::MinimumExpanding );
-        buttonlay->addItem( item2 );
-        KSeparator* sep = new KSeparator( frame );
-        buttonlay->addWidget( sep );
-
-        // Back to Desktop
-        KPushButton* btnBack = new KPushButton( KStdGuiItem::cancel(), frame );
-        buttonlay->addWidget( btnBack );
-
-        QObject::connect(btnLogout, SIGNAL(clicked()),
-                         this, SLOT(slotLogout()));
-        QObject::connect(btnHalt, SIGNAL(clicked()),
-                         this, SLOT(slotHalt()));
-        QObject::connect(btnReboot, SIGNAL(clicked()),
-                         this, SLOT(slotReboot()));
-        QObject::connect(btnBack, SIGNAL(clicked()),
-                         this, SLOT(reject()));
-
-        if ( sdtype == KApplication::ShutdownTypeHalt )
-            btnHalt->setFocus();
-        else if ( sdtype == KApplication::ShutdownTypeReboot )
+        connect(btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
+        if ( sdtype == KApplication::ShutdownTypeReboot )
             btnReboot->setFocus();
-        else
-            btnLogout->setFocus();
 
- #if 0
-        mgrp = new QVButtonGroup( i18n("Shutdown Mode"), frame );
-        rSched = new QRadioButton( i18n("Sch&edule"), mgrp );
-        if (maynuke)
-            rForce = new QRadioButton( i18n("&Force now"), mgrp );
-        rTry = new QRadioButton( i18n("&Try now"), mgrp );
-        hbox->addWidget( mgrp, AlignTop );
- #endif
     }
 
-    vbox->addStretch();
+    buttonlay->addStretch( 1 );
 
-    if ( !maysd ) {
-        QHBoxLayout* hbox = new QHBoxLayout( vbox );
-        hbox->addStretch();
+    // Separator
+    buttonlay->addWidget( new KSeparator( frame ) );
 
-        // logout
-        KPushButton* btnLogout = new KPushButton( i18n("&Logout"), frame );
-        btnLogout->setIconSet( QIconSet( SmallIconSet("exit") ) );
-        btnLogout->setFocus();
-        connect( btnLogout, SIGNAL( clicked() ), SLOT( slotLogout() ) );
-        hbox->addWidget( btnLogout );
-        hbox->addStretch();
+    // Back to Desktop
+    KPushButton* btnBack = new KPushButton( KStdGuiItem::cancel(), frame );
+    buttonlay->addWidget( btnBack );
+    connect(btnBack, SIGNAL(clicked()), SLOT(reject()));
 
-       // cancel
-       KPushButton* cancel = new KPushButton( KStdGuiItem::cancel(), frame );
-       connect( cancel, SIGNAL( clicked() ), SLOT( reject() ) );
-       hbox->addWidget( cancel );
-       hbox->addStretch();
-    }
 }
 
 
