@@ -22,6 +22,7 @@
 #include "kcmodule.h"
 class QRadioButton;
 class QLabel;
+class QBoxLayout;
 class KFileShareConfig  : public KCModule
 {
   Q_OBJECT
@@ -40,7 +41,8 @@ class KFileShareConfig  : public KCModule
  protected:
     QRadioButton *noSharing;
     QRadioButton *sharing;
-    QLabel * info;
+    
+    void createShareListView(QBoxLayout* layout);    
 };
 
 #endif

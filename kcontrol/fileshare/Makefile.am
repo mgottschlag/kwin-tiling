@@ -3,7 +3,7 @@ kde_module_LTLIBRARIES = kcm_fileshare.la
 kcm_fileshare_la_SOURCES = fileshare.cpp
 
 kcm_fileshare_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
-kcm_fileshare_la_LIBADD = -lkdeui 
+kcm_fileshare_la_LIBADD = -lkdeui $(LIB_KIO) 
 
 INCLUDES= $(all_includes)
 

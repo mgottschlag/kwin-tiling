@@ -18,11 +18,18 @@
 #include <kdebug.h>
 #include <qlayout.h>
 #include <qvbuttongroup.h>
+#include <qvgroupbox.h> 
 #include <qlabel.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
 #include <qradiobutton.h>
+#include <klistview.h>
+#include <kiconloader.h>
+
 #include "fileshare.h"
+#include <knfsshare.h>
+#include <ksambashare.h>
+
 #include <qdir.h>
 #include <kstandarddirs.h>
 
@@ -33,7 +40,7 @@ K_EXPORT_COMPONENT_FACTORY (kcm_fileshare, ShareFactory("kcmfileshare") )
 KFileShareConfig::KFileShareConfig(QWidget *parent, const char *name, const QStringList &):
     KCModule(ShareFactory::instance(), parent, name)
 {
-  QBoxLayout *layout = new QVBoxLayout(this,
+  QBoxLayout* layout = new QVBoxLayout(this,
 				       KDialog::marginHint(),
 				       KDialog::spacingHint());
   QVButtonGroup *box = new QVButtonGroup( i18n("File Sharing"), this );
@@ -42,9 +49,6 @@ KFileShareConfig::KFileShareConfig(QWidget *parent, const char *name, const QStr
   layout->addWidget(box);
   noSharing=new QRadioButton( i18n("Do &not allow users to share files"), box );
   sharing=new QRadioButton( i18n("&Allow users to share files from their HOME folder"),  box);
-  info = new QLabel( this );
-  layout->addWidget(info);
-  layout->addStretch();
 
    QString path = QString::fromLatin1("/usr/sbin");
    QString smbExec = KStandardDirs::findExe( QString::fromLatin1("smbd"), path );
@@ -52,14 +56,17 @@ KFileShareConfig::KFileShareConfig(QWidget *parent, const char *name, const QStr
 
   if ( nfsExec.isEmpty() && smbExec.isEmpty())
   {
+      QLabel* info = new QLabel( this );
+      layout->addWidget(info);
       info->setText(i18n("SMB and NFS servers are not installed on this machine, to enable this module the servers must be installed."));
       info->show();
       noSharing->setEnabled( false );
       sharing->setEnabled( false );
   }
   else
-  {
-      info->hide();
+  {  
+      createShareListView(layout);
+      
       if(getuid() == 0)
           load();
   }
@@ -74,6 +81,56 @@ KFileShareConfig::KFileShareConfig(QWidget *parent, const char *name, const QStr
       noSharing->setEnabled( false );
       sharing->setEnabled( false );
   }
+
+  layout->addStretch();
+  
+}
+
+void KFileShareConfig::createShareListView(QBoxLayout* layout) 
+{
+      QGroupBox *grpBox = new QVGroupBox( i18n("Shared Folders"), this);
+      layout->addWidget(grpBox);
+      
+      KNFSShare* nfs = KNFSShare::instance();
+      KSambaShare* samba = KSambaShare::instance();
+      
+      QStringList dirs = nfs->sharedDirectories();
+      QStringList sambaDirs = samba->sharedDirectories();
+      
+      for ( QStringList::ConstIterator it = sambaDirs.begin(); it != sambaDirs.end(); ++it ) {
+        // Do not insert duplicates
+        if (nfs->isDirectoryShared(*it))
+            continue;
+            
+        dirs += *it;            
+      }
+
+      QPixmap folderPix = SmallIcon("folder",0,KIcon::ShareOverlay);
+      QPixmap okPix = SmallIcon("button_ok");
+      QPixmap cancelPix = SmallIcon("button_cancel");
+      
+      KListView* listView = new KListView( grpBox );
+      listView->setSelectionMode(QListView::NoSelection);
+      listView->addColumn(i18n("Path"));
+      listView->addColumn(i18n("Samba"));
+      listView->addColumn(i18n("NFS"));
+      
+      for ( QStringList::Iterator it = dirs.begin(); it != dirs.end(); ++it ) {
+        KListViewItem* item = new KListViewItem(listView);
+        item->setText(0,*it);
+        item->setPixmap(0, folderPix);
+        
+        if (samba->isDirectoryShared(*it))
+          item->setPixmap(1,okPix);
+        else 
+          item->setPixmap(1,cancelPix);
+          
+        if (nfs->isDirectoryShared(*it))
+          item->setPixmap(2,okPix);
+        else          
+          item->setPixmap(2,cancelPix);
+
+      }
 }
 
 void KFileShareConfig::load()
