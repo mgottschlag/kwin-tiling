@@ -29,7 +29,7 @@ genkdmconf_SOURCES = genkdmconf.c
 genkdmconf_LDFLAGS = -L$(x_libraries)
 genkdmconf_LDADD = $(LIB_X11)
 
-install-data-local:
+install-data-local: genkdmconf
 	@$(mkinstalldirs) $(DESTDIR)$(kde_confdir)/kdm
 	@./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm
 
