@@ -393,6 +393,18 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 	    }
 	    Reply ("\n");
 	    goto bust;
+	} else if (!strcmp (ar[0], "reserve")) {
+	    int lt;
+	    if (d && (d->displayType & d_location) != dLocal) {
+		fLog (d, fd, "perm", "display is not local");
+		goto bust;
+	    }
+	    lt = ar[1] ? atoi (ar[1]) : 0;
+	    /* XXX make timeout configurable? */
+	    if (!StartReserveDisplay (lt > 15 ? lt : 60)) {
+		fLog (d, fd, "noent", "no reserve display available");
+		goto bust;
+	    }
 	} else if (!strcmp (ar[0], "shutdown")) {
 	    if (!ar[1] || (!ar[2] && !d)) {
 		fLog (d, fd, "bad", "missing argument(s)");
@@ -458,20 +470,6 @@ processCtrl (const char *string, int len, int fd, struct display *d)
 #ifdef AUTO_RESERVE
 		ReapReserveDisplays ();
 #endif
-	    } else if (!strcmp (ar[0], "reserve")) {
-		if ((d->displayType & d_location) == dLocal) {
-		    int lt = 0;
-		    if (ar[1])
-			lt = atoi (ar[1]);
-		    /* XXX make timeout configurable? */
-		    if (!StartReserveDisplay (lt > 15 ? lt : 60)) {
-			fLog (d, fd, "noent", "no reserve display available");
-			goto bust;
-		    }
-		} else {
-		    fLog (d, fd, "perm", "display is not local");
-		    goto bust;
-		}
 	    } else if (!strcmp (ar[0], "suicide")) {
 		if (d->status == running && d->pid != -1) {
 		    TerminateProcess (d->pid, SIGTERM);
