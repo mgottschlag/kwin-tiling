@@ -58,14 +58,14 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   grid->addWidget(label, 2,0);
 
   logopath = "kdelogo.png";
-  logobutton = new KIconLoaderButton(KGlobal::iconLoader(), group);
+  logobutton = new KIconButton(group);
   logobutton->setAcceptDrops(true);
   logobutton->installEventFilter(this); // for drag and drop
   logobutton->setMinimumSize(24,24);
   logobutton->setMaximumSize(80,80);
   grid->addWidget(logobutton, 2,1, QWidget::AlignCenter);
   grid->addRowSpacing(2, 80);
-  logobutton->setIcon("kdelogo.png");
+  logobutton->setIcon("kdelogo");
   connect(logobutton, SIGNAL(iconChanged(QString)), SLOT(slotLogoPixChanged(QString)));
   connect(logobutton, SIGNAL(iconChanged(const QString&)), this, SLOT(changed()));
 
@@ -160,9 +160,7 @@ void KDMAppearanceWidget::loadLocaleList(KLanguageCombo *combo, const QString &s
 void KDMAppearanceWidget::setLogo(QString logo)
 {
   logopath = logo;
-
-  QPixmap p(logo);
-  logobutton->setPixmap(p);
+  logobutton->setIcon(logo);
   logobutton->adjustSize();
   resize(width(), height());
 }
@@ -170,28 +168,11 @@ void KDMAppearanceWidget::setLogo(QString logo)
 
 void KDMAppearanceWidget::slotLogoPixChanged(QString iconstr)
 {
-  // Because KIconLoaderButton only returns a relative filename
-  // we gotta save the image in PIXDIR.
-  // To make it easy we save it as an PNG
-
-  QString msg;
-  QString pix = /*PIXDIR + */ iconstr.left(iconstr.findRev('.')) + ".png";
-  const QPixmap *p = logobutton->pixmap();
-  if(!p)
-    return;
-  if(!p->save(pix, "PNG"))
-  {
-    msg  = i18n("There was an error saving the image:\n>");
-    msg += pix;
-    msg += i18n("<");
-    KMessageBox::sorry(this, msg);
-  }
-  else
-    setLogo(pix);
+  logopath = iconstr;
 }
 
 
-bool KDMAppearanceWidget::eventFilter(QObject */*o*/, QEvent *e)
+bool KDMAppearanceWidget::eventFilter(QObject *, QEvent *e)
 {
   if (e->type() == QEvent::DragEnter) {
     iconLoaderDragEnterEvent((QDragEnterEvent *) e);
@@ -349,7 +330,7 @@ void KDMAppearanceWidget::load()
 void KDMAppearanceWidget::defaults()
 {
   greetstr_lined->setText("KDE System at [HOSTNAME]");
-  setLogo("kdelogo.png");
+  setLogo("kdelogo");
   guicombo->setCurrentItem(0);
   langcombo->setCurrentItem("C");
   countrycombo->setCurrentItem("C");

@@ -39,7 +39,7 @@
 #include <qlayout.h>
 
 #include <kapp.h>
-#include <kiconloaderdialog.h>
+#include <kicondialog.h>
 #include <ksimpleconfig.h>
 #include <kimgio.h>
 

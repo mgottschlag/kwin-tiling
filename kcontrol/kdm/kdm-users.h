@@ -67,7 +67,7 @@ private:
         KIconLoader *iconloader;
 	QButtonGroup *usrGroup, *shwGroup;
         QCheckBox    *cbusrshw, *cbusrsrt;
-        KIconLoaderButton *userbutton;
+        KIconButton *userbutton;
         QLabel       *userlabel;
 	QListBox     *alluserlb, *nouserlb, *userlb;
 	bool         showallusers;

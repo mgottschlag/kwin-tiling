@@ -29,7 +29,7 @@
 #include <kcolorbtn.h>
 #include <kurl.h>
 #include <kiconloader.h>
-#include <kiconloaderdialog.h>
+#include <kicondialog.h>
 #include <kcmodule.h>
 
 
@@ -63,7 +63,7 @@ private slots:
         void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
  
 private:
-        KIconLoaderButton *logobutton;
+        KIconButton *logobutton;
         KLineEdit    *greetstr_lined;
 	QString      logopath;
 	QComboBox    *guicombo;
