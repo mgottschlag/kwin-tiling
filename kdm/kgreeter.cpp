@@ -621,7 +621,7 @@ KGreeter::restrict_expired(){
 	     return true;
 	 } else if (expiresec - time(NULL) < warntime) {
 	     QDateTime dat;
-	     dat.setTime_t(pwd->pw_expire);
+	     dat.setTime_t(expiresec);
              QString str = i18n("Warning: your account expires on %1.").
 			 arg(KGlobal::locale()->formatDateTime(dat));
 	     QMessageBox::critical(this, QString::null,
