@@ -53,10 +53,6 @@ ButtonTab::ButtonTab( QWidget *parent, const char* name )
                          KDialog::spacingHint());
   vbox->addSpacing(fontMetrics().lineSpacing());
   
-  highlight_cb = new QCheckBox(i18n("Highlight on mouse over."), general_group);
-  connect(highlight_cb, SIGNAL(clicked()), SIGNAL(changed()));
-  vbox->addWidget(highlight_cb);
-
   tiles_cb = new QCheckBox(i18n("Enable background tiles."), general_group);
   connect(tiles_cb, SIGNAL(clicked()), SLOT(tiles_clicked()));
   vbox->addWidget(tiles_cb);
@@ -341,7 +337,6 @@ void ButtonTab::load()
   
   c->setGroup("buttons");
 
-  highlight_cb->setChecked(c->readBoolEntry("HighlightOnMouseOver", false));
   bool tiles = c->readBoolEntry("EnableTileBackground", false);
   tiles_cb->setChecked(tiles);
 
@@ -452,7 +447,6 @@ void ButtonTab::save()
   
   c->setGroup("buttons");
 
-  c->writeEntry("HighlightOnMouseOver", highlight_cb->isChecked());
   c->writeEntry("EnableTileBackground", tiles_cb->isChecked());
 
   c->setGroup("button_tiles");
@@ -475,7 +469,6 @@ void ButtonTab::save()
 
 void ButtonTab::defaults()
 {
-  highlight_cb->setChecked(true);
   tiles_cb->setChecked(false);
 
   kmenu_group->setEnabled(false);

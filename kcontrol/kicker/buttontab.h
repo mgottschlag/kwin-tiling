@@ -69,7 +69,6 @@ class ButtonTab : public QWidget
 
   // general group
   QGroupBox    *general_group;
-  QCheckBox    *highlight_cb;
   QCheckBox    *tiles_cb;
 
   // kmenu button-tiles group
