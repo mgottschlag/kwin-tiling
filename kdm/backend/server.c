@@ -175,15 +175,12 @@ serverPause (unsigned t, int serverPid)
     if (!Setjmp (pauseAbort)) {
 	(void) Signal (SIGALRM, serverPauseAbort);
 	(void) Signal (SIGUSR1, serverPauseUsr1);
-#ifdef SYSV
-	if (receivedUsr1)
-	    (void) alarm ((unsigned) 1);
-	else
-	    (void) alarm (t);
-#else
 	if (!receivedUsr1)
 	    (void) alarm (t);
 	else
+#ifdef SYSV
+	    (void) alarm ((unsigned) 1);
+#else
 	    Debug ("Already received USR1\n");
 #endif
 	for (;;) {
