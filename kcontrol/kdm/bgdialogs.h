@@ -26,7 +26,7 @@ class QGroupBox;
 class QListBox;
 class KBackgroundProgram;
 class KBackgroundSettings;
-
+class KURLRequester;
 
 /**
  * Dialog to select a background program.
@@ -80,7 +80,8 @@ public slots:
 private:
     QString m_Program;
     QLineEdit *m_NameEdit, *m_CommentEdit;
-    QLineEdit *m_ExecEdit, *m_CommandEdit;
+    KURLRequester *m_ExecEdit;
+    QLineEdit *m_CommandEdit;
     QLineEdit *m_PreviewEdit; 
     QSpinBox *m_RefreshEdit;
     KBackgroundProgram *m_Prog;

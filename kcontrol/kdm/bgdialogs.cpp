@@ -34,6 +34,8 @@
 #include <kbuttonbox.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
+#include <kurlrequester.h>
+#include <klineedit.h>
 
 #include <bgdialogs.h>
 #include <bgrender.h>
@@ -273,7 +275,7 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
 
     lbl = new QLabel(i18n("&Executable:"), frame);
     grid->addWidget(lbl, 4, 0);
-    m_ExecEdit = new QLineEdit(frame);
+    m_ExecEdit = new KURLRequester(frame);
     lbl->setBuddy(m_ExecEdit);
     grid->addWidget(m_ExecEdit, 4, 1);
 
@@ -303,7 +305,7 @@ KProgramEditDialog::KProgramEditDialog(QString program, QWidget *parent, char *n
     m_NameEdit->setText(m_Program);
     KBackgroundProgram prog(m_Program);
     m_CommentEdit->setText(prog.comment());
-    m_ExecEdit->setText(prog.executable());
+    m_ExecEdit->lineEdit()->setText(prog.executable());
     m_CommandEdit->setText(prog.command());
     m_PreviewEdit->setText(prog.previewCommand());
     m_RefreshEdit->setValue(prog.refresh());
@@ -333,7 +335,7 @@ void KProgramEditDialog::slotOk()
 	    return;
     }
 
-    if (m_ExecEdit->text().isEmpty()) {
+    if (m_ExecEdit->lineEdit()->text().isEmpty()) {
 	KMessageBox::sorry(this, i18n("You did not fill in the `Executable' field.\n"
 		"This is a required field."));
 	return;
@@ -345,7 +347,7 @@ void KProgramEditDialog::slotOk()
     }
 
     prog.setComment(m_CommentEdit->text());
-    prog.setExecutable(m_ExecEdit->text());
+    prog.setExecutable(m_ExecEdit->lineEdit()->text());
     prog.setCommand(m_CommandEdit->text());
     prog.setPreviewCommand(m_PreviewEdit->text());
     prog.setRefresh(m_RefreshEdit->value());
