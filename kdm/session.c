@@ -383,7 +383,7 @@ ManageSession (struct display *d)
 		 * being killed.
 		 */
 		if (!PingServer (d, (Display *) NULL)) {
-		    LogError("It happened!\n");
+		    Debug("X-Server dead upon session exit.\n");
 		    if (d->displayType.origin == FromXDMCP)
 			SessionPingFailed (d);
 		    else
@@ -741,20 +741,21 @@ StartClient (
 	    LogError("setpcred for \"%s\" failed, errno=%d\n", name, errno);
 	    return (0);
 	}
+
 	{ 
-	    char *usrTag, *sysTag;
 	    extern char **newenv; /* from libs.a, this is set up by setpenv */
+	    char *theenv[];
+	    int i;
 
 	    /*
-	     * Save pointers to tags. Note: changes to the locations of these
-	     * tags in verify.c must be reflected here by adjusting SYS_ENV_TAG
-	     * or USR_ENV_TAG. XXX
+	     * Make a copy of the environment, because setpenv will trash it.
 	     */
-#	    define SYS_ENV_TAG 0
-#	    define USR_ENV_TAG 3
-
-	    sysTag = verify->userEnviron[SYS_ENV_TAG];
-	    usrTag = verify->userEnviron[USR_ENV_TAG];
+	    for (i = 0; verify->userEnviron[i++]; );
+	    if (!(theenv = malloc(i * sizeof(char *)))) {
+		Debug("Out of memory\n");
+		return(0);
+	    }
+	    memcpy(theenv, verify->userEnviron, i * sizeof(char *));
 
 	    /*
 	     * Set the users process environment. Store protected variables and
@@ -762,21 +763,16 @@ StartClient (
 	     * global 'newenv'. 
 	     */
 	    if (setpenv(name, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
-			verify->userEnviron, NULL) != 0) {
-
+			theenv, NULL) != 0) {
 		Debug("Can't set process environment (user=%s)\n", name);
+		free(theenv);
 		return(0);
 	    }
 
 	    /*
-	     * Restore pointers to tags (in order to be properly freed).
-	     */
-	    verify->userEnviron[SYS_ENV_TAG] = sysTag;
-	    verify->userEnviron[USR_ENV_TAG] = usrTag;
-
-	    /*
 	     * Free old userEnviron and replace with newenv from setpenv().
 	     */
+	    free(theenv);
 	    freeEnv(verify->userEnviron);
 	    verify->userEnviron = newenv;
 	}
