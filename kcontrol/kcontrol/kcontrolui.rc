@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kcontrol">
+<kpartgui name="kcontrol" version="1">
 <MenuBar>
     <Menu name="view"><text>&amp;View</text>
         <Menu name="view_mode"><text>&amp;Mode</text>
