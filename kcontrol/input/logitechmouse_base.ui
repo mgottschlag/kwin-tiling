@@ -8,259 +8,149 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>451</width>
-            <height>390</height>
+            <width>458</width>
+            <height>383</height>
         </rect>
     </property>
     <property name="caption">
         <string>Form1</string>
     </property>
-    <widget class="QLabel">
+    <grid>
         <property name="name">
-            <cstring>cordlessNameLabel</cstring>
+            <cstring>unnamed</cstring>
         </property>
-        <property name="geometry">
-            <rect>
-                <x>31</x>
-                <y>10</y>
-                <width>340</width>
-                <height>31</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>Cordless Name</string>
-        </property>
-    </widget>
-    <spacer>
-        <property name="name">
-            <cstring>spacer3</cstring>
-        </property>
-        <property name="orientation">
-            <enum>Horizontal</enum>
-        </property>
-        <property name="sizeType">
-            <enum>Expanding</enum>
-        </property>
-        <property name="sizeHint">
-            <size>
-                <width>20</width>
-                <height>71</height>
-            </size>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>400</x>
-                <y>110</y>
-                <width>20</width>
-                <height>71</height>
-            </rect>
-        </property>
-    </spacer>
-    <spacer>
-        <property name="name">
-            <cstring>spacer1</cstring>
-        </property>
-        <property name="orientation">
-            <enum>Vertical</enum>
-        </property>
-        <property name="sizeType">
-            <enum>Expanding</enum>
-        </property>
-        <property name="sizeHint">
-            <size>
-                <width>71</width>
-                <height>20</height>
-            </size>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>60</x>
-                <y>360</y>
-                <width>71</width>
-                <height>20</height>
-            </rect>
-        </property>
-    </spacer>
-    <widget class="QGroupBox">
-        <property name="name">
-            <cstring>batteryBox</cstring>
-        </property>
-        <property name="enabled">
-            <bool>false</bool>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>30</x>
-                <y>120</y>
-                <width>340</width>
-                <height>64</height>
-            </rect>
-        </property>
-        <property name="title">
-            <string>Battery Level</string>
-        </property>
-        <widget class="QProgressBar">
+        <widget class="QLabel" row="0" column="0">
             <property name="name">
-                <cstring>batteryBar</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>30</x>
-                    <y>20</y>
-                    <width>280</width>
-                    <height>24</height>
-                </rect>
-            </property>
-            <property name="totalSteps">
-                <number>7</number>
-            </property>
-        </widget>
-    </widget>
-    <widget class="QButtonGroup">
-        <property name="name">
-            <cstring>resolutionSelector</cstring>
-        </property>
-        <property name="enabled">
-            <bool>false</bool>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>30</x>
-                <y>50</y>
-                <width>340</width>
-                <height>60</height>
-            </rect>
-        </property>
-        <property name="title">
-            <string>Sensor Resolution</string>
-        </property>
-        <property name="radioButtonExclusive">
-            <bool>true</bool>
-        </property>
-        <widget class="QRadioButton">
-            <property name="name">
-                <cstring>button400cpi</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>31</x>
-                    <y>21</y>
-                    <width>132</width>
-                    <height>21</height>
-                </rect>
+                <cstring>cordlessNameLabel</cstring>
             </property>
             <property name="text">
-                <string>400 counts per inch</string>
-            </property>
-            <property name="buttonGroupId">
-                <number>1</number>
+                <string>Cordless Name</string>
             </property>
         </widget>
-        <widget class="QRadioButton">
+        <widget class="QLabel" row="4" column="0">
             <property name="name">
-                <cstring>button800cpi</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>169</x>
-                    <y>21</y>
-                    <width>132</width>
-                    <height>21</height>
-                </rect>
+                <cstring>permissionProblemText</cstring>
             </property>
             <property name="text">
-                <string>800 counts per inch</string>
+                <string>You have a Logitech Mouse connected, and libusb was found at compile time, but it was not possible to access this mouse. This is probably caused by a permissions problem - you should consult the manual on how to fix this.</string>
             </property>
-            <property name="buttonGroupId">
-                <number>1</number>
-            </property>
-        </widget>
-    </widget>
-    <widget class="QButtonGroup">
-        <property name="name">
-            <cstring>channelSelector</cstring>
-        </property>
-        <property name="enabled">
-            <bool>false</bool>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>30</x>
-                <y>190</y>
-                <width>340</width>
-                <height>60</height>
-            </rect>
-        </property>
-        <property name="title">
-            <string>RF Channel</string>
-        </property>
-        <property name="exclusive">
-            <bool>true</bool>
-        </property>
-        <widget class="QRadioButton">
-            <property name="name">
-                <cstring>channel1</cstring>
-            </property>
-            <property name="geometry">
-                <rect>
-                    <x>41</x>
-                    <y>21</y>
-                    <width>82</width>
-                    <height>21</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Channel 1</string>
-            </property>
-            <property name="checked">
-                <bool>true</bool>
-            </property>
-            <property name="buttonGroupId">
-                <number>3</number>
+            <property name="alignment">
+                <set>WordBreak|AlignVCenter</set>
             </property>
         </widget>
-        <widget class="QRadioButton">
+        <widget class="QButtonGroup" row="1" column="0">
             <property name="name">
-                <cstring>channel2</cstring>
+                <cstring>resolutionSelector</cstring>
             </property>
             <property name="enabled">
                 <bool>false</bool>
             </property>
-            <property name="geometry">
-                <rect>
-                    <x>170</x>
-                    <y>20</y>
-                    <width>82</width>
-                    <height>21</height>
-                </rect>
+            <property name="title">
+                <string>Sensor Resolution</string>
             </property>
-            <property name="text">
-                <string>Channel 2</string>
+            <property name="radioButtonExclusive">
+                <bool>true</bool>
             </property>
-            <property name="buttonGroupId">
-                <number>3</number>
-            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>button400cpi</cstring>
+                    </property>
+                    <property name="text">
+                        <string>400 counts per inch</string>
+                    </property>
+                    <property name="buttonGroupId">
+                        <number>1</number>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>button800cpi</cstring>
+                    </property>
+                    <property name="text">
+                        <string>800 counts per inch</string>
+                    </property>
+                    <property name="buttonGroupId">
+                        <number>1</number>
+                    </property>
+                </widget>
+            </hbox>
         </widget>
-    </widget>
-    <widget class="QLabel">
-        <property name="name">
-            <cstring>permissionProblemText</cstring>
-        </property>
-        <property name="geometry">
-            <rect>
-                <x>30</x>
-                <y>260</y>
-                <width>341</width>
-                <height>91</height>
-            </rect>
-        </property>
-        <property name="text">
-            <string>You have a Logitech Mouse connected, and libusb was found at compile time, but it was not possible to access this mouse. This is probably caused by a permissions problem - you should consult the manual on how to fix this.</string>
-        </property>
-        <property name="alignment">
-            <set>WordBreak|AlignVCenter</set>
-        </property>
-    </widget>
+        <widget class="QGroupBox" row="2" column="0">
+            <property name="name">
+                <cstring>batteryBox</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="title">
+                <string>Battery Level</string>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QProgressBar">
+                    <property name="name">
+                        <cstring>batteryBar</cstring>
+                    </property>
+                    <property name="totalSteps">
+                        <number>7</number>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QButtonGroup" row="3" column="0">
+            <property name="name">
+                <cstring>channelSelector</cstring>
+            </property>
+            <property name="enabled">
+                <bool>false</bool>
+            </property>
+            <property name="title">
+                <string>RF Channel</string>
+            </property>
+            <property name="exclusive">
+                <bool>true</bool>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>channel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Channel 1</string>
+                    </property>
+                    <property name="checked">
+                        <bool>true</bool>
+                    </property>
+                    <property name="buttonGroupId">
+                        <number>3</number>
+                    </property>
+                </widget>
+                <widget class="QRadioButton">
+                    <property name="name">
+                        <cstring>channel2</cstring>
+                    </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
+                    <property name="text">
+                        <string>Channel 2</string>
+                    </property>
+                    <property name="buttonGroupId">
+                        <number>3</number>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+    </grid>
 </widget>
 <layoutdefaults spacing="6" margin="11"/>
 </UI>
