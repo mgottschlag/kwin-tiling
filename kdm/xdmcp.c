@@ -977,8 +977,8 @@ void manage (from, fromlen, length)
     int			expectlen;
     struct protoDisplay	*pdpy;
     struct display	*d;
-    char		*name;
-    char		*class;
+    char		*name = NULL;
+    char		*class = NULL;
     XdmcpNetaddr	from_save;
     ARRAY8		clientAddress, clientPort;
     CARD16		connectionType;
@@ -1052,7 +1052,10 @@ void manage (from, fromlen, length)
 		class[displayClass.length] = '\0';
 	    }
 	    else
-		class = (char *) 0;
+	    {
+		free ((char *) class);
+		class = (char *) NULL;
+	    }
 	    from_save = (XdmcpNetaddr) malloc (fromlen);
 	    if (!from_save)
 	    {
@@ -1110,6 +1113,8 @@ void manage (from, fromlen, length)
     }
 abort:
     XdmcpDisposeARRAY8 (&displayClass);
+    if (name) free ((char*) name);
+    if (class) free ((char*) class);
 }
 
 void SendFailed (d, reason)
