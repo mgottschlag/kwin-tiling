@@ -119,19 +119,20 @@ QLineEdit* NewThemeDlg::newLine(const QString& aLabelText, int cols)
 
 void NewThemeDlg::slotSnapshot()
 {
-  int desktop = KWin::currentDesktop();
   SnapshotDlg *dlg = new SnapshotDlg(this);
   int result = dlg->exec();
   delete dlg;
   if (result == SnapshotDlg::Rejected)
      return;
-
+  // make sure the countdown dialog is closed so the
+  // snapshot won't show it:
   kapp->processEvents();
-#ifdef HAVE_USLEEP
-  usleep(100000);
-  kapp->processEvents();
-#endif
+  QTimer::singleShot(100, this, SLOT(doSnapshot()));
+}
 
+void NewThemeDlg::doSnapshot()
+{
+  int desktop = KWin::currentDesktop();
   mPreview = QPixmap::grabWindow( qt_xrootwin()).convertToImage().smoothScale(320,240);
   QPixmap snapshot;
   snapshot.convertFromImage(mPreview.smoothScale(160,120));

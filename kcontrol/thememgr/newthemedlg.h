@@ -51,6 +51,7 @@ protected:
 
 protected slots:
   void slotSnapshot();
+  void doSnapshot();
 
 protected:
   int mGridRow;
