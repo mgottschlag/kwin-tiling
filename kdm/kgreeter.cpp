@@ -231,7 +231,6 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      failedLabel = new QLabel( i18n("Login failed!"), winFrame);
      failedLabel->setFont( *kdmcfg->failFont());
      set_min( failedLabel);
-     failedLabel->hide();
      hbox2->addWidget( failedLabel);
 
      QLabel* sessionargLabel = new QLabel(i18n("Session Type:"),
@@ -320,6 +319,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      // Center on screen:
      move( QApplication::desktop()->width()/2  - width()/2,
 	   QApplication::desktop()->height()/2 - height()/2 );  
+     failedLabel->hide();
 }
 
 void 
