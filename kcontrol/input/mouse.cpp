@@ -43,8 +43,6 @@
 #include <klocale.h>
 #include <kconfig.h>
 
-static bool GUI;
-
 MouseConfig::~MouseConfig ()
 {
   if (GUI)

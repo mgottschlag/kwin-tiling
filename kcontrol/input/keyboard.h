@@ -66,6 +66,8 @@ private:
 
   KConfig *config;
   int clickVolume, keyboardRepeat;
+
+  bool GUI;
 };
 
 #endif

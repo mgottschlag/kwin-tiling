@@ -53,6 +53,8 @@
 #include "general.moc"
 
 extern int dropError(Display *, XErrorEvent *);
+int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p);
+bool getSimpleProperty(Window w, Atom a, long &result);
 
 FontUseItem::FontUseItem( const QString& n, QFont default_fnt, bool f )
 	: selected(0)
@@ -724,7 +726,7 @@ void KGeneral::slotApply()
 }
 
 //Matthias
-static int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p){
+int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p){
   Atom real_type;
   int format;
   unsigned long n, extra;
@@ -739,7 +741,7 @@ static int _getprop(Window w, Atom a, Atom type, long len, unsigned char **p){
 }
 
 //Matthias
-static bool getSimpleProperty(Window w, Atom a, long &result){
+bool getSimpleProperty(Window w, Atom a, long &result){
   long *p = 0;
 
   if (_getprop(w, a, a, 1L, (unsigned char**)&p) <= 0){

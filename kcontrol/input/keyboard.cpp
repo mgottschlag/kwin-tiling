@@ -40,8 +40,6 @@
 #include <klocale.h>
 #include <kconfig.h>
 
-static bool GUI;
-
 KeyboardConfig::~KeyboardConfig ()
 {
   if (GUI)

@@ -76,6 +76,8 @@ private:
 
   KConfig *config;
   int accelRate, thresholdMove, handed;
+
+  bool GUI;
 };
 
 #endif
