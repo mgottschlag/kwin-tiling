@@ -42,12 +42,11 @@ signals:
 private slots:
     void slotLimitCache(bool);
     void slotCacheSize(int);
-    void slotExportBackground(bool);
 
 private:
     void apply();
 
-    QCheckBox *m_pCBLimit, *m_pCBExport;
+    QCheckBox *m_pCBLimit;
     QSpinBox *m_pCacheBox;
 
     KGlobalBackgroundSettings *m_pSettings;

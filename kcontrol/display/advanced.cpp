@@ -75,10 +75,6 @@ KAdvanced::KAdvanced(QWidget *parent, const char *name)
     hbox->addWidget(m_pCacheBox);
     hbox->addStretch();
 
-    m_pCBExport = new QCheckBox(i18n("&Export Background to shared Pixmap"), group);
-    vbox->addWidget(m_pCBExport);
-    connect(m_pCBExport, SIGNAL(toggled(bool)), SLOT(slotExportBackground(bool)));
-
     top->addStretch();
 
     m_pSettings = new KGlobalBackgroundSettings();
@@ -108,7 +104,6 @@ void KAdvanced::save()
 void KAdvanced::defaults()
 {
     m_pSettings->setLimitCache(_defLimitCache);
-    m_pSettings->setExportBackground(_defExport);
     m_pSettings->setCacheSize(_defCacheSize);
     apply();
     emit changed(true);
@@ -133,7 +128,6 @@ void KAdvanced::apply()
     }
 
     m_pCacheBox->setValue(m_pSettings->cacheSize());
-    m_pCBExport->setChecked(m_pSettings->exportBackground());
 }
 
 
@@ -151,14 +145,5 @@ void KAdvanced::slotCacheSize(int size)
     apply();
     emit changed(true);
 }
-
-
-void KAdvanced::slotExportBackground(bool exp)
-{
-    m_pSettings->setExportBackground(exp);
-    apply();
-    emit changed(true);
-}
-
 
 #include "advanced.moc"
