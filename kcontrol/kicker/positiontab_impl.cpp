@@ -45,8 +45,6 @@
 #include "positiontab_impl.moc"
 
 
-extern int kickerconfig_screen_number;
-
 // magic numbers for the preview widget layout
 extern const int offsetX = 23;
 extern const int offsetY = 14;

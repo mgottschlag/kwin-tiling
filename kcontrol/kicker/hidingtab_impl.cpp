@@ -38,9 +38,6 @@
 #include "hidingtab_impl.moc"
 
 
-extern int kickerconfig_screen_number;
-
-
 HidingTab::HidingTab( KickerConfig *kcmKicker, const char* name )
   : HidingTabBase (kcmKicker, name),
     m_kcm(kcmKicker),

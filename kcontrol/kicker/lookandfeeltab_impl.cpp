@@ -310,7 +310,7 @@ void LookAndFeelTab::save()
   }
   else
   {
-    c.writeEntry("EnableBrowserTiles", false);  
+    c.writeEntry("EnableBrowserTiles", false);
   }
 
   tile = m_exeTile->currentItem();

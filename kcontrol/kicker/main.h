@@ -25,10 +25,11 @@
 class QTabWidget;
 class PositionTab;
 class HidingTab;
-class MenuTab;
-class LookAndFeelTab;
-class AppletTab;
+//class MenuTab;
+//class LookAndFeelTab;
+//class AppletTab;
 class ExtensionsTab;
+
 
 class KickerConfig : public KCModule
 {
@@ -42,7 +43,7 @@ public:
     void defaults();
     QString quickHelp() const;
     const KAboutData* aboutData() const;
-    
+
     void populateExtensionInfoList(QListView* list);
     void reloadExtensionInfo();
     void saveExtentionInfo();
@@ -62,9 +63,9 @@ private:
     QTabWidget     *tab;
     PositionTab    *positiontab;
     HidingTab      *hidingtab;
-    LookAndFeelTab *lookandfeeltab;
-    MenuTab        *menutab;
-    AppletTab      *applettab;
+//    LookAndFeelTab *lookandfeeltab;
+//    MenuTab        *menutab;
+//    AppletTab      *applettab;
     extensionInfoList m_extensionInfo;
 };
 
