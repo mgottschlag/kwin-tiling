@@ -51,7 +51,7 @@
 
 
 TopLevel::TopLevel(const char* name)
-  : KTMainWindow( name )
+  : KTMainWindow( name, WStyle_ContextHelp  )
   , _active(0), dummyAbout(0)
 {
   setPlainCaption(i18n("KDE Control Center"));
@@ -335,10 +335,10 @@ void TopLevel::reportBug()
 {
   // this assumes the user only opens one bug report at a time
   static char buffer[30];
-  
+
   dummyAbout = 0;
   bool deleteit = false;
-  
+
   if (!_active) // report against kcontrol
 	dummyAbout = const_cast<KAboutData*>(KGlobal::instance()->aboutData());
   else
