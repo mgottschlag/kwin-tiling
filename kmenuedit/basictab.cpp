@@ -211,19 +211,6 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
     _term_group->setEnabled(isDF);
     _uid_group->setEnabled(isDF);
 
-    // clean all disabled fields and return if it is not a .desktop file
-    if (!isDF) {
-
-          _execEdit->lineEdit()->setText("");
-	  _typeEdit->setText("");
-	  _pathEdit->lineEdit()->setText("");
-	  _termOptEdit->setText("");
-	  _uidEdit->setText("");
-	  _terminalCB->setChecked(false);
-	  _uidCB->setChecked(false);
-          return;
-    }
-
     // key binding part
     if( desktopFile.find(".desktop") > 0 )
     {
@@ -235,8 +222,21 @@ void BasicTab::setDesktopFile(const QString& desktopFile)
         }
     }
     else
+    {
         general_group_keybind->setEnabled( false ); // not a menu entry - no shortcut
-
+        _keyEdit->setText("");
+    }
+   // clean all disabled fields and return if it is not a .desktop file
+    if (!isDF) {
+          _execEdit->lineEdit()->setText("");
+	  _typeEdit->setText("");
+	  _pathEdit->lineEdit()->setText("");
+	  _termOptEdit->setText("");
+	  _uidEdit->setText("");
+	  _terminalCB->setChecked(false);
+	  _uidCB->setChecked(false);
+          return;
+    }
 
     _execEdit->lineEdit()->setText(df.readEntry("Exec"));
     _typeEdit->setText(df.readType());
