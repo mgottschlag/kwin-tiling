@@ -56,8 +56,8 @@ KControlApp::KControlApp()
   KConfig *config = KGlobal::config();
   config->setGroup("General");
   QWidget *desk = QApplication::desktop();
-  int x = config->readNumEntry(QString::fromLatin1("InitialWidth %1").arg(desk->width()), 730);
-  int y = config->readNumEntry(QString::fromLatin1("InitialHeight %1").arg(desk->height()), 530);
+  int x = config->readNumEntry(QString::fromLatin1("InitialWidth %1").arg(desk->width()), 740);
+  int y = config->readNumEntry(QString::fromLatin1("InitialHeight %1").arg(desk->height()), 540);
   toplevel->resize(x,y);
 }
 

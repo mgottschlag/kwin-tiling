@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2000 Matthias Elter <elter@kde.org>
+  Copyright (c) 2000,2001 Matthias Elter <elter@kde.org>
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #define __aboutwidget_h__
 
 #include <qwidget.h>
+#include <qpixmap.h>
 
 class AboutWidget : public QWidget
 {  
@@ -29,6 +30,13 @@ class AboutWidget : public QWidget
 public:   
   AboutWidget(QWidget *parent, const char *name=0);	
   
+protected:
+    void paintEvent(QPaintEvent*);
+    void resizeEvent(QResizeEvent*);
+
+private:
+    QPixmap _part1, _part2, _part3;
+    QPixmap _buffer;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2000 Matthias Elter <elter@kde.org>
+  Copyright (c) 2000,2001 Matthias Elter <elter@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,151 +17,214 @@
 
 */
 
-#include <qlayout.h>
-#include <qhbox.h>
-#include <qlabel.h>
+#include <qpainter.h>
+#include <qwhatsthis.h>
 
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <klocale.h>
 #include <kiconloader.h>
-#include <qwhatsthis.h>
+#include <kdebug.h>
+#include <kpixmap.h>
+#include <kpixmapeffect.h>
 
 #include "global.h"
 #include "aboutwidget.h"
 #include "aboutwidget.moc"
 
+const QString title_text = i18n("Configure your desktop environment.");
+
+const QString intro_text = i18n("Welcome to the \"KDE Control Center\", "
+                                "a central place to configure your "
+                                "desktop environment. "
+                                "Select an item from the index on the left "
+                                "to load a configuration module.");
+
+QString use_text = i18n("Click on the \"<b>Help</b>\" tab on the left to view help "
+                        "for the active "
+                        "control module. Use the \"<b>Search</b>\" tab if you are unsure "
+                        "where to look for "
+                        "a particular configuration option.");
+
+const QString version_text = i18n("KDE version:");
+const QString user_text = i18n("User:");
+const QString host_text = i18n("Hostname:");
+const QString system_text = i18n("System:");
+const QString release_text = i18n("Release:");
+const QString machine_text = i18n("Machine:");
+
 AboutWidget::AboutWidget(QWidget *parent , const char *name)
-  : QWidget(parent, name)
+   : QWidget(parent, name)
 {
-  // main layout
-  QVBoxLayout *mainlayout = new QVBoxLayout(this, 10, 15);
+    setMinimumSize(400, 400);
 
-  // title hbox
-  QHBox *title = new QHBox(this);
-  title->setSpacing(10);
+    // load images
+    _part1 = QPixmap(locate("data", "kcontrol/pics/part1.png"));
+    _part2 = QPixmap(locate("data", "kcontrol/pics/part2.png"));
+    _part3 = QPixmap(locate("data", "kcontrol/pics/part3.png"));
 
-  // title image
-  QLabel *title_image = new QLabel(title);
-  title_image->setPixmap(KGlobal::iconLoader()->loadIcon("kcontrol",
-                                                         KIcon::Desktop, KIcon::SizeLarge));
-  // title text
-  QLabel *title_text = new QLabel(title);
-  title_text->setTextFormat(RichText);
-  title_text->setText("<big><big>"
-                      + i18n("KDE Control Center")
-                      + "</big></big>"
-                      + "<br>"
-                      + i18n("Configure your desktop environment."));
+    // sanity check
+    if(_part1.isNull() || _part2.isNull() || _part3.isNull()) {
+        kdError() << "AboutWidget::paintEvent: Image loading error!" << endl;
+        setBackgroundColor(QColor(49,121,172));
+    }
+    else
+        setBackgroundMode(NoBackground); // no flicker
 
-  // give title text as much space as possible
-  title->setStretchFactor(title_text, 10);
+    // set qwhatsthis help
+    QWhatsThis::add(this, intro_text);
 
-  // add title to mainlayout
-  mainlayout->addWidget(title);
+    // do not break message freeze
+    use_text.replace(QRegExp("<b>"), "");
+    use_text.replace(QRegExp("</b>"), "");
+}
 
-  // intro text widget
-  QLabel *intro_text = new QLabel(this);
-  intro_text->setTextFormat(RichText);
-  intro_text->setText(i18n("Welcome to the \"KDE Control Center\", "
-                           "a central place to configure your "
-                           "desktop environment. "
-                           "Select an item from the index on the left "
-                           "to load a configuration module."));
+void AboutWidget::paintEvent(QPaintEvent* e)
+{
+    QPainter p (this);
 
-  QWhatsThis::add( this, intro_text->text() );
+    if(_buffer.isNull())
+        p.fillRect(0, 0, width(), height(), QBrush(QColor(49,121,172)));
+    else
+        p.drawPixmap(QPoint(e->rect().x(), e->rect().y()), _buffer, e->rect());
+}
 
-  // add intro text to mainlayout
-  mainlayout->addWidget(intro_text);
-  mainlayout->setStretchFactor(intro_text, 1);
+void AboutWidget::resizeEvent(QResizeEvent*)
+{
+    if(_part1.isNull() || _part2.isNull() || _part3.isNull())
+        return;
 
-  // body hbox
-  QHBox *body = new QHBox(this);
-  body->setSpacing(10);
+    _buffer.resize(width(), height());
 
-  // body text
-  QLabel *body_text = new QLabel(body);
-  body_text->setTextFormat(RichText);
-  body_text->setText("<table border=0 width=100%>"
-                     "<tr>"
-                     "<td>"
-                     "<table celpadding=2 cellspacing=1 border=0>"
-                     "<tr>"
-                     "<td>"
-                     + i18n("KDE version:") +
-                     "</td>"
-                     "<td><b>"
-                     + KCGlobal::kdeVersion() +
-                     "</b></td>"
-                     "</tr>"
-                     "<tr>"
-                     "<td>"
-                     + i18n("User:") +
-                     "</td>"
-                     "<td><b>"
-                     + KCGlobal::userName() +
-                     "</td></b>"
-                     "</tr>"
-                     "<tr>"
-                     "<td>"
-                     + i18n("Hostname:") +
-                     "</td>"
-                     "<td><b>"
-                     + KCGlobal::hostName() +
-                     "</td></b>"
-                     "</tr>"
-                     "<tr>"
-                     "<td>"
-                     + i18n("System:") +
-                     "</td>"
-                     "<td><b>"
-                     + KCGlobal::systemName() +
-                     "</td></b>"
-                     "</tr>"
-                     "<tr>"
-                     "<td>"
-                     + i18n("Release:") +
-                     "</td>"
-                     "<td><b>"
-                     + KCGlobal::systemRelease() +
-                     "</td></b>"
-                     "</tr>"
-                     "<tr>"
-                     "<td>"
-                     + i18n("Machine:") +
-                     "</td>"
-                     "<td><b>"
-                     + KCGlobal::systemMachine() +
-                     "</td></b>"
-                     "</tr>"
-                     "<tr>"
-                     "<td>"
-                     "<br>"
-                     "</td>"
-                     "</tr>"
-                     "</table>"
-                     "</td>"
-                     "</tr>"
-                     "<tr>"
-                     "<td colspan=2>"
-                     + i18n("Click on the \"<b>Help</b>\" tab on the left to view help "
-                            "for the active "
-                            "control module. Use the \"<b>Search</b>\" tab if you are unsure "
-                            "where to look for "
-                            "a particular configuration option.") +
-                     "</td>"
-                     "</tr>"
-                     "</table>");
+    QPainter p(&_buffer);
 
-  // body image
-  QLabel *body_image = new QLabel(body);
-  body_image->setPixmap(QPixmap(locate("data", "kcontrol/pics/wizard.png")));
+    // draw part1
+    p.drawPixmap(0, 0, _part1);
 
-  // add body to mainlayout
-  mainlayout->addWidget(body);
-  mainlayout->setStretchFactor(body, 10);
+    int xoffset = _part1.width();
+    int yoffset = _part1.height();
 
-  // start the party
-  mainlayout->activate();
-  setMinimumSize(400,200);
+    // draw part2 tiled
+    int xpos = xoffset;
+    if(width() > xpos)
+        p.drawTiledPixmap(xpos, 0, width() - xpos, _part2.height(), _part2);
+
+    // draw title text
+    p.setPen(white);
+    p.drawText(150, 84, width() - 150, 108 - 84, AlignLeft | AlignVCenter, title_text);
+
+    // draw intro text
+    p.setPen(black);
+    p.drawText(28, 128, width() - 28, 184 - 128, AlignLeft | AlignVCenter | WordBreak, intro_text);
+
+    // fill background
+    p.fillRect(0, yoffset, width(), height() - yoffset, QBrush(QColor(49,121,172)));
+
+    // draw part3
+    if (height() <= 184) return;
+
+    int yoffset3 = height() - _part3.height();
+    int xoffset3 = width() - _part3.width();
+    if (xoffset3 < 0) xoffset3 = 0;
+    if (height() < 184 + _part3.height()) yoffset3 = 184;
+
+    p.drawPixmap(xoffset3, yoffset3, _part3);
+
+    // draw textbox
+    if (height() <= 184 + 50) return;
+
+    xoffset = 25;
+    yoffset = 184 + 50;
+    int bheight = height() - 184 - 50 - 25;
+    int bwidth = width() - _part3.width() + 60;
+
+    if (bheight < 0) bheight = 0;
+    if (bwidth < 0) bheight = 0;
+    if (bheight > 400) bheight = 400;
+    if (bwidth > 500) bwidth = 500;
+
+    KPixmap box(QSize(bwidth, bheight));
+
+    QPainter pb;
+    pb.begin(&box);
+    pb.fillRect(0, 0, bwidth, bheight, QBrush(QColor(49,121,172)));
+    pb.drawPixmap(xoffset3 - xoffset, yoffset3 - yoffset, _part3);
+    pb.end();
+
+    box = KPixmapEffect::fade(box, 0.8, white);
+
+    p.drawPixmap(xoffset, yoffset, box);
+
+    p.setViewport(xoffset, yoffset, bwidth, bheight);
+    p.setWindow(0, 0, bwidth, bheight);
+    p.setClipRect(xoffset, yoffset, bwidth, bheight);
+
+    // draw info text
+    xoffset = 10;
+    yoffset = 20;
+
+    int fheight = fontMetrics().height();
+    int xadd = 120;
+
+    QFont f1 = font();
+    QFont f2 = f1;
+    f2.setBold(true);
+
+    // kde version
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, version_text);
+    p.setFont(f2);
+    p.drawText(xoffset + xadd, yoffset, KCGlobal::kdeVersion());
+    yoffset += fheight + 5;
+    if(yoffset > bheight) return;
+
+    // user name
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, user_text);
+    p.setFont(f2);
+    p.drawText(xoffset + xadd, yoffset, KCGlobal::userName());
+    yoffset += fheight + 5;
+    if(yoffset > bheight) return;
+
+    // host name
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, host_text);
+    p.setFont(f2);
+    p.drawText(xoffset + xadd, yoffset, KCGlobal::hostName());
+    yoffset += fheight + 5;
+    if(yoffset > bheight) return;
+
+    // system
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, system_text);
+    p.setFont(f2);
+    p.drawText(xoffset + xadd, yoffset, KCGlobal::systemName());
+    yoffset += fheight + 5;
+    if(yoffset > bheight) return;
+
+    // release
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, release_text);
+    p.setFont(f2);
+    p.drawText(xoffset + xadd, yoffset, KCGlobal::systemRelease());
+    yoffset += fheight + 5;
+    if(yoffset > bheight) return;
+
+    // machine
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, machine_text);
+    p.setFont(f2);
+    p.drawText(xoffset + xadd, yoffset, KCGlobal::systemMachine());
+    if(yoffset > bheight) return;
+
+    yoffset += 10;
+
+    if(width() < 450 || height() < 450) return;
+
+    // draw use text
+    bheight = bheight - yoffset - 10;
+    bwidth = bwidth - xoffset;
+
+    p.setFont(f1);
+    p.drawText(xoffset, yoffset, bwidth, bheight, AlignLeft | AlignVCenter | WordBreak, use_text);
 }
