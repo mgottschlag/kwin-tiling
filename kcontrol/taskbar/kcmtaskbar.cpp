@@ -119,8 +119,7 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringLi
 {
     ui = new TaskbarConfigUI(this);
 
-    QVBoxLayout *vbox = new QVBoxLayout(this, KDialog::marginHint(),
-                                        KDialog::spacingHint());
+    QVBoxLayout *vbox = new QVBoxLayout(this, 0, KDialog::spacingHint());
     vbox->addWidget(ui);
     connect(ui->showAllCheck, SIGNAL(clicked()), SLOT(configChanged()));
     connect(ui->showListBtnCheck, SIGNAL(clicked()), SLOT(configChanged()));
