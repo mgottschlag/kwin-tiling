@@ -488,7 +488,7 @@ QStringList TreeView::dirList(const QString& rPath)
 bool TreeView::acceptDrag(QDropEvent* e) const
 {
     return QString(e->format()).contains("application/x-kmenuedit-internal") &&
-           (e->source() == this);
+           (e->source() == const_cast<TreeView *>(this));
 }
 
 
