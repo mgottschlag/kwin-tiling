@@ -2,6 +2,9 @@ case "$host" in
   *-*-linux*)
 	FOUND_USBVIEW=yes
 	;;
+  *-*-freebsd*)
+	FOUND_USBVIEW=yes
+	;;
 esac
 
 AM_CONDITIONAL(include_kcontrol_usbview, test "$FOUND_USBVIEW" = "yes")

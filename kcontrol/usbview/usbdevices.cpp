@@ -19,10 +19,14 @@
 #include <qregexp.h>
 
 #include <klocale.h>
+#include <kmessagebox.h>
 
 #include "usbdb.h"
 #include "usbdevices.h"
 
+#ifdef Q_OS_FREEBSD
+#include <sys/ioctl.h>
+#endif
 
 QPtrList<USBDevice> USBDevice::_devices;
 USBDB *USBDevice::_db;
@@ -30,7 +34,7 @@ USBDB *USBDevice::_db;
 
 USBDevice::USBDevice()
   : _bus(0), _level(0), _parent(0), _port(0), _count(0), _device(0),
-    _channels(0), _speed(0.0),
+    _channels(0), _power(0), _speed(0.0),
     _bwTotal(0), _bwUsed(0), _bwPercent(0), _bwIntr(0), _bwIso(0), _hasBW(false),
     _verMajor(0), _verMinor(0), _class(0), _sub(0), _prot(0), _maxPacketSize(0), _configs(0),
     _vendorID(0), _prodID(0), _revMajor(0), _revMinor(0)
@@ -129,9 +133,11 @@ QString USBDevice::dump()
   if (!prname.isEmpty())
     pr += "<td>(" + prname +")</td>";
   r += i18n("<tr><td><i>Protocol</i></td>%1</tr>").arg(pr);
+#ifndef Q_OS_FREEBSD
   r += i18n("<tr><td><i>USB Version</i></td><td>%1.%2</td></tr>")
     .arg(_verMajor,0,16)
     .arg(QString::number(_verMinor,16).prepend('0').right(2));
+#endif
   r += "<tr><td></td></tr>";
 
   QString v = QString::number(_vendorID,16);
@@ -151,7 +157,18 @@ QString USBDevice::dump()
 
   r += i18n("<tr><td><i>Speed</i></td><td>%1 Mbit/s</td></tr>").arg(_speed);
   r += i18n("<tr><td><i>Channels</i></td><td>%1</td></tr>").arg(_channels);
+#ifdef Q_OS_FREEBSD
+	if ( _power )
+		r += i18n("<tr><td><i>Power Consumption</i></td><td>%1 mA</td></tr>").arg(_power);
+	else
+		r += i18n("<tr><td><i>Power Consumption</i></td><td>self powered</td></tr>");
+	r += i18n("<tr><td><i>Attached Devicenodes</i></td><td>%1</td></tr>").arg(*_devnodes.at(0));
+	if ( _devnodes.count() > 1 )
+		for ( QStringList::Iterator it = _devnodes.at(1); it != _devnodes.end(); ++it )
+			r += "<tr><td></td><td>" + *it + "</td></tr>";
+#else  
   r += i18n("<tr><td><i>Max. Packet Size</i></td><td>%1</td></tr>").arg(_maxPacketSize);
+#endif  
   r += "<tr><td></td></tr>";
 
   if (_hasBW)
@@ -168,6 +185,7 @@ QString USBDevice::dump()
 }
 
 
+#ifndef Q_OS_FREEBSD
 bool USBDevice::parse(QString fname)
 {
   _devices.clear();
@@ -211,3 +229,113 @@ bool USBDevice::parse(QString fname)
   return true;
 }
 
+#else
+
+/*
+ * FreeBSD support by Markus Brueffer <markus@brueffer.de>
+ *
+ * Basic idea and some code fragments were taken from FreeBSD's usbdevs(8), 
+ * originally developed for NetBSD, so this code should work with no or 
+ * only little modification on NetBSD.
+ */
+
+void USBDevice::collectData( int fd, int level, usb_device_info &di, int parent)
+{
+	// determine data for this device
+	_level        = level;
+	_parent       = parent;
+	
+	_bus          = di.udi_bus;
+	_device       = di.udi_addr;
+	_product      = QString::fromLatin1(di.udi_product);
+	if ( _device == 1 )
+		_product += " " + QString::number( _bus );
+	_manufacturer = QString::fromLatin1(di.udi_vendor);
+	_prodID       = di.udi_productNo;
+	_vendorID     = di.udi_vendorNo;
+	_class        = di.udi_class;
+	_sub          = di.udi_subclass;
+	_prot         = di.udi_protocol;
+	_power        = di.udi_power;
+	_channels     = di.udi_nports;
+	
+	// determine the speed
+	switch (di.udi_speed) {
+		case USB_SPEED_LOW:  _speed = 1.5;   break;
+		case USB_SPEED_FULL: _speed = 12.0;  break;
+		case USB_SPEED_HIGH: _speed = 480.0; break;
+	}
+
+	// Get all attached devicenodes
+	for ( int i = 0; i < USB_MAX_DEVNAMES; ++i )
+		if ( di.udi_devnames[i][0] )
+			_devnodes << di.udi_devnames[i];
+
+	// For compatibility, split the revision number
+	sscanf( di.udi_release, "%x.%x", &_revMajor, &_revMinor );
+
+	// Cycle through the attached devices if there are any
+	for ( int p = 0; p < di.udi_nports; ++p ) {
+		// Get data for device
+		struct usb_device_info di2;
+
+		di2.udi_addr = di.udi_ports[p];
+		
+		if ( di2.udi_addr >= USB_MAX_DEVICES )
+			continue;
+			
+		if ( ioctl(fd, USB_DEVICEINFO, &di2) == -1 )
+			continue;
+
+		// Only add the device if we didn't detect it, yet
+		if (!find( di2.udi_bus, di2.udi_addr ) )
+		{
+			USBDevice *device = new USBDevice();
+			device->collectData( fd, level + 1, di2, di.udi_addr );
+		}
+	}
+}
+
+
+bool USBDevice::parse(QString fname)
+{
+	static bool showErrorMessage = true;
+	bool error = false;
+	_devices.clear();
+	
+	QFile controller("/dev/usb0");
+	int i = 1;
+	while ( controller.exists() )
+	{
+		// If the devicenode exists, continue with further inspection
+		if ( controller.open(IO_ReadOnly) )
+		{
+			for ( int addr = 1; addr < USB_MAX_DEVICES; ++addr ) 
+			{
+				struct usb_device_info di;
+				
+				di.udi_addr = addr;
+				if ( ioctl(controller.handle(), USB_DEVICEINFO, &di) != -1 )
+				{
+					if (!find( di.udi_bus, di.udi_addr ) )
+					{
+						USBDevice *device = new USBDevice();
+						device->collectData( controller.handle(), 0, di, 0);
+					}
+				}
+			}
+			controller.close();
+		} else {
+			error = true;
+		}
+		controller.setName( QString::fromLocal8Bit("/dev/usb%1").arg(i++) );
+	}
+	
+	if ( showErrorMessage && error ) {
+		showErrorMessage = false;
+		KMessageBox::error( 0, i18n("Could not open one or more USB controller. Make sure, you have read access to all USB controllers that should be listed here."));
+	}
+	
+	return true;
+}
+#endif

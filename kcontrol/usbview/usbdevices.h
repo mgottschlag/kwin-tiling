@@ -16,6 +16,9 @@
 #include <qstring.h>
 #include <qptrlist.h>
 
+#ifdef Q_OS_FREEBSD
+#include <dev/usb/usb.h>
+#endif
 
 class USBDB;
 
@@ -47,7 +50,7 @@ private:
 
   static USBDB *_db;
 
-  int _bus, _level, _parent, _port, _count, _device, _channels;
+  int _bus, _level, _parent, _port, _count, _device, _channels, _power;
   float _speed;
 
   QString _manufacturer, _product, _serial;
@@ -60,6 +63,10 @@ private:
 
   unsigned int _vendorID, _prodID, _revMajor, _revMinor;
 
+#ifdef Q_OS_FREEBSD
+  void collectData( int fd, int level, usb_device_info &di, int parent );
+  QStringList _devnodes;
+#endif
 };
 
 
