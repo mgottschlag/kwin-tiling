@@ -33,6 +33,9 @@
 
 #include <unistd.h>
 #include <sys/utsname.h>
+#if !defined(HAVE_GETDOMAINNAME) && defined(SECURE_RPC)
+# include <sys/systeminfo.h>
+#endif
 
 KdmLabel::KdmLabel( KdmItem *parent, const QDomNode &node, const char *name )
     : KdmItem( parent, node, name )
@@ -210,7 +213,11 @@ KdmLabel::lookupText( const QString &t )
 	char buf[256];
 	buf[sizeof(buf) - 1] = '\0';
 	m['h'] = gethostname( buf, sizeof(buf) - 1 ) ? "localhost" : QString::fromLocal8Bit( buf );
+#ifdef HAVE_GETDOMAINNAME
 	m['o'] = getdomainname( buf, sizeof(buf) - 1 ) ? "localdomain" : QString::fromLocal8Bit( buf );
+#elif defined(SECURE_RPC)
+	m['o'] = (unsigned)sysinfo( SI_SRPC_DOMAIN, buf, sizeof(buf) ) > sizeof(buf) ? "localdomain" : QString::fromLocal8Bit( buf );
+#endif
 	//m['d'] = delay;	not implemented (yet)
 	//m['s'] = delayuser;	not implemented (yet)
 	KGlobal::locale()->setDateFormat( i18n("date format", "%a %d %B") );
