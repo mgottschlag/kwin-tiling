@@ -321,12 +321,12 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 		   QString::fromLatin1(::d->name);
     loginEdit->setFocus();
 
+    passwdLabel = new QLabel( i18n("Password:"), this);
+    passwdEdit = new KPasswordEdit( this, "edit", kdmcfg->_echoMode);
+
     sessionargLabel = new QLabel(i18n("Session Type:"), this);
     sessionargBox = new QComboBox( false, this);
     sessionargBox->insertStringList( kdmcfg->_sessionTypes );
-
-    passwdLabel = new QLabel( i18n("Password:"), this);
-    passwdEdit = new KPasswordEdit( this, "edit", kdmcfg->_echoMode);
 
     vbox->addLayout( hbox1);
     vbox->addLayout( hbox2);
@@ -335,7 +335,7 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
     hbox1->addLayout( grid, 3);
 
     QFrame* sepFrame = new QFrame( this);
-    sepFrame->setFrameStyle( QFrame::HLine| QFrame::Sunken);
+    sepFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken);
     sepFrame->setFixedHeight( sepFrame->sizeHint().height());
 
     failedLabel = new QLabel( this);
@@ -343,10 +343,10 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 
     grid->addWidget( loginLabel , 0, 0);
     grid->addWidget( loginEdit  , 0, 1);
-    grid->addWidget( sessionargLabel , 1, 0);
-    grid->addWidget( sessionargBox   , 1, 1);
-    grid->addWidget( passwdLabel, 2, 0);
-    grid->addWidget( passwdEdit , 2, 1);
+    grid->addWidget( passwdLabel, 1, 0);
+    grid->addWidget( passwdEdit , 1, 1);
+    grid->addWidget( sessionargLabel, 2, 0);
+    grid->addWidget( sessionargBox  , 2, 1);
     grid->addMultiCellWidget( failedLabel, 3, 3, 0, 1, AlignCenter);
     grid->addMultiCellWidget( sepFrame, 4, 4, 0, 1);
     grid->setColStretch( 1, 4);
@@ -696,7 +696,9 @@ KGreeter::restrict()
     }
 
 }
+#ifdef USE_LOGIN_CAP
 nolog_succ:
+#endif
 #endif /* !USE_PAM */
 // restrict_nologin
 
