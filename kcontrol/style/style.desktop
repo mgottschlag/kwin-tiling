@@ -11,8 +11,7 @@ X-KDE-FactoryName=style
 
 Name=Style Settings 
 
-Comment=Allows the the manipulation of widget behaviour and allows changing the Style for KDE
-Comment[de]=Erm�glicht das Einstellen bestimmter Bildschirmelemente sowie das �ndern der Stile f�r KDE
+Comment=Allows the the manipulation of widget behavior and allows changing the Style for KDE
 
 Keywords=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications
 Keywords[af]=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE programme
@@ -21,6 +20,7 @@ Keywords[az]=tərz,tərzlər,görünüş,dekorlar,örtük,örtüklər,parçacıq
 Keywords[da]=stil,udseende,dims,ikoner,værktøjslinjer,tekst,fremhæv,markér,prog,KDE-programmer
 Keywords[de]=Stile,Designs,Themes,Schema,Elemente,Bildschirmelemente,Icons,Bedienelemente,Schriften,Symbole,Werkzeugleisten,Text,Hervorhebungen,Knöpfe,Anwendungen,Programme,KDE-Programme
 Keywords[es]=estilo,estilos,temas,aspecto,objeto visual,widget,texto,resaltado,botones, aplicaciones, aplicaciones KDE
+Keywords[fi]=tyyli,tyylit,ulkonäkö,kontrolli,kuvakkeet,työkalupalkit,teksti,korostus,sovellukset,KDE sovellukset
 Keywords[fr]=style,styles,thème,apparence,widget,barre de menus,MacOS,police,couleur,non KDE,icône,icônes,barre d'outils,barres d'outils,barres de menus,texte,surbrillance,sélection,bouton,souris,transparence,déplacement,menus,texte,surbrillance,sélection,bouton,souris,transparence,déplacement,écran,applications,programmes,programmes non KDE,applications non KDE
 Keywords[he]=סגנון,מראה,פריטים,סמלים,סרגל כלים,טקסט,הדגשה,יישומים,יישומים של KDE
 Keywords[hu]=stílus,stílusok,kinézet,grafikus elem,ikonok,eszköztárak,szöveg,kiemelés,alkalmazások,KDE alkalmazások
