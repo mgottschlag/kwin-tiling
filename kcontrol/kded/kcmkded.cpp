@@ -186,6 +186,13 @@ void KDEDConfig::save() {
 			}
 		}
 
+		// Special case: kxmlrpcd
+		item = static_cast<QCheckListItem *>(_lvStartup->findItem("kxmlrpcd",4));
+		if (item) {
+			KConfig config("kxmlrpcdrc", false, false);
+			config.setGroup("General");
+			config.writeEntry("StartServer", item->isOn()); 
+		}	
 	}
 
 };
