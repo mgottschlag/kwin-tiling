@@ -22,6 +22,9 @@
 #include <qcheckbox.h>
 #include <qpushbutton.h>
 #include <qtabwidget.h>
+#include <qwhatsthis.h>
+#include <qtooltip.h>
+#include <qptrlist.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -58,6 +61,13 @@ Privacy::Privacy(QWidget *parent, const char *name)
   KListView *sw = cleaningDialog->privacyListView;
 
   sw->addColumn(i18n("Privacy Settings"));
+  sw->addColumn(i18n("Description"));
+
+  sw->setRootIsDecorated(true);
+  sw->setTooltipColumn(1);
+  sw->setColumnWidthMode(0, QListView::Maximum);
+
+
 
   generalCLI     = new KListViewItem(sw, i18n("General") );
   webbrowsingCLI = new KListViewItem(sw, i18n("Webbrowsing") );
@@ -66,31 +76,53 @@ Privacy::Privacy(QWidget *parent, const char *name)
   webbrowsingCLI->setOpen(true);
 
   clearRunCommandHistory = new QCheckListItem(generalCLI,
-      i18n("Clear Run Command History"),QCheckListItem::CheckBox);
+      i18n("Run Command History"),QCheckListItem::CheckBox);
   clearAllCookies = new QCheckListItem(webbrowsingCLI,
-      i18n("Clear all cookies"),QCheckListItem::CheckBox);
+      i18n("Cookies"),QCheckListItem::CheckBox);
   clearSavedClipboardContents = new QCheckListItem(generalCLI,
-      i18n("Clear saved clipboard contents"),QCheckListItem::CheckBox);
+      i18n("saved clipboard contents"),QCheckListItem::CheckBox);
   clearWebHistory = new QCheckListItem(webbrowsingCLI,
-      i18n("Clear web history"),QCheckListItem::CheckBox);
+      i18n("Web history"),QCheckListItem::CheckBox);
   clearWebCache = new QCheckListItem(webbrowsingCLI,
-      i18n("Clear web cache"),QCheckListItem::CheckBox);
+      i18n("Web cache"),QCheckListItem::CheckBox);
   clearFormCompletion = new QCheckListItem(webbrowsingCLI,
-      i18n("Clear form completion entries"),QCheckListItem::CheckBox);
+      i18n("Form completion entries"),QCheckListItem::CheckBox);
   clearRecentDocuments = new QCheckListItem(generalCLI,
-      i18n("Clear Recent Documents"),QCheckListItem::CheckBox);
+      i18n("Recent Documents"),QCheckListItem::CheckBox);
   clearQuickStartMenu = new QCheckListItem(generalCLI,
-      i18n("Clear Quick Start Menu"),QCheckListItem::CheckBox);
+      i18n("Quick Start Menu"),QCheckListItem::CheckBox);
   clearFavIcons = new QCheckListItem(webbrowsingCLI,
       i18n("Clear favicons"),QCheckListItem::CheckBox);
 
-  clearRunCommandHistory->setEnabled(true);
+  QWhatsThis::add(sw, i18n("Check all cleanup actions you would like to perform. These will be executed by pressing the button below"));
+  QWhatsThis::add(cleaningDialog->cleanupButton, i18n("Immediately performs the cleanup actions selected above"));
 
+  clearRunCommandHistory->setText(1, "Clears the history of commands run through the Run Command tool on the desktop");
+  clearAllCookies->setText(1, "Clears all stored cookies set by websites");
+  clearWebHistory->setText(1, "Clears the history of visited websites");
+  clearSavedClipboardContents->setText(1, "Clears the clipboard contents stored by klipper");
+  clearWebCache->setText(1, "Clears the temporary cache of websites visited");
+  clearFormCompletion->setText(1, "Clears values which were entered into forms on websites");
+  clearRecentDocuments->setText(1, "Clears the list of recently used documents from the KDE applications menu");
+  clearQuickStartMenu->setText(1, "Clears the entries from the kist of recently started applications");
+  clearFavIcons->setText(1, "Clears the FavIcons cached from visited websites");
 
   connect(sw, SIGNAL(selectionChanged()), SLOT(configChanged()));
 
+  // store all entries in a list for easy access later on
+  checklist.append(clearRunCommandHistory);
+  checklist.append(clearAllCookies);
+  checklist.append(clearSavedClipboardContents);
+  checklist.append(clearWebHistory);
+  checklist.append(clearWebCache);
+  checklist.append(clearFormCompletion);
+  checklist.append(clearRecentDocuments);
+  checklist.append(clearQuickStartMenu);
+  checklist.append(clearFavIcons);
 
   connect(cleaningDialog->cleanupButton, SIGNAL(clicked()), SLOT(cleanup()));
+  connect(cleaningDialog->selectAllButton, SIGNAL(clicked()), SLOT(selectAll()));
+  connect(cleaningDialog->selectNoneButton, SIGNAL(clicked()), SLOT(selectNone()));
 
   load();
 };
@@ -134,16 +166,7 @@ void Privacy::load()
 
 void Privacy::defaults()
 {
-  clearRunCommandHistory->setOn(false);
-  clearAllCookies->setOn(false);
-  clearSavedClipboardContents->setOn(false);
-  clearFormCompletion->setOn(false);
-  clearWebCache->setOn(false);
-  clearWebHistory->setOn(false);
-  clearRecentDocuments->setOn(false);
-  clearQuickStartMenu->setOn(false);
-  clearFavIcons->setOn(false);
-
+  selectNone();
   emit changed(true);
 }
 
@@ -190,64 +213,81 @@ void Privacy::configChanged()
   emit changed(true);
 }
 
+void Privacy::selectAll()
+{
+  QCheckListItem *item;
+
+  for ( item  = checklist.first(); item; item = checklist.next() )
+    item->setOn(true);
+
+  emit changed(true);
+}
+
+void Privacy::selectNone()
+{
+  QCheckListItem *item;
+
+  for ( item  = checklist.first(); item; item = checklist.next() )
+    item->setOn(false);
+  
+  emit changed(true);
+}
+
+
 void Privacy::cleanup()
 {
   cleaningDialog->statusTextEdit->clear();
   cleaningDialog->statusTextEdit->setText(i18n("Starting cleanup.."));
 
+  QCheckListItem *item;
+  bool error = false;
 
-  if(clearRunCommandHistory->isOn()) {
-    cleaningDialog->statusTextEdit->append(i18n("Clearing Run Command history.."));
-    if(!m_privacymanager->clearRunCommandHistory())
-      cleaningDialog->statusTextEdit->append(i18n("Clearing of Run Command history failed."));
-  }
+  for ( item  = checklist.first(); item; item = checklist.next() )
+  {
+    if(item->isOn())
+    {
+      QString statusText =  i18n("Clearing");
+              statusText += item->text();
+              statusText += "..";
+      cleaningDialog->statusTextEdit->append(statusText);
+      
+      if(item == clearRunCommandHistory)
+        error = !m_privacymanager->clearRunCommandHistory();
 
-  if(clearSavedClipboardContents->isOn()) {
-    cleaningDialog->statusTextEdit->append(i18n("Clearing saved clipboard contents.."));
-    if(!m_privacymanager->clearSavedClipboardContents())
-      cleaningDialog->statusTextEdit->append(i18n("Clearing of saved clipboard content failed."));
-  }
+      if(item == clearSavedClipboardContents)
+        error = !m_privacymanager->clearSavedClipboardContents();
 
-  if(clearFormCompletion->isOn()) {
-    cleaningDialog->statusTextEdit->append(i18n("Clearing form completion entries.."));
-    if(!m_privacymanager->clearFormCompletion())
-      cleaningDialog->statusTextEdit->append(i18n("Clearing of form completion entries failed."));
-  }
-  if(clearAllCookies->isOn()) {
-    cleaningDialog->statusTextEdit->append(i18n("Clearing cookies.."));
-    if(!m_privacymanager->clearAllCookies())
-      cleaningDialog->statusTextEdit->append(i18n("Clearing cookies failed."));
-  }
-  if(clearWebCache->isOn()) {
-    cleaningDialog->statusTextEdit->append(i18n("Clearing web cache.."));
-    if(!m_privacymanager->clearWebCache())
-      cleaningDialog->statusTextEdit->append(i18n("Clearing of web cache failed."));
-  }
+      if(item == clearAllCookies)
+        error = !m_privacymanager->clearAllCookies();
 
-  if(clearWebHistory->isOn()) {
-    cleaningDialog->statusTextEdit->append(i18n("Clearing web history.."));
-    if(!m_privacymanager->clearWebHistory())
-      cleaningDialog->statusTextEdit->append(i18n("Clearing of web history failed."));
-  }
+      if(item == clearFormCompletion)
+        error = !m_privacymanager->clearFormCompletion();
 
-  if(clearRecentDocuments->isOn()) {
-    cleaningDialog->statusTextEdit->append(i18n("Clearing Recent Documents.."));
-    if(!m_privacymanager->clearRecentDocuments())
-      cleaningDialog->statusTextEdit->append(i18n("Clearing of Recent Documents failed."));
-  }
+      if(item == clearWebCache)
+        error = !m_privacymanager->clearWebCache();
 
-  if(clearQuickStartMenu->isOn()) {
-    cleaningDialog->statusTextEdit->append(i18n("Clearing Quick Start menu.."));
-    if(!m_privacymanager->clearQuickStartMenu())
-      cleaningDialog->statusTextEdit->append(i18n("Clearing of Quick Start menu failed."));
-  }
+      if(item == clearWebHistory)
+        error = !m_privacymanager->clearWebHistory();
 
-  if(clearFavIcons->isOn()) {
-    cleaningDialog->statusTextEdit->append(i18n("Clearing FavIcons.."));
-    if(!m_privacymanager->clearFavIcons())
-      cleaningDialog->statusTextEdit->append(i18n("Clearing of FavIcons failed."));
-  }
+      if(item == clearRecentDocuments)
+        error = !m_privacymanager->clearRecentDocuments();
 
+      if(item == clearQuickStartMenu)
+        error = !m_privacymanager->clearQuickStartMenu();
+
+      if(item == clearFavIcons)
+        error = !m_privacymanager->clearFavIcons();
+
+      if(error)
+      {
+        QString errorText =  i18n("Clearing of ");
+                errorText += item->text();
+                errorText += i18n(" failed.");
+
+        cleaningDialog->statusTextEdit->append(errorText);
+      }
+    }
+  }
 
 
   cleaningDialog->statusTextEdit->append(i18n("Clean up finished."));

@@ -47,26 +47,30 @@ public:
 public slots:
     void configChanged();
     void cleanup();
+    void selectAll();
+    void selectNone();
 
 private:
-      KAboutData *myAboutData;
-      KCMPrivacyDialog  *cleaningDialog;
-      KPrivacySettings  *p3pSettings;
-      KPrivacyManager *m_privacymanager;
+    KAboutData *myAboutData;
+    KCMPrivacyDialog  *cleaningDialog;
+    KPrivacySettings  *p3pSettings;
+    KPrivacyManager *m_privacymanager;
 
-      KListViewItem *generalCLI;
-      KListViewItem *webbrowsingCLI;
+    QPtrList<QCheckListItem> checklist;
 
-      QCheckListItem *clearRunCommandHistory;
-      QCheckListItem *clearAllCookies;
-      QCheckListItem *clearSavedClipboardContents;
-      QCheckListItem *clearWebHistory;
-      QCheckListItem *clearWebCache;
-      QCheckListItem *clearFormCompletion;
-      QCheckListItem *clearRecentDocuments;
-      QCheckListItem *clearQuickStartMenu;
-      QCheckListItem *clearFavIcons;
-      //QCheckListItem *clearFileDialogHistory;
+    KListViewItem *generalCLI;
+    KListViewItem *webbrowsingCLI;
+
+    QCheckListItem *clearRunCommandHistory;
+    QCheckListItem *clearAllCookies;
+    QCheckListItem *clearSavedClipboardContents;
+    QCheckListItem *clearWebHistory;
+    QCheckListItem *clearWebCache;
+    QCheckListItem *clearFormCompletion;
+    QCheckListItem *clearRecentDocuments;
+    QCheckListItem *clearQuickStartMenu;
+    QCheckListItem *clearFavIcons;
+    //QCheckListItem *clearFileDialogHistory;
 
 
 };
