@@ -707,7 +707,7 @@ KGreeter::verifyUser(bool haveto)
 		    MsgBox (infobox, i18n("Your account expires tomorrow."));
 		else
 		    MsgBox (infobox, 
-			i18n("Your account expires in %1 days.").arg(expire));
+			i18n("Your account expires in one day.", "Your account expires in %n days.", expire));
 		break;
 	    case V_PWEXPIRE:
 		expire = GRecvInt ();
@@ -717,7 +717,7 @@ KGreeter::verifyUser(bool haveto)
 		    MsgBox (infobox, i18n("Your password expires tomorrow."));
 		else
 		    MsgBox (infobox, 
-			i18n("Your password expires in %1 days.").arg(expire));
+			i18n("Your password expires in one day.", "Your password expires in %n days.", expire));
 		break;
 	    case V_OK:
 		break;
