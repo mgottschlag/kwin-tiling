@@ -51,10 +51,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <limits.h>
 #endif
 
-#ifdef HAVE_VFORK_H
-#include <vfork.h>
-#endif
-
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qdatastream.h>
