@@ -100,7 +100,7 @@ static void applyQtStyles(bool active)
          QStringList actcgorig, inactcgorig, discgorig;
          QString fontorig,styleorig;
          /* activating kde settings for the first time, save qt settings to restore */
-         
+
          actcgorig = settings.readListEntry("/qt/Palette/active", &found);
          if(found)
             settings.writeEntry("/qt/QTorig/active", actcgorig);
@@ -112,7 +112,7 @@ static void applyQtStyles(bool active)
          discgorig = settings.readListEntry("/qt/Palette/disabled", &found);
          if(found)
             settings.writeEntry("/qt/QTorig/disabled", discgorig);
-         
+
          fontorig = settings.readEntry("/qt/font", QString::null, &found);
          if(found)
             settings.writeEntry("/qt/QTorig/font", fontorig);
@@ -120,6 +120,21 @@ static void applyQtStyles(bool active)
          styleorig = settings.readEntry("/qt/style", QString::null, &found);
          if(found)
             settings.writeEntry("/qt/QTorig/style", styleorig);
+
+         QStringList guieffects = settings.readListEntry("/qt/GUIEffects", &found);
+         if(found)
+            settings.writeEntry("/qt/QTorig/GUIEffects", guieffects);
+
+         bool xft = settings.readBoolEntry("/qt/enableXft", &found);
+         if(found)
+            settings.writeEntry("/qt/QTorig/enableXft", xft);
+
+         xft = settings.readBoolEntry("/qt/useXft", &found);
+         if(found)
+            settings.writeEntry("/qt/QTorig/useXft", xft);
+
+
+
       }
 
       KSimpleConfig kconfig("kstylerc",true); /* open the style data read-only */
@@ -146,6 +161,33 @@ static void applyQtStyles(bool active)
       settings.writeEntry("/qt/Palette/disabled", discg);
 
       settings.writeEntry("/qt/font", KGlobalSettings::generalFont().toString());
+
+      KSimpleConfig kglobals("kdeglobals", true);
+      kglobals.setGroup("KDE");
+      bool fadeMenus = kglobals.readBoolEntry("EffectFadeMenu", false);
+      bool fadeTooltips = kglobals.readBoolEntry("EffectFadeTooltip", false);
+      bool animateCombobox = kglobals.readBoolEntry("EffectAnimateCombo", false);
+
+      QStringList guieffects;
+      if (fadeMenus || fadeTooltips || animateCombobox) {
+          guieffects << QString("general");
+          if (fadeMenus)
+              guieffects << QString("fademenu");
+          if (animateCombobox)
+              guieffects << QString("animatecombo");
+          if (fadeTooltips)
+              guieffects << QString("fadetooltip");
+      }
+      else
+          guieffects << QString("none");
+
+      settings.writeEntry("qt/GUIEffects", guieffects);
+
+      bool usexft = kglobals.readBoolEntry("AntiAliasing", false);
+
+      settings.writeEntry("qt/enableXft", usexft);
+      settings.writeEntry("qt/useXft", usexft);
+
    }
    else
    {
@@ -163,7 +205,7 @@ static void applyQtStyles(bool active)
       discg = settings.readListEntry("/qt/QTorig/disabled", &found);
       if(found)
          settings.writeEntry("/qt/Palette/disabled", discg);
-      
+
       font = settings.readEntry("/qt/QTorig/font", QString::null, &found);
       if(found)
          settings.writeEntry("/qt/font", font);
@@ -172,12 +214,27 @@ static void applyQtStyles(bool active)
       if(found)
          settings.writeEntry("/qt/style", style);
 
+      QStringList guieffects = settings.readListEntry("/qt/QTorig/GUIEffects", &found);
+      if(found)
+        settings.writeEntry("/qt/GUIEffects", guieffects);
+
+      bool xft = settings.readBoolEntry("/qt/QTorig/enableXft", &found);
+      if(found)
+        settings.writeEntry("/qt/enableXft", xft);
+
+      xft = settings.readBoolEntry("/qt/QTorig/useXft", &found);
+      if(found)
+        settings.writeEntry("/qt/useXft", xft);
+
       /* and remove our clutter from the file */
       settings.removeEntry("/qt/QTorig/active");
       settings.removeEntry("/qt/QTorig/inactive");
       settings.removeEntry("/qt/QTorig/disabled");
       settings.removeEntry("/qt/QTorig/font");
       settings.removeEntry("/qt/QTorig/style");
+      settings.removeEntry("/qt/QTorig/enableXft");
+      settings.removeEntry("/qt/QTorig/useXft");
+
    }
    QApplication::setDesktopSettingsAware( true );
    QApplication::x11_apply_settings();
