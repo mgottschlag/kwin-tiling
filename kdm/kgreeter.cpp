@@ -89,35 +89,12 @@ Display                 ** dpy;
 struct verify_info      *verify;
 struct greet_info       *greet;
 
-// Here we store a number for the seed:
-//static int event_sum;
-
 class MyApp:public KApplication {
 public:
      MyApp( int &argc, char **argv );
      virtual ~MyApp();
      virtual bool x11EventFilter( XEvent * );
-
-     /* Calculate a "sum" of the recorded events
-      * The "sum" is caclulated in a somewhat ad hoc
-      * way by starting with the value of a pointer
-      * and shifting and xor'ing events to it. See
-      * the implementation.
-      * 
-      * If someone has a more "proven" way to do this,
-      * please contact me /stefh
-      *
-      * NOTE: This is disabled now. We read /dev/mem instead!
-      * /stefh
-      */
-     //static int getSum() { return event_sum;}
-private:
-     // Add one timestamp
-     //void addEvent( int);
-     //static int event_sum;
 };
-
-//int MyApp::event_sum = 42;
 
 MyApp::MyApp(int &argc, char **argv ) : KApplication(argc, argv)
 {}
@@ -127,12 +104,6 @@ MyApp::~MyApp()
 
 bool 
 MyApp::x11EventFilter( XEvent * ev){
-#if 0 
-    if( ev->type == KeyPress ||
-	 ev->type == KeyRelease ) addEvent( ((XKeyEvent*)ev)->time);
-     if( ev->type == ButtonPress ||
-	 ev->type == ButtonRelease ) addEvent( ((XButtonEvent*)ev)->time);
-#endif
      if( ev->type == KeyPress && kgreeter){
 	  // This should go away
 	  if (XLookupKeysym(&(ev->xkey),0) == XK_Return)
@@ -149,19 +120,15 @@ MyApp::x11EventFilter( XEvent * ev){
      return FALSE;
 }
 
-#if 0
-void
-MyApp::addEvent( int t)
+// Misc helper functions:
+static inline int my_seteuid( uid_t euid)
 {
-     event_sum = (event_sum << 3) ^ t;
-     printf("addEvent( %d): event_sum = %d\n", t, event_sum);
+#ifdef HAVE_SETEUID
+     return seteuid(euid);
+#else
+     return setreuid(-1, euid);
+#endif // HAVE_SETEUID
 }
-
-// GenerateAuthData calls this to get the seed:
-extern "C" {
-     int greeter_event_sum() { printf("%d\n",MyApp::getSum());return MyApp::getSum();}
-}
-#endif
 
 static void
 set_min( QWidget* w)
@@ -408,9 +375,9 @@ static inline gid_t* switch_to_user( int *gidset_size,
      gid_t *gidset = new gid_t[*gidset_size];
      if( getgroups( *gidset_size, gidset) == -1 ||
 	 initgroups(pwd->pw_name, pwd->pw_gid) != 0 ||
-	 seteuid(pwd->pw_uid) != 0) {
+	 my_seteuid(pwd->pw_uid) != 0) {
 	  // Error, back out
-	  seteuid(0);
+	  my_seteuid(0);
 	  setgroups( *gidset_size, gidset);
 	  delete[] gidset;
 	  return 0;
@@ -421,7 +388,7 @@ static inline gid_t* switch_to_user( int *gidset_size,
 // Switch uid back to root, and gids to gidset
 static inline void switch_to_root( int gidset_size, gid_t *gidset)
 {
-     seteuid(0);
+     my_seteuid(0);
      setgroups( gidset_size, gidset);
      delete[] gidset;
 }
@@ -701,7 +668,7 @@ KGreeter::restrict_nohome(){
      // don't deny root to log in
      if (!pwd->pw_uid) return false;
 
-     seteuid(pwd->pw_uid);
+     my_seteuid(pwd->pw_uid);
      if (!*pwd->pw_dir || chdir(pwd->pw_dir) < 0) {
 	  if (login_getcapbool(lc, "requirehome", 0)) {
 	       QMessageBox::critical(this, QString::null, 
@@ -710,7 +677,7 @@ KGreeter::restrict_nohome(){
 	       return true;
 	  }
      }
-     seteuid(0);
+     my_seteuid(0);
 
      return false;
 }
