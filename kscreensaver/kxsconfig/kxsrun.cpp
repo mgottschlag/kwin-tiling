@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-  QString filename = args->url(0).path();
+  QString filename = args->arg(0);
   QString configFile(filename);
 
   // Get the config filename
@@ -142,8 +142,6 @@ int main(int argc, char *argv[])
     {
       cmd += " " + item->command();
     }
-
-    kdDebug() << "Command: " << cmd << endl;
 
     // put into char * array for execv
     QTextStream ts(&cmd, IO_ReadOnly);
