@@ -103,7 +103,7 @@ private:
     KToggleAction *toggleURLGrabAction;
     QMap<long,QString> m_clipDict;
     QTimer *m_checkTimer;
-    QPixmap *m_pixmap;
+    QPixmap m_pixmap;
     bool bPopupAtMouse, bClipEmpty, bKeepContents, bURLGrabber;
     bool bReplayActionInHistory, bUseGUIRegExpEditor;
     bool bNoNullClipboard;

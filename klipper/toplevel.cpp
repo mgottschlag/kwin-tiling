@@ -32,6 +32,7 @@
 #include <kdebug.h>
 #include <kglobalsettings.h>
 #include <dcopclient.h>
+#include <kiconloader.h>
 
 #include "configdialog.h"
 #include "toplevel.h"
@@ -97,7 +98,7 @@ TopLevel::TopLevel( QWidget *parent, bool applet )
     connect( clip, SIGNAL( selectionChanged() ), SLOT(slotSelectionChanged()));
     connect( clip, SIGNAL( dataChanged() ), SLOT( slotClipboardChanged() ));
 
-    m_pixmap = new QPixmap( locate("data", "klipper/pics/klipper_dock.png" ));
+    m_pixmap = UserIcon( "klipper_dock" );
     adjustSize();
 
     globalKeys = new KGlobalAccel(this);
@@ -118,7 +119,6 @@ TopLevel::~TopLevel()
 {
     delete m_checkTimer;
     delete m_popup;
-    delete m_pixmap;
     delete myURLGrabber;
     if( isApplet()) {
         delete m_config;
@@ -128,7 +128,7 @@ TopLevel::~TopLevel()
 
 void TopLevel::adjustSize()
 {
-    resize( m_pixmap->size() );
+    resize( m_pixmap.size() );
 }
 
 // this is used for quiting klipper process, if klipper is being started as an applet
@@ -171,11 +171,11 @@ void TopLevel::mousePressEvent(QMouseEvent *e)
 void TopLevel::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
-    int x = (width() - m_pixmap->width()) / 2;
-    int y = (height() - m_pixmap->height()) / 2;
+    int x = (width() - m_pixmap.width()) / 2;
+    int y = (height() - m_pixmap.height()) / 2;
     if ( x < 0 ) x = 0;
     if ( y < 0 ) y = 0;
-    p.drawPixmap(x , y, *m_pixmap);
+    p.drawPixmap(x , y, m_pixmap);
     p.end();
 }
 
