@@ -126,6 +126,35 @@ extern int AcceptableDisplayAddress( ARRAY8Ptr clientAddress,
                                      CARD16 connectionType,
                                      xdmOpCode type );
 
+/* Report the loadavg to chooser. Nice feature --
+ * someone told me that the xdm packaged with Debian
+ * already does this??
+ *
+ * Wed Mar 10 06:14:56 1999 -- Steffen Hansen
+ */
+static void Willing_msg( char* mbuf)
+{
+#ifdef __linux__
+     int fd;
+     const char *fail_msg = "Willing to manage";
+     char buf[5];
+
+     fd = open( "/proc/loadavg", O_RDONLY);
+     if( fd == -1) {
+	  sprintf( mbuf, fail_msg);
+     } else if( read( fd, buf, 4) != 4) {
+	  close( fd);
+	  sprintf( mbuf, fail_msg);	  
+     } else {
+	  buf[4] = '\0';
+	  sprintf(mbuf, "Available (load: %s)", buf);
+	  close( fd);
+     }
+#else /* !__linux__ */
+     sprintf( mbuf, "Willing to manage");     
+#endif
+}
+
 /*ARGSUSED*/
 int
 Willing (addr, connectionType, authenticationName, status, type)
@@ -142,7 +171,7 @@ Willing (addr, connectionType, authenticationName, status, type)
     if (!ret)
 	sprintf (statusBuf, "Display not authorized to connect");
     else
-	sprintf (statusBuf, "Willing to manage");
+	Willing_msg(statusBuf);
     status->length = strlen (statusBuf);
     status->data = (CARD8Ptr) malloc (status->length);
     if (!status->data)
