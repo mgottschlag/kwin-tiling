@@ -343,18 +343,35 @@ wp_out:
             }
             // fall through
 	case CentredMaxpect:
-            double sx = (double) w / ww;
-            double sy = (double) h / wh;
-            if (sx > sy) {
-                ww = (int)(sy * ww);
-                wh = h;
-            } else {
-                wh = (int)(sx * wh);
-                ww = w;
+            {
+              double sx = (double) w / ww;
+              double sy = (double) h / wh;
+              if (sx > sy) {
+                  ww = (int)(sy * ww);
+                  wh = h;
+              } else {
+                  wh = (int)(sx * wh);
+                  ww = w;
+              }
+              wp = wp.smoothScale(ww, wh);
+	      d.setRect((w - ww) / 2, (h - wh) / 2, ww, wh);
+	      break;
             }
-            wp = wp.smoothScale(ww, wh);
-	    d.setRect((w - ww) / 2, (h - wh) / 2, ww, wh);
-	    break;
+	case TiledMaxpect:
+            {
+              double sx = (double) w / ww;
+              double sy = (double) h / wh;
+              if (sx > sy) {
+                  ww = (int)(sy * ww);
+                  wh = h;
+              } else {
+                  wh = (int)(sx * wh);
+                  ww = w;
+              }
+              wp = wp.smoothScale(ww, wh);
+	      d.setRect(0, 0, w, h);
+	      break;
+            }
     }
 
 

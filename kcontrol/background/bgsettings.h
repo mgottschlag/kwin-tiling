@@ -188,7 +188,7 @@ public:
     QString wallpaper() const { return m_Wallpaper; }
 
     enum WallpaperMode {
-	NoWallpaper, Centred, Tiled, CenterTiled, CentredMaxpect,
+	NoWallpaper, Centred, Tiled, CenterTiled, CentredMaxpect, TiledMaxpect,
 	Scaled, CentredAutoFit, lastWallpaperMode
     };
     void setWallpaperMode(int mode);

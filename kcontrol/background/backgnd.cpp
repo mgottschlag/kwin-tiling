@@ -420,6 +420,7 @@ void KBackground::init()
     m_pArrangementBox->insertItem(i18n("Tiled"));
     m_pArrangementBox->insertItem(i18n("Center Tiled"));
     m_pArrangementBox->insertItem(i18n("Centered Maxpect"));
+    m_pArrangementBox->insertItem(i18n("Tiled Maxpect"));
     m_pArrangementBox->insertItem(i18n("Scaled"));
     m_pArrangementBox->insertItem(i18n("Centered Auto Fit"));
 }
