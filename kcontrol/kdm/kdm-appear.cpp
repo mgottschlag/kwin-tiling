@@ -540,7 +540,7 @@ void KDMAppearanceWidget::load()
   else  // "NoEcho"
     echocombo->setCurrentItem(0);
 
-  if (c->readBoolEntry("GreeterPosFixed", "false")) {
+  if (c->readBoolEntry("GreeterPosFixed", false)) {
     posSpecifyRadio->setChecked(true);
     slotPosRadioClicked(1);
   } else {
