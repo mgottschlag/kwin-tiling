@@ -141,8 +141,8 @@ TaskbarConfig::TaskbarConfig( QWidget *parent, const char* name, const QStringLi
     connect(ui->leftButtonComboBox, SIGNAL(activated(int)), SLOT(configChanged()));
     connect(ui->middleButtonComboBox, SIGNAL(activated(int)), SLOT(configChanged()));
     connect(ui->rightButtonComboBox, SIGNAL(activated(int)), SLOT(configChanged()));
-    connect(ui->groupComboBox, SIGNAL(clicked()), SLOT(configChanged()));
-    connect(ui->groupComboBox, SIGNAL(clicked()), SLOT(slotUpdateComboBox()));
+    connect(ui->groupComboBox, SIGNAL(activated(int)), SLOT(configChanged()));
+    connect(ui->groupComboBox, SIGNAL(activated(int)), SLOT(slotUpdateComboBox()));
 
     load();
 }

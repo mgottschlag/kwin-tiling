@@ -116,7 +116,7 @@
 			<cstring>groupTasksLabel</cstring>
 		</property>
 		<property name="text">
-			<string>Group similar tasks</string>
+			<string>Group Similar Tasks:</string>
 		</property>
 		</widget>
                 <widget class="QComboBox">
