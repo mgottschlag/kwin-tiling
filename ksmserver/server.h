@@ -114,6 +114,7 @@ private:
     void startProtection();
     void endProtection();
 
+    void startApplication( const QStringList& command );
     void executeCommand( const QStringList& command );
 
  private:

@@ -177,9 +177,9 @@ QString KSMClient::userId() const
 
 
 /*! Utility function to execute a command on the local machine. Used
- to restart applications and to discard session data
+ * to restart applications.
  */
-void KSMServer::executeCommand( const QStringList& command )
+void KSMServer::startApplication( const QStringList& command )
 {
     if ( command.isEmpty() )
 	return;
@@ -194,6 +194,33 @@ void KSMServer::executeCommand( const QStringList& command )
     QDataStream stream(params, IO_WriteOnly);
     stream << app << argList;
     kapp->dcopClient()->send(launcher, launcher, "exec_blind(QCString,QValueList<QCString>)", params);
+}
+
+/*! Utility function to execute a command on the local machine. Used
+ * to discard session data
+ */
+void KSMServer::executeCommand( const QStringList& command )
+{
+    if ( command.isEmpty() )
+	return;
+    int n = command.count();
+    QCString app = command[0].latin1();
+    char ** argList = new char *[n+1];
+
+    for ( int i=0; i < n; i++)
+       argList[0] = (char *) command[i].latin1();
+    argList[n] = 0;
+
+    int pid = fork();
+    if (pid == -1)
+       return;
+    if (pid == 0) {
+       execvp(app.data(), argList);
+       exit(127);
+    }
+    int status;
+    waitpid(pid, &status, 0);
+    delete [] argList;
 }
 
 IceAuthDataEntry *authDataEntries = 0;
@@ -1077,7 +1104,7 @@ void KSMServer::restoreSession()
 		break;
 	    }
 	}
-	executeCommand( wmCommand );
+	startApplication( wmCommand );
 	QTimer::singleShot( 2000, this, SLOT( restoreSessionInternal() ) );
 	return;
     }
@@ -1092,7 +1119,7 @@ void KSMServer::restoreSession()
  */
 void KSMServer::startDefaultSession()
 {
-    executeCommand( wm );
+    startApplication( wm );
 }
 
 
@@ -1104,7 +1131,7 @@ void KSMServer::restoreSessionInternal()
     for ( int i = 1; i <= count; i++ ) {
 	QString n = QString::number(i);
 	if ( wm != config->readEntry( QString("program")+n ) ) {
-	    executeCommand( config->readListEntry( QString("restartCommand")+n ) );
+	    startApplication( config->readListEntry( QString("restartCommand")+n ) );
 	}
     }
 }
