@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-
+#include <qdir.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
@@ -42,7 +42,22 @@ extern KSimpleConfig *c;
 KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, QStringList *show_users)
     : KCModule(parent, name)
 {
-    m_userPixDir = KGlobal::dirs()->resourceDirs("data").last() + "kdm/pics/users/";
+    // We assume that $kde_datadir/kdm exists, but better check for pics/ and pics/users,
+    // and create them if necessary.
+    m_userPixDir = KGlobal::dirs()->resourceDirs("data").last() + "kdm/pics/";
+    QDir testDir( m_userPixDir );
+    if ( !testDir.exists() && !testDir.mkdir( testDir.absPath() ) )
+    {
+        KMessageBox::sorry(this, i18n("Couldn't create directory %1").arg(testDir.absPath()));
+        m_userPixDir += "users/"; // doesn't exist, then...
+    } else
+    {
+        m_userPixDir += "users/";
+        if ( !testDir.exists() )
+            if ( !testDir.mkdir( testDir.absPath() ) )
+                KMessageBox::sorry(this, i18n("Couldn't create directory %1").arg(testDir.absPath()));
+    }
+
     m_defaultText = i18n("<default>");
 
     QString wtstr;
