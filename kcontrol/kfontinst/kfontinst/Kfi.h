@@ -29,6 +29,8 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <qstring.h>
+
 class CKfiMainWidget;
 class QWidget;
 
@@ -38,6 +40,8 @@ class CKfi
 
     static CKfiMainWidget * create(QWidget *parent);
     static void             destroy();
+
+    static const QString constVersion;
 };
 
 #endif

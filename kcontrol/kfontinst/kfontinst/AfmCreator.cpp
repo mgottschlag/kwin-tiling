@@ -30,6 +30,7 @@
 #include "Misc.h"
 #include "FontEngine.h"
 #include "Config.h"
+#include "Kfi.h"
 #include "KfiGlobal.h"
 #include "Ttf.h"
 #include <stdlib.h>
@@ -41,12 +42,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <fstream.h>
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#else
-#define VERSION "Unknown"
-#endif
 
 static const char * constNotDef     = ".notdef";
 static const char * constKfiComment = "Comment kfontinst ";
@@ -221,7 +216,7 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName, const QString &en
                 << "FullName " << CKfiGlobal::fe().getFullName().latin1() << endl
                 << "FamilyName " << CKfiGlobal::fe().getFamilyName() << endl
                 << "Weight " << CFontEngine::weightStr(CKfiGlobal::fe().getWeight()).latin1() << endl
-                << "Notice Created with kfontinst v" << VERSION << endl
+                << "Notice Created with kfontinst v" << CKfi::constVersion.latin1() << endl
                 << "ItalicAngle " << CKfiGlobal::fe().getItalicAngle() << endl
                 << "IsFixedPitch " << (CFontEngine::SPACING_MONOSPACED==CKfiGlobal::fe().getSpacing() ? "true" : "false") << endl
                 << "UnderlinePosition " << CKfiGlobal::fe().getUnderlinePosition() << endl

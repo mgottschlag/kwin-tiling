@@ -33,6 +33,8 @@
 #include "SettingsWizard.h"
 #include <qapplication.h>
 #include <qnamespace.h>
+
+const QString CKfi::constVersion("0.10/CVS");
  
 CKfiMainWidget * CKfi::create(QWidget *parent)
 {
