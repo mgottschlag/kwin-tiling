@@ -1389,7 +1389,8 @@ bool KBackground::setNew( QString pic, int item )
     }
   else {
     QMessageBox::warning(this, i18n("File error"),
-			 i18n("Can't load image file") );
+			 i18n("Can't load image file"),
+			i18n("OK") );
     return false;
   }
 
@@ -2000,7 +2001,8 @@ void KRandomDlg::done( int r )
   QDir d( dirLined->text() );
   if ( !d.exists() ) {
     QMessageBox::warning(this, i18n("Directory error"),
-			 i18n("Selected directory doesn't exists") );
+			 i18n("Selected directory doesn't exists"),
+			i18n("OK") );
     return;
   }
 

@@ -311,7 +311,8 @@ void KColorScheme::slotRemove()
 		QMessageBox::critical( 0, i18n("Error removing"),
 		      i18n("This color scheme could not be removed.\n"
 			   "Perhaps you do not have permission to alter the file\n"
-			   "system where the color scheme is stored." ) );
+			   "system where the color scheme is stored." ),
+		      i18n("OK") );
 		return;
 	}
 	
@@ -369,7 +370,8 @@ void KColorScheme::slotAdd()
 				QMessageBox::critical( 0, i18n( "Naming error" ),
 					i18n( "Please choose a unique name for the new color\n"\
 							"scheme. The one you entered already appears\n"\
-							"in the color scheme list." ) );
+							"in the color scheme list." ),
+					i18n("OK") );
 			}
 		}
 	} else return;

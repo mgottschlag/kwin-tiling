@@ -135,7 +135,7 @@ void KIconStyle::apply()
         }
     }
     if (changed)
-      QMessageBox::information( 0L, i18n("Icons style"), i18n("The icon style change will not all be applied until you restart KDE."));
+      QMessageBox::information( 0L, i18n("Icons style"), i18n("The icon style change will not all be applied until you restart KDE."), i18n("OK"));
 }
 
 void KIconStyle::readSettings()
