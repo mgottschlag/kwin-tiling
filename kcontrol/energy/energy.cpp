@@ -432,7 +432,7 @@ QString KEnergy::quickHelp() const
       " display to return to an active state.<p>"
       " To wake up the display from a power saving mode, you can make a small"
       " movement with the mouse, or press a key that is not likely to cause"
-      " any unintended side-effects, for example, the \"shift\" key.");
+      " any unintentional side-effects, for example, the \"Shift\" key.");
 }
 
 void KEnergy::openURL(const QString &URL)
