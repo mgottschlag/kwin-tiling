@@ -411,13 +411,13 @@ void FontAASettings::changed()
 int FontAASettings::exec()
 {
     enableButtonOK(false);
-    if(KDialogBase::Cancel==KDialogBase::exec())
-    {
-        load(); // Reset settings...
-        return 0;
-    }
 
-    return 1;
+    int i=KDialogBase::exec();
+
+    if(!i)
+        load(); // Reset settings...
+
+    return i;
 }
 
 /**** KFonts ****/
