@@ -56,85 +56,142 @@
 InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *name)
     : KCModule(parent, name)
 {
-    QVBoxLayout* toplevel = new QVBoxLayout( this, 10 );
+    QGridLayout *lay = new QGridLayout(this, 2, 1, 10, 5);
 
-    QHGroupBox *igb = new QHGroupBox(i18n("Keywords"), this);
-    toplevel->addWidget( igb );
+    QGroupBox *igb = new QGroupBox(i18n("Keywords"), this);
+    QGridLayout *igbLay = new QGridLayout(igb, 3, 5, 10, 5);
+    igbLay->addRowSpacing(0, 10);
+    igbLay->addColSpacing(1, 5);
+    igbLay->addColSpacing(3, 5);
 
-    cb_enableInternetKeywords = new QCheckBox( i18n("&Enable Internet Keywords"), igb );
-    connect( cb_enableInternetKeywords, SIGNAL( clicked() ), this, SLOT( changeInternetKeywordsEnabled() ) );
-    QWhatsThis::add( cb_enableInternetKeywords, i18n( "If this box is checked, KDE will search for keywords on the web using the search engines configured below." ) );
+    igbLay->setRowStretch(1,0);
+    igbLay->setColStretch(0,3);
+    igbLay->setColStretch(2,4);
+    igbLay->setColStretch(4,4);
 
-    QLabel *lb_searchFallback = new QLabel( i18n("Search &Fallback:"), igb);
+    cb_enableInternetKeywords = new QCheckBox(i18n("&Enable Internet Keywords"), igb);
+    cb_enableInternetKeywords->adjustSize();
+    cb_enableInternetKeywords->setMinimumSize(cb_enableInternetKeywords->size());
+    igbLay->addWidget(cb_enableInternetKeywords, 1, 0);
+
+    connect(cb_enableInternetKeywords, SIGNAL(clicked()), this, SLOT(changeInternetKeywordsEnabled()));
+    QWhatsThis::add(cb_enableInternetKeywords, i18n("If this box is checked, KDE will let you type Internet Keywords in its browser's address bar."));
+
+    QLabel *lb_searchFallback = new QLabel(i18n("Search &Fallback:"), igb);
+    lb_searchFallback->adjustSize();
+    lb_searchFallback->setMinimumSize(lb_searchFallback->size());  
+    igbLay->addWidget(lb_searchFallback, 1, 2, AlignRight);
 
     cmb_searchFallback = new QComboBox(false, igb);
-    lb_searchFallback->setBuddy( cmb_searchFallback );
-    connect(cmb_searchFallback, SIGNAL(activated(const QString &)), this, SLOT(changeSearchFallback(const QString &)));
-    QString wtstr = i18n( "Here you can select a search engine that will be used if the user-selected search engine did not give any results." );
-    QWhatsThis::add( lb_searchFallback, wtstr );
-    QWhatsThis::add( cmb_searchFallback, wtstr );
+    igbLay->addWidget(cmb_searchFallback, 1, 4);
 
-    QVGroupBox *gb = new QVGroupBox(i18n("Search"), this);
-    toplevel->addWidget( gb );
+    igbLay->activate();
+
+    lb_searchFallback->setBuddy(cmb_searchFallback);
+    connect(cmb_searchFallback, SIGNAL(activated(const QString &)), this, SLOT(changeSearchFallback(const QString &)));
+    QString wtstr = i18n("Here you can select a search engine that will be used if what is typed is not an Internet Keyword. Select None if you do not want to do a search in this case.");
+    QWhatsThis::add(lb_searchFallback, wtstr);
+    QWhatsThis::add(cmb_searchFallback, wtstr);
+
+    igbLay->addWidget(cmb_searchFallback, 1, 4);
+    igbLay->activate();
+
+    lay->addWidget(igb, 0, 0);
+
+    QGroupBox *gb = new QGroupBox(i18n("Search"), this);
+    QGridLayout *gbLay = new QGridLayout(gb, 11, 3, 10, 5);
+
+    gbLay->addRowSpacing(0, 10);
+    gbLay->addRowSpacing(3, 10);
+    gbLay->addRowSpacing(4, 10);
+    gbLay->addRowSpacing(6, 10);
+    gbLay->addColSpacing(1, 5);
+
+      gbLay->setRowStretch(9, 1);
+    gbLay->setColStretch(0, 3);
+    gbLay->setColStretch(2, 4); 
+
     lv_searchProviders = new QListView(gb);
     lv_searchProviders->setMultiSelection(false);
     lv_searchProviders->addColumn(i18n("Name"));
     lv_searchProviders->addColumn(i18n("Shortcuts"));
     lv_searchProviders->setSorting(0);
-    lv_searchProviders->setFixedSize( lv_searchProviders->sizeHint() );
-    wtstr = i18n( "This list contains the search engines that KDE knows about with the parameters needed to use them." );
-    QWhatsThis::add( lv_searchProviders, wtstr );
+    lv_searchProviders->setMinimumSize(lv_searchProviders->sizeHint());
+    wtstr = i18n("This list contains the search engines that KDE knows about, and their associated shortcuts.");
+    QWhatsThis::add(lv_searchProviders, wtstr);
 
     connect(lv_searchProviders, SIGNAL(selectionChanged(QListViewItem *)),
            this, SLOT(updateSearchProvider(QListViewItem *)));
 
-    QVBox* lowerthings = new QVBox( gb );
-    lowerthings->setSpacing( 10 );
-    QHBox* hb = new QHBox( lowerthings );
-    hb->setSpacing( 10 );
-    QVBox* vb1 = new QVBox( hb );
-    lb_searchProviderName = new QLabel( i18n("Search &Provider Name:"), vb1);
+    gbLay->addMultiCellWidget(lv_searchProviders, 1, 9, 0, 0);
 
-    le_searchProviderName = new QLineEdit(vb1);
-    lb_searchProviderName->setBuddy( le_searchProviderName );
-    connect( le_searchProviderName, SIGNAL( textChanged( const QString & ) ),
-         SLOT( textChanged( const QString & ) ) );
-    wtstr = i18n( "Enter a human-readable name of the search engine here." );
-    QWhatsThis::add( lb_searchProviderName, wtstr );
-    QWhatsThis::add( le_searchProviderName, wtstr );
+    lb_searchProviderName = new QLabel(i18n("Search &Provider Name:"), gb);
+    lb_searchProviderName->adjustSize();
+    lb_searchProviderName->setMinimumSize(lb_searchProviderName->size());    
+    gbLay->addWidget(lb_searchProviderName, 1, 2);
 
-    QVBox* vb2 = new QVBox( hb );
-    lb_searchProviderURI = new QLabel( i18n("Search &URI:"), vb2);
+    le_searchProviderName = new QLineEdit(gb);
+    le_searchProviderName->adjustSize();
+    le_searchProviderName->setMinimumSize(le_searchProviderName->size()); 
+    gbLay->addWidget(le_searchProviderName, 2, 2);
 
-    le_searchProviderURI = new QLineEdit(vb2);
-    lb_searchProviderURI->setBuddy( le_searchProviderURI );
-    connect( le_searchProviderURI, SIGNAL( textChanged( const QString & ) ),
-         SLOT( textChanged( const QString & ) ) );
-    wtstr = i18n( "Enter the URI that is used for the search engine here. The text to be searched for can be specified as \\1" );
-    QWhatsThis::add( lb_searchProviderURI, wtstr );
-    QWhatsThis::add( le_searchProviderURI, wtstr );
+    lb_searchProviderName->setBuddy(le_searchProviderName);
+    connect(le_searchProviderName, SIGNAL(textChanged(const QString &)),
+         SLOT(textChanged(const QString &)));
+    wtstr = i18n("Enter the human-readable name of the search engine here.");
+    QWhatsThis::add(lb_searchProviderName, wtstr);
+    QWhatsThis::add(le_searchProviderName, wtstr);
 
-    QVBox* vb3 = new QVBox( hb );
-    lb_searchProviderShortcuts = new QLabel( i18n("UR&I Shortcuts:"), vb3);
+    lb_searchProviderURI = new QLabel(i18n("Search &URI:"), gb);
+    lb_searchProviderURI->adjustSize();
+    lb_searchProviderURI->setMinimumSize(lb_searchProviderURI->size());
+    gbLay->addWidget(lb_searchProviderURI, 3, 2); 
+    
+    le_searchProviderURI = new QLineEdit(gb);
+    le_searchProviderURI->adjustSize();
+    le_searchProviderURI->setMinimumSize(le_searchProviderURI->size());  
+    gbLay->addWidget(le_searchProviderURI, 4, 2);
 
-    le_searchProviderShortcuts = new QLineEdit(vb3);
-    lb_searchProviderShortcuts->setBuddy( le_searchProviderShortcuts );
-    connect( le_searchProviderShortcuts, SIGNAL( textChanged( const QString & ) ),
-         SLOT( textChanged(const QString &) ) );
-    wtstr = i18n( "The abbreviations entered here can be used whereever in KDE you can enter a URI." );
-    QWhatsThis::add( lb_searchProviderShortcuts, wtstr );
-    QWhatsThis::add( le_searchProviderShortcuts, wtstr );
+    lb_searchProviderURI->setBuddy(le_searchProviderURI);
+    connect(le_searchProviderURI, SIGNAL(textChanged(const QString &)),
+         SLOT(textChanged(const QString &)));
+    wtstr = i18n("Enter the URI that is used to do a search on the search engine here. The text to be searched for can be specified as \\1.");
+    QWhatsThis::add(lb_searchProviderURI, wtstr);
+    QWhatsThis::add(le_searchProviderURI, wtstr);
 
+    lb_searchProviderShortcuts = new QLabel(i18n("UR&I Shortcuts:"), gb);
+    lb_searchProviderShortcuts->adjustSize();
+    lb_searchProviderShortcuts->setMinimumSize(lb_searchProviderShortcuts->size());
+    gbLay->addWidget(lb_searchProviderShortcuts, 5, 2);
 
-    KButtonBox *bbox = new KButtonBox(lowerthings);
+    le_searchProviderShortcuts = new QLineEdit(gb);
+    le_searchProviderShortcuts->adjustSize();
+    le_searchProviderShortcuts->setMinimumSize(le_searchProviderShortcuts->size());
+    gbLay->addWidget(le_searchProviderShortcuts, 6, 2);
+
+    lb_searchProviderShortcuts->setBuddy(le_searchProviderShortcuts);
+    connect(le_searchProviderShortcuts, SIGNAL(textChanged(const QString &)),
+         SLOT(textChanged(const QString &)));
+    wtstr = i18n("The shortcuts entered here can be used as a pseudo-URI scheme in KDE. For example, the shortcut av can be used as in av:my search.");
+    QWhatsThis::add(lb_searchProviderShortcuts, wtstr);
+    QWhatsThis::add(le_searchProviderShortcuts, wtstr);
+
+    KButtonBox *bbox = new KButtonBox(gb);
     bbox->addStretch(20);
     pb_chgSearchProvider = bbox->addButton(i18n("&Add"));
-    QWhatsThis::add( pb_chgSearchProvider, i18n( "Click here to add/change a search engine." ) );
-    connect( pb_chgSearchProvider, SIGNAL( clicked() ), this, SLOT( changeSearchProvider() ) );
+    QWhatsThis::add(pb_chgSearchProvider, i18n("Click here to add/change a search engine."));
+    connect(pb_chgSearchProvider, SIGNAL(clicked()), this, SLOT(changeSearchProvider()));
     pb_delSearchProvider = bbox->addButton(i18n("&Delete"));
-    QWhatsThis::add( pb_delSearchProvider, i18n( "Click here to delete the currently selected search engine from the list." ) );
+    QWhatsThis::add(pb_delSearchProvider, i18n("Click here to delete the currently selected search engine from the list."));
     pb_delSearchProvider->setEnabled(false);
-    connect( pb_delSearchProvider, SIGNAL( clicked() ), this, SLOT( deleteSearchProvider() ) );
+    connect(pb_delSearchProvider, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));
+    bbox->layout();
+
+    gbLay->addWidget(bbox, 8, 2);
+    gbLay->activate();
+
+    lay->addWidget(gb, 1, 0);
+    lay->activate();
 
     load();
 }
@@ -142,7 +199,7 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
 
 QString InternetKeywordsOptions::quickHelp() const
 {
-    return i18n( "In this module, you can configure various Internet search engines that KDE can use for keyword search. This allows you, for example, to enter a pseudo-URI like gg:Smetana to search the Google search engine for web pages about the Czech composer Bedrich Smetana." );
+    return i18n("In this module, you can configure various Internet search engines that KDE can use for keyword search. This allows you, for example, to enter a pseudo-URI like gg:Smetana to search the Google search engine for web pages about the Czech composer Bedrich Smetana.");
 }
 
 void InternetKeywordsOptions::load() {
@@ -236,13 +293,13 @@ void InternetKeywordsOptions::changeSearchProvider() {
     QString uri = le_searchProviderURI->text();
 
     if (provider.isEmpty()) {
-        KMessageBox::error( 0,
-                              i18n("You must enter a search provider name first!") );
+        KMessageBox::error(0,
+                              i18n("You must enter a search provider name first!"));
         return;
     }
     if (uri.isEmpty() && provider.left(9) != "RealNames") {
-        KMessageBox::error( 0,
-                              i18n("You must enter a search provider URI first!") );
+        KMessageBox::error(0,
+                              i18n("You must enter a search provider URI first!"));
         return;
     }
 
