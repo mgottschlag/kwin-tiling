@@ -2,7 +2,7 @@
 dnl -- FreeType v2 --------------------------------------------------------------
 FREETYPE_INC=NO
 AC_MSG_CHECKING([for FreeType2 freetype/t1tables.h])
-FREETYPE_INC_DIRS="/usr/include /usr/include/freetype2 /usr/local/include /usr/local/include/freetype2 /usr/X11R6/include/freetype2 $kde_extra_includes"
+FREETYPE_INC_DIRS="/usr/include /usr/include/freetype2 /usr/local/include /usr/local/include/freetype2 /usr/X11R6/include/freetype2 /usr/X11/include/freetype2 $x_includes $x_includes/freetype2 $kde_extra_includes "
 AC_FIND_FILE(freetype/t1tables.h,$FREETYPE_INC_DIRS,FREETYPE_INC)
 if test "$FREETYPE_INC" = NO; then
     AC_MSG_WARN([FreeType2 headers not found!])
