@@ -33,6 +33,7 @@ class QIconView;
 class QTabWidget;
 class QGridLayout;
 class QPushButton;
+class QGroupBox;
 
 class KConfig;
 class KIconEffect;
@@ -145,7 +146,8 @@ private:
     Effect mEffect;
     Effect mDefaultEffect;
     QImage mExample;
-    QLabel *mpPreview;
+    QGroupBox *mpEffectGroup;
+    QLabel *mpPreview, *mpEffectLabel, *mpEffectColor;
 };                      
                       
 #endif

@@ -490,7 +490,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     QWidget *page = new QWidget(this);
     setMainWidget(page);
 
-    QGridLayout *top = new QGridLayout(page, 4, 3, 0, spacingHint());
+    QGridLayout *top = new QGridLayout(page, 4, 2, 0, spacingHint());
     top->setColStretch(0,1);
     top->addColSpacing(1,10);
     top->setColStretch(2,2);
@@ -505,16 +505,17 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpEffectBox->insertItem(i18n("Colorize"));
     mpEffectBox->insertItem(i18n("Gamma"));
     mpEffectBox->insertItem(i18n("Desaturate"));
+    mpEffectBox->setMinimumWidth( 100 );
     connect(mpEffectBox, SIGNAL(highlighted(int)), SLOT(slotEffectType(int)));
     top->addMultiCellWidget(mpEffectBox, 1, 2, 0, 0, Qt::AlignLeft);
     lbl->setBuddy(mpEffectBox);
 
-    mpSTCheck = new QCheckBox(i18n("Semi-transparent"), page);
+    mpSTCheck = new QCheckBox(i18n("&Semi-transparent"), page);
     connect(mpSTCheck, SIGNAL(toggled(bool)), SLOT(slotSTCheck(bool)));
     top->addWidget(mpSTCheck, 3, 0, Qt::AlignLeft);
     
     frame = new QGroupBox(i18n("Preview"), page);
-    top->addMultiCellWidget(frame, 0, 1, 2, 2);
+    top->addMultiCellWidget(frame, 0, 1, 1, 1);
     grid = new QGridLayout(frame, 2, 1, marginHint(), spacingHint());
     grid->addRowSpacing(0, fontMetrics().lineSpacing());
     grid->setRowStretch(1, 1);
@@ -524,20 +525,22 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpPreview->setMinimumSize(105, 105);
     grid->addWidget(mpPreview, 1, 0);
 
-    frame = new QGroupBox(i18n("Effect Parameters"), page);
-    top->addMultiCellWidget(frame, 2, 3, 2, 2);
-    grid = new QGridLayout(frame, 3, 2, marginHint(), spacingHint());
+    mpEffectGroup = new QGroupBox(i18n("Effect Parameters"), page);
+    top->addMultiCellWidget(mpEffectGroup, 2, 3, 1, 1);
+    grid = new QGridLayout(mpEffectGroup, 3, 2, marginHint(), spacingHint());
     grid->addRowSpacing(0, fontMetrics().lineSpacing());
 
-    lbl = new QLabel(i18n("Amount:"), frame);
-    grid->addWidget(lbl, 1, 0);
-    mpEffectSlider = new QSlider(0, 100, 5, 10, QSlider::Horizontal, frame);
+    mpEffectLabel = new QLabel(i18n("&Amount:"), mpEffectGroup);
+    grid->addWidget(mpEffectLabel, 1, 0);
+    mpEffectSlider = new QSlider(0, 100, 5, 10, QSlider::Horizontal, mpEffectGroup);
+    mpEffectLabel->setBuddy( mpEffectSlider );
     connect(mpEffectSlider, SIGNAL(valueChanged(int)), SLOT(slotEffectValue(int)));
     grid->addWidget(mpEffectSlider, 1, 1);
 
-    lbl = new QLabel(i18n("Color:"), frame);
-    grid->addWidget(lbl, 2, 0);
-    mpEColButton = new KColorButton(frame);
+    mpEffectColor = new QLabel(i18n("Co&lor:"), mpEffectGroup);
+    grid->addWidget(mpEffectColor, 2, 0);
+    mpEColButton = new KColorButton(mpEffectGroup);
+    mpEffectColor->setBuddy( mpEColButton );
     connect(mpEColButton, SIGNAL(changed(const QColor &)),
 		SLOT(slotEffectColor(const QColor &)));
     grid->addWidget(mpEColButton, 2, 1);
@@ -576,7 +579,8 @@ void KIconEffectSetupDialog::slotEffectColor(const QColor &col)
 void KIconEffectSetupDialog::slotEffectType(int type)
 {
     mEffect.type = type;
-    mpEffectSlider->setEnabled(mEffect.type != KIconEffect::NoEffect);
+    mpEffectGroup->setEnabled(mEffect.type != KIconEffect::NoEffect);
+    mpEffectColor->setEnabled(mEffect.type == KIconEffect::Colorize);
     mpEColButton->setEnabled(mEffect.type == KIconEffect::Colorize);
     preview();
 }
