@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.9  1999/03/12 18:40:56  dfaure
+    Squashed more ksprintf and did some more Qt2.0 porting
+
     Revision 1.8  1999/03/02 15:54:56  kulow
     CVS_SILENT replacing klocale->translate with i18n
 
@@ -143,7 +146,7 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   int delta;
   QString path;
   QDir dir;
-  const QStrList *list;
+  QStringList list;
   QLabel *eventlabel, *soundlabel, *statustext;
 
   //
@@ -198,7 +201,7 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   dir.setFilter(QDir::Readable | QDir::Files);
   list = dir.entryList();
 
-  soundlist->insertStrList(list);
+  soundlist->insertStringList(list);
   
   audiodrop = new KDNDDropZone(soundlist, DndURL);
 
