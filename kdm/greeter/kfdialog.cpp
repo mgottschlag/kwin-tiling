@@ -26,10 +26,6 @@
 
 #include "kfdialog.h"
 #include <qapplication.h>
-#include <X11/Xlib.h>
-
-#include <unistd.h>
-#include <stdio.h>
 
 int
 FDialog::exec()

@@ -27,6 +27,10 @@
 #include "kdmconfig.h"
 #include "kdmclock.h" 
 
+#ifdef USESHADOW
+#include <shadow.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/param.h>
 #include <sys/stat.h>	/* remove when qt closes qt_thread_pipe itself */
@@ -56,6 +60,7 @@
 #include <kcmdlineargs.h>
 #include <kapp.h>
 
+#include <X11/Xmd.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
@@ -68,10 +73,6 @@
 #undef HAVE_SETEUID
 #undef HAVE_INITGROUPS
 #include <sys/id.h>
-#endif
-
-#ifdef USESHADOW
-#	include <shadow.h>
 #endif
 
 #if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)

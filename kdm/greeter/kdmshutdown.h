@@ -34,8 +34,6 @@
 #endif
 #include <qglobal.h>
 
-#include <X11/Xmd.h>
-
 #include <sys/param.h>	// for BSD
 #include <stdlib.h>
 #include <qlayout.h>

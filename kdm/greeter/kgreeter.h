@@ -31,12 +31,11 @@
 
 #include <qglobal.h>
 
-#include <X11/Xmd.h>
-
 #define WMRC ".wmrc"
 
 #include <qlineedit.h>
 #include <qframe.h>
+#undef index
 #include <qiconview.h>
 
 class QTimer;

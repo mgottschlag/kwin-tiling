@@ -454,8 +454,9 @@ VerifyRoot( const char* pw)
     }
     endpwent();
 #ifdef USESHADOW
-    // If USESHADOW is defined, kdm will work for both shadow and non
-    // shadow systems
+    /* If USESHADOW is defined, kdm will work for both shadow and non
+     * shadow systems
+     */
     {
 	struct spwd *spws = getspnam( superuser);
 	if( spws != NULL)
