@@ -25,4 +25,8 @@ messages: rc.cpp
 data_DATA = panel.desktop panel_appearance.desktop panel_menus.desktop
 datadir = $(kde_appsdir)/Settings/Panel/
 
+install-data-local: uninstall.desktop
+	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel
+	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/panel.desktop
+
 EXTRA_DIST = $(data_DATA)

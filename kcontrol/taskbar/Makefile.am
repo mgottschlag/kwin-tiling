@@ -17,4 +17,8 @@ messages: rc.cpp
 data_DATA = kcmtaskbar.desktop
 datadir = $(kde_appsdir)/Settings/Panel/
 
+install-data-local: uninstall.desktop
+	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel
+	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/kcmtaskbar.desktop
+
 EXTRA_DIST = $(data_DATA)
