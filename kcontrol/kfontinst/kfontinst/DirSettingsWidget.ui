@@ -512,7 +512,7 @@ If the file is not specified, is of an unrecognized format, or the Font Installe
                 <set>AlignVCenter|AlignLeft</set>
             </property>
             <property name="whatsThis" stdset="0">
-                <string>This file is used by Ghostscript to map the names of fonts within Postscript files, to the physical fonts located on disk.
+                <string>This file is used by Ghostscript to map the names of fonts within Postscript files to the physical fonts located on disk.
 
 (Most UNIX/Linux programs produce Postscript files when printing - and these are passed on to Ghostscript, which does the actual work.)
 
@@ -520,7 +520,7 @@ For normal (non-root) users, this file will usually be:
 
     ~/.kde/share/fonts/Fontmap
 
-...and for root, usually the system-wide Fontmap will be selected, and this would normally be something like:
+...and for root, the system-wide Fontmap will usually be selected, which would normally be something like:
 
     /usr/share/ghostscript/5.50/Fontmap</string>
             </property>

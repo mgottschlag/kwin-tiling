@@ -186,7 +186,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsGhostscriptFileText->setFrameShadow( QLabel::Sunken );
     itsGhostscriptFileText->setText( tr2i18n( "TextLabel2" ) );
     itsGhostscriptFileText->setAlignment( int( QLabel::AlignVCenter | QLabel::AlignLeft ) );
-    QWhatsThis::add( itsGhostscriptFileText, tr2i18n( "This file is used by Ghostscript to map the names of fonts within Postscript files, to the physical fonts located on disk.\n"
+    QWhatsThis::add( itsGhostscriptFileText, tr2i18n( "This file is used by Ghostscript to map the names of fonts within Postscript files to the physical fonts located on disk.\n"
 "\n"
 "(Most UNIX/Linux programs produce Postscript files when printing - and these are passed on to Ghostscript, which does the actual work.)\n"
 "\n"
@@ -194,7 +194,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
 "\n"
 "    ~/.kde/share/fonts/Fontmap\n"
 "\n"
-"...and for root, usually the system-wide Fontmap will be selected, and this would normally be something like:\n"
+"...and for root, the system-wide Fontmap will usually be selected, which would normally be something like:\n"
 "\n"
 "    /usr/share/ghostscript/5.50/Fontmap" ) );
 
