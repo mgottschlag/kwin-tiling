@@ -59,7 +59,7 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name)
 void KCMKonsole::load()
 {
 
-    KConfig *config = new KConfig("konsolerc", false, true);
+    KConfig *config = new KConfig("konsolerc", true);
     config->setDesktopGroup();
 
 
@@ -79,11 +79,13 @@ void KCMKonsole::load()
 
     config->setGroup("konsole-mainwindow#1 Toolbar style");
     dialog->showToolBarCB->setChecked(!config->readBoolEntry("Hidden",false));
+    delete config;
 
-    config = new KConfig("kdeglobals", false, true);
+    config = new KConfig("kdeglobals", true);
     config->setGroup("General");
     dialog->terminalLE->setText(config->readEntry("TerminalApplication","konsole"));
     dialog->terminalCB->setChecked(config->readEntry("TerminalApplication","konsole")!="konsole");
+    delete config;
 
     emit changed(false);
 }
@@ -109,13 +111,12 @@ void KCMKonsole::setupFont()
 
 void KCMKonsole::configChanged()
 {
-emit changed(true);
+    emit changed(true);
 }
 
 void KCMKonsole::save()
 {
-
-    KConfig *config = new KConfig("konsolerc", false, true);
+    KConfig *config = new KConfig("konsolerc");
     config->setDesktopGroup();
 
 
@@ -136,16 +137,13 @@ void KCMKonsole::save()
     config->setGroup("konsole-mainwindow#1 Toolbar style");
     config->writeEntry("Hidden",!dialog->showToolBarCB->isChecked());
 
-    config->sync();		//is it necessary ?
-
-    config = new KConfig("kdeglobals", false, true);
+    // that one into kdeglobals
     config->setGroup("General");
-    config->writeEntry("TerminalApplication",dialog->terminalCB->isChecked()?dialog->terminalLE->text():"konsole");
+    config->writeEntry("TerminalApplication",dialog->terminalCB->isChecked()?dialog->terminalLE->text():"konsole", true, true);
     
-    config->sync();		//is it necessary ?
+    delete config;
 
     emit changed(false);
-
 }
 
 void KCMKonsole::defaults()
