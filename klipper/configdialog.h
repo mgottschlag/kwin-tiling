@@ -25,7 +25,7 @@
 #include "urlgrabber.h"
 
 class KGlobalAccel;
-class KEditableListView;
+class KListView;
 
 class GeneralWidget : public QVGroupBox
 {
@@ -64,10 +64,10 @@ private slots:
     void slotAddAction();
     void slotDeleteAction();
     void slotRightPressed( QListViewItem *, const QPoint&, int col );
-    void slotItemChanged( QListViewItem *, int );
+    void slotItemChanged( QListViewItem *, const QPoint& , int );
 
 private:
-    KEditableListView *listView;
+    KListView *listView;
 
 };
 

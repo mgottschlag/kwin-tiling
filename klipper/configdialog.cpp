@@ -21,8 +21,8 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kpopupmenu.h>
+#include <klistview.h>
 
-#include "keditablelistview.h"
 #include "configdialog.h"
 
 ConfigDialog::ConfigDialog( const ActionList *list, KKeyEntryMap *keyMap )
@@ -113,9 +113,17 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
 
     setTitle( i18n("Action settings (right-click to add/remove commands)") );
 
-    listView = new KEditableListView( this, "list view" );
+    listView = new KListView( this, "list view" );
     listView->addColumn( i18n("Regular expression (see http://doc.trolltech.com/qregexp.html#details)") );
     listView->addColumn( i18n("Description") );
+
+    listView->setRenameable(0);
+    listView->setRenameable(1);
+    listView->setItemsRenameable( true );
+    listView->setItemsMovable( true );
+    listView->setAcceptDrops( true );
+    listView->setDropVisualizer( true );
+    listView->setDragEnabled( true );
 
     listView->setRootIsDecorated( true );
     listView->setMultiSelection( false );
@@ -125,8 +133,8 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent,
                                                    const QPoint&, int) ),
              SLOT( slotRightPressed( QListViewItem *, const QPoint&, int )));
     connect( listView,
-             SIGNAL( itemChanged( QListViewItem *, int ) ),
-             SLOT( slotItemChanged( QListViewItem *, int ) ) );
+             SIGNAL( executed( QListViewItem*, const QPoint&, int ) ),
+             SLOT( slotItemChanged( QListViewItem*, const QPoint& , int ) ) );
 
     ClipAction *action   = 0L;
     ClipCommand *command = 0L;
@@ -207,7 +215,7 @@ void ActionWidget::slotRightPressed( QListViewItem *item, const QPoint&, int )
     delete menu;
 }
 
-void ActionWidget::slotItemChanged( QListViewItem *item, int col )
+void ActionWidget::slotItemChanged( QListViewItem *item, const QPoint& pt, int col )
 {
     if ( !item->parent() || col != 0 )
         return;
