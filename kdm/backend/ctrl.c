@@ -320,7 +320,7 @@ str_cat( char **bp, const char *str )
 }
 
 static void
-sd_cat( char **bp, SdRec *sdr )
+sd_cat( char **bp, SdRec *sdr, BoRec *bor )
 {
 	if (sdr->how == SHUT_HALT)
 		str_cat( bp, "halt," );
@@ -342,7 +342,7 @@ sd_cat( char **bp, SdRec *sdr )
 		str_cat( bp, "forcemy" );
 	else
 		str_cat( bp, "cancel" );
-	*bp += sprintf( *bp, ",%d", sdr->uid );
+	*bp += sprintf( *bp, ",%d,%s", sdr->uid, bor->name ? bor->name : "-" );
 }
 
 static void
@@ -536,11 +536,11 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 				*bp++ = 'k';
 				if (sdRec.how) {
 					str_cat( &bp, "\tglobal," );
-					sd_cat( &bp, &sdRec );
+					sd_cat( &bp, &sdRec, &boRec );
 				}
 				if (d && d->hstent->sdRec.how) {
 					str_cat( &bp, "\tlocal," );
-					sd_cat( &bp, &d->hstent->sdRec );
+					sd_cat( &bp, &d->hstent->sdRec, &d->hstent->boRec );
 				}
 				*bp++ = '\n';
 				Writer( fd, cbuf, bp - cbuf );
@@ -712,9 +712,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 			Writer( fd, cbuf, sprintf( cbuf, "\t%d\t%d\n", def, cur ) );
 			goto bust;
 		} else if (!strcmp( ar[0], "setbootoption" )) {
-			if (!ar[1])
-				goto miss;
-			if (ar[2])
+			if (ar[1] && ar[2])
 				goto exce;
 			if (d && sdRec.how && sdRec.uid != -1) {
 				fLog( d, fd, "perm", "overriding boot option forbidden" );
