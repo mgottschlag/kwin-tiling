@@ -13,6 +13,11 @@
  
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     $Log$
+    Revision 1.10  1999/12/03 03:32:39  deller
+    - cleaned up Memory-Widget
+    - much more information on X-Server (more will follow)
+    - I tried to use better error-messages.
+
     Revision 1.9  1999/07/28 09:02:11  deller
 
     now the linux-specific information looks nicer again, after dmuell removed
@@ -71,6 +76,7 @@
 #define INFO_SOUND_AVAILABLE
 #define INFO_DEV_SNDSTAT "/dev/sndstat"
 #define INFO_SOUND "/proc/sound" 
+#define INFO_ASOUND "/proc/asound/sndstat"
 
 #define INFO_DEVICES_AVAILABLE
 #define INFO_DEVICES "/proc/devices"
@@ -196,8 +202,10 @@ bool GetInfo_Sound( QListView *lBox )
   sorting_allowed = false;	// no sorting by user !
   if ( GetInfo_ReadfromFile( lBox, INFO_DEV_SNDSTAT, 0 )) 
     return true;
-  else 
-    return GetInfo_ReadfromFile( lBox, INFO_SOUND, 0 );
+  else if ( GetInfo_ReadfromFile( lBox, INFO_SOUND, 0 ))
+    return true;
+  else
+    return GetInfo_ReadfromFile( lBox, INFO_ASOUND, 0 );
 }
 
 bool GetInfo_Devices( QListView *lBox )
