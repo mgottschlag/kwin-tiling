@@ -713,7 +713,7 @@ void* KSMServer::watchConnection( IceConn iceConn )
 
 void KSMServer::removeConnection( KSMConnection* conn )
 {
-    
+
     // safety, check wether there's  still a client exisiting that waits for that connection
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
 	if ( SmsGetIceConnection( c->connection() ) == conn->iceConn ) {
@@ -798,7 +798,7 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
 	return;
     if ( success ) {
 	client->saveYourselfDone = TRUE;
-	
+
 	// workaround for broken qt-2.1beta3: make the window manager
 	// pseudo phase2. #### remove this with qt-2.1 final
 	if ( !client->waitForPhase2 && !client->phase2Workaround &&
@@ -808,7 +808,7 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
 	    client->saveYourselfDone = FALSE;
 	    SmsShutdownCancelled( client->connection() );
 	}
-	
+
 	completeShutdown();
     } else {
 	cancelShutdown();
@@ -871,7 +871,7 @@ void KSMServer::cancelShutdown()
 	// final
 	if ( c->phase2Workaround && c->waitForPhase2)
 	    continue;
-	
+
  	SmsShutdownCancelled( c->connection() );
     }
     state = Idle;
@@ -913,6 +913,10 @@ void KSMServer::completeShutdown()
     // kill all clients
     state = Killing;
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	// do not kill the wm yet, we do that in completeKilling()
+	// below.
+	if ( !wm.isEmpty() && c->program() == wm ) 
+	    continue;
 	SmsDie( c->connection() );
     }
     if ( clients.isEmpty() )
@@ -925,6 +929,12 @@ void KSMServer::completeKilling()
 {
     if ( state != Killing )
 	return;
+    if ( !wm.isEmpty() && clients.count() == 1 && clients.first()->program() == wm ) {
+	// the wm was not killed yet, do it
+	SmsDie( clients.first()->connection() );
+	return;
+    }
+	
     if ( clients.isEmpty() )
 	qApp->quit();
 }
@@ -933,7 +943,6 @@ void KSMServer::timeoutQuit()
 {
     qApp->quit();
 }
-
 
 void KSMServer::discardSession()
 {
