@@ -147,7 +147,8 @@ void KlipperWidget::clearClipboardContents()
 // DCOP
 void KlipperWidget::clearClipboardHistory()
 {
-  clearClipboardContents();
+  //disable until Qt 3.2 hang bug is fixed
+  //clearClipboardContents();
   trimClipHistory(0);
   saveSession();
 }
@@ -188,8 +189,11 @@ void KlipperWidget::clickedMenu(int id)
             config->writeEntry("AutoStart", true);
         else if ( autoStart == KMessageBox::No) {
             config->writeEntry("AutoStart", false);
-        }else  // cancel chosen don't quit
-	    break;
+        } else  // cancel chosen don't quit
+            break;
+        config->sync();
+        kapp->quit();
+        break;
     }
 //    case URLGRAB_ITEM: // handled with an extra slot
 //	break;
@@ -198,9 +202,10 @@ void KlipperWidget::clickedMenu(int id)
 	{
 	    m_checkTimer->stop();
 
-	    trimClipHistory(0);
-            slotClearClipboard();
-            setEmptyClipboard();
+        trimClipHistory(0);
+        //disable until Qt 3.2 hang bug is fixed
+        //slotClearClipboard();
+        //setEmptyClipboard();
 
 	    m_checkTimer->start(1000);
 	}
@@ -545,33 +550,31 @@ void KlipperWidget::removeFromHistory( const QString& text )
 
 void KlipperWidget::slotClearClipboard()
 {
-    clip->setSelectionMode( true );
-    clip->clear();
-    clip->setSelectionMode( false );
-    clip->clear();
+    clip->clear(QClipboard::Selection);
+    clip->clear(QClipboard::Clipboard);
     if ( m_selectedItem != -1 )
         m_popup->setItemEnabled(m_selectedItem, false);
 }
 
 QString KlipperWidget::clipboardContents( bool *isSelection )
 {
-    clip->setSelectionMode( true );
-
-    QString contents = "";
-    if(!bClipEmpty) contents = clip->text();
+    bool selection = true;
+    QString contents = clip->text(QClipboard::Selection);
 
     if ( contents == m_lastSelection )
     {
-        clip->setSelectionMode( false );
-        QString clipContents = clip->text();
+        QString clipContents = clip->text(QClipboard::Clipboard);
         if ( clipContents != m_lastClipboard )
+        {
             contents = clipContents;
+            selection = false;
+        }
         else
-            clip->setSelectionMode( true );
+            selection = true;
     }
 
     if ( isSelection )
-        *isSelection = clip->selectionModeEnabled();
+        *isSelection = selection;
 
     return contents;
 }
@@ -638,21 +641,13 @@ void KlipperWidget::clipboardSignalArrived( bool selectionMode )
     updateXTime();
 //     qDebug("*** clipboardSignalArrived: %i", selectionMode);
 
-    clip->setSelectionMode( selectionMode );
-
-    if(!bClipEmpty) 
-    {
-      QString text = clip->text();
-//     qDebug("-> text is: %s", text.latin1());
-      checkClipData( text, selectionMode );
-    }
+    QString text = clip->text( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
+    checkClipData( text, selectionMode );
     m_checkTimer->start(1000);
 }
 
 void KlipperWidget::checkClipData( const QString& text, bool selectionMode )
 {
-   clip->setSelectionMode( selectionMode );
-
     if ( ignoreClipboardChanges() ) // internal to klipper, ignoring QSpinBox selections
     {
         // keep our old clipboard, thanks
@@ -661,7 +656,7 @@ void KlipperWidget::checkClipData( const QString& text, bool selectionMode )
         return;
     }
 
-
+    bool clipEmpty = (clip->data(selectionMode ? QClipboard::Selection : QClipboard::Clipboard)->format() == 0L);
 //     qDebug("checkClipData(%i): %s, empty: %i (lastClip: %s, lastSel: %s)", selectionMode, text.latin1(), clipEmpty, m_lastClipboard.latin1(), m_lastSelection.latin1() );
 
 //     const char *format;
@@ -677,7 +672,7 @@ void KlipperWidget::checkClipData( const QString& text, bool selectionMode )
 
     if ( text != lastClipRef ) {
         // keep old clipboard after someone set it to null
-        if ( bClipEmpty && bNoNullClipboard )
+        if ( clipEmpty && bNoNullClipboard )
             setClipboard( lastClipRef, selectionMode );
         else
             lastClipRef = text;
@@ -732,12 +727,10 @@ void KlipperWidget::setClipboard( const QString& text, int mode )
     klip->setSynchronizing( false );
 
     if ( mode & Selection ) {
-        clip->setSelectionMode( true );
-        clip->setText( text );
+        clip->setText( text, QClipboard::Selection );
     }
     if ( mode & Clipboard ) {
-        clip->setSelectionMode( false );
-        clip->setText( text );
+        clip->setText( text, QClipboard::Clipboard );
     }
 
     klip->setReverseSynchronizing( selection );
