@@ -21,7 +21,6 @@
  */
 
 #include <qcheckbox.h>
-#include <qdragobject.h>
 #include <qevent.h>
 #include <qpushbutton.h>
 #include <qspinbox.h>
@@ -30,6 +29,7 @@
 #include <kfiledialog.h>
 #include <kimageio.h>
 #include <klocale.h>
+#include <kurldrag.h>
 
 #include "bgsettings.h"
 #include "bgwallpaper.h"
@@ -47,14 +47,22 @@ BGMultiWallpaperList::BGMultiWallpaperList(QWidget *parent, const char *name)
 
 void BGMultiWallpaperList::dragEnterEvent(QDragEnterEvent *ev)
 {
-   ev->accept(QUriDrag::canDecode(ev));
+   ev->accept(KURLDrag::canDecode(ev));
 }
 
 
 void BGMultiWallpaperList::dropEvent(QDropEvent *ev)
 {
    QStringList files;
-   QUriDrag::decodeLocalFiles(ev, files);
+   KURL::List urls;
+   KURLDrag::decode(ev, urls);
+   for(KURL::List::ConstIterator it = urls.begin();
+       it != urls.end(); ++it)
+   {
+      // TODO: Download remote files
+      if ((*it).isLocalFile())
+          files.append((*it).path());
+   }
    insertStringList(files);
 }
 
