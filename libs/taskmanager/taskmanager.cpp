@@ -534,3 +534,8 @@ void Startup::timerEvent(QTimerEvent *)
     killTimers();
     emit(killMe(this));
 }
+
+int TaskManager::currentDesktop()
+{
+    return kwin_module->currentDesktop();
+}

@@ -143,6 +143,7 @@ public:
 
     QString desktopName(int);
     int numberOfDesktops();
+    int currentDesktop();
     bool isOnTop(Task*);
 
 signals:
