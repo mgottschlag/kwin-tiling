@@ -62,7 +62,7 @@ from The Open Group.
  *     - , -> short for |','
  *     - { -> short for ('{')' }'<' '|''
  *   - the pointer to the array is the last argument to the format
- *
+ * - the %m conversion from syslog() is supported
  */
 
 /**************************************************************
@@ -298,7 +298,7 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
     void *arptr;
 #endif
     unsigned long value;
-    int radix, min, max, flags, cflags;
+    int radix, min, max, flags, cflags, errn;
 #ifdef PRINT_ARRAYS
     int arlen;
     unsigned aridx;
@@ -313,6 +313,7 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 # endif
     radix = 0;
 #endif
+    errn = errno;
     for (;;) {
 	for (;;) {
 	    NCHR;
@@ -430,6 +431,9 @@ DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 	switch (ch) {
 	case '%':
 	    dopr_outch (bp, ch);
+	    break;
+	case 'm':
+	    fmtstr (dopr_outch, bp, strerror (errn), flags, min, max);
 	    break;
 	case 'c':
 	    dopr_outch (bp, va_arg (args, int));

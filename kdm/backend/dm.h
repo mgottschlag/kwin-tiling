@@ -521,7 +521,6 @@ extern const char *getEnv (char **e, const char *name);
 extern const char *localHostname (void);
 extern int Reader (int fd, void *buf, int len);
 extern void FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr);
-extern const char *SysErrorMsg (void);
 
 /* in inifile.c */
 extern char *iniLoad (const char *fname);

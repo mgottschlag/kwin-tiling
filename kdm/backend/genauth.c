@@ -223,7 +223,7 @@ sumFile (const char *name, int len, int whence, long offset)
     unsigned char buf[0x1000];
 
     if ((fd = open (name, O_RDONLY)) < 0) {
-	Debug("cannot open entropy source %\"s: %s\n", name, SysErrorMsg());
+	Debug("cannot open entropy source %\"s: %m\n", name);
 	return -1;
     }
     lseek (fd, offset, whence);
@@ -232,7 +232,7 @@ sumFile (const char *name, int len, int whence, long offset)
 	    break;
 	if (cnt < 0) {
 	    close (fd);
-	    Debug("cannot read entropy source %\"s: %s\n", name, SysErrorMsg());
+	    Debug("cannot read entropy source %\"s: %m\n", name);
 	    return -1;
 	}
 	readlen += cnt;
@@ -344,9 +344,9 @@ GenerateAuthData (char *auth, int len)
 		return 1;
 	    }
 	    close(fd);
-	    LogError("Cannot read randomDevice %\"s: %s\n", rd, SysErrorMsg());
+	    LogError("Cannot read randomDevice %\"s: %m\n", rd);
 	} else
-	    LogError("Cannot open randomDevice %\"s: %s\n", rd, SysErrorMsg());
+	    LogError("Cannot open randomDevice %\"s: %m\n", rd);
 # ifdef DEV_RANDOM
 	return 0;
 # else

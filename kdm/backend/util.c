@@ -453,10 +453,3 @@ FdGetsCall (int fd, void (*func)(const char *, int, void *), void *ptr)
 	bpos += llen;
     }
 }
-
-const char *SysErrorMsg ()
-{
-    const char *s = strerror(errno);
-    return (s ? s : "Unknown error");
-}
-

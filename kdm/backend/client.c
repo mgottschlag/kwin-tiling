@@ -565,7 +565,7 @@ Verify (GConvFunc gconv)
     if ((sp = getspnam (curuser)))
 	p->pw_passwd = sp->sp_pwdp;
     else
-	Debug ("getspnam() failed: %s.  Are you root?\n", SysErrorMsg());
+	Debug ("getspnam() failed: %m.  Are you root?\n");
 # endif
 
     if (!*p->pw_passwd) {
@@ -894,14 +894,13 @@ SetGid (const char *name, int gid)
 {
     if (setgid(gid) < 0)
     {
-	LogError("setgid(%d) (user %s) failed: %s\n",
-		 gid, name, SysErrorMsg());
+	LogError("setgid(%d) (user %s) failed: %m\n", gid, name);
 	return 0;
     }
 #ifndef QNX4
     if (initgroups(name, gid) < 0)
     {
-	LogError("initgroups for %s failed: %s\n", name, SysErrorMsg());
+	LogError("initgroups for %s failed: %m\n", name);
 	return 0;
     }
 #endif   /* QNX4 doesn't support multi-groups, no initgroups() */
@@ -913,8 +912,7 @@ SetUid (const char *name, int uid)
 {
     if (setuid(uid) < 0)
     {
-	LogError("setuid(%d) (user %s) failed: %s\n",
-		 uid, name, SysErrorMsg());
+	LogError("setuid(%d) (user %s) failed: %m\n", uid, name);
 	return 0;
     }
     return 1;
@@ -1203,7 +1201,7 @@ StartClient ()
 #  if defined(BSD) && (BSD >= 199103)
 	if (setlogin(curuser) < 0)
 	{
-	    LogError("setlogin for %s failed: %s\n", curuser, SysErrorMsg());
+	    LogError("setlogin for %s failed: %m\n", curuser);
 	    exit (1);
 	}
 #  endif
@@ -1227,8 +1225,7 @@ StartClient ()
 	 */
 	if (setusercontext(NULL, p, p->pw_uid, LOGIN_SETALL) < 0)
 	{
-	    LogError("setusercontext for %s failed: %s\n",
-		     curuser, SysErrorMsg());
+	    LogError("setusercontext for %s failed: %m\n", curuser);
 	    exit (1);
 	}
 
@@ -1243,7 +1240,7 @@ StartClient ()
 	 */
 	if (setpcred(curuser, NULL) == -1)
 	{
-	    LogError("setpcred for %s failed: %s\n", curuser, SysErrorMsg());
+	    LogError("setpcred for %s failed: %m\n", curuser);
 	    exit (1);
 	}
 
@@ -1325,8 +1322,8 @@ StartClient ()
 	home = getEnv (userEnviron, "HOME");
 	if (home) {
 	    if (chdir (home) < 0) {
-		LogError ("Cannot chdir to %s's home %s: %s, using /\n",
-			  curuser, home, SysErrorMsg());
+		LogError ("Cannot chdir to %s's home %s: %m, using /\n",
+			  curuser, home);
 		home = 0;
 		userEnviron = setEnv (userEnviron, "HOME", "/");
 		chdir ("/");
@@ -1364,20 +1361,18 @@ StartClient ()
 		argv = addStrArr (argv, sessargs, -1);
 		Debug ("executing session %\"[s\n", argv);
 		execute (argv, userEnviron);
-		LogError ("Session %\"s execution failed: %s\n",
-			  argv[0], SysErrorMsg());
+		LogError ("Session %\"s execution failed: %m\n", argv[0]);
 	} else {
 		LogError ("Session has no command/arguments\n");
 	}
 	failsafeArgv[0] = td->failsafeClient;
 	failsafeArgv[1] = 0;
 	execute (failsafeArgv, userEnviron);
-	LogError ("Failsafe client %\"s execution failed: %s\n",
-		  failsafeArgv[0], SysErrorMsg());
+	LogError ("Failsafe client %\"s execution failed: %m\n",
+		  failsafeArgv[0]);
 	exit (1);
     case -1:
-	LogError ("Forking session on %s failed: %s\n",
-		  td->name, SysErrorMsg());
+	LogError ("Forking session on %s failed: %m\n", td->name);
 	return 0;
     default:
 	Debug ("StartSession, fork succeeded %d\n", pid);

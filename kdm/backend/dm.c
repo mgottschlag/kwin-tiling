@@ -598,8 +598,7 @@ StartRemoteLogin (struct display *d)
 	LogError ("X server %\"s cannot be executed\n", argv[0]);
 	exit (1);
     case -1:
-	LogError ("Forking X server for remote login failed: %s",
-		  SysErrorMsg());
+	LogError ("Forking X server for remote login failed: %m");
 	d->status = notRunning;
 	return;
     default:

@@ -81,7 +81,7 @@ BecomeDaemon (void)
 	break;
     case -1:
 	/* error */
-	LogError("Daemon fork failed: %s\n", SysErrorMsg());
+	LogError("Daemon fork failed: %m\n");
 	break;
 
     default:

@@ -156,7 +156,7 @@ Wait4 (int pid)
 #endif
 	if (errno != EINTR)
 	{
-	    Debug ("Wait4(%d) failed: %s\n", pid, SysErrorMsg() );
+	    Debug ("Wait4(%d) failed: %m\n", pid);
 	    return 0;
 	}
     return waitVal (result);
@@ -214,10 +214,10 @@ runAndWait (char **args, char **env)
     switch (pid = Fork ()) {
     case 0:
 	execute (args, env);
-	LogError ("Can't execute %\"s: %s\n", args[0], SysErrorMsg());
+	LogError ("Can't execute %\"s: %m\n", args[0]);
 	exit (1);
     case -1:
-	LogError ("Can't fork to execute %\"s: %s\n", args[0], SysErrorMsg());
+	LogError ("Can't fork to execute %\"s: %m\n", args[0]);
 	return 1;
     }
     ret = Wait4 (pid);

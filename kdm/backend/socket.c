@@ -56,7 +56,7 @@ CreateWellKnownSockets (void)
     Debug ("creating socket %d\n", request_port);
     xdmcpFd = socket (AF_INET, SOCK_DGRAM, 0);
     if (xdmcpFd == -1) {
-	LogError ("XDMCP socket creation failed: %s\n", SysErrorMsg());
+	LogError ("XDMCP socket creation failed: %m\n");
 	return;
     }
     name = localHostname ();
@@ -71,7 +71,7 @@ CreateWellKnownSockets (void)
     sock_addr.sin_addr.s_addr = htonl (INADDR_ANY);
     if (bind (xdmcpFd, (struct sockaddr *)&sock_addr, sizeof (sock_addr)) == -1)
     {
-	LogError ("Cannot bind UDP port %d: %s\n", request_port, SysErrorMsg());
+	LogError ("Cannot bind UDP port %d: %m\n", request_port);
 	close (xdmcpFd);
 	xdmcpFd = -1;
 	return;

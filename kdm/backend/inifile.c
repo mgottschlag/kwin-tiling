@@ -53,7 +53,7 @@ iniLoad (const char *fname)
     int fd, len;
 
     if ((fd = open (fname, O_RDONLY)) < 0) {
-	Debug ("cannot open ini-file %\"s: %s", fname, SysErrorMsg());
+	Debug ("cannot open ini-file %\"s: %m", fname);
 	return 0;
     }
     len = lseek (fd, 0, SEEK_END);
@@ -64,7 +64,7 @@ iniLoad (const char *fname)
     }
     lseek (fd, 0, SEEK_SET);
     if (read (fd, data, len) != len) {
-	Debug ("cannot read ini-file %\"s: %s", fname, SysErrorMsg());
+	Debug ("cannot read ini-file %\"s: %m", fname);
 	free (data);
 	close (fd);
 	return 0;
@@ -82,7 +82,7 @@ iniSave (const char *data, const char *fname)
     int fd, cnt, len;
 
     if ((fd = creat (fname, 0600)) < 0) {
-	Debug ("cannot create ini-file %\"s: %s", fname, SysErrorMsg());
+	Debug ("cannot create ini-file %\"s: %m", fname);
 	return 0;
     }
     len = strlen (data);
@@ -91,7 +91,7 @@ iniSave (const char *data, const char *fname)
 	return 1;
     }
     if (cnt == -1)
-	Debug ("cannot write ini-file %\"s: %s", fname, SysErrorMsg());
+	Debug ("cannot write ini-file %\"s: %m", fname);
     else
 	Debug ("cannot write ini-file %\"s: partial write", fname);
     close (fd);

@@ -274,8 +274,7 @@ WaitForServer (struct display *d)
 		RegisterCloseOnFork (ConnectionNumber (dpy));
 		return;
 	    }
-	    Debug ("OpenDisplay(%s) attempt %d failed: %s\n",
-		   d->name, i+1, SysErrorMsg());
+	    Debug ("OpenDisplay(%s) attempt %d failed: %m\n", d->name, i + 1);
 	    sleep ((unsigned) d->openDelay);
 	} else {
 	    LogError ("Hung in XOpenDisplay(%s), aborting\n", d->name);

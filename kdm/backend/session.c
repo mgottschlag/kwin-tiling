@@ -466,7 +466,7 @@ catchTerm (int n ATTR_UNUSED)
 static int
 IOErrorHandler (Display *dspl ATTR_UNUSED)
 {
-    LogError("Fatal X server IO error: %s\n", SysErrorMsg());
+    LogError("Fatal X server IO error: %m\n");
     /* The only X interaction during the session are pings, and those
        have an own IOErrorHandler -> not EX_AL_RESERVER_DPY */
     Longjmp (abortSession, EX_RESERVER_DPY);
