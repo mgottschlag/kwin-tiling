@@ -57,12 +57,12 @@ class LaunchConfig : public KCModule
 
   private:
 
-    QCheckBox * cb_busyCursor_;
-    QCheckBox * cb_taskbarButton_;
+    QCheckBox * cb_busyCursor;
+    QCheckBox * cb_busyBlinking;
+    QCheckBox * cb_taskbarButton;
     QSpinBox  * sb_cursorTimeout;
     QSpinBox  * sb_taskbarTimeout;
-    QGroupBox * gb_cursor;
-    QGroupBox * gb_taskbar;
+
 };
 
 #endif

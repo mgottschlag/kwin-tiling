@@ -44,68 +44,138 @@ extern "C"
 LaunchConfig::LaunchConfig(QWidget * parent, const char * name)
   : KCModule(parent, name)
 {
-  QGroupBox * groupBox = new QGroupBox
-    (
-     2,
-     Vertical,
-     i18n("When an application is starting"),
-     this
-    );
+    if ( !name )
+	setName( "Form1" );
+    resize( 451, 316 );
+    setCaption( i18n( "Form1" ) );
+    QVBoxLayout* Form1Layout = new QVBoxLayout( this );
+    Form1Layout->setSpacing( 6 );
+    Form1Layout->setMargin( 11 );
 
-  cb_busyCursor_ =
-    new QCheckBox(i18n("Show an icon next to the mouse cursor"), groupBox);
+    QGroupBox* GroupBox1 = new QGroupBox( this, "GroupBox1" );
+    GroupBox1->setTitle( i18n( "Busy Cursor" ) );
+    QWhatsThis::add(GroupBox1, i18n(
+     "<h1>Busy Cursor</h1>\n"
+     "KDE offers a busy cursor for application startup notification.\n"
+     "To enable the busy cursor, check 'Enable Busy Cursor'.\n"
+     "To have the cursor blinking, check 'Enable blinking' below.\n"
+     "It may occur, that some applications are not aware of this startup\n"
+     "notification. In this case, the cursor stops blinking after the time\n"
+     "given in the section 'Startup indication timeout'"));
 
-  cb_taskbarButton_ =
-    new QCheckBox
-    (
-     i18n("Show a button in the taskbar with an animated disk"),
-     groupBox
-    );
+    GroupBox1->setColumnLayout(0, Qt::Vertical );
+    GroupBox1->layout()->setSpacing( 0 );
+    GroupBox1->layout()->setMargin( 0 );
+    QGridLayout* GroupBox1Layout = new QGridLayout( GroupBox1->layout() );
+    GroupBox1Layout->setAlignment( Qt::AlignTop );
+    GroupBox1Layout->setSpacing( 6 );
+    GroupBox1Layout->setMargin( 11 );
+    QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    GroupBox1Layout->addItem( spacer, 2, 4 );
 
-  QVBoxLayout * layout =
-    new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
+    QLabel* TextLabel1 = new QLabel( GroupBox1, "TextLabel1" );
+    TextLabel1->setText( i18n( "Startup indication timeout (seconds) :" ) );
 
-  layout->addWidget(groupBox);
+    GroupBox1Layout->addMultiCellWidget( TextLabel1, 2, 2, 0, 2 );
 
-  gb_cursor = new QGroupBox( 1, Vertical, i18n( "Busy cursor settings" ), this );
-  ( void ) new QLabel( i18n( "Startup indication timeout (seconds) : " ), gb_cursor );
-  sb_cursorTimeout = new QSpinBox( 0, 60, 1, gb_cursor );
-  layout->addWidget(gb_cursor);
+    sb_cursorTimeout = new QSpinBox( GroupBox1, "sb_cursorTimeout" );
 
-  gb_taskbar = new QGroupBox( 1, Vertical, i18n( "Taskbar settings" ), this );
-  ( void )  new QLabel( i18n( "Startup indication timeout (seconds) : " ), gb_taskbar );
-  sb_taskbarTimeout = new QSpinBox( 0, 60, 1, gb_taskbar );
-  layout->addWidget(gb_taskbar);
+    GroupBox1Layout->addWidget( sb_cursorTimeout, 2, 3 );
 
-  layout->addStretch(100);
+    cb_busyCursor = new QCheckBox( GroupBox1, "cb_busyCursor" );
+    cb_busyCursor->setText( i18n( "Enable Busy Cursor " ) );
+
+    GroupBox1Layout->addMultiCellWidget( cb_busyCursor, 0, 0, 0, 2 );
+    QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum );
+    GroupBox1Layout->addItem( spacer_2, 1, 0 );
+
+    cb_busyBlinking = new QCheckBox( GroupBox1, "cb_busyBlinking" );
+    cb_busyBlinking->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)0, cb_busyBlinking->sizePolicy().hasHeightForWidth() ) );
+    cb_busyBlinking->setText( i18n( "Enable blinking" ) );
+
+    GroupBox1Layout->addWidget( cb_busyBlinking, 1, 1 );
+    QSpacerItem* spacer_3 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    GroupBox1Layout->addMultiCell( spacer_3, 1, 1, 2, 4 );
+    Form1Layout->addWidget( GroupBox1 );
+
+    QGroupBox* GroupBox2 = new QGroupBox( this, "GroupBox2" );
+    GroupBox2->setTitle( i18n( "Taskbar Notification" ) );
+    QWhatsThis::add(GroupBox2, i18n("<H1>Taskbar Notification</H1>\n"
+    "You can enable a second method of startup notification which is\n"
+    "used by the taskbar where a button with a rotating disk appears,\n"
+    "symbolizing that your started application is loading.\n"
+    "It may occur, that some applications are not aware of this startup\n"
+     "notification. In this case, the button disappears after the time\n"
+     "given in the section 'Startup indication timeout'"));
+
+    GroupBox2->setColumnLayout(0, Qt::Vertical );
+    GroupBox2->layout()->setSpacing( 0 );
+    GroupBox2->layout()->setMargin( 0 );
+    QGridLayout* GroupBox2Layout = new QGridLayout( GroupBox2->layout() );
+    GroupBox2Layout->setAlignment( Qt::AlignTop );
+    GroupBox2Layout->setSpacing( 6 );
+    GroupBox2Layout->setMargin( 11 );
+
+    QLabel* TextLabel2 = new QLabel( GroupBox2, "TextLabel2" );
+    TextLabel2->setText( i18n( "Startup indication timeout (seconds) :" ) );
+
+    GroupBox2Layout->addWidget( TextLabel2, 1, 0 );
+
+    sb_taskbarTimeout = new QSpinBox( GroupBox2, "sb_taskbarTimeout" );
+
+    GroupBox2Layout->addWidget( sb_taskbarTimeout, 1, 1 );
+    QSpacerItem* spacer_4 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+    GroupBox2Layout->addItem( spacer_4, 1, 2 );
+
+    cb_taskbarButton = new QCheckBox( GroupBox2, "cb_taskbarButton" );
+    cb_taskbarButton->setText( i18n( "Enable Taskbar Notification " ) );
+
+    GroupBox2Layout->addWidget( cb_taskbarButton, 0, 0 );
+    Form1Layout->addWidget( GroupBox2 );
+//    QSpacerItem* spacer_5 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
+//    Form1Layout->addItem( spacer_5 );
+    Form1Layout->addStretch();
 
   load();
 
   connect
     (
-     cb_busyCursor_,
+     cb_busyCursor,
      SIGNAL(toggled(bool)),
      SLOT( checkChanged())
     );
   connect
     (
-     cb_busyCursor_,
+     cb_busyCursor,
      SIGNAL(toggled(bool)),
-     gb_cursor,
+     cb_busyBlinking,
      SLOT( setEnabled(bool))
+    );
+  connect
+    (
+     cb_busyCursor,
+     SIGNAL(toggled(bool)),
+     sb_cursorTimeout,
+     SLOT( setEnabled(bool))
+    );
+  connect
+    (
+     cb_busyBlinking,
+     SIGNAL(toggled(bool)),
+     SLOT( checkChanged())
     );
 
   connect
     (
-     cb_taskbarButton_,
+     cb_taskbarButton,
      SIGNAL(toggled(bool)),
      SLOT( checkChanged())
     );
   connect
     (
-     cb_taskbarButton_,
+     cb_taskbarButton,
      SIGNAL(toggled(bool)),
-     gb_taskbar,
+     sb_taskbarTimeout,
      SLOT( setEnabled(bool))
     );
 
@@ -122,6 +192,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name)
      SIGNAL(valueChanged(int)),
      SLOT( checkChanged())
     );
+
 }
 
 LaunchConfig::~LaunchConfig()
@@ -138,17 +209,22 @@ LaunchConfig::load()
   bool busyCursor =
     c.readBoolEntry("BusyCursor", Default & BusyCursor);
 
+
   bool taskbarButton =
     c.readBoolEntry("TaskbarButton", Default & TaskbarButton);
 
-  cb_busyCursor_     ->setChecked(busyCursor);
-  cb_taskbarButton_  ->setChecked(taskbarButton);
+  cb_busyCursor->setChecked(busyCursor);
+  cb_taskbarButton->setChecked(taskbarButton);
   
-  gb_cursor->setEnabled( busyCursor );
-  gb_taskbar->setEnabled( taskbarButton );
+  cb_busyBlinking->setEnabled( busyCursor );
+  sb_cursorTimeout->setEnabled( busyCursor );
+
+  sb_taskbarTimeout->setEnabled( taskbarButton );
 
   c.setGroup( "BusyCursorSettings" );
   sb_cursorTimeout->setValue( c.readUnsignedNumEntry( "Timeout", 30 ));
+  bool busyBlinking =c.readBoolEntry("Blinking", true);
+  cb_busyBlinking->setChecked(busyBlinking);
 
   c.setGroup( "TaskbarButtonSettings" );
   sb_taskbarTimeout->setValue( c.readUnsignedNumEntry( "Timeout", 30 ));
@@ -162,13 +238,13 @@ LaunchConfig::save()
   KConfig c("klaunchrc", false, false);
 
   c.setGroup("FeedbackStyle");
+  c.writeEntry("BusyCursor",    cb_busyCursor->isChecked());
+  c.writeEntry("TaskbarButton", cb_taskbarButton->isChecked());
 
-  c.writeEntry("BusyCursor",    cb_busyCursor_     ->isChecked());
-  c.writeEntry("TaskbarButton", cb_taskbarButton_  ->isChecked());
-  
   c.setGroup( "BusyCursorSettings" );
   c.writeEntry( "Timeout", sb_cursorTimeout->value());
- 
+  c.writeEntry("Blinking", cb_busyBlinking->isChecked());
+
   c.setGroup( "TaskbarButtonSettings" );
   c.writeEntry( "Timeout", sb_taskbarTimeout->value());
 
@@ -186,8 +262,9 @@ LaunchConfig::save()
   void
 LaunchConfig::defaults()
 {
-  cb_busyCursor_     ->setChecked(Default & BusyCursor);
-  cb_taskbarButton_  ->setChecked(Default & TaskbarButton);
+  cb_busyCursor->setChecked(Default & BusyCursor);
+  cb_busyBlinking->setChecked(Default & BusyCursor);
+  cb_taskbarButton->setChecked(Default & TaskbarButton);
 
   sb_cursorTimeout->setValue( 30 );
   sb_taskbarTimeout->setValue( 30 );
@@ -210,15 +287,16 @@ LaunchConfig::checkChanged()
 
   c.setGroup( "BusyCursorSettings" );
   unsigned int savedCursorTimeout = c.readUnsignedNumEntry( "Timeout", 30 );
+  bool savedBusyBlinking =c.readBoolEntry("Blinking", true);
 
   c.setGroup( "TaskbarButtonSettings" );
   unsigned int savedTaskbarTimeout = c.readUnsignedNumEntry( "Timeout", 30 );
 
-  bool newBusyCursor =
-    cb_busyCursor_->isChecked();
+  bool newBusyCursor =cb_busyCursor->isChecked();
 
-  bool newTaskbarButton =
-    cb_taskbarButton_->isChecked();
+  bool newTaskbarButton =cb_taskbarButton->isChecked();
+
+  bool newBusyBlinking= cb_busyBlinking->isChecked();
 
   unsigned int newCursorTimeout = sb_cursorTimeout->value();
   
@@ -235,6 +313,8 @@ LaunchConfig::checkChanged()
       savedCursorTimeout  != newCursorTimeout
       ||
       savedTaskbarTimeout != newTaskbarTimeout
+      ||
+      savedBusyBlinking != newBusyBlinking
      )
     );
 }
