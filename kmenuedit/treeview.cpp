@@ -549,7 +549,7 @@ void TreeView::slotDropped (QDropEvent * e, QListViewItem *parent, QListViewItem
     }
 }
 
-QDragObject *TreeView::dragObject() const
+QDragObject *TreeView::dragObject()
 {
     TreeItem *item = (TreeItem*)selectedItem();
     if(item == 0) return 0;

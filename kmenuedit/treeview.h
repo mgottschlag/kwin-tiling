@@ -88,7 +88,7 @@ protected:
     QStringList dirList(const QString& relativePath);
 
     bool acceptDrag(QDropEvent* event) const;
-    QDragObject *dragObject() const;
+    QDragObject *dragObject();
 
 private:
     KActionCollection *_ac;
