@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Service
+Name=Google (I'm Feeling Lucky)
+ServiceTypes=SearchProvider
+Keys=ggl,gglucky
+Query=http://www.google.com/search?q=\\1&btnI=I%27m+Feeling+Lucky

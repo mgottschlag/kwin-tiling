@@ -6,5 +6,5 @@ services_DATA = acronym.desktop altavista.desktop austronaut.desktop \
                 mamma.desktop metacrawler.desktop realnames.desktop \
                 rpmfind.desktop thesaurus.desktop voila.desktop \
                 vivisimo.desktop webster.desktop deja.desktop whatis.desktop \
-                google_images.desktop
+                google_images.desktop google_lucky.desktop
 servicesdir = $(kde_servicesdir)/searchproviders
