@@ -1469,6 +1469,9 @@ static Ent entsGreeter[] = {
 "# Widget Style of the greeter:\n"
 "# Default, Windows, Platinum, Motif, MotifPlus, CDE, SGI, and any styles you\n"
 "# may have installed, e.g., HighColor; Default is \"Default\"\n" },
+{ "ColorScheme",		0, 0, 
+"# Widget Colors of the greeter:\n"
+"# Default, and any color schemes you may have installed. Default is \"Default\"\n" },
 { "LogoArea",		0, upd_logoarea, 
 "# What should be shown righthand of the input lines:\n"
 "# \"Logo\" - the image specified by LogoPixmap (Default)\n"
@@ -1704,6 +1707,7 @@ static DEnt dEntsAnyCore[] = {
 static DEnt dEntsAnyGreeter[] = {
 { "SessionTypes",	"default,kde,failsafe", 1 },
 { "GUIStyle",		"Windows", 0 },
+{ "ColorScheme",	"Pumpkin", 0 },
 { "LogoArea",		"None", 0 },
 { "LogoPixmap",		"", 0 },
 { "GreeterPosFixed",	"true", 0 },

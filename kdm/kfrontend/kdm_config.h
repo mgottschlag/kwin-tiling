@@ -80,5 +80,6 @@
 # define FACE_PREFER_ADMIN	1
 # define FACE_PREFER_USER	2
 # define FACE_USER_ONLY		3
+#define C_ColorScheme		(C_TYPE_STR | 0x102c)
 
 #endif /* _KDM_CONFIG_H_ */

@@ -187,7 +187,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hlp = new QWidget( group );
   grid->addWidget(hlp, 3, 1);
   hglay = new QGridLayout( hlp, 2, 3, KDialog::spacingHint() );
-  hglay->setColStretch(2, 1);
+  hglay->setColStretch(3, 1);
 
   guicombo = new KComboBox(false, hlp);
   guicombo->insertStringList(QStyleFactory::keys());
@@ -200,6 +200,17 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( guicombo, wtstr );
 
+  colcombo = new KComboBox(false, hlp);
+  loadColorSchemes(colcombo);
+  label = new QLabel(colcombo, i18n("&Color Scheme:"), hlp);
+  connect(colcombo, SIGNAL(activated(int)), SLOT(changed()));
+  hglay->addWidget(label, 1, 0);
+  hglay->addWidget(colcombo, 1, 1);
+  wtstr = i18n("You can choose a basic Color Scheme here that will be "
+        "used by KDM only.");
+  QWhatsThis::add( label, wtstr );
+  QWhatsThis::add( colcombo, wtstr );
+
   label = new QLabel(i18n("Echo &mode:"), hlp);
   echocombo = new QComboBox(false, hlp);
   label->setBuddy( echocombo );
@@ -207,8 +218,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   echocombo->insertItem(i18n("One Star"));
   echocombo->insertItem(i18n("Three Stars"));
   connect(echocombo, SIGNAL(activated(int)), SLOT(changed()));
-  hglay->addWidget(label, 1, 0);
-  hglay->addWidget(echocombo, 1, 1);
+  hglay->addWidget(label, 2, 0);
+  hglay->addWidget(echocombo, 2, 1);
   wtstr = i18n("You can choose whether and how KDM shows your password when you type it.");
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( echocombo, wtstr );
@@ -254,6 +265,7 @@ void KDMAppearanceWidget::makeReadOnly()
     xLineEdit->setEnabled(false);
     yLineEdit->setEnabled(false);
     guicombo->setEnabled(false);
+    colcombo->setEnabled(false);
     echocombo->setEnabled(false);
     langcombo->setEnabled(false);
 }
@@ -275,6 +287,28 @@ void KDMAppearanceWidget::loadLanguageList(KLanguageButton *combo)
     entry.setGroup(QString::fromLatin1("KCM Locale"));
     QString name = entry.readEntry(QString::fromLatin1("Name"), i18n("without name"));
     combo->insertLanguage(nid, name, QString::fromLatin1("l10n/"), QString::null);
+  }
+}
+
+void KDMAppearanceWidget::loadColorSchemes(KComboBox *combo)
+{
+  combo->clear();
+
+  // Global + local schemes
+  QStringList list = KGlobal::dirs()->findAllResources("data",
+       "kdisplay/color-schemes/*.kcsrc", false, true);
+
+  combo->insertItem("Default");
+  for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++) {
+    KSimpleConfig *config = new KSimpleConfig(*it, true);
+    config->setGroup("Color Scheme");
+
+    QString str;
+    if (!(str = config->readEntry("Name")).isEmpty() ||
+	!(str = config->readEntry("name")).isEmpty())
+	combo->insertItem(str);
+
+    delete config;
   }
 }
 
@@ -393,6 +427,8 @@ void KDMAppearanceWidget::save()
 
   config->writeEntry("GUIStyle", guicombo->currentText());
 
+  config->writeEntry("ColorScheme", colcombo->currentText());
+
   config->writeEntry("EchoMode", echocombo->currentItem() == 0 ? "NoEcho" :
 			    echocombo->currentItem() == 1 ? "OneStar" :
 							    "ThreeStars");
@@ -430,6 +466,9 @@ void KDMAppearanceWidget::load()
 
   // Check the GUI type
   guicombo->setCurrentItem (config->readEntry("GUIStyle", "Default"), true, 0);
+
+  // Check the Color Scheme
+  colcombo->setCurrentItem (config->readEntry("ColorScheme", "Default"), true, 0);
 
   // Check the echo mode
   QString echostr = config->readEntry("EchoMode", "OneStar");

@@ -31,6 +31,7 @@
 #include <qstring.h>
 #include <qstrlist.h>
 #include <qfont.h>
+#include <qpalette.h>
 
 #include <ksimpleconfig.h>	// need it here for "make final"
 
@@ -43,8 +44,8 @@ QStringList GetCfgQStrList (int id);
 class KDMConfig {
 
 private:
-    QFont Str2Font (QString aValue);
-//    QColor Str2Color (QString aValue);
+    QFont Str2Font (const QString &aValue);
+    QPalette Str2Palette (const QString &aValue);
 
 public:
     KDMConfig();

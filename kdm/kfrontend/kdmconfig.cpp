@@ -72,7 +72,7 @@ QStringList GetCfgQStrList (int id)
 }
 
 // Based on kconfigbase.cpp
-QFont KDMConfig::Str2Font (QString aValue)
+QFont KDMConfig::Str2Font (const QString &aValue)
 {
     uint nFontBits;
     QFont aRetFont;
@@ -104,22 +104,107 @@ QFont KDMConfig::Str2Font (QString aValue)
     return aRetFont;
 }
 
-/*
-QColor KDMConfig::Str2Color (QString aValue)
+// XXX gallium, fix this :)
+QPalette KDMConfig::Str2Palette (const QString &aValue)
 {
-    QColor aRetColor;
-    QStringList sl;
+    QStringList list = KGlobal::dirs()->findAllResources("data",
+            "kdisplay/color-schemes/*.kcsrc", false, true);
+    QStringList::ConstIterator it;
 
-    if ( aValue.at(0) == '#' )
-	aRetColor.setNamedColor(aValue);
-    else {
-	sl = QStringList::split (QString::fromLatin1(","), aValue);
-	if (sl.count() == 3)
-	    aRetColor.setRgb( sl[0].toInt(), sl[1].toInt(), sl[2].toInt() );
+    KSimpleConfig *config;
+    for (it = list.begin(); it != list.end(); it++) {
+       config = new KSimpleConfig(*it, true);
+       config->setGroup("Color Scheme");
+       QString str = config->readEntry("Name");
+       if (str.isEmpty()) {
+          str =  config->readEntry("name");
+          if (str.isEmpty())
+             continue;
+       }
+       if (str == aValue)
+	  goto haveit;
+
+       delete config;
     }
-    return aRetColor;
+    return kapp->palette();
+
+  haveit:
+    QColor kde2Blue;
+    if (QPixmap::defaultDepth() > 8)
+      kde2Blue.setRgb(10, 95, 137);
+    else
+      kde2Blue.setRgb(0, 0, 192);
+
+    QColor widget(220, 220, 220);
+
+    QColor _button;
+    if (QPixmap::defaultDepth() > 8)
+      _button.setRgb(228, 228, 228);
+    else
+      _button.setRgb(220, 220, 220);
+
+    QColor background = config->readColorEntry("background", &widget);
+    QColor foreground = config->readColorEntry("foreground", &Qt::black);
+    QColor button = config->readColorEntry("buttonBackground", &_button);
+    QColor buttonText = config->readColorEntry("buttonForeground", &Qt::black);
+    QColor highlight = config->readColorEntry("selectBackground", &kde2Blue);
+    QColor highlightedText = config->readColorEntry("selectForeground", &Qt::white);
+    QColor base = config->readColorEntry("windowBackground", &Qt::white);
+    QColor baseText = config->readColorEntry("windowForeground", &Qt::black);
+
+    int contrast = config->readNumEntry("contrast", 7);
+
+    delete config;
+
+
+    // The following code was more or less stolen from KApplication
+    // TODO: Default colors
+
+    int highlightVal, lowlightVal;
+    highlightVal = 100 + (2*contrast+4)*16/10;
+    lowlightVal = 100 + (2*contrast+4)*10;
+
+    QColor disfg = foreground;
+
+    int h, s, v;
+    disfg.hsv( &h, &s, &v );
+    if (v > 128)
+        // dark bg, light fg - need a darker disabled fg
+        disfg = disfg.dark(lowlightVal);
+    else if (disfg != Qt::black)
+        // light bg, dark fg - need a lighter disabled fg - but only if !black
+        disfg = disfg.light(highlightVal);
+    else
+        // black fg - use darkgrey disabled fg
+        disfg = Qt::darkGray;
+
+    QColorGroup disabledgrp(disfg, background,
+                            background.light(highlightVal),
+                            background.dark(lowlightVal),
+                            background.dark(120),
+                            background.dark(120), base);
+
+    QColorGroup colgrp(foreground, background, background.light(highlightVal),
+                       background.dark(lowlightVal),
+                       background.dark(120),
+                       baseText, base);
+
+    int inlowlightVal = lowlightVal-25;
+    if (inlowlightVal < 120) inlowlightVal = 120;
+
+    colgrp.setColor(QColorGroup::Highlight, highlight);
+    colgrp.setColor(QColorGroup::HighlightedText, highlightedText);
+    colgrp.setColor(QColorGroup::Button, button);
+    colgrp.setColor(QColorGroup::ButtonText, buttonText);
+    colgrp.setColor(QColorGroup::Midlight, background.light(110));
+
+    disabledgrp.setColor(QColorGroup::Button, button);
+    disabledgrp.setColor(QColorGroup::ButtonText, buttonText);
+    disabledgrp.setColor(QColorGroup::Midlight, background.light(110));
+
+    return QPalette(colgrp, disabledgrp, colgrp);
 }
-*/
+
 
 KDMConfig::KDMConfig()
 {
@@ -139,6 +224,7 @@ KDMConfig::KDMConfig()
     _greeterScreen = GetCfgInt (C_GreeterScreen);
 
     kapp->setStyle (GetCfgStr (C_GUIStyle));
+    kapp->setPalette (Str2Palette (GetCfgStr (C_ColorScheme)));
 
     _logoArea = GetCfgInt (C_LogoArea);
 

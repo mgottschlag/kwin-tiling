@@ -55,6 +55,7 @@ public:
 	void makeReadOnly();
 	QString quickHelp() const;
 
+	void loadColorSchemes(KComboBox *combo);
 	void loadLanguageList(KLanguageButton *combo);
 
 	bool eventFilter(QObject *, QEvent *);
@@ -89,6 +90,7 @@ private:
 	QLabel	     *yLineLabel;
 	QLineEdit    *yLineEdit;
 	KComboBox    *guicombo;
+	KComboBox    *colcombo;
 	QComboBox    *echocombo;
 	KLanguageButton *langcombo;
 
