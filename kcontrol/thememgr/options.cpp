@@ -59,7 +59,7 @@ Options::Options (QWidget * aParent, const char *aName, bool aInit)
   mCbxWallpapers = newLine("Display", i18n("Wallpapers"), &mStatWallpapers);
   mCbxSounds = newLine("Sounds", i18n("Sound effects"), &mStatSounds);
   mCbxIcons = newLine("Icons", i18n("Icons"), &mStatIcons);
-  mCbxWM = newLine("WM", i18n("Window Decorations"), &mStatWM);
+  mCbxWM = newLine("Window Border", i18n("Window Decorations"), &mStatWM);
 
   btn = new QPushButton(i18n("Clear"), this);
   btn->setFixedSize(btn->sizeHint());
@@ -230,7 +230,7 @@ void Options::updateStatus(void)
   updateStatus("Display", mStatWallpapers);
   updateStatus("Sounds", mStatSounds);
   updateStatus("Icons", mStatIcons);
-  updateStatus("WM", mStatWM);
+  updateStatus("Window Border", mStatWM);
 }
 
 

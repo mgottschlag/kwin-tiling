@@ -69,6 +69,7 @@
 #   - kfmclient <arg>: Calls kfmclient with <arg> as the argument.
 #   - applyColors: Sends a color-scheme-changed signal to all windows.
 #   - applyWallpaper: Changes wallpaper.
+#   - applyKWM: Changes WM decorations.
 #   - restart <app>: Restart application <app>.
 #
 # * ConfigInstallCmd: This command is executed after the current group
@@ -79,6 +80,7 @@
 #   - oneDesktopMode: activates oneDesktopMode if exactly one wallpaper
 #   - setWallPaperMode: corrects wallpaper settings.
 #   - setSound: enable sound notification
+#   - setKWM: enable kwm theme
 #
 #-----------------------------------------------------------------------------
 [Colors]
@@ -409,3 +411,35 @@ ConfigNextGroup=Sound-27
 [Sound-27]
 ConfigGroup=activate
 WindowActivate=soundfile
+#
+[Window Border]
+ConfigFile=kdeglobals
+ConfigAppDir=apps/kwin/pics
+ConfigGroup=General
+ConfigInstallCmd=setKWM
+ConfigActivateCmd=applyKWM
+shapePixmapTop=wm_top
+shapePixmapBottom=wm_bottom
+shapePixmapLeft=wm_left
+shapePixmapRight=wm_right
+shapePixmapTopLeft=wm_topleft
+shapePixmapTopRight=wm_topright
+shapePixmapBottomLeft=wm_bottomleft
+shapePixmapBottomRight=wm_bottomright
+#
+[Window Titlebar]
+ConfigFile=kdeglobals
+ConfigAppDir=apps/kwin/pics
+ConfigInstallCmd=setKWM2
+ConfigGroup=General
+CloseButton=close
+MaximizeButton=maximize
+MaximizeDownButton=maximize
+MenuButton=menu
+MinimizeButton=iconify
+TitlebarPixmapActive=
+TitlebarPixmapInactive=
+TitleFrameShaded=!
+PixmapUnderTitleText=!
+TitleAlignment=!
+

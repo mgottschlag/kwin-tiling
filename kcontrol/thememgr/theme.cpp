@@ -667,6 +667,16 @@ void Theme::preInstallCmd(KSimpleConfig* aCfg, const QString& aCmd)
   }
 }
 
+static void cleanKWMPixmapEntry(KSimpleConfig *aCfg, const char *entry)
+{
+  QString pixmap1 = QString::fromLatin1(entry) + ".png";
+  QString pixmap2 = aCfg->readEntry(entry);
+  if (pixmap2 != pixmap1)
+  {
+     QString file = locateLocal("data", "kwin/pics/"+pixmap1);
+     ::unlink(QFile::encodeName(file));
+  }
+}
 
 //-----------------------------------------------------------------------------
 void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
@@ -695,6 +705,24 @@ void Theme::installCmd(KSimpleConfig* aCfg, const QString& aCmd,
        aCfg->writeEntry("presentation", presentation | 1);
     else
        aCfg->writeEntry("presentation", presentation & ~1);
+  }
+  else if (cmd == "setKWM")
+  {
+    KConfig kwinrc("kwinrc");
+    kwinrc.setGroup("Style");
+    kwinrc.writeEntry("PluginLib", "libkwinkwmtheme");
+    kwinrc.sync();
+  }
+  else if (cmd == "setKWM2")
+  {
+    // Clean up spurious theme pixmaps
+    cleanKWMPixmapEntry(aCfg, "menu");
+    cleanKWMPixmapEntry(aCfg, "iconify");
+    cleanKWMPixmapEntry(aCfg, "maximize");
+    cleanKWMPixmapEntry(aCfg, "maximizedown");
+    cleanKWMPixmapEntry(aCfg, "close");
+    cleanKWMPixmapEntry(aCfg, "pinup");
+    cleanKWMPixmapEntry(aCfg, "pindown");
   }
   else
   {
@@ -770,6 +798,16 @@ void Theme::doCmdList(void)
        if (!client->isAttached())
           client->attach();
        client->send("knotify", "", "reconfigure()", "");
+    }
+    else if (cmd == "applyKWM")
+    {
+       // Clean up spurious theme pixmaps
+       kapp->config()->reparseConfiguration();
+       // reconfigure kwin
+       DCOPClient *client = kapp->dcopClient();
+       if (!client->isAttached())
+          client->attach();
+       client->send("kwin", "", "reconfigure()", "");
     }
     else if (cmd.startsWith("restart"))
     {
@@ -888,7 +926,11 @@ void Theme::install(void)
   if (instColors) installGroup("Colors");
   if (instSounds) installGroup("Sounds");
   if (instIcons) installGroup("Icons");
-  if (instWM) installGroup("WM");
+  if (instWM) 
+  { 
+     installGroup("Window Border");
+     installGroup("Window Titlebar");
+  }
 
   kdDebug() << "*** executing command list" << endl;
 
