@@ -112,7 +112,7 @@ Programs::Programs(EventView *_eventview, QListView *_programs,
 	
 	QStringList dirs("eventsrc"); // load system-wide eventsrc
 	{
-		QStringList fullpaths(KGlobal::dirs()->findAllResources("data", "*/eventsrc"));
+		QStringList fullpaths(KGlobal::dirs()->findAllResources("data", "*/eventsrc", false, true));
 		for (QStringList::Iterator it=fullpaths.begin(); it!=fullpaths.end(); ++it)
 		{
 			QString s=Programs::getFileWithOnlyOneSlash(*it);
