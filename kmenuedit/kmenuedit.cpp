@@ -24,6 +24,7 @@
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kedittoolbar.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -83,8 +84,8 @@ void KMenuEdit::setupActions()
     KStdAction::cut(0, 0, actionCollection());
     KStdAction::copy(0, 0, actionCollection());
     KStdAction::paste(0, 0, actionCollection());
-    KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), 
-actionCollection());
+    KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), actionCollection());
+    KStdAction::configureToolbars(this, SLOT(slotConfigureToolbars()), actionCollection());
 }
 
 void KMenuEdit::setupView()
@@ -190,3 +191,9 @@ bool KMenuEdit::queryClose()
     return false;
 }
 
+void KMenuEdit::slotConfigureToolbars()
+{
+    KEditToolbar dlg( factory() );
+      
+    dlg.exec();
+}
