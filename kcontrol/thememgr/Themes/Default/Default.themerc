@@ -1,6 +1,6 @@
 [General]
 Name=Default
-Name[af]=verstek
+Name[af]=Verstek
 Name[ar]=افتراضي
 Name[az]=Əsas
 Name[be]=Па ўмаўчаньні
@@ -62,7 +62,7 @@ author=Stefan Taferner
 email=taferner@kde.org
 info=
 Comment=Reset to default theme-less KDE desktop
-Comment[af]=herstel na verstek theme-less kde werkskerm
+Comment[af]=Herstel na verstek theme-less Kde werkskerm
 Comment[bs]=Vraća na osnovnu KDE radnu površinu bez teme
 Comment[ca]=Restableix l'escriptori KDE al predeterminat sense tema
 Comment[cs]=Obnovit na výchozí vzhled KDE bez motivu

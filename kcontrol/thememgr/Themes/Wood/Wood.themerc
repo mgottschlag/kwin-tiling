@@ -1,6 +1,6 @@
 [General]
 Name=Wood
-Name[af]=hout
+Name[af]=Hout
 Name[az]=Odun
 Name[bg]=Гора
 Name[br]=Koad
@@ -48,7 +48,7 @@ author=Georg Russell
 email=russell@kde.org
 info=
 Comment=A wooden look for your desktop!\nBy Georg Russell <russell@kde.org>
-Comment[af]='n hout kyk vir jou werkskerm!\nBy georg russell <russell@kde.org>
+Comment[af]='n hout kyk vir jou werkskerm!\nBy Georg Russell <Russell@kde.org>
 Comment[ar]=مظهر خشبي لسطح المكتب!\nBy Georg Russell <russell@kde.org>
 Comment[az]=Masa üstünüz üçün təbii bir görünüş!\nGeorg Russell <russell@kde.org>
 Comment[bg]=Вашето работно място в стил на гора!a\nGeorg Russell <russell@kde.org>
