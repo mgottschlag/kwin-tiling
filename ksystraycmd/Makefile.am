@@ -3,18 +3,18 @@
 AM_CPPFLAGS = -DQT_CLEAN_NAMESPACE -DQT_NO_COMPAT
 
 INCLUDES = $(all_includes)
-LDFLAGS = $(all_libraries) $(KDE_RPATH)
-LDADD   =       $(LIB_KDECORE) $(LIB_KDEUI)
+LDFLAGS  = $(all_libraries) $(KDE_RPATH)
+LDADD    = $(LIB_KDECORE) $(LIB_KDEUI)
 
 #######	Files
 
-bin_PROGRAMS	= ksystrayproxy
-METASOURCES	= ksystrayproxy.moc
-noinst_HEADERS = ksystrayproxy.h
+bin_PROGRAMS	= ksystraycmd
+METASOURCES	= ksystraycmd.moc
+noinst_HEADERS  = ksystraycmd.h
 
-ksystrayproxy_SOURCES	= ksystrayproxy.cpp main.cpp
+ksystraycmd_SOURCES = ksystraycmd.cpp main.cpp
 
 messages:
-	$(XGETTEXT) $(ksystrayproxy_SOURCES) -o $(podir)/ksystrayproxy.pot
+	$(XGETTEXT) $(ksystraycmd_SOURCES) -o $(podir)/ksystraycmd.pot
 
 
