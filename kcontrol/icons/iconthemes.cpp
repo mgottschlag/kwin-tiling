@@ -79,7 +79,7 @@ IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   connect(m_removeButton,SIGNAL(clicked()),SLOT(removeSelectedTheme()));
 
   topLayout->addWidget(
-	new QLabel(i18n("Select the icon theme you want to use :"),this) );
+	new QLabel(i18n("Select the icon theme you want to use:"),this) );
   topLayout->addWidget(m_preview);
   topLayout->addWidget(m_iconThemes);
   QGridLayout *lg=new QGridLayout( topLayout, 2, 2);
@@ -177,7 +177,7 @@ void IconThemesConfig::removeSelectedTheme()
   if (!selected)
      return;
 
-  QString question=i18n("Are you sure you want to remove the %1 icon theme ?"
+  QString question=i18n("Are you sure you want to remove the %1 icon theme?"
         "\nThis will delete the files installed by this theme").
 	arg(selected->text(0));
 

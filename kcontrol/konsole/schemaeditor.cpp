@@ -434,7 +434,7 @@ void SchemaEditor::querySave()
 {
     int result = KMessageBox::questionYesNo(this, 
                          i18n("The schema has been modified.\n"
-			"Do you want to save the changes ?"),
+			"Do you want to save the changes?"),
 			i18n("Schema Modified"),
 			KStdGuiItem::save(),
 			KStdGuiItem::discard());

@@ -167,7 +167,7 @@
                                 <cstring>TextLabel1_2_3</cstring>
                             </property>
                             <property name="text">
-                                <string>TrueType :</string>
+                                <string>TrueType:</string>
                             </property>
                         </widget>
                     </grid>

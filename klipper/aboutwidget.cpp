@@ -44,7 +44,7 @@ AboutWidget::AboutWidget( QWidget *parent, const char *name ) : QVBox( parent, n
     
     QWidget *widget = new QWidget( this );
     QHBoxLayout *layout = new QHBoxLayout( widget );
-    m_bugReport = new QPushButton( i18n("&Report a bug or wish..."), 
+    m_bugReport = new QPushButton( i18n("&Report a Bug or Wish..."), 
                                    widget, "bugreport button" );
     layout->insertWidget( 0, m_bugReport, 1, AlignRight );
     connect( m_bugReport, SIGNAL( clicked() ), SLOT( slotBugreport() ));

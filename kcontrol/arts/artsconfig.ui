@@ -317,7 +317,7 @@
                             <cstring>GroupBox1</cstring>
                         </property>
                         <property name="title">
-                            <string> Audio buffer size (response time) </string>
+                            <string> Audio Buffer Size (response time) </string>
                         </property>
                         <grid>
                             <property name="name">

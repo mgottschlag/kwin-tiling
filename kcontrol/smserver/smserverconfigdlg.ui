@@ -81,7 +81,7 @@
                 <cstring>sdGroup</cstring>
             </property>
             <property name="title">
-                <string>Default action after logout</string>
+                <string>Default Action After Logout</string>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>Here you can choose what should happen by default when you log out. This only has meaning, if you logged in through KDM.</string>

@@ -135,7 +135,7 @@ void CInstalledFontListWidget::uninstall()
 
     if((res=KMessageBox::warningYesNoCancel(this, (dir ? i18n("Uninstall selected folder (and ALL of its contents)?") :
                                                          i18n("Uninstall selected fonts?") ) +
-                                                  i18n("\n\nPlease select uninstall method :"
+                                                  i18n("\n\nPlease select uninstall method:"
                                                        "\n(\"Move\" will move the selected items to \"%1\")").arg(CKfiGlobal::cfg().getUninstallDir()),
                                                   i18n("Remove"), i18n("&Move"), i18n("&Delete")))!=KMessageBox::Cancel)
     {
