@@ -62,6 +62,7 @@ else
 		[AC_DEFINE(BSD_UTMP, 1, [Define if the system has no getutent])])
 fi
 
+AC_CHECK_MEMBERS([struct utmp.ut_user], , , [#include <utmp.h>])
 AC_CHECK_MEMBERS([struct passwd.pw_expire],
 	[AC_DEFINE(HAVE_PW_EXPIRE, 1, [Define if struct passwd has a pw_expire member])], ,
 [#include <pwd.h>])
