@@ -1,5 +1,12 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include <kapplication.h>
+#include <dcopclient.h>
 #include "componentchooser.h"
 #include "componentchooser.moc"
+#include <klineedit.h>
+#include <kemailsettings.h>
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 #include <klocale.h>
@@ -10,6 +17,12 @@
 #include <qcombobox.h>
 #include <kmessagebox.h>
 #include <qlabel.h>
+#include <qpushbutton.h>
+#include <qcheckbox.h>
+#include <qtoolbutton.h>
+#include <qfile.h>
+#include <kurl.h>
+#include <kopenwith.h>
 
 class MyListBoxItem: public QListBoxText
 {
@@ -25,7 +38,7 @@ ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
 	somethingChanged=false;
 	m_lookupDict.setAutoDelete(true);
 	m_revLookupDict.setAutoDelete(true);
-	latestEditedService="";	
+	latestEditedService="";
 
 	QStringList dummy;
 	QStringList services=KGlobal::dirs()->findAllResources( "data","kcm_componentchooser/*.desktop",false,true,dummy);
@@ -34,12 +47,22 @@ ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
 		KSimpleConfig *cfg=new KSimpleConfig((*it));
 		ServiceChooser->insertItem(new MyListBoxItem(cfg->readEntry("Name",i18n("Unknown")),(*it)));
 		delete cfg;
-		
+
 	}
 	connect(ServiceChooser,SIGNAL(selected(QListBoxItem*)),this,SLOT(slotServiceSelected(QListBoxItem*)));
 	ServiceChooser->setSelected(0,true);
 	slotServiceSelected(ServiceChooser->item(0));
 	connect(ComponentSelector,SIGNAL(activated(const QString&)),this,SLOT(slotComponentChanged(const QString&)));
+
+	pSettings = new KEMailSettings();
+	load();
+
+	connect(txtEMailClient, SIGNAL(textChanged(const QString&)), SLOT(configChanged()) );
+	connect(chkRunTerminal, SIGNAL(clicked()), SLOT(configChanged()) );
+	connect(btnSelectEmail, SIGNAL(clicked()), SLOT(selectEmailClient()) );
+
+	connect(terminalLE,SIGNAL(textChanged(const QString &)),this,SLOT(configChanged()));
+	connect(terminalCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
 }
 
 void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
@@ -84,7 +107,7 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	latestEditedService=static_cast<MyListBoxItem*>(it)->File;
 	emitChanged(false);
 	delete cfg;
-} 
+}
 
 
 void ComponentChooser::emitChanged(bool val) {
@@ -96,10 +119,29 @@ void ComponentChooser::slotComponentChanged(const QString& str) {
 	emitChanged(true);
 }
 
-ComponentChooser::~ComponentChooser() { ; }
+ComponentChooser::~ComponentChooser()
+{
+	delete pSettings;
+}
 
 void ComponentChooser::load() {
-;
+	txtEMailClient->setText(pSettings->getSetting(KEMailSettings::ClientProgram));
+	chkRunTerminal->setChecked((pSettings->getSetting(KEMailSettings::ClientTerminal) == "true"));
+
+	KConfig *config = new KConfig("kdeglobals", true);
+	config->setGroup("General");
+	QString terminal = config->readEntry("TerminalApplication","konsole");
+	if (terminal == "konsole")
+	{
+	   terminalLE->setText("xterm");
+	   terminalCB->setChecked(true);
+	}
+	else
+	{
+	  terminalLE->setText(terminal);
+	  terminalCB->setChecked(false);
+	}
+	delete config;
 }
 
 void ComponentChooser::save() {
@@ -119,8 +161,53 @@ void ComponentChooser::save() {
 		delete store;
 	}
 	delete cfg;
+
+	pSettings->setSetting(KEMailSettings::ClientProgram, txtEMailClient->text());
+	pSettings->setSetting(KEMailSettings::ClientTerminal, (chkRunTerminal->isChecked()) ? "true" : "false");
+
+	// insure proper permissions -- contains sensitive data
+	QString cfgName(KGlobal::dirs()->findResource("config", "emails"));
+	if (!cfgName.isEmpty())
+		::chmod(QFile::encodeName(cfgName), 0600);
+
+	kapp->dcopClient()->emitDCOPSignal("KDE_emailSettingsChanged()", QByteArray());
+
+
+	KConfig *config = new KConfig("kdeglobals");
+	config->setGroup("General");
+	config->writeEntry("TerminalApplication",terminalCB->isChecked()?"konsole":terminalLE->text(), true, true);
+	delete config;
+
+	emitChanged(false);
 }
 
 void ComponentChooser::restoreDefault() {
-;
+	txtEMailClient->setText("kmail");
+	chkRunTerminal->setChecked(false);
+
+	// Check if -e is needed, I do not think so
+	terminalLE->setText("xterm");  //No need for i18n
+	terminalCB->setChecked(true);
+	emitChanged(false);
+}
+
+void ComponentChooser::configChanged()
+{
+	emitChanged(true);
+}
+
+void ComponentChooser::selectEmailClient()
+{
+	KURL::List urlList;
+	KOpenWithDlg dlg(urlList, i18n("Select preferred email client:"), QString::null, this);
+	if (dlg.exec() != QDialog::Accepted) return;
+	QString client = dlg.text();
+
+	bool b = client.left(11) == "konsole -e ";
+	if (b) client = client.mid(11);
+	if (!client.isEmpty())
+	{
+		chkRunTerminal->setChecked(b);
+		txtEMailClient->setText(client);
+	}
 }

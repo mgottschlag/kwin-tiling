@@ -6,6 +6,7 @@
 #include <qstring.h>
 
 class QListBoxItem;
+class KEMailSettings;
 
 class ComponentChooser : public ComponentChooser_UI
 {
@@ -24,12 +25,17 @@ private:
 	QString latestEditedService;
 	bool somethingChanged;
 	void emitChanged(bool);
-	
-protected slots:	
+	KEMailSettings *pSettings;
+
+protected slots:
+	void configChanged();
 	void slotServiceSelected(QListBoxItem *);
 	void slotComponentChanged(const QString&);
+	void selectEmailClient();
+
 signals:
 	void changed(bool);
+
 };
 
 
