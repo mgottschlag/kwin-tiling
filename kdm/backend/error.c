@@ -39,7 +39,6 @@ from the copyright holder.
 #include "dm.h"
 #include "dm_error.h"
 
-#include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
 
@@ -91,7 +90,6 @@ void
 InitErrorLog (const char *errorLogFile)
 {
     int fd;
-    struct stat st;
     char buf[128];
 
 #ifdef USE_SYSLOG
@@ -100,19 +98,7 @@ InitErrorLog (const char *errorLogFile)
     /* We do this independently of using syslog, as we cannot redirect
      * the output of external programs to syslog.
      */
-    if (errorLogFile
-	|| fstat (1, &st) ||
-#ifndef X_NOT_POSIX
-	!(S_ISREG(st.st_mode) || S_ISFIFO(st.st_mode))
-#else
-	!(st.st_mode & (S_IFREG | S_IFIFO))
-#endif
-	|| fstat (2, &st) ||
-#ifndef X_NOT_POSIX
-	!(S_ISREG(st.st_mode) || S_ISFIFO(st.st_mode)))
-#else
-	!(st.st_mode & (S_IFREG | S_IFIFO)))
-#endif
+    if (!errorLogFile || strcmp (errorLogFile, "-"))
     {
 	if (!errorLogFile) {
 	    sprintf (buf, "/var/log/%s.log", prog);
