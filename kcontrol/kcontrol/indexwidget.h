@@ -1,6 +1,6 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,67 +18,54 @@
  
 */                                                                            
 
+#ifndef __indexwidget_h__
+#define __indexwidget_h__
 
-
-#ifndef __INDEX_H__
-#define __INDEX_H__
-
-
-#include <qlistview.h>
 #include <qwidget.h>
-#include <qobject.h>
-#include <qstringlist.h>
+#include <qlistview.h>
 
-#include "modules.h"
+class ConfigModuleList;
+class ConfigModule;
+class QPushButton;
 
+class IndexWidget : public QWidget
+{  
+  Q_OBJECT    
+  
+public:   
+  IndexWidget(QWidget *parent, const char *name=0);	
 
-class IndexPane : public QWidget
-{
-  Q_OBJECT
-
-public:
-
-  IndexPane(QWidget *parent=0, const char *name=0);
-
-  void fillIndex(ConfigModuleList &list);
-
+  void fillIndex(ConfigModuleList *list);
 
 public slots:
-
   void moduleChanged(ConfigModule *module);
   void makeVisible(ConfigModule *module);
- 
-
-protected:
-
-//  void resizeEvent(QResizeEvent *event);
-  void updateItem(QListViewItem *item, ConfigModule *module);
-
 
 protected slots:
-    
   void currentChanged(QListViewItem *item);
- 
+  void treeButtonClicked();
+  void iconButtonClicked();
 
 signals:
-
   void moduleActivated(ConfigModule *module);
- 
+
+protected:
+  void updateItem(QListViewItem *item, ConfigModule *module);
+  void resizeEvent(QResizeEvent *);
 
 private:
-
   QListViewItem *getGroupItem(QListViewItem *parent, const QStringList &groups);
 
-  QListView *_tree;
-  QListViewItem *localMachine, *localUser;
+  QListView     *_tree;
+  QListViewItem *_root;
+  QPushButton   *_treebtn, *_iconbtn;
 
 };
 
-
 class IndexItem : public QListViewItem
 {
+  
 public:
-
   IndexItem(QListViewItem *parent)
     : QListViewItem(parent) {};
   IndexItem(QListView *parent)
@@ -87,20 +74,16 @@ public:
   void setTag(QString tag) { _tag = tag; };
   QString tag() const { return _tag; };
 
-
 private:
-  
   QString _tag;
 
 };
 
-
 class IndexListItem : public IndexItem
 {
-  friend class IndexPane;
+  friend class IndexWidget;
 
 public:
-
   IndexListItem(QListViewItem *parent, ConfigModule *module);
   IndexListItem(QListView *parent, ConfigModule *module);
 
@@ -108,12 +91,8 @@ public:
 
 
 protected:
-
-  void paintCell(QPainter *p, const QColorGroup &cg, int column, int width, int align);
-
   ConfigModule *_module;
 
 };
-
 
 #endif

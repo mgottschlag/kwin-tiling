@@ -1,6 +1,6 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -16,67 +16,79 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  
-*/                                                                            
-
-#include <qstringlist.h>
-#include <qpushbutton.h>
+*/
+                                          
 #include <kapp.h>
-#include <ktoolbar.h>
 #include <kglobal.h>
 #include <kstddirs.h>
-#include <qlineedit.h>
+
 #include <qsplitter.h>
-#include <kiconloader.h>
-#include <qdialog.h>
-#include <kcmodule.h>
-#include <klocale.h>
 #include <qtabwidget.h>
+
 #include <kaction.h>
 #include <kstdaction.h>
+#include <klocale.h>
 
+#include "indexwidget.h"
+#include "searchwidget.h"
+#include "helpwidget.h"
+#include "dockcontainer.h"
+#include "aboutwidget.h"
+#include "modules.h"
+#include "proxywidget.h"
 
 #include "toplevel.h"
 #include "toplevel.moc"
-#include "kdockwidget.h"
-#include "aboutwidget.h"
-#include "closedlg.h"
 
 
 TopLevel::TopLevel(const char* name)
   : KTMainWindow( name )
 {
   // initialize the entries
-  _modules.readDesktopEntries();
+  _modules = new ConfigModuleList();
+  _modules->readDesktopEntries();
 
   // create the splitter
-  QSplitter *splitter = new QSplitter(this);
+  _splitter = new QSplitter(this);
 
-  // create the left hand side (the tree view)
-  _index = new IndexPane(splitter);
-  _index->fillIndex(_modules);
-  splitter->setResizeMode(_index,QSplitter::KeepSize);
-  connect(_index, SIGNAL(moduleActivated(ConfigModule*)),
-	  this, SLOT(moduleActivated(ConfigModule*)));
+  // create the left hand side (the tab view)
+  _tab = new QTabWidget(_splitter);
+
+  // index tab
+  _indextab = new IndexWidget(_tab);
+  _indextab->fillIndex(_modules);
+  connect(_indextab, SIGNAL(moduleActivated(ConfigModule*)),
+		  this, SLOT(moduleActivated(ConfigModule*)));
+  _tab->addTab(_indextab, "In&dex");
+
+  // search tab
+  _searchtab = new SearchWidget(_tab);
+  _tab->addTab(_searchtab, "S&earch");
+
+  // help tab
+  _helptab = new HelpWidget(_tab);
+  _tab->addTab(_helptab, "Hel&p");
+  
+  // set a reasonable resize mode
+  _splitter->setResizeMode(_tab, QSplitter::KeepSize);
 
   // set up the right hand side (the docking area)
-  _container = new KDockContainer(splitter);
-  connect(_container, SIGNAL(newModule(const QString&)), this, SLOT(newModule(const QString&)));
+  _dock = new DockContainer(_splitter);
+  connect(_dock, SIGNAL(newModule(const QString&, const QString&)),
+		  this, SLOT(newModule(const QString&, const QString&)));
 
   // insert the about widget
   AboutWidget *aw = new AboutWidget(this);
-  _container->addWidget(aw, kapp->miniIcon());
-  _container->showPage(aw);
+  _dock->setBaseWidget(aw);
 
   // set the main view
-  setView(splitter);
+  setView(_splitter);
 
-  // initialize the GUI
+  // initialize the GUI actions
   setupActions();
-  setupStatusBar();
 
   setPlainCaption(i18n("KDE Control Center"));
 }
-
 
 TopLevel::~TopLevel() {}
 
@@ -87,24 +99,21 @@ void TopLevel::setupActions()
   createGUI("kcontrolui.rc");
 }
 
-void TopLevel::setupStatusBar()
+void TopLevel::newModule(const QString &name, const QString &quickhelp)
 {
-  KStatusBar* status_bar = statusBar();
-  //status_bar->setInsertOrder(KStatusBar::RightToLeft);
-  status_bar->insertItem(i18n("Welcome to the KDE Control Center"), 4);
-}
+  QString cap = i18n("KDE Control Center");
+  
+  if (!name.isEmpty())
+    cap += " - [" + name +"]";
 
+  setPlainCaption(cap);
+
+  _helptab->setText(quickhelp);
+}
 
 void TopLevel::moduleActivated(ConfigModule *module)
 {
-  QWidget *widget = module->module(_container);
-  if (widget)
-    {
-      _container->showPage(widget);
-      newModule(widget->caption());
-      widget->show();
-      widget->raise();
-    }
+  _dock->dockModule(module);
 }
 
 void TopLevel::showModule(QString desktopFile)
@@ -122,50 +131,15 @@ void TopLevel::showModule(QString desktopFile)
   QStringList::Iterator it;
   for (it = files.begin(); it != files.end(); ++it)
     {
-      for (ConfigModule *mod = _modules.first(); mod != 0; mod = _modules.next())
-	if (mod->fileName() == *it)
-	  {
-	    QWidget *widget = mod->module(_container);
-	    if (widget)
-	      {
-		_container->showPage(widget);
-	        newModule(widget->caption());
-		widget->show();
-	      }
-
-	    // tell the index to display the module
-	    _index->makeVisible(mod);
-
-	    // tell the index to mark this module as loaded
-	    _index->moduleChanged(mod);
+      for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
+		if (mod->fileName() == *it)
+		  {
+			// tell the index to display the module
+			_indextab->makeVisible(mod);
+			
+			// tell the index to mark this module as loaded
+			_indextab->moduleChanged(mod);
 	  }
     }
 }
 
-
-bool TopLevel::queryClose()
-{
-  int cnt=0;
-
-  CloseDialog dlg(0);
-
-  for (ConfigModule *mod = _modules.first(); mod != 0; mod = _modules.next())
-    if (mod->isChanged())
-      {
-	dlg.addUnsaved(mod->icon(), mod->name());
-	cnt++;
-      }
-  
-  return (cnt == 0) || (dlg.exec() == QDialog::Accepted);
-}
-
-
-void TopLevel::newModule(const QString &name)
-{
-  QString cap = i18n("KDE Control Center");
-  
-  if (!name.isEmpty())
-    cap += " - [" + name +"]";
-
-  setPlainCaption(cap);
-}

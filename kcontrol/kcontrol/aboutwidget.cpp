@@ -31,11 +31,12 @@
 #include <stdlib.h>
 
 #include <qlayout.h>
+#include <qpixmap.h>
 #include <qlabel.h>
 
 #include <kglobal.h>
+#include <kstddirs.h>
 #include <klocale.h>
-#include <kiconloader.h>
 
 #include "config.h"
 #include "aboutwidget.h"
@@ -48,24 +49,44 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   char buf[128];
   struct utsname info;
   QString str;
-  QHBoxLayout *hbox;
-  QVBoxLayout *vbox1,*vbox2;
+  QHBoxLayout *hbox1;
+  QVBoxLayout *vbox1,*vbox2, *vbox3;
 
   setCaption(i18n("About"));
 
   QVBoxLayout *top = new QVBoxLayout(this,10,10);
-  
+
+  vbox3 = new QVBoxLayout(top);
+
   QLabel *label = new QLabel(i18n("KDE Control Center"), this);
-  label->setFont(QFont("times", 24, QFont::Bold, true));
+  label->setFont(QFont("times", 24, QFont::Bold));
   label->setAlignment(AlignLeft);
   label->setMaximumHeight(40);
-  top->addWidget(label);
+  vbox3->addWidget(label);
 
-  hbox = new QHBoxLayout(top);
-  hbox->addStretch();
-  vbox1 = new QVBoxLayout(hbox);
-  hbox->addSpacing(20);
-  vbox2 = new QVBoxLayout(hbox);
+  label = new QLabel(i18n("The control center is a central place to configure your desktop environment. "
+						  "Select a item from the index list on the right to load a configuration module. "
+						  "Click on Desktop->Background for example to configure the desktop background.\n\n"
+						  "If you are unsure about where to look for a configuration option you can "
+						  "search a keyword list. "
+						  "Enter a search string in the \"search\" tab on the right to start a query.\n\n"
+						  "The \"help\" tab displays a short help text for the active control module."), this);
+  label->setAlignment(AlignLeft | WordBreak);
+  vbox3->addWidget(label);
+
+  hbox1 = new QHBoxLayout(top);
+
+  label = new QLabel(this);
+  QPixmap pm(locate( "data", QString::fromLatin1("kdeui/pics/aboutkde.png")));
+  label->setPixmap(pm);
+  label->setFixedSize(pm.size());
+  label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  label->setAlignment(AlignCenter);
+  hbox1->addWidget( label );
+
+  vbox1 = new QVBoxLayout(hbox1);
+  hbox1->addSpacing(20);
+  vbox2 = new QVBoxLayout(hbox1);
 
   vbox1->addWidget( new QLabel(i18n("KDE Version:"), this) );
   vbox2->addWidget( new QLabel(VERSION, this) );
@@ -92,11 +113,4 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   
   vbox1->addWidget( new QLabel(i18n("Machine:"), this) );
   vbox2->addWidget( new QLabel(info.machine, this) );
-
-  hbox->addStretch();
-    
-  label = new QLabel(this);  
-  label->setPixmap(BarIcon("kdekcc"));
-  label->setAlignment(AlignCenter);
-  top->addWidget( label );
 }

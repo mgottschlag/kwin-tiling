@@ -33,22 +33,23 @@
  * to newInstance().
  */
 
-
 #include <kapp.h>
 #include <kcmdlineargs.h>
 #include <dcopclient.h>
 #include <klocale.h>
-
 #include <kaboutdata.h>
+#include <kmessagebox.h>
 
 
 #include "main.h"
 #include "main.moc"
 #include "toplevel.h"
+#include "global.h"
 
 static KCmdLineOptions options[] =
 {
    { "+module", I18N_NOOP("Configuration module to open."), 0 },
+   { "system", I18N_NOOP("Configure system global settings."), 0 },
    { 0,0,0 }
 };
 
@@ -61,7 +62,7 @@ MyApplication::MyApplication()
     toplevel = new TopLevel();
   
   setMainWidget(toplevel);
-  toplevel->resize(640,400);
+  toplevel->resize(720,540); // 800x600 - 10%
 }
 
 
@@ -70,7 +71,7 @@ int MyApplication::newInstance()
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
   for (int i=0; i < args->count(); i++)
   {
-     toplevel->showModule(args->arg(i));
+	toplevel->showModule(args->arg(i));
   }
   toplevel->raise();
 
@@ -84,18 +85,28 @@ int main(int argc, char *argv[])
     "v2.0pre", "The KDE Control Centre", KAboutData::License_GPL, 
     "(c) 1998-2000, The KDE Control Centre Developers");
   aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
+  aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
+
   KCmdLineArgs::init( argc, argv, &aboutData );
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
- 
-  
+  KUniqueApplication::addCmdLineOptions();
+
+  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+  KCGlobal::init();
+  KCGlobal::setSystem(args->isSet("system"));
+
   if (!MyApplication::start())
     exit(0); // Don't do anything if we are already running
   
-  MyApplication app; //&aboutData
-  // TODO: MyApplication (a KUniqueApplication) doesn't 
-  // support KApplication::KApplication(KAboutData *)
-  // So, I'm leaving this alone, and will let the 
-  // maintainter of kcontrol finish it up!
+  MyApplication app; 
+
+  if (KCGlobal::system() && !KCGlobal::root())
+	{
+	  KMessageBox::error(0, I18N_NOOP("Only the root user can edit system global settings!")
+						 , I18N_NOOP("Error!"));
+	  exit(0);
+	}
 
   // show the whole stuff
   app.mainWidget()->show();

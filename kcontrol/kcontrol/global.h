@@ -1,6 +1,5 @@
 /*
-
-  Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,33 +17,31 @@
  
 */                                                                            
 
+#ifndef __global_h__
+#define __global_h__
 
+#include <qstring.h>
 
-#ifndef __CLOSEDIALOG_H__
-#define __CLOSEDIALOG_H__
-
-
-#include <qdialog.h>
-
-
-class QListView;
-
-
-class CloseDialog : public QDialog
+class KCGlobal
 {
-  Q_OBJECT
-
 public:
 
-  CloseDialog(QWidget *parent=0);
+  static void init();
 
-  void addUnsaved(QPixmap icon, QString text);
+  static bool root() { return _root; }
+  static bool system() { return _system; }
+  static QString userName() { return _uname; }
+  static QString hostName() { return _hname; }
 
 
-private:  
-  
-  QListView *_unsaved;
-  
+  static void setRoot(bool r) { _root = r; }
+  static void setSystem(bool s) { _system = s; }
+  static void setUserName(const QString& n){ _uname = n; }
+  static void setHostName(const QString& n){ _hname = n; }
+
+private:
+  static bool _root, _system;
+  static QString _uname, _hname;
 };
 
 

@@ -1,7 +1,7 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
- 
+  Copyright (c) 2000 Matthias Elter <elter@kde.org> 
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
@@ -18,59 +18,49 @@
  
 */                                                                            
 
-
-
 #ifndef __TOPLEVEL_H__
 #define __TOPLEVEL_H__
 
-
 #include <ktmainwindow.h>
 
+class QTabWidget;
+class QSplitter;
 
-class KDockContainer;
-
-
-#include "index.h"
-#include "modules.h"
-
+class DockContainer;
+class IndexWidget;
+class SearchWidget;
+class HelpWidget;
+class ConfigModule;
+class ConfigModuleList;
 
 class TopLevel : public KTMainWindow
 {
   Q_OBJECT
 
 public:
-
   TopLevel( const char* name=0 );
   ~TopLevel();
 
-
-public slots:
-
   void showModule(QString desktopFile);
 
-
 protected:
-
   void setupActions(); 
-  void setupStatusBar();
-
-  bool queryClose();
-
 
 protected slots:
-
   void moduleActivated(ConfigModule *module);
-  void newModule(const QString &name);
- 
+  void newModule(const QString &name, const QString &quickhelp);
 
 private:
+  QTabWidget     *_tab;
+  DockContainer  *_dock;
+  QSplitter      *_splitter;
 
-  IndexPane        *_index;
-  ConfigModuleList  _modules;
-  KDockContainer   *_container;
+  IndexWidget  *_indextab;
+  SearchWidget *_searchtab;
+  HelpWidget   *_helptab;
 
+  ConfigModuleList *_modules;
 };
-
 
 #endif
 

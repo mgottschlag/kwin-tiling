@@ -34,25 +34,11 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 {
   KDesktopFile desktop(desktopFile);
 
-  // find out about the type of the module
-  ModuleType t = Executable;
-  if (desktop.readEntry("X-KDE-ModuleType", "Executable") == "Library")
-    t = Library;
-  setType(t);
-
-  if (t == Library)
-    {
-      setLibrary(desktop.readEntry("X-KDE-LibraryName"));
-      setHandle(desktop.readEntry("X-KDE-FactoryName", library()));
-    }
-  else
-    setExecutable(desktop.readEntry("Exec"));
-
+  setLibrary(desktop.readEntry("X-KDE-LibraryName"));
+  setHandle(desktop.readEntry("X-KDE-FactoryName", library()));
+ 
   // executable only with root access?
   setOnlyRoot(desktop.readBoolEntry("X-KDE-RootOnly", false));
-
-  // user or system settings?
-  setLocalUser(desktop.readBoolEntry("X-KDE-LocalUser", true));
 
   // set the modules' simple attributes
   setName(desktop.readName());

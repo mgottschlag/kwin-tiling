@@ -1,6 +1,5 @@
 /*
-
-  Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -16,23 +15,23 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  
-*/                                                                            
+*/               
 
+#include <qcolor.h>
+#include <qbrush.h>                                 
 
+#include "quickhelp.h"
+#include "quickhelp.moc"
 
-#include <qwidget.h>
-
-
-#include <kcmodule.h>
-
-
-#include "moduleinfo.h"
-
-
-class ModuleLoader
+QuickHelp::QuickHelp(QWidget *parent , const char *name)
+    : KTextBrowser( parent, name)
 {
-public:
-
-  static KCModule *module(const ModuleInfo &mod);
-
-};
+  viewport()->setFont( QFont("times") );
+  QColorGroup clgrp = colorGroup();
+  clgrp.setColor( QColorGroup::Base, QColor( 255, 255, 224 ) );
+  setPaperColorGroup( clgrp );
+  setFrameStyle( QFrame::Panel | QFrame::Sunken );
+  setFocusPolicy( NoFocus );
+  setHScrollBarMode( QScrollView::AlwaysOff );
+  setNotifyClick(true);
+}

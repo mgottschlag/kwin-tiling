@@ -46,6 +46,7 @@ KCDialog::KCDialog(KCModule *client, const QString &docpath, QWidget *parent, co
   : QDialog(parent, name, modal, f), _client(client), _docpath(docpath)
 {
   client->reparent(this,0,QPoint(0,0),true);
+  connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
 
   _sep = new QFrame(this);
   _sep->setFrameStyle(QFrame::HLine | QFrame::Sunken);

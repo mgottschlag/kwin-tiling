@@ -1,6 +1,5 @@
 /*
-
-  Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,21 +17,29 @@
  
 */                                                                            
 
+#include <stdlib.h> 
+#include <unistd.h>
+#include <sys/types.h>
 
+#include "global.h"
 
-#include <qwidget.h>
+bool KCGlobal::_root = false;
+bool KCGlobal::_system = false;
+QString KCGlobal::_uname = "";
+QString KCGlobal::_hname = "";
 
-
-#include <kcmodule.h>
-
-
-#include "moduleinfo.h"
-
-
-class ModuleLoader
+void KCGlobal::init()
 {
-public:
+  QString hostname, username;
+  char buf[128];
+  char *user = getlogin();
+  
+  gethostname(buf, 128);
+  if (strlen(buf)) hostname = QString("%1").arg(buf); else hostname = "";
+  if (!user) user = getenv("LOGNAME");
+  if (!user) username = ""; else username = QString("%1").arg(user);
 
-  static KCModule *module(const ModuleInfo &mod);
-
-};
+  setHostName(hostname);
+  setUserName(username);
+  setRoot(getuid() == 0);
+}

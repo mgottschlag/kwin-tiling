@@ -45,10 +45,12 @@ static void setVisible(QPushButton *btn, bool vis)
 }
 
 
-ProxyWidget::ProxyWidget(KCModule *client, QString title, QPixmap icon,
-			 KDockContainer *parent, const char *name)
-  : KDockWidget(title,icon,parent,name), _client(client)
+ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name)
+  : QWidget(0, name)
+  , _client(client)
 {
+  setCaption(title);
+
   client->reparent(this,0,QPoint(0,0),true);
   connect(client, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
 
@@ -84,7 +86,6 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, QPixmap icon,
   connect(_ok, SIGNAL(clicked()), this, SLOT(okClicked()));
 
   QGridLayout *top = new QGridLayout(this, 4, 6, 5);
-  top->addRowSpacing(0, DOCKBAR_HEIGHT);
   top->addMultiCellWidget(client, 1, 1, 0, 6);
   top->addMultiCellWidget(_sep, 2, 2, 0, 6);
   top->addWidget(_help, 3, 0);
@@ -103,16 +104,21 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, QPixmap icon,
 
   // Restrict minimum size to the optimal one
   setMinimumSize(sizeHint());
-
-  // Notify parent about minimumSize change
-  parent->updateGeometry();
 }
 
 
 ProxyWidget::~ProxyWidget()
 {
+  delete _client;
 }
 
+QString ProxyWidget::quickHelp()
+{
+  if (_client)
+	return _client->quickHelp();
+  else
+	return "";
+}
 
 void ProxyWidget::helpClicked()
 {
@@ -133,12 +139,10 @@ void ProxyWidget::resetClicked()
   clientChanged(false);
 }
 
-
 void ProxyWidget::cancelClicked()
 {
   emit closed();
 }
-
 
 void ProxyWidget::applyClicked()
 {

@@ -33,20 +33,16 @@
 
 
 class QWidget;
-class KDockContainer;
 class KCModule;
-
+class ProxyWidget;
 
 #include "moduleinfo.h"
-#include "proxymodule.h"
-
 
 class ConfigModule : public ModuleInfo
 {
   Q_OBJECT
 
 public:
-
   ConfigModule(QString desktopFile);
   ~ConfigModule();
 
@@ -54,30 +50,27 @@ public:
   void setChanged(bool changed) { _changed = changed; };
 
   bool isActive() { return _module != 0; };
-  QWidget *module(KDockContainer *parent);
+  ProxyWidget *module();
 
+public slots:
+  void deleteClient();
 
 private slots:
-
   void clientClosed();
   void clientChanged(bool state);
-  void processTerminated();
   void helpRequest();
 
 
 signals:
 
   void changed(ConfigModule *module);
+  void childClosed();
 
 
 private:
 
-  ProcessProxy *process();
-  
   bool         _changed;
-  QWidget      *_module;
-  ProcessProxy *_process;
-
+  ProxyWidget      *_module;
 };
 
 

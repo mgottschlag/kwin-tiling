@@ -1,5 +1,4 @@
 /*
-
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
 
   This program is free software; you can redistribute it and/or modify
@@ -17,8 +16,6 @@
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 */
-
-
 
 #include <iostream.h>
 
@@ -119,7 +116,7 @@ int main(int _argc, char *_argv[])
 
     // load the module
     ModuleInfo info(files[0]);
-    KCModule *module = ModuleLoader::module(info, 0);
+    KCModule *module = ModuleLoader::module(info);
 
     if (module) {
 	// create the dialog

@@ -1,6 +1,5 @@
 /*
-
-  Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,52 +17,29 @@
  
 */                                                                            
 
+#ifndef __helpwidget_h__
+#define __helpwidget_h__
 
+#include <qwidget.h>
 
-#ifndef __KCMROOT_H__
-#define __KCMROOT_H__
+class QuickHelp;
 
+class HelpWidget : public QWidget
+{  
+  Q_OBJECT    
+  
+public:   
+  HelpWidget(QWidget *parent, const char *name=0);
 
-#include <qobject.h>
-#include <qstring.h>
+  void setText(const QString& text);
+  void setBaseText();
 
-
-#include <kcmodule.h>
-
-
-#include "KCModuleIface.h"
-
-
-class RemoteProxy : public QObject, virtual public KCModuleIface
-{
-  Q_OBJECT
-
-public:
-
-  RemoteProxy(KCModule *module, QCString modId);
-
-  int winId() { return _module->winId(); };
-
-  void load() { _module->load(); };
-  void save() { _module->save(); };
-  void defaults() { _module->defaults(); };
- 
-  void init() { _module->init(); };
- 
-  int buttons() { return _module->buttons(); };
-
-
-private slots:
-
-  void changed(bool state);
-
+protected slots:
+  void urlClicked(const QString &);
+  void mailClicked(const QString &,const QString &);
 
 private:
-
-  KCModule *_module;
-  QCString _modId;
-
+  QuickHelp *_browser;  
 };
-
 
 #endif

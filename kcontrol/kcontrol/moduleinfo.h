@@ -36,8 +36,6 @@ class ModuleInfo : public QObject
 
 public:
 
-  enum ModuleType { Library, Executable };
-
   ModuleInfo(QString desktopFile);
 
   const QString fileName() const { return _fileName; };
@@ -47,14 +45,9 @@ public:
   bool isDirectory() const { return _directory; };
   QString library() const { return _lib; };
   QString handle() const { return _handle; };
-  QString executable() const { return _exec; };
   bool onlyRoot() const { return _root; };
-  bool localUser() const { return _local; };
-  ModuleType type() const { return _type; };
   QString docPath() const { return _doc; };
-
   QCString moduleId() const;
-
 
 protected:
 
@@ -65,17 +58,12 @@ protected:
   void setLibrary(QString lib) { _lib = lib; };
   void setHandle(QString handle) { _handle = handle; };
   void setOnlyRoot(bool only) { _root = only; };
-  void setLocalUser(bool local) { _local = local; };
-  void setType(ModuleType t) { _type = t; };
-  void setExecutable(QString e) { _exec = e; };
   void setDocPath(QString p) { _doc = p; };
 private:
   
   QStringList _groups;
-  QString     _name, _icon, _lib, _handle, _fileName, _exec, _doc;
-  bool        _directory, _root, _local;
-  ModuleType  _type;
-
+  QString     _name, _icon, _lib, _handle, _fileName, _doc;
+  bool        _directory, _root;
 };
 
 
