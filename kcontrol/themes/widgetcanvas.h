@@ -20,12 +20,17 @@
 #ifndef WIDGETCANVAS_H
 #define WIDGETCANVAS_H
 
+#undef index
+
+#include <qlistbox.h>
+#include <kslider.h>
+#include <kcontrol.h>
+#include <X11/X.h>
 #include "kcolorbtn.h"
 #include "savescm.h"
 
 #include "display.h"
-#include <X11/X.h>
-#include <kcontrol.h>
+
 
 #define MAX_HOTSPOTS   13
 

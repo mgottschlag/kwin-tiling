@@ -11,6 +11,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+
 #include <qgrpbox.h>
 #include <qbttngrp.h>
 #include <qlabel.h>
