@@ -109,6 +109,12 @@ typedef enum {
     ConvPutError
 } ConvRequest;
 
+/* these must match the defs in kgreeterplugin.h */
+typedef enum {
+    IsUser = 1, /* unused in kcheckpass */
+    IsPassword = 2
+} DataTag;
+
 /*****************************************************************
  * Authenticates user
  *****************************************************************/
@@ -121,7 +127,7 @@ AuthReturn Authenticate(
         char *(*conv) (ConvRequest, const char *));
 
 /*****************************************************************
- * Output a message to syslog or stderr
+ * Output a message to stderr
  *****************************************************************/
 void message(const char *, ...) ATTR_PRINTFLIKE(1, 2);
 

@@ -53,12 +53,8 @@ AuthReturn Authenticate(const char *method,
     dispose(passwd);
     return AuthOk; /* Success */
   }
-  if (*passwd) {
-    dispose(passwd);
-    return AuthBad; /* Password wrong or account locked */
-  }
   dispose(passwd);
-  return AuthAbort;
+  return AuthBad; /* Password wrong or account locked */
 }
 
 #endif

@@ -36,7 +36,7 @@ public:
     virtual void show();
 
     // from KGreetPluginHandler
-    virtual void gplugReturnText( const char *text, int );
+    virtual void gplugReturnText( const char *text, int tag );
     virtual void gplugReturnBinary( const char *data );
     virtual void gplugSetUser( const QString & );
     virtual void gplugStart();

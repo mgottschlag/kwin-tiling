@@ -61,7 +61,7 @@
 #define ACCEPT_ENV
 
 
-static int havetty, sfd = -1;
+static int havetty, sfd = -1, nullpass;
 
 static char *
 conv_legacy (ConvRequest what, const char *prompt)
@@ -237,8 +237,14 @@ conv_server (ConvRequest what, const char *prompt)
       }
     case ConvGetNormal:
     case ConvGetHidden:
+      {
+	char *msg;
 	GSendStr (prompt);
-	return GRecvStr ();
+	msg = GRecvStr ();
+	if (msg && (GRecvInt() & IsPassword) && !*msg)
+	  nullpass = 1;
+	return msg;
+      }
     case ConvPutInfo:
     case ConvPutError:
     default:
@@ -253,17 +259,7 @@ message(const char *fmt, ...)
   va_list		ap;
 
   va_start(ap, fmt);
-  if (havetty) {
-    vfprintf(stderr, fmt, ap);
-  } else {
-#ifndef HAVE_VSYSLOG
-    char	buffer[1024];
-    vsnprintf(buffer, sizeof(buffer), fmt, ap);
-    syslog(LOG_NOTICE, "%s", buffer);
-#else
-    vsyslog(LOG_NOTICE, fmt, ap);
-#endif
-  }
+  vfprintf(stderr, fmt, ap);
 }
 
 static void ATTR_NORETURN
@@ -303,8 +299,6 @@ main(int argc, char **argv)
   uid_t		uid;
   long		lasttime;
   AuthReturn	ret;
-
-  openlog("kcheckpass", LOG_PID, LOG_AUTH);
 
 #ifdef HAVE_OSF_C2_PASSWD
   initialize_osf_security(argc, argv);
@@ -411,8 +405,13 @@ main(int argc, char **argv)
           unlink(fname);
       }
     }
-    if (ret == AuthBad)
-      message("Authentication failure (invoked by uid %d)\n", uid);
+    if (ret == AuthBad) {
+      message("Authentication failure\n");
+      if (!nullpass) {
+        openlog("kcheckpass", LOG_PID, LOG_AUTH);
+        syslog(LOG_NOTICE, "Authentication failure for %s (invoked by uid %d)", username, uid);
+      }
+    }
   }
   return ret;
 }

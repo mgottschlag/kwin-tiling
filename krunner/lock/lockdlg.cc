@@ -378,9 +378,11 @@ void PasswordDlg::handleVerify()
                                 
 ////// greeter plugin callbacks
 
-void PasswordDlg::gplugReturnText( const char *text, int )
+void PasswordDlg::gplugReturnText( const char *text, int tag )
 {
     GSendStr( text );
+    if (text)
+        GSendInt( tag );
     handleVerify();
 }
 

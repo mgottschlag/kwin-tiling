@@ -73,12 +73,8 @@ AuthReturn Authenticate(const char *method,
     dispose(typed_in_password);
     return AuthOk; /* Success */
   }
-  if (*typed_in_password) {
-    dispose(typed_in_password);
-    return AuthBad; /* Password wrong or account locked */
-  }
   dispose(typed_in_password);
-  return AuthAbort;
+  return AuthBad; /* Password wrong or account locked */
 }
 
 /*
