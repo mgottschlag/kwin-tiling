@@ -113,27 +113,27 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     
     QWhatsThis::add( group,
      i18n("<qt>There are two different clipboard buffers available:<br><br>"
-          "The <b>Clipboard</b>, that you fill by selecting something<br>"
-          "and pressing Ctrl-C or by pressing \"Copy\" in a tool- or<br>"
+          "<b>Clipboard</b> is filled by selecting something<br>"
+          "and pressing CTRL-C, or by clicking \"Copy\" in a toolbar or<br>"
           "menubar.<br><br>"
-          "And the <b>Selection</b>, that is available immediately after<br>"
+          "<b>Selection</b> is available immediately after<br>"
           "selecting some text. The only way to access the selection<br>"
           "is to press the middle mouse button.<br><br>"
-          "You can configure the relation between Clipboard and Selection."
+          "You can configure the relationship between Clipboard and Selection."
           "</qt>" ));
 
     cbSynchronize = new QRadioButton( 
         i18n("Sy&nchronize contents of the clipboard and the selection"), 
         group );
     QWhatsThis::add( cbSynchronize,
-      i18n("Selecting this option synchronizes those two buffers, so they "
+      i18n("Selecting this option synchronizes these two buffers, so they "
            "work the same way as in KDE 1.x and 2.x.") );
 
     cbImplicitSelection = new QRadioButton( 
         i18n("When the clipboard is set, set the selection as well"), group );
     QWhatsThis::add( cbImplicitSelection,
         i18n("Selecting this option will set both clipboard and selection, "
-             " when choosing e.g. \"Copy\" in a menubar.") );
+             "when choosing e.g. \"Copy\" in a menubar.") );
     
     cbSeparate = new QRadioButton( 
         i18n("Separate clipboard and selection"), group );
