@@ -50,7 +50,7 @@ bool MenuFolderInfo::takeRecursive(MenuFolderInfo *info)
       subFolders.take(i);
       return true;
    }
-   
+
    for(MenuFolderInfo *subFolderInfo = subFolders.first();
        subFolderInfo; subFolderInfo = subFolders.next())
    {
@@ -59,13 +59,13 @@ bool MenuFolderInfo::takeRecursive(MenuFolderInfo *info)
    }
    return false;
 }
-    
+
 // Add entry
 void MenuFolderInfo::add(MenuEntryInfo *entry)
 {
    entries.append(entry);
 }
-    
+
 // Remove entry
 void MenuFolderInfo::take(MenuEntryInfo *entry)
 {
@@ -80,7 +80,7 @@ QString MenuFolderInfo::uniqueMenuCaption(const QString &caption)
    QString cap = (r.search(caption) > -1) ? r.cap(1) : caption;
 
    QString result = caption;
-   
+
    for(int n = 1; ++n; )
    {
       bool ok = true;
@@ -95,7 +95,7 @@ QString MenuFolderInfo::uniqueMenuCaption(const QString &caption)
       }
       if (ok)
          return result;
-      
+
       result = cap + QString("-%1").arg(n);
    }
    return QString::null; // Never reached
@@ -116,14 +116,14 @@ QString MenuFolderInfo::uniqueItemCaption(const QString &caption, const QString 
          ok = false;
       MenuEntryInfo *entryInfo;
       for(QPtrListIterator<MenuEntryInfo> it(entries);
-          ok && (entryInfo = it.current()); ++it) 
+          ok && (entryInfo = it.current()); ++it)
       {
          if (entryInfo->caption == result)
             ok = false;
       }
       if (ok)
          return result;
-      
+
       result = cap + QString("-%1").arg(n);
    }
    return QString::null; // Never reached
@@ -151,7 +151,7 @@ void MenuFolderInfo::save()
    if (dirty)
    {
       QString local = KDesktopFile::locateLocal(directoryFile);
-  
+
       KConfig *df = 0;
       if (directoryFile != local)
       {
@@ -167,8 +167,9 @@ void MenuFolderInfo::save()
       df->writeEntry("Name", caption);
       df->writeEntry("Comment", comment);
       df->writeEntry("Icon", icon);
+      df->sync();
    }
-   
+
    // Save sub-menus
    for(MenuFolderInfo *subFolderInfo = subFolders.first();
        subFolderInfo; subFolderInfo = subFolders.next())
@@ -179,7 +180,7 @@ void MenuFolderInfo::save()
    // Save entries
    MenuEntryInfo *entryInfo;
    for(QPtrListIterator<MenuEntryInfo> it(entries);
-       (entryInfo = it.current()); ++it) 
+       (entryInfo = it.current()); ++it)
    {
       entryInfo->save();
    }
@@ -199,7 +200,7 @@ bool MenuFolderInfo::hasDirt()
    // Check entries
    MenuEntryInfo *entryInfo;
    for(QPtrListIterator<MenuEntryInfo> it(entries);
-       (entryInfo = it.current()); ++it) 
+       (entryInfo = it.current()); ++it)
    {
       if (entryInfo->dirty) return true;
    }
@@ -222,16 +223,16 @@ KDesktopFile *MenuEntryInfo::desktopFile()
    {
       df = new KDesktopFile(service->desktopEntryPath());
    }
-   
+
    return df;
 }
 
 void MenuEntryInfo::setDirty()
 {
    if (dirty) return;
-   
+
    dirty = true;
-   
+
    QString local = locateLocal("xdgdata-apps", service->menuId());
    if (local != service->desktopEntryPath())
    {
@@ -247,7 +248,7 @@ void MenuEntryInfo::save()
    if (!dirty) return;
 
    df->sync();
-   
+
    if (shortcutDirty)
    {
       if( KHotKeys::present())
@@ -255,8 +256,8 @@ void MenuEntryInfo::save()
          KHotKeys::changeMenuEntryShortcut( service->storageId(), shortCut.toStringInternal() );
       }
       shortcutDirty = false;
-   }   
-   
+   }
+
    dirty = false;
 }
 
@@ -273,7 +274,7 @@ void MenuEntryInfo::setIcon(const QString &_icon)
 {
    if (icon == _icon)
       return;
-      
+
    icon = _icon;
    setDirty();
    desktopFile()->writeEntry("Icon", icon);
