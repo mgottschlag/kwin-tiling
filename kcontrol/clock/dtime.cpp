@@ -66,10 +66,10 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // Time Server
 
   privateLayoutWidget = new QWidget( this, "layout1" );
-  QHBoxLayout *layout1 = new QHBoxLayout( privateLayoutWidget, 0, 0, "ntplayout"); 
+  QHBoxLayout *layout1 = new QHBoxLayout( privateLayoutWidget, 0, 0, "ntplayout");
 
   setDateTimeAuto = new QCheckBox( privateLayoutWidget, "setDateTimeAuto" );
-  setDateTimeAuto->setText(i18n("Set Date and Time &automatically:"));
+  setDateTimeAuto->setText(i18n("Set date and time &automatically:"));
   connect(setDateTimeAuto, SIGNAL(toggled(bool)), this, SLOT(serverTimeCheck()));
   connect(setDateTimeAuto, SIGNAL(toggled(bool)), SLOT(configChanged()));
   layout1->addWidget( setDateTimeAuto );
@@ -242,7 +242,7 @@ void Dtime::load()
 {
   KConfig config("kcmclockrc", true, false);
   config.setGroup("NTP");
-  timeServerList->insertStringList(QStringList::split(',', config.readEntry("servers", 
+  timeServerList->insertStringList(QStringList::split(',', config.readEntry("servers",
     i18n("Public Time Server (pool.ntp.org),\
 asia.pool.ntp.org,\
 europe.pool.ntp.org,\
@@ -280,7 +280,7 @@ void Dtime::save()
   }
   config.writeEntry("servers", list.join(","));
   config.writeEntry("enabled", setDateTimeAuto->isChecked());
-  
+
   if(setDateTimeAuto->isChecked() && !ntpUtility.isEmpty()){
     // NTP Time setting
     QString timeServer = timeServerList->currentText();
