@@ -309,11 +309,11 @@ static QString color( const QColor& col )
 
 static void createGtkrc( bool exportColors, const QColorGroup& cg )
 {
-    QFile f( locateLocal("config", "gtkrc" ) );
+    QFile f( locateLocal("config", "gtkrc" ) ); // lukas: why does it create in ~/.kde/share/config ???
 
     if ( f.open( IO_WriteOnly) ) {
         QTextStream t( &f );
-        t.setEncoding( QTextStream::Latin1 );
+        t.setEncoding( QTextStream::Locale );
 
         t << i18n(
             "# created by KDE, %1\n"
