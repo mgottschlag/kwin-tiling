@@ -226,9 +226,9 @@ void TopLevel::showPopupMenu( QPopupMenu *menu )
     if (bPopupAtMouse) {
         QPoint g = QCursor::pos();
         if ( menu->height() < g.y() )
-            menu->exec(QPoint( g.x(), g.y() - menu->height()));
+            menu->popup(QPoint( g.x(), g.y() - menu->height()));
         else
-            menu->exec(QPoint(g.x(), g.y()));
+            menu->popup(QPoint(g.x(), g.y()));
     }
 
     else {
@@ -237,9 +237,9 @@ void TopLevel::showPopupMenu( QPopupMenu *menu )
 
         if ( g.x() > QApplication::desktop()->width()/2 &&
              g.y() + menu->height() > QApplication::desktop()->height() )
-            menu->exec(QPoint( g.x(), g.y() - menu->height()));
+            menu->popup(QPoint( g.x(), g.y() - menu->height()));
         else
-            menu->exec(QPoint( g.x() + width(), g.y() + height()));
+            menu->popup(QPoint( g.x() + width(), g.y() + height()));
 
         //      menu->exec(mapToGlobal(QPoint( width()/2, height()/2 )));
     }
@@ -330,6 +330,7 @@ void TopLevel::slotConfigure()
                                           &map );
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
+    dlg->setPopupTimeout( myURLGrabber->popupTimeout() );
 
     if ( dlg->exec() == QDialog::Accepted ) {
         bKeepContents = dlg->keepContents();
@@ -339,6 +340,7 @@ void TopLevel::slotConfigure()
         toggleURLGrabAction->setAccel( globalKeys->currentKey( "toggle-clipboard-actions" ));
 
         myURLGrabber->setActionList( dlg->actionList() );
+	myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
         writeConfiguration( kapp->config() );
         setURLGrabberEnabled( bURLGrabber );
     }

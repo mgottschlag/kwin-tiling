@@ -20,10 +20,12 @@
 #include <qstringlist.h>
 
 #include <kprocess.h>
-// #include <krun.h>
 
+
+class QTimer;
 
 class KConfig;
+class KPopupMenu;
 
 class ClipAction;
 struct ClipCommand;
@@ -52,6 +54,8 @@ public:
   void readConfiguration( KConfig * );
   void writeConfiguration( KConfig * );
 
+  int popupTimeout() const { return myPopupKillTimeout; }
+  void setPopupTimeout( int timeout ) { myPopupKillTimeout = timeout; }
 
 private:	
   const ActionList& matchingActions( const QString& );
@@ -66,11 +70,14 @@ private:
   QString myClipData;
   ClipAction *myCurrentAction;
   QIntDict<ClipCommand> myCommandMapper;
-
+  KPopupMenu *myMenu;
+  QTimer *myPopupKillTimer;
+  int myPopupKillTimeout;
 
 private slots:
   void slotActionMenu();
   void slotItemSelected( int );
+  void slotKillPopupMenu();
 
 
 signals:

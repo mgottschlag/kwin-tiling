@@ -31,12 +31,18 @@
 URLGrabber::URLGrabber()
 {
     myCurrentAction = 0L;
+    myMenu = 0L;
+    myPopupKillTimeout = 8;
 
     myActions = new ActionList();
     myActions->setAutoDelete( true );
     myMatches.setAutoDelete( false );
 
     readConfiguration( kapp->config() );
+
+    myPopupKillTimer = new QTimer( this );
+    connect( myPopupKillTimer, SIGNAL( timeout() ),
+	     SLOT( slotKillPopupMenu() ));
 
     // testing
     /*
@@ -115,39 +121,46 @@ void URLGrabber::slotActionMenu()
         QString item;
         myCommandMapper.clear();
 
-        KPopupMenu *menu = new KPopupMenu;
-        connect( menu, SIGNAL( activated( int )),
+	myPopupKillTimer->stop();
+	delete myMenu;
+        myMenu = new KPopupMenu;
+        connect( myMenu, SIGNAL( activated( int )),
                  SLOT( slotItemSelected( int )));
 
         for ( action = it.current(); action; action = ++it ) {
             QListIterator<ClipCommand> it2( action->commands() );
             if ( it2.count() > 0 )
-                menu->insertTitle( action->description() +
+                myMenu->insertTitle( action->description() +
                                    i18n(" -  Actions for: ") + myClipData );
             for ( command = it2.current(); command; command = ++it2 ) {
                 item = command->description;
                 if ( item.isEmpty() )
                     item = command->command;
 
-                int id = menu->insertItem( item );
+                int id = myMenu->insertItem( item );
                 myCommandMapper.insert( id, command );
             }
         }
 
         // add an edit-possibility
-        menu->insertSeparator();
-        menu->insertSeparator();
-        menu->insertItem( i18n("&Edit and process again"), URL_EDIT_ITEM );
-        menu->insertItem( i18n("Do &Nothing"), DO_NOTHING_ITEM );
+        myMenu->insertSeparator();
+        myMenu->insertSeparator();
+        myMenu->insertItem( i18n("&Edit and process again"), URL_EDIT_ITEM );
+        myMenu->insertItem( i18n("Do &Nothing"), DO_NOTHING_ITEM );
 
-        emit sigPopup( menu );
-        delete menu;
+	if ( myPopupKillTimer > 0 )
+	    myPopupKillTimer->start( 1000 * myPopupKillTimeout, true );
+        emit sigPopup( myMenu );
     }
 }
 
 
 void URLGrabber::slotItemSelected( int id )
 {
+    myPopupKillTimer->stop();
+    delete myMenu;
+    myMenu = 0L;
+
     switch ( id ) {
     case -1:
     case DO_NOTHING_ITEM:
@@ -235,6 +248,7 @@ void URLGrabber::readConfiguration( KConfig *kc )
     kc->setGroup( "General" );
     int num = kc->readNumEntry("Number of Actions", 0);
     myAvoidWindows = kc->readListEntry("No Actions for WM_CLASS");
+    myPopupKillTimeout = kc->readNumEntry( "Timeout for Action popups (seconds)", 8 );
 
     QString group;
     for ( int i = 0; i < num; i++ ) {
@@ -248,7 +262,8 @@ void URLGrabber::readConfiguration( KConfig *kc )
 void URLGrabber::writeConfiguration( KConfig *kc )
 {
     kc->setGroup( "General" );
-    kc->writeEntry("Number of Actions", myActions->count() );
+    kc->writeEntry( "Number of Actions", myActions->count() );
+    kc->writeEntry( "Timeout for Action popups (seconds)", myPopupKillTimeout);
 
     ActionListIterator it( *myActions );
     ClipAction *action;
@@ -308,6 +323,12 @@ bool URLGrabber::isAvoidedWindow() const
     return ret;
 }
 
+
+void URLGrabber::slotKillPopupMenu()
+{
+    delete myMenu;
+    myMenu = 0L;
+}
 
 ///////////////////////////////////////////////////////////////////////////
 ////////

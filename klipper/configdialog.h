@@ -20,6 +20,7 @@
 
 #include <kdialogbase.h>
 #include <kkeydialog.h>
+#include <knuminput.h>
 
 #include "urlgrabber.h"
 
@@ -38,6 +39,7 @@ public:
 
 private:
     QCheckBox *cbMousePos, *cbSaveContents;
+    KIntNumInput *popupTimeout;
 
 };
 
@@ -100,13 +102,20 @@ public:
 	return generalWidget->cbMousePos->isChecked();
     }
 
+    int popupTimeout() const {
+	return generalWidget->popupTimeout->value();
+    }
+    
     void setKeepContents( bool enable ) {
 	generalWidget->cbSaveContents->setChecked( enable );
     }
     void setPopupAtMousePos( bool enable ) {
 	generalWidget->cbMousePos->setChecked( enable );
     }
-
+    void setPopupTimeout( int timeout ) {
+	generalWidget->popupTimeout->setValue( timeout );
+    }
+    
 private:
     GeneralWidget *generalWidget;
     ActionWidget *actionWidget;

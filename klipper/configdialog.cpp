@@ -10,11 +10,12 @@
 
  ------------------------------------------------------------- */
 
+#include <qlabel.h>
 #include <qlayout.h>
 #include <qlistview.h>
 #include <qpushbutton.h>
+#include <qtooltip.h>
 #include <qvbox.h>
-#include <qlabel.h>
 
 #include <kaboutdialog.h>
 #include <kiconloader.h>
@@ -75,6 +76,18 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
 				this );
     cbSaveContents = new QCheckBox( i18n("Save clipboard contents on exit"),
 				    this );
+
+    // workaround for KIntNumInput making a huge QSpinBox
+    QHBox *box = new QHBox( this );
+    popupTimeout = new KIntNumInput( box );
+    popupTimeout->setRange( 0, 200, 1, false );
+    popupTimeout->setSuffix( i18n(" seconds") );
+    popupTimeout->setLabel( i18n("Timeout for Action popups:"),
+			    AlignVCenter);
+    QToolTip::add( popupTimeout, i18n("A value of 0 disables the timeout") );
+    QWidget * dummy = new QWidget( box );
+    box->setStretchFactor( dummy, 10 );
+
 #ifdef __GNUC__
 #warning Qt Bug, remove these setOrientation lines when fixed
 #endif
