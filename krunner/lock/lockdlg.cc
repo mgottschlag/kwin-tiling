@@ -33,7 +33,7 @@
 
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
-#include <../fixx11h.h>
+#include <fixx11h.h>
 
 #define PASSDLG_HIDE_TIMEOUT 10000
 
