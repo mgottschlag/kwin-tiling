@@ -317,7 +317,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     QWidget *dummy = new QWidget(themeBox);
     QHBoxLayout *btnLay = new QHBoxLayout(dummy);
 
-    QPushButton *btnImport = new QPushButton(i18n("&Import..."), dummy);
+    QPushButton *btnImport = new QPushButton(i18n("&Import legacy themes..."), dummy);
     btnImport->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum));
     QWhatsThis::add(btnImport, i18n("The launches KDE legacy style importer "
         "which allows you to convert i.e. GTK themes to KDE widget styles."));
