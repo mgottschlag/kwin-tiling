@@ -113,6 +113,20 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   bool isMalformed = !url.isValid();
   //kdDebug() << "url=" << url.url() << " cmd=" << cmd << " isMalformed=" << isMalformed << endl;
 
+  if (!isMalformed &&
+      (url.protocol().length() == 4) && 
+      (url.protocol() != QString::fromLatin1("http")) &&
+      (url.protocol()[0]=='h') &&
+      (url.protocol()[1]==url.protocol()[2]) &&
+      (url.protocol()[3]=='p'))
+  {
+     // Handle "encrypted" URLs like: h++p://www.kde.org
+     url.setProtocol( QString::fromLatin1("http"));
+     setFilteredURI( data, url);
+     setURIType( data, KURIFilterData::NET_PROTOCOL );
+     return true;
+  }
+
   // TODO: Make this a bit more intelligent for Minicli! There
   // is no need to make comparisons if the supplied data is a local
   // executable and only the argument part, if any, changed! (Dawit)
