@@ -1,6 +1,6 @@
 INCLUDES = $(all_includes)
 
-kde_module_LTLIBRARIES = libkcm_randr.la
+kde_module_LTLIBRARIES = kcm_randr.la
 
 noinst_LTLIBRARIES = librandrinternal.la
 
@@ -9,9 +9,9 @@ lib_LTLIBRARIES = krandrinithack.la
 librandrinternal_la_SOURCES = ktimerdialog.cpp randr.cpp
 librandrinternal_la_METASOURCES = AUTO
 
-libkcm_randr_la_SOURCES = krandrmodule.cpp
-libkcm_randr_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-libkcm_randr_la_LIBADD = librandrinternal.la $(LIB_KDEUI) $(LIB_XRANDR)
+kcm_randr_la_SOURCES = krandrmodule.cpp
+kcm_randr_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
+kcm_randr_la_LIBADD = librandrinternal.la $(LIB_KDEUI) $(LIB_XRANDR)
 
 krandrinithack_la_SOURCES = krandrinithack.cpp krandrmodule.cpp
 krandrinithack_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
