@@ -85,7 +85,7 @@ KControlApp::~KControlApp()
   delete toplevel;
 }
 
-int main(int argc, char *argv[])
+extern "C" int kdemain(int argc, char *argv[])
 {
   KLocale::setMainCatalogue("kcontrol");
   KAboutData aboutKControl( "kcontrol", I18N_NOOP("KDE Control Center"),

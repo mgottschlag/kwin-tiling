@@ -29,7 +29,7 @@
 int khotkeys_screen_number = 0;
 
 
-int main( int argc, char** argv )
+extern "C" int kdemain( int argc, char** argv )
 {                             // no need to i18n these, no GUI
     {
 	// multiheaded hotkeys

@@ -1,23 +1,25 @@
 INCLUDES= $(all_includes)
 
-bin_PROGRAMS = klipper
-lib_LTLIBRARIES = klipper.la
+bin_PROGRAMS =
+lib_LTLIBRARIES =
+noinst_LTLIBRARIES = libklipper_common.la
+kdeinit_LTLIBRARIES = klipper.la
 kde_module_LTLIBRARIES = klipper_panelapplet.la
 
 CLEANFILES = dummy.cpp
 
-klipper_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) 
-klipper_la_SOURCES = main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp \
+libklipper_common_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) 
+libklipper_common_la_SOURCES = main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp \
     toplevel.skel
 
-klipper_la_METASOURCES = AUTO
+libklipper_common_la_METASOURCES = AUTO
+libklipper_common_la_LDFLAGS = $(all_libraries)
+
+klipper_la_LIBADD = libklipper_common.la
+klipper_la_SOURCES = dummy.cpp
 klipper_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
-klipper_LDADD = klipper.la $(LIB_KSYCOCA)
-klipper_SOURCES = dummy.cpp
-klipper_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-
-klipper_panelapplet_la_LIBADD = klipper.la
+klipper_panelapplet_la_LIBADD = libklipper_common.la
 klipper_panelapplet_la_SOURCES = applet.cpp applet.skel
 klipper_panelapplet_la_LDFLAGS = $(all_libraries) -module -avoid-version
 

@@ -22,10 +22,9 @@ METASOURCES = AUTO
 
 SUBDIRS = . pics
 
-CLEANFILES = dummy.cpp
-
-bin_PROGRAMS = kcontrol kcmshell kcminit
-lib_LTLIBRARIES = kcontrol.la kcmshell.la kcminit.la
+bin_PROGRAMS =
+lib_LTLIBRARIES =
+kdeinit_LTLIBRARIES = kcontrol.la kcmshell.la kcminit.la
 
 kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
 	helpwidget.cpp modules.cpp proxywidget.cpp \
@@ -44,18 +43,6 @@ kcmshell_la_LDFLAGS = $(all_libraries) -module -avoid-version
 kcminit_la_SOURCES = kcminit.cpp global.cpp
 kcminit_la_LIBADD   = $(LIB_KDEUI) $(LIB_KSYCOCA) -lkutils
 kcminit_la_LDFLAGS = $(all_libraries) -module -avoid-version
-
-kcontrol_SOURCES = dummy.cpp
-kcontrol_LDADD = kcontrol.la
-kcontrol_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
-
-kcmshell_SOURCES = dummy.cpp
-kcmshell_LDADD = kcmshell.la
-kcmshell_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
-
-kcminit_SOURCES = dummy.cpp
-kcminit_LDADD = kcminit.la
-kcminit_LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 
 rccontroldir = $(kde_datadir)/kcontrol
 rccontrol_DATA = kcontrolui.rc
@@ -79,6 +66,3 @@ EXTRA_DIST = $(kcontrol_data_DATA)
 
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcontrol.pot
-
-dummy.cpp:
-	echo > dummy.cpp

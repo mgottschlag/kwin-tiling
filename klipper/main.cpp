@@ -23,7 +23,7 @@
 static const char *description =
 	I18N_NOOP("KDE Cut & Paste history utility");
 
-int main(int argc, char *argv[])
+extern "C" int kdemain(int argc, char *argv[])
 {
   KAboutData aboutData("klipper", I18N_NOOP("Klipper"),
     klipper_version, description, KAboutData::License_Artistic,

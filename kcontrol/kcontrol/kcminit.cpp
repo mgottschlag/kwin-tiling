@@ -56,7 +56,7 @@ static bool runModule(const QString &libName, KLibLoader *loader, KService::Ptr 
     return false;
 }
 
-int main(int argc, char *argv[])
+extern "C" int kdemain(int argc, char *argv[])
 {
   KLocale::setMainCatalogue("kcontrol");
   KAboutData aboutData( "kcminit", I18N_NOOP("KCMInit"),

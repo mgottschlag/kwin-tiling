@@ -125,7 +125,7 @@ kcmApplication::slotAppExit(const QCString &appId)
 }
 
 
-int main(int _argc, char *_argv[])
+extern "C" int kdemain(int _argc, char *_argv[])
 {
     KAboutData aboutData( "kcmshell", I18N_NOOP("KDE Control Module"),
                           KCONTROL_VERSION,

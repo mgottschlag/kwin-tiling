@@ -1,7 +1,8 @@
 INCLUDES = $(all_includes)
 
-bin_PROGRAMS = kmenuedit
-lib_LTLIBRARIES = kmenuedit.la
+bin_PROGRAMS =
+lib_LTLIBRARIES =
+kdeinit_LTLIBRARIES = kmenuedit.la
 
 CLEANFILES = dummy.cpp
 
@@ -9,10 +10,6 @@ kmenuedit_la_SOURCES = basictab.cpp treeview.cpp desktopfileeditor.cpp menueditv
 
 kmenuedit_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO)
 kmenuedit_la_LDFLAGS = $(all_libraries) -module -avoid-version
-
-kmenuedit_SOURCES = dummy.cpp
-kmenuedit_LDADD   = kmenuedit.la
-kmenuedit_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 noinst_HEADERS = kmenuedit.h menueditview.h treeview.h desktopfileeditor.h basictab.h khotkeys.h
 

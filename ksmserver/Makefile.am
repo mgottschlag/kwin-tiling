@@ -19,19 +19,17 @@ SUBDIRS = .
 
 INCLUDES=  $(all_includes)
 
-bin_PROGRAMS = ksmserver
-lib_LTLIBRARIES = ksmserver.la
+bin_PROGRAMS =
+lib_LTLIBRARIES =
+kdeinit_LTLIBRARIES = ksmserver.la
 noinst_HEADERS = global.h server.h shutdown.h
 
 ksmserver_la_METASOURCES = AUTO
 # Order is important for --enable-final!
 ksmserver_la_SOURCES = main.cpp server.cpp shutdown.cpp KSMServerInterface.skel
-ksmserver_SOURCES = dummy.cpp
 
 ksmserver_la_LDFLAGS = $(all_libraries) -avoid-version -module
-ksmserver_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 ksmserver_la_LIBADD = $(LIB_KDEUI)
-ksmserver_LDADD = ksmserver.la
 
 picsdir = $(kde_datadir)/ksmserver/pics
 pics_DATA = shutdownkonq.png
@@ -47,6 +45,3 @@ testsh_LDADD = $(LIB_KDEUI) shutdown.lo
 
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/ksmserver.pot
-
-dummy.cpp:
-	echo > dummy.cpp

@@ -30,7 +30,7 @@
 static const char *description = I18N_NOOP("KDE Menu editor");
 static const char *version = "0.4";
 
-int main( int argc, char **argv )
+extern "C" int kdemain( int argc, char **argv )
 {
     KAboutData aboutData("kmenuedit", I18N_NOOP("KDE Menu Editor"),
 			 version, description, KAboutData::License_GPL,
