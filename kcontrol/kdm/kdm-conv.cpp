@@ -118,7 +118,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     npuserlv->header()->hide();
     npuserlv->setResizeMode(QListView::LastColumn);
     QWhatsThis::add(npuserlv, i18n("Check all users you want to allow a password-less login for."));
-	
+
     btGroup = new QVGroupBox( i18n("Miscellaneous"), this );
 
     cbarlen = new QCheckBox(i18n("Automatically log in again after &X server crash"), btGroup);

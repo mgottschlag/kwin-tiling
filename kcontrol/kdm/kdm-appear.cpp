@@ -314,11 +314,11 @@ void KDMAppearanceWidget::loadColorSchemes(KComboBox *combo)
 bool KDMAppearanceWidget::setLogo(QString logo)
 {
     QString flogo = logo.isEmpty() ?
-	locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") ) :
-	logo;
+                    locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") ) :
+                    logo;
     QPixmap p(flogo);
     if (p.isNull())
-	return false;
+        return false;
     logobutton->setPixmap(p);
     logobutton->adjustSize();
 //    resize(width(), height());
