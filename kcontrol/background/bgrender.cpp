@@ -325,6 +325,7 @@ wp_load:
 		    svgHeight = m_Size.height();
 		    svgWidth = svgHeight;
 	            break;
+		case ScaleAndCrop:
 	        case NoWallpaper:
 	        default:
 	            kdWarning() << k_funcinfo << "unknown diagram type" << endl;
