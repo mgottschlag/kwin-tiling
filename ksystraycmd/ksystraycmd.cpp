@@ -127,6 +127,7 @@ void KSysTrayCmd::refresh()
 {
   KWin::setSystemTrayWindowFor( winId(), win ? win : winId() );
 
+  QToolTip::remove( this );
   if ( win ) {
     setPixmap( KWin::icon( win, 20, 20, true ) );
     QToolTip::add( this, KWin::info( win ).name );
