@@ -19,9 +19,10 @@
 #include <qheader.h>
 
 #include <kgenericfactory.h>
+#include <kaboutdata.h>
+#include <kdialog.h>
 
 #include "usbdevices.h"
-#include <kaboutdata.h>
 #include "kcmusb.moc"
 
 typedef KGenericFactory<USBViewer, QWidget > USBFactory;
@@ -32,12 +33,12 @@ USBViewer::USBViewer(QWidget *parent, const char *name, const QStringList &)
 {
   setButtons(Help);
 
-  QVBoxLayout *vbox = new QVBoxLayout(this);
+  QVBoxLayout *vbox = new QVBoxLayout(this, 0, KDialog::spacingHint());
   QGroupBox *gbox = new QGroupBox(i18n("USB Devices"), this);
+  gbox->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(gbox);
 
-  QVBoxLayout *vvbox = new QVBoxLayout(gbox, 6);
-  vvbox->addSpacing(gbox->fontMetrics().height());
+  QVBoxLayout *vvbox = new QVBoxLayout(gbox->layout(), KDialog::spacingHint());
 
   QSplitter *splitter = new QSplitter(gbox);
   vvbox->addWidget(splitter);
