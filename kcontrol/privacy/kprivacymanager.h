@@ -47,6 +47,7 @@ public:
 
 private:
     bool isApplicationRegistered(QString appName);
+    bool m_error;
 
 };
 

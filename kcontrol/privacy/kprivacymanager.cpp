@@ -38,6 +38,8 @@ KPrivacyManager::KPrivacyManager()
 {
   if (!kapp->dcopClient()->isAttached())
     kapp->dcopClient()->attach();
+
+  m_error = false;
 }
 
 
@@ -76,7 +78,12 @@ bool KPrivacyManager::clearFormCompletion()
 {
   QFile *completionFile = new QFile(locateLocal("data", "khtml/formcompletions"));
 
-  return completionFile->remove();
+  m_error = completionFile->remove();
+
+  delete completionFile;
+
+  return m_error;
+
 }
 
 bool KPrivacyManager::clearWebCache()
@@ -115,15 +122,15 @@ bool KPrivacyManager::clearWebHistory()
 bool KPrivacyManager::clearFavIcons()
 {
   QDir *favIconDir = new QDir(KGlobal::dirs()->saveLocation( "cache", "favicons/" ));
-  bool error = false;
 
   QStringList entries = favIconDir->entryList();
 
   // erase all files in favicon directory
   for( QStringList::Iterator it = entries.begin() ; it != entries.end() ; ++it)
-    if(!favIconDir->remove(*it)) error = true;
+    if(!favIconDir->remove(*it)) m_error = true;
 
-  return error;
+  delete favIconDir;
+  return m_error;
 }
 
 
