@@ -29,8 +29,8 @@
 
 static KCmdLineOptions options[] =
 {
-    { "list", I18N_NOOP("List modules that are run at startup."), 0 },
-    { "+module", I18N_NOOP("Configuration module to run."), 0 },
+    { "list", I18N_NOOP("List modules that are run at startup"), 0 },
+    { "+module", I18N_NOOP("Configuration module to run"), 0 },
     KCmdLineLastOption
 };
 

@@ -21,12 +21,12 @@ const int XFocusIn = FocusIn;
 
 static KCmdLineOptions options[] =
 {
-  { "!+command", I18N_NOOP("Command to execute."), 0 },
+  { "!+command", I18N_NOOP("Command to execute"), 0 },
   // "!" means: all options after command are treated as arguments to the command
-  { "window <regexp>", I18N_NOOP("A regular expression matching the window title.\n"
+  { "window <regexp>", I18N_NOOP("A regular expression matching the window title\n"
                   "If you do not specify one, then the very first window\n"
 				 "to appear will be taken - not recommended."), 0 },
-  { "wid <int>", I18N_NOOP("The window id of the target window.\n"
+  { "wid <int>", I18N_NOOP("The window id of the target window\n"
                   "Specifies the id of the window to use. If the id starts with 0x\n"
 			   "it is assumed to be in hex."), 0 },
   { "hidden", I18N_NOOP( "Hide the window to the tray on startup" ), 0 },
@@ -35,9 +35,9 @@ static KCmdLineOptions options[] =
   { "tooltip <text>", I18N_NOOP( "Sets the initial tooltip for the tray icon" ), 0 },
   { "keeprunning", I18N_NOOP( "Keep the tray icon even if the client exits. This option\n"
 			 "has no effect unless startonshow is specified." ), 0 },
-  { "quitonhide", I18N_NOOP( "Quit the client when we are told to hide the window.\n"
+  { "quitonhide", I18N_NOOP( "Quit the client when we are told to hide the window\n"
              "This has no effect unless startonshow is specified and implies keeprunning." ), 0 },
-  /*  { "menuitem <item>", I18N_NOOP( "Adds a custom entry to the tray icon menu.\n"
+  /*  { "menuitem <item>", I18N_NOOP( "Adds a custom entry to the tray icon menu\n"
       "The item should have the form text:command." ), 0 },*/
   KCmdLineLastOption
 };

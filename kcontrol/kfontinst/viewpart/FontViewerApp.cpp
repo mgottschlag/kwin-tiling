@@ -102,7 +102,7 @@ CFontViewerApp::CFontViewerApp()
 
 static KCmdLineOptions options[] =
 {
-    { "+[URL]", I18N_NOOP("URL to Open."), 0 },
+    { "+[URL]", I18N_NOOP("URL to open"), 0 },
     KCmdLineLastOption
 };
 
