@@ -478,7 +478,7 @@ KGreeter::updateStatus()
 	failedLabel->setText( i18n("Login failed") );
     } else if (capslocked) {
 	failedLabel->setPaletteForegroundColor( Qt::red );
-	failedLabel->setText( i18n("Warning: Caps locked") );
+	failedLabel->setText( i18n("Warning: Caps Lock on") );
     } else
 	failedLabel->clear();
 }
