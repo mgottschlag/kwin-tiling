@@ -23,6 +23,7 @@
 #undef Unsorted
 
 #include <dcopclient.h>
+#include <kapplication.h>
 #include <ksimpleconfig.h>
 #include <klocale.h>
 #include <kipc.h>
@@ -418,6 +419,8 @@ void KFonts::save()
   if ( !_changed )
     return;
 
+  _changed = false;    
+
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() )
       i->writeFont();
 
@@ -438,6 +441,8 @@ void KFonts::save()
 
   KIPC::sendMessageAll(KIPC::FontChanged);
 
+  kapp->processEvents(); // Process font change ourselves
+
   KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType);
 
   if(aaExcludeRange->isChecked())
@@ -450,13 +455,13 @@ void KFonts::save()
       xft.setSubPixelType(getAaSubPixelType());
   else
       xft.setSubPixelType(KXftConfig::SubPixel::None);
+      
   if((useAA != useAA_original) || xft.changed()) {
     KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change will only affect newly started applications."), i18n("Anti-Aliasing Settings Changed"), "AAsettingsChanged", false);
     useAA_original = useAA;
   }
 
   xft.apply();
-  _changed = false;
   emit changed(false);
 }
 
