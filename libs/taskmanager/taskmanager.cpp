@@ -55,6 +55,10 @@ TaskManager::TaskManager(QObject *parent, const char *name)
     for (QValueList<WId>::ConstIterator it = windows.begin(); it != windows.end(); ++it )
 	windowAdded(*it);
 
+    // set active window
+    WId win = kwin_module->activeWindow();
+    activeWindowChanged(win);
+
     // application startup notification
     connectDCOPSignal(0, 0, "clientDied(pid_t)", "clientDied(pid_t)", false);
     connectDCOPSignal(0, 0, "clientStarted(QString,QString,pid_t,QString,bool)",
