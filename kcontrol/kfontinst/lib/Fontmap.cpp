@@ -446,10 +446,13 @@ void CFontmap::createTopLevel()
 
                         in.close();
 
-                        ofstream out(QFile::encodeName(CGlobal::cfg().getGhostscriptFile()));
+                        if(added) // Don't re-write GS's Fontmap unless we've actually added something...
+                        {
+                            ofstream out(QFile::encodeName(CGlobal::cfg().getGhostscriptFile()));
 
-                        if(out)
-                            out << buffer;
+                            if(out)
+                                out << buffer;
+                        }
                         delete [] buffer;
                     }
                 }
