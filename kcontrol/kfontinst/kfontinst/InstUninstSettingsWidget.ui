@@ -104,7 +104,7 @@
                     <property name="whatsThis" stdset="0">
                         <string>Some TrueType fonts have incorrect PostScript names for certain characters.
 
-For example, "Euro" is sometimes listed as "uni20ac". This would affect any PostScript output from applications (and most produce PostScript when printing), as it would list the use of the "Euro" character -but when this PostScript output is sent to the printer, or viewed, the "Euro" symbol would not be found.
+For example, "Euro" is sometimes listed as "uni20ac". This would affect any PostScript output from applications (and most produce PostScript when printing), as it would list the use of the "Euro" character - but when this PostScript output is sent to the printer, or viewed, the "Euro" symbol would not be found.
 
 Selecting this option will cause the installer to automatically correct any broken fonts.</string>
                     </property>
