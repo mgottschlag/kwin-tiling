@@ -66,7 +66,7 @@ static const char vroot_rcsid[] = "#Id: vroot.h,v 1.4 1991/09/30 19:23:16 stolck
 #include <X11/Xlib.h>
 
 static Window
-#ifdef __STDC__ /* ANSIfication added by jwz, to avoid superfluous warnings. */
+#ifdef __STDC__ || defined(__cplusplus) /* ANSIfication added by jwz, to avoid superfluous warnings. */
 VirtualRootWindowOfScreen(Screen *screen)
 #else /* !__STDC__ */
 VirtualRootWindowOfScreen(screen) Screen *screen;
