@@ -1,6 +1,7 @@
 /*
  *   Copyright (C) 2000 Matthias Elter <elter@kde.org>
- *   Copyright (C) 2001-2002 Raffaele Sandrini <sandrini@kde.org)
+ *   Copyright (C) 2001-2002 Raffaele Sandrini <sandrini@kde.org>
+ *   Copyright (C) 2004 Waldo Bastian <bastian@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,17 +25,19 @@
 #include <klocale.h>
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
+#include <kstandarddirs.h>
 
 #include "kmenuedit.h"
 
-static const char description[] = I18N_NOOP("KDE Menu editor");
-static const char version[] = "0.5";
+static const char description[] = I18N_NOOP("KDE Control Center Editor");
+static const char version[] = "1.0";
 
 extern "C" int kdemain( int argc, char **argv )
 {
-    KAboutData aboutData("kmenuedit", I18N_NOOP("KDE Menu Editor"),
+    KLocale::setMainCatalogue("kmenuedit");
+    KAboutData aboutData("kcontroledit", I18N_NOOP("KDE Control Center Editor"),
 			 version, description, KAboutData::License_GPL,
-			 "(C) 2000-2003, Waldo Bastian, Raffaele Sandrini, Matthias Elter");
+			 "(C) 2000-2004, Waldo Bastian, Raffaele Sandrini, Matthias Elter");
     aboutData.addAuthor("Waldo Bastian", I18N_NOOP("Maintainer"), "bastian@kde.org");
     aboutData.addAuthor("Raffaele Sandrini", I18N_NOOP("Previous Maintainer"), "sandrini@kde.org");
     aboutData.addAuthor("Matthias Elter", I18N_NOOP("Original Author"), "elter@kde.org");
@@ -47,7 +50,7 @@ extern "C" int kdemain( int argc, char **argv )
 
     KUniqueApplication app;
 
-    KMenuEdit *menuEdit = new KMenuEdit(false);
+    KMenuEdit *menuEdit = new KMenuEdit(true);
     menuEdit->show();
 
     app.setMainWidget(menuEdit);

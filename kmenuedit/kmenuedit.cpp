@@ -37,11 +37,9 @@
 #include "kmenuedit.h"
 #include "kmenuedit.moc"
 
-KMenuEdit::KMenuEdit (QWidget *, const char *name)
-  : KMainWindow (0, name), m_tree(0), m_basicTab(0), m_splitter(0)
+KMenuEdit::KMenuEdit (bool controlCenter, QWidget *, const char *name)
+  : KMainWindow (0, name), m_tree(0), m_basicTab(0), m_splitter(0), m_controlCenter(controlCenter)
 {
-    setCaption(i18n("Edit K Menu"));
-
     // restore size
     KConfig *config = KGlobal::config();
     config->setGroup("General");
@@ -95,7 +93,7 @@ void KMenuEdit::slotConfigureKeys()
 void KMenuEdit::setupView()
 {
     m_splitter = new QSplitter(Horizontal, this);
-    m_tree = new TreeView(actionCollection(), m_splitter);
+    m_tree = new TreeView(m_controlCenter, actionCollection(), m_splitter);
     m_basicTab = new BasicTab(m_splitter);
 
     connect(m_tree, SIGNAL(entrySelected(MenuFolderInfo *)),
@@ -144,7 +142,10 @@ void KMenuEdit::slotChangeView()
 
     if (!m_splitter)
        setupView();
-    createGUI("kmenueditui.rc");
+    if (m_controlCenter)
+       createGUI("kcontroleditui.rc");
+    else
+       createGUI("kmenueditui.rc");
 
     m_tree->setViewMode(m_showHidden);
 }
@@ -158,11 +159,24 @@ bool KMenuEdit::queryClose()
 {
     if (!m_tree->dirty()) return true;
 
-    int result = KMessageBox::warningYesNoCancel(this,
+
+    int result;
+    if (m_controlCenter)
+    {
+       result = KMessageBox::warningYesNoCancel(this,
+                    i18n("You have made changes to the Control Center.\n"
+                         "Do you want to save the changes or discard them?"),
+                    i18n("Save Control Center Changes?"),
+                    KStdGuiItem::save(), KStdGuiItem::discard() );
+    }
+    else
+    {
+       result = KMessageBox::warningYesNoCancel(this,
                     i18n("You have made changes to the menu.\n"
                          "Do you want to save the changes or discard them?"),
                     i18n("Save Menu Changes?"),
                     KStdGuiItem::save(), KStdGuiItem::discard() );
+    }
 
     switch(result)
     {

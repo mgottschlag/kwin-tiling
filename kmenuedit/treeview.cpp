@@ -118,9 +118,10 @@ static QPixmap appIcon(const QString &iconName)
 }
 
 
-TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
+TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, const char *name )
     : KListView(parent, name), m_ac(ac), m_rmb(0),
-      m_clipboardFolderInfo(0), m_clipboardEntryInfo(0)
+      m_clipboardFolderInfo(0), m_clipboardEntryInfo(0),
+      m_controlCenter(controlCenter)
 {
     setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
     setAllColumnsShowFocus(true);
@@ -217,7 +218,10 @@ void TreeView::readMenuFolderInfo(MenuFolderInfo *folderInfo, KServiceGroup::Ptr
     if (!folderInfo)
     {
        folderInfo = m_rootFolder;
-       folder = KServiceGroup::root();
+       if (m_controlCenter)
+          folder = KServiceGroup::baseGroup("settings");
+       else
+          folder = KServiceGroup::root();
     }
 
     if (!folder || !folder->isValid())

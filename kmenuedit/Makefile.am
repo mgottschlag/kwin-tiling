@@ -2,15 +2,25 @@ INCLUDES = $(all_includes)
 
 bin_PROGRAMS =
 lib_LTLIBRARIES =
-kdeinit_LTLIBRARIES = kmenuedit.la
+kdeinit_LTLIBRARIES = kmenuedit.la kcontroledit.la
+
+noinst_LTLIBRARIES = libkmenueditcommon.la
 
 CLEANFILES = dummy.cpp
 
-kmenuedit_la_SOURCES = basictab.cpp treeview.cpp kmenuedit.cpp \
-	main.cpp khotkeys.cpp menufile.cpp menuinfo.cpp
+libkmenueditcommon_la_SOURCES = basictab.cpp treeview.cpp kmenuedit.cpp \
+	khotkeys.cpp menufile.cpp menuinfo.cpp
 
-kmenuedit_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO)
+libkmenueditcommon_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO)
+libkmenueditcommon_la_LDFLAGS = $(all_libraries) -module -avoid-version
+
+kmenuedit_la_SOURCES = main.cpp
+kmenuedit_la_LIBADD = libkmenueditcommon.la
 kmenuedit_la_LDFLAGS = $(all_libraries) -module -avoid-version
+
+kcontroledit_la_SOURCES = kcontrol_main.cpp
+kcontroledit_la_LIBADD = libkmenueditcommon.la
+kcontroledit_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 noinst_HEADERS = kmenuedit.h treeview.h basictab.h khotkeys.h \
 	menufile.h menuinfo.h
@@ -29,6 +39,9 @@ EXTRA_DIST = $(xdg_apps_DATA)
 
 rcdir = $(kde_datadir)/kmenuedit
 rc_DATA = kmenueditui.rc
+
+rc2dir = $(kde_datadir)/kcontroledit
+rc2_DATA = kcontroleditui.rc
 
 messages: rc.cpp
 	$(XGETTEXT) rc.cpp *.cpp -o $(podir)/kmenuedit.pot

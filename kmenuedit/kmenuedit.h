@@ -33,7 +33,7 @@ class KMenuEdit : public KMainWindow
     Q_OBJECT
 
 public:
-    KMenuEdit( QWidget *parent=0, const char *name=0 );
+    KMenuEdit( bool controlCenter, QWidget *parent=0, const char *name=0 );
     ~KMenuEdit();
 
 protected:
@@ -53,6 +53,7 @@ protected:
     KAction *m_actionDelete;
     KToggleAction *m_actionShowHidden;
     bool m_showHidden;
+    bool m_controlCenter;
 };
 
 #endif

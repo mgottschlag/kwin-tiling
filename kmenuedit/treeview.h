@@ -79,7 +79,7 @@ class TreeView : public KListView
     friend class TreeItem;
     Q_OBJECT
 public:
-    TreeView(KActionCollection *ac, QWidget *parent=0, const char *name=0);
+    TreeView(bool controlCenter, KActionCollection *ac, QWidget *parent=0, const char *name=0);
     ~TreeView();
 
     void readMenuFolderInfo(MenuFolderInfo *folderInfo=0, KServiceGroup::Ptr folder=0, const QString &prefix=QString::null);
@@ -141,6 +141,7 @@ private:
     MenuFolderInfo    *m_dragInfo;
     TreeItem          *m_dragItem;
     bool               m_showHidden;
+    bool               m_controlCenter;
     MenuFile          *m_menuFile;
     MenuFolderInfo    *m_rootFolder;
     QStringList        m_newMenuIds;
