@@ -30,8 +30,11 @@
 #include <fstab.h>
 #include <stdlib.h>
 
+#include <qtextstream.h>
 #include <qfile.h>
 #include <qfontmetrics.h>
+
+#include <kdebug.h>
 
 /* stdio.h has NULL, but also a lot of extra cruft */
 #ifndef NULL

@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <stdlib.h>	// For atoi()
+#include <stdio.h>
 #include <unistd.h>
 
 void KMemoryWidget::update()
