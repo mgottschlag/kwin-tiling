@@ -1,4 +1,4 @@
-SUBDIRS = bell background filetypes samba display input info kdm kwm\
+SUBDIRS = bell background filetypes samba display input info ioslaveinfo kdm kwm\
 	kicker locale keys kio konq thememgr \
 	konqhtml email ebrowsing arts kcontrol passwords knotify\
 	clock pics $(ACCESS_SUBDIR) colors energy fonts \
