@@ -28,53 +28,54 @@
 
 #include <qwidget.h>
 
-class KLocaleAdvanced;
+class KLocale;
 class KLanguageButton;
 class KLocaleSample;
+
+#include <qstringlist.h>
 
 class KLocaleConfig : public QWidget
 {
   Q_OBJECT
 
 public:
-  KLocaleConfig( KLocaleAdvanced *_locale,
+  KLocaleConfig( KLocale *_locale,
 		 QWidget *parent=0, const char *name=0);
-  ~KLocaleConfig( );
+  virtual ~KLocaleConfig( );
 
-  void loadLanguageList(KLanguageButton *combo, const QStringList &first);
-  void loadCountryList(KLanguageButton *combo);
-
-  void load();
   void save();
-  void defaults();
-  QString quickHelp() const;
 
 public slots:
-  void reTranslate();
+  /**
+   * Loads all settings from the current locale into the current widget.
+   */
+  void slotLocaleChanged();
+  /**
+   * Retranslate all objects owned by this object using the current locale.
+   */
+  void slotTranslate();
 
 signals:
-  void translate();
-  void resample();
+  void localeChanged();
   void languageChanged();
-  void countryChanged();
-  void chsetChanged();
 
 private:
-  KLocaleAdvanced *locale;
-  QStringList langs;
+  QStringList languageList() const;
 
-  KLanguageButton *comboCountry,
-    *comboLang,
-    *comboChset;
+  KLocale *m_locale;
 
-  QLabel *labCountry,
-    *labLang,
-    *labChset;
+  KLanguageButton *m_comboCountry,
+    *m_comboLanguage;
+
+  QLabel *m_labCountry,
+    *m_labLang;
 
 private slots:
+  void loadLanguageList();
+  void loadCountryList();
+
   void changedCountry(int);
   void changedLanguage(int);
-  void changedCharset(int);
   void readLocale(const QString &path, QString &name, const QString &sub) const;
 };
 

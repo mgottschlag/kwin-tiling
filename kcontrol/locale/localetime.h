@@ -31,7 +31,7 @@ class QCheckBox;
 class QComboBox;
 class QLineEdit;
 
-class KLocaleAdvanced;
+class KLocale;
 class KLanguageCombo;
 
 class KLocaleConfigTime : public QWidget
@@ -39,16 +39,23 @@ class KLocaleConfigTime : public QWidget
   Q_OBJECT
 
 public:
-  KLocaleConfigTime( KLocaleAdvanced *_locale, QWidget *parent=0, const char *name=0);
-  ~KLocaleConfigTime( );
+  KLocaleConfigTime( KLocale *_locale, QWidget *parent=0, const char *name=0);
+  virtual ~KLocaleConfigTime( );
 
-  void load();
   void save();
-  void defaults();
 
 public slots:
-  void reset();
-  void reTranslate();
+  /**
+   * Loads all settings from the current locale into the current widget.
+   */
+  void slotLocaleChanged();
+  /**
+   * Retranslate all objects owned by this object using the current locale.
+   */
+  void slotTranslate();
+
+signals:
+  void localeChanged();
 
 private slots:
   // Time & dates
@@ -57,22 +64,18 @@ private slots:
   void slotDateFmtShortChanged(const QString &t);
   void slotWeekStartsMondayChanged();
 
-signals:
-  void translate();
-  void resample();
-
 private:
-  KLocaleAdvanced *locale;
+  KLocale *m_locale;
 
   // Time & dates
-  QLabel *labTimeFmt;
-  QLineEdit *edTimeFmt;
-  QLabel *labDateFmt;
-  QLineEdit *edDateFmt;
-  QLabel *labDateFmtShort;
-  QLineEdit *edDateFmtShort;
-  QLabel *labWeekStartsMonday;
-  QCheckBox *chWeekStartsMonday;
+  QLabel *m_labTimeFmt;
+  QLineEdit *m_edTimeFmt;
+  QLabel *m_labDateFmt;
+  QLineEdit *m_edDateFmt;
+  QLabel *m_labDateFmtShort;
+  QLineEdit *m_edDateFmtShort;
+  QLabel *m_labWeekStartsMonday;
+  QCheckBox *m_chWeekStartsMonday;
 };
 
 #endif

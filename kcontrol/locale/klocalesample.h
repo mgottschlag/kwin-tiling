@@ -30,29 +30,29 @@
 class QLabel;
 class QResizeEvent;
 
-class KLocaleAdvanced;
+class KLocale;
 
 class KLocaleSample : public QWidget
 {
   Q_OBJECT
 public:
-  KLocaleSample(KLocaleAdvanced *_locale,
+  KLocaleSample(KLocale *_locale,
 		QWidget *parent=0, const char*name=0);
-  ~KLocaleSample();
+  virtual ~KLocaleSample();
 
 public slots:
-  void update();
+  void slotLocaleChanged();
 
 protected slots:
   void slotUpdateTime();
 
 private:
-  KLocaleAdvanced *locale;
-  QLabel *numberSample, *labNumber;
-  QLabel *moneySample, *labMoney;
-  QLabel *timeSample, *labTime;
-  QLabel *dateSample, *labDate;
-  QLabel *dateShortSample, *labDateShort;
+  KLocale *m_locale;
+  QLabel *m_numberSample, *m_labNumber;
+  QLabel *m_moneySample, *m_labMoney;
+  QLabel *m_timeSample, *m_labTime;
+  QLabel *m_dateSample, *m_labDate;
+  QLabel *m_dateShortSample, *m_labDateShort;
 };
 
 #endif

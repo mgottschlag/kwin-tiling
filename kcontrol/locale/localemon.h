@@ -31,7 +31,7 @@ class QCheckBox;
 class QComboBox;
 class QLineEdit;
 
-class KLocaleAdvanced;
+class KLocale;
 class KLanguageCombo;
 
 class KLocaleConfigMoney : public QWidget
@@ -39,16 +39,23 @@ class KLocaleConfigMoney : public QWidget
   Q_OBJECT
 
 public:
-  KLocaleConfigMoney( KLocaleAdvanced *_locale, QWidget *parent=0, const char *name=0);
-  ~KLocaleConfigMoney( );
+  KLocaleConfigMoney(KLocale *locale, QWidget *parent=0, const char *name=0);
+  virtual ~KLocaleConfigMoney();
 
-  void load();
   void save();
-  void defaults();
 
 public slots:
-  void reset();
-  void reTranslate();
+  /**
+   * Loads all settings from the current locale into the current widget.
+   */
+  void slotLocaleChanged();
+  /**
+   * Retranslate all objects owned by this object using the current locale.
+   */
+  void slotTranslate();
+
+signals:
+  void localeChanged();
 
 private slots:
   // Money
@@ -61,13 +68,8 @@ private slots:
   void slotMonPosMonSignPosChanged(int i);
   void slotMonNegMonSignPosChanged(int i);
 
-signals:
-  void translate();
-  void resample();
-
 private:
-  KLocaleAdvanced *locale;
-  KLocaleSample *sample;
+  KLocale *m_locale;
 
   // Money
   QLabel *labMonCurSym;

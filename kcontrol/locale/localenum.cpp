@@ -29,111 +29,63 @@
 #include <qlayout.h>
 #include <qwhatsthis.h>
 
+#include <klocale.h>
 #include <kglobal.h>
 #include <kdialog.h>
 #include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
 
-#include "klocaleadv.h"
 #include "toplevel.h"
 #include "localenum.h"
 #include "localenum.moc"
 
-KLocaleConfigNumber::KLocaleConfigNumber(KLocaleAdvanced *_locale,
+KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 					 QWidget *parent, const char*name)
- : QWidget(parent, name),
-   locale(_locale)
+  : QWidget(parent, name),
+    m_locale(locale)
 {
   QGridLayout *lay = new QGridLayout(this, 5, 2,
 				     KDialog::marginHint(),
 				     KDialog::spacingHint());
   lay->setAutoAdd(TRUE);
 
-  labDecSym = new QLabel(this, I18N_NOOP("Decimal symbol:"));
-  edDecSym = new QLineEdit(this);
-  connect( edDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDecSymChanged(const QString &) ) );
-  labDecSym->setBuddy(edDecSym);
+  m_labDecSym = new QLabel(this, I18N_NOOP("Decimal symbol:"));
+  m_edDecSym = new QLineEdit(this);
+  connect( m_edDecSym, SIGNAL( textChanged(const QString &) ),
+	   this, SLOT( slotDecSymChanged(const QString &) ) );
+  m_labDecSym->setBuddy(m_edDecSym);
 
-  labThoSep = new QLabel(this, I18N_NOOP("Thousands separator:"));
-  edThoSep = new QLineEdit(this);
-  connect( edThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotThoSepChanged(const QString &) ) );
+  m_labThoSep = new QLabel(this, I18N_NOOP("Thousands separator:"));
+  m_edThoSep = new QLineEdit(this);
+  connect( m_edThoSep, SIGNAL( textChanged(const QString &) ),
+	   this, SLOT( slotThoSepChanged(const QString &) ) );
 
-  labMonPosSign = new QLabel(this, I18N_NOOP("Positive sign:"));
-  edMonPosSign = new QLineEdit(this);
-  connect( edMonPosSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonPosSignChanged(const QString &) ) );
+  m_labMonPosSign = new QLabel(this, I18N_NOOP("Positive sign:"));
+  m_edMonPosSign = new QLineEdit(this);
+  connect( m_edMonPosSign, SIGNAL( textChanged(const QString &) ),
+	   this, SLOT( slotMonPosSignChanged(const QString &) ) );
 
-  labMonNegSign = new QLabel(this, I18N_NOOP("Negative sign:"));
-  edMonNegSign = new QLineEdit(this);
-  connect( edMonNegSign, SIGNAL( textChanged(const QString &) ), this, SLOT( slotMonNegSignChanged(const QString &) ) );
+  m_labMonNegSign = new QLabel(this, I18N_NOOP("Negative sign:"));
+  m_edMonNegSign = new QLineEdit(this);
+  connect( m_edMonNegSign, SIGNAL( textChanged(const QString &) ),
+	   this, SLOT( slotMonNegSignChanged(const QString &) ) );
 
   lay->setColStretch(1, 1);
+
+  connect(this, SIGNAL(localeChanged()),
+	  SLOT(slotLocaleChanged()));
 }
 
 KLocaleConfigNumber::~KLocaleConfigNumber()
 {
 }
 
-/**
- * Load stored configuration.
- */
-void KLocaleConfigNumber::load()
-{
-  // temperary use of our locale as the global locale
-  KLocale *lsave = KGlobal::_locale;
-  KGlobal::_locale = locale;
-
-  KConfig *config = KGlobal::config();
-  KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
-
-  KSimpleConfig ent(locate("locale",
-			   QString::fromLatin1("l10n/%1/entry.desktop")
-			   .arg(locale->country())), true);
-  ent.setGroup(QString::fromLatin1("KCM Locale"));
-
-  // different tmp variables
-  QString str;
-
-  // DecimalSymbol
-  str = config->readEntry(QString::fromLatin1("DecimalSymbol"));
-  if (str.isNull())
-    str = ent.readEntry(QString::fromLatin1("DecimalSymbol"), QString::fromLatin1("."));
-  locale->setDecimalSymbol(str);
-
-  // ThousandsSeparator
-  str = config->readEntry(QString::fromLatin1("ThousandsSeparator"));
-  if (str.isNull())
-    str = ent.readEntry(QString::fromLatin1("ThousandsSeparator"), QString::fromLatin1(","));
-  str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
-  locale->setThousandsSeparator(str);
- 
-  // PositiveSign
-  str = config->readEntry(QString::fromLatin1("PositiveSign"));
-  if (str.isNull())
-    str = ent.readEntry(QString::fromLatin1("PositiveSign"));
-  locale->setPositiveSign(str);
-
-  // NegativeSign
-  str = config->readEntry(QString::fromLatin1("NegativeSign"));
-  if (str.isNull())
-    str = ent.readEntry(QString::fromLatin1("NegativeSign"), QString::fromLatin1("-"));
-  locale->setNegativeSign(str);
-
-  // update the widgets
-  edDecSym->setText(locale->decimalSymbol());
-  edThoSep->setText(locale->thousandsSeparator());
-  edMonPosSign->setText(locale->positiveSign());
-  edMonNegSign->setText(locale->negativeSign());
-
-  // restore the old global locale
-  KGlobal::_locale = lsave;
-}
-
 void KLocaleConfigNumber::save()
 {
   // temperary use of our locale as the global locale
   KLocale *lsave = KGlobal::_locale;
-  KGlobal::_locale = locale;
+  KGlobal::_locale = m_locale;
 
   KSimpleConfig *c = new KSimpleConfig(QString::fromLatin1("kdeglobals"), false);
   c->setGroup(QString::fromLatin1("Locale"));
@@ -149,118 +101,95 @@ void KLocaleConfigNumber::save()
 
   KSimpleConfig ent(locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
-			   .arg(locale->country())), true);
+			   .arg(m_locale->country())), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   QString str;
 
-  str = ent.readEntry(QString::fromLatin1("DecimalSymbol"), QString::fromLatin1("."));
+  str = ent.readEntry(QString::fromLatin1("DecimalSymbol"),
+		      QString::fromLatin1("."));
   str = config->readEntry(QString::fromLatin1("DecimalSymbol"), str);
-  if (str != locale->decimalSymbol())
-    config->writeEntry(QString::fromLatin1("DecimalSymbol"), locale->decimalSymbol(), true, true);
+  if (str != m_locale->decimalSymbol())
+    config->writeEntry(QString::fromLatin1("DecimalSymbol"),
+		       m_locale->decimalSymbol(), true, true);
 
-  str = ent.readEntry(QString::fromLatin1("ThousandsSeparator"), QString::fromLatin1(","));
+  str = ent.readEntry(QString::fromLatin1("ThousandsSeparator"),
+		      QString::fromLatin1(","));
   str = config->readEntry(QString::fromLatin1("ThousandsSeparator"), str);
   str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
-  if (str != locale->thousandsSeparator())
-    config->writeEntry(QString::fromLatin1("ThousandsSeparator"), QString::fromLatin1("$0%1$0").arg(locale->thousandsSeparator()), true, true);
+  if (str != m_locale->thousandsSeparator())
+    config->writeEntry(QString::fromLatin1("ThousandsSeparator"),
+		       QString::fromLatin1("$0%1$0")
+		       .arg(m_locale->thousandsSeparator()), true, true);
 
   // restore the old global locale
   KGlobal::_locale = lsave;
 }
 
-void KLocaleConfigNumber::defaults()
+void KLocaleConfigNumber::slotLocaleChanged()
 {
-  reset();
+  // #### load all settings here
+  m_edDecSym->setText( m_locale->decimalSymbol() );
+  m_edThoSep->setText( m_locale->thousandsSeparator() );
+  m_edMonPosSign->setText( m_locale->positiveSign() );
+  m_edMonNegSign->setText( m_locale->negativeSign() );
 }
 
 void KLocaleConfigNumber::slotDecSymChanged(const QString &t)
 {
-  locale->setDecimalSymbol(t);
-  emit resample();
+  m_locale->setDecimalSymbol(t);
+  emit localeChanged();
 }
 
 void KLocaleConfigNumber::slotThoSepChanged(const QString &t)
 {
-  locale->setThousandsSeparator(t);
-  emit resample();
+  m_locale->setThousandsSeparator(t);
+  emit localeChanged();
 }
 
 void KLocaleConfigNumber::slotMonPosSignChanged(const QString &t)
 {
-  locale->setPositiveSign(t);
-  emit resample();
+  m_locale->setPositiveSign(t);
+  emit localeChanged();
 }
 
 void KLocaleConfigNumber::slotMonNegSignChanged(const QString &t)
 {
-  locale->setNegativeSign(t);
-  emit resample();
+  m_locale->setNegativeSign(t);
+  emit localeChanged();
 }
 
-void KLocaleConfigNumber::reset()
-{
-  // temperary use of our locale as the global locale
-  KLocale *lsave = KGlobal::_locale;
-  KGlobal::_locale = locale;
-
-  KSimpleConfig ent(locate("locale",
-			   QString::fromLatin1("l10n/%1/entry.desktop")
-			   .arg(locale->country())), true);
-  ent.setGroup(QString::fromLatin1("KCM Locale"));
-
-  QString str;
-
-  locale->setDecimalSymbol(ent.readEntry(QString::fromLatin1("DecimalSymbol"),
-					 QString::fromLatin1(".")));
-  str = ent.readEntry(QString::fromLatin1("ThousandsSeparator"),
-		      QString::fromLatin1(","));
-  str.replace(QRegExp(QString::fromLatin1("$0")), QString::null);
-  locale->setThousandsSeparator(str);
-  locale->setPositiveSign(ent.readEntry(QString::fromLatin1("PositiveSign")));
-  locale->setNegativeSign(ent.readEntry(QString::fromLatin1("NegativeSign"),
-					QString::fromLatin1("-")));
-
-  edDecSym->setText(locale->decimalSymbol());
-  edThoSep->setText(locale->thousandsSeparator());
-  edMonPosSign->setText(locale->positiveSign());
-  edMonNegSign->setText(locale->negativeSign());
-
-  // restore the old global locale
-  KGlobal::_locale = lsave;
-}
-
-void KLocaleConfigNumber::reTranslate()
+void KLocaleConfigNumber::slotTranslate()
 {
   QString str;
 
-  str = locale->translate( "Here you can define the decimal separator used "
-			   "to display numbers (i.e. a dot or a comma in "
-			   "most countries).<p>"
-			   "Note that the decimal separator used to "
-			   "display monetary values has to be set "
-			   "separately (see the 'Money' tab)." );
-  QWhatsThis::add( labDecSym, str );
-  QWhatsThis::add( edDecSym,  str );
+  str = m_locale->translate( "Here you can define the decimal separator used "
+			     "to display numbers (i.e. a dot or a comma in "
+			     "most countries).<p>"
+			     "Note that the decimal separator used to "
+			     "display monetary values has to be set "
+			     "separately (see the 'Money' tab)." );
+  QWhatsThis::add( m_labDecSym, str );
+  QWhatsThis::add( m_edDecSym,  str );
 
-  str = locale->translate( "Here you can define the thousands separator "
-			   "used to display numbers.<p>"
-			   "Note that the thousands separator used to "
-			   "display monetary values has to be set "
-			   "separately (see the 'Money' tab)." );
-  QWhatsThis::add( labThoSep, str );
-  QWhatsThis::add( edThoSep,  str );
+  str = m_locale->translate( "Here you can define the thousands separator "
+			     "used to display numbers.<p>"
+			     "Note that the thousands separator used to "
+			     "display monetary values has to be set "
+			     "separately (see the 'Money' tab)." );
+  QWhatsThis::add( m_labThoSep, str );
+  QWhatsThis::add( m_edThoSep,  str );
 
-  str = locale->translate( "Here you can specify text used to prefix "
-			   "positive numbers. Most people leave this "
-			   "blank." );
-  QWhatsThis::add( labMonPosSign, str );
-  QWhatsThis::add( edMonPosSign,  str );
+  str = m_locale->translate( "Here you can specify text used to prefix "
+			     "positive numbers. Most people leave this "
+			     "blank." );
+  QWhatsThis::add( m_labMonPosSign, str );
+  QWhatsThis::add( m_edMonPosSign,  str );
 
-  str = locale->translate( "Here you can specify text used to prefix "
-			   "negative numbers. This shouldn't be empty, so "
-			   "you can distinguish positive and negative "
-			   "numbers. It's normally set to minus (-)." );
-  QWhatsThis::add( labMonNegSign, str );
-  QWhatsThis::add( edMonNegSign,  str );
+  str = m_locale->translate( "Here you can specify text used to prefix "
+			     "negative numbers. This shouldn't be empty, so "
+			     "you can distinguish positive and negative "
+			     "numbers. It's normally set to minus (-)." );
+  QWhatsThis::add( m_labMonNegSign, str );
+  QWhatsThis::add( m_edMonNegSign,  str );
 }

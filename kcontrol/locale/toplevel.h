@@ -30,7 +30,7 @@
 class QTabWidget;
 class QGroupBox;
 
-class KLocaleAdvanced;
+class KLocale;
 class KLocaleConfig;
 class KLocaleConfigMoney;
 class KLocaleConfigNumber;
@@ -43,32 +43,35 @@ class KLocaleApplication : public KCModule
 
 public:
   KLocaleApplication(QWidget *parent, const char *name);
-  ~KLocaleApplication();
+  virtual ~KLocaleApplication();
 
-  void load();
-  void save();
-  void defaults();
-  QString quickHelp() const;
+  virtual void load();
+  virtual void save();
+  virtual void defaults();
+  virtual QString quickHelp() const;
+
+signals:
+  void languageChanged();
+  void localeChanged();
 
 public slots:
-  void reTranslate();
-  void reset();
-  void newChset();
-  void moduleChanged(bool state);
-  void updateSample();
-  void update() { reTranslate(); updateSample(); };
+  /**
+   * Retranslates the current widget.
+   */
+  void slotTranslate();
+  void slotChanged();
 
 private:
-  KLocaleAdvanced *locale;
+  KLocale *m_locale;
 
-  QTabWidget          *tab;
-  KLocaleConfig       *localemain;
-  KLocaleConfigNumber *localenum;
-  KLocaleConfigMoney  *localemon;
-  KLocaleConfigTime   *localetime;
+  QTabWidget          *m_tab;
+  KLocaleConfig       *m_localemain;
+  KLocaleConfigNumber *m_localenum;
+  KLocaleConfigMoney  *m_localemon;
+  KLocaleConfigTime   *m_localetime;
 
-  QGroupBox           *gbox;
-  KLocaleSample       *sample;
+  QGroupBox           *m_gbox;
+  KLocaleSample       *m_sample;
 };
 
 #endif

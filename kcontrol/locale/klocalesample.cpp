@@ -29,19 +29,19 @@
 #include <qlayout.h>
 #include <qtimer.h>
 
+#include <stdio.h>
+
 #include <kglobal.h>
 #include <kstddirs.h>
-#include <kdebug.h>
 #include <klocale.h>
 
-#include "klocaleadv.h"
 #include "klocalesample.h"
 #include "klocalesample.moc"
 
-KLocaleSample::KLocaleSample(KLocaleAdvanced *_locale,
+KLocaleSample::KLocaleSample(KLocale *locale,
 			     QWidget *parent, const char*name)
   : QWidget(parent, name),
-    locale(_locale)
+    m_locale(locale)
 {
   QGridLayout *lay = new QGridLayout(this, 5, 2);
   lay->setAutoAdd(TRUE);
@@ -51,30 +51,30 @@ KLocaleSample::KLocaleSample(KLocaleAdvanced *_locale,
   a.setColor(QColorGroup::Foreground,Qt::black);
   QPalette pal(a,a,a);
 
-  labNumber = new QLabel(this, I18N_NOOP("Numbers:"));
-  labNumber->setPalette(pal);
-  numberSample = new QLabel(this);
-  numberSample->setPalette(pal);
+  m_labNumber = new QLabel(this, I18N_NOOP("Numbers:"));
+  m_labNumber->setPalette(pal);
+  m_numberSample = new QLabel(this);
+  m_numberSample->setPalette(pal);
 
-  labMoney = new QLabel(this, I18N_NOOP("Money:"));
-  labMoney->setPalette(pal);
-  moneySample = new QLabel(this);
-  moneySample->setPalette(pal);
+  m_labMoney = new QLabel(this, I18N_NOOP("Money:"));
+  m_labMoney->setPalette(pal);
+  m_moneySample = new QLabel(this);
+  m_moneySample->setPalette(pal);
 
-  labDate = new QLabel(this, I18N_NOOP("Date:"));
-  labDate->setPalette(pal);
-  dateSample = new QLabel(this);
-  dateSample->setPalette(pal);
+  m_labDate = new QLabel(this, I18N_NOOP("Date:"));
+  m_labDate->setPalette(pal);
+  m_dateSample = new QLabel(this);
+  m_dateSample->setPalette(pal);
 
-  labDateShort = new QLabel(this, I18N_NOOP("Short date:"));
-  labDateShort->setPalette(pal);
-  dateShortSample = new QLabel(this);
-  dateShortSample->setPalette(pal);
+  m_labDateShort = new QLabel(this, I18N_NOOP("Short date:"));
+  m_labDateShort->setPalette(pal);
+  m_dateShortSample = new QLabel(this);
+  m_dateShortSample->setPalette(pal);
 
-  labTime = new QLabel(this, I18N_NOOP("Time:"));
-  labTime->setPalette(pal);
-  timeSample = new QLabel(this);
-  timeSample->setPalette(pal);
+  m_labTime = new QLabel(this, I18N_NOOP("Time:"));
+  m_labTime->setPalette(pal);
+  m_timeSample = new QLabel(this);
+  m_timeSample->setPalette(pal);
 
   lay->setColStretch(0, 1);
   lay->setColStretch(1, 3);
@@ -92,44 +92,44 @@ void KLocaleSample::slotUpdateTime()
 {
   QDateTime dt = QDateTime::currentDateTime();
 
-  dateSample->setText(locale->formatDate(dt.date(), false));
-  dateShortSample->setText(locale->formatDate(dt.date(), true));
-  timeSample->setText(locale->formatTime(dt.time(), true));
+  m_dateSample->setText(m_locale->formatDate(dt.date(), false));
+  m_dateShortSample->setText(m_locale->formatDate(dt.date(), true));
+  m_timeSample->setText(m_locale->formatTime(dt.time(), true));
 }
 
-void KLocaleSample::update()
+void KLocaleSample::slotLocaleChanged()
 {
-  numberSample->setText(locale->formatNumber(1234567.89) +
+  printf("sample::slotLocaleChanged\n");
+  m_numberSample->setText(m_locale->formatNumber(1234567.89) +
 			QString::fromLatin1(" / ") +
-			locale->formatNumber(-1234567.89));
+			m_locale->formatNumber(-1234567.89));
 
-  moneySample->setText(locale->formatMoney(123456789.00) +
+  m_moneySample->setText(m_locale->formatMoney(123456789.00) +
 		       QString::fromLatin1(" / ") +
-		       locale->formatMoney(-123456789.00));
+		       m_locale->formatMoney(-123456789.00));
 
   slotUpdateTime();
 
   QString str;
 
-  str = locale->translate("This is how numbers will be displayed.");
-  QWhatsThis::add( labNumber,  str );
-  QWhatsThis::add( numberSample, str );
+  str = m_locale->translate("This is how numbers will be displayed.");
+  QWhatsThis::add( m_labNumber,  str );
+  QWhatsThis::add( m_numberSample, str );
 
-  str = locale->translate("This is how monetary values will be displayed.");
-  QWhatsThis::add( labMoney,    str );
-  QWhatsThis::add( moneySample, str );
+  str = m_locale->translate("This is how monetary values will be displayed.");
+  QWhatsThis::add( m_labMoney,    str );
+  QWhatsThis::add( m_moneySample, str );
 
-  str = locale->translate("This is how date values will be displayed.");
-  QWhatsThis::add( labDate,    str );
-  QWhatsThis::add( dateSample, str );
+  str = m_locale->translate("This is how date values will be displayed.");
+  QWhatsThis::add( m_labDate,    str );
+  QWhatsThis::add( m_dateSample, str );
 
-  str = locale->translate("This is how date values will be displayed using "
-			  "a short notation.");
-  QWhatsThis::add( labDateShort, str );
-  QWhatsThis::add( dateShortSample, str );
+  str = m_locale->translate("This is how date values will be displayed using "
+			    "a short notation.");
+  QWhatsThis::add( m_labDateShort, str );
+  QWhatsThis::add( m_dateShortSample, str );
 
-  str = locale->translate("This is how the time will be displayed.");
-  QWhatsThis::add( labTime,    str );
-  QWhatsThis::add( timeSample, str );
+  str = m_locale->translate("This is how the time will be displayed.");
+  QWhatsThis::add( m_labTime,    str );
+  QWhatsThis::add( m_timeSample, str );
 }
-

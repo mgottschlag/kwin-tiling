@@ -28,7 +28,6 @@
 #include <qwidgetintdict.h>
 #include <qlayout.h>
 
-#include <kcharsets.h>
 #include <kconfig.h>
 #include <kcmodule.h>
 #include <kmessagebox.h>
@@ -36,7 +35,10 @@
 #include <klocale.h>
 #include <kprocess.h>
 
-#include "klocaleadv.h"
+#include <kdebug.h>
+
+#include <stdio.h>
+
 #include "locale.h"
 #include "localenum.h"
 #include "localemon.h"
@@ -48,121 +50,159 @@
 KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
-  locale = new KLocaleAdvanced(QString::fromLatin1("kcmlocale"));
+  m_locale = new KLocale(QString::fromLatin1("kcmlocale"), false);
   QVBoxLayout *l = new QVBoxLayout(this, 5);
   l->setAutoAdd(TRUE);
 
-  tab = new QTabWidget(this);
+  m_tab = new QTabWidget(this);
 
-  localemain = new KLocaleConfig(locale, this);
-  tab->addTab( localemain, QString::null);
-  localenum = new KLocaleConfigNumber(locale, this);
-  tab->addTab( localenum, QString::null);
-  localemon = new KLocaleConfigMoney(locale, this);
-  tab->addTab( localemon, QString::null);
-  localetime = new KLocaleConfigTime(locale, this);
-  tab->addTab( localetime, QString::null);
+  m_localemain = new KLocaleConfig(m_locale, this);
+  m_tab->addTab( m_localemain, QString::null);
+  m_localenum = new KLocaleConfigNumber(m_locale, this);
+  m_tab->addTab( m_localenum, QString::null );
+  m_localemon = new KLocaleConfigMoney(m_locale, this);
+  m_tab->addTab( m_localemon, QString::null );
+  m_localetime = new KLocaleConfigTime(m_locale, this);
+  m_tab->addTab( m_localetime, QString::null );
 
   // Examples
-  gbox = new QVGroupBox(this);
-  sample = new KLocaleSample(locale, gbox);
+  m_gbox = new QVGroupBox(this);
+  m_sample = new KLocaleSample(m_locale, m_gbox);
+
+  // getting signals from childs
+  connect(m_localemain, SIGNAL(localeChanged()),
+	  this, SIGNAL(localeChanged()));
+  connect(m_localemain, SIGNAL(languageChanged()),
+	  this, SIGNAL(languageChanged()));
+
+  // run the slots on the childs
+  connect(this, SIGNAL(localeChanged()),
+  	  m_localemain, SLOT(slotLocaleChanged()));
+  connect(this, SIGNAL(localeChanged()),
+	  m_localenum, SLOT(slotLocaleChanged()));
+  connect(this, SIGNAL(localeChanged()),
+  m_localemon, SLOT(slotLocaleChanged()));
+  connect(this, SIGNAL(localeChanged()),
+  	  m_localetime, SLOT(slotLocaleChanged()));
+
+  // keep the example up to date
+  // NOTE: this will make the sample be updated 6 times the first time
+  // because combo boxes++ emits the change signal not only when the user changes
+  // it, but also when it's changed by the program.
+  connect(m_localenum, SIGNAL(localeChanged()),
+	  m_sample, SLOT(slotLocaleChanged()));
+  connect(m_localemon, SIGNAL(localeChanged()),
+	  m_sample, SLOT(slotLocaleChanged()));
+  connect(m_localetime, SIGNAL(localeChanged()),
+	  m_sample, SLOT(slotLocaleChanged()));
+  connect(this, SIGNAL(localeChanged()),
+	  m_sample, SLOT(slotLocaleChanged()));
+
+  // make sure we always have translated interface
+  connect(this, SIGNAL(languageChanged()),
+	  this, SLOT(slotTranslate()));
+  connect(this, SIGNAL(languageChanged()),
+	  m_localenum, SLOT(slotTranslate()));
+  connect(this, SIGNAL(languageChanged()),
+	  m_localemon, SLOT(slotTranslate()));
+  connect(this, SIGNAL(languageChanged()),
+	  m_localetime, SLOT(slotTranslate()));
+
+  // mark it as changed when we change it.
+  connect(m_localemain, SIGNAL(localeChanged()),
+	  SLOT(slotChanged()));
+  connect(m_localenum, SIGNAL(localeChanged()),
+	  SLOT(slotChanged()));
+  connect(m_localemon, SIGNAL(localeChanged()),
+	  SLOT(slotChanged()));
+  connect(m_localetime, SIGNAL(localeChanged()),
+	  SLOT(slotChanged()));
 
   load();
-  update();
-
-  connect(localemain, SIGNAL(resample()),                    SLOT(update()  ));
-  connect(localenum,  SIGNAL(resample()),                    SLOT(update()  ));
-  connect(localemon,  SIGNAL(resample()),                    SLOT(update()  ));
-  connect(localetime, SIGNAL(resample()),                    SLOT(update()  ));
-  connect(localemain, SIGNAL(languageChanged()), localenum,  SLOT(reset()   ));
-  connect(localemain, SIGNAL(languageChanged()), localemon,  SLOT(reset()   ));
-  connect(localemain, SIGNAL(languageChanged()), localetime, SLOT(reset()   ));
-  connect(localemain, SIGNAL(countryChanged()),              SLOT(reset   ()));
-  connect(localemain, SIGNAL(chsetChanged()),                SLOT(newChset()));
 }
 
 KLocaleApplication::~KLocaleApplication()
 {
-    delete locale;
+  delete m_locale;
 }
 
 void KLocaleApplication::load()
 {
-    localemain->load();
-    localenum->load();
-    localemon->load();
-    localetime->load();
+  //delete locale;
+  // #### HPB: Do not use environment variables here!
+  //  locale = new KLocale(QString::fromLatin1("kcmlocale"), false);
+  // *m_locale = KLocale(QString::fromLatin1("kcmlocale"), false);
+  // #### HPB: KLocale has to be fixed so that it's possible to ask for a complete
+  // reload
+  //m_locale->setDefaultsOnly( false );
+  kdDebug() << "KLocaleApplication::load() not implemented" << endl;
+
+  emit changed(false);
+  emit languageChanged();
+  emit localeChanged();
 }
 
 void KLocaleApplication::save()
 {
-    // temperary use of our locale as the global locale
-    KLocale *lsave = KGlobal::_locale;
-    KGlobal::_locale = locale;
-    KMessageBox::information(this, locale->translate
-                 ("Changed language settings apply only to "
-                  "newly started applications.\nTo change the "
-                  "language of all programs, you will have to "
-                  "logout first."),
-                             locale->translate("Applying language settings"));
-    // restore the old global locale
-    KGlobal::_locale = lsave;
+  // temperary use of our locale as the global locale
+  KLocale *lsave = KGlobal::_locale;
+  KGlobal::_locale = m_locale;
+  KMessageBox::information(this, m_locale->translate
+			   ("Changed language settings apply only to "
+			    "newly started applications.\nTo change the "
+			    "language of all programs, you will have to "
+			    "logout first."),
+			   m_locale->translate("Applying language settings"));
+  // restore the old global locale
+  KGlobal::_locale = lsave;
 
-    KConfig *config = KGlobal::config();
-    KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
+  KConfig *config = KGlobal::config();
+  KConfigGroupSaver saver(config, QString::fromLatin1("Locale"));
 
-    bool langChanged = config->readEntry(QString::fromLatin1("Language"))
-           != locale->language();
+  bool langChanged = config->readEntry(QString::fromLatin1("Language"))
+    != m_locale->language();
 
-    localemain->save();
-    localenum->save();
-    localemon->save();
-    localetime->save();
+  m_localemain->save();
+  m_localenum->save();
+  m_localemon->save();
+  m_localetime->save();
 
-    // rebuild the date base if language was changed
-    if (langChanged)
+  // rebuild the date base if language was changed
+  if (langChanged)
     {
       KProcess proc;
       proc << QString::fromLatin1("kbuildsycoca");
       proc.start(KProcess::DontCare);
     }
+
+  emit changed(false);
 }
 
 void KLocaleApplication::defaults()
 {
-    localemain->defaults();
-    localenum->defaults();
-    localemon->defaults();
-    localetime->defaults();
-}
+  // #### HPB: Do not use user config here..
+  m_locale->setLanguage(QString::fromLatin1("C"));
+  m_locale->setCountry(QString::fromLatin1("C"));
+  m_locale->setDefaultsOnly( true );
 
-void KLocaleApplication::moduleChanged(bool state)
-{
-  emit changed(state);
+  emit localeChanged();
 }
 
 QString KLocaleApplication::quickHelp() const
 {
-  return locale->translate("<h1>Locale</h1>\n"
+  return m_locale->translate("<h1>Locale</h1>\n"
           "<p>From here you can configure language, numeric, and time \n"
           "settings for your particular region. In most cases it will be \n"
           "sufficient to choose the country you live in. For instance KDE \n"
           "will automatically choose \"German\" as language if you choose \n"
           "\"Germany\" from the list. It will also change the time format \n"
-          "to use 24 hours and and use comma as decimal separator.</p>\n"
-          "<p><b>Note:</b> The default charset is ISO 8859-1. That \n"
-          "charset is used when choosing fonts. You will have to change \n"
-          "it if you are using a non-Western European language.\n");
+          "to use 24 hours and and use comma as decimal separator.</p>\n");
 }
 
-void KLocaleApplication::updateSample()
+void KLocaleApplication::slotTranslate()
 {
-    sample->update();
-    moduleChanged(true);
-}
+  printf("KLocaleApp::slotTranslate\n");
 
-void KLocaleApplication::reTranslate()
-{
   // The untranslated string for QLabel are stored in
   // the name() so we use that when retranslating
   QObject *wc;
@@ -174,63 +214,30 @@ void KLocaleApplication::reTranslate()
     // unnamed labels will cause errors and should not be
     // retranslated. E.g. the example box should not be
     // retranslated from here.
+    if (wc->name() == 0) continue;
+    if (strcmp(wc->name(), "") == 0) continue;
     if (strcmp(wc->name(), "unnamed") == 0) continue;
 
     if (strcmp(wc->className(), "QLabel") == 0)
-      ((QLabel *)wc)->setText( locale->translate( wc->name() ) );
+      ((QLabel *)wc)->setText( m_locale->translate( wc->name() ) );
     else if (strcmp(wc->className(), "QGroupBox") == 0)
-      ((QGroupBox *)wc)->setTitle( locale->translate( wc->name() ) );
+      ((QGroupBox *)wc)->setTitle( m_locale->translate( wc->name() ) );
   }
   delete list;
 
   // Here we have the pointer
-  gbox->setCaption(locale->translate("Examples"));
-  tab->changeTab(localemain, locale->translate("&Locale"));
-  tab->changeTab(localenum, locale->translate("&Numbers"));
-  tab->changeTab(localemon, locale->translate("&Money"));
-  tab->changeTab(localetime, locale->translate("&Time && dates"));
-
-  // retranslate some other widgets
-  localemain->reTranslate();
-  localenum->reTranslate();
-  localemon->reTranslate();
-  localetime->reTranslate();
-  sample->update();
+  m_gbox->setCaption(m_locale->translate("Examples"));
+  m_tab->changeTab(m_localemain, m_locale->translate("&Locale"));
+  m_tab->changeTab(m_localenum, m_locale->translate("&Numbers"));
+  m_tab->changeTab(m_localemon, m_locale->translate("&Money"));
+  m_tab->changeTab(m_localetime, m_locale->translate("&Time && dates"));
 
   // FIXME: All widgets are done now. However, there are
   // still some problems. Popup menus from the QLabels are
   // not retranslated.
 }
 
-void KLocaleApplication::reset()
+void KLocaleApplication::slotChanged()
 {
-  localenum->reset();
-  localemon->reset();
-  localetime->reset();
-}
-
-void KLocaleApplication::newChset()
-{
-  // figure out which font to use
-  KConfig *c = KGlobal::config();
-  c->setGroup( QString::fromLatin1("General") );
-
-  QFont font(QString::fromLatin1("helvetica"), 12, QFont::Normal);
-  KGlobal::charsets()->setQFont(font, locale->charset());
-  font = c->readFontEntry(QString::fromLatin1("font"), &font);
-
-  // set the font for all subwidgets
-  QObjectList *list = queryList("QWidget");
-  QObjectListIt it(*list);
-
-  QObject *w;
-  while ( (w = it.current()) != 0 ) {
-    ++it;
-    ((QWidget *)w)->setFont(font);
-  }
-  delete list;
-
-  // FIXME: the context helps are still using the old charset
-
-  moduleChanged(true);
+  emit changed(true);
 }
