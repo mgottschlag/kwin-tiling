@@ -131,8 +131,6 @@ Dtime::Dtime(QWidget * parent, const char *name)
   QSpacerItem *spacer3 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
   v3->addMultiCell(spacer3, 0, 1, 9, 9);
 
-  v2->addItem( v3 );
-
   QHBoxLayout *top = new QHBoxLayout( this, 0, KDialog::spacingHint() );
   top->addWidget(dateBox, 1);
   top->addWidget(timeBox, 1);
