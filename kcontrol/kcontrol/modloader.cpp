@@ -65,10 +65,7 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
      if (module)
 		return module;
 
-
-     kdDebug() << "Unable to load module using ComponentFactory! Giving up..." << endl;
   }
-/*
 
      // else do a fallback
      kdDebug() << "Unable to load module using ComponentFactory! Falling back to old loader." << endl;
@@ -92,7 +89,6 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
     }
     else
       kdWarning() << "Module " << mod.fileName() << " doesn't specify a library!" << endl;
-*/
   /*
    * Ok, we could not load the library.
    * Try to run it as an executable.
