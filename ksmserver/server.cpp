@@ -1082,7 +1082,7 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
 	    c->resetState();
 	    SmsSaveYourself( c->connection(), saveSession?SmSaveBoth: SmSaveGlobal,
 			     TRUE, SmInteractStyleAny, FALSE );
-	
+
 	}
 	if ( clients.isEmpty() )
 	    completeShutdown();
@@ -1440,7 +1440,23 @@ void KSMServer::autoStart()
 	return;
     beenThereDoneThat = TRUE;
 
-    kapp->dcopClient()->send("klauncher", "klauncher", "autoStart()", QByteArray());
+    QByteArray data;
+    QDataStream arg(data, IO_WriteOnly);
+    arg << (int)1;
+    kapp->dcopClient()->send("klauncher", "klauncher", "autoStart(int)", data);
+}
+
+void KSMServer::autoStart2()
+{
+    static bool beenThereDoneThat = FALSE;
+    if ( beenThereDoneThat )
+	return;
+    beenThereDoneThat = TRUE;
+
+    QByteArray data;
+    QDataStream arg(data, IO_WriteOnly);
+    arg << (int)2;
+    kapp->dcopClient()->send("klauncher", "klauncher", "autoStart(int)", data);
 }
 
 
@@ -1472,6 +1488,17 @@ void KSMServer::restoreSessionInternal()
 
 	startApplication( restartCommand );
     }
+
+    connectDCOPSignal( "klauncher", "klauncher", "autoStart2Done()",
+                       "restoreSessionDone()", true);
+    autoStart2();
+}
+
+
+void KSMServer::restoreSessionDone()
+{
+    disconnectDCOPSignal( "klauncher", "klauncher", "autoStart2Done()",
+                          "restoreSessionDone()");
     if (progress == 0) {
 	publishProgress( progress );
 	upAndRunning( "session ready" );

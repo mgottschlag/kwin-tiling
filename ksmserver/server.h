@@ -112,6 +112,7 @@ private slots:
     void processData( int socket );
     void timeoutQuit();
     void restoreSessionInternal();
+    void restoreSessionDone();
 
     void protectionTimeout();
     void cancelShutdown();
@@ -132,6 +133,8 @@ private:
 
     void startApplication( const QStringList& command );
     void executeCommand( const QStringList& command );
+
+    void autoStart2();
 
  private:
     QPtrList<KSMListener> listener;
