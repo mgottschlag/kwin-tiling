@@ -223,12 +223,16 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
     // right column
     vLayout = new QVBoxLayout(topLayout, 10);
 
+    vLayout->addStretch();
+
     mMonitorLabel = new QLabel( this );
     mMonitorLabel->setAlignment( AlignCenter );
     mMonitorLabel->setPixmap( QPixmap(locate("data",
                          "kcontrol/pics/monitor.png")));
     vLayout->addWidget(mMonitorLabel, 0);
     QWhatsThis::add( mMonitorLabel, i18n("Here you can see a preview of the selected screen saver.") );
+
+    vLayout->addStretch();
 
     group = new QGroupBox( i18n("Settings"), this );
     vLayout->addWidget( group );
