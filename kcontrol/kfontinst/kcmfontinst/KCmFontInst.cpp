@@ -56,7 +56,6 @@
 #define CFG_LISTVIEW       "ListView"
 #define CFG_PATH           "Path"
 #define CFG_SPLITTER_SIZES "SplitterSizes"
-#define CFG_SIZE           "Size"
 
 typedef KGenericFactory<KFI::CKCmFontInst, QWidget> FontInstallFactory;
 K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory("kcmfontinst"))
@@ -86,8 +85,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     itsEmbeddedAdmin=Misc::root() && (NULL==appName || strcmp("kcontrol", appName) &&
                      KCmdLineArgs::parsedArgs()->isSet("embed"));
-    itsKCmshell=!itsEmbeddedAdmin && NULL!=appName && 0==strcmp("kcmshell", appName) &&
-                !KCmdLineArgs::parsedArgs()->isSet("embed");
 
     itsStatusLabel = new QLabel(this);
     itsStatusLabel->setFrameShape(QFrame::Panel);
@@ -272,13 +269,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
                       SLOT(dropped(const KFileItem *, QDropEvent *, const KURL::List &)));
     connect(itsDirOp->dirLister(), SIGNAL(infoMessage(const QString &)), SLOT(infoMessage(const QString &)));
     connect(itsDirOp, SIGNAL(updateInformation(int, int)), SLOT(updateInformation(int, int)));
-
-    if(itsKCmshell)
-    {
-        QSize defSize(450, 380);
-
-        itsSizeHint=itsConfig.readSizeEntry(CFG_SIZE, &defSize);
-    }
 }
 
 CKCmFontInst::~CKCmFontInst()
@@ -288,16 +278,9 @@ CKCmFontInst::~CKCmFontInst()
     {
         itsConfig.setGroup(CFG_GROUP);
         itsConfig.writeEntry(CFG_SPLITTER_SIZES, itsSplitter->sizes());
-        if(itsKCmshell)
-            itsConfig.writeEntry(CFG_SIZE, size());
     }
 #endif
     delete itsDirOp;
-}
-
-QSize CKCmFontInst::sizeHint() const
-{
-    return itsKCmshell ? itsSizeHint : KCModule::sizeHint();
 }
 
 QString CKCmFontInst::quickHelp() const

@@ -34,7 +34,6 @@
 #endif
 
 #include <qstringlist.h>
-#include <qsize.h>
 #include <kcmodule.h>
 #include <kurl.h>
 #include <kconfig.h>
@@ -64,8 +63,6 @@ class CKCmFontInst : public KCModule
 
     CKCmFontInst(QWidget *parent=NULL, const char *name=NULL, const QStringList &list=QStringList());
     virtual ~CKCmFontInst();
-
-    QSize sizeHint() const;
 
     public slots:
 
@@ -102,10 +99,8 @@ class CKCmFontInst : public KCModule
 #endif
     QSplitter            *itsSplitter;
     KConfig              itsConfig;
-    bool                 itsEmbeddedAdmin,
-                         itsKCmshell;
+    bool                 itsEmbeddedAdmin;
     QLabel               *itsStatusLabel;
-    QSize                itsSizeHint;
 };
 
 }
