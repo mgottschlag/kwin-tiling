@@ -173,7 +173,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
 
     colorButton = new KColorButton( group );
     connect( colorButton, SIGNAL( changed(const QColor &)),
-        SLOT(slotSelectColor(const QColor &)));
+             SLOT(slotSelectColor(const QColor &)));
 
     groupLayout->addWidget( colorButton );
 
@@ -278,7 +278,7 @@ void KColorScheme::save()
     config->sync();
     delete config;
 
-    
+
     // Notify all KDE applications
 
     KIPC::sendMessageAll(KIPC::PaletteChanged);
@@ -293,11 +293,11 @@ void KColorScheme::save()
     QApplication::flushX();
     // Notify non Qt apps ?
     if (useRM) {
-    QApplication::setOverrideCursor( waitCursor );
-    KProcess proc;
-    proc.setExecutable("krdb");
-    proc.start(KProcess::Block);
-    QApplication::restoreOverrideCursor();
+        QApplication::setOverrideCursor( waitCursor );
+        KProcess proc;
+        proc.setExecutable("kcminit style");
+        proc.start(KProcess::Block);
+        QApplication::restoreOverrideCursor();
     }
 
     m_bChanged = false;
@@ -398,7 +398,7 @@ void KColorScheme::slotRemove()
 void KColorScheme::slotAdd()
 {
     QString sName;
-    if (sList->currentItem() >= nSysSchemes) 
+    if (sList->currentItem() >= nSysSchemes)
        sName = sList->currentText();
     SaveScm *ss = new SaveScm( 0,  "save scheme", sName );
 
@@ -407,7 +407,7 @@ void KColorScheme::slotAdd()
     bool valid = false;
     int exists = -1;
 
-    while (!valid) 
+    while (!valid)
     {
         if (ss->exec() != QDialog::Accepted)
             return;
@@ -422,7 +422,7 @@ void KColorScheme::slotAdd()
 
         // Capitalise each word
         sName.at(0) = sName.at(0).upper();
-        while (1) 
+        while (1)
         {
             i = sName.find(" ", i);
             if (i == -1)
@@ -436,7 +436,7 @@ void KColorScheme::slotAdd()
         // Check if it's already there
         for (i=0; i < (int) sList->count(); i++)
         {
-            if (sName == sList->text(i)) 
+            if (sName == sList->text(i))
             {
                 exists = i;
                 int result = KMessageBox::warningContinueCancel( 0,
@@ -685,7 +685,7 @@ void KColorScheme::readSchemeNames()
     config->setGroup("Color Scheme");
     QString str = config->readEntry("Name");
     if (str.isEmpty()) {
-       str =  config->readEntry("name");  
+       str =  config->readEntry("name");
        if (str.isEmpty())
           continue;
     }
@@ -701,7 +701,7 @@ void KColorScheme::readSchemeNames()
     config->setGroup("Color Scheme");
     QString str = config->readEntry("Name");
     if (str.isEmpty()) {
-       str =  config->readEntry("name");  
+       str =  config->readEntry("name");
        if (str.isEmpty())
           continue;
     }
@@ -721,7 +721,7 @@ void KColorScheme::slotPreviewScheme(int indx)
     cs->drawSampleWidgets();
     sb->setValue(cs->contrast);
     slotWidgetColor(0);
-    if (indx < nSysSchemes) 
+    if (indx < nSysSchemes)
        removeBt->setEnabled(false);
     else
        removeBt->setEnabled(true);
