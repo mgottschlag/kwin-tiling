@@ -9,4 +9,4 @@ kstyle_keramik_config_la_METASOURCES = AUTO
 
 
 messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/mypotfile.pot 
+	$(XGETTEXT) *.cpp *.h -o $(podir)/kstyle_keramik_config.po
