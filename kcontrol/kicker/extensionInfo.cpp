@@ -162,8 +162,8 @@ void extensionInfo::setDefaults()
     _alignment      = QApplication::reverseLayout() ? 2 : 0;
     _xineramaScreen = QApplication::desktop()->primaryScreen();
     _size           = 2;
-    _showLeftHB     = true;
-    _showRightHB    = false;
+    _showLeftHB     = false;
+    _showRightHB    = true;
     _hideButtonSize = 14;
     _autohidePanel  = false;
     _backgroundHide = false;
