@@ -26,6 +26,7 @@
 #include <klocale.h>
 #include <kstddirs.h>
 #include <kcmdlineargs.h>
+#include <kservice.h>
 #include <kdesktopfile.h>
 
 #include "kcdialog.h"
@@ -95,11 +96,7 @@ int main(int _argc, char *_argv[])
 	return -1;
     }
 
-    QCString arg = "Settings/";
-    arg += args->arg(0);
-    arg += ".desktop";
-
-    args->clear();
+    QCString arg = args->arg(0);
 
     // locate the desktop file
     //QStringList files;
@@ -109,26 +106,39 @@ int main(int _argc, char *_argv[])
         // (because of KService::findServiceByDesktopPath)
 	//files.append(args->arg(0));
     }
+
+    QCString path = "Settings/";
+    path += arg;
+    path += ".desktop";
+
     /*
     else
 	files = KGlobal::dirs()->
 	    findAllResources("apps",
 			     QString("Settings/%1.desktop").arg(args->arg(0)),
 			     true);
-    */
-
     // check the matches
-    /*
     if (files.count() > 1)
     	cerr << i18n("Module name not unique. Taking the first match.") << endl;
-    if (files.count() <= 0) {
-	cerr << i18n("Module %1 not found!").arg(args->arg(0)) << endl;
-	return -1;
-    }
     */
 
+    if (!KService::serviceByDesktopPath( path ))
+    {
+        // Path didn't work. Trying as a name
+        KService::Ptr serv = KService::serviceByDesktopName( arg );
+        if ( serv )
+            path = serv->entryPath();
+        else
+        {
+            cerr << i18n("Module %1 not found!").arg(arg) << endl;
+            return -1;
+        }
+    }
+
+    args->clear();
+
     // load the module
-    ModuleInfo info(arg);
+    ModuleInfo info(path);
 
     KCModule *module = ModuleLoader::module(info);
 
