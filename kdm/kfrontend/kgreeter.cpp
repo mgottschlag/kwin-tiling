@@ -50,7 +50,7 @@
 //#include "kdm_config.h"
 
 /*#include <X11/Xlib.h>*/
-#ifdef HAVE_X11_XKBLIB_H
+#ifdef HAVE_XKB
 // note: some XKBlib.h versions contain a global variable definition
 // called "explicit". This keyword is not allowed on some C++ compilers so ->
 # define explicit __explicit_dummy
@@ -689,7 +689,7 @@ kg_main(int argc, char **argv)
 
     myapp.setFont( kdmcfg->_normalFont);
 
-#if defined(HAVE_X11_XKBLIB_H) && defined(HAVE_XKBSETPERCLIENTCONTROLS)
+#ifdef HAVE_XKBSETPERCLIENTCONTROLS
     //
     //  Activate the correct mapping for modifiers in XKB extension as
     //  grabbed keyboard has its own mapping by default
@@ -698,11 +698,7 @@ kg_main(int argc, char **argv)
     unsigned int value = XkbPCF_GrabsUseXKBStateMask;
     if (XkbQueryExtension (qt_xdisplay(), &opcode, &evbase,
                            &errbase, &majret, &minret))
-    {
-        if (!XkbSetPerClientControls (qt_xdisplay(),
-				      XkbPCF_GrabsUseXKBStateMask, &value))
-	    (void) fprintf(stderr, "XkbSetPerClientControls failed\n");
-    }
+        XkbSetPerClientControls (qt_xdisplay(), value, &value);
 #endif
     SecureDisplay (qt_xdisplay());
     if (!dgrabServer)
