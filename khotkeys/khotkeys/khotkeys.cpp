@@ -14,7 +14,6 @@
 #include <config.h>
 #endif
 
-//#include <kaccelaction.h>
 #include <krun.h>
 #include <kdesktopfile.h>
 #include <ksimpleconfig.h>
