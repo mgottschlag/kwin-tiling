@@ -974,15 +974,12 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
         (confirm == KApplication::ShutdownConfirmYes) ? false :
        (confirm == KApplication::ShutdownConfirmNo) ? true :
                   !config->readBoolEntry( "confirmLogout", true );
-    KApplication::ShutdownType old_sdtype = (KApplication::ShutdownType)
-                                            config->readNumEntry( "shutdownType",
-                                                               (int)KApplication::ShutdownTypeNone );
     if (sdtype == KApplication::ShutdownTypeDefault)
-        sdtype = old_sdtype;
-    KApplication::ShutdownMode old_sdmode = (KApplication::ShutdownMode)
-                                            config->readNumEntry( "shutdownMode", (int)defsdmode );
+        sdtype = (KApplication::ShutdownType)
+                 config->readNumEntry( "shutdownType", (int)KApplication::ShutdownTypeNone );
     if (sdmode == KApplication::ShutdownModeDefault)
-        sdmode = old_sdmode;
+        sdmode = (KApplication::ShutdownMode)
+                 config->readNumEntry( "shutdownMode", (int)defsdmode );;
 
     if (!maysd)
         sdtype = KApplication::ShutdownTypeNone;
