@@ -8,7 +8,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>416</width>
+            <width>376</width>
             <height>181</height>
         </rect>
     </property>
@@ -202,7 +202,7 @@
                                 <cstring>mButton</cstring>
                             </property>
                             <property name="text">
-                                <string>&amp;Start New Login Session</string>
+                                <string>&amp;Start New Session</string>
                             </property>
                         </widget>
                     </hbox>
