@@ -273,7 +273,7 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
         </widget>
         <widget class="QButtonGroup">
             <property name="name">
-                <cstring>buttonGroup3</cstring>
+                <cstring>m_groupCache</cstring>
             </property>
             <property name="title">
                 <string>Memory Usage</string>

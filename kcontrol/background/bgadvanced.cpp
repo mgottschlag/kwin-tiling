@@ -74,46 +74,50 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    dlg = new BGAdvancedBase(this);
    setMainWidget(dlg);
 
+   dlg->m_listPrograms->header()->setStretchEnabled ( true, 1 );
+   dlg->m_listPrograms->setAllColumnsShowFocus(true);
+
+   connect(dlg->m_listPrograms, SIGNAL(clicked(QListViewItem *)),
+         SLOT(slotProgramItemClicked(QListViewItem *)));
+
+   // Load programs
+   QStringList lst = KBackgroundProgram::list();
+   QStringList::Iterator it;
+   for (it=lst.begin(); it != lst.end(); it++)
+      addProgram(*it);
+
    if (m_multidesktop)
    {
-      dlg->m_listPrograms->header()->setStretchEnabled ( true, 1 );
-      dlg->m_listPrograms->setAllColumnsShowFocus(true);
-
-      connect(dlg->m_listPrograms, SIGNAL(clicked(QListViewItem *)),
-            SLOT(slotProgramItemClicked(QListViewItem *)));
-      connect(dlg->m_listPrograms, SIGNAL(doubleClicked(QListViewItem *)),
-            SLOT(slotProgramItemDoubleClicked(QListViewItem *)));
-
-      connect(dlg->m_buttonAdd, SIGNAL(clicked()),
-            SLOT(slotAdd()));
-      connect(dlg->m_buttonRemove, SIGNAL(clicked()),
-            SLOT(slotRemove()));
-      connect(dlg->m_buttonModify, SIGNAL(clicked()),
-            SLOT(slotModify()));
-
-      // Load programs
-      QStringList lst = KBackgroundProgram::list();
-      QStringList::Iterator it;
-      for (it=lst.begin(); it != lst.end(); it++)
-         addProgram(*it);
-
       KConfig cfg(desktopConfigname(), false, false);
       cfg.setGroup( "General" );
       if (!cfg.readBoolEntry( "Enabled", true ))
       {
          dlg->m_groupIconText->hide();
       }
+
+      dlg->m_spinCache->setSteps(512, 1024);
+      dlg->m_spinCache->setRange(0, 10240);
+      dlg->m_spinCache->setSpecialValueText(i18n("Unlimited"));
+      dlg->m_spinCache->setSuffix(i18n(" KB"));
+
+      connect(dlg->m_buttonAdd, SIGNAL(clicked()),
+         SLOT(slotAdd()));
+      connect(dlg->m_buttonRemove, SIGNAL(clicked()),
+         SLOT(slotRemove()));
+      connect(dlg->m_buttonModify, SIGNAL(clicked()),
+         SLOT(slotModify()));
+
+      connect(dlg->m_listPrograms, SIGNAL(doubleClicked(QListViewItem *)),
+         SLOT(slotProgramItemDoubleClicked(QListViewItem *)));
    }
    else
    {
-      dlg->m_groupProgram->hide();
+      dlg->m_buttonAdd->hide();
+      dlg->m_buttonRemove->hide();
+      dlg->m_buttonModify->hide();
       dlg->m_groupIconText->hide();
+      dlg->m_groupCache->hide();
    }
-
-   dlg->m_spinCache->setSteps(512, 1024);
-   dlg->m_spinCache->setRange(0, 10240);
-   dlg->m_spinCache->setSpecialValueText(i18n("Unlimited"));
-   dlg->m_spinCache->setSuffix(i18n(" KB"));
 
    connect( dlg->m_cbProgram, SIGNAL(toggled(bool)),
             SLOT(slotEnableProgram(bool)));

@@ -71,8 +71,6 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    {
       m_pDesktopLabel->hide();
       m_comboDesktop->hide();
-      m_buttonSetupWallpapers->hide();
-      m_radioSlideShow->hide();
    }
 
    // preview monitor
