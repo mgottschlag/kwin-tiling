@@ -57,6 +57,8 @@
 #include <qdragobject.h>
 #include <qcursor.h>
 
+#include <iostream>
+
 static const QString constDisabledSubDir(".disabled");
 
 static bool contains(QListViewItem *first, const QString &file)
@@ -813,7 +815,7 @@ void CFontListWidget::addSubDir(const QString &top, const QString &sub)
                 if(item->fullName()==top)
                 {
                     if(item->isOpen() && !contains(item->firstChild(), sub))
-                        CDirectoryItem *nItem=new CDirectoryItem(this, (CDirectoryItem *)item, sub, true);
+                        (void) new CDirectoryItem(this, (CDirectoryItem *)item, sub, true);
                     break;
                 }
             item=(CListViewItem *)(item->itemBelow());
@@ -828,11 +830,9 @@ void CFontListWidget::scan()
     if(itsAdvancedMode)
     {
         setColumnWidthMode(0, QListView::Maximum);
-        QListViewItem *item=NULL;
-
         setColumnText(0, i18n("Folder/File"));
 
-        new CDirectoryItem(this, this, CKfiGlobal::cfg().getFontsDir(), i18n("X11 Fonts Folder"), "fonts", false);
+        (void) new CDirectoryItem(this, this, CKfiGlobal::cfg().getFontsDir(), i18n("X11 Fonts Folder"), "fonts", false);
 
         setEnabled(true);
         restore(firstChild());
@@ -1106,8 +1106,7 @@ void CFontListWidget::install()
 
 void CFontListWidget::uninstall()
 {
-    bool dir=getNumSelectedDirs() ? true : false,
-         changed = false;
+    bool changed = false;
 
     CListViewItem *item=(CListViewItem *)firstChild();
 
@@ -1141,8 +1140,7 @@ void CFontListWidget::enable()
 
 void CFontListWidget::changeStatus(bool status)
 {
-    bool          dir     = getNumSelectedDirs() ? true : false,
-                  changed = false;
+    bool changed = false;
     CListViewItem *item   = (CListViewItem *)firstChild();
 
     while(item!=NULL)
@@ -1309,8 +1307,7 @@ void CFontListWidget::applyChanges()
         //
         // Do actual work...
         EStatus     status;
-        int         successes=0,
-                    i;
+        int         successes=0;
 
         // ...adds
         for(addItem=itsAddItems.first(); addItem; addItem=itsAddItems.next())
@@ -1562,8 +1559,7 @@ void CFontListWidget::popupMenu(QListViewItem *item, const QPoint &point, int)
         else
             if(CKfiGlobal::xcfg().ok() && CKfiGlobal::xcfg().writable())
             {
-                bool showMenu=false,
-                     fontsDir=isRequiredDir(item);
+                bool showMenu=false;
 
                 if(NULL==item->parent())
                 {
@@ -1777,8 +1773,8 @@ void CFontListWidget::movableDropEvent(QListViewItem *parent, QListViewItem *aft
             if(item->isSelected())
             {
                 // CPD: TODO - need to take into account if item is new, deted, disabled...
-                cerr << "MOVE ITEM:" << ((CListViewItem *)item)->fullName().latin1() << " TO:"
-                     << dest->fullName().latin1() << endl;
+                std::cerr << "MOVE ITEM:" << ((CListViewItem *)item)->fullName().latin1() << " TO:"
+                     << dest->fullName().latin1() << std::endl;
             }
 
             item=item->itemBelow();

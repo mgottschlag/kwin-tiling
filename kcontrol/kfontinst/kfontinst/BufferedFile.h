@@ -29,7 +29,7 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <fstream.h>
+#include <fstream>
 #include <qcstring.h>
 
 class CBufferedFile
@@ -54,7 +54,7 @@ class CBufferedFile
     char         *itsData;
     unsigned int itsSize,
                  itsOffset;
-    ofstream     itsFile;
+    std::ofstream     itsFile;
     QCString     itsGuard;
     bool         itsSection, // i.e. is the stuff to be removed marked on each line, or in  a section...
                  itsWrittenGuard;

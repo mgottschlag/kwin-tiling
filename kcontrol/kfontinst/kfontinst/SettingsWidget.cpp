@@ -48,7 +48,7 @@
 #include <kmessagebox.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <fstream.h>
+#include <fstream>
 
 void CSettingsWidget::reset()
 {
@@ -353,7 +353,7 @@ static bool isAPpd(const char *fname)
 
 static const char * getName(const QString &file)
 {
-    ifstream     f(file.local8Bit());
+    std::ifstream     f(file.local8Bit());
     const char * retVal="<Unknown>";
 
     if(f)
