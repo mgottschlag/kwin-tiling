@@ -235,6 +235,9 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     topLayout->addMultiCellWidget( cbExportColors, 2, 2, 0, 1 );
     connect(cbExportColors, SIGNAL(toggled(bool)), this, SLOT(slotChanged()));
 
+    // Allow us to export colors to qtrc after the KDE palette has changed.
+    connect(kapp, SIGNAL(kdisplayPaletteChanged()), this, SLOT(slotPaletteChanged()));
+
     load();
 }
 
@@ -331,25 +334,26 @@ void KColorScheme::save()
     KConfig cfg2("kcmdisplayrc", false, false);
     cfg2.setGroup("X11");
     bool exportColors = cbExportColors->isChecked();
-    uint flags = KRdbExportQtColors;
-    if ( exportColors )
-        flags |= KRdbExportColors;
     cfg2.writeEntry("exportKDEColors", exportColors);
     cfg2.sync();
-    runRdb( flags );
-
-    QApplication::setOverrideCursor( waitCursor );
-    QStringList args;
-    args.append("style");
-    kapp->kdeinitExecWait("kcminit", args);
-    QApplication::restoreOverrideCursor();
-    QApplication::flushX();
+    QApplication::syncX();
 
     // Notify all KDE applications
     KIPC::sendMessageAll(KIPC::PaletteChanged);
 
     m_bChanged = false;
     emit changed(false);
+}
+
+
+void KColorScheme::slotPaletteChanged()
+{
+    // Notify all qt-only apps after the KDE palette changes
+    bool exportColors = cbExportColors->isChecked();
+    uint flags = KRdbExportQtColors;
+    if ( exportColors )
+        flags |= KRdbExportColors;
+    runRdb( flags );	// Save the palette to qtrc for KStyles
 }
 
 

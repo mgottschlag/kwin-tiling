@@ -260,7 +260,6 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	comboMenuEffectType = new QComboBox( FALSE, menuContainer );
 	comboMenuEffectType->insertItem( i18n("Software Tint") );
 	comboMenuEffectType->insertItem( i18n("Software Blend") );
-// Hmm, ###### ADD XRENDER TEST configure.in.in
 #ifdef HAVE_XRENDER
 	comboMenuEffectType->insertItem( i18n("XRender Blend") );
 #endif
@@ -397,6 +396,11 @@ void KCMStyle::load()
 
 void KCMStyle::save()
 {
+	// Don't do anything if we don't need to.
+	if ( !(m_bToolbarsDirty | m_bMacDirty |
+		   m_bEffectsDirty  | m_bStyleDirty ) )
+		return;
+
 	bool allowMenuTransparency = false;
 
 	// Read the KStyle flags to see if the style writer
@@ -480,27 +484,36 @@ void KCMStyle::save()
 	config.writeEntry( "IconText", tbIcon, true, true );
 	config.sync();
 
-	// Export the changes we made to qtrc, and update
-	// all qt-only applications on the fly.
-	runRdb( KRdbExportQtSettings );
+	// Export the changes we made to qtrc, and update all qt-only 
+	// applications on the fly, ensuring that we still follow the user's
+	// export fonts/colors settings.
+	if (m_bStyleDirty | m_bEffectsDirty)	// Export only if necessary
+	{
+		uint flags = KRdbExportQtSettings;
+		KConfig kconfig("kcmdisplayrc", true, true);
+		kconfig.setGroup("X11");
+		bool exportKDEColors = kconfig.readBoolEntry("exportKDEColors", true);
+		if (exportKDEColors)
+			flags |= KRdbExportColors;
+		runRdb( flags );
+	}
 
 	// Now allow KDE apps to reconfigure themselves.
 	if ( m_bStyleDirty )
 		KIPC::sendMessageAll(KIPC::StyleChanged);
-	else if (m_bMacDirty)
+
+	if (m_bMacDirty)
 		kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", QByteArray());
+
 	if ( m_bToolbarsDirty || m_bMacDirty )
 		// ##### FIXME - Doesn't apply all settings correctly due to bugs in
 		// KApplication/KToolbar
-		KIPC::sendMessageAll(KIPC::ToolbarStyleChanged, 0
-			/* we could use later for finer granularity */);
+		KIPC::sendMessageAll(KIPC::ToolbarStyleChanged);
 
 	if (m_bEffectsDirty) {
 		KIPC::sendMessageAll(KIPC::SettingsChanged);
 		kapp->dcopClient()->send("kwin*", "", "reconfigure()", "");
 	}
-
-	QApplication::syncX();
 
 	// Clean up
 	m_bMacDirty      = false;
@@ -538,10 +551,10 @@ void KCMStyle::defaults()
 
 	// Miscellanous
 	cbHoverButtons->setChecked(true);
-	cbTransparentToolbars->setChecked(false);
+	cbTransparentToolbars->setChecked(true);
 	cbEnableTooltips->setChecked(true);
 	comboToolbarIcons->setCurrentItem(0);
-	cbIconsOnButtons->setChecked(true);
+	cbIconsOnButtons->setChecked(false);
 	cbTearOffHandles->setChecked(true);
 	cbMacMenubar->setChecked(false);
 }
@@ -670,9 +683,9 @@ void KCMStyle::loadStyle( KSimpleConfig& config )
 		current = lvStyle->firstChild();	// Last fallback
 
 	// Select the current style
+	lvStyle->sort();
 	lvStyle->setCurrentItem( current );
 	lvStyle->ensureItemVisible( current );
-	lvStyle->sort();
 	lvStyle->viewport()->setUpdatesEnabled(true);
 	lvStyle->viewport()->repaint(false);
 
@@ -774,7 +787,6 @@ void KCMStyle::loadEffects( KSimpleConfig& config )
 	QSettings settings;
 	QString effectEngine = settings.readEntry("/KStyle/Settings/MenuTransparencyEngine", "Disabled");
 
-// #### Add XRENDER check!
 #ifdef HAVE_XRENDER
 	if (effectEngine == "XRender") {
 		comboMenuEffectType->setCurrentItem(2);
@@ -858,7 +870,7 @@ void KCMStyle::loadMisc( KSimpleConfig& config )
 	// KDE's Part via KConfig
 	config.setGroup("Toolbar style");
 	cbHoverButtons->setChecked(config.readBoolEntry("Highlighting", true));
-	cbTransparentToolbars->setChecked(config.readBoolEntry("TransparentMoving", false));
+	cbTransparentToolbars->setChecked(config.readBoolEntry("TransparentMoving", true));
 
 	QString tbIcon = config.readEntry("IconText", "IconOnly");
 	if (tbIcon == "TextOnly")
@@ -871,12 +883,13 @@ void KCMStyle::loadMisc( KSimpleConfig& config )
 		comboToolbarIcons->setCurrentItem(0);
 
 	config.setGroup("KDE");
-	cbIconsOnButtons->setChecked(config.readBoolEntry("ShowIconsOnPushButtons", true));
+	cbIconsOnButtons->setChecked(config.readBoolEntry("ShowIconsOnPushButtons", false));
 	cbEnableTooltips->setChecked(!config.readBoolEntry("EffectNoTooltip", false));
 	cbTearOffHandles->setChecked(config.readBoolEntry("InsertTearOffHandle",true));
 	cbMacMenubar->setChecked(config.readBoolEntry("macStyle", false));
 
 	m_bMacDirty = false;
+	m_bToolbarsDirty = false;
 }
 
 void KCMStyle::addWhatsThis()

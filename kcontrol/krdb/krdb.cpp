@@ -18,6 +18,7 @@
 #include <string.h>
 
 #undef Unsorted
+#include <qbuffer.h>
 #include <qdir.h>
 #include <qpixmap.h>
 #include <qsettings.h>
@@ -34,6 +35,8 @@
 #include <kglobalsettings.h>
 
 #include "krdb.h"
+
+#include <X11/Xlib.h>
 
 
 // -----------------------------------------------------------------------------
@@ -348,23 +351,45 @@ void runRdb( uint flags )
   } else
     applyGtkStyles(false);
 
-  if (flags > KRdbExportColors)
+  /* Qt exports */
+  bool exportQtColors   = flags & KRdbExportQtColors;
+  bool exportQtSettings = flags & KRdbExportQtSettings;
+  if ( exportQtColors || exportQtSettings )
   {
-    { /* extra braces for a qsettings.sync() in its destructor */
-      QSettings settings;
-      KSimpleConfig kglobals("kdeglobals", true); /* open read-only */
+    QSettings* settings = new QSettings;
+    KSimpleConfig kglobals("kdeglobals", true); /* open read-only */
 
-      if ( flags & KRdbExportQtColors )
-        applyQtColors( kglobals, settings );    // For kcmcolors
+    if ( exportQtColors )
+      applyQtColors( kglobals, *settings );    // For kcmcolors
 
-      if ( flags & KRdbExportQtSettings )
-        applyQtSettings( kglobals, settings );  // For kcmstyle
+    if ( exportQtSettings )
+      applyQtSettings( kglobals, *settings );  // For kcmstyle
+
+    delete settings;
+
+    // We let KIPC take care of ourselves, as we are in a KDE app with
+    // QApp::setDesktopSettingsAware(false);
+    // Instead of calling QApp::x11_apply_settings() directly, we instead
+    // modify the timestamp which propagates the settings changes onto
+    // Qt-only apps without adversely affecting ourselves.
+
+    // Cheat and use the current timestamp, since we just saved to qtrc.
+    QDateTime settingsstamp = QDateTime::currentDateTime();
+
+    static Atom qt_settings_timestamp = 0;
+    if (!qt_settings_timestamp) {
+	 QString atomname("_QT_SETTINGS_TIMESTAMP_");
+	 atomname += XDisplayName( 0 ); // Use the $DISPLAY envvar.
+	 qt_settings_timestamp = XInternAtom( qt_xdisplay(), atomname.latin1(), False);
     }
 
-    /* apply the settings to qt-only apps */
-    QApplication::setDesktopSettingsAware( true );
-    QApplication::x11_apply_settings();
-    QApplication::setDesktopSettingsAware( false );
+    QBuffer stamp;
+    QDataStream s(stamp.buffer(), IO_WriteOnly);
+    s << settingsstamp;
+    XChangeProperty( qt_xdisplay(), qt_xrootwin(), qt_settings_timestamp,
+		     qt_settings_timestamp, 8, PropModeReplace,
+		     (unsigned char*) stamp.buffer().data(),
+		     stamp.buffer().size() );
   }
 }
 

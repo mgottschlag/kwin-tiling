@@ -60,6 +60,7 @@ private slots:
     void slotColorForWidget(int, const QColor &);
     void slotPreviewScheme(int);
     void slotChanged();
+    void slotPaletteChanged();
 
 private:
     void setColorName( const QString &name, int id );
