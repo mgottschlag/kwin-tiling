@@ -20,7 +20,7 @@
 
 #include <qheader.h>
 #include <qstring.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qpoint.h>
 #include <qcursor.h>
 
@@ -117,7 +117,7 @@ void ModuleTreeView::updateItem(ModuleTreeItem *item, ConfigModule *module)
     }
 }
 
-void ModuleTreeView::expandItem(QListViewItem *item, QList<QListViewItem> *parentList)
+void ModuleTreeView::expandItem(QListViewItem *item, QPtrList<QListViewItem> *parentList)
 {
   while (item)
     {
@@ -136,7 +136,7 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
   item = static_cast<ModuleTreeItem*>(firstChild());
 
   // collapse all
-  //QList<QListViewItem> parents;
+  //QPtrList<QListViewItem> parents;
   //expandItem(firstChild(), &parents);
 
   QStringList::ConstIterator it;
@@ -244,7 +244,7 @@ void ModuleTreeView::slotItemSelected(QListViewItem* item)
   /*
   else
     {
-      QList<QListViewItem> parents;
+      QPtrList<QListViewItem> parents;
 
       QListViewItem* i = item;
       while(i)

@@ -21,7 +21,7 @@
 #define __searchwidget_h__
 
 #include <qwidget.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qstring.h>
 #include <qstringlist.h>
 
@@ -39,11 +39,11 @@ class KeywordListEntry
   void addModule(ConfigModule* module);
 
   QString name() { return _name; }
-  QList<ConfigModule> modules() { return _modules; }
+  QPtrList<ConfigModule> modules() { return _modules; }
   
  private:
   QString _name;
-  QList<ConfigModule> _modules;
+  QPtrList<ConfigModule> _modules;
   
 };
 
@@ -72,7 +72,7 @@ protected slots:
 private:
   KListBox  *_keyList, *_resultList;
   KLineEdit *_input; 
-  QList<KeywordListEntry> _keywords;
+  QPtrList<KeywordListEntry> _keywords;
   QStringList _results;
 };
 

@@ -1,21 +1,21 @@
 /*
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
- 
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
- 
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
-*/                                                                            
+
+*/
 
 #include <qlabel.h>
 #include <qlayout.h>
@@ -38,18 +38,18 @@
 /**
  * Helper class for sorting icon modules by name without losing the fileName ID
  */
-class ModuleName 
+class ModuleName
 {
 protected:
  QString m_name;
  ConfigModule *m_module;
- 
+
 public:
  ModuleName(const QString &name, ConfigModule *module) :
 	 m_name(name), m_module(module)
  { }
- 
- ModuleName() 
+
+ ModuleName()
  { }
 
  QString name() const { return m_name; };
@@ -58,10 +58,10 @@ public:
 
  bool operator== (const ModuleName &ip)
  { return m_name == ip.m_name; }
- 
+
  bool operator< (const ModuleName &ip)
  { return m_name < ip.m_name; }
- 
+
 };
 
 KeywordListEntry::KeywordListEntry(const QString& name, ConfigModule* module)
@@ -70,7 +70,7 @@ KeywordListEntry::KeywordListEntry(const QString& name, ConfigModule* module)
   if(module)
     _modules.append(module);
 }
-  
+
 void KeywordListEntry::addModule(ConfigModule* module)
 {
   if(module)
@@ -94,14 +94,14 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
 
   // keyword list
   _keyList = new KListBox(this);
-  QLabel *keyl = new QLabel(_keyList, i18n("&Keywords:"), this);  
+  QLabel *keyl = new QLabel(_keyList, i18n("&Keywords:"), this);
 
   l->addWidget(keyl);
   l->addWidget(_keyList);
 
   // result list
   _resultList = new KListBox(this);
-  QLabel *resultl = new QLabel(_keyList, i18n("&Results:"), this);  
+  QLabel *resultl = new QLabel(_keyList, i18n("&Results:"), this);
 
   l->addWidget(resultl);
   l->addWidget(_resultList);
@@ -132,7 +132,7 @@ void SearchWidget::populateKeywordList(ConfigModuleList *list)
     {
       if (module->library().isEmpty())
         continue;
-	  
+
       // get the modules keyword list
       QStringList kw = module->keywords();
 
@@ -173,7 +173,7 @@ void SearchWidget::populateKeyListBox(const QString& s)
 
   for(KeywordListEntry *k = _keywords.first(); k != 0; k = _keywords.next())
     {
-      if ( QRegExp(s, false, true).match(k->name()) >= 0)   
+      if ( QRegExp(s, false, true).match(k->name()) >= 0)
         matches.append(k->name());
     }
 
@@ -195,8 +195,8 @@ void SearchWidget::populateResultListBox(const QString& s)
     {
       if (k->name() == s)
         {
-          QList<ConfigModule> modules = k->modules();
-          
+          QPtrList<ConfigModule> modules = k->modules();
+
           for(ConfigModule *m = modules.first(); m != 0; m = modules.next())
               results.append(new ModuleName(m->name(),m));
         }

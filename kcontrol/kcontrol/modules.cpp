@@ -49,7 +49,7 @@
 #include <X11/Xlib.h>
 
 
-template class QList<ConfigModule>;
+template class QPtrList<ConfigModule>;
 
 
 ConfigModule::ConfigModule(QString desktopFile)
@@ -71,7 +71,7 @@ ProxyWidget *ConfigModule::module()
   bool run_as_root = needsRootPrivileges() && (getuid() != 0);
 
   KCModule *modWidget = 0;
-  
+
   if (run_as_root && !hasReadOnlyMode())
      modWidget = new KCRootOnly(0, "root_only");
   else
@@ -170,8 +170,8 @@ void ConfigModule::runAsRoot()
       _rootProcess = new KProcess;
       *_rootProcess << kdesu;
       // We have to disable the keep-password feature because
-      // in that case the modules is started through kdesud and kdesu 
-      // returns before the module is running and that doesn't work. 
+      // in that case the modules is started through kdesud and kdesu
+      // returns before the module is running and that doesn't work.
       // We also don't have a way to close the module in that case.
       *_rootProcess << "--n"; // Don't keep password.
       if (kdeshell)

@@ -24,7 +24,7 @@
 
 #include <qobject.h>
 #include <qstringlist.h>
-#include <qlist.h>
+#include <qptrlist.h>
 #include <qpixmap.h>
 
 #include "moduleinfo.h"
@@ -86,7 +86,7 @@ private:
 
 };
 
-class ConfigModuleList : public QList<ConfigModule>
+class ConfigModuleList : public QPtrList<ConfigModule>
 {
 public:
 

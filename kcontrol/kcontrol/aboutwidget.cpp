@@ -79,9 +79,9 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* cate
 {
     if (_category)
       _moduleList = true;
-      
+
     _moduleLinks.setAutoDelete(true);
-    
+
     setMinimumSize(400, 400);
 
     // load images
@@ -125,7 +125,7 @@ void AboutWidget::initPixmaps()
   _part1 = new QPixmap( locate( "data", "kcontrol/pics/part1.png" ) );
   _part2 = new QPixmap( locate( "data", "kcontrol/pics/part2.png" ) );
   _part3 = new QPixmap( locate( "data", "kcontrol/pics/part3.png" ) );
-    
+
   _part3Effect = new KPixmap( _part3->size() );
 
   QPainter pb;
@@ -246,7 +246,7 @@ void AboutWidget::updatePixmap()
     p.fillRect( boxX, boxY, bwidth, bheight,
                 QBrush( QColor( 204, 222, 234 ) ) );
     p.drawPixmap( part3EffectX, part3EffectY, *_part3Effect );
-    
+
     p.setViewport( boxX, boxY, bwidth, bheight);
     p.setWindow(0, 0, bwidth, bheight);
 
@@ -259,7 +259,7 @@ void AboutWidget::updatePixmap()
 
     f2.setBold(true);
 
-    
+
     if (!_moduleList)
     {
       // kde version
@@ -393,7 +393,7 @@ void AboutWidget::updatePixmap()
 
 //          yoffset += fheight + 5;
           if(yoffset > bheight) return;
-          
+
           pEntry = pEntry->nextSibling();
         }
       }
@@ -406,7 +406,7 @@ void AboutWidget::mouseMoveEvent(QMouseEvent *e)
     ModuleLink *newLink = 0;
     if (_linkArea.contains(e->pos()))
     {
-        for (QListIterator<ModuleLink> it(_moduleLinks); it.current(); ++it)
+        for (QPtrListIterator<ModuleLink> it(_moduleLinks); it.current(); ++it)
         {
             if (it.current()->linkArea.contains(e->pos()))
             {

@@ -83,7 +83,7 @@ private:
     bool    _moduleList;
     QListViewItem* _category;
     struct ModuleLink;
-    QList<ModuleLink> _moduleLinks;
+    QPtrList<ModuleLink> _moduleLinks;
     ModuleLink *_activeLink;
 };
 
