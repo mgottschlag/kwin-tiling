@@ -3,7 +3,7 @@ INCLUDES = $(all_includes)
 
 SUBDIRS = default pics
 
-lib_LTLIBRARIES = libkcm_locale.la
+kde_module_LTLIBRARIES = libkcm_locale.la
 libkcm_locale_la_SOURCES = ktagcombobox.cpp klocaleadv.cpp main.cpp toplevel.cpp locale.cpp klangcombo.cpp klocalesample.cpp localenum.cpp localemon.cpp localetime.cpp 
 
 METASOURCES = AUTO
