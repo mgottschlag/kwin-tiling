@@ -72,6 +72,7 @@ private:
 
     QCheckBox *cbExternal;
     QListView *view;
+    QLabel *lblFilename;
     KURLRequester *requester, *reqExternal;
     QPushButton *playButton, *soundButton;
     QSlider *volumeSlider;

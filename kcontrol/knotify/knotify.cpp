@@ -72,9 +72,9 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name, const QStringLis
 
     QHBox *hbox = new QHBox( box );
     hbox->setSpacing( KDialog::spacingHint() );
-    QLabel *l = new QLabel( i18n("&Filename: "), hbox );
+    lblFilename = new QLabel( i18n("&Filename: "), hbox );
     requester = new KURLRequester( hbox );
-    l->setBuddy( requester );
+    lblFilename->setBuddy( requester );
     connect( requester, SIGNAL( openFileDialog( KURLRequester * )),
 	     SLOT( slotRequesterClicked( KURLRequester * )));
 
@@ -103,7 +103,7 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name, const QStringLis
 
     hbox = new QHBox( box );
     hbox->setSpacing( KDialog::spacingHint() );
-    l = new QLabel( i18n( "&Volume: " ), hbox );
+    QLabel *l = new QLabel( i18n( "&Volume: " ), hbox );
     volumeSlider = new QSlider( hbox );
     volumeSlider->setOrientation( Horizontal );
     volumeSlider->setRange( 0, 100 );
@@ -247,6 +247,7 @@ void KNotifyWidget::load()
 
     requester->clear();
     requester->setEnabled( false );
+    lblFilename->setEnabled( false );
     playButton->hide();
 
     view->clear();
@@ -306,6 +307,7 @@ void KNotifyWidget::slotItemActivated( QListViewItem *i )
     }
 
     requester->setEnabled( enableButton );
+    lblFilename->setEnabled( enableButton );
 }
 
 void KNotifyWidget::externalClicked( bool on )
