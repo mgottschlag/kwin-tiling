@@ -1,6 +1,6 @@
 /* This file is part of the KDE project
-   Copyright (C) ???
-   Copyright (C) 2002 Oswald Buddenhagen <ossi@kde.org>
+   Copyright (C) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+   Copyright (C) 2002,2004 Oswald Buddenhagen <ossi@kde.org>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -22,6 +22,7 @@
 
 
 #include <kapplication.h>
+#include <qtimer.h>
 
 #include <bgrender.h>
 
@@ -35,9 +36,11 @@ public:
 
 private slots:
   void renderDone();
+  void slotTimeout();
 
 private:
   KBackgroundRenderer renderer;
+  QTimer timer;
 };
 
 #endif

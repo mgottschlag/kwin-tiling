@@ -1,6 +1,6 @@
 /* This file is part of the KDE project
-   Copyright (C) ???
-   Copyright (C) 2002 Oswald Buddenhagen <ossi@kde.org>
+   Copyright (C) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+   Copyright (C) 2002,2004 Oswald Buddenhagen <ossi@kde.org>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -34,7 +34,7 @@
 static const char description[] =
 	I18N_NOOP("Fancy desktop background for kdm");
 
-static const char version[] = "v1.5";
+static const char version[] = "v2.0";
 
 static KCmdLineOptions options[] = {
     { "+config", I18N_NOOP("Name of the configuration file"), 0 },
@@ -46,7 +46,9 @@ MyApplication::MyApplication( const char *conf )
   : KApplication(),
     renderer( 0, new KSimpleConfig( QFile::decodeName( conf ) ) )
 {
+  connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()));
   connect( &renderer, SIGNAL(imageDone(int)), this, SLOT(renderDone()) );
+  timer.start( 60000 );
   renderer.start();
 }
 
@@ -55,9 +57,31 @@ void MyApplication::renderDone()
 {
   desktop()->setBackgroundPixmap( *renderer.pixmap() );
   desktop()->repaint( true );
-  quit();
+  if (renderer.backgroundMode() != KBackgroundSettings::Program &&
+      (renderer.multiWallpaperMode() == KBackgroundSettings::NoMulti ||
+       renderer.multiWallpaperMode() == KBackgroundSettings::NoMultiRandom))
+    quit();
 }
 
+void MyApplication::slotTimeout()
+{
+  bool change = false;
+
+  if ((renderer.backgroundMode() == KBackgroundSettings::Program) &&
+      (renderer.KBackgroundProgram::needUpdate()))
+  {
+     renderer.KBackgroundProgram::update();
+     change = true;
+  }
+
+  if (renderer.needWallpaperChange()) {
+     renderer.changeWallpaper();
+     change = true;
+  }
+
+  if (change)
+     renderer.start();
+}
 
 int main(int argc, char *argv[])
 {
@@ -73,12 +97,12 @@ int main(int argc, char *argv[])
   MyApplication app( args->arg( 0 ) );
   args->clear();
 
-  // Keep color resources after termination
-  XSetCloseDownMode( qt_xdisplay(), RetainTemporary );
-
   app.exec();
 
   app.flushX();
+
+  // Keep color resources after termination
+  XSetCloseDownMode( qt_xdisplay(), RetainTemporary );
 
   return 0;
 }
