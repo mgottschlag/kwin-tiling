@@ -275,7 +275,7 @@ void KEmailConfig::save()
   config->writeEntry("ServerType", sType);
 
   QString client;
-  if (emailClient->text() == "")
+  if (emailClient->text().isEmpty())
     client = KGlobal::dirs()->findResource("exe", "kmail");
   else
     client = emailClient->text();
@@ -308,7 +308,13 @@ void KEmailConfig::defaults()
 
   emailAddr->setText(tmp);
 
-  emailClient->setText(KGlobal::dirs()->findResource("exe", "kmail"));
+  QString client;
+  client = KGlobal::dirs()->findResource("exe", "kmail");
+  
+  if (client.isEmpty())
+	client = "kmail";
+
+  emailClient->setText(client);
 
   cTerminalClient->setChecked(false);
 
