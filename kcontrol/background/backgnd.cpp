@@ -740,7 +740,7 @@ void KBackground::slotBGSetup()
         dlg.setCurrent(cur);
         if ((dlg.exec() == QDialog::Accepted) && !dlg.pattern().isEmpty()) {
             r->stop();
-            r->setPattern(dlg.pattern());
+            r->setPatternName(dlg.pattern());
             r->start();
             emit changed(true);
         }

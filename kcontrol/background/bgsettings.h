@@ -158,7 +158,7 @@ public:
     QColor colorB() const { return m_ColorB; }
 
     void setProgram(QString program);
-    void setPattern(QString pattern);
+    void setPatternName(QString pattern);
 
     enum BackgroundMode {
 	Flat, Pattern, Program,

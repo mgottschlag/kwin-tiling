@@ -518,7 +518,7 @@ void KBackgroundSettings::setColorB(const QColor& color)
 }
 
 
-void KBackgroundSettings::setPattern(QString name)
+void KBackgroundSettings::setPatternName(QString name)
 {
     int ohash = KBackgroundPattern::hash();
     KBackgroundPattern::load(name);

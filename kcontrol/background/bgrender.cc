@@ -162,7 +162,7 @@ int KBackgroundRenderer::doBackground(bool quit)
     int bgmode = backgroundMode();
 
     if (quit) {
-	if (bgmode == Program)
+	if (bgmode == Program && m_pProc)
 	    m_pProc->kill();
         return Done;
     }
@@ -179,6 +179,8 @@ int KBackgroundRenderer::doBackground(bool quit)
 
     case Pattern:
     {
+        if (pattern().isEmpty())
+            break;
         file = m_pDirs->findResource("dtop_pattern", pattern());
         if (file.isEmpty())
             break;
@@ -591,6 +593,7 @@ void KBackgroundRenderer::load(int desk, bool reparseConfig)
 {
     if (m_State & Rendering)
         stop();
+
     cleanup();
     m_bPreview = false;
     m_bTile = false;
