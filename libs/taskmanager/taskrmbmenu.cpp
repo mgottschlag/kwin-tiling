@@ -145,11 +145,11 @@ void TaskRMBMenu::fillMenu( TaskList* tasks, TaskManager* manager )
 	
 	insertSeparator();
 	
-	id = insertItem( i18n("All To &Desktop"), makeDesktopsMenu( tasks, manager ) );
-	
+	id = insertItem( i18n("All to &Desktop"), makeDesktopsMenu( tasks, manager ) );
+
 	enable = false;
-	
-	id = insertItem( i18n( "All &To Current Desktop" ), this, SLOT( slotAllToCurrentDesktop() ) );
+
+	id = insertItem( i18n( "All &to Current Desktop" ), this, SLOT( slotAllToCurrentDesktop() ) );
 	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
 		if( !(*it)->isOnCurrentDesktop() ) {
 			enable = true;
