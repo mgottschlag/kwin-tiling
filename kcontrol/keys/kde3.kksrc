@@ -1,7 +1,6 @@
 [Settings]
 Name=KDE Default for 3 Modifier Keys
 Name[af]=Kde Verstek vir 3 Modifiseerder Sleutels
-Name[bg]=КДЕ подразбиране за 3 клавишен модификатор
 Name[bs]=KDE osnovne postavke za 3 modifikacijske tipke
 Name[ca]=Predeterminat del KDE per a 3 tecles modificadores
 Name[cs]=Výchozí pro KDE (3 modifikátory)
@@ -35,6 +34,7 @@ Name[pt]=KDE por Omissão para 3 Modificadores
 Name[pt_BR]=Padrão KDE para 3 Teclas Modificadoras
 Name[ro]=KDE implicit pentru 3 taste modificator
 Name[ru]=KDE по умолчанию для трех модификаторов
+Name[se]=KDE-standárda golbma modifikatorboalu várás
 Name[sk]=KDE štandardná pre 3 modifikátory
 Name[sl]=Privzeto za KDE za 3 modifikatorje
 Name[sr]=KDE предефинисано за три модификаторска тастера

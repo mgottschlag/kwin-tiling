@@ -2,7 +2,7 @@
 Name=UNIX Scheme
 Name[af]=Unix Skema
 Name[be]=Схема UNIX
-Name[bg]=UNIX Схема
+Name[bg]=Схема за Unix
 Name[bs]=UNIX šema
 Name[ca]=Tema Unix
 Name[cs]=Schéma Unix
@@ -34,6 +34,7 @@ Name[pl]=Schemat uniksowy
 Name[pt]=Esquema do UNIX
 Name[pt_BR]=Esquema UNIX
 Name[ru]=Схема UNIX
+Name[se]=UNIX-čoahkádus
 Name[sk]=UNIX schéma
 Name[sl]=Shema Unix
 Name[sr]=UNIX шема
