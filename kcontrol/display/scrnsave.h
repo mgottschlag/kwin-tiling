@@ -21,106 +21,145 @@
 
 #include "display.h"
 
+//===========================================================================
 class CornerButton : public QLabel
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	CornerButton( QWidget *parent, int num, char _action );
+    CornerButton( QWidget *parent, int num, char _action );
 
 signals:
-	void cornerAction( int corner, char action );
+    void cornerAction( int corner, char action );
 
 protected:
-	virtual void mousePressEvent( QMouseEvent * );
-	void setActionText();
+    virtual void mousePressEvent( QMouseEvent * );
+    void setActionText();
 
 protected slots:
-	void slotActionSelected( int );
+    void slotActionSelected( int );
 
 protected:
-	QPopupMenu popupMenu;
-	int number;
-	char action;
+    QPopupMenu popupMenu;
+    int number;
+    char action;
 };
 
+//===========================================================================
 class KSSMonitor : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	KSSMonitor( QWidget *parent ) : QWidget( parent ) {}
+    KSSMonitor( QWidget *parent ) : QWidget( parent ) {}
 
-	// we don't want no steenking palette change
-	virtual void setPalette( const QPalette & ) {}
+    // we don't want no steenking palette change
+    virtual void setPalette( const QPalette & ) {}
 };
 
+//===========================================================================
+class SaverConfig
+{
+public:
+    SaverConfig();
+
+    bool read(QString file);
+
+    QString exec() const { return mExec; }
+    QString setup() const { return mSetup; }
+    QString saver() const { return mSaver; }
+    QString name() const { return mName; }
+    QString file() const { return mFile; }
+
+protected:
+    QString mExec;
+    QString mSetup;
+    QString mSaver;
+    QString mName;
+    QString mFile;
+};
+
+//===========================================================================
+class TestWin : public QWidget
+{
+    Q_OBJECT
+public:
+    TestWin();
+
+signals:
+    void stopTest();
+
+protected:
+    void mousePressEvent(QMouseEvent *);
+    void keyPressEvent(QKeyEvent *);
+};
+
+//===========================================================================
 class KScreenSaver : public KDisplayModule
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	KScreenSaver( QWidget *parent, int mode, int desktop = 0 );
-	~KScreenSaver();
+    KScreenSaver( QWidget *parent, int mode, int desktop = 0 );
+    ~KScreenSaver();
 
-	virtual void readSettings( int deskNum = 0 );
-	virtual void apply( bool force = FALSE );
-	virtual void loadSettings();
-	virtual void applySettings();
-	virtual void defaultSettings();
-	virtual void updateValues();
+    virtual void readSettings( int deskNum = 0 );
+    virtual void apply( bool force = FALSE );
+    virtual void loadSettings();
+    virtual void applySettings();
+    virtual void defaultSettings();
+    virtual void updateValues();
 
 protected slots:
-	void slotApply();
-	void slotScreenSaver( int );
-	void slotSetup();
-	void slotTest();
-	void slotTimeoutChanged( const QString &);
-	void slotLock( bool );
-	void slotAllowRoot( bool );
-	void slotStars( bool );
-	void slotPriorityChanged( int val );
-	void slotSetupDone(KProcess*);
-	void slotHelp();
-	void slotCornerAction( int, char );
-	void resizeEvent( QResizeEvent * );
+    void slotApply();
+    void slotScreenSaver( int );
+    void slotSetup();
+    void slotTest();
+    void slotStopTest();
+    void slotTimeoutChanged( const QString &);
+    void slotLock( bool );
+    void slotStars( bool );
+    void slotPriorityChanged( int val );
+    void slotSetupDone(KProcess*);
+    void slotHelp();
+    void slotCornerAction( int, char );
+    // when selecting a new screensaver, the old preview will
+    // be killed. -- This callback is responsible for restarting the
+    // new preview
+    void slotPreviewExited(KProcess *);
 
 protected:
-	void writeSettings();
-	void findSavers();
-	void getSaverNames();
-	void setMonitor();
-	void setDefaults();
+    void writeSettings();
+    void findSavers();
+    void getSaverNames();
+    void setMonitor();
+    void setDefaults();
+    void resizeEvent( QResizeEvent * );
 
 protected:
-	KConfig *kssConfig;
-	KProcess *ssSetup, *ssPreview;
-	KSSMonitor* monitor;
-	QPushButton *setupBt;
-	QPushButton *testBt;
-	QListBox *ssList;
-	QLineEdit *waitEdit;
-	QSlider *prioritySlider;
-	QCheckBox *cb, *cbStars, *cbRoot;
-	QLabel *monitorLabel;
-	QStringList saverList;
-	QStringList saverNames;
-	QString saverFile;
-	int lock;
-	int priority;
-	bool showStars;
-	bool allowRoot;
-	char cornerAction[5];
+    TestWin     *mTestWin;
+    KProcess    *mTestProc;
+    KProcess    *mSetupProc;
+    KProcess    *mPreviewProc;
+    KSSMonitor  *mMonitor;
+    QPushButton *mSetupBt;
+    QPushButton *mTestBt;
+    QListBox    *mSaverListBox;
+    QLineEdit   *mWaitEdit;
+    QSlider     *mPrioritySlider;
+    QCheckBox   *mLockCheckBox;
+    QCheckBox   *mStarsCheckBox;
+    QLabel      *mMonitorLabel;
+    QList<SaverConfig> mSaverList;
 
-	int xtimeout, xinterval;
-	int xprefer_blanking;
-	int xallow_exposures;
+    int         mSelected;
+    bool        mChanged;
 
-	bool changed;
-	bool bUseSaver;
-
-private slots:
-	void slotPreviewExited(KProcess *);
-	// when selecting a new screensaver, the old preview will
-	// be killed. -- This callback is responsible for restarting the
-	// new preview
+    // Settings
+    int         mTimeout;
+    int         mPriority;
+    bool        mLock;
+    bool        mEnabled;
+    bool        mPasswordStars;
+    QString     mSaver;
+    QString     mCornerAction;
 };
 
 #endif

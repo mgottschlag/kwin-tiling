@@ -109,6 +109,8 @@ void KDisplayApplication::init()
   delete background;
   KScreenSaver *screensaver = new KScreenSaver(0, KDisplayModule::Init);
   delete screensaver;
+  KEnergy *energy = new KEnergy(0, KDisplayModule::Init);
+  delete energy;
   KFonts *fonts = new KFonts(0, KDisplayModule::Init);
   delete fonts;
   KGeneral *general = new KGeneral(0, KDisplayModule::Init);
@@ -133,6 +135,8 @@ void KDisplayApplication::apply()
     background->applySettings();
   if (screensaver)
     screensaver->applySettings();
+  if (energy)
+    energy->applySettings();
   if (fonts)
     fonts->applySettings();
   if (general)
@@ -158,6 +162,8 @@ void KDisplayApplication::defaultValues()
     background->defaultSettings();
   if (screensaver)
     screensaver->defaultSettings();
+  if (energy)
+    energy->defaultSettings();
   if (fonts)
     fonts->defaultSettings();
   if (general)
