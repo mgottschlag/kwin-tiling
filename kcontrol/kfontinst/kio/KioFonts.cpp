@@ -1059,17 +1059,19 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
     }
 
     bool                       nrs=false,
-                               dir=S_ISDIR(buffSrc.st_mode);
+                               dir=S_ISDIR(buffSrc.st_mode),
+                               linkDir=S_ISLNK(buffSrc.st_mode) && !(CFontEngine::isAFont(srcPath)||CFontEngine::isAAfm(srcPath));
     QStringList::ConstIterator it;
     QStringList                list=CGlobal::cfg().getRealTopDirs(src.path());
 
     if(nonRootSys(dest))
     {
         QCString cmd;
-        bool     first=true;
+        bool     first=true,
+                 found=false;
 
         for(it=list.begin(); it!=list.end(); ++it)
-            if(CMisc::fExists(*it+sSub))
+            if(dir ? CMisc::dExists(*it+sSub) : CMisc::fExists(*it+sSub) || CMisc::isLink(*it+sSub))
             {
                 if(first)
                     first=false;
@@ -1079,11 +1081,12 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
                 cmd+=QFile::encodeName(KProcess::quote(*it+sSub));
                 cmd+=" ";
                 cmd+=QFile::encodeName(KProcess::quote(*it+dSub));
+                found=true;
             }
 
         nrs=true;
 
-        if(!doRootCmd(cmd))
+        if(!found || !doRootCmd(cmd))
         {
             error(KIO::ERR_CANNOT_RENAME, src.path());
             return;
@@ -1091,7 +1094,7 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
     }
     else
         for(it=list.begin(); it!=list.end(); ++it)
-            if(CMisc::fExists(*it+sSub))
+            if(dir ? CMisc::dExists(*it+sSub) : CMisc::fExists(*it+sSub) || CMisc::isLink(*it+sSub))
             {
                 KDE_DBUG << "rename " << *it+sSub << " to " << *it+dSub << endl;
 
@@ -1116,7 +1119,7 @@ void CKioFonts::rename(const KURL &src, const KURL &dest, bool overwrite)
                 }
             }
 
-    if(dir)
+    if(dir || linkDir)
     {
         if(!CMisc::hidden(srcPath, true))
             deletedDir(srcPath, nrs);
