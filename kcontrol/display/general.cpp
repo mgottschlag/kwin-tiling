@@ -161,7 +161,7 @@ void KIconStyle::load()
     // this is now handled in the new and improved way
     config->setGroup(QString::fromLatin1("Toolbar style"));
     KIconLoader::Size bar_size;
-    bar_size = config->readNumEntry(QString::fromLatin1("IconSize"),
+    bar_size = (KIconLoader::Size)config->readNumEntry(QString::fromLatin1("IconSize"),
                                     KIconLoader::Medium);
     switch(bar_size)
     {
