@@ -896,7 +896,7 @@ void KSMServer::deleteClient( KSMClient* client )
     delete client;
     if ( state == Shutdown || state == Checkpoint )
         completeShutdownOrCheckpoint();
-    if ( state == Killing )
+    if ( state == Killing || state == Killing2 )
         completeKilling();
 }
 
@@ -1240,7 +1240,7 @@ void KSMServer::completeShutdownOrCheckpoint()
         kdDebug( 1218 ) << " We killed all clients. We have now clients.count()=" <<
            clients.count() << endl;
         completeKilling();
-        QTimer::singleShot( 4000, kapp, SLOT( quit() ) );
+        QTimer::singleShot( 4000, this, SLOT( timeoutQuit() ) );
     } else if ( state == Checkpoint ) {
         state = Idle;
     }
@@ -1250,7 +1250,7 @@ void KSMServer::completeKilling()
 {
     kdDebug( 1218 ) << "KSMServer::completeKilling clients.count()=" <<
         clients.count() << endl;
-    if ( state != Killing ) {
+    if ( state != Killing && state != Killing2 ) {
         //      kdWarning() << "Not Killing !!! state=" << state << endl;
         return;
     }
@@ -1258,15 +1258,42 @@ void KSMServer::completeKilling()
     if ( clients.isEmpty() ) {
         kapp->quit();
     } else {
-        for (KSMClient *c = clients.first(); c; c = clients.next()) {
-            if (! c->wasPhase2)
-                return;
+        if( state == Killing ) {
+            for (KSMClient *c = clients.first(); c; c = clients.next()) {
+                if (! c->wasPhase2)
+                    return;
+            }
+            // the wm was not killed yet, do it
+            for (KSMClient *c = clients.first(); c; c = clients.next()) {
+                SmsDie( c->connection() );
+            }
         }
-        // the wm was not killed yet, do it
-        for (KSMClient *c = clients.first(); c; c = clients.next()) {
-            SmsDie( c->connection() );
+        else {
+            for (KSMClient *c = clients.first(); c; c = clients.next()) {
+                if (c->wasPhase2)
+                    return;
+            }
+            // only clients from first phase of killing remain, don't time out
+            // second time just because of them
         }
     }
+}
+
+void KSMServer::timeoutQuit()
+{
+    state = Killing2;
+    bool kill_phase2 = false;
+    for (KSMClient *c = clients.first(); c; c = clients.next()) {
+        if (c->wasPhase2) {
+            kill_phase2 = true;
+            SmsDie( c->connection() );
+        } else {
+            kdWarning( 1218 ) << "SmsDie timeout, client " << c->program() << "(" << c->clientId() << ")" << endl;
+        }
+    }
+    if( !kill_phase2 )
+        kapp->quit();
+    QTimer::singleShot( 4000, kapp, SLOT( quit() ) );
 }
 
 void KSMServer::discardSession()

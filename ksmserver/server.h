@@ -127,6 +127,7 @@ private slots:
     void restoreSessionDoneInternal();
 
     void protectionTimeout();
+    void timeoutQuit();
 
     void autoStart();
     void autoStart2();
@@ -173,7 +174,7 @@ private:
     QPtrList<KSMListener> listener;
     QPtrList<KSMClient> clients;
 
-    enum State { Idle, Shutdown, Checkpoint, Killing };
+    enum State { Idle, Shutdown, Checkpoint, Killing, Killing2 };
     State state;
     bool dialogActive;
     bool saveSession;
