@@ -49,7 +49,7 @@ ExtensionsTab::ExtensionsTab( QWidget *parent, const char* name )
     connect(m_delaySpinBox, SIGNAL(valueChanged(int)), SLOT(slotChanged()));
     connect(m_lHB, SIGNAL(clicked()), SLOT(slotChanged()));
     connect(m_rHB, SIGNAL(clicked()), SLOT(slotChanged()));
-    connect(m_hideButtonSlider, SIGNAL(sliderMoved(int)), SLOT(slotChanged()));
+    connect(m_hideButtonSlider, SIGNAL(valueChanged(int)), SLOT(slotChanged()));
 
     connect(m_extensionsListView, SIGNAL(selectionChanged(QListViewItem*)), SLOT(loadConfig(QListViewItem*)));
 
