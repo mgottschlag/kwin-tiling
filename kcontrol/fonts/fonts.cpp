@@ -273,7 +273,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    connect(fontAdjustButton, SIGNAL(clicked()), this, SLOT(slotApplyFontDiff()));
    layout->addItem(lay);
 
-   cbAA = new QCheckBox( i18n( "Use A&nti-Aliasing for fonts and icons" ),this);
+   cbAA = new QCheckBox( i18n( "Use A&nti-Aliasing for fonts" ),this);
 
    QWhatsThis::add(cbAA,
      i18n(
