@@ -1015,7 +1015,11 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
 	client->saveYourselfDone = TRUE;
 	completeShutdown();
     } else {
-	cancelShutdown();
+	// fake success to make KDE's logout not block with broken
+	// apps. A perfect ksmserver would display a warning box at
+	// the very end.
+	client->saveYourselfDone = TRUE;
+	completeShutdown();
     }
     startProtection();
 }
