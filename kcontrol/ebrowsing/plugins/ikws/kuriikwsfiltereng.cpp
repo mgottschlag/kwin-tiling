@@ -230,8 +230,8 @@ QString KURISearchFilterEngine::formatResult( const QString& query, const QStrin
 
         QString userquery = url;
         int space_pos;
-        while( (space_pos=userquery.find(" ")) != -1 )
-            userquery.replace( space_pos, 1, "+" );
+        while( (space_pos=userquery.find(' ')) != -1 )
+           userquery=userquery.replace( space_pos, 1, "+" );
 
         if( isMalformed )
             userquery = KURL::encode_string(userquery);
