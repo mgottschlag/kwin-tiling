@@ -109,10 +109,9 @@ FindDisplayByAddress (XdmcpNetaddr addr, int addrlen, CARD16 displayNumber)
     for (d = displays; d; d = d->next)
 	if ((d->displayType & d_origin) == FromXDMCP &&
 	    d->displayNumber == displayNumber &&
-	    addressEqual (d->from.data, d->from.length, addr, addrlen))
-	{
+	    addressEqual ((XdmcpNetaddr)d->from.data, d->from.length, 
+			  addr, addrlen))
 	    return d;
-	}
     return 0;
 }
 
@@ -124,21 +123,15 @@ void
 RemoveDisplay (struct display *old)
 {
     struct display	*d, **dp;
-    char		**x;
     int			i;
 
-    for (dp = &displays; *dp; dp = &(*dp)->next) {
-	d = *dp;
+    for (dp = &displays; (d = *dp); dp = &(*dp)->next) {
 	if (d == old) {
 	    *dp = d->next;
 	    IfFree (d->class2);
 	    IfFree (d->cfg.data);
 	    delStr (d->cfg.dep.name);
-	    if (d->serverArgv) {
-		for (x = d->serverArgv; *x; x++)
-		    free (*x);
-		free (d->serverArgv);
-	    }
+	    freeStrArr (d->serverArgv);
 	    if (d->authorizations)
 	    {
 		for (i = 0; i < d->authNum; i++)

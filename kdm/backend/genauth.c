@@ -269,7 +269,7 @@ GenerateAuthData (char *auth, int len)
 	    auth[i] = (value & 0xff00) >> 8;
     	}
 	value = len;
-	if (value > sizeof (key))
+	if (value > (int)sizeof (key))
 	    value = sizeof (key);
     	memmove( (char *) key, auth, value);
     }

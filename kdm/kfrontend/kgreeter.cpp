@@ -139,7 +139,7 @@ KGreeter::insertUsers( QIconView *iconview)
 {
     QPixmap default_pix( locate("user_pic", QString::fromLatin1("default.png")));
     if( default_pix.isNull())
-	LogError("Can't get default pixmap from \"default.png\"\n");
+	LogError("Can't open default pixmap \"default.png\"\n");
     if( kdmcfg->_showUsers == SHOW_ALL ) {
 	struct passwd *ps;
 	for( setpwent(); (ps = getpwent()) != 0; ) {

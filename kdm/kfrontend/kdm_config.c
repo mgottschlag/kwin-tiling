@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 #include <fcntl.h>
 #include <ctype.h>
 #include <errno.h>
@@ -113,6 +114,7 @@ typedef struct ValArr {
 #define LOG_LOCAL
 #define LOG_DEBUG_MASK DEBUG_CONFIG
 #define LOG_PANIC_EXIT 1
+#define USE_CONST
 #include <printf.c>
 
 
@@ -288,7 +290,6 @@ freeFile (File *file)
 }
 #endif
 
-static char *errfile;
 static int daemonize = -1, autolog = 1;
 static Value VnoPassEnable, VautoLoginEnable, VxdmcpEnable;
 
@@ -389,7 +390,7 @@ PautoLoginX (Value *retval)
 # endif
 #endif
 
-static char
+static const char
     *guistyle[] = { "KDE", "Windows", "Platinum", 
 		    "Motif", "Motif+", "CDE", "SGI", 0 },
     *logoarea[] = { "None", "Logo", "Clock", 0 },
@@ -534,15 +535,15 @@ Sect allSects[] = {
  { "-Greeter", entsGreeter, as(entsGreeter) },
 };
 
-static char *kdmrc = KDMCONF "/kdmrc";
+static const char *kdmrc = KDMCONF "/kdmrc";
 
 static Section *rootsec;
 
 static void
 ReadConf ()
 {
-    char *nstr, *dstr, *cstr, *dhost, *dnum, *dclass;
-    char *s, *e, *st, *en, *ek, *sl;
+    const char *nstr, *dstr, *cstr, *dhost, *dnum, *dclass;
+    const char *s, *e, *st, *en, *ek, *sl;
     Section *cursec;
     Entry *curent;
     int nlen, dlen, clen, dhostl, dnuml, dclassl;
@@ -814,7 +815,7 @@ FindDEnt (int id, DSpec *dspec)
     return bestent;
 }
 
-static char *
+static const char *
 CvtValue (Ent *et, Value *retval, int vallen, const char *val, char **eopts)
 {
     Value *ents;
@@ -895,7 +896,7 @@ static void
 GetValue (Ent *et, DSpec *dspec, Value *retval, char **eopts)
 {
     Entry *ent;
-    char *errs;
+    const char *errs;
 
 /*    Debug ("Getting value 0x%x\n", et->id);*/
     if (dspec)
@@ -1000,11 +1001,6 @@ Debug ("sending values\n");
 Debug ("values sent\n");
 }
 
-/*
-static char *xservers;
-static char *xaccess;
-*/
-
 #define T_S 0
 #define T_N 1
 #define T_Y 2
@@ -1013,14 +1009,13 @@ static char *xaccess;
 static struct {
 	const char *name;
 	int type;
-	char **dest;
+	const char **dest;
 } opts[] = {
 	{ "-config", T_S, &kdmrc },
-	{ "-error", T_S, &errfile },
-	{ "-daemon", T_Y, (char **)&daemonize }, 
-	{ "-nodaemon", T_N, (char **)&daemonize },
-	{ "-autolog", T_Y, (char **)&autolog }, 
-	{ "-noautolog", T_N, (char **)&autolog },
+	{ "-daemon", T_Y, (const char **)&daemonize }, 
+	{ "-nodaemon", T_N, (const char **)&daemonize },
+	{ "-autolog", T_Y, (const char **)&autolog }, 
+	{ "-noautolog", T_N, (const char **)&autolog },
 };
 
 static int cfgMapT[] = { GC_gGlobal, GC_gDisplay };

@@ -74,7 +74,7 @@ BecomeDaemon (void)
 #ifdef CSRG_BASED
     int fd;
 #else
-    int stat;
+    int sts;
     register int i;
 #endif
 
@@ -102,15 +102,15 @@ BecomeDaemon (void)
 
 #ifndef CSRG_BASED
 # if defined(SVR4) || defined(__QNXNTO__)
-	stat = setpgid(child_id, child_id);
+	sts = setpgid(child_id, child_id);
 	/* This gets error EPERM.  Why? */
 # else
 #  if defined(SYSV)
-	stat = 0;	/* don't know how to set child's process group */
+	sts = 0;	/* don't know how to set child's process group */
 #  else
-	stat = setpgrp(child_id, child_id);
+	sts = setpgrp(child_id, child_id);
 #   ifndef MINIX
-	if (stat != 0)
+	if (sts)
 	    LogError("setting process grp for daemon failed, errno = %d\n",
 		     errno);
 #   endif /* MINIX */

@@ -71,7 +71,7 @@ freeSomeArgs (char **args, int n)
 }
 
 void
-ParseDisplay (char *source)
+ParseDisplay (char *src)
 {
     char		**args, **argv, *dtx, *atPos;
     char		*name, *class2, *type;
@@ -79,7 +79,7 @@ ParseDisplay (char *source)
     int			usedDefault;
     int			displayType;
 
-    if (!(args = parseArgs (0, source)))
+    if (!(args = parseArgs (0, src)))
 	return;
     if (!args[0])
     {

@@ -1074,7 +1074,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
     char	*envname = 0;
     int	lockStatus;
     Xauth	*entry, **auths;
-    int		setenv = 0;
+    int		set_env = 0;
     struct stat	statb;
     int		i;
     int		magicCookie;
@@ -1096,7 +1096,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 	    if (lockStatus == LOCK_SUCCESS) {
 		if (openFiles (home_name, new_name, &old, &new)) {
 		    name = home_name;
-		    setenv = 0;
+		    set_env = 0;
 		} else {
 		    Debug ("openFiles failed\n");
 		    XauUnlockAuth (home_name);
@@ -1112,7 +1112,7 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 	    if (lockStatus == LOCK_SUCCESS) {
 		if (openFiles (backup_name, new_name, &old, &new)) {
 		    name = backup_name;
-		    setenv = 1;
+		    set_env = 1;
 		} else {
 		    XauUnlockAuth (backup_name);
 		    lockStatus = LOCK_ERROR;
@@ -1143,7 +1143,8 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 	    	    writeLocalAuth (new, auths[i], d->name);
 #ifdef XDMCP
 	    	else
-	    	    writeRemoteAuth (new, auths[i], d->peer.data, d->peer.length, d->name);
+	    	    writeRemoteAuth (new, auths[i], (XdmcpNetaddr)d->peer.data, 
+				     d->peer.length, d->name);
 #endif
 		break;
 	    }
@@ -1164,7 +1165,8 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 	    	    writeLocalAuth (new, auths[i], d->name);
 #ifdef XDMCP
 	    	else
-	    	    writeRemoteAuth (new, auths[i], d->peer.data, d->peer.length, d->name);
+	    	    writeRemoteAuth (new, auths[i], (XdmcpNetaddr)d->peer.data, 
+				     d->peer.length, d->name);
 #endif
 		auths[i]->data_length = data_len;
 	    }
@@ -1191,13 +1193,13 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 	if (link (new_name, name) == -1) {
 	    Debug ("link failed %s %s\n", new_name, name);
 	    LogError ("Can't move authorization into place\n");
-	    setenv = 1;
+	    set_env = 1;
 	    envname = new_name;
 	} else {
 	    Debug ("new authorization moved into place\n");
 	    unlink (new_name);
 	}
-	if (setenv) {
+	if (set_env) {
 	    verify->userEnviron = setEnv (verify->userEnviron,
 				    "XAUTHORITY", envname);
 	    verify->systemEnviron = setEnv (verify->systemEnviron,
@@ -1246,7 +1248,8 @@ RemoveUserAuthorization (struct display *d, struct verify_info *verify)
 	    	writeLocalAuth (new, auths[i], d->name);
 #ifdef XDMCP
 	    else
-	    	writeRemoteAuth (new, auths[i], d->peer.data, d->peer.length, d->name);
+	    	writeRemoteAuth (new, auths[i], (XdmcpNetaddr)d->peer.data, 
+				 d->peer.length, d->name);
 #endif
 	}
 	doWrite = 1;

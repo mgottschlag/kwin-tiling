@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <string.h>
 #include <signal.h>
 #include <setjmp.h>
 #include <ctype.h>
@@ -44,6 +45,7 @@
 #define LOG_NAME "kdm_greet"
 #define LOG_DEBUG_MASK DEBUG_GREET
 #define LOG_PANIC_EXIT EX_UNMANAGE_DPY
+#define USE_CONST
 #include <printf.c>
 
 
@@ -239,7 +241,7 @@ abortReset (int n ATTR_UNUSED)
  * this display connection better not have any windows...
  */
  
-void
+static void
 pseudoReset (Display *dpy)
 {
     int		screen;
@@ -318,7 +320,7 @@ UnsecureDisplay (Display *dpy)
     }
 }
 
-
+/*
 static jmp_buf	pingTime;
 
 static int
@@ -366,7 +368,7 @@ PingServer (Display *dpy)
     XSetIOErrorHandler (oldError);
     return 1;
 }
-
+*/
 
 extern void kg_main(int, char **);
 
@@ -391,7 +393,7 @@ main (int argc, char **argv)
     dgrabServer = GetCfgInt (C_grabServer);
     dgrabTimeout = GetCfgInt (C_grabTimeout);
 /*    dpingInterval = GetCfgInt (C_pingInterval);*/	/* XXX not here */
-    dpingTimeout = GetCfgInt (C_pingTimeout);
+/*    dpingTimeout = GetCfgInt (C_pingTimeout);*/
     disLocal = (GetCfgInt (C_displayType) & d_location) == Local;
     if ((ci = GetCfgStr (C_console))) {
 	dhasConsole = ci[0] != 0;

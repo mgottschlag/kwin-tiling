@@ -363,7 +363,7 @@ putEnv(char *string, char **env)
     return env;
 }
 
-int
+static int
 GetHostname(char *buf, int maxlen)
 {
     int len;

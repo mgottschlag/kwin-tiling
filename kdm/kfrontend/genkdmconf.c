@@ -49,10 +49,11 @@
 #define KDMCONF KDE_CONFDIR "/kdm"
 
 static int no_old, copy_files;
-static char *newdir = KDMCONF, *oldxdm, *oldkde;
+static const char *newdir = KDMCONF, *oldxdm, *oldkde;
 
 
 #define NO_LOGGER
+#define USE_CONST
 #include <printf.c>
 
 typedef struct {
@@ -88,7 +89,7 @@ OutCh_OCA (void *bp, char c)
 }
 
 static int 
-VASPrintf (char **strp, char *fmt, va_list args)
+VASPrintf (char **strp, const char *fmt, va_list args)
 {
     OCABuf ocab = { 0, 0, 0, -1 };
 
@@ -101,7 +102,7 @@ VASPrintf (char **strp, char *fmt, va_list args)
 }
 
 static int 
-ASPrintf (char **strp, char *fmt, ...)
+ASPrintf (char **strp, const char *fmt, ...)
 {
     va_list args;
     int len;
@@ -824,7 +825,7 @@ Create (const char *fn, int mode)
 }
 
 static void
-writeFile (char *fsp, int mode, char *fmt, ...)
+writeFile (const char *fsp, int mode, const char *fmt, ...)
 {
     va_list args;
     char *fn, *buf;
@@ -1382,8 +1383,9 @@ DumpEntry(
     XrmValuePtr         value,
     XPointer            data ATTR_UNUSED)
 {
-    char *dpy, *key, dpybuf[80];
+    const char *dpy, *key;
     int el, hasu;
+    char dpybuf[80];
 
     if (*type != XrmQString)
 	return False;
@@ -1403,20 +1405,20 @@ DumpEntry(
     } else if (*bindings != XrmBindLoosely && quarks[1] &&
 	       *bindings != XrmBindLoosely && !quarks[2]) { /* DM.foo.bar */
 	dpy = dpybuf + 4;
-	strcpy (dpy, XrmQuarkToString (*quarks));
-	for (hasu = 0, el = 0; dpy[el]; el++)
-	    if (dpy[el] == '_')
+	strcpy (dpybuf + 4, XrmQuarkToString (*quarks));
+	for (hasu = 0, el = 4; dpybuf[el]; el++)
+	    if (dpybuf[el] == '_')
 		hasu = 1;
 	if (!hasu/* && isupper (dpy[0])*/) {
 	    dpy = dpybuf;
-	    memcpy (dpy, "*:*_", 4);
+	    memcpy (dpybuf, "*:*_", 4);
 	} else {
 	    for (; --el >= 0; )
-		if (dpy[el] == '_') {
-		    dpy[el] = ':';
-		    for (; --el >= 0; )
-			if (dpy[el] == '_')
-			    dpy[el] = '.';
+		if (dpybuf[el] == '_') {
+		    dpybuf[el] = ':';
+		    for (; --el >= 4; )
+			if (dpybuf[el] == '_')
+			    dpybuf[el] = '.';
 		    break;
 		}
 	}
@@ -1427,7 +1429,7 @@ DumpEntry(
     return False;
 }
 
-static char *xdmconfs[] = { "%s/kdm-config", "%s/xdm-config" };
+static const char *xdmconfs[] = { "%s/kdm-config", "%s/xdm-config" };
 
 static int
 mergeXdmCfg (const char *path)
@@ -1674,7 +1676,7 @@ KDE_BINDIR "/kdmdesktop &\n"
 );
 }
 
-static char *oldkdes[] = {
+static const char *oldkdes[] = {
     KDE_CONFDIR, 
     "/opt/kde2/share/config",
     "/usr/local/kde2/share/config",
@@ -1686,7 +1688,7 @@ static char *oldkdes[] = {
     "/usr/share/config",
 };
 
-static char *oldxdms[] = {
+static const char *oldxdms[] = {
     "/etc/X11/kdm", 
     XLIBDIR "/kdm",
     "/etc/X11/xdm", 
@@ -1695,9 +1697,10 @@ static char *oldxdms[] = {
 
 int main(int argc, char **argv)
 {
-    int i, ap;
-    char **where, *newkdmrc;
+    const char **where;
+    char *newkdmrc;
     FILE *f;
+    int i, ap;
     char nname[80];
 
     for (ap = 1; ap < argc; ap++) {

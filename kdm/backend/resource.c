@@ -218,7 +218,7 @@ needsReScan (int what, CfgDep *dep)
 	return 0;
 }
 
-int
+static int
 startConfig (int what, CfgDep *dep, int force)
 {
 Debug ("startConfig\n");

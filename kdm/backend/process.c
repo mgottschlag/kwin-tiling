@@ -78,9 +78,9 @@ SIGVAL (*Signal (int sig, SIGFUNC handler))(int)
 
 
 void
-TerminateProcess (int pid, int signal)
+TerminateProcess (int pid, int sig)
 {
-    kill (pid, signal);
+    kill (pid, sig);
 #ifdef SIGCONT
     kill (pid, SIGCONT);
 #endif

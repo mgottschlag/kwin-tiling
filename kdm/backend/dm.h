@@ -399,7 +399,7 @@ extern char *GRecvStr (void);
 extern void GSendArgv (char **argv);
 extern void GSendStrArr (int len, char **data);
 extern char **GRecvStrArr (int *len);
-extern char **GRecvArgv ();
+extern char **GRecvArgv (void);
 
 /* client.c */
 extern int Verify (struct display *d, char *name, char *pass);

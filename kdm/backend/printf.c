@@ -87,6 +87,10 @@ from The Open Group.
 #define DP_C_LONG	3
 #define DP_C_STR	10
 
+#ifndef USE_CONST
+# define const
+#endif
+
 typedef void (*OutCh)(void *bp, char c);
 
 
@@ -95,7 +99,8 @@ fmtint (OutCh dopr_outch, void *bp,
 	long value, int base, int min, int max, int flags)
 {
     unsigned long uvalue;
-    char convert[20], *ctab;
+    char convert[20];
+    const char *ctab;
     int signvalue = 0;
     int place = 0;
     int spadlen = 0;		/* amount to space pad */
@@ -174,7 +179,7 @@ fmtint (OutCh dopr_outch, void *bp,
 
 static void
 fmtstr (OutCh dopr_outch, void *bp,
-	char *value, int flags, int min, int max)
+	const char *value, int flags, int min, int max)
 {
     int padlen, strln, curcol;
 #ifdef PRINT_QUOTES
@@ -255,11 +260,11 @@ fmtstr (OutCh dopr_outch, void *bp,
 }
 
 static void
-DoPr (OutCh dopr_outch, void *bp, char *format, va_list args)
+DoPr (OutCh dopr_outch, void *bp, const char *format, va_list args)
 {
-    char *strvalue;
+    const char *strvalue;
 #ifdef PRINT_ARRAYS
-    char *arpr, *arsf, *arepr, *aresf, *aresp;
+    const char *arpr, *arsf, *arepr, *aresf, *aresp;
     void *arptr;
 #endif
     unsigned long value;
@@ -500,7 +505,7 @@ logTime (char *dbuf)
 #endif
 
 STATIC void
-LogOutOfMem (char *fkt)
+LogOutOfMem (const char *fkt)
 {
 #ifdef USE_SYSLOG
     syslog (LOG_CRIT, "Out of memory in %s()", fkt);
@@ -582,7 +587,7 @@ OutChL (void *bp, char c)
 }
 
 static void
-Logger (int type, char *fmt, va_list args)
+Logger (int type, const char *fmt, va_list args)
 {
     static OCLBuf oclb;
 
@@ -597,7 +602,7 @@ Logger (int type, char *fmt, va_list args)
 STATIC int debugLevel;
 
 STATIC void
-Debug (char *fmt, ...)
+Debug (const char *fmt, ...)
 {
     va_list args;
 
@@ -612,7 +617,7 @@ Debug (char *fmt, ...)
 
 #ifndef LOG_NO_INFO
 STATIC void 
-LogInfo(char *fmt, ...)
+LogInfo(const char *fmt, ...)
 {
     va_list args;
 
@@ -624,7 +629,7 @@ LogInfo(char *fmt, ...)
 
 #ifndef LOG_NO_ERROR
 STATIC void
-LogError (char *fmt, ...)
+LogError (const char *fmt, ...)
 {
     va_list args;
 
@@ -636,7 +641,7 @@ LogError (char *fmt, ...)
 
 #ifdef LOG_PANIC_EXIT
 STATIC void
-LogPanic (char *fmt, ...)
+LogPanic (const char *fmt, ...)
 {
     va_list args;
 
