@@ -51,6 +51,7 @@ class KWinDecorationModule : public KCModule, virtual public KWinDecorationIface
 		virtual void defaults();
 
 		QString quickHelp() const;
+		const KAboutData* aboutData() const;
 
 		virtual void dcopUpdateClientList();
 

@@ -32,6 +32,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdialog.h>
+#include <kaboutdata.h>
 #include <dcopclient.h>
 
 #include "kwindecoration.h"
@@ -462,6 +463,18 @@ QString KWinDecorationModule::quickHelp() const
 	return i18n( "<h1>Window Manager Decoration</h1>"
                  "This module allows you to choose the window border decorations, "
                 "as well as titlebar button positions and custom decoration options.");
+}
+
+
+const KAboutData* KWinDecorationModule::aboutData() const
+{
+	KAboutData* about = 
+		new KAboutData(I18N_NOOP("kcmkwindecoration"),
+				I18N_NOOP("Window Decoration Control Module"),
+				0, 0, KAboutData::License_GPL,
+				I18N_NOOP("(c) 2001 Karol Szwed"));
+	about->addAuthor("Karol Szwed", 0, "gallium@kde.org");
+	return about;
 }
 
 
