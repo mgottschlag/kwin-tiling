@@ -159,8 +159,8 @@ LaunchConfig::load()
 
   c.setGroup( "BusyCursorSettings" );
   sb_cursorTimeout->setValue( c.readUnsignedNumEntry( "Timeout", 30 ));
-  bool busyBlinking =c.readBoolEntry("Blinking", true);
-  bool busyBouncing =c.readBoolEntry("Bouncing", false);
+  bool busyBlinking =c.readBoolEntry("Blinking", false);
+  bool busyBouncing =c.readBoolEntry("Bouncing", true);
   if ( !busyCursor )
      cb_busyCursor->setCurrentItem(0);
   else if ( busyBlinking )
