@@ -714,7 +714,7 @@ void KAdvancedConfig::load( void )
         anim = config->readNumEntry(KWIN_MINIMIZE_ANIM_SPEED);
         if( anim < 1 ) anim = 0;
         if( anim > 10 ) anim = 10;
-        setMinimizeAnim( config->readBoolEntry("KWIN_MINIMIZE_ANIM", true ), anim );
+        setMinimizeAnim( config->readBoolEntry(KWIN_MINIMIZE_ANIM, true ), anim );
     }
     else{
         config->writeEntry(KWIN_MINIMIZE_ANIM, true );
