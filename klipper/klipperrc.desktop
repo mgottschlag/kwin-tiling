@@ -1,136 +1,325 @@
 [Action_0]
 Description=Jpeg-Image
+Description[az]=Jpeg-Rəsmi
+Description[es]=Imagen Jpeg
+Description[lv]=Jpeg Attēls
+Description[pt]=Imagem-JPEG
+Description[pt_BR]=Imagem-JPEG
+Description[sv]=Jpeg-bild
+Description[tr]=Jpeg Resmi
 Number of commands=1
 Regexp=^\\/.+\\.jpg$
 
 [Action_0/Command_0]
 Commandline=kview "%s"
 Description=Launch K&View
+Description[az]=K&View-u Başlat
+Description[da]=Start K&View
+Description[es]=Iniciar K&View
+Description[lv]=Palaist K&Skatīt
+Description[pt]=Lançar o K&View
+Description[pt_BR]=Lançar o K&View
+Description[sv]=Starta K&view
+Description[tr]=K&View Çalıştır
 Enabled=true
 
 [Action_1]
 Description=Web-URL
+Description[az]=Veb-URL
+Description[da]=Net-URL
+Description[es]=URL Web
+Description[pt]=URL da Web
+Description[pt_BR]=URL da Web
+Description[sv]=Webbadress
 Number of commands=5
 Regexp=^https?:\\/\\/
 
 [Action_1/Command_0]
 Commandline=dcop konqueror default 'createNewWindow(QString)' '%s' || kfmclient exec '%s'
 Description=Open with &Konqueror
+Description[az]=&Konqueror ilə Aç
+Description[da]=Åbn med &Konqueror
+Description[es]=Abrir con &Konqueror
+Description[lv]=Atvērt ar Ie&karotāju
+Description[pt]=Abrir com o &Konqueror
+Description[pt_BR]=Abrir com o &Konqueror
+Description[sv]=Öppna med &Konqueror
+Description[tr]=&Konqueror ile Aç
 Enabled=true
 
 [Action_1/Command_1]
 Commandline=netscape -no-about-splash -remote "openURL(%s, new-window)"
 Description=Open with &Netscape
+Description[az]=&Netscape ilə Aç
+Description[da]=Åbn med &Netscape
+Description[es]=Abrir con &Netscape
+Description[lv]=Atvērt ar &Netscape
+Description[pt]=Abrir com o &Netscape
+Description[pt_BR]=Abrir com o &Netscape
+Description[sv]=Öppna med &Netscape
+Description[tr]=&Netscape ile Aç
 Enabled=true
 
 [Action_1/Command_2]
 Commandline=mozilla -remote "openURL(%s, new-window)"
 Description=Open with &Mozilla
+Description[az]=&Mozilla ilə Aç
+Description[da]=Åbn med &Mozilla
+Description[es]=Abrir con &Mozilla
+Description[lv]=Atvērt ar &Mozilla
+Description[pt]=Abrir com o &Mozilla
+Description[pt_BR]=Abrir com o &Mozilla
+Description[sv]=Öppna med &Mozilla
+Description[tr]=&Mozilla ile Aç
 Enabled=true
 
 [Action_1/Command_3]
 Commandline=kmail --body  '%s'
 Description=Send &URL
+Description[az]=&URL Göndər
+Description[es]=Enviar &URL
+Description[lv]=Sūtīt &URL
+Description[pt]=Enviar o &URL
+Description[pt_BR]=Enviar o &URL
+Description[sv]=Skicka &webbadress
+Description[tr]=&URL Gönder
 Enabled=true
 
 [Action_1/Command_4]
 Commandline=kmail  --attach '%s'
 Description=Send &Page
+Description[az]=&Səhifə Göndər
+Description[da]=Send &side
+Description[es]=Enviar &página
+Description[lv]=Sūtīt La&pu
+Description[pt]=Enviar a &Página
+Description[pt_BR]=Enviar a &Página
+Description[sv]=Ski&cka sida
+Description[tr]=&Sayfayı Gönder
 Enabled=true
 
 [Action_2]
 Description=Mail-URL
+Description[az]=Məktub-URL
+Description[da]=E-mail-URL
+Description[es]=URL de correo
+Description[lv]=Mailot URL
+Description[pt]=URL de Email
+Description[pt_BR]=URL de Email
 Number of commands=2
 Regexp=^mailto:
 
 [Action_2/Command_0]
 Commandline=kmail --composer %s
 Description=Launch &Kmail
+Description[az]=&Kmail-i Başlat
+Description[da]=Start &Kmail
+Description[es]=Iniciar &Kmail
+Description[lv]=Palaiž &Kpastu
+Description[pt]=Lançar o &Kmail
+Description[pt_BR]=Lançar o &Kmail
+Description[sv]=Starta &Kmail
+Description[tr]=KMail Ç&alıştır
 Enabled=true
 
 [Action_2/Command_1]
 Commandline=konsole -e mutt `echo "%s" | sed 's/mailto://g'`
 Description=Launch &mutt
+Description[az]=&mutt-u Başlat
+Description[da]=Start &mutt
+Description[es]=Iniciar &mutt
+Description[lv]=Palaiž &mutt
+Description[pt]=Lançar o &mutt
+Description[pt_BR]=Lançar o &mutt
+Description[sv]=Starta &mutt
+Description[tr]=&Mutt Çalıştır
 Enabled=true
 
 [Action_3]
 Description=Text File
+Description[az]=Mətn Faylı
+Description[da]=Tekstfil
+Description[es]=Archivo de texto
+Description[lv]=Teksta Fails
+Description[pt]=Ficheiro de Texto
+Description[pt_BR]=Ficheiro de Texto
+Description[sv]=Textfil
 Number of commands=2
 Regexp=^\\/.+\\.txt$
 
 [Action_3/Command_0]
 Commandline=kedit "%s"
 Description=Launch K&Edit
+Description[az]=K&Edit-i Başlat
+Description[da]=Start K&Edit
+Description[es]=Iniciar K&Edit
+Description[lv]=Palaiž K&Edit
+Description[pt]=Lançar o K&Edit
+Description[pt_BR]=Lançar o K&Edit
+Description[sv]=Starta K&edit
+Description[tr]=K&edit Çalıştır
 Enabled=true
 
 [Action_3/Command_1]
 Commandline=kwrite "%s"
 Description=Launch K&Write
+Description[az]=K&Write-ı Başlat
+Description[da]=Start K&Write
+Description[es]=Inicar K&Write
+Description[lv]=Palaiž K&Write
+Description[pt]=Lançar o K&Write
+Description[pt_BR]=Lançar o K&Write
+Description[sv]=Starta K&write
+Description[tr]=K&Write Çalıştır
 Enabled=true
 
 [Action_4]
 Description=Local file URL
+Description[az]=Yerli fayl URL-si
+Description[da]=Lokalfil-URL
+Description[es]=URL de archivo local
+Description[lv]=Lokāla faila URL
+Description[pt]=URL de ficheiro local
+Description[pt_BR]=URL de ficheiro local
 Number of commands=2
 Regexp=^file:.
 
 [Action_4/Command_0]
 Commandline=kmail --body  '%s'
 Description=Send &URL
+Description[az]=&URL Göndər
+Description[es]=Enviar &URL
+Description[lv]=Sūtīt &URL
+Description[pt]=Enviar o &URL
+Description[pt_BR]=Enviar o &URL
+Description[sv]=Skicka &webbadress
+Description[tr]=&URL Gönder
 Enabled=true
 
 [Action_4/Command_1]
 Commandline=kmail  --attach '%s'
 Description=Send &File
+Description[az]=&Fayl Göndər
+Description[da]=Send &fil
+Description[es]=Enviar &archivo
+Description[lv]=Sūtīt &Failu
+Description[pt]=Enviar o &Ficheiro
+Description[pt_BR]=Enviar o &Ficheiro
+Description[sv]=Skicka &fil
+Description[tr]=Dosya &Gönder
 Enabled=true
 
 [Action_5]
 Description=Gopher URL
+Description[az]=Qofher URL
+Description[es]=URL de Gopher
+Description[pt]=URL do Gopher
+Description[pt_BR]=URL do Gopher
 Number of commands=2
 Regexp=^gopher:.
 
 [Action_5/Command_0]
 Commandline=kmail --body  '%s'
 Description=Send &URL
+Description[az]=&URL Göndər
+Description[es]=Enviar &URL
+Description[lv]=Sūtīt &URL
+Description[pt]=Enviar o &URL
+Description[pt_BR]=Enviar o &URL
+Description[sv]=Skicka &webbadress
+Description[tr]=&URL Gönder
 Enabled=true
 
 [Action_5/Command_1]
 Commandline=kmail  --attach '%s'
 Description=Send &File
+Description[az]=&Fayl Göndər
+Description[da]=Send &fil
+Description[es]=Enviar &archivo
+Description[lv]=Sūtīt &Failu
+Description[pt]=Enviar o &Ficheiro
+Description[pt_BR]=Enviar o &Ficheiro
+Description[sv]=Skicka &fil
+Description[tr]=Dosya &Gönder
 Enabled=true
 
 [Action_6]
 Description=ftp URL
+Description[da]=ftp-URL
+Description[es]=URL de ftp
+Description[pt]=URL de FTP
+Description[pt_BR]=URL de FTP
+Description[sv]=FTP-webbadress
 Number of commands=5
 Regexp=^ftp:\\/\\/
 
 [Action_6/Command_0]
 Commandline=dcop konqueror default 'createNewWindow(QString)' '%s' || kfmclient exec '%s'
 Description=Open with &Konqueror
+Description[az]=&Konqueror ilə Aç
+Description[da]=Åbn med &Konqueror
+Description[es]=Abrir con &Konqueror
+Description[lv]=Atvērt ar Ie&karotāju
+Description[pt]=Abrir com o &Konqueror
+Description[pt_BR]=Abrir com o &Konqueror
+Description[sv]=Öppna med &Konqueror
+Description[tr]=&Konqueror ile Aç
 Enabled=true
 
 [Action_6/Command_1]
 Commandline=netscape -no-about-splash -remote "openURL(%s, new-window)"
 Description=Open with &Netscape
+Description[az]=&Netscape ilə Aç
+Description[da]=Åbn med &Netscape
+Description[es]=Abrir con &Netscape
+Description[lv]=Atvērt ar &Netscape
+Description[pt]=Abrir com o &Netscape
+Description[pt_BR]=Abrir com o &Netscape
+Description[sv]=Öppna med &Netscape
+Description[tr]=&Netscape ile Aç
 Enabled=true
 
 [Action_6/Command_2]
 Commandline=mozilla -remote "openURL(%s, new-window)"
 Description=Open with &Mozilla
+Description[az]=&Mozilla ilə Aç
+Description[da]=Åbn med &Mozilla
+Description[es]=Abrir con &Mozilla
+Description[lv]=Atvērt ar &Mozilla
+Description[pt]=Abrir com o &Mozilla
+Description[pt_BR]=Abrir com o &Mozilla
+Description[sv]=Öppna med &Mozilla
+Description[tr]=&Mozilla ile Aç
 Enabled=true
 
 [Action_6/Command_3]
 Commandline=kmail --body  '%s'
 Description=Send &URL
+Description[az]=&URL Göndər
+Description[es]=Enviar &URL
+Description[lv]=Sūtīt &URL
+Description[pt]=Enviar o &URL
+Description[pt_BR]=Enviar o &URL
+Description[sv]=Skicka &webbadress
+Description[tr]=&URL Gönder
 Enabled=true
 
 [Action_6/Command_4]
 Commandline=kmail  --attach '%s'
 Description=Send &File
+Description[az]=&Fayl Göndər
+Description[da]=Send &fil
+Description[es]=Enviar &archivo
+Description[lv]=Sūtīt &Failu
+Description[pt]=Enviar o &Ficheiro
+Description[pt_BR]=Enviar o &Ficheiro
+Description[sv]=Skicka &fil
+Description[tr]=Dosya &Gönder
 Enabled=true
 
 [General]
 KeepClipboardContents=true
-No Actions for WM_CLASS=Navigator,konqueror,keditbookmarks,mozilla-bin,Opera main window,opera,gnumeric,Gnumeric
+No Actions for WM_CLASS=Navigator,konqueror,keditbookmarks,mozilla-bin,Opera main window,opera,gnumeric,Gnumeric,Galeon
 Number of Actions=7
 PopupAtMousePosition=false
 URLGrabberEnabled=true
