@@ -1,7 +1,7 @@
 /**
  * kcmxinerama.cpp
  *
- * Copyright (c) 2002-2003 George Staikos <staikos@kde.org>
+ * Copyright (c) 2002-2004 George Staikos <staikos@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
 		connect(xw->_identify, SIGNAL(clicked()),
 			this, SLOT(indicateWindows()));
 
-		connect(xw, SIGNAL(configChanged()), this, SLOT(configChanged()));
+		connect(xw, SIGNAL(configChanged()), this, SLOT(changed()));
 	} else { // no Xinerama
 		QLabel *ql = new QLabel(i18n("<qt><p>This module is only for configuring systems with a single desktop spread across multiple monitors. You do not appear to have this configuration.</p></qt>"), this);
 		grid->addWidget(ql, 0, 0);
@@ -105,11 +105,6 @@ KCMXinerama::~KCMXinerama() {
 	config = 0;
 	clearIndicator();
 }
-
-void KCMXinerama::configChanged() {
-	emit changed(true);
-}
-
 
 #define KWIN_XINERAMA              "XineramaEnabled"
 #define KWIN_XINERAMA_MOVEMENT     "XineramaMovementEnabled"
@@ -266,13 +261,9 @@ KCModule *create_xinerama(QWidget *parent, const char *name) {
 	return new KCMXinerama(parent, name);
 }
 
-#if 0
-void init_xinerama() {
-	// Should we disable Xinerama support here if they boot without
-	// Xinerama?  or not?  I imagine there are some nice things we could
-	// do here anyways.
-}
-#endif
+	bool test_xinerama() {
+		return QApplication::desktop()->isVirtualDesktop();
+	}
 }
 
 

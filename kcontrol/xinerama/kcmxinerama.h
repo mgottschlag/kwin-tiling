@@ -1,7 +1,7 @@
 /**
  * kcmxinerama.h
  *
- * Copyright (c) 2002-2003 George Staikos <staikos@kde.org>
+ * Copyright (c) 2002-2004 George Staikos <staikos@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -40,12 +40,10 @@ public:
 	void save();
 	void defaults();
 
-	int buttons();
 	QString quickHelp() const;
 	const KAboutData* aboutData() const;
 
 public slots:
-	void configChanged();
 	void windowIndicator(int dpy);
 	void clearIndicator();
 
