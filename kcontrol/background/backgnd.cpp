@@ -247,7 +247,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pTabWidget->addTab(m_pTab2, i18n("&Wallpaper"));
     grid = new QGridLayout(m_pTab2, 5, 3, 10, 10);
     grid->setColStretch(1, 1);
-    grid->setColStretch(2, 1);
+    grid->setColStretch(2, 0);
     grid->setRowStretch(4, 1);
 
     m_WallpaperType = new QHButtonGroup( m_pTab2 );
@@ -431,14 +431,6 @@ void KBackground::init()
         m_pWallpaperBox->insertItem(s);
         m_Wallpaper[s] = i;
     }
-
-    // I would have prefered to use setMinimumWidth here, but it seems to
-    // have no effect. The default width is too large because of the long
-    // filenames that are inserted.
-    // Yeah but truncating filenames is even more ugly (David)
-    //m_pWallpaperBox->setFixedWidth(width);
-    // Better set a _max_ size that doesn't truncate the names.
-    m_pWallpaperBox->setMaximumWidth(m_pWallpaperBox->sizeHint().width());
 
     // Wallpaper tilings: again they must match the ones from bgrender.cc
     m_pArrangementBox->insertItem(i18n("Centered"));
