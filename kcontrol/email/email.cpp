@@ -102,7 +102,7 @@ KEmailConfig::KEmailConfig(QWidget *parent, const char *name)
   bGrp = new QButtonGroup(1, Qt::Vertical,
 			   i18n("Incoming mail server type"), this);
   connect(bGrp, SIGNAL(clicked(int)), this, SLOT(configChanged()));
-  
+
   topLayout->addWidget(bGrp);
 
   imapButton = new QRadioButton(i18n("&IMAP"), bGrp);
@@ -126,7 +126,7 @@ void KEmailConfig::configChanged()
 
 void KEmailConfig::load()
 {
-  KConfig *config = KGlobal::config();
+  KConfig *config = new KConfig("emaildefaults");
   char hostname[80];
   struct passwd *p;
 
@@ -150,13 +150,12 @@ void KEmailConfig::load()
   bGrp->setButton(config->readNumEntry("ServerType", 0));
 
   emit changed(false);
+  delete config;
 }
 
 void KEmailConfig::save()
 {
-    debug("KEmailConfig save called");
-    
-  KConfig *config = KGlobal::config();
+  KConfig *config = new KConfig("emaildefaults");
 
   config->setGroup("UserInfo");
   config->writeEntry("FullName", fullName->text());
@@ -186,12 +185,25 @@ void KEmailConfig::save()
     ::chmod(cfgName.utf8(), 0600);
 
   emit changed(false);
+  delete config;
 }
 
 void KEmailConfig::defaults()
 {
-    // as there is nothing really reset, we shouldn't call this yet
-    //emit changed(false);
+  char hostname[80];
+  struct passwd *p;
+    
+  p = getpwuid(getuid());
+  gethostname(hostname, 80);
+
+  fullName->setText(p->pw_gecos);
+    
+  QString tmp = p->pw_name;
+  tmp += "@"; tmp += hostname;
+
+  emailAddr->setText(tmp);
+  
+  emit changed(true);
 }
 
 
