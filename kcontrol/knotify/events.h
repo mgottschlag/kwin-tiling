@@ -46,6 +46,8 @@ public:
     ApplicationList& apps() { return m_apps; }
 
 private:
+    QString makeRelative( const QString& );
+
     ApplicationList m_apps;
 
 };
@@ -53,7 +55,7 @@ private:
 class KNApplication
 {
 public:
-    KNApplication( const QString& file );
+    KNApplication( KConfig * );
     ~KNApplication();
 
     const QString& text() const { return m_description; }

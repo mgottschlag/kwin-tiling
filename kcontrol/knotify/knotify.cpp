@@ -204,6 +204,7 @@ void KNotifyWidget::slotItemActivated( QListViewItem *i )
     else {
 	requester->lineEdit()->clear();
 	playButton->hide();
+	currentItem = 0L;
     }
 
     requester->setEnabled( enableButton );
@@ -287,7 +288,7 @@ void KNListViewItem::itemChanged( KNCheckListItem *item )
     if ( item->isOn() )
 	event->presentation |= item->type;
     else
-	event->presentation &= item->type;
+	event->presentation &= ~item->type;
 
     emit changed();
 }

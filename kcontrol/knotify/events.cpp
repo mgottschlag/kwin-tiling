@@ -40,10 +40,16 @@ Events::Events()
 void Events::load()
 {
     m_apps.clear();
-    m_apps.append( new KNApplication( locate( "config", "eventsrc" )));
+    m_apps.append( new KNApplication( new KConfig("eventsrc", false, false)));
+
     QStringList fullpaths(KGlobal::dirs()->findAllResources("data", "*/eventsrc", false, true));
+    QString path;
     for (QStringList::Iterator it=fullpaths.begin(); it!=fullpaths.end(); ++it) {
-	m_apps.append( new KNApplication( *it ));
+        path = makeRelative( *it );
+	if ( !path.isEmpty() ) {
+	    KConfig *kc = new KConfig( path, false, false, "data" );
+	    m_apps.append( new KNApplication( kc ));
+	}
     }
 }
 
@@ -56,19 +62,28 @@ void Events::save()
     }
 }
 
+// returns e.g. "kwin/eventsrc" from a given path 
+// "/opt/kde2/share/apps/kwin/eventsrc"
+QString Events::makeRelative( const QString& fullPath ) 
+{
+  int slash = fullPath.findRev( '/' ) - 1;
+  slash = fullPath.findRev( '/', slash );
+
+  if ( slash < 0 )
+    return QString::null;
+
+  return fullPath.mid( slash+1 );
+}
+
 //////////////////////////////////////////////////////////////////////
 
 
 
-KNApplication::KNApplication( const QString& file )
+// ownership of the KConfig is transferred
+KNApplication::KNApplication( KConfig *config )
 {
-    // only one slash???
-    kdDebug() << " ** loading from configfile: " << file << endl;
     m_events = 0L;
-
-    kc = new KConfig(file, false, false,
-		     (file == "eventsrc") ? "config" : "data");
-
+    kc = config;
     kc->setGroup( QString::fromLatin1("!Global!") );
     m_icon = kc->readEntry(QString::fromLatin1("IconName"), 
                            QString::fromLatin1("misc")); 
@@ -114,6 +129,7 @@ void KNApplication::save()
 	
 	++it;
     }
+    kc->sync();
 }
 
 
