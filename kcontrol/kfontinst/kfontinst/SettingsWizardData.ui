@@ -47,7 +47,7 @@
             <cstring>itsIntroPage</cstring>
         </property>
         <attribute name="title">
-            <string>Welcome To The KDE Font Installer</string>
+            <string>Welcome to the KDE Font Installer</string>
         </attribute>
         <grid>
             <property name="name">
