@@ -1,6 +1,6 @@
 AM_CPPFLAGS = $(all_includes)
 
-SUBDIRS = . kcs ad pics
+SUBDIRS = . themes kcs ad pics
 
 
 noinst_LTLIBRARIES = libkrdb.la
