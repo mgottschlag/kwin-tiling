@@ -18,7 +18,6 @@
  *
  */
 
-#include <iostream.h>
 #include <unistd.h>
 
 #include <kuniqueapplication.h>
@@ -42,19 +41,12 @@ int main( int argc, char **argv )
     KCmdLineArgs::init( argc, argv, &aboutData );
     KUniqueApplication::addCmdLineOptions();
 
-    if (!KUniqueApplication::start()) {
-	cout << aboutData.appName() << " is already running!" << endl;
-	return(1);
-    }
+    if (!KUniqueApplication::start()) 
+	return 1;
 
     KUniqueApplication app;
 
     KMenuEdit *menuEdit = new KMenuEdit;
-    if( menuEdit == 0 ) {
-	cout << "Unable to start " << aboutData.appName() << " - Memory exhausted!" << endl;
-	return(1);
-    }
-
     menuEdit->show();
 
     app.setMainWidget(menuEdit);
