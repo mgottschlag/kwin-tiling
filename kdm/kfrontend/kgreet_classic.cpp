@@ -126,7 +126,8 @@ KClassicGreeter::KClassicGreeter(
 // virtual
 KClassicGreeter::~KClassicGreeter()
 {
-    abort();
+    if (running)
+	abort();
     QLayoutIterator it = static_cast<QLayout *>(layoutItem)->iterator();
     for (QLayoutItem *itm = it.current(); itm; itm = ++it)
 	 delete itm->widget();
