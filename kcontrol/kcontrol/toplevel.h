@@ -26,7 +26,6 @@
 #include <qapplication.h>
 #include <qmenubar.h>
 #include <kapp.h>
-#include <ktopwidget.h>
 #include <ktoolbar.h>
 #include <qlistview.h>
 #include <kstatusbar.h>
@@ -55,7 +54,7 @@ signals:
 };
 
 
-class TopLevel : public KTopLevelWidget
+class TopLevel : public KTMainWindow
 {
   Q_OBJECT
 

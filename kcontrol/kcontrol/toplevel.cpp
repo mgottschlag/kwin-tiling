@@ -41,7 +41,7 @@ void MySplitter::resizeEvent(QResizeEvent *event)
 
 
 TopLevel::TopLevel (ConfigList *cl)
-  : KTopLevelWidget(), ID_GENERAL(1)
+  : KTMainWindow(), ID_GENERAL(1)
 {
   configList = cl;
   current = 0;
