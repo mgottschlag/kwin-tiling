@@ -37,7 +37,7 @@ int  setupScreenSaver();
 
   Display a dialog so the the user can change the screen saver settings.
 
-const char *getScreenSaverName()
+QString getScreenSaverName()
 
   return the name/description of the screen saver
 
