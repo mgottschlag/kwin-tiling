@@ -254,7 +254,7 @@ void KLocaleConfig::defaultSettings()
   comboNumber->setCurrentItem("C");
   comboMoney->setCurrentItem("C");
   comboDate->setCurrentItem("C");
-  ((KLocaleApplication*)kapp)->resetAdvanced();
+  ((KLocaleApplication*)kapp)->reset();
 }
 
 void KLocaleConfig::changedCountry(int i)
@@ -293,7 +293,7 @@ void KLocaleConfig::changedCountry(int i)
   comboDate->setCurrentItem(country);
 
   update();
-  ((KLocaleApplication*)kapp)->resetAdvanced();
+  ((KLocaleApplication*)kapp)->reset();
 }
 
 void KLocaleConfig::changedLanguage(int i)
@@ -334,7 +334,7 @@ void KLocaleConfig::changedNumber(int i)
                       comboMoney->tag(i),
                       QString::null,
                       QString::null);
-  ((KLocaleApplication*)kapp)->resetAdvancedNum();
+  ((KLocaleApplication*)kapp)->resetNum();
   update();
 }
 
@@ -347,7 +347,7 @@ void KLocaleConfig::changedMoney(int i)
                       QString::null,
                       comboDate->tag(i),
                       QString::null);
-  ((KLocaleApplication*)kapp)->resetAdvancedMon();
+  ((KLocaleApplication*)kapp)->resetMon();
   update();
 }
 

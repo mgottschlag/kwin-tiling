@@ -1,5 +1,5 @@
 /*
- * localeadv.cpp
+ * localemon.cpp
  *
  * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
  *
@@ -28,18 +28,22 @@
 #include <qlineedit.h>
 
 #include <kglobal.h>
+
+#define KLocaleConfigAdvanced KLocaleConfigMoney
 #include <klocale.h>
+#undef KLocaleConfigAdvanced
+
 #include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <kstddirs.h>
 
 #include "klocalesample.h"
-#include "localeadv.h"
-#include "localeadv.moc"
+#include "localemon.h"
+#include "localemon.moc"
 
 #define i18n(a) (a)
 
-KLocaleConfigAdvanced::KLocaleConfigAdvanced(QWidget *parent, const char*name)
+KLocaleConfigMoney::KLocaleConfigMoney(QWidget *parent, const char*name)
  : KConfigWidget(parent, name)
 {
   QLabel *label;
@@ -47,36 +51,11 @@ KLocaleConfigAdvanced::KLocaleConfigAdvanced(QWidget *parent, const char*name)
 
   QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 
-  // Numbers
-  gbox = new QGroupBox(this, i18n("Numbers"));
-  tl->addWidget(gbox);
-
-  QGridLayout *tl1 = new QGridLayout(gbox, 2, 4, 5);
-  tl1->addRowSpacing(0, 15);
-  tl1->addRowSpacing(4, 10);
-  tl1->addColSpacing(0, 10);
-  tl1->addColSpacing(3, 10);
-  tl1->setColStretch(2, 1); 
-
-  label = new QLabel(i18n("Decimal symbol"), gbox);
-  edDecSym = new QLineEdit(gbox);
-  connect( edDecSym, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDecSymChanged(const QString &) ) );
-  tl1->addWidget(label, 1, 1);
-  tl1->addWidget(edDecSym, 1, 2);
-
-  label = new QLabel(i18n("Thousands separator"), gbox);
-  edThoSep = new QLineEdit(gbox);
-  connect( edThoSep, SIGNAL( textChanged(const QString &) ), this, SLOT( slotThoSepChanged(const QString &) ) );
-  tl1->addWidget(label, 2, 1);
-  tl1->addWidget(edThoSep, 2, 2);
-
-  tl1->activate();
-
   // Money
   gbox = new QGroupBox(this, i18n("Money"));
   tl->addWidget(gbox);
 
-  tl1 = new QGridLayout(gbox, 6, 4, 5);
+  QGridLayout *tl1 = new QGridLayout(gbox, 6, 4, 5);
   tl1->addRowSpacing(0, 15);
   tl1->addRowSpacing(4, 10);
   tl1->addColSpacing(0, 10);
@@ -161,20 +140,19 @@ KLocaleConfigAdvanced::KLocaleConfigAdvanced(QWidget *parent, const char*name)
   sample = new KLocaleSample(gbox);
 
   sample->update();
-  syncWithKLocaleNum();
   syncWithKLocaleMon();
 }
 
-KLocaleConfigAdvanced::~KLocaleConfigAdvanced()
+KLocaleConfigMoney::~KLocaleConfigMoney()
 {
 }
 
-void KLocaleConfigAdvanced::loadSettings()
+void KLocaleConfigMoney::loadSettings()
 {
   debug("load");
 }
 
-void KLocaleConfigAdvanced::applySettings()
+void KLocaleConfigMoney::applySettings()
 {
   debug("apply");
   KConfigBase *config = KGlobal::config();
@@ -185,6 +163,7 @@ void KLocaleConfigAdvanced::applySettings()
 
   QString str;
 
+/*
   str = ent.readEntry("DecimalSymbol");
   if (str != edDecSym->text())
     config->writeEntry("DecimalSymbol", edDecSym->text());
@@ -192,80 +171,63 @@ void KLocaleConfigAdvanced::applySettings()
   str = ent.readEntry("ThousandsSeparator");
   if (str != edThoSep->text())
     config->writeEntry("ThousandsSeparator", edThoSep->text());
+*/
 }
 
-void KLocaleConfigAdvanced::defaultSettings()
+void KLocaleConfigMoney::defaultSettings()
 {
   debug("default");
 }
 
-void KLocaleConfigAdvanced::slotDecSymChanged(const QString &t)
-{
-  KGlobal::locale()->_decimalSymbol = t;
-  sample->update();
-}
-
-void KLocaleConfigAdvanced::slotThoSepChanged(const QString &t)
-{
-  KGlobal::locale()->_thousandsSeparator = t;
-  sample->update();
-}
-
-void KLocaleConfigAdvanced::slotMonCurSymChanged(const QString &t)
+void KLocaleConfigMoney::slotMonCurSymChanged(const QString &t)
 {
   KGlobal::locale()->_currencySymbol = t;
   sample->update();
 }
 
-void KLocaleConfigAdvanced::slotMonDecSymChanged(const QString &t)
+void KLocaleConfigMoney::slotMonDecSymChanged(const QString &t)
 {
   KGlobal::locale()->_monetaryDecimalSymbol = t;
   sample->update();
 }
 
-void KLocaleConfigAdvanced::slotMonThoSepChanged(const QString &t)
+void KLocaleConfigMoney::slotMonThoSepChanged(const QString &t)
 {
   KGlobal::locale()->_monetaryThousandsSeparator = t;
   sample->update();
 }
 
-void KLocaleConfigAdvanced::slotMonNegSignChanged(const QString &t)
+void KLocaleConfigMoney::slotMonNegSignChanged(const QString &t)
 {
   KGlobal::locale()->_negativeSign = t;
   sample->update();
 }
 
-void KLocaleConfigAdvanced::slotMonPosSignChanged(const QString &t)
+void KLocaleConfigMoney::slotMonPosSignChanged(const QString &t)
 {
   KGlobal::locale()->_positiveSign = t;
   sample->update();
 }
 
-void KLocaleConfigAdvanced::slotMonFraDigChanged(const QString &t)
+void KLocaleConfigMoney::slotMonFraDigChanged(const QString &t)
 {
   KGlobal::locale()->_fracDigits = (int)KGlobal::locale()->readNumber(t);
   sample->update();
 }
 
-void KLocaleConfigAdvanced::slotMonPosMonSignPosChanged(int i)
+void KLocaleConfigMoney::slotMonPosMonSignPosChanged(int i)
 {
   KGlobal::locale()->_positiveMonetarySignPosition = i;
   sample->update();
 }
 
-void KLocaleConfigAdvanced::slotMonNegMonSignPosChanged(int i)
+void KLocaleConfigMoney::slotMonNegMonSignPosChanged(int i)
 {
   KGlobal::locale()->_negativeMonetarySignPosition = i;
   sample->update();
 }
 
-void KLocaleConfigAdvanced::syncWithKLocaleNum()
-{
-  // Numbers
-  edDecSym->setText(KGlobal::locale()->_decimalSymbol);
-  edThoSep->setText(KGlobal::locale()->_thousandsSeparator);
-}
-void KLocaleConfigAdvanced::syncWithKLocaleMon()
+void KLocaleConfigMoney::syncWithKLocaleMon()
 {
   // Money
   edMonCurSym->setText(KGlobal::locale()->_currencySymbol);

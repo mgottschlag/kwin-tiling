@@ -7,14 +7,12 @@ SUBDIRS = pics default
 
 bin_PROGRAMS = kcmlocale
 
-kcmlocale_SOURCES = main.cpp locale.cpp klangcombo.cpp klocalesample.cpp localeadv.cpp
-METASOURCES = locale.moc klangcombo.moc localeadv.moc
-noinst_HEADERS = locale.h klangcombo.h klocalesample.h localeadv.h
+kcmlocale_SOURCES = main.cpp locale.cpp klangcombo.cpp klocalesample.cpp localenum.cpp localemon.cpp
+METASOURCES = locale.moc klangcombo.moc localenum.moc localemon.moc
+noinst_HEADERS = locale.h klangcombo.h klocalesample.h localenum.h localemon.h
 EXTRA_DIST = kcmlocalerc 
 
 KDE_ICON = locale
-
-kde_conf_DATA = kcmlocalerc
 
 messages:
 	$(XGETTEXT) -C -ktranslate -ki18n -x $(includedir)/kde.pot $(kcmlocale_SOURCES) && mv messages.po ../../po/kcmlocale.pot

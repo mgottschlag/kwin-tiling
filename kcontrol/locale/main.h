@@ -21,7 +21,8 @@
 
 #include <kcontrol.h>
 
-class KLocaleConfigAdvanced;
+class KLocaleConfigMoney;
+class KLocaleConfigNumber;
 
 class KLocaleApplication : public KControlApplication
 {
@@ -35,11 +36,12 @@ public:
   static void reTranslate();
   static void reTranslate(QObjectListIt it);
 
-  void resetAdvanced();
-  void resetAdvancedMon();
-  void resetAdvancedNum();
+  void reset();
+  void resetNum();
+  void resetMon();
 
 private:
   KLocaleConfig *locale;
-  KLocaleConfigAdvanced *localeadv;
+  KLocaleConfigNumber *localenum;
+  KLocaleConfigMoney *localemon;
 };

@@ -1,5 +1,5 @@
 /*
- * localeadv.h
+ * localemon.h
  *
  * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
  *
@@ -34,26 +34,21 @@ class QLineEdit;
 class KLanguageCombo;
 class KLocaleSample;
 
-class KLocaleConfigAdvanced : public KConfigWidget
+class KLocaleConfigMoney : public KConfigWidget
 {
   Q_OBJECT
 
 public:
-  KLocaleConfigAdvanced( QWidget *parent=0, const char *name=0);
-  ~KLocaleConfigAdvanced( );
+  KLocaleConfigMoney( QWidget *parent=0, const char *name=0);
+  ~KLocaleConfigMoney( );
 
 public slots:
   void loadSettings();
   void applySettings();
   void defaultSettings();
   void syncWithKLocaleMon();
-  void syncWithKLocaleNum();
 
 private slots:
-  // Numbers
-  void slotDecSymChanged(const QString &t);
-  void slotThoSepChanged(const QString &t);
-
   // Money
   void slotMonCurSymChanged(const QString &t);
   void slotMonDecSymChanged(const QString &t);
@@ -67,10 +62,6 @@ private slots:
 
 private:
   KLocaleSample *sample;
-
-  // Numbers
-  QLineEdit *edDecSym;
-  QLineEdit *edThoSep;
 
   // Money
   QLineEdit *edMonCurSym;

@@ -31,7 +31,8 @@
 #include <kglobal.h>
 
 #include "locale.h"
-#include "localeadv.h"
+#include "localenum.h"
+#include "localemon.h"
 #include "main.h"
 
 KLocaleApplication::KLocaleApplication(int &argc, char **argv, const char *name)
@@ -44,17 +45,20 @@ KLocaleApplication::KLocaleApplication(int &argc, char **argv, const char *name)
       if (!pages || pages->contains("language"))
         addPage(locale = new KLocaleConfig(dialog, "locale"), 
 		i18n("&Locale"), "locale-1.html");
-      if (!pages || pages->contains("advanced"))
-        addPage(localeadv = new KLocaleConfigAdvanced(dialog, "advanced"), 
-		i18n("&Numbers && Money"), "locale-2.html");
+      if (!pages || pages->contains("number"))
+        addPage(localenum = new KLocaleConfigNumber(dialog, "number"), 
+		i18n("&Numbers"), "locale-2.html");
+      if (!pages || pages->contains("money"))
+        addPage(localemon = new KLocaleConfigMoney(dialog, "money"), 
+		i18n("&Money"), "locale-3.html");
 
       reTranslate();
 
-      if (locale || localeadv)
+      if (locale || localenum || localemon)
         dialog->show();
       else
         {
-          fprintf(stderr, i18n("usage: kcmlocale [-init | language | advanced]\n").ascii());
+          fprintf(stderr, i18n("usage: kcmlocale [-init | language | number | money]\n").ascii());
 	  justInit = TRUE;
         }
     }
@@ -69,16 +73,20 @@ void KLocaleApplication::apply()
 {
   if (locale)
     locale->applySettings();
-  if (localeadv)
-    localeadv->applySettings();
+  if (localenum)
+    localenum->applySettings();
+  if (localemon)
+    localemon->applySettings();
 }
 
 void KLocaleApplication::defaultValues()
 {
   if (locale)
     locale->defaultSettings();
-  if (localeadv)
-    localeadv->defaultSettings();
+  if (localenum)
+    localemon->defaultSettings();
+  if (localemon)
+    localemon->defaultSettings();
 }
 
 void KLocaleApplication::reTranslate()
@@ -114,25 +122,22 @@ void KLocaleApplication::reTranslate(QObjectListIt it)
     }
 }
 
-void KLocaleApplication::resetAdvanced()
+void KLocaleApplication::reset()
 {
-  if (localeadv)
-  {
-    localeadv->syncWithKLocaleNum();
-    localeadv->syncWithKLocaleMon();
-  }
+  resetNum();
+  resetMon();
 }
 
-void KLocaleApplication::resetAdvancedMon()
+void KLocaleApplication::resetMon()
 {
-  if (localeadv)
-    localeadv->syncWithKLocaleMon();
+  if (localemon)
+    localemon->syncWithKLocaleMon();
 }
 
-void KLocaleApplication::resetAdvancedNum()
+void KLocaleApplication::resetNum()
 {
-  if (localeadv)
-    localeadv->syncWithKLocaleNum();
+  if (localenum)
+    localenum->syncWithKLocaleNum();
 }
 
 int main(int argc, char **argv)
