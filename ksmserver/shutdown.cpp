@@ -27,7 +27,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 KSMShutdown::KSMShutdown()
     : QDialog( 0, 0, TRUE, WStyle_Customize | WStyle_NoBorder ) //WType_Popup )
 {
-    KLocale locale(QString::fromLatin1("ksmserver"));
     QVBoxLayout* vbox = new QVBoxLayout( this );
     QFrame* frame = new QFrame( this );
     frame->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
@@ -35,23 +34,23 @@ KSMShutdown::KSMShutdown()
     vbox->addWidget( frame );
     vbox = new QVBoxLayout( frame, 15, 5 );
 
-    QLabel* label = new QLabel(locale.translate(
+    QLabel* label = new QLabel(i18n(
          "<center><b><big><big>Shutdown KDE Session?</big></big></b></center>"),
 	 frame );
     vbox->addWidget( label );
     vbox->addStretch();
 
-    checkbox = new QCheckBox( locale.translate("&Restore session when loggin in next time"), frame );
+    checkbox = new QCheckBox( i18n("&Restore session when loggin in next time"), frame );
     vbox->addWidget( checkbox, 0, AlignRight  );
     vbox->addStretch();
 
     QHBoxLayout* hbox = new QHBoxLayout( vbox );
     hbox->addStretch();
-    QPushButton* yes = new QPushButton(locale.translate("&Yes"), frame );
+    QPushButton* yes = new QPushButton(i18n("&Yes"), frame );
     connect( yes, SIGNAL( clicked() ), this, SLOT( accept() ) );
     yes->setDefault( TRUE );
     hbox->addWidget( yes );
-    QPushButton* cancel = new QPushButton(locale.translate("&Cancel"), frame );
+    QPushButton* cancel = new QPushButton(i18n("&Cancel"), frame );
     connect( cancel, SIGNAL( clicked() ), this, SLOT( reject() ) );
     hbox->addWidget( cancel );
 
