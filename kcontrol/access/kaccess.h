@@ -25,7 +25,7 @@ public:
 
   bool x11EventFilter(XEvent *event);
   
-  int newInstance() { readSettings(); return 0; };
+  int newInstance();
 
 
 protected:

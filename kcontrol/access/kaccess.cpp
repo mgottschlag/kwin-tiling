@@ -42,8 +42,6 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
     }
   kdDebug() << "X server XKB extension major=" << major << " minor=" << minor << endl;
 
-  readSettings();
-
   _activeWindow = wm.activeWindow();
   connect(&wm, SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
 
@@ -51,6 +49,12 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   connect( artsBellTimer, SIGNAL( timeout() ), SLOT( slotArtsBellTimeout() ));
 }
 
+int KAccessApp::newInstance()
+{
+  KGlobal::config()->reparseConfiguration();
+  readSettings();
+  return 0;
+};
 
 void KAccessApp::readSettings()
 {
@@ -146,7 +150,8 @@ void KAccessApp::readSettings()
   uint values = XkbAudibleBellMask;
   XkbSetAutoResetControls(qt_xdisplay(), ctrls, &ctrls, &values);
 
-
+  delete overlay;
+  overlay = 0;
 }
 
 
@@ -216,6 +221,7 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
 	overlay->setBackgroundColor(_visibleBellColor);
 
       // flash the overlay widget
+      overlay->raise();
       overlay->show();
       flushX();
     }
