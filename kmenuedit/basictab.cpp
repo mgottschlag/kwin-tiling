@@ -284,7 +284,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     _termOptEdit->setText(df->readEntry("TerminalOptions"));
     _uidEdit->setText(df->readEntry("X-KDE-Username"));
 
-    if( df->hasEntry( "StartupNotify" ))
+    if( df->hasKey( "StartupNotify" ))
         _launchCB->setChecked(df->readBoolEntry("StartupNotify", true));
     else // backwards comp.
         _launchCB->setChecked(df->readBoolEntry("X-KDE-StartupNotify", true));
