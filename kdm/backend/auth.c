@@ -340,7 +340,6 @@ SaveServerAuthorizations (
     auth_file = fopen (d->authFile, "w");
     umask (mask);
     if (!auth_file) {
-	Debug ("Can't creat auth file %s\n", d->authFile);
 	LogError ("Cannot open server authorization file %s\n", d->authFile);
 	free (d->authFile);
 	d->authFile = NULL;
@@ -590,10 +589,10 @@ writeAuth (FILE *file, Xauth *auth)
     if (debugLevel & DEBUG_AUTH) {	/* normally too verbose */
 	Debug (	"writeAuth: doWrite = %d\n"
 		"family: %d\n"
-		"addr:   %02[*:x\n"
-		"number: %02[*:x\n"
-		"name:   %02[*:x\n"
-		"data:   %02[*:x\n", 
+		"addr:   %02[*:hhx\n"
+		"number: %02[*:hhx\n"
+		"name:   %02[*:hhx\n"
+		"data:   %02[*:hhx\n", 
 		doWrite, auth->family,
 		auth->address_length, auth->address,
 		auth->number_length, auth->number,
@@ -1121,8 +1120,6 @@ SetUserAuthorization (struct display *d, struct verify_info *verify)
 	    }
 	}
 	if (lockStatus != LOCK_SUCCESS) {
-	    Debug ("can't lock auth file %s or backup %s\n",
-			    home_name, backup_name);
 	    LogError ("can't lock authorization file %s or backup %s\n",
 			    home_name, backup_name);
 	    return;
