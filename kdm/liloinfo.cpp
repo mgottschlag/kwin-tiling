@@ -7,8 +7,8 @@
  */
 LiloInfo::LiloInfo ( QString lilolocation,
 		             QString bootmaplocation,
-		             bool enableHack = true,
-		             bool enableDebug = false
+		             bool enableHack,
+		             bool enableDebug
 		           )
 {
 	debug = enableDebug;
@@ -475,7 +475,7 @@ bool LiloInfo::getNextOptionFromLilo()
  * Note that probably the default option will always be on the first line, but I don't use
  * that, so it that changes, this will keep working.
  */
-void LiloInfo::getOptionsFromStdout ( KProcess *, char *buffer, int len )
+void LiloInfo::getOptionsFromStdout ( KProcess *, char *buffer, int )
 {
 	bool ready = false, // indicates whether the entire input has been parsed
 		curIsDefault = false; // true if the current line contains the default option
@@ -547,7 +547,7 @@ void LiloInfo::getOptionsFromStdout ( KProcess *, char *buffer, int len )
  * Parse the output of Lilo to find the next option. The shell command, i.e. the output
  * of Lilo piped through sed scripts, is either empty or contains the next boot option.
  */
-void LiloInfo::getNextOptionFromStdout ( KProcess *, char *buffer, int len )
+void LiloInfo::getNextOptionFromStdout ( KProcess *, char *buffer, int )
 {
 	QString nextOption = QString ( buffer );
 
@@ -584,7 +584,7 @@ void LiloInfo::getNextOptionFromStdout ( KProcess *, char *buffer, int len )
  * map file, Lilo says "Ignoring entry 'map'". This is not an error, so we skip that.
  * BTW: we assume that this ignore message is always the first line on stderr.
  */
-void LiloInfo::processStderr ( KProcess *, char *buffer, int len )
+void LiloInfo::processStderr ( KProcess *, char *buffer, int  )
 {
 	// Copy the received string into a QString
 	QString errString = QString ( buffer ).append ( "\n" );
