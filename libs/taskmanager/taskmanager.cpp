@@ -646,13 +646,13 @@ void Task::close()
 void Task::raise()
 {
 //    kdDebug(1210) << "Task::raise(): " << name() << endl;
-    XRaiseWindow( qt_xdisplay(), _win );
+    KWin::raiseWindow( _win );
 }
 
 void Task::lower()
 {
 //    kdDebug(1210) << "Task::lower(): " << name() << endl;
-    XLowerWindow( qt_xdisplay(), _win );
+    KWin::lowerWindow( _win );
 }
 
 void Task::activate()
