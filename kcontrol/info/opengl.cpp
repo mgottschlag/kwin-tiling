@@ -214,13 +214,13 @@ print_extension_list(const char *ext, QListViewItem *l1)
       j++;
    }
 }
-/*
+
 #ifdef GLX_ARB_get_proc_address
 extern "C" {
 	extern __GLXextFuncPtr glXGetProcAddressARB (const GLubyte *);
 }
 #endif
-*/
+
 static void
 print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
 {
