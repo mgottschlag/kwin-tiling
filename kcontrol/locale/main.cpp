@@ -1,7 +1,7 @@
 /*
   main.cpp - A KControl Application
 
-  Copyright 1999-2000 Hans Petter Bieker <bieker@kde.org>
+  Copyright 1999-2003 Hans Petter Bieker <bieker@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,16 +17,16 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-  */
+ */
 
 #include "toplevel.h"
 #include <klocale.h>
 
-extern "C" { 
-  void *init_kcm_locale() { 
+extern "C" {
+  void *init_kcm_locale() {
     KLocale::setMainCatalogue("kcmlocale");
     return new KLocaleFactory("kcmlocale");
-  } 
+  }
 };
 
 /*

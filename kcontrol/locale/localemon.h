@@ -1,7 +1,7 @@
 /*
  * localemon.h
  *
- * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -40,7 +40,7 @@ class KLocaleConfigMoney : public QWidget
   Q_OBJECT
 
 public:
-  KLocaleConfigMoney(KLocale *locale, QWidget *parent=0, const char *name=0);
+  KLocaleConfigMoney(KLocale *locale, QWidget *parent = 0, const char *name = 0);
   virtual ~KLocaleConfigMoney();
 
   void save();

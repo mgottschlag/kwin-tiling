@@ -1,7 +1,7 @@
 /*
  * klanguagebutton.cpp - Adds some methods for inserting languages.
  *
- * Copyright (c) 1999-2002 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.trolltech.com/
@@ -33,7 +33,7 @@
 #include <kdebug.h>
 
 static void checkInsertPos( QPopupMenu *popup, const QString & str,
-                                   int &index )
+                            int &index )
 {
   if ( index == -1 )
     return;
@@ -59,7 +59,7 @@ static void checkInsertPos( QPopupMenu *popup, const QString & str,
 }
 
 static QPopupMenu * checkInsertIndex( QPopupMenu *popup,
-                            const QStringList *tags, const QString &submenu )
+                                      const QStringList *tags, const QString &submenu )
 {
   int pos = tags->findIndex( submenu );
 
@@ -128,7 +128,7 @@ KLanguageButton::~KLanguageButton()
 }
 
 void KLanguageButton::insertItem( const QIconSet& icon, const QString &text,
-                      const QString & id, const QString &submenu, int index )
+                                  const QString & id, const QString &submenu, int index )
 {
   QPopupMenu *pi = checkInsertIndex( m_popup, m_ids, submenu );
   checkInsertPos( pi, text, index );
@@ -150,7 +150,7 @@ void KLanguageButton::insertSeparator( const QString &submenu, int index )
 }
 
 void KLanguageButton::insertSubmenu( const QIconSet & icon,
-				     const QString &text, const QString &id,
+                                     const QString &text, const QString &id,
                                      const QString &submenu, int index )
 {
   QPopupMenu *pi = checkInsertIndex( m_popup, m_ids, submenu );
@@ -159,9 +159,9 @@ void KLanguageButton::insertSubmenu( const QIconSet & icon,
   pi->insertItem( icon, text, p, count(), index );
   m_ids->append( id );
   connect( p, SIGNAL( activated( int ) ),
-                        SLOT( slotActivated( int ) ) );
+           SLOT( slotActivated( int ) ) );
   connect( p, SIGNAL( highlighted( int ) ), this,
-                        SLOT( slotHighlighted( int ) ) );
+           SLOT( slotHighlighted( int ) ) );
 }
 
 void KLanguageButton::insertSubmenu( const QString &text, const QString &id,
@@ -205,15 +205,15 @@ void KLanguageButton::clear()
   d->button->setPopup( m_popup );
 
   connect( m_popup, SIGNAL( activated( int ) ),
-                        SLOT( slotActivated( int ) ) );
+           SLOT( slotActivated( int ) ) );
   connect( m_popup, SIGNAL( highlighted( int ) ),
-	   SLOT( slotHighlighted( int ) ) );
+           SLOT( slotHighlighted( int ) ) );
 
   if ( !d->staticText )
-    {
-      d->button->setText( QString::null );
-      d->button->setIconSet( QIconSet() );
-    }
+  {
+    d->button->setText( QString::null );
+    d->button->setIconSet( QIconSet() );
+  }
 }
 
 bool KLanguageButton::contains( const QString & id ) const
@@ -238,14 +238,14 @@ void KLanguageButton::setCurrentItem( int i )
   m_current = i;
 
   if ( !d->staticText )
-    {
-      d->button->setText( m_popup->text( m_current ) );
-      QIconSet *icon = m_popup->iconSet( m_current );
-      if( icon )
-	d->button->setIconSet( *icon );
-      else
-	d->button->setIconSet( QIconSet() );
-    }
+  {
+    d->button->setText( m_popup->text( m_current ) );
+    QIconSet *icon = m_popup->iconSet( m_current );
+    if ( icon )
+      d->button->setIconSet( *icon );
+    else
+      d->button->setIconSet( QIconSet() );
+  }
 }
 
 void KLanguageButton::setCurrentItem( const QString & id )

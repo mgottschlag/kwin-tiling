@@ -3,7 +3,7 @@
  *
  * Copyright (c) 1998 Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
  * Copyright (c) 1999 Preston Brown <pbrown@kde.org>
- * Copyright (c) 1999-2001 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -39,7 +39,7 @@
 #include "klocalesample.moc"
 
 KLocaleSample::KLocaleSample(KLocale *locale,
-			     QWidget *parent, const char*name)
+                             QWidget *parent, const char*name)
   : QWidget(parent, name),
     m_locale(locale)
 {
@@ -48,8 +48,8 @@ KLocaleSample::KLocaleSample(KLocale *locale,
 
   // Whatever the color scheme is, we want black text
   QColorGroup a = palette().active();
-  a.setColor(QColorGroup::Foreground,Qt::black);
-  QPalette pal(a,a,a);
+  a.setColor(QColorGroup::Foreground, Qt::black);
+  QPalette pal(a, a, a);
 
   m_labNumber = new QLabel(this, I18N_NOOP("Numbers:"));
   m_labNumber->setPalette(pal);
@@ -100,12 +100,12 @@ void KLocaleSample::slotUpdateTime()
 void KLocaleSample::slotLocaleChanged()
 {
   m_numberSample->setText(m_locale->formatNumber(1234567.89) +
-			QString::fromLatin1(" / ") +
-			m_locale->formatNumber(-1234567.89));
+                          QString::fromLatin1(" / ") +
+                          m_locale->formatNumber(-1234567.89));
 
   m_moneySample->setText(m_locale->formatMoney(123456789.00) +
-		       QString::fromLatin1(" / ") +
-		       m_locale->formatMoney(-123456789.00));
+                         QString::fromLatin1(" / ") +
+                         m_locale->formatMoney(-123456789.00));
 
   slotUpdateTime();
 
@@ -124,7 +124,7 @@ void KLocaleSample::slotLocaleChanged()
   QWhatsThis::add( m_dateSample, str );
 
   str = m_locale->translate("This is how date values will be displayed using "
-			    "a short notation.");
+                            "a short notation.");
   QWhatsThis::add( m_labDateShort, str );
   QWhatsThis::add( m_dateShortSample, str );
 

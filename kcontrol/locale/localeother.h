@@ -1,7 +1,7 @@
 /*
  * localeother.h
  *
- * Copyright (c) 2001 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 2001-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -36,7 +36,7 @@ class KLocaleConfigOther : public QWidget
   Q_OBJECT
 
 public:
-  KLocaleConfigOther(KLocale *locale, QWidget *parent=0, const char *name=0);
+  KLocaleConfigOther(KLocale *locale, QWidget *parent = 0, const char *name = 0);
   virtual ~KLocaleConfigOther();
 
   void save();

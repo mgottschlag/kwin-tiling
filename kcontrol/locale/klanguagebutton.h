@@ -2,7 +2,7 @@
  * klangbutton.h - Button with language selection drop down menu.
  *                 Derived from the KLangCombo class by Hans Petter Bieker.
  *
- * Copyright (c) 1999-2002 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2003 Hans Petter Bieker <bieker@kde.org>
  *           (c) 2001      Martijn Klingens   <mklingens@yahoo.com>
  *
  * Requires the Qt widget libraries, available at no cost at
@@ -101,8 +101,8 @@ public:
    * @param index The visual position in the submenu.
    */
   void insertSubmenu( const QIconSet & icon, const QString &text,
-		      const QString & id, const QString &submenu = QString::null,
-		      int index = -1);
+                      const QString & id, const QString &submenu = QString::null,
+                      int index = -1);
   /**
    * Inserts a submenu into the combo box. A negative index will append the item.
    *

@@ -2,7 +2,7 @@
  * locale.h
  *
  * Copyright (c) 1998 Matthias Hoelzer <hoelzer@physik.uni-wuerzburg.de>
- * Copyright (c) 1999-2000 Hans Petter Bieker <bieker@kde.org>
+ * Copyright (c) 1999-2003 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -23,8 +23,8 @@
  */
 
 
-#ifndef __LOCALE_H__
-#define __LOCALE_H__
+#ifndef __KCMLOCALE_H__
+#define __KCMLOCALE_H__
 
 #include <qwidget.h>
 
@@ -45,7 +45,7 @@ class KLocaleConfig : public QWidget
 
 public:
   KLocaleConfig( KLocale *_locale,
-		 QWidget *parent=0, const char *name=0);
+                 QWidget *parent = 0, const char *name = 0);
   virtual ~KLocaleConfig( );
 
   void save();
@@ -70,7 +70,7 @@ private slots:
 
   void changedCountry(const QString & code);
   void readLocale(const QString &path, QString &name,
-		  const QString &sub) const;
+                  const QString &sub) const;
 
   void slotAddLanguage(const QString & id);
   void slotRemoveLanguage();
@@ -85,8 +85,8 @@ private:
 
   KLanguageButton *m_comboCountry;
 
-  QLabel *m_labCountry,
-    *m_labLang;
+  QLabel *m_labCountry;
+  QLabel *m_labLang;
 
   QListBox * m_languages;
   KLanguageButton * m_addLanguage;

@@ -2,7 +2,7 @@
   toplevel.cpp - A KControl Application
 
   Copyright 1998 Matthias Hoelzer
-  Copyright 1999-2001 Hans Petter Bieker <bieker@kde.org>
+  Copyright 1999-2003 Hans Petter Bieker <bieker@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@
 #include "toplevel.moc"
 
 KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name, 
-				       const QStringList &args)
+                                       const QStringList &args)
   : KCModule( KLocaleFactory::instance(), parent, args),
     m_aboutData(0)
 {
@@ -79,63 +79,63 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name,
 
   // getting signals from childs
   connect(m_localemain, SIGNAL(localeChanged()),
-	  this, SIGNAL(localeChanged()));
+          this, SIGNAL(localeChanged()));
   connect(m_localemain, SIGNAL(languageChanged()),
-	  this, SIGNAL(languageChanged()));
+          this, SIGNAL(languageChanged()));
 
   // run the slots on the childs
   connect(this, SIGNAL(localeChanged()),
-  	  m_localemain, SLOT(slotLocaleChanged()));
+          m_localemain, SLOT(slotLocaleChanged()));
   connect(this, SIGNAL(localeChanged()),
-	  m_localenum, SLOT(slotLocaleChanged()));
+          m_localenum, SLOT(slotLocaleChanged()));
   connect(this, SIGNAL(localeChanged()),
-	  m_localemon, SLOT(slotLocaleChanged()));
+          m_localemon, SLOT(slotLocaleChanged()));
   connect(this, SIGNAL(localeChanged()),
-  	  m_localetime, SLOT(slotLocaleChanged()));
+          m_localetime, SLOT(slotLocaleChanged()));
   connect(this, SIGNAL(localeChanged()),
-	  m_localeother, SLOT(slotLocaleChanged()));
+          m_localeother, SLOT(slotLocaleChanged()));
 
   // keep the example up to date
   // NOTE: this will make the sample be updated 6 times the first time
   // because combo boxes++ emits the change signal not only when the user changes
   // it, but also when it's changed by the program.
   connect(m_localenum, SIGNAL(localeChanged()),
-	  m_sample, SLOT(slotLocaleChanged()));
+          m_sample, SLOT(slotLocaleChanged()));
   connect(m_localemon, SIGNAL(localeChanged()),
-	  m_sample, SLOT(slotLocaleChanged()));
+          m_sample, SLOT(slotLocaleChanged()));
   connect(m_localetime, SIGNAL(localeChanged()),
-	  m_sample, SLOT(slotLocaleChanged()));
+          m_sample, SLOT(slotLocaleChanged()));
   // No examples for this yet
   //connect(m_localetime, SIGNAL(slotLocaleChanged()),
   //m_sample, SLOT(slotLocaleChanged()));
   connect(this, SIGNAL(localeChanged()),
-	  m_sample, SLOT(slotLocaleChanged()));
+          m_sample, SLOT(slotLocaleChanged()));
 
   // make sure we always have translated interface
   connect(this, SIGNAL(languageChanged()),
-	  this, SLOT(slotTranslate()));
+          this, SLOT(slotTranslate()));
   connect(this, SIGNAL(languageChanged()),
-	  m_localemain, SLOT(slotTranslate()));
+          m_localemain, SLOT(slotTranslate()));
   connect(this, SIGNAL(languageChanged()),
-	  m_localenum, SLOT(slotTranslate()));
+          m_localenum, SLOT(slotTranslate()));
   connect(this, SIGNAL(languageChanged()),
-	  m_localemon, SLOT(slotTranslate()));
+          m_localemon, SLOT(slotTranslate()));
   connect(this, SIGNAL(languageChanged()),
-	  m_localetime, SLOT(slotTranslate()));
+          m_localetime, SLOT(slotTranslate()));
   connect(this, SIGNAL(languageChanged()),
-	  m_localeother, SLOT(slotTranslate()));
+          m_localeother, SLOT(slotTranslate()));
 
   // mark it as changed when we change it.
   connect(m_localemain, SIGNAL(localeChanged()),
-	  SLOT(slotChanged()));
+          SLOT(slotChanged()));
   connect(m_localenum, SIGNAL(localeChanged()),
-	  SLOT(slotChanged()));
+          SLOT(slotChanged()));
   connect(m_localemon, SIGNAL(localeChanged()),
-	  SLOT(slotChanged()));
+          SLOT(slotChanged()));
   connect(m_localetime, SIGNAL(localeChanged()),
-	  SLOT(slotChanged()));
+          SLOT(slotChanged()));
   connect(m_localeother, SIGNAL(localeChanged()),
-	  SLOT(slotChanged()));
+          SLOT(slotChanged()));
 
   load();
 }
@@ -164,11 +164,11 @@ void KLocaleApplication::save()
   KLocale *lsave = KGlobal::_locale;
   KGlobal::_locale = m_locale;
   KMessageBox::information(this, m_locale->translate
-			   ("Changed language settings apply only to "
-			    "newly started applications.\nTo change the "
-			    "language of all programs, you will have to "
-			    "logout first."),
-			   m_locale->translate("Applying Language Settings"),
+                           ("Changed language settings apply only to "
+                            "newly started applications.\nTo change the "
+                            "language of all programs, you will have to "
+                            "logout first."),
+                           m_locale->translate("Applying Language Settings"),
                            QString::fromLatin1("LanguageChangesApplyOnlyToNewlyStartedPrograms"));
   // restore the old global locale
   KGlobal::_locale = lsave;
@@ -188,11 +188,11 @@ void KLocaleApplication::save()
 
   // rebuild the date base if language was changed
   if (langChanged)
-    {
-      KProcess proc;
-      proc << QString::fromLatin1("kbuildsycoca");
-      proc.start(KProcess::DontCare);
-    }
+  {
+    KProcess proc;
+    proc << QString::fromLatin1("kbuildsycoca");
+    proc.start(KProcess::DontCare);
+  }
 
   emit changed(false);
 }
@@ -225,23 +225,27 @@ void KLocaleApplication::slotTranslate()
   QObject *wc;
   QObjectList *list = queryList("QWidget");
   QObjectListIt it(*list);
-  while ( (wc = it.current()) != 0 ) {
+  while ( (wc = it.current()) != 0 )
+  {
     ++it;
 
     // unnamed labels will cause errors and should not be
     // retranslated. E.g. the example box should not be
     // retranslated from here.
-    if (wc->name() == 0) continue;
-    if (::qstrcmp(wc->name(), "") == 0) continue;
-    if (::qstrcmp(wc->name(), "unnamed") == 0) continue;
+    if (wc->name() == 0)
+      continue;
+    if (::qstrcmp(wc->name(), "") == 0)
+      continue;
+    if (::qstrcmp(wc->name(), "unnamed") == 0)
+      continue;
 
     if (::qstrcmp(wc->className(), "QLabel") == 0)
       ((QLabel *)wc)->setText( m_locale->translate( wc->name() ) );
     else if (::qstrcmp(wc->className(), "QGroupBox") == 0 ||
-	     ::qstrcmp(wc->className(), "QVGroupBox") == 0)
+             ::qstrcmp(wc->className(), "QVGroupBox") == 0)
       ((QGroupBox *)wc)->setTitle( m_locale->translate( wc->name() ) );
     else if (::qstrcmp(wc->className(), "QPushButton") == 0 ||
-	     ::qstrcmp(wc->className(), "KMenuButton") == 0)
+             ::qstrcmp(wc->className(), "KMenuButton") == 0)
       ((QPushButton *)wc)->setText( m_locale->translate( wc->name() ) );
     else if (::qstrcmp(wc->className(), "QCheckBox") == 0)
       ((QCheckBox *)wc)->setText( m_locale->translate( wc->name() ) );
@@ -269,20 +273,20 @@ void KLocaleApplication::slotChanged()
 const KAboutData * KLocaleApplication::aboutData() const
 {
   if ( ! m_aboutData )
-    {
-      KLocaleApplication * that = const_cast<KLocaleApplication *>(this);
+  {
+    KLocaleApplication * that = const_cast<KLocaleApplication *>(this);
 
-      that->m_aboutData = new KAboutData("kcmlocale",
-					 I18N_NOOP("KCMLocale"),
-					 "3.0",
-					 I18N_NOOP("Regional settings"),
-					 KAboutData::License_GPL,
-					 "(C) 1998 Matthias Hoelzer, "
-					 "(C) 1999-2001 Hans Petter Bieker",
-					 0,
-					 0,
-					 "bieker@kde.org");
-    }
+    that->m_aboutData = new KAboutData("kcmlocale",
+                                       I18N_NOOP("KCMLocale"),
+                                       "3.0",
+                                       I18N_NOOP("Regional settings"),
+                                       KAboutData::License_GPL,
+                                       "(C) 1998 Matthias Hoelzer, "
+                                       "(C) 1999-2003 Hans Petter Bieker",
+                                       0,
+                                       0,
+                                       "bieker@kde.org");
+  }
 
   return m_aboutData;
 }
