@@ -45,11 +45,11 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name, bool init)
 
 void KDMUsersWidget::setupPage(QWidget *)
 {
-      QLabel *a_label = new QLabel(klocale->translate("All users"), this);
+      QLabel *a_label = new QLabel(i18n("All users"), this);
       a_label->setFixedSize(a_label->sizeHint());
-      QLabel *s_label = new QLabel(klocale->translate("Selected users"), this);
+      QLabel *s_label = new QLabel(i18n("Selected users"), this);
       s_label->setFixedSize(s_label->sizeHint());
-      QLabel *n_label = new QLabel(klocale->translate("No-show users"), this);
+      QLabel *n_label = new QLabel(i18n("No-show users"), this);
       n_label->setFixedSize(n_label->sizeHint());
 
       QPushButton *all_to_no, *all_to_usr, *no_to_all, *usr_to_all;
@@ -76,14 +76,14 @@ void KDMUsersWidget::setupPage(QWidget *)
       usrGroup->setExclusive( TRUE );
 
       rb = new QRadioButton( 
-         klocale->translate("Show only\nselected users"), usrGroup );
+         i18n("Show only\nselected users"), usrGroup );
       rb->setGeometry( 10, 10, 140, 25 );
       if(!showallusers)
         rb->setChecked(true);
       usrGroup->insert( rb, 0 );
 
       rb = new QRadioButton( 
-         klocale->translate("Show all users\n but no-show users"), usrGroup );
+         i18n("Show all users\n but no-show users"), usrGroup );
       rb->setGeometry( 10, 50, 140, 25 );
       if(showallusers)
         rb->setChecked(true);
@@ -94,13 +94,13 @@ void KDMUsersWidget::setupPage(QWidget *)
 
       shwGroup = new QButtonGroup( this );
       cbusrshw = new QCheckBox(
-         klocale->translate("Show users"), shwGroup);
+         i18n("Show users"), shwGroup);
       cbusrshw->setGeometry( 10, 10, 120, 25 );
       if(showusers)
         cbusrshw->setChecked(true);
       connect( cbusrshw, SIGNAL( toggled( bool ) ), SLOT( slotUserShow( bool ) ) );
       cbusrsrt = new QCheckBox(
-         klocale->translate("Sort users"), shwGroup);
+         i18n("Sort users"), shwGroup);
       cbusrsrt->setGeometry( 10, 40, 120, 25 );
       if(sortusers)
         cbusrsrt->setChecked(true);
@@ -132,7 +132,7 @@ void KDMUsersWidget::setupPage(QWidget *)
       userbutton->setFixedSize(80, 80);
       connect(userbutton, SIGNAL(iconChanged(const char*)),
               SLOT(slotUserPixChanged(const char*)));
-      QToolTip::add(userbutton, klocale->translate("Click or drop an image here"));
+      QToolTip::add(userbutton, i18n("Click or drop an image here"));
       userpixdrop = new KDNDDropZone(userbutton, DndURL);
       connect(userpixdrop, SIGNAL(dropAction(KDNDDropZone*)),
               SLOT(slotPixDropped(KDNDDropZone*)));
@@ -179,8 +179,8 @@ void KDMUsersWidget::slotUserPixChanged(const char*)
   QString msg, user(userlabel->text());
   if(user.isEmpty())
   {
-    if(KMsgBox::yesNo(this, klocale->translate("No user selected"),
-       klocale->translate("Save image as default image?")))
+    if(KMsgBox::yesNo(this, i18n("No user selected"),
+       i18n("Save image as default image?")))
       user = "default";
     else
       return;
@@ -191,10 +191,10 @@ void KDMUsersWidget::slotUserPixChanged(const char*)
     return;
   if(!p->save(userpix, "XPM"))
   {
-    msg  = klocale->translate("There was an error saving the image:\n>");
+    msg  = i18n("There was an error saving the image:\n>");
     msg += userpix;
-    msg += klocale->translate("<");
-    KMsgBox::message(this, klocale->translate("ERROR"), msg);
+    msg += i18n("<");
+    KMsgBox::message(this, i18n("ERROR"), msg);
   }
   userbutton->adjustSize();
 }
@@ -224,12 +224,12 @@ void KDMUsersWidget::slotPixDropped(KDNDDropZone *zone)
 
   if( !ext.contains(filename.right(filename.length()-last_dot_idx), false) )
   {
-    msg =  klocale->translate("Sorry, but \n");
+    msg =  i18n("Sorry, but \n");
     msg += filename;
-    msg += klocale->translate("\ndoes not seem to be an image file");
-    msg += klocale->translate("\nPlease use files with these extensions\n");
+    msg += i18n("\ndoes not seem to be an image file");
+    msg += i18n("\nPlease use files with these extensions\n");
     msg += ext;
-    KMsgBox::message( this, klocale->translate("Improper File Extension"), msg);
+    KMsgBox::message( this, i18n("Improper File Extension"), msg);
   }
   else
   {
@@ -248,8 +248,8 @@ void KDMUsersWidget::slotPixDropped(KDNDDropZone *zone)
     {
       if(user.isEmpty())
       {
-        if(KMsgBox::yesNo(this, klocale->translate("No user selected"),
-           klocale->translate("Save image as default image?")))
+        if(KMsgBox::yesNo(this, i18n("No user selected"),
+           i18n("Save image as default image?")))
           user = "default";
         else
           return;
@@ -273,10 +273,10 @@ void KDMUsersWidget::slotPixDropped(KDNDDropZone *zone)
       }
       else
       {
-        msg  = klocale->translate("There was an error loading the image:\n>");
+        msg  = i18n("There was an error loading the image:\n>");
         msg += url.path();
-        msg += klocale->translate("<\nIt will not be saved...");
-        KMsgBox::message(this, klocale->translate("ERROR"), msg);
+        msg += i18n("<\nIt will not be saved...");
+        KMsgBox::message(this, i18n("ERROR"), msg);
       }
     }
   }

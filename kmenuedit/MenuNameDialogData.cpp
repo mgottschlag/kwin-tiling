@@ -28,17 +28,17 @@ MenuNameDialogData::MenuNameDialogData
 	Inherited( parent, name, TRUE, 0 )
 {
 	QLabel* dlgedit_Label_1;
-	dlgedit_Label_1 = new QLabel(klocale->translate("Change the name of the menus as displayed in kpanel"), 
+	dlgedit_Label_1 = new QLabel(i18n("Change the name of the menus as displayed in kpanel"), 
 				     this, "Label_1" );
 	dlgedit_Label_1->setFixedSize(dlgedit_Label_1->sizeHint());
 
 	QLabel* dlgedit_Label_2;
-	dlgedit_Label_2 = new QLabel(klocale->translate("Personal:"),
+	dlgedit_Label_2 = new QLabel(i18n("Personal:"),
 				     this, "Label_2" );
 	dlgedit_Label_2->setFixedSize(dlgedit_Label_2->sizeHint());
 
 	QLabel* dlgedit_Label_3;
-	dlgedit_Label_3 = new QLabel(klocale->translate("Default:"),
+	dlgedit_Label_3 = new QLabel(i18n("Default:"),
 				     this, "Label_3" );
 	dlgedit_Label_3->setFixedSize(dlgedit_Label_3->sizeHint());
 
@@ -52,20 +52,20 @@ MenuNameDialogData::MenuNameDialogData
 	i_default->setMinimumSize(fontMetrics().width("----------"), h);
 	i_default->setMaximumSize(QLayout::unlimited, h);
 
-	int w = (int)(1.8 * QMAX(fontMetrics().width(klocale->translate("OK")),
-			   fontMetrics().width(klocale->translate("Cancel"))));
+	int w = (int)(1.8 * QMAX(fontMetrics().width(i18n("OK")),
+			   fontMetrics().width(i18n("Cancel"))));
 	
 	b_ok = new QPushButton( this, "PushButton_1" );
 	b_ok->setFixedSize(w,h);
 	connect( b_ok, SIGNAL(pressed()), SLOT(accept()) );
-	b_ok->setText( klocale->translate("OK") );
+	b_ok->setText( i18n("OK") );
 	b_ok->setAutoRepeat( FALSE );
 	b_ok->setAutoResize( FALSE );
 
 	b_cancel = new QPushButton( this, "PushButton_2" );
 	b_cancel->setFixedSize(w,h);
 	connect( b_cancel, SIGNAL(pressed()), SLOT(reject()) );
-	b_cancel->setText( klocale->translate("Cancel") );
+	b_cancel->setText( i18n("Cancel") );
 	b_cancel->setAutoRepeat( FALSE );
 	b_cancel->setAutoResize( FALSE );
 

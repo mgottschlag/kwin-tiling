@@ -206,8 +206,8 @@ void EditButton::mouseReleaseEvent( QMouseEvent * _mouse )
       QFileInfo fi(data);
       if( !fi.exists() || data == "/" )
 	{
-	  QMessageBox::warning( 0, klocale->translate("KMenuedit"), 
-				klocale->translate("Sorry ! You have to save your changes\n"
+	  QMessageBox::warning( 0, i18n("KMenuedit"), 
+				i18n("Sorry ! You have to save your changes\n"
 				"before you can drop this item on "
 				"another window.") );
 	  delete dndIcon;

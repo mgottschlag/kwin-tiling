@@ -58,12 +58,12 @@ KeyboardConfig::KeyboardConfig (QWidget * parent, const char *name, bool init)
 
   if (GUI)
     {
-      repeatBox = new QButtonGroup(klocale->translate("Keyboard repeat"), 
+      repeatBox = new QButtonGroup(i18n("Keyboard repeat"), 
 				   this);
-      repeatOn = new QRadioButton(klocale->translate("On"), repeatBox);
-      repeatOff = new QRadioButton(klocale->translate("Off"), repeatBox);
+      repeatOn = new QRadioButton(i18n("On"), repeatBox);
+      repeatOff = new QRadioButton(i18n("Off"), repeatBox);
       
-      click = new KSliderControl(klocale->translate("Key click volume"),
+      click = new KSliderControl(i18n("Key click volume"),
 				 0, 100, 10, 100, "%", this);
       click->setLabelSize(0.3);
       click->setLabelAlignment(AlignLeft);

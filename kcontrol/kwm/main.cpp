@@ -61,29 +61,29 @@ KKWMApplication::KKWMApplication(int &argc, char **argv, const char *name)
     {
       if (!pages || pages->contains("options"))
 	addPage(options = new KWindowConfig(dialog, "options"), 
-		klocale->translate("&Options"), "kwm-1.html");
+		i18n("&Options"), "kwm-1.html");
       if (!pages || pages->contains("buttons"))
 	addPage(buttons = new KTitlebarButtons(dialog, "buttons"),
-		klocale->translate("&Buttons"), "kwm-2.html");
+		i18n("&Buttons"), "kwm-2.html");
       if (!pages || pages->contains("titlebar"))
 	addPage(appearance = new KTitlebarAppearance(dialog, "titlebar"), 
-		klocale->translate("&Titlebar"), "kwm-3.html");
+		i18n("&Titlebar"), "kwm-3.html");
       if (!pages || pages->contains("borders"))
 	addPage(desktop = new KDesktopConfig(dialog, "borders"), 
-		klocale->translate("Bo&rders"), "kwm-4.html"); 
+		i18n("Bo&rders"), "kwm-4.html"); 
       if (!pages || pages->contains("mouse"))
 	addPage(mouse = new KMouseConfig(dialog, "mouse"), 
-		klocale->translate("&Mouse"), "kwm-5.html"); 
+		i18n("&Mouse"), "kwm-5.html"); 
 
       if (!pages || pages->contains("advanced"))
 	addPage(advanced = new KAdvancedConfig(dialog, "advanced"), 
-		klocale->translate("&Advanced"), "kwm-6.html"); 
+		i18n("&Advanced"), "kwm-6.html"); 
 
       if (options || buttons || appearance || desktop || mouse || advanced)
         dialog->show();
       else
         {
-          fprintf(stderr, klocale->translate("usage: kcmkwm [-init | {options,buttons,titlebar,borders,mouse,advanced}]\n"));
+          fprintf(stderr, i18n("usage: kcmkwm [-init | {options,buttons,titlebar,borders,mouse,advanced}]\n"));
           justInit = TRUE;
         }
 
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
     config = new KConfig(KApplication::kde_configdir() + "/kwmrc", 
                          KApplication::localconfigdir() + "/kwmrc");
     KKWMApplication app(argc, argv, "kcmkwm");
-    app.setTitle(klocale->translate("Window manager style"));
+    app.setTitle(i18n("Window manager style"));
     int result = 0;
     if (app.runGUI())
 	result =  app.exec();

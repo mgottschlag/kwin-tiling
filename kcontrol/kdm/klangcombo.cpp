@@ -50,7 +50,7 @@ void KLanguageCombo::insertLanguage(const char *lang)
 {
   QPainter p;
 
-  QString output = QString(klocale->translate(language(lang))) + " ("+tag(lang)+")";
+  QString output = QString(i18n(language(lang))) + " ("+tag(lang)+")";
 
   int w = fontMetrics().width(output) + 24;
   QPixmap pm(w, 16);
@@ -130,7 +130,7 @@ void KLanguageCombo::loadLanguageList()
       if (!name.isEmpty())
         languages.append(name);
       else
-        languages.append(klocale->translate("without name!"));
+        languages.append(i18n("without name!"));
              
      insertLanguage(QString(lang)+";"+name);
 

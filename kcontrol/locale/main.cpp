@@ -49,13 +49,13 @@ KLocaleApplication::KLocaleApplication(int &argc, char **argv, const char *name)
     {
       if (!pages || pages->contains("language"))
         addPage(locale = new KLocaleConfig(dialog, "locale"), 
-		klocale->translate("&Locale"), "locale-1.html");
+		i18n("&Locale"), "locale-1.html");
 
       if (locale)
         dialog->show();
       else
         {
-          fprintf(stderr, klocale->translate("usage: kcmlocale [-init | language]\n"));
+          fprintf(stderr, i18n("usage: kcmlocale [-init | language]\n"));
 	  justInit = TRUE;
         }
     }
@@ -83,7 +83,7 @@ void KLocaleApplication::defaultValues()
 int main(int argc, char **argv)
 {
   KLocaleApplication app(argc, argv, "kcmlocale");
-  app.setTitle(klocale->translate("Locale settings"));
+  app.setTitle(i18n("Locale settings"));
   
   if (app.runGUI())
     return app.exec();

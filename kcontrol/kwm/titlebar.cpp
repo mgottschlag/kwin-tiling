@@ -122,23 +122,23 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
   blankTitlebar = new TitlebarPreview(titlebarFrame, "blanktbar");
 
   // button name labels
-  minB = new QLabel(klocale->translate("Minimize"), this);
+  minB = new QLabel(i18n("Minimize"), this);
   minB->adjustSize();
   label_w = max(label_w, minB->width());
 
-  maxB = new QLabel(klocale->translate("Maximize"), this);
+  maxB = new QLabel(i18n("Maximize"), this);
   maxB->adjustSize();
   label_w = max(label_w, maxB->width());
 
-  stickyB = new QLabel(klocale->translate("Sticky"), this);
+  stickyB = new QLabel(i18n("Sticky"), this);
   stickyB->adjustSize();
   label_w = max(label_w, stickyB->width());
 
-  closeB = new QLabel(klocale->translate("Close"), this);
+  closeB = new QLabel(i18n("Close"), this);
   closeB->adjustSize();
   label_w = max(label_w, closeB->width());
 
-  menuB = new QLabel(klocale->translate("Menu"), this);
+  menuB = new QLabel(i18n("Menu"), this);
   menuB->adjustSize();
   label_w = max(label_w, menuB->width());
 
@@ -175,15 +175,15 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
   delete pm;
 
   // left/right/off column labels
-  left = new QLabel(klocale->translate("Left"), this);
+  left = new QLabel(i18n("Left"), this);
   left->adjustSize();
   selection_w = max(selection_w, left->width());
 
-  right = new QLabel(klocale->translate("Right"), this);
+  right = new QLabel(i18n("Right"), this);
   right->adjustSize();
   selection_w = max(selection_w, right->width());
 
-  off = new QLabel(klocale->translate("Off"), this);
+  off = new QLabel(i18n("Off"), this);
   off->adjustSize();
   selection_w = max(selection_w, off->width());
 
@@ -467,12 +467,12 @@ void KTitlebarButtons::drawPreview(bool draw)
 	{
 
 	  // can't place max on left
-	  KMsgBox::message(this,klocale->translate("Warning"),
-			   klocale->translate("The left side of the titlebar "
+	  KMsgBox::message(this,i18n("Warning"),
+			   i18n("The left side of the titlebar "
 					      "is full... disabling the 'maximise' "
 					      "button\n"),
 			   KMsgBox::EXCLAMATION,
-			   klocale->translate("Close") );
+			   i18n("Close") );
 	  maxRB[0]->setChecked(FALSE);
 	  maxRB[2]->setChecked(TRUE);
 	  left--;
@@ -500,12 +500,12 @@ void KTitlebarButtons::drawPreview(bool draw)
       else
 	{
 	  // can't place max on right
-	  KMsgBox::message(this,klocale->translate("Warning"),
-			   klocale->translate("The right side of the titlebar "
+	  KMsgBox::message(this,i18n("Warning"),
+			   i18n("The right side of the titlebar "
 					      "is full... disabling the 'maximise' "
 					      "button\n"),
 			   KMsgBox::EXCLAMATION,
-			   klocale->translate("Close") );
+			   i18n("Close") );
 	  maxRB[1]->setChecked(FALSE);
 	  maxRB[2]->setChecked(TRUE);
 	  right--;
@@ -540,12 +540,12 @@ void KTitlebarButtons::drawPreview(bool draw)
       else
 	{
 	  // left side is full
-	  KMsgBox::message(this,klocale->translate("Warning"),
-			   klocale->translate("The left side of the titlebar "
+	  KMsgBox::message(this,i18n("Warning"),
+			   i18n("The left side of the titlebar "
 					      "is full... disabling the 'minimise' "
 					      "button\n"),
 			   KMsgBox::EXCLAMATION,
-			   klocale->translate("Close") );
+			   i18n("Close") );
 	  minRB[0]->setChecked(FALSE);
 	  minRB[2]->setChecked(TRUE);
 	  left--;
@@ -573,12 +573,12 @@ void KTitlebarButtons::drawPreview(bool draw)
       else
 	{
 	  // can't place min on right
-	  KMsgBox::message(this,klocale->translate("Warning"),
-			   klocale->translate("The right side of the titlebar "
+	  KMsgBox::message(this,i18n("Warning"),
+			   i18n("The right side of the titlebar "
 					      "is full... disabling the 'minimise' "
 					      "button\n"),
 			   KMsgBox::EXCLAMATION,
-			   klocale->translate("Close") );
+			   i18n("Close") );
 	  minRB[1]->setChecked(FALSE);
 	  minRB[2]->setChecked(TRUE);
 	  right--;
@@ -927,21 +927,21 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   lay->setColStretch(1,1);
 
   //CT 06Nov1998 - title alignment GUI config  
-  alignBox = new QButtonGroup (klocale->translate("Title Alignment"), this);
+  alignBox = new QButtonGroup (i18n("Title Alignment"), this);
 
   QGridLayout *pixLay = new QGridLayout(alignBox,2,3,15,5);
   
-  leftAlign = new QRadioButton(klocale->translate("Left"),alignBox);
+  leftAlign = new QRadioButton(i18n("Left"),alignBox);
   leftAlign->adjustSize();
   leftAlign->setMinimumSize(leftAlign->size());
   pixLay->addWidget(leftAlign,1,0);
 
-  midAlign = new QRadioButton(klocale->translate("Middle"),alignBox);
+  midAlign = new QRadioButton(i18n("Middle"),alignBox);
   midAlign->adjustSize();
   midAlign->setMinimumSize(midAlign->size());
   pixLay->addWidget(midAlign,1,1);
 
-  rightAlign = new QRadioButton(klocale->translate("Right"),alignBox);
+  rightAlign = new QRadioButton(i18n("Right"),alignBox);
   rightAlign->adjustSize();
   rightAlign->setMinimumSize(rightAlign->size());
   pixLay->addWidget(rightAlign,1,2);
@@ -952,7 +952,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   //CT
 
   //CT 02Dec1998 - foul changes for some weird options
-  appearBox = new QGroupBox(klocale->translate("Appearance"), 
+  appearBox = new QGroupBox(i18n("Appearance"), 
 				 this);
 
   QBoxLayout *appearLay = new QVBoxLayout (appearBox,10,5);
@@ -964,13 +964,13 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   QBoxLayout *pushLay = new QVBoxLayout (titlebarBox,10,5);
   //CT
 
-  vShaded = new QRadioButton(klocale->translate("Shaded Vertically"), 
+  vShaded = new QRadioButton(i18n("Shaded Vertically"), 
 			    titlebarBox);
   vShaded->adjustSize();
   vShaded->setMinimumSize(vShaded->size());
   pushLay->addWidget(vShaded);
 
-  hShaded = new QRadioButton(klocale->translate("Shaded Horizontally"), 
+  hShaded = new QRadioButton(i18n("Shaded Horizontally"), 
 			    titlebarBox);
   hShaded->adjustSize();
   hShaded->setMinimumSize(hShaded->size());
@@ -979,7 +979,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   connect(vShaded, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
   connect(hShaded, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
 
-  plain = new QRadioButton(klocale->translate("Plain"), 
+  plain = new QRadioButton(i18n("Plain"), 
 			   titlebarBox);
   plain->adjustSize();
   plain->setMinimumSize(plain->size());
@@ -987,7 +987,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   connect(plain, SIGNAL(clicked()), this, SLOT(titlebarChanged()));
 
-  pixmap = new QRadioButton(klocale->translate("Pixmap"),
+  pixmap = new QRadioButton(i18n("Pixmap"),
 	                   titlebarBox);
   pixmap->adjustSize();
   pixmap->setMinimumSize(pixmap->size());
@@ -1000,7 +1000,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   appearLay->addWidget(titlebarBox);
 
-  cbFrame = new QCheckBox(klocale->translate("Active title has shaded frame"),
+  cbFrame = new QCheckBox(i18n("Active title has shaded frame"),
 	                   appearBox);
   cbFrame->adjustSize();
   cbFrame->setMinimumSize(cbFrame->size());
@@ -1012,7 +1012,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   lay->addWidget(appearBox,1,0);
 
-  pixmapBox    = new QGroupBox(klocale->translate("Pixmap"), this); 
+  pixmapBox    = new QGroupBox(i18n("Pixmap"), this); 
  
   pixLay = new QGridLayout(pixmapBox,7,2,10,5);
   pixLay->addRowSpacing(0,10);
@@ -1041,18 +1041,18 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
 
   connect(pbPixmapInactive, SIGNAL(clicked()), this, SLOT(inactivePressed()));
 
-  lPixmapActive = new QLabel(pbPixmapActive, klocale->translate("Active pixmap:"), pixmapBox);
+  lPixmapActive = new QLabel(pbPixmapActive, i18n("Active pixmap:"), pixmapBox);
   lPixmapActive->adjustSize(); 
   lPixmapActive->setMinimumSize(lPixmapActive->size());
   pixLay->addMultiCellWidget(lPixmapActive,1,1,0,1);
 
-  lPixmapInactive = new QLabel(pbPixmapInactive, klocale->translate("Inactive pixmap:"), pixmapBox);
+  lPixmapInactive = new QLabel(pbPixmapInactive, i18n("Inactive pixmap:"), pixmapBox);
   lPixmapInactive->adjustSize();
   lPixmapInactive->setMinimumSize(lPixmapInactive->size());
   pixLay->addMultiCellWidget(lPixmapInactive,4,4,0,1);
 
   //CT 02Dec1998 - macStyle soup options
-  cbPixedText = new QCheckBox(klocale->translate("No pixmap under text"),pixmapBox);
+  cbPixedText = new QCheckBox(i18n("No pixmap under text"),pixmapBox);
   cbPixedText->adjustSize();
   cbPixedText->setMinimumSize(cbPixedText->size());
   pixLay->addMultiCellWidget(cbPixedText,6,6,0,1);
@@ -1063,7 +1063,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   lay->addWidget(pixmapBox,1,1);
 
   //CT 11feb98 - Title double click
-  titlebarDblClickBox = new QGroupBox(klocale->translate("Mouse action"),
+  titlebarDblClickBox = new QGroupBox(i18n("Mouse action"),
 				       this);
 
   pixLay = new QGridLayout(titlebarDblClickBox,2,2,10,5);
@@ -1071,7 +1071,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   pixLay->setColStretch(0,0);
   pixLay->setColStretch(1,1);
 
-  lDblClick = new QLabel(klocale->translate("Left Button double click does:"),
+  lDblClick = new QLabel(i18n("Left Button double click does:"),
 			 titlebarDblClickBox);
   lDblClick->adjustSize();
   lDblClick->setMinimumSize(lDblClick->size());
@@ -1081,16 +1081,16 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   
   // I commented some stuff out, since it does not make sense (Matthias 23okt98)
   dblClickCombo = new QComboBox(FALSE, titlebarDblClickBox);
-  dblClickCombo->insertItem(klocale->translate("(Un)Maximize"),DCTB_MAXIMIZE);
-  dblClickCombo->insertItem(klocale->translate("(Un)Shade"),DCTB_SHADE);
-  dblClickCombo->insertItem(klocale->translate("Iconify"),DCTB_ICONIFY);
-  dblClickCombo->insertItem(klocale->translate("(Un)Sticky"),DCTB_STICKY);
-//   dblClickCombo->insertItem(klocale->translate("Move"),DCTB_MOVE);
-//   dblClickCombo->insertItem(klocale->translate("Resize"),DCTB_RESIZE);
-//   dblClickCombo->insertItem(klocale->translate("Restore"),DCTB_RESTORE);
-//   dblClickCombo->insertItem(klocale->translate("Operations Menu"),
+  dblClickCombo->insertItem(i18n("(Un)Maximize"),DCTB_MAXIMIZE);
+  dblClickCombo->insertItem(i18n("(Un)Shade"),DCTB_SHADE);
+  dblClickCombo->insertItem(i18n("Iconify"),DCTB_ICONIFY);
+  dblClickCombo->insertItem(i18n("(Un)Sticky"),DCTB_STICKY);
+//   dblClickCombo->insertItem(i18n("Move"),DCTB_MOVE);
+//   dblClickCombo->insertItem(i18n("Resize"),DCTB_RESIZE);
+//   dblClickCombo->insertItem(i18n("Restore"),DCTB_RESTORE);
+//   dblClickCombo->insertItem(i18n("Operations Menu"),
 // 			    DCTB_OPERATIONS);
-  dblClickCombo->insertItem(klocale->translate("Close"),DCTB_CLOSE);
+  dblClickCombo->insertItem(i18n("Close"),DCTB_CLOSE);
   dblClickCombo->setCurrentItem( DCTB_MAXIMIZE );
 
   dblClickCombo->adjustSize();
@@ -1104,7 +1104,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   //CT ---
 
   // titlebar animation
-  animBox = new QGroupBox(klocale->translate("Title animation"),
+  animBox = new QGroupBox(i18n("Title animation"),
 				       this);
 
   pixLay = new QGridLayout(animBox,2,3,10,5);
@@ -1120,7 +1120,7 @@ KTitlebarAppearance::KTitlebarAppearance (QWidget * parent, const char *name)
   t->setMinimumSize(t->size());
   pixLay->addWidget(t,1,0);
 
-  sec = new QLabel(klocale->translate("ms"), animBox);
+  sec = new QLabel(i18n("ms"), animBox);
   sec->adjustSize();
   sec->setMinimumSize(sec->size());
   pixLay->addWidget(sec,1,1);

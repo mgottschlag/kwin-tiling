@@ -65,11 +65,11 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name, bool init)
 
   if (GUI)
     {
-      accel = new KSliderControl(klocale->translate("Acceleration"), 
+      accel = new KSliderControl(i18n("Acceleration"), 
 				 1,20,2,20, "x", 
 				 this);
-      thresh = new KSliderControl(klocale->translate("Threshold"), 
-				  1,20,2,20, klocale->translate("pixels"), 
+      thresh = new KSliderControl(i18n("Threshold"), 
+				  1,20,2,20, i18n("pixels"), 
 				  this);
       accel->setLabelSize(0.3);
       thresh->setLabelSize(0.3);
@@ -78,11 +78,11 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name, bool init)
       accel->setSteps(1,20);
       thresh->setSteps(1,20);
 
-      handedBox = new QButtonGroup(klocale->translate("Button mapping"), 
+      handedBox = new QButtonGroup(i18n("Button mapping"), 
 				   this, "handed");
-      rightHanded = new QRadioButton(klocale->translate("Right handed"), 
+      rightHanded = new QRadioButton(i18n("Right handed"), 
 				     handedBox, "R");
-      leftHanded = new QRadioButton(klocale->translate("Left handed"), 
+      leftHanded = new QRadioButton(i18n("Left handed"), 
 				    handedBox, "L");
 
       accel->move(SPACE_XO, SPACE_YO);

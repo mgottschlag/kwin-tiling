@@ -66,18 +66,18 @@ KKeyApplication::KKeyApplication(int &argc, char **argv, const char *name)
       if (!pages || pages->contains("standard")){
 	printf("create standard\n");
 //	addPage(standard = new KStdConfig(dialog),
-//		klocale->translate("&Standard shortcuts"), "keys-2.html");
+//		i18n("&Standard shortcuts"), "keys-2.html");
  	global_switch = false ;
  	addPage(standard = new KKeyConfig(dialog),
-		klocale->translate("&Standard shortcuts"), "keys-1.html");
+		i18n("&Standard shortcuts"), "keys-1.html");
       }
       if (!pages || pages->contains("global")){
 	printf("create global\n");
 //	addPage(global = new KGlobalConfig(dialog),
-//		klocale->translate("&Global shortcuts"), "keys-1.html");
+//		i18n("&Global shortcuts"), "keys-1.html");
  	global_switch = true ;
 	addPage(global = new KKeyConfig(dialog),
-		klocale->translate("&Global shortcuts"), "keys-1.html");
+		i18n("&Global shortcuts"), "keys-1.html");
 
       }
 
@@ -85,7 +85,7 @@ KKeyApplication::KKeyApplication(int &argc, char **argv, const char *name)
         dialog->show();
       else
         {
-          fprintf(stderr, klocale->translate("usage: kcmkeys [-init | {standard,global}]\n"));
+          fprintf(stderr, i18n("usage: kcmkeys [-init | {standard,global}]\n"));
           justInit = TRUE;
         }
 
@@ -129,7 +129,7 @@ int main(int argc, char **argv)
 {
 
   KKeyApplication app(argc, argv, "kcmkeys");
-  app.setTitle(klocale->translate("Key binding settings"));
+  app.setTitle(i18n("Key binding settings"));
 
   if (app.runGUI())
     return app.exec();

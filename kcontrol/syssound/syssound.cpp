@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.7  1999/03/01 23:24:11  kulow
+    CVS_SILENT ported to Qt 2.0
+
     Revision 1.6.4.1  1999/02/22 22:19:42  kulow
     CVS_SILENT replaced old qt header names with new ones
 
@@ -146,37 +149,37 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   //
 
   eventlist = new QListBox(this);
-  eventlist->insertItem(klocale->translate("(none)"));
-  eventlist->insertItem(klocale->translate("Change to Desktop 1"));
-  eventlist->insertItem(klocale->translate("Change to Desktop 2"));
-  eventlist->insertItem(klocale->translate("Change to Desktop 3"));
-  eventlist->insertItem(klocale->translate("Change to Desktop 4"));
-  eventlist->insertItem(klocale->translate("Change to Desktop 5"));
-  eventlist->insertItem(klocale->translate("Change to Desktop 6"));
-  eventlist->insertItem(klocale->translate("Change to Desktop 7"));
-  eventlist->insertItem(klocale->translate("Change to Desktop 8"));
+  eventlist->insertItem(i18n("(none)"));
+  eventlist->insertItem(i18n("Change to Desktop 1"));
+  eventlist->insertItem(i18n("Change to Desktop 2"));
+  eventlist->insertItem(i18n("Change to Desktop 3"));
+  eventlist->insertItem(i18n("Change to Desktop 4"));
+  eventlist->insertItem(i18n("Change to Desktop 5"));
+  eventlist->insertItem(i18n("Change to Desktop 6"));
+  eventlist->insertItem(i18n("Change to Desktop 7"));
+  eventlist->insertItem(i18n("Change to Desktop 8"));
 
-  eventlist->insertItem(klocale->translate("Activate Window"));
-  eventlist->insertItem(klocale->translate("Open new window"));
-  eventlist->insertItem(klocale->translate("Close Window"));
-  eventlist->insertItem(klocale->translate("Startup"));
+  eventlist->insertItem(i18n("Activate Window"));
+  eventlist->insertItem(i18n("Open new window"));
+  eventlist->insertItem(i18n("Close Window"));
+  eventlist->insertItem(i18n("Startup"));
 
-  eventlist->insertItem(klocale->translate(    "Window Shade Up"));
-  eventlist->insertItem(klocale->translate(    "Window Shade Down"));
-  eventlist->insertItem(klocale->translate(    "Window Iconify"));
-  eventlist->insertItem(klocale->translate(    "Window DeIconify"));
-  eventlist->insertItem(klocale->translate(    "Window Maximize"));
-  eventlist->insertItem(klocale->translate(    "Window UnMaximize"));
-  eventlist->insertItem(klocale->translate(    "Window Sticky"));
-  eventlist->insertItem(klocale->translate(    "Window UnSticky"));
-  eventlist->insertItem(klocale->translate(    "Window Trans New"));
-  eventlist->insertItem(klocale->translate(    "Window Trans Delete"));
-  eventlist->insertItem(klocale->translate(    "Logout"));
-  eventlist->insertItem(klocale->translate(    "Logout Message"));
-  eventlist->insertItem(klocale->translate(    "Window Move Start"));
-  eventlist->insertItem(klocale->translate(    "Window Move End"));
-  eventlist->insertItem(klocale->translate(    "Window Resize Start"));
-  eventlist->insertItem(klocale->translate(    "Window Resize End"));
+  eventlist->insertItem(i18n(    "Window Shade Up"));
+  eventlist->insertItem(i18n(    "Window Shade Down"));
+  eventlist->insertItem(i18n(    "Window Iconify"));
+  eventlist->insertItem(i18n(    "Window DeIconify"));
+  eventlist->insertItem(i18n(    "Window Maximize"));
+  eventlist->insertItem(i18n(    "Window UnMaximize"));
+  eventlist->insertItem(i18n(    "Window Sticky"));
+  eventlist->insertItem(i18n(    "Window UnSticky"));
+  eventlist->insertItem(i18n(    "Window Trans New"));
+  eventlist->insertItem(i18n(    "Window Trans Delete"));
+  eventlist->insertItem(i18n(    "Logout"));
+  eventlist->insertItem(i18n(    "Logout Message"));
+  eventlist->insertItem(i18n(    "Window Move Start"));
+  eventlist->insertItem(i18n(    "Window Move End"));
+  eventlist->insertItem(i18n(    "Window Resize Start"));
+  eventlist->insertItem(i18n(    "Window Resize End"));
 
   //
   // CC: Now set up the list of known WAV Files
@@ -184,7 +187,7 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
 
   soundlist = new QListBox(this);
 
-  soundlist->insertItem(klocale->translate("(none)"));
+  soundlist->insertItem(i18n("(none)"));
 
   path = KApplication::kde_sounddir().copy();
   dir.setPath(path);
@@ -198,24 +201,24 @@ KSoundWidget::KSoundWidget(QWidget *parent, const char *name):
   audiodrop = new KDNDDropZone(soundlist, DndURL);
 
   sounds_enabled = new QCheckBox(this);
-  sounds_enabled->setText(klocale->translate("e&nable system sounds"));
+  sounds_enabled->setText(i18n("e&nable system sounds"));
   sounds_enabled->setMinimumSize(sounds_enabled->sizeHint());
   sounds_enabled->setMaximumSize(sounds_enabled->sizeHint());
 
   btn_test = new QPushButton(this);
-  btn_test->setText(klocale->translate("&Test"));
+  btn_test->setText(i18n("&Test"));
   btn_test->setMinimumSize(btn_test->sizeHint());
   btn_test->setMaximumSize(btn_test->sizeHint());  
 
-  eventlabel = new QLabel(eventlist, klocale->translate("&Events:"), this);
+  eventlabel = new QLabel(eventlist, i18n("&Events:"), this);
   eventlabel->setMinimumSize(eventlabel->sizeHint());
   eventlabel->setMaximumSize(eventlabel->sizeHint());
 
-  soundlabel = new QLabel(soundlist, klocale->translate("&Sounds:"), this);
+  soundlabel = new QLabel(soundlist, i18n("&Sounds:"), this);
   soundlabel->setMinimumSize(soundlabel->sizeHint());
   soundlabel->setMaximumSize(soundlabel->sizeHint());
 
-  statustext = new QLabel(klocale->translate(
+  statustext = new QLabel(i18n(
 	       "Additional WAV files can be dropped onto the sound list."
 	       ),this);
 
@@ -392,7 +395,7 @@ void KSoundWidget::saveConfiguration(){
     else {
       // keep configuration files language--independent
 
-      if (!strcmp(klocale->translate("(none)"), *sname))
+      if (!strcmp(i18n("(none)"), *sname))
 	config->writeEntry(eventNames[0][lf], "(none)");
       else
 	config->writeEntry(eventNames[0][lf], *sname);
@@ -456,8 +459,8 @@ void KSoundWidget::soundDropped(KDNDDropZone *zone){
 
       // CC: for now, only file URLs are supported
 
-      QMessageBox::warning(this, klocale->translate("Unsupported URL"),
-        klocale->translate(
+      QMessageBox::warning(this, i18n("Unsupported URL"),
+        i18n(
                  "Sorry, this type of URL is currently unsupported"\
 		 "by the KDE System Sound Module"
 		           )
@@ -471,7 +474,7 @@ void KSoundWidget::soundDropped(KDNDDropZone *zone){
         ksprintf(&msg, i18n("Sorry, but \n%s\ndoes not seem "\
 			    "to be a WAV--file."), url.data());
 
-	QMessageBox::warning(this, klocale->translate("Improper File Extension"), msg);
+	QMessageBox::warning(this, i18n("Improper File Extension"), msg);
 
       } else {
 
@@ -486,7 +489,7 @@ void KSoundWidget::soundDropped(KDNDDropZone *zone){
 			      "%s\n"
 			      "is already in the list"), url.data());
 
-	  QMessageBox::warning(this, klocale->translate("File Already in List"), msg);
+	  QMessageBox::warning(this, i18n("File Already in List"), msg);
 
 	}
       }

@@ -64,10 +64,10 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name, bool
 void KDMAppearanceWidget::setupPage(QWidget *pw)
 {
       QGroupBox *group = new QGroupBox( 
-            klocale->translate("Appearance"), this );
+            i18n("Appearance"), this );
       CHECK_PTR(group);
       group->setGeometry(5, 10, pw->width()-30, pw->height()-20);
-      QLabel *label = new QLabel(klocale->translate("Greeting string:"), group);
+      QLabel *label = new QLabel(i18n("Greeting string:"), group);
       label->move( 10, 20 );
 
       greetstr_lined = new QLineEdit(group);
@@ -75,7 +75,7 @@ void KDMAppearanceWidget::setupPage(QWidget *pw)
       greetstr_lined->setGeometry(label->width()+10, 20,
                        pw->width()-(label->width()+50), label->height());
 
-      label = new QLabel(klocale->translate("KDM logo:"), group);
+      label = new QLabel(i18n("KDM logo:"), group);
       label->move(10, greetstr_lined->height()+30);
       logo_lined = new QLineEdit( group);
       logo_lined->setText(logopath.data());
@@ -102,19 +102,19 @@ void KDMAppearanceWidget::setupPage(QWidget *pw)
       connect(logobutton, SIGNAL(iconChanged(const char*)),
               SLOT(slotLogoPixChanged(const char*)));
 
-      QToolTip::add(logobutton, klocale->translate("Click or drop an image here"));
+      QToolTip::add(logobutton, i18n("Click or drop an image here"));
       logopixdrop = new KDNDDropZone(logobutton, DndURL);
       connect(logopixdrop, SIGNAL(dropAction(KDNDDropZone*)),
               SLOT(slotPixDropped(KDNDDropZone*)));
 
-      label = new QLabel(klocale->translate("GUI Style:"), group);
+      label = new QLabel(i18n("GUI Style:"), group);
       label->move(10, logobutton->y()+100);
 
       guicombo = new QComboBox( FALSE, group );
       connect(guicombo, SIGNAL(highlighted(int)), SLOT(slotSetGUI(int)));
       guicombo->move(logobutton->x(), label->y());
-      guicombo->insertItem(klocale->translate("Motif"), 0);
-      guicombo->insertItem(klocale->translate("Windows"), 1);
+      guicombo->insertItem(i18n("Motif"), 0);
+      guicombo->insertItem(i18n("Windows"), 1);
       guicombo->adjustSize();
       if(guistr == "Windows")
         guicombo->setCurrentItem(1);
@@ -125,10 +125,10 @@ void KDMAppearanceWidget::setupPage(QWidget *pw)
       group->setMinimumSize(group->size());
 
       QGroupBox *group2 = new QGroupBox( 
-            klocale->translate("Language"), this );
+            i18n("Language"), this );
       CHECK_PTR(group2);
       group2->setGeometry(5, group->height()+5, group->width(), 50);
-      label = new QLabel(klocale->translate("Language:"), group2);
+      label = new QLabel(i18n("Language:"), group2);
       label->move( 10, 20 );
       langcombo = new KLanguageCombo(group2);
       langcombo->adjustSize();
@@ -164,10 +164,10 @@ void KDMAppearanceWidget::slotLogoPixTextChanged()
   }
   else
   {
-    msg  = klocale->translate("There was an error loading the image:\n>");
+    msg  = i18n("There was an error loading the image:\n>");
     msg += pix;
-    msg += klocale->translate("<");
-    KMsgBox::message(this, klocale->translate("ERROR"), msg);
+    msg += i18n("<");
+    KMsgBox::message(this, i18n("ERROR"), msg);
   }
 }
 
@@ -183,10 +183,10 @@ void KDMAppearanceWidget::slotLogoPixChanged(const char *icon)
     return;
   if(!p->save(pix, "XPM"))
   {
-    msg  = klocale->translate("There was an error saving the image:\n>");
+    msg  = i18n("There was an error saving the image:\n>");
     msg += pix;
-    msg += klocale->translate("<");
-    KMsgBox::message(this, klocale->translate("ERROR"), msg);
+    msg += i18n("<");
+    KMsgBox::message(this, i18n("ERROR"), msg);
   }
   else
     logo_lined->setText(pix.data());
@@ -216,12 +216,12 @@ void KDMAppearanceWidget::slotPixDropped(KDNDDropZone *zone)
 
   if( !ext.contains(filename.right(filename.length()-last_dot_idx), false) )
   {
-    msg =  klocale->translate("Sorry, but \n");
+    msg =  i18n("Sorry, but \n");
     msg += filename;
-    msg += klocale->translate("\ndoes not seem to be an image file");
-    msg += klocale->translate("\nPlease use files with these extensions\n");
+    msg += i18n("\ndoes not seem to be an image file");
+    msg += i18n("\nPlease use files with these extensions\n");
     msg += ext;
-    KMsgBox::message( this, klocale->translate("Improper File Extension"), msg);
+    KMsgBox::message( this, i18n("Improper File Extension"), msg);
   }
   else
   {
@@ -248,10 +248,10 @@ void KDMAppearanceWidget::slotPixDropped(KDNDDropZone *zone)
       }
       else
       {
-        msg  = klocale->translate("There was an error loading the image:\n>");
+        msg  = i18n("There was an error loading the image:\n>");
         msg += url.path();
-        msg += klocale->translate("<\nIt will not be saved...");
-        KMsgBox::message(this, klocale->translate("ERROR"), msg);
+        msg += i18n("<\nIt will not be saved...");
+        KMsgBox::message(this, i18n("ERROR"), msg);
       }
     }
   }

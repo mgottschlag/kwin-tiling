@@ -79,14 +79,14 @@ void TopLevel::setupMenuBar()
     file = new QPopupMenu();
     options = new QPopupMenu();
 
-    file->insertItem(klocale->translate("E&xit"),
+    file->insertItem(i18n("E&xit"),
 		     KApplication::getKApplication(), SLOT(quit()));
 
     options->setCheckable(TRUE);
-    swallowID = options->insertItem(klocale->translate("&Swallow modules"),
+    swallowID = options->insertItem(i18n("&Swallow modules"),
                         this, SLOT(swallowChanged()));
 
-    QPopupMenu *helpMenu = kapp->getHelpMenu(true, klocale->translate("KDE Control Center - "
+    QPopupMenu *helpMenu = kapp->getHelpMenu(true, i18n("KDE Control Center - "
 					"Version 1.0\n\n"
 					"Written by Matthias Hölzer\n"
 					"(hoelzer@physik.uni-wuerzburg.de)\n\n"
@@ -94,10 +94,10 @@ void TopLevel::setupMenuBar()
 					"S. Kulow, P. Dowler, M. Wuebben & M. Jones."));
 
     menubar = new KMenuBar(this);
-    menubar->insertItem(klocale->translate("&File"), file);
-    menubar->insertItem(klocale->translate("&Options"), options);
+    menubar->insertItem(i18n("&File"), file);
+    menubar->insertItem(i18n("&Options"), options);
     menubar->insertSeparator(-1);
-    menubar->insertItem(klocale->translate("&Help"), helpMenu);
+    menubar->insertItem(i18n("&Help"), helpMenu);
 
     setMenu(menubar);
 }

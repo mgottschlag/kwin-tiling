@@ -65,7 +65,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
 
   QBoxLayout *lay = new QVBoxLayout (this, 5);
 
-  windowsBox = new QButtonGroup(klocale->translate("Windows"), this);
+  windowsBox = new QButtonGroup(i18n("Windows"), this);
 
   QBoxLayout *wLay = new QVBoxLayout (windowsBox,10,5);
   wLay->addSpacing(10);
@@ -79,23 +79,23 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   rLay->setColStretch(1,1);
 
   //CT checkboxes: maximize, move, resize behaviour
-  vertOnly = new QCheckBox(klocale->translate("Vertical maximization only by default"), windowsBox);
+  vertOnly = new QCheckBox(i18n("Vertical maximization only by default"), windowsBox);
   vertOnly->adjustSize();
   vertOnly->setMinimumSize(vertOnly->size());
   bLay->addWidget(vertOnly);
 
-  opaque = new QCheckBox(klocale->translate("Display content in moving windows"), windowsBox);
+  opaque = new QCheckBox(i18n("Display content in moving windows"), windowsBox);
   opaque->adjustSize();
   opaque->setMinimumSize(opaque->size());
   bLay->addWidget(opaque);
 
-  resizeOpaqueOn = new QCheckBox(klocale->translate("Display content in resizing windows"), windowsBox);
+  resizeOpaqueOn = new QCheckBox(i18n("Display content in resizing windows"), windowsBox);
   resizeOpaqueOn->adjustSize();
   resizeOpaqueOn->setMinimumSize(resizeOpaqueOn->size());
   bLay->addWidget(resizeOpaqueOn);
 
   // resize animation - CT 27May98; 19Oct1998
-  resizeAnimTitleLabel = new QLabel(klocale->translate("Resize animation:"),
+  resizeAnimTitleLabel = new QLabel(i18n("Resize animation:"),
 				    windowsBox);
   resizeAnimTitleLabel->adjustSize();
   resizeAnimTitleLabel->setMinimumSize(resizeAnimTitleLabel->size());
@@ -108,13 +108,13 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   resizeAnimSlider->setMinimumSize(resizeAnimSlider->size());
   rLay->addMultiCellWidget(resizeAnimSlider,0,0,1,2);
 
-  resizeAnimNoneLabel= new QLabel(klocale->translate("None"),windowsBox);
+  resizeAnimNoneLabel= new QLabel(i18n("None"),windowsBox);
   resizeAnimNoneLabel->adjustSize();
   resizeAnimNoneLabel->setMinimumSize(resizeAnimNoneLabel->size());
   resizeAnimNoneLabel->setAlignment(AlignTop|AlignLeft);
   rLay->addWidget(resizeAnimNoneLabel,1,1);
 
-  resizeAnimFastLabel= new QLabel(klocale->translate("Fast"),windowsBox);
+  resizeAnimFastLabel= new QLabel(i18n("Fast"),windowsBox);
   resizeAnimFastLabel->adjustSize();
   resizeAnimFastLabel->setMinimumSize(resizeAnimFastLabel->size());
   resizeAnimFastLabel->setAlignment(AlignTop|AlignRight);
@@ -125,21 +125,21 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   lay->addWidget(windowsBox);
 
   // placement policy --- CT 19jan98, 13mar98 ---
-  plcBox = new QButtonGroup(klocale->translate("Placement policy"),this);
+  plcBox = new QButtonGroup(i18n("Placement policy"),this);
 
   QGridLayout *pLay = new QGridLayout(plcBox,3,3,10,5);
   pLay->addRowSpacing(0,10);
 
   placementCombo = new QComboBox(FALSE, plcBox);
-  placementCombo->insertItem(klocale->translate(i18n("Smart")),
+  placementCombo->insertItem(i18n(i18n("Smart")),
 			     SMART_PLACEMENT);
-  placementCombo->insertItem(klocale->translate(i18n("Cascade")),
+  placementCombo->insertItem(i18n(i18n("Cascade")),
 			     CASCADE_PLACEMENT);
-  placementCombo->insertItem(klocale->translate(i18n("Interactive")),
+  placementCombo->insertItem(i18n(i18n("Interactive")),
 			     INTERACTIVE_PLACEMENT);
-  placementCombo->insertItem(klocale->translate(i18n("Random")),
+  placementCombo->insertItem(i18n(i18n("Random")),
 			     RANDOM_PLACEMENT);
-  placementCombo->insertItem(klocale->translate(i18n("Manual")),
+  placementCombo->insertItem(i18n(i18n("Manual")),
 			     MANUAL_PLACEMENT);
   placementCombo->setCurrentItem(SMART_PLACEMENT);
   placementCombo->adjustSize();
@@ -151,7 +151,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   connect(placementCombo, SIGNAL(activated(int)),this,
 	  SLOT(ifPlacementIsInteractive()) );
 
-  iTLabel = new QLabel(klocale->translate(i18n("  Allowed overlap:\n"
+  iTLabel = new QLabel(i18n(i18n("  Allowed overlap:\n"
 					       "(% of desktop space)")),
 		       plcBox);
   iTLabel->adjustSize();
@@ -172,7 +172,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   lay->addWidget(plcBox);
 
   // focus policy
-  fcsBox = new QButtonGroup(klocale->translate("Focus policy"),this);
+  fcsBox = new QButtonGroup(i18n("Focus policy"),this);
 
   QGridLayout *fLay = new QGridLayout(fcsBox,5,3,10,5);
   fLay->addRowSpacing(0,10);
@@ -182,13 +182,13 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
 
 
   focusCombo =  new QComboBox(FALSE, fcsBox);
-  focusCombo->insertItem(klocale->translate("Click to focus"),
+  focusCombo->insertItem(i18n("Click to focus"),
 			 CLICK_TO_FOCUS);
-  focusCombo->insertItem(klocale->translate("Focus follows mouse"),
+  focusCombo->insertItem(i18n("Focus follows mouse"),
 			 FOCUS_FOLLOWS_MOUSE);
-  focusCombo->insertItem(klocale->translate("Classic focus follows mouse"),
+  focusCombo->insertItem(i18n("Classic focus follows mouse"),
 			 CLASSIC_FOCUS_FOLLOWS_MOUSE);
-  focusCombo->insertItem(klocale->translate("Classic sloppy focus"),
+  focusCombo->insertItem(i18n("Classic sloppy focus"),
 			 CLASSIC_SLOPPY_FOCUS);
   focusCombo->adjustSize();
   focusCombo->setMinimumSize(focusCombo->size());
@@ -200,20 +200,20 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
 
   // autoraise delay
 
-  autoRaiseOn = new QCheckBox(klocale->translate("Auto Raise"), fcsBox);
+  autoRaiseOn = new QCheckBox(i18n("Auto Raise"), fcsBox);
   autoRaiseOn->adjustSize();
   autoRaiseOn->setMinimumSize(autoRaiseOn->size());
   fLay->addWidget(autoRaiseOn,2,0);
   connect(autoRaiseOn,SIGNAL(toggled(bool)), this, SLOT(autoRaiseOnTog(bool)));
 
-  clickRaiseOn = new QCheckBox(klocale->translate("Click Raise"), fcsBox);
+  clickRaiseOn = new QCheckBox(i18n("Click Raise"), fcsBox);
   clickRaiseOn->adjustSize();
   clickRaiseOn->setMinimumSize(clickRaiseOn->size());
   fLay->addWidget(clickRaiseOn,3,0);
 
   connect(clickRaiseOn,SIGNAL(toggled(bool)), this, SLOT(clickRaiseOnTog(bool)));
 
-  alabel = new QLabel(klocale->translate("Delay (ms)"), fcsBox);
+  alabel = new QLabel(i18n("Delay (ms)"), fcsBox);
   alabel->adjustSize();
   alabel->setMinimumSize(alabel->size());
   alabel->setAlignment(AlignVCenter|AlignHCenter);

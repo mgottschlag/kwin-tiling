@@ -43,7 +43,7 @@ int standalone(ConfigList *cl)
   TopLevel *toplevel;
   
   toplevel = new TopLevel(cl);
-  toplevel->setCaption(klocale->translate("KDE Control Center"));
+  toplevel->setCaption(i18n("KDE Control Center"));
   
   kapp->setMainWidget(toplevel);
   

@@ -60,23 +60,23 @@ KMenuEdit::KMenuEdit( const char *name )
 
   menubar = new KMenuBar( this, "menubar" );
   QPopupMenu *file = new QPopupMenu;
-  file->insertItem(klocale->translate("&Reload"), this, SLOT(reload()) );
-  file->insertItem(klocale->translate("&Save"), this, SLOT(save()) );
+  file->insertItem(i18n("&Reload"), this, SLOT(reload()) );
+  file->insertItem(i18n("&Save"), this, SLOT(save()) );
   file->insertSeparator();
-  file->insertItem(klocale->translate("&Quit"), qApp, SLOT(quit()), CTRL+Key_Q );
+  file->insertItem(i18n("&Quit"), qApp, SLOT(quit()), CTRL+Key_Q );
   //QPopupMenu *edit_menu = new QPopupMenu;
   QPopupMenu *options = new QPopupMenu;
-  options->insertItem(klocale->translate("Change &Menuname"), this, SLOT(changeMenuName()) );
-  options->insertItem(klocale->translate("Reload &Filetypes"), this, SLOT(reloadFileTypes()) );
+  options->insertItem(i18n("Change &Menuname"), this, SLOT(changeMenuName()) );
+  options->insertItem(i18n("Reload &Filetypes"), this, SLOT(reloadFileTypes()) );
 
-  menubar->insertItem( klocale->translate("&File"), file );
-  //menubar->insertItem( klocale->translate("Edit"), edit_menu);
-  menubar->insertItem( klocale->translate("&Options"), options);
+  menubar->insertItem( i18n("&File"), file );
+  //menubar->insertItem( i18n("Edit"), edit_menu);
+  menubar->insertItem( i18n("&Options"), options);
   menubar->insertSeparator();
   QString about = "KMenuedit 0.3.1\n(C) ";
-  about += (QString) klocale->translate("by") +
+  about += (QString) i18n("by") +
     " Christoph Neerfeld\nChristoph.Neerfeld@home.ivm.de";
-  menubar->insertItem( klocale->translate("&Help"),
+  menubar->insertItem( i18n("&Help"),
 		       KApplication::getKApplication()->getHelpMenu(TRUE, about ) );
 
   // create toolbar
@@ -84,10 +84,10 @@ KMenuEdit::KMenuEdit( const char *name )
   QPixmap temp_pix;
   temp_pix = global_pix_loader->loadIcon("reload.xpm");
   toolbar->insertButton(temp_pix, 0, SIGNAL(clicked()), this,
-                      SLOT(reload()), TRUE, klocale->translate("Reload"));
+                      SLOT(reload()), TRUE, i18n("Reload"));
   temp_pix = global_pix_loader->loadIcon("filefloppy.xpm");
   toolbar->insertButton(temp_pix, 1, SIGNAL(clicked()), this,
-                      SLOT(save()), TRUE, klocale->translate("Save"));
+                      SLOT(save()), TRUE, i18n("Save"));
   toolbar->insertSeparator();
   toolbar->setBarPos( (KToolBar::BarPosition) config->readNumEntry("ToolBarPos") );
   setMenu(menubar);
@@ -176,10 +176,10 @@ KMenuEdit::~KMenuEdit()
 {
   if( changes_to_save )
     {
-      if( QMessageBox::warning ( this, klocale->translate("Changes not saved !"),
-				 klocale->translate("\nDo you want to save your changes ?"),
-				 klocale->translate("Yes"),
-				 klocale->translate("No") )  == 0 )
+      if( QMessageBox::warning ( this, i18n("Changes not saved !"),
+				 i18n("\nDo you want to save your changes ?"),
+				 i18n("Yes"),
+				 i18n("No") )  == 0 )
 	{
 	  saveMenus();
 	}
@@ -201,11 +201,11 @@ void KMenuEdit::closeEvent( QCloseEvent *e )
   int retcode;
   if( changes_to_save )
     {
-      retcode = QMessageBox::warning ( this, klocale->translate("Changes not saved !"),
-				       klocale->translate("\nDo you want to save your changes ?"),
-				       klocale->translate("Yes"),
-				       klocale->translate("No"),
-				       klocale->translate("Cancel"), 0, 2 );
+      retcode = QMessageBox::warning ( this, i18n("Changes not saved !"),
+				       i18n("\nDo you want to save your changes ?"),
+				       i18n("Yes"),
+				       i18n("No"),
+				       i18n("Cancel"), 0, 2 );
       switch ( retcode ) {
       case 0:
 	saveMenus();
@@ -261,7 +261,7 @@ void KMenuEdit::loadMenus()
   pers_menu_data = new PMenu;
   pers_menu_data->parse(dir);
   if( !pers_menu_data->count() )
-    pers_menu_data->add(new PMenuItem(unix_com, klocale->translate("EMPTY")));
+    pers_menu_data->add(new PMenuItem(unix_com, i18n("EMPTY")));
   QFileInfo fi(dir_name + "/.directory");
   if( fi.isReadable() )
     {
@@ -340,12 +340,12 @@ void KMenuEdit::reload()
 {
   if( changes_to_save )
     {
-      if( QMessageBox::warning(this, klocale->translate("Reload Menus"),
-			      klocale->translate("Reloading the menus will discard all "
+      if( QMessageBox::warning(this, i18n("Reload Menus"),
+			      i18n("Reloading the menus will discard all "
 						 "changes.\n"
 						 "Are you sure you want to reload ?"),
-			       klocale->translate("Yes"),
-			       klocale->translate("No") ) != 0 )
+			       i18n("Yes"),
+			       i18n("No") ) != 0 )
         {
 	  return;
 	}

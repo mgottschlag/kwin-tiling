@@ -45,18 +45,18 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name, bool init)
 void KDMFontWidget::setupPage(QWidget *)
 {
       QGroupBox *tGroup = new QGroupBox( 
-            klocale->translate("Select fonts"), this );
+            i18n("Select fonts"), this );
       QGroupBox *bGroup = new QGroupBox( 
-            klocale->translate("Example"), this );
+            i18n("Example"), this );
       QPushButton *fontbtn = 
-             new QPushButton(klocale->translate("Change font..."), tGroup);
+             new QPushButton(i18n("Change font..."), tGroup);
       connect(fontbtn, SIGNAL(clicked()), SLOT(slotGetFont()));
       fontbtn->setFixedSize(fontbtn->sizeHint());
       fontcombo = new QComboBox( FALSE, tGroup );
       connect(fontcombo, SIGNAL(highlighted(int)), SLOT(slotSetFont(int)));
-      fontcombo->insertItem(klocale->translate("Greeting"), 0);
-      fontcombo->insertItem(klocale->translate("Fail"), 1);
-      fontcombo->insertItem(klocale->translate("Standard"), 2);
+      fontcombo->insertItem(i18n("Greeting"), 0);
+      fontcombo->insertItem(i18n("Fail"), 1);
+      fontcombo->insertItem(i18n("Standard"), 2);
       fontcombo->setFixedSize(fontcombo->sizeHint());
       fontlabel = new QLabel( bGroup );
       //fontlabel->setAutoResize(true);

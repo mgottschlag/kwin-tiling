@@ -118,7 +118,7 @@ void KModuleListEntry::parseKdelnkFile(const QString &fn)
   miniIcon = config.readEntry("MiniIcon");
   docPath =  config.readEntry("DocPath");
   comment =  config.readEntry("Comment");
-  name =     config.readEntry("Name", klocale->translate("Unknown module: ")+fn);
+  name =     config.readEntry("Name", i18n("Unknown module: ")+fn);
   init =     config.readEntry("Init");
   
   //create a unique swallow title. IGNORE SwallowTitle settings in the kdelnk file (ettrich)

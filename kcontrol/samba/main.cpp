@@ -54,7 +54,7 @@ KSambaApplication::KSambaApplication(int &argc, char **argv,
         dialog->show();
       else
         {
-          fprintf(stderr, klocale->translate("usage: kcmsamba [-init | status]\n"));
+          fprintf(stderr, i18n("usage: kcmsamba [-init | status]\n"));
           justInit = TRUE;
         }
     }
@@ -65,7 +65,7 @@ KSambaApplication::KSambaApplication(int &argc, char **argv,
 int main(int argc, char **argv)
 {
   KSambaApplication app(argc, argv, "kcmsamba");
-  app.setTitle(klocale->translate("Samba"));
+  app.setTitle(i18n("Samba"));
   
   if (app.runGUI())
     return app.exec();

@@ -67,7 +67,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       s += "/kdmconfig/pics/monitor.xpm";
       QPixmap p(s.data()); // = iconloader->loadIcon("monitor.xpm");
 
-      tGroup = new QGroupBox( klocale->translate("Preview"), this );
+      tGroup = new QGroupBox( i18n("Preview"), this );
 
       label = new QLabel( tGroup );
       label->setAlignment( AlignCenter );
@@ -92,23 +92,23 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       connect( dropsite, SIGNAL( dragEnter( QDragEnterEvent*) ), 
         this, SLOT( slotQDragEnter( QDragEnterEvent*) ) );
 
-      lGroup = new QGroupBox( klocale->translate("Color"), this );
+      lGroup = new QGroupBox( i18n("Color"), this );
       cGroup = new QButtonGroup( lGroup );
       cGroup->setFrameStyle(QFrame::NoFrame);
       cGroup->setExclusive( TRUE );
       QBoxLayout *cl = new QVBoxLayout(cGroup, 10, 10, "cl");
 
-      QRadioButton *crb1 = new QRadioButton( klocale->translate("Solid Color"), cGroup );
+      QRadioButton *crb1 = new QRadioButton( i18n("Solid Color"), cGroup );
       crb1->setFixedSize( crb1->sizeHint());
       cGroup->insert( crb1, Plain );
       cl->addWidget(crb1, 0, AlignLeft);
 
-      QRadioButton *crb2 = new QRadioButton( klocale->translate("Horizontal Blend"), cGroup );
+      QRadioButton *crb2 = new QRadioButton( i18n("Horizontal Blend"), cGroup );
       crb2->setFixedSize( crb2->sizeHint());
       cGroup->insert( crb2, Horizontal );
       cl->addWidget(crb2, 0, AlignLeft);
 
-      QRadioButton *crb3 = new QRadioButton( klocale->translate("Vertical Blend"), cGroup );
+      QRadioButton *crb3 = new QRadioButton( i18n("Vertical Blend"), cGroup );
       crb3->setFixedSize( crb3->sizeHint());
       cGroup->insert( crb3, Vertical );
       cl->addWidget(crb3, 0, AlignLeft);
@@ -127,7 +127,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       connect( colButton2, SIGNAL( changed( const QColor & ) ),
 		SLOT( slotSelectColor2( const QColor & ) ) );
 
-      rGroup = new QGroupBox( klocale->translate("Wallpaper"), this );
+      rGroup = new QGroupBox( i18n("Wallpaper"), this );
 
       QString path = kapp->kde_wallpaperdir().copy();
       QDir d( path, "*", QDir::Name, QDir::Readable | QDir::Files );
@@ -153,7 +153,7 @@ void KDMBackgroundWidget::setupPage(QWidget *)
 		SLOT( slotWallpaper( const char * )  )  );
       wpCombo->setFixedHeight(wpCombo->sizeHint().height());
 
-      button = new QPushButton( klocale->translate("Browse..."), rGroup );
+      button = new QPushButton( i18n("Browse..."), rGroup );
       button->setFixedSize( button->sizeHint() );
       connect( button, SIGNAL( clicked() ), SLOT( slotBrowse() ) );
 
@@ -168,47 +168,47 @@ void KDMBackgroundWidget::setupPage(QWidget *)
       wpl->addLayout(wpl2);
       wpl->addLayout(wpl3);
 
-      rb = new QRadioButton( klocale->translate("None"), wpGroup );
+      rb = new QRadioButton( i18n("None"), wpGroup );
       rb->setFixedSize( rb->sizeHint());
       wpGroup->insert( rb, NoPic );
       wpl1->addWidget(rb, 0, AlignLeft);
 
-      rb = new QRadioButton( klocale->translate("Tile"), wpGroup );
+      rb = new QRadioButton( i18n("Tile"), wpGroup );
       rb->setFixedSize( rb->sizeHint());
       wpGroup->insert( rb, Tile );
       wpl1->addWidget(rb, 0, AlignLeft);
 
-      rb = new QRadioButton( klocale->translate("Center"), wpGroup );
+      rb = new QRadioButton( i18n("Center"), wpGroup );
       rb->setFixedSize( rb->sizeHint() );
       wpGroup->insert( rb, Center );
       wpl1->addWidget(rb, 0, AlignLeft);
 
-      rb = new QRadioButton( klocale->translate("Scale"), wpGroup );
+      rb = new QRadioButton( i18n("Scale"), wpGroup );
       rb->setFixedSize( rb->sizeHint() );
       wpGroup->insert( rb, Scale );
       wpl2->addWidget(rb, 0, AlignLeft);
 
-      rb = new QRadioButton( klocale->translate("TopLeft"), wpGroup );
+      rb = new QRadioButton( i18n("TopLeft"), wpGroup );
       rb->setFixedSize( rb->sizeHint());
       wpGroup->insert( rb, TopLeft );
       wpl2->addWidget(rb, 0, AlignLeft);
 
-      rb = new QRadioButton( klocale->translate("TopRight"), wpGroup );
+      rb = new QRadioButton( i18n("TopRight"), wpGroup );
       rb->setFixedSize( rb->sizeHint());
       wpGroup->insert( rb, TopRight );
       wpl2->addWidget(rb, 0, AlignLeft);
 
-      rb = new QRadioButton( klocale->translate("BottomLeft"), wpGroup );
+      rb = new QRadioButton( i18n("BottomLeft"), wpGroup );
       rb->setFixedSize( rb->sizeHint());
       wpGroup->insert( rb, BottomLeft );
       wpl3->addWidget(rb, 0, AlignLeft);
 
-      rb = new QRadioButton( klocale->translate("BottomRight"), wpGroup );
+      rb = new QRadioButton( i18n("BottomRight"), wpGroup );
       rb->setFixedSize( rb->sizeHint());
       wpGroup->insert( rb, BottomRight );
       wpl3->addWidget(rb, 0, AlignLeft);
 
-      rb = new QRadioButton( klocale->translate("Fancy"), wpGroup );
+      rb = new QRadioButton( i18n("Fancy"), wpGroup );
       rb->setFixedSize( rb->sizeHint());
       wpGroup->insert( rb, Fancy );
       wpl3->addWidget(rb, 0, AlignLeft);

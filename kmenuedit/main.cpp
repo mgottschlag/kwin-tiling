@@ -76,8 +76,8 @@ int main( int argc, char **argv )
   bool error = FALSE;
   if( !(fi.exists() && fi.isDir()) )
     {
-      if( KMsgBox::yesNo( NULL, klocale->translate("KMenuedit"), 
-			  klocale->translate("The directory for your personal menu does not exist.\n Do you want to create it now ?")) == 1 )
+      if( KMsgBox::yesNo( NULL, i18n("KMenuedit"), 
+			  i18n("The directory for your personal menu does not exist.\n Do you want to create it now ?")) == 1 )
 	{
 	  QDir dir( fi.dirPath() );
 	  if( !dir.mkdir(fi.fileName()) )
@@ -89,8 +89,8 @@ int main( int argc, char **argv )
 	}
       if( error )
 	{
-	  KMsgBox::message( NULL, klocale->translate("KMenuedit"), 
-			    klocale->translate("Unable to create directory for personal menu.\n Select OK to exit KMenuedit."));
+	  KMsgBox::message( NULL, i18n("KMenuedit"), 
+			    i18n("Unable to create directory for personal menu.\n Select OK to exit KMenuedit."));
 	  exit(1);
 	}
     }

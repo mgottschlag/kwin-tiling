@@ -62,14 +62,14 @@ KBellConfig::KBellConfig (QWidget * parent, const char *name, bool init)
   if (GUI)
     {
       // args: label, min, max, step, initial, units
-      volume = new KSliderControl(klocale->translate("Volume"), 
+      volume = new KSliderControl(i18n("Volume"), 
 				  0, 100, 5, 50, "%", this);
-      pitch = new KSliderControl(klocale->translate("Pitch"), 
+      pitch = new KSliderControl(i18n("Pitch"), 
 				 0, 2000, 20, 800, 
-				 klocale->translate("Hz"), this);
-      duration = new KSliderControl(klocale->translate("Duration"), 
+				 i18n("Hz"), this);
+      duration = new KSliderControl(i18n("Duration"), 
 				    0, 1000, 50, 100, 
-				    klocale->translate("milliseconds"), this);
+				    i18n("milliseconds"), this);
       
       volume->setLabelSize(0.30);
       pitch->setLabelSize(0.30);
@@ -84,7 +84,7 @@ KBellConfig::KBellConfig (QWidget * parent, const char *name, bool init)
       pitch->setSteps(40,200);
       duration->setSteps(20,100);
       
-      test = new QPushButton(klocale->translate("Test"),this,"test");
+      test = new QPushButton(i18n("Test"),this,"test");
       connect( test, SIGNAL(clicked()), SLOT(ringBell()));
 
       test->adjustSize();

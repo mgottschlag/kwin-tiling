@@ -33,7 +33,7 @@ KAdvancedConfig::KAdvancedConfig(QWidget * parent, const char *name)
 
   QBoxLayout *lay = new QVBoxLayout(this,5);
 
-  keyBox = new QGroupBox(klocale->translate("Keyboard and Mouse"), this);
+  keyBox = new QGroupBox(i18n("Keyboard and Mouse"), this);
 
   QGridLayout *chkLay = new QGridLayout(keyBox,5,2,5);
   chkLay->addRowSpacing(0,10);
@@ -43,30 +43,30 @@ KAdvancedConfig::KAdvancedConfig(QWidget * parent, const char *name)
   chkLay->setRowStretch(3,0);
   chkLay->setRowStretch(4,1);
 
-  ctrltab = new QCheckBox(klocale->translate("Ctrl-Tab walks through desktops"),keyBox);
+  ctrltab = new QCheckBox(i18n("Ctrl-Tab walks through desktops"),keyBox);
   ctrltab->adjustSize();
   ctrltab->setMinimumSize(ctrltab->size());
   chkLay->addMultiCellWidget(ctrltab,1,1,0,1);
 
-  trall = new QCheckBox(klocale->translate("Alt-Tab is limited to current desktop"),keyBox);
+  trall = new QCheckBox(i18n("Alt-Tab is limited to current desktop"),keyBox);
   trall->adjustSize();
   trall->setMinimumSize(trall->size());
   chkLay->addMultiCellWidget(trall,2,2,0,1);
 
-  atLabel = new QLabel(klocale->translate("Alt-Tab mode:"),keyBox);
+  atLabel = new QLabel(i18n("Alt-Tab mode:"),keyBox);
   atLabel->adjustSize();
   atLabel->setMinimumSize(atLabel->size());
   atLabel->setAlignment(AlignHCenter | AlignVCenter);
   chkLay->addWidget(atLabel,3,0);
 
   alttab = new QComboBox(FALSE, keyBox, "AltTab");
-  alttab->insertItem(klocale->translate("KDE"),ATM_KDE);
-  alttab->insertItem(klocale->translate("CDE"),ATM_CDE);
+  alttab->insertItem(i18n("KDE"),ATM_KDE);
+  alttab->insertItem(i18n("CDE"),ATM_CDE);
   alttab->adjustSize();
   alttab->setMinimumSize(alttab->size());
   chkLay->addWidget(alttab,3,1);
 
-  b3grab = new QCheckBox(klocale->translate("Grab the Right Mouse Button"),keyBox);
+  b3grab = new QCheckBox(i18n("Grab the Right Mouse Button"),keyBox);
   b3grab->adjustSize();
   b3grab->setMinimumSize(atLabel->size());
   chkLay->addMultiCellWidget(b3grab,4,4,0,1);
@@ -75,7 +75,7 @@ KAdvancedConfig::KAdvancedConfig(QWidget * parent, const char *name)
 
   lay->addWidget(keyBox);
 
-  filterBox = new QGroupBox(klocale->translate("Filters"),this);
+  filterBox = new QGroupBox(i18n("Filters"),this);
 
   chkLay = new QGridLayout(filterBox,5,5,5);
   chkLay->addRowSpacing(0,10);
@@ -95,17 +95,17 @@ KAdvancedConfig::KAdvancedConfig(QWidget * parent, const char *name)
   chkLay->setColStretch(3,1);
   chkLay->setColStretch(4,0);
 
-  wLabel = new QLabel(klocale->translate("Windows will:"),filterBox);
+  wLabel = new QLabel(i18n("Windows will:"),filterBox);
   wLabel->adjustSize();
   wLabel->setMinimumSize(wLabel->size());
   chkLay->addMultiCellWidget(wLabel,1,1,1,4);
 
   opCombo = new QComboBox(FALSE,filterBox, "Filters");
-  opCombo->insertItem(klocale->translate("have tiny decorations"),TDEC);
-  opCombo->insertItem(klocale->translate("have no decorations"),NDEC);
-  opCombo->insertItem(klocale->translate("never gain focus"),NFOC);
-  opCombo->insertItem(klocale->translate("start as Sticky"),STIC);
-  opCombo->insertItem(klocale->translate("be excluded from session management"),SESS);
+  opCombo->insertItem(i18n("have tiny decorations"),TDEC);
+  opCombo->insertItem(i18n("have no decorations"),NDEC);
+  opCombo->insertItem(i18n("never gain focus"),NFOC);
+  opCombo->insertItem(i18n("start as Sticky"),STIC);
+  opCombo->insertItem(i18n("be excluded from session management"),SESS);
   opCombo->setCurrentItem(TDEC);
   opCombo->adjustSize();
   opCombo->setMinimumSize(opCombo->size());
@@ -113,17 +113,17 @@ KAdvancedConfig::KAdvancedConfig(QWidget * parent, const char *name)
 
   connect(opCombo, SIGNAL(activated(int)),this,SLOT(filterSelected(int)));
 
-  ifLabel = new QLabel(klocale->translate("if they match the following:"),filterBox);
+  ifLabel = new QLabel(i18n("if they match the following:"),filterBox);
   ifLabel->adjustSize();
   ifLabel->setMinimumSize(ifLabel->size());
   chkLay->addMultiCellWidget(ifLabel,3,3,1,4);
 
-  tList = new myListBrowser(klocale->translate("Titles"),filterBox,"tList");
+  tList = new myListBrowser(i18n("Titles"),filterBox,"tList");
   tList->adjustSize();
   tList->setMinimumSize(tList->size());
   chkLay->addWidget(tList,4,1);
 
-  cList = new myListBrowser(klocale->translate("Classes"),filterBox,"cList");
+  cList = new myListBrowser(i18n("Classes"),filterBox,"cList");
   cList->adjustSize();
   cList->setMinimumSize(cList->size());
   chkLay->addWidget(cList,4,3);

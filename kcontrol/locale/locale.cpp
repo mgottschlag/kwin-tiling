@@ -42,7 +42,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   tl->addLayout(tl1);
   tl->addStretch(1);
 
-  gbox = new QGroupBox(klocale->translate("Language"), this);
+  gbox = new QGroupBox(i18n("Language"), this);
   tl1->addMultiCellWidget(gbox, 0, 4, 0, 3);
   tl1->addRowSpacing(0, 10);
   tl1->addRowSpacing(4, 15);
@@ -52,7 +52,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
 
   changedFlag = FALSE;
  
-  QLabel *label = new QLabel(klocale->translate("First"), gbox);
+  QLabel *label = new QLabel(i18n("First"), gbox);
   label->setMinimumSize(label->sizeHint());
   combo1 = new KLanguageCombo(gbox);
   combo1->setMinimumWidth(combo1->sizeHint().width());
@@ -62,7 +62,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   tl1->addWidget(label, 1, 1);
   tl1->addWidget(combo1, 1, 2);
 
-  label = new QLabel(klocale->translate("Second"), gbox);
+  label = new QLabel(i18n("Second"), gbox);
   label->setMinimumSize(label->sizeHint());
   combo2 = new KLanguageCombo(gbox);
   combo2->setMinimumWidth(combo2->sizeHint().width());
@@ -72,7 +72,7 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   tl1->addWidget(label, 2, 1);
   tl1->addWidget(combo2, 2, 2);
 
-  label = new QLabel(klocale->translate("Third"), gbox);
+  label = new QLabel(i18n("Third"), gbox);
   label->setMinimumSize(label->sizeHint());
   combo3 = new KLanguageCombo(gbox);
   combo3->setMinimumWidth(combo3->sizeHint().width());
@@ -112,7 +112,7 @@ void KLocaleConfig::loadLanguageList(KLanguageCombo *combo)
       if (!name.isEmpty())
         languages.append(name);
       else
-        languages.append(klocale->translate("without name!"));
+        languages.append(i18n("without name!"));
              
      combo->insertLanguage(QString(lang)+";"+name);
 
@@ -178,8 +178,8 @@ void KLocaleConfig::applySettings()
   config.sync();
 
   if (changedFlag)
-    KMsgBox::message(this,klocale->translate("Applying language settings"),
-      klocale->translate("Changed language settings apply only to newly started "
+    KMsgBox::message(this,i18n("Applying language settings"),
+      i18n("Changed language settings apply only to newly started "
                          "applications.\nTo change the language of all "
                          "programs, you will have to logout first."));
 

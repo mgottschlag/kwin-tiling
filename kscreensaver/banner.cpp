@@ -81,7 +81,7 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	KSlider *sb;
 	QComboBox *combo;
 
-	setCaption( klocale->translate("Setup kbanner") );
+	setCaption( i18n("Setup kbanner") );
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;

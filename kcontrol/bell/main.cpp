@@ -49,13 +49,13 @@ KBellApplication::KBellApplication(int &argc, char **argv, const char *name)
     {
       if (!pages || pages->contains("bell"))
         addPage(bell = new KBellConfig(dialog, "bell", FALSE), 
-		klocale->translate("&Bell"), "bell-1.html");
+		i18n("&Bell"), "bell-1.html");
 
       if (bell)
         dialog->show();
       else
         {
-          fprintf(stderr, klocale->translate("usage: kcmbell [-init | bell]\n"));
+          fprintf(stderr, i18n("usage: kcmbell [-init | bell]\n"));
 	  justInit = TRUE;
         }
     }
@@ -86,7 +86,7 @@ void KBellApplication::defaultValues()
 int main(int argc, char **argv)
 {
   KBellApplication app(argc, argv, "kcmbell");
-  app.setTitle(klocale->translate("Bell settings"));
+  app.setTitle(i18n("Bell settings"));
   
   if (app.runGUI())
     return app.exec();

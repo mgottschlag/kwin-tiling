@@ -51,16 +51,16 @@ KInputApplication::KInputApplication(int &argc, char **argv, const char *name)
     {
       if (!pages || pages->contains("mouse"))
 	addPage(mouse = new MouseConfig(dialog, "mouse", FALSE), 
-		klocale->translate("&Mouse"), "input-2.html");
+		i18n("&Mouse"), "input-2.html");
       if (!pages || pages->contains("keyboard"))
 	addPage(keyboard = new KeyboardConfig(dialog, "keyboard", FALSE), 
-		klocale->translate("&Keyboard"), "input-1.html");
+		i18n("&Keyboard"), "input-1.html");
 
       if (mouse || keyboard)
         dialog->show();
       else
         {
-          fprintf(stderr, klocale->translate("usage: kcminput [-init | {mouse,keyboard}]\n"));
+          fprintf(stderr, i18n("usage: kcminput [-init | {mouse,keyboard}]\n"));
           justInit = TRUE;
         }
 
@@ -101,7 +101,7 @@ void KInputApplication::defaultValues()
 int main(int argc, char **argv)
 {
   KInputApplication app(argc, argv, "kcminput");
-  app.setTitle(klocale->translate("Input Devices Properties"));
+  app.setTitle(i18n("Input Devices Properties"));
   
   if (app.runGUI())
     return app.exec();

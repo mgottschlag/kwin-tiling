@@ -50,7 +50,7 @@ KSyssoundApplication::KSyssoundApplication(int &argc, char **argv, char *name)
   if (runGUI())
     {
       if (!pages || pages->contains("syssound"))
-        addPage(sound = new KSoundWidget(dialog, "sound"), klocale->translate("&Sound"), "syssound-1.html");
+        addPage(sound = new KSoundWidget(dialog, "sound"), i18n("&Sound"), "syssound-1.html");
 
       dialog->show();
     }
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 {
   KSyssoundApplication app(argc, argv, "kcmsyssound");
 
-  app.setTitle(klocale->translate("System Sounds"));
+  app.setTitle(i18n("System Sounds"));
 
   if (app.runGUI())
     return app.exec();

@@ -16,7 +16,7 @@ mainWidget::mainWidget(QWidget *parent , const char *name)
 {
   KIconLoader iconLoader;
 
-  QLabel *heading = new QLabel(klocale->translate("KDE Control Center"),this);
+  QLabel *heading = new QLabel(i18n("KDE Control Center"),this);
   QFont font("times",18,QFont::Bold);
   KApplication::getKApplication()->getCharsets()->setQFont(font);
   pmap = iconLoader.loadIcon("kdekcc.xpm");

@@ -62,7 +62,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
 
   QBoxLayout *lay = new QVBoxLayout(this, 5);
 
-  ElectricBox = new QButtonGroup(klocale->translate("Active desktop borders"),
+  ElectricBox = new QButtonGroup(i18n("Active desktop borders"),
 				 this);
 
   QGridLayout *eLay = new QGridLayout(ElectricBox,5,3,10,5);
@@ -71,20 +71,20 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   eLay->setColStretch(1,1);
 
   enable= new
-    QCheckBox(klocale->translate("Enable active desktop borders"),
+    QCheckBox(i18n("Enable active desktop borders"),
 	      ElectricBox);
   enable->adjustSize();
   enable->setMinimumSize(enable->size());
   eLay->addMultiCellWidget(enable,1,1,0,1);
 
   movepointer = new
-    QCheckBox(klocale->translate("Move pointer towards center after switch"),
+    QCheckBox(i18n("Move pointer towards center after switch"),
 	      ElectricBox);
   movepointer->adjustSize();
   movepointer->setMinimumSize(movepointer->size());
   eLay->addMultiCellWidget(movepointer,2,2,0,1);
 
-  delaylabel = new QLabel(klocale->translate("Desktop switch delay:"),
+  delaylabel = new QLabel(i18n("Desktop switch delay:"),
 			  ElectricBox);
   delaylabel->adjustSize();
   delaylabel->setMinimumSize(delaylabel->size());
@@ -114,7 +114,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   lay->addWidget(ElectricBox,5);
 
   //CT 15mar98 - add EdgeResistance, BorderAttractor, WindowsAttractor config
-  MagicBox = new QButtonGroup(klocale->translate("Magic Borders"), this);
+  MagicBox = new QButtonGroup(i18n("Magic Borders"), this);
 
   eLay = new QGridLayout(MagicBox,4,3,10,5);
   eLay->addRowSpacing(0,10);
@@ -123,7 +123,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
   eLay->setColStretch(1,0);
   eLay->setColStretch(2,1);
 
-  BrdrSnapLabel = new QLabel(klocale->translate("Border Snap Zone:\n       (pixels)"), MagicBox);
+  BrdrSnapLabel = new QLabel(i18n("Border Snap Zone:\n       (pixels)"), MagicBox);
   BrdrSnapLabel->adjustSize();
   BrdrSnapLabel->setMinimumSize(BrdrSnapLabel->size());
   BrdrSnapLabel->setAlignment(AlignTop);
@@ -148,7 +148,7 @@ KDesktopConfig::KDesktopConfig (QWidget * parent, const char *name)
 
   connect( BrdrSnapSlider, SIGNAL(valueChanged(int)), BrdrSnapLCD, SLOT(display(int)) );
 
-  WndwSnapLabel = new QLabel(klocale->translate("Window Snap Zone:\n       (pixels)"), MagicBox);
+  WndwSnapLabel = new QLabel(i18n("Window Snap Zone:\n       (pixels)"), MagicBox);
   WndwSnapLabel->adjustSize();
   WndwSnapLabel->setMinimumSize(WndwSnapLabel->size());
   WndwSnapLabel->setAlignment(AlignTop);

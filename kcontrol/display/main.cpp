@@ -61,26 +61,26 @@ KDisplayApplication::KDisplayApplication(int &argc, char **argv, const char *nam
     {
       if (!pages || pages->contains("background"))
         addPage(background = new KBackground(dialog, KDisplayModule::Setup),
-		klocale->translate("&Background"), "kdisplay-3.html");
+		i18n("&Background"), "kdisplay-3.html");
       if (!pages || pages->contains("screensaver"))
 	addPage(screensaver = new KScreenSaver(dialog, KDisplayModule::Setup),
-		klocale->translate("&Screensaver"), "kdisplay-4.html");
+		i18n("&Screensaver"), "kdisplay-4.html");
 
       if (!pages || pages->contains("colors"))
 	addPage(colors = new KColorScheme(dialog, KDisplayModule::Setup),
-		klocale->translate("&Colors"), "kdisplay-5.html");
+		i18n("&Colors"), "kdisplay-5.html");
       if (!pages || pages->contains("fonts"))
 	addPage(fonts = new KFonts(dialog, KDisplayModule::Setup),
-		klocale->translate("&Fonts"), "kdisplay-6.html");
+		i18n("&Fonts"), "kdisplay-6.html");
       if (!pages || pages->contains("style"))
 	addPage(general = new KGeneral(dialog, KDisplayModule::Setup),
-		klocale->translate("&Style"), "kdisplay-7.html");
+		i18n("&Style"), "kdisplay-7.html");
 
       if (background || screensaver || colors || fonts || general)
         dialog->show();
       else
         {
-          fprintf(stderr, klocale->translate("usage: kcmdisplay [-init | {background,screensaver,colors,fonts,style}]\n"));
+          fprintf(stderr, i18n("usage: kcmdisplay [-init | {background,screensaver,colors,fonts,style}]\n"));
           justInit = TRUE;
         }
 
@@ -147,7 +147,7 @@ int main(int argc, char **argv)
   // colors they want - Mark Donohoe
 
   KDisplayApplication app(argc, argv, "kcmdisplay");
-  app.setTitle(klocale->translate("Display settings"));
+  app.setTitle(i18n("Display settings"));
 
   kimgioRegister();
 

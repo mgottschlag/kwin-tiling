@@ -26,7 +26,7 @@
 int main(int argc, char **argv)
 {
   KControlApplication app(argc, argv, "kcmsample");
-  app.setTitle(klocale->translate("KDE Control Application Sample"));
+  app.setTitle(i18n("KDE Control Application Sample"));
 
   if (app.runGUI())	
     return app.exec();

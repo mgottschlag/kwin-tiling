@@ -53,30 +53,30 @@ void KDMSessionsWidget::setupPage(QWidget *)
 
       sdcombo = new QComboBox( FALSE, group0 );
       connect(sdcombo, SIGNAL(highlighted(int)), SLOT(slotSetAllowShutdown(int)));
-      sdcombo->insertItem(klocale->translate("None"), 0);
-      sdcombo->insertItem(klocale->translate("All"), 1);
-      sdcombo->insertItem(klocale->translate("Root Only"), 2);
-      sdcombo->insertItem(klocale->translate("Console Only"), 3);
+      sdcombo->insertItem(i18n("None"), 0);
+      sdcombo->insertItem(i18n("All"), 1);
+      sdcombo->insertItem(i18n("Root Only"), 2);
+      sdcombo->insertItem(i18n("Console Only"), 3);
       sdcombo->setCurrentItem(sdMode);
       sdcombo->setFixedSize(sdcombo->sizeHint());
 
-      QGroupBox *group1 = new QGroupBox( klocale->translate("Commands"), this );
-      QLabel *shutdown_label = new QLabel(klocale->translate("Shutdown"), group1);
+      QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
+      QLabel *shutdown_label = new QLabel(i18n("Shutdown"), group1);
       shutdown_label->setFixedSize(shutdown_label->sizeHint());
       shutdown_lined = new QLineEdit(group1);
       shutdown_lined->setFixedHeight(shutdown_lined->sizeHint().height());
       shutdown_lined->setText(shutdownstr);
 
-      QLabel *restart_label = new QLabel(klocale->translate("Restart"), group1);
+      QLabel *restart_label = new QLabel(i18n("Restart"), group1);
       restart_label->setFixedSize(restart_label->sizeHint());
 
       restart_lined = new QLineEdit(group1);
       restart_lined->setFixedHeight(shutdown_lined->height());
       restart_lined->setText(restartstr);
 
-      QGroupBox *group2 = new QGroupBox( klocale->translate("Session types"), this );
+      QGroupBox *group2 = new QGroupBox( i18n("Session types"), this );
       
-      QLabel *type_label = new QLabel(klocale->translate("New type"), group2);
+      QLabel *type_label = new QLabel(i18n("New type"), group2);
       type_label->setFixedSize(type_label->sizeHint());
 
       session_lined = new QLineEdit(group2);
@@ -86,19 +86,19 @@ void KDMSessionsWidget::setupPage(QWidget *)
       connect(session_lined, SIGNAL(returnPressed()),
               SLOT(slotAddSessionType()));
 
-      QLabel *types_label = new QLabel(klocale->translate("Available types"), group2);
+      QLabel *types_label = new QLabel(i18n("Available types"), group2);
       types_label->setFixedSize(types_label->sizeHint());
 
       sessionslb = new MyListBox(group2);
       connect(sessionslb, SIGNAL(highlighted(int)), SLOT(slotSessionHighlighted(int)));
       sessionslb->insertStrList(&sessions);
 
-      btnrm = new QPushButton( klocale->translate("Remove"), group2 );
+      btnrm = new QPushButton( i18n("Remove"), group2 );
       btnrm->setFixedSize(btnrm->sizeHint());
       btnrm->setEnabled(false);
       connect( btnrm, SIGNAL( clicked() ), SLOT( slotRemoveSessionType() ) );
 
-      btnadd = new QPushButton( klocale->translate("Add"), group2 );
+      btnadd = new QPushButton( i18n("Add"), group2 );
       btnadd->setFixedSize(btnadd->sizeHint());
       btnadd->setEnabled(false);
       connect( btnadd, SIGNAL( clicked() ), SLOT( slotAddSessionType() ) );

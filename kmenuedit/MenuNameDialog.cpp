@@ -18,7 +18,7 @@
 MenuNameDialog::MenuNameDialog(	QWidget* parent, const char* name )
   : Inherited( parent, name )
 {
-  setCaption( klocale->translate("Change Menunames") );
+  setCaption( i18n("Change Menunames") );
   i_personal->setFocus();
 }
 

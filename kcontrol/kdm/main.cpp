@@ -81,26 +81,26 @@ KDMConfigApplication::KDMConfigApplication(int &argc, char **argv, const char *n
 
       if (!pages || pages->contains("appearance"))
 	  addPage(appearance = new KDMAppearanceWidget(dialog, "appearance", FALSE),
-		  klocale->translate("&Appearance"), 
+		  i18n("&Appearance"), 
 		  "kdm-appear.html");
       if (!pages || pages->contains("font"))
         addPage(font = new KDMFontWidget(dialog, "font", FALSE),
-		klocale->translate("&Fonts"),
+		i18n("&Fonts"),
 		"kdm-font.html");
       if (!pages || pages->contains("background"))
 	  addPage(background = new KDMBackgroundWidget(dialog, "background", FALSE),
-		  klocale->translate("&Background"), "kdm-backgnd.html");
+		  i18n("&Background"), "kdm-backgnd.html");
       if (!pages || pages->contains("users"))
         addPage(users = new KDMUsersWidget(dialog, "users", FALSE),
-                                  klocale->translate("&Users"), "kdm-users.html");
+                                  i18n("&Users"), "kdm-users.html");
       if (!pages || pages->contains("sessions"))
         addPage(sessions = new KDMSessionsWidget(dialog, "sessions", FALSE),
-                                  klocale->translate("&Sessions"), "kdm-sess.html");
+                                  i18n("&Sessions"), "kdm-sess.html");
       if (appearance || font || background || sessions || users)
         dialog->show();
       else
         {
-          fprintf(stderr, klocale->translate("usage: kdmconfig [-init | {appearance,font,background,sessions,users}]\n"));
+          fprintf(stderr, i18n("usage: kdmconfig [-init | {appearance,font,background,sessions,users}]\n"));
           justInit = TRUE;
         }
 
@@ -139,7 +139,7 @@ void KDMConfigApplication::apply()
 int main(int argc, char **argv)
 {
   KDMConfigApplication app(argc, argv, "kdmconfig");
-  app.setTitle(klocale->translate("KDM Configuration"));
+  app.setTitle(i18n("KDM Configuration"));
   
   if (app.runGUI())
   {
@@ -149,9 +149,9 @@ int main(int argc, char **argv)
       return app.exec();
     else
     {
-      QString msg = klocale->translate("Sorry, but you don't have read/write\n"
+      QString msg = i18n("Sorry, but you don't have read/write\n"
 				       "permission to the KDM setup file.");
-      KMsgBox::message( 0, klocale->translate("Missing privileges"), msg);
+      KMsgBox::message( 0, i18n("Missing privileges"), msg);
     }
   }
   else
