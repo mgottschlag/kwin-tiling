@@ -30,6 +30,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* for AIX at least */
+#include <time.h>
+
 #undef Below // Namespace collision
 
 #include <qbuttongroup.h>
