@@ -43,13 +43,13 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   : LookAndFeelTabBase (parent, name)
 {
     // connections
-    connect(m_manualHideAnimation, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_manualHideSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_autoHideAnimation, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_autoHideSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_hideButtons, SIGNAL(clicked()), SIGNAL(changed()));
-    connect(m_hideButtonSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_backgroundImage, SIGNAL(clicked()), SIGNAL(changed()));
+    connect(m_manualHideAnimation, SIGNAL(clicked()), SLOT(changed()));
+    connect(m_manualHideSlider, SIGNAL(valueChanged(int)), SLOT(changed()));
+    connect(m_autoHideAnimation, SIGNAL(clicked()), SLOT(changed()));
+    connect(m_autoHideSlider, SIGNAL(valueChanged(int)), SLOT(changed()));
+    connect(m_hideButtons, SIGNAL(clicked()), SLOT(changed()));
+    connect(m_hideButtonSlider, SIGNAL(valueChanged(int)), SLOT(changed()));
+    connect(m_backgroundImage, SIGNAL(clicked()), SLOT(changed()));
     connect(m_backgroundButton, SIGNAL(clicked()), SLOT(browse_theme()));
 
     // whats this help
