@@ -19,7 +19,6 @@ timezones:
 messages:
 	$(XGETTEXT) -ktranslate $(kcm_locale_la_SOURCES) -o $(podir)/kcmlocale.pot
 	$(XGETTEXT) TIMEZONES -o $(podir)/../kdelibs/timezones.pot
-	perl -p -i -e 's,^"Content-Type: text/plain; charset=CHARSET\\n"$,"Content-Type: text/plain; charset=UTF-8\\n",' $(podir)/../kdelibs/timezones.pot
 
 xdg_apps_DATA = language.desktop
 
