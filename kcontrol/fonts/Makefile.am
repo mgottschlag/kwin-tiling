@@ -12,7 +12,7 @@ kde_module_LTLIBRARIES = kcm_fonts.la
 
 kcm_fonts_la_SOURCES = fonts.cpp
 kcm_fonts_la_LDFLAGS = $(KDE_RPATH) $(LIBFONTCONFIG_RPATH) -module -avoid-version $(all_libraries) -no-undefined
-kcm_fonts_la_LIBADD = $(LIB_KDEUI) libkxftconfig.la $(LIBFONTCONFIG_LIBS) $(top_builddir)/kcontrol/krdb/libkrdb.la
+kcm_fonts_la_LIBADD = libkxftconfig.la $(top_builddir)/kcontrol/krdb/libkrdb.la $(LIB_KDEUI) $(LIBFONTCONFIG_LIBS)
 kcm_fonts_la_METASOURCES = fonts.moc
 
 noinst_HEADERS = fonts.h kxftconfig.h

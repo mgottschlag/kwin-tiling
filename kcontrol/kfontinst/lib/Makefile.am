@@ -23,6 +23,6 @@ KfiConfig.h \
 Misc.h \
 XConfig.h
 
-libkfontinst_la_LIBADD = $(LIB_FONT_ENC) $(LIB_KIO) ../../fonts/libkxftconfig.la $(LIBFONTCONFIG_LIBS) $(LIBFREETYPE_LIBS) $(LIBZ)
+libkfontinst_la_LIBADD = ../../fonts/libkxftconfig.la $(LIB_FONT_ENC) $(LIB_KIO) $(LIBFONTCONFIG_LIBS) $(LIBFREETYPE_LIBS) $(LIBZ)
 libkfontinst_la_LDFLAGS = $(all_libraries) $(KDE_RPATH) $(LIBFONTCONFIG_RPATH) $(LIBFREETYPE_RPATH) -no-undefined
 INCLUDES= $(LIBFREETYPE_CFLAGS) $(LIBFONTCONFIG_CFLAGS) -DOS_$(UNAME) -I$(srcdir)/../../fonts $(all_includes)
