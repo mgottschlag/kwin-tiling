@@ -169,6 +169,11 @@ void ConfigModule::runAsRoot()
     {
       _rootProcess = new KProcess;
       *_rootProcess << kdesu;
+      // We have to disable the keep-password feature because
+      // in that case the modules is started through kdesud and kdesu 
+      // returns before the module is running and that doesn't work. 
+      // We also don't have a way to close the module in that case.
+      *_rootProcess << "--n"; // Don't keep password.
       if (kdeshell)
         *_rootProcess << "kcmshell";
       *_rootProcess << QString("%1 --embed %2").arg(cmd).arg(_embedWidget->winId());
