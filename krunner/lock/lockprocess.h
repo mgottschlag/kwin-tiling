@@ -71,7 +71,6 @@ private slots:
     void resume();
     void checkDPMSActive();
     void slotDeadTimePassed();
-    void slotFade();
 
 private:
     void configure();
@@ -126,8 +125,6 @@ private:
     int         mAutoLogoutTimerId;
     int         mAutoLogoutTimeout;
     bool        mAutoLogout;
-    KPixmap	mOriginal;
-    double      mFadeValue; 
 };
 
 #endif

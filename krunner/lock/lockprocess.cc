@@ -101,8 +101,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mVisibility(false),
       mRestoreXF86Lock(false),
       mForbidden(false),
-      mAutoLogout(false),
-      mFadeValue(0)
+      mAutoLogout(false)
 {
     setupSignals();
 
@@ -637,8 +636,7 @@ bool LockProcess::startSaver()
     raise();
     XSync(qt_xdisplay(), False);
     setVRoot( winId(), winId() );
-    mOriginal = QPixmap::grabWindow(winId());
-    QTimer::singleShot(1, this, SLOT(slotFade()));
+    startHack();
     return true;
 }
 
@@ -733,22 +731,6 @@ bool LockProcess::startLock()
 //---------------------------------------------------------------------------
 //
 
-
-void  LockProcess::slotFade()
-{
-    mFadeValue = mFadeValue + 0.1;
-    if (mFadeValue > 0.5)
-    {
-        startHack();
-	return;
-    }
-    else
-    {
-        KPixmapEffect::fade(mOriginal, mFadeValue, Qt::black);
-        bitBlt(this, 0, 0, &mOriginal);
-        QTimer::singleShot(1, this, SLOT(slotFade()));
-    }
- }
 
 bool LockProcess::startHack()
 {
