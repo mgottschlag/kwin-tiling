@@ -181,7 +181,6 @@ void KNotifyWidget::slotFileChanged( const QString& text )
 
     if ( itemText && *itemText != text ) {
 	*itemText = text;
-	qDebug("*** event: %s", event->soundfile.latin1());
 	emit changed();
     }
 
@@ -195,7 +194,8 @@ void KNotifyWidget::playSound()
 
 void KNotifyWidget::loadAll()
 {
-    setEnabled( false );
+    // FIXME, Qt Bug, uncomment this when fixed
+    //    setEnabled( false );
     setCursor( KCursor::waitCursor() );
     m_events->load();
     updateView();
