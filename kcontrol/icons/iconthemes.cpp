@@ -343,7 +343,7 @@ void IconThemesConfig::updateRemoveButton()
 void IconThemesConfig::themeSelected(QListViewItem *item)
 {
 #ifdef HAVE_LIBART
-  KSVGIconEngine engine;  
+  KSVGIconEngine engine;
 #endif 
   QString dirName(m_themeNames[item->text(0)]);
   KIconTheme icontheme(dirName);
@@ -357,7 +357,12 @@ void IconThemesConfig::themeSelected(QListViewItem *item)
 #ifdef HAVE_LIBART
 	  icon=icontheme.iconPath("exec.svg", size, KIcon::MatchBest);
 	  if(engine.load(size, size, icon.path))
-		m_previewExec->setPixmap(*engine.image());
+              m_previewExec->setPixmap(*engine.image());
+          else {
+              icon=icontheme.iconPath("exec.svgz", size, KIcon::MatchBest);
+              if(engine.load(size, size, icon.path))
+                  m_previewExec->setPixmap(*engine.image());
+          }
 #endif
   }
   else
@@ -368,7 +373,12 @@ void IconThemesConfig::themeSelected(QListViewItem *item)
 #ifdef HAVE_LIBART
 	  icon=icontheme.iconPath("folder.svg", size, KIcon::MatchBest);
 	  if(engine.load(size, size, icon.path))
-		m_previewFolder->setPixmap(*engine.image());
+              m_previewFolder->setPixmap(*engine.image());
+          else {
+              icon=icontheme.iconPath("folder.svgz", size, KIcon::MatchBest);
+              if(engine.load(size, size, icon.path))
+                  m_previewFolder->setPixmap(*engine.image());
+          }
 #endif
   }
   else
@@ -379,7 +389,12 @@ void IconThemesConfig::themeSelected(QListViewItem *item)
 #ifdef HAVE_LIBART
 	  icon=icontheme.iconPath("txt.svg", size, KIcon::MatchBest);
 	  if(engine.load(size, size, icon.path))
-		m_previewDocument->setPixmap(*engine.image());
+              m_previewDocument->setPixmap(*engine.image());
+          else {
+              icon=icontheme.iconPath("txt.svgz", size, KIcon::MatchBest);
+              if(engine.load(size, size, icon.path))
+                  m_previewDocument->setPixmap(*engine.image());
+          }
 #endif
   }
   else  
