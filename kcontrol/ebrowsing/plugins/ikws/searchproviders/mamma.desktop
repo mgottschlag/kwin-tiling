@@ -1,6 +1,28 @@
 [Desktop Entry]
 Type=Service
 Name=Mamma - Mother of all Search Engines
+Name[ca]=Mamma - La mare de tots els motors de cerca
+Name[cs]=Mamma
+Name[da]=Mamma - Moderen til alle søgemaskiner
+Name[de]=Mamma - Die Mutter aller Suchmaschinen
+Name[eo]=Mamma - Patrino de ĉiuj retserĉiloj
+Name[es]=Mamma - La Madre de todos los Motores de Búsqueda
+Name[et]=Mamma - kõigi otsingumootorite ema
+Name[fr]=Mamma - Mère de tous les moteurs de recherche
+Name[he]=שופיחה יעונמ לכ םא - Mamma
+Name[hu]=Mamma
+Name[is]=Mamma - Mamma allra leitarvéla
+Name[ko]=맘마 - 모든 찾기 엔진의 어머니
+Name[lv]=Mamma - Visu Meklēšanas Mašīnu Māte
+Name[nl]=Mamma - moeder van alle zoekmachines
+Name[no]=Mamma - alle søkemotorers mor
+Name[pt]=Mamma - Mãe de Todos os Motores de Busca
+Name[pt_BR]=Mamma - Mãe de todas as máquinas de procura
+Name[sr]=Mamma - Majka svih pretraživača
+Name[sv]=Mamma - Moder till alla sökmotorer
+Name[tr]=Mamma - Bütün arama motorlarının Annesi
+Name[uk]=Mamma - мати всіх пошукових машин
+Name[zh_TW.Big5]=Mamma - 所有搜尋引擎之母
 ServiceTypes=SearchProvider
 Keys=mm,mamma
 Query=http://www.mamma.com/Mamma?lang=1&timeout=4&qtype=0&query=\\1

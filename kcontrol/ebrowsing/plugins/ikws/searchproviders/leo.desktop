@@ -1,6 +1,11 @@
 [Desktop Entry]
 Type=Service
 Name=LEO-Translate
+Name[de]=LEO-Übersetzung
+Name[eo]=LEO-Tradukilo
+Name[is]=LEO-þýðandi
+Name[lv]=LEO-Tulkot
+Name[no]=LEO-oversetter
 ServiceTypes=SearchProvider
 Keys=leo
 Query=http://dict.leo.org/?search=\\1

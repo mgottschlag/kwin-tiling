@@ -1,6 +1,29 @@
 [Desktop Entry]
 Type=Service
 Name=Free On-Line Dictionary Of Computing
+Name[ca]=Diccionari d'ordinadors en línia lliure
+Name[cs]=Online slovník výp. techniky
+Name[da]=Gratis On-Line mappe for computing
+Name[de]=Freies Online-Lexikon der Computerbegriffe
+Name[eo]=Libera reta vortaro de komputado
+Name[es]=Free On-Line Dictionary Of Computing (diccionario de Informática)
+Name[et]=Vaba arvutialane võrgusõnastik
+Name[fi]=Vapaa tietokonealan sanasto
+Name[fr]=Dictionnaire de l'Informatique en Ligne
+Name[hu]=Szabad hozzáférésű számítástechnikai szótár
+Name[is]=Ókeypis tölvuorðabók á Netinu
+Name[it]=Dizionario free on-line di informatica
+Name[ko]=무료 온라인 컴퓨터 사전
+Name[lv]=Bezmaksas On-lain Datorvārdnīca
+Name[no]=Gratis online ordbok om datamaskiner
+Name[pt]=Dicionário de Computação On-Line Gratuito
+Name[pt_BR]=Dicionário gratuito on-line de computação
+Name[ru]=Online словарь по компьютерам
+Name[sr]=Besplatni On-Line rečnik za računare
+Name[sv]=Free On-Line Dictionary Of Computing (en datortermsordlista)
+Name[tr]=Ücretsiz Çevrimiçi Bilişim Sözlüğü
+Name[uk]=Вільний онлайн словник з інформатики
+Name[zh_TW.Big5]=免費的線上電腦辭典
 ServiceTypes=SearchProvider
 Keys=fd,foldoc
 Query=http://foldoc.doc.ic.ac.uk/foldoc/foldoc.cgi?query=\\1

@@ -1,6 +1,20 @@
 [Desktop Entry]
 Type=Service
 Name=AllTheWeb fast
+Name[ca]=AllTheWeb ràpid
+Name[da]=AllTheWeb hurtigt
+Name[eo]=La tuta teksaĵo rapide
+Name[es]=AllTheWeb de Fast
+Name[hu]=AllTheWeb
+Name[is]=AllTheWeb hratt
+Name[it]=TuttoIlWeb veloce
+Name[lv]=VissWebs ātri
+Name[no]=HeleWeben fort
+Name[no_NY]=AllTheWeb Fast
+Name[pt]=AllThe Web fast
+Name[sl]=AllTheWeb hitro
+Name[sv]=AllTheWeb snabb
+Name[tr]=AllTheWeb
 ServiceTypes=SearchProvider
 Keys=atw,alltheweb
 Query=http://www.alltheweb.com/cgi-bin/search?exec=FAST+Search&type=all&query=\\1&exec=FAST+Search
