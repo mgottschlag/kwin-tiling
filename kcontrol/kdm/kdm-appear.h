@@ -15,7 +15,7 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
-*/  
+*/
 
 
 #ifndef __KDMAPPEAR_H__
@@ -67,13 +67,13 @@ protected:
 	void iconLoaderDragEnterEvent(QDragEnterEvent *event);
 	void iconLoaderDropEvent(QDropEvent *event);
 	bool setLogo(QString logo);
-
+    static QStringList sortStringList(QStringList list);
 private slots:
 	void slotAreaRadioClicked(int id);
 	void slotPosRadioClicked(int id);
 	void slotLogoButtonClicked();
 	void changed();
- 
+
 private:
 	enum { KdmNone, KdmClock, KdmLogo };
 	QLabel      *logoLabel;

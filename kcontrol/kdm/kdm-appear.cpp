@@ -192,7 +192,10 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay->setColStretch(3, 1);
 
   guicombo = new KComboBox(false, hlp);
-  guicombo->insertStringList(QStyleFactory::keys());
+  QStringList list = QStyleFactory::keys();
+  list = KDMAppearanceWidget::sortStringList(list);
+  guicombo->insertStringList(list);
+
   label = new QLabel(guicombo, i18n("GUI s&tyle:"), hlp);
   connect(guicombo, SIGNAL(activated(int)), SLOT(changed()));
   hglay->addWidget(label, 0, 0);
@@ -300,8 +303,8 @@ void KDMAppearanceWidget::loadColorSchemes(KComboBox *combo)
   // Global + local schemes
   QStringList list = KGlobal::dirs()->findAllResources("data",
        "kdisplay/color-schemes/*.kcsrc", false, true);
-
-  combo->insertItem("Default");
+  QStringList tmp;
+  tmp.append( "Default");
   for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++) {
     KSimpleConfig *config = new KSimpleConfig(*it, true);
     config->setGroup("Color Scheme");
@@ -309,10 +312,12 @@ void KDMAppearanceWidget::loadColorSchemes(KComboBox *combo)
     QString str;
     if (!(str = config->readEntry("Name")).isEmpty() ||
 	!(str = config->readEntry("name")).isEmpty())
-	combo->insertItem(str);
+        tmp.append( str );
 
     delete config;
   }
+  tmp = KDMAppearanceWidget::sortStringList(tmp);
+  combo->insertStringList(tmp);
 }
 
 bool KDMAppearanceWidget::setLogo(QString logo)
@@ -528,6 +533,23 @@ QString KDMAppearanceWidget::quickHelp() const
 void KDMAppearanceWidget::changed()
 {
   emit changed(true);
+}
+
+QStringList KDMAppearanceWidget::sortStringList(QStringList list)
+{
+    QStringList lst;
+    QStringList tmp(list);
+    QMap<QString,  QString> map;
+    for ( QStringList::Iterator it = tmp.begin(); it != tmp.end(); ++it )
+    {
+        lst<<(*it).lower();
+        map.insert((*it).lower(), *it);
+    }
+    lst.sort();
+    tmp.clear();
+    for ( QStringList::Iterator it = lst.begin(); it != lst.end(); ++it )
+        tmp<<map.find(*it).data();
+    return tmp;
 }
 
 #include "kdm-appear.moc"
