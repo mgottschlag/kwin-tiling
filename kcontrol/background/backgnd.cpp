@@ -128,7 +128,7 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
     m_oldMode = KBackgroundSettings::Centred;
 
     // Top layout
-    QGridLayout *top = new QGridLayout(this, 3, 2);
+    QGridLayout *top = new QGridLayout(this, 2, 2);
     top->setSpacing(10); top->setMargin(10);
     top->setColStretch(0, 1);
     top->setColStretch(1, 2);
@@ -923,8 +923,22 @@ void KBackground::slotBrowseWallpaper()
         desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
+    QString currentWallpaper = m_pWallpaperBox->currentText();
+    QString currentWallpaperDir;
+    
+    if (currentWallpaper.startsWith("/"))
+    {
+       KURL url;
+       url.setPath(currentWallpaper);
+       currentWallpaperDir = url.directory();
+    }
+    else
+    {
+       currentWallpaperDir = KGlobal::dirs()->findDirs("wallpaper", "").first();
+    }
+
     KURL url = KFileDialog::getImageOpenURL(
-                          KGlobal::dirs()->findDirs("wallpaper", "").first(), 
+                          currentWallpaperDir, 
                           0, i18n("Select Wallpaper"));
 
     if (url.isEmpty())
