@@ -271,7 +271,8 @@ void SchemaEditor::slotColorChanged(int slot)
 
 void SchemaEditor::removeCurrent()
 {
-
+    if(schemaList->currentItem()==-1)
+        return;
     QString base = *filename.at(schemaList->currentItem());
     if(base==schema())
      setSchema("");
