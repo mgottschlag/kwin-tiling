@@ -295,7 +295,7 @@ void KLocaleConfigMoney::reTranslate()
   list.append(cmbMonNegMonSignPos);
 
   QComboBox *wc;
-  for(QObjectListIt li(list) ; (wc = (QComboBox *)li.current()) != 0; li++)
+  for(QObjectListIt li(list) ; (wc = (QComboBox *)li.current()) != 0; ++li)
   {
     wc->changeItem(locale->translate("Parens around"), 0);
     wc->changeItem(locale->translate("Before quantity money"), 1); 
