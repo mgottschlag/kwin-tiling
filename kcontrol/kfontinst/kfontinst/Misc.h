@@ -68,8 +68,8 @@ class CMisc
     static bool         doCmdStr(const QString &cmd);
     static QString      changeExt(const QString &f, const QString &newExt);
     static QString      afmName(const QString &f) { return changeExt(f, "afm"); }
-    static QString      locate(QString file) { return KGlobal::instance()->dirs()->findResource("data", "kfontinst/"+file); }
-    static QStringList  locateAll(QString dir, QString type) { return KGlobal::instance()->dirs()->findAllResources("data", "kfontinst/"+dir+"/"+"*."+type); }
+    static QString      locate(QString file) { return KGlobal::instance()->dirs()->findResource("data", "kcmfontinst/"+file); }
+    static QStringList  locateAll(QString dir, QString type) { return KGlobal::instance()->dirs()->findAllResources("data", "kcmfontinst/"+dir+"/"+"*."+type); }
     static QString      removeSymbols(const QString &str);
     static QString      shortName(const QString &dir);
     static int          findIndex(const QComboBox *box, const QString &str);

@@ -261,7 +261,7 @@ const QString CConfig::constXftConfigFiles[]=
 const QString CConfig::constNotFound ("<Not Found>");
 
 CConfig::CConfig()
-       : KConfig("kfontinstrc")
+       : KConfig("kcmfontinstrc")
 {
     QCString defaultFontsDir,
              defaultXConfigFile,

@@ -1,0 +1,51 @@
+[Desktop Entry]
+Exec=kcmshell fontinst
+Icon=kcmfontinst
+Type=Application
+DocPath=kcontrol/font-installer.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=fontinst
+X-KDE-FactoryName=fontinst
+X-KDE-RootOnly=true
+X-KDE-HasReadOnlyMode=true
+
+Name=Font Installer
+Name[af]=skrif tipe installeerder
+Name[az]=Yazı Növü Qurucusu
+Name[bg]=Инсталатор на шрифт
+Name[da]=Skrift installatør
+Name[de]=Schriften-Installation
+Name[el]=Εγκατάσταση Γραμματοσειρών
+Name[es]=Instalador de fuentes
+Name[fr]=Installeur de polices
+Name[he]=מתקין הגופנים
+Name[hu]=Betűtípus-telepítő
+Name[ko]=글꼴 설치기
+Name[nl]=Lettertype Installeerder
+Name[pt]=Instalador de Tipos de Letra
+Name[pt_BR]=Instalador de Tipos de Letra
+Name[ru]=Установка шрифтов
+Name[sl]=Namestilnik pisav
+Name[sv]=Teckensnittsinstallerare
+Name[uk]=Встановлювач шрифтів
+
+Comment=Install & preview fonts
+Comment[af]=installeer & voorskou skriftipes
+Comment[az]=Yazı növü qur & nümayiş et
+Comment[bg]=Инсталира и преглежда шрифтове
+Comment[da]=Installér og forhåndsvis skrifttyper
+Comment[de]=Schriften installieren und betrachten
+Comment[el]=Εγκατάσταση & Προεπισκόπηση Γραμματοσειρών
+Comment[es]=Instalar y previsualizar fuentes
+Comment[fr]=Pour installer et afficher des polices de caractères
+Comment[he]=התקנה ותצוגה מקדימה של גופנים
+Comment[hu]=Betűtípusok telepítése előnézettel
+Comment[ko]=글꼴을 미리보거나 깔아줍니다
+Comment[nl]=Lettertypen installeren en bekijken
+Comment[pt]=Instala e antevê tipos de letra
+Comment[pt_BR]=Instala e antevê tipos de letra
+Comment[ru]=установка и просмотр шрифтов
+Comment[sl]=Namesti in prikaže pisave
+Comment[sv]=Installera & förhandsgranska teckensnitt
+Comment[uk]=Дозволяє встановлювати та переглядати шрифти

@@ -55,7 +55,7 @@ CSettingsWidget::CSettingsWidget(QWidget *parent, const char *name)
     topLayout->addWidget(janus, 0, 0); 
 
     // Appearance page...
-    frame=janus->addPage(i18n("Appearance"), i18n("Customize the look & operation"),	
+    frame=janus->addPage(i18n("Appearance"), i18n("Customize the look & operation"),
                          KGlobal::iconLoader()->loadIcon("appearance", KIcon::Desktop));
     layout=new QVBoxLayout(frame, 0);
 
@@ -82,8 +82,9 @@ CSettingsWidget::CSettingsWidget(QWidget *parent, const char *name)
     layout->addWidget(inst);
 
     // StarOffice page...
+    KGlobal::iconLoader()->addAppDir("kcmfontinst");
     frame=janus->addPage(i18n("StarOffice"), i18n("StarOffice configuration"),
-                         KGlobal::iconLoader()->loadIcon("so", KIcon::Desktop));
+                         KGlobal::iconLoader()->loadIcon("kcmfontinst_star_office", KIcon::User));
     layout=new QVBoxLayout(frame, 0);
  
     CStarOfficeSettingsWidget *so=new CStarOfficeSettingsWidget(frame);

@@ -70,7 +70,7 @@ const KAboutData * CKfiCmModule::aboutData() const
     {
         CKfiCmModule *that = const_cast<CKfiCmModule *>(this);
 
-        that->itsAboutData=new KAboutData("kfontinst",
+        that->itsAboutData=new KAboutData("kcmfontinst",
                                           I18N_NOOP("KFontinst"),
                                           CKfi::constVersion,
                                           I18N_NOOP("Font installer and previewer"),
@@ -134,7 +134,7 @@ QString CKfiCmModule::quickHelp() const
 
 extern "C"
 {
-    KCModule *create_kfontinst(QWidget *parent, const char *name)
+    KCModule * create_fontinst(QWidget *parent, const char *name)
     {
         return new CKfiCmModule(parent, name);
     };

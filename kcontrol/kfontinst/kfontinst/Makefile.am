@@ -1,14 +1,14 @@
-SUBDIRS = docs
+kcmSUBDIRS = docs
 
-lib_LTLIBRARIES = libkcm_kfontinst.la
-libkcm_kfontinst_la_LIBADD  = $(FREETYPE_LIB) $(LIB_KFILE)
-libkcm_kfontinst_la_METASOURCES = AUTO
-libkcm_kfontinst_la_LDFLAGS = $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH)
+kde_module_LTLIBRARIES = libkcm_fontinst.la
+libkcm_fontinst_la_LIBADD  = $(FREETYPE_LIB) $(LIB_KFILE)
+libkcm_fontinst_la_METASOURCES = AUTO
+libkcm_fontinst_la_LDFLAGS = $(KDE_PLUGIN) $(all_libraries) $(KDE_RPATH) -module -avoid-version -no-undefined
  
-desktop_DATA = kfontinst.desktop
+desktop_DATA = kcmfontinst.desktop
 desktopdir = $(kde_appsdir)/Settings/System/
  
-libkcm_kfontinst_la_SOURCES = \
+libkcm_fontinst_la_SOURCES = \
 	KfiCmModule.cpp \
 	Config.cpp \
 	DiskFontListWidget.cpp \
@@ -62,7 +62,7 @@ xftparserfiles = xftlex.l xftgram.y
 
 EXTRA_DIST = \
 	$(desktop_DATA) \
-	$(libkcm_kfontinst_la_SOURCES) \
+	$(libkcm_fontinst_la_SOURCES) \
 	$(xftparserfiles) \
 	KfiCmModule.h \
 	Config.h \
@@ -128,21 +128,21 @@ EXTRA_DIST = \
 	XftConfigIncludesWidget.h \
 	XftConfigIncludesWidgetData.h \
 	XftConfigIncludesWidget.ui \
-	hi32-app-kfontinst.png \
-	hi48-app-kfontinst.png \
-	lo16-app-kfontinst.png \
-	lo32-app-kfontinst.png \
-	so.png
+	hi32-app-kcmfontinst.png \
+	hi48-app-kcmfontinst.png \
+	lo16-app-kcmfontinst.png \
+	lo32-app-kcmfontinst.png \
+	kcmfontinst_star_office.png
 
 noinst_HEADERS = $(EXTRA_DIST)
 
 INCLUDES= $(FREETYPE_INC) $(all_includes)
-KDE_ICON = kfontinst
+KDE_ICON = kcmfontinst
 
-pics_DATA = so.png
-picsdir = $(kde_datadir)/kfontinst/pics
+pics_DATA = kcmfontinst_star_office.png
+picsdir = $(kde_datadir)/kcmfontinst/pics
 
-DISTCLEANFILES = $(kfontinst_METASOURCES)
+DISTCLEANFILES = $(lib_fontinst_METASOURCES)
 
 xftparser: $(xftparserfiles)
 	cd $(srcdir); \
@@ -150,4 +150,4 @@ xftparser: $(xftparserfiles)
 	bison -pKfiXftConfig -t -d -o xftgram.c xftgram.y
 
 messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kfontinst.pot
+	$(XGETTEXT) *.cpp -o $(podir)/fontinst.pot
