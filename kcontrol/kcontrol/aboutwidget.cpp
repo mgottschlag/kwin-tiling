@@ -23,6 +23,7 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <klocale.h>
+#include <kiconloader.h>
 
 #include "global.h"
 #include "aboutwidget.h"
@@ -40,7 +41,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   browser->setNotifyClick(true);
 
   QString wizard = locate("data", "kcontrol/pics/wizard.png");
-  QString kcontrol = locate("icon", "large/hicolor/apps/kcontrol.png");
+  QString kcontrol = KGlobal::iconLoader()->iconPath("kcontrol", KIconLoader::Large);
 
   QString text = "<p>"
     "<table cellpadding=\"2\" cellspacing=\"1\" border=\"0\"  width=\"98%\">"

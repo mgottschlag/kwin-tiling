@@ -72,7 +72,7 @@ QPixmap ModuleInfo::icon()
 {
   QPixmap icon = KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Small, 0, true);
   if(icon.isNull())
-	icon = KGlobal::iconLoader()->loadIcon("package.png", KIconLoader::Small);
+	icon = KGlobal::iconLoader()->loadIcon("unknown", KIconLoader::Small); 
   
   return icon;
 }
@@ -81,7 +81,7 @@ QPixmap ModuleInfo::largeIcon()
 {
   QPixmap icon = KGlobal::iconLoader()->loadIcon(_icon, KIconLoader::Medium, 0, true);
   if(icon.isNull())
-	icon = KGlobal::iconLoader()->loadIcon("package.png", KIconLoader::Medium);  
+	icon = KGlobal::iconLoader()->loadIcon("unknown", KIconLoader::Medium);  
   return icon;
 }
 
