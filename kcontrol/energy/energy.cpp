@@ -179,7 +179,7 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
        " level for some displays.") );
 
     m_pOffSlider = new KIntNumInput(m_pSuspendSlider, m_Off, this);
-    m_pOffSlider->setLabel(i18n("&Power Off after:"));
+    m_pOffSlider->setLabel(i18n("&Power off after:"));
     m_pOffSlider->setRange(0, 120, 10);
     m_pOffSlider->setSuffix(i18n(" min"));
     m_pOffSlider->setSpecialValueText(i18n("Disabled"));
