@@ -2,7 +2,7 @@
 
 INCLUDES = -I$(top_srcdir)/kcheckpass -I$(top_srcdir)/kdm/kfrontend $(all_includes)
 kdesktop_lock_LDFLAGS  = $(all_libraries) $(KDE_RPATH)
-kdesktop_lock_LDADD    = $(LIB_KIO) $(LIB_XF86MISC)
+kdesktop_lock_LDADD    = $(LIB_KIO) $(LIB_XF86MISC) -lXxf86vm
 
 ####### Files
 
