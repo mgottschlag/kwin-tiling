@@ -24,7 +24,7 @@ SUBDIRS = . pics
 
 bin_PROGRAMS =
 lib_LTLIBRARIES =
-kdeinit_LTLIBRARIES = kcontrol.la kcmshell.la kcminit.la
+kdeinit_LTLIBRARIES = kcontrol.la kcmshell.la
 
 noinst_LTLIBRARIES = libkcontrolcommon.la libkcontrolglobal.la
 # global.cpp is used by two targets
@@ -45,11 +45,6 @@ kcontrol_la_LDFLAGS = $(all_libraries) -module -avoid-version
 kcmshell_la_SOURCES = kcmshell.cpp kcdialog.cpp kcdialog.skel
 kcmshell_la_LIBADD = libkcontrolcommon.la $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
 kcmshell_la_LDFLAGS = $(all_libraries) -module -avoid-version
-
-
-kcminit_la_SOURCES = kcminit.cpp
-kcminit_la_LIBADD   = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_KUTILS)
-kcminit_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 rccontroldir = $(kde_datadir)/kcontrol
 rccontrol_DATA = kcontrolui.rc
