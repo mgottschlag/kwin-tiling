@@ -128,7 +128,7 @@ kLinesSetup::kLinesSetup(QWidget *parent, const char *name):QDialog(parent, name
 	QPushButton *button;
 	QSlider *sb;
 
-	setCaption(i18n("Setup klines"));
+	setCaption(i18n("Setup Lines Screen Saver"));
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;

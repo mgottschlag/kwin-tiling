@@ -90,7 +90,7 @@ KBlobSaver::KBlobSaver ( WId id)
  QColor color;
 	float ramp = (256.0-64.0)/(float)RAMP;
 	QString msg =
-	  i18n("Sorry. This screensaver needs a color display");
+	  i18n("Sorry. This screen saver requires a color display");
 
     blank();
 
@@ -451,7 +451,7 @@ KBlobSetup::KBlobSetup
 	// get saver configuration from kde registry
 	readSettings();
 
-	setCaption(i18n("Setup Blob Saver"));
+	setCaption(i18n("Setup Blob Screen Saver"));
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;
@@ -461,7 +461,7 @@ KBlobSetup::KBlobSetup
 	tl1->addLayout(tl11);
 
 	// seconds to generate on a frame
-	label = new QLabel(i18n("Frame Show sec."),
+	label = new QLabel(i18n("Frame Show (secs)"),
 		    this);
 	stime = new QLineEdit(this);
 	str.setNum(showtime);

@@ -74,7 +74,7 @@ KLorenzSetup::KLorenzSetup( QWidget *parent, const char *name )
 {
     readSettings();
 
-    setCaption( i18n("Lorenz Attractor Setup") );
+    setCaption( i18n("Setup Lorenz Attractor Screen Saver") );
 
     QLabel *label;
     QPushButton *button;

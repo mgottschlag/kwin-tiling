@@ -51,7 +51,7 @@ KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
 	QLabel *label;
 	QPushButton *button;
 
-	setCaption( i18n("Setup kblankscrn") );
+	setCaption( i18n("Setup Blank Screen Saver") );
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;

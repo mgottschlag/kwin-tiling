@@ -284,7 +284,7 @@ kVmSetup::kVmSetup( QWidget *parent, const char *name )
 {
 	readSettings();
 
-	setCaption( i18n("Setup KVm") );
+	setCaption( i18n("Setup Virtual Machine Screen Saver") );
 
 	QLabel *label;
 	QPushButton *button;

@@ -72,7 +72,7 @@ KBannerSetup::KBannerSetup( QWidget *parent, const char *name )
 	QSlider *sb;
 	QComboBox *combo;
 
-	setCaption( i18n("Setup kbanner") );
+	setCaption( i18n("Setup Banner Screen Saver") );
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;

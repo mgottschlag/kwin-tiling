@@ -583,7 +583,7 @@ void kSpaceSaver::slotTimeout()
 //-----------------------------------------------------------------------------
 
 kSpaceSetup::kSpaceSetup( QWidget *parent, const char *name )
-	: KDialogBase( parent, name, true, i18n("Setup KSpace"),
+	: KDialogBase( parent, name, true, i18n("Setup Space Screen Saver"),
 		       Ok|Cancel|User1, Ok, false, i18n("About") )
 {
     readSettings();

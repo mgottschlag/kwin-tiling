@@ -319,7 +319,7 @@ kSwarmSetup::kSwarmSetup( QWidget *parent, const char *name )
 {
 	readSettings();
 
-	setCaption( i18n("Setup KSwarm") );
+	setCaption( i18n("Setup Swarm Screen Saver") );
 
 	QLabel *label;
 	QPushButton *button;

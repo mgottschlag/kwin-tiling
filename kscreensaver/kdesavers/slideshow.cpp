@@ -861,7 +861,7 @@ void kSlideShowSaver::blank()
 kSlideShowSetup::kSlideShowSetup(QWidget *aParent, const char *aName):
   QDialog(aParent, aName, TRUE )
 {
-  setCaption(i18n("Setup Slide Show"));
+  setCaption(i18n("Setup Slide Show Screen Saver"));
 
   QPushButton *button;
   mSaver = NULL;

@@ -71,7 +71,7 @@ kPolygonSetup::kPolygonSetup( QWidget *parent, const char *name )
 	QPushButton *button;
 	QSlider *sb;
 
-	setCaption( i18n("Setup kpolygon") );
+	setCaption( i18n("Setup Polygon Screen Saver") );
 
 	QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
 	QHBoxLayout *tl1 = new QHBoxLayout;

@@ -334,7 +334,7 @@ void KScienceSaver::initCurvatureLens()
  
 	intens = (double) radius*intensity[mode] / 20.0; 
 	if( inverse[mode] ) intens = -intens;
-  
+
 	for(int y = side-1; y >= 0; y--)
 	{
 		dy = y - origin;
@@ -574,7 +574,7 @@ void KScienceSaver::readSettings()
 	config->setGroup( "Settings" );
 	mode = config->readNumEntry( "ModeNr", SCI_DEFAULT_MODE );
 
-	for(int i=0; i < MAX_MODES; i++) 
+	for(int i=0; i < MAX_MODES; i++)
 	{
 		sMode.setNum( i );
 		config->setGroup( "Mode" + sMode ); 
@@ -863,7 +863,7 @@ KScienceSetup::KScienceSetup(  QWidget *parent, const char *name ) :
 	readSettings();
 	initModeInfo();
 
-	setCaption( i18n("Setup Science") );
+	setCaption( i18n("Setup Science Screen Saver") );
 
 	QLabel *label;
 	QPushButton *button;

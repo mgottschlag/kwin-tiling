@@ -458,7 +458,7 @@ kSlideScreenSetup::kSlideScreenSetup( QWidget *parent, const char *name )
 	//number = 15;
 
 	//readSettings();
-	setCaption( i18n("Setup KSlideScreen") );
+	setCaption( i18n("Setup Slide Screen Saver") );
 
 
 	//QLabel *label;

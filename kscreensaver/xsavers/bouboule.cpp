@@ -718,7 +718,7 @@ drawbouboule(Window win)
 		XFillArcs(dsp,win, Scr[screen].gc,sp->xarcleft, sp->NbStars);
 
   		if (PARAM_INSTALLED) 
-			XSetFunction(dsp,Scr[screen].gc, GXcopy);  	
+			XSetFunction(dsp,Scr[screen].gc, GXcopy);
 	} else {
  		XSetForeground(dsp, Scr[screen].gc,sp->color);
  		XFillArcs(dsp, win, Scr[screen].gc, sp->xarc,sp->NbStars); 
@@ -980,7 +980,7 @@ kBoubouleSetup::kBoubouleSetup( QWidget *parent, const char *name )
 {
 	readSettings();
 
-	setCaption( i18n("Setup KBouboule") );
+	setCaption( i18n("Setup Bouboule Screen Saver") );
 //	setGeometry (x,0,300,250);
 
 	QLabel *label;

@@ -1033,7 +1033,7 @@ void kMorph3dSaver::slotTimeout()
 //-----------------------------------------------------------------------------
 
 kMorph3dSetup::kMorph3dSetup( QWidget *parent, const char *name )
-	: KDialogBase( parent, name, true, i18n("Setup KMorph3d"),
+	: KDialogBase( parent, name, true, i18n("Setup Morph3D Screen Saver"),
 			Ok|Cancel|User1, Ok, false, i18n("About") )
 {
     readSettings();

@@ -513,7 +513,7 @@ kPyroSetup::kPyroSetup( QWidget *parent, const char *name )
 
 	readSettings();
 
-	setCaption( i18n("Setup KPyro") );
+	setCaption( i18n("Setup Pyro Screen Saver") );
 
 	QLabel *label;
 	QPushButton *button;

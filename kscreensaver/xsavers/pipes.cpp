@@ -748,7 +748,7 @@ void kPipesSaver::readSettings()
 // Setup //////////////////////////////////////////////////////////////////////
 
 kPipesSetup::kPipesSetup( QWidget *parent, const char *name )
-  : KDialogBase( parent, name, true, i18n("Setup KPipes"), Ok|Cancel|User1,
+  : KDialogBase( parent, name, true, i18n("Setup Pipes Screen Saver"), Ok|Cancel|User1,
 		Ok, false, i18n("About") )
 {
   readSettings();

@@ -532,7 +532,7 @@ kRockSetup::kRockSetup( QWidget *parent, const char *name )
 
 	readSettings();
 
-	setCaption( i18n("Setup krock") );
+	setCaption( i18n("Setup Rock Screen Saver") );
 
 	QLabel *label;
 	QPushButton *button;
