@@ -14,6 +14,7 @@
 
 #include <kcmodule.h>
 #include <qvaluelist.h>
+#include <qcolor.h>
 
 class QWidget;
 class QCheckBox;
@@ -25,6 +26,8 @@ class KConfig;
 class KIconEffect;
 class KIconTheme;
 class KIconLoader;
+class QIconView;
+class QIconViewItem;
 
 /**
  * The Desktop/icons tab in kcontrol.
@@ -51,6 +54,12 @@ private slots:
     void slotSize(int index);
     void slotDPCheck(bool check);
 
+    void slotBgColorChanged(const QColor &);
+    void slotNormalColorChanged(const QColor &);
+    void slotHiliteColorChanged(const QColor &);
+    void slotUnderline(bool);
+    void slotWrap(bool);
+    
 private:
     void init();
     void read();
@@ -72,11 +81,16 @@ private:
     KIconLoader *mpLoader;
     KConfig *mpConfig;
 
-    QLabel *mpPreview;
+    QIconView *mpPreview;
+    QIconViewItem *mpPreviewItem;
+    
     QListBox *mpUsageList, *mpStateList;
     QComboBox *mpEffectBox, *mpSizeBox;
     QSlider *mpEffectSlider;
-    QCheckBox *mpDPCheck;
+    QCheckBox *mpDPCheck, *wordWrapCB, *underlineCB;
+
+    bool wrap, underline;	
+    QColor bgColor, normalColor, hiliteColor;
 };
 
 #endif
