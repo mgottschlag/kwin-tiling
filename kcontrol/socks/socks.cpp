@@ -218,6 +218,7 @@ void KSocksConfig::load()
   base->_c_libs->clearSelection();
   base->_c_remove->setEnabled(false);
   base->_c_add->setEnabled(false);
+  base->_c_newPath->clear();
   emit changed(false);
 }
 
