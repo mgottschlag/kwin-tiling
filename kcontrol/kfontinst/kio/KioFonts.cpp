@@ -285,7 +285,6 @@ static void checkPath(const QCString path, bool &exists, bool &hidden)
 
 CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
          : KIO::SlaveBase(KIO_FONTS_PROTOCOL, pool, app),
-           itsShowingInfo(false),
            itsNewFonts(0)
 {
     KDE_DBUG << "Constructor" << endl;
@@ -344,7 +343,6 @@ void CKioFonts::listDir(const KURL &url)
 
     listEntry(size ? entry : KIO::UDSEntry(), true);
     finished();
-    itsShowingInfo=false;
 
     KDE_DBUG << "listDir - finished!" << endl;
 }
@@ -355,7 +353,6 @@ int CKioFonts::getSize(const QString &ds)
 
     QDir                dir(ds);
     const QFileInfoList *files=dir.entryInfoList(QDir::Dirs|QDir::Files|QDir::Hidden);
-    itsShowingInfo=false;
 
     int                 size=0;
 
@@ -1262,7 +1259,7 @@ void CKioFonts::cfgDir(const QString &ds)
 
         if (!CMisc::fExists(ds+"fonts.dir") || dTs!=CMisc::getTimeStamp(ds+"fonts.dir"))
         {
-            showInfo();
+            infoMessage(i18n("Configuring out of date font folder."));
 
             KDE_DBUG << "configure out of date x dir" << dTs << " " << CMisc::getTimeStamp(ds+"fonts.dir") << endl;
 
@@ -1293,7 +1290,7 @@ void CKioFonts::cfgDir(const QString &ds)
 
         if (!CMisc::fExists(ds+"Fontmap") || dTs!=CMisc::getTimeStamp(ds+"Fontmap"))
         {
-            showInfo();
+            infoMessage(i18n("Configuring out of date font folder."));
 
             KDE_DBUG << "configure out of date fontmap" << dTs << " " << CMisc::getTimeStamp(ds+"Fontmap") << endl;
 
@@ -1688,25 +1685,5 @@ QString CKioFonts::convertUrl(const KURL &url)
             return url.path();
         else
             return CGlobal::cfg().getRealTopDir(url.path())+CMisc::getSub(url.path());
-    }
-}
-
-void CKioFonts::showInfo()
-{
-    if(!itsShowingInfo)
-    {
-        QByteArray  data;
-        QDataStream stream(data, IO_WriteOnly);
-
-        stream << (int)Information
-               << i18n("The font system has detected that 1 or more font folders need updating. "
-                       "This may take a little while, please be patient.")
-               << i18n("Information")
-               << QString::null
-               << QString::null; 
-
-        m_pConnection->send(KIO::INF_MESSAGEBOX, data);
-
-        itsShowingInfo=true;
     }
 }

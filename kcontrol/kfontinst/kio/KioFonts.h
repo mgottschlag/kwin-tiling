@@ -77,7 +77,6 @@ class CKioFonts : public KIO::SlaveBase
     bool    doRootCmd(const char *cmd, const QString &passwd);
     bool    doRootCmd(const char *cmd, bool askPasswd=true) { return doRootCmd(cmd, getRootPasswd(askPasswd)); }
     bool    confirmUrl(KURL &url);
-    void    showInfo();
 
     static QString convertUrl(const KURL &url);
 
@@ -86,8 +85,7 @@ class CKioFonts : public KIO::SlaveBase
     QStringList itsModifiedDirs,
                 itsModifiedSysDirs;
     QString     itsPasswd;
-    bool        itsCanStorePasswd,
-                itsShowingInfo;
+    bool        itsCanStorePasswd;
     uint        itsNewFonts;
 };
 
