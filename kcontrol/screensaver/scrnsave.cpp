@@ -354,13 +354,16 @@ void KScreenSaver::load()
     readSettings();
 
     SaverConfig *saver;
-    mSelected = 0;
+    mSelected = -1;
     for (saver = mSaverList.first(); saver != 0; saver = mSaverList.next()) {
         if (saver->file() == mSaver)
             mSelected = mSaverListBox->count()-1;
     }
-    mSaverListBox->setCurrentItem(mSelected);
-    slotScreenSaver(mSelected);
+    if ( mSelected > -1 )
+    {
+      mSaverListBox->setCurrentItem(mSelected);
+      slotScreenSaver(mSelected);
+    }
 
     updateValues();
     emit changed(false);
@@ -471,7 +474,7 @@ void KScreenSaver::findSavers()
         delete mLoadTimer;
         mSaverList.sort();
 
-        mSelected = 0;
+        mSelected = -1;
         mSaverListBox->clear();
         for ( SaverConfig *s = mSaverList.first(); s != 0; s = mSaverList.next())
         {
@@ -480,14 +483,18 @@ void KScreenSaver::findSavers()
                 mSelected = mSaverListBox->count()-1;
         }
 
-        mSaverListBox->setCurrentItem(mSelected);
-        mSaverListBox->ensureCurrentVisible();
-        mSaverListBox->setEnabled(mEnabled);
         connect( mSaverListBox, SIGNAL( highlighted( int ) ),
                  this, SLOT( slotScreenSaver( int ) ) );
-        mSetupBt->setEnabled(mEnabled &&
-                             !mSaverList.at(mSelected)->setup().isEmpty());
-        mTestBt->setEnabled(mEnabled);
+
+        if ( mSelected >= 0 )
+        {
+            mSaverListBox->setCurrentItem(mSelected);
+            mSaverListBox->ensureCurrentVisible();
+            mSaverListBox->setEnabled(mEnabled);
+            mSetupBt->setEnabled(mEnabled &&
+                                 !mSaverList.at(mSelected)->setup().isEmpty());
+            mTestBt->setEnabled(mEnabled);
+        }
         setMonitor();
     } else {
         mSaverList.sort();
@@ -517,6 +524,9 @@ void KScreenSaver::slotPreviewExited(KProcess *)
 {
     // Ugly hack to prevent continual respawning of savers that crash
     if (mSelected == mPrevSelected)
+        return;
+
+    if ( mSaverList.isEmpty() ) // safety check
         return;
 
     // Some xscreensaver hacks do something nasty to the window that
