@@ -9,8 +9,6 @@ INCLUDES= $(all_includes)
 
 kcm_bell_la_METASOURCES = bell.moc
 
-KDE_ICON = bell
-
 messages:
 	$(XGETTEXT) $(kcm_bell_la_SOURCES) -o $(podir)/kcmbell.pot
 
