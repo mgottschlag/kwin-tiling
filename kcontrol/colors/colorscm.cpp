@@ -33,6 +33,7 @@
 #include <kmessagebox.h>
 #include <kprocess.h>
 #include <kstandarddirs.h>
+#include <kaboutdata.h>
 
 #if defined Q_WS_X11 && !defined K_WS_QTONLY
 #include <X11/Xlib.h>
@@ -277,6 +278,16 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
        " current color scheme to non-KDE applications."));
 
     load();
+
+    KAboutData* about = new KAboutData("kcmcolors", I18N_NOOP("Colors"), 0, 0,
+        KAboutData::License_GPL,
+        I18N_NOOP("(c) 1997-2005 Colors Developers"), 0, 0);
+    about->addAuthor("Mark Donohoe", 0, 0);
+    about->addAuthor("Matthias Hoelzer", 0, 0);
+    about->addAuthor("Matthias Ettrich", 0, 0);
+    about->addAuthor("Geert Jansen", 0, 0);
+    about->addAuthor("Waldo Bastian", 0, 0);
+    setAboutData( about );
 }
 
 
