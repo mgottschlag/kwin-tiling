@@ -298,7 +298,8 @@ KGreeter::insertUsers()
 	} else {
 	    KCStringList::ConstIterator it = users.users.begin();
 	    for (; it != users.users.end(); ++it)
-		if ((ps = getpwnam( (*it).data() )))
+		if ((ps = getpwnam( (*it).data() )) &&
+		    (ps->pw_uid || _showRoot))
 		    insertUser( default_pix, QFile::decodeName( *it ), ps );
 	}
     }
