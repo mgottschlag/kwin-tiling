@@ -46,12 +46,12 @@ IndexWidget::IndexWidget(ConfigModuleList *modules, QWidget *parent ,const char 
 		  this, SLOT(moduleSelected(ConfigModule*)));
 
   // treeview button
-  _treebtn = new QPushButton(i18n("Tree view"), this);
+  _treebtn = new QPushButton(i18n("&Tree view"), this);
   _treebtn->setFixedHeight(22);
   connect(_treebtn, SIGNAL(clicked()), this, SLOT(treeButtonClicked()));
 
   // iconview button
-  _iconbtn = new QPushButton(i18n("Icon view"), this);
+  _iconbtn = new QPushButton(i18n("&Icon view"), this);
   _iconbtn->setFixedHeight(22);
   connect(_iconbtn, SIGNAL(clicked()), this, SLOT(iconButtonClicked()));
 
