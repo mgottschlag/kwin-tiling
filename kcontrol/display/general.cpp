@@ -128,7 +128,7 @@ void KIconStyle::apply()
 
 void KIconStyle::readSettings()
 {
-    KConfig *config = kapp->config();
+    KConfig *config = KGlobal::config();
 
     KConfigGroupSaver saver(config, "KDE");
     for (int i = 0 ; i < nApp ; i++) {
@@ -143,7 +143,7 @@ void KIconStyle::readSettings()
 
 void KIconStyle::writeSettings()
 {
-    KConfig *cfg = kapp->config();
+    KConfig *cfg = KGlobal::config();
 
     KConfigGroupSaver saver(cfg, "KDE");
     for (int i = 0 ; i < nApp ; i++) {
@@ -469,17 +469,18 @@ void KGeneral::writeSettings()
     if ( !changed )
 		return;
 		
-    KConfig *config = kapp->config();
-	KConfigGroupSaver saver(config, "KDE");
+    KConfig *config = KGlobal::config();
+	KConfigGroupSaver saver(config, "Toolbar style");
 
 	QString str;
 
-	config->writeEntry( "macStyle", macStyle);
+	config->writeEntry( "macStyle", macStyle, true, true);
 
 	config->setGroup( "Toolbar style" );
-	config->writeEntry( "IconText", tbUseText);
-	config->writeEntry( "Highlighting", (int)tbUseHilite);
-	config->writeEntry( "TransparentMoving", (int)tbMoveTransparent);
+	config->writeEntry( "IconText", tbUseText, true, true);
+	config->writeEntry( "Highlighting", (int)tbUseHilite, true, true);
+	config->writeEntry( "TransparentMoving", (int)tbMoveTransparent,
+    true, true);
 
 	config->setGroup("X11");
 	config->writeEntry( "useResourceManager", useRM );
