@@ -45,13 +45,8 @@ class KBGMonitor : public QWidget
     Q_OBJECT
 public:
 
-    KBGMonitor(QWidget *parent) : QWidget(parent) {
-	setAcceptDrops(true);
-    };
+    KBGMonitor(QWidget *parent, const char *name=0L);
 	     
-    // we don't want no steenking palette change
-    virtual void setPalette(const QPalette &) {};
-
 signals:
     void imageDropped(QString);
 

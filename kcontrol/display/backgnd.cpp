@@ -64,6 +64,13 @@ extern "C" {
 
 /**** KBGMonitor ****/
 
+KBGMonitor::KBGMonitor(QWidget *parent, const char *name)
+    : QWidget(parent, name)
+{
+    setAcceptDrops(true);
+}
+    
+
 void KBGMonitor::dropEvent(QDropEvent *e)
 {
     if (!QUriDrag::canDecode(e))
@@ -72,7 +79,6 @@ void KBGMonitor::dropEvent(QDropEvent *e)
     QStringList uris;
     if (QUriDrag::decodeLocalFiles(e, uris) && (uris.count() > 0)) {
 	QString uri = *uris.begin();
-	uri.prepend('/');
 	emit imageDropped(uri);
     }
 }
@@ -80,7 +86,10 @@ void KBGMonitor::dropEvent(QDropEvent *e)
 					 
 void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 {
-    e->accept(QImageDrag::canDecode(e) || QUriDrag::canDecode(e));
+    if (QUriDrag::canDecode(e))
+	e->accept(rect());
+    else
+	e->ignore(rect());
 }                                                                                                             
 
 
@@ -168,7 +177,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     lbl->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
     lbl->setFixedSize(lbl->sizeHint());
     hbox->addWidget(lbl);
-    m_pMonitor = new KBGMonitor(lbl);
+    m_pMonitor = new KBGMonitor(lbl, "preview monitor");
     m_pMonitor->setGeometry(20, 10, 157, 111);
     connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
 
@@ -224,6 +233,10 @@ KBackground::KBackground(QWidget *parent, const char *name)
 	m_Renderer[i] = new KBackgroundRenderer(i);
 	connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
     }
+
+    // Doing this only in KBGMonitor only doesn't work, probably due to the
+    // reparenting that is done.
+    setAcceptDrops(true);
 
     init();
     apply();

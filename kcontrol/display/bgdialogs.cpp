@@ -73,7 +73,8 @@ KProgramSelectDialog::KProgramSelectDialog(QWidget *parent, char *name)
 	updateItem(*it);
 
     // Make the listview a little broader
-    m_ListView->setMinimumWidth(m_ListView->sizeHint().width() + 40);
+    m_ListView->setMinimumWidth(m_ListView->sizeHint().width() + 20);
+    m_ListView->setFixedSize(m_ListView->width(), 200);
 
     connect(m_ListView, SIGNAL(clicked(QListViewItem *)),
 	    SLOT(slotItemClicked(QListViewItem *)));
