@@ -66,7 +66,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstandarddirs.h>
 #include <unistd.h>
 #include <kapplication.h>
-#include <knotifyclient.h>
 #include <kstaticdeleter.h>
 #include <ktempfile.h>
 #include <kprocess.h>
@@ -81,6 +80,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "server.moc"
 
 #include <kdebug.h>
+
+const int XNone = None;
+#undef None
+#include <knotifyclient.h>
 #include <qregexp.h>
 
 #include <X11/Xlib.h>
@@ -1495,9 +1498,9 @@ const int WM_SAVE_YOURSELF_TIMEOUT = 4000;
 
 static WindowMap* windowMapPtr = 0;
 
-static Atom wm_save_yourself = None;
-static Atom wm_protocols = None;
-static Atom wm_client_leader = None;
+static Atom wm_save_yourself = XNone;
+static Atom wm_protocols = XNone;
+static Atom wm_client_leader = XNone;
 
 extern Time qt_x_time;
 
@@ -1521,7 +1524,7 @@ void KSMServer::performLegacySessionSave()
     // Compute set of leader windows that need legacy session management
     // and determine which style (WM_COMMAND or WM_SAVE_YOURSELF)
     KWinModule module;
-    if( wm_save_yourself == None ) {
+    if( wm_save_yourself == XNone ) {
 	Atom atoms[ 3 ];
 	const char* const names[]
 	    = { "WM_SAVE_YOURSELF", "WM_PROTOCOLS", "WM_CLIENT_LEADER" };
@@ -1562,7 +1565,7 @@ void KSMServer::performLegacySessionSave()
     XGrabKeyboard(newdisplay, root, False,
                   GrabModeAsync, GrabModeAsync, CurrentTime);
     XGrabPointer(newdisplay, root, False, Button1Mask|Button2Mask|Button3Mask,
-                 GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
+                 GrabModeAsync, GrabModeAsync, XNone, XNone, CurrentTime);
     // Send WM_SAVE_YOURSELF messages
     XEvent ev;
     int awaiting_replies = 0;
@@ -1832,7 +1835,7 @@ extern Atom qt_sm_client_id;
 QCString KSMServer::windowSessionId(WId w, WId leader)
 {
     QCString result = getStringProperty(w, qt_sm_client_id);
-    if (result.isEmpty() && leader != None && leader != w)
+    if (result.isEmpty() && leader != XNone && leader != w)
 	result = getStringProperty(leader, qt_sm_client_id);
     return result;
 }
