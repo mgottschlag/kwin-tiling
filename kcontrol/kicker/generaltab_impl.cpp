@@ -50,7 +50,7 @@ GeneralTab::GeneralTab( QWidget *parent, const char* name )
                                       " You can also access this option via the panel context menu, i.e."
                                       " by right-clicking on some free space on the panel."));
 
-    QWhatsThis::add(m_autoHide, i18n("If this option is enabled the panel will automatically hide"
+    QWhatsThis::add(m_autoHide, i18n("If this option is enabled, the panel will automatically hide "
                                      "after some time and reappear when you move the mouse to the "
                                      "screen edge the panel is attached to. "
                                      "This is particularly useful for small screen resolutions, "
