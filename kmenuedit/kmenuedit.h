@@ -41,7 +41,7 @@ protected:
 protected slots:
     void slotClose();
     void slotChangeView();
-
+    void slotConfigureKeys();
 protected:
     MenuEditView *m_view;
     KAction *m_actionDelete;

@@ -27,6 +27,7 @@
 #include <kdebug.h>
 #include <dcopclient.h>
 #include <kapplication.h>
+#include <kkeydialog.h>
 
 #include "menueditview.h"
 #include "kmenuedit.h"
@@ -76,6 +77,12 @@ void KMenuEdit::setupActions()
     KStdAction::cut(0, 0, actionCollection());
     KStdAction::copy(0, 0, actionCollection());
     KStdAction::paste(0, 0, actionCollection());
+    KStdAction::keyBindings( this, SLOT( slotConfigureKeys() ), actionCollection() );
+}
+
+void KMenuEdit::slotConfigureKeys()
+{
+  KKeyDialog::configure( actionCollection(), this );
 }
 
 void KMenuEdit::setupView()
