@@ -35,7 +35,10 @@
 #  undef INFO_PARTITIONS_FULL_INFO	/* no partitions-info */
 #endif
 
+#include <qregexp.h>
+
 #include <kapplication.h>
+#include <kiconloader.h>
 
 #define INFO_CPU_AVAILABLE
 #define INFO_CPU "/proc/cpuinfo"
@@ -138,9 +141,31 @@ bool GetInfo_IRQ(QListView * lBox)
 
 bool GetInfo_DMA(QListView * lBox)
 {
+    QFile file(INFO_DMA);
+    
     lBox->addColumn(i18n("DMA-Channel"));
     lBox->addColumn(i18n("Used By"));
-    return GetInfo_ReadfromFile(lBox, INFO_DMA, ':');
+
+    if (file.exists() && file.open(IO_ReadOnly)) {
+	QTextStream stream(&file);
+	QString line;
+	QListViewItem *child=0L;
+	
+	while (!stream.atEnd()) {
+	    line = stream.readLine();
+	    if (!line.isEmpty()) {
+		QRegExp rx("^\\s*(\\S+)\\s*:\\s*(\\S+)");
+		if (-1 != rx.search(line)) {
+		    child = new QListViewItem(lBox,child,rx.cap(1),rx.cap(2));
+		}
+	    }
+	}
+	file.close();
+    } else {
+	return false;
+    }
+
+    return true;
 }
 
 bool GetInfo_PCI(QListView * lBox)
@@ -181,13 +206,73 @@ bool GetInfo_Sound(QListView * lBox)
 
 bool GetInfo_Devices(QListView * lBox)
 {
-    QListViewItem *lastitem = 0;
-    sorting_allowed = false;	/* no sorting by user */
-    GetInfo_ReadfromFile(lBox, INFO_DEVICES, 0, lastitem, &lastitem);
-    lastitem = new QListViewItem(lBox, lastitem, "");	/* add empty line */
-    /* don't use i18n() for "Misc devices", because all other info is english too! */
-    lastitem = new QListViewItem(lBox, lastitem, QString("Misc devices:"));
-    GetInfo_ReadfromFile(lBox, INFO_MISC, 0, lastitem, &lastitem);
+    QFile file;
+    QListViewItem *misc=0L;
+
+    lBox->setRootIsDecorated(true);
+    lBox->addColumn(i18n("Devices"));
+    lBox->addColumn(i18n("Major Number"));
+    lBox->addColumn(i18n("Minor Number"));
+
+    file.setName(INFO_DEVICES);
+    if (file.exists() && file.open(IO_ReadOnly)) {
+	QTextStream stream(&file);
+	QString line;
+	QListViewItem *parent=0L, *child=0L;
+	
+	while (!stream.atEnd()) {
+	    line = stream.readLine();
+	    if (!line.isEmpty()) {
+		if (-1 != line.find("character device",0,false)) {
+		    parent = new QListViewItem(lBox,parent,i18n("Character Devices"));
+		    parent->setPixmap(0,SmallIcon("chardevice"));
+		    parent->setOpen(true);
+		} else if (-1 != line.find("block device",0,false)) {
+		    parent = new QListViewItem(lBox,parent,i18n("Block Devices"));
+		    parent->setPixmap(0,SmallIcon("blockdevice"));
+		    parent->setOpen(true);
+		} else {
+		    QRegExp rx("^\\s*(\\S+)\\s+(\\S+)");
+		    if (-1 != rx.search(line)) {
+			if (parent) {
+			    child = new QListViewItem(parent,child,rx.cap(2),rx.cap(1));
+			} else {
+			    child = new QListViewItem(lBox,parent,rx.cap(2),rx.cap(1));
+			}
+			if (rx.cap(2)=="misc") {
+			    misc=child;
+			}
+		    }
+		}
+	    }
+	}
+	file.close();
+    } else {
+	return false;
+    }
+    
+    file.setName(INFO_MISC);
+    if (misc && file.exists() && file.open(IO_ReadOnly)) {
+	QTextStream stream(&file);
+	QString line;
+	QListViewItem *child=0L;
+	
+	misc->setText(0,i18n("Miscellaneous Devices"));
+	misc->setPixmap(0,SmallIcon("memory"));
+	misc->setOpen(true);
+	
+	while (!stream.atEnd()) {
+	    line = stream.readLine();
+	    if (!line.isEmpty()) {
+		QRegExp rx("^\\s*(\\S+)\\s+(\\S+)");
+		if (-1 != rx.search(line)) {
+		    child = new QListViewItem(misc,child,rx.cap(2),"10",rx.cap(1));
+		}
+	    }
+	}
+	file.close();
+    }
+    
     return true;
 }
 
