@@ -178,7 +178,7 @@ AC_SUBST(LIB_LIBS)
 AC_CHECK_LIB(Xdmcp, main, [LIBXDMCP="-lXdmcp"], , $X_LDFLAGS -lX11 $LIBSOCKET) dnl for Unixware
 AC_SUBST(LIBXDMCP)
 
-AC_CHECK_HEADERS(sys/sockio.h sys/stropts.h sys/socket.h sys/stream.h libutil.h)
+AC_CHECK_HEADERS(sys/sockio.h sys/stropts.h sys/socket.h sys/stream.h libutil.h util.h)
 
 if test -n "$LIBXDMCP"; then
   ac_cpp_safe=$ac_cpp
