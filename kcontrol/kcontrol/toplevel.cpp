@@ -24,16 +24,15 @@
 #include <ktoolbar.h>
 #include <kglobal.h>
 #include <kstddirs.h>
-#include <kmenubar.h>
 #include <qlineedit.h>
 #include <qsplitter.h>
 #include <kiconloader.h>
-#include <qmenubar.h>
 #include <qdialog.h>
 #include <kcmodule.h>
 #include <klocale.h>
-#include <kstdaccel.h>
 #include <qtabwidget.h>
+#include <kaction.h>
+#include <kstdaction.h>
 
 
 #include "toplevel.h"
@@ -85,19 +84,8 @@ TopLevel::~TopLevel()
 
 void TopLevel::initMenuBar()
 {
-  QPopupMenu *file_menu = new QPopupMenu();
-
-  file_menu->insertItem(BarIcon("exit"), i18n("E&xit"), kapp, SLOT(quit()),
-                        KStdAccel::key(KStdAccel::Quit));
-
-  KMenuBar* menu_bar = new KMenuBar(this);
-  menu_bar->insertItem(i18n("&File"), file_menu);
-	
-  menu_bar->insertItem(i18n("&Help"), helpMenu(
-    i18n("The KDE Control Center\n\nFramework: Matthias Hölzer-Klüpfel "
-	 "(hoelzer@kde.org)\n\nModules: almost the whole KDE team!")));
-
-  setMenu(menu_bar);
+  KStdAction::quit(kapp, SLOT(quit()), actionCollection());
+  createGUI();
 }
 
 
