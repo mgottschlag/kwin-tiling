@@ -700,7 +700,7 @@ void Task::restore()
     if( info.isMinimized())
         KWin::deIconifyWindow( _win );
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState );
-    ni.setState( 0, NET::Max );
+    ni.setState( 0, 0 );
     if( !on_current )
         KWin::forceActiveWindow( _win );
 }
