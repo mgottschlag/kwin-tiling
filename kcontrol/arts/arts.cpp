@@ -38,6 +38,7 @@
 #include <qwidget.h>
 #include <qtabwidget.h>
 #include <qtabbar.h>
+#include <qdir.h>
 
 #include <kconfig.h>
 #include <klocale.h>
@@ -80,6 +81,15 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
   layout->addWidget(networkTransparent);
   connect(networkTransparent,SIGNAL(clicked()),this,SLOT(slotChanged()));
 
+  x11Comm = new QCheckBox(this);
+  x11Comm->setText(i18n("Exchange security and reference info over the &X11 server"));
+  layout->addWidget(x11Comm);
+  connect(x11Comm,SIGNAL(clicked()),this,SLOT(slotChanged()));
+
+  QLabel *x11CommHint = new QLabel(this);
+  x11CommHint->setText(i18n("    If you want network transparency or if you use the soundserver\n    only when you use X11, enable this."));
+  layout->addWidget(x11CommHint);
+
   QFrame *hLine = new QFrame(this);
   hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
  
@@ -95,32 +105,34 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
   layout->activate();
 
   config = new KConfig("kcmartsrc");
-  
+
   GetSettings();
 }
 
 
 void KArtsModule::GetSettings( void )
 {
-    config->setGroup("Arts");
+	config->setGroup("Arts");
 	startServer->setChecked(config->readBoolEntry("StartServer",true));
 	startRealtime->setChecked(config->readBoolEntry("StartRealtime",false));
 	networkTransparent->setChecked(config->readBoolEntry("NetworkTransparent",false));
+	x11Comm->setChecked(config->readBoolEntry("X11GlobalComm",false));
 	updateWidgets();
 }
 
 void KArtsModule::saveParams( void )
 {
-    config->setGroup("Arts");
+	config->setGroup("Arts");
 	config->writeEntry("StartServer",startServer->isChecked());
 	config->writeEntry("StartRealtime",startRealtime->isChecked());
 	config->writeEntry("NetworkTransparent",networkTransparent->isChecked());
+	config->writeEntry("X11GlobalComm",x11Comm->isChecked());
 	config->sync();
 }
 
 void KArtsModule::load()
 {
-    GetSettings();
+	GetSettings();
 }
 
 void KArtsModule::save()
@@ -134,64 +146,78 @@ void KArtsModule::save()
 		fclose(why);
 
 		QMessageBox::warning( 0, "kcmarts",
-       		i18n("There is an installation problem which doesn't allow "
-				 "starting the aRts server with realtime priority. \n"
-				 "The following problem occured:\n")+thereason);
+				i18n("There is an installation problem which doesn't allow "
+					"starting the aRts server with realtime priority. \n"
+					"The following problem occured:\n")+thereason);
 	}
-    saveParams();
+	saveParams();
 }
 
 void KArtsModule::defaults()
 {
 	startServer->setChecked(true);
-    startRealtime->setChecked(false);
-    networkTransparent->setChecked(false);
+	startRealtime->setChecked(false);
+	networkTransparent->setChecked(false);
+	x11Comm->setChecked(false);
 }
 
 void KArtsModule::updateWidgets()
 {
 	startRealtime->setEnabled(startServer->isChecked());
 	networkTransparent->setEnabled(startServer->isChecked());
+	x11Comm->setEnabled(startServer->isChecked());
 }
 
 void KArtsModule::slotChanged()
 {
-  updateWidgets();
-  emit changed(true);
+	updateWidgets();
+	emit changed(true);
 }
 
 
 extern "C"
 {
-  KCModule *create_arts(QWidget *parent, const char *name) 
-  { 
-    KGlobal::locale()->insertCatalogue("kcmarts");
-    return new KArtsModule(parent, name);
-  }
-
-  void init_arts()
-  {
-    KConfig *config = new KConfig("kcmartsrc");
-	QCString cmdline;
-
-    config->setGroup("Arts");
-	bool startServer = config->readBoolEntry("StartServer",true);
-	bool startRealtime = config->readBoolEntry("StartRealtime",false);
-	bool networkTransparent = config->readBoolEntry("NetworkTransparent",false);
-
-	if(startServer)
-	{
-		cmdline = "kdeinit_wrapper ";
-		if(startRealtime && artswrapper_check())
-			cmdline += "artswrapper";
-		else
-			cmdline += "artsd";
-
-		if(networkTransparent)
-			cmdline += " -n";
-
-		system(cmdline);
+	KCModule *create_arts(QWidget *parent, const char *name) 
+	{ 
+		KGlobal::locale()->insertCatalogue("kcmarts");
+		return new KArtsModule(parent, name);
 	}
-  }
+
+	void init_arts()
+	{
+		KConfig *config = new KConfig("kcmartsrc");
+		QCString cmdline;
+
+		config->setGroup("Arts");
+		bool startServer = config->readBoolEntry("StartServer",true);
+		bool startRealtime = config->readBoolEntry("StartRealtime",false);
+		bool networkTransparent = config->readBoolEntry("NetworkTransparent",false);
+		bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
+
+		/* put the value of x11Comm into .mcoprc */
+		KConfig *X11CommConfig = new KConfig(QDir::homeDirPath()+"/.mcoprc");
+
+		if(x11Comm)
+			X11CommConfig->writeEntry("GlobalComm","X11GlobalComm");
+		else
+			X11CommConfig->writeEntry("GlobalComm","TmpGlobalComm");
+
+		X11CommConfig->sync();
+		delete X11CommConfig;
+
+		if(startServer)
+		{
+			cmdline = "kdeinit_wrapper ";
+			if(startRealtime && artswrapper_check())
+				cmdline += "artswrapper";
+			else
+				cmdline += "artsd";
+
+			if(networkTransparent)
+				cmdline += " -n";
+
+			system(cmdline);
+		}
+	}
 }
 
