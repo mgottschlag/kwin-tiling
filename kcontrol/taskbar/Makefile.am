@@ -19,5 +19,3 @@ xdg_apps_DATA = kcmtaskbar.desktop
 install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/kcmtaskbar.desktop
-
-EXTRA_DIST = $(kcmtaskbar_data_DATA)

@@ -19,5 +19,3 @@ messages: rc.cpp
 xdg_apps_DATA = style.desktop
 
 install-data-local:
-
-EXTRA_DIST = $(style_DATA)
