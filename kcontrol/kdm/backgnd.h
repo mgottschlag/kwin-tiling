@@ -33,6 +33,7 @@ class QTabWidget;
 class KColorButton;
 class KBackgroundRenderer;
 class KStandardDirs;
+class KSimpleConfig;
 
 /**
  * This class handles drops on the preview monitor.
@@ -67,6 +68,7 @@ class KBackground: public QWidget
 
 public:
     KBackground(QWidget *parent=0, const char *name=0);
+    ~KBackground();
 
     void load();
     void save();
@@ -108,7 +110,7 @@ private:
     KColorButton *m_pColor1But, *m_pColor2But;
     KBGMonitor *m_pMonitor;
     QLabel *m_pMLabel;
-
+    KSimpleConfig *m_simpleConf;
     KStandardDirs *m_pDirs;
 };
 

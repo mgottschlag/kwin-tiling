@@ -232,15 +232,19 @@ KBackground::KBackground(QWidget *parent, const char *name)
     top->addWidget(m_pTabWidget);
 
     config->setGroup( "X-*-Greeter" );
-    m_Renderer = new KBackgroundRenderer( 0,
-	new KSimpleConfig(
-	    config->readEntry( "BackgroundCfg",
-			       KDE_CONFDIR "/kdm/backgroundrc" ) ) );
+    m_simpleConf=new KSimpleConfig(config->readEntry( "BackgroundCfg",KDE_CONFDIR "/kdm/backgroundrc" ) );
+    m_Renderer = new KBackgroundRenderer( 0, m_simpleConf);
     connect(m_Renderer, SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
 
     init();
     apply();
 
+}
+
+KBackground::~KBackground()
+{
+    delete m_simpleConf;
+    delete m_Renderer;
 }
 
 void KBackground::makeReadOnly()
