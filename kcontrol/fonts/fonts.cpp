@@ -18,7 +18,7 @@
 #include <qcombobox.h>
 #include <qgroupbox.h>
 #include <knuminput.h>
-
+#include <qpushbutton.h>
 
 #include <dcopclient.h>
 #include <kapplication.h>
@@ -33,7 +33,6 @@
 #include "fonts.moc"
 
 #include <kdebug.h>
-#include <qpushbutton.h>
 
 #include <X11/Xlib.h>
 
@@ -122,39 +121,26 @@ K_EXPORT_COMPONENT_FACTORY( kcm_fonts, FontFactory("kcmfonts") );
 
 FontUseItem::FontUseItem(
   QWidget * parent,
-  QLabel * prvw,
-  QString n,
-  QString grp,
-  QString key,
-  QString rc,
-  QFont default_fnt,
+  const QString &name,
+  const QString &grp,
+  const QString &key,
+  const QString &rc,
+  const QFont &default_fnt,
   bool f
 )
-  : QObject(),
-    prnt(parent),
-    preview(prvw),
-    _text(n),
+  : KFontRequester(parent, 0L, f),
     _rcfile(rc),
     _rcgroup(grp),
     _rckey(key),
-    _font(default_fnt),
-    _default(default_fnt),
-    fixed(f)
+    _default(default_fnt)
 {
+  setTitle( name );
   readFont();
-}
-
-QString FontUseItem::fontString(QFont rFont)
-{
-  QString aValue;
-  aValue = rFont.rawName();
-  return aValue;
 }
 
 void FontUseItem::setDefault()
 {
-  _font = _default;
-  updateLabel();
+  setFont( _default, isFixedOnly() );
 }
 
 void FontUseItem::readFont()
@@ -171,10 +157,9 @@ void FontUseItem::readFont()
   }
 
   config->setGroup(_rcgroup);
-  QFont tmpFnt(_font);
-  _font = config->readFontEntry(_rckey, &tmpFnt);
+  QFont tmpFnt(font());
+  setFont( config->readFontEntry(_rckey, &tmpFnt), isFixedOnly() );
   if (deleteme) delete config;
-  updateLabel();
 }
 
 void FontUseItem::writeFont()
@@ -184,50 +169,33 @@ void FontUseItem::writeFont()
   if (_rcfile.isEmpty()) {
     config = KGlobal::config();
     config->setGroup(_rcgroup);
-    config->writeEntry(_rckey, _font, true, true);
+    config->writeEntry(_rckey, font(), true, true);
   } else {
     config = new KSimpleConfig(locateLocal("config", _rcfile));
     config->setGroup(_rcgroup);
-    config->writeEntry(_rckey, _font);
+    config->writeEntry(_rckey, font());
     config->sync();
     delete config;
   }
 }
 
-void FontUseItem::choose()
-{
-  KFontDialog dlg( prnt, "Font Selector", fixed, true, QStringList(), true );
-  dlg.setFont( _font, fixed );
-  int result = dlg.exec();
-  if (KDialog::Accepted == result)
-  {
-    _font = dlg.font();
-    updateLabel();
-    emit changed();
-  }
-}
-
 void FontUseItem::applyFontDiff( const QFont &fnt, int fontDiffFlags )
 {
+  QFont _font( font() );
+
   if (fontDiffFlags & KFontChooser::FontDiffSize) {
     _font.setPointSize( fnt.pointSize() );
   }
   if (fontDiffFlags & KFontChooser::FontDiffFamily) {
-    if (!fixed) _font.setFamily( fnt.family() );
+    if (!isFixedOnly()) _font.setFamily( fnt.family() );
   }
   if (fontDiffFlags & KFontChooser::FontDiffStyle) {
     _font.setBold( fnt.bold() );
     _font.setItalic( fnt.italic() );
     _font.setUnderline( fnt.underline() );
   }
-  updateLabel();
-}
 
-void FontUseItem::updateLabel()
-{
-  QString fontDesc = _font.family() + " " + QString::number(_font.pointSize());
-  preview->setText(fontDesc);
-  preview->setFont(_font);
+  setFont( _font, isFixedOnly() );
 }
 
 /**** KFonts ****/
@@ -320,9 +288,6 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
 
   while (it != nameGroupKeyRc.end()) {
 
-    QLabel * preview = new QLabel(this);
-    preview->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    // preview->setMaximumWidth(200);
     QString name = *it; it++;
     QString group = *it; it++;
     QString key = *it; it++;
@@ -331,7 +296,6 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     FontUseItem * i =
       new FontUseItem(
         this,
-        preview,
         name,
         group,
         key,
@@ -341,35 +305,23 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
       );
 
     fontUseList.append(i);
-    connect(i, SIGNAL(changed()), this, SLOT(fontChanged()));
+    connect(i, SIGNAL(fontSelected(const QFont &)), SLOT(fontSelected()));
 
-    QWhatsThis::add(preview, i18n("This is a preview of the \"%1\" font. You can change this font by clicking the \"Choose...\" button to the right.").arg(i->text()));
-    QToolTip::add(preview, i18n("Preview of the \"%1\" font").arg(i->text()));
-
-    QLabel * fontUse = new QLabel(i->text()+":", this);
-
+    QLabel * fontUse = new QLabel(name+":", this);
     QWhatsThis::add(fontUse, *quickHelpIt++);
 
-    QPushButton * chooseButton = new QPushButton(i18n("Choose..."), this);
-
-    QWhatsThis::add(chooseButton, i18n("Click to select a font"));
-
-    connect(chooseButton, SIGNAL(clicked()), i, SLOT(choose()));
-
     fontUseLayout->addWidget(fontUse, count, 0);
-    fontUseLayout->addWidget(preview, count, 1);
-    fontUseLayout->addWidget(chooseButton, count, 2);
+    fontUseLayout->addWidget(i, count, 1);
 
     ++count;
   }
 
    QHBoxLayout *lay = new QHBoxLayout(layout, KDialog::spacingHint());
-   QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-   lay->addItem( spacer );
+   lay->addStretch();
    QPushButton * fontAdjustButton = new QPushButton(i18n("Ad&just All Fonts..."), this);
    QWhatsThis::add(fontAdjustButton, i18n("Click to change all fonts"));
    lay->addWidget( fontAdjustButton );
-   connect(fontAdjustButton, SIGNAL(clicked()), this, SLOT(slotApplyFontDiff()));
+   connect(fontAdjustButton, SIGNAL(clicked()), SLOT(slotApplyFontDiff()));
 
    QGroupBox *aaBox=new QGroupBox(i18n("An&ti-Aliasing"), this);
 
@@ -381,7 +333,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
                               "fonts."));
 
    QHBox *hbox =  new QHBox(aaBox);
-   spacer = new QSpacerItem( 20, 0, QSizePolicy::Fixed, QSizePolicy::Minimum );
+   QSpacerItem *spacer = new QSpacerItem( 20, 0, QSizePolicy::Fixed, QSizePolicy::Minimum );
    hbox->layout()->addItem(spacer);
    aaExcludeRange=new QCheckBox(i18n("E&xclude range:"), hbox),
    aaExcludeFrom=new KDoubleNumInput(0, 72, 8.0, 1, 1, hbox),
@@ -436,7 +388,7 @@ KFonts::~KFonts()
   fontUseList.clear();
 }
 
-void KFonts::fontChanged()
+void KFonts::fontSelected()
 {
   _changed = true;
   emit changed(true);
@@ -481,7 +433,7 @@ void KFonts::load()
 
   useAA = QSettings().readBoolEntry("/qt/useXft");
   useAA_original = useAA;
-  kdDebug() << "AA:" << useAA << endl;
+  kdDebug(1208) << "AA:" << useAA << endl;
   cbAA->setChecked(useAA);
 
   setAaWidgets();
@@ -508,7 +460,7 @@ void KFonts::save()
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() ) {
       if("font"==i->rcKey())
           QSettings().writeEntry("/qt/font", i->font().toString());
-      kdDebug () << "write entry " <<  i->rcKey() << endl;
+      kdDebug(1208) << "write entry " <<  i->rcKey() << endl;
       config->writeEntry( i->rcKey(), i->font() );
   }
   config->sync();
@@ -559,7 +511,7 @@ void KFonts::slotApplyFontDiff()
   int fontDiffFlags = 0;
   int ret = KFontDialog::getFontDiff(font,fontDiffFlags);
 
-  if (ret && fontDiffFlags)
+  if (ret == KDialog::Accepted && fontDiffFlags)
   {
     for ( int i = 0; i < (int) fontUseList.count(); i++ )
       fontUseList.at( i )->applyFontDiff( font,fontDiffFlags );

@@ -11,51 +11,37 @@
 #include <qobject.h>
 #include <kfontdialog.h>
 #include <kcmodule.h>
+#include <kfontrequester.h>
+
 #include "kxftconfig.h"
 
 class QCheckBox;
 class QComboBox;
 class KDoubleNumInput;
 
-class FontUseItem : public QObject
+class FontUseItem : public KFontRequester
 {
   Q_OBJECT
 
 public:
-    FontUseItem(QWidget * parent, QLabel * prvw, QString n, QString grp, QString key, QString rc, QFont default_fnt, bool fixed = false);
-
-    QString fontString(QFont rFont);
+    FontUseItem(QWidget * parent, const QString &name, const QString &grp, 
+        const QString &key, const QString &rc, const QFont &default_fnt, 
+        bool fixed = false);
 
     void readFont();
     void writeFont();
     void setDefault();
-    void setFont(const QFont &fnt ) { _font = fnt; }
     void applyFontDiff(const QFont &fnt, int fontDiffFlags);
 
-    QFont font() { return _font; }
     const QString& rcFile() { return _rcfile; }
     const QString& rcGroup() { return _rcgroup; }
     const QString& rcKey() { return _rckey; }
-    const QString& text() { return _text; }
-    bool spacing() { return fixed; }
-
-signals:
-    void changed();
-
-public slots:
-    void choose();
 
 private:
-    void updateLabel();
-    QWidget * prnt;
-    QLabel * preview;
-    QString _text;
     QString _rcfile;
     QString _rcgroup;
     QString _rckey;
-    QFont _font;
     QFont _default;
-    bool fixed;
 };
 
 
@@ -78,7 +64,7 @@ public:
     int buttons();
 
 protected slots:
-    void fontChanged();
+    void fontSelected();
     void slotApplyFontDiff(); 
     void slotUseAntiAliasing();
     void slotAaChange();
