@@ -131,6 +131,8 @@ extern "C"
                                      "kicker/tiles");
 	KGlobal::dirs()->addResourceType("hb_pics", KStandardDirs::kde_default("data") +
                                      "kcmkicker/pics");
+	KGlobal::dirs()->addResourceType("applets", KStandardDirs::kde_default("data") +
+                                     "kicker/applets");
     return new KickerConfig(parent, name);
   };
 }

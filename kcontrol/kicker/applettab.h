@@ -23,10 +23,13 @@
 
 #include <qwidget.h>
 
-class QGridLayout;
 class QGroupBox;
-class QCheckBox;
-class KIntNumInput;
+class QGridLayout;
+class QButtonGroup;
+class QRadioButton;
+class QPushButton;
+class KListView;
+class QListViewItem;
 
 class AppletTab : public QWidget
 {
@@ -43,6 +46,30 @@ class AppletTab : public QWidget
 
  signals:
   void changed();
+
+ protected slots:
+  void level_changed(int level);
+  void trusted_selection_changed(QListViewItem *);
+  void available_selection_changed(QListViewItem *);
+  void add_clicked();
+  void remove_clicked();
+
+ protected:
+  void updateTrusted();
+  void updateAvailable();
+
+ private:
+  QGridLayout *layout;
+
+  // security level group
+  QButtonGroup  *level_group;
+  QRadioButton  *trusted_rb, *new_rb, *all_rb;
+
+  // trusted list group
+  QGroupBox     *list_group;
+  QPushButton   *pb_add, *pb_remove;
+  KListView     *lb_trusted, *lb_available;
+  QStringList   available, l_available, l_trusted;
 };
 
 #endif
