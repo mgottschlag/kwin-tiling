@@ -65,13 +65,13 @@ int main( int argc, char* argv[] )
     if ( wm.isEmpty() )
 	wm = "kwin";
 
-    KSMServer server ( QString::fromLatin1(wm) );
+    KSMServer *server = new KSMServer( QString::fromLatin1(wm) );
     IceSetIOErrorHandler (IoErrorHandler );
 
     if ( args->isSet("restore") )
-	server.restoreSession();
+	server->restoreSession();
     else
-	server.startDefaultSession();
+	server->startDefaultSession();
 
     setjmp (JumpHere);
     return a.exec();

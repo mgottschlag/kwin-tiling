@@ -608,6 +608,7 @@ static void sighandler(int sig)
     {
        the_server->cleanUp();
        delete the_server;
+       the_server = 0;
     }
     ::exit(0);
 }
@@ -784,7 +785,7 @@ void KSMServer::removeConnection( KSMConnection* conn )
 /*!
   Called from our IceIoErrorHandler
  */
-void KSMServer::ioError( IceConn /*iceConn*/ )
+void KSMServer::ioError( IceConn iceConn )
 {
     QListIterator<KSMClient> it ( clients );
     while ( it.current() &&SmsGetIceConnection( it.current()->connection() ) != iceConn )
