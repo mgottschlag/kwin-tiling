@@ -26,6 +26,7 @@
 class JoyDevice;
 
 class PosWidget;
+class QLabel;
 class QTable;
 class QTimer;
 class QComboBox;
@@ -60,6 +61,7 @@ class JoyWidget : public QWidget
     void restoreCurrDev(); // restores the content of the combobox to reflect the current open device
 
   private:
+    QLabel *message;  // in case of no device, show here a message rather than in a dialog
     QComboBox *device;
     PosWidget *xyPos;
     QTable *buttonTbl;

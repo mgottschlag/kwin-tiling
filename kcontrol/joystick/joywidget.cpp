@@ -50,6 +50,9 @@ JoyWidget::JoyWidget(QWidget *parent, const char *name)
   mainVbox->setSpacing(KDialog::spacingHint());
   mainVbox->setMargin(KDialog::marginHint());
 
+  message = new QLabel(mainVbox);
+  message->hide();
+
   QHBox *devHbox = new QHBox(mainVbox);
   new QLabel(i18n("Device:"), devHbox);
   device = new QComboBox(true, devHbox);
@@ -173,12 +176,13 @@ void JoyWidget::init()
   }
 
   /* KDE 4: Remove this check(and i18n) when all KCM wrappers properly test modules */
-  if ( device->count() == 0 ) 
+  if ( device->count() == 0 )
   {
-    KMessageBox::sorry(this,
+    message->show();
+    message->setText(QString("<qt><b>%1</b></qt>").arg(
       i18n("No joystick device automatically found on this computer.\n"
            "Checks were done in /dev/js[0-4] and /dev/input/js[0-4]\n"
-           "If you know that there is one attached, please enter the correct device file."), i18n("No Device"));
+           "If you know that there is one attached, please enter the correct device file.")));
   }
 }
 
