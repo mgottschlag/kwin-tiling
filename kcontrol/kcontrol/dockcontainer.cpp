@@ -43,12 +43,6 @@ DockContainer::DockContainer(QWidget *parent, const char *name)
   _busy->setTextFormat(RichText);
   _busy->setGeometry(0,0, width(), height());
   _busy->hide();
-  _rootOnly = new QLabel(i18n("<big>You need super user privileges to run this control module.</big><br>"
-							  "Click on the \"Modify\" button below."), this);
-  _rootOnly->setAlignment(AlignCenter);
-  _rootOnly->setTextFormat(RichText);
-  _rootOnly->setGeometry(0,0, width(), height());
-  _rootOnly->hide();
 }
 
 DockContainer::~DockContainer()
@@ -88,14 +82,6 @@ void DockContainer::dockModule(ConfigModule *module)
 
   deleteModule();
 
-  if (module->needsRootPrivileges() && !KCGlobal::root() && !module->hasReadOnlyMode())
-	{
-	  _rootOnly->raise();
-	  _rootOnly->show();
-	  _rootOnly->repaint();
-	  return;
-	}
-
   _busy->raise();
   _busy->show();
   _busy->repaint();
@@ -105,7 +91,7 @@ void DockContainer::dockModule(ConfigModule *module)
 
   if (widget)
     {
-	  _module = module;
+      _module = module;
       connect(_module, SIGNAL(childClosed()),
               this, SLOT(removeModule()));
 
@@ -156,7 +142,6 @@ void DockContainer::deleteModule()
 void DockContainer::resizeEvent(QResizeEvent *)
 {
   _busy->resize(width(), height());
-  _rootOnly->resize(width(), height());
   if (_module)
 	{
 	  _module->module()->resize(size());

@@ -31,7 +31,8 @@ kcontrol_la_SOURCES = main.cpp toplevel.cpp indexwidget.cpp searchwidget.cpp \
 	helpwidget.cpp moduleinfo.cpp utils.cpp modules.cpp proxywidget.cpp \
 	modloader.cpp dockcontainer.cpp aboutwidget.cpp global.cpp \
 	quickhelp.cpp moduletreeview.cpp moduleiconview.cpp modulemenu.cpp \
-	kecdialog.cpp
+	kecdialog.cpp kcrootonly.cpp
+
 kcontrol_la_LIBADD  = $(LIB_KDEUI) $(LIB_KSYCOCA)
 kcontrol_la_LDFLAGS = $(all_libraries) -module -avoid-version
 

@@ -44,7 +44,7 @@
 #include "utils.h"
 #include "proxywidget.h"
 #include "modloader.h"
-
+#include "kcrootonly.h"
 
 #include <X11/Xlib.h>
 
@@ -68,11 +68,17 @@ ProxyWidget *ConfigModule::module()
   if (_module)
     return _module;
 
-  KCModule *modWidget = ModuleLoader::loadModule(*this);
+  bool run_as_root = needsRootPrivileges() && (getuid() != 0);
+
+  KCModule *modWidget = 0;
+  
+  if (run_as_root && !hasReadOnlyMode())
+     modWidget = new KCRootOnly(0, "root_only");
+  else
+     modWidget = ModuleLoader::loadModule(*this);
 
   if (modWidget)
     {
-      bool run_as_root = needsRootPrivileges() && (getuid() != 0);
 
       _module = new ProxyWidget(modWidget, name(), "", run_as_root);
       connect(_module, SIGNAL(changed(bool)), this, SLOT(clientChanged(bool)));
