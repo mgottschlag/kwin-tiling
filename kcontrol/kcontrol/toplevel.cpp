@@ -322,7 +322,7 @@ void TopLevel::categorySelected(QListViewItem *category)
   {
     if (_active->isChanged())
       {
-        int res = KMessageBox::warningYesNo(this, _active ?
+        int res = KMessageBox::warningYesNoCancel(this, _active ?
              i18n("There are unsaved changes in the active module.\n"
                   "Do you want to apply the changes before running "
                   "the new module or forget the changes?") :
@@ -334,6 +334,8 @@ void TopLevel::categorySelected(QListViewItem *category)
                             i18n("&Forget"));
         if (res == KMessageBox::Yes)
           _active->module()->applyClicked();
+        else if (res == KMessageBox::Cancel)
+          return;
       }
   }
   _dock->removeModule();

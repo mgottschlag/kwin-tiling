@@ -74,7 +74,7 @@ void DockContainer::dockModule(ConfigModule *module)
   if (_module && _module->isChanged())
     {
 
-      int res = KMessageBox::warningYesNo(this,
+      int res = KMessageBox::warningYesNoCancel(this,
 module ?
 i18n("There are unsaved changes in the active module.\n"
      "Do you want to apply the changes before running "
@@ -87,6 +87,8 @@ i18n("There are unsaved changes in the active module.\n"
                                           i18n("&Forget"));
       if (res == KMessageBox::Yes)
         _module->module()->applyClicked();
+      if (res == KMessageBox::Cancel)
+        return;
     }
 
   deleteModule();
