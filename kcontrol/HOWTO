@@ -142,7 +142,7 @@ X-KDE-ModuleType
 	be of this type, it is only here to keep some kind of
 	upward compatibility with the old style modules.
 
-X-KDE-LibraryName
+X-KDE-Library
 
 	This is the name of the library, without the libkcm_ prefix.
 	So in the example, the library name would be "xyz".
@@ -151,7 +151,7 @@ X-KDE-FactoryName
 
 	This entry can be used to set the name of the factory
   	function in the library. Usually, this is the same as
-	the LibraryName, but if you want to have more than
+	the Library, but if you want to have more than
 	one module in one library, you need this entry.
 
 	For example, if you have a library named
@@ -161,12 +161,12 @@ X-KDE-FactoryName
 	with two modules, named "kermit" and "quak", you would
 	have 
 
-	X-KDE-LibraryName=frog
+	X-KDE-Library=frog
 	X-KDE-FactoryName=kermit
 
 	in one of the .desktop files, and in the other
 
-	X-KDE-LibraryName=frog
+	X-KDE-Library=frog
 	X-KDE-FactoryName=quak
 
 	The control center would then call the "create_kermit" and
@@ -203,7 +203,7 @@ X-KDE-Init
 	use this entry to build the name of a function to call.
 	if X-KDE-Init is "bell", for example, the function
 	"init_bell" is called in the library indicated by
-	X-KDE-LibraryName.
+	X-KDE-Library.
 
 
 Don't forget the usual entries :
