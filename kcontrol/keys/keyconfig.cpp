@@ -60,7 +60,7 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   keys = new KAccel( this );
   
   if ( KeyType == "global" ) {
-#include "../../kwm/kwmbindings.cpp"
+#include "../../kwin/kwinbindings.cpp"
     KeyScheme = "Global Key Scheme " ;
     KeySet    = "Global Keys" ;
     check_against_std_keys  = true ;
