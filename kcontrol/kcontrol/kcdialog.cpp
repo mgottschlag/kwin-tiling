@@ -54,8 +54,8 @@ KCDialog::KCDialog(KCModule *client, int b, const QString &docpath, QWidget *par
 
 void KCDialog::slotDefault()
 {
-    _client->defaults();
     clientChanged(true);
+    _client->defaults();
 }
 
 void KCDialog::slotOk()

@@ -277,8 +277,8 @@ void ProxyWidget::helpClicked()
 
 void ProxyWidget::defaultClicked()
 {
-  _client->defaults();
   clientChanged(true);
+  _client->defaults();
 }
 
 void ProxyWidget::applyClicked()
