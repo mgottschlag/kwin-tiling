@@ -13,6 +13,7 @@ services_DATA =	acronym.desktop \
 		dmoz.desktop \
 		docbook.desktop \
 		excite.desktop \
+		feedster.desktop \
 		foldoc.desktop \
 		freshmeat.desktop \
 		froogle.desktop \
@@ -21,6 +22,7 @@ services_DATA =	acronym.desktop \
 		google_groups.desktop \
 		google_images.desktop \
 		google_lucky.desktop \
+		google_news.desktop \
 		hotbot.desktop \
 		imdb.desktop \
 		jeeves.desktop \
