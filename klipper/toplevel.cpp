@@ -61,6 +61,9 @@
 #define EMPTY (m_popup->count() - MENU_ITEMS)
 
 extern bool qt_qclipboard_bailout_hack;
+#if KDE_IS_VERSION( 3, 9, 0 )
+#error Check status of #80072 with Qt4.
+#endif
 
 // config == kapp->config for process, otherwise applet
 KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
