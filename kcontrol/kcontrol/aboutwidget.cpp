@@ -163,5 +163,5 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
 
   // start the party
   mainlayout->activate();
-  setMinimumSize( sizeHint() );
+  setMinimumSize(400,200);
 }
