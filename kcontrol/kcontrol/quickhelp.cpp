@@ -32,8 +32,10 @@ QuickHelp::QuickHelp(QWidget *parent , const char *name)
 void QuickHelp::setText(const QString &text)
 {
   QString s(text);
-  s.replace(QRegExp("<[Hh]1>"),"<font face=utopia><h1>");
-  s.replace(QRegExp("</[Hh]1>"),"</h1></font>");
+  //lukas: no need to change the font -- it breaks for
+  //those not having it in the right encoding!
+  //s.replace(QRegExp("<[Hh]1>"),"<font face=utopia><h1>");
+  //s.replace(QRegExp("</[Hh]1>"),"</h1></font>");
   KTextBrowser::setText(s);
 }
 
