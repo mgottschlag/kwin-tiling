@@ -137,7 +137,7 @@ void AppletTab::load()
   l_trusted.clear();
 
   int level = c->readNumEntry("SecurityLevel", 1);
-  
+
   switch(level)
     {
     case 0:
@@ -172,7 +172,7 @@ void AppletTab::load()
     }
   else
       l_trusted << "clockapplet" << "ksystemtrayapplet" << "krunapplet" << "quicklauncher"
-                << "kminipagerapplet" << "ktaskbarapplet" << "eyesapplet";
+                << "kminipagerapplet" << "ktaskbarapplet" << "eyesapplet" << "kmixapplet";
 
   for ( QStringList::Iterator it = available.begin(); it != available.end(); ++it )
     {
