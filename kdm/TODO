@@ -8,3 +8,9 @@ Things to be done:
 - Animated logo?
 - Different logos for each session type
 - Make remembering user's last session more portable?
+- Use kcheckpass?
+- Make nis & kerberos5 work
+- Integrate chooser
+
+- Possibly kill warning on AIX - see bug #13628
+

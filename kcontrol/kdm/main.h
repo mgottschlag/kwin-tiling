@@ -31,7 +31,6 @@
 class KDMAppearanceWidget;
 class KBackground;
 class KDMFontWidget;
-class KDMLiloWidget;
 class KDMSessionsWidget;
 class KDMUsersWidget;
 class KDMConvenienceWidget;
@@ -68,7 +67,6 @@ private:
   KDMAppearanceWidget	*appearance;
   KBackground		*background;
   KDMFontWidget		*font;
-  KDMLiloWidget		*lilo;
   KDMSessionsWidget	*sessions;
   KDMUsersWidget	*users;
   KDMConvenienceWidget	*convenience;

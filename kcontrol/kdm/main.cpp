@@ -36,7 +36,7 @@
 #include "kdm-conv.h"
 
 #include "main.h"
-
+#include "config.h"
 
 KSimpleConfig *c;
 
@@ -45,10 +45,7 @@ KDModule::KDModule(QWidget *parent, const char *name)
 {
   QStringList show_users;
 
-  c = new KSimpleConfig(
-// QString::fromLatin1(KDE_CONFDIR "/kdmrc") 
-*KGlobal::dirs()->resourceDirs("config").begin() + "kdmrc"
-  );
+  c = new KSimpleConfig( QString::fromLatin1(KDE_CONFDIR "/kdmrc") );
 
   QVBoxLayout *top = new QVBoxLayout(this);
   tab = new QTabWidget(this);

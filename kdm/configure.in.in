@@ -2,7 +2,8 @@
 dnl this is for kdm:
 
 AC_REQUIRE([AC_PATH_KDE])
-kdecfg=`eval echo -n $kde_confdir`
+KDE_CONFDIR=`eval echo $kde_confdir`
+AC_DEFINE_UNQUOTED(KDE_CONFDIR, "$KDE_CONFDIR", [Define where to look for kde config files])
 
 AC_CHECK_FUNCS(getsecretkey getloadavg)
 
@@ -10,7 +11,7 @@ dnl checks for X server
 AC_PATH_PROG(X_SERVER, X)
 if test ! -z "$X_SERVER"; then
     X_SERVER=`echo $X_SERVER | sed -e 's#/X$##'`
-    AC_DEFINE_UNQUOTED(XBINDIR,$X_SERVER, [Define where to find the X server])
+    AC_DEFINE_UNQUOTED(XBINDIR, $X_SERVER, [Define where to find the X server])
     XBINDIR=$X_SERVER
 fi
 AC_SUBST(XBINDIR)
@@ -110,7 +111,7 @@ AC_ARG_WITH(xdmdir,
 	[ ac_xdmdir="no"])
 AC_MSG_CHECKING([for xdm config directory])
 if test "$ac_xdmdir" = "no"; then
-    ac_xdmdir=$kdecfg/kdm
+    ac_xdmdir=$KDE_CONFDIR/kdm
     dnl should /var/X11/xdm go before $XDMDIR?
     for i in /etc/X11/kdm /etc/X11/xdm $XDMDIR /var/X11/xdm /usr/openwin/xdm /usr/X11R6/lib/X11/xdm; do
 	if test -d $i; then
