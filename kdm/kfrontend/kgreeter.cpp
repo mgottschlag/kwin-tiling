@@ -728,8 +728,10 @@ kg_main( int argc, char **argv )
 #endif
     setup_modifiers( dpy, kdmcfg->_numLockStatus );
     SecureDisplay( dpy );
-    if (!dgrabServer)
+    if (!dgrabServer) {
 	GSendInt( G_SetupDpy );
+	GRecvInt();
+    }
     QDesktopWidget *dsk = kapp->desktop();
     QRect scr = dsk->screenGeometry(
 	unsigned(kdmcfg->_greeterScreen) < unsigned(dsk->numScreens()) ?

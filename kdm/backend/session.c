@@ -364,6 +364,7 @@ GreetUser (struct display *d)
 	case G_SetupDpy:
 	    Debug ("G_SetupDpy\n");
 	    SetupDisplay (d);
+	    GSendInt (0);
 	    break;
 	default:
 	    LogError ("Received unknown command 0x%x from greeter\n", cmd);
