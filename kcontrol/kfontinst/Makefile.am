@@ -1,5 +1,5 @@
 
-SUBDIRS = kfontinst other thumbnail kfile-plugin
+SUBDIRS = kfontinst other $(FONTINST_TN) kfile-plugin
 
 EXTRA_DIST = TODO
 
