@@ -1195,21 +1195,8 @@ void KBackground::slotSelectColor2( const QColor &col )
 
 void KBackground::slotBrowse()
 {
-  QString path;
-
-  static bool firsttime = true;
-
-  if (firsttime) { // the file selector remembers the last path
-    path = kapp->kde_wallpaperdir().copy();
-
-    QDir dir( path );
-    if ( !dir.exists() )
-      path = QString::null;
-	    
-    firsttime = false;
-  }
-
-  QString filename = KFileDialog::getOpenFileName( path );
+    
+  QString filename = KFileDialog::getOpenFileName( 0 );
   debug("filename:%s", filename.ascii());
   if(!filename.isNull())
       debug("Passed Null");

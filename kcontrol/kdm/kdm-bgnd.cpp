@@ -309,7 +309,7 @@ void KDMBackgroundWidget::slotBrowse()
 {
     QString filename = KFileDialog::getOpenFileName( 0 );
     slotWallpaper( filename );
-    if ( !filename.isEmpty() && filename != wallpaper) )
+    if ( !filename.isEmpty() && filename != wallpaper) 
 	{
 	    wpCombo->insertItem( wallpaper );
 	    wpCombo->setCurrentItem( wpCombo->count() - 1 );
@@ -616,7 +616,7 @@ void KDMBackgroundWidget::applySettings()
 
 void KDMBackgroundWidget::loadSettings()
 {
-  iconloader = kapp->getIconLoader();
+    iconloader = KGlobal::iconLoader();
   QString fn(CONFIGFILE), str;
   
   // Get config object

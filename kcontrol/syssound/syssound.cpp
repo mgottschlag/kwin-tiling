@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.13  1999/05/23 20:48:55  kulow
+    some more fixes
+
     Revision 1.12  1999/05/16 08:58:33  bieker
     sprintf -> arg
 
@@ -72,6 +75,7 @@
 #include "syssound.h"
 #include <kconfig.h>
 #include <kglobal.h>
+#include <kstddirs.h>
 #include "syssound.moc"
 
 #ifdef HAVE_CONFIG_H
