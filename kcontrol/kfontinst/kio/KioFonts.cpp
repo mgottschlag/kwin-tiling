@@ -49,7 +49,7 @@
 #include <kio/netaccess.h>
 #include <kio/slaveinterface.h>
 #include <kio/connection.h>
-#include <qdatastream.h>
+#include <qtextstream.h>
 #include <kmimetype.h>
 #include <kmessagebox.h>
 #include <kprocess.h>

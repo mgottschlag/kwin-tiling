@@ -3,6 +3,7 @@
 #include <qfontmetrics.h>
 #include <qfont.h>
 #include <qfile.h>
+#include <qtextstream.h>
 #include <kurl.h>
 #include <kconfig.h>
 #include <kglobalsettings.h>
