@@ -25,7 +25,6 @@
 #include <kmessagebox.h>
 #include <kinstance.h>
 #include <kaction.h>
-#include <kkeydialog.h>
 
 #include <qtabwidget.h>
 #include <qwhatsthis.h>
@@ -201,7 +200,8 @@ bool TopLevel::queryClose()
 void TopLevel::setupActions()
 {
   KStdAction::quit(this, SLOT(close()), actionCollection());
-  KStdAction::keyBindings( this, SLOT( slotConfigureKeys() ), actionCollection() );
+  KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()), 
+actionCollection());
   icon_view = new KRadioAction
     (i18n("&Icon View"), 0, this, SLOT(activateIconView()),
      actionCollection(), "activate_iconview");
@@ -246,11 +246,6 @@ void TopLevel::setupActions()
   report_bug->setText(i18n("&Report Bug..."));
   report_bug->disconnect();
   connect(report_bug, SIGNAL(activated()), SLOT(reportBug()));
-}
-
-void TopLevel::slotConfigureKeys()
-{
-  KKeyDialog::configure( actionCollection(), this );
 }
 
 void TopLevel::activateIconView()

@@ -72,7 +72,6 @@ protected slots:
   void changedModule(ConfigModule *changed);
 
   bool queryClose();
-    void slotConfigureKeys();
 
 private:
 
