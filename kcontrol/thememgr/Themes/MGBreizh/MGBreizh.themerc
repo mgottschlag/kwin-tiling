@@ -6,6 +6,7 @@
 # in later versions of the theme manager.
 # Name of the theme
 Name=MGBreizh
+Name[fr]=MG Breizh
 # Name of the author
 author=Mikael GEORGES
 # Email address of the author
