@@ -22,8 +22,8 @@
 // Per desktop defaults
 // Before you change this get in touch with me (torsten@kde.org)
 // Thanks!!
-#define _defColorA  QColor("#249FD0")
-#define _defColorB  QColor("#19A2A0")
+#define _defColorA  QColor("#72A3D5")
+#define _defColorB  QColor("#24A0D1")
 #define _defBackgroundMode VerticalGradient
 #define _defWallpaperMode NoWallpaper
 #define _defMultiMode NoMulti
