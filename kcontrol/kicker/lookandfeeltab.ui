@@ -492,6 +492,9 @@
                     <property name="checked">
                         <bool>true</bool>
                     </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>If this option is selected, the panel background image will be colored to match the default colors. To change the default colors, go to the 'Colors' control module.</string>
+                    </property>
                 </widget>
                 <widget class="QLabel" row="0" column="2" rowspan="2" colspan="1">
                     <property name="name">
@@ -556,7 +559,8 @@
                         </sizepolicy>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Here you can choose a theme to be displayed by the panel. Press the 'Browse' button to choose a theme using the file dialog.&lt;p&gt; This option is only active if 'Enable background image' is selected.</string>
+                        <string>Here you can choose a theme to be displayed by the panel. Press the 'Browse' button to choose a theme using the file dialog.
+This option is only active if 'Enable background image' is selected.</string>
                     </property>
                 </widget>
             </grid>
@@ -578,6 +582,9 @@
                     </property>
                     <property name="accel">
                         <string>Alt+E</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Click here to open the Advanced Options dialog. You can configure the applet handles look and feel, the tint transparency color and more.</string>
                     </property>
                 </widget>
                 <spacer>
