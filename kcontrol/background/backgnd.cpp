@@ -413,13 +413,13 @@ void KBackground::init()
 
     // Wallpapers
     QStringList lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
+    lst.sort();
     for (i=0; i<(int)lst.count(); i++) {
         int n = lst[i].findRev('/');
         QString s = lst[i].mid(n+1);
         m_pWallpaperBox->insertItem(s);
         m_Wallpaper[s] = i;
     }
-
     // Wallpaper tilings: again they must match the ones from bgrender.cc
     m_pArrangementBox->insertItem(i18n("Centered"));
     m_pArrangementBox->insertItem(i18n("Tiled"));
