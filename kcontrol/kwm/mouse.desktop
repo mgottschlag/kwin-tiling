@@ -7,8 +7,6 @@ DocPath=kcontrol/kcmkwm/kwm-5.html
 X-KDE-ModuleType=Library
 X-KDE-Library=kwinmouse
 X-KDE-FactoryName=kwinmouse
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Mouse Behavior
 Name[ca]=Comportament del ratolí

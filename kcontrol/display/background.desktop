@@ -7,8 +7,6 @@ DocPath=kcontrol/kcmdisplay/kdisplay-3.html
 X-KDE-ModuleType=Library
 X-KDE-Library=display
 X-KDE-FactoryName=background
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Background
 Name[ca]=Fons

@@ -7,8 +7,6 @@ DocPath=kcontrol/kcminfo/info-5.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=ioports
-X-KDE-ControlModuleType=Info
-X-KDE-HideFromPanel=true
 
 Name=IO-Ports
 Name[ca]=Ports E/S

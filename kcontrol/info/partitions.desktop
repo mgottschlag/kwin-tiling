@@ -7,8 +7,6 @@ DocPath=kcontrol/kcminfo/info-10.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=partitions
-X-KDE-ControlModuleType=Info
-X-KDE-HideFromPanel=true
 
 Name=Partitions
 Name[ca]=Particions

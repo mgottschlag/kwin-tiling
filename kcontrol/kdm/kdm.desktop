@@ -7,8 +7,6 @@ DocPath=kcontrol/kdmconfig/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=kdm
 X-KDE-RootOnly=true
-X-KDE-ControlModuleType=System
-X-KDE-HideFromPanel=true
 
 Name=Login Manager
 Name[ca]=Gestor de connexió

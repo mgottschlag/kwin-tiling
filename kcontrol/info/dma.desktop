@@ -7,8 +7,6 @@ DocPath=kcontrol/kcminfo/info-4.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=dma
-X-KDE-ControlModuleType=Info
-X-KDE-HideFromPanel=true
 
 Name=DMA-Channels
 Name[ca]=Canals DMA

@@ -8,8 +8,6 @@ X-KDE-ModuleType=Library
 X-KDE-Library=input
 X-KDE-FactoryName=mouse
 X-KDE-Init=mouse
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Mouse
 Name[ca]=Ratolí

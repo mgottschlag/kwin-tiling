@@ -7,8 +7,6 @@ DocPath=kcontrol/kcmlocale/locale-1.html
 X-KDE-ModuleType=Library
 X-KDE-Library=locale
 X-KDE-FactoryName=locale
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Country & Language
 Name[ca]=Pais i idioma

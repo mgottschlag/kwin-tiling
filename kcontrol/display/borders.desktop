@@ -7,8 +7,6 @@ DocPath=kcontrol/kcmkwm/kwm-4.html
 X-KDE-ModuleType=Library
 X-KDE-Library=kwindesktop
 X-KDE-FactoryName=kwindesktop
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Borders
 Name[ca]=Vores

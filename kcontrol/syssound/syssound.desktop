@@ -7,8 +7,6 @@ DocPath=kcontrol/kcmsyssound/syssound-1.html
 X-KDE-ModuleType=Library
 X-KDE-Library=syssound
 X-KDE-Init=sound
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=System Sounds
 Name[ca]=Sons del sistema

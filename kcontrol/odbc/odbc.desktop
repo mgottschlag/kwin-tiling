@@ -7,8 +7,6 @@ X-KDE-ModuleType=Library
 X-KDE-Library=odbc
 X-KDE-FactoryName=odbc
 X-KDE-RootOnly=true
-X-KDE-ControlModuleType=System
-X-KDE-HideFromPanel=true
 
 Name=ODBC
 

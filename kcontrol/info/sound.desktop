@@ -7,8 +7,6 @@ DocPath=kcontrol/kcminfo/info-6.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=sound
-X-KDE-ControlModuleType=Info
-X-KDE-HideFromPanel=true
 
 Name=Sound
 Name[ca]=So

@@ -8,8 +8,6 @@ Exec=kcmshell LookNFeel/Desktop/desktop
 X-KDE-ModuleType=Library
 X-KDE-Library=konq
 X-KDE-FactoryName=desktop
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Desktop
 Name[ca]=Escriptori

@@ -7,8 +7,6 @@ DocPath=kcontrol/kcmkwm/kwm-1.html
 X-KDE-ModuleType=Library
 X-KDE-Library=kwinoptions
 X-KDE-FactoryName=kwinoptions
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Actions
 Name[ca]=Accions

@@ -7,8 +7,6 @@ DocPath=kcontrol/kcmdisplay/kdisplay-5.html
 X-KDE-ModuleType=Library
 X-KDE-Library=display
 X-KDE-FactoryName=colors
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Colors
 Name[cs]=Barvy

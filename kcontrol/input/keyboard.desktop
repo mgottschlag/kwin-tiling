@@ -8,8 +8,6 @@ X-KDE-ModuleType=Library
 X-KDE-Library=input
 X-KDE-FactoryName=keyboard
 X-KDE-Init=keyboard
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Keyboard
 Name[ca]=Teclat

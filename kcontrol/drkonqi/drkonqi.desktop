@@ -6,7 +6,6 @@ Exec=kcmshell Applications/DrKonqi
 
 X-KDE-ModuleType=Library
 X-KDE-Library=drkonqi
-X-KDE-ControlModuleType=User
 
 Name=Dr. Konqi
 Name[eo]=D-ro Konĉjo

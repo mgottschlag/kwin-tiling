@@ -6,8 +6,6 @@ Init=kcmkeys -init
 
 X-KDE-ModuleType=Library
 X-KDE-Library=keys
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Key bindings
 Name[ca]=Lligams de tecles

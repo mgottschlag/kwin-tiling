@@ -7,8 +7,6 @@ DocPath=kcontrol/kcminfo/info-9.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=scsi
-X-KDE-ControlModuleType=Info
-X-KDE-HideFromPanel=true
 
 Name=SCSI
 Name[is]=SCSI-tæki

@@ -7,8 +7,6 @@ DocPath=kcontrol/kcmsamba/smbstatus-1.html
 X-KDE-ModuleType=Library
 X-KDE-Library=samba
 X-KDE-FactoryName=samba
-X-KDE-ControlModuleType=Info
-X-KDE-HideFromPanel=true
 
 Name=Samba Status
 Name[ca]=Estat de Samba

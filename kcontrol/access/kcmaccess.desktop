@@ -4,14 +4,30 @@ Type=Application
 Exec=kcmshell Personalization/access
 
 X-KDE-ModuleType=Library
-X-KDE-LibraryName=access
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
+X-KDE-Library=access
 X-KDE-Init=access
 
 Name=Accessibility
-Name[de]=Benutzbarkeit
+Name[ca]=Accessibilitat
+Name[eo]=Alirebleco
+Name[hu]=Segédeszközök fogyatékosoknak
+Name[it]=Accessibilità
+Name[nl]=Toegankelijkheid
+Name[no]=Tilgjenglighet
+Name[no_NY]=Tilgjenge
 
 Comment=Improved accessibility for disabled persons
+Comment[ca]=Accessibilitat millorada per a persones discapacitades
+Comment[eo]=Plibonigita alirebleco por handikapitoj
+Comment[hu]=A kezelést elősegítő eszközök fogyatékosoknak
+Comment[it]=Accessibilità migliorata per le persone disabili
+Comment[nl]=Verbeterde toegankelijkheid voor gehandicapte personen
+Comment[no_NY]=Forbetra tilgjenge for hørsels-, syns og rørslehemma personar
 
 Keywords=access,acessibility,deaf,impaired
+Keywords[ca]=accés,accessibilitat,sord,discapacitat
+Keywords[eo]=aliro,uzeblo,handikapito,malhelpito
+Keywords[it]=accesso,accessibilità,sordità,disabile
+Keywords[nl]=toegankelijkheid,gehandicapt,doof,slechtziend
+Keywords[no]=tilgang,døv,svaksynt
+Keywords[no_NY]=tilgjenge,tilgang,døv,hemma

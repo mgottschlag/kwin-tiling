@@ -7,8 +7,6 @@ Exec=kcmshell LookNFeel/icons
 X-KDE-ModuleType=Library
 X-KDE-Library=display
 X-KDE-FactoryName=icons
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Icons
 Name[ca]=Icones

@@ -7,8 +7,6 @@ DocPath=kcontrol/kcminfo/info-8.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=devices
-X-KDE-ControlModuleType=Info
-X-KDE-HideFromPanel=true
 
 Name=Devices
 Name[ca]=Dispositius

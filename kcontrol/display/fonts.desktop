@@ -8,8 +8,6 @@ Init=kcmdisplay -init
 X-KDE-ModuleType=Library
 X-KDE-Library=display
 X-KDE-FactoryName=fonts
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Fonts
 Name[cs]=Písma

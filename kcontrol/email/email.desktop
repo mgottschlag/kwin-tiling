@@ -5,8 +5,6 @@ Exec=kcmshell Personalization/email
 
 X-KDE-ModuleType=Library
 X-KDE-LibraryName=email
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=E-mail
 Comment=Configure your identity, e-mail addresses, mail servers, etc.

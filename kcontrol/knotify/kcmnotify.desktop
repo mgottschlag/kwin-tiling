@@ -6,8 +6,6 @@ DocPath=kcontrol/knotify/knotify-1.html
 
 X-KDE-ModuleType=Library
 X-KDE-Library=knotify
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=System Notifications
 Name[ca]=Notificacions del sistema

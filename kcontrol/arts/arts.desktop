@@ -7,8 +7,6 @@ DocPath=kcontrol/kcmarts/arts-1.html
 X-KDE-ModuleType=Library
 X-KDE-Library=arts
 X-KDE-Init=arts
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Soundserver
 Name[ca]=Servidor de so

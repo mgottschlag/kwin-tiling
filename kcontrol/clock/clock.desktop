@@ -6,8 +6,7 @@ Icon=clock
 X-KDE-ModuleType=Library
 X-KDE-Library=clock
 X-KDE-RootOnly=true
-X-KDE-ControlModuleType=System
-X-KDE-HideFromPanel=true
+X-KDE-HasReadOnlyMode=true
 
 Name=Date & Time
 Name[ca]=Dia i hora

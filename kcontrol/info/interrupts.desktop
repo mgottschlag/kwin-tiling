@@ -7,8 +7,6 @@ DocPath=kcontrol/kcminfo/info-3.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=irq
-X-KDE-ControlModuleType=Info
-X-KDE-HideFromPanel=true
 
 Name=Interrupts
 Name[ca]=Interrupcions

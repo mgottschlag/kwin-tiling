@@ -8,8 +8,6 @@ Terminal=0
 X-KDE-ModuleType=Library
 X-KDE-Library=display
 X-KDE-FactoryName=energy
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Energy
 Name[ca]=Energia

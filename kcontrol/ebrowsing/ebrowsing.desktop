@@ -7,8 +7,6 @@ Exec=kcmshell Browsing/Web/ebrowsing
 X-KDE-ModuleType=Library
 X-KDE-Library=kurifilt
 X-KDE-FactoryName=kurifilt
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Enhanced Browsing
 Name[ca]=Navegació millorada

@@ -7,8 +7,6 @@ DocPath=kcontrol/kcminfo/info-2.html
 X-KDE-ModuleType=Library
 X-KDE-Library=info
 X-KDE-FactoryName=cpu
-X-KDE-ControlModuleType=Info
-X-KDE-HideFromPanel=true
 
 Name=Processor
 Name[ca]=Processador

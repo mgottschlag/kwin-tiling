@@ -7,8 +7,6 @@ Exec=kcmshell Browsing/Neighborhood/smb
 X-KDE-ModuleType=Library
 X-KDE-Library=kio
 X-KDE-FactoryName=smb
-X-KDE-ControlModuleType=User
-X-KDE-HideFromPanel=true
 
 Name=Windows Shares
 Name[ca]=Directoris windows
