@@ -26,56 +26,56 @@
 
 /*  all following functions should return TRUE, when the Information 
     was filled into the lBox-Widget.
-    returning FALSE indicates, that information was not available.
+    returning false indicates, that information was not available.
 */
        
 
-bool GetInfo_CPU( KTabListBox * )
+bool GetInfo_CPU( QListView * )
 {
-	return FALSE;
+	return false;
 }
 
-bool GetInfo_IRQ( KTabListBox * )
+bool GetInfo_IRQ( QListView * )
 {
-	return FALSE;
+	return false;
 }
 
-bool GetInfo_DMA( KTabListBox * )
+bool GetInfo_DMA( QListView * )
 {
-	return FALSE;
+	return false;
 }
 
-bool GetInfo_PCI( KTabListBox * )
+bool GetInfo_PCI( QListView * )
 {
-	return FALSE;
+	return false;
 }
 
-bool GetInfo_IO_Ports( KTabListBox * )
+bool GetInfo_IO_Ports( QListView * )
 {
-	return FALSE;
+	return false;
 }
 
-bool GetInfo_Sound( KTabListBox * )
+bool GetInfo_Sound( QListView * )
 {
-	return FALSE;
+	return false;
 }
 
-bool GetInfo_Devices( KTabListBox * )
+bool GetInfo_Devices( QListView * )
 {
-	return FALSE;
+	return false;
 }
 
-bool GetInfo_SCSI( KTabListBox * )
+bool GetInfo_SCSI( QListView * )
 {
-	return FALSE;
+	return false;
 }
 
-bool GetInfo_Partitions( KTabListBox * )
+bool GetInfo_Partitions( QListView * )
 {
-	return FALSE;
+	return false;
 }
 
-bool GetInfo_XServer_and_Video( KTabListBox *lBox )
+bool GetInfo_XServer_and_Video( QListView *lBox )
 {
 	return GetInfo_XServer_Generic( lBox );
 }

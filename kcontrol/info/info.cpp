@@ -36,7 +36,7 @@
 	
 */
 
-#include <qtabbar.h>
+#include <qheader.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -46,7 +46,6 @@
 #include "info.moc"
 
 #include <X11/Xlib.h>
-
 
 /* All Functions GetInfo_xyz() can set GetInfo_ErrorString, when a special 
    error-message should be shown to the user....
@@ -63,9 +62,6 @@ QString	GetInfo_ErrorString;
 #define I18N_MAX(txt,in,fm,maxw) \
     { int n = fm.width(txt=in); if (n>maxw) maxw=n; }
     
-#define SEPERATOR 	"\t"
-#define SEPERATOR_CHAR	'\t'
-
 #define PIXEL_ADD	20	// add x Pixel to multicolumns..
 
 static QString Value( int val, int numbers=1 )
@@ -73,106 +69,85 @@ static QString Value( int val, int numbers=1 )
 }
 
 
-static void XServer_fill_screen_info( KTabListBox *lBox, Display *dpy, int scr,
-	    QFontMetrics fm, int *maxwidth )
+static void XServer_fill_screen_info( QListView *lBox, Display *dpy, int scr)
 {
     int i;
     double xres, yres;
-    int ndepths = 0, *depths = NULL;
+    int ndepths = 0, *depths = 0;
     QString txt,txt2;
-    QString TAB(SEPERATOR);
     
     xres = ((double)(DisplayWidth(dpy,scr)  * 25.4) / DisplayWidthMM(dpy,scr) );
     yres = ((double)(DisplayHeight(dpy,scr) * 25.4) / DisplayHeightMM(dpy,scr));
-
-    lBox->insertItem("");
-
-    lBox->insertItem( i18n("Screen # %1").arg((int)scr,-1) );
-
-    I18N_MAX(txt,i18n("Dimensions"),fm,*maxwidth);
+    
+    QListViewItem* item =
+        new QListViewItem(lBox, i18n("Screen # %1").arg((int)scr,-1) );
+    
     txt2 = i18n("%1 x %2 Pixel (%3 x %4 mm)")
 		.arg( (int)DisplayWidth(dpy,scr) )
 		.arg( (int)DisplayHeight(dpy,scr) )
 		.arg( (int)DisplayWidthMM(dpy,scr) )
 		.arg( (int)DisplayHeightMM (dpy,scr) );
-    lBox->insertItem( QString(" ") + txt + TAB + txt2 );
-
-    I18N_MAX(txt,i18n("Resolution"),fm,*maxwidth);
-    txt2 = i18n("%1 x %2 Dots per Inch (dpi)")
+    
+    new QListViewItem(item, i18n("Dimensions"), txt2);
+    
+    txt2 = i18n("%1 x %2 dpi")
 		.arg( (int)(xres+0.5) )
 		.arg( (int)(yres+0.5) );
-    lBox->insertItem( QString(" ") + txt + TAB + txt2 );
-
-    depths = XListDepths (dpy, scr, &ndepths);
-    if (!depths) ndepths = 0;
-    I18N_MAX(txt,i18n("Depths"),fm,*maxwidth);
-    txt =  QString(" ") + txt + QString(" (%1)").arg(ndepths,-1) + TAB;
+    new QListViewItem(item, i18n("Resolution"), txt2 );
     
-    for (i = 0; i < ndepths; i++) 
-    {	
-	txt = txt + Value(depths[i]);
-	if (i < ndepths - 1)
-	    txt = txt + QString(", ");
+    depths = XListDepths (dpy, scr, &ndepths);
+    if (depths) {
+        txt =  "";
+    
+        for (i = 0; i < ndepths; i++) {	
+            txt = txt + Value(depths[i]);
+            if (i < ndepths - 1)
+                txt = txt + QString(", ");
+        }
+    
+        new QListViewItem(item, i18n("Depths") + QString(" (%1)").arg(ndepths,-1), txt);
+        XFree((char *) depths);
     }
-    lBox->insertItem(txt);
-    if (depths) XFree((char *) depths);
+
+    item->setOpen(true);
 }
 
 
-bool GetInfo_XServer_Generic( KTabListBox *lBox )
+bool GetInfo_XServer_Generic( QListView *lBox )
 {
     /* Parts of this source is taken from the X11-program "xdpyinfo" */
 
     Display *dpy;
     int i;
     QString str,txt;
-    QFontMetrics fm(lBox->tableFont());
-    int	maxwidth;
-    QString TAB(SEPERATOR);
 
-    dpy = XOpenDisplay(NULL);
-    if (!dpy)  return FALSE;
+    dpy = XOpenDisplay(0);
+    if (!dpy)
+        return false;
 
-    lBox->setNumCols(2);		// Table-Headers....
-    maxwidth = 0;
-    I18N_MAX(txt,i18n("Information"),fm,maxwidth);
-    lBox->setColumn(0,txt,maxwidth );
-    lBox->setColumn(1,i18n("Value") );
-    lBox->setSeparator(SEPERATOR_CHAR);
-
+    lBox->addColumn(i18n("Information") );
+    lBox->addColumn(i18n("Value") );
+    lBox->header()->setClickEnabled(false);
 			
-    I18N_MAX(txt,i18n("Name of the Display"),fm,maxwidth);
-    str = txt + TAB + DisplayString(dpy);
-    lBox->insertItem(str);
+    new QListViewItem(lBox, i18n("Name of the Display"), DisplayString(dpy));
 
-    I18N_MAX(txt,i18n("Version Number"),fm,maxwidth);
-    str = txt 	+ TAB + Value((int)ProtocolVersion(dpy)) 
-		+ QString(".") + Value((int)ProtocolRevision(dpy));
-    lBox->insertItem(str);
+    new QListViewItem(lBox,i18n("Version Number"),
+                      Value((int)ProtocolVersion(dpy)) + QString(".")
+                      + Value((int)ProtocolRevision(dpy)));
 
-    I18N_MAX(txt,i18n("Vendor String"),fm,maxwidth);
-    str = txt + TAB + QString(ServerVendor(dpy));
-    lBox->insertItem(str);
-
-    I18N_MAX(txt,i18n("Vendor Release Number"),fm,maxwidth);
-    str = txt + TAB + Value((int)VendorRelease(dpy));
-    lBox->insertItem(str);
-
-    I18N_MAX(txt,i18n("Default Screen Number"),fm,maxwidth);
-    str = txt + TAB + Value((int)DefaultScreen(dpy));
-    lBox->insertItem(str);
-
-    I18N_MAX(txt,i18n("Number of Screens"),fm,maxwidth);
-    str = txt + TAB + Value((int)ScreenCount(dpy));
-    lBox->insertItem(str);
+    new QListViewItem(lBox, i18n("Vendor String"), QString(ServerVendor(dpy)));
+    new QListViewItem(lBox, i18n("Vendor Release Number"),
+                      Value((int)VendorRelease(dpy)));
+    new QListViewItem(lBox, i18n("Default Screen Number") + "   ",
+                      Value((int)DefaultScreen(dpy)));
+    new QListViewItem(lBox,i18n("Number of Screens") ,
+                      Value((int)ScreenCount(dpy)));
 
     for (i = 0; i < ScreenCount (dpy); ++i)
-	XServer_fill_screen_info (lBox,dpy, i, fm, &maxwidth);
+        XServer_fill_screen_info (lBox,dpy, i);
 
-    lBox->setColumnWidth(0,maxwidth+20);
-    
     XCloseDisplay (dpy);
-    return TRUE;
+    return true;
 }
 
 
@@ -183,6 +158,7 @@ bool GetInfo_XServer_Generic( KTabListBox *lBox )
 ***************************************************************************
 */
 
+#include <qlayout.h>
 #include <qobjcoll.h>
 #include <qwidget.h>
 #include <qwidcoll.h>
@@ -192,66 +168,60 @@ bool GetInfo_XServer_Generic( KTabListBox *lBox )
 
 void KInfoListWidget::defaultSettings()
 {  
-    bool ok = FALSE;
-    
-    if (lBox)	delete lBox;
-    lBox 	= new KTabListBox(this);
+    bool ok = false;
 
-    if (lBox)
-    {   lBox->clear();
-	lBox->setMinimumSize( 200,2*SCREEN_XY_OFFSET );
-	lBox->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
-                     width() -2*SCREEN_XY_OFFSET,
-		     height()-2*SCREEN_XY_OFFSET);
-	lBox->setTableFont(KGlobal::fixedFont());
-	lBox->enableKey();
-	lBox->setAutoUpdate(TRUE);
+    delete lBox;
+    lBox  = new QListView(this);
 
+    if (lBox) {
+        lBox->setAllColumnsShowFocus(true);
+        lBox->setSorting(-1, true);   // No Sorting per default
+        
+         
+//        lBox->clear();
+        setMinimumSize( 200,6*SCREEN_XY_OFFSET );
+        lBox->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
+                          width() -2*SCREEN_XY_OFFSET,
+                          height()-2*SCREEN_XY_OFFSET);
+        
 	/*  Delete the user-visible ErrorString, before calling the 
 	    retrieve-function. If the function wants the widget to show
 	    another string, then it should modify GetInfo_ErrorString ! */
-	GetInfo_ErrorString = "";
-	
+        GetInfo_ErrorString = "";
+        
         if (getlistbox)
-	    ok = (*getlistbox)(lBox);	// retrieve the information !
+            ok = (*getlistbox)(lBox);	// retrieve the information !
 
-	if (lBox->numCols()<=1)  // if ONLY ONE COLUMN (!), then set title and calculate necessary column-width
-	{   QFontMetrics fm(lBox->tableFont());
-	    int row, cw, colwidth = 0;
-	    row = lBox->numRows();
-	    while (row>=0)			// loop through all rows in this single column
-	    {  cw = fm.width(lBox->text(row));	// calculate the necessary width
-	       if (cw>colwidth) colwidth=cw;
-	       --row;
-	    }
-	    colwidth += 5;
-	    if (!title.isEmpty()) 
-   	        lBox->setColumn(0,title,colwidth); // set title and width
-	    else
-   	        lBox->setDefaultColumnWidth(colwidth); // only set width
-	}
-
-	if (ok) lBox->show();
+        if (lBox->header()->count()<=1) 
+            lBox->addColumn(title);
+        
+        lBox->header()->setClickEnabled(false); // Headers readonly
+        
+        if (ok)
+            lBox->show();
     }
 
-    if (!ok)
-    {	if (lBox) { delete lBox; lBox = 0; }	    
-	if (GetInfo_ErrorString.isEmpty())
-	    GetInfo_ErrorString = DEFAULT_ERRORSTRING;
-	if (NoInfoText)
-	    NoInfoText->setText(GetInfo_ErrorString);
-	else
-	    NoInfoText = new QLabel(GetInfo_ErrorString,this);
-	NoInfoText->setAutoResize(TRUE);
-	NoInfoText->setAlignment(AlignCenter); //  | WordBreak);
-	NoInfoText->move( width()/2,height()/2 ); // -120 -30
+    if (!ok) {
+        if (lBox) {
+            delete lBox;
+            lBox = 0;
+        }	    
+        if (GetInfo_ErrorString.isEmpty())
+            GetInfo_ErrorString = DEFAULT_ERRORSTRING;
+        if (NoInfoText)
+            NoInfoText->setText(GetInfo_ErrorString);
+        else
+            NoInfoText = new QLabel(GetInfo_ErrorString,this);
+        NoInfoText->setAutoResize(true);
+        NoInfoText->setAlignment(AlignCenter); //  | WordBreak);
+        NoInfoText->move( width()/2,height()/2 ); // -120 -30
     }
 }
 
 
 KInfoListWidget::KInfoListWidget(QWidget *parent, const char *name, 
-		QString _title, bool _getlistbox(KTabListBox *lbox))
-  : KConfigWidget(parent, name)
+                                 QString _title, bool _getlistbox(QListView *lbox))
+    : KConfigWidget(parent, name)
 {   
     int pos;
     getlistbox 	= _getlistbox;
@@ -259,30 +229,31 @@ KInfoListWidget::KInfoListWidget(QWidget *parent, const char *name,
     NoInfoText  = 0;
     title   	= _title;
     if (title.isEmpty() && name)
-	title = QString(name);
+        title = QString(name);
     do {	// delete all '&'-chars !
-	pos = title.find('&');
-	if (pos>=0) title.remove(pos,1);	// delete this char !
+        pos = title.find('&');
+        if (pos>=0)
+            title.remove(pos,1);	// delete this char !
     } while (pos>=0);
     GetInfo_ErrorString = "";
-    setMinimumSize( 200,6*SCREEN_XY_OFFSET );
+//    setMinimumSize( 200,600 );
     defaultSettings();
 }
 
 
 void KInfoListWidget::resizeEvent( QResizeEvent *re )
-{   QSize size = re->size();
+{
+    QSize size = re->size();
     if (lBox)
         lBox->setGeometry(SCREEN_XY_OFFSET,SCREEN_XY_OFFSET,
-                    size.width() -2*SCREEN_XY_OFFSET,
-		    size.height()-2*SCREEN_XY_OFFSET);
+                          size.width() -2*SCREEN_XY_OFFSET,
+                          size.height()-2*SCREEN_XY_OFFSET);
     if (NoInfoText) {
-	QSize s = NoInfoText->sizeHint();
+        QSize s = NoInfoText->sizeHint();
     	NoInfoText->move(   (size.width()-s.width())/2,
-			    (size.height()-s.height())/2 );
+                            (size.height()-s.height())/2 );
     }
 }
-
 
 /*
 ***************************************************************************

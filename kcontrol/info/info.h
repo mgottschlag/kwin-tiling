@@ -5,6 +5,7 @@
 #include <qwidget.h>
 #include <qframe.h>
 #include <qlabel.h>
+#include <qlistview.h>
 #include <qtabdialog.h>
 #include <qpushbutton.h>
 #include <qtimer.h>
@@ -13,7 +14,6 @@
 #include <qevent.h>
 
 #include <kcontrol.h>
-#include <ktablistbox.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,16 +22,16 @@
 
 /* function call-back-prototypes... */
 
-bool GetInfo_CPU( KTabListBox *lBox );
-bool GetInfo_IRQ( KTabListBox *lBox );
-bool GetInfo_DMA( KTabListBox *lBox );
-bool GetInfo_PCI( KTabListBox *lBox );
-bool GetInfo_IO_Ports( KTabListBox *lBox );
-bool GetInfo_Sound( KTabListBox *lBox );
-bool GetInfo_Devices( KTabListBox *lBox );
-bool GetInfo_SCSI( KTabListBox *lBox );
-bool GetInfo_Partitions( KTabListBox *lBox );
-bool GetInfo_XServer_and_Video( KTabListBox *lBox );
+bool GetInfo_CPU( QListView *lBox );
+bool GetInfo_IRQ( QListView *lBox );
+bool GetInfo_DMA( QListView *lBox );
+bool GetInfo_PCI( QListView *lBox );
+bool GetInfo_IO_Ports( QListView *lBox );
+bool GetInfo_Sound( QListView *lBox );
+bool GetInfo_Devices( QListView *lBox );
+bool GetInfo_SCSI( QListView *lBox );
+bool GetInfo_Partitions( QListView *lBox );
+bool GetInfo_XServer_and_Video( QListView *lBox );
 
 
 
@@ -41,15 +41,15 @@ class KInfoListWidget : public KConfigWidget
 
 public:
 
-  KInfoListWidget(QWidget *parent, const char *name=0, QString _title=0, bool _getlistbox (KTabListBox *)=0);
+  KInfoListWidget(QWidget *parent, const char *name=0, QString _title=0, bool _getlistbox (QListView *)=0);
 
   void applySettings() {};
   void loadSettings() {};
   virtual void defaultSettings();
   
 private:
-  KTabListBox 	*lBox;
-  bool 		(*getlistbox) (KTabListBox *);
+  QListView 	*lBox;
+  bool 		(*getlistbox) (QListView *);
   QString 	title;
   
   QLabel	*NoInfoText;

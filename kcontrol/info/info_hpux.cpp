@@ -304,51 +304,51 @@ static const struct _type_LOOKUPTABLE PA_LOOKUPTABLE[] = {
 
 /* Helper-Functions */
 
-/* easier to read with such a define ! */
-#define I18N_MAX(txt,in,fm,maxw) \
-    { int n = fm.width(txt=in); if (n>maxw) maxw=n; }
-
 // Value() is defined in info.cpp !!!
 
-static bool Find_in_LOOKUPTABLE( KTabListBox *lBox, char *machine )
+static bool Find_in_LOOKUPTABLE( QListView *lBox, char *machine )
 {	char *Machine;
 	int  len;
 	const struct _type_LOOKUPTABLE *Entry = PA_LOOKUPTABLE;
 	QString str;
-        QString TAB(SEPERATOR);
+    QListViewItem* olditem = 0;
+    
 	
 	Machine = machine;	// machine is like: "9000/715/D"
-	while ((*Machine) && (*Machine!='/')) ++Machine; 
-	if (*Machine) ++Machine; else Machine=machine;
+	while ((*Machine) && (*Machine!='/'))
+        ++Machine;
+    
+	if (*Machine)
+        ++Machine;
+    else
+        Machine=machine;
+    
 	len = strlen(Machine);
 	
 	while (Entry->Name[0])
 	{	if (strncmp(Entry->Name,Machine,len)==0)
 		{
-		    str = i18n("PA-RISC Processor") + TAB 
-			+ QString(PA_NAME[Entry->parisc_name]);
-		    lBox->insertItem( str );
-		    str = i18n("PA-RISC Revision") + TAB 
-			+ QString("PA-RISC ") 
-			+ QString(PA_REVISION[Entry->parisc_rev]);
-		    lBox->insertItem( str );
-		    return TRUE;
+            olditem = new QListViewItem(lBox, olditem, i18n("PA-RISC Processor"),
+                                        QString(PA_NAME[Entry->parisc_name]));
+            olditem = new QListViewItem(lBox, olditem, i18n("PA-RISC Revision"),
+                                        QString("PA-RISC ") + QString(PA_REVISION[Entry->parisc_rev]));
+		    return true;
 		}
 		else
 		    ++Entry;	// next Entry !
 	}
 	
-	return FALSE;
+	return false;
 }
 
 
-/*  all following functions should return TRUE, when the Information 
+/*  all following functions should return true, when the Information 
     was filled into the lBox-Widget.
-    returning FALSE indicates, that information was not available.
+    returning false indicates, that information was not available.
 */
 
 
-bool GetInfo_CPU( KTabListBox *lBox )
+bool GetInfo_CPU( QListView *lBox )
 {
   FILE *pipe;
   QFile *model;
@@ -357,60 +357,49 @@ bool GetInfo_CPU( KTabListBox *lBox )
   struct pst_static	pst;
   struct pst_processor	pro;
   struct utsname	info;
-  QString TAB(SEPERATOR);
   QString str,str2;
-  QFontMetrics fm(lBox->tableFont());
+  QListViewItem* olditem = 0;
   int	maxwidth,m,i;
 			
   if((pstat_getstatic(&pst, sizeof(pst), (size_t)1, 0) == -1) ||
      (pstat_getdynamic(&psd, sizeof(psd), (size_t)1, 0)== -1)) {
      GetInfo_ErrorString = i18n("Could not get Information !"); // set Error !
-     return FALSE;
+     return false;
   }
 
-  lBox->setNumCols(2);		// Table-Headers....
   maxwidth = 0;
-  I18N_MAX(str,i18n("Information"),fm,maxwidth);
-  lBox->setColumn(0,str,maxwidth );
-  lBox->setColumn(1,i18n("Value") );
-  lBox->setSeparator(SEPERATOR_CHAR);
+  lBox->addColumn(i18n("Information") );
+  lBox->addColumn(i18n("Value") );
   
   uname(&info);
-  I18N_MAX(str,i18n("Machine"),fm,maxwidth);
-  str += TAB + QString(info.machine);
-  lBox->insertItem( str );
+  
+  olditem = new QListViewItem(lBox, olditem, i18n("Machine"), info.machine);
   
   model = new QFile(INFO_CPU_MODEL);  
   if (model->exists()) 
   {	if ((pipe = popen(INFO_CPU_MODEL, "r"))) 
 	{	QTextStream *t = new QTextStream(pipe, IO_ReadOnly);
 		str = t->readLine();
-                m = fm.width(str); if (m>maxwidth) maxwidth=m;
-		str = i18n("Model") + TAB + str;	// Machine Model...
-		lBox->insertItem(str);
+        olditem = new QListViewItem(lBox, olditem, i18n("Model"), str);
 		delete t;
 	}
 	delete pipe;
   }
   delete model;
   
-  I18N_MAX(str,i18n("Machine Identification Number"),fm,maxwidth);
-  str += TAB + (	strlen(info.__idnumber) ? 
-                  QString(info.__idnumber) : i18n("(none)") );
-  lBox->insertItem( str );
+  olditem = new QListViewItem(lBox, olditem, i18n("Machine Identification Number"),
+                              strlen(info.__idnumber) ? QString(info.__idnumber) : i18n("(none)") );    
 
-  lBox->insertItem( "" );
-  I18N_MAX(str,i18n("Number of active Processors"),fm,maxwidth);
-  if (psd.psd_proc_cnt<=0) psd.psd_proc_cnt=1; // Minimum one CPU !
-  str += TAB + Value(psd.psd_proc_cnt);
-  lBox->insertItem( str );
-
+  if (psd.psd_proc_cnt<=0)
+      psd.psd_proc_cnt=1; // Minimum one CPU !
+  
+  olditem = new QListViewItem(lBox, olditem, i18n("Number of active Processors"),
+                              Value(psd.psd_proc_cnt));
+  
   pstat_getprocessor( &pro, sizeof(pro), 1, 0 );
-  I18N_MAX(str,i18n("CPU Clock"),fm,maxwidth);
-  str += TAB + Value(pro.psp_iticksperclktick/10000) 
-             + QString(" ") + i18n("MHz");
-  lBox->insertItem(str);
-
+  olditem = new QListViewItem(lBox, olditem, i18n("CPU Clock"),
+                              Value(pro.psp_iticksperclktick/10000) + " " + i18n("MHz"));
+  
   switch(sysconf(_SC_CPU_VERSION))
   {	case CPU_HP_MC68020:	str2 = "Motorola 68020";	break;
 	case CPU_HP_MC68030:	str2 = "Motorola 68030";	break;
@@ -430,57 +419,49 @@ bool GetInfo_CPU( KTabListBox *lBox )
 #endif
 	default:		str2 = i18n("(unknown)"); 	break;
   }
-  I18N_MAX(str,i18n("CPU Architecture"),fm,maxwidth);
-  str += TAB + str2;
-  lBox->insertItem(str);
+
+  olditem = new QListViewItem(lBox, olditem, i18n("CPU Architecture"), str2);
   
   Find_in_LOOKUPTABLE( lBox, info.machine );// try to get extended Information.
 
-  for (i=PS_PA83_FPU; i<=PS_PA89_FPU; ++i)
-  {	I18N_MAX(str,i18n("Numerical Coprocessor (FPU)"),fm,maxwidth);
-	if ((1<<(i-1)) & pro.psp_coprocessor.psc_present)
-	{ 	str += TAB 
-		    + QString( (i==PS_PA83_FPU) ? "PS_PA83_FPU":"PS_PA89_FPU" )
-		    + QString(" (")
-		    + QString(((1<<(i-1))&pro.psp_coprocessor.psc_enabled) ? 
-				    i18n("enabled") : i18n("disabled")	)
-		    + QString(")");
-		lBox->insertItem( str );
-	}
+  for (i=PS_PA83_FPU; i<=PS_PA89_FPU; ++i) {
+      if ((1<<(i-1)) & pro.psp_coprocessor.psc_present) {
+          str = QString( (i==PS_PA83_FPU) ? "PS_PA83_FPU":"PS_PA89_FPU" )
+              + QString(" (")
+              + QString(((1<<(i-1))&pro.psp_coprocessor.psc_enabled) ? 
+                        i18n("enabled") : i18n("disabled")	)
+              + QString(")");
+
+          olditem = new QListViewItem(lBox, olditem, i18n("Numerical Coprocessor (FPU)"), str);
+      }
   }// for(coprocessor..)
   
-  lBox->insertItem( "" );
-  I18N_MAX(str,i18n("Total Physical Memory"),fm,maxwidth);
-  str += TAB 
-      + Value(((pst.physical_memory*pst.page_size)/1024/1024)) 
+  str = Value(((pst.physical_memory*pst.page_size)/1024/1024)) 
       + QString(" ")
       + i18n("MB");	// Mega-Byte
-  lBox->insertItem(str);
+  olditem = new QListViewItem(lBox, olditem, i18n("Total Physical Memory"), str);
 
-  I18N_MAX(str,i18n("Size of one Page"),fm,maxwidth); // ..of one Memory Page.
-  str += TAB + Value(pst.page_size) + QString(" ") + i18n("Bytes");
-  lBox->insertItem(str);
-
-   
-  lBox->setColumnWidth(0, maxwidth + PIXEL_ADD);
+  str = Value(pst.page_size) + QString(" ") + i18n("Bytes");
+  olditem = new QListViewItem(lBox, olditem, i18n("Size of one Page"), str);
   
-  return TRUE;
+  return true;
 }
 
-bool GetInfo_ReadfromFile( KTabListBox *lBox, char *Name )
+bool GetInfo_ReadfromFile( QListView *lBox, char *Name )
 {
   char buf[2048];
 
   QFile *file = new QFile(Name);
+  QListViewItem* olditem = 0;
 
   if(!file->open(IO_ReadOnly)) {
     delete file; 
-    return FALSE;
+    return false;
   }
   
   while (file->readLine(buf,sizeof(buf)-1) >= 0) 
   {	if (strlen(buf))
-	    lBox->insertItem(buf);
+      olditem = new QListViewItem(lBox, olditem, buf);
   }
   
   file->close();
@@ -489,29 +470,30 @@ bool GetInfo_ReadfromFile( KTabListBox *lBox, char *Name )
 }
 
 
-static bool GetInfo_ReadfromPipe( KTabListBox *lBox, char *FileName )
+static bool GetInfo_ReadfromPipe( QListView *lBox, char *FileName )
 {
     FILE *pipe;
     QFile *devices = new QFile(FileName);
     QTextStream *t;
+    QListViewItem* olditem = 0;
     QString s;
   
     if (!devices->exists()) 
     {	delete devices;
-	return FALSE;
+	return false;
     }
   
     if ((pipe = popen(FileName, "r")) == NULL) 
     {   delete devices;
 	pclose(pipe);
-	return FALSE;
+	return false;
     }
 
     t = new QTextStream(pipe, IO_ReadOnly);
 
     while (!t->eof())
 	if ((s=t->readLine())!="")
-	    lBox->insertItem(s);
+        olditem = new QListViewItem(lBox, olditem, s);
   
     delete t; 
     delete devices; 
@@ -521,37 +503,37 @@ static bool GetInfo_ReadfromPipe( KTabListBox *lBox, char *FileName )
 }
 
 
-bool GetInfo_IRQ( KTabListBox *lBox )
-{	lBox = lBox;
-	return FALSE;
+bool GetInfo_IRQ( QListView * )
+{
+	return false;
 }
 
-bool GetInfo_DMA( KTabListBox *lBox )
-{	lBox = lBox;
-	return FALSE;
+bool GetInfo_DMA( QListView * )
+{
+	return false;
 }
 
-bool GetInfo_PCI( KTabListBox *lBox )
+bool GetInfo_PCI( QListView *lBox )
 {	
     return(	GetInfo_ReadfromFile(lBox,INFO_PCI)    + 
 		GetInfo_ReadfromFile(lBox,INFO_PCI_EISA) );
 }
 
-bool GetInfo_IO_Ports( KTabListBox *lBox )
+bool GetInfo_IO_Ports( QListView *lBox )
 {
 	if (GetInfo_ReadfromPipe( lBox, INFO_IOPORTS_1 ))
-	    return TRUE;
+	    return true;
 	else
 	    return GetInfo_ReadfromPipe( lBox, INFO_IOPORTS_2 );
 }
 
 
-bool GetInfo_Devices( KTabListBox *lBox )
+bool GetInfo_Devices( QListView *lBox )
 {
 	return GetInfo_ReadfromPipe( lBox, INFO_DEVICES );
 }
 
-bool GetInfo_SCSI( KTabListBox *lBox )
+bool GetInfo_SCSI( QListView *lBox )
 {	
     return GetInfo_Devices( lBox );
 }
@@ -607,23 +589,20 @@ static int get_fs_usage (char *path, long *l_total, long *l_avail)
 
 // Some Ideas taken from garbazo from his source in info_fbsd.cpp
 
-bool GetInfo_Partitions (KTabListBox *lbox)
+bool GetInfo_Partitions (QListView *lbox)
 {
 	#define NUMCOLS 5
-	int maxwidth[NUMCOLS]={0,0,0,0,0};
 	QString Title[NUMCOLS];
 	int n;
 	
 	struct fstab *fstab_ent;
 	struct statvfs svfs;
 	long total,avail;
-	QFontMetrics fm(lbox->tableFont());
 	QString str;
-	QString MB(i18n("MB"));	// International Text for MB=Mega-Byte
-	QString TAB(SEPERATOR);
+	QString MB(i18n("MB")+ "  ");	// International Text for MB=Mega-Byte
 
 	if (setfsent() != 1) // Try to open fstab 
-	    return FALSE;
+	    return false;
 
 	Title[0] = i18n("Device");
 	Title[1] = i18n("Mount Point");
@@ -631,55 +610,40 @@ bool GetInfo_Partitions (KTabListBox *lbox)
 	Title[3] = i18n("Total Size");
 	Title[4] = i18n("Free Size");
 
-	lbox->setNumCols(NUMCOLS);
-	lbox->setSeparator(SEPERATOR_CHAR);
-	for (n=0; n<NUMCOLS; ++n)
-        {	maxwidth[n]=fm.width(Title[n]);
-		lbox->setColumn(n,Title[n],maxwidth[n] );
+	for (n=0; n<NUMCOLS; ++n) {
+        lbox->addColumn(Title[n] );
 	}
 
 	while ((fstab_ent=getfsent())!=NULL) {
-		if ( (n=fm.width(fstab_ent->fs_spec)) > maxwidth[0])
-			maxwidth[0]=n;
-
-		if ( (n=fm.width(fstab_ent->fs_file)) > maxwidth[1])
-			maxwidth[1]=n;
-
 		/* fstab_ent->fs_type holds only "rw","xx","ro"... */
 		memset(&svfs,0,sizeof(svfs)); 
 		statvfs(fstab_ent->fs_file,&svfs);
 		get_fs_usage(fstab_ent->fs_file, &total, &avail);
 		
-		if ( (n=fm.width(svfs.f_basetype)) > maxwidth[2])
-			maxwidth[2]=n;
-
-		if (!maxwidth[3])
-		    maxwidth[3] = maxwidth[4] = fm.width("999999 MB");
-
 		if (!strcmp(fstab_ent->fs_type,FSTAB_XX))  // valid drive ?
 			svfs.f_basetype[0] = 0;
-			    		
-		str =  QString(fstab_ent->fs_spec) + TAB
-		    +  QString(fstab_ent->fs_file) + TAB 
-		    +  QString("  ")
-		    +  (svfs.f_basetype[0] ? 
-			    QString(svfs.f_basetype) : i18n("n/a"));
-		if (svfs.f_basetype[0])
-		    str += TAB
-			+  Value((total+512)/1024,6) + MB + TAB
-			+  Value((avail+512)/1024,6) + MB;
-		lbox->insertItem(str);
+
+        if(svfs.f_basetype[0]) {
+            new QListViewItem(lbox, QString(fstab_ent->fs_spec),
+                              QString(fstab_ent->fs_file) + QString("  "),
+                              (svfs.f_basetype[0] ? QString(svfs.f_basetype) : i18n("n/a")),
+                              Value((total+512)/1024,6) + MB,
+                              Value((avail+512)/1024,6) + MB);
+        }
+        else {
+            new QListViewItem(lbox, QString(fstab_ent->fs_spec),
+                              QString(fstab_ent->fs_file) + QString("  "),
+                              (svfs.f_basetype[0] ? QString(svfs.f_basetype) : i18n("n/a")));
+        }
+
 	}
 	endfsent(); 
-
-	for (n=0; n<NUMCOLS; ++n)
-	    lbox->setColumnWidth(n, maxwidth[n] + PIXEL_ADD);
 	    
-	return TRUE;
+	return true;
 }
 
 
-bool GetInfo_XServer_and_Video( KTabListBox *lBox )
+bool GetInfo_XServer_and_Video( QListView *lBox )
 {	lBox = lBox;
 	return GetInfo_XServer_Generic( lBox );
 }
@@ -690,10 +654,10 @@ bool GetInfo_XServer_and_Video( KTabListBox *lBox )
 
 #ifndef HAVE_ALIB_H
 
-bool GetInfo_Sound( KTabListBox *lBox )
+bool GetInfo_Sound( QListView *lBox )
 {	lBox = lBox;
 	GetInfo_ErrorString = i18n("Sorry, Audio-Support (Alib) was disabled during configuration and compile-time !");
-	return FALSE;
+	return false;
 }
 
 #else // defined(HAVE_ALIB_H)
@@ -710,172 +674,136 @@ static const char formatNames[6][16] = {
 #endif
 
 
-bool GetInfo_Sound( KTabListBox *lBox )
+bool GetInfo_Sound( QListView *lBox )
 {	
     Audio	*audio;
     long	status;
     char	server[80];
     int		i;
 
-    QString 	TAB(QString(" ")+QString(SEPERATOR));
     QString 	str,str2;
-    QFontMetrics fm(lBox->tableFont());
+    QListViewItem* olditem = 0;
     int		maxwidth;
 
     // server = Hostname....
     server[0] = 0;    
     audio = AOpenAudio( server, &status );
     if( status ) {
-	GetInfo_ErrorString = i18n("Unable to open Audio-Server (Alib) !");
-	return FALSE;
+        GetInfo_ErrorString = i18n("Unable to open Audio-Server (Alib) !");
+        return false;
     }
     
-    lBox->setNumCols(2);		// Table-Headers....
-    maxwidth = 0;
-    I18N_MAX(str,i18n("Information"),fm,maxwidth);
-    lBox->setColumn(0,str,maxwidth );
-    lBox->setColumn(1,i18n("Value") );
-    lBox->setSeparator(SEPERATOR_CHAR);
-    
-    I18N_MAX(str,i18n("Audio Name"),fm,maxwidth);
-    lBox->insertItem(str + TAB + QString(audio->audio_name));
+    lBox->addColumn(i18n("Information") );
+    lBox->addColumn(i18n("Value") );
 
-    I18N_MAX(str,i18n("Vendor"),fm,maxwidth);
-    lBox->insertItem(str + TAB + QString(audio->vendor));
-    
-    I18N_MAX(str,i18n("Alib Version"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->alib_major_version) 
-	    + QString(".") + Value(audio->alib_minor_version));
-    
-    I18N_MAX(str,i18n("Protocol Revision"),fm,maxwidth);
-    str += TAB + Value(audio->proto_major_version) 
-	+ QString(".") + Value(audio->proto_minor_version);
-    lBox->insertItem(str);
+    olditem = new QListViewItem(lBox, olditem, i18n("Audio Name"), QString(audio->audio_name));
+    olditem = new QListViewItem(lBox, olditem, i18n("Vendor"), QString(audio->vendor));
+    olditem = new QListViewItem(lBox, olditem, i18n("Alib Version"),     
+                                Value(audio->alib_major_version) + QString(".") +
+                                Value(audio->alib_minor_version));
 
-    /* printf( "fd %d\n", audio->fd ); */
+    olditem = new QListViewItem(lBox, olditem, i18n("Protocol Revision"), 
+                                Value(audio->proto_major_version) + QString(".") +
+                                Value(audio->proto_minor_version));
+
+    olditem = new QListViewItem(lBox, olditem, i18n("Vendor Number"), 
+                                Value(audio->vnumber));
+
+    olditem = new QListViewItem(lBox, olditem, i18n("Release"),
+                                Value(audio->release));
+
+    olditem = new QListViewItem(lBox, olditem, i18n("Byte Order"),
+                                QString((audio->byte_order==ALSBFirst)? i18n("ALSBFirst (LSB)"):
+                                        ((audio->byte_order==AMSBFirst)? i18n("AMSBFirst (MSB)"):
+                                         i18n("Invalid Byteorder !")) ));
     
-    I18N_MAX(str,i18n("Vendor Number"),fm,maxwidth);
-    lBox->insertItem(str + TAB + Value(audio->vnumber));
+    olditem = new QListViewItem(lBox, olditem, i18n("Bit Order"),
+                                QString((audio->sound_bit_order==ALeastSignificant)? 
+                                        i18n("ALeastSignificant (LSB)") :
+                                        ((audio->sound_bit_order==AMostSignificant) ? 
+                                         i18n("AMostSignificant (MSB)"):i18n("Invalid Bitorder !")) ));
 
-    I18N_MAX(str,i18n("Release"),fm,maxwidth);
-    lBox->insertItem(str + TAB + Value(audio->release));
-    
-    lBox->insertItem("");
-    I18N_MAX(str,i18n("Byte Order"),fm,maxwidth);
-    str += TAB + QString(  
-	    (audio->byte_order==ALSBFirst)? i18n("ALSBFirst (LSB)"):(
-	    (audio->byte_order==AMSBFirst)? i18n("AMSBFirst (MSB)"):
-					    i18n("Invalid Byteorder !")) );
-    lBox->insertItem(str);
-
-    I18N_MAX(str,i18n("Bit Order"),fm,maxwidth);
-    str += TAB + QString(  
-	    (audio->sound_bit_order==ALeastSignificant)? 
-		i18n("ALeastSignificant (LSB)") :
-	    ((audio->sound_bit_order==AMostSignificant) ? 
-		i18n("AMostSignificant (MSB)"):i18n("Invalid Bitorder !")) );
-    lBox->insertItem(str);
-
-    lBox->insertItem("");
-    I18N_MAX(str,i18n("Data Formats"),fm,maxwidth);
+    olditem = new QListViewItem(lBox, olditem, i18n("Data Formats"));
     for ( i = 0;  i < audio->n_data_format; i++ ) {
-	if (audio->data_format_list[i] <= ADFLin8Offset)
-	    lBox->insertItem(str + TAB + 
-		    QString(formatNames[audio->data_format_list[i]]));
-	str = "";
+        if (audio->data_format_list[i] <= ADFLin8Offset)
+            new QListViewItem(olditem, QString(formatNames[audio->data_format_list[i]]));
     }
 
-    lBox->insertItem("");
-    I18N_MAX(str,i18n("Sampling Rates"),fm,maxwidth);    
+    olditem = new QListViewItem(lBox, olditem, i18n("Sampling Rates"));
     for ( i = 0;  i < audio->n_sampling_rate; i++ ) {
-	lBox->insertItem( str + TAB + Value(audio->sampling_rate_list[i]));
-	str = "";
+        new QListViewItem(olditem, Value(audio->sampling_rate_list[i]));
     }
 
-    lBox->insertItem("");
-    I18N_MAX(str,i18n("Input Sources"),fm,maxwidth);    
-    str += TAB;
-    if ( audio->input_sources & AMonoMicrophoneMask ) 
-    { lBox->insertItem(str+i18n("Mono-Microphone")); str = TAB; }
+    olditem = new QListViewItem(lBox, oldirem, i18n("Input Sources"));
+    if ( audio->input_sources & AMonoMicrophoneMask )
+        new QListViewItem(olditem, i18n("Mono-Microphone"));
     if ( audio->input_sources & AMonoAuxiliaryMask )
-    { lBox->insertItem(str+i18n("Mono-Auxiliary"));  str = TAB; }
+        new QListViewItem(olditem, i18n("Mono-Auxiliary"));
     if ( audio->input_sources & ALeftMicrophoneMask )
-    { lBox->insertItem(str+i18n("Left-Microphone")); str = TAB; }
+        new QListViewItem(olditem, i18n("Left-Microphone"));
     if ( audio->input_sources & ARightMicrophoneMask )
-    { lBox->insertItem(str+i18n("Right-Microphone"));str = TAB; }
+        new QListViewItem(olditem, i18n("Right-Microphone"));
     if ( audio->input_sources & ALeftAuxiliaryMask )
-    { lBox->insertItem(str+i18n("Left-Auxiliary"));  str = TAB; }
+        new QListViewItem(olditem, i18n("Left-Auxiliary"));
     if ( audio->input_sources & ARightAuxiliaryMask )
-    { lBox->insertItem(str+i18n("Right-Auxiliary")); str = TAB; }
+        new QListViewItem(olditem, i18n("Right-Auxiliary"));
 
-    lBox->insertItem("");
-    I18N_MAX(str,i18n("Input Channels"),fm,maxwidth);    
-    str += TAB;
+    olditem = new QListViewItem(lBox, olditem,i18n("Input Channels"));
     if ( audio->input_channels & AMonoInputChMask )
-    { lBox->insertItem(str+i18n("Mono-Channel"));  str = TAB; }
+        new QListViewItem(olditem, i18n("Mono-Channel"));
     if ( audio->input_channels & ALeftInputChMask )
-    { lBox->insertItem(str+i18n("Left-Channel"));  str = TAB; }
+        new QListViewItem(olditem, i18n("Left-Channel"));
     if ( audio->input_channels & ARightInputChMask )
-    { lBox->insertItem(str+i18n("Right-Channel")); str = TAB; }
+        new QListViewItem(olditem, i18n("Right-Channel"));
 
-    lBox->insertItem("");
-    I18N_MAX(str,i18n("Output Destinations"),fm,maxwidth);    
-    str += TAB;
+    olditem = new QListViewItem(lBox, olditem, i18n("Output Destinations"));
     if ( audio->output_destinations & AMonoIntSpeakerMask )
-    { lBox->insertItem(str+i18n("Mono-InternalSpeaker")); str = TAB; }
+        new QListViewItem(olditem, i18n("Mono-InternalSpeaker"));
     if ( audio->output_destinations & AMonoJackMask )
-    { lBox->insertItem(str+i18n("Mono-Jack")); 	str = TAB; }
+        new QListViewItem(olditem, i18n("Mono-Jack"));
     if ( audio->output_destinations & ALeftIntSpeakerMask )
-    { lBox->insertItem(str+i18n("Left-InternalSpeaker")); str = TAB; }
+        new QListViewItem(olditem, i18n("Left-InternalSpeaker"));
     if ( audio->output_destinations & ARightIntSpeakerMask )
-    { lBox->insertItem(str+i18n("Right-InternalSpeaker")); str = TAB; }
+        new QListViewItem(olditem, i18n("Right-InternalSpeaker"));
     if ( audio->output_destinations & ALeftJackMask )
-    { lBox->insertItem(str+i18n("Left-Jack")); str = TAB; }
+        new QListViewItem(olditem, i18n("Left-Jack"));
     if ( audio->output_destinations & ARightJackMask )
-    { lBox->insertItem(str+i18n("Right-Jack")); str = TAB; }
+        new QListViewItem(olditem, i18n("Right-Jack"));
 
-    lBox->insertItem("");
-    I18N_MAX(str,i18n("Output Channels"),fm,maxwidth);    
-    str += TAB;
+    olditem = new QListViewItem(lBox, olditem, i18n("Output Channels"));
     if ( audio->output_channels & AMonoOutputChMask )
-    { lBox->insertItem(str+i18n("Mono-Channel")); str = TAB; }
+        new QListViewItem(olditem, i18n("Mono-Channel")); 
     if ( audio->output_channels & ALeftOutputChMask )
-    { lBox->insertItem(str+i18n("Left-Channel")); str = TAB; }
+        new QListViewItem(olditem, i18n("Left-Channel"));
     if ( audio->output_channels & ARightOutputChMask )
-    { lBox->insertItem(str+i18n("Right-Channel")); str = TAB; }
+        new QListViewItem(olditem, i18n("Right-Channel"));
 
-
-    lBox->insertItem("");
-    I18N_MAX(str,i18n("Input Gain Limits"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->min_input_gain) + QString(" ") 
-			    + Value(audio->max_input_gain));
-    I18N_MAX(str,i18n("Output Gain Limits"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->min_output_gain) + QString(" ") 
-			    + Value(audio->max_output_gain));
-    I18N_MAX(str,i18n("Monitor Gain Limits"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->min_monitor_gain) + QString(" ") 
-			    + Value(audio->max_monitor_gain));
-    I18N_MAX(str,i18n("Gain Restricted"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->gm_gain_restricted));
-    /*	printf( "sample rate tolerance  %f %f\n", 
-        audio->sample_rate_lo_tolerance,audio->sample_rate_hi_tolerance ); */
-    I18N_MAX(str,i18n("Lock"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->lock));
-    I18N_MAX(str,i18n("Queue Length"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->qlen));
-    I18N_MAX(str,i18n("Block Size"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->block_size));
-    I18N_MAX(str,i18n("Stream Port (decimal)"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->stream_port));
-    I18N_MAX(str,i18n("Ev Buffer Size"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->ev_buf_size));
-    I18N_MAX(str,i18n("Ext Number"),fm,maxwidth);    
-    lBox->insertItem(str+TAB+Value(audio->ext_number));
+    olditem = new QListViewItem(lBox, olditem, i18n("Input Gain Limits"), 
+                                Value(audio->max_input_gain));
+    olditem = new QListViewItem(lBox, olditem,i18n("Output Gain Limits"),
+                                Value(audio->min_output_gain) + QString(" ") 
+                                + Value(audio->max_output_gain));
+    olditem = new QListViewItem(lBox, olditem, 18n("Monitor Gain Limits"),
+                                Value(audio->min_monitor_gain) + QString(" ")
+                                + Value(audio->max_monitor_gain));
+    olditem = new QListViewItem(lBox, olditem, i18n("Gain Restricted"),    
+                                Value(audio->gm_gain_restricted));
+    olditem = new QListViewItem(lBox, olditem,i18n("Lock"),
+                                Value(audio->lock));
+    olditem = new QListViewItem(lBox, olditem, i18n("Queue Length"),
+                                Value(audio->qlen));
+    olditem = new QListViewItem(lBox, olditem, i18n("Block Size"),
+                                Value(audio->block_size));
+    olditem = new QListViewItem(lBox, olditem, i18n("Stream Port (decimal)"),
+                                Value(audio->stream_port));
+    olditem = new QListViewItem(lBox, olditem, i18n("Ev Buffer Size"),
+                                Value(audio->ev_buf_size));
+    olditem = new QListViewItem(lBox, olditem, i18n("Ext Number"),
+                                Value(audio->ext_number));
 
     ACloseAudio( audio, &status );
    
-    lBox->setColumnWidth(0, maxwidth + PIXEL_ADD);
-    return TRUE;
+    return true;
 }
 
 #endif // defined(HAVE_ALIB_H)

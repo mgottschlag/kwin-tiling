@@ -36,7 +36,7 @@
 
 #include <kdebug.h>
 
-bool GetInfo_CPU (KTabListBox *lBox)
+bool GetInfo_CPU (QListView *lBox)
 { 
   QString str;
 
@@ -68,39 +68,39 @@ bool GetInfo_CPU (KTabListBox *lBox)
 	cpustring = i18n("%1 running at %2 MHz").arg(buf).arg(mhz);
 
   /* Put everything in the listbox */
-  lBox->insertItem(cpustring);
+  new QListViewItem(lBox, cpustring);
   /* Clean up after ourselves, this time I mean it ;-) */
   free(mhz);
   free(buf);
 
-  return TRUE;
+  return true;
 }
 
-bool GetInfo_IRQ (KTabListBox *)
+bool GetInfo_IRQ (QListView *)
 {
   /* systat lists the interrupts assigned to devices as well as how many were
      generated.  Parsing its output however is about as fun as a sandpaper
      enema.  The best idea would probably be to rip out the guts of systat.
      Too bad it's not very well commented */
-  return FALSE;
+  return false;
 }
 
-bool GetInfo_DMA (KTabListBox *)
+bool GetInfo_DMA (QListView *)
 {
-  return FALSE;
+  return false;
 }
 
-bool GetInfo_PCI (KTabListBox *)
+bool GetInfo_PCI (QListView *)
 {
-  return FALSE;
+  return false;
 }
 
-bool GetInfo_IO_Ports (KTabListBox *)
+bool GetInfo_IO_Ports (QListView *)
 {
-  return FALSE;
+  return false;
 }
 
-bool GetInfo_Sound (KTabListBox *lbox)
+bool GetInfo_Sound (QListView *lbox)
 {
   QFile *sndstat = new QFile("/dev/sndstat");
   QTextStream *t; QString s;
@@ -115,12 +115,11 @@ bool GetInfo_Sound (KTabListBox *lbox)
     return false;
   }
   
-  lbox->clear();
-  
   t = new QTextStream(sndstat);
 
+  QListViewItem* olditem = 0;
   while ((s=t->readLine())!="")
-    lbox->insertItem(s);
+      olditem = new QListViewItem(lbox, olditem, s);
 
   delete t;
   sndstat->close();
@@ -128,7 +127,7 @@ bool GetInfo_Sound (KTabListBox *lbox)
   return true;
 }
 
-bool GetInfo_Devices (KTabListBox *lbox)
+bool GetInfo_Devices (QListView *lbox)
 {
 	QFile *dmesg = new QFile("/var/run/dmesg.boot");
 
@@ -147,8 +146,10 @@ bool GetInfo_Devices (KTabListBox *lbox)
 	QTextStream *t = new QTextStream(dmesg);
 	QString s;
 
+    QListViewItem* olditem;
+    
 	while ((s=t->readLine())!="")
-		lbox->insertItem(s);
+        olditem = new QListViewItem(lbox, olditem, s);
 
 	delete t;
 	dmesg->close();
@@ -156,7 +157,7 @@ bool GetInfo_Devices (KTabListBox *lbox)
 	return true;
 }
 
-bool GetInfo_SCSI (KTabListBox *lbox)
+bool GetInfo_SCSI (QListView *lbox)
 {
   /*
    * This code relies on the system at large having "the" CAM (see the FreeBSD
@@ -183,81 +184,50 @@ bool GetInfo_SCSI (KTabListBox *lbox)
   }
 
   t = new QTextStream(pipe, IO_ReadOnly);
+  
+  QListViewItem* olditem = 0;
 
   while ((s=t->readLine())!="")
-    lbox->insertItem(s);
+      olditem = new QListViewItem(lbox, olditem, s);
   
   delete t; delete camcontrol; pclose(pipe);
   
-  if (!lbox->count())
+  if (!lbox->childCount())
     return false;
   
   return true;
 }
 
-bool GetInfo_Partitions (KTabListBox *lbox)
+bool GetInfo_Partitions (QListView *lbox)
 {
-	int maxwidth[4]={0,0,0,0};
-
 	struct fstab *fstab_ent;
-	QFontMetrics fm(lbox->tableFont());
-	QString s;
 
 	if (setfsent() != 1) /* Try to open fstab */ {
 		kdebug(KDEBUG_ERROR, 0, "Ahh couldn't open fstab!");
 		return false;
 	}
 
-	lbox->setNumCols(4);
-	lbox->setSeparator(';');
-
-	maxwidth[0]=fm.width(i18n("Device"));
-	lbox->setColumn(0, i18n("Device"), maxwidth[0]+2);
-
-	maxwidth[1]=fm.width(i18n("Mount Point"));
-	lbox->setColumn(1, i18n("Mount Point"), maxwidth[1]+2);
-
-	maxwidth[2]=fm.width(i18n("FS Type"));
-	lbox->setColumn(2, i18n("FS Type"), maxwidth[2]+2);
-
-	maxwidth[3]=fm.width(i18n("Mount Options"));
-	lbox->setColumn(3, i18n("Mount Options"), maxwidth[3]+2);
+	lbox->addColumn(i18n("Device"));
+	lbox->addColumn(i18n("Mount Point"));
+	lbox->addColumn(i18n("FS Type"));
+	lbox->addColumn(i18n("Mount Options"));
 
 
 	while ((fstab_ent=getfsent())!=NULL) {
-		if (fm.width(fstab_ent->fs_spec) > maxwidth[0]) {
-			maxwidth[0]=fm.width(fstab_ent->fs_spec);
-			lbox->setColumnWidth(0, maxwidth[0]+10);
-		}
-
-		if (fm.width(fstab_ent->fs_file) > maxwidth[1]) {
-			maxwidth[1]=fm.width(fstab_ent->fs_file);
-			lbox->setColumnWidth(1, maxwidth[1]+10);
-		}
-
-		if (fm.width(fstab_ent->fs_vfstype) > maxwidth[2]) {
-			maxwidth[2]=fm.width(fstab_ent->fs_vfstype);
-			lbox->setColumnWidth(2, maxwidth[2]+10);
-		}
-
-		if (fm.width(fstab_ent->fs_mntops) > maxwidth[3]) {
-			maxwidth[3]=fm.width(fstab_ent->fs_mntops);
-			lbox->setColumnWidth(3, maxwidth[3]+10);
-		}
-
-		s = QString("%1;%2;%3;%4")
-			.arg(fstab_ent->fs_spec)
-			.arg(fstab_ent->fs_file)
-			.arg(fstab_ent->fs_vfstype)
-			.arg(fstab_ent->fs_mntops);
-		lbox->insertItem(s);
+        new QListViewItem(lbox, fstab_ent->fs_spec,
+                          fstab_ent->fs_file, fstab_ent->fs_vfstype,
+                          fstab_ent->fs_mntops);
+        
 	}
+
+    lbox->setSorting(0);
+    lbox->header()->setClickEnabled(true);
 
 	endfsent(); /* Close fstab */
 	return true;
 }
 
-bool GetInfo_XServer_and_Video (KTabListBox *lBox)
+bool GetInfo_XServer_and_Video (QListView *lBox)
 {
 	return GetInfo_XServer_Generic( lBox );
 }

@@ -22,108 +22,111 @@
 
 #include <sys/systeminfo.h>
 
-/*  all following functions should return TRUE, when the Information 
+/*  all following functions should return true, when the Information 
     was filled into the lBox-Widget.
-    returning FALSE indicates, that information was not available.
+    returning false indicates, that information was not available.
 */
 
-bool GetInfo_ReadfromFile( KTabListBox *lBox, char *Name, char splitchar  )
+bool GetInfo_ReadfromFile( QListView *lBox, char *Name, char splitchar  )
 {
   QString str;
   char buf[512];
 
   QFile *file = new QFile(Name);
+  QListViewItem* olditem = 0;
 
   if(!file->open(IO_ReadOnly)) {
     delete file; 
-    return FALSE;
+    return false;
   }
   
   while (file->readLine(buf,sizeof(buf)-1) > 0) {
-      if (strlen(buf))
-      {  char *p=buf;
-         if (splitchar!=0)    /* remove leading spaces between ':' and the following text */
-	     while (*p)
-	     {	if (*p==splitchar)
-	        { *p++ = ' ';
-		  while (*p==' ') ++p;
-		  *(--p) = splitchar;
-		  ++p;
-		}
-		else ++p;
-	     }
-         lBox->setSeparator(splitchar);
-         lBox->insertItem(buf);
+      if (strlen(buf)) {
+          char *p=buf;
+          if (splitchar!=0)    /* remove leading spaces between ':' and the following text */
+              while (*p) {
+                  if (*p==splitchar) {
+                      *p++ = ' ';
+                      while (*p==' ') ++p;
+                      *(--p) = splitchar;
+                      ++p;
+                  }
+                  else ++p;
+              }
+          
+          QString s1(buf);
+          QString s2 = s1.mid(s1.find(splitchar)+1);
+          
+          s1.truncate(s1.find(splitchar));
+          if(!(s1.isEmpty() || s2.isEmpty()))
+              olditem = new QListViewItem(lBox, olditem, s1, s2);
       }
   }
   file->close();
+  
   delete file;
-  return TRUE;
+  return true;
 }
 
-bool GetInfo_CPU( KTabListBox *lBox )
+bool GetInfo_CPU( QListView *lBox )
 {
-      QString str;
       char buf[256];
 
       sysinfo(SI_ARCHITECTURE, buf, sizeof(buf));
-      str = buf;
-      lBox->insertItem(str);
-      return TRUE;
+      new QListViewItem(lBox, QString(buf));
+      return true;
 }
 
 
-bool GetInfo_IRQ( KTabListBox *lBox )
-{	lBox = lBox;
-	return FALSE;
-}
-
-bool GetInfo_DMA( KTabListBox *lBox )
-{	lBox = lBox;
-	return FALSE;
-}
-
-bool GetInfo_PCI( KTabListBox *lBox )
+bool GetInfo_IRQ( QListView * )
 {
-      QString str;
+	return false;
+}
+
+bool GetInfo_DMA( QListView * )
+{
+	return false;
+}
+
+bool GetInfo_PCI( QListView *lBox )
+{
       char buf[256];
 
       sysinfo(SI_BUSTYPES, buf, sizeof(buf));
-      str = buf;
-      lBox->insertItem(str);
-      return TRUE;
+      new QListViewItem(lBox, QString(buf));
+      return true;
 }
 
-bool GetInfo_IO_Ports( KTabListBox *lBox )
-{	lBox = lBox;
-	return FALSE;
+bool GetInfo_IO_Ports( QListView * )
+{
+	return false;
 }
 
-bool GetInfo_Sound( KTabListBox *lBox )
+bool GetInfo_Sound( QListView *lBox )
 {
   if ( GetInfo_ReadfromFile( lBox, INFO_DEV_SNDSTAT, 0 ))
-    return TRUE;
+    return true;
   else
-    return FALSE;
+    return false;
 }
 
-bool GetInfo_Devices( KTabListBox *lBox )
-{	lBox = lBox;
-	return FALSE;
+bool GetInfo_Devices( QListView * )
+{
+    return false;
 }
 
-bool GetInfo_SCSI( KTabListBox *lBox )
-{	lBox = lBox;
-	return FALSE;
+bool GetInfo_SCSI( QListView * )
+{
+    return false;
 }
 
-bool GetInfo_Partitions( KTabListBox *lBox )
-{	lBox = lBox;
-	return FALSE;
+bool GetInfo_Partitions( QListView * )
+{
+	return false;
 }
 
-bool GetInfo_XServer_and_Video( KTabListBox *lBox )
-{	lBox = lBox;
+bool GetInfo_XServer_and_Video( QListView *lBox )
+{
 	return GetInfo_XServer_Generic( lBox );
 }
 
