@@ -212,7 +212,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     doubleClickInterval = new KIntNumInput(thresh, 2000, tab2);
     doubleClickInterval->setLabel(i18n("Double click interval:"));
     doubleClickInterval->setRange(0, 2000, 100);
-    doubleClickInterval->setSuffix(i18n(" ms"));
+    doubleClickInterval->setSuffix(i18n(" msec"));
     doubleClickInterval->setSteps(100, 100);
     lay->addWidget(doubleClickInterval);
     connect(doubleClickInterval, SIGNAL(valueChanged(int)), this, SLOT(changed()));
@@ -230,7 +230,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     dragStartTime = new KIntNumInput(doubleClickInterval, 2000, tab2);
     dragStartTime->setLabel(i18n("Drag start time:"));
     dragStartTime->setRange(0, 2000, 100);
-    dragStartTime->setSuffix(i18n(" ms"));
+    dragStartTime->setSuffix(i18n(" msec"));
     dragStartTime->setSteps(100, 100);
     lay->addWidget(dragStartTime);
     connect(dragStartTime, SIGNAL(valueChanged(int)), this, SLOT(changed()));
