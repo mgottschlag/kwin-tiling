@@ -31,7 +31,7 @@ class KSyssoundApplication : public KControlApplication
 {
 public:
 
-  KSyssoundApplication(int &argc, char **arg, char *name);
+  KSyssoundApplication(int &argc, char **arg, const char *name);
 
   void init();
   void apply();
@@ -42,7 +42,7 @@ private:
 };
 
 
-KSyssoundApplication::KSyssoundApplication(int &argc, char **argv, char *name)
+KSyssoundApplication::KSyssoundApplication(int &argc, char **argv, const char *name)
   : KControlApplication(argc, argv, name)
 {
   sound = 0;

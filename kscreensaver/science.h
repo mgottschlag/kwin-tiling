@@ -71,7 +71,7 @@ public:
 	void setGravity     ( bool b );
 	void setHideBG      ( bool b );
 
-	void myAssert( bool term, char *sMsg );
+	void myAssert( bool term, const char *sMsg );
 
 private:
 	void readSettings();

@@ -189,27 +189,27 @@ KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
 
   // pixmap labels to show which button is which
   minP = new QLabel("", this);
-  minP->setPixmap( Icon(locate("kwm_pics", "iconify.xpm")));
+  minP->setPixmap( QPixmap(locate("kwm_pics", "iconify.xpm")));
 
   lay->addWidget( minP, 5, 3, 10);
 
   maxP = new QLabel("", this);
-  maxP->setPixmap( Icon(locate("kwm_pics", "maximize.xpm")));
+  maxP->setPixmap( QPixmap(locate("kwm_pics", "maximize.xpm")));
 
   lay->addWidget( maxP, 7, 3, 10);
 
   stickyP = new QLabel("", this);
-  stickyP->setPixmap( Icon(locate("kwm_pics", "pinup.xpm")));
+  stickyP->setPixmap( QPixmap(locate("kwm_pics", "pinup.xpm")));
 
   lay->addWidget( stickyP, 9, 3, 10);
 
   closeP = new QLabel("", this);
-  closeP->setPixmap( Icon(locate("kwm_pics", "close.xpm")));
+  closeP->setPixmap( QPixmap(locate("kwm_pics", "close.xpm")));
 
   lay->addWidget( closeP, 11, 3, 10);
 
   menuP = new QLabel("", this);
-  menuP->setPixmap( Icon(locate("kwm_pics", "menu.xpm")));
+  menuP->setPixmap( QPixmap(locate("kwm_pics", "menu.xpm")));
 
   lay->addWidget( menuP, 13, 3, 10);
 
@@ -1407,9 +1407,9 @@ void KTitlebarAppearance::GetSettings( void )
   sPixmapActive = "activetitlebar.xpm";
   sPixmapInactive = "inactivetitlebar.xpm";
   pbPixmapActive->setPixmap(pixmapActiveOld =
-			      Icon( sPixmapActive ));
+			      BarIcon( sPixmapActive ));
   pbPixmapInactive->setPixmap(pixmapInactiveOld =
-			      Icon( sPixmapInactive ));
+			      BarIcon( sPixmapInactive ));
 
   titleAnim->setValue(config->readNumEntry(KWM_TITLEANIMATION,0));
 

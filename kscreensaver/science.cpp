@@ -248,7 +248,7 @@ KScienceSaver::~KScienceSaver()
 		delete dlg;
 }
 
-void KScienceSaver::myAssert( bool term, char *eMsg )
+void KScienceSaver::myAssert( bool term, const char *eMsg )
 {
 	if( !term ) {
 		fprintf(stderr, "Error in KScreensaver - mode Science: %s\n", eMsg);

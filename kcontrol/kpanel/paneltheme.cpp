@@ -56,8 +56,6 @@ void KPanelTheme::loadSettings()
 
 void KPanelTheme::saveSettings()
 {
-    QColor test;
-
     config->setGroup("kpanel");
 
     config->writeEntry("PanelBackground", canvas->colors[WidgetCanvas::C_Panel]);
@@ -211,8 +209,8 @@ KPanelTheme::KPanelTheme(QWidget *parent, const char *name)
     
     QGroupBox *canvasBox = new QGroupBox(i18n("KPanel Preview"), this);
     canvas = new WidgetCanvas(canvasBox);
-    canvas->goPix = Icon("go.xpm");
-    canvas->appPix = Icon("mini-go.xpm");
+    canvas->goPix = BarIcon("go.xpm");
+    canvas->appPix = BarIcon("mini-go.xpm");
     loadSettings();
     canvas->drawSampleWidgets();
     canvas->setMinimumSize(canvas->sizeHint());

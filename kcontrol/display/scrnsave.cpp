@@ -158,7 +158,7 @@ KScreenSaver::KScreenSaver( QWidget *parent, Mode m )
     
 	mMonitorLabel = new QLabel( this );
 	mMonitorLabel->setAlignment( AlignCenter );
-	mMonitorLabel->setPixmap(Icon(locate("data","kcontrol/pics/monitor.xpm"))); 
+	mMonitorLabel->setPixmap( QPixmap(locate("data","kcontrol/pics/monitor.xpm"))); 
 	mMonitorLabel->setMinimumSize( 220, 160 );
     
 	topLayout->addMultiCellWidget( mMonitorLabel, 1, 1, 1, 2 );
