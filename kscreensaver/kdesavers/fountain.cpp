@@ -24,6 +24,8 @@
 #include <qimage.h>
 #include <kdebug.h>
 #include <qpainter.h>
+#include <kglobal.h>
+#include <kstddirs.h>
 // libkscreensaver interface
 extern "C"
 {
@@ -171,17 +173,25 @@ Fountain::~Fountain()
 bool Fountain::loadPartical()
 {
     /* Status indicator */
-    bool Status = FALSE;
+    bool Status = TRUE;
 	QImage buf;
 
-    /* Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit */
-    //if ( ( TextureImage[0] = SDL_LoadBMP( "data/particle.bmp" ) ) )
-    if (buf.load( "particle.bmp" ) )
+    kdDebug() << "Loading: " << locate("data", "kscreensaver/particle.bmp") << endl;
+    if (buf.load( locate("data", "kscreensaver/particle.bmp") ) )
         {
+		tex = QGLWidget::convertToGLFormat( buf );  // flipped 32bit RGBA
+	}
+	else
+	{
+		QImage dummy( 32, 32, 32 );
+  		dummy.fill( Qt::white.rgb() );
+        	buf = dummy;
+		tex = QGLWidget::convertToGLFormat( buf );
+	}
 
             /* Set the status to true */
-            Status = TRUE;
-	    tex = QGLWidget::convertToGLFormat( buf );  // flipped 32bit RGBA
+            //Status = TRUE;
+
             /* Create The Texture */
            glGenTextures( 1, &texture[0] );
 
@@ -190,13 +200,13 @@ bool Fountain::loadPartical()
 
             /* Generate The Texture */
             glTexImage2D( GL_TEXTURE_2D, 0, 3, tex.width(),
-                          tex.height(), 0, GL_BGR,GL_UNSIGNED_BYTE, tex.bits() );
+                          tex.height(), 0, GL_RGB,GL_UNSIGNED_BYTE, tex.bits() );
 
             /* Linear Filtering */
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	    //glEnable( GL_TEXTURE_2D );
-        }
+
 
 
     return Status;
@@ -323,6 +333,15 @@ void Fountain::paintGL ()
 				particle[loop].g=colors[col][1];			// Select Green From Color Table
 				particle[loop].b=colors[col][2];			// Select Blue From Color Table
 			}
+			// Lets stir some things up
+			/*if ( particle[loop].yg < 1.5f )
+			particle[loop].yg += rand();
+			else if ( particle[loop].yg > -1.5f )
+			particle[loop].yg -= rand();
+			if ( particle[loop].xg < 1.5f )
+			particle[loop].xg += rand();
+			else if ( particle[loop].xg > -1.5f )
+			particle[loop].xg -= rand();*/
 		}
 	}
 

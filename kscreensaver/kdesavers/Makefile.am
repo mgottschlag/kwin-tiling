@@ -39,7 +39,7 @@ messages:
 
 ########## Meta objects ##########
 
-data_DATA = kscience.png partical.bmp
+data_DATA = kscience.png  particle.bmp
 datadir = $(kde_datadir)/kscreensaver
 
 desktop_DATA = KBanner.desktop KBlankscreen.desktop KPolygon.desktop \
@@ -49,4 +49,4 @@ desktop_DATA = KBanner.desktop KBlankscreen.desktop KPolygon.desktop \
 
 desktopdir = $(kde_appsdir)/System/ScreenSavers
 
-EXTRA_DIST = $(desktop_DATA) vm.xpm vm.xbm kscience.png texture.raw
+EXTRA_DIST = $(desktop_DATA) vm.xpm vm.xbm kscience.png  particle.bmp
