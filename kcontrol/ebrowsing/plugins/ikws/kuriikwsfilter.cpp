@@ -124,13 +124,7 @@ QString KURISearchFilter::configName() const {
 }
 
 
-static const char *mocs[] = {
-#include "libkuriikwsfilter_la_moc_classes.h"
-   0
-};
-
 KURISearchFilterFactory::KURISearchFilterFactory(QObject *parent, const char *name) : KLibFactory(parent, name) {
-    setMocClasses(mocs);
     KURISearchFilterEngine::incRef();
     s_instance = new KInstance(KURISearchFilterEngine::self()->name());
 }
