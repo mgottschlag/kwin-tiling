@@ -14,7 +14,7 @@
 
 #include <qgroupbox.h>
 #include <qlabel.h>
-#include <qlineedit.h>
+#include <klineedit.h>
 #include <qpushbutton.h>
 #include <qslider.h>
 #include <qcombobox.h>
@@ -111,18 +111,15 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
        " to the current scheme, those changes will be lost if you select"
        " another color scheme.") );
 
-    QBoxLayout *pushLayout = new QHBoxLayout;
-    groupLayout->addLayout( pushLayout );
-
-    addBt = new QPushButton(i18n("&Add ..."), group);
+    addBt = new QPushButton(i18n("&Save scheme..."), group);
     connect(addBt, SIGNAL(clicked()), SLOT(slotAdd()));
-    pushLayout->addWidget(addBt, 10);
+    groupLayout->addWidget(addBt, 10);
 
     QWhatsThis::add( addBt, i18n("Press this button if you want to save"
-       " the current color settings as a new color scheme. You will be"
+       " the current color settings as a color scheme. You will be"
        " prompted for a name.") );
 
-    removeBt = new QPushButton(i18n("&Remove"), group);
+    removeBt = new QPushButton(i18n("&Remove scheme"), group);
     removeBt->setEnabled(FALSE);
     connect(removeBt, SIGNAL(clicked()), SLOT(slotRemove()));
 
@@ -130,17 +127,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name)
        " color scheme. Note that this button is disabled if you do not have"
        " permission to delete the color scheme.") );
 
-    pushLayout->addWidget( removeBt, 10 );
-
-    saveBt = new QPushButton(i18n("&Save changes"), group);
-    saveBt->setEnabled(FALSE);
-    connect(saveBt, SIGNAL(clicked()), SLOT(slotSave()));
-    groupLayout->addWidget(saveBt);
-
-    QWhatsThis::add(saveBt, i18n("Press this button to save changes made"
-       " to the current color scheme. Note that this button is disabled if"
-       " you do not have permission to modify the color scheme, but you can"
-       " still save the changes by adding a new color scheme.") );
+    groupLayout->addWidget( removeBt, 10 );
 
     QBoxLayout *stackLayout = new QVBoxLayout;
     topLayout->addLayout(stackLayout, 1, 1);
@@ -386,7 +373,6 @@ void KColorScheme::slotSave( )
     config->writeEntry("visitedLinkColor", cs->visitedLink);
 
     config->sync();
-    saveBt->setEnabled( FALSE );
 }
 
 
@@ -411,63 +397,82 @@ void KColorScheme::slotRemove()
  */
 void KColorScheme::slotAdd()
 {
-    SaveScm *ss = new SaveScm( 0,  "save scheme" );
+    QString sName;
+    if (sList->currentItem() >= nSysSchemes) 
+       sName = sList->currentText();
+    SaveScm *ss = new SaveScm( 0,  "save scheme", sName );
 
-    QString sName, sFile;
+    QString sFile;
 
     bool valid = false;
+    int exists = -1;
 
-    while (!valid) {
+    while (!valid) 
+    {
+        if (ss->exec() != QDialog::Accepted)
+            return;
 
-    if (ss->exec() != QDialog::Accepted)
-        return;
+        sName = ss->nameLine->text();
+        sName = sName.simplifyWhiteSpace();
+        if (sName.isEmpty())
+            return;
+        sFile = sName;
 
-    sName = ss->nameLine->text();
-    sName = sName.simplifyWhiteSpace();
-    if (sName.isEmpty())
-        return;
-    sFile = sName;
+        int i = 0;
 
-    int i = 0;
-
-    // Capitalise each word
-    sName.at(0) = sName.at(0).upper();
-    while (1) {
-        i = sName.find(" ", i);
-        if (i == -1)
-        break;
-        if (++i >= (int) sName.length())
-        break;
-        sName.at(i) = sName.at(i).upper();
-    }
-
-    // Check if it's already there
-    for (i=0; i < (int) sList->count(); i++)
-        if (sName == sList->text(i)) {
-        KMessageBox::error( 0,
-            i18n("Please choose a unique name for the new color\n"\
-            "scheme. The one you entered already appears\n"\
-            "in the color scheme list." ));
-        break;
+        // Capitalise each word
+        sName.at(0) = sName.at(0).upper();
+        while (1) 
+        {
+            i = sName.find(" ", i);
+            if (i == -1)
+                break;
+            if (++i >= (int) sName.length())
+                break;
+            sName.at(i) = sName.at(i).upper();
         }
-    if (i == (int) sList->count())
-        valid = true;
+
+        exists = -1;
+        // Check if it's already there
+        for (i=0; i < (int) sList->count(); i++)
+        {
+            if (sName == sList->text(i)) 
+            {
+                exists = i;
+                int result = KMessageBox::warningContinueCancel( 0,
+                   i18n("A color scheme with the name '%1' already exists.\n"
+                        "Do you want to overwrite it?\n").arg(sName),
+		   i18n("Save color scheme"),
+                   i18n("Overwrite"));
+                if (result == KMessageBox::Cancel)
+                    break;
+            }
+        }
+        if (i == (int) sList->count())
+            valid = true;
     }
 
     disconnect(sList, SIGNAL(highlighted(int)), this,
         SLOT(slotPreviewScheme(int)));
 
-    sList->insertItem(sName);
-    sList->setFocus();
-    sList->setCurrentItem(sList->count() - 1);
+    if (exists != -1)
+    {
+       sList->setFocus();
+       sList->setCurrentItem(exists);
+    }
+    else
+    {
+       sList->insertItem(sName);
+       sList->setFocus();
+       sList->setCurrentItem(sList->count() - 1);
+       sFile = KGlobal::dirs()->saveLocation("data", "kdisplay/color-schemes/") + sFile + ".kcsrc";
+       sFileList.append(sFile);
 
-    sFile = KGlobal::dirs()->saveLocation("data", "kdisplay/color-schemes/") + sFile + ".kcsrc";
-    sFileList.append(sFile);
-
-    KSimpleConfig *config = new KSimpleConfig(sFile);
-    config->setGroup( "Color Scheme");
-    config->writeEntry("name", sName);
-    delete config;
+       KSimpleConfig *config = new KSimpleConfig(sFile);
+       config->setGroup( "Color Scheme");
+       config->writeEntry("name", sName);
+       delete config;
+    }
     slotSave();
 
     connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
@@ -528,11 +533,6 @@ void KColorScheme::slotSelectColor(const QColor &col)
     color(selection) = col;
 
     cs->drawSampleWidgets();
-
-    if (removeBt->isEnabled())
-    saveBt->setEnabled(true);
-    else
-    saveBt->setEnabled(false);
 
     m_bChanged = true;
     emit changed(true);
@@ -715,11 +715,10 @@ void KColorScheme::slotPreviewScheme(int indx)
     cs->drawSampleWidgets();
     sb->setValue(cs->contrast);
     slotWidgetColor(0);
-    if (indx < nSysSchemes) {
-    removeBt->setEnabled(false);
-    saveBt->setEnabled(false);
-    } else
-    removeBt->setEnabled(true);
+    if (indx < nSysSchemes) 
+       removeBt->setEnabled(false);
+    else
+       removeBt->setEnabled(true);
 
     m_bChanged = true;
     emit changed(true);
@@ -748,55 +747,31 @@ QPalette KColorScheme::createPalette()
 
 /**** SaveScm ****/
 
-SaveScm::SaveScm( QWidget *parent, const char *name )
-    : QDialog( parent, name, TRUE )
+SaveScm::SaveScm( QWidget *parent, const char *name, const QString &def )
+    : KDialogBase( parent, name, true, i18n("Save color scheme"), Ok|Cancel, Ok, true )
 {
-    setFocusPolicy(QWidget::StrongFocus);
-    setCaption( i18n("Add a color scheme"));
+    QWidget *page = new QWidget(this);
+    setMainWidget(page);
+    QVBoxLayout *topLayout = new QVBoxLayout( page, 0, spacingHint() );
 
-    QBoxLayout *topLayout = new QVBoxLayout( this, 10 );
-    QBoxLayout *stackLayout = new QVBoxLayout( 3 );
-    topLayout->addLayout( stackLayout );
-
-    nameLine = new QLineEdit( this );
+    nameLine = new KLineEdit( page );
     nameLine->setFocus();
     nameLine->setMaxLength(18);
     nameLine->setFixedHeight( nameLine->sizeHint().height() );
+    nameLine->setText(def);
+    nameLine->selectAll();
 
     QLabel* tmpQLabel;
     tmpQLabel = new QLabel( nameLine,
-     i18n( "Enter a name for the new color scheme\n"\
-        "to be added to your personal list.\n\n"\
-        "The colors currently used in the preview will\n"\
-        "be copied into this scheme to begin with." ), this );
+     i18n( "Enter a name for the color scheme:\n"), page);
+
     tmpQLabel->setAlignment( AlignLeft | AlignBottom | ShowPrefix );
     tmpQLabel->setFixedHeight( tmpQLabel->sizeHint().height() );
     tmpQLabel->setMinimumWidth( tmpQLabel->sizeHint().width() );
 
-    stackLayout->addStretch( 10 );
-    stackLayout->addWidget( tmpQLabel );
-    stackLayout->addWidget( nameLine );
-
-    QFrame* tmpQFrame;
-    tmpQFrame = new QFrame( this );
-    tmpQFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken );
-    tmpQFrame->setMinimumHeight( tmpQFrame->sizeHint().height() );
-
-    topLayout->addWidget( tmpQFrame );
-
-    KButtonBox *bbox = new KButtonBox( this );
-    bbox->addStretch( 10 );
-
-    QPushButton *ok = bbox->addButton( i18n( "&OK" ) );
-    ok->setDefault( true );
-    connect( ok, SIGNAL( clicked() ), SLOT( accept() ) );
-
-    QPushButton *cancel = bbox->addButton( i18n( "&Cancel" ) );
-    connect( cancel, SIGNAL( clicked() ), SLOT( reject() ) );
-
-    bbox->layout();
-    topLayout->addWidget( bbox );
-    resize( 250, 0 );
+    topLayout->addWidget( tmpQLabel );
+    topLayout->addWidget( nameLine );
+    topLayout->addStretch( 10 );
 }
 
 

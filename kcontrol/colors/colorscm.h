@@ -12,7 +12,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qcolor.h>
-#include <qdialog.h>
+#include <kdialogbase.h>
 
 #include <kcmodule.h>
 
@@ -22,7 +22,7 @@ class QSlider;
 class QComboBox;
 class QPushButton;
 class QResizeEvent;
-class QLineEdit;
+class KLineEdit;
 class QPalette;
 class KListBox;
 class KColorButton;
@@ -72,7 +72,7 @@ private:
     QColor colorPushColor;
     QSlider *sb;
     QComboBox *wcCombo;
-    QPushButton *saveBt, *addBt, *removeBt;
+    QPushButton *addBt, *removeBt;
     KListBox *sList;
     QStringList sFileList;
 
@@ -84,16 +84,14 @@ private:
 /**
  * A little dialog which prompts for a name for a color scheme.
  */
-class SaveScm: public QDialog 
+class SaveScm: public KDialogBase
 {
     Q_OBJECT
 
 public:
-    SaveScm(QWidget *parent, const char *name);
+    SaveScm(QWidget *parent, const char *name, const QString &def);
 	
-    QLineEdit* nameLine;
-    QPushButton* ok;
-    QPushButton* cancel;
+    KLineEdit* nameLine;
 };
 
 #endif
