@@ -37,6 +37,7 @@
 #include <qstring.h>
 #include <qdir.h>
 #include <qvaluelist.h>
+#include <qglobal.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <stdio.h>
@@ -91,6 +92,9 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName)
             status=create(fName, CFontEngine::isAType1(fName) ? CEncodings::constT1Symbol : CEncodings::constTTSymbol, true);
         else
         {
+#if QT_VERSION >= 300
+            const char * constDefaultCharSet = "iso8859-1";
+#endif
             QStringList encs=CKfiGlobal::fe().get8BitEncodings();
             QString     enc;
 
@@ -101,8 +105,13 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName)
                     if(CKfiGlobal::cfg().getExclusiveEncoding() && encs.findIndex(CKfiGlobal::cfg().getEncoding())!=-1)  // Try X11 encoding...
                         enc=CKfiGlobal::cfg().getEncoding();
                     else
+#if QT_VERSION < 300
                         if(encs.findIndex(QFont::encodingName(QFont::charSetForLocale()))!=-1)   // Try locale...
                             enc=QFont::encodingName(QFont::charSetForLocale());
+#else
+                        if(encs.findIndex(constDefaultCharSet))
+                            enc=constDefaultCharSet;
+#endif
                         else
                             enc=encs.first();  // Hmmm... just use the first available...
 

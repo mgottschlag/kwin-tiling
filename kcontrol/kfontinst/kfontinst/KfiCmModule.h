@@ -42,6 +42,8 @@ class CKfiCmModule : public KCModule
     CKfiCmModule(QWidget *parent=NULL, const char *name=NULL);
     virtual ~CKfiCmModule();
 
+    const KAboutData * aboutData() const;
+
     static void madeChanges(bool m);
     static CKfiCmModule * instance() { return theirInstance; }
 
@@ -59,6 +61,7 @@ class CKfiCmModule : public KCModule
     private:
 
     CKfiMainWidget *itsMainWidget;
+    KAboutData     *itsAboutData;
 
     static CKfiCmModule *theirInstance;
 };

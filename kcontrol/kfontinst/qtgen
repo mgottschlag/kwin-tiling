@@ -18,7 +18,7 @@ else
         echo "$1Data.h is not writable"
     fi
     if (! test -e $1Data.cpp ) || (test -w $1Data.cpp) then
-        uic -tr i18n -i $1Data.h -o $1Data.cpp $1.ui
+        uic -tr QT_KDE_I18N -i $1Data.h -o $1Data.cpp $1.ui
         echo "#include <klocale.h>" > /tmp/$user$1Data.cpp
         \cat $1Data.cpp | \sed s/QDialog/KDialog/ | \sed s/qdialog/kdialog/ | \sed s/QWizard/KWizard/ | \sed s/qwizard/kwizard/ | \sed s/QProgressBar/KProgress/ | \sed s/qprogressbar/kprogress/ >> /tmp/$user$1Data.cpp
         echo "#include \"$1Data.moc\"" >> /tmp/$user$1Data.cpp

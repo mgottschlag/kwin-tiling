@@ -41,6 +41,7 @@
 #include <qcstring.h>
 #include <qdir.h>
 #include <qfileinfo.h>
+#include <qregexp.h>
 #include <klocale.h>
 
 static const QString  constAfmDir       ("fontmetrics/afm/");

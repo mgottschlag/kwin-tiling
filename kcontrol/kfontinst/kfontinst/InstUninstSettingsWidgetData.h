@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'InstUninstSettingsWidget.ui'
 **
-** Created: Sun Sep 9 19:25:47 2001
+** Created: Tue Sep 18 12:15:15 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -33,6 +33,7 @@ public:
     QButtonGroup* ButtonGroup1;
     QPushButton* itsUninstallDirButton;
     QLabel* itsUninstallDirText;
+
 
 public slots:
     virtual void fixTtfNamesSelected(bool);

@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>CKfiMainWidgetData</class>
 <comment>////////////////////////////////////////////////////////////////////////////////
 //
@@ -27,14 +27,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////</comment>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>CKfiMainWidgetData</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
@@ -42,159 +39,115 @@
             <height>480</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Form1</string>
     </property>
-    <property>
-        <name>layoutMargin</name>
+    <property name="layoutMargin" stdset="0">
     </property>
-    <property>
-        <name>layoutSpacing</name>
+    <property name="layoutSpacing" stdset="0">
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>5</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>5</number>
         </property>
-        <widget row="0"  column="0" >
-            <class>QTabWidget</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QTabWidget" row="0" column="0">
+            <property name="name">
                 <cstring>itsTab</cstring>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>7</hsizetype>
                     <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property>
-                <name>layoutMargin</name>
+            <property name="layoutMargin" stdset="0">
             </property>
-            <property>
-                <name>layoutSpacing</name>
+            <property name="layoutSpacing" stdset="0">
             </property>
-            <widget>
-                <class>QWidget</class>
-                <property stdset="1">
-                    <name>name</name>
+            <widget class="QWidget">
+                <property name="name">
                     <cstring>itsFontsTab</cstring>
                 </property>
-                <attribute>
-                    <name>title</name>
+                <attribute name="title">
                     <string>F&amp;onts</string>
                 </attribute>
                 <grid>
-                    <property stdset="1">
-                        <name>margin</name>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
                         <number>0</number>
                     </property>
-                    <property stdset="1">
-                        <name>spacing</name>
+                    <property name="spacing">
                         <number>0</number>
                     </property>
-                    <widget row="0"  column="0" >
-                        <class>CFontsWidget</class>
-                        <property stdset="1">
-                            <name>name</name>
+                    <widget class="CFontsWidget" row="0" column="0">
+                        <property name="name">
                             <cstring>itsFonts</cstring>
                         </property>
-                        <property stdset="1">
-                            <name>sizePolicy</name>
+                        <property name="sizePolicy">
                             <sizepolicy>
                                 <hsizetype>5</hsizetype>
                                 <vsizetype>5</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
                             </sizepolicy>
                         </property>
                     </widget>
                 </grid>
             </widget>
-            <widget>
-                <class>QWidget</class>
-                <property stdset="1">
-                    <name>name</name>
+            <widget class="QWidget">
+                <property name="name">
                     <cstring>itsAATab</cstring>
                 </property>
-                <attribute>
-                    <name>title</name>
+                <attribute name="title">
                     <string>A&amp;nti-Alias</string>
                 </attribute>
                 <grid>
-                    <property stdset="1">
-                        <name>margin</name>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
                         <number>0</number>
                     </property>
-                    <property stdset="1">
-                        <name>spacing</name>
+                    <property name="spacing">
                         <number>0</number>
                     </property>
-                    <widget row="0"  column="0" >
-                        <class>CXftConfigSettingsWidget</class>
-                        <property stdset="1">
-                            <name>name</name>
+                    <widget class="CXftConfigSettingsWidget" row="0" column="0">
+                        <property name="name">
                             <cstring>itsAA</cstring>
                         </property>
                     </widget>
                 </grid>
             </widget>
-            <widget>
-                <class>QWidget</class>
-                <property stdset="1">
-                    <name>name</name>
+            <widget class="QWidget">
+                <property name="name">
                     <cstring>itsSettingsTab</cstring>
                 </property>
-                <attribute>
-                    <name>title</name>
+                <attribute name="title">
                     <string>&amp;Settings</string>
                 </attribute>
                 <grid>
-                    <property stdset="1">
-                        <name>margin</name>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
                         <number>0</number>
                     </property>
-                    <property stdset="1">
-                        <name>spacing</name>
+                    <property name="spacing">
                         <number>0</number>
                     </property>
-                    <widget row="0"  column="0" >
-                        <class>CSettingsWidget</class>
-                        <property stdset="1">
-                            <name>name</name>
+                    <widget class="CSettingsWidget" row="0" column="0">
+                        <property name="name">
                             <cstring>itsSettings</cstring>
-                        </property>
-                    </widget>
-                </grid>
-            </widget>
-            <widget>
-                <class>QWidget</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>itsAboutTab</cstring>
-                </property>
-                <attribute>
-                    <name>title</name>
-                    <string>A&amp;bout</string>
-                </attribute>
-                <grid>
-                    <property stdset="1">
-                        <name>margin</name>
-                        <number>0</number>
-                    </property>
-                    <property stdset="1">
-                        <name>spacing</name>
-                        <number>0</number>
-                    </property>
-                    <widget row="0"  column="0" >
-                        <class>CAboutWidget</class>
-                        <property stdset="1">
-                            <name>name</name>
-                            <cstring>CAboutWidget1</cstring>
                         </property>
                     </widget>
                 </grid>
@@ -214,6 +167,8 @@
         <sizepolicy>
             <hordata>5</hordata>
             <verdata>5</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
         </sizepolicy>
         <pixmap>image0</pixmap>
         <signal>preview(const QString &amp;)</signal>
@@ -229,20 +184,8 @@
         <sizepolicy>
             <hordata>5</hordata>
             <verdata>5</verdata>
-        </sizepolicy>
-        <pixmap>image0</pixmap>
-    </customwidget>
-    <customwidget>
-        <class>CAboutWidget</class>
-        <header location="local">AboutWidget.h</header>
-        <sizehint>
-            <width>-1</width>
-            <height>-1</height>
-        </sizehint>
-        <container>0</container>
-        <sizepolicy>
-            <hordata>5</hordata>
-            <verdata>5</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
         </sizepolicy>
         <pixmap>image0</pixmap>
     </customwidget>
@@ -257,17 +200,21 @@
         <sizepolicy>
             <hordata>5</hordata>
             <verdata>5</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
         </sizepolicy>
         <pixmap>image0</pixmap>
     </customwidget>
 </customwidgets>
 <images>
-    <image>
-        <name>image0</name>
+    <image name="image0">
         <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1ddec44f503c0ae2a154410f53d0ed20e2bf6bdb656dd6861dd23d9a66591b0587fd1654235ebded6f0edcd53e419d87ae7b1f4f9b8f906d0bfe012317426a70b07bdc2f3ec77f8ed6b89559061a0343d06a124cc105596482585094bc0ae599b04646c9018926491b2205e140c485cace25755c175d0a967b622ff900b8cc9c7d29af594ea722d589167f813aa852ba07d94b9dce296e883fe7bb163f23896753</data>
     </image>
 </images>
 <connections>
-    <slot access="public">tabChanged(QWidget *)</slot>
 </connections>
+<slots>
+    <slot>tabChanged(QWidget *)</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

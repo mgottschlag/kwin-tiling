@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'XftConfigRules.ui'
 **
-** Created: Wed Jul 4 21:45:25 2001
+** Created: Tue Sep 18 12:04:33 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -42,6 +42,7 @@ public:
     QWidget* itsIncludesTab;
     CXftConfigIncludesWidget* itsIncludes;
     CXftConfigIncludesWidget* itsIncludeIfs;
+
 
 public slots:
     virtual void addButtonPressed();

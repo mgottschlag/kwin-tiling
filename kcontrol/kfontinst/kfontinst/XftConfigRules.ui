@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>CXftConfigRulesData</class>
 <comment>////////////////////////////////////////////////////////////////////////////////
 //
@@ -27,14 +27,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // (C) Craig Drummond, 2001
 ///////////////////////////////////////////////////////////////////////////////</comment>
-<widget>
-    <class>QDialog</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QDialog">
+    <property name="name">
         <cstring>Form1</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
@@ -42,217 +39,173 @@
             <height>416</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>XftConfig</string>
     </property>
-    <property>
-        <name>layoutMargin</name>
+    <property name="layoutMargin" stdset="0">
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget row="1"  column="2" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="1" column="2">
+            <property name="name">
                 <cstring>itsCancelButton</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>&amp;Cancel</string>
             </property>
         </widget>
-        <widget row="1"  column="1" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="1" column="1">
+            <property name="name">
                 <cstring>itsOkButton</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>&amp;OK</string>
             </property>
         </widget>
-        <spacer row="1"  column="0" >
-            <property>
-                <name>name</name>
+        <spacer row="1" column="0">
+            <property name="name">
                 <cstring>Spacer2</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Horizontal</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
+            <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
-            <property>
-                <name>sizeHint</name>
+            <property name="sizeHint">
                 <size>
                     <width>20</width>
                     <height>20</height>
                 </size>
             </property>
         </spacer>
-        <widget row="0"  column="0"  rowspan="1"  colspan="3" >
-            <class>QTabWidget</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QTabWidget" row="0" column="0" rowspan="1" colspan="3">
+            <property name="name">
                 <cstring>TabWidget2</cstring>
             </property>
-            <property>
-                <name>layoutMargin</name>
+            <property name="layoutMargin" stdset="0">
             </property>
-            <property>
-                <name>layoutSpacing</name>
+            <property name="layoutSpacing" stdset="0">
             </property>
-            <widget>
-                <class>QWidget</class>
-                <property stdset="1">
-                    <name>name</name>
+            <widget class="QWidget">
+                <property name="name">
                     <cstring>itsRulesTab</cstring>
                 </property>
-                <attribute>
-                    <name>title</name>
+                <attribute name="title">
                     <string>R&amp;ules</string>
                 </attribute>
                 <grid>
-                    <property stdset="1">
-                        <name>margin</name>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
                         <number>11</number>
                     </property>
-                    <property stdset="1">
-                        <name>spacing</name>
+                    <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget row="0"  column="0" >
-                        <class>QGroupBox</class>
-                        <property stdset="1">
-                            <name>name</name>
+                    <widget class="QGroupBox" row="0" column="0">
+                        <property name="name">
                             <cstring>GroupBox1</cstring>
                         </property>
-                        <property stdset="1">
-                            <name>title</name>
+                        <property name="title">
                             <string>Entries:</string>
                         </property>
                         <grid>
-                            <property stdset="1">
-                                <name>margin</name>
+                            <property name="name">
+                                <cstring>unnamed</cstring>
+                            </property>
+                            <property name="margin">
                                 <number>11</number>
                             </property>
-                            <property stdset="1">
-                                <name>spacing</name>
+                            <property name="spacing">
                                 <number>6</number>
                             </property>
-                            <widget row="0"  column="0"  rowspan="1"  colspan="4" >
-                                <class>QListView</class>
+                            <widget class="QListView" row="0" column="0" rowspan="1" colspan="4">
                                 <column>
-                                    <property>
-                                        <name>text</name>
+                                    <property name="text">
                                         <string>Match:</string>
                                     </property>
-                                    <property>
-                                        <name>clickable</name>
+                                    <property name="clickable">
                                         <bool>true</bool>
                                     </property>
-                                    <property>
-                                        <name>resizeable</name>
+                                    <property name="resizeable">
                                         <bool>true</bool>
                                     </property>
                                 </column>
                                 <column>
-                                    <property>
-                                        <name>text</name>
+                                    <property name="text">
                                         <string>Edit:</string>
                                     </property>
-                                    <property>
-                                        <name>clickable</name>
+                                    <property name="clickable">
                                         <bool>true</bool>
                                     </property>
-                                    <property>
-                                        <name>resizeable</name>
+                                    <property name="resizeable">
                                         <bool>true</bool>
                                     </property>
                                 </column>
-                                <property stdset="1">
-                                    <name>name</name>
+                                <property name="name">
                                     <cstring>itsList</cstring>
                                 </property>
-                                <property stdset="1">
-                                    <name>allColumnsShowFocus</name>
+                                <property name="allColumnsShowFocus">
                                     <bool>true</bool>
                                 </property>
                             </widget>
-                            <spacer row="1"  column="0" >
-                                <property>
-                                    <name>name</name>
+                            <spacer row="1" column="0">
+                                <property name="name">
                                     <cstring>Spacer1</cstring>
                                 </property>
-                                <property stdset="1">
-                                    <name>orientation</name>
+                                <property name="orientation">
                                     <enum>Horizontal</enum>
                                 </property>
-                                <property stdset="1">
-                                    <name>sizeType</name>
+                                <property name="sizeType">
                                     <enum>Expanding</enum>
                                 </property>
-                                <property>
-                                    <name>sizeHint</name>
+                                <property name="sizeHint">
                                     <size>
                                         <width>20</width>
                                         <height>20</height>
                                     </size>
                                 </property>
                             </spacer>
-                            <widget row="1"  column="3" >
-                                <class>QPushButton</class>
-                                <property stdset="1">
-                                    <name>name</name>
+                            <widget class="QPushButton" row="1" column="3">
+                                <property name="name">
                                     <cstring>itsRemoveButton</cstring>
                                 </property>
-                                <property stdset="1">
-                                    <name>enabled</name>
+                                <property name="enabled">
                                     <bool>false</bool>
                                 </property>
-                                <property stdset="1">
-                                    <name>text</name>
+                                <property name="text">
                                     <string>&amp;Remove</string>
                                 </property>
                             </widget>
-                            <widget row="1"  column="1" >
-                                <class>QPushButton</class>
-                                <property stdset="1">
-                                    <name>name</name>
+                            <widget class="QPushButton" row="1" column="1">
+                                <property name="name">
                                     <cstring>itsAddButton</cstring>
                                 </property>
-                                <property stdset="1">
-                                    <name>enabled</name>
+                                <property name="enabled">
                                     <bool>false</bool>
                                 </property>
-                                <property stdset="1">
-                                    <name>text</name>
+                                <property name="text">
                                     <string>&amp;Add...</string>
                                 </property>
                             </widget>
-                            <widget row="1"  column="2" >
-                                <class>QPushButton</class>
-                                <property stdset="1">
-                                    <name>name</name>
+                            <widget class="QPushButton" row="1" column="2">
+                                <property name="name">
                                     <cstring>itsEditButton</cstring>
                                 </property>
-                                <property stdset="1">
-                                    <name>enabled</name>
+                                <property name="enabled">
                                     <bool>false</bool>
                                 </property>
-                                <property stdset="1">
-                                    <name>text</name>
+                                <property name="text">
                                     <string>&amp;Edit...</string>
                                 </property>
                             </widget>
@@ -260,53 +213,41 @@
                     </widget>
                 </grid>
             </widget>
-            <widget>
-                <class>QWidget</class>
-                <property stdset="1">
-                    <name>name</name>
+            <widget class="QWidget">
+                <property name="name">
                     <cstring>itsIncludesTab</cstring>
                 </property>
-                <attribute>
-                    <name>title</name>
+                <attribute name="title">
                     <string>&amp;Include Directives</string>
                 </attribute>
                 <grid>
-                    <property stdset="1">
-                        <name>margin</name>
+                    <property name="name">
+                        <cstring>unnamed</cstring>
+                    </property>
+                    <property name="margin">
                         <number>11</number>
                     </property>
-                    <property stdset="1">
-                        <name>spacing</name>
+                    <property name="spacing">
                         <number>6</number>
                     </property>
-                    <widget row="0"  column="0" >
-                        <class>CXftConfigIncludesWidget</class>
-                        <property stdset="1">
-                            <name>name</name>
+                    <widget class="CXftConfigIncludesWidget" row="0" column="0">
+                        <property name="name">
                             <cstring>itsIncludes</cstring>
                         </property>
-                        <property>
-                            <name>whatsThis</name>
-                            <string>List here any other Xft files that you want included
-from your Xft file.
+                        <property name="whatsThis" stdset="0">
+                            <string>List here any other Xft files that you want included from your Xft file.
 
-NOTE: Xft will complain if any files from this
-list are not found.</string>
+NOTE: Xft will complain if any files from this list are not found.</string>
                         </property>
                     </widget>
-                    <widget row="1"  column="0" >
-                        <class>CXftConfigIncludesWidget</class>
-                        <property stdset="1">
-                            <name>name</name>
+                    <widget class="CXftConfigIncludesWidget" row="1" column="0">
+                        <property name="name">
                             <cstring>itsIncludeIfs</cstring>
                         </property>
-                        <property>
-                            <name>whatsThis</name>
-                            <string>List here any other Xft files that you want included
-from your Xft file.
+                        <property name="whatsThis" stdset="0">
+                            <string>List here any other Xft files that you want included from your Xft file.
 
-NOTE: Xft will *not* complain if any files from
-this list are not found.</string>
+NOTE: Xft will *not* complain if any files from this list are not found.</string>
                         </property>
                     </widget>
                 </grid>
@@ -326,13 +267,14 @@ this list are not found.</string>
         <sizepolicy>
             <hordata>5</hordata>
             <verdata>5</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
         </sizepolicy>
         <pixmap>image0</pixmap>
     </customwidget>
 </customwidgets>
 <images>
-    <image>
-        <name>image0</name>
+    <image name="image0">
         <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1ddec44f503c0ae2a154410f53d0ed20e2bf6bdb656dd6861dd23d9a66591b0587fd1654235ebded6f0edcd53e419d87ae7b1f4f9b8f906d0bfe012317426a70b07bdc2f3ec77f8ed6b89559061a0343d06a124cc105596482585094bc0ae599b04646c9018926491b2205e140c485cace25755c175d0a967b622ff900b8cc9c7d29af594ea722d589167f813aa852ba07d94b9dce296e883fe7bb163f23896753</data>
     </image>
 </images>
@@ -341,7 +283,7 @@ this list are not found.</string>
         <sender>itsList</sender>
         <signal>currentChanged(QListViewItem*)</signal>
         <receiver>Form1</receiver>
-        <slot>itemSelected(QListViewItem *)</slot>
+        <slot>itemSelected(QListViewItem*)</slot>
     </connection>
     <connection>
         <sender>itsOkButton</sender>
@@ -373,10 +315,6 @@ this list are not found.</string>
         <receiver>Form1</receiver>
         <slot>removeButtonPressed()</slot>
     </connection>
-    <slot access="public">addButtonPressed()</slot>
-    <slot access="public">itemSelected(QListViewItem *)</slot>
-    <slot access="public">editButtonPressed()</slot>
-    <slot access="public">removeButtonPressed()</slot>
 </connections>
 <tabstops>
     <tabstop>itsList</tabstop>
@@ -386,4 +324,11 @@ this list are not found.</string>
     <tabstop>itsOkButton</tabstop>
     <tabstop>itsCancelButton</tabstop>
 </tabstops>
+<slots>
+    <slot>addButtonPressed()</slot>
+    <slot>itemSelected(QListViewItem *)</slot>
+    <slot>editButtonPressed()</slot>
+    <slot>removeButtonPressed()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

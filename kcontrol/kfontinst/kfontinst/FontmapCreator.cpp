@@ -39,6 +39,7 @@
 #include <dirent.h>
 #include <stdlib.h>
 #include <qcstring.h>
+#include <qregexp.h>
 #include <klocale.h>
 
 static const QString  constUnknown    ("_____");

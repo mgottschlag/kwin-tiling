@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DisplaySettingsWidget.ui'
 **
-** Created: Mon Apr 30 21:02:39 2001
+** Created: Tue Sep 18 12:10:11 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -35,6 +35,7 @@ public:
     QButtonGroup* ButtonGroup2;
     QRadioButton* itsLeftAndRight;
     QRadioButton* itsTopAndBottom;
+
 
 public slots:
     virtual void advancedSelected(bool);

@@ -28,6 +28,7 @@
 
 #include "BufferedFile.h"
 #include "Misc.h"
+#include <qregexp.h>
 #include <string.h>
 #include <stdlib.h>
 

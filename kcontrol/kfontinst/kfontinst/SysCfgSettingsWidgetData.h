@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'SysCfgSettingsWidget.ui'
 **
-** Created: Thu Jul 19 00:08:36 2001
+** Created: Tue Sep 18 12:17:29 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -44,6 +44,7 @@ public:
     QRadioButton* itsXfsRadio;
     QRadioButton* itsCustomRadio;
     QLineEdit* itsRestartXfsCommand;
+
 
 public slots:
     virtual void afmEncodingSelected(const QString &);

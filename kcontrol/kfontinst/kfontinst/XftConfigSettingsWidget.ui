@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>CXftConfigSettingsWidgetData</class>
 <comment>////////////////////////////////////////////////////////////////////////////////
 //
@@ -27,14 +27,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////</comment>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>CXftConfigSettingsWidgetData</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
@@ -42,307 +39,238 @@
             <height>361</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Form1</string>
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget row="4"  column="0"  rowspan="1"  colspan="3" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
+            <property name="name">
                 <cstring>itsUseSubPixelHintingCheck</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>false</bool>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>&amp;Use sub-pixel hinting</string>
             </property>
-            <property>
-                <name>whatsThis</name>
-                <string>Subpixel hinting uses colors instead of gray
-pixels to do the anti-aliasing.
+            <property name="whatsThis" stdset="0">
+                <string>Subpixel hinting uses colors instead of gray pixels to do the anti-aliasing.
 
 This may be of use if you have an LCD screen.</string>
             </property>
         </widget>
-        <widget row="2"  column="0"  rowspan="1"  colspan="2" >
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QLabel" row="2" column="0" rowspan="1" colspan="2">
+            <property name="name">
                 <cstring>TextLabel2_2_2</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>Configuration file:</string>
             </property>
-            <property stdset="1">
-                <name>alignment</name>
-                <set>AlignVCenter|AlignLeft</set>
+            <property name="alignment">
+                <set>AlignAuto|AlignVCenter|AlignLeft</set>
             </property>
-            <property>
-                <name>wordwrap</name>
+            <property name="wordwrap" stdset="0">
             </property>
         </widget>
-        <widget row="3"  column="2" >
-            <class>QLineEdit</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QLineEdit" row="3" column="2">
+            <property name="name">
                 <cstring>itsFromText</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>false</bool>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>8.0</string>
             </property>
-            <property stdset="1">
-                <name>alignment</name>
-                <set>AlignRight</set>
+            <property name="alignment">
+                <set>AlignAuto|AlignRight</set>
             </property>
-            <property>
-                <name>hAlign</name>
+            <property name="hAlign" stdset="0">
             </property>
         </widget>
-        <widget row="3"  column="3" >
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QLabel" row="3" column="3">
+            <property name="name">
                 <cstring>TextLabel2</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>pt, to</string>
             </property>
         </widget>
-        <widget row="3"  column="4" >
-            <class>QLineEdit</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QLineEdit" row="3" column="4">
+            <property name="name">
                 <cstring>itsToText</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>false</bool>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>15.0</string>
             </property>
-            <property stdset="1">
-                <name>alignment</name>
-                <set>AlignRight</set>
+            <property name="alignment">
+                <set>AlignAuto|AlignRight</set>
             </property>
-            <property>
-                <name>hAlign</name>
+            <property name="hAlign" stdset="0">
             </property>
         </widget>
-        <widget row="3"  column="5" >
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QLabel" row="3" column="5">
+            <property name="name">
                 <cstring>TextLabel3</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>pt</string>
             </property>
         </widget>
-        <widget row="2"  column="2"  rowspan="1"  colspan="3" >
-            <class>QLabel</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QLabel" row="2" column="2" rowspan="1" colspan="3">
+            <property name="name">
                 <cstring>itsConfigFileText</cstring>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>3</hsizetype>
                     <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property stdset="1">
-                <name>frameShape</name>
+            <property name="frameShape">
                 <enum>Panel</enum>
             </property>
-            <property stdset="1">
-                <name>frameShadow</name>
+            <property name="frameShadow">
                 <enum>Sunken</enum>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>TextLabel2</string>
             </property>
-            <property stdset="1">
-                <name>alignment</name>
-                <set>AlignVCenter|AlignLeft</set>
+            <property name="alignment">
+                <set>AlignAuto|AlignVCenter|AlignLeft</set>
             </property>
-            <property>
-                <name>whatsThis</name>
-                <string>This is the configuration file used by the XRender
-extension. Under Linux/XFree86 this file will usually
-be either; ~/.xftconfig - for personal settings - or /usr/X11R6/lib/X11/XftConfig - for system-wide
-settings (usually only "root" can alter this file).</string>
+            <property name="whatsThis" stdset="0">
+                <string>This is the configuration file used by the XRender extension. Under Linux/XFree86 this file will usually be either; ~/.xftconfig - for personal settings - or /usr/X11R6/lib/X11/XftConfig - for system-wide settings (usually only "root" can alter this file).</string>
             </property>
-            <property>
-                <name>wordwrap</name>
+            <property name="wordwrap" stdset="0">
             </property>
         </widget>
-        <widget row="2"  column="5" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="2" column="5">
+            <property name="name">
                 <cstring>itsConfigFileButton</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>true</bool>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>0</hsizetype>
                     <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property stdset="1">
-                <name>minimumSize</name>
+            <property name="minimumSize">
                 <size>
                     <width>22</width>
                     <height>22</height>
                 </size>
             </property>
-            <property stdset="1">
-                <name>maximumSize</name>
+            <property name="maximumSize">
                 <size>
                     <width>22</width>
                     <height>22</height>
                 </size>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>.</string>
             </property>
-            <property>
-                <name>toolTip</name>
+            <property name="toolTip" stdset="0">
                 <string>Select File.</string>
             </property>
         </widget>
-        <spacer row="5"  column="1" >
-            <property>
-                <name>name</name>
+        <spacer row="5" column="1">
+            <property name="name">
                 <cstring>Spacer1</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Vertical</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
+            <property name="sizeType">
                 <enum>Fixed</enum>
             </property>
-            <property>
-                <name>sizeHint</name>
+            <property name="sizeHint">
                 <size>
                     <width>16</width>
                     <height>20</height>
                 </size>
             </property>
         </spacer>
-        <widget row="6"  column="3"  rowspan="1"  colspan="2" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="6" column="3" rowspan="1" colspan="2">
+            <property name="name">
                 <cstring>itsAdvancedButton</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>true</bool>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>&amp;Advanced...</string>
             </property>
         </widget>
-        <spacer row="6"  column="0"  rowspan="1"  colspan="3" >
-            <property>
-                <name>name</name>
+        <spacer row="6" column="0" rowspan="1" colspan="3">
+            <property name="name">
                 <cstring>Spacer4</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Horizontal</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
+            <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
-            <property>
-                <name>sizeHint</name>
+            <property name="sizeHint">
                 <size>
                     <width>20</width>
                     <height>20</height>
                 </size>
             </property>
         </spacer>
-        <widget row="3"  column="0"  rowspan="1"  colspan="2" >
-            <class>QCheckBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+            <property name="name">
                 <cstring>itsExcludeRangeCheck</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>false</bool>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>E&amp;xclude range:</string>
             </property>
         </widget>
-        <widget row="7"  column="3"  rowspan="1"  colspan="2" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="7" column="3" rowspan="1" colspan="2">
+            <property name="name">
                 <cstring>itsSaveButton</cstring>
             </property>
-            <property stdset="1">
-                <name>enabled</name>
+            <property name="enabled">
                 <bool>false</bool>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>Save &amp;Changes</string>
             </property>
         </widget>
-        <spacer row="8"  column="4" >
-            <property>
-                <name>name</name>
+        <spacer row="8" column="4">
+            <property name="name">
                 <cstring>Spacer3</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Vertical</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
+            <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
-            <property>
-                <name>sizeHint</name>
+            <property name="sizeHint">
                 <size>
                     <width>20</width>
                     <height>20</height>
@@ -368,13 +296,13 @@ settings (usually only "root" can alter this file).</string>
         <sender>itsFromText</sender>
         <signal>textChanged(const QString&amp;)</signal>
         <receiver>CXftConfigSettingsWidgetData</receiver>
-        <slot>fromChanged(const QString &amp;)</slot>
+        <slot>fromChanged(const QString&amp;)</slot>
     </connection>
     <connection>
         <sender>itsToText</sender>
         <signal>textChanged(const QString&amp;)</signal>
         <receiver>CXftConfigSettingsWidgetData</receiver>
-        <slot>toChanged(const QString &amp;)</slot>
+        <slot>toChanged(const QString&amp;)</slot>
     </connection>
     <connection>
         <sender>itsUseSubPixelHintingCheck</sender>
@@ -394,13 +322,6 @@ settings (usually only "root" can alter this file).</string>
         <receiver>CXftConfigSettingsWidgetData</receiver>
         <slot>saveButtonPressed()</slot>
     </connection>
-    <slot access="public">advancedButtonPressed()</slot>
-    <slot access="public">excludeRangeChecked(bool)</slot>
-    <slot access="public">fileButtonPressed()</slot>
-    <slot access="public">fromChanged(const QString &amp;)</slot>
-    <slot access="public">saveButtonPressed()</slot>
-    <slot access="public">toChanged(const QString &amp;)</slot>
-    <slot access="public">useSubPixelChecked(bool)</slot>
 </connections>
 <tabstops>
     <tabstop>itsConfigFileButton</tabstop>
@@ -410,4 +331,14 @@ settings (usually only "root" can alter this file).</string>
     <tabstop>itsUseSubPixelHintingCheck</tabstop>
     <tabstop>itsAdvancedButton</tabstop>
 </tabstops>
+<slots>
+    <slot>advancedButtonPressed()</slot>
+    <slot>excludeRangeChecked(bool)</slot>
+    <slot>fileButtonPressed()</slot>
+    <slot>fromChanged(const QString &amp;)</slot>
+    <slot>saveButtonPressed()</slot>
+    <slot>toChanged(const QString &amp;)</slot>
+    <slot>useSubPixelChecked(bool)</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -59,12 +59,12 @@ CInstalledFontListWidget::CInstalledFontListWidget(QWidget *parent, const char *
 
     setCfgButtonState(CKfiGlobal::cfg().getModifiedDirs().count()>0 || CKfiGlobal::cfg().firstTime() ? true : false);
 
-    QWhatsThis::add(itsButton2, i18n("Installing and uninstalling the fonts only\n"
-                                     "copies them to / removes them from the X\n"
-                                     "fonts folder. In order to make X, Ghostscript,\n"
-                                     "and StarOffice aware of the changes you\n"
-                                     "must \"configure\" your system - this will\n"
-                                     "create the neccessary configuration files\n"
+    QWhatsThis::add(itsButton2, i18n("Installing and uninstalling the fonts only"
+                                     "copies them to / removes them from the X"
+                                     "fonts folder. In order to make X, Ghostscript,"
+                                     "and StarOffice aware of the changes you"
+                                     "must \"configure\" your system - this will"
+                                     "create the neccessary configuration files"
                                      "needed by the various programs."));
 
     itsFontsPopup=new QPopupMenu(this);

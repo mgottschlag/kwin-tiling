@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'KfiMainWidget.ui'
 **
-** Created: Mon Sep 17 00:38:07 2001
+** Created: Tue Sep 18 12:00:22 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -14,7 +14,6 @@
 class QVBoxLayout; 
 class QHBoxLayout; 
 class QGridLayout; 
-class CAboutWidget;
 class CFontsWidget;
 class CSettingsWidget;
 class CXftConfigSettingsWidget;
@@ -35,8 +34,7 @@ public:
     CXftConfigSettingsWidget* itsAA;
     QWidget* itsSettingsTab;
     CSettingsWidget* itsSettings;
-    QWidget* itsAboutTab;
-    CAboutWidget* CAboutWidget1;
+
 
 public slots:
     virtual void tabChanged(QWidget *);
@@ -46,7 +44,6 @@ protected:
     QGridLayout* itsFontsTabLayout;
     QGridLayout* itsAATabLayout;
     QGridLayout* itsSettingsTabLayout;
-    QGridLayout* itsAboutTabLayout;
 };
 
 #endif // CKFIMAINWIDGETDATA_H

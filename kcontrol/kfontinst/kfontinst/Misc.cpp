@@ -35,6 +35,7 @@
 #include <qfileinfo.h>
 #include <qfile.h>
 #include <qcombobox.h>
+#include <qregexp.h>
 #include <ctype.h>
 
 bool CMisc::dExists(const QString &d)

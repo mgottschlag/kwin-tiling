@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>CFontsWidgetData</class>
 <comment>////////////////////////////////////////////////////////////////////////////////
 //
@@ -27,14 +27,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////</comment>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>CFontsWidgetData</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
@@ -42,56 +39,51 @@
             <height>397</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Form1</string>
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <widget row="1"  column="0" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QGroupBox" row="1" column="0">
+            <property name="name">
                 <cstring>itsBox</cstring>
             </property>
-            <property stdset="1">
-                <name>sizePolicy</name>
+            <property name="sizePolicy">
                 <sizepolicy>
                     <hsizetype>1</hsizetype>
                     <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string>Preview:</string>
             </property>
-            <property>
-                <name>layoutMargin</name>
+            <property name="layoutMargin" stdset="0">
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>6</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="0"  column="0" >
-                    <class>QFrame</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QFrame" row="0" column="0">
+                    <property name="name">
                         <cstring>itsBackground</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>palette</name>
+                    <property name="palette">
                         <palette>
                             <active>
                                 <color>
@@ -163,6 +155,16 @@
                                     <red>255</red>
                                     <green>255</green>
                                     <blue>255</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
                                 </color>
                             </active>
                             <disabled>
@@ -236,6 +238,16 @@
                                     <green>255</green>
                                     <blue>255</blue>
                                 </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
                             </disabled>
                             <inactive>
                                 <color>
@@ -308,100 +320,97 @@
                                     <green>255</green>
                                     <blue>255</blue>
                                 </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
+                                <color>
+                                    <red>0</red>
+                                    <green>0</green>
+                                    <blue>0</blue>
+                                </color>
                             </inactive>
                         </palette>
                     </property>
-                    <property stdset="1">
-                        <name>frameShape</name>
+                    <property name="frameShape">
                         <enum>WinPanel</enum>
                     </property>
-                    <property stdset="1">
-                        <name>frameShadow</name>
+                    <property name="frameShadow">
                         <enum>Sunken</enum>
                     </property>
-                    <property>
-                        <name>layoutMargin</name>
+                    <property name="layoutMargin" stdset="0">
                     </property>
-                    <property>
-                        <name>layoutSpacing</name>
+                    <property name="layoutSpacing" stdset="0">
                     </property>
                     <grid>
-                        <property stdset="1">
-                            <name>margin</name>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
                             <number>2</number>
                         </property>
-                        <property stdset="1">
-                            <name>spacing</name>
+                        <property name="spacing">
                             <number>0</number>
                         </property>
-                        <widget row="0"  column="3" >
-                            <class>QProgressBar</class>
-                            <property stdset="1">
-                                <name>name</name>
+                        <widget class="QProgressBar" row="0" column="3">
+                            <property name="name">
                                 <cstring>itsProgress</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>sizePolicy</name>
+                            <property name="sizePolicy">
                                 <sizepolicy>
                                     <hsizetype>0</hsizetype>
                                     <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
-                            <property stdset="1">
-                                <name>minimumSize</name>
+                            <property name="minimumSize">
                                 <size>
                                     <width>160</width>
                                     <height>0</height>
                                 </size>
                             </property>
-                            <property stdset="1">
-                                <name>maximumSize</name>
+                            <property name="maximumSize">
                                 <size>
                                     <width>160</width>
                                     <height>32767</height>
                                 </size>
                             </property>
                         </widget>
-                        <widget row="0"  column="1" >
-                            <class>QLabel</class>
-                            <property stdset="1">
-                                <name>name</name>
+                        <widget class="QLabel" row="0" column="1">
+                            <property name="name">
                                 <cstring>itsLabel</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>sizePolicy</name>
+                            <property name="sizePolicy">
                                 <sizepolicy>
                                     <hsizetype>5</hsizetype>
                                     <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
-                            <property stdset="1">
-                                <name>minimumSize</name>
+                            <property name="minimumSize">
                                 <size>
                                     <width>0</width>
                                     <height>32</height>
                                 </size>
                             </property>
-                            <property stdset="1">
-                                <name>text</name>
+                            <property name="text">
                                 <string>No preview available</string>
                             </property>
                         </widget>
-                        <spacer row="0"  column="2" >
-                            <property>
-                                <name>name</name>
+                        <spacer row="0" column="2">
+                            <property name="name">
                                 <cstring>Spacer1</cstring>
                             </property>
-                            <property stdset="1">
-                                <name>orientation</name>
+                            <property name="orientation">
                                 <enum>Horizontal</enum>
                             </property>
-                            <property stdset="1">
-                                <name>sizeType</name>
+                            <property name="sizeType">
                                 <enum>Expanding</enum>
                             </property>
-                            <property>
-                                <name>sizeHint</name>
+                            <property name="sizeHint">
                                 <size>
                                     <width>20</width>
                                     <height>20</height>
@@ -412,11 +421,17 @@
                 </widget>
             </grid>
         </widget>
-        <widget row="0"  column="0" >
-            <class>QSplitter</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QSplitter" row="0" column="0">
+            <property name="name">
                 <cstring>itsSplitter</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>3</hsizetype>
+                    <vsizetype>3</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
             </property>
         </widget>
     </grid>
@@ -433,17 +448,21 @@
         <sizepolicy>
             <hordata>5</hordata>
             <verdata>5</verdata>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
         </sizepolicy>
         <pixmap>image0</pixmap>
     </customwidget>
 </customwidgets>
 <images>
-    <image>
-        <name>image0</name>
+    <image name="image0">
         <data format="XPM.GZ" length="646">789c6dd2c10ac2300c00d07bbf2234b7229d1ddec44f503c0ae2a154410f53d0ed20e2bf6bdb656dd6861dd23d9a66591b0587fd1654235ebded6f0edcd53e419d87ae7b1f4f9b8f906d0bfe012317426a70b07bdc2f3ec77f8ed6b89559061a0343d06a124cc105596482585094bc0ae599b04646c9018926491b2205e140c485cace25755c175d0a967b622ff900b8cc9c7d29af594ea722d589167f813aa852ba07d94b9dce296e883fe7bb163f23896753</data>
     </image>
 </images>
 <connections>
-    <slot access="public">preview(const QString &amp;)</slot>
 </connections>
+<slots>
+    <slot>preview(const QString &amp;)</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

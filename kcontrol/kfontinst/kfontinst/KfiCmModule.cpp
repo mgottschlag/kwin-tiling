@@ -41,7 +41,8 @@ static bool firstTime=true;
 CKfiCmModule * CKfiCmModule::theirInstance=NULL;
 
 CKfiCmModule::CKfiCmModule(QWidget *parent, const char *name)
-            : KCModule(parent, name)
+            : KCModule(parent, name),
+              itsAboutData(NULL)
 {
     QGridLayout *topLayout=new QGridLayout(this);
 
@@ -58,6 +59,33 @@ CKfiCmModule::~CKfiCmModule()
 {
     theirInstance=NULL;
     CKfi::destroy();
+
+    if(itsAboutData)
+        delete itsAboutData;
+}
+
+const KAboutData * CKfiCmModule::aboutData() const
+{
+    if(!itsAboutData)
+    {
+        CKfiCmModule *that = const_cast<CKfiCmModule *>(this);
+
+        that->itsAboutData=new KAboutData("kfontinst",
+                                          I18N_NOOP("KFontinst"),
+                                          CKfi::constVersion,
+                                          I18N_NOOP("Font installer and previewer"),
+                                          KAboutData::License_GPL,
+                                          I18N_NOOP("(C) Craig Drummond, 2000, 2001"),
+                                          I18N_NOOP("\n(TQMM, PS - MBFM y CGD)"));
+
+        that->itsAboutData->addAuthor("Craig Drummond", "Developer and maintainer", "cpdrummond@uklinux.net");
+        that->itsAboutData->addAuthor("Michael Davis", I18N_NOOP("StarOffice xprinter.prolog patch"));
+#ifdef HAVE_XFT
+        that->itsAboutData->addAuthor("Keith Packard", I18N_NOOP("XftConfig parser"));
+#endif
+    }
+
+    return itsAboutData;
 }
 
 void CKfiCmModule::madeChanges(bool m)

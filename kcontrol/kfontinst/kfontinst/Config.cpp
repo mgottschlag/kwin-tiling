@@ -352,11 +352,15 @@ CConfig::CConfig()
 
     setGroup("SystemConfiguration");
     itsExclusiveEncoding=readBoolEntry("ExclusiveEncoding");
+#if QT_VERSION < 300
     itsEncoding=readEntry("Encoding", QFont::encodingName(QFont::charSetForLocale()));
+#else
+    itsEncoding=readEntry("Encoding", "iso8859-1");
+#endif
     itsDoAfm=readBoolEntry("DoAfm");
     itsDoTtAfms=readBoolEntry("DoTtAfms", true);
     itsDoT1Afms=readBoolEntry("DoT1Afms", true);
-    itsAfmEncoding=readEntry("AfmEncoding", QFont::encodingName(QFont::charSetForLocale()));
+    itsAfmEncoding=readEntry("AfmEncoding", "iso8859-1"); // QFont::encodingName(QFont::charSetForLocale()));
     intVal=readNumEntry("XRefreshCmd", XREFRESH_XSET_FP_REHASH);
     itsXRefreshCmd=intVal>=0 && intVal <=XREFRESH_CUSTOM ? (EXFontListRefresh)intVal : XREFRESH_XSET_FP_REHASH;
     itsCustomXRefreshCmd=readEntry("CustomXRefreshCmd");

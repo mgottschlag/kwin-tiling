@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI>
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
 <class>CInstUninstSettingsWidgetData</class>
 <comment>////////////////////////////////////////////////////////////////////////////////
 //
@@ -27,216 +27,178 @@
 ////////////////////////////////////////////////////////////////////////////////
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////</comment>
-<widget>
-    <class>QWidget</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QWidget">
+    <property name="name">
         <cstring>CInstUninstSettingsWidgetData</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>307</width>
+            <width>314</width>
             <height>187</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>sizePolicy</name>
+    <property name="sizePolicy">
         <sizepolicy>
             <hsizetype>3</hsizetype>
             <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
         </sizepolicy>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Form2</string>
     </property>
     <grid>
-        <property stdset="1">
-            <name>margin</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
             <number>11</number>
         </property>
-        <property stdset="1">
-            <name>spacing</name>
+        <property name="spacing">
             <number>6</number>
         </property>
-        <spacer row="3"  column="1" >
-            <property>
-                <name>name</name>
+        <spacer row="3" column="1">
+            <property name="name">
                 <cstring>Spacer5</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Vertical</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
+            <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
-            <property>
-                <name>sizeHint</name>
+            <property name="sizeHint">
                 <size>
                     <width>20</width>
                     <height>20</height>
                 </size>
             </property>
         </spacer>
-        <widget row="0"  column="0"  rowspan="1"  colspan="2" >
-            <class>QGroupBox</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
                 <cstring>GroupBox5</cstring>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string>Upon Install:</string>
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="0"  column="0" >
-                    <class>QCheckBox</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QCheckBox" row="0" column="0">
+                    <property name="name">
                         <cstring>itsFixTtfPsNamesUponInstall</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>Fix &amp;TrueType Postscript names table</string>
                     </property>
-                    <property>
-                        <name>whatsThis</name>
-                        <string>Some TrueType fonts have incorrect
-Postscript names for certain characters.
+                    <property name="whatsThis" stdset="0">
+                        <string>Some TrueType fonts have incorrect Postscript names for certain characters.
 
-For example, "Euro" is sometimes listed
-as "uni20ac". This would affect any
-Postscript output from applications (and
-most produce Postscript when printing),
-as it would list the use of the "Euro"
-character -but when this Postscript
-output is sent to the printer, or viewed,
-the "Euro" symbol would not be found.
+For example, "Euro" is sometimes listed as "uni20ac". This would affect any Postscript output from applications (and most produce Postscript when printing), as it would list the use of the "Euro" character -but when this Postscript output is sent to the printer, or viewed, the "Euro" symbol would not be found.
 
-Selecting this option will cause the installer
-to automatically correct any broken fonts.</string>
+Selecting this option will cause the installer to automatically correct any broken fonts.</string>
                     </property>
                 </widget>
             </grid>
         </widget>
-        <widget row="2"  column="0"  rowspan="1"  colspan="2" >
-            <class>QButtonGroup</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QButtonGroup" row="2" column="0" rowspan="1" colspan="2">
+            <property name="name">
                 <cstring>ButtonGroup1</cstring>
             </property>
-            <property stdset="1">
-                <name>title</name>
+            <property name="title">
                 <string>Uninstall - "Move" To Folder:</string>
             </property>
             <grid>
-                <property stdset="1">
-                    <name>margin</name>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
                     <number>11</number>
                 </property>
-                <property stdset="1">
-                    <name>spacing</name>
+                <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget row="0"  column="3" >
-                    <class>QPushButton</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QPushButton" row="0" column="3">
+                    <property name="name">
                         <cstring>itsUninstallDirButton</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
+                    <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>0</hsizetype>
                             <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property stdset="1">
-                        <name>minimumSize</name>
+                    <property name="minimumSize">
                         <size>
                             <width>22</width>
                             <height>22</height>
                         </size>
                     </property>
-                    <property stdset="1">
-                        <name>maximumSize</name>
+                    <property name="maximumSize">
                         <size>
                             <width>22</width>
                             <height>22</height>
                         </size>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>.</string>
                     </property>
-                    <property>
-                        <name>toolTip</name>
+                    <property name="toolTip" stdset="0">
                         <string>Change Folder.</string>
                     </property>
                 </widget>
-                <widget row="0"  column="2" >
-                    <class>QLabel</class>
-                    <property stdset="1">
-                        <name>name</name>
+                <widget class="QLabel" row="0" column="2">
+                    <property name="name">
                         <cstring>itsUninstallDirText</cstring>
                     </property>
-                    <property stdset="1">
-                        <name>sizePolicy</name>
+                    <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>3</hsizetype>
                             <vsizetype>1</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
                         </sizepolicy>
                     </property>
-                    <property stdset="1">
-                        <name>frameShape</name>
+                    <property name="frameShape">
                         <enum>Panel</enum>
                     </property>
-                    <property stdset="1">
-                        <name>frameShadow</name>
+                    <property name="frameShadow">
                         <enum>Sunken</enum>
                     </property>
-                    <property stdset="1">
-                        <name>text</name>
+                    <property name="text">
                         <string>TextLabel4</string>
                     </property>
-                    <property stdset="1">
-                        <name>alignment</name>
-                        <set>AlignVCenter|AlignLeft</set>
+                    <property name="alignment">
+                        <set>AlignAuto|AlignVCenter|AlignLeft</set>
                     </property>
-                    <property>
-                        <name>wordwrap</name>
+                    <property name="wordwrap" stdset="0">
                     </property>
                 </widget>
             </grid>
         </widget>
-        <spacer row="1"  column="0" >
-            <property>
-                <name>name</name>
+        <spacer row="1" column="0">
+            <property name="name">
                 <cstring>Spacer1_2_2_2</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Vertical</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
+            <property name="sizeType">
                 <enum>Fixed</enum>
             </property>
-            <property>
-                <name>sizeHint</name>
+            <property name="sizeHint">
                 <size>
                     <width>16</width>
                     <height>16</height>
@@ -258,13 +220,16 @@ to automatically correct any broken fonts.</string>
         <receiver>CInstUninstSettingsWidgetData</receiver>
         <slot>uninstallDirButtonPressed()</slot>
     </connection>
-    <slot access="public">fixTtfNamesSelected(bool)</slot>
-    <slot access="public">moveToSelected(bool)</slot>
-    <slot access="public">processAfmsSelected(bool)</slot>
-    <slot access="public">uninstallDirButtonPressed()</slot>
 </connections>
 <tabstops>
     <tabstop>itsFixTtfPsNamesUponInstall</tabstop>
     <tabstop>itsUninstallDirButton</tabstop>
 </tabstops>
+<slots>
+    <slot>fixTtfNamesSelected(bool)</slot>
+    <slot>moveToSelected(bool)</slot>
+    <slot>processAfmsSelected(bool)</slot>
+    <slot>uninstallDirButtonPressed()</slot>
+</slots>
+<layoutdefaults spacing="6" margin="11"/>
 </UI>

@@ -44,8 +44,6 @@ libkcm_kfontinst_la_SOURCES = \
 	BufferedFile.cpp \
 	StarOfficeConfig.cpp \
 	XConfig.cpp \
-	AboutWidget.cpp \
-	AboutWidgetData.cpp \
 	SettingsWizard.cpp \
 	SettingsWizardData.cpp \
 	XftConfigSettingsWidget.cpp \
@@ -101,8 +99,6 @@ EXTRA_DIST = \
 	BufferedFile.h \
 	StarOfficeConfig.h \
 	XConfig.h \
-	AboutWidget.h \
-	AboutWidgetData.h \
 	SettingsWizard.h \
 	SettingsWizardData.h \
 	XftConfigSettingsWidget.h \

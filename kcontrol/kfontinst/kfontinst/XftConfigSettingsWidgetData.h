@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'XftConfigSettingsWidget.ui'
 **
-** Created: Fri Sep 7 00:51:09 2001
+** Created: Tue Sep 18 12:19:29 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -38,6 +38,7 @@ public:
     QPushButton* itsAdvancedButton;
     QCheckBox* itsExcludeRangeCheck;
     QPushButton* itsSaveButton;
+
 
 public slots:
     virtual void advancedButtonPressed();

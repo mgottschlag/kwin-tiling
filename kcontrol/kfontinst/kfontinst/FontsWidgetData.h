@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'FontsWidget.ui'
 **
-** Created: Mon Jun 18 22:19:59 2001
+** Created: Tue Sep 18 12:00:39 2001
 **      by:  The User Interface Compiler (uic)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -33,6 +33,7 @@ public:
     KProgress* itsProgress;
     QLabel* itsLabel;
     QSplitter* itsSplitter;
+
 
 public slots:
     virtual void preview(const QString &);
