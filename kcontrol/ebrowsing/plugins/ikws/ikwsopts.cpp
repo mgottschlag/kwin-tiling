@@ -229,7 +229,7 @@ void InternetKeywordsOptions::load()
 
     bool searchEnabled = config.readBoolEntry("SearchEngineShortcutsEnabled", true);
     cb_enableSearchKeywords->setChecked( searchEnabled );
-    gb_search->setEnabled( searchEnabled );
+    changeSearchKeywordsEnabled();
 
     if (lv_searchProviders->childCount())
       lv_searchProviders->setSelected(lv_searchProviders->firstChild(), true);
