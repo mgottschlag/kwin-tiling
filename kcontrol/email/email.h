@@ -3,7 +3,6 @@
 
 #include <qvariant.h>
 #include <qdialog.h>
-#include <qvbox.h>
 
 #include <kcmodule.h>
 
@@ -14,17 +13,18 @@ class QLabel;
 class KLineEdit;
 class QPushButton;
 class QRadioButton;
+class QVBox;
 
 class KComboBox;
 class KEMailSettings;
 
 class topKCMEmail
 	: public KCModule
-{
-    Q_OBJECT
+{ 
+	Q_OBJECT
 
 public:
-	topKCMEmail (QWidget* parent = 0, const char* name = 0);
+	topKCMEmail (QWidget *parent = 0, const char *name = 0);
 	~topKCMEmail ();
 
         void load();
@@ -42,6 +42,7 @@ public slots:
 
 protected:
 	QGroupBox *grpClient;
+
 	KLineEdit *txtEMailClient;
 	QPushButton *btnBrowseClient;
 	QCheckBox *chkRunTerminal;
@@ -51,8 +52,9 @@ protected:
 	QRadioButton *radIMAP, *radPOP, *radICMLocal;
 	QPushButton *btnICMSettings;
 
-        QButtonGroup *grpOutgoing;
-        QVBox *grpOGM;
+
+	QButtonGroup *grpOutgoing;
+	QVBox *grpOGM;
 	QPushButton *btnOGMSettings;
 	QRadioButton *radSMTP, *radOGMLocal;
 
@@ -72,7 +74,7 @@ protected slots:
 
 protected:
 	void clearData();
-	KEMailSettings *pSettings;
+	KEMailSettings *pSettings;	
 	QString m_sICMPassword, m_sICMUsername, m_sICMPath, m_sICMHost;
 	QString m_sOGMPassword, m_sOGMUsername, m_sOGMCommand, m_sOGMHost;
 	unsigned int m_uOGMPort, m_uICMPort;
