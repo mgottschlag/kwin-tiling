@@ -69,16 +69,19 @@ void ShortcutsModule::save()
 {
 	kdDebug(125) << "ShortcutsModule::save()" << endl;
 
+	// FIXME: This isn't working.  Why? -- ellis, 2002/01/27
+	// Check for old group,
+	if( KGlobal::config()->hasGroup( "Keys" ) ) {
+		KGlobal::config()->deleteGroup( "Keys", true, true );
+	}
+	KGlobal::config()->sync();
+
 	m_pkcGeneral->commitChanges();
 	m_pkcSequence->commitChanges();
 	m_pkcApplication->save();
 
 	m_actionsGeneral.writeActions( "Global Shortcuts", 0, true, true );
 	m_actionsSequence.writeActions( "Global Shortcuts", 0, true, true );
-
-	// TODO: Add the widget for this
-	//KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
-	//KGlobal::config()->writeEntry( "Use Four Modifier Keys", m_pchkUseFourModifierKeys, true, true );
 
 	KIPC::sendMessageAll( KIPC::SettingsChanged, KApplication::SETTINGS_SHORTCUTS );
 }
@@ -175,7 +178,7 @@ void ShortcutsModule::initGUI()
 	m_pTab->addTab( m_pkcGeneral, i18n("&Global Shortcuts") );
 	connect( m_pkcGeneral, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
-	m_pListSequence = new KAccelShortcutList( m_actionsGeneral, true );
+	m_pListSequence = new KAccelShortcutList( m_actionsSequence, true );
 	m_pkcSequence = new KKeyChooser( m_pListSequence, this, KKeyChooser::Global, false );
 	m_pTab->addTab( m_pkcSequence, i18n("Shortcut Se&quences") );
 	connect( m_pkcSequence, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
@@ -287,6 +290,7 @@ void ShortcutsModule::slotKeyChange()
 
 void ShortcutsModule::slotSelectScheme( int )
 {
+	i18n("Your current changes will be lost if you load another scheme before saving this one.");
 	kdDebug(125) << "ShortcutsModule::slotSelectScheme( " << m_pcbSchemes->currentItem() << " )" << endl;
 	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentItem() ];
 
@@ -294,7 +298,7 @@ void ShortcutsModule::slotSelectScheme( int )
 		// TODO: remove nulls params
 		m_pkcGeneral->syncToConfig( "Global Shortcuts", 0, true );
 		m_pkcSequence->syncToConfig( "Global Shortcuts", 0, true );
-		m_pkcApplication->syncToConfig( "Shortcuts", 0, true );
+		m_pkcApplication->syncToConfig( "Shortcuts", 0, false );
 	} else {
 		KSimpleConfig config( sFilename );
 		config.setGroup( "Settings" );
@@ -315,7 +319,7 @@ void ShortcutsModule::slotSelectScheme( int )
 
 		m_pkcGeneral->syncToConfig( "Global Shortcuts", &config, true );
 		m_pkcSequence->syncToConfig( "Global Shortcuts", &config, true );
-		m_pkcApplication->syncToConfig( "Shortcuts", &config, true );
+		m_pkcApplication->syncToConfig( "Shortcuts", &config, false );
 	}
 
 	m_prbPre->setChecked( true );
