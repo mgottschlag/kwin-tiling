@@ -105,10 +105,11 @@ KBackground::~KBackground( ){
 }
 
 KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/* */)
-    : KCModule(parent, name),
+    : KCModule(KBackGndFactory::instance(), parent, name),
     m_Max( KWin::numberOfDesktops() ),
     m_Renderer( m_Max )
 {
+    kdDebug() << "KBackground\n";
     m_Renderer.setAutoDelete(true);
     KImageIO::registerFormats();
 
