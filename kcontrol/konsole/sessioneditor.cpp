@@ -161,7 +161,7 @@ void SessionEditor::loadAllSession()
       sessionList->insertItem(i18n("Unnamed"),i);
     else
       sessionList->insertItem(sesname,i);
-
+    delete co;
     i++;
   }
   emit getList();
@@ -225,6 +225,7 @@ void SessionEditor::readSession(int num)
             counter++;
         }
         schemaCombo->setCurrentItem(i);
+        delete co;
     }
     sesMod=false;
     oldSession=num;
@@ -305,7 +306,7 @@ void SessionEditor::saveCurrent()
   co->writeEntry("KeyTab",*keytabFilename.at(keytabCombo->currentItem()));
   co->writeEntry("Schema",*schemaFilename.at(schemaCombo->currentItem()));
   co->sync();
-
+  delete co;
   sesMod=false;
   loadAllSession();
   readSession(0);
