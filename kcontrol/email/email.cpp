@@ -558,7 +558,7 @@ void topKCMEmail::slotComboChanged(const QString &name)
 void topKCMEmail::slotICMSettings()
 {
 	if (!radICMLocal->isChecked()) {
-		UserNameDlg *ud = new UserNameDlg(this, i18n("Incomingg Mail Retrieval Settings"));
+		UserNameDlg *ud = new UserNameDlg(this, i18n("Incoming Mail Retrieval Settings"));
 		ud->txtUsername->setText(m_sICMUsername);
 		ud->txtPass->setText(m_sICMPassword);
 		ud->txtHost->setText(m_sICMHost);
