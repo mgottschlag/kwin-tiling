@@ -41,17 +41,13 @@ KDMConfig::KDMConfig( )
 void
 KDMConfig::insertUsers( QIconView *iconview, QStringList s, bool sorted)
 {
+     kc->setGroup( QString::fromLatin1("KDM") );
      QPixmap default_pix( locate("user_pic", 
 				 QString::fromLatin1("default.png")));
      if( default_pix.isNull())
 	  printf("Cant get default pixmap from \"default.png\"\n");
      if( s.isEmpty()) {
           QStringList no_users = kc->readListEntry( QString::fromLatin1("NoUsers"));
-	  for ( QStringList::Iterator it = no_users.begin(); 
-		it != no_users.end();
-		++it ) {
-	    printf("No_users: %s \n", (*it).latin1());
-	  }
           struct passwd *ps;
 #define CHECK_STRING( x) (x != 0 && x[0] != 0)
           setpwent();
