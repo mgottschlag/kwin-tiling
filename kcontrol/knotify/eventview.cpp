@@ -112,18 +112,22 @@ void EventView::itemSelected(int item)
 		if (present & KNotifyClient::Messagebox)
 			enabled->setChecked(true);
 		break;
+/*		
 	case (2):
 		if (present & KNotifyClient::Logwindow)
 			enabled->setChecked(true);
 		break;
+*/
 	case (3):
 		file->show();
 		file->setText(logfile);
+		/*
 		if (present & KNotifyClient::Logfile)
 		{
 			enabled->setChecked(true);
 			file->setEnabled(true);
 		}
+		*/
 		break;
 	case (4):
 		if (present & KNotifyClient::Stderr)
@@ -151,9 +155,11 @@ void EventView::itemToggled(bool on)
 	case (2):
 		p=KNotifyClient::Logwindow;
 		break;
+		/*
 	case (3):
 		p=KNotifyClient::Logfile;
 		break;
+		*/
 	case (4):
 		p=KNotifyClient::Stderr;
 		break;
@@ -206,8 +212,9 @@ void EventView::load(KConfig *config, const QString &section)
 		setPixmap(1, true);
 	if (present & KNotifyClient::Logwindow)
 		setPixmap(2, true);
-	if (present & KNotifyClient::Logfile)
-		setPixmap(3, true);
+	#warning njord, please fix this
+	//	if (present & KNotifyClient::Logfile)
+	//		setPixmap(3, true);
 	if (present & KNotifyClient::Stderr)
 		setPixmap(4, true);
 }
