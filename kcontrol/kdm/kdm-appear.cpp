@@ -19,7 +19,7 @@
 
 
 #include <unistd.h>
-#include <sys/types.h> 
+#include <sys/types.h>
 
 
 #include <qbuttongroup.h>
@@ -48,19 +48,19 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
   QString wtstr;
-  QVBoxLayout *vbox = new QVBoxLayout(this, KDialog::marginHint(), 
+  QVBoxLayout *vbox = new QVBoxLayout(this, KDialog::marginHint(),
 				      KDialog::spacingHint(), "vbox");
   QGroupBox *group = new QGroupBox(i18n("Appearance"), this);
-  vbox->addWidget(group);
+  vbox->addWidget(group, 1);
 
-  QGridLayout *grid = new QGridLayout( group, 5, 3, KDialog::spacingHint(), 
+  QGridLayout *grid = new QGridLayout( group, 5, 3, KDialog::spacingHint(),
 				       KDialog::spacingHint(), "grid");
   grid->addRowSpacing(0,group->fontMetrics().height());
   grid->setColStretch(2,1);
 
   QLabel *label = new QLabel(i18n("Greeting string:"), group);
   greetstr_lined = new KLineEdit(group);
-  connect(greetstr_lined, SIGNAL(textChanged(const QString&)), 
+  connect(greetstr_lined, SIGNAL(textChanged(const QString&)),
 	  this, SLOT(changed()));
   grid->addWidget(label, 1,0 );
   grid->addMultiCellWidget(greetstr_lined, 1,1, 1,2);
@@ -80,9 +80,9 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   logoRadio = new QRadioButton( i18n("Show KDM logo"), helper );
   clockRadio = new QRadioButton( i18n("Show clock"), helper );
   QButtonGroup *buttonGroup = new QButtonGroup( helper );
-  connect( buttonGroup, SIGNAL(clicked(int)), 
+  connect( buttonGroup, SIGNAL(clicked(int)),
 	   this, SLOT(slotRadioClicked(int)) );
-  connect( buttonGroup, SIGNAL(clicked(int)), 
+  connect( buttonGroup, SIGNAL(clicked(int)),
 	   this, SLOT(changed()) );
   buttonGroup->insert(logoRadio, KdmLogo);
   buttonGroup->insert(clockRadio, KdmClock);
@@ -137,7 +137,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
   // The Language group box
   group = new QGroupBox(i18n("Language"), this);
-  vbox->addWidget(group);
+  vbox->addWidget(group, 1);
 
   QGridLayout *hbox = new QGridLayout(group, 2, 2, KDialog::marginHint(), KDialog::spacingHint() );
 //  hbox->addRowSpacing(0, 15);
@@ -178,6 +178,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   loadLocaleList(countrycombo, QString::fromLatin1("l10n/"), QStringList());
   load();
 
+  vbox->addStretch(1);
+  
   // implement read-only mode
   if (getuid() != 0)
     {
@@ -228,7 +230,7 @@ void KDMAppearanceWidget::loadLocaleList(KLanguageCombo *combo, const QString &s
 	KSimpleConfig entry(*it);
 	entry.setGroup(QString::fromLatin1("KCM Locale"));
 	name = entry.readEntry(QString::fromLatin1("Name"), i18n("without name"));
-	
+
 	QString path = *it;
 	int index = path.findRev('/');
 	path = path.left(index);

@@ -4,7 +4,7 @@
  *
  * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
- * 
+ *
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
  */
@@ -29,6 +29,7 @@ class QStringList;
 class QButtonGroup;
 class QPalette;
 class QLabel;
+class QTabWidget;
 
 class KColorButton;
 class KBackgroundRenderer;
@@ -47,7 +48,7 @@ public:
     KBGMonitor(QWidget *parent) : QWidget(parent) {
 	setAcceptDrops(true);
     };
-	     
+
     // we don't want no steenking palette change
     virtual void setPalette(const QPalette &) {};
 
@@ -103,6 +104,8 @@ private:
     QComboBox *m_pArrangementBox;
     QPushButton *m_pBGSetupBut, *m_pMSetupBut;
     QPushButton *m_pBrowseBut;
+    QTabWidget *m_pTabWidget;
+    QWidget *m_pTab1, *m_pTab2;
     QMap<QString,int> m_Wallpaper;
 
     KBackgroundRenderer *m_Renderer[_maxDesktops];

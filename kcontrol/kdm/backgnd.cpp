@@ -5,6 +5,9 @@
  * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
  *
+ * Modified 2000.07.14 by Brad Hughes <bhughes@trolltech.com>
+ * Improve layout and consistency with KDesktop's background selection
+ *
  * Based on old backgnd.cpp:
  *
  * Copyright (c)  Martin R. Jones 1996
@@ -37,6 +40,7 @@
 #include <qhbox.h>
 #include <qevent.h>
 #include <qwhatsthis.h>
+#include <qtabwidget.h>
 
 #include <kapp.h>
 #include <kconfig.h>
@@ -82,7 +86,7 @@ void KBGMonitor::dropEvent(QDropEvent *e)
 	emit imageDropped(uri);
     }
 }
-				
+
 
 void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 {
@@ -99,10 +103,9 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pDirs = KGlobal::dirs();
 
     // Top layout
-    QGridLayout *top = new QGridLayout(this, 2, 2);
-    top->setSpacing(10); top->setMargin(10);
+    QGridLayout *top = new QGridLayout(this, 2, 1, 10, 10);
     top->setColStretch(0, 1);
-    top->setColStretch(1, 2);
+    // top->setColStretch(1, 2);
 
     // A nice button size. Translators can adapt this
     QPushButton *pbut = new QPushButton(i18n("abcdefgh"), this);
@@ -110,136 +113,145 @@ KBackground::KBackground(QWidget *parent, const char *name)
     delete pbut;
 
     /*
-    // Desktop chooser at (0, 0)
-    QGroupBox *group = new QGroupBox(i18n("Desktop"), this);
-    top->addWidget(group, 0, 0);
-    QVBoxLayout *vbox = new QVBoxLayout(group);
-    vbox->setMargin(10);
-    vbox->setSpacing(10);
-    vbox->addSpacing(10);
-    m_pDeskList = new QListBox(group);
-    connect(m_pDeskList, SIGNAL(highlighted(int)), SLOT(slotSelectDesk(int)));
-    vbox->addWidget(m_pDeskList);
-    m_pCBCommon = new QCheckBox(i18n("&Common Background"), group);
-    vbox->addWidget(m_pCBCommon);
-    connect(m_pCBCommon, SIGNAL(toggled(bool)), SLOT(slotCommonDesk(bool)));
+      // Desktop chooser at (0, 0)
+      QGroupBox *group = new QGroupBox(i18n("Desktop"), this);
+      top->addWidget(group, 0, 0);
+      QVBoxLayout *vbox = new QVBoxLayout(group);
+      vbox->setMargin(10);
+      vbox->setSpacing(10);
+      vbox->addSpacing(10);
+      m_pDeskList = new QListBox(group);
+      connect(m_pDeskList, SIGNAL(highlighted(int)), SLOT(slotSelectDesk(int)));
+      vbox->addWidget(m_pDeskList);
+      m_pCBCommon = new QCheckBox(i18n("&Common Background"), group);
+      vbox->addWidget(m_pCBCommon);
+      connect(m_pCBCommon, SIGNAL(toggled(bool)), SLOT(slotCommonDesk(bool)));
     */
-
-    // Background settings
-    QGroupBox *group = new QGroupBox(i18n("Background"), this);
-    top->addWidget(group, 1, 0);
-    QGridLayout *grid = new QGridLayout(group, 5, 2);
-    grid->setMargin(10);
-    grid->setSpacing(10);
-    grid->addRowSpacing(0, 10);
-    grid->setColStretch(0, 0);
-
-    QLabel *lbl = new QLabel(i18n("&Mode:"), group);
+        
+    // Preview monitor at (0,0)
+    QLabel *lbl = new QLabel(this);
+    lbl->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
     lbl->setFixedSize(lbl->sizeHint());
-    grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
-    m_pBackgroundBox = new QComboBox(group);
+    top->addWidget(lbl, 0,0); // 0,1, AlignCenter);
+    m_pMonitor = new KBGMonitor(lbl);
+    m_pMonitor->setGeometry(20, 10, 157, 111);
+    connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
+
+    QWhatsThis::add( m_pMonitor,
+		     i18n("Here you can see a preview of how KDM's background will look "
+			  "like using the current settings. You can even set a background "
+			  "picture by dragging it onto the preview (e.g. from Konqueror).") );
+
+    // Tabwidget at (1,0)
+    m_pTabWidget = new QTabWidget(this);
+    top->addWidget(m_pTabWidget, 1, 0);
+    
+    // Background settings on Tab 1
+    m_pTab1 = new QWidget(0, "Background Tab");
+    m_pTabWidget->addTab(m_pTab1, i18n("Back&ground"));
+    
+    // QGroupBox *group = new QGroupBox(i18n("Background"), this);
+    // top->addWidget(group, 1, 0);
+    
+    QGridLayout *grid = new QGridLayout(m_pTab1, 4, 3, 10, 10);
+    grid->setColStretch(1, 1);
+    grid->setColStretch(2, 1);
+
+    lbl = new QLabel(i18n("&Mode:"), m_pTab1);
+    lbl->setFixedSize(lbl->sizeHint());
+    grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
+    m_pBackgroundBox = new QComboBox(m_pTab1);
     connect(m_pBackgroundBox, SIGNAL(activated(int)), SLOT(slotBGMode(int)));
     lbl->setBuddy(m_pBackgroundBox);
-    grid->addWidget(m_pBackgroundBox, 1, 1);
+    grid->addWidget(m_pBackgroundBox, 0, 1);
 
     wtstr = i18n("Here you can change the way colors are applied to KDM's background."
-      " Apart of just a plain color you can choose gradients, custom patterns or a"
-      " background program (e.g. xearth).");
+		 " Apart of just a plain color you can choose gradients, custom patterns or a"
+		 " background program (e.g. xearth).");
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( m_pBackgroundBox, wtstr );
 
-    lbl = new QLabel(i18n("Color &1:"), group);
+    lbl = new QLabel(i18n("Color &1:"), m_pTab1);
     lbl->setFixedSize(lbl->sizeHint());
-    grid->addWidget(lbl, 2, 0, Qt::AlignLeft);
-    m_pColor1But = new KColorButton(group);
+    grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
+    m_pColor1But = new KColorButton(m_pTab1);
     connect(m_pColor1But, SIGNAL(changed(const QColor &)),
 	    SLOT(slotColor1(const QColor &)));
-    grid->addWidget(m_pColor1But, 2, 1);
+    grid->addWidget(m_pColor1But, 1, 1);
     lbl->setBuddy(m_pColor1But);
 
-    wtstr = i18n("By clicking on these buttons you can choose the colors KDM will use"
-      " to paint the background. If you selected a gradient or a pattern, you can choose"
-      " two colors.");
+    wtstr = i18n("By clicking on these buttons you can choose the colors KDM will use to "
+		 "paint the background. If you selected a gradient or a pattern, you can "
+		 "choose two colors.");
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( m_pColor1But, wtstr );
 
-    lbl = new QLabel(i18n("Color &2:"), group);
+    lbl = new QLabel(i18n("Color &2:"), m_pTab1);
     lbl->setFixedSize(lbl->sizeHint());
-    grid->addWidget(lbl, 3, 0, Qt::AlignLeft);
-    m_pColor2But = new KColorButton(group);
+    grid->addWidget(lbl, 2, 0, Qt::AlignLeft);
+    m_pColor2But = new KColorButton(m_pTab1);
     connect(m_pColor2But, SIGNAL(changed(const QColor &)),
 	    SLOT(slotColor2(const QColor &)));
-    grid->addWidget(m_pColor2But, 3, 1);
+    grid->addWidget(m_pColor2But, 2, 1);
     lbl->setBuddy(m_pColor2But);
 
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( m_pColor2But, wtstr );
 
     QHBoxLayout *hbox = new QHBoxLayout();
-    grid->addLayout(hbox, 4, 1);
-    m_pBGSetupBut = new QPushButton(i18n("&Setup"), group);
+    grid->addLayout(hbox, 3, 1);
+    m_pBGSetupBut = new QPushButton(i18n("&Setup"), m_pTab1);
     m_pBGSetupBut->setFixedSize(bsize);
     connect(m_pBGSetupBut, SIGNAL(clicked()), SLOT(slotBGSetup()));
     hbox->addWidget(m_pBGSetupBut);
     hbox->addStretch();
 
     QWhatsThis::add( m_pBGSetupBut, i18n("Click here to setup a pattern or a background"
-      " program."));
+					 " program."));
 
-
-    // Preview monitor at (0,1)
-    lbl = new QLabel(this);
-    lbl->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
+    // Wallpaper at Tab2
+    m_pTab2 = new QWidget(0, "Wallpaper Tab");
+    m_pTabWidget->addTab(m_pTab2, i18n("&Wallpaper"));
+        
+    // group = new QGroupBox(i18n("Wallpaper"), this);
+    // top->addWidget(group, 1, 1);
+    
+    grid = new QGridLayout(m_pTab2, 4, 3, 10, 10);
+    grid->setColStretch(1, 1);
+    grid->setColStretch(2, 1);
+    
+    lbl = new QLabel(i18n("M&ode:"), m_pTab2);
     lbl->setFixedSize(lbl->sizeHint());
-    top->addMultiCellWidget(lbl, 0,0,0,1, AlignCenter);
-    m_pMonitor = new KBGMonitor(lbl);
-    m_pMonitor->setGeometry(20, 10, 157, 111);
-    connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
-
-    QWhatsThis::add( m_pMonitor, i18n("Here you can see a preview of how KDM's background"
-      " will look like using the current settings. You can even set a background picture"
-      " by dragging it onto the preview (e.g. from Konqueror).") );
-
-    // Wallpaper at (1,1)
-    group = new QGroupBox(i18n("Wallpaper"), this);
-    top->addWidget(group, 1, 1);
-    grid = new QGridLayout(group, 6, 2);
-    grid->setMargin(10); grid->setSpacing(10);
-    grid->addRowSpacing(0, 10);
-    grid->addRowSpacing(4, 10);
-
-    lbl = new QLabel(i18n("M&ode:"), group);
-    lbl->setFixedSize(lbl->sizeHint());
-    grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
-    m_pArrangementBox = new QComboBox(group);
+    grid->addWidget(lbl, 0, 0, Qt::AlignLeft);
+    m_pArrangementBox = new QComboBox(m_pTab2);
     connect(m_pArrangementBox, SIGNAL(activated(int)), SLOT(slotWPMode(int)));
     lbl->setBuddy(m_pArrangementBox);
-    grid->addWidget(m_pArrangementBox, 1, 1);
+    grid->addWidget(m_pArrangementBox, 0, 1);
 
     wtstr = i18n("Here you can choose the way the selected picture will be used to cover"
-      " KDM's background. If you select \"No Wallpaper\", the colors settings will be used.");
+		 " KDM's background. If you select \"No Wallpaper\", the colors settings will be used.");
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( m_pArrangementBox, wtstr );
 
-    lbl = new QLabel(i18n("&Wallpaper"), group);
+    lbl = new QLabel(i18n("&Wallpaper"), m_pTab2);
     lbl->setFixedSize(lbl->sizeHint());
-    grid->addWidget(lbl, 2, 0, Qt::AlignLeft);
-    m_pWallpaperBox = new QComboBox(group);
+    grid->addWidget(lbl, 1, 0, Qt::AlignLeft);
+    m_pWallpaperBox = new QComboBox(m_pTab2);
     lbl->setBuddy(m_pWallpaperBox);
     connect(m_pWallpaperBox, SIGNAL(activated(const QString &)),
 	    SLOT(slotWallpaper(const QString &)));
-    grid->addWidget(m_pWallpaperBox, 2, 1);
+    grid->addWidget(m_pWallpaperBox, 1, 1);
 
     wtstr = i18n("Here you can choose from several wallpaper pictures, i.e. pictures"
-      " that have been installed in the system's or your wallpaper directory. If you"
-      " want to use other pictures, you can either click on the \"Browse\" button or"
-      " drag a picture (e.g. from Konqueror) onto the preview.");
+		 " that have been installed in the system's or your wallpaper directory. If you"
+		 " want to use other pictures, you can either click on the \"Browse\" button or"
+		 " drag a picture (e.g. from Konqueror) onto the preview.");
     QWhatsThis::add( lbl, wtstr );
     QWhatsThis::add( m_pWallpaperBox, wtstr );
 
     hbox = new QHBoxLayout();
-    grid->addLayout(hbox, 3, 1);
-    m_pBrowseBut = new QPushButton(i18n("&Browse"), group);
+    grid->addLayout(hbox, 2, 1);
+    m_pBrowseBut = new QPushButton(i18n("&Browse"), m_pTab2);
     m_pBrowseBut->setFixedSize(bsize);
     connect(m_pBrowseBut, SIGNAL(clicked()), SLOT(slotBrowseWallpaper()));
     hbox->addWidget(m_pBrowseBut);
@@ -247,13 +259,13 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     QWhatsThis::add( m_pBrowseBut, i18n("Click here to choose a wallpaper using a file dialog.") );
 
-    m_pCBMulti = new QCheckBox(i18n("M&ultiple:"), group);
+    m_pCBMulti = new QCheckBox(i18n("M&ultiple:"), m_pTab2);
     m_pCBMulti->setFixedSize(m_pCBMulti->sizeHint());
     connect(m_pCBMulti, SIGNAL(toggled(bool)), SLOT(slotMultiMode(bool)));
-    grid->addWidget(m_pCBMulti, 4, 0);
+    grid->addWidget(m_pCBMulti, 3, 0);
     hbox = new QHBoxLayout();
-    grid->addLayout(hbox, 4, 1);
-    m_pMSetupBut = new QPushButton(i18n("S&etup"), group);
+    grid->addLayout(hbox, 3, 1);
+    m_pMSetupBut = new QPushButton(i18n("S&etup"), m_pTab2);
     m_pMSetupBut->setFixedSize(bsize);
     connect(m_pMSetupBut, SIGNAL(clicked()), SLOT(slotSetupMulti()));
     hbox->addWidget(m_pMSetupBut);
@@ -275,17 +287,17 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     // read only mode
     if (getuid() != 0)
-      {
-	m_pCBMulti->setEnabled(false);
-	m_pBackgroundBox->setEnabled(false);
-	m_pWallpaperBox->setEnabled(false);
-	m_pArrangementBox->setEnabled(false);
-	m_pBGSetupBut->setEnabled(false);
-	m_pMSetupBut->setEnabled(false);
-	m_pBrowseBut->setEnabled(false);
-	m_pColor1But->setEnabled(false);
-	m_pColor2But->setEnabled(false);
-      }
+	{
+	    m_pCBMulti->setEnabled(false);
+	    m_pBackgroundBox->setEnabled(false);
+	    m_pWallpaperBox->setEnabled(false);
+	    m_pArrangementBox->setEnabled(false);
+	    m_pBGSetupBut->setEnabled(false);
+	    m_pMSetupBut->setEnabled(false);
+	    m_pBrowseBut->setEnabled(false);
+	    m_pColor1But->setEnabled(false);
+	    m_pColor2But->setEnabled(false);
+	}
 }
 
 
