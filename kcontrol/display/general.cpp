@@ -3,7 +3,7 @@
  * This file is part of the KDE project, module kcmdisplay.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
  * Copyright (C) 1997 Mark Donohoe
- * 
+ *
  * You can Freely distribute this program under the GNU General Public
  * License. See the file "COPYING" for the exact licensing terms.
  */
@@ -57,7 +57,7 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
 
     setTitle(i18n("Icon style"));
 
-    QGridLayout *grid = new QGridLayout(this, 7, 4, KDialog::marginHint(),
+    QGridLayout *grid = new QGridLayout(this, 5, 4, KDialog::marginHint(),
 					KDialog::spacingHint());
     grid->addRowSpacing(0, fontMetrics().lineSpacing());
 
@@ -113,14 +113,11 @@ KIconStyle::KIconStyle(QWidget *parent, const char *name)
     kdeGroup->insert(rb);
     grid->addWidget(rb, 4, 3);
 
+    /*
     QFrame *frame = new QFrame(this);
     frame->setFrameStyle(QFrame::HLine|QFrame::Sunken);
     grid->addMultiCellWidget(frame, 5, 5, 0, 3);
-      
-    singleClick = new QCheckBox(i18n("Single &click to activate"), this);
-    connect(singleClick, SIGNAL(clicked()), SLOT(slotSingleClick()));
-
-    grid->addMultiCellWidget(singleClick, 6, 6, 0, 3);
+    */
 
     config = new KConfig(QString::fromLatin1("kcmdisplayrc"));
     load();
@@ -140,7 +137,7 @@ void KIconStyle::load()
     static QString small  = QString::fromLatin1("Small");
 
     config->setGroup(QString::fromLatin1("KDE"));
-    
+
     // these two need to be reworked Real Soon
     QString s;
     s = config->readEntry(QString::fromLatin1("kpanelIconStyle"), normal);
@@ -154,9 +151,6 @@ void KIconStyle::load()
     if (s == large) m_KonqStyle = 0;
     if (s == small) m_KonqStyle = 2;
     konqGroup->setButton(m_KonqStyle);
-
-    bool b = config->readBoolEntry(QString::fromLatin1("SingleClick"), true);
-    singleClick->setChecked(b);
 
     // this is now handled in the new and improved way
     config->setGroup(QString::fromLatin1("Toolbar style"));
@@ -226,8 +220,6 @@ void KIconStyle::save()
     }
     config->writeEntry(QString::fromLatin1("konqIconStyle"), entry, true, true);
 
-    config->writeEntry(QString::fromLatin1("SingleClick"), singleClick->isChecked(), true, true);
-
     // this is now handled in the new and improved way
     config->setGroup(QString::fromLatin1("Toolbar style"));
     KIconLoader::Size size;
@@ -255,7 +247,6 @@ void KIconStyle::defaults()
     m_PanelStyle = 1; panelGroup->setButton(1);
     m_KonqStyle = 1; konqGroup->setButton(1);
     m_KDEStyle = 1; kdeGroup->setButton(1);
-    singleClick->setChecked(true);
     bChanged = true; emit changed(bChanged);
 }
 
@@ -276,11 +267,6 @@ void KIconStyle::slotKDE(int style)
 {
     m_KDEStyle = style;
     bChanged = true; emit changed(bChanged);
-}
-
-void KIconStyle::slotSingleClick()
-{
-  bChanged = true; emit changed(bChanged);
 }
 
 
@@ -354,13 +340,13 @@ void KThemeListBox::defaults()
     setSelected(defItem, true);
 }
 
-    
+
 void KThemeListBox::load()
 {
     setSelected(curItem, true);
 }
-    
-    
+
+
 void KThemeListBox::save()
 {
     if (currentItem()->text(0) == curName)
@@ -389,8 +375,8 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
     QBoxLayout *lay = new QHBoxLayout;
     topLayout->addLayout(lay);
 
-    QGroupBox *themeBox = new QGroupBox(1, Vertical, 
-					i18n("Widget style and theme:"), 
+    QGroupBox *themeBox = new QGroupBox(1, Vertical,
+					i18n("Widget style and theme:"),
 					this);
     lay->addWidget(themeBox);
 
@@ -426,7 +412,7 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
 
     vlay = new QVBoxLayout( tbStyle, 10 );
     vlay->addSpacing( tbStyle->fontMetrics().lineSpacing() );
-    
+
     QGridLayout *grid = new QGridLayout(2, 2);
     vlay->addLayout( grid );
 
@@ -523,7 +509,7 @@ void KGeneral::readSettings()
     int val = config->readNumEntry( "Highlighting", 1);
     tbUseHilite = val? true : false;
     tbMoveTransparent = config->readBoolEntry( "TransparentMoving", true);
-		    
+		
     config->setGroup("X11");
     useRM = config->readBoolEntry( "useResourceManager", true );
 }
@@ -533,7 +519,7 @@ void KGeneral::showSettings()
 {
     cbRes->setChecked(useRM);
     cbMac->setChecked(macStyle);
-    
+
     tbHilite->setChecked(tbHilite);
     tbTransp->setChecked(tbMoveTransparent);
 
@@ -599,13 +585,13 @@ void KGeneral::save()
     config->setGroup("Toolbar style");
     config->writeEntry("IconText", tbUseText, true, true);
     config->writeEntry("Highlighting", (int) tbUseHilite, true, true);
-    config->writeEntry("TransparentMoving", (int) tbMoveTransparent, 
+    config->writeEntry("TransparentMoving", (int) tbMoveTransparent,
 	    true, true);
 
     config->setGroup("X11");
     config->writeEntry("useResourceManager", useRM, true, true);
     config->sync();
-    
+
     if (useRM) {
 	QApplication::setOverrideCursor( waitCursor );
 	KProcess proc;
@@ -613,7 +599,7 @@ void KGeneral::save()
 	proc.start( KProcess::Block );
 	QApplication::restoreOverrideCursor();
     }
-    
+
     KIPC::sendMessageAll("KDEChangeGeneral");
     KWM::sendKWMCommand((macStyle ? "macStyleOn" : "macStyleOff"));
     QApplication::syncX();
