@@ -41,6 +41,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <time.h>
 
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
@@ -63,6 +64,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kconfig.h>
 #include <unistd.h>
 #include <kapp.h>
+#include <kstaticdeleter.h>
 #include <dcopclient.h>
 
 #include "server.h"
@@ -99,6 +101,7 @@ KSMClient::~KSMClient()
 {
     for ( SmProp* prop = properties.first(); prop; prop = properties.next() )
 	SmFreeProperty( prop );
+    if (clientId) free((void*)clientId);
 }
 
 SmProp* KSMClient::property( const char* name ) const
@@ -117,11 +120,40 @@ void KSMClient::resetState()
     waitForPhase2 = FALSE;
 }
 
+/*
+ * This fakes SmsGenerateClientID() in case we can't read our own hostname.
+ * In this case SmsGenerateClientID() returns NULL, but we really want a
+ * client ID, so we fake one.
+ */
+static KStaticDeleter<QString> smy_addr;
+char * safeSmsGenerateClientID( SmsConn c )
+{
+    char *ret = SmsGenerateClientID(c);
+    if (!ret) {
+        static QString *my_addr = 0;
+       if (!my_addr) {
+           qDebug("Can't get own host name. Your system is severely misconfigured\n");
+           my_addr = smy_addr.setObject(new QString);
+
+           /* Faking our IP address, the 0 below is "unknown" address format
+	      (1 would be IP, 2 would be DEC-NET format) */
+           my_addr->sprintf("0%.8x", KApplication::random());
+       }
+       /* Needs to be malloc(), to look the same as libSM */
+       ret = (char *)malloc(1+9+13+10+4+1 + /*safeness*/ 10);
+       static int sequence = 0;
+       sprintf(ret, "1%s%.13ld%.10d%.4d", my_addr->latin1(), (long)time(NULL),
+           getpid(), sequence);
+       sequence = (sequence + 1) % 10000;
+    }
+    return ret;
+}
+
 void KSMClient::registerClient( const char* previousId )
 {
     clientId = previousId;
     if ( !clientId )
-	clientId = SmsGenerateClientID( smsConn );
+	clientId = safeSmsGenerateClientID( smsConn );
     SmsRegisterClientReply( smsConn, (char*) clientId );
     SmsSaveYourself(smsConn, SmSaveLocal, FALSE, SmInteractStyleNone, FALSE);
 }
