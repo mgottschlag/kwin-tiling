@@ -66,7 +66,7 @@ private:
   QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm,
   			*fullDuplex;
   QButtonGroup *responseGroup;
-  QRadioButton *responseButton[3];
+  QRadioButton *responseButton[4];
 
   KConfig *config;
 };
