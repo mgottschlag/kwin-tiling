@@ -44,8 +44,8 @@
 CDiskFontListWidget::CDiskFontListWidget(QWidget *parent, const char *)
                    : CFontListWidget(parent, CConfig::DISK, false, false, i18n("Install From"), i18n("&Install"), i18n("Cha&nge Folder..."),
                                      CKfiGlobal::cfg().getInstallDir(),
-                                     QString(getenv("HOME"))+"/", i18n("Home Directory"), "folder_home",
-                                     "/", i18n("Root Directory"), "folder"),
+                                     QString(getenv("HOME"))+"/", i18n("Home Folder"), "folder_home",
+                                     "/", i18n("Root Folder"), "folder"),
                                      itsDestDir(QString::null)
 {
     connect(itsButton1, SIGNAL(clicked()), SLOT(install()));

@@ -76,7 +76,7 @@
                 <widget class="KListView" row="1" column="0" rowspan="1" colspan="3">
                     <column>
                         <property name="text">
-                            <string>Directory/File</string>
+                            <string>Folder/File</string>
                         </property>
                         <property name="clickable">
                             <bool>true</bool>

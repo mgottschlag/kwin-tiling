@@ -105,7 +105,7 @@ QString CXftConfigIncludesWidget::getFile(const QString &current, bool checkDupl
             if(file.contains('\"'))
                 KMessageBox::error(this, i18n("Entry cannot contain quotes!"), i18n("Error"));
             else if(CMisc::dExists(file))
-                KMessageBox::error(this, i18n("Entry is a directory!"), i18n("Error"));
+                KMessageBox::error(this, i18n("Entry is a folder!"), i18n("Error"));
             else if(checkDuplicates && NULL!=itsList->findItem(file))
                 KMessageBox::error(this, i18n("Entry already exists!"), i18n("Error"));
             else
