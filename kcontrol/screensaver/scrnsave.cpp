@@ -39,6 +39,7 @@
 #include <kservicegroup.h>
 #include <kgenericfactory.h>
 #include <kwin.h>
+#include <kdialog.h>
 
 #include <X11/Xlib.h>
 
@@ -167,18 +168,16 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     connect(mPreviewProc, SIGNAL(processExited(KProcess *)),
             this, SLOT(slotPreviewExited(KProcess *)));
 
-
-    QBoxLayout *topLayout = new QVBoxLayout(this, 10, 10);
-
-    QBoxLayout *helperLayout = new QHBoxLayout(topLayout, 10);
+    QBoxLayout *topLayout = new QHBoxLayout(this, 0, KDialog::spacingHint());
 
     // left column
-    QBoxLayout *vLayout = new QVBoxLayout(helperLayout, 10);
+    QBoxLayout *vLayout = new QVBoxLayout(topLayout, KDialog::spacingHint());
 
     mSaverGroup = new QGroupBox(i18n("Screen Saver"), this );
+    mSaverGroup->setColumnLayout( 0, Qt::Horizontal );
     vLayout->addWidget(mSaverGroup);
-    QBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup, 10 );
-    groupLayout->addSpacing(10);
+    QBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup->layout(), 
+        KDialog::spacingHint() );
 
     mSaverListView = new QListView( mSaverGroup );
     mSaverListView->addColumn("");
@@ -188,15 +187,15 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     QWhatsThis::add( mSaverListView, i18n("This is a list of the available"
       " screen savers. Select the one you want to use.") );
 
-    QBoxLayout* hlay = new QHBoxLayout(groupLayout, 10);
-    mSetupBt = new QPushButton(  i18n("&Setup..."), mSaverGroup );
+    QBoxLayout* hlay = new QHBoxLayout(groupLayout, KDialog::spacingHint());
+    mSetupBt = new QPushButton( i18n("&Setup..."), mSaverGroup );
     connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
     mSetupBt->setEnabled(false);
     hlay->addWidget( mSetupBt );
     QWhatsThis::add( mSetupBt, i18n("If the screen saver you selected has"
       " customizable features, you can set them up by clicking this button.") );
 
-    mTestBt = new QPushButton(  i18n("&Test"), mSaverGroup );
+    mTestBt = new QPushButton( i18n("&Test"), mSaverGroup );
     connect( mTestBt, SIGNAL( clicked() ), SLOT( slotTest() ) );
     mTestBt->setEnabled(false);
     hlay->addWidget( mTestBt );
@@ -205,7 +204,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
       " will look like.)") );
 
     // right column
-    vLayout = new QVBoxLayout(helperLayout, 10);
+    vLayout = new QVBoxLayout(topLayout, KDialog::spacingHint());
 
     mMonitorLabel = new QLabel( this );
     mMonitorLabel->setAlignment( AlignCenter );
@@ -217,7 +216,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mSettingsGroup = new QGroupBox( i18n("Settings"), this );
     mSettingsGroup->setColumnLayout( 0, Qt::Vertical );
     vLayout->addWidget( mSettingsGroup );
-    groupLayout = new QVBoxLayout( mSettingsGroup->layout(), 10 );
+    groupLayout = new QVBoxLayout( mSettingsGroup->layout(), 
+        KDialog::spacingHint() );
 
 
     mEnabledCheckBox = new QCheckBox(i18n("Start screen saver a&utomatically"), mSettingsGroup);
