@@ -169,7 +169,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     // Cursor theme tab
     themetab = new ThemePage(this);
     connect(themetab, SIGNAL(changed(bool)), SLOT(changed()));
-    tabwidget->addTab(themetab, i18n("&Cursor theme"));
+    tabwidget->addTab(themetab, i18n("&Cursor Theme"));
 
     // Advanced tab
     tab2 = new QWidget(0, "Advanced Tab");
