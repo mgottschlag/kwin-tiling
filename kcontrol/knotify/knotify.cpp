@@ -72,7 +72,7 @@ KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
     connect( m_appCombo, SIGNAL( activated( const QString& ) ),
              SLOT( slotAppActivated( const QString& )) );
 
-    connect( m_notifyWidget->m_playerButton, SIGNAL( clicked() ), 
+    connect( m_notifyWidget->m_playButton, SIGNAL( clicked() ), 
              SLOT( slotPlayerSettings()));
     
     load();
