@@ -406,7 +406,7 @@ void KDEDConfig::slotStartService()
 	// Special case: kxmlrpcd
 	if (service == KXMLRPCD)
 	{
-		kapp->startServiceByDesktopName(KXMLRPCD);
+		KApplication::startServiceByDesktopName(KXMLRPCD);
 		slotReload();
 		return;
 	}
@@ -414,7 +414,7 @@ void KDEDConfig::slotStartService()
 	// Special case: kalarmd
 	if (service == KALARMD)
 	{
-		kapp->startServiceByDesktopName(KALARMD);
+		KApplication::startServiceByDesktopName(KALARMD);
 		slotReload();
 		return;
 	}
@@ -422,7 +422,7 @@ void KDEDConfig::slotStartService()
 	// Special case: kwrited
 	if (service == KWRITED)
 	{
-		kapp->startServiceByDesktopName(KWRITED);
+		KApplication::startServiceByDesktopName(KWRITED);
 		slotReload();
 		return;
 	}
