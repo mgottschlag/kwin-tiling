@@ -79,7 +79,9 @@ if test $FOUND_FREETYPE -eq 1; then
     AC_MSG_WARN(FontEnc headers not found. FontEnc support disabled)
   else
     ac_LDFLAGS_save="$LDFLAGS"
-    LDFLAGS="$LDFLAGS $all_libraries -lz"
+    ld_shared_flag=
+    KDE_CHECK_COMPILER_FLAG(shared, [ld_shared_flag="-shared"])
+    LDFLAGS="$LDFLAGS $ld_shared_flag $all_libraries -lz"
     AC_CHECK_LIB(fontenc,FontEncDirectory,ac_font_enc_lib=1,ac_font_enc_lib=0)
     if test "$ac_font_enc_lib" = "1"; then
       LIB_FONT_ENC="-lfontenc"
