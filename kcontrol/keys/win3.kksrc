@@ -133,6 +133,6 @@ ShowMenubar=Ctrl+M
 TextCompletion=Ctrl+E
 Undo=Ctrl+Z
 Up=Alt+Up
-WhatThis=Shift+F1
+WhatsThis=Shift+F1
 ZoomIn=Ctrl+Plus
 ZoomOut=Ctrl+Minus

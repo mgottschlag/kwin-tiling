@@ -27,7 +27,7 @@ Name[zh_TW]=有 4 個裝飾符的 KDE 預設(Meta/Alt/Ctrl/Shift)
 Uses Win Modifer=true
 
 [Global Shortcuts]
-Desktop Screenshot=Ctrl+Print
+Desktop Screenshot=Win+Print
 Enable/Disable Clipboard Actions=Win+Ctrl+X
 Execute Command=Win+Return
 Kill Window=Win+Ctrl+Delete
