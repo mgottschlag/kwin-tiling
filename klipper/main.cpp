@@ -33,9 +33,6 @@ int main(int argc, char *argv[])
   aboutData.addAuthor("Andrew Stanley-Jones", 0, "asj@cban.com");
   aboutData.addAuthor("Carsten Pfeiffer", 0, "pfeiffer@kde.org");
 
-  // WABA: Make sure not to enable session management.
-  putenv(strdup("SESSION_MANAGER="));
-
   KCmdLineArgs::init( argc, argv, &aboutData );
   KUniqueApplication::addCmdLineOptions();
 
