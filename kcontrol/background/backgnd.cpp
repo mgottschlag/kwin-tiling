@@ -697,42 +697,11 @@ void Backgnd::slotAdvanced()
 
 void Backgnd::setEnabled( bool state )
 {
-    KBackgroundRenderer *r = m_Renderer[m_Desk];
-    m_pDesktopLabel->setEnabled(state);
-    m_pDesktopBox->setEnabled(state);
-    m_monitorImage->setEnabled(state);
-    m_pAdvancedBut->setEnabled( state );
-    m_pWallpaperGrp->setEnabled( state );
-    PushButton17->setEnabled( state );
-    m_pWallpaperBox->setEnabled( state );
-    m_pRemoveBut->setEnabled( state );
-    m_pChangeInterval->setEnabled( state );
-    m_pWPBlendBox->setEnabled( state );
-    m_pWPImageOrderLbl->setEnabled( state );
-    m_pWPBlendLbl->setEnabled( state );
-    m_pBalanceLbl->setEnabled( state );
-    m_pImageOrderBox->setEnabled( state );
-    m_pWPChangeIntervalLbl->setEnabled( state );
-    m_pWPModeLbl->setEnabled( state );
-
-    m_pBalanceSlider->setEnabled( state );
-    m_pWPModeBox->setEnabled( state );
-    m_pBackgroundGrp->setEnabled( state );
-    m_pProgramRadio->setEnabled( state );
-    m_pProgramSetupBut->setEnabled( state );
-    m_pPatternEditBut->setEnabled( state );
-    m_pColor1Label->setEnabled( state );
-    m_pColor2But->setEnabled( state);
-    m_pColor2Label->setEnabled( state );
-    m_pColor1But->setEnabled( state );
-    m_pBlendModeLabel->setEnabled( state );
-    m_pColorBlendBox->setEnabled( state );
-    m_pColorRadio->setEnabled( state );
-
+    QWidget::setEnabled( state );
     if ( state )
     {
+        KBackgroundRenderer *r = m_Renderer[m_Desk];
         m_pPatternEditBut->setEnabled(r->backgroundMode() == KBackgroundSettings::Pattern);
-
         m_pColor2But->setEnabled(r->backgroundMode() != KBackgroundSettings::Flat);
         m_pColor2Label->setEnabled(r->backgroundMode() != KBackgroundSettings::Flat);
         m_pBalanceSlider->setEnabled(r->backgroundMode()!=KBackgroundSettings::NoBlending);
@@ -744,36 +713,29 @@ void Backgnd::setEnabled( bool state )
 
 void Backgnd::makeReadOnly()
 {
-    m_pDesktopLabel->setEnabled(false);
+/* this function is only for kdm (which does not use multidesktop)
+//    m_pDesktopLabel->setEnabled(false);
     m_pDesktopBox->setEnabled(false);
-    m_monitorImage->setEnabled(false);
+*/
+    m_monitorImage->setEnabled( false );	// disable drops. should not chage appearance
     m_pAdvancedBut->setEnabled( false );
-    m_pWallpaperGrp->setEnabled( false );
-    PushButton17->setEnabled( false );
-    m_pWallpaperBox->setEnabled( false );
-    m_pRemoveBut->setEnabled( false );
-    m_pChangeInterval->setEnabled( false );
-    m_pWPBlendBox->setEnabled( false );
-    m_pWPImageOrderLbl->setEnabled( false );
-    m_pWPBlendLbl->setEnabled( false );
-    m_pBalanceLbl->setEnabled( false );
-    m_pImageOrderBox->setEnabled( false );
-    m_pWPChangeIntervalLbl->setEnabled( false );
-    m_pWPModeLbl->setEnabled( false );
 
-    m_pBalanceSlider->setEnabled( false );
+    m_pWallpaperBox->setEnabled( false );
+    m_pAddImageBut->setEnabled( false );
+    m_pRemoveBut->setEnabled( false );
     m_pWPModeBox->setEnabled( false );
-    m_pBackgroundGrp->setEnabled( false );
+    m_pWPBlendBox->setEnabled( false );
+    m_pBalanceSlider->setEnabled( false );
+    m_pChangeInterval->setEnabled( false );
+    m_pImageOrderBox->setEnabled( false );
+
+    m_pColorRadio->setEnabled( false );
     m_pProgramRadio->setEnabled( false );
     m_pProgramSetupBut->setEnabled( false );
     m_pPatternEditBut->setEnabled( false );
-    m_pColor1Label->setEnabled( false );
-    m_pColor2But->setEnabled( false);
-    m_pColor2Label->setEnabled( false );
     m_pColor1But->setEnabled( false );
-    m_pBlendModeLabel->setEnabled( false );
     m_pColorBlendBox->setEnabled( false );
-    m_pColorRadio->setEnabled( false );
+    m_pColor2But->setEnabled( false);
 }
 
 #include "backgnd.moc"
