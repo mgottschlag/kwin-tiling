@@ -134,7 +134,7 @@ void KBackgroundPattern::readSettings()
     dirty = false;
     hashdirty = true;
 
-    m_Pattern = m_pConfig->readEntry("File");
+    m_Pattern = m_pConfig->readPathEntry("File");
     m_Comment = m_pConfig->readEntry("Comment");
 }
 
@@ -149,7 +149,7 @@ void KBackgroundPattern::writeSettings()
     if ( !m_pConfig )
         return; // better safe than sorry
 
-    m_pConfig->writeEntry("File", m_Pattern);
+    m_pConfig->writePathEntry("File", m_Pattern);
     m_pConfig->writeEntry("Comment", m_Comment);
     m_pConfig->sync();
     dirty = false;
@@ -333,8 +333,8 @@ void KBackgroundProgram::readSettings()
 
     m_Comment = m_pConfig->readEntry("Comment");
     m_Executable = m_pConfig->readEntry("Executable");
-    m_Command = m_pConfig->readEntry("Command");
-    m_PreviewCommand = m_pConfig->readEntry("PreviewCommand", m_Command);
+    m_Command = m_pConfig->readPathEntry("Command");
+    m_PreviewCommand = m_pConfig->readPathEntry("PreviewCommand", m_Command);
     m_Refresh = m_pConfig->readNumEntry("Refresh", 300);
 }
 
@@ -351,7 +351,7 @@ void KBackgroundProgram::writeSettings()
 
     m_pConfig->writeEntry("Comment", m_Comment);
     m_pConfig->writeEntry("Executable", m_Executable);
-    m_pConfig->writeEntry("Command", m_Command);
+    m_pConfig->writePathEntry("Command", m_Command);
     m_pConfig->writeEntry("PreviewCommand", m_PreviewCommand);
     m_pConfig->writeEntry("Refresh", m_Refresh);
     m_pConfig->sync();
@@ -734,11 +734,11 @@ void KBackgroundSettings::readSettings(bool reparse)
     m_ColorA = m_pConfig->readColorEntry("Color1", &defColorA);
     m_ColorB = m_pConfig->readColorEntry("Color2", &defColorB);
 
-    QString s = m_pConfig->readEntry("Pattern");
+    QString s = m_pConfig->readPathEntry("Pattern");
     if (!s.isEmpty())
         KBackgroundPattern::load(s);
 
-    s = m_pConfig->readEntry("Program");
+    s = m_pConfig->readPathEntry("Program");
     if (!s.isEmpty())
         KBackgroundProgram::load(s);
 
@@ -815,10 +815,10 @@ void KBackgroundSettings::writeSettings()
     m_pConfig->setGroup(QString("Desktop%1").arg(m_Desk));
     m_pConfig->writeEntry("Color1", m_ColorA);
     m_pConfig->writeEntry("Color2", m_ColorB);
-    m_pConfig->writeEntry("Pattern", KBackgroundPattern::name());
+    m_pConfig->writePathEntry("Pattern", KBackgroundPattern::name());
     m_pConfig->writeEntry("Program", KBackgroundProgram::name());
     m_pConfig->writeEntry("BackgroundMode", m_BMRevMap[m_BackgroundMode]);
-    m_pConfig->writeEntry("Wallpaper", m_Wallpaper);
+    m_pConfig->writePathEntry("Wallpaper", m_Wallpaper);
     m_pConfig->writeEntry("WallpaperMode", m_WMRevMap[m_WallpaperMode]);
     m_pConfig->writeEntry("MultiWallpaperMode", m_MMRevMap[m_MultiMode]);
     m_pConfig->writeEntry("BlendMode", m_BlMRevMap[m_BlendMode]);

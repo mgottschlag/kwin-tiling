@@ -583,7 +583,7 @@ int Theme::installGroup(const char* aGroupName)
         if (!value.isEmpty())
             mConfig->setGroup(value);
 
-        value = mMappings->readEntry("ConfigFile");
+        value = mMappings->readPathEntry("ConfigFile");
         if (!value.isEmpty())
         {
             cfgFile = value;
@@ -1197,7 +1197,7 @@ void Theme::loadGroupGeneral(void)
      if (mThemeType == Theme_Windows)
      {
         mConfig->setGroup("Control Panel/Desktop");
-        mPreviewFile = mConfig->readEntry("Wallpaper");
+        mPreviewFile = mConfig->readPathEntry("Wallpaper");
         mPreviewFile.replace(QRegExp("%.+%"), QString::null);
         mPreviewFile = findFile(mPreviewFile);
         if (!mPreviewFile.isEmpty())

@@ -37,6 +37,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kpixmap.h>
+#include <kimageio.h>
 #include <kstandarddirs.h>
 #include <kstringhandler.h>
 #include <kurlrequester.h>
@@ -106,6 +107,8 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
 
    m_Renderer = QPtrVector<KBackgroundRenderer>( m_Max + 1 );
    m_Renderer.setAutoDelete(true);
+
+   m_urlWallpaper->setFilter(KImageIO::pattern());
 
    // set up the common desktop renderer
    m_Renderer.insert(0, new KBackgroundRenderer(0, _config));
