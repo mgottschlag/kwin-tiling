@@ -10,6 +10,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h>
 
 #include <dcopclient.h>
 #include <qmessagebox.h>
@@ -45,48 +46,99 @@ void IoErrorHandler ( IceConn iceConn)
     the_server->ioError( iceConn );
 }
 
+bool writeTest(QCString path)
+{
+   path += "/XXXXXX";
+   int fd = mkstemp(path.data());
+   if (fd == -1)
+      return false;
+   if (write(fd, "Hello World\n", 12) == -1)
+   {
+      int save_errno = errno;
+      close(fd);
+      unlink(path.data());
+      errno = save_errno;
+      return false;
+   }
+   close(fd);
+   unlink(path.data());
+   return true;
+}
+
 void sanity_check( int argc, char* argv[] )
 {
-  const char *msg = 0;
+  QCString msg;
   QCString path = getenv("HOME");
   if (path.isEmpty())
   {
      msg = "$HOME not set!";
   }
-  else
+  if (msg.isEmpty() && access(path.data(), W_OK))
   {
-     if (access(path.data(), W_OK))
-     {
-       if (errno == ENOENT)
-          msg = "$HOME directory (%s) does not exist.";
-       else
-          msg = "No write access to $HOME directory (%s).";
-     }
-     else if (access(path.data(), R_OK))
-     {
-       if (errno == ENOENT)
-          msg = "$HOME directory (%s) does not exist.";
-       else
-          msg = "No read access to $HOME directory (%s).";
-     }
+     if (errno == ENOENT)
+        msg = "$HOME directory (%s) does not exist.";
      else
+        msg = "No write access to $HOME directory (%s).";
+  }
+  if (msg.isEmpty() && access(path.data(), R_OK))
+  {
+     if (errno == ENOENT)
+        msg = "$HOME directory (%s) does not exist.";
+     else
+        msg = "No read access to $HOME directory (%s).";
+  }
+  if (msg.isEmpty() && !writeTest(path))
+  {
+     if (errno == ENOSPC)
+        msg = "$HOME directory (%s) is out of disk space.";
+     else
+        msg = "Writing to the $HOME directory (%s) failed with\n    "
+              "the error '"+QCString(strerror(errno))+"'";
+  }
+  if (msg.isEmpty())
+  {
+     path += "/.ICEauthority";
+ 
+     if (access(path.data(), W_OK) && (errno != ENOENT))
+        msg = "No write access to '%s'.";
+     else if (access(path.data(), R_OK) && (errno != ENOENT))
+        msg = "No read access to '%s'.";
+  }
+  if (msg.isEmpty())
+  {
+     path = getenv("KDETMP");
+     if (path.isEmpty()) 
+        path = "/tmp";
+     if (!writeTest(path))
      {
-        path += "/.ICEauthority";
-        if (access(path.data(), W_OK) && (errno != ENOENT))
-           msg = "No write access to '%s'.";
-        else if (access(path.data(), R_OK) && (errno != ENOENT))
-           msg = "No read access to '%s'.";
+        if (errno == ENOSPC)
+           msg = "Temp directory (%s) is out of disk space.";
         else
-        {
-           path = "/tmp/.ICE-unix";
-           if (access(path.data(), W_OK) && (errno != ENOENT))
-              msg = "No write access to '%s'.";
-           else if (access(path.data(), R_OK) && (errno != ENOENT))
-              msg = "No read access to '%s'.";
-        }
+           msg = "Writing to the temp directory (%s) failed with\n    "
+                 "the error '"+QCString(strerror(errno))+"'";
      }
   }
-  if (msg)
+  if (msg.isEmpty() && (path != "/tmp"))
+  {
+     path = "/tmp";
+     if (!writeTest(path))
+     {
+        if (errno == ENOSPC)
+           msg = "Temp directory (%s) is out of disk space.";
+        else
+           msg = "Writing to the temp directory (%s) failed with\n    "
+                 "the error '"+QCString(strerror(errno))+"'";
+     }
+  }
+  if (msg.isEmpty())
+  {
+     path += ".ICE-unix";
+     if (access(path.data(), W_OK) && (errno != ENOENT))
+        msg = "No write access to '%s'.";
+     else if (access(path.data(), R_OK) && (errno != ENOENT))
+        msg = "No read access to '%s'.";
+  }
+  if (!msg.isEmpty())
   {
     const char *msg_pre = 
              "The following installation problem was detected\n"
@@ -94,12 +146,12 @@ void sanity_check( int argc, char* argv[] )
              "\n\n    ";
     const char *msg_post = "\n\nKDE is unable to start.\n";
     fprintf(stderr, msg_pre);
-    fprintf(stderr, msg, path.data());
+    fprintf(stderr, msg.data(), path.data());
     fprintf(stderr, msg_post);
  
     QApplication a(argc, argv);
     QCString qmsg(256+path.length());
-    qmsg.sprintf(msg, path.data());
+    qmsg.sprintf(msg.data(), path.data());
     qmsg = msg_pre+qmsg+msg_post; 
     QMessageBox::critical(0, "KDE Installation Problem!",
         QString::fromLatin1(qmsg.data()));
