@@ -229,7 +229,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   setVisible(_root, run_as_root);
 
   // disable initial buttons
-//  _apply->setEnabled(false);
+  _apply->setEnabled(false);
   _reset->setEnabled(false);
 
   connect(_help, SIGNAL(clicked()), SLOT(helpClicked()));
@@ -291,6 +291,7 @@ void ProxyWidget::applyClicked()
 {
   _client->save();
   clientChanged(false);
+  _apply->setEnabled(false);
 }
 
 void ProxyWidget::resetClicked()
@@ -311,6 +312,7 @@ void ProxyWidget::clientChanged(bool state)
     // int b = _client->buttons();
 //  _apply->setEnabled(state);
   _reset->setEnabled(state);
+  _apply->setEnabled(true);
 
   // forward the signal
   emit changed(state);
