@@ -1,6 +1,6 @@
 [Color Scheme]
 activeBackground=0,0,0
-activeBlend=0,0,0
+activeBlend=255,255,255
 activeForeground=255,255,255
 activeTitleBtnBg=0,0,0
 activeTitleBtnBlend=0,0,0
@@ -8,7 +8,7 @@ activeTitleBtnFg=255,255,255
 background=168,168,168
 buttonBackground=168,168,168
 buttonForeground=0,0,0
-contrast=2
+contrast=10
 foreground=0,0,0
 inactiveBackground=168,168,168
 inactiveBlend=168,168,168
