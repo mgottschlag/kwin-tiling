@@ -88,10 +88,8 @@ void ConfigDialog::show()
 
 
 GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
-    : QVGroupBox( parent, name )
+    : QVBox( parent, name )
 {
-    setTitle( i18n("General settings" ));
-
     cbMousePos = new QCheckBox( i18n("&Popup menu at mouse-cursor position"),
                                 this );
     cbSaveContents = new QCheckBox( i18n("Sa&ve clipboard contents on exit"),
@@ -122,10 +120,9 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     maxItemsBox->setStretchFactor( lblItems, 10 );
     maxItemsBox->setSpacing(6);
 
-#ifdef __GNUC__
-#warning Qt Bug, remove these setOrientation lines when fixed
-#endif
-    setOrientation( Horizontal );
+    // Add some spacing at the end
+    QLabel *dummy = new QLabel( this );
+    setStretchFactor( dummy, 1 );
 }
 
 GeneralWidget::~GeneralWidget()
@@ -162,12 +159,10 @@ void ListView::rename( QListViewItem* item, int c )
 
 ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, QWidget *parent,
                             const char *name )
-    : QVGroupBox( parent, name ),
+    : QVBox( parent, name ),
       advancedWidget( 0L )
 {
     Q_ASSERT( list != 0L );
-
-    setTitle( i18n("Action settings") );
 
     QLabel *lblAction = new QLabel(
 	  i18n("Action &list (right click to add/remove commands):"), this );
@@ -249,7 +244,6 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
     (void) new QWidget( box ); // spacer
 
     delActionButton->setEnabled(listView->currentItem () !=0);
-    setOrientation( Horizontal );
 }
 
 ActionWidget::~ActionWidget()
@@ -392,13 +386,9 @@ void AdvancedWidget::setWMClasses( const QStringList& items )
 
 
 KeysWidget::KeysWidget( KKeyEntryMap *keyMap, QWidget *parent, const char *name)
-    : QVGroupBox( parent, name )
+    : QVBox( parent, name )
 {
-    setTitle( i18n("Global keyboard shortcuts") );
-
     keyChooser = new KKeyChooser( keyMap, this );
-
-    setOrientation( Horizontal );
 }
 
 KeysWidget::~KeysWidget()

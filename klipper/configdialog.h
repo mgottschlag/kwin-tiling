@@ -18,7 +18,6 @@
 #include <qgroupbox.h>
 #include <qheader.h>
 #include <qvbox.h>
-#include <qvgroupbox.h>
 
 #include <kdialogbase.h>
 #include <keditlistbox.h>
@@ -33,7 +32,7 @@ class KListView;
 class QPushButton;
 class KRegExpDialog;
 
-class GeneralWidget : public QVGroupBox
+class GeneralWidget : public QVBox
 {
     Q_OBJECT
 
@@ -66,7 +65,7 @@ private:
     KEditListBox *editListBox;
 };
 
-class ActionWidget : public QVGroupBox
+class ActionWidget : public QVBox
 {
     Q_OBJECT
 
@@ -102,7 +101,7 @@ private:
     QCheckBox *cbUseGUIRegExpEditor;
 };
 
-class KeysWidget : public QVGroupBox
+class KeysWidget : public QVBox
 {
     Q_OBJECT
 
