@@ -227,7 +227,7 @@ addStrArr( char **arr, const char *str, int len )
 	int nu;
 
 	nu = arrLen( arr );
-	if ((rarr = Realloc( arr, sizeof(char *)* (nu + 2) ))) {
+	if ((rarr = Realloc( arr, sizeof(char *) * (nu + 2) ))) {
 		rarr[nu + 1] = 0;
 		if (StrNDup( rarr + nu, str, len ))
 			return rarr;
@@ -246,7 +246,7 @@ xCopyStrArr( int rn, char **arr )
 
 	nu = arrLen( arr );
 	if ((rarr = Calloc( sizeof(char *), nu + rn + 1 )))
-		memcpy( rarr + rn, arr, sizeof(char *)* nu );
+		memcpy( rarr + rn, arr, sizeof(char *) * nu );
 	return rarr;
 }
 

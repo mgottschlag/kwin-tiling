@@ -740,7 +740,7 @@ CvtValue( Ent *et, Value *retval, int vallen, const char *val, char **eopts )
 					retval->len--;
 			return 0;
 		case C_TYPE_ARGV:
-			if (!(ents = Malloc( sizeof(Value)* (esiz = 10) )))
+			if (!(ents = Malloc( sizeof(Value) * (esiz = 10) )))
 				return 0;
 			for (nents = 0, tlen = 0, i = 0; ; i++) {
 				for (; i < vallen && isspace( val[i] ); i++);
@@ -750,7 +750,7 @@ CvtValue( Ent *et, Value *retval, int vallen, const char *val, char **eopts )
 				for (e = i; e > b && isspace( val[e - 1] ); e--);
 				if (esiz < nents + 2) {
 					Value *entsn = Realloc( ents,
-					                        sizeof(Value)* (esiz = esiz * 2 + 1) );
+					                        sizeof(Value) * (esiz = esiz * 2 + 1) );
 					if (!nents)
 						break;
 					ents = entsn;
@@ -799,7 +799,7 @@ AddValue( ValArr *va, int id, Value *val )
 
 /*	Debug( "Addig value %#x\n", id );*/
 	if (va->nents == va->esiz) {
-		va->ents = Realloc( va->ents, sizeof(Val)* (va->esiz += 50) );
+		va->ents = Realloc( va->ents, sizeof(Val) * (va->esiz += 50) );
 		if (!va->ents)
 			return 0;
 	}

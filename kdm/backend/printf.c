@@ -70,6 +70,7 @@ from the copyright holder.
  **************************************************************/
 
 #include <ctype.h>
+#include <string.h>
 #include <stdarg.h>
 
 /* format flags - Bits */
@@ -531,7 +532,7 @@ DoPr( OutCh dopr_outch, void *bp, const char *format, va_list args )
 			break;
 		case 'p':
 			value = (long)va_arg( args, void * );
-			fmtint( dopr_outch, bp, value, 16, sizeof(long)* 2 + 2,
+			fmtint( dopr_outch, bp, value, 16, sizeof(long) * 2 + 2,
 			        max, flags | DP_F_UNSIGNED | DP_F_ZERO | DP_F_NUM );
 			break;
 		}
