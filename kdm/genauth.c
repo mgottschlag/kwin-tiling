@@ -49,8 +49,18 @@ extern Time_t time ();
 #define Time_t time_t
 #endif
 
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 #ifndef X_GETTIMEOFDAY
-#define X_GETTIMEOFDAY(t) gettimeofday(t)
+//#define X_GETTIMEOFDAY(t) gettimeofday(t)
+//WABA: According to the man page gettimeofday takes a second argument
+//if this breaks on your system, we need to have a configure test.
+#define X_GETTIMEOFDAY(t) gettimeofday(t, NULL)
 #endif
 
 static unsigned char	key[8];
