@@ -27,5 +27,5 @@ SUBDIRS = bell background filetypes samba krdb input info ioslaveinfo kdm\
 	clock pics $(ACCESS_SUBDIR) colors energy fonts css \
 	icons screensaver taskbar crypto privacy smserver \
 	konsole spellchecking fileshare $(USBVIEW_SUBDIR) \
-	$(KSMCARD_SUBDIR) nics $(FONTINST_SUBDIR) randr \
+	$(KSMCARD_SUBDIR) nics $(FONTINST_SUBDIR) $(RANDR_SUBDIR) \
 	componentchooser performance xinerama $(VIEW1394_SUBDIR)
