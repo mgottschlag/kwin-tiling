@@ -401,18 +401,18 @@ void Tab_widget::set_action_type_slot( int type_P )
 
 const char* const Tab_widget::tab_labels[ Tab_widget::TAB_END ] = {
     I18N_NOOP( "Info" ),  // TAB_INFO
-    I18N_NOOP( "General settings" ), // TAB_GENERAL_SETTINGS
-    I18N_NOOP( "Gestures settings" ), // TAB_GESTURES_SETTINGS
+    I18N_NOOP( "General Settings" ), // TAB_GENERAL_SETTINGS
+    I18N_NOOP( "Gestures Settings" ), // TAB_GESTURES_SETTINGS
     I18N_NOOP( "General" ), // TAB_GENERAL
     I18N_NOOP( "General" ), // TAB_GROUP_GENERAL
     I18N_NOOP( "Triggers" ), // TAB_TRIGGERS
-    I18N_NOOP( "Keyboard shortcut" ), // TAB_SHORTCUT_TRIGGER
+    I18N_NOOP( "Keyboard Shortcut" ), // TAB_SHORTCUT_TRIGGER
     I18N_NOOP( "Gestures" ), // TAB_GESTURE_TRIGGER
     I18N_NOOP( "Actions" ), // TAB_ACTIONS
-    I18N_NOOP( "Command/URL settings" ), // TAB_COMMAND_URL
-    I18N_NOOP( "Menu entry settings" ), // TAB_MENUENTRY
-    I18N_NOOP( "DCOP call settings" ), // TAB_DCOP
-    I18N_NOOP( "Keyboard input settings" ), // TAB_KEYBOARD_INPUT
+    I18N_NOOP( "Command/URL Settings" ), // TAB_COMMAND_URL
+    I18N_NOOP( "Menu Entry Settings" ), // TAB_MENUENTRY
+    I18N_NOOP( "DCOP Call Settings" ), // TAB_DCOP
+    I18N_NOOP( "Keyboard Input Settings" ), // TAB_KEYBOARD_INPUT
     I18N_NOOP( "Window" ), // TAB_WINDOW
     I18N_NOOP( "Conditions" ) // TAB_CONDITIONS
     };

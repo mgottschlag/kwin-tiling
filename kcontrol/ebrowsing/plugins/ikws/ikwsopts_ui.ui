@@ -24,7 +24,7 @@
                 <cstring>cbEnableShortcuts</cstring>
             </property>
             <property name="text">
-                <string>&amp;Enable web shortcuts</string>
+                <string>&amp;Enable Web shortcuts</string>
             </property>
             <property name="accel">
                 <string>Alt+E</string>
