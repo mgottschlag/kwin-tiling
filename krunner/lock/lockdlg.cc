@@ -96,6 +96,9 @@ PasswordDlg::PasswordDlg(QWidget *parent, bool nsess)
 QString PasswordDlg::currentUser(void)
 {
     struct passwd *current = getpwuid(getuid());
+    if ( !current )
+        return QString::null;
+
     QString fullname = QString::fromLocal8Bit(current->pw_gecos);
     if (fullname.find(',') != -1)
     {
