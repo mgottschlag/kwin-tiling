@@ -31,6 +31,8 @@ INCLUDES= $(all_includes)
 
 METASOURCES = AUTO
 
+KDE_ICON = kcontrol
+
 LDFLAGS = $(all_libraries) $(KDE_RPATH) -export-dynamic
 
 messages:
