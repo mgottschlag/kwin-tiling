@@ -35,8 +35,11 @@
 #include <qlayout.h>
 #include <qwidget.h>
 #include <qvbuttongroup.h>
+#include <qpushbutton.h>
+#include <qcombobox.h>
 #include <qhbox.h>
 #include <qlineedit.h>
+#include <qslider.h>
 #include <qdir.h>
 #include <qwhatsthis.h>
 
@@ -45,8 +48,11 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
+#include <kstddirs.h>
 
 #include "arts.h"
+#include <audioio.h>
+#include <soundserver.h>
 
 /* check if starting realtime would be possible */
 
@@ -59,17 +65,20 @@ bool artswrapper_check()
 
 extern "C" {
 
-QString createArgs(bool netTrans, bool duplex, int responseTime,
-					QString deviceName, int rate)
+QString createArgs(bool netTrans, bool duplex, int fragmentCount, int fragmentSize,
+					QString deviceName, int rate, int bits, QString audioIO,
+					QString addOptions)
 {
     QString args;
 
-    switch (responseTime) {
-        case 0: args += " -F 3 -S 512";     break;
-        case 1: args += " -F 7 -S 1024";    break;
-        case 2: args += " -F 5 -S 8192";    break;
-        case 3: args += " -F 128 -S 4096";  break;
-    }
+	if(fragmentCount)
+	  args += QString(" -F %1").arg(fragmentCount);
+
+	if(fragmentSize)
+	  args += QString(" -S %1").arg(fragmentSize);
+
+    if (audioIO.length() > 0)
+	  args += QString(" -a %1").arg(audioIO);
 
     if (duplex)
       args += " -d";
@@ -83,125 +92,88 @@ QString createArgs(bool netTrans, bool duplex, int responseTime,
 	if (rate)
 	  args += QString(" -r %1").arg(rate);
 
+	if (bits)
+	  args += QString(" -b %1").arg(bits);
+
+	if (addOptions.length() > 0)
+      args += " " + addOptions;
+
     return args;
 }
+
+void init_arts();
 }
 
-
 KArtsModule::KArtsModule(QWidget *parent, const char *name)
-  : KCModule(parent, name)
+  : KCModule(parent, name), configChanged(false)
 {
     setButtons(Reset|Default|Cancel|Apply|Ok);
 
+	dispatcher = new Arts::Dispatcher();
+
     QVBoxLayout *layout = new QVBoxLayout(this, 10);
+	artsConfig = new ArtsConfig(this);
+	layout->addWidget(artsConfig);
+	layout->setMargin(0);
 
-    // options
-    startServer = new QCheckBox(this);
-    startServer->setText(i18n("&Start aRts soundserver on KDE startup"));
-    layout->addWidget(startServer);
-    connect(startServer,SIGNAL(clicked()),this,SLOT(slotChanged()));
-
-    QWhatsThis::add(startServer, i18n("If this option is enabled, the arts soundserver will be started on KDE startup. Recommended if you want sound."));
-
-    // dependant options: only useful when soundserver will be started
-    QFrame *hLine = new QFrame(this);
-    hLine->setFrameStyle(QFrame::Sunken|QFrame::HLine);
-    layout->addWidget(hLine);
-
-    networkTransparent = new QCheckBox(this);
-    networkTransparent->setText(i18n("Enable &network transparency"));
-    layout->addWidget(networkTransparent);
-    connect(networkTransparent,SIGNAL(clicked()),this,SLOT(slotChanged()));
-
-    QWhatsThis::add(networkTransparent, i18n("This option allows sound requests coming in from over the network to be accepted, instead of just limiting the server to the local computer."));
-
-    x11Comm = new QCheckBox(this);
-    x11Comm->setText(i18n("Exchange security and reference info over the &X11 server"));
-    layout->addWidget(x11Comm);
-    connect(x11Comm,SIGNAL(clicked()),this,SLOT(slotChanged()));
-
-    QWhatsThis::add(x11Comm, i18n("If you want network transparency or if you use the soundserver only when you use X11, enable this option."));
-
-    startRealtime = new QCheckBox(this);
-    startRealtime->setText(i18n("Run soundserver with &realtime priority"));
-    layout->addWidget(startRealtime);
-    connect(startRealtime,SIGNAL(clicked()),this,SLOT(slotChanged()));
-
-    QWhatsThis::add(startRealtime, i18n("On systems which support realtime scheduling, if you have sufficient permissions, this option will enable a very high priority for processing sound requests."));
-
-    fullDuplex = new QCheckBox(this);
-    fullDuplex->setText(i18n("Enable full &duplex operation"));
-    layout->addWidget(fullDuplex);
-    connect(fullDuplex,SIGNAL(clicked()),this,SLOT(slotChanged()));
-
-    QWhatsThis::add(fullDuplex, i18n("This enables the soundserver to record and play sound at the same time. If you use applications like internet telephony, voice recognition or similar, you probably want this."));
-
-    responseGroup = new QVButtonGroup(i18n("Response time"), this);
-    QWhatsThis::add(responseGroup, i18n("A small response time means: <ul><li>fast response<li>high CPU usage<li>more dropouts</ul><p>On the other hand, a large response time means:<ul><li>slow response<li>low CPU usage<li>less dropouts</ul>"));
-	
-    responseButton[0] = new QRadioButton( i18n("&Fast (10ms)"), responseGroup );
-    responseButton[1] = new QRadioButton( i18n("&Standard (50ms)"), responseGroup );
-    responseButton[2] = new QRadioButton( i18n("&Comfortable (250ms)"), responseGroup);
-    responseButton[3] = new QRadioButton( i18n("&Don't care (large!)"), responseGroup);
-    connect(responseGroup, SIGNAL(clicked(int)), SLOT(slotChanged()));
-
-    layout->addWidget(responseGroup);
-
-	// the Use custom sound device: [     ] section
-
-	QGridLayout *grid = new QGridLayout(0,2,2);
-	grid->setSpacing(6);
-	layout->addLayout(grid);
-
-	customDevice = new QCheckBox(this);
-    customDevice->setText(i18n("&Use custom sound device:"));
-    connect(customDevice, SIGNAL(clicked()), SLOT(slotChanged()));
-	grid->addWidget(customDevice,0,0);
-
-	deviceName = new QLineEdit(this);
-	grid->addWidget(deviceName,0,1);
-
-	customRate = new QCheckBox(this);
-    customRate->setText(i18n("Use custom s&ampling rate:"));
-    connect(customRate, SIGNAL(clicked()), SLOT(slotChanged()));
-	grid->addWidget(customRate,1,0);
-
-	samplingRate = new QLineEdit(this);
-	grid->addWidget(samplingRate,1,1);
+    startServer = artsConfig->startServer;
+    networkTransparent = artsConfig->networkTransparent;
+    x11Comm = artsConfig->x11Comm;
+    startRealtime = artsConfig->startRealtime;
+    fullDuplex = artsConfig->fullDuplex;
+	customDevice = artsConfig->customDevice;
+	deviceName = artsConfig->deviceName;
+	customRate = artsConfig->customRate;
+	samplingRate = artsConfig->samplingRate;
 
    	QString deviceHint = i18n("Normally, the sound server defaults to using the device called <b>/dev/dsp</b> for sound output. That should work in most cases. An exception is for instance if you are using devfs, then you should use <b>/dev/sound/dsp</b> instead. Other alternatives are things like <b>/dev/dsp0</b> or <b>/dev/dsp1</b> if you have a soundcard that supports multiple outputs, or you have multiple soundcards.");
 
 	QString rateHint = i18n("Normally, the sound server defaults to using a sampling rate of 44100 Hz (CD quality), which is supported on almost any hardware. If you are using certain <b>Yamaha soundcards</b>, you might need to configure this to 48000 Hz here, if you are using <b>old SoundBlaster cards</b>, like SoundBlaster Pro, you might need to change this to 22050 Hz. All other values are possible, too, and may make sense in certain contexts (i.e. professional studio equipment).");
 
+	QString optionsHint = i18n("This configuration module is intended to cover almost every aspect of the aRts sound server that you can configure. However, there are some things which may not be available here, so you can add <b>command line options</b> here which will directly be passed to <b>artsd</b>. The options will be appended, so they will in doubt override the choices made in the GUI. To see the possible choices, open a konsole window, and type <b>artsd -h</b>.");
+
     QWhatsThis::add(customDevice, deviceHint);
     QWhatsThis::add(deviceName, deviceHint);
     QWhatsThis::add(customRate, rateHint);
     QWhatsThis::add(samplingRate, rateHint);
+    QWhatsThis::add(artsConfig->customOptions, optionsHint);
+    QWhatsThis::add(artsConfig->addOptions, optionsHint);
 
- // options end
+	// fill audioIO widget:
+	for(int ai = 0; ai < Arts::AudioIO::queryAudioIOCount(); ai++)
+	{
+		const char *fullName =
+			Arts::AudioIO::queryAudioIOParamStr(ai, Arts::AudioIO::fullName);
 
-    QLabel *restartHint = new QLabel(this);
-    restartHint->setText(i18n("<qt>The aRts soundserver cannot be "
-                  "initialized except at login time. "
-                  "If you modify any settings, you will "
-                  "have to restart your session in order for "
-                  "those changes to take effect.</qt>"));
-    layout->addWidget(restartHint);
-
-    QLabel *yamahaHint = new QLabel(this);
-    yamahaHint->setText(i18n("<qt>If you are using a Yamaha soundcard, "
-			"you might need to set the sampling rate to 48000 Hz.</qt>"));
-	                       
-    layout->addWidget(yamahaHint);
-    layout->addStretch();
-
-    setMinimumSize(sizeHint());
+		artsConfig->audioIO->insertItem(fullName);
+	}
 
     config = new KConfig("kcmartsrc");
-
     GetSettings();
+
+    connect(startServer,SIGNAL(clicked()),this,SLOT(slotChanged()));
+    connect(networkTransparent,SIGNAL(clicked()),this,SLOT(slotChanged()));
+    connect(x11Comm,SIGNAL(clicked()),this,SLOT(slotChanged()));
+    connect(startRealtime,SIGNAL(clicked()),this,SLOT(slotChanged()));
+    connect(fullDuplex,SIGNAL(clicked()),this,SLOT(slotChanged()));
+	connect(customDevice, SIGNAL(clicked()), SLOT(slotChanged()));
+	connect(deviceName, SIGNAL(textChanged(const QString&)), SLOT(slotChanged()));
+	connect(customRate, SIGNAL(clicked()), SLOT(slotChanged()));
+	connect(samplingRate, SIGNAL(textChanged(const QString&)), SLOT(slotChanged()));
+
+    connect(artsConfig->audioIO,SIGNAL(highlighted(int)),SLOT(slotChanged()));
+    connect(artsConfig->customOptions,SIGNAL(clicked()),SLOT(slotChanged()));
+    connect(artsConfig->addOptions,SIGNAL(textChanged(const QString&)),SLOT(slotChanged()));
+    connect(artsConfig->soundQuality,SIGNAL(highlighted(int)),SLOT(slotChanged()));
+	connect(artsConfig->latencySlider,SIGNAL(sliderMoved(int)),SLOT(slotChanged()));
+
+	connect(artsConfig->testSound,SIGNAL(clicked()),SLOT(slotTestSound()));
 }
 
+KArtsModule::~KArtsModule()
+{
+	delete dispatcher;
+}
 
 void KArtsModule::GetSettings( void )
 {
@@ -213,6 +185,10 @@ void KArtsModule::GetSettings( void )
     fullDuplex->setChecked(config->readBoolEntry("FullDuplex",false));
 	deviceName->setText(config->readEntry("DeviceName",""));
 	customDevice->setChecked(deviceName->text() != "");
+	artsConfig->addOptions->setText(config->readEntry("AddOptions",""));
+	artsConfig->customOptions->setChecked(artsConfig->addOptions->text() != "");
+	artsConfig->latencySlider->setValue(config->readNumEntry("Latency",250));
+
 	int rate = config->readNumEntry("SamplingRate",0);
 	if(rate)
 	{
@@ -224,17 +200,46 @@ void KArtsModule::GetSettings( void )
 		customRate->setChecked(false);
 		samplingRate->setText("");
 	}
+	int bits = config->readNumEntry("Bits",0);
+	if(bits == 0)
+		artsConfig->soundQuality->setCurrentItem(0);
+	else if(bits == 16)
+		artsConfig->soundQuality->setCurrentItem(1);
+	else if(bits == 8)
+		artsConfig->soundQuality->setCurrentItem(2);
 
-    int responseTime=config->readNumEntry("ResponseTime",2);
-    responseButton[ (responseTime<4) ? responseTime : 2 ]->setChecked(true);
-
+	QString audioIO = config->readEntry("AudioIO","");
+	for(int ai = 0; ai < Arts::AudioIO::queryAudioIOCount(); ai++)
+	{
+		const char *name =
+			Arts::AudioIO::queryAudioIOParamStr(ai, Arts::AudioIO::name);
+		if(name == audioIO)		// first item: "autodetect"
+			artsConfig->audioIO->setCurrentItem(ai + 1);
+	}
     updateWidgets();
 }
 
 void KArtsModule::saveParams( void )
 {
-	QString dev = customDevice->isChecked()?deviceName->text():QString("");
+	QString audioIO;
+
+	int item = artsConfig->audioIO->currentItem() - 1;	// first item: "default"
+	if(item >= 0)
+		audioIO=Arts::AudioIO::queryAudioIOParamStr(item, Arts::AudioIO::name);
+
+	QString dev = customDevice->isChecked()?deviceName->text():"";
 	int rate = customRate->isChecked()?samplingRate->text().toLong():0;
+	QString addOptions;
+	if(artsConfig->customOptions->isChecked())
+		addOptions = artsConfig->addOptions->text();
+
+	int latency = artsConfig->latencySlider->value();
+	int bits = 0;
+
+	if(artsConfig->soundQuality->currentItem() == 1)
+		bits = 16;
+	else if(artsConfig->soundQuality->currentItem() == 2)
+		bits = 8;
 
     config->setGroup("Arts");
     config->writeEntry("StartServer",startServer->isChecked());
@@ -244,22 +249,18 @@ void KArtsModule::saveParams( void )
     config->writeEntry("FullDuplex",fullDuplex->isChecked());
     config->writeEntry("DeviceName",dev);
     config->writeEntry("SamplingRate",rate);
+    config->writeEntry("AudioIO",audioIO);
+    config->writeEntry("AddOptions",addOptions);
+	config->writeEntry("Latency",latency);
+	config->writeEntry("Bits",bits);
 
-    int t = 2;
-
-    for (int i = 0; i < 4; i++) {
-        if (responseButton[i]->isChecked()) {
-          t = i;
-          config->writeEntry("ResponseTime", t);
-          break;
-        }
-	}
-
+	calculateLatency();
 	// Save arguments string in case any other process wants to restart artsd.
 
 	config->writeEntry("Arguments",
 		createArgs(networkTransparent->isChecked(), fullDuplex->isChecked(),
-					t, dev, rate));
+					fragmentCount, fragmentSize, dev, rate, bits,
+					audioIO, addOptions));
 
 	config->sync();
 }
@@ -271,6 +272,9 @@ void KArtsModule::load()
 
 void KArtsModule::save()
 {
+	if(!configChanged)
+		return;
+
     if(startRealtime->isChecked() && !artswrapper_check())
     {
         FILE *why = popen("artswrapper check 2>&1","r");
@@ -284,7 +288,45 @@ void KArtsModule::save()
                     "starting the aRts server with realtime priority. \n"
                     "The following problem occured:\n")+thereason);
     }
+	configChanged = false;
     saveParams();
+
+	if(KMessageBox::warningYesNo(this,
+				i18n("If you say 'no', your changes will get active the\n"
+					 "next time you log in.\n\n"
+					 "If you say 'yes', I will restart the sound server now.\n"
+					 "However, applications using sound right now might get\n"
+					 "confused or crash."),
+				i18n("Restart sound server now?")) == KMessageBox::Yes)
+	{
+		{
+			Arts::SoundServer s = Arts::Reference("global:Arts_SoundServer");
+			if(!s.isNull()) s.terminate();
+		}
+
+		/*
+		 * We have to do restart the dispatcher, as the MCOP global
+		 * communication style might have changed (X11GlobalComm vs.
+		 * TmpGlobalComm).
+		 */
+		delete dispatcher;	
+		sleep(1);				// leave artsd some time to go away
+		init_arts();
+		dispatcher = new Arts::Dispatcher();
+	}
+}
+
+void KArtsModule::slotTestSound()
+{
+	if(configChanged)
+	{
+		save();
+		sleep(1);
+	}
+
+	Arts::SoundServer s = Arts::Reference("global:Arts_SoundServer");
+	if(!s.isNull())
+		s.play(locate( "sound", "KDE_Startup.wav" ).ascii());
 }
 
 void KArtsModule::defaults()
@@ -294,11 +336,16 @@ void KArtsModule::defaults()
     networkTransparent->setChecked(false);
     x11Comm->setChecked(false);
     fullDuplex->setChecked(false);
-    responseButton[2]->setChecked(true);
 	customDevice->setChecked(false);
 	deviceName->setText("");
 	customRate->setChecked(false);
 	samplingRate->setText("");
+	artsConfig->customOptions->setChecked(false);
+	artsConfig->addOptions->setText("");
+	artsConfig->audioIO->setCurrentItem(0);
+	artsConfig->soundQuality->setCurrentItem(0);
+	artsConfig->latencySlider->setValue(250);
+	slotChanged();
 }
 
 QString KArtsModule::quickHelp() const
@@ -310,24 +357,64 @@ QString KArtsModule::quickHelp() const
           " an easy way to achieve sound support.");
 }
 
+void KArtsModule::calculateLatency()
+{
+	int latencyInBytes, latencyInMs;
+
+	if(artsConfig->latencySlider->value() < 490)
+	{
+		int rate = customRate->isChecked()?samplingRate->text().toLong():44100;
+		if(rate < 4000 || rate > 200000) rate = 44100;
+
+		int sampleSize = (artsConfig->soundQuality->currentItem() == 2)?2:4;
+
+		latencyInBytes=artsConfig->latencySlider->value()*rate*sampleSize/1000;
+
+		fragmentSize = 2;
+		do {
+			fragmentSize *= 2;
+			fragmentCount = latencyInBytes / fragmentSize;
+		} while (fragmentCount > 8 && fragmentSize != 4096);
+
+		latencyInMs = (fragmentSize*fragmentCount*1000) / rate / sampleSize;
+		artsConfig->latencyLabel->setText(
+				QString(i18n("%1 milliseconds (%2 fragments with %3 bytes)"))
+					.arg(latencyInMs).arg(fragmentCount).arg(fragmentSize));
+	}
+	else
+	{
+		fragmentCount = 128;
+		fragmentSize = 8192;
+		artsConfig->latencyLabel->setText(QString(i18n("as large as possible")));
+	}
+}
+
 void KArtsModule::updateWidgets()
 {
     startRealtime->setEnabled(startServer->isChecked());
     networkTransparent->setEnabled(startServer->isChecked());
     x11Comm->setEnabled(startServer->isChecked());
     fullDuplex->setEnabled(startServer->isChecked());
-    responseGroup->setEnabled(startServer->isChecked());
     customDevice->setEnabled(startServer->isChecked());
     deviceName->setEnabled(startServer->isChecked()
 							&& customDevice->isChecked());
     customRate->setEnabled(startServer->isChecked());
     samplingRate->setEnabled(startServer->isChecked()
 							&& customRate->isChecked());
+    artsConfig->customOptions->setEnabled(startServer->isChecked());
+    artsConfig->addOptions->setEnabled(startServer->isChecked()
+    						&& artsConfig->customOptions->isChecked());
+
+	artsConfig->soundIO->setEnabled(startServer->isChecked());
+	artsConfig->testSound->setEnabled(startServer->isChecked());
+
+	calculateLatency();
 }
 
 void KArtsModule::slotChanged()
 {
     updateWidgets();
+	configChanged = true;
     emit changed(true);
 }
 
@@ -343,17 +430,12 @@ extern "C"
     void init_arts()
     {
         KConfig *config = new KConfig("kcmartsrc", true, false);
-        QCString cmdline;
 
         config->setGroup("Arts");
         bool startServer = config->readBoolEntry("StartServer",true);
         bool startRealtime = config->readBoolEntry("StartRealtime",false);
-        bool networkTransparent = config->readBoolEntry("NetworkTransparent",false);
         bool x11Comm = config->readBoolEntry("X11GlobalComm",false);
-        bool fullDuplex = config->readBoolEntry("FullDuplex",false);
-        int responseTime = config->readNumEntry("ResponseTime",2);
-		QString deviceName = config->readEntry("DeviceName","");
-		int samplingRate = config->readNumEntry("SamplingRate",0);
+		QString args = config->readEntry("Arguments","-F 10 -S 4096");
 
         delete config;
 
@@ -370,18 +452,13 @@ extern "C"
 
         if(startServer)
         {
-            cmdline = "kdeinit_wrapper ";
+        	QCString cmdline = "kdeinit_wrapper ";
+
             if(startRealtime)
-                cmdline += "artswrapper";
+                cmdline += "artswrapper " + args.utf8();
             else
-                cmdline += "artsd";
-
-            QString args =
-              createArgs(networkTransparent, fullDuplex, responseTime,
-			  				deviceName,samplingRate);
-
-            cmdline += args.utf8();
-
+                cmdline += "artsd " + args.utf8();
+			
             system(cmdline);
         }
     }

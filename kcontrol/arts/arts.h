@@ -36,7 +36,9 @@
 
 #include <qbuttongroup.h>
 #include <qradiobutton.h>
+#include <artsconfig.h>
 
+#include <dispatcher.h>
 
 class KArtsModule : public KCModule
 {
@@ -45,6 +47,7 @@ class KArtsModule : public KCModule
 public:
 
   KArtsModule(QWidget *parent=0, const char *name=0);
+  ~KArtsModule();
 
   void saveParams( void );
 
@@ -57,21 +60,26 @@ public:
 private slots:
 
   void slotChanged();
+  void slotTestSound();
  
 
 private:
 
   void updateWidgets(void);
+  void calculateLatency();
   void GetSettings( void );
 
   QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm,
   			*fullDuplex, *customDevice, *customRate;
-  QButtonGroup *responseGroup;
-  QRadioButton *responseButton[4];
   QLineEdit *deviceName;
   QLineEdit *samplingRate;
-
+  ArtsConfig *artsConfig;
   KConfig *config;
+  int fragmentCount;
+  int fragmentSize;
+  bool configChanged;
+
+  Arts::Dispatcher *dispatcher;
 };
 
 
