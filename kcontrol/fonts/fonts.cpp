@@ -147,7 +147,6 @@ void FontUseItem::applyFontDiff( const QFont &fnt, int fontDiffFlags )
 void FontUseItem::updateLabel()
 {
   QString fontDesc = _font.family() + ' ' + QString::number(_font.pointSize());
-
   preview->setText(fontDesc);
   preview->setFont(_font);
 }
@@ -264,14 +263,13 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     ++count;
   }
 
-   QHBoxLayout *lay = new QHBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
+   QHBoxLayout *lay = new QHBoxLayout(layout, KDialog::spacingHint());
    QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
    lay->addItem( spacer );
    QPushButton * fontAdjustButton = new QPushButton(i18n("Adjust All Fonts..."), this);
    QWhatsThis::add(fontAdjustButton, i18n("Click to change all fonts"));
    lay->addWidget( fontAdjustButton );
    connect(fontAdjustButton, SIGNAL(clicked()), this, SLOT(slotApplyFontDiff()));
-   layout->addItem(lay);
 
    cbAA = new QCheckBox( i18n( "Use A&nti-Aliasing for fonts" ),this);
 
@@ -332,7 +330,7 @@ QString KFonts::quickHelp() const
 
 void KFonts::load()
 {
-  for ( int i = 0; i < (int) fontUseList.count(); i++ )
+  for ( uint i = 0; i < fontUseList.count(); i++ )
     fontUseList.at( i )->readFont();
 
   useAA = QSettings().readBoolEntry("/qt/useXft");
@@ -342,7 +340,6 @@ void KFonts::load()
 
   _changed = true;
   emit changed(false);
-
 }
 
 void KFonts::save()
