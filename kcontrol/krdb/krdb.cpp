@@ -23,6 +23,7 @@
 #include <qbuffer.h>
 #include <qdir.h>
 #include <qsettings.h>
+#include <qtooltip.h>
 
 #include <dcopclient.h>
 
@@ -31,6 +32,7 @@
 #include <kglobalsettings.h>
 #include <kstandarddirs.h>
 #include <kprocess.h>
+#include <ksavefile.h>
 #include <ktempfile.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
@@ -309,53 +311,83 @@ static QString color( const QColor& col )
 
 static void createGtkrc( bool exportColors, const QColorGroup& cg )
 {
-    QFile f( locateLocal("config", "gtkrc" ) ); // lukas: why does it create in ~/.kde/share/config ???
+    // lukas: why does it create in ~/.kde/share/config ???
+    // pfeiffer: so that we don't overwrite the user's gtkrc.
+    // it is found via the GTK_RC_FILES environment variable.
+    KSaveFile saveFile( locateLocal( "config", "gtkrc" ) ); 
+    if ( saveFile.status() != 0 || saveFile.textStream() == 0L )
+        return;
 
-    if ( f.open( IO_WriteOnly) ) {
-        QTextStream t( &f );
-        t.setEncoding( QTextStream::Locale );
+    QTextStream& t = *saveFile.textStream();
+    t.setEncoding( QTextStream::Locale );
 
-        t << i18n(
+    t << i18n(
             "# created by KDE, %1\n"
             "#\n"
             "# If you do not want KDE to override your GTK settings, select\n"
             "# Appearance & Themes -> Colors in the Control Center and disable the checkbox\n"
             "# \"Apply colors to non-KDE applications\"\n"
             "#\n"
-            "#\n").arg(QDateTime::currentDateTime().toString()).local8Bit();
+            "#\n").arg(QDateTime::currentDateTime().toString());
 
-        t << "style \"default\"" << endl;
+    t << "style \"default\"" << endl;
+    t << "{" << endl;
+    if (exportColors)
+    {
+        t << "  bg[NORMAL] = " << color( cg.background() ) << endl;
+        t << "  bg[SELECTED] = " << color( cg.highlight() ) << endl;
+        t << "  bg[INSENSITIVE] = " << color( cg.background() ) << endl;
+        t << "  bg[ACTIVE] = " << color( cg.mid() ) << endl;
+        t << "  bg[PRELIGHT] = " << color( cg.background() ) << endl;
+        t << endl;
+        t << "  base[NORMAL] = " << color( cg.base() ) << endl;
+        t << "  base[SELECTED] = " << color( cg.highlight() ) << endl;
+        t << "  base[INSENSITIVE] = " << color( cg.background() ) << endl;
+        t << "  base[ACTIVE] = " << color( cg.base() ) << endl;
+        t << "  base[PRELIGHT] = " << color( cg.base() ) << endl;
+        t << endl;
+        t << "  text[NORMAL] = " << color( cg.text() ) << endl;
+        t << "  text[SELECTED] = " << color( cg.highlightedText() ) << endl;
+        t << "  text[INSENSITIVE] = " << color( cg.mid() ) << endl;
+        t << "  text[ACTIVE] = " << color( cg.text() ) << endl;
+        t << "  text[PRELIGHT] = " << color( cg.text() ) << endl;
+        t << endl;
+        t << "  fg[NORMAL] = " << color( cg.foreground() ) << endl;
+        t << "  fg[SELECTED] = " << color( cg.highlightedText() ) << endl;
+        t << "  fg[INSENSITIVE] = " << color( cg.mid() ) << endl;
+        t << "  fg[ACTIVE] = " << color( cg.foreground() ) << endl;
+        t << "  fg[PRELIGHT] = " << color( cg.foreground() ) << endl;
+    }
 
+    t << "}" << endl;
+    t << endl;
+    t << "class \"*\" style \"default\"" << endl;
+    t << endl;
+
+    if (exportColors)
+    {
+        // tooltips don't have the standard background color
+        t << "style \"ToolTip\"" << endl;
         t << "{" << endl;
-        if (exportColors)
-        {
-          t << "  bg[NORMAL] = " << color( cg.background() ) << endl;
-          t << "  bg[SELECTED] = " << color( cg.highlight() ) << endl;
-          t << "  bg[INSENSITIVE] = " << color( cg.background() ) << endl;
-          t << "  bg[ACTIVE] = " << color( cg.mid() ) << endl;
-          t << "  bg[PRELIGHT] = " << color( cg.background() ) << endl;
-          t << endl;
-          t << "  base[NORMAL] = " << color( cg.base() ) << endl;
-          t << "  base[SELECTED] = " << color( cg.highlight() ) << endl;
-          t << "  base[INSENSITIVE] = " << color( cg.background() ) << endl;
-          t << "  base[ACTIVE] = " << color( cg.base() ) << endl;
-          t << "  base[PRELIGHT] = " << color( cg.base() ) << endl;
-          t << endl;
-          t << "  text[NORMAL] = " << color( cg.text() ) << endl;
-          t << "  text[SELECTED] = " << color( cg.highlightedText() ) << endl;
-          t << "  text[INSENSITIVE] = " << color( cg.mid() ) << endl;
-          t << "  text[ACTIVE] = " << color( cg.text() ) << endl;
-          t << "  text[PRELIGHT] = " << color( cg.text() ) << endl;
-          t << endl;
-          t << "  fg[NORMAL] = " << color( cg.foreground() ) << endl;
-          t << "  fg[SELECTED] = " << color( cg.highlightedText() ) << endl;
-          t << "  fg[INSENSITIVE] = " << color( cg.mid() ) << endl;
-          t << "  fg[ACTIVE] = " << color( cg.foreground() ) << endl;
-          t << "  fg[PRELIGHT] = " << color( cg.foreground() ) << endl;
-        }
+        QColorGroup group = QToolTip::palette().active();
+        t << "  bg[NORMAL] = " << color( group.background() ) << endl;
+        t << "  base[NORMAL] = " << color( group.base() ) << endl;
+        t << "  text[NORMAL] = " << color( group.text() ) << endl;
+        t << "  fg[NORMAL] = " << color( group.foreground() ) << endl;
         t << "}" << endl;
         t << endl;
-        t << "class \"*\" style \"default\"" << endl;
+        t << "widget \"gtk-tooltips\" style \"ToolTip\"" << endl;
+        t << endl;
+        
+    
+        // highlight the current (mouse-hovered) menu-item
+        // not every button, checkbox, etc.
+        t << "style \"MenuItem\"" << endl;
+        t << "{" << endl;
+        t << "  bg[PRELIGHT] = " << color( cg.highlight() ) << endl;
+        t << "}" << endl;
+        t << endl;
+        t << "class \"*MenuItem\" style \"MenuItem\"" << endl;
         t << endl;
     }
 }
