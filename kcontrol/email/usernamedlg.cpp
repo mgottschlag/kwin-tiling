@@ -54,7 +54,7 @@ UserNameDlg::UserNameDlg (QWidget *parent, const QString &caption)
 	layHost->setMargin(0);
 	lblHost = new QLabel(top, "lblHost");
 	lblHost->setText(i18n("&Hostname:"));
-	lblHost->setSizePolicy( QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed) );
+	//lblHost->setSizePolicy( QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed) );
 	txtHost = new KLineEdit(top, "txtHost");
 	txtHost->setSizePolicy( QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed) );
 	lblHost->setBuddy(txtHost);
@@ -63,7 +63,7 @@ UserNameDlg::UserNameDlg (QWidget *parent, const QString &caption)
 
 	lblPort = new QLabel(top, "lblPort");
 	lblPort->setText(i18n("&Port:"));
-	lblPort->setSizePolicy( QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed) );
+	//lblPort->setSizePolicy( QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed) );
 	txtPort = new KLineEdit(top, "txtPort");
 	txtPort->setSizePolicy( QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed) );
 	lblPort->setBuddy(txtPort);
