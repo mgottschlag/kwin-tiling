@@ -92,9 +92,7 @@ extern "C" {
 
 #ifdef hpux
 # include <sys/utsname.h>
-# ifdef HAS_IFREQ
-#  include <net/if.h>
-# endif
+# include <net/if.h>
 #else
 #ifdef __convex__
 # include <sync/queue.h>
