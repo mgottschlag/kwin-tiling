@@ -349,6 +349,7 @@ void TopLevel::slotConfigure()
     dlg->setPopupAtMousePos( bPopupAtMouse );
     dlg->setReplayActionInHistory( bReplayActionInHistory);
     dlg->setPopupTimeout( myURLGrabber->popupTimeout() );
+    dlg->setNoActionsFor( myURLGrabber->avoidWindows() );
 
     if ( dlg->exec() == QDialog::Accepted ) {
         bKeepContents = dlg->keepContents();
@@ -360,6 +361,8 @@ void TopLevel::slotConfigure()
 
         myURLGrabber->setActionList( dlg->actionList() );
         myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
+	myURLGrabber->setAvoidWindows( dlg->noActionsFor() );
+	
         writeConfiguration( kapp->config() );
     }
 

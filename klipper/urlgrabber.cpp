@@ -274,6 +274,7 @@ void URLGrabber::writeConfiguration( KConfig *kc )
     kc->setGroup( "General" );
     kc->writeEntry( "Number of Actions", myActions->count() );
     kc->writeEntry( "Timeout for Action popups (seconds)", myPopupKillTimeout);
+    kc->writeEntry( "No Actions for WM_CLASS", myAvoidWindows );
 
     ActionListIterator it( *myActions );
     ClipAction *action;

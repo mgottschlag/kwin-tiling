@@ -57,6 +57,9 @@ public:
   int popupTimeout() const { return myPopupKillTimeout; }
   void setPopupTimeout( int timeout ) { myPopupKillTimeout = timeout; }
 
+  const QStringList& avoidWindows() const { return myAvoidWindows; }
+  void setAvoidWindows( const QStringList& list ) { myAvoidWindows = list; }
+    
 private:	
   const ActionList& matchingActions( const QString& );
   void execute( const struct ClipCommand *command ) const;

@@ -19,6 +19,7 @@
 #include <qvgroupbox.h>
 
 #include <kdialogbase.h>
+#include <keditlistbox.h>
 #include <kkeydialog.h>
 #include <knuminput.h>
 
@@ -40,6 +41,7 @@ public:
 private:
     QCheckBox *cbMousePos, *cbSaveContents, *cbReplayAIH;
     KIntNumInput *popupTimeout;
+    KEditListBox *editListBox;
 
 };
 
@@ -106,11 +108,13 @@ public:
     bool replayActionInHistory() const {
 	return generalWidget->cbReplayAIH->isChecked();
     }
-
     int popupTimeout() const {
 	return generalWidget->popupTimeout->value();
     }
-    
+    QStringList noActionsFor() const {
+	return generalWidget->editListBox->items();
+    }
+
     void setKeepContents( bool enable ) {
 	generalWidget->cbSaveContents->setChecked( enable );
     }
@@ -123,7 +127,10 @@ public:
     void setPopupTimeout( int timeout ) {
 	generalWidget->popupTimeout->setValue( timeout );
     }
-    
+    void setNoActionsFor( const QStringList& items ) {
+	generalWidget->editListBox->insertStringList( items );
+    }
+
 private:
     GeneralWidget *generalWidget;
     ActionWidget *actionWidget;

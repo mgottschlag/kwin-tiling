@@ -90,6 +90,9 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     QWidget * dummy = new QWidget( box );
     box->setStretchFactor( dummy, 10 );
 
+    editListBox = new KEditListBox( i18n("Disable actions for windows of type WM_CLASS:"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
+
+    
 #ifdef __GNUC__
 #warning Qt Bug, remove these setOrientation lines when fixed
 #endif
@@ -220,7 +223,7 @@ void ActionWidget::slotItemChanged( QListViewItem *item, const QPoint&, int col 
     if ( !item->parent() || col != 0 )
         return;
     ClipCommand command( item->text(0), item->text(1) );
-        item->setPixmap( 0, SmallIcon( command.pixmap.isEmpty() ? 
+        item->setPixmap( 0, SmallIcon( command.pixmap.isEmpty() ?
                                                    "exec" : command.pixmap ) );
 }
 
