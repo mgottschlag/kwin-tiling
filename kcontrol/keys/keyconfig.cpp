@@ -36,6 +36,7 @@
 #include "keyconfig.h"
 #include "keyconfig.moc"
 
+#define KICKER_ALL_BINDINGS
 
 //----------------------------------------------------------------------------
 
