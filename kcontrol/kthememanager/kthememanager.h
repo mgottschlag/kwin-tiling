@@ -162,7 +162,7 @@ private:
      * Updates the preview widget
      */
     void updatePreview( const QString & pixFile );
-
+    bool themeExist(const QString &_themeName);
     KThemeDlg * dlg;
 
     KTheme * m_theme;

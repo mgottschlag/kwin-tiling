@@ -239,6 +239,11 @@ void kthememanager::slotRemoveTheme()
     }
 }
 
+bool kthememanager::themeExist(const QString &_themeName)
+{
+    return ( dlg->lvThemes->findItem( _themeName, 0 )!=0 );
+}
+
 void kthememanager::slotCreateTheme()
 {
     KNewThemeDlg dlg( this );
@@ -253,31 +258,39 @@ void kthememanager::slotCreateTheme()
 
     if ( dlg.exec() == QDialog::Accepted )
     {
+
         QString themeName = dlg.getName();
-        if ( getThemeVersion( themeName ) != -1 ) // remove the installed theme first
+        if ( themeExist(themeName) )
         {
-            KTheme::remove( themeName );
+            KMessageBox::information( this, i18n( "Theme %1 already exists." ).arg( themeName ) );
         }
-        m_theme = new KTheme( true );
-        m_theme->setName( dlg.getName() );
-        m_theme->setAuthor( dlg.getAuthor() );
-        m_theme->setEmail( dlg.getEmail() );
-        m_theme->setHomepage( dlg.getHomepage() );
-        m_theme->setComment( dlg.getComment().replace( "\n", "" ) );
-        m_theme->setVersion( dlg.getVersion() );
-        m_theme->addPreview();
-
-        QString result = m_theme->createYourself( true );
-        if ( result )
-            KMessageBox::information( this, i18n( "Your theme has been successfully created in %1." ).arg( result ),
-                                      i18n( "Theme Created" ), "theme_created_ok" );
         else
-            KMessageBox::error( this, i18n( "An error occured while creating your theme." ),
-                                i18n( "Theme Not Created" ) );
-        delete m_theme;
-        m_theme = 0;
+        {
+            if ( getThemeVersion( themeName ) != -1 ) // remove the installed theme first
+            {
+                KTheme::remove( themeName );
+            }
+            m_theme = new KTheme( true );
+            m_theme->setName( dlg.getName() );
+            m_theme->setAuthor( dlg.getAuthor() );
+            m_theme->setEmail( dlg.getEmail() );
+            m_theme->setHomepage( dlg.getHomepage() );
+            m_theme->setComment( dlg.getComment().replace( "\n", "" ) );
+            m_theme->setVersion( dlg.getVersion() );
+            m_theme->addPreview();
 
-        listThemes();
+            QString result = m_theme->createYourself( true );
+            if ( result )
+                KMessageBox::information( this, i18n( "Your theme has been successfully created in %1." ).arg( result ),
+                                          i18n( "Theme Created" ), "theme_created_ok" );
+            else
+                KMessageBox::error( this, i18n( "An error occured while creating your theme." ),
+                                    i18n( "Theme Not Created" ) );
+            delete m_theme;
+            m_theme = 0;
+
+            listThemes();
+        }
     }
 }
 
