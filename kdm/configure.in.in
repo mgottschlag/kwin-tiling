@@ -259,5 +259,6 @@ if test "x$with_krb4" != xno; then
 	XDM_CFLAGS="$XDM_CFLAGS -DNO_AFS"
     fi
 fi
+XDM_CFLAGS="$XDM_CFLAGS $(echo "$CFLAGS" | sed 's/ -D_XOPEN_SOURCE=[[0-9]]*//;s/ -D_BSD_SOURCE//;s/ -D_GNU_SOURCE//')"
 AC_MSG_RESULT([xdm CFLAGS: $XDM_CFLAGS])
 AC_SUBST(XDM_CFLAGS)
