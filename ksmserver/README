@@ -65,14 +65,13 @@ desparately trying to connect to something, try setting it to some
 bogus value.
 
 In addition, ksmserver propagates both its network address and its
-process id in ~/.KSMserver, similar to what the DCOP server does.  A
+process id in ~/.kde/socket-$HOSTNAME/KSMserver-$DISPLAY. A
 utility function KApplication::propagateSessionManager() reads this
 setting and sets SESSION_MANAGER accordingly, so that child processes
 can pick it up.  The function is called by clients that are started
 outside the session ( i.e. before ksmserver is started), but want to
 launch other processes that should participate in the session.
 Examples are kdesktop or kicker, see below.
-
 
 Authorization
 -------------
@@ -116,5 +115,6 @@ Troubleshooting
 If you experience trouble like 'logout does not work anymore' or 'I
 cannot start new applications', as a result of a previous crash,
 ensure that ksmserver is indeed not running anymore and remove the
-file ~/.KSMserver. Shouldn't be necessry, but one never knows.
+file ~/.kde/socket-$HOSTNAME/KSMserver-$DISPLAY. Shouldn't be necessry, 
+but one never knows.
 
