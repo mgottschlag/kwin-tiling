@@ -1,0 +1,44 @@
+[Desktop Entry]
+Exec=kcmshell kwindecoration
+Icon=kcmkwm
+Type=Application
+DocPath=kcontrol/kwindecoration.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=kwindecoration
+X-KDE-FactoryName=kwindecoration
+
+Name=Window Decoration
+Name[cs]=Okraje oken
+Name[da]=Vindueskanter
+Name[he]=×ª×× ××× ×ª×××××
+Name[hu]=AblakszegÃ©lyek
+Name[is]=Kantar glugga
+Name[ko]=ì°½ íëë¦¬
+Name[lv]=Loga RÄmji
+Name[ro]=Margini ferestre
+Name[sv]=FÃ¶nsterkanter
+Name[tr]=Pencere kenarlarÄ±
+
+Comment=Window border theme
+Comment[cs]=Motiv okraje oken
+Comment[da]=Vindues kanttema
+Comment[he]=×ª×× ×××× ×ª××××× ××× ××¡ ××× ××©
+Comment[hu]=AblakszegÃ©ly-tÃ©ma
+Comment[is]=Ãema fyrir gluggakanta
+Comment[ko]=ì°½ íëë¦¬ íë§
+Comment[lv]=Loga rÄmja tÄma
+Comment[ro]=TematicÄ margini ferestre
+Comment[tr]=Pencere kenarÄ± temasÄ±
+
+Keywords=kwin, window, manager, border, style, theme, look, feel, layout, button, handle, edge, kwm, decoration
+Keywords[cs]=kwin,Okno,SprÃ¡vce,Okraj,Styl,Motiv,TÃ©ma,Vzhled,RozvrÅ¾enÃ­,TlaÄÃ­tko,Ãchytka,kwm,Dekorace
+Keywords[da]=kwin, vindue, hÃ¥ndtering, kant, stil, tema, udseende, fornemmelse, layout, knap, hÃ¥ndtag, kant, kwm, dekoration
+Keywords[he]=×××©××§,××¦×§,×ª×××,×¨××ª×¤×,××¡××¨×¤,××©×××ª,×××¨×,××©××  ×ª××¨×¢,×××¨×¢,××× ××¡,×ª×¨××¡×,××××,××× ×,×ª×× ×××,×ª×× ×××× ××× ×
+Keywords[hu]=KWin, ablak, kezelÅ, szegÃ©ly, stÃ­lus, tÃ©ma, kinÃ©zet, megjelenÃ©s, elrendezÃ©s, nyomÃ³gomb, fogantyÃº, perem, kwm, ablakstÃ­lus
+Keywords[is]=kwin, gluggi, gluggastjÃ³ri, gluggar, kantar, rammi, skreyting, Ã¾ema, stÃ­ll, Ãºtlit, takki, kwm, skraut
+Keywords[ko]=kwin, window, manager, border, style, theme, look, feel, layout, button, handle, edge, kwm, decoration,ì°½,ìëì°,ë§¤ëì ,ê´ë¦¬ì,íë§,ë³´ê¸°,ëª¨ìì,ë¨ì¶
+Keywords[lv]=kwin, logs, menedÅ¾eris, rÄmis, stils, tÄma, skats, gars, izkÄrtojums, poga, rokturis, stÅ«ris, kwm, dekorÄcija
+Keywords[ro]=kwin, fereatrÄ, manager, margine, stil, tematicÄ, aspect, format, buton, contur, kwm, decoraÅ£ie
+Keywords[sv]=kwin, fÃ¶nster, hanterare, kant, stil, tema, utseende, kÃ¤nsla, layout, knapp, hantera, kant, kwm, dekoration
+Keywords[tr]=kwin,pencere,yÃ¶netici,kenar,stil,tema,gÃ¶rÃ¼nÃ¼Å,doku,yerleÅim,dÃ¼Äme,tutamaÃ§,kenar,kwm,dekorasyon
