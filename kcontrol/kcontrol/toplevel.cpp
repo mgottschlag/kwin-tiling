@@ -77,6 +77,9 @@ TopLevel::TopLevel(const char* name)
   // initialize the entries
   _modules = new ConfigModuleList();
   _modules->readDesktopEntries();
+  
+  for ( ConfigModule* m = _modules->first(); m; m = _modules->next() )
+      connect( m, SIGNAL( helpRequest() ), this, SLOT( slotHelpRequest() ) );
 
   // create the splitter
   _splitter = new QSplitter(this);
@@ -107,8 +110,8 @@ TopLevel::TopLevel(const char* name)
 
   // set up the right hand side (the docking area)
   _dock = new DockContainer(_splitter);
-  connect(_dock, SIGNAL(newModule(const QString&, const QString&)),
-		  this, SLOT(newModule(const QString&, const QString&)));
+  connect(_dock, SIGNAL(newModule(const QString&, const QString&, const QString&)),
+		  this, SLOT(newModule(const QString&, const QString&, const QString&)));
 
   // insert the about widget
   AboutWidget *aw = new AboutWidget(this);
@@ -255,7 +258,7 @@ void TopLevel::activateLargeIcons()
   _indextab->reload();
 }
 
-void TopLevel::newModule(const QString &name, const QString &quickhelp)
+void TopLevel::newModule(const QString &name, const QString& docPath, const QString &quickhelp)
 {
   QString cap = i18n("KDE Control Center");
 
@@ -264,7 +267,7 @@ void TopLevel::newModule(const QString &name, const QString &quickhelp)
 
   setPlainCaption(cap);
 
-  _helptab->setText(quickhelp);
+  _helptab->setText( docPath, quickhelp );
 }
 
 void TopLevel::moduleActivated(ConfigModule *module)
@@ -329,6 +332,12 @@ void TopLevel::deleteDummyAbout()
 {
   delete dummyAbout;
   dummyAbout = 0;
+}
+
+
+void TopLevel::slotHelpRequest()
+{
+    _tab->showPage( _helptab );
 }
 
 void TopLevel::reportBug()

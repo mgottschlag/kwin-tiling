@@ -1,22 +1,22 @@
 /*
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
- 
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
- 
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
-*/                                                                            
+
+*/
 
 #include <qheader.h>
 #include <qstring.h>
@@ -31,6 +31,7 @@
 #include <kiconloader.h>
 #include <kservicegroup.h>
 #include <kdebug.h>
+#include <qwhatsthis.h>
 
 #include "moduletreeview.h"
 #include "moduletreeview.moc"
@@ -38,23 +39,47 @@
 #include "global.h"
 
 
+class ModuleTreeWhatsThis : public QWhatsThis
+{
+public:
+    ModuleTreeWhatsThis( ModuleTreeView* tree)
+	: QWhatsThis( tree ), treeView( tree ) {}
+    ~ModuleTreeWhatsThis(){};
+
+
+    QString text( const QPoint & p) {
+	ModuleTreeItem* i = (ModuleTreeItem*)  treeView->itemAt( p );
+	if ( i && i->module() )  {
+	    return i->module()->comment();
+	} else if ( i ) {
+	    return i18n("The %1 configuration group. Click to open it.").arg( i->text(0) );
+	}
+	return i18n("This treeview display alls available control modules. Click on one of the modules to receive more detailed information.");
+    }
+
+private:
+    ModuleTreeView* treeView;;
+};
+
 ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const char * name)
   : KListView(parent, name)
   , _modules(list)
 {
-  setFrameStyle(QFrame::WinPanel | QFrame::Sunken);   
-  addColumn("");   
+  setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
+  addColumn("");
   setAllColumnsShowFocus(true);
   header()->hide();
 
-  connect(this, SIGNAL(clicked(QListViewItem*)), 
+  new ModuleTreeWhatsThis( this );
+
+  connect(this, SIGNAL(clicked(QListViewItem*)),
 		  this, SLOT(slotItemSelected(QListViewItem*)));
 }
 
 void ModuleTreeView::fill()
 {
   clear();
-  
+
   ConfigModule *module;
   for (module=_modules->first(); module != 0; module=_modules->next())
     {
@@ -62,14 +87,14 @@ void ModuleTreeView::fill()
       parent = getGroupItem(parent, module->groups());
       new ModuleTreeItem(parent, module);
     }
-  
+
   setMinimumWidth(columnWidth(0));
 }
 
 void ModuleTreeView::makeSelected(ConfigModule *module)
 {
   ModuleTreeItem *item = static_cast<ModuleTreeItem*>(firstChild());
- 
+
   updateItem(item, module);
 }
 
@@ -93,7 +118,7 @@ void ModuleTreeView::expandItem(QListViewItem *item, QList<QListViewItem> *paren
   while (item)
     {
       setOpen(item, parentList->contains(item));
-      
+
 	  if (item->childCount() != 0)
 		expandItem(item->firstChild(), parentList);
       item = item->nextSibling();
@@ -103,7 +128,7 @@ void ModuleTreeView::expandItem(QListViewItem *item, QList<QListViewItem> *paren
 void ModuleTreeView::makeVisible(ConfigModule *module)
 {
   ModuleTreeItem *item;
-  
+
   item = static_cast<ModuleTreeItem*>(firstChild());
 
   // collapse all
@@ -121,11 +146,11 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
 			  setOpen(item, true);
 			  break;
 			}
-		  
+		
 		  item = static_cast<ModuleTreeItem*>(item->nextSibling());
 		}
     }
-  
+
   // make the item visible
   if (item)
     ensureItemVisible(item);
@@ -148,7 +173,7 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
   // look if menu already exists
   if (_menuDict[path])
     return _menuDict[path];
-  
+
   // find parent menu
   QStringList parGroup;
   for (unsigned int i=0; i<groups.count()-1; i++)
@@ -193,7 +218,7 @@ void ModuleTreeView::slotItemSelected(QListViewItem* item)
   else
     {
       QList<QListViewItem> parents;
-      
+
       QListViewItem* i = item;
       while(i)
         {
@@ -204,7 +229,7 @@ void ModuleTreeView::slotItemSelected(QListViewItem* item)
       //int oy1 = item->itemPos();
       //int oy2 = mapFromGlobal(QCursor::pos()).y();
       //int offset = oy2 - oy1;
-      
+
       expandItem(firstChild(), &parents);
 
       //int x =mapFromGlobal(QCursor::pos()).x();
@@ -217,7 +242,7 @@ void ModuleTreeView::slotItemSelected(QListViewItem* item)
 void ModuleTreeView::keyPressEvent(QKeyEvent *e)
 {
   if (!currentItem()) return;
-  
+
   if(e->key() == Key_Return
      || e->key() == Key_Enter
         || e->key() == Key_Space)

@@ -1,28 +1,31 @@
 /*
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
- 
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
- 
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
-*/               
 
-#include <qlayout.h>                                                       
+*/
+
+#include <qlayout.h>
 
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
 #include <kprocess.h>
+#include <kapp.h>
+
+#include <qpushbutton.h>
 
 #include "quickhelp.h"
 #include "helpwidget.h"
@@ -40,16 +43,27 @@ HelpWidget::HelpWidget(QWidget *parent , const char *name)
 		  SLOT(mailClicked(const QString &,const QString &)));
 
   l->addWidget(_browser);
+  
+  QPushButton* pb = new QPushButton( i18n("Full Help"), this );
+  connect( pb, SIGNAL( clicked() ), this, SLOT( fullHelp() ) );
+  l->addWidget( pb );
 
   setBaseText();
 }
 
-void HelpWidget::setText(const QString& text)
+void HelpWidget::setText( const QString& docPath, const QString& text)
 {
+  docpath = docPath;
   if (text.isEmpty())
 	setBaseText();
   else
 	_browser->setText(text);
+}
+
+
+void HelpWidget::fullHelp()
+{
+    kapp->invokeHelp( docpath, "" );
 }
 
 void HelpWidget::setBaseText()

@@ -53,11 +53,11 @@ DockContainer::DockContainer(QWidget *parent, const char *name)
 void DockContainer::setBaseWidget(QWidget *widget)
 {
   if (!widget) return;
-  
+
   _basew = widget;
   _basew->reparent(this, 0 , QPoint(0,0), true);
   resize(_basew->sizeHint());
-  emit newModule(widget->caption(), "");
+  emit newModule(widget->caption(), "", "");
 }
 
 void DockContainer::dockModule(ConfigModule *module)
@@ -66,7 +66,7 @@ void DockContainer::dockModule(ConfigModule *module)
   if (_module == module) return;
 
   if (_module && _module->isChanged())
-    {	  	  
+    {	  	
       int res = KMessageBox::warningYesNo(this,i18n("There are unsaved changes in the "
                                                  "active module.\n"
                                                  "Do you want to apply the changes "
@@ -88,26 +88,28 @@ void DockContainer::dockModule(ConfigModule *module)
 	  _rootOnly->repaint();
 	  return;
 	}
-  
+
   _busy->raise();
   _busy->show();
   _busy->repaint();
   QApplication::setOverrideCursor( waitCursor );
 
   ProxyWidget *widget = module->module();
-  
+
   if (widget)
     {
 	  _module = module;
       connect(_module, SIGNAL(childClosed()),
               this, SLOT(removeModule()));
-	  connect(_module, SIGNAL(quickHelpChanged()),
-              this, SLOT(quickHelpChanged()));
       
+      //####### this doesn't work anymore, what was it supposed to do? The signal is gone.
+//       connect(_module, SIGNAL(quickHelpChanged()),
+//               this, SLOT(quickHelpChanged()));
+
       widget->reparent(this, 0 , QPoint(0,0), false);
       widget->resize(size());
-      
-      emit newModule(widget->caption(), widget->quickHelp());
+
+      emit newModule(widget->caption(), module->docPath(), widget->quickHelp());
       QApplication::restoreOverrideCursor();
     }
   else
@@ -120,13 +122,13 @@ void DockContainer::dockModule(ConfigModule *module)
 void DockContainer::removeModule()
 {
   deleteModule();
-  
+
   resizeEvent(0L);
-  
+
   if (_basew)
-	emit newModule(_basew->caption(), "");
+	emit newModule(_basew->caption(), "", "");
   else
-	emit newModule("", "");
+	emit newModule("", "", "");
 }
 
 void DockContainer::deleteModule()
@@ -135,7 +137,7 @@ void DockContainer::deleteModule()
 	_module->deleteClient();
 	_module = 0;
   }
-}  
+}
 
 void DockContainer::resizeEvent(QResizeEvent *)
 {
@@ -156,5 +158,5 @@ void DockContainer::resizeEvent(QResizeEvent *)
 void DockContainer::quickHelpChanged()
 {
   if (_module && _module->module())
-	emit newModule(_module->module()->caption(), _module->module()->quickHelp());
+	emit newModule(_module->module()->caption(),  _module->docPath(), _module->module()->quickHelp());
 }

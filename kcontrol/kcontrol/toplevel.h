@@ -52,7 +52,7 @@ protected:
 protected slots:
   void activateModule(const QString& name);
   void moduleActivated(ConfigModule *module);
-  void newModule(const QString &name, const QString &quickhelp);
+  void newModule(const QString &name, const QString& docPath, const QString &quickhelp);
   void activateIconView();
   void activateTreeView();
 
@@ -63,6 +63,8 @@ protected slots:
   void activateLargeIcons();
 
   void deleteDummyAbout();
+    
+  void slotHelpRequest();
 
 private:
   QTabWidget     *_tab;
