@@ -168,15 +168,13 @@ void KLocaleConfigTime::reTranslate()
    "time strings. The sequences below will be replaced:\n"
    "\n"
    "%H The hour as a decimal number using a 24-hour clock\n"
-   "   (range 00 to 23).\n"
-   "%k The hour (24-hour clock) as a decimal number (range\n"
-   "   0 to 23).\n"
+   "   (00-23).\n"
+   "%k The hour (24-hour clock) as a decimal number (0-23).\n"
    "%I The  hour as a decimal number using a 12-hour clock\n"
-   "   (range 01 to 12).\n"
-   "%l The hour (12-hour clock) as a decimal number (range\n"
-   "   1 to 12).\n"
-   "%M The minute as a decimal number (range 00 to 59).\n"
-   "%S The second as a decimal number (range 00 to 61).\n"
+   "   (01-12).\n"
+   "%l The hour (12-hour clock) as a decimal number (1-12).\n"
+   "%M The minute as a decimal number (00-59).\n"
+   "%S The second as a decimal number (00-61).\n"
    "%p Either AM or PM according to the given time\n"
    "   value. Noon is treated as Pm and midnight as Am."));
 
@@ -190,7 +188,7 @@ void KLocaleConfigTime::reTranslate()
     "%B\tThe full month name.\n"
     "%d\tThe day of month as a decimal number (01-31).\n"
     "%e\tThe day of month as a decimal number (1-31).\n"
-    "%a\tThe first three characters of the week name.\n"
+    "%a\tThe first three characters of the weekday name.\n"
     "%A\tThe full weekday name.");
 
   QToolTip::add(edDateFmt, locale->translate(
