@@ -2,8 +2,22 @@
 //
 // KDE xscreensaver configuration dialog
 //
-// Copyright (c)  Martin R. Jones 1999
+// Copyright (c)  Martin R. Jones <mjones@kde.org> 1999
 //
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation;
+// version 2 of the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; see the file COPYING.  If not, write to
+// the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+// Boston, MA 02111-1307, USA.
 
 #include <stdlib.h>
 #include <qlayout.h>
@@ -57,6 +71,14 @@ KXSConfigDialog::KXSConfigDialog(const QString &filename)
         controlLayout->add(rc);
         mConfigItemList.append(rc);
       }
+      else if (type == "DoubleRange")
+      {
+        KXSDoubleRangeControl *rc =
+          new KXSDoubleRangeControl(plainPage(), group, config);
+        connect(rc, SIGNAL(changed()), SLOT(slotChanged()));
+        controlLayout->add(rc);
+        mConfigItemList.append(rc);
+      }
       else if (type == "Check")
       {
         KXSCheckBoxControl *cc = new KXSCheckBoxControl(plainPage(), group,
@@ -92,6 +114,8 @@ KXSConfigDialog::KXSConfigDialog(const QString &filename)
 
   mPreview = new QWidget(plainPage());
   mPreview->setFixedSize(250, 200);
+//  mPreview->setBackgroundMode(QWidget::NoBackground);
+  mPreview->setBackgroundColor(Qt::black);
 
   layout->add(mPreview);
 
