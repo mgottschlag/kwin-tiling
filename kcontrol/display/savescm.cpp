@@ -53,6 +53,7 @@ SaveScm::SaveScm( QWidget *parent, const char *name )
 	bbox->addStretch( 10 );
 	
 	QPushButton *ok = bbox->addButton( i18n( "&OK" ) );
+	ok->setDefault( true );
 	connect( ok, SIGNAL( clicked() ), SLOT( accept() ) );
 	
 	QPushButton *cancel = bbox->addButton( i18n( "&Cancel" ) );
