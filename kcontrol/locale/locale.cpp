@@ -33,111 +33,115 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kstddirs.h>
+#include <ksimpleconfig.h>
 
 #include "locale.h"
 #include "locale.moc"
+#include <stdlib.h>
 
 KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
   : KConfigWidget (parent, name)
 {
-  // allow localization of numbers and money
-  KGlobal::locale()->enableNumericLocale(true);  
+    locale = new KLocale("kdelibs");
+    
+    // allow localization of numbers and money
+    locale->enableNumericLocale(true);
+    
+    QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
+    QGroupBox *gbox = new QGroupBox(i18n("Language"), this);
+    tl->addWidget(gbox);
+    
+    QGridLayout *tl1 = new QGridLayout(gbox, 5, 4, 5);
+    tl1->addRowSpacing(0, 15);
+    tl1->addRowSpacing(4, 10);
+    tl1->addColSpacing(0, 10);
+    tl1->addColSpacing(3, 10);
+    tl1->setColStretch(2, 1);
+    
+    changedFlag = FALSE;
+    
+    QLabel *label = new QLabel(i18n("&First"), gbox);
+    label->setMinimumSize(label->sizeHint());
+    combo1 = new KLanguageCombo(gbox);
+    combo1->setMinimumWidth(combo1->sizeHint().width());
+    combo1->setFixedHeight(combo1->sizeHint().height());
+    label->setBuddy(combo1);
+    connect(combo1,SIGNAL(highlighted(int)),this,SLOT(changed(int)));
+    tl1->addWidget(label, 1, 1);
+    tl1->addWidget(combo1, 1, 2);
+    
+    label = new QLabel(i18n("&Second"), gbox);
+    label->setMinimumSize(label->sizeHint());
+    combo2 = new KLanguageCombo(gbox);
+    combo2->setMinimumWidth(combo2->sizeHint().width());
+    combo2->setFixedHeight(combo2->sizeHint().height());
+    label->setBuddy(combo2);
+    connect(combo2,SIGNAL(highlighted(int)),this,SLOT(changed(int)));
+    tl1->addWidget(label, 2, 1);
+    tl1->addWidget(combo2, 2, 2);
+    
+    label = new QLabel(i18n("&Third"), gbox);
+    label->setMinimumSize(label->sizeHint());
+    combo3 = new KLanguageCombo(gbox);
+    combo3->setMinimumWidth(combo3->sizeHint().width());
+    combo3->setFixedHeight(combo3->sizeHint().height());
+    label->setBuddy(combo3);
+    connect(combo3,SIGNAL(highlighted(int)),this,SLOT(changed(int)));
+    tl1->addWidget(label, 3, 1);
+    tl1->addWidget(combo3, 3, 2);
+    
+    tl1->activate();
+    
+    gbox = new QGroupBox(i18n("Examples"), this);
+    tl->addWidget(gbox);
+    
+    tl1 = new QGridLayout(gbox, 6, 4, 5);
+    tl1->addRowSpacing(0, 15);
+    tl1->addRowSpacing(5, 10);
+    tl1->addColSpacing(0, 10);
+    tl1->addColSpacing(3, 10);
+    tl1->setColStretch(2, 1);
+    
+    label = new QLabel(i18n("Numbers:"), gbox);
+    label->setMinimumSize(label->sizeHint());
+    tl1->addWidget(label, 1, 1);
+    
+    numberSample = new QLabel(gbox);
+    tl1->addWidget(numberSample, 1, 2);
+    numberSample->setText(locale->formatNumber(1234567.89) +
+			  " / " +
+			  locale->formatNumber(-1234567.89));
+    
+    label = new QLabel(i18n("Money:"), gbox);
+    label->setMinimumSize(label->sizeHint());
+    tl1->addWidget(label, 2, 1);
+    
+    moneySample = new QLabel(gbox);
+    tl1->addWidget(moneySample, 2, 2);
+    moneySample->setText(locale->formatMoney(123456789.00) +
+			 " / " + 
+			 locale->formatMoney(-123456789.00));
+    
+    label = new QLabel(i18n("Date:"), gbox);
+    label->setMinimumSize(label->sizeHint());
+    tl1->addWidget(label, 3, 1);
+    
+    dateSample = new QLabel(gbox);
+    tl1->addWidget(dateSample, 3, 2);
+    dateSample->setText(locale->formatDate(QDate::currentDate()));
+    
+    label = new QLabel(i18n("Time:"), gbox);
+    label->setMinimumSize(label->sizeHint());
+    tl1->addWidget(label, 4, 1);
+    
+    timeSample = new QLabel(gbox);
+    tl1->addWidget(timeSample, 4, 2);
+    timeSample->setText(locale->formatTime(QTime::currentTime()));
+    
+    tl->addStretch(1);
+    tl->activate();
 
-  QVBoxLayout *tl = new QVBoxLayout(this, 10, 10);
-  QGroupBox *gbox = new QGroupBox(i18n("Language"), this);
-  tl->addWidget(gbox);
-
-  QGridLayout *tl1 = new QGridLayout(gbox, 5, 4, 5);
-  tl1->addRowSpacing(0, 15);
-  tl1->addRowSpacing(4, 10);
-  tl1->addColSpacing(0, 10);
-  tl1->addColSpacing(3, 10);
-  tl1->setColStretch(2, 1);
-
-  changedFlag = FALSE;
- 
-  QLabel *label = new QLabel(i18n("First"), gbox);
-  label->setMinimumSize(label->sizeHint());
-  combo1 = new KLanguageCombo(gbox);
-  combo1->setMinimumWidth(combo1->sizeHint().width());
-  combo1->setFixedHeight(combo1->sizeHint().height());
-  label->setBuddy(combo1);
-  connect(combo1,SIGNAL(highlighted(int)),this,SLOT(changed(int)));
-  tl1->addWidget(label, 1, 1);
-  tl1->addWidget(combo1, 1, 2);
-
-  label = new QLabel(i18n("Second"), gbox);
-  label->setMinimumSize(label->sizeHint());
-  combo2 = new KLanguageCombo(gbox);
-  combo2->setMinimumWidth(combo2->sizeHint().width());
-  combo2->setFixedHeight(combo2->sizeHint().height());
-  label->setBuddy(combo2);
-  connect(combo2,SIGNAL(highlighted(int)),this,SLOT(changed(int)));
-  tl1->addWidget(label, 2, 1);
-  tl1->addWidget(combo2, 2, 2);
-
-  label = new QLabel(i18n("Third"), gbox);
-  label->setMinimumSize(label->sizeHint());
-  combo3 = new KLanguageCombo(gbox);
-  combo3->setMinimumWidth(combo3->sizeHint().width());
-  combo3->setFixedHeight(combo3->sizeHint().height());
-  label->setBuddy(combo3);
-  connect(combo3,SIGNAL(highlighted(int)),this,SLOT(changed(int)));
-  tl1->addWidget(label, 3, 1);
-  tl1->addWidget(combo3, 3, 2);
-
-  tl1->activate();
-
-  gbox = new QGroupBox(i18n("Examples"), this);
-  tl->addWidget(gbox);
-
-  tl1 = new QGridLayout(gbox, 6, 4, 5);
-  tl1->addRowSpacing(0, 15);
-  tl1->addRowSpacing(5, 10);
-  tl1->addColSpacing(0, 10);
-  tl1->addColSpacing(3, 10);
-  tl1->setColStretch(2, 1);
-
-  label = new QLabel(i18n("Numbers:"), gbox);
-  label->setMinimumSize(label->sizeHint());
-  tl1->addWidget(label, 1, 1);
-
-  numberSample = new QLabel(gbox);
-  tl1->addWidget(numberSample, 1, 2);
-  numberSample->setText(KGlobal::locale()->formatNumber(1234567.89) +
-			" / " +
-			KGlobal::locale()->formatNumber(-1234567.89));
-
-  label = new QLabel(i18n("Money:"), gbox);
-  label->setMinimumSize(label->sizeHint());
-  tl1->addWidget(label, 2, 1);
-
-  moneySample = new QLabel(gbox);
-  tl1->addWidget(moneySample, 2, 2);
-  moneySample->setText(KGlobal::locale()->formatMoney(123456789.00) +
-		       " / " + 
-		       KGlobal::locale()->formatMoney(-123456789.00));
-
-  label = new QLabel(i18n("Date:"), gbox);
-  label->setMinimumSize(label->sizeHint());
-  tl1->addWidget(label, 3, 1);
-
-  dateSample = new QLabel(gbox);
-  tl1->addWidget(dateSample, 3, 2);
-  dateSample->setText(KGlobal::locale()->formatDate(QDate::currentDate()));
-
-  label = new QLabel(i18n("Time:"), gbox);
-  label->setMinimumSize(label->sizeHint());
-  tl1->addWidget(label, 4, 1);
-
-  timeSample = new QLabel(gbox);
-  tl1->addWidget(timeSample, 4, 2);
-  timeSample->setText(KGlobal::locale()->formatTime(QTime::currentTime()));
-
-  tl->addStretch(1);
-  tl->activate();
-
-  loadSettings();
+    loadSettings();
 }
 
 
@@ -152,25 +156,30 @@ void KLocaleConfig::loadLanguageList(KLanguageCombo *combo)
   QString name;
 
   combo->clear();
-  languages.clear();  
   tags.clear();
 
-  config->setGroup("KCM Locale");
-  tags = config->readListEntry("Languages");
-
-  for ( QStringList::Iterator it = tags.begin(); it != tags.end(); ++it )
+  config->setGroup("C");
+  combo->insertLanguage("C;" + config->readEntry("Name"));
+  tags.append("C");
+ 
+  QStringList filelist = KGlobal::dirs()->findAllResources("locale",
+							   "*/entry.desktop");
+  for ( QStringList::ConstIterator it = filelist.begin();
+	it != filelist.end(); ++it )
     {
-      config->setGroup(*it);
-      name = config->readEntry("Name");
-      if (!name.isEmpty())
-        languages.append(name);
-      else
-        languages.append(i18n("without name!"));
-             
-     combo->insertLanguage(*it+";"+name);
-
-     if (*it == "C")
-       combo->setCurrentItem(combo->count()-1);
+	KSimpleConfig entry(*it);
+	entry.setGroup("KCM Locale");
+	name = entry.readEntry("Language");
+	if (name.isEmpty())
+	    name = "without name!";
+	
+	QString path = *it;
+	int index = path.findRev('/');
+	path = path.left(index);
+	index = path.findRev('/');
+	path = path.mid(index+1);
+	combo->insertLanguage(path + ";" + name);
+	tags.append(path);
     }
 }
 
@@ -214,6 +223,7 @@ void KLocaleConfig::loadSettings()
       default: return;
     }
   } 
+  changed(combo1->currentItem());
 }
 
 
@@ -255,14 +265,22 @@ void KLocaleConfig::changed(int)
 {
   changedFlag = TRUE;
 
-  // should update the locale here before redisplaying samples.
-  numberSample->setText(KGlobal::locale()->formatNumber(1234567.89) +
-			" / " +
-			KGlobal::locale()->formatNumber(-1234567.89));
+  delete locale;
+  const KLanguageCombo *send = static_cast<const KLanguageCombo*>(sender());
+  if (!send)
+      send = combo1;
+  setenv("KDE_LANG", *tags.at(send->currentItem()), 1);
+  locale = new KLocale("kdelibs");
 
-  moneySample->setText(KGlobal::locale()->formatMoney(123456789.00) +
+  debug("changed %s", locale->language().ascii());
+  // should update the locale here before redisplaying samples.
+  numberSample->setText(locale->formatNumber(1234567.89) +
+			" / " +
+			locale->formatNumber(-1234567.89));
+
+  moneySample->setText(locale->formatMoney(123456789.00) +
 		       " / " + 
-		       KGlobal::locale()->formatMoney(-123456789.00));
-  dateSample->setText(KGlobal::locale()->formatDate(QDate::currentDate()));
-  timeSample->setText(KGlobal::locale()->formatTime(QTime::currentTime()));
+		       locale->formatMoney(-123456789.00));
+  dateSample->setText(locale->formatDate(QDate::currentDate()));
+  timeSample->setText(locale->formatTime(QTime::currentTime()));
 }

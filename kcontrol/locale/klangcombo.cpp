@@ -58,7 +58,7 @@ void KLanguageCombo::insertLanguage(const QString& lang)
   pm.fill(colorGroup().background());
   p.begin(&pm);
 
-  p.drawText(24,1,w-24,16,AlignLeft | AlignTop,output);
+  p.drawText(24, 1 , w-24, 16, AlignLeft | AlignTop, output);
   if (!flag.isNull())
     p.drawPixmap(1,1,flag);
   p.end();

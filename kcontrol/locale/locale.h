@@ -31,6 +31,7 @@
 #include "klangcombo.h"
 
 class QLabel;
+class KLocale;
 
 class KLocaleConfig : public KConfigWidget
 {
@@ -59,8 +60,9 @@ private:
   QLabel *timeSample;
   QLabel *dateSample;
 
-  QStringList tags, languages;
+  QStringList tags;
   bool changedFlag;
+  KLocale *locale;
 
 private slots:
 
