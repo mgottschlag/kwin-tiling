@@ -4,7 +4,7 @@
     This file is part of the KDE project
     Copyright (C) 2000 Yves Arrouye <yves@realnames.com>
     Copyright (C) 2000 Dawit Alemayehu <adawit@earthlink.net>
-    Copyright (C) 2000 Malte Alemayehu <adawit@earthlink.net>
+    Copyright (C) 2000 Malte Starostik <starosti@zedat.fu-berlin.de>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,9 +39,24 @@ class KShortURIFilter : public KURIFilterPlugin , public DCOPObject
     K_DCOP
 public:
     KShortURIFilter( QObject *parent = 0, const char *name = 0 );
+
+    /**
+     * Destructor
+     */
     virtual ~KShortURIFilter() {};
+
+    /**
+     * Converts short URIs into fully qualified valid URI.
+     *
+     * Parses any given invalid URI to determine whether it
+     * is a known short URI and converts it to its fully
+     * qualified version.
+     *
+     * @param data the data to be filtered
+     * @return true if the url has been filtered
+     */
     virtual bool filterURI( KURIFilterData &data ) const;
-    virtual QString configName() const { return i18n("Short URI"); }
+    virtual QString configName() const { return i18n("ShortURIFilter"); }
 
 public:
 k_dcop:
@@ -52,28 +67,14 @@ protected:
     /**
      * Determines the validity of the URI from
      *
-     * Parses any given invalid URI to determine whether it
-     * is a known short URI and converts it to its fully
-     * qualified version.
+     * Parses any given invalid URI to determine whether its
+     * signature is a possible match for a short URI.
      *
      * @param
      * @param
      * @return
      */
     bool isValidShortURL ( const QString& ) const;
-
-    /**
-     * Converts short URIs into fully qualified valid URI.
-     *
-     * Parses any given invalid URI to determine whether it
-     * is a known short URI and converts it to its fully
-     * qualified version.
-     *
-     * @param
-     * @param
-     * @return
-     */
-    void parseURI( KURIFilterData& ) const;
 
 private:
     QMap<QString, QString> m_urlHints;
