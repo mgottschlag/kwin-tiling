@@ -445,6 +445,7 @@ void MouseSettings::load(KConfig *config)
 
   handedEnabled = true;
 
+  // ## keep this in sync with KGlobalSettings::mouseSettings
   switch (num_buttons)
     {
     case 1:
