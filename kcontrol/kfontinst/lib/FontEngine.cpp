@@ -454,6 +454,26 @@ static bool getCharMap(FT_Face &face, const QString &str)
     return false;
 }
 
+static void drawText(QPainter &painter, int x, int y, int width, const QString &str)
+{
+    QString s(str);
+    bool    addedElipses=false;
+
+    width-=x*2;
+    while(s.length()>3 && painter.fontMetrics().size(0, s).width()>width)
+    {
+        if(!addedElipses)
+        {
+            s.remove(s.length()-2, 2);
+            s.append("...");
+            addedElipses=true;
+        }
+        else
+            s.remove(s.length()-4, 1);
+    }
+    painter.drawText(x, y, s);
+}
+
 void CFontEngine::createPreview(const QString &path, int width, int height, QPixmap &pix, int faceNo)
 {
     static const struct
@@ -513,12 +533,12 @@ void CFontEngine::createPreview(const QString &path, int width, int height, QPix
         painter.setFont(title);
         painter.setPen(Qt::black);
         y=painter.fontMetrics().height();
-        painter.drawText(x, y, name);
+        drawText(painter, x, y, width, name);
 
         if(bmp)
         {
             y+=2+painter.fontMetrics().height();
-            painter.drawText(x, y, info);
+            drawText(painter, x, y, width, info);
         }
 
         y+=4;
