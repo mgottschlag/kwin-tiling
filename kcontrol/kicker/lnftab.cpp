@@ -50,46 +50,6 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
   layout = new QGridLayout(this, 4, 1,
                            KDialog::marginHint(),
                            KDialog::spacingHint());
-  // hidebutton group
-  hb_group = new QGroupBox(i18n("&Hide Buttons"), this);
-
-  vbox = new QVBoxLayout(hb_group,KDialog::marginHint(),
-			 KDialog::spacingHint());
-  vbox->addSpacing(fontMetrics().lineSpacing());
-
-  QHBox *hbox2 = new QHBox(hb_group);
-  QVBox *vbox2 = new QVBox(hbox2);
-
-
-  show_hbs = new QCheckBox(i18n("&Enabled"), vbox2);
-  connect(show_hbs, SIGNAL(clicked()), SLOT(show_hbs_clicked()));
-  QWhatsThis::add( show_hbs, i18n("If this option is enabled, the panel"
-    " will have buttons on both ends that can be used to hide it. The"
-    " panel will slide away, leaving more room for applications. There"
-    " only remains a small button which can be used to show the panel again.") );
-
-  highlight_hbs = new QCheckBox(i18n("Highlight on mouse &over"), vbox2);
-  connect(highlight_hbs, SIGNAL(clicked()), SIGNAL(changed()));
-  QWhatsThis::add( highlight_hbs, i18n("If this option is enabled, the"
-    " hide buttons are highlighted when the mouse cursor is moved over them.") );
-
-  hb_preview = new HBPreview(hbox2);
-  hb_preview->setFixedSize(68,46);
-
-  hbox2->setStretchFactor(hb_preview, 1);
-  hbox2->setStretchFactor(vbox2, 2);
-
-  hb_input = new KIntNumInput(10, hb_group);
-  hb_input->setRange(3, 24, 1, true);
-  hb_input->setLabel(i18n("Size:"), AlignTop);
-  connect(hb_input, SIGNAL(valueChanged(int)), SLOT(hbs_input_changed(int)));
-  QString wtstr = i18n("Here you can change the size of the hide buttons.");
-  QWhatsThis::add( hb_input, wtstr );
-
-  vbox->addWidget(hbox2);
-  vbox->addWidget(hb_input);
-  layout->addWidget(hb_group, 0, 1);
-
 
 
   // hide animation group
@@ -115,31 +75,6 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
 
   layout->addWidget(hide_group, 0, 0);
 
-  // auto-hide group
-  ah_group = new QButtonGroup(i18n("&Auto Hide"), this);
-
-  vbox = new QVBoxLayout(ah_group, KDialog::marginHint(),
-                         KDialog::spacingHint());
-  vbox->addSpacing(fontMetrics().lineSpacing());
-
-  ah_cb = new QCheckBox(i18n("En&abled"), ah_group);
-  connect(ah_cb, SIGNAL(clicked()), SLOT(ah_clicked()));
-  vbox->addWidget(ah_cb);
-  QWhatsThis::add( ah_cb, i18n("If this option is enabled the panel will automatically hide"
-    " after some time and reappear when you move the mouse to the screen edge the panel is attached to."
-    " This is particularly useful for small screen resolutions, for example, on laptops.") );
-
-  ah_input = new KIntNumInput(3, ah_group);
-  ah_input->setRange(1, 100, 1, true);
-  ah_input->setLabel(i18n("&Delay in seconds:"), AlignTop);
-  connect(ah_input, SIGNAL(valueChanged(int)), SLOT(ah_input_changed(int)));
-  vbox->addWidget(ah_input);
-  QWhatsThis::add( ah_input, i18n("Here you can change the delay after which the panel will disappear"
-    " if not used."));
-
-  layout->addWidget(ah_group, 1, 1);
-
-
   // auto-hide animation group
   autohide_group = new QGroupBox(i18n("&Auto Hide Animation"), this);
 
@@ -162,6 +97,48 @@ LnFTab::LnFTab( QWidget *parent, const char* name )
     " i.e. the animation shown when the panel disappears after a certain amount of time."));
 
   layout->addWidget(autohide_group, 1, 0);
+
+  // theme background group
+  theme_group = new QGroupBox(i18n("Background Theme"), this);
+
+  vbox = new QVBoxLayout(theme_group,KDialog::marginHint(),
+                                       KDialog::spacingHint());
+  vbox->addSpacing(fontMetrics().lineSpacing());
+
+  QHBox *hbox1 = new QHBox(theme_group);
+  use_theme_cb = new QCheckBox(i18n("Use background theme"), hbox1);
+  connect(use_theme_cb, SIGNAL(clicked()), SLOT(use_theme_clicked()));
+  theme_label = new QLabel(hbox1);
+  theme_label->setFixedSize(50,50);
+  theme_label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  theme_label->setAlignment(AlignCenter);
+  hbox1->setSpacing(KDialog::spacingHint());
+  hbox1->setStretchFactor(use_theme_cb, 2);
+  QWhatsThis::add( use_theme_cb, i18n("If this option is selected, you"
+    " can choose an individual 'theme' that will be used to display the"
+    " panel. If it is not selected, the default colors will be used,"
+    " see the 'Colors' control module.") );
+  QWhatsThis::add( theme_label, i18n("This is a preview for the selected"
+    " panel theme.") );
+
+  QHBox *hbox2 = new QHBox(theme_group);
+  theme_input = new KLineEdit(hbox2);
+  theme_input->setReadOnly(true);
+  browse_button = new QPushButton(i18n("Browse"), hbox2);
+  connect(browse_button, SIGNAL(clicked()), SLOT(browse_theme()));
+  QString wtstr = i18n("Here you can choose a theme to be displayed by the panel."
+    " Press the 'Browse' button to choose a theme using the file dialog.<p>"
+    " This option is only active if 'Use background theme' is selected.");
+  QWhatsThis::add( theme_input, wtstr );
+  QWhatsThis::add( browse_button, wtstr );
+
+  hbox2->setSpacing(KDialog::spacingHint());
+  hbox2->setStretchFactor(theme_input, 2);
+
+  vbox->addWidget(hbox1);
+  vbox->addWidget(hbox2);
+
+  layout->addWidget(theme_group, 2, 0);
 
   // misc group
   misc_group = new QGroupBox(i18n("Miscellaneous"), this);
