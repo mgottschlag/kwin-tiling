@@ -312,9 +312,9 @@ void TopLevel::readProperties(KConfig *kc)
                   -2, -1);
           m_clipDict.insert( id, *it );
       }
-      
+
       if ( !dataList.isEmpty() )
-      {    
+      {
           m_lastSelection = dataList.first();
           m_lastClipboard = dataList.first();
           m_lastString    = dataList.first();
@@ -553,7 +553,7 @@ QString TopLevel::clipboardContents( bool *isSelection )
         else
             clip->setSelectionMode( true );
     }
-            
+
     if ( isSelection )
         *isSelection = clip->selectionModeEnabled();
 
@@ -632,6 +632,16 @@ void TopLevel::checkClipData( const QString& text, bool selectionMode )
 {
     clip->setSelectionMode( selectionMode );
 
+    if ( ignoreClipboardChanges() )
+    {
+        // keep our old clipboard, thanks
+        setClipboard( selectionMode ? m_lastSelection : m_lastClipboard,
+                      selectionMode );
+        return;
+    }
+    
+
+    
     bool clipEmpty = (clip->data()->format() == 0L);
 //     qDebug("checkClipData(%i): %s, empty: %i (lastClip: %s, lastSel: %s)", selectionMode, text.latin1(), clipEmpty, m_lastClipboard.latin1(), m_lastSelection.latin1() );
 
@@ -647,8 +657,7 @@ void TopLevel::checkClipData( const QString& text, bool selectionMode )
     if ( text != lastClipRef ) {
         // keep old clipboard after someone set it to null
         if ( clipEmpty && bNoNullClipboard )
-            setClipboard( lastClipRef, 
-                          selectionMode ? Selection : Clipboard );
+            setClipboard( lastClipRef, selectionMode );
         else
             lastClipRef = text;
     }
@@ -679,11 +688,16 @@ void TopLevel::checkClipData( const QString& text, bool selectionMode )
     }
 }
 
+void TopLevel::setClipboard( const QString& text, bool selectionMode )
+{
+    setClipboard( text, selectionMode ? Selection : Clipboard );
+}
+
 void TopLevel::setClipboard( const QString& text, int mode )
 {
     bool blocked = clip->signalsBlocked();
     clip->blockSignals( true ); // ### this might break other kicker applets
-    
+
     KClipboard *klip = KClipboard::self();
     bool implicit = klip->implicitSelection();
     bool synchronize = klip->isSynchronizing();
@@ -701,8 +715,30 @@ void TopLevel::setClipboard( const QString& text, int mode )
 
     klip->setImplicitSelection( implicit );
     klip->setSynchronizing( synchronize );
-    
+
     clip->blockSignals( blocked );
+}
+
+//
+// changing a spinbox in klipper's config-dialog causes the lineedit-contents
+// of the spinbox to be selected and hence the clipboard changes. But we don't
+// want all those items in klipper's history. See #41917
+//
+bool TopLevel::ignoreClipboardChanges() const
+{
+    QWidget *focusWidget = qApp->focusWidget();
+    if ( focusWidget )
+    {
+        if ( focusWidget->inherits( "QSpinBox" ) || 
+             (focusWidget->parentWidget() &&
+              focusWidget->inherits("QLineEdit") && 
+              focusWidget->parentWidget()->inherits("QSpinWidget")) )
+        {
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 #include "toplevel.moc"

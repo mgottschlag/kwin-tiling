@@ -73,6 +73,8 @@ protected:
     void applyClipChanges( const QString& text );
 
     void setClipboard( const QString& text, int mode );
+    void setClipboard( const QString& text, bool selectionMode );
+    bool ignoreClipboardChanges() const;
 
 protected slots:
     void slotPopupMenu() { showPopupMenu( m_popup ); }
