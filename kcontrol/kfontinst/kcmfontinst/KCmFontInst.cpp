@@ -75,7 +75,7 @@ K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory("kcmfontinst"))
 CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
             : KCModule(parent, "kfontinst"),
               itsAboutData(NULL),
-              itsTop(CMisc::root() ? "fonts:/" : QString("fonts:/")+i18n(KIO_FONTS_USER)),
+              itsTop(CMisc::root() ? QString("fonts:/") : QString("fonts:/")+i18n(KIO_FONTS_USER)),
               itsPreview(NULL),
               itsConfig(CGlobal::uiCfgFile())
 {
