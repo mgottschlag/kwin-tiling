@@ -224,7 +224,6 @@ KFonts::KFonts(QWidget *parent, const char *name)
     QLabel * preview = new QLabel(this);
     preview->setFrameStyle(QFrame::Box | QFrame::Plain);
     preview->setMaximumWidth(200);
-    QWhatsThis::add(preview, i18n("Preview of selected font"));
 
     FontUseItem * i =
       new FontUseItem(
@@ -240,6 +239,9 @@ KFonts::KFonts(QWidget *parent, const char *name)
 
     fontUseList.append(i);
     connect(i, SIGNAL(changed()), this, SLOT(fontChanged()));
+
+    QWhatsThis::add(preview, i18n("Preview of the \"%1\" font").arg(i->text()));
+
     QLabel * fontUse = new QLabel(i->text(), this);
     
     QWhatsThis::add(fontUse, *quickHelpIt++);
