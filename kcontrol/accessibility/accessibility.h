@@ -23,20 +23,9 @@
 #ifndef _ACCESSIBILITY_H_
 #define _ACCESSIBILITY_H_
 
-// #include <kcmodule.h>
 #include <kdebug.h>
 
 #include "accessibilityconfigwidget.h"
-
-class QCheckBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
-class KColorButton;
-class QSlider;
-class KNumInput;
-class KAboutData;
 
 class AccessibilityConfig : public AccessibilityConfigWidget {
    Q_OBJECT
@@ -83,29 +72,11 @@ class AccessibilityConfig : public AccessibilityConfigWidget {
        * That is displayed in the sidebar in the KControl
        */
       QString quickHelp() const;            
-
+      
+      /**
+       * Returns the about data of the Accessibility module
+       */
       const KAboutData* aboutData() const;
-
-   protected slots:
-      void checkAccess();
-      void invertClicked();
-      void flashClicked();
-      void selectSound();
-      void changeFlashScreenColor();
-
-   private:
-//       QCheckBox *systemBell, *customBell, *visibleBell;
-//       QRadioButton *invertScreen, *flashScreen;
-//       QLabel    *soundLabel, *colorLabel;
-//       QLineEdit *soundEdit;
-//       QPushButton *soundButton;
-//       KColorButton *colorButton;
-//       KIntNumInput *durationSlider;
-// 
-//       QCheckBox *stickyKeys, *stickyKeysLock;
-// 
-//       QCheckBox *slowKeys, *bounceKeys;    
-//       KIntNumInput *slowKeysDelay, *bounceKeysDelay;
 
    private slots:
       /**
