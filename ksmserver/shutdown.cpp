@@ -76,7 +76,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     char *user = getlogin();
     if (!user) user = getenv("LOGNAME");
     QLabel* label = new QLabel(
-      i18n("End session for %1").arg(QString::fromLatin1(user ? user : "<?""?""?>")),
+      i18n("End session for \"%1\"").arg(QString::fromLatin1(user ? user : "<?""?""?>")),
       frame );
     QFont fnt = label->font();
     fnt.setBold( true );
