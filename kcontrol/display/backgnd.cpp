@@ -252,6 +252,9 @@ void KBackground::init()
     m_pBackgroundBox->insertItem(i18n("Pipecross Gradient"));
     m_pBackgroundBox->insertItem(i18n("Elliptic Gradient"));
 
+    // Use this as a common size for the combo boxen
+    int width = m_pBackgroundBox->sizeHint().width();
+
     // Wallpapers
     QStringList lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
     for (i=0; i<(int)lst.count(); i++) {
@@ -261,6 +264,11 @@ void KBackground::init()
 	m_Wallpaper[s] = i;
     }
 
+    // I would have prefered to use setMinimumWidth here, but it seems to
+    // have no effect. The default width is too large because of the long
+    // filenames that are inserted.
+    m_pWallpaperBox->setFixedWidth(width);
+
     // Wallpaper tilings: again they must match the ones from bgrender.cc
     m_pArrangementBox->insertItem(i18n("No Wallpaper"));
     m_pArrangementBox->insertItem(i18n("Centred"));
@@ -268,6 +276,7 @@ void KBackground::init()
     m_pArrangementBox->insertItem(i18n("Center Tiled"));
     m_pArrangementBox->insertItem(i18n("Centred Maxpect"));
     m_pArrangementBox->insertItem(i18n("Scaled"));
+    m_pArrangementBox->setFixedWidth(width);
 }
 
 

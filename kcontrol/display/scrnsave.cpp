@@ -7,49 +7,47 @@
 // Converted to a kcc module by Matthias Hoelzer 1997
 //
 
-#include <kprocess.h>
+
+#include <config.h>
 
 #include <stdio.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <qhgroupbox.h> 
-#include <qvgroupbox.h>
-#include <qbuttongroup.h>
-#include <qlabel.h>
-#include <qpixmap.h>
-#include <qpushbutton.h>
-#include <qfiledialog.h>
-#include <qradiobutton.h>
-#include <qcheckbox.h>
-#include <qslider.h>
-#include <qlayout.h>
-#include <qtextstream.h>
-#include <ksimpleconfig.h>
-#include <kapp.h>
-#include <knuminput.h>
-#include <kstddirs.h>
-#include <kglobal.h>
-#include <dcopclient.h>
 #include <stdlib.h>
-#include <X11/Xlib.h>
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <signal.h>
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
+#include <sys/types.h>
+#include <sys/wait.h>
+
+#include <qbuttongroup.h>
+#include <qlabel.h>
+#include <qpixmap.h>
+#include <qpushbutton.h>
+#include <qradiobutton.h>
+#include <qcheckbox.h>
+#include <qslider.h>
+#include <qlayout.h>
+#include <qtextstream.h>
+
+#include <kapp.h>
+#include <kprocess.h>
+#include <ksimpleconfig.h>
+#include <knuminput.h>
+#include <kstddirs.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kcolordlg.h>
 #include <kiconloader.h>
 #include <kcmodule.h>
+#include <kglobal.h>
+#include <dcopclient.h>
+
+#include <X11/Xlib.h>
 
 #include "scrnsave.h"
-#include "scrnsave.moc"
+
 
 #define CORNER_SIZE		15
 
@@ -220,7 +218,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name)
 
     mWaitEdit = new KIntNumInput(i18n("&Wait for"), 1, 120, 1, mTimeout/60,
                                  i18n("min"), 10, false, group);
-    mWaitEdit->setLabelAlignment(AlignCenter);
+    mWaitEdit->setLabelAlignment(AlignLeft);
     connect( mWaitEdit, SIGNAL( valueChanged(int) ),
              SLOT( slotTimeoutChanged(int) ) );
     groupLayout->addWidget(mWaitEdit);
@@ -665,3 +663,4 @@ void KScreenSaver::slotSetupDone(KProcess *)
     mSetupBt->setEnabled( true );
 }
 
+#include "scrnsave.moc"

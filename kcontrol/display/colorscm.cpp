@@ -360,7 +360,6 @@ void KColorScheme::slotAdd()
 	if (sName.isEmpty())
 	    return;
 	sFile = sName;
-	qDebug("file: %s", sFile.latin1());
 	
 	int i = 0;
 
@@ -669,7 +668,6 @@ void KColorScheme::readSchemeNames()
     QStringList localList;
     QStringList::Iterator it;
     for (it = list.begin(); it != list.end(); it++) {
-	qDebug("entry: %s", (*it).latin1());
 	QFileInfo fi(*it);
 	if (fi.isWritable()) {
 	    localList.append(*it);
