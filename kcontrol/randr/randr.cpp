@@ -540,9 +540,10 @@ RandRDisplay::RandRDisplay()
 
 	m_version = QString("X Resize and Rotate extension version %1.%1").arg(major_version).arg(minor_version);
 
-	m_numScreens = QApplication::desktop()->numScreens();
-	// Haven't tested this assumption, it's here to remind me to test it
-	Q_ASSERT(QApplication::desktop()->numScreens() == ScreenCount(qt_xdisplay()));
+	m_numScreens = ScreenCount(qt_xdisplay());
+
+	// This assumption is WRONG with Xinerama
+	// Q_ASSERT(QApplication::desktop()->numScreens() == ScreenCount(qt_xdisplay()));
 
 	m_screens.setAutoDelete(true);
 	for (int i = 0; i < m_numScreens; i++) {
@@ -591,7 +592,8 @@ void RandRDisplay::setCurrentScreen(int index)
 
 int RandRDisplay::screenIndexOfWidget(QWidget* widget)
 {
-	return QApplication::desktop()->screenNumber(widget);
+	int ret = QApplication::desktop()->screenNumber(widget);
+	return ret != -1 ? ret : QApplication::desktop()->primaryScreen();
 }
 
 int RandRDisplay::currentScreenIndex() const
