@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=sapphire
+TryExec=sapphire
 Name=Sapphire
 Comment=A minimal but configurable window manager
+Comment[nl]=Een minimale maar instelbare window manager
+Comment[sv]=En minimal men anpassningsbar fönsterhanterare

@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=vtwm
+TryExec=vtwm
 Name=VTWM
 Comment=The Virtual Tab Window Manager, TWM enhanced by virtual screens, etc.
+Comment[nl]=De Virtual Tab Window Manager. TWM uitgebreid met virtuele bureaubladen, etc.
+Comment[sv]=Virtuell flikfönsterhanterare, TWM utökad med virtuella skärmar, etc.

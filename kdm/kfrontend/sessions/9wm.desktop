@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=9wm
+TryExec=9wm
 Name=9WM
 Comment=An emulation of the Plan 9 window manager 8-1/2
+Comment[nl]=Een emulator voor de Plan9 window manager 8-1/2
+Comment[sv]=En emulering av Plan-9 fönsterhanteraren 8-1/2

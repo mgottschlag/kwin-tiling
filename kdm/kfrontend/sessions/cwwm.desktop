@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=cwwm
+TryExec=cwwm
 Name=CWWM
 Comment=The ChezWam Window Manager, a minimalist window manager based on EvilWM
+Comment[nl]=The ChezWam Window Manager, een minimalistische window manager gebaseerd op EvilWM
+Comment[sv]=Fönsterhanteraren Chezwam, en minimalistisk fönsterhanterare baserad på Ond WM

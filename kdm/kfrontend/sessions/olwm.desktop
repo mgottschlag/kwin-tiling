@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=olwm
+TryExec=olwm
 Name=OLWM
 Comment=The traditional Open Look Window Manager
+Comment[nl]=De traditionele Open Look Window Manager
+Comment[sv]=Den traditionella Open Look fönsterhanteraren

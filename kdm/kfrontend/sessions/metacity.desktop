@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=metacity
+TryExec=metacity
 Name=Metacity
 Comment=A lightweight GTK2 based window manager
+Comment[nl]=Een lichtgewicht op GTK2 gebaseerde window manager
+Comment[sv]=En lättviktig GTK2-baserad fönsterhanterare

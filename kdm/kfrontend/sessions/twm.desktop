@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=twm
+TryExec=twm
 Name=TWM
 Comment=The Tab Window Manager
+Comment[nl]=De Tab Window Manager
+Comment[sv]=Flikfönsterhanteraren

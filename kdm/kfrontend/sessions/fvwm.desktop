@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=fvwm
+TryExec=fvwm
 Name=FVWM
 Comment=A powerful ICCCM-compliant multiple virtual desktop window manager
+Comment[nl]=Een krachtige ICCCM-compliant window manager met meerdere bureaubladen
+Comment[sv]=En kraftfull fönsterhanterare med flera virtuella skrivbord som följer ICCCM

@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=matchbox
+TryExec=matchbox
 Name=Matchbox
 Comment=A window manager for handheld devices
+Comment[nl]=Een window manager voor handcomputers
+Comment[sv]=En fönsterhanterare för handburna enheter

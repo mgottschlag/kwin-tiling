@@ -2,5 +2,9 @@
 Encoding=UTF-8
 Type=XSession
 Exec=asclassic
+TryExec=asclassic
 Name=ASClassic
+Name[sv]=AS klassisk
 Comment=AfterStep Classic, a window manager based on AfterStep v1.1
+Comment[nl]=AfterStep Classic, een window manager gebaseerd op AfterStep 1.1
+Comment[sv]=Afterstep klassisk, en fönsterhanterare baserad på Afterstep version 1.1

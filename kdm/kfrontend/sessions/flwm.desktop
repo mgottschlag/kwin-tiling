@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=flwm
+TryExec=flwm
 Name=FLWM
 Comment=The Fast Light Window Manager, based primarily on WM2
+Comment[nl]=De Fast Light Window Manager, primair gebaseerd op WM2.
+Comment[sv]=Fönsterhanteraren Fast Light Window Manager, i huvudsak baserad på WM2

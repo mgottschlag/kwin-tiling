@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=aewm
+TryExec=aewm
 Name=AEWM
 Comment=A minimalist window manager
+Comment[nl]=Een minimalistische window manager
+Comment[sv]=En minimalistisk fönsterhanterare

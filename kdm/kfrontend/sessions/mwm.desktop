@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=mwm
+TryExec=mwm
 Name=MWM
 Comment=The Motif Window Manager
+Comment[nl]=De Motif Window Manager
+Comment[sv]=Motifs fönsterhanterare

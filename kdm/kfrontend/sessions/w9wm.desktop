@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=w9wm
+TryExec=w9wm
 Name=W9WM
 Comment=A window manager based on 9WM, enhanced by virtual screens and keyboard bindings
+Comment[nl]=Een window manager gebaseerd op 9WM. Uitgebreid met virtuele bureaubladen en toetsenbindingen
+Comment[sv]=En fönsterhanterare baserad på 9WM, utökad med virtuella skärmar och tangentbindingar

@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=ion
+TryExec=ion
 Name=Ion
 Comment=A keyboard-friendly window manager with tiled windows, based on PWM
+Comment[nl]=een toetsenbordvriendelijke window manager met getegelde vensters. Gebaseerd op PWM
+Comment[sv]=En tangentbordsvänlig fönsterhanterare med fönster sida vid sida, baserad på PWM

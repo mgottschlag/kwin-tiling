@@ -2,7 +2,10 @@
 Encoding=UTF-8
 Type=XSession
 Exec=lwm
+TryExec=lwm
 Name=LWM
 Comment=The Lightweight Window Manager, an unconfigurable, bare window manager
+Comment[nl]=De Lightweight Window Manager, en niet-instelbare, kale window manager
+Comment[sv]=Den lättviktiga fönsterhanteraren, en enkel fönsterhanterare utan anpassningsmöjligheter
 # this can't be used as a session in itself
 Hidden=true

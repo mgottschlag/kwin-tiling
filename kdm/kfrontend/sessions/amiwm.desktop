@@ -2,5 +2,9 @@
 Encoding=UTF-8
 Type=XSession
 Exec=amiwm
+TryExec=amiwm
 Name=AmiWM
+Name[sv]=Ami WM
 Comment=The Amiga look-alike window manager
+Comment[nl]=Een Amiga-achtige window manager
+Comment[sv]=Fönsterhanteraren som ser ut som Amiga

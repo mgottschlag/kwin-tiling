@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=blackbox
+TryExec=blackbox
 Name=Blackbox
 Comment=A fast & light window manager
+Comment[nl]=Een snelle lichtgewicht window manager
+Comment[sv]=En snabb och lättviktig fönsterhanterare

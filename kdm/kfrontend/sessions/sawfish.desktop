@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=sawfish
+TryExec=sawfish
 Name=Sawfish
 Comment=An extensible window manager scriptable with an Emacs Lisp-like language
+Comment[nl]=Een uitbreidbare window manager, scriptbaar via een Emacs Lisp-achtige taal
+Comment[sv]=En utökningsbar fönsterhanterare som kan styras med ett Emacs Lisp-liknande skriptspråk

@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=aewm++_xsession
+TryExec=aewm++_xsession
 Name=AEWM++
 Comment=A minimal window manager based on AEWM, enhanced by virtual desktops and partial GNOME support
+Comment[nl]=Een minimalistische window manager gebaseerd op AEWM, uitgebreid met virtuele bureaubladen en gedeeltelijke GNOME-ondersteuning
+Comment[sv]=En minimal fönsterhanterare baserad på AEWM, utökad med virtuella skrivbord och delvis stöd för GNOME

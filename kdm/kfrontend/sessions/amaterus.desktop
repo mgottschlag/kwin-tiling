@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=amaterus
+TryExec=amaterus
 Name=AMATERUS
 Comment=A GTK+ based window manager with a window grouping feature
+Comment[nl]=Een op GTK+ gebaseerde window manager met venstergroeperingfunctionaliteit
+Comment[sv]=En GTK+ baserad fönsterhanterare med en funktion för fönstergruppering

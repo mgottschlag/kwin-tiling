@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=openbox
+TryExec=openbox
 Name=Openbox
 Comment=A lightweight window manager based Blackbox
+Comment[nl]=Een lichtgewicht window manager, gebaseerd op Blackbox
+Comment[sv]=En lättviktig fönsterhanterare baserad på Blackbox

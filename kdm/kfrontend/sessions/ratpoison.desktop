@@ -2,5 +2,9 @@
 Encoding=UTF-8
 Type=XSession
 Exec=ratpoison
+TryExec=ratpoison
 Name=Ratpoison
+Name[sv]=Råttgift
 Comment=A simple keyboard-only window manger modelled after Screen
+Comment[nl]=Een eenvoudige windowmanager, welke alleen met het toetsenbord te bedienen is
+Comment[sv]=En enkelt fönsterhanterare bara för tangentbord modellerad efter Screen

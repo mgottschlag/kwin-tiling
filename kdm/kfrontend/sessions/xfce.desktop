@@ -2,5 +2,9 @@
 Encoding=UTF-8
 Type=XSession
 Exec=xfce
+TryExec=xfce
 Name=XFce
+Name[sv]=Xfce
 Comment=The Cholesterol Free Desktop Environment, a desktop environment reminiscent of CDE
+Comment[nl]=The Cholesterol Free Desktop Environment. Een desktop environment die herrinnert aan CDE
+Comment[sv]=Den kolesterolfria skrivbordsmiljön, en skrivbordsmiljö som påminner om CDE

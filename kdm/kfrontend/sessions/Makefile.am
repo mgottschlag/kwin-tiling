@@ -1,7 +1,5 @@
-#EXTRA_DIST = $(sessions_DATA)
-#sessionsdir = $(kde_confdir)/kdm/sessions
-#sessions_DATA = \
-noinst_DATA = \
+sessionsdir = $(kde_datadir)/kdm/sessions
+sessions_DATA = \
     kde.desktop gnome.desktop \
     9wm.desktop \
     aewm++.desktop \
@@ -46,3 +44,5 @@ noinst_DATA = \
     wm2.desktop \
     wmaker.desktop \
     xfce.desktop
+
+EXTRA_DIST = $(sessions_DATA)

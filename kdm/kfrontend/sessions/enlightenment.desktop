@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=enlightenment
+TryExec=enlightenment
 Name=Enlightenment
 Comment=An extremely themable very feature-rich window manager
+Comment[nl]=Een zeer rijke en configureerbare window manager
+Comment[sv]=En ytterst anpassningsbar mycket funktionsrik fönsterhanterare

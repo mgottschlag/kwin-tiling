@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=golem
+TryExec=golem
 Name=Golem
 Comment=A lightweight window manager
+Comment[nl]=Een lichtgewicht window manager
+Comment[sv]=En lättviktig fönsterhanterare

@@ -2,5 +2,9 @@
 Encoding=UTF-8
 Type=XSession
 Exec=afterstep
+TryExec=afterstep
 Name=AfterStep
+Name[sv]=Afterstep
 Comment=A window manager with the NeXTStep look and feel, based on FVWM
+Comment[nl]=Een window manager met het uiterlijk en gedrag van NeXTStep; gebaseerd op FVWM
+Comment[sv]=En fönsterhanterare med Nextstep utseende och känsla, baserad på FVWM

@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=pwm
+TryExec=pwm
 Name=PWM
 Comment=A lightweight window manager able to attach multiple windows to one frame
+Comment[nl]=Een lichtgewicht window manager, welke meerdere vensters kan verbinden met een frame
+Comment[sv]=En lättviktig fönsterhanterare som kan ansluta flera fönster till en ram

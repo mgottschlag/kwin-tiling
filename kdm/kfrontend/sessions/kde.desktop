@@ -2,5 +2,9 @@
 Encoding=UTF-8
 Type=XSession
 Exec=startkde
+TryExec=startkde
 Name=KDE
+Name[xh]=iKDE
 Comment=The K Desktop Environment, a powerful Open Source graphical desktop environment
+Comment[nl]=De K Desktop Environment, een krachtige open source grafische desktop environment
+Comment[sv]=K-skrivbordsmiljön, en kraftfull grafisk skrivbordsmiljö med öppen källkod

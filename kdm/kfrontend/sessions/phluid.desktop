@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=phluid
+TryExec=phluid
 Name=Phluid
 Comment=An Imlib2 based window manager
+Comment[nl]=Een op imlib2 gebaseerde window manager
+Comment[sv]=En Imlib2-baserad fönsterhanterare

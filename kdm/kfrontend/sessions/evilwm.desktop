@@ -2,5 +2,9 @@
 Encoding=UTF-8
 Type=XSession
 Exec=evilwm
+TryExec=evilwm
 Name=EvilWM
+Name[sv]=Ond WM
 Comment=A minimalist window manager based on AEWM
+Comment[nl]=Een minimalistische window manager gebaseerd op AEWM
+Comment[sv]=En minimalistisk fönsterhanterare baserad på AEWM

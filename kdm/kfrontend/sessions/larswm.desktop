@@ -2,5 +2,9 @@
 Encoding=UTF-8
 Type=XSession
 Exec=larswm
+TryExec=larswm
 Name=LarsWM
+Name[sv]=Lars WM
 Comment=The Lars Window Manager, based on 9WM, supports tiled windows
+Comment[nl]=De Lars Window Manager, gebaseerd op 9WM. Biedt ondersteuning voor getegelde vensters
+Comment[sv]=Lars fönsterhanterare, baserad på 9WM, med stöd för fönster sida vid sida

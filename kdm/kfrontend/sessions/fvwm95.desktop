@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=XSession
 Exec=fvwm95
+TryExec=fvwm95
 Name=FVWM95
 Comment=A Win95 lookalike derivative of FVWM
+Comment[nl]=Een op Windows'95 lijkende afleiding van FVWM
+Comment[sv]=En fönsterhanterare som liknar Windows 95 med ursprung i FVWM

@@ -2,7 +2,10 @@
 Encoding=UTF-8
 Type=XSession
 Exec=oroborus
+TryExec=oroborus
 Name=Oroborus
 Comment=A lightweight themeable window manager
+Comment[nl]=Een lichtgewicht window manager met themabeheer
+Comment[sv]=En lättviktig fönsterhanterare med teman
 # not usable as a session
 Hidden=true
