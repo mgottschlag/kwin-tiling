@@ -249,10 +249,10 @@ a) call "kcmshell modules"
 
 to run the module as a separate program.
 
-b) use "KCDialog"
+b) use "KCMultiDialog" (in kdelibs/kutils)
 
-This is a simple dialog that takes your module as first parameter
-and creates a normal KDialogBase.
+This is a simple dialog that can show an abitrary number of modules 
+in a normal KDialogBase.
 
 The advantage is that you can control the behaviour and the results 
 much easier that with a separate process. And as your module is a 
