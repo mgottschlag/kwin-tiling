@@ -66,15 +66,15 @@ Windowdef_simple_widget::Windowdef_simple_widget( QWidget* parent_P, const char*
 
 void Windowdef_simple_widget::clear_data()
     {
-    comment_lineedit->setText( "" );
+    comment_lineedit->clear();
     window_title_combo->setCurrentItem( 0 );
-    window_title_lineedit->setText( "" );    
+    window_title_lineedit->clear();    
     window_title_lineedit->setEnabled( false );
     window_class_combo->setCurrentItem( 0 );
-    window_class_lineedit->setText( "" );
+    window_class_lineedit->clear();
     window_class_lineedit->setEnabled( false );
     window_role_combo->setCurrentItem( 0 );
-    window_role_lineedit->setText( "" );
+    window_role_lineedit->clear();
     window_role_lineedit->setEnabled( false );
     type_normal_checkbox->setChecked( true );
     type_dialog_checkbox->setChecked( true );
@@ -86,6 +86,11 @@ void Windowdef_simple_widget::clear_data()
     
 void Windowdef_simple_widget::set_data( const Windowdef_simple* data_P )
     {
+    if( data_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     comment_lineedit->setText( data_P->comment());
     window_title_combo->setCurrentItem( data_P->title_match_type());
     window_title_lineedit->setText( data_P->title());    

@@ -46,7 +46,7 @@ Keyboard_input_widget::Keyboard_input_widget( QWidget* parent_P, const char* nam
 
 void Keyboard_input_widget::clear_data()
     {
-    keyboard_input_multilineedit->setText( "" );
+    keyboard_input_multilineedit->clear();
     specific_window_checkbox->setChecked( false );
     window_groupbox->setEnabled( false );
     windowdef_list_widget->clear_data();
@@ -54,6 +54,11 @@ void Keyboard_input_widget::clear_data()
 
 void Keyboard_input_widget::set_data( const Keyboard_input_action* data_P )
     {
+    if( data_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     keyboard_input_multilineedit->setText( data_P->input());
     const Windowdef_list* dest_window = data_P->dest_window();
     specific_window_checkbox->setChecked( dest_window != NULL );

@@ -48,16 +48,21 @@ void Action_group_tab::clear_data()
     {
     disconnect( action_name_lineedit, SIGNAL( textChanged( const QString& )), this,
         SLOT( action_group_name_changed( const QString& )));
-    action_name_lineedit->setText( "" );
+    action_name_lineedit->clear();
     action_name_lineedit->setReadOnly( false );
     disable_checkbox->setChecked( false );
     disable_checkbox->setText( i18n( "&Disable" ));
-    comment_multilineedit->setText( "" );
+    comment_multilineedit->clear();
     system_group = Action_data_group::SYSTEM_NONE;
     }
 
 void Action_group_tab::set_data( const Action_data_group* data_P )
     {
+    if( data_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     action_name_lineedit->setText( data_P->name());
     action_name_lineedit->setReadOnly( data_P->is_system_group());
     disable_checkbox->setChecked( !data_P->enabled( true ));

@@ -48,15 +48,20 @@ Dcop_widget::Dcop_widget( QWidget* parent_P, const char* name_P )
     
 void Dcop_widget::clear_data()
     {
-    remote_app_lineedit->setText( "" );
-    remote_object_lineedit->setText( "" );
-    called_function_lineedit->setText( "" );
-    arguments_lineedit->setText( "" );
+    remote_app_lineedit->clear();
+    remote_object_lineedit->clear();
+    called_function_lineedit->clear();
+    arguments_lineedit->clear();
     // CHECKME nebo spis multilineedit ?
     }
 
 void Dcop_widget::set_data( const Dcop_action* data_P )
     {
+    if( data_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     remote_app_lineedit->setText( data_P->remote_application());
     remote_object_lineedit->setText( data_P->remote_object());
     called_function_lineedit->setText( data_P->called_function());

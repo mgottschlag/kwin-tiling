@@ -81,12 +81,17 @@ Action_list_widget::~Action_list_widget()
 
 void Action_list_widget::clear_data()
     {
-    comment_lineedit->setText( "" );
+    comment_lineedit->clear();
     actions_listview->clear();
     }
 
 void Action_list_widget::set_data( const Action_list* data_P )
     {
+    if( data_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     comment_lineedit->setText( data_P->comment());
     Action_list_item* after = NULL;
     actions_listview->clear();

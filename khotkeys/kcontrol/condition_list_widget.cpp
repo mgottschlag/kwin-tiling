@@ -83,13 +83,18 @@ Condition_list_widget::~Condition_list_widget()
 
 void Condition_list_widget::clear_data()
     {
-    comment_lineedit->setText( "" );
+    comment_lineedit->clear();
     conditions_listview->clear();
     conditions.clear();
     }
 
 void Condition_list_widget::set_data( const Condition_list* data_P )
     {
+    if( data_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     comment_lineedit->setText( data_P->comment());
     conditions_listview->clear();
     conditions.clear();

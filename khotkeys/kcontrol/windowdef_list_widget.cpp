@@ -76,12 +76,17 @@ Windowdef_list_widget::~Windowdef_list_widget()
 
 void Windowdef_list_widget::clear_data()
     {
-    comment_lineedit->setText( "" );
+    comment_lineedit->clear();
     windows_listview->clear();
     }
 
 void Windowdef_list_widget::set_data( const Windowdef_list* data_P )
     {
+    if( data_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     comment_lineedit->setText( data_P->comment());
     Windowdef_list_item* after = NULL;
     windows_listview->clear();

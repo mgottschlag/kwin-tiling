@@ -56,6 +56,11 @@ void Gesture_triggers_tab::clear_data()
     
 void Gesture_triggers_tab::set_data( const Trigger_list* triggers_P )
     {
+    if( triggers_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     Gesture_trigger* trig = NULL;
     Trigger_list::Iterator it( *triggers_P );
     if( it )

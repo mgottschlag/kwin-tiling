@@ -43,11 +43,16 @@ Menuentry_widget::Menuentry_widget( QWidget* parent_P, const char* name_P )
 
 void Menuentry_widget::clear_data()
     {
-    menuentry_lineedit->setText( "" );
+    menuentry_lineedit->clear();
     }
 
 void Menuentry_widget::set_data( const Menuentry_action* data_P )
     {
+    if( data_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     menuentry_lineedit->setText( data_P->command_url());
     }
 

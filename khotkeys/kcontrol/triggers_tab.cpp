@@ -82,12 +82,17 @@ Triggers_tab::~Triggers_tab()
 
 void Triggers_tab::clear_data()
     {
-    comment_lineedit->setText( "" );
+    comment_lineedit->clear();
     triggers_listview->clear();
     }
 
 void Triggers_tab::set_data( const Trigger_list* data_P )
     {
+    if( data_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     comment_lineedit->setText( data_P->comment());
     Trigger_list_item* after = NULL;
     triggers_listview->clear();
@@ -229,6 +234,11 @@ void Shortcut_trigger_widget::capturedShortcut( const KShortcut& s_P )
 
 void Shortcut_trigger_widget::set_data( const Shortcut_trigger* data_P )
     {
+    if( data_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     bt->setShortcut( data_P->keycode(), false );
     }
 

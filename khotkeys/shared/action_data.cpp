@@ -289,7 +289,7 @@ void Simple_action_data< T, A >::set_trigger( T* trigger_P )
 template< typename T, typename A >
 const A* Simple_action_data< T, A >::action() const
     {
-    if( actions() == NULL ) // CHECKME tohle poradne zkontrolovat
+    if( actions() == NULL || actions()->count() == 0 ) // CHECKME tohle poradne zkontrolovat
         return NULL;
     return static_cast< A* >( const_cast< Action_list* >( actions())->first());
     }
@@ -297,7 +297,7 @@ const A* Simple_action_data< T, A >::action() const
 template< typename T, typename A >
 const T* Simple_action_data< T, A >::trigger() const
     {
-    if( triggers() == NULL ) // CHECKME tohle poradne zkontrolovat
+    if( triggers() == NULL || triggers()->count() == 0 ) // CHECKME tohle poradne zkontrolovat
         return NULL;
     return static_cast< T* >( const_cast< Trigger_list* >( triggers())->first());
     }

@@ -43,11 +43,16 @@ Command_url_widget::Command_url_widget( QWidget* parent_P, const char* name_P )
 
 void Command_url_widget::clear_data()
     {
-    command_url_lineedit->lineEdit()->setText( "" );
+    command_url_lineedit->lineEdit()->clear();
     }
 
 void Command_url_widget::set_data( const Command_url_action* data_P )
     {
+    if( data_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     command_url_lineedit->lineEdit()->setText( data_P->command_url());
     }
 

@@ -89,16 +89,21 @@ void General_tab::clear_data()
         this, SLOT( action_name_changed( const QString& )));
     disconnect( action_type_combo, SIGNAL( activated( int )),
         this, SIGNAL( action_type_changed( int ))); // CHECKME neodpoji to sloty od nej ?
-    action_name_lineedit->setText( "" );
+    action_name_lineedit->clear();
     disable_checkbox->setChecked( false );
     disable_checkbox->setText( i18n( "&Disable" ));
-    comment_multilineedit->setText( "" );
+    comment_multilineedit->clear();
     action_type_combo->setCurrentItem( Tab_widget::TYPE_GENERIC );
 //    module->set_action_type( data_P->type()); CHECKME tohle asi tady ne
     }
 
 void General_tab::set_data( const Action_data* data_P )
     {
+    if( data_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     action_name_lineedit->setText( data_P->name());
     disable_checkbox->setChecked( !data_P->enabled( true ));
     if( !data_P->parent()->enabled( false ))

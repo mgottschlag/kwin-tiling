@@ -54,6 +54,11 @@ void Window_trigger_widget::clear_data()
     
 void Window_trigger_widget::set_data( const Window_trigger* trigger_P )
     {
+    if( trigger_P == NULL )
+        {
+        clear_data();
+        return;
+        }
     windowdef_list_widget->set_data( trigger_P->windows());
     window_appears_checkbox->setChecked(
         trigger_P->triggers_on( Window_trigger::WINDOW_APPEARS ));
