@@ -120,6 +120,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     npuserlv->header()->hide();
     npuserlv->setResizeMode(QListView::LastColumn);
     QWhatsThis::add(npuserlv, i18n("Check all users you want to allow a password-less login for."));
+    connect( npuserlv, SIGNAL(clicked( QListViewItem * )),
+	     SLOT(slotChanged()) );
 
     btGroup = new QVGroupBox( i18n("Miscellaneous"), this );
 
