@@ -39,21 +39,21 @@
 # XXX do this on a per-display basis: should be [X-*-Desktop]
 # HELPME: I need help with kbackgroundrenderer!  -- ossi@kde.org
 [Desktop0]
-BackgroundMode=VerticalGradient
+BackgroundMode=Wallpaper
 BlendBalance=100
 BlendMode=NoBlending
 ChangeInterval=60
-Color1=0,0,128
-Color2=0,255,255
+Color1=30,114,160
+Color2=192,192,192
 CurrentWallpaper=0
 LastChange=0
 MultiWallpaperMode=NoMulti
 Pattern=
 Program=
 ReverseBlending=false
-Wallpaper=
+Wallpaper=default_blue.jpg
 WallpaperList=
-WallpaperMode=Tiled
+WallpaperMode=Scaled
 
 [General]
 # If "false", KDM won't daemonize after startup. Use this, if you start
