@@ -370,7 +370,7 @@ void KTheme::apply()
 {
     kdDebug() << "Going to apply theme: " << m_name << endl;
 
-    QString themeDir = m_kgd->saveLocation( "themes", m_name + "/" );
+    QString themeDir = m_kgd->findResourceDir( "themes", m_name + "/" + m_name + ".xml") + m_name + "/";
     kdDebug() << "Theme dir: " << themeDir << endl;
 
     // 2. Background theme
@@ -801,7 +801,7 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
 QString KTheme::unprocessFilePath( const QString & section, QString path )
 {
     if ( path.startsWith( "theme:/" ) )
-        return path.replace( QRegExp( "^theme:/" ), m_kgd->saveLocation( "themes", m_name + "/") );
+        return path.replace( QRegExp( "^theme:/" ), m_kgd->findResourceDir( "themes", m_name + "/" + m_name + ".xml") + m_name + "/" );
 
     if ( QFile::exists( path ) )
         return path;
