@@ -22,8 +22,8 @@ apps_DATA = kmenuedit.desktop
 appsdir = $(kde_appsdir)/Settingsmenu
 
 install-data-local: uninstall.desktop
-	$(mkinstalldirs) $(kde_appsdir)/System
-	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(kde_appsdir)/System/kmenuedit.desktop
+	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/System
+	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/System/kmenuedit.desktop
 
 KDE_ICON = kmenuedit
 

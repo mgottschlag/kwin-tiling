@@ -24,7 +24,7 @@ lnf_DATA = icons.desktop
 lnfdir = $(kde_appsdir)/Settings/LookNFeel/
 
 install-data-local: uninstall.desktop
-	$(mkinstalldirs) $(kde_appsdir)/Settings/LookNFeel/Themes
-	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(kde_appsdir)/Settings/LookNFeel/Themes/iconthemes.desktop
+	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/Themes
+	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/Themes/iconthemes.desktop
 
 EXTRA_DIST = $(lnf_DATA)

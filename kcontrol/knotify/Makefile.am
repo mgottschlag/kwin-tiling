@@ -23,6 +23,6 @@ picsdir = $(kde_datadir)/kcontrol/pics
 
 # the following should be gone at release time.
 install-data-local:
-	rm -f $(kde_appsdir)/Settings/LookNFeel/knotify.desktop
-	rm -f $(kde_appsdir)/Settings/LookNFeel/kcmnotify.desktop
+	rm -f $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/knotify.desktop
+	rm -f $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/kcmnotify.desktop
 

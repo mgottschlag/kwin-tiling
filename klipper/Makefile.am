@@ -32,8 +32,8 @@ appldir = $(kde_datadir)/kicker/applets
 appl_DATA = klipper.desktop
 
 install-data-local:
-	$(mkinstalldirs) $(kde_confdir)
-	$(INSTALL_DATA) $(srcdir)/klipperrc.desktop $(kde_confdir)/klipperrc
+	$(mkinstalldirs) $(DESTDIR)$(kde_confdir)
+	$(INSTALL_DATA) $(srcdir)/klipperrc.desktop $(DESTDIR)$(kde_confdir)/klipperrc
 
 KDE_ICON = klipper
 dockicondir = $(kde_datadir)/klipper/pics

@@ -16,7 +16,7 @@ data_DATA = ioslaveinfo.desktop
 datadir = $(kde_appsdir)/Settings/Information
 
 install-data-local: uninstall.desktop
-	$(mkinstalldirs) $(kde_appsdir)/Settings/Information
+	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/Information
 
-#	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(kde_appsdir)/Settings/Network/ioslaveinfo.desktop
+#	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/Network/ioslaveinfo.desktop
 

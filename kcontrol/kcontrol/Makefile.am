@@ -66,8 +66,8 @@ data_DATA = KControl.desktop
 datadir = $(kde_appsdir)/Settingsmenu
 
 install-data-local: KControl_NoDisplay.desktop
-	$(mkinstalldirs) $(kde_appsdir)
-	$(INSTALL_DATA) $(srcdir)/KControl_NoDisplay.desktop $(kde_appsdir)/KControl.desktop
+	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)
+	$(INSTALL_DATA) $(srcdir)/KControl_NoDisplay.desktop $(DESTDIR)$(kde_appsdir)/KControl.desktop
 
 KDE_ICON=AUTO
 
