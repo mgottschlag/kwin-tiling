@@ -11,4 +11,4 @@ Name[lv]=RPM-Meklēšana
 Name[zh_TW.Big5]=RPM 搜尋
 ServiceTypes=SearchProvider
 Keys=rf,rpmfind
-Query=http://rpmfind.com/RPM/\\1.html
+Query=http://rpmfind.net/linux/rpm2html/search.php?query=\1
