@@ -34,6 +34,7 @@
 
 #include <kfiledialog.h>
 #include <klineedit.h>
+#include <klistview.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <kstddirs.h>
@@ -53,11 +54,11 @@ QString whatstr;
 QFrame *frame;
 
   frame = new QFrame(this);
-  grid = new QGridLayout(frame, 12, 5, KDialog::marginHint(),
+  grid = new QGridLayout(frame, 13, 5, KDialog::marginHint(),
                                        KDialog::spacingHint());
 
   // First widget: "Enable SOCKS support?"
-  _c_enableSocks = new QCheckBox(i18n("Enable SOCKS Support"), frame);
+  _c_enableSocks = new QCheckBox(i18n("&Enable SOCKS Support"), frame);
   connect(_c_enableSocks, SIGNAL(clicked()), this, SLOT(enableChanged()));
   whatstr = i18n("Check this to enable SOCKS4 and SOCKS5 support in KDE"
                  " applications and I/O subsystems.");
@@ -103,12 +104,40 @@ QFrame *frame;
   connect(_c_customPath, SIGNAL(textChanged(const QString&)),
                      this, SLOT(customPathChanged(const QString&)));
 
+  // Additional libpaths
+  QLabel *lbl = new QLabel(i18n("Additional library paths to search..."), frame);
+  grid->addMultiCellWidget(lbl, 8, 8, 0, 4);
+  whatstr = i18n("Here you can specify additional directories to search for the SOCKS libraries.  /usr/lib, /usr/local/lib and /opt/socks5/lib are already searched by default.");
+  QWhatsThis::add(lbl, whatstr);
+  _c_newPath = new KLineEdit(frame);
+  grid->addMultiCellWidget(_c_newPath, 9, 9, 0, 2);
+  connect(_c_newPath, SIGNAL(returnPressed(const QString&)), 
+          this, SLOT(addThisLibrary(const QString&)));
+  connect(_c_newPath, SIGNAL(textChanged(const QString&)), 
+          this, SLOT(libTextChanged(const QString&)));
+  QWhatsThis::add(_c_newPath, whatstr);
+  _c_add = new QPushButton(i18n("&Add"), frame);
+  grid->addWidget(_c_add, 9, 3);
+  connect(_c_add, SIGNAL(clicked()), this, SLOT(addLibrary()));
+  _c_add->setEnabled(false);
+  _c_remove = new QPushButton(i18n("&Remove"), frame);
+  grid->addWidget(_c_remove, 9, 4);
+  connect(_c_remove, SIGNAL(clicked()), this, SLOT(removeLibrary()));
+  _c_remove->setEnabled(false);
+  _c_libs = new KListView(frame);
+  grid->addMultiCellWidget(_c_libs, 10, 11, 0, 4);
+  _c_libs->addColumn(i18n("Path"));
+  connect(_c_libs, SIGNAL(selectionChanged()), this, SLOT(libSelection()));
+  whatstr = i18n("This is the list of additional paths that will be searched.");
+  QWhatsThis::add(_c_libs, whatstr);
+  
+
   // The "Test" button
   _c_test = new QPushButton(i18n("&Test"), frame);
   connect(_c_test, SIGNAL(clicked()), this, SLOT(testClicked()));
   whatstr = i18n("Click here to test SOCKS support.");
   QWhatsThis::add(_c_test, whatstr);
-  grid->addWidget(_c_test, 11, 4);
+  grid->addWidget(_c_test, 12, 4);
   
 
   frame->resize(frame->sizeHint());
@@ -177,6 +206,50 @@ void KSocksConfig::chooseCustomLib()
 }
 
 
+
+void KSocksConfig::libTextChanged(const QString& lib)
+{
+   if (lib.length() > 0)
+      _c_add->setEnabled(true);
+   else _c_add->setEnabled(false);
+}
+
+
+void KSocksConfig::addThisLibrary(const QString& lib)
+{
+   if (lib.length() > 0) {
+      new QListViewItem(_c_libs, lib);
+      _c_newPath->clear();
+      _c_add->setEnabled(false);
+      _c_newPath->setFocus();
+      emit changed(true);
+   }
+}
+
+
+void KSocksConfig::addLibrary()
+{
+   addThisLibrary(_c_newPath->text());
+}
+
+
+void KSocksConfig::removeLibrary()
+{
+ QListViewItem *thisitem = _c_libs->selectedItem();
+   _c_libs->takeItem(thisitem);
+   delete thisitem;
+   _c_libs->clearSelection();
+   _c_remove->setEnabled(false);
+   emit changed(true);
+}
+
+
+void KSocksConfig::libSelection()
+{
+   _c_remove->setEnabled(true);
+}
+
+
 void KSocksConfig::load()
 {
   _c_enableSocks->setChecked(config->readBoolEntry("Enable SOCKS", false));
@@ -192,14 +265,36 @@ void KSocksConfig::load()
     _c_customChoose->setEnabled(false);
   }
   _c_customPath->setText(config->readEntry("Custom Lib", ""));
-  emit changed(false);
+
+  QListViewItem *thisitem;
+  while ((thisitem = _c_libs->firstChild())) {
+     _c_libs->takeItem(thisitem);
+     delete thisitem;
+  }
+
+  QStringList libs = config->readListEntry("Lib Path");
+  for(QStringList::Iterator it = libs.begin();
+                            it != libs.end();
+                            ++it ) {
+     new QListViewItem(_c_libs, *it);
+  }
+  _c_libs->clearSelection();
+  _c_remove->setEnabled(false);
+ emit changed(false);
 }
 
 void KSocksConfig::save()
 {
+QStringList libs;
   config->writeEntry("Enable SOCKS", _c_enableSocks->isChecked());
   config->writeEntry("SOCKS Method", bg->id(bg->selected()));
   config->writeEntry("Custom Lib", _c_customPath->text());
+  QListViewItem *thisitem = _c_libs->firstChild();
+  while (thisitem) {
+    libs << thisitem->text(0);
+    thisitem = thisitem->itemBelow();
+  }
+  config->writeEntry("Lib Path", libs);
   config->sync();
 
   emit changed(false);
@@ -214,6 +309,14 @@ void KSocksConfig::defaults()
     _c_customPath->setEnabled(false);
     _c_customChoose->setEnabled(false);
   _c_customPath->setText("");
+  QListViewItem *thisitem;
+  while ((thisitem = _c_libs->firstChild())) {
+     _c_libs->takeItem(thisitem);
+     delete thisitem;
+  }
+  _c_newPath->clear();
+  _c_add->setEnabled(false);
+  _c_remove->setEnabled(false);
   emit changed(true);
 }
 

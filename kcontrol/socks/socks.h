@@ -52,6 +52,11 @@ private slots:
   void testClicked();
   void chooseCustomLib();
   void customPathChanged(const QString&);
+  void addLibrary();
+  void libTextChanged(const QString& lib);
+  void addThisLibrary(const QString& lib);
+  void removeLibrary();
+  void libSelection();
 
 private:
 
@@ -65,6 +70,9 @@ private:
   KLineEdit *_c_customPath;
   QPushButton *_c_customChoose;
   QVButtonGroup *bg;
+  QPushButton *_c_add, *_c_remove;
+  KListView *_c_libs;
+  KLineEdit *_c_newPath;
 
   KConfig *config;
 };
