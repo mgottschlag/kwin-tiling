@@ -66,7 +66,7 @@ ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const c
   , _modules(list)
 {
   setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
-  addColumn("");
+  addColumn(QString::null);
   setAllColumnsShowFocus(true);
   setRootIsDecorated(true);
   header()->hide();
@@ -122,6 +122,7 @@ void ModuleTreeView::updateItem(ModuleTreeItem *item, ConfigModule *module)
     }
 }
 
+/*
 void ModuleTreeView::expandItem(QListViewItem *item, QPtrList<QListViewItem> *parentList)
 {
   while (item)
@@ -133,7 +134,7 @@ void ModuleTreeView::expandItem(QListViewItem *item, QPtrList<QListViewItem> *pa
       item = item->nextSibling();
     }
 }
-
+*/
 void ModuleTreeView::makeVisible(ConfigModule *module)
 {
   ModuleTreeItem *item;
@@ -168,13 +169,7 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
 
 static QString menuPath(const QStringList& groups)
 {
-  QString path;
-
-  QStringList::ConstIterator it;
-  for (it=groups.begin(); it != groups.end(); ++it)
-    path += *it + "/";
-
-  return path;
+  return groups.join("/")+"/";
 }
 
 ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStringList& groups)
@@ -206,6 +201,7 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
 
   KServiceGroup::Ptr group = KServiceGroup::group(KCGlobal::baseGroup()+path);
   QString defName = path.left(path.length()-1);
+  kdDebug() << path << " " << defName << endl;
   int pos = defName.findRev('/');
   if (pos >= 0)
     defName = defName.mid(pos+1);
