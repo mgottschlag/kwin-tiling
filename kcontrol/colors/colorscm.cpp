@@ -69,9 +69,9 @@ public:
 
 class KColorSchemeList : public QPtrList<KColorSchemeEntry> {
 public:
-    KColorSchemeList() 
+    KColorSchemeList()
         { setAutoDelete(true); }
-    
+
     int compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2)
         {
            KColorSchemeEntry *i1 = (KColorSchemeEntry*)item1;
@@ -85,7 +85,7 @@ public:
 #define SIZE 8
 
 // make a 24 * 8 pixmap with the main colors in a scheme
-QPixmap mkColorPreview(const WidgetCanvas *cs) 
+QPixmap mkColorPreview(const WidgetCanvas *cs)
 {
    QPixmap group(SIZE*3,SIZE);
    QPixmap block(SIZE,SIZE);
@@ -175,8 +175,8 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
 	QWhatsThis::add( importBt, i18n("Press this button to import a new color"
 		" scheme. Note that the color scheme will only be available for the"
 		" current user." ));
-			
-	
+
+
     QBoxLayout *stackLayout = new QVBoxLayout;
     topLayout->addLayout(stackLayout, 1, 1);
 
@@ -212,6 +212,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     setColorName(i18n("Alternate background in lists"), CSM_Alternate_background);
 
     wcCombo->adjustSize();
+    wcCombo->
     connect(wcCombo, SIGNAL(activated(int)), SLOT(slotWidgetColor(int)));
     groupLayout->addWidget(wcCombo);
 
@@ -307,7 +308,7 @@ void KColorScheme::load()
 void KColorScheme::save()
 {
     if (!m_bChanged)
-    return;
+        return;
 
     KConfig *cfg = KGlobal::config();
     cfg->setGroup( "General" );
@@ -516,9 +517,6 @@ void KColorScheme::slotAdd()
 
         int i = 0;
 
-        // Capitalise each word
-		sName = KStringHandler::capwords(sName);
-
         exists = -1;
         // Check if it's already there
         for (i=0; i < (int) sList->count(); i++)
@@ -529,7 +527,7 @@ void KColorScheme::slotAdd()
                 int result = KMessageBox::warningContinueCancel( 0,
                    i18n("A color scheme with the name '%1' already exists.\n"
                         "Do you want to overwrite it?\n").arg(sName),
-		   i18n("Save Color Scheme"),
+                   i18n("Save Color Scheme"),
                    i18n("Overwrite"));
                 if (result == KMessageBox::Cancel)
                     break;
@@ -540,7 +538,7 @@ void KColorScheme::slotAdd()
     }
 
     disconnect(sList, SIGNAL(highlighted(int)), this,
-        SLOT(slotPreviewScheme(int)));
+               SLOT(slotPreviewScheme(int)));
 
     if (exists != -1)
     {
@@ -556,8 +554,8 @@ void KColorScheme::slotAdd()
        delete config;
 
 	   insertEntry(sFile, sName);
-       
-   }
+
+    }
     slotSave();
 
     QPixmap preview = mkColorPreview(cs);
@@ -658,12 +656,12 @@ void KColorScheme::slotSelectColor(const QColor &col)
     if ( selection == CSM_Standard_background &&
          color(CSM_Alternate_background) ==
          KGlobalSettings::calculateAlternateBackgroundColor(
-             color(CSM_Standard_background) ) ) 
+             color(CSM_Standard_background) ) )
     {
-        color(CSM_Alternate_background) = 
+        color(CSM_Alternate_background) =
             KGlobalSettings::calculateAlternateBackgroundColor( col );
     }
-        
+
     color(selection) = col;
 
     cs->drawSampleWidgets();
@@ -865,7 +863,7 @@ int KColorScheme::findSchemeByName(const QString &scheme)
       search = search.mid(i+1);
 
    i = 0;
-   
+
    for(KColorSchemeEntry *entry = mSchemeList->first(); entry; entry = mSchemeList->next())
    {
       if (entry->path.endsWith(search))
