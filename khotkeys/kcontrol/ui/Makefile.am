@@ -16,3 +16,5 @@ dummy.cpp:
 
 DISTCLEANFILES = dummy.cpp
 
+METASOURCES = AUTO
+
