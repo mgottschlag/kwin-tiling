@@ -16,7 +16,7 @@ Xservers.ws: $(srcdir)/Xserv.ws.cpp
 	BINDIR=$(XBINDIR) ;\
 	sed -e "s#BINDIR#$$BINDIR#" $(srcdir)/Xserv.ws.cpp | sed -e '/^#  *[0-9][0-9]*  *.*$$/d' -e '/^XCOMM$$/s//#/' -e '/^XCOMM[^a-zA-Z0-9_]/s/^XCOMM/#/' > Xservers.ws
 
-Xsetup: Xsetup_0
+Xsetup: $(srcdir)/Xsetup_0
 	$(RM) -f Xsetup
 	$(LN_S) $(srcdir)/Xsetup_0 Xsetup
 
