@@ -32,7 +32,6 @@
 #include <kdialog.h>
 #include <kguiitem.h>
 #include <kstdguiitem.h>
-#include <dcopclient.h>
 
 #include <qwhatsthis.h>
 #include <qvbox.h>
@@ -75,31 +74,22 @@ static void setVisible(QPushButton *btn, bool vis)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-class RootInfoWidget : public QFrame
+class RootInfoWidget : public QLabel
 {
 public:
     RootInfoWidget(QWidget *parent, const char *name);
-    void setRootMsg(const QString& s) { text->setText(s); }
-private:
-    QLabel *text;
+    void setRootMsg(const QString& s) { setText(s); }
 };
 
 RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
-    : QFrame(parent, name)
+    : QLabel(parent, name)
 {
     setFrameShape(QFrame::Box);
     setFrameShadow(QFrame::Raised);
 
-    QHBoxLayout *layout = new QHBoxLayout(this, KDialog::spacingHint(), KDialog::marginHint());
-    QLabel *pixmap = new QLabel(this);
-    pixmap->setPixmap(KGlobal::iconLoader()->loadIcon("info", KIcon::Desktop, KIcon::SizeMedium ));
-    text = new QLabel(i18n("Changes on this module require root access!\n"
+    setText(i18n("<b>Changes on this module require root access!</b><br>"
                       "Click the \"Administrator Mode\" button to "
-                      "allow modifications on this module."), this);
-
-    QFont font;
-    font.setBold(true);
-	 text->setFont(font);
+                      "allow modifications on this module."));
 
 	QWhatsThis::add(this, i18n("This module requires special permissions, probably "
                               "for system-wide modifications. Therefore it is "
@@ -107,13 +97,6 @@ RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
                               "able to change the modules properties. As long as "
                               "you don't provide the password, the module will be "
                               "disabled."));
-
-
-    pixmap->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred));
-    text->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum));
-
-    layout->addWidget(pixmap);
-    layout->addWidget(text);
 }
 
 
@@ -212,8 +195,6 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 {
   setCaption(title);
 
-  isRootModule=run_as_root;
-
   view = new ProxyView(client, title, this, run_as_root, "proxyview");
   (void) new WhatsThis( this );
 
@@ -274,19 +255,10 @@ ProxyWidget::~ProxyWidget()
 
 QString ProxyWidget::quickHelp() const
 {
-  kdDebug() << "Help clicked (isRootModule=" << isRootModule << ")" << endl;
-  if (isRootModule)
-  {
-    if (_client)
-      return _client->quickHelp();
-    else
-      return "";
-  }
+  if (_client)
+    return _client->quickHelp();
   else
-  {
-    kdDebug() << "Sending help request via DCOP!" << endl;
-    kapp->dcopClient()->send("kcontrol", "moduleIface", "invokeHelp()", "");
-  }
+    return "";
 }
 
 void ProxyWidget::helpClicked()
