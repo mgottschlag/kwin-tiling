@@ -107,7 +107,7 @@ QWidget *frame;
   // Additional libpaths
   QLabel *lbl = new QLabel(i18n("Additional library paths to search..."), frame);
   grid->addMultiCellWidget(lbl, 8, 8, 0, 4);
-  whatstr = i18n("Here you can specify additional directories to search for the SOCKS libraries.  /usr/lib, /usr/local/lib and /opt/socks5/lib are already searched by default.");
+  whatstr = i18n("Here you can specify additional directories to search for the SOCKS libraries.  /usr/lib, /usr/local/lib, /usr/local/socks5/lib and /opt/socks5/lib are already searched by default.");
   QWhatsThis::add(lbl, whatstr);
   _c_newPath = new KLineEdit(frame);
   grid->addMultiCellWidget(_c_newPath, 9, 9, 0, 2);
@@ -190,15 +190,17 @@ void KSocksConfig::customPathChanged(const QString&)
 
 void KSocksConfig::testClicked()
 {
+  save();   // we have to save before we can test!  Perhaps
+            // it would be best to warn, though.
   
   if (KSocks::self()->hasSocks()) {
      KMessageBox::information(NULL,
-                              i18n("SOCKS was found and initialized."),
+                              i18n("Success!  SOCKS was found and initialized."),
                               i18n("SOCKS Support"));
      // Eventually we could actually attempt to connect to a site here.
   } else {
       KMessageBox::information(NULL,
-                               i18n("SOCKS could not be loaded."),
+                               i18n("Sorry, SOCKS could not be loaded."),
                                i18n("SOCKS Support"));
   }
 
