@@ -12,4 +12,4 @@ INCLUDES = -I$(srcdir)/../lib -I$(srcdir)/../../fonts $(all_includes) $(LIBFREET
 METASOURCES = AUTO
 
 partdir = $(kde_datadir)/kfontinst
-part_DATA = kfontviewpart.rc
+#part_DATA = kfontviewpart.rc
