@@ -33,6 +33,7 @@
 #include <qcombobox.h>
 #include <qstring.h>
 #include <qaccel.h>
+#include <qcursor.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -729,7 +730,13 @@ kg_main(int argc, char **argv)
     SecureDisplay (dpy);
     if (!dgrabServer)
 	GSendInt (G_SetupDpy);
-    QRect scr = kapp->desktop()->screenGeometry(kdmcfg->_greeterScreen);
+    // GS, 2002 - Default is -1 which means use the u-l screen
+    // also do not forget, the screen numbers start at 0
+    QRect scr;
+    int nscrs = kapp->desktop()->numScreens();
+    if (kdmcfg->_greeterScreen < 0 || kdmcfg->_greeterScreen >= nscrs)
+        scr = kapp->desktop()->screenGeometry(kapp->desktop()->screenNumber(QPoint(0,0)));
+    else scr = kapp->desktop()->screenGeometry(kdmcfg->_greeterScreen);
     kgreeter = new KGreeter;
     kgreeter->setMaximumSize(scr.size());
     kgreeter->move(-10000, -10000);
@@ -738,9 +745,13 @@ kg_main(int argc, char **argv)
     if (kdmcfg->_greeterPosX >= 0) {
 	grt.moveCenter( QPoint( kdmcfg->_greeterPosX, kdmcfg->_greeterPosY ) );
 	moveInto( grt, scr );
-    } else
+    } else {
 	grt.moveCenter( scr.center() );
+    }
     kgreeter->setGeometry( grt );
+    if (QApplication::desktop()->screenNumber(QCursor::pos()) !=
+        QApplication::desktop()->screenNumber(grt.center()))
+        QCursor::setPos(grt.center());
     XSetInputFocus( dpy, kgreeter->winId(), RevertToParent, CurrentTime );
     XUndefineCursor( dpy, RootWindow( dpy, DefaultScreen( dpy ) ) );
     Debug ("entering event loop\n");

@@ -780,7 +780,8 @@ static Ent entsGreeter[] = {
 { "GreeterPosY",	0, 0, 0 },
 { "GreeterScreen",	0, 0,
 "# The screen the greeter should be displayed on in multi-headed setups.\n"
-"# Default is 0\n" },
+"# Default is -1 which means to use the upper-left screen.\n"
+"# The parameter ranges from -1, 0..(number of screens - 1)\n"  },
 { "GreetString",	F_UPDATE, (const char *)upd_greetstring, 
 "# The headline in the greeter.\n"
 "# The following character pairs are replaced:\n"
@@ -1014,7 +1015,7 @@ static DEnt dEntsLocalCore[] = {
 
 static DEnt dEntsLocalGreeter[] = {
 { "AuthComplain",	"false", 0 },
-{ "GreeterScreen",	"1", 0 },
+{ "GreeterScreen",	"-1", 0 },
 };
 
 static DEnt dEnts0Core[] = {
