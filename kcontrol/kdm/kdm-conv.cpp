@@ -197,8 +197,11 @@ void KDMConvenienceWidget::save()
 void KDMConvenienceWidget::load()
 {
     config->setGroup("X-:0-Core");
-    alGroup->setChecked(config->readBoolEntry( "AutoLoginEnable", false) );
+    bool alenable = config->readBoolEntry( "AutoLoginEnable", false);
     autoUser = config->readEntry( "AutoLoginUser" );
+    if (autoUser.isEmpty())
+	alenable=false;
+    alGroup->setChecked( alenable );
 
     config->setGroup("X-:*-Core");
     npGroup->setChecked(config->readBoolEntry( "NoPassEnable", false) );
