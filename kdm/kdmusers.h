@@ -22,6 +22,8 @@
 
     */
  
+#ifndef _KDMUSERS_H_
+#define _KDMUSERS_H_
 
 # include "kdm-config.h"
 
@@ -34,3 +36,5 @@ public:
 private:
      QString user_name;
 };
+
+#endif // _KDMUSERS_H_

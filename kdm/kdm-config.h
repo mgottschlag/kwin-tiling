@@ -22,10 +22,15 @@
 
     */
  
+#ifndef KDM_CONFIG_H_
+#define KDM_CONFIG_H_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#define QT_CLEAN_NAMESPACE /* to avoid INT32 conflict between <qglobal.h>
+                              and <X/Xmd.h>. */ 
 
 /* xdm stuff, should always defined */
 #define UNIXCONN          
@@ -95,3 +100,5 @@ int LogOutOfMem( char*, ...);
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* KDM_CONFIG_H */

@@ -31,6 +31,9 @@ from the X Consortium.
 
 */
 
+#ifndef _DM_H_
+#define _DM_H_
+
 #include "kdm-config.h"
 
 /*
@@ -403,3 +406,5 @@ SIGVAL (*Signal())();
 void udp_read_cb(nbio_ref_t ref, int res, int err);
 void tcp_listen_cb(nbio_ref_t ref, int res, int err);
 #endif
+
+#endif // _DM_H_

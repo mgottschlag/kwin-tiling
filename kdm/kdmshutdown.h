@@ -33,9 +33,6 @@
 #include <qglobal.h>
 
 #include <X11/Xmd.h>
-typedef unsigned char   UINT8;                  // 8 bit unsigned
-typedef unsigned short  UINT16;                 // 16 bit unsigned
-typedef unsigned int    UINT32;                 // 32 bit unsigned
 
 #include <stdlib.h>
 #include <qlayout.h>

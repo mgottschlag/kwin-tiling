@@ -2,7 +2,7 @@
 
 SUBDIRS	= config pics $(xdmconfigsubdir)
 
-# Extra lib. Might be -lpam -dl or -lshadow or nonthing
+# Extra lib. Might be -lpam -dl or -lshadow or nothing
 PASSLIB= $(PASSWDLIB) $(PAMLIBS)
 
 INCLUDES = $(all_includes)

@@ -34,6 +34,9 @@ from the X Consortium.
  * greet.h - interface to xdm's dynamically-loadable modular greeter
  */
 
+#ifndef GREET_H
+#define GREET_H
+
 # include "kdm-config.h"
 
 #include <X11/Xlib.h>
@@ -196,3 +199,5 @@ extern	char     *(*__xdm_crypt)();
 #define	crypt		(*__xdm_crypt)
 
 #endif /* GREET_LIB */
+
+#endif /* GREET_H */

@@ -50,19 +50,6 @@ extern "C" {
 #include "dm.h"
 #include <klocale.h>
 
-static inline void
-set_min( QWidget* w)
-{
-     w->adjustSize();
-     w->setMinimumSize( w->size());
-}
-static inline void
-set_fixed( QWidget* w)
-{
-     w->adjustSize();
-     w->setFixedSize( w->size());
-}
-
 #ifdef USE_PAM
 static const char *PAM_password;
 
@@ -180,7 +167,9 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 	  shutdownmsg += i18n( "(Enter Root Password)");
      }
      label = new QLabel( shutdownmsg, winFrame);
-     set_fixed( label);
+     label->adjustSize();
+     label->setFixedSize( label->size());
+
      h += label->height() + 10;
      w = label->width();
 
@@ -196,7 +185,6 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      QRadioButton *rb;
      rb = new QRadioButton( winFrame /*btGroup*/);
      rb->setText( i18n("Shutdown"));
-     set_min( rb);
      rb->setFocusPolicy( StrongFocus);
      // Default action
      rb->setChecked( true);
@@ -210,7 +198,6 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      btGroup->insert( rb);
      rb = new QRadioButton( winFrame /*btGroup*/);
      rb->setText( i18n("Shutdown and restart"));
-     set_min( rb);
      rb->setFocusPolicy( StrongFocus);
      h += rb->height() + 10;
      w = QMAX( rb->width(), w);
@@ -219,7 +206,6 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      btGroup->insert( rb);
      rb = new QRadioButton( winFrame /*btGroup*/);
      rb->setText( i18n("Restart X Server"));//better description
-     set_min( rb);
      rb->setFocusPolicy( StrongFocus);
      h += rb->height() + 10;
      w = QMAX( rb->width(), w);
@@ -230,7 +216,6 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      // Passwd line edit
      if( mode == KDMConfig::RootOnly) {
 	  pswdEdit = new QLineEdit( winFrame);
-	  //set_min( pswdEdit);
 	  pswdEdit->setMinimumHeight( pswdEdit->sizeHint().height());
 	  pswdEdit->setEchoMode( QLineEdit::NoEcho);
 	  /*QColorGroup   passwdColGroup(
@@ -255,10 +240,8 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
      box->addLayout( box3);
 
      okButton = new QPushButton( i18n("OK"), winFrame);
-     set_min( okButton);
      okButton->setFocusPolicy( StrongFocus);
      cancelButton = new QPushButton( i18n("Cancel"), winFrame);
-     set_min( cancelButton);
      //cancelButton->setDefault( true);
      cancelButton->setFocusPolicy( StrongFocus);
      h += cancelButton->height() + 10;
