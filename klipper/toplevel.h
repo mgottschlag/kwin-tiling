@@ -40,6 +40,11 @@ protected:
     void readProperties(KConfig *);
     void readConfiguration(KConfig *);
     void writeConfiguration(KConfig *);
+    /**
+     * @returns the contents of the selection or, if empty, the contents of
+     * the clipboard.
+     */
+    QString clipboardContents();
 
 protected slots:
     void slotPopupMenu() { showPopupMenu( m_popup ); }
@@ -53,6 +58,8 @@ private slots:
     void newClipData();
     void clickedMenu(int);
     void slotConfigure();
+    void slotClearClipboard();
+    void slotClipboardChanged( const QString& newContents );
 
 private:
     QClipboard *clip;

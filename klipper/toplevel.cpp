@@ -175,7 +175,7 @@ void TopLevel::newClipData()
     }
     
     // If the string is null bug out
-    if(clipData.isEmpty()) {
+    if (clipData.isEmpty()) {
 	if (m_selectedItem != -1) {
             m_popup->setItemChecked(m_selectedItem, false);
 	    m_selectedItem = -1;
@@ -184,47 +184,7 @@ void TopLevel::newClipData()
     }
 
     if(clipData != m_lastString) {
-        m_lastString = clipData;
-
-        QString *data = new QString(clipData);
-
-        if ( bURLGrabber && myURLGrabber ) {
-            if ( myURLGrabber->checkNewData( clipData ))
-                return; // don't add into the history
-        }
-
-        if (bClipEmpty) { // remove <clipboard empty> from popupmenu and dict
-            if (*data != QSempty) {
-                bClipEmpty = false;
-                m_popup->removeItemAt(EMPTY);
-                m_clipDict->clear();
-            }
-        }
-
-	trimClipHistory(maxClipItems - 1);
-
-        if(clipData.length() > 50){
-            clipData.truncate(47);
-            clipData.append("...");
-        }
-        long int id = m_popup->insertItem(KStringHandler::csqueeze(clipData.simplifyWhiteSpace(), 45), -2, 1); // -2 means unique id, 1 means first location
-        m_clipDict->insert(id, data);
-
-        if (m_selectedItem != -1)
-	{
-            m_popup->setItemChecked(m_selectedItem, false);
-	}
-        m_selectedItem = id;
-
-	if ( bClipEmpty )
-	{
-	    clip->clear();
-	    m_popup->setItemEnabled(m_selectedItem, false);
-	}
-	else
-	{
-	    m_popup->setItemChecked(m_selectedItem, true);
-	}
+        slotClipboardChanged( clipData );
     }
 }
 
@@ -263,7 +223,7 @@ void TopLevel::clickedMenu(int id)
 	    m_clipDict->clear();
 	
 	    bClipEmpty = true;
-	    clip->setText(QSempty);
+            slotClearClipboard();
 	    newClipData();
 	    m_checkTimer->start(1000);
 	}
@@ -276,16 +236,24 @@ void TopLevel::clickedMenu(int id)
 	else if ( !bClipEmpty )
 	{
 	    m_checkTimer->stop();
-	    //CT mark up the currently put into clipboard - so that user can see later
-	    m_popup->setItemChecked(m_selectedItem, false);
+	    //CT mark up the currently put into clipboard - 
+            // so that user can see later
+            if ( m_selectedItem != -1 )
+                m_popup->setItemChecked(m_selectedItem, false);
+
 	    m_selectedItem = id;
 	    m_popup->setItemChecked(m_selectedItem, true);
 	    QString *data = m_clipDict->find(id);
-	    if(data != 0x0 && *data != QSempty){
-		clip->setText(*data);
+	    if (data != 0x0 && *data != QSempty) 
+            {
+                clip->setSelectionMode( true );
+		clip->setText( *data );
+                clip->setSelectionMode( false );
+                clip->setText( *data );
+                
 		if (bURLGrabber && bReplayActionInHistory)
 		    myURLGrabber->checkNewData(*data);
-		m_lastString = data->copy();
+		m_lastString = *data;
 	    }
 
 	    m_checkTimer->start(1000);
@@ -340,13 +308,13 @@ void TopLevel::readProperties(KConfig *kc)
       for (QStringList::ConstIterator it = dataList.begin();
            it != dataList.end(); ++it)
       {
-          id = m_popup->insertItem( KStringHandler::csqueeze(*it, 45), -2, -1 );
+          id = m_popup->insertItem( KStringHandler::csqueeze(*it, 45), -2, -1);
           m_clipDict->insert( id, new QString( *it ));
       }
   }
 
-  bClipEmpty = clip->text().simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
-
+  bClipEmpty = clipboardContents().simplifyWhiteSpace().isEmpty() && dataList.isEmpty();
+  
   m_popup->insertSeparator();
   toggleURLGrabAction->plug( m_popup, -1 );
   URLGrabItem = m_popup->idAt( m_popup->count() - 1 );
@@ -359,7 +327,7 @@ void TopLevel::readProperties(KConfig *kc)
   m_popup->insertItem(SmallIcon("exit"), i18n("&Quit"), QUIT_ITEM );
 
   if(bClipEmpty)
-    clip->setText(QSempty);
+      slotClearClipboard();
 
   newClipData();
 }
@@ -507,4 +475,56 @@ void TopLevel::trimClipHistory( int new_size )
         m_popup->removeItemAt(EMPTY);
     }
 }
+
+void TopLevel::slotClearClipboard()
+{
+    clip->setSelectionMode( true );
+    clip->clear();
+    clip->setSelectionMode( false );
+    clip->clear();
+    if ( m_selectedItem != -1 )
+        m_popup->setItemEnabled(m_selectedItem, false);
+}
+
+QString TopLevel::clipboardContents()
+{
+    clip->setSelectionMode( true );
+    QString clipContents = clip->text().stripWhiteSpace();
+    if ( clipContents.isEmpty() ) {
+        clip->setSelectionMode( false );
+        clipContents = clip->text().stripWhiteSpace();
+    }
+  
+    return clipContents;
+}
+
+void TopLevel::slotClipboardChanged( const QString& clipData )
+{
+    m_lastString = clipData;
+
+    QString *data = new QString(clipData);
+    
+    if ( bURLGrabber && myURLGrabber ) {
+        if ( myURLGrabber->checkNewData( clipData ))
+            return; // don't add into the history
+    }
+
+    if (bClipEmpty) { // remove <clipboard empty> from popupmenu and dict
+        if (*data != QSempty) {
+            bClipEmpty = false;
+            m_popup->removeItemAt(EMPTY);
+            m_clipDict->clear();
+        }
+    }
+
+    trimClipHistory(maxClipItems - 1);
+    
+    if (m_selectedItem != -1)
+        m_popup->setItemChecked(m_selectedItem, false);
+    
+    m_selectedItem = m_popup->insertItem(KStringHandler::csqueeze(clipData.simplifyWhiteSpace(), 45), -2, 1); // -2 means unique id, 1 means first location
+    m_clipDict->insert(m_selectedItem, data);
+    m_popup->setItemChecked(m_selectedItem, true);
+}
+
 #include "toplevel.moc"
