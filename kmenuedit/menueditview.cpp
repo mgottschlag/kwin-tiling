@@ -31,33 +31,33 @@
 MenuEditView::MenuEditView( QWidget *parent, const char *name )
   : QVBox(parent, name)
 {
-  _splitter = new QSplitter(Horizontal, this);
-  _tree = new TreeView(_splitter);
-   _editor = new DesktopFileEditor(_splitter);
+    _splitter = new QSplitter(Horizontal, this);
+    _tree = new TreeView(_splitter);
+    _editor = new DesktopFileEditor(_splitter);
 
-  connect(_tree, SIGNAL(entrySelected(const QString&)),
-	  _editor, SLOT(setDesktopFile(const QString&)));
-  connect(_tree, SIGNAL(entrySelected(const QString&)),
-	  SIGNAL(pathChanged(const QString&))); 
-  connect(_editor, SIGNAL(changed()), _tree, SLOT(slotCurrentChanged()));
+    connect(_tree, SIGNAL(entrySelected(const QString&)),
+	    _editor, SLOT(setDesktopFile(const QString&)));
+    connect(_tree, SIGNAL(entrySelected(const QString&)),
+	    SIGNAL(pathChanged(const QString&)));
+    connect(_editor, SIGNAL(changed()), _tree, SLOT(slotCurrentChanged()));
 
-  // restore splitter sizes
-  KConfig* config = KGlobal::config();
-  QValueList<int> sizes = config->readIntListEntry("SplitterSizes");
-  
-  if (sizes.isEmpty())
-    sizes << 1 << 3;
-  _splitter->setSizes(sizes);
- _tree->setFocus();
+    // restore splitter sizes
+    KConfig* config = KGlobal::config();
+    QValueList<int> sizes = config->readIntListEntry("SplitterSizes");
+
+    if (sizes.isEmpty())
+	sizes << 1 << 3;
+    _splitter->setSizes(sizes);
+    _tree->setFocus();
 }
 
 MenuEditView::~MenuEditView()
 {
-  // save splitter sizes
-  KConfig* config = KGlobal::config();
-  config->setGroup("General");
-  config->writeEntry("SplitterSizes", _splitter->sizes());
-  config->sync();  
+    // save splitter sizes
+    KConfig* config = KGlobal::config();
+    config->setGroup("General");
+    config->writeEntry("SplitterSizes", _splitter->sizes());
+    config->sync();
 }
 
 void MenuEditView::file_newsubmenu()
@@ -82,7 +82,7 @@ void MenuEditView::edit_paste()
 
 void MenuEditView::edit_delete()
 {
-  _tree->slotDeleteCurrent();
+    _tree->slotDeleteCurrent();
 }
 
 void MenuEditView::edit_moveup()

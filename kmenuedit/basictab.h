@@ -29,33 +29,33 @@ class QGroupBox;
 
 class BasicTab : public QWidget
 {
-  Q_OBJECT;
-  
- public:
-  BasicTab( QWidget *parent=0, const char *name=0 );
+    Q_OBJECT;
 
-  void apply();
-  void reset();
+public:
+    BasicTab( QWidget *parent=0, const char *name=0 );
 
- signals:
-  void changed();
+    void apply();
+    void reset();
 
- public slots:
-  void setDesktopFile(const QString& desktopFile);
+signals:
+    void changed();
 
- protected slots:
-  void slotChanged(const QString&);
-  void termcb_clicked();
-  void uidcb_clicked();
+public slots:
+    void setDesktopFile(const QString& desktopFile);
 
- protected:
-  KLineEdit    *_nameEdit, *_commentEdit, *_execEdit, *_typeEdit;
-  KLineEdit    *_termOptEdit, *_uidEdit, *_pathEdit;
-  QCheckBox    *_terminalCB, *_uidCB;
-  KIconButton  *_iconButton;
-  QGroupBox    *_path_group, *_term_group, *_uid_group;
+protected slots:
+    void slotChanged(const QString&);
+    void termcb_clicked();
+    void uidcb_clicked();
 
-  QString       _desktopFile;
+protected:
+    KLineEdit    *_nameEdit, *_commentEdit, *_execEdit, *_typeEdit;
+    KLineEdit    *_termOptEdit, *_uidEdit, *_pathEdit;
+    QCheckBox    *_terminalCB, *_uidCB;
+    KIconButton  *_iconButton;
+    QGroupBox    *_path_group, *_term_group, *_uid_group;
+
+    QString       _desktopFile;
 };
 
 #endif

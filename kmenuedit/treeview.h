@@ -24,53 +24,53 @@
 
 class TreeItem : public QListViewItem
 {
-  
-public:
-  TreeItem(QListViewItem *parent, const QString& file);
-  TreeItem(QListViewItem *parent, QListViewItem *after, const QString& file);
-  TreeItem(QListView *parent, const QString& file);
-  TreeItem(QListView *parent, QListViewItem* after, const QString& file);
 
-  QString file() const { return _file; };
-  void setFile(const QString& file) { _file = file; }
+public:
+    TreeItem(QListViewItem *parent, const QString& file);
+    TreeItem(QListViewItem *parent, QListViewItem *after, const QString& file);
+    TreeItem(QListView *parent, const QString& file);
+    TreeItem(QListView *parent, QListViewItem* after, const QString& file);
+
+    QString file() const { return _file; };
+    void setFile(const QString& file) { _file = file; }
 
 private:
-  QString _file;
+    QString _file;
 };
 
 class TreeView : public KListView
 {
-  Q_OBJECT;
+    Q_OBJECT;
 
- public:
-  TreeView(QWidget *parent=0, const char *name=0);
+public:
+    TreeView(QWidget *parent=0, const char *name=0);
 
- public slots:
-  void slotCurrentChanged(); 
-  void slotDeleteCurrent();
+public slots:
+    void slotCurrentChanged();
+    void slotDeleteCurrent();
 
- signals:
-  void entrySelected(const QString&);
+signals:
+    void entrySelected(const QString&);
 
- protected slots:
-  void itemSelected(QListViewItem *);
-  void slotDropped(QDropEvent *, QListViewItem *);
+protected slots:
+    void itemSelected(QListViewItem *);
+    void slotDropped(QDropEvent *, QListViewItem *);
 
- protected:
-  void fill();
-  void fillBranch(const QString& relPath, TreeItem* parent);
+protected:
+    void fill();
+    void fillBranch(const QString& relPath, TreeItem* parent);
 
-  void copyFile(const QString& src, const QString& dest);
-  void copyDir(const QString& src, const QString& dest);
+    void copyFile(const QString& src, const QString& dest);
+    void copyDir(const QString& src, const QString& dest);
 
-  void deleteFile(const QString& deskfile);
-  void deleteDir(const QString& dir);
+    void deleteFile(const QString& deskfile);
+    void deleteDir(const QString& dir);
 
-  QStringList fileList(const QString& relativePath);
-  QStringList dirList(const QString& relativePath);
+    QStringList fileList(const QString& relativePath);
+    QStringList dirList(const QString& relativePath);
 
-  bool acceptDrag(QDropEvent* event) const;
-  QDragObject *dragObject() const;
+    bool acceptDrag(QDropEvent* event) const;
+    QDragObject *dragObject() const;
 };
 
 #endif

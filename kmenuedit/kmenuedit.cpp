@@ -31,65 +31,65 @@
 KMenuEdit::KMenuEdit (QWidget *, const char *name)
   : KTMainWindow (name)
 {
-  setCaption(i18n("Edit K Menu"));
+    setCaption(i18n("Edit K Menu"));
 
-  // restore size
-  KConfig *config = KGlobal::config();
-  config->setGroup("General");
-  int w = config->readNumEntry("Width",640);
-  int h = config->readNumEntry("Height", 480);
-  resize(w, h);
+    // restore size
+    KConfig *config = KGlobal::config();
+    config->setGroup("General");
+    int w = config->readNumEntry("Width",640);
+    int h = config->readNumEntry("Height", 480);
+    resize(w, h);
 
-  // setup GUI
-  setupView();
-  setupActions();
+    // setup GUI
+    setupView();
+    setupActions();
 }
 
 KMenuEdit::~KMenuEdit()
 {
-  // save size
-  KConfig *config = KGlobal::config();
-  config->setGroup("General");
-  config->writeEntry("Width", width());
-  config->writeEntry("Height", height());
-  config->sync();
-  
-  // clean up
-  delete _view;
+    // save size
+    KConfig *config = KGlobal::config();
+    config->setGroup("General");
+    config->writeEntry("Width", width());
+    config->writeEntry("Height", height());
+    config->sync();
+
+    // clean up
+    delete _view;
 }
 
 void KMenuEdit::setupActions()
 {
-  // setup file menu
-  (void)new KAction(i18n("&New Submenu"), "filenew", 0 , _view, SLOT(file_newsubmenu()),
-		    actionCollection(), "newsubmenu");
+    // setup file menu
+    (void)new KAction(i18n("&New Submenu"), "filenew", 0 , _view, SLOT(file_newsubmenu()),
+		      actionCollection(), "newsubmenu");
 
-  (void)new KAction(i18n("New &Item"), "filenew", 0, _view, SLOT(file_newitem()),
-		    actionCollection(), "newitem");
+    (void)new KAction(i18n("New &Item"), "filenew", 0, _view, SLOT(file_newitem()),
+		      actionCollection(), "newitem");
 
-  KStdAction::quit(this, SLOT(close()), actionCollection());
+    KStdAction::quit(this, SLOT(close()), actionCollection());
 
-  // setup edit menu
-  KStdAction::cut(_view, SLOT(edit_cut()), actionCollection());
-  KStdAction::copy(_view, SLOT(edit_copy()), actionCollection());
-  KStdAction::paste(_view, SLOT(edit_paste()), actionCollection());
+    // setup edit menu
+    KStdAction::cut(_view, SLOT(edit_cut()), actionCollection());
+    KStdAction::copy(_view, SLOT(edit_copy()), actionCollection());
+    KStdAction::paste(_view, SLOT(edit_paste()), actionCollection());
 
-  (void)new KAction(i18n("&Delete"), "editdelete", 0, _view, SLOT(edit_delete()),
-		    actionCollection(), "delete");
+    (void)new KAction(i18n("&Delete"), "editdelete", 0, _view, SLOT(edit_delete()),
+		      actionCollection(), "delete");
 
-  (void)new KAction(i18n("Move &Up"), "up", 0, _view, SLOT(edit_moveup()),
-		    actionCollection(), "moveup");
+    (void)new KAction(i18n("Move &Up"), "up", 0, _view, SLOT(edit_moveup()),
+		      actionCollection(), "moveup");
 
-  (void)new KAction(i18n("Move &Down"), "down", 0, _view, SLOT(edit_movedown()),
-		    actionCollection(), "movedown");
+    (void)new KAction(i18n("Move &Down"), "down", 0, _view, SLOT(edit_movedown()),
+		      actionCollection(), "movedown");
 
-  createGUI("kmenueditui.rc");
+    createGUI("kmenueditui.rc");
 
-  toolBar(0)->setIconText(KToolBar::IconTextBottom);
+    toolBar(0)->setIconText(KToolBar::IconTextBottom);
 }
 
 void KMenuEdit::setupView()
 {
-  _view = new MenuEditView(this);
-  setView(_view);
+    _view = new MenuEditView(this);
+    setView(_view);
 }

@@ -27,36 +27,35 @@
 
 #include "kmenuedit.h"
 
-static const char *description = 
-	I18N_NOOP("KDE Menu editor");
+static const char *description = I18N_NOOP("KDE Menu editor");
 
 static const char *version = "0.0.1";
 
 int main( int argc, char **argv )
 {
-  KAboutData aboutData("kmenuedit", I18N_NOOP("KDE Menu Editor"),
-		       version, description, KAboutData::License_GPL,
-		       "(c) 2000, Matthias Elter");
-  aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
+    KAboutData aboutData("kmenuedit", I18N_NOOP("KDE Menu Editor"),
+			 version, description, KAboutData::License_GPL,
+			 "(c) 2000, Matthias Elter");
+    aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
 
-  KCmdLineArgs::init( argc, argv, &aboutData );
-  KUniqueApplication::addCmdLineOptions();
+    KCmdLineArgs::init( argc, argv, &aboutData );
+    KUniqueApplication::addCmdLineOptions();
 
-  if (!KUniqueApplication::start()) {
-    cout << aboutData.appName() << " is already running!" << endl;
-    return(1);
-  }
+    if (!KUniqueApplication::start()) {
+	cout << aboutData.appName() << " is already running!" << endl;
+	return(1);
+    }
 
-  KUniqueApplication app;
+    KUniqueApplication app;
 
-  KMenuEdit *menuEdit = new KMenuEdit;
-  if( menuEdit == 0 ) {
-    cout << "Unable to start " << aboutData.appName() << " - Memory exhausted!" << endl;
-    return(1);
-  }
-  
-  menuEdit->show();
+    KMenuEdit *menuEdit = new KMenuEdit;
+    if( menuEdit == 0 ) {
+	cout << "Unable to start " << aboutData.appName() << " - Memory exhausted!" << endl;
+	return(1);
+    }
 
-  app.setMainWidget(menuEdit);
-  return  app.exec();
+    menuEdit->show();
+
+    app.setMainWidget(menuEdit);
+    return  app.exec();
 }

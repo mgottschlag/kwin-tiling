@@ -30,28 +30,28 @@ class QFrame;
 
 class DesktopFileEditor : public QWidget
 {
-  Q_OBJECT;
-  
- public:
-  DesktopFileEditor( QWidget *parent=0, const char *name=0 );
+    Q_OBJECT;
 
- signals:
-  void changed();
+public:
+    DesktopFileEditor( QWidget *parent=0, const char *name=0 );
 
- public slots:
-  void setDesktopFile(const QString& desktopFile);
- 
- protected slots:
-  void slotChanged();
-  void slotApply();
-  void slotReset();
+signals:
+    void changed();
 
- protected:
-  BasicTab      *_basicTab;
-  AdvancedTab   *_advancedTab;
-  QFrame        *_separator;
-  QPushButton   *_apply, *_reset;
-  QTabWidget    *_tabs;
+public slots:
+    void setDesktopFile(const QString& desktopFile);
+
+protected slots:
+    void slotChanged();
+    void slotApply();
+    void slotReset();
+
+protected:
+    BasicTab      *_basicTab;
+    AdvancedTab   *_advancedTab;
+    QFrame        *_separator;
+    QPushButton   *_apply, *_reset;
+    QTabWidget    *_tabs;
 };
 
 #endif

@@ -28,31 +28,31 @@ class QSplitter;
 
 class MenuEditView : public QVBox
 {
-  Q_OBJECT;
+    Q_OBJECT;
 
- public:
-  MenuEditView( QWidget *parent=0, const char *name=0 );
-  ~MenuEditView();
+public:
+    MenuEditView( QWidget *parent=0, const char *name=0 );
+    ~MenuEditView();
 
- public slots:
-  void file_newsubmenu();
-  void file_newitem();
+public slots:
+    void file_newsubmenu();
+    void file_newitem();
 
-  void edit_cut();
-  void edit_copy();
-  void edit_paste();
+    void edit_cut();
+    void edit_copy();
+    void edit_paste();
 
-  void edit_delete();
-  void edit_moveup();
-  void edit_movedown();
+    void edit_delete();
+    void edit_moveup();
+    void edit_movedown();
 
- signals:
-  void pathChanged(const QString&);
+signals:
+    void pathChanged(const QString&);
 
- protected:
-  TreeView           *_tree;
-  DesktopFileEditor  *_editor;
-  QSplitter          *_splitter;
+protected:
+    TreeView           *_tree;
+    DesktopFileEditor  *_editor;
+    QSplitter          *_splitter;
 };
 
 #endif

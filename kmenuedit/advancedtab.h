@@ -24,22 +24,22 @@
 
 class AdvancedTab : public QWidget
 {
-  Q_OBJECT;
-  
- public:
-  AdvancedTab( QWidget *parent=0, const char *name=0 );
+    Q_OBJECT;
 
-  void apply();
-  void reset();
+public:
+    AdvancedTab( QWidget *parent=0, const char *name=0 );
 
- signals:
-  void changed();
+    void apply();
+    void reset();
 
- public slots:
-  void setDesktopFile(const QString& desktopFile);
+signals:
+    void changed();
 
- protected:
-  QString _desktopFile;
+public slots:
+    void setDesktopFile(const QString& desktopFile);
+
+protected:
+    QString _desktopFile;
 };
 
 #endif

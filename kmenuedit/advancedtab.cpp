@@ -37,11 +37,11 @@ AdvancedTab::AdvancedTab( QWidget *parent, const char *name )
 
 void AdvancedTab::setDesktopFile(const QString& desktopFile)
 {
-  _desktopFile = desktopFile;
+    _desktopFile = desktopFile;
 
-  // KDesktopFile can also handle relative pathes, so we don't have
-  // to make sure it's absolute.
-  KDesktopFile df(desktopFile);
+    // KDesktopFile can also handle relative pathes, so we don't have
+    // to make sure it's absolute.
+    KDesktopFile df(desktopFile);
 }
 
 void AdvancedTab::apply()
@@ -50,6 +50,6 @@ void AdvancedTab::apply()
 
 void AdvancedTab::reset()
 {
-  if(_desktopFile != "")
-    setDesktopFile(_desktopFile);
+    if(_desktopFile != "")
+	setDesktopFile(_desktopFile);
 }

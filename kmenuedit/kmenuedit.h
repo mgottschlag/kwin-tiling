@@ -26,18 +26,18 @@ class MenuEditView;
 
 class KMenuEdit : public KTMainWindow
 {
-  Q_OBJECT;
+    Q_OBJECT;
 
- public:
-  KMenuEdit( QWidget *parent=0, const char *name=0 );
-  ~KMenuEdit();
+public:
+    KMenuEdit( QWidget *parent=0, const char *name=0 );
+    ~KMenuEdit();
 
- protected:
-  void setupView();
-  void setupActions();
+protected:
+    void setupView();
+    void setupActions();
 
- protected:
-  MenuEditView *_view;
+protected:
+    MenuEditView *_view;
 };
 
 #endif
