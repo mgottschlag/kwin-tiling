@@ -231,9 +231,9 @@
                         <bool>true</bool>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>&lt;qt&gt;When this option is selected an image will appear down the right-hand side of the K Menu. The image will be tinted according to your color settings.
+                        <string>&lt;qt&gt;When this option is selected an image will appear down the left-hand side of the K Menu. The image will be tinted according to your color settings.
 
-&lt;p&gt;&lt;b&gt;Tip&lt;/b&gt;: You can customize the image that appears in the K Menu by putting an image file called kside.png and a tileable image file called kside_title.png in $KDEHOME/share/apps/kicker/pics.&lt;/qt&gt;</string>
+&lt;p&gt;&lt;b&gt;Tip&lt;/b&gt;: You can customize the image that appears in the K Menu by putting an image file called kside.png and a tileable image file called kside_tile.png in $KDEHOME/share/apps/kicker/pics.&lt;/qt&gt;</string>
                     </property>
                 </widget>
                 <spacer row="2" column="0">
@@ -496,4 +496,11 @@
     <slot>launchMenuEditor()</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>klistview.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+    <includehint>knuminput.h</includehint>
+</includehints>
 </UI>
