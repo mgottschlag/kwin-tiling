@@ -707,17 +707,22 @@ void CEncodings::addDir(const QString &path, int sub)
                                         toLower(buffer);
                                         if(NULL!=(line=strstr(buffer, "startencoding")) &&
                                            sscanf(line, "startencoding %s", encName)==1 && (sep=strchr(encName, '-'))!=NULL && sep!=encName)
-                                        {
                                             gotName=true;
-                                            break;
-                                        }
                                         else if(NULL!=(line=strstr(buffer, "size")))
                                         {
                                             unsigned int dummy;
 
-                                            if(sscanf(line, "size %d %d", &dummy, &dummy)==2)
+                                            line+=strlen("size");
+
+                                            if(sscanf(line, "%x %x", &dummy, &dummy)==2 ||
+                                               sscanf(line, "%d %d", &dummy, &dummy)==2)
                                                 sixteenBit=true;
                                         }
+                                        else if(NULL!=(line=strstr(buffer, "startmapping")))
+                                            break;
+
+                                        if(gotName && sixteenBit)
+                                            break;
                                     }
 
                                     if(gotName)
@@ -726,7 +731,7 @@ void CEncodings::addDir(const QString &path, int sub)
                                             bool                     found=false;
                                             const CEncodings::T16Bit *enc16;
 
-                                            for(enc16=CKfiGlobal::enc().first16Bit(); NULL!=enc16 && !found; enc16=CKfiGlobal::enc().next16Bit())
+                                            for(enc16=first16Bit(); NULL!=enc16 && !found; enc16=next16Bit())
                                                 if(enc16->name==encName)
                                                     found=true;
 
