@@ -32,7 +32,7 @@ else
     fi
 
     ac_save_LDFLAGS=$LDFLAGS
-    LDFLAGS="$LDFLAGS $X_LDFLAGS"
+    LDFLAGS="$X_LDFLAGS $all_libraries $LDFLAGS"
     AC_CHECK_LIB(freetype,main,FREETYPE_LIB="-lfreetype",FREETYPE_LIB="NO")
     if test "$FREETYPE_LIB" = NO; then
         AC_MSG_WARN([FreeType2 library not found!])
