@@ -615,7 +615,7 @@ void MouseSettings::save(KConfig *config)
 
   config->setGroup(QString::fromLatin1("KDE"));
   config->writeEntry("DoubleClickInterval", doubleClickInterval, true, true);
-  config->writeEntry("StartDragIime", dragStartTime, true, true);
+  config->writeEntry("StartDragTime", dragStartTime, true, true);
   config->writeEntry("StartDragDist", dragStartDist, true, true);
   config->writeEntry(QString::fromLatin1("SingleClick"), singleClick, true, true);
   config->writeEntry( "AutoSelectDelay", autoSelectDelay, true, true );
