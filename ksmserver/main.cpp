@@ -106,6 +106,16 @@ void sanity_check( int argc, char* argv[] )
   }
   if (msg.isEmpty())
   {
+     path = DCOPClient::dcopServerFile();
+     if (access(path.data(), R_OK) && (errno == ENOENT))
+     {
+        // Check iceauth
+        if (DCOPClient::iceauthPath().isEmpty())
+           msg = "Could not find 'iceauth' in path.";
+     }
+  }
+  if (msg.isEmpty())
+  {
      path = getenv("KDETMP");
      if (path.isEmpty())
         path = "/tmp";
