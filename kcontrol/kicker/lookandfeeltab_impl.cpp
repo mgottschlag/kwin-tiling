@@ -103,7 +103,7 @@ void LookAndFeelTab::load()
   c.setGroup("General");
 
   bool use_theme = c.readBoolEntry("UseBackgroundTheme", false);
-  theme = c.readEntry("BackgroundTheme", QString::null).stripWhiteSpace();
+  theme = c.readEntry("BackgroundTheme").stripWhiteSpace();
 
   bool transparent = c.readBoolEntry( "Transparent", false );
 

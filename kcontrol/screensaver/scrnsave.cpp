@@ -82,7 +82,7 @@ SaverConfig::SaverConfig()
 bool SaverConfig::read(QString file)
 {
     KDesktopFile config(file, true);
-    mExec = config.readEntry("Exec");
+    mExec = config.readPathEntry("Exec");
     mName = config.readEntry("Name");
     mCategory = i18n("Screen saver category", // Must be same in Makefile.am
                      config.readEntry("X-KDE-Category").utf8());
@@ -90,13 +90,13 @@ bool SaverConfig::read(QString file)
     if (config.hasActionGroup("Setup"))
     {
       config.setActionGroup("Setup");
-      mSetup = config.readEntry("Exec");
+      mSetup = config.readPathEntry("Exec");
     }
 
     if (config.hasActionGroup("InWindow"))
     {
       config.setActionGroup("InWindow");
-      mSaver = config.readEntry("Exec");
+      mSaver = config.readPathEntry("Exec");
     }
 
     int indx = file.findRev('/');

@@ -247,7 +247,7 @@ void PlayerSettingsDialog::load()
     config.setGroup( "Misc" );
     cbExternal->setChecked( config.readBoolEntry( "Use external player",
                                                   false ));
-    reqExternal->setURL( config.readEntry( "External player" ));
+    reqExternal->setURL( config.readPathEntry( "External player" ));
     reqExternal->setEnabled( cbExternal->isChecked() );
     volumeSlider->setValue( config.readNumEntry( "Volume", 100 ) );
     volumeSlider->parentWidget()->setEnabled( !cbExternal->isChecked() );
@@ -258,7 +258,7 @@ void PlayerSettingsDialog::save()
     // see kdelibs/arts/knotify/knotify.cpp
     KConfig config( "knotifyrc", false, false );
     config.setGroup( "Misc" );
-    config.writeEntry( "External player", reqExternal->url() );
+    config.writePathEntry( "External player", reqExternal->url() );
     config.writeEntry( "Use external player", cbExternal->isChecked() );
     config.writeEntry( "Volume", volumeSlider->value() );
     config.sync();

@@ -280,32 +280,32 @@ void CConfig::load()
     itsConfigured=readBoolEntry("Configured");
 
     setGroup("FoldersAndFiles");
-    val=readEntry("FontsDir");
+    val=readPathEntry("FontsDir");
     itsFontsDir=val.length()>0 ? val : defaultFontsDir;
     val=readEntry("TTSubDir");
     itsTTSubDir=val.length()>0 ? val : constDefaultTTSubDir;
     val=readEntry("T1SubDir");
     itsT1SubDir=val.length()>0 ? val : constDefaultT1SubDir;
-    val=readEntry("XConfigFile");
+    val=readPathEntry("XConfigFile");
     itsXConfigFile=val.length()>0 ? val : defaultXConfigFile;
-    val=readEntry("EncodingsDir");
+    val=readPathEntry("EncodingsDir");
     itsEncodingsDir=val.length()>0 ? val : constDefaultEncodingsDir;
-    val=readEntry("GhostscriptFile");
+    val=readPathEntry("GhostscriptFile");
     itsGhostscriptFile=val.length()>0 ? val : defaultGhostscriptFile;
     itsDoGhostscript=readBoolEntry("DoGhostscript", true);
     if(CMisc::root())
     {
-        val=readEntry("CupsDir");
+        val=readPathEntry("CupsDir");
         itsCupsDir=val.length()>0 ? val : constDefaultCupsDir;
         itsDoCups=readBoolEntry("DoCups", true);
     }
     setGroup("InstallUninstall");
-    val=readEntry("InstallDir");
+    val=readPathEntry("InstallDir");
     itsInstallDir=val.length()>0 && CMisc::dExists(val) ? val : (QString(getenv("HOME"))+"/");
 
     setGroup("StarOffice");
     itsSOConfigure=readBoolEntry("SOConfigure");
-    val=readEntry("SODir");
+    val=readPathEntry("SODir");
     itsSODir=val.length()>0 ? val : constDefaultSODir;
     val=readEntry("SOPpd");
     itsSOPpd=val.length()>0 ? val : constDefaultSOPpd;
@@ -317,7 +317,7 @@ void CConfig::load()
     itsAfmEncoding=readEntry("AfmEncoding", "iso8859-1"); // QFont::encodingName(QFont::charSetForLocale()));
     intVal=readNumEntry("XRefreshCmd", XREFRESH_XSET_FP_REHASH);
     itsXRefreshCmd=intVal>=0 && intVal <=XREFRESH_CUSTOM ? (EXFontListRefresh)intVal : XREFRESH_XSET_FP_REHASH;
-    itsCustomXRefreshCmd=readEntry("CustomXRefreshCmd");
+    itsCustomXRefreshCmd=readPathEntry("CustomXRefreshCmd");
     if(itsCustomXRefreshCmd.isNull() && itsXRefreshCmd==XREFRESH_CUSTOM)
         itsXRefreshCmd=XREFRESH_XSET_FP_REHASH;
     //
@@ -435,25 +435,25 @@ void CConfig::save()
     writeEntry("Configured", itsConfigured);
 
     setGroup("FoldersAndFiles");
-    writeEntry("FontsDir", itsFontsDir);
+    writePathEntry("FontsDir", itsFontsDir);
     writeEntry("TTSubDir", itsTTSubDir);
     writeEntry("T1SubDir", itsT1SubDir);
-    writeEntry("XConfigFile", itsXConfigFile);
-    writeEntry("EncodingsDir", itsEncodingsDir);
-    writeEntry("GhostscriptFile", itsGhostscriptFile);
+    writePathEntry("XConfigFile", itsXConfigFile);
+    writePathEntry("EncodingsDir", itsEncodingsDir);
+    writePathEntry("GhostscriptFile", itsGhostscriptFile);
     writeEntry("DoGhostscript", itsDoGhostscript);
     if(CMisc::root())
     {
-        writeEntry("CupsDir", itsCupsDir);
+        writePathEntry("CupsDir", itsCupsDir);
         writeEntry("DoCups", itsDoCups);
     }
 
     setGroup("InstallUninstall");
-    writeEntry("InstallDir", itsInstallDir);
+    writePathEntry("InstallDir", itsInstallDir);
 
     setGroup("StarOffice");
     writeEntry("SOConfigure", itsSOConfigure);
-    writeEntry("SODir", itsSODir);
+    writePathEntry("SODir", itsSODir);
     writeEntry("SOPpd", itsSOPpd);
 
     setGroup("SystemConfiguration");
@@ -462,7 +462,7 @@ void CConfig::save()
     writeEntry("DoT1Afms", itsDoT1Afms);
     writeEntry("AfmEncoding", itsAfmEncoding);
     writeEntry("XRefreshCmd", itsXRefreshCmd);
-    writeEntry("CustomXRefreshCmd", itsCustomXRefreshCmd);
+    writePathEntry("CustomXRefreshCmd", itsCustomXRefreshCmd);
 
     // Restore KConfig group...
     setGroup(origGroup);

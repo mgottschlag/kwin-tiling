@@ -200,10 +200,10 @@ void SessionEditor::readSession(int num)
         str = co->readEntry("Name");
         nameLine->setText(str);
 
-        str = co->readEntry("Cwd");
+        str = co->readPathEntry("Cwd");
         directoryLine->setText(str);
 
-        str = co->readEntry("Exec");
+        str = co->readPathEntry("Exec");
         executeLine->setText(str);
 
         str = co->readEntry("Icon","openterm");
@@ -301,8 +301,8 @@ void SessionEditor::saveCurrent()
   co->setDesktopGroup();
   co->writeEntry("Type","KonsoleApplication");
   co->writeEntry("Name",nameLine->text());
-  co->writeEntry("Cwd",directoryLine->text());
-  co->writeEntry("Exec",executeLine->text());
+  co->writePathEntry("Cwd",directoryLine->text());
+  co->writePathEntry("Exec",executeLine->text());
   co->writeEntry("Icon",previewIcon->icon());
   if (fontCombo->currentItem()==0)
     co->writeEntry("Font","");

@@ -91,8 +91,8 @@ void Theme::loadSettings(void)
   KConfig* cfg = kapp->config();
 
   cfg->setGroup("Install");
-  mRestartCmd = cfg->readEntry("restart-cmd",
-			       "kill `pidof %s`; %s >/dev/null 2>&1 &");
+  mRestartCmd = cfg->readPathEntry("restart-cmd",
+			       QString("kill `pidof %s`; %s >/dev/null 2>&1 &"));
 }
 
 

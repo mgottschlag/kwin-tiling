@@ -58,10 +58,10 @@ void CfgComponent::slotComponentChanged(const QString&) {
 }
 
 void CfgComponent::save(KConfig *cfg) {
-  		QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure","");
-		KConfig *store = new KConfig(cfg->readEntry("storeInFile","null"));
-		store->setGroup(cfg->readEntry("valueSection",""));
-		store->writeEntry(cfg->readEntry("valueName","kcm_componenchooser_null"),*m_lookupDict[ComponentSelector->currentText()]);
+  		QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure");
+		KConfig *store = new KConfig(cfg->readPathEntry("storeInFile","null"));
+		store->setGroup(cfg->readEntry("valueSection"));
+		store->writePathEntry(cfg->readEntry("valueName","kcm_componenchooser_null"),*m_lookupDict[ComponentSelector->currentText()]);
 		store->sync();
 		delete store;
 }
@@ -72,9 +72,9 @@ void CfgComponent::load(KConfig *cfg) {
 	m_lookupDict.clear();
 	m_revLookupDict.clear();
 
-	QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure","");
+	QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure");
 
-	QString MimeTypeOfInterest=cfg->readEntry("MimeTypeOfInterest","");
+	QString MimeTypeOfInterest=cfg->readEntry("MimeTypeOfInterest");
 	KTrader::OfferList offers = KTrader::self()->query(MimeTypeOfInterest, "'"+ServiceTypeToConfigure+"' in ServiceTypes");
 
 	for (KTrader::OfferList::Iterator tit = offers.begin(); tit != offers.end(); ++tit)
@@ -84,11 +84,11 @@ void CfgComponent::load(KConfig *cfg) {
 		m_revLookupDict.insert((*tit)->desktopEntryName(),new QString((*tit)->name()));
 	}
 
-	KConfig *store = new KConfig(cfg->readEntry("storeInFile","null"));
-        store->setGroup(cfg->readEntry("valueSection",""));
-	QString setting=store->readEntry(cfg->readEntry("valueName","kcm_componenchooser_null"),"");
+	KConfig *store = new KConfig(cfg->readPathEntry("storeInFile","null"));
+        store->setGroup(cfg->readEntry("valueSection"));
+	QString setting=store->readEntry(cfg->readEntry("valueName","kcm_componenchooser_null"));
         delete store;
-	if (setting.isEmpty()) setting=cfg->readEntry("defaultImplementation","");
+	if (setting.isEmpty()) setting=cfg->readEntry("defaultImplementation");
 	QString *tmp=m_revLookupDict[setting];
 	if (tmp)
 		for (int i=0;i<ComponentSelector->count();i++)
@@ -248,7 +248,7 @@ void CfgTerminalEmulator::save(KConfig *) {
 
 	KConfig *config = new KConfig("kdeglobals");
 	config->setGroup("General");
-	config->writeEntry("TerminalApplication",terminalCB->isChecked()?"konsole":terminalLE->text(), true, true);
+	config->writePathEntry("TerminalApplication",terminalCB->isChecked()?"konsole":terminalLE->text(), true, true);
 	config->sync();
 	delete config;
 

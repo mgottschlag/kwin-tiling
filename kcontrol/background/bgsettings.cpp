@@ -332,7 +332,7 @@ void KBackgroundProgram::readSettings()
     hashdirty = true;
 
     m_Comment = m_pConfig->readEntry("Comment");
-    m_Executable = m_pConfig->readEntry("Executable");
+    m_Executable = m_pConfig->readPathEntry("Executable");
     m_Command = m_pConfig->readPathEntry("Command");
     m_PreviewCommand = m_pConfig->readPathEntry("PreviewCommand", m_Command);
     m_Refresh = m_pConfig->readNumEntry("Refresh", 300);
@@ -350,7 +350,7 @@ void KBackgroundProgram::writeSettings()
         return; // better safe than sorry
 
     m_pConfig->writeEntry("Comment", m_Comment);
-    m_pConfig->writeEntry("Executable", m_Executable);
+    m_pConfig->writePathEntry("Executable", m_Executable);
     m_pConfig->writePathEntry("Command", m_Command);
     m_pConfig->writeEntry("PreviewCommand", m_PreviewCommand);
     m_pConfig->writeEntry("Refresh", m_Refresh);
@@ -769,7 +769,7 @@ void KBackgroundSettings::readSettings(bool reparse)
     m_ReverseBlending = m_pConfig->readBoolEntry( "ReverseBlending", defReverseBlending);
 
     // Multiple wallpaper config
-    m_WallpaperList = m_pConfig->readListEntry("WallpaperList");
+    m_WallpaperList = m_pConfig->readPathListEntry("WallpaperList");
     updateWallpaperFiles();
 
     m_Interval = m_pConfig->readNumEntry("ChangeInterval", 60);
@@ -827,7 +827,7 @@ void KBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("MinOptimizationDepth", m_MinOptimizationDepth);
     m_pConfig->writeEntry("UseSHM", m_bShm);
 
-    m_pConfig->writeEntry("WallpaperList", m_WallpaperList);
+    m_pConfig->writePathEntry("WallpaperList", m_WallpaperList);
     m_pConfig->writeEntry("ChangeInterval", m_Interval);
     m_pConfig->writeEntry("LastChange", m_LastChange);
     m_pConfig->writeEntry("CurrentWallpaper", m_CurrentWallpaper);
@@ -1120,6 +1120,6 @@ void KGlobalBackgroundSettings::writeSettings()
 
     // tell kdesktop to get it's butt in gear and pick up the new settings
     QByteArray data;
-    bool returnStatus = kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", data);
+    kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", data);
 }
 

@@ -526,7 +526,7 @@ void KDMAppearanceWidget::load()
   }
 
   // See if we use alternate logo
-  setLogo( config->readEntry("LogoPixmap", ""));
+  setLogo( config->readPathEntry("LogoPixmap"));
 
   // Check the GUI type
   guicombo->setCurrentId (config->readEntry("GUIStyle", ""));

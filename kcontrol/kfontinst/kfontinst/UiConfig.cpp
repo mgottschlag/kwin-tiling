@@ -69,10 +69,10 @@ CUiConfig::CUiConfig()
     itsKCmShell=NULL!=appName && 0==strcmp("kcmshell", appName);
 
     setGroup("KcmFontinst");
-    itsOpenInstDirs=readListEntry("OpenInstDirs");
-    itsInstTopItem=readEntry("InstTopItem");
-    itsOpenFsDirs=readListEntry("OpenFsDirs");
-    itsFsTopItem=readEntry("FsTopItem");
+    itsOpenInstDirs=readPathListEntry("OpenInstDirs");
+    itsInstTopItem=readPathEntry("InstTopItem");
+    itsOpenFsDirs=readPathListEntry("OpenFsDirs");
+    itsFsTopItem=readPathEntry("FsTopItem");
     intVal=readNumEntry("Mode", BASIC);
     itsMode=intVal>=BASIC && intVal <=ADVANCED_PLUS_FS ? (EMode)intVal : BASIC;
 
@@ -94,11 +94,11 @@ CUiConfig::~CUiConfig()
 
     setGroup("KcmFontinst");
     checkSize(itsOpenInstDirs);
-    writeEntry("OpenInstDirs", itsOpenInstDirs);
-    writeEntry("InstTopItem", itsInstTopItem);
+    writePathEntry("OpenInstDirs", itsOpenInstDirs);
+    writePathEntry("InstTopItem", itsInstTopItem);
     checkSize(itsOpenFsDirs);
-    writeEntry("OpenFsDirs", itsOpenFsDirs);
-    writeEntry("FsTopItem", itsFsTopItem);
+    writePathEntry("OpenFsDirs", itsOpenFsDirs);
+    writePathEntry("FsTopItem", itsFsTopItem);
     writeEntry("Mode", (int)itsMode);
     if(itsKCmShell)
         writeEntry("MainSize", itsMainSize);
@@ -190,7 +190,7 @@ void CUiConfig::write(const QString &key, const QStringList &value)
     {
         KConfigGroupSaver cfgSaver(this, "KcmFontinst");
 
-        writeEntry(key, value);
+        writePathEntry(key, value);
         sync();
     }
 }
@@ -201,7 +201,7 @@ void CUiConfig::write(const QString &key, const QString &value)
     {
         KConfigGroupSaver cfgSaver(this, "KcmFontinst");
 
-        writeEntry(key, value);
+        writePathEntry(key, value);
         sync();
     }
 }

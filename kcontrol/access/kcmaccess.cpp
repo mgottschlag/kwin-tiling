@@ -269,7 +269,7 @@ void KAccessConfig::load()
 
   systemBell->setChecked(config->readBoolEntry("SystemBell", true));
   customBell->setChecked(config->readBoolEntry("ArtsBell", false));
-  soundEdit->setText(config->readEntry("ArtsBellFile"));
+  soundEdit->setText(config->readPathEntry("ArtsBellFile"));
 
   visibleBell->setChecked(config->readBoolEntry("VisibleBell", false));
   invertScreen->setChecked(config->readBoolEntry("VisibleBellInvert", true));
@@ -306,7 +306,7 @@ void KAccessConfig::save()
 
   config->writeEntry("SystemBell", systemBell->isChecked());
   config->writeEntry("ArtsBell", customBell->isChecked());
-  config->writeEntry("ArtsBellFile", soundEdit->text());
+  config->writePathEntry("ArtsBellFile", soundEdit->text());
 
   config->writeEntry("VisibleBell", visibleBell->isChecked());
   config->writeEntry("VisibleBellInvert", invertScreen->isChecked());

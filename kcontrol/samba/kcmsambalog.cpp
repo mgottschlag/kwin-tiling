@@ -136,7 +136,7 @@ void LogView::loadSettings()
    if (configFile==0) return;
    std::cout<<"LogView::load reading..."<<std::endl;
    configFile->setGroup(LOGGROUPNAME);
-   logFileName.setURL(configFile->readEntry( "SambaLogFile", "/var/log/samba.log"));
+   logFileName.setURL(configFile->readPathEntry( "SambaLogFile", "/var/log/samba.log"));
 
    showConnOpen.setChecked(configFile->readBoolEntry( "ShowConnectionOpen", TRUE));
    showConnClose.setChecked(configFile->readBoolEntry( "ShowConnectionClose", FALSE));
@@ -148,7 +148,7 @@ void LogView::saveSettings()
 {
    if (configFile==0) return;
    configFile->setGroup(LOGGROUPNAME);
-   configFile->writeEntry( "SambaLogFile", logFileName.url());
+   configFile->writePathEntry( "SambaLogFile", logFileName.url());
 
    configFile->writeEntry( "ShowConnectionOpen", showConnOpen.isChecked());
    configFile->writeEntry( "ShowConnectionClose", showConnClose.isChecked());

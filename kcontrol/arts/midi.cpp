@@ -113,7 +113,7 @@ void KMidConfig::load()
 
   config->setGroup("Configuration");
   mididevices->setCurrentItem(config->readNumEntry("midiDevice",0));
-  QString mapurl(config->readEntry("mapFilename",""));
+  QString mapurl(config->readPathEntry("mapFilename"));
 //  KURL::encode(mapurl);
   maprequester->setURL(mapurl);
   usemap->setChecked(config->readBoolEntry("useMidiMapper", false));
@@ -132,7 +132,7 @@ void KMidConfig::save()
 
   config->writeEntry("midiDevice", mididevices->currentItem());
   config->writeEntry("useMidiMapper", usemap->isChecked());
-  config->writeEntry("mapFilename", maprequester->url());
+  config->writePathEntry("mapFilename", maprequester->url());
 
   config->sync();
   delete config;

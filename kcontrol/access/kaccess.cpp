@@ -64,7 +64,7 @@ void KAccessApp::readSettings()
   config->setGroup("Bell");
   _systemBell = config->readBoolEntry("SystemBell", true);
   _artsBell = config->readBoolEntry("ArtsBell", false);
-  _artsBellFile = config->readEntry("ArtsBellFile");
+  _artsBellFile = config->readPathEntry("ArtsBellFile");
   _visibleBell = config->readBoolEntry("VisibleBell", false);
   _visibleBellInvert = config->readBoolEntry("VisibleBellInvert", false);
   QColor def(Qt::red);
