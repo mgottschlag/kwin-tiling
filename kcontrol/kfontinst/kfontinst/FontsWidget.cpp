@@ -119,8 +119,8 @@ void CFontsWidget::setPreviewMode(bool on)
 void CFontsWidget::initProgress(const QString &title, int numSteps)
 {
     emit progressActive(true);
-    if(kapp->activeWindow())
-        kapp->activeWindow()->setEnabled(false);
+    if(topLevelWidget())
+        topLevelWidget()->setEnabled(false);
     itsProgress->setRange(0, numSteps);
     setPreviewMode(false);
     itsBox->setTitle(i18n(title));
@@ -158,8 +158,8 @@ void CFontsWidget::stopProgress()
     setPreviewMode(true);
     kapp->processEvents();
 
-    if(kapp->activeWindow())
-        kapp->activeWindow()->setEnabled(true);
+    if(topLevelWidget())
+        topLevelWidget()->setEnabled(true);
     emit progressActive(false);
 }
 
