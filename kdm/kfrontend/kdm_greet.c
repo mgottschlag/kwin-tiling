@@ -565,7 +565,7 @@ main (int argc, char **argv)
     char *ci;
     FILE *f;
     int i;
-    char qtrc[25];
+    char qtrc[40];
 
     if (!(ci = getenv("CONINFO"))) {
 	fprintf(stderr, "This program is part of kdm and should not be run manually.\n");
