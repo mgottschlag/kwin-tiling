@@ -28,6 +28,7 @@
 #include "dockcontainer.h"
 #include "dockcontainer.moc"
 
+#include "global.h"
 #include "modules.h"
 #include "proxywidget.h"
 
@@ -41,6 +42,12 @@ DockContainer::DockContainer(QWidget *parent, const char *name)
   _busy->setTextFormat(RichText);
   _busy->setGeometry(0,0, width(), height());
   _busy->hide();
+  _rootOnly = new QLabel(i18n("<big>You need super user privileges to run this control module.</big><br>"
+							  "Click on the \"Run as root\" button below."), this);
+  _rootOnly->setAlignment(AlignCenter);
+  _rootOnly->setTextFormat(RichText);
+  _rootOnly->setGeometry(0,0, width(), height());
+  _rootOnly->hide();
 }
 
 void DockContainer::setBaseWidget(QWidget *widget)
@@ -71,6 +78,16 @@ void DockContainer::dockModule(ConfigModule *module)
       if (res == KMessageBox::Yes)
         _module->module()->applyClicked();
     }
+
+  if (module->needsRootPrivileges() && !KCGlobal::root() && !module->hasReadOnlyMode())
+	{
+	  _rootOnly->raise();
+	  _rootOnly->show();
+	  _rootOnly->repaint();
+      if (_module) _module->deleteClient();
+	  _module = 0;
+	  return;
+	}
   
   _busy->raise();
   _busy->show();
@@ -119,6 +136,7 @@ void DockContainer::removeModule()
 void DockContainer::resizeEvent(QResizeEvent *)
 {
   _busy->resize(width(), height());
+  _rootOnly->resize(width(), height());
   if (_module)
 	{
 	  _module->module()->resize(size());

@@ -1,6 +1,7 @@
 /*
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
- 
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
@@ -20,17 +21,17 @@
 #ifndef __main_h__
 #define __main_h__
 
-#include <kapp.h>
+#include <kuniqueapp.h>
 
 class TopLevel;
 
-class MyApplication : public KApplication
+class KControlApp : public KUniqueApplication
 {
   Q_OBJECT 
 
 public:
-  MyApplication();
-  virtual ~MyApplication();
+  KControlApp();
+  virtual ~KControlApp();
 
 private:
 

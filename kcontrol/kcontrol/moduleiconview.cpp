@@ -88,12 +88,6 @@ void ModuleIconView::fill()
       if (module->library().isEmpty())
 		continue;
 
-      if (!KCGlobal::types().contains(module->type()))
-		continue;
-
-	  if (module->onlyRoot() && !KCGlobal::root())
-		continue;
-      
 	  QString path = module->groups().join(QString::null);
 
 	  if(!subdirs.contains(path))
@@ -101,7 +95,7 @@ void ModuleIconView::fill()
 	}
   subdirs.sort();
 
-  kdDebug() << "path: " << _path << endl;
+  //kdDebug() << "path: " << _path << endl;
 
   if (_path == QString::null)
 	{
@@ -171,23 +165,20 @@ void ModuleIconView::fill()
 		{
 		  if (module->library().isEmpty())
 			continue;
-
-		  if (!KCGlobal::types().contains(module->type()))
-			continue;
-		  
-		  if (module->onlyRoot() && !KCGlobal::root())
-			continue;
 				  
 		  QString path = module->groups().join(QString::null);
 		  if(path != _path)
             continue;
-          
-          if (KCGlobal::iconSize() == Small)
-            (void) new ModuleIconItem(this, module->name(), module->smallIcon(), module);
+
+		  QPixmap icon;
+		  if (KCGlobal::iconSize() == Small)
+			icon = KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall);
           else if (KCGlobal::iconSize() == Large)
-            (void) new ModuleIconItem(this, module->name(), module->largeIcon(), module);
-          else
-            (void) new ModuleIconItem(this, module->name(), module->mediumIcon(), module);
+			icon = KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeLarge);
+		  else
+			icon = KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeMedium);
+
+		  (void) new ModuleIconItem(this, module->name(), icon, module);
 		}
     }
 

@@ -46,7 +46,7 @@ signals:
 
 private:
   QWidget      *_basew;
-  QLabel       *_busy;
+  QLabel       *_busy, *_rootOnly;
   ConfigModule *_module;
 
 };

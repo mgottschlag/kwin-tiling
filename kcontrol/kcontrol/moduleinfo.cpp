@@ -1,6 +1,7 @@
 /*
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
- 
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
@@ -32,19 +33,20 @@ ModuleInfo::ModuleInfo(QString desktopFile)
 {
   KDesktopFile desktop(desktopFile);
 
-  setLibrary(desktop.readEntry("X-KDE-LibraryName"));
-  setHandle(desktop.readEntry("X-KDE-FactoryName", library()));
- 
-  // executable only with root access?
-  setOnlyRoot(desktop.readBoolEntry("X-KDE-RootOnly", false));
-
   // set the modules simple attributes
   setName(desktop.readName());
   setComment(desktop.readComment());
   setIcon(desktop.readIcon());
 
-  // set module type
-  setType(desktop.readEntry("X-KDE-ControlModuleType", "User").lower());
+  // library and factory
+  setLibrary(desktop.readEntry("X-KDE-LibraryName"));
+  setHandle(desktop.readEntry("X-KDE-FactoryName", library()));
+
+  // does the module need super user privileges?
+  setNeedsRootPrivileges(desktop.readBoolEntry("X-KDE-NeedsRootPrivileges", false));
+
+  // does the module implement a read-only mode?
+  setHasReadOnlyMode(desktop.readBoolEntry("X-KDE-HasReadOnlyMode", false));
 
   // get the documentation path
   setDocPath(desktop.readEntry("DocPath"));
@@ -68,21 +70,6 @@ ModuleInfo::ModuleInfo(QString desktopFile)
   QStringList groups;
   splitString(group, '/', groups);
   setGroups(groups);
-}
-
-QPixmap ModuleInfo::smallIcon()
-{
-  return SmallIcon(_icon);
-}
-
-QPixmap ModuleInfo::mediumIcon()
-{
-  return DesktopIcon(_icon, KIcon::SizeMedium);
-}
-
-QPixmap ModuleInfo::largeIcon()
-{
-  return DesktopIcon(_icon, KIcon::SizeLarge);
 }
 
 QCString ModuleInfo::moduleId() const

@@ -1,6 +1,7 @@
 /*
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
- 
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
@@ -29,8 +30,8 @@
 KCModule *ModuleLoader::module(const ModuleInfo &mod)
 {
   // check, if we require root privileges we don't have
-  if ( mod.onlyRoot() && (!KCGlobal::root()))
-	return 0;
+  //if ( mod.onlyRoot() && (!KCGlobal::root()))
+  //	return 0;
 
   /*
    * Simple libraries as modules are the easiest case: 

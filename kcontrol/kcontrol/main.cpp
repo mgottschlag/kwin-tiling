@@ -32,7 +32,6 @@
  * to newInstance().
  */
 
-#include <kapp.h>
 #include <kcmdlineargs.h>
 #include <dcopclient.h>
 #include <klocale.h>
@@ -45,15 +44,8 @@
 #include "toplevel.h"
 #include "global.h"
 
-static KCmdLineOptions options[] =
-{
-   { "t", 0, 0 },
-   { "type <t>", I18N_NOOP("Show control modules of type \"t\"."), "User" },
-   { 0,0,0 }
-};
-
-MyApplication::MyApplication()
-  : KApplication()
+KControlApp::KControlApp()
+  : KUniqueApplication()
   , toplevel(0)
 {
   toplevel = new TopLevel();
@@ -67,7 +59,7 @@ MyApplication::MyApplication()
   toplevel->resize(x,y);
 }
 
-MyApplication::~MyApplication()
+KControlApp::~KControlApp()
 {
   if (toplevel)
     {
@@ -81,29 +73,23 @@ MyApplication::~MyApplication()
 
 int main(int argc, char *argv[])
 {
-  KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Centre"), 
-    "v2.0pre", "The KDE Control Centre", KAboutData::License_GPL, 
-    "(c) 1998-2000, The KDE Control Centre Developers");
+  KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Center"), 
+    "v2.0pre", "The KDE Control Center", KAboutData::License_GPL, 
+    "(c) 1998-2000, The KDE Control Center Developers");
   aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
   aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
 
   KCmdLineArgs::init( argc, argv, &aboutData );
-  KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
   KApplication::addCmdLineOptions();
 
-  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-
   KCGlobal::init();
-  KCGlobal::setType(args->getOption("type"));
 
-  MyApplication app;
-
-  if (KCGlobal::types().contains("system") && !KCGlobal::root())
-	{
-	  KMessageBox::error(0, I18N_NOOP("Only the root user can edit system global settings!")
-						 , I18N_NOOP("Error!"));
-	  exit(0);
-	}
+  if (!KControlApp::start()) {
+	qDebug("kcontrol is already running!\n");
+	return (0);
+  }
+  
+  KControlApp app;
 
   // show the whole stuff
   app.mainWidget()->show();

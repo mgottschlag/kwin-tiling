@@ -25,6 +25,7 @@
 #include <qpixmap.h>
 
 #include <klineedit.h>
+#include <kiconloader.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <klistbox.h>
@@ -101,12 +102,6 @@ void SearchWidget::populateKeywordList(ConfigModuleList *list)
     {
       if (module->library().isEmpty())
         continue;
-      
-      if (!KCGlobal::types().contains(module->type()))
-		continue;
-
-	  if (module->onlyRoot() && !KCGlobal::root())
-		continue;
 	  
       // get the modules keyword list
       QStringList kw = module->keywords();
@@ -182,7 +177,7 @@ void SearchWidget::populateResultListBox(const QString& s)
   results.sort();
 
   for(QStringList::ConstIterator it = results.begin(); it != results.end(); it++)
-    _resultList->insertItem((dict[*it])->smallIcon(), *it);
+    _resultList->insertItem(KGlobal::iconLoader()->loadIcon((dict[*it])->icon(), KIcon::Desktop, KIcon::SizeSmall), *it);
 }
 
 void SearchWidget::slotSearchTextChanged(const QString & s)

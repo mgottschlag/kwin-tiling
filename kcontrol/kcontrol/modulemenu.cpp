@@ -48,16 +48,11 @@ ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * na
     {
       if (module->library().isEmpty())
 		continue;
-
-      if (!KCGlobal::types().contains(module->type()))
-		continue;
-
-	  if (module->onlyRoot() && !KCGlobal::root())
-		continue;
-         
+ 
       KPopupMenu *parent = 0;
       parent = getGroupMenu(module->groups());
-      int realid = parent->insertItem(module->smallIcon(), module->name(), id);
+      int realid = parent->insertItem(KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall)
+									  , module->name(), id);
       _moduleDict.insert(realid, module);
 
       id++;
@@ -87,7 +82,7 @@ KPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
 
   // calculate path
   QString path = menuPath(groups);
-  kdDebug() << "Path " << path << endl;
+  //kdDebug() << "Path " << path << endl;
 
   // look if menu already exists
   if (_menuDict[path])
@@ -107,7 +102,8 @@ KPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
   int pos = defName.findRev('/');
   if (pos >= 0)
     defName = defName.mid(pos+1);
-  parent->insertItem(SmallIcon(directory.readEntry("Icon")), directory.readEntry("Name", defName), menu);
+  parent->insertItem(KGlobal::iconLoader()->loadIcon(directory.readEntry("Icon"), KIcon::Desktop, KIcon::SizeSmall)
+					 , directory.readEntry("Name", defName), menu);
 
   _menuDict.insert(path, menu);
 

@@ -43,8 +43,8 @@ kcminit_LDADD   = $(LIB_KDEUI)
 rcdir = $(kde_datadir)/kcontrol
 rc_DATA = kcontrolui.rc
 
-data_DATA = SysInfo.desktop  System.desktop  User.desktop
-datadir = $(kde_appsdir)/Control
+data_DATA = KControl.desktop
+datadir = $(kde_appsdir)
 
 EXTRA_DIST = $(data_DATA)
 

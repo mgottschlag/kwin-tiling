@@ -1,5 +1,6 @@
 /*
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+  Copyright (c) 2000 Matthias Elter <elter@kde.org>
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -39,15 +40,14 @@ public:
   const QStringList &keywords() const { return _keywords; };
   QString name() const { return _name; };
   QString comment() const { return _comment; };
-  QString type() const { return _type; };
-  QPixmap smallIcon();
-  QPixmap mediumIcon();
-  QPixmap largeIcon();
-  bool isDirectory() const { return _directory; };
+  QString icon() const { return _icon; };
+  QString docPath() const { return _doc; };
   QString library() const { return _lib; };
   QString handle() const { return _handle; };
-  bool onlyRoot() const { return _root; };
-  QString docPath() const { return _doc; };
+  bool isDirectory() const { return _directory; };
+  bool needsRootPrivileges() const { return _needsRootPrivileges; };
+  bool hasReadOnlyMode() const { return _hasReadOnlyMode; };
+
   QCString moduleId() const;
 
 protected:
@@ -55,20 +55,20 @@ protected:
   void setGroups(QStringList &groups) { _groups = groups; };
   void setKeywords(QStringList &k) { _keywords = k; };
   void setName(QString name) { _name = name; };
-  void setType(QString type) { _type = type; };
   void setComment(QString comment) { _comment = comment; };
   void setIcon(QString icon) { _icon = icon; };
   void setDirectory(bool dir) { _directory = dir; };
   void setLibrary(QString lib) { _lib = lib; };
   void setHandle(QString handle) { _handle = handle; };
-  void setOnlyRoot(bool only) { _root = only; };
+  void setHasReadOnlyMode(bool hasReadOnlyMode) { _hasReadOnlyMode = hasReadOnlyMode; };
+  void setNeedsRootPrivileges(bool needsRootPrivileges) { _needsRootPrivileges = needsRootPrivileges; };
   void setDocPath(QString p) { _doc = p; };
 
 private:
   
   QStringList _groups, _keywords;
-  QString     _name, _icon, _lib, _handle, _fileName, _doc, _comment, _type;
-  bool        _directory, _root;
+  QString     _name, _icon, _lib, _handle, _fileName, _doc, _comment;
+  bool        _directory, _hasReadOnlyMode, _needsRootPrivileges;
 };
 
 #endif

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=kcontrol -caption "%c" %i %m
+Icon=kcontrol
+Type=Application
+DocPath=kcontrol/index.html
+
+Name=Control Center
+
+Comment=A central place to configure your desktop environment

@@ -62,12 +62,6 @@ void ModuleTreeView::fill()
       if (module->library().isEmpty())
 		continue;
 
-      if (!KCGlobal::types().contains(module->type()))
-		continue;
-
-	  if (module->onlyRoot() && !KCGlobal::root())
-		continue;
-      
       ModuleTreeItem *parent = 0;
       parent = getGroupItem(parent, module->groups());
       new ModuleTreeItem(parent, module);
@@ -153,7 +147,7 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
 
   // calculate path
   QString path = menuPath(groups);
-  kdDebug() << "Path " << path << endl;
+  //kdDebug() << "Path " << path << endl;
 
   // look if menu already exists
   if (_menuDict[path])
@@ -246,7 +240,7 @@ ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, ConfigModule *module)
   if (_module)
 	{
 	  setText(0, module->name());
-	  setPixmap(0, module->smallIcon());
+	  setPixmap(0, KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall));
 	}
 }
 
@@ -258,7 +252,7 @@ ModuleTreeItem::ModuleTreeItem(QListView *parent, ConfigModule *module)
   if (_module)
 	{
 	  setText(0, module->name());
-	  setPixmap(0, module->smallIcon());
+	  setPixmap(0, KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall));
 	}
 }
 
