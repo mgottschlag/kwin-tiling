@@ -1,5 +1,4 @@
 #include <iostream.h>
-using namespace std;
 
 
 #include <qlayout.h>
