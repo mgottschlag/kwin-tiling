@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 
+#include <qfile.h>
 
 #include <dcopclient.h>
 
@@ -53,34 +54,14 @@ static KCmdLineOptions options[] =
     KCmdLineLastOption
 };
 
-static QString locateModule(const QCString module)
+static KService::Ptr locateModule(const QCString& module)
 {
-    // locate the desktop file
-    //QStringList files;
-    if (module[0] == '/')
-    {
-        kdDebug(1208) << "Full path given to kcmshell - not supported yet" << endl;
-        // (because of KService::findServiceByDesktopPath)
-        //files.append(args->arg(0));
-    }
+    QString path = QFile::decodeName(module);
 
-    QString path = KCGlobal::baseGroup();
-    path += module;
-    path += ".desktop";
+    if (!path.endsWith(".desktop"))
+        path += ".desktop";
 
-    if (!KService::serviceByDesktopPath( path ))
-    {
-        // Path didn't work. Trying as a name
-        KService::Ptr serv = KService::serviceByDesktopName( module );
-        if ( serv )
-            path = serv->entryPath();
-        else
-        {
-            kdError(1208) << i18n("Module %1 not found!").arg(module) << endl;
-            return QString::null;
-        }
-    }
-    return path;
+    return KService::serviceByStorageId( path );
 }
 
 void
@@ -204,12 +185,12 @@ extern "C" int kdemain(int _argc, char *_argv[])
            return 0;
         }
 
-        QString path = locateModule(args->arg(0));
-        if (path.isEmpty())
+        KService::Ptr service = locateModule(args->arg(0));
+        if (!service)
            return 1; // error
 
         // load the module
-        KCModuleInfo info(path);
+        KCModuleInfo info(service);
 
         KCModule *module = KCModuleLoader::loadModule(info, false);
 
@@ -261,11 +242,11 @@ extern "C" int kdemain(int _argc, char *_argv[])
     }
 
     // multiple control modules
-    QStringList modules;
+    KService::List modules;
     for (int i = 0; i < args->count(); i++) {
-        QString path = locateModule(args->arg(i));
-        if(!path.isEmpty())
-            modules.append(path);
+        KService::Ptr service = locateModule(args->arg(i));
+        if(service)
+            modules.append(service);
     }
 
     if (modules.count() < 1) return -1;
@@ -278,8 +259,8 @@ extern "C" int kdemain(int _argc, char *_argv[])
     dlg->setAcceptDrops(true);
 
     // add modules
-    for (QStringList::ConstIterator it = modules.begin(); it != modules.end(); ++it)
-        dlg->addModule(*it, false);
+    for (KService::List::ConstIterator it = modules.begin(); it != modules.end(); ++it)
+        dlg->addModule(KCModuleInfo(*it), false);
 
     // if we are going to be embedded, embed
     QCString embed = args->getOption("embed");

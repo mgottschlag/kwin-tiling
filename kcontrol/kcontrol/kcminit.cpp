@@ -82,20 +82,14 @@ extern "C" int kdemain(int argc, char *argv[])
 
   if (!arg.isEmpty()) {
 
-    QString path = KCGlobal::baseGroup();
-    path += arg;
-    path += ".desktop";
+    QString module = QFile::decodeName(arg);
+    if (!module.endsWith(".desktop"))
+       module += ".desktop";
 
-    KService::Ptr serv = KService::serviceByDesktopPath( path );
-    if (!serv)
-    {
-        // Path didn't work. Trying as a name
-        serv = KService::serviceByDesktopName( arg );
-    }
-
+    KService::Ptr serv = KService::serviceByStorageId( module );
     if ( !serv || serv->library().isEmpty() ||
 	 serv->init().isEmpty()) {
-      kdError(1208) << i18n("Module %1 not found!").arg(arg) << endl;
+      kdError(1208) << i18n("Module %1 not found!").arg(module) << endl;
       return -1;
     } else
       list.append(serv);
