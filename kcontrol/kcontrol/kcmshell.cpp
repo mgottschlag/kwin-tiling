@@ -45,7 +45,15 @@ static KCmdLineOptions options[] =
 
 int main(int _argc, char *_argv[])
 {
-    KCmdLineArgs::init( _argc, _argv, "kcmshell", I18N_NOOP("A tool to start single kcontrol modules"), "2.0pre" );
+    KAboutData aboutData( "kcmshell", I18N_NOOP("KDE Control Module"),
+			  "2.0pre", 
+			  I18N_NOOP("A tool to start single KDE control modules"), 
+			  KAboutData::License_GPL,
+			  "(c) 1999-2000, The KDE Developers");
+    aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
+    aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
+    
+    KCmdLineArgs::init(_argc, _argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
     KLocale::setMainCatalogue("kcontrol");
     KApplication app;
