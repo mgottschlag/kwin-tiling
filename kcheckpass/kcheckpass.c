@@ -92,7 +92,7 @@ message(const char *fmt, ...)
 #else
     vsprintf(buffer, fmt, ap);
 #endif
-    syslog(LOG_NOTICE, buffer);
+    syslog(LOG_NOTICE, "%s", buffer);
 #else
     vsyslog(LOG_NOTICE, fmt, ap);
 #endif
