@@ -320,6 +320,7 @@ struct dpyEnts {
 { C_displayType,	boffset(displayType) },
 { C_serverArgv,		boffset(serverArgv) },
 { C_serverPid,		boffset(serverPid) },
+{ C_console,		boffset(console) },
 #ifdef XDMCP
 { C_sessionID,		boffset(sessionID) },
 { C_peer,		boffset(peer) },

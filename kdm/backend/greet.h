@@ -231,6 +231,7 @@ from The Open Group.
 #define C_useChooser		(C_TYPE_INT | 0x209)
 #define C_clientAddr		(C_TYPE_ARR | 0x20a)
 #define C_connectionType	(C_TYPE_INT | 0x20b)
+#define C_console		(C_TYPE_STR | 0x20c)
 
 /**
  ** Various parts of struct display
