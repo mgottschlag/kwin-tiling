@@ -469,7 +469,7 @@ void TreeView::copyDir(const QString& s, const QString& d, bool moving )
 // Return value: 0 - removed everything
 //               1 - removed only local
 //               2 - removed none
-bool TreeView::deleteFile(const QString& deskfile, const bool move)
+bool TreeView::deleteFile(const QString& deskfile, bool move)
 {
     // We search for the file in all prefixes and remove all writeable
     // ones. If we were not able to remove all (because of lack of permissons)
@@ -524,7 +524,7 @@ bool TreeView::deleteFile(const QString& deskfile, const bool move)
     return true;
 }
 
-bool TreeView::deleteDir(const QString& d, const bool move)
+bool TreeView::deleteDir(const QString& d, bool move)
 {
     // We delete all .desktop files and then process with the subdirs.
     // Afterwards the .directory file gets deleted from all prefixes

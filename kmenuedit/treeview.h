@@ -105,8 +105,8 @@ protected:
     void copyFile(const QString& src, const QString& dest, bool moving );
     void copyDir(const QString& src, const QString& dest, bool moving );
 
-    bool deleteFile(const QString& deskfile, const bool move = false);
-    bool deleteDir(const QString& dir, const bool move = false);
+    bool deleteFile(const QString& deskfile, bool move = false);
+    bool deleteDir(const QString& dir, bool move = false);
     void hideDir(const QString& d, const QString name, bool hide);
 
     void cleanupClipboard();
