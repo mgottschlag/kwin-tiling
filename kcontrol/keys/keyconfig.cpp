@@ -212,7 +212,8 @@ void KKeyConfig::slotRemove()
 		QMessageBox::critical( 0, i18n("Error removing scheme"),
 		      i18n("This key scheme could not be removed.\n"
 			   "Perhaps you do not have permission to alter the file\n"
-			   "system where the key scheme is stored." ) );
+			   "system where the key scheme is stored." ),
+		      i18n("OK") );
 		return;
 	}
 	
@@ -340,7 +341,8 @@ void KKeyConfig::slotAdd()
 				QMessageBox::critical( 0, i18n( "Naming conflict" ),
 					i18n( "Please choose a unique name for the new key\n"\
 							"scheme. The one you entered already appears\n"\
-							"in the key scheme list." ) );
+							"in the key scheme list." ),
+					i18n("OK") );
 			}
 		}
 	} else return;

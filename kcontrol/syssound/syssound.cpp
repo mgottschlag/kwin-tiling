@@ -21,6 +21,12 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.17  1999/06/26 00:01:56  bieker
+    Made it compile with QT_NO_ASCII_CAST...
+
+    Some day someone should grep for lines with both ascii() and i18n() -- I
+    dint't fix it all.
+
     Revision 1.16  1999/06/18 16:49:13  kulow
     adoting to new KConfig API
 
@@ -496,13 +502,13 @@ void KSoundWidget::soundDropped(KDNDDropZone *zone){
         msg = i18n("Sorry, but \n%1\ndoes not seem "\
 			 "to be a WAV--file.").arg(url);
 
-	QMessageBox::warning(this, i18n("Improper File Extension"), msg);
+	QMessageBox::warning(this, i18n("Improper File Extension"), msg, i18n("OK"));
 
       } else {
 
 	// CC: Hurra! Finally we've got a WAV file to add to the list
 
-	url = url.right(url.length()-5); // strip the leading "file:"
+	url.remove(0, 5); // strip the leading "file:"
 
 	if (!addToSoundList(url)) {
 
@@ -511,7 +517,7 @@ void KSoundWidget::soundDropped(KDNDDropZone *zone){
 		           "%1\n"
 			   "is already in the list").arg(url);
 
-	  QMessageBox::warning(this, i18n("File Already in List"), msg);
+	  QMessageBox::warning(this, i18n("File Already in List"), msg, i18n("OK"));
 
 	}
       }
