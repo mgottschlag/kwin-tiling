@@ -106,6 +106,9 @@ void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
 KBackground::KBackground(QWidget *parent, const char *name)
     : KCModule(parent, name)
 {
+
+    KImageIO::registerFormats();
+
     m_pConfig = new KConfig("kdesktoprc");
     m_pDirs = KGlobal::dirs();
 

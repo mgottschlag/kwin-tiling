@@ -58,8 +58,6 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, KConfig *config)
 
     m_pTimer = new QTimer(this);
     connect(m_pTimer, SIGNAL(timeout()), SLOT(render()));
-
-    KImageIO::registerFormats();
 }
 
 
