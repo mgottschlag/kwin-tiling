@@ -27,63 +27,127 @@
 #ifndef __KLANGBUTTON_H__
 #define __KLANGBUTTON_H__
 
-#include "qpushbutton.h"
+#include <qwidget.h>
 
-/*
- * Extended QPushButton that shows a menu with submenu for language selection.
- * Essentially just a combo box with a 2-D dataset, but using a real
- * QComboBox will produce ugly results.
+class KLanguageButtonPrivate;
+
+/**
+ * KLanguageButton provides a combobox with a 2-D dataset. It also supports icons.
+ *
+ * All items are identified using strings, not integers.
  *
  * Combined version of KTagCombo and KLanguageCombo but using a QPushButton
  * instead.
  */
-class KLanguageButton : public QPushButton
+class KLanguageButton : public QWidget
 {
   Q_OBJECT
 
 public:
-  KLanguageButton(QWidget *parent=0, const char *name=0);
-  ~KLanguageButton();
+  /**
+   * Constructs a combobox widget with parent parent called name. 
+   *
+   * @param parent The parent of the combo box
 
+   */
+  KLanguageButton(QWidget * parent = 0, const char * name = 0);
+  virtual ~KLanguageButton();
+
+  /**
+   * Inserts an item into the combo box. A negative index will append the item.
+   *
+   * @param icon The icon used used when displaying the item.
+   * @param text The text string used when displaying the item.
+   * @param id The text string used to identify the item.
+   * @param submenu The place where the item should be placed.
+   * @param index The visual position in the submenu.
+   */
   void insertItem( const QIconSet& icon, const QString &text,
-                   const QString &tag, const QString &submenu = QString::null,
+                   const QString & id, const QString &submenu = QString::null,
                    int index = -1 );
-  void insertItem( const QString &text, const QString &tag,
+  /**
+   * Inserts an item into the combo box. A negative index will append the item.
+   *
+   * @param text The text string used when displaying the item.
+   * @param id The text string used to identify the item.
+   * @param submenu The place where the item should be placed.
+   * @param index The visual position in the submenu.
+   */
+  void insertItem( const QString &text, const QString & id,
                    const QString &submenu = QString::null, int index = -1 );
+  /**
+   * Inserts a seperator item into the combo box. A negative index will append the item.
+   *
+   * @param id The text string used to identify the item.
+   * @param submenu The place where the item should be placed.
+   * @param index The visual position in the submenu.
+   */
   void insertSeparator( const QString &submenu = QString::null,
                         int index = -1 );
-  void insertSubmenu( const QString &text, const QString &tag,
+  /**
+   * Inserts a submenu into the combo box. A negative index will append the item.
+   *
+   * @param icon The icon used used when displaying the item.
+   * @param text The text string used when displaying the item.
+   * @param id The text string used to identify the item.
+   * @param submenu The place where the item should be placed.
+   * @param index The visual position in the submenu.
+   */
+  void insertSubmenu( const QIconSet & icon, const QString &text,
+		      const QString & id, const QString &submenu = QString::null,
+		      int index = -1);
+  /**
+   * Inserts a submenu into the combo box. A negative index will append the item.
+   *
+   * @param text The text string used when displaying the item.
+   * @param id The text string used to identify the item.
+   * @param submenu The place where the item should be placed.
+   * @param index The visual position in the submenu.
+   */
+  void insertSubmenu( const QString &text, const QString & id,
                       const QString &submenu = QString::null, int index = -1);
 
   int count() const;
+  /**
+   * Removes all combobox items.
+   */
   void clear();
   
-  /*
-   * Tag of the selected item
+  /**
+   * Returns the id of the combobox's current item.
    */
-  QString currentTag() const;
-  QString tag( int i ) const;
-  bool containsTag( const QString &str ) const;
-
-  /*
-   * Set the current item
+  QString current() const;
+  /**
+   * Returns TRUE if the combobox contains id.
    */
-  int currentItem() const;
-  void setCurrentItem( int i );
-  void setCurrentItem( const QString &code );
+  bool contains( const QString & id ) const;
+  /**
+   * Sets id as current item.
+   */
+  void setCurrentItem( const QString & id );
 
 signals:
-  void activated( int index );
-  void highlighted( int index );
+  /**
+   * This signal is emitted when a new item is activated. The id is
+   * the identificator of the selected item.
+   */
+  void activated( const QString & id );
+  void highlighted( const QString & id );
 
 private slots:
   void slotActivated( int );
+  void slotHighlighted( int );
 
 private:
+  int currentItem() const;
+  void setCurrentItem( int );
+
   // work space for the new class
-  QStringList *m_tags;  
-  QPopupMenu  *m_popup, *m_oldPopup;
-  int         m_current;
+  QStringList *m_ids;
+  QPopupMenu *m_popup, *m_oldPopup;
+  int m_current;
+
+  KLanguageButtonPrivate * d;
 };
 
 #endif

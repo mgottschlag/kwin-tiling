@@ -69,7 +69,7 @@ private slots:
   void loadLanguageList();
   void loadCountryList();
 
-  void changedCountry(int);
+  void changedCountry(const QString & code);
   void readLocale(const QString &path, QString &name,
 		  const QString &sub) const;
 

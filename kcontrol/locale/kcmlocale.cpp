@@ -68,8 +68,8 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   m_labCountry = new QLabel(this, I18N_NOOP("Country:"));
   m_comboCountry = new KLanguageButton( this );
   m_labCountry->setBuddy(m_comboCountry);
-  connect( m_comboCountry, SIGNAL(activated(int)),
-	   this, SLOT(changedCountry(int)) );
+  connect( m_comboCountry, SIGNAL(activated(const QString &)),
+	   this, SLOT(changedCountry(const QString &)) );
 
   m_labLang = new QLabel(this, I18N_NOOP("Languages:"));
   m_labLang->setAlignment( AlignTop );
@@ -246,7 +246,13 @@ void KLocaleConfig::loadCountryList()
     QString name = entry.readEntry("Name",
 				   m_locale->translate("without name"));
 
-    m_comboCountry->insertSubmenu( name, tag, sub, -2 );
+    QString map( locate( "locale",
+			  QString::fromLatin1( "l10n/%1.png" )
+			  .arg(tag) ) );
+    QIconSet icon;
+    if ( !map.isNull() )
+      icon = KGlobal::iconLoader()->loadIconSet(map, KIcon::Small);
+    m_comboCountry->insertSubmenu( icon, name, tag, sub, -2 );
   }
 
   // add all languages to the list
@@ -397,9 +403,9 @@ QStringList KLocaleConfig::languageList() const
   return entry.readListEntry("Languages");
 }
 
-void KLocaleConfig::changedCountry(int i)
+void KLocaleConfig::changedCountry(const QString & code)
 {
-  m_locale->setCountry(m_comboCountry->tag(i));
+  m_locale->setCountry(code);
 
   // change to the prefered languages in that country, installed only
   QStringList languages = languageList();
