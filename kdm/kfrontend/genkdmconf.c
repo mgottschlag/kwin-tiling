@@ -218,7 +218,10 @@ freeFile (File *file)
  */
 
 #ifndef HALT_CMD
-# ifdef BSD
+# ifdef _AIX
+#  define HALT_CMD	"/usr/sbin/shutdown -h now"
+#  define REBOOT_CMD	"/usr/sbin/shutdown -r now"
+# elif defined(BSD)
 #  define HALT_CMD	"/sbin/shutdown -h now"
 #  define REBOOT_CMD	"/sbin/shutdown -r now"
 # elif defined(__SVR4)
@@ -263,7 +266,7 @@ freeFile (File *file)
 #elif defined(sun)
 # define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X"
 #elif defined(_AIX)
-# define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X"
+# define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X -T -force"
 #else
 # define DEF_SERVER_LINE ":0 local " XBINDIR "/X"
 #endif
@@ -395,11 +398,37 @@ const char def_startup[] =
 "chown $USER /dev/console\n"
 #endif
 "\n"
+#ifdef _AIX
+"# We create a pseudodevice for finger.  (host:0 becomes kdm/host_0)\n"
+"# Without it, finger errors out with \"Can't stat /dev/host:0\".\n"
+"#\n"
+"if [ -f /usr/lib/X11/xdm/sessreg ]; then\n"
+"  devname=`echo $DISPLAY | /usr/bin/sed -e 's/[:\\.]/_/g' | /usr/bin/cut -c1-8`\n"
+"  hostname=`echo $DISPLAY | /usr/bin/cut -d':' -f1`\n"
+"\n"
+"  if [ -z \"$devname\" ]; then\n"
+"    devname=\"unknown\"\n"
+"  fi\n"
+"  if [ ! -d /dev/kdm ]; then\n"
+"    /usr/bin/mkdir /dev/kdm\n"
+"    /usr/bin/chmod 755 /dev/kdm\n"
+"  fi\n"
+"  /usr/bin/touch /dev/kdm/$devname\n"
+"  /usr/bin/chmod 644 /dev/kdm/$devname\n"
+"\n"
+"  if [ -z \"$hostname\" ]; then\n"
+"    exec /usr/lib/X11/xdm/sessreg -a -l kdm/$devname $USER\n"
+"  else\n"
+"    exec /usr/lib/X11/xdm/sessreg -a -l kdm/$devname -h $hostname $USER\n"
+"  fi\n"
+"fi\n";
+#else
 "#exec sessreg -a -l $DISPLAY "
-#ifdef BSD
+# ifdef BSD
 "-x " KDMCONF "/Xservers "
-#endif
+# endif
 "$USER\n";
+#endif /* _AIX */
 
 const char def_reset[] = 
 "#! /bin/sh\n"
@@ -417,11 +446,18 @@ const char def_reset[] =
 "chmod 622 /dev/console\n"
 #endif
 "\n"
+#ifdef _AIX
+"if [ -f /usr/lib/X11/xdm/sessreg ]; then\n"
+"  devname=`echo $DISPLAY | /usr/bin/sed -e 's/[:\\.]/_/g' | /usr/bin/cut -c1-8`\n"
+"  exec /usr/lib/X11/xdm/sessreg -d -l kdm/$devname $USER\n"
+"fi\n";
+#else
 "#exec sessreg -d -l $DISPLAY "
-#ifdef BSD
+# ifdef BSD
 "-x " KDMCONF "/Xservers "
-#endif
+# endif
 "$USER\n";
+#endif /* _AIX */
 
 const char def_session[] = 
 "#! /bin/sh\n"
@@ -1009,7 +1045,7 @@ static DEnt dEntsAnyGreeter[] = {
 { "Language",		"de_DE", 0 },
 { "ShowUsers",		"None", 0 },
 { "SelectedUsers",	"root,johndoe", 0 },
-{ "HiddenUsers",	"adm,alias,amanda,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ident,ingres,kmem,lp,mail,mailnull,man,mta,mysql,named,news,nfsnobody,nobody,nscd,ntp,operator,pcap,pop,postfix,postgres,qmaild,qmaill,qmailp,qmailq,qmailr,qmails,radvd,reboot,rpc,rpcuser,rpm,sendmail,shutdown,squid,sympa,sync,tty,uucp,xfs,xten", 1 },
+{ "HiddenUsers",	"adm,alias,amanda,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,httpd,ident,imnadm,ingres,kmem,lp,mail,mailnull,man,mta,mysql,named,news,nfsnobody,nobody,nscd,ntp,operator,pcap,pop,postfix,postgres,qmaild,qmaill,qmailp,qmailq,qmailr,qmails,radvd,reboot,rpc,rpcuser,rpm,sendmail,shutdown,squid,sympa,sync,tty,uucp,xfs,xten", 1 },
 { "MinShowUID",		"1000", 0 },
 { "MaxShowUID",		"29999", 0 },
 { "SortUsers",		"false", 0 },
