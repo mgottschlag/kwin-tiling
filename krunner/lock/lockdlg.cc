@@ -92,7 +92,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     ok = new KPushButton( i18n("Unl&ock"), frame );
     cancel = new KPushButton( KStdGuiItem::cancel(), frame );
 
-    greet = plugin->info->create( this, this, mLayoutButton, QString::null,
+    greet = plugin->info->create( this, 0, this, mLayoutButton, QString::null,
               KGreeterPlugin::Authenticate, KGreeterPlugin::ExUnlock );
 
 
