@@ -526,6 +526,7 @@ void BGDialog::slotWallpaperTypeChanged(int i)
       m_comboWallpaperPos->setEnabled(false);
       m_lblWallpaperPos->setEnabled(false);
       r->setWallpaperMode(KBackgroundSettings::NoWallpaper);
+      r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
       setBlendingEnabled(false);
    }
    else if (i == m_buttonGroupBackground->id(m_radioSlideShow))
@@ -542,9 +543,6 @@ void BGDialog::slotWallpaperTypeChanged(int i)
           r->setWallpaperMode( KBackgroundSettings::NoWallpaper );
       else
           r->setWallpaperMode(m_wallpaperPos);
-      if ((r->multiWallpaperMode() == KBackgroundSettings::NoMulti)
-          || (r->multiWallpaperMode() == KBackgroundSettings::NoMultiRandom))
-          m_slideShowRandom = KBackgroundSettings::InOrder;
       r->setMultiWallpaperMode(m_slideShowRandom); 
       setWallpaper(r->wallpaper());
       setBlendingEnabled(true);
