@@ -2,7 +2,7 @@
 Type=Application
 DocPath=kcontrol/kcmkdesktop/kdesktop-1.html
 Icon=kfm
-Exec=kcmshell Desktop/icons
+Exec=kcmshell LookNFeel/Desktop/icons
 
 X-KDE-ModuleType=Library
 X-KDE-LibraryName=display
@@ -11,19 +11,39 @@ X-KDE-ControlModuleType=User
 X-KDE-HideFromPanel=true
 
 Name=Icons
+Name[ca]=Icones
+Name[de]=Symbole
+Name[fi]=Kuvakkeet
+Name[he]=םילמס
 Name[hu]=Ikonok
+Name[it]=Icone
 Name[no]=Ikoner
 Name[no_NY]=Ikon
+Name[pt]=Ícones
 Name[ro]=Iconiţe
+Name[sl]=Ikone
 
 Comment=Customize KDE Icons
+Comment[ca]=Configura les icones KDE
+Comment[de]=KDE-Symbole einrichten
+Comment[fi]=Muokkaa KDE:n kuvakkeita
+Comment[he]=KDE ילמס תרוצת תעיבק
 Comment[hu]=KDE ikonok testreszabása
+Comment[it]=Personalizza le icone di KDE
 Comment[no]=Tilpass ikonene i KDE
 Comment[no_NY]=Tilpass KDE-ikon
+Comment[pt]=Altere os ícones do KDE
 Comment[ro]=Personalizează iconiţele KDE
+Comment[sl]=Prikrojitev ikon za KDE
 
 Keywords=icons,effects,size,hicolor,locolor
+Keywords[ca]=icones,efectes,mida,hicolor,locolor
+Keywords[de]=symbole,icons,effekte,größe,echtfarben
+Keywords[fi]=kuvakkeet,efektit,koko,korkeaväri,matalaväri
+Keywords[he]=icons,effects,size,hicolor,locolor,ךומנ עבצ,הובג עבצ,לדוג,םיטקפא,םילמס
 Keywords[hu]=ikonok,effektek,méret,sokszínű,kevésszínű,színes
 Keywords[no]=ikoner,effekter,størrelse,mange farger,få farger
 Keywords[no_NY]=ikon,effektar,storleik,mange fargar,få fargar
+Keywords[pt]=ícones,efeitos,tamanho,muitas cores,poucas cores
 Keywords[ro]=iconiţe,efecte,mărime,culori multe, culori puţine
+Keywords[sl]=ikone,efekti,velikost,barve
