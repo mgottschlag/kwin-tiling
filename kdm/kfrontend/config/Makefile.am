@@ -1,5 +1,5 @@
 EXTRA_DIST = kdmrc.in Xservers.in Xaccess \
-    Xsession Xstartup.in Xreset.in Xsetup Xwilling
+    Xsession Xstartup.in Xreset.in Xsetup.in Xwilling
 
 install-data-local:
 	@if test ! -d $(DESTDIR)$(kde_confdir)/kdm; then \
