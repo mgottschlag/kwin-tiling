@@ -12,12 +12,12 @@ public:
 
   CSSTemplate(QString fname) : _filename(fname) {};
 
-  bool expand(QString destname, QAsciiDict<char> dict);
+  bool expand(QString destname, const QAsciiDict<char> &dict);
 
 
 protected:
 
-  QString eval(QString expr, QAsciiDict<char> dict);
+  QString eval(QString expr, const QAsciiDict<char> &dict);
 
 
 private:
