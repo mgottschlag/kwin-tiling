@@ -17,6 +17,7 @@
 #include <qsettings.h>
 #include <qcombobox.h>
 #include <qgroupbox.h>
+#include <qpixmap.h>
 #include <knuminput.h>
 
 
@@ -42,6 +43,78 @@
 #undef Bool
 #undef Unsorted
 #undef None
+
+static const char *aa_rgb_xpm[]={
+"12 12 3 1",
+"a c #0000ff",
+"# c #00ff00",
+". c #ff0000",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa"};
+static const char *aa_bgr_xpm[]={
+"12 12 3 1",
+". c #0000ff",
+"# c #00ff00",
+"a c #ff0000",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa",
+"....####aaaa"};
+static const char *aa_vrgb_xpm[]={
+"12 12 3 1",
+"a c #0000ff",
+"# c #00ff00",
+". c #ff0000",
+"............",
+"............",
+"............",
+"............",
+"############",
+"############",
+"############",
+"############",
+"aaaaaaaaaaaa",
+"aaaaaaaaaaaa",
+"aaaaaaaaaaaa",
+"aaaaaaaaaaaa"};
+static const char *aa_vbgr_xpm[]={
+"12 12 3 1",
+". c #0000ff",
+"# c #00ff00",
+"a c #ff0000",
+"............",
+"............",
+"............",
+"............",
+"############",
+"############",
+"############",
+"############",
+"aaaaaaaaaaaa",
+"aaaaaaaaaaaa",
+"aaaaaaaaaaaa",
+"aaaaaaaaaaaa"};
+
+static QPixmap aaPixmaps[]={ QPixmap(aa_rgb_xpm), QPixmap(aa_bgr_xpm),
+                             QPixmap(aa_vrgb_xpm), QPixmap(aa_vbgr_xpm) };
 
 /**** DLL Interface ****/
 typedef KGenericFactory<KFonts, QWidget> FontFactory;
@@ -331,7 +404,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    hbox->setStretchFactor(dummy, 1);
 
    for(int t=KXftConfig::SubPixel::None+1; t<=KXftConfig::SubPixel::Vbgr; ++t)
-       aaSubPixelType->insertItem(KXftConfig::description((KXftConfig::SubPixel::Type)t));
+       aaSubPixelType->insertItem(aaPixmaps[t-1], KXftConfig::description((KXftConfig::SubPixel::Type)t));
 
    setAaWidgets();
 
