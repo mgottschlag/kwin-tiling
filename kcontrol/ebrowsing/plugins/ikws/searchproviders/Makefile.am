@@ -62,6 +62,7 @@ services_DATA = \
 		voila.desktop \
 		webster.desktop \
 		whatis.desktop \
+		wikipedia.desktop \
 		wordref.desktop
 
 servicesdir = $(kde_servicesdir)/searchproviders
