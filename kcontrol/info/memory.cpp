@@ -76,16 +76,15 @@ static QLabel *GraphLabel[MEM_LAST];
 
 #define SPACING 16
 
-static QString format_MB(t_memsize value)
+static QString formatted_unit(t_memsize value)
 {
-#ifdef __linux__
-    double mb = value / 1024000.0;	/* with Linux divide by (1024*1000) */
-#elif hpux
-    double mb = value / 1048576.0;	/* with hpux divide by (1024*1024) */
-#else				// I don't know for other archs... please fill in !
-    double mb = value / 1048576.0;	/* divide by (1024*1024) */
-#endif
-    return i18n("%1 MB").arg(KGlobal::locale()->formatNumber(mb, 2));
+    if (value > (1024 * 1024))
+        if (value > (1024 * 1024 * 1024))
+            return i18n("%1 GB").arg(KGlobal::locale()->formatNumber(value / (1024.0 * 1024.0 * 1024.0), 2));
+        else
+            return i18n("%1 MB").arg(KGlobal::locale()->formatNumber(value / (1024.0 * 1024.0), 2));
+    else
+        return i18n("%1 KB").arg(KGlobal::locale()->formatNumber(value / 1024.0, 2));
 }
 
 KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
@@ -106,15 +105,6 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 
     QVBoxLayout *top = new QVBoxLayout(this, 10, 10);
 
-    Widget = new QLabel(i18n("Memory Information"), this);
-    Widget->setAlignment(AlignCenter);
-    QFont font(Widget->font());
-    font.setUnderline(true);
-    font.setPointSize(3 * font.pointSize() / 2);
-    Widget->setFont(font);
-    top->addWidget(Widget);
-    top->addSpacing(SPACING);
-
     QHBoxLayout *hbox = new QHBoxLayout();
     top->addLayout(hbox);
 
@@ -126,37 +116,37 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
     for (i = TOTAL_MEM; i < MEM_LAST_ENTRY; ++i) {
 	switch (i) {
 	case TOTAL_MEM:
-	    title = i18n("Total physical memory");
+	    title = i18n("Total physical memory:");
 	    break;
 	case FREE_MEM:
-	    title = i18n("Free physical memory");
+	    title = i18n("Free physical memory:");
 	    break;
 #if !defined(__svr4__) || !defined(sun)
 #if !defined(__NetBSD__) && !defined(__OpenBSD__)
 	case SHARED_MEM:
-	    title = i18n("Shared memory");
+	    title = i18n("Shared memory:");
 	    break;
 	case BUFFER_MEM:
-	    title = i18n("Buffer memory");
+	    title = i18n("Disk buffers:");
 	    break;
 #else
 	case ACTIVE_MEM:
-	    title = i18n("Active memory");
+	    title = i18n("Active memory:");
 	    break;
 	case INACTIVE_MEM:
-	    title = i18n("Inactive memory");
+	    title = i18n("Inactive memory:");
 	    break;
 #endif
 #endif
 	case CACHED_MEM:
-	    title = i18n("Cached memory");
+	    title = i18n("Disk cache:");
 	    break;
 	case SWAP_MEM:
 	    vbox->addSpacing(SPACING);
-	    title = i18n("Total swap memory");
+	    title = i18n("Total swap memory:");
 	    break;
 	case FREESWAP_MEM:
-	    title = i18n("Free swap memory");
+	    title = i18n("Free swap memory:");
 	    break;
 	default:
 	    title = "";
@@ -194,13 +184,13 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 
 	switch (i) {
 	case MEM_RAM_AND_HDD:
-	    title = i18n("Total memory");
+	    title = i18n("Total Memory");
 	    break;
 	case MEM_RAM:
-	    title = i18n("Physical memory");
+	    title = i18n("Physical Memory");
 	    break;
 	case MEM_HDD:
-	    title = i18n("Virtual memory");
+	    title = i18n("Swap Space");
 	    break;
 	default:
 	    title = "";
@@ -335,7 +325,7 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
     paint.end();
     bitBlt(graph, 0, 0, &pm);
 
-    GraphLabel[widgetindex]->setText(i18n("%1 free").arg(format_MB(last_used)));
+    GraphLabel[widgetindex]->setText(i18n("%1 free").arg(formatted_unit(last_used)));
  
     return true;
 }
@@ -365,7 +355,7 @@ void KMemoryWidget::update_Values()
     for (i = TOTAL_MEM; i < MEM_LAST_ENTRY; i++) {
 	label = MemSizeLabel[i][1];
 	label->setText((Memory_Info[i] != NO_MEMORY_INFO)
-		       ? format_MB(Memory_Info[i])
+		       ? formatted_unit(Memory_Info[i])
 		       : Not_Available_Text);
     }
 
@@ -387,13 +377,13 @@ void KMemoryWidget::update_Values()
     used[0] = ZERO_IF_NO_INFO(Memory_Info[TOTAL_MEM]) - used[1] - used[2] - used[3];
     if (!ram_colors_initialized) {
 		ram_colors_initialized = true;
-		ram_text[0] = i18n("used+shared");
+		ram_text[0] = i18n("Used RAM");
 		ram_colors[0] = COLOR_USED_MEMORY; /* used+shared */
-		ram_text[1] = i18n("buffer mem");
+		ram_text[1] = i18n("Disk Buffers");
 		ram_colors[1] = QColor(24,131,5); /* buffer */
-		ram_text[2] = i18n("cached ram");
+		ram_text[2] = i18n("Disk Cache");
 		ram_colors[2] = QColor(33,180,7); /* cached */
-		ram_text[3] = i18n("free ram");
+		ram_text[3] = i18n("Free RAM");
 		ram_colors[3] = COLOR_FREE_MEMORY; /* free */
     }
     ok1 = Display_Graph(MEM_RAM, 4, Memory_Info[TOTAL_MEM],
@@ -404,9 +394,9 @@ void KMemoryWidget::update_Values()
     used[0] = ZERO_IF_NO_INFO(Memory_Info[SWAP_MEM]) - used[1];
     if (!swap_colors_initialized) {
 		swap_colors_initialized = true;
-		swap_text[0] = i18n("used swap");
+		swap_text[0] = i18n("Used Swap");
 		swap_colors[0] = COLOR_USED_SWAP; /* used */
-		swap_text[1] = i18n("free swap");
+		swap_text[1] = i18n("Free Swap");
 		swap_colors[1] = COLOR_FREE_MEMORY; /* free */
     }
     Display_Graph(MEM_HDD, 2, Memory_Info[SWAP_MEM],
@@ -422,11 +412,11 @@ void KMemoryWidget::update_Values()
     used[0] = (Memory_Info[TOTAL_MEM]+Memory_Info[SWAP_MEM])-used[1]-used[2];
     if (!all_colors_initialized) {
 		all_colors_initialized = true;
-		all_text[0] = i18n("used ram");
+		all_text[0] = i18n("Used RAM");
 		all_colors[0] = COLOR_USED_MEMORY; /* used ram */
-		all_text[1] = i18n("used swap");
+		all_text[1] = i18n("Used Swap");
 		all_colors[1] = COLOR_USED_SWAP; /* used swap */
-		all_text[2] = i18n("free ram+swap");
+		all_text[2] = i18n("Total Free Memory");
 		all_colors[2] = COLOR_FREE_MEMORY; /* free ram+swap*/
     }
     Display_Graph(MEM_RAM_AND_HDD, 3,
