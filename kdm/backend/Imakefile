@@ -6,7 +6,7 @@ XCOMM $Id$
 #define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)'
 */
 
-#ifdef Debug
+#ifdef DEBUG
 CDEBUGFLAGS := $(CDEBUGFLAGS) -g
 #endif
 
@@ -37,6 +37,10 @@ RPCSRCS = rpcauth.c
 RPCLIB = -lrpcsvc
 #endif
 
+#ifdef USEKRB4
+#undef HasKrbIV
+#define HasKrbIV USEKRB4
+#endif
 #if HasKrbIV
 #if NOAFS
 KRBIV_DEFINES = KrbIVDefines -DNO_AFS
@@ -55,9 +59,18 @@ KRB5SRCS = krb5auth.c
 #endif
 
 /* This is correct for Linux and FreeBSD */
+#ifdef USEPAM
+#undef HasPam
+#define HasPam USEPAM
+#endif
 #if HasPam
 PAM_LIBRARIES = PamLibraries
 PAM_DEFINES = -DUSE_PAM
+#endif
+
+#ifdef USESHADOW
+#undef HasShadowPasswd
+#define HasShadowPasswd USESHADOW
 #endif
 
 #if SystemV4 || HasShadowPasswd
@@ -161,3 +174,5 @@ SpecialCObjectRule(auth,$(ICONFIGFILES),$(SOCK_DEFINES))
 SpecialCObjectRule(policy,$(ICONFIGFILES),$(_NOOP_))
 SpecialCObjectRule(socket,$(ICONFIGFILES),$(SOCK_DEFINES))
 SpecialCObjectRule(xdmcp,$(ICONFIGFILES),$(SOCK_DEFINES))
+
+$(OBJS): Makefile

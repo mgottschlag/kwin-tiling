@@ -12,8 +12,10 @@ dist-hook:
 	done
 
 $(srcdir)/backend/Makefile: $(srcdir)/backend/Imakefile
-	cd $(srcdir)/backend; $(XMKMF) -a $(IMAKEFLAGS)
-	rm -f $(srcdir)/backend/Makefile.bak
+	cd $(srcdir)/backend; \
+	    imake -DUseInstalled $(IMAKEFLAGS) -I$(x_libraries)/X11/config; \
+	    $(MAKE) depend; \
+	    rm -f Makefile.bak
 
 all-local: $(srcdir)/backend/Makefile
 	$(MAKE) -C backend

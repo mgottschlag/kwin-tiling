@@ -110,11 +110,11 @@ AC_ARG_WITH(krb4,
 case "$with_krb4" in
 no)
   AC_MSG_RESULT(no)
-  IMAKEFLAGS="$IMAKEFLAGS -DHasKrbIV=0"
+  IMAKEFLAGS="$IMAKEFLAGS -DUSEKRB4=0"
   ;;
 *)
   AC_MSG_RESULT(yes)
-  IMAKEFLAGS="$IMAKEFLAGS -DHasKrbIV=1"
+  IMAKEFLAGS="$IMAKEFLAGS -DUSEKRB4=1"
   AC_DEFINE_UNQUOTED(KRB4, 1, [ define if you have Kerberos IV ])
   KERBEROS_ROOT="$with_krb4"
   KERBEROS_INCS="-I${KERBEROS_ROOT}/include"
@@ -166,10 +166,20 @@ AC_SUBST(KERBEROS_INCS)dnl
 AC_SUBST(KERBEROS_LIBS)dnl
 AC_SUBST(KRB_RPATH)
 
-IMAKEFLAGS="$IMAKEFLAGS -DKrbIVLibraries=\"$KERBEROS_LIBS\""
+if test "$with_krb4" != "no"; then
+    IMAKEFLAGS="$IMAKEFLAGS -DKrbIVLibraries=\"$KERBEROS_LIBS\""
+fi
 
 if test "$kde_use_debug_code" = "yes"; then
-    IMAKEFLAGS="$IMAKEFLAGS -DDebug"
+    IMAKEFLAGS="$IMAKEFLAGS -DDEBUG"
+fi
+
+if test "$pam_support" = "yes"; then
+    IMAKEFLAGS="$IMAKEFLAGS -DUSEPAM=1 -DUSESHADOW=0"
+elif test "$shadow_support" = "yes"; then
+    IMAKEFLAGS="$IMAKEFLAGS -DUSEPAM=0 -DUSESHADOW=1"
+else
+    IMAKEFLAGS="$IMAKEFLAGS -DUSEPAM=0 -DUSESHADOW=0"
 fi
 
 AC_SUBST(IMAKEFLAGS)
