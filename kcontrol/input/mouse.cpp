@@ -127,6 +127,17 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
          " want only to select the icon without activating it.");
     QWhatsThis::add( cbAutoSelect, wtstr );
 
+#ifdef QT_AUTO_COPY_TO_CLIPBOARD
+    cbAutoCopy = new QCheckBox( i18n( "Copy selections automatically to clipboard" ), tab1);
+    connect( cbAutoCopy, SIGNAL( clicked() ), SLOT (changed() ) );
+    lay->addWidget(cbAutoCopy);
+ 
+    wtstr = i18n( "If this option is selected, KDE will"
+      " automatically copy any selections you make to the clipboard. This is"
+      " common on Unix but interferes with Ctrl-C/Ctrl-V based Copy & Paste.");
+    QWhatsThis::add( cbAutoCopy, wtstr );
+#endif
+
     //----------
     QGridLayout* grid = new QGridLayout(lay, 2 /*rows*/, 3 /*cols*/ );
 
@@ -362,6 +373,7 @@ void MouseConfig::load()
 
   doubleClick->setChecked(!settings->singleClick);
 
+  cbAutoCopy->setChecked( settings->autoCopy );
   cbAutoSelect->setChecked( settings->autoSelectDelay >= 0 );
   if ( settings->autoSelectDelay < 0 )
      slAutoSelect->setValue( 0 );
@@ -385,6 +397,7 @@ void MouseConfig::save()
   settings->wheelScrollLines = wheelScrollLines->value();
   settings->singleClick = !doubleClick->isChecked();
   settings->autoSelectDelay = cbAutoSelect->isChecked()?slAutoSelect->value():-1;
+  settings->autoCopy = cbAutoCopy->isChecked();
   settings->visualActivate = cbVisualActivate->isChecked();
   settings->changeCursor = cbCursor->isChecked();
   settings->largeCursor = cbLargeCursor->isChecked();
@@ -392,9 +405,7 @@ void MouseConfig::save()
   // Check if the user has asked us not to remind them that KDE needs
   // restarting after a cursor size change.
   bool wasLargeCursor =
-      config->readBoolEntry(
-        QString::fromLatin1("LargeCursor"), KDE_DEFAULT_LARGE_CURSOR
-                           );
+      config->readBoolEntry("LargeCursor", KDE_DEFAULT_LARGE_CURSOR);
 
   settings->apply();
   settings->save(config);
@@ -414,6 +425,7 @@ void MouseConfig::defaults()
     wheelScrollLines->setValue(3);
     doubleClick->setChecked( !KDE_DEFAULT_SINGLECLICK );
     cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
+    cbAutoCopy->setChecked( false );
     slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
     cbCursor->setChecked( KDE_DEFAULT_CHANGECURSOR );
     cbLargeCursor->setChecked( KDE_DEFAULT_LARGE_CURSOR );
@@ -516,17 +528,18 @@ void MouseSettings::load(KConfig *config)
     handed = h;
 
   // SC/DC/AutoSelect/ChangeCursor
-  config->setGroup(QString::fromLatin1("KDE"));
+  config->setGroup("KDE");
   doubleClickInterval = config->readNumEntry("DoubleClickInterval", 400);
   dragStartTime = config->readNumEntry("StartDragTime", 500);
   dragStartDist = config->readNumEntry("StartDragDist", 4);
   wheelScrollLines = config->readNumEntry("WheelScrollLines", 3);
+  autoCopy = config->readBoolEntry("AutoCopyToClipboard", false);
 
-  singleClick = config->readBoolEntry(QString::fromLatin1("SingleClick"), KDE_DEFAULT_SINGLECLICK);
+  singleClick = config->readBoolEntry("SingleClick", KDE_DEFAULT_SINGLECLICK);
   autoSelectDelay = config->readNumEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
   visualActivate = config->readBoolEntry("VisualActivate", KDE_DEFAULT_VISUAL_ACTIVATE);
   changeCursor = config->readBoolEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
-  largeCursor = config->readBoolEntry(QString::fromLatin1("LargeCursor"), KDE_DEFAULT_LARGE_CURSOR);
+  largeCursor = config->readBoolEntry("LargeCursor", KDE_DEFAULT_LARGE_CURSOR);
 }
 
 void MouseSettings::apply()
@@ -630,16 +643,17 @@ void MouseSettings::save(KConfig *config)
   else
       config->writeEntry("MouseButtonMapping",QString("LeftHanded"));
 
-  config->setGroup(QString::fromLatin1("KDE"));
+  config->setGroup("KDE");
   config->writeEntry("DoubleClickInterval", doubleClickInterval, true, true);
   config->writeEntry("StartDragTime", dragStartTime, true, true);
   config->writeEntry("StartDragDist", dragStartDist, true, true);
   config->writeEntry("WheelScrollLines", wheelScrollLines, true, true);
-  config->writeEntry(QString::fromLatin1("SingleClick"), singleClick, true, true);
-  config->writeEntry( "AutoSelectDelay", autoSelectDelay, true, true );
+  config->writeEntry("SingleClick", singleClick, true, true);
+  config->writeEntry("AutoSelectDelay", autoSelectDelay, true, true );
+  config->writeEntry("AutoCopyToClipboard", autoCopy, true, true );
   config->writeEntry("VisualActivate", visualActivate, true, true);
-  config->writeEntry( "ChangeCursor", changeCursor, true, true );
-  config->writeEntry( "LargeCursor", largeCursor, true, true );
+  config->writeEntry("ChangeCursor", changeCursor, true, true );
+  config->writeEntry("LargeCursor", largeCursor, true, true );
   config->sync();
   KIPC::sendMessageAll(KIPC::SettingsChanged, KApplication::SETTINGS_MOUSE);
 }
