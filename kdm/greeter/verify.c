@@ -442,16 +442,15 @@ Verify (const char *name, const char *password)
 	return V_FAIL;
 
 # ifdef KRB4
-    if (!krb4_auth(p, password)) {
+    if (!krb4_auth(p, password))
 # endif  /* KRB4 */
-
 # if defined(ultrix) || defined(__ultrix__)
 	if (authenticate_user(p, password, NULL) < 0)
 # else
 	if (strcmp (crypt (password, user_pass), user_pass))
 # endif
 	{
-	    if(!d->allowNullPasswd || p->pw_passwd[0]) {
+	    if(!d->allowNullPasswd || user_pass[0]) {
 		Debug ("password verify failed\n");
 # ifdef USESHADOW
 		bzero(user_pass, strlen(user_pass));
@@ -459,9 +458,6 @@ Verify (const char *name, const char *password)
 		return V_FAIL;
 	    } /* else: null passwd okay */
 	}
-# ifdef KRB4
-    }
-# endif  /* KRB4 */
 
 # ifdef USESHADOW
     bzero(user_pass, strlen(user_pass));
