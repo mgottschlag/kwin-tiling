@@ -29,6 +29,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "kdmconfig.h" // for HAVE_VTS
 #include "kgverify.h"
 
+#include <kpushbutton.h>
+
 #include <qradiobutton.h>
 
 class QLabel;
@@ -99,7 +101,7 @@ class BootHandler {
 	int defaultTarget, oldTarget;
 };
 
-class KDMShutdown : public KDMShutdownBase, public BootHandler {
+class KDMShutdown : public KDMShutdownBase {
 	Q_OBJECT
 	typedef KDMShutdownBase inherited;
 
@@ -123,6 +125,8 @@ class KDMShutdown : public KDMShutdownBase, public BootHandler {
 	QRadioButton *restart_rb;
 	QLineEdit *le_start, *le_timeout;
 	QCheckBox *cb_force;
+	QComboBox *targets;
+	int oldTarget;
 	int sch_st, sch_to;
 
 };
@@ -142,21 +146,42 @@ class KDMRadioButton : public QRadioButton {
 
 };
 
-class KDMSlimShutdown : public FDialog, public BootHandler {
+class KDMDelayedPushButton : public KPushButton {
+	Q_OBJECT
+	typedef KPushButton inherited;
+
+  public:
+	KDMDelayedPushButton( const KGuiItem &item, QWidget *parent, const char *name = 0 );
+	void setPopup( QPopupMenu *pop );
+
+  private slots:
+	void slotTimeout();
+	void slotPressed();
+	void slotReleased();
+
+  private:
+	QPopupMenu *pop;
+	QTimer popt;
+};
+
+class KDMSlimShutdown : public FDialog {
 	Q_OBJECT
 	typedef FDialog inherited;
 
   public:
 	KDMSlimShutdown( QWidget *_parent = 0 );
+	~KDMSlimShutdown();
 	static void externShutdown( int type, const char *os, int uid );
 
   private slots:
 	void slotHalt();
 	void slotReboot();
+	void slotReboot( int );
 	void slotSched();
 
   private:
 	bool checkShutdown( int type, const char *os );
+	char **targetList;
 
 };
 

@@ -220,27 +220,6 @@ KDMShutdownBase::verifySetUser( const QString & )
 }
 
 
-bool
-BootHandler::setupTargets( QWidget *parent )
-{
-	GSet( 1 );
-	GSendInt( G_ListBootOpts );
-	if (GRecvInt() != BO_OK) {
-		GSet( 0 );
-		return false; /* XXX needs somewhat more handling */
-	}
-	char **tlist = GRecvStrArr( 0 );
-	defaultTarget = GRecvInt();
-	oldTarget = GRecvInt();
-	GSet( 0 );
-	targets = new QComboBox( parent );
-	for (int i = 0; tlist[i]; i++)
-		targets->insertItem( QString::fromLocal8Bit( tlist[i] ) );
-	freeStrArr( tlist );
-	targets->setCurrentItem( oldTarget == -1 ? defaultTarget : oldTarget );
-	return true;
-}
-
 QCString
 BootHandler::obtainTarget()
 {
@@ -286,18 +265,26 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 	connect( rb, SIGNAL(doubleClicked()), SLOT(accept()) );
 	connect( restart_rb, SIGNAL(doubleClicked()), SLOT(accept()) );
 
-	if (_bootManager != BO_NONE) {
+	GSet( 1 );
+	GSendInt( G_ListBootOpts );
+	if (GRecvInt() == BO_OK) { /* XXX show dialog on failure */
+		char **tlist = GRecvStrArr( 0 );
+		int defaultTarget = GRecvInt();
+		oldTarget = GRecvInt();
 		QWidget *hlp = new QWidget( howGroup );
-		if (setupTargets( hlp )) {
-			QHBoxLayout *hb = new QHBoxLayout( hlp, 0, KDsh );
-			int spc = kapp->style().pixelMetric( QStyle::PM_ExclusiveIndicatorWidth )
-			          + howGroup->insideSpacing();
-			hb->addSpacing( spc );
-			hb->addWidget( targets );
-			connect( targets, SIGNAL(activated( int )), SLOT(slotTargetChanged()) );
-		} else
-			delete hlp;
+		targets = new QComboBox( hlp );
+		for (int i = 0; tlist[i]; i++)
+			targets->insertItem( QString::fromLocal8Bit( tlist[i] ) );
+		freeStrArr( tlist );
+		targets->setCurrentItem( oldTarget == -1 ? defaultTarget : oldTarget );
+		QHBoxLayout *hb = new QHBoxLayout( hlp, 0, KDsh );
+		int spc = kapp->style().pixelMetric( QStyle::PM_ExclusiveIndicatorWidth )
+		          + howGroup->insideSpacing();
+		hb->addSpacing( spc );
+		hb->addWidget( targets );
+		connect( targets, SIGNAL(activated( int )), SLOT(slotTargetChanged()) );
 	}
+	GSet( 0 );
 
 	howGroup->setSizePolicy( fp );
 
@@ -399,7 +386,9 @@ KDMShutdown::accepted()
 	GSendInt( sch_to );
 	GSendInt( cb_force->isChecked() ? SHUT_FORCE : SHUT_CANCEL );
 	GSendInt( _allowShutdown == SHUT_ROOT ? 0 : -2 );
-	GSendStr( restart_rb->isChecked() ? obtainTarget().data() : 0 );
+	GSendStr( (restart_rb->isChecked() &&
+	           targets && targets->currentItem() != oldTarget) ?
+	          targets->currentText().local8Bit().data() : 0 );
 	GSet( 0 );
 	inherited::accepted();
 }
@@ -431,6 +420,7 @@ KDMShutdown::scheduleShutdown( QWidget *_parent )
 	KDMShutdown( uid, _parent ).exec();
 }
 
+
 KDMRadioButton::KDMRadioButton( const QString &label, QWidget *parent )
 	: inherited( label, parent )
 {
@@ -443,8 +433,45 @@ KDMRadioButton::mouseDoubleClickEvent( QMouseEvent * )
 }
 
 
+KDMDelayedPushButton::KDMDelayedPushButton( const KGuiItem &item,
+                                            QWidget *parent, 
+                                            const char *name )
+	: inherited( item, parent, name )
+	, pop( 0 )
+{
+	connect( this, SIGNAL(pressed()), SLOT(slotPressed()) );
+	connect( this, SIGNAL(released()), SLOT(slotReleased()) );
+	connect( &popt, SIGNAL(timeout()), SLOT(slotTimeout()) );
+}
+
+void KDMDelayedPushButton::setPopup( QPopupMenu *p )
+{
+	pop = p;
+	setIsMenuButton( p != 0 );
+}
+
+void KDMDelayedPushButton::slotPressed()
+{
+	if (pop)
+		popt.start( QApplication::startDragTime() );
+}
+
+void KDMDelayedPushButton::slotReleased()
+{
+	popt.stop();
+}
+
+void KDMDelayedPushButton::slotTimeout()
+{
+	popt.stop();
+	pop->popup( mapToGlobal( rect().bottomLeft() ) );
+	setDown( false );
+}
+
+
 KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	: inherited( _parent )
+	, targetList( 0 )
 {
 	QHBoxLayout *hbox = new QHBoxLayout( this, KDmh, KDsh );
 
@@ -467,18 +494,29 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 
 	buttonlay->addSpacing( KDialog::spacingHint() );
 
-	KPushButton *btnReboot = new
-		KPushButton( KGuiItem( i18n("&Restart Computer"), "reload" ), this );
+	KDMDelayedPushButton *btnReboot = new
+		KDMDelayedPushButton( KGuiItem( i18n("&Restart Computer"), "reload" ), this );
 	buttonlay->addWidget( btnReboot );
 	connect( btnReboot, SIGNAL(clicked()), SLOT(slotReboot()) );
 
-	if (setupTargets( this )) {
-		QLabel *bol = new QLabel( targets, i18n("Next &boot:"), this );
-		QHBoxLayout *hb = new QHBoxLayout( buttonlay, KDsh );
-		hb->addWidget( bol );
-		hb->addWidget( targets );
-		connect( targets, SIGNAL(activated( int )), btnReboot, SLOT(setFocus()) );
+	GSet( 1 );
+	GSendInt( G_ListBootOpts );
+	if (GRecvInt() == BO_OK) {
+		targetList = GRecvStrArr( 0 );
+		/*int def =*/ GRecvInt();
+		int cur = GRecvInt();
+		QPopupMenu *targets = new QPopupMenu( this );
+		for (int i = 0; targetList[i]; i++) {
+			QString t( QString::fromLocal8Bit( targetList[i] ) );
+			targets->insertItem( i == cur ?
+			                     i18n("current option in boot loader",
+			                          "%1 (current)").arg( t ) :
+			                     t, i );
+		}
+		btnReboot->setPopup( targets );
+		connect( targets, SIGNAL(activated(int)), SLOT(slotReboot(int)) );
 	}
+	GSet( 0 );
 
 	buttonlay->addStretch( 1 );
 
@@ -502,6 +540,11 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	buttonlay->addSpacing( KDialog::spacingHint() );
 }
 
+KDMSlimShutdown::~KDMSlimShutdown()
+{
+	freeStrArr( targetList );
+}
+
 void
 KDMSlimShutdown::slotSched()
 {
@@ -519,10 +562,15 @@ KDMSlimShutdown::slotHalt()
 void
 KDMSlimShutdown::slotReboot()
 {
-	QCString target( obtainTarget() );
+	if (checkShutdown( SHUT_REBOOT, 0 ))
+		doShutdown( SHUT_REBOOT, 0 );
+}
 
-	if (checkShutdown( SHUT_REBOOT, target.data() ))
-		doShutdown( SHUT_REBOOT, target.data() );
+void
+KDMSlimShutdown::slotReboot( int opt )
+{
+	if (checkShutdown( SHUT_REBOOT, targetList[opt] ))
+		doShutdown( SHUT_REBOOT, targetList[opt] );
 }
 
 bool
