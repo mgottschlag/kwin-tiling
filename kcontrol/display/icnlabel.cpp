@@ -37,7 +37,7 @@
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kcolordlg.h>
-#include <kcolorbtn.h>                                                                                                                  
+#include <kcolorbtn.h>
 
 #include <icnlabel.h>
 
@@ -48,7 +48,7 @@ KIconConfigLabel::KIconConfigLabel(QWidget *parent, const char *name)
 {
     QGridLayout *top = new QGridLayout(this, 2, 2,
                                        KDialog::marginHint(),
-                                       KDialog::spacingHint());                 
+                                       KDialog::spacingHint());
     top->setColStretch(0, 1);
     top->setColStretch(1, 1);
 
@@ -56,37 +56,37 @@ KIconConfigLabel::KIconConfigLabel(QWidget *parent, const char *name)
     // Desktop-Icons - Preview
     QGroupBox *gbox = new QGroupBox(i18n("Desktop-Icons"), this);
     top->addWidget(gbox, 0, 0);
-    QBoxLayout *g_lay = new QVBoxLayout(gbox, KDialog::marginHint(), 0); 
-    g_lay->addSpacing(fontMetrics().lineSpacing());                             
+    QBoxLayout *g_lay = new QVBoxLayout(gbox, KDialog::marginHint(), 0);
+    g_lay->addSpacing(fontMetrics().lineSpacing());
     mpPreview = new QIconView(gbox);
     mpPreview->setGridX(70);
-    mpPreview->setItemsMovable(false);                                          
+    mpPreview->setItemsMovable(false);
     mpPreview->setMinimumSize(128, 128);
     g_lay->addWidget(mpPreview);
 
     mpPreviewItem = new QIconViewItem(mpPreview,
-                                      i18n("Very long filename.ext"));          
+                                      i18n("Very long filename.ext"));
 
     // Desktop-Icons - Fonts
     g_lay->addSpacing(fontMetrics().lineSpacing());
- 
+
     QPushButton *mpDTfont = new QPushButton(i18n("Font..."), gbox);
     g_lay->addWidget(mpDTfont);
 
-    g_lay->addSpacing(fontMetrics().lineSpacing());                              
+    g_lay->addSpacing(fontMetrics().lineSpacing());
 
     QBoxLayout *h_lay = new QHBoxLayout;
     g_lay->addLayout(h_lay);
- 
+
     QLabel *lbl = new QLabel(i18n("Background Color:"), gbox);
     h_lay->addWidget(lbl);
     KColorButton *colorButton = new KColorButton(bgColor, gbox);
     h_lay->addWidget(colorButton);
     connect(colorButton, SIGNAL(changed(const QColor &)),
             SLOT(slotBgColorChanged(const QColor &)));
- 
+
     h_lay = new QHBoxLayout;
-    g_lay->addLayout(h_lay);                                                    
+    g_lay->addLayout(h_lay);
 
     lbl = new QLabel(i18n("Normal Color:"), gbox);
     h_lay->addWidget(lbl);
@@ -94,69 +94,69 @@ KIconConfigLabel::KIconConfigLabel(QWidget *parent, const char *name)
     h_lay->addWidget(colorButton);
     connect(colorButton, SIGNAL(changed(const QColor &)),
             SLOT(slotNormalColorChanged(const QColor &)));
- 
+
     h_lay = new QHBoxLayout;
     g_lay->addLayout(h_lay);
- 
+
     lbl = new QLabel(i18n("Highlighted Color:"), gbox);
     h_lay->addWidget(lbl);
     colorButton = new KColorButton(hiliteColor, gbox);
     h_lay->addWidget(colorButton);
     connect(colorButton, SIGNAL(changed(const QColor &)),
             SLOT(slotHiliteColorChanged(const QColor &)));
- 
+
     wordWrapCB = new QCheckBox(i18n("&Word-wrap Text"), gbox);
-    g_lay->addWidget(wordWrapCB);                                               
+    g_lay->addWidget(wordWrapCB);
 
     connect(wordWrapCB, SIGNAL(toggled(bool)),
             SLOT(slotWrap(bool)));
- 
+
     underlineCB = new QCheckBox(i18n("&Underline Text"), gbox);
     g_lay->addWidget(underlineCB);
     connect(underlineCB, SIGNAL(toggled(bool)),
-            SLOT(slotUnderline(bool)));                                         
+            SLOT(slotUnderline(bool)));
 
     // Toolbar-Icons
     gbox = new QGroupBox(i18n("Toolbar-Icons"), this);
     top->addWidget(gbox, 0, 1);
-    g_lay = new QVBoxLayout(gbox, KDialog::marginHint(), 0);                              
-    g_lay->addSpacing(fontMetrics().lineSpacing());                             
+    g_lay = new QVBoxLayout(gbox, KDialog::marginHint(), 0);
+    g_lay->addSpacing(fontMetrics().lineSpacing());
 
     // Use of Icon
 
     mpUsageList = new QListBox(gbox);
     connect(mpUsageList, SIGNAL(highlighted(int)), SLOT(slotUsage(int)));
     g_lay->addSpacing(10);
-    g_lay->addWidget(mpUsageList);                                              
+    g_lay->addWidget(mpUsageList);
 
     //
 
     g_lay->addSpacing(fontMetrics().lineSpacing());
- 
+
     QPushButton *mpTBfont = new QPushButton(i18n("Font..."), gbox);
     g_lay->addWidget(mpTBfont);
- 
-    g_lay->addSpacing(fontMetrics().lineSpacing());                             
-      
+
+    g_lay->addSpacing(fontMetrics().lineSpacing());
+
     QRadioButton *tbIcon   = new QRadioButton( i18n( "&Icons only" ), gbox);
     QRadioButton *tbText   = new QRadioButton( i18n( "&Text only" ), gbox);
     QRadioButton *tbAside  = new QRadioButton( i18n( "Text a&side icons" ), gbox);
-    QRadioButton *tbUnder  = new QRadioButton( i18n( "Text &under icons" ), gbox);                          
+    QRadioButton *tbUnder  = new QRadioButton( i18n( "Text &under icons" ), gbox);
 
     connect( tbIcon , SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
     connect( tbText , SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
     connect( tbAside, SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
     connect( tbUnder, SIGNAL( clicked() ), SLOT( slotChangeTbStyle()  )  );
- 
+
     g_lay->addWidget(tbIcon);
     g_lay->addWidget(tbText);
     g_lay->addWidget(tbAside);
-    g_lay->addWidget(tbUnder);                                                  
+    g_lay->addWidget(tbUnder);
 
     init();
     read();
     apply();
-    preview(); 
+    preview();
 }
 
 void KIconConfigLabel::init()
@@ -165,9 +165,9 @@ void KIconConfigLabel::init()
     mpConfig = KGlobal::config();
     mpEffect = new KIconEffect;
     mpTheme = mpLoader->theme();
- 
+
 }
- 
+
 void KIconConfigLabel::read()
 {
     mTheme = mpTheme->current();
@@ -175,30 +175,30 @@ void KIconConfigLabel::read()
     mpConfig->setGroup("Icon Labels");
     wrap = mpConfig->readBoolEntry("WordWrap", true);
     underline = mpConfig->readBoolEntry("Underline", true);
-}                                                                               
-    
+}
+
 
 void KIconConfigLabel::apply()
 {
- 
+
     wordWrapCB->setChecked(wrap);
     underlineCB->setChecked(underline);
- 
+
 }
-  
+
 void KIconConfigLabel::preview()
 {
     // Apply effects ourselves because we don't want to sync
     // the configuration every preview.
     QPixmap pm = mpLoader->loadIcon(mExample, KIcon::Desktop);
     mpPreviewItem->setPixmap(pm);
- 
+
     QFont fnt = mpPreview->font();
     fnt.setUnderline(underline);
     mpPreview->setFont(fnt);
     mpPreview->setWordWrapIconText(wrap);
- 
-} 
+
+}
 
 void KIconConfigLabel::load()
 {
@@ -208,7 +208,7 @@ void KIconConfigLabel::load()
     for (int i=0; i<KIcon::LastGroup; i++)
         mbChanged[i] = false; */
 }
- 
+
 void KIconConfigLabel::save()
 {
 /*
@@ -218,7 +218,7 @@ void KIconConfigLabel::save()
     for (int i=0; i<KIcon::LastGroup; i++)
         mbChanged[i] = false;
 */
-}                                                                               
+}
 
 void KIconConfigLabel::defaults()
 {
@@ -237,25 +237,25 @@ void KIconConfigLabel::defaults()
         mEffectValues[i][0] = 1.0;
         mEffectValues[i][1] = 1.0;
         mEffectValues[i][2] = 1.0;
- 
+
     }
     apply();
     preview();
- 
+
     emit changed(true);
-*/    
+*/
 }
 
-void KIconConfigLabel::slotBgColorChanged(const QColor &newColor) {}
-void KIconConfigLabel::slotNormalColorChanged(const QColor &newColor) {}
-void KIconConfigLabel::slotHiliteColorChanged(const QColor &newColor) {}
- 
+void KIconConfigLabel::slotBgColorChanged(const QColor &) {}
+void KIconConfigLabel::slotNormalColorChanged(const QColor &) {}
+void KIconConfigLabel::slotHiliteColorChanged(const QColor &) {}
+
 void KIconConfigLabel::slotUnderline(bool ul)
 {
     underline = ul;
     preview();
     emit changed(true);
-}                                                                               
+}
 
 
 void KIconConfigLabel::slotWrap(bool w)
@@ -264,15 +264,15 @@ void KIconConfigLabel::slotWrap(bool w)
     preview();
     emit changed(true);
 }
- 
-void KIconConfigLabel::slotUsage(int index)
+
+void KIconConfigLabel::slotUsage(int /*index*/)
 {
 /*    mUsage = index;
     mState = 0;
     apply();
     preview();
 */
-}                                                                               
+}
 
 void KIconConfigLabel::slotChangeTbStyle()
 {
@@ -286,9 +286,9 @@ void KIconConfigLabel::slotChangeTbStyle()
         tbUseText = 3;
     else
         tbUseText = 0 ;
- 
+
     m_bChanged = true;
     emit changed(true);
 */
-}                                                                               
+}
 #include "icnlabel.moc"

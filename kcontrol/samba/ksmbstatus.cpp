@@ -61,20 +61,20 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
     topLayout->setAutoAdd(true);
     topLayout->setMargin(SCREEN_XY_OFFSET);
     topLayout->setSpacing(10);
-    
+
     list=new QListView(this,"Hello");
     version=new QLabel(this);
-    
+
     list->setAllColumnsShowFocus(true);
     list->setMinimumSize(425,200);
     list->addColumn(i18n("Type"), 50);
     list->addColumn(i18n("Service"), 80);
     list->addColumn(i18n("Accessed from"),100);
     list->addColumn(i18n("UID"), 70);
-    list->addColumn(i18n("GID"), 70);     
+    list->addColumn(i18n("GID"), 70);
     list->addColumn(i18n("PID"), 50);
     list->addColumn(i18n("Open Files"),70);
- 
+
     timer = new QTimer(this);
     timer->start(10000);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -86,7 +86,7 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
 
 void NetMon::help()
 {
-//        KNetMon->invokeHTMLHelp("","");                 
+//        KNetMon->invokeHTMLHelp("","");
 
 }
 
@@ -114,7 +114,7 @@ void NetMon::processSambaLine(char *bufline, int)
    {
       readingpart=connexions;
    }
-   else if ((readingpart==connexions) && (line.length()>=iMachine))
+   else if ((readingpart==connexions) && (int(line.length())>=iMachine))
    {
       strShare=line.mid(0,iUser);
       strUser=line.mid(iUser,iGroup-iUser);

@@ -52,9 +52,8 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
     KURL kurl = data.uri();
     QString url = kurl.url();
 
-    if (KURISearchFilterEngine::self()->verbose()) {
-	kDebugInfo("filtering %s", url.ascii());
-    }
+    if (KURISearchFilterEngine::self()->verbose())
+	kdDebug() << "filtering " << url << endl;
 
     // Is this URL a candidate for filtering?
     if (kurl.isMalformed())
@@ -94,15 +93,15 @@ bool KURISearchFilter::filterURI( KURIFilterData &data ) const
 	
 	    QString userquery = url.mid(pos+1).replace(QRegExp(" "), "+").utf8();
 	    if (kurl.isMalformed()) {
-	        userquery = KURL::encode_string(userquery); 
+	        userquery = KURL::encode_string(userquery);
 	    }
 	    if ((pct = newurl.find("\\1")) >= 0) {
 		newurl = newurl.replace(pct, 2, userquery);
 	    }
 	
-	    if (KURISearchFilterEngine::self()->verbose()) {
-		kDebugInfo("filtered %s to %s\n", url.ascii(), newurl.ascii());
-	    }	
+	    if (KURISearchFilterEngine::self()->verbose())
+		kdDebug() << "filtered " << url << " to " << newurl << "\n";
+
         setFilteredURI( data, newurl );
         setURIType( data, KURIFilterData::NET_PROTOCOL );
 	    return true;

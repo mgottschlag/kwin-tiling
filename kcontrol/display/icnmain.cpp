@@ -67,7 +67,7 @@ void KIconConfigMain::defaults()
     label->defaults();
 }
 
-void KIconConfigMain::moduleChanged(bool state)
+void KIconConfigMain::moduleChanged(bool )
 {
   emit changed(true);
 }
@@ -79,7 +79,7 @@ QString KIconConfigMain::quickHelp()
                 " <h2>General</h2> Icons are being used in different"
 		" places. You can set the size of an icon for each"
 		" of these places here. In additon you can change "
-		" the way an icon appears when your mouse-pointer" 
+		" the way an icon appears when your mouse-pointer"
 		" is placed over an icon or when the feature that "
 		" the icon symbolizes is not available."
                 " <h2>Label</h2> Desktop-icons and Toolbar-icons"

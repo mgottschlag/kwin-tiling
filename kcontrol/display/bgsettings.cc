@@ -4,8 +4,8 @@
  *
  * This file is part of the KDE project, module kdesktop.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
- * 
- * You can Freely distribute this program under the GNU Library General 
+ *
+ * You can Freely distribute this program under the GNU Library General
  * Public License. See the file "COPYING.LIB" for the exact licensing terms.
  */
 
@@ -43,9 +43,9 @@ static int QHash(QString key)
     const QChar *p = key.unicode();
     for (unsigned i=0; i < key.length(); i++) {
         h = (h << 4) + p[i].cell();
-        if ((g = (h & 0xf0000000))) 
-            h ^= (g >> 24); 
-        h &= ~g; 
+        if ((g = (h & 0xf0000000)))
+            h ^= (g >> 24);
+        h &= ~g;
     }
     return h;
 }
@@ -63,11 +63,11 @@ KBackgroundPattern::KBackgroundPattern(QString name)
     m_pDirs->addResourceType("dtop_pattern", m_pDirs->kde_default("data") +
                              "kdesktop/patterns");
     m_pConfig = 0L;
-    
+
     m_Name = name;
     if (m_Name.isEmpty())
         return;
-    
+
     init();
     readSettings();
 }
@@ -90,16 +90,16 @@ void KBackgroundPattern::load(QString name)
 void KBackgroundPattern::init(bool force_rw)
 {
     delete m_pConfig;
-    
+
     m_File = m_pDirs->findResource("dtop_pattern", m_Name + ".desktop");
     if (force_rw || m_File.isEmpty()) {
         m_File = m_pDirs->saveLocation("dtop_pattern") + m_Name + ".desktop";
         m_pConfig = new KSimpleConfig(m_File);
     } else
         m_pConfig = new KSimpleConfig(m_File);
-    
+
     m_pConfig->setGroup("KDE Desktop Pattern");
-    
+
     QFileInfo fi(m_File);
     m_bReadOnly = !fi.isWritable();
 }
@@ -127,7 +127,7 @@ void KBackgroundPattern::readSettings()
 {
     dirty = false;
     hashdirty = true;
-    
+
     m_Pattern = m_pConfig->readEntry("File");
     m_Comment = m_pConfig->readEntry("Comment");
 }
@@ -139,7 +139,7 @@ void KBackgroundPattern::writeSettings()
         return;
     if (m_bReadOnly)
         init(true);
-    
+
     m_pConfig->writeEntry("File", m_Pattern);
     m_pConfig->writeEntry("Comment", m_Comment);
     m_pConfig->sync();
@@ -215,14 +215,14 @@ KBackgroundProgram::KBackgroundProgram(QString name)
     m_pDirs->addResourceType("dtop_program", m_pDirs->kde_default("data") +
                              "kdesktop/programs");
     m_pConfig = 0L;
-    
+
     // prevent updates when just constructed.
     m_LastChange = (int) time(0L);
 
     m_Name = name;
     if (m_Name.isEmpty())
         return;
-    
+
     init();
     readSettings();
 }
@@ -237,7 +237,7 @@ KBackgroundProgram::~KBackgroundProgram()
 void KBackgroundProgram::init(bool force_rw)
 {
     delete m_pConfig;
-    
+
     m_File = m_pDirs->findResource("dtop_program", m_Name + ".desktop");
     if (force_rw || m_File.isEmpty()) {
         m_File = m_pDirs->saveLocation("dtop_program") + m_Name + ".desktop";
@@ -245,7 +245,7 @@ void KBackgroundProgram::init(bool force_rw)
     } else
         m_pConfig = new KSimpleConfig(m_File);
     m_pConfig->setGroup("KDE Desktop Program");
-    
+
     QFileInfo fi(m_File);
     m_bReadOnly = !fi.isWritable();
 }
@@ -359,7 +359,7 @@ void KBackgroundProgram::update()
     m_LastChange = (int) time(0L);
 }
 
-    
+
 QString KBackgroundProgram::fingerprint()
 {
     return QString("co:%1;re:%2").arg(m_Command).arg(m_Refresh);
@@ -424,7 +424,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     ADD_STRING(HorizontalGradient)
     ADD_STRING(VerticalGradient)
     ADD_STRING(PyramidGradient)
-    ADD_STRING(PipeCrossGradient) 
+    ADD_STRING(PipeCrossGradient)
     ADD_STRING(EllipticGradient)
     #undef ADD_STRING
 
@@ -434,7 +434,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
     ADD_STRING(HorizontalBlending)
     ADD_STRING(VerticalBlending)
     ADD_STRING(PyramidBlending)
-    ADD_STRING(PipeCrossBlending) 
+    ADD_STRING(PipeCrossBlending)
     ADD_STRING(EllipticBlending)
     ADD_STRING(IntensityBlending)
     ADD_STRING(SaturateBlending)
@@ -615,7 +615,7 @@ void KBackgroundSettings::readSettings(bool reparse)
         m_pConfig->reparseConfiguration();
 
     m_pConfig->setGroup(QString("Desktop%1").arg(m_Desk));
-    
+
     // Background mode (Flat, div. Gradients, Pattern or Program)
     m_ColorA = m_pConfig->readColorEntry("Color1", &defColorA);
     m_ColorB = m_pConfig->readColorEntry("Color2", &defColorB);
@@ -623,11 +623,11 @@ void KBackgroundSettings::readSettings(bool reparse)
     QString s = m_pConfig->readEntry("Pattern");
     if (!s.isEmpty())
         KBackgroundPattern::load(s);
-    
+
     s = m_pConfig->readEntry("Program");
     if (!s.isEmpty())
         KBackgroundProgram::load(s);
-    
+
     m_BackgroundMode = defBackgroundMode;
     s = m_pConfig->readEntry("BackgroundMode", "invalid");
     if (m_BMMap.contains(s)) {
@@ -636,10 +636,10 @@ void KBackgroundSettings::readSettings(bool reparse)
         if  ( ((mode != Pattern) && (mode != Program)) ||
               ((mode == Pattern) && !pattern().isEmpty()) ||
               ((mode == Program) && !command().isEmpty())
-            ) 
+            )
             m_BackgroundMode = mode;
     }
-    
+
     m_BlendMode = defBlendMode;
     s = m_pConfig->readEntry("BlendMode", "invalid");
     if (m_BlMMap.contains(s)) {
@@ -650,7 +650,7 @@ void KBackgroundSettings::readSettings(bool reparse)
     int value = m_pConfig->readNumEntry( "BlendBalance", defBlendBalance);
     if (value > -201 && value < 201)
       m_BlendBalance = value;
-      
+
     m_ReverseBlending = m_pConfig->readBoolEntry( "ReverseBlending", defReverseBlending);
 
     // Wallpaper mode (NoWallpaper, div. tilings)
@@ -663,7 +663,7 @@ void KBackgroundSettings::readSettings(bool reparse)
         if ((mode == NoWallpaper) || !m_Wallpaper.isEmpty())
             m_WallpaperMode = mode;
     }
-    
+
     // Multiple wallpaper config
     m_WallpaperList = m_pConfig->readListEntry("WallpaperList");
     updateWallpaperFiles();
@@ -774,7 +774,7 @@ void KBackgroundSettings::changeWallpaper(bool init)
     hashdirty = true;
 }
 
-    
+
 QString KBackgroundSettings::currentWallpaper()
 {
     if (m_MultiMode == NoMulti)
@@ -826,15 +826,15 @@ QString KBackgroundSettings::fingerprint()
         s += QString("ca:%1;cb:%2;").arg(m_ColorA.rgb()).arg(m_ColorB.rgb());
         break;
     }
-    
+
     s += QString("wm:%1;").arg(m_WallpaperMode);
     if (m_WallpaperMode != NoWallpaper)
         s += QString("wp:%1;").arg(currentWallpaper());
     s += QString("blm:%1;").arg(m_BlendMode);
     if (m_BlendMode != NoBlending) {
       s += QString("blb:%1;").arg(m_BlendBalance);
-      s += QString("rbl:%1;").arg(m_ReverseBlending);
-    }    
+      s += QString("rbl:%1;").arg(int(m_ReverseBlending));
+    }
     return s;
 }
 
@@ -937,7 +937,7 @@ void KGlobalBackgroundSettings::readSettings()
     cfg2.setGroup("Desktops");
     m_Names.clear();
     for (int i=0; i<_maxDesktops; i++)
-	m_Names += cfg2.readEntry(QString("Desktop%1").arg(i+1), 
+	m_Names += cfg2.readEntry(QString("Desktop%1").arg(i+1),
 		QString("Desktop %1").arg(i+1));
 
     dirty = false;
