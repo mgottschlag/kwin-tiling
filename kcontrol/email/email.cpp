@@ -70,7 +70,7 @@
 topKCMEmail::topKCMEmail (QWidget *parent,  const char *name)
 	: KCModule (parent, name)
 {
-	QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
+	QVBoxLayout *topLayout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 	m_email = new KCMEmailBase(this);
 	topLayout->add(m_email);
 
