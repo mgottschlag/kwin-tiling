@@ -1,5 +1,6 @@
 <!DOCTYPE UI><UI>
 <class>GeneralTabBase</class>
+<include>klineedit.h</include>
 <widget>
     <class>QWidget</class>
     <property stdset="1">

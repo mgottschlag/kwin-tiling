@@ -1,5 +1,6 @@
 <!DOCTYPE UI><UI>
 <class>LookAndFeelTabBase</class>
+<include>klineedit.h</include>
 <widget>
     <class>QWidget</class>
     <property stdset="1">
