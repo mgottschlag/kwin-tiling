@@ -17,7 +17,7 @@ kfontview_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 bin_PROGRAMS = kfontview
 xdg_apps_DATA = kfontview.desktop
 
-appdata_DATA = kfontviewpart.rc
+appdata_DATA = kfontviewpart.rc kfontviewui.rc
 appdatadir = $(kde_datadir)/kfontview
 
 kfontview_SOURCES = FontViewerApp.cpp
