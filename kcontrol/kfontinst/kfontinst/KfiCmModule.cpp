@@ -92,7 +92,7 @@ const KAboutData * CKfiCmModule::aboutData() const
                                           I18N_NOOP("(C) Craig Drummond, 2000 - 2002"),
                                           I18N_NOOP("(TQMM, PS - MBFM y CGD)"));
 
-        that->itsAboutData->addAuthor("Craig Drummond", "Developer and maintainer", "cpdrummond@uklinux.net");
+        that->itsAboutData->addAuthor("Craig Drummond", "Developer and maintainer", "Craig.Drummond@gmx.net");
         that->itsAboutData->addCredit("Michael Davis", I18N_NOOP("StarOffice xprinter.prolog patch"));
     }
 
