@@ -423,11 +423,7 @@ void CDirectoryItem::setOpen(bool open)
                 QFileInfoListIterator    it(*files);
                 QFileInfo                *fInfo;
                 CDirectoryItem           *ndItem;
-#if QT_VERSION >= 300
                 QPtrList<CDirectoryItem> newDirs;
-#else
-                QList<CDirectoryItem>    newDirs;
-#endif
 
                 itsListWidget->progressInit(i18n("Scanning folder %1:").arg(fullName()), files->count());
                 for(; NULL!=(fInfo=it.current()); ++it)

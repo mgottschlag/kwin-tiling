@@ -26,10 +26,6 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "FontEngine.h"
 #if !defined KFI_THUMBNAIL && !defined KFI_METAINFO
 #include "KfiGlobal.h"

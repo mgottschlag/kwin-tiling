@@ -31,11 +31,7 @@
 
 #include <qstring.h>
 #include <qglobal.h>
-#if QT_VERSION >= 300
 #include <qptrlist.h>
-#else
-#include <qlist.h>
-#endif
 
 class CEncodings
 {
@@ -74,29 +70,21 @@ class CEncodings
     CEncodings();
     virtual ~CEncodings()                               { }
 
-    void                  reset();
-    bool                  createEncodingsDotDir(const QString &dir);
-    void                  addDir(const QString &path)   { addDir(path, 0); }
-    void                  clear()                       { its8BitList.clear(); its16BitList.clear(); }
-#if QT_VERSION >= 300
+    void                     reset();
+    bool                     createEncodingsDotDir(const QString &dir);
+    void                     addDir(const QString &path)   { addDir(path, 0); }
+    void                     clear()                       { its8BitList.clear(); its16BitList.clear(); }
     const QPtrList<T8Bit> & list8Bit()                  { return its8BitList; }
-#else
-    const QList<T8Bit> &  list8Bit()                    { return its8BitList; }
-#endif
-    T8Bit *               first8Bit()                   { return its8BitList.first(); }
-    T8Bit *               next8Bit()                    { return its8BitList.next(); }
-#if QT_VERSION >= 300
+    T8Bit *                  first8Bit()                   { return its8BitList.first(); }
+    T8Bit *                  next8Bit()                    { return its8BitList.next(); }
     const QPtrList<T16Bit> & list16Bit()                { return its16BitList; }
-#else
-    const QList<T16Bit> & list16Bit()                   { return its16BitList; }
-#endif
-    T16Bit *              first16Bit()                  { return its16BitList.first(); }
-    T16Bit *              next16Bit()                   { return its16BitList.next(); }
-    T8Bit *               get8Bit(const QString &enc);
-    QString               getFile8Bit(const QString &enc);
-    static bool           isBuiltin(const T8Bit &enc);
-    static bool           isAEncFile(const char *file);
-    static bool           isUnicode(const QString &enc) { return strcmp(constUnicodeStr.latin1(), enc.latin1())==0 ? true : false; }
+    T16Bit *                 first16Bit()                  { return its16BitList.first(); }
+    T16Bit *                 next16Bit()                   { return its16BitList.next(); }
+    T8Bit *                  get8Bit(const QString &enc);
+    QString                  getFile8Bit(const QString &enc);
+    static bool              isBuiltin(const T8Bit &enc);
+    static bool              isAEncFile(const char *file);
+    static bool              isUnicode(const QString &enc) { return strcmp(constUnicodeStr.latin1(), enc.latin1())==0 ? true : false; }
 
     static const QString constUnicodeStr;
     static const QString constT1Symbol;
@@ -106,14 +94,9 @@ class CEncodings
 
     void                 addDir(const QString &path, int sub);
 
-#if QT_VERSION >= 300
     QPtrList<T8Bit>  its8BitList;
     QPtrList<T16Bit> its16BitList;
-#else
-    QList<T8Bit>  its8BitList;
-    QList<T16Bit> its16BitList;
-#endif
-    unsigned int  itsNumBuiltin;
+    unsigned int     itsNumBuiltin;
 };
 
 #endif

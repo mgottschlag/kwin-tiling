@@ -34,10 +34,6 @@
 #include <string.h>
 #include <klocale.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
- 
 using namespace std;
 
 CTtf::CTtf()
@@ -126,17 +122,9 @@ CTtf::EStatus CTtf::fixPsNames(const QString &nameAndPath)
     return status;
 }
 
-#if QT_VERSION >= 300
 QPtrList<CTtf::TKerning> * CTtf::getKerningData(const QString &nameAndPath)
-#else
-QList<CTtf::TKerning> * CTtf::getKerningData(const QString &nameAndPath)
-#endif
 {
-#if QT_VERSION >= 300
     QPtrList<TKerning> *list=NULL;
-#else
-    QList<TKerning> *list=NULL;
-#endif
 
     ifstream ttf(nameAndPath.local8Bit());
 
@@ -181,11 +169,7 @@ QList<CTtf::TKerning> * CTtf::getKerningData(const QString &nameAndPath)
                                         {
                                             if(NULL==list)
                                             {
-#if QT_VERSION >= 300
                                                 list=new QPtrList<TKerning>;
-#else
-                                                list=new QList<TKerning>;
-#endif
                                                 list->setAutoDelete(true);
                                             }
                                             list->append(new TKerning(ntohs(data.left), ntohs(data.right), ntohs(data.value)));

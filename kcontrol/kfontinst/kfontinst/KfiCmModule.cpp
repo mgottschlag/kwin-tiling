@@ -40,12 +40,10 @@
 #include <kaboutdata.h>
 #include <kapplication.h>
 
-#if KDE_VERSION >= 292
 #include <kgenericfactory.h>
 
 typedef KGenericFactory<CKfiCmModule, QWidget> FontInstallFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_fontinst, FontInstallFactory );
-#endif
 
 static bool firstTime=true;
 
@@ -63,9 +61,7 @@ CKfiCmModule::CKfiCmModule(QWidget *parent, const char *, const QStringList&)
     topLayout->addWidget(itsMainWidget, 0, 0);
     connect(itsMainWidget, SIGNAL(madeChanges()), SLOT(emitChanged()));
     setButtons(Apply);
-#if KDE_VERSION >= 291
     setUseRootOnlyMsg(false);
-#endif
     firstTime=true;
     theirInstance=this;
 }
@@ -166,15 +162,5 @@ QString CKfiCmModule::quickHelp() const
 
     return CMisc::root() ? help : help+rootHelp;
 }
-
-#if KDE_VERSION <= 291
-extern "C"
-{
-    KCModule * create_fontinst(QWidget *parent, const char *name)
-    {
-        return new CKfiCmModule(parent, name);
-    };
-}
-#endif
 
 #include "KfiCmModule.moc"

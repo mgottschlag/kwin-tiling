@@ -29,10 +29,6 @@
 // (C) Craig Drummond, 2001
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <qstring.h>
 #include <qnamespace.h>
 #include <qstringlist.h>

@@ -97,9 +97,7 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName)
             status=create(fName, CFontEngine::isAType1(fName.local8Bit()) ? CEncodings::constT1Symbol : CEncodings::constTTSymbol, true);
         else
         {
-#if QT_VERSION >= 300
             const char * constDefaultCharSet = "iso8859-1";
-#endif
             QStringList encs=CKfiGlobal::fe().get8BitEncodings();
             QString     enc;
 
@@ -107,13 +105,8 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName)
                 if(encs.findIndex(CKfiGlobal::cfg().getAfmEncoding())!=-1)   // Check for requested encoding...
                     enc=CKfiGlobal::cfg().getAfmEncoding();
                 else
-#if QT_VERSION < 300
-                    if(encs.findIndex(QFont::encodingName(QFont::charSetForLocale()))!=-1)   // Try locale...
-                        enc=QFont::encodingName(QFont::charSetForLocale());
-#else
                     if(encs.findIndex(constDefaultCharSet))
                         enc=constDefaultCharSet;
-#endif
                     else
                         enc=encs.first();  // Hmmm... just use the first available...
 
@@ -179,15 +172,11 @@ CAfmCreator::EStatus CAfmCreator::create(const QString &fName, const QString &en
     //
     if(!CMisc::fExists(afmName) || encoding!=getEncoding(afmName))
     {
-        CEncodings::T8Bit *enc=NULL; // CKfiGlobal::enc().get8Bit(CKfiGlobal::cfg().getAfmEncoding());
-#if QT_VERSION >= 300
+        CEncodings::T8Bit  *enc=NULL; // CKfiGlobal::enc().get8Bit(CKfiGlobal::cfg().getAfmEncoding());
         QPtrList<TKerning> kerning;
-#else
-        QList<TKerning>   kerning;
-#endif
-        QStringList       composite,
-                          chars;
-        QValueList<int>   usedGlyphs;
+        QStringList        composite,
+                           chars;
+        QValueList<int>    usedGlyphs;
 
         // Set charmap...
         if(!symEnc)
@@ -362,11 +351,7 @@ static bool encContainsGlyph(CEncodings::T8Bit &enc, unsigned int glyph)
     return false;
 }
 
-#if QT_VERSION >= 300
 void CAfmCreator::readKerningAndComposite(const QString &font, QPtrList<TKerning> &kern, QStringList &comp, CEncodings::T8Bit *enc)
-#else
-void CAfmCreator::readKerningAndComposite(const QString &font, QList<TKerning> &kern, QStringList &comp, CEncodings::T8Bit *enc)
-#endif
 {
     if(CFontEngine::isAType1(font.local8Bit()))
     {
@@ -404,12 +389,8 @@ void CAfmCreator::readKerningAndComposite(const QString &font, QList<TKerning> &
     else
         if(NULL!=enc && CFontEngine::isATtf(font.local8Bit()))
         {
-#if QT_VERSION >= 300
             QPtrList<CTtf::TKerning> *ttfList=CTtf::getKerningData(font);
-#else
-            QList<CTtf::TKerning> *ttfList=CTtf::getKerningData(font);
-#endif
-            CTtf::TKerning        *kd;
+            CTtf::TKerning           *kd;
 
             if(ttfList)
             {

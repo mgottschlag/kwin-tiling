@@ -31,13 +31,8 @@
 
 #include <stdio.h>
 #include <qglobal.h>
-#if QT_VERSION >= 300
 #include <qptrlist.h>
-#else
-#include <qlist.h>
-#endif
 #include <qstring.h>
-
 #include <fstream>
 
 class CTtf
@@ -194,12 +189,8 @@ class CTtf
 
     EStatus fixPsNames(const QString &nameAndPath);
 
-#if QT_VERSION >= 300
     static QPtrList<TKerning> * getKerningData(const QString &nameAndPath);
-#else
-    static QList<TKerning> * getKerningData(const QString &nameAndPath);
-#endif
-    static QString           toString(EStatus status);
+    static QString              toString(EStatus status);
 
     private:
 
@@ -212,13 +203,9 @@ class CTtf
 
     private:
 
-    char              *itsBuffer;
-    unsigned int      itsBufferSize;
-#if QT_VERSION >= 300
+    char                 *itsBuffer;
+    unsigned int         itsBufferSize;
     QPtrList<TPsNameMap> itsPsNameList;
-#else
-    QList<TPsNameMap> itsPsNameList;
-#endif
 };
 
 #endif
