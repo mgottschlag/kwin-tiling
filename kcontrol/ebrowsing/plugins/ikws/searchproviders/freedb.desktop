@@ -4,6 +4,7 @@ Type=Service
 Name=FreeDB
 Name[bn]=ফ্রী-ডি.বি.
 Name[eo]=Libera Civilizludo
+Name[hi]=फ्री-डीबी
 Name[ta]=இலவசடிபி
 Name[xx]=xxFreeDBxx
 ServiceTypes=SearchProvider
