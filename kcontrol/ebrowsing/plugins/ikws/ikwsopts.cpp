@@ -123,7 +123,17 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
 
     lay->addWidget(gb_keywords);
 
-    cb_enableSearchKeywords = new QCheckBox(i18n("Enable &Search Shortcuts"), this);
+    gb_search = new QGroupBox( i18n("Search"), this );
+    QGridLayout *gbsLay = new QGridLayout(gb_search, 7, 2, KDialog::marginHint(), KDialog::spacingHint());
+
+    gbsLay->setRowStretch(0, 1);
+    gbsLay->setRowStretch(2, 1);
+    gbsLay->setRowStretch(3, 1);
+    gbsLay->setRowStretch(4, 1);
+    gbsLay->setRowStretch(5, 1);
+    gbsLay->setRowStretch(6, 1);
+
+    cb_enableSearchKeywords = new QCheckBox(i18n("Enable &Search Shortcuts"), gb_search);
     //cb_enableSearchKeywords->adjustSize();
     //cb_enableSearchKeywords->setMinimumSize(cb_enableSearchKeywords->size());
     connect(cb_enableSearchKeywords, SIGNAL(clicked()), this, SLOT(changeSearchKeywordsEnabled()));
@@ -132,17 +142,8 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
                                                   "typing the words <em>shortcut</em>:<em>KDE</em> will result in "
                                                   "the word <em>KDE</em> being searched using the URI defined by "
                                                   "the <em>shortcut</em>."));
-    lay->addWidget( cb_enableSearchKeywords );
-
-    gb_search = new QGroupBox( i18n("Search"), this );
-    QGridLayout *gbsLay = new QGridLayout(gb_search, 6, 2, KDialog::marginHint(), KDialog::spacingHint());
-
-    gbsLay->addRowSpacing(0, kapp->fontMetrics().height());
-    gbsLay->setRowStretch(1, 1);
-    gbsLay->setRowStretch(2, 1);
-    gbsLay->setRowStretch(3, 1);
-    gbsLay->setRowStretch(4, 1);
-    gbsLay->setRowStretch(5, 1);
+    // gbsLay->addRowSpacing(0, kapp->fontMetrics().height());
+    gbsLay->addWidget(cb_enableSearchKeywords, 0, 0);
 
     lv_searchProviders = new QListView( gb_search );
     lv_searchProviders->setMultiSelection(false);
@@ -157,35 +158,35 @@ InternetKeywordsOptions::InternetKeywordsOptions(QWidget *parent, const char *na
     connect(lv_searchProviders, SIGNAL(doubleClicked(QListViewItem *)),
            this, SLOT(changeSearchProvider()));
 
-    gbsLay->addMultiCellWidget(lv_searchProviders, 1, 5, 0, 0);
+    gbsLay->addMultiCellWidget(lv_searchProviders, 2, 6, 0, 0);
 
     pb_addSearchProvider = new QPushButton(i18n("Add..."), gb_search);
     QWhatsThis::add(pb_addSearchProvider, i18n("Click here to add a search provider."));
     connect(pb_addSearchProvider, SIGNAL(clicked()), this, SLOT(addSearchProvider()));
-    gbsLay->addWidget(pb_addSearchProvider, 1, 1);
+    gbsLay->addWidget(pb_addSearchProvider, 2, 1);
 
     pb_chgSearchProvider = new QPushButton(i18n("Change..."), gb_search);
     QWhatsThis::add(pb_chgSearchProvider, i18n("Click here to change a search provider."));
     pb_chgSearchProvider->setEnabled(false);
     connect(pb_chgSearchProvider, SIGNAL(clicked()), this, SLOT(changeSearchProvider()));
-    gbsLay->addWidget(pb_chgSearchProvider, 2, 1);
+    gbsLay->addWidget(pb_chgSearchProvider, 3, 1);
 
     pb_delSearchProvider = new QPushButton(i18n("Delete"), gb_search);
     QWhatsThis::add(pb_delSearchProvider, i18n("Click here to delete the currently selected search provider from the list."));
     pb_delSearchProvider->setEnabled(false);
     connect(pb_delSearchProvider, SIGNAL(clicked()), this, SLOT(deleteSearchProvider()));
-    gbsLay->addWidget(pb_delSearchProvider, 3, 1);
+    gbsLay->addWidget(pb_delSearchProvider, 4, 1);
 
     pb_impSearchProvider = new QPushButton(i18n("Import..."), gb_search);
     QWhatsThis::add(pb_delSearchProvider, i18n("Click here to import a search provider from a file."));
     connect(pb_impSearchProvider, SIGNAL(clicked()), this, SLOT(importSearchProvider()));
-    gbsLay->addWidget(pb_impSearchProvider, 4, 1);
+    gbsLay->addWidget(pb_impSearchProvider, 5, 1);
 
     pb_expSearchProvider = new QPushButton(i18n("Export..."), gb_search);
     QWhatsThis::add(pb_expSearchProvider, i18n("Click here to export a search provider to a file."));
     pb_expSearchProvider->setEnabled(false);
     connect(pb_expSearchProvider, SIGNAL(clicked()), this, SLOT(exportSearchProvider()));
-    gbsLay->addWidget(pb_expSearchProvider, 5, 1);
+    gbsLay->addWidget(pb_expSearchProvider, 6, 1);
 
     lay->addWidget( gb_search );
 
