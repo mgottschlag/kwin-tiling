@@ -55,12 +55,16 @@ KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
 
     QVBoxLayout *layout = new QVBoxLayout( this, 0, KDialog::spacingHint() );
 
+    QLabel *label = new QLabel( i18n( "Event Source:" ), this );
     m_appCombo = new KComboBox( false, this, "app combo" );
+
+    QHBoxLayout *hbox = new QHBoxLayout( layout );
+    hbox->addWidget( label );
+    hbox->addWidget( m_appCombo, 10 );
 
     m_notifyWidget = new KNotifyWidget( this, "knotify widget", true );
     connect( m_notifyWidget, SIGNAL( changed( bool )), SIGNAL( changed(bool)));
 
-    layout->addWidget( m_appCombo );
     layout->addWidget( m_notifyWidget );
 
     connect( m_appCombo, SIGNAL( activated( const QString& ) ),
@@ -70,7 +74,6 @@ KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
              SLOT( slotPlayerSettings()));
 
     load();
-
 }
 
 KCMKNotify::~KCMKNotify()
@@ -132,7 +135,6 @@ void KCMKNotify::load()
     QStringList fullpaths =
         KGlobal::dirs()->findAllResources("data", "*/eventsrc", false, true );
 
-    
     QStringList::ConstIterator it = fullpaths.begin();
     for ( ; it != fullpaths.end(); ++it) 
         m_notifyWidget->addApplicationEvents( *it );
@@ -145,7 +147,6 @@ void KCMKNotify::load()
     for ( ; appIt.current(); ++appIt )
         m_appCombo->insertItem( appIt.current()->text() );
 
-
     KConfig config( "knotifyrc", true, false );
     config.setGroup( "Misc" );
     QString appDesc = config.readEntry( "LastConfiguredApp" );
@@ -154,7 +155,6 @@ void KCMKNotify::load()
 
      // sets the applicationEvents for KNotifyWidget
     slotAppActivated( m_appCombo->currentText() );
-
 
     // unsetCursor(); // unsetting doesn't work. sigh.
     setEnabled( true );
