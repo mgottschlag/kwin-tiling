@@ -75,6 +75,7 @@ TaskManager::TaskManager(QObject *parent, const char *name)
 
 TaskManager::~TaskManager()
 {
+    KGlobal::locale()->removeCatalogue("libtaskmanager");
 }
 
 void TaskManager::configure_startup()
