@@ -38,6 +38,7 @@ public:
   void setDateFormat(const QString &fmt);
   void setDateFormatShort(const QString &fmt);
   void setTimeFormat(const QString &fmt);
+  void setWeekStartsMonday(bool start);
   QString dateFormat() const;
   QString dateFormatShort() const;
   QString timeFormat() const;

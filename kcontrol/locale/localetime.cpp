@@ -47,7 +47,7 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
   // Time
-  QGridLayout *lay = new QGridLayout(this, 4, 2, 
+  QGridLayout *lay = new QGridLayout(this, 5, 2, 
 				     KDialog::marginHint(),
 				     KDialog::spacingHint());
   lay->setAutoAdd(TRUE);
@@ -63,6 +63,11 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   labDateFmtShort = new QLabel(this, I18N_NOOP("Short date format:"));
   edDateFmtShort = new QLineEdit(this);
   connect( edDateFmtShort, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtShortChanged(const QString &) ) );
+
+  labWeekStartsMonday = new QLabel(this, I18N_NOOP("Start week on Monday:"));
+  chWeekStartsMonday = new QCheckBox(this);
+  connect( chWeekStartsMonday, SIGNAL( clicked() ), this,
+	   SLOT( slotWeekStartsMondayChanged() ) );
   
   lay->setColStretch(1, 1);
 }
@@ -96,6 +101,7 @@ void KLocaleConfigTime::load()
   if (str.isNull())
     str = ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p"));
   locale->setTimeFormat(str);
+
   // DateFormat
   str = config->readEntry(QString::fromLatin1("DateFormat"));
   if (str.isNull())
@@ -108,10 +114,17 @@ void KLocaleConfigTime::load()
     str = ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%m/%d/%y"));
   locale->setDateFormatShort(str);
 
+  // WeekStartsMonday
+  bool b;
+  b = ent.readBoolEntry(QString::fromLatin1("WeekStartsMonday"), true);
+  b = config->readNumEntry(QString::fromLatin1("WeekStartsMonday"), b);
+  locale->setWeekStartsMonday(b);
+
   // update the widgets
   edTimeFmt->setText(locale->timeFormat());
   edDateFmt->setText(locale->dateFormat());
   edDateFmtShort->setText(locale->dateFormatShort());
+  chWeekStartsMonday->setChecked(locale->weekStartsMonday());
 
   // restore the old global locale
   KGlobal::_locale = lsave;
@@ -131,6 +144,7 @@ void KLocaleConfigTime::save()
   c->deleteEntry(QString::fromLatin1("TimeFormat"), false);
   c->deleteEntry(QString::fromLatin1("DateFormat"), false);
   c->deleteEntry(QString::fromLatin1("DateFormatShort"), false);
+  c->deleteEntry(QString::fromLatin1("WeekStartsMonday"), false);
   delete c;
 
   KConfigBase *config = new KConfig;
@@ -157,6 +171,13 @@ void KLocaleConfigTime::save()
   str = config->readEntry(QString::fromLatin1("DateFormatShort"), str);
   if (str != locale->dateFormatShort())
     config->writeEntry(QString::fromLatin1("DateFormatShort"), locale->dateFormatShort(), true, true);
+
+  bool b;
+  b = ent.readBoolEntry(QString::fromLatin1("WeekStartsMonday"), true);
+  b = config->readBoolEntry(QString::fromLatin1("WeekStartsMonday"), b);
+  if (b != locale->weekStartsMonday())
+    config->writeEntry(QString::fromLatin1("WeekStartsMonday"),
+		       locale->weekStartsMonday(), true, true);
 
   delete config;
 
@@ -187,6 +208,12 @@ void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
   emit resample();
 }
 
+void KLocaleConfigTime::slotWeekStartsMondayChanged()
+{
+  locale->setWeekStartsMonday(chWeekStartsMonday->isChecked());
+  emit resample();
+}
+
 void KLocaleConfigTime::reset()
 {
   // temperary use of our locale as the global locale
@@ -201,10 +228,12 @@ void KLocaleConfigTime::reset()
   locale->setTimeFormat(ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p")));
   locale->setDateFormat(ent.readEntry(QString::fromLatin1("DateFormat"), QString::fromLatin1("%A %d %B %Y")));
   locale->setDateFormatShort(ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%m/%d/%y")));
+  locale->setWeekStartsMonday(ent.readBoolEntry(QString::fromLatin1("WeekStartsMonday"), true));
 
   edTimeFmt->setText(locale->timeFormat());
   edDateFmt->setText(locale->dateFormat());
   edDateFmtShort->setText(locale->dateFormatShort());
+  chWeekStartsMonday->setChecked(locale->weekStartsMonday());
 
   // restore the old global locale
   KGlobal::_locale = lsave;
@@ -215,43 +244,66 @@ void KLocaleConfigTime::reTranslate()
   QString str;
 
   str = locale->translate
-    ("The text in this textbox will be used to format "
-     "time strings. The sequences below will be replaced:\n"
-     "\n"
-     "%H The hour as a decimal number using a 24-hour clock (00-23).\n"
-     "%k The hour (24-hour clock) as a decimal number (0-23).\n"
-     "%I The  hour as a decimal number using a 12-hour clock (01-12).\n"
-     "%l The hour (12-hour clock) as a decimal number (1-12).\n"
-     "%M The minute as a decimal number (00-59).\n"
-     "%S The second as a decimal number (00-59).\n"
-     "%p Either AM or PM according to the given time "
-     "value. Noon is treated as PM and midnight as AM.");
+    ("<p>The text in this textbox will be used to format "
+     "time strings. The sequences below will be replaced:</p>"
+     "<table>"
+     "<tr><td><b>%H</b></td><td>The hour as a decimal number using a 24-hour "
+     "clock (00-23).</td></tr>"
+     "<tr><td><b>%k</b></td><td>The hour (24-hour clock) as a decimal number "
+     "(0-23).</td></tr>"
+     "<tr><td><b>%I</b></td><td>The hour as a decimal number using a 12-hour "
+     "clock (01-12).</td></tr>"
+     "<tr><td><b>%l</b></td><td>The hour (12-hour clock) as a decimal number "
+     "(1-12).</td></tr>"
+     "<tr><td><b>%M</b></td><td>The minute as a decimal number (00-59)."
+     "</td><tr>"
+     "<tr><td><b>%S</b></td><td>The second as a decimal number (00-59)."
+     "</td></tr>"
+     "<tr><td><b>%p</b></td><td>Either \"am\" or \"pm\" according to the "
+     "given time value. Noon is treated as \"pm\" and midnight as \"am\"."
+     "</td></tr>"
+     "</table>");
   QWhatsThis::add( labTimeFmt, str );
   QWhatsThis::add( edTimeFmt,  str );
 
   QString datecodes = locale->translate(
-    "\n"
-    "%Y\tThe year with century as a decimal number.\n"
-    "%y\tThe year without century as a decimal number (00-99).\n"
-    "%m\tThe month as a decimal number (01-12).\n"
-    "%n\tThe month as a decimal number (1-12).\n"
-    "%b\tThe first three characters of the month name.\n"
-    "%B\tThe full month name.\n"
-    "%d\tThe day of month as a decimal number (01-31).\n"
-    "%e\tThe day of month as a decimal number (1-31).\n"
-    "%a\tThe first three characters of the weekday name.\n"
-    "%A\tThe full weekday name.");
+    "<table>"
+    "<tr><td><b>%Y</b></td><td>The year with century as a decimal number."
+    "</td></tr>"
+    "<tr><td><b>%y</b></td><td>The year without century as a decimal number "
+    "(00-99).</td></tr>"
+    "<tr><td><b>%m</b></td><td>The month as a decimal number (01-12)."
+    "</td></tr>"
+    "<tr><td><b>%n</b></td><td>The month as a decimal number (1-12).</td></tr>"
+    "<tr><td><b>%b</b></td><td>The first three characters of the month name. "
+    "</td></tr>"
+    "<tr><td><b>%B</b></td><td>The full month name.</td></tr>"
+    "<tr><td><b>%d</b></td><td>The day of month as a decimal number (01-31)."
+    "</td></tr>"
+    "<tr><td><b>%e</b></td><td>The day of month as a decimal number (1-31)."
+    "</td></tr>"
+    "<tr><td><b>%a</b></td><td>The first three characters of the weekday name."
+    "</td></tr>"
+    "<tr><td><b>%A</b></td><td>The full weekday name.</td></tr>"
+    "</table>");
 
   str = locale->translate
-    ( "The text in this textbox will be used to format long "
-      "dates. The sequences below will be replaced:\n") + datecodes;
+    ( "<p>The text in this textbox will be used to format long "
+      "dates. The sequences below will be replaced:</p>") + datecodes;
   QWhatsThis::add( labDateFmt, str );
   QWhatsThis::add( edDateFmt,  str );
   
   str = locale->translate
-    ( "The text in this textbox will be used to format short "
+    ( "<p>The text in this textbox will be used to format short "
       "dates. For instance, this is used when listing files. "
-      "The sequences below will be replaced:\n") + datecodes;
+      "The sequences below will be replaced:</p>") + datecodes;
   QWhatsThis::add( labDateFmtShort, str );
   QWhatsThis::add( edDateFmtShort,  str );
+
+  str = locale->translate
+    ("If this option is checked, calendars will be printed "
+     "with Monday as the first day in the week. If not, "
+     "Sunday will be used instead.");
+  QWhatsThis::add( labWeekStartsMonday, str );
+  QWhatsThis::add( chWeekStartsMonday,  str );
 }

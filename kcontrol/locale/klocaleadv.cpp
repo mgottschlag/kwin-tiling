@@ -52,6 +52,11 @@ void KLocaleAdvanced::setTimeFormat(const QString &fmt)
   _timefmt = fmt;
 }
 
+void KLocaleAdvanced::setWeekStartsMonday(bool start)
+{
+  m_weekStartsMonday = start;
+}
+
 QString KLocaleAdvanced::dateFormat() const
 {
   return _datefmt;

@@ -54,6 +54,7 @@ private slots:
   void slotTimeFmtChanged(const QString &t);
   void slotDateFmtChanged(const QString &t);
   void slotDateFmtShortChanged(const QString &t);
+  void slotWeekStartsMondayChanged();
 
 signals:
   void translate();
@@ -67,6 +68,8 @@ private:
   QLineEdit *edDateFmt;
   QLabel *labDateFmtShort;
   QLineEdit *edDateFmtShort;
+  QLabel *labWeekStartsMonday;
+  QCheckBox *chWeekStartsMonday;
 };
 
 #endif
