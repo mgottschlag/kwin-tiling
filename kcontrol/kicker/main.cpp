@@ -25,6 +25,7 @@
 #include <kglobal.h>
 #include <kstddirs.h>
 #include <klocale.h>
+#include <kimgio.h>
 
 #include <dcopclient.h>
 
@@ -81,6 +82,7 @@ extern "C"
 {
   KCModule *create_kicker(QWidget *parent, const char *name)
   {
+    kimgioRegister();
     KGlobal::locale()->insertCatalogue("kcmkicker");
     return new KickerConfig(parent, name);
   };

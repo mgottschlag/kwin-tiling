@@ -25,10 +25,14 @@
 
 class QGridLayout;
 class QButtonGroup;
+class QGroupBox;
+class QPushButton;
 class QRadioButton;
 class QCheckBox;
 class QLabel;
+class QString;
 class QSlider;
+class KLineEdit;
 
 class PanelTab : public QWidget
 {
@@ -49,26 +53,41 @@ class PanelTab : public QWidget
   void position_clicked(int);
   void size_clicked(int);
   void show_hbs_clicked();
+  void highlight_hbs_clicked();
   void hbs_size_changed(int);
+  void use_theme_clicked();
+  void browse_theme();
 
  private:
   QGridLayout *layout;
-  
-  enum Position { Left = 0, Right, Top, Bottom } position; 
-  QRadioButton *pos_buttons[4];
+
+  // position group
   QButtonGroup *pos_group;
+  QRadioButton *pos_buttons[4];
+  enum Position { Left = 0, Right, Top, Bottom } position; 
   
-  enum Size {Tiny=0, Normal, Large} size;
-  QRadioButton *size_buttons[3];
+  // size group
   QButtonGroup *size_group;
+  QRadioButton *size_buttons[3];
+  enum Size {Tiny=0, Normal, Large} size;
 
-  bool showHBs;
-  int HBwidth;
-
+  // hide button group
+  QGroupBox    *hb_group;
   QSlider      *hb_size;
   QLabel       *hb_size_label;
-  QCheckBox    *show_hbs;
-  QButtonGroup *hb_group;
+  QCheckBox    *show_hbs, *highlight_hbs;
+  bool showHBs, highlightHBs;
+  int HBwidth;
+
+  // theme group
+  QGroupBox    *theme_group;
+  QCheckBox    *use_theme_cb;
+  QLabel       *theme_label;
+  KLineEdit    *theme_input;
+  QPushButton  *browse_button;
+  bool         use_theme;
+  QString      theme;
+  QPixmap      theme_preview;
 };
 
 #endif

@@ -3,7 +3,7 @@ lib_LTLIBRARIES = libkcm_kicker.la
 libkcm_kicker_la_SOURCES = main.cpp panel.cpp 
 
 libkcm_kicker_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-libkcm_kicker_la_LIBADD = -lkdeui  
+libkcm_kicker_la_LIBADD = $(LIB_KIMGIO) $(LIB_KFILE)
 INCLUDES= $(all_includes) 
 
 libkcm_kicker_la_METASOURCES = AUTO
