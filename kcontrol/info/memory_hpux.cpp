@@ -85,6 +85,8 @@ void KMemoryWidget::update()
   Memory_Info[BUFFER_MEM]   = MEMORY(fields_[2]*page_size); /* FIXME ?? */
   Memory_Info[SWAP_MEM]     = MEMORY(total_swap); // total size of all swap-partitions
   Memory_Info[FREESWAP_MEM] = MEMORY(free_swap);  // free memory in swap-partitions
+#ifdef __GNUC__
 #warning "FIXME: Memory_Info[CACHED_MEM]"
+#endif
   Memory_Info[CACHED_MEM] = NO_MEMORY_INFO; // cached memory in ram
 }

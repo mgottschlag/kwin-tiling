@@ -74,7 +74,9 @@ void KMemoryWidget::update()
   Memory_Info[FREE_MEM]     = pagetob(vmstats.free_count);
   Memory_Info[SHARED_MEM]   = NO_MEMORY_INFO; 		    /* FIXME ?? */
   Memory_Info[BUFFER_MEM]   = NO_MEMORY_INFO; 		    /* FIXME ?? */
+#ifdef __GNUC__
 #warning "FIXME: Memory_Info[CACHED_MEM]"
+#endif
   Memory_Info[CACHED_MEM]   = NO_MEMORY_INFO; /* cached memory in ram */
   Memory_Info[SWAP_MEM]     = pagetob(swap_pages);
   Memory_Info[FREESWAP_MEM] = pagetob(swap_free);
