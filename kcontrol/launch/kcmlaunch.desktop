@@ -1,0 +1,14 @@
+[Desktop Entry]
+Icon=exec
+Type=Application
+DocPath=kcontrol/launch.html
+Exec=kcmshell kcmlaunch
+
+X-KDE-ModuleType=Library
+X-KDE-Library=launch
+X-KDE-FactoryName=launch
+
+Name=Launch feedback
+
+Comment=Choose application-launch feedback style
+Keywords=application,start,launch,busy,cursor,feedback
