@@ -17,6 +17,8 @@
  *  along with this program; if not, write to the Free Software
  */
 
+#include <kcolorbutton.h>
+#include <qslider.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
@@ -54,6 +56,10 @@ advancedDialog::advancedDialog(QWidget* parent, const char* name)
             this, SLOT(changed()));
     connect(m_advancedWidget->resizeableHandle, SIGNAL(toggled(bool)),
             this, SLOT(changed()));
+    connect(m_advancedWidget->tintColorB, SIGNAL(clicked()),
+            this, SLOT(changed()));
+    connect(m_advancedWidget->tintSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(changed()));
     load();
 }
 
@@ -71,6 +77,11 @@ void advancedDialog::load()
     m_advancedWidget->hideButtonSize->setValue(defaultHideButtonSize);
     bool resizeableHandle = c.readBoolEntry( "ResizeableHandle", false);
     m_advancedWidget->resizeableHandle->setChecked(resizeableHandle);
+    QColor color = c.readColorEntry( "TintColor", &colorGroup().mid() );
+    m_advancedWidget->tintColorB->setColor( color );
+    int tintValue = c.readNumEntry( "TintValue", 0 );
+    m_advancedWidget->tintSlider->setValue( tintValue );
+
     actionButton(Apply)->setEnabled(false);
 }
 
@@ -83,7 +94,11 @@ void advancedDialog::save()
                  m_advancedWidget->fadeOutHandles->isChecked());
     c.writeEntry("HideButtonSize",
                  m_advancedWidget->hideButtonSize->value());
-    
+    c.writeEntry("TintColor",
+                 m_advancedWidget->tintColorB->color());
+    c.writeEntry("TintValue",
+                 m_advancedWidget->tintSlider->value());
+
     QStringList elist = c.readListEntry("Extensions2");
     for (QStringList::Iterator it = elist.begin(); it != elist.end(); ++it)
     {
@@ -96,7 +111,7 @@ void advancedDialog::save()
         {
             continue;
         }
-        
+
         // set config group
         c.setGroup(group);
         KConfig extConfig(c.readEntry("ConfigFile"));
@@ -105,6 +120,11 @@ void advancedDialog::save()
                              m_advancedWidget->fadeOutHandles->isChecked());
         extConfig.writeEntry("HideButtonSize",
                              m_advancedWidget->hideButtonSize->value());
+        extConfig.writeEntry("TintColor",
+                             m_advancedWidget->tintColorB->color());
+        extConfig.writeEntry("TintValue",
+                             m_advancedWidget->tintSlider->value());
+
         extConfig.sync();
     }
     c.writeEntry("ResizeableHandle",
