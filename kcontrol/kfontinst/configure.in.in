@@ -8,10 +8,19 @@ if test "$FREETYPE_INC" = NO; then
     AC_MSG_WARN([FreeType2 headers not found!])
 else
     AC_MSG_RESULT([yes, $FREETYPE_INC])
-    FREETYPE_INC="-I$FREETYPE_INC"
-fi
+    dnl some versions of freetype2 need <ft2build.h>, but place them
+    dnl into /x/y if t1tables.h is in /x/y/freetype2/freetype
+    ft_dir=$FREETYPE_INC
+    FREETYPE_INC=""
+    ft_test=`echo $ft_dir | sed 's,^.*/,,'`
+    if test "$ft_test" = freetype2; then
+      dnl note the outer [] to make autoconf not remove the inner ones
+      ft_addinc=[`echo "$ft_dir" | sed 's,/[^/]*$,,'`]
+      test "$ft_addinc" = "$ft_dir" || test "$ft_addinc" = /usr/include \
+        || test -z "$ft_addinc" || FREETYPE_INC="-I$ft_addinc"
+    fi
+    FREETYPE_INC="-I$ft_dir $FREETYPE_INC"
 
-if test "$FREETYPE_INC" != NO; then
     dnl FreeType 2.0.1 has a ftnames.h, whereas 2.0.2 calls it ftsnames.h
     AC_MSG_CHECKING([for FreeType2 freetype/ftsnames.h])
     AC_FIND_FILE(freetype/ftsnames.h,$FREETYPE_INC_DIRS,FT2_FTSNAMES)
@@ -22,6 +31,7 @@ if test "$FREETYPE_INC" != NO; then
         AC_DEFINE_UNQUOTED(HAVE_FT2_FTSNAMES, 1, [Define if your system has ftsnames.h])
     fi
 
+    ac_save_LDFLAGS=$LDFLAGS
     LDFLAGS="$LDFLAGS $X_LDFLAGS"
     AC_CHECK_LIB(freetype,main,FREETYPE_LIB="-lfreetype",FREETYPE_LIB="NO")
     if test "$FREETYPE_LIB" = NO; then
@@ -31,6 +41,7 @@ if test "$FREETYPE_INC" != NO; then
         AC_SUBST(FREETYPE_LIB)
         AC_SUBST(FREETYPE_INC)
     fi
+    LDFLAGS=$ac_save_LDFLAGS
 fi
 
 if test "$FREETYPE_INC" = "NO" || test "$FREETYPE_LIB" = "NO"; then
