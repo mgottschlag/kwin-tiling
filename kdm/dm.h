@@ -50,31 +50,31 @@ extern "C" {
 #include <X11/Intrinsic.h>
 
 #if defined(X_POSIX_C_SOURCE)
-#define _POSIX_C_SOURCE X_POSIX_C_SOURCE
-#include <setjmp.h>
-#include <limits.h>
-#undef _POSIX_C_SOURCE
+# define _POSIX_C_SOURCE X_POSIX_C_SOURCE
+# include <setjmp.h>
+# include <limits.h>
+# undef _POSIX_C_SOURCE
 #else
-#if defined(X_NOT_POSIX) || defined(_POSIX_SOURCE)
-#include <setjmp.h>
-#include <limits.h>
-#else
-#define _POSIX_SOURCE
-#include <setjmp.h>
-#include <limits.h>
-#undef _POSIX_SOURCE
-#endif
+# if defined(X_NOT_POSIX) || defined(_POSIX_SOURCE)
+#  include <setjmp.h>
+#  include <limits.h>
+# else
+#  define _POSIX_SOURCE
+#  include <setjmp.h>
+#  include <limits.h>
+#  undef _POSIX_SOURCE
+# endif
 #endif
 #ifdef X_NOT_STDC_ENV
-#define Time_t long
+# define Time_t long
 extern Time_t time ();
 #else
-#include <time.h>
-#define Time_t time_t
+# include <time.h>
+# define Time_t time_t
 #endif
 
 #ifdef XDMCP
-#include <X11/Xdmcp.h>
+# include <X11/Xdmcp.h>
 #endif
 
 #ifndef NGROUPS_MAX
@@ -83,52 +83,52 @@ extern Time_t time ();
 #endif
 
 #ifdef pegasus
-#undef dirty		/* Some bozo put a macro called dirty in sys/param.h */
+# undef dirty		/* Some bozo put a macro called dirty in sys/param.h */
 #endif /* pegasus */
 
 #ifndef X_NOT_POSIX
-#ifdef _POSIX_SOURCE
-#include <sys/wait.h>
-#else
-#define _POSIX_SOURCE
-#ifdef SCO325
-#include <sys/procset.h>
-#include <sys/siginfo.h>
-#endif
-#include <sys/wait.h>
-#undef _POSIX_SOURCE
-#endif
+# ifdef _POSIX_SOURCE
+#  include <sys/wait.h>
+# else
+#  define _POSIX_SOURCE
+#  ifdef SCO325
+#   include <sys/procset.h>
+#   include <sys/siginfo.h>
+#  endif
+#  include <sys/wait.h>
+#  undef _POSIX_SOURCE
+# endif
 # define waitCode(w)	(WIFEXITED(w) ? WEXITSTATUS(w) : 0)
 # define waitSig(w)	(WIFSIGNALED(w) ? WTERMSIG(w) : 0)
 # define waitCore(w)    0	/* not in POSIX.  so what? */
 typedef int		waitType;
 #else /* X_NOT_POSIX */
-#ifdef SYSV
-# define waitCode(w)	(((w) >> 8) & 0x7f)
-# define waitSig(w)	((w) & 0xff)
-# define waitCore(w)	(((w) >> 15) & 0x01)
+# ifdef SYSV
+#  define waitCode(w)	(((w) >> 8) & 0x7f)
+#  define waitSig(w)	((w) & 0xff)
+#  define waitCore(w)	(((w) >> 15) & 0x01)
 typedef int		waitType;
-#else /* SYSV */
-# include <sys/wait.h>
-# define waitCode(w)	((w).w_T.w_Retcode)
-# define waitSig(w)	((w).w_T.w_Termsig)
-# define waitCore(w)	((w).w_T.w_Coredump)
+# else /* SYSV */
+#  include <sys/wait.h>
+#  define waitCode(w)	((w).w_T.w_Retcode)
+#  define waitSig(w)	((w).w_T.w_Termsig)
+#  define waitCore(w)	((w).w_T.w_Coredump)
 typedef union wait	waitType;
-#endif
+# endif
 #endif /* X_NOT_POSIX */
 
 #ifdef USE_PAM
-#include <security/pam_appl.h>
+# include <security/pam_appl.h>
 #endif
 
 
-# define waitCompose(sig,core,code) ((sig) * 256 + (core) * 128 + (code))
-# define waitVal(w)	waitCompose(waitSig(w), waitCore(w), waitCode(w))
+#define waitCompose(sig,core,code) ((sig) * 256 + (core) * 128 + (code))
+#define waitVal(w) waitCompose(waitSig(w), waitCore(w), waitCode(w))
 
 typedef enum displayStatus { running, notRunning, zombie, phoenix } DisplayStatus;
 
 #ifdef HAVE_SYS_SELECT_H
-#include <sys/select.h>                /* Defines fd_set on some systems */
+# include <sys/select.h>                /* Defines fd_set on some systems */
 #endif
 
 #ifndef FD_ZERO
@@ -310,10 +310,10 @@ struct greet_info {
 };
 
 /* setgroups is not covered by POSIX, arg type varies */
-#if defined(SYSV) || defined(SVR4) || defined(__osf__) || defined(__linux__)
-#define GID_T gid_t
+#if defined(SYSV) || defined(SVR4) || defined(__osf__) || defined(linux)
+# define GID_T gid_t
 #else
-#define GID_T int
+# define GID_T int
 #endif
 
 struct verify_info {
@@ -340,8 +340,8 @@ struct verify_info {
 # define OPENFAILED_DISPLAY	4	/* XOpenDisplay failed, retry */
 
 #ifndef TRUE
-#define TRUE	1
-#define FALSE	0
+# define TRUE	1
+# define FALSE	0
 #endif
 
 extern char	*config;
@@ -533,29 +533,29 @@ extern void registerHostname(char *name, int namelen);
 # define LEAVE_FOR_DISPLAY  1
 
 #ifndef X_NOT_STDC_ENV
-#include <stdlib.h>
+# include <stdlib.h>
 #else
 char *malloc(), *realloc();
 #endif
 
 #if defined(X_NOT_POSIX) && defined(SIGNALRETURNSINT)
-#define SIGVAL int
+# define SIGVAL int
 #else
-#define SIGVAL void
+# define SIGVAL void
 #endif
 
 #if defined(X_NOT_POSIX) || defined(__EMX__) || defined(__NetBSD__) && defined(__sparc__)
-#if defined(SYSV) || defined(__EMX__)
-#define SIGNALS_RESET_WHEN_CAUGHT
-#define UNRELIABLE_SIGNALS
-#endif
-#define Setjmp(e)	setjmp(e)
-#define Longjmp(e,v)	longjmp(e,v)
-#define Jmp_buf		jmp_buf
+# if defined(SYSV) || defined(__EMX__)
+#  define SIGNALS_RESET_WHEN_CAUGHT
+#  define UNRELIABLE_SIGNALS
+# endif
+# define Setjmp(e)	setjmp(e)
+# define Longjmp(e,v)	longjmp(e,v)
+# define Jmp_buf	jmp_buf
 #else
-#define Setjmp(e)   sigsetjmp(e,1)
-#define Longjmp(e,v)	siglongjmp(e,v)
-#define Jmp_buf		sigjmp_buf
+# define Setjmp(e)	sigsetjmp(e,1)
+# define Longjmp(e,v)	siglongjmp(e,v)
+# define Jmp_buf	sigjmp_buf
 #endif
 
 typedef SIGVAL (*SIGFUNC)(int);
@@ -563,7 +563,7 @@ typedef SIGVAL (*SIGFUNC)(int);
 SIGVAL (*Signal(int, SIGFUNC Handler))(int);
 
 #ifdef MINIX
-#include <sys/nbio.h>
+# include <sys/nbio.h>
 void udp_read_cb(nbio_ref_t ref, int res, int err);
 void tcp_listen_cb(nbio_ref_t ref, int res, int err);
 #endif

@@ -108,7 +108,7 @@ extern	void	endgrent(void);
 # include <unistd.h>
 #else
 extern	struct passwd	*getpwnam(GETPWNAM_ARGS);
-# ifdef __linux__
+# ifdef linux
 extern  void	endpwent(void);
 # endif
 extern	char	*crypt(CRYPT_ARGS);
@@ -177,7 +177,7 @@ static	struct dlfuncs	dlfuncs = {
 #endif /* QNX4 doesn't use endspent */
 #endif
 	getpwnam,
-#ifdef __linux__
+#ifdef linux
 	endpwent,
 #endif
 	crypt,

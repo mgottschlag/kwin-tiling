@@ -8,9 +8,10 @@ Things to be done:
 - Animated logo?
 - Different logos for each session type
 - Make remembering user's last session more portable?
-- Use kcheckpass?
-- Make nis & kerberos5 work
 - Integrate chooser
+
+- Make nis & kerberos5 work
+- Let verify return V_AUTHMSG for PAM and authenticate() errors -> messagebox
 
 - Possibly kill warning on AIX - see bug #13628
 

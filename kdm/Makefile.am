@@ -13,7 +13,7 @@ EXTRA_PROGRAMS = greetest
 greetest_SOURCES = greetest.c
 
 DBGFLAGS = -g
-AM_CFLAGS = $(CONN_FLAGS) $(DBGFLAGS)
+AM_CFLAGS = $(STD_DEFINES) $(CONN_FLAGS) $(DBGFLAGS)
 
 # this is for static linking - inserted into KDM_GREET_LIBS by configure
 KDM_KDE_LIBS  = $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) \

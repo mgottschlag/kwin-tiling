@@ -1,21 +1,21 @@
 # $Id$
 
-AM_CPPFLAGS = $(CONN_FLAGS) -DQT_NO_CAST_ASCII
+AM_CPPFLAGS = $(STD_DEFINES) $(CONN_FLAGS) -DQT_NO_CAST_ASCII
 
 INCLUDES = -I$(srcdir)/.. $(all_includes)
 
 bin_PROGRAMS = chooser
 
 chooser_SOURCES = \
-	chooser.cpp \
-	CXdmcp.cpp \
-	CXdmcp_c.c \
-	DXdmcp.cpp \
-	kfdialog.cpp
+    chooser.cpp \
+    CXdmcp.cpp \
+    CXdmcp_c.c \
+    DXdmcp.cpp \
+    kfdialog.cpp
 
 chooser_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 chooser_LDADD  = $(LIB_KDEUI) -lXau $(LIBXDMCP) $(LIB_LIBS) \
-	$(LIBSOCKET) $(LIBUCB) $(LIBUTIL)  -lXt
+    $(LIBSOCKET) $(LIBUCB) $(LIBUTIL)  -lXt
 
 noinst_HEADERS = CXdmcp_c.h CXdmcp.h DXdmcp.h kfdialog.h
 

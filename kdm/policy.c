@@ -119,7 +119,7 @@ SelectAuthorizationTypeIndex (
  */
 static void Willing_msg (char *mbuf)
 {
-#ifdef __linux__
+#ifdef linux
     int fd;
     const char *fail_msg = "Willing to manage";
     char buf[1024];
@@ -177,7 +177,7 @@ static void Willing_msg (char *mbuf)
     getloadavg (load, 3);
     sprintf (mbuf, "Available (load: %0.2f, %0.2f, %0.2f)", load[0],
 	     load[1], load[2]);
-#else				/* !__linux__ */
+#else				/* !linux */
     sprintf (mbuf, "Willing to manage");
 #endif
 }

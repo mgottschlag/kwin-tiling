@@ -43,7 +43,7 @@ extern "C" {
 /*
  * Do this rather than break a build over a const-mismatch
  */
-#if defined(__linux__) || defined(CSRG_BASED) || defined(sun)
+#if defined(linux) || defined(CSRG_BASED) || defined(sun)
 # define CRYPT_ARGS    const char *s1, const char *s2
 # define GETSPNAM_ARGS const char *name
 # define GETPWNAM_ARGS const char *name
@@ -87,7 +87,7 @@ struct dlfuncs {
     void (*_endspent)(void);
 #endif
     struct passwd *(*_getpwnam)(GETPWNAM_ARGS);
-#ifdef __linux__
+#ifdef linux
     void (*_endpwent)(void);
 #endif
     char *(*_crypt)(CRYPT_ARGS);
@@ -184,7 +184,7 @@ extern	struct spwd   *(*__xdm_getspnam)(GETSPNAM_ARGS);
 extern	void    (*__xdm_endspent)(void);
 #endif
 extern	struct passwd   *(*__xdm_getpwnam)(GETPWNAM_ARGS);
-#ifdef __linux__
+#ifdef linux
 extern	void    (*__xdm_endpwent)(void);
 #endif
 extern	char    *(*__xdm_crypt)(CRYPT_ARGS);
@@ -220,11 +220,11 @@ extern	pam_handle_t    **(*__xdm_thepamh)(void);
 #define	getgrent	(*__xdm_getgrent)
 #define	endgrent	(*__xdm_endgrent)
 #ifdef USESHADOW
-#define	getspnam	(*__xdm_getspnam)
-#define	endspent	(*__xdm_endspent)
+# define getspnam	(*__xdm_getspnam)
+# define endspent	(*__xdm_endspent)
 #endif
-#ifdef __linux__
-#define endpwent	(*__xdm_endpwent)
+#ifdef linux
+# define endpwent	(*__xdm_endpwent)
 #endif
 #define	getpwnam	(*__xdm_getpwnam)
 #define	crypt		(*__xdm_crypt)

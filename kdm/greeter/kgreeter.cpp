@@ -203,6 +203,7 @@ TempUngrab_Run(void (*func)(void *), void *ptr)
 }
 
 #ifndef HAVE_SETEUID
+# undef seteuid		/* from config.h */
 # define seteuid(euid) setreuid(-1, euid);
 # define setegid(egid) setregid(-1, egid);
 #endif // HAVE_SETEUID
@@ -613,19 +614,19 @@ QString errm;
 static void
 errorbox(void *)
 {
-    KMessageBox::error(kgreeter, errm);
+    KMessageBox::error(0, errm);
 }
 
 static void
 sorrybox(void *)
 {
-    KMessageBox::sorry(kgreeter, errm);
+    KMessageBox::sorry(0, errm);
 }
 
 static void
 infobox(void *)
 {
-    KMessageBox::information(kgreeter, errm);
+    KMessageBox::information(0, errm);
 }
 
 void 
@@ -1000,12 +1001,12 @@ GreetUser(
      */
     if (source (verify->systemEnviron, ::d->startup) != 0)
     {
-        QString buf = i18n("Startup program %1 exited with non-zero status."
-			   "\nPlease contact your system administrator.\n"
-			   "Please press OK to retry.")
-	       .arg(QFile::decodeName(::d->startup));
 	qApp->restoreOverrideCursor();
-	KMessageBox::error(0, buf, i18n("Login aborted"));
+	KMessageBox::error(0, 
+			i18n("Startup program %1 exited with non-zero status."
+			     "\nPlease contact your system administrator.\n"
+			     "Please press OK to retry.")
+	       .arg(QFile::decodeName(::d->startup)));
 	SessionExit (::d, OBEYSESS_DISPLAY, FALSE);
     }
 

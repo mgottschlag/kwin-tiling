@@ -42,7 +42,7 @@ from The Open Group.
 #ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
 #endif
-#if defined(__osf__) || defined(__linux__) || defined(MINIX)
+#if defined(__osf__) || defined(linux) || defined(MINIX)
 # define setpgrp setpgid
 #endif
 #ifdef hpux

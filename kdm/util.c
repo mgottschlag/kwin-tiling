@@ -52,7 +52,7 @@ from The Open Group.
 #undef _POSIX_SOURCE
 #endif
 #endif
-#if defined(__osf__) || defined(__linux__) || defined(MINIX) || defined(__QNXNTO__)
+#if defined(__osf__) || defined(linux) || defined(MINIX) || defined(__QNXNTO__)
 #define setpgrp setpgid
 #endif
 
