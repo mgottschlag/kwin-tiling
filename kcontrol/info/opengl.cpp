@@ -22,12 +22,12 @@
 
 #if defined(INFO_OPENGL_AVAILABLE)
 
-#define KCMGL_DO_GLU  
+#define KCMGL_DO_GLU
 
-#include <qregexp.h> 
+#include <qregexp.h>
 #include <qlistview.h>
 #include <qfile.h>
-#include <qstring.h> 
+#include <qstring.h>
 
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -41,6 +41,7 @@
 #endif
 
 #include <GL/gl.h>
+#include <GL/glext.h>
 #include <GL/glx.h>
 
 #include <stdio.h>
@@ -67,10 +68,10 @@ static struct glinfo {
 } gli;
 
 static struct {
-	QString module, 
-		pci, 
-		vendor, 
-		device, 
+	QString module,
+		pci,
+		vendor,
+		device,
 		subvendor,
 		rev;
 } dri_info;
@@ -80,29 +81,29 @@ static int ReadPipe(QString FileName, QStringList &list)
     FILE *pipe;
 
     if ((pipe = popen(FileName.ascii(), "r")) == NULL) {
-	pclose(pipe);  
-	return 0;  
+	pclose(pipe);
+	return 0;
     }
 
     QTextStream t(pipe, IO_ReadOnly);
 
     while (!t.atEnd()) list.append(t.readLine());
-    
+
     pclose(pipe);
     return list.count();
 }
 
 #if defined(Q_OS_LINUX)
- 
+
 #define INFO_DRI "/proc/dri/0/name"
- 
+
 static bool get_dri_device()
 {
     QFile file;
     file.setName(INFO_DRI);
     if (!file.exists() || !file.open(IO_ReadOnly))
 	return false;
-    
+
     QTextStream stream(&file);
     QString line = stream.readLine();
     if (!line.isEmpty()) {
@@ -120,7 +121,7 @@ static bool get_dri_device()
 		if (((num = ReadPipe(cmd, pci_info)) ||
 		(num = ReadPipe("/sbin/"+cmd, pci_info)) ||
 		(num = ReadPipe("/usr/sbin/"+cmd, pci_info)) ||
-		(num = ReadPipe("/usr/local/sbin/"+cmd, pci_info))) && num>=7) { 
+		(num = ReadPipe("/usr/local/sbin/"+cmd, pci_info))) && num>=7) {
 			for (int i=2; i<=6; i++) {
 				line = pci_info[i];
 				line.remove(QRegExp("[^:]*:[ ]*"));
@@ -130,8 +131,8 @@ static bool get_dri_device()
 					case 4: dri_info.subvendor = line; break;
 					case 6: dri_info.rev = line;       break;
 				}
-			}					
-			return true;					
+			}
+			return true;
 		}
 	}
     }
@@ -141,7 +142,7 @@ static bool get_dri_device()
 
 #elif defined(Q_OS_FREEBSD)
 
-static bool get_dri_device() { 
+static bool get_dri_device() {
 
 	QStringList pci_info;
 	if (ReadPipe("sysctl -n hw.dri.0.name",pci_info)) {
@@ -155,7 +156,7 @@ static bool get_dri_device() {
 static bool get_dri_device() { return false; }
 
 #endif
- 
+
 static void
 mesa_hack(Display *dpy, int scrnum)
 {
@@ -180,7 +181,7 @@ mesa_hack(Display *dpy, int scrnum)
       XFree(visinfo);
 }
 
- 
+
 static void
 print_extension_list(const char *ext, QListViewItem *l1)
 {
@@ -189,8 +190,8 @@ print_extension_list(const char *ext, QListViewItem *l1)
    if (!ext || !ext[0])
       return;
    QString *qext = new QString(ext);
-   QListViewItem *l2 = NULL;      
- 
+   QListViewItem *l2 = NULL;
+
    i = j = 0;
    while (1) {
       if (ext[j] == ' ' || ext[j] == 0) {
@@ -213,13 +214,13 @@ print_extension_list(const char *ext, QListViewItem *l1)
       j++;
    }
 }
-
-#ifdef GLX_ARB_get_proc_address      
+/*
+#ifdef GLX_ARB_get_proc_address
 extern "C" {
 	extern __GLXextFuncPtr glXGetProcAddressARB (const GLubyte *);
 }
 #endif
-
+*/
 static void
 print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
 {
@@ -227,14 +228,14 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
       GL_SAMPLE_BUFFERS
       GL_SAMPLES
       GL_COMPRESSED_TEXTURE_FORMATS
-*/   
-  
+*/
+
   struct token_name {
       GLuint type;  // count and flags, !!! count must be <=2 for now
       GLenum token;
       const QString name;
    };
-   
+
    struct token_group {
    	int count;
 	int type;
@@ -242,7 +243,7 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
 	const QString descr;
 	const char *ext;
    };
-   
+
    QListViewItem *l2 = NULL, *l3 = NULL;
    PFNGLGETPROGRAMIVARBPROC kcm_glGetProgramivARB = NULL;
 
@@ -250,7 +251,7 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
    #define KCMGL_PROG 256
    #define KCMGL_COUNT_MASK(x) (x & 127)
    #define KCMGL_SIZE(x) (sizeof(x)/sizeof(x[0]))
-   
+
    const struct token_name various_limits[] = {
       { 1, GL_MAX_LIGHTS, 		i18n("Max. number of light sources") },
       { 1, GL_MAX_CLIP_PLANES,		i18n("Max. number of clipping planes") },
@@ -259,14 +260,16 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
       { 1, GL_MAX_EVAL_ORDER, 		i18n("Max. evaluator order") },
       { 1, GL_MAX_ELEMENTS_VERTICES, 	i18n("Max. recommended vertex count") },
       { 1, GL_MAX_ELEMENTS_INDICES, 	i18n("Max. recommended index count") },
-#ifdef GL_QUERY_COUNTER_BITS      
+#ifdef GL_QUERY_COUNTER_BITS
       { 1, GL_QUERY_COUNTER_BITS, 	i18n("Occlusion query counter bits")},
 #endif
+#ifdef GL_MAX_VERTEX_UNITS_ARB
       { 1, GL_MAX_VERTEX_UNITS_ARB, 	i18n("Max. vertex blend matrices") },
+#endif
       { 1, GL_MAX_PALETTE_MATRICES_ARB, i18n("Max. vertex blend matrix palette size") },
-      {0,0,0}             
+      {0,0,0}
      };
-     
+
    const struct token_name texture_limits[] = {
       { 1, GL_MAX_TEXTURE_SIZE, 	i18n("Max. texture size") },
       { 1, GL_MAX_TEXTURE_UNITS_ARB, 	i18n("Num. of texture units") },
@@ -275,10 +278,10 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
       { 1, GL_MAX_RECTANGLE_TEXTURE_SIZE_NV, 	i18n("Max. rectangular texture size") },
       { 1 | KCMGL_FLOAT, GL_MAX_TEXTURE_LOD_BIAS_EXT, i18n("Max. texture LOD bias") },
       { 1, GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, 	i18n("Max. anisotropy filtering level") },
-      { 1, GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB, i18n("Num. of compressed texture formats") },      
-      {0,0,0}             
+      { 1, GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB, i18n("Num. of compressed texture formats") },
+      {0,0,0}
      };
-          
+
    const struct token_name float_limits[] = {
       { 2 | KCMGL_FLOAT, GL_ALIASED_POINT_SIZE_RANGE, 	"ALIASED_POINT_SIZE_RANGE" },
       { 2 | KCMGL_FLOAT, GL_SMOOTH_POINT_SIZE_RANGE, 	"SMOOTH_POINT_SIZE_RANGE" },
@@ -286,9 +289,9 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
       { 2 | KCMGL_FLOAT, GL_ALIASED_LINE_WIDTH_RANGE, 	"ALIASED_LINE_WIDTH_RANGE" },
       { 2 | KCMGL_FLOAT, GL_SMOOTH_LINE_WIDTH_RANGE, 	"SMOOTH_LINE_WIDTH_RANGE" },
       { 1 | KCMGL_FLOAT, GL_SMOOTH_LINE_WIDTH_GRANULARITY,"SMOOTH_LINE_WIDTH_GRANULARITY"},
-      {0,0,0}                   
+      {0,0,0}
      };
-          
+
    const struct token_name stack_depth[] = {
       { 1, GL_MAX_MODELVIEW_STACK_DEPTH, 	"MAX_MODELVIEW_STACK_DEPTH" },
       { 1, GL_MAX_PROJECTION_STACK_DEPTH, 	"MAX_PROJECTION_STACK_DEPTH" },
@@ -297,10 +300,10 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
       { 1, GL_MAX_ATTRIB_STACK_DEPTH, 		"MAX_ATTRIB_STACK_DEPTH" },
       { 1, GL_MAX_CLIENT_ATTRIB_STACK_DEPTH, 	"MAX_CLIENT_ATTRIB_STACK_DEPTH" },
       { 1, GL_MAX_COLOR_MATRIX_STACK_DEPTH, 	"MAX_COLOR_MATRIX_STACK_DEPTH" },
-      { 1, GL_MAX_MATRIX_PALETTE_STACK_DEPTH_ARB,"MAX_MATRIX_PALETTE_STACK_DEPTH"},           
-      {0,0,0}                         
+      { 1, GL_MAX_MATRIX_PALETTE_STACK_DEPTH_ARB,"MAX_MATRIX_PALETTE_STACK_DEPTH"},
+      {0,0,0}
    };
-   
+
 #ifdef GL_ARB_fragment_program
    const struct token_name arb_fp[] = {
     { 1, GL_MAX_TEXTURE_COORDS_ARB, "MAX_TEXTURE_COORDS" },
@@ -323,10 +326,10 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
     { 1 | KCMGL_PROG, GL_MAX_PROGRAM_NATIVE_TEMPORARIES_ARB, "MAX_PROGRAM_NATIVE_TEMPORARIES" },
     { 1 | KCMGL_PROG, GL_MAX_PROGRAM_NATIVE_PARAMETERS_ARB, "MAX_PROGRAM_NATIVE_PARAMETERS" },
     { 1 | KCMGL_PROG, GL_MAX_PROGRAM_NATIVE_ATTRIBS_ARB, "MAX_PROGRAM_NATIVE_ATTRIBS" },
-    {0,0,0}                         
+    {0,0,0}
    };
 #endif
-   
+
 #ifdef GL_ARB_vertex_program
    const struct token_name arb_vp[] = {
 { 1 | KCMGL_PROG, GL_MAX_PROGRAM_ENV_PARAMETERS_ARB,"MAX_PROGRAM_ENV_PARAMETERS"},
@@ -344,10 +347,10 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
 { 1 | KCMGL_PROG, GL_MAX_PROGRAM_NATIVE_PARAMETERS_ARB,"MAX_PROGRAM_NATIVE_PARAMETERS"},
 { 1 | KCMGL_PROG, GL_MAX_PROGRAM_NATIVE_ATTRIBS_ARB,"MAX_PROGRAM_NATIVE_ATTRIBS"},
 { 1 | KCMGL_PROG, GL_MAX_PROGRAM_NATIVE_ADDRESS_REGISTERS_ARB ,"MAX_PROGRAM_NATIVE_ADDRESS_REGISTERS"},
-{0,0,0}                         
+{0,0,0}
 };
 #endif
-                                                             
+
 #ifdef GL_ARB_vertex_shader
    const struct token_name arb_vs[] = {
     { 1, GL_MAX_VERTEX_ATTRIBS_ARB,"MAX_VERTEX_ATTRIBS"},
@@ -357,26 +360,26 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
     { 1, GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS_ARB,"MAX_VERTEX_TEXTURE_IMAGE_UNITS"},
     { 1, GL_MAX_TEXTURE_IMAGE_UNITS_ARB,"MAX_TEXTURE_IMAGE_UNITS"},
     { 1, GL_MAX_TEXTURE_COORDS_ARB,"MAX_TEXTURE_COORDS"},
-    {0,0,0}                         
+    {0,0,0}
    };
 #endif
-   
+
 #ifdef GL_ARB_fragment_shader
    const struct token_name arb_fs[] = {
     { 1, GL_MAX_FRAGMENT_UNIFORM_COMPONENTS_ARB,"MAX_FRAGMENT_UNIFORM_COMPONENTS"},
     { 1, GL_MAX_TEXTURE_IMAGE_UNITS_ARB,"MAX_TEXTURE_IMAGE_UNITS"},
     { 1, GL_MAX_TEXTURE_COORDS_ARB,"MAX_TEXTURE_COORDS"},
-    {0,0,0}                         
+    {0,0,0}
    };
-#endif 
-   
+#endif
+
    const struct token_name frame_buffer_props[] = {
       { 2, GL_MAX_VIEWPORT_DIMS, 	i18n("Max. viewport dimensions") },
       { 1, GL_SUBPIXEL_BITS, 		i18n("Subpixel bits") },
       { 1, GL_AUX_BUFFERS, 		i18n("Aux. buffers")},
-      {0,0,0}                         
+      {0,0,0}
     };
-    
+
    const struct token_group groups[] =
    {
     {KCMGL_SIZE(frame_buffer_props), 0, frame_buffer_props, i18n("Frame buffer properties"), NULL},
@@ -398,46 +401,46 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
 #endif
    };
 
-#ifdef GLX_ARB_get_proc_address      
-   if (GetProcAddress && strstr(glExtensions, "GL_ARB_vertex_program")) 
+#ifdef GLX_ARB_get_proc_address
+   if (GetProcAddress && strstr(glExtensions, "GL_ARB_vertex_program"))
    kcm_glGetProgramivARB = (PFNGLGETPROGRAMIVARBPROC) glXGetProcAddressARB((const GLubyte *)"glGetProgramivARB");
-#endif   
-               
+#endif
+
    for (uint i = 0; i<KCMGL_SIZE(groups); i++) {
    	if (groups[i].ext && !strstr(glExtensions, groups[i].ext)) continue;
-   	
-	if (l2) l2 = new QListViewItem(l1, l2, groups[i].descr); 
+
+	if (l2) l2 = new QListViewItem(l1, l2, groups[i].descr);
    	   else l2 = new QListViewItem(l1, groups[i].descr);
 	l3 = NULL;
-   	const struct token_name *cur_token; 
+   	const struct token_name *cur_token;
 	for (cur_token = groups[i].group; cur_token->type; cur_token++) {
-		
+
    		bool tfloat = cur_token->type & KCMGL_FLOAT;
    		bool tprog = cur_token->type & KCMGL_PROG;
 		int count = KCMGL_COUNT_MASK(cur_token->type);
 		GLint max[2]={0,0};
    		GLfloat fmax[2]={0.0,0.0};
-      		
+
 #ifdef GL_ARB_vertex_program
-		if (tprog && kcm_glGetProgramivARB) 
+		if (tprog && kcm_glGetProgramivARB)
 			kcm_glGetProgramivARB(groups[i].type, cur_token->token, max);
 		else
-#endif		
+#endif
 		if (tfloat) glGetFloatv(cur_token->token, fmax);
    			else glGetIntegerv(cur_token->token, max);
-      		
+
 		if (glGetError() == GL_NONE) {
 			QString s;
 		 	if (!tfloat && count == 1) s = QString::number(max[0]); else
 		 	if (!tfloat && count == 2) s = QString("%1, %2").arg(max[0]).arg(max[1]); else
 		 	if (tfloat && count == 2) s = QString("%1 - %2").arg(fmax[0],0,'f',6).arg(fmax[1],0,'f',6); else
 			if (tfloat && count == 1) s = QString::number(fmax[0],'f',6);
-   			if (l3) l3 = new QListViewItem(l2, l3, cur_token->name, s); 
+   			if (l3) l3 = new QListViewItem(l2, l3, cur_token->name, s);
    	   			else l3 = new QListViewItem(l2, cur_token->name, s);
-			
+
 		}
 	}
-         
+
      }
 }
 
@@ -445,38 +448,38 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
 static QListViewItem *print_screen_info(QListViewItem *l1, QListViewItem *after)
 {
    	QListViewItem *l2 = NULL, *l3 = NULL;
-      
+
    	if (after) l1= new QListViewItem(l1,after,IsDirect ? i18n("Direct Rendering") : i18n("Indirect Rendering"));
          	else l1= new QListViewItem(l1,IsDirect ? i18n("Direct Rendering") : i18n("Indirect Rendering"));
-   	if (IsDirect) 
-   	 	if (get_dri_device())  {  			
+   	if (IsDirect)
+   	 	if (get_dri_device())  {
       			l2 = new QListViewItem(l1, i18n("3D Accelerator"));
     			l2->setOpen(true);
-   			l3 = new QListViewItem(l2, l3, i18n("Vendor"), dri_info.vendor);       
-   			l3 = new QListViewItem(l2, l3, i18n("Device"), dri_info.device);       
-   			l3 = new QListViewItem(l2, l3, i18n("Subvendor"), dri_info.subvendor);       
-   			l3 = new QListViewItem(l2, l3, i18n("Revision"), dri_info.rev);       
+   			l3 = new QListViewItem(l2, l3, i18n("Vendor"), dri_info.vendor);
+   			l3 = new QListViewItem(l2, l3, i18n("Device"), dri_info.device);
+   			l3 = new QListViewItem(l2, l3, i18n("Subvendor"), dri_info.subvendor);
+   			l3 = new QListViewItem(l2, l3, i18n("Revision"), dri_info.rev);
 		}
 		else l2=new QListViewItem(l1, l2, i18n("3D Accelerator"),i18n("unknown"));
     	if (l2) l2 = new QListViewItem(l1, l2, i18n("Driver"));
        		else l2 = new QListViewItem(l1, i18n("Driver"));
     	l2->setOpen(true);
-    
+
   	l3 = new QListViewItem(l2, i18n("Vendor"),gli.glVendor);
     	l3 = new QListViewItem(l2, l3, i18n("Renderer"), gli.glRenderer);
     	l3 = new QListViewItem(l2, l3, i18n("OpenGL version"), gli.glVersion);
-    
+
     	if (IsDirect) {
     		if (!dri_info.module) dri_info.module = i18n("unknown");
-    		l3 = new QListViewItem(l2, l3, i18n("Kernel module"), dri_info.module); 
-    	}  
-    
-    	l3 = new QListViewItem(l2, l3, i18n("OpenGL extensions"));       
+    		l3 = new QListViewItem(l2, l3, i18n("Kernel module"), dri_info.module);
+    	}
+
+    	l3 = new QListViewItem(l2, l3, i18n("OpenGL extensions"));
     	print_extension_list(gli.glExtensions,l3);
-    
-    	l3 = new QListViewItem(l2, l3, i18n("Implementation specific"));       
+
+    	l3 = new QListViewItem(l2, l3, i18n("Implementation specific"));
     	print_limits(l3, gli.glExtensions, strstr(gli.clientExtensions, "GLX_ARB_get_proc_address") != NULL);
- 
+
         return l1;
 }
 
@@ -486,28 +489,28 @@ void print_glx_glu(QListViewItem *l1, QListViewItem *l2)
 
    l2=new QListViewItem(l1, l2, i18n("GLX"));
    l3 = new QListViewItem(l2, i18n("server GLX vendor"),gli.serverVendor);
-   l3 = new QListViewItem(l2, l3, i18n("server GLX version"),gli.serverVersion);       
-   l3 = new QListViewItem(l2, l3, i18n("server GLX extensions"));       
+   l3 = new QListViewItem(l2, l3, i18n("server GLX version"),gli.serverVersion);
+   l3 = new QListViewItem(l2, l3, i18n("server GLX extensions"));
    print_extension_list(gli.serverExtensions,l3);
-      
-    l3 = new QListViewItem(l2, l3, i18n("client GLX vendor"),gli.clientVendor);   
+
+    l3 = new QListViewItem(l2, l3, i18n("client GLX vendor"),gli.clientVendor);
     l3 = new QListViewItem(l2, l3, i18n("client GLX version"),gli.clientVersion);
-    l3 = new QListViewItem(l2, l3, i18n("client GLX extensions"));       
+    l3 = new QListViewItem(l2, l3, i18n("client GLX extensions"));
     print_extension_list(gli.clientExtensions,l3);
-    l3 = new QListViewItem(l2, l3, i18n("GLX extensions"));       
+    l3 = new QListViewItem(l2, l3, i18n("GLX extensions"));
     print_extension_list(gli.glxExtensions,l3);
 
 #ifdef KCMGL_DO_GLU
     l2 = new QListViewItem(l1, l2, i18n("GLU"));
     l3 = new QListViewItem(l2, i18n("GLU version"), gli.gluVersion);
-    l3 = new QListViewItem(l2, l3, i18n("GLU extensions"));       
+    l3 = new QListViewItem(l2, l3, i18n("GLU extensions"));
     print_extension_list(gli.gluExtensions,l3);
-#endif   
+#endif
 
 }
 
-static QListViewItem *get_gl_info(Display *dpy, int scrnum, Bool allowDirect,QListViewItem *l1, QListViewItem *after) 
-{   
+static QListViewItem *get_gl_info(Display *dpy, int scrnum, Bool allowDirect,QListViewItem *l1, QListViewItem *after)
+{
    Window win;
    int attribSingle[] = {
       GLX_RGBA,
@@ -530,7 +533,7 @@ static QListViewItem *get_gl_info(Display *dpy, int scrnum, Bool allowDirect,QLi
    XVisualInfo *visinfo;
    int width = 100, height = 100;
    QListViewItem *result = after;
-   
+
    root = RootWindow(dpy, scrnum);
 
    visinfo = glXChooseVisual(dpy, scrnum, attribSingle);
@@ -547,7 +550,7 @@ static QListViewItem *get_gl_info(Display *dpy, int scrnum, Bool allowDirect,QLi
    attr.colormap = XCreateColormap(dpy, root, visinfo->visual, AllocNone);
    attr.event_mask = StructureNotifyMask | ExposureMask;
    mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
-   win = XCreateWindow(dpy, root, 0, 0, width, height, 
+   win = XCreateWindow(dpy, root, 0, 0, width, height,
    			0, visinfo->depth, InputOutput,
 		       visinfo->visual, mask, &attr);
 
@@ -576,14 +579,14 @@ static QListViewItem *get_gl_info(Display *dpy, int scrnum, Bool allowDirect,QLi
       gli.gluExtensions = (const char *) gluGetString(GLU_EXTENSIONS);
 #endif
       IsDirect = glXIsDirect(dpy, ctx);
-      
+
       result = print_screen_info(l1, after);
    }
    else {
       kdDebug() << "Error: glXMakeCurrent failed\n";
-      glXDestroyContext(dpy, ctx);      
+      glXDestroyContext(dpy, ctx);
    }
-  
+
    glXDestroyContext(dpy, ctx);
    XDestroyWindow(dpy, win);
    return result;
@@ -593,18 +596,18 @@ static QListViewItem *get_gl_info(Display *dpy, int scrnum, Bool allowDirect,QLi
 
 static bool GetInfo_OpenGL_Generic( QListView *lBox )
 {
-   QListViewItem *l1, *l2 = NULL;   
-     
+   QListViewItem *l1, *l2 = NULL;
+
    char *displayName = NULL;
    Display *dpy;
    int numScreens, scrnum;
-        
+
    dpy = XOpenDisplay(displayName);
    if (!dpy) {
 //      kdDebug() << "Error: unable to open display " << displayName << endl;
       return false;
    }
-   
+
     lBox->addColumn(i18n("Information") );
     lBox->addColumn(i18n("Value") );
 
@@ -614,30 +617,30 @@ static bool GetInfo_OpenGL_Generic( QListView *lBox )
     l1->setExpandable(false);
 
     numScreens = ScreenCount(dpy);
-   
-  scrnum = 0; 
+
+  scrnum = 0;
 #ifdef KCMGL_MANY_SCREENS
-      for (; scrnum < numScreens; scrnum++) 
+      for (; scrnum < numScreens; scrnum++)
 #endif
       {
          mesa_hack(dpy, scrnum);
-         	 
+
 	 l2 = get_gl_info(dpy, scrnum, true, l1, l2);
 	 if (l2) l2->setOpen(true);
-	 
+
 	 if (IsDirect) l2 = get_gl_info(dpy, scrnum, false, l1, l2);
 
 //   TODO      print_visual_info(dpy, scrnum, mode);
-      }  
+      }
     if (l2)
-	print_glx_glu(l1, l2); 
+	print_glx_glu(l1, l2);
     else
-	KMessageBox::error(0, i18n("Could not initialize OpenGL")); 
+	KMessageBox::error(0, i18n("Could not initialize OpenGL"));
 
     XCloseDisplay(dpy);
-    return true;    
+    return true;
    }
-   
+
 bool GetInfo_OpenGL(QListView * lBox)
 {
     return GetInfo_OpenGL_Generic(lBox);
