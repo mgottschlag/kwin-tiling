@@ -9,7 +9,7 @@ INCLUDES = $(all_includes)
 
 #AM_CFLAGS   = -Wall -Wno-implicit -Wno-return-type
 
-bin_PROGRAMS = kdm 
+bin_PROGRAMS = kdm chooser
 
 # Libraries:
 LDFLAGS = $(all_libraries) $(KDE_RPATH)
@@ -50,9 +50,20 @@ kdm_SOURCES = kdmconfig.cpp \
 	liloinfo.cpp \
 	$(kdmlib_source)
 
+chooser_SOURCES = \
+        chooser.cpp \
+	CXdmcp.cpp \
+	DXdmcp.cpp \
+	kdmview.cpp \
+	kfdialog.cpp
+
+chooser_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+chooser_LDADD  = $(LIB_KIMGIO) $(LIB_KDEUI) -lXau $(LIBXDMCP) $(PASSLIB) $(LIB_LIBS) \
+	$(LIBSOCKET) $(LIBCRYPT) $(LIBUCB) $(LIBUTIL)  -lXt
+
 noinst_HEADERS = kdmconfig.h kdmview.h kdm-config.h kdmshutdown.h kfdialog.h dm.h kgreeter.h greet.h liloinfo.h
 
-METASOURCES = kfdialog.moc kdmview.moc kdmshutdown.moc kgreeter.moc liloinfo.moc
+METASOURCES = kfdialog.moc kdmview.moc kdmshutdown.moc kgreeter.moc liloinfo.moc CXdmcp.moc DXdmcp.moc
 
 messages:
 	$(XGETTEXT) -C -ki18n -x $(includedir)/kde.pot $(kdm_SOURCES) $(kdmdesktop_SOURCES) && mv messages.po ../po/kdm.pot

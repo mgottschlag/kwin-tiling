@@ -1,6 +1,6 @@
 $Id$
 
-This is version v0.5 of the KDE Display Manager (kdm). 
+This is the KDE Display Manager (kdm) for KDE-2.0. 
 
 Kdm is intended as a "drop-in" replacement of xdm. It reads the xdm
 specific files (usually in /usr/X11R6/lib/X11/xdm), so it should not be
@@ -46,6 +46,7 @@ Michael Bach Jensen and Torsten Rahn for drawing icons.
 Duncan Haldane for investigation of PAM issues.
 Stephan Kulow for helping me with the autoconf stuff.
 Martin Baehr for intensive testing and writing the sample Xsession scripts.
+Harald Hoyer <Harald.Hoyer@redhat.de> for the chooser
 
 kdm is free software. I'm not sure exactly how it's license is, because it
 has a lot of code from xdm in it. Anyway, i have to state:

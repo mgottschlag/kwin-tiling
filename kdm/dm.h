@@ -282,14 +282,14 @@ struct greet_info {
 
 /* setgroups is not covered by POSIX, arg type varies */
 /* Well, then assume it follows getgroups and let autoconf do it: /stefh */
-#define GID_T GETGROUPS_T
-/*
+//#define GID_T GETGROUPS_T
+
 #if defined(SYSV) || defined(SVR4) || defined(__osf__) || defined(linux)
 #define GID_T gid_t
 #else
 #define GID_T int
 #endif
-*/
+
 
 struct verify_info {
 	int		uid;		/* user id */

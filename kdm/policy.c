@@ -143,26 +143,65 @@ extern int AcceptableDisplayAddress( ARRAY8Ptr clientAddress,
 static void Willing_msg( char* mbuf)
 {
 #ifdef __linux__
-     int fd;
-     const char *fail_msg = "Willing to manage";
-     char buf[5];
+	int fd;
+  const char *fail_msg = "Willing to manage";
+  char buf[1024];
+  FILE *f;
+	float load[3];
+  float mhz = 0.0;
+	int numcpu = 0;
 
-     fd = open( "/proc/loadavg", O_RDONLY);
-     if( fd == -1) {
-	  sprintf( mbuf, fail_msg);
-     } else if( read( fd, buf, 4) != 4) {
-	  close( fd);
-	  sprintf( mbuf, fail_msg);	  
-     } else {
-	  buf[4] = '\0';
-	  sprintf(mbuf, "Available (load: %s)", buf);
-	  close( fd);
-     }
+  fd = open( "/proc/loadavg", O_RDONLY);
+  if( fd == -1) {
+		sprintf( mbuf, fail_msg);
+		return;
+
+  } else if( read( fd, buf, 100) < 4) {
+		close( fd);
+	  sprintf( mbuf, fail_msg);	
+		return;
+  }
+
+	sscanf(buf, "%f %f %f", &load[0], &load[1], &load[2]);
+	snprintf(mbuf, 256, "Available (load: %0.2f, %0.2f, %0.2f)",
+		load[0], load[1], load[2]);
+	close( fd);
+
+	mbuf[255] = 0;
+
+	numcpu = 0;
+
+	if(!(f = fopen("/proc/cpuinfo", "r")))
+		return;
+
+	while(!feof(f)) {	
+	  float m;
+		fgets(buf, 1024, f);
+		buf[sizeof(buf)-1] = 0;
+
+		if(sscanf(buf, "cpu MHz : %f", &m)) {
+			numcpu++;
+			mhz = m ;
+		}
+	}
+
+   fclose(f);
+
+   if(numcpu) {
+        if(numcpu > 1) 
+	   sprintf(buf, " %d*%0.0f MHz", numcpu, mhz);	   
+        else
+	   sprintf(buf, " %0.0f MHz", mhz);	   
+	
+	strncat(mbuf, buf, 256);
+
+	mbuf[255] = 0;
+   }
 #elif BSD4_3
 #warning This code is untested...
      double load[3];
      getloadavg(load, 3);
-     sprintf( mbuf, "Available (load: %0.2f, %0.2f, %0.2f)", load[0], load[1], load[2]);     
+     sprintf( mbuf, "Available (load: %0.2f, %0.2f, %0.2f)", load[0], load[1], load[2]);
 #else /* !__linux__ */
      sprintf( mbuf, "Willing to manage");     
 #endif

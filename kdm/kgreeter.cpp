@@ -258,6 +258,13 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
      set_fixed( goButton);
      hbox2->addWidget( goButton, AlignBottom);
 
+#if 0
+     chooserButton = new QPushButton( i18n("Chooser"), winFrame);
+     connect( chooserButton, SIGNAL(clicked()), SLOT(cancel_button_clicked()));
+     set_fixed( chooserButton);
+     hbox2->addWidget( chooserButton, AlignBottom);
+#endif
+     
      cancelButton = new QPushButton( i18n("Cancel"), winFrame);
      connect( cancelButton, SIGNAL(clicked()), SLOT(cancel_button_clicked()));
      set_fixed( cancelButton);
@@ -276,9 +283,17 @@ KGreeter::KGreeter(QWidget *parent = 0, const char *t = 0)
 	  set_fixed( shutdownButton);
 	  hbox2->addWidget( shutdownButton, AlignBottom);
 	  sbw = shutdownButton->width();
-     } else
+     } else {
+	quitButton = new QPushButton( i18n("Quit"), winFrame);
+	connect( quitButton, SIGNAL(clicked()), SLOT(quit_button_clicked()));
+	set_fixed( quitButton);
+	hbox2->addWidget( quitButton, AlignBottom);
+	sbw = 0;
+     }
+#else
+     sbw = 0;
 #endif
-	  sbw = 0;
+
      vbox->activate();
      timer = new QTimer( this );
      //// Signals/Slots
@@ -334,7 +349,29 @@ KGreeter::cancel_button_clicked()
      loginEdit->setFocus();
 }
 
-void 
+void
+KGreeter::quit_button_clicked()
+{
+   QApplication::flushX();
+   exit(UNMANAGE_DISPLAY);
+}
+
+#if 0
+extern void RunChooser(struct display *d);
+
+void
+KGreeter::chooser_button_clicked()
+{
+	if(!fork()) {
+		RunChooser(QApplication::display());		
+	}
+	hide();
+  QApplication::flushX();
+  exit(UNMANAGE_DISPLAY);
+}
+#endif
+
+void
 KGreeter::shutdown_button_clicked()
 {
   timer->stop();

@@ -892,6 +892,7 @@ DefineSelf (fd, file, auth)
 #define ifr_size(p) (sizeof (struct ifreq))
 #endif
 
+#include <X11/Xdmcp.h>
 
 extern int ConvertAddr( XdmcpNetaddr saddr, int *len, char **addr);
 

@@ -73,6 +73,7 @@ public:
 public slots:
      void go_button_clicked();
      void cancel_button_clicked();
+		 void quit_button_clicked();
      void shutdown_button_clicked();
      void timerDone();
      void slot_user_name( int i);
@@ -96,6 +97,8 @@ private:
      QLineEdit*     passwdEdit; 
      QFrame*        separator;
      QPushButton*   goButton;
+     QPushButton*   chooserButton;
+     QPushButton*   quitButton;
      QPushButton*   cancelButton;
      QPushButton*   shutdownButton;
      QComboBox*     sessionargBox;
