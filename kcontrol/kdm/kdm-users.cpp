@@ -269,14 +269,14 @@ void KDMUsersWidget::changeUserPix(const QString &pix)
     if (p.isNull()) {
 	KMessageBox::sorry( this,
 			    i18n("There was an error loading the image\n"
-				 "%1\n").arg( pix ) );
+				 "%1").arg( pix ) );
 	return;
     }
 
     QString userpix = m_userPixDir + user + ".png";
     if (!p.save( userpix, "PNG" ))
         KMessageBox::sorry(this,
-	    i18n("There was an error saving the image:\n%1\n")
+	    i18n("There was an error saving the image:\n%1")
 		.arg( userpix ) );
 
     slotUserSelected();
