@@ -173,6 +173,7 @@ void CreateWellKnownSockets ()
 	LogError ("chooser socket creation failed, errno %d\n", errno);
 	return;
     }
+    RegisterCloseOnFork (chooserFd);
 #ifdef MINIX
     tcpconf.nwtc_flags= NWTC_EXCL | NWTC_LP_SEL | NWTC_UNSET_RA |
     	NWTC_UNSET_RP;
