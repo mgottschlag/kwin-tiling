@@ -466,7 +466,7 @@ bool GetInfo_ReadfromFile( QListView *lBox, char *Name )
   
   file->close();
   delete file;
-  return (lBox->count());
+  return (lBox->childCount());
 }
 
 
@@ -499,7 +499,7 @@ static bool GetInfo_ReadfromPipe( QListView *lBox, char *FileName )
     delete devices; 
     pclose(pipe);
   
-    return (lBox->count());
+    return (lBox->childCount());
 }
 
 
@@ -644,8 +644,9 @@ bool GetInfo_Partitions (QListView *lbox)
 
 
 bool GetInfo_XServer_and_Video( QListView *lBox )
-{	lBox = lBox;
-	return GetInfo_XServer_Generic( lBox );
+{	
+    lBox = lBox;
+    return GetInfo_XServer_Generic( lBox );
 }
 
 
@@ -728,13 +729,15 @@ bool GetInfo_Sound( QListView *lBox )
         if (audio->data_format_list[i] <= ADFLin8Offset)
             new QListViewItem(olditem, QString(formatNames[audio->data_format_list[i]]));
     }
+    olditem->setOpen(true);
 
     olditem = new QListViewItem(lBox, olditem, i18n("Sampling Rates"));
     for ( i = 0;  i < audio->n_sampling_rate; i++ ) {
         new QListViewItem(olditem, Value(audio->sampling_rate_list[i]));
     }
+    olditem->setOpen(true);
 
-    olditem = new QListViewItem(lBox, oldirem, i18n("Input Sources"));
+    olditem = new QListViewItem(lBox, olditem, i18n("Input Sources"));
     if ( audio->input_sources & AMonoMicrophoneMask )
         new QListViewItem(olditem, i18n("Mono-Microphone"));
     if ( audio->input_sources & AMonoAuxiliaryMask )
@@ -747,6 +750,7 @@ bool GetInfo_Sound( QListView *lBox )
         new QListViewItem(olditem, i18n("Left-Auxiliary"));
     if ( audio->input_sources & ARightAuxiliaryMask )
         new QListViewItem(olditem, i18n("Right-Auxiliary"));
+    olditem->setOpen(true);
 
     olditem = new QListViewItem(lBox, olditem,i18n("Input Channels"));
     if ( audio->input_channels & AMonoInputChMask )
@@ -755,6 +759,7 @@ bool GetInfo_Sound( QListView *lBox )
         new QListViewItem(olditem, i18n("Left-Channel"));
     if ( audio->input_channels & ARightInputChMask )
         new QListViewItem(olditem, i18n("Right-Channel"));
+    olditem->setOpen(true);
 
     olditem = new QListViewItem(lBox, olditem, i18n("Output Destinations"));
     if ( audio->output_destinations & AMonoIntSpeakerMask )
@@ -769,6 +774,7 @@ bool GetInfo_Sound( QListView *lBox )
         new QListViewItem(olditem, i18n("Left-Jack"));
     if ( audio->output_destinations & ARightJackMask )
         new QListViewItem(olditem, i18n("Right-Jack"));
+    olditem->setOpen(true);
 
     olditem = new QListViewItem(lBox, olditem, i18n("Output Channels"));
     if ( audio->output_channels & AMonoOutputChMask )
@@ -777,17 +783,23 @@ bool GetInfo_Sound( QListView *lBox )
         new QListViewItem(olditem, i18n("Left-Channel"));
     if ( audio->output_channels & ARightOutputChMask )
         new QListViewItem(olditem, i18n("Right-Channel"));
+    olditem->setOpen(true);
 
-    olditem = new QListViewItem(lBox, olditem, i18n("Input Gain Limits"), 
+
+    olditem = new QListViewItem(lBox, olditem, i18n("Gain"));
+    new QListViewItem(olditem, i18n("Input Gain Limits"), 
                                 Value(audio->max_input_gain));
-    olditem = new QListViewItem(lBox, olditem,i18n("Output Gain Limits"),
+    new QListViewItem(olditem,i18n("Output Gain Limits"),
                                 Value(audio->min_output_gain) + QString(" ") 
                                 + Value(audio->max_output_gain));
-    olditem = new QListViewItem(lBox, olditem, 18n("Monitor Gain Limits"),
+    new QListViewItem(olditem, i18n("Monitor Gain Limits"),
                                 Value(audio->min_monitor_gain) + QString(" ")
                                 + Value(audio->max_monitor_gain));
-    olditem = new QListViewItem(lBox, olditem, i18n("Gain Restricted"),    
+    new QListViewItem(olditem, i18n("Gain Restricted"),    
                                 Value(audio->gm_gain_restricted));
+    olditem->setOpen(true);
+    
+
     olditem = new QListViewItem(lBox, olditem,i18n("Lock"),
                                 Value(audio->lock));
     olditem = new QListViewItem(lBox, olditem, i18n("Queue Length"),
