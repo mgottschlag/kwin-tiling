@@ -19,6 +19,7 @@
 */
 
 #include <qhbox.h>
+#include <qcursor.h>
 
 #include <klocale.h>
 #include <kapp.h>
