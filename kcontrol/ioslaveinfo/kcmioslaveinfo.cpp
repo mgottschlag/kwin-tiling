@@ -66,4 +66,4 @@ extern "C"
   }
 }
 
-#include "kcmioslaveinfo.moc.cpp"
+#include "kcmioslaveinfo.moc"
