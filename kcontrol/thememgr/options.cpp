@@ -6,7 +6,7 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qcheckbox.h>
-#include <qcombo.h>
+#include <qcombobox.h>
 
 #include <kapp.h>
 #include <kconfig.h>

@@ -26,7 +26,7 @@
 #include <config.h>
 
 #include <qlabel.h>
-#include <qcombo.h>
+#include <qcombobox.h>
 #include <qpixmap.h>
 #include <qlayout.h>
 #include <qfile.h>

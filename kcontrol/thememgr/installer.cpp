@@ -29,7 +29,7 @@
 #include <qradiobutton.h>
 #include <qcheckbox.h>
 #include <qfileinfo.h>
-#include <qmultilinedit.h>
+#include <qmultilineedit.h>
 
 #include <unistd.h>
 #include <stdlib.h>

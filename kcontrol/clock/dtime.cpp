@@ -22,8 +22,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <qmsgbox.h>
-#include <qcombo.h>
+#include <qmessagebox.h>
+#include <qcombobox.h>
 #include <qtimer.h>
 #include <qpushbutton.h>
 #include <qpainter.h>

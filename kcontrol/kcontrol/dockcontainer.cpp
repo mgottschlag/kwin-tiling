@@ -32,7 +32,7 @@
 #include "global.h"
 #include "modules.h"
 #include "proxywidget.h"
-#include <qobjcoll.h>
+#include <qobjectlist.h>
 #include <qaccel.h>
 
 DockContainer::DockContainer(QWidget *parent)
