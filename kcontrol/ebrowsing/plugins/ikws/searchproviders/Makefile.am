@@ -1,5 +1,8 @@
-
-services_DATA =	acronym.desktop \
+# List generated with ls -1 *.desktop | sed -e 's/^/\t\t/;s/$/ \\/'
+services_DATA = \
+		acronym.desktop \
+		alexa.desktop \
+		alexa_url.desktop \
 		alltheweb.desktop \
 		altavista.desktop \
 		appsy.desktop \
@@ -7,24 +10,33 @@ services_DATA =	acronym.desktop \
 		bugft.desktop \
 		bugno.desktop \
 		call.desktop \
+		citeseer.desktop \
 		cpan.desktop \
-		ctan.desktop \
 		ctan_cat.desktop \
+		ctan.desktop \
+		de2en.desktop \
 		dmoz.desktop \
 		docbook.desktop \
+		en2de.desktop \
+		en2es.desktop \
+		en2fr.desktop \
+		en2it.desktop \
+		es2en.desktop \
 		excite.desktop \
 		feedster.desktop \
 		foldoc.desktop \
+		fr2en.desktop \
 		freshmeat.desktop \
 		froogle.desktop \
-		google.desktop \
 		google_advanced.desktop \
+		google.desktop \
 		google_groups.desktop \
 		google_images.desktop \
 		google_lucky.desktop \
 		google_news.desktop \
 		hotbot.desktop \
 		imdb.desktop \
+		it2en.desktop \
 		jeeves.desktop \
 		kde.desktop \
 		kde_webcvs.desktop \
@@ -49,6 +61,7 @@ services_DATA =	acronym.desktop \
 		vivisimo.desktop \
 		voila.desktop \
 		webster.desktop \
-		whatis.desktop
+		whatis.desktop \
+		wordref.desktop
 
 servicesdir = $(kde_servicesdir)/searchproviders
