@@ -23,7 +23,6 @@
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
-#include <qgroupbox.h>
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qobjectlist.h>
@@ -34,14 +33,10 @@
 #include <qregexp.h>
 
 #include <knuminput.h>
-#include <kglobal.h>
 #include <kdialog.h>
-#include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
-#include <klocale.h>
 
-#include "klocalesample.h"
 #include "toplevel.h"
 #include "localemon.h"
 #include "localemon.moc"

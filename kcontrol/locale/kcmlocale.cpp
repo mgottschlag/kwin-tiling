@@ -23,34 +23,23 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <qdir.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qgroupbox.h>
 #include <qtooltip.h>
-#include <qiconset.h>
 #include <qwhatsthis.h>
-#include <qcombobox.h>
 #include <qpushbutton.h>
 
 #include <qhbox.h>
 
 #include <kdialog.h>
-#include <kcharsets.h>
-#include <kapplication.h>
 #include <kdebug.h>
-#include <kconfig.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
-#include <klocale.h>
-#include <kmessagebox.h>
 #include <kiconloader.h>
 
 #include <qlistbox.h>
 
 #include "klanguagebutton.h"
-#include "klocalesample.h"
 #include "kcmlocale.h"
 #include "kcmlocale.moc"
 #include "toplevel.h"

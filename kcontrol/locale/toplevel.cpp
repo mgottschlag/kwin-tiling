@@ -24,17 +24,12 @@
 #include <qvgroupbox.h>
 #include <qobjectlist.h>
 #include <qtabwidget.h>
-#include <qevent.h>
-#include <qwidgetintdict.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qcheckbox.h>
 
 #include <kconfig.h>
-#include <kcmodule.h>
 #include <kdebug.h>
-#include <kglobal.h>
-#include <klocale.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
 

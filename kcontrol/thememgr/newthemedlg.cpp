@@ -21,13 +21,10 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "config.h"
 
 #include <unistd.h>
 
 #include <qlabel.h>
-#include <qimage.h>
-#include <qlineedit.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qvbox.h>
@@ -38,7 +35,6 @@
 
 #include "newthemedlg.h"
 #include "themecreator.h"
-#include "global.h"
 
 
 //-----------------------------------------------------------------------------

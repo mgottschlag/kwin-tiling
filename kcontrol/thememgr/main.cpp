@@ -21,22 +21,17 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <kmessagebox.h>
 
 #include "themecreator.h"
 #include "installer.h"
-#include "global.h"
 #include "options.h"
 #include "version.h"
 
 #include <qlayout.h>
 #include <qtabwidget.h>
 
-#include <klocale.h>
 #include <kdebug.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
-#include <kapplication.h>
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
 #include <kcmodule.h>

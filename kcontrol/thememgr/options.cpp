@@ -1,15 +1,11 @@
 /*
  * Copyright (c) 1998 Stefan Taferner <taferner@kde.org>
  */
-#include <qframe.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qpushbutton.h>
 #include <qcheckbox.h>
-#include <qcombobox.h>
 
 #include <kapplication.h>
-#include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
 

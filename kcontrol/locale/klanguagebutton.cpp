@@ -23,7 +23,6 @@
 
 #define INCLUDE_MENUITEM_DEF
 #include <qpopupmenu.h>
-#include <qiconset.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 

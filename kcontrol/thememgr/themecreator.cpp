@@ -22,17 +22,9 @@
  */
 
 #include "themecreator.h"
-#include <kapplication.h>
-#include <klocale.h>
 #include <kdebug.h>
-#include <kconfigbackend.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
-#include <kconfig.h>
 
-#include <qstring.h>
-#include <qfile.h>
-#include <qfileinfo.h>
 #include <qdir.h>
 #include <qimage.h>
 

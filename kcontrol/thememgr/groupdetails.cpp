@@ -1,10 +1,7 @@
 /* (C) 1998 Stefan Taferner <taferner@kde.org>
  */
 #include <qlayout.h>
-#include <kapplication.h>
 #include "groupdetails.h"
-#include "theme.h"
-#include "global.h"
 #include <klocale.h>
 
 //-----------------------------------------------------------------------------

@@ -23,17 +23,12 @@
 
 #include <qcheckbox.h>
 #include <qlabel.h>
-#include <qlineedit.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
 #include <qcombobox.h>
-#include <qtl.h>
 #include <qvaluevector.h>
 
-#include <klocale.h>
-#include <kglobal.h>
 #include <kdialog.h>
-#include <kconfig.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>

@@ -20,15 +20,9 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-#include <qdir.h>
-#include <qbuttongroup.h>
-#include <qframe.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qradiobutton.h>
-#include <qcheckbox.h>
-#include <qfileinfo.h>
 #include <qmultilineedit.h>
 
 #include <unistd.h>
@@ -40,10 +34,8 @@
 #include "newthemedlg.h"
 
 #include <kbuttonbox.h>
-#include <klistbox.h>
 #include <kfiledialog.h>
 #include <klocale.h>
-#include <kglobal.h>
 #include <kglobalsettings.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>

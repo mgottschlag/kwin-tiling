@@ -30,26 +30,16 @@
 #include <assert.h>
 
 #include <qdir.h>
-#include <qfile.h>
-#include <qtextstream.h>
-#include <qfileinfo.h>
 #include <kapplication.h>
-#include <qpixmap.h>
 #include <qbitmap.h>
 #include <qpainter.h>
-#include <qwindowdefs.h>
 #include <qimage.h>
 #include <qregexp.h>
 #include <dcopclient.h>
 
-#include <kconfigbackend.h>
 #include <kmessagebox.h>
 #include <klocale.h>
-#include <kconfig.h>
-#include <kglobal.h>
 #include <kstandarddirs.h>
-#include <kdesktopfile.h>
-#include <kicontheme.h>
 #include <kipc.h>
 #include <kdebug.h>
 #include <kprocess.h>

@@ -31,8 +31,6 @@
 
 #include <stdio.h>
 
-#include <kglobal.h>
-#include <kstandarddirs.h>
 #include <klocale.h>
 
 #include "klocalesample.h"

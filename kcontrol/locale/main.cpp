@@ -20,7 +20,6 @@
  */
 
 #include "toplevel.h"
-#include <klocale.h>
 
 extern "C" {
   void *init_kcm_locale() {

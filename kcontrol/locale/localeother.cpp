@@ -26,9 +26,7 @@
 #include <qlabel.h>
 #include <qprinter.h>
 
-#include <kconfig.h>
 #include <kdialog.h>
-#include <kglobal.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
