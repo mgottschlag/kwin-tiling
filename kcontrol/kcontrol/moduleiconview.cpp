@@ -144,6 +144,8 @@ void ModuleIconView::fill()
     QString subdir = (*it);
 
     KServiceGroup::Ptr group = KServiceGroup::group(KCGlobal::baseGroup()+subdir+'/');
+    if (!group || !group->isValid())
+       continue;
 
     if (KCGlobal::iconSize() == Small)
     {
