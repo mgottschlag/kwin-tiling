@@ -42,7 +42,6 @@ public:
 
 
 protected slots:
-
 	void slotReload();
 	void slotStartService();
 	void slotStopService();
@@ -51,12 +50,17 @@ protected slots:
 	void slotItemChecked(QCheckListItem *item);
 	void getServiceStatus();
 
-private:
+        bool autoloadEnabled(KConfig *config, const QString &filename);
+        void setAutoloadEnabled(KConfig *config, const QString &filename, bool b);
 
+private:
 	KListView *_lvLoD;
 	KListView *_lvStartup;
 	QPushButton *_pbStart;
 	QPushButton *_pbStop;
+	
+	QString RUNNING;
+	QString NOT_RUNNING;
 };
 
 class CheckListItem : public QObject, public QCheckListItem

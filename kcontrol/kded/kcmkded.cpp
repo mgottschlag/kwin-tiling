@@ -36,7 +36,7 @@
 #include <kstandarddirs.h>
 
 #include <dcopclient.h>
-
+#include <dcopref.h>
 
 #include <kdebug.h>
 
@@ -55,6 +55,9 @@ static const bool KWRITED_DEFAULT = true;
 KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	KCModule( KDEDFactory::instance(), parent, name )
 {
+	RUNNING = i18n("Running")+" ";
+	NOT_RUNNING = i18n("Not running")+" ";
+	
 	QVBoxLayout *lay = new QVBoxLayout( this, 0, KDialog::spacingHint() );
 
 	QGroupBox *gb = new QVGroupBox(i18n("Load-on-Demand Services"), this );
@@ -67,8 +70,8 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	_lvLoD->addColumn(i18n("Service"));
 	_lvLoD->addColumn(i18n("Description"));
 	_lvLoD->addColumn(i18n("Status"));
-	_lvLoD->setResizeMode(QListView::LastColumn);
 	_lvLoD->setAllColumnsShowFocus(true);
+	_lvLoD->header()->setStretchEnabled(true, 1);
 
  	gb = new QVGroupBox(i18n("Startup Services"), this );
 	QWhatsThis::add(gb, i18n("This shows all KDE services that can be loaded "
@@ -81,8 +84,8 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	_lvStartup->addColumn(i18n("Service"));
 	_lvStartup->addColumn(i18n("Description"));
 	_lvStartup->addColumn(i18n("Status"));
-	_lvStartup->setResizeMode(QListView::LastColumn);
 	_lvStartup->setAllColumnsShowFocus(true);
+	_lvStartup->header()->setStretchEnabled(true, 2);
 
 	KButtonBox *buttonBox = new KButtonBox( gb, Horizontal);
 	_pbStart = buttonBox->addButton( i18n("Start"));
@@ -98,7 +101,33 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	load();
 }
 
+void setModuleGroup(KConfig *config, const QString &filename)
+{
+	QString module = filename;
+	int i = module.findRev('/');
+	if (i != -1)
+	   module = module.mid(i+1);
+	i = module.findRev('.');
+	if (i != -1)
+	   module = module.left(i);
+	
+	config->setGroup(QString("Module-%1").arg(module));
+}
+
+bool KDEDConfig::autoloadEnabled(KConfig *config, const QString &filename)
+{
+	setModuleGroup(config, filename);
+	return config->readBoolEntry("autoload", true);
+}
+
+void KDEDConfig::setAutoloadEnabled(KConfig *config, const QString &filename, bool b)
+{
+	setModuleGroup(config, filename);
+	return config->writeEntry("autoload", b);
+}
+
 void KDEDConfig::load() {
+	KConfig kdedrc("kdedrc", true, false);
 
 	_lvStartup->clear();
 	_lvLoD->clear();
@@ -118,17 +147,17 @@ void KDEDConfig::load() {
 			if ( file.readBoolEntry("X-KDE-Kded-autoload") ) {
 				clitem = new CheckListItem(_lvStartup, QString::null);
 				connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
-				clitem->setOn(!file.readBoolEntry("X-KDE-Kded-nostart",false));
+				clitem->setOn(autoloadEnabled(&kdedrc, *it));
 				item = clitem;
 				item->setText(1, file.readName());
 				item->setText(2, file.readComment());
-				item->setText(3, i18n("Not running"));
+				item->setText(3, NOT_RUNNING);
 				item->setText(4, file.readEntry("X-KDE-Library"));
 			}
 			else if ( file.readBoolEntry("X-KDE-Kded-load-on-demand") ) {
 				item = new QListViewItem(_lvLoD, file.readName());
 				item->setText(1, file.readComment());
-				item->setText(2, i18n("Not running"));
+				item->setText(2, NOT_RUNNING);
 				item->setText(4, file.readEntry("X-KDE-Library"));
 			}
 		}
@@ -147,7 +176,7 @@ void KDEDConfig::load() {
 		item = clitem;
 		item->setText(1, i18n("Alarm Daemon"));
 		item->setText(2, QString::null);
-		item->setText(3, i18n("Not running"));
+		item->setText(3, NOT_RUNNING);
 		item->setText(4, QString::fromLatin1(KALARMD));
 	}
 
@@ -164,7 +193,7 @@ void KDEDConfig::load() {
 		item = clitem;
 		item->setText(1, i18n("KWrite Daemon"));
 		item->setText(2, QString::null);
-		item->setText(3, i18n("Not running"));
+		item->setText(3, NOT_RUNNING);
 		item->setText(4, QString::fromLatin1(KWRITED));
 	}
 
@@ -179,6 +208,7 @@ void KDEDConfig::save() {
 			QString::fromLatin1( "kded/*.desktop" ),
 			true, true, files );
 
+	KConfig kdedrc("kdedrc", false, false);
 
 	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); it++ ) {
 
@@ -192,11 +222,7 @@ void KDEDConfig::save() {
 				item = static_cast<QCheckListItem *>(_lvStartup->findItem(file.readEntry("X-KDE-Library"),4));
 				if (item) {
 					// we found a match, now compare and see what changed
-					if (item->isOn())
-						file.writeEntry("X-KDE-Kded-nostart", false);
-					else
-						file.writeEntry("X-KDE-Kded-nostart", true);
-
+					setAutoloadEnabled(&kdedrc, *it, item->isOn());
 				}
 			}
 		}
@@ -217,6 +243,10 @@ void KDEDConfig::save() {
 		config.setGroup("General");
 		config.writeEntry("Autostart", item->isOn());
 	}
+	kdedrc.sync();
+	
+	DCOPRef( "kded", "kded" ).call( "reconfigure" );
+	QTimer::singleShot(0, this, SLOT(slotServiceRunningToggled()));
 }
 
 
@@ -272,21 +302,21 @@ void KDEDConfig::getServiceStatus()
 	}
 
 	for( QListViewItemIterator it( _lvLoD); it.current() != 0; ++it )
-                it.current()->setText(2, i18n("Not running"));
+                it.current()->setText(2, NOT_RUNNING);
 	for( QListViewItemIterator it( _lvStartup); it.current() != 0; ++it )
-                it.current()->setText(3, i18n("Not running"));
+                it.current()->setText(3, NOT_RUNNING);
 	for ( QCStringList::Iterator it = modules.begin(); it != modules.end(); ++it )
 	{
 		QListViewItem *item = _lvLoD->findItem(*it, 4);
 		if ( item )
 		{
-			item->setText(2, i18n("Running"));
+			item->setText(2, RUNNING);
 		}
 
 		item = _lvStartup->findItem(*it, 4);
 		if ( item )
 		{
-			item->setText(3, i18n("Running"));
+			item->setText(3, RUNNING);
 		}
 	}
 
@@ -295,7 +325,7 @@ void KDEDConfig::getServiceStatus()
 	if ( item )
 	{
 		bool running = kapp->dcopClient()->isApplicationRegistered(KALARMD);
-		item->setText(3, (running ? i18n("Running") : i18n("Not running")));
+		item->setText(3, (running ? RUNNING : NOT_RUNNING));
 	}
 
 	// Special case: kwrited
@@ -304,7 +334,7 @@ void KDEDConfig::getServiceStatus()
 		QListViewItem *item = _lvStartup->findItem(QString::fromLatin1(KWRITED), 4);
 		if ( item )
 		{
-			item->setText(3, i18n("Running"));
+			item->setText(3, RUNNING);
 		}
 	}
 }
@@ -323,11 +353,11 @@ void KDEDConfig::slotEvalItem(QListViewItem * item)
 	if (!item)
 		return;
 
-	if ( item->text(3) == i18n("Running") ) {
+	if ( item->text(3) == RUNNING ) {
 		_pbStart->setEnabled( false );
 		_pbStop->setEnabled( true );
 	}
-	else if ( item->text(3) == i18n("Not running") ) {
+	else if ( item->text(3) == NOT_RUNNING ) {
 		_pbStart->setEnabled( true );
 		_pbStop->setEnabled( false );
 	}
