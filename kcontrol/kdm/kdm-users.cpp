@@ -27,7 +27,6 @@
 #include <qwhatsthis.h>
 #include <qvgroupbox.h>
 #include <qpushbutton.h>
-#include <qdragobject.h>
 
 #include <kfiledialog.h>
 #include <kimageio.h>
@@ -36,6 +35,7 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
+#include <kurldrag.h>
 
 #include "kdm-users.h"
 
@@ -313,7 +313,7 @@ bool KDMUsersWidget::eventFilter(QObject *, QEvent *e)
 {
     if (e->type() == QEvent::DragEnter) {
 	QDragEnterEvent *ee = (QDragEnterEvent *) e;
-	ee->accept( QUriDrag::canDecode(ee) );
+	ee->accept( KURLDrag::canDecode(ee) );
         return true;
     }
 

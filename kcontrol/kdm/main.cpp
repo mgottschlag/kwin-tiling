@@ -24,12 +24,12 @@
 #include <config.h>
 
 #include <qlayout.h>
-#include <qdragobject.h>
 
 #include <kimageio.h>
 #include <kmessagebox.h>
 #include <kaboutdata.h>
 #include <kgenericfactory.h>
+#include <kurldrag.h>
 
 #include "kdm-appear.h"
 #include "kdm-font.h"
@@ -49,10 +49,10 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kdm, KDMFactory("kdmconfig") );
 
 KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 {
-    QStringList uris;
+    KURL::List uris;
 
-    if (QUriDrag::decodeToUnicodeUris(e, uris) && (uris.count() > 0)) {
-	KURL *url = new KURL(*uris.begin());
+    if (KURLDrag::decode(e, uris) && (uris.count() > 0)) {
+	KURL *url = new KURL(uris.first());
 
 	KImageIO::registerFormats();
 	if( KImageIO::canRead(KImageIO::type(url->fileName())) )

@@ -25,7 +25,6 @@
 
 
 #include <qbuttongroup.h>
-#include <qdragobject.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
@@ -41,6 +40,7 @@
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include <kiconloader.h>
+#include <kurldrag.h>
 
 #include "kdm-appear.h"
 
@@ -437,7 +437,7 @@ bool KDMAppearanceWidget::eventFilter(QObject *, QEvent *e)
 
 void KDMAppearanceWidget::iconLoaderDragEnterEvent(QDragEnterEvent *e)
 {
-  e->accept(QUriDrag::canDecode(e));
+  e->accept(KURLDrag::canDecode(e));
 }
 
 
