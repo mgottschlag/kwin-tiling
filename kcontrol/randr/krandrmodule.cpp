@@ -74,7 +74,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 		return;
 	}
 
-	QVBoxLayout* topLayout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
+	QVBoxLayout* topLayout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
 	QHBox* screenBox = new QHBox(this);
 	topLayout->addWidget(screenBox);
