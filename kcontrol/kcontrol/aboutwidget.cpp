@@ -32,14 +32,11 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
   : QVBox(parent, name)
 {
   KTextBrowser *browser = new KTextBrowser(this);
-  browser->setFrameStyle(QFrame::NoFrame);
-  
   QColorGroup clgrp = colorGroup();
   clgrp.setColor( QColorGroup::Base, clgrp.background() );
   browser->setPaperColorGroup( clgrp );
   browser->setFrameStyle(QFrame::NoFrame);
   browser->setFocusPolicy(NoFocus);
-  //browser->setHScrollBarMode( QScrollView::AlwaysOff );
   browser->setNotifyClick(true);
 
   QString wizard = locate("data", "kcontrol/pics/wizard.png");
@@ -70,7 +67,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name)
            "for example.") +
     "</p>"
     "<p>"
-    "<table cellpadding=2 cellspacing=1 border=0  width=100%>"
+    "<table cellpadding=0 cellspacing=0 border=0  width=100%>"
     "<tr>"
 
     "<td>"
