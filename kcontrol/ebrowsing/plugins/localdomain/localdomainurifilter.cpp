@@ -113,6 +113,6 @@ void LocalDomainURIFilter::configure()
 }
 
 K_EXPORT_COMPONENT_FACTORY( liblocaldomainurifilter,
-                            KGenericFactory<LocalDomainURIFilter>( "localdomainurifilter" ) )
+                            KGenericFactory<LocalDomainURIFilter>( "kcmkurifilt" ) )
 
 #include "localdomainurifilter.moc"

@@ -2,7 +2,7 @@
     Copyright (C) 1999 Simon Hausmann <hausmann@kde.org>
     Copyright (C) 2000 Yves Arrouye <yves@realnames.com>
     Copyright (C) 2002, 2003 Dawit Alemayehu <adawit@kde.org>
-    
+
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -32,7 +32,7 @@
 #include "kuriikwsfilter.h"
 
 typedef KGenericFactory<KAutoWebSearch> KAutoWebSearchFactory;
-K_EXPORT_COMPONENT_FACTORY (libkuriikwsfilter, KAutoWebSearchFactory("kuriikwsfilter"))
+K_EXPORT_COMPONENT_FACTORY (libkuriikwsfilter, KAutoWebSearchFactory("kcmkurifilt"))
 
 KAutoWebSearch::KAutoWebSearch(QObject *parent, const char *name, const QStringList&)
                :KURIFilterPlugin(parent, name ? name : "kuriikwsfilter", 1.0),
@@ -63,7 +63,7 @@ bool KAutoWebSearch::filterURI( KURIFilterData &data ) const
     {
       if ( KURISearchFilterEngine::self()->verbose() )
         kdDebug () << "Filtered URL: " << result << endl;
-      
+
       setFilteredURI( data, result );
       setURIType( data, KURIFilterData::NET_PROTOCOL );
       return true;
