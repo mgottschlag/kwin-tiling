@@ -13,6 +13,9 @@ KDE3.2 -> KDE3.3
 10. Default to width=normal, weight=medium if not set.
 11. Allow change of preview string.
 12. Allow zooming in/out of preview.
+13. Waterfall font preview.
+14. Use font preview part in the KControl module - less code duplication.
+15. Include simple fontviwer app - basically just an application wrapper for the viewpart.
 
 KDE3.1 -> KDE3.2
 ================
