@@ -43,6 +43,7 @@
 
 extern "C" {
     KCModule *create_style(QWidget *parent, const char *name) {
+        KGlobal::locale()->insertCatalogue(QString::fromLatin1("kcmdisplay"));
 	return new KGeneral(parent, name);
     }
 }
