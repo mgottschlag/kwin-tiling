@@ -842,14 +842,12 @@ void KBackground::slotWallpaper(const QString &wallpaper)
 
 void KBackground::slotBrowseWallpaper()
 {
-    static KURL startUrl;
-
     int desk = m_Desk;
     if (m_pGlobals->commonBackground())
         desk = 0;
     KBackgroundRenderer *r = m_Renderer[desk];
 
-    KURL url = KFileDialog::getOpenURL(startUrl.url(),
+    KURL url = KFileDialog::getOpenURL(QString::null,
                                        KImageIO::pattern(KImageIO::Reading),
                                        0,
                                        i18n("Select Wallpaper"));
@@ -859,7 +857,6 @@ void KBackground::slotBrowseWallpaper()
         KMessageBox::sorry(this, i18n("Currently only local wallpapers are allowed."));
         return;
     }
-    startUrl = url;
     QString file = url.path();
     if (file == r->wallpaper())
         return;
