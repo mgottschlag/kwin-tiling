@@ -145,7 +145,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsXConfigFileText->setFrameShadow( QLabel::Sunken );
     itsXConfigFileText->setText( i18n( "TextLabel2" ) );
     itsXConfigFileText->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
-    QWhatsThis::add(  itsXConfigFileText, i18n( "This is the configuration file used by X to\ndetermine where to look for fonts.\n\nFor normal (non-root) users, this file will\nusually be called:\n    ~/.kde/share/config/fonts/fontpaths\n\nFor root, on Linux with XFree86, this file will\nusually this will be called XF86Config.\n\nIf the file is not specified, is of an unrecognised\nformat, or the Font Installer cannot write to the\nspecified file, then you will not be able to  add,\nremove, or disable folders in the Advanced\nmode." ) );
+    QWhatsThis::add(  itsXConfigFileText, i18n( "This is the configuration file used by X to\ndetermine where to look for fonts.\n\nFor normal (non-root) users, this file will\nusually be called:\n    ~/.kde/share/config/fonts/fontpaths\n\nFor root, on Linux with XFree86, this file will\nusually be called XF86Config.\n\nIf the file is not specified, is of an unrecognized\nformat, or the Font Installer cannot write to the\nspecified file, then you will not be able to add,\nremove, or disable folders in the Advanced\nmode." ) );
 
     GroupBox4_3Layout->addWidget( itsXConfigFileText, 3, 1 );
 
@@ -178,7 +178,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsGhostscriptFileText->setFrameShadow( QLabel::Sunken );
     itsGhostscriptFileText->setText( i18n( "TextLabel2" ) );
     itsGhostscriptFileText->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
-    QWhatsThis::add(  itsGhostscriptFileText, i18n( "This file is used by Ghoscript to map the\nnames of fonts within Postscript files, to\nthe physical fonts located on disk.\n\n(Most UNIX/Linux programs produce\nPostscript files when printing - and these\nare passed onto Ghostscript, which does\nthe actual work.)\n\nFor normal (non-root) users, this file will\nusually be:\n    ~/.kde/share/config/fonts/Fontmap\n\n...and for root, usually the system-wide\nFontmap will be selected, and this would\nnormally be something like:\n    /usr/share/ghostscript/5.50/Fontmap" ) );
+    QWhatsThis::add(  itsGhostscriptFileText, i18n( "This file is used by Ghostscript to map the\nnames of fonts within Postscript files, to\nthe physical fonts located on disk.\n\n(Most UNIX/Linux programs produce\nPostscript files when printing - and these\nare passed on to Ghostscript, which does\nthe actual work.)\n\nFor normal (non-root) users, this file will\nusually be:\n    ~/.kde/share/config/fonts/Fontmap\n\n...and for root, usually the system-wide\nFontmap will be selected, and this would\nnormally be something like:\n    /usr/share/ghostscript/5.50/Fontmap" ) );
 
     CDirSettingsWidgetDataLayout->addWidget( itsGhostscriptFileText, 2, 1 );
 

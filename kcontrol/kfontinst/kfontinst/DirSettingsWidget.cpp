@@ -105,7 +105,7 @@ void CDirSettingsWidget::xConfigButtonPressed()
     {
         setXConfigFile(file);
         if(!CKfiGlobal::xcfg().ok())
-            KMessageBox::information(this, i18n("File format not recognised!\n"
+            KMessageBox::information(this, i18n("File format not recognized!\n"
                                                 "Advanced mode folder operations will not be available."));
     }
 }

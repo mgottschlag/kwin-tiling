@@ -104,12 +104,12 @@ CXftConfigRulesData::CXftConfigRulesData( QWidget* parent,  const char* name, bo
     itsIncludesTabLayout->setMargin( 11 );
 
     itsIncludes = new CXftConfigIncludesWidget( itsIncludesTab, "itsIncludes" );
-    QWhatsThis::add(  itsIncludes, i18n( "List here any other Xft files that you want included\nfrom your Xft file.\n\nNOTE: That Xft will complain if any files from this\nlist are not found." ) );
+    QWhatsThis::add(  itsIncludes, i18n( "List here any other Xft files that you want included\nfrom your Xft file.\n\nNOTE: Xft will complain if any files from this\nlist are not found." ) );
 
     itsIncludesTabLayout->addWidget( itsIncludes, 0, 0 );
 
     itsIncludeIfs = new CXftConfigIncludesWidget( itsIncludesTab, "itsIncludeIfs" );
-    QWhatsThis::add(  itsIncludeIfs, i18n( "List here any other Xft files that you want included\nfrom your Xft file.\n\nNOTE: That Xft will *not* complain if any files from\nthis list are not found." ) );
+    QWhatsThis::add(  itsIncludeIfs, i18n( "List here any other Xft files that you want included\nfrom your Xft file.\n\nNOTE: Xft will *not* complain if any files from\nthis list are not found." ) );
 
     itsIncludesTabLayout->addWidget( itsIncludeIfs, 1, 0 );
     TabWidget2->insertTab( itsIncludesTab, i18n( "&Include Directives" ) );

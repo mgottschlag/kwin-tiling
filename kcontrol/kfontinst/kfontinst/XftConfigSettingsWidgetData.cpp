@@ -36,7 +36,7 @@ CXftConfigSettingsWidgetData::CXftConfigSettingsWidgetData( QWidget* parent,  co
     itsUseSubPixelHintingCheck = new QCheckBox( this, "itsUseSubPixelHintingCheck" );
     itsUseSubPixelHintingCheck->setEnabled( FALSE );
     itsUseSubPixelHintingCheck->setText( i18n( "&Use sub-pixel hinting" ) );
-    QWhatsThis::add(  itsUseSubPixelHintingCheck, i18n( "Subpixel hinting uses colours instead of grey\npixels to do the anti-aliasing.\n\nThis may be of use if you have an LCD screen." ) );
+    QWhatsThis::add(  itsUseSubPixelHintingCheck, i18n( "Subpixel hinting uses colors instead of gray\npixels to do the anti-aliasing.\n\nThis may be of use if you have an LCD screen." ) );
 
     CXftConfigSettingsWidgetDataLayout->addMultiCellWidget( itsUseSubPixelHintingCheck, 4, 4, 0, 2 );
 
@@ -76,7 +76,7 @@ CXftConfigSettingsWidgetData::CXftConfigSettingsWidgetData( QWidget* parent,  co
     itsConfigFileText->setFrameShadow( QLabel::Sunken );
     itsConfigFileText->setText( i18n( "TextLabel2" ) );
     itsConfigFileText->setAlignment( int( QLabel::WordBreak | QLabel::AlignVCenter | QLabel::AlignLeft ) );
-    QWhatsThis::add(  itsConfigFileText, i18n( "This is the configuration file used by the XRender\nextension. Under Linux/XFree86 this file will usually\nbe either; ~/.xftconfig - for personal settings - or /usr/X11R6/lib/X11/XftConfig - for system-wide\nsettings (not usually on \"root\" can alter this file)." ) );
+    QWhatsThis::add(  itsConfigFileText, i18n( "This is the configuration file used by the XRender\nextension. Under Linux/XFree86 this file will usually\nbe either; ~/.xftconfig - for personal settings - or /usr/X11R6/lib/X11/XftConfig - for system-wide\nsettings (usually only \"root\" can alter this file)." ) );
 
     CXftConfigSettingsWidgetDataLayout->addMultiCellWidget( itsConfigFileText, 2, 2, 2, 4 );
 

@@ -71,7 +71,7 @@
             </property>
             <property>
                 <name>whatsThis</name>
-                <string>Subpixel hinting uses colours instead of grey
+                <string>Subpixel hinting uses colors instead of gray
 pixels to do the anti-aliasing.
 
 This may be of use if you have an LCD screen.</string>
@@ -195,7 +195,7 @@ This may be of use if you have an LCD screen.</string>
                 <string>This is the configuration file used by the XRender
 extension. Under Linux/XFree86 this file will usually
 be either; ~/.xftconfig - for personal settings - or /usr/X11R6/lib/X11/XftConfig - for system-wide
-settings (not usually on "root" can alter this file).</string>
+settings (usually only "root" can alter this file).</string>
             </property>
             <property>
                 <name>wordwrap</name>

@@ -69,7 +69,7 @@ CSysCfgSettingsWidgetData::CSysCfgSettingsWidgetData( QWidget* parent,  const ch
     itsAfmEncodingCombo = new QComboBox( FALSE, GroupBox4_2, "itsAfmEncodingCombo" );
     itsAfmEncodingCombo->setEnabled( FALSE );
     itsAfmEncodingCombo->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, itsAfmEncodingCombo->sizePolicy().hasHeightForWidth() ) );
-    QWhatsThis::add(  itsAfmEncodingCombo, i18n( "AFMs (Asobe Font Metrics) are files that\nmay be used by programs (such as\nStarOffice) to obtain detailed \"metrics\"\n(e.g. sizes) of each character in a font -\nso that it may be displayed/printed\ncorrectly. \n\nAFMs may only contain one encoding,\nso here you can specify which one\nshould be used." ) );
+    QWhatsThis::add(  itsAfmEncodingCombo, i18n( "AFMs (Adobe Font Metrics) are files that\nmay be used by programs (such as\nStarOffice) to obtain detailed \"metrics\"\n(e.g. sizes) of each character in a font -\nso that it may be displayed/printed\ncorrectly. \n\nAFMs may only contain one encoding,\nso here you can specify which one\nshould be used." ) );
 
     GroupBox4_2Layout->addMultiCellWidget( itsAfmEncodingCombo, 2, 2, 1, 2 );
 

@@ -161,7 +161,7 @@
                     </property>
                     <property>
                         <name>whatsThis</name>
-                        <string>AFMs (Asobe Font Metrics) are files that
+                        <string>AFMs (Adobe Font Metrics) are files that
 may be used by programs (such as
 StarOffice) to obtain detailed "metrics"
 (e.g. sizes) of each character in a font -

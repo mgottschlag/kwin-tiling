@@ -157,7 +157,7 @@ void CDiskFontListWidget::rescan(bool advancedMode)
 void CDiskFontListWidget::install()
 {
     bool    dir=getNumSelectedDirs() ? true : false;
-    QString q(dir ? i18n("Copy slected folder (and ALL of its contents) to:\n") : i18n("Copy selected fonts to:\n"));
+    QString q(dir ? i18n("Copy selected folder (and ALL of its contents) to:\n") : i18n("Copy selected fonts to:\n"));
 
     q+=i18n("X11 fonts folder");
     if(itsAdvancedMode)

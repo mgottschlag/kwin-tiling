@@ -513,11 +513,11 @@ usually be called:
     ~/.kde/share/config/fonts/fontpaths
 
 For root, on Linux with XFree86, this file will
-usually this will be called XF86Config.
+usually be called XF86Config.
 
-If the file is not specified, is of an unrecognised
+If the file is not specified, is of an unrecognized
 format, or the Font Installer cannot write to the
-specified file, then you will not be able to  add,
+specified file, then you will not be able to add,
 remove, or disable folders in the Advanced
 mode.</string>
                     </property>
@@ -628,13 +628,13 @@ of Ghostscript.</string>
             </property>
             <property>
                 <name>whatsThis</name>
-                <string>This file is used by Ghoscript to map the
+                <string>This file is used by Ghostscript to map the
 names of fonts within Postscript files, to
 the physical fonts located on disk.
 
 (Most UNIX/Linux programs produce
 Postscript files when printing - and these
-are passed onto Ghostscript, which does
+are passed on to Ghostscript, which does
 the actual work.)
 
 For normal (non-root) users, this file will

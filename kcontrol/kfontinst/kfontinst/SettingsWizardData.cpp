@@ -126,7 +126,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     TextLabel1_2_2->setFrameShape( QLabel::Panel );
     TextLabel1_2_2->setFrameShadow( QLabel::Sunken );
     TextLabel1_2_2->setMargin( 10 );
-    TextLabel1_2_2->setText( i18n( "If you wish to enable configuration of StarOffice from KFontinst, then select the \"Configure\" option, and enter the location of the main StarOffice folder.\n\nNOTE: This is not needed for OpenOffice, and StarOffice version 6 onwards. The only thing that these two require is the exsistence of AFM files for Type1 fonts. This can be set using the \"System\" part of the \"Settings\" tab when the module has loaded." ) );
+    TextLabel1_2_2->setText( i18n( "If you wish to enable configuration of StarOffice from KFontinst, then select the \"Configure\" option, and enter the location of the main StarOffice folder.\n\nNOTE: This is not needed for OpenOffice, and StarOffice version 6 onwards. The only thing that these two require is the existence of AFM files for Type1 fonts. This can be set using the \"System\" part of the \"Settings\" tab when the module has loaded." ) );
     TextLabel1_2_2->setAlignment( int( QLabel::WordBreak | QLabel::AlignTop | QLabel::AlignLeft ) );
 
     itsStarOfficePageLayout->addWidget( TextLabel1_2_2, 0, 0 );

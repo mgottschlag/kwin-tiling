@@ -470,11 +470,11 @@ QString CTtf::toString(EStatus status)
         case NO_CMAP:
             return i18n("No 'character map' table");
         case NO_SUITABLE_TABLE:
-            return i18n("No suitable 'postcript' table");
+            return i18n("No suitable 'postscript' table");
         case USES_MAC_STANDARD:
             return i18n("Uses MAC standard table");
         case CONFIG_FILE_NOT_OPENED:
-            return i18n("PS name maping file not found, or empty"); 
+            return i18n("PS name mapping file not found, or empty"); 
         case NO_REMAP_GLYPHS:
             return i18n("Font does not contain any glyphs to remap");
         case FILE_FORMAT_ERROR:

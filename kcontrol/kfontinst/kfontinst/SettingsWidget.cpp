@@ -55,7 +55,7 @@ CSettingsWidget::CSettingsWidget(QWidget *parent, const char *name)
     topLayout->addWidget(janus, 0, 0); 
 
     // Appearance page...
-    frame=janus->addPage(i18n("Appearance"), i18n("Customise the look & operation"),	
+    frame=janus->addPage(i18n("Appearance"), i18n("Customize the look & operation"),	
                          KGlobal::iconLoader()->loadIcon("appearance", KIcon::Desktop));
     layout=new QVBoxLayout(frame, 0);
 

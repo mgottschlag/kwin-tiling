@@ -416,7 +416,7 @@ QString CAfmCreator::statusToStr(EStatus val)
         case COLD_NOT_CREATE_FILE:
             return i18n("Could not create file");
         default:
-            return i18n("Uknown");
+            return i18n("Unknown");
     }
 }
 #include "AfmCreator.moc"

@@ -101,7 +101,7 @@ void CXftConfigSettingsWidget::fileButtonPressed()
             }
             else
                 if(!CMisc::fWritable(file))
-                    KMessageBox::information(this, i18n("File is not writable!\n"
+                    KMessageBox::information(this, i18n("File is not writeable!\n"
                                                         "Modifications will not be possible."));
         }
 

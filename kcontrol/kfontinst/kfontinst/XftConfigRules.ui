@@ -290,7 +290,7 @@
                             <string>List here any other Xft files that you want included
 from your Xft file.
 
-NOTE: That Xft will complain if any files from this
+NOTE: Xft will complain if any files from this
 list are not found.</string>
                         </property>
                     </widget>
@@ -305,7 +305,7 @@ list are not found.</string>
                             <string>List here any other Xft files that you want included
 from your Xft file.
 
-NOTE: That Xft will *not* complain if any files from
+NOTE: Xft will *not* complain if any files from
 this list are not found.</string>
                         </property>
                     </widget>

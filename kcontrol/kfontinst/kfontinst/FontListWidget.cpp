@@ -470,7 +470,7 @@ void CFontListWidget::scanDir(const QString &dir, int sub)
             QFileInfo             *fInfo;
 
             if(0==sub && files->count())
-                progressInit(i18n("Scaning folder %1:").arg(dir), 0);
+                progressInit(i18n("Scanning folder %1:").arg(dir), 0);
  
             for(; NULL!=(fInfo=it.current()); ++it)
                 if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
