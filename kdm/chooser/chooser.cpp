@@ -65,6 +65,8 @@ static KCmdLineOptions options[] = {
     KCmdLineLastOption
 };
 
+extern char *savhome;
+
 int main(int argc, char **argv)
 {
     /* for QSettings */
@@ -79,6 +81,8 @@ int main(int argc, char **argv)
   okay:
     if (setenv( "HOME", qtrc, 1 ))
 	Die( EX_UNMANAGE_DPY, "Cannot set $HOME\n" );
+    if (!(savhome = strdup (qtrc)))
+	Die( EX_UNMANAGE_DPY, "Cannot save $HOME\n" );
 
     KApplication::disableAutoDcopRegistration();
 

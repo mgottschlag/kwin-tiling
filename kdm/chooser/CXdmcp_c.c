@@ -61,12 +61,18 @@ int _XdmcpWriteCARD16(XdmcpBuffer *a, CARD16 b)
 int _XdmcpWriteHeader(XdmcpBuffer *a, XdmcpHeader *b)
 { return XdmcpWriteHeader (a, b); }
 
+char *savhome;
+
 void Exit(int ret)
 {
     char buf[128];
 
-    sprintf (buf, "rm -rf %s", getenv ("HOME"));
-    system (buf);
+    if (strcmp (savhome, getenv ("HOME")) || memcmp (savhome, "/tmp/", 5))
+	fprintf (stderr, "Internal error: memory corruption detected\n");
+    else {
+	sprintf (buf, "rm -rf %s", savhome);
+	system (buf);
+    }
     exit (ret);
 }
 
