@@ -28,7 +28,6 @@
 #include <klocale.h>
 #include <kdebug.h>
 #include <kdialog.h>
-#include <kglobalsettings.h>
 #include <kiconloader.h>
 
 #include "dockcontainer.h"
@@ -60,8 +59,8 @@ ModuleTitle::ModuleTitle( QWidget *parent, const char *name )
   m_icon = new QLabel( this );
   m_name = new QLabel( this );
 
-  QFont font = KGlobalSettings::generalFont();
-  font.setPointSize( font.pointSize()+2 );
+  QFont font = m_name->font();
+  font.setPointSize( font.pointSize()+1 );
   font.setBold( true );
   m_name->setFont( font );
 
@@ -74,9 +73,11 @@ void ModuleTitle::showTitleFor( ConfigModule *config )
   if ( !config )
     return;
 
-  QWhatsThis::add( this, QString::null );
+  QWhatsThis::remove( this );
   QWhatsThis::add( this, config->comment() );
-  m_icon->setPixmap( BarIcon(  config->icon() ) );
+  KIconLoader *loader = KGlobal::instance()->iconLoader();
+  QPixmap icon = loader->loadIcon( config->icon(), KIcon::NoGroup, 22 );
+  m_icon->setPixmap( icon );
   m_name->setText( config->moduleName() );
 
   show();
