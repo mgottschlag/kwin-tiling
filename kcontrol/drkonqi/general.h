@@ -22,9 +22,11 @@
 #define __general_h__
 
 #include <kcmodule.h>
-#include <kconfig.h>
-#include <qcombobox.h>
-#include <qcheckbox.h>
+
+class KConfig;
+class QCheckBox;
+class QListBox;
+class QComboBox;
 
 class KDrKonqiGeneral : public KCModule
 {

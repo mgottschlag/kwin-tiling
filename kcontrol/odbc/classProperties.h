@@ -2,14 +2,8 @@
 #define classProperties_included
 
 #include <qdialog.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qpixmap.h>
-#include <qlistbox.h>
-#include <qcombobox.h>
-#include <qtooltip.h>
+
+class QComboBox;
 
 #include <odbcinstext.h>
 
@@ -27,8 +21,6 @@ public:
 
 private:
 	int					nProperties;
-	QBoxLayout 			*pTopLayout;
-	QGridLayout			*pGridLayout;
 	HODBCINSTPROPERTY	hFirstProperty;
 
 	void setCurrentItem( QComboBox *pComboBox, char *pszItem );

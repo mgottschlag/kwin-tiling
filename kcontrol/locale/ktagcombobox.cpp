@@ -41,8 +41,8 @@ KTagComboBox::~KTagComboBox ()
 
 KTagComboBox::KTagComboBox (QWidget * parent, const char *name)
   : QComboBox(parent, name),
-  old_popup(0),
-  popup(0)
+	popup(0),
+	old_popup(0)
 {
   tags = new QStringList;
 

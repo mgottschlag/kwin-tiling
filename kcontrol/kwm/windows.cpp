@@ -25,6 +25,11 @@
 #include <qspinbox.h>
 #include <qslider.h>
 #include <qwhatsthis.h>
+#include <qbuttongroup.h>
+#include <qcheckbox.h>
+#include <qlabel.h>
+#include <qcombobox.h>
+#include <qlcdnumber.h>
 
 #include <kapp.h>
 #include <klocale.h>

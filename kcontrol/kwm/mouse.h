@@ -22,7 +22,7 @@
 #ifndef __KKWMMOUSECONFIG_H__
 #define __KKWMMOUSECONFIG_H__
 
-#include <qcombobox.h>
+class QComboBox;
 
 #include <kcmodule.h>
 

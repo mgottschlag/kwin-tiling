@@ -22,6 +22,8 @@
 #include <qlistbox.h>
 #include <qvgroupbox.h>
 #include <qvbox.h>
+#include <qcheckbox.h>
+#include <qcombobox.h>
 
 #include <kconfig.h>
 #include <kglobal.h>

@@ -11,17 +11,17 @@
 #ifndef __KADVCONFIG_H__
 #define __KADVCONFIG_H__
 
-#include <qlabel.h>
-#include <qframe.h>
-#include <qpainter.h>
-#include <qgroupbox.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qcombobox.h>
-#include <qlineedit.h>
-#include <qlistbox.h>
+class QLabel;
+class QFrame;
+class QPainter;
+class QGroupBox;
+class QPushButton;
+class QCheckBox;
+class QComboBox;
+class QLineEdit;
+class QListBox;
+class KIconLoader;
 
-#include <kiconloader.h>
 #include <kcontrol.h>
 
 // kwm configs and values

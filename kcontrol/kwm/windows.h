@@ -24,19 +24,14 @@
 #ifndef __KWINDOWCONFIG_H__
 #define __KWINDOWCONFIG_H__
 
-#include <qlcdnumber.h>
-#include <qlabel.h>
-#include <qdialog.h>
-#include <qmessagebox.h>
-#include <qradiobutton.h>
-#include <qcheckbox.h>
-#include <qbuttongroup.h>
-#include <qpushbutton.h>
-
-#include <qcombobox.h>   //CT 31jan98
 #include <kcmodule.h>
 
-
+class QRadioButton;
+class QCheckBox;
+class QPushButton;
+class QComboBox;
+class QLCDNumber;
+class QLabel;
 class QSlider;
 class QButtonGroup;
 class QSpinBox;

@@ -24,6 +24,12 @@
 #include "kcmsambastatistics.moc"
 
 #include <qlayout.h>
+#include <qlistview.h>
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qcheckbox.h>
+#include <qcombobox.h>
+#include <qpushbutton.h>
 
 #include <kapp.h>
 #include <kglobal.h>
@@ -38,83 +44,83 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    :QWidget (parent, name)
    ,configFile(config)
    ,dataList(0)
-   ,viewStatistics(this)
-   ,connectionsL(i18n("Connections: 0"),this)
-   ,filesL(i18n("File accesses: 0"),this)
-   ,eventCb(FALSE,this)
-   ,eventL(&eventCb,i18n("Event: "),this)
-   ,serviceLe(this)
-   ,serviceL(&serviceLe,i18n("Service/File:"),this)
-   ,hostLe(this)
-   ,hostL(&hostLe,i18n("Host/User:"),this)
-   ,calcButton(i18n("Search"),this)
-   ,clearButton(i18n("Clear results"),this)
-   ,expandedInfoCb(i18n("Show expanded service info"),this)
-   ,expandedUserCb(i18n("Show expanded host info"),this)
-
    ,connectionsCount(0)
    ,filesCount(0)
    ,calcCount(0)
 {
-   viewStatistics.setAllColumnsShowFocus(TRUE);
-   viewStatistics.setFocusPolicy(QWidget::ClickFocus);
-   
-   viewStatistics.addColumn(i18n("Nr"),50);
-   viewStatistics.addColumn(i18n("Event"),150);
-   viewStatistics.addColumn(i18n("Service/File"),210);
-   viewStatistics.addColumn(i18n("Host/User"),100);
-   viewStatistics.addColumn(i18n("Hits"),70);
-   //viewStatistics.addColumn(i18n("Percentage"),100);
+  viewStatistics = new QListView( this );
+  connectionsL = new QLabel( i18n( "Connections: 0" ), this );
+  filesL = new QLabel( i18n( "File accesses: 0" ), this );
+  eventCb = new QComboBox( false, this );
+  eventL = new QLabel( eventCb, i18n( "Event: " ), this );
+  serviceLe = new QLineEdit( this );
+  serviceL = new QLabel( serviceLe, i18n( "Service/File:" ), this );
+  hostLe = new QLineEdit( this );
+  hostL = new QLabel( hostLe, i18n( "Host/User:" ), this );
+  calcButton = new QPushButton( i18n( "Search" ), this );
+  clearButton = new QPushButton( i18n( "Clear results" ), this );
+  expandedInfoCb = new QCheckBox( i18n( "Show expanded service info" ), this );
+  expandedUserCb = new QCheckBox( i18n( "Show expanded host info" ), this );
 
-   eventCb.insertItem(i18n("Connection"));
-   eventCb.insertItem(i18n("File Access"));
+   viewStatistics->setAllColumnsShowFocus(TRUE);
+   viewStatistics->setFocusPolicy(QWidget::ClickFocus);
    
-   expandedInfoCb.setChecked(FALSE);
-   expandedUserCb.setChecked(FALSE);
+   viewStatistics->addColumn(i18n("Nr"),50);
+   viewStatistics->addColumn(i18n("Event"),150);
+   viewStatistics->addColumn(i18n("Service/File"),210);
+   viewStatistics->addColumn(i18n("Host/User"),100);
+   viewStatistics->addColumn(i18n("Hits"),70);
+   //viewStatistics->addColumn(i18n("Percentage"),100);
+
+   eventCb->insertItem(i18n("Connection"));
+   eventCb->insertItem(i18n("File Access"));
+   
+   expandedInfoCb->setChecked(FALSE);
+   expandedUserCb->setChecked(FALSE);
    clearStatistics();
-   serviceLe.setText("*");
-   hostLe.setText("*");
+   serviceLe->setText("*");
+   hostLe->setText("*");
    
-   viewStatistics.setMinimumSize(425,200);
-   connectionsL.setMinimumSize(connectionsL.sizeHint());
-   filesL.setMinimumSize(filesL.sizeHint());
-   eventL.setMinimumSize(eventL.sizeHint());
-   eventCb.setMinimumSize(eventCb.sizeHint());
-   hostL.setMinimumSize(hostL.sizeHint());
-   hostLe.setMinimumSize(150,hostLe.sizeHint().height());
-   serviceL.setMinimumSize(serviceL.sizeHint());
-   serviceLe.setMinimumSize(150,serviceLe.sizeHint().height());
-   calcButton.setMinimumSize(calcButton.sizeHint());
-   clearButton.setMinimumSize(clearButton.sizeHint());
-   expandedInfoCb.setMinimumSize(expandedInfoCb.sizeHint());
-   expandedUserCb.setMinimumSize(expandedUserCb.sizeHint());
+   viewStatistics->setMinimumSize(425,200);
+   connectionsL->setMinimumSize(connectionsL->sizeHint());
+   filesL->setMinimumSize(filesL->sizeHint());
+   eventL->setMinimumSize(eventL->sizeHint());
+   eventCb->setMinimumSize(eventCb->sizeHint());
+   hostL->setMinimumSize(hostL->sizeHint());
+   hostLe->setMinimumSize(150,hostLe->sizeHint().height());
+   serviceL->setMinimumSize(serviceL->sizeHint());
+   serviceLe->setMinimumSize(150,serviceLe->sizeHint().height());
+   calcButton->setMinimumSize(calcButton->sizeHint());
+   clearButton->setMinimumSize(clearButton->sizeHint());
+   expandedInfoCb->setMinimumSize(expandedInfoCb->sizeHint());
+   expandedUserCb->setMinimumSize(expandedUserCb->sizeHint());
    
    QVBoxLayout *topLayout=new QVBoxLayout(this);
    topLayout->setMargin(SCREEN_XY_OFFSET);
    topLayout->setSpacing(10);
-   topLayout->addWidget(&viewStatistics,1);
+   topLayout->addWidget(viewStatistics,1);
    QGridLayout *subLayout=new QGridLayout(topLayout,4,3);
    subLayout->setColStretch(1,1);
    subLayout->setColStretch(2,1);
    
    QHBoxLayout *twoButtonsLayout=new QHBoxLayout;
-   twoButtonsLayout->addWidget(&calcButton,1);
-   twoButtonsLayout->addWidget(&clearButton,1);
+   twoButtonsLayout->addWidget(calcButton,1);
+   twoButtonsLayout->addWidget(clearButton,1);
    
-   subLayout->addWidget(&connectionsL,0,0);
-   subLayout->addWidget(&filesL,0,1);
-   subLayout->addWidget(&eventL,1,0);
-   subLayout->addWidget(&serviceL,1,1);
-   subLayout->addWidget(&hostL,1,2);
-   subLayout->addWidget(&eventCb,2,0);
-   subLayout->addWidget(&serviceLe,2,1);
-   subLayout->addWidget(&hostLe,2,2);
+   subLayout->addWidget(connectionsL,0,0);
+   subLayout->addWidget(filesL,0,1);
+   subLayout->addWidget(eventL,1,0);
+   subLayout->addWidget(serviceL,1,1);
+   subLayout->addWidget(hostL,1,2);
+   subLayout->addWidget(eventCb,2,0);
+   subLayout->addWidget(serviceLe,2,1);
+   subLayout->addWidget(hostLe,2,2);
    subLayout->addLayout(twoButtonsLayout,3,0);
-   subLayout->addWidget(&expandedInfoCb,3,1);
-   subLayout->addWidget(&expandedUserCb,3,2);
+   subLayout->addWidget(expandedInfoCb,3,1);
+   subLayout->addWidget(expandedUserCb,3,2);
 
-   connect(&clearButton,SIGNAL(clicked()),this,SLOT(clearStatistics()));
-   connect(&calcButton,SIGNAL(clicked()),this,SLOT(calculate()));
+   connect(clearButton,SIGNAL(clicked()),this,SLOT(clearStatistics()));
+   connect(calcButton,SIGNAL(clicked()),this,SLOT(calculate()));
    setListInfo(0,0,0);
 };
 
@@ -123,8 +129,8 @@ void StatisticsView::setListInfo(QListView *list, int nrOfFiles, int nrOfConnect
    dataList=list;
    filesCount=nrOfFiles;
    connectionsCount=nrOfConnections;
-   connectionsL.setText(i18n("Connections: %1").arg(KGlobal::locale()->formatNumber(connectionsCount)));
-   filesL.setText(i18n("File accesses: %1").arg(KGlobal::locale()->formatNumber(filesCount)));
+   connectionsL->setText(i18n("Connections: %1").arg(KGlobal::locale()->formatNumber(connectionsCount)));
+   filesL->setText(i18n("File accesses: %1").arg(KGlobal::locale()->formatNumber(filesCount)));
    clearStatistics();
 };
 
@@ -133,14 +139,14 @@ void StatisticsView::calculate()
    if (dataList==0) return;
    QApplication::setOverrideCursor(waitCursor);
    int connCount(0);
-   if (eventCb.currentText()==i18n("Connection"))
+   if (eventCb->currentText()==i18n("Connection"))
       connCount=1;
    //something has to be counted exactly
-   if ((expandedInfoCb.isChecked()) || (expandedUserCb.isChecked()))
+   if ((expandedInfoCb->isChecked()) || (expandedUserCb->isChecked()))
    {
       SambaLog sLog;
-      QRegExp rService(serviceLe.text(),FALSE,TRUE);
-      QRegExp rHost(hostLe.text(),FALSE,TRUE);
+      QRegExp rService(serviceLe->text(),FALSE,TRUE);
+      QRegExp rHost(hostLe->text(),FALSE,TRUE);
       QString item2, item3;
       QListViewItem* item=dataList->firstChild();
       while (item!=0)
@@ -150,10 +156,10 @@ void StatisticsView::calculate()
             if ((QString(item->text(1)).contains(i18n("CONNECTION OPENED")))
                 && (QString(item->text(2)).contains(rService)) && (QString(item->text(3)).contains(rHost)))
             {
-               if (expandedInfoCb.isChecked()) item2=item->text(2);
-               else item2=serviceLe.text();
-               if (expandedUserCb.isChecked()) item3=item->text(3);
-               else item3=hostLe.text();
+               if (expandedInfoCb->isChecked()) item2=item->text(2);
+               else item2=serviceLe->text();
+               if (expandedUserCb->isChecked()) item3=item->text(3);
+               else item3=hostLe->text();
                sLog.addItem(item2,item3);
                //count++;
             };
@@ -163,10 +169,10 @@ void StatisticsView::calculate()
             if ((QString(item->text(1)).contains(i18n("FILE OPENED")))
                 && (QString(item->text(2)).contains(rService)) && (QString(item->text(3)).contains(rHost)))
             {
-               if (expandedInfoCb.isChecked()) item2=item->text(2);
-               else item2=serviceLe.text();
-               if (expandedUserCb.isChecked()) item3=item->text(3);
-               else item3=hostLe.text();
+               if (expandedInfoCb->isChecked()) item2=item->text(2);
+               else item2=serviceLe->text();
+               if (expandedUserCb->isChecked()) item3=item->text(3);
+               else item3=hostLe->text();
                sLog.addItem(item2,item3);
                
             };
@@ -182,7 +188,7 @@ void StatisticsView::calculate()
             number.sprintf("%6d",calcCount);
             QString hits("");
             hits.sprintf("%7d",tmpStr->count);
-            new QListViewItem(&viewStatistics,number,eventCb.currentText(),tmpItem->name,tmpStr->name,hits);
+            new QListViewItem(viewStatistics,number,eventCb->currentText(),tmpItem->name,tmpStr->name,hits);
          };
       };
    }
@@ -191,8 +197,8 @@ void StatisticsView::calculate()
    {
       calcCount++;
       int count(0);
-      QRegExp rService(serviceLe.text(),FALSE,TRUE);
-      QRegExp rHost(hostLe.text(),FALSE,TRUE);
+      QRegExp rService(serviceLe->text(),FALSE,TRUE);
+      QRegExp rHost(hostLe->text(),FALSE,TRUE);
       QListViewItem* item=dataList->firstChild();
       while (item!=0)
       {
@@ -214,14 +220,14 @@ void StatisticsView::calculate()
       number.sprintf("%6d",calcCount);
       QString hits("");
       hits.sprintf("%7d",count);
-      new QListViewItem(&viewStatistics,number,eventCb.currentText(),serviceLe.text(),hostLe.text(),hits);
+      new QListViewItem(viewStatistics,number,eventCb->currentText(),serviceLe->text(),hostLe->text(),hits);
    };
    QApplication::restoreOverrideCursor();
 };
 
 void StatisticsView::clearStatistics()
 {
-   viewStatistics.clear();
+   viewStatistics->clear();
    calcCount=0;
 };
 

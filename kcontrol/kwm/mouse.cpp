@@ -25,6 +25,7 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kdialog.h>
+#include <qcombobox.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>

@@ -6,7 +6,7 @@ classProperties::classProperties( QWidget* parent, const char* name, HODBCINSTPR
 {
     HODBCINSTPROPERTY 	hProperty;
 	int				nProperty;
-	pTopLayout		= new QVBoxLayout( this );
+	QVBoxLayout* pTopLayout		= new QVBoxLayout( this );
 	QBoxLayout 		*pButtonLayout	= new QHBoxLayout();
 	QPushButton 	*pbOk;
 	QPushButton 	*pbCancel;
@@ -19,7 +19,7 @@ classProperties::classProperties( QWidget* parent, const char* name, HODBCINSTPR
 		nProperties++;
 	}
 
-	pGridLayout = new QGridLayout( nProperties, 2, 2 );
+	QGridLayout* pGridLayout = new QGridLayout( nProperties, 2, 2 );
 	pTopLayout->addLayout( pGridLayout );
 	pGridLayout->setColStretch ( 0, 0 );
 	pGridLayout->setColStretch ( 1, 1 );
@@ -135,12 +135,6 @@ classProperties::~classProperties()
 {
 }
 
-/*
-void resizeEvent( QResizeEvent *p )
-{
-	pTopLayout->resize( p->size() );
-}
-*/
 
 void classProperties::pbOk_Clicked()
 {
