@@ -1,0 +1,15 @@
+[Desktop Entry]
+Exec=kcmshell Sound/bell
+Icon=bell
+Type=Application
+DocPath=kcontrol/kcmbell/index.html
+
+X-KDE-ModuleType=Library
+X-KDE-Library=bell
+X-KDE-Init=bell
+
+Name=System Bell
+
+Comment=System Bell Configuration
+
+Keywords=Bell,,Audio,Sound
