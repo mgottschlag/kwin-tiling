@@ -124,6 +124,9 @@ typedef int waitType;
 # define PUTUTLINE pututline
 # define ENDUTENT endutent
 # define LASTLOG lastlog
+#if defined(__FreeBSD__)
+# define ut_user ut_name
+#endif
 #endif
 #ifndef WTMP_FILE
 # ifdef _PATH_WTMPX
