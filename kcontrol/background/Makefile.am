@@ -1,6 +1,6 @@
 SUBDIRS = . pics
 
-AM_CPPFLAGS = $(all_includes)
+AM_CPPFLAGS = -I$(top_srcdir)/libkonq $(all_includes)
 
 kde_module_LTLIBRARIES = kcm_background.la
 
