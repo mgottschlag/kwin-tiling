@@ -36,16 +36,10 @@ openctl( int fd, int err, const char *ctl, const char *dpy )
 	struct sockaddr_un sa;
 
 	sa.sun_family = AF_UNIX;
-	if (dpy) {
-		if (*dpy == ':') {
-			snprintf( sa.sun_path, sizeof(sa.sun_path),
-			          "%s/dmctl-localhost%s/socket", ctl, dpy );
-			if (!connect( fd, (struct sockaddr *)&sa, sizeof(sa) ))
-				return 1;
-		}
+	if (dpy)
 		snprintf( sa.sun_path, sizeof(sa.sun_path),
 		          "%s/dmctl-%s/socket", ctl, dpy );
-	} else
+	else
 		snprintf( sa.sun_path, sizeof(sa.sun_path),
 		          "%s/dmctl/socket", ctl );
 	if (!connect( fd, (struct sockaddr *)&sa, sizeof(sa) ))

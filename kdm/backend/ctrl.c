@@ -89,9 +89,11 @@ openCtrl (struct display *d)
 
     if (!*fifoDir)
 	return;
-    if (d)
+    if (d) {
 	cr = &d->ctrl, dname = d->name;
-    else
+	if (!memcmp (dname, "localhost:", 10))
+	    dname += 9;
+    } else
 	cr = &ctrl, dname = 0;
     if (cr->fifo.fd < 0) {
 	if (mkdir (fifoDir, 0755)) {
