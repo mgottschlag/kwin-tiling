@@ -72,9 +72,6 @@ PasswordDlg::PasswordDlg(LockProcess *parent, bool nsess)
 
     connect(&mPassProc, SIGNAL(processExited(KProcess *)),
                         SLOT(passwordChecked(KProcess *)));
-
-    DCOPRef kxkb("kxkb", "kxkb");
-    kxkb.call("setUSLayout");
 }
 
 QString PasswordDlg::checkForUtf8(QString txt)
@@ -272,8 +269,6 @@ void PasswordDlg::passwordChecked(KProcess *proc)
 	    */
         if (mPassProc.normalExit() && !mPassProc.exitStatus())
         {
-	    DCOPRef kxkb("kxkb", "kxkb");
-	    kxkb.call("restoreLayout");
 	    accept();
         }
         else if ( mPassProc.exitStatus() == 2 )
