@@ -40,9 +40,12 @@ public:
   
 protected slots:
   void changed();
-  
+
+private slots:
+  void updateControls(void);
       
 private:
+
   KConfig *g_pConfig;
   QString groupname;
 
