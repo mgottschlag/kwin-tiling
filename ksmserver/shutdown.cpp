@@ -113,10 +113,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                          this, SLOT(accept()));
 
 
-        rLogout = new QRadioButton( i18n("&Login as different user"), tgrp );
-        rHalt = new QRadioButton( i18n("&Turn off computer"), tgrp );
-        rReboot = new QRadioButton( i18n("&Restart computer"), tgrp );
-
         grid->addWidget( rLogout, 1, 1 );
         grid->addWidget( rHalt, 2, 1 );
         grid->addWidget( rReboot, 3, 1 );
