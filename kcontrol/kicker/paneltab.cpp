@@ -115,7 +115,7 @@ PanelTab::PanelTab( QWidget *parent, const char* name )
     " panel will slide away, leaving more room for applications. There"
     " only remains a small button which can be used to show the panel again.") );
 
-  highlight_hbs = new QCheckBox(i18n("Highlight on mouse &over."), vbox2);
+  highlight_hbs = new QCheckBox(i18n("Highlight on mouse &over"), vbox2);
   connect(highlight_hbs, SIGNAL(clicked()), SIGNAL(changed()));
   QWhatsThis::add( highlight_hbs, i18n("If this option is enabled, the"
     " hide buttons are highlighted when the mouse cursor is moved over them.") );

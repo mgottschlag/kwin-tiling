@@ -1,4 +1,4 @@
-SUBDIRS= . sounds
+SUBDIRS= . 
 
 lib_LTLIBRARIES = libkcm_knotify.la
 
