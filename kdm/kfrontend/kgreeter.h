@@ -153,8 +153,8 @@ class KThemedGreeter : public KGreeter {
 //	KdmClock *clock;
 	KdmThemer *themer;
 	KdmItem *caps_warning, *xauth_warning, *pam_error,
-						*console_rect, *userlist_rect,
-						*session_button, *system_button;
+	        *console_rect, *userlist_rect,
+	        *session_button, *system_button;
 
   public: // from KGVerifyHandler
 	virtual void verifyFailed();
