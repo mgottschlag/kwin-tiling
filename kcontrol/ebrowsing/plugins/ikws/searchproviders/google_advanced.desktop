@@ -51,7 +51,7 @@ Name[ru]=Google - продвинутый поиск
 Name[se]=Dárkilis ohcan Google báikkis
 Name[sk]=Pokročilé hľadanie Google
 Name[sl]=Napredno iskanje z Google
-Name[sr]=Google напредно претраживање
+Name[sr]=Google-ово напредно претраживање
 Name[sr@Latn]=Google napredno pretraživanje
 Name[ss]=Kusesha lokusembili kwe Google 
 Name[sv]=Google avancerad sökning
@@ -69,7 +69,7 @@ Name[zh_TW]=Google 進階搜尋
 Name[zu]=Usesho lwezinga eliphezulu lwe-Google
 Query=http://www.google.com/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact,""}&as_oq=\\{any,""}&as_eq=\\{without,""}&lr=\\{lang,""}&as_ft=\\{ft,"i"}&as_filetype=\\{filetype,""}&as_qdr=\{date,"all"}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i"}&as_sitesearch=\\{site}&safe=\\{safe,"active"}&ie=UTF-8&oe=UTF-8
 Query[en_GB]=http://www.google.co.uk/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact,""}&as_oq=\\{any,""}&as_eq=\\{without,""}&lr=\\{lang,""}&as_ft=\\{ft,"i"}&as_filetype=\\{filetype,""}&as_qdr=\{date,"all"}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i"}&as_sitesearch=\\{site}&safe=\\{safe,"active"}&ie=UTF-8&oe=UTF-8
-Query[es]=http://www.google.es/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact,""}&as_oq=\\{any,""}&as_eq=\\{without,""}&lr=\\{lang,""}&as_ft=\\{ft,"i"}&as_filetype=\\{filetype,""}&as_qdr=\{date,"all"}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i"}&as_sitesearch=\\{site}&safe=\\{safe,"active"}&ie=UTF-8&oe=UTF-8
+Query[es]=http://www.google.com/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact,""}&as_oq=\\{any,""}&as_eq=\\{without,""}&lr=\\{lang,""}&as_ft=\\{ft,"i"}&as_filetype=\\{filetype,""}&as_qdr=\{date,"all"}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i" }&as_sitesearch=\\{site}&safe=\\{safe, "active"}&ie=UTF-8&oe=UTF-8
 Query[fi]=http://www.google.fi/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact,""}&as_oq=\\{any,""}&as_eq=\\{without,""}&lr=\\{lang,""}&as_ft=\\{ft,"i"}&as_filetype=\\{filetype,""}&as_qdr=\{date,"all"}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i"}&as_sitesearch=\\{site}&safe=\\{safe,"active"}&ie=UTF-8&oe=UTF-8
 Query[fr]=http://www.google.fr/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact,""}&as_oq=\\{any,""}&as_eq=\\{without,""}&lr=\\{lang,""}&as_ft=\\{ft,"i"}&as_filetype=\\{filetype,""}&as_qdr=\{date,"all"}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i"}&as_sitesearch=\\{site}&safe=\\{safe,"active"}&ie=UTF-8&oe=UTF-8
 Query[fy]=http://www.google.nl/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact,""}&as_oq=\\{any,""}&as_eq=\\{without,""}&lr=\\{lang,""}&as_ft=\\{ft,"i"}&as_filetype=\\{filetype,""}&as_qdr=\{date,"all"}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i"}&as_sitesearch=\\{site}&safe=\\{safe,"active"}&ie=UTF-8&oe=UTF-8
@@ -77,7 +77,6 @@ Query[he]=http://www.google.co.il/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Go
 Query[nb]=http://www.google.no/search?
 Query[nl]=http://www.google.nl/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact,""}&as_oq=\\{any,""}&as_eq=\\{without,""}&lr=\\{lang,""}&as_ft=\\{ft,"i"}&as_filetype=\\{filetype,""}&as_qdr=\{date,"all"}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i"}&as_sitesearch=\\{site}&safe=\\{safe,"active"}&ie=UTF-8&oe=UTF-8
 Query[nn]=http://www.google.com/search?hl=nn&as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact,""}&as_oq=\\{any,""}&as_eq=\\{without,""}&lr=\\{lang,""}&as_ft=\\{ft,"i"}&as_filetype=\\{filetype,""}&as_qdr=\{date,"all"}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i"}&as_sitesearch=\\{site}&safe=\\{safe,"active"}&ie=UTF-8&oe=UTF-8
-Query[pl]=http://www.google.pl/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact,""}&as_oq=\\{any,""}&as_eq=\\{without,""}&lr=\\{lang,""}&as_ft=\\{ft,"i"}&as_filetype=\\{filetype,""}&as_qdr=\{date,"all"}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i"}&as_sitesearch=\\{site}&safe=\\{safe,"active"}&ie=UTF-8&oe=UTF-8
 Query[pt]=http://www.google.pt/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact,""}&as_oq=\\{any,""}&as_eq=\\{without,""}&lr=\\{lang,""}&as_ft=\\{ft,"i"}&as_filetype=\\{filetype,""}&as_qdr=\{date,"all"}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i"}&as_sitesearch=\\{site}&safe=\\{safe,"active"}&ie=UTF-8&oe=UTF-8
 Query[xx]=xxhttp://www.google.com/search?as_q=\\{all,@}&num=\\{num,"10"}&btnG=Google+Search&as_epq=\\{exact,""}&as_oq=\\{any,""}&as_eq=\\{without,""}&lr=\\{lang,""}&as_ft=\\{ft,"i"}&as_filetype=\\{filetype,""}&as_qdr=\{date,"all"}&as_occt=\\{occ,"any"}&as_dt=\\{siteop,"i"}&as_sitesearch=\\{site}&safe=\\{safe,"active"}&ie=UTF-8&oe=UTF-8xx
 Charset=utf8

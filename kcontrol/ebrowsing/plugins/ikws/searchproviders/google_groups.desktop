@@ -48,7 +48,7 @@ Name[ro]=Grupuri Google
 Name[ru]=Группы Google
 Name[sk]=Diskusné skupiny Google
 Name[sl]=Skupine Google
-Name[sr]=Google групе
+Name[sr]=Google-ове групе
 Name[sr@Latn]=Google grupe
 Name[ss]=Emacembu ye Google 
 Name[sv]=Google-grupper
@@ -67,13 +67,11 @@ ServiceTypes=SearchProvider
 Keys=ggg,groups,dj,deja
 Query=http://groups.google.com/groups?oi=djq&as_q=\\{@}
 Query[en_GB]=http://groups.google.co.uk/groups?oi=djq&as_q=\\{@}
-Query[es]=http://groups.google.es/groups?oi=djq&as_q=\\{@}
 Query[fr]=http://groups.google.fr/groups?oi=djq&as_q=\\{@}
 Query[fy]=http://groups.google.nl/groups?oi=djq&as_q=\\{@}
 Query[he]=http://groups.google.co.il/groups?oi=djq&as_q=\\{@}
 Query[nb]=http://groups.google.no/groups?hl=nn&oi=djq&as_q=\\{@}
 Query[nl]=http://groups.google.nl/groups?oi=djq&as_q=\\{@}
 Query[nn]=http://groups.google.com/groups?hl=nn&oi=djq&as_q=\\{@}
-Query[pl]=http://groups.google.pl/groups?oi=djq&as_q=\\{@}
 Query[pt]=http://groups.google.pt/groups?oi=djq&as_q=\\{@}
 Query[xx]=xxhttp://groups.google.com/groups?oi=djq&as_q=\\{@}xx

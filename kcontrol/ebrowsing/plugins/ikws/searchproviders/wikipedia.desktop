@@ -44,7 +44,7 @@ Name[ru]=Wikipedia - свободная энциклопедия
 Name[se]=Wikipedia – fridja leksikona
 Name[sk]=Wikipedia - voľne dostupná encyklopédia
 Name[sl]=Wikipedia - Prosta enciklopedija
-Name[sr]=Wikipedia - Слободна енциклопедија
+Name[sr]=Wikipedia — Слободна енциклопедија
 Name[sr@Latn]=Wikipedia - Slobodna enciklopedija
 Name[sv]=Wikipedia - den fria encyklopedin
 Name[ta]=விகிபிடியா - இலவச கலைக்களஞ்சியம்
@@ -60,5 +60,4 @@ Name[zh_TW]=Wikipedia - 免費的 Encyclopedia
 ServiceTypes=SearchProvider
 Keys=wp
 Query=http://en.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go 
-Query[es]=http://es.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go 
 Charset=utf8

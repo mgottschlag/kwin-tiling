@@ -39,7 +39,7 @@ Name[ro]=Bază de date Internet de filme
 Name[ru]=Интернет-база кинофильмов (imdb)
 Name[sk]=Internetová databáza filmov
 Name[sl]=Internetna zbirka filmov
-Name[sr]=Интернет база података о филмовима
+Name[sr]=База података о филмовима на Интернету
 Name[sr@Latn]=Internet baza podataka o filmovima
 Name[sv]=Internet filmdatabas
 Name[ta]=வலைதள திரைப்பட தகவல்தளம்
@@ -55,7 +55,6 @@ ServiceTypes=SearchProvider
 Keys=imdb
 Query=http://imdb.com/Find?\\{@}
 Query[en_GB]=http://imdb.co.uk/Find?\\{@}
-Query[es]=http://spanish.imdb.com/Find?\\{@}
 Query[it]=http://italian.imdb.com/Find?\\{@}
 Query[xx]=xxhttp://imdb.com/Find?\\{@}xx
 
