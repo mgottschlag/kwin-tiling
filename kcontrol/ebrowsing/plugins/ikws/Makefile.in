@@ -248,9 +248,15 @@ ikwsopts.moc.lo  kuriikwsfilter_skel.lo
 @KDE_USE_FINAL_TRUE@libkuriikwsfilter_la_OBJECTS = libkuriikwsfilter_la.all_cpp.lo 
 libkuriikwsfilter_la_final_OBJECTS = libkuriikwsfilter_la.all_cpp.lo 
 CXXFLAGS = @CXXFLAGS@
+#>- CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+#>+ 1
 CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) $(KDE_CXXFLAGS)
+#>- LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+#>+ 1
 LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) $(KDE_CXXFLAGS)
 CXXLD = $(CXX)
+#>- CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
+#>+ 1
 CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(KDE_CXXFLAGS) $(LDFLAGS) -o $@
 DATA =  $(rc_DATA) $(service_DATA)
 
@@ -263,13 +269,13 @@ TAR = tar
 GZIP_ENV = --best
 #>- DEP_FILES =  .deps/ikwsopts.P .deps/kuriikwsfilter.P \
 #>- .deps/kuriikwsfiltereng.P
-
 #>+ 6
 @KDE_USE_FINAL_TRUE@DEP_FILES =  $(DEPDIR)/ikwsopts.moc.P  $(DEPDIR)/libkuriikwsfilter_la.all_cpp.P \
 	  .deps/ikwsopts.P .deps/kuriikwsfilter.P \
 .deps/kuriikwsfiltereng.P
 @KDE_USE_FINAL_FALSE@DEP_FILES =  $(DEPDIR)/ikwsopts.moc.P   .deps/ikwsopts.P .deps/kuriikwsfilter.P \
 .deps/kuriikwsfiltereng.P
+
 SOURCES = $(libkuriikwsfilter_la_SOURCES)
 OBJECTS = $(libkuriikwsfilter_la_OBJECTS)
 
