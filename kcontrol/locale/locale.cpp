@@ -270,15 +270,23 @@ void KLocaleConfig::changedCountry(int i)
   KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + country + QString::fromLatin1("/entry.desktop")), true);
   ent.setGroup(QString::fromLatin1("KCM Locale"));
   QStringList langs = ent.readListEntry(QString::fromLatin1("Languages"));
-  if (langs.isEmpty()) langs = QString::fromLatin1("C");
 
-  locale->setLanguage(*langs.at(0));
+  QString lang = QString::fromLatin1("C");
+  // use the first INSTALLED langauge in the list, or default to C
+  for ( QStringList::Iterator it = langs.begin(); it != langs.end(); ++it )
+    if (comboLang->containsTag(*it))
+      {
+	lang = *it;
+	break;
+      }
+
+  locale->setLanguage(lang);
   locale->setCountry(country);
 
   reTranslateLists();
   loadLocaleList(comboLang, QString::null, langs);
 
-  comboLang->setCurrentItem(*langs.at(0));
+  comboLang->setCurrentItem(lang);
   comboNumber->setCurrentItem(country);
   comboMoney->setCurrentItem(country);
   comboDate->setCurrentItem(country);

@@ -181,6 +181,11 @@ void KTagComboBox::paintEvent( QPaintEvent * ev)
   }
 }
 
+bool KTagComboBox::containsTag( const QString &str ) const
+{
+  return tags->contains(str) > 0;
+}
+
 QString KTagComboBox::currentTag() const
 {
   return *tags->at(currentItem());

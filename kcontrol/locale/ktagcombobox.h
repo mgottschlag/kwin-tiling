@@ -55,6 +55,7 @@ public:
    */
   QString currentTag() const;
   QString tag ( int i ) const;
+  bool containsTag (const QString &str ) const;
 
   /*
    * Set the current item
