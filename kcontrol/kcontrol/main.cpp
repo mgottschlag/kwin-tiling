@@ -48,7 +48,7 @@
 static KCmdLineOptions options[] =
 {
    { "t", 0, 0 },
-   { "type <t>", I18N_NOOP("Sow control modules of type \"t\"."), "User" },
+   { "type <t>", I18N_NOOP("Show control modules of type \"t\"."), "User" },
    { 0,0,0 }
 };
 
