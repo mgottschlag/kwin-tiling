@@ -19,6 +19,7 @@ Name[eu]=PHP bilaketa
 Name[fa]=PHP جستجوی
 Name[fi]=PHP haku
 Name[fr]=Recherche PHP
+Name[ga]=Cuardach PHP
 Name[gl]=Procura PHP
 Name[hi]=पीएचपी खोज
 Name[is]=PHP leit
@@ -31,6 +32,7 @@ Name[mk]=PHP пребарување
 Name[mn]=PHP хайлт
 Name[mt]=Tfittxija PHP
 Name[nb]=PHP-søk
+Name[nds]=PHP-Söök
 Name[nl]=PHP-zoekactie
 Name[nn]=PHP-søk
 Name[nso]=Nyako ya PHP
@@ -60,6 +62,5 @@ Name[zh_TW]=PHP 搜尋
 Name[zu]=Usesho lwe-PHP
 Query=http://www.php.net/search.php?show=\\{mode,"manual"}&pattern=\\{@}
 Query[fi]=http://fi2.php.net/search.php?show=\\{mode,"manual"}&pattern=\\{@}
-Query[sv]=http://se.php.net/search.php?show=\\{mode,"manual"}&pattern=\\{@}
 ServiceTypes=SearchProvider
 Type=Service

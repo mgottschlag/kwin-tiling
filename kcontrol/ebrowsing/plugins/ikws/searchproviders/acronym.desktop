@@ -17,7 +17,7 @@ Name[el]=Βάση δεδομένων αρκτικόλεξου
 Name[eo]=Mallongigo-datumbazo
 Name[es]=Base de datos Acronym
 Name[et]=Akronüümide andmebaas
-Name[eu]=Acronym datubasea
+Name[eu]=Acronym datu-basea
 Name[fa]=بانک اطلاعات مخفف
 Name[fi]=Akronyymitietokanta
 Name[fo]=Styttingardátugrunnur
@@ -32,9 +32,11 @@ Name[ko]=애크로님 자료틀
 Name[lo]=ຖານຂໍ້ມູນ Acronym
 Name[lt]=Akronimų duomenų bazė
 Name[lv]=Akronīmu Datubāze
+Name[mk]=База на податоци со акроними
 Name[mn]=Acronym-Өгөгдлийн бааз
 Name[mt]=Database ta' taqsiriet
 Name[nb]=Forkortingsdatabase
+Name[nds]=Akronüm-Datenbank
 Name[nl]=Acroniemen database
 Name[nn]=Forkortingsdatabase
 Name[nso]=Database ya Acronym
@@ -66,4 +68,3 @@ Name[zu]=Isiqu sedata samagama asho okufanayo
 ServiceTypes=SearchProvider
 Keys=ad,acro,acronym
 Query=http://www.chemie.de/tools/acronym.php3?language=e&acronym=\\{@}
-Query[de]=http://www.chemie.de/tools/acronym.php3?language=d&acronym=\\{@}
