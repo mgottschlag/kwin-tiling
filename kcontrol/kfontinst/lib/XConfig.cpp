@@ -35,6 +35,8 @@
 #include <qdir.h>
 #include <qregexp.h>
 #include <klocale.h>
+#include <sys/types.h>
+#include <signal.h>
 
 extern "C" unsigned int kfi_getPid(const char *proc, unsigned int ppid);
 
@@ -283,7 +285,7 @@ void CXConfig::refreshPaths()
             QString pid;
 
             KFI_DBUG << "kill -SIGUSR1 " << pid << endl;
-            CMisc::doCmd("kill", "-SIGUSR1", pid.setNum(xfsPid));
+            kill(xfsPid, SIGUSR1);
         }
     }
     else
