@@ -416,7 +416,7 @@ Task::Task(WId win, QObject *parent, const char *name)
     // try to guess the icon from the classhint
     if(_pixmap.isNull())
     {
-        KGlobal::instance()->iconLoader()->loadIcon(className().lower(),
+        KGlobal::iconLoader()->loadIcon(className().lower(),
                                                     KIcon::Small,
                                                     KIcon::Small,
                                                     KIcon::DefaultState,
@@ -441,7 +441,7 @@ void Task::refreshIcon()
     // try to guess the icon from the classhint
     if(_pixmap.isNull())
     {
-        KGlobal::instance()->iconLoader()->loadIcon(className().lower(),
+        KGlobal::iconLoader()->loadIcon(className().lower(),
                                                     KIcon::Small,
                                                     KIcon::Small,
                                                     KIcon::DefaultState,
