@@ -81,6 +81,7 @@
 # define FACE_PREFER_USER	2
 # define FACE_USER_ONLY		3
 #define C_ColorScheme		(C_TYPE_STR | 0x102c)
+#define C_ForgingSeed		(C_TYPE_INT | 0x102d)
 
 #ifdef BUILTIN_XCONSOLE
 # define C_ShowLog		(C_TYPE_INT | 0x2000)

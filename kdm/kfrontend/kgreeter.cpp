@@ -565,7 +565,8 @@ KGreeter::set_wm( const char *cwm )
 void
 KGreeter::load_wm()
 {
-    int sum, len, i, num, dummy;
+    int len, i, b, num, dummy;
+    unsigned long crc, by;
     QCString name;
     char **ptr;
 
@@ -583,13 +584,16 @@ KGreeter::load_wm()
 	GSendStr( name.data() );
 	ptr = GRecvStrArr( &dummy );
 	if (!ptr) {		/* no such user */
-	    /* XXX - voodoo */
-	    for (sum = 0, i = 0; i < len; i++)
-		sum += (int)name[i] << ((i ^ sum) & 7);
-	    sum ^= (sum >> 7);
+	    /* simple crc32 */
+	    for (crc = kdmcfg->_forgingSeed, i = 0; i < len; i++) {
+		by = (crc & 255) ^ name[i];
+		for (b = 0; b < 8; b++)
+		    by = (by >> 1) ^ (-(by & 1) & 0xedb88320);
+		crc = (crc >> 8) ^ by;
+	    }
 	    /* forge a session with this hash - default more probable */
 	    num = sessargBox->count();
-	    i = sum % (num * 4 / 3);
+	    i = crc % (num * 4 / 3);
 	    if (i < num) {
 		sessargBox->setCurrentItem( i );
 		return;

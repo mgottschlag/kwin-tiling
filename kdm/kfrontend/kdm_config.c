@@ -542,6 +542,7 @@ Ent entsGreeter[] = {
 { "BackgroundCfg",	C_BackgroundCfg,	0,	KDMCONF "/backgroundrc" },
 { "LoginMode",		C_loginMode | C_ENUM,	loginmode,	"LocalOnly" },
 { "ChooserHosts",	C_chooserHosts,		0,	"*" },
+{ "ForgingSeed",	C_ForgingSeed,		0,	"0" },
 #ifdef BUILTIN_XCONSOLE
 { "ShowLog",		C_ShowLog | C_BOOL,	0,	"false" },
 { "LogSource",		C_LogSource,		0,	"" },

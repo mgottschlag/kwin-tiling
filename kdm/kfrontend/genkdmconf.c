@@ -39,6 +39,7 @@
 #include <fcntl.h>
 #include <pwd.h>
 #include <dirent.h>
+#include <time.h>
 #include <sys/param.h>
 #ifdef BSD
 # include <utmp.h>
@@ -1656,6 +1657,15 @@ upd_hiddenusers(Entry *ce, Section *cs ATTR_UNUSED)
     ce->value = nv ? nv : "";
 }
 
+static void
+upd_forgingseed(Entry *ce, Section *cs ATTR_UNUSED)
+{
+    if (!ce->active) {
+	ASPrintf ((char **)&ce->value, "%d", time(0));
+	ce->active = ce->written = 1;
+    }
+}
+
 static Ent entsGeneral[] = {
 { "ConfigVersion",	0, 0, 
 "# This option exists solely for the purpose of a clean automatic upgrade.\n"
@@ -1997,6 +2007,11 @@ static Ent entsGreeter[] = {
 { "ChooserHosts",	0, 0, 
 "# A list of hosts to be automatically added to the remote login menu. The\n"
 "# special name \"*\" means broadcast. Default is \"*\"\n" },
+{ "ForgingSeed",	0, upd_forgingseed,
+"# Use this number as a random seed when forging saved session types, etc. of\n"
+"# unknown users. This is used to avoid telling an attacker about existing users\n"
+"# by reverse conclusion. This value should be random but constant across the\n"
+"# login domain. Default is 0\n" },
 #ifdef BUILTIN_XCONSOLE
 { "ShowLog",		0, 0, 
 "# Enable KDM's built-in xconsole. Note, that this can be enabled for only\n"
@@ -2165,6 +2180,7 @@ static DEnt dEntsAnyGreeter[] = {
 { "BackgroundCfg",	"", 0 },
 { "GrabServer",		"true", 0 },
 { "GrabTimeout",	"", 0 },
+{ "ForgingSeed",	"", 0 },
 };
 
 static DEnt dEntsLocalCore[] = {

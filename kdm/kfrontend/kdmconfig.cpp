@@ -201,6 +201,8 @@ KDMConfig::KDMConfig()
 
     _loginMode = GetCfgInt (C_loginMode);
 
+    _forgingSeed = GetCfgInt (C_ForgingSeed);
+
 #ifdef BUILTIN_XCONSOLE
     _showLog = GetCfgInt (C_ShowLog);
     _logSource = GetCfgStr (C_LogSource);

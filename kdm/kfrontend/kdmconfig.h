@@ -82,6 +82,8 @@ public:
 
     int		_loginMode;
 
+    int		_forgingSeed;
+
 #ifdef BUILTIN_XCONSOLE
     bool	_showLog;
     QString	_logSource;
