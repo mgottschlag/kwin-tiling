@@ -1,5 +1,9 @@
 [Settings]
 Name=UNIX Scheme
+Name[cs]=Schéma Unix
+Name[hu]=UNIX-összeállítás
+Name[pt_BR]=Esquema UNIX
+Name[sv]=Unix-schema
 Uses Win Modifer=false
 
 [Global Shortcuts]
