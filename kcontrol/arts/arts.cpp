@@ -451,16 +451,8 @@ extern "C"
         delete X11CommConfig;
 
         if(startServer)
-        {
-        	QCString cmdline = "kdeinit_wrapper ";
-
-            if(startRealtime)
-                cmdline += "artswrapper " + args.utf8();
-            else
-                cmdline += "artsd " + args.utf8();
-			
-            system(cmdline);
-        }
+			kapp->kdeinitExec(startRealtime?"artswrapper":"artsd",
+											QStringList::split(" \t",args));
     }
 }
 
