@@ -42,7 +42,7 @@ public:
   ~KLanguageCombo();
 
   // insertLanguage should not use locate..
-  void insertLanguage(const QString& path, const QString& name, const QString& sub = 0);
+  void insertLanguage(const QString& path, const QString& name, const QString& sub = QString::null);
   void changeLanguage(const QString& name, int i);
 
   // work space

@@ -41,10 +41,14 @@
 
 KLocale *locale;
 
+#ifndef LAT
+#define LAT QString::fromLatin1("1")
+#endif
+
 KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   : KCModule(parent, name)
 {
-  locale = new KLocale("kcmlocale");
+  locale = new KLocale(QString::fromLatin1("kcmlocale"));
 
   QVBoxLayout *l = new QVBoxLayout(this, 5);
 
@@ -52,13 +56,13 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   l->addWidget(tab);
 
   localemain = new KLocaleConfig( this, I18N_NOOP("&Locale") );
-  tab->addTab( localemain, "1");
+  tab->addTab( localemain, LAT);
   localenum = new KLocaleConfigNumber( this, I18N_NOOP("&Numbers") );
-  tab->addTab( localenum, "1" );
+  tab->addTab( localenum, QString::fromLatin1("1") );
   localemon = new KLocaleConfigMoney( this, I18N_NOOP("&Money") );
-  tab->addTab( localemon, "1" ); 
+  tab->addTab( localemon, QString::fromLatin1("1") ); 
   localetime = new KLocaleConfigTime( this, I18N_NOOP("&Time && dates") );
-  tab->addTab( localetime, "1" ); 
+  tab->addTab( localetime, QString::fromLatin1("1") ); 
 
   connect(localemain, SIGNAL(resample()),       SLOT(update()));
   connect(localenum,  SIGNAL(resample()),       SLOT(update()));
@@ -67,7 +71,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char *name)
   connect(localemain, SIGNAL(countryChanged()), SLOT(reset()) );
 
   // Examples
-  gbox = new QGroupBox("1", this, I18N_NOOP("Examples"));
+  gbox = new QGroupBox(LAT, this, I18N_NOOP("Examples"));
   l->addWidget(gbox);
   sample = new KLocaleSample(gbox);
 

@@ -108,12 +108,13 @@ KLocaleConfig::KLocaleConfig(QWidget *parent, const char *name)
     tl1->addWidget(label, 6, 1);
     tl1->addWidget(comboChset, 6, 2);
 
-    QToolTip::add(comboCountry, I18N_NOOP("This is were you live. KDE will use the defaults for this country."));
-    QToolTip::add(comboLang, I18N_NOOP("All KDE programs will be displayed in this language (if available)."));
-    QToolTip::add(comboNumber, I18N_NOOP("The rules of this country will be used to localize numbers"));
-    QToolTip::add(comboMoney, I18N_NOOP("The rules of this country will be used to localize money"));
-    QToolTip::add(comboDate, I18N_NOOP("The rules of this country will be used to display time and dates"));
-    QToolTip::add(comboChset, I18N_NOOP("The prefered charset for fonts"));
+    // FIXME no support for retranslation
+    QToolTip::add(comboCountry, locale->translate("This is were you live. KDE will use the defaults for this country."));
+    QToolTip::add(comboLang, locale->translate("All KDE programs will be displayed in this language (if available)."));
+    QToolTip::add(comboNumber, locale->translate("The rules of this country will be used to localize numbers"));
+    QToolTip::add(comboMoney, locale->translate("The rules of this country will be used to localize money"));
+    QToolTip::add(comboDate, locale->translate("The rules of this country will be used to display time and dates"));
+    QToolTip::add(comboChset, locale->translate("The prefered charset for fonts"));
 
     QStringList list = KGlobal::charsets()->availableCharsetNames();
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
@@ -142,14 +143,14 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
   // add the primary languages for the country to the list
   for ( QStringList::ConstIterator it = first.begin(); it != first.end(); ++it )
     {
-        QString str = locate("locale", sub + *it + "/entry.desktop");
+        QString str = locate("locale", sub + *it + QString::fromLatin1("/entry.desktop"));
         if (!str.isNull())
           prilang << str;
     }
 
   // add all languages to the list
   QStringList alllang = KGlobal::dirs()->findAllResources("locale",
-							   sub + "*/entry.desktop");
+							   sub + QString::fromLatin1("*/entry.desktop"));
   alllang.sort();
   QStringList langlist = prilang;
   if (langlist.count() > 0)
@@ -166,8 +167,8 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
           continue;
         }
 	KSimpleConfig entry(*it);
-	entry.setGroup("KCM Locale");
-	name = entry.readEntry("Name", locale->translate("without name"));
+	entry.setGroup(QString::fromLatin1("KCM Locale"));
+	name = entry.readEntry(QString::fromLatin1("Name"), locale->translate("without name"));
 	
 	QString path = *it;
 	int index = path.findRev('/');
@@ -182,39 +183,39 @@ void KLocaleConfig::loadLocaleList(KLanguageCombo *combo, const QString &sub, co
 
 void KLocaleConfig::load()
 {
-  loadLocaleList(comboCountry, "l10n/", QStringList());
-  loadLocaleList(comboNumber, "l10n/", QStringList());
-  loadLocaleList(comboMoney, "l10n/", QStringList());
-  loadLocaleList(comboDate, "l10n/", QStringList());
+  loadLocaleList(comboCountry, QString::fromLatin1("l10n/"), QStringList());
+  loadLocaleList(comboNumber, QString::fromLatin1("l10n/"), QStringList());
+  loadLocaleList(comboMoney, QString::fromLatin1("l10n/"), QStringList());
+  loadLocaleList(comboDate, QString::fromLatin1("l10n/"), QStringList());
 
   KConfig *config = KGlobal::config();
-  config->setGroup("Locale");
+  config->setGroup(QString::fromLatin1("Locale"));
 
-  QString str = config->readEntry("Country");
+  QString str = config->readEntry(QString::fromLatin1("Country"));
   comboCountry->setCurrentItem(str);
 
-  KSimpleConfig ent(locate("locale", "l10n/" + str + "/entry.desktop"), true);
-  ent.setGroup("KCM Locale");
-  QStringList langs = ent.readListEntry("Languages");
-  if (langs.isEmpty()) langs = QString("C");
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + str + QString::fromLatin1("/entry.desktop")), true);
+  ent.setGroup(QString::fromLatin1("KCM Locale"));
+  QStringList langs = ent.readListEntry(QString::fromLatin1("Languages"));
+  if (langs.isEmpty()) langs = QString::fromLatin1("C");
 
-  loadLocaleList(comboLang, 0, langs);
+  loadLocaleList(comboLang, QString::null, langs);
 
   // Language
-  str = config->readEntry("Language");
-  str = str.left(str.find(':')); // for compatible -- FIXME in KDE3
+  str = config->readEntry(QString::fromLatin1("Language"));
+  str = str.left(str.find(':')); // only use  the first lang
   comboLang->setCurrentItem(str);
 
   // Numeric
-  str = config->readEntry("Numeric");
+  str = config->readEntry(QString::fromLatin1("Numeric"));
   comboNumber->setCurrentItem(str);
 
   // Money
-  str = config->readEntry("Monetary");
+  str = config->readEntry(QString::fromLatin1("Monetary"));
   comboMoney->setCurrentItem(str);
 
   // Date and time
-  str = config->readEntry("Time");
+  str = config->readEntry(QString::fromLatin1("Time"));
   comboDate->setCurrentItem(str);
 
   // Charset
@@ -229,9 +230,9 @@ void KLocaleConfig::readLocale(const QString &path, QString &name, const QString
   KGlobal::_locale = locale;
 
   // read the name
-  KSimpleConfig entry(locate("locale", sub + path + "/entry.desktop"));
-  entry.setGroup("KCM Locale");
-  name = entry.readEntry("Name", locale->translate("without name"));
+  KSimpleConfig entry(locate("locale", sub + path + QString::fromLatin1("/entry.desktop")));
+  entry.setGroup(QString::fromLatin1("KCM Locale"));
+  name = entry.readEntry(QString::fromLatin1("Name"), locale->translate("without name"));
 
   // restore the old global locale
   KGlobal::_locale = lsave;
@@ -241,14 +242,14 @@ void KLocaleConfig::save()
 {
   KConfigBase *config = KGlobal::config();
 
-  config->setGroup("Locale");
+  config->setGroup(QString::fromLatin1("Locale"));
 
-  config->writeEntry("Country", comboCountry->currentTag(), true, true);
-  config->writeEntry("Language", comboLang->currentTag(), true, true);
-  config->writeEntry("Numeric", comboNumber->currentTag(), true, true);
-  config->writeEntry("Monetary", comboMoney->currentTag(), true, true);
-  config->writeEntry("Time", comboDate->currentTag(), true, true);
-  config->writeEntry("Charset", comboChset->currentTag(), true, true);
+  config->writeEntry(QString::fromLatin1("Country"), comboCountry->currentTag(), true, true);
+  config->writeEntry(QString::fromLatin1("Language"), comboLang->currentTag(), true, true);
+  config->writeEntry(QString::fromLatin1("Numeric"), comboNumber->currentTag(), true, true);
+  config->writeEntry(QString::fromLatin1("Monetary"), comboMoney->currentTag(), true, true);
+  config->writeEntry(QString::fromLatin1("Time"), comboDate->currentTag(), true, true);
+  config->writeEntry(QString::fromLatin1("Charset"), comboChset->currentTag(), true, true);
 
   config->sync();
 
@@ -266,17 +267,18 @@ void KLocaleConfig::defaults()
 {
   changedFlag = FALSE;
 
-  locale->setLanguage("C");
-  locale->setCountry("C");
+  QString C = QString::fromLatin1("C");
+  locale->setLanguage(C);
+  locale->setCountry(C);
 
   reTranslateLists();
-  loadLocaleList(comboLang, 0, QStringList());
+  loadLocaleList(comboLang, QString::null, QStringList());
 
-  comboCountry->setCurrentItem("C");
-  comboLang->setCurrentItem("C");
-  comboNumber->setCurrentItem("C");
-  comboMoney->setCurrentItem("C");
-  comboDate->setCurrentItem("C");
+  comboCountry->setCurrentItem(C);
+  comboLang->setCurrentItem(C);
+  comboNumber->setCurrentItem(C);
+  comboMoney->setCurrentItem(C);
+  comboDate->setCurrentItem(C);
   
   emit resample();
 }
@@ -287,16 +289,16 @@ void KLocaleConfig::changedCountry(int i)
 
   QString country = comboCountry->tag(i);
 
-  KSimpleConfig ent(locate("locale", "l10n/" + country + "/entry.desktop"), true);
-  ent.setGroup("KCM Locale");
-  QStringList langs = ent.readListEntry("Languages");
-  if (langs.isEmpty()) langs = QString("C");
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + country + QString::fromLatin1("/entry.desktop")), true);
+  ent.setGroup(QString::fromLatin1("KCM Locale"));
+  QStringList langs = ent.readListEntry(QString::fromLatin1("Languages"));
+  if (langs.isEmpty()) langs = QString::fromLatin1("C");
 
   locale->setLanguage(*langs.at(0));
   locale->setCountry(country);
 
   reTranslateLists();
-  loadLocaleList(comboLang, 0, langs);
+  loadLocaleList(comboLang, QString::null, langs);
 
   comboLang->setCurrentItem(*langs.at(0));
   comboNumber->setCurrentItem(country);
@@ -354,7 +356,7 @@ void KLocaleConfig::reTranslateLists()
   QString name;
   for (j = 0; j < comboCountry->count(); j++)
   {
-    readLocale(comboCountry->tag(j), name, "l10n/");
+    readLocale(comboCountry->tag(j), name, QString::fromLatin1("l10n/"));
     comboCountry->changeLanguage(name, j);
     comboNumber->changeLanguage(name, j);
     comboMoney->changeLanguage(name, j);
@@ -363,10 +365,13 @@ void KLocaleConfig::reTranslateLists()
 
   for (j = 0; j < comboLang->count(); j++)
   {
-    if (comboLang->tag(j) == "other")
-      name = locale->translate("Other");
+    if (comboLang->tag(j) == QString::fromLatin1("other"))
+      comboLang->changeItem(locale->translate("Other"), j);
     else
-      readLocale(comboLang->tag(j), name, 0);
-    comboLang->changeLanguage(name, j);
+    {
+      readLocale(comboLang->tag(j), name, QString::null);
+      comboLang->changeLanguage(name, j);
+    }
+
   }
 }

@@ -33,6 +33,10 @@
 
 extern KLocale *locale;
 
+#ifndef LAT
+#define LAT QString::fromLatin1("1")
+#endif
+
 KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
   : QGridLayout(parent, 6, 4, 5, -1, name)
 {
@@ -44,31 +48,31 @@ KLocaleSample::KLocaleSample(QWidget *parent, const char*name)
     addColSpacing(3, 10);
     setColStretch(2, 1);
 
-    label = new QLabel("1", parent, I18N_NOOP("Numbers:"));
+    label = new QLabel(LAT, parent, I18N_NOOP("Numbers:"));
     addWidget(label, 1, 1);
 
     numberSample = new QLabel(parent);
     addWidget(numberSample, 1, 2);
 
-    label = new QLabel("1", parent, I18N_NOOP("Money:"));
+    label = new QLabel(LAT, parent, I18N_NOOP("Money:"));
     addWidget(label, 2, 1);
 
     moneySample = new QLabel(parent);
     addWidget(moneySample, 2, 2);
 
-    label = new QLabel("1", parent, I18N_NOOP("Date:"));
+    label = new QLabel(LAT, parent, I18N_NOOP("Date:"));
     addWidget(label, 3, 1);
 
     dateSample = new QLabel(parent);
     addWidget(dateSample, 3, 2);
 
-    label = new QLabel("1", parent, I18N_NOOP("Short date:"));
+    label = new QLabel(LAT, parent, I18N_NOOP("Short date:"));
     addWidget(label, 4, 1);
 
     dateShortSample = new QLabel(parent);
     addWidget(dateShortSample, 4, 2);
 
-    label = new QLabel("1", parent, I18N_NOOP("Time:"));
+    label = new QLabel(LAT, parent, I18N_NOOP("Time:"));
     addWidget(label, 5, 1);
 
     timeSample = new QLabel(parent);
@@ -82,11 +86,11 @@ KLocaleSample::~KLocaleSample()
 void KLocaleSample::update()
 {
   numberSample->setText(locale->formatNumber(1234567.89) +
-			" / " +
+			QString::fromLatin1(" / ") +
 			locale->formatNumber(-1234567.89));
 
   moneySample->setText(locale->formatMoney(123456789.00) +
-		       " / " +
+		       QString::fromLatin1(" / ") +
 		       locale->formatMoney(-123456789.00));
   dateSample->setText(locale->formatDate(QDate::currentDate(), false));
   dateShortSample->setText(locale->formatDate(QDate::currentDate(), true));

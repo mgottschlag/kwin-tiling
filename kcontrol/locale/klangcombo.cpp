@@ -204,8 +204,8 @@ void KLanguageCombo::insertSeparator(int index)
 void KLanguageCombo::insertOther()
 {
   QPopupMenu *p = new QPopupMenu;
-  popup->insertItem(locale->translate("Other"), p);
-  tags->append("other");
+  popup->insertItem(locale->translate("Other"), p, count());
+  tags->append(QString::fromLatin1("other"));
   connect( p, SIGNAL(activated(int)),
                         SLOT(internalActivate(int)) );
   connect( p, SIGNAL(highlighted(int)),
@@ -214,15 +214,15 @@ void KLanguageCombo::insertOther()
 
 void KLanguageCombo::insertLanguage(const QString& path, const QString& name, const QString& sub)
 {
-  QString output = name + " (" + path + ")";
-  QPixmap flag(locate("locale", sub + path + "/flag.png"));
+  QString output = name + QString::fromLatin1(" (") + path + QString::fromLatin1(")");
+  QPixmap flag(locate("locale", sub + path + QString::fromLatin1("/flag.png")));
   insertItem(QIconSet(flag), output, path);
 }
 
 void KLanguageCombo::changeLanguage(const QString& name, int i)
 {
   if (i < 0 || i >= count()) return;
-  QString output = name + " (" + *tags->at(i) + ")";
+  QString output = name + QString::fromLatin1(" (") + *tags->at(i) + QString::fromLatin1(")");
   changeItem(output, i);
 }
 
@@ -233,7 +233,7 @@ QString KLanguageCombo::currentTag() const
 
 QString KLanguageCombo::tag(int i) const
 {
-  if (i < 0 || i >= count()) return 0;
+  if (i < 0 || i >= count()) return QString::null;
   return *tags->at(i);
 }
 

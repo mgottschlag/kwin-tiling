@@ -45,6 +45,10 @@
 
 extern KLocale *locale;
 
+#ifndef LAT
+#define LAT QString::fromLatin1("1")
+#endif
+
 KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
  : QWidget(parent, name)
 {
@@ -54,19 +58,19 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   QGridLayout *tl1 = new QGridLayout(this, 1, 1, 10, 5);
   tl1->setColStretch(2, 1); 
 
-  label = new QLabel("1", this, I18N_NOOP("Time format"));
+  label = new QLabel(LAT, this, I18N_NOOP("Time format"));
   edTimeFmt = new QLineEdit(this);
   connect( edTimeFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotTimeFmtChanged(const QString &) ) );
   tl1->addWidget(label, 0, 1);
   tl1->addWidget(edTimeFmt, 0, 2);
 
-  label = new QLabel("1", this, I18N_NOOP("Date format"));
+  label = new QLabel(LAT, this, I18N_NOOP("Date format"));
   edDateFmt = new QLineEdit(this);
   connect( edDateFmt, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtChanged(const QString &) ) );
   tl1->addWidget(label, 1, 1);
   tl1->addWidget(edDateFmt, 1, 2);
 
-  label = new QLabel("1", this, I18N_NOOP("Short date format"));
+  label = new QLabel(LAT, this, I18N_NOOP("Short date format"));
   edDateFmtShort = new QLineEdit(this);
   connect( edDateFmtShort, SIGNAL( textChanged(const QString &) ), this, SLOT( slotDateFmtShortChanged(const QString &) ) );
   tl1->addWidget(label, 2, 1);
@@ -74,7 +78,7 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
   
   tl1->setRowStretch(3, 1);
 
-  QToolTip::add(edTimeFmt, I18N_NOOP(
+  QToolTip::add(edTimeFmt, locale->translate(
 "The text in this textbox will be used to format\n"  
 "time strings. The sequences below will be replaced:\n"
 "\n"
@@ -91,7 +95,7 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
 "%p Either AM or PM according to the given time\n"
 "   value. Noon is treated as Pm and midnight as Am."));
 
-  QToolTip::add(edDateFmt, I18N_NOOP(
+  QToolTip::add(edDateFmt, locale->translate(
 "The text in this textbox will be used to format long\n"
 "dates. The sequences below will be replaced:\n"
 "\n"
@@ -117,32 +121,32 @@ KLocaleConfigTime::KLocaleConfigTime(QWidget *parent, const char*name)
 "%w The weekday (Sunday as the first day of the week) as\n"
 "   a decimal number (0-6)."));
 
-  QToolTip::add(edDateFmtShort, I18N_NOOP(
-"The text in this textbox will be used to format short\n"
-"dates. Short dates can not be longer than 12 charaters.\n"
-"The sequences below will be replaced:\n"
-"\n"
-"%Y The year with century as a decimal number.\n"
-"%y The year without century as a decimal number (00-99).\n"
-"%C (year / 100) as decimal number; single digits are\n"
-"   preceded by a zero.\n"
-"%m The month as a decimal number (01-12).\n"
-"%n The month as a decimal number (1-12); single digits are\n"
-"   preceded by a blank.\n"
-"%b The national representation of the abbreviated month\n"
-"   name, where the abbreviation is the first three characters.\n"
-"%B The national representation of the full month name.\n"
-"%d The day of month as a decimal number (01-31).\n"
-"%e The day of month as a decimal number (1-31); single\n"
-"   digits are preceded by a blank.\n"
-"%j The day of the year as a decimal number (001-366).\n"
-"%a The national representation of the abbreviated weekday\n"
-"   name, where the abbreviation is the first three characters.\n"
-"%A The national representation of the full weekday name.\n"
-"%u The weekday (Monday as the first day of the week) as\n"
-"   a decimal number (1-7).\n"
-"%w The weekday (Sunday as the first day of the week) as\n"
-"   a decimal number (0-6)."));
+  QToolTip::add(edDateFmtShort, locale->translate(
+    "The text in this textbox will be used to format short\n"
+    "dates. Short dates can not be longer than 12 charaters.\n"
+    "The sequences below will be replaced:\n"
+    "\n"
+    "%Y The year with century as a decimal number.\n"
+    "%y The year without century as a decimal number (00-99).\n"
+    "%C (year / 100) as decimal number; single digits are\n"
+    "   preceded by a zero.\n"
+    "%m The month as a decimal number (01-12).\n"
+    "%n The month as a decimal number (1-12); single digits are\n"
+    "   preceded by a blank.\n"
+    "%b The national representation of the abbreviated month\n"
+    "   name, where the abbreviation is the first three characters.\n"
+    "%B The national representation of the full month name.\n"
+    "%d The day of month as a decimal number (01-31).\n"
+    "%e The day of month as a decimal number (1-31); single\n"
+    "   digits are preceded by a blank.\n"
+    "%j The day of the year as a decimal number (001-366).\n"
+    "%a The national representation of the abbreviated weekday\n"
+    "   name, where the abbreviation is the first three characters.\n"
+    "%A The national representation of the full weekday name.\n"
+    "%u The weekday (Monday as the first day of the week) as\n"
+    "   a decimal number (1-7).\n"
+    "%w The weekday (Sunday as the first day of the week) as\n"
+    "   a decimal number (0-6)."));
 
   load();
 }
@@ -160,38 +164,38 @@ void KLocaleConfigTime::load()
 
 void KLocaleConfigTime::save()
 {
-  KSimpleConfig *c = new KSimpleConfig("kdeglobals", false);
-  c->setGroup("Locale");
+  KSimpleConfig *c = new KSimpleConfig(QString::fromLatin1("kdeglobals"), false);
+  c->setGroup(QString::fromLatin1("Locale"));
   // Write something to the file to make it dirty
-  c->writeEntry("TimeFormat", QString::null);
+  c->writeEntry(QString::fromLatin1("TimeFormat"), QString::null);
 
-  c->deleteEntry("TimeFormat", false);
-  c->deleteEntry("DateFormat", false);
-  c->deleteEntry("DateFormatShort", false);
+  c->deleteEntry(QString::fromLatin1("TimeFormat"), false);
+  c->deleteEntry(QString::fromLatin1("DateFormat"), false);
+  c->deleteEntry(QString::fromLatin1("DateFormatShort"), false);
   delete c;
 
   KConfigBase *config = new KConfig;
-  config->setGroup("Locale");
+  config->setGroup(QString::fromLatin1("Locale"));
 
-  KSimpleConfig ent(locate("locale", "l10n/" + locale->time + "/entry.desktop"), true);
-  ent.setGroup("KCM Locale");
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->time + QString::fromLatin1("/entry.desktop")), true);
+  ent.setGroup(QString::fromLatin1("KCM Locale"));
 
   QString str;
 
-  str = ent.readEntry("TimeFormat", "%I:%M:%S %p");
-  str = config->readEntry("TimeFormat", str);
+  str = ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p"));
+  str = config->readEntry(QString::fromLatin1("TimeFormat"), str);
   if (str != locale->_timefmt)
-    config->writeEntry("TimeFormat", locale->_timefmt, true, true);
+    config->writeEntry(QString::fromLatin1("TimeFormat"), locale->_timefmt, true, true);
 
-  str = ent.readEntry("DateFormat", "%A %d %B %Y");
-  str = config->readEntry("DateFormat", str);
+  str = ent.readEntry(QString::fromLatin1("DateFormat"), QString::fromLatin1("%A %d %B %Y"));
+  str = config->readEntry(QString::fromLatin1("DateFormat"), str);
   if (str != locale->_datefmt)
-    config->writeEntry("DateFormat", locale->_datefmt, true, true);
+    config->writeEntry(QString::fromLatin1("DateFormat"), locale->_datefmt, true, true);
 
-  str = ent.readEntry("DateFormatShort", "%m/%d/%y");
-  str = config->readEntry("DateFormatShort", str);
+  str = ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%m/%d/%y"));
+  str = config->readEntry(QString::fromLatin1("DateFormatShort"), str);
   if (str != locale->_datefmtshort)
-    config->writeEntry("DateFormatShort", locale->_datefmtshort, true, true);
+    config->writeEntry(QString::fromLatin1("DateFormatShort"), locale->_datefmtshort, true, true);
 
   delete config;
 }
@@ -221,12 +225,12 @@ void KLocaleConfigTime::slotDateFmtShortChanged(const QString &t)
 
 void KLocaleConfigTime::reset()
 {
-  KSimpleConfig ent(locate("locale", "l10n/" + locale->time + "/entry.desktop"), true);
-  ent.setGroup("KCM Locale");
+  KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/") + locale->time + QString::fromLatin1("/entry.desktop")), true);
+  ent.setGroup(QString::fromLatin1("KCM Locale"));
 
-  locale->_timefmt = ent.readEntry("TimeFormat", "%I:%M:%S %p");
-  locale->_datefmt = ent.readEntry("DateFormat", "%A %d %B %Y");
-  locale->_datefmtshort = ent.readEntry("DateFormatShort", "%m/%d/%y");
+  locale->_timefmt = ent.readEntry(QString::fromLatin1("TimeFormat"), QString::fromLatin1("%I:%M:%S %p"));
+  locale->_datefmt = ent.readEntry(QString::fromLatin1("DateFormat"), QString::fromLatin1("%A %d %B %Y"));
+  locale->_datefmtshort = ent.readEntry(QString::fromLatin1("DateFormatShort"), QString::fromLatin1("%m/%d/%y"));
 
   load();
 }
