@@ -35,6 +35,7 @@
 #include <fcntl.h>
 #include <ctype.h>
 #include <errno.h>
+#include <netdb.h>
 
 #define KDMCONF KDE_CONFDIR "/kdm"
 
@@ -177,9 +178,12 @@ GSendInt (int val)
 static void
 GSendStr (const char *buf)
 {
-    int len = strlen (buf) + 1;
-    GWrite (&len, sizeof(len));
-    GWrite (buf, len);
+    if (buf) {
+	int len = strlen (buf) + 1;
+	GWrite (&len, sizeof(len));
+	GWrite (buf, len);
+    } else
+	GWrite (&buf, sizeof(int));
 }
 
 static void
@@ -189,6 +193,13 @@ GSendNStr (const char *buf, int len)
     GWrite (&tlen, sizeof(tlen));
     GWrite (buf, len);
     GWrite ("", 1);
+}
+
+static void
+GSendArr (int len, const char *data)
+{
+    GWrite (&len, sizeof(len));
+    GWrite (data, len);
 }
 
 static int
@@ -227,20 +238,20 @@ GRecvStr ()
 /* #define WANT_CLOSE 1 */
 
 typedef struct File {
-	char *buf, *eof;
+	char *buf, *eof, *cur;
 #if defined(HAVE_MMAP) && defined(WANT_CLOSE)
 	int ismapped;
 #endif
 } File;
 
 static int
-readFile (File *file, const char *fn)
+readFile (File *file, const char *fn, const char *what)
 {
     int fd;
     off_t flen;
 
     if ((fd = open (fn, O_RDONLY)) < 0) {
-	LogInfo ("Cannot open config file %s\n", fn);
+	LogInfo ("Cannot open %s file %s\n", what, fn);
 	return 0;
     }
 
@@ -249,7 +260,7 @@ readFile (File *file, const char *fn)
 # ifdef WANT_CLOSE
     file->ismapped = 0;
 # endif
-    file->buf = mmap(0, flen, PROT_READ, MAP_PRIVATE, fd, 0);
+    file->buf = mmap(0, flen + 1, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
 # ifdef WANT_CLOSE
     if (file->buf)
 	file->ismapped = 1;
@@ -259,7 +270,7 @@ readFile (File *file, const char *fn)
 # endif
 #endif
     {
-	if (!(file->buf = malloc (flen))) {
+	if (!(file->buf = malloc (flen + 1))) {
 	    LogOutOfMem ("readFile");
 	    close (fd);
 	    return 0;
@@ -267,23 +278,38 @@ readFile (File *file, const char *fn)
 	lseek (fd, 0, SEEK_SET);
 	if (read (fd, file->buf, flen) != flen) {
 	    free (file->buf);
-	    LogError ("Cannot read config file\n");
+	    LogError ("Cannot read %s file %s\n", what, fn);
 	    close (fd);
 	    return 0;
 	}
     }
-    file->eof = file->buf + flen;
+    file->eof = (file->cur = file->buf) + flen;
     close (fd);
+    return 1;
+}
+
+static int
+copyBuf (File *file, const char *buf, int len)
+{
+    if (!(file->buf = malloc (len + 1))) {
+	LogOutOfMem ("copyBuf");
+	return 0;
+    }
+    memcpy (file->buf, buf, len);
+    file->eof = (file->cur = file->buf) + len;
+#if defined(HAVE_MMAP) && defined(WANT_CLOSE)
+    file->ismapped = 0;
+#endif
     return 1;
 }
 
 #ifdef WANT_CLOSE
 static void
-freeFile (File *file)
+freeBuf (File *file)
 {
 # ifdef HAVE_MMAP
     if (file->ismapped)
-	munmap(file->buf, file->eof - file->buf);
+	munmap(file->buf, file->eof - file->buf + 1);
     else
 # endif
 	free (file->buf);
@@ -291,15 +317,19 @@ freeFile (File *file)
 #endif
 
 static int daemonize = -1, autolog = 1;
-static Value VnoPassEnable, VautoLoginEnable, VxdmcpEnable;
+static Value VnoPassEnable, VautoLoginEnable, VxdmcpEnable,
+	VXaccess, VXservers;
 
 #define C_BOOL		0x10000000	/* C_TYPE_INT is a boolean */
 #define C_ENUM		0x20000000	/* C_TYPE_INT is an enum (option) */
 #define C_INTERNAL	0x40000000	/* don't expose to core */
+#define C_CONFIG	0x80000000	/* process only for finding deps */
 
 #define C_noPassEnable		( C_TYPE_INT | C_INTERNAL | 0x2000 )
 #define C_autoLoginEnable	( C_TYPE_INT | C_INTERNAL | 0x2001 )
 #define C_xdmcpEnable		( C_TYPE_INT | C_INTERNAL | 0x2002 )
+#define C_accessFile		( C_TYPE_STR | C_INTERNAL | C_CONFIG | 0x2003 )
+#define C_servers		( C_TYPE_STR | C_INTERNAL | C_CONFIG | 0x2004 )
 
 static int
 PdaemonMode (Value *retval)
@@ -401,10 +431,10 @@ static const char
 
 Ent entsGeneral[] = {
 { "DaemonMode",		C_daemonMode | C_BOOL,	(void *)PdaemonMode,	"true" },
-{ "Xservers",		C_servers,		0,	KDMCONF "/Xservers" },
+{ "Xservers",		C_servers,		&VXservers,	KDMCONF "/Xservers" },
 { "PidFile",		C_pidFile,		0,	"/var/run/xdm.pid" },
 { "LockPidFile",	C_lockPidFile | C_BOOL,	0,	"true" },
-{ "AuthDir",		C_authDir	,	0,	"/var/lib/kdm" },
+{ "AuthDir",		C_authDir,		0,	"/var/lib/kdm" },
 { "AutoRescan",		C_autoRescan | C_BOOL,	0,	"true" },
 { "ExportList",		C_exportList,		0,	"" },
 #if !defined(__linux__) && !defined(__OpenBSD__)
@@ -417,7 +447,7 @@ Ent entsXdmcp[] = {
 { "Enable",		C_xdmcpEnable | C_BOOL,	&VxdmcpEnable,	"true" },
 { "Port",		C_requestPort,		(void *)PrequestPort,	"177" },
 { "KeyFile",		C_keyFile,		0,	KDMCONF "/kdmkeys" },
-{ "Xaccess",		C_accessFile,		0,	KDMCONF "/Xaccess" },
+{ "Xaccess",		C_accessFile,		&VXaccess,	KDMCONF "/Xaccess" },
 { "ChoiceTimeout",	C_choiceTimeout,	0,	"15" },
 { "RemoveDomainname",	C_removeDomainname | C_BOOL, 0,	"true" },
 { "SourceAddress",	C_sourceAddress | C_BOOL, 0,	"false" },
@@ -526,6 +556,7 @@ Ent entsDesktop[] = {
 { "WallpaperMode",	C_WallpaperMode,	0,	"Tiled" },
 };
 
+/* Don't change order! */
 Sect allSects[] = { 
  { "General", entsGeneral, as(entsGeneral) },
  { "Xdmcp", entsXdmcp, as(entsXdmcp) },
@@ -543,7 +574,7 @@ static void
 ReadConf ()
 {
     const char *nstr, *dstr, *cstr, *dhost, *dnum, *dclass;
-    const char *s, *e, *st, *en, *ek, *sl;
+    char *s, *e, *st, *en, *ek, *sl, *pt;
     Section *cursec;
     Entry *curent;
     int nlen, dlen, clen, dhostl, dnuml, dclassl;
@@ -556,7 +587,7 @@ ReadConf ()
     confread = 1;
 
 Debug ("reading config %s ...\n", kdmrc);
-    if (!readFile (&file, kdmrc))
+    if (!readFile (&file, kdmrc, "master configuration"))
 	return;
 
 Debug ("parsing config ...\n");
@@ -691,7 +722,7 @@ Debug ("parsing config ...\n");
 	continue;
 
       haveeq:
-	for (ek = s - 1;; ek--) {
+	for (ek = s - 1; ; ek--) {
 	    if (ek < sl) {
 		LogError ("Invalid entry (empty key) at %s:%d\n", kdmrc, line);
 		goto sktoeol;
@@ -703,10 +734,31 @@ Debug ("parsing config ...\n");
 	s++;
 	while ((s < file.eof) && isspace(*s) && (*s != '\n'))
 	    s++;
-	st = s;
-	while ((s < file.eof) && (*s != '\n'))
-	    s++;
-	for (en = s - 1; en >= st && isspace (*en); en--);
+	for (pt = st = en = s; s < file.eof && *s != '\n'; s++) {
+	    if (*s == '\\') {
+		s++;
+		if (s >= file.eof || *s == '\n') {
+		    LogError ("Trailing backslash at %s:%d\n", kdmrc, line);
+		    break;
+		}
+		switch(*s) {
+		case 's': *pt++ = ' '; break;
+		case 't': *pt++ = '\t'; break;
+		case 'n': *pt++ = '\n'; break;
+		case 'r': *pt++ = '\r'; break;
+		case '\\': *pt++ = '\\'; break;
+		default: 
+		    LogError ("Unrecognized escape '\\%c' at %s:%d\n", 
+			      *s, kdmrc, line);
+		    break;
+		}
+		en = pt;
+	    } else {
+		*pt++ = *s;
+		if (*s != ' ' && *s != '\t')
+		    en = pt;
+	    }
+        }
 
 	nstr = sl;
 	nlen = ek - sl + 1;
@@ -732,11 +784,11 @@ Debug ("parsing config ...\n");
 	curent->keyid = cursec->sect->ents[i].id;
 	curent->line = line;
 	curent->val = st;
-	curent->vallen = en - st + 1;
+	curent->vallen = en - st;
 	curent->next = cursec->entries;
 	cursec->entries = curent;
       keyfnd:
-	Debug ("read entry '%.*s'='%.*s'\n", nlen, nstr, en - st + 1, st);
+	Debug ("read entry '%.*s'='%.*s'\n", nlen, nstr, en - st, st);
 	continue;
     }
 Debug ("config parsed\n");
@@ -946,7 +998,7 @@ AddValue (ValArr *va, int id, Value *val)
 }
 
 static void
-CopyValues (ValArr *va, Sect *sec, DSpec *dspec)
+CopyValues (ValArr *va, Sect *sec, DSpec *dspec, int isconfig)
 {
     Value val;
     int i;
@@ -954,7 +1006,9 @@ CopyValues (ValArr *va, Sect *sec, DSpec *dspec)
 /*Debug ("copying values from section [%s]\n", sec->name);*/
     for (i = 0; i < sec->numents; i++) {
 /*Debug ("value 0x%x\n", sec->ents[i].id);*/
-	if (sec->ents[i].id & C_INTERNAL) {
+	if ((sec->ents[i].id & (int)C_CONFIG) != isconfig)
+	    ;
+	else if (sec->ents[i].id & C_INTERNAL) {
 	    GetValue (sec->ents + i, dspec, ((Value *)sec->ents[i].ptr), 0);
 	} else {
 	    if ((sec->ents[i].id & C_ENUM) || !sec->ents[i].ptr ||
@@ -1001,6 +1055,441 @@ Debug ("sending values\n");
 Debug ("values sent\n");
 }
 
+
+static char *
+ReadWord (File *file, int *len, int EOFatEOL)
+{
+    char    *wordp, *wordBuffer;
+    int	    quoted;
+    char    c;
+
+  rest:
+    wordp = wordBuffer = file->cur;
+  mloop:
+    quoted = 0;
+  qloop:
+    if (file->cur == file->eof)
+    {
+      doeow:
+	if (wordp == wordBuffer)
+{Debug ("read empty word\n");
+	    return 0;
+}      retw:
+	*wordp = '\0';
+	*len = wordp - wordBuffer;
+Debug ("read word '%s'\n", wordBuffer);
+	return wordBuffer;
+    }
+    c = *file->cur++;
+    switch (c) {
+    case '#':
+	if (quoted)
+	    break;
+	do {
+	    if (file->cur == file->eof)
+		goto doeow;
+	    c = *file->cur++;
+	} while (c != '\n');
+    case '\0':
+    case '\n':
+	if (EOFatEOL && !quoted)
+	{
+	    file->cur--;
+	    goto doeow;
+	}
+    case ' ':
+    case '\t':
+	if (wordp != wordBuffer)
+	    goto retw;
+	goto rest;
+    case '\\':
+	if (!quoted)
+	{
+	    quoted = 1;
+	    goto qloop;
+	}
+	break;
+    }
+    *wordp++ = c;
+    goto mloop;
+}
+
+
+#define ALIAS_CHARACTER	    '%'
+#define NEGATE_CHARACTER    '!'
+#define CHOOSER_STRING	    "CHOOSER"
+#define BROADCAST_STRING    "BROADCAST"
+#define NOBROADCAST_STRING  "NOBROADCAST"
+
+typedef struct hostEntry {
+    struct hostEntry	*next;
+    int		type;
+    union _hostOrAlias {
+	char	*aliasPattern;
+	char	*hostPattern;
+	struct _display {
+	    int		connectionType;
+	    int		hostAddrLen;
+	    char	*hostAddress;
+	} displayAddress;
+    } entry;
+} HostEntry;
+
+typedef struct aliasEntry {
+    struct aliasEntry	*next;
+    char	*name;
+    int		hosts;
+    int		nhosts;
+} AliasEntry;
+
+typedef struct aclEntry {
+    struct aclEntry	*next;
+    int		entries;
+    int		nentries;
+    int		hosts;
+    int		nhosts;
+    int		flags;
+} AclEntry;
+
+
+static int
+HasGlobCharacters (char *s)
+{
+    for (;;)
+	switch (*s++) {
+	case '?':
+	case '*':
+	    return 1;
+	case '\0':
+	    return 0;
+	}
+}
+
+static int
+ParseHost (int *nHosts, HostEntry ***hostPtr, int *nChars, 
+	   char *hostOrAlias, int len)
+{
+    struct hostent  *hostent;
+
+    if (!(**hostPtr = (HostEntry *) malloc (sizeof (HostEntry))))
+    {
+	LogOutOfMem ("ParseHost");
+	return 0;
+    }
+    if (!strcmp (hostOrAlias, BROADCAST_STRING))
+    {
+	(**hostPtr)->type = HOST_BROADCAST;
+    }
+    else if (*hostOrAlias == ALIAS_CHARACTER)
+    {
+	(**hostPtr)->type = HOST_ALIAS;
+	(**hostPtr)->entry.aliasPattern = hostOrAlias + 1;
+	*nChars += len;
+    }
+    else if (HasGlobCharacters (hostOrAlias))
+    {
+	(**hostPtr)->type = HOST_PATTERN;
+	(**hostPtr)->entry.hostPattern = hostOrAlias;
+	*nChars += len + 1;
+    }
+    else
+    {
+	(**hostPtr)->type = HOST_ADDRESS;
+	if (!(hostent = gethostbyname (hostOrAlias)))
+	{
+	    LogError ("Host \"%s\" not found\n", hostOrAlias);
+	    free ((char *) (**hostPtr));
+	    return 0;
+	}
+	if (!((**hostPtr)->entry.displayAddress.hostAddress = 
+	      malloc (hostent->h_length)))
+	{
+	    LogOutOfMem ("ParseHost");
+	    free ((char *) (**hostPtr));
+	    return 0;
+	}
+	memcpy ((**hostPtr)->entry.displayAddress.hostAddress, 
+		hostent->h_addr, hostent->h_length);
+	*nChars += hostent->h_length;
+	(**hostPtr)->entry.displayAddress.hostAddrLen = hostent->h_length;
+	(**hostPtr)->entry.displayAddress.connectionType = hostent->h_addrtype;
+    }
+    *hostPtr = &(**hostPtr)->next;
+    (*nHosts)++;
+    return 1;
+}
+
+static void
+ReadAccessFile (const char *fname)
+{
+    HostEntry		*hostList, **hostPtr = &hostList;
+    AliasEntry		*aliasList, **aliasPtr = &aliasList;
+    AclEntry		*acList, **acPtr = &acList;
+    char		*displayOrAlias, *hostOrAlias;
+    File		file;
+    int			nHosts, nAliases, nAcls, nChars, error;
+    int			i, len;
+
+    nHosts = nAliases = nAcls = nChars = error = 0;
+    if (!readFile (&file, fname, "XDMCP access control"))
+	goto sendacl;
+    while ((displayOrAlias = ReadWord (&file, &len, FALSE)))
+    {
+	if (*displayOrAlias == ALIAS_CHARACTER)
+	{
+	    if (!(*aliasPtr = (AliasEntry *) malloc (sizeof (AliasEntry))))
+	    {
+	      oom:
+		LogOutOfMem ("ReadAccessFile");
+		error = 1;
+		break;
+	    }
+	    (*aliasPtr)->name = displayOrAlias + 1;
+	    nChars += len;
+	    (*aliasPtr)->hosts = nHosts;
+	    (*aliasPtr)->nhosts = 0;
+	    while ((hostOrAlias = ReadWord (&file, &len, TRUE)))
+	    {
+		if (!ParseHost (&nHosts, &hostPtr, &nChars, hostOrAlias, len))
+		    goto sktoeol;
+		(*aliasPtr)->nhosts++;
+	    }
+	    aliasPtr = &(*aliasPtr)->next;
+	    nAliases++;
+	}
+	else
+	{
+	    if (!(*acPtr = (AclEntry *) malloc (sizeof (AclEntry))))
+		goto oom;
+	    (*acPtr)->flags = 0;
+	    if (*displayOrAlias == NEGATE_CHARACTER)
+	    {
+		(*acPtr)->flags |= a_notAllowed;
+		displayOrAlias++;
+	    }
+	    (*acPtr)->entries = nHosts;
+	    (*acPtr)->nentries = 1;
+	    if (!ParseHost (&nHosts, &hostPtr, &nChars, displayOrAlias, len))
+	    {
+	      sktoeol:
+		while (ReadWord (&file, &len, TRUE));
+		error = 1;
+		continue;
+	    }
+	    (*acPtr)->hosts = nHosts;
+	    (*acPtr)->nhosts = 0;
+	    while ((hostOrAlias = ReadWord (&file, &len, TRUE)))
+	    {
+		if (!strcmp (hostOrAlias, CHOOSER_STRING))
+		    (*acPtr)->flags |= a_useChooser;
+		else if (!strcmp (hostOrAlias, NOBROADCAST_STRING))
+		    (*acPtr)->flags |= a_notBroadcast;
+		else
+		{
+		    if (!ParseHost (&nHosts, &hostPtr, &nChars, 
+				    hostOrAlias, len))
+			goto sktoeol;
+		    (*acPtr)->nhosts++;
+		}
+	    }
+	    acPtr = &(*acPtr)->next;
+	    nAcls++;
+	}
+    }
+
+    if (error) {
+	nHosts = nAliases = nAcls = nChars = 0;
+      sendacl:
+	LogError ("No XDMCP reqeusts will be granted\n");
+    }
+    GSendInt (nHosts);
+    GSendInt (nAliases);
+    GSendInt (nAcls);
+    GSendInt (nChars);
+    for (i = 0; i < nHosts; i++, hostList = hostList->next) {
+	GSendInt (hostList->type);
+	switch (hostList->type) {
+	case HOST_ALIAS:
+	    GSendStr (hostList->entry.aliasPattern);
+	    break;
+	case HOST_PATTERN:
+	    GSendStr (hostList->entry.hostPattern);
+	    break;
+	case HOST_ADDRESS:
+	    GSendArr (hostList->entry.displayAddress.hostAddrLen,
+		      hostList->entry.displayAddress.hostAddress);
+	    GSendInt (hostList->entry.displayAddress.connectionType);
+	    break;
+	}
+    }
+    for (i = 0; i < nAliases; i++, aliasList = aliasList->next) {
+	GSendStr (aliasList->name);
+	GSendInt (aliasList->hosts);
+	GSendInt (aliasList->nhosts);
+    }
+    for (i = 0; i < nAcls; i++, acList = acList->next) {
+	GSendInt (acList->entries);
+	GSendInt (acList->nentries);
+	GSendInt (acList->hosts);
+	GSendInt (acList->nhosts);
+	GSendInt (acList->flags);
+    }
+}
+
+
+#ifdef __linux__
+# define DEF_SERVER_LINE ":0 local@tty1 " XBINDIR "/X vt7"
+#elif defined(sun)
+# define DEF_SERVER_LINE ":0 local@console " XBINDIR "/X"
+#elif defined(_AIX)
+# define DEF_SERVER_LINE ":0 local@lft0 " XBINDIR "/X"
+#else
+# define DEF_SERVER_LINE ":0 local " XBINDIR "/X"
+#endif
+
+static struct displayMatch {
+	const char	*name;
+	int		len, type;
+} displayTypes[] = {
+	{ "local", 5,	Local | Permanent | FromFile },
+	{ "foreign", 7,	Foreign | Permanent | FromFile },
+};
+
+#define def_type (Local | Permanent | FromFile)
+
+static int
+parseDisplayType (const char *string, const char **atPos)
+{
+    struct displayMatch	*d;
+
+    *atPos = 0;
+    for (d = displayTypes; d < displayTypes + as(displayTypes); d++) {
+	if (!memcmp (d->name, string, d->len) &&
+	    (!string[d->len] || string[d->len] == '@')) {
+	    if (string[d->len] == '@')
+		*atPos = string + d->len + 1;
+	    return d->type;
+	}
+    }
+    return -1;
+}
+
+typedef struct argV {
+    struct argV	*next;
+    const char	*str;
+} ArgV;
+
+typedef struct serverEntry {
+    struct serverEntry	*next;
+    const char	*name, *class2, *console;
+    ArgV	*argv;
+    int		type, argc;
+} ServerEntry;
+
+static void
+ReadServersFile (const char *fname)
+{
+    const char	*word, *atPos;
+    ServerEntry	*serverList, **serverPtr = &serverList;
+    ArgV	*argv, **argp;
+    File	file;
+    int		i, j, len, nserv;
+
+    nserv = 0;
+    if (strcmp (fname, kdmrc)) {
+	if (readFile (&file, fname, "X-Server specification"))
+	    goto haveit;
+    } else {
+	ReadConf ();
+	if (copyBuf (&file, VXservers.ptr, VXservers.len - 1))
+	    goto haveit;
+    }
+    if (!copyBuf (&file, DEF_SERVER_LINE, sizeof (DEF_SERVER_LINE) - 1)) {
+	LogInfo ("No X-Servers will be started\n");
+	goto sendxs;
+    }
+  haveit:
+    while ((word = ReadWord (&file, &len, FALSE))) {
+Debug ("read display name %s\n", word);
+	if (!(*serverPtr = (ServerEntry *) malloc (sizeof (ServerEntry)))) {
+	    LogOutOfMem ("ReadServerFile");
+	    break;
+	}
+	(*serverPtr)->name = word;
+	/*
+	 * extended syntax; if the second argument doesn't
+	 * exactly match a legal display type and the third
+	 * argument does, use the second argument as the
+	 * display class string
+	 */
+	if (!(word = ReadWord (&file, &len, TRUE))) {
+	  notype:
+	    LogError ("Missing display type for %s in file %s\n", 
+		      (*serverPtr)->name, fname);
+	    continue;
+	}
+	(*serverPtr)->class2 = 0;
+	(*serverPtr)->type = parseDisplayType (word, &atPos);
+	if ((*serverPtr)->type < 0) {
+	    (*serverPtr)->class2 = word;
+Debug ("read display class %s\n", word);
+	    if (!(word = ReadWord (&file, &len, TRUE)))
+		goto notype;
+	    (*serverPtr)->type = parseDisplayType (word, &atPos);
+	    if ((*serverPtr)->type < 0) {
+		while (ReadWord (&file, &len, TRUE));
+		goto notype;
+	    }
+	}
+Debug ("read display type %s\n", word);
+	(*serverPtr)->console = atPos;
+Debug ("read console %s\n", atPos);
+	(*serverPtr)->argc = 0;
+	argp = &(*serverPtr)->argv;
+	while ((word = ReadWord (&file, &len, TRUE))) {
+Debug ("read server arg %s\n", word);
+	    if (!(*argp = (ArgV *) malloc (sizeof (ArgV)))) {
+		LogOutOfMem ("ReadServerFile");
+		goto sendxs;
+	    }
+	    (*argp)->str = word;
+	    argp = &(*argp)->next;
+	    (*serverPtr)->argc++;
+	}
+	if (((*serverPtr)->type & d_location) == Local) {
+	    if (!(*serverPtr)->argc) {
+		LogError ("Missing arguments to local server %s in file %s\n",
+			  (*serverPtr)->name, fname);
+		continue;
+	    }
+	} else {
+	    if ((*serverPtr)->argc) {
+		LogError ("Superflous arguments to foreign server %s in file %s\n",
+			  (*serverPtr)->name, fname);
+		continue;
+	    }
+	}
+	serverPtr = &(*serverPtr)->next;
+	nserv++;
+    }
+  sendxs:
+    GSendInt (nserv);
+    for (i = 0; i < nserv; i++, serverList = serverList->next) {
+	GSendStr (serverList->name);
+	GSendStr (serverList->class2);
+	GSendStr (serverList->console);
+	GSendInt (serverList->type);
+	j = serverList->argc;
+	if (j) {
+	    GSendInt (j + 1);
+	    for (argv = serverList->argv; j; j--, argv = argv->next)
+		GSendStr (argv->str);
+	}
+	GSendInt (0);
+    }
+}
+
+
 #define T_S 0
 #define T_N 1
 #define T_Y 2
@@ -1018,8 +1507,6 @@ static struct {
 	{ "-noautolog", T_N, (const char **)&autolog },
 };
 
-static int cfgMapT[] = { GC_gGlobal, GC_gDisplay };
-static int cfgMap[] = { 0, 0 };
 
 #ifdef HAVE_PAM
 Value pamservice = { KDM_PAM_SERVICE, sizeof(KDM_PAM_SERVICE) };
@@ -1029,7 +1516,7 @@ int main(int argc, char **argv)
 {
     DSpec dspec;
     ValArr va;
-    char *ci, *disp, *dcls;
+    char *ci, *disp, *dcls, *cfgfile;
     int ap, what, i;
 
     if (!(ci = getenv("CONINFO"))) {
@@ -1082,31 +1569,44 @@ int main(int argc, char **argv)
 	switch (what) {
 	case GC_Files:
 /*	    Debug ("GC_Files\n");*/
-	    /* ReadConf (); */
-	    GSendInt (1);
+	    ReadConf ();
+	    CopyValues (&va, allSects + 0, 0, C_CONFIG);
+	    CopyValues (&va, allSects + 1, 0, C_CONFIG);
+	    GSendInt ((VXservers.ptr[0] == '/') ? 3 : 2);
 	    GSendStr (kdmrc); GSendInt (-1);
-	    for (; (what = GRecvInt ()) != -1; ) {
-		for (i = 0; i < as(cfgMapT); i++)
-		    if (what == cfgMapT[i]) {
-			GSendInt (cfgMap[i]);
-			goto mapok;
-		    }
-		GSendInt (-1);
-	      mapok: ;
+	    GSendNStr (VXaccess.ptr, VXaccess.len); GSendInt (0);
+	    if (VXservers.ptr[0] == '/') {
+		GSendNStr (VXservers.ptr, VXservers.len); GSendInt (0);
 	    }
+	    for (; (what = GRecvInt ()) != -1; )
+		switch (what) {
+		case GC_gGlobal:
+		case GC_gDisplay:
+		    GSendInt (0);
+		    break;
+		case GC_gXaccess:
+		    GSendInt (1);
+		    break;
+		case GC_gXservers:
+		    GSendInt ((VXservers.ptr[0] == '/') ? 2 : 0);
+		    break;
+		default:
+		    GSendInt (-1);
+		    break;
+		}
 	    break;
 	case GC_GetConf:
 /*	    Debug ("GC_GetConf\n");*/
 	    memset (&va, 0, sizeof(va));
 	    what = GRecvInt();
-	    free (GRecvStr ());	/* don't need it - currently */	    
+	    cfgfile = GRecvStr ();
 	    switch (what) {
 	    case GC_gGlobal:
 /*		Debug ("GC_gGlobal\n");*/
 		ReadConf ();
-		CopyValues (&va, allSects + 0, 0);
-		CopyValues (&va, allSects + 1, 0);
-		CopyValues (&va, allSects + 2, 0);
+		CopyValues (&va, allSects + 0, 0, 0);
+		CopyValues (&va, allSects + 1, 0, 0);
+		CopyValues (&va, allSects + 2, 0, 0);
 #ifdef HAVE_PAM
 		AddValue (&va, C_PAMService, &pamservice);
 #endif
@@ -1120,20 +1620,23 @@ int main(int argc, char **argv)
 /*		Debug (" Class %s\n", dcls);*/
 		MkDSpec (&dspec, disp, dcls ? dcls : "");
 		ReadConf ();
-		CopyValues (&va, allSects + 4, &dspec);
-		CopyValues (&va, allSects + 5, &dspec);
+		CopyValues (&va, allSects + 4, &dspec, 0);
+		CopyValues (&va, allSects + 5, &dspec, 0);
 		free (disp);
 		if (dcls)
 		    free (dcls);
 		SendValues (&va);
 		break;
-/*	    case GC_gXservers:
+	    case GC_gXservers:
+		ReadServersFile (cfgfile);
 		break;
 	    case GC_gXaccess:
+		ReadAccessFile (cfgfile);
 		break;
-*/	    default:
+	    default:
 		Debug ("Unsupported config cathegory 0x%x\n", what);
 	    }
+	    free (cfgfile);
 	    break;
 	default:
 	    Debug ("Unknown config command 0x%x\n", what);
