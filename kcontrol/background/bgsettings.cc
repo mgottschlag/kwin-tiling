@@ -673,7 +673,7 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     // Wallpaper mode (NoWallpaper, div. tilings)
     m_WallpaperMode = defWallpaperMode;
-    m_Wallpaper = m_pConfig->readEntry("Wallpaper");
+    m_Wallpaper = m_pConfig->readPathEntry("Wallpaper");
     s = m_pConfig->readEntry("WallpaperMode", "invalid");
     if (m_WMMap.contains(s)) {
         int mode = m_WMMap[s];
