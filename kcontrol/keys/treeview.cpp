@@ -81,7 +81,7 @@ void AppTreeItem::setOpen(bool o)
 
 static QPixmap appIcon(const QString &iconName)
 {
-    QPixmap normal = KGlobal::iconLoader()->loadIcon(iconName, KIcon::Small, 0, KIcon::DefaultState, 0L, true);
+    QPixmap normal = SmallIcon( iconName );
     // make sure they are not larger than 20x20
     if (normal.width() > 20 || normal.height() > 20)
     {
