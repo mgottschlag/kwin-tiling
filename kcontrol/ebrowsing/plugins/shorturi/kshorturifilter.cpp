@@ -242,7 +242,8 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
         isLocalFullPath = true;
     }
   }
-  else if( isLocalFullPath )
+
+  if( isLocalFullPath && !exists )
   {
     exists = ( stat( cmd.local8Bit().data() , &buff ) == 0 );
   }
