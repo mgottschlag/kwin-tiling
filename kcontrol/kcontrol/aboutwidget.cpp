@@ -228,7 +228,7 @@ void AboutWidget::updatePixmap()
 
     //draw the caption text
     p.setFont(f3);
-    p.setPen(QColor(139, 163, 198));
+    p.setPen(QColor(92, 171, 230));
     p.drawText(xpos + 13, 60, caption);
     p.setPen(black);
     p.drawText(xpos + 10, 57, caption);
