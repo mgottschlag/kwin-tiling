@@ -221,7 +221,7 @@ void
 KDMShutdown::bye_bye()
 {
      // usernames and passwords are stored in the same format as files
-    if( !pswdEdit || VerifyRoot( pswdEdit->password() ) == V_OK ) {
+    if( !pswdEdit || VerifyRoot( pswdEdit->password() ) >= V_OK ) {
 	QApplication::flushX();
 	if( fork() == 0) {
 
