@@ -83,13 +83,18 @@ KBackground::KBackground(QWidget *parent, const char *name)
     QString wtstr;
     m_pDirs = KGlobal::dirs();
 
-    // Top layout
-    QGridLayout *top = new QGridLayout(this, 3, 3, KDialog::marginHint(), KDialog::spacingHint() );
+    // Enabling checkbox
+    m_pCBEnable = new QCheckBox( i18n("E&nable background"), this );
+    QWhatsThis::add( m_pCBEnable,
+             i18n("If this is checked, KDM will use the settings below for the background."
+		" If it is disabled, you have to care for the background yourself;"
+		" this is done by running some program (possibly xsetroot) in the script"
+		" specified in the Setup= option in kdmrc (usually Xsetup).") );
+    connect( m_pCBEnable, SIGNAL(toggled( bool )), SLOT(slotEnableChanged()) );
 
-    // Preview monitor at (0,1)
+    // Preview monitor
     m_pMLabel = new QLabel(this);
     m_pMLabel->setPixmap(locate("data", "kcontrol/pics/monitor.png"));
-    top->addWidget(m_pMLabel, 0, 1, AlignCenter);
     m_pMonitor = new KBGMonitor(m_pMLabel);
     m_pMonitor->setGeometry(23, 14, 151, 115);
     connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
@@ -99,18 +104,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
               "like using the current settings. You can even set a background "
               "picture by dragging it onto the preview (e.g. from Konqueror).") );
 
-    m_pCBEnable = new QCheckBox( i18n("Enab&le background"), this );
-    QWhatsThis::add( m_pCBEnable,
-             i18n("If this is checked, KDM will use the settings below for the background."
-		" If it is disabled, you have to care for the background yourself;"
-		" this is done by running some program (possibly xsetroot) in the script"
-		" specified in the Setup= option in kdmrc (usually Xsetup).") );
-    top->addMultiCellWidget( m_pCBEnable, 1, 1, 0, 2 );
-    connect( m_pCBEnable, SIGNAL(toggled( bool )), SLOT(slotEnableChanged()) );
-
-    // Tabwidget at (0,2, 2,2)
+    // Tabwidget
     m_pTabWidget = new QTabWidget(this);
-    top->addMultiCellWidget(m_pTabWidget,2,2,0,2);
 
     // Background settings on Tab 1
     m_pTab1 = new QWidget(0, "Background Tab");
@@ -230,6 +225,12 @@ KBackground::KBackground(QWidget *parent, const char *name)
     m_pCBMulti->hide();
     m_pMSetupBut->hide();
 
+    // Top layout
+    QVBoxLayout *top = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint() );
+    top->addWidget(m_pCBEnable);
+    top->addWidget(m_pMLabel, 0, AlignCenter);
+    top->addWidget(m_pTabWidget);
+
     config->setGroup( "X-*-Greeter" );
     m_Renderer = new KBackgroundRenderer( 0,
 	new KSimpleConfig(
@@ -244,6 +245,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
 void KBackground::makeReadOnly()
 {
+    m_pCBEnable->setEnabled(false);
     m_pCBMulti->setEnabled(false);
     m_pBackgroundBox->setEnabled(false);
     m_pWallpaperBox->setEnabled(false);
