@@ -80,16 +80,16 @@ bool KURISearchFilter::filterURI(KURL &kurl){
 	
 	if (query != QString::null) {
 	    QString newurl = query;
-	    
+	
 	    int pct;
-	    
+	
 	    // Always use utf-8, since it is guaranteed that this
 	    // will be understood.
-	    
+	
 	    if ((pct = newurl.find("\\2")) >= 0) {
 		newurl = newurl.replace(pct, 2, "utf-8");
 	    }
-	    
+	
 	    QString userquery = url.mid(pos+1).replace(QRegExp(" "), "+").utf8();
 	    if (kurl.isMalformed()) {
 	        KURL::encode(userquery);
@@ -97,17 +97,17 @@ bool KURISearchFilter::filterURI(KURL &kurl){
 	    if ((pct = newurl.find("\\1")) >= 0) {
 		newurl = newurl.replace(pct, 2, userquery);
 	    }
-	    
+	
 	    if (KURISearchFilterEngine::self()->verbose()) {
 		kDebugInfo("filtered %s to %s\n", url.ascii(), newurl.ascii());
 	    }
-	    
+	
 	    kurl = newurl;
-	    
+	
 	    return true;
 	}
     }
-    
+
     return false;
 }
 
@@ -129,7 +129,9 @@ KURISearchFilterFactory::~KURISearchFilterFactory() {
 
 QObject *KURISearchFilterFactory::create( QObject *parent, const char *, const char*, const QStringList & )
 {
-    return new KURISearchFilter( parent );
+    QObject *obj = new KURISearchFilter( parent );
+    emit objectCreated( obj );
+    return obj;
 }
 
 KInstance *KURISearchFilterFactory::instance() {

@@ -234,7 +234,9 @@ KShortURIFilterFactory::~KShortURIFilterFactory()
 
 QObject *KShortURIFilterFactory::create( QObject *parent, const char *, const char*, const QStringList & )
 {
-    return new KShortURIFilter( parent );
+    QObject *obj = new KShortURIFilter( parent );
+    emit objectCreated( obj );
+    return obj;
 }
 
 KInstance *KShortURIFilterFactory::instance()
