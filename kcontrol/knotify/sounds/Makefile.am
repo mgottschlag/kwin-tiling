@@ -40,7 +40,6 @@ sounds_data_DATA = \
 	KDE_Window_Sticky.wav \
 	KDE_Window_UnMaximize.wav \
 	KDE_Window_UnSticky.wav \
-	\
 	KDE_Beep.ogg \
 	KDE_Beep_Car.ogg \
 	KDE_Beep_Classic.ogg \
@@ -72,6 +71,7 @@ sounds_data_DATA = \
 	KDE_Drum_Break.ogg \
 	KDE_Error_1.ogg \
 	KDE_Error_2.ogg \
+	KDE_Error_3.ogg \
 	KDE_Event_1.ogg \
 	KDE_Event_2.ogg \
 	KDE_Event_3.ogg \
@@ -88,7 +88,6 @@ sounds_data_DATA = \
 	KDE_Startup_2.ogg \
 	KDE_Startup_3.ogg \
 	KDE_TypeWriter_Bell.ogg \
-	KDE_TypeWriter_EndOfLine.ogg \
 	KDE_TypeWriter_End_Of_Line.ogg \
 	KDE_TypeWriter_Key_1.ogg \
 	KDE_TypeWriter_Key_2.ogg \
