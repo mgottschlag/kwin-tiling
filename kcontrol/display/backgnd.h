@@ -16,7 +16,7 @@
 #include <qlineedit.h>
 #include <qbuttongroup.h>
 
-#include <kintlineedit.h>
+#include <knumlineedit.h>
 #include <kcolordlg.h>
 #include <kcolorbtn.h>
 #include <kcontrol.h>
