@@ -1,4 +1,4 @@
-EXTRA_DIST = bat-0.png bat-1.png bat-2.png bat-3.png bat-4.png
+EXTRA_DIST = bat-0.xpm bat-1.xpm bat-2.xpm bat-3.xpm bat-4.xpm
 
 
 
