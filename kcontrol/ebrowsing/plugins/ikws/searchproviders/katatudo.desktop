@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=KataTudo
+ServiceTypes=SearchProvider
+Keys=kt,katatudo
+Query=http://www.katatudo.com.br/busca/resultado.php?q=\\{@}&onde=&b=Buscar
+Query[pt_BR]=http://www.katatudo.com.br/busca/resultado.php?q=\\{@}&onde=lr%3Dlang_pt&b=Buscar
+Charset=utf8

@@ -46,6 +46,7 @@ services_DATA = \
 		jeeves.desktop \
 		kde.desktop \
 		kde_webcvs.desktop \
+		katatudo.desktop \
 		leo.desktop \
 		lycos.desktop \
 		mamma.desktop \
