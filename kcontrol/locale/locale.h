@@ -28,10 +28,9 @@
 
 #include <kcontrol.h>
 
-#include "klangcombo.h"
-
 class QLabel;
 class KLocale;
+class KLanguageCombo;
 
 class KLocaleConfig : public KConfigWidget
 {
@@ -41,11 +40,9 @@ public:
   KLocaleConfig( QWidget *parent=0, const char *name=0);
   ~KLocaleConfig( );
 
-  void loadLanguageList(KLanguageCombo *combo, const QStringList &first);
-  void loadCountryList(KLanguageCombo *combo, const QStringList &first);
+  void loadLocaleList(KLanguageCombo *combo, const QString &sub, const QStringList &first);
 
 public slots:
-
   void loadSettings();
   void applySettings();
   void defaultSettings();
@@ -70,6 +67,7 @@ private slots:
   void changedMoney(int);
   void changedTime(int);
   void updateSample();
+  void readLocale(const QString &path, QString &name, const QString &sub) const;
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
  * klangcombo.h - A combobox to select a language
  *
- * Copyright (c) 1998 Matthias Hoelzer (hoelzer@physik.uni-wuerzburg.de)
+ * Copyright (c) 1999 Hans Petter Bieker <bieker@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
  * http://www.troll.no/
@@ -25,32 +25,71 @@
 #ifndef __KLANGCOMBO_H__
 #define __KLANGCOMBO_H__
 
+#include <qwidget.h>
 
-#include <qcombobox.h>
-
-
-class KLanguageCombo : public QComboBox
+/*
+ * This class should be just like qcombobox, but it should be possible
+ * to have have a QIconSet for each entry, and each entry should have a tag.
+ *
+ * Support for sub menues should be added in the future.
+ */
+class KLanguageCombo : public QWidget
 {
   Q_OBJECT
 
 public:
-
   KLanguageCombo(QWidget *parent=0, const char *name=0);
   ~KLanguageCombo();
 
+  // insertLanguage should not use locate..
   void insertLanguage(const QString& path, const QString& name, const QString& sub = 0);
+  void changeLanguage(const QString& name, int i);
+
+  // work space
+  void insertItem(const QIconSet& icon, const QString &text, const QString &tag, int index=-1 );
+  void insertSeparator(int index=-1 );
+  void changeItem( const QString &text, int index );
+
+  // count number of installed items
+  int count() const;
+  // clear the widget
+  void clear();
 
   /*
    * Tag of the selected item
    */
   QString currentTag() const;
+  QString tag ( int i ) const;
 
   /*
    * Set the current item
    */
-  void setItem(const QString &code);
+  int currentItem() const;
+  void setCurrentItem(int i);
+  void setCurrentItem(const QString &code);
 
-  QStringList tags;  
+  // widget stuff
+  QSize sizeHint() const;
+signals:
+  void activated( int index );
+  void highlighted( int index );
+
+private slots:
+  void internalActivate( int );
+  void internalHighlight( int );
+
+protected:
+  void paintEvent( QPaintEvent * );
+  void mousePressEvent( QMouseEvent * );
+  void keyPressEvent( QKeyEvent *e );
+  void popupMenu();
+
+private:
+  // work space for the new class
+  QStringList *tags;  
+  QPopupMenu *popup;
+  int current;
+  bool getMetrics(int *dist, int *buttonW, int *buttonH) const;
 };
 
 #endif
