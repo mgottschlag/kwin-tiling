@@ -231,7 +231,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
 
   QValueList<QFont> defaultFontList;
 
-  // Keep in sync with kglobalsettings.
+  // Keep in sync with kdelibs/kdecore/kglobalsettings.cpp
 
   QFont f0("helvetica", 12);
   QFont f1("courier", 12);
@@ -240,8 +240,8 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
   QFont f4("helvetica", 11);
 
   f0.setPointSize(12);
-  f1.setPointSize(10);
-  f2.setPointSize(12);
+  f1.setPointSize(12);
+  f2.setPointSize(10);
   f3.setPointSize(12);
   f4.setPointSize(11);
 
