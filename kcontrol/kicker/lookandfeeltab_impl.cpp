@@ -154,7 +154,7 @@ void LookAndFeelTab::load()
   m_backgroundImage->setChecked(use_theme);
   m_backgroundInput->setEnabled(use_theme);
   m_backgroundLabel->setEnabled(use_theme);
-  m_colorizeImage->setChecked(c.readBoolEntry("ColorizeBackground", true));
+  m_colorizeImage->setChecked(c.readBoolEntry("ColorizeBackground", false));
   m_colorizeImage->setEnabled(use_theme);
   m_backgroundInput->lineEdit()->setText( QString::null );
   m_transparent->setChecked( transparent );
