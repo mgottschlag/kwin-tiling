@@ -356,15 +356,6 @@ KGeneral::KGeneral(QWidget *parent, const char *name)
       " applications. While this works fine with most applications, it <em>may</em>"
       " give strange results sometimes.") );
 
-#ifdef QT_AUTO_COPY_TO_CLIPBOARD
-    cbAutoCopy = new QCheckBox( i18n( "Copy selections automatically to clipboard" ), styles);
-    connect( cbAutoCopy, SIGNAL( clicked() ), SLOT ( slotAutoCopySelection() ) );
-    vlay->addWidget( cbAutoCopy, 10 );
-    QWhatsThis::add( cbAutoCopy, i18n( "If this option is selected, KDE will "
-      " automatically copy any selections you make to the clipboard. This is"
-      " common on Unix but interferes with Ctrl-C/Ctrl-V based Copy & Paste.") );
-#endif
-
     tbStyle = new QButtonGroup( i18n( "Style options for toolbars" ), this);
 
     topLayout->addWidget(tbStyle, 10);
@@ -511,15 +502,6 @@ void KGeneral::slotMacStyle()
     emit changed(true);
 }
 
-void KGeneral::slotAutoCopySelection()
-{
-#ifdef QT_AUTO_COPY_TO_CLIPBOARD
-    useAutoCopy = cbAutoCopy->isChecked();
-    m_bChanged = true;
-    emit changed(true);
-#endif
-}
-
 void KGeneral::readSettings()
 {
     config->setGroup("KDE");
@@ -531,9 +513,6 @@ void KGeneral::readSettings()
     else
     applicationStyle = MotifStyle;
     macStyle = config->readBoolEntry( "macStyle", false);
-#ifdef QT_AUTO_COPY_TO_CLIPBOARD
-    useAutoCopy = config->readBoolEntry( "AutoCopyToClipboard", false);
-#endif
     effectAnimateMenu = config->readBoolEntry( "EffectAnimateMenu", false );
     effectFadeMenu = config->readBoolEntry( "EffectFadeMenu", false );
     effectAnimateCombo = config->readBoolEntry( "EffectAnimateCombo", false );
@@ -561,9 +540,6 @@ void KGeneral::showSettings()
 {
     cbRes->setChecked(useRM);
     cbMac->setChecked(macStyle);
-#ifdef QT_AUTO_COPY_TO_CLIPBOARD
-    cbAutoCopy->setChecked(useAutoCopy);
-#endif
 
     tbHilite->setChecked(tbUseHilite);
     tbTransp->setChecked(tbMoveTransparent);
@@ -586,9 +562,6 @@ void KGeneral::defaults()
 {
     useRM = true;
     macStyle = false;
-#ifdef QT_AUTO_COPY_TO_CLIPBOARD
-    useAutoCopy = false;
-#endif
     tbUseText = "IconOnly";
     tbUseHilite = true;
     tbMoveTransparent = true;
@@ -638,13 +611,8 @@ void KGeneral::save()
     if (!m_bChanged)
     return;
 
-
-
     config->setGroup("KDE");
     config->writeEntry("macStyle", macStyle, true, true);
-#ifdef QT_AUTO_COPY_TO_CLIPBOARD
-    config->writeEntry("AutoCopyToClipboard", useAutoCopy, true, true);
-#endif
     config->writeEntry("EffectAnimateMenu", effectAnimateMenu, true, true);
     config->writeEntry("EffectFadeMenu", effectFadeMenu, true, true);
     config->writeEntry("EffectAnimateCombo", effectAnimateCombo, true, true);
