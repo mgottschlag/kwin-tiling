@@ -322,7 +322,7 @@ CTtf::EStatus CTtf::fixGlyphName(int index, const char *newName)
                     for(int g=0; g<glyph-258; ++g)
                         name+=1+(*name);
 
-                    int  numChars=*name;
+                    unsigned int  numChars=*name;
                     char nameStr[256];
 
                     strncpy(nameStr, ++name, numChars);
