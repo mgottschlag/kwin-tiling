@@ -18,10 +18,18 @@
 */
 
 #include <qlabel.h>
+#include <qvbox.h>
+#include <qpixmap.h>
+#include <qfont.h>
+#include <qwhatsthis.h>
 
+#include <kapplication.h>
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kdebug.h>
+#include <kdialog.h>
+#include <kglobalsettings.h>
+#include <kiconloader.h>
 
 #include "dockcontainer.h"
 #include "dockcontainer.moc"
@@ -30,16 +38,107 @@
 #include "modules.h"
 #include "proxywidget.h"
 
+class ModuleTitle : public QHBox
+{
+  public:
+    ModuleTitle( QWidget *parent, const char *name=0 );
+    ~ModuleTitle() {}
+
+    void showTitleFor( ConfigModule *module );
+    void clear();
+
+  protected:
+    QLabel *m_icon;
+    QLabel *m_name;
+};
+
+ModuleTitle::ModuleTitle( QWidget *parent, const char *name )
+    : QHBox( parent, name )
+{
+  QWidget *spacer = new QWidget( this );
+  spacer->setFixedWidth( KDialog::marginHint()-KDialog::spacingHint() );
+  m_icon = new QLabel( this );
+  m_name = new QLabel( this );
+
+  QFont font = KGlobalSettings::generalFont();
+  font.setPointSize( font.pointSize()+2 );
+  font.setBold( true );
+  m_name->setFont( font );
+
+  setSpacing( KDialog::spacingHint() );
+  setStretchFactor( m_name, 10 );
+}
+
+void ModuleTitle::showTitleFor( ConfigModule *config )
+{
+  if ( !config )
+    return;
+
+  QWhatsThis::add( this, QString::null );
+  QWhatsThis::add( this, config->comment() );
+  m_icon->setPixmap( BarIcon(  config->icon() ) );
+  m_name->setText( config->moduleName() );
+
+  show();
+  kapp->processEvents();
+}
+
+void ModuleTitle::clear()
+{
+  m_icon->setPixmap( QPixmap() );
+  m_name->setText( QString::null );
+  kapp->processEvents();
+}
+
+class ModuleWidget : public QVBox
+{
+  public:
+    ModuleWidget( QWidget *parent, const char *name );
+    ~ModuleWidget() {}
+
+    ProxyWidget* load( ConfigModule *module );
+
+  protected:
+    ModuleTitle *m_title;
+    QVBox *m_body;
+};
+
+ModuleWidget::ModuleWidget( QWidget *parent, const char *name )
+    : QVBox( parent, name )
+{
+  m_title = new ModuleTitle( this, "m_title" );
+  m_body = new QVBox( this, "m_body" );
+}
+
+ProxyWidget *ModuleWidget::load( ConfigModule *module )
+{
+  m_title->clear();
+  ProxyWidget *proxy = module->module();
+
+  if ( proxy )
+  {
+    proxy->reparent(m_body, 0, QPoint(0,0), false);
+    setStretchFactor( proxy, 10 );
+    proxy->show();
+    m_title->showTitleFor( module );
+  }
+
+  return proxy;
+}
+
 DockContainer::DockContainer(QWidget *parent)
-  : QWidget(parent, "DockContainer")
+  : QWidgetStack(parent, "DockContainer")
   , _basew(0L)
   , _module(0L)
 {
-  _busy = new QLabel(i18n("<big>Loading...</big>"), this);
-  _busy->setAlignment(AlignCenter);
-  _busy->setTextFormat(RichText);
-  _busy->setGeometry(0,0, width(), height());
-  _busy->hide();
+  _busyw = new QLabel(i18n("<big><b>Loading...</b></big>"), this);
+  _busyw->setAlignment(AlignCenter);
+  _busyw->setTextFormat(RichText);
+  _busyw->setGeometry(0,0, width(), height());
+  addWidget( _busyw );
+
+  _modulew = new ModuleWidget( this, "_modulew" );
+  addWidget( _modulew );
 }
 
 DockContainer::~DockContainer()
@@ -49,25 +148,45 @@ DockContainer::~DockContainer()
 
 void DockContainer::setBaseWidget(QWidget *widget)
 {
+  removeWidget( _basew );
   delete _basew;
   _basew = 0;
   if (!widget) return;
 
   _basew = widget;
-  _basew->reparent(this, 0, QPoint(0,0), true);
 
-  _basew->resize( size() );
+  addWidget( _basew );
+  raiseWidget( _basew );
+
   emit newModule(widget->caption(), "", "");
-  updateGeometry();
 }
 
-QSize DockContainer::minimumSizeHint() const
+ProxyWidget* DockContainer::loadModule( ConfigModule *module )
 {
-    if (_module)
-	return _module->module()->minimumSizeHint();
-    if ( _basew )
-	return _basew->minimumSizeHint().expandedTo( _basew->minimumSize() );
-    return QWidget::minimumSizeHint();
+  QApplication::setOverrideCursor( waitCursor );
+
+  ProxyWidget *widget = _modulew->load( module );
+
+  if (widget)
+  {
+    _module = module;
+    connect(_module, SIGNAL(childClosed()), SLOT(removeModule()));
+    connect(_module, SIGNAL(changed(ConfigModule *)),
+            SIGNAL(changedModule(ConfigModule *)));
+    connect(widget, SIGNAL(quickHelpChanged()), SLOT(quickHelpChanged()));
+
+    raiseWidget( _modulew );
+    emit newModule(widget->caption(), module->docPath(), widget->quickHelp());
+  }
+  else
+  {
+    raiseWidget( _basew );
+    emit newModule(_basew->caption(), "", "");
+  }
+
+  QApplication::restoreOverrideCursor();
+
+  return widget;
 }
 
 bool DockContainer::dockModule(ConfigModule *module)
@@ -94,59 +213,26 @@ i18n("There are unsaved changes in the active module.\n"
         return false;
     }
 
+  raiseWidget( _busyw );
+  kapp->processEvents();
+
   deleteModule();
   if (!module) return true;
 
-  _busy->raise();
-  _busy->show();
-  _busy->repaint();
-  QApplication::setOverrideCursor( waitCursor );
-
-  ProxyWidget *widget = module->module();
-
-  if (widget)
-    {
-      _module = module;
-      connect(_module, SIGNAL(childClosed()),
-              this, SLOT(removeModule()));
-      connect(_module, SIGNAL(changed(ConfigModule *)),
-              SIGNAL(changedModule(ConfigModule *)));
-
-      connect(widget, SIGNAL(quickHelpChanged()),
-              this, SLOT(quickHelpChanged()));
-
-      widget->reparent(this, 0 , QPoint(0,0), false);
-      widget->resize(size());
-
-      emit newModule(widget->caption(), module->docPath(), widget->quickHelp());
-      QApplication::restoreOverrideCursor();
-    }
-  else
-    QApplication::restoreOverrideCursor();
-
-  if (widget)  {
-      widget->show();
-      QApplication::sendPostedEvents( widget, QEvent::ShowWindowRequest ); // show NOW
-  }
-  _busy->hide();
+  ProxyWidget *widget = loadModule( module );
 
   KCGlobal::repairAccels( topLevelWidget() );
-  updateGeometry();
-  return true;
+  return ( widget!=0 );
 }
 
 void DockContainer::removeModule()
 {
   deleteModule();
 
-  resizeEvent(0L);
-
   if (_basew)
       emit newModule(_basew->caption(), "", "");
   else
       emit newModule("", "", "");
-
-  updateGeometry();
 }
 
 void DockContainer::deleteModule()
@@ -155,21 +241,6 @@ void DockContainer::deleteModule()
 	_module->deleteClient();
 	_module = 0;
   }
-}
-
-void DockContainer::resizeEvent(QResizeEvent *)
-{
-  _busy->resize(width(), height());
-  if (_module)
-	{
-	  _module->module()->resize(size());
-	  _basew->hide();
-	}
-  else if (_basew)
-	{
-	  _basew->resize(size());
-	  _basew->show();
-	}
 }
 
 void DockContainer::quickHelpChanged()

@@ -20,23 +20,15 @@
 
 #include <kstandarddirs.h>
 #include <kconfig.h>
-#include <kdebug.h>
 #include <kbugreport.h>
 #include <kaboutapplication.h>
 #include <kmessagebox.h>
 #include <kinstance.h>
-#include <kiconloader.h>
+#include <kaction.h>
+#include <kkeydialog.h>
 
 #include <qtabwidget.h>
 #include <qwhatsthis.h>
-#include <qpixmap.h>
-#include <qlabel.h>
-#include <qvbox.h>
-#include <qfont.h>
-
-#include <kaction.h>
-#include <kkeydialog.h>
-#include <kglobalsettings.h>
 
 #include "indexwidget.h"
 #include "searchwidget.h"
@@ -48,56 +40,6 @@
 
 #include "toplevel.h"
 #include "toplevel.moc"
-
-class ModuleTitle : public QHBox
-{
-  public:
-    ModuleTitle( QWidget *parent, const char *name=0 );
-    ~ModuleTitle() {}
-
-    void showTitleFor( ConfigModule *module );
-    void clear();
-
-  protected:
-    QLabel *m_icon;
-    QLabel *m_name;
-};
-
-ModuleTitle::ModuleTitle( QWidget *parent, const char *name )
-    : QHBox( parent, name )
-{
-  QWidget *spacer = new QWidget( this );
-  spacer->setFixedWidth( KDialog::marginHint()-KDialog::spacingHint() );
-  m_icon = new QLabel( this );
-  m_name = new QLabel( this );
-
-  QFont font = KGlobalSettings::generalFont();
-  font.setPointSize( font.pointSize()+2 );
-  font.setBold( true );
-  m_name->setFont( font );
-
-  setSpacing( KDialog::spacingHint() );
-  setStretchFactor( m_name, 10 );
-}
-
-void ModuleTitle::showTitleFor( ConfigModule *config )
-{
-  if ( !config )
-    return;
-
-  QWhatsThis::add( this, QString::null );
-  QWhatsThis::add( this, config->comment() );
-  m_icon->setPixmap( BarIcon( config->icon() ) );
-  m_name->setText( config->moduleName() );
-
-  show();
-}
-
-void ModuleTitle::clear()
-{
-  m_icon->setPixmap( QPixmap() );
-  m_name->setText( QString::null );
-}
 
 TopLevel::TopLevel(const char* name)
   : KMainWindow( 0, name, WStyle_ContextHelp  )
@@ -169,16 +111,11 @@ TopLevel::TopLevel(const char* name)
   if (!sizes.isEmpty())
      _splitter->setSizes(sizes);
 
+  // set up the right hand side (the docking area)
+  _dock = new DockContainer( _splitter );
+
   // That one does the trick ...
   _splitter->setResizeMode( _tab, QSplitter::KeepSize );
-
-  // set up the right hand side (the docking area)
-  QVBox *base = new QVBox( _splitter );
-  _title = new ModuleTitle( base );
-  _title->hide();
-  _dock = new DockContainer( base );
-  base->setStretchFactor( _dock, 10 );
-  _dock->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 
   connect(_dock, SIGNAL(newModule(const QString&, const QString&, const QString&)),
                   this, SLOT(newModule(const QString&, const QString&, const QString&)));
@@ -427,20 +364,23 @@ void TopLevel::categorySelected(QListViewItem *category)
 
 void TopLevel::activateModule(ConfigModule *mod)
 {
+  if ( _dock->module() == mod )
+     return;
+
   // tell the index to display the module
   _indextab->makeVisible(mod);
 
   // tell the index to mark this module as loaded
   _indextab->makeSelected(mod);
 
-  _title->showTitleFor( mod );
-
   // dock it
   if (!_dock->dockModule(mod))
   {
-     _title->hide();
-     _indextab->makeVisible(_active);
-     _indextab->makeSelected(_active);
+     if ( _dock->module() )
+     {
+       _indextab->makeVisible(_active);
+       _indextab->makeSelected(_active);
+     }
      return;
   }
 
@@ -460,21 +400,6 @@ void TopLevel::activateModule(ConfigModule *mod)
      about_module->setEnabled(false);
   }
 }
-
-#if 0
-void TopLevel::activateModule(const QString& name)
-{
-  kdDebug(1208) << "activate: " << name << endl;
-  for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
-  {
-     if (mod->fileName() == name)
-     {
-        activateModule(mod);
-        return;
-     }
-  }
-}
-#endif
 
 void TopLevel::deleteDummyAbout()
 {

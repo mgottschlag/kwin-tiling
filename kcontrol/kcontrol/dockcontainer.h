@@ -20,12 +20,15 @@
 #ifndef __dockcontainer_h__
 #define __dockcontainer_h__
 
-#include <qwidget.h>
+#include <qwidgetstack.h>
 
 class ConfigModule;
+class ModuleWidget;
+class ProxyWidget;
 class QLabel;
+class QVBox;
 
-class DockContainer : public QWidget
+class DockContainer : public QWidgetStack
 {
   Q_OBJECT
 
@@ -35,12 +38,9 @@ public:
 
   void setBaseWidget(QWidget *widget);
   QWidget *baseWidget() { return _basew; }
-  
+
   bool dockModule(ConfigModule *module);
-
-  QSize minimumSizeHint() const;
-
-  QSize sizeHint() const { return minimumSizeHint(); }
+  ConfigModule *module() { return _module; }
 
 public slots:
   void removeModule();
@@ -49,8 +49,8 @@ protected slots:
   void quickHelpChanged();
 
 protected:
-  void resizeEvent (QResizeEvent *);
   void deleteModule();
+  ProxyWidget* loadModule( ConfigModule *module );
 
 signals:
   void newModule(const QString &name, const QString& docPath, const QString &quickhelp);
@@ -58,7 +58,8 @@ signals:
 
 private:
   QWidget      *_basew;
-  QLabel       *_busy;
+  QLabel       *_busyw;
+  ModuleWidget *_modulew;
   ConfigModule *_module;
 
 };
