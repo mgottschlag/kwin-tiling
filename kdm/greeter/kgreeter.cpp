@@ -421,6 +421,7 @@ KGreeter::slot_user_name( QIconViewItem *item)
 {
     if( item != 0) {
 	loginEdit->setText( item->text());
+	passwdEdit->erase();
 	passwdEdit->setFocus();
 	load_wm();
     }
