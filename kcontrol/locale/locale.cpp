@@ -383,7 +383,7 @@ void KLocaleConfig::changedTime(int i)
 void scani18n(QObjectListIt it)
 {
     QObject *wc;
-    while( wc = it.current() ) {
+    while( (wc = it.current()) != 0 ) {
       ++it;
       if (wc->children())
         scani18n(QObjectListIt(*wc->children()));
