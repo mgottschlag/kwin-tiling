@@ -41,9 +41,9 @@
 <para>The system bell or beep is a feature of the X server, which
 attempts to make good use of the available hardware. </para>
 
-<para>&kde; normally doesn't use the system bell, instead using it's
+<para>&kde; normally doesn't use the system bell; instead using its
 own system notifications, which could include log entries, message
-popups, or it's own beep.  You can configure these in their own
+popups, or its own beep.  You can configure these in the
 <guilabel>System Notifications</guilabel> &kcontrol; module.</para>
 
 <note><para>It isn't always possible for the X server to actually make
