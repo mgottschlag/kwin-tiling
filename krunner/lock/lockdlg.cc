@@ -405,11 +405,7 @@ void PasswordDlg::capsLocked()
     Window dummy1, dummy2;
     int dummy3, dummy4, dummy5, dummy6;
     XQueryPointer(qt_xdisplay(), DefaultRootWindow( qt_xdisplay() ), &dummy1, &dummy2, &dummy3, &dummy4, &dummy5, &dummy6, &lmask);
-    int nlock = lmask & LockMask;
-    if (nlock != mCapsLocked)
-    {
-     mCapsLocked = nlock;
-    }
+    mCapsLocked = lmask & LockMask;
     updateLabel();
 }
 
