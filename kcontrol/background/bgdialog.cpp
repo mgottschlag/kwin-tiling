@@ -357,15 +357,9 @@ void BGDialog::updateUI()
    m_colorSecondary->setColor(r->colorB());
 
    if (r->backgroundMode() == KBackgroundSettings::Program)
-   {
-      m_colorPrimary->setEnabled(false);
-      m_comboPattern->setEnabled(false);
-   }
+      groupBox3->setEnabled( false );
    else
-   {
-      m_colorPrimary->setEnabled(true);
-      m_comboPattern->setEnabled(true);
-   }
+      groupBox3->setEnabled( true );
 
    int wallpaperMode = r->wallpaperMode();
    int multiMode = r->multiWallpaperMode();
