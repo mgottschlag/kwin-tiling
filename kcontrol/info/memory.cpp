@@ -1,6 +1,9 @@
 /* $Id$ 
  *
  * $Log$
+ * Revision 1.15  1999/08/26 04:09:40  corey
+ * Give it a proper height; couldn't see anything before.
+ *
  * Revision 1.14  1999/07/27 21:35:09  deller
  *
  * info-widgets use now the user-defined font from kcmdisplay.
@@ -61,7 +64,7 @@ static QString format( t_memsize value)
 }
 
 KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
-  : KConfigWidget(parent, name)
+  : KCModule(parent, name)
 {
     QFont	fixedfont    = KGlobal::fixedFont();	
     QFont	generalfont  = KGlobal::generalFont();
@@ -69,6 +72,8 @@ KMemoryWidget::KMemoryWidget(QWidget *parent, const char *name)
     QString	title,initial_str;
     QLabel	*titleWidget;
     int 	i,xs;  
+
+    setButtons(Ok|Help);
 
     fontinfo = new QFontInfo(fixedfont);	// make same font-sizes..
     i  = fontinfo->pointSize();

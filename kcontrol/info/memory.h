@@ -9,19 +9,16 @@
 #include <qpushbutton.h>
 #include <qtimer.h>
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 
 
-class KMemoryWidget : public KConfigWidget
+class KMemoryWidget : public KCModule
 {
   Q_OBJECT
 
 public:
   KMemoryWidget(QWidget *parent, const char *name=0);
   ~KMemoryWidget();
-
-  void applySettings() {};
-  void loadSettings() {};
 
 private:
   QString Not_Available_Text;

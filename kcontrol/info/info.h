@@ -13,7 +13,7 @@
 #include <qfile.h>
 #include <qevent.h>
 
-#include <kcontrol.h>
+#include <kcmodule.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,17 +35,16 @@ bool GetInfo_XServer_and_Video( QListView *lBox );
 
 
 
-class KInfoListWidget : public KConfigWidget
+class KInfoListWidget : public KCModule
 {
   Q_OBJECT
 
 public:
 
-  KInfoListWidget(QWidget *parent, const char *name=0, QString _title=0, bool _getlistbox (QListView *)=0);
+  KInfoListWidget(QWidget *parent, const char *name=0, bool _getlistbox (QListView *)=0);
 
-  void applySettings() {};
-  void loadSettings() {};
-  virtual void defaultSettings();
+
+  virtual void defaults();
   
 private:
   QListView 	*lBox;
@@ -54,8 +53,10 @@ private:
   
   QLabel	*NoInfoText;
 
+
 protected:
   virtual void resizeEvent( QResizeEvent * );
+
 };
 
 

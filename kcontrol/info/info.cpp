@@ -167,7 +167,7 @@ bool GetInfo_XServer_Generic( QListView *lBox )
 
 #define SCREEN_XY_OFFSET 20
 
-void KInfoListWidget::defaultSettings()
+void KInfoListWidget::defaults()
 {  
     bool ok = false;
 
@@ -221,23 +221,17 @@ void KInfoListWidget::defaultSettings()
 
 
 KInfoListWidget::KInfoListWidget(QWidget *parent, const char *name, 
-                                 QString _title, bool _getlistbox(QListView *lbox))
-    : KConfigWidget(parent, name)
+                                 bool _getlistbox(QListView *lbox))
+    : KCModule(parent, name)
 {   
     int pos;
     getlistbox 	= _getlistbox;
     lBox 	= 0;
     NoInfoText  = 0;
-    title   	= _title;
-    if (title.isEmpty() && name)
-        title = QString(name);
-    do {	// delete all '&'-chars !
-        pos = title.find('&');
-        if (pos>=0)
-            title.remove(pos,1);	// delete this char !
-    } while (pos>=0);
     GetInfo_ErrorString = "";
-    defaultSettings();
+    defaults();
+
+    setButtons(Ok|Help);
 }
 
 
