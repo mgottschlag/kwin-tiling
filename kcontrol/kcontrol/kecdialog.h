@@ -92,6 +92,8 @@ protected slots:
      **/
     virtual void slotHelp();
 
+private slots:
+	
     void slotAboutToShow(QWidget *);
 
     void clientChanged(bool state);

@@ -58,11 +58,13 @@ KExtendedCDialog::~KExtendedCDialog()
 void KExtendedCDialog::slotDefault()
 {
     int curPageIndex = activePageIndex();
-    for (KCModule* module = modules.first(); module != 0; module = modules.next())
+
+    QPtrListIterator<KCModule> it(modules);
+    for (; it.current(); ++it)
     {
-       if (pageIndex((QWidget *)module->parent()) == curPageIndex)
+       if (pageIndex((QWidget *)(*it)->parent()) == curPageIndex)
        {
-          module->defaults();
+          (*it)->defaults();
           clientChanged(true);
           return;
        }
@@ -71,28 +73,31 @@ void KExtendedCDialog::slotDefault()
 
 void KExtendedCDialog::slotApply()
 {
-    for (KCModule* module = modules.first(); module != 0; module = modules.next())
-        module->save();
+    QPtrListIterator<KCModule> it(modules);
+    for (; it.current(); ++it)
+      (*it)->save();
     clientChanged(false);
 }
 
 
 void KExtendedCDialog::slotOk()
 {
-    for (KCModule* module = modules.first(); module != 0; module = modules.next())
-        module->save();
+    QPtrListIterator<KCModule> it(modules);
+    for (; it.current(); ++it)
+      (*it)->save();
     accept();
 }
 
 void KExtendedCDialog::slotHelp()
 {
-    KProcess process;
-    KURL url( KURL("help:/"), _docPath.local8Bit() );
+    KURL url( KURL("help:/"), _docPath );
 
     if (url.protocol() == "help" || url.protocol() == "man" || url.protocol() == "info") {
+        KProcess process;
         process << "khelpcenter"
                 << url.url();
         process.start(KProcess::DontCare);
+		process.detach();
     } else {
         new KRun(url);
     }
