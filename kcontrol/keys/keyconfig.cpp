@@ -27,6 +27,7 @@
 #include <kaccel.h>
 #include <kwin.h>
 #include <kdialog.h>
+#include <kseparator.h>
 #include <dcopclient.h>
 #include <kapp.h>
 
@@ -105,9 +106,7 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   QWhatsThis::add( removeBt, i18n("Click here to remove the selected key bindings scheme. You can not"
     " remove the standard system wide schemes, 'Current scheme' and 'KDE default'.") );
 
-  QFrame* tmpQFrame = new QFrame( this );
-  tmpQFrame->setFrameStyle( QFrame::HLine | QFrame::Sunken );
-  tmpQFrame->setMinimumHeight(15);
+  KSeparator* line = new KSeparator( KSeparator::HLine, this );
 
   dict = keys->keyDict();
 
@@ -125,7 +124,8 @@ KKeyModule::KKeyModule( QWidget *parent, bool isGlobal, const char *name )
   topLayout->addMultiCellWidget(sList, 1, 2, 0, 0);
   topLayout->addMultiCellWidget(addBt, 1, 1, 1, 2);
   topLayout->addMultiCellWidget(removeBt, 2, 2, 1, 2);
-  topLayout->addMultiCellWidget(tmpQFrame, 3, 3, 0, 2);
+  topLayout->addMultiCellWidget(line, 3, 3, 0, 2);
+  topLayout->addRowSpacing(3, 15);
   topLayout->addMultiCellWidget(kc, 4, 4, 0, 2);
 
   setMinimumSize(topLayout->sizeHint());
