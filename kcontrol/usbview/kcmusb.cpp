@@ -9,7 +9,7 @@
  ***************************************************************************/
 
 
-#include <stream.h>
+#include <iostream.h>
 
 
 #include <qlayout.h>
