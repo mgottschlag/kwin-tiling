@@ -25,11 +25,12 @@
 
 #include "kgreeter.h"
 
+#include <sys/types.h>
+#include <sys/param.h>
+
+#include <pwd.h>
 #include <stdio.h>
 #include <signal.h>
-#include <pwd.h>
-#include <sys/param.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 #if defined( HAVE_INITGROUPS) && defined( HAVE_GETGROUPS) && defined( HAVE_SETGROUPS)
@@ -59,34 +60,33 @@
 
 // Make the C++ compiler shut the f... up:
 extern "C" {
-int Verify( struct display*, struct greet_info*, struct verify_info*);
-char** parseArgs( char**, const char*);
-void DeleteXloginResources( struct display*, Display*);
-void SetupDisplay( struct display* d);
-void SecureDisplay( struct display* d, Display *);
-void RegisterCloseOnFork( int );
-int source(void*,void*);
-void SessionExit(void*,int,int);
+	int Verify( struct display*, struct greet_info*, struct verify_info*);
+	char **parseArgs(char **, const char *);
+	void DeleteXloginResources(struct display *, Display *dpy);
+	void SetupDisplay(struct display *d);
+	void SecureDisplay(struct display *d, Display *);
+	void RegisterCloseOnFork(int);
+	int source(void*, void*);
+	void SessionExit(void*, int, int);
 }
 
 #ifdef USESHADOW
-#include <shadow.h>
+	#include <shadow.h>
 #endif
 
 #if defined(HAVE_LOGIN_CAP_H) && !defined(__NetBSD__)
-#include <login_cap.h>
+	#include <login_cap.h>
 #endif
 
 #ifdef TEST_KDM
-
-int Verify( struct display*, struct greet_info*, struct verify_info*) {}
-char** parseArgs( char**, const char*) {}
-void DeleteXloginResources( struct display*, Display*) {}
-void SetupDisplay( struct display* d) {}
-void SecureDisplay( struct display* d, Display *dpy) {}
-void RegisterCloseOnFork( int i) {}
-int source(void*,void*) {}
-void SessionExit(void*,int,int) {}
+	int Verify(struct display *, struct greet_info *, struct verify_info *) {}
+	char **parseArgs( char **, const char *) {}
+	void DeleteXloginResources(struct display *, Display *) {}
+	void SetupDisplay(struct display *d) {}
+	void SecureDisplay(struct display *d, Display *dpy) {}
+	void RegisterCloseOnFork(int i) {}
+	int source(void *,void *) {}
+	void SessionExit(void *, int, int) {}
 #endif
 
 static const char *description = 
