@@ -45,12 +45,14 @@ static int runs;
 static void
 OpenGetter ()
 {
-    char *ret;
+    char *ret, **env;
 
     if (!runs) {
 	runs = 1;
-	if ((ret = GOpen (originalArgv, "_config", 0)))
+	env = defaultEnv((char *)0);
+	if ((ret = GOpen (originalArgv, "_config", env)))
 	    LogPanic ("Cannot run config reader: %s\n", ret);
+	freeStrArr (env);
     }
     Debug ("Getter ready\n");
 }
