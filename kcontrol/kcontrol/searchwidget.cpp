@@ -86,7 +86,7 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
   connect(_keyList, SIGNAL(highlighted(const QString&)),
           this, SLOT(slotKeywordSelected(const QString&)));
 
-  connect(_resultList, SIGNAL(highlighted(const QString&)),
+  connect(_resultList, SIGNAL(selected(const QString&)),
           this, SLOT(slotModuleSelected(const QString&)));
 }
 
