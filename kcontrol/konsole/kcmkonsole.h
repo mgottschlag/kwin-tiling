@@ -42,6 +42,7 @@ public slots:
 	void configChanged();
 private:
 	KCMKonsoleDialog *dialog;
+	bool xonXoffOrig;
 };
 
 #endif

@@ -130,7 +130,15 @@
                                     <string>Allow progr&amp;ams to resize terminal window</string>
                                 </property>
                             </widget>
-                            <widget class="QLabel" row="7" column="0">
+                            <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="3">
+                                <property name="name">
+                                    <cstring>xonXoffCB</cstring>
+                                </property>
+                                <property name="text">
+                                    <string>Use Ctrl-S / Ctrl-Q flow control</string>
+                                </property>
+                            </widget>
+                            <widget class="QLabel" row="8" column="0">
                                 <property name="name">
                                     <cstring>TextLabel1_4</cstring>
                                 </property>
@@ -149,7 +157,7 @@
                                     <cstring>line_spacingSB</cstring>
                                 </property>
                             </widget>
-                            <widget class="KIntNumInput" row="7" column="1">
+                            <widget class="KIntNumInput" row="8" column="1">
                                 <property name="name">
                                     <cstring>line_spacingSB</cstring>
                                 </property>
@@ -168,7 +176,7 @@
                                     <number>8</number>
                                 </property>
                             </widget>
-                            <spacer row="7" column="3">
+                            <spacer row="8" column="3">
                                 <property name="name">
                                     <cstring>Spacer2</cstring>
                                 </property>
@@ -179,7 +187,7 @@
                                     <enum>Expanding</enum>
                                 </property>
                             </spacer>
-                            <widget class="QLabel" row="8" column="0">
+                            <widget class="QLabel" row="9" column="0">
                                 <property name="name">
                                     <cstring>SilenceLabel</cstring>
                                 </property>
@@ -198,7 +206,7 @@
                                     <cstring>silence_secondsSB</cstring>
                                 </property>
                             </widget>
-                            <widget class="KIntNumInput" row="8" column="1">
+                            <widget class="KIntNumInput" row="9" column="1">
                                 <property name="name">
                                     <cstring>silence_secondsSB</cstring>
                                 </property>
@@ -214,7 +222,7 @@
                                     <number>1</number>
                                 </property>
                             </widget>
-                            <spacer row="8" column="3">
+                            <spacer row="9" column="3">
                                 <property name="name">
                                     <cstring>Spacer3</cstring>
                                 </property>

@@ -27,6 +27,7 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kfontdialog.h>
+#include <kmessagebox.h>
 #include <kgenericfactory.h>
 #include "schemaeditor.h"
 #include "sessioneditor.h"
@@ -55,6 +56,7 @@ KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
     connect(dialog->ctrldragCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->cutToBeginningOfLineCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->allowResizeCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
+    connect(dialog->xonXoffCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->blinkingCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->frameCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
     connect(dialog->startKwritedCB,SIGNAL(toggled(bool)),this,SLOT(configChanged()));
@@ -79,6 +81,8 @@ void KCMKonsole::load()
     dialog->ctrldragCB->setChecked(config->readBoolEntry("CtrlDrag",false));
     dialog->cutToBeginningOfLineCB->setChecked(config->readBoolEntry("CutToBeginningOfLine",false));
     dialog->allowResizeCB->setChecked(config->readBoolEntry("AllowResize",true));
+    xonXoffOrig = config->readBoolEntry("XonXoff",false);
+    dialog->xonXoffCB->setChecked(xonXoffOrig);
     dialog->blinkingCB->setChecked(config->readBoolEntry("BlinkingCursor",false));
     dialog->frameCB->setChecked(config->readBoolEntry("has frame",true));
     dialog->line_spacingSB->setValue(config->readUnsignedNumEntry( "LineSpacing", 0 ));
@@ -129,6 +133,8 @@ void KCMKonsole::save()
     config->writeEntry("CtrlDrag", dialog->ctrldragCB->isChecked());
     config->writeEntry("CutToBeginningOfLine", dialog->cutToBeginningOfLineCB->isChecked());
     config->writeEntry("AllowResize", dialog->allowResizeCB->isChecked());
+    bool xonXoffNew = dialog->xonXoffCB->isChecked();
+    config->writeEntry("XonXoff", xonXoffNew);
     config->writeEntry("BlinkingCursor", dialog->blinkingCB->isChecked());
     config->writeEntry("has frame", dialog->frameCB->isChecked());
     config->writeEntry("LineSpacing" , dialog->line_spacingSB->value());
@@ -150,6 +156,15 @@ void KCMKonsole::save()
     dcc->send("konsole-*", "konsole", "reparseConfiguration()", QByteArray());
     dcc->send("kdesktop", "default", "configure()", QByteArray());
     dcc->send("klauncher", "klauncher", "reparseConfiguration()", QByteArray());
+    
+    if (xonXoffOrig != xonXoffNew)
+    {
+       xonXoffOrig = xonXoffNew;
+       KMessageBox::information(this, i18n("The Ctrl-S / Ctrl-Q flow control setting will only affect "
+                                           "newly started konsoles.\n"
+                                           "The 'stty' command can be used to change the flow control "
+                                           "settings of existing konsoles."));
+    }
 }
 
 void KCMKonsole::defaults()
@@ -159,6 +174,7 @@ void KCMKonsole::defaults()
     dialog->ctrldragCB->setChecked(false);
     dialog->cutToBeginningOfLineCB->setChecked(false);
     dialog->allowResizeCB->setChecked(true);
+    dialog->xonXoffCB->setChecked(false);
     dialog->blinkingCB->setChecked(false);
     dialog->frameCB->setChecked(true);
     dialog->startKwritedCB->setChecked(true);
