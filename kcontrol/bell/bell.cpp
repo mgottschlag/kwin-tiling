@@ -68,7 +68,7 @@ extern "C"
 KBellConfig::KBellConfig(QWidget *parent, const char *name):
     KCModule(parent, name)
 {
-  QBoxLayout *layout = new QVBoxLayout(this);
+  QBoxLayout *layout = new QVBoxLayout(this, KDialog::marginHint());
 
   int row = 0;
   QGroupBox *box = new QGroupBox( i18n("Bell Settings"), this );
@@ -103,7 +103,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   m_pitch = new KIntNumInput(m_volume, 800, box);
   m_pitch->setLabel(i18n("&Pitch:"));
   m_pitch->setRange(20, 2000, 20);
-  m_pitch->setSuffix(i18n("Hz"));
+  m_pitch->setSuffix(i18n(" Hz"));
   m_pitch->setSteps(40,200);
   grid->addWidget(m_pitch, ++row, 1);
   QWhatsThis::add( m_pitch, i18n("Here you can customize the pitch of the system bell. For further"
@@ -112,7 +112,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   m_duration = new KIntNumInput(m_pitch, 100, box);
   m_duration->setLabel(i18n("&Duration:"));
   m_duration->setRange(1, 1000, 50);
-  m_duration->setSuffix(i18n("ms"));
+  m_duration->setSuffix(i18n(" msec"));
   m_duration->setSteps(20,100);
   grid->addWidget(m_duration, ++row, 1);
   QWhatsThis::add( m_duration, i18n("Here you can customize the duration of the system bell. For further"
