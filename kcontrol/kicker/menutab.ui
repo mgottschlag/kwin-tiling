@@ -241,10 +241,10 @@
                 </widget>
                 <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="2">
                     <property name="name">
-                        <cstring>m_mergeLocations</cstring>
+                        <cstring>m_detailedEntries</cstring>
                     </property>
                     <property name="text">
-                        <string>Merge d&amp;ifferent menu locations</string>
+                        <string>Detailed menu &amp;entries</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -562,7 +562,7 @@
     <tabstop>m_showBookmarks</tabstop>
     <tabstop>m_showRecent</tabstop>
     <tabstop>m_showQuickBrowser</tabstop>
-    <tabstop>m_mergeLocations</tabstop>
+    <tabstop>m_detailedEntries</tabstop>
     <tabstop>m_hiddenFiles</tabstop>
     <tabstop>m_maxSlider</tabstop>
     <tabstop>m_maxSpinBox</tabstop>

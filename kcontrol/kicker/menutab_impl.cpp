@@ -50,7 +50,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     connect(m_hiddenFiles, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_maxSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_maxSpinBox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
-    connect(m_mergeLocations, SIGNAL(clicked()), SIGNAL(changed()));
+    connect(m_detailedEntries, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_showBookmarks, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_showRecent, SIGNAL(clicked()), SIGNAL(changed()));
     connect(m_showQuickBrowser, SIGNAL(clicked()), SIGNAL(changed()));
@@ -77,13 +77,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     QWhatsThis::add(m_maxSlider, maxstr);
     QWhatsThis::add(m_maxSpinBox, maxstr);
 
-    QWhatsThis::add(m_mergeLocations, i18n("KDE can support several different locations "
-                                           "on the system for storing program "
-                                           "information, including (but not limited to) "
-                                           "a system-wide and a personal directory. "
-                                           "Enabling this option makes the KDE panel "
-                                           "merge these different locations into a "
-                                           "single logical tree of programs."));
+    QWhatsThis::add(m_detailedEntries, i18n("Toogle menu entry details."));
 
     QWhatsThis::add(m_showBookmarks, i18n("Enabling this option will make the panel show "
                                           "a bookmarks menu in your KDE menu"));
@@ -131,7 +125,7 @@ void MenuTab::load()
     m_maxSlider->setValue(c->readNumEntry("MaxEntries2", 30));
     m_maxSpinBox->setValue(c->readNumEntry("MaxEntries2", 30));
 
-    m_mergeLocations->setChecked(c->readBoolEntry("MergeKDEDirs", true));
+    m_detailedEntries->setChecked(c->readBoolEntry("DetailedMenuEntries", true));
     m_showBookmarks->setChecked(c->readBoolEntry("UseBookmarks", true));
     m_showRecent->setChecked(c->readBoolEntry("UseRecent", true));
     m_showQuickBrowser->setChecked(c->readBoolEntry("UseBrowser", true));
@@ -188,7 +182,7 @@ void MenuTab::save()
     c->setGroup("menus");
 
     c->writeEntry("MaxEntries2", m_maxSlider->value());
-    c->writeEntry("MergeKDEDirs", m_mergeLocations->isChecked());
+    c->writeEntry("DetailedMenuEntries", m_detailedEntries->isChecked());
     c->writeEntry("UseBookmarks", m_showBookmarks->isChecked());
     c->writeEntry("UseRecent", m_showRecent->isChecked());
     c->writeEntry("UseBrowser", m_showQuickBrowser->isChecked());
@@ -217,7 +211,7 @@ void MenuTab::defaults()
   m_showPixmap->setChecked(true);
   m_maxSlider->setValue(30);
   m_maxSpinBox->setValue(30);
-  m_mergeLocations->setChecked(true);
+  m_detailedEntries->setChecked(true);
   m_showRecent->setChecked(true);
   m_showQuickBrowser->setChecked(true);
   m_hiddenFiles->setChecked(false);
