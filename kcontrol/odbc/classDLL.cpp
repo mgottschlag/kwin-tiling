@@ -14,7 +14,7 @@
 classDLL::classDLL( char *szFileName )
 {
 	szError[0] = '\0';
-	hDLL = dlopen( szFileName, RTLD_LAZY );
+	hDLL = (HDBDPROC)dlopen( szFileName, RTLD_LAZY );
 	if ( !hDLL )
 		strncpy( szError, dlerror(), 200 );
 }
@@ -28,7 +28,7 @@ classDLL::~classDLL()
 
 int classDLL::Symbol( HCBDPROC *hProc, char *szSymbol )
 {
-	char 		*pError;
+	const char 		*pError;
 
 	*hProc = dlsym( hDLL, szSymbol );
 
