@@ -62,6 +62,7 @@ services_DATA = \
 		webster.desktop \
 		whatis.desktop \
 		wikipedia.desktop \
-		wordref.desktop
+		wordref.desktop \
+		netcraft.desktop
 
 servicesdir = $(kde_servicesdir)/searchproviders
