@@ -50,12 +50,17 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
   clear_cache_cb = new QCheckBox(i18n("Clear menu cache"), general_group);
   connect(clear_cache_cb, SIGNAL(clicked()), SLOT(clear_cache_clicked()));
   vbox->addWidget(clear_cache_cb);
+  QWhatsThis::add( clear_cache_cb, i18n("The panel can cache information about menu entries instead"
+    " of reading it from disk every time you browse the menus. This makes the panel menus react faster."
+    " However, you might want to turn this off if you're short on memory.") );
 
   cache_time_input = new KIntNumInput(60, general_group);
   cache_time_input->setRange(1, 600, 1, true);
   cache_time_input->setLabel(i18n("Clear after n seconds:"));
   connect(cache_time_input, SIGNAL(valueChanged(int)), SLOT(cache_time_changed(int)));
   vbox->addWidget(cache_time_input);
+  QWhatsThis::add( cache_time_input, i18n("If menu chaching is turned on, you can set a delay after which"
+    " the cache will be cleared.") );
 
   layout->addWidget(general_group,0,0);
 
@@ -69,12 +74,17 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
   show_hidden_cb = new QCheckBox(i18n("Show hidden files"), browser_group);
   connect(show_hidden_cb, SIGNAL(clicked()), SIGNAL(changed()));
   vbox->addWidget(show_hidden_cb);
+  QWhatsThis::add( show_hidden_cb, i18n("If this option is enabled, hidden files (i.e. files beginning with a dot)"
+    " will be shown in the QuickBrowser menus.") );
 
   max_entries_input = new KIntNumInput(200, browser_group);
   max_entries_input->setRange(20, 1000, 1, true);
   max_entries_input->setLabel(i18n("Maximum browser menu entries:"));
   connect(max_entries_input, SIGNAL(valueChanged(int)), SLOT(max_entries_changed(int)));
   vbox->addWidget(max_entries_input);
+  QWhatsThis::add( max_entries_input, i18n("When browsing directories that contain a lot of files, the QuickBrowser"
+    " can sometimes hide your whole desktop. Here you can limit the number of entries shown at a time in the QuickBrowser."
+    " This is particularly useful for low screen resolutions.") );
 
   layout->addWidget(browser_group,1,0);
 

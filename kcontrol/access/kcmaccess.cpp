@@ -18,6 +18,7 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qslider.h>
+#include <qwhatsthis.h>
 
 
 #include <kconfig.h>
@@ -46,17 +47,23 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   QWidget *bell = new QWidget(this);
 
   QVBoxLayout *vbox = new QVBoxLayout(bell, 6,6);
-  
+
   QGroupBox *grp = new QGroupBox(i18n("Audible bell"), bell);
   vbox->addWidget(grp);
 
   QVBoxLayout *vvbox = new QVBoxLayout(grp, 6,6);
   vvbox->addSpacing(grp->fontMetrics().height());
-  
+
   systemBell = new QCheckBox(i18n("Use &System bell"), grp);
   vvbox->addWidget(systemBell);
   customBell = new QCheckBox(i18n("Use &customized bell"), grp);
   vvbox->addWidget(customBell);
+  QWhatsThis::add( systemBell, i18n("If this option is checked, the default system bell will be used. See the"
+    " \"System Bell\" control module for how to customize the system bell."
+    " Normally, this is just a \"beeep\".") );
+  QWhatsThis::add( customBell, i18n("Check this option if you want to use a customized bell, playing"
+    " a sound file. If you do this, you will probably want to turn off the system bell.<p> Please note"
+    " that on slow machines this may cause a \"lag\" between the event causing the bell and the sound being played.") );
 
   QHBoxLayout *hbox = new QHBoxLayout(vvbox, 6);
   hbox->addSpacing(24);
@@ -66,6 +73,11 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   hbox->addWidget(soundEdit);
   soundButton = new QPushButton(i18n("&Browse..."), grp);
   hbox->addWidget(soundButton);
+  QString wtstr = i18n("If the option \"Use customized bell\" is enabled, you can choose a sound file here."
+    " Click \"Browse ...\" to choose a sound file using the file dialog.");
+  QWhatsThis::add( soundEdit, wtstr );
+  QWhatsThis::add( soundLabel, wtstr );
+  QWhatsThis::add( soundButton, wtstr );
 
   connect(soundButton, SIGNAL(clicked()), this, SLOT(selectSound()));
 
@@ -74,7 +86,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   connect(systemBell, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(customBell, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(soundEdit, SIGNAL(textChanged(const QString&)), this, SLOT(configChanged()));
-  
+
   // -----------------------------------------------------
 
   // visible bell ----------------------------------------
@@ -83,23 +95,29 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
 
   vvbox = new QVBoxLayout(grp, 6,6);
   vvbox->addSpacing(grp->fontMetrics().height());
-  
+
   visibleBell = new QCheckBox(i18n("&Use visible bell"), grp);
   vvbox->addWidget(visibleBell);
+  QWhatsThis::add( visibleBell, i18n("This option will turn on the \"visible bell\", i.e. a visible"
+    " notification shown every time that normally just a bell would occur. This is especially useful"
+    " for deaf people.") );
 
   hbox = new QHBoxLayout(vvbox, 6);
   hbox->addSpacing(24);
   invertScreen = new QRadioButton(i18n("&Invert screen"), grp);
   hbox->addWidget(invertScreen);
   hbox = new QHBoxLayout(vvbox, 6);
+  QWhatsThis::add( invertScreen, i18n("All screen colors will be inverted for the amount of time specified below.") );
   hbox->addSpacing(24);
   flashScreen = new QRadioButton(i18n("&Flash screen"), grp);
   hbox->addWidget(flashScreen);
+  QWhatsThis::add( flashScreen, i18n("The screen will turn to a custom color for the amount of time specified below.") );
   hbox->addSpacing(12);
   colorButton = new KColorButton(grp);
   colorButton->setFixedWidth(colorButton->sizeHint().height()*2);
   hbox->addWidget(colorButton);
   hbox->addStretch();
+  QWhatsThis::add( colorButton, i18n("Click here to choose the color used for the \"flash screen\" visible bell.") );
 
   hbox = new QHBoxLayout(vvbox, 6);
   hbox->addSpacing(24);
@@ -109,20 +127,21 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   durationSlider->setLabel(i18n("&Duration:"));
   durationSlider->setSuffix(i18n("ms"));
   hbox->addWidget(durationSlider);
-  
+  QWhatsThis::add( durationSlider, i18n("Here you can customize the duration of the \"visible bell\" effect being shown.") );
+
   connect(invertScreen, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(flashScreen, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(visibleBell, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(visibleBell, SIGNAL(clicked()), this, SLOT(checkAccess()));
   connect(colorButton, SIGNAL(clicked()), this, SLOT(configChanged()));
-  
+
   connect(invertScreen, SIGNAL(clicked()), this, SLOT(invertClicked()));
-  connect(flashScreen, SIGNAL(clicked()), this, SLOT(flashClicked()));  
+  connect(flashScreen, SIGNAL(clicked()), this, SLOT(flashClicked()));
 
   connect(durationSlider, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
 
   vvbox->addStretch();
-  
+
   // -----------------------------------------------------
 
   tab->addTab(bell, i18n("&Bell"));
@@ -132,13 +151,13 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   QWidget *keys = new QWidget(this);
 
   vbox = new QVBoxLayout(keys, 6,6);
-  
+
   grp = new QGroupBox(i18n("Sticky Keys"), keys);
   vbox->addWidget(grp);
 
   vvbox = new QVBoxLayout(grp, 6,6);
   vvbox->addSpacing(grp->fontMetrics().height());
-  
+
   stickyKeys = new QCheckBox(i18n("Use &sticky keys"), grp);
   vvbox->addWidget(stickyKeys);
 
@@ -152,7 +171,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
 
   vvbox = new QVBoxLayout(grp, 6,6);
   vvbox->addSpacing(grp->fontMetrics().height());
-  
+
   slowKeys = new QCheckBox(i18n("Use s&low keys"), grp);
   vvbox->addWidget(slowKeys);
 
@@ -170,7 +189,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
 
   vvbox = new QVBoxLayout(grp, 6,6);
   vvbox->addSpacing(grp->fontMetrics().height());
-  
+
   bounceKeys = new QCheckBox(i18n("Use s&low keys"), grp);
   vvbox->addWidget(bounceKeys);
 
@@ -197,7 +216,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   vvbox->addStretch();
 
   tab->addTab(keys, i18n("&Keyboard"));
-  
+
   // -----------------------------------------------------
 
 
@@ -206,13 +225,13 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   QWidget *mouse = new QWidget(this);
 
   vbox = new QVBoxLayout(mouse, 6,6);
-  
+
   grp = new QGroupBox(i18n("Mouse navigation"), mouse);
   vbox->addWidget(grp);
 
   vvbox = new QVBoxLayout(grp, 6,6);
   vvbox->addSpacing(grp->fontMetrics().height());
-  
+
   mouseKeys = new QCheckBox(i18n("&Move mouse with keyboard (using the Num pad)"), grp);
   vvbox->addWidget(mouseKeys);
 
@@ -264,17 +283,17 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *name)
   vvbox->addStretch();
 
   tab->addTab(mouse, i18n("&Mouse"));
-  
+
   // -----------------------------------------------------
 
 
   vbox->addStretch();
-  
+
   load();
 }
 
 
-KAccessConfig::~KAccessConfig() 
+KAccessConfig::~KAccessConfig()
 {
 }
 
@@ -301,7 +320,7 @@ void KAccessConfig::configChanged()
 void KAccessConfig::load()
 {
   KConfig *config = new KConfig("kaccessrc", true);
-  
+
   config->setGroup("Bell");
 
   systemBell->setChecked(config->readBoolEntry("SystemBell", true));
@@ -313,12 +332,12 @@ void KAccessConfig::load()
   flashScreen->setChecked(!invertScreen->isChecked());
   QColor def(Qt::red);
   colorButton->setColor(config->readColorEntry("VisibleBellColor", &def));
-  
+
   durationSlider->setValue(config->readNumEntry("VisibleBellPause", 500));
 
 
   config->setGroup("Keyboard");
-  
+
   stickyKeys->setChecked(config->readBoolEntry("StickyKeys", false));
   stickyKeysLock->setChecked(config->readBoolEntry("StickyKeysLatch", true));
   slowKeys->setChecked(config->readBoolEntry("SlowKeys", false));
@@ -359,7 +378,7 @@ void KAccessConfig::save()
 
   config->writeEntry("VisibleBellPause", durationSlider->value());
 
-  
+
   config->setGroup("Keyboard");
 
   config->writeEntry("StickyKeys", stickyKeys->isChecked());
@@ -371,9 +390,9 @@ void KAccessConfig::save()
   config->writeEntry("BounceKeys", bounceKeys->isChecked());
   config->writeEntry("BounceKeysDelay", bounceKeysDelay->value());
 
-  
+
   config->setGroup("Mouse");
-  
+
   config->writeEntry("MouseKeys", mouseKeys->isChecked());
   config->writeEntry("MKDelay", mk_delay->value());
   config->writeEntry("MKInterval", mk_interval->value());
@@ -402,7 +421,7 @@ void KAccessConfig::defaults()
   invertScreen->setChecked(true);
   flashScreen->setChecked(false);
   colorButton->setColor(QColor(Qt::red));
-  
+
   durationSlider->setValue(500);
 
   slowKeys->setChecked(false);
@@ -429,7 +448,7 @@ void KAccessConfig::defaults()
 
 void KAccessConfig::invertClicked()
 {
-  flashScreen->setChecked(false); 
+  flashScreen->setChecked(false);
 }
 
 
@@ -482,7 +501,7 @@ extern "C"
     KConfig *config = new KConfig("kaccessrc");
 
     config->setGroup("Bell");
-    
+
     if (!config->readBoolEntry("SystemBell", true))
       run = true;
     if (config->readBoolEntry("ArtsBell", false))
