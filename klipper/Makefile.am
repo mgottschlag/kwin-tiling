@@ -21,9 +21,7 @@ klipper_panelapplet_la_LIBADD = klipper.la
 klipper_panelapplet_la_SOURCES = applet.cpp applet.skel
 klipper_panelapplet_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
-
-appsdir = $(kde_appsdir)/Utilities
-apps_DATA = klipper.desktop
+xdg_apps_DATA = klipper.desktop
 
 autostartdir = $(prefix)/share/autostart
 autostart_DATA = klipper.desktop
