@@ -107,7 +107,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 
   KURL url = data.uri();
   QString cmd = data.typedString();
-  bool isMalformed = url.isMalformed();
+  bool isMalformed = !url.isValid();
 
   // TODO: Make this a bit more intelligent for Minicli! There
   // is no need to make comparisons if the supplied data is a local

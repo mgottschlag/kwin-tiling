@@ -1,5 +1,5 @@
 /*
-    kshorturifilter.h
+    localdomainfilter.cpp
 
     This file is part of the KDE project
     Copyright (C) 2002 Lubos Lunak <llunak@suse.cz>
@@ -31,6 +31,7 @@
 
 #define HOSTPORT_PATTERN "[a-zA-Z][a-zA-Z0-9-]*:[0-9]+"
 
+
 LocalDomainURIFilter::LocalDomainURIFilter( QObject *parent, const char *name,
                                             const QStringList & /*args*/ )
     : KURIFilterPlugin( parent, name ? name : "localdomainurifilter", 1.0 ),
@@ -47,7 +48,7 @@ bool LocalDomainURIFilter::filterURI( KURIFilterData& data ) const
     QString cmd = url.url();
 
     if( cmd[ 0 ] != '#' && cmd[ 0 ] != '~' && cmd[ 0 ] != '/'
-        && cmd.find( ' ' ) < 0 && cmd.find( '.' ) < 0 
+        && cmd.find( ' ' ) < 0 && cmd.find( '.' ) < 0
         && cmd.find( '$' ) < 0  // env. vars could resolve to anything
         // most of these are taken from KShortURIFilter
         && cmd[ cmd.length() - 1 ] != '&'
@@ -55,7 +56,7 @@ bool LocalDomainURIFilter::filterURI( KURIFilterData& data ) const
         && cmd.find( QString::fromLatin1("&&") ) < 0 // must not look like shell
         && cmd.find( QRegExp( QString::fromLatin1("[ ;<>]") )) < 0
         && KStandardDirs::findExe( cmd ).isNull()
-        && ( url.isMalformed() || m_hostPortPattern.exactMatch( cmd ) )
+        && ( !url.isValid() || m_hostPortPattern.exactMatch( cmd ) )
         && isLocalDomainHost( cmd ))
     {
         cmd.prepend( QString::fromLatin1("http://") );
@@ -112,6 +113,6 @@ void LocalDomainURIFilter::configure()
 }
 
 K_EXPORT_COMPONENT_FACTORY( liblocaldomainurifilter,
-	                    KGenericFactory<LocalDomainURIFilter>( "localdomainurifilter" ) )
+                            KGenericFactory<LocalDomainURIFilter>( "localdomainurifilter" ) );
 
 #include "localdomainurifilter.moc"

@@ -30,10 +30,13 @@
 int main( int argc, char* argv[] )
 {
     struct hostent* ent;
+
     if( argc != 2 )
-	return 2;
+      return 2;
+
     ent = gethostbyname( argv[ 1 ] );
     if (ent)
-	fputs( ent->h_name, stdout );
+      fputs( ent->h_name, stdout );
+
     return (ent != NULL || h_errno == NO_ADDRESS) ? 0 : 1;
 }
