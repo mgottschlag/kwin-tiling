@@ -12,7 +12,7 @@ noinst_HEADERS = email.h
 
 KDE_ICON = email
 
-messages:
+messages: rc.cpp
 	$(XGETTEXT) $(libkcm_email_la_SOURCES) -o $(podir)/kcmemail.pot
 
 data_DATA = email.desktop
