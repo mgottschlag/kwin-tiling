@@ -38,7 +38,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 
-#include "xpm/world.xpm"
+//#include "xpm/world.xpm"
 #include "tzone.h"
 #include "tzone.moc"
 
@@ -96,21 +96,22 @@ void Tzone::fillTimeZones()
 
     FILE *fp;
     char buf[MAXPATHLEN];
-    
+
     snprintf(buf, MAXPATHLEN,
-	    "/bin/find %s \\( -name src -prune \\) -o -type f -print | /bin/cut -b %d-",
-	    ZONEINFODIR, strlen(ZONEINFODIR) + 2);
-    
+             "/bin/find %s \\( -name src -prune \\) -o -type f -print | /bin/cut -b %d-",
+             ZONEINFODIR, strlen(ZONEINFODIR) + 2);
+
     if (fp = popen(buf, "r"))
-      {
-	while(fgets(buf, MAXPATHLEN - 1, fp) != NULL)
-	  {
-	    buf[strlen(buf) - 1] = '\0';
-	    list << buf;
-	  }
-	pclose(fp);
-      }
-    
+    {
+        while(fgets(buf, MAXPATHLEN - 1, fp) != NULL)
+        {
+            buf[strlen(buf) - 1] = '\0';
+            list << i18n(buf);
+            tzonenames << buf;
+        }
+        pclose(fp);
+    }
+
 #else
     QFile f("/usr/share/zoneinfo/zone.tab");
     if (f.open(IO_ReadOnly))
@@ -122,8 +123,10 @@ void Tzone::fillTimeZones()
             if (line.isEmpty() || line[0] == '#')
                 continue;
             QStringList fields = QStringList::split(spaces, line);
-            if (fields.count() >= 3)
-                list << fields[2];
+            if (fields.count() >= 3) {
+                list << i18n(fields[2].utf8());
+                tzonenames << fields[2];
+            }
         }
     }
 #endif // !USE_SOLARIS
@@ -140,7 +143,7 @@ QString Tzone::currentZone() const
     tzset();
     strftime(result.data(), result.size(), "%Z", localtime(&now));
     kdDebug() << "strftime returned: " << result << endl;
-    return QString::fromLatin1(result);
+    return QString::fromLocal8Bit(result);
 }
 
 void Tzone::load()
@@ -155,19 +158,19 @@ void Tzone::load()
     char buf[MAXPATHLEN];
 
     snprintf(buf, MAXPATHLEN,
-	     "/bin/fgrep 'TZ=' %s | /bin/head -n 1 | /bin/cut -b 4-",
-	     INITFILE);
-    
+             "/bin/fgrep 'TZ=' %s | /bin/head -n 1 | /bin/cut -b 4-",
+             INITFILE);
+
     if (fp = popen(buf, "r"))
-      {
-	if (fgets(buf, MAXPATHLEN - 1, fp) != NULL)
-	  {
-	    buf[strlen(buf) - 1] = '\0';
-	    sCurrentlySet = QString(buf);
-	  }
-	pclose(fp);
-      }
-#else    
+    {
+        if (fgets(buf, MAXPATHLEN - 1, fp) != NULL)
+        {
+            buf[strlen(buf) - 1] = '\0';
+            sCurrentlySet = QString(buf);
+        }
+        pclose(fp);
+    }
+#else
     QFile f("/etc/timezone");
     if(f.open(IO_ReadOnly))
     {
@@ -179,7 +182,7 @@ void Tzone::load()
     // find the currently set time zone and select it
     for (int i = 0; i < tzonelist->count(); i++)
     {
-        if (tzonelist->text(i) == sCurrentlySet)
+      if (tzonelist->text(i) == i18n(sCurrentlySet.utf8()))
         {
             tzonelist->setCurrentItem(i);
             break;
@@ -195,81 +198,87 @@ void Tzone::save()
 
     if( selectedzone != i18n("[No selection]"))
     {
+      // Find untranslated selected zone
+      QStringList::Iterator it;
+      for (it = tzonenames.begin(); it != tzonenames.end(); it++)
+        if (selectedzone == i18n((*it).utf8()))
+          break;
+      selectedzone = (*it);
 
 #if defined(USE_SOLARIS)	// MARCO
-      char buf[MAXPATHLEN];
-      
-      strcpy(buf, "/tmp/kde-tzone-XXXXXX");
-      mktemp(buf);
-      
-      if (*buf == '\0')
-	{
-				// Could not create a temporary file
-				// name.
-	  return;
-	}
+        char buf[MAXPATHLEN];
 
-      QFile tf(buf);
-      QFile fTimezoneFile(INITFILE);
-      bool updatedFile = false;
-      
-      if (tf.open(IO_WriteOnly | IO_Truncate) &&
-	  fTimezoneFile.open(IO_ReadOnly))
-	{
-	  bool found = false;
-	  QTextStream ts(&tf);
-	  QTextStream is(&fTimezoneFile);
-	  
-	  for (QString line = is.readLine(); !line.isNull();
-	       line = is.readLine())
-	    {
-	      if (line.find("TZ=") == 0)
-		{
-		  ts << "TZ=" << selectedzone << endl;
-		  found = true;
-		}
-	      else
-		{
-		  ts << line << endl;
-		}
-	    }
-	  
-	  if (!found)
-	    {
-	      ts << "TZ=" << selectedzone << endl;
-	    }
-	
-	  updatedFile = true;
-	  tf.close();
-	  fTimezoneFile.close();
+        strcpy(buf, "/tmp/kde-tzone-XXXXXX");
+        mktemp(buf);
+
+        if (*buf == '\0')
+        {
+            // Could not create a temporary file
+            // name.
+            return;
         }
 
-      if (updatedFile)
-	{
-	  fTimezoneFile.remove();
+        QFile tf(buf);
+        QFile fTimezoneFile(INITFILE);
+        bool updatedFile = false;
 
-	  if (tf.open(IO_ReadOnly) &&
-	      fTimezoneFile.open(IO_WriteOnly | IO_Truncate))
-	    {
-	      QTextStream ts(&tf);
-	      QTextStream os(&fTimezoneFile);
+        if (tf.open(IO_WriteOnly | IO_Truncate) &&
+            fTimezoneFile.open(IO_ReadOnly))
+        {
+            bool found = false;
+            QTextStream ts(&tf);
+            QTextStream is(&fTimezoneFile);
 
-	      for (QString line = ts.readLine(); !line.isNull();
-		   line = ts.readLine())
-		{
-		  os << line << endl;
-		}
+            for (QString line = is.readLine(); !line.isNull();
+                 line = is.readLine())
+            {
+                if (line.find("TZ=") == 0)
+                {
+                    ts << "TZ=" << selectedzone << endl;
+                    found = true;
+                }
+                else
+                {
+                    ts << line << endl;
+                }
+            }
 
-	      fchmod(fTimezoneFile.handle(),
-		     S_IXUSR | S_IRUSR | S_IRGRP | S_IXGRP |
-		     S_IROTH | S_IXOTH);
-	      fTimezoneFile.close();
-	      tf.remove();
-	    }
-	}
+            if (!found)
+            {
+                ts << "TZ=" << selectedzone << endl;
+            }
+
+            updatedFile = true;
+            tf.close();
+            fTimezoneFile.close();
+        }
+
+        if (updatedFile)
+        {
+            fTimezoneFile.remove();
+
+            if (tf.open(IO_ReadOnly) &&
+                fTimezoneFile.open(IO_WriteOnly | IO_Truncate))
+            {
+                QTextStream ts(&tf);
+                QTextStream os(&fTimezoneFile);
+
+                for (QString line = ts.readLine(); !line.isNull();
+                     line = ts.readLine())
+                {
+                    os << line << endl;
+                }
+
+                fchmod(fTimezoneFile.handle(),
+                       S_IXUSR | S_IRUSR | S_IRGRP | S_IXGRP |
+                       S_IROTH | S_IXOTH);
+                fTimezoneFile.close();
+                tf.remove();
+            }
+        }
 
 
-      QString val = selectedzone;
+        QString val = selectedzone;
 #else
         QFile fTimezoneFile("/etc/timezone");
 
@@ -280,7 +289,7 @@ void Tzone::save()
             fTimezoneFile.close();
         }
 
-        tz = "/usr/share/zoneinfo/" + tzonelist->currentText();
+        tz = "/usr/share/zoneinfo/" + selectedzone;
 
         kdDebug() << "Set time zone " << tz << endl;
 
@@ -300,11 +309,11 @@ void Tzone::save()
 #if !defined(USE_SOLARIS) // Do not update the System!
         unlink( "/etc/timezone" );
         unlink( "/etc/localtime" );
-		
+
         setenv("TZ", "", 1);
         tzset();
-#endif // !USE SOLARIS		
+#endif // !USE SOLARIS
     }
-    
+
     currentzone->setText(currentZone());
 }

@@ -28,13 +28,13 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kgenericfactory.h>
+#include <kaboutdata.h>
 
 #include "main.h"
 #include "main.moc"
 
 #include "tzone.h"
 #include "dtime.h"
-#include <kaboutdata.h>
 
 typedef KGenericFactory<KclockModule, QWidget> KlockModuleFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_clock, KlockModuleFactory("kcmkclock"));
@@ -42,7 +42,8 @@ K_EXPORT_COMPONENT_FACTORY( kcm_clock, KlockModuleFactory("kcmkclock"));
 KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList &)
   : KCModule(KlockModuleFactory::instance(), parent, name)
 {
-//qWarning("new");
+  KGlobal::locale()->insertCatalogue("timezones"); // For time zone translations
+
   QVBoxLayout *layout = new QVBoxLayout(this);
 
   dtime = new Dtime(this);
@@ -59,8 +60,6 @@ KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList 
     setButtons(Help|Apply);
   else
     setButtons(Help);
-
-
 }
 
 void KclockModule::save()
@@ -101,11 +100,11 @@ const KAboutData* KclockModule::aboutData() const
    KAboutData *about =
    new KAboutData(I18N_NOOP("kcmclock"), I18N_NOOP("KDE Clock Control Module"),
                   0, 0, KAboutData::License_GPL,
-                  I18N_NOOP("(c) 1996 - 2001 Luca Montecchiani"));
- 
+                  "(c) 1996 - 2001 Luca Montecchiani");
+
    about->addAuthor("Luca Montecchiani", I18N_NOOP("Original author"), "m.luca@usa.net");
-	about->addAuthor("Paul Campbell", I18N_NOOP("Current Maintainer"), "paul@taniwha.com");
- 
+   about->addAuthor("Paul Campbell", I18N_NOOP("Current Maintainer"), "paul@taniwha.com");
+
    return about;
 }
 
@@ -113,5 +112,3 @@ void KclockModule::moduleChanged(bool state)
 {
   emit changed(state);
 }
-
-

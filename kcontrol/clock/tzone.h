@@ -23,6 +23,7 @@
 #define tzone_included
 
 class QComboBox;
+class QStringList;
 
 class Tzone : public QWidget
 {
@@ -45,6 +46,7 @@ private:
   QString currentZone() const;
 
   QComboBox       *tzonelist;
+  QStringList     tzonenames;
 	QLabel					*currentzonetitle;
 	QLabel          *currentzone;
   QString         BufS;
