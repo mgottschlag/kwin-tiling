@@ -7,17 +7,21 @@
  *
  * Portions Copyright (C) TrollTech AS.
  * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
+ * Based on kcmdisplay
+ * Copyright (C) 1997-2002 kcmdisplay Authors.
+ * (see Help -> About Style Settings)
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
  * License version 2 as published by the Free Software Foundation.
  *
- * This library is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIB.  If not, write to
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
@@ -25,26 +29,10 @@
 #ifndef __KCMSTYLE_H
 #define __KCMSTYLE_H
 
-#include <kcmodule.h>
-//class QHBoxLayout; 
-//class QGridLayout; 
-//class QButtonGroup;
-//class QCheckBox;
-//class QComboBox;
-//class QFrame;
-//class QLabel;
-//class QLineEdit;
-//class QListBoxItem;
-//class QProgressBar;
-//class QPushButton;
-//class QRadioButton;
-//class QScrollBar;
-//class QSlider;
-//class QSpinBox;
-//class QTable;
-
 #include <qtimer.h>
 #include <qstring.h>
+#include <kcmodule.h>
+
 #include "stylepreview.h"
 #include "menupreview.h"
 
@@ -145,6 +133,7 @@ private:
 	
 	QCheckBox* cbIconsOnButtons;
 	QCheckBox* cbTearOffHandles;
+	QCheckBox* cbMacMenubar;
 };
 
 #endif // __KCMSTYLE_H

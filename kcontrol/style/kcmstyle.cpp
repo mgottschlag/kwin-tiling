@@ -7,17 +7,17 @@
  *
  * Portions Copyright (C) 2000 TrollTech AS.
  * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
  * License version 2 as published by the Free Software Foundation.
  *
- * This library is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIB.  If not, write to
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
@@ -43,11 +43,13 @@
 #include <qapplication.h>
 #include <qobjectlist.h>
 #include <qpixmapcache.h>
+#include <qwhatsthis.h>
 
 #include <dcopclient.h>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kglobal.h>
+#include <kglobalsettings.h>
 #include <klocale.h>
 #include <kipc.h>
 #include <kaboutdata.h>
@@ -58,7 +60,26 @@
 
 #include "kcmstyle.h"
 #include "stylepreview.h"
+#include "krdb.h"
 
+#include <X11/Xlib.h>
+// X11 namespace cleanup
+#undef Below
+#undef KeyPress
+#undef KeyRelease
+
+/**** DLL Interface for kcontrol ****/
+
+void applyMultiHead(bool active)
+{
+	// Pass env. var to kdeinit.
+	QCString name = "KDE_MULTIHEAD";
+	QCString value = active ? "true" : "false";
+	QByteArray params;
+	QDataStream stream(params, IO_WriteOnly);
+	stream << name << value;
+	kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
+}
 
 // Plugin Interface
 // Danimo: Why do we use the old interface?!
@@ -69,6 +90,36 @@ extern "C"
 		KGlobal::locale()->insertCatalogue("kcmstyle");
 		return new KCMStyle(parent, "kcmstyle");
 	}
+
+    void init_style() 
+	{
+		KConfig config("kcmdisplayrc", true, true);
+		config.setGroup("X11");
+		bool exportKDEColors = config.readBoolEntry("exportKDEColors", true);
+		runRdb(exportKDEColors);
+
+		bool isActive = !config.readBoolEntry( "disableMultihead", false ) && 
+						(ScreenCount(qt_xdisplay()) > 1);
+		applyMultiHead( isActive );
+
+        config.setGroup("KDE");
+
+        // Write some Qt root property.
+#ifndef __osf__      // this crashes under Tru64 randomly -- will fix later
+        QByteArray properties;
+        QDataStream d(properties, IO_WriteOnly);
+        d.setVersion( 3 );      // Qt2 apps need this.
+        d << kapp->palette() << KGlobalSettings::generalFont();
+        Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
+
+        // do it for all root windows - multihead support
+        int screen_count = ScreenCount(qt_xdisplay());
+        for (int i = 0; i < screen_count; i++)
+            XChangeProperty(qt_xdisplay(),  RootWindow(qt_xdisplay(), i),
+                            a, a, 8, PropModeReplace,
+                            (unsigned char*) properties.data(), properties.size());
+#endif
+    }
 }
 
 /*
@@ -253,6 +304,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	gbVisualAppearance = new QGroupBox( 1, Qt::Horizontal, i18n("Visual Appearance"), page3 );
 	cbIconsOnButtons = new QCheckBox( i18n("Sho&w Icons on buttons"), gbVisualAppearance );
 	cbTearOffHandles = new QCheckBox( i18n("Show tear-off handles in &popup menus"), gbVisualAppearance );
+	cbMacMenubar = new QCheckBox( i18n("&Menubar on top of the screen in the style of MacOS"), gbVisualAppearance );
 
 	// Layout page3.
 	page3Layout->addWidget( gbToolbarSettings );
@@ -275,6 +327,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	connect( cbEnableTooltips,      SIGNAL(toggled(bool)),    this, SLOT(setDirty()));
 	connect( cbIconsOnButtons,      SIGNAL(toggled(bool)),    this, SLOT(setDirty()));
 	connect( cbTearOffHandles,      SIGNAL(toggled(bool)),    this, SLOT(setDirty()));
+	connect( cbMacMenubar,          SIGNAL(toggled(bool)),    this, SLOT(setDirty()));
 	connect( comboToolbarIcons,     SIGNAL(highlighted(int)), this, SLOT(setDirty()));
 
 	addWhatsThis();
@@ -403,13 +456,14 @@ void KCMStyle::save()
 	config->writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), true, true );
 	config->writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), true, true );
 	config->writeEntry( "InsertTearOffHandle", cbTearOffHandles->isChecked(), true, true );
+//	config->writeEntry( "macStyle", cbMacMenubar->isChecked(), true, true );
 	config->sync();
 
 	// Propagate changes to all Qt applications.
 	QApplication::x11_apply_settings();
 
 	// Now allow KDE apps to reconfigure themselves.
-	// KIPC::sendMessageAll(KIPC::StyleChanged);	// REDUNDANT - use Qt's method.
+	KIPC::sendMessageAll(KIPC::StyleChanged);	// REDUNDANT - use Qt's method.
 	KIPC::sendMessageAll(KIPC::ToolbarStyleChanged, 0);
 	KIPC::sendMessageAll(KIPC::SettingsChanged);
 
@@ -451,6 +505,7 @@ void KCMStyle::defaults()
 	comboToolbarIcons->setCurrentItem(0);
 	cbIconsOnButtons->setChecked(true);
 	cbTearOffHandles->setChecked(true);
+//	cbMacMenubar->setChecked(false);
 }
 
 
@@ -498,11 +553,11 @@ void KCMStyle::loadStyle(QSettings& settings)
 	// Find out which style is currently being used
 	// This uses Qtconfig's method of style matching for compatibility
 	QString currentStyle = settings.readEntry("/qt/style");
-	if (currentStyle.isNull())
+	if (currentStyle.isNull() || currentStyle == "Unknown")
 		currentStyle = QApplication::style().className();
 
 	QStringList::iterator it = styles.begin();
-	int styleNo = 0;
+	unsigned int styleNo = 0;
 	while (it != styles.end())
 	{
 		if (*it == currentStyle)
@@ -732,20 +787,67 @@ void KCMStyle::loadMisc()
 	cbIconsOnButtons->setChecked(config->readBoolEntry("ShowIconsOnPushButtons", true));
 	cbEnableTooltips->setChecked(!config->readBoolEntry("EffectNoTooltip", false));
 	cbTearOffHandles->setChecked(config->readBoolEntry("InsertTearOffHandle",true));
+//	cbMacMenubar->setChecked(config->readBoolEntry("macStyle", false));
 }
 
 void KCMStyle::addWhatsThis()
 {
 	// Page1
-/*	QWhatsThis::add( , i18n("") );
-	QWhatsThis::add( , i18n("") );
+	QWhatsThis::add( lbStyle, i18n("Here you can choose from a list of"
+							" predefined widget styles (e.g. the way buttons are drawn) which"
+							" may or may not be combined with a theme (additional information"
+							" like a marble texture or a gradient).") );
+	QWhatsThis::add( stylePreview, i18n("This area shows a preview of the currently selected style "
+							"without having to apply it to the whole desktop.") );
 
-	QWhatsThis::add( , i18n("") );
-	QWhatsThis::add( , i18n("") );
-	QWhatsThis::add( , i18n("") );
-	QWhatsThis::add( , i18n("") );
-	QWhatsThis::add( , i18n("") );
-	QWhatsThis::add( , i18n("") ); */
+	// Page2
+	QWhatsThis::add( gbEffects, i18n("This page allows you to enable various widget style effects. "
+							"For best performance, it is advisable to disable all effects.") );
+    QWhatsThis::add( cbEnableEffects, i18n( "If you check this box, you can select several effects "
+							"for different widgets like combo boxes, menus or tooltips.") );
+    QWhatsThis::add( comboComboEffect, i18n( "<p><b>Disable: </b>Don't use any combo box effects.</p>\n"
+							"<b>Animate: </b>Do some animation.") );
+    QWhatsThis::add( comboTooltipEffect, i18n( "<p><b>Disable: </b>Don't use any tooltip effects.</p>\n"
+							"<p><b>Animate: </b>Do some animation.</p>\n"
+							"<b>Fade: </b>Fade in tooltips using alpha-blending.") );
+    QWhatsThis::add( comboMenuEffect, i18n( "<p><b>Disable: </b>Don't use any menu effects.</p>\n"
+							"<p><b>Animate: </b>Do some animation.</p>\n"
+							"<p><b>Fade: </b>Fade in menus using alpha-blending.</p>\n"
+							"<b>Make Translucent: </b>Alpha-blend menus for a see-through effect. (KDE styles only)") );
+    QWhatsThis::add( comboMenuEffectType, i18n( "<p><b>Software Tint: </b>Alpha-blend using a flat color.</p>\n"
+							"<p><b>Software Blend: </b>Alpha-blend using an image.</p>\n"
+							"<b>XRender Blend: </b>Use the XFree RENDER extension for image blending (if available). "
+							"This method may be slower than the Software routines on non-accelerated displays, "
+							"but may however improve performance on remote displays.</p>\n") );
+	QWhatsThis::add( slOpacity, i18n("By adjusting this slider you can control the menu effect opacity.") );
+
+	// Page3
+	QWhatsThis::add( gbToolbarSettings, i18n("<b>Note:</b> that all widgets in this combobox "
+							"do not apply to Qt-only applications!") );
+	QWhatsThis::add( cbHoverButtons, i18n("If this option is selected, toolbar buttons will change "
+							"their color when the mouse cursor is moved over them." ) );
+	QWhatsThis::add( cbTransparentToolbars, i18n("If you check this box, the toolbars will be "
+							"transparent when moving them around.") );
+	QWhatsThis::add( cbEnableTooltips, i18n( "If you check this option, the KDE application "
+							"will offer tooltips when the cursor remains over items in the toolbar." ) );
+    QWhatsThis::add( comboToolbarIcons, i18n( "<p><b>Icons only:</b> Shows only icons on toolbar buttons. "
+							"Best option for low resolutions.</p>"
+							"<p><b>Text only: </b>Shows only text on toolbar buttons.</p>"
+							"<p><b>Text alongside icons: </b> Shows icons and text on toolbar buttons. "
+							"Text is aligned alongside the icon.</p>"
+							"<b>Text under icons: </b> Shows icons and text on toolbar buttons. "
+							"Text is aligned below the icon.") );
+	QWhatsThis::add( cbIconsOnButtons, i18n( "If you enable this option, KDE Applications will "
+							"show small icons alongside some important buttons.") );
+	QWhatsThis::add( cbTearOffHandles, i18n( "If you enable this option some pop-up menus will "
+							"show so called tear-off handles. If you click them, you get the menu "
+							"inside a widget. This can be very helpful when performing "
+							"the same action multiple times.") );
+	QWhatsThis::add( cbMacMenubar, i18n("If this option is selected, applications"
+							" won't have their menubar attached to their own window anymore."
+							" Instead, there is one menu bar at the top of the screen which shows"
+							" the menu of the currently active application. You might recognize"
+							" this behavior from MacOS.") ); 
 }
 
 #include "kcmstyle.moc"
