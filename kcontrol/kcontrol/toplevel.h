@@ -51,9 +51,8 @@ public slots:
 
 protected:
 
-  void initMenuBar();
-  void initToolBars();
-  void initStatusBar();
+  void setupActions(); 
+  void setupStatusBar();
 
   bool queryClose();
 
@@ -67,7 +66,7 @@ protected slots:
 private:
 
   IndexPane        *_index;
-  ConfigModuleList _modules;
+  ConfigModuleList  _modules;
   KDockContainer   *_container;
 
 };

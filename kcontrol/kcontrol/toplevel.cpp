@@ -70,38 +70,24 @@ TopLevel::TopLevel(const char* name)
   // set the main view
   setView(splitter);
 
-  // initialize the various *bars
-  initMenuBar();
-  initToolBars();
-  initStatusBar();
+  // initialize the GUI
+  setupActions();
+  setupStatusBar();
 
   setPlainCaption(i18n("KDE Control Center"));
 }
 
 
-TopLevel::~TopLevel()
-{}
+TopLevel::~TopLevel() {}
 
-void TopLevel::initMenuBar()
+void TopLevel::setupActions()
 {
   KStdAction::quit(kapp, SLOT(quit()), actionCollection());
-  createGUI();
+  KStdAction::preferences(kapp, SLOT(preferences()), actionCollection());
+  createGUI("kcontrolui.rc");
 }
 
-
-void TopLevel::initToolBars()
-{
-  /*
-  KToolBar* tool_bar_0 = toolBar(0);
-  tool_bar_0->setFullWidth(false);
-  tool_bar_0->insertButton( BarIcon("fileopen"), 1 );
-  tool_bar_0->insertButton( BarIcon("filefloppy"), 2 );
-  tool_bar_0->setFullWidth( true );
-  */
-}
-
-
-void TopLevel::initStatusBar()
+void TopLevel::setupStatusBar()
 {
   KStatusBar* status_bar = statusBar();
   //status_bar->setInsertOrder(KStatusBar::RightToLeft);
@@ -120,7 +106,6 @@ void TopLevel::moduleActivated(ConfigModule *module)
       widget->raise();
     }
 }
-
 
 void TopLevel::showModule(QString desktopFile)
 {

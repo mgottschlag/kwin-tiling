@@ -33,6 +33,9 @@ iconsdir = $(kde_datadir)/kcontrol/pics
 
 INCLUDES= $(all_includes)
 
+rcdir = $(kde_datadir)/kcontrol
+rc_DATA = kcontrolui.rc
+
 METASOURCES = AUTO
 
 KDE_ICON = kcontrol
