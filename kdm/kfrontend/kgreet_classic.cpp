@@ -416,7 +416,7 @@ static bool init(
 	QVariant (*getConf)( void *, const char *, const QVariant & ),
 	void *ctx )
 {
-    echoMode = getConf( ctx, "EchoMode", QVariant() ).toInt();
+    echoMode = getConf( ctx, "EchoMode", QVariant( -1 ) ).toInt();
     KGlobal::locale()->insertCatalogue("kgreet_classic");
     return true;
 }
