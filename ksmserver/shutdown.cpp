@@ -103,8 +103,8 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         QGridLayout* grid = new QGridLayout( tgrp->layout() );
         grid->setAlignment( Qt::AlignTop );
 
-        QLabel* whatNext = new QLabel( i18n("What do you want to do next?"), tgrp );
-        rLogout = new KSMRadioButton( i18n("&Login as different user"), tgrp );
+        QLabel* whatNext = new QLabel( i18n("What do you want to do?"), tgrp );
+        rLogout = new KSMRadioButton( i18n("&End session only"), tgrp );
         rHalt = new KSMRadioButton( i18n("&Turn off computer"), tgrp );
         rReboot = new KSMRadioButton( i18n("&Restart computer"), tgrp );
 
