@@ -23,13 +23,14 @@
  */
 #ifndef kcmioslaveinfo_h_included
 #define kcmioslaveinfo_h_included
- 
+
 #include <kcmodule.h>
 
 #include <qstring.h>
 #include <ktextbrowser.h>
 #include <qlistbox.h>
-//#include <klistbox.h>
+#include <klistbox.h>
+#include <kio/job.h>
 
 class KIOTimeoutControl;
 class QTabWidget;
@@ -38,27 +39,31 @@ class KConfig;
 
 class KCMIOSlaveInfo : public KCModule
 {
-   Q_OBJECT
-   public:
-      KCMIOSlaveInfo(QWidget *parent = 0L, const char *name = 0L);
-      virtual ~KCMIOSlaveInfo();
+    Q_OBJECT
+public:
+    KCMIOSlaveInfo(QWidget *parent = 0L, const char *name = 0L);
+    virtual ~KCMIOSlaveInfo();
 
-      void load();
-      void save();
-      void defaults();
-      int buttons();
-      QString quickHelp() const;
+    void load();
+    void save();
+    void defaults();
+    int buttons();
+    QString quickHelp() const;
 
-   protected:
-      QListBox *m_ioslavesLb;
-      KTextBrowser *m_info;
-   protected slots:
+protected:
+    KListBox *m_ioslavesLb;
+    KTextBrowser *m_info;
+    QCString helpData;
 
-      void showInfo(const QString& protocol);
-      //void showInfo(QListBoxItem *item);
+protected slots:
 
-   public slots:
-      void configChanged();
-      void childChanged(bool really);
+    void showInfo(const QString& protocol);
+    void showInfo(QListBoxItem *item);
+    void slaveHelp( KIO::Job *, const QByteArray &data);
+
+public slots:
+    void configChanged();
+    void childChanged(bool really);
+
 };
 #endif

@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libkcm_ioslaveinfo.la
+kde_module_LTLIBRARIES = libkcm_ioslaveinfo.la
 
 libkcm_ioslaveinfo_la_SOURCES = kcmioslaveinfo.cpp
 

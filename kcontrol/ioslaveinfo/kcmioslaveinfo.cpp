@@ -40,7 +40,9 @@
 #include <kdialog.h>
 #include <kglobal.h>
 #include <kdialog.h>
-
+#include <kio/job.h>
+#include <kdebug.h>
+#include <qtextcodec.h>
 
 KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name)
                :KCModule(parent,name),m_ioslavesLb(0)
@@ -49,8 +51,9 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name)
 
    QLabel* label=new QLabel(i18n("Available IOSlaves"),this);
    QHBox *hbox=new QHBox(this);
-   m_ioslavesLb=new QListBox(hbox);
+   m_ioslavesLb=new KListBox(hbox);
    m_ioslavesLb->setMinimumSize(fontMetrics().width("blahfaselwhatever----"),10);
+   connect( m_ioslavesLb, SIGNAL( executed( QListBoxItem * ) ), SLOT( showInfo( QListBoxItem * ) ) );
    //TODO make something useful after 2.1 is released
    m_info=new KTextBrowser(hbox);
    hbox->setSpacing(KDialog::spacingHint());
@@ -66,9 +69,10 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name)
       m_ioslavesLb->insertItem(*it);
    };
    m_ioslavesLb->sort();
-   
+
    setButtons(buttons());
    load();
+   showInfo( "man" );
 };
 
 
@@ -101,54 +105,51 @@ void KCMIOSlaveInfo::childChanged(bool really) {
   emit changed(really);
 }
 
-
 QString KCMIOSlaveInfo::quickHelp() const
 {
-   return i18n("Gives you an overview of the installed ioslaves and allows"
-               " you to configure the network timeout values for those slaves.");
+   return i18n("<qt>Gives you an overview of the installed ioslaves and allows"
+               " you to configure the network timeout values for those slaves.</qt>");
+}
+
+void KCMIOSlaveInfo::slaveHelp( KIO::Job *, const QByteArray &data)
+{
+    if ( data.size() == 0 ) { // EOF
+        int index = helpData.find( "<meta http-equiv=\"Content-Type\"" );
+        index = helpData.find( "charset=", index ) + 8;
+        QString charset = helpData.mid( index, helpData.find( '\"', index ) - index );
+        kdDebug() << "charset " << charset << endl;
+        QString text = QTextCodec::codecForName(charset.latin1())->toUnicode( helpData );
+        index = text.find( "<div class=\"article\">" );
+        text = text.mid( index );
+        index = text.find( "<div id=\"bottom-nav\"" );
+        kdDebug() << "index " << index << endl;
+        text = text.left( index );
+        m_info->setText(text);
+        return;
+    }
+    helpData += data;
 }
 
 void KCMIOSlaveInfo::showInfo(const QString& protocol)
 {
-   //m_info->setText(QString("Some info about protocol %1:/ ...").arg(protocol));
-/*   QStringList dirs=KGlobal::dirs()->resourceDirs("html");
-   for ( QStringList::Iterator it = dirs.begin(); it != dirs.end(); ++it )
-   {
-      printf( "%s \n", (*it).latin1() );
-   };*/
+   QString file = QString("kioslave/%1.docbook").arg( protocol );
+   file = KGlobal::locale()->langLookup( file );
 
-   QString tmp("default/kioslave/");
-   tmp+=protocol+".html";
-   QString file=KGlobal::dirs()->findResource("html",tmp);
-   /*QString tmp("kioslave/");
-   tmp+=protocol+".html";
-   QString file=KGlobal::dirs()->findResource("data",tmp);*/
-
-   //cout<<"found for -"<<tmp.latin1()<<"- file -"<<file.latin1()<<"-"<<endl;
    if (!file.isEmpty())
    {
-      QFile theFile( file );
-      theFile.open( IO_ReadOnly );
-      uint size = theFile.size();
-      char* buffer = new char[ size + 1 ];
-      theFile.readBlock( buffer, size );
-      buffer[ size ] = 0;
-      theFile.close();
-
-      QString text = QString::fromUtf8( buffer, size );
-      delete[] buffer;
-      m_info->setText(text);
-      return;
-   };
+       helpData.truncate( 0 );
+       KIO::Job *tfj = KIO::get( QString("help:/kioslave/%1.html").arg( protocol ), true, false );
+       connect( tfj, SIGNAL( data( KIO::Job *, const QByteArray &) ), SLOT( slaveHelp( KIO::Job *, const QByteArray &) ) );
+   }
    m_info->setText(QString("Some info about protocol %1:/ ...").arg(protocol));
-};
+}
 
-/*void KCMIOSlaveInfo::showInfo(QListBoxItem *item)
+void KCMIOSlaveInfo::showInfo(QListBoxItem *item)
 {
    if (item==0)
       return;
-   m_info->setText(QString("Some info about protocol %1 :/ ...").arg(item->text()));
-};*/
+   showInfo( item->text() );
+}
 
 
 extern "C"
