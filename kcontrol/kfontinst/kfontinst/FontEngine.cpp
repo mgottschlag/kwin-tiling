@@ -740,7 +740,7 @@ static QString createFamilyName(const QString &familyName, const QString &fullNa
 
     //
     // Remove family name...
-    if(0==retVal.find(familyName))
+    if(QString::null!=familyName && 0==retVal.find(familyName))
         retVal.remove(0, familyName.length());
     //
     // Remove widthm, weight, and italic stuff from fullName...
@@ -759,7 +759,8 @@ static QString createFamilyName(const QString &familyName, const QString &fullNa
 
     //
     // Add the family name back on...
-    retVal=familyName+retVal;
+    if(QString::null!=familyName)
+        retVal=familyName+retVal;
 
     //
     // Replace any non-alphanumeric or space characters...
@@ -883,7 +884,8 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
                        foundFamily=false,
                        foundPs=false,
                        foundNotice=false,
-                       foundEncoding=false;
+                       foundEncoding=false,
+                       familyIsFull=false;
 
             header=binary ? &data[6] : data;
 
@@ -908,7 +910,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
                     foundName=true;
                 }
 
-                if(mask&PROPERTIES && NULL!=(str=getTokenT1(dict, "/FontName")))
+                if((mask&NAME || mask&XLFD || mask&PROPERTIES) && NULL!=(str=getTokenT1(dict, "/FontName")))
                 {
                     itsPsName=str[0]=='/' ? &str[1] : str;
                     foundPs=true;
@@ -969,6 +971,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
                 if(!foundFamily && foundName)
                 {
                     itsFamily=itsFullName;
+                    familyIsFull=true;
                     foundFamily=true;
                 }
 
@@ -994,7 +997,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
 
 
             if(foundName && foundFamily)
-                itsFamily=createFamilyName(itsFamily, itsFullName);
+                itsFamily=createFamilyName(familyIsFull ? QString::null : itsFamily, itsFullName);
 
             status= ( (mask&NAME && !foundName) || (mask&PROPERTIES && (!foundPs || !foundFamily)) ||
                     (mask&XLFD && (!foundNotice || !foundName || !foundEncoding)) ) ? false : true;
