@@ -6,7 +6,7 @@
 	  Xservers; option AllowConsole.
 
 2003-10-27  Oswald Buddenhagen <ossi@kde.org>
-	* KDM now complies the input model of PAM. The greeter has an 
+	* KDM now complies with the input model of PAM. The greeter has an 
 	  interface for conversation plugins, so alternative authentication
 	  mechanisms can be handled; options PluginsLogin & PluginsShutdown.
 	* Password-less and automatic logins now use a separate PAM service
@@ -168,7 +168,7 @@
 
 	* Added auto-login; options AutoLoginEnable, AutoLoginUser, and
 	  AutoLogin1st
-	* Added password-less login; option NoPassUsers
+	* Added password-less login; options NoPassEnable and NoPassUsers
 	* Added auto-re-login on XServer crash; option AutoReLogin
 	* Added displaying the previously logged in user in the "Login"
 	  field; option ShowPrevious
