@@ -72,7 +72,8 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
                               "Are you sure you want to import it again?" )) != KMessageBox::Continue )
                     return true; // import "successful"
                 }
-            already_imported.append( import_id );
+            else
+                already_imported.append( import_id );
             }
         else
             {
