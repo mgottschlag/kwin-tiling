@@ -427,9 +427,9 @@ void KWindowConfig::load( void )
   key = config->readEntry(KWM_FOCUS);
   if( key == "ClickToFocus")
     setFocus(CLICK_TO_FOCUS);
-  else if( key == "FocusFollowMouse")
+  else if( key == "FocusFollowsMouse")
     setFocus(FOCUS_FOLLOWS_MOUSE);
-  else if(key == "ClassicFocusFollowMouse")
+  else if(key == "ClassicFocusFollowsMouse")
     setFocus(CLASSIC_FOCUS_FOLLOWS_MOUSE);
   else if(key == "ClassicSloppyFocus")
     setFocus(CLASSIC_SLOPPY_FOCUS);
