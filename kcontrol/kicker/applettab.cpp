@@ -62,6 +62,16 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
 
   all_rb = new QRadioButton(i18n("Load all applets internal"), level_group);
   vbox->addWidget(all_rb);
+  QWhatsThis::add( level_group, i18n("Panel applets can be started using two different ways:"
+    " internal or external. While 'internal' is the preferred way to load applets, this can"
+    " raise stability or security problems when you are using poorly programmed third-party applets."
+    " To address these problems, applets can be marked 'trusted'. You might want to configure"
+    " kicker to treat trusted applets different from untrusted ones. Your options are:"
+    " <ul><li><em>Load only trusted applets internal:</em> All applets but the ones marked 'trusted'"
+    " will be loaded using an external wrapper application.</li>"
+    " <li><em>Load startup config applets internal:</em> The applets shown on KDE startup"
+    " will be loaded internally, others will be loaded using an external wrapper application.</li>"
+    " <li><em>Load all applets internal</em></li></ul>") );
 
   layout->addWidget(level_group,0,0);
 
@@ -79,10 +89,18 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
   connect(lb_trusted, SIGNAL(selectionChanged(QListViewItem*)),
           SLOT(trusted_selection_changed(QListViewItem*)));
   hbox->addWidget(lb_trusted);
+  QWhatsThis::add( lb_trusted, i18n("Here you can see a list of applets that are marked"
+    " 'trusted', i.e. will be loaded internally by kicker in any case. To move an applet"
+    " from the list of available applets to the trusted ones or vice versa, select it and"
+    " press the left or right buttons.") );
 
   QVBox *vbox2 = new QVBox(list_group);
   pb_add = new QPushButton(i18n("<<"), vbox2);
+  QWhatsThis::add( pb_add, i18n("Click here to move the selected applet in the list of available"
+    " applets to the list of trusted applets.") );
   pb_remove = new QPushButton(i18n(">>"), vbox2);
+  QWhatsThis::add( pb_remove, i18n("Click here to remove the selected applet in the list of trusted"
+    " applets and move it to the list of available, untrusted applets.") );
   pb_add->setEnabled(false);
   pb_remove->setEnabled(false);
   connect(pb_add, SIGNAL(clicked()), SLOT(add_clicked()));
@@ -94,6 +112,11 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
   connect(lb_available, SIGNAL(selectionChanged(QListViewItem*)),
           SLOT(available_selection_changed(QListViewItem*)));
   hbox->addWidget(lb_available);
+  QWhatsThis::add( lb_available, i18n("Here you can see a list of available applets that you"
+    " currently don't trust. This doesn't mean you can't use those applets, but rather that"
+    " the panel's policy using them depends on your applet security level. To move an applet"
+    " from the list of available applets to the trusted ones or vice versa, select it and"
+    " press the left or right buttons.") );
 
   layout->addWidget(list_group,1,0);
 
