@@ -8,6 +8,7 @@
 #include <kapplication.h>
 #include <kcolorbutton.h>
 #include <kconfig.h>
+#include <kdialogbase.h>
 #include <kfontdialog.h>
 #include <kgenericfactory.h>
 #include <kglobalsettings.h>
@@ -15,6 +16,7 @@
 #include <kurlrequester.h>
 
 #include "cssconfig.h"
+#include "csscustom.h"
 #include "template.h"
 #include "preview.h"
 
@@ -26,7 +28,11 @@ K_EXPORT_COMPONENT_FACTORY( kcm_css, CSSFactory("kcmcss") )
 CSSConfig::CSSConfig(QWidget *parent, const char *name, const QStringList &)
   : KCModule(CSSFactory::instance(), parent, name)
 {
-  dialog = new CSSConfigDialog(this);
+  customDialogBase = new KDialogBase(this, "customCSSDialog", true, QString::null, 
+        KDialogBase::Close, KDialogBase::Close, true );
+  customDialog = new CSSCustomDialog(customDialogBase);
+  customDialogBase->setMainWidget(customDialog);
+  configDialog = new CSSConfigDialog(this);
 
   setQuickHelp( i18n("<h1>Konqueror Stylesheets</h1> This module allows you to apply your own color"
               " and font settings to Konqueror by using"
@@ -42,49 +48,51 @@ CSSConfig::CSSConfig(QWidget *parent, const char *name, const QStringList &)
 
   QStringList fonts;
   KFontChooser::getFontList(fonts, 0);
-  dialog->fontFamily->insertStringList(fonts);
+  customDialog->fontFamily->insertStringList(fonts);
 
-  connect(dialog->useDefault, SIGNAL(clicked()),
+  connect(configDialog->useDefault, SIGNAL(clicked()),
 	  SLOT(changed()));
-  connect(dialog->useAccess, SIGNAL(clicked()),
+  connect(configDialog->useAccess, SIGNAL(clicked()),
 	  SLOT(changed()));
-  connect(dialog->useUser, SIGNAL(clicked()),
+  connect(configDialog->useUser, SIGNAL(clicked()),
 	  SLOT(changed()));
-  connect(dialog->urlRequester, SIGNAL(textChanged(const QString&)),
+  connect(configDialog->urlRequester, SIGNAL(textChanged(const QString&)),
 	  SLOT(changed()));
-  connect(dialog->basefontsize, SIGNAL(highlighted(int)),
+  connect(configDialog->customize, SIGNAL(clicked()),
+          SLOT(slotCustomize()));
+  connect(customDialog->basefontsize, SIGNAL(highlighted(int)),
 	  SLOT(changed()));
-  connect(dialog->basefontsize, SIGNAL(textChanged(const QString&)),
+  connect(customDialog->basefontsize, SIGNAL(textChanged(const QString&)),
 	  SLOT(changed()));
-  connect(dialog->dontScale, SIGNAL(clicked()),
+  connect(customDialog->dontScale, SIGNAL(clicked()),
 	  SLOT(changed()));
-  connect(dialog->blackOnWhite, SIGNAL(clicked()),
+  connect(customDialog->blackOnWhite, SIGNAL(clicked()),
 	  SLOT(changed()));
-  connect(dialog->whiteOnBlack, SIGNAL(clicked()),
+  connect(customDialog->whiteOnBlack, SIGNAL(clicked()),
 	  SLOT(changed()));
-  connect(dialog->customColor, SIGNAL(clicked()),
+  connect(customDialog->customColor, SIGNAL(clicked()),
 	  SLOT(changed()));
-  connect(dialog->foregroundColor, SIGNAL(changed(const QColor &)),
+  connect(customDialog->foregroundColor, SIGNAL(changed(const QColor &)),
 	  SLOT(changed()));
-  connect(dialog->backgroundColor, SIGNAL(changed(const QColor &)),
+  connect(customDialog->backgroundColor, SIGNAL(changed(const QColor &)),
 	  SLOT(changed()));
-  connect(dialog->fontFamily, SIGNAL(highlighted(int)),
+  connect(customDialog->fontFamily, SIGNAL(highlighted(int)),
 	  SLOT(changed()));
-  connect(dialog->fontFamily, SIGNAL(textChanged(const QString&)),
+  connect(customDialog->fontFamily, SIGNAL(textChanged(const QString&)),
 	  SLOT(changed()));
-  connect(dialog->sameFamily, SIGNAL(clicked()),
+  connect(customDialog->sameFamily, SIGNAL(clicked()),
 	  SLOT(changed()));
-  connect(dialog->preview, SIGNAL(clicked()),
+  connect(customDialog->preview, SIGNAL(clicked()),
+          SLOT(slotPreview()));
+  connect(customDialog->sameColor, SIGNAL(clicked()),
 	  SLOT(changed()));
-  connect(dialog->sameColor, SIGNAL(clicked()),
+  connect(customDialog->hideImages, SIGNAL(clicked()),
 	  SLOT(changed()));
-  connect(dialog->hideImages, SIGNAL(clicked()),
-	  SLOT(changed()));
-  connect(dialog->hideBackground, SIGNAL(clicked()),
+  connect(customDialog->hideBackground, SIGNAL(clicked()),
 	  SLOT(changed()));
 
   QVBoxLayout *vbox = new QVBoxLayout(this, 0, 0);
-  vbox->addWidget(dialog);
+  vbox->addWidget(configDialog);
 
   load();
 }
@@ -96,38 +104,38 @@ void CSSConfig::load()
 
   c->setGroup("Stylesheet");
   QString u = c->readEntry("Use", "default");
-  dialog->useDefault->setChecked(u == "default");
-  dialog->useUser->setChecked(u == "user");
-  dialog->useAccess->setChecked(u == "access");
-  dialog->urlRequester->setURL(c->readEntry("SheetName"));
+  configDialog->useDefault->setChecked(u == "default");
+  configDialog->useUser->setChecked(u == "user");
+  configDialog->useAccess->setChecked(u == "access");
+  configDialog->urlRequester->setURL(c->readEntry("SheetName"));
 
   c->setGroup("Font");
-  dialog->basefontsize->setEditText(QString::number(c->readNumEntry("BaseSize", 12)));
-  dialog->dontScale->setChecked(c->readBoolEntry("DontScale", false));
+  customDialog->basefontsize->setEditText(QString::number(c->readNumEntry("BaseSize", 12)));
+  customDialog->dontScale->setChecked(c->readBoolEntry("DontScale", false));
 
   QString fname = c->readEntry("Family", "Arial");
-  for (int i=0; i < dialog->fontFamily->count(); ++i)
-    if (dialog->fontFamily->text(i) == fname)
+  for (int i=0; i < customDialog->fontFamily->count(); ++i)
+    if (customDialog->fontFamily->text(i) == fname)
       {
-	dialog->fontFamily->setCurrentItem(i);
+	customDialog->fontFamily->setCurrentItem(i);
 	break;
       }
 
-  dialog->sameFamily->setChecked(c->readBoolEntry("SameFamily", false));
+  customDialog->sameFamily->setChecked(c->readBoolEntry("SameFamily", false));
 
   c->setGroup("Colors");
   QString m = c->readEntry("Mode", "black-on-white");
-  dialog->blackOnWhite->setChecked(m == "black-on-white");
-  dialog->whiteOnBlack->setChecked(m == "white-on-black");
-  dialog->customColor->setChecked(m == "custom");
-  dialog->backgroundColor->setColor(c->readColorEntry("BackColor", &Qt::white));
-  dialog->foregroundColor->setColor(c->readColorEntry("ForeColor", &Qt::black));
-  dialog->sameColor->setChecked(c->readBoolEntry("SameColor", false));
+  customDialog->blackOnWhite->setChecked(m == "black-on-white");
+  customDialog->whiteOnBlack->setChecked(m == "white-on-black");
+  customDialog->customColor->setChecked(m == "custom");
+  customDialog->backgroundColor->setColor(c->readColorEntry("BackColor", &Qt::white));
+  customDialog->foregroundColor->setColor(c->readColorEntry("ForeColor", &Qt::black));
+  customDialog->sameColor->setChecked(c->readBoolEntry("SameColor", false));
 
   // Images
   c->setGroup("Images");
-  dialog->hideImages->setChecked(c->readBoolEntry("Hide", false));
-  dialog->hideBackground->setChecked(c->readBoolEntry("HideBackground", true));
+  customDialog->hideImages->setChecked(c->readBoolEntry("Hide", false));
+  customDialog->hideBackground->setChecked(c->readBoolEntry("HideBackground", true));
 
   delete c;
 }
@@ -139,34 +147,34 @@ void CSSConfig::save()
   KConfig *c = new KConfig("kcmcssrc", false, false);
 
   c->setGroup("Stylesheet");
-  if (dialog->useDefault->isChecked())
+  if (configDialog->useDefault->isChecked())
     c->writeEntry("Use", "default");
-  if (dialog->useUser->isChecked())
+  if (configDialog->useUser->isChecked())
     c->writeEntry("Use", "user");
-  if (dialog->useAccess->isChecked())
+  if (configDialog->useAccess->isChecked())
     c->writeEntry("Use", "access");
-  c->writeEntry("SheetName", dialog->urlRequester->url());
+  c->writeEntry("SheetName", configDialog->urlRequester->url());
 
   c->setGroup("Font");
-  c->writeEntry("BaseSize", dialog->basefontsize->currentText());
-  c->writeEntry("DontScale", dialog->dontScale->isChecked());
-  c->writeEntry("SameFamily", dialog->sameFamily->isChecked());
-  c->writeEntry("Family", dialog->fontFamily->currentText());
+  c->writeEntry("BaseSize", customDialog->basefontsize->currentText());
+  c->writeEntry("DontScale", customDialog->dontScale->isChecked());
+  c->writeEntry("SameFamily", customDialog->sameFamily->isChecked());
+  c->writeEntry("Family", customDialog->fontFamily->currentText());
 
   c->setGroup("Colors");
-  if (dialog->blackOnWhite->isChecked())
+  if (customDialog->blackOnWhite->isChecked())
     c->writeEntry("Mode", "black-on-white");
-  if (dialog->whiteOnBlack->isChecked())
+  if (customDialog->whiteOnBlack->isChecked())
     c->writeEntry("Mode", "white-on-black");
-  if (dialog->customColor->isChecked())
+  if (customDialog->customColor->isChecked())
     c->writeEntry("Mode", "custom");
-  c->writeEntry("BackColor", dialog->backgroundColor->color());
-  c->writeEntry("ForeColor", dialog->foregroundColor->color());
-  c->writeEntry("SameColor", dialog->sameColor->isChecked());
+  c->writeEntry("BackColor", customDialog->backgroundColor->color());
+  c->writeEntry("ForeColor", customDialog->foregroundColor->color());
+  c->writeEntry("SameColor", customDialog->sameColor->isChecked());
 
   c->setGroup("Images");
-  c->writeEntry("Hide", dialog->hideImages->isChecked());
-  c->writeEntry("HideBackground", dialog->hideBackground->isChecked());
+  c->writeEntry("Hide", customDialog->hideImages->isChecked());
+  c->writeEntry("HideBackground", customDialog->hideBackground->isChecked());
 
   c->sync();
   delete c;
@@ -188,11 +196,11 @@ void CSSConfig::save()
   c = new KConfig("konquerorrc", false, false);
 
   c->setGroup("HTML Settings");
-  c->writeEntry("UserStyleSheetEnabled", !dialog->useDefault->isChecked());
+  c->writeEntry("UserStyleSheetEnabled", !configDialog->useDefault->isChecked());
 
-  if (dialog->useUser->isChecked())
-    c->writeEntry("UserStyleSheet", dialog->urlRequester->url());
-  if (dialog->useAccess->isChecked())
+  if (configDialog->useUser->isChecked())
+    c->writeEntry("UserStyleSheet", configDialog->urlRequester->url());
+  if (configDialog->useAccess->isChecked())
     c->writeEntry("UserStyleSheet", dest);
 
   c->sync();
@@ -203,32 +211,32 @@ void CSSConfig::save()
 
 void CSSConfig::defaults()
 {
-  dialog->useDefault->setChecked(true);
-  dialog->useUser->setChecked(false);
-  dialog->useAccess->setChecked(false);
-  dialog->urlRequester->setURL("");
+  configDialog->useDefault->setChecked(true);
+  configDialog->useUser->setChecked(false);
+  configDialog->useAccess->setChecked(false);
+  configDialog->urlRequester->setURL("");
 
-  dialog->basefontsize->setEditText(QString::number(12));
-  dialog->dontScale->setChecked(false);
+  customDialog->basefontsize->setEditText(QString::number(12));
+  customDialog->dontScale->setChecked(false);
 
   QString fname =  "Arial";
-  for (int i=0; i < dialog->fontFamily->count(); ++i)
-    if (dialog->fontFamily->text(i) == fname)
+  for (int i=0; i < customDialog->fontFamily->count(); ++i)
+    if (customDialog->fontFamily->text(i) == fname)
       {
-	dialog->fontFamily->setCurrentItem(i);
+	customDialog->fontFamily->setCurrentItem(i);
 	break;
       }
 
-  dialog->sameFamily->setChecked(false);
-  dialog->blackOnWhite->setChecked(true);
-  dialog->whiteOnBlack->setChecked(false);
-  dialog->customColor->setChecked(false);
-  dialog->backgroundColor->setColor(Qt::white);
-  dialog->foregroundColor->setColor(Qt::black);
-  dialog->sameColor->setChecked(false);
+  customDialog->sameFamily->setChecked(false);
+  customDialog->blackOnWhite->setChecked(true);
+  customDialog->whiteOnBlack->setChecked(false);
+  customDialog->customColor->setChecked(false);
+  customDialog->backgroundColor->setColor(Qt::white);
+  customDialog->foregroundColor->setColor(Qt::black);
+  customDialog->sameColor->setChecked(false);
 
-  dialog->hideImages->setChecked(false);
-  dialog->hideBackground->setChecked( true);
+  customDialog->hideImages->setChecked(false);
+  customDialog->hideBackground->setChecked( true);
   emit changed(true);
 }
 
@@ -248,10 +256,10 @@ QMap<QString,QString> CSSConfig::cssDict()
 
   // Fontsizes ------------------------------------------------------
 
-  int bfs = dialog->basefontsize->currentText().toInt();
+  int bfs = customDialog->basefontsize->currentText().toInt();
   dict.insert("fontsize-base", px(bfs, 1.0));
 
-  if (dialog->dontScale->isChecked())
+  if (customDialog->dontScale->isChecked())
     {
       dict.insert("fontsize-small-1", px(bfs, 1.0));
       dict.insert("fontsize-large-1", px(bfs, 1.0));
@@ -273,41 +281,41 @@ QMap<QString,QString> CSSConfig::cssDict()
 
   // Colors --------------------------------------------------------
 
-  if (dialog->blackOnWhite->isChecked())
+  if (customDialog->blackOnWhite->isChecked())
     {
       dict.insert("background-color", "White");
       dict.insert("foreground-color", "Black");
     }
-  else if (dialog->whiteOnBlack->isChecked())
+  else if (customDialog->whiteOnBlack->isChecked())
     {
       dict.insert("background-color", "Black");
       dict.insert("foreground-color", "White");
     }
   else
     {
-      dict.insert("background-color", dialog->backgroundColor->color().name());
-      dict.insert("foreground-color", dialog->foregroundColor->color().name());
+      dict.insert("background-color", customDialog->backgroundColor->color().name());
+      dict.insert("foreground-color", customDialog->foregroundColor->color().name());
     }
 
-  if (dialog->sameColor->isChecked())
+  if (customDialog->sameColor->isChecked())
     dict.insert("force-color", "! important");
   else
     dict.insert("force-color", "");
 
   // Fonts -------------------------------------------------------------
-  dict.insert("font-family", dialog->fontFamily->currentText());
-  if (dialog->sameFamily->isChecked())
+  dict.insert("font-family", customDialog->fontFamily->currentText());
+  if (customDialog->sameFamily->isChecked())
     dict.insert("force-font", "! important");
   else
     dict.insert("force-font", "");
 
   // Images
 
-  if (dialog->hideImages->isChecked())
+  if (customDialog->hideImages->isChecked())
     dict.insert("display-images", "background-image : none ! important");
   else
     dict.insert("display-images", "");
-  if (dialog->hideBackground->isChecked())
+  if (customDialog->hideBackground->isChecked())
     dict.insert("display-background", "background-image : none ! important");
   else
     dict.insert("display-background", "");
@@ -316,7 +324,13 @@ QMap<QString,QString> CSSConfig::cssDict()
 }
 
 
-void CSSConfig::preview()
+void CSSConfig::slotCustomize()
+{
+  customDialogBase->exec();
+}
+
+
+void CSSConfig::slotPreview()
 {
 
   QStyleSheetItem *h1 = new QStyleSheetItem(QStyleSheet::defaultSheet(), "h1");
@@ -326,9 +340,9 @@ void CSSConfig::preview()
 
   // Fontsize
 
-  int bfs = dialog->basefontsize->currentText().toInt();
+  int bfs = customDialog->basefontsize->currentText().toInt();
   text->setFontSize(bfs);
-  if (dialog->dontScale->isChecked())
+  if (customDialog->dontScale->isChecked())
     {
       h1->setFontSize(bfs);
       h2->setFontSize(bfs);
@@ -345,20 +359,20 @@ void CSSConfig::preview()
 
   QColor back, fore;
 
-  if (dialog->blackOnWhite->isChecked())
+  if (customDialog->blackOnWhite->isChecked())
     {
       back = Qt::white;
       fore = Qt::black;
     }
-  else if (dialog->whiteOnBlack->isChecked())
+  else if (customDialog->whiteOnBlack->isChecked())
     {
       back = Qt::black;
       fore = Qt::white;
     }
   else
     {
-      back = dialog->backgroundColor->color();
-      fore = dialog->foregroundColor->color();
+      back = customDialog->backgroundColor->color();
+      fore = customDialog->foregroundColor->color();
     }
 
   h1->setColor(fore);
@@ -368,10 +382,10 @@ void CSSConfig::preview()
 
   // Fonts
 
-  h1->setFontFamily(dialog->fontFamily->currentText());
-  h2->setFontFamily(dialog->fontFamily->currentText());
-  h3->setFontFamily(dialog->fontFamily->currentText());
-  text->setFontFamily(dialog->fontFamily->currentText());
+  h1->setFontFamily(customDialog->fontFamily->currentText());
+  h2->setFontFamily(customDialog->fontFamily->currentText());
+  h3->setFontFamily(customDialog->fontFamily->currentText());
+  text->setFontFamily(customDialog->fontFamily->currentText());
 
   // Show the preview
   PreviewDialog *dlg = new PreviewDialog(this, 0, true);
@@ -382,6 +396,8 @@ void CSSConfig::preview()
 
   delete dlg;
 }
+
+
 
 
 #include "kcmcss.moc"

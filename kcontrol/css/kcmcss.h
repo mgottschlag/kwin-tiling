@@ -25,6 +25,8 @@
 
 
 class CSSConfigDialog;
+class CSSCustomDialog;
+class KDialogBase;
 
 
 class CSSConfig : public KCModule
@@ -41,15 +43,16 @@ public:
 
 public slots:
  
-  void preview();
-
+  void slotPreview();
+  void slotCustomize();
 
 private:
 
   QMap<QString,QString> cssDict();
 
-  CSSConfigDialog *dialog;
-
+  CSSConfigDialog *configDialog;
+  CSSCustomDialog *customDialog;
+  KDialogBase *customDialogBase;
 };
 
 
