@@ -65,13 +65,19 @@ bool KShortURIFilter::expandEnivVar( QString& cmd ) const
 {
     // ENVIRONMENT variable expansion
     int env_len = 0;
+    int env_loc = 0;
     while( 1 )
     {
-        int env_loc = QRegExp( "$[a-zA-Z_][a-zA-Z0-9_]*" ).match( cmd, 0, &env_len );
+        env_loc = QRegExp( "$[a-zA-Z_][a-zA-Z0-9_]*" ).match( cmd, env_loc, &env_len );
         if( env_loc == -1 ) break;
         const char* exp = getenv( cmd.mid( env_loc + 1, env_len - 1 ).latin1() );
-        debug( "Expand Variable : %s\nVariable expanded to : %s", cmd.mid( env_loc + 1, env_len - 1 ).latin1(), exp );
-        if( exp != 0  ) cmd.replace( env_loc, env_len, exp );
+        if( exp == 0 )
+        	env_loc = env_len; // Avoid a big infinte loop :)
+        else
+        {
+			cmd.replace( env_loc, env_len, exp );
+			env_loc = 0;  // clear out the previous location since text size changed :)
+		}
     }
     return ( env_len ) ? true : false;
 }
@@ -178,7 +184,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
                 cmd.replace (0, len, dir->pw_dir);
             else
             {
-                QString msg = dir ? i18n("%1 doesn't have a home directory!").arg(user) : i18n("There is no user called %1.").arg(user);
+                QString msg = dir ? i18n("<qt><b>%1</b> doesn't have a home directory!</qt>").arg(user) : i18n("<qt>There is no user called <b>%1</b>.</qt>").arg(user);
                 setErrorMsg( data, msg );
                 setURIType( data, KURIFilterData::ERROR );
                 return data.hasBeenFiltered();
