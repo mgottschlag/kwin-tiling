@@ -58,7 +58,7 @@ bool KAutoWebSearch::filterURI( KURIFilterData &data ) const
   KURL u = data.uri();
   if ( u.pass().isEmpty() )
   {
-    QString result = KURISearchFilterEngine::self()->autoWebSearchQuery( u );
+    QString result = KURISearchFilterEngine::self()->autoWebSearchQuery( u.protocol(), data.typedString() );
     if( !result.isEmpty() )
     {
       if ( KURISearchFilterEngine::self()->verbose() )

@@ -82,31 +82,22 @@ QString KURISearchFilterEngine::webShortcutQuery( const QString& typedString ) c
 }
 
 
-QString KURISearchFilterEngine::autoWebSearchQuery( const KURL& url ) const
+QString KURISearchFilterEngine::autoWebSearchQuery( const QString& protocol,
+                                                    const QString& typedString ) const
 {
   QString result;
 
-  if (m_bWebShortcutsEnabled && !m_defaultSearchEngine.isEmpty())
+  if (m_bWebShortcutsEnabled && !m_defaultSearchEngine.isEmpty() &&
+      !KProtocolInfo::isKnownProtocol(protocol))
   {
-    QString key;
-    QString u = url.url();
-
-    if( !url.isValid() && u[0] == '/' )
-      key = QString::fromLatin1( "file" );
-    else
-      key = url.protocol();
-
-    if(!KProtocolInfo::isKnownProtocol(key))
-    {
       SearchProvider *provider = SearchProvider::findByDesktopName(m_defaultSearchEngine);
 
       if (provider)
       {
         result = formatResult (provider->query(), provider->charset(),
-                               QString::null, u, true);
+                               QString::null, typedString, true);
         delete provider;
       }
-    }
   }
 
   return result;
