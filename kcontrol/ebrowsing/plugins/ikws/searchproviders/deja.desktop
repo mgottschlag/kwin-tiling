@@ -1,7 +1,6 @@
 [Desktop Entry]
 Type=Service
-Name=Deja.com
-Name[de]=deja.com
+Name=Google Groups
 ServiceTypes=SearchProvider
-Keys=dj,deja
-Query=http://www.deja.com/dnquery.xp?QRY=\\1
+Keys=ggg,groups,dj,deja
+Query=http://groups.google.com/groups?oi=djq&as_q=\\1
