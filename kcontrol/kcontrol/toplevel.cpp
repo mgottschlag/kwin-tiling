@@ -44,7 +44,6 @@
 #include "modules.h"
 #include "proxywidget.h"
 #include "global.h"
-#include "modulemenu.h"
 #include <stdio.h>
 
 #include "toplevel.h"
@@ -223,12 +222,6 @@ void TopLevel::setupActions()
   report_bug->setText(i18n("&Report Bug..."));
   report_bug->disconnect();
   connect(report_bug, SIGNAL(activated()), SLOT(reportBug()));
-
-  // add menu with the modules
-  ModuleMenu *menu = new ModuleMenu(_modules, this);
-  menuBar()->insertItem(i18n("&Modules"), menu, -1, 2);
-  connect(menu, SIGNAL(moduleActivated(ConfigModule*)),
-          this, SLOT(moduleActivated(ConfigModule*)));
 }
 
 void TopLevel::activateIconView()

@@ -161,8 +161,16 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
 }
 
 
-extern QString menuPath(const QStringList& groups);
+static QString menuPath(const QStringList& groups)
+{
+  QString path;
 
+  QStringList::ConstIterator it;
+  for (it=groups.begin(); it != groups.end(); ++it)
+    path += *it + "/";
+
+  return path;
+}
 
 ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStringList& groups)
 {

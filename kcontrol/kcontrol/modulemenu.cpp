@@ -1,3 +1,7 @@
+this file is currently not used.
+this message breaks compilation.
+that is intentional :-]
+
 /*
   Copyright (c) 2000 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
 
