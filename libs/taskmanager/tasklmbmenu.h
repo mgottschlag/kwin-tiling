@@ -1,6 +1,7 @@
 /*****************************************************************
 
 Copyright (c) 2001 Matthias Elter <elter@kde.org>
+Copyright (c) 2002 John Firebaugh <jfirebaugh@kde.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define __tasklmbmenu_h__
 
 #include <qpopupmenu.h>
+#include <qtimer.h>
+
 #include "taskmanager.h"
 
 class TaskLMBMenu : public QPopupMenu
@@ -34,8 +37,20 @@ class TaskLMBMenu : public QPopupMenu
 public:
 	TaskLMBMenu( TaskList* list, QWidget *parent = 0, const char *name = 0 );
 	
+protected slots:
+	void dragSwitch();
+	
+protected:
+	void dragEnterEvent( QDragEnterEvent* );
+	void dragLeaveEvent( QDragLeaveEvent* );
+	void dragMoveEvent( QDragMoveEvent* );
+	
 private:
 	void fillMenu( TaskList* tasks );
+	
+	TaskList&  m_tasks;
+	int        m_lastDragId;
+	QTimer     dragSwitchTimer;
 };
 
 #endif
