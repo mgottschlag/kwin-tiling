@@ -62,26 +62,24 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
   // Date box
   QGroupBox* dateBox = new QGroupBox( this, "dateBox" );
-  dateBox->setColumnLayout( 0, Qt::Horizontal );
 
-  QVBoxLayout *l1 = new QVBoxLayout( dateBox->layout(), KDialog::spacingHint() );
+  QVBoxLayout *l1 = new QVBoxLayout( dateBox, KDialog::spacingHint() );
 
   cal = new KDatePicker( dateBox );
+  cal->setMinimumSize(cal->sizeHint());
   l1->addWidget( cal );
   QWhatsThis::add( cal, i18n("Here you can change the system date's day of the month, month and year.") );
 
   // Time frame
   QGroupBox* timeBox = new QGroupBox( this, "timeBox" );
-  timeBox->setColumnLayout( 0, Qt::Horizontal );
 
-  QVBoxLayout *v2 = new QVBoxLayout( timeBox->layout(), KDialog::spacingHint() );
+  QVBoxLayout *v2 = new QVBoxLayout( timeBox, KDialog::spacingHint() );
 
   kclock = new Kclock( timeBox, "kclock" );
-  kclock->setMinimumHeight(150);
+  kclock->setMinimumSize(150,150);
   v2->addWidget( kclock );
 
-  QGridLayout *v3 = new QGridLayout( 2, 9 );
-
+  QGridLayout *v3 = new QGridLayout( v2, 2, 9 );
 
   // Even if the module's widgets are reversed (usually when using RTL
   // languages), the placing of the time fields must always be H:M:S, from

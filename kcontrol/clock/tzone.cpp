@@ -54,38 +54,30 @@
 #endif
 
 Tzone::Tzone(QWidget * parent, const char *name)
-  : QWidget (parent, name)
+  : QGroupBox(parent, name)
 {
-    QGroupBox* gBox = new QGroupBox ( this );
-    gBox->setColumnLayout( 0, Qt::Horizontal );
-
-    QBoxLayout *top_lay = new QVBoxLayout( gBox->layout(), KDialog::spacingHint() );
+    QBoxLayout *top_lay = new QVBoxLayout( this, KDialog::spacingHint() );
     QBoxLayout *lay = new QHBoxLayout(top_lay);
 
-    currentzonetitle = new QLabel(i18n("Current time zone: "), gBox);
-    currentzonetitle->setAutoResize(true);
+    currentzonetitle = new QLabel(i18n("Current time zone: "), this);
     lay->addWidget(currentzonetitle);
 
-    currentzone = new QLabel(gBox);
+    currentzone = new QLabel(this);
     lay->addWidget(currentzone);
     currentzone->setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
 
-    QLabel* instructions = new QLabel(i18n("To change the time zone, select your area from the list below:"), gBox);
+    QLabel* instructions = new QLabel(i18n("To change the time zone, select your area from the list below:"), this);
     top_lay->addWidget(instructions);
 
-    tzonelist = new QComboBox( FALSE, gBox, "ComboBox_1" );
+    tzonelist = new QComboBox( false, this, "ComboBox_1" );
     connect( tzonelist, SIGNAL(activated(int)), SLOT(handleZoneChange()) );
     top_lay->addWidget( tzonelist );
-
-    QBoxLayout *top = new QVBoxLayout( this, 0, KDialog::spacingHint() );
-    top->addWidget(gBox);
 
     fillTimeZones();
 
     load();
 
     tzonelist->setEnabled(getuid() == 0);
-
 }
 
 void Tzone::fillTimeZones()

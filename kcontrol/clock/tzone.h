@@ -22,10 +22,12 @@
 #ifndef tzone_included
 #define tzone_included
 
+#include <qgroupbox.h>
+
 class QComboBox;
 class QStringList;
 
-class Tzone : public QWidget
+class Tzone : public QGroupBox
 {
   Q_OBJECT
 
