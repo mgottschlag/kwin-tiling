@@ -17,6 +17,8 @@
 
 */
 
+#include <unistd.h> // for getuid()
+
 #include <qwidget.h>
 #include <qstring.h>
 #include <kpushbutton.h>
@@ -32,6 +34,7 @@
 #include <kdialog.h>
 #include <kguiitem.h>
 #include <kstdguiitem.h>
+#include <dcopclient.h>
 
 #include <qwhatsthis.h>
 #include <qvbox.h>
@@ -39,6 +42,7 @@
 
 #include "proxywidget.h"
 #include "proxywidget.moc"
+
 #include <kdebug.h>
 
 class WhatsThis : public QWhatsThis
@@ -268,7 +272,10 @@ QString ProxyWidget::quickHelp() const
 
 void ProxyWidget::helpClicked()
 {
-  emit helpRequest();
+  if (getuid()!=0)
+	  emit helpRequest();
+  else
+     kapp->dcopClient()->send("kcontrol", "moduleIface", "invokeHelp()", QByteArray());
 }
 
 void ProxyWidget::defaultClicked()
