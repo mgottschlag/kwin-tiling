@@ -54,73 +54,59 @@ public:
 KPanelConfig::KPanelConfig( QWidget *parent, const char* name )
     : KConfigWidget (parent, name), location(LTop), taskbar(TTop)
 {
+  int i;
+
     layout = new QGridLayout(this, 2, 2, 10);
-    int i, w = 0;
 
     loc_group = new QButtonGroup(i18n("Location"), this);
+
+    QVBoxLayout *vbox = new QVBoxLayout(loc_group,10);
+    vbox->addSpacing(loc_group->fontMetrics().height());
+    
     loc_buttons[0] = new QRadioButton( i18n("&Top"), loc_group );
     loc_buttons[1] = new QRadioButton( i18n("&Left"), loc_group );
     loc_buttons[2] = new QRadioButton( i18n("&Bottom"), loc_group);
     loc_buttons[3] = new QRadioButton( i18n("&Right"), loc_group);
 
-    for (i = 0; i < 4; i++) {
-	loc_buttons[i]->adjustSize();
-	if (w < loc_buttons[i]->width())
-	    w = loc_buttons[i]->width();
-    }
-
+    for (i = 0; i < 4; i++) 
+      vbox->addWidget(loc_buttons[i]);
+    layout->addWidget(loc_group,0,0);
+    
     loc_buttons[location]->setChecked(true);
     connect(loc_group, SIGNAL(clicked(int)), SLOT(location_clicked(int)));
-    layout->addWidget(loc_group, 0, 0);
-
+    
+    
     task_group = new QButtonGroup(i18n("Taskbar"), this);
-    task_buttons[0] = new QRadioButton( i18n("&Hidden"),
-					task_group );
-    task_buttons[1] = new QRadioButton( i18n("T&op"),
-					task_group );
-    task_buttons[2] = new QRadioButton( i18n("Botto&m"),
-					task_group);
-    task_buttons[3] = new QRadioButton( i18n("Top/Le&ft"),
-					task_group);
+
+    vbox = new QVBoxLayout(task_group,10);
+    vbox->addSpacing(loc_group->fontMetrics().height());
+
+    task_buttons[0] = new QRadioButton( i18n("&Hidden"), task_group );
+    task_buttons[1] = new QRadioButton( i18n("T&op"), task_group );
+    task_buttons[2] = new QRadioButton( i18n("Botto&m"), task_group);
+    task_buttons[3] = new QRadioButton( i18n("Top/Le&ft"), task_group);
     task_buttons[taskbar]->setChecked(true);
-    for (i = 0; i < 4; i++) {
-	task_buttons[i]->adjustSize();
-	if (w < task_buttons[i]->width())
-	    w = task_buttons[i]->width();
-    }
 
     connect(task_group, SIGNAL(clicked(int)), SLOT(taskbar_clicked(int)));
-    layout->addWidget(task_group, 0, 1);
+
+    for (i = 0; i < 4; i++) 
+      vbox->addWidget(task_buttons[i]);
+    layout->addWidget(task_group,0,1);
    
 
     style_group = new QButtonGroup(i18n("Style"), this);
 
-    style_buttons[0] = new QRadioButton( i18n("T&iny"),
-					 style_group );
-    style_buttons[1] = new QRadioButton( i18n("&Normal"),
-					 style_group );
-    style_buttons[2] = new QRadioButton( i18n("L&arge"),
-					 style_group);
+    vbox = new QVBoxLayout(style_group,10);
+    vbox->addSpacing(loc_group->fontMetrics().height());
+
+    style_buttons[0] = new QRadioButton( i18n("T&iny"), style_group );
+    style_buttons[1] = new QRadioButton( i18n("&Normal"), style_group );
+    style_buttons[2] = new QRadioButton( i18n("L&arge"), style_group);
     connect(style_group, SIGNAL(clicked(int)), SLOT(style_clicked(int)));
-    for (i = 0; i < 3; i++) {
-	style_buttons[i]->adjustSize();
-	if (w < style_buttons[i]->width())
-	    w = style_buttons[i]->width();
-    }
 
+    for (i = 0; i < 3; i++) 
+      vbox->addWidget(style_buttons[0]);
     layout->addWidget(style_group, 1, 0);
-
-    w = w + 15;
-
-    loc_group->setMinimumSize(w, loc_buttons[0]->sizeHint().height() * 4 + 30);
-    task_group->setMinimumSize(w, task_buttons[0]->sizeHint().height() * 4 + 30);
-    style_group->setMinimumSize(w, style_buttons[0]->sizeHint().height() * 3 + 30);
-   
-    layout->setRowStretch(0, 10);
-    layout->setRowStretch(1, 10);
-   
-    layout->activate();
-   
 
     loadSettings();
 }
