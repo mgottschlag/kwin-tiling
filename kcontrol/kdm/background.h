@@ -17,7 +17,7 @@
 
 
 class KSimpleConfig;
-class Backgnd;
+class BGDialog;
 class KGlobalBackgroundSettings;
 class QCheckBox;
 class QLabel;
@@ -45,7 +45,7 @@ private:
     QCheckBox *m_pCBEnable;
     QLabel *m_pMLabel;
     KSimpleConfig *m_simpleConf;
-    Backgnd *m_background;
+    BGDialog *m_background;
 };
 
 

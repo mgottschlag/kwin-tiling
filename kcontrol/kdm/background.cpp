@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-
+#include <qgroupbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qwhatsthis.h>
@@ -34,7 +34,7 @@
 #include <klocale.h>
 #include <dcopclient.h>
 #include "../background/bgsettings.h"
-#include "../background/backgnd.h"
+#include "../background/bgdialog.h"
 #include "background.h"
 #include <qcheckbox.h>
 #include <ksimpleconfig.h>
@@ -55,7 +55,8 @@ KBackground::KBackground(QWidget *parent, const char *name)
 		" specified in the Setup= option in kdmrc (usually Xsetup).") );
     config->setGroup( "X-*-Greeter" );
     m_simpleConf=new KSimpleConfig(config->readEntry( "BackgroundCfg",KDE_CONFDIR "/kdm/backgroundrc" ) );
-    m_background = new Backgnd( this, m_simpleConf, false );
+    m_background = new BGDialog( this, m_simpleConf, false );
+
     connect(m_background, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
 
     // Top layout
@@ -63,8 +64,6 @@ KBackground::KBackground(QWidget *parent, const char *name)
     top->addWidget(m_pCBEnable);
     top->addWidget(m_background);
     connect( m_pCBEnable, SIGNAL(toggled( bool )), SLOT(slotEnableChanged()) );
-
-
 }
 
 KBackground::~KBackground()
