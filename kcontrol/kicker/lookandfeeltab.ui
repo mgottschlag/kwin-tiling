@@ -39,7 +39,7 @@
                 <enum>Sunken</enum>
             </property>
             <property name="title">
-                <string>General</string>
+                <string>&amp;General</string>
             </property>
             <vbox>
                 <property name="name">
@@ -80,7 +80,7 @@
                 <cstring>GroupBox9</cstring>
             </property>
             <property name="title">
-                <string>Button Background</string>
+                <string>B&amp;utton Background</string>
             </property>
             <grid>
                 <property name="name">
@@ -491,7 +491,7 @@
                 <cstring>advancedOptionsButton</cstring>
             </property>
             <property name="text">
-                <string>Advan&amp;ced Options...</string>
+                <string>Advanc&amp;ed Options...</string>
             </property>
         </widget>
     </grid>
