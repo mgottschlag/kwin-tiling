@@ -63,26 +63,65 @@ class KIntNumInput;
 
 class QSpinBox;
 
-class KWindowConfig : public KCModule
+class KFocusConfig : public KCModule
 {
   Q_OBJECT
 public:
-  KWindowConfig( QWidget *parent=0, const char* name=0 );
-  ~KWindowConfig();
+  KFocusConfig( KConfig *_config, QWidget *parent=0, const char* name=0 );
+  ~KFocusConfig();
 
   void load();
   void save();
   void defaults();
-  QString quickHelp() const;
-
-  void loadSettings();
-  void applySettings();
 
 private slots:
   void setAutoRaiseEnabled();
-  //  void ifPlacementIsInteractive();
   void autoRaiseOnTog(bool);//CT 23Oct1998
   void clickRaiseOnTog(bool);
+  void slotChanged();
+
+private:
+
+  int getFocus( void );
+  int getAutoRaiseInterval( void );
+
+  void setFocus(int);
+  void setAutoRaiseInterval(int);
+  void setAutoRaise(bool);
+  void setClickRaise(bool);
+  void setAltTabMode(bool);
+  void setCtrlTab(bool);
+
+  QButtonGroup *fcsBox;
+  QComboBox *focusCombo;
+  QCheckBox *autoRaiseOn;
+  QCheckBox *clickRaiseOn;
+  KIntNumInput *autoRaise;
+  QLabel *alabel;
+  QLCDNumber *s;
+  //CT  QLabel *sec;
+
+  QButtonGroup *kbdBox;
+  QRadioButton *kdeMode;
+  QRadioButton *cdeMode;
+  QCheckBox    *ctrlTab;
+  
+  KConfig *config;
+};
+
+class KAdvancedConfig : public KCModule
+{
+  Q_OBJECT
+public:
+  KAdvancedConfig( KConfig *config, QWidget *parent=0, const char* name=0 );
+  ~KAdvancedConfig();
+
+  void load();
+  void save();
+  void defaults();
+
+private slots:
+  //  void ifPlacementIsInteractive();
   void slotChanged();
   void shadeHoverChanged(bool);
 
@@ -93,22 +132,14 @@ private:
   int getMinimizeAnimSpeed( void );
   int getResizeOpaque ( void );
   int getPlacement( void ); //CT
-  int getFocus( void );
-  int getAutoRaiseInterval( void );
   int getShadeHoverInterval (void );
 
   void setMove(int);
   void setMinimizeAnim(bool,int);
   void setResizeOpaque(int);
   void setPlacement(int); //CT
-  void setFocus(int);
-  void setAutoRaiseInterval(int);
-  void setAutoRaise(bool);
-  void setClickRaise(bool);
   void setAnimateShade(bool);
   void setMoveResizeMaximized(bool);
-  void setAltTabMode(bool);
-  void setCtrlTab(bool);
   void setShadeHover(bool);
   void setShadeHoverInterval(int);
 
@@ -128,25 +159,13 @@ private:
   //QSpinBox *interactiveTrigger;
   //QLabel *iTLabel;
 
-  QButtonGroup *fcsBox;
-  QComboBox *focusCombo;
-  QCheckBox *autoRaiseOn;
-  QCheckBox *clickRaiseOn;
-  KIntNumInput *autoRaise;
-  QLabel *alabel;
-  QLCDNumber *s;
-  //CT  QLabel *sec;
-
   QButtonGroup *shBox;
   QCheckBox *shadeHoverOn;
   KIntNumInput *shadeHover;
   QLCDNumber *shadeHoverNum;
   QLabel *shlabel;
 
-  QButtonGroup *kbdBox;
-  QRadioButton *kdeMode;
-  QRadioButton *cdeMode;
-  QCheckBox    *ctrlTab;
+  KConfig *config;
 };
 
 #endif

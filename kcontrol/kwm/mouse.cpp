@@ -38,24 +38,13 @@
 #include <qwhatsthis.h>
 #include <qtl.h>
 
-
-extern "C" {
-  KCModule *create_kwinmouse ( QWidget *parent, const char* name)
-  {
-    //CT there's need for decision: kwm or kwin?
-    KGlobal::locale()->insertCatalogue("kcmkwm");
-    return new KMouseConfig( parent, name);
-  }
-}
-
-
-KMouseConfig::~KMouseConfig ()
+KActionsConfig::~KActionsConfig ()
 {
 
 }
 
-KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
-  : KCModule (parent, name)
+KActionsConfig::KActionsConfig (KConfig *_config, QWidget * parent, const char *name)
+  : KCModule (parent, name), config(_config)
 {
   QString strWin1, strWin2, strWin3, strAll1, strAll2, strAll3;
   QGridLayout *layout = new QGridLayout( this, 15, 4,
@@ -358,7 +347,7 @@ KMouseConfig::KMouseConfig (QWidget * parent, const char *name)
   load();
 }
 
-void KMouseConfig::setComboText(QComboBox* combo, const char* text){
+void KActionsConfig::setComboText(QComboBox* combo, const char* text){
   int i;
   QString s = i18n(text); // no problem. These are already translated!
   for (i=0;i<combo->count();i++){
@@ -369,7 +358,7 @@ void KMouseConfig::setComboText(QComboBox* combo, const char* text){
   }
 }
 
-const char*  KMouseConfig::functionTiDbl(int i)
+const char*  KActionsConfig::functionTiDbl(int i)
 {
   switch (i){
   case 0: return "Maximize"; break;
@@ -378,7 +367,7 @@ const char*  KMouseConfig::functionTiDbl(int i)
   return "";
 }
 
-const char*  KMouseConfig::functionTiAc(int i)
+const char*  KActionsConfig::functionTiAc(int i)
 {
   switch (i){
   case 0: return "Raise"; break;
@@ -390,7 +379,7 @@ const char*  KMouseConfig::functionTiAc(int i)
   }
   return "";
 }
-const char*  KMouseConfig::functionTiInAc(int i)
+const char*  KActionsConfig::functionTiInAc(int i)
 {
   switch (i){
   case 0: return "Activate and raise"; break;
@@ -402,7 +391,7 @@ const char*  KMouseConfig::functionTiInAc(int i)
   }
   return "";
 }
-const char*  KMouseConfig::functionWin(int i)
+const char*  KActionsConfig::functionWin(int i)
 {
   switch (i){
   case 0: return "Activate, raise and pass click"; break;
@@ -414,7 +403,7 @@ const char*  KMouseConfig::functionWin(int i)
   }
   return "";
 }
-const char*  KMouseConfig::functionAll(int i)
+const char*  KActionsConfig::functionAll(int i)
 {
   switch (i){
   case 0: return "Move"; break;
@@ -428,9 +417,8 @@ const char*  KMouseConfig::functionAll(int i)
 }
 
 
-void KMouseConfig::load()
+void KActionsConfig::load()
 {
-  KConfig *config = new KConfig("kwinrc", false, false);
   config->setGroup("Windows");
   setComboText(coTiDbl, config->readEntry("TitlebarDoubleClickCommand","Shade").ascii());
   
@@ -450,14 +438,13 @@ void KMouseConfig::load()
 }
 
 // many widgets connect to this slot
-void KMouseConfig::slotChanged()
+void KActionsConfig::slotChanged()
 {
   emit changed(true);
 }
 
-void KMouseConfig::save()
+void KActionsConfig::save()
 {
-  KConfig *config = new KConfig("kwinrc", false, false);
   config->setGroup("Windows");
   config->writeEntry("TitlebarDoubleClickCommand", functionTiDbl( coTiDbl->currentItem() ) );
   
@@ -474,14 +461,9 @@ void KMouseConfig::save()
   config->writeEntry("CommandAll1", functionAll(coAll1->currentItem()));
   config->writeEntry("CommandAll2", functionAll(coAll2->currentItem()));
   config->writeEntry("CommandAll3", functionAll(coAll3->currentItem()));
-
-  config->sync();
-  if ( !kapp->dcopClient()->isAttached() )
-      kapp->dcopClient()->attach();
-  kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
 }
 
-void KMouseConfig::defaults()
+void KActionsConfig::defaults()
 {
   setComboText(coTiAct1,"Raise");
   setComboText(coTiAct2,"Lower");
@@ -495,14 +477,6 @@ void KMouseConfig::defaults()
   setComboText (coAll1,"Move");
   setComboText(coAll2,"Toggle raise and lower");
   setComboText(coAll3,"Resize");
-}
-
-QString KMouseConfig::quickHelp() const
-{
-  return i18n("<h1>Mouse Behavior</h1> Here you can customize the way the KDE window manager handles"
-    " mouse button clicks. <p>Please note that this configuration will not take effect if you don't use"
-    " KWin as your window manager. If you do use a different window manager, please refer to its documentation"
-    " for how to customize mouse behavior.");
 }
 
 #include "mouse.moc"

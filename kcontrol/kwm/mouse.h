@@ -23,23 +23,22 @@
 #define __KKWMMOUSECONFIG_H__
 
 class QComboBox;
+class KConfig;
 
 #include <kcmodule.h>
 
-class KMouseConfig : public KCModule
+class KActionsConfig : public KCModule
 {
   Q_OBJECT
 
 public:
 
-  KMouseConfig( QWidget *parent=0, const char* name=0 );
-  ~KMouseConfig( );
+  KActionsConfig( KConfig *_config, QWidget *parent=0, const char* name=0 );
+  ~KActionsConfig( );
 
   void load();
   void save();
   void defaults();
-
-  QString quickHelp() const;
 
 private  slots:
     void slotChanged();
@@ -61,6 +60,8 @@ private:
   QComboBox* coAll1;
   QComboBox* coAll2;
   QComboBox* coAll3;
+  
+  KConfig *config;
 
   const char* functionTiDbl(int);
   const char* functionTiAc(int);
