@@ -786,7 +786,7 @@ static const char def_session[] =
 "    exec $HOME/.xsession\n"
 "    ;;\n"
 "  default)\n"
-"    exec startkde\n"
+"    exec " KDE_BINDIR "/startkde\n"
 "    ;;\n"
 "  *)\n"
 "    eval exec \"$1\"\n"
