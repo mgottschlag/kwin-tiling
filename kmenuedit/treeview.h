@@ -50,7 +50,8 @@ class TreeView : public KListView
   void entrySelected(const QString&);
 
  protected slots:
-  void itemSelected(QListViewItem * item);
+  void itemSelected(QListViewItem *);
+  void slotDropped(QDropEvent *, QListViewItem *);
 
  protected:
   void fill();
@@ -64,6 +65,9 @@ class TreeView : public KListView
 
   QStringList fileList(const QString& relativePath);
   QStringList dirList(const QString& relativePath);
+
+  bool acceptDrag(QDropEvent* event) const;
+  QDragObject *dragObject() const;
 };
 
 #endif

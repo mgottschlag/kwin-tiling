@@ -23,6 +23,9 @@
 #include <qheader.h>
 #include <qstringlist.h>
 #include <qfileinfo.h>
+#include <qdragobject.h>
+#include <qdatastream.h>
+#include <qcstring.h>
 
 #include <kglobal.h>
 #include <kstddirs.h>
@@ -55,6 +58,13 @@ TreeView::TreeView( QWidget *parent, const char *name )
   setAllColumnsShowFocus(true);
   setRootIsDecorated(true);
   setSorting(-1);
+  setAcceptDrops(true);
+  setDropVisualizer(true);
+  setDragEnabled(true);
+
+  connect(this, SIGNAL(dropped(QDropEvent*, QListViewItem*)),
+	  SLOT(slotDropped(QDropEvent*, QListViewItem*)));
+
 
   addColumn("");
   header()->hide();
@@ -381,4 +391,44 @@ QStringList TreeView::dirList(const QString& relativePath)
 	}
     }
   return dirlist;
+}
+
+bool TreeView::acceptDrag(QDropEvent* event) const
+{
+  return (QString(event->format()).contains("text/plain"));
+}
+
+void TreeView::slotDropped (QDropEvent * e, QListViewItem *after)
+{
+  if(!e) return;
+
+  QByteArray a = e->encodedData("text/plain");
+  if (a.isEmpty()) return;
+  QString src(a);
+ 
+  if (after == 0) return; // FIXME;
+
+  TreeItem *item = (TreeItem*)after;
+  QString dest = item->file();
+
+  int pos1 = dest.find("/.directory");
+  if (pos1 > 0) dest.truncate(pos1);
+
+  int pos2 = dest.findRev('/');
+  if (pos2 < 0) pos2 = 0;
+  dest.truncate(pos2);
+
+  kdDebug() << dest.local8Bit() << endl;
+
+  
+}
+
+QDragObject *TreeView::dragObject() const
+{
+  TreeItem *item = (TreeItem*)selectedItem();
+  if(item == 0) return 0;
+
+  QTextDrag *d = new QTextDrag(item->file(), (QWidget*)this);
+  d->setPixmap(*item->pixmap(0));
+  return d;
 }
