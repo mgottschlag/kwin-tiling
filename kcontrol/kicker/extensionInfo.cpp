@@ -53,10 +53,11 @@ void extensionInfo::load()
         
         if (_resizeable)
         {
-            _useStdSizes = df.readBoolEntry("X-KDE-PanelExt-StdSizes", _useStdSizes);            
+            _useStdSizes = df.readBoolEntry("X-KDE-PanelExt-StdSizes", _useStdSizes); 
+            _size = df.readNumEntry("X-KDE-PanelExt-StdSizeDefault", _size);
             _customSizeMin = df.readNumEntry("X-KDE-PanelExt-CustomSizeMin", _customSizeMin);
             _customSizeMax = df.readNumEntry("X-KDE-PanelExt-CustomSizeMax", _customSizeMax);
-            _customSize = df.readNumEntry("X-KDE-PanelExt-CustomSizeDefault", _customSize);                
+            _customSize = df.readNumEntry("X-KDE-PanelExt-CustomSizeDefault", _customSize);
         }
     }
 
