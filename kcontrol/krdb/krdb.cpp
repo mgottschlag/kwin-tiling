@@ -195,19 +195,29 @@ static void applyQtSettings( KSimpleConfig& kglobals, QSettings& settings )
 {
   /* export kde's plugin library path to qtrc */
   //Read qt library path..
-  QStringList pathorig = QApplication::libraryPaths();
+  QStringList plugins = QApplication::libraryPaths();
   //and merge in KDE one..
-  QStringList plugins = KGlobal::dirs()->resourceDirs( "qtplugins" );
+  plugins += KGlobal::dirs()->resourceDirs( "qtplugins" );
+
+  QStringList paths;
   QStringList::Iterator it = plugins.begin();
   while (it != plugins.end()) {
+    QString path = *it;
+    if (path.endsWith("/"))
+      path.truncate(path.length()-1);
+
+    char new_path[PATH_MAX+1];
+    if (realpath(QFile::encodeName(path), new_path))
+      path = QFile::decodeName(new_path);
+
     //Check whether *it is already there... Sigh, this is quadratic..
     //But the paths are short enough to make a faster datastructure
     //a waste..
-    if (pathorig.contains( *it ) == 0)
-        pathorig.append( *it );
+    if (paths.contains( path ) == 0)
+        paths.append( path );
     ++it;
   }
-  settings.writeEntry("/qt/libraryPath", pathorig, ':');
+  settings.writeEntry("/qt/libraryPath", paths, ':');
 
   /* export widget style */
   kglobals.setGroup("General");
