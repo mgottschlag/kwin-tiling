@@ -46,7 +46,8 @@ public:
     virtual ~KShortURIFilter() {};
 
     /**
-     * Converts short URIs into fully qualified valid URI.
+     * Converts short URIs into fully qualified valid URIs
+     * whenever possible.
      *
      * Parses any given invalid URI to determine whether it
      * is a known short URI and converts it to its fully

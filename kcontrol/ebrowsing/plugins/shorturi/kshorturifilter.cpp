@@ -52,13 +52,6 @@ KShortURIFilter::KShortURIFilter( QObject *parent, const char *name )
 
 bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
 {
-  // NOTE : By design, this check disqualifies some valid
-  // URL's that contain queries and *nix command characters.
-  // This is an intentional trade off to best match the URL
-  // with a local resource first.  This also allows KShortURIFilter
-  // to behave consistently with the way it does now. (Dawit A.)
-  // Some tests removed since this is now called only if the start of cmd qualifies for a host name (malte)
-
   // TODO: configurability like always treat foobar/XXX as a shortURL
   if ( QRegExp( "[ ;<>]" ).match( cmd ) >= 0
     || QRegExp( "||" ).match( cmd ) >= 0
@@ -74,8 +67,6 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 
     // First look if we've got a known protocol prefix
     // and it is a valid URL.  If so return immediately.
-    debug( "kshorturifilter: About to Filter: %s\n", cmd.latin1() );
-    debug( "kshorturifilter: Is Malformed: %i\n", data.uri().isMalformed() );
     QStringList protocols = KProtocolManager::self().protocols();
     for( QStringList::ConstIterator it = protocols.begin(); it != protocols.end(); it++ )
     {
@@ -87,8 +78,11 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     }
 
     // See if the beginning of cmd looks like a valid FQDN
+    // QRegExp is buggy, the caseSenstive flag does not work!!
+    // Worked around it by adding the signature for CAP letters
+    // into QRegExp. (DA)
     QString host;
-    if( QRegExp("[a-z][a-z0-9-]*\\.[a-z]", false).match(cmd) == 0 )
+    if( QRegExp("[a-zA-Z][a-zA-Z0-9-]*\\.[a-zA-Z]").match(cmd) == 0 )
     {
         host = cmd.left(cmd.find('.'));
         // Check if it's one of the urlHints and qualify the URL
@@ -101,7 +95,6 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
             return data.hasBeenFiltered();
         }
     }
-
     // Assume http if cmd starts with <IP>/
     // Will QRegExp support ([0-9]{1,3}\.){3}[0-9]{1,3} some time?
     // TODO : ADD LITERAL IPv6 support - See RFC 2373 Appendix B
@@ -134,10 +127,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     if( smbURI || cmd.find( "\\\\" ) == 0 )
     {
         if( smbURI )
-        {
-            if( cmd.left(1) != '/' )
-                cmd += '/';
-        }
+            if( cmd.left(1) != '/' ) cmd += '/';
         else
             cmd.replace( 0, 2, "smb:/" );
         setFilteredURI( data, cmd );
