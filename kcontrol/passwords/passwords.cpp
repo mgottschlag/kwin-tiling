@@ -197,7 +197,7 @@ void KPasswordConfig::slotKeep(bool keep)
 int KPasswordConfig::buttons()
 {
     return KCModule::Help | KCModule::Default | KCModule::Reset |
-	   KCModule::Cancel | KCModule::Ok;
+	   KCModule::Cancel | KCModule::Ok| KCModule::Apply ;
 }
 
 QString KPasswordConfig::quickHelp()
