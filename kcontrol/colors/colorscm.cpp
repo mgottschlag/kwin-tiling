@@ -191,25 +191,25 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
        wcCombo->insertItem(QString::null);
     }
 
-    setColorName(i18n("Inactive title bar") , CSM_Inactive_title_bar);
-    setColorName(i18n("Inactive title text"), CSM_Inactive_title_text);
-    setColorName(i18n("Inactive title blend"), CSM_Inactive_title_blend);
-    setColorName(i18n("Active title bar"), CSM_Active_title_bar);
-    setColorName(i18n("Active title text"), CSM_Active_title_text);
-    setColorName(i18n("Active title blend"), CSM_Active_title_blend);
-    setColorName(i18n("Window background"), CSM_Background);
-    setColorName(i18n("Window text"), CSM_Text);
-    setColorName(i18n("Selected background"), CSM_Select_background);
-    setColorName(i18n("Selected text"), CSM_Select_text);
+    setColorName(i18n("Inactive Title Bar") , CSM_Inactive_title_bar);
+    setColorName(i18n("Inactive Title Text"), CSM_Inactive_title_text);
+    setColorName(i18n("Inactive Title Blend"), CSM_Inactive_title_blend);
+    setColorName(i18n("Active Title Bar"), CSM_Active_title_bar);
+    setColorName(i18n("Active Title Text"), CSM_Active_title_text);
+    setColorName(i18n("Active Title Blend"), CSM_Active_title_blend);
+    setColorName(i18n("Window Background"), CSM_Background);
+    setColorName(i18n("Window Text"), CSM_Text);
+    setColorName(i18n("Selected Background"), CSM_Select_background);
+    setColorName(i18n("Selected Text"), CSM_Select_text);
     setColorName(i18n("Standard Background"), CSM_Standard_background);
     setColorName(i18n("Standard Text"), CSM_Standard_text);
-    setColorName(i18n("Button background"), CSM_Button_background);
-    setColorName(i18n("Button text"), CSM_Button_text);
-    setColorName(i18n("Active title button"), CSM_Active_title_button);
-    setColorName(i18n("Inactive title button"), CSM_Inactive_title_button);
+    setColorName(i18n("Button Background"), CSM_Button_background);
+    setColorName(i18n("Button Text"), CSM_Button_text);
+    setColorName(i18n("Active Title Button"), CSM_Active_title_button);
+    setColorName(i18n("Inactive Title Button"), CSM_Inactive_title_button);
     setColorName(i18n("Link"), CSM_Link);
     setColorName(i18n("Followed Link"), CSM_Followed_Link);
-    setColorName(i18n("Alternate background in lists"), CSM_Alternate_background);
+    setColorName(i18n("Alternate Background in Lists"), CSM_Alternate_background);
 
     wcCombo->adjustSize();
     connect(wcCombo, SIGNAL(activated(int)), SLOT(slotWidgetColor(int)));
