@@ -19,20 +19,11 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qdict.h>
 #include <qptrqueue.h>
 #include <qptrdict.h>
-#include <qapplication.h>
+#include <kapplication.h>
 #include <qtimer.h>
+#include <dcopobject.h>
 
-#define INT32 QINT32
-#include <X11/Xlib.h>
-#include <X11/Xmd.h>
-#include <X11/ICE/ICElib.h>
-extern "C" {
-#include <X11/ICE/ICEutil.h>
-#include <X11/ICE/ICEmsg.h>
-#include <X11/ICE/ICEproto.h>
-#include <X11/SM/SM.h>
-#include <X11/SM/SMlib.h>
-}
+#include "server2.h"
 
 #include "KSMServerInterface.h"
 
@@ -87,6 +78,10 @@ typedef QMap<WId,SMData> WindowMap;
 class KSMServer : public QObject, public KSMServerInterface
 {
 Q_OBJECT
+K_DCOP
+k_dcop:
+    void notifySlot(QString,QString,QString,QString,QString,int,int,int,int);
+    void logoutSoundFinished(int,int);
 public:
     KSMServer( const QString& windowManager, bool only_local );
     ~KSMServer();
@@ -128,6 +123,7 @@ private slots:
 
     void protectionTimeout();
     void timeoutQuit();
+    void knotifyTimeout();
 
     void autoStart();
     void autoStart2();
@@ -136,6 +132,7 @@ private slots:
 private:
     void handlePendingInteractions();
     void completeShutdownOrCheckpoint();
+    void startKilling();
     void completeKilling();
     void cancelShutdown( KSMClient* c );
 
@@ -174,7 +171,7 @@ private:
     QPtrList<KSMListener> listener;
     QPtrList<KSMClient> clients;
 
-    enum State { Idle, Shutdown, Checkpoint, Killing, Killing2 };
+    enum State { Idle, Shutdown, Checkpoint, Killing, Killing2, WaitingForKNotify };
     State state;
     bool dialogActive;
     bool saveSession;
@@ -193,6 +190,8 @@ private:
     QTimer protectionTimer;
     QTimer restoreTimer;
     QString xonCommand;
+    int logoutSoundEvent;
+    QTimer knotifyTimeoutTimer;
 
     // ksplash interface
     void upAndRunning( const QString& msg );

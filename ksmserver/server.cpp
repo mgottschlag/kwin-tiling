@@ -733,6 +733,8 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     config->setGroup("General" );
     clientInteracting = 0;
     xonCommand = config->readEntry( "xonCommand", "xon" );
+    
+    connect( &knotifyTimeoutTimer, SIGNAL( timeout()), SLOT( knotifyTimeout()));
 
     only_local = _only_local;
 #ifdef HAVE__ICETRANSNOLISTEN
@@ -983,7 +985,6 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
         // Set the real desktop background to black so that exit looks
         // clean regardless of what was on "our" desktop.
         kapp->desktop()->setBackgroundColor( Qt::black );
-        KNotifyClient::event( 0, "exitkde" ); // KDE says good bye
         state = Shutdown;
         wmPhase1WaitingCount = 0;
         saveType = saveSession?SmSaveBoth:SmSaveGlobal;
@@ -1216,22 +1217,48 @@ void KSMServer::completeShutdownOrCheckpoint()
         discardSession();
 
     if ( state == Shutdown ) {
-        // kill all clients
-        state = Killing;
-        for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
-            kdDebug( 1218 ) << "completeShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
-            if (c->wasPhase2)
-                continue;
-            SmsDie( c->connection() );
+        bool waitForKNotify = true;
+        if( !kapp->dcopClient()->connectDCOPSignal( "knotify", "",
+            "notifySignal(QString,QString,QString,QString,QString,int,int,int,int)",
+            "ksmserver", "notifySlot(QString,QString,QString,QString,QString,int,int,int,int)", false )) {
+            waitForKNotify = false;
         }
-
-        kdDebug( 1218 ) << " We killed all clients. We have now clients.count()=" <<
-           clients.count() << endl;
-        completeKilling();
-        QTimer::singleShot( 4000, this, SLOT( timeoutQuit() ) );
+        if( !kapp->dcopClient()->connectDCOPSignal( "knotify", "",
+            "playingFinished(int,int)",
+            "ksmserver", "logoutSoundFinished(int,int)", false )) {
+            waitForKNotify = false;
+        }
+        // event() can return -1 if KNotifyClient short-circuits and avoids KNotify
+        logoutSoundEvent = KNotifyClient::event( 0, "exitkde" ); // KDE says good bye
+        if( logoutSoundEvent <= 0 )
+            waitForKNotify = false;
+        if( waitForKNotify ) {
+            state = WaitingForKNotify;
+            knotifyTimeoutTimer.start( 20000, true );
+            return;
+        }
+        startKilling();
     } else if ( state == Checkpoint ) {
         state = Idle;
     }
+}
+
+void KSMServer::startKilling()
+{
+    knotifyTimeoutTimer.stop();
+    // kill all clients
+    state = Killing;
+    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+        kdDebug( 1218 ) << "completeShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
+        if (c->wasPhase2)
+            continue;
+        SmsDie( c->connection() );
+    }
+
+    kdDebug( 1218 ) << " We killed all clients. We have now clients.count()=" <<
+       clients.count() << endl;
+    completeKilling();
+    QTimer::singleShot( 4000, this, SLOT( timeoutQuit() ) );
 }
 
 void KSMServer::completeKilling()
@@ -1265,6 +1292,36 @@ void KSMServer::completeKilling()
             // second time just because of them
         }
     }
+}
+
+// called when KNotify performs notification for logout (not when sound is finished though)
+void KSMServer::notifySlot(QString event ,QString app,QString,QString,QString,int present,int,int,int)
+{
+    if( state != WaitingForKNotify )
+        return;
+    if( event != "exitkde" || app != "ksmserver" )
+        return;
+    if( present & KNotifyClient::Sound ) // logoutSoundFinished() will be called
+        return;
+    startKilling();
+}
+
+// This is stupid. The normal DCOP signal connected to notifySlot() above should be simply
+// emitted in KNotify only after the sound is finished playing.
+void KSMServer::logoutSoundFinished( int event, int )
+{
+    if( state != WaitingForKNotify )
+        return;
+    if( event != logoutSoundEvent )
+        return;
+    startKilling();
+}
+
+void KSMServer::knotifyTimeout()
+{
+    if( state != WaitingForKNotify )
+        return;
+    startKilling();
 }
 
 void KSMServer::timeoutQuit()

@@ -26,7 +26,7 @@ noinst_HEADERS = global.h server.h shutdown.h
 
 ksmserver_la_METASOURCES = AUTO
 # Order is important for --enable-final!
-ksmserver_la_SOURCES = main.cpp server.cpp shutdown.cpp KSMServerInterface.skel
+ksmserver_la_SOURCES = main.cpp server.cpp shutdown.cpp KSMServerInterface.skel server.skel
 
 ksmserver_la_LDFLAGS = $(all_libraries) -avoid-version -module
 ksmserver_la_LIBADD = ../kdmlib/libdmctl.la $(LIB_KDEUI)
