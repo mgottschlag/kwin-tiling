@@ -44,7 +44,7 @@ ModuleInfo::ModuleInfo(QString desktopFile)
   setIcon(desktop.readIcon());
 
   // set module type
-  setType(desktop.readEntry("X-KDE-ControlModuleType", "User"));
+  setType(desktop.readEntry("X-KDE-ControlModuleType", "User").lower());
 
   // get the documentation path
   setDocPath(desktop.readEntry("DocPath"));
