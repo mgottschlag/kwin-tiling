@@ -63,6 +63,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qmessagebox.h>
 #include <qguardedptr.h>
 #include <qtimer.h>
+
 #include <klocale.h>
 #include <kglobal.h>
 #include <kconfig.h>
@@ -71,6 +72,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kapplication.h>
 #include <knotifyclient.h>
 #include <kstaticdeleter.h>
+#include <ktempfile.h>
+#include <kprocess.h>
 #include <dcopclient.h>
 #include <dcopref.h>
 
@@ -262,8 +265,7 @@ void KSMServer::executeCommand( const QStringList& command )
 }
 
 IceAuthDataEntry *authDataEntries = 0;
-static char *addAuthFile = 0;
-static char *remAuthFile = 0;
+static KTempFile *remAuthFile = 0;
 
 static IceListenObj *listenObjs = 0;
 int numTransports = 0;
@@ -482,45 +484,6 @@ static void write_iceauth (FILE *addfp, FILE *removefp, IceAuthDataEntry *entry)
 }
 
 
-#ifndef HAVE_MKSTEMP
-static char *unique_filename (const char *path, const char *prefix)
-#else
-static char *unique_filename (const char *path, const char *prefix, int *pFd)
-#endif
-{
-#ifndef HAVE_MKSTEMP
-#ifndef X_NOT_POSIX
-    return ((char *) tempnam (path, prefix));
-#else
-    char tempFile[PATH_MAX];
-    char *tmp;
-
-    sprintf (tempFile, "%s/%sXXXXXX", path, prefix);
-    tmp = (char *) mktemp (tempFile);
-    if (tmp)
-        {
-            char *ptr = (char *) malloc (strlen (tmp) + 1);
-            strcpy (ptr, tmp);
-            return (ptr);
-        }
-    else
-        return (NULL);
-#endif
-#else
-    char tempFile[PATH_MAX];
-    char *ptr;
-
-    sprintf (tempFile, "%s/%sXXXXXX", path, prefix);
-    ptr = (char *)malloc(strlen(tempFile) + 1);
-    if (ptr != NULL)
-        {
-            strcpy(ptr, tempFile);
-            *pFd =  mkstemp(ptr);
-        }
-    return ptr;
-#endif
-}
-
 #define MAGIC_COOKIE_LEN 16
 
 Status SetAuthentication_local (int count, IceListenObj *listenObjs)
@@ -553,52 +516,20 @@ Status SetAuthentication_local (int count, IceListenObj *listenObjs)
 Status SetAuthentication (int count, IceListenObj *listenObjs,
                           IceAuthDataEntry **authDataEntries)
 {
-    FILE        *addfp = NULL;
-    FILE        *removefp = NULL;
-    const char  *path;
-    int         original_umask;
-    char        command[256];
-    int         i;
-#ifdef HAVE_MKSTEMP
-    int         fd;
-#endif
+    KTempFile addAuthFile;
+    addAuthFile.setAutoDelete(true);
+    
+    remAuthFile = new KTempFile;
+    remAuthFile->setAutoDelete(true);    
 
-    original_umask = ::umask (0077);      /* disallow non-owner access */
-
-    path = getenv ("KSM_SAVE_DIR");
-    if (!path)
-        path = "/tmp";
-#ifndef HAVE_MKSTEMP
-    if ((addAuthFile = unique_filename (path, "ksm")) == NULL)
-        goto bad;
-
-    if (!(addfp = fopen (addAuthFile, "w")))
-        goto bad;
-
-    if ((remAuthFile = unique_filename (path, "ksm")) == NULL)
-        goto bad;
-
-    if (!(removefp = fopen (remAuthFile, "w")))
-        goto bad;
-#else
-    if ((addAuthFile = unique_filename (path, "ksm", &fd)) == NULL)
-        goto bad;
-
-    if (!(addfp = fdopen(fd, "wb")))
-        goto bad;
-
-    if ((remAuthFile = unique_filename (path, "ksm", &fd)) == NULL)
-        goto bad;
-
-    if (!(removefp = fdopen(fd, "wb")))
-        goto bad;
-#endif
+    if ((addAuthFile.status() != 0) || (remAuthFile->status() != 0))
+        return 0;
 
     if ((*authDataEntries = (IceAuthDataEntry *) malloc (
                          count * 2 * sizeof (IceAuthDataEntry))) == NULL)
-        goto bad;
+        return 0;
 
-    for (i = 0; i < numTransports * 2; i += 2) {
+    for (int i = 0; i < numTransports * 2; i += 2) {
         (*authDataEntries)[i].network_id =
             IceGetListenConnectionString (listenObjs[i/2]);
         (*authDataEntries)[i].protocol_name = (char *) "ICE";
@@ -617,44 +548,28 @@ Status SetAuthentication (int count, IceListenObj *listenObjs,
             IceGenerateMagicCookie (MAGIC_COOKIE_LEN);
         (*authDataEntries)[i+1].auth_data_length = MAGIC_COOKIE_LEN;
 
-        write_iceauth (addfp, removefp, &(*authDataEntries)[i]);
-        write_iceauth (addfp, removefp, &(*authDataEntries)[i+1]);
+        write_iceauth (addAuthFile.fstream(), remAuthFile->fstream(), &(*authDataEntries)[i]);
+        write_iceauth (addAuthFile.fstream(), remAuthFile->fstream(), &(*authDataEntries)[i+1]);
 
         IceSetPaAuthData (2, &(*authDataEntries)[i]);
 
         IceSetHostBasedAuthProc (listenObjs[i/2], HostBasedAuthProc);
     }
+    addAuthFile.close();
+    remAuthFile->close();
 
-    fclose (addfp);
-    fclose (removefp);
+    QString iceAuth = KGlobal::dirs()->findExe("iceauth");
+    if (iceAuth.isEmpty())
+    {
+        qWarning("KSMServer: could not find iceauth");
+        return 0;
+    }
 
-    umask (original_umask);
-
-    sprintf (command, "iceauth source %s", addAuthFile);
-    system (command);
-
-    unlink (addAuthFile);
+    KProcess p;
+    p << iceAuth << "source" << addAuthFile.name();
+    p.start(KProcess::Block);
 
     return (1);
-
- bad:
-
-    if (addfp)
-        fclose (addfp);
-
-    if (removefp)
-        fclose (removefp);
-
-    if (addAuthFile) {
-        unlink(addAuthFile);
-        free(addAuthFile);
-    }
-    if (remAuthFile) {
-        unlink(remAuthFile);
-        free(remAuthFile);
-    }
-
-    return (0);
 }
 
 /*
@@ -663,27 +578,29 @@ Status SetAuthentication (int count, IceListenObj *listenObjs,
 void FreeAuthenticationData(int count, IceAuthDataEntry *authDataEntries)
 {
     /* Each transport has entries for ICE and XSMP */
-
-    char command[256];
-    int i;
-
     if (only_local)
         return;
 
-    for (i = 0; i < count * 2; i++) {
+    for (int i = 0; i < count * 2; i++) {
         free (authDataEntries[i].network_id);
         free (authDataEntries[i].auth_data);
     }
 
     free (authDataEntries);
 
-    sprintf (command, "iceauth source %s", remAuthFile);
-    system(command);
+    QString iceAuth = KGlobal::dirs()->findExe("iceauth");
+    if (iceAuth.isEmpty())
+    {
+        qWarning("KSMServer: could not find iceauth");
+        return;
+    }
+    
+    KProcess p;
+    p << iceAuth << "source" << remAuthFile->name();
+    p.start(KProcess::Block);
 
-    unlink(remAuthFile);
-
-    free(addAuthFile);
-    free(remAuthFile);
+    delete remAuthFile;
+    remAuthFile = 0;
 }
 
 static int Xio_ErrorHandler( Display * )
