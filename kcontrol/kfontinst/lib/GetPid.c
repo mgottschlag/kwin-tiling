@@ -31,6 +31,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#if defined(__DragonFly__)
+#include <sys/param.h>
+#endif
+
 #include <sys/types.h>
 
 #ifndef __cplusplus
@@ -210,7 +215,11 @@ unsigned int kfi_getPid(const char *proc, unsigned int ppid)
                 else
                     pid=p[num].ki_pid;
 #else
+#if defined(__DragonFly__)
+	    if(proc_p.kp_eproc.e_ppid==ppid && p[num].kp_thread.td_comm && 0==strcmp(p[num].kp_thread.td_comm, proc))
+#else
             if(proc_p.kp_eproc.e_ppid==ppid && p[num].kp_proc.p_comm && 0==strcmp(p[num].kp_proc.p_comm, proc))
+#endif
                 if(pid)
                     error=true;
                 else
