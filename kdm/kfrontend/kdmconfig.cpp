@@ -79,37 +79,42 @@ QFont KDMConfig::Str2Font (QString aValue)
     QString chStr;
 
     QStringList sl = QStringList::split (QString::fromLatin1(","), aValue);
+
     if (sl.count() == 1) {
+	/* X11 font spec */
 	aRetFont = QFont (aValue);
 	aRetFont.setRawMode (true);
-	return aRetFont;
-    }
-    if (sl.count() != 6)
-	return aRetFont;
+    } else if (sl.count() == 10) {
+	/* qt3 font spec */
+	aRetFont.fromString( aValue );
+    } else if (sl.count() == 6) {
+	/* backward compatible kde2 font spec */
+	aRetFont = QFont (sl[0], sl[1].toInt(), sl[4].toUInt() );
 
-    aRetFont = QFont (sl[0], sl[1].toInt(), sl[4].toUInt() );
+	aRetFont.setStyleHint( (QFont::StyleHint)sl[2].toUInt() );
 
-    aRetFont.setStyleHint( (QFont::StyleHint)sl[2].toUInt() );
-
-    nFontBits = sl[5].toUInt();
-    aRetFont.setItalic( nFontBits & 0x01 != 0);
-    aRetFont.setUnderline( nFontBits & 0x02 != 0 );
-    aRetFont.setStrikeOut( nFontBits & 0x04 != 0 );
-    aRetFont.setFixedPitch( nFontBits & 0x08 != 0 );
-    aRetFont.setRawMode( nFontBits & 0x20 != 0 );
+	nFontBits = sl[5].toUInt();
+	aRetFont.setItalic( nFontBits & 0x01 != 0);
+	aRetFont.setUnderline( nFontBits & 0x02 != 0 );
+	aRetFont.setStrikeOut( nFontBits & 0x04 != 0 );
+	aRetFont.setFixedPitch( nFontBits & 0x08 != 0 );
+	aRetFont.setRawMode( nFontBits & 0x20 != 0 );
 
 #if QT_VERSION < 300
-    QFont::CharSet chId = (QFont::CharSet)sl[3].toUInt(&chOldEntry);
-    if (chOldEntry)
-        aRetFont.setCharSet( chId );
-    else if (kapp) {
-        if (sl[3] == QString::fromLatin1("default"))
-	    chStr = KGlobal::locale() ? KGlobal::locale()->charset() : "iso-8859-1";
-	else
-	    chStr = sl[3];
-        KGlobal::charsets()->setQFont(aRetFont, chStr);
-    }
+	QFont::CharSet chId = (QFont::CharSet)sl[3].toUInt(&chOldEntry);
+	if (chOldEntry)
+	    aRetFont.setCharSet( chId );
+	else if (kapp) {
+	    if (sl[3] == QString::fromLatin1("default"))
+		chStr = KGlobal::locale() ? 
+			KGlobal::locale()->charset() : 
+			"iso-8859-1";
+	    else
+		chStr = sl[3];
+	    KGlobal::charsets()->setQFont(aRetFont, chStr);
+	}
 #endif
+    }
 
     return aRetFont;
 }
