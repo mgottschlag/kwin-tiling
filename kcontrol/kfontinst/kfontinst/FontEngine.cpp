@@ -36,7 +36,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
-#include <fstream.h>
+#include <fstream>
 #include <iostream>
 #include <stdio.h>
 #include <netinet/in.h>
@@ -265,7 +265,7 @@ CFontEngine::CFontEngine()
     itsType=NONE;
     if(FT_Init_FreeType(&itsFt.library))
     {
-        cerr << "ERROR: FreeType2 failed to initialise\n";
+        std::cerr << "ERROR: FreeType2 failed to initialise\n";
         exit(0);
     }
 }
@@ -1067,7 +1067,7 @@ bool CFontEngine::openFontT1(const QString &file, unsigned short mask)
 
         if(CMisc::fExists(afm))
         {
-            ifstream f(afm.local8Bit());
+            std::ifstream f(afm.local8Bit());
  
             if(f)
             {
@@ -1564,7 +1564,7 @@ bool CFontEngine::openFontSpd(const QString &file, unsigned short mask)
     };
 
     bool     status=false;
-    ifstream spd(file.local8Bit());
+    std::ifstream spd(file.local8Bit());
 
     if(spd)
     {
