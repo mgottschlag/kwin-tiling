@@ -280,6 +280,9 @@ NoUsers=adm,alias,apache,bin,bind,daemon,exim,falken,ftp,games,gdm,gopher,halt,h
 # Special case of NoUsers: users with a UID less than this number (except root)
 # will not be shown as well. Default is 0
 #MinShowUID=1000
+# Complement to MinShowUID: users with a UID greater than this number will
+# not be shown as well. Default is 65535
+#MaxShowUID=29999
 # If false, the users are listed in the order they appear in /etc/passwd.
 # If true, they are sorted alphabetically. Default is true
 #SortUsers=false
