@@ -161,7 +161,7 @@ void LookAndFeelTab::load()
     bool showHBs = c->readBoolEntry("ShowHideButtons", true);
     m_hideButtons->setChecked(showHBs);
 
-    m_hideButtonSlider->setValue(c->readNumEntry("HideButtonSize", 10));
+    m_hideButtonSlider->setValue(c->readNumEntry("HideButtonSize", 14));
     m_hideButtonSlider->setEnabled(showHBs);
 
     delete c;
@@ -208,5 +208,5 @@ void LookAndFeelTab::defaults()
     m_autoHideSlider->setValue(25);
 
     m_hideButtons->setChecked(true);
-    m_hideButtonSlider->setValue(10);
+    m_hideButtonSlider->setValue(14);
 }
