@@ -461,7 +461,7 @@ void CKfiConfig::checkAndModifyXConfigFile()
         {
             QString file=itsSysXConfigFile.mid(slashPos+1);
 
-            if(file.find(KFI_XF86CFG)!=-1 || file.find(KFI_XORGCFG))
+            if(-1!=file.find(KFI_XF86CFG) || -1!=file.find(KFI_XORGCFG))
                 itsSysXfs=!itsSysXfsConfigFile.isEmpty() && CXConfig(CXConfig::X11, itsSysXConfigFile).xfsInPath();
         }
     }
