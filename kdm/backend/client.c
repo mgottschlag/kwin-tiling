@@ -1255,9 +1255,10 @@ void
 SessionExit (struct display *d, int status)
 {
     /* make sure the server gets reset after the session is over */
-    if (d->serverPid >= 2 && d->resetSignal)
-	TerminateProcess (d->serverPid, d->resetSignal);
-    else
+    if (d->serverPid >= 2) {
+	if (!d->terminateServer && d->resetSignal)
+	    TerminateProcess (d->serverPid, d->resetSignal);
+    } else
 	ResetServer (d);
     if (sourceReset) {
 	/*
