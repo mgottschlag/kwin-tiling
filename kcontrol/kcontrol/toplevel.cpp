@@ -25,6 +25,7 @@
 #include <kdebug.h>
 #include <kbugreport.h>
 #include <kaboutdata.h>
+#include <kaboutapplication.h>
 
 #include <qhbox.h>
 #include <qtabwidget.h>
@@ -214,6 +215,9 @@ void TopLevel::setupActions()
      actionCollection(), "activate_largeicons");
   icon_large->setExclusiveGroup( "iconsize" );
 
+  about_module = new KAction(i18n("About the current Module"), 0, this, SLOT(aboutModule()), actionCollection(), "help_about_module");
+  about_module->setEnabled(false);
+
   // I need to add this so that each module can get a bug reported,
   // and not just KControl
   createGUI("kcontrolui.rc");
@@ -350,6 +354,18 @@ void TopLevel::activateModule(const QString& name)
 
                   // dock it
                   _dock->dockModule(mod);
+                  if (mod->aboutData())
+                  {
+                      about_module->setText(i18n("Help menu->about <modulename>", "About %1").arg(mod->name()));
+                      about_module->setIcon(mod->icon());
+                      about_module->setEnabled(true);
+                  }
+                  else
+                  {
+                      about_module->setText(i18n("About the current Module"));
+                      about_module->setIconSet(QIconSet());
+                      about_module->setEnabled(false);
+                  }
                   break;
                 }
         }
@@ -395,3 +411,10 @@ void TopLevel::reportBug()
         dummyAbout = 0;
     br->show();
 }
+
+void TopLevel::aboutModule()
+{
+    KAboutApplication dlg(_active->aboutData());
+    dlg.show();
+}
+

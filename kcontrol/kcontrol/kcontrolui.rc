@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kcontrol" version="1">
+<kpartgui name="kcontrol" version="2">
 <MenuBar>
     <Menu name="view"><text>&amp;View</text>
         <Menu name="view_mode"><text>&amp;Mode</text>
@@ -11,6 +11,9 @@
             <Action name="activate_mediumicons"/>
             <Action name="activate_largeicons"/>
         </Menu>
+    </Menu>
+    <Menu name="help">
+        <Action name="help_about_module" append="about_merge">
     </Menu>
 </MenuBar>
 </kpartgui>

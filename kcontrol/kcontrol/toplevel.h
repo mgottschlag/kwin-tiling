@@ -56,6 +56,7 @@ protected slots:
   void activateTreeView();
 
   void reportBug();
+  void aboutModule();
 
   void activateSmallIcons();
   void activateMediumIcons();
@@ -75,7 +76,7 @@ private:
 
   KToggleAction *tree_view, *icon_view;
   KToggleAction *icon_small, *icon_medium, *icon_large;
-  KAction *report_bug;
+  KAction *report_bug, *about_module;
 
   IndexWidget  *_indextab;
   SearchWidget *_searchtab;
