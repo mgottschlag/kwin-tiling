@@ -919,7 +919,8 @@ void KSMServer::ioError( IceConn iceConn  )
 	++it;
 
     if ( it.current() ) {
-	printf("IO error for client %s\n", it.current()->program().latin1() );
+	const char *name = it.current()->program().latin1();
+	printf("IO error for client %s\n", name ? name : "<unknown>" );
     }
 }
 
