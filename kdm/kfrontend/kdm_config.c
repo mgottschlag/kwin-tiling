@@ -415,7 +415,7 @@ PautoLoginX (Value *retval)
 #endif
 
 #ifndef DEF_AUTH_NAME
-# ifdef HASXDMAUTH
+# if 0 /*def HASXDMAUTH*/
 #  define DEF_AUTH_NAME	"XDM-AUTHORIZATION-1,MIT-MAGIC-COOKIE-1"
 # else
 #  define DEF_AUTH_NAME	"MIT-MAGIC-COOKIE-1"
