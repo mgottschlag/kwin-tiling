@@ -792,6 +792,8 @@ userEnv (struct display *d, int isRoot,
 			  d->defSdMode == SHUT_TRYNOW ? ",tn" : ",sched", 
 		    (char *)0);
 	}
+	if (AnyReserveDisplays ())
+	    StrApp (&xma, ",rsvd", (char *)0);
     if (xma)
     {
 	env = setEnv (env, "XDM_MANAGED", xma);
