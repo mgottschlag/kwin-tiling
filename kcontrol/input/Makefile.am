@@ -1,3 +1,5 @@
+SUBDIRS= pics
+
 kde_module_LTLIBRARIES = libkcm_input.la
 
 libkcm_input_la_SOURCES = main.cpp mouse.cpp kmousedlg.ui
