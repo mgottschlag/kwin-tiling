@@ -97,7 +97,7 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	insertThemes();
 
 	QHBox *hbox = new QHBox( this );
-	hbox->setSpacing( 6 );
+	hbox->setSpacing( KDialog::spacingHint() );
 	installButton = new QPushButton( i18n("Install New Theme..."), hbox );
 	removeButton = new QPushButton( i18n("Remove Theme"), hbox );
 
