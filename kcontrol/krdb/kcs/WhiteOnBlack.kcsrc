@@ -1,0 +1,22 @@
+[Color Scheme]
+Name=White on Black
+activeBackground=255,255,255
+activeBlend=255,255,255
+activeForeground=0,0,0
+activeTitleBtnBg=255,255,255
+alternateBackground=200,200,200
+background=0,0,0
+buttonBackground=0,0,0
+buttonForeground=255,255,255
+contrast=7
+foreground=255,255,255
+inactiveBackground=170,170,170
+inactiveBlend=170,170,170
+inactiveForeground=0,0,0
+inactiveTitleBtnBg=170,170,170
+linkColor=255,255,255
+selectBackground=255,255,255
+selectForeground=0,0,0
+visitedLinkColor=255,255,255
+windowBackground=0,0,0
+windowForeground=255,255,255

@@ -1,0 +1,22 @@
+[Color Scheme]
+Name=Yellow on Blue
+activeBackground=255,255,0
+activeBlend=255,255,0
+activeForeground=0,0,255
+activeTitleBtnBg=255,255,0
+alternateBackground=85,85,170
+background=0,0,255
+buttonBackground=0,0,255
+buttonForeground=255,255,0
+contrast=7
+foreground=255,255,0
+inactiveBackground=170,170,80
+inactiveBlend=170,170,80
+inactiveForeground=0,0,255
+inactiveTitleBtnBg=170,170,80
+linkColor=255,255,0
+selectBackground=255,255,0
+selectForeground=0,0,255
+visitedLinkColor=255,255,0
+windowBackground=0,0,255
+windowForeground=255,255,0
