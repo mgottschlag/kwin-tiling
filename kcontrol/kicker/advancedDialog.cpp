@@ -27,10 +27,10 @@
 #include <knuminput.h>
 
 #include "advancedDialog.h"
-#include "advancedOptions.h" 
+#include "advancedOptions.h"
 #include "main.h"
 
-advancedDialog::advancedDialog(QWidget* parent, char* name)
+advancedDialog::advancedDialog(QWidget* parent, const char* name)
     : KDialogBase(KDialogBase::Plain,
                   i18n("Advanced Options"),
                   KDialogBase::Ok |
