@@ -51,26 +51,29 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 				     KDialog::spacingHint());
   lay->setAutoAdd(TRUE);
 
-  m_labDecSym = new QLabel(this, I18N_NOOP("Decimal symbol:"));
+  m_labDecSym = new QLabel(this, I18N_NOOP("&Decimal symbol:"));
   m_edDecSym = new QLineEdit(this);
   connect( m_edDecSym, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotDecSymChanged(const QString &) ) );
   m_labDecSym->setBuddy(m_edDecSym);
 
-  m_labThoSep = new QLabel(this, I18N_NOOP("Thousands separator:"));
+  m_labThoSep = new QLabel(this, I18N_NOOP("Tho&usands separator:"));
   m_edThoSep = new QLineEdit(this);
   connect( m_edThoSep, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotThoSepChanged(const QString &) ) );
+  m_labThoSep->setBuddy(m_edThoSep);
 
-  m_labMonPosSign = new QLabel(this, I18N_NOOP("Positive sign:"));
+  m_labMonPosSign = new QLabel(this, I18N_NOOP("&Positive sign:"));
   m_edMonPosSign = new QLineEdit(this);
   connect( m_edMonPosSign, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotMonPosSignChanged(const QString &) ) );
+  m_labMonPosSign->setBuddy(m_edMonPosSign);
 
-  m_labMonNegSign = new QLabel(this, I18N_NOOP("Negative sign:"));
+  m_labMonNegSign = new QLabel(this, I18N_NOOP("&Negative sign:"));
   m_edMonNegSign = new QLineEdit(this);
   connect( m_edMonNegSign, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotMonNegSignChanged(const QString &) ) );
+  m_labMonNegSign->setBuddy(m_edMonNegSign);
 
   lay->setColStretch(1, 1);
 
