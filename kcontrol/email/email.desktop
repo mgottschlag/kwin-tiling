@@ -9,44 +9,6 @@ X-KDE-ControlModuleType=User
 X-KDE-HideFromPanel=true
 
 Name=E-mail
-Name[ca]=Correu E
-Name[de]=Email
-Name[eo]=Retpoŝto
-Name[fi]=Sähköposti
-Name[fr]=Courrier électronique
-Name[he]=ל"אוד
-Name[it]=Posta elettronica
-Name[ja]=Eメール
-Name[no]=Epost
-Name[no_NY]=Epost
-Name[pt]=Correio Electrónico
-Name[sl]=E-po�ta
-Name[sv]=E-post
-Name[ta]=Á¢ý-«ïºø
-
 Comment=Configure your identity, e-mail addresses, mail servers, etc.
-Comment[ca]=Configureu la vostra identitat, adreces i servidors de correu, etc.
-Comment[cs]=Nastavení vaší identity, emailových adres, poštovních serverů atd.
-Comment[de]=Richten Sie Ihre Identität, Email-Adressen, Mail-Server und anderes ein
-Comment[eo]=Agordu vian identecon, retpoŝtadreson, retpoŝtservilojn ktp.
-Comment[fi]=Aseta identiteettisi, sähköpostiosoite, sähköpostipalvelimet jne.
-Comment[fr]=Configuration de votre identité, des adresses et des serveurs
-Comment[he]='וכו ראודה יתרש ,ינורטקלאה ראודה תובותכ ,ךלש תוהזה תא רדגה
-Comment[hu]=Azonosító, e-mail cím, levél kiszolgálók, stb. beállítása
-Comment[it]=Configura la tua identità, l'indirizzo di posta elettronica, il server della posta ecc.
-Comment[no]=Konfigurer din egen identitet, epostadresse, posttjener, osv.
-Comment[no_NY]=Set opp identiteten din, epost-adressa di, epost-tenarar osv.
-Comment[pt]=Configure a sua identidade, endereços de correio electrónico, servidors, etc.
-Comment[ro]=Configurează identitatea, adrese de mail, server-e de mail etc.
-Comment[sl]=Nastavitev va�e identitete, e-naslovov, po�tnih stre�nikov, itd.
-Comment[ta]=¯í¸û ¦ÀÂ÷, Á¢ý-«ïºø Ó¸ÅÃ¢, «ïºø §º¨ÅÂ¸õ, §À¡ýÈÅü¨È ­í§¸ ÅÊÅ¨Áì¸Ä¡õ
-
 Keywords=EMail,Mail,E-Mail,Address,Email server,IMAP,POP3,Local mailbox,mailbox
-Keywords[ca]=Correu electrònic,Correu,e-mail,Adreça,servidor de correu,IMAP,POP3,bústia local,bústia
-Keywords[de]=email,mail,e-mail,adresse,email-server,imap,pop3,lokale mailbox,mailbox,postfach
-Keywords[hu]=EMail,E-Mail,Mail,üzenet,cím,levél,IMAP,POP3,postafiók,levelesláda,mailbox
-Keywords[no]=Epost,post,e-post,adresse,epost-tjener,IMAP,POP3,Lokal postboks,postboks
-Keywords[no_NY]=e-post,epost,adresse,e-posttenar,IMAP,POP3,lokal postboks,postboks
-Keywords[pt]=email,mail,e-mail,correio electrónico,endereço,servidor de email,IMAP,POP3,caixa de correio local,caixa de correio
-Keywords[ro]=EMail,Mail,E-Mail,adresă,server Email,IMAP,POP3,căsuţă de mail locală,mailbox
-Keywords[sl]=epo�ta,e-po�ta,po�ta,EMail,E-Mail,naslov,e-po�tni stre�nik,IMAP,POP3,lokalni po�tni predal,po�tni predal
+
