@@ -77,11 +77,11 @@ void KCMDisplay::load()
 
 void KCMDisplay::save()
 {
-  if ( m_randr && m_randr->changed() )
+  if ( m_randr )
     m_randr->save();
-  if ( m_gamma && m_gamma->changed() )
+  if ( m_gamma )
     m_gamma->save();
-  if ( m_xiner && m_xiner->changed() )
+  if ( m_xiner )
     m_xiner->save();
 }
 
