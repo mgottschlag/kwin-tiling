@@ -8,16 +8,16 @@
    Copyright (c) 1997 Mark Donohoe
    Copyright (c) 1998 Stephan Kulow
    Copyright (c) 1998 Matej Koss
-   
+
    This program is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License 
+   modify it under the terms of the GNU General Public License
    version 2 as published by the Free Software Foundation.
-   
+
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Library General Public License for more details.
-   
+
    You should have received a copy of the GNU Library General Public License
    along with this library; see the file COPYING.LIB.  If not, write to
    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
@@ -105,7 +105,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
 
    m_Renderer = QPtrVector<KBackgroundRenderer>( m_Max );
    m_Renderer.setAutoDelete(true);
-   for (int i=0; i<m_Max; i++) 
+   for (int i=0; i<m_Max; i++)
    {
       m_Renderer.insert(i, new KBackgroundRenderer(i, _config));
       connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
@@ -158,6 +158,9 @@ void BGDialog::makeReadOnly()
     m_comboWallpaperPos->setEnabled( false );
     m_buttonSetupWallpapers->setEnabled( false );
     m_buttonAdvanced->setEnabled( false );
+    m_comboBlend->setEnabled( false );
+    m_sliderBlend->setEnabled( false );
+    m_cbBlendReverse->setEnabled( false );
 }
 
 
@@ -200,7 +203,7 @@ void BGDialog::defaults()
    if (r->isActive())
       r->stop();
 
-   if (QPixmap::defaultDepth() > 8) 
+   if (QPixmap::defaultDepth() > 8)
    {
       r->setBackgroundMode(_defBackgroundMode);
    }
@@ -223,7 +226,7 @@ void BGDialog::defaults()
    m_copyAllDesktops = true;
    emit changed(true);
 }
-               
+
 QString BGDialog::quickHelp() const
 {
    return i18n("<h1>Background</h1> This module allows you to control the"
@@ -323,7 +326,7 @@ void BGDialog::setWallpaper(const QString &s)
          {
             i--;
             comboWallpaper->removeItem(i);
-         }   
+         }
          comboWallpaper->insertItem(KStringHandler::lsqueeze(s, 45));
          m_Wallpaper[s] = i;
          comboWallpaper->setCurrentItem(i);
@@ -384,7 +387,7 @@ void BGDialog::updateUI()
 
    m_comboWallpaperPos->setCurrentItem(r->wallpaperMode()-1);
 
-   bool bSecondaryEnabled = true;   
+   bool bSecondaryEnabled = true;
    m_comboPattern->blockSignals(true);
    switch (r->backgroundMode()) {
      case KBackgroundSettings::Flat:
@@ -450,10 +453,10 @@ void BGDialog::slotPreviewDone(int desk_done)
 
    if (m_eDesk != desk_done)
       return;
-      
+
    if (!m_previewUpdates)
       return;
-      
+
    KBackgroundRenderer *r = m_Renderer[m_eDesk];
 
    KPixmap pm;
@@ -527,7 +530,7 @@ void BGDialog::slotWallpaper(int i)
             break;
          }
       }
-      
+
       r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
       r->setWallpaperMode(m_wallpaperPos);
       r->setWallpaper(uri);
@@ -627,7 +630,7 @@ void BGDialog::slotPattern(int pattern)
    r->start();
    m_colorSecondary->setEnabled(bSecondaryEnabled);
    m_lblColorSecondary->setEnabled(bSecondaryEnabled);
-   
+
    m_copyAllDesktops = true;
    emit changed(true);
 }
@@ -639,11 +642,11 @@ void BGDialog::slotSelectDesk(int desk)
    if (m_pGlobals->commonBackground() && (desk > 0) && m_copyAllDesktops)
    {
       // Copy stuff
-      for (int i=1; i<m_Max; i++) 
+      for (int i=1; i<m_Max; i++)
       {
          m_Renderer[i]->copyConfig(m_Renderer[0]);
       }
-      
+
    }
    m_copyAllDesktops = false;
 
@@ -651,7 +654,7 @@ void BGDialog::slotSelectDesk(int desk)
    {
       if (m_pGlobals->commonBackground())
          return; // Nothing to do
-       
+
       m_pGlobals->setCommonBackground(true);
       m_eDesk = m_Desk = 0;
    }
@@ -761,6 +764,6 @@ void BGDialog::desktopResized()
     }
     m_Renderer[m_eDesk]->start();
 }
-    
+
 
 #include "bgdialog.moc"
