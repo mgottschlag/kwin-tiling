@@ -480,7 +480,7 @@ void ClipAction::save( KConfig *kc ) const
         QString group = actionGroup + "/Command_%1";
         kc->setGroup( group.arg( i ) );
 
-        kc->writePathEntry( "Commandline", cmd->command );
+        kc->writePathEntry( "Commandline", cmd->command.replace( "$","$$" ));
         kc->writeEntry( "Description", cmd->description );
         kc->writeEntry( "Enabled", cmd->isEnabled );
 
