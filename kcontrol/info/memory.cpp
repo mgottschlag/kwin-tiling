@@ -96,13 +96,13 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
     ram_colors_initialized =
     swap_colors_initialized = 
     all_colors_initialized = false;
-    
+
     setButtons(Help);
 
     /* default string for no Information... */
     Not_Available_Text = i18n("Not available.");
 
-    QVBoxLayout *top = new QVBoxLayout(this, 10, 10);
+    QVBoxLayout *top = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
     QHBoxLayout *hbox = new QHBoxLayout();
     top->addLayout(hbox);

@@ -35,6 +35,8 @@
 
 #include <kglobalsettings.h>
 #include <kiconloader.h>
+#include <kdialog.h>
+
 #include "info.h"		/* include the forward declares... */
 
 #include <X11/Xlib.h>
@@ -405,7 +407,7 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
     setButtons(KCModule::Help);
     getlistbox 	= _getlistbox;
     GetInfo_ErrorString = 0;
-    QHBoxLayout *layout = new QHBoxLayout(this, 10);
+    QHBoxLayout *layout = new QHBoxLayout(this, 0, KDialog::spacingHint());
     widgetStack = new QWidgetStack(this);
     layout->addWidget(widgetStack);
     lBox 	= new QListView(widgetStack);
