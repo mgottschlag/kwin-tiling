@@ -71,7 +71,7 @@ void GeneralTab::load()
 
     c->setGroup("General");
 
-    m_sizeGroup->setButton(c->readNumEntry("Size", 1));
+    m_sizeGroup->setButton(c->readNumEntry("Size", 2));
     m_locationGroup->setButton(c->readNumEntry("Position", 3));
 
     bool ah = c->readBoolEntry("AutoHidePanel", false);
@@ -112,7 +112,7 @@ void GeneralTab::save()
 
 void GeneralTab::defaults()
 {
-    m_sizeGroup->setButton(1);
+    m_sizeGroup->setButton(2);
     m_locationGroup->setButton(3);
 
     m_autoHide->setChecked(false);
