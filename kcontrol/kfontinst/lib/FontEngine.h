@@ -274,6 +274,10 @@ class CFontEngine
     }
 #endif
 
+    QString &       getXlfdBmp()                          { return itsXlfd; }
+
+    private:
+
     //
     // Type1 functions...
     //
@@ -295,6 +299,7 @@ class CFontEngine
         //  TrueType & Type1 shared functionality (FreeType2)
         //
     void            closeFaceFt();
+    void            setPsNameFt();
     bool            setCharmapFt(FT_CharMap &charMap)    { return FT_Set_Charmap(itsFt.face, charMap) ? false : true; }
     unsigned int    getGlyphIndexFt(unsigned short code) { return FT_Get_Char_Index(itsFt.face, code); }
     bool            setCharmapUnicodeFt()                { return FT_Select_Charmap(itsFt.face, ft_encoding_unicode) ? false : true; }
@@ -323,7 +328,6 @@ class CFontEngine
     //
     void            createNameBmp(int pointSize, int res, const QString &enc);
     void            parseXlfdBmp();
-    QString &       getXlfdBmp()                          { return itsXlfd; }
 
     // Bdf...
     bool            openFontBdf(const QString &file);
@@ -335,8 +339,6 @@ class CFontEngine
     bool            openFontPcf(const QString &file);
 
 #ifdef HAVE_FT_CACHE
-    private:
-
     FTC_FaceID getId(const QString &f, int faceNo); 
 
 #if KFI_FT_IS_GE(2, 1, 8)
@@ -360,7 +362,6 @@ class CFontEngine
 #endif
 
     void       createAddStyle();
-
 
     private:
 
