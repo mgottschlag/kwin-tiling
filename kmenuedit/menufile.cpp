@@ -247,6 +247,8 @@ void MenuFile::addEntry(const QString &menuName, const QString &menuId)
 {
    m_bDirty = true;   
 
+   m_removedEntries.remove(menuId);
+
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, true);
 
    QDomElement excludeNode;
@@ -270,6 +272,8 @@ void MenuFile::removeEntry(const QString &menuName, const QString &menuId)
 {
    m_bDirty = true;
    
+   m_removedEntries.append(menuId);
+   
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, true);
 
    QDomElement excludeNode;
@@ -291,7 +295,6 @@ void MenuFile::removeEntry(const QString &menuName, const QString &menuId)
 void MenuFile::addMenu(const QString &menuName, const QString &menuFile)
 {
    m_bDirty = true;
-
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, true);
 
    QDomElement dirElem = m_doc.createElement(MF_DIRECTORY);
@@ -438,6 +441,19 @@ void MenuFile::performAllActions()
       performAction(atom);
       delete atom;
    }
+   
+   // Entries that have been removed from the menu are added to .hidden
+   // so that they don't re-appear in Lost & Found
+   QStringList removed = m_removedEntries;
+   m_removedEntries.clear();
+   for(QStringList::ConstIterator it = removed.begin();
+       it != removed.end(); ++it)
+   {
+      addEntry("/.hidden/", *it);
+   }
+
+   m_removedEntries.clear();
+   
    if (m_bDirty)
       save();
 }

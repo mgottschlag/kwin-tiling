@@ -101,6 +101,7 @@ private:
    bool m_bDirty;
    
    QPtrList<ActionAtom> m_actionList;
+   QStringList m_removedEntries;
 };
 
 
