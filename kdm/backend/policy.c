@@ -41,6 +41,11 @@ from The Open Group.
 
 #include <X11/X.h>
 
+#include <errno.h>
+#ifdef X_NOT_STDC_ENV
+extern int errno;
+#endif
+
 static ARRAY8 noAuthentication = { (CARD16) 0, (CARD8Ptr) 0 };
 
 typedef struct _XdmAuth {
@@ -217,11 +222,16 @@ Willing (
         if (*willing)
 	{
 	    FILE *fd;
+	    sprintf (statusBuf, "Willing, but %s failed", willing);
 	    if ((fd = popen(willing, "r"))) {
-		if (fgets(statusBuf, sizeof(statusBuf), fd))
-		    statusBuf[strlen(statusBuf)-1] = 0; /* chop newline */
-		else
-		    sprintf (statusBuf, "Willing, but %s failed", willing);
+		for (;;) {
+		    if (fgets(statusBuf, sizeof(statusBuf), fd)) {
+			statusBuf[strlen(statusBuf)-1] = 0; /* chop newline */
+			break;
+		    }
+		    if (feof (fd) || errno != EINTR)
+			break;
+		}
 		pclose(fd);
 	    }
 	}
