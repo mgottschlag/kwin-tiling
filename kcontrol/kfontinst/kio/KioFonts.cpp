@@ -73,7 +73,14 @@
 #define XFT_CACHE_CMD "xftcache"
 #endif
 
+#define KFI_USE_STDERR
+#ifdef KFI_USE_STDERR
+#include <qtextstream.h>
+#include <stdio.h>
+static QTextOStream  KDE_DBUG(stderr);
+#else
 #define KDE_DBUG kdDebug()
+#endif
 
 extern "C"
 {
@@ -141,7 +148,7 @@ static void addAtom(KIO::UDSEntry &entry, unsigned int ID, long l, const QString
 
 static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QString &path, const QString &url, const QString &mime, bool file)
 {
-    KDE_DBUG << "createUDSEntry " << name << ' ' << path << endl;
+    KDE_DBUG << "createUDSEntry " << name << ' ' << path << ' ' << url << endl;
 
     KDE_struct_stat buff;
     QString         formattedPath;
@@ -162,21 +169,21 @@ static bool createUDSEntry(KIO::UDSEntry &entry, const QString &name, const QStr
     {
         if(file && (CFontEngine::isAFont(cPath) || CFontEngine::isAAfm(cPath)))
         {
-            if(CGlobal::fe().openFont(exists ? path : formattedPath))
-            {
-                QString displayedName(CGlobal::fe().getFullName());
+            QString fontName(CGlobal::fe().createName(exists ? path : formattedPath));
 
+            if(fontName.isEmpty())
+                addAtom(entry, KIO::UDS_NAME, 0, name);
+            else
+            {
                 if(CFontEngine::isAAfm(cPath))
-                    displayedName+=i18n(", Metrics");
+                    fontName+=i18n(", Metrics");
             
                 if(name[0]=='.')
-                    displayedName+=i18n(KIO_FONTS_DISABLED);
-                addAtom(entry, KIO::UDS_NAME, 0, displayedName);
+                    fontName+=i18n(KIO_FONTS_DISABLED);
+                addAtom(entry, KIO::UDS_NAME, 0, fontName);
                 addAtom(entry, KIO::UDS_URL, 0, url);
                 CGlobal::fe().closeFont();
             }
-            else
-                addAtom(entry, KIO::UDS_NAME, 0, name);
         }
         else
         {
@@ -519,7 +526,7 @@ void CKioFonts::listDir(const QStringList &top, const QString &sub, const KURL &
                             QString ds(CMisc::dirSyntax(fInfo->filePath()));
 
                             if((QChar('.')==fInfo->fileName()[0] || (!sys && addDir(ds)) || xcfg.subInPath(ds)) &&
-                               createDirEntry(entry, fInfo->fileName(), ds, QString(KIO_FONTS_PROTOCOL)+QChar(':')+url.path()+QChar('/')+
+                               createDirEntry(entry, fInfo->fileName(), ds, QString(KIO_FONTS_PROTOCOL)+QChar(':')+CMisc::dirSyntax(url.path())+
                                               fInfo->fileName(), sys && !CMisc::root()))
                             {
                                 if(!sys && QChar('.')!=fInfo->fileName()[0])
@@ -1330,8 +1337,10 @@ void CKioFonts::del(const KURL &url, bool isFile)
         if((isFile && CMisc::fExists(*constIt+sub)) ||
            (!isFile && CMisc::dExists(*constIt+sub)))
             items.append(*constIt+sub);
- 
+
+#ifndef KFI_USE_STDERR 
     KDE_DBUG << "real " << items << endl;
+#endif
 
     if(items.count())
         if(isFile)
