@@ -214,5 +214,4 @@ void KBlankEffect::blankBlocks()
     }
 }
 
-
-
+#include "kscreensaver.moc"

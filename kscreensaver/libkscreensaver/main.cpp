@@ -28,7 +28,7 @@
 #include <kapp.h>
 
 #include "kscreensaver.h"
-#include "vroot.h"
+#include "kscreensaver_vroot.h"
 
 extern "C"
 {
