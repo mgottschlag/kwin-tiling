@@ -92,7 +92,15 @@ void KlipperApplet::about()
 }
 
 KlipperAppletWidget::KlipperAppletWidget( QWidget* parent )
-    : KlipperWidget( parent, new KConfig( "klipperrc" ))
+// init() is called first, before KlipperWidget is called with ( parent, kconfig )
+    : KlipperWidget( ( init(), parent ), new KConfig( "klipperrc" ))
+{
+}
+
+// this needs to be called before KlipperWidget ctor, because it performs already some
+// operations with the clipboard, and the other running instance could notice that
+// and request data while this instance is waiting in the DCOP call
+void KlipperAppletWidget::init()
 {
     // if there's klipper process running, quit it
     QByteArray arg1, arg2;
@@ -101,14 +109,17 @@ KlipperAppletWidget::KlipperAppletWidget( QWidget* parent )
     kapp->dcopClient()->call("klipper", "klipper", "quitProcess()", arg1, str, arg2 );
     // register ourselves, so if klipper process is started,
     // it will quit immediately (KUniqueApplication)
-    m_dcop = new DCOPClient;
-    m_dcop->registerAs( "klipper", false );
+    s_dcop = new DCOPClient;
+    s_dcop->registerAs( "klipper", false );
 }
 
 KlipperAppletWidget::~KlipperAppletWidget()
 {
-    delete m_dcop;
+    delete s_dcop;
+    s_dcop = 0;
 }
+
+DCOPClient* KlipperAppletWidget::s_dcop = 0;
 
 // this is just to make klipper process think we're KUniqueApplication
 // (AKA ugly hack)

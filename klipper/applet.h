@@ -51,7 +51,8 @@ public:
     KlipperAppletWidget( QWidget* parent = NULL );
     virtual ~KlipperAppletWidget();
 private:
-    DCOPClient* m_dcop;
+    void init();
+    static DCOPClient* s_dcop;
 
 };
 
