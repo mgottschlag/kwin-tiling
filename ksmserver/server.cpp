@@ -33,9 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <sys/types.h>
 #include <sys/param.h>
-#ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
-#endif
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif
