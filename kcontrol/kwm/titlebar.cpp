@@ -117,7 +117,7 @@ KTitlebarButtons::~KTitlebarButtons ()
 KTitlebarButtons::KTitlebarButtons (QWidget * parent, const char *name)
   : KConfigWidget (parent, name)
 {
-  int label_w = 0, pixmap_w = 16, selection_w = 0, i;
+  int i;
 
   //CT 08Apr1999 - layout - finaly
   QGridLayout *lay = new QGridLayout( this, 11, 15, 10);
