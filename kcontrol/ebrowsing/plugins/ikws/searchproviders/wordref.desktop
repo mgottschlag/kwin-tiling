@@ -1,0 +1,8 @@
+[Desktop Entry]
+Charset=
+Hidden=false
+Keys=wordref
+Name=WordReference.com English Dictionary
+Query=http://www.wordreference.com/english/definition.asp?en=\\{@}
+ServiceTypes=SearchProvider
+Type=Service

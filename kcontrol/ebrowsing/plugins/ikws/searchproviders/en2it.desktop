@@ -1,0 +1,8 @@
+[Desktop Entry]
+Charset=
+Hidden=false
+Keys=en2it
+Name=WordReference.com Translation: English To Italian
+Query=http://www.wordreference.com/it/translation.asp?enit=\\{@}
+ServiceTypes=SearchProvider
+Type=Service

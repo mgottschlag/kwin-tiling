@@ -1,0 +1,8 @@
+[Desktop Entry]
+Charset=
+Hidden=false
+Keys=es2en
+Name=WordReference.com Translation: Spanish To English
+Query=http://www.wordreference.com/es/en/translation.asp?spen=\\{@}
+ServiceTypes=SearchProvider
+Type=Service

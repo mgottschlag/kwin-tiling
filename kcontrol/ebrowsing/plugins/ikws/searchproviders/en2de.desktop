@@ -1,0 +1,8 @@
+[Desktop Entry]
+Charset=
+Hidden=false
+Keys=en2de
+Name=WordReference.com Translation: English To German
+Query=http://www.wordreference.com/de/translation.asp?ende=\\{@}
+ServiceTypes=SearchProvider
+Type=Service
