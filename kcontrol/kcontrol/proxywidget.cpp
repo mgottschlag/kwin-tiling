@@ -178,7 +178,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   _sep = new KSeparator(KSeparator::HLine, this);
 
   _help =    new KPushButton( KStdGuiItem::help(), this );
-  _default = new QPushButton( i18n( "&Defaults" ), this );
+  _default = new KPushButton( KStdGuiItem::defaults(), this );
   _apply =   new KPushButton( KStdGuiItem::apply(), this );
   _reset =   new KPushButton( KGuiItem( i18n( "&Reset" ), "undo" ), this );
   _root =    new QPushButton( i18n( "&Administrator Mode" ), this );
