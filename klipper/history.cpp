@@ -31,6 +31,10 @@ History::History( QWidget* parent, const char* name )
 History::~History() {
 }
 
+History::iterator History::youngest() {
+    return iterator( itemList );
+}
+
 void History::insert( const HistoryItem* item ) {
     remove( item );
     forceInsert( item );

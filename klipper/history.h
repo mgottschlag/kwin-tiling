@@ -22,6 +22,7 @@ Licensed under the GNU GPL Version 2
 class KlipperPopup;
 class QPopupMenu;
 class QWidget;
+class QptrListIterator;
 
 class History : public QObject
 {
@@ -29,6 +30,10 @@ class History : public QObject
 public:
     History( QWidget* parent, const char* name );
     ~History();
+    /**
+     * Iterator for history
+     */
+    typedef QPtrListIterator<HistoryItem> iterator;
 
     /**
      * Return (toplevel) popup menu (or default view, of you like)
@@ -70,6 +75,18 @@ public:
     const HistoryItem* next();
 
     /**
+     * Get an iterator pointing to the first (most recent) item
+     * This iterator should probably be a constant iterator, but
+     * the QTL doesn't support this easily.
+     *
+     * Anyway, if you modify the items via. the iterator, call changed()
+     * when you're done. Calling changed() multiple times doesn't hurt.
+     *
+     * iterator could be made into a proxy class that did the right thing.
+     */
+    iterator youngest();
+
+    /**
      * True if no history items
      */
     bool empty() const { return itemList.isEmpty(); }
@@ -101,6 +118,11 @@ signals:
 private:
 
     /**
+     * The history
+     */
+    QPtrList<HistoryItem> itemList;
+
+    /**
      * ensure that the number of items does not exceed max_size()
      * Deletes items from the end as neccessary.
      */
@@ -112,10 +134,6 @@ private:
      */
     KlipperPopup* m_popup;
 
-    /**
-     * The history
-     */
-    QPtrList<HistoryItem> itemList;
 
     /**
      * The number of clipboard items stored.

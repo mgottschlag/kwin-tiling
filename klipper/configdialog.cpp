@@ -96,7 +96,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     cbStripWhitespace = new QCheckBox( i18n("Remove whitespace when executing actions"), this );
     QWhatsThis::add( cbStripWhitespace,
                      i18n("Sometimes, the selected text has some whitespace at the end, which, if loaded as URL in a browser would cause an error. Enabling this option removes any whitespace at the beginning or end of the selected string (the original clipboard contents will not be modified).") );
-    
+
     cbReplayAIH = new QCheckBox( i18n("&Replay actions on an item selected from history"),
                                     this );
 
@@ -153,7 +153,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
 
     maxItems = new KIntNumInput( this );
     maxItems->setLabel(  i18n( "C&lipboard history size:" ) );
-    maxItems->setRange( 2, 25, 1, true );
+    maxItems->setRange( 2, 2048, 100, true );
     connect( maxItems, SIGNAL( valueChanged( int )),
              SLOT( historySizeChanged( int ) ));
 

@@ -1,6 +1,6 @@
 /* -------------------------------------------------------------
 
-   history.cpp (part of Klipper - Cut & paste history for KDE)
+   klipperpopup.cpp (part of Klipper - Cut & paste history for KDE)
 
    (C) 2004 Esben Mose Hansen <kde@mosehansen.dk>
    (C) by Andrew Stanley-Jones
@@ -11,19 +11,24 @@
    Licensed under the GNU GPL Version 2
 
  ------------------------------------------------------------- */
+#include <qstyle.h>
 
 #include <kmessagebox.h>
 #include <khelpmenu.h>
 #include <kiconloader.h>
-#include <kstringhandler.h>
 
 #include <klocale.h>
 #include <kaction.h>
 #include <kglobalsettings.h>
+#include <kwin.h>
+#include <kapplication.h>
+#include <kglobalsettings.h>
+#include <kdebug.h>
 
 #include "klipperpopup.h"
 #include "history.h"
 #include "toplevel.h"
+#include "popupproxy.h"
 
 
 KlipperPopup::KlipperPopup( History* history, QWidget* parent, const char* name )
@@ -31,7 +36,8 @@ KlipperPopup::KlipperPopup( History* history, QWidget* parent, const char* name 
       m_dirty( true ),
       QSempty( i18n("<empty clipboard>") ),
       m_history( history ),
-      helpmenu( new KHelpMenu( this,  KlipperWidget::aboutData(), false ) )
+      helpmenu( new KHelpMenu( this,  KlipperWidget::aboutData(), false ) ),
+      m_popupProxy(new PopupProxy( this, "popup_proxy", calcItemsPerMenu() ) )
 {
 
     connect( this, SIGNAL( aboutToShow() ), SLOT( slotAboutToShow() ) );
@@ -41,17 +47,35 @@ KlipperPopup::~KlipperPopup() {
 
 }
 
-void KlipperPopup::slotAboutToShow() {
+int KlipperPopup::calcItemsPerMenu() {
+    KWin::WindowInfo i = KWin::windowInfo( winId(), NET::WMGeometry );
+    QRect g = i.geometry();
+    QRect screen = KGlobalSettings::desktopGeometry(g.center());
 
-    // If the history is unchanged since last menu build, the is no reason
-    // to rebuild it,
-    if ( m_dirty ) {
-        rebuild();
-    }
+    // Determine height of a menu item. This requires us to insert a menuitem
+    // in a popupmenu; we'll just this menu and remove the item again quickly.
+    int fontheight = QFontMetrics( fontMetrics()  ).height();
+    int id = insertItem( "XMg" );
+    QMenuItem* mi = findItem( id );
+    int lineheight = style().sizeFromContents(QStyle::CT_PopupMenuItem,
+                                              this,
+                                              QSize( 0, fontheight ),
+                                              QStyleOption(mi,10,0) ).height();
+    removeItem( id );
+   // Use about 75% of the screen height for items
+    int itemsPerMenu = ( screen.height() / lineheight ) * 3/4;
+
+    return itemsPerMenu;
+}
+
+void KlipperPopup::slotAboutToShow() {
+    ensureClean();
 
 }
 
 void KlipperPopup::ensureClean() {
+    // If the history is unchanged since last menu build, the is no reason
+    // to rebuild it,
     if ( m_dirty ) {
         rebuild();
     }
@@ -62,13 +86,9 @@ void KlipperPopup::rebuild() {
 
     clear();
     insertTitle( SmallIcon( "klipper" ), i18n("Klipper - Clipboard Tool"));
-    int i = 0;
-    for ( const HistoryItem* item = m_history->first(); item; item = m_history->next(), i++ ) {
-        int id = insertItem( KStringHandler::cEmSqueeze(item->text().simplifyWhiteSpace(), fontMetrics(), 25).replace( "&", "&&" ));
-        connectItem(  id, m_history,  SLOT( slotMoveToTop( int) ) );
-        setItemParameter(  id,  i );
-    }
-    if ( i == 0 ) {
+    m_popupProxy->buildParent();
+
+    if ( m_history->empty() ) {
         insertItem( QSempty );
     }
     QString lastGroup;
@@ -91,6 +111,7 @@ void KlipperPopup::rebuild() {
     if ( KGlobalSettings::insertTearOffHandle() ) {
         insertTearOffHandle();
     }
+    m_dirty = false;
 
 }
 
