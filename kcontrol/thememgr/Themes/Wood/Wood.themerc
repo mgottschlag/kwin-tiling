@@ -1,5 +1,6 @@
 [General]
 Name=Wood
+Name[af]=HOUT
 Name[az]=Odun
 Name[bg]=Гора
 Name[cs]=Dřevo
@@ -35,6 +36,7 @@ author=Georg Russell
 email=russell@kde.org
 info=
 Comment=A wooden look for your desktop!\nBy Georg Russell <russell@kde.org>
+Comment[af]=A HOUT KYK VIR JOU WERKSKERM!\nBy GEORG RUSSELL <russell@kde.org>
 Comment[az]=Masa üstünüz üçün təbii bir görünüş!\nGeorg Russell <russell@kde.org>
 Comment[cs]=Vzhled ve stylu dřeva!\nVytvořil Georg Russell <russell@kde.org>
 Comment[da]=Et træagtigt udseende for dit skrivebord!\nAf Georg Russell <russell@kde.org>
@@ -62,6 +64,7 @@ Comment[sl]=Lesen videz vašega namizja!\nIzdelal Georg Russell <russell@kde.org
 Comment[sv]=Ett träaktigt utseende för ditt skrivbord!\nAv Georg Russell <russell@kde.org>
 Comment[ta]=¯í¸û §Á¨ºì¸¡É ´Õ ÁÃò§¾¡üÈõ!\n ¬ì¸¢§Â¡ý Georg Russell <russell@kde.org>
 Comment[uk]=Обрамлення Вашої стільниці деревом!\nАвтор: Georg Russell <russell@kde.org>
+Comment[zh_CN.GB2312]=桌面上的木头外观！\n作者 Georg Russell <russell@kde.org>
 [Panel]
 background=panel.png
 [Filemanager]

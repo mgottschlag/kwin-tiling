@@ -2,6 +2,7 @@
 #-----------------------------------------------------------------------------
 [General]
 Name=Nostalgy
+Name[af]=NOSTALGIE
 Name[az]=Nostalgiya
 Name[bg]=Носталгия
 Name[cs]=Nostalgie
@@ -34,6 +35,7 @@ Name[zh_CN.GB2312]=怀旧
 author=Robert Flemming & Daniel M. Duley
 email=mosfet@kde.org
 Comment=A simple original theme that tries to combine the best aspects of familiar interfaces.
+Comment[af]=A EENVOUDIGE OORSPRONKLIKE TEMA WAT PROBEER AAN KOMBINEER DIE BESTE ASPEKTE VAN BEKENDE KOPPELVLAKKE.
 Comment[az]=Olduqca bəsit və original bir örtü
 Comment[bg]=Простая, но оригинална тема, комбинираща в себе си най добрите черти на обичайният интерфейс.
 Comment[cs]=Jednoduchý původní motiv, který se snaží zkombinovat nejlepší aspekty známých prostředí.
