@@ -285,8 +285,10 @@ void Tzone::save()
 
         kdDebug() << "Set time zone " << tz << endl;
 
-	if (!QFile::remove("/etc/localtime")) 
+	if (!QFile::remove("/etc/localtime"))
+	{	
 		//After the KDE 3.2 release, need to add an error message
+	}
 	else
 		if (!KIO::NetAccess::file_copy(KURL(tz),KURL("/etc/localtime")))
 			KMessageBox::error( 0,  i18n("Error setting new Time Zone!"),
