@@ -230,7 +230,7 @@ bool LiloInfo::getNextOptionFromLilo()
 
 	// Create the process handle
 	liloproc << liloloc;
-	liloproc << QString::fromLatin1("-q") << QString::fromLatin1("-v") << QString::fromLatin1("-m") << bootmaploc << QString::fromLatin1("|") << QString::fromLatin1("sed") << QString::fromLatin1("-n") << QString::fromLatin1("'s/\"[^\"]*$//;/Default boot command/s/.*\"//p'") << QString::fromLatin1("|") << QString::fromLatin1("sed 's/ .*//'");
+	liloproc << QString::fromLatin1("-w") << QString::fromLatin1("-q") << QString::fromLatin1("-v") << QString::fromLatin1("-m") << bootmaploc << QString::fromLatin1("|") << QString::fromLatin1("sed") << QString::fromLatin1("-n") << QString::fromLatin1("'s/\"[^\"]*$//;/Default boot command/s/.*\"//p'") << QString::fromLatin1("|") << QString::fromLatin1("sed 's/ .*//'");
 
 	// Connect to the standard output and error signals. This time standard output is
 	// received by getNextOptionFromStdout().
@@ -400,16 +400,11 @@ void LiloInfo::processStderr ( KProcess *, char *buffer, int len )
 	// Copy the received string into a QString
 	buffer[len ? len-1 : 0] = '\0';
 	QString errString = QString::fromLatin1(buffer);
-	QString warning = "Warning:";
 
 	if ( debug ) cerr << "[LiloInfo]     Received on standard error: \"" << errString.latin1() << "\"" << endl;
 
 	// If the string starts with "Ignoring entry ...", remove the first line
 	if ( errString.left ( 8 ) == QString::fromLatin1("Ignoring") )
-		removeLine (errString);
-
-	// Remove warnings
-	while ( errString.startsWith (warning) )
 		removeLine (errString);
 
 	if ( !errString.isEmpty() )
