@@ -82,7 +82,11 @@ extern int XdmcpARRAY8Equal(ARRAY8 *, ARRAY8 *);
 extern int XdmcpAllocARRAY8 (ARRAY8 *, int);
 extern void XdmcpDisposeARRAY8(ARRAY8 *);
 extern int XdmcpFill(int , XdmcpBuffer *, char *, int *);
+#ifdef XIMStringConversionRetrival
 extern int XdmcpFlush(int, XdmcpBuffer *, void *, int );
+#else
+extern int XdmcpFlush(int, XdmcpBuffer *, char *, int );
+#endif
 extern int XdmcpReadARRAY8(XdmcpBuffer *, ARRAY8 *);
 extern int XdmcpReadHeader(XdmcpBuffer *, XdmcpHeader *);
 extern int XdmcpWriteARRAY8(XdmcpBuffer *, ARRAY8 *);

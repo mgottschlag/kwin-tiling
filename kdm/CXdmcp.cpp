@@ -240,9 +240,17 @@ CXdmcp::doPingHosts()
   for (hosts = hostAddrdb; hosts; hosts = hosts->next)
   {
   	if (hosts->type == QUERY)
+#ifdef XIMStringConversionRetrival
 			XdmcpFlush (socketFD, &directBuffer, hosts->addr, hosts->addrlen);
+#else
+			XdmcpFlush (socketFD, &directBuffer, (char*)hosts->addr, hosts->addrlen);
+#endif	
     else
+#ifdef XIMStringConversionRetrival
 			XdmcpFlush (socketFD, &broadcastBuffer, hosts->addr, hosts->addrlen);
+#else
+			XdmcpFlush (socketFD, &broadcastBuffer, (char*)hosts->addr, hosts->addrlen);
+#endif	
     }
 	  if (++pingTry < TRIES)
   	  t->start( PING_INTERVAL, true);
