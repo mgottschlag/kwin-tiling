@@ -1207,7 +1207,7 @@ void KSMServer::discardSession()
 	QString n = QString::number(i);
 	executeCommand( config->readListEntry( QString("discardCommand")+n ) );
     }
-    config->writeEntry( "count", 0 );
+    config->deleteGroup("Session");
 }
 
 void KSMServer::storeSesssion()
