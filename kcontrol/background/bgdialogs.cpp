@@ -183,7 +183,7 @@ void KProgramSelectDialog::slotRemove()
 	KMessageBox::sorry(this,
 		i18n("Unable to remove the program! The program is global\n"
 		"and can only be removed by the System Administrator.\n"),
-		i18n("Cannot remove Program"));
+		i18n("Cannot remove program"));
 	return;
     }
     if (KMessageBox::warningYesNo(this,
@@ -546,7 +546,7 @@ void KPatternSelectDialog::slotRemove()
 	KMessageBox::sorry(this,
 		i18n("Unable to remove the pattern! The pattern is global\n"
 		"and can only be removed by the System Administrator.\n"),
-		i18n("Cannot remove Pattern"));
+		i18n("Cannot remove pattern"));
 	return;
     }
     if (KMessageBox::warningYesNo(this,

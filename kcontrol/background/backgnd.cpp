@@ -306,7 +306,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
     connect(m_pBlendBox, SIGNAL(activated(int)), SLOT(slotBlendMode(int)));
     lbl->setBuddy(m_pBlendBox);
     grid->addWidget(m_pBlendBox, 0, 1);
-    QWhatsThis::add( m_pBlendBox, i18n("If you have selected to wallpaper, you"
+    QWhatsThis::add( m_pBlendBox, i18n("If you have selected to use wallpaper, you"
 				       " can choose various methods of blending the background colors and patterns"
 				       " with the wallpaper. The default option, \"No Blending\", means that the"
 				       " wallpaper simply obscures the background below.") );
@@ -333,7 +333,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
 					      " reverse the background and wallpaper layers by checking this option.") );
 
     m_pCBLimit = new QCheckBox(i18n("&Limit Pixmap Cache"), m_pTab3);
-    QWhatsThis::add( m_pCBLimit, i18n( "Checking this box limits the amount of memory that KDE will use to save pixmap (raster graphics). It is advisable to do this, especially if you do not have lots of memory." ) );
+    QWhatsThis::add( m_pCBLimit, i18n( "Checking this box limits the amount of memory that KDE will use to save pixmap (raster graphics). It is advisable to do this, especially if you do not have alot of memory." ) );
     grid->addMultiCellWidget(m_pCBLimit, 2, 2, 0, 1);
     connect(m_pCBLimit, SIGNAL(toggled(bool)), SLOT(slotLimitCache(bool)));
     hbox = new QHBoxLayout();
@@ -1022,7 +1022,7 @@ QString KBackground::quickHelp() const
       " customizable, with options for tiling and stretching images. The"
       " wallpaper can be overlaid opaquely, or blended in different ways with"
       " the background colors and patterns.<p>"
-      " KDE allows you to have the wallpaper change automatically at prespecified"
+      " KDE allows you to have the wallpaper change automatically at specified"
       " intervals of time. You can also replace the background with a program"
       " that updates the desktop dynamically. For example, the \"kdeworld\""
       " program shows a day/night map of the world which is updated periodically.");

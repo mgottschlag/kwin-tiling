@@ -84,8 +84,8 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   grid->addColSpacing(0, 30);
 
   m_useBell = new QCheckBox( i18n("&Use System Bell instead of System Notification" ), box );
-  QWhatsThis::add(m_useBell, i18n("You can use the standard system bell (PC-speaker) or a "
-				  "more sophisticated System notification, see the "
+  QWhatsThis::add(m_useBell, i18n("You can use the standard system bell (PC speaker) or a "
+				  "more sophisticated system notification, see the "
 				  "\"System Notifications\" control module for the "
 				  "\"Something Special Happened in the Program\" event."));
   connect(m_useBell, SIGNAL( toggled( bool )), SLOT( useBell( bool )));
@@ -231,7 +231,7 @@ void KBellConfig::defaults()
 QString KBellConfig::quickHelp() const
 {
   return i18n("<h1>System Bell</h1> Here you can customize the sound of the standard system bell,"
-    " i.e. the \"beeep\" you always hear when there's something wrong. Note that you can further"
+    " i.e. the \"beep\" you always hear when there's something wrong. Note that you can further"
     " customize this sound using the \"Accessibility\" control module: for example you can choose"
     " a sound file to be played instead of the standard bell.");
 }
