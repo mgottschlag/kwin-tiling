@@ -225,12 +225,12 @@ QStringList KURISearchFilterEngine::modifySubstitutionMap(SubstMap& map, const Q
 	return l;
 }
 
-QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &map, const QString& userquery) const
+QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &map, const QString& userquery, const int encodingMib) const
 {
 	QString newurl = url;
 	QStringList ql = modifySubstitutionMap (map, userquery);
 	int count = ql.count();
-
+	
 	// Check, if old style '\1' is found and replace it with \{@} (compatibility mode):
 	{
 		int pos = -1;
@@ -276,16 +276,16 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
 					v = v.stripWhiteSpace();
 					if (v != "") found = true;
 					PDVAR ("    range", QString::number(first) + "-" + QString::number(last) + " => '" + v + "'");
-					v = KURL::encode_string(v);
+					v = KURL::encode_string(v, encodingMib);
 				} else if ((rlitem.left(1) == "\"") && (rlitem.right(1) == "\"")) {	// Use default string from query definition:
 					found = true;
 					QString s = rlitem.mid(1, rlitem.length() - 2);
-					v = KURL::encode_string(s);
+					v = KURL::encode_string(s, encodingMib);
 					PDVAR ("    default", s);
 				} else if (map.contains(rlitem)) {					// Use value from substitution map:
 					found = true;
 					PDVAR ("    map['" + rlitem + "']", map[rlitem]);
-					v = KURL::encode_string(map[rlitem]);
+					v = KURL::encode_string(map[rlitem], encodingMib);
 
 					// Remove used value from ql (needed for \{@}):
 					QString c = rlitem.left(1);
@@ -326,7 +326,7 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
 			}
 			v = v.simplifyWhiteSpace();
 			PDVAR ("    rest", v);
-			v = KURL::encode_string(v);
+			v = KURL::encode_string(v, encodingMib);
 
 			// Substitute \{@} with list of unmatched query strings
 			int vpos = 0;
@@ -391,9 +391,7 @@ QString KURISearchFilterEngine::formatResult( const QString& url,
 		csetb = "iso-8859-1";
 	map.replace("wsc_charset", csetb);
 
-	userquery = csetacodec->fromUnicode(userquery);
-
-	QString newurl = substituteQuery (url, map, userquery);
+	QString newurl = substituteQuery (url, map, userquery, csetacodec->mibEnum());
 
 	PDVAR ("substituted query", newurl);
 
