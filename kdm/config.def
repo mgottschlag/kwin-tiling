@@ -128,6 +128,15 @@
  Every comment applies to the following section or key. Note that all
  comments will be lost if you change this file with the kcontrol frontend.
  The defaults refer to KDM's built-in values, not anything set in this file.
+ _
+ Special characters need to be backslash-escaped (leading and trailing
+ spaces (\\s), tab (\\t), linefeed (\\n), carriage return (\\r) and the
+ backslash itself (\\\\)).
+ In lists, fields are separated with commas without whitespace in between.
+ Some command strings are subject to simplified sh-style word splitting:
+ single quotes (') and double quotes (") have the usual meaning; the backslash
+ quotes everything (not only special characters). Note that the backslashes
+ need to be doubled because of the two levels of quoting.
 
 [General]
 
@@ -279,6 +288,18 @@ Some keys do not apply to particular displays, in which case they are ignored.
 
 <para>If a setting is not found in any matching section, the default
 is used.</para>
+
+<para>Special characters need to be backslash-escaped (leading and trailing
+spaces (<literal>\s</literal>), tab (<literal>\t</literal>), linefeed
+(<literal>\n</literal>), carriage return (<literal>\r</literal>) and the
+backslash itself (<literal>\\</literal>)).</para>
+<para>In lists, fields are separated with commas without whitespace in between.
+</para>
+<para>Some command strings are subject to simplified sh-style word splitting:
+single quotes (<literal>'</literal>) and double quotes (<literal>"</literal>)
+have the usual meaning; the backslash quotes everything (not only special
+characters). Note that the backslashes need to be doubled because of the
+two levels of quoting.</para>
 
 <note><para>A pristine &kdmrc; is very thoroughly commented.
 All comments will be lost if you change this file with the
@@ -1169,9 +1190,9 @@ DDefault: -
 User: core(cmdHalt)
 Instance: #""
 Comment:
- The command to run to halt the system.
+ The command (subject to word splitting) to run to halt the system.
 Description:
- The command to run to halt/poweroff the system.
+ The command (subject to word splitting) to run to halt/poweroff the system.
  </para><para>
  The default is something reasonable for the system on which &kdm; was built, like
  <command>/sbin/shutdown&nbsp;<option>-h</option>&nbsp;<parameter>now</parameter></command>.
@@ -1183,9 +1204,9 @@ DDefault: -
 User: core(cmdReboot)
 Instance: #""
 Comment:
- The command to run to reboot the system.
+ The command (subject to word splitting) to run to reboot the system.
 Description:
- The command to run to reboot the system.
+ The command (subject to word splitting) to run to reboot the system.
  </para><para>
  The default is something reasonable for the system &kdm; on which was built, like
  <command>/sbin/shutdown&nbsp;<option>-r</option>&nbsp;<parameter>now</parameter></command>.
@@ -1475,9 +1496,11 @@ Instance: #*/""
 Merge: xdm
 Comment:
  The xrdb program to use to read the above specified recources.
+ Subject to word splitting.
 Description:
  The <command>xrdb</command> program to use to read the X-resources file
  specified in <option>Recources</option>.
+ The command is subject to word splitting.
 
 Key: Setup
 Type: string
@@ -1489,9 +1512,10 @@ Update: mk_setup
 Merge: xdm
 Comment:
  A program to run before the greeter is shown. Can be used to start an
- xconsole or an alternative background generator.
+ xconsole or an alternative background generator. Subject to word splitting.
 Description:
- This specifies a program which is run (as
+ This string is subject to word splitting.
+ It specifies a program which is run (as
  <systemitem class="username">root</systemitem>) before offering the
  greeter window. This may be used to change the appearance of the screen
  around the greeter window or to put up other windows (e.g., you may want
@@ -1508,9 +1532,10 @@ Instance: #*/""
 Update: mk_startup
 Merge: xdm
 Comment:
- A program to run before a user session starts.
+ A program to run before a user session starts. Subject to word splitting.
 Description:
- This specifies a program which is run (as
+ This string is subject to word splitting.
+ It specifies a program which is run (as
  <systemitem class="username">root</systemitem>) after the user
  authentication process succeeds.
  The conventional name for a file used here is <command>Xstartup</command>.
@@ -1525,9 +1550,10 @@ Instance: #*/""
 Update: mk_reset
 Merge: xdm
 Comment:
- A program to run after a user session exits.
+ A program to run after a user session exits. Subject to word splitting.
 Description:
- This specifies a program which is run (as
+ This string is subject to word splitting.
+ It specifies a program which is run (as
  <systemitem class="username">root</systemitem>) after the session
  terminates.
  The conventional name for a file used here is <command>Xreset</command>.
@@ -1544,9 +1570,10 @@ Update: mk_session
 Comment:
  The program which is run as the user which logs in. It is supposed to
  interpret the session argument (see SessionsDirs) and start an appropriate
- session according to it.
+ session according to it. Subject to word splitting.
 Description:
- This specifies the session program to be executed (as the user owning
+ This string is subject to word splitting.
+ It specifies the session program to be executed (as the user owning
  the session).
  The conventional name for a file used here is <command>Xsession</command>.
  See <xref linkend="kdmrc-xsession"/>.

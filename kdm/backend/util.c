@@ -1,7 +1,7 @@
 /*
 
 Copyright 1989, 1998  The Open Group
-Copyright 2000-2004 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2000-2005 Oswald Buddenhagen <ossi@kde.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -42,6 +42,7 @@ from the copyright holder.
 # include <string.h>
 # include <unistd.h>
 #endif
+#include <ctype.h>
 
 #ifdef USG
 # define NEED_UTSNAME
@@ -220,21 +221,32 @@ arrLen( char **arr )
 	return nu;
 }
 
-char **
-addStrArr( char **arr, const char *str, int len )
+static char **
+extStrArr( char **arr, char ***strp )
 {
 	char **rarr;
 	int nu;
 
 	nu = arrLen( arr );
-	if ((rarr = Realloc( arr, sizeof(char *) * (nu + 2) ))) {
+	if ((rarr = Realloc( arr, sizeof(char *)* (nu + 2) ))) {
 		rarr[nu + 1] = 0;
-		if (StrNDup( rarr + nu, str, len ))
-			return rarr;
-		freeStrArr( rarr );
-		return 0;
+		*strp = rarr + nu;
+		return rarr;
 	}
 	freeStrArr( arr );
+	return 0;
+}
+
+char **
+addStrArr( char **arr, const char *str, int len )
+{
+	char **strp;
+
+	if ((arr = extStrArr( arr, &strp ))) {
+		if (StrNDup( strp, str, len ))
+			return arr;
+		freeStrArr( arr );
+	}
 	return 0;
 }
 
@@ -246,7 +258,7 @@ xCopyStrArr( int rn, char **arr )
 
 	nu = arrLen( arr );
 	if ((rarr = Calloc( sizeof(char *), nu + rn + 1 )))
-		memcpy( rarr + rn, arr, sizeof(char *) * nu );
+		memcpy( rarr + rn, arr, sizeof(char *)* nu );
 	return rarr;
 }
 
@@ -267,21 +279,65 @@ char **
 parseArgs( char **argv, const char *string )
 {
 	const char *word;
-	char ch;
+	char **strp, *str;
+	int wlen;
 
 	if (!(argv = initStrArr( argv )))
 		return 0;
-	for (word = string; ; ++string) {
-		ch = *string;
-		if (!ch || ch == ' ' || ch == '\t') {
-			if (word != string)
-				if (!(argv = addStrArr( argv, word, string - word )))
-					return 0;
-			if (!ch)
-				return argv;
-			word = string + 1;
+	while (*string) {
+		if (isspace( *string )) {
+			string++;
+			continue;
 		}
+		word = string;
+		wlen = 0;
+		do {
+			if (*string == '\\') {
+				if (!*++string)
+					string--;
+				wlen++;
+			} else if (*string == '\'') {
+				while (*++string != '\'' && *string)
+					wlen++;
+			} else if (*string == '"') {
+				while (*++string != '"' && *string) {
+					if (*string == '\\') {
+						if (!*++string)
+							string--;
+					}
+					wlen++;
+				}
+			} else
+				wlen++;
+		} while (*++string && !isspace( *string ));
+		if (!(argv = extStrArr( argv, &strp )))
+			return 0;
+		if (!(*strp = str = Malloc( wlen + 1 ))) {
+			freeStrArr( argv );
+			return 0;
+		}
+		do {
+			if (*word == '\\') {
+				if (!*++word)
+					word--;
+				*str++ = *word;
+			} else if (*word == '\'') {
+				while (*++word != '\'' && *word)
+					*str++ = *word;
+			} else if (*word == '"') {
+				while (*++word != '"' && *word) {
+					if (*word == '\\') {
+						if (!*++word)
+							word--;
+					}
+					*str++ = *word;
+				}
+			} else
+				*str++ = *word;
+		} while (*++word && !isspace( *word ));
+		*str = 0;
 	}
+	return argv;
 }
 
 

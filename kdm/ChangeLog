@@ -2,6 +2,11 @@ This change log contains only changes relevant to the KDM configuration,
 startup and packaging. Bug fixes are not listed, and feature changes only
 if they affect the configuration.
 
+2005-02-01  Oswald Buddenhagen <ossi@kde.org>
+
+	* Made the word splitter more sh-like. Affects HaltCmd, RebootCmd,
+	  Setup, Startup, Reset, Session and Xrdb.
+
 2005-01-31  Oswald Buddenhagen <ossi@kde.org>
 
 	* Added console mode that is suitable for systems with VTs (Linux).
