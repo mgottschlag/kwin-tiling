@@ -21,6 +21,7 @@
 #include <qdir.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
+#include <qstring.h>
 #include <qpainter.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
@@ -33,7 +34,6 @@
 #include <kiconloader.h>
 #include <kbuttonbox.h>
 #include <kpixmap.h>
-#include <kstring.h>
 #include <kimgio.h>
 
 #include <X11/Xlib.h>
@@ -491,7 +491,7 @@ void KBackground::resizeEvent( QResizeEvent * )
 void KBackground::readSettings( int num )
 {
   QString group;
-  ksprintf( &group, "/desktop%drc", num);
+  group.sprintf( "/desktop%drc", num);
 
   bool first_time = false;
 
@@ -509,12 +509,12 @@ void KBackground::readSettings( int num )
     randomMode = config.readBoolEntry( "RandomMode", DEFAULT_ENABLE_RANDOM_MODE);
 
     if ( randomMode || !interactive )
-      ksprintf( &group, "Desktop%d", random );
+      group.sprintf( "Desktop%d", random );
     else
-      ksprintf( &group, "Desktop%d", DEFAULT_DESKTOP);
+      group.sprintf( "Desktop%d", DEFAULT_DESKTOP);
   }
   else
-    ksprintf( &group, "Desktop%d", num + 1);
+    group.sprintf( "Desktop%d", num + 1);
 
   config.setGroup( group );
   
@@ -613,12 +613,12 @@ void KBackground::writeSettings( int num )
   }
 
   QString group;
-  ksprintf( &group, "/desktop%drc", num);
+  group.sprintf( "/desktop%drc", num);
   KConfig config(KApplication::kde_configdir() + group, 
 		  KApplication::localconfigdir() + group);
 
   if ( randomMode || !interactive )
-    ksprintf( &group, "Desktop%d", random );
+    group.sprintf( "Desktop%d", random );
   else
     group ="Desktop0";
 
@@ -1947,7 +1947,7 @@ void KRandomDlg::copyCurrent()
 void KRandomDlg::readSettings()
 {
   QString tmpf;
-  ksprintf( &tmpf, "/desktop%drc", desktop);
+  tmpf.sprintf( "/desktop%drc", desktop);
 
   KConfig picturesConfig(KApplication::kde_configdir() + tmpf,
 		  KApplication::localconfigdir() + tmpf);
@@ -2008,7 +2008,7 @@ void KRandomDlg::done( int r )
   kb->interactive = true;
 
   QString tmpf;
-  ksprintf( &tmpf, "/desktop%drc", desktop);
+  tmpf.sprintf( "/desktop%drc", desktop);
 
   KConfig picturesConfig(KApplication::kde_configdir() + tmpf,
 		  KApplication::localconfigdir() + tmpf);
