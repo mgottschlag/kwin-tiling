@@ -126,7 +126,7 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 	menu->insertTitle(SmallIcon("window_fullscreen"), i18n("Screen Size"));
 
 	int numSizes = currentScreen()->numSizes();
-	int sizeSort[numSizes];
+	int* sizeSort = new int[numSizes];
 
 	for (int i = 0; i < numSizes; i++) {
 		sizeSort[i] = currentScreen()->pixelCount(i);
@@ -152,6 +152,8 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 		menu->setItemParameter(lastIndex, highestIndex);
 		menu->connectItem(lastIndex, this, SLOT(slotResolutionChanged(int)));
 	}
+	delete [] sizeSort;
+	sizeSort = 0L;
 
 	// Don't display the rotation options if there is no point (ie. none are supported)
 	// XFree86 4.3 does not include rotation support.
