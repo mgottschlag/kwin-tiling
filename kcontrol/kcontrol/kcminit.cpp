@@ -32,7 +32,8 @@
 
 static KCmdLineOptions options[] =
 {
-    { "+module", I18N_NOOP("Configuration module to open."), 0 },
+    { "list", I18N_NOOP("List modules that are run at startup."), 0 },
+    { "+module", I18N_NOOP("Configuration module to run."), 0 },
     KCmdLineLastOption
 };
 
@@ -79,6 +80,22 @@ extern "C" int kdemain(int argc, char *argv[])
   KLibLoader *loader = KLibLoader::self();
 
   KService::List list;
+
+  if (args->isSet("list"))
+  {
+    list = KService::allInitServices();
+    
+    for(KService::List::Iterator it = list.begin();
+        it != list.end();
+        ++it)
+    {
+      KService::Ptr service = (*it);
+      if (service->library().isEmpty() || service->init().isEmpty())
+	continue; // Skip
+      printf("%s\n", QFile::encodeName(service->desktopEntryName()).data());
+    }
+    return 0;
+  }
 
   if (!arg.isEmpty()) {
 
