@@ -65,10 +65,11 @@ private:
   void GetSettings( void );
 
   QCheckBox *startServer, *startRealtime, *networkTransparent, *x11Comm,
-  			*fullDuplex, *customDevice;
+  			*fullDuplex, *customDevice, *customRate;
   QButtonGroup *responseGroup;
   QRadioButton *responseButton[4];
   QLineEdit *deviceName;
+  QLineEdit *samplingRate;
 
   KConfig *config;
 };

@@ -59,8 +59,8 @@ bool artswrapper_check()
 
 extern "C" {
 
-  QString
-createArgs(bool netTrans, bool duplex, int responseTime, QString deviceName)
+QString createArgs(bool netTrans, bool duplex, int responseTime,
+					QString deviceName, int rate)
 {
     QString args;
 
@@ -79,6 +79,9 @@ createArgs(bool netTrans, bool duplex, int responseTime, QString deviceName)
 
 	if (deviceName.length() > 0)
 	  args += " -D "+deviceName;
+
+	if (rate)
+	  args += QString(" -r %1").arg(rate);
 
     return args;
 }
@@ -146,19 +149,36 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 
 	// the Use custom sound device: [     ] section
 
-	QHBox *hbox = new QHBox(this);
-	hbox->setSpacing(6);
-	layout->addWidget(hbox);
+	QGridLayout *grid = new QGridLayout(0,2,2);
+	grid->setSpacing(6);
+	layout->addLayout(grid);
 
-    QWhatsThis::add(hbox, i18n("Normally, the sound server defaults to using the device called <b>/dev/dsp</b> for sound output. That should work in most cases. An exception is for instance if you are using devfs, then you should use <b>/dev/sound/dsp</b> instead. Other alternatives are things like <b>/dev/dsp0</b> or <b>/dev/dsp1</b> if you have a soundcard that supports multiple outputs, or you have multiple soundcards."));
-
-	customDevice = new QCheckBox(hbox);
+	customDevice = new QCheckBox(this);
     customDevice->setText(i18n("&Use custom sound device:"));
     connect(customDevice, SIGNAL(clicked()), SLOT(slotChanged()));
+	grid->addWidget(customDevice,0,0);
 
-	deviceName = new QLineEdit(hbox);
+	deviceName = new QLineEdit(this);
+	grid->addWidget(deviceName,0,1);
 
-    // options end
+	customRate = new QCheckBox(this);
+    customRate->setText(i18n("Use custom s&ampling rate:"));
+    connect(customRate, SIGNAL(clicked()), SLOT(slotChanged()));
+	grid->addWidget(customRate,1,0);
+
+	samplingRate = new QLineEdit(this);
+	grid->addWidget(samplingRate,1,1);
+
+   	QString deviceHint = i18n("Normally, the sound server defaults to using the device called <b>/dev/dsp</b> for sound output. That should work in most cases. An exception is for instance if you are using devfs, then you should use <b>/dev/sound/dsp</b> instead. Other alternatives are things like <b>/dev/dsp0</b> or <b>/dev/dsp1</b> if you have a soundcard that supports multiple outputs, or you have multiple soundcards.");
+
+	QString rateHint = i18n("Normally, the sound server defaults to using a sampling rate of 44100 Hz (CD quality), which is supported on almost any hardware. If you are using certain <b>Yamaha soundcards</b>, you might need to configure this to 48000 Hz here, if you are using <b>old SoundBlaster cards</b>, like SoundBlaster Pro, you might need to change this to 22050 Hz. All other values are possible, too, and may make sense in certain contexts (i.e. professional studio equipment).");
+
+    QWhatsThis::add(customDevice, deviceHint);
+    QWhatsThis::add(deviceName, deviceHint);
+    QWhatsThis::add(customRate, rateHint);
+    QWhatsThis::add(samplingRate, rateHint);
+
+ // options end
 
     QLabel *restartHint = new QLabel(this);
     restartHint->setText(i18n("<qt>The aRts soundserver cannot be "
@@ -167,6 +187,12 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
                   "have to restart your session in order for "
                   "those changes to take effect.</qt>"));
     layout->addWidget(restartHint);
+
+    QLabel *yamahaHint = new QLabel(this);
+    yamahaHint->setText(i18n("<qt>If you are using a Yamaha soundcard, "
+			"you might need to set the sampling rate to 48000 Hz.</qt>"));
+	                       
+    layout->addWidget(yamahaHint);
     layout->addStretch();
 
     setMinimumSize(sizeHint());
@@ -187,6 +213,18 @@ void KArtsModule::GetSettings( void )
     fullDuplex->setChecked(config->readBoolEntry("FullDuplex",false));
 	deviceName->setText(config->readEntry("DeviceName",""));
 	customDevice->setChecked(deviceName->text() != "");
+	int rate = config->readNumEntry("SamplingRate",0);
+	if(rate)
+	{
+		customRate->setChecked(true);
+		samplingRate->setText(QString("%1").arg(rate));
+	}
+	else
+	{
+		customRate->setChecked(false);
+		samplingRate->setText("");
+	}
+
     int responseTime=config->readNumEntry("ResponseTime",2);
     responseButton[ (responseTime<4) ? responseTime : 2 ]->setChecked(true);
 
@@ -196,6 +234,7 @@ void KArtsModule::GetSettings( void )
 void KArtsModule::saveParams( void )
 {
 	QString dev = customDevice->isChecked()?deviceName->text():"";
+	int rate = customRate->isChecked()?samplingRate->text().toLong():0;
 
     config->setGroup("Arts");
     config->writeEntry("StartServer",startServer->isChecked());
@@ -204,6 +243,7 @@ void KArtsModule::saveParams( void )
     config->writeEntry("X11GlobalComm",x11Comm->isChecked());
     config->writeEntry("FullDuplex",fullDuplex->isChecked());
     config->writeEntry("DeviceName",dev);
+    config->writeEntry("SamplingRate",rate);
 
     int t = 2;
 
@@ -219,7 +259,7 @@ void KArtsModule::saveParams( void )
 
 	config->writeEntry("Arguments",
 		createArgs(networkTransparent->isChecked(), fullDuplex->isChecked(),
-					t, dev));
+					t, dev, rate));
 
 	config->sync();
 }
@@ -257,6 +297,8 @@ void KArtsModule::defaults()
     responseButton[2]->setChecked(true);
 	customDevice->setChecked(false);
 	deviceName->setText("");
+	customRate->setChecked(false);
+	samplingRate->setText("");
 }
 
 QString KArtsModule::quickHelp() const
@@ -278,6 +320,9 @@ void KArtsModule::updateWidgets()
     customDevice->setEnabled(startServer->isChecked());
     deviceName->setEnabled(startServer->isChecked()
 							&& customDevice->isChecked());
+    customRate->setEnabled(startServer->isChecked());
+    samplingRate->setEnabled(startServer->isChecked()
+							&& customRate->isChecked());
 }
 
 void KArtsModule::slotChanged()
@@ -308,6 +353,7 @@ extern "C"
         bool fullDuplex = config->readBoolEntry("FullDuplex",false);
         int responseTime = config->readNumEntry("ResponseTime",2);
 		QString deviceName = config->readEntry("DeviceName","");
+		int samplingRate = config->readNumEntry("SamplingRate",0);
 
         delete config;
 
@@ -332,7 +378,7 @@ extern "C"
 
             QString args =
               createArgs(networkTransparent, fullDuplex, responseTime,
-			  				deviceName);
+			  				deviceName,samplingRate);
 
             cmdline += args.utf8();
 
