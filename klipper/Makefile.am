@@ -30,7 +30,7 @@ EXTRA_DIST = $(data_DATA)
 KDE_ICON = klipper
 
 messages:
-	$(XGETTEXT) $(klipper_la_SOURCES) -o $(podir)/klipper.pot
+	$(XGETTEXT) $(klipper_la_SOURCES) klipperbindings.cpp -o $(podir)/klipper.pot
 
 dummy.cpp:
 	echo > dummy.cpp
