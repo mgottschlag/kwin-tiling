@@ -289,43 +289,41 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
 
    cbAA = new QCheckBox( i18n( "Use a&nti-aliasing for fonts" ), aaBox);
 
-   QWhatsThis::add(cbAA,
-     i18n(
-       "If this option is selected, KDE will smooth the edges of curves in "
-			 "fonts and some images."));
+   QWhatsThis::add(cbAA, i18n("If this option is selected, KDE will smooth the edges of curves in "
+                              "fonts and some images."));
 
 
    aaExcludeRange=new QCheckBox(i18n("E&xclude range:"), aaBox),
    aaExcludeFrom=new KDoubleNumInput(aaBox),
-   aaExcludeFrom->setRange(0.0, 72.0, 1.0);
+   aaExcludeFrom->setRange(0.0, 7.2, 0.1);
    aaExcludeFrom->setPrecision(1);
    aaExcludeFrom->setSuffix(i18n(" pt"));
    aaExcludeTo=new KDoubleNumInput(aaBox);
-   aaExcludeTo->setRange(0.0, 72.0, 1.0);
+   aaExcludeTo->setRange(0.0, 7.2, 0.1);
    aaExcludeTo->setPrecision(1);
    aaExcludeTo->setSuffix(i18n(" pt"));
    aaUseSubPixel=new QCheckBox(i18n("&Use sub-pixel hinting:"), aaBox);
    aaSubPixelType=new QComboBox(false, aaBox);
 
    for(int t=KXftConfig::SubPixel::None+1; t<=KXftConfig::SubPixel::Vbgr; ++t)
-     aaSubPixelType->insertItem(KXftConfig::toStr((KXftConfig::SubPixel::Type)t));
+       aaSubPixelType->insertItem(KXftConfig::toStr((KXftConfig::SubPixel::Type)t));
 
    aaLayout->addMultiCellWidget(cbAA, 0, 0, 0, 4);
    aaLayout->addItem(new QSpacerItem(16, 16, QSizePolicy::Fixed,
-                                               QSizePolicy::Fixed), 
-                       1, 0);
+                                     QSizePolicy::Fixed),
+                     1, 0);
    aaLayout->addWidget(aaExcludeRange, 1, 1);
    aaLayout->addWidget(aaExcludeFrom, 1, 2);
    aaLayout->addWidget(new QLabel(i18n(" to "), aaBox), 1, 3);
    aaLayout->addWidget(aaExcludeTo, 1, 4);
    aaLayout->addItem(new QSpacerItem(16, 16, QSizePolicy::Fixed,
-                                               QSizePolicy::Fixed),
-                       2, 0);
+                                     QSizePolicy::Fixed),
+                     2, 0);
    aaLayout->addWidget(aaUseSubPixel, 2, 1);
    aaLayout->addMultiCellWidget(aaSubPixelType, 2, 2, 2, 4);
 
    setAaWidgets();
- 
+
    connect(aaExcludeRange, SIGNAL(toggled(bool)),
            aaExcludeFrom, SLOT(setEnabled(bool)));
    connect(aaExcludeRange, SIGNAL(toggled(bool)),
@@ -419,7 +417,7 @@ void KFonts::save()
   if ( !_changed )
     return;
 
-  _changed = false;    
+  _changed = false;
 
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() )
       i->writeFont();
@@ -455,7 +453,7 @@ void KFonts::save()
       xft.setSubPixelType(getAaSubPixelType());
   else
       xft.setSubPixelType(KXftConfig::SubPixel::None);
-      
+
   if((useAA != useAA_original) || xft.changed()) {
     KMessageBox::information(this, i18n("You have changed anti-aliasing related settings.\nThis change will only affect newly started applications."), i18n("Anti-Aliasing Settings Changed"), "AAsettingsChanged", false);
     useAA_original = useAA;
