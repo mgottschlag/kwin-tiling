@@ -15,14 +15,14 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
-*/  
+*/
 
 
 #include <qdragobject.h>
 #include <qlayout.h>
 
 #include "utils.h"
-#include <kio_job.h>
+#include <kio/job.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <klined.h>
@@ -86,7 +86,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   vvbox = new QVBoxLayout(group, 6,6);
   vvbox->addSpacing(group->fontMetrics().height());
 
-  QHBoxLayout *hbox = new QHBoxLayout(vvbox, 6);  
+  QHBoxLayout *hbox = new QHBoxLayout(vvbox, 6);
 
   label = new QLabel(i18n("Language:"), group);
   hbox->addWidget(label);
@@ -140,7 +140,7 @@ void KDMAppearanceWidget::slotLogoPixChanged(const QString &iconstr)
 
 
 bool KDMAppearanceWidget::eventFilter(QObject */*o*/, QEvent *e)
-{  
+{
   if (e->type() == QEvent::DragEnter) {
     iconLoaderDragEnterEvent((QDragEnterEvent *) e);
     return true;
@@ -165,7 +165,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
   QStringList uris;
   if (QUriDrag::decodeToUnicodeUris( e, uris) && (uris.count() > 0)) {
     KURL url(*uris.begin());
-    
+
     QString filename = url.filename();
     QString msg;
     QStringList dirs = KGlobal::dirs()->findDirs("data", "kdm/pics/");
@@ -173,10 +173,10 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
     QStringList::ConstIterator it = dirs.begin();
     if ((*it).left(local.length()) == local)
       it++;
-    QString pixurl("file:"+ *it); 
+    QString pixurl("file:"+ *it);
     int last_dot_idx = filename.findRev('.');
     bool istmp = false;
-    
+
     // CC: Now check for the extension
     QString ext(".png .xpm .xbm");
     //#ifdef HAVE_LIBGIF
@@ -185,7 +185,7 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 #ifdef HAVE_LIBJPEG
     ext += " .jpg";
 #endif
-    
+
     if( !ext.contains(filename.right(filename.length()-
 				     last_dot_idx), false) ) {
       msg =  i18n("Sorry, but %1\n"
@@ -276,14 +276,14 @@ void KDMAppearanceWidget::load()
     guicombo->setCurrentItem(1);
   else
     guicombo->setCurrentItem(0);
-  
+
   // get the language
   c->setGroup("Locale");
   QString lang = c->readEntry("Language", "C");
   int index = lang.find(':');
   if (index>0)
     lang.truncate(index);
-  langcombo->setLanguage(lang);                                           
+  langcombo->setLanguage(lang);
 }
 
 
@@ -292,7 +292,7 @@ void KDMAppearanceWidget::defaults()
   greetstr_lined->setText("KDE System at [HOSTNAME]");
   setLogo("kdelogo.png");
   guicombo->setCurrentItem(0);
-  langcombo->setLanguage("C"); 
+  langcombo->setLanguage("C");
 }
 
 
