@@ -11,7 +11,7 @@ khotkeys_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 noinst_HEADERS = khotkeys.h
 
-INCLUDES= $(all_includes) -I$(srcdir)/shared
+INCLUDES = -I$(srcdir)/shared $(all_includes)
 
 METASOURCES = AUTO
 

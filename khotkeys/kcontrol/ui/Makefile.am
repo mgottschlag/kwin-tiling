@@ -9,7 +9,7 @@ libui_la_SOURCES = dummy.cpp windowdef_simple_widget_ui.ui windowdef_list_widget
 libui_la_LIBADD  = ../../shared/libshared.la $(LIB_KDEUI)
 libui_la_LDFLAGS = $(all_libraries)
 
-INCLUDES= $(all_includes) -I$(srcdir)/.. -I$(top_srcdir)/khotkeys/shared
+INCLUDES= -I$(srcdir)/.. -I$(top_srcdir)/khotkeys/shared $(all_includes)
 
 dummy.cpp:
 	echo > dummy.cpp

@@ -22,7 +22,7 @@ noinst_HEADERS = menuedit.h window_trigger_widget.h \
     gesturedrawer.h gesturerecorder.h gesturerecordpage.h gesture_triggers_tab.h
 
 
-INCLUDES= -I$(top_srcdir)/khotkeys/shared $(all_includes) -I$(srcdir)/ui -I./ui
+INCLUDES= -I$(top_srcdir)/khotkeys/shared -I$(srcdir)/ui -I./ui $(all_includes)
 
 METASOURCES = AUTO
 
