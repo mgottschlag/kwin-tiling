@@ -36,12 +36,9 @@
 #include "MetaDialog.h"
 #include "Misc.h"
 #include "KfiCmModule.h"
-
 #include <kprogress.h>
 #include <kapplication.h>
 #include <klocale.h>
-#include <kbuttonbox.h>
-
 #include <qbitmap.h>
 #include <qlabel.h>
 #include <qgroupbox.h>
@@ -50,7 +47,6 @@
 #include <qpushbutton.h>
 #include <qcombobox.h>
 #include <qsplitter.h>
-
 #include <stdlib.h>
 
 CFontsWidget::CFontsWidget(QWidget *parent, const char *)
@@ -74,11 +70,9 @@ CFontsWidget::CFontsWidget(QWidget *parent, const char *)
                 *progressLayout=new QGridLayout(itsProgressBox, 2, 2, 11, 6),
                 *previewLayout=new QGridLayout(previewBox, 1, 1, 6, 6),
                 *layout=new QGridLayout(this, 1, 1, 11, 6),
-                *installedLayout=new QGridLayout(installedBox, 3, 2),
-                *selectorLayout=new QGridLayout(itsSelectorBox, 3, 2);
+                *installedLayout=new QGridLayout(installedBox, 5, 2, 0, 6),
+                *selectorLayout=new QGridLayout(itsSelectorBox, 3, 2, 0, 6);
     QPushButton *fsAdd=new QPushButton(i18n("Add"), itsSelectorBox);
- 
-    KButtonBox  *buttonBox=new KButtonBox(installedBox, Qt::Horizontal);
     QPalette    pal(itsProgressBox->palette());
     QColorGroup dis(pal.disabled());
 
@@ -105,15 +99,17 @@ CFontsWidget::CFontsWidget(QWidget *parent, const char *)
     itsFontList->setSizePolicy(QSizePolicy((QSizePolicy::SizeType)3, (QSizePolicy::SizeType)3, 0, 0, 
                               itsFontList->sizePolicy().hasHeightForWidth()));
     itsFontListLabel=new QLabel(i18n("<B>Install to:</B>"), installedBox);
-    installedLayout->addMultiCellWidget(itsFontListLabel, 0, 0, 0, 1);
-    installedLayout->addMultiCellWidget(itsFontList, 1, 1, 0, 1);
+    installedLayout->addMultiCellWidget(itsFontListLabel, 0, 0, 0, 4);
+    installedLayout->addMultiCellWidget(itsFontList, 1, 1, 0, 4);
     installedLayout->addItem(new QSpacerItem(5, 5, QSizePolicy::Expanding, QSizePolicy::Minimum), 2, 0);
-    installedLayout->addWidget(buttonBox, 2, 1);
-
-    itsButtonAdd = buttonBox->addButton(i18n("Add..."));
-    itsButtonRemove = buttonBox->addButton(i18n("Remove"));
-    itsButtonDisable = buttonBox->addButton(i18n("Disable"));
-    itsButtonEnable = buttonBox->addButton(i18n("Enable"));
+    itsButtonAdd = new QPushButton(i18n("Add..."), installedBox);
+    itsButtonRemove = new QPushButton(i18n("Remove"), installedBox);
+    itsButtonDisable = new QPushButton(i18n("Disable"), installedBox);
+    itsButtonEnable = new QPushButton(i18n("Enable"), installedBox);
+    installedLayout->addWidget(itsButtonAdd, 2, 1);
+    installedLayout->addWidget(itsButtonRemove, 2, 2);
+    installedLayout->addWidget(itsButtonDisable, 2, 3);
+    installedLayout->addWidget(itsButtonEnable, 2, 4);
     itsModeCombo=new QComboBox(fontsBox);
 
     itsModeCombo->insertItem(i18n("Basic Mode"));
