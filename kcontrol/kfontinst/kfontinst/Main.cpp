@@ -26,6 +26,10 @@
 // (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "Misc.h"
 #include "FontEngine.h"
 #include "Fontmap.h"
@@ -33,7 +37,15 @@
 #include "kxftconfig.h"
 #include <fontconfig/fontconfig.h>
 #include <qfile.h>
+#include <stdio.h>
+
+//
+// Bug#99335 Solaris 2.6 does not have getopt.h :-(
+#ifdef HAVE_GETOPT_H
 #include <getopt.h>
+#else
+#include <unistd.h>
+#endif
 #include <iostream>
 
 #define KFI_XF86CFG "XF86Config"
@@ -93,8 +105,8 @@ KFI::CXConfig * getXCfg(bool root)
         // ...note on some systems (Solaris and HP-UX) only the xfs file will be found
         bool          xfs=false;
         KFI::CXConfig *xcfg=NULL;
-        QString       xConfigFile=getFile(QFile::encodeName(xConfigFile), constXConfigFiles),
-                      xfsConfigFile=getFile(QFile::encodeName(xfsConfigFile), constXfsConfigFiles);
+        QString       xConfigFile=getFile(QFile::encodeName(constXConfigFiles[0]), constXConfigFiles),
+                      xfsConfigFile=getFile(QFile::encodeName(constXfsConfigFiles[0]), constXfsConfigFiles);
             
         // If found xfs, but not X - then assume that xfs is being used...
         if(!xfsConfigFile.isEmpty() && xConfigFile.isEmpty())
@@ -127,6 +139,7 @@ static void usage(char *app)
               << std::endl
               << "  Helper application for KDE's fonts:/ ioslave." << std::endl
               << std::endl
+#ifdef HAVE_GETOPT_H
               << "  -x, --configure_x        Configure FOLDER for regular x - i.e." << std::endl
               << "                           create fonts.dir, fonts.scale and encodngs.dir" << std::endl
               << std::endl
@@ -143,6 +156,24 @@ static void usage(char *app)
               << "  -r, --refresh_x          Refresh X." << std::endl
               << std::endl
               << "  -s, --refresh_xfs        Refresh Xfs." << std::endl
+#else
+              << "  -x                       Configure FOLDER for regular x - i.e." << std::endl
+              << "                           create fonts.dir, fonts.scale and encodngs.dir" << std::endl
+              << std::endl
+              << "  -g                       Create Fontmap file. If run as root, then " << std::endl
+              << "                           no paramter is required as all fonts are " << std::endl
+              << "                           configured, and Fontmap placed in /etc/fonts" << std::endl
+              << "                           For non-root, fonts located in FOLDER are" << std::endl
+              << "                           configured, and Fontmap placed there." << std::endl
+              << std::endl
+              << "  -f                       Add FOLDER to fontconfig config files." << std::endl
+              << std::endl
+              << "  -a                       Add FOLDER to X config files only when run as root.," << std::endl
+              << std::endl
+              << "  -r                       Refresh X." << std::endl
+              << std::endl
+              << "  -s                       Refresh Xfs." << std::endl
+#endif
               << std::endl
               << std::endl
               << "  (C) Craig Drummond, 2003, 2004." << std::endl
@@ -161,6 +192,7 @@ void refresh(bool refreshX, bool refreshXfs, bool root)
 
 int main(int argc, char *argv[])
 {
+#ifdef HAVE_GETOPT_H
     static struct option options[]=
     {
         { "configure_x",    0, 0, 'x' },
@@ -171,6 +203,7 @@ int main(int argc, char *argv[])
         { "refresh_xfs",    0, 0, 's' },
         { 0,                0, 0, 0   }
     };
+#endif
 
     int  c=0,
          optIndex,
@@ -183,7 +216,11 @@ int main(int argc, char *argv[])
          refreshXfs=false,
          root=KFI::Misc::root();
 
+#ifdef HAVE_GETOPT_H
     while(-1!=(c=getopt_long(argc, argv, "xgfars", options, &optIndex)))
+#else
+    while(-1!=(c=getopt(argc, argv, "xgfars")))
+#endif
         switch(c)
         {
             case 'x':
@@ -212,6 +249,8 @@ int main(int argc, char *argv[])
     int  left=argc-optind;
     bool folderRequired=doX || addToX || addToFc || (!root && doGs);
 
+FILE *f=fopen("/tmp/kfi", "a");
+fprintf(f, "%s\n", "Called...");
     if (left>1 || (0==left && folderRequired) || (!doX && !doGs && !addToX && !addToFc))
         usage(argv[0]);
     else
@@ -281,7 +320,10 @@ int main(int argc, char *argv[])
                 KFI::CFontEngine fe;
 
                 if(0==rv && doX)
+{
+fprintf(f, "%s\n", "doing X");
                     rv=KFI::CXConfig::configureDir(folder, fe) ? 0 : -5;
+}
 
                 refresh(refreshX, refreshXfs, root);
 
@@ -293,5 +335,6 @@ int main(int argc, char *argv[])
         }
     }
 
+fclose(f);
     return rv;
 }
