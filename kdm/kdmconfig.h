@@ -29,6 +29,9 @@
 
 #include "kdm-config.h"
 
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>	// for BSD
+#endif
 #include <unistd.h>
 
 #include <qstring.h>
@@ -64,7 +67,9 @@ public:
      QString         liloCmd() { return _liloCmd; };
      QString         liloMap() { return _liloMap; };
      bool            useLilo() { return _useLilo; };
+#ifndef BSD
      QString         *consoleMode() { return _consoleMode; };
+#endif
 
 private:
      void           getConfig();
@@ -86,8 +91,9 @@ private:
      QString        _liloCmd;
      QString        _liloMap;
      bool           _useLilo;
+#ifndef BSD
      QString        *_consoleMode;
-
+#endif
 };
 
 #endif /* KDMCONFIG_H */

@@ -34,6 +34,9 @@
 
 #include <X11/Xmd.h>
 
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>	// for BSD
+#endif
 #include <stdlib.h>
 #include <qlayout.h>
 #include <qlabel.h>
@@ -47,9 +50,11 @@ class KDMShutdown : public FDialog {
      Q_OBJECT
 public:
      KDMShutdown( int mode, QWidget* _parent=0, const char* _name=0,
-		  const char* _shutdown = "/sbin/halt", 
-		  const char* _restart  = "/sbin/reboot",
+		  const char* _shutdown = SHUTDOWN_CMD,
+		  const char* _restart  = REBOOT_CMD,
+#ifndef BSD
 		  const char *_console = "/sbin/init 3",
+#endif
 		  bool _lilo = FALSE,
 		  const char* _lilocmd = 0,
                   const char* _lilomap = 0);
@@ -67,7 +72,9 @@ private:
      const char*   cur_action;
      const char*   shutdown;
      const char*   restart;
+#ifndef BSD
      const char*   console;
+#endif
      QRadioButton  *restart_rb;
      bool          lilo;
      int           liloTarget;

@@ -167,7 +167,9 @@ verify_root_pw( const char* pw)
 KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 			  const char* _shutdown, 
 			  const char* _restart,
+#ifndef BSD
 			  const char *_console,
+#endif
 			  bool _lilo,
 			  const char *_lilocmd, const char *_lilomap)
 
@@ -175,7 +177,9 @@ KDMShutdown::KDMShutdown( int mode, QWidget* _parent, const char* _name,
 {
      shutdown = _shutdown;
      restart  = _restart;
+#ifndef BSD
      console = _console;
+#endif
      int h = 10, w = 0;
      lilo = _lilo;
      liloCmd = _lilocmd;
@@ -334,9 +338,11 @@ KDMShutdown::rb_clicked( int id)
      case 2:
 	  cur_action = 0L;
 	  break;
+#ifndef BSD
      case 3:
 	  cur_action = console;
 	  break;
+#endif
      }
 }
 

@@ -131,16 +131,18 @@ void KDMConfig::getConfig()
 	    _shutdownButton = KNone;
 	_shutdown         = new QString( kc->readEntry(  "Shutdown"));
 	if( _shutdown->isNull())
-	    *_shutdown = "/sbin/halt";
+	    *_shutdown = SHUTDOWN_CMD;
 	_restart          = new QString( kc->readEntry(   "Restart"));
 	if( _restart->isNull())
-	    *_restart = "/sbin/reboot";
+	    *_restart = REBOOT_CMD;
     } else
 	_shutdownButton   = KNone;
     
+#ifndef BSD
     _consoleMode = new QString(kc->readEntry("ConsoleMode"));
     if (_consoleMode->isNull())
 	*_consoleMode = "/sbin/init 3";
+#endif
     
     /* TODO: to be ported to QStyle
        if( kc->hasKey( "GUIStyle")) {
