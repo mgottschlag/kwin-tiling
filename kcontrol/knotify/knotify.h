@@ -20,6 +20,11 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.6  2000/04/09 05:57:05  charles
+    Major milestone in progress of the new version of this applet.
+
+    Aren't ya all proud of me? :D
+
     Revision 1.5  2000/04/08 22:50:45  charles
     Totally broken for a change in design.
     I'll start doing some "object oriented programming" now! Who would've
@@ -93,8 +98,6 @@ private slots:
 	 * Load all the apps
 	 */
 	void loadAll();
-	void appSelected(QListViewItem *);
-	void eventSelected(QListViewItem *);
 	
 protected:
 	QListView *apps;

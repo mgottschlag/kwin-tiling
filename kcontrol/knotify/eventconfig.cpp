@@ -88,7 +88,6 @@ void ProgramConfig::load(KConfig &conf)
 		eventlist.append(e);
 		kapp->processEvents();
 	}
-
 }
 
 Programs::Programs(EventView *_eventview, QListView *_programs,
@@ -160,12 +159,13 @@ EventConfig::EventListViewItem::EventListViewItem(EventConfig *ev)
 void Programs::selected(QListViewItem *_i)
 {
 	(static_cast<ProgramConfig::ProgramListViewItem*>(_i))->program->selected();
-	
 }
 
 void ProgramConfig::selected()
 {
 	// Clean up after the previous ProgramConfig
+	Programs::eventview->unload();
+	Programs::events->clear();
 	
 	// Load the new events
 	for (EventConfig *ev=eventlist.first(); ev != 0; ev=eventlist.next())
@@ -176,16 +176,12 @@ void ProgramConfig::selected()
 void ProgramConfig::selected(QListViewItem *_i)
 {
 	(static_cast<EventConfig::EventListViewItem*>(_i))->event->selected();
-	
 }
 
 void EventConfig::selected()
 {
-	// Clean up after the previous ProgramConfig
-	
 	// Load the new events
 	Programs::eventview->load(this);
-
 }
 
 ProgramConfig::ProgramConfig()

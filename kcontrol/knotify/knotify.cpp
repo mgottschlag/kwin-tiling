@@ -37,32 +37,24 @@
 KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	KCModule(parent, name)
 {
-
 	QVBoxLayout *layout=new QVBoxLayout(this,0,3);
-	//layout->setAutoAdd(true);
 	
 	apps=new QListView(this);
-	//apps->setMaximumHeight(100);
 	apps->addColumn(i18n("Application Name"));
 	apps->addColumn(i18n("Description"));
 	apps->setSelectionMode(QListView::Single);
 	layout->addWidget(apps, 1);
-	//layout->setStretchFactor(events, -1);
 	
 	events=new QListView(this);
 	events->setSelectionMode(QListView::Single);
 	events->addColumn(i18n("Event Name"));
 	events->addColumn(i18n("Description"));
 	layout->addWidget(events, 1);
-	//layout->setStretchFactor(events, 1);
 	
 	eventview=new EventView(this);
 	eventview->setEnabled(false);
 	layout->addWidget(eventview, 1);
-	//layout->setStretchFactor(events, 1);
-	
-	applications = new Programs(eventview, apps, events);
-	applications->show();
+	loadAll();
 };
 
 KNotifyWidget::~KNotifyWidget()
@@ -75,8 +67,10 @@ void KNotifyWidget::defaults()
 	if (KMessageBox::warningContinueCancel(this,
 		i18n("This will cause the notifications for *All Applications* "
 		     "to be reset to their defaults!"), i18n("Are you sure?!"), i18n("Continue"))
-		== KMessageBox::Continue)
-		KMessageBox::sorry(this, "Not implemented yet :)  Who wants to?  (nudge nudge, wink wink)", "Oops!");
+		!= KMessageBox::Continue)
+		return;
+	delete applications;
+	loadAll();
 }
 
 void KNotifyWidget::changed()
@@ -86,18 +80,7 @@ void KNotifyWidget::changed()
 
 void KNotifyWidget::loadAll()
 {
-
+	applications = new Programs(eventview, apps, events);
+	applications->show();
 }
-
-void KNotifyWidget::appSelected(QListViewItem *_i)
-{
-
-}
-
-void KNotifyWidget::eventSelected(QListViewItem *_i)
-{
-
-}
-
-
 

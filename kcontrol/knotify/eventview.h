@@ -20,6 +20,11 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.11  2000/04/10 23:34:06  charles
+    More stable, supports browsing better.
+    Still doesn't save the configuration though :(
+    I'm not done with this one yet!
+
     Revision 1.10  2000/04/10 04:56:07  charles
     Thought I'de commit before I break out for the day^H^H^Hnight.
 
@@ -94,7 +99,7 @@ public:
 	
 public slots:
 	void defaults();
-	void load(EventConfig *_event);
+	void load(EventConfig *_event, bool save=true);
 	void unload(bool save=true);
 	void itemSelected(int item);
 	

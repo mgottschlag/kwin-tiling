@@ -36,7 +36,7 @@
 EventView::EventView(QWidget *parent, const char *name):
 	QWidget(parent, name), event(0), localEvent(0), oldListItem(-1)
 {
-	QGridLayout *layout=new QGridLayout(this,2,4);
+	QGridLayout *layout=new QGridLayout(this,2,8);
 	
 	static QStringList presentation;
 	presentation << i18n("Sound")
@@ -47,16 +47,17 @@ EventView::EventView(QWidget *parent, const char *name):
 	eventslist=new QListBox(this);
 	eventslist->insertStringList(presentation);
 	
-	layout->addMultiCellWidget(eventslist, 0,3, 0,0);
+	layout->addMultiCellWidget(eventslist, 0,7, 0,0);
 	layout->addWidget(enabled=new QCheckBox(i18n("&Enabled"),this), 0,1);
 	layout->addWidget(file=new KLineEdit(this), 2,1);
 	layout->addWidget(new QLabel(file, i18n("&File:"), this), 1,1);
-	layout->addWidget(todefault=new QPushButton(i18n("&Default"), this), 3,1);
+	layout->addWidget(todefault=new QPushButton(i18n("&Default Event"), this), 3,1);
 	
 	file->setEnabled(false);
 	connect(eventslist, SIGNAL(highlighted(int)), SLOT(itemSelected(int)));
 	connect(enabled, SIGNAL(toggled(bool)), SLOT(itemToggled(bool)));
-	connect(file, SIGNAL(textChanged(QString)), SLOT(changed(textChanged(QString))));
+//	connect(file, SIGNAL(textChanged(QString)), SLOT(changed(textChanged(QString))));
+	connect(todefault, SIGNAL(clicked()), SLOT(defaults()));
 };
 
 EventView::~EventView()
@@ -65,8 +66,9 @@ EventView::~EventView()
 
 void EventView::defaults()
 {
-//	emit changed();
-	unload();
+	emit changed();
+	
+	load(event, false);
 }
 
 void EventView::textChanged(const QString &str)
@@ -98,9 +100,9 @@ void EventView::itemToggled(bool on)
 	setPixmaps();
 }
 
-void EventView::load(EventConfig *_event)
+void EventView::load(EventConfig *_event, bool save)
 {
-	unload();
+	unload(save);
 	event=_event;
 	localEvent=new EventConfig(_event);
 	setEnabled(true);
@@ -133,6 +135,7 @@ void EventView::unload(bool save)
 {
 	if (save && localEvent)
 		event->set(localEvent);
+
 	if (localEvent)
 		delete localEvent;
 
