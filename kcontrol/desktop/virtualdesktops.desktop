@@ -1,33 +1,12 @@
 [Desktop Entry]
 Icon=desktop
 Type=Application
-Exec=kcmshell LookNFeel/Desktop/numberandnames
+Exec=kcmshell LookNFeel/Desktop/virtualdesktops
 
 X-KDE-ModuleType=Library
-X-KDE-Library=numberandnames
+X-KDE-Library=virtualdesktops
 
-Name=Number & Name
-Name[ca]=N�meros i Noms
-Name[cs]=Číslo a jméno
-Name[da]=Nummer&Navn
-Name[de]=Nummer und Name
-Name[eo]=Nombro kaj Nomo
-Name[et]=Arv ja nimed
-Name[fi]=Numero&Nimi
-Name[fr]=Numéro et nom
-Name[he]=םירפסמו תומש
-Name[hu]=Szám&név
-Name[it]=Numero e nomi
-Name[ja]=数＆名前
-Name[nl]=Nummer&Naam
-Name[no]=Nummer og navn
-Name[no_NY]=Nummer og namn
-Name[pt]=Número&Nome
-Name[pt_BR]=Número&Nome
-Name[ro]=Număr şi nume
-Name[sl]=Številka&ime
-Name[sr]=Broj&Ime
-Name[sv]=Nummer&Namn
+Name=Virtual Desktops
 
 Comment=Configure desktop number and names
 Comment[ca]=Configuraci� del n�mero d'escriptoris i dels noms

@@ -35,8 +35,9 @@
 
 extern "C"
 {
-  KCModule *create_numberandnames(QWidget *parent, const char *name)
+  KCModule *create_virtualdesktops(QWidget *parent, const char *name)
   {
+    // FIXME: rename the .pot file
     KGlobal::locale()->insertCatalogue("kcmnumberandnames");
     return new KDesktopConfig(parent, name);
   };

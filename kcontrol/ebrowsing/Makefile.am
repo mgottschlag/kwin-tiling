@@ -20,4 +20,4 @@ messages:
 	$(XGETTEXT) $(libkcm_kurifilt_la_SOURCES) -o $(podir)/kcmkurifilt.pot
 
 data_DATA = ebrowsing.desktop
-datadir = $(kde_appsdir)/Settings/Browsing/Web
+datadir = $(kde_appsdir)/Settings/WebBrowsing

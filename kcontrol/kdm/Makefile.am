@@ -17,4 +17,4 @@ messages:
 	$(XGETTEXT) $(libkcm_kdm_la_SOURCES) -o $(podir)/kdmconfig.pot
 
 data_DATA = kdm.desktop
-datadir = $(kde_appsdir)/Settings/Applications
+datadir = $(kde_appsdir)/Settings/System
