@@ -34,11 +34,12 @@
 
 #include <stdlib.h>
 
-CFontPreview::CFontPreview(QWidget *parent, const char *name)
+CFontPreview::CFontPreview(QWidget *parent, const char *name, const QString &str)
             : QWidget(parent, name),
               itsLastWidth(0),
               itsLastHeight(0),
-              itsJob(NULL)
+              itsJob(NULL),
+              itsString(QString::null==str ? i18n(" No preview available") : str)
 {
 }
 
@@ -83,6 +84,7 @@ void CFontPreview::gotPreview(const KFileItem *item, const QPixmap &pix)
     {
         itsPixmap=pix;
         update();
+        emit status(true);
     }
 }
 
@@ -94,6 +96,7 @@ void CFontPreview::failed(const KFileItem *item)
 
         itsPixmap=nullPix;
         update();
+        emit status(false);
     }
 }
 
@@ -108,7 +111,7 @@ void CFontPreview::paintEvent(QPaintEvent *)
         r.setX(r.x()+1);
         r.setY(r.y()+((height()-fontMetrics().height())/2));
         paint.setPen(kapp->palette().active().text());
-        paint.drawText(r, AlignLeft, i18n(" No preview available"));
+        paint.drawText(r, AlignLeft, itsString);
     }
     else
     {

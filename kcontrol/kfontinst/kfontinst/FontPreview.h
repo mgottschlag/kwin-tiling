@@ -44,7 +44,7 @@ class CFontPreview : public QWidget
 
     public:
 
-    CFontPreview(QWidget *parent, const char *name=NULL);
+    CFontPreview(QWidget *parent, const char *name=NULL, const QString &str=QString::null);
     virtual ~CFontPreview() {}
 
     void  paintEvent(QPaintEvent *);
@@ -58,6 +58,10 @@ class CFontPreview : public QWidget
     void gotPreview(const KFileItem *item, const QPixmap &pix);
     void failed(const KFileItem *item);
 
+    signals:
+
+    void status(bool);
+
     private:
 
     void showFont();
@@ -69,6 +73,7 @@ class CFontPreview : public QWidget
     int             itsLastWidth,
                     itsLastHeight;
     KIO::PreviewJob *itsJob;
+    QString         itsString;
 };
 
 #endif
