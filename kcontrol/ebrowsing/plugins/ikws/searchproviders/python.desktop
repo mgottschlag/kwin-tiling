@@ -1,0 +1,8 @@
+[Desktop Entry]
+Charset=
+Hidden=false
+Keys=py,python
+Name=Python Reference Manual
+Query=http://search.python.org/query.html?col=\{what,"pydocs"}&nh=\{num,"20"}&qt=\{@}
+ServiceTypes=SearchProvider
+Type=Service
