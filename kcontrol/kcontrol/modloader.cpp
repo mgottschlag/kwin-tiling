@@ -65,8 +65,6 @@ KCModule *ModuleLoader::loadModule(const ModuleInfo &mod, bool withfallback)
      if (module)
 		return module;
 
-  }
-
      // else do a fallback
      kdDebug() << "Unable to load module using ComponentFactory! Falling back to old loader." << endl;
 
