@@ -39,7 +39,7 @@
 #include <kdeversion.h>
 #include <stdio.h>
 #include <string.h>
-#include <fstream.h>
+#include <fstream>
 
 static const char * constNotDef     = ".notdef";
 static const char * constKfiComment = "Comment kfontinst ";

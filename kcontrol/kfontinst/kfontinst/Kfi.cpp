@@ -30,7 +30,7 @@
 #include "KfiMainWidget.h"
 #include "XConfig.h"
 #include <kmessagebox.h>
-#include <fstream.h>
+#include <fstream>
 #include "kxftconfig.cpp" // CPD: Hack!!, this source file is located in kcontrol/fonts
 
 CKfiMainWidget * CKfi::create(QWidget *parent)

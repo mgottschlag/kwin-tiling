@@ -32,7 +32,7 @@
 #include "BufferedFile.h"
 #include "KfiGlobal.h"
 #include "Config.h"
-#include <fstream.h>
+#include <fstream>
 #include <stdlib.h>
 #include <string.h>
 #include <qdir.h>

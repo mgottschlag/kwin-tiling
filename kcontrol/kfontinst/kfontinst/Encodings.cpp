@@ -33,7 +33,7 @@
 #include "CompressedFile.h"
 #include <qdir.h>
 #include <ctype.h>
-#include <fstream.h>
+#include <fstream>
 
 // Use the strict maps - needed for creating AFMs...
 #define STRICT_ENCODING_MAPS
