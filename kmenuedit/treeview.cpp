@@ -18,6 +18,8 @@
  *
  */
 
+#include <unistd.h>
+
 #include <qdir.h>
 #include <qheader.h>
 #include <qstringlist.h>
@@ -502,14 +504,21 @@ bool TreeView::deleteFile(const QString& deskfile, const bool move)
 
     if (hasLocal)
     {
-//       unlink(QFile::encodeName(localFile).data());
+        ::unlink(QFile::encodeName(localFile).data());
     }
 
     if(hasGlobal) {
 	KSimpleConfig c(localFile);
         c.setDesktopGroup();
-        c.writeEntry("Name", "empty");
-        c.writeEntry("Hidden", true);
+        if (move)
+        {
+           c.writeEntry("Name", "empty");
+           c.writeEntry("Hidden", true);
+        }
+        else
+        {
+           c.writeEntry("NoDisplay", true);
+        }
         c.sync();
     }
     
@@ -569,13 +578,12 @@ bool TreeView::deleteDir(const QString& d, const bool move)
     return allremoved;
 }
 
-void TreeView::hideDir(const QString& d, const QString name, bool hide, QString icon) {
+void TreeView::hideDir(const QString& d, const QString name, bool hide) {
 	QString directory = d;
         KConfig c(directory + "/.directory", false, false, "apps");
 	c.setDesktopGroup();
 	c.writeEntry("Name", name);
 	c.writeEntry("NoDisplay", hide);
-	c.writeEntry("Icon", icon);
 	c.sync();
 }
 
@@ -1043,7 +1051,7 @@ void TreeView::del()
     if(file.endsWith("/.directory"))
     {
         KDesktopFile df(item->file());
-        hideDir(file.mid(0, file.find("/.directory")), findName(&df, false), true, df.readIcon());
+        hideDir(file.mid(0, file.find("/.directory")), findName(&df, false), true);
     }
     else if (file.find(".desktop"))
     {

@@ -104,7 +104,7 @@ protected:
 
     bool deleteFile(const QString& deskfile, const bool move = false);
     bool deleteDir(const QString& dir, const bool move = false);
-    void hideDir(const QString& d, const QString name, bool hide, QString icon);
+    void hideDir(const QString& d, const QString name, bool hide);
 
     void cleanupClipboard();
     void cleanupClipboard(const QString path);
