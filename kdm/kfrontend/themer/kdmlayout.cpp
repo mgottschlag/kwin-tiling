@@ -135,7 +135,7 @@ KdmLayoutBox::update( const QRect &parentGeometry, bool force )
 }
 
 //FIXME truly experimental (is so close to greeter_geometry.c)
-const QSize &
+QSize
 KdmLayoutBox::sizeHint()
 {
 	// Sum up area taken by children
@@ -162,6 +162,6 @@ KdmLayoutBox::sizeHint()
 		w += box.spacing * (m_children.count() - 1);
 
 	// Make hint at least equal to minimum size (if set)
-	return 	QSize( w < box.minwidth ? box.minwidth : w,
-		       h < box.minheight ? box.minheight : h );
+	return QSize( w < box.minwidth ? box.minwidth : w,
+		      h < box.minheight ? box.minheight : h );
 }
