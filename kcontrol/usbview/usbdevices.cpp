@@ -30,10 +30,10 @@ USBDB *USBDevice::_db;
 
 USBDevice::USBDevice()
   : _bus(0), _level(0), _parent(0), _port(0), _count(0), _device(0),
-    _channels(0), _speed(0.0), _manufacturer(""), _product(""), _serial(""),
+    _channels(0), _speed(0.0),
     _bwTotal(0), _bwUsed(0), _bwPercent(0), _bwIntr(0), _bwIso(0), _hasBW(false),
     _verMajor(0), _verMinor(0), _class(0), _sub(0), _prot(0), _maxPacketSize(0), _configs(0),
-    _className(""), _vendorID(0), _prodID(0), _revMajor(0), _revMinor(0)
+    _vendorID(0), _prodID(0), _revMajor(0), _revMinor(0)
 {
   _devices.append(this);
   _devices.setAutoDelete(true);
@@ -45,28 +45,28 @@ USBDevice::USBDevice()
 
 void USBDevice::parseLine(QString line)
 {
-  if (line.left(2) == "T:")
+  if (line.startsWith("T:"))
     sscanf(line.local8Bit().data(),
 	   "T:  Bus=%2d Lev=%2d Prnt=%2d Port=%d Cnt=%2d Dev#=%3d Spd=%3f MxCh=%2d",
 	   &_bus, &_level, &_parent, &_port, &_count, &_device, &_speed, &_channels);
-  else if (line.left(16) == "S:  Manufacturer")
+  else if (line.startsWith("S:  Manufacturer"))
     _manufacturer = line.mid(17);
-  else if (line.left(11) == "S:  Product") {
+  else if (line.startsWith("S:  Product")) {
     _product = line.mid(12);
     /* add bus number to root devices */
     if (_device==1)
 	_product += QString(" (%1)").arg(_bus);
   }
-  else if (line.left(16) == "S:  SerialNumber")
+  else if (line.startsWith("S:  SerialNumber"))
     _serial = line.mid(17);
-  else if (line.left(2) == "B:")
+  else if (line.startsWith("B:"))
     {
       sscanf(line.local8Bit().data(),
 	     "B:  Alloc=%3d/%3d us (%2d%%), #Int=%3d, #Iso=%3d",
 	     &_bwUsed, &_bwTotal, &_bwPercent, &_bwIntr, &_bwIso);
       _hasBW = true;
     }
-  else if (line.left(2) == "D:")
+  else if (line.startsWith("D:"))
     {
       char buffer[11];
       sscanf(line.local8Bit().data(),
@@ -74,7 +74,7 @@ void USBDevice::parseLine(QString line)
 	     &_verMajor, &_verMinor, &_class, buffer, &_sub, &_prot, &_maxPacketSize, &_configs);
       _className = buffer;
     }
-  else if (line.left(2) == "P:")
+  else if (line.startsWith("P:"))
     sscanf(line.local8Bit().data(),
 	   "P:  Vendor=%x ProdID=%x Rev=%x.%x",
 	   &_vendorID, &_prodID, &_revMajor, &_revMinor);
@@ -196,7 +196,7 @@ bool USBDevice::parse(QString fname)
     {
       QString line = result.mid(start, end-start);
 
-      if (line.left(2) == "T:")
+      if (line.startsWith("T:"))
 	device = new USBDevice();
 
       if (device)

@@ -93,6 +93,31 @@ void USBViewer::load()
   refresh();
 }
 
+static Q_UINT32 key( USBDevice &dev )
+{
+  return dev.bus()*256 + dev.device();
+}
+
+static Q_UINT32 key_parent( USBDevice &dev )
+{
+  return dev.bus()*256 + dev.parent();
+}
+
+static void delete_recursive( QListViewItem *item, const QIntDict<QListViewItem> &new_items )
+{
+  if (!item)
+	return;
+
+  QListViewItemIterator it( item );
+  while ( it.current() ) {
+        if (!new_items.find(it.current()->text(1).toUInt())) {
+		delete_recursive( it.current()->firstChild(), new_items);
+		delete it.current();
+	}
+	++it;
+  }
+}
+
 void USBViewer::refresh()
 {
   QIntDict<QListViewItem> new_items;
@@ -111,34 +136,31 @@ void USBViewer::refresh()
       for ( ; it.current(); ++it)
 	if (it.current()->level() == level)
 	  {
+	    Q_UINT32 k = key(*it.current());
 	    if (level == 0)
 	      {
-		QListViewItem *item = _items.find(it.current()->bus()*256+it.current()->device());
+		QListViewItem *item = _items.find(k);
 		if (!item) {
 		    item = new QListViewItem(_devices,
 				it.current()->product(),
-				QString("%1").arg(it.current()->bus()),
-				QString("%1").arg(it.current()->device()) );
+				QString::number(k));
 		}
-		new_items.insert(it.current()->bus()*256+it.current()->device(),
-				item);
+		new_items.insert(k, item);
 		found = true;
 	      }
 	    else
 	      {
-		QListViewItem *parent = new_items.find(it.current()->bus()*256+it.current()->parent());
+		QListViewItem *parent = new_items.find(key_parent(*it.current()));
 		if (parent)
 		  {
-		    QListViewItem *item = _items.find(it.current()->bus()*256+it.current()->device());
+		    QListViewItem *item = _items.find(k);
 
 		    if (!item) {
 		        item = new QListViewItem(parent,
 				    it.current()->product(),
-				    QString("%1").arg(it.current()->bus()),
-				    QString("%1").arg(it.current()->device()) );
+				    QString::number(k) );
 		    }
-		    new_items.insert(it.current()->bus()*256+it.current()->device(),
-				item);
+		    new_items.insert(k, item);
 		    parent->setOpen(true);
 		    found = true;
 		  }
@@ -148,14 +170,8 @@ void USBViewer::refresh()
       ++level;
     }
 
-    // delete all items not in new_items
-    {
-        QIntDictIterator<QListViewItem> it(_items);
-        for (; it.current(); ++it) {
-            if (!new_items.find(it.currentKey()))
-	        delete it.current();
-        }
-    }
+    // recursive delete all items not in new_items
+    delete_recursive( _devices->firstChild(), new_items );
 
     _items = new_items;
 
@@ -168,15 +184,15 @@ void USBViewer::selectionChanged(QListViewItem *item)
 {
   if (item)
     {
-      USBDevice *dev = USBDevice::find(item->text(1).toInt(),
-		      item->text(2).toInt());
+      Q_UINT32 busdev = item->text(1).toUInt();
+      USBDevice *dev = USBDevice::find(busdev>>8, busdev&255);
       if (dev)
 	{
 	  _details->setText(dev->dump());
 	  return;
 	}
     }
-  _details->setText("");
+  _details->clear();
 }
 
 
