@@ -145,6 +145,8 @@ private:
 
     void startApplication( const QStringList& command );
     void executeCommand( const QStringList& command );
+    
+    bool isWM( const KSMClient* client ) const;
 
 #ifndef NO_LEGACY_SESSION_MANAGEMENT
     void performLegacySessionSave();
@@ -172,6 +174,8 @@ private:
     State state;
     bool dialogActive;
     bool saveSession;
+    int wmPhase1WaitingCount;
+    int saveType;
 
     bool clean;
     KSMClient* clientInteracting;

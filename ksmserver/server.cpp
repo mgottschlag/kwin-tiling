@@ -463,7 +463,7 @@ class KSMConnection : public QSocketNotifier
 /* for printing hex digits */
 static void fprintfhex (FILE *fp, unsigned int len, char *cp)
 {
-    static char hexchars[] = "0123456789abcdef";
+    static const char hexchars[] = "0123456789abcdef";
 
     for (; len > 0; len--, cp++) {
         unsigned char s = *cp;
@@ -718,6 +718,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     state = Idle;
     dialogActive = false;
     saveSession = false;
+    wmPhase1WaitingCount = 0;
     KConfig* config = KGlobal::config();
     config->setGroup("General" );
     clientInteracting = 0;
@@ -1001,15 +1002,39 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
             config->writeEntry( "shutdownMode", (int)sdmode);
         }
         state = Shutdown;
+        wmPhase1WaitingCount = 0;
+        saveType = saveSession?SmSaveBoth:SmSaveGlobal;
 #ifndef NO_LEGACY_SESSION_MANAGEMENT
 	performLegacySessionSave();
 #endif
         startProtection();
         for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
             c->resetState();
-            SmsSaveYourself( c->connection(), saveSession?SmSaveBoth: SmSaveGlobal,
+            // Whoever came with the idea of phase 2 got it backwards
+            // unfortunately. Window manager should be the very first
+            // one saving session data, not the last one, as possible
+            // user interaction during session save may alter
+            // window positions etc.
+            // Moreover, KWin's focus stealing prevention would lead
+            // to undesired effects while session saving (dialogs
+            // wouldn't be activated), so it needs be assured that
+            // KWin will turn it off temporarily before any other
+            // user interaction takes place.
+            // Therefore, make sure the WM finishes its phase 1
+            // before others a chance to change anything.
+            // KWin will check if the session manager is ksmserver,
+            // and if yes it will save in phase 1 instead of phase 2.
+            if( isWM( c )) {
+                ++wmPhase1WaitingCount;
+                SmsSaveYourself( c->connection(), saveType,
                              true, SmInteractStyleAny, false );
+            }
 
+        }
+        if( wmPhase1WaitingCount == 0 ) { // no WM, simply start them all
+            for ( KSMClient* c = clients.first(); c; c = clients.next() )
+                SmsSaveYourself( c->connection(), saveType,
+                             true, SmInteractStyleAny, false );
         }
         if ( clients.isEmpty() )
             completeShutdownOrCheckpoint();
@@ -1047,13 +1072,22 @@ void KSMServer::saveCurrentSession()
         sessionGroup = QString("Session: ") + SESSION_BY_USER;
 
     state = Checkpoint;
+    wmPhase1WaitingCount = 0;
+    saveType = SmSaveLocal;
     saveSession = true;
 #ifndef NO_LEGACY_SESSION_MANAGEMENT
     performLegacySessionSave();
 #endif
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
         c->resetState();
-        SmsSaveYourself( c->connection(), SmSaveLocal, false, SmInteractStyleNone, false );
+        if( isWM( c )) {
+            ++wmPhase1WaitingCount;
+            SmsSaveYourself( c->connection(), saveType, false, SmInteractStyleNone, false );
+        }
+    }
+    if( wmPhase1WaitingCount == 0 ) {
+        for ( KSMClient* c = clients.first(); c; c = clients.next() )
+            SmsSaveYourself( c->connection(), saveType, false, SmInteractStyleNone, false );
     }
     if ( clients.isEmpty() )
         completeShutdownOrCheckpoint();
@@ -1083,6 +1117,17 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
         completeShutdownOrCheckpoint();
     }
     startProtection();
+    if( isWM( client ) && !client->wasPhase2 && wmPhase1WaitingCount > 0 ) {
+        --wmPhase1WaitingCount;
+        // WM finished its phase1, save the rest
+        if( wmPhase1WaitingCount == 0 ) {
+            for ( KSMClient* c = clients.first(); c; c = clients.next() )
+                if( !isWM( c ))
+                    SmsSaveYourself( c->connection(), saveType, saveType != SmSaveLocal,
+                        saveType != SmSaveLocal ? SmInteractStyleAny : SmInteractStyleNone,
+                        false );
+        }
+    }
 }
 
 void KSMServer::interactRequest( KSMClient* client, int /*dialogType*/ )
@@ -1093,7 +1138,6 @@ void KSMServer::interactRequest( KSMClient* client, int /*dialogType*/ )
         SmsInteract( client->connection() );
 
     handlePendingInteractions();
-
 }
 
 void KSMServer::interactDone( KSMClient* client, bool cancelShutdown_ )
@@ -1113,6 +1157,17 @@ void KSMServer::phase2Request( KSMClient* client )
     client->waitForPhase2 = true;
     client->wasPhase2 = true;
     completeShutdownOrCheckpoint();
+    if( isWM( client ) && wmPhase1WaitingCount > 0 ) {
+        --wmPhase1WaitingCount;
+        // WM finished its phase1 and requests phase2, save the rest
+        if( wmPhase1WaitingCount == 0 ) {
+            for ( KSMClient* c = clients.first(); c; c = clients.next() )
+                if( !isWM( c ))
+                    SmsSaveYourself( c->connection(), saveType, saveType != SmSaveLocal,
+                        saveType != SmSaveLocal ? SmInteractStyleAny : SmInteractStyleNone,
+                        false );
+        }
+    }
 }
 
 void KSMServer::handlePendingInteractions()
@@ -1155,8 +1210,10 @@ void KSMServer::protectionTimeout()
         return;
 
     for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
-        if ( !c->saveYourselfDone && !c->waitForPhase2 )
+        if ( !c->saveYourselfDone && !c->waitForPhase2 ) {
+            kdDebug() << "protectionTimeout: client " << c->program() << "(" << c->clientId() << ")" << endl;
             c->saveYourselfDone = true;
+        }
     }
     completeShutdownOrCheckpoint();
     startProtection();
@@ -1494,6 +1551,16 @@ QStringList KSMServer::sessionList()
         if ( (*it).startsWith( "Session: " ) )
             sessions << (*it).mid( 9 );
     return sessions;
+}
+
+bool KSMServer::isWM( const KSMClient* client ) const
+{
+    // KWin relies on ksmserver's special treatment in phase1,
+    // therefore make sure it's recognized even if ksmserver
+    // was initially started with different WM, and kwin replaced
+    // it later
+    return client->program() == wm
+        || client->program() == "kwin";
 }
 
 /*
