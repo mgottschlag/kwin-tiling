@@ -1,4 +1,4 @@
 SUBDIRS = sample filetypes samba display input info kdm \
 	kicker $(ODBC_DIR) locale syssound keys kio konq \
-	konqhtml email ebrowsing arts kcontrol
+	konqhtml email ebrowsing arts kcontrol passwords
 
