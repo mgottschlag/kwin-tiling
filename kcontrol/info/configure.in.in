@@ -3,6 +3,9 @@ case "$host" in
   *-*-osf*)
     AC_CHECK_LIB(mach, vm_statistics, LIB_TRU64_MACH="-lmach")dnl
     ;;
+  *-*-linux*)
+    AC_CHECK_HEADERS(linux/raw.h)dnl
+    ;;
 esac
 AC_SUBST(LIB_TRU64_MACH)
 

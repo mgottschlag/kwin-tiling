@@ -14,6 +14,9 @@
     /dev/sndstat support added: 1998-12-08 Duncan Haldane (f.d.m.haldane@cwix.com)
     
     $Log$
+    Revision 1.20  2001/10/23 22:48:49  mueller
+    CVS_SILENT: fixincludes -e
+
     Revision 1.19  2001/06/21 10:20:04  deller
     - use lspci (if available) for "PCI Information" instead of directly
       reading from /proc/pci (closes bug #12906)
@@ -57,7 +60,6 @@
 #else
 #  undef INFO_PARTITIONS_FULL_INFO	/* no partitions-info */
 #endif
-
 
 #include <kapplication.h>
 
@@ -276,6 +278,103 @@ bool GetInfo_Partitions(QListView * lBox)
 #endif
 #endif
 
+
+
+#if defined(HAVE_LINUX_RAW_H) && defined(HAVE_SYS_IOCTL_H)
+#include <linux/raw.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+/* 
+ * get raw device bindings and information
+ */
+void Get_LinuxRawDevices(QListView *lbox)
+{
+    int f, i, err;
+    int new_raw_devs = 1;
+    struct raw_config_request rq;
+    QString devname;
+    QString MB(i18n("MB"));	/* "MB" = "Mega-Byte" */
+
+    /* try to open the raw device control file */
+    f = open("/dev/rawctl", O_RDWR);
+    if (f == -1) {
+	f = open("/dev/raw", O_RDWR);
+	new_raw_devs = 0;
+    }
+    if (f == -1)
+	    return;
+
+    for (i=1; i<256; i++) {
+	rq.raw_minor = i;
+	if (ioctl(f, RAW_GETBIND, &rq))
+		continue;
+	if (!rq.block_major) /* unbound ? */
+		continue;
+	unsigned int minor = rq.block_minor;
+	char first_letter;
+	switch ((int)rq.block_major) {
+
+		/* IDE drives */
+		case 3: first_letter = 'a';
+			set_ide_name:
+			devname = QString("/dev/hd%1%2")
+				.arg(QChar(first_letter + minor/64))
+				.arg(minor&63);
+			break;
+		case 22:first_letter = 'c';	goto set_ide_name;
+		case 33:first_letter = 'e';	goto set_ide_name;
+		case 34:first_letter = 'g';	goto set_ide_name;
+		case 56:first_letter = 'i';	goto set_ide_name;
+		case 57:first_letter = 'k';	goto set_ide_name;
+		case 88:first_letter = 'm';	goto set_ide_name;
+		case 89:first_letter = 'o';	goto set_ide_name;
+		case 90:first_letter = 'q';	goto set_ide_name;
+		case 91:first_letter = 's';	goto set_ide_name;
+			
+		/* SCSI drives */
+		case 8: first_letter = 'a';
+			set_scsi_name:
+			devname = QString("/dev/sd%1%2")
+				.arg(QChar(first_letter + minor/16))
+				.arg(minor&15);
+			break;
+		case 65:first_letter = 'q';	goto set_scsi_name;
+
+		/* Compaq /dev/cciss devices */
+		case 104: case 105: case 106:
+		case 107: case 108: case 109:
+			devname = QString("/dev/cciss/c%1d%2")
+				.arg((int)rq.block_major-104)
+				.arg(minor&15);
+			break;
+
+		/* Compaq Intelligent Drive Array (ida) */
+		case 72: case 73: case 74: case 75: 
+		case 76: case 77: case 78: case 79:
+			devname = QString("/dev/ida/c%1d%2")
+				.arg((int)rq.block_major-72)
+				.arg(minor&15);
+			break;
+		
+		default: devname = QString("%1/%2")
+			 	.arg((int)rq.block_major)
+				.arg(minor);
+
+	}
+
+	/* TODO: get device size */
+	QString size = "";
+	
+	new QListViewItem(lbox, devname,
+		QString(new_raw_devs ? "/dev/raw/raw%1" : "/dev/raw%1").arg(i),
+		"raw", size, " ", "");
+    }
+    close(f);
+}
+#else
+#define Get_LinuxRawDevices(x)	/* nothing */
+#endif
+
 bool GetInfo_Partitions(QListView * lbox)
 {
 #define NUMCOLS 6
@@ -383,6 +482,9 @@ bool GetInfo_Partitions(QListView * lbox)
     endmntent(fp);		/* close fstab.. */
 #endif
 
+    /* get raw device entires if available... */
+    Get_LinuxRawDevices(lbox);
+    
     sorting_allowed = true;	/* sorting by user allowed ! */
     lbox->setSorting(1);
 
