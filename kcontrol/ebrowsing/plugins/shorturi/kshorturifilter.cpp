@@ -33,7 +33,6 @@
 #include <kstandarddirs.h>
 #include <kconfig.h>
 
-//#include "kshorturiopts.h"
 #include "kshorturifilter.h"
 
 
@@ -70,19 +69,24 @@ bool KShortURIFilter::isValidShortURL( const QString& cmd ) const
 QString KShortURIFilter::removeArgs( const QString& _cmd ) const
 {
   QString cmd( _cmd );
+
   if( cmd[0] != '\'' && cmd[0] != '"' )
   {
     // Remove command-line options (look for first non-escaped space)
     int spacePos = 0;
-    do {
+
+    do
+    {
       spacePos = cmd.find( ' ', spacePos+1 );
     } while ( spacePos > 1 && cmd[spacePos - 1] == '\\' );
+
     if( spacePos > 0 )
     {
       cmd = cmd.left( spacePos );
       //kdDebug() << k_funcinfo << "spacePos=" << spacePos << " returning " << cmd << endl;
     }
   }
+
   return cmd;
 }
 
@@ -100,15 +104,22 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   * if it is not found. TODO: the user-defined table is currently only manually
   * hackable and is missing a config dialog.
   */
+
+  QString ref;
   KURL url = data.uri();
   QString cmd = url.url();
-  QString ref;
   bool isMalformed = url.isMalformed();
 
   // Extract path if URL is local
   // (this removes "file:" but also decodes back %20 etc.)
-  if( url.isLocalFile() && !isMalformed ) {
+  if( url.isLocalFile() && !isMalformed )
+  {
     cmd = url.path();
+
+    // Filter file://localhost as well...
+    if (url.hasHost() && cmd.isEmpty())
+      cmd = "/";
+
     if ( url.hasRef() )
         ref = QFL1("#") + url.ref();
   }
@@ -176,27 +187,32 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     }
     expanded = true;
   }
-  else if ( cmd[0] == '$' ) {
-      // Environment variable expansion.
-      QRegExp r (QFL1(ENV_VAR_PATTERN));
-      if ( r.search( cmd ) == 0 ) {
-          const char* exp = getenv( cmd.mid( 1, r.matchedLength() - 1 ).local8Bit().data() );
-          if(exp) {
-              cmd.replace( 0, r.matchedLength(), QString::fromLocal8Bit(exp) );
-              expanded = true;
-          }
+  else if ( cmd[0] == '$' )
+  {
+    // Environment variable expansion.
+    QRegExp r (QFL1(ENV_VAR_PATTERN));
+    if ( r.search( cmd ) == 0 )
+    {
+      const char* exp = getenv( cmd.mid( 1, r.matchedLength() - 1 ).local8Bit().data() );
+      if(exp)
+      {
+        cmd.replace( 0, r.matchedLength(), QString::fromLocal8Bit(exp) );
+        expanded = true;
       }
+    }
   }
 
-  if ( expanded ) {
-      // Look for #ref again, after $ and ~ expansion
-      // Can't use KURL here, setPath would escape it...
-      int pos = cmd.find('#');
-      if ( pos > -1 ) {
-          ref = cmd.mid( pos );
-          cmd = cmd.left( pos );
-          //kdDebug() << "cmd=" << cmd << " ref=" << ref << endl;
-      }
+  if ( expanded )
+  {
+    // Look for #ref again, after $ and ~ expansion
+    // Can't use KURL here, setPath would escape it...
+    int pos = cmd.find('#');
+    if ( pos > -1 )
+    {
+      ref = cmd.mid( pos );
+      cmd = cmd.left( pos );
+      //kdDebug() << "cmd=" << cmd << " ref=" << ref << endl;
+    }
   }
 
   bool isLocalFullPath = cmd[0] == '/';
@@ -208,8 +224,11 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
 
   bool canBeAbsolute = (isMalformed && !abs_path.isEmpty());
   bool canBeLocalAbsolute = (canBeAbsolute && abs_path[0] =='/');
-  //kdDebug() << "abs_path=" << abs_path << " malformed=" << isMalformed << " canBeLocalAbsolute=" << canBeLocalAbsolute << endl;
   bool exists = false;
+
+  /*kdDebug() << "abs_path=" << abs_path << " malformed=" << isMalformed
+              << " canBeLocalAbsolute=" << canBeLocalAbsolute << endl;*/
+
   struct stat buff;
   if ( canBeLocalAbsolute )
   {
@@ -222,7 +241,8 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     abs = QDir::cleanDirPath(abs + '/' + cmd);
     //kdDebug() << "checking whether " << abs << " exists." << endl;
     // Check if it exists
-    if( stat( abs.local8Bit().data(), &buff ) == 0 ) {
+    if( stat( abs.local8Bit().data(), &buff ) == 0 )
+    {
         cmd = abs; // yes -> store as the new cmd
         exists = true;
         isLocalFullPath = true;
@@ -230,9 +250,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   }
 
   if( isLocalFullPath && !exists )
-  {
     exists = ( stat( cmd.local8Bit().data() , &buff ) == 0 );
-  }
 
   //kdDebug() << "cmd=" << cmd << " isLocalFullPath=" << isLocalFullPath << " exists=" << exists << endl;
   if( exists )
@@ -264,7 +282,7 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
   // line arguments or options that might have been supplied.
   QString exe = removeArgs( cmd );
   //kdDebug() << k_funcinfo << "findExe with " << exe << endl;
-  if( !KStandardDirs::findExe( exe ).isNull() )
+  if( !KStandardDirs::findExe( exe ).isNull() && data.checkForExecutables() )
   {
     //kdDebug() << "EXECUTABLE  exe=" << exe << endl;
     setFilteredURI( data, exe );
@@ -295,32 +313,9 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     }
   }
 
-#if 0
-  // Provided as a filter for remote URLs.  Example,
-  // if the current path is ftp://ftp.kde.org/pub/
-  // and user typed ../ in the location bar they would
-  // correctly get ftp://ftp.kde.org/. Is that cool or what ??
-  // David: yes but it's against the documentation for KURIFilterData::setAbsolutePath() :)
-  // Plus, it breaks if you type something like "www.kde.org" after going to an FTP site.
-  // It'll append www.kde.org, without checking that the resulting FTP url exists.
-  // A stat() over FTP can be slow... too slow for a shorturifilter IMHO -> disabled.
-  if( canBeAbsolute && !canBeLocalAbsolute )
-  {
-    KURL u( KURL( data.absolutePath() ), cmd );
-    if( !u.isMalformed() )
-    {
-      setFilteredURI( data, u.url() );
-      setURIType( data, KURIFilterData::NET_PROTOCOL );
-      return true;
-    }
-  }
-#endif
-
   // Okay this is the code that allows users to supply custom matches for
-  // specific URLs using Qt's regexp class. This is hard-coded for now in
-  // the constructor, but will soon be moved to the config dialog so that
-  // people can configure this stuff.  This is perhaps one of those unecessary
-  // but somewhat useful features that usually makes people go WHOO and WHAAA.
+  // specific URLs using Qt's regexp class. This is hard-coded for now.
+  // TODO: Make configurable at some point...
   if ( !cmd.contains( ' ' ) )
   {
     QRegExp match;
@@ -360,11 +355,8 @@ bool KShortURIFilter::filterURI( KURIFilterData& data ) const
     return true;
   }
 
-  // If we reach this point, we cannot filter
-  // this thing so simply return false so that
-  // other filters, if present, can take a crack
-  // at it.
-  //kdDebug() << "KShortURIFilter::filterURI returning false!" << endl;
+  // If we reach this point, we cannot filter this thing so simply return false
+  // so that other filters, if present, can take a crack at it.
   return false;
 }
 
@@ -380,20 +372,20 @@ QString KShortURIFilter::configName() const
 
 void KShortURIFilter::configure()
 {
-    KConfig config( name() + QFL1("rc"), false, false );
-    EntryMap map = config.entryMap( QFL1("Pattern Matching") );
-    if( !map.isEmpty() )
-    {
-        EntryMap::Iterator it = map.begin();
-        for( ; it != map.end(); ++it )
-            m_urlHints.append( URLHint(it.key(), it.data()) );
-    }
+  KConfig config( name() + QFL1("rc"), false, false );
+  EntryMap map = config.entryMap( QFL1("Pattern Matching") );
+  if( !map.isEmpty() )
+  {
+      EntryMap::Iterator it = map.begin();
+      for( ; it != map.end(); ++it )
+          m_urlHints.append( URLHint(it.key(), it.data()) );
+  }
 
-    // Include some basic defaults.  Note these will always be
-    // overridden by a users entries. TODO: Make this configurable
-    // from the control panel.
-    m_urlHints.append( URLHint(QFL1(IPv4_PATTERN), QFL1("http://")) );
-    m_urlHints.append( URLHint(QFL1(FQDN_PATTERN), QFL1("http://")) );
+  // Include some basic defaults.  Note these will always be
+  // overridden by a users entries. TODO: Make this configurable
+  // from the control panel.
+  m_urlHints.append( URLHint(QFL1(IPv4_PATTERN), QFL1("http://")) );
+  m_urlHints.append( URLHint(QFL1(FQDN_PATTERN), QFL1("http://")) );
 }
 
 K_EXPORT_COMPONENT_FACTORY( libkshorturifilter,

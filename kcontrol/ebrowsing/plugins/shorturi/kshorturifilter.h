@@ -32,9 +32,6 @@ class KInstance;
 /**
 * This is short URL filter class.
 *
-*
-*
-*
 * @short A filter that converts short URLs into fully qualified ones.
 *
 * @author Dawit Alemayehu <adawit@kde.org>
