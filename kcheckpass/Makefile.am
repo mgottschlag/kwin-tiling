@@ -18,5 +18,4 @@ noinst_HEADERS = kcheckpass.h
 
 EXTRA_DIST = README
 
-messages:
 
