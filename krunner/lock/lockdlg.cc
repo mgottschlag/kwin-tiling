@@ -200,7 +200,7 @@ void PasswordDlg::updateLabel()
     }
     else
     {
-        mStatusLabel->setText(i18n("<b> </b>"));
+        mStatusLabel->setText("<b> </b>");
     }
 }
 
