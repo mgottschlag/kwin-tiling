@@ -24,7 +24,7 @@
 #include <kapp.h>
 #include <kconfig.h>
 
-#include "kdmclock.moc"
+#include "kdmclock.h"
 
 KdmClock::KdmClock( QWidget *parent, const char *name )
   : QFrame( parent, name )
@@ -191,7 +191,4 @@ void KdmClock::paintEvent( QPaintEvent * )
     bitBlt ( this, contentsRect().topLeft(), &pm ); 
 }
 
-
-
-
-
+#include "kdmclock.moc"

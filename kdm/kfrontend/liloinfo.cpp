@@ -26,7 +26,7 @@
 
 #include <klocale.h>
 
-#include "liloinfo.moc"
+#include "liloinfo.h"
 
 /*
  * The constructor. Initialize the internal variables and copy the parameter strings.
@@ -455,5 +455,7 @@ int LiloInfo::setNextBootOption ( int nextBootOptionIndex)
 	// Return the error code
 	return error;
 }
+
+#include "liloinfo.moc"
 
 #endif
