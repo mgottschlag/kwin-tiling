@@ -39,10 +39,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_launch, LaunchFactory("kcmlaunch") );
 LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringList &)
   : KCModule(LaunchFactory::instance(), parent, name)
 {
-    if ( !name )
-	setName( "Form1" );
     resize( 451, 316 );
-    setCaption( i18n( "Form1" ) );
     QVBoxLayout* Form1Layout = new QVBoxLayout( this );
     Form1Layout->setSpacing( 6 );
     Form1Layout->setMargin( 11 );
@@ -52,7 +49,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     QWhatsThis::add(GroupBox1, i18n(
      "<h1>Busy Cursor</h1>\n"
      "KDE offers a busy cursor for application startup notification.\n"
-     "To enable the busy cursor, check 'Enable Busy Cursor'.\n"
+     "To enable the busy cursor, check 'Enable busy cursor'.\n"
      "To have the cursor blinking, check 'Enable blinking' below.\n"
      "It may occur, that some applications are not aware of this startup\n"
      "notification. In this case, the cursor stops blinking after the time\n"
@@ -78,7 +75,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     GroupBox1Layout->addWidget( sb_cursorTimeout, 2, 3 );
 
     cb_busyCursor = new QCheckBox( GroupBox1, "cb_busyCursor" );
-    cb_busyCursor->setText( i18n( "Enable Busy Cursor " ) );
+    cb_busyCursor->setText( i18n( "Enable busy cursor " ) );
 
     GroupBox1Layout->addMultiCellWidget( cb_busyCursor, 0, 0, 0, 2 );
     QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum );
@@ -123,7 +120,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     GroupBox2Layout->addItem( spacer_4, 1, 2 );
 
     cb_taskbarButton = new QCheckBox( GroupBox2, "cb_taskbarButton" );
-    cb_taskbarButton->setText( i18n( "Enable Taskbar Notification " ) );
+    cb_taskbarButton->setText( i18n( "Enable taskbar notification " ) );
 
     GroupBox2Layout->addWidget( cb_taskbarButton, 0, 0 );
     Form1Layout->addWidget( GroupBox2 );
