@@ -117,9 +117,9 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   sFileList->append( "Not a kcsrc file" );
   sList->insertItem( i18n("KDE Default for 3 Modifiers (Alt/Ctrl/Shift)"), 1 );
   sFileList->append( "Not a kcsrc file" );
-  sList->insertItem( i18n("KDE Default for 4 Modifiers (Meta/Alt/Ctrl/Shift)"), 2 );
-  sFileList->append( "Not a kcsrc file" );
-  nSysSchemes = 3;
+  //sList->insertItem( i18n("KDE Default for 4 Modifiers (Meta/Alt/Ctrl/Shift)"), 2 );
+  //sFileList->append( "Not a kcsrc file" );
+  nSysSchemes = 2;
   readSchemeNames();
   sList->setCurrentItem( 0 );
   connect( sList, SIGNAL( highlighted( int ) ),
@@ -279,8 +279,8 @@ void KKeyModule::readScheme( int index )
   kdDebug(125) << "readScheme( " << index << " )\n";
   if( index == 1 )
     kc->allDefault( false );
-  else if( index == 2 )
-    kc->allDefault( true );
+  //else if( index == 2 )
+  //  kc->allDefault( true );
   else {
     KConfigBase* config;
     if( index == 0 )	config = new KConfig( "kdeglobals" );
@@ -430,7 +430,8 @@ void KKeyModule::slotPreviewScheme( int indx )
 void KKeyModule::readSchemeNames( )
 {
   QStringList schemes = KGlobal::dirs()->findAllResources("data", "kcmkeys/" + KeyType + "/*.kksrc");
-  QRegExp r( "-kde[34].kksrc$" );
+  //QRegExp r( "-kde[34].kksrc$" );
+  QRegExp r( "-kde3.kksrc$" );
 
   // This for system files
   for ( QStringList::ConstIterator it = schemes.begin(); it != schemes.end(); it++) {
