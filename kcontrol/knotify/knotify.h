@@ -34,10 +34,10 @@
 
 #include "events.h"
 
+class QSlider;
 class KAboutData;
 class KNCheckListItem;
 class KURLRequester;
-
 
 class KNotifyWidget : public KCModule
 {
@@ -71,6 +71,7 @@ private:
     QListView *view;
     KURLRequester *requester, *reqExternal;
     QPushButton *playButton;
+    QSlider *volumeSlider;
     Events *m_events;
     KNCheckListItem *currentItem;
     bool updating;

@@ -25,6 +25,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+#include <qslider.h>
 #include <qsplitter.h>
 #include <qtimer.h>
 #include <qvgroupbox.h>
@@ -100,6 +101,15 @@ KNotifyWidget::KNotifyWidget(QWidget *parent, const char *name):
 	     SLOT( externalClicked( bool )));
     connect( reqExternal, SIGNAL( textChanged( const QString& )),
 	     SLOT( changed() ));
+
+    hbox = new QHBox( box );
+    hbox->setSpacing( KDialog::spacingHint() );
+    l = new QLabel( i18n( "&Volume: " ), hbox );
+    volumeSlider = new QSlider( hbox );
+    volumeSlider->setOrientation( Horizontal );
+    volumeSlider->setRange( 0, 100 );
+    connect( volumeSlider, SIGNAL( valueChanged( int ) ), SLOT( changed() ) );
+    l->setBuddy( volumeSlider );
 
     m_events = new Events();
     qApp->processEvents(); // let's show up
@@ -214,6 +224,8 @@ void KNotifyWidget::load()
     cbExternal->setChecked( kc->readBoolEntry( "Use external player", false ));
     reqExternal->setURL( kc->readEntry( "External player" ));
     reqExternal->setEnabled( cbExternal->isChecked() );
+    volumeSlider->setValue( kc->readNumEntry( "Volume", 100 ) );
+    static_cast<QHBox *>( volumeSlider->parent() )->setEnabled( !cbExternal->isChecked() );
     delete kc;
 
     requester->clear();
@@ -236,6 +248,7 @@ void KNotifyWidget::save()
     kc->setGroup( "Misc" );
     kc->writeEntry( "External player", reqExternal->url() );
     kc->writeEntry( "Use external player", cbExternal->isChecked() );
+    kc->writeEntry( "Volume", volumeSlider->value() );
     kc->sync();
     delete kc;
 	
@@ -283,6 +296,7 @@ void KNotifyWidget::externalClicked( bool on )
     if ( on )
 	reqExternal->setFocus();
     reqExternal->setEnabled( on );
+    static_cast<QHBox *>( volumeSlider->parent() )->setEnabled( !on );
     changed();
 }
 
