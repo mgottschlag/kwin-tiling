@@ -61,7 +61,7 @@ QWidget *ConfigModule::module(KDockContainer *container)
   if (_module)
     return _module;
 
-  KCModule *modWidget = ModuleLoader::module(*this);
+  KCModule *modWidget = ModuleLoader::module(*this, container);
 
   if (modWidget)
     {
