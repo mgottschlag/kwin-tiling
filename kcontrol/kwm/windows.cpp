@@ -191,7 +191,7 @@ KFocusConfig::KFocusConfig (KConfig *_config, QWidget * parent, const char *name
     QGridLayout *kLay = new QGridLayout(kbdBox, 3, 3,
                                         KDialog::marginHint(),
                                         KDialog::spacingHint());
-    kLay->addRowSpacing(0,10);
+    kLay->addRowSpacing(0,fontMetrics().lineSpacing());
     QLabel *altTabLabel = new QLabel( i18n("Walk through windows mode:"), kbdBox);
     kLay->addWidget(altTabLabel, 1, 0);
     kdeMode = new QRadioButton(i18n("KDE"), kbdBox);
@@ -493,9 +493,9 @@ KAdvancedConfig::KAdvancedConfig (KConfig *_config, QWidget *parent, const char 
     QWhatsThis::add( delays, i18n("Here you can set a delay for switching desktops using the active"
        " borders feature. Desktops will be switched after the mouse has been pushed against a screen border"
        " for the specified number of milliseconds.") );
- 
+
     connect( enable, SIGNAL(clicked()), this, SLOT(setEBorders()));
- 
+
     lay->addWidget(electricBox);
 
 
