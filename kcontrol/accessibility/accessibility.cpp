@@ -48,6 +48,7 @@
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <kdebug.h>
+#include <kgenericfactory.h>
 
 #include "accessibilityconfigwidget.h"
 
@@ -449,7 +450,7 @@ QString KAccessConfig::quickHelp() const{
 
 const KAboutData* KAccessConfig::aboutData() const{
    KAboutData *about =
-   new KAboutData(I18N_NOOP("kaccess"), I18N_NOOP("KDE Accessibility Tool"),
+   new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
                   0, 0, KAboutData::License_GPL,
                   I18N_NOOP("(c) 2000, Matthias Hoelzer-Kluepfel"));
 
@@ -459,26 +460,28 @@ const KAboutData* KAccessConfig::aboutData() const{
    return about;
 }
 
-//K_EXPORT_COMPONENT_FACTORY( libmyplugin, KGenericFactory<MyPlugin> );
+typedef KGenericFactory<KAccessConfig, QWidget> AccessibilityFactory;
+K_EXPORT_COMPONENT_FACTORY( kcm_accessiblity, AccessibilityFactory("kcmaccessibility") );
 
-extern "C"
-{
-  KCModule *create_access(QWidget *parent, const char *name)
-  {
-    return new KAccessConfig(parent, name);
-  };
 
-  /* This one gets called by kcminit
-
-   */
-  /*
-  void init_access()
-  {
-    KConfig *config = new KConfig("kaccessrc", true, false);
-    bool run = needToRunKAccessDaemon( config );
-
-    delete config;
-    if (run)
-      kapp->startServiceByDesktopName("kaccess");
-  }*/
-}
+// extern "C"
+// {
+//   /*KCModule *create_access(QWidget *parent, const char *name)
+//   {
+//     return new KAccessConfig(parent, name);
+//   };*/
+// 
+//   /* This one gets called by kcminit
+// 
+//    */
+//   /*
+//   void init_access()
+//   {
+//     KConfig *config = new KConfig("kaccessrc", true, false);
+//     bool run = needToRunKAccessDaemon( config );
+// 
+//     delete config;
+//     if (run)
+//       kapp->startServiceByDesktopName("kaccess");
+//   }*/
+// }
