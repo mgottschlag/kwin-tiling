@@ -54,6 +54,8 @@
 #include <kstandarddirs.h>
 #include <kgenericfactory.h>
 
+#include <netwm.h>
+
 #include <bgdefaults.h>
 #include <bgsettings.h>
 #include <bgrender.h>
@@ -82,6 +84,14 @@ Backgnd::Backgnd( QWidget* parent,  const char* name, WFlags fl )
     m_Desk = KWin::currentDesktop() - 1;
     if(m_pGlobals->commonBackground())
         m_Desk = 0;
+
+    // get number of desktops
+    NETRootInfo info( qt_xdisplay(), NET::NumberOfDesktops | NET::DesktopNames );
+    if (info.numberOfDesktops() == 1)
+    {
+        m_pDesktopLabel->hide();
+        m_pDesktopBox->hide();
+    }
 
     int i;
     for (i=0; i<m_Max; i++) {
@@ -173,9 +183,7 @@ void Backgnd::defaults()
 void Backgnd::setWidgets()
 {
     if (m_pGlobals->commonBackground())
-    {
         m_pDesktopBox->setCurrentItem(m_Desk);
-    }
     else
         m_pDesktopBox->setCurrentItem(m_Desk+1);
 
