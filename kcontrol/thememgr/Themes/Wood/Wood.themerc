@@ -35,6 +35,7 @@ Name[uk]=Дерево
 Name[xh]=Inkuni
 Name[xx]=xx
 Name[zh_CN]=木头
+Name[zh_TW]=木頭
 Name[zu]=Ukhuni
 author=Georg Russell
 email=russell@kde.org
@@ -79,6 +80,7 @@ Comment[vi]=Làm cho desktop của bạn giống như làm bằng gềE\nBy Geor
 Comment[xh]=Ujongeko njengekhuni lwedesktopyakho!\nNgu Georg Russell <russell@kde.org>
 Comment[xx]=xx
 Comment[zh_CN]=桌面上的木头外观！\n作者 Georg Russell <russell@kde.org>
+Comment[zh_TW]=桌面上的木頭外觀！\n作者 Georg Russell <russell@kde.org>
 Comment[zu]=Ubukeko olunjengokhuni lwedesktopyakho!\nNgu Georg Russell <russell@kde.org>
 [Panel]
 background=panel.png
