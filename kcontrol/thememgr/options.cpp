@@ -40,6 +40,7 @@ Options::Options (QWidget * aParent, const char *aName, bool aInit)
 
   mCbxOverwrite = new QCheckBox(i18n("Uninstall parts of previous theme"),
 				this);
+  connect(mCbxOverwrite,SIGNAL(clicked()), this, SLOT(slotCbxClicked()));
   mCbxOverwrite->setMinimumSize(mCbxOverwrite->sizeHint());
   mCbxOverwrite->setMaximumSize(32767, mCbxOverwrite->sizeHint().height()+5);
   mGrid->addMultiCellWidget(mCbxOverwrite, mGridRow, mGridRow, 0, 5);
@@ -95,7 +96,7 @@ Options::~Options()
 
 //-----------------------------------------------------------------------------
 QCheckBox* Options::newLine(const char* aGroupName, const QString& aText,
-			    QLabel** aStatusPtr) 
+			    QLabel** aStatusPtr)
 {
   QCheckBox* cbx = new QCheckBox(aText, this);
   QPushButton* btnDetails;
@@ -219,7 +220,7 @@ void Options::updateStatus(const char* aGroupName, QLabel* aLblStatus)
 
   if (theme->hasGroup(aGroupName, true))
     statusStr = i18n("available");
-  else 
+  else
     statusStr = i18n("empty");
 
   aLblStatus->setText(statusStr);
