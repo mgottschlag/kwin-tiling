@@ -12,6 +12,7 @@
 #include <kconfig.h>
 #include <qbitmap.h>
 #include <qtooltip.h>
+#include <qstyle.h>
 
 #include "widgetcanvas.h"
 #include "widgetcanvas.moc"
@@ -427,7 +428,9 @@ void WidgetCanvas::drawSampleWidgets()
     
     // Menu bar
 
-    qDrawShadePanel ( &paint, 25, 55, width()-52, 28, cg, FALSE, 2, &brush);
+    //qDrawShadePanel ( &paint, 25, 55, width()-52, 28, cg, FALSE, 2, &brush);
+    kapp->style().drawPrimitive(QStyle::PE_PanelMenuBar, &paint, 
+			QRect(QPoint(25, 55), QSize(width()-52, 28)), cg);
 
     paint.setFont( menuFont );
     paint.setPen(txt );

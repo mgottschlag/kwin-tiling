@@ -19,6 +19,7 @@
 #include <klineedit.h>
 #include <qpushbutton.h>
 #include <qslider.h>
+#include <qpixmap.h>
 #include <qcombobox.h>
 #include <klistbox.h>
 #include <qlayout.h>
@@ -738,6 +739,19 @@ void KColorScheme::readScheme( int index )
       delete config;
 }
 
+#define SIZE 8
+
+// make a 24 * 8 pixmap with the main colors in a scheme
+QPixmap mkColorPreview(const WidgetCanvas *cs) 
+{
+   QPixmap group(SIZE*3,SIZE);
+   QPixmap block(SIZE,SIZE);
+   group.fill(QColor(0,0,0));
+   block.fill(cs->back);   bitBlt(&group,0*SIZE,0,&block,0,0,SIZE,SIZE);
+   block.fill(cs->window); bitBlt(&group,1*SIZE,0,&block,0,0,SIZE,SIZE);
+   block.fill(cs->aTitle); bitBlt(&group,2*SIZE,0,&block,0,0,SIZE,SIZE);
+   return group;
+}
 
 /*
  * Get all installed color schemes.
@@ -775,6 +789,15 @@ void KColorScheme::readSchemeNames()
     {
        sList->insertItem(entry->name);
     }
+
+    int b = (int)nSysSchemes;
+    for (uint i = 0; i < (b + mSchemeList->count()); i++) 
+    {
+       readScheme( i );
+       QPixmap preview = mkColorPreview(cs);
+       sList->changeItem(preview, sList->text(i), i);
+    }
+
 }
 
 /*
