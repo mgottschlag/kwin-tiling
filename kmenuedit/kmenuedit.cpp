@@ -44,6 +44,7 @@
 #include "MenuNameDialog.h"
 #include <klocale.h>
 #include <kglobal.h>
+#include <kstddirs.h>
 
 extern KIconLoader *global_pix_loader;
 KStatusBar *global_status_bar;
