@@ -57,7 +57,7 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
 {
   connect(m_zoom_cb, SIGNAL(clicked()), SIGNAL(changed()));
   connect(m_showToolTips, SIGNAL(clicked()), SIGNAL(changed()));
-  
+
   connect(m_kmenuTile, SIGNAL(activated(int)), SIGNAL(changed()));
   connect(m_desktopTile, SIGNAL(activated(int)), SIGNAL(changed()));
   connect(m_browserTile, SIGNAL(activated(int)), SIGNAL(changed()));
@@ -66,6 +66,7 @@ LookAndFeelTab::LookAndFeelTab( QWidget *parent, const char* name )
   connect(m_wlTile, SIGNAL(activated(int)), SIGNAL(changed()));
 
   connect(m_backgroundImage, SIGNAL(clicked()), SIGNAL(changed()));
+  connect(m_transparent, SIGNAL(clicked()), SIGNAL(changed()));
 
   m_backgroundInput->fileDialog()->setFilter(KImageIO::pattern(KImageIO::Reading));
   m_backgroundInput->fileDialog()->setCaption(i18n("Select an Image File"));
@@ -113,9 +114,12 @@ void LookAndFeelTab::load()
   bool use_theme = c.readBoolEntry("UseBackgroundTheme", false);
   theme = c.readEntry("BackgroundTheme", QString::null).stripWhiteSpace();
 
+  bool transparent = c.readBoolEntry( "Transparent", false );
+
   m_backgroundImage->setChecked(use_theme);
   m_backgroundInput->setEnabled(use_theme);
   m_backgroundLabel->setEnabled(use_theme);
+  m_transparent->setChecked( transparent );
 
   if (theme.length() > 0)
   {
@@ -238,6 +242,7 @@ void LookAndFeelTab::save()
 
   c.setGroup("General");
   c.writeEntry("UseBackgroundTheme", m_backgroundImage->isChecked());
+  c.writeEntry("Transparent", m_transparent->isChecked());
   c.writeEntry("BackgroundTheme", theme);
   c.writeEntry( "ShowToolTips", m_showToolTips->isChecked() );
 
@@ -252,7 +257,7 @@ void LookAndFeelTab::save()
   }
   else
   {
-    c.writeEntry("EnableKMenuTiles", false);  
+    c.writeEntry("EnableKMenuTiles", false);
   }
 
   tile = m_desktopTile->currentItem();
@@ -264,9 +269,9 @@ void LookAndFeelTab::save()
   }
   else
   {
-    c.writeEntry("EnableDesktopButtonTiles", false);  
+    c.writeEntry("EnableDesktopButtonTiles", false);
   }
-  
+
   tile = m_urlTile->currentItem();
   if (tile > 0)
   {
@@ -276,7 +281,7 @@ void LookAndFeelTab::save()
   }
   else
   {
-    c.writeEntry("EnableURLTiles", false);  
+    c.writeEntry("EnableURLTiles", false);
   }
 
   tile = m_browserTile->currentItem();
@@ -300,7 +305,7 @@ void LookAndFeelTab::save()
   }
   else
   {
-    c.writeEntry("EnableExeTiles", false);  
+    c.writeEntry("EnableExeTiles", false);
   }
 
   tile = m_wlTile->currentItem();
@@ -312,13 +317,13 @@ void LookAndFeelTab::save()
   }
   else
   {
-    c.writeEntry("EnableWindowListTiles", false);  
+    c.writeEntry("EnableWindowListTiles", false);
   }
 
   c.setGroup("buttons");
   c.writeEntry("EnableTileBackground", enableTiles);
   c.writeEntry("EnableIconZoom", m_zoom_cb->isChecked());
-  
+
   c.sync();
 }
 
@@ -337,6 +342,7 @@ void LookAndFeelTab::defaults()
   theme = QString::null;
 
   m_backgroundImage->setChecked(false);
+  m_transparent->setChecked(false);
   m_backgroundInput->lineEdit()->setText(theme);
   m_backgroundLabel->clear();
 
@@ -386,13 +392,13 @@ void LookAndFeelTab::fillTileCombos()
     m_browserTile->insertItem(pix, tile);
     m_exeTile->insertItem(pix, tile);
     m_wlTile->insertItem(pix, tile);
-    
-    if (pix.height() > minHeight)    
+
+    if (pix.height() > minHeight)
     {
         minHeight = pix.height();
     }
   }
-  
+
   minHeight += 6;
   m_kmenuTile->setMinimumHeight(minHeight);
   m_desktopTile->setMinimumHeight(minHeight);

@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>450</width>
-            <height>453</height>
+            <width>451</width>
+            <height>563</height>
         </rect>
     </property>
     <property name="caption">
@@ -18,7 +18,7 @@
     <property name="whatsThis" stdset="0">
         <string>If this option is selected, informational tooltips will appear when the mouse cursor moves over the icons, buttons and applets in the panel.</string>
     </property>
-    <grid>
+    <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
         </property>
@@ -28,7 +28,7 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QGroupBox" row="0" column="0" rowspan="1" colspan="2">
+        <widget class="QGroupBox">
             <property name="name">
                 <cstring>general_group</cstring>
             </property>
@@ -75,7 +75,7 @@
                 </widget>
             </vbox>
         </widget>
-        <widget class="QGroupBox" row="1" column="0" rowspan="1" colspan="2">
+        <widget class="QGroupBox">
             <property name="name">
                 <cstring>GroupBox9</cstring>
             </property>
@@ -339,14 +339,14 @@
                 </spacer>
             </grid>
         </widget>
-        <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="2">
+        <widget class="QGroupBox">
             <property name="name">
                 <cstring>GroupBox10</cstring>
             </property>
             <property name="title">
                 <string>Panel Background</string>
             </property>
-            <grid>
+            <vbox>
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
@@ -356,54 +356,18 @@
                 <property name="spacing">
                     <number>6</number>
                 </property>
-                <widget class="QLabel" row="0" column="1" rowspan="2" colspan="1">
+                <widget class="QCheckBox">
                     <property name="name">
-                        <cstring>m_backgroundLabel</cstring>
+                        <cstring>m_transparent</cstring>
                     </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>0</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>50</width>
-                            <height>50</height>
-                        </size>
-                    </property>
-                    <property name="maximumSize">
-                        <size>
-                            <width>50</width>
-                            <height>50</height>
-                        </size>
-                    </property>
-                    <property name="frameShape">
-                        <enum>Panel</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Sunken</enum>
-                    </property>
-                    <property name="scaledContents">
-                        <bool>true</bool>
-                    </property>
-                    <property name="alignment">
-                        <set>AlignCenter</set>
-                    </property>
-                    <property name="hAlign" stdset="0">
-                    </property>
-                    <property name="vAlign" stdset="0">
+                    <property name="text">
+                        <string>Enable &amp;transparency</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>This is a preview for the selected background image.</string>
+                        <string>If this option is selected, you can choose a background image that will be displayed on the panel. If it is not selected, the default colors will be used, see the 'Colors' control module.</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="0" column="0">
+                <widget class="QCheckBox">
                     <property name="name">
                         <cstring>m_backgroundImage</cstring>
                     </property>
@@ -414,87 +378,154 @@
                         <string>If this option is selected, you can choose a background image that will be displayed on the panel. If it is not selected, the default colors will be used, see the 'Colors' control module.</string>
                     </property>
                 </widget>
-                <widget class="KURLRequester" row="1" column="0">
+                <widget class="QLayoutWidget">
                     <property name="name">
-                        <cstring>m_backgroundInput</cstring>
+                        <cstring>layout1</cstring>
                     </property>
-                    <property name="enabled">
-                        <bool>false</bool>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <widget class="KURLRequester">
+                            <property name="name">
+                                <cstring>m_backgroundInput</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>5</hsizetype>
+                                    <vsizetype>5</vsizetype>
+                                    <horstretch>1</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Here you can choose a theme to be displayed by the panel. Press the 'Browse' button to choose a theme using the file dialog.&lt;p&gt; This option is only active if 'Enable background image' is selected.</string>
+                            </property>
+                        </widget>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>m_backgroundLabel</cstring>
+                            </property>
+                            <property name="enabled">
+                                <bool>false</bool>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                                <size>
+                                    <width>50</width>
+                                    <height>50</height>
+                                </size>
+                            </property>
+                            <property name="maximumSize">
+                                <size>
+                                    <width>50</width>
+                                    <height>50</height>
+                                </size>
+                            </property>
+                            <property name="frameShape">
+                                <enum>Panel</enum>
+                            </property>
+                            <property name="frameShadow">
+                                <enum>Sunken</enum>
+                            </property>
+                            <property name="scaledContents">
+                                <bool>true</bool>
+                            </property>
+                            <property name="alignment">
+                                <set>AlignCenter</set>
+                            </property>
+                            <property name="hAlign" stdset="0">
+                            </property>
+                            <property name="vAlign" stdset="0">
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>This is a preview for the selected background image.</string>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout2</cstring>
+            </property>
+            <grid>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QPushButton" row="1" column="0">
+                    <property name="name">
+                        <cstring>advancedOptionsButton</cstring>
                     </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>5</hsizetype>
-                            <vsizetype>5</vsizetype>
-                            <horstretch>1</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Here you can choose a theme to be displayed by the panel. Press the 'Browse' button to choose a theme using the file dialog.&lt;p&gt; This option is only active if 'Enable background image' is selected.</string>
+                    <property name="text">
+                        <string>Advanc&amp;ed Options...</string>
                     </property>
                 </widget>
+                <spacer row="0" column="0">
+                    <property name="name">
+                        <cstring>Spacer4_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>MinimumExpanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>16</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                </spacer>
+                <spacer row="2" column="0">
+                    <property name="name">
+                        <cstring>Spacer9_2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>16</height>
+                        </size>
+                    </property>
+                </spacer>
+                <spacer row="1" column="1">
+                    <property name="name">
+                        <cstring>Spacer4</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>260</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                </spacer>
             </grid>
         </widget>
-        <spacer row="5" column="0">
-            <property name="name">
-                <cstring>Spacer9_2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>20</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <spacer row="4" column="1">
-            <property name="name">
-                <cstring>Spacer4</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Horizontal</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>301</width>
-                    <height>0</height>
-                </size>
-            </property>
-        </spacer>
-        <spacer row="3" column="0">
-            <property name="name">
-                <cstring>Spacer4_2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>MinimumExpanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>0</width>
-                    <height>10</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QPushButton" row="4" column="0">
-            <property name="name">
-                <cstring>advancedOptionsButton</cstring>
-            </property>
-            <property name="text">
-                <string>Advanc&amp;ed Options...</string>
-            </property>
-        </widget>
-    </grid>
+    </vbox>
 </widget>
 <connections>
     <connection>
@@ -526,6 +557,24 @@
         <signal>clicked()</signal>
         <receiver>LookAndFeelTabBase</receiver>
         <slot>launchAdvancedDialog()</slot>
+    </connection>
+    <connection>
+        <sender>m_transparent</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_backgroundImage</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_transparent</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_backgroundInput</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>m_transparent</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>m_backgroundLabel</receiver>
+        <slot>setDisabled(bool)</slot>
     </connection>
 </connections>
 <tabstops>
