@@ -33,6 +33,9 @@ ksmserver_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 ksmserver_la_LIBADD = $(LIB_KDEUI)
 ksmserver_LDADD = ksmserver.la
 
+picsdir = $(kde_datadir)/ksmserver/pics
+pics_DATA = shutdownkonq.png
+
 check_PROGRAMS = testsh
 testsh_SOURCES = test.cpp shutdown.cpp
 

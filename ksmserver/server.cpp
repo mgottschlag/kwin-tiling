@@ -1049,7 +1049,7 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
 	sdmode = KApplication::ShutdownModeSchedule;
 
     if ( !logoutConfirmed ) {
-	KSMShutdownFeedback::start(); // make the screen gray
+  	KSMShutdownFeedback::start(); // make the screen gray
 	logoutConfirmed =
 	    KSMShutdownDlg::confirmShutdown( saveSession,
 					     maysd, maynuke, sdtype, sdmode );
@@ -1057,7 +1057,7 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
 	// because this prevents interaction ("do you want to save", etc.)
 	// TODO: turn the feedback widget into a list of apps to be closed,
 	// with an indicator of the current status for each.
-	KSMShutdownFeedback::stop(); // make the screen become normal again
+  	KSMShutdownFeedback::stop(); // make the screen become normal again
     }
 
     if ( logoutConfirmed ) {

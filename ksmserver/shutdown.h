@@ -25,6 +25,7 @@ public:
     static void stop() { delete s_pSelf; s_pSelf = 0L; }
     static KSMShutdownFeedback * self() { return s_pSelf; }
 
+
 protected:
     ~KSMShutdownFeedback() {}
 
@@ -47,15 +48,15 @@ public slots:
 
 protected:
     ~KSMShutdownDlg() {};
-    virtual void showEvent( QShowEvent * );
-    virtual void hideEvent( QHideEvent * );
 
 private:
     KSMShutdownDlg( QWidget* parent, bool saveSession, bool maysd, bool maynuke, KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode );
     QCheckBox* checkbox;
-    QRadioButton *rLogout, *rHalt, *rReboot, *rSched, *rTry, *rForce;
+    QRadioButton *rLogout, *rHalt, *rReboot;
+#if 0
+    , *rSched, *rTry, *rForce;
     QVButtonGroup *mgrp;
-    QPixmap pm;
+#endif
 };
 
 #endif
