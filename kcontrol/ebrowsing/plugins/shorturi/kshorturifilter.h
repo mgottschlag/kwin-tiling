@@ -117,6 +117,8 @@ protected:
      */
     bool expandEnvVar( QString& ) const;
 
+    QString removeArgs( const QString& cmd ) const;
+
 private:
 
     struct URLHint
