@@ -50,7 +50,7 @@ class Tab_widget
         void check_action_type();
         class Pages_set;
         void show_pages( const Pages_set& pages_P );
-        enum tab_pos_t { TAB_FIRST, TAB_INFO = TAB_FIRST, TAB_GESTURES_SETTINGS,
+        enum tab_pos_t { TAB_FIRST, TAB_INFO = TAB_FIRST, TAB_GENERAL_SETTINGS, TAB_GESTURES_SETTINGS,
             TAB_GENERAL, TAB_GROUP_GENERAL,
             TAB_TRIGGERS, TAB_SHORTCUT_TRIGGER, TAB_GESTURE_TRIGGER, TAB_ACTIONS, TAB_COMMAND_URL,
             TAB_MENUENTRY, TAB_DCOP, TAB_KEYBOARD_INPUT, TAB_WINDOW, TAB_CONDITIONS, TAB_END };

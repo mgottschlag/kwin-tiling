@@ -24,7 +24,8 @@ class KHotKeysApp
     Q_OBJECT
     K_DCOP
     k_dcop:
-        virtual ASYNC reread_configuration();
+        ASYNC reread_configuration();
+        ASYNC quit(); 
     public:
         KHotKeysApp();
         virtual ~KHotKeysApp();

@@ -36,6 +36,7 @@ Info_tab::Info_tab( QWidget* parent_P, const char* name_P )
 
 void Info_tab::clear_data()
     {
+    // "global" tab, not action specific, do nothing
     }
 
 } // namespace KHotKeys

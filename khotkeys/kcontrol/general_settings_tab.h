@@ -8,24 +8,26 @@
  
 ****************************************************************************/
 
-#ifndef _GESTURES_SETTINGS_TAB_H_
-#define _GESTURES_SETTINGS_TAB_H_
+#ifndef _GENERAL_SETTINGS_TAB_H_
+#define _GENERAL_SETTINGS_TAB_H_
 
-#include <gestures_settings_tab_ui.h>
+#include <general_settings_tab_ui.h>
 
 namespace KHotKeys
 {
 
-class Gestures_settings_tab
-    : public Gestures_settings_tab_ui
+class General_settings_tab
+    : public General_settings_tab_ui
     {
     Q_OBJECT
     public:
-        Gestures_settings_tab( QWidget* parent = NULL, const char* name = NULL );
+        General_settings_tab( QWidget* parent = NULL, const char* name = NULL );
         void read_data();
         void write_data() const;
     public slots:
         void clear_data();
+    protected slots:
+        virtual void import_clicked();
     };
 
 //***************************************************************************

@@ -22,13 +22,16 @@ class Settings
     {
     public:
         Settings();
-        void read_settings( bool include_disabled_P );
+        bool read_settings( bool include_disabled_P );
         void write_settings();
+        bool import( KConfig& cfg_P );
         Action_data_group* actions;
         bool gestures_disabled_globally;
         int gesture_mouse_button;
         int gesture_timeout;
+        bool daemon_disabled;
     protected:
+        bool read_settings( KConfig& cfg_P, bool include_disabled_P, bool import_P );
         void read_settings_v1( KConfig& cfg_P );
         void read_settings_v2( KConfig& cfg_P, bool include_disabled_P );
         int write_actions_recursively_v2( KConfig& cfg_P, Action_data_group* parent_P, bool enabled_P );

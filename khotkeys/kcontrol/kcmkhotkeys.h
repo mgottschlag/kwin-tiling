@@ -46,6 +46,9 @@ class Module
         int gesture_button() const;
         void set_gesture_timeout( int time );
         int gesture_timeout() const;
+        void set_daemon_disabled( bool disable );
+        bool daemon_disabled() const;
+        void import();
     public slots:
         void changed();
     protected:
@@ -120,6 +123,18 @@ inline
 int Module::gesture_timeout() const
     {
     return settings.gesture_timeout;
+    }
+
+inline
+void Module::set_daemon_disabled( bool disabled_P )
+    {
+    settings.daemon_disabled = disabled_P;
+    }
+
+inline
+bool Module::daemon_disabled() const
+    {
+    return settings.daemon_disabled;
     }
 
 } // namespace KHotKeys

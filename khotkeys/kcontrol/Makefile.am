@@ -9,7 +9,7 @@ kcm_khotkeys_la_SOURCES = \
     windowdef_simple_widget.cpp triggers_tab.cpp dcop_widget.cpp info_tab.cpp \
     action_list_widget.cpp keyboard_input_widget.cpp condition_list_widget.cpp \
     gesturedrawer.cpp gesturerecorder.cpp gesturerecordpage.cpp gesture_triggers_tab.cpp \
-    windowselector.cpp gestures_settings_tab.cpp
+    windowselector.cpp gestures_settings_tab.cpp general_settings_tab.cpp
     
 kcm_khotkeys_la_LIBADD  = ui/libui.la $(LIB_KDEUI)
 kcm_khotkeys_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
@@ -21,7 +21,7 @@ noinst_HEADERS = menuedit.h window_trigger_widget.h \
     action_list_widget.h keyboard_input_widget.h condition_list_widget.h \
     activate_window_widget.h \
     gesturedrawer.h gesturerecorder.h gesturerecordpage.h gesture_triggers_tab.h \
-    windowselector.h gestures_settings_tab.h
+    windowselector.h gestures_settings_tab.h general_settings_tab.h
 
 
 INCLUDES= -I$(top_srcdir)/khotkeys/shared -I$(srcdir)/ui -I./ui $(all_includes)

@@ -47,14 +47,14 @@ Gestures_settings_tab::Gestures_settings_tab( QWidget* parent_P, const char* nam
         module, SLOT( changed()));
     }
 
-void Gestures_settings_tab::set_data()
+void Gestures_settings_tab::read_data()
     {
     mouse_gestures_globally->setChecked( module->gestures_disabled());
     mouse_button_combo->setCurrentItem( module->gesture_button() - 1 );
     timeout_input->setValue( module->gesture_timeout());
     }
 
-void Gestures_settings_tab::get_data() const
+void Gestures_settings_tab::write_data() const
     {
     module->set_gestures_disabled( mouse_gestures_globally->isChecked());
     module->set_gesture_button( mouse_button_combo->currentItem() + 1 );
@@ -63,7 +63,7 @@ void Gestures_settings_tab::get_data() const
 
 void Gestures_settings_tab::clear_data()
     {
-    set_data();
+    // "global" tab, not action specific, do nothing
     }
     
 } // namespace KHotKeys

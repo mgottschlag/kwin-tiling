@@ -30,6 +30,8 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kglobal.h>
+#include <ksimpleconfig.h>
+#include <kfiledialog.h>
 
 #include <input.h>
 #include <triggers.h>
@@ -105,16 +107,25 @@ void Module::save()
     tab_widget->save_current_action_changes();
     settings.actions = _actions_root;
     settings.write_settings();
-    if( !kapp->dcopClient()->isApplicationRegistered( "khotkeys" ))
+    if( daemon_disabled())
         {
-        kdDebug( 1217 ) << "launching new khotkeys daemon" << endl;
-        KApplication::kdeinitExec( "khotkeys" );
+        QByteArray data;
+        kapp->dcopClient()->send( "khotkeys*", "khotkeys", "quit()", data );
+        kdDebug( 1217 ) << "disabling khotkeys daemon" << endl;
         }
     else
         {
-        QByteArray data;
-        kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
-        kdDebug( 1217 ) << "telling khotkeys daemon to reread configuration" << endl;
+        if( !kapp->dcopClient()->isApplicationRegistered( "khotkeys" ))
+            {
+            kdDebug( 1217 ) << "launching new khotkeys daemon" << endl;
+            KApplication::kdeinitExec( "khotkeys" );
+            }
+        else
+            {
+            QByteArray data;
+            kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
+            kdDebug( 1217 ) << "telling khotkeys daemon to reread configuration" << endl;
+            }
         }
     setChanged( false );
     }
@@ -260,6 +271,26 @@ void Module::global_settings()
     {
     actions_listview_widget->set_current_action( NULL );
     set_new_current_action( true );
+    }
+
+void Module::import()
+    {
+    QString file = KFileDialog::getOpenFileName( QString::null, "*.khotkeys", topLevelWidget(),
+        i18n( "Select the file with actions to be imported" ));
+    if( file.isEmpty())
+        return;
+    KSimpleConfig cfg( file, true );
+    if( !settings.import( cfg ))
+        {
+        KMessageBox::error( topLevelWidget(),
+            i18n( "Import of the specified file failed. Most probably the file is not a valid "
+                "file with actions." ));
+        return;
+        }
+    actions_listview_widget->clear();
+    actions_listview_widget->build_up();
+    tab_widget->load_current_action();
+    setChanged( true );
     }
     
 void Module::changed()

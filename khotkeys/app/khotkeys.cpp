@@ -63,6 +63,11 @@ void KHotKeysApp::reread_configuration()
     khotkeys_set_active( true );
     actions_root->update_triggers();
     }
+
+void KHotKeysApp::quit()
+    {
+    kapp->quit();
+    }
     
 } // namespace KHotKeys
 

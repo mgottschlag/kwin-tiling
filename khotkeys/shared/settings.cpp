@@ -36,34 +36,51 @@ Settings::Settings()
     {
     }
     
-void Settings::read_settings( bool include_disabled_P )
+bool Settings::read_settings( bool include_disabled_P )
+    {
+    KConfig cfg( KHOTKEYS_CONFIG_FILE, true );
+    return read_settings( cfg, include_disabled_P, false );
+    }
+
+bool Settings::import( KConfig& cfg_P )
+    {
+    return read_settings( cfg_P, true, true );
+    }
+
+bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, bool import_P )
     {
     if( actions == NULL )
         actions = new Action_data_group( NULL, "should never see", "should never see",
             NULL, Action_data_group::SYSTEM_ROOT, true );
-    KConfig cfg( KHOTKEYS_CONFIG_FILE, true );
-    if( cfg.groupList().count() == 0 ) // empty
-        return;
-    cfg.setGroup( "Main" ); // main group
-    int version = cfg.readNumEntry( "Version", -1234576 );
+    if( cfg_P.groupList().count() == 0 ) // empty
+        return false;
+    cfg_P.setGroup( "Main" ); // main group
+    int version = cfg_P.readNumEntry( "Version", -1234576 );
     switch( version )
         {
         case 1:
-            read_settings_v1( cfg );
+            read_settings_v1( cfg_P );
           break;
         case 2:
-            read_settings_v2( cfg, include_disabled_P );
+            read_settings_v2( cfg_P, include_disabled_P );
           break;
         default:
             kdWarning( 1217 ) << "Unknown cfg. file version\n";
-          break;
+          return false;
         case -1234576: // no config file
+            if( import_P ) // if importing, this is an error
+                return false;
           break;
         }
-    cfg.setGroup( "Gestures" );
-    gestures_disabled_globally = cfg.readBoolEntry( "Disabled", false );
-    gesture_mouse_button = cfg.readNumEntry( "MouseButton", 2 );
-    gesture_timeout = cfg.readNumEntry( "Timeout", 1000 );
+    if( import_P )
+        return true; // don't read global settings
+    cfg_P.setGroup( "Main" ); // main group
+    daemon_disabled = cfg_P.readBoolEntry( "Disabled", false );
+    cfg_P.setGroup( "Gestures" );
+    gestures_disabled_globally = cfg_P.readBoolEntry( "Disabled", false );
+    gesture_mouse_button = cfg_P.readNumEntry( "MouseButton", 2 );
+    gesture_timeout = cfg_P.readNumEntry( "Timeout", 1000 );
+    return true;
     }
 
 void Settings::write_settings()
@@ -80,7 +97,8 @@ void Settings::write_settings()
     cfg.setGroup( "Data" );
     int cnt = write_actions_recursively_v2( cfg, actions, true );
     cfg.setGroup( "Main" );
-    cfg.writeEntry( "Autostart", cnt != 0 );
+    cfg.writeEntry( "Autostart", cnt != 0 && !daemon_disabled );
+    cfg.writeEntry( "Disabled", daemon_disabled );
     cfg.setGroup( "Gestures" );
     cfg.writeEntry( "Disabled", gestures_disabled_globally );
     cfg.writeEntry( "MouseButton", gesture_mouse_button );
