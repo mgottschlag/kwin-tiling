@@ -38,6 +38,7 @@
 #include <kaboutdata.h>
 #include <kmessagebox.h>
 #include <kconfig.h>
+#include <kdebug.h>
 
 #include "main.h"
 #include "main.moc"
