@@ -31,6 +31,7 @@
 #include <qregexp.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 using namespace std;
 
