@@ -94,21 +94,6 @@ const int XNone = None;
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 
-extern "C" {
-    /* int umask(...); */
-
-static void the_reaper(int /*sig*/)
-{
-    int status;
-#ifdef HAVE_WAITPID
-    while(waitpid(-1, &status, WNOHANG) > 0) ;
-#else
-    wait(&status);
-#endif
-    signal(SIGCHLD, the_reaper);
-}
-
-}
 KSMServer* the_server = 0;
 
 KSMClient::KSMClient( SmsConn conn)
@@ -270,24 +255,9 @@ void KSMServer::executeCommand( const QStringList& command )
 {
     if ( command.isEmpty() )
         return;
-    int n = command.count();
-    QCString app = command[0].latin1();
-    char ** argList = new char *[n+1];
-
-    for ( int i=0; i < n; i++)
-       argList[i] = (char *) command[i].latin1();
-    argList[n] = 0;
-
-    int pid = fork();
-    if (pid == -1)
-       return;
-    if (pid == 0) {
-       execvp(app.data(), argList);
-       exit(127);
-    }
-    int status;
-    waitpid(pid, &status, 0);
-    delete [] argList;
+    KProcess proc;
+    proc << command;
+    proc.start( KProcess::Block );
 }
 
 IceAuthDataEntry *authDataEntries = 0;
@@ -814,7 +784,6 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     signal(SIGHUP, sighandler);
     signal(SIGTERM, sighandler);
     signal(SIGINT, sighandler);
-    signal(SIGCHLD, the_reaper);
     signal(SIGPIPE, SIG_IGN);
 
     connect( &protectionTimer, SIGNAL( timeout() ), this, SLOT( protectionTimeout() ) );
@@ -850,7 +819,6 @@ void KSMServer::cleanUp()
     FreeAuthenticationData(numTransports, authDataEntries);
     signal(SIGTERM, SIG_DFL);
     signal(SIGINT, SIG_DFL);
-    signal(SIGCHLD, SIG_DFL);
 }
 
 
