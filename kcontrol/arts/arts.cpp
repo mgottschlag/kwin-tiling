@@ -151,7 +151,7 @@ void KArtsModule::initAudioIOList()
 KArtsModule::KArtsModule(QWidget *parent, const char *name)
   : KCModule(parent, name), configChanged(false)
 {
-    setButtons(Reset|Default|Cancel|Apply|Ok);
+    setButtons(Default|Apply);
 
 	initAudioIOList();
 
