@@ -227,26 +227,39 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     vLayout->addWidget( mSettingsGroup );
     groupLayout = new QVBoxLayout( mSettingsGroup->layout(), 10 );
 
+
+    mEnabledCheckBox = new QCheckBox(i18n("Start screensaver a&utomatically"), mSettingsGroup);
+    mEnabledCheckBox->setChecked(mEnabled);
+    QWhatsThis::add( mEnabledCheckBox, i18n("When you check this option, the selected screensaver will be started"
+                                            " automatically after a certain number of minutes of inactivity."
+                                            " This time out period can be defined in the spinbox below") );
+    connect(mEnabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(slotEnable(bool)));
+    groupLayout->addWidget(mEnabledCheckBox);
+    
     QBoxLayout *hbox = new QHBoxLayout();
     groupLayout->addLayout(hbox);
-    QLabel *lbl = new QLabel(i18n("Acti&vate after:"), mSettingsGroup);
-    hbox->addWidget(lbl);
+    hbox->addSpacing(30);
+    mActivateLbl = new QLabel(i18n("After:"), mSettingsGroup);
+    mActivateLbl->setEnabled(mEnabled);
+    hbox->addWidget(mActivateLbl);
     mWaitEdit = new QSpinBox(mSettingsGroup);
     mWaitEdit->setSteps(1, 10);
-    mWaitEdit->setRange(0, 120);
-    mWaitEdit->setSuffix(i18n(" min"));
-    mWaitEdit->setSpecialValueText(i18n("Never"));
+    mWaitEdit->setRange(1, 120);
+    mWaitEdit->setSuffix(i18n(" minutes"));
+    mWaitEdit->setSpecialValueText(i18n("1 minute"));
     mWaitEdit->setValue(mTimeout/60);
+    mWaitEdit->setEnabled(mEnabled);
     connect(mWaitEdit, SIGNAL(valueChanged(int)), SLOT(slotTimeoutChanged(int)));
-    lbl->setBuddy(mWaitEdit);
+    mActivateLbl->setBuddy(mWaitEdit);
     hbox->addWidget(mWaitEdit);
+    hbox->addStretch(1);
     QString wtstr = i18n("Choose the period of inactivity (from 1"
       " to 120 minutes) after which the screen saver should start."
       "To prevent the screensaver from automatically starting, choose zero minutes.");
-    QWhatsThis::add( lbl, wtstr );
+    QWhatsThis::add( mActivateLbl, wtstr );
     QWhatsThis::add( mWaitEdit, wtstr );
-
-    mLockCheckBox = new QCheckBox( i18n("&Require password"), mSettingsGroup );
+    
+    mLockCheckBox = new QCheckBox( i18n("&Require password to stop screensaver"), mSettingsGroup );
     mLockCheckBox->setChecked( mLock );
     connect( mLockCheckBox, SIGNAL( toggled( bool ) ),
          this, SLOT( slotLock( bool ) ) );
@@ -258,7 +271,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     QGridLayout *gl = new QGridLayout(groupLayout, 2, 4);
     gl->setColStretch( 2, 10 );
 
-    lbl = new QLabel(i18n("&Priority:"), mSettingsGroup);
+    QLabel* lbl = new QLabel(i18n("&Priority:"), mSettingsGroup);
     gl->addWidget(lbl, 0, 0);
 
     mPrioritySlider = new QSlider(QSlider::Horizontal, mSettingsGroup);
@@ -377,7 +390,7 @@ void KScreenSaver::load()
     emit changed(false);
 }
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------After---------------
 //
 void KScreenSaver::readSettings()
 {
@@ -385,23 +398,14 @@ void KScreenSaver::readSettings()
     config->setGroup( "ScreenSaver" );
 
     mEnabled = config->readBoolEntry("Enabled", false);
-    
-    if (mEnabled)
-    {
-        mTimeout = config->readNumEntry("Timeout", 300);
-    }
-    else
-    {
-        mTimeout = 0;
-    }
-    
+    mTimeout = config->readNumEntry("Timeout", 300);
     mLock = config->readBoolEntry("Lock", false);
     mPriority = config->readNumEntry("Priority", 19);
     mSaver = config->readEntry("Saver");
 
     if (mPriority < 0) mPriority = 0;
     if (mPriority > 19) mPriority = 19;
-    if (mTimeout < 0) mTimeout = 0;
+    if (mTimeout < 60) mTimeout = 60;
 
     mChanged = false;
     delete config;
@@ -431,7 +435,7 @@ void KScreenSaver::defaults()
     slotScreenSaver( 0 );
     mSaverListBox->setCurrentItem( 0 );
     mSaverListBox->centerCurrentItem();
-    slotTimeoutChanged( 15 );
+    slotTimeoutChanged( 5 );
     slotPriorityChanged( 0 );
     slotLock( false );
     updateValues();
@@ -596,6 +600,18 @@ void KScreenSaver::slotPreviewExited(KProcess *)
 
 //---------------------------------------------------------------------------
 //
+void KScreenSaver::slotEnable(bool e)
+{
+    mEnabled = e;
+    mActivateLbl->setEnabled( e );
+    mWaitEdit->setEnabled( e );
+    mChanged = true;
+    emit changed(true);
+}
+
+
+//---------------------------------------------------------------------------
+//
 void KScreenSaver::slotScreenSaver(int indx)
 {
     bool bChanged = (indx != mSelected);
@@ -725,7 +741,6 @@ void KScreenSaver::slotStopTest()
 void KScreenSaver::slotTimeoutChanged(int to )
 {
     mTimeout = to * 60;
-    mEnabled = (to > 0);
     mChanged = true;
     emit changed(true);
 }
