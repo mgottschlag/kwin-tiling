@@ -466,14 +466,14 @@ void CConfig::configured()
     KConfigGroupSaver cfgSaver(this, "Misc");
 
     itsConfigured=true; 
-    writeEntry("Configured", itsConfigured);
+    write("Configured", itsConfigured);
 }
 
 void CConfig::setAdvancedMode(bool b)
 {
     KConfigGroupSaver cfgSaver(this, "Appearance");
  
-    writeEntry("AdvancedMode", b);
+    write("AdvancedMode", b);
     itsAdvancedMode=b;
 }
 
@@ -481,7 +481,7 @@ void CConfig::setFontListsOrientation(Qt::Orientation o)
 {
     KConfigGroupSaver cfgSaver(this, "Appearance");
  
-    writeEntry("FontListsOrientation", o);
+    write("FontListsOrientation", o);
     itsFontListsOrientation=o;
 }
 
@@ -489,7 +489,7 @@ void CConfig::setUseCustomPreviewStr(bool b)
 {
     KConfigGroupSaver cfgSaver(this, "Appearance");
  
-    writeEntry("UseCustomPreviewStr", b);
+    write("UseCustomPreviewStr", b);
     itsUseCustomPreviewStr=b;
 }
 
@@ -497,7 +497,7 @@ void CConfig::setCustomPreviewStr(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "Appearance");
  
-    writeEntry("CustomPreviewStr", s);
+    write("CustomPreviewStr", s);
     itsCustomPreviewStr=s;
 }
 
@@ -505,7 +505,7 @@ void CConfig::setFontsDir(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "FoldersAndFiles");	
  
-    writeEntry("FontsDir", s);
+    write("FontsDir", s);
     itsFontsDir=s; 
 }
 
@@ -513,7 +513,7 @@ void CConfig::setTTSubDir(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "FoldersAndFiles");
  
-    writeEntry("TTSubDir", s);
+    write("TTSubDir", s);
     itsTTSubDir=s; 
 }
 
@@ -521,7 +521,7 @@ void CConfig::setT1SubDir(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "FoldersAndFiles");
  
-    writeEntry("T1SubDir", s);
+    write("T1SubDir", s);
     itsT1SubDir=s; 
 }
 
@@ -529,7 +529,7 @@ void CConfig::setXConfigFile(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "FoldersAndFiles");
  
-    writeEntry("XConfigFile", s);
+    write("XConfigFile", s);
     itsXConfigFile=s;
 }
 
@@ -538,7 +538,7 @@ void CConfig::setXftConfigFile(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "AntiAlias");
  
-    writeEntry("XftConfigFile", s);
+    write("XftConfigFile", s);
     itsXftConfigFile=s;
 }
 #endif
@@ -547,7 +547,7 @@ void CConfig::setEncodingsDir(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "FoldersAndFiles");
  
-    writeEntry("EncodingsDir", s);
+    write("EncodingsDir", s);
     itsEncodingsDir=s; 
 }
 
@@ -555,7 +555,7 @@ void CConfig::setGhostscriptFile(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "FoldersAndFiles");
  
-    writeEntry("GhostscriptFile", s);
+    write("GhostscriptFile", s);
     itsGhostscriptFile=s; 
 }
 
@@ -563,7 +563,7 @@ void CConfig::setDoGhostscript(bool b)
 {
     KConfigGroupSaver cfgSaver(this, "FoldersAndFiles");
  
-    writeEntry("DoGhostscript", b);
+    write("DoGhostscript", b);
     itsDoGhostscript=b;
 }
 
@@ -571,7 +571,7 @@ void CConfig::setFixTtfPsNamesUponInstall(bool b)
 {
     KConfigGroupSaver cfgSaver(this, "InstallUninstall");
  
-    writeEntry("FixTtfPsNamesUponInstall", b);
+    write("FixTtfPsNamesUponInstall", b);
     itsFixTtfPsNamesUponInstall=b; 
 }
 
@@ -579,7 +579,7 @@ void CConfig::setUninstallDir(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "InstallUninstall");
  
-    writeEntry("UninstallDir", s);
+    write("UninstallDir", s);
     itsUninstallDir=s; 
 }
 
@@ -587,7 +587,7 @@ void CConfig::setInstallDir(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "InstallUninstall");
  
-    writeEntry("InstallDir", s);
+    write("InstallDir", s);
     itsInstallDir=s;
 }
 
@@ -595,7 +595,7 @@ void CConfig::setSOConfigure(bool b)
 {
     KConfigGroupSaver cfgSaver(this, "StarOffice");
  
-    writeEntry("SOConfigure", b);
+    write("SOConfigure", b);
     itsSOConfigure=b;
     if(b)
         setDoAfm(true);
@@ -605,7 +605,7 @@ void CConfig::setSODir(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "StarOffice");
  
-    writeEntry("SODir", s);
+    write("SODir", s);
     itsSODir=s; 
 }
 
@@ -613,7 +613,7 @@ void CConfig::setSOPpd(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "StarOffice");
  
-    writeEntry("SOPpd", s);
+    write("SOPpd", s);
     itsSOPpd=s; 
 }
 
@@ -621,7 +621,7 @@ void CConfig::setExclusiveEncoding(bool b)
 {
     KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
  
-    writeEntry("ExclusiveEncoding", b);
+    write("ExclusiveEncoding", b);
     itsExclusiveEncoding=b; 
 }
 
@@ -629,7 +629,7 @@ void CConfig::setEncoding(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
  
-    writeEntry("Encoding", s);
+    write("Encoding", s);
     itsEncoding=s; 
 }
 
@@ -637,7 +637,7 @@ void CConfig::setDoAfm(bool b)
 {
     KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
  
-    writeEntry("DoAfm", b);
+    write("DoAfm", b);
     itsDoAfm=b; 
     if(b)
     {
@@ -655,7 +655,7 @@ void CConfig::setDoTtAfms(bool b)
 {
     KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
  
-    writeEntry("DoTtAfms", b);
+    write("DoTtAfms", b);
     itsDoTtAfms=b;
     if(!b && !itsDoTtAfms)
         setDoAfm(false);
@@ -668,7 +668,7 @@ void CConfig::setDoT1Afms(bool b)
 {
     KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
  
-    writeEntry("DoT1Afms", b);
+    write("DoT1Afms", b);
     itsDoT1Afms=b;
     if(!b && !itsDoT1Afms)
         setDoAfm(false);
@@ -681,7 +681,7 @@ void CConfig::setAfmEncoding(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
  
-    writeEntry("AfmEncoding", s);
+    write("AfmEncoding", s);
     itsAfmEncoding=s;
 }
 
@@ -689,7 +689,7 @@ void CConfig::setXRefreshCmd(EXFontListRefresh cmd)
 {
     KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
  
-    writeEntry("XRefreshCmd", (int)cmd);
+    write("XRefreshCmd", (int)cmd);
     itsXRefreshCmd=cmd; 
 }
 
@@ -697,7 +697,7 @@ void CConfig::setCustomXRefreshCmd(const QString &s)
 {
     KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
  
-    writeEntry("CustomXRefreshCmd", s);
+    write("CustomXRefreshCmd", s);
     itsCustomXRefreshCmd=s; 
 }
 
@@ -707,7 +707,7 @@ void CConfig::addModifiedDir(const QString &d)
     {
         KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
         itsModifiedDirs.append(d);
-        writeEntry("ModifiedDirs", itsModifiedDirs);
+        write("ModifiedDirs", itsModifiedDirs);
     }
 }
 
@@ -717,7 +717,7 @@ void CConfig::removeModifiedDir(const QString &d)
     {
         KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
         itsModifiedDirs.remove(d);
-        writeEntry("ModifiedDirs", itsModifiedDirs);
+        write("ModifiedDirs", itsModifiedDirs);
     }
 }
 
@@ -725,5 +725,29 @@ void CConfig::clearModifiedDirs()
 {
     KConfigGroupSaver cfgSaver(this, "SystemConfiguration");
     itsModifiedDirs.clear();
-    writeEntry("ModifiedDirs", itsModifiedDirs);
+    write("ModifiedDirs", itsModifiedDirs);
+}
+
+void CConfig::write(const QString &key, const QString &value)
+{
+    writeEntry(key, value);
+    sync();
+}
+
+void CConfig::write(const QString &key, const QStringList &value)
+{
+    writeEntry(key, value);
+    sync();
+}
+
+void CConfig::write(const QString &key, bool value)
+{
+    writeEntry(key, value);
+    sync();
+}
+
+void CConfig::write(const QString &key, int value)
+{
+    writeEntry(key, value);
+    sync();
 }

@@ -50,6 +50,7 @@ class CConfig : public KConfig
     };
 
     CConfig();
+    virtual ~CConfig()                              { }
 
     bool              firstTime()                   { return !itsConfigured; }
     void              configured();
@@ -140,6 +141,13 @@ class CConfig : public KConfig
     static const QString constGhostscriptFiles[];
     static const QString constSODirs[];
     static const QString constNotFound;
+
+    private:
+
+    void write(const QString &key, const QString &value);
+    void write(const QString &key, const QStringList &value);
+    void write(const QString &key, bool value);
+    void write(const QString &key, int value);
 
     private:
 
