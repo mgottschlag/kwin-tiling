@@ -25,6 +25,7 @@
 #include <qhbox.h>
 #include <qvbox.h>
 #include <qdesktopwidget.h>
+#include <qwhatsthis.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -85,6 +86,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	}
 
 	m_screenSelector->setCurrentItem(currentScreenIndex());
+	QWhatsThis::add(m_screenSelector, i18n("The screen whose settings you would like to change can be selected using this drop-down list."));
 
 	connect(m_screenSelector, SIGNAL(activated(int)), SLOT(slotScreenChanged(int)));
 
@@ -95,26 +97,31 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	topLayout->addWidget(sizeBox);
 	new QLabel(i18n("Screen size:"), sizeBox);
 	m_sizeCombo = new KComboBox(sizeBox);
+	QWhatsThis::add(m_sizeCombo, i18n("The size, otherwise known as the resolution, of your screen can be selected from this drop-down list."));
 	connect(m_sizeCombo, SIGNAL(activated(int)), SLOT(slotSizeChanged(int)));
 
 	QHBox* refreshBox = new QHBox(this);
 	topLayout->addWidget(refreshBox);
 	new QLabel(i18n("Refresh rate:"), refreshBox);
 	m_refreshRates = new KComboBox(refreshBox);
+	QWhatsThis::add(m_refreshRates, i18n("The refresh rate of your screen can be selected from this drop-down list."));
 	connect(m_refreshRates, SIGNAL(activated(int)), SLOT(slotRefreshChanged(int)));
 
 	m_rotationGroup = new QButtonGroup(2, Qt::Horizontal, i18n("Orientation (degrees counterclockwise)"), this);
 	topLayout->addWidget(m_rotationGroup);
 	m_rotationGroup->setRadioButtonExclusive(true);
+	QWhatsThis::add(m_rotationGroup, i18n("The options in this section allow you to change the rotation of your screen."));
 
 	m_applyOnStartup = new QCheckBox(i18n("Apply settings on KDE startup"), this);
 	topLayout->addWidget(m_applyOnStartup);
+	QWhatsThis::add(m_applyOnStartup, i18n("If this option is enabled the size and orientation settings will be used when KDE starts."));
 	connect(m_applyOnStartup, SIGNAL(clicked()), SLOT(setChanged()));
 
 	QHBox* syncBox = new QHBox(this);
 	syncBox->layout()->addItem(new QSpacerItem(20, 1, QSizePolicy::Maximum));
 	m_syncTrayApp = new QCheckBox(i18n("Allow tray application to change startup settings"), syncBox);
 	topLayout->addWidget(syncBox);
+	QWhatsThis::add(m_syncTrayApp, i18n("If this option is enabled, options set by the system tray applet will be saved and loaded when KDE starts instead of being temporary."));
 	connect(m_syncTrayApp, SIGNAL(clicked()), SLOT(setChanged()));
 
 	topLayout->addStretch(1);
