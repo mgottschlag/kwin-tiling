@@ -80,7 +80,9 @@ struct _app_resources {
 };
 
 extern "C" {
+#ifndef XIMStringConversionRetrival
 extern int XdmcpARRAY8Equal(ARRAY8 *, ARRAY8 *);
+#endif
 extern int XdmcpAllocARRAY8 (ARRAY8 *, int);
 extern void XdmcpDisposeARRAY8(ARRAY8 *);
 extern int XdmcpFill(int , XdmcpBuffer *, char *, int *);
