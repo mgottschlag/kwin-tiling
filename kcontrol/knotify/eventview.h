@@ -20,6 +20,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.15  2000/05/25 21:13:36  charles
+    *** empty log message ***
+
     Revision 1.14  2000/05/21 08:23:22  charles
     *** empty log message ***
 
@@ -123,11 +126,13 @@ protected slots:
 	void itemToggled(bool on);
 
 	void textChanged(const QString &str);
+	void playSound();
 
 signals:
 	void changed();
 
 private:
+	QPushButton *play;
 	QListBox *eventslist;
 	QCheckBox *enabled;
 	KURLRequester *file;

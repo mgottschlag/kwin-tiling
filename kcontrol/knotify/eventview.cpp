@@ -23,14 +23,16 @@
 
 #include "eventview.h"
 #include "eventview.moc"
+#include "eventconfig.h"
 
 #include <qlabel.h>
 #include <qlayout.h>
+
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kdialog.h>
 #include <kinstance.h>
-#include "eventconfig.h"
+#include <kaudioplayer.h>
 
 #include <iostream.h>
 
@@ -46,21 +48,25 @@ EventView::EventView(QWidget *parent, const char *name):
 	QGridLayout *layout=new QGridLayout(this,4, 2, 
 					    KDialog::marginHint(),
 					    KDialog::spacingHint());
-	
+	QHBoxLayout *tinylayout;
+	layout->addLayout(tinylayout=new QHBoxLayout(this),2,1);
 
+	
 	eventslist=new QListBox(this);
 	
 	layout->addMultiCellWidget(eventslist, 0,3, 0,0);
 	layout->addWidget(enabled=new QCheckBox(i18n("&Enabled"),this), 0,1);
-	layout->addWidget(file=new KURLRequester(this), 2,1);
+	tinylayout->addWidget(file=new KURLRequester(this));
+	tinylayout->addWidget(play=new QPushButton(i18n("&Play"), this));
 	layout->addWidget(new QLabel(file, i18n("&File:"), this), 1,1);
-	layout->addWidget(todefault=new QPushButton(i18n("&Default Event"), this), 3,1, Qt::AlignRight);
+	layout->addWidget(todefault=new QPushButton(i18n("Set To &Default"), this), 3,1, Qt::AlignRight);
 	
 	file->setEnabled(false);
 	connect(eventslist, SIGNAL(highlighted(int)), SLOT(itemSelected(int)));
 	connect(enabled, SIGNAL(toggled(bool)), SLOT(itemToggled(bool)));
 	connect((QObject*)file->lineEdit(), SIGNAL(textChanged(const QString&)), SLOT(textChanged(const QString&)) );
 	connect(todefault, SIGNAL(clicked()), SLOT(defaults()));
+	connect(play, SIGNAL(clicked()), SLOT(playSound()));
 };
 
 EventView::~EventView()
@@ -95,11 +101,20 @@ void EventView::itemSelected(int item)
 	
 	enabled->setChecked((event->present & enumNum(item)) ? true : false);
 	if (enumNum(item) == KNotifyClient::Sound)
-		file->setEnabled(true), file->setURL(event->soundfile);
+		file->setEnabled(true), file->setURL(event->soundfile), play->show();
+	else
+		play->hide();
+		
 	if (enumNum(item) == KNotifyClient::Logfile)
 		file->setEnabled(true), file->setURL(event->logfile);
+	
 		
 	oldListItem=item;
+}
+
+void EventView::playSound()
+{
+	KAudioPlayer::play(file->url());
 }
 
 void EventView::itemToggled(bool on)
