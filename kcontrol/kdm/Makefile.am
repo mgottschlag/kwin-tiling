@@ -1,11 +1,11 @@
 kde_module_LTLIBRARIES = kcm_kdm.la
 
-kcm_kdm_la_SOURCES = kdm-appear.cpp kdm-font.cpp kdm-sess.cpp \
-	kdropsite.cpp backgnd.cpp kdm-users.cpp kdm-conv.cpp \
-	klanguagebutton.cpp main.cpp bgdialogs.cpp
+kcm_kdm_la_SOURCES = background.cpp kdm-appear.cpp kdm-font.cpp kdm-sess.cpp \
+	kdropsite.cpp kdm-users.cpp kdm-conv.cpp \
+	klanguagebutton.cpp main.cpp
 
 kcm_kdm_la_LDFLAGS  = $(KDE_RPATH) $(all_libraries) -module -avoid-version -no-undefined
-kcm_kdm_la_LIBADD = $(top_builddir)/kcontrol/background/libbgnd.la $(LIB_KIO)
+kcm_kdm_la_LIBADD = $(top_builddir)/kcontrol/background/libkcmbgnd.la $(top_builddir)/kcontrol/background/libbgnd.la $(LIB_KIO)
 
 INCLUDES= -I$(top_srcdir)/kcontrol/background -I$(top_srcdir)/kdesktop $(all_includes)
 

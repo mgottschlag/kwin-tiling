@@ -30,11 +30,11 @@
 #include <kcmodule.h>
 
 class KDMAppearanceWidget;
-class KBackground;
 class KDMFontWidget;
 class KDMSessionsWidget;
 class KDMUsersWidget;
 class KDMConvenienceWidget;
+class KBackground;
 
 class KDModule : public KCModule
 {

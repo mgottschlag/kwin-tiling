@@ -70,24 +70,60 @@
 
 #include "advancedDialog.h"
 
+/**** KBGMonitor ****/
+
+KBGMonitor::KBGMonitor(QWidget *parent, const char *name)
+    : QWidget(parent, name)
+{
+    setAcceptDrops(true);
+}
+
+
+void KBGMonitor::dropEvent(QDropEvent *e)
+{
+    if (!QUriDrag::canDecode(e))
+        return;
+
+    QStringList uris;
+    if (QUriDrag::decodeLocalFiles(e, uris) && (uris.count() > 0)) {
+        QString uri = *uris.begin();
+        emit imageDropped(uri);
+    }
+}
+
+
+void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
+{
+    if (QUriDrag::canDecode(e))
+        e->accept(rect());
+    else
+        e->ignore(rect());
+}
+
+
 /*
  *  Constructs a Backgnd which is a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'
  */
-Backgnd::Backgnd( QWidget* parent,  const char* name, WFlags fl )
-    : BackgndBase( parent, name, fl ),
-    m_Max( KWin::numberOfDesktops() ),
-    m_Renderer( m_Max )
+Backgnd::Backgnd( QWidget* parent, KConfig *_config, bool _multidesktop,  const char* name, WFlags fl )
+    : BackgndBase( parent, name, fl )
 {
+    m_multidesktop= _multidesktop;
+    m_Max = m_multidesktop ? KWin::numberOfDesktops(): 1;
+    m_Renderer = QPtrVector<KBackgroundRenderer>( m_Max );
+    m_multidesktop= _multidesktop;
+
     m_pGlobals = new KGlobalBackgroundSettings();
 
-    m_Desk = KWin::currentDesktop() - 1;
+
+    m_Desk = m_multidesktop ? (KWin::currentDesktop() - 1) : 0;
+
     if(m_pGlobals->commonBackground())
         m_Desk = 0;
 
     // get number of desktops
     NETRootInfo info( qt_xdisplay(), NET::NumberOfDesktops | NET::DesktopNames );
-    if (info.numberOfDesktops() == 1)
+    if (info.numberOfDesktops() == 1 || !m_multidesktop)
     {
         m_pDesktopLabel->hide();
         m_pDesktopBox->hide();
@@ -95,7 +131,7 @@ Backgnd::Backgnd( QWidget* parent,  const char* name, WFlags fl )
 
     int i;
     for (i=0; i<m_Max; i++) {
-        m_Renderer.insert(i, new KBackgroundRenderer(i));
+        m_Renderer.insert(i, new KBackgroundRenderer(i, _config));
         connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotPreviewDone(int)));
     }
 
@@ -107,9 +143,12 @@ Backgnd::Backgnd( QWidget* parent,  const char* name, WFlags fl )
     connect(m_pMonitor, SIGNAL(imageDropped(QString)), SLOT(slotImageDropped(QString)));
     QWhatsThis::add( m_pMonitor, i18n("In this monitor, you can preview how your settings will look like on a \"real\" desktop.") );
 
-    // Desktop names
-    for (i=0; i<m_Max; i++)
-        m_pDesktopBox->insertItem(m_pGlobals->deskName(i));
+    if ( m_multidesktop)
+    {
+        // Desktop names
+        for (i=0; i<m_Max; i++)
+            m_pDesktopBox->insertItem(m_pGlobals->deskName(i));
+    }
 
 }
 
@@ -656,6 +695,38 @@ void Backgnd::slotAdvanced()
     delete dlg;
 }
 
+void Backgnd::makeReadOnly(bool state)
+{
+    m_pDesktopLabel->setEnabled(state);
+    m_pDesktopBox->setEnabled(state);
+    m_monitorImage->setEnabled(state);
+    m_pAdvancedBut->setEnabled( state );
+    m_pWallpaperGrp->setEnabled( state );
+    PushButton17->setEnabled( state );
+    m_pWallpaperBox->setEnabled( state );
+    m_pRemoveBut->setEnabled( state );
+    m_pChangeInterval->setEnabled( state );
+    m_pWPBlendBox->setEnabled( state );
+    m_pWPImageOrderLbl->setEnabled( state );
+    m_pWPBlendLbl->setEnabled( state );
+    m_pBalanceLbl->setEnabled( state );
+    m_pImageOrderBox->setEnabled( state );
+    m_pWPChangeIntervalLbl->setEnabled( state );
+    m_pWPModeLbl->setEnabled( state );
+    m_pBalanceSlider->setEnabled( state );
+    m_pWPModeBox->setEnabled( state );
+    m_pBackgroundGrp->setEnabled( state );
+    m_pProgramRadio->setEnabled( state );
+    m_pProgramSetupBut->setEnabled( state );
+    m_pPatternEditBut->setEnabled( state );
+    m_pColor1Label->setEnabled( state );
+    m_pColor2But->setEnabled( state );
+    m_pColor2Label->setEnabled( state );
+    m_pColor1But->setEnabled( state );
+    m_pBlendModeLabel->setEnabled( state );
+    m_pColorBlendBox->setEnabled( state );
+    m_pColorRadio->setEnabled( state );
+}
 
 #include "backgnd.moc"
 

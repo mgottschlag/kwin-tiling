@@ -33,18 +33,18 @@ protected:
 
 
 class Backgnd : public BackgndBase
-{ 
+{
     Q_OBJECT
 
 public:
-    Backgnd( QWidget* parent = 0, const char* name = 0, WFlags fl = 0 );
+    Backgnd( QWidget* parent = 0, KConfig *_config = 0L , bool _multidesktop = true, const char* name = 0, WFlags fl = 0 );
     ~Backgnd();
 
     void setWidgets();
     void load();
     void save();
     void defaults();
-
+    void makeReadOnly(bool state = false);
 protected slots:
     void slotColorBlendMode(int);
     void slotBGMode(int);
@@ -68,22 +68,22 @@ protected slots:
 
 signals:
     void changed(bool);
-    
+
 private:
     void init();
     void adjustMultiWP();
-    
+
     int m_Desk, m_Max;
     int m_oldMode;
 
     KGlobalBackgroundSettings *m_pGlobals;
-    
+
     QPtrVector<KBackgroundRenderer> m_Renderer;
     KBGMonitor *m_pMonitor;
-    
+
     KConfig *m_pConfig;
     KStandardDirs *m_pDirs;
-
+    bool m_multidesktop;
 
 
 };

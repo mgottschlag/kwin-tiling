@@ -51,40 +51,9 @@
 typedef KGenericFactory<KBackground, QWidget> KBackGndFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_background, KBackGndFactory("kcmbackground"));
 
-
-/**** KBGMonitor ****/
-
-KBGMonitor::KBGMonitor(QWidget *parent, const char *name)
-    : QWidget(parent, name)
-{
-    setAcceptDrops(true);
-}
-
-
-void KBGMonitor::dropEvent(QDropEvent *e)
-{
-    if (!QUriDrag::canDecode(e))
-        return;
-
-    QStringList uris;
-    if (QUriDrag::decodeLocalFiles(e, uris) && (uris.count() > 0)) {
-        QString uri = *uris.begin();
-        emit imageDropped(uri);
-    }
-}
-
-
-void KBGMonitor::dragEnterEvent(QDragEnterEvent *e)
-{
-    if (QUriDrag::canDecode(e))
-        e->accept(rect());
-    else
-        e->ignore(rect());
-}
-
 /**** KBackground ****/
 KBackground::~KBackground( )
-{ 
+{
 }
 
 KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/* */)
@@ -95,7 +64,7 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
     m_base->show();
     layout->add(m_base);
 
-    
+
     kdDebug() << "KBackground\n";
     KImageIO::registerFormats();
 
@@ -112,7 +81,7 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/
     setAcceptDrops(true);
 
     connect(m_base, SIGNAL(changed(bool)), SLOT(slotChildChanged(bool)));
-    
+
     m_base->setWidgets();
 
 }
@@ -190,7 +159,7 @@ const KAboutData* KBackground::aboutData() const
     about->addAuthor("Matthias Hoelzer-Kluepfel", 0, "mhk@kde.org");
     about->addAuthor("Stephan Kulow", 0, "coolo@kde.org");
     about->addAuthor("Mark Donohoe", 0, 0);
-    about->addAuthor("Matej Koss", 0 , 0); 
+    about->addAuthor("Matej Koss", 0 , 0);
 
     return about;
 }

@@ -35,13 +35,14 @@
 
 #include "kdm-appear.h"
 #include "kdm-font.h"
-#include "backgnd.h"
 #include "kdm-users.h"
 #include "kdm-sess.h"
 #include "kdm-conv.h"
 
 #include "main.h"
 
+#include "background.h"
+#include "../background/backgnd.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -124,8 +125,6 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   connect(this, SIGNAL(delUsers(const QMap<QString,int> &)), convenience, SLOT(slotDelUsers(const QMap<QString,int> &)));
   connect(this, SIGNAL(clearUsers()), convenience, SLOT(slotClearUsers()));
 
-  load();
-
   if (getuid() != 0) {
     appearance->makeReadOnly();
     font->makeReadOnly();
@@ -134,7 +133,7 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
     sessions->makeReadOnly();
     convenience->makeReadOnly();
   }
-
+  load();
   top->addWidget(tab);
 }
 
