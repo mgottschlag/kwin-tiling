@@ -3,7 +3,7 @@
 **
 ** Implementation of QXEmbed class
 **
-** Created : 
+** Created :
 **
 ** Copyright (C) 1992-1999 Troll Tech AS.  All rights reserved.
 **
@@ -33,6 +33,18 @@ QXEmbed::QXEmbed(QWidget *parent, const char *name)
     window = 0;
     setFocusPolicy(StrongFocus);
     setSizeGrip( FALSE ); //trick to create extraData();
+}
+
+QXEmbed::~QXEmbed()
+{
+    if ( topLevelWidget()->isActiveWindow() ) {
+	XEvent e;
+	e.type = FocusIn;
+	e.xfocus.window = topLevelWidget()->winId();
+	e.xfocus.mode = NotifyNormal;
+	e.xfocus.detail = NotifyDetailNone;
+	XSendEvent(qt_xdisplay(), topLevelWidget()->winId(), 0, FALSE, &e);
+    }
 }
 
 

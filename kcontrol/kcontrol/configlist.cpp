@@ -271,21 +271,9 @@ void KModuleListEntry::processExit(KProcess *proc)
       process = 0;
 
       if (visibleWidget && visibleWidget == swallowWidget){
-
-	  if ( visibleWidget->topLevelWidget()->isActiveWindow() ) {
-	      XSetInputFocus(qt_xdisplay(), visibleWidget->topLevelWidget()->winId(),
-			     RevertToPointerRoot, CurrentTime);
-	      XEvent e;
-	      e.type = FocusIn;
-	      e.xfocus.window = visibleWidget->topLevelWidget()->winId();
-	      e.xfocus.mode = NotifyNormal;
-	      e.xfocus.detail = NotifyDetailNone;
-	      XSendEvent(qt_xdisplay(), visibleWidget->topLevelWidget()->winId(), 0, FALSE, &e);
-	  }
-	  
-	if (listview)
-	    listview->setFocus();
-	visibleWidget = 0;
+	  if (listview)
+	      listview->setFocus();
+	  visibleWidget = 0;
       }
 
       delete swallowWidget;

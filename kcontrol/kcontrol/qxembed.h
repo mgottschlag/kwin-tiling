@@ -3,7 +3,7 @@
 **
 ** Definition of QXEmbed class
 **
-** Created : 
+** Created :
 **
 ** Copyright (C) 1992-1999 Troll Tech AS.  All rights reserved.
 **
@@ -35,6 +35,7 @@ class QXEmbed : public QWidget
 public:
 
   QXEmbed(QWidget *parent=0, const char *name=0);
+  ~QXEmbed();
 
   void embed(WId w);
 
