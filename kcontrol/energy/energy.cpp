@@ -50,7 +50,17 @@
 #include <X11/Xmd.h>
 extern "C" {
 #include <X11/extensions/dpms.h>
+Status DPMSInfo ( Display *, CARD16 *, BOOL * );
+Bool DPMSCapable( Display * );
 int __kde_do_not_unload = 1;
+
+#ifndef HAVE_DPMSCAPABLE_PROTO
+Bool DPMSCapable ( Display * );
+#endif
+
+#ifndef HAVE_DPMSINFO_PROTO
+Status DPMSInfo ( Display *, CARD16 *, BOOL * );
+#endif
 }
 
 #if defined(XIMStringConversionRetrival) || defined (__sun) || defined(__hpux)
