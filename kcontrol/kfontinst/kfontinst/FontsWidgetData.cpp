@@ -30,14 +30,14 @@ CFontsWidgetData::CFontsWidgetData( QWidget* parent,  const char* name, WFlags f
     if ( !name )
 	setName( "CFontsWidgetData" );
     resize( 603, 397 ); 
-    setCaption( QT_KDE_I18N( "Form1", "" ) );
+    setCaption( tr2i18n( "Form1", "" ) );
     CFontsWidgetDataLayout = new QGridLayout( this ); 
     CFontsWidgetDataLayout->setSpacing( 6 );
     CFontsWidgetDataLayout->setMargin( 11 );
 
     itsBox = new QGroupBox( this, "itsBox" );
     itsBox->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, 0, 0, itsBox->sizePolicy().hasHeightForWidth() ) );
-    itsBox->setTitle( QT_KDE_I18N( "Preview:", "" ) );
+    itsBox->setTitle( tr2i18n( "Preview:", "" ) );
     itsBox->setColumnLayout(0, Qt::Vertical );
     itsBox->layout()->setSpacing( 0 );
     itsBox->layout()->setMargin( 0 );
@@ -117,7 +117,7 @@ CFontsWidgetData::CFontsWidgetData( QWidget* parent,  const char* name, WFlags f
     itsLabel = new QLabel( itsBackground, "itsLabel" );
     itsLabel->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)0, 0, 0, itsLabel->sizePolicy().hasHeightForWidth() ) );
     itsLabel->setMinimumSize( QSize( 0, 32 ) );
-    itsLabel->setText( QT_KDE_I18N( "No preview available", "" ) );
+    itsLabel->setText( tr2i18n( "No preview available", "" ) );
 
     itsBackgroundLayout->addWidget( itsLabel, 0, 1 );
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );

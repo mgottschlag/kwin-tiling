@@ -28,13 +28,13 @@ CFontListWidgetData::CFontListWidgetData( QWidget* parent,  const char* name, WF
     if ( !name )
 	setName( "CFontListWidgetData" );
     resize( 403, 155 ); 
-    setCaption( QT_KDE_I18N( "Form1", "" ) );
+    setCaption( tr2i18n( "Form1", "" ) );
     CFontListWidgetDataLayout = new QGridLayout( this ); 
     CFontListWidgetDataLayout->setSpacing( 0 );
     CFontListWidgetDataLayout->setMargin( 0 );
 
     itsBox = new QGroupBox( this, "itsBox" );
-    itsBox->setTitle( QT_KDE_I18N( "Label", "" ) );
+    itsBox->setTitle( tr2i18n( "Label", "" ) );
     itsBox->setColumnLayout(0, Qt::Vertical );
     itsBox->layout()->setSpacing( 0 );
     itsBox->layout()->setMargin( 0 );
@@ -44,8 +44,8 @@ CFontListWidgetData::CFontListWidgetData( QWidget* parent,  const char* name, WF
     itsBoxLayout->setMargin( 11 );
 
     itsList = new QListView( itsBox, "itsList" );
-    itsList->addColumn( QT_KDE_I18N( "Directory/File", "" ) );
-    itsList->addColumn( QT_KDE_I18N( "Name", "" ) );
+    itsList->addColumn( tr2i18n( "Directory/File", "" ) );
+    itsList->addColumn( tr2i18n( "Name", "" ) );
     itsList->setMinimumSize( QSize( 0, 24 ) );
     itsList->setSelectionMode( QListView::Extended );
     itsList->setAllColumnsShowFocus( TRUE );
@@ -57,7 +57,7 @@ CFontListWidgetData::CFontListWidgetData( QWidget* parent,  const char* name, WF
     itsButton2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, 0, 0, itsButton2->sizePolicy().hasHeightForWidth() ) );
     itsButton2->setMinimumSize( QSize( 0, 0 ) );
     itsButton2->setMaximumSize( QSize( 32767, 32767 ) );
-    itsButton2->setText( QT_KDE_I18N( "Action", "" ) );
+    itsButton2->setText( tr2i18n( "Action", "" ) );
 
     itsBoxLayout->addWidget( itsButton2, 1, 2 );
 
@@ -65,7 +65,7 @@ CFontListWidgetData::CFontListWidgetData( QWidget* parent,  const char* name, WF
     itsButton1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)0, 0, 0, itsButton1->sizePolicy().hasHeightForWidth() ) );
     itsButton1->setMinimumSize( QSize( 0, 0 ) );
     itsButton1->setMaximumSize( QSize( 32767, 32767 ) );
-    itsButton1->setText( QT_KDE_I18N( "Action", "" ) );
+    itsButton1->setText( tr2i18n( "Action", "" ) );
 
     itsBoxLayout->addWidget( itsButton1, 1, 0 );
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );

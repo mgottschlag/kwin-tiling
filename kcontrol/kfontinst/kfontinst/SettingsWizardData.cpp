@@ -33,7 +33,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     if ( !name )
 	setName( "CSettingsWizardData" );
     resize( 681, 436 ); 
-    setCaption( QT_KDE_I18N( "Settings Wizard", "" ) );
+    setCaption( tr2i18n( "Settings Wizard", "" ) );
 
     itsIntroPage = new QWidget( this, "itsIntroPage" );
     itsIntroPageLayout = new QGridLayout( itsIntroPage ); 
@@ -41,7 +41,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     itsIntroPageLayout->setMargin( 11 );
 
     itsMainText = new QLabel( itsIntroPage, "itsMainText" );
-    itsMainText->setText( QT_KDE_I18N( "As this is the first time you have run KFontinst, there are some configuration settings that you will need to inform KFontinst of.", "" ) );
+    itsMainText->setText( tr2i18n( "As this is the first time you have run KFontinst, there are some configuration settings that you will need to inform KFontinst of.", "" ) );
     itsMainText->setAlignment( int( QLabel::WordBreak | QLabel::AlignAuto | QLabel::AlignTop | QLabel::AlignLeft ) );
 
     itsIntroPageLayout->addMultiCellWidget( itsMainText, 0, 0, 0, 2 );
@@ -49,20 +49,20 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     itsIntroPageLayout->addItem( spacer, 5, 2 );
 
     TextLabel1 = new QLabel( itsIntroPage, "TextLabel1" );
-    TextLabel1->setText( QT_KDE_I18N( "Please press \"Next>\" to proceed.", "" ) );
+    TextLabel1->setText( tr2i18n( "Please press \"Next>\" to proceed.", "" ) );
 
     itsIntroPageLayout->addMultiCellWidget( TextLabel1, 4, 4, 0, 2 );
     QSpacerItem* spacer_2 = new QSpacerItem( 16, 16, QSizePolicy::Minimum, QSizePolicy::Fixed );
     itsIntroPageLayout->addItem( spacer_2, 3, 0 );
 
     itsNonRootText = new QLabel( itsIntroPage, "itsNonRootText" );
-    itsNonRootText->setText( QT_KDE_I18N( "NOTE: As you are not logged in as \"root\", then the settings will refer to your own personal settings - any fonts installed by you will (normally) only be available to you. To install fonts system-wide, login as root.", "" ) );
+    itsNonRootText->setText( tr2i18n( "NOTE: As you are not logged in as \"root\", then the settings will refer to your own personal settings - any fonts installed by you will (normally) only be available to you. To install fonts system-wide, login as root.", "" ) );
     itsNonRootText->setAlignment( int( QLabel::WordBreak | QLabel::AlignAuto | QLabel::AlignVCenter | QLabel::AlignLeft ) );
 
     itsIntroPageLayout->addMultiCellWidget( itsNonRootText, 2, 2, 0, 2 );
     QSpacerItem* spacer_3 = new QSpacerItem( 16, 16, QSizePolicy::Minimum, QSizePolicy::Fixed );
     itsIntroPageLayout->addItem( spacer_3, 1, 1 );
-    addPage( itsIntroPage, QT_KDE_I18N( "Welcome To KFontinst", "" ) );
+    addPage( itsIntroPage, tr2i18n( "Welcome To KFontinst", "" ) );
 
     itsDirsAndFilesPage = new QWidget( this, "itsDirsAndFilesPage" );
     itsDirsAndFilesPageLayout = new QGridLayout( itsDirsAndFilesPage ); 
@@ -81,11 +81,11 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     TextLabel2->setFrameShape( QLabel::Panel );
     TextLabel2->setFrameShadow( QLabel::Sunken );
     TextLabel2->setMargin( 10 );
-    TextLabel2->setText( QT_KDE_I18N( "KFontinst has determined the following values for your X11 and Ghostscript Fontmap folders and files. Please enter the correct location for any entries containing \"<Not Found>\"", "" ) );
+    TextLabel2->setText( tr2i18n( "KFontinst has determined the following values for your X11 and Ghostscript Fontmap folders and files. Please enter the correct location for any entries containing \"<Not Found>\"", "" ) );
     TextLabel2->setAlignment( int( QLabel::WordBreak | QLabel::AlignAuto | QLabel::AlignTop | QLabel::AlignLeft ) );
 
     itsDirsAndFilesPageLayout->addWidget( TextLabel2, 0, 0 );
-    addPage( itsDirsAndFilesPage, QT_KDE_I18N( "Folder/File Locations", "" ) );
+    addPage( itsDirsAndFilesPage, tr2i18n( "Folder/File Locations", "" ) );
 
     itsAAPage = new QWidget( this, "itsAAPage" );
     itsAAPageLayout = new QGridLayout( itsAAPage ); 
@@ -99,7 +99,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     TextLabel1_2->setFrameShape( QLabel::Panel );
     TextLabel1_2->setFrameShadow( QLabel::Sunken );
     TextLabel1_2->setMargin( 10 );
-    TextLabel1_2->setText( QT_KDE_I18N( "If your system is capable of using the XRender extension for anti-aliasing fonts, then please enter the relevant data.", "" ) );
+    TextLabel1_2->setText( tr2i18n( "If your system is capable of using the XRender extension for anti-aliasing fonts, then please enter the relevant data.", "" ) );
     TextLabel1_2->setAlignment( int( QLabel::WordBreak | QLabel::AlignAuto | QLabel::AlignTop | QLabel::AlignLeft ) );
 
     itsAAPageLayout->addWidget( TextLabel1_2, 0, 0 );
@@ -107,7 +107,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     XftWizard = new CXftConfigSettingsWidget( itsAAPage, "XftWizard" );
 
     itsAAPageLayout->addWidget( XftWizard, 0, 1 );
-    addPage( itsAAPage, QT_KDE_I18N( "Anti-Aliasing", "" ) );
+    addPage( itsAAPage, tr2i18n( "Anti-Aliasing", "" ) );
 
     itsStarOfficePage = new QWidget( this, "itsStarOfficePage" );
     itsStarOfficePageLayout = new QGridLayout( itsStarOfficePage ); 
@@ -126,13 +126,13 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     TextLabel1_2_2->setFrameShape( QLabel::Panel );
     TextLabel1_2_2->setFrameShadow( QLabel::Sunken );
     TextLabel1_2_2->setMargin( 10 );
-    TextLabel1_2_2->setText( QT_KDE_I18N( "If you wish to enable configuration of StarOffice from KFontinst, then select the \"Configure\" option, and enter the location of the main StarOffice folder.\n"
+    TextLabel1_2_2->setText( tr2i18n( "If you wish to enable configuration of StarOffice from KFontinst, then select the \"Configure\" option, and enter the location of the main StarOffice folder.\n"
 "\n"
 "NOTE: This is not needed for OpenOffice, and StarOffice version 6 onwards. The only thing that these two require is the existence of AFM files for Type1 fonts. This can be set using the \"System\" part of the \"Settings\" tab when the module has loaded.", "" ) );
     TextLabel1_2_2->setAlignment( int( QLabel::WordBreak | QLabel::AlignAuto | QLabel::AlignTop | QLabel::AlignLeft ) );
 
     itsStarOfficePageLayout->addWidget( TextLabel1_2_2, 0, 0 );
-    addPage( itsStarOfficePage, QT_KDE_I18N( "StarOffice", "" ) );
+    addPage( itsStarOfficePage, tr2i18n( "StarOffice", "" ) );
 
     itsCompletePage = new QWidget( this, "itsCompletePage" );
     itsCompletePageLayout = new QGridLayout( itsCompletePage ); 
@@ -140,7 +140,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     itsCompletePageLayout->setMargin( 11 );
 
     TextLabel1_3 = new QLabel( itsCompletePage, "TextLabel1_3" );
-    TextLabel1_3->setText( QT_KDE_I18N( "KFontinst has now determined all the setup information that it needs.\n"
+    TextLabel1_3->setText( tr2i18n( "KFontinst has now determined all the setup information that it needs.\n"
 "\n"
 "This KControl module has two main modes of operation; Basic and Advanced.\n"
 "\n"
@@ -156,7 +156,7 @@ CSettingsWizardData::CSettingsWizardData( QWidget* parent,  const char* name, bo
     itsCompletePageLayout->addWidget( TextLabel1_3, 0, 0 );
     QSpacerItem* spacer_4 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
     itsCompletePageLayout->addItem( spacer_4, 1, 0 );
-    addPage( itsCompletePage, QT_KDE_I18N( "Setup Complete", "" ) );
+    addPage( itsCompletePage, tr2i18n( "Setup Complete", "" ) );
 }
 
 /*  

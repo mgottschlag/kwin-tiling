@@ -28,47 +28,47 @@ CXftConfigSettingsWidgetData::CXftConfigSettingsWidgetData( QWidget* parent,  co
     if ( !name )
 	setName( "CXftConfigSettingsWidgetData" );
     resize( 498, 361 ); 
-    setCaption( QT_KDE_I18N( "Form1", "" ) );
+    setCaption( tr2i18n( "Form1", "" ) );
     CXftConfigSettingsWidgetDataLayout = new QGridLayout( this ); 
     CXftConfigSettingsWidgetDataLayout->setSpacing( 6 );
     CXftConfigSettingsWidgetDataLayout->setMargin( 11 );
 
     itsUseSubPixelHintingCheck = new QCheckBox( this, "itsUseSubPixelHintingCheck" );
     itsUseSubPixelHintingCheck->setEnabled( FALSE );
-    itsUseSubPixelHintingCheck->setText( QT_KDE_I18N( "&Use sub-pixel hinting", "" ) );
-    QWhatsThis::add( itsUseSubPixelHintingCheck, QT_KDE_I18N( "Subpixel hinting uses colors instead of gray pixels to do the anti-aliasing.\n"
+    itsUseSubPixelHintingCheck->setText( tr2i18n( "&Use sub-pixel hinting", "" ) );
+    QWhatsThis::add( itsUseSubPixelHintingCheck, tr2i18n( "Subpixel hinting uses colors instead of gray pixels to do the anti-aliasing.\n"
 "\n"
 "This may be of use if you have an LCD screen.", "" ) );
 
     CXftConfigSettingsWidgetDataLayout->addMultiCellWidget( itsUseSubPixelHintingCheck, 4, 4, 0, 2 );
 
     TextLabel2_2_2 = new QLabel( this, "TextLabel2_2_2" );
-    TextLabel2_2_2->setText( QT_KDE_I18N( "Configuration file:", "" ) );
+    TextLabel2_2_2->setText( tr2i18n( "Configuration file:", "" ) );
     TextLabel2_2_2->setAlignment( int( QLabel::AlignAuto | QLabel::AlignVCenter | QLabel::AlignLeft ) );
 
     CXftConfigSettingsWidgetDataLayout->addMultiCellWidget( TextLabel2_2_2, 2, 2, 0, 1 );
 
     itsFromText = new QLineEdit( this, "itsFromText" );
     itsFromText->setEnabled( FALSE );
-    itsFromText->setText( QT_KDE_I18N( "8.0", "" ) );
+    itsFromText->setText( tr2i18n( "8.0", "" ) );
     itsFromText->setAlignment( int( QLineEdit::AlignAuto | QLineEdit::AlignRight ) );
 
     CXftConfigSettingsWidgetDataLayout->addWidget( itsFromText, 3, 2 );
 
     TextLabel2 = new QLabel( this, "TextLabel2" );
-    TextLabel2->setText( QT_KDE_I18N( "pt, to", "" ) );
+    TextLabel2->setText( tr2i18n( "pt, to", "" ) );
 
     CXftConfigSettingsWidgetDataLayout->addWidget( TextLabel2, 3, 3 );
 
     itsToText = new QLineEdit( this, "itsToText" );
     itsToText->setEnabled( FALSE );
-    itsToText->setText( QT_KDE_I18N( "15.0", "" ) );
+    itsToText->setText( tr2i18n( "15.0", "" ) );
     itsToText->setAlignment( int( QLineEdit::AlignAuto | QLineEdit::AlignRight ) );
 
     CXftConfigSettingsWidgetDataLayout->addWidget( itsToText, 3, 4 );
 
     TextLabel3 = new QLabel( this, "TextLabel3" );
-    TextLabel3->setText( QT_KDE_I18N( "pt", "" ) );
+    TextLabel3->setText( tr2i18n( "pt", "" ) );
 
     CXftConfigSettingsWidgetDataLayout->addWidget( TextLabel3, 3, 5 );
 
@@ -76,9 +76,9 @@ CXftConfigSettingsWidgetData::CXftConfigSettingsWidgetData( QWidget* parent,  co
     itsConfigFileText->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)1, 0, 0, itsConfigFileText->sizePolicy().hasHeightForWidth() ) );
     itsConfigFileText->setFrameShape( QLabel::Panel );
     itsConfigFileText->setFrameShadow( QLabel::Sunken );
-    itsConfigFileText->setText( QT_KDE_I18N( "TextLabel2", "" ) );
+    itsConfigFileText->setText( tr2i18n( "TextLabel2", "" ) );
     itsConfigFileText->setAlignment( int( QLabel::AlignAuto | QLabel::AlignVCenter | QLabel::AlignLeft ) );
-    QWhatsThis::add( itsConfigFileText, QT_KDE_I18N( "This is the configuration file used by the XRender extension. Under Linux/XFree86 this file will usually be either; ~/.xftconfig - for personal settings - or /usr/X11R6/lib/X11/XftConfig - for system-wide settings (usually only \"root\" can alter this file).", "" ) );
+    QWhatsThis::add( itsConfigFileText, tr2i18n( "This is the configuration file used by the XRender extension. Under Linux/XFree86 this file will usually be either; ~/.xftconfig - for personal settings - or /usr/X11R6/lib/X11/XftConfig - for system-wide settings (usually only \"root\" can alter this file).", "" ) );
 
     CXftConfigSettingsWidgetDataLayout->addMultiCellWidget( itsConfigFileText, 2, 2, 2, 4 );
 
@@ -87,8 +87,8 @@ CXftConfigSettingsWidgetData::CXftConfigSettingsWidgetData( QWidget* parent,  co
     itsConfigFileButton->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, itsConfigFileButton->sizePolicy().hasHeightForWidth() ) );
     itsConfigFileButton->setMinimumSize( QSize( 22, 22 ) );
     itsConfigFileButton->setMaximumSize( QSize( 22, 22 ) );
-    itsConfigFileButton->setText( QT_KDE_I18N( ".", "" ) );
-    QToolTip::add( itsConfigFileButton, QT_KDE_I18N( "Select File.", "" ) );
+    itsConfigFileButton->setText( tr2i18n( ".", "" ) );
+    QToolTip::add( itsConfigFileButton, tr2i18n( "Select File.", "" ) );
 
     CXftConfigSettingsWidgetDataLayout->addWidget( itsConfigFileButton, 2, 5 );
     QSpacerItem* spacer = new QSpacerItem( 16, 20, QSizePolicy::Minimum, QSizePolicy::Fixed );
@@ -96,7 +96,7 @@ CXftConfigSettingsWidgetData::CXftConfigSettingsWidgetData( QWidget* parent,  co
 
     itsAdvancedButton = new QPushButton( this, "itsAdvancedButton" );
     itsAdvancedButton->setEnabled( TRUE );
-    itsAdvancedButton->setText( QT_KDE_I18N( "&Advanced...", "" ) );
+    itsAdvancedButton->setText( tr2i18n( "&Advanced...", "" ) );
 
     CXftConfigSettingsWidgetDataLayout->addMultiCellWidget( itsAdvancedButton, 6, 6, 3, 4 );
     QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
@@ -104,13 +104,13 @@ CXftConfigSettingsWidgetData::CXftConfigSettingsWidgetData( QWidget* parent,  co
 
     itsExcludeRangeCheck = new QCheckBox( this, "itsExcludeRangeCheck" );
     itsExcludeRangeCheck->setEnabled( FALSE );
-    itsExcludeRangeCheck->setText( QT_KDE_I18N( "E&xclude range:", "" ) );
+    itsExcludeRangeCheck->setText( tr2i18n( "E&xclude range:", "" ) );
 
     CXftConfigSettingsWidgetDataLayout->addMultiCellWidget( itsExcludeRangeCheck, 3, 3, 0, 1 );
 
     itsSaveButton = new QPushButton( this, "itsSaveButton" );
     itsSaveButton->setEnabled( FALSE );
-    itsSaveButton->setText( QT_KDE_I18N( "Save &Changes", "" ) );
+    itsSaveButton->setText( tr2i18n( "Save &Changes", "" ) );
 
     CXftConfigSettingsWidgetDataLayout->addMultiCellWidget( itsSaveButton, 7, 7, 3, 4 );
     QSpacerItem* spacer_3 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );

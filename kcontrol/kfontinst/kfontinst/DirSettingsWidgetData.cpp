@@ -30,7 +30,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
 	setName( "CDirSettingsWidgetData" );
     resize( 482, 466 ); 
     setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, 0, 0, sizePolicy().hasHeightForWidth() ) );
-    setCaption( QT_KDE_I18N( "Form1", "" ) );
+    setCaption( tr2i18n( "Form1", "" ) );
     CDirSettingsWidgetDataLayout = new QGridLayout( this ); 
     CDirSettingsWidgetDataLayout->setSpacing( 6 );
     CDirSettingsWidgetDataLayout->setMargin( 11 );
@@ -40,7 +40,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     CDirSettingsWidgetDataLayout->addItem( spacer_2, 1, 1 );
 
     GroupBox4_3 = new QGroupBox( this, "GroupBox4_3" );
-    GroupBox4_3->setTitle( QT_KDE_I18N( "X:", "" ) );
+    GroupBox4_3->setTitle( tr2i18n( "X:", "" ) );
     GroupBox4_3->setColumnLayout(0, Qt::Vertical );
     GroupBox4_3->layout()->setSpacing( 0 );
     GroupBox4_3->layout()->setMargin( 0 );
@@ -50,7 +50,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     GroupBox4_3Layout->setMargin( 11 );
 
     GroupBox3 = new QGroupBox( GroupBox4_3, "GroupBox3" );
-    GroupBox3->setTitle( QT_KDE_I18N( "Basic Mode Sub-Folders:", "" ) );
+    GroupBox3->setTitle( tr2i18n( "Basic Mode Sub-Folders:", "" ) );
     GroupBox3->setColumnLayout(0, Qt::Vertical );
     GroupBox3->layout()->setSpacing( 0 );
     GroupBox3->layout()->setMargin( 0 );
@@ -61,23 +61,23 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
 
     itsTTCombo = new QComboBox( FALSE, GroupBox3, "itsTTCombo" );
     itsTTCombo->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, 0, 0, itsTTCombo->sizePolicy().hasHeightForWidth() ) );
-    QToolTip::add( itsTTCombo, QT_KDE_I18N( "Where TrueType fonts are installed in \"basic\" mode.", "" ) );
+    QToolTip::add( itsTTCombo, tr2i18n( "Where TrueType fonts are installed in \"basic\" mode.", "" ) );
 
     GroupBox3Layout->addWidget( itsTTCombo, 0, 1 );
 
     itsT1Combo = new QComboBox( FALSE, GroupBox3, "itsT1Combo" );
     itsT1Combo->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)0, 0, 0, itsT1Combo->sizePolicy().hasHeightForWidth() ) );
-    QToolTip::add( itsT1Combo, QT_KDE_I18N( "Where Type1 fonts are installed in \"basic\" mode.", "" ) );
+    QToolTip::add( itsT1Combo, tr2i18n( "Where Type1 fonts are installed in \"basic\" mode.", "" ) );
 
     GroupBox3Layout->addWidget( itsT1Combo, 1, 1 );
 
     TextLabel1_2_2_2 = new QLabel( GroupBox3, "TextLabel1_2_2_2" );
-    TextLabel1_2_2_2->setText( QT_KDE_I18N( "Type1:", "" ) );
+    TextLabel1_2_2_2->setText( tr2i18n( "Type1:", "" ) );
 
     GroupBox3Layout->addWidget( TextLabel1_2_2_2, 1, 0 );
 
     TextLabel1_2_3 = new QLabel( GroupBox3, "TextLabel1_2_3" );
-    TextLabel1_2_3->setText( QT_KDE_I18N( "TrueType :", "" ) );
+    TextLabel1_2_3->setText( tr2i18n( "TrueType :", "" ) );
 
     GroupBox3Layout->addWidget( TextLabel1_2_3, 0, 0 );
 
@@ -87,9 +87,9 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsFontsDirText->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)1, 0, 0, itsFontsDirText->sizePolicy().hasHeightForWidth() ) );
     itsFontsDirText->setFrameShape( QLabel::Panel );
     itsFontsDirText->setFrameShadow( QLabel::Sunken );
-    itsFontsDirText->setText( QT_KDE_I18N( "TextLabel1", "" ) );
+    itsFontsDirText->setText( tr2i18n( "TextLabel1", "" ) );
     itsFontsDirText->setAlignment( int( QLabel::AlignAuto | QLabel::AlignVCenter | QLabel::AlignLeft ) );
-    QWhatsThis::add( itsFontsDirText, QT_KDE_I18N( "This is the top level X11 fonts folder. Located within this will be the folders containing your fonts, and encodings files. Usually this will be (for Linux) either:\n"
+    QWhatsThis::add( itsFontsDirText, tr2i18n( "This is the top level X11 fonts folder. Located within this will be the folders containing your fonts, and encodings files. Usually this will be (for Linux) either:\n"
 "\n"
 "    ~/.kde/share/fonts/    (Normal users)\n"
 "    /usr/X11R6/lib/X11/fonts/    (Root)", "" ) );
@@ -100,8 +100,8 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsFontsDirButton->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, itsFontsDirButton->sizePolicy().hasHeightForWidth() ) );
     itsFontsDirButton->setMinimumSize( QSize( 22, 22 ) );
     itsFontsDirButton->setMaximumSize( QSize( 22, 22 ) );
-    itsFontsDirButton->setText( QT_KDE_I18N( ".", "" ) );
-    QToolTip::add( itsFontsDirButton, QT_KDE_I18N( "Change Folder.", "" ) );
+    itsFontsDirButton->setText( tr2i18n( ".", "" ) );
+    QToolTip::add( itsFontsDirButton, tr2i18n( "Change Folder.", "" ) );
 
     GroupBox4_3Layout->addWidget( itsFontsDirButton, 0, 2 );
     QSpacerItem* spacer_3 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Fixed );
@@ -110,7 +110,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     GroupBox4_3Layout->addItem( spacer_4, 1, 2 );
 
     TextLabel1_3 = new QLabel( GroupBox4_3, "TextLabel1_3" );
-    TextLabel1_3->setText( QT_KDE_I18N( "Fonts folder:", "" ) );
+    TextLabel1_3->setText( tr2i18n( "Fonts folder:", "" ) );
 
     GroupBox4_3Layout->addWidget( TextLabel1_3, 0, 0 );
     QSpacerItem* spacer_5 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Minimum );
@@ -120,8 +120,8 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsEncodingsDirButton->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, itsEncodingsDirButton->sizePolicy().hasHeightForWidth() ) );
     itsEncodingsDirButton->setMinimumSize( QSize( 22, 22 ) );
     itsEncodingsDirButton->setMaximumSize( QSize( 22, 22 ) );
-    itsEncodingsDirButton->setText( QT_KDE_I18N( ".", "" ) );
-    QToolTip::add( itsEncodingsDirButton, QT_KDE_I18N( "Change Folder.", "" ) );
+    itsEncodingsDirButton->setText( tr2i18n( ".", "" ) );
+    QToolTip::add( itsEncodingsDirButton, tr2i18n( "Change Folder.", "" ) );
 
     GroupBox4_3Layout->addWidget( itsEncodingsDirButton, 7, 2 );
 
@@ -129,9 +129,9 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsEncodingsDirText->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)1, 0, 0, itsEncodingsDirText->sizePolicy().hasHeightForWidth() ) );
     itsEncodingsDirText->setFrameShape( QLabel::Panel );
     itsEncodingsDirText->setFrameShadow( QLabel::Sunken );
-    itsEncodingsDirText->setText( QT_KDE_I18N( "TextLabel1", "" ) );
+    itsEncodingsDirText->setText( tr2i18n( "TextLabel1", "" ) );
     itsEncodingsDirText->setAlignment( int( QLabel::AlignAuto | QLabel::AlignVCenter | QLabel::AlignLeft ) );
-    QWhatsThis::add( itsEncodingsDirText, QT_KDE_I18N( "This is the folder containing XFree86 encoding files. These files (which usually have the suffix .enc or .enc.gz) are used to enable X to have access to more encoding shemes (such as cp1252).\n"
+    QWhatsThis::add( itsEncodingsDirText, tr2i18n( "This is the folder containing XFree86 encoding files. These files (which usually have the suffix .enc or .enc.gz) are used to enable X to have access to more encoding shemes (such as cp1252).\n"
 "\n"
 "This folder is normaly a sub-folder of the system X11 fonts folder - and is usually named 'Encodings' or 'encodings'. As an example, on SuSE Linux 7.1 - the folder is:\n"
 "\n"
@@ -140,7 +140,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     GroupBox4_3Layout->addWidget( itsEncodingsDirText, 7, 1 );
 
     TextLabel1_3_2 = new QLabel( GroupBox4_3, "TextLabel1_3_2" );
-    TextLabel1_3_2->setText( QT_KDE_I18N( "Encodings folder:", "" ) );
+    TextLabel1_3_2->setText( tr2i18n( "Encodings folder:", "" ) );
 
     GroupBox4_3Layout->addWidget( TextLabel1_3_2, 7, 0 );
     QSpacerItem* spacer_6 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Fixed );
@@ -150,9 +150,9 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsXConfigFileText->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)1, 0, 0, itsXConfigFileText->sizePolicy().hasHeightForWidth() ) );
     itsXConfigFileText->setFrameShape( QLabel::Panel );
     itsXConfigFileText->setFrameShadow( QLabel::Sunken );
-    itsXConfigFileText->setText( QT_KDE_I18N( "TextLabel2", "" ) );
+    itsXConfigFileText->setText( tr2i18n( "TextLabel2", "" ) );
     itsXConfigFileText->setAlignment( int( QLabel::AlignAuto | QLabel::AlignVCenter | QLabel::AlignLeft ) );
-    QWhatsThis::add( itsXConfigFileText, QT_KDE_I18N( "This is the configuration file used by X to determine where to look for fonts.\n"
+    QWhatsThis::add( itsXConfigFileText, tr2i18n( "This is the configuration file used by X to determine where to look for fonts.\n"
 "\n"
 "For normal (non-root) users, this file will usually be called:\n"
 "    ~/.kde/share/fonts/fontpaths\n"
@@ -164,7 +164,7 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     GroupBox4_3Layout->addWidget( itsXConfigFileText, 3, 1 );
 
     TextLabel2_2_2 = new QLabel( GroupBox4_3, "TextLabel2_2_2" );
-    TextLabel2_2_2->setText( QT_KDE_I18N( "Configuration file:", "" ) );
+    TextLabel2_2_2->setText( tr2i18n( "Configuration file:", "" ) );
     TextLabel2_2_2->setAlignment( int( QLabel::AlignAuto | QLabel::AlignVCenter | QLabel::AlignLeft ) );
 
     GroupBox4_3Layout->addWidget( TextLabel2_2_2, 3, 0 );
@@ -173,16 +173,16 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsXConfigFileButton->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, itsXConfigFileButton->sizePolicy().hasHeightForWidth() ) );
     itsXConfigFileButton->setMinimumSize( QSize( 22, 22 ) );
     itsXConfigFileButton->setMaximumSize( QSize( 22, 22 ) );
-    itsXConfigFileButton->setText( QT_KDE_I18N( ".", "" ) );
-    QToolTip::add( itsXConfigFileButton, QT_KDE_I18N( "Select File.", "" ) );
+    itsXConfigFileButton->setText( tr2i18n( ".", "" ) );
+    QToolTip::add( itsXConfigFileButton, tr2i18n( "Select File.", "" ) );
 
     GroupBox4_3Layout->addWidget( itsXConfigFileButton, 3, 2 );
 
     CDirSettingsWidgetDataLayout->addMultiCellWidget( GroupBox4_3, 0, 0, 0, 2 );
 
     itsGhostscriptCheck = new QCheckBox( this, "itsGhostscriptCheck" );
-    itsGhostscriptCheck->setText( QT_KDE_I18N( "Ghostscript, Fontmap file:", "" ) );
-    QWhatsThis::add( itsGhostscriptCheck, QT_KDE_I18N( "Check this box to enable configuration of Ghostscript.", "" ) );
+    itsGhostscriptCheck->setText( tr2i18n( "Ghostscript, Fontmap file:", "" ) );
+    QWhatsThis::add( itsGhostscriptCheck, tr2i18n( "Check this box to enable configuration of Ghostscript.", "" ) );
 
     CDirSettingsWidgetDataLayout->addWidget( itsGhostscriptCheck, 2, 0 );
 
@@ -190,9 +190,9 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsGhostscriptFileText->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)1, 0, 0, itsGhostscriptFileText->sizePolicy().hasHeightForWidth() ) );
     itsGhostscriptFileText->setFrameShape( QLabel::Panel );
     itsGhostscriptFileText->setFrameShadow( QLabel::Sunken );
-    itsGhostscriptFileText->setText( QT_KDE_I18N( "TextLabel2", "" ) );
+    itsGhostscriptFileText->setText( tr2i18n( "TextLabel2", "" ) );
     itsGhostscriptFileText->setAlignment( int( QLabel::AlignAuto | QLabel::AlignVCenter | QLabel::AlignLeft ) );
-    QWhatsThis::add( itsGhostscriptFileText, QT_KDE_I18N( "This file is used by Ghostscript to map the names of fonts within Postscript files, to the physical fonts located on disk.\n"
+    QWhatsThis::add( itsGhostscriptFileText, tr2i18n( "This file is used by Ghostscript to map the names of fonts within Postscript files, to the physical fonts located on disk.\n"
 "\n"
 "(Most UNIX/Linux programs produce Postscript files when printing - and these are passed on to Ghostscript, which does the actual work.)\n"
 "\n"
@@ -211,8 +211,8 @@ CDirSettingsWidgetData::CDirSettingsWidgetData( QWidget* parent,  const char* na
     itsGhostscriptFileButton->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, itsGhostscriptFileButton->sizePolicy().hasHeightForWidth() ) );
     itsGhostscriptFileButton->setMinimumSize( QSize( 22, 22 ) );
     itsGhostscriptFileButton->setMaximumSize( QSize( 22, 22 ) );
-    itsGhostscriptFileButton->setText( QT_KDE_I18N( ".", "" ) );
-    QToolTip::add( itsGhostscriptFileButton, QT_KDE_I18N( "Select File.", "" ) );
+    itsGhostscriptFileButton->setText( tr2i18n( ".", "" ) );
+    QToolTip::add( itsGhostscriptFileButton, tr2i18n( "Select File.", "" ) );
 
     CDirSettingsWidgetDataLayout->addWidget( itsGhostscriptFileButton, 2, 2 );
 

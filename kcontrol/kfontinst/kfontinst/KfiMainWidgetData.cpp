@@ -29,7 +29,7 @@ CKfiMainWidgetData::CKfiMainWidgetData( QWidget* parent,  const char* name, WFla
     if ( !name )
 	setName( "CKfiMainWidgetData" );
     resize( 540, 480 ); 
-    setCaption( QT_KDE_I18N( "Form1", "" ) );
+    setCaption( tr2i18n( "Form1", "" ) );
     CKfiMainWidgetDataLayout = new QGridLayout( this ); 
     CKfiMainWidgetDataLayout->setSpacing( 5 );
     CKfiMainWidgetDataLayout->setMargin( 5 );
@@ -46,7 +46,7 @@ CKfiMainWidgetData::CKfiMainWidgetData( QWidget* parent,  const char* name, WFla
     itsFonts->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)5, (QSizePolicy::SizeType)5, 0, 0, itsFonts->sizePolicy().hasHeightForWidth() ) );
 
     itsFontsTabLayout->addWidget( itsFonts, 0, 0 );
-    itsTab->insertTab( itsFontsTab, QT_KDE_I18N( "F&onts", "" ) );
+    itsTab->insertTab( itsFontsTab, tr2i18n( "F&onts", "" ) );
 
     itsAATab = new QWidget( itsTab, "itsAATab" );
     itsAATabLayout = new QGridLayout( itsAATab ); 
@@ -56,7 +56,7 @@ CKfiMainWidgetData::CKfiMainWidgetData( QWidget* parent,  const char* name, WFla
     itsAA = new CXftConfigSettingsWidget( itsAATab, "itsAA" );
 
     itsAATabLayout->addWidget( itsAA, 0, 0 );
-    itsTab->insertTab( itsAATab, QT_KDE_I18N( "A&nti-Alias", "" ) );
+    itsTab->insertTab( itsAATab, tr2i18n( "A&nti-Alias", "" ) );
 
     itsSettingsTab = new QWidget( itsTab, "itsSettingsTab" );
     itsSettingsTabLayout = new QGridLayout( itsSettingsTab ); 
@@ -66,7 +66,7 @@ CKfiMainWidgetData::CKfiMainWidgetData( QWidget* parent,  const char* name, WFla
     itsSettings = new CSettingsWidget( itsSettingsTab, "itsSettings" );
 
     itsSettingsTabLayout->addWidget( itsSettings, 0, 0 );
-    itsTab->insertTab( itsSettingsTab, QT_KDE_I18N( "&Settings", "" ) );
+    itsTab->insertTab( itsSettingsTab, tr2i18n( "&Settings", "" ) );
 
     CKfiMainWidgetDataLayout->addWidget( itsTab, 0, 0 );
 

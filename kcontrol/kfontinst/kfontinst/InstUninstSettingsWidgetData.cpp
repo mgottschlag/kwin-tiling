@@ -30,7 +30,7 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
 	setName( "CInstUninstSettingsWidgetData" );
     resize( 314, 187 ); 
     setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)5, 0, 0, sizePolicy().hasHeightForWidth() ) );
-    setCaption( QT_KDE_I18N( "Form2", "" ) );
+    setCaption( tr2i18n( "Form2", "" ) );
     CInstUninstSettingsWidgetDataLayout = new QGridLayout( this ); 
     CInstUninstSettingsWidgetDataLayout->setSpacing( 6 );
     CInstUninstSettingsWidgetDataLayout->setMargin( 11 );
@@ -38,7 +38,7 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     CInstUninstSettingsWidgetDataLayout->addItem( spacer, 3, 1 );
 
     GroupBox5 = new QGroupBox( this, "GroupBox5" );
-    GroupBox5->setTitle( QT_KDE_I18N( "Upon Install:", "" ) );
+    GroupBox5->setTitle( tr2i18n( "Upon Install:", "" ) );
     GroupBox5->setColumnLayout(0, Qt::Vertical );
     GroupBox5->layout()->setSpacing( 0 );
     GroupBox5->layout()->setMargin( 0 );
@@ -48,8 +48,8 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     GroupBox5Layout->setMargin( 11 );
 
     itsFixTtfPsNamesUponInstall = new QCheckBox( GroupBox5, "itsFixTtfPsNamesUponInstall" );
-    itsFixTtfPsNamesUponInstall->setText( QT_KDE_I18N( "Fix &TrueType Postscript names table", "" ) );
-    QWhatsThis::add( itsFixTtfPsNamesUponInstall, QT_KDE_I18N( "Some TrueType fonts have incorrect Postscript names for certain characters.\n"
+    itsFixTtfPsNamesUponInstall->setText( tr2i18n( "Fix &TrueType Postscript names table", "" ) );
+    QWhatsThis::add( itsFixTtfPsNamesUponInstall, tr2i18n( "Some TrueType fonts have incorrect Postscript names for certain characters.\n"
 "\n"
 "For example, \"Euro\" is sometimes listed as \"uni20ac\". This would affect any Postscript output from applications (and most produce Postscript when printing), as it would list the use of the \"Euro\" character -but when this Postscript output is sent to the printer, or viewed, the \"Euro\" symbol would not be found.\n"
 "\n"
@@ -60,7 +60,7 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     CInstUninstSettingsWidgetDataLayout->addMultiCellWidget( GroupBox5, 0, 0, 0, 1 );
 
     ButtonGroup1 = new QButtonGroup( this, "ButtonGroup1" );
-    ButtonGroup1->setTitle( QT_KDE_I18N( "Uninstall - \"Move\" To Folder:", "" ) );
+    ButtonGroup1->setTitle( tr2i18n( "Uninstall - \"Move\" To Folder:", "" ) );
     ButtonGroup1->setColumnLayout(0, Qt::Vertical );
     ButtonGroup1->layout()->setSpacing( 0 );
     ButtonGroup1->layout()->setMargin( 0 );
@@ -73,8 +73,8 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     itsUninstallDirButton->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, itsUninstallDirButton->sizePolicy().hasHeightForWidth() ) );
     itsUninstallDirButton->setMinimumSize( QSize( 22, 22 ) );
     itsUninstallDirButton->setMaximumSize( QSize( 22, 22 ) );
-    itsUninstallDirButton->setText( QT_KDE_I18N( ".", "" ) );
-    QToolTip::add( itsUninstallDirButton, QT_KDE_I18N( "Change Folder.", "" ) );
+    itsUninstallDirButton->setText( tr2i18n( ".", "" ) );
+    QToolTip::add( itsUninstallDirButton, tr2i18n( "Change Folder.", "" ) );
 
     ButtonGroup1Layout->addWidget( itsUninstallDirButton, 0, 3 );
 
@@ -82,7 +82,7 @@ CInstUninstSettingsWidgetData::CInstUninstSettingsWidgetData( QWidget* parent,  
     itsUninstallDirText->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)3, (QSizePolicy::SizeType)1, 0, 0, itsUninstallDirText->sizePolicy().hasHeightForWidth() ) );
     itsUninstallDirText->setFrameShape( QLabel::Panel );
     itsUninstallDirText->setFrameShadow( QLabel::Sunken );
-    itsUninstallDirText->setText( QT_KDE_I18N( "TextLabel4", "" ) );
+    itsUninstallDirText->setText( tr2i18n( "TextLabel4", "" ) );
     itsUninstallDirText->setAlignment( int( QLabel::AlignAuto | QLabel::AlignVCenter | QLabel::AlignLeft ) );
 
     ButtonGroup1Layout->addWidget( itsUninstallDirText, 0, 2 );
