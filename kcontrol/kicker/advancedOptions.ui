@@ -40,9 +40,6 @@
                     <property name="text">
                         <string>Allow Drag 'n Drop &amp;resizing of panels</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+R</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>With this option enabled you can click and drag the edge of the panel to freely resize it. The panel's size has to be set to "Custom". This option can also be set in the panel's context menu.</string>
                     </property>
@@ -115,9 +112,6 @@
                     <property name="text">
                         <string>&amp;Visible</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+V</string>
-                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
@@ -135,9 +129,6 @@
                     <property name="text">
                         <string>&amp;Fade out</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+F</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>&lt;qt&gt;
 &lt;p&gt;Select this option to make Applet Handles visible only on mouse hover.&lt;/p&gt;
@@ -151,9 +142,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Hide</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+H</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>&lt;qt&gt;

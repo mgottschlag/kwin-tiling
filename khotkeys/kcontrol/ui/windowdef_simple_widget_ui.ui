@@ -360,9 +360,6 @@
                     <property name="text">
                         <string>&amp;Autodetect</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+A</string>
-                    </property>
                 </widget>
                 <spacer>
                     <property name="name">

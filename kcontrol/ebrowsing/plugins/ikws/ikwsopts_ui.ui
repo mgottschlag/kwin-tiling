@@ -26,9 +26,6 @@
             <property name="text">
                 <string>&amp;Enable Web shortcuts</string>
             </property>
-            <property name="accel">
-                <string>Alt+E</string>
-            </property>
             <property name="whatsThis" stdset="0">
                 <string>&lt;qt&gt;
 Enable shortcuts that allow you to quickly search for information on the web. For example, entering the shortcut &lt;b&gt;gg:KDE&lt;/b&gt; will result in a search of the word &lt;b&gt;KDE&lt;/b&gt; on the Google(TM) search engine.
@@ -125,9 +122,6 @@ Select the search engine to use for input boxes that provide automatic lookup se
                     <property name="text">
                         <string>Chan&amp;ge...</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+G</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>Modify a search provider.</string>
                     </property>
@@ -142,9 +136,6 @@ Select the search engine to use for input boxes that provide automatic lookup se
                     <property name="text">
                         <string>De&amp;lete</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+L</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>Delete the selected search provider.</string>
                     </property>
@@ -155,9 +146,6 @@ Select the search engine to use for input boxes that provide automatic lookup se
                     </property>
                     <property name="text">
                         <string>&amp;New...</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+N</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Add a search provider.</string>

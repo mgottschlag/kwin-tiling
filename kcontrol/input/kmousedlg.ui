@@ -131,9 +131,6 @@
             <property name="text">
                 <string>Re&amp;verse scroll polarity</string>
             </property>
-            <property name="accel">
-                <string>Alt+V</string>
-            </property>
             <property name="whatsThis" stdset="0">
                 <string>Change the direction of scrolling for the mouse wheel or the 4th and 5th mouse buttons.</string>
             </property>
@@ -188,9 +185,6 @@
                     </property>
                     <property name="text">
                         <string>Cha&amp;nge pointer shape over icons</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+N</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -320,9 +314,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Single-click to open files and folders</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>

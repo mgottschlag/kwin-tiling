@@ -46,9 +46,6 @@
                     <property name="text">
                         <string>&amp;Add...</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+A</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>&lt;qt&gt;
 &lt;p&gt;Click here if you want to add a program to the listbox. This button opens a dialog where you are asked to give details about the program you want to run. To successfully add a program, you must know if it is compatible, the name of the executable file and, if necessary, its options.&lt;/p&gt;
@@ -66,9 +63,6 @@
                     <property name="text">
                         <string>&amp;Remove</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+R</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>Click here to remove programs from this list. Please note that it does not remove the program from your system, it only removes it from the available options in the background drawing programs list.</string>
                     </property>
@@ -82,9 +76,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Modify...</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+M</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>&lt;qt&gt;
@@ -266,9 +257,6 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                     <property name="text">
                         <string>&amp;Use solid color behind text:</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+U</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>Check here if you want to use a solid background color. This is useful to ensure that the desktop text will be identifiable against all background colors and wallpapers, or in other words, that a background or wallpaper will not make a desktop text of a similar color difficult to read.</string>
                     </property>
@@ -279,9 +267,6 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                     </property>
                     <property name="text">
                         <string>&amp;Enable shadow</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+E</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Check here to enable a shadow outline around the desktop font. This also improves the readability of the desktop text against backgrounds of a similar color.</string>

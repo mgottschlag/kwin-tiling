@@ -216,9 +216,6 @@
                                 <property name="text">
                                     <string>&amp;Black on white</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+B</string>
-                                </property>
                                 <property name="checked">
                                     <bool>true</bool>
                                 </property>
@@ -233,9 +230,6 @@
                                 <property name="text">
                                     <string>&amp;White on black</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+W</string>
-                                </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>&lt;b&gt;White on Black&lt;/b&gt;&lt;p&gt;This is your classic inverse color scheme.&lt;/p&gt;</string>
                                 </property>
@@ -246,9 +240,6 @@
                                 </property>
                                 <property name="text">
                                     <string>Cus&amp;tom</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+T</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>&lt;b&gt;Custom&lt;/b&gt;&lt;p&gt;Select this option to define a custom color for the default font.&lt;/p&gt;</string>
@@ -443,9 +434,6 @@
                                 <property name="text">
                                     <string>&amp;Suppress images</string>
                                 </property>
-                                <property name="accel">
-                                    <string>Alt+S</string>
-                                </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>&lt;b&gt;Suppress images&lt;/b&gt;&lt;p&gt;Selecting this will prevent Konqueror from loading images.&lt;/p&gt;</string>
                                 </property>
@@ -489,9 +477,6 @@
                                 </property>
                                 <property name="text">
                                     <string>&amp;Preview</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+P</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>&lt;b&gt;Preview&lt;/b&gt;&lt;p&gt;Click on this button to see what your selections look like in action.&lt;/p&gt;</string>
@@ -747,9 +732,6 @@
                                 </property>
                                 <property name="text">
                                     <string>&amp;Use same size for all elements</string>
-                                </property>
-                                <property name="accel">
-                                    <string>Alt+U</string>
                                 </property>
                                 <property name="whatsThis" stdset="0">
                                     <string>&lt;b&gt;Use same size for all elements&lt;/b&gt;&lt;p&gt;Select this option to override custom font sizes in favor of the base font size. All fonts will be displayed in the same size.&lt;/p&gt;</string>

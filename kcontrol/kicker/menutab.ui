@@ -137,9 +137,6 @@
                             <property name="text">
                                 <string>&amp;Name only</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+N</string>
-                            </property>
                             <property name="whatsThis" stdset="0">
                                 <string>When this option is selected, items in the K Menu will appear with the application's name next to the icon.</string>
                             </property>
@@ -150,9 +147,6 @@
                             </property>
                             <property name="text">
                                 <string>Na&amp;me (Description)</string>
-                            </property>
-                            <property name="accel">
-                                <string>Alt+M</string>
                             </property>
                             <property name="checked">
                                 <bool>true</bool>
@@ -397,9 +391,6 @@
                     </property>
                     <property name="text">
                         <string>Show &amp;the applications most frequently used</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+T</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>When this option is selected the QuickStart menu area will be filled with the applications you use most frequently.</string>

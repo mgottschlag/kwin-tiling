@@ -99,9 +99,6 @@
                     <property name="text">
                         <string>&amp;Use Konsole as terminal application</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+U</string>
-                    </property>
                 </widget>
                 <widget class="QLayoutWidget" row="2" column="1">
                     <property name="name">

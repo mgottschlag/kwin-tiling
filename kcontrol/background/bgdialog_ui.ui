@@ -161,9 +161,6 @@
                             <property name="text">
                                 <string>Advanced Options...</string>
                             </property>
-                            <property name="accel">
-                                <string></string>
-                            </property>
                             <property name="whatsThis" stdset="0">
                                 <string>Click this button to set the icon text colors and shadow, set up a program to run for the background picture or control the size of the background cache.</string>
                             </property>
@@ -358,9 +355,6 @@
                     <property name="text">
                         <string>Reverse roles</string>
                     </property>
-                    <property name="accel">
-                        <string></string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>For some types of blending, you can reverse the role of the background and the picture by checking this option.</string>
                     </property>
@@ -451,9 +445,6 @@
                     <property name="text">
                         <string>&amp;No picture</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+N</string>
-                    </property>
                     <property name="toolTip" stdset="0">
                         <string>No picture, color only</string>
                     </property>
@@ -465,9 +456,6 @@
                     <property name="text">
                         <string>&amp;Slide show:</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
-                    </property>
                 </widget>
                 <widget class="QRadioButton" row="1" column="0">
                     <property name="name">
@@ -475,9 +463,6 @@
                     </property>
                     <property name="text">
                         <string>&amp;Picture:</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+P</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -506,9 +491,6 @@
                     </property>
                     <property name="text">
                         <string>Set&amp;up...</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+U</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Click this button to select a set of images to be used as background pictures. One picture at a time will be shown for a specified amount of time, after which another image from the set will be shown. Images can be shown at random or in the order you specify them.</string>

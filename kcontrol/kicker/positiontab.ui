@@ -631,9 +631,6 @@ how it is positioned on the screen and how much of the screen it should use.</st
                     <property name="text">
                         <string>E&amp;xpand as required to fit contents</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+X</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>When this option is selected, the panel will grow as necessary to accommodate the buttons and applets on it.</string>
                     </property>

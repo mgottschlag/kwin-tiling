@@ -143,9 +143,6 @@
                     <property name="text">
                         <string>&amp;Use KMail as preferred email client</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+U</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>Kmail is the standard Mail program for the KDE desktop.</string>
                     </property>

@@ -102,9 +102,6 @@
                     <property name="text">
                         <string>&amp;Only hide when a panel-hiding button is clicked</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+O</string>
-                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
@@ -135,9 +132,6 @@
                     </property>
                     <property name="text">
                         <string>Hide a&amp;utomatically</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+U</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>If this option is selected, the panel will automatically hide after a period of time and reappear when you move the mouse to the screen edge where the panel is hidden. This is particularly useful for small screen resolutions, such as on laptops.</string>

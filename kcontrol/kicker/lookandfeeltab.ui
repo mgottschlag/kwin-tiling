@@ -43,9 +43,6 @@
                     <property name="text">
                         <string>Enable icon &amp;zooming</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+Z</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>When this option is selected the button icons are zoomed when the mouse cursor is moved over them.</string>
                     </property>
@@ -435,9 +432,6 @@
                     <property name="text">
                         <string>Enable &amp;transparency</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+T</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>If this option is selected, you can choose a background image that will be displayed on the panel. If it is not selected, the default colors will be used, see the 'Colors' control module.</string>
                     </property>
@@ -448,9 +442,6 @@
                     </property>
                     <property name="text">
                         <string>Enable &amp;background image</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+B</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -485,9 +476,6 @@
                     </property>
                     <property name="text">
                         <string>Colorize to &amp;match the desktop color scheme</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+M</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -579,9 +567,6 @@ This option is only active if 'Enable background image' is selected.</string>
                     </property>
                     <property name="text">
                         <string>Advanc&amp;ed Options...</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+E</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Click here to open the Advanced Options dialog. You can configure the applet handles look and feel, the tint transparency color and more.</string>
