@@ -41,6 +41,7 @@
 #include <kio/netaccess.h>
 #include <kiconloader.h>
 #include <kurldrag.h>
+#include <kimagefilepreview.h>
 
 #include "kdm-appear.h"
 
@@ -373,12 +374,19 @@ bool KDMAppearanceWidget::setLogo(QString logo)
 void KDMAppearanceWidget::slotLogoButtonClicked()
 {
     KImageIO::registerFormats();
-    QString fileName = KFileDialog::getOpenFileName(
-	locate("data", QString::fromLatin1("kdm/pics/") ),
-	KImageIO::pattern());
-    if (!fileName.isEmpty())
-	if (setLogo(fileName))
+    KFileDialog dialogue(locate("data", QString::fromLatin1("kdm/pics/")),
+			 KImageIO::pattern( KImageIO::Reading ),
+			 this, 0, true);
+    dialogue.setOperationMode( KFileDialog::Opening );
+    dialogue.setMode( KFile::File | KFile::LocalOnly );
+
+    KImageFilePreview* imagePreview = new KImageFilePreview( &dialogue );
+    dialogue.setPreviewWidget( imagePreview );
+    if (dialogue.exec() == QDialog::Accepted) {
+	if ( setLogo(dialogue.selectedFile()) ) {
 	    changed();
+	}
+    }
 }
 
 
