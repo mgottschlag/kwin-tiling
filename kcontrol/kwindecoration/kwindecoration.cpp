@@ -114,7 +114,7 @@ KWinDecorationModule::KWinDecorationModule(QWidget* parent, const char* name)
 	tabWidget->insertTab( page1, i18n("&General") );
 	tabWidget->insertTab( buttonPage, i18n("&Buttons") );
 	tabWidget->insertTab( pluginPage, i18n("&Configure [") + 
-						  decorationListBox->currentText() + QString(i18n("]")) );
+						  decorationListBox->currentText() + i18n("]") );
 
 	tabWidget->setTabEnabled( buttonPage, cbUseCustomButtonPositions->isChecked() );
 
@@ -197,7 +197,7 @@ void KWinDecorationModule::slotDecorationHighlighted( const QString& s )
 	// Let the user see config options for the currently selected decoration
 	resetPlugin( &kwinConfig, &s );
 	tabWidget->changeTab( pluginPage, i18n("&Configure [") + 
-						  decorationListBox->currentText() + QString(i18n("]")) );
+						  decorationListBox->currentText() + i18n("]") );
 }
 
 
