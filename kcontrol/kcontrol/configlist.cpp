@@ -35,7 +35,7 @@
 #include <ksimpleconfig.h>
 #include <klocale.h>
 #include <kglobal.h>
-
+#include <kstddirs.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <kwm.h>
@@ -53,10 +53,10 @@ KSwallowWidget *KModuleListEntry::visibleWidget = 0;
 bool KModuleListEntry::swallowingEnabled = TRUE;
 
 
-KModuleListEntry::KModuleListEntry(const QString &fn)
-  : filename(fn)
+KModuleListEntry::KModuleListEntry(const QString& filen_)
 {
-  QFileInfo info(fn);
+  filename = filen_;
+  QFileInfo info(filename);
 
   children = 0;
   process = 0;
@@ -357,7 +357,9 @@ ConfigTreeItem::ConfigTreeItem(QListViewItem * parent, KModuleListEntry *e )
 
 ConfigList::ConfigList()
 {
-  modules = new KModuleListEntry(kapp->kde_appsdir()+"/Settings");
+  QStringList list = KGlobal::dirs()->findDirs("apps", "Settings");
+  for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
+    modules = new KModuleListEntry(*it);
 }
 
 ConfigList::~ConfigList()

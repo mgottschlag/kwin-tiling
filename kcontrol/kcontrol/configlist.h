@@ -43,12 +43,12 @@ class KModuleListEntry : QObject
 
 public:
 
-  KModuleListEntry(const QString &fn);
+  KModuleListEntry(const QString &filename);
   ~KModuleListEntry();
 
   QList<KModuleListEntry> *getChildren() { return children; };
 
-  QString &getFilename() { return filename; };
+  //  QString &getFilename() { return filename; };
   QString &getExec()     { return exec; };
   QPixmap getIcon();
   QString &getDocPath()  { return docPath; };
@@ -74,7 +74,6 @@ private:
 
   QList<KModuleListEntry> *children;
 
-  QString filename;
   QString exec;
   QString icon;
   QString miniIcon;
@@ -83,6 +82,7 @@ private:
   QString name;
   QString init;
   QString swallowTitle;
+  QString filename;
 
   bool swallow;
 
