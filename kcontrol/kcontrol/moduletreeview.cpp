@@ -40,7 +40,9 @@ ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const c
   setAllColumnsShowFocus(true);
   header()->hide();
 
-  connect(this, SIGNAL(currentChanged(QListViewItem*)), 
+  connect(this, SIGNAL(clicked(QListViewItem*)), 
+		  this, SLOT(slotItemSelected(QListViewItem*)));
+  connect(this, SIGNAL(returnPressed(QListViewItem*)), 
 		  this, SLOT(slotItemSelected(QListViewItem*)));
 }
 
@@ -180,8 +182,18 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
 
 void ModuleTreeView::slotItemSelected(QListViewItem* item)
 {
+  if (!item) return;
+
   if (static_cast<ModuleTreeItem*>(item)->module())
-	emit moduleSelected(static_cast<ModuleTreeItem*>(item)->module());
+    {
+      emit moduleSelected(static_cast<ModuleTreeItem*>(item)->module());
+      return;
+    }
+
+  if (item->isOpen())
+    setOpen(item, false);
+  else
+    setOpen(item, true);
 }
 
 ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, ConfigModule *module)

@@ -48,12 +48,8 @@ ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const c
 
   connect(this, SIGNAL(clicked(QIconViewItem*)), 
 		  this, SLOT(slotItemSelected(QIconViewItem*)));
-
-  connect(this, SIGNAL(onItem(QIconViewItem*)), 
-		  this, SLOT(slotOnItem(QIconViewItem*)));
-
-  connect(this, SIGNAL(onViewport()), 
-		  this, SLOT(slotOnViewport()));
+  connect(this, SIGNAL(returnPressed(QIconViewItem*)), 
+		  this, SLOT(slotItemSelected(QIconViewItem*)));
 }
   
 void ModuleIconView::makeSelected(ConfigModule *m)
