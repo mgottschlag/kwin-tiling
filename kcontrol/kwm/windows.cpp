@@ -86,7 +86,8 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
 
   //CT checkboxes: maximize, move, resize behaviour
   vertOnly = new QCheckBox(i18n("Vertical maximization only by default"), windowsBox);
-#warning CT: disabling is needed as long as functionality misses in kwin  
+
+  // CT: disabling is needed as long as functionality misses in kwin  
   vertOnly->setEnabled(false);
   bLay->addWidget(vertOnly);
 
@@ -113,7 +114,9 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   resizeAnimFastLabel->setAlignment(AlignTop|AlignRight);
   rLay->addWidget(resizeAnimFastLabel,1,2);
 
+#ifdef __GNUC__
 #warning CT: disabling is needed as long as functionality misses in kwin  
+#endif
   resizeAnimTitleLabel->setEnabled(false);
   resizeAnimSlider->setEnabled(false);
   resizeAnimNoneLabel->setEnabled(false);
@@ -131,7 +134,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   placementCombo->insertItem(i18n("Smart"), SMART_PLACEMENT);
   placementCombo->insertItem(i18n("Cascade"), CASCADE_PLACEMENT);
   placementCombo->insertItem(i18n("Random"), RANDOM_PLACEMENT);
-#warning CT: disabling is needed as long as functionality misses in kwin  
+  // CT: disabling is needed as long as functionality misses in kwin 
   //placementCombo->insertItem(i18n("Interactive"), INTERACTIVE_PLACEMENT);
   //placementCombo->insertItem(i18n("Manual"), MANUAL_PLACEMENT);
   placementCombo->setCurrentItem(SMART_PLACEMENT);
@@ -166,7 +169,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   focusCombo =  new QComboBox(false, fcsBox);
   focusCombo->insertItem(i18n("Click to focus"), CLICK_TO_FOCUS);
   focusCombo->insertItem(i18n("Focus follows mouse"), FOCUS_FOLLOWS_MOUSE);
-#warning CT: disabling is needed as long as functionality misses in kwin  
+  // CT: disabling is needed as long as functionality misses in kwin  
   //  focusCombo->insertItem(i18n("Classic focus follows mouse"), CLASSIC_FOCUS_FOLLOWS_MOUSE);
   //  focusCombo->insertItem(i18n("Classic sloppy focus"), CLASSIC_SLOPPY_FOCUS);
   fLay->addMultiCellWidget(focusCombo,1,1,0,1);
@@ -202,7 +205,7 @@ KWindowConfig::KWindowConfig (QWidget * parent, const char *name)
   fLay->addMultiCellWidget(autoRaise,3,3,1,2);
   connect( autoRaise, SIGNAL(valueChanged(int)), s, SLOT(display(int)) );
 
-#warning CT: disabling is needed as long as functionality misses in kwin  
+  // CT: disabling is needed as long as functionality misses in kwin  
   autoRaiseOn->setEnabled(false);
   clickRaiseOn->setEnabled(false);
   alabel->setEnabled(false);
@@ -372,7 +375,7 @@ void KWindowConfig::load( void )
     setMove(OPAQUE);
 
   //CT 17Jun1998 - variable animation speed from 0 (none!!) to 10 (max)
-#warning CT: disabling is needed as long as functionality misses in kwin  
+  // CT: disabling is needed as long as functionality misses in kwin  
 //   int anim = 1;
 //   if (config->hasKey(KWM_RESIZE_ANIM)) {
 //     anim = config->readNumEntry(KWM_RESIZE_ANIM);
@@ -498,7 +501,7 @@ void KWindowConfig::save( void )
   else
     config->writeEntry(KWM_RESIZE_OPAQUE, "Transparent");
 
-#warning CT: disabling is needed as long as functionality misses in kwin  
+ //CT: disabling is needed as long as functionality misses in kwin  
 //   v = getMaximize();
 //   if (v == MAXIMIZE_VERT)
 //     config->writeEntry(KWM_MAXIMIZE, "on");

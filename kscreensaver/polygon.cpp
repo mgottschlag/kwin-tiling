@@ -32,6 +32,9 @@
 #define MAXLENGTH	65
 #define MAXVERTICES	19
 
+template class QList<Polygon>;
+template class QArray<XPoint>;
+
 // this refers to klock.po. If you want an extra dictionary, 
 // create an extra KLocale instance here.
 extern KLocale *glocale;

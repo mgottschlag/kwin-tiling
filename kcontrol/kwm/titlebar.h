@@ -49,6 +49,9 @@ class QGroupBox;
 class QWidgetStack;
 
 class KIntNumInput;
+#ifdef CLOSE // X headers are mean :)
+#undef CLOSE
+#endif
 
 #define NOFUNC     -1
 #define MAXIMIZE    0

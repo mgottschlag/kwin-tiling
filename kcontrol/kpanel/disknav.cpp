@@ -247,7 +247,10 @@ KDiskNavConfig::KDiskNavConfig( QWidget *parent, const char* name )
 
 void KDiskNavConfig::edit_shared_clicked() 
 {
+#ifdef __GNUC__
 #warning TODO Port to KStandardDirs
+// see below
+#endif
 #if 0
   KShellProcess proc;
   proc << "kfmclient folder " + KApplication::kde_datadir() + "/" + "/kdisknav";
@@ -257,7 +260,6 @@ void KDiskNavConfig::edit_shared_clicked()
 
 void KDiskNavConfig::edit_personal_clicked() 
 {
-#warning TODO Port to KStandardDirs
 #if 0
   KShellProcess proc;
   proc << "kfmclient folder " + KApplication::localkdedir() + "/share/apps/kdisknav";

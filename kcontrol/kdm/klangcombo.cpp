@@ -107,7 +107,9 @@ QString KLanguageCombo::language(const QString& lang)
     return name.right(name.length()-pos-1);
 }
 
+#ifdef __GNUC__
 #warning TODO: kdmconfig is massivly broken with KStandardDirs ;(
+#endif
 
 void KLanguageCombo::loadLanguageList()
 {

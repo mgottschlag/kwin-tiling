@@ -21,6 +21,9 @@
     Boston, MA 02111-1307, USA.
 
     $Log$
+    Revision 1.6  1999/11/15 14:29:45  hoelzer
+    Ported to the new module concept.
+
     Revision 1.5  1999/07/13 23:49:50  pbrown
     KDND is dead, long live Xdnd.
 
@@ -56,7 +59,7 @@
 
 class KSoundWidget : public KCModule{
 
-	Q_OBJECT;
+	Q_OBJECT
 
 public:
 
