@@ -190,13 +190,22 @@ void ConfigModule::rootExited(KProcess *)
 {
   if (_embedWidget->embeddedWinId())
     XDestroyWindow(qt_xdisplay(), _embedWidget->embeddedWinId());
+
   delete _embedWidget;
   _embedWidget = 0;
+
+  delete _rootProcess;
   _rootProcess = 0;
+
   delete _embedLayout;
   _embedLayout = 0;
+
   delete _module;
   _module=0;
+
+  _changed = false;
+  emit changed(this);
+  emit childClosed();
 }
 
 

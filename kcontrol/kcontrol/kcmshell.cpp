@@ -219,14 +219,24 @@ int main(int _argc, char *_argv[])
                 bool ok;
                 int id = embed.toInt(&ok);
                 if (ok)
-                    QXEmbed::embedClientIntoWindow(dlg, id);
+	            {
+	              // NOTE: This relies on a bug in QT 2.x:
+		      // When calling QDialog::show on a modal dialog
+		      // it will enter an event loop. Unfortunately,
+		      // QXEmbed calls show, so we shouldn't call exec
+		      // afterwards. This has to be changed for QT 3.0!
+                      QXEmbed::embedClientIntoWindow(dlg, id);
+		      delete dlg;
+		      ModuleLoader::unloadModule(info);
+		      return 0;
+		    }
             }
-
+	   
             // run the dialog
-            int ret = dlg->exec();
+            dlg->exec();
             delete dlg;
             ModuleLoader::unloadModule(info);
-            return ret;
+            return 0;
         }
 
         KMessageBox::error(0,
@@ -263,12 +273,17 @@ int main(int _argc, char *_argv[])
         bool ok;
         int id = embed.toInt(&ok);
         if (ok)
-            QXEmbed::embedClientIntoWindow(dlg, id);
+	    {
+              // NOTE: This has to be changed for QT 3.0. See above!
+              QXEmbed::embedClientIntoWindow(dlg, id);
+	      delete dlg;
+	      return 0;
+	    }
     }
 
     // run the dialog
-    int ret = dlg->exec();
+    dlg->exec();
     delete dlg;
-    return ret;
+    return 0;
 }
 #include "kcmshell.moc"
