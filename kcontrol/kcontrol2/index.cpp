@@ -113,7 +113,7 @@ QListViewItem *IndexPane::getGroupItem(QListViewItem *parent, const QStringList&
 
 void IndexPane::doubleClicked(QListViewItem *item)
 {
-  IndexListItem *iitem = dynamic_cast<IndexListItem*>(item);
+  IndexListItem *iitem = static_cast<IndexListItem*>(item);
   if (iitem && iitem->_module)
     {
       emit moduleDoubleClicked(iitem->_module);
@@ -128,7 +128,7 @@ void IndexPane::updateItem(QListViewItem *item, ConfigModule *module)
     {
       updateItem(item->firstChild(), module);
 
-      IndexListItem *iitem = dynamic_cast<IndexListItem*>(item);
+      IndexListItem *iitem = static_cast<IndexListItem*>(item);
       if ((iitem && iitem->getModule()) && (iitem->getModule() == module))
 	iitem->repaint();
 

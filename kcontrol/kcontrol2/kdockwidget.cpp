@@ -19,21 +19,20 @@
 */                                                                            
 
 
-
 #include <qpushbutton.h>
 #include <qtabwidget.h>
 #include <qpainter.h>
 #include <qiconset.h>
 
+
 #include <ktoolboxmgr.h>
 #include <kwm.h>
+#include <kglobal.h>
+#include <kiconloader.h>
 
 
 #include "kdockwidget.h"
 #include "kdockwidget.moc"
-
-
-#include "close.xpm" // FIXME: replace with loadable pixmap!!!
 
 
 KDockContainer::KDockContainer(QWidget *parent, const char *name)
@@ -145,8 +144,7 @@ KDockWidget::KDockWidget(QString caption, QPixmap icon, KDockContainer *parent, 
   // create the close button
   _closeButton = new QPushButton(this);
   _closeButton->setFocusPolicy(QWidget::ClickFocus);
-  _closeButton->setPixmap(close_xpm);
-  // FIXME: Use a loadable pixmap for the button!!!!
+  _closeButton->setPixmap( KGlobal::iconLoader()->loadIcon( "close", false ) );
 
   connect(_closeButton, SIGNAL(clicked()), this, SLOT(slotCloseClicked()));
 
