@@ -13,7 +13,7 @@ bin_PROGRAMS = krandom.kss kblankscrn.kss
 krandom_kss_SOURCES = random.cpp
 
 kblankscrn_kss_SOURCES = blankscrn.cpp
-kblankscrn_kss_LDADD = $(LIB_KDEUI) -lkscreensaver -lm -lGL -lGLU
+kblankscrn_kss_LDADD = $(LIB_KDEUI) -lkscreensaver -lm 
 
 METASOURCES = blankscrn.moc
 
