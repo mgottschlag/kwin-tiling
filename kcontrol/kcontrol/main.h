@@ -20,18 +20,17 @@
 #ifndef __main_h__
 #define __main_h__
 
-#include <kuniqueapp.h>
+#include <kapp.h>
 
 class TopLevel;
 
-class MyApplication : public KUniqueApplication
+class MyApplication : public KApplication
 {
   Q_OBJECT 
 
 public:
   MyApplication();
   virtual ~MyApplication();
-  virtual int newInstance();
 
 private:
 

@@ -1,5 +1,6 @@
 /*
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
+  Copyright (c) 2000 Matthias Elter <elter@kde.org> 
  
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -14,7 +15,6 @@
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
 */                                                                            
 
 
@@ -54,12 +54,10 @@ static KCmdLineOptions options[] =
 };
 
 MyApplication::MyApplication()
-  : KUniqueApplication(), toplevel(0)
+  : KApplication()
+  , toplevel(0)
 {
-  if (isRestored())
-    RESTORE(TopLevel)
-  else 
-    toplevel = new TopLevel();
+  toplevel = new TopLevel();
   
   setMainWidget(toplevel);
 
@@ -82,19 +80,6 @@ MyApplication::~MyApplication()
     }
 }
 
-int MyApplication::newInstance()
-{
-  KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-  for (int i=0; i < args->count(); i++)
-  {
-	toplevel->showModule(args->arg(i));
-  }
-  toplevel->raise();
-
-  return 0;
-}
-
-
 int main(int argc, char *argv[])
 {
   KAboutData aboutData( "kcontrol", I18N_NOOP("KDE Control Centre"), 
@@ -105,17 +90,14 @@ int main(int argc, char *argv[])
 
   KCmdLineArgs::init( argc, argv, &aboutData );
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
-  KUniqueApplication::addCmdLineOptions();
+  KApplication::addCmdLineOptions();
 
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
   KCGlobal::init();
   KCGlobal::setType(args->getOption("type"));
 
-  if (!MyApplication::start())
-    exit(0); // Don't do anything if we are already running
-  
-  MyApplication app; 
+  MyApplication app;
 
   if (KCGlobal::types().contains("System") && !KCGlobal::root())
 	{
