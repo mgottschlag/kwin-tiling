@@ -43,18 +43,18 @@ class ModuleTreeWhatsThis : public QWhatsThis
 {
 public:
     ModuleTreeWhatsThis( ModuleTreeView* tree)
-	: QWhatsThis( tree ), treeView( tree ) {}
+        : QWhatsThis( tree ), treeView( tree ) {}
     ~ModuleTreeWhatsThis(){};
 
 
     QString text( const QPoint & p) {
-	ModuleTreeItem* i = (ModuleTreeItem*)  treeView->itemAt( p );
-	if ( i && i->module() )  {
-	    return i->module()->comment();
-	} else if ( i ) {
-	    return i18n("The %1 configuration group. Click to open it.").arg( i->text(0) );
-	}
-	return i18n("This treeview display all available control modules. Click on one of the modules to receive more detailed information.");
+        ModuleTreeItem* i = (ModuleTreeItem*)  treeView->itemAt( p );
+        if ( i && i->module() )  {
+            return i->module()->comment();
+        } else if ( i ) {
+            return i18n("The %1 configuration group. Click to open it.").arg( i->text(0) );
+        }
+        return i18n("This treeview display all available control modules. Click on one of the modules to receive more detailed information.");
     }
 
 private:
@@ -74,7 +74,7 @@ ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const c
   new ModuleTreeWhatsThis( this );
 
   connect(this, SIGNAL(executed(QListViewItem*)),
-		  this, SLOT(slotItemSelected(QListViewItem*)));
+                  this, SLOT(slotItemSelected(QListViewItem*)));
 }
 
 void ModuleTreeView::fill()
@@ -103,14 +103,14 @@ void ModuleTreeView::updateItem(ModuleTreeItem *item, ConfigModule *module)
 {
   while (item)
     {
-	  if (item->childCount() != 0)
-		updateItem(static_cast<ModuleTreeItem*>(item->firstChild()), module);
-	  if (item->module() == module)
-		{
-		  setSelected(item, true);
-		  break;
-		}
-	  item = static_cast<ModuleTreeItem*>(item->nextSibling());
+          if (item->childCount() != 0)
+                updateItem(static_cast<ModuleTreeItem*>(item->firstChild()), module);
+          if (item->module() == module)
+                {
+                  setSelected(item, true);
+                  break;
+                }
+          item = static_cast<ModuleTreeItem*>(item->nextSibling());
     }
 }
 
@@ -120,8 +120,8 @@ void ModuleTreeView::expandItem(QListViewItem *item, QList<QListViewItem> *paren
     {
       setOpen(item, parentList->contains(item));
 
-	  if (item->childCount() != 0)
-		expandItem(item->firstChild(), parentList);
+          if (item->childCount() != 0)
+                expandItem(item->firstChild(), parentList);
       item = item->nextSibling();
     }
 }
@@ -141,15 +141,15 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
   for (it=module->groups().begin(); it != module->groups().end(); it++)
     {
       while (item)
-		{
-		  if (item->tag() == *it)
-			{
-			  setOpen(item, true);
-			  break;
-			}
-		
-		  item = static_cast<ModuleTreeItem*>(item->nextSibling());
-		}
+                {
+                  if (item->tag() == *it)
+                        {
+                          setOpen(item, true);
+                          break;
+                        }
+
+                  item = static_cast<ModuleTreeItem*>(item->nextSibling());
+                }
     }
 
   // make the item visible
@@ -188,7 +188,7 @@ ModuleTreeItem *ModuleTreeView::getGroupItem(ModuleTreeItem *parent, const QStri
   else
     menu = new ModuleTreeItem(this);
 
-  KServiceGroup::Ptr group = KServiceGroup::group("Settings/"+path);
+  KServiceGroup::Ptr group = KServiceGroup::group(KCGlobal::baseGroup()+path);
   QString defName = path.left(path.length()-1);
   int pos = defName.findRev('/');
   if (pos >= 0)
@@ -261,10 +261,10 @@ ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, ConfigModule *module)
   , _tag(QString::null)
 {
   if (_module)
-	{
-	  setText(0, module->name());
-	  setPixmap(0, SmallIcon(module->icon()));
-	}
+        {
+          setText(0, module->name());
+          setPixmap(0, SmallIcon(module->icon()));
+        }
 }
 
 ModuleTreeItem::ModuleTreeItem(QListView *parent, ConfigModule *module)
@@ -273,10 +273,10 @@ ModuleTreeItem::ModuleTreeItem(QListView *parent, ConfigModule *module)
   , _tag(QString::null)
 {
   if (_module)
-	{
-	  setText(0, module->name());
-	  setPixmap(0, SmallIcon(module->icon()));
-	}
+        {
+          setText(0, module->name());
+          setPixmap(0, SmallIcon(module->icon()));
+        }
 }
 
 ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, const QString& text)

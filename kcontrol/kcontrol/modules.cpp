@@ -27,6 +27,7 @@
 
 
 #include <kapp.h>
+#include <kdebug.h>
 #include <kglobal.h>
 #include <kservicegroup.h>
 #include <kcmodule.h>
@@ -39,6 +40,7 @@
 
 #include "modules.h"
 #include "modules.moc"
+#include "global.h"
 #include "utils.h"
 #include "proxywidget.h"
 #include "modloader.h"
@@ -128,8 +130,8 @@ void ConfigModule::runAsRoot()
   delete _embedWidget;
   delete _embedLayout;
 
-  // create an embed widget that will embed the 
-  // kcmshell running as root  
+  // create an embed widget that will embed the
+  // kcmshell running as root
   _embedLayout = new QVBoxLayout(_module->parentWidget());
   _embedWidget = new QXEmbed(_module->parentWidget());
   _embedLayout->addWidget(_embedWidget,1);
@@ -159,13 +161,13 @@ void ConfigModule::runAsRoot()
       _rootProcess = new KProcess;
       *_rootProcess << kdesu;
       if (kdeshell)
-	*_rootProcess << "kcmshell";
+        *_rootProcess << "kcmshell";
       *_rootProcess << QString("%1 --embed %2").arg(cmd).arg(_embedWidget->winId());
-      
+
       connect(_rootProcess, SIGNAL(processExited(KProcess*)), this, SLOT(rootExited(KProcess*)));
 
       _rootProcess->start(KProcess::NotifyOnExit);
-      
+
       return;
     }
 
@@ -204,7 +206,7 @@ const KAboutData *ConfigModule::aboutData() const
 
 void ConfigModuleList::readDesktopEntries()
 {
-  readDesktopEntriesRecursive("Settings/");
+  readDesktopEntriesRecursive( KCGlobal::baseGroup() );
 }
 
 void ConfigModuleList::readDesktopEntriesRecursive(const QString &path)

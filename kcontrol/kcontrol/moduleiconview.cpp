@@ -1,21 +1,21 @@
 /*
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
- 
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
- 
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
-*/            
+
+*/
 
 
 #include <qevent.h>
@@ -49,22 +49,22 @@ ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const c
   setItemTextPos(Bottom);
   setResizeMode(Adjust);
 
-  connect(this, SIGNAL(executed(QIconViewItem*)), 
-		  this, SLOT(slotItemSelected(QIconViewItem*)));
+  connect(this, SIGNAL(executed(QIconViewItem*)),
+                  this, SLOT(slotItemSelected(QIconViewItem*)));
 }
-  
+
 void ModuleIconView::makeSelected(ConfigModule *m)
 {
   if (!m) return;
 
   for (QIconViewItem *i = firstItem(); i; i = i->nextItem())
-	{
+        {
       if(static_cast<ModuleIconItem*>(i)->module() == m)
-		{
-		  setSelected(i, true);
-		  break;
-		}
-	}
+                {
+                  setSelected(i, true);
+                  break;
+                }
+        }
 
 }
 
@@ -80,7 +80,7 @@ void ModuleIconView::fill()
   clear();
 
   QStringList subdirs;
-  
+
   // build a list of subdirs
   ConfigModule *module;
   for (module=_modules->first(); module != 0; module=_modules->next())
@@ -143,7 +143,7 @@ void ModuleIconView::fill()
   {
     QString subdir = (*it);
 
-    KServiceGroup::Ptr group = KServiceGroup::group("Settings/"+subdir+"/");
+    KServiceGroup::Ptr group = KServiceGroup::group(KCGlobal::baseGroup()+subdir+'/');
 
     if (KCGlobal::iconSize() == Small)
     {
@@ -198,13 +198,13 @@ void ModuleIconView::slotItemSelected(QIconViewItem* item)
   if (!item) return;
 
   if (static_cast<ModuleIconItem*>(item)->module())
-	emit moduleSelected(static_cast<ModuleIconItem*>(item)->module());
+        emit moduleSelected(static_cast<ModuleIconItem*>(item)->module());
   else
-	{
-	  _path = static_cast<ModuleIconItem*>(item)->tag();
-	  fill();
+        {
+          _path = static_cast<ModuleIconItem*>(item)->tag();
+          fill();
       setCurrentItem(firstItem());
-	}
+        }
 }
 
 QDragObject *ModuleIconView::dragObject()
@@ -217,27 +217,27 @@ QDragObject *ModuleIconView::dragObject()
 
 
   QPoint orig = viewportToContents(viewport()->mapFromGlobal(QCursor::pos()));
-  
-  QStringList l;	
+
+  QStringList l;
   ModuleIconItem *item = (ModuleIconItem*) findItem(orig);
   if (item)
     {
       if (item->module())
-	l.append(item->module()->fileName());
+        l.append(item->module()->fileName());
       else
-	if (!item->tag().isEmpty())
-	  {
-	    QString dir = _path + "/" + item->tag();
-	    dir = locate("apps", "Settings/"+dir+"/.directory");
-	    int pos = dir.findRev("/.directory");
-	    if (pos > 0)
-	      {
-		dir = dir.left(pos);
-		l.append(dir);
-	      }
-	  }
-      
-      drag->setFilenames(l); 
+        if (!item->tag().isEmpty())
+          {
+            QString dir = _path + "/" + item->tag();
+            dir = locate("apps", KCGlobal::baseGroup()+dir+"/.directory");
+            int pos = dir.findRev("/.directory");
+            if (pos > 0)
+              {
+                dir = dir.left(pos);
+                l.append(dir);
+              }
+          }
+
+      drag->setFilenames(l);
     }
 
   delete icondrag;
@@ -261,14 +261,14 @@ void ModuleIconView::keyPressEvent(QKeyEvent *e)
   else if(e->key() == Key_Up)
     {
       QKeyEvent ev(e->type(), Key_Left, e->ascii(), e->state(), e->text(),
-                   e->isAutoRepeat(), e->count()); 
+                   e->isAutoRepeat(), e->count());
       KIconView::keyPressEvent(&ev);
     }
   // Workaround for strange QIconView behaviour.
   else if(e->key() == Key_Down)
     {
       QKeyEvent ev(e->type(), Key_Right, e->ascii(), e->state(), e->text(),
-                   e->isAutoRepeat(), e->count()); 
+                   e->isAutoRepeat(), e->count());
       KIconView::keyPressEvent(&ev);
     }
   else

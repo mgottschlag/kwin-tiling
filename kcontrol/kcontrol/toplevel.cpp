@@ -97,14 +97,14 @@ TopLevel::TopLevel(const char* name)
   // index tab
   _indextab = new IndexWidget(_modules, _tab);
   connect(_indextab, SIGNAL(moduleActivated(ConfigModule*)),
-		  this, SLOT(moduleActivated(ConfigModule*)));
+                  this, SLOT(moduleActivated(ConfigModule*)));
   _tab->addTab(_indextab, i18n("In&dex"));
 
   // search tab
   _searchtab = new SearchWidget(_tab);
   _searchtab->populateKeywordList(_modules);
   connect(_searchtab, SIGNAL(moduleSelected(const QString&)),
-		  this, SLOT(activateModule(const QString&)));
+                  this, SLOT(activateModule(const QString&)));
 
   _tab->addTab(_searchtab, i18n("S&earch"));
 
@@ -118,7 +118,7 @@ TopLevel::TopLevel(const char* name)
   // set up the right hand side (the docking area)
   _dock = new DockContainer(_splitter);
   connect(_dock, SIGNAL(newModule(const QString&, const QString&, const QString&)),
-		  this, SLOT(newModule(const QString&, const QString&, const QString&)));
+                  this, SLOT(newModule(const QString&, const QString&, const QString&)));
 
   // insert the about widget
   AboutWidget *aw = new AboutWidget(this);
@@ -202,8 +202,8 @@ void TopLevel::setupActions()
   // and not just KControl
 
   report_bug=new KAction(i18n("&Report Bug..."),0,
-			 this, SLOT(reportBug()), actionCollection(),
-			 "help_report_bug");
+                         this, SLOT(reportBug()), actionCollection(),
+                         "help_report_bug");
 
   createGUI("kcontrolui.rc");
 
@@ -211,7 +211,7 @@ void TopLevel::setupActions()
   ModuleMenu *menu = new ModuleMenu(_modules, this);
   menuBar()->insertItem(i18n("&Modules"), menu, -1, 2);
   connect(menu, SIGNAL(moduleActivated(ConfigModule*)),
-	  this, SLOT(moduleActivated(ConfigModule*)));
+          this, SLOT(moduleActivated(ConfigModule*)));
 }
 
 void TopLevel::activateIconView()
@@ -302,26 +302,26 @@ void TopLevel::showModule(QString desktopFile)
 
   // locate the desktop file
   QStringList files;
-  files = KGlobal::dirs()->findAllResources("apps", "Settings/"+desktopFile+".desktop", TRUE);
+  files = KGlobal::dirs()->findAllResources("apps", KCGlobal::baseGroup()+desktopFile+".desktop", TRUE);
 
   // show all matches
   QStringList::Iterator it;
   for (it = files.begin(); it != files.end(); ++it)
     {
       for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
-		if (mod->fileName() == *it && mod != _active)
-		  {
-			// tell the index to display the module
-			_indextab->makeVisible(mod);
-			
-			// tell the index to mark this module as loaded
-			_indextab->makeSelected(mod);
+                if (mod->fileName() == *it && mod != _active)
+                  {
+                        // tell the index to display the module
+                        _indextab->makeVisible(mod);
 
-			// dock it
+                        // tell the index to mark this module as loaded
+                        _indextab->makeSelected(mod);
+
+                        // dock it
             _dock->dockModule(mod);
             mod->module()->show();
             break;
-	  }
+          }
     }
 }
 
@@ -329,20 +329,20 @@ void TopLevel::activateModule(const QString& name)
 {
   kdDebug() << "activate: " << name << endl;
   for (ConfigModule *mod = _modules->first(); mod != 0; mod = _modules->next())
-	{
-	  if (mod->name() == name)
-		{
-		  // tell the index to display the module
-		  _indextab->makeVisible(mod);
+        {
+          if (mod->name() == name)
+                {
+                  // tell the index to display the module
+                  _indextab->makeVisible(mod);
 
-		  // tell the index to mark this module as loaded
-		  _indextab->makeSelected(mod);
-		
-		  // dock it
-		  _dock->dockModule(mod);
-		  break;
-		}
-	}
+                  // tell the index to mark this module as loaded
+                  _indextab->makeSelected(mod);
+
+                  // dock it
+                  _dock->dockModule(mod);
+                  break;
+                }
+        }
 }
 
 void TopLevel::deleteDummyAbout()
@@ -370,13 +370,13 @@ void TopLevel::reportBug()
   else
     {
       if (_active->aboutData())
-	dummyAbout = const_cast<KAboutData*>(_active->aboutData());
+        dummyAbout = const_cast<KAboutData*>(_active->aboutData());
       else
-	{
-	  sprintf(buffer, "kcm%s", _active->library().latin1());
-	  dummyAbout = new KAboutData(buffer, _active->name().utf8(), "2.0");
-	  deleteit = true;
-	}
+        {
+          sprintf(buffer, "kcm%s", _active->library().latin1());
+          dummyAbout = new KAboutData(buffer, _active->name().utf8(), "2.0");
+          deleteit = true;
+        }
     }
   KBugReport *br = new KBugReport(this, false, dummyAbout);
   if (deleteit)

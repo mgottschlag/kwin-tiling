@@ -38,6 +38,7 @@
 #include "kcdialog.h"
 #include "moduleinfo.h"
 #include "modloader.h"
+#include "global.h"
 
 
 static KCmdLineOptions options[] =
@@ -51,13 +52,13 @@ static KCmdLineOptions options[] =
 int main(int _argc, char *_argv[])
 {
     KAboutData aboutData( "kcmshell", I18N_NOOP("KDE Control Module"),
-			  "2.0pre", 
-			  I18N_NOOP("A tool to start single KDE control modules"), 
-			  KAboutData::License_GPL,
-			  "(c) 1999-2000, The KDE Developers");
+                          "2.0pre",
+                          I18N_NOOP("A tool to start single KDE control modules"),
+                          KAboutData::License_GPL,
+                          "(c) 1999-2000, The KDE Developers");
     aboutData.addAuthor("Matthias Hoelzer-Kluepfel",0, "hoelzer@kde.org");
     aboutData.addAuthor("Matthias Elter",0, "elter@kde.org");
-    
+
     KCmdLineArgs::init(_argc, _argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
     KLocale::setMainCatalogue("kcontrol");
@@ -68,48 +69,48 @@ int main(int _argc, char *_argv[])
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     if (args->isSet("list")) {
-	QStringList files;
-	KGlobal::dirs()->findAllResources("apps",
-					  "Settings/*.desktop",
-					  true, true, files);
-	QStringList modules;
-	QStringList descriptions;
-	uint maxwidth = 0;
-	for (QStringList::ConstIterator it = files.begin(); it != files.end(); it++) {
-	
-	    if (KDesktopFile::isDesktopFile(*it)) {
-		KDesktopFile file(*it, true);
-		QString module = *it;
-		if (module.left(9) == "Settings/")
-		    module = module.mid(9);
-		if (module.right(8) == ".desktop")
-		    module.truncate(module.length() - 8);
+        QStringList files;
+        KGlobal::dirs()->findAllResources("apps",
+                                          KCGlobal::baseGroup() + "*.desktop",
+                                          true, true, files);
+        QStringList modules;
+        QStringList descriptions;
+        uint maxwidth = 0;
+        for (QStringList::ConstIterator it = files.begin(); it != files.end(); it++) {
 
-		modules.append(module);
-		if (module.length() > maxwidth)
-		    maxwidth = module.length();
-		descriptions.append(QString("%2 (%3)").arg(file.readName()).arg(file.readComment()));
-	    }
-	}
-	
-	QByteArray vl;
-	vl.fill(' ', 80);
-	QString verylong = vl;
+            if (KDesktopFile::isDesktopFile(*it)) {
+                KDesktopFile file(*it, true);
+                QString module = *it;
+                if (module.startsWith(KCGlobal::baseGroup()))
+                    module = module.mid(KCGlobal::baseGroup().length());
+                if (module.right(8) == ".desktop")
+                    module.truncate(module.length() - 8);
 
-	for (uint i = 0; i < modules.count(); i++) {
-	    cout << (*modules.at(i)).local8Bit();
-	    cout << verylong.left(maxwidth - (*modules.at(i)).length()).local8Bit();
-	    cout << " - ";
-	    cout << (*descriptions.at(i)).local8Bit();
-	    cout << endl;
-	}
+                modules.append(module);
+                if (module.length() > maxwidth)
+                    maxwidth = module.length();
+                descriptions.append(QString("%2 (%3)").arg(file.readName()).arg(file.readComment()));
+            }
+        }
 
-	return 0;
+        QByteArray vl;
+        vl.fill(' ', 80);
+        QString verylong = vl;
+
+        for (uint i = 0; i < modules.count(); i++) {
+            cout << (*modules.at(i)).local8Bit();
+            cout << verylong.left(maxwidth - (*modules.at(i)).length()).local8Bit();
+            cout << " - ";
+            cout << (*descriptions.at(i)).local8Bit();
+            cout << endl;
+        }
+
+        return 0;
     }
 
     if (args->count() != 1) {
-	args->usage();
-	return -1;
+        args->usage();
+        return -1;
     }
 
     QCString arg = args->arg(0);
@@ -120,10 +121,10 @@ int main(int _argc, char *_argv[])
     {
         kdDebug() << "Full path given to kcmshell - not supported yet" << endl;
         // (because of KService::findServiceByDesktopPath)
-	//files.append(args->arg(0));
+        //files.append(args->arg(0));
     }
 
-    QCString path = "Settings/";
+    QString path = KCGlobal::baseGroup();
     path += arg;
     path += ".desktop";
 
@@ -132,7 +133,7 @@ int main(int _argc, char *_argv[])
         // Path didn't work. Trying as a name
         KService::Ptr serv = KService::serviceByDesktopName( arg );
         if ( serv )
-            path = QFile::encodeName(serv->entryPath());
+            path = serv->entryPath();
         else
         {
             cerr << i18n("Module %1 not found!").arg(arg).local8Bit() << endl;
@@ -148,29 +149,29 @@ int main(int _argc, char *_argv[])
     KCModule *module = ModuleLoader::loadModule(info);
 
     if (module) {
-	// create the dialog
-	KCDialog * dlg = new KCDialog(module, module->buttons(), info.docPath(), 0, 0, true);
-	dlg->setCaption(info.name());
-	
-	// Needed for modules that use d'n'd (not really the right
-	// solution for this though, I guess)
-	dlg->setAcceptDrops(true);
+        // create the dialog
+        KCDialog * dlg = new KCDialog(module, module->buttons(), info.docPath(), 0, 0, true);
+        dlg->setCaption(info.name());
 
-	// if we are going to be embedded, embed
-	QCString embed = args->getOption("embed");
-	if (!embed.isEmpty())
-	  {
-	    bool ok;
-	    int id = embed.toInt(&ok);
-	    if (ok)
-	      QXEmbed::embedClientIntoWindow(dlg, id);
-	  }
+        // Needed for modules that use d'n'd (not really the right
+        // solution for this though, I guess)
+        dlg->setAcceptDrops(true);
 
-	// run the dialog	
-	int ret = dlg->exec();
+        // if we are going to be embedded, embed
+        QCString embed = args->getOption("embed");
+        if (!embed.isEmpty())
+          {
+            bool ok;
+            int id = embed.toInt(&ok);
+            if (ok)
+              QXEmbed::embedClientIntoWindow(dlg, id);
+          }
+
+        // run the dialog
+        int ret = dlg->exec();
         delete dlg;
-	ModuleLoader::unloadModule(info);
-	return ret;
+        ModuleLoader::unloadModule(info);
+        return ret;
     }
 
     return 0;

@@ -1,26 +1,29 @@
 /*
   Copyright (c) 2000 Matthias Elter <elter@kde.org>
- 
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
- 
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
-*/                                                                            
 
-#include <stdlib.h> 
+*/
+
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
+#include <kservicegroup.h>
+#include <ksycoca.h>
+#include <kdebug.h>
 
 #include "config.h"
 #include "utils.h"
@@ -37,6 +40,7 @@ QString KCGlobal::_iversion = "";
 QString KCGlobal::_imachine = "";
 IndexViewMode KCGlobal::_viewmode = Icon;
 IndexIconSize KCGlobal::_iconsize = Medium;
+QString KCGlobal::_baseGroup = QString::null;
 
 void KCGlobal::init()
 {
@@ -44,7 +48,7 @@ void KCGlobal::init()
   char buf[128];
   char *user = getlogin();
   struct utsname info;
-  
+
   gethostname(buf, 128);
   if (strlen(buf)) hostname = QString("%1").arg(buf); else hostname = "";
   if (!user) user = getenv("LOGNAME");
@@ -57,7 +61,7 @@ void KCGlobal::init()
   setKDEVersion(VERSION);
 
   uname(&info);
-  
+
   setSystemName(info.sysname);
   setSystemRelease(info.release);
   setSystemVersion(info.version);
@@ -68,4 +72,25 @@ void KCGlobal::setType(const QCString& s)
 {
   QString string = s.lower();
   splitString(string, ',', _types);
+}
+
+QString KCGlobal::baseGroup()
+{
+  if ( _baseGroup.isEmpty() )
+  {
+    KServiceGroup::Ptr group = KServiceGroup::baseGroup( "settings" );
+    if (group)
+    {
+      _baseGroup = group->relPath();
+      kdDebug() << "Found basegroup = " << _baseGroup << endl;
+      return _baseGroup;
+    }
+    // Compatibility with old behaviour, in case of missing .directory files.
+    if (_baseGroup.isEmpty())
+    {
+      kdWarning() << "No K menu group with X-KDE-KControl-Base=true found ! Defaulting to Settings/" << endl;
+      _baseGroup = QString::fromLatin1("Settings");
+    }
+  }
+  return _baseGroup;
 }

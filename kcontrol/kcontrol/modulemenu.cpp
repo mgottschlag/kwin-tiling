@@ -1,20 +1,20 @@
 /*
   Copyright (c) 2000 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
- 
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
- 
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*/                                                                            
+*/
 
 
 #include <qheader.h>
@@ -49,24 +49,24 @@ ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * na
       KPopupMenu *parent = 0;
       parent = getGroupMenu(module->groups());
       int realid = parent->insertItem(KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall)
-									  , module->name(), id);
+                                                                          , module->name(), id);
       _moduleDict.insert(realid, module);
 
       id++;
-    }  
-  
+    }
+
   connect(this, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
 }
 
 
 QString menuPath(const QStringList& groups)
 {
-  QString path;  
+  QString path;
 
   QStringList::ConstIterator it;
   for (it=groups.begin(); it != groups.end(); ++it)
     path += *it + "/";
-  
+
   return path;
 }
 
@@ -84,7 +84,7 @@ KPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
   // look if menu already exists
   if (_menuDict[path])
     return _menuDict[path];
-  
+
   // find parent menu
   QStringList parGroup;
   for (unsigned int i=0; i<groups.count()-1; i++)
@@ -95,15 +95,15 @@ KPopupMenu *ModuleMenu::getGroupMenu(const QStringList &groups)
   KPopupMenu *menu = new KPopupMenu(parent);
   connect(menu, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
 
-  KServiceGroup::Ptr group = KServiceGroup::group("Settings/"+path);
+  KServiceGroup::Ptr group = KServiceGroup::group(KCGlobal::baseGroup()+path);
   parent->insertItem(KGlobal::iconLoader()->loadIcon(group->icon(), KIcon::Desktop, KIcon::SizeSmall)
-					 , group->caption(), menu);
+                                         , group->caption(), menu);
 
   _menuDict.insert(path, menu);
 
   return menu;
 }
-  
+
 
 void ModuleMenu::moduleSelected(int id)
 {
