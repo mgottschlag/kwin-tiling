@@ -37,8 +37,8 @@ class MenuEntryInfo;
 class TreeItem : public QListViewItem
 {
 public:
-    TreeItem(QListViewItem *parent, QListViewItem *after, const QString &menuId);
-    TreeItem(QListView *parent, QListViewItem* after, const QString &menuId);
+  TreeItem(QListViewItem *parent, QListViewItem *after, const QString &menuIdn, bool __init = false);
+    TreeItem(QListView *parent, QListViewItem* after, const QString &menuId, bool __init = false);
 
     QString menuId() const { return _menuId; }
 
@@ -110,7 +110,7 @@ protected slots:
     void del();
 
 protected:
-    TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuFolderInfo *folderInfo);
+    TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuFolderInfo *folderInfo, bool _init = false);
     TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuEntryInfo *entryInfo);
 
     void del(TreeItem *, bool deleteInfo);

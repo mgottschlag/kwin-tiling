@@ -57,12 +57,12 @@
 #define MOVE_FILE   'm'
 #define COPY_FILE   'c'
 
-TreeItem::TreeItem(QListViewItem *parent, QListViewItem *after, const QString& menuId)
-    :QListViewItem(parent, after), _hidden(false), _init(false), _menuId(menuId), 
+TreeItem::TreeItem(QListViewItem *parent, QListViewItem *after, const QString& menuId, bool __init)
+    :QListViewItem(parent, after), _hidden(false), _init(__init), _menuId(menuId), 
      m_folderInfo(0), m_entryInfo(0) {}
 
-TreeItem::TreeItem(QListView *parent, QListViewItem *after, const QString& menuId)
-    : QListViewItem(parent, after), _hidden(false), _init(false), _menuId(menuId), 
+TreeItem::TreeItem(QListView *parent, QListViewItem *after, const QString& menuId, bool __init)
+    : QListViewItem(parent, after), _hidden(false), _init(__init), _menuId(menuId), 
      m_folderInfo(0), m_entryInfo(0) {}
 
 void TreeItem::setName(const QString &name)
@@ -301,13 +301,13 @@ QString TreeView::findName(KDesktopFile *df, bool deleted)
     return name;
 }
 
-TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, MenuFolderInfo *folderInfo)
+TreeItem *TreeView::createTreeItem(TreeItem *parent, QListViewItem *after, MenuFolderInfo *folderInfo, bool _init)
 {
    TreeItem *item;		
    if (parent == 0)
-      item = new TreeItem(this, after, QString::null);
+     item = new TreeItem(this, after, QString::null, _init);
    else
-      item = new TreeItem(parent, after, QString::null);
+     item = new TreeItem(parent, after, QString::null, _init);
 
    item->setMenuFolderInfo(folderInfo);
    QString tmp = folderInfo->caption;
@@ -747,11 +747,11 @@ void TreeView::newsubmenu()
    // update fileInfo data
    parentFolderInfo->add(folderInfo);
          
+   TreeItem *newItem = createTreeItem(parentItem, item, folderInfo, true);
+
    // create the TreeItem
    if(parentItem)
       parentItem->setOpen(true);
-
-   TreeItem *newItem = createTreeItem(parentItem, item, folderInfo);
 
    setSelected ( newItem, true);
    itemSelected( newItem);
