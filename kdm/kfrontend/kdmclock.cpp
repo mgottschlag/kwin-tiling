@@ -63,6 +63,7 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
         //setFrameStyle( WinPanel|Sunken );
     }
 
+/*
     if( !mDigital )
     {
         if( height() < width() )
@@ -74,6 +75,7 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
 	    resize( width() ,width() );
 	}
     }
+*/
 
     //setBackgroundOrigin( WindowOrigin );
     mBackgroundBrush = backgroundBrush();
@@ -111,6 +113,7 @@ void KdmClock::paintEvent( QPaintEvent * )
     // get current time
     QTime time = QTime::currentTime();
 
+/*
     if( mDigital )
     {
         QString buf;
@@ -130,6 +133,7 @@ void KdmClock::paintEvent( QPaintEvent * )
     }
     else
     {
+*/
         QPointArray pts;
 	QPoint cp = contentsRect().center() - QPoint(2,2);
 	int d = QMIN(contentsRect().width()-15,contentsRect().height()-15);
@@ -182,7 +186,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 	    matrix.rotate( 6 );
 	}
 
-    }
+//    } // if(mDigital)
     paint.end();
 
     // flicker free code by Remi Guyomarch <rguyom@mail.dotcom.fr>
