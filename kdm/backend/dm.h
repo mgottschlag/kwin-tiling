@@ -548,9 +548,6 @@ extern void ProcessRequestSocket (int fd);
 
 #endif /* XDMCP */
 
-/* support -debug 0x200 */
-#define nofork_session (debugLevel & DEBUG_NOFORK)
-
 /* automatically fork off reserve display if all displays are locked */
 /*#define AUTO_RESERVE 1*/
 

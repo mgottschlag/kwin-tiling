@@ -1496,9 +1496,6 @@ StartClient ()
     default:
 	Debug ("StartSession, fork succeeded %d\n", pid);
 /* ### right after forking dpy	mstrtalk.pipe = &td->pipe; */
-#ifdef nofork_session
-	if (!nofork_session)
-#endif
 	if (!Setjmp (mstrtalk.errjmp)) {
 	    GSet (&mstrtalk);
 	    GSendInt (D_User);

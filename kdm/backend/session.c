@@ -366,10 +366,6 @@ CtrlGreeterWait (int wreply)
 	case G_Shutdown:
 	    i = GRecvInt ();
 	    j = GRecvInt ();
-#ifdef nofork_session
-	    if (nofork_session)
-		break;
-#endif
 	    GSet (&mstrtalk);
 	    GSendInt (D_Shutdown);
 	    GSendInt (i);

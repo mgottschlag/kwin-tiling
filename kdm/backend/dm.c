@@ -1507,19 +1507,9 @@ StartDisplayP2 (struct display *d)
     int		pid;
 
     openFifo (&d->fifofd, &d->fifoPath, d->name);
-#ifdef nofork_session
-    if (!nofork_session) {
-#endif
-	Debug ("forking session\n");
-	ASPrintf (&cname, "sub-daemon for display %s", d->name);
-	pid = GFork (&d->pipe, "master daemon", cname);
-#ifdef nofork_session
-    } else {
-	Debug ("not forking session\n");
-	CloseGetter ();
-	pid = -2;
-    }
-#endif
+    Debug ("forking session\n");
+    ASPrintf (&cname, "sub-daemon for display %s", d->name);
+    pid = GFork (&d->pipe, "master daemon", cname);
     switch (pid)
     {
     case 0:
@@ -1527,15 +1517,9 @@ StartDisplayP2 (struct display *d)
 	if (debugLevel & DEBUG_WSESS)
 	    sleep (100);
 	mstrtalk.pipe = &d->pipe;
-#ifdef nofork_session
-    case -2:
-#endif
 	(void) Signal (SIGPIPE, SIG_IGN);
 	SetAuthorization (d);
 	WaitForServer (d);
-#ifdef nofork_session
-	if (!pid)
-#endif
 	if ((d->displayType & d_location) == dLocal) {
 	    GSet (&mstrtalk);
 	    GSendInt (D_XConnOk);
