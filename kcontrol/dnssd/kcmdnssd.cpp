@@ -30,7 +30,6 @@
 
 #include "kcmdnssd.h"
 #include <dnssd/settings.h>
-#include <dnssd/responder.h>
 #include <dnssd/domainbrowser.h>
 #include <kipc.h>
 
