@@ -95,17 +95,27 @@ bool CXConfig::readConfig()
 
 bool CXConfig::writeConfig()
 {
+    bool written=false;
+
     switch(itsType)
     {
         case KFONTINST:
-            return writeFontpaths();
+            written=writeFontpaths();
+            break;
         case XF86CONFIG:
-            return writeXF86Config();
+            written=writeXF86Config();
+            break;
         case XFS:
-            return writeXfsConfig();
+            written=writeXfsConfig();
+            break;
         default:
-            return false;
+            written=false;
     }
+
+    if(written)
+        readConfig();
+
+    return written;
 }
 
 bool CXConfig::madeChanges()
@@ -388,7 +398,7 @@ bool CXConfig::writeXF86Config()
     {
         CMisc::createBackup(CKfiGlobal::cfg().getXConfigFile().local8Bit());
 
-        CBufferedFile cfg(CKfiGlobal::cfg().getXConfigFile().local8Bit(), "FontPath", itsInsertPos.latin1(), false);
+        CBufferedFile cfg(CKfiGlobal::cfg().getXConfigFile().local8Bit(), "FontPath", itsInsertPos.latin1(), false, false, true);
        
         if(cfg)
         {
@@ -652,7 +662,7 @@ bool CXConfig::processXfs(const QString &fname, bool read)
                         }
                     while(NULL!=cat && !found && !formatError);
                 }
-                delete buffer;
+                delete [] buffer;
             }
         }
         if(!closed)
