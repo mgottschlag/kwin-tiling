@@ -113,7 +113,7 @@ class CXConfig
 #endif
     void addPath(const QString &dir, bool unscaled=false);
     void removePath(const QString &dir);
-    bool getDirs(QStringList &list);
+    bool getDirs(QStringList &list, bool checkExists=true);
     void refreshPaths();
     void restart();
 

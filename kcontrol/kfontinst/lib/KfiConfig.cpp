@@ -29,8 +29,10 @@
 #include "KfiConfig.h"
 #include "Global.h"
 #include "Misc.h"
+#include "XConfig.h"
 #include <qdir.h>
 #include <qfile.h>
+#include <qregexp.h>
 #include <kapplication.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -331,6 +333,7 @@ CKfiConfig::CKfiConfig(bool all, bool checkDirs, bool checkX)
             // The X config file is where the system will specify whether xfs is being used or not,
             // so check if the timestamp of this has changed. If so, then set xfs to false - so that
             // a re-check of the X config file will be performed.
+
             if(sysXConfigFileTs!=ts)
                 itsSysXfs=false;
             else   // OK, file has not been modified, therefore no reason to force a check
@@ -447,50 +450,17 @@ void CKfiConfig::checkAndModifyXConfigFile()
 
             if(file.find("XF86Config")!=-1)
             {
-                std::ifstream f(QFile::encodeName(itsSysXConfigFile));
+                CXConfig    xcfg(CXConfig::XF86, itsSysXConfigFile);
+                QStringList dirs;
 
-                if(f)
+                if(xcfg.getDirs(dirs, false) && dirs.count()>0)
                 {
-                    const int constMaxLineLen=1024;
+                    QStringList::Iterator it;
+                    bool                  useXfs=false;
 
-                    char line[constMaxLineLen],
-                         str1[constMaxLineLen],
-                         str2[constMaxLineLen];
-                    bool inFiles=false,
-                         useXfs=false;
-
-                    do
-                    {
-                        f.getline(line, constMaxLineLen);
-
-                        if(f.good())
-                        {
-                            line[constMaxLineLen-1]='\0';
-
-                            if('#'!=line[0] && sscanf(line, "%s %s", str1, str2)==2)
-                            {
-                                if(!inFiles)
-                                {
-                                    if(strcmp(str1, "Section")==0 && strcmp(str2, "\"Files\"")==0)
-                                        inFiles=true;
-                                }
-                                else
-                                    if(strcmp(str1, "FontPath")==0 && str2[0]=='\"')
-                                    {
-                                        unsigned int s2len=strlen(str2);
-
-                                        if(s2len>8 && str2[s2len-1]=='\"' && &str2[1]==strstr(&str2[1], "unix/") && strchr(&str2[1], ':')!=NULL)
-                                            useXfs=true;
-                                    }
-                            }
-                            else
-                                if(inFiles && sscanf(line, "%s", str1)==1 && strcmp(str1, "EndSection")==0)
-                                    break;
-                        }
-                    }
-                    while(!f.eof() && !useXfs);
-
-                    f.close();
+                    for(it=dirs.begin(); it!=dirs.end() && !useXfs; ++it)
+                        if((*it).replace(QRegExp("\\s*"), "").find("unix/:")==0)
+                            useXfs=true;
 
                     if(useXfs)
                         for(int i=0; !constXfsConfigFiles[i].isNull(); ++i)

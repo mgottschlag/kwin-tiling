@@ -202,14 +202,14 @@ void CXConfig::removePath(const QString &dir)
     }
 }
 
-bool CXConfig::getDirs(QStringList &list)
+bool CXConfig::getDirs(QStringList &list, bool checkExists)
 {
     if(itsOk)
     {
         TPath *path=NULL;
  
         for(path=itsPaths.first(); path; path=itsPaths.next())
-            if(!path->disabled && CMisc::dExists(path->dir))
+            if(!path->disabled && (!checkExists || CMisc::dExists(path->dir)))
                 list.append(path->dir);
 
         return true;
