@@ -94,7 +94,7 @@ LIBS="$LIBS $LIBUTIL"
 AC_CHECK_FUNCS([setlogin setusercontext getusershell login_getclass auth_timeok])
 LIBS=$ac_save_libs
 
-AC_CHECK_FUNCS([mkstemp setproctitle])
+AC_CHECK_FUNCS([mkstemp setproctitle sysinfo])
 
 dnl is this always available without additional libs?
 dnl my linux glibc 2.3.2 getifaddrs() returns nonsense, so ignore it
