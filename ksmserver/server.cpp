@@ -239,7 +239,7 @@ void KSMServer::executeCommand( const QStringList& command )
     char ** argList = new char *[n+1];
 
     for ( int i=0; i < n; i++)
-       argList[0] = (char *) command[i].latin1();
+       argList[i] = (char *) command[i].latin1();
     argList[n] = 0;
 
     int pid = fork();
