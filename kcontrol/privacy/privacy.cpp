@@ -143,7 +143,7 @@ void Privacy::save()
     return;
   KConfig *c = new KConfig("kprivacyrc", false, false);
   {
-    KConfigGroupSaver saver(c, "Clear");
+    KConfigGroupSaver saver(c, "Cleaning");
 
     c->writeEntry("ClearRunCommandHistory", clearRunCommandHistory->isOn());
     c->writeEntry("ClearAllCookies", clearAllCookies->isOn());
