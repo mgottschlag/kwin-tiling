@@ -72,7 +72,7 @@ protected:
 private:
 
     QStringList modifySubstitutionMap (SubstMap& map, const QString& query) const;
-    QString substituteQuery (const QString& url, SubstMap &map, const QString& userquery, const int) const;
+    QString substituteQuery (const QString& url, SubstMap &map, const QString& userquery, const int encodingMib) const;
     bool m_bSearchKeywordsEnabled;
 
     bool m_bInternetKeywordsEnabled;
