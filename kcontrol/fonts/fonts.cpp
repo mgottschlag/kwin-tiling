@@ -128,7 +128,7 @@ void FontUseItem::writeFont()
     config->writeEntry(_rckey+"Charset", charset, true, true);
     config->sync();
   } else {
-    config = new KSimpleConfig(locate("config", _rcfile));
+    config = new KSimpleConfig(locateLocal("config", _rcfile));
     config->setGroup(_rcgroup);
     config->writeEntry(_rckey, _font);
     config->writeEntry(_rckey+"Charset", charset);
@@ -176,7 +176,8 @@ KFonts::KFonts(QWidget *parent, const char *name)
     << i18n("File manager")   << "FMSettings" << "StandardFont" << "konquerorrc"
     << i18n("Toolbar")        << "General"    << "toolBarFont"  << ""
     << i18n("Menu")           << "General"    << "menuFont"     << ""
-    << i18n("Window title")   << "WM"         << "activeFont"   << "";
+    << i18n("Window title")   << "WM"         << "activeFont"   << ""
+    << i18n("Taskbar")        << "General"    << "taskbarFont"  << "ktaskbarrc";
 
   QValueList<QFont> defaultFontList;
 
@@ -186,19 +187,22 @@ KFonts::KFonts(QWidget *parent, const char *name)
   QFont f1("courier", 12);
   QFont f2("helvetica", 10);
   QFont f3("helvetica", 12, QFont::Bold);
+  QFont f4("helvetica", 11);
 
   f0.setPixelSize(12);
   f1.setPixelSize(10);
   f2.setPixelSize(12);
   f3.setPixelSize(12);
+  f4.setPixelSize(11);
 
-  defaultFontList << f0 << f1 << f2 << f2 << f2 << f0 << f3 << f1 << f1;
+  defaultFontList << f0 << f1 << f2 << f2 << f2 << f0 << f3 << f4;
 
   QValueList<bool> fixedList;
 
   fixedList
     <<  false
     <<  true
+    <<  false
     <<  false
     <<  false
     <<  false
@@ -214,7 +218,8 @@ KFonts::KFonts(QWidget *parent, const char *name)
     << i18n("Used to display the names of icons in the file manager.")
     << i18n("Used to display text beside toolbar icons.")
     << i18n("Used by menu bars and popup menus.")
-    << i18n("Used by the window titlebar.");
+    << i18n("Used by the window titlebar.")
+    << i18n("Used by the taskbar.");
 
   QGridLayout * fontUseLayout =
     new QGridLayout(
