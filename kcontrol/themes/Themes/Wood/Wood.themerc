@@ -5,7 +5,7 @@ email=russell@kde.org
 info=
 description=A wooden look for your desktop!\nBy Georg Russell <russell@kde.org>
 [Panel]
-background=panel.xpm
+background=panel.png
 [Filemanager]
 [Display]
 Wallpaper0=wallpaper.jpg
@@ -27,15 +27,15 @@ windowBackground=202,255,196
 terminalForeground=black
 terminalBackground=#caffc4
 [Window Border]
-shapePixmapTop=top.xpm
-shapePixmapBottom=bottom.xpm
-shapePixmapLeft=left.xpm
-shapePixmapRight=right.xpm
-shapePixmapTopLeft=topleft.xpm
-shapePixmapTopRight=topright.xpm
-shapePixmapBottomLeft=bottomleft.xpm
-shapePixmapBottomRight=bottomright.xpm
+shapePixmapTop=top.png
+shapePixmapBottom=bottom.png
+shapePixmapLeft=left.png
+shapePixmapRight=right.png
+shapePixmapTopLeft=topleft.png
+shapePixmapTopRight=topright.png
+shapePixmapBottomLeft=bottomleft.png
+shapePixmapBottomRight=bottomright.png
 [Window Titlebar]
-TitlebarPixmapActive=titlebar.xpm
-TitlebarPixmapInactive=inactivetitle.xpm
+TitlebarPixmapActive=titlebar.png
+TitlebarPixmapInactive=inactivetitle.png
 

@@ -31,22 +31,22 @@ windowBackground=255,255,255
 contrast=7
 #-----------------------------------------------------------------------------
 [Window Border]
-shapePixmapTop=wm_top.xpm
-shapePixmapBottom=wm_bottom.xpm
-shapePixmapLeft=wm_left.xpm
-shapePixmapRight=wm_right.xpm
-shapePixmapTopLeft=wm_topleft.xpm
-shapePixmapTopRight=wm_topright.xpm
-shapePixmapBottomLeft=wm_bottomleft.xpm
-shapePixmapBottomRight=wm_bottomright.xpm
+shapePixmapTop=wm_top.png
+shapePixmapBottom=wm_bottom.png
+shapePixmapLeft=wm_left.png
+shapePixmapRight=wm_right.png
+shapePixmapTopLeft=wm_topleft.png
+shapePixmapTopRight=wm_topright.png
+shapePixmapBottomLeft=wm_bottomleft.png
+shapePixmapBottomRight=wm_bottomright.png
 #-----------------------------------------------------------------------------
 [Window Titlebar]
-CloseButton=close.xpm
-MaximizeButton=maximize.xpm
-MaximizeDownButton=maximizedown.xpm
-MinimizeButton=iconify.xpm
-TitlebarPixmapActive=activetitlebar.xpm
-TitlebarPixmapInactive=inactivetitlebar.xpm
+CloseButton=close.png
+MaximizeButton=maximize.png
+MaximizeDownButton=maximizedown.png
+MinimizeButton=iconify.png
+TitlebarPixmapActive=activetitlebar.png
+TitlebarPixmapInactive=inactivetitlebar.png
 PixmapUnderTitleText=no
 TitleFrameShaded=no
 TitleAlignment=middle

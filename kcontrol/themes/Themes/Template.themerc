@@ -214,17 +214,17 @@ PanelExit=
 PanelKey=
 #
 # e.g.:
-#Trash=mytrash.xpm:my-mini-trash.xpm
-#TrashFull=full-mytrash.xpm:full-my-mini-trash.xpm
+#Trash=mytrash.png:my-mini-trash.png
+#TrashFull=full-mytrash.png:full-my-mini-trash.png
 #
 # All other icons shall have the name of the mime type, either
 # relative to the $KDEDIR/share/mimelnk or relative to the
 # $KDEDIR/share/applnk directory. Examples:
 #
-#application/x-tar=mytar.xpm
-#audio/x-midi=midisound.xpm:mini-midisound.xpm
-#KControl=mycontrolpad.xpm:mycontrolpad.mini.xpm
-#Graphics/kview=kview.xpm:mini-kview.xpm
+#application/x-tar=mytar.png
+#audio/x-midi=midisound.png:mini-midisound.png
+#KControl=mycontrolpad.png:mycontrolpad.mini.png
+#Graphics/kview=kview.png:mini-kview.png
 #
 #-----------------------------------------------------------------------------
 [Extra Icons]
@@ -233,7 +233,7 @@ PanelKey=
 # Just give the keys any name you want.
 Extra1=
 Extra2=
-#Extra3=mytrash2.xpm:mini-mytrash2.xpm
+#Extra3=mytrash2.png:mini-mytrash2.png
 #...
 #
 #-----------------------------------------------------------------------------

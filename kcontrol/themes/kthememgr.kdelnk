@@ -1,8 +1,0 @@
-# KDE Config File
-[KDE Desktop Entry]
-Icon=kthememgr.xpm
-Exec=kthememgr
-Type=Application
-Comment=Manager for Desktop Themes
-Name=Theme Manager
-Init=

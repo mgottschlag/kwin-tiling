@@ -1,0 +1,34 @@
+# KDE Config File
+[KDE Desktop Entry]
+Icon=kthememgr.png
+Exec=kthememgr
+Type=Application
+Comment=Manager for Desktop Themes
+Comment[ca]=Gestor pels temes d'escriptori
+Comment[cs]=Správce témat pracovní plochy
+Comment[da]=Manager for arbejdspladstemaer
+Comment[de]=Verwaltung von Arbeitsplatz-Designs
+Comment[eo]=Administrilo por la labortabulaj temoj
+Comment[es]=Gestor de Temas de Escritorio
+Comment[fi]=Hallintaohjelma työpöydän teemoille
+Comment[fr]=Gestionnaire de thèmes de bureau
+Comment[hr]=Upravitelj temama radne povr¹ine
+Comment[hu]=Munkaasztal téma kezelõ
+Comment[is]=kthememgr:  Stjórna þema skjáborðs
+Comment[it]=Gestione dei Temi del Desktop
+Comment[ja]=¥Ç¥¹¥¯¥È¥Ã¥×¥Æ¡¼¥Þ¥Þ¥Í¡¼¥¸¥ã¡¼
+Name=Theme Manager
+Name[ca]=Gestor de temes
+Name[cs]=Správce témat
+Name[da]=Temamanager
+Name[de]=Design-Verwaltung
+Name[eo]=Temadministrilo
+Name[es]=Gestor de Temas
+Name[fi]=Teemanhallinta
+Name[fr]=Gestionnaire de thèmes
+Name[hr]=Upravitelj temema
+Name[hu]=Téma Kezelõ
+Name[is]=Þemastjóri
+Name[it]=Gestione Temi
+Name[ja]=¥Æ¡¼¥Þ¥Þ¥Í¡¼¥¸¥ã¡¼
+Init=

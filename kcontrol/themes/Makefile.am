@@ -18,7 +18,7 @@ METASOURCES = theme.moc installer.moc colors.moc widgetcanvas.moc \
 
 KDE_ICON = kthememgr
 
-apps_DATA = kthememgr.kdelnk 
+apps_DATA = kthememgr.desktop
 appsdir = $(kde_appsdir)/Settings/Desktop 
 
 mappingdir = $(kde_datadir)/kthememgr
