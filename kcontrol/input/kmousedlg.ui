@@ -95,7 +95,7 @@
                         <cstring>rightHanded</cstring>
                     </property>
                     <property name="text">
-                        <string>Right handed</string>
+                        <string>R&amp;ight handed</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -106,7 +106,7 @@
                         <cstring>leftHanded</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Left handed</string>
+                        <string>Le&amp;ft handed</string>
                     </property>
                 </widget>
                 <widget class="QLabel" row="0" column="1" rowspan="3" colspan="1">
@@ -149,7 +149,7 @@
                         <cstring>doubleClick</cstring>
                     </property>
                     <property name="text">
-                        <string>Double-click to open files and folders (select icons on first click)</string>
+                        <string>Dou&amp;ble-click to open files and folders (select icons on first click)</string>
                     </property>
                     <property name="checked">
                         <bool>false</bool>
@@ -202,7 +202,7 @@
                                 <cstring>cb_pointershape</cstring>
                             </property>
                             <property name="text">
-                                <string>Change pointer shape over icons</string>
+                                <string>Change pointer sha&amp;pe over icons</string>
                             </property>
                             <property name="checked">
                                 <bool>true</bool>
@@ -227,7 +227,7 @@
                                         <cstring>lDelay</cstring>
                                     </property>
                                     <property name="text">
-                                        <string>De&amp;lay:</string>
+                                        <string>D&amp;elay:</string>
                                     </property>
                                     <property name="buddy" stdset="0">
                                         <cstring>slAutoSelect</cstring>
@@ -312,7 +312,7 @@
                                 <cstring>cbAutoSelect</cstring>
                             </property>
                             <property name="text">
-                                <string>Automatically select icons</string>
+                                <string>A&amp;utomatically select icons</string>
                             </property>
                         </widget>
                     </grid>
