@@ -1269,8 +1269,12 @@ void Theme::runKrdb(void) const
   KSimpleConfig cfg("kcmdisplayrc", true);
 
   cfg.setGroup("X11");
-  if (cfg.readBoolEntry("useResourceManager", true))
-    system("krdb");
+  if (cfg.readBoolEntry("useResourceManager", true)) {
+    QString exe = locate("exe", "krdb");
+    if (exe.isEmpty())
+      exe = "krdb";
+    system(exe.local8Bit());
+  }
 }
 
 
