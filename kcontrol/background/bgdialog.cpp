@@ -498,12 +498,11 @@ void BGDialog::slotWallpaperSelection()
    KImageFilePreview* previewWidget = new KImageFilePreview(&dlg);
    dlg.setPreviewWidget(previewWidget);
 
-   QString pattern = KImageIO::pattern();
+   QStringList mimeTypes = KImageIO::mimeTypes( KImageIO::Reading ); 
 #ifdef HAVE_LIBART
-   pattern = "*.svg *.svgz " + pattern;
-   pattern += i18n("\n*.svg *.SVG *.svgz *.SVGZ|Scalable Vector Graphics");
+   mimeTypes += "image/svg+xml";
 #endif
-   dlg.setFilter(pattern);
+   dlg.setFilter( mimeTypes.join( " " ) );
    dlg.setMode( KFile::File | KFile::ExistingOnly | KFile::LocalOnly );
    dlg.setCaption( i18n("Select Wallpaper") );
 

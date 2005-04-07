@@ -144,14 +144,13 @@ void BGMultiWallpaperDialog::setEnabledMoveButtons()
 
 void BGMultiWallpaperDialog::slotAdd()
 {
-    QString pattern = KImageIO::pattern();
+    QStringList mimeTypes = KImageIO::mimeTypes( KImageIO::Reading );
 #ifdef HAVE_LIBART
-    pattern = "*.svg *.svgz " + pattern;
-    pattern += i18n("\n*.svg *.SVG *.svgz *.SVGZ|Scalable Vector Graphics");
+    mimeTypes += "image/svg+xml";
 #endif
 
     KFileDialog fileDialog(KGlobal::dirs()->findDirs("wallpaper", "").first(),
-			   pattern, this,
+			   mimeTypes.join( " " ), this,
 			   0L, true);
 
     fileDialog.setCaption(i18n("Select Image"));

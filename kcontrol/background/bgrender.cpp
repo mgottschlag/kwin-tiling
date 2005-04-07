@@ -25,6 +25,7 @@
 #include <kpixmapio.h>
 #include <ktempfile.h>
 #include <kcursor.h>
+#include <kmimetype.h>
 
 #ifdef HAVE_LIBART
 #include <ksvgiconengine.h>
@@ -293,7 +294,7 @@ wp_load:
 	    goto wp_out;
 	}
 
-        if (file.endsWith(".svg") || file.endsWith(".svgz")) {
+        if ( KMimeType::findByPath( file )->is( "image/svg+xml" ) ) {
 #ifdef HAVE_LIBART
 	    // Special stuff for SVG icons
 	    KSVGIconEngine* svgEngine = new KSVGIconEngine();
