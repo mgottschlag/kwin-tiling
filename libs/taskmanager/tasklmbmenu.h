@@ -32,25 +32,29 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class KDE_EXPORT TaskLMBMenu : public QPopupMenu
 {
-	Q_OBJECT
-	
-public:
-	TaskLMBMenu( TaskList* list, QWidget *parent = 0, const char *name = 0 );
-	
-protected slots:
-	void dragSwitch();
-	
-protected:
-	void dragEnterEvent( QDragEnterEvent* );
-	void dragLeaveEvent( QDragLeaveEvent* );
-	void dragMoveEvent( QDragMoveEvent* );
-	
-private:
-	void fillMenu( TaskList* tasks );
-	
-	TaskList&  m_tasks;
-	int        m_lastDragId;
-	QTimer     dragSwitchTimer;
+    Q_OBJECT
+
+    public:
+        TaskLMBMenu(TaskList* list, QWidget *parent = 0, const char *name = 0);
+
+        protected slots:
+            void dragSwitch();
+
+    protected:
+        void dragEnterEvent(QDragEnterEvent*);
+        void dragLeaveEvent(QDragLeaveEvent*);
+        void dragMoveEvent(QDragMoveEvent*);
+        void mousePressEvent(QMouseEvent*);
+        void mouseMoveEvent(QMouseEvent*);
+        void mouseReleaseEvent(QMouseEvent*);
+
+    private:
+        void fillMenu(TaskList* tasks);
+
+        TaskList&  m_tasks;
+        int        m_lastDragId;
+        QTimer     dragSwitchTimer;
+        QPoint     m_dragStartPos;
 };
 
 #endif

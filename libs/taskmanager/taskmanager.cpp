@@ -110,6 +110,33 @@ Task* TaskManager::findTask(WId w)
     return 0;
 }
 
+Task* TaskManager::findTask(int desktop, const QPoint& p)
+{
+    QValueList<WId> list = winModule()->stackingOrder();
+
+    Task* task = 0;
+    int currentIndex = -1;
+    for (Task* t = _tasks.first(); t; t = _tasks.next())
+    {
+        if (t->desktop() != desktop)
+        {
+            continue;
+        }
+
+        if (t->geometry().contains(p))
+        {
+            int index = list.findIndex(t->window());
+            if (index > currentIndex)
+            {
+                currentIndex = index;
+                task = t;
+            }
+        }
+    }
+
+    return task;
+}
+
 void TaskManager::windowAdded(WId w )
 {
     NETWinInfo info(qt_xdisplay(),  w, qt_xrootwin(),
@@ -1066,3 +1093,49 @@ int TaskManager::currentDesktop() const
 {
     return m_winModule->currentDesktop();
 }
+
+TaskDrag::TaskDrag(const TaskList& tasks, QWidget* source, const char* name)
+  : QStoredDrag("taskbar/task", source, name)
+{
+    QByteArray data;
+    QDataStream stream(data, IO_WriteOnly);
+
+    for (QPtrListIterator<Task> i(tasks); i.current(); ++i)
+    {
+      stream << i.current()->window();
+    }
+
+    setEncodedData(data);
+}
+
+TaskDrag::~TaskDrag()
+{
+}
+
+bool TaskDrag::canDecode(const QMimeSource* e)
+{
+    return e->provides("taskbar/task");
+}
+
+TaskList TaskDrag::decode( const QMimeSource* e )
+{
+    QByteArray data(e->encodedData("taskbar/task"));
+    TaskList tasks;
+
+    if (data.size())
+    {
+        QDataStream stream(data, IO_ReadOnly);
+        while (!stream.atEnd()) 
+        {
+            WId id;
+            stream >> id;
+            if (Task* task = TaskManager::the()->findTask(id))
+            {
+                tasks.append(task);
+            }
+        }
+    }
+
+    return tasks;
+}
+

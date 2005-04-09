@@ -31,6 +31,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qpixmap.h>
 #include <qpoint.h>
 #include <qptrlist.h>
+#include <qpixmap.h>
+#include <qdragobject.h>
 #include <qrect.h>
 #include <qvaluelist.h>
 
@@ -221,6 +223,11 @@ public:
     * Returns true if the window is on the specified screen of a multihead configuration
     */
     bool isOnScreen( int screen ) const;
+
+    /**
+     * Returns the geometry for this window
+     */
+    QRect geometry() const { return _info.geometry(); }
 
     // internal
 
@@ -420,6 +427,35 @@ private:
     class TaskPrivate *d;
 };
 
+typedef QPtrList<Task> TaskList;
+
+
+/**
+ * Provids a drag object for tasks across desktops.
+ */
+class KDE_EXPORT TaskDrag : public QStoredDrag
+{
+public:
+    /**
+     * Constructs a task drag object for a task list.
+     */
+    TaskDrag(const TaskList& tasks, QWidget* source = 0,
+             const char* name = 0);
+    ~TaskDrag();
+
+    /**
+     * Returns true if the mime source can be decoded to a TaskDrag.
+     */
+    static bool canDecode( const QMimeSource* e );
+
+    /**
+     * Decodes the tasks from the mime source and returns them if successful. 
+     * Otherwise an empty task list is returned.
+     */
+    static TaskList decode( const QMimeSource* e );
+};
+
+
 /**
  * Represents a task which is in the process of starting.
  *
@@ -466,7 +502,6 @@ private:
     class StartupPrivate *d;
 };
 
-typedef QPtrList<Task> TaskList;
 typedef QPtrList<Startup> StartupList;
 
 /**
@@ -487,6 +522,16 @@ class KDE_EXPORT TaskManager : public QObject
 public:
     static TaskManager* the();
     ~TaskManager();
+
+    /**
+     * Returns the task for a given WId, or 0 if there is no such task.
+     */
+    Task* findTask(WId w);
+
+    /**
+     * Returns the task for a given location, or 0 if there is no such task.
+     */
+    Task* findTask(int desktop, const QPoint& p);
 
     /**
      * Returns a list of all current tasks. Return type changed to
@@ -586,10 +631,7 @@ protected slots:
     void gotRemoveStartup( const KStartupInfoId& );
 
 protected:
-    /**
-     * Returns the task for a given WId, or 0 if there is no such task.
-     */
-    Task* findTask(WId w);
+
     void configure_startup();
 
 private:
