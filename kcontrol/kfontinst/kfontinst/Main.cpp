@@ -249,8 +249,6 @@ int main(int argc, char *argv[])
     int  left=argc-optind;
     bool folderRequired=doX || addToX || addToFc || (!root && doGs);
 
-FILE *f=fopen("/tmp/kfi", "a");
-fprintf(f, "%s\n", "Called...");
     if (left>1 || (0==left && folderRequired) || (!doX && !doGs && !addToX && !addToFc))
         usage(argv[0]);
     else
@@ -320,10 +318,7 @@ fprintf(f, "%s\n", "Called...");
                 KFI::CFontEngine fe;
 
                 if(0==rv && doX)
-{
-fprintf(f, "%s\n", "doing X");
                     rv=KFI::CXConfig::configureDir(folder, fe) ? 0 : -5;
-}
 
                 refresh(refreshX, refreshXfs, root);
 
@@ -335,6 +330,5 @@ fprintf(f, "%s\n", "doing X");
         }
     }
 
-fclose(f);
     return rv;
 }
