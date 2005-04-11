@@ -421,11 +421,8 @@ void CKCmFontInst::removeFonts()
 			   i18n("Delete Font"), KStdGuiItem::del());
             break;
             default:
-	    // TODO: replace the "translators" string with a more logical one, like
-	    // "Do you really wnat to delete this font?". It's too confusing to translate, otherwise,
-	    // since the msgstr needs a \n but can't start with \n...
                 doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
-                           i18n("translators: not called for n == 1", "Do you really want to delete these %n fonts?",
+                           i18n("Do you really want to delete this font?", "Do you really want to delete these %n fonts?",
                                 files.count()),
 			   files, i18n("Delete Fonts"), KStdGuiItem::del());
         }
