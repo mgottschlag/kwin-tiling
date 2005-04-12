@@ -7,11 +7,12 @@ Name[da]=CIA Bog over verdens fakta
 Name[it]=World Fact Book della CIA
 Name[lt]=CIA pasaulio faktų knyga
 Name[pa]=CIA ਸੰਸਾਰ ਜਾਣਕਾਰੀ ਕਿਤਾਬ
-Name[ru]=Всемирная книга фактов ЦРУ
+Name[ru]=Всемирная книга фактов (ЦРУ)
 Name[sr]=Књига светских чињеница CIA-е
-Name[sr@Latn]=Књига светских чињеница CIA-е
+Name[sr@Latn]=Knjiga svetskih činjenica CIA-e
 Name[sv]=CIA-världsfaktabok
 Name[ta]=CIA உலக உண்மைப் புத்தகம்
+Name[tr]=CIA Dünya Gerçekleri Kitabı
 Name[uk]=Всесвітня книга фактів ЦРУ
 Name[xx]=xxCIA World Fact Bookxx
 Query=http://www.google.com/search?q=allintitle%3A\\{@}+world+fact+book+site%3Awww.cia.gov&ie=UTF-8&btnI=I%27m+Feeling+Lucky
