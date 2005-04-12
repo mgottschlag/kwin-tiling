@@ -38,6 +38,7 @@ int main(int argc, char **argv)
 	KAboutData aboutData("randr", I18N_NOOP("Resize and Rotate"), krandrtrayVersion, I18N_NOOP("Resize and Rotate System Tray App"), KAboutData::License_GPL, "(c) 2002,2003 Hamish Rodda", 0L, "");
 	aboutData.addAuthor("Hamish Rodda",I18N_NOOP("Maintainer"), "rodda@kde.org");
 	aboutData.addCredit("Lubos Lunak",I18N_NOOP("Many fixes"), "l.lunak@suse.cz");
+	aboutData.setProductName("krandr/krandrtray");
 	KGlobal::locale()->setMainCatalogue("krandr");
 
 	KCmdLineArgs::init(argc,argv,&aboutData);
