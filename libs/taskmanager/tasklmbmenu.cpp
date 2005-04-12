@@ -122,7 +122,7 @@ void TaskLMBMenu::fillMenu(TaskList* tasks)
     {
         Task* t = (*it);
 
-        QString text = t->visibleNameWithState().replace("&", "&&");
+        QString text = t->visibleName().replace("&", "&&");
 
         TaskMenuItem *menuItem = new TaskMenuItem(text,
                                                   t->isActive(),
