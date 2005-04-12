@@ -220,6 +220,7 @@ KdmLabel::lookupText( const QString &t )
 #endif
 	//m['d'] = delay;	not implemented (yet)
 	//m['s'] = delayuser;	not implemented (yet)
+        // xgettext:no-c-format
 	KGlobal::locale()->setDateFormat( i18n("date format", "%a %d %B") );
 	m['c'] = KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), false, false );
 
