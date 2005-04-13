@@ -114,6 +114,27 @@ int kdemain(int argc, char **argv)
 
 inline QString getSect(const QString &f) { return f.section('/', 1, 1); }
 
+static QString modifyName(const QString &fname)
+{
+    static const char * constSymbols[]={ "-", " ", NULL };
+
+    QString rv(fname);
+    int     dotPos=rv.findRev('.');
+
+    if(-1!=dotPos)
+    {
+        unsigned int rvLen=rv.length();
+
+        for(unsigned int i=dotPos+1; i<rvLen; ++i)
+            rv[i]=rv[i].lower();
+    }
+
+    for(int s=0; constSymbols[s]; ++s)
+        rv=rv.replace(QString::fromLatin1(constSymbols[s]), QString::fromLatin1("_"));
+
+    return rv;
+}
+
 static QString getFcString(FcPattern *pat, const char *val)
 {
     FcChar8 *fcStr;
@@ -780,7 +801,14 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KURL &url, EFolder f
         return createFontUDSEntry(entry, it.key(), it.data());
     else
     {
-        FcPattern *pat=getEntry(folder, url.fileName());
+        QString   name(url.fileName());
+        FcPattern *pat=getEntry(folder, name);
+
+        if(!pat) // OK, try the modified version of the name...
+        {
+            name=modifyName(name);
+            pat=getEntry(folder, name);
+        }
 
         if(pat)
             return createUDSEntry(entry, url.fileName(), getFcString(pat, FC_FILE), false, false);
@@ -899,7 +927,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
     bool            changed=confirmUrl(url),
                     nrs=nonRootSys(url);
     EFolder         destFolder=itsRoot || i18n(KFI_KIO_FONTS_SYS)==getSect(url.path()) ? FOLDER_SYS : FOLDER_USER;
-    QString         dest=itsFolders[destFolder].location+url.fileName(),
+    QString         dest=itsFolders[destFolder].location+modifyName(url.fileName()),
                     passwd;
     QCString        destC=QFile::encodeName(dest);
     KDE_struct_stat buffDest;
@@ -1164,7 +1192,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
 
                     for(it=srcFiles.begin(); it!=end; ++it) 
                     {
-                        cmd+=QFile::encodeName(KProcess::quote(*it));
+                        cmd+=QFile::encodeName(KProcess::quote(modifyName(*it)));
                         cmd+=" ";
                         int s=getSize(QFile::encodeName(*it));
                         if(s>0)
@@ -1199,9 +1227,8 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
 
                     for(it=srcFiles.begin(); it!=end; ++it)
                     {
-                        QCString realSrc(QFile::encodeName(*it)),
-                                 realDest(QFile::encodeName(itsFolders[destFolder].location+Misc::getFile(*it)));
-
+                        QCString        realSrc(QFile::encodeName(*it)),
+                                        realDest(QFile::encodeName(itsFolders[destFolder].location+modifyName(Misc::getFile(*it))));
                         KDE_struct_stat buffSrc;
 
                         if(-1==KDE_stat(realSrc.data(), &buffSrc))
@@ -1892,11 +1919,17 @@ bool CKioFonts::checkDestFiles(const KURL &src, QStringList &srcFiles, const KUR
                                   end=srcFiles.end();
 
             for(it=srcFiles.begin(); it!=end; ++it)
-                if(NULL!=getEntry(destFolder, Misc::getFile(*it)))
+            {
+                QString file(Misc::getFile(*it));
+
+                //
+                // Check both original, and modified version of filename
+                if(NULL!=getEntry(destFolder, file) || NULL!=getEntry(destFolder, modifyName(file)))
                 {
                     error(KIO::ERR_FILE_ALREADY_EXIST, dest.prettyURL());
                     return false;
                 }
+            }
         }
     }
 
