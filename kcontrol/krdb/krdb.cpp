@@ -363,6 +363,10 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg )
     t << endl;
     t << "class \"*\" style \"default\"" << endl;
     t << endl;
+    if ( true ) {  // we should maybe check for MacOS settings here
+	t << "gtk-alternative-button-order = 1" << endl;
+	t << endl;
+    }
 
     if (exportColors)
     {
