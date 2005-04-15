@@ -65,11 +65,12 @@ void TaskMenuItem::paint(QPainter *p, const QColorGroup &cg,
     {
         p->setPen(QPen(blendColors(cg.background(), cg.text())));
     }
-
-    if (!m_demandsAttention || m_attentionState)
+    else if (m_demandsAttention && !m_attentionState)
     {
-        p->drawText(x, y, w, h, AlignAuto|AlignVCenter|DontClip|ShowPrefix, m_text);
+        p->setPen(cg.mid());
     }
+
+    p->drawText(x, y, w, h, AlignAuto|AlignVCenter|DontClip|ShowPrefix, m_text);
 }
 
 QSize TaskMenuItem::sizeHint()
@@ -143,7 +144,7 @@ void TaskLMBMenu::fillMenu(TaskList* tasks)
     {
         m_attentionTimer = new QTimer(this, "AttentionTimer");
         connect(m_attentionTimer, SIGNAL(timeout()), SLOT(attentionTimeout()));
-        m_attentionTimer->start(750, true);
+        m_attentionTimer->start(500, true);
     }
 }
 
@@ -159,14 +160,7 @@ void TaskLMBMenu::attentionTimeout()
 
     update();
 
-    if (m_attentionState)
-    {
-        m_attentionTimer->start(750, true);
-    }
-    else
-    {
-        m_attentionTimer->start(250, true);
-    }
+    m_attentionTimer->start(500, true);
 }
 
 void TaskLMBMenu::dragEnterEvent( QDragEnterEvent* e )
