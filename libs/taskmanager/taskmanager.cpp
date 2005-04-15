@@ -97,7 +97,7 @@ void TaskManager::configure_startup()
         SLOT( gotStartupChange( const KStartupInfoId&, const KStartupInfoData& )));
     connect( _startup_info,
         SIGNAL( gotRemoveStartup( const KStartupInfoId&, const KStartupInfoData& )),
-        SLOT( gotRemoveStartup( const KStartupInfoId& )));
+        SLOT( killStartup( const KStartupInfoId& )));
     c.setGroup( "TaskbarButtonSettings" );
     _startup_info->setTimeout( c.readUnsignedNumEntry( "Timeout", 30 ));
 }
@@ -338,11 +338,6 @@ void TaskManager::gotStartupChange( const KStartupInfoId& id, const KStartupInfo
             return;
         }
     }
-}
-
-void TaskManager::gotRemoveStartup( const KStartupInfoId& id )
-{
-    killStartup( id );
 }
 
 void TaskManager::killStartup( const KStartupInfoId& id )
@@ -1072,20 +1067,19 @@ void Task::generateThumbnail()
    emit thumbnailChanged();
 }
 
-Startup::Startup( const KStartupInfoId& id, const KStartupInfoData& data,
-    QObject * parent, const char *name)
-    : QObject(parent, name), _id( id ), _data( data )
+Startup::Startup(const KStartupInfoId& id, const KStartupInfoData& data,
+                 QObject * parent, const char *name)
+    : QObject(parent, name), _id(id), _data(data)
 {
 }
 
 Startup::~Startup()
 {
-
 }
 
-void Startup::update( const KStartupInfoData& data )
+void Startup::update(const KStartupInfoData& data)
 {
-    _data.update( data );
+    _data.update(data);
     emit changed();
 }
 

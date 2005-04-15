@@ -627,8 +627,6 @@ protected slots:
     void gotNewStartup( const KStartupInfoId&, const KStartupInfoData& );
     //* @internal
     void gotStartupChange( const KStartupInfoId&, const KStartupInfoData& );
-    //* @internal
-    void gotRemoveStartup( const KStartupInfoId& );
 
 protected:
 
