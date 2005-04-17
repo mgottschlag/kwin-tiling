@@ -54,7 +54,8 @@ TaskManager::TaskManager()
     : QObject(),
       _active(0),
       _startup_info(0),
-      m_winModule(new KWinModule())
+      m_winModule(new KWinModule()),
+      m_trackGeometry(false)
 {
     KGlobal::locale()->insertCatalogue("libtaskmanager");
     connect(m_winModule, SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)));
@@ -256,9 +257,10 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     }
 
     // check if any state we are interested in is marked dirty
-    if(!(dirty & (NET::WMVisibleName | NET::WMName | NET::WMVisibleIconName |
+    if(!(dirty & (NET::WMVisibleName | NET::WMVisibleIconName |
                   NET::WMIconName | NET::WMState | NET::WMIcon |
-                  NET::XAWMState | NET::WMDesktop | NET::WMGeometry)))
+                  NET::XAWMState | NET::WMDesktop) ||
+         (m_trackGeometry && dirty & NET::WMGeometry)))
     {
         return;
     }
@@ -273,17 +275,15 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         t->updateDemandsAttentionState( w );
 
     // refresh icon pixmap if necessary
-    if (dirty == NET::WMIcon)
+    if (dirty & NET::WMIcon)
     {
         t->refreshIcon();
     }
-    else
+
+    if (dirty != NET::WMIcon)
     {
+        // only refresh this stuff if we have other changes besides icons
         t->refresh();
-        if (dirty & NET::WMIcon)
-        {
-            t->refreshIcon();
-        }
     }
 
     if (dirty & (NET::WMDesktop| NET::WMState | NET::XAWMState))

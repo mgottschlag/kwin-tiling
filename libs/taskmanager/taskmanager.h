@@ -565,6 +565,13 @@ public:
      */
     bool isOnTop( const Task*);
 
+    /** 
+     * Tells the task manager whether or not we care about geometry
+     * updates. This generates a lot of activity so should only be used
+     * when necessary.
+     */
+    void trackGeometry(bool track) { m_trackGeometry = track; }
+
     /**
     * Returns whether the Window with WId wid is on the screen screen
     */
@@ -641,6 +648,7 @@ private:
     StartupList         _startups;
     KStartupInfo*       _startup_info;
     KWinModule* m_winModule;
+    bool m_trackGeometry;
 
     static TaskManager* m_self;
 
