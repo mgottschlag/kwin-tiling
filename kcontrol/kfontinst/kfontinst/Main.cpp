@@ -206,7 +206,6 @@ int main(int argc, char *argv[])
 #endif
 
     int  c=0,
-         optIndex,
          rv=0;
     bool doX=false,
          doGs=false,
@@ -217,6 +216,7 @@ int main(int argc, char *argv[])
          root=KFI::Misc::root();
 
 #ifdef HAVE_GETOPT_H
+    int optIndex;
     while(-1!=(c=getopt_long(argc, argv, "xgfars", options, &optIndex)))
 #else
     while(-1!=(c=getopt(argc, argv, "xgfars")))

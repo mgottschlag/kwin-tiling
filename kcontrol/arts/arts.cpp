@@ -603,7 +603,6 @@ void KArtsModule::restartServer()
 	terminateArts << "terminate";
 	terminateArts.start(KProcess::Block);
 
-	KStartArtsProgressDialog *dlg = 0;
 	if (starting)
 	{
 		// Wait for artsd to shutdown completely and then (re)start artsd again

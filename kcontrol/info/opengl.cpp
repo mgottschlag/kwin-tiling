@@ -424,12 +424,12 @@ print_limits(QListViewItem *l1, const char * glExtensions, bool GetProcAddress)
 	for (cur_token = groups[i].group; cur_token->type; cur_token++) {
 
    		bool tfloat = cur_token->type & KCMGL_FLOAT;
-   		bool tprog = cur_token->type & KCMGL_PROG;
 		int count = KCMGL_COUNT_MASK(cur_token->type);
 		GLint max[2]={0,0};
    		GLfloat fmax[2]={0.0,0.0};
 
 #if defined(PFNGLGETPROGRAMIVARBPROC) && defined(GL_ARB_vertex_program)
+   		bool tprog = cur_token->type & KCMGL_PROG;
 		if (tprog && kcm_glGetProgramivARB)
 			kcm_glGetProgramivARB(groups[i].type, cur_token->token, max);
 		else
