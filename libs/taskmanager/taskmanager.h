@@ -37,6 +37,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qvaluelist.h>
 
 #include <dcopobject.h>
+#include <ksharedptr.h>
 #include <kstartupinfo.h>
 #include <kwin.h>
 
@@ -449,7 +450,7 @@ public:
     static bool canDecode( const QMimeSource* e );
 
     /**
-     * Decodes the tasks from the mime source and returns them if successful. 
+     * Decodes the tasks from the mime source and returns them if successful.
      * Otherwise an empty task list is returned.
      */
     static TaskList decode( const QMimeSource* e );
@@ -461,7 +462,7 @@ public:
  *
  * @see TaskManager
  */
-class KDE_EXPORT Startup: public QObject
+class KDE_EXPORT Startup: public QObject, public KShared
 {
     Q_OBJECT
     Q_PROPERTY( QString text READ text )
@@ -469,6 +470,8 @@ class KDE_EXPORT Startup: public QObject
     Q_PROPERTY( QString icon READ icon )
 
 public:
+    typedef KSharedPtr<Startup> Ptr;
+
     Startup( const KStartupInfoId& id, const KStartupInfoData& data, QObject * parent,
         const char *name = 0);
     virtual ~Startup();
@@ -502,7 +505,8 @@ private:
     class StartupPrivate *d;
 };
 
-typedef QPtrList<Startup> StartupList;
+
+typedef QValueList<Startup::Ptr> StartupList;
 
 /**
  * A generic API for task managers. This class provides an easy way to
@@ -540,8 +544,7 @@ public:
     TaskList tasks() const { return _tasks; }
 
     /**
-     * Returns a list of all current startups. Return type changed to
-     * QPtrList in KDE 3.
+     * Returns a list of all current startups.
      */
     StartupList startups() const { return _startups; }
 
@@ -565,7 +568,7 @@ public:
      */
     bool isOnTop( const Task*);
 
-    /** 
+    /**
      * Tells the task manager whether or not we care about geometry
      * updates. This generates a lot of activity so should only be used
      * when necessary.
@@ -593,14 +596,14 @@ signals:
     /**
      * Emitted when a new task is expected.
      */
-    void startupAdded(Startup*);
+    void startupAdded(Startup::Ptr);
 
     /**
      * Emitted when a startup item should be removed. This could be because
      * the task has started, because it is known to have died, or simply
      * as a result of a timeout.
      */
-    void startupRemoved(Startup*);
+    void startupRemoved(Startup::Ptr);
 
     /**
      * Emitted when the current desktop changes.
@@ -628,7 +631,7 @@ protected slots:
     //* @internal
     void killStartup( const KStartupInfoId& );
     //* @internal
-    void killStartup(Startup*);
+    void killStartup(Startup::Ptr);
 
     //* @internal
     void gotNewStartup( const KStartupInfoId&, const KStartupInfoData& );

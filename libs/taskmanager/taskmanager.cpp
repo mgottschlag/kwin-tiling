@@ -324,7 +324,7 @@ void TaskManager::currentDesktopChanged(int desktop)
 
 void TaskManager::gotNewStartup( const KStartupInfoId& id, const KStartupInfoData& data )
 {
-    Startup* s = new Startup( id, data, this );
+    Startup::Ptr s = new Startup( id, data, this );
     _startups.append(s);
 
     emit startupAdded(s);
@@ -332,9 +332,12 @@ void TaskManager::gotNewStartup( const KStartupInfoId& id, const KStartupInfoDat
 
 void TaskManager::gotStartupChange( const KStartupInfoId& id, const KStartupInfoData& data )
 {
-    for( Startup* s = _startups.first(); s != 0; s = _startups.next()) {
-        if ( s->id() == id ) {
-            s->update( data );
+    StartupList::iterator itEnd = _startups.end();
+    for (StartupList::iterator sIt = _startups.begin(); sIt != itEnd; ++sIt)
+    {
+        if ((*sIt)->id() == id)
+        {
+            (*sIt)->update(data);
             return;
         }
     }
@@ -342,25 +345,35 @@ void TaskManager::gotStartupChange( const KStartupInfoId& id, const KStartupInfo
 
 void TaskManager::killStartup( const KStartupInfoId& id )
 {
-    Startup* s = 0;
-    for(s = _startups.first(); s != 0; s = _startups.next()) {
-        if (s->id() == id)
+    StartupList::iterator itEnd = _startups.end();
+    Startup::Ptr s = 0;
+    for (StartupList::iterator sIt = _startups.begin(); sIt != itEnd; ++sIt)
+    {
+        if ((*sIt)->id() == id)
+        {
+            s = *sIt;
             break;
+        }
     }
-    if (s == 0) return;
 
-    _startups.removeRef(s);
+    if (!s)
+    {
+        return;
+    }
+
+    _startups.remove(s);
     emit startupRemoved(s);
-    delete s;
 }
 
-void TaskManager::killStartup(Startup* s)
+void TaskManager::killStartup(Startup::Ptr s)
 {
-    if (s == 0) return;
+    if (!s)
+    {
+        return;
+    }
 
-    _startups.removeRef(s);
+    _startups.remove(s);
     emit startupRemoved(s);
-    delete s;
 }
 
 QString TaskManager::desktopName(int desk) const
@@ -449,7 +462,6 @@ Task::Task(WId win, QObject *parent, const char *name)
     if (_pixmap.isNull())
       _pixmap = SmallIcon("kcmx");
 }
-
 
 Task::~Task()
 {
@@ -808,7 +820,7 @@ void Task::setMaximized(bool maximize)
     {
         ni.setState(0, NET::Max);
     }
-    
+
     if (!on_current)
     {
         KWin::forceActiveWindow(_win);
@@ -1119,7 +1131,7 @@ TaskList TaskDrag::decode( const QMimeSource* e )
     if (data.size())
     {
         QDataStream stream(data, IO_ReadOnly);
-        while (!stream.atEnd()) 
+        while (!stream.atEnd())
         {
             WId id;
             stream >> id;
