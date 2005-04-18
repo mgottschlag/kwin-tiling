@@ -103,22 +103,31 @@ void TaskManager::configure_startup()
     _startup_info->setTimeout( c.readUnsignedNumEntry( "Timeout", 30 ));
 }
 
-Task* TaskManager::findTask(WId w)
+Task::Ptr TaskManager::findTask(WId w)
 {
-    for (Task* t = _tasks.first(); t != 0; t = _tasks.next())
+    TaskList::iterator itEnd = _tasks.end();
+    for (TaskList::iterator it = _tasks.begin(); it != itEnd; ++it)
+    {
+        Task::Ptr t = *it;
         if (t->window() == w  || t->hasTransient(w))
+        {
             return t;
+        }
+    }
+
     return 0;
 }
 
-Task* TaskManager::findTask(int desktop, const QPoint& p)
+Task::Ptr TaskManager::findTask(int desktop, const QPoint& p)
 {
     QValueList<WId> list = winModule()->stackingOrder();
 
-    Task* task = 0;
+    Task::Ptr task = 0;
     int currentIndex = -1;
-    for (Task* t = _tasks.first(); t; t = _tasks.next())
+    TaskList::iterator itEnd = _tasks.end();
+    for (TaskList::iterator it = _tasks.begin(); it != itEnd; ++it)
     {
+        Task::Ptr t = *it;
         if (t->desktop() != desktop)
         {
             continue;
@@ -181,7 +190,7 @@ void TaskManager::windowAdded(WId w )
             && wType != NET::Utility )
         {
 
-            Task* t = findTask(transient_for);
+            Task::Ptr t = findTask(transient_for);
             if (t)
             {
                 if (t->window() != w)
@@ -194,7 +203,7 @@ void TaskManager::windowAdded(WId w )
         }
     }
 
-    Task* t = new Task(w, this);
+    Task::Ptr t = new Task(w, this);
     _tasks.append(t);
 
     // kdDebug() << "TM: Task added for WId: " << w << endl;
@@ -206,7 +215,7 @@ void TaskManager::windowRemoved(WId w )
 {
     _skiptaskbar_windows.remove( w );
     // find task
-    Task* t = findTask(w);
+    Task::Ptr t = findTask(w);
     if (!t)
     {
         return;
@@ -214,7 +223,7 @@ void TaskManager::windowRemoved(WId w )
 
     if (t->window() == w)
     {
-        _tasks.removeRef(t);
+        _tasks.remove(t);
         emit taskRemoved(t);
 
         if (t == _active)
@@ -222,7 +231,6 @@ void TaskManager::windowRemoved(WId w )
             _active = 0;
         }
 
-        delete t;
         //kdDebug() << "TM: Task for WId " << w << " removed." << endl;
     }
     else
@@ -266,7 +274,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     }
 
     // find task
-    Task* t = findTask( w );
+    Task::Ptr t = findTask( w );
     if (!t) return;
 
     //kdDebug() << "TaskManager::windowChanged " << w << " " << dirty << endl;
@@ -301,7 +309,7 @@ void TaskManager::activeWindowChanged(WId w )
 {
     //kdDebug() << "TaskManager::activeWindowChanged" << endl;
 
-    Task* t = findTask( w );
+    Task::Ptr t = findTask( w );
     if (!t) {
         if (_active) {
             _active->setActive(false);
@@ -388,25 +396,33 @@ int TaskManager::numberOfDesktops() const
 
 bool TaskManager::isOnTop(const Task* task)
 {
-    if(!task) return false;
+    if (!task)
+    {
+        return false;
+    }
 
     QValueList<WId>::ConstIterator begin(m_winModule->stackingOrder().constBegin());
     QValueList<WId>::ConstIterator it = m_winModule->stackingOrder().fromLast();
     do
     {
-        for (Task* t = _tasks.first(); t != 0; t = _tasks.next())
+        TaskList::iterator taskItEnd = _tasks.end();
+        for (TaskList::iterator taskIt = _tasks.begin();
+             taskIt != taskItEnd; ++taskIt)
         {
+            Task::Ptr t = *taskIt;
             if ((*it) == t->window())
             {
                 if (t == task)
                 {
                     return true;
                 }
+
                 if (!t->isIconified() &&
                     (t->isAlwaysOnTop() == task->isAlwaysOnTop()))
                 {
                     return false;
                 }
+
                 break;
             }
         }
@@ -1106,9 +1122,10 @@ TaskDrag::TaskDrag(const TaskList& tasks, QWidget* source, const char* name)
     QByteArray data;
     QDataStream stream(data, IO_WriteOnly);
 
-    for (QPtrListIterator<Task> i(tasks); i.current(); ++i)
+    TaskList::const_iterator itEnd = tasks.end();
+    for (TaskList::const_iterator it = tasks.begin(); it != itEnd; ++it)
     {
-      stream << i.current()->window();
+        stream << (*it)->window();
     }
 
     setEncodedData(data);
@@ -1135,7 +1152,7 @@ TaskList TaskDrag::decode( const QMimeSource* e )
         {
             WId id;
             stream >> id;
-            if (Task* task = TaskManager::the()->findTask(id))
+            if (Task::Ptr task = TaskManager::the()->findTask(id))
             {
                 tasks.append(task);
             }

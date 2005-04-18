@@ -50,7 +50,7 @@ class TaskManager;
  * @see TaskManager
  * @see KWinModule
  */
-class KDE_EXPORT Task: public QObject
+class KDE_EXPORT Task: public QObject, public KShared
 {
     Q_OBJECT
     Q_PROPERTY( QString visibleIconicName READ visibleIconicName )
@@ -77,6 +77,9 @@ class KDE_EXPORT Task: public QObject
     Q_PROPERTY( QPixmap thumbnail READ thumbnail )
 
 public:
+    typedef KSharedPtr<Task> Ptr;
+    typedef KSharedPtr<const Task> ConstPtr;
+
     Task(WId win, QObject *parent, const char *name = 0);
     virtual ~Task();
 
@@ -428,7 +431,7 @@ private:
     class TaskPrivate *d;
 };
 
-typedef QPtrList<Task> TaskList;
+typedef QValueList<Task::Ptr> TaskList;
 
 
 /**
@@ -530,12 +533,12 @@ public:
     /**
      * Returns the task for a given WId, or 0 if there is no such task.
      */
-    Task* findTask(WId w);
+    Task::Ptr findTask(WId w);
 
     /**
      * Returns the task for a given location, or 0 if there is no such task.
      */
-    Task* findTask(int desktop, const QPoint& p);
+    Task::Ptr findTask(int desktop, const QPoint& p);
 
     /**
      * Returns a list of all current tasks. Return type changed to
@@ -566,7 +569,7 @@ public:
     /**
      * Returns true if the specified task is on top.
      */
-    bool isOnTop( const Task*);
+    bool isOnTop(const Task*);
 
     /**
      * Tells the task manager whether or not we care about geometry
@@ -586,12 +589,12 @@ signals:
     /**
      * Emitted when a new task has started.
      */
-    void taskAdded(Task*);
+    void taskAdded(Task::Ptr);
 
     /**
      * Emitted when a task has terminated.
      */
-    void taskRemoved(Task*);
+    void taskRemoved(Task::Ptr);
 
     /**
      * Emitted when a new task is expected.
@@ -645,7 +648,7 @@ protected:
 private:
     TaskManager();
 
-    Task*               _active;
+    Task::Ptr               _active;
     TaskList            _tasks;
     QValueList< WId >   _skiptaskbar_windows;
     StartupList         _startups;

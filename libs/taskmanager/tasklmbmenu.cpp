@@ -119,9 +119,10 @@ void TaskLMBMenu::fillMenu(TaskList* tasks)
 {
     setCheckable(true);
 
-    for (QPtrListIterator<Task> it(*tasks); *it; ++it)
+    TaskList::iterator itEnd = (*tasks).end();
+    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
     {
-        Task* t = (*it);
+        Task::Ptr t = (*it);
 
         QString text = t->visibleName().replace("&", "&&");
 
@@ -223,10 +224,10 @@ void TaskLMBMenu::dragMoveEvent( QDragMoveEvent* e )
 
 void TaskLMBMenu::dragSwitch()
 {
-    Task* t = m_tasks.at(indexOf(m_lastDragId));
-    if (t)
+    TaskList::iterator t = m_tasks.at(indexOf(m_lastDragId));
+    if (t != m_tasks.end())
     {
-        t->activate();
+        (*t)->activate();
 
         for (unsigned int i = 0; i < count(); ++i)
         {
@@ -273,12 +274,13 @@ void TaskLMBMenu::mouseMoveEvent(QMouseEvent* e)
         int index = indexOf(idAt(m_dragStartPos));
         if (index != -1)
         {
-            if (Task* task = m_tasks.at(index))
+            TaskList::iterator task = m_tasks.at(index);
+            if (task != m_tasks.end())
             {
                 TaskList tasks;
-                tasks.append(task);
+                tasks.append(*task);
                 TaskDrag* drag = new TaskDrag(tasks, this);
-                drag->setPixmap(task->pixmap());
+                drag->setPixmap((*task)->pixmap());
                 drag->dragMove();
             }
         }
