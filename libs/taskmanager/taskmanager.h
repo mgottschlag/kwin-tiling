@@ -236,7 +236,7 @@ public:
     // internal
 
     //* @internal
-    void refresh();
+    void refresh(unsigned int dirty);
     //* @internal
     void refreshIcon();
     //* @internal
