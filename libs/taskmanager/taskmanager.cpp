@@ -515,7 +515,7 @@ void Task::refresh(unsigned int dirty)
     QString name = visibleIconicName();
     _info = KWin::windowInfo(_win);
 
-    if (dirty ^ NET::WMName || name != visibleIconicName())
+    if (dirty != NET::WMName || name != visibleIconicName())
     {
         emit changed();
     }
