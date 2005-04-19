@@ -175,8 +175,7 @@
                         <cstring>excludeLineedit</cstring>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Here you can enter a colon-separated list of applications that should not be saved in sessions, and therefore will not be started when restoring a session. For example 'xterm:xconsole'.
-</string>
+                        <string>Here you can enter a comma-separated list of applications that should not be saved in sessions, and therefore will not be started when restoring a session. For example 'xterm,xconsole'.</string>
                     </property>
                 </widget>
             </vbox>

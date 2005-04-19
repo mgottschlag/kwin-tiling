@@ -941,7 +941,7 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
     config->reparseConfiguration(); // config may have changed in the KControl module
 
     config->setGroup("General" );
-    excludeApps = QStringList::split( ':', config->readEntry( "excludeApps" ).lower()); 
+    excludeApps = QStringList::split( QRegExp( "[,:]" ), config->readEntry( "excludeApps" ).lower()); 
     bool logoutConfirmed =
         (confirm == KApplication::ShutdownConfirmYes) ? false :
        (confirm == KApplication::ShutdownConfirmNo) ? true :
