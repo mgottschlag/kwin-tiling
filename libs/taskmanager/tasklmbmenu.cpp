@@ -26,10 +26,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "tasklmbmenu.moc"
 
 #include <qpainter.h>
-#include "qstyle.h"
+#include <qstyle.h>
 
 #include <kdebug.h>
 #include <kglobalsettings.h>
+
+#include "global.h"
 
 TaskMenuItem::TaskMenuItem(const QString &text,
                           bool active, bool minimized, bool attention)
@@ -63,7 +65,7 @@ void TaskMenuItem::paint(QPainter *p, const QColorGroup &cg,
     }
     else if (m_isMinimized)
     {
-        p->setPen(QPen(blendColors(cg.background(), cg.text())));
+        p->setPen(QPen(KickerLib::blendColors(cg.background(), cg.text())));
     }
     else if (m_demandsAttention && !m_attentionState)
     {
@@ -82,21 +84,6 @@ QSize TaskMenuItem::sizeHint()
     }
     return QFontMetrics(font).size(AlignAuto|AlignVCenter|DontClip|ShowPrefix,
                                    m_text);
-}
-
-QColor TaskMenuItem::blendColors( QColor c1, QColor c2 )
-{
-    int r1, g1, b1;
-    int r2, g2, b2;
-
-    c1.rgb( &r1, &g1, &b1 );
-    c2.rgb( &r2, &g2, &b2 );
-
-    r1 += (int) ( .5 * ( r2 - r1 ) );
-    g1 += (int) ( .5 * ( g2 - g1 ) );
-    b1 += (int) ( .5 * ( b2 - b1 ) );
-
-    return QColor( r1, g1, b1 );
 }
 
 /*****************************************************************************/

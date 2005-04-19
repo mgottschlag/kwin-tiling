@@ -39,7 +39,6 @@ public:
 
     void paint(QPainter*, const QColorGroup&, bool, bool, int, int, int, int);
     QSize sizeHint();
-    QColor blendColors(QColor, QColor);
     void setAttentionState(bool state) { m_attentionState = state; }
 
 private:
