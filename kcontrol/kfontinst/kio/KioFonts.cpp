@@ -548,6 +548,11 @@ static QString getMatch(const QString &file, const char *extensions[])
     return QString::null;
 }
 
+inline bool isHidden(const KURL &u)
+{
+    return QChar('.')==u.fileName()[0];
+}
+
 namespace KFI
 {
 
@@ -919,6 +924,12 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
 {
     KFI_DBUG << "put " << u.path() << endl;
 
+    if(isHidden(u))
+    {
+        error(KIO::ERR_WRITE_ACCESS_DENIED, u.prettyURL());
+        return;
+    }
+
     updateFontList();
 
     //checkUrl(u) // CPD: Don't need to check URL, as the call to "confirmUrl()" below will sort out any probs!
@@ -1157,6 +1168,12 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
     //    Copying from fonts:/ and file:/
     //
     KFI_DBUG << "copy " << src.prettyURL() << " - " << d.prettyURL() << endl;
+
+    if(isHidden(d))
+    {
+        error(KIO::ERR_WRITE_ACCESS_DENIED, d.prettyURL());
+        return;
+    }
 
     if(updateFontList() && checkUrl(src) && checkAllowed(src))
     {
