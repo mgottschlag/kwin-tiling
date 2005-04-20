@@ -171,37 +171,65 @@ static QString createName(const QString &family, const QString &weight, const ch
     return name;
 }
 
-static void addEntry(QStringList &list, const QString &name, const QString &file, const QString &fmapDir)
+static QString getEntry(QStringList &list, const QString &name)
 {
-    // CPD: TODO: The check below should really be more robust, need to check if an alias for this psname has already
-    // been added, is so remove.
-    QString      entry;
-    QTextOStream str(&entry);
+    QStringList::Iterator it(list.begin()),
+                          end(list.end());
 
-    str << '/' << name << " (";
+    for( ; it!=end; ++it)
+        if(0==(*it).find('/'+name+' '))
+            return *it;
 
-    if(0==file.find(fmapDir))
-        str << file.mid(fmapDir.length());
-    else
-        str << file;
-
-    str << ") ;";
-    if(-1==list.findIndex(entry))
-        list.append(entry);
+    return QString::null;
 }
 
-static void addAliasEntry(QStringList &list, const QString &x11Name, const QString &psName)
+inline bool isAlias(const QString &entry)
 {
-    // CPD: TODO: The check below should really be more robust, need to check that no other alias to this psname exists,
-    // and that the x11Name does not map onto anything else...
-    if(x11Name!=psName)
+    return -1==entry.findRev(QRegExp(")\\s*;\\s*$"));
+}
+
+static void addEntry(QStringList &list, const QString &name, const QString &file, const QString &fmapDir)
+{
+    QString existing(getEntry(list, name));
+    bool    insert=true;
+
+    if(!existing.isEmpty())
+        if(isAlias(existing))
+            list.remove(existing);
+        else
+            insert=false;
+
+    if(insert)
     {
         QString      entry;
         QTextOStream str(&entry);
 
-        str << '/' << x11Name << " /" << psName << " ;";
-        if(-1==list.findIndex(entry))
+        str << '/' << name << " (";
+
+        if(0==file.find(fmapDir))
+            str << file.mid(fmapDir.length());
+        else
+            str << file;
+
+        str << ") ;";
+        list.append(entry);
+    }
+}
+
+static void addAliasEntry(QStringList &list, const QString &x11Name, const QString &psName)
+{
+    if(x11Name!=psName)
+    {
+        QString existing(getEntry(list, x11Name));
+
+        if(existing.isEmpty())
+        {
+            QString      entry;
+            QTextOStream str(&entry);
+
+            str << '/' << x11Name << " /" << psName << " ;";
             list.append(entry);
+        }
     }
 }
 
