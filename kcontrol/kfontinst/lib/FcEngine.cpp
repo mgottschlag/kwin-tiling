@@ -7,6 +7,7 @@
 #include <kurl.h>
 #include <kconfig.h>
 #include <kglobalsettings.h>
+#include <kio/netaccess.h>
 #include <math.h>
 #include "FcEngine.h"
 #include "KfiConstants.h"
@@ -658,7 +659,7 @@ QString CFcEngine::getFcString(FcPattern *pat, const char *val, int faceNo)
     FcChar8 *fcStr;
 
     if(FcResultMatch==FcPatternGetString(pat, val, faceNo, &fcStr))
-        rv=(char *)fcStr;
+        rv=QString::fromUtf8((char *)fcStr);
 
     return rv;
 }
@@ -824,72 +825,92 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
 
     // Possible urls:
     //
-    //    fonts:/Helvetica, Bold Italic
-    //    fonts:/System/Helvetica, Bold Italic
+    //    fonts:/times.ttf
+    //    fonts:/System/times.ttf
     //    file:/home/wibble/hmm.ttf
     //
     if(KFI_KIO_FONTS_PROTOCOL==url.protocol())
     {
-        QString name(url.fileName());
-        int     pos;
+        KIO::UDSEntry udsEntry;
+        QString       name;
 
-        itsDescriptiveName=name;
-        itsSpacing=FC_PROPORTIONAL;
-        if(-1==(pos=name.find(", ")))   // No style information...
+        if(KIO::NetAccess::stat(url, udsEntry, NULL))  // Need to stat the url to get its font name...
         {
-            itsWeight=FC_WEIGHT_NORMAL;
+            KIO::UDSEntry::Iterator it(udsEntry.begin()),
+                                    end(udsEntry.end());
+
+            for( ; it != end; ++it)
+                if (KIO::UDS_NAME==(*it).m_uds)
+                {
+                    name=(*it).m_str;
+                    break;
+                }
+        }
+
+        if(!name.isEmpty())
+        {
+            int pos;
+    
+            itsDescriptiveName=name;
+            itsSpacing=FC_PROPORTIONAL;
+            if(-1==(pos=name.find(", ")))   // No style information...
+            {
+                itsWeight=FC_WEIGHT_NORMAL;
 #ifndef KFI_FC_NO_WIDTHS
-            itsWidth=FC_WIDTH_NORMAL;
+                itsWidth=FC_WIDTH_NORMAL;
 #endif
-            itsSlant=FC_SLANT_ROMAN;
+                itsSlant=FC_SLANT_ROMAN;
+            }
+            else
+            {
+                QString style(name.mid(pos+2));
+    
+                itsWeight=strToWeight(style, style);
+#ifndef KFI_FC_NO_WIDTHS
+                itsWidth=strToWidth(style, style);
+#endif
+                itsSlant=strToSlant(style);
+                name=name.left(pos);
+            }
+    
+            itsName=name;
+    
+            if(all)
+            {
+//                XftFont *xft=getFont(8);
+//
+//                if(xft)
+//                {
+//                   FcPatternGetInteger(xft->pattern, FC_SPACING, faceNo, &itsSpacing);
+//                    itsFoundry=getFcString(xft->pattern, FC_FOUNDRY, faceNo);
+//                    XftFontClose(QPaintDevice::x11AppDisplay(), xft);
+//                }
+                FcObjectSet *os  = FcObjectSetBuild(FC_SPACING, FC_FOUNDRY, (void *)0);
+                FcPattern   *pat = FcPatternBuild(NULL,
+                                                    FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.latin1()),
+                                                    FC_WEIGHT, FcTypeInteger, itsWeight,
+                                                    FC_SLANT, FcTypeInteger, itsSlant,
+#ifndef KFI_FC_NO_WIDTHS
+                                                    FC_WIDTH, FcTypeInteger, itsWidth,
+#endif
+                                                    NULL);
+                FcFontSet   *set =  FcFontList(0, pat, os);    
+    
+                FcPatternDestroy(pat);
+                FcObjectSetDestroy(os);
+    
+                if(set && set->nfont)
+                {
+                    FcPatternGetInteger(set->fonts[0], FC_SPACING, faceNo, &itsSpacing);
+                    itsFoundry=getFcString(set->fonts[0], FC_FOUNDRY, faceNo);
+                }
+            }
+    
+            itsInstalled=true;
+            itsIndex=0; // Doesn't matter, as we're gonna use font name!
         }
         else
-        {
-            QString style(name.mid(pos+2));
-
-            itsWeight=strToWeight(style, style);
-#ifndef KFI_FC_NO_WIDTHS
-            itsWidth=strToWidth(style, style);
-#endif
-            itsSlant=strToSlant(style);
-            name=name.left(pos);
-        }
-
-        itsName=name;
-
-        if(all)
-        {
-//            XftFont *xft=getFont(8);
-//
-//            if(xft)
-//            {
-//                FcPatternGetInteger(xft->pattern, FC_SPACING, faceNo, &itsSpacing);
-//                itsFoundry=getFcString(xft->pattern, FC_FOUNDRY, faceNo);
-//                XftFontClose(QPaintDevice::x11AppDisplay(), xft);
-//            }
-            FcObjectSet *os  = FcObjectSetBuild(FC_SPACING, FC_FOUNDRY, (void*)0);
-            FcPattern   *pat = FcPatternBuild(NULL,
-                                                FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.latin1()),
-                                                FC_WEIGHT, FcTypeInteger, itsWeight,
-                                                FC_SLANT, FcTypeInteger, itsSlant,
-#ifndef KFI_FC_NO_WIDTHS
-                                                FC_WIDTH, FcTypeInteger, itsWidth,
-#endif
-                                                NULL);
-            FcFontSet   *set =  FcFontList(0, pat, os);    
-
-            FcPatternDestroy(pat);
-            FcObjectSetDestroy(os);
-
-            if(set && set->nfont)
-            {
-                FcPatternGetInteger(set->fonts[0], FC_SPACING, faceNo, &itsSpacing);
-                itsFoundry=getFcString(set->fonts[0], FC_FOUNDRY, faceNo);
-            }
-        }
-
-        itsInstalled=true;
-        itsIndex=0; // Doesn't matter, as we're gonna use font name!
+            return false;
     }
     else if(url.isLocalFile())
     {

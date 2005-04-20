@@ -1,3 +1,19 @@
+KDE3.4 -> KDE3.5
+================
+1. When copying a file out of fonts sub-system, copy as filename, or <fontname>.fonts.tar.gz
+   in the case of multiple font files mapped to the same font name.
+
+    e.g. Times New Roman -> times.ttf
+         Helvetica, Bold Oblique-> Hevetica, Bold Oblique.fonts.tar.gz
+                  Which contains:
+                           75dpi_helvBO10.pcf.gz
+                           75dpi_helvBO12.pcf.gz
+                           100dpi_helvBO10.pcf.gz
+                           100dpi_helvBO12.pcf.gz
+                           ...etc
+
+2. New mimetype: fonts/package - to cater for the above.
+
 KDE3.3 -> KDE3.4
 ================
 1. Font listing comes from fontconfig. This means that fonts will be grouped, i.e.

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=MimeType
+Encoding=UTF-8
+MimeType=fonts/package
+Icon=font
+Patterns=*.fonts.tar.gz
+Comment=Fonts Package
+
+[Property::X-KDE-LocalProtocol]
+Type=QString
+Value=tar

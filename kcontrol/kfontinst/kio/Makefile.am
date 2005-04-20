@@ -16,5 +16,5 @@ services_DATA = fonts.protocol
 vfsdata_DATA = fonts.desktop
 vfsdatadir = $(kde_datadir)/konqsidebartng/virtual_folders/services
 
-mimetype_DATA = folder.desktop system-folder.desktop
+mimetype_DATA = folder.desktop system-folder.desktop package.desktop
 mimetypedir = $(kde_mimedir)/fonts

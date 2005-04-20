@@ -39,6 +39,7 @@
 #include <qmap.h>
 #include <qvaluelist.h>
 #include "Misc.h"
+#include "KfiConstants.h"
 
 namespace KFI
 {
@@ -86,8 +87,6 @@ class CKioFonts : public KIO::SlaveBase
 
     struct TFolder
     {
-
-
         QString                                 location;
         CDirList                                modified;
         QMap<QString, QValueList<FcPattern *> > fontMap;   // Maps from "Times New Roman" -> $HOME/.fonts/times.ttf
@@ -97,6 +96,8 @@ class CKioFonts : public KIO::SlaveBase
 
     CKioFonts(const QCString &pool, const QCString &app);
     virtual ~CKioFonts();
+
+    static QString getSect(const QString &f) { return f.section('/', 1, 1); }
 
     void listDir(const KURL &url);
     void stat(const KURL &url);
@@ -120,11 +121,13 @@ class CKioFonts : public KIO::SlaveBase
     bool     confirmUrl(KURL &url);
     void     reinitFc();
     bool     updateFontList();
+    EFolder  getFolder(const KURL &url);
+    QMap<QString, QValueList<FcPattern *> >::Iterator getMap(const KURL &url);
     QValueList<FcPattern *> * getEntries(const KURL &url);
     FcPattern * getEntry(EFolder folder, const QString &file, bool full=false);
     bool     checkFile(const QString &file);
     bool     getSourceFiles(const KURL &src, QStringList &files);
-    bool     checkDestFiles(const KURL &src, QStringList &srcFiles, const KURL &dest, EFolder destFolder, bool overwrite);
+    bool     checkDestFiles(const KURL &src, QMap<QString, QString> &map, const KURL &dest, EFolder destFolder, bool overwrite);
     bool     confirmMultiple(const KURL &url, const QStringList &files, EFolder folder, EOp op);
     bool     confirmMultiple(const KURL &url, QValueList<FcPattern *> *patterns, EFolder folder, EOp op);
     bool     checkUrl(const KURL &u, bool rootOk=false);
