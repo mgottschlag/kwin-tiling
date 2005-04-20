@@ -47,6 +47,11 @@ class CKioFonts : public KIO::SlaveBase
 {
     private:
 
+    enum EConstants
+    {
+        KFI_PARAMS = 8
+    };
+
     enum EDest
     {
         DEST_UNCHANGED,
@@ -69,12 +74,22 @@ class CKioFonts : public KIO::SlaveBase
         OP_DELETE
     };
 
+    class CDirList : public QStringList
+    {
+        public:
+
+        CDirList()                                      { }
+        CDirList(const QString &str) : QStringList(str) { }
+
+        void add(const QString &d)                      { if (!contains(d)) append(d); }
+    };
+
     struct TFolder
     {
-        TFolder() : modified(false) {}
+
 
         QString                                 location;
-        bool                                    modified;
+        CDirList                                modified;
         QMap<QString, QValueList<FcPattern *> > fontMap;   // Maps from "Times New Roman" -> $HOME/.fonts/times.ttf
     };
 
@@ -95,9 +110,9 @@ class CKioFonts : public KIO::SlaveBase
     private:
 
     bool     putReal(const QString &destOrig, const QCString &destOrigC, bool origExists, int mode, bool resume);
-    void     modified(EFolder folder);
+    void     modified(EFolder folder, const CDirList &dirs=CDirList());
     void     special(const QByteArray &a);
-    void     createRootRefreshCmd(QCString &cmd);
+    void     createRootRefreshCmd(QCString &cmd, const CDirList &dirs=CDirList());
     void     doModified();
     QString  getRootPasswd(bool askPasswd=true);
     bool     doRootCmd(const char *cmd, const QString &passwd);
@@ -126,8 +141,9 @@ class CKioFonts : public KIO::SlaveBase
     time_t       itsLastDestTime;
     FcFontSet    *itsFontList;
     TFolder      itsFolders[FOLDER_COUNT];
-    char         itsNrsKfiParams[8],
-                 itsKfiParams[8];
+    char         itsNrsKfiParams[KFI_PARAMS],
+                 itsNrsNonMainKfiParams[KFI_PARAMS],
+                 itsKfiParams[KFI_PARAMS];
 };
 
 }

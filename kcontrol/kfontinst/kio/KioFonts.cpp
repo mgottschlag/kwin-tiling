@@ -667,9 +667,9 @@ CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
         XCloseDisplay(xDisplay);
     }
 
+    strcpy(itsKfiParams, "-g");
     if(itsRoot)
     {
-        strcpy(itsKfiParams, "-g");
         if(!usingFcFpe)
         {
             strcat(itsKfiParams, usingXfsFpe ? "s" : "r");
@@ -680,7 +680,6 @@ CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
     }
     else
     {
-        strcpy(itsKfiParams, "-g");
         strcpy(itsNrsKfiParams, addToSysFc ? "-gf" : "-g");
         if(!usingFcFpe)
         {
@@ -689,6 +688,9 @@ CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
                 strcat(itsNrsKfiParams, "a");
             strcat(itsKfiParams, "xr");
         }
+        memcpy(itsNrsNonMainKfiParams, itsNrsKfiParams, KFI_PARAMS);
+        removeChar(itsNrsNonMainKfiParams, 'a');
+        removeChar(itsNrsNonMainKfiParams, 'f');
     }
     reinitFc();
 }
@@ -1408,13 +1410,27 @@ void CKioFonts::rename(const KURL &src, const KURL &d, bool overwrite)
                     cmd+=" ";
                     cmd+=destFile;
 
+                    QString sysDir,
+                            userDir;
+
+                    if(FOLDER_SYS==destFolder)
+                    {
+                        sysDir=itsFolders[destFolder].location;
+                        userDir=Misc::getDir(*it);
+                    }
+                    else
+                    {
+                        userDir=itsFolders[destFolder].location;
+                        sysDir=Misc::getDir(*it);
+                    }
+
                     if(!itsCanStorePasswd)
-                        createRootRefreshCmd(cmd);
+                        createRootRefreshCmd(cmd, sysDir);
 
                     if(doRootCmd(cmd, askPasswd))
                     {
-                        modified(FOLDER_SYS);
-                        modified(FOLDER_USER);
+                        modified(FOLDER_SYS, sysDir);
+                        modified(FOLDER_USER, userDir);
                         askPasswd=false;  // Don't keep on asking for password...
                     }
                     else
@@ -1442,6 +1458,7 @@ void CKioFonts::del(const KURL &url, bool)
     {
         QValueList<FcPattern *>::Iterator it,
                                           end=entries->end();
+        CDirList                          modifiedDirs;
 
         if(nonRootSys(url))
         {
@@ -1451,6 +1468,7 @@ void CKioFonts::del(const KURL &url, bool)
             {
                 QString file(getFcString(*it, FC_FILE));
 
+                modifiedDirs.add(Misc::getDir(file));
                 cmd+=" ";
                 cmd+=QFile::encodeName(KProcess::quote(file));
 
@@ -1472,10 +1490,10 @@ void CKioFonts::del(const KURL &url, bool)
             }
     
             if(!itsCanStorePasswd)
-                createRootRefreshCmd(cmd);
+                createRootRefreshCmd(cmd, modifiedDirs);
     
             if(doRootCmd(cmd))
-                modified(FOLDER_SYS);
+                modified(FOLDER_SYS, modifiedDirs);
             else
                 error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_SYS)));
         }
@@ -1494,6 +1512,8 @@ void CKioFonts::del(const KURL &url, bool)
                           file);
                 else
                 {
+                    modifiedDirs.add(Misc::getDir(file));
+
                     KURL::List urls;
 
                     Misc::getAssociatedUrls(KURL(file), urls);
@@ -1508,19 +1528,29 @@ void CKioFonts::del(const KURL &url, bool)
                     }
                 }
             }
-            modified(itsRoot ? FOLDER_SYS : FOLDER_USER);
+            modified(itsRoot ? FOLDER_SYS : FOLDER_USER, modifiedDirs);
         }
         finished();
     }
 }
 
-void CKioFonts::modified(EFolder folder)
+void CKioFonts::modified(EFolder folder, const CDirList &dirs)
 {
     KFI_DBUG << "modified(" << (int)folder << ")\n";
 
     if(FOLDER_SYS!=folder || itsCanStorePasswd || itsRoot)
     {
-        itsFolders[folder].modified=true;
+        if(dirs.count())
+        {
+            CDirList::ConstIterator it(dirs.begin()),
+                                    end(dirs.end());
+
+            for(; it!=end; ++it)
+                itsFolders[folder].modified.add(*it);
+        }
+        else
+            itsFolders[folder].modified.add(itsFolders[folder].location);
+
         //reinitFc();
 
         if(++itsFontChanges>MAX_NEW_FONTS)
@@ -1551,14 +1581,36 @@ void CKioFonts::special(const QByteArray &)
     doModified();
 }
 
-void CKioFonts::createRootRefreshCmd(QCString &cmd)
+void CKioFonts::createRootRefreshCmd(QCString &cmd, const CDirList &dirs)
 {
     if(!cmd.isEmpty())
         cmd+=" && ";
-    cmd+=FC_CACHE_CMD" && kfontinst ";
-    cmd+=itsNrsKfiParams;
-    cmd+=" ";
-    cmd+=QFile::encodeName(KProcess::quote(itsFolders[FOLDER_SYS].location));
+
+    cmd+=FC_CACHE_CMD;
+
+    if(dirs.count())
+    {
+        CDirList::ConstIterator it(dirs.begin()),
+                                end(dirs.end());
+
+        for(; it!=end; ++it)
+        {
+            cmd+=" && kfontinst ";
+            if(*it==itsFolders[FOLDER_SYS].location)
+                cmd+=itsNrsKfiParams;
+            else
+                cmd+=itsNrsNonMainKfiParams;
+            cmd+=" ";
+            cmd+=QFile::encodeName(KProcess::quote(*it));
+        }
+    }
+    else
+    {
+        cmd+=" && kfontinst ";
+        cmd+=itsNrsKfiParams;
+        cmd+=" ";
+        cmd+=QFile::encodeName(KProcess::quote(itsFolders[FOLDER_SYS].location));
+    }
 }
 
 void CKioFonts::doModified()
@@ -1566,39 +1618,57 @@ void CKioFonts::doModified()
     KFI_DBUG << "doModified" << endl;
 
     itsFontChanges=0;
-    if(itsFolders[FOLDER_SYS].modified)
+    if(itsFolders[FOLDER_SYS].modified.count())
     {
         if(itsRoot)
         {
             Misc::doCmd(FC_CACHE_CMD);
-            KFI_DBUG << "RUN: " << FC_CACHE_CMD << endl;
-            Misc::doCmd("kfontinst", itsKfiParams, QFile::encodeName(itsFolders[FOLDER_SYS].location));
-            KFI_DBUG << "RUN: kfontinst " << itsKfiParams << ' ' << itsFolders[FOLDER_SYS].location << endl;
-            removeChar(itsKfiParams, 'a');
+            KFI_DBUG << "RUN(root): " << FC_CACHE_CMD << endl;
+
+            CDirList::ConstIterator it(itsFolders[FOLDER_SYS].modified.begin()),
+                                    end(itsFolders[FOLDER_SYS].modified.end());
+
+            for(; it!=end; ++it)
+            {
+                Misc::doCmd("kfontinst", itsKfiParams, QFile::encodeName(*it));
+                KFI_DBUG << "RUN(root): kfontinst " << itsKfiParams << ' ' << *it << endl;
+            }
+
+            if(itsFolders[FOLDER_SYS].modified.contains(itsFolders[FOLDER_SYS].location))
+            {
+                removeChar(itsKfiParams, 'a');
+                removeChar(itsKfiParams, 'f');
+            }
         }
         else
         {
             QCString cmd;
 
-            createRootRefreshCmd(cmd);
-            if(doRootCmd(cmd, false))
+            createRootRefreshCmd(cmd, itsFolders[FOLDER_SYS].modified);
+            if(doRootCmd(cmd, false) && itsFolders[FOLDER_SYS].modified.contains(itsFolders[FOLDER_SYS].location))
             {
                 removeChar(itsNrsKfiParams, 'f');
                 removeChar(itsNrsKfiParams, 'a');
             }
             Misc::doCmd("xset", "fp", "rehash");  // doRootCmd can only refresh if xfs is being used, so try here anyway...
         }
-        itsFolders[FOLDER_SYS].modified=false;
+        itsFolders[FOLDER_SYS].modified.clear();
     }
 
-    if(!itsRoot && itsFolders[FOLDER_USER].modified)
+    if(!itsRoot && itsFolders[FOLDER_USER].modified.count())
     {
         Misc::doCmd(FC_CACHE_CMD);
-        KFI_DBUG << "RUN: " << FC_CACHE_CMD << endl;
-        Misc::doCmd("kfontinst", itsKfiParams, QFile::encodeName(itsFolders[FOLDER_USER].location));
-        KFI_DBUG << "RUN: kfontinst " << itsKfiParams << ' '
-                 << KProcess::quote(itsFolders[FOLDER_USER].location) << endl;
-        itsFolders[FOLDER_USER].modified=false;
+        KFI_DBUG << "RUN(non-root): " << FC_CACHE_CMD << endl;
+
+        CDirList::ConstIterator it(itsFolders[FOLDER_USER].modified.begin()),
+                                end(itsFolders[FOLDER_USER].modified.end());
+
+        for(; it!=end; ++it)
+        {
+            Misc::doCmd("kfontinst", itsKfiParams, QFile::encodeName(*it));
+            KFI_DBUG << "RUN(non-root): kfontinst " << itsKfiParams << ' ' << *it << endl;
+        }
+        itsFolders[FOLDER_USER].modified.clear();
     }
 
     KFI_DBUG << "finished ModifiedDirs" << endl;
