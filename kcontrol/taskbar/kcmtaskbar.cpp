@@ -31,7 +31,9 @@
 #include <kgenericfactory.h>
 #include <kwin.h>
 
+#define protected public
 #include "kcmtaskbarui.h"
+#undef protected
 #include "taskbarsettings.h"
 
 #include "kcmtaskbar.h"
@@ -107,6 +109,7 @@ TaskbarConfig::TaskbarConfig(QWidget *parent, const char* name, const QStringLis
     {
         m_widget->kcfg_ShowAllWindows->hide();
         m_widget->kcfg_SortByDesktop->hide();
+        m_widget->spacer2->changeSize(0, 0);
     }
 
     if (!QApplication::desktop()->isVirtualDesktop() ||
