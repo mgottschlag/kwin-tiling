@@ -59,10 +59,11 @@ void TaskRMBMenu::fillMenu(Task::Ptr t)
     setCheckable(true);
 
     insertItem(i18n("Ad&vanced"), makeAdvancedMenu(t));
+    bool checkActions = KWin::allowedActionsSupported();
 
     if (TaskManager::the()->numberOfDesktops() > 1)
     {
-        insertItem(i18n("To &Desktop"), makeDesktopsMenu(t));
+        id = insertItem(i18n("To &Desktop"), makeDesktopsMenu(t));
 
         if (showAll)
         {
@@ -70,21 +71,35 @@ void TaskRMBMenu::fillMenu(Task::Ptr t)
                             t, SLOT(toCurrentDesktop()));
             setItemEnabled( id, !t->isOnCurrentDesktop() );
         }
+
+        if (checkActions)
+        {
+            setItemEnabled(id, t->info().actionSupported(NET::ActionChangeDesktop));
+        }
     }
 
     id = insertItem(SmallIconSet("move"), i18n("&Move"), t, SLOT(move()));
+    setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionMove));
+
     id = insertItem(i18n("Re&size"), t, SLOT(resize()));
+    setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionResize));
 
     id = insertItem(i18n("Mi&nimize"), t, SLOT(toggleIconified()));
     setItemChecked(id, t->isIconified());
+    setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionMinimize));
+
     id = insertItem(i18n("Ma&ximize"), t, SLOT(toggleMaximized()));
     setItemChecked(id, t->isMaximized());
+    setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionMax));
+
     id = insertItem(i18n("&Shade"), t, SLOT(toggleShaded()));
     setItemChecked(id, t->isShaded());
+    setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionShade));
 
     insertSeparator();
 
     id = insertItem(SmallIcon("fileclose"), i18n("&Close"), t, SLOT(close()));
+    setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionClose));
 }
 
 void TaskRMBMenu::fillMenu(TaskList *tasks)
@@ -203,6 +218,11 @@ QPopupMenu* TaskRMBMenu::makeAdvancedMenu(Task::Ptr t)
                           i18n("&Fullscreen"),
                           t, SLOT(toggleFullScreen()));
     menu->setItemChecked(id, t->isFullScreen());
+
+    if (KWin::allowedActionsSupported())
+    {
+        menu->setItemEnabled(id, t->info().actionSupported(NET::ActionFullScreen));
+    }
 
     return menu;
 }
