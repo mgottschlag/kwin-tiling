@@ -141,7 +141,7 @@ static QString removeMultipleExtension(const KURL &url)
 
 static QString modifyName(const QString &fname)
 {
-    static const char * constSymbols[]={ "-", " ", NULL };
+    static const char constSymbols[]={ '-', ' ', ':', 0 };
 
     QString rv(fname);
     int     dotPos=rv.findRev('.');
@@ -155,7 +155,7 @@ static QString modifyName(const QString &fname)
     }
 
     for(int s=0; constSymbols[s]; ++s)
-        rv=rv.replace(QString::fromLatin1(constSymbols[s]), QString::fromLatin1("_"));
+        rv=rv.replace(constSymbols[s], '_');
 
     return rv;
 }
