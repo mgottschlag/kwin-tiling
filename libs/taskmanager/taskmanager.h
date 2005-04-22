@@ -84,6 +84,8 @@ public:
     virtual ~Task();
 
     WId window() const { return _win; }
+    KWin::WindowInfo info() const { return _info; }
+
 #if 0 // this would use (_NET_)WM_ICON_NAME, which is shorter, but can be different from window name
     QString visibleIconicName() const { return _info.visibleIconName(); }
     QString visibleIconicNameWithState() const { return _info.visibleIconNameWithState(); }

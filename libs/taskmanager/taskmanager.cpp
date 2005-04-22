@@ -568,7 +568,7 @@ bool Task::isShaded() const
 
 bool Task::isOnCurrentDesktop() const
 {
-    return _info.valid() && (_info.isOnCurrentDesktop());
+    return _info.valid() && _info.isOnCurrentDesktop();
 }
 
 bool Task::isOnAllDesktops() const
