@@ -541,8 +541,7 @@ public:
     Task::Ptr findTask(int desktop, const QPoint& p);
 
     /**
-     * Returns a list of all current tasks. Return type changed to
-     * QPtrList in KDE 3.
+     * Returns a list of all current tasks.
      */
     TaskList tasks() const { return _tasks; }
 
