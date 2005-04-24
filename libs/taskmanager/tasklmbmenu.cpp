@@ -88,13 +88,13 @@ QSize TaskMenuItem::sizeHint()
 
 /*****************************************************************************/
 
-TaskLMBMenu::TaskLMBMenu( TaskList* tasks, QWidget *parent, const char *name )
+TaskLMBMenu::TaskLMBMenu(const Task::List& tasks, QWidget *parent, const char *name)
   : QPopupMenu(parent, name),
-    m_tasks(*tasks),
+    m_tasks(tasks),
     m_lastDragId(-1),
     m_attentionState(false)
 {
-    fillMenu(tasks);
+    fillMenu();
 
     setAcceptDrops(true); // Always enabled to activate task during drag&drop.
 
@@ -102,12 +102,12 @@ TaskLMBMenu::TaskLMBMenu( TaskList* tasks, QWidget *parent, const char *name )
     connect(m_dragSwitchTimer, SIGNAL(timeout()), SLOT(dragSwitch()));
 }
 
-void TaskLMBMenu::fillMenu(TaskList* tasks)
+void TaskLMBMenu::fillMenu()
 {
     setCheckable(true);
 
-    TaskList::iterator itEnd = (*tasks).end();
-    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+    Task::List::iterator itEnd = m_tasks.end();
+    for (Task::List::iterator it = m_tasks.begin(); it != itEnd; ++it)
     {
         Task::Ptr t = (*it);
 
@@ -211,7 +211,7 @@ void TaskLMBMenu::dragMoveEvent( QDragMoveEvent* e )
 
 void TaskLMBMenu::dragSwitch()
 {
-    TaskList::iterator t = m_tasks.at(indexOf(m_lastDragId));
+    Task::List::iterator t = m_tasks.at(indexOf(m_lastDragId));
     if (t != m_tasks.end())
     {
         (*t)->activate();
@@ -261,10 +261,10 @@ void TaskLMBMenu::mouseMoveEvent(QMouseEvent* e)
         int index = indexOf(idAt(m_dragStartPos));
         if (index != -1)
         {
-            TaskList::iterator task = m_tasks.at(index);
+            Task::List::iterator task = m_tasks.at(index);
             if (task != m_tasks.end())
             {
-                TaskList tasks;
+                Task::List tasks;
                 tasks.append(*task);
                 TaskDrag* drag = new TaskDrag(tasks, this);
                 drag->setPixmap((*task)->pixmap());

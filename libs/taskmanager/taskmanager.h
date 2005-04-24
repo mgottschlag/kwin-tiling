@@ -78,7 +78,8 @@ class KDE_EXPORT Task: public QObject, public KShared
 
 public:
     typedef KSharedPtr<Task> Ptr;
-    typedef KSharedPtr<const Task> ConstPtr;
+    typedef QValueList<Task::Ptr> List;
+    typedef QMap<WId, Task::Ptr> Dict;
 
     Task(WId win, QObject *parent, const char *name = 0);
     virtual ~Task();
@@ -225,10 +226,22 @@ public:
      * Returns true if the task is not active but demands user's attention.
      */
     bool demandsAttention() const;
+
+
     /**
     * Returns true if the window is on the specified screen of a multihead configuration
     */
     bool isOnScreen( int screen ) const;
+
+    /**
+     * Returns true if the task should be shown in taskbar-like apps
+     */
+    bool showInTaskbar() const { return _info.state() ^ NET::SkipTaskbar; }
+
+    /**
+     * Returns true if the task should be shown in pager-like apps
+     */
+    bool showInPager() const { return _info.state() ^ NET::SkipPager; }
 
     /**
      * Returns the geometry for this window
@@ -433,8 +446,6 @@ private:
     class TaskPrivate *d;
 };
 
-typedef QValueList<Task::Ptr> TaskList;
-
 
 /**
  * Provids a drag object for tasks across desktops.
@@ -445,7 +456,7 @@ public:
     /**
      * Constructs a task drag object for a task list.
      */
-    TaskDrag(const TaskList& tasks, QWidget* source = 0,
+    TaskDrag(const Task::List& tasks, QWidget* source = 0,
              const char* name = 0);
     ~TaskDrag();
 
@@ -458,7 +469,7 @@ public:
      * Decodes the tasks from the mime source and returns them if successful.
      * Otherwise an empty task list is returned.
      */
-    static TaskList decode( const QMimeSource* e );
+    static Task::List decode( const QMimeSource* e );
 };
 
 
@@ -476,6 +487,7 @@ class KDE_EXPORT Startup: public QObject, public KShared
 
 public:
     typedef KSharedPtr<Startup> Ptr;
+    typedef QValueList<Startup::Ptr> List;
 
     Startup( const KStartupInfoId& id, const KStartupInfoData& data, QObject * parent,
         const char *name = 0);
@@ -511,8 +523,6 @@ private:
 };
 
 
-typedef QValueList<Startup::Ptr> StartupList;
-
 /**
  * A generic API for task managers. This class provides an easy way to
  * build NET compliant task managers. It provides support for startup
@@ -545,12 +555,12 @@ public:
     /**
      * Returns a list of all current tasks.
      */
-    TaskList tasks() const { return _tasks; }
+    Task::Dict tasks() const { return m_tasksByWId; }
 
     /**
      * Returns a list of all current startups.
      */
-    StartupList startups() const { return _startups; }
+    Startup::List startups() const { return _startups; }
 
     /**
      * Returns the name of the nth desktop.
@@ -577,7 +587,7 @@ public:
      * updates. This generates a lot of activity so should only be used
      * when necessary.
      */
-    void trackGeometry(bool track) { m_trackGeometry = track; }
+    void trackGeometry() { m_trackGeometry = true; }
 
     /**
     * Returns whether the Window with WId wid is on the screen screen
@@ -617,8 +627,8 @@ signals:
     /**
      * Emitted when a window changes desktop.
      */
-    void windowChanged(WId);
-    void windowChangedGeometry(WId);
+    void windowChanged(Task::Ptr);
+    void windowChangedGeometry(Task::Ptr);
 
 protected slots:
     //* @internal
@@ -650,10 +660,10 @@ private:
     TaskManager();
 
     Task::Ptr               _active;
-    TaskList            _tasks;
-    QValueList< WId >   _skiptaskbar_windows;
-    StartupList         _startups;
-    KStartupInfo*       _startup_info;
+    Task::Dict m_tasksByWId;
+    QValueList< WId > _skiptaskbar_windows;
+    Startup::List _startups;
+    KStartupInfo* _startup_info;
     KWinModule* m_winModule;
     bool m_trackGeometry;
 

@@ -105,17 +105,14 @@ void TaskManager::configure_startup()
 
 Task::Ptr TaskManager::findTask(WId w)
 {
-    TaskList::iterator itEnd = _tasks.end();
-    for (TaskList::iterator it = _tasks.begin(); it != itEnd; ++it)
+    QMap<WId, Task::Ptr>::iterator it = m_tasksByWId.find(w);
+
+    if (it == m_tasksByWId.end())
     {
-        Task::Ptr t = *it;
-        if (t->window() == w  || t->hasTransient(w))
-        {
-            return t;
-        }
+        return 0;
     }
 
-    return 0;
+    return it.data();
 }
 
 Task::Ptr TaskManager::findTask(int desktop, const QPoint& p)
@@ -124,10 +121,10 @@ Task::Ptr TaskManager::findTask(int desktop, const QPoint& p)
 
     Task::Ptr task = 0;
     int currentIndex = -1;
-    TaskList::iterator itEnd = _tasks.end();
-    for (TaskList::iterator it = _tasks.begin(); it != itEnd; ++it)
+    Task::Dict::iterator itEnd = m_tasksByWId.end();
+    for (Task::Dict::iterator it = m_tasksByWId.begin(); it != itEnd; ++it)
     {
-        Task::Ptr t = *it;
+        Task::Ptr t = it.data();
         if (t->desktop() != desktop)
         {
             continue;
@@ -204,7 +201,8 @@ void TaskManager::windowAdded(WId w )
     }
 
     Task::Ptr t = new Task(w, this);
-    _tasks.append(t);
+//     _tasks.append(t);
+    m_tasksByWId[w] = t;
 
     // kdDebug() << "TM: Task added for WId: " << w << endl;
 
@@ -223,7 +221,8 @@ void TaskManager::windowRemoved(WId w )
 
     if (t->window() == w)
     {
-        _tasks.remove(t);
+//         _tasks.remove(t);
+        m_tasksByWId.remove(w);
         emit taskRemoved(t);
 
         if (t == _active)
@@ -274,14 +273,17 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     }
 
     // find task
-    Task::Ptr t = findTask( w );
-    if (!t) return;
+    Task::Ptr t = findTask(w);
+    if (!t)
+    {
+        return;
+    }
 
     //kdDebug() << "TaskManager::windowChanged " << w << " " << dirty << endl;
 
     if (dirty & NET::WMState)
     {
-        t->updateDemandsAttentionState( w );
+        t->updateDemandsAttentionState(w);
     }
 
     // refresh icon pixmap if necessary
@@ -296,14 +298,14 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         t->refresh(dirty);
     }
 
-    if (dirty & (NET::WMDesktop| NET::WMState | NET::XAWMState))
+    if (dirty & (NET::WMDesktop | NET::WMState | NET::XAWMState))
     {
         // moved to different desktop or is on all or change in iconification/withdrawnnes
-        emit windowChanged(w);
+        emit windowChanged(t);
     }
     else if (dirty & NET::WMGeometry)
     {
-        emit windowChangedGeometry(w);
+        emit windowChangedGeometry(t);
     }
 }
 
@@ -342,8 +344,8 @@ void TaskManager::gotNewStartup( const KStartupInfoId& id, const KStartupInfoDat
 
 void TaskManager::gotStartupChange( const KStartupInfoId& id, const KStartupInfoData& data )
 {
-    StartupList::iterator itEnd = _startups.end();
-    for (StartupList::iterator sIt = _startups.begin(); sIt != itEnd; ++sIt)
+    Startup::List::iterator itEnd = _startups.end();
+    for (Startup::List::iterator sIt = _startups.begin(); sIt != itEnd; ++sIt)
     {
         if ((*sIt)->id() == id)
         {
@@ -355,9 +357,9 @@ void TaskManager::gotStartupChange( const KStartupInfoId& id, const KStartupInfo
 
 void TaskManager::killStartup( const KStartupInfoId& id )
 {
-    StartupList::iterator itEnd = _startups.end();
+    Startup::List::iterator itEnd = _startups.end();
     Startup::Ptr s = 0;
-    for (StartupList::iterator sIt = _startups.begin(); sIt != itEnd; ++sIt)
+    for (Startup::List::iterator sIt = _startups.begin(); sIt != itEnd; ++sIt)
     {
         if ((*sIt)->id() == id)
         {
@@ -407,11 +409,11 @@ bool TaskManager::isOnTop(const Task* task)
     QValueList<WId>::ConstIterator it = m_winModule->stackingOrder().fromLast();
     do
     {
-        TaskList::iterator taskItEnd = _tasks.end();
-        for (TaskList::iterator taskIt = _tasks.begin();
+        Task::Dict::iterator taskItEnd = m_tasksByWId.end();
+        for (Task::Dict::iterator taskIt = m_tasksByWId.begin();
              taskIt != taskItEnd; ++taskIt)
         {
-            Task::Ptr t = *taskIt;
+            Task::Ptr t = taskIt.data();
             if ((*it) == t->window())
             {
                 if (t == task)
@@ -1123,14 +1125,14 @@ int TaskManager::currentDesktop() const
     return m_winModule->currentDesktop();
 }
 
-TaskDrag::TaskDrag(const TaskList& tasks, QWidget* source, const char* name)
+TaskDrag::TaskDrag(const Task::List& tasks, QWidget* source, const char* name)
   : QStoredDrag("taskbar/task", source, name)
 {
     QByteArray data;
     QDataStream stream(data, IO_WriteOnly);
 
-    TaskList::const_iterator itEnd = tasks.end();
-    for (TaskList::const_iterator it = tasks.begin(); it != itEnd; ++it)
+    Task::List::const_iterator itEnd = tasks.end();
+    for (Task::List::const_iterator it = tasks.begin(); it != itEnd; ++it)
     {
         stream << (*it)->window();
     }
@@ -1147,10 +1149,10 @@ bool TaskDrag::canDecode(const QMimeSource* e)
     return e->provides("taskbar/task");
 }
 
-TaskList TaskDrag::decode( const QMimeSource* e )
+Task::List TaskDrag::decode( const QMimeSource* e )
 {
     QByteArray data(e->encodedData("taskbar/task"));
-    TaskList tasks;
+    Task::List tasks;
 
     if (data.size())
     {

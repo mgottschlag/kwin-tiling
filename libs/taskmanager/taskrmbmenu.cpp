@@ -32,22 +32,24 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskrmbmenu.h"
 #include "taskrmbmenu.moc"
 
-TaskRMBMenu::TaskRMBMenu(TaskList* theTasks, bool show, QWidget *parent, const char *name)
+TaskRMBMenu::TaskRMBMenu(const Task::List& theTasks, bool show, QWidget *parent, const char *name)
 	: QPopupMenu( parent, name )
 	, tasks( theTasks )
 	, showAll( show )
 {
-	assert( tasks->count() > 0 );
-	if( tasks->count() == 1 ) {
-		fillMenu(tasks->first());
-	} else {
-		fillMenu(tasks);
-	}
+    assert(tasks.count() > 0);
+    if (tasks.count() == 1)
+    {
+        fillMenu(tasks.first());
+    }
+    else
+    {
+        fillMenu();
+    }
 }
 
 TaskRMBMenu::TaskRMBMenu(Task::Ptr task, bool show, QWidget *parent, const char *name)
 	: QPopupMenu( parent, name )
-	, tasks(0)
 	, showAll( show )
 {
 	fillMenu(task);
@@ -102,13 +104,13 @@ void TaskRMBMenu::fillMenu(Task::Ptr t)
     setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionClose));
 }
 
-void TaskRMBMenu::fillMenu(TaskList *tasks)
+void TaskRMBMenu::fillMenu()
 {
 	int id;
 	setCheckable( true );
 
-    TaskList::iterator itEnd = (*tasks).end();
-    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+    Task::List::iterator itEnd = tasks.end();
+    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
     {
 		Task::Ptr t = (*it);
 
@@ -125,11 +127,11 @@ void TaskRMBMenu::fillMenu(TaskList *tasks)
 
     if (TaskManager::the()->numberOfDesktops() > 1)
     {
-        id = insertItem(i18n("All to &Desktop"), makeDesktopsMenu(tasks));
+        id = insertItem(i18n("All to &Desktop"), makeDesktopsMenu());
 
         id = insertItem(i18n("All &to Current Desktop"), this, SLOT(slotAllToCurrentDesktop()));
-        TaskList::iterator itEnd = (*tasks).end();
-        for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+        Task::List::iterator itEnd = tasks.end();
+        for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
         {
             if (!(*it)->isOnCurrentDesktop())
             {
@@ -143,8 +145,8 @@ void TaskRMBMenu::fillMenu(TaskList *tasks)
     enable = false;
 
 	id = insertItem( i18n( "Mi&nimize All" ), this, SLOT( slotMinimizeAll() ) );
-    itEnd = (*tasks).end();
-    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+    itEnd = tasks.end();
+    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
     {
 		if( !(*it)->isIconified() ) {
 			enable = true;
@@ -156,8 +158,8 @@ void TaskRMBMenu::fillMenu(TaskList *tasks)
 	enable = false;
 
 	id = insertItem( i18n( "Ma&ximize All" ), this, SLOT( slotMaximizeAll() ) );
-    itEnd = (*tasks).end();
-    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+    itEnd = tasks.end();
+    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         if( !(*it)->isMaximized() ) {
 			enable = true;
@@ -169,8 +171,8 @@ void TaskRMBMenu::fillMenu(TaskList *tasks)
 	enable = false;
 
 	id = insertItem( i18n( "&Restore All" ), this, SLOT( slotRestoreAll() ) );
-    itEnd = (*tasks).end();
-    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+    itEnd = tasks.end();
+    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
     {
 		if( (*it)->isIconified() || (*it)->isMaximized() ) {
 			enable = true;
@@ -185,7 +187,7 @@ void TaskRMBMenu::fillMenu(TaskList *tasks)
 
 	/*
 	id = insertItem( i18n( "&Shade All" ), this, SLOT( slotShadeAll() ), 0, OpMenu::ShadeOp );
-	for( QPtrListIterator<Task> it(*tasks); *it; ++it ) {
+	for( QPtrListIterator<Task> it(tasks); *it; ++it ) {
 		if( !(*it)->isShaded() ) {
 			enable = true;
 			break;
@@ -248,7 +250,7 @@ QPopupMenu* TaskRMBMenu::makeDesktopsMenu(Task::Ptr t)
 	return m;
 }
 
-QPopupMenu* TaskRMBMenu::makeDesktopsMenu(TaskList*)
+QPopupMenu* TaskRMBMenu::makeDesktopsMenu()
 {
 	QPopupMenu* m = new QPopupMenu( this );
 	m->setCheckable( true );
@@ -269,8 +271,8 @@ QPopupMenu* TaskRMBMenu::makeDesktopsMenu(TaskList*)
 
 void TaskRMBMenu::slotMinimizeAll()
 {
-    TaskList::iterator itEnd = (*tasks).end();
-    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+    Task::List::iterator itEnd = tasks.end();
+    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->setIconified(true);
     }
@@ -278,8 +280,8 @@ void TaskRMBMenu::slotMinimizeAll()
 
 void TaskRMBMenu::slotMaximizeAll()
 {
-    TaskList::iterator itEnd = (*tasks).end();
-    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+    Task::List::iterator itEnd = tasks.end();
+    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->setMaximized(true);
     }
@@ -287,8 +289,8 @@ void TaskRMBMenu::slotMaximizeAll()
 
 void TaskRMBMenu::slotRestoreAll()
 {
-    TaskList::iterator itEnd = (*tasks).end();
-    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+    Task::List::iterator itEnd = tasks.end();
+    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->restore();
     }
@@ -296,8 +298,8 @@ void TaskRMBMenu::slotRestoreAll()
 
 void TaskRMBMenu::slotShadeAll()
 {
-    TaskList::iterator itEnd = (*tasks).end();
-    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+    Task::List::iterator itEnd = tasks.end();
+    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->setShaded( !(*it)->isShaded() );
     }
@@ -305,8 +307,8 @@ void TaskRMBMenu::slotShadeAll()
 
 void TaskRMBMenu::slotCloseAll()
 {
-    TaskList::iterator itEnd = (*tasks).end();
-    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+    Task::List::iterator itEnd = tasks.end();
+    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->close();
     }
@@ -314,8 +316,8 @@ void TaskRMBMenu::slotCloseAll()
 
 void TaskRMBMenu::slotAllToDesktop( int desktop )
 {
-    TaskList::iterator itEnd = (*tasks).end();
-    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+    Task::List::iterator itEnd = tasks.end();
+    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->toDesktop( desktop );
     }
@@ -323,8 +325,8 @@ void TaskRMBMenu::slotAllToDesktop( int desktop )
 
 void TaskRMBMenu::slotAllToCurrentDesktop()
 {
-    TaskList::iterator itEnd = (*tasks).end();
-    for (TaskList::iterator it = (*tasks).begin(); it != itEnd; ++it)
+    Task::List::iterator itEnd = tasks.end();
+    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->toCurrentDesktop();
     }

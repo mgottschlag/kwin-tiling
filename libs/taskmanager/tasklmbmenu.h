@@ -56,7 +56,7 @@ class KDE_EXPORT TaskLMBMenu : public QPopupMenu
     Q_OBJECT
 
 public:
-    TaskLMBMenu(TaskList* list, QWidget *parent = 0, const char *name = 0);
+    TaskLMBMenu(const Task::List& list, QWidget *parent = 0, const char *name = 0);
 
 protected slots:
     void dragSwitch();
@@ -71,9 +71,9 @@ protected:
     void mouseReleaseEvent(QMouseEvent*);
 
 private:
-    void fillMenu(TaskList* tasks);
+    void fillMenu();
 
-    TaskList&  m_tasks;
+    Task::List m_tasks;
     int        m_lastDragId;
     bool       m_attentionState;
     QTimer*    m_attentionTimer;

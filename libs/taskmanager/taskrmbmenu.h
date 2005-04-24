@@ -32,15 +32,15 @@ class KDE_EXPORT TaskRMBMenu : public QPopupMenu
 	Q_OBJECT
 
 public:
-	TaskRMBMenu(TaskList*, bool showAll = true, QWidget *parent = 0, const char *name = 0);
+	TaskRMBMenu(const Task::List&, bool showAll = true, QWidget *parent = 0, const char *name = 0);
 	TaskRMBMenu(Task::Ptr, bool showAll = true, QWidget *parent = 0, const char *name = 0);
 
 private:
 	void fillMenu(Task::Ptr);
-	void fillMenu(TaskList*);
+	void fillMenu();
     QPopupMenu* makeAdvancedMenu(Task::Ptr);
 	QPopupMenu* makeDesktopsMenu(Task::Ptr);
-	QPopupMenu* makeDesktopsMenu(TaskList*);
+	QPopupMenu* makeDesktopsMenu();
 
 private slots:
 	void slotMinimizeAll();
@@ -52,7 +52,7 @@ private slots:
 	void slotAllToCurrentDesktop();
 
 private:
-	TaskList* tasks;
+	Task::List tasks;
 	bool showAll;
 };
 
