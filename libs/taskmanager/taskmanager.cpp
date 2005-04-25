@@ -125,7 +125,7 @@ Task::Ptr TaskManager::findTask(int desktop, const QPoint& p)
     for (Task::Dict::iterator it = m_tasksByWId.begin(); it != itEnd; ++it)
     {
         Task::Ptr t = it.data();
-        if (t->desktop() != desktop)
+        if (!t->isOnAllDesktops() && t->desktop() != desktop)
         {
             continue;
         }
