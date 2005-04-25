@@ -107,8 +107,12 @@ bool RandRScreen::applyProposed()
 
 	if (proposedRefreshRate() < 0)
 		status = XRRSetScreenConfig(qt_xdisplay(), d->config, DefaultRootWindow(qt_xdisplay()), (SizeID)proposedSize(), (Rotation)proposedRotation(), CurrentTime);
-	else
+	else {
+		if( refreshRateIndexToHz(proposedSize(), proposedRefreshRate()) <= 0 ) {
+			m_proposedRefreshRate = 0;
+		}
 		status = XRRSetScreenConfigAndRate(qt_xdisplay(), d->config, DefaultRootWindow(qt_xdisplay()), (SizeID)proposedSize(), (Rotation)proposedRotation(), refreshRateIndexToHz(proposedSize(), proposedRefreshRate()), CurrentTime);
+	}
 
 	//kdDebug() << "New size: " << WidthOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << ", " << HeightOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << endl;
 
@@ -455,7 +459,8 @@ int RandRScreen::refreshRateIndexToHz(int size, int index) const
 		return 0;
 
 	// Wrong input Hz!
-	Q_ASSERT(index < nrates);
+	if(index >= nrates)
+		return 0;
 
 	return rates[index];
 }
