@@ -196,6 +196,8 @@ void BGDialog::makeReadOnly()
     m_comboBlend->setEnabled( false );
     m_sliderBlend->setEnabled( false );
     m_cbBlendReverse->setEnabled( false );
+    m_buttonAdvanced->setEnabled( false );
+    m_buttonGetNew->setEnabled( false );
 }
 
 void BGDialog::load()
