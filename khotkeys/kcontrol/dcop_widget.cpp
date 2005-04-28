@@ -71,8 +71,9 @@ void Dcop_widget::set_data( const Dcop_action* data_P )
 
 Dcop_action* Dcop_widget::get_data( Action_data* data_P ) const
     {
-    return new Dcop_action( data_P, remote_app_lineedit->text(), remote_object_lineedit->text(),
-        called_function_lineedit->text(), arguments_lineedit->text());
+    return new Dcop_action( data_P, remote_app_lineedit->text().stripWhiteSpace(),
+        remote_object_lineedit->text().stripWhiteSpace(),
+        called_function_lineedit->text().stripWhiteSpace(), arguments_lineedit->text());
     }
     
 // CHECKME later "steal" whole interfaces browsing from kdcop
