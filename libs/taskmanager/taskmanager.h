@@ -36,10 +36,25 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qrect.h>
 #include <qvaluelist.h>
 
-#include <dcopobject.h>
 #include <ksharedptr.h>
 #include <kstartupinfo.h>
 #include <kwin.h>
+
+#include <config.h>
+
+#if defined(HAVE_XCOMPOSITE) && \
+    defined(HAVE_XRENDER) && \
+    defined(HAVE_XFIXES)
+#include <X11/Xlib.h>
+#include <X11/extensions/Xcomposite.h>
+#include <X11/extensions/Xfixes.h>
+#include <X11/extensions/Xrender.h>
+#if XCOMPOSITE_VERSION >= 00200 && \
+    XFIXES_VERSION >= 20000 && \
+    (RENDER_MAJOR > 0 || RENDER_MINOR >= 6)
+#define THUMBNAILING_POSSIBLE
+#endif
+#endif
 
 class KWinModule;
 class TaskManager;
@@ -291,6 +306,10 @@ public:
      */
     const QPixmap &thumbnail() const { return _thumb; }
 
+    QPixmap thumbnail(int maxDimension);
+
+    void updateWindowPixmap();
+
 public slots:
     // actions
 
@@ -426,9 +445,13 @@ protected slots:
     //* @internal
     void generateThumbnail();
 
+protected:
+    void findWindowFrameId();
+
 private:
     bool                _active;
     WId                 _win;
+    WId                 m_frameId;
     QPixmap             _pixmap;
     KWin::WindowInfo    _info;
     QValueList<WId>     _transients;
@@ -442,8 +465,9 @@ private:
     double _thumbSize;
     QPixmap _thumb;
     QPixmap _grab;
-
-    class TaskPrivate *d;
+#ifdef THUMBNAILING_POSSIBLE
+    Pixmap              m_windowPixmap;
+#endif // THUMBNAILING_POSSIBLE
 };
 
 
@@ -596,6 +620,8 @@ public:
 
     KWinModule* winModule() const { return m_winModule; }
 
+    static bool useXComposite() { return m_usableXComposite; }
+
 signals:
     /**
      * Emitted when a new task has started.
@@ -653,8 +679,9 @@ protected slots:
     void gotStartupChange( const KStartupInfoId&, const KStartupInfoData& );
 
 protected:
-
     void configure_startup();
+    void initComposite();
+    void updateWindowPixmap(WId);
 
 private:
     TaskManager();
@@ -668,6 +695,7 @@ private:
     bool m_trackGeometry;
 
     static TaskManager* m_self;
+    static bool m_usableXComposite;
 
     class TaskManagerPrivate *d;
 };
