@@ -620,7 +620,8 @@ public:
 
     KWinModule* winModule() const { return m_winModule; }
 
-    static bool useXComposite() { return m_usableXComposite; }
+    void setXCompositeEnabled(bool state);
+    static bool xCompositeEnabled() { return m_xCompositeEnabled != 0; }
 
 signals:
     /**
@@ -680,7 +681,6 @@ protected slots:
 
 protected:
     void configure_startup();
-    void initComposite();
     void updateWindowPixmap(WId);
 
 private:
@@ -695,7 +695,7 @@ private:
     bool m_trackGeometry;
 
     static TaskManager* m_self;
-    static bool m_usableXComposite;
+    static uint m_xCompositeEnabled;
 
     class TaskManagerPrivate *d;
 };

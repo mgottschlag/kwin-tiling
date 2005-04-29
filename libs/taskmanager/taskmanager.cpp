@@ -41,7 +41,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 TaskManager* TaskManager::m_self = 0;
 static KStaticDeleter<TaskManager> staticTaskManagerDeleter;
-bool TaskManager::m_usableXComposite = false;
+uint TaskManager::m_xCompositeEnabled = 0;
 
 TaskManager* TaskManager::the()
 {
@@ -65,8 +65,6 @@ TaskManager::TaskManager()
     connect(m_winModule, SIGNAL(activeWindowChanged(WId)), SLOT(activeWindowChanged(WId)));
     connect(m_winModule, SIGNAL(currentDesktopChanged(int)), SLOT(currentDesktopChanged(int)));
     connect(m_winModule, SIGNAL(windowChanged(WId,unsigned int)), SLOT(windowChanged(WId,unsigned int)));
-
-    initComposite();
 
     // register existing windows
     const QValueList<WId> windows = m_winModule->windows();
@@ -107,10 +105,31 @@ void TaskManager::configure_startup()
     _startup_info->setTimeout( c.readUnsignedNumEntry( "Timeout", 30 ));
 }
 
-void TaskManager::initComposite()
+void TaskManager::setXCompositeEnabled(bool state)
 {
 #ifdef THUMBNAILING_POSSIBLE
     Display *dpy = QPaintDevice::x11AppDisplay();
+
+    if (!state)
+    {
+        if (!--m_xCompositeEnabled)
+        {
+            // unredirecting windows
+            for (int i = 0; i < ScreenCount(dpy); i++)
+            {
+                XCompositeUnredirectSubwindows(dpy, RootWindow(dpy, i),
+                                                CompositeRedirectAutomatic);
+            }
+        }
+        return;
+    }
+
+    if (m_xCompositeEnabled)
+    {
+        // we don't unlearn riding bike ;)
+        m_xCompositeEnabled++;
+        return;
+    }
 
     // XComposite extension check
     int event_base, error_base;
@@ -161,13 +180,19 @@ void TaskManager::initComposite()
     }
 
     // if we get here, we've got usable extensions
-    m_usableXComposite = true;
+    m_xCompositeEnabled++;
 
     // redirecting windows to backing pixmaps
     for (int i = 0; i < ScreenCount(dpy); i++)
     {
         XCompositeRedirectSubwindows(dpy, RootWindow(dpy, i),
                                      CompositeRedirectAutomatic);
+    }
+
+    Task::Dict::iterator itEnd = m_tasksByWId.end();
+    for (Task::Dict::iterator it = m_tasksByWId.begin(); it != itEnd; ++it)
+    {
+        it.data()->updateWindowPixmap();
     }
 #endif // THUMBNAILING_POSSIBLE
 }
@@ -372,7 +397,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         // moved to different desktop or is on all or change in iconification/withdrawnnes
         emit windowChanged(t);
 
-        if (m_usableXComposite && dirty & NET::WMState && !t->isMinimized())
+        if (m_xCompositeEnabled && dirty & NET::WMState)
         {
             // update on restoring a minimized window
             updateWindowPixmap(w);
@@ -383,7 +408,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     {
         emit windowChangedGeometry(t);
 
-        if (m_usableXComposite && t->isOnCurrentDesktop())
+        if (m_xCompositeEnabled)
         {
             // update on size changes, not on task drags
             updateWindowPixmap(w);
@@ -394,7 +419,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
 
 void TaskManager::updateWindowPixmap(WId w)
 {
-    if (!m_usableXComposite)
+    if (!m_xCompositeEnabled)
     {
         return;
     }
@@ -584,15 +609,11 @@ Task::Task(WId win, QObject *parent, const char *name)
 
 #ifdef THUMBNAILING_POSSIBLE
     m_windowPixmap = 0;
+    findWindowFrameId();
 
-    if (TaskManager::useXComposite())
+    if (TaskManager::xCompositeEnabled())
     {
-        findWindowFrameId();
-
-        if (!isMinimized() && isOnCurrentDesktop())
-        {
-            updateWindowPixmap();
-        }
+        updateWindowPixmap();
     }
 #endif // THUMBNAILING_POSSIBLE
 }
@@ -1266,7 +1287,7 @@ void Task::generateThumbnail()
 QPixmap Task::thumbnail(int maxDimension)
 {
 #ifdef THUMBNAILING_POSSIBLE
-    if (!TaskManager::useXComposite() || !m_windowPixmap)
+    if (!TaskManager::xCompositeEnabled() || !m_windowPixmap)
     {
         return QPixmap();
     }
@@ -1356,7 +1377,8 @@ QPixmap Task::thumbnail(int maxDimension)
 void Task::updateWindowPixmap()
 {
 #ifdef THUMBNAILING_POSSIBLE
-    if (!TaskManager::useXComposite())
+    if (!TaskManager::xCompositeEnabled() || !isOnCurrentDesktop() ||
+        isMinimized())
     {
         return;
     }
