@@ -722,6 +722,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     the_server = this;
     clean = false;
     wm = windowManager;
+    startupSuspendCount = 0;
 
     shutdownType = KApplication::ShutdownTypeNone;
 
@@ -735,6 +736,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     xonCommand = config->readEntry( "xonCommand", "xon" );
     
     connect( &knotifyTimeoutTimer, SIGNAL( timeout()), SLOT( knotifyTimeout()));
+    connect( &startupSuspendTimeoutTimer, SIGNAL( timeout()), SLOT( startupSuspendTimeout()));
 
     only_local = _only_local;
 #ifdef HAVE__ICETRANSNOLISTEN
@@ -814,7 +816,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     signal(SIGPIPE, SIG_IGN);
 
     connect( &protectionTimer, SIGNAL( timeout() ), this, SLOT( protectionTimeout() ) );
-    connect( &restoreTimer, SIGNAL( timeout() ), this, SLOT( restoreNextInternal() ) );
+    connect( &restoreTimer, SIGNAL( timeout() ), this, SLOT( tryRestoreNext() ) );
     connect( kapp, SIGNAL( shutDown() ), this, SLOT( cleanUp() ) );
 }
 
@@ -1545,9 +1547,30 @@ void KSMServer::clientSetProgram( KSMClient* client )
 void KSMServer::clientRegistered( const char* previousId )
 {
     if ( previousId && lastIdStarted == previousId )
-        restoreNextInternal();
+        tryRestoreNext();
 }
 
+
+void KSMServer::suspendStartup()
+{
+    ++startupSuspendCount;
+}
+
+void KSMServer::resumeStartup()
+{
+    if( startupSuspendCount > 0 ) {
+        --startupSuspendCount;
+        if( startupSuspendCount == 0 && startupSuspendTimeoutTimer.isActive())
+            restoreNext();
+    }
+}
+
+void KSMServer::startupSuspendTimeout()
+{
+    kdDebug() << "Startup suspend timeout" << endl;
+    startupSuspendCount = 0;
+    restoreNext();
+}
 
 void KSMServer::restoreSessionInternal()
 {
@@ -1555,12 +1578,22 @@ void KSMServer::restoreSessionInternal()
                           "restoreSessionInternal()");
     lastAppStarted = 0;
     lastIdStarted = QString::null;
-    restoreNextInternal();
+    tryRestoreNext();
 }
 
-void KSMServer::restoreNextInternal()
+void KSMServer::tryRestoreNext()
+{
+    if( startupSuspendCount > 0 ) {
+        startupSuspendTimeoutTimer.start( 10000, true );
+        return;
+    }
+    restoreNext();
+}
+
+void KSMServer::restoreNext()
 {
     restoreTimer.stop();
+    startupSuspendTimeoutTimer.stop();
     KConfig* config = KGlobal::config();
     config->setGroup( sessionGroup );
 

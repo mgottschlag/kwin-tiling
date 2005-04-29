@@ -112,6 +112,9 @@ public:
                    KApplication::ShutdownType sdtype,
                    KApplication::ShutdownMode sdmode );
 
+    virtual void suspendStartup();
+    virtual void resumeStartup();
+
 public slots:
     void cleanUp();
 
@@ -127,7 +130,9 @@ private slots:
 
     void autoStart();
     void autoStart2();
-    void restoreNextInternal();
+    void tryRestoreNext();
+    void restoreNext();
+    void startupSuspendTimeout();
 
 private:
     void handlePendingInteractions();
@@ -177,6 +182,7 @@ private:
     bool saveSession;
     int wmPhase1WaitingCount;
     int saveType;
+    int startupSuspendCount;
 
     KApplication::ShutdownType shutdownType;
     KApplication::ShutdownMode shutdownMode;
@@ -193,6 +199,7 @@ private:
     QString xonCommand;
     int logoutSoundEvent;
     QTimer knotifyTimeoutTimer;
+    QTimer startupSuspendTimeoutTimer;
 
     // ksplash interface
     void upAndRunning( const QString& msg );
