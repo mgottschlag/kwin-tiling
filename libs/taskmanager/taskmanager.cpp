@@ -211,7 +211,7 @@ Task::Ptr TaskManager::findTask(WId w)
     Task::Dict::iterator it = m_tasksByWId.begin();
     Task::Dict::iterator itEnd = m_tasksByWId.end();
 
-    if (it != itEnd)
+    if (it == itEnd)
     {
         return it.data();
     }
