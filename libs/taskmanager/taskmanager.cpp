@@ -211,11 +211,6 @@ Task::Ptr TaskManager::findTask(WId w)
     Task::Dict::iterator it = m_tasksByWId.begin();
     Task::Dict::iterator itEnd = m_tasksByWId.end();
 
-    if (it == itEnd)
-    {
-        return it.data();
-    }
-
     for (; it !=itEnd; ++it)
     {
         if (it.key() == w || it.data()->hasTransient(w))
