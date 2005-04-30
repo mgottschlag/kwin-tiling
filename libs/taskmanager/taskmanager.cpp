@@ -60,11 +60,16 @@ TaskManager::TaskManager()
       m_trackGeometry(false)
 {
     KGlobal::locale()->insertCatalogue("libtaskmanager");
-    connect(m_winModule, SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)));
-    connect(m_winModule, SIGNAL(windowRemoved(WId)), SLOT(windowRemoved(WId)));
-    connect(m_winModule, SIGNAL(activeWindowChanged(WId)), SLOT(activeWindowChanged(WId)));
-    connect(m_winModule, SIGNAL(currentDesktopChanged(int)), SLOT(currentDesktopChanged(int)));
-    connect(m_winModule, SIGNAL(windowChanged(WId,unsigned int)), SLOT(windowChanged(WId,unsigned int)));
+    connect(m_winModule, SIGNAL(windowAdded(WId)),
+            this,        SLOT(windowAdded(WId)));
+    connect(m_winModule, SIGNAL(windowRemoved(WId)),
+            this,        SLOT(windowRemoved(WId)));
+    connect(m_winModule, SIGNAL(activeWindowChanged(WId)),
+            this,        SLOT(activeWindowChanged(WId)));
+    connect(m_winModule, SIGNAL(currentDesktopChanged(int)),
+            this,        SLOT(currentDesktopChanged(int)));
+    connect(m_winModule, SIGNAL(windowChanged(WId,unsigned int)),
+            this,        SLOT(windowChanged(WId,unsigned int)));
 
     // register existing windows
     const QValueList<WId> windows = m_winModule->windows();
@@ -199,14 +204,27 @@ void TaskManager::setXCompositeEnabled(bool state)
 
 Task::Ptr TaskManager::findTask(WId w)
 {
-    Task::Dict::iterator it = m_tasksByWId.find(w);
+    // TODO: might be able to be made more efficient if
+    // we check to see if w is a transient first?
+    // profiling would say whether this is worth the effort
 
-    if (it == m_tasksByWId.end())
+    Task::Dict::iterator it = m_tasksByWId.begin();
+    Task::Dict::iterator itEnd = m_tasksByWId.end();
+
+    if (it != itEnd)
     {
-        return 0;
+        return it.data();
     }
 
-    return it.data();
+    for (; it !=itEnd; ++it)
+    {
+        if (it.key() == w || it.data()->hasTransient(w))
+        {
+            return it.data();
+        }
+    }
+
+    return 0;
 }
 
 Task::Ptr TaskManager::findTask(int desktop, const QPoint& p)
@@ -280,7 +298,6 @@ void TaskManager::windowAdded(WId w )
             && transient_for != 0
             && wType != NET::Utility )
         {
-
             Task::Ptr t = findTask(transient_for);
             if (t)
             {
@@ -295,7 +312,6 @@ void TaskManager::windowAdded(WId w )
     }
 
     Task::Ptr t = new Task(w, this);
-//     _tasks.append(t);
     m_tasksByWId[w] = t;
 
     // kdDebug() << "TM: Task added for WId: " << w << endl;
@@ -303,9 +319,10 @@ void TaskManager::windowAdded(WId w )
     emit taskAdded(t);
 }
 
-void TaskManager::windowRemoved(WId w )
+void TaskManager::windowRemoved(WId w)
 {
-    _skiptaskbar_windows.remove( w );
+    _skiptaskbar_windows.remove(w);
+
     // find task
     Task::Ptr t = findTask(w);
     if (!t)
@@ -315,7 +332,6 @@ void TaskManager::windowRemoved(WId w )
 
     if (t->window() == w)
     {
-//         _tasks.remove(t);
         m_tasksByWId.remove(w);
         emit taskRemoved(t);
 
@@ -328,7 +344,7 @@ void TaskManager::windowRemoved(WId w )
     }
     else
     {
-        t->removeTransient( w );
+        t->removeTransient(w);
         //kdDebug() << "TM: Transient " << w << " for Task " << t->window() << " removed." << endl;
     }
 }
@@ -361,7 +377,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     if (!(dirty & (NET::WMVisibleName | NET::WMVisibleIconName | NET::WMName |
                    NET::WMIconName | NET::WMState | NET::WMIcon |
                    NET::XAWMState | NET::WMDesktop) ||
-        (m_trackGeometry && dirty & NET::WMGeometry)))
+          (m_trackGeometry && dirty & NET::WMGeometry)))
     {
         return;
     }
@@ -791,13 +807,19 @@ bool Task::isOnScreen( int screen ) const
 
 void Task::updateDemandsAttentionState( WId w )
 {
-    if( window() != w ) { // 'w' is a transient for this task
+    if (window() != w)
+    {
+        // 'w' is a transient for this task
         NETWinInfo i( qt_xdisplay(), w, qt_xrootwin(), NET::WMState );
-        if( i.state() & NET::DemandsAttention ) {
-            if( !_transients_demanding_attention.contains( w )) {
-                _transients_demanding_attention.append( w );
+        if(i.state() & NET::DemandsAttention)
+        {
+            if (!_transients_demanding_attention.contains(w))
+            {
+                _transients_demanding_attention.append(w);
             }
-        } else {
+        }
+        else
+        {
             _transients_demanding_attention.remove( w );
         }
     }
@@ -806,17 +828,17 @@ void Task::updateDemandsAttentionState( WId w )
 void Task::addTransient( WId w, const NETWinInfo& info )
 {
     _transients.append(w);
-    if (_info.valid() && info.state() & NET::DemandsAttention)
+    if (info.state() & NET::DemandsAttention)
     {
         _transients_demanding_attention.append(w);
         emit changed();
     }
 }
 
-void Task::removeTransient( WId w )
+void Task::removeTransient(WId w)
 {
-    _transients.remove( w );
-    _transients_demanding_attention.remove( w );
+    _transients.remove(w);
+    _transients_demanding_attention.remove(w);
 }
 
 QString Task::className()
@@ -1113,8 +1135,10 @@ void Task::activate()
 {
 //    kdDebug(1210) << "Task::activate():" << name() << endl;
     WId w = _win;
-    if( _transients_demanding_attention.count() > 0 )
+    if (_transients_demanding_attention.count() > 0)
+    {
         w = _transients_demanding_attention.last();
+    }
     KWin::forceActiveWindow( w );
 }
 

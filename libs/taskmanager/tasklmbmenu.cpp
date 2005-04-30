@@ -34,7 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "global.h"
 
 TaskMenuItem::TaskMenuItem(const QString &text,
-                          bool active, bool minimized, bool attention)
+                           bool active, bool minimized, bool attention)
   : QCustomMenuItem(),
     m_text(text),
     m_isActive(active),
