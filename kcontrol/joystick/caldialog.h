@@ -42,6 +42,9 @@ class CalDialog : public KDialogBase
     void waitButton(int axis, bool press, int &lastVal);
 
   private:
+    virtual void slotUser1();
+
+  private:
     JoyDevice *joydev;
 
     QLabel *text;

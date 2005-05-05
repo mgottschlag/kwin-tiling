@@ -36,7 +36,7 @@
 CalDialog::CalDialog(QWidget *parent, JoyDevice *joy)
   : KDialogBase(parent, "calibrateDialog", true,
       i18n("Calibration"),
-      KDialogBase::Cancel, KDialogBase::Cancel, true),
+      KDialogBase::Cancel|KDialogBase::User1, KDialogBase::User1, true, KGuiItem(i18n("Next"))),
     joydev(joy)
 {
   QVBox *main = makeVBoxMainWidget();
@@ -59,6 +59,10 @@ void CalDialog::calibrate()
   QTimer ti;
   ti.start(2000, true); // single shot in 2 seconds
 
+  // normally I'd like to hide the 'Next' button in this step,
+  // but it does not work - which means: in the steps after the first,
+  // the 'Next' button does not have the focus (to be the default button)
+
   do
   {
     qApp->processEvents(2000);
@@ -69,16 +73,25 @@ void CalDialog::calibrate()
 
   int i, lastVal;
   int min[2], center[2], max[2];
+  QString hint;
 
   for (i = 0; i < joydev->numAxes(); i++)
   {
+    if ( i == 0 )
+      hint = i18n("(usually X)");
+    else if ( i == 1 )
+      hint = i18n("(usually Y)");
+    else
+      hint = "";
+
     // minimum position
     text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br><br>"
-                       "Please move <b>axis %1</b> on your device to the <b>minimum</b> position.<br><br>"
-                       "Press any button on the device to continue with the next step.</qt>").arg(i+1));
+                       "Please move <b>axis %1 %2</b> on your device to the <b>minimum</b> position.<br><br>"
+                       "Press any button on the device or click on the 'Next' button "
+                       "to continue with the next step.</qt>").arg(i+1).arg(hint));
     waitButton(i, true, lastVal);
     joydev->resetMinMax(i, lastVal);
-    waitButton(i, false, lastVal);
+    if ( result() != -2 ) waitButton(i, false, lastVal);
 
     min[0] = joydev->axisMin(i);
     min[1] = joydev->axisMax(i);
@@ -87,11 +100,12 @@ void CalDialog::calibrate()
 
     // center position
     text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br><br>"
-                       "Please move <b>axis %1</b> on your device to the <b>center</b> position.<br><br>"
-                       "Press any button on the device to continue with the next step.</qt>").arg(i+1));
+                       "Please move <b>axis %1 %2</b> on your device to the <b>center</b> position.<br><br>"
+                       "Press any button on the device or click on the 'Next' button "
+                       "to continue with the next step.</qt>").arg(i+1).arg(hint));
     waitButton(i, true, lastVal);
     joydev->resetMinMax(i, lastVal);
-    waitButton(i, false, lastVal);
+    if ( result() != -2 ) waitButton(i, false, lastVal);
 
     center[0] = joydev->axisMin(i);
     center[1] = joydev->axisMax(i);
@@ -100,11 +114,12 @@ void CalDialog::calibrate()
 
     // maximum position
     text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br><br>"
-                       "Please move <b>axis %1</b> on your device to the <b>maximum</b> position.<br><br>"
-                       "Press any button on the device to continue with the next step.</qt>").arg(i+1));
+                       "Please move <b>axis %1 %2</b> on your device to the <b>maximum</b> position.<br><br>"
+                       "Press any button on the device or click on the 'Next' button "
+                       "to continue with the next step.</qt>").arg(i+1).arg(hint));
     waitButton(i, true, lastVal);
     joydev->resetMinMax(i, lastVal);
-    waitButton(i, false, lastVal);
+    if ( result() != -2 ) waitButton(i, false, lastVal);
 
     max[0] = joydev->axisMin(i);
     max[1] = joydev->axisMax(i);
@@ -135,7 +150,8 @@ void CalDialog::waitButton(int axis, bool press, int &lastVal)
   bool button = false;
   lastVal = 0;
 
-  // loop until the user presses a button on the device
+  setResult(-1);
+  // loop until the user presses a button on the device or on the dialog
   do
   {
     qApp->processEvents(100);
@@ -148,7 +164,18 @@ void CalDialog::waitButton(int axis, bool press, int &lastVal)
         valueLbl->setText(i18n("Value Axis %1: %2").arg(axis+1).arg(lastVal = value));
     }
   }
-  while ( !button && (result() != QDialog::Rejected) );
+  while ( !button && (result() == -1) );
 }
+
+//--------------------------------------------------------------
+
+void CalDialog::slotUser1()
+{
+  setResult(-2);
+}
+
+//--------------------------------------------------------------
+
 #include "caldialog.moc"
+
 //--------------------------------------------------------------
