@@ -199,6 +199,7 @@ void TaskManager::setXCompositeEnabled(bool state)
     {
         it.data()->updateWindowPixmap();
     }
+}
 #else // THUMBNAILING_POSSIBLE
 void TaskManager::setXCompositeEnabled(bool state)
 {
