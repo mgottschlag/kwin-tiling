@@ -110,9 +110,9 @@ void TaskManager::configure_startup()
     _startup_info->setTimeout( c.readUnsignedNumEntry( "Timeout", 30 ));
 }
 
+#ifdef THUMBNAILING_POSSIBLE
 void TaskManager::setXCompositeEnabled(bool state)
 {
-#ifdef THUMBNAILING_POSSIBLE
     Display *dpy = QPaintDevice::x11AppDisplay();
 
     if (!state)
@@ -199,8 +199,11 @@ void TaskManager::setXCompositeEnabled(bool state)
     {
         it.data()->updateWindowPixmap();
     }
-#endif // THUMBNAILING_POSSIBLE
+#else // THUMBNAILING_POSSIBLE
+void TaskManager::setXCompositeEnabled(bool state)
+{
 }
+#endif // !THUMBNAILING_POSSIBLE
 
 Task::Ptr TaskManager::findTask(WId w)
 {
@@ -211,7 +214,7 @@ Task::Ptr TaskManager::findTask(WId w)
     Task::Dict::iterator it = m_tasksByWId.begin();
     Task::Dict::iterator itEnd = m_tasksByWId.end();
 
-    for (; it !=itEnd; ++it)
+    for (; it != itEnd; ++it)
     {
         if (it.key() == w || it.data()->hasTransient(w))
         {
@@ -490,9 +493,10 @@ void TaskManager::gotStartupChange( const KStartupInfoId& id, const KStartupInfo
 
 void TaskManager::killStartup( const KStartupInfoId& id )
 {
+    Startup::List::iterator sIt = _startups.begin();
     Startup::List::iterator itEnd = _startups.end();
     Startup::Ptr s = 0;
-    for (Startup::List::iterator sIt = _startups.begin(); sIt != itEnd; ++sIt)
+    for (; sIt != itEnd; ++sIt)
     {
         if ((*sIt)->id() == id)
         {
@@ -506,7 +510,7 @@ void TaskManager::killStartup( const KStartupInfoId& id )
         return;
     }
 
-    _startups.remove(s);
+    _startups.erase(sIt);
     emit startupRemoved(s);
 }
 
@@ -517,7 +521,17 @@ void TaskManager::killStartup(Startup::Ptr s)
         return;
     }
 
-    _startups.remove(s);
+    Startup::List::iterator sIt = _startups.begin();
+    Startup::List::iterator itEnd = _startups.end();
+    for (; sIt != itEnd; ++sIt)
+    {
+        if ((*sIt) == s)
+        {
+            _startups.erase(sIt);
+            break;
+        }
+    }
+
     emit startupRemoved(s);
 }
 
@@ -1303,9 +1317,9 @@ void Task::generateThumbnail()
    emit thumbnailChanged();
 }
 
+#ifdef THUMBNAILING_POSSIBLE
 QPixmap Task::thumbnail(int maxDimension)
 {
-#ifdef THUMBNAILING_POSSIBLE
     if (!TaskManager::xCompositeEnabled() || !m_windowPixmap)
     {
         return QPixmap();
@@ -1388,10 +1402,13 @@ QPixmap Task::thumbnail(int maxDimension)
     XRenderFreePicture(dpy, picture);
 
     return thumbnail;
-#else // THUMBNAILING_POSSIBLE
-    return QPixmap();
-#endif // THUMBNAILING_POSSIBLE
 }
+#else // THUMBNAILING_POSSIBLE
+QPixmap Task::thumbnail(int /* maxDimension */)
+{
+    return QPixmap();
+}
+#endif // THUMBNAILING_POSSIBLE
 
 void Task::updateWindowPixmap()
 {

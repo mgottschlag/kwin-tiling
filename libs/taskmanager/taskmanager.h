@@ -35,6 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qdragobject.h>
 #include <qrect.h>
 #include <qvaluelist.h>
+#include <qvaluevector.h>
 
 #include <ksharedptr.h>
 #include <kstartupinfo.h>
@@ -58,6 +59,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class KWinModule;
 class TaskManager;
+
+typedef QValueList<WId> WindowList;
 
 /**
  * A dynamic interface to a task (main window).
@@ -93,7 +96,7 @@ class KDE_EXPORT Task: public QObject, public KShared
 
 public:
     typedef KSharedPtr<Task> Ptr;
-    typedef QValueList<Task::Ptr> List;
+    typedef QValueVector<Task::Ptr> List;
     typedef QMap<WId, Task::Ptr> Dict;
 
     Task(WId win, QObject *parent, const char *name = 0);
@@ -121,7 +124,7 @@ public:
      * A list of the window ids of all transient windows (dialogs) associated
      * with this task.
      */
-    QValueList<WId> transients() const { return _transients; }
+    WindowList transients() const { return _transients; }
 
     /**
      * Returns a 16x16 (KIcon::Small) icon for the task. This method will
@@ -274,7 +277,7 @@ public:
     //* @internal
     void removeTransient( WId w );
     //* @internal
-    bool hasTransient( WId w ) const { return _transients.contains( w ); }
+    bool hasTransient(WId w) const { return _transients.find(w) != _transients.end(); }
     //* @internal
     void updateDemandsAttentionState( WId w );
     //* @internal
@@ -454,8 +457,8 @@ private:
     WId                 m_frameId;
     QPixmap             _pixmap;
     KWin::WindowInfo    _info;
-    QValueList<WId>     _transients;
-    QValueList<WId>     _transients_demanding_attention;
+    WindowList          _transients;
+    WindowList          _transients_demanding_attention;
 
     int                 _lastWidth;
     int                 _lastHeight;
@@ -511,7 +514,7 @@ class KDE_EXPORT Startup: public QObject, public KShared
 
 public:
     typedef KSharedPtr<Startup> Ptr;
-    typedef QValueList<Startup::Ptr> List;
+    typedef QValueVector<Startup::Ptr> List;
 
     Startup( const KStartupInfoId& id, const KStartupInfoData& data, QObject * parent,
         const char *name = 0);
@@ -688,7 +691,7 @@ private:
 
     Task::Ptr               _active;
     Task::Dict m_tasksByWId;
-    QValueList< WId > _skiptaskbar_windows;
+    WindowList _skiptaskbar_windows;
     Startup::List _startups;
     KStartupInfo* _startup_info;
     KWinModule* m_winModule;
