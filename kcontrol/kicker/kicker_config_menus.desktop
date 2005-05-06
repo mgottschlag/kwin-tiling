@@ -10,12 +10,14 @@ X-KDE-FactoryName=kicker_menus
 X-KDE-ParentApp=kicker
 
 Name=Menus
+Name[bg]=Менюта
 Name[da]=Menuer
 Name[ga]=Roghchláir
 Name[sl]=Meniji
 Name[sv]=Menyer
 Name[ta]=பட்டியல்கள்
 Comment=You can configure the menus of the panel here
+Comment[bg]=Настройки на менютата на системния панел
 Comment[da]=Her kan du indstille panelets menuer
 Comment[pt_BR]=Você pode configurar os menus do painel aqui
 Comment[sv]=Du kan anpassa panelens menyer här

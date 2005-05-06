@@ -1,37 +1,7 @@
 [Settings]
 Name=WindowMaker (3 Modifier Keys)
-Name[az]=WindowMaker (3 Modifayr Düymə)
-Name[bs]=WindowMaker (3 modificirajuće tipke)
-Name[ca]=WindowMaker (3 tecles modificadores)
-Name[cs]=Windowmaker (3 modifikátory)
 Name[cy]=WindowMaker (3 Bysell Addasu)
-Name[da]=WindowMaker (3 ændringstaster)
-Name[de]=WindowMaker (3 Sondertasten)
-Name[el]=WindowMaker (3 ειδικά πλήκτρα)
-Name[es]=WindowMaker (3 teclas modificadoras)
-Name[et]=WindowMaker (3 muuteklahviga)
-Name[fi]=WindowMaker (3 muuntajanäppäintä)
-Name[fr]=WindowMaker (3 Modificateurs)
-Name[gl]=WindowMaker (3 Teclas Modificadoras)
-Name[hi]=विंडो-मेकर (3 मॉडिफायर कुंजियाँ)
-Name[hu]=WindowMaker-összeállítás (3 módosítóbillentyűvel)
-Name[it]=WindowMaker (3 tasti modificatori)
 Name[mn]=WindowMaker (3 сэлгүүр товчилуур)
-Name[nb]=WindowMakere (3 modifikatortaster)
-Name[nl]=WindowMaker (3 modificatietoetsen)
-Name[nn]=WindowMaker (3 modifikatortastar)
-Name[pl]=WindowMaker (3 klawisze modyfikatorów)
-Name[pt]=WindowMaker (3 Modificadores)
-Name[pt_BR]=WindowMaker (para 3 Teclas Modificadoras)
-Name[ro]=WindowMaker pentru 3 taste modificator
-Name[sk]=WindowMaker (3 modifikátory)
-Name[sl]=WindowMaker (3 modifikatorji)
-Name[sr]=WindowMaker (три модификаторска тастера)
-Name[sv]=WindowMaker (3 väljartangenter)
-Name[tr]=WindowMaker
-Name[uk]=WindowMaker (3 модифікатора)
-Name[xx]=xxWindowMaker (3 Modifier Keys)xx
-Name[zh_CN]=WindowMaker(三个修饰键)
 
 [Global Shortcuts]
 Desktop Screenshot=Ctrl+Print

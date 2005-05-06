@@ -10,6 +10,7 @@ X-KDE-FactoryName=kicker_arrangement
 X-KDE-ParentApp=kicker
 
 Name=Arrangement
+Name[bg]=Разпределение
 Name[br]=Doare
 Name[ga]=Leagan Amach
 Name[pt_BR]=Disposição
