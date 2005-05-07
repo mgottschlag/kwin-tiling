@@ -201,7 +201,7 @@ void TaskManager::setXCompositeEnabled(bool state)
     }
 }
 #else // THUMBNAILING_POSSIBLE
-void TaskManager::setXCompositeEnabled(bool state)
+void TaskManager::setXCompositeEnabled(bool)
 {
 }
 #endif // !THUMBNAILING_POSSIBLE
@@ -1458,8 +1458,8 @@ TaskDrag::TaskDrag(const Task::List& tasks, QWidget* source, const char* name)
     QByteArray data;
     QDataStream stream(data, IO_WriteOnly);
 
-    Task::List::const_iterator itEnd = tasks.end();
-    for (Task::List::const_iterator it = tasks.begin(); it != itEnd; ++it)
+    Task::List::const_iterator itEnd = tasks.constEnd();
+    for (Task::List::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
         stream << (*it)->window();
     }
