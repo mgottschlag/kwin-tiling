@@ -1,0 +1,474 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" 
+"dtd/kdex.dtd" [
+  <!ENTITY kappname "&kmenuedit;">
+  <!ENTITY package "kdebase">
+  <!ENTITY firefox "Firefox">
+  <!ENTITY internet "Internet">
+  <!ENTITY Virgil.J.Nisly "<personname><firstname>Virgil</firstname><othername>J.</othername><surname>Nisly</surname></personname>">
+  <!ENTITY Virgil.J.Nisly.mail "<email>virgil@vigilite.com</email>">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<book lang="&language;">
+
+<bookinfo>
+
+<title>The &kmenuedit; Handbook</title>
+
+<authorgroup>
+<author>&Milos.Prudek; &Milos.Prudek.mail;</author>
+
+<othercredit role="reviewer">
+&Lauri.Watts; &Lauri.Watts.mail;
+<!-- <contrib>Reviewer</contrib> -->
+</othercredit>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<copyright>
+<year>2000</year>
+<holder>&Milos.Prudek;</holder>
+</copyright>
+
+<legalnotice>&FDLNotice;</legalnotice>
+
+<date>2000-12-14</date>
+<releaseinfo>0.00.01</releaseinfo>
+
+<abstract><para>&kmenuedit; allows editing of the &kde; Main menu. 
+</para></abstract>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KDE Menu Editor</keyword>
+<keyword>kmenuedit</keyword>
+<keyword>application</keyword>
+<keyword>program</keyword>
+<keyword>menu</keyword>
+<keyword>kicker</keyword>
+
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title>Introduction</title>
+
+<para>&kmenuedit; allows editing of &kde; Main menu.</para>
+
+<para>&kmenuedit; can be started either by right-clicking
+<inlinemediaobject><imageobject><imagedata fileref="i_k_button.png"
+format="PNG"/></imageobject></inlinemediaobject> the
+<guiicon>K</guiicon> Button, or by choosing <guimenuitem>Menu
+Edit</guimenuitem> from the <guisubmenu>System</guisubmenu> submenu of
+the <guimenu>Main</guimenu> menu.</para>
+
+<para>&kmenuedit; allows you to:</para>
+
+<itemizedlist>
+<listitem><para>View and edit current <guimenu>Main</guimenu>
+menu</para></listitem>
+<listitem><para><guimenuitem>Cut</guimenuitem>, <guimenuitem>Copy</guimenuitem>
+and <guimenuitem>paste</guimenuitem> menu items</para></listitem>
+<listitem><para>Create and delete submenus</para></listitem>
+</itemizedlist>
+
+</chapter>
+
+<chapter id="quickstart">
+<chapterinfo>
+<authorgroup>
+<author>&Virgil.J.Nisly; &Virgil.J.Nisly.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATOR -->
+</authorgroup>
+</chapterinfo>
+<title>A Quick Start Guide to Adding an Entry to the &kmenu;</title>
+
+  <para>In this example, we will add &firefox; to the Internet menu. <note><para>Most applications can be added with &kappfinder;, &firefox; can usually be added that way, but was used for lack of a a better example.</para></note></para>
+  <para>To start off, we need to open &kmenuedit;, so &RMB; on the &kmenu;, click <guimenuitem>Menu Editor</guimenuitem> to start &kmenuedit;. After &kmenuedit; has started, select &internet; as shown in picture below. 
+<screenshot>
+<screeninfo>Select Internet</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="selectinternet.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>Select Internet</phrase>
+</textobject>
+</mediaobject>
+</screenshot></para>
+  <para>
+    Once you have selected &internet;, click on <menuchoice><guimenu>File</guimenu><guimenuitem>New Item...</guimenuitem></menuchoice>, opening the <guilabel>New Item</guilabel> dialog, as shown below. Type the name of the program you want to add, in this case, type <userinput>firefox</userinput>. 
+<screenshot>
+<screeninfo>New Item dialog</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="itemname.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>The new item dialog.</phrase>
+</textobject>
+</mediaobject>
+</screenshot>
+</para>
+<para>
+Press return, and you should see something like the picture below in the main window.
+<screenshot>
+<screeninfo>New Item</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="new.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>The new item created.</phrase>
+</textobject>
+</mediaobject>
+</screenshot></para>
+  
+<para>
+    Now lets fill in the <guilabel>Description:</guilabel>, in this case type <userinput>Web Browser</userinput>. <note><para>The description and name will be displayed on the &kmenu; as <quote>Web Browser (Firefox)</quote>.</para></note> We will need to fill out executable name in the <guilabel>Command:</guilabel> field, in this instance we will type <userinput><command>firefox</command></userinput>.</para>
+<note><para>Following the command, you can have several place holders which will be replaced with actual values when the program is run:
+<simplelist>
+<member>f% - a single file name</member>
+<member>F% - a list of files; use for applications that can open several local files at once</member>
+<member>u% - a single URL</member>
+<member>U% - a list of URLs</member>
+<member>d% - the folder of a file to open</member>
+<member>D% - a list of folders</member>
+<member>i% - the icon</member>
+<member>m% - the mini icon</member>
+<member>c% - the caption</member>
+</simplelist></para>
+<informalexample><para>For example: if you want to firefox to start your web browsing at www.kde.org - instead of <command>firefox</command> you would type <command>firefox %u www.kde.org</command>.</para></informalexample></note>
+<para>We would like to have a more creative icon, so we will click the generic icon sitting beside <guilabel>Name:</guilabel>. It will bring the <guilabel>Select Icon</guilabel> dialog which will let us choose the new icon, as shown below.
+<screenshot>
+<screeninfo>Select Icon dialog</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="selecticon.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>The select icon dialog.</phrase>
+</textobject>
+</mediaobject>
+</screenshot></para>
+
+  <para>We choose the firefox icon from the list, and press return. Your finished screen should probably look something like the screenshot below. 
+<screenshot>
+<screeninfo>Done screenshot</screeninfo>
+<mediaobject>
+<imageobject>
+<imagedata fileref="done.png" format="PNG" />
+</imageobject>
+<textobject>
+<phrase>This is what the completed menu item should looks like.</phrase>
+</textobject>
+</mediaobject>
+</screenshot></para>
+
+<para>Click <menuchoice><guimenu>File</guimenu><guimenuitem>Save</guimenuitem></menuchoice>, wait for the <guilabel>Updating System</guilabel> dialog to get finished, you should find &firefox; in the &kmenu; <guisubmenu>&internet;</guisubmenu> sub menu!</para>
+  
+
+
+</chapter>
+
+<chapter id="using-kmenuedit">
+<title>Using &kmenuedit;</title>
+
+<para>The left application panel shows the Main menu structure. When
+you browse items in the left panel, the right panel shows detailed
+information for the highlighted menu item.</para>
+
+<sect1 id="details-general">
+<title>General program information</title>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Name</guilabel></term>
+<listitem><para>This is the name of your program as it appears in the
+<guimenu>Main</guimenu> menu. It can be different from the real executable
+name. For instance the name of <command>mc</command> executable is
+"<application>Midnight Commander</application>".</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Comment</guilabel></term>
+<listitem><para>Describe the program in greater detail in this field. This is
+entirely optional.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Command</guilabel></term>
+<listitem><para>This is the name of the executable program. Make sure that you
+have permission to run the program.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Type</guilabel></term>
+<listitem><para>This field is similar to the Comment field. Describe
+the type of your program here.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Work Path</guilabel></term>
+<listitem><para>Specify the work path of the program. This will be the current
+path when the program launches. It does not need to be the same as the
+executable location.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guiicon>Icon List</guiicon></term>
+<listitem><para><inlinemediaobject><imageobject><imagedata 
+fileref="icon_sets.png" format="PNG"/></imageobject></inlinemediaobject> Click
+this icon to display a choice of icons. Choose an icon for your
+program.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Run in Terminal</guilabel></term>
+<listitem><para>You must check this if your program requires terminal emulator
+in order to run. This mainly applies to <link
+linkend="gloss-console-application">console 
+applications</link>.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Terminal Options</guilabel></term>
+<listitem><para>Put all terminal options in this field.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Run as different user</guilabel></term>
+<listitem><para>If you want to run this program as a different user (not you),
+check this checkbox, and provide the username in the
+<guilabel>Username</guilabel> field.</para></listitem>
+</varlistentry>
+</variablelist>
+
+<para>You can assign a special keyboard shortcut to launch your program.</para>
+
+<para>Click the empty button to the right of the <guilabel>Current
+key</guilabel> checkbox and press the key combination on your keyboard
+that you want to be assigned to your program.</para>
+
+<para>A dialog box will pop up, allowing you to assign a second
+keybinding to the same item by checking the
+<guilabel>Alternate</guilabel> button.  This might be useful, for
+example, if you often switch keyboard maps, and some shortcuts are not
+as convenient to type at all times.</para>
+
+<para>Click the <guiicon>x</guiicon> to clear the shortcut, if you
+made a mistake.  Check the <guilabel>Multi-Key</guilabel> box if you
+want to assign a shortcut that uses more than one key.</para>
+
+<para>By default the <guilabel>Auto-Close</guilabel> box is checked,
+and the dialog will close when you have selected a keybinding.
+Uncheck it if you want the dialog to stay open.</para>
+
+</sect1> 
+
+</chapter>
+
+<chapter id="menu-reference">
+<title>Menu Reference</title>
+
+<variablelist>
+<varlistentry id="file-new-item">
+<term><menuchoice> <guimenu><inlinemediaobject><imageobject><imagedata
+fileref="i_new_item.png" format="PNG"/></imageobject></inlinemediaobject>
+File</guimenu> <guimenuitem>New Item</guimenuitem>
+</menuchoice></term> <listitem><para><action>Adds new menu
+item.</action></para></listitem>
+</varlistentry>
+
+<varlistentry id="file-new-submenu">
+<term><menuchoice>
+<guimenu><inlinemediaobject><imageobject><imagedata fileref="i_new_submenu.png"
+format="PNG"/></imageobject></inlinemediaobject>File</guimenu>
+<guimenuitem>New Submenu</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Adds new submenu.</action></para></listitem>
+</varlistentry>
+
+<varlistentry id="file-quit">
+<term><menuchoice>
+<shortcut>
+<keycombo action="simul">&Ctrl;<keycap>Q</keycap></keycombo>
+</shortcut>
+<guimenu>File</guimenu>
+<guimenuitem>Quit</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Quits</action> &kmenuedit;.</para></listitem>
+</varlistentry>
+
+<varlistentry id="edit-cut">
+<term><menuchoice>
+<shortcut>
+<keycombo action="simul">&Ctrl;<keycap>X</keycap></keycombo>
+</shortcut>
+<guimenu><inlinemediaobject><imageobject><imagedata fileref="i_cut.png"
+format="PNG"/></imageobject></inlinemediaobject>
+Edit</guimenu> <guimenuitem>Cut</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Cuts the current menu item to the clipboard.</action> If
+you want to move menu item, you should first cut it to the clipboard, move to
+the destination place using the left panel, and use the
+<guimenuitem>Paste</guimenuitem> function to paste the menu item from the
+clipboard.</para></listitem> 
+</varlistentry>
+
+<varlistentry id="edit-copy">
+<term><menuchoice>
+<shortcut>
+<keycombo action="simul">&Ctrl;<keycap>C</keycap></keycombo>
+</shortcut>
+<guimenu><inlinemediaobject><imageobject><imagedata fileref="i_copy.png"
+format="PNG"/></imageobject></inlinemediaobject>
+Edit</guimenu> <guimenuitem>Copy</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Copies the current menu item to the
+clipboard</action>. You can later use the <guimenuitem>Paste</guimenuitem>
+function to paste the copied menu itemfrom the clipboard to its destination. You
+can paste the same item many times.</para></listitem>
+</varlistentry>
+
+<varlistentry id="edit-paste">
+<term><menuchoice>
+<shortcut>
+<keycombo action="simul">&Ctrl;<keycap>V</keycap></keycombo>
+</shortcut>
+<guimenu><inlinemediaobject><imageobject><imagedata fileref="i_paste.png"
+format="PNG"/></imageobject></inlinemediaobject> Edit</guimenu>
+<guimenuitem>Paste</guimenuitem> </menuchoice></term>
+<listitem><para><action>Paste menu item from the clipboard</action> to currently
+selected place in the <guimenu>Main</guimenu> menu. You must first use
+<guimenuitem>Cut</guimenuitem> or <guimenuitem>Copy</guimenuitem> before you can
+<guimenuitem>Paste</guimenuitem>.</para></listitem>
+</varlistentry>
+
+<varlistentry id="edit-delete">
+<term><menuchoice>
+<guimenu><inlinemediaobject><imageobject><imagedata fileref="i_delete.png" 
+format="PNG"/></imageobject></inlinemediaobject>
+Edit</guimenu> <guimenuitem>Delete</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Deletes currently selected menu
+item.</action></para></listitem>
+</varlistentry>
+</variablelist>
+
+&help.menu.documentation;
+
+<glossary id="glossary">
+<title>Glossary</title> 
+
+<glossentry id="gloss-terminal-emulator">
+<glossterm>Terminal emulator</glossterm>
+<glossdef>
+<para>Terminal emulator is simply a windowed shell; this is known as
+<quote>command line window</quote> in some other environments. If you
+want to use the shell, you should know at least a few of the
+system-level commands for your operating system.</para>
+</glossdef>
+</glossentry>
+
+<glossentry id="gloss-applet">
+<glossterm>Applet</glossterm>
+<glossdef><para>A small application that occupies very little memory
+and screen space, and at the same time gives you some useful
+information or provides a control shortcut. For instance the
+<application>Clock</application> applet shows current time and date
+(and even a month diary if you click it), and <application>System
+Monitor</application> applet shows how busy your machine currently is
+in real-time.</para> </glossdef> 
+</glossentry>
+
+<glossentry id="gloss-legacy-application">
+<glossterm>Legacy Application</glossterm>
+<glossdef>
+
+<para>An X-window application which was not written with &kde; in
+mind. Such applications run fine in &kde;. However, they are not
+warned automatically when you shut down your &kde; session. You
+therefore must not forget to save documents open in these applications
+before you log out from &kde;. </para> <para>Additionally, many of
+these applications do not support copying and pasting from
+&kde; compliant applications. &Netscape; 4.x browser is a prominent
+example of such application <footnote><para>Some <ulink
+url="http://www.gnome.org">GNOME</ulink> applications may provide
+limited interoperability with the &kde;.</para></footnote>.</para>
+</glossdef>
+</glossentry>
+
+<glossentry id="gloss-console-application">
+<glossterm>Console Application</glossterm>
+<glossdef>
+
+<para>Application originally written for non-graphic, text oriented
+environment. Such applications run fine in &kde;. They must run within
+console emulator, like &konsole;. They are not warned automatically
+when you shut down your &kde; session. You therefore must not forget
+to save documents open in these applications before you log out from
+the &kde;.</para>
+
+<para>Console applications support copying and pasting from
+KDE-compliant applications.Simply mark the text in the console
+application with your mouse, switch to the KDE-compliant application
+and press <keycombo action="simul">&Ctrl;
+<keycap>V</keycap></keycombo> to paste the text. If you want to copy
+from &kde; application to a console application, first mark the text
+with your mouse, press <keycombo action="simul">&Ctrl;
+<keycap>C</keycap></keycombo>, switch to the console application and
+press the middle button on your mouse<footnote><para>If your mouse
+does not have a middle button, you must press
+<mousebutton>left</mousebutton> and <mousebutton>right</mousebutton>
+button at the same time. This is called <quote>middle button
+emulation</quote> and it must be supported by your operating system to
+work.</para></footnote>.</para>
+
+</glossdef>
+</glossentry>
+
+</glossary>
+</chapter>
+
+<chapter id="credits">
+
+<title>Credits and License</title>
+
+<para>
+&kmenuedit;
+</para>
+<para>Program copyright &copy; 2002, &Raffaele.Sandrini;</para>
+
+<para>Contributors:</para>
+<itemizedlist>
+<listitem><para>&Matthias.Elter; &Matthias.Elter.mail; - Original
+Author</para> 
+</listitem>
+<listitem><para>&Matthias.Ettrich; &Matthias.Ettrich.mail;</para>
+</listitem>
+<listitem><para>&Daniel.M.Duley; &Daniel.M.Duley.mail;</para>
+</listitem>
+<listitem><para>&Preston.Brown; &Preston.Brown.mail;</para>
+</listitem>
+</itemizedlist>
+
+<para>Documentation copyright &copy; 2000 &Milos.Prudek;</para>
+
+<para>Updated for &kde; 3.0 by &Lauri.Watts; &Lauri.Watts.mail;
+2002</para>
+
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
+
+&underFDL;
+&underGPL;
+
+</chapter>
+
+
+
+&documentation.index; 
+</book>
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes: nil
+sgml-general-insert-case: lower
+End:
+-->
+
