@@ -5,6 +5,8 @@ MimeType=fonts/package
 Icon=font
 Patterns=*.fonts.tar.gz
 Comment=Fonts Package
+Comment[ga]=Pacáiste na gClónna
+Comment[pt_BR]=Pacote de Fontes
 
 [Property::X-KDE-LocalProtocol]
 Type=QString
