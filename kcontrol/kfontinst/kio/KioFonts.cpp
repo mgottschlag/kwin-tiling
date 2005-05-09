@@ -617,17 +617,11 @@ static bool isAType1(const QString &fname)
     return match;
 }
 
-static QString getMatch(const QString &file, const char *extensions[])
+static QString getMatch(const QString &file, const char *extension)
 {
-    for(int e=0; extensions[e]; ++e)
-    {
-        QString f(Misc::changeExt(file, extensions[e]));
+    QString f(Misc::changeExt(file, extension));
 
-        if(Misc::fExists(f))
-            return f;
-    }
-
-    return QString::null;
+    return Misc::fExists(f) ? f : QString::null;
 }
 
 inline bool isHidden(const KURL &u)
@@ -1424,7 +1418,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
                         modified(destFolder);
                         processedSize(size);
                         if(src.isLocalFile() && 1==srcFiles.count())
-                            createAfm(itsFolders[destFolder].location+map.begin().data(), true, passwd);
+                            createAfm(itsFolders[destFolder].location+modifyName(map.begin().data()), true, passwd);
                     }
                     else
                     {
@@ -1531,7 +1525,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
                     }
 
                     if(src.isLocalFile() && 1==srcFiles.count())
-                        createAfm(itsFolders[destFolder].location+map.begin().data());
+                        createAfm(itsFolders[destFolder].location+modifyName(map.begin().data()));
                 }
     
                 finished();
@@ -2351,17 +2345,13 @@ void CKioFonts::createAfm(const QString &file, bool nrs, const QString &passwd)
     if(nrs && passwd.isEmpty())
         return;
 
-    static const char * afmExt[]={ "afm", "AFM", "Afm", "AFm", "AfM", "aFM", "aFm", "afM", NULL };
-    static const char * pfmExt[]={ "pfm", "PFM", "Pfm", "PFm", "PfM", "pFM", "pFm", "pfM", NULL };
-    static const char * t1Ext[]= { "pfa", "PFA", "Pfa", "PFa", "PfA", "pFA", "pFa", "pfA",
-                                   "pfb", "PFB", "Pfb", "PFb", "PfB", "pFB", "pFb", "pfB", NULL };
-
     bool type1=isAType1(file),
          pfm=!type1 && isAPfm(file);  // No point checking if is pfm if its a type1
 
     if(type1 || pfm)
     {
-        QString afm=getMatch(file, afmExt);
+        QString afm=getMatch(file, "afm");  // pf2afm wants files with lowercase extension, so just check for lowercase!
+                                            // -- when a font is installed, the extensio is converted to lowercase anyway...
 
         if(afm.isEmpty())  // No point creating if AFM already exists!
         {
@@ -2370,12 +2360,14 @@ void CKioFonts::createAfm(const QString &file, bool nrs, const QString &passwd)
 
             if(type1)      // Its a Type1, so look for existing PFM
             {
-                pfm=getMatch(file, pfmExt);
+                pfm=getMatch(file, "pfm");
                 t1=file;
             }
             else           // Its a PFM, so look for existing Type1
             {
-                t1=getMatch(file, t1Ext);
+                t1=getMatch(file, "pfa");
+                if(t1.isEmpty())
+                    t1=getMatch(file, "pfb");
                 pfm=file;
             }
 
