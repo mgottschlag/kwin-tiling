@@ -1260,6 +1260,9 @@ void KSMServer::completeShutdownOrCheckpoint()
         }
         startKilling();
     } else if ( state == Checkpoint ) {
+        for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+            SmsSaveComplete( c->connection());
+        }
         state = Idle;
     }
 }
