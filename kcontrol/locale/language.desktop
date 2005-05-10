@@ -11,6 +11,7 @@ X-KDE-FactoryName=locale
 X-KDE-ParentApp=kcontrol
 
 Name=Country/Region & Language
+Name[af]=Land/Streek & Taal
 Name[ar]=البلد و اللغة
 Name[az]=Ölkə/Bölgə və Dil
 Name[be]=Краіна/рэгіён і мова

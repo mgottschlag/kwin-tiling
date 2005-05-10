@@ -4,6 +4,7 @@ Actions=installFont;
 
 [Desktop Action installFont]
 Name=Install
+Name[af]=Installeer
 Name[be]=Усталяваць
 Name[bg]=Инсталиране
 Name[bn]=ইনস্টল

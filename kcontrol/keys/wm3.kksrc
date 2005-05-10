@@ -3,6 +3,7 @@ Name=WindowMaker (3 Modifier Keys)
 Name[cy]=WindowMaker (3 Bysell Addasu)
 Name[mn]=WindowMaker (3 сэлгүүр товчилуур)
 Name[pt_BR]=WindowMaker (3 teclas modificadoras)
+Name[sv]=Windowmaker (3 väljartangenter)
 
 [Global Shortcuts]
 Desktop Screenshot=Ctrl+Print
