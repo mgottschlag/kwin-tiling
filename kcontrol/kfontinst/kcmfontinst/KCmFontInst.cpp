@@ -28,6 +28,7 @@
 
 #include "KCmFontInst.h"
 #include "KfiConstants.h"
+#include "SettingsDialog.h"
 #include <qlayout.h>
 #include <qlabel.h>
 #include <kaboutdata.h>
@@ -133,7 +134,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     QString previousPath=itsConfig.readEntry(CFG_PATH);
 
-    itsDirOp = new KDirOperator(Misc::root() ? QString("fonts:/") : QString("fonts:/")+KFI_KIO_FONTS_USER,
+    itsDirOp = new KDirOperator(Misc::root() ? QString("fonts:/") : QString("fonts:/")+i18n(KFI_KIO_FONTS_USER),
                                 fontsFrame);
     itsDirOp->setViewConfig(&itsConfig, "ListView Settings");
     itsDirOp->setMinimumSize(QSize(96, 64));
@@ -226,7 +227,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         connect(itsDeleteAct, SIGNAL(activated()), this, SLOT(removeFonts()));
     }
 
-    topMnu->insert(sep);
+    toolbar->insertLineSeparator();
+    act=new KAction(i18n("Configure..."), "configure", 0, this, SLOT(configure()), itsDirOp->actionCollection(), "configure");
+    act->plug(toolbar);
 
     if( (itsSepDirsAct=itsDirOp->actionCollection()->action("separate dirs")) &&
         (itsShowHiddenAct=itsDirOp->actionCollection()->action("show hidden")))
@@ -435,6 +438,11 @@ void CKCmFontInst::removeFonts()
             job->setAutoErrorHandlingEnabled(true, this);
         }
     }
+}
+
+void CKCmFontInst::configure()
+{
+    CSettingsDialog(this).exec();
 }
 
 void CKCmFontInst::dropped(const KFileItem *i, QDropEvent *, const KURL::List &urls)

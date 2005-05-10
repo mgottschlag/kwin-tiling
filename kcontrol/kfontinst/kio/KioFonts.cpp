@@ -91,6 +91,8 @@ QTextOStream ostr(stderr);
 #define FC_CACHE_CMD  "fc-cache"
 
 static const char * constMultipleExtension=".fonts.tar.gz";  // Fonts that have multiple files are returned as a .tar.gz!
+static const int    constMaxLastDestTime=5;
+static const int    constMaxFcCheckTime=10;
 
 extern "C"
 {
@@ -461,19 +463,6 @@ static QString getFontFolder(const QString &defaultDir, const QString &root, QSt
     return QString::null;
 }
 
-static void removeChar(char *str, char ch)
-{
-    unsigned int i=0,
-                 len=strlen(str);
-
-    for(i=0; i<len; ++i)
-        if(str[i]==ch)
-        {
-            memmove(&str[i], &str[i+1], len-i);
-            return;
-        }
-}
-
 static bool writeAll(int fd, const char *buf, size_t len)
 {
    while(len>0)
@@ -725,9 +714,14 @@ static bool getFontList(const QStringList &files, QMap<QString, QString> &map)
 CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
          : KIO::SlaveBase(KFI_KIO_FONTS_PROTOCOL, pool, app),
            itsRoot(Misc::root()),
+           itsUsingFcFpe(false),
+           itsUsingXfsFpe(false),
+           itsHasSys(false),
+           itsAddToSysFc(false),
            itsFontChanges(0),
            itsLastDest(DEST_UNCHANGED),
            itsLastDestTime(0),
+           itsLastFcCheckTime(0),
            itsFontList(NULL)
 {
     KFI_DBUG << "Constructor" << endl;
@@ -774,7 +768,6 @@ CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
 
     QString sysDefault("/usr/local/share/fonts/"),
             sysDir(getFontFolder(sysDefault, "/usr/local/share/", dirs));
-    bool    addToSysFc=false;
 
     if(sysDir.isEmpty())
     {
@@ -785,7 +778,7 @@ CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
             xft.apply();
         }
         else
-            addToSysFc=true;
+            itsAddToSysFc=true;
 
         sysDir=sysDefault;
     }
@@ -801,9 +794,6 @@ CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
     // Work out best params to send to kfontinst
 
     // ...determine if X already knows about the system font path...
-    bool    usingFcFpe=false,
-            usingXfsFpe=false,
-            hasSys=false;
     Display *xDisplay=XOpenDisplay(NULL);
 
     if(xDisplay)
@@ -812,11 +802,11 @@ CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
         char **paths=XGetFontPath(xDisplay, &numPaths);
 
         if(numPaths>0)
-            for(int path=0; path<numPaths && !usingFcFpe; ++path)
+            for(int path=0; path<numPaths && !itsUsingFcFpe; ++path)
                 if(paths[path][0]=='/')
                 {
                     if(Misc::dirSyntax(paths[path])==itsFolders[FOLDER_SYS].location)
-                        hasSys=true;
+                        itsHasSys=true;
                 }
                 else
                 {
@@ -825,40 +815,13 @@ CKioFonts::CKioFonts(const QCString &pool, const QCString &app)
                     str.replace(QRegExp("\\s*"), "");
 
                     if(0==str.find("unix/:"))
-                        usingXfsFpe=true;
+                        itsUsingXfsFpe=true;
                     else if("fontconfig"==str)
-                        usingFcFpe=true;
+                        itsUsingFcFpe=true;
                 }
         XFreeFontPath(paths);
         XCloseDisplay(xDisplay);
     }
-
-    strcpy(itsKfiParams, "-g");
-    if(itsRoot)
-    {
-        if(!usingFcFpe)
-        {
-            strcat(itsKfiParams, usingXfsFpe ? "s" : "r");
-            strcat(itsKfiParams, "x");
-            if(!hasSys)
-                strcat(itsKfiParams, "a");
-        }
-    }
-    else
-    {
-        strcpy(itsNrsKfiParams, addToSysFc ? "-gf" : "-g");
-        if(!usingFcFpe)
-        {
-            strcat(itsNrsKfiParams, usingXfsFpe ? "sx" : "x");   // Can't get root to refresh X, only xfs!
-            if(!hasSys)
-                strcat(itsNrsKfiParams, "a");
-            strcat(itsKfiParams, "xr");
-        }
-        memcpy(itsNrsNonMainKfiParams, itsNrsKfiParams, KFI_PARAMS);
-        removeChar(itsNrsNonMainKfiParams, 'a');
-        removeChar(itsNrsNonMainKfiParams, 'f');
-    }
-    reinitFc();
 }
 
 CKioFonts::~CKioFonts()
@@ -1749,25 +1712,51 @@ void CKioFonts::modified(EFolder folder, const CDirList &dirs)
             setTimeoutSpecialCommand(TIMEOUT);
     }
 
-    //
-    // Remove any kfontinst params possible...
     if(FOLDER_SYS==folder && !itsRoot && !itsCanStorePasswd)
     {
         // If we modified sys, we're not root, and  couldn't store the passwd, then kfontinst has already been called
         // so no need to ask it to add folder to fontconfig and X's config files...
-        removeChar(itsNrsKfiParams, 'f');
-        removeChar(itsNrsKfiParams, 'a');
+        itsHasSys=true;
+        itsAddToSysFc=false;
     }
+    clearFontList();  // List of fonts has changed.../
 }
 
-void CKioFonts::special(const QByteArray &)
+void CKioFonts::special(const QByteArray &a)
 {
     KFI_DBUG << "special" << endl;
-    doModified();
+
+    if(a.size())
+    {
+        QDataStream stream(a, IO_ReadOnly);
+        int         cmd;
+
+        stream >> cmd;
+
+        switch (cmd)
+        {
+            case SPECIAL_RECONFIG:  // Only itended to be called from kcmfontinst - when a user has re-enabled doX or doGs
+                if(itsRoot && !itsFolders[FOLDER_SYS].modified.contains(itsFolders[FOLDER_SYS].location))
+                    itsFolders[FOLDER_SYS].modified.add(itsFolders[FOLDER_SYS].location);
+                else if(!itsRoot && !itsFolders[FOLDER_USER].modified.contains(itsFolders[FOLDER_USER].location))
+                    itsFolders[FOLDER_USER].modified.add(itsFolders[FOLDER_USER].location);
+
+                doModified();
+                finished();
+                break;
+            default:
+                error( KIO::ERR_UNSUPPORTED_ACTION, QString::number(cmd));
+        }
+    }
+    else
+        doModified();
 }
 
-void CKioFonts::createRootRefreshCmd(QCString &cmd, const CDirList &dirs)
+void CKioFonts::createRootRefreshCmd(QCString &cmd, const CDirList &dirs, bool reparseCfg)
 {
+    if(reparseCfg)
+        reparseConfig();
+
     if(!cmd.isEmpty())
         cmd+=" && ";
 
@@ -1780,16 +1769,27 @@ void CKioFonts::createRootRefreshCmd(QCString &cmd, const CDirList &dirs)
 
         for(; it!=end; ++it)
         {
-            cmd+=" && kfontinst ";
+            QCString tmpCmd;
+
             if(*it==itsFolders[FOLDER_SYS].location)
-                cmd+=itsNrsKfiParams;
+            {
+                if(0!=itsNrsKfiParams[0])
+                    tmpCmd+=itsNrsKfiParams;
+            }
             else
-                cmd+=itsNrsNonMainKfiParams;
-            cmd+=" ";
-            cmd+=QFile::encodeName(KProcess::quote(*it));
+                if(0!=itsNrsNonMainKfiParams[0])
+                    tmpCmd+=itsNrsNonMainKfiParams;
+
+            if(!tmpCmd.isEmpty())
+            {
+                cmd+=" && kfontinst ";
+                cmd+=tmpCmd;
+                cmd+=" ";
+                cmd+=QFile::encodeName(KProcess::quote(*it));
+            }
         }
     }
-    else
+    else if (0!=itsNrsKfiParams[0])
     {
         cmd+=" && kfontinst ";
         cmd+=itsNrsKfiParams;
@@ -1802,6 +1802,9 @@ void CKioFonts::doModified()
 {
     KFI_DBUG << "doModified" << endl;
 
+    if(itsFolders[FOLDER_SYS].modified.count() || itsFolders[FOLDER_USER].modified.count())
+        reparseConfig();
+
     itsFontChanges=0;
     if(itsFolders[FOLDER_SYS].modified.count())
     {
@@ -1810,32 +1813,47 @@ void CKioFonts::doModified()
             Misc::doCmd(FC_CACHE_CMD);
             KFI_DBUG << "RUN(root): " << FC_CACHE_CMD << endl;
 
-            CDirList::ConstIterator it(itsFolders[FOLDER_SYS].modified.begin()),
-                                    end(itsFolders[FOLDER_SYS].modified.end());
-
-            for(; it!=end; ++it)
+            //
+            // If a non-default folder has been modified, always configure X
+            if(NULL==strchr(itsKfiParams, 'x') && 
+               (itsFolders[FOLDER_SYS].modified.count()>1 || !itsFolders[FOLDER_SYS].modified.contains(itsFolders[FOLDER_SYS].location)))
             {
-                Misc::doCmd("kfontinst", itsKfiParams, QFile::encodeName(*it));
-                KFI_DBUG << "RUN(root): kfontinst " << itsKfiParams << ' ' << *it << endl;
+                if(0==itsKfiParams[0])
+                    strcpy(itsKfiParams, "-x");
+                else
+                    strcat(itsKfiParams, "x");
             }
 
-            if(itsFolders[FOLDER_SYS].modified.contains(itsFolders[FOLDER_SYS].location))
+            if(0!=itsKfiParams[0])
             {
-                removeChar(itsKfiParams, 'a');
-                removeChar(itsKfiParams, 'f');
+                CDirList::ConstIterator it(itsFolders[FOLDER_SYS].modified.begin()),
+                                        end(itsFolders[FOLDER_SYS].modified.end());
+
+                for(; it!=end; ++it)
+                {
+                    Misc::doCmd("kfontinst", itsKfiParams, QFile::encodeName(*it));
+                    KFI_DBUG << "RUN(root): kfontinst " << itsKfiParams << ' ' << *it << endl;
+                }
+
+                if(itsFolders[FOLDER_SYS].modified.contains(itsFolders[FOLDER_SYS].location))
+                {
+                    itsHasSys=true;
+                    itsAddToSysFc=false;
+                }
             }
         }
         else
         {
             QCString cmd;
 
-            createRootRefreshCmd(cmd, itsFolders[FOLDER_SYS].modified);
+            createRootRefreshCmd(cmd, itsFolders[FOLDER_SYS].modified, false);
             if(doRootCmd(cmd, false) && itsFolders[FOLDER_SYS].modified.contains(itsFolders[FOLDER_SYS].location))
             {
-                removeChar(itsNrsKfiParams, 'f');
-                removeChar(itsNrsKfiParams, 'a');
+                itsHasSys=true;
+                itsAddToSysFc=false;
             }
-            Misc::doCmd("xset", "fp", "rehash");  // doRootCmd can only refresh if xfs is being used, so try here anyway...
+            if(NULL==strstr(itsNrsKfiParams, "s"))
+                Misc::doCmd("xset", "fp", "rehash");  // doRootCmd can only refresh if xfs is being used, so try here anyway...
         }
         itsFolders[FOLDER_SYS].modified.clear();
     }
@@ -1845,13 +1863,16 @@ void CKioFonts::doModified()
         Misc::doCmd(FC_CACHE_CMD);
         KFI_DBUG << "RUN(non-root): " << FC_CACHE_CMD << endl;
 
-        CDirList::ConstIterator it(itsFolders[FOLDER_USER].modified.begin()),
-                                end(itsFolders[FOLDER_USER].modified.end());
-
-        for(; it!=end; ++it)
+        if(0!=itsKfiParams[0])
         {
-            Misc::doCmd("kfontinst", itsKfiParams, QFile::encodeName(*it));
-            KFI_DBUG << "RUN(non-root): kfontinst " << itsKfiParams << ' ' << *it << endl;
+            CDirList::ConstIterator it(itsFolders[FOLDER_USER].modified.begin()),
+                                    end(itsFolders[FOLDER_USER].modified.end());
+
+            for(; it!=end; ++it)
+            {
+                 Misc::doCmd("kfontinst", itsKfiParams, QFile::encodeName(*it));
+                KFI_DBUG << "RUN(non-root): kfontinst " << itsKfiParams << ' ' << *it << endl;
+            }
         }
         itsFolders[FOLDER_USER].modified.clear();
     }
@@ -1920,7 +1941,7 @@ bool CKioFonts::confirmUrl(KURL &url)
         {
             bool changeToSystem=false;
 
-            if(DEST_UNCHANGED!=itsLastDest && itsLastDestTime && (abs(time(NULL)-itsLastDestTime) < 5))
+            if(DEST_UNCHANGED!=itsLastDest && itsLastDestTime && (abs(time(NULL)-itsLastDestTime) < constMaxLastDestTime))
                 changeToSystem=DEST_SYS==itsLastDest;
             else
                 changeToSystem=KMessageBox::No==messageBox(QuestionYesNo,
@@ -1951,33 +1972,35 @@ bool CKioFonts::confirmUrl(KURL &url)
     return false;
 }
 
-void CKioFonts::reinitFc()
+void CKioFonts::clearFontList()
 {
-    KFI_DBUG << "reinitFc()" << endl;
+    KFI_DBUG << "clearFontList" << endl;
 
-#if 0
-    if (!itsFontList || !FcConfigUptoDate(0))
-    {
-#endif
-        FcInitReinitialize();
-        if(itsFontList)
-            FcFontSetDestroy(itsFontList);
-        itsFontList=NULL;
-        itsFolders[FOLDER_SYS].fontMap.clear();
-        itsFolders[FOLDER_USER].fontMap.clear();
-#if 0
-    }
-#endif
+    if(itsFontList)
+        FcFontSetDestroy(itsFontList);
+
+    itsFontList=NULL;
+    itsFolders[FOLDER_SYS].fontMap.clear();
+    itsFolders[FOLDER_USER].fontMap.clear();
 }
 
 bool CKioFonts::updateFontList()
 {
     KFI_DBUG << "updateFontList" << endl;
 
-    reinitFc();
+    if(!itsFontList || !FcConfigUptoDate(0)  ||   // For some reason just the "!FcConfigUptoDate(0)" check does not always work :-(
+       abs(time(NULL)-itsLastFcCheckTime)>constMaxFcCheckTime)
+    {
+        FcInitReinitialize();
+        clearFontList();
+    }
 
     if(!itsFontList)
     {
+        KFI_DBUG << "updateFontList - update list of fonts " << endl;
+
+        itsLastFcCheckTime=time(NULL);
+
         FcPattern   *pat = FcPatternCreate();
         FcObjectSet *os  = FcObjectSetBuild(FC_FILE, FC_FAMILY, FC_WEIGHT, FC_SCALABLE,
 #ifdef KFI_FC_HAS_WIDTHS
@@ -2386,6 +2409,90 @@ void CKioFonts::createAfm(const QString &file, bool nrs, const QString &passwd)
             }
         }
     }
+}
+
+void CKioFonts::reparseConfig()
+{
+    KFI_DBUG << "reparseConfig" << endl;
+
+    itsKfiParams[0]=0;
+    if(!itsRoot)
+    {
+        itsNrsKfiParams[0]=0;
+        itsNrsNonMainKfiParams[0]=0;
+    }
+
+    if(itsRoot)
+    {
+        KConfig cfg(KFI_ROOT_CFG_FILE);
+        bool    doX=cfg.readBoolEntry(KFI_CFG_X_KEY, KFI_DEFAULT_CFG_X),
+                doGs=cfg.readBoolEntry(KFI_CFG_GS_KEY, KFI_DEFAULT_CFG_GS);
+
+        if(doX || !doGs)
+        {
+            strcpy(itsKfiParams, doGs ? "-g" : "-");
+            if(doX)
+            {
+                if(!itsUsingXfsFpe)
+                    strcat(itsKfiParams, "r");
+
+                if(!itsUsingFcFpe)
+                {
+                    strcat(itsKfiParams, itsUsingXfsFpe ? "sx" : "x");
+                    if(!itsHasSys)
+                        strcat(itsKfiParams, "a");
+                }
+            }
+        }
+    }
+    else
+    {
+        KConfig rootCfg(KFI_ROOT_CFG_FILE);
+        bool    rootDoX=rootCfg.readBoolEntry(KFI_CFG_X_KEY, KFI_DEFAULT_CFG_X),
+                rootDoGs=rootCfg.readBoolEntry(KFI_CFG_GS_KEY, KFI_DEFAULT_CFG_GS);
+
+        strcpy(itsNrsKfiParams, "-");
+
+        if(rootDoX || rootDoGs)
+        {
+            strcpy(itsNrsKfiParams, "-");
+            strcpy(itsNrsNonMainKfiParams, "-");
+
+            if(rootDoGs)
+            {
+                strcpy(itsNrsKfiParams, "g");
+                strcpy(itsNrsNonMainKfiParams, "g");
+            }
+
+            if(rootDoX && !itsUsingFcFpe)
+            {
+                strcat(itsNrsKfiParams, itsUsingXfsFpe ? "sx" : "x");   // Can't get root to refresh X, only xfs!
+                strcat(itsNrsNonMainKfiParams, itsUsingXfsFpe ? "sx" : "x");
+                if(!itsHasSys)
+                     strcat(itsNrsKfiParams, "a");
+            }
+            if(0==itsNrsNonMainKfiParams[1])
+                itsNrsNonMainKfiParams[0]=0;
+        }
+
+        if(itsAddToSysFc)
+            strcpy(itsNrsKfiParams, "f");
+
+        if(0==itsNrsKfiParams[1])
+            itsNrsKfiParams[0]=0;
+
+        KConfig cfg(KFI_CFG_FILE);
+        bool    doX=cfg.readBoolEntry(KFI_CFG_X_KEY, KFI_DEFAULT_CFG_X),
+                doGs=cfg.readBoolEntry(KFI_CFG_GS_KEY, KFI_DEFAULT_CFG_GS);
+
+        strcpy(itsKfiParams, doGs ? "-g" : "-");
+
+        if(doX)
+            strcat(itsKfiParams, itsUsingFcFpe ? "r" : "rx");
+    }
+
+    if(0==itsKfiParams[1])
+        itsKfiParams[0]=0;
 }
 
 }

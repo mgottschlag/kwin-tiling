@@ -11,7 +11,26 @@
 #define KFI_KIO_FONTS_SYS            I18N_NOOP("System")
 
 // Config
-#define KFI_UI_CFG_FILE              "kfontinstuirc"
+#define KFI_UI_CFG_FILE              KFI_CATALOGUE"uirc"
+#define KFI_CFG_FILE                 KFI_CATALOGUE"rc"
+#define KFI_ROOT_CFG_DIR             "/etc/fonts/"
+#define KFI_ROOT_CFG_FILE            KFI_ROOT_CFG_DIR KFI_CFG_FILE
+#define KFI_CFG_X_KEY                "ConfigureX"
+#define KFI_CFG_GS_KEY               "ConfigureGS"
+#define KFI_DEFAULT_CFG_X            true
+#define KFI_DEFAULT_CFG_GS           false
+
+// KIO::special
+
+namespace KFI
+{
+
+enum ESpecial
+{
+    SPECIAL_RECONFIG = 0
+};
+
+}
 
 // Font name...
 #define KFI_WEIGHT_THIN              I18N_NOOP("Thin")

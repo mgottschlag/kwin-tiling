@@ -30,6 +30,7 @@
 #include "FontEngine.h"
 #include "XConfig.h"
 #include "FcEngine.h"
+#include "KfiConstants.h"
 #include <qdir.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -290,7 +291,7 @@ bool create(const QString &dir, CFontEngine &fe)
 {
     bool        root(Misc::root()),
                 added=false;
-    QString     fmapDir(Misc::dirSyntax(root ? "/etc/fonts/" : dir));
+    QString     fmapDir(Misc::dirSyntax(root ? KFI_ROOT_CFG_DIR : dir));
     CFile       old(fmapDir);
     QStringList entries;
     int         i;

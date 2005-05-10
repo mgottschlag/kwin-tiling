@@ -75,6 +75,7 @@ class CKCmFontInst : public KCModule
     void    loadingFinished();
     void    addFonts();
     void    removeFonts();
+    void    configure();
     void    dropped(const KFileItem *i, QDropEvent *e, const KURL::List &urls);
     void    infoMessage(const QString &msg);
     void    updateInformation(int dirs, int fonts);

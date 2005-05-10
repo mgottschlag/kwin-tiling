@@ -113,13 +113,13 @@ class CKioFonts : public KIO::SlaveBase
     bool     putReal(const QString &destOrig, const QCString &destOrigC, bool origExists, int mode, bool resume);
     void     modified(EFolder folder, const CDirList &dirs=CDirList());
     void     special(const QByteArray &a);
-    void     createRootRefreshCmd(QCString &cmd, const CDirList &dirs=CDirList());
+    void     createRootRefreshCmd(QCString &cmd, const CDirList &dirs=CDirList(), bool reparseCfg=true);
     void     doModified();
     QString  getRootPasswd(bool askPasswd=true);
     bool     doRootCmd(const char *cmd, const QString &passwd);
     bool     doRootCmd(const char *cmd, bool askPasswd=true) { return doRootCmd(cmd, getRootPasswd(askPasswd)); }
     bool     confirmUrl(KURL &url);
-    void     reinitFc();
+    void     clearFontList();
     bool     updateFontList();
     EFolder  getFolder(const KURL &url);
     QMap<QString, QValueList<FcPattern *> >::Iterator getMap(const KURL &url);
@@ -133,15 +133,21 @@ class CKioFonts : public KIO::SlaveBase
     bool     checkUrl(const KURL &u, bool rootOk=false);
     bool     checkAllowed(const KURL &u);
     void     createAfm(const QString &file, bool nrs=false, const QString &passwd=QString::null);
+    void     reparseConfig();
 
     private:
 
     bool         itsRoot,
-                 itsCanStorePasswd;
+                 itsCanStorePasswd,
+                 itsUsingFcFpe,
+                 itsUsingXfsFpe,
+                 itsHasSys,
+                 itsAddToSysFc;
     QString      itsPasswd;
     unsigned int itsFontChanges;
     EDest        itsLastDest;
-    time_t       itsLastDestTime;
+    time_t       itsLastDestTime,
+                 itsLastFcCheckTime;
     FcFontSet    *itsFontList;
     TFolder      itsFolders[FOLDER_COUNT];
     char         itsNrsKfiParams[KFI_PARAMS],
