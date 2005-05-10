@@ -954,28 +954,29 @@ CXConfig::CFontsFile::CFontsFile(const char *file)
             {
                 // Assume entries are:
                 //    <file>.<ext>   -<xlfd>
-                char *dot=strchr(line, '.'),
-                     *dash=dot ? strchr(dot, '-') : NULL;
+                char *dash=strstr(line, " -");
+
+                if(!dash)
+                    dash=strstr(line, "\t-");
 
                 if(dash)
                 {
                     itsXlfdCount++;
 
-                    QString xlfd(dash);
+                    QString xlfd(&dash[1]);
 
                     *dash='\0';
 
                     //
-                    // Check for ttc files...
+                    // Check for ttc files, and ttcap entries...
                     QString fname(QString(line).stripWhiteSpace()), 
                             mod;
-                    int     c1=fname.find(':'),
-                            c2=-1!=c1 ? fname.findRev(':') : -1;
+                    int     c1=fname.findRev(':');
 
-                    if(-1!=c2 && c1!=c2)
+                    if(-1!=c1)
                     {
-                        mod=fname.mid(c1+1, c2-1);
-                        fname.remove(0, c2+1);
+                        mod=fname.left(c1+1);
+                        fname.remove(0, c1+1);
                     }
 
                     TEntry *entry=getEntry(&current, fname);
