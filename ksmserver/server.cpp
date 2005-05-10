@@ -1570,7 +1570,7 @@ void KSMServer::resumeStartup()
 
 void KSMServer::startupSuspendTimeout()
 {
-    kdDebug() << "Startup suspend timeout" << endl;
+    kdDebug( 1218 ) << "Startup suspend timeout" << endl;
     startupSuspendCount = 0;
     restoreNext();
 }
