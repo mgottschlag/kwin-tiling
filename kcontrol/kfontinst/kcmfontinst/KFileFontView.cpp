@@ -51,6 +51,7 @@
 
 #define COL_NAME 0
 #define COL_SIZE 1
+#define COL_TYPE 2
 
 class CKFileFontView::CKFileFontViewPrivate
 {
@@ -73,9 +74,10 @@ CKFileFontView::CKFileFontView(QWidget *parent, const char *name)
 
     addColumn(i18n("Name"));
     addColumn(i18n("Size"));
+    addColumn(i18n("Type"));
     setShowSortIndicator(true);
     setAllColumnsShowFocus(true);
-    setDragEnabled(true);
+    setDragEnabled(false);
 
     connect(header(), SIGNAL(sectionClicked(int)), SLOT(slotSortingChanged(int)));
     connect(this, SIGNAL(returnPressed(QListViewItem *)), SLOT(slotActivate(QListViewItem *)));
@@ -310,10 +312,13 @@ void CKFileFontView::slotSortingChanged(int col)
         case COL_NAME:
             sortSpec = (sort & ~QDir::SortByMask | QDir::Name);
             break;
-        // the following columns have no equivalent in QDir, so we set it
-        // to QDir::Unsorted and remember the column (itsSortingCol)
         case COL_SIZE:
             sortSpec = (sort & ~QDir::SortByMask | QDir::Size);
+            break;
+        // the following columns have no equivalent in QDir, so we set it
+        // to QDir::Unsorted and remember the column (itsSortingCol)
+        case COL_TYPE:
+            sortSpec = (sort & ~QDir::SortByMask | QDir::Time);
             break;
         default:
             break;
@@ -468,9 +473,10 @@ QDragObject *CKFileFontView::dragObject()
     hotspot.setX(pixmap.width() / 2);
     hotspot.setY(pixmap.height() / 2);
 
-    QDragObject* dragObject=new KURLDrag(urls, widget());
+    QDragObject *dragObject=new KURLDrag(urls, widget());
 
-    dragObject->setPixmap(pixmap, hotspot);
+    if(dragObject)
+        dragObject->setPixmap(pixmap, hotspot);
 
     return dragObject;
 }
@@ -617,6 +623,7 @@ void CFontListViewItem::init()
 
     setText(COL_NAME, itsInf->text());
     setText(COL_SIZE, itsInf->isDir() ? "" : KGlobal::locale()->formatNumber(itsInf->size(), 0));
+    setText(COL_TYPE, itsInf->mimeComment());
 }
 
 void CKFileFontView::virtual_hook(int id, void *data)

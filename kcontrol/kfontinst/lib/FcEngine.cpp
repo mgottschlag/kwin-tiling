@@ -1,7 +1,6 @@
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qfontmetrics.h>
-#include <qfont.h>
 #include <qfile.h>
 #include <qtextstream.h>
 #include <kurl.h>
@@ -29,6 +28,9 @@
 
 namespace KFI
 {
+
+const int CFcEngine::constScalableSizes[]={8, 10, 12, 24, 36, 48, 64, 72, 96, 0 };
+const int CFcEngine::constDefaultAlphaSize=24;
 
 static int fcWeight(int weight)
 {
@@ -64,6 +66,35 @@ static int fcWeight(int weight)
     return FC_WEIGHT_HEAVY;
 }
 
+static int fcToQtWeight(int weight)
+{
+    switch(weight)
+    {
+        case FC_WEIGHT_THIN:
+            return 0;
+        case FC_WEIGHT_ULTRALIGHT:
+            return QFont::Light>>1;
+        case FC_WEIGHT_LIGHT:
+            return QFont::Light;
+        default:
+        case FC_WEIGHT_NORMAL:
+            return QFont::Normal;
+        case FC_WEIGHT_MEDIUM:
+#ifdef KFI_HAVE_MEDIUM_WEIGHT
+            return (QFont::Normal+QFont::DemiBold)>>1;
+#endif
+            return QFont::Normal;
+        case FC_WEIGHT_SEMIBOLD:
+            return QFont::DemiBold;
+        case FC_WEIGHT_BOLD:
+            return QFont::Bold;
+        case FC_WEIGHT_ULTRABOLD:
+            return (QFont::Bold+QFont::Black)>>1;
+        case FC_WEIGHT_HEAVY:
+            return QFont::Black;
+    }
+}
+
 #ifndef KFI_FC_NO_WIDTHS
 static int fcWidth(int width)
 {
@@ -93,6 +124,32 @@ static int fcWidth(int width)
 
     return FC_WIDTH_ULTRAEXPANDED;
 }
+
+static int fcToQtWidth(int weight)
+{
+    switch(weight)
+    {
+        case FC_WIDTH_ULTRACONDENSED:
+            return QFont::UltraCondensed;
+        case FC_WIDTH_EXTRACONDENSED:
+            return QFont::ExtraCondensed;
+        case FC_WIDTH_CONDENSED:
+            return QFont::Condensed;
+        case FC_WIDTH_SEMICONDENSED:
+            return QFont::SemiCondensed;
+        default:
+        case FC_WIDTH_NORMAL:
+            return QFont::Unstretched;
+        case FC_WIDTH_SEMIEXPANDED:
+            return QFont::SemiExpanded;
+        case FC_WIDTH_EXPANDED:
+            return QFont::Expanded;
+        case FC_WIDTH_EXTRAEXPANDED:
+            return QFont::ExtraExpanded;
+        case FC_WIDTH_ULTRAEXPANDED:
+            return QFont::UltraExpanded;
+    }
+}
 #endif
 
 static int fcSlant(int slant)
@@ -108,6 +165,11 @@ static int fcSlant(int slant)
 #else
     return FC_SLANT_ITALIC;
 #endif
+}
+
+static bool fcToQtSlant(int slant)
+{
+    return FC_SLANT_ROMAN==slant ? false : true;
 }
 
 static int fcSpacing(int spacing)
@@ -435,7 +497,7 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
 
         getSizes(&pix);
 
-        if(itsSizes.count())
+        if(itsSizes.size())
         {
             XRenderColor xrenderCol;
             XftColor     xftCol;
@@ -449,7 +511,7 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
 
             XftDraw *xftDraw=XftDrawCreate(pix.x11Display(), (Pixmap)(pix.handle()),
                                            (Visual*)(pix.x11Visual()), pix.x11Colormap());
-                                           
+
             if(xftDraw)
             {
                 XftFont *xftFont=NULL;
@@ -458,7 +520,7 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                 if(thumb)
                 {
                     QString text(i18n("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789"));
-    
+
                     //
                     // Calculate size of text...
                     int fSize= h <= 32
@@ -466,29 +528,26 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                                 : h <= 64
                                         ? (h-(offset*3))/2   // 2 lines...
                                         : (h-(offset*4))/3;  // 3 lines or more
-    
-    
+
                     if(!itsScalable) // Then need to get nearest size...
                     {
-                        QValueList<int>::iterator it,
-                                                end=itsSizes.end();
-                        int                       bSize=fSize;
-    
-                        for (it=itsSizes.begin(); it!=end && y<h; ++it)
-                            if (*it<=fSize)
-                                bSize=*it;
+                        int bSize=fSize;
+
+                        for(unsigned int s=0; s<itsSizes.size(); ++s)
+                            if (itsSizes[s]<=fSize)
+                                bSize=itsSizes[s];
                         fSize=bSize;
                     }
-    
+
                     unsigned int ch;
-    
+
                     xftFont=getFont(fSize, &pix);
-    
+
                     y=fSize;
                     if(xftFont)
                     {
                         drawGlyphs=!hasStr(xftFont, text);
-    
+
                         if(!drawGlyphs)
                             for(ch=0; ch<text.length(); ++ch)   // Display char by char so that it wraps...
                                 if(!drawChar(pix, xftDraw, xftFont, &xftCol, text, ch, x, y, w, h, fSize, offset))
@@ -496,7 +555,7 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                         if(drawGlyphs)
                         {
                             FT_Face face=XftLockFace(xftFont);
-                                    
+
                             if(face)
                             {
                                 for(int i=1; i<face->num_glyphs && y<w; ++i)  // Glyph 0 is the NULL glyph
@@ -510,19 +569,16 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                 }
                 else
                 {
-                    QString lowercase(i18n("All of the letters of the alphabet, lowercase",
-                                        "abcdefghijklmnopqrstuvwxyz")),
-                            uppercase(i18n("All of the letters of the alphabet, uppercase",
-                                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ")),
-                            punctuation(i18n("Numbers and characters",
-                                            "0123456789.:,;(*!?'/\\\")£$€%^&-+@~#<>{}[]")),
+                    QString lowercase(getLowercaseLetters()),
+                            uppercase(getUppercaseLetters()),
+                            punctuation(getPunctuation()),
                             title(itsDescriptiveName.isEmpty()
                                     ? i18n("ERROR: Could not determine font's name.")
                                     : itsDescriptiveName);
-    
-                    if(1==itsSizes.count())
-                        title=i18n("%1 [1 pixel]", "%1 [%n pixels]", itsSizes.first()).arg(title);
-    
+
+                    if(1==itsSizes.size())
+                        title=i18n("%1 [1 pixel]", "%1 [%n pixels]", itsSizes[0]).arg(title);
+
                     painter.setFont(KGlobalSettings::generalFont());
                     painter.setPen(Qt::black);
                     y=painter.fontMetrics().height();
@@ -530,21 +586,20 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                     y+=4;
                     painter.drawLine(offset, y, w-(offset+1), y);
                     y+=8;
-    
+
                     bool lc=true,
                          uc=true,
                          punc=true;
-                    
-    
+
                     xftFont=getFont(itsAlphaSize, &pix);
                     if(xftFont)
                     {
                         lc=hasStr(xftFont, lowercase);
                         uc=hasStr(xftFont, uppercase);
                         punc=hasStr(xftFont, punctuation);
-    
+
                         drawGlyphs=!lc && !uc;
-    
+
                         if(!drawGlyphs)
                         {
                             if(lc)
@@ -558,12 +613,10 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                                 painter.drawLine(offset, y, w-(offset+1), y);
                             y+=8;
                         }
-    
-                        QValueList<int>::iterator it,
-                                                  end=itsSizes.end();
-                        QString                   previewString(getPreviewString());
-                        bool                      stop=false;
-    
+
+                        QString previewString(getPreviewString());
+                        bool    stop=false;
+
                         if(!drawGlyphs)
                         {
                             if(!lc && uc)
@@ -571,25 +624,25 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                             if(!uc && lc)
                                 previewString=previewString.lower();
                         }
-    
-                        for (it=itsSizes.begin(); it!=end && y<h && !stop; ++it)
+
+                        for(unsigned int s=0; s<itsSizes.size(); ++s)
                         {
-                            xftFont=getFont(*it, &pix);
-    
+                            xftFont=getFont(itsSizes[s], &pix);
+
                             if(xftFont)
                             {
                                 if(drawGlyphs)
                                 {
                                     FT_Face face=XftLockFace(xftFont);
-                                    
+
                                     if(face)
                                     {
-                                        int        space=*it/10;
+                                        int        space=itsSizes[s]/10;
                                         XGlyphInfo extents;
-                                        
+
                                         if(!space)
                                             space=1;
-                                    
+
                                         for(int i=1; i<face->num_glyphs && y<w && !stop; ++i)
                                         {
                                             XftGlyphExtents(pix.x11Display(), xftFont, (const FT_UInt *)&i, 1, &extents);
@@ -606,7 +659,7 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                                             }
                                             if(x>=w || i==face->num_glyphs-1)
                                             {
-                                                y+=*it+offset;
+                                                y+=itsSizes[s]+offset;
                                                 x=offset;
                                                 break;
                                             }
@@ -622,7 +675,7 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                         }
                     }
                 }
-                
+
                 XftDrawDestroy(xftDraw);
             }
         }
@@ -630,6 +683,7 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
 
     return rv;
 }
+#endif
 
 QString CFcEngine::getPreviewString()
 {
@@ -643,15 +697,29 @@ QString CFcEngine::getPreviewString()
                                 "The quick brown fox jumps over the lazy dog")
                          : str;
 }
-    
+
 void CFcEngine::setPreviewString(const QString &str)
-{   
+{
     KConfig cfg(KFI_UI_CFG_FILE);
-    
+
     cfg.setGroup(KFI_PREVIEW_GROUP);
     cfg.writeEntry(KFI_PREVIEW_STRING_KEY, str);
 }
-#endif
+
+QString CFcEngine::getUppercaseLetters()
+{
+    return i18n("All of the letters of the alphabet, uppercase", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+}
+
+QString CFcEngine::getLowercaseLetters()
+{
+    return i18n("All of the letters of the alphabet, lowercase", "abcdefghijklmnopqrstuvwxyz");
+}
+
+QString CFcEngine::getPunctuation()
+{
+    return i18n("Numbers and characters", "0123456789.:,;(*!?'/\\\")£$€%^&-+@~#<>{}[]");
+}
 
 QString CFcEngine::getFcString(FcPattern *pat, const char *val, int faceNo)
 {
@@ -819,6 +887,18 @@ bool CFcEngine::getInfo(const KURL &url, int faceNo, QString &full, QString &fam
     return false;
 }
 
+QFont CFcEngine::getQFont(const QString &name, int size)
+{
+    parseName(name, 0, false);
+
+    QFont font(itsName, size, fcToQtWeight(itsWeight), fcToQtSlant(itsSlant));
+
+#ifndef KFI_FC_NO_WIDTHS
+    font.setStretch(fcToQtWidth(itsWidth));
+#endif
+    return font;
+}
+
 bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
 {
     FcInitLoadConfigAndFonts();
@@ -849,65 +929,8 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
 
         if(!name.isEmpty())
         {
-            int pos;
-    
-            itsDescriptiveName=name;
-            itsSpacing=FC_PROPORTIONAL;
-            if(-1==(pos=name.find(", ")))   // No style information...
-            {
-                itsWeight=FC_WEIGHT_NORMAL;
-#ifndef KFI_FC_NO_WIDTHS
-                itsWidth=FC_WIDTH_NORMAL;
-#endif
-                itsSlant=FC_SLANT_ROMAN;
-            }
-            else
-            {
-                QString style(name.mid(pos+2));
-    
-                itsWeight=strToWeight(style, style);
-#ifndef KFI_FC_NO_WIDTHS
-                itsWidth=strToWidth(style, style);
-#endif
-                itsSlant=strToSlant(style);
-                name=name.left(pos);
-            }
-    
-            itsName=name;
-    
-            if(all)
-            {
-//                XftFont *xft=getFont(8);
-//
-//                if(xft)
-//                {
-//                   FcPatternGetInteger(xft->pattern, FC_SPACING, faceNo, &itsSpacing);
-//                    itsFoundry=getFcString(xft->pattern, FC_FOUNDRY, faceNo);
-//                    XftFontClose(QPaintDevice::x11AppDisplay(), xft);
-//                }
-                FcObjectSet *os  = FcObjectSetBuild(FC_SPACING, FC_FOUNDRY, (void *)0);
-                FcPattern   *pat = FcPatternBuild(NULL,
-                                                    FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.latin1()),
-                                                    FC_WEIGHT, FcTypeInteger, itsWeight,
-                                                    FC_SLANT, FcTypeInteger, itsSlant,
-#ifndef KFI_FC_NO_WIDTHS
-                                                    FC_WIDTH, FcTypeInteger, itsWidth,
-#endif
-                                                    NULL);
-                FcFontSet   *set =  FcFontList(0, pat, os);    
-    
-                FcPatternDestroy(pat);
-                FcObjectSetDestroy(os);
-    
-                if(set && set->nfont)
-                {
-                    FcPatternGetInteger(set->fonts[0], FC_SPACING, faceNo, &itsSpacing);
-                    itsFoundry=getFcString(set->fonts[0], FC_FOUNDRY, faceNo);
-                }
-            }
-    
+            parseName(name, faceNo, all); 
             itsInstalled=true;
-            itsIndex=0; // Doesn't matter, as we're gonna use font name!
         }
         else
             return false;
@@ -973,6 +996,60 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
     return true;
 }
 
+void CFcEngine::parseName(const QString &name, int faceNo, bool all)
+{
+    int pos;
+
+    itsDescriptiveName=name;
+    itsSpacing=FC_PROPORTIONAL;
+    if(-1==(pos=name.find(", ")))   // No style information...
+    {
+        itsWeight=FC_WEIGHT_NORMAL;
+#ifndef KFI_FC_NO_WIDTHS
+        itsWidth=FC_WIDTH_NORMAL;
+#endif
+        itsSlant=FC_SLANT_ROMAN;
+        itsName=name;
+    }
+    else
+    {
+        QString style(name.mid(pos+2));
+
+        itsWeight=strToWeight(style, style);
+#ifndef KFI_FC_NO_WIDTHS
+        itsWidth=strToWidth(style, style);
+#endif
+        itsSlant=strToSlant(style);
+        itsName=name.left(pos);
+    }
+
+    if(all)
+    {
+        FcObjectSet *os  = FcObjectSetBuild(FC_SPACING, FC_FOUNDRY, (void *)0);
+        FcPattern   *pat = FcPatternBuild(NULL,
+                                            FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.latin1()),
+                                            FC_WEIGHT, FcTypeInteger, itsWeight,
+                                            FC_SLANT, FcTypeInteger, itsSlant,
+#ifndef KFI_FC_NO_WIDTHS
+                                            FC_WIDTH, FcTypeInteger, itsWidth,
+#endif
+                                            NULL);
+        FcFontSet   *set = FcFontList(0, pat, os);
+
+        FcPatternDestroy(pat);
+        FcObjectSetDestroy(os);
+
+        if(set && set->nfont)
+        {
+            FcPatternGetInteger(set->fonts[0], FC_SPACING, faceNo, &itsSpacing);
+            itsFoundry=getFcString(set->fonts[0], FC_FOUNDRY, faceNo);
+        }
+    }
+
+    itsIndex=0; // Doesn't matter, as we're gonna use font name!
+    itsLastUrl=KURL();
+}
+
 #ifdef HAVE_XFT
 XftFont * CFcEngine::getFont(int size, QPixmap *pix)
 {
@@ -1002,10 +1079,7 @@ void CFcEngine::getSizes(QPixmap *pix)
     static const int constNumSizes=11;
     static const int constNumSizeRanges=2;
     static const int constSizes[constNumSizeRanges][constNumSizes]= { {8, 10, 12, 14, 16, 18, 24, 36, 48, 72, 96},
-                                                                      {7, 9,  11, 13, 15, 17, 23, 35, 47, 71, 95} };
-    static const int constScalableSizes[]={8, 10, 12, 24, 36, 48, 64, 72, 96, 0};
-    static const int constAlphaSize=24;
-
+                                                                      {7,  9, 11, 13, 15, 17, 23, 35, 47, 71, 95} };
     XftFont *f=getFont(8, pix);
 
     itsScalable=FcTrue;
@@ -1036,10 +1110,12 @@ void CFcEngine::getSizes(QPixmap *pix)
 
                     gotSizes=true;
 
-                    for (size = 0; size<numSizes; size++)
+                    itsSizes.reserve(numSizes);
+
+                    for (size=0; size<numSizes; size++)
                     {
-                        itsSizes.append(face->available_sizes[size].height);
-                        if (face->available_sizes[size].height<=constAlphaSize)
+                        itsSizes.push_back(face->available_sizes[size].height);
+                        if (face->available_sizes[size].height<=constDefaultAlphaSize)
                             itsAlphaSize=face->available_sizes[size].height;
                     }
                 }
@@ -1054,6 +1130,9 @@ void CFcEngine::getSizes(QPixmap *pix)
         // sizes, and ask fontconfig for a font of that sizes. Then check the retured size, family, etc is what was asked
         // for!
         if(!itsScalable && !gotSizes)
+        {
+            itsSizes.reserve(constNumSizes);
+
             for(int l=0; l<constNumSizeRanges && !gotSizes; ++l)
                 for(int i=0; i<constNumSizes; ++i)
                 {
@@ -1074,21 +1153,24 @@ void CFcEngine::getSizes(QPixmap *pix)
                            FcResultMatch==FcPatternGetString(f->pattern, FC_FAMILY, 0, &str) && str &&
                            0==strcmp((const char *)str, itsName.latin1()))
                         {
-                            itsSizes.append(constSizes[l][i]);
+                            itsSizes.push_back(constSizes[l][i]);
                             gotSizes=true;
-                            if(constSizes[l][i]<=constAlphaSize)
+                            if(constSizes[l][i]<=constDefaultAlphaSize)
                                 itsAlphaSize=constSizes[l][i];
                         }
                         XftFontClose(KFI_DISPLAY(pix), f);
                     }
                 }
+        }
     }
 
     if(itsScalable)
     {
+        itsSizes.reserve(constNumSizes);
+
         for (int i=0; constScalableSizes[i]; ++i)
-            itsSizes.append(point2Pixel(constScalableSizes[i]));
-        itsAlphaSize=constAlphaSize;
+            itsSizes.push_back(point2Pixel(constScalableSizes[i]));
+        itsAlphaSize=constDefaultAlphaSize;
     }
 }
 #endif

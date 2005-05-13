@@ -1,12 +1,12 @@
-#ifndef __FONT_VIEW_PART_H__
-#define __FONT_VIEW_PART_H__
+#ifndef __PRINT_H__
+#define __PRINT_H__
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : KFI::CFontViewPart
+// Namespace     : KFI::Print
 // Author        : Craig Drummond
-// Project       : K Font Installer (kfontinst-kcontrol)
-// Creation Date : 03/08/2002
+// Project       : K Font Installer
+// Creation Date : 14/05/2005
 // Version       : $Revision$ $Date$
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,61 +26,23 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2002, 2003, 2004
+// (C) Craig Drummond, 2005
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <kparts/part.h>
-#include <qvaluevector.h>
-
-class QPushButton;
-class QFrame;
-class QLabel;
 class QStringList;
-class KIntNumInput;
-class KAction;
-class KURL;
+class QString;
+class QWidget;
 
 namespace KFI
 {
 
-class CFontPreview;
 class CFcEngine;
 
-class CFontViewPart : public KParts::ReadOnlyPart
+namespace Print
 {
-    Q_OBJECT
-
-    public:
-
-    CFontViewPart(QWidget *parent=0, const char *name=0);
-    virtual ~CFontViewPart() {}
-
-    bool openURL(const KURL &url);
-
-    protected:
-
-    bool openFile();
-
-    private slots:
-
-    void previewStatus(bool st);
-    void install();
-    void changeText();
-    void print();
-
-    private:
-
-    CFontPreview  *itsPreview;
-    QPushButton   *itsInstallButton;
-    QFrame        *itsFrame,
-                  *itsToolsFrame;
-    QLabel        *itsFaceLabel;
-    KIntNumInput  *itsFaceSelector;
-    KAction       *itsChangeTextAction,
-                  *itsPrintAction;
-    bool          itsShowInstallButton;
-    int           itsFace;
-};
+extern void printItems(const QStringList &items, int size, QWidget *parent, CFcEngine &engine);
+extern bool printable(const QString &mime);
+}
 
 }
 

@@ -15,6 +15,9 @@ KDE3.4 -> KDE3.5
 2. New mimetype: fonts/package - to cater for the above.
 3. Add settings to enable/disable configuring fonts for legacy X, and Ghostscript
    (X defaults to true, and Ghostscript defaults to false)
+4. Show mime-type in detailed view.
+5. Simple font sample printing - but only of installed fonts!
+6. Add toggle button to control display of bitmap fonts.
 
 KDE3.3 -> KDE3.4
 ================

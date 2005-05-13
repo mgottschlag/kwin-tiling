@@ -2,6 +2,7 @@
 <kpartgui name="kfontviewpart" version="1">
 <ToolBar name="mainToolBar">
   <text>&amp;Main Toolbar</text>
+  <Action name="print"/>
   <Action name="changeText"/>
 </ToolBar>
 </kpartgui>

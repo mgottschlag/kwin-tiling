@@ -6,7 +6,8 @@
 #endif
 
 #include <qstring.h>
-#include <qvaluelist.h>
+#include <qvaluevector.h>
+#include <qfont.h>
 #include <kurl.h>
 #include <kdeversion.h>
 #include <fontconfig/fontconfig.h>
@@ -61,11 +62,16 @@ class KDE_EXPORT CFcEngine
                     QString &width,
 #endif
                     QString &spacing, QString &slant);
+    QFont   getQFont(const QString &name, int size);
 
-#ifdef HAVE_XFT
+    const QValueVector<int> & sizes() const { return itsSizes; }
+    int                       alphaSize() const { return itsAlphaSize; }
+
     static QString getPreviewString();
     static void    setPreviewString(const QString &str);
-#endif
+    static QString getUppercaseLetters();
+    static QString getLowercaseLetters();
+    static QString getPunctuation();
     static QString getFcString(FcPattern *pat, const char *val, int faceNo=0);
     static QString createName(FcPattern *pat, int faceNo=0);
     static QString weightStr(int weight, bool emptyNormal=true);
@@ -75,9 +81,13 @@ class KDE_EXPORT CFcEngine
     static QString slantStr(int slant, bool emptyNormal=true);
     static QString spacingStr(int spacing);
 
+    static const int constScalableSizes[];
+    static const int constDefaultAlphaSize;
+
     private:
 
     bool      parseUrl(const KURL &url, int faceNo, bool all=false);
+    void      parseName(const QString &name, int faceNo, bool all=false);
 #ifdef HAVE_XFT
     XftFont * getFont(int size, QPixmap *pix=NULL);
     void      getSizes(QPixmap *pix=NULL);
@@ -85,22 +95,22 @@ class KDE_EXPORT CFcEngine
 
     private:
 
-    bool            itsInstalled;
-    QString         itsName,
-                    itsDescriptiveName,
-                    itsFoundry;
-    int             itsIndex,
-                    itsIndexCount,
-                    itsWeight,
+    bool              itsInstalled;
+    QString           itsName,
+                      itsDescriptiveName,
+                      itsFoundry;
+    int               itsIndex,
+                      itsIndexCount,
+                      itsWeight,
 #ifndef KFI_FC_NO_WIDTHS
-                    itsWidth,
+                      itsWidth,
 #endif
-                    itsSlant,
-                    itsSpacing,
-                    itsAlphaSize;
-    QValueList<int> itsSizes;
-    KURL            itsLastUrl;
-    FcBool          itsScalable;
+                      itsSlant,
+                      itsSpacing,
+                      itsAlphaSize;
+    QValueVector<int> itsSizes;
+    KURL              itsLastUrl;
+    FcBool            itsScalable;
 };
 
 }

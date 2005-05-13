@@ -30,14 +30,19 @@
 #include "FontPreview.h"
 #include "Misc.h"
 #include "KfiConstants.h"
+#include "KfiPrint.h"
 #include <klocale.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qframe.h>
 #include <qfile.h>
 #include <qlabel.h>
+#include <qpainter.h>
+#include <qpaintdevicemetrics.h>
 #include <qvalidator.h>
 #include <qregexp.h>
+#include <qsettings.h>
+#include <qstringlist.h>
 #include <kio/netaccess.h>
 #include <kinstance.h>
 #include <kmessagebox.h>
@@ -46,6 +51,7 @@
 #include <kaction.h>
 #include <kinputdialog.h>
 #include <kdialog.h>
+#include <kprinter.h>
 #include <string.h>
 
 #define DEFAULT_FONT_SIZE 28
@@ -108,6 +114,8 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
     itsChangeTextAction=new KAction(i18n("Change Text..."), "text", KShortcut(),
                                     this, SLOT(changeText()), actionCollection(), "changeText");
     itsChangeTextAction->setEnabled(false);
+    itsPrintAction=KStdAction::print(this, SLOT(print()), actionCollection(), "print");
+    itsPrintAction->setEnabled(false);
 
     setXMLFile("kfontviewpart.rc");
     setWidget(itsFrame);
@@ -153,7 +161,7 @@ bool CFontViewPart::openFile()
     itsFaceSelector->setShown(showFs);
     itsToolsFrame->hide();
 
-    if(KFI_KIO_FONTS_PROTOCOL!=m_url.protocol())
+    if(!isFonts)
     {
         KURL          destUrl;
         KIO::UDSEntry uds;
@@ -186,6 +194,7 @@ void CFontViewPart::previewStatus(bool st)
     itsInstallButton->setShown(st && itsShowInstallButton);
     itsToolsFrame->setShown(itsInstallButton->isShown()||itsFaceSelector->isShown());
     itsChangeTextAction->setEnabled(st);
+    itsPrintAction->setEnabled(st && KFI_KIO_FONTS_PROTOCOL==m_url.protocol());
 }
 
 void CFontViewPart::install()
@@ -253,6 +262,15 @@ void CFontViewPart::changeText()
         itsPreview->engine().setPreviewString(newStr);
         itsPreview->showFont();
     }
+}
+
+void CFontViewPart::print()
+{
+    QStringList items;
+
+    items.append(itsPreview->engine().getName(m_url));
+
+    Print::printItems(items, 0, itsFrame->parentWidget(), itsPreview->engine());
 }
 
 }

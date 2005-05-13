@@ -1,10 +1,15 @@
+noinst_LTLIBRARIES = libkfontinstprint.la
+libkfontinstprint_la_SOURCES = KfiPrint.cpp
+libkfontinstprint_la_DFLAGS = $(all_libraries)
+libkfontinstprint_la_LIBADD = $(LIB_KDEPRINT) ../lib/libkfontinst.la
+
 kde_module_LTLIBRARIES = libkfontviewpart.la
 
 libkfontviewpart_la_SOURCES = FontViewPart.cpp FontViewPartFactory.cpp FontPreview.cpp
 libkfontviewpart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
-libkfontviewpart_la_LIBADD = $(LIB_KPARTS) ../lib/libkfontinst.la
+libkfontviewpart_la_LIBADD = $(LIB_KPARTS) libkfontinstprint.la ../lib/libkfontinst.la
 
-noinst_HEADERS  = FontViewPart.h FontViewPartFactory.h FontPreview.h FontViewerApp.h
+noinst_HEADERS  = FontViewPart.h FontViewPartFactory.h FontPreview.h FontViewerApp.h KfiPrint.h
 
 kde_services_DATA = kfontviewpart.desktop
 

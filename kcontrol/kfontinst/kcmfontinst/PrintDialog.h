@@ -1,12 +1,12 @@
-#ifndef __FONT_VIEW_PART_H__
-#define __FONT_VIEW_PART_H__
+#ifndef __PRINT_DIALOG_H__
+#define __PRINT_DIALOG_H__
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Class Name    : KFI::CFontViewPart
+// Class Name    : KFI::CPrintDialog
 // Author        : Craig Drummond
-// Project       : K Font Installer (kfontinst-kcontrol)
-// Creation Date : 03/08/2002
+// Project       : K Font Installer
+// Creation Date : 12/05/2005
 // Version       : $Revision$ $Date$
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,60 +26,29 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// (C) Craig Drummond, 2002, 2003, 2004
+// (C) Craig Drummond, 2005
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <kparts/part.h>
-#include <qvaluevector.h>
-
-class QPushButton;
-class QFrame;
-class QLabel;
-class QStringList;
-class KIntNumInput;
-class KAction;
-class KURL;
+#include <kdialogbase.h>
+#include <qcombobox.h>
 
 namespace KFI
 {
 
-class CFontPreview;
-class CFcEngine;
-
-class CFontViewPart : public KParts::ReadOnlyPart
+class CPrintDialog : public KDialogBase
 {
-    Q_OBJECT
-
     public:
 
-    CFontViewPart(QWidget *parent=0, const char *name=0);
-    virtual ~CFontViewPart() {}
+    CPrintDialog(QWidget *parent);
 
-    bool openURL(const KURL &url);
-
-    protected:
-
-    bool openFile();
-
-    private slots:
-
-    void previewStatus(bool st);
-    void install();
-    void changeText();
-    void print();
+    bool exec(bool select, int size);
+    int  chosenSize() { return itsSize->currentItem(); }
+    bool outputAll()  { return 0==itsOutput->currentItem(); }
 
     private:
 
-    CFontPreview  *itsPreview;
-    QPushButton   *itsInstallButton;
-    QFrame        *itsFrame,
-                  *itsToolsFrame;
-    QLabel        *itsFaceLabel;
-    KIntNumInput  *itsFaceSelector;
-    KAction       *itsChangeTextAction,
-                  *itsPrintAction;
-    bool          itsShowInstallButton;
-    int           itsFace;
+    QComboBox *itsOutput,
+              *itsSize;
 };
 
 }

@@ -46,6 +46,7 @@ class KDirOperator;
 class KAction;
 class KRadioAction;
 class KActionMenu;
+class KToggleAction;
 class KFileItem;
 class QLabel;
 class QSplitter;
@@ -64,8 +65,11 @@ class CKCmFontInst : public KCModule
     CKCmFontInst(QWidget *parent=NULL, const char *name=NULL, const QStringList &list=QStringList());
     virtual ~CKCmFontInst();
 
+    void    setMimeTypes(bool showBitmap);
+
     public slots:
 
+    void    filterFonts();
     QString quickHelp() const;
     void    listView();
     void    iconView();
@@ -76,6 +80,7 @@ class CKCmFontInst : public KCModule
     void    addFonts();
     void    removeFonts();
     void    configure();
+    void    print();
     void    dropped(const KFileItem *i, QDropEvent *e, const KURL::List &urls);
     void    infoMessage(const QString &msg);
     void    updateInformation(int dirs, int fonts);
@@ -89,6 +94,7 @@ class CKCmFontInst : public KCModule
 
     KDirOperator         *itsDirOp;
     KURL                 itsTop;
+    KToggleAction        *itsShowBitmapAct;
     KAction              *itsSepDirsAct,
                          *itsShowHiddenAct,
                          *itsDeleteAct;

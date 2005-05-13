@@ -28,12 +28,21 @@
 
 #include "KCmFontInst.h"
 #include "KfiConstants.h"
+#include "PrintDialog.h"
 #include "SettingsDialog.h"
+#ifdef HAVE_XFT
+#include "KfiPrint.h"
+#include "FcEngine.h"
+#endif
 #include <qlayout.h>
 #include <qlabel.h>
+#include <qpainter.h>
+#include <qpaintdevicemetrics.h>
+#include <qsettings.h>
 #include <kaboutdata.h>
 #include <kgenericfactory.h>
 #include <kdiroperator.h>
+#include <kprinter.h>
 #include "Misc.h"
 #include "KFileFontIconView.h"
 #include "KFileFontView.h"
@@ -45,7 +54,6 @@
 #include <kmessagebox.h>
 #include <kcmdlineargs.h>
 #include <kapplication.h>
-#include <klibloader.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
 #include <kdirlister.h>
@@ -57,6 +65,8 @@
 #define CFG_LISTVIEW       "ListView"
 #define CFG_PATH           "Path"
 #define CFG_SPLITTER_SIZES "SplitterSizes"
+#define CFG_SHOW_BITMAP    "ShowBitmap"
+#define CFG_FONT_SIZE      "FontSize"
 
 typedef KGenericFactory<KFI::CKCmFontInst, QWidget> FontInstallFactory;
 K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory("kcmfontinst"))
@@ -127,6 +137,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     QGridLayout *fontsLayout=new QGridLayout(fontsFrame, 1, 1, 0, 1);
     QVBoxLayout *layout=new QVBoxLayout(this, 0, KDialog::spacingHint());
     KToolBar    *toolbar=new KToolBar(this);
+    bool        showBitmap(itsConfig.readBoolEntry(CFG_SHOW_BITMAP, false));
 
     fontsFrame->setLineWidth(0);
     toolbar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
@@ -138,19 +149,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
                                 fontsFrame);
     itsDirOp->setViewConfig(&itsConfig, "ListView Settings");
     itsDirOp->setMinimumSize(QSize(96, 64));
-
-    QStringList mimeTypes;
-
-    mimeTypes << "application/x-font-ttf"
-              << "application/x-font-otf"
-              << "application/x-font-ttc"
-              << "application/x-font-type1"
-              << "application/x-font-pcf"
-              << "application/x-font-bdf";
-              //<< "application/x-font-snf"
-              //<< "application/x-font-speedo";
-
-    itsDirOp->setMimeFilter(mimeTypes);
+    setMimeTypes(showBitmap);
     itsDirOp->dirLister()->setMainWindow(this);
     itsDirOp->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     fontsLayout->addMultiCellWidget(itsDirOp, 0, 0, 0, 1);
@@ -177,9 +176,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     //
     // Now for the hack!
-    KAction          *act;
-    KActionMenu      *topMnu=dynamic_cast<KActionMenu *>(itsDirOp->actionCollection()->action("popupMenu"));
-    KActionSeparator *sep=new KActionSeparator(itsDirOp->actionCollection(), "separator" );
+    KAction     *act;
+    KActionMenu *topMnu=dynamic_cast<KActionMenu *>(itsDirOp->actionCollection()->action("popupMenu"));
 
     itsViewMenuAct=dynamic_cast<KActionMenu *>(itsDirOp->actionCollection()->action("view menu"));
     topMnu->popupMenu()->clear();
@@ -212,6 +210,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         itsListAct->plug(toolbar);
     }
 
+    itsShowBitmapAct=new KToggleAction(i18n("Show Bitmap Fonts"), "font_bitmap", 0, this, SLOT(filterFonts()), 
+                                       itsDirOp->actionCollection(), "showbitmap");
+    itsShowBitmapAct->setChecked(showBitmap);
+    itsShowBitmapAct->plug(toolbar);
+
     toolbar->insertLineSeparator();
 
     act=new KAction(i18n("Add Fonts..."), "newfont", 0, this, SLOT(addFonts()), itsDirOp->actionCollection(), "addfonts");
@@ -230,6 +233,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     toolbar->insertLineSeparator();
     act=new KAction(i18n("Configure..."), "configure", 0, this, SLOT(configure()), itsDirOp->actionCollection(), "configure");
     act->plug(toolbar);
+#ifdef HAVE_XFT
+    toolbar->insertLineSeparator();
+    act=new KAction(i18n("Print..."), "fileprint", 0, this, SLOT(print()), itsDirOp->actionCollection(), "print");
+    act->plug(toolbar);
+#endif
 
     if( (itsSepDirsAct=itsDirOp->actionCollection()->action("separate dirs")) &&
         (itsShowHiddenAct=itsDirOp->actionCollection()->action("show hidden")))
@@ -244,13 +252,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     {
         KActionCollection *previewCol=itsPreview->actionCollection();
 
-        if(previewCol && previewCol->count()>0)
-        {
-            toolbar->insertLineSeparator();
-
-            if((act=previewCol->action("changeText")))
-                act->plug(toolbar);
-        }
+        if(previewCol && previewCol->count()>0 && (act=previewCol->action("changeText")))
+            act->plug(toolbar);
     }
 #endif
 
@@ -281,6 +284,31 @@ CKCmFontInst::~CKCmFontInst()
     }
 #endif
     delete itsDirOp;
+}
+
+void CKCmFontInst::setMimeTypes(bool showBitmap)
+{
+    QStringList mimeTypes;
+
+    mimeTypes << "application/x-font-ttf"
+              << "application/x-font-otf"
+              << "application/x-font-ttc"
+              << "application/x-font-type1";
+    if(showBitmap)
+        mimeTypes << "application/x-font-pcf"
+                  << "application/x-font-bdf";
+
+    itsDirOp->setMimeFilter(mimeTypes);
+}
+
+void CKCmFontInst::filterFonts()
+{
+    setMimeTypes(itsShowBitmapAct->isChecked());
+    itsDirOp->rereadDir();
+    itsConfig.setGroup(CFG_GROUP);
+    itsConfig.writeEntry(CFG_SHOW_BITMAP, itsShowBitmapAct->isChecked());
+    if(itsEmbeddedAdmin)
+        itsConfig.sync();
 }
 
 QString CKCmFontInst::quickHelp() const
@@ -445,6 +473,67 @@ void CKCmFontInst::configure()
     CSettingsDialog(this).exec();
 }
 
+void CKCmFontInst::print()
+{
+#ifdef HAVE_XFT
+    KFileItemList list;
+    bool          ok=false;
+
+    for (KFileItem *item=itsDirOp->view()->firstFileItem(); item && !ok; item=itsDirOp->view()->nextItem(item))
+        if(Print::printable(item->mimetype()))
+            ok=true;
+
+    if(ok)
+    {
+        const KFileItemList *list=itsDirOp->selectedItems();
+        bool                select=false;
+
+        if(list)
+        {
+            KFileItemList::Iterator it(list->begin()),
+                                    end(list->end());
+
+            for(; it!=end && !select; ++it)
+                if(Print::printable((*it)->mimetype()))
+                    select=true;
+        }
+
+        CPrintDialog dlg(this);
+
+        itsConfig.setGroup(CFG_GROUP);
+        if(dlg.exec(select, itsConfig.readNumEntry(CFG_FONT_SIZE, 1)))
+        {
+            static const int constSizes[]={0, 12, 18, 24, 36, 48};
+    
+            QStringList       items;
+            QValueVector<int> sizes;
+            CFcEngine         engine;
+
+            if(dlg.outputAll())
+            {
+                for (KFileItem *item=itsDirOp->view()->firstFileItem(); item; item=itsDirOp->view()->nextItem(item))
+                    items.append(item->name());
+            }
+            else
+            {
+                KFileItemList::Iterator it(list->begin()),
+                                        end(list->end());
+
+                for(; it!=end; ++it)
+                    items.append((*it)->name());
+            }
+            Print::printItems(items, constSizes[dlg.chosenSize()], this, engine);
+            itsConfig.writeEntry(CFG_FONT_SIZE, dlg.chosenSize());
+            if(itsEmbeddedAdmin)
+                itsConfig.sync();
+        }
+    }
+    else
+        KMessageBox::information(this, i18n("There are no printable fonts!\nYou can only print non-bitmap fonts."),
+                                 i18n("Can't Print"));
+#endif
+}
+
 void CKCmFontInst::dropped(const KFileItem *i, QDropEvent *, const KURL::List &urls)
 {
     if(urls.count())
@@ -501,8 +590,15 @@ void CKCmFontInst::jobResult(KIO::Job *job)
     if(job && 0==job->error())
     {
         itsDirOp->dirLister()->updateDirectory(itsDirOp->url());
-        KMessageBox::information(this, i18n("Please note that any open applications will need to be restarted in order "
-                                            "for any changes to be noticed."),
+        KMessageBox::information(this,
+#ifdef HAVE_XFT
+                                 i18n("<p>Please note that any open applications will need to be restarted in order "
+                                      "for any changes to be noticed.<p><p>(You will also have to restart this application "
+                                      "in order to use its print function on any newly installed fonts.)</p>"),
+#else
+                                 i18n("Please note that any open applications will need to be restarted in order "
+                                      "for any changes to be noticed."),
+#endif
                                  i18n("Success"), "KFontinst_WarnAboutFontChangesAndOpenApps");
     }
 }
