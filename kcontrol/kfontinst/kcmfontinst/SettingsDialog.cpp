@@ -55,7 +55,7 @@ CSettingsDialog::CSettingsDialog(QWidget *parent)
                                  "older applications can use the fonts you install.</p><p>Please note, however, that this will slow down "
                                  "the installation process.<p>"));
     itsDoGs=new QCheckBox(i18n("Configure fonts for Ghostscript"), page);
-    QWhatsThis::add(itsDoGs, i18n("<p>When printing, most applications create what's know as PostScript. This is then sent to a special "
+    QWhatsThis::add(itsDoGs, i18n("<p>When printing, most applications create what is know as PostScript. This is then sent to a special "
                                   "application, named Ghostscript, which can interpret the PostScript and send the appropriate instructions "
                                   "to your printer. If your application does not embed whatever fonts it uses into the PostScript, then "
                                   "Ghostscript needs to be informed as to which fonts you have installed, and where they are located.</p>"
