@@ -1,5 +1,5 @@
 if include_fontinst_tn
-FONTINST_PRINT_INC=-I../viewpart
+FONTINST_PRINT_INC=-I$(srcdir)/../viewpart
 FONTINST_PRINT_LIB=../viewpart/libkfontinstprint.la
 endif
 
