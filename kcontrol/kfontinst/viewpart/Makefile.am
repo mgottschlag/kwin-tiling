@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libkfontinstprint.la
 libkfontinstprint_la_SOURCES = KfiPrint.cpp
-libkfontinstprint_la_DFLAGS = $(all_libraries)
+libkfontinstprint_la_LDFLAGS = $(all_libraries)
 libkfontinstprint_la_LIBADD = $(LIB_KDEPRINT) ../lib/libkfontinst.la
 
 kde_module_LTLIBRARIES = libkfontviewpart.la
