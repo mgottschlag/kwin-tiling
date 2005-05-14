@@ -62,5 +62,11 @@ Name[zh_CN]=Wikipedia - 免费的百科全书
 Name[zh_TW]=Wikipedia - 免費的 Encyclopedia
 ServiceTypes=SearchProvider
 Keys=wp
-Query=http://en.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go 
+Query=http://en.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go
+Query[fi]=http://fi.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go
+Query[fr]=http://fr.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go
+Query[it]=http://it.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go
+Query[nb]=http://no.wikipedia.org/wiki/Special:Search?search=\{@}&go=Go
+Query[pa]=http://en.wikipedia.org/wiki/Special:Search?search=\{@}&go=ਜਾਓ
+Query[xx]=xxhttp://en.wikipedia.org/wiki/Special:Search?search=\{@}&go=Goxx
 Charset=utf8

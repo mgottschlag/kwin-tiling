@@ -5,6 +5,7 @@ MimeType=fonts/package
 Icon=font
 Patterns=*.fonts.tar.gz
 Comment=Fonts Package
+Comment[bg]=Пакет с шрифтове
 Comment[ga]=Pacáiste na gClónna
 Comment[pt_BR]=Pacote de Fontes
 Comment[sv]=Teckensnittspaket
