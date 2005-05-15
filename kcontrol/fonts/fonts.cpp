@@ -20,6 +20,7 @@
 
 #include <dcopclient.h>
 
+#include <kaccelmanager.h>
 #include <kapplication.h>
 #include <kgenericfactory.h>
 #include <kipc.h>
@@ -155,6 +156,7 @@ FontUseItem::FontUseItem(
     _rckey(key),
     _default(default_fnt)
 {
+  KAcceleratorManager::setNoAccel( this );
   setTitle( name );
   readFont();
 }
