@@ -529,8 +529,8 @@ void CKCmFontInst::print()
         }
     }
     else
-        KMessageBox::information(this, i18n("There are no printable fonts!\nYou can only print non-bitmap fonts."),
-                                 i18n("Can't Print"));
+        KMessageBox::information(this, i18n("There are no printable fonts.\nYou can only print non-bitmap fonts."),
+                                 i18n("Cannot Print"));
 #endif
 }
 
