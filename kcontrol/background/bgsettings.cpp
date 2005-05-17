@@ -783,7 +783,6 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     // Multiple wallpaper config
     m_WallpaperList = m_pConfig->readPathListEntry("WallpaperList");
-    updateWallpaperFiles();
 
     m_Interval = m_pConfig->readNumEntry("ChangeInterval", 60);
     m_LastChange = m_pConfig->readNumEntry("LastChange", 0);
@@ -795,6 +794,8 @@ void KBackgroundSettings::readSettings(bool reparse)
 	int mode = m_MMMap[s];
 	m_MultiMode = mode;
     }
+
+    updateWallpaperFiles();
 
     // Wallpaper mode (NoWallpaper, div. tilings)
     m_WallpaperMode = defWallpaperMode;
