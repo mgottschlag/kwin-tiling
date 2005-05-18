@@ -61,6 +61,8 @@ advancedDialog::advancedDialog(QWidget* parent, const char* name)
             this, SLOT(changed()));
     connect(m_advancedWidget->tintSlider, SIGNAL(valueChanged(int)),
             this, SLOT(changed()));
+    connect(m_advancedWidget->menubarPanelTransparent, SIGNAL(clicked()),
+            this, SLOT(changed()));
     load();
 }
 
@@ -88,6 +90,9 @@ void advancedDialog::load()
     m_advancedWidget->tintColorB->setColor( color );
     int tintValue = c.readNumEntry( "TintValue", 0 );
     m_advancedWidget->tintSlider->setValue( tintValue );
+    
+    bool transparentMenubarPanel = c.readBoolEntry("MenubarPanelTransparent", false);
+    m_advancedWidget->menubarPanelTransparent->setChecked( transparentMenubarPanel );
 
     enableButtonApply(false);
 }
@@ -107,6 +112,8 @@ void advancedDialog::save()
                  m_advancedWidget->tintColorB->color());
     c.writeEntry("TintValue",
                  m_advancedWidget->tintSlider->value());
+    c.writeEntry("MenubarPanelTransparent",
+                 m_advancedWidget->menubarPanelTransparent->isChecked());
 
     QStringList elist = c.readListEntry("Extensions2");
     for (QStringList::Iterator it = elist.begin(); it != elist.end(); ++it)
@@ -135,6 +142,8 @@ void advancedDialog::save()
                              m_advancedWidget->tintColorB->color());
         extConfig.writeEntry("TintValue",
                              m_advancedWidget->tintSlider->value());
+        extConfig.writeEntry("MenubarPanelTransparent",
+                             m_advancedWidget->menubarPanelTransparent->isChecked());
 
         extConfig.sync();
     }

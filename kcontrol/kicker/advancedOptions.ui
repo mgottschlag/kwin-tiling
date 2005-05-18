@@ -12,6 +12,9 @@
             <height>235</height>
         </rect>
     </property>
+    <property name="caption">
+        <string>advancedKickerOptions</string>
+    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -184,7 +187,7 @@
                         <string>Click on this button to set the color to use when tinting transparent panels.</string>
                     </property>
                 </widget>
-                <spacer row="2" column="0" rowspan="2" colspan="1">
+                <spacer row="2" column="0">
                     <property name="name">
                         <cstring>spacer2</cstring>
                     </property>
@@ -201,7 +204,7 @@
                         </size>
                     </property>
                 </spacer>
-                <widget class="QLabel" row="3" column="1">
+                <widget class="QLabel" row="2" column="1">
                     <property name="name">
                         <cstring>textLabel3</cstring>
                     </property>
@@ -232,7 +235,7 @@
                         </size>
                     </property>
                 </spacer>
-                <widget class="QSlider" row="1" column="1" rowspan="2" colspan="2">
+                <widget class="QSlider" row="1" column="1" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>tintSlider</cstring>
                     </property>
@@ -243,7 +246,7 @@
                         <string>Use this slider to set how much transparent panels should be tinted using the tint color.</string>
                     </property>
                 </widget>
-                <widget class="QLabel" row="3" column="2">
+                <widget class="QLabel" row="2" column="2">
                     <property name="name">
                         <cstring>textLabel2</cstring>
                     </property>
@@ -283,6 +286,17 @@
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>Click on this button to set the color to use when tinting transparent panels.</string>
+                    </property>
+                </widget>
+                <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>menubarPanelTransparent</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Also apply to panel with menu bar</string>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>Normally if you have the desktop's or current application's menu bar displayed in a panel at the top of the screen (MacOS-style), transparency is disabled for this panel to avoid the desktop background clashing with the menu bar. Set this option to make it transparent anyways.</string>
                     </property>
                 </widget>
             </grid>
