@@ -58,12 +58,11 @@
 
 <para>&kmenuedit; allows editing of &kde; Main menu.</para>
 
-<para>&kmenuedit; can be started either by right-clicking
-<inlinemediaobject><imageobject><imagedata fileref="i_k_button.png"
-format="PNG"/></imageobject></inlinemediaobject> the
-<guiicon>K</guiicon> Button, or by choosing <guimenuitem>Menu
-Edit</guimenuitem> from the <guisubmenu>System</guisubmenu> submenu of
-the <guimenu>Main</guimenu> menu.</para>
+<para>&kmenuedit; can be started either by &RMB; clicking the
+<guiicon>K</guiicon> Menu Button on the panel, or by choosing
+<guimenuitem>Menu Edit</guimenuitem> from the
+<guisubmenu>System</guisubmenu> submenu of the <guimenu>Main</guimenu>
+menu.</para>
 
 <para>&kmenuedit; allows you to:</para>
 
@@ -215,8 +214,7 @@ executable location.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guiicon>Icon List</guiicon></term>
-<listitem><para><inlinemediaobject><imageobject><imagedata 
-fileref="icon_sets.png" format="PNG"/></imageobject></inlinemediaobject> Click
+<listitem><para>Click
 this icon to display a choice of icons. Choose an icon for your
 program.</para></listitem>
 </varlistentry>
@@ -268,8 +266,7 @@ Uncheck it if you want the dialog to stay open.</para>
 
 <variablelist>
 <varlistentry id="file-new-item">
-<term><menuchoice> <guimenu><inlinemediaobject><imageobject><imagedata
-fileref="i_new_item.png" format="PNG"/></imageobject></inlinemediaobject>
+<term><menuchoice> <guimenu>
 File</guimenu> <guimenuitem>New Item</guimenuitem>
 </menuchoice></term> <listitem><para><action>Adds new menu
 item.</action></para></listitem>
@@ -277,11 +274,29 @@ item.</action></para></listitem>
 
 <varlistentry id="file-new-submenu">
 <term><menuchoice>
-<guimenu><inlinemediaobject><imageobject><imagedata fileref="i_new_submenu.png"
-format="PNG"/></imageobject></inlinemediaobject>File</guimenu>
+<guimenu>File</guimenu>
 <guimenuitem>New Submenu</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Adds new submenu.</action></para></listitem>
+</varlistentry>
+
+<varlistentry id="file-new-separator">
+<term><menuchoice><guimenu>File</guimenu><guimenuitem>New
+Separator</guimenuitem></menuchoice></term>
+<listitem>
+<para><action>Adds a new separator to the menu.</action></para>
+</listitem>
+</varlistentry>
+
+<varlistentry id="file-save">
+<term><menuchoice>
+<shortcut><keycombo
+action="simul">&Ctrl;<keycap>S</keycap></keycombo></shortcut>
+<guimenu>File</guimenu><guimenuitem>Save</guimenuitem>
+</menuchoice></term>
+<listitem>
+<para><action>Saves the menu</action></para>
+</listitem>
 </varlistentry>
 
 <varlistentry id="file-quit">
@@ -300,8 +315,7 @@ format="PNG"/></imageobject></inlinemediaobject>File</guimenu>
 <shortcut>
 <keycombo action="simul">&Ctrl;<keycap>X</keycap></keycombo>
 </shortcut>
-<guimenu><inlinemediaobject><imageobject><imagedata fileref="i_cut.png"
-format="PNG"/></imageobject></inlinemediaobject>
+<guimenu>
 Edit</guimenu> <guimenuitem>Cut</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Cuts the current menu item to the clipboard.</action> If
@@ -316,8 +330,7 @@ clipboard.</para></listitem>
 <shortcut>
 <keycombo action="simul">&Ctrl;<keycap>C</keycap></keycombo>
 </shortcut>
-<guimenu><inlinemediaobject><imageobject><imagedata fileref="i_copy.png"
-format="PNG"/></imageobject></inlinemediaobject>
+<guimenu>
 Edit</guimenu> <guimenuitem>Copy</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Copies the current menu item to the
@@ -331,8 +344,7 @@ can paste the same item many times.</para></listitem>
 <shortcut>
 <keycombo action="simul">&Ctrl;<keycap>V</keycap></keycombo>
 </shortcut>
-<guimenu><inlinemediaobject><imageobject><imagedata fileref="i_paste.png"
-format="PNG"/></imageobject></inlinemediaobject> Edit</guimenu>
+<guimenu>Edit</guimenu>
 <guimenuitem>Paste</guimenuitem> </menuchoice></term>
 <listitem><para><action>Paste menu item from the clipboard</action> to currently
 selected place in the <guimenu>Main</guimenu> menu. You must first use
@@ -342,16 +354,77 @@ selected place in the <guimenu>Main</guimenu> menu. You must first use
 
 <varlistentry id="edit-delete">
 <term><menuchoice>
-<guimenu><inlinemediaobject><imageobject><imagedata fileref="i_delete.png" 
-format="PNG"/></imageobject></inlinemediaobject>
-Edit</guimenu> <guimenuitem>Delete</guimenuitem>
+<guimenu>Edit</guimenu> <guimenuitem>Delete</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Deletes currently selected menu
 item.</action></para></listitem>
 </varlistentry>
+
+<varlistentry id="settings-hide-toolbar">
+<term><menuchoice>
+<guimenu>Settings</guimenu>
+<guimenuitem>Hide Toolbar</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>Hide the toolbar</action></para></listitem>
+</varlistentry>
+
+<varlistentry id="settings-configure-shortcuts">
+<term><menuchoice>
+<guimenu>Settings</guimenu><guimenuitem>Configure
+Shortcuts...</guimenuitem></menuchoice></term>
+<listitem>
+<para><action>Customize the keyboard shortcuts</action></para>
+</listitem>
+</varlistentry>
+
+<varlistentry id="settings-configure-toolbars">
+<term><menuchoice>
+<guimenu>Settings</guimenu><guimenuitem>Configure
+Toolbars...</guimenuitem></menuchoice></term>
+<listitem>
+<para><action>Customize the toolbar icons.</action></para>
+</listitem>
+</varlistentry>
+
 </variablelist>
 
 &help.menu.documentation;
+
+</chapter>
+
+<chapter id="credits">
+
+<title>Credits and License</title>
+
+<para>
+&kmenuedit;
+</para>
+<para>Program copyright &copy; 2002, &Raffaele.Sandrini;</para>
+
+<para>Contributors:</para>
+<itemizedlist>
+<listitem><para>&Matthias.Elter; &Matthias.Elter.mail; - Original
+Author</para> 
+</listitem>
+<listitem><para>&Matthias.Ettrich; &Matthias.Ettrich.mail;</para>
+</listitem>
+<listitem><para>&Daniel.M.Duley; &Daniel.M.Duley.mail;</para>
+</listitem>
+<listitem><para>&Preston.Brown; &Preston.Brown.mail;</para>
+</listitem>
+</itemizedlist>
+
+<para>Documentation copyright &copy; 2000 &Milos.Prudek;</para>
+
+<para>Updated for &kde; 3.0 by &Lauri.Watts; &Lauri.Watts.mail;
+2002</para>
+
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
+
+&underFDL;
+&underGPL;
+
+</chapter>
 
 <glossary id="glossary">
 <title>Glossary</title> 
@@ -424,45 +497,9 @@ work.</para></footnote>.</para>
 </glossentry>
 
 </glossary>
-</chapter>
-
-<chapter id="credits">
-
-<title>Credits and License</title>
-
-<para>
-&kmenuedit;
-</para>
-<para>Program copyright &copy; 2002, &Raffaele.Sandrini;</para>
-
-<para>Contributors:</para>
-<itemizedlist>
-<listitem><para>&Matthias.Elter; &Matthias.Elter.mail; - Original
-Author</para> 
-</listitem>
-<listitem><para>&Matthias.Ettrich; &Matthias.Ettrich.mail;</para>
-</listitem>
-<listitem><para>&Daniel.M.Duley; &Daniel.M.Duley.mail;</para>
-</listitem>
-<listitem><para>&Preston.Brown; &Preston.Brown.mail;</para>
-</listitem>
-</itemizedlist>
-
-<para>Documentation copyright &copy; 2000 &Milos.Prudek;</para>
-
-<para>Updated for &kde; 3.0 by &Lauri.Watts; &Lauri.Watts.mail;
-2002</para>
-
-<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
-
-&underFDL;
-&underGPL;
-
-</chapter>
-
-
 
 &documentation.index; 
+
 </book>
 <!--
 Local Variables:
