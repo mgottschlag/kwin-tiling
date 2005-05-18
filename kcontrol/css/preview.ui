@@ -1,14 +1,10 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>PreviewDialog</class>
-<include location="global">kseparator.h</include>
-<widget>
-    <class>QDialog</class>
-    <property stdset="1">
-        <name>name</name>
+<widget class="QDialog">
+    <property name="name">
         <cstring>PreviewDialog</cstring>
     </property>
-    <property stdset="1">
-        <name>geometry</name>
+    <property name="geometry">
         <rect>
             <x>0</x>
             <y>0</y>
@@ -16,51 +12,43 @@
             <height>349</height>
         </rect>
     </property>
-    <property stdset="1">
-        <name>caption</name>
+    <property name="caption">
         <string>Preview</string>
     </property>
     <grid>
-        <widget row="1"  column="0"  rowspan="1"  colspan="2" >
-            <class>KSeparator</class>
-            <property stdset="1">
-                <name>name</name>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="KSeparator" row="1" column="0" rowspan="1" colspan="2">
+            <property name="name">
                 <cstring>Line1</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
-                <enum>Horizontal</enum>
+            <property name="orientation">
+                <number>5</number>
             </property>
         </widget>
-        <spacer row="2"  column="0" >
-            <property>
-                <name>name</name>
+        <spacer row="2" column="0">
+            <property name="name">
                 <cstring>Spacer1</cstring>
             </property>
-            <property stdset="1">
-                <name>orientation</name>
+            <property name="orientation">
                 <enum>Horizontal</enum>
             </property>
-            <property stdset="1">
-                <name>sizeType</name>
+            <property name="sizeType">
                 <enum>Expanding</enum>
             </property>
-            <property>
-                <name>sizeHint</name>
+            <property name="sizeHint">
                 <size>
                     <width>20</width>
                     <height>20</height>
                 </size>
             </property>
         </spacer>
-        <widget row="0"  column="0"  rowspan="1"  colspan="2" >
-            <class>QTextBrowser</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QTextBrowser" row="0" column="0" rowspan="1" colspan="2">
+            <property name="name">
                 <cstring>preview</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>&lt;qt&gt;
 
 &lt;h1&gt;Heading 1&lt;/h1&gt;&lt;br/&gt;
@@ -74,18 +62,14 @@ people.&lt;/p&gt;
 &lt;/qt&gt;</string>
             </property>
         </widget>
-        <widget row="2"  column="1" >
-            <class>QPushButton</class>
-            <property stdset="1">
-                <name>name</name>
+        <widget class="QPushButton" row="2" column="1">
+            <property name="name">
                 <cstring>PushButton2</cstring>
             </property>
-            <property stdset="1">
-                <name>text</name>
+            <property name="text">
                 <string>&amp;OK</string>
             </property>
-            <property stdset="1">
-                <name>default</name>
+            <property name="default">
                 <bool>true</bool>
             </property>
         </widget>
@@ -100,8 +84,12 @@ people.&lt;/p&gt;
     </connection>
 </connections>
 <includes>
+    <include location="global" impldecl="in declaration">kseparator.h</include>
     <include location="global" impldecl="in implementation">kdialog.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
+<includehints>
+    <includehint>kseparator.h</includehint>
+</includehints>
 </UI>
