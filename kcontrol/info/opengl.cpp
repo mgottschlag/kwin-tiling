@@ -109,10 +109,15 @@ static bool get_dri_device()
     if (!line.isEmpty()) {
 	dri_info.module = line.mid(0, line.find(0x20));
 
-	QRegExp rx = QRegExp("\\bPCI:([0-9a-fA-F]:[0-9a-fA-F]:[0-9a-fA-F])\\b");
+	// possible formats, for regression testing
+	// line = " PCI:01:00:0";
+	// line = " pci:0000:01:00.0"
+	QRegExp rx = QRegExp("\\b[Pp][Cc][Ii][:]([0-9a-fA-F]+[:])?([0-9a-fA-F]+[:][0-9a-fA-F]+[:.][0-9a-fA-F]+)\\b");
 	if (rx.search(line)>0)	 {
-		dri_info.pci = rx.cap(1);
+		dri_info.pci = rx.cap(2);
 		int end = dri_info.pci.findRev(':');
+		int end2 = dri_info.pci.findRev('.');
+		if (end2>end) end=end2;
 		dri_info.pci[end]='.';
 
 		QString cmd = QString("lspci -m -v -s ") + dri_info.pci;
