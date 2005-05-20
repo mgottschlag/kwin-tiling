@@ -140,10 +140,11 @@ void TaskLMBMenu::attentionTimeout()
 {
     m_attentionState = !m_attentionState;
 
-    TaskMenuItem *menuItem = m_attentionMap.first();
-    for (; menuItem; menuItem = m_attentionMap.next())
+    for (QValueList<TaskMenuItem*>::const_iterator it = m_attentionMap.constBegin();
+         it != m_attentionMap.constEnd();
+         ++it)
     {
-        menuItem->setAttentionState(m_attentionState);
+        (*it)->setAttentionState(m_attentionState);
     }
 
     update();

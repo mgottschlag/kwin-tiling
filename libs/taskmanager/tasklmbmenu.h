@@ -79,7 +79,7 @@ private:
     QTimer*    m_attentionTimer;
     QTimer*    m_dragSwitchTimer;
     QPoint     m_dragStartPos;
-    QPtrList<TaskMenuItem> m_attentionMap;
+    QValueList<TaskMenuItem*> m_attentionMap;
 };
 
 #endif
