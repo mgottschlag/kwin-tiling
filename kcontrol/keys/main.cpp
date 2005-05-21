@@ -163,7 +163,7 @@ extern "C"
 #include "../../klipper/klipperbindings.cpp"
 #include "../../kwin/kwinbindings.cpp"
 #define KICKER_ALL_BINDINGS
-#include "../../kicker/core/kickerbindings.cpp"
+#include "../../kicker/kicker/core/kickerbindings.cpp"
 #include "../../kicker/taskbar/taskbarbindings.cpp"
 #include "../../kdesktop/kdesktopbindings.cpp"
 #include "../../kxkb/kxkbbindings.cpp"

@@ -7,9 +7,9 @@ kcm_kicker_la_SOURCES = positiontab.ui hidingtab.ui lookandfeeltab.ui menutab.ui
                         positionconfig.cpp hidingconfig.cpp menuconfig.cpp lookandfeelconfig.cpp
 
 kcm_kicker_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-kcm_kicker_la_LIBADD = $(top_builddir)/kicker/share/libkickermain.la ../background/libbgnd.la $(LIB_KIO) $(LIB_KUTILS)
-AM_CPPFLAGS = -I$(top_srcdir)/kicker/core -I$(top_srcdir)/kicker/share \
-	-I$(top_builddir)/kicker/share -I$(srcdir)/../background $(all_includes)
+kcm_kicker_la_LIBADD = $(top_builddir)/kicker/libkicker/libkickermain.la ../background/libbgnd.la $(LIB_KIO) $(LIB_KUTILS)
+AM_CPPFLAGS = -I$(top_srcdir)/kicker/kicker/core -I$(top_srcdir)/kicker/libkicker \
+	-I$(top_builddir)/kicker/libkicker -I$(srcdir)/../background $(all_includes)
 
 METASOURCES = AUTO
 
@@ -37,4 +37,4 @@ install-data-local: uninstall.desktop
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/panel_appearance.desktop
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(xdg_appsdir)/panel_appearance.desktop
 
-extensionInfo.lo: ../../kicker/share/kickerSettings.h
+extensionInfo.lo: ../../kicker/libkicker/kickerSettings.h
