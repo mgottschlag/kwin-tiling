@@ -10,7 +10,7 @@ endif
 
 SUBDIRS = $(THEMEPAGE_SUBDIR) pics
 
-AM_CPPFLAGS  = $(THEMEPAGE_INCLUDES) $(all_includes)
+AM_CPPFLAGS  = $(USB_CFLAGS) $(THEMEPAGE_INCLUDES) $(all_includes)
 
 bin_PROGRAMS = kapplymousetheme
 
