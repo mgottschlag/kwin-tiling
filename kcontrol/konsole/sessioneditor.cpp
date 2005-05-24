@@ -302,7 +302,7 @@ void SessionEditor::saveCurrent()
     int result = KMessageBox::warningContinueCancel( this,
             i18n( "The Execute entry is not a valid command.\n"
 			"You can still save this session, but it will not show up in Konsole's Session list." ),
-			i18n( "Invalid Execute entry" ),
+			i18n( "Invalid Execute Entry" ),
 			KStdGuiItem::save() );
     if ( result != KMessageBox::Continue )
     {
