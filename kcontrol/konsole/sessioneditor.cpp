@@ -31,6 +31,8 @@
 #include <kurlrequester.h>
 #include <klineedit.h>
 #include <kiconloader.h>
+#include <krun.h>
+#include <kshell.h>
 
 // SessionListBoxText is a list box text item with session filename
 class SessionListBoxText : public QListBoxText
@@ -285,6 +287,30 @@ void SessionEditor::schemaListChanged(const QStringList &titles, const QStringLi
 
 void SessionEditor::saveCurrent()
 {
+  // Verify Execute entry is valid; otherwise Konsole will ignore it.
+  // This code is take from konsole.cpp; if you change one, change both.
+  QString exec = executeLine->text();
+  if ( exec.startsWith( "su -c \'" ) ) {
+     exec = exec.mid( 7, exec.length() - 8 );
+  }
+  exec = KRun::binaryName( exec, false );
+  exec = KShell::tildeExpand( exec );
+  QString pexec = KGlobal::dirs()->findExe( exec );
+
+  if ( pexec.isEmpty() )
+  {
+    int result = KMessageBox::warningContinueCancel( this,
+            i18n( "The Execute entry is not a valid command.\n"
+			"You can still save this session, but it will not show up in Konsole's Session list." ),
+			i18n( "Invalid Execute entry" ),
+			KStdGuiItem::save() );
+    if ( result != KMessageBox::Continue )
+    {
+        return;
+    }
+
+  }
+
   QString fullpath;
   if (sessionList->currentText() == nameLine->text()) {
     fullpath = ( ((SessionListBoxText *)sessionList->item( sessionList->currentItem() ))->filename() ).section('/',-1);
