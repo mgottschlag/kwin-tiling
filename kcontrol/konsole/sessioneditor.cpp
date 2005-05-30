@@ -167,7 +167,7 @@ void SessionEditor::loadAllSession(QString currentFile)
 
     QString name = (*it);
 
-    KSimpleConfig* co = new KSimpleConfig(name,TRUE);
+    KSimpleConfig* co = new KSimpleConfig(name,true);
     co->setDesktopGroup();
     QString sesname = co->readEntry("Name",i18n("Unnamed"));
     delete co;
@@ -201,7 +201,7 @@ void SessionEditor::readSession(int num)
     if( sessionList->item(num) )
     {
         removeButton->setEnabled( QFileInfo ( ((SessionListBoxText *)sessionList->item(num))->filename() ).isWritable () );
-        co = new KSimpleConfig( ((SessionListBoxText *)sessionList->item(num))->filename(),TRUE);
+        co = new KSimpleConfig( ((SessionListBoxText *)sessionList->item(num))->filename(),true);
 
         co->setDesktopGroup();
         str = co->readEntry("Name");
