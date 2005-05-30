@@ -191,17 +191,6 @@ void TaskRMBMenu::fillMenu()
 
 	enable = false;
 
-	/*
-	id = insertItem( i18n( "&Shade All" ), this, SLOT( slotShadeAll() ), 0, OpMenu::ShadeOp );
-	for( QPtrListIterator<Task> it(tasks); *it; ++it ) {
-		if( !(*it)->isShaded() ) {
-			enable = true;
-			break;
-		}
-	}
-	setItemEnabled( id, enable );
-	*/
-
 	insertItem( SmallIcon( "remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
 }
 
