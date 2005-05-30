@@ -171,7 +171,7 @@ void ExtensionInfo::setDefaults()
     _autoHideDelay  = 3;
     _hideAnim       = true;
     _hideAnimSpeed  = 40;
-    _unhideLocation = 6;
+    _unhideLocation = 0;
     _sizePercentage = 100;
     _expandSize     = true;
     _customSize     = 0;
