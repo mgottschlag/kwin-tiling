@@ -468,6 +468,7 @@ private:
     double _thumbSize;
     QPixmap _thumb;
     QPixmap _grab;
+    QRect m_iconGeometry;
 #ifdef THUMBNAILING_POSSIBLE
     Pixmap              m_windowPixmap;
 #endif // THUMBNAILING_POSSIBLE

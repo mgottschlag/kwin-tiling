@@ -1263,12 +1263,18 @@ void Task::toggleShaded()
 
 void Task::publishIconGeometry(QRect rect)
 {
+    if( rect == m_iconGeometry )
+        return;
+    m_iconGeometry = rect;
     NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), 0 );
     NETRect r;
-    r.pos.x = rect.x();
-    r.pos.y = rect.y();
-    r.size.width = rect.width();
-    r.size.height = rect.height();
+    if( rect.isValid())
+    {
+        r.pos.x = rect.x();
+        r.pos.y = rect.y();
+        r.size.width = rect.width();
+        r.size.height = rect.height();
+    }
     ni.setIconGeometry(r);
 }
 
