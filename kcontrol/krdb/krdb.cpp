@@ -15,9 +15,11 @@
 **
 *****************************************************************************/
 
+#include <config.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #undef Unsorted
 #include <qbuffer.h>
@@ -49,7 +51,20 @@ inline const char * gtkEnvVar(int version)
 
 inline const char * sysGtkrc(int version)
 {
-    return 2==version ? "/etc/gtk-2.0/gtkrc" : "/etc/gtk/gtkrc";
+    if(2==version)
+    {
+	if(access("/etc/opt/gnome/gtk-2.0", F_OK) == 0)
+	    return "/etc/opt/gnome/gtk-2.0/gtkrc";
+	else
+	    return "/etc/gtk-2.0/gtkrc";
+    }
+    else
+    {
+	if(access("/etc/opt/gnome/gtk", F_OK) == 0)
+	    return "/etc/opt/gnome/gtk/gtkrc";
+	else
+	    return "/etc/gtk/gtkrc";
+    }
 }
 
 inline const char * userGtkrc(int version)
@@ -60,7 +75,7 @@ inline const char * userGtkrc(int version)
 // -----------------------------------------------------------------------------
 static void applyGtkStyles(bool active, int version)
 {
-   QString gtkkde = locateLocal("config", "gtkrc");
+   QString gtkkde = locateLocal("config", 2==version?"gtkrc-2.0":"gtkrc");
    QCString gtkrc = getenv(gtkEnvVar(version));
    QStringList list = QStringList::split(':', QFile::decodeName(gtkrc));
    if (list.count() == 0)
@@ -309,12 +324,12 @@ static QString color( const QColor& col )
     return QString( "{ %1, %2, %3 }" ).arg( item( col.red() ) ).arg( item( col.green() ) ).arg( item( col.blue() ) );
 }
 
-static void createGtkrc( bool exportColors, const QColorGroup& cg )
+static void createGtkrc( bool exportColors, const QColorGroup& cg, int version )
 {
     // lukas: why does it create in ~/.kde/share/config ???
     // pfeiffer: so that we don't overwrite the user's gtkrc.
     // it is found via the GTK_RC_FILES environment variable.
-    KSaveFile saveFile( locateLocal( "config", "gtkrc" ) ); 
+    KSaveFile saveFile( locateLocal( "config", 2==version?"gtkrc-2.0":"gtkrc" ) ); 
     if ( saveFile.status() != 0 || saveFile.textStream() == 0L )
         return;
 
@@ -363,7 +378,7 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg )
     t << endl;
     t << "class \"*\" style \"default\"" << endl;
     t << endl;
-    if ( true ) {  // we should maybe check for MacOS settings here
+    if ( 2==version ) {  // we should maybe check for MacOS settings here
 	t << "gtk-alternative-button-order = 1" << endl;
 	t << endl;
     }
@@ -426,7 +441,8 @@ void runRdb( uint flags )
     KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
     QColorGroup cg = newPal.active();
     KGlobal::locale()->insertCatalogue("krdb");
-    createGtkrc( true, cg );
+    createGtkrc( true, cg, 1 );
+    createGtkrc( true, cg, 2 );
 
     QString preproc;
     QColor backCol = cg.background();
