@@ -69,6 +69,7 @@ Keywords[bg]=видеокарта, хардуер,екран, ускорение
 Keywords[ca]=OpenGL,DRI,GLX,3D,Targeta de vídeo,Hardware Acceleració,Gràfics,X,X11,Xserver,Servidor X,XFree86,Pantalla
 Keywords[cs]=OpenGL,DRI,GLX,3D,videokarta,akcelerace,grafika,X,X11,Xserver,X-Server,XFree86,Display
 Keywords[da]=OpenGL,DRI,GLX,3D,VideoCard,Hardware Acceleration,Grafik,X,X11,Xserver,X-Server,XFree86,Skærm
+Keywords[el]=OpenGL,DRI,GLX,3D,Κάρτα Γραφικών,Υλικό Επιτάχυνση,Γραφικά,X,X11,Xserver,X-Server,XFree86,Οθόνη
 Keywords[eo]=OpenGL,DRI,GLX,3D,VideoCard,Hardware akcelo,grafikoj,X,X11,Xserver,X-Server,XFree86,ekrano
 Keywords[es]=OpenGL,DRI,GLX,3D,Tarjeta, Grafica,Hardware Aceleradora,Gráficos,X,X11,Xserver,X-Server,XFree86,Monitor
 Keywords[et]=OpenGL,DRI,GLX,3D,Videokaart,Riistvaraline kiirendus,Graafika,X,X11,Xserver,X-Server,XFree86,Kuva
