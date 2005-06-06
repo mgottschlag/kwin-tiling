@@ -53,11 +53,7 @@
 #include <kdialog.h>
 #include <kprinter.h>
 #include <string.h>
-
-#define DEFAULT_FONT_SIZE 28
-#define FONT_SIZE_STEP     4
-#define MIN_FONT_SIZE      8
-#define MAX_FONT_SIZE     72
+#include <fontconfig/fontconfig.h>
 
 static KURL getDest(const KURL &url, bool system)
 {
@@ -147,6 +143,9 @@ bool CFontViewPart::openFile()
 {
     bool showFs=false,
          isFonts=KFI_KIO_FONTS_PROTOCOL==m_url.protocol();
+
+    if(isFonts)
+        FcInitReinitialize();
 
     itsPreview->showFont(isFonts ? m_url : m_file);
 
