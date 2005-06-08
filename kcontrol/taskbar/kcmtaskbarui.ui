@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>593</width>
-            <height>387</height>
+            <width>317</width>
+            <height>340</height>
         </rect>
     </property>
     <property name="caption">
@@ -46,9 +46,6 @@
                     <property name="text">
                         <string>Show windows from all sc&amp;reens</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+R</string>
-                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
@@ -64,9 +61,6 @@ By default, this option is selected and all windows are shown.</string>
                     </property>
                     <property name="text">
                         <string>Sort windows by desk&amp;top</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+T</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -101,9 +95,6 @@ By default this option is selected.</string>
                     <property name="text">
                         <string>&amp;Show windows from all desktops</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
-                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
@@ -113,56 +104,12 @@ By default this option is selected.</string>
 By default, this option is selected and all windows are shown.</string>
                     </property>
                 </widget>
-                <widget class="QLayoutWidget" row="6" column="0" rowspan="1" colspan="3">
-                    <property name="name">
-                        <cstring>Layout2</cstring>
-                    </property>
-                    <hbox>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <widget class="QLabel">
-                            <property name="name">
-                                <cstring>groupTasksLabel</cstring>
-                            </property>
-                            <property name="text">
-                                <string>&amp;Group similar tasks:</string>
-                            </property>
-                            <property name="buddy" stdset="0">
-                                <cstring>kcfg_GroupTasks</cstring>
-                            </property>
-                        </widget>
-                        <widget class="QComboBox">
-                            <property name="name">
-                                <cstring>kcfg_GroupTasks</cstring>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>7</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>The taskbar can group similar windows into single buttons. When one of these window group buttons are clicked on a menu appears showing all the windows in that group. This can be especially useful with the &lt;em&gt;Show all windows&lt;/em&gt; option.
-
-You can set the taskbar to &lt;strong&gt;Never&lt;/strong&gt; group windows, to &lt;strong&gt;Always&lt;/strong&gt; group windows or to group windows only &lt;strong&gt;When the Taskbar is Full&lt;/strong&gt;.
-
-By default the taskbar groups windows when it is full.</string>
-                            </property>
-                        </widget>
-                    </hbox>
-                </widget>
                 <widget class="QCheckBox" row="4" column="0" rowspan="1" colspan="3">
                     <property name="name">
                         <cstring>kcfg_ShowIcon</cstring>
                     </property>
                     <property name="text">
                         <string>Sho&amp;w application icons</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+W</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -180,9 +127,6 @@ By default this option is selected.</string>
                     <property name="text">
                         <string>Show window list &amp;button</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+B</string>
-                    </property>
                     <property name="checked">
                         <bool>true</bool>
                     </property>
@@ -190,20 +134,64 @@ By default this option is selected.</string>
                         <string>Selecting this option causes the taskbar to display a button that, when clicked, shows a list of all windows in a popup menu.</string>
                     </property>
                 </widget>
-                <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="2">
+                <widget class="QCheckBox" row="3" column="0" rowspan="1" colspan="3">
                     <property name="name">
                         <cstring>kcfg_ShowOnlyIconified</cstring>
                     </property>
                     <property name="text">
                         <string>Show o&amp;nly minimized windows</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+N</string>
-                    </property>
                     <property name="whatsThis" stdset="0">
                         <string>Select this option if you want the taskbar to display &lt;b&gt;only&lt;/b&gt; minimized windows. 
 
 By default, this option is not selected and the taskbar will show all windows.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="6" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>groupTasksLabel</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Group similar tasks:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>kcfg_GroupTasks</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="6" column="2">
+                    <property name="name">
+                        <cstring>kcfg_GroupTasks</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="whatsThis" stdset="0">
+                        <string>The taskbar can group similar windows into single buttons. When one of these window group buttons are clicked on a menu appears showing all the windows in that group. This can be especially useful with the &lt;em&gt;Show all windows&lt;/em&gt; option.
+
+You can set the taskbar to &lt;strong&gt;Never&lt;/strong&gt; group windows, to &lt;strong&gt;Always&lt;/strong&gt; group windows or to group windows only &lt;strong&gt;When the Taskbar is Full&lt;/strong&gt;.
+
+By default the taskbar groups windows when it is full.</string>
+                    </property>
+                </widget>
+                <widget class="QLabel" row="7" column="0" rowspan="1" colspan="2">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>A&amp;ppearance:</string>
+                    </property>
+                    <property name="buddy" stdset="0">
+                        <cstring>appearance</cstring>
+                    </property>
+                </widget>
+                <widget class="QComboBox" row="7" column="2">
+                    <property name="name">
+                        <cstring>appearance</cstring>
                     </property>
                 </widget>
             </grid>

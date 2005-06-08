@@ -42,6 +42,38 @@
 typedef KGenericFactory<TaskbarConfig, QWidget > TaskBarFactory;
 K_EXPORT_COMPONENT_FACTORY (kcm_taskbar, TaskBarFactory("kcmtaskbar") )
 
+TaskbarAppearance::TaskbarAppearance(QString name,
+                                     bool drawButtons,
+                                     bool haloText,
+                                     bool showButtonOnHover)
+    : m_name(name),
+      m_drawButtons(drawButtons),
+      m_haloText(haloText),
+      m_showButtonOnHover(showButtonOnHover)
+{
+}
+
+TaskbarAppearance::TaskbarAppearance()
+    : m_drawButtons(false),
+      m_haloText(false),
+      m_showButtonOnHover(true)
+{
+}
+
+bool TaskbarAppearance::matchesSettings() const
+{
+    return TaskBarSettings::drawButtons() == m_drawButtons &&
+           TaskBarSettings::haloText() == m_haloText &&
+           TaskBarSettings::showButtonOnHover() == m_showButtonOnHover;
+}
+
+void TaskbarAppearance::alterSettings() const
+{
+    TaskBarSettings::self()->setDrawButtons(m_drawButtons);
+    TaskBarSettings::self()->setHaloText(m_haloText);
+    TaskBarSettings::self()->setShowButtonOnHover(m_showButtonOnHover);
+}
+
 // These are the strings that are actually stored in the config file.
 const QStringList& TaskbarConfig::actionList()
 {
@@ -88,7 +120,21 @@ TaskbarConfig::TaskbarConfig(QWidget *parent, const char* name, const QStringLis
     QVBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
     m_widget = new TaskbarConfigUI(this);
     layout->addWidget(m_widget);
-    
+
+    // TODO: Load these from .desktop files?
+    m_appearances.append(TaskbarAppearance(i18n("Elegant"), false, false, true));
+    m_appearances.append(TaskbarAppearance(i18n("Classic"), true, false, true));
+    m_appearances.append(TaskbarAppearance(i18n("For Transparency"), false, true, true));
+
+    for (TaskbarAppearance::List::const_iterator it = m_appearances.constBegin();
+         it != m_appearances.constEnd();
+         ++it)
+    {
+        m_widget->appearance->insertItem((*it).name());
+    }
+
+    connect(m_widget->appearance, SIGNAL(activated(int)),
+            this, SLOT(appearanceChanged(int)));
     addConfig(TaskBarSettings::self(), m_widget);
 
     setQuickHelp(i18n("<h1>Taskbar</h1> You can configure the taskbar here."
@@ -104,6 +150,8 @@ TaskbarConfig::TaskbarConfig(QWidget *parent, const char* name, const QStringLis
 
     connect(m_widget->kcfg_GroupTasks, SIGNAL(activated(int)),
             this, SLOT(slotUpdateComboBox()));
+
+    updateAppearanceCombo();
 
     if (KWin::numberOfDesktops() < 2)
     {
@@ -152,16 +200,52 @@ void TaskbarConfig::slotUpdateComboBox()
     }
 }
 
+void TaskbarConfig::updateAppearanceCombo()
+{
+    unsigned int i = 0;
+    for (TaskbarAppearance::List::const_iterator it = m_appearances.constBegin();
+         it != m_appearances.constEnd();
+         ++it, ++i)
+    {
+        if ((*it).matchesSettings())
+        {
+            break;
+        }
+    }
+
+    if (i < m_appearances.count())
+    {
+        m_widget->appearance->setCurrentItem(i);
+        return;
+    }
+
+    if (m_widget->appearance->count() == m_appearances.count())
+    {
+        m_widget->appearance->insertItem(i18n("Custom"));
+    }
+
+    m_widget->appearance->setCurrentItem(m_appearances.count());
+}
+
+void TaskbarConfig::appearanceChanged(int selected)
+{
+    if (selected < m_appearances.count())
+    {
+        unmanagedWidgetChangeState(!m_appearances[m_widget->appearance->currentItem()].matchesSettings());
+    }
+}
+
 void TaskbarConfig::load()
 {
     KCModule::load();
     slotUpdateComboBox();
+    updateAppearanceCombo();
 }
 
 void TaskbarConfig::save()
 {
     KCModule::save();
-    
+
     QByteArray data;
     kapp->dcopClient()->emitDCOPSignal("kdeTaskBarConfigChanged()", data);
 }
@@ -170,9 +254,10 @@ void TaskbarConfig::defaults()
 {
     KCModule::defaults();
     slotUpdateComboBox();
+    updateAppearanceCombo();
 }
 
-void TaskbarConfig::notChanged() 
+void TaskbarConfig::notChanged()
 {
     emit changed(false);
 }

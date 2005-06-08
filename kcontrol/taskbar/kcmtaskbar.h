@@ -19,9 +19,33 @@
 #ifndef __kcmtaskbar_h__
 #define __kcmtaskbar_h__
 
+#include <qvaluelist.h>
+
 #include <kcmodule.h>
 
 class TaskbarConfigUI;
+
+class TaskbarAppearance
+{
+    public:
+        typedef QValueList<TaskbarAppearance> List;
+
+        TaskbarAppearance();
+        TaskbarAppearance(QString name,
+                          bool drawButtons,
+                          bool haloText,
+                          bool showButtonOnHover);
+
+        bool matchesSettings() const;
+        void alterSettings() const;
+        QString name() const { return m_name; }
+
+    private:
+        QString m_name;
+        bool m_drawButtons;
+        bool m_haloText;
+        bool m_showButtonOnHover;
+};
 
 class TaskbarConfig : public KCModule
 {
@@ -38,9 +62,12 @@ public slots:
 
 protected slots:
     void slotUpdateComboBox();
+    void appearanceChanged(int);
     void notChanged();
 
 private:
+    TaskbarAppearance::List m_appearances;
+    void updateAppearanceCombo();
     static const QStringList& actionList();
     static QStringList i18nActionList();
     static const QStringList& groupModeList();
