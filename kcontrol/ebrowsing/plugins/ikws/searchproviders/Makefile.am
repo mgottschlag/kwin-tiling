@@ -74,6 +74,8 @@ services_DATA = \
 		ruby_application_archive.desktop \
 		seek.desktop \
 		sourceforge.desktop \
+		technorati.desktop \
+		technoratitags.desktop \
 		thesaurus.desktop \
 		tvtome.desktop \
 		uspto.desktop \

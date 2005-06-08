@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Technorati Tags
+ServiceTypes=SearchProvider
+Keys=tags,tag,technoratitags
+Query=http://technorati.com/tag/\\{@}
+Charset=utf8
