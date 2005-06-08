@@ -26,6 +26,7 @@
 #include <klistview.h>
 #include <kstaticdeleter.h>
 #include <kstandarddirs.h>
+#include <kdebug.h>
 
 #include "hidingconfig.h"
 #include "kickerSettings.h"

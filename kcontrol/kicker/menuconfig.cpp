@@ -19,6 +19,7 @@
 #include <qtimer.h>
 
 #include <klocale.h>
+#include <kdebug.h>
 
 #include "kickerSettings.h"
 #include "main.h"
