@@ -4,5 +4,5 @@ Type=Service
 Name=Technorati
 ServiceTypes=SearchProvider
 Keys=tr,technorati
-Query=http://technorati.com/cosmos/search.html?url=\\{@}
+Query=http://technorati.com/cosmos/search.html?sourceid=kde-search&url=\\{@}
 Charset=utf8

@@ -4,5 +4,5 @@ Type=Service
 Name=Technorati Tags
 ServiceTypes=SearchProvider
 Keys=tags,tag,technoratitags
-Query=http://technorati.com/tag/\\{@}
+Query=http://technorati.com/tag/\\{@}?sourceid=kde-search
 Charset=utf8
