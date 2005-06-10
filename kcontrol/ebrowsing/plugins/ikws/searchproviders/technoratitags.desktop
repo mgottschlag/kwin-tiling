@@ -2,6 +2,8 @@
 Encoding=UTF-8
 Type=Service
 Name=Technorati Tags
+Name[da]=Technorati mærker
+Name[ga]=Clibeanna Technorati
 ServiceTypes=SearchProvider
 Keys=tags,tag,technoratitags
 Query=http://technorati.com/tag/\\{@}?sourceid=kde-search
