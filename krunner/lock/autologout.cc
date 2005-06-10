@@ -23,8 +23,8 @@
 #include <qstyle.h>
 #include <qapplication.h>
 #include <qdialog.h>
+#include <qprogressbar.h
 
-//FIXME don't hardcode the time
 #define COUNTDOWN 30*1000 
 
 AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog", true, WX11BypassWM)
@@ -42,6 +42,10 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog",
     mStatusLabel = new QLabel("<b> </b>", frame);
     mStatusLabel->setAlignment(QLabel::AlignCenter);
 
+    QLabel *mProgressLabel = new QLabel("Time Remaining:", frame);
+    mProgressRemaining = new QProgressBar(frame);
+    mProgressRemaining->setPercentageVisible(false);
+
     QVBoxLayout *unlockDialogLayout = new QVBoxLayout( this );
     unlockDialogLayout->addWidget( frame );
 
@@ -50,16 +54,18 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog",
     frameLayout->addWidget(greetLabel, 0, 1);
     frameLayout->addWidget(mStatusLabel, 1, 1);
     frameLayout->addWidget(infoLabel, 2, 1);
+    frameLayout->addWidget(mProgressLabel, 3, 1);
+    frameLayout->addWidget(mProgressRemaining, 4, 1);
 
     // get the time remaining in seconds for the status label
     mRemaining = COUNTDOWN/1000;
 
-    updateLabel(mRemaining);
+    mProgressRemaining->setTotalSteps(mRemaining);
 
-    // event second we want to update the label
+    updateInfo(mRemaining);
+
     mCountdownTimerId = startTimer(1000);
 
-    // we found some activity so dismiss the dialog
     connect(qApp, SIGNAL(activity()), SLOT(slotActivity()));
 }
 
@@ -68,18 +74,19 @@ AutoLogout::~AutoLogout()
     hide();
 }
 
-void AutoLogout::updateLabel(int timeout)
+void AutoLogout::updateInfo(int timeout)
 {
     mStatusLabel->setText(i18n("<nobr><qt>You will be automatically logged out in 1 second</qt></nobr>",
                                "<nobr><qt>You will be automatically logged out in %n seconds</qt></nobr>",
                                timeout) );
+    mProgressRemaining->setProgress(mRemaining);
 }
 
 void AutoLogout::timerEvent(QTimerEvent *ev)
 {
     if (ev->timerId() == mCountdownTimerId)
     {
-        updateLabel(mRemaining);
+        updateInfo(mRemaining);
 	--mRemaining;
 	if (mRemaining < 0)
 	{

@@ -18,6 +18,7 @@ class QFrame;
 class QGridLayout;
 class QLabel;
 class QDialog;
+class QProgressBar;
 
 class AutoLogout : public QDialog
 {
@@ -35,13 +36,14 @@ private slots:
     void slotActivity();
 
 private:
-    void        updateLabel(int);
+    void        updateInfo(int);
     QFrame      *frame;
     QGridLayout *frameLayout;
     QLabel      *mStatusLabel;
     int         mCountdownTimerId;
     int         mRemaining;
     QTimer      countDownTimer;
+    QProgressBar *mProgressRemaining;
     void logout();
 };
 
