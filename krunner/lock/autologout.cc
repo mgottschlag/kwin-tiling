@@ -23,9 +23,9 @@
 #include <qstyle.h>
 #include <qapplication.h>
 #include <qdialog.h>
-#include <qprogressbar.h
+#include <qprogressbar.h>
 
-#define COUNTDOWN 30*1000 
+#define COUNTDOWN 30 
 
 AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog", true, WX11BypassWM)
 {
@@ -58,13 +58,13 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog",
     frameLayout->addWidget(mProgressRemaining, 4, 1);
 
     // get the time remaining in seconds for the status label
-    mRemaining = COUNTDOWN/1000;
+    mRemaining = COUNTDOWN * 25;
 
-    mProgressRemaining->setTotalSteps(mRemaining);
+    mProgressRemaining->setTotalSteps(COUNTDOWN * 25);
 
     updateInfo(mRemaining);
 
-    mCountdownTimerId = startTimer(1000);
+    mCountdownTimerId = startTimer(1000/25);
 
     connect(qApp, SIGNAL(activity()), SLOT(slotActivity()));
 }
@@ -78,8 +78,8 @@ void AutoLogout::updateInfo(int timeout)
 {
     mStatusLabel->setText(i18n("<nobr><qt>You will be automatically logged out in 1 second</qt></nobr>",
                                "<nobr><qt>You will be automatically logged out in %n seconds</qt></nobr>",
-                               timeout) );
-    mProgressRemaining->setProgress(mRemaining);
+                               timeout / 25) );
+    mProgressRemaining->setProgress(timeout);
 }
 
 void AutoLogout::timerEvent(QTimerEvent *ev)
