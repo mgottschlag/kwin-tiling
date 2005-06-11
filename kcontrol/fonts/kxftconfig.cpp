@@ -34,6 +34,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <fontconfig/fontconfig.h>
+#include <kdebug.h>
 #endif
 
 using namespace std;
@@ -156,6 +157,63 @@ static time_t getTimeStamp(const QString &item)
 }
 
 #ifdef HAVE_FONTCONFIG
+
+inline QString fileSyntax(const QString &f) { return xDirSyntax(f); }
+//
+// Obtain location of config file to use.
+//
+// For system, prefer the following:
+//
+//     <...>/config.d/00kde   = preferred method from FontConfig >= 2.3
+//     <...>/local.conf
+//
+// Non-system, prefer:
+//
+//     $HOME/<...>/.fonts.conf
+//     $HOME/<...>/fonts.conf
+//
+QString getConfigFile(bool system)
+{
+#if (FC_VERSION>=20300)
+    static const char * constKdeRootFcFile="00kde";
+#endif
+
+    FcStrList   *list=FcConfigGetConfigFiles(FcConfigGetCurrent());
+    QStringList files;
+    FcChar8     *file;
+    QString     home(dirSyntax(QDir::homeDirPath()));
+
+    while((file=FcStrListNext(list)))
+    {
+        QString f((const char *)file);
+
+        if(fExists(f))
+        {
+            if(system || 0==fileSyntax(f).find(home)) // For nonsystem, only consider file within $HOME
+                files.append(f);
+        }
+#if (FC_VERSION>=20300)
+        else if(system && dExists(f) && -1!=f.find(QRegExp("/conf\\.d/?$")))
+            return dirSyntax(f)+constKdeRootFcFile;   // This ones good enough for me!
+#endif
+    }
+
+    //
+    // Go through list of files, looking for the preferred one...
+    if(files.count())
+    {
+        QStringList::Iterator it(files.begin()),
+                              end(files.end());
+
+        for(; it!=end; ++it)
+            if(-1!=(*it).find(QRegExp(system ? "/local\\.conf$" : "/\\.?fonts\\.conf$")))
+                return *it;
+        return files.front();  // Just return the 1st one...
+    }
+    else
+        return system ? "/etc/fonts/local.conf" : fileSyntax(home+"/.fonts.conf"); // Hmmm... no known files?
+}
+
 static QString getEntry(QDomElement element, const char *type, unsigned int numAttributes, ...)
 {
     if(numAttributes==element.attributes().length())
@@ -344,16 +402,11 @@ static KXftConfig::ListItem * getLastItem(QPtrList<KXftConfig::ListItem> &list)
     return NULL;
 }
 
-#ifdef HAVE_FONTCONFIG
-static const QString defaultPath("/etc/fonts/local.conf");
-static const QString defaultUserFile(".fonts.conf");
-#else
+#ifndef HAVE_FONTCONFIG
 static const QString defaultPath("/usr/X11R6/lib/X11/XftConfig");
 static const QString defaultUserFile(".xftconfig");
 static const char *  constSymEnc="\"glyphs-fontspecific\"";
-#endif
 
-#ifndef HAVE_FONTCONFIG
 static const QString constConfigFiles[]=
 {
     defaultPath,
@@ -373,11 +426,12 @@ KXftConfig::KXftConfig(int required, bool system)
 #endif
             m_system(system)
 {
+#ifdef HAVE_FONTCONFIG
+    m_file=getConfigFile(system);
+    kdDebug(1208) << "Using fontconfig file:" << m_file << endl;
+#else
     if(system) 
     {
-#ifdef HAVE_FONTCONFIG
-        m_file=defaultPath;
-#else
         int f;
 
         for(f=0; !constConfigFiles[f].isNull(); ++f)
@@ -386,13 +440,10 @@ KXftConfig::KXftConfig(int required, bool system)
 
         if(m_file.isNull())
             m_file=defaultPath;
-#endif
     }
     else
-    {
         m_file= QString(QDir::homeDirPath()+"/"+defaultUserFile);
-    }
-
+#endif
 #ifndef HAVE_FONTCONFIG
     m_symbolFamilies.setAutoDelete(true);
 #endif
