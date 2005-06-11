@@ -75,10 +75,12 @@ ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const c
   : KListView(parent, name)
   , _modules(list)
 {
-  setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
   addColumn(QString::null);
+  setColumnWidthMode (0, QListView::Maximum);
   setAllColumnsShowFocus(true);
+  setResizeMode(QListView::AllColumns);
   setRootIsDecorated(true);
+  setHScrollBarMode(AlwaysOff);
   header()->hide();
 
   new ModuleTreeWhatsThis( this );
