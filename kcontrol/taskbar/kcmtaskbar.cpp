@@ -66,7 +66,8 @@ bool TaskbarAppearance::matchesSettings() const
            TaskBarSettings::haloText() == m_haloText &&
            TaskBarSettings::showButtonOnHover() == m_showButtonOnHover;
 }
-
+#include <iostream>
+using namespace std;
 void TaskbarAppearance::alterSettings() const
 {
     TaskBarSettings::self()->setDrawButtons(m_drawButtons);
@@ -231,7 +232,7 @@ void TaskbarConfig::appearanceChanged(int selected)
 {
     if (selected < m_appearances.count())
     {
-        unmanagedWidgetChangeState(!m_appearances[m_widget->appearance->currentItem()].matchesSettings());
+        unmanagedWidgetChangeState(!m_appearances[selected].matchesSettings());
     }
 }
 
@@ -244,6 +245,13 @@ void TaskbarConfig::load()
 
 void TaskbarConfig::save()
 {
+    int selectedAppearance = m_widget->appearance->currentItem();
+    if (selectedAppearance < m_appearances.count())
+    {
+        m_appearances[selectedAppearance].alterSettings();
+        TaskBarSettings::self()->writeConfig();
+    }
+
     KCModule::save();
 
     QByteArray data;
