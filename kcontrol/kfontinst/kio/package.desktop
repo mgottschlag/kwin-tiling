@@ -11,6 +11,7 @@ Comment[ga]=Pacáiste na gClónna
 Comment[pa]=ਫੋਂਟ ਪੈਕੇਜ
 Comment[pt_BR]=Pacote de Fontes
 Comment[sv]=Teckensnittspaket
+Comment[zh_CN]=字体包
 
 [Property::X-KDE-LocalProtocol]
 Type=QString
