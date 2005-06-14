@@ -95,5 +95,6 @@ X-KDE-Library=kdnssd
 X-KDE-ModuleType=Library
 X-KDE-ParentApp=kcontrol
 X-KDE-SubstituteUID=false
+X-KDE-RootOnly=true
 X-KDE-Init=kdnssd
 Categories=Qt;KDE;X-KDE-settings-network;

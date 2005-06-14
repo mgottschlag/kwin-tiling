@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Jakub Stachowski                                *
+ *   Copyright (C) 2004,2005 by Jakub Stachowski                           *
  *   qbast@go2.pl                                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -21,18 +21,29 @@
 #ifndef _KCMDNSSD_H_
 #define _KCMDNSSD_H_
 
+#include <qmap.h>
+
 #include <configdialog.h>
 #include <kaboutdata.h>
 
+class KSimpleConfig;
 class KCMDnssd: public ConfigDialog
 {
 	Q_OBJECT
 
 public:
 	KCMDnssd( QWidget *parent=0, const char *name=0, const QStringList& = QStringList() );
+	~KCMDnssd();
 	virtual void save();
+	virtual void load();
 private slots:
-	void notchanged();
+	void wdchanged();
+private: 
+	void loadMdnsd();
+	bool saveMdnsd();
+	QMap<QString,QString> mdnsdLines;
+	bool m_wdchanged;
+	KSimpleConfig* domain;
 };
 
 #endif
