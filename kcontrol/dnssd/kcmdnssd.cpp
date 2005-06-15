@@ -42,6 +42,7 @@
 #include <kipc.h>
 
 #define MDNSD_CONF "/etc/mdnsd.conf"
+#define MDNSD_PID "/var/run/mdnsd.pid"
 
 typedef KGenericFactory<KCMDnssd, QWidget> KCMDnssdFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kdnssd, KCMDnssdFactory("kcmkdnssd"))
@@ -128,6 +129,13 @@ bool KCMDnssd::saveMdnsd()
 	// if it is new file, then make it only accessible for root as it can contain shared
 	// secret for dns server. 
 	if (newfile) chmod(MDNSD_CONF,0600); 
+	f.setName(MDNSD_PID);
+	if (!f.open(IO_ReadOnly)) return true; // it is not running so no need to signal
+	QString line;
+	if (f.readLine(line,16)<1) return true;
+	unsigned int pid = line.toUInt();
+	if (pid==0) return true;           // not a pid
+	kill(pid,SIGHUP);
 	return true;
 }
 	
