@@ -582,7 +582,8 @@ static const char def_startup[] =
 " -x " KDMCONF "/Xservers"
 # endif
 #endif /* _AIX */
-" $USER\n";
+" $USER\n"
+"\n# NOTE: The session is aborted if the last command returns non-zero.\n";
 
 static const char def_reset[] =
 "#! /bin/sh\n"
