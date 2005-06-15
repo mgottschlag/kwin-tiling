@@ -188,6 +188,7 @@ Keywords[nds]=kdm,Startschirm,xdm,Bruker,anmellen,greeting,Logo,Stilen,Spraak,La
 Keywords[nl]=kdm,display manager,xdm,users,login,begroeting,inloggen,gebruikers,loginbeheerder,logo,stijlen,taal,language,country,land,fonts,lettertypen,achtergrond,wallpapers,behang,sessies,shutdown,restart,afsluiten,herstarten,aanmelden,opstarten
 Keywords[nn]=kdm,xdm,brukarar,innlogging,helsing,logo,stil,språk,land,skrifttypar,bakgrunn,bakgrunnsbilete,økt,avslutt,slå av,omstart
 Keywords[nso]=kdm,molaodi wa pontsho,xdm,badirisi,tseno,madume,Logo,mekgwa,leleme,naga,difonto,bokamorago,di-wallpaper,ditiragalo,timo,thomaleswa
+Keywords[pa]=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart, ਲੋਗੋ, ਭਾਸ਼ਾ, ਦੇਸ਼, ਫੋਂਟ, ਲਾਗਿੰਨ, ਉਪਭੋਗੀ, ਸ਼ੈਸ਼ਨ
 Keywords[pl]=kdm,menedżer ekranu,xdm,użytkownicy,logowanie,powitanie,Logo,style,jezyk,kraj,czcionki,tło,tapety,sesje,zamknięcie systemu,restart,rozpoczęcie pracy
 Keywords[pt]=kdm,gestor de 'logins',xdm,utilizadores,saudação,logotipo,estilos,língua,país,tipos de letra,fundo,papéis de parede,sessões,terminar,reiniciar
 Keywords[pt_BR]=kdm,gerenciador de tela, xdm,usuários,login,saudação,Logo,estilos,linguagem,país,fontes, papéis de parede,sessões,desligar,reiniciar
