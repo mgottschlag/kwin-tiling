@@ -178,6 +178,10 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   QVBoxLayout *top = new QVBoxLayout(this);
   tab = new QTabWidget(this);
 
+  // *****
+  // _don't_ add a theme configurator until the theming engine is _really_ done!!
+  // *****
+
   appearance = new KDMAppearanceWidget(this);
   tab->addTab(appearance, i18n("A&ppearance"));
   connect(appearance, SIGNAL(changed(bool)), SIGNAL( changed(bool)));

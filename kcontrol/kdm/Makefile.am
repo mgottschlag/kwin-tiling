@@ -1,5 +1,6 @@
 kde_module_LTLIBRARIES = kcm_kdm.la
 
+# _don't_ add a theme configurator!!
 kcm_kdm_la_SOURCES = background.cpp kdm-appear.cpp kdm-font.cpp kdm-sess.cpp \
 	kdm-users.cpp kdm-conv.cpp main.cpp
 
