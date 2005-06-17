@@ -5,6 +5,7 @@ Name=Technorati Tags
 Name[da]=Technorati mærker
 Name[ga]=Clibeanna Technorati
 Name[pa]=Technorati ਟੈਗ
+Name[sv]=Technorati-taggar
 ServiceTypes=SearchProvider
 Keys=tags,tag,technoratitags
 Query=http://technorati.com/tag/\\{@}?sourceid=kde-search
