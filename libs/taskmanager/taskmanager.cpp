@@ -241,6 +241,11 @@ Task::Ptr TaskManager::findTask(int desktop, const QPoint& p)
             continue;
         }
 
+        if (t->isIconified() || t->isShaded())
+        {
+            continue;
+        }
+
         if (t->geometry().contains(p))
         {
             int index = list.findIndex(t->window());
