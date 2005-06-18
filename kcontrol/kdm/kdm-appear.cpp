@@ -137,7 +137,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay->addWidget(label, 0, 0);
   QVBoxLayout *vlay = new QVBoxLayout( KDialog::spacingHint() );
   hglay->addMultiCellLayout(vlay, 0,0, 1,2);
-  noneRadio = new QRadioButton( i18n("&None"), group );
+  noneRadio = new QRadioButton( i18n("logo area", "&None"), group );
   clockRadio = new QRadioButton( i18n("Show cloc&k"), group );
   logoRadio = new QRadioButton( i18n("Sho&w logo"), group );
   QButtonGroup *buttonGroup = new QButtonGroup( group );
