@@ -80,6 +80,10 @@ Status DPMSInfo ( Display *, CARD16 *, BOOL * );
 #include <X11/extensions/xf86misc.h>
 #endif
 
+#ifdef HAVE_GLXCHOOSEVISUAL
+#include <GL/glx.h>
+#endif
+
 #define LOCK_GRACE_DEFAULT          5000
 #define AUTOLOGOUT_DEFAULT          600
 
@@ -95,6 +99,7 @@ static Atom   gXA_SCREENSAVER_VERSION;
 //
 LockProcess::LockProcess(bool child, bool useBlankOnly)
     : QWidget(0L, "saver window", WX11BypassWM),
+      mOpenGLVisual(0),
       child_saver(child),
       mParent(0),
       mUseBlankOnly(useBlankOnly),
@@ -137,10 +142,6 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     // virtual root property
     gXA_VROOT = XInternAtom (qt_xdisplay(), "__SWM_VROOT", False);
     gXA_SCREENSAVER_VERSION = XInternAtom (qt_xdisplay(), "_SCREENSAVER_VERSION", False);
-
-    XWindowAttributes attrs;
-    XGetWindowAttributes(qt_xdisplay(), winId(), &attrs);
-    mColorMap = attrs.colormap;
 
     connect(&mHackProc, SIGNAL(processExited(KProcess *)),
                         SLOT(hackExited(KProcess *)));
@@ -371,6 +372,10 @@ void LockProcess::readSaver()
 				kdDebug(1204) << "Screensaver is type OpenGL and OpenGL is forbidden" << endl;
 				mForbidden = true;
 			}
+			if (saverTypes[i] == "OpenGL")
+			{
+				mOpenGLVisual = true;
+			}
 		}
 	}
 
@@ -390,8 +395,26 @@ void LockProcess::readSaver()
 //
 void LockProcess::createSaverWindow()
 {
-    // We only create the window once, but we reset its attributes every
-    // time.
+    Visual* visual = CopyFromParent;
+    XSetWindowAttributes attrs;
+    int flags = 0;
+#ifdef HAVE_GLXCHOOSEVISUAL
+    if( mOpenGLVisual )
+    {
+        int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, x11Depth(), None };
+        XVisualInfo* i = glXChooseVisual( x11Display(), x11Screen(), attribs );
+        visual = i->visual;
+        static Colormap colormap = 0;
+        if( colormap != 0 )
+            XFreeColormap( x11Display(), colormap );
+        colormap = XCreateColormap( x11Display(), RootWindow( x11Display(), x11Screen()), visual, AllocNone );
+        attrs.colormap = colormap;
+        flags |= CWColormap;
+    }
+#endif
+    Window w = XCreateWindow( x11Display(), RootWindow( x11Display(), x11Screen()),
+        x(), y(), width(), height(), 0, x11Depth(), InputOutput, visual, flags, &attrs );
+    create( w );
 
     // Some xscreensaver hacks check for this property
     const char *version = "KDE 2.0";
@@ -400,19 +423,10 @@ void LockProcess::createSaverWindow()
                      (unsigned char *) version, strlen(version));
 
     XSetWindowAttributes attr;
-    if (mColorMap != None)
-    {
-        attr.colormap = mColorMap;
-    }
-    else
-    {
-        attr.colormap = DefaultColormapOfScreen(
-                                ScreenOfDisplay(qt_xdisplay(), qt_xscreen()));
-    }
     attr.event_mask = KeyPressMask | ButtonPressMask | PointerMotionMask |
                         VisibilityChangeMask | ExposureMask;
     XChangeWindowAttributes(qt_xdisplay(), winId(),
-                            CWEventMask | CWColormap, &attr);
+                            CWEventMask, &attr);
 
     // erase();
 

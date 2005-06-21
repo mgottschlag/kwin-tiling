@@ -100,12 +100,12 @@ private:
     int         mLockGrace;
     int         mPriority;
     bool        mBusy;
-    Colormap    mColorMap;
     KProcess    mHackProc;
     int         mRootWidth;
     int         mRootHeight;
     QString     mSaverExec;
     QString     mSaver;
+    bool        mOpenGLVisual;
     bool        child_saver;
     QValueList<int> child_sockets;
     int         mParent;
