@@ -132,7 +132,7 @@ commitGrub( void )
 {
 	FILE *f;
 	int pid;
-	static const char *args[] = { 0, "--batch", 0 };
+	static const char *args[] = { 0, "--batch", "--no-floppy", 0 };
 
 	if (sdRec.bmstamp != mTime( GRUB_MENU ) &&
 	    setGrub( sdRec.osname, &sdRec ) != BO_OK)
