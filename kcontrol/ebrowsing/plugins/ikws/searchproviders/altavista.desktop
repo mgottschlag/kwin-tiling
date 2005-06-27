@@ -20,4 +20,5 @@ Keys=av,altavista
 Query=http://www.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\{@}
 Query[nb]=http://no.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\{@}
 Query[nn]=http://no.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\{@}
+Query[ro]=http://www.altavista.com/cgi-bin/query?pg=q&kl=ro&stype=stext&q=\\{@}
 Query[xx]=xxhttp://www.altavista.com/cgi-bin/query?pg=q&kl=XX&stype=stext&q=\\{@}xx
