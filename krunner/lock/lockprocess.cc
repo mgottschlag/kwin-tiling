@@ -402,14 +402,17 @@ void LockProcess::createSaverWindow()
     if( mOpenGLVisual )
     {
         int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, x11Depth(), None };
-        XVisualInfo* i = glXChooseVisual( x11Display(), x11Screen(), attribs );
-        visual = i->visual;
-        static Colormap colormap = 0;
-        if( colormap != 0 )
-            XFreeColormap( x11Display(), colormap );
-        colormap = XCreateColormap( x11Display(), RootWindow( x11Display(), x11Screen()), visual, AllocNone );
-        attrs.colormap = colormap;
-        flags |= CWColormap;
+        if( XVisualInfo* i = glXChooseVisual( x11Display(), x11Screen(), attribs ))
+        {
+            visual = i->visual;
+            static Colormap colormap = 0;
+            if( colormap != 0 )
+                XFreeColormap( x11Display(), colormap );
+            colormap = XCreateColormap( x11Display(), RootWindow( x11Display(), x11Screen()), visual, AllocNone );
+            attrs.colormap = colormap;
+            flags |= CWColormap;
+            XFree( i );
+        }
     }
 #endif
     Window w = XCreateWindow( x11Display(), RootWindow( x11Display(), x11Screen()),
