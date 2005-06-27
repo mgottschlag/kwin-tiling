@@ -1,9 +1,9 @@
 #ifndef TESTWIN_H
 #define TESTWIN_H
 
-#include <qxembed.h>
+#include "kswidget.h"
 
-class TestWin : public QXEmbed
+class TestWin : public KSWidget
 {
     Q_OBJECT
 public:

@@ -1,12 +1,12 @@
 #ifndef KSSMONITOR_H
 #define KSSMONITOR_H
 
-#include <qxembed.h>
+#include "kswidget.h"
 
-class KSSMonitor : public QXEmbed
+class KSSMonitor : public KSWidget
 {
 public:
-    KSSMonitor( QWidget *parent ) : QXEmbed( parent ) {}
+    KSSMonitor( QWidget *parent ) : KSWidget( parent ) {}
 
     // we don't want no steenking palette change
     virtual void setPalette( const QPalette & ) {}
