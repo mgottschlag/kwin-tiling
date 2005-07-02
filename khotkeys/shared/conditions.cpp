@@ -223,11 +223,13 @@ void Condition_list::set_data( Action_data_base* data_P )
 const QString Condition_list::description() const
     {
     assert( false );
+    return QString::null;
     }
 
 Condition_list* Condition_list::copy( Condition_list_base* ) const
     {
     assert( false );
+    return NULL;
     }
 
 // Active_window_condition
