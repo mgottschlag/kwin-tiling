@@ -20,6 +20,7 @@
 #include <qcheckbox.h>
 #include <qfile.h>
 #include <qgroupbox.h>
+#include <qheader.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
@@ -32,6 +33,7 @@
 #include <kapplication.h>
 #include <kcombobox.h>
 #include <kconfig.h>
+#include <kiconloader.h>
 #include <klistview.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -47,11 +49,11 @@
 #include "searchproviderdlg.h"
 
 
-class SearchProviderItem : public QListViewItem
+class SearchProviderItem : public QCheckListItem
 {
 public:
     SearchProviderItem(QListView *parent, SearchProvider *provider)
-    :QListViewItem(parent), m_provider(provider)
+    :QCheckListItem(parent, provider->name(), CheckBox), m_provider(provider)
     {
       update();
     }
@@ -82,6 +84,7 @@ FilterOptions::FilterOptions(KInstance *instance, QWidget *parent, const char *n
     m_dlg = new FilterOptionsUI (this);
     mainLayout->addWidget(m_dlg);
 
+    m_dlg->lvSearchProviders->header()->setLabel(0, SmallIconSet("bookmark"),i18n("Name"));
     m_dlg->lvSearchProviders->setSorting(0);
 
     // Load the options
@@ -110,6 +113,10 @@ void FilterOptions::load()
     config.setGroup("General");
 
     QString defaultSearchEngine = config.readEntry("DefaultSearchEngine");
+
+    m_favoriteEngines.clear();
+    m_favoriteEngines << "google" << "google_groups" << "google_news" << "webster" << "dmoz" << "wikipedia";
+    m_favoriteEngines = config.readListEntry("FavoriteSearchEngines", m_favoriteEngines);
 
     const KTrader::OfferList services = KTrader::self()->query("SearchProvider");
 
@@ -143,6 +150,8 @@ void FilterOptions::load()
            this, SLOT(changeSearchProvider()));
     connect(m_dlg->lvSearchProviders, SIGNAL(returnPressed(QListViewItem *)),
            this, SLOT(changeSearchProvider()));
+    connect(m_dlg->lvSearchProviders, SIGNAL(executed(QListViewItem *)),
+           this, SLOT(checkFavoritesChanged()));
 
     connect(m_dlg->cmbDefaultEngine, SIGNAL(activated(const QString &)), this,
             SLOT(configChanged()));
@@ -199,6 +208,8 @@ void FilterOptions::save()
   int changedProviderCount = 0;
   QString path = kapp->dirs()->saveLocation("services", "searchproviders/");
 
+  m_favoriteEngines.clear();
+
   for (QListViewItemIterator it(m_dlg->lvSearchProviders); it.current(); ++it)
   {
     SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(it.current());
@@ -208,6 +219,9 @@ void FilterOptions::save()
     SearchProvider *provider = item->provider();
 
     QString name = provider->desktopEntryName();
+
+    if (item->isOn())
+      m_favoriteEngines << name;
 
     if (provider->isDirty())
     {
@@ -280,6 +294,7 @@ void FilterOptions::save()
       service.writeEntry("Hidden", true);
   }
 
+  config.writeEntry("FavoriteSearchEngines", m_favoriteEngines);
   config.sync();
 
   emit changed(false);
@@ -305,6 +320,25 @@ void FilterOptions::configChanged()
 {
   // kdDebug () << "FilterOptions::configChanged: TRUE" << endl;
   emit changed(true);
+}
+
+void FilterOptions::checkFavoritesChanged()
+{
+  QStringList currentFavoriteEngines;
+  for (QListViewItemIterator it(m_dlg->lvSearchProviders); it.current(); ++it)
+  {
+    SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(it.current());
+
+    Q_ASSERT(item);
+
+    if (item->isOn())
+      currentFavoriteEngines << item->provider()->desktopEntryName();
+  }
+
+  if (!(currentFavoriteEngines==m_favoriteEngines)) {
+    m_favoriteEngines=currentFavoriteEngines;
+    configChanged();
+  }
 }
 
 void FilterOptions::setWebShortcutState()
@@ -410,6 +444,9 @@ SearchProviderItem *FilterOptions::displaySearchProvider(SearchProvider *p, bool
     int totalCount = m_dlg->cmbDefaultEngine->count();
 
     item = new SearchProviderItem(m_dlg->lvSearchProviders, p);
+
+    if (m_favoriteEngines.find(p->desktopEntryName())!=m_favoriteEngines.end())
+       item->setOn(true);
 
     for (itemCount = 1; itemCount < totalCount; itemCount++)
     {

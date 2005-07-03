@@ -212,7 +212,7 @@ Select the search engine to use for input boxes that provide automatic lookup se
                         <number>0</number>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>List of search providers and their associated shortcuts.</string>
+                        <string>List of search providers, their associated shortcuts and whether they shall be listed in menus.</string>
                     </property>
                 </widget>
                 <widget class="KComboBox" row="5" column="1">

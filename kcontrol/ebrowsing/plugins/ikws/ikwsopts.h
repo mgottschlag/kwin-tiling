@@ -44,6 +44,7 @@ public:
 
 protected slots:
     void configChanged();
+    void checkFavoritesChanged();
 
     void setWebShortcutState();
 
@@ -63,6 +64,7 @@ private:
     // on save if a global service file exists for it.
     QStringList m_deletedProviders;
     QMap <QString, QString> m_defaultEngineMap;
+    QStringList m_favoriteEngines;
 
     FilterOptionsUI* m_dlg;
 };
