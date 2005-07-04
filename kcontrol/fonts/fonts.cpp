@@ -526,11 +526,11 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
 
   // Keep in sync with kdelibs/kdecore/kglobalsettings.cpp
 
-  QFont f0("helvetica", 12);
-  QFont f1("courier", 12);
-  QFont f2("helvetica", 10);
-  QFont f3("helvetica", 12, QFont::Bold);
-  QFont f4("helvetica", 11);
+  QFont f0("Sans Serif", 12);
+  QFont f1("Monospace", 12);
+  QFont f2("Sans Serif", 10);
+  QFont f3("Sans Serif", 12, QFont::Bold);
+  QFont f4("Sans Serif", 11);
 
   f0.setPointSize(12);
   f1.setPointSize(12);
