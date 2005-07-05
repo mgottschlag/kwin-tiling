@@ -2561,7 +2561,7 @@ int main( int argc, char **argv )
 	int i, ap, newer, locals, foreigns;
 	int no_old_xdm = 0, no_old_kde = 0;
 	struct stat st;
-	char nname[80];
+	char *nname;
 
 	for (ap = 1; ap < argc; ap++) {
 		if (!strcmp( argv[ap], "--help" )) {
@@ -2802,7 +2802,7 @@ int main( int argc, char **argv )
 	wrconf( f );
 	fclose( f );
 
-	sprintf( nname, "%s/README", newdir );
+	ASPrintf( &nname, "%s/README", newdir );
 	f = Create( nname, 0644 );
 	fprintf( f,
 "This automatically generated configuration consists of the following files:\n" );
