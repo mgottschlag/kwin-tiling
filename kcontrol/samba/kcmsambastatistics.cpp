@@ -54,7 +54,7 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
   serviceL = new QLabel( serviceLe, i18n( "Service/File:" ), this );
   hostLe = new QLineEdit( this );
   hostL = new QLabel( hostLe, i18n( "Host/User:" ), this );
-  calcButton = new QPushButton( i18n( "Search" ), this );
+  calcButton = new QPushButton( i18n( "&Search" ), this );
   clearButton = new QPushButton( i18n( "Clear Results" ), this );
   expandedInfoCb = new QCheckBox( i18n( "Show expanded service info" ), this );
   expandedUserCb = new QCheckBox( i18n( "Show expanded host info" ), this );
