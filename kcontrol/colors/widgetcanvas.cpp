@@ -550,20 +550,20 @@ void WidgetCanvas::drawSampleWidgets()
         HotSpot( QRect( 56, 83, textLenNew, 14 ), CSM_Text );
 
     paint.setFont( menuFont );
-    textLenOpen = paint.fontMetrics().width( i18n("Open") );
+    textLenOpen = paint.fontMetrics().width( i18n("Menu item", "Open") );
 
     hotspots[ spot++ ] =
         HotSpot( QRect( 56, 105, textLenOpen, 14 ), CSM_Text );
 
     paint.setFont( menuFont );
-    textLenSave = paint.fontMetrics().width( i18n("Save") );
+    textLenSave = paint.fontMetrics().width( i18n("Menu item", "Save") );
 
 	QPopupMenu *popup = new QPopupMenu( this );
 	popup->setFont( menuFont );
 	popup->setPalette( QPalette(cg,cg,cg));
 	popup->insertItem(i18n("New"));
-	popup->insertItem(i18n("Open"));
-	int id = popup->insertItem(i18n("Save"));
+	popup->insertItem(i18n("Menu item", "Open"));
+	int id = popup->insertItem(i18n("Menu item", "Save"));
 	popup->setItemEnabled( id, false );
 
 	// HACK: Force Layouting
