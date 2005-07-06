@@ -2048,30 +2048,30 @@ Description:
 
 Key: GreetFont
 Type: string
-Default: "charter,24,5,0,50,0"
-CDefault: "charter,24,bold"
+Default: "Serif,24,5,0,50,0"
+CDefault: "Serif,24,bold"
 User: greeter:font
-Instance: #*/"charter,20,5,0,50,0"
+Instance: #*/"Serif,20,5,0,50,0"
 Comment: &
 Description:
  The font for the greeter headline.
 
 Key: StdFont
 Type: string
-Default: "helvetica,12,5,0,50,0"
-CDefault: "helvetica,12"
+Default: "Sans Serif,12,5,0,50,0"
+CDefault: "Sans Serif,12"
 User: greeter(normalFont):font
-Instance: #*/"helvetica,10,5,0,50,0"
+Instance: #*/"Sans Serif,10,5,0,50,0"
 Comment: &
 Description:
  The normal font used in the greeter.
 
 Key: FailFont
 Type: string
-Default: "helvetica,12,5,0,75,0"
-CDefault: "helvetica,12,bold"
+Default: "Sans Serif,12,5,0,75,0"
+CDefault: "Sans Serif,12,bold"
 User: greeter:font
-Instance: #*/"helvetica,10,5,0,75,0"
+Instance: #*/"Sans Serif,10,5,0,75,0"
 Comment: &
 Description:
  The font used for the <quote>Login Failed</quote> message.
