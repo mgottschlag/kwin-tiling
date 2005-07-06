@@ -48,7 +48,7 @@ Name[pl]=Google - wyszukiwanie zdjęć
 Name[pt]=Pesquisa de Imagens do Google
 Name[pt_BR]=Busca de Imagens do Google
 Name[ro]=Căutare de imagini Google
-Name[ru]=Google - поиск изображений
+Name[ru]=Изображения Google
 Name[se]=Oza govaid Google báikkis
 Name[sk]=Hľadanie obrázkov Google
 Name[sl]=Iskanje slik z Google
@@ -80,4 +80,5 @@ Query[nb]=http://images.google.no/images?hl=nn&q=\\{@}
 Query[nl]=http://images.google.nl/images?q=\\{@}
 Query[nn]=http://images.google.com/images?hl=nn&q=\\{@}
 Query[pt]=http://images.google.pt/images?q=\\{@}
+Query[ru]=http://images.google.com/images?q=\\{@}&hl=ru&ie=UTF-8&oe=UTF-8
 Query[xx]=xxhttp://images.google.com/images?q=\\{@}xx
