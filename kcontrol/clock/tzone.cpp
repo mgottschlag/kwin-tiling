@@ -48,9 +48,6 @@
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
-#define ZONEINFODIR	"/usr/share/lib/zoneinfo"
-#define INITFILE	"/etc/default/init"
 #endif
 
 Tzone::Tzone(QWidget * parent, const char *name)
@@ -86,59 +83,27 @@ void Tzone::fillTimeZones()
 
     tzonelist->insertItem(i18n("[No selection]"));
 
-#if defined(USE_SOLARIS)	// MARCO
-
-    FILE *fp;
-    char buf[MAXPATHLEN];
-
-    snprintf(buf, MAXPATHLEN,
-             "/bin/find %s \\( -name src -prune \\) -o -type f -print | /bin/cut -b %d-",
-             ZONEINFODIR, strlen(ZONEINFODIR) + 2);
-
-    fp = popen(buf, "r");
-    if (fp)
+    const KTimezones::ZoneMap zones = m_zoneDb.allZones();
+    for (KTimezones::ZoneMap::ConstIterator it = zones.begin(); it != zones.end(); ++it)
     {
-        while(fgets(buf, MAXPATHLEN - 1, fp) != NULL)
-        {
-            buf[strlen(buf) - 1] = '\0';
-            list << i18n(buf);
-            tzonenames << buf;
-        }
-        pclose(fp);
+        const KTimezone *zone = it.data();
+        list << i18n(zone->name().utf8());
+        tzonenames << zone->name();
     }
-
-#else
-    QFile f("/usr/share/zoneinfo/zone.tab");
-    if (f.open(IO_ReadOnly))
-    {
-        QTextStream ts(&f);
-        QRegExp spaces("[ \t]");
-        for (QString line = ts.readLine(); !line.isNull(); line = ts.readLine())
-        {
-            if (line.isEmpty() || line[0] == '#')
-                continue;
-            QStringList fields = QStringList::split(spaces, line);
-            if (fields.count() >= 3) {
-                list << i18n(fields[2].utf8());
-                tzonenames << fields[2];
-            }
-        }
-    }
-#endif // !USE_SOLARIS
 
     list.sort();
 
     tzonelist->insertStringList(list);
 }
 
-QString Tzone::currentZone() const
+QString Tzone::currentZone()
 {
     QCString result(100);
     time_t now = time(0);
     tzset();
-    strftime(result.data(), result.size(), "%Z", localtime(&now));
+    strftime(result.data(), result.size(), " (%Z)", localtime(&now));
     kdDebug() << "strftime returned: " << result << endl;
-    return QString::fromLocal8Bit(result);
+    return m_zoneDb.local()->name() + QString::fromLocal8Bit(result);
 }
 
 void Tzone::load()
@@ -147,33 +112,8 @@ void Tzone::load()
     currentzone->setText(currentZone());
 
     // read the currently set time zone
-
-#if defined(USE_SOLARIS)	// MARCO
-    FILE *fp;
-    char buf[MAXPATHLEN];
-
-    snprintf(buf, MAXPATHLEN,
-             "/bin/fgrep 'TZ=' %s | /bin/head -n 1 | /bin/cut -b 4-",
-             INITFILE);
-
-    fp = popen(buf, "r");
-    if (fp)
-    {
-        if (fgets(buf, MAXPATHLEN - 1, fp) != NULL)
-        {
-            buf[strlen(buf) - 1] = '\0';
-            sCurrentlySet = QString(buf);
-        }
-        pclose(fp);
-    }
-#else
-    QFile f("/etc/timezone");
-    if(f.open(IO_ReadOnly))
-    {
-        QTextStream ts(&f);
-        ts >> sCurrentlySet;
-    }
-#endif // !USE_SOLARIS
+    const KTimezone *local = m_zoneDb.local();
+    sCurrentlySet = i18n(local->name().utf8());
 
     // find the currently set time zone and select it
     for (int i = 0; i < tzonelist->count(); i++)
@@ -186,6 +126,8 @@ void Tzone::load()
     }
 }
 
+// FIXME: Does the logic in this routine actually work correctly? For example,
+// on non-Solaris systems which do not use /etc/timezone?
 void Tzone::save()
 {
     QString tz;
@@ -213,7 +155,7 @@ void Tzone::save()
         if (tf.status() == 0 && fTimezoneFile.open(IO_ReadOnly))
         {
             bool found = false;
-            
+
             QTextStream is(&fTimezoneFile);
 
             for (QString line = is.readLine(); !line.isNull();
@@ -278,7 +220,7 @@ void Tzone::save()
         kdDebug() << "Set time zone " << tz << endl;
 
 	if (!QFile::remove("/etc/localtime"))
-	{	
+	{
 		//After the KDE 3.2 release, need to add an error message
 	}
 	else

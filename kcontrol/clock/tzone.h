@@ -17,11 +17,12 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- */  
+ */
 
 #ifndef tzone_included
 #define tzone_included
 
+#include <ktimezones.h>
 #include <qgroupbox.h>
 
 class QComboBox;
@@ -33,10 +34,10 @@ class Tzone : public QGroupBox
 
 public:
   Tzone( QWidget *parent=0, const char* name=0 );
-  
+
   void	save();
   void  load();
-  
+
 signals:
 	void zoneChanged(bool);
 
@@ -44,8 +45,9 @@ protected slots:
   void handleZoneChange() {emit zoneChanged( TRUE );}
 
 private:
+  KTimezones m_zoneDb;
   void  fillTimeZones();
-  QString currentZone() const;
+  QString currentZone();
 
   QComboBox       *tzonelist;
   QStringList     tzonenames;
