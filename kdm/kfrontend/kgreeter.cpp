@@ -180,12 +180,10 @@ KGreeter::insertUser( const QImage &default_pix,
 	    _faceSource != FACE_ADMIN_ONLY)
 		nd = 1;
 	QImage p;
-	// XXX remove seteuid-voodoo when we run as nobody
-	seteuid( ps->pw_uid );
 	do {
 		QString fn = dp ?
-					 QFile::decodeName( ps->pw_dir ) + "/.face" :
-					 _faceDir + '/' + username + ".face";
+		             QFile::decodeName( ps->pw_dir ) + "/.face" :
+		             _faceDir + '/' + username + ".face";
 		if (p.load( fn + ".icon" ) || p.load( fn )) {
 			QSize ns( 48, 48 );
 			if (p.size() != ns)
@@ -196,7 +194,6 @@ KGreeter::insertUser( const QImage &default_pix,
 	} while (--nd >= 0);
 	p = default_pix;
   gotit:
-	seteuid( 0 );
 	QString realname = KStringHandler::from8Bit( ps->pw_gecos );
 	realname.truncate( realname.find( ',' ) );
 	if (realname.isEmpty() || realname == username)
@@ -249,6 +246,13 @@ UserList::UserList( char **in )
 void
 KGreeter::insertUsers()
 {
+	struct passwd *ps;
+
+	// XXX remove seteuid-voodoo when we run as nobody
+	if (!(ps = getpwnam( "nobody" )))
+		return;
+	seteuid( ps->pw_uid );
+
 	QImage default_pix;
 	if (userView) {
 		if (!default_pix.load( _faceDir + "/.default.face.icon" ))
@@ -259,7 +263,6 @@ KGreeter::insertUsers()
 			default_pix =
 			  default_pix.convertDepth( 32 ).smoothScale( ns, QImage::ScaleMin );
 	}
-	struct passwd *ps;
 	if (_showUsers == SHOW_ALL) {
 		UserList noUsers( _noUsers );
 		QDict<int> dupes( 1000 );
@@ -312,6 +315,9 @@ KGreeter::insertUsers()
 		if (userList)
 			userList->sort();
 	}
+
+	// XXX remove seteuid-voodoo when we run as nobody
+	seteuid( 0 );
 }
 
 void
