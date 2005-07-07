@@ -168,7 +168,7 @@ The sockets are UNIX domain sockets which live in subdirectories of the
 directory specified by FifoDir=. The subdir is the key to addressing and
 security; the sockets all have the file name "socket" and file permissions
 rw-rw-rw- (0666). This is because some systems don't care for the file
-permission of the socket files.
+permissions of the socket files.
 There are two types of sockets: the global one (dmctl) and the per-display
 ones (dmctl-<display>).
 The global one's subdir is owned by root, the subdirs of the per-display
@@ -313,12 +313,12 @@ if kdmctl | grep -q shutdown; then
   IFS=$'\t'
   set -- `kdmctl listbootoptions`
   if [ "$1" = ok ]; then
-	fbsd=$(echo "$2" | tr ' ' '\n' | sed -ne 's,\\s, ,g;/freebsd/I{p;q}')
-	if [ -n "$fbsd" ]; then
+    fbsd=$(echo "$2" | tr ' ' '\n' | sed -ne 's,\\s, ,g;/freebsd/I{p;q}')
+    if [ -n "$fbsd" ]; then
       kdmctl shutdown reboot "=$fbsd" ask > /dev/null
-	else
-	  echo "FreeBSD boot unavailable."
-	fi
+    else
+      echo "FreeBSD boot unavailable."
+    fi
   else
     echo "Boot options unavailable."
   fi
