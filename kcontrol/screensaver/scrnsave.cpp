@@ -46,10 +46,7 @@
 
 #include "scrnsave.h"
 
-// X11 headers
-#undef Above
-#undef Below
-#undef None
+#include <fixx11h.h>
 
 template class QPtrList<SaverConfig>;
 
