@@ -17,3 +17,5 @@ messages: rc.cpp
 	-rm -f category_list.cpp
 
 xdg_apps_DATA = screensaver.desktop
+
+KDE_OPTIONS = nofinal
