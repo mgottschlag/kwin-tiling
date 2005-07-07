@@ -54,7 +54,7 @@ services_DATA = \
 		it2en.desktop \
 		jeeves.desktop \
 		kde.desktop \
-		kde_webcvs.desktop \
+		kde_websvn.desktop \
 		katatudo.desktop \
 		leo.desktop \
 		lycos.desktop \
