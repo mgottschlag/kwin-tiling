@@ -1341,12 +1341,18 @@ Description:
 Key: ServerCmd
 Type: string
 Default: DEF_SERVER_CMD
+DDefault: -
 User: core
 Instance: :*/DEF_SERVER_CMD
-Comment: &
+Comment:
+ The command line to start the &X-Server;, without display number and VT spec.
+ This string is subject to word splitting.
 Description:
  The command line to start the &X-Server;, without display number and VT spec.
  This string is subject to word splitting.
+ </para><para>
+ The default is something reasonable for the system on which &kdm; was built,
+ like <command>/usr/X11R6/bin/X</command>.
 
 Key: ServerArgsLocal
 Type: string
