@@ -447,12 +447,12 @@ void CKCmFontInst::removeFonts()
             case 0:
                 break;
             case 1:
-                doIt = KMessageBox::Yes==KMessageBox::warningYesNo(this,
+                doIt = KMessageBox::Continue==KMessageBox::warningContinueCancel(this,
                            i18n("<qt>Do you really want to delete\n <b>'%1'</b>?</qt>").arg(files.first()),
 			   i18n("Delete Font"), KStdGuiItem::del());
             break;
             default:
-                doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
+                doIt = KMessageBox::Continue==KMessageBox::warningContinueCancelList(this,
                            i18n("Do you really want to delete this font?", "Do you really want to delete these %n fonts?",
                                 files.count()),
 			   files, i18n("Delete Fonts"), KStdGuiItem::del());

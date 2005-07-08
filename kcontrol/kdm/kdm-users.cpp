@@ -272,7 +272,7 @@ void KDMUsersWidget::changeUserPix(const QString &pix)
     if (user == m_defaultText)
     {
        user = ".default";
-       if (KMessageBox::questionYesNo(this, i18n("Save image as default image?"))
+       if (KMessageBox::questionYesNo(this, i18n("Save image as default image?"),QString::null,KStdGuiItem::save(),KStdGuiItem::cancel())
             != KMessageBox::Yes)
           return;
     }

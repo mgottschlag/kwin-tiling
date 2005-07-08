@@ -415,7 +415,7 @@ int KArtsModule::userSavedChanges()
                             "you restarted the sound server.\n"
                             "Do you want to save them?");
 	QString caption = i18n("Save Sound Server Settings?");
-	reply = KMessageBox::questionYesNo(this, question, caption);
+	reply = KMessageBox::questionYesNo(this, question, caption,KStdGuiItem::save(),KStdGuiItem::discard());
 	if ( reply == KMessageBox::Yes)
 	{
         configChanged = false;

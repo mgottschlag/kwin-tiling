@@ -405,7 +405,7 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	if (!it) return;
 
 	if (somethingChanged) {
-		if (KMessageBox::questionYesNo(this,i18n("<qt>You changed the default component of your choice, do want to save that change now ?<BR><BR>Selecting <B>No</B> will discard your changes</qt>"))==KMessageBox::Yes) save();
+		if (KMessageBox::questionYesNo(this,i18n("<qt>You changed the default component of your choice, do want to save that change now ?</qt>"),QString::null,KStdGuiItem::save(),KStdGuiItem::discard())==KMessageBox::Yes) save();
 	}
 	KSimpleConfig cfg(static_cast<MyListBoxItem*>(it)->File);
 

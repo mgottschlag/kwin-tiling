@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Fredrik Höglund <fredrik@kde.org>
+ * Copyright (C) 2003 Fredrik Hï¿½lund <fredrik@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -237,8 +237,8 @@ void ThemePage::removeClicked()
 		.arg( listview->currentItem()->text( NameColumn ) );
 
 	// Get confirmation from the user
-	int answer = KMessageBox::warningYesNo( this, question, i18n( "Confirmation" ) );
-	if ( answer != KMessageBox::Yes )
+	int answer = KMessageBox::warningContinueCancel( this, question, i18n( "Confirmation" ), KStdGuiItem::del() );
+	if ( answer != KMessageBox::Continue )
 		return;
 
 	// Delete the theme from the harddrive
@@ -293,8 +293,8 @@ bool ThemePage::installThemes( const QString &file )
 		if ( QDir( destDir ).exists( *it ) ) {
 			const QString question = i18n( "A theme named %1 already exists in your icon "
 					"theme folder. Do you want replace it with this one?" ).arg( *it );
-			int answer = KMessageBox::warningYesNo( this, question, i18n( "Overwrite theme?" ) );
-			if ( answer != KMessageBox::Yes )
+			int answer = KMessageBox::warningContinueCancel( this, question, i18n( "Overwrite Theme?"), i18n("Replace") );
+			if ( answer != KMessageBox::Continue )
 				continue;
 
 			// ### If the theme that's being replaced is the current theme, it

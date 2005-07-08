@@ -471,10 +471,10 @@ void KProgramEditDialog::slotOk()
 
     KBackgroundProgram prog(s);
     if ((s != m_Program) && !prog.command().isEmpty()) {
-	int ret = KMessageBox::warningYesNo(this,
+	int ret = KMessageBox::warningContinueCancel(this,
 	    i18n("There is already a program with the name `%1'.\n"
-	    "Do you want to overwrite it?").arg(s));
-	if (ret != KMessageBox::Yes)
+	    "Do you want to overwrite it?").arg(s),QString::null,i18n("Overwrite"));
+	if (ret != KMessageBox::Continue)
 	    return;
     }
 

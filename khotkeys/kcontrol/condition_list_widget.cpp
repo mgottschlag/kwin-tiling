@@ -156,7 +156,7 @@ void Condition_list_widget::new_selected( int type_P )
         if( tmp && tmp->accepts_children())
             {
             int ret = KMessageBox::questionYesNoCancel( NULL,
-                i18n( "A group is selected.\nAdd the new condition in this selected group?" ));
+                i18n( "A group is selected.\nAdd the new condition in this selected group?" ), QString::null, i18n("Add in Group"), i18n("Ignore Group"));
             if( ret == KMessageBox::Cancel )
                 return;
             else if( ret == KMessageBox::Yes )
