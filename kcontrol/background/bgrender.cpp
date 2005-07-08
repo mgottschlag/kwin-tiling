@@ -294,7 +294,10 @@ wp_load:
 	    goto wp_out;
 	}
 
-        if ( KMimeType::findByPath( file )->is( "image/svg+xml" ) ) {
+        // _Don't_ use KMimeType, as it relies on ksycoca which we really
+        // don't want in krootimage (kdm context).
+        //if ( KMimeType::findByPath( file )->is( "image/svg+xml" ) ) {
+        if (file.endsWith(".svg") || file.endsWith(".svgz")) {
 #ifdef HAVE_LIBART
 	    // Special stuff for SVG icons
 	    KSVGIconEngine* svgEngine = new KSVGIconEngine();
