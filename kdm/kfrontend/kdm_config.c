@@ -70,8 +70,8 @@ typedef struct Sect {
 typedef struct Entry {
 	struct Entry *next;
 	const char *val;
+	Ent *ent;
 	int vallen;
-	int keyid;
 	int line;
 } Entry;
 
@@ -116,6 +116,7 @@ typedef struct ValArr {
 static void *Malloc( size_t size );
 static void *Realloc( void *ptr, size_t size );
 
+#define PRINT_QUOTES
 #define LOG_NAME "kdm_config"
 #define LOG_DEBUG_MASK DEBUG_CONFIG
 #define LOG_PANIC_EXIT 1
@@ -513,8 +514,8 @@ ReadConf()
 			cursec->entries = 0;
 			cursec->next = rootsec;
 			rootsec = cursec;
-			Debug( "now in section [%.*s], dpy '%.*s', core '%.*s'\n",
-			       nlen, nstr, dlen, dstr, clen, cstr );
+			/*Debug( "now in section [%.*s], dpy '%.*s', core '%.*s'\n",
+			       nlen, nstr, dlen, dstr, clen, cstr );*/
 		  secfnd:
 			continue;
 		}
@@ -571,7 +572,7 @@ ReadConf()
 
 		nstr = sl;
 		nlen = ek - sl + 1;
-		Debug( "read entry '%.*s'='%.*s'\n", nlen, nstr, en - st, st );
+		/*Debug( "read entry '%.*s'='%.*s'\n", nlen, nstr, en - st, st );*/
 		for (i = 0; i < cursec->sect->numents; i++) {
 			ce = cursec->sect->ents + i;
 			if ((int)strlen( ce->name ) == nlen &&
@@ -583,7 +584,7 @@ ReadConf()
 		continue;
 	  keyok:
 		for (curent = cursec->entries; curent; curent = curent->next)
-			if (ce->id == curent->keyid) {
+			if (ce == curent->ent) {
 				LogError( "Multiple occurrences of key '%s' in section [%.*s]"
 				          " of %s\n",
 				          ce->name, cursec->nlen, cursec->name, kdmrc );
@@ -591,7 +592,7 @@ ReadConf()
 			}
 		if (!(curent = Malloc( sizeof(*curent) )))
 			return;
-		curent->keyid = ce->id;
+		curent->ent = ce;
 		curent->line = line;
 		curent->val = st;
 		curent->vallen = en - st;
@@ -611,8 +612,12 @@ FindGEnt( int id )
 	for (cursec = rootsec; cursec; cursec = cursec->next)
 		if (!cursec->dname)
 			for (curent = cursec->entries; curent; curent = curent->next)
-				if (curent->keyid == id)
+				if (curent->ent->id == id) {
+					Debug( "line %d: %s = %'.*s\n",
+					       curent->line, curent->ent->name,
+					       curent->vallen, curent->val );
 					return curent;
+				}
 	return 0;
 }
 
@@ -624,7 +629,7 @@ FindGEnt( int id )
 static Entry *
 FindDEnt( int id, DSpec *dspec )
 {
-	Section *cursec;
+	Section *cursec, *bestsec;
 	Entry *curent, *bestent;
 	int score, bestscore;
 
@@ -670,13 +675,20 @@ FindDEnt( int id, DSpec *dspec )
 			}
 			if (score > bestscore) {
 				for (curent = cursec->entries; curent; curent = curent->next)
-					if (curent->keyid == id) {
+					if (curent->ent->id == id) {
 						bestent = curent;
+						bestsec = cursec;
 						bestscore = score;
 						break;
 					}
 			}
 		}
+	if (bestent)
+		Debug( "line %d: %.*s:%.*s_%.*s/%s = %'.*s\n", bestent->line,
+		       bestsec->dhostl, bestsec->dhost,
+		       bestsec->dnuml, bestsec->dnum,
+		       bestsec->dclassl, bestsec->dclass,
+		       bestent->ent->name, bestent->vallen, bestent->val );
 	return bestent;
 }
 
@@ -779,6 +791,7 @@ GetValue( Ent *et, DSpec *dspec, Value *retval, char **eopts )
 		LogError( "Invalid %s value '%.*s' at %s:%d\n",
 		          errs, ent->vallen, ent->val, kdmrc, ent->line );
 	}
+	Debug( "default: %s = %'s\n", et->name, et->def );
 	if ((errs = CvtValue( et, retval, strlen( et->def ), et->def, eopts )))
 		LogError( "Internal error: invalid default %s value '%s' for key %s\n",
 		          errs, et->def, et->name );
@@ -819,7 +832,7 @@ CopyValues( ValArr *va, Sect *sec, DSpec *dspec, int isconfig )
 	Value val;
 	int i;
 
-/*Debug ("copying values from section [%s]\n", sec->name);*/
+	Debug( "getting values for section class [%s]\n", sec->name );
 	for (i = 0; i < sec->numents; i++) {
 /*Debug ("value %#x\n", sec->ents[i].id);*/
 		if ((sec->ents[i].id & (int)C_CONFIG) != isconfig)
@@ -1307,6 +1320,7 @@ int main( int argc ATTR_UNUSED, char **argv )
 			switch (what) {
 			case GC_gGlobal:
 /*		Debug( "GC_gGlobal\n" );*/
+				Debug( "getting global config\n" );
 				ReadConf();
 				CopyValues( &va, &secGeneral, 0, 0 );
 #ifdef XDMCP
@@ -1321,6 +1335,7 @@ int main( int argc ATTR_UNUSED, char **argv )
 /*		Debug( " Display %s\n", disp );*/
 				dcls = GRecvStr();
 /*		Debug( " Class %s\n", dcls );*/
+				Debug( "getting config for display %s, class %s\n", disp, dcls );
 				MkDSpec( &dspec, disp, dcls ? dcls : "" );
 				ReadConf();
 				CopyValues( &va, &sec_Core, &dspec, 0 );
