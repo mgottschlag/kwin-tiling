@@ -34,10 +34,11 @@
 #include <kdialog.h>
 #include <kurlrequester.h>
 
-#include "kdm-sess.h"
-
+#include "kdm-shut.h"
+#include "kbackedcombobox.h"
 
 extern KSimpleConfig *config;
+
 
 KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
   : QWidget(parent, name)
@@ -86,28 +87,28 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( restart_lined, wtstr );
 
 
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
-      QGroupBox *group4 = new QGroupBox( i18n("LILO"), this );
+      QGroupBox *group4 = new QGroupBox( i18n("Miscellaneous"), this );
 
-      lilo_check = new QCheckBox(i18n("Sho&w boot options"), group4);
-      connect(lilo_check, SIGNAL(toggled(bool)),
-	      SLOT(changed()));
-      wtstr = i18n("Enable LILO boot options in the \"Shutdown...\" dialog.");
-      QWhatsThis::add( lilo_check, wtstr );
+      bm_combo = new KBackedComboBox( group4 );
+      bm_combo->insertItem("None", i18n("boot manager", "None"));
+      bm_combo->insertItem("Grub", i18n("Grub"));
+#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
+      bm_combo->insertItem("Lilo", i18n("Lilo"));
 #endif
+      QLabel *bm_label = new QLabel( bm_combo, i18n("Boot Manager:"), group4 );
+      connect(bm_combo, SIGNAL(activated(int)), SLOT(changed()));
+      wtstr = i18n("Enable boot options in the \"Shutdown...\" dialog.");
+      QWhatsThis::add( bm_label, wtstr );
+      QWhatsThis::add( bm_combo, wtstr );
 
       QBoxLayout *main = new QVBoxLayout( this, 10 );
-      QGridLayout *lgroup0 = new QGridLayout( group0, 3, 5, 10);
-      QGridLayout *lgroup1 = new QGridLayout( group1, 3, 5, 10);
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
-      QGridLayout *lgroup4 = new QGridLayout( group4, 3, 4, 10);
-#endif
+      QGridLayout *lgroup0 = new QGridLayout( group0, 1, 1, 10);
+      QGridLayout *lgroup1 = new QGridLayout( group1, 1, 1, 10);
+      QGridLayout *lgroup4 = new QGridLayout( group4, 1, 1, 10);
 
       main->addWidget(group0);
       main->addWidget(group1);
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
       main->addWidget(group4);
-#endif
       main->addStretch();
 
       lgroup0->addRowSpacing(0, group0->fontMetrics().height()/2);
@@ -128,10 +129,10 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       lgroup1->addWidget(restart_label, 1, 3);
       lgroup1->addWidget(restart_lined, 1, 4);
 
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
       lgroup4->addRowSpacing(0, group4->fontMetrics().height()/2);
-      lgroup4->addWidget(lilo_check, 1, 0);
-#endif
+      lgroup4->addWidget(bm_label, 1, 0);
+      lgroup4->addWidget(bm_combo, 1, 1);
+      lgroup4->setColStretch(2, 1);
 
       main->activate();
 
@@ -147,9 +148,7 @@ void KDMSessionsWidget::makeReadOnly()
     shutdown_lined->lineEdit()->setReadOnly(true);
     shutdown_lined->button()->setEnabled(false);
 
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
-    lilo_check->setEnabled(false);
-#endif
+    bm_combo->setEnabled(false);
 }
 
 void KDMSessionsWidget::writeSD(QComboBox *combo)
@@ -174,9 +173,8 @@ void KDMSessionsWidget::save()
     config->setGroup("Shutdown");
     config->writeEntry("HaltCmd", shutdown_lined->url(), true);
     config->writeEntry("RebootCmd", restart_lined->url(), true);
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
-    config->writeEntry("UseLilo", lilo_check->isChecked());
-#endif
+
+    config->writeEntry("BootManager", bm_combo->currentId());
 }
 
 void KDMSessionsWidget::readSD(QComboBox *combo, QString def)
@@ -203,9 +201,8 @@ void KDMSessionsWidget::load()
   config->setGroup("Shutdown");
   restart_lined->setURL(config->readEntry("RebootCmd", "/sbin/reboot"));
   shutdown_lined->setURL(config->readEntry("HaltCmd", "/sbin/halt"));
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
-  lilo_check->setChecked(config->readBoolEntry("UseLilo", false));
-#endif
+
+  bm_combo->setCurrentId(config->readEntry("BootManager", "None"));
 }
 
 
@@ -218,9 +215,7 @@ void KDMSessionsWidget::defaults()
   sdlcombo->setCurrentItem(SdAll);
   sdrcombo->setCurrentItem(SdRoot);
 
-#if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
-  lilo_check->setChecked(false);
-#endif
+  bm_combo->setCurrentId("None");
 }
 
 
@@ -229,4 +224,4 @@ void KDMSessionsWidget::changed()
   emit changed(true);
 }
 
-#include "kdm-sess.moc"
+#include "kdm-shut.moc"

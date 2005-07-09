@@ -85,9 +85,9 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   , updateOK(false)
 {
   KAboutData *about =
-  new KAboutData(I18N_NOOP("kcmkdm"), I18N_NOOP("KDE Login Manager Config Module"),
+    new KAboutData(I18N_NOOP("kcmkdm"), I18N_NOOP("KDE Login Manager Config Module"),
                 0, 0, KAboutData::License_GPL,
-                I18N_NOOP("(c) 1996 - 2002 The KDM Authors"));
+                I18N_NOOP("(c) 1996 - 2005 The KDM Authors"));
 
   about->addAuthor("Thomas Tanghus", I18N_NOOP("Original author"), "tanghus@earthling.net");
 	about->addAuthor("Steffen Hansen", 0, "hansen@kde.org");

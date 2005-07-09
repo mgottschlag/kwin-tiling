@@ -44,48 +44,7 @@
 #include <kimagefilepreview.h>
 
 #include "kdm-appear.h"
-
-
-class KBackedComboBox : public KComboBox {
-
-public:
-    KBackedComboBox( QWidget *parent ) : KComboBox( false, parent ) {}
-    void insertItem( const QString &id, const QString &name );
-    void itemsInserted();
-    void setCurrentId( const QString &id );
-    QString currentId();
-
-private:
-    QMap<QString,QString> id2name, name2id;
-
-};
-
-void KBackedComboBox::insertItem( const QString &id, const QString &name )
-{
-    id2name[id] = name;
-    name2id[name] = id;
-}
-
-void KBackedComboBox::itemsInserted()
-{
-    KComboBox::insertItem( i18n("<default>") );
-    KComboBox::insertStringList( name2id.keys() );
-    insertItem( "", i18n("<default>") );
-}
-
-void KBackedComboBox::setCurrentId( const QString &id )
-{
-    if (id2name.contains( id ))
-	setCurrentItem( id2name[id] );
-    else
-	setCurrentItem( 0 );
-}
-
-QString KBackedComboBox::currentId()
-{
-    return name2id[currentText()];
-}
-
+#include "kbackedcombobox.h"
 
 extern KSimpleConfig *config;
 
@@ -211,6 +170,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay->setColStretch(3, 1);
 
   guicombo = new KBackedComboBox(group);
+  guicombo->insertItem( "", i18n("<default>") );
   loadGuiStyles(guicombo);
   label = new QLabel(guicombo, i18n("GUI s&tyle:"), group);
   connect(guicombo, SIGNAL(activated(int)), SLOT(changed()));
@@ -222,6 +182,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( guicombo, wtstr );
 
   colcombo = new KBackedComboBox(group);
+  colcombo->insertItem( "", i18n("<default>") );
   loadColorSchemes(colcombo);
   label = new QLabel(colcombo, i18n("&Color scheme:"), group);
   connect(colcombo, SIGNAL(activated(int)), SLOT(changed()));
@@ -232,12 +193,11 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QWhatsThis::add( label, wtstr );
   QWhatsThis::add( colcombo, wtstr );
 
-  label = new QLabel(i18n("Echo &mode:"), group);
-  echocombo = new QComboBox(false, group);
-  label->setBuddy( echocombo );
-  echocombo->insertItem(i18n("No Echo"));
-  echocombo->insertItem(i18n("One Star"));
-  echocombo->insertItem(i18n("Three Stars"));
+  echocombo = new KBackedComboBox(group);
+  echocombo->insertItem("NoEcho", i18n("No Echo"));
+  echocombo->insertItem("OneStar", i18n("One Star"));
+  echocombo->insertItem("ThreeStars", i18n("Three Stars"));
+  label = new QLabel(echocombo, i18n("Echo &mode:"), group);
   connect(echocombo, SIGNAL(activated(int)), SLOT(changed()));
   hglay->addWidget(label, 2, 0);
   hglay->addWidget(echocombo, 2, 1);
@@ -323,7 +283,6 @@ void KDMAppearanceWidget::loadColorSchemes(KBackedComboBox *combo)
         combo->insertItem( str2, str );
     }
   }
-  combo->itemsInserted();
 }
 
 void KDMAppearanceWidget::loadGuiStyles(KBackedComboBox *combo)
@@ -350,7 +309,6 @@ void KDMAppearanceWidget::loadGuiStyles(KBackedComboBox *combo)
     config.setGroup("Misc");
     combo->insertItem( str2, config.readEntry("Name") );
   }
-  combo->itemsInserted();
 }
 
 bool KDMAppearanceWidget::setLogo(QString logo)
@@ -469,9 +427,7 @@ void KDMAppearanceWidget::save()
 
   config->writeEntry("ColorScheme", colcombo->currentId());
 
-  config->writeEntry("EchoMode", echocombo->currentItem() == 0 ? "NoEcho" :
-			    echocombo->currentItem() == 1 ? "OneStar" :
-							    "ThreeStars");
+  config->writeEntry("EchoMode", echocombo->currentId());
 
   config->writeEntry("GreeterPos", xLineEdit->text() + ',' + yLineEdit->text());
 
@@ -509,13 +465,7 @@ void KDMAppearanceWidget::load()
   colcombo->setCurrentId(config->readEntry("ColorScheme"));
 
   // Check the echo mode
-  QString echostr = config->readEntry("EchoMode", "OneStar");
-  if (echostr == "ThreeStars")
-    echocombo->setCurrentItem(2);
-  else if (echostr == "OneStar")
-    echocombo->setCurrentItem(1);
-  else  // "NoEcho"
-    echocombo->setCurrentItem(0);
+  echocombo->setCurrentId(config->readEntry("EchoMode", "OneStar"));
 
   QStringList sl = config->readListEntry( "GreeterPos" );
   if (sl.count() != 2) {
@@ -539,7 +489,7 @@ void KDMAppearanceWidget::defaults()
   setLogo( "" );
   guicombo->setCurrentId( "" );
   colcombo->setCurrentId( "" );
-  echocombo->setCurrentItem( 1 );
+  echocombo->setCurrentItem( "OneStar" );
 
   xLineEdit->setText( "50" );
   yLineEdit->setText( "50" );

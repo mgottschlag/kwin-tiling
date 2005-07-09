@@ -26,6 +26,7 @@
 class QComboBox;
 class QCheckBox;
 class KURLRequester;
+class KBackedComboBox;
 
 class KDMSessionsWidget : public QWidget
 {
@@ -54,9 +55,7 @@ private:
 	QComboBox	*sdlcombo, *sdrcombo;
 	QLabel		*sdllabel, *sdrlabel;
 	KURLRequester	*restart_lined, *shutdown_lined;
-#ifdef __linux__
-	QCheckBox	*lilo_check;
-#endif
+	KBackedComboBox	*bm_combo;
 };
 
 
