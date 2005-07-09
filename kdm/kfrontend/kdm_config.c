@@ -1005,7 +1005,7 @@ HasGlobCharacters( char *s )
 #define PARSE_ALL       0
 #define PARSE_NO_BCAST  1
 #define PARSE_NO_PAT    2
-#define PARSE_NO_ALIAS  3
+#define PARSE_NO_ALIAS  4
 
 static int
 ParseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
