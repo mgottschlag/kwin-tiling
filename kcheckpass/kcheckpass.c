@@ -88,7 +88,11 @@ conv_legacy (ConvRequest what, const char *prompt)
 	return strdup(buf);
     case ConvGetHidden:
 	if (havetty) {
+#ifdef HAVE_GETPASSPHRASE
+	    p = getpassphrase(prompt ? prompt : "Password: ");
+#else
 	    p = getpass(prompt ? prompt : "Password: ");
+#endif
 	    p2 = strdup(p);
 	    memset(p, 0, strlen(p));
 	    return p2;
