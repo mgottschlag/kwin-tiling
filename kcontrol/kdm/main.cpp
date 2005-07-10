@@ -34,7 +34,7 @@
 #include "kdm-appear.h"
 #include "kdm-font.h"
 #include "kdm-users.h"
-#include "kdm-sess.h"
+#include "kdm-shut.h"
 #include "kdm-conv.h"
 
 #include "main.h"
