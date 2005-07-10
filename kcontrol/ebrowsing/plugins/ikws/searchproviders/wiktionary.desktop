@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Name=Wiktionary - The Free Dictionary
+ServiceTypes=SearchProvider
+Keys=wt,wikt
+Query=http://en.wiktionary.org/wiki/Special:Search?search=\{@}&go=Go
+Charset=utf8
