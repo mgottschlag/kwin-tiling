@@ -2054,8 +2054,8 @@ Description:
 
 Key: GreetFont
 Type: string
-Default: "Serif,24,5,0,50,0"
-CDefault: "Serif,24,bold"
+Default: "Serif,20,5,0,50,0"
+CDefault: "Serif,20,bold"
 User: greeter:font
 Instance: #*/"Serif,20,5,0,50,0"
 Comment: &
@@ -2064,8 +2064,8 @@ Description:
 
 Key: StdFont
 Type: string
-Default: "Sans Serif,12,5,0,50,0"
-CDefault: "Sans Serif,12"
+Default: "Sans Serif,10,5,0,50,0"
+CDefault: "Sans Serif,10"
 User: greeter(normalFont):font
 Instance: #*/"Sans Serif,10,5,0,50,0"
 Comment: &
@@ -2074,8 +2074,8 @@ Description:
 
 Key: FailFont
 Type: string
-Default: "Sans Serif,12,5,0,75,0"
-CDefault: "Sans Serif,12,bold"
+Default: "Sans Serif,10,5,0,75,0"
+CDefault: "Sans Serif,10,bold"
 User: greeter:font
 Instance: #*/"Sans Serif,10,5,0,75,0"
 Comment: &
