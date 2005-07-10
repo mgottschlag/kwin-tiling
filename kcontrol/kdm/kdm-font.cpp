@@ -90,9 +90,9 @@ void KDMFontWidget::configChanged()
 
 void KDMFontWidget::set_def()
 {
-  stdFontChooser->setFont(QFont("Sans Serif", 12));
-  failFontChooser->setFont(QFont("Sans Serif", 12, QFont::Bold));
-  greetingFontChooser->setFont(QFont("Serif", 24));
+  stdFontChooser->setFont(QFont("Sans Serif", 10));
+  failFontChooser->setFont(QFont("Sans Serif", 10, QFont::Bold));
+  greetingFontChooser->setFont(QFont("Serif", 20));
 }
 
 void KDMFontWidget::save()
