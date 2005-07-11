@@ -6,4 +6,5 @@ Name[ga]=WebSVN KDE
 ServiceTypes=SearchProvider
 Keys=websvn,kdesvn,ksvn,kvs
 Query=http://websvn.kde.org/\\{@}
+Query[eu]=http://webcvs.kde.org/\\{@}
 
