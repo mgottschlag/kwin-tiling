@@ -22,8 +22,8 @@
 
 KSysTrayCmd::KSysTrayCmd()
   : QLabel( 0, "systray_cmd" ),
-    isVisible(true), lazyStart( false ), noquit( false ), quitOnHide( false ),
-    win(0), client(0), kwinmodule(0)
+    isVisible(true), lazyStart( false ), noquit( false ), quitOnHide( false ), onTop(false), ownIcon(false),
+    win(0), client(0), kwinmodule(0), top(0), left(0)
 {
   setAlignment( AlignCenter );
   kwinmodule = new KWinModule( this );
@@ -49,8 +49,13 @@ bool KSysTrayCmd::start()
       }
 
       checkExistingWindows();
-      if ( win )
-	  return true;
+      if ( win ) {
+        // Window always on top
+        if (onTop) { 
+          KWin::setState(win, NET::StaysOnTop);
+        }
+        return true;
+      }
 
       errStr = i18n( "No window matching pattern '%1' and no command specified.\n" )
 	  .arg( window );
@@ -77,7 +82,17 @@ void KSysTrayCmd::showWindow()
   if ( !win )
     return;
   XMapWindow( qt_xdisplay(), win );
-  KWin::setActiveWindow( win );
+  // We move the window to the memorized position
+  XMoveWindow( qt_xdisplay(), win, left, top);  
+  
+  // Window always on top
+  if (onTop)
+  {
+    KWin::setState(win, NET::StaysOnTop);
+  }
+  
+  KWin::activateWindow( win );
+  
 }
 
 void KSysTrayCmd::hideWindow()
@@ -85,27 +100,37 @@ void KSysTrayCmd::hideWindow()
   isVisible = false;
   if ( !win )
     return;
+  //We memorize the position of the window
+  left = KWin::windowInfo(win).frameGeometry().left();
+  top=KWin::windowInfo(win).frameGeometry().top();
+
   XUnmapWindow( qt_xdisplay(), win );
 }
 
 void KSysTrayCmd::setTargetWindow( WId w )
 {
-  setTargetWindow( KWin::info( w ) );
+  setTargetWindow( KWin::windowInfo( w ) );
 }
 
-void KSysTrayCmd::setTargetWindow( const KWin::Info &info )
+void KSysTrayCmd::setTargetWindow( const KWin::WindowInfo &info )
 {
   disconnect( kwinmodule, SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
   connect( kwinmodule, SIGNAL(windowChanged(WId)), SLOT(windowChanged(WId)) );
-  win = info.win;
+  win = info.win();
   KWin::setSystemTrayWindowFor( winId(), win );
   refresh();
   show();
 
   if ( isVisible )
-    KWin::setActiveWindow( win );
+    KWin::activateWindow( win );
   else
     hideWindow();
+
+  // Always on top ?
+  if (onTop)
+  {
+    KWin::setState(win, NET::StaysOnTop);
+  }
 }
 
 //
@@ -121,8 +146,18 @@ void KSysTrayCmd::refresh()
     KConfig *appCfg = kapp->config();
     KConfigGroupSaver configSaver(appCfg, "System Tray");
     int iconWidth = appCfg->readNumEntry("systrayIconWidth", 22);
-    setPixmap( KWin::icon( win, iconWidth, iconWidth, true ) );
-    QToolTip::add( this, KWin::info( win ).name );
+
+    // ksystraycmd's icon or app's icon
+    if (ownIcon)
+    {
+      setPixmap( KSystemTray::loadIcon( kapp->iconName() ) );
+    }
+    else
+    {
+      setPixmap( KWin::icon( win, iconWidth, iconWidth, true ) );
+    }
+
+    QToolTip::add( this, KWin::windowInfo( win ).name() );
   }
   else {
     if ( !tooltip.isEmpty() )
@@ -166,9 +201,19 @@ void KSysTrayCmd::clientExited()
 void KSysTrayCmd::quitClient()
 {
   if ( win ) {
+    // Before sending the close request we have to show the window
+    XMapWindow( qt_xdisplay(), win );
     NETRootInfo ri( qt_xdisplay(), NET::CloseWindow );
     ri.closeWindowRequest( win );
+    win=0;
     noquit = false;
+
+    // We didn't give command, so we didn't open an application.
+    // That's why  when the application is closed we aren't informed.
+    // So we quit now.
+    if ( !command ) {
+      qApp->quit();
+    }
   }
   else {
     qApp->quit();
@@ -198,7 +243,21 @@ void KSysTrayCmd::execContextMenu( const QPoint &pos )
     else if ( cmd == undockId )
       quit();
     else if ( cmd == hideShowId )
-      toggleWindow();
+    {
+      if ( lazyStart && ( !hasRunningClient() ) )
+      {
+        start();
+        isVisible=true;
+      }
+      else if ( quitOnHide && ( hasRunningClient() ) && isVisible )
+      {
+        NETRootInfo ri( qt_xdisplay(), NET::CloseWindow );
+        ri.closeWindowRequest( win );
+        isVisible=false;
+      }
+      else
+        toggleWindow();
+    }
 
     delete menu;
 }
@@ -215,7 +274,7 @@ void KSysTrayCmd::checkExistingWindows()
 
 void KSysTrayCmd::windowAdded(WId w)
 {
-  if ( !window.isEmpty() && ( QRegExp( window ).search( KWin::info(w).name ) == -1 ) )
+  if ( !window.isEmpty() && ( QRegExp( window ).search( KWin::windowInfo(w).name() ) == -1 ) )
     return; // no match
   setTargetWindow( w );
 }
@@ -236,11 +295,15 @@ void KSysTrayCmd::mousePressEvent( QMouseEvent *e )
   if ( e->button() == RightButton )
     execContextMenu( e->globalPos() );
   else if ( lazyStart && ( !hasRunningClient() ) )
+  {
     start();
+    isVisible=true;
+  }
   else if ( quitOnHide && ( hasRunningClient() ) && isVisible )
   {
     NETRootInfo ri( qt_xdisplay(), NET::CloseWindow );
     ri.closeWindowRequest( win );
+    isVisible=false;
   }
   else
     toggleWindow();

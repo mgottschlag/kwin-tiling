@@ -35,6 +35,9 @@ static KCmdLineOptions options[] =
   { "tooltip <text>", I18N_NOOP( "Sets the initial tooltip for the tray icon" ), 0 },
   { "keeprunning", I18N_NOOP( "Keep the tray icon even if the client exits. This option\n"
 			 "has no effect unless startonshow is specified." ), 0 },
+  { "ownicon", I18N_NOOP( "Don't use window's icon in systray, but ksystraycmd one's\n"
+             "(should be use with --icon to specify ksystraycmd icon)" ), 0 },
+  { "ontop", I18N_NOOP( "Try to keep the window above other windows"), 0 },
   { "quitonhide", I18N_NOOP( "Quit the client when we are told to hide the window.\n"
              "This has no effect unless startonshow is specified and implies keeprunning." ), 0 },
   /*  { "menuitem <item>", I18N_NOOP( "Adds a custom entry to the tray icon menu\n"
@@ -112,6 +115,14 @@ int main( int argc, char *argv[] )
   // Start hidden
   if ( args->isSet( "hidden" ) )
     cmd.hideWindow();
+
+  // On top
+  if ( args->isSet( "ontop" ) )
+    cmd.setOnTop(true);
+
+  // Use ksystraycmd icon
+  if ( args->isSet( "ownicon" ) )
+    cmd.setOwnIcon(true);
 
   // Lazy invocation flag
   if ( args->isSet( "startonshow" ) ) {
