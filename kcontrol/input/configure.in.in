@@ -1,19 +1,26 @@
-LIBUSBCONFIG=""
-AC_PATH_PROG(LIBUSBCONFIG,libusb-config,no)
-if test $LIBUSBCONFIG = "no"  ; then
-    AC_MSG_WARN(Can't find libusb-config)
-    AC_MSG_WARN(Check your libusb installation)
-    USB_LIBS=""
-    USB_CFLAGS=""
-else  
-    USB_LIBS="$($LIBUSBCONFIG --libs)"
-    USB_CFLAGS="$($LIBUSBCONFIG --cflags)"
-AC_CHECK_LIB(usb,main,
-    AC_DEFINE(HAVE_LIBUSB, 1, [Defined if you have libusb]),
-    [],
-    $USB_LIBS
-)
+AC_ARG_WITH(libusb,
+    [AS_HELP_STRING(--with-libusb,
+        [enable control of some mouse models through libusb @<:@default=check@:>@])],
+    [], with_libusb=check)
+
+USB_LIBS=
+USB_CFLAGS=
+have_libusb=no
+if test "x$with_libusb" != xno; then
+    AC_PATH_PROG(LIBUSBCONFIG,libusb-config,no)
+    if test $LIBUSBCONFIG != "no"; then
+        USB_LIBS="$($LIBUSBCONFIG --libs)"
+        USB_CFLAGS="$($LIBUSBCONFIG --cflags)"
+    
+        AC_CHECK_LIB(usb,main,
+            [have_libusb=yes
+             AC_DEFINE(HAVE_LIBUSB, 1, [Defined if you have libusb])],
+            [], [$USB_LIBS]
+        )
+    fi
+    if test "x$with_libusb" != xcheck && test "x$have_libusb" = xno; then
+        AC_MSG_FAILURE([--with-libusb was given, but test for libusb failed])
+    fi
 fi
 AC_SUBST(USB_LIBS)
 AC_SUBST(USB_CFLAGS)
-

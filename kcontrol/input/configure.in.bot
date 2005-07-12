@@ -1,10 +1,4 @@
-if test "$LUSBLIB" = "no"; then
-  echo
-  echo "   Problem!  libusb library not found, get it from"
-  echo "   http://libusb.sourceforge.net"
-fi
-
-if (test x"$USB_LIBS" = x""); then
+if test "x$with_libusb" = xcheck && test "x$have_libusb" = xno; then
   echo ""
   echo "Logitech mouse support is disabled. Provide libusb to enable it."
   echo ""
