@@ -178,12 +178,24 @@ main( int argc, char **argv )
 			pt++;
 		if (!strcmp( pt, "help" ) || !strcmp( pt, "h" )) {
 			printf( "Usage: %s [options] [tty]\n"
-"  -daemon\t\t  - Daemonize even when started by init\n"
+"  -daemon\t  - Daemonize even when started by init\n"
 "  -nodaemon\t  - Don't daemonize even when started from command line\n"
-"  -config <file>\t  - Use alternative master configuration file\n"
+"  -config <file>  - Use alternative master configuration file\n"
 "  -xrm <res>\t  - Override frontend-specific resource\n"
-"  -debug <num>\t  - Debug option bitfield\n"
-"  -error <file>\t  - Use alternative log file\n", prog );
+"  -error <file>\t  - Use alternative log file\n"
+"  -debug <num>\t  - Debug option bitfield:\n"
+"\t\t\t0x1 - core log\n"
+"\t\t\t0x2 - config reader log\n"
+"\t\t\t0x4 - greeter log\n"
+"\t\t\t0x8 - IPC log\n"
+"\t\t\t0x10 - session sub-daemon post-fork delay\n"
+"\t\t\t0x20 - config reader post-start delay\n"
+"\t\t\t0x40 - greeter post-start delay\n"
+"\t\t\t0x80 - don't use syslog\n"
+"\t\t\t0x100 - core Xauth log\n"
+"\t\t\t0x400 - valgrind config reader and greeter\n"
+"\t\t\t0x800 - strace config reader and greeter\n"
+			        , prog );
 			exit( 0 );
 		} else if (!strcmp( pt, "daemon" ))
 			noDaemonMode = 0;
