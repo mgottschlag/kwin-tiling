@@ -9,8 +9,9 @@ bin_PROGRAMS = kcheckpass
 kcheckpass_SOURCES = kcheckpass.c \
 	checkpass_etcpasswd.c checkpass_pam.c checkpass_shadow.c \
 	checkpass_osfc2passwd.c checkpass_aix.c
+kcheckpass_CFLAGS = $(KDE_USE_FPIE)
 kcheckpass_LDADD = -lkdefakes $(PASSWDLIBS) $(LIBSOCKET)
-kcheckpass_LDFLAGS = $(all_libraries)
+kcheckpass_LDFLAGS = $(KDE_USE_PIE) $(all_libraries)
 
 noinst_HEADERS = kcheckpass.h
 
