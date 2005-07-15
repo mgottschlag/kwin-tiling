@@ -639,10 +639,11 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 		QListViewItem *itm;
 		int ns = 0;
 		QString user, loc;
-		for (; sess; sess = sess->next, ns++) {
+		do {
 			decodeSess( sess, user, loc );
 			itm = new QListViewItem( lv, user, loc );
-		}
+			sess = sess->next, ns++;
+		} while (sess);
 		int fw = lv->frameWidth() * 2;
 		QSize hds( lv->header()->sizeHint() );
 		lv->setMinimumWidth( fw + hds.width() +
