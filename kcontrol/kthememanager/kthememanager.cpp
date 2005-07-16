@@ -144,7 +144,7 @@ void kthememanager::save()
     {
         QString themeName = cur->text( 0 );
 
-	m_theme = new KTheme( this, KGlobal::dirs()->findResource( "themes", themeName + "/" + themeName + ".xml") );
+        m_theme = new KTheme( this, KGlobal::dirs()->findResource( "themes", themeName + "/" + themeName + ".xml") );
         m_theme->apply();
 
         // Save the current theme name

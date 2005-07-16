@@ -1,19 +1,19 @@
 // -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 4; -*-
 /*  Copyright (C) 2003 Lukas Tinkl <lukas@kde.org>
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "ktheme.h"
@@ -42,8 +42,8 @@
 #include <kstandarddirs.h>
 #include <ktar.h>
 
-KTheme::KTheme( QWidget *parent, const QString & xmlFile )
-: m_parent(parent)
+                             KTheme::KTheme( QWidget *parent, const QString & xmlFile )
+                                 : m_parent(parent)
 {
     QFile file( xmlFile );
     file.open( IO_ReadOnly );
@@ -57,7 +57,7 @@ KTheme::KTheme( QWidget *parent, const QString & xmlFile )
 }
 
 KTheme::KTheme( QWidget *parent, bool create )
-: m_parent(parent)
+    : m_parent(parent)
 {
     if ( create )
     {
@@ -125,8 +125,10 @@ QString KTheme::createYourself( bool pack )
 
     // 2. Background theme
     KConfig * globalConf = KGlobal::config();
-    globalConf->setGroup( "Desktops" );
-    uint numDesktops = globalConf->readUnsignedNumEntry( "Number", 4 );
+
+    KConfig kwinConf( "kwinrc", true );
+    kwinConf.setGroup( "Desktops" );
+    uint numDesktops = kwinConf.readUnsignedNumEntry( "Number", 4 );
 
     KConfig desktopConf( "kdesktoprc", true );
     desktopConf.setGroup( "Background Common" );
@@ -253,7 +255,6 @@ QString KTheme::createYourself( bool pack )
     // TODO copy the cursor theme?
 
     // 7. KWin
-    KConfig kwinConf( "kwinrc", true );
     kwinConf.setGroup( "Style" );
     QDomElement wmElem = m_dom.createElement( "wm" );
     wmElem.setAttribute( "name", kwinConf.readEntry( "PluginLib" ) );
@@ -309,7 +310,7 @@ QString KTheme::createYourself( bool pack )
     widgetsElem.setAttribute( "name", globalConf->readEntry( "widgetStyle" ) );
     m_root.appendChild( widgetsElem );
 
-    // 12. 
+    // 12.
     QDomElement fontsElem = m_dom.createElement( "fonts" );
     QStringList fonts;
     fonts   << "General"    << "font"
@@ -421,7 +422,7 @@ void KTheme::apply()
     desktopConf.sync();         // TODO sync and signal only if <desktop> elem present
     // reconfigure kdesktop. kdesktop will notify all clients
     DCOPClient *client = kapp->dcopClient();
-    if (!client->isAttached())
+    if ( !client->isAttached() )
         client->attach();
     client->send("kdesktop", "KBackgroundIface", "configure()", "");
     // FIXME Xinerama
@@ -437,36 +438,37 @@ void KTheme::apply()
         QDomNodeList iconList = iconElem.childNodes();
         for ( uint i = 0; i < iconList.count(); i++ )
         {
-           QDomElement iconSubElem = iconList.item( i ).toElement();
-           QString object = iconSubElem.attribute( "object" );
-           if ( object == "desktop" )
-              iconConf->setGroup( "DesktopIcons" );
-           else if ( object == "mainToolbar" )
-              iconConf->setGroup( "MainToolbarIcons" );
-           else if ( object == "panel" )
-              iconConf->setGroup( "PanelIcons" );
-           else if ( object == "small" )
-              iconConf->setGroup( "SmallIcons" );
-           else if ( object == "toolbar" )
-              iconConf->setGroup( "ToolbarIcons" );
+            QDomElement iconSubElem = iconList.item( i ).toElement();
+            QString object = iconSubElem.attribute( "object" );
+            if ( object == "desktop" )
+                iconConf->setGroup( "DesktopIcons" );
+            else if ( object == "mainToolbar" )
+                iconConf->setGroup( "MainToolbarIcons" );
+            else if ( object == "panel" )
+                iconConf->setGroup( "PanelIcons" );
+            else if ( object == "small" )
+                iconConf->setGroup( "SmallIcons" );
+            else if ( object == "toolbar" )
+                iconConf->setGroup( "ToolbarIcons" );
 
-           QString iconName = iconSubElem.tagName();
-           if (iconName.contains( "Color" )) {
-               QColor iconColor = QColor( iconSubElem.attribute( "rgb" ) );
-               iconConf->writeEntry( iconName, iconColor, true, true );
-           }
-           else if ( iconName.contains( "Value" ) || iconName == "Size" )
-               iconConf->writeEntry( iconName, iconSubElem.attribute( "value" ).toUInt(), true, true );
-           else if ( iconName.contains( "Effect" ) )
-               iconConf->writeEntry( iconName, iconSubElem.attribute( "name" ), true, true );
-           else
-               iconConf->writeEntry( iconName, static_cast<bool>( iconSubElem.attribute( "value" ).toUInt() ), true, true );
+            QString iconName = iconSubElem.tagName();
+            if ( iconName.contains( "Color" ) )
+            {
+                QColor iconColor = QColor( iconSubElem.attribute( "rgb" ) );
+                iconConf->writeEntry( iconName, iconColor, true, true );
+            }
+            else if ( iconName.contains( "Value" ) || iconName == "Size" )
+                iconConf->writeEntry( iconName, iconSubElem.attribute( "value" ).toUInt(), true, true );
+            else if ( iconName.contains( "Effect" ) )
+                iconConf->writeEntry( iconName, iconSubElem.attribute( "name" ), true, true );
+            else
+                iconConf->writeEntry( iconName, static_cast<bool>( iconSubElem.attribute( "value" ).toUInt() ), true, true );
         }
         iconConf->sync();
 
-        for (int i = 0; i < KIcon::LastGroup; i++)
-            KIPC::sendMessageAll(KIPC::IconChanged, i);
-	KService::rebuildKSycoca(m_parent);
+        for ( int i = 0; i < KIcon::LastGroup; i++ )
+            KIPC::sendMessageAll( KIPC::IconChanged, i );
+        KService::rebuildKSycoca( m_parent );
     }
 
     // 4. Sounds
@@ -561,18 +563,20 @@ void KTheme::apply()
             kwinConf.writeEntry( "PluginLib", wmElem.attribute( "name" ) );
         //else // TODO support custom themes
         QDomNodeList buttons = wmElem.elementsByTagName ("buttons");
-        if (buttons.count() > 0) {
+        if ( buttons.count() > 0 )
+        {
             kwinConf.writeEntry( "CustomButtonPositions", true );
             kwinConf.writeEntry( "ButtonsOnLeft", getProperty( wmElem, "buttons", "left" ) );
             kwinConf.writeEntry( "ButtonsOnRight", getProperty( wmElem, "buttons", "right" ) );
         }
-        else {
-           kwinConf.writeEntry( "CustomButtonPositions", false );
+        else
+        {
+            kwinConf.writeEntry( "CustomButtonPositions", false );
         }
         kwinConf.writeEntry( "BorderSize", getProperty( wmElem, "border", "size" ) );
 
         kwinConf.sync();
-        client->send("kwin", "", "reconfigure()", "");
+        client->send( "kwin", "", "reconfigure()", "" );
     }
 
     // 8. Konqueror
@@ -704,41 +708,42 @@ void KTheme::createIconElems( const QString & group, const QString & object,
     cfg->setGroup( group );
     QStringList elemNames;
     elemNames << "Animated" << "DoublePixels" << "Size"
-          << "ActiveColor" << "ActiveColor2" << "ActiveEffect"
-          << "ActiveSemiTransparent" << "ActiveValue"
-          << "DefaultColor" << "DefaultColor2" << "DefaultEffect"
-          << "DefaultSemiTransparent" << "DefaultValue"
-          << "DisabledColor" << "DisabledColor2" << "DisabledEffect"
-          << "DisabledSemiTransparent" << "DisabledValue";
+              << "ActiveColor" << "ActiveColor2" << "ActiveEffect"
+              << "ActiveSemiTransparent" << "ActiveValue"
+              << "DefaultColor" << "DefaultColor2" << "DefaultEffect"
+              << "DefaultSemiTransparent" << "DefaultValue"
+              << "DisabledColor" << "DisabledColor2" << "DisabledEffect"
+              << "DisabledSemiTransparent" << "DisabledValue";
     for ( QStringList::ConstIterator it = elemNames.begin(); it != elemNames.end(); ++it ) {
-       if ((*it).contains( "Color" ))
-          createColorElem( *it, object, parent, cfg );
-       else {
-          QDomElement tmpCol = m_dom.createElement( *it );
-          tmpCol.setAttribute( "object", object );
+        if ( (*it).contains( "Color" ) )
+            createColorElem( *it, object, parent, cfg );
+        else
+        {
+            QDomElement tmpCol = m_dom.createElement( *it );
+            tmpCol.setAttribute( "object", object );
 
-          if ( (*it).contains( "Value" ) || *it == "Size" )
-             tmpCol.setAttribute( "value", cfg->readNumEntry( *it, 1 ) );
-          else if ( (*it).contains( "Effect" ) )
-             tmpCol.setAttribute( "name", cfg->readEntry( *it, "none" ) );
-          else
-             tmpCol.setAttribute( "value", cfg->readBoolEntry( *it, false ) );
-          parent.appendChild( tmpCol );
-       }
+            if ( (*it).contains( "Value" ) || *it == "Size" )
+                tmpCol.setAttribute( "value", cfg->readNumEntry( *it, 1 ) );
+            else if ( (*it).contains( "Effect" ) )
+                tmpCol.setAttribute( "name", cfg->readEntry( *it, "none" ) );
+            else
+                tmpCol.setAttribute( "value", cfg->readBoolEntry( *it, false ) );
+            parent.appendChild( tmpCol );
+        }
     }
 }
 
 void KTheme::createColorElem( const QString & name, const QString & object,
                               QDomElement parent, KConfig * cfg )
 {
-   QColor color = cfg->readColorEntry( name );
-   if ( color.isValid() )
-   {
-      QDomElement tmpCol = m_dom.createElement( name );
-      tmpCol.setAttribute( "rgb", color.name() );
-      tmpCol.setAttribute( "object", object );
-      parent.appendChild( tmpCol );
-   }
+    QColor color = cfg->readColorEntry( name );
+    if ( color.isValid() )
+    {
+        QDomElement tmpCol = m_dom.createElement( name );
+        tmpCol.setAttribute( "rgb", color.name() );
+        tmpCol.setAttribute( "object", object );
+        parent.appendChild( tmpCol );
+    }
 }
 
 void KTheme::createSoundList( const QStringList & events, const QString & object,
