@@ -234,7 +234,6 @@ Krb5Destroy( const char *dname )
 			else
 				LogError( "%s while destroying Krb5 credentials cache\n",
 				          error_message( code ) );
-			krb5_cc_close( ctx, ccache );
 		} else
 			Debug( "kerberos ccache destroyed\n" );
 	}
