@@ -573,8 +573,17 @@ ListSessions( int flags, struct display *d, void *ctx,
 		   )
 		{
 #endif
-			if (!(flags & lstRemote) && *ut->ut_host)
-				continue; /* from remote or x */
+			if (*ut->ut_host) { /* from remote or x */
+				if (!(flags & lstRemote))
+					continue;
+			} else {
+				/* hack around broken konsole which does not set ut_host. */
+				/* this chech is probably linux-specific. */
+				/* alternatively we could open the device and try VT_OPENQRY. */
+				if (memcmp( ut->ut_line, "tty", 3 ) ||
+				    !isdigit( ut->ut_line[3] ))
+					continue;
+			}
 			if (StrNChrCnt( ut->ut_line, sizeof(ut->ut_line), ':' ))
 				continue; /* x login */
 			switch (StrNChrCnt( ut->ut_host, sizeof(ut->ut_host), ':' )) {
