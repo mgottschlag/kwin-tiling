@@ -143,9 +143,13 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     if( !kxkb.isNull() ) {
         layoutsList = kxkb.call("getLayoutsList");
         QString currentLayout = kxkb.call("getCurrentLayout");
-        if( !currentLayout.isEmpty() && layoutsList.count() > 1 )
-            setLayoutText(currentLayout);
-        else
+        if( !currentLayout.isEmpty() && layoutsList.count() > 1 ) {
+            currLayout = layoutsList.find(currentLayout);
+            if (currLayout == layoutsList.end())
+                setLayoutText("err");
+            else
+                setLayoutText(*currLayout);
+        } else
             mLayoutButton->hide();
     } else {
         mLayoutButton->hide(); // no kxkb running
@@ -162,20 +166,13 @@ PasswordDlg::~PasswordDlg()
 
 void PasswordDlg::layoutClicked()
 {
-    QStringList::iterator it = layoutsList.find( mLayoutButton->text() );
-    if( it == layoutsList.end() ) {  // huh?
 
-	setLayoutText( "err" );
+    if( ++currLayout == layoutsList.end() )
+        currLayout = layoutsList.begin();
 
-    } else {
+    DCOPRef kxkb("kxkb", "kxkb");
+    setLayoutText( kxkb.call("setLayout", *currLayout) ? *currLayout : "err" );
 
-	if( ++it == layoutsList.end() )
-	    it = layoutsList.begin();
-
-	DCOPRef kxkb("kxkb", "kxkb");
-	setLayoutText( kxkb.call("setLayout", *it) ? *it : "err" );
-
-    }
 }
 
 void PasswordDlg::setLayoutText( const QString &txt )

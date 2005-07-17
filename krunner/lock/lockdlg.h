@@ -83,6 +83,7 @@ private:
     int         mCapsLocked;
     bool        mUnlockingFailed;
     QStringList layoutsList;
+    QStringList::iterator currLayout;
     int         sPid, sFd;
     QListView   *lv;
 };
