@@ -1878,6 +1878,16 @@ Description:
  unless the user is logged into a <acronym>NIS</acronym> or Kerberos domain. If you use this
  option, you should <command>chmod&nbsp;<option>600</option>&nbsp;<filename>kdmrc</filename></command> for obvious reasons.
 
+Key: AutoLoginLocked
+Type: bool
+Default: false
+User: core(autoLock)
+Instance: #:0/!
+Comment: &
+Description:
+ Immediately lock the automatically started session. This works only with
+ KDE sessions.
+
 Key: SessionsDirs
 Type: list
 Default: KDMDATA "/sessions"

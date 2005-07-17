@@ -68,7 +68,7 @@ private slots:
 
 private:
 	QGroupBox	*alGroup, *puGroup, *npGroup, *btGroup;
-	QCheckBox	*cbarlen, *cbjumppw;
+	QCheckBox	*cbarlen, *cbjumppw, *autoLockCheck;
 	QRadioButton	*npRadio, *ppRadio, *spRadio;
 	KComboBox	*userlb, *puserlb;
 	KListView	*npuserlv;

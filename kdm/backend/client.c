@@ -1143,6 +1143,8 @@ StartClient()
 		env = setEnv( env, "XDM_MANAGED", xma );
 		free( xma );
 	}
+	if (td->autoLock && cursource == PWSRC_AUTOLOGIN)
+		env = setEnv( env, "DESKTOP_LOCKED", "true" );
 	env = setEnv( env, "PATH", curuid ? td->userPath : td->systemPath );
 	env = setEnv( env, "SHELL", p->pw_shell );
 	env = setEnv( env, "HOME", p->pw_dir );
