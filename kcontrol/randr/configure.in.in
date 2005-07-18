@@ -16,4 +16,3 @@ else
 fi
 AC_SUBST(LIB_XRANDR)
 AM_CONDITIONAL(include_kcontrol_randr, test -n "$RANDR_SUBDIR")
-
