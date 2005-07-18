@@ -50,13 +50,6 @@ save these options to .dmrc?
 - genkdmconf: treat backgroundrc as an ini file, not as a text blob
 - add proper quoting and dequoting to genkdmconf ini parser & writer
 
-- think of something extremely clever to solve the case of modules
-  that simply hang in pam_authenticate waiting for data.
-  theoretically they could make PAM return PAM_INCOMPLETE, so we should
-  poll every second or so, but in practice no module i know does it.
-  evaluate communication directly with the backend, particularily letting it
-  spawn another process for the shutdown authentication.
-
 - write generic conversation plugin
 - write modern conv plugin. or maybe this should be a parallel vs. serial
   setting of the classic plugin?
@@ -174,7 +167,7 @@ and the session. .dmrc later affects only the session, not the greeter.
 internal stuff:
 - improve signal handling in the subdaemon, it's incredibly racy (GOpen/GClose).
   depends on proper main loop.
-- alternative extreme measure: launch greeter from master daemon?
+  alternative extreme measure: launch greeter from master daemon?
 - the process reaping from GClose should be in sync with the main loop.
 - kill warning on AIX - see bug #13628 (really present?)
 - implement auto-re-login by keeping the display subdaemon alive instead
@@ -198,11 +191,46 @@ ralf says:
 - enable the clock by default
 
 thoughts (not really todo):
-- suspending authentication (for nested shutdown auth) could be done with
-  PAM_CONV_AGAIN/PAM_INCOMPLETE, but this is not portable.
-  actually suspending is not required at all if PAM is reentrant enough to
-  run a complete auth cycle from within the conversation function.
-- multiple plugins could be used in a row, each serving a pam module.
+- PAM sucks. big time.
+  historically, it is completely incapable of operating in event-driven contexts
+  when it comes to non-console authentication schemes. the module just hangs in
+  pam_sm_authenticate() (pam_authenticate() to the outside), waiting for input
+  from its device.
+  then came linux-pam 0.58, introducing PAM_BINARY_{MSG,PROMPT} to the
+  conversation function interface. no conversation function could handle the
+  binary prompts generically, of course. so came linux-pam 0.63 with a client
+  library that would add another layer of indirection, so the conversation
+  function could simply call into it and it would do whatever was configured
+  by the admin. and everbody was happy, right? wrong! i've yet to see a single
+  module (except for the demo module in linux-pam, of course) that actually
+  uses this feature. not to mention the non-existing portability (you don't
+  seriously expect TOG to extend the PAM standard within the next decade, do
+  you?). so we're right where we started from.
+  this imposes problems in two use cases:
+  - cancelling authentication alltogether. this happens when the user changes
+    the authentication method or when the greeter exits for some reason. if
+    the process waits in the conversation function, it can simply return
+    PAM_CONV_ABORT. if the module hangs, we're screwed.
+  - suspending authentication. this is needed for shutdowns that need auth.
+    if the module hangs, we're screwed, of course. if we're waiting in the
+    conversation function, we have three options: 1) just abort the auth
+    cycle and start a new one. this is what is done currently. 2) just open
+    a second pam handle and authenticate with it, all from within the "outer"
+    pam_authenticate(). if we're lucky, no involved modules use static variables
+    and things work out. 3) linux-pam 0.65 introduced the following: the
+    conversation function can return PAM_CONV_AGAIN. this in turn makes the
+    module and consequently libpam return PAM_INCOMPLETE, requesting the
+    application to call the resp. libpam function again. in theory this
+    guarantees that authentication with a second pam handle is safe. of course,
+    PAM_INCOMPLETE is just as popular and thus useful as PAM_BINARY_PROMPT.
+  we could just longjmp() out of hanging modules from a signal handler.
+  however, this might lead to resource leaks and even leave us with an unstable
+  libpam. killing the hanging process seems like the most viable solution.
+  however, for this we first need to make the greeter a child of the master
+  daemon. also, the display sub-daemon (which happens to do the main auth.)
+  is responsible for keeping the initial X connection open. killing it would
+  terminate the session according to the XDMCP spec. other issues are probable.
+- multiple conv. plugins could be used in a row, each serving a pam module.
   the plugins would have to detect that it's their turn by filtering messages
   and prompts.
 - consider making the menu an actions-only menu again and put an "options >>"
