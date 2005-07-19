@@ -26,11 +26,7 @@
 #include <config.h>
 
 #include <qlabel.h>
-#include <qcombobox.h>
-#include <qgroupbox.h>
-#include <qlayout.h>
 #include <qfile.h>
-#include <qregexp.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -51,97 +47,49 @@
 #endif
 
 Tzone::Tzone(QWidget * parent, const char *name)
-  : QGroupBox(parent, name)
+  : QVGroupBox(parent, name)
 {
-    QBoxLayout *top_lay = new QVBoxLayout( this, KDialog::spacingHint() );
-    QBoxLayout *lay = new QHBoxLayout(top_lay);
+    setTitle(i18n("To change the timezone, select your area from the list below"));
 
-    currentzonetitle = new QLabel(i18n("Current time zone: "), this);
-    lay->addWidget(currentzonetitle);
+    tzonelist = new KTimezoneWidget(this, "ComboBox_1", &m_zoneDb);
+    connect( tzonelist, SIGNAL(selectionChanged()), SLOT(handleZoneChange()) );
 
-    currentzone = new QLabel(this);
-    lay->addWidget(currentzone);
-    currentzone->setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
-
-    QLabel* instructions = new QLabel(i18n("To change the time zone, select your area from the list below:"), this);
-    top_lay->addWidget(instructions);
-
-    tzonelist = new QComboBox( false, this, "ComboBox_1" );
-    connect( tzonelist, SIGNAL(activated(int)), SLOT(handleZoneChange()) );
-    top_lay->addWidget( tzonelist );
-
-    fillTimeZones();
+    m_local = new QLabel(this);
 
     load();
 
     tzonelist->setEnabled(getuid() == 0);
 }
 
-void Tzone::fillTimeZones()
-{
-    QStringList	list;
-
-    tzonelist->insertItem(i18n("[No selection]"));
-
-    const KTimezones::ZoneMap zones = m_zoneDb.allZones();
-    for (KTimezones::ZoneMap::ConstIterator it = zones.begin(); it != zones.end(); ++it)
-    {
-        const KTimezone *zone = it.data();
-        list << i18n(zone->name().utf8());
-        tzonenames << zone->name();
-    }
-
-    list.sort();
-
-    tzonelist->insertStringList(list);
-}
-
-QString Tzone::currentZone()
-{
-    QCString result(100);
-    time_t now = time(0);
-    tzset();
-    strftime(result.data(), result.size(), " (%Z)", localtime(&now));
-    kdDebug() << "strftime returned: " << result << endl;
-    return m_zoneDb.local()->name() + QString::fromLocal8Bit(result);
-}
-
 void Tzone::load()
 {
-    QString sCurrentlySet(i18n("Unknown"));
-    currentzone->setText(currentZone());
+    currentZone();
 
     // read the currently set time zone
-    const KTimezone *local = m_zoneDb.local();
-    sCurrentlySet = i18n(local->name().utf8());
+    tzonelist->setSelected(m_zoneDb.local()->name(), true);
+}
 
-    // find the currently set time zone and select it
-    for (int i = 0; i < tzonelist->count(); i++)
-    {
-      if (tzonelist->text(i) == i18n(sCurrentlySet.utf8()))
-        {
-            tzonelist->setCurrentItem(i);
-            break;
-        }
-    }
+void Tzone::currentZone()
+{
+    QString localZone(i18n("Current local timezone: %1 (%2)"));
+    QCString result(100);
+
+    time_t now = time(0);
+    tzset();
+    strftime(result.data(), result.size(), "%Z", localtime(&now));
+    m_local->setText(localZone.arg(KTimezoneWidget::displayName(m_zoneDb.local())).arg(result));
 }
 
 // FIXME: Does the logic in this routine actually work correctly? For example,
 // on non-Solaris systems which do not use /etc/timezone?
 void Tzone::save()
 {
-    QString tz;
-    QString selectedzone(tzonelist->currentText());
-    QString currentlySetZone;
+    QStringList selectedZones(tzonelist->selection());
 
-    if( selectedzone != i18n("[No selection]"))
+    if (selectedZones.count() > 0)
     {
       // Find untranslated selected zone
-      QStringList::Iterator it;
-      for (it = tzonenames.begin(); it != tzonenames.end(); ++it)
-        if (selectedzone == i18n((*it).utf8()))
-          break;
-      selectedzone = (*it);
+      QString selectedzone(selectedZones[0]);
 
 #if defined(USE_SOLARIS)	// MARCO
 
@@ -215,7 +163,7 @@ void Tzone::save()
             fTimezoneFile.close();
         }
 
-        tz = "/usr/share/zoneinfo/" + selectedzone;
+        QString tz = "/usr/share/zoneinfo/" + selectedzone;
 
         kdDebug() << "Set time zone " << tz << endl;
 
@@ -225,7 +173,7 @@ void Tzone::save()
 	}
 	else
 		if (!KIO::NetAccess::file_copy(KURL(tz),KURL("/etc/localtime")))
-			KMessageBox::error( 0,  i18n("Error setting new Time Zone."),
+			KMessageBox::error( 0,  i18n("Error setting new timezone."),
                         		    i18n("Timezone Error"));
 
         QString val = ":" + tz;
@@ -244,5 +192,5 @@ void Tzone::save()
 #endif // !USE SOLARIS
     }
 
-    currentzone->setText(currentZone());
+    currentZone();
 }

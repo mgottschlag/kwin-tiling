@@ -23,12 +23,13 @@
 #define tzone_included
 
 #include <ktimezones.h>
-#include <qgroupbox.h>
+#include <ktimezonewidget.h>
+#include <qvgroupbox.h>
 
 class QComboBox;
-class QStringList;
+class QLabel;
 
-class Tzone : public QGroupBox
+class Tzone : public QVGroupBox
 {
   Q_OBJECT
 
@@ -45,16 +46,10 @@ protected slots:
   void handleZoneChange() {emit zoneChanged( TRUE );}
 
 private:
+  void currentZone();
   KTimezones m_zoneDb;
-  void  fillTimeZones();
-  QString currentZone();
-
-  QComboBox       *tzonelist;
-  QStringList     tzonenames;
-	QLabel					*currentzonetitle;
-	QLabel          *currentzone;
-  QString         BufS;
-  int             pos;
+  QLabel *m_local;
+  KTimezoneWidget *tzonelist;
 };
 
 #endif // tzone_included
