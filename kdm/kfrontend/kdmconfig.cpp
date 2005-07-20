@@ -92,6 +92,9 @@ Str2Font( const QString &aValue )
 		aRetFont.setFixedPitch( nFontBits & 0x08 != 0 );
 		aRetFont.setRawMode( nFontBits & 0x20 != 0 );
 	}
+	aRetFont.setStyleStrategy( (QFont::StyleStrategy)
+	   (QFont::PreferMatch |
+	    (_antiAliasing ? QFont::PreferAntialias : QFont::NoAntialias)) );
 
 	return aRetFont;
 }

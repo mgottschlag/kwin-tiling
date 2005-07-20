@@ -2065,6 +2065,16 @@ Description:
  </varlistentry>
  </variablelist>
 
+# This needs to come _in front_ of the font settings to be effective!
+Key: AntiAliasing
+Type: bool
+Default: false
+User: greeter
+Instance: #*/!
+Comment: &
+Description:
+ Whether the fonts used in the greeter should be antialiased.
+
 Key: GreetFont
 Type: string
 Default: "Serif,20,5,0,50,0"
@@ -2094,15 +2104,6 @@ Instance: #*/"Sans Serif,10,5,0,75,0"
 Comment: &
 Description:
  The font used for the <quote>Login Failed</quote> message.
-
-Key: AntiAliasing
-Type: bool
-Default: false
-User: greeter-c
-Instance: #*/!
-Comment: &
-Description:
- Whether the fonts used in the greeter should be antialiased.
 
 Key: NumLock
 Type: enum

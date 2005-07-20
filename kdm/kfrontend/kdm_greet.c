@@ -738,7 +738,6 @@ int
 main( int argc ATTR_UNUSED, char **argv )
 {
 	char *ci;
-	FILE *f;
 	int i;
 	char qtrc[40];
 
@@ -779,14 +778,6 @@ main( int argc ATTR_UNUSED, char **argv )
 	if (!(savhome = strdup( qtrc )))
 		LogPanic( "Cannot save $HOME\n" );
 	atexit( cleanup );
-	strcat( qtrc, "/.qt" );
-	mkdir( qtrc, 0700 );
-	strcat( qtrc, "/qtrc" );
-	if (!(f = fopen( qtrc, "w" )))
-		LogPanic( "Cannot create qt config\n" );
-	fprintf( f, "[General]\nuseXft=%s\n",
-	         _antiAliasing ? "true" : "false" );
-	fclose( f );
 
 	setenv( "LC_ALL", _language, 1 );
 
