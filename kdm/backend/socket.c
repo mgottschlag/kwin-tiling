@@ -51,6 +51,9 @@ static int
 CreateListeningSocket( struct sockaddr *sock_addr, int salen )
 {
 	int fd;
+#if defined(IPv6) && defined(IPPROTO_IPV6) && defined(IPV6_V6ONLY)
+	int on = 0;
+#endif
 	const char *addrstring = "unknown";
 #if defined(IPv6) && defined(AF_INET6)
 	char addrbuf[INET6_ADDRSTRLEN];
@@ -81,6 +84,9 @@ CreateListeningSocket( struct sockaddr *sock_addr, int salen )
 		LogError( "XDMCP socket creation failed, errno %d\n", errno );
 		return -1;
 	}
+#if defined(IPv6) && defined(IPPROTO_IPV6) && defined(IPV6_V6ONLY)
+	setsockopt( fd, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on) );
+#endif
 
 	if (bind( fd, sock_addr, salen ) == -1) {
 		LogError( "error %d binding socket address %d\n", errno, request_port );
