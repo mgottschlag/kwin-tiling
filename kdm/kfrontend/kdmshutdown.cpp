@@ -630,12 +630,10 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 		box->addWidget( lab );
 		QListView *lv = new QListView( this );
 		lv->setSelectionMode( QListView::NoSelection );
-		lv->setResizeMode( QListView::AllColumns );
 		lv->setAllColumnsShowFocus( true );
+		lv->header()->setResizeEnabled( false );
 		lv->addColumn( i18n("Session") );
 		lv->addColumn( i18n("Location") );
-		lv->setColumnWidthMode( 0, QListView::Maximum );
-		lv->setColumnWidthMode( 1, QListView::Maximum );
 		QListViewItem *itm;
 		int ns = 0;
 		QString user, loc;
@@ -645,12 +643,8 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 			sess = sess->next, ns++;
 		} while (sess);
 		int fw = lv->frameWidth() * 2;
-		QSize hds( lv->header()->sizeHint() );
-		lv->setMinimumWidth( fw + hds.width() +
-			(ns > 10 ? style().pixelMetric( QStyle::PM_ScrollBarExtent ) : 0 ) );
-		lv->setFixedHeight( fw + hds.height() +
+		lv->setFixedHeight( fw + lv->header()->height() +
 			itm->height() * (ns < 3 ? 3 : ns > 10 ? 10 : ns) );
-		lv->header()->adjustHeaderSize();
 		box->addWidget( lv );
 		complete( lv );
 	} else
