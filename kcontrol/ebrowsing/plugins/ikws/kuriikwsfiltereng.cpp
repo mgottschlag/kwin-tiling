@@ -63,12 +63,14 @@ QString KURISearchFilterEngine::webShortcutQuery( const QString& typedString ) c
 
   if (m_bWebShortcutsEnabled)
   {
-    QString key;
     QString search = typedString;
     int pos = search.find(m_cKeywordDelimiter);
 
+    QString key;
     if ( pos > -1 )
       key = search.left(pos);
+    else if ( m_cKeywordDelimiter == ' ' && !search.isEmpty() )
+      key = search;
 
     if (!key.isEmpty() && !KProtocolInfo::isKnownProtocol( key ))
     {
@@ -90,7 +92,7 @@ QString KURISearchFilterEngine::webShortcutQuery( const QString& typedString ) c
 QString KURISearchFilterEngine::autoWebSearchQuery( const QString& typedString ) const
 {
   QString result;
-    
+
   if (m_bWebShortcutsEnabled && !m_defaultSearchEngine.isEmpty())
   {
     // Make sure we ignore supported protocols, e.g. "smb:", "http:"
@@ -99,7 +101,7 @@ QString KURISearchFilterEngine::autoWebSearchQuery( const QString& typedString )
     if (pos == -1 || !KProtocolInfo::isKnownProtocol(typedString.left(pos)))
     {
       SearchProvider *provider = SearchProvider::findByDesktopName(m_defaultSearchEngine);
-    
+
       if (provider)
       {
         result = formatResult (provider->query(), provider->charset(),
@@ -391,8 +393,9 @@ QString KURISearchFilterEngine::formatResult( const QString& url,
                                               bool /* isMalformed */,
                                               SubstMap& map ) const
 {
-  // Return nothing if userquery is empty:
-  if (query.isEmpty())
+  // Return nothing if userquery is empty and it contains
+  // substitution strings...
+  if (query.isEmpty() && url.find(QRegExp(QRegExp::escape("\{"))) > 0)
     return QString::null;
 
   // Debug info of map:
