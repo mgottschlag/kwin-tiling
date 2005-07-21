@@ -34,7 +34,7 @@
  * IMPORTANT: If you change anything here, please run the regression test
  * kdelibs/kio/tests/kurifiltertest
  */
- 
+
 typedef KGenericFactory<KAutoWebSearch> KAutoWebSearchFactory;
 K_EXPORT_COMPONENT_FACTORY (libkuriikwsfilter, KAutoWebSearchFactory("kcmkurifilt"))
 
@@ -50,14 +50,16 @@ KAutoWebSearch::~KAutoWebSearch()
 
 void KAutoWebSearch::configure()
 {
-  kdDebug() << "KAutoWebSearch::configure: Config reload requested..." << endl;
+  if ( KURISearchFilterEngine::self()->verbose() )
+    kdDebug() << "KAutoWebSearch::configure: Config reload requested..." << endl;
+
   KURISearchFilterEngine::self()->loadConfig();
 }
 
 bool KAutoWebSearch::filterURI( KURIFilterData &data ) const
 {
   if (KURISearchFilterEngine::self()->verbose())
-    kdDebug() << "KAutoWebSearch::filterURI: " <<  data.uri().url() << endl;
+    kdDebug() << "KAutoWebSearch::filterURI: '" <<  data.uri().url() << "'" << endl;
 
   KURL u = data.uri();
   if ( u.pass().isEmpty() )

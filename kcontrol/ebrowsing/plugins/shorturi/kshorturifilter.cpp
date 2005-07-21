@@ -513,6 +513,9 @@ QString KShortURIFilter::configName() const
 
 void KShortURIFilter::configure()
 {
+  if ( m_bVerbose )
+    kdDebug() << "KShortURIFilter::configure: Config reload request..." << endl;
+
   KConfig config( name() + QFL1("rc"), false, false );
   m_strDefaultProtocol = config.readEntry( "DefaultProtocol", QFL1("http://") );
   m_bVerbose = config.readBoolEntry( "Verbose", false );
