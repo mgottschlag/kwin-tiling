@@ -9,7 +9,7 @@ Name[sv]=TV-tome
 Name[th]=ทีวีทอร์ม
 Name[tr]=TV Kanalları
 Name[xx]=xxTV Tomexx
-Query=http://www.tvtome.com/tvtome/servlet/Search?searchType=all&searchString=\\{@}
-Query[xx]=xxhttp://www.tvtome.com/tvtome/servlet/Search?searchType=all&searchString=\\{@}xx
 ServiceTypes=SearchProvider
+Query=http://www.tv.com/search.php?type=11&stype=all&qs=\\{@}&x=0&y=0
+Query[xx]=xxhttp://www.tv.com/search.php?type=11&stype=all&qs=\\{@}&x=0&y=0xx
 Type=Service
