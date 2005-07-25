@@ -3,10 +3,8 @@
 "dtd/kdex.dtd" [
   <!ENTITY kappname "&kmenuedit;">
   <!ENTITY package "kdebase">
-  <!ENTITY firefox "Firefox">
+  <!ENTITY firefox "<application>Firefox</application>">
   <!ENTITY internet "Internet">
-  <!ENTITY Virgil.J.Nisly "<personname><firstname>Virgil</firstname><othername>J.</othername><surname>Nisly</surname></personname>">
-  <!ENTITY Virgil.J.Nisly.mail "<email>virgil@vigilite.com</email>">
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE" > <!-- change language only here -->
 ]>
