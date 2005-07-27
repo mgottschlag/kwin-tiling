@@ -422,6 +422,12 @@ Description[zh_TW]=送出 &URL
 Description[zu]=Thumela i-&URL
 Enabled=true
 
+[Action_1/Command_3]
+Commandline=ps x |grep -q '[f]irefox' && firefox -remote openURL\(%s, new-window\) || firefox %s
+Icon=firefox
+Description=Open with &Firefox
+Enabled=true
+
 [Action_1/Command_4]
 Commandline=kmail  --attach %s
 Description=Send &Page
