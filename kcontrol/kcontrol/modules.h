@@ -33,7 +33,7 @@ class KAboutData;
 class KCModule;
 class ProxyWidget;
 class KProcess;
-class QXEmbed;
+class QX11EmbedWidget;
 class QVBoxLayout;
 class Q3VBox;
 
@@ -78,7 +78,7 @@ private:
   
   bool         _changed;
   ProxyWidget *_module;
-  QXEmbed     *_embedWidget;
+  QX11EmbedWidget  *_embedWidget;
   KProcess    *_rootProcess;
   QVBoxLayout *_embedLayout;
   Q3VBox       *_embedFrame;

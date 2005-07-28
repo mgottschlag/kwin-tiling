@@ -28,11 +28,11 @@
 #include <QVBoxLayout>
 #include <Q3Frame>
 #include <Q3PtrList>
+#include <QX11EmbedWidget>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kservicegroup.h>
 #include <kprocess.h>
-#include <qxembed.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
 
@@ -94,7 +94,7 @@ ProxyWidget *ConfigModule::module()
 void ConfigModule::deleteClient()
 {
   if (_embedWidget)
-    XKillClient(QX11Info::display(), _embedWidget->embeddedWinId());
+    XKillClient(QX11Info::display(), _embedWidget->containerWinId());
 
   delete _rootProcess;
   _rootProcess = 0;
@@ -153,7 +153,7 @@ void ConfigModule::runAsRoot()
   _embedFrame->setLineWidth( 2 );
   _embedFrame->setMidLineWidth( 2 );
   _embedLayout->addWidget(_embedFrame,1);
-  _embedWidget = new QXEmbed(_embedFrame );
+  _embedWidget = new QX11EmbedWidget(_embedFrame );
   _module->hide();
   _embedFrame->show();
   QLabel *_busy = new QLabel(i18n("<big>Loading...</big>"), _embedWidget);
@@ -223,8 +223,8 @@ void ConfigModule::runAsRoot()
 
 void ConfigModule::rootExited(KProcess *)
 {
-  if (_embedWidget->embeddedWinId())
-    XDestroyWindow(QX11Info::display(), _embedWidget->embeddedWinId());
+  if (_embedWidget->containerWinId())
+    XDestroyWindow(QX11Info::display(), _embedWidget->containerWinId());
 
   delete _embedWidget;
   _embedWidget = 0;
