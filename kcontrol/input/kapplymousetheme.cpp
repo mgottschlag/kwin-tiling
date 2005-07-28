@@ -26,6 +26,7 @@
 #  include <config.h>
 #endif
 
+#include <QX11Info>
 #include <stdlib.h>
 #include <ctype.h>
 #include <X11/Xlib.h>
@@ -35,8 +36,8 @@
 #endif
 
 static Display* dpy;
-static Display* qt_xdisplay() { return dpy; }\
-static Window qt_xrootwin() { return DefaultRootWindow( dpy ); }
+Display* QX11Info::display() { return dpy; }
+Qt::HANDLE QX11Info::appRootWindow(int) { return DefaultRootWindow( dpy ); }
 
 bool isEmpty( const char* str )
     {
@@ -63,8 +64,8 @@ int main( int argc, char* argv[] )
 
     // use a default value for theme only if it's not configured at all, not even in X resources
     if( isEmpty( theme )
-        && isEmpty( XGetDefault( qt_xdisplay(), "Xcursor", "theme" ))
-        && isEmpty( XcursorGetTheme( qt_xdisplay())))
+        && isEmpty( XGetDefault( QX11Info::display(), "Xcursor", "theme" ))
+        && isEmpty( XcursorGetTheme( QX11Info::display())))
     {
         theme = "default";
         ret = 10; // means to switch to default
@@ -72,19 +73,19 @@ int main( int argc, char* argv[] )
 
      // Apply the KDE cursor theme to ourselves
     if( !isEmpty( theme ))
-        XcursorSetTheme(qt_xdisplay(), theme );
+        XcursorSetTheme(QX11Info::display(), theme );
 
     if (!isEmpty( size ))
-    	XcursorSetDefaultSize(qt_xdisplay(), atoi( size ));
+    	XcursorSetDefaultSize(QX11Info::display(), atoi( size ));
 
     // Load the default cursor from the theme and apply it to the root window.
-    Cursor handle = XcursorLibraryLoadCursor(qt_xdisplay(), "left_ptr");
-    XDefineCursor(qt_xdisplay(), qt_xrootwin(), handle);
-    XFreeCursor(qt_xdisplay(), handle); // Don't leak the cursor
+    Cursor handle = XcursorLibraryLoadCursor(QX11Info::display(), "left_ptr");
+    XDefineCursor(QX11Info::display(), QX11Info::appRootWindow(), handle);
+    XFreeCursor(QX11Info::display(), handle); // Don't leak the cursor
 
 #else
-    ( void ) qt_xdisplay();
-    ( void ) qt_xrootwin();
+    ( void ) QX11Info::display();
+    ( void ) QX11Info::appRootWindow();
     ( void ) argv;
 #endif
     XCloseDisplay( dpy );

@@ -44,8 +44,8 @@ protected slots:
 	void slotStartService();
 	void slotStopService();
 	void slotServiceRunningToggled();
-	void slotEvalItem(QListViewItem *item);
-	void slotItemChecked(QCheckListItem *item);
+	void slotEvalItem(Q3ListViewItem *item);
+	void slotItemChecked(Q3CheckListItem *item);
 	void getServiceStatus();
 
         bool autoloadEnabled(KConfig *config, const QString &filename);
@@ -61,14 +61,14 @@ private:
 	QString NOT_RUNNING;
 };
 
-class CheckListItem : public QObject, public QCheckListItem
+class CheckListItem : public QObject, public Q3CheckListItem
 {
 	Q_OBJECT
 public:
-	CheckListItem(QListView* parent, const QString &text);
+	CheckListItem(Q3ListView* parent, const QString &text);
 	~CheckListItem() { }
 signals:
-	void changed(QCheckListItem*);
+	void changed(Q3CheckListItem*);
 protected:
 	virtual void stateChange(bool);
 };

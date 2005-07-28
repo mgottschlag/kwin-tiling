@@ -9,14 +9,21 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qdir.h>
-#include <qgroupbox.h>
-#include <qhbox.h>
+#include <q3groupbox.h>
+#include <q3hbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qsettings.h>
 #include <qtooltip.h>
-#include <qwhatsthis.h>
+
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3CString>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <Q3ValueList>
+#include <QVBoxLayout>
 
 #include <dcopclient.h>
 
@@ -37,6 +44,7 @@
 #include <kdebug.h>
 
 #include <X11/Xlib.h>
+#include <QX11Info>
 
 // X11 headers
 #undef Bool
@@ -232,19 +240,19 @@ FontAASettings::FontAASettings(QWidget *parent)
 
   excludeRange=new QCheckBox(i18n("E&xclude range:"), mw),
   layout->addWidget(excludeRange, 0, 0);
-  excludeFrom=new KDoubleNumInput(0, 72, 8.0, 1, 1, mw),
+  excludeFrom=new KDoubleNumInput(0, 72, 8.0, mw,1, 1),
   excludeFrom->setSuffix(i18n(" pt"));
   layout->addWidget(excludeFrom, 0, 1);
   excludeToLabel=new QLabel(i18n(" to "), mw);
   layout->addWidget(excludeToLabel, 0, 2);
-  excludeTo=new KDoubleNumInput(0, 72, 15.0, 1, 1, mw);
+  excludeTo=new KDoubleNumInput(0, 72, 15.0, mw, 1, 1);
   excludeTo->setSuffix(i18n(" pt"));
   layout->addWidget(excludeTo, 0, 3);
 
   useSubPixel=new QCheckBox(i18n("&Use sub-pixel hinting:"), mw);
   layout->addWidget(useSubPixel, 1, 0);
 
-  QWhatsThis::add(useSubPixel, i18n("If you have a TFT or LCD screen you"
+  useSubPixel->setWhatsThis( i18n("If you have a TFT or LCD screen you"
        " can further improve the quality of displayed fonts by selecting"
        " this option.<br>Sub-pixel hinting is also known as ClearType(tm).<br>"
        "<br><b>This will not work with CRT monitors.</b>"));
@@ -252,7 +260,7 @@ FontAASettings::FontAASettings(QWidget *parent)
   subPixelType=new QComboBox(false, mw);
   layout->addMultiCellWidget(subPixelType, 1, 1, 1, 3);
 
-  QWhatsThis::add(subPixelType, i18n("In order for sub-pixel hinting to"
+  subPixelType->setWhatsThis( i18n("In order for sub-pixel hinting to"
        " work correctly you need to know how the sub-pixels of your display"
        " are aligned.<br>"
        " On TFT or LCD displays a single pixel is actually composed of"
@@ -271,8 +279,8 @@ FontAASettings::FontAASettings(QWidget *parent)
     hintingStyle->insertItem(i18n(KXftConfig::description((KXftConfig::Hint::Style)s).utf8()));
 
   QString hintingText(i18n("Hinting is a process used to enhance the quality of fonts at small sizes."));
-  QWhatsThis::add(hintingStyle, hintingText);
-  QWhatsThis::add(hintingLabel, hintingText);
+  hintingStyle->setWhatsThis( hintingText);
+  hintingLabel->setWhatsThis( hintingText);
 #endif
   load();
   enableWidgets();
@@ -494,12 +502,12 @@ int FontAASettings::exec()
 
 /**** KFonts ****/
 
-static QCString desktopConfigName()
+static Q3CString desktopConfigName()
 {
   int desktop=0;
-  if (qt_xdisplay())
-    desktop = DefaultScreen(qt_xdisplay());
-  QCString name;
+  if (QX11Info::display())
+    desktop = DefaultScreen(QX11Info::display());
+  Q3CString name;
   if (desktop == 0)
     name = "kdesktoprc";
   else
@@ -508,8 +516,8 @@ static QCString desktopConfigName()
   return name;
 }
 
-KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
-    :   KCModule(FontFactory::instance(), parent, name)
+KFonts::KFonts(QWidget *parent, const char *, const QStringList &args)
+    :   KCModule(FontFactory::instance(), parent, args)
 {
   QStringList nameGroupKeyRc;
 
@@ -522,7 +530,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     << i18n("Taskbar")        << "General"    << "taskbarFont"  << ""
     << i18n("Desktop")        << "FMSettings" << "StandardFont" << desktopConfigName();
 
-  QValueList<QFont> defaultFontList;
+  Q3ValueList<QFont> defaultFontList;
 
   // Keep in sync with kdelibs/kdecore/kglobalsettings.cpp
 
@@ -540,7 +548,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
 
   defaultFontList << f0 << f1 << f2 << f0 << f3 << f4 << f0;
 
-  QValueList<bool> fixedList;
+  Q3ValueList<bool> fixedList;
 
   fixedList
     <<  false
@@ -572,8 +580,8 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
   fontUseLayout->setColStretch(1, 1);
   fontUseLayout->setColStretch(2, 0);
 
-  QValueList<QFont>::ConstIterator defaultFontIt(defaultFontList.begin());
-  QValueList<bool>::ConstIterator fixedListIt(fixedList.begin());
+  Q3ValueList<QFont>::ConstIterator defaultFontIt(defaultFontList.begin());
+  Q3ValueList<bool>::ConstIterator fixedListIt(fixedList.begin());
   QStringList::ConstIterator quickHelpIt(quickHelpList.begin());
   QStringList::ConstIterator it(nameGroupKeyRc.begin());
 
@@ -601,7 +609,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
     connect(i, SIGNAL(fontSelected(const QFont &)), SLOT(fontSelected()));
 
     QLabel * fontUse = new QLabel(name+":", this);
-    QWhatsThis::add(fontUse, *quickHelpIt++);
+    fontUse->setWhatsThis( *quickHelpIt++);
 
     fontUseLayout->addWidget(fontUse, count, 0);
     fontUseLayout->addWidget(i, count, 1);
@@ -612,7 +620,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
    QHBoxLayout *lay = new QHBoxLayout(layout, KDialog::spacingHint());
    lay->addStretch();
    QPushButton * fontAdjustButton = new QPushButton(i18n("Ad&just All Fonts..."), this);
-   QWhatsThis::add(fontAdjustButton, i18n("Click to change all fonts"));
+   fontAdjustButton->setWhatsThis( i18n("Click to change all fonts"));
    lay->addWidget( fontAdjustButton );
    connect(fontAdjustButton, SIGNAL(clicked()), SLOT(slotApplyFontDiff()));
 
@@ -620,7 +628,7 @@ KFonts::KFonts(QWidget *parent, const char *name, const QStringList &)
 
    lay = new QHBoxLayout(layout, KDialog::spacingHint());
    cbAA = new QCheckBox( i18n( "Use a&nti-aliasing for fonts" ), this);
-   QWhatsThis::add(cbAA, i18n("If this option is selected, KDE will smooth the edges of curves in "
+   cbAA->setWhatsThis( i18n("If this option is selected, KDE will smooth the edges of curves in "
                               "fonts."));
    lay->addStretch();
    QPushButton *aaSettingsButton = new QPushButton( i18n( "Configure..." ), this);

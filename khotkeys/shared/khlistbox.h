@@ -19,25 +19,25 @@ namespace KHotKeys
 {
 
 class KHListBox
-    : public QListBox
+    : public Q3ListBox
     {
     Q_OBJECT
     Q_PROPERTY( bool forceSelect READ forceSelect WRITE setForceSelect )
     public:
         KHListBox( QWidget* parent_P, const char* name_P = NULL );
         virtual void clear();
-        virtual void insertItem( QListBoxItem* item_P );
+        virtual void insertItem( Q3ListBoxItem* item_P );
         bool forceSelect() const;
         void setForceSelect( bool force_P );
     signals:
-        void current_changed( QListBoxItem* item_P );
+        void current_changed( Q3ListBoxItem* item_P );
     private slots:
-        void slot_selection_changed( QListBoxItem* item_P );
+        void slot_selection_changed( Q3ListBoxItem* item_P );
         void slot_selection_changed();
-        void slot_current_changed( QListBoxItem* item_P );
+        void slot_current_changed( Q3ListBoxItem* item_P );
         void slot_insert_select();
     private:
-        QListBoxItem* saved_current_item;
+        Q3ListBoxItem* saved_current_item;
         bool in_clear;
         bool force_select;
         QTimer insert_select_timer;

@@ -74,12 +74,12 @@ private slots:
 private:
   void updateWeekDayNames();
 
-  QValueList<StringPair> timeMap() const;
-  QValueList<StringPair> dateMap() const;
+  QList<StringPair> timeMap() const;
+  QList<StringPair> dateMap() const;
 
-  QString storeToUser(const QValueList<StringPair> & map,
+  QString storeToUser(const QList<StringPair> & map,
 		      const QString & storeFormat) const;
-  QString userToStore(const QValueList<StringPair> & map,
+  QString userToStore(const QList<StringPair> & map,
 		      const QString & userFormat) const;
   StringPair buildStringPair(const QChar &storeName, const QString &userName) const;
 

@@ -14,7 +14,7 @@
 
 
 #include <qstring.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #ifdef Q_OS_FREEBSD
 #include <dev/usb/usb.h>
@@ -39,14 +39,14 @@ public:
 
   QString dump();
 
-  static QPtrList<USBDevice> &devices() { return _devices; };
+  static Q3PtrList<USBDevice> &devices() { return _devices; };
   static USBDevice *find(int bus, int device);
   static bool parse(QString fname);
 
 
 private:
 
-  static QPtrList<USBDevice> _devices;
+  static Q3PtrList<USBDevice> _devices;
 
   static USBDB *_db;
 

@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
 
         if(folderRequired && !KFI::Misc::dExists(folder))
         {
-            std::cerr << "ERROR: " << QFile::encodeName(folder) << " does not exist!" << std::endl;
+            std::cerr << "ERROR: " << QFile::encodeName(folder).constData() << " does not exist!" << std::endl;
             rv=-2;
         }
         else

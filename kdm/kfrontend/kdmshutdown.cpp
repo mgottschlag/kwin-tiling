@@ -36,18 +36,26 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kuser.h>
 
 #include <qcombobox.h>
-#include <qvbuttongroup.h>
 #include <qstyle.h>
 #include <qlayout.h>
-#include <qaccel.h>
-#include <qpopupmenu.h>
+#include <q3accel.h>
+#include <q3popupmenu.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qdatetime.h>
-#include <qlistview.h>
-#include <qheader.h>
+#include <q3listview.h>
+#include <q3header.h>
 #include <qdatetime.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QBoxLayout>
+#include <Q3Frame>
+#include <QVBoxLayout>
+#include <QMouseEvent>
+#include <Q3VButtonGroup>
 
 #define KDmh KDialog::marginHint()
 #define KDsh KDialog::spacingHint()
@@ -101,8 +109,8 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 		                          KGreeterPlugin::Shutdown );
 		verify->selectPlugin( curPlugin );
 		box->addLayout( verify->getLayout() );
-		QAccel *accel = new QAccel( this );
-		accel->insertItem( ALT+Key_A, 0 );
+		Q3Accel *accel = new Q3Accel( this );
+		accel->insertItem( Qt::ALT+Qt::Key_A, 0 );
 		connect( accel, SIGNAL(activated( int )), SLOT(slotActivatePlugMenu()) );
 	}
 
@@ -141,7 +149,7 @@ void
 KDMShutdownBase::slotActivatePlugMenu()
 {
 	if (needRoot) {
-		QPopupMenu *cmnu = verify->getPlugMenu();
+		Q3PopupMenu *cmnu = verify->getPlugMenu();
 		if (!cmnu)
 			return;
 		QSize sh( cmnu->sizeHint() / 2 );
@@ -243,8 +251,8 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 
 	QHBoxLayout *hlay = new QHBoxLayout( box, KDsh );
 
-	howGroup = new QVButtonGroup( i18n("Shutdown Type"), this );
-	hlay->addWidget( howGroup, 0, AlignTop );
+	howGroup = new Q3VButtonGroup( i18n("Shutdown Type"), this );
+	hlay->addWidget( howGroup, 0, Qt::AlignTop );
 
 	QRadioButton *rb;
 	rb = new KDMRadioButton( i18n("&Turn off computer"), howGroup );
@@ -269,7 +277,7 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 		freeStrArr( tlist );
 		targets->setCurrentItem( oldTarget == -1 ? defaultTarget : oldTarget );
 		QHBoxLayout *hb = new QHBoxLayout( hlp, 0, KDsh );
-		int spc = kapp->style().pixelMetric( QStyle::PM_ExclusiveIndicatorWidth )
+		int spc = kapp->style()->pixelMetric( QStyle::PM_ExclusiveIndicatorWidth )
 		          + howGroup->insideSpacing();
 		hb->addSpacing( spc );
 		hb->addWidget( targets );
@@ -279,8 +287,8 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 
 	howGroup->setSizePolicy( fp );
 
-	schedGroup = new QGroupBox( i18n("Scheduling"), this );
-	hlay->addWidget( schedGroup, 0, AlignTop );
+	schedGroup = new Q3GroupBox( i18n("Scheduling"), this );
+	hlay->addWidget( schedGroup, 0, Qt::AlignTop );
 
 	le_start = new QLineEdit( schedGroup );
 	QLabel *lab1 = new QLabel( le_start, i18n("&Start:"), schedGroup );
@@ -297,9 +305,9 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 
 	QGridLayout *grid = new QGridLayout( schedGroup, 0, 0, KDmh, KDsh );
 	grid->addRowSpacing( 0, schedGroup->fontMetrics().height() - 5 );
-	grid->addWidget( lab1, 1, 0, AlignRight );
+	grid->addWidget( lab1, 1, 0, Qt::AlignRight );
 	grid->addWidget( le_start, 1, 1 );
-	grid->addWidget( lab2, 2, 0, AlignRight );
+	grid->addWidget( lab2, 2, 0, Qt::AlignRight );
 	grid->addWidget( le_timeout, 2, 1 );
 	grid->addMultiCellWidget( cb_force, 3,3, 0,1 );
 
@@ -435,10 +443,11 @@ KDMDelayedPushButton::KDMDelayedPushButton( const KGuiItem &item,
 	connect( &popt, SIGNAL(timeout()), SLOT(slotTimeout()) );
 }
 
-void KDMDelayedPushButton::setPopup( QPopupMenu *p )
+void KDMDelayedPushButton::setPopup( QMenu *p )
 {
 	pop = p;
-	setIsMenuButton( p != 0 );
+#warning setMenu might do more than setIsMenuButton
+	setMenu( p );
 }
 
 void KDMDelayedPushButton::slotPressed()
@@ -466,9 +475,9 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 {
 	QHBoxLayout *hbox = new QHBoxLayout( this, KDmh, KDsh );
 
-	QFrame *lfrm = new QFrame( this );
-	lfrm->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-	hbox->addWidget( lfrm, AlignCenter );
+	Q3Frame *lfrm = new Q3Frame( this );
+	lfrm->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
+	hbox->addWidget( lfrm, Qt::AlignCenter );
 	QLabel *icon = new QLabel( lfrm );
 	icon->setPixmap( QPixmap( locate( "data", "kdm/pics/shutdown.jpg" ) ) );
 	QVBoxLayout *iconlay = new QVBoxLayout( lfrm );
@@ -496,7 +505,7 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 		targetList = GRecvStrArr( 0 );
 		/*int def =*/ GRecvInt();
 		int cur = GRecvInt();
-		QPopupMenu *targets = new QPopupMenu( this );
+		QMenu *targets = new QMenu( this );
 		for (int i = 0; targetList[i]; i++) {
 			QString t( QString::fromLocal8Bit( targetList[i] ) );
 			targets->insertItem( i == cur ?
@@ -628,18 +637,18 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 		                          i18n("No permission to abort active sessions:"),
 		                          this );
 		box->addWidget( lab );
-		QListView *lv = new QListView( this );
-		lv->setSelectionMode( QListView::NoSelection );
+		Q3ListView *lv = new Q3ListView( this );
+		lv->setSelectionMode( Q3ListView::NoSelection );
 		lv->setAllColumnsShowFocus( true );
 		lv->header()->setResizeEnabled( false );
 		lv->addColumn( i18n("Session") );
 		lv->addColumn( i18n("Location") );
-		QListViewItem *itm;
+		Q3ListViewItem *itm;
 		int ns = 0;
 		QString user, loc;
 		do {
 			decodeSess( sess, user, loc );
-			itm = new QListViewItem( lv, user, loc );
+			itm = new Q3ListViewItem( lv, user, loc );
 			sess = sess->next, ns++;
 		} while (sess);
 		int fw = lv->frameWidth() * 2;
@@ -674,13 +683,13 @@ KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
 		strt = i18n("now");
 	else {
 		qdt.setTime_t( start );
-		strt = qdt.toString( LocalDate );
+		strt = qdt.toString( Qt::LocalDate );
 	}
 	if (timeout == TO_INF)
 		end = i18n("infinite");
 	else {
 		qdt.setTime_t( timeout );
-		end = qdt.toString( LocalDate );
+		end = qdt.toString( Qt::LocalDate );
 	}
 	QString trg =
 		i18n("Owner: %1"

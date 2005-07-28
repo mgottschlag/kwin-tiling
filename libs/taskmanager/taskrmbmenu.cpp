@@ -39,10 +39,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskrmbmenu.moc"
 
 TaskRMBMenu::TaskRMBMenu(const Task::List& theTasks, bool show, QWidget *parent, const char *name)
-	: QPopupMenu( parent, name )
+	: QMenu( parent )
 	, tasks( theTasks )
 	, showAll( show )
 {
+    setName(name);
     assert(tasks.count() > 0);
     if (tasks.count() == 1)
     {
@@ -54,14 +55,15 @@ TaskRMBMenu::TaskRMBMenu(const Task::List& theTasks, bool show, QWidget *parent,
     }
 }
 
-TaskRMBMenu::TaskRMBMenu(Task::Ptr task, bool show, QWidget *parent, const char *name)
-	: QPopupMenu( parent, name )
+TaskRMBMenu::TaskRMBMenu(Task::TaskPtr task, bool show, QWidget *parent, const char *name)
+	: QMenu( parent )
 	, showAll( show )
 {
+	setName(name);      
 	fillMenu(task);
 }
 
-void TaskRMBMenu::fillMenu(Task::Ptr t)
+void TaskRMBMenu::fillMenu(Task::TaskPtr t)
 {
     int id;
     setCheckable(true);
@@ -118,9 +120,9 @@ void TaskRMBMenu::fillMenu()
     Task::List::iterator itEnd = tasks.end();
     for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
     {
-		Task::Ptr t = (*it);
+		Task::TaskPtr t = (*it);
 
-		id = insertItem( QIconSet( t->pixmap() ),
+		id = insertItem( QIcon( t->pixmap() ),
 				 t->visibleNameWithState(),
 		                 new TaskRMBMenu(t, this) );
 		setItemChecked( id, t->isActive() );
@@ -194,10 +196,10 @@ void TaskRMBMenu::fillMenu()
 	insertItem( SmallIcon( "remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
 }
 
-QPopupMenu* TaskRMBMenu::makeAdvancedMenu(Task::Ptr t)
+QMenu* TaskRMBMenu::makeAdvancedMenu(Task::TaskPtr t)
 {
     int id;
-    QPopupMenu* menu = new QPopupMenu(this);
+    QMenu* menu = new QMenu(this);
 
     menu->setCheckable(true);
 
@@ -224,9 +226,9 @@ QPopupMenu* TaskRMBMenu::makeAdvancedMenu(Task::Ptr t)
     return menu;
 }
 
-QPopupMenu* TaskRMBMenu::makeDesktopsMenu(Task::Ptr t)
+QMenu* TaskRMBMenu::makeDesktopsMenu(Task::TaskPtr t)
 {
-	QPopupMenu* m = new QPopupMenu( this );
+	QMenu* m = new QMenu( this );
 	m->setCheckable( true );
 
 	int id = m->insertItem( i18n("&All Desktops"), t, SLOT( toDesktop(int) ) );
@@ -245,9 +247,9 @@ QPopupMenu* TaskRMBMenu::makeDesktopsMenu(Task::Ptr t)
 	return m;
 }
 
-QPopupMenu* TaskRMBMenu::makeDesktopsMenu()
+QMenu* TaskRMBMenu::makeDesktopsMenu()
 {
-	QPopupMenu* m = new QPopupMenu( this );
+	QMenu* m = new QMenu( this );
 	m->setCheckable( true );
 
 	int id = m->insertItem( i18n("&All Desktops"), this, SLOT( slotAllToDesktop(int) ) );

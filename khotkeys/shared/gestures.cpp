@@ -35,6 +35,7 @@
 
 #include "input.h"
 #include "windows.h"
+#include <QX11Info>
 
 namespace KHotKeys
 {
@@ -146,8 +147,8 @@ bool Gesture::x11Event( XEvent* ev_P )
         if( gesture.isEmpty())
             {
             kdDebug( 1217 ) << "GESTURE: replay" << endl;
-            XAllowEvents( qt_xdisplay(), AsyncPointer, CurrentTime );
-            XUngrabPointer( qt_xdisplay(), CurrentTime );
+            XAllowEvents( QX11Info::display(), AsyncPointer, CurrentTime );
+            XUngrabPointer( QX11Info::display(), CurrentTime );
             mouse_replay( true );
             return true;
             }
@@ -170,8 +171,8 @@ bool Gesture::x11Event( XEvent* ev_P )
 void Gesture::stroke_timeout()
     {
     kdDebug( 1217 ) << "GESTURE: timeout" << endl;
-    XAllowEvents( qt_xdisplay(), AsyncPointer, CurrentTime );
-    XUngrabPointer( qt_xdisplay(), CurrentTime );
+    XAllowEvents( QX11Info::display(), AsyncPointer, CurrentTime );
+    XUngrabPointer( QX11Info::display(), CurrentTime );
     mouse_replay( false );
     recording = false;
     }
@@ -207,7 +208,7 @@ void Gesture::grab_mouse( bool grab_P )
         for( int i = 0;
              i < 8;
              ++i )
-            XGrabButton( qt_xdisplay(), button, mods[ i ], qt_xrootwin(), False,
+            XGrabButton( QX11Info::display(), button, mods[ i ], QX11Info::appRootWindow(), False,
                 ButtonPressMask | ButtonReleaseMask | mask[ button ], GrabModeAsync, GrabModeAsync,
                 None, None );
         bool err = handler.error( true );
@@ -216,7 +217,7 @@ void Gesture::grab_mouse( bool grab_P )
     else
         {
         kdDebug( 1217 ) << "Gesture ungrab" << endl;
-        XUngrabButton( qt_xdisplay(), button, AnyModifier, qt_xrootwin());
+        XUngrabButton( QX11Info::display(), button, AnyModifier, QX11Info::appRootWindow());
         }
     }
 

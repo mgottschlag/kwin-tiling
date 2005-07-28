@@ -2,6 +2,10 @@
 #include <qtextstream.h>
 #include <qimage.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <QMouseEvent>
+#include <QLabel>
+#include <Q3ValueList>
 
 #include <kdebug.h>
 #include <kapplication.h>
@@ -18,6 +22,7 @@
 
 #include "ksystraycmd.h"
 #include "ksystraycmd.moc"
+#include <QX11Info>
 
 
 KSysTrayCmd::KSysTrayCmd()
@@ -25,7 +30,7 @@ KSysTrayCmd::KSysTrayCmd()
     isVisible(true), lazyStart( false ), noquit( false ), quitOnHide( false ), onTop(false), ownIcon(false),
     win(0), client(0), kwinmodule(0), top(0), left(0)
 {
-  setAlignment( AlignCenter );
+  setAlignment( Qt::AlignCenter );
   kwinmodule = new KWinModule( this );
   refresh();
 }
@@ -42,7 +47,8 @@ KSysTrayCmd::~KSysTrayCmd()
 bool KSysTrayCmd::start()
 {
   // If we have no command we must catching an existing window
-  if ( !command ) {
+#warning !Qstring == QString.isEmpty ???
+  if ( command.isEmpty() ) {
       if ( win ) {
 	  setTargetWindow( win );
 	  return true;
@@ -81,9 +87,9 @@ void KSysTrayCmd::showWindow()
   isVisible = true;
   if ( !win )
     return;
-  XMapWindow( qt_xdisplay(), win );
+  XMapWindow( QX11Info::display(), win );
   // We move the window to the memorized position
-  XMoveWindow( qt_xdisplay(), win, left, top);  
+  XMoveWindow( QX11Info::display(), win, left, top);  
   
   // Window always on top
   if (onTop)
@@ -104,7 +110,7 @@ void KSysTrayCmd::hideWindow()
   left = KWin::windowInfo(win).frameGeometry().left();
   top=KWin::windowInfo(win).frameGeometry().top();
 
-  XUnmapWindow( qt_xdisplay(), win );
+  XUnmapWindow( QX11Info::display(), win );
 }
 
 void KSysTrayCmd::setTargetWindow( WId w )
@@ -202,8 +208,8 @@ void KSysTrayCmd::quitClient()
 {
   if ( win ) {
     // Before sending the close request we have to show the window
-    XMapWindow( qt_xdisplay(), win );
-    NETRootInfo ri( qt_xdisplay(), NET::CloseWindow );
+    XMapWindow( QX11Info::display(), win );
+    NETRootInfo ri( QX11Info::display(), NET::CloseWindow );
     ri.closeWindowRequest( win );
     win=0;
     noquit = false;
@@ -211,7 +217,9 @@ void KSysTrayCmd::quitClient()
     // We didn't give command, so we didn't open an application.
     // That's why  when the application is closed we aren't informed.
     // So we quit now.
-    if ( !command ) {
+
+#warning !Qstring == QString.isEmpty ???
+    if ( command.isEmpty() ) {
       qApp->quit();
     }
   }
@@ -233,8 +241,8 @@ void KSysTrayCmd::execContextMenu( const QPoint &pos )
     KPopupMenu *menu = new KPopupMenu();
     menu->insertTitle( *pixmap(), i18n( "KSysTrayCmd" ) );
     int hideShowId = menu->insertItem( isVisible ? i18n( "&Hide" ) : i18n( "&Restore" ) );
-    int undockId = menu->insertItem( SmallIcon("close"), i18n( "&Undock" ) );
-    int quitId = menu->insertItem( SmallIcon("exit"), i18n( "&Quit" ) );
+    int undockId = menu->insertItem( QIcon(SmallIcon("close")), i18n( "&Undock" ) );
+    int quitId = menu->insertItem( QIcon(SmallIcon("exit")), i18n( "&Quit" ) );
 
     int cmd = menu->exec( pos );
 
@@ -251,7 +259,7 @@ void KSysTrayCmd::execContextMenu( const QPoint &pos )
       }
       else if ( quitOnHide && ( hasRunningClient() ) && isVisible )
       {
-        NETRootInfo ri( qt_xdisplay(), NET::CloseWindow );
+        NETRootInfo ri( QX11Info::display(), NET::CloseWindow );
         ri.closeWindowRequest( win );
         isVisible=false;
       }
@@ -264,7 +272,7 @@ void KSysTrayCmd::execContextMenu( const QPoint &pos )
 
 void KSysTrayCmd::checkExistingWindows()
 {
-  QValueList<WId>::ConstIterator it;
+  QList<WId>::ConstIterator it;
   for ( it = kwinmodule->windows().begin(); it != kwinmodule->windows().end(); ++it ) {
     windowAdded( *it );
     if ( win )
@@ -292,7 +300,7 @@ void KSysTrayCmd::windowChanged( WId w )
 
 void KSysTrayCmd::mousePressEvent( QMouseEvent *e )
 {
-  if ( e->button() == RightButton )
+  if ( e->button() == Qt::RightButton )
     execContextMenu( e->globalPos() );
   else if ( lazyStart && ( !hasRunningClient() ) )
   {
@@ -301,7 +309,7 @@ void KSysTrayCmd::mousePressEvent( QMouseEvent *e )
   }
   else if ( quitOnHide && ( hasRunningClient() ) && isVisible )
   {
-    NETRootInfo ri( qt_xdisplay(), NET::CloseWindow );
+    NETRootInfo ri( QX11Info::display(), NET::CloseWindow );
     ri.closeWindowRequest( win );
     isVisible=false;
   }
@@ -313,12 +321,12 @@ WId KSysTrayCmd::findRealWindow( WId w, int depth )
 {
     if( depth > 5 )
 	return None;
-    static Atom wm_state = XInternAtom( qt_xdisplay(), "WM_STATE", False );
+    static Atom wm_state = XInternAtom( QX11Info::display(), "WM_STATE", False );
     Atom type;
     int format;
     unsigned long nitems, after;
     unsigned char* prop;
-    if( XGetWindowProperty( qt_xdisplay(), w, wm_state, 0, 0, False, AnyPropertyType,
+    if( XGetWindowProperty( QX11Info::display(), w, wm_state, 0, 0, False, AnyPropertyType,
 	&type, &format, &nitems, &after, &prop ) == Success ) {
 	if( prop != NULL )
 	    XFree( prop );
@@ -329,7 +337,7 @@ WId KSysTrayCmd::findRealWindow( WId w, int depth )
     Window* children;
     unsigned int nchildren;
     Window ret = None;
-    if( XQueryTree( qt_xdisplay(), w, &root, &parent, &children, &nchildren ) != 0 ) {
+    if( XQueryTree( QX11Info::display(), w, &root, &parent, &children, &nchildren ) != 0 ) {
 	for( unsigned int i = 0;
 	     i < nchildren && ret == None;
 	     ++i )

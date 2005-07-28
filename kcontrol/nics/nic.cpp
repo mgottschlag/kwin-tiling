@@ -36,10 +36,14 @@
 #include <kglobal.h>
 
 #include <qlayout.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qtabwidget.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <Q3PtrList>
 
 #include "nic.h"
 
@@ -79,15 +83,15 @@ struct MyNIC
    QString type;
 };
 
-typedef QPtrList<MyNIC> NICList;
+typedef Q3PtrList<MyNIC> NICList;
 
 NICList* findNICs();
 
-KCMNic::KCMNic(QWidget *parent, const char * name, const QStringList &)
-   :KCModule(KCMNicFactory::instance(), parent,name)
+KCMNic::KCMNic(QWidget *parent, const char *, const QStringList &)
+   :KCModule(KCMNicFactory::instance(), parent)
 {
    QVBoxLayout *box=new QVBoxLayout(this, 0, KDialog::spacingHint());
-   m_list=new QListView(this);
+   m_list=new Q3ListView(this);
    box->addWidget(m_list);
    m_list->addColumn(i18n("Name"));
    m_list->addColumn(i18n("IP Address"));
@@ -121,7 +125,7 @@ void KCMNic::update()
    NICList *nics=findNICs();
    nics->setAutoDelete(true);
    for (MyNIC* tmp=nics->first(); tmp!=0; tmp=nics->next())
-      new QListViewItem(m_list,tmp->name, tmp->addr, tmp->netmask, tmp->type, tmp->state);
+      new Q3ListViewItem(m_list,tmp->name, tmp->addr, tmp->netmask, tmp->type, tmp->state);
    delete nics;
 }
 

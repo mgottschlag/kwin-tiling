@@ -30,12 +30,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qobject.h>
 #include <qpixmap.h>
 #include <qpoint.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qpixmap.h>
-#include <qdragobject.h>
+#include <q3dragobject.h>
 #include <qrect.h>
-#include <qvaluelist.h>
-#include <qvaluevector.h>
+#include <q3valuelist.h>
+#include <q3valuevector.h>
 
 #include <ksharedptr.h>
 #include <kstartupinfo.h>
@@ -50,6 +50,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xfixes.h>
 #include <X11/extensions/Xrender.h>
+#include <fixx11h.h>
 #if XCOMPOSITE_VERSION >= 00200 && \
     XFIXES_VERSION >= 20000 && \
     (RENDER_MAJOR > 0 || RENDER_MINOR >= 6)
@@ -60,7 +61,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class KWinModule;
 class TaskManager;
 
-typedef QValueList<WId> WindowList;
+typedef QList<WId> WindowList;
 
 /**
  * A dynamic interface to a task (main window).
@@ -95,9 +96,9 @@ class KDE_EXPORT Task: public QObject, public KShared
     Q_PROPERTY( QPixmap thumbnail READ thumbnail )
 
 public:
-    typedef KSharedPtr<Task> Ptr;
-    typedef QValueVector<Task::Ptr> List;
-    typedef QMap<WId, Task::Ptr> Dict;
+    typedef KSharedPtr<Task> TaskPtr;
+    typedef QVector<Task::TaskPtr> List;
+    typedef QMap<WId, Task::TaskPtr> Dict;
 
     Task(WId win, QObject *parent, const char *name = 0);
     virtual ~Task();
@@ -478,7 +479,7 @@ private:
 /**
  * Provids a drag object for tasks across desktops.
  */
-class KDE_EXPORT TaskDrag : public QStoredDrag
+class KDE_EXPORT TaskDrag : public Q3StoredDrag
 {
 public:
     /**
@@ -514,8 +515,8 @@ class KDE_EXPORT Startup: public QObject, public KShared
     Q_PROPERTY( QString icon READ icon )
 
 public:
-    typedef KSharedPtr<Startup> Ptr;
-    typedef QValueVector<Startup::Ptr> List;
+    typedef KSharedPtr<Startup> StartupPtr;
+    typedef QVector<Startup::StartupPtr> List;
 
     Startup( const KStartupInfoId& id, const KStartupInfoData& data, QObject * parent,
         const char *name = 0);
@@ -573,12 +574,12 @@ public:
     /**
      * Returns the task for a given WId, or 0 if there is no such task.
      */
-    Task::Ptr findTask(WId w);
+    Task::TaskPtr findTask(WId w);
 
     /**
      * Returns the task for a given location, or 0 if there is no such task.
      */
-    Task::Ptr findTask(int desktop, const QPoint& p);
+    Task::TaskPtr findTask(int desktop, const QPoint& p);
 
     /**
      * Returns a list of all current tasks.
@@ -631,24 +632,24 @@ signals:
     /**
      * Emitted when a new task has started.
      */
-    void taskAdded(Task::Ptr);
+    void taskAdded(Task::TaskPtr);
 
     /**
      * Emitted when a task has terminated.
      */
-    void taskRemoved(Task::Ptr);
+    void taskRemoved(Task::TaskPtr);
 
     /**
      * Emitted when a new task is expected.
      */
-    void startupAdded(Startup::Ptr);
+    void startupAdded(Startup::StartupPtr);
 
     /**
      * Emitted when a startup item should be removed. This could be because
      * the task has started, because it is known to have died, or simply
      * as a result of a timeout.
      */
-    void startupRemoved(Startup::Ptr);
+    void startupRemoved(Startup::StartupPtr);
 
     /**
      * Emitted when the current desktop changes.
@@ -658,8 +659,8 @@ signals:
     /**
      * Emitted when a window changes desktop.
      */
-    void windowChanged(Task::Ptr);
-    void windowChangedGeometry(Task::Ptr);
+    void windowChanged(Task::TaskPtr);
+    void windowChangedGeometry(Task::TaskPtr);
 
 protected slots:
     //* @internal
@@ -676,7 +677,7 @@ protected slots:
     //* @internal
     void killStartup( const KStartupInfoId& );
     //* @internal
-    void killStartup(Startup::Ptr);
+    void killStartup(Startup::StartupPtr);
 
     //* @internal
     void gotNewStartup( const KStartupInfoId&, const KStartupInfoData& );
@@ -690,7 +691,7 @@ protected:
 private:
     TaskManager();
 
-    Task::Ptr               _active;
+    Task::TaskPtr               _active;
     Task::Dict m_tasksByWId;
     WindowList _skiptaskbar_windows;
     Startup::List _startups;

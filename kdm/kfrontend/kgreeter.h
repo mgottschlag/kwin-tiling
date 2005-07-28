@@ -28,6 +28,11 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "kgverify.h"
 #include "kgdialog.h"
+//Added by qt3to4:
+#include <QLabel>
+#include <QKeyEvent>
+#include <QEvent>
+#include <QVector>
 
 class KdmClock;
 class UserListView;
@@ -39,8 +44,8 @@ class KSimpleConfig;
 
 class QLabel;
 class QPushButton;
-class QPopupMenu;
-class QListViewItem;
+class Q3PopupMenu;
+class Q3ListViewItem;
 
 struct SessType {
 	QString name, type;
@@ -50,7 +55,7 @@ struct SessType {
 	SessType() {}
 	SessType( const QString &n, const QString &t, bool h, int p ) :
 		name( n ), type( t ), hid( h ), prio( p ) {}
-	bool operator<( const SessType &st ) {
+	bool operator<( const SessType &st ) const {
 		return hid != st.hid ? hid < st.hid :
 		       prio != st.prio ? prio < st.prio :
 		       name < st.name;
@@ -68,7 +73,7 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
   public slots:
 	void accept();
 	void reject();
-	void slotUserClicked( QListViewItem * );
+	void slotUserClicked( Q3ListViewItem * );
 	void slotSessionSelected( int );
 	void slotUserEntered();
 
@@ -85,8 +90,8 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 	KSimpleConfig *stsFile;
 	UserListView *userView;
 	QStringList *userList;
-	QPopupMenu *sessMenu;
-	QValueVector<SessType> sessionTypes;
+	Q3PopupMenu *sessMenu;
+	QVector<SessType> sessionTypes;
 	int nNormals, nSpecials;
 	int curPrev, curSel;
 	bool prevValid;

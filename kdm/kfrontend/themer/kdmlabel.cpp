@@ -61,7 +61,7 @@ KdmLabel::KdmLabel( KdmItem *parent, const QDomNode &node, const char *name )
 	// Read LABEL TAGS
 	QDomNodeList childList = node.childNodes();
 	bool stockUsed = false;
-	for (uint nod = 0; nod < childList.count(); nod++) {
+	for (int nod = 0; nod < childList.count(); nod++) {
 		QDomNode child = childList.item( nod );
 		QDomElement el = child.toElement();
 		QString tagName = el.tagName();
@@ -118,7 +118,7 @@ KdmLabel::sizeHint()
 	else if (state == Sprelight && label.prelight.present)
 		l = &label.prelight;
 	// get the hint from font metrics
-	QSize hint = QFontMetrics( l->font ).size( AlignLeft | SingleLine, cText );
+	QSize hint = QFontMetrics( l->font ).size( Qt::AlignLeft | Qt::SingleLine, cText );
 	// clip the result using the max-width label(pos) parameter
 	if (label.maximumWidth > 0 && hint.width() > label.maximumWidth)
 		hint.setWidth( label.maximumWidth );
@@ -138,7 +138,7 @@ KdmLabel::drawContents( QPainter *p, const QRect &/*r*/  )
 	p->setFont( l->font );
 	p->setPen( l->color );
 	//TODO paint clipped (tested but not working..)
-	p->drawText( area, AlignLeft | SingleLine, cText );
+	p->drawText( area, Qt::AlignLeft | Qt::TextSingleLine, cText );
 }
 
 void

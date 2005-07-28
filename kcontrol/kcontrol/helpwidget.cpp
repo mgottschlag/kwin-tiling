@@ -18,6 +18,8 @@
 */
 
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <klocale.h>
 #include <kdebug.h>
@@ -54,8 +56,13 @@ void HelpWidget::setText( const QString& docPath, const QString& text)
   else if (docPath.isEmpty())
     _browser->setText(text);
   else
+  {
+    QByteArray a = docPath.toLocal8Bit();
+    QString path = QString::fromLocal8Bit (a.data(), a.size());
+  
     _browser->setText(text + i18n("<p>Use the \"Whats This\" (Shift+F1) to get help on specific options.</p><p>To read the full manual click <a href=\"%1\">here</a>.</p>")
-		      .arg(docPath.local8Bit()));
+		      .arg(path));
+  }
 }
 
 void HelpWidget::setBaseText()

@@ -22,14 +22,16 @@
 #ifndef tzone_included
 #define tzone_included
 
+#include <q3groupbox.h>
+//Added by qt3to4:
+#include <QLabel>
 #include <ktimezones.h>
 #include <ktimezonewidget.h>
-#include <qvgroupbox.h>
 
 class QComboBox;
 class QLabel;
 
-class Tzone : public QVGroupBox
+class Tzone : public QGroupBox
 {
   Q_OBJECT
 

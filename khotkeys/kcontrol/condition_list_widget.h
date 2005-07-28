@@ -11,8 +11,8 @@
 #ifndef _CONDITIONS_LIST_WIDGET_H_
 #define _CONDITIONS_LIST_WIDGET_H_
 
-#include <qlistview.h>
-#include <qptrlist.h>
+#include <q3listview.h>
+#include <q3ptrlist.h>
 
 #include <kdialogbase.h>
 
@@ -39,8 +39,8 @@ class Condition_list_widget
     public slots:
         void clear_data();
     protected:
-        Condition_list_item* create_listview_item( Condition* condition_P, QListView* parent1_P,
-            Condition_list_item* parent2_P, QListViewItem* after_P, bool copy_P );
+        Condition_list_item* create_listview_item( Condition* condition_P, Q3ListView* parent1_P,
+            Condition_list_item* parent2_P, Q3ListViewItem* after_P, bool copy_P );
         void edit_listview_item( Condition_list_item* item_P );
         enum type_t { TYPE_ACTIVE_WINDOW, TYPE_EXISTING_WINDOW, TYPE_NOT, TYPE_AND, TYPE_OR };
     protected slots:
@@ -48,25 +48,25 @@ class Condition_list_widget
         virtual void copy_pressed();
         virtual void delete_pressed();
         virtual void modify_pressed();
-        virtual void current_changed( QListViewItem* item_P );
+        virtual void current_changed( Q3ListViewItem* item_P );
     private:
         void insert_listview_items( const Condition_list_base* parent_P,
-            QListView* parent1_P, Condition_list_item* parent2_P );
-        void get_listview_items( Condition_list_base* list_P, QListViewItem* first_item_P ) const;
+            Q3ListView* parent1_P, Condition_list_item* parent2_P );
+        void get_listview_items( Condition_list_base* list_P, Q3ListViewItem* first_item_P ) const;
         Condition_list_item* selected_item;
-        QPtrList< Condition > conditions;
+        Q3PtrList< Condition > conditions;
     };
 
 typedef Condition_list_widget Condition_list_tab;
 
 class Condition_list_item
-    : public QListViewItem
+    : public Q3ListViewItem
     {
     public:
-        Condition_list_item( QListView* parent_P, Condition* condition_P );
-        Condition_list_item( QListViewItem* parent_P, Condition* condition_P );
-        Condition_list_item( QListView* parent_P, QListViewItem* after_P, Condition* condition_P );
-        Condition_list_item( QListViewItem* parent_P, QListViewItem* after_P,
+        Condition_list_item( Q3ListView* parent_P, Condition* condition_P );
+        Condition_list_item( Q3ListViewItem* parent_P, Condition* condition_P );
+        Condition_list_item( Q3ListView* parent_P, Q3ListViewItem* after_P, Condition* condition_P );
+        Condition_list_item( Q3ListViewItem* parent_P, Q3ListViewItem* after_P,
             Condition* condition_P );
         virtual QString text( int column_P ) const;
         Condition* condition() const;
@@ -116,28 +116,28 @@ class Existing_window_condition_dialog
 // Condition_list_item
 
 inline
-Condition_list_item::Condition_list_item( QListView* parent_P, Condition* condition_P )
-    : QListViewItem( parent_P ), _condition( condition_P )
+Condition_list_item::Condition_list_item( Q3ListView* parent_P, Condition* condition_P )
+    : Q3ListViewItem( parent_P ), _condition( condition_P )
     {
     }
     
 inline
-Condition_list_item::Condition_list_item( QListViewItem* parent_P, Condition* condition_P )
-    : QListViewItem( parent_P ), _condition( condition_P )
+Condition_list_item::Condition_list_item( Q3ListViewItem* parent_P, Condition* condition_P )
+    : Q3ListViewItem( parent_P ), _condition( condition_P )
     {
     }
 
 inline
-Condition_list_item::Condition_list_item( QListView* parent_P, QListViewItem* after_P,
+Condition_list_item::Condition_list_item( Q3ListView* parent_P, Q3ListViewItem* after_P,
     Condition* condition_P )
-    : QListViewItem( parent_P, after_P ), _condition( condition_P )
+    : Q3ListViewItem( parent_P, after_P ), _condition( condition_P )
     {
     }
 
 inline
-Condition_list_item::Condition_list_item( QListViewItem* parent_P, QListViewItem* after_P,
+Condition_list_item::Condition_list_item( Q3ListViewItem* parent_P, Q3ListViewItem* after_P,
     Condition* condition_P )
-    : QListViewItem( parent_P, after_P ), _condition( condition_P )
+    : Q3ListViewItem( parent_P, after_P ), _condition( condition_P )
     {
     }
 

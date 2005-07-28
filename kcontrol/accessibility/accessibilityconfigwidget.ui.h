@@ -12,7 +12,7 @@ void AccessibilityConfigWidget::updateFlashScreenColor(){
 }
 
 
-void AccessibilityConfigWidget::configChanged()
+void AccessibilityConfigWidget::changed()
 {
 
 }

@@ -21,6 +21,9 @@
 #define __moduleiconview_h__
 
 #include <klistview.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QKeyEvent>
 
 class ConfigModule;
 class ConfigModuleList;
@@ -29,7 +32,7 @@ class ModuleIconItem : public KListViewItem
 {
 
 public:
-  ModuleIconItem(QListView *parent, const QString& text, const QPixmap& pm, ConfigModule *m = 0)
+  ModuleIconItem(Q3ListView *parent, const QString& text, const QPixmap& pm, ConfigModule *m = 0)
 	: KListViewItem(parent, text)
 	, _tag(QString::null)
 	, _module(m)
@@ -69,7 +72,7 @@ signals:
   void moduleSelected(ConfigModule*);
 
 protected slots:
-  void slotItemSelected(QListViewItem*);
+  void slotItemSelected(Q3ListViewItem*);
 
 protected:
   void keyPressEvent(QKeyEvent *);

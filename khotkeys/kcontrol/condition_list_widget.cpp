@@ -18,9 +18,9 @@
 
 #include <assert.h>
 #include <qpushbutton.h>
-#include <qheader.h>
+#include <q3header.h>
 #include <qlineedit.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -43,13 +43,13 @@ Condition_list_widget::Condition_list_widget( QWidget* parent_P, const char* nam
     : Condition_list_widget_ui( parent_P, name_P ), selected_item( NULL )
     {
     conditions.setAutoDelete( true );
-    QPopupMenu* popup = new QPopupMenu; // CHECKME looks like setting parent doesn't work
+    Q3PopupMenu* popup = new Q3PopupMenu; // CHECKME looks like setting parent doesn't work
     popup->insertItem( i18n( "Active Window..." ), TYPE_ACTIVE_WINDOW );
     popup->insertItem( i18n( "Existing Window..." ), TYPE_EXISTING_WINDOW );
     popup->insertItem( i18n( "Not_condition", "Not" ), TYPE_NOT );
     popup->insertItem( i18n( "And_condition", "And" ), TYPE_AND );
     popup->insertItem( i18n( "Or_condition", "Or" ), TYPE_OR );
-    connect( conditions_listview, SIGNAL( doubleClicked ( QListViewItem *, const QPoint &, int ) ),
+    connect( conditions_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
              this, SLOT( modify_pressed() ) );
 
     connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
@@ -106,7 +106,7 @@ void Condition_list_widget::set_data( const Condition_list* data_P )
     }
 
 void Condition_list_widget::insert_listview_items( const Condition_list_base* parent_P,
-    QListView* parent1_P, Condition_list_item* parent2_P )
+    Q3ListView* parent1_P, Condition_list_item* parent2_P )
     {
     Condition_list_item* prev = NULL;
     for( Condition_list_base::Iterator it( *parent_P );
@@ -132,10 +132,10 @@ Condition_list* Condition_list_widget::get_data( Action_data_base* data_P ) cons
     }
 
 void Condition_list_widget::get_listview_items( Condition_list_base* list_P,
-    QListViewItem* first_item_P ) const
+    Q3ListViewItem* first_item_P ) const
     {
     list_P->clear();
-    for( QListViewItem* pos = first_item_P;
+    for( Q3ListViewItem* pos = first_item_P;
          pos != NULL;
          pos = pos->nextSibling())
         {
@@ -231,7 +231,7 @@ void Condition_list_widget::modify_pressed()
     edit_listview_item( selected_item );
     }
 
-void Condition_list_widget::current_changed( QListViewItem* item_P )
+void Condition_list_widget::current_changed( Q3ListViewItem* item_P )
     {
 //    if( item_P == selected_item )
 //        return;
@@ -255,7 +255,7 @@ void Condition_list_widget::current_changed( QListViewItem* item_P )
     }
 
 Condition_list_item* Condition_list_widget::create_listview_item( Condition* condition_P,
-    QListView* parent1_P, Condition_list_item* parent2_P, QListViewItem* after_P, bool copy_P )
+    Q3ListView* parent1_P, Condition_list_item* parent2_P, Q3ListViewItem* after_P, bool copy_P )
     {
 #ifdef KHOTKEYS_DEBUG
     kdDebug( 1217 ) << "Condition_list_widget::create_listview_item():" << endl;

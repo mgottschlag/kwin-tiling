@@ -14,6 +14,8 @@
 
 #include <qfile.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <QTextStream>
 
 
 #include <kstandarddirs.h>
@@ -33,7 +35,7 @@ USBDB::USBDB()
 
   QFile f(db);
 
-  if (f.open(IO_ReadOnly))
+  if (f.open(QIODevice::ReadOnly))
     {
       QTextStream ts(&f);
 
@@ -44,7 +46,7 @@ USBDB::USBDB()
       QRegExp cls("C [0-9a-fA-F][0-9a-fA-F]");
       QRegExp subclass("\\s+[0-9a-fA-F][0-9a-fA-F]  ");
       QRegExp prot("\\s+[0-9a-fA-F][0-9a-fA-F]  ");
-      while (!ts.eof())
+      while (!ts.atEnd())
 	{
 	  line = ts.readLine();
 	  if (line.left(1) == "#" || line.stripWhiteSpace().isEmpty())

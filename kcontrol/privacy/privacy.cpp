@@ -20,11 +20,14 @@
 
 #include <qcheckbox.h>
 #include <qlayout.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qpushbutton.h>
 #include <qtabwidget.h>
 #include <qtooltip.h>
-#include <qwhatsthis.h>
+
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QBoxLayout>
 
 #include <kaboutdata.h>
 #include <kconfig.h>
@@ -78,7 +81,7 @@ Privacy::Privacy(QWidget *parent, const char *name)
 
   sw->setRootIsDecorated(true);
   sw->setTooltipColumn(1);
-  sw->setColumnWidthMode(0, QListView::Maximum);
+  sw->setColumnWidthMode(0, Q3ListView::Maximum);
 
 
 
@@ -88,29 +91,29 @@ Privacy::Privacy(QWidget *parent, const char *name)
   generalCLI->setOpen(true);
   webbrowsingCLI->setOpen(true);
 
-  clearThumbnails = new QCheckListItem(generalCLI,
-      i18n("Thumbnail Cache"),QCheckListItem::CheckBox);
-  clearRunCommandHistory = new QCheckListItem(generalCLI,
-      i18n("Run Command History"),QCheckListItem::CheckBox);
-  clearAllCookies = new QCheckListItem(webbrowsingCLI,
-      i18n("Cookies"),QCheckListItem::CheckBox);
-  clearSavedClipboardContents = new QCheckListItem(generalCLI,
-      i18n("Saved Clipboard Contents"),QCheckListItem::CheckBox);
-  clearWebHistory = new QCheckListItem(webbrowsingCLI,
-      i18n("Web History"),QCheckListItem::CheckBox);
-  clearWebCache = new QCheckListItem(webbrowsingCLI,
-      i18n("Web Cache"),QCheckListItem::CheckBox);
-  clearFormCompletion = new QCheckListItem(webbrowsingCLI,
-      i18n("Form Completion Entries"),QCheckListItem::CheckBox);
-  clearRecentDocuments = new QCheckListItem(generalCLI,
-      i18n("Recent Documents"),QCheckListItem::CheckBox);
-  clearQuickStartMenu = new QCheckListItem(generalCLI,
-      i18n("Quick Start Menu"),QCheckListItem::CheckBox);
-  clearFavIcons = new QCheckListItem(webbrowsingCLI,
-      i18n("Favorite Icons"),QCheckListItem::CheckBox);
+  clearThumbnails = new Q3CheckListItem(generalCLI,
+      i18n("Thumbnail Cache"),Q3CheckListItem::CheckBox);
+  clearRunCommandHistory = new Q3CheckListItem(generalCLI,
+      i18n("Run Command History"),Q3CheckListItem::CheckBox);
+  clearAllCookies = new Q3CheckListItem(webbrowsingCLI,
+      i18n("Cookies"),Q3CheckListItem::CheckBox);
+  clearSavedClipboardContents = new Q3CheckListItem(generalCLI,
+      i18n("Saved Clipboard Contents"),Q3CheckListItem::CheckBox);
+  clearWebHistory = new Q3CheckListItem(webbrowsingCLI,
+      i18n("Web History"),Q3CheckListItem::CheckBox);
+  clearWebCache = new Q3CheckListItem(webbrowsingCLI,
+      i18n("Web Cache"),Q3CheckListItem::CheckBox);
+  clearFormCompletion = new Q3CheckListItem(webbrowsingCLI,
+      i18n("Form Completion Entries"),Q3CheckListItem::CheckBox);
+  clearRecentDocuments = new Q3CheckListItem(generalCLI,
+      i18n("Recent Documents"),Q3CheckListItem::CheckBox);
+  clearQuickStartMenu = new Q3CheckListItem(generalCLI,
+      i18n("Quick Start Menu"),Q3CheckListItem::CheckBox);
+  clearFavIcons = new Q3CheckListItem(webbrowsingCLI,
+      i18n("Favorite Icons"),Q3CheckListItem::CheckBox);
 
-  QWhatsThis::add(sw, i18n("Check all cleanup actions you would like to perform. These will be executed by pressing the button below"));
-  QWhatsThis::add(cleaningDialog->cleanupButton, i18n("Immediately performs the cleanup actions selected above"));
+  sw->setWhatsThis( i18n("Check all cleanup actions you would like to perform. These will be executed by pressing the button below"));
+  cleaningDialog->cleanupButton->setWhatsThis( i18n("Immediately performs the cleanup actions selected above"));
 
   clearThumbnails->setText(1, i18n("Clears all cached thumbnails"));
   clearRunCommandHistory->setText(1, i18n("Clears the history of commands run through the Run Command tool on the desktop"));
@@ -223,7 +226,7 @@ void Privacy::save()
 
 void Privacy::selectAll()
 {
-  QCheckListItem *item;
+  Q3CheckListItem *item;
 
   for ( item  = checklist.first(); item; item = checklist.next() )
     item->setOn(true);
@@ -233,7 +236,7 @@ void Privacy::selectAll()
 
 void Privacy::selectNone()
 {
-  QCheckListItem *item;
+  Q3CheckListItem *item;
 
   for ( item  = checklist.first(); item; item = checklist.next() )
     item->setOn(false);
@@ -249,7 +252,7 @@ void Privacy::cleanup()
   cleaningDialog->statusTextEdit->clear();
   cleaningDialog->statusTextEdit->setText(i18n("Starting cleanup..."));
 
-  QCheckListItem *item;
+  Q3CheckListItem *item;
   bool error = false;
 
   for ( item  = checklist.first(); item; item = checklist.next() )

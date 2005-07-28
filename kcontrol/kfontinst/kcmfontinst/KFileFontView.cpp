@@ -34,10 +34,16 @@
 //
 
 #include <qevent.h>
-#include <qkeycode.h>
-#include <qheader.h>
+#include <qnamespace.h>
+#include <q3header.h>
 #include <qpainter.h>
 #include <qpixmap.h>
+//Added by qt3to4:
+#include <QDragEnterEvent>
+#include <QDragLeaveEvent>
+#include <QDragMoveEvent>
+#include <QKeyEvent>
+#include <QDropEvent>
 #include <kapplication.h>
 #include <kfileitem.h>
 #include <kglobal.h>
@@ -80,11 +86,11 @@ CKFileFontView::CKFileFontView(QWidget *parent, const char *name)
     setDragEnabled(false);
 
     connect(header(), SIGNAL(sectionClicked(int)), SLOT(slotSortingChanged(int)));
-    connect(this, SIGNAL(returnPressed(QListViewItem *)), SLOT(slotActivate(QListViewItem *)));
-    connect(this, SIGNAL(clicked(QListViewItem *, const QPoint&, int)), SLOT(selected( QListViewItem *)));
-    connect(this, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int)), SLOT(slotActivate(QListViewItem *)));
-    connect(this, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint &, int)),
-	    this, SLOT(slotActivateMenu(QListViewItem *, const QPoint &)));
+    connect(this, SIGNAL(returnPressed(Q3ListViewItem *)), SLOT(slotActivate(Q3ListViewItem *)));
+    connect(this, SIGNAL(clicked(Q3ListViewItem *, const QPoint&, int)), SLOT(selected( Q3ListViewItem *)));
+    connect(this, SIGNAL(doubleClicked(Q3ListViewItem *, const QPoint &, int)), SLOT(slotActivate(Q3ListViewItem *)));
+    connect(this, SIGNAL(contextMenuRequested(Q3ListViewItem *, const QPoint &, int)),
+	    this, SLOT(slotActivateMenu(Q3ListViewItem *, const QPoint &)));
 
     // DND
     connect(&(d->itsAutoOpenTimer), SIGNAL(timeout()), this, SLOT(slotAutoOpen()));
@@ -144,7 +150,7 @@ void CKFileFontView::invertSelection()
     KListView::invertSelection();
 }
 
-void CKFileFontView::slotActivateMenu(QListViewItem *item,const QPoint& pos)
+void CKFileFontView::slotActivateMenu(Q3ListViewItem *item,const QPoint& pos)
 {
     if (!item)
         sig->activateMenu(0, pos);
@@ -165,7 +171,7 @@ void CKFileFontView::insertItem(KFileItem *i)
 {
     KFileView::insertItem(i);
 
-    CFontListViewItem *item = new CFontListViewItem((QListView*) this, i);
+    CFontListViewItem *item = new CFontListViewItem((Q3ListView*) this, i);
 
     setSortingKey(item, i);
 
@@ -175,7 +181,7 @@ void CKFileFontView::insertItem(KFileItem *i)
         itsResolver->m_lstPendingMimeIconItems.append(item);
 }
 
-void CKFileFontView::slotActivate(QListViewItem *item)
+void CKFileFontView::slotActivate(Q3ListViewItem *item)
 {
     if (item)
     {
@@ -186,9 +192,9 @@ void CKFileFontView::slotActivate(QListViewItem *item)
     }
 }
 
-void CKFileFontView::selected(QListViewItem *item)
+void CKFileFontView::selected(Q3ListViewItem *item)
 {
-    if (item && !(KApplication::keyboardMouseState() & (ShiftButton|ControlButton)) &&
+    if (item && !(KApplication::keyboardMouseState() & (Qt::ShiftButton|Qt::ControlButton)) &&
          KGlobalSettings::singleClick())
     {
         const KFileItem *fi = ((CFontListViewItem*)item)->fileInfo();
@@ -198,7 +204,7 @@ void CKFileFontView::selected(QListViewItem *item)
     }
 }
 
-void CKFileFontView::highlighted( QListViewItem *item )
+void CKFileFontView::highlighted( Q3ListViewItem *item )
 {
     if (item)
     {
@@ -212,22 +218,22 @@ void CKFileFontView::highlighted( QListViewItem *item )
 void CKFileFontView::setSelectionMode(KFile::SelectionMode sm)
 {
     disconnect(SIGNAL(selectionChanged()), this);
-    disconnect(SIGNAL(selectionChanged(QListViewItem *)), this);
+    disconnect(SIGNAL(selectionChanged(Q3ListViewItem *)), this);
 
     switch (sm)
     {
         case KFile::Multi:
-            QListView::setSelectionMode(QListView::Multi);
+            Q3ListView::setSelectionMode(Q3ListView::Multi);
             break;
         case KFile::Extended:
-            QListView::setSelectionMode(QListView::Extended);
+            Q3ListView::setSelectionMode(Q3ListView::Extended);
             break;
         case KFile::NoSelection:
-            QListView::setSelectionMode(QListView::NoSelection);
+            Q3ListView::setSelectionMode(Q3ListView::NoSelection);
             break;
         default: // fall through
         case KFile::Single:
-            QListView::setSelectionMode(QListView::Single);
+            Q3ListView::setSelectionMode(Q3ListView::Single);
             break;
     }
 
@@ -235,7 +241,7 @@ void CKFileFontView::setSelectionMode(KFile::SelectionMode sm)
     if (KFile::Multi==sm || KFile::Extended==sm)
         connect(this, SIGNAL(selectionChanged()), SLOT(slotSelectionChanged()));
     else
-        connect(this, SIGNAL(selectionChanged(QListViewItem *)), SLOT(highlighted(QListViewItem * )));
+        connect(this, SIGNAL(selectionChanged(Q3ListViewItem *)), SLOT(highlighted(Q3ListViewItem * )));
 }
 
 bool CKFileFontView::isSelected(const KFileItem *i) const
@@ -255,7 +261,7 @@ void CKFileFontView::updateView(bool b)
 {
     if (b)
     {
-        QListViewItemIterator it((QListView*)this);
+        Q3ListViewItemIterator it((Q3ListView*)this);
 
         for (; it.current(); ++it)
         {
@@ -428,8 +434,8 @@ void CKFileFontView::keyPressEvent(QKeyEvent *e)
 {
     KListView::keyPressEvent(e);
 
-    if (Key_Return==e->key() || Key_Enter==e->key())
-        if (e->state() & ControlButton)
+    if (Qt::Key_Return==e->key() || Qt::Key_Enter==e->key())
+        if (e->state() & Qt::ControlButton)
             e->ignore();
         else
             e->accept();
@@ -454,7 +460,7 @@ void CKFileFontView::listingCompleted()
     itsResolver->start();
 }
 
-QDragObject *CKFileFontView::dragObject()
+Q3DragObject *CKFileFontView::dragObject()
 {
     // create a list of the URL:s that we want to drag
     KURL::List            urls;
@@ -473,7 +479,7 @@ QDragObject *CKFileFontView::dragObject()
     hotspot.setX(pixmap.width() / 2);
     hotspot.setY(pixmap.height() / 2);
 
-    QDragObject *dragObject=new KURLDrag(urls, widget());
+    Q3DragObject *dragObject=new KURLDrag(urls, widget());
 
     if(dragObject)
         dragObject->setPixmap(pixmap, hotspot);

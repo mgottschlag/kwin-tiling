@@ -25,7 +25,7 @@
 #include <qlabel.h>
 #include <qtimer.h>
 #include <qapplication.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -39,7 +39,7 @@ CalDialog::CalDialog(QWidget *parent, JoyDevice *joy)
       KDialogBase::Cancel|KDialogBase::User1, KDialogBase::User1, true, KGuiItem(i18n("Next"))),
     joydev(joy)
 {
-  QVBox *main = makeVBoxMainWidget();
+  Q3VBox *main = makeVBoxMainWidget();
 
   text = new QLabel(main);
   text->setMinimumHeight(200);
@@ -65,7 +65,7 @@ void CalDialog::calibrate()
 
   do
   {
-    qApp->processEvents(2000);
+    qApp->processEvents(QEventLoop::AllEvents, 2000);
   }
   while ( ti.isActive() && (result() != QDialog::Rejected) );
 
@@ -154,7 +154,7 @@ void CalDialog::waitButton(int axis, bool press, int &lastVal)
   // loop until the user presses a button on the device or on the dialog
   do
   {
-    qApp->processEvents(100);
+    qApp->processEvents(QEventLoop::AllEvents, 100);
 
     if ( joydev->getEvent(type, number, value) )
     {

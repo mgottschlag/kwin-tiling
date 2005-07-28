@@ -23,11 +23,12 @@
 #include <qstyle.h>
 #include <qapplication.h>
 #include <qdialog.h>
+#include <QAbstractEventDispatcher>
 #include <qprogressbar.h>
 
 #define COUNTDOWN 30 
 
-AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog", true, WX11BypassWM)
+AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog", true,Qt::WX11BypassWM)
 {
     frame = new QFrame(this);
     frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
@@ -40,11 +41,11 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog",
     QLabel *infoLabel = new QLabel(i18n("<qt>To prevent being logged out, resume using this session by moving the mouse or pressing a key.</qt>"), frame);
 
     mStatusLabel = new QLabel("<b> </b>", frame);
-    mStatusLabel->setAlignment(QLabel::AlignCenter);
+    mStatusLabel->setAlignment(Qt::AlignCenter);
 
     QLabel *mProgressLabel = new QLabel("Time Remaining:", frame);
     mProgressRemaining = new QProgressBar(frame);
-    mProgressRemaining->setPercentageVisible(false);
+    mProgressRemaining->setTextVisible(false);
 
     QVBoxLayout *unlockDialogLayout = new QVBoxLayout( this );
     unlockDialogLayout->addWidget( frame );
@@ -60,7 +61,7 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog",
     // get the time remaining in seconds for the status label
     mRemaining = COUNTDOWN * 25;
 
-    mProgressRemaining->setTotalSteps(COUNTDOWN * 25);
+    mProgressRemaining->setMaximum(COUNTDOWN * 25);
 
     updateInfo(mRemaining);
 
@@ -79,7 +80,7 @@ void AutoLogout::updateInfo(int timeout)
     mStatusLabel->setText(i18n("<nobr><qt>You will be automatically logged out in 1 second</qt></nobr>",
                                "<nobr><qt>You will be automatically logged out in %n seconds</qt></nobr>",
                                timeout / 25) );
-    mProgressRemaining->setProgress(timeout);
+    mProgressRemaining->setValue(timeout);
 }
 
 void AutoLogout::timerEvent(QTimerEvent *ev)
@@ -102,7 +103,7 @@ void AutoLogout::slotActivity()
 
 void AutoLogout::logout()
 {
-	killTimers();
+	QAbstractEventDispatcher::instance()->unregisterTimers(this);
 	DCOPRef("ksmserver","ksmserver").send("logout", 0, 2, 0);
 }
 

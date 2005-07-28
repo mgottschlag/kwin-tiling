@@ -20,6 +20,8 @@
 #include <kdebug.h>
 #include <kapplication.h>
 #include <X11/Xlib.h>
+#include <QDesktopWidget>
+#include <QX11Info>
 
 namespace KHotKeys
 {
@@ -31,7 +33,7 @@ WindowSelector::WindowSelector( QObject* receiver_P, const char* slot_P )
 
 void WindowSelector::select()
     {
-    kapp->desktop()->grabMouse( QCursor( crossCursor ));
+    kapp->desktop()->grabMouse( QCursor( Qt::crossCursor ));
     kapp->installX11EventFilter( this );
     }
 
@@ -54,12 +56,12 @@ WId WindowSelector::findRealWindow( WId w, int depth )
     {
     if( depth > 5 )
 	return None;
-    static Atom wm_state = XInternAtom( qt_xdisplay(), "WM_STATE", False );
+    static Atom wm_state = XInternAtom( QX11Info::display(), "WM_STATE", False );
     Atom type;
     int format;
     unsigned long nitems, after;
     unsigned char* prop;
-    if( XGetWindowProperty( qt_xdisplay(), w, wm_state, 0, 0, False, AnyPropertyType,
+    if( XGetWindowProperty( QX11Info::display(), w, wm_state, 0, 0, False, AnyPropertyType,
 	&type, &format, &nitems, &after, &prop ) == Success )
         {
 	if( prop != NULL )
@@ -71,7 +73,7 @@ WId WindowSelector::findRealWindow( WId w, int depth )
     Window* children;
     unsigned int nchildren;
     Window ret = None;
-    if( XQueryTree( qt_xdisplay(), w, &root, &parent, &children, &nchildren ) != 0 )
+    if( XQueryTree( QX11Info::display(), w, &root, &parent, &children, &nchildren ) != 0 )
         {
 	for( unsigned int i = 0;
 	     i < nchildren && ret == None;

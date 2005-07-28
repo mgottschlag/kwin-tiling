@@ -22,6 +22,8 @@
 #define _CALDIALOG_H_
 
 #include <kdialogbase.h>
+//Added by qt3to4:
+#include <QLabel>
 
 class QLabel;
 

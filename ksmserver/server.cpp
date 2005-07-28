@@ -58,11 +58,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qdatastream.h>
-#include <qptrstack.h>
 #include <qpushbutton.h>
 #include <qmessagebox.h>
-#include <qguardedptr.h>
 #include <qtimer.h>
+#include <QDesktopWidget>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -95,6 +94,8 @@ const int XNone = None;
 #include <X11/Xutil.h>
 
 #include <dmctl.h>
+#include <QX11Info>
+#include <QApplication>
 
 KSMServer* the_server = 0;
 
@@ -107,16 +108,16 @@ KSMClient::KSMClient( SmsConn conn)
 
 KSMClient::~KSMClient()
 {
-    for ( SmProp* prop = properties.first(); prop; prop = properties.next() )
+	foreach( SmProp *prop, properties )
         SmFreeProperty( prop );
     if (id) free((void*)id);
 }
 
 SmProp* KSMClient::property( const char* name ) const
 {
-    for ( QPtrListIterator<SmProp> it( properties ); it.current(); ++it ) {
-        if ( !qstrcmp( it.current()->name, name ) )
-            return it.current();
+	foreach ( SmProp *prop, properties ) {
+        if ( !qstrcmp( prop->name, name ) )
+            return prop;
     }
     return 0;
 }
@@ -261,10 +262,10 @@ void KSMServer::startApplication( QStringList command, const QString& clientMach
 	command.prepend( xonCommand ); // "xon" by default
     }
     int n = command.count();
-    QCString app = command[0].latin1();
-    QValueList<QCString> argList;
+    QByteArray app = command[0].latin1();
+    QList<QByteArray> argList;
     for ( int i=1; i < n; i++)
-       argList.append( QCString(command[i].latin1()));
+       argList.append( command[i].latin1());
     DCOPRef( launcher ).send( "exec_blind", app, DCOPArg( argList, "QValueList<QCString>" ) );
 }
 
@@ -395,7 +396,7 @@ void KSMSetPropertiesProc (
     for ( int i = 0; i < numProps; i++ ) {
         SmProp *p = client->property( props[i]->name );
         if ( p ) {
-            client->properties.removeRef( p );
+            client->properties.remove( p );
             SmFreeProperty( p );
         }
         client->properties.append( props[i] );
@@ -419,7 +420,7 @@ void KSMDeletePropertiesProc (
     for ( int i = 0; i < numProps; i++ ) {
         SmProp *p = client->property( propNames[i] );
         if ( p ) {
-            client->properties.removeRef( p );
+            client->properties.remove( p );
             SmFreeProperty( p );
         }
     }
@@ -433,7 +434,7 @@ void KSMGetPropertiesProc (
     KSMClient* client = ( KSMClient* ) managerData;
     SmProp** props = new SmProp*[client->properties.count()];
     int i = 0;
-    for ( SmProp* prop = client->properties.first(); prop; prop = client->properties.next() )
+	foreach( SmProp *prop, client->properties )
         props[i++] = prop;
 
     SmsReturnProperties( smsConn, i, props );
@@ -767,15 +768,15 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 
     {
         // publish available transports.
-        QCString fName = QFile::encodeName(locateLocal("socket", "KSMserver"));
-        QCString display = ::getenv("DISPLAY");
+        QByteArray fName = QFile::encodeName(locateLocal("socket", "KSMserver"));
+        QString display = ::getenv("DISPLAY");
         // strip the screen number from the display
         display.replace(QRegExp("\\.[0-9]+$"), "");
         int i;
         while( (i = display.find(':')) >= 0)
            display[i] = '_';
 
-        fName += "_"+display;
+        fName += "_"+display.toLocal8Bit();
         FILE *f;
         f = ::fopen(fName.data(), "w+");
         if (!f)
@@ -802,7 +803,6 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 
     IceAddConnectionWatch (KSMWatchProc, (IcePointer) this);
 
-    listener.setAutoDelete( true );
     KSMListener* con;
     for ( int i = 0; i < numTransports; i++) {
         con = new KSMListener( listenObjs[i] );
@@ -822,6 +822,9 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 
 KSMServer::~KSMServer()
 {
+	foreach( KSMListener*l, listener ) {
+		delete l;
+	}
     the_server = 0;
     cleanUp();
 }
@@ -832,15 +835,15 @@ void KSMServer::cleanUp()
     clean = true;
     IceFreeListenObjs (numTransports, listenObjs);
 
-    QCString fName = QFile::encodeName(locateLocal("socket", "KSMserver"));
-    QCString display = ::getenv("DISPLAY");
+    QByteArray fName = QFile::encodeName(locateLocal("socket", "KSMserver"));
+    QString display  = QString::fromLocal8Bit(::getenv("DISPLAY"));
     // strip the screen number from the display
     display.replace(QRegExp("\\.[0-9]+$"), "");
     int i;
     while( (i = display.find(':')) >= 0)
          display[i] = '_';
 
-    fName += "_"+display;
+    fName += "_"+display.toLocal8Bit();
     ::unlink(fName.data());
 
     FreeAuthenticationData(numTransports, authDataEntries);
@@ -878,12 +881,12 @@ void KSMServer::processData( int /*socket*/ )
     IceProcessMessagesStatus status = IceProcessMessages( iceConn, 0, 0 );
     if ( status == IceProcessMessagesIOError ) {
         IceSetShutdownNegotiation( iceConn, False );
-        QPtrListIterator<KSMClient> it ( clients );
-        while ( it.current() &&SmsGetIceConnection( it.current()->connection() ) != iceConn )
+        QList<KSMClient*>::iterator it = clients.begin();
+        while ( *it && SmsGetIceConnection( ( *it )->connection() ) != iceConn )
             ++it;
-        if ( it.current() ) {
-            SmsConn smsConn = it.current()->connection();
-            deleteClient( it.current() );
+        if ( *it ) {
+            SmsConn smsConn = (*it)->connection();
+            deleteClient( *it );
             SmsCleanUp( smsConn );
         }
         (void) IceCloseConnection( iceConn );
@@ -899,9 +902,9 @@ KSMClient* KSMServer::newClient( SmsConn conn )
 
 void KSMServer::deleteClient( KSMClient* client )
 {
-    if ( clients.findRef( client ) == -1 ) // paranoia
+    if ( !clients.contains( client ) ) // paranoia
         return;
-    clients.removeRef( client );
+    clients.remove( client );
     if ( client == clientInteracting ) {
         clientInteracting = 0;
         handlePendingInteractions();
@@ -998,7 +1001,7 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
 	performLegacySessionSave();
 #endif
         startProtection();
-        for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+		foreach ( KSMClient *c, clients ) {
             c->resetState();
             // Whoever came with the idea of phase 2 got it backwards
             // unfortunately. Window manager should be the very first
@@ -1022,7 +1025,7 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
 
         }
         if( wmPhase1WaitingCount == 0 ) { // no WM, simply start them all
-            for ( KSMClient* c = clients.first(); c; c = clients.next() )
+			foreach ( KSMClient *c, clients )
                 SmsSaveYourself( c->connection(), saveType,
                              true, SmInteractStyleAny, false );
         }
@@ -1054,7 +1057,7 @@ void KSMServer::saveCurrentSession()
 #ifndef NO_LEGACY_SESSION_MANAGEMENT
     performLegacySessionSave();
 #endif
-    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	foreach ( KSMClient *c, clients ) {
         c->resetState();
         if( isWM( c )) {
             ++wmPhase1WaitingCount;
@@ -1062,7 +1065,7 @@ void KSMServer::saveCurrentSession()
         }
     }
     if( wmPhase1WaitingCount == 0 ) {
-        for ( KSMClient* c = clients.first(); c; c = clients.next() )
+		foreach ( KSMClient *c, clients )
             SmsSaveYourself( c->connection(), saveType, false, SmInteractStyleNone, false );
     }
     if ( clients.isEmpty() )
@@ -1105,7 +1108,7 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
         --wmPhase1WaitingCount;
         // WM finished its phase1, save the rest
         if( wmPhase1WaitingCount == 0 ) {
-            for ( KSMClient* c = clients.first(); c; c = clients.next() )
+			foreach ( KSMClient *c, clients )
                 if( !isWM( c ))
                     SmsSaveYourself( c->connection(), saveType, saveType != SmSaveLocal,
                         saveType != SmSaveLocal ? SmInteractStyleAny : SmInteractStyleNone,
@@ -1145,7 +1148,7 @@ void KSMServer::phase2Request( KSMClient* client )
         --wmPhase1WaitingCount;
         // WM finished its phase1 and requests phase2, save the rest
         if( wmPhase1WaitingCount == 0 ) {
-            for ( KSMClient* c = clients.first(); c; c = clients.next() )
+			foreach ( KSMClient *c, clients )
                 if( !isWM( c ))
                     SmsSaveYourself( c->connection(), saveType, saveType != SmSaveLocal,
                         saveType != SmSaveLocal ? SmInteractStyleAny : SmInteractStyleNone,
@@ -1159,7 +1162,7 @@ void KSMServer::handlePendingInteractions()
     if ( clientInteracting )
         return;
 
-    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	foreach ( KSMClient *c, clients ) {
         if ( c->pendingInteraction ) {
             clientInteracting = c;
             c->pendingInteraction = false;
@@ -1179,7 +1182,7 @@ void KSMServer::cancelShutdown( KSMClient* c )
 {
     kdDebug( 1218 ) << "cancelShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
     clientInteracting = 0;
-    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	foreach ( KSMClient *c, clients ) {
         SmsShutdownCancelled( c->connection() );
         if( c->saveYourselfDone ) {
             // Discard also saved state.
@@ -1200,7 +1203,7 @@ void KSMServer::protectionTimeout()
     if ( ( state != Shutdown && state != Checkpoint ) || clientInteracting )
         return;
 
-    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	foreach ( KSMClient *c, clients ) {
         if ( !c->saveYourselfDone && !c->waitForPhase2 ) {
             kdDebug( 1218 ) << "protectionTimeout: client " << c->program() << "(" << c->clientId() << ")" << endl;
             c->saveYourselfDone = true;
@@ -1215,14 +1218,14 @@ void KSMServer::completeShutdownOrCheckpoint()
     if ( state != Shutdown && state != Checkpoint )
         return;
 
-    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	foreach ( KSMClient *c, clients ) {
         if ( !c->saveYourselfDone && !c->waitForPhase2 )
             return; // not done yet
     }
 
     // do phase 2
     bool waitForPhase2 = false;
-    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	foreach ( KSMClient *c, clients ) {
         if ( !c->saveYourselfDone && c->waitForPhase2 ) {
             c->waitForPhase2 = false;
             SmsSaveYourselfPhase2( c->connection() );
@@ -1260,7 +1263,7 @@ void KSMServer::completeShutdownOrCheckpoint()
         }
         startKilling();
     } else if ( state == Checkpoint ) {
-        for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+		foreach ( KSMClient *c, clients ) {
             SmsSaveComplete( c->connection());
         }
         state = Idle;
@@ -1272,7 +1275,7 @@ void KSMServer::startKilling()
     knotifyTimeoutTimer.stop();
     // kill all clients
     state = Killing;
-    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	foreach ( KSMClient *c, clients ) {
         kdDebug( 1218 ) << "completeShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
         if (c->wasPhase2)
             continue;
@@ -1298,17 +1301,17 @@ void KSMServer::completeKilling()
         kapp->quit();
     } else {
         if( state == Killing ) {
-            for (KSMClient *c = clients.first(); c; c = clients.next()) {
+			foreach ( KSMClient *c, clients ) {
                 if (! c->wasPhase2)
                     return;
             }
             // the wm was not killed yet, do it
-            for (KSMClient *c = clients.first(); c; c = clients.next()) {
+			foreach ( KSMClient *c, clients ) {
                 SmsDie( c->connection() );
             }
         }
         else {
-            for (KSMClient *c = clients.first(); c; c = clients.next()) {
+			foreach ( KSMClient *c, clients ) {
                 if (c->wasPhase2)
                     return;
             }
@@ -1352,7 +1355,7 @@ void KSMServer::timeoutQuit()
 {
     state = Killing2;
     bool kill_phase2 = false;
-    for (KSMClient *c = clients.first(); c; c = clients.next()) {
+	foreach ( KSMClient *c, clients ) {
         if (c->wasPhase2) {
             kill_phase2 = true;
             SmsDie( c->connection() );
@@ -1370,7 +1373,7 @@ void KSMServer::discardSession()
     KConfig* config = KGlobal::config();
     config->setGroup( sessionGroup );
     int count =  config->readNumEntry( "count", 0 );
-    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	foreach ( KSMClient *c, clients ) {
         QStringList discardCommand = c->discardCommand();
         if ( discardCommand.isEmpty())
             continue;
@@ -1398,11 +1401,11 @@ void KSMServer::storeSession()
         // check that non of the new clients uses the exactly same
         // discardCommand before we execute it. This used to be the
         // case up to KDE and Qt < 3.1
-        KSMClient* c = clients.first();
-        while ( c && discardCommand != c->discardCommand() )
-            c = clients.next();
-        if ( c )
-            continue;
+		QList<KSMClient*>::iterator it = clients.begin();
+		while ( *it && discardCommand != ( *it )->discardCommand() )
+			++it;
+		if ( *it )
+			continue;
         executeCommand( discardCommand );
     }
     config->deleteGroup( sessionGroup ); //### does not work with global config object...
@@ -1411,14 +1414,15 @@ void KSMServer::storeSession()
 
     if ( !wm.isEmpty() ) {
         // put the wm first
-        for ( KSMClient* c = clients.first(); c; c = clients.next() )
+		foreach ( KSMClient *c, clients )
             if ( c->program() == wm ) {
-                clients.prepend( clients.take() );
+				clients.remove( c );
+				clients.prepend( c );
                 break;
             }
     }
 
-    for ( KSMClient* c = clients.first(); c; c = clients.next() ) {
+	foreach ( KSMClient *c, clients ) {
         int restartHint = c->restartStyleHint();
         if (restartHint == SmRestartNever)
            continue;
@@ -1441,7 +1445,7 @@ void KSMServer::storeSession()
     config->writeEntry( "count", count );
 
     config->setGroup("General");
-    config->writeEntry( "screenCount", ScreenCount(qt_xdisplay()));
+    config->writeEntry( "screenCount", ScreenCount(QX11Info::display()));
 
 #ifndef NO_LEGACY_SESSION_MANAGEMENT
     storeLegacySession( config );
@@ -1465,7 +1469,7 @@ void KSMServer::restoreSession( QString sessionName )
     int count =  config->readNumEntry( "count" );
     appsToStart = count;
 
-    QValueList<QStringList> wmCommands;
+    QList<QStringList> wmCommands;
     if ( !wm.isEmpty() ) {
 	for ( int i = 1; i <= count; i++ ) {
 	    QString n = QString::number(i);
@@ -1488,7 +1492,7 @@ void KSMServer::restoreSession( QString sessionName )
         // when we have a window manager, we start it first and give
         // it some time before launching other processes. Results in a
         // visually more appealing startup.
-        for (uint i = 0; i < wmCommands.count(); i++)
+        for (int i = 0; i < wmCommands.count(); i++)
             startApplication( wmCommands[i] );
         QTimer::singleShot( 4000, this, SLOT( autoStart() ) );
     } else {
@@ -1510,7 +1514,7 @@ void KSMServer::startDefaultSession()
                        "autoStart2()", true);
     connectDCOPSignal( launcher, launcher, "autoStart2Done()",
                        "restoreSessionDoneInternal()", true);
-    startApplication( wm );
+    startApplication( QStringList( wm ) );
     QTimer::singleShot( 4000, this, SLOT( autoStart() ) );
 }
 
@@ -1655,19 +1659,19 @@ void KSMServer::upAndRunning( const QString& msg )
     DCOPRef( "ksplash" ).send( "upAndRunning", msg );
     XEvent e;
     e.xclient.type = ClientMessage;
-    e.xclient.message_type = XInternAtom( qt_xdisplay(), "_KDE_SPLASH_PROGRESS", False );
-    e.xclient.display = qt_xdisplay();
-    e.xclient.window = qt_xrootwin();
+    e.xclient.message_type = XInternAtom( QX11Info::display(), "_KDE_SPLASH_PROGRESS", False );
+    e.xclient.display = QX11Info::display();
+    e.xclient.window = QX11Info::appRootWindow();
     e.xclient.format = 8;
     assert( strlen( msg.latin1()) < 20 );
     strcpy( e.xclient.data.b, msg.latin1());
-    XSendEvent( qt_xdisplay(), qt_xrootwin(), False, SubstructureNotifyMask, &e );
+    XSendEvent( QX11Info::display(), QX11Info::appRootWindow(), False, SubstructureNotifyMask, &e );
 }
 
 
 QStringList KSMServer::sessionList()
 {
-    QStringList sessions = "default";
+    QStringList sessions ( "default" );
     KConfig* config = KGlobal::config();
     QStringList groups = config->groupList();
     for ( QStringList::ConstIterator it = groups.begin(); it != groups.end(); it++ )
@@ -1699,8 +1703,6 @@ static Atom wm_save_yourself = XNone;
 static Atom wm_protocols = XNone;
 static Atom wm_client_leader = XNone;
 
-extern Time qt_x_time;
-
 static int winsErrorHandler(Display *, XErrorEvent *ev)
 {
     if (windowMapPtr) {
@@ -1725,20 +1727,20 @@ void KSMServer::performLegacySessionSave()
 	Atom atoms[ 3 ];
 	const char* const names[]
 	    = { "WM_SAVE_YOURSELF", "WM_PROTOCOLS", "WM_CLIENT_LEADER" };
-	XInternAtoms( qt_xdisplay(), const_cast< char** >( names ), 3,
+	XInternAtoms( QX11Info::display(), const_cast< char** >( names ), 3,
 	    False, atoms );
 	wm_save_yourself = atoms[ 0 ];
 	wm_protocols = atoms[ 1 ];
 	wm_client_leader = atoms[ 2 ];
     }
-    for ( QValueList<WId>::ConstIterator it = module.windows().begin();
+    for ( QList<WId>::ConstIterator it = module.windows().begin();
 	  it != module.windows().end(); ++it) {
         WId leader = windowWmClientLeader( *it );
         if (!legacyWindows.contains(leader) && windowSessionId( *it, leader ).isEmpty()) {
             SMType wtype = SM_WMCOMMAND;
             int nprotocols = 0;
             Atom *protocols = 0;
-            if( XGetWMProtocols(qt_xdisplay(), leader, &protocols, &nprotocols)) {
+            if( XGetWMProtocols(QX11Info::display(), leader, &protocols, &nprotocols)) {
                 for (int i=0; i<nprotocols; i++)
                     if (protocols[i] == wm_save_yourself) {
                         wtype = SM_WMSAVEYOURSELF;
@@ -1749,7 +1751,7 @@ void KSMServer::performLegacySessionSave()
 	    SMData data;
 	    data.type = wtype;
             XClassHint classHint;
-            if( XGetClassHint( qt_xdisplay(), leader, &classHint ) ) {
+            if( XGetClassHint( QX11Info::display(), leader, &classHint ) ) {
                 data.wmclass1 = classHint.res_name;
                 data.wmclass2 = classHint.res_class;
                 XFree( classHint.res_name );
@@ -1759,8 +1761,8 @@ void KSMServer::performLegacySessionSave()
         }
     }
     // Open fresh display for sending WM_SAVE_YOURSELF
-    XSync(qt_xdisplay(), False);
-    Display *newdisplay = XOpenDisplay(DisplayString(qt_xdisplay()));
+    XSync(QX11Info::display(), False);
+    Display *newdisplay = XOpenDisplay(DisplayString(QX11Info::display()));
     if (!newdisplay) {
 	windowMapPtr = NULL;
 	XSetErrorHandler(oldHandler);
@@ -1784,7 +1786,7 @@ void KSMServer::performLegacySessionSave()
             ev.xclient.message_type = wm_protocols;
             ev.xclient.format = 32;
             ev.xclient.data.l[0] = wm_save_yourself;
-            ev.xclient.data.l[1] = qt_x_time;
+            ev.xclient.data.l[1] = QX11Info::appTime();
             XSelectInput(newdisplay, w, PropertyChangeMask|StructureNotifyMask);
             XSendEvent(newdisplay, w, False, 0, &ev);
         }
@@ -1827,7 +1829,7 @@ void KSMServer::performLegacySessionSave()
     XSync(newdisplay, False);
     XCloseDisplay(newdisplay);
     // Restore old error handler
-    XSync(qt_xdisplay(), False);
+    XSync(QX11Info::display(), False);
     XSetErrorHandler(oldHandler);
     for (WindowMap::Iterator it = legacyWindows.begin(); it != legacyWindows.end(); ++it) {
         if ( (*it).type != SM_ERROR) {
@@ -1909,15 +1911,15 @@ void KSMServer::restoreLegacySessionInternal( KConfig* config, char sep )
     }
 }
     
-static QCString getQCStringProperty(WId w, Atom prop)
+static QByteArray getQCStringProperty(WId w, Atom prop)
 {
     Atom type;
     int format, status;
     unsigned long nitems = 0;
     unsigned long extra = 0;
     unsigned char *data = 0;
-    QCString result = "";
-    status = XGetWindowProperty( qt_xdisplay(), w, prop, 0, 10000,
+    QByteArray result = "";
+    status = XGetWindowProperty( QX11Info::display(), w, prop, 0, 10000,
                                  FALSE, XA_STRING, &type, &format,
                                  &nitems, &extra, &data );
     if ( status == Success) {
@@ -1937,7 +1939,7 @@ static QStringList getQStringListProperty(WId w, Atom prop)
     unsigned char *data = 0;
     QStringList result;
 
-    status = XGetWindowProperty( qt_xdisplay(), w, prop, 0, 10000,
+    status = XGetWindowProperty( QX11Info::display(), w, prop, 0, 10000,
                                  FALSE, XA_STRING, &type, &format,
                                  &nitems, &extra, &data );
     if ( status == Success) {
@@ -1973,7 +1975,7 @@ QStringList KSMServer::windowWmCommand(WId w)
 
 QString KSMServer::windowWmClientMachine(WId w)
 {
-    QCString result = getQCStringProperty(w, XA_WM_CLIENT_MACHINE);
+    QByteArray result = getQCStringProperty(w, XA_WM_CLIENT_MACHINE);
     if (result.isEmpty()) {
         result = "localhost";
     } else {
@@ -2001,7 +2003,7 @@ WId KSMServer::windowWmClientLeader(WId w)
     unsigned long extra = 0;
     unsigned char *data = 0;
     Window result = w;
-    status = XGetWindowProperty( qt_xdisplay(), w, wm_client_leader, 0, 10000,
+    status = XGetWindowProperty( QX11Info::display(), w, wm_client_leader, 0, 10000,
                                  FALSE, XA_WINDOW, &type, &format,
                                  &nitems, &extra, &data );
     if (status  == Success ) {
@@ -2017,12 +2019,12 @@ WId KSMServer::windowWmClientLeader(WId w)
   Returns sessionId for this client,
   taken either from its window or from the leader window.
  */
-extern Atom qt_sm_client_id;
-QCString KSMServer::windowSessionId(WId w, WId leader)
+QByteArray KSMServer::windowSessionId(WId w, WId leader)
 {
-    QCString result = getQCStringProperty(w, qt_sm_client_id);
-    if (result.isEmpty() && leader != (WId)XNone && leader != w)
-	result = getQCStringProperty(leader, qt_sm_client_id);
+#warning FIXME KDE4: it is wrong, someone with session management understanding look at it...
+    QByteArray result = qApp->sessionId().toAscii();
+//KDE4    if (result.isEmpty() && leader != (WId)XNone && leader != w)
+//KDE4		result = getQCStringProperty(leader, qt_sm_client_id );
     return result;
 }
 #endif

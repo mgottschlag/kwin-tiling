@@ -20,7 +20,7 @@
 #include <qlineedit.h>
 #include <klineedit.h>
 #include <qcheckbox.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <kurlrequester.h>
 
 #include <actions.h>

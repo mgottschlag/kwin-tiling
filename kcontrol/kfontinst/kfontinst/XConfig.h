@@ -30,7 +30,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "Misc.h"
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <time.h>
@@ -90,7 +90,7 @@ class CXConfig
 
         private:
 
-        QPtrList<TEntry> itsEntries;
+        Q3PtrList<TEntry> itsEntries;
         unsigned int     itsXlfdCount;
     };
 
@@ -133,7 +133,7 @@ class CXConfig
     private:
 
     EType           itsType;
-    QPtrList<TPath> itsPaths;
+    Q3PtrList<TPath> itsPaths;
     QString         itsFileName,
                     itsInsertPos;
     bool            itsOk,

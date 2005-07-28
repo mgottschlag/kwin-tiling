@@ -19,6 +19,8 @@
 #include <qlayout.h>
 #include <qstringlist.h>
 #include <qtabwidget.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <dcopclient.h>
 
@@ -37,7 +39,7 @@ typedef KGenericFactory<KCMKonsole, QWidget> ModuleFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_konsole, ModuleFactory("kcmkonsole") )
 
 KCMKonsole::KCMKonsole(QWidget * parent, const char *name, const QStringList&)
-:KCModule(ModuleFactory::instance(), parent, name)
+:KCModule(ModuleFactory::instance(), parent)
 {
     
     setQuickHelp( i18n("<h1>Konsole</h1> With this module you can configure Konsole, the KDE terminal"

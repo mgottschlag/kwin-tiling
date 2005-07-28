@@ -18,8 +18,13 @@
 
 */
 
-#include <qheader.h>
+#include <q3header.h>
 #include <qcursor.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QKeyEvent>
+#include <Q3PtrList>
+#include <QApplication>
 
 #include <klocale.h>
 #include <kstandarddirs.h>
@@ -51,15 +56,15 @@ ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const c
   // This is intentionally _not_ connected with executed(), since
   // honoring doubleclick doesn't make any sense here (changed by
   // large user demand)
-  connect(this, SIGNAL(clicked(QListViewItem*)),
-          this, SLOT(slotItemSelected(QListViewItem*)));
+  connect(this, SIGNAL(clicked(Q3ListViewItem*)),
+          this, SLOT(slotItemSelected(Q3ListViewItem*)));
 }
 
 void ModuleIconView::makeSelected(ConfigModule *m)
 {
   if (!m) return;
 
-  for (QListViewItem *i = firstChild(); i; i = i->nextSibling())
+  for (Q3ListViewItem *i = firstChild(); i; i = i->nextSibling())
   {
      if(static_cast<ModuleIconItem*>(i)->module() == m)
      {
@@ -117,7 +122,7 @@ void ModuleIconView::fill()
   }
 
   c = 0;
-  QPtrList<ConfigModule> moduleList = _modules->modules(_path);
+  Q3PtrList<ConfigModule> moduleList = _modules->modules(_path);
   for (ConfigModule *module=moduleList.first(); module != 0; module=moduleList.next())
   {
      icon = loadIcon( module->icon() );
@@ -127,7 +132,7 @@ void ModuleIconView::fill()
   }
 }
 
-void ModuleIconView::slotItemSelected(QListViewItem* item)
+void ModuleIconView::slotItemSelected(Q3ListViewItem* item)
 {
   QApplication::restoreOverrideCursor();
   if (!item) return;
@@ -146,9 +151,9 @@ void ModuleIconView::slotItemSelected(QListViewItem* item)
 
 void ModuleIconView::keyPressEvent(QKeyEvent *e)
 {
-  if(   e->key() == Key_Return
-     || e->key() == Key_Enter
-     || e->key() == Key_Space)
+  if(   e->key() == Qt::Key_Return
+     || e->key() == Qt::Key_Enter
+     || e->key() == Qt::Key_Space)
   {
      if (currentItem())
         slotItemSelected(currentItem());

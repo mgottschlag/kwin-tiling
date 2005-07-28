@@ -23,10 +23,9 @@
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qobjectlist.h>
 #include <qpushbutton.h>
 #include <qtabwidget.h>
-#include <qvgroupbox.h>
+#include <q3groupbox.h>
 
 #include <kaboutdata.h>
 #include <kconfig.h>
@@ -45,7 +44,7 @@
 #include "kcmlocale.h"
 #include "toplevel.moc"
 
-KLocaleApplication::KLocaleApplication(QWidget *parent, const char* /*name*/, 
+KLocaleApplication::KLocaleApplication(QWidget *parent, const char* /*name*/,
                                        const QStringList &args)
   : KCModule( KLocaleFactory::instance(), parent, args)
 {
@@ -80,8 +79,12 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char* /*name*/,
   m_tab->addTab( m_localeother, QString::null );
 
   // Examples
-  m_gbox = new QVGroupBox(this);
+  m_gbox = new Q3GroupBox(this);
+  m_gbox->setOrientation(Qt::Vertical);
+  QVBoxLayout *laygroup = new QVBoxLayout(m_gbox->layout(), KDialog::spacingHint() );
   m_sample = new KLocaleSample(m_locale, m_gbox);
+  laygroup->addWidget( m_sample );
+
 
   // getting signals from childs
   connect(m_localemain, SIGNAL(localeChanged()),
@@ -226,9 +229,9 @@ void KLocaleApplication::slotTranslate()
   // The untranslated string for QLabel are stored in
   // the name() so we use that when retranslating
   QObject *wc;
-  QObjectList *list = queryList("QWidget");
-  QObjectListIt it(*list);
-  while ( (wc = it.current()) != 0 )
+  QObjectList list = queryList("QWidget");
+  QObjectList::iterator it = list.begin();
+  while ( (wc = *it) != 0 )
   {
     ++it;
 
@@ -253,7 +256,6 @@ void KLocaleApplication::slotTranslate()
     else if (::qstrcmp(wc->className(), "QCheckBox") == 0)
       ((QCheckBox *)wc)->setText( m_locale->translate( wc->name() ) );
   }
-  delete list;
 
   // Here we have the pointer
   m_gbox->setCaption(m_locale->translate("Examples"));

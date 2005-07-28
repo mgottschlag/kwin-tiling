@@ -75,7 +75,7 @@
                 <cstring>Spacer1</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
                 <enum>Fixed</enum>
@@ -100,7 +100,7 @@
                 <cstring>Spacer2</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
                 <enum>Fixed</enum>
@@ -128,7 +128,7 @@
                 <cstring>comment_multilineedit</cstring>
             </property>
             <property name="textFormat">
-                <enum>PlainText</enum>
+                <enum>Qt::PlainText</enum>
             </property>
         </widget>
     </vbox>
@@ -138,7 +138,7 @@
     <slot access="protected" specifier="pure virtual">action_type_changed(int)</slot>
 </slots>
 <includes>
-    <include location="global" impldecl="in implementation">kdialog.h</include>
+    <include location="global" impldecl="in declaration">kdialog.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>

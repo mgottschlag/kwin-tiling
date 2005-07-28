@@ -56,7 +56,7 @@
 </widget>
 <includes>
     <include location="global" impldecl="in declaration">kcombobox.h</include>
-    <include location="local" impldecl="in implementation">kdialog.h</include>
+    <include location="local" impldecl="in declaration">kdialog.h</include>
 </includes>
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>

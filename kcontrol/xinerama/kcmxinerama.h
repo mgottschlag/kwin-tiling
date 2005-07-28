@@ -22,7 +22,7 @@
 #define _KCM_XINERAMA_H
 
 #include <kcmodule.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qtimer.h>
 
 #include "xineramawidget.h"
@@ -51,7 +51,7 @@ private:
 	KConfig *config, *ksplashrc;
 	XineramaWidget *xw;
 	QTimer _timer;
-	QPtrList<QWidget> _indicators;
+	Q3PtrList<QWidget> _indicators;
 
 	int _displays;
 

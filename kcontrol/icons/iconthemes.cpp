@@ -25,6 +25,11 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QVBoxLayout>
+#include <Q3Frame>
+#include <QHBoxLayout>
 
 #include <kdebug.h>
 #include <kapplication.h>
@@ -57,7 +62,7 @@ IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
                                            KDialog::spacingHint());
 
-  QFrame *m_preview=new QFrame(this);
+  Q3Frame *m_preview=new Q3Frame(this);
   m_preview->setMinimumHeight(50);
 
   QHBoxLayout *lh2=new QHBoxLayout( m_preview );
@@ -82,8 +87,8 @@ IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
   m_iconThemes->addColumn(i18n("Description"));
   m_iconThemes->setAllColumnsShowFocus( true );
   m_iconThemes->setFullWidth(true);
-  connect(m_iconThemes,SIGNAL(selectionChanged(QListViewItem *)),
-		SLOT(themeSelected(QListViewItem *)));
+  connect(m_iconThemes,SIGNAL(selectionChanged(Q3ListViewItem *)),
+		SLOT(themeSelected(Q3ListViewItem *)));
 
   QPushButton *installButton=new QPushButton( i18n("Install New Theme..."),
 	this, "InstallNewTheme");
@@ -115,9 +120,9 @@ IconThemesConfig::~IconThemesConfig()
 {
 }
 
-QListViewItem *IconThemesConfig::iconThemeItem(const QString &name)
+Q3ListViewItem *IconThemesConfig::iconThemeItem(const QString &name)
 {
-  QListViewItem *item;
+  Q3ListViewItem *item;
   for ( item=m_iconThemes->firstChild(); item ; item=item->nextSibling() )
     if (m_themeNames[item->text(0)]==name) return item;
 
@@ -145,7 +150,7 @@ void IconThemesConfig::loadThemes()
     for (int i=2; m_themeNames.find(tname)!=m_themeNames.end() ; i++)
         tname=QString("%1-%2").arg(name).arg(i);
 
-    m_iconThemes->insertItem(new QListViewItem(m_iconThemes,name,
+    m_iconThemes->insertItem(new Q3ListViewItem(m_iconThemes,name,
 		icontheme.description()));
 
     m_themeNames.insert(name,*it);
@@ -198,7 +203,7 @@ void IconThemesConfig::installNewTheme()
   KGlobal::instance()->newIconLoader();
   loadThemes();
 
-  QListViewItem *item=iconThemeItem(KIconTheme::current());
+  Q3ListViewItem *item=iconThemeItem(KIconTheme::current());
   m_iconThemes->setSelected(item, true);
   updateRemoveButton();
 }
@@ -217,7 +222,7 @@ bool IconThemesConfig::installThemes(const QStringList &themes, const QString &a
   progressDiag.show();
 
   KTar archive(archiveName);
-  archive.open(IO_ReadOnly);
+  archive.open(QIODevice::ReadOnly);
   kapp->processEvents();
 
   const KArchiveDirectory* rootDir = archive.directory();
@@ -257,7 +262,7 @@ QStringList IconThemesConfig::findThemeDirs(const QString &archiveName)
   QStringList foundThemes;
 
   KTar archive(archiveName);
-  archive.open(IO_ReadOnly);
+  archive.open(QIODevice::ReadOnly);
   const KArchiveDirectory* themeDir = archive.directory();
 
   KArchiveEntry* possibleDir = 0L;
@@ -283,7 +288,7 @@ QStringList IconThemesConfig::findThemeDirs(const QString &archiveName)
 
 void IconThemesConfig::removeSelectedTheme()
 {
-  QListViewItem *selected = m_iconThemes->selectedItem();
+  Q3ListViewItem *selected = m_iconThemes->selectedItem();
   if (!selected)
      return;
 
@@ -310,7 +315,7 @@ void IconThemesConfig::removeSelectedTheme()
 
   loadThemes();
 
-  QListViewItem *item=0L;
+  Q3ListViewItem *item=0L;
   //Fallback to the default if we've deleted the current theme
   if (!deletingCurrentTheme)
      item=iconThemeItem(KIconTheme::current());
@@ -326,7 +331,7 @@ void IconThemesConfig::removeSelectedTheme()
 
 void IconThemesConfig::updateRemoveButton()
 {
-  QListViewItem *selected = m_iconThemes->selectedItem();
+  Q3ListViewItem *selected = m_iconThemes->selectedItem();
   bool enabled = false;
   if (selected)
   {
@@ -341,7 +346,7 @@ void IconThemesConfig::updateRemoveButton()
   m_removeButton->setEnabled(enabled);
 }
 
-void IconThemesConfig::themeSelected(QListViewItem *item)
+void IconThemesConfig::themeSelected(Q3ListViewItem *item)
 {
 #ifdef HAVE_LIBART
   KSVGIconEngine engine;
@@ -358,11 +363,11 @@ void IconThemesConfig::themeSelected(QListViewItem *item)
 #ifdef HAVE_LIBART
 	  icon=icontheme.iconPath("exec.svg", size, KIcon::MatchBest);
 	  if(engine.load(size, size, icon.path))
-              m_previewExec->setPixmap(*engine.image());
+              m_previewExec->setPixmap(QPixmap(*engine.image()));
           else {
               icon=icontheme.iconPath("exec.svgz", size, KIcon::MatchBest);
               if(engine.load(size, size, icon.path))
-                  m_previewExec->setPixmap(*engine.image());
+                  m_previewExec->setPixmap(QPixmap(*engine.image()));
           }
 #endif
   }
@@ -374,11 +379,11 @@ void IconThemesConfig::themeSelected(QListViewItem *item)
 #ifdef HAVE_LIBART
 	  icon=icontheme.iconPath("folder.svg", size, KIcon::MatchBest);
 	  if(engine.load(size, size, icon.path))
-              m_previewFolder->setPixmap(*engine.image());
+              m_previewFolder->setPixmap(QPixmap(*engine.image()));
           else {
               icon=icontheme.iconPath("folder.svgz", size, KIcon::MatchBest);
               if(engine.load(size, size, icon.path))
-                  m_previewFolder->setPixmap(*engine.image());
+                  m_previewFolder->setPixmap(QPixmap(*engine.image()));
           }
 #endif
   }
@@ -390,11 +395,11 @@ void IconThemesConfig::themeSelected(QListViewItem *item)
 #ifdef HAVE_LIBART
 	  icon=icontheme.iconPath("txt.svg", size, KIcon::MatchBest);
 	  if(engine.load(size, size, icon.path))
-              m_previewDocument->setPixmap(*engine.image());
+              m_previewDocument->setPixmap(QPixmap(*engine.image()));
           else {
               icon=icontheme.iconPath("txt.svgz", size, KIcon::MatchBest);
               if(engine.load(size, size, icon.path))
-                  m_previewDocument->setPixmap(*engine.image());
+                  m_previewDocument->setPixmap(QPixmap(*engine.image()));
           }
 #endif
   }
@@ -415,7 +420,7 @@ void IconThemesConfig::save()
 {
   if (!m_bChanged)
      return;
-  QListViewItem *selected = m_iconThemes->selectedItem();
+  Q3ListViewItem *selected = m_iconThemes->selectedItem();
   if (!selected)
      return;
 

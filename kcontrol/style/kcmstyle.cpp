@@ -25,21 +25,27 @@
 #endif
 
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <QGridLayout>
+#include <Q3Frame>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <kcombobox.h>
-#include <qlistbox.h>
-#include <qgroupbox.h>
+#include <q3listbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qslider.h>
 #include <qstylefactory.h>
 #include <qtabwidget.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 #include <qfile.h>
 #include <qsettings.h>
-#include <qobjectlist.h>
+#include <qobject.h>
 #include <qpixmapcache.h>
-#include <qwhatsthis.h>
+
 #include <qpushbutton.h>
+#include <QX11Info>
 
 #include <dcopclient.h>
 #include <kapplication.h>
@@ -94,15 +100,15 @@ extern "C"
         // Write some Qt root property.
 #ifndef __osf__      // this crashes under Tru64 randomly -- will fix later
         QByteArray properties;
-        QDataStream d(properties, IO_WriteOnly);
+        QDataStream d(&properties, QIODevice::WriteOnly);
         d.setVersion( 3 );      // Qt2 apps need this.
         d << kapp->palette() << KGlobalSettings::generalFont();
-        Atom a = XInternAtom(qt_xdisplay(), "_QT_DESKTOP_PROPERTIES", false);
+        Atom a = XInternAtom(QX11Info::display(), "_QT_DESKTOP_PROPERTIES", false);
 
         // do it for all root windows - multihead support
-        int screen_count = ScreenCount(qt_xdisplay());
+        int screen_count = ScreenCount(QX11Info::display());
         for (int i = 0; i < screen_count; i++)
-            XChangeProperty(qt_xdisplay(),  RootWindow(qt_xdisplay(), i),
+            XChangeProperty(QX11Info::display(),  RootWindow(QX11Info::display(), i),
                             a, a, 8, PropModeReplace,
                             (unsigned char*) properties.data(), properties.size());
 #endif
@@ -155,7 +161,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 
 	// Add Page1 (Style)
 	// -----------------
-	gbWidgetStyle = new QGroupBox( i18n("Widget Style"), page1, "gbWidgetStyle" );
+	gbWidgetStyle = new Q3GroupBox( i18n("Widget Style"), page1, "gbWidgetStyle" );
 	gbWidgetStyle->setColumnLayout( 0, Qt::Vertical );
 	gbWidgetStyle->layout()->setMargin( KDialog::marginHint() );
 	gbWidgetStyle->layout()->setSpacing( KDialog::spacingHint() );
@@ -187,8 +193,8 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	gbWidgetStyleLayout->addWidget( cbTearOffHandles );
 	cbTearOffHandles->hide(); // reenable when the corresponding Qt method is virtual and properly reimplemented
 
-    QGroupBox *gbPreview = new QGroupBox( i18n( "Preview" ), page1 );
-	gbPreview->setColumnLayout( 0, Vertical );
+	Q3GroupBox *gbPreview = new Q3GroupBox( i18n( "Preview" ), page1 );
+	gbPreview->setColumnLayout( 0, Qt::Vertical );
 	gbPreview->layout()->setMargin( 0 );
 	gbPreview->layout()->setSpacing( KDialog::spacingHint() );
 	gbPreview->setFlat( true );
@@ -206,8 +212,8 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	// Add Page2 (Effects)
 	// -------------------
 	cbEnableEffects = new QCheckBox( i18n("&Enable GUI effects"), page2 );
-	containerFrame = new QFrame( page2 );
-	containerFrame->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
+	containerFrame = new Q3Frame( page2 );
+	containerFrame->setFrameStyle( Q3Frame::NoFrame | Q3Frame::Plain );
 	containerFrame->setMargin(0);
 	containerLayout = new QGridLayout( containerFrame, 1, 1,	// rows, columns
 		KDialog::marginHint(), KDialog::spacingHint() );
@@ -256,12 +262,12 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	containerLayout->addItem( comboSpacer, 1, 2 );
 
 	// Separator.
-	QFrame* hline = new QFrame ( page2 );
-	hline->setFrameStyle( QFrame::HLine | QFrame::Sunken );
+	Q3Frame* hline = new Q3Frame ( page2 );
+	hline->setFrameStyle( Q3Frame::HLine | Q3Frame::Sunken );
 
 	// Now implement the Menu Transparency container.
-	menuContainer = new QFrame( page2 );
-	menuContainer->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
+	menuContainer = new Q3Frame( page2 );
+	menuContainer->setFrameStyle( Q3Frame::NoFrame | Q3Frame::Plain );
 	menuContainer->setMargin(0);
 	menuContainerLayout = new QGridLayout( menuContainer, 1, 1,    // rows, columns
 		KDialog::marginHint(), KDialog::spacingHint() );
@@ -276,26 +282,26 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 #endif
 
 	// So much stuffing around for a simple slider..
-	sliderBox = new QVBox( menuContainer );
+	sliderBox = new Q3VBox( menuContainer );
 	sliderBox->setSpacing( KDialog::spacingHint() );
 	sliderBox->setMargin( 0 );
 	slOpacity = new QSlider( 0, 100, 5, /*opacity*/ 90, Qt::Horizontal, sliderBox );
 	slOpacity->setTickmarks( QSlider::Below );
 	slOpacity->setTickInterval( 10 );
-	QHBox* box1 = new QHBox( sliderBox );
+	Q3HBox* box1 = new Q3HBox( sliderBox );
 	box1->setSpacing( KDialog::spacingHint() );
 	box1->setMargin( 0 );
 	QLabel* lbl = new QLabel( i18n("0%"), box1 );
-	lbl->setAlignment( AlignLeft );
+	lbl->setAlignment( Qt::AlignLeft );
 	lbl = new QLabel( i18n("50%"), box1 );
-	lbl->setAlignment( AlignHCenter );
+	lbl->setAlignment( Qt::AlignHCenter );
 	lbl = new QLabel( i18n("100%"), box1 );
-	lbl->setAlignment( AlignRight );
+	lbl->setAlignment( Qt::AlignRight );
 
 	lblMenuEffectType = new QLabel( comboMenuEffectType, i18n("Menu trans&lucency type:"), menuContainer );
-	lblMenuEffectType->setAlignment( AlignBottom | AlignLeft );
+	lblMenuEffectType->setAlignment( Qt::AlignBottom | Qt::AlignLeft );
 	lblMenuOpacity    = new QLabel( slOpacity, i18n("Menu &opacity:"), menuContainer );
-	lblMenuOpacity->setAlignment( AlignBottom | AlignLeft );
+	lblMenuOpacity->setAlignment( Qt::AlignBottom | Qt::AlignLeft );
 
 	menuContainerLayout->addWidget( lblMenuEffectType, 0, 0 );
 	menuContainerLayout->addWidget( comboMenuEffectType, 1, 0 );
@@ -387,6 +393,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 
 KCMStyle::~KCMStyle()
 {
+    qDeleteAll(styleEntries);
 	delete appliedStyle;
 }
 
@@ -502,12 +509,15 @@ void KCMStyle::save()
 	{
 		allowMenuDropShadow = true;
 		KStyle* style = dynamic_cast<KStyle*>(appliedStyle);
-		if (style) {
+/*		if (style) {
 			KStyle::KStyleFlags flags = style->styleFlags();
 			if (flags & KStyle::AllowMenuTransparency)
 				allowMenuTransparency = true;
-		}
+		}*/
 	}
+
+	//### KDE4: not at all clear whether this will come back
+	allowMenuTransparency = false;
 
 	QString warn_string( i18n("<qt>Selected style: <b>%1</b><br><br>"
 		"One or more effects that you have chosen could not be applied because the selected "
@@ -620,12 +630,13 @@ void KCMStyle::save()
 
 	if (m_bEffectsDirty) {
 		KIPC::sendMessageAll(KIPC::SettingsChanged);
-		kapp->dcopClient()->send("kwin*", "", "reconfigure()", "");
+		kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray());
 	}
-        //update kicker to re-used tooltips kicker parameter otherwise, it overwritted
-        //by style tooltips parameters.
-        QByteArray data;
-        kapp->dcopClient()->send( "kicker", "kicker", "configure()", data );
+
+	//update kicker to re-used tooltips kicker parameter otherwise, it overwritted
+	//by style tooltips parameters.
+	QByteArray data;
+	kapp->dcopClient()->send( "kicker", "kicker", "configure()", QByteArray() );
 
 	// Clean up
 	m_bEffectsDirty  = false;
@@ -637,7 +648,7 @@ void KCMStyle::save()
 
 bool KCMStyle::findStyle( const QString& str, int& combobox_item )
 {
-	StyleEntry* se   = styleEntries.find(str.lower());
+	StyleEntry* se   = styleEntries[str.lower()];
 
 	QString     name = se ? se->name : str;
 
@@ -663,7 +674,7 @@ void KCMStyle::defaults()
 	int item = 0;
 	bool found;
 
-	found = findStyle( KStyle::defaultStyle(), item );
+	found = findStyle( "plastique", item ); //### KStyle::defaultStyle()
 	if (!found)
 		found = findStyle( "highcolor", item );
 	if (!found)
@@ -727,8 +738,8 @@ void KCMStyle::loadStyle( KConfig& config )
 
 	// Create a dictionary of WidgetStyle to Name and Desc. mappings,
 	// as well as the config page info
+	qDeleteAll(styleEntries);
 	styleEntries.clear();
-	styleEntries.setAutoDelete(true);
 
 	QString strWidgetStyle;
 	QStringList list = KGlobal::dirs()->findAllResources("themes", "*.themerc", true, true);
@@ -769,7 +780,7 @@ void KCMStyle::loadStyle( KConfig& config )
 	{
 		QString id = (*it).lower();
 		// Find the entry.
-		if ( (entry = styleEntries.find(id)) != 0 )
+		if ( (entry = styleEntries[id]) != 0 )
 		{
 			// Do not add hidden entries
 			if (entry->hidden)
@@ -792,7 +803,7 @@ void KCMStyle::loadStyle( KConfig& config )
 
 	// Find out which style is currently being used
 	config.setGroup( "General" );
-	QString defaultStyle = KStyle::defaultStyle();
+	QString defaultStyle = "plastique"; //### KDE4: FIXME KStyle::defaultStyle();
 	QString cfgStyle = config.readEntry( "widgetStyle", defaultStyle );
 
 	// Select the current style
@@ -812,7 +823,7 @@ void KCMStyle::loadStyle( KConfig& config )
 			break;
 		else if ( id.contains( cfgStyle ) )
 			break;
-		else if ( id.contains( QApplication::style().className() ) )
+		else if ( id.contains( QApplication::style()->className() ) )
 			break;
 		item = 0;
 	}
@@ -858,7 +869,7 @@ void KCMStyle::switchStyle(const QString& styleName, bool force)
 	appliedStyle = style;
 
 	// Set the correct style description
-	StyleEntry* entry = styleEntries.find( styleName );
+	StyleEntry* entry = styleEntries[ styleName ];
 	QString desc;
 	desc = i18n("Description: %1").arg( entry ? entry->desc : i18n("No description available.") );
 	lblStyleDesc->setText( desc );
@@ -878,16 +889,11 @@ void KCMStyle::setStyleRecursive(QWidget* w, QStyle* s)
 	w->setStyle(s);
 
 	// Recursively update all children.
-	const QObjectList *children = w->children();
-	if (!children)
-		return;
+	const QObjectList children = w->children();
 
 	// Apply the style to each child widget.
-	QPtrListIterator<QObject> childit(*children);
-	QObject *child;
-	while ((child = childit.current()) != 0)
+    foreach (QObject* child, children)
 	{
-		++childit;
 		if (child->isWidgetType())
 			setStyleRecursive((QWidget *) child, s);
 	}
@@ -1039,56 +1045,56 @@ void KCMStyle::loadMisc( KConfig& config )
 void KCMStyle::addWhatsThis()
 {
 	// Page1
-	QWhatsThis::add( cbStyle, i18n("Here you can choose from a list of"
+	cbStyle->setWhatsThis( i18n("Here you can choose from a list of"
 							" predefined widget styles (e.g. the way buttons are drawn) which"
 							" may or may not be combined with a theme (additional information"
 							" like a marble texture or a gradient).") );
-	QWhatsThis::add( stylePreview, i18n("This area shows a preview of the currently selected style "
+	stylePreview->setWhatsThis( i18n("This area shows a preview of the currently selected style "
 							"without having to apply it to the whole desktop.") );
 
 	// Page2
-	QWhatsThis::add( page2, i18n("This page allows you to enable various widget style effects. "
+	page2->setWhatsThis( i18n("This page allows you to enable various widget style effects. "
 							"For best performance, it is advisable to disable all effects.") );
-	QWhatsThis::add( cbEnableEffects, i18n( "If you check this box, you can select several effects "
+	cbEnableEffects->setWhatsThis( i18n( "If you check this box, you can select several effects "
 							"for different widgets like combo boxes, menus or tooltips.") );
-	QWhatsThis::add( comboComboEffect, i18n( "<p><b>Disable: </b>do not use any combo box effects.</p>\n"
+	comboComboEffect->setWhatsThis( i18n( "<p><b>Disable: </b>do not use any combo box effects.</p>\n"
 							"<b>Animate: </b>Do some animation.") );
-	QWhatsThis::add( comboTooltipEffect, i18n( "<p><b>Disable: </b>do not use any tooltip effects.</p>\n"
+	comboTooltipEffect->setWhatsThis( i18n( "<p><b>Disable: </b>do not use any tooltip effects.</p>\n"
 							"<p><b>Animate: </b>Do some animation.</p>\n"
 							"<b>Fade: </b>Fade in tooltips using alpha-blending.") );
-	QWhatsThis::add( comboMenuEffect, i18n( "<p><b>Disable: </b>do not use any menu effects.</p>\n"
+	comboMenuEffect->setWhatsThis( i18n( "<p><b>Disable: </b>do not use any menu effects.</p>\n"
 							"<p><b>Animate: </b>Do some animation.</p>\n"
 							"<p><b>Fade: </b>Fade in menus using alpha-blending.</p>\n"
 							"<b>Make Translucent: </b>Alpha-blend menus for a see-through effect. (KDE styles only)") );
-	QWhatsThis::add( cbMenuShadow, i18n( "When enabled, all popup menus will have a drop-shadow, otherwise "
+	cbMenuShadow->setWhatsThis( i18n( "When enabled, all popup menus will have a drop-shadow, otherwise "
 							"drop-shadows will not be displayed. At present, only KDE styles can have this "
 							"effect enabled.") );
-	QWhatsThis::add( comboMenuEffectType, i18n( "<p><b>Software Tint: </b>Alpha-blend using a flat color.</p>\n"
+	comboMenuEffectType->setWhatsThis( i18n( "<p><b>Software Tint: </b>Alpha-blend using a flat color.</p>\n"
 							"<p><b>Software Blend: </b>Alpha-blend using an image.</p>\n"
 							"<b>XRender Blend: </b>Use the XFree RENDER extension for image blending (if available). "
 							"This method may be slower than the Software routines on non-accelerated displays, "
 							"but may however improve performance on remote displays.</p>\n") );
-	QWhatsThis::add( slOpacity, i18n("By adjusting this slider you can control the menu effect opacity.") );
+	slOpacity->setWhatsThis( i18n("By adjusting this slider you can control the menu effect opacity.") );
 
 	// Page3
-	QWhatsThis::add( page3, i18n("<b>Note:</b> that all widgets in this combobox "
+	page3->setWhatsThis( i18n("<b>Note:</b> that all widgets in this combobox "
 							"do not apply to Qt-only applications.") );
-	QWhatsThis::add( cbHoverButtons, i18n("If this option is selected, toolbar buttons will change "
+	cbHoverButtons->setWhatsThis( i18n("If this option is selected, toolbar buttons will change "
 							"their color when the mouse cursor is moved over them." ) );
-	QWhatsThis::add( cbTransparentToolbars, i18n("If you check this box, the toolbars will be "
+	cbTransparentToolbars->setWhatsThis( i18n("If you check this box, the toolbars will be "
 							"transparent when moving them around.") );
-	QWhatsThis::add( cbEnableTooltips, i18n( "If you check this option, the KDE application "
+	cbEnableTooltips->setWhatsThis( i18n( "If you check this option, the KDE application "
 							"will offer tooltips when the cursor remains over items in the toolbar." ) );
-	QWhatsThis::add( comboToolbarIcons, i18n( "<p><b>Icons only:</b> Shows only icons on toolbar buttons. "
+	comboToolbarIcons->setWhatsThis( i18n( "<p><b>Icons only:</b> Shows only icons on toolbar buttons. "
 							"Best option for low resolutions.</p>"
 							"<p><b>Text only: </b>Shows only text on toolbar buttons.</p>"
 							"<p><b>Text alongside icons: </b> Shows icons and text on toolbar buttons. "
 							"Text is aligned alongside the icon.</p>"
 							"<b>Text under icons: </b> Shows icons and text on toolbar buttons. "
 							"Text is aligned below the icon.") );
-	QWhatsThis::add( cbIconsOnButtons, i18n( "If you enable this option, KDE Applications will "
+	cbIconsOnButtons->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
 							"show small icons alongside some important buttons.") );
-	QWhatsThis::add( cbTearOffHandles, i18n( "If you enable this option some pop-up menus will "
+	cbTearOffHandles->setWhatsThis( i18n( "If you enable this option some pop-up menus will "
 							"show so called tear-off handles. If you click them, you get the menu "
 							"inside a widget. This can be very helpful when performing "
 							"the same action multiple times.") );

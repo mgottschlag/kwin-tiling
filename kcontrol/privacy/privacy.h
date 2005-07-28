@@ -27,6 +27,8 @@
 #include "kcmprivacydialog.h"
 #include "kprivacymanager.h"
 #include "kprivacysettings.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 class Privacy: public KCModule
 {
@@ -50,21 +52,21 @@ private:
     KPrivacySettings  *p3pSettings;
     KPrivacyManager *m_privacymanager;
 
-    QPtrList<QCheckListItem> checklist;
+    Q3PtrList<Q3CheckListItem> checklist;
 
     KListViewItem *generalCLI;
     KListViewItem *webbrowsingCLI;
 
-    QCheckListItem *clearThumbnails;	
-    QCheckListItem *clearRunCommandHistory;
-    QCheckListItem *clearAllCookies;
-    QCheckListItem *clearSavedClipboardContents;
-    QCheckListItem *clearWebHistory;
-    QCheckListItem *clearWebCache;
-    QCheckListItem *clearFormCompletion;
-    QCheckListItem *clearRecentDocuments;
-    QCheckListItem *clearQuickStartMenu;
-    QCheckListItem *clearFavIcons;
+    Q3CheckListItem *clearThumbnails;	
+    Q3CheckListItem *clearRunCommandHistory;
+    Q3CheckListItem *clearAllCookies;
+    Q3CheckListItem *clearSavedClipboardContents;
+    Q3CheckListItem *clearWebHistory;
+    Q3CheckListItem *clearWebCache;
+    Q3CheckListItem *clearFormCompletion;
+    Q3CheckListItem *clearRecentDocuments;
+    Q3CheckListItem *clearQuickStartMenu;
+    Q3CheckListItem *clearFavIcons;
     //QCheckListItem *clearFileDialogHistory;
 
 

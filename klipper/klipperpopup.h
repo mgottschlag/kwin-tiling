@@ -21,8 +21,10 @@
 #define _KLIPPERPOPUP_H_
 
 #include <kpopupmenu.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <QKeyEvent>
 
 class History;
 class KlipperWidget;
@@ -95,7 +97,7 @@ private:
     /**
      * (unowned) actions to plug into the primary popup menu
      */
-    QPtrList<KAction> m_actions;
+    Q3PtrList<KAction> m_actions;
 
     /**
      * Proxy helper object used to track history items

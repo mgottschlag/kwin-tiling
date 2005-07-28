@@ -28,6 +28,8 @@
 #include "joywidget.h"
 #include "joydevice.h"
 
+#include <stdio.h>
+
 //---------------------------------------------------------------------------------------------
 
 typedef KGenericFactory<joystick, QWidget> JoystickFactory;
@@ -67,7 +69,7 @@ extern "C"
 //---------------------------------------------------------------------------------------------
 
 joystick::joystick(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(JoystickFactory::instance(), parent, name)
+  : KCModule(JoystickFactory::instance(), parent)
 {
   setAboutData( new KAboutData("kcmjoystick", I18N_NOOP("KDE Joystick Control Module"), "1.0",
                                I18N_NOOP("KDE Control Center Module to test Joysticks"),

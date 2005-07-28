@@ -21,7 +21,9 @@
 
 #include <qobject.h>
 #include <qstringlist.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 #include <kcmodule.h>
 #include <kconfig.h>
@@ -154,9 +156,9 @@ private:
 
 	int			m_screen;
 
-	QValueList<QSize>	m_pixelSizes;
-	QValueList<QSize>	m_mmSizes;
-	int					m_rotations;
+	QList<QSize>		m_pixelSizes;
+	QList<QSize>		m_mmSizes;
+	int			m_rotations;
 
 	int			m_originalRotation;
 	int			m_originalSize;
@@ -177,7 +179,7 @@ private slots:
 	void		shownDialogDestroyed();
 };
 
-typedef QPtrList<RandRScreen> ScreenList;
+typedef Q3PtrList<RandRScreen> ScreenList;
 
 class RandRDisplay
 {

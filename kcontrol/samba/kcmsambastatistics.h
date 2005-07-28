@@ -23,10 +23,10 @@
 #ifndef kcmsambastatistics_h_included
 #define kcmsambastatistics_h_included
  
+#include <q3ptrlist.h>
 #include <qwidget.h>
-#include <qptrlist.h>
 
-class QListView;
+class Q3ListView;
 class QLabel;
 class QComboBox;
 class QCheckBox;
@@ -55,7 +55,7 @@ class LogItem
 	};
   QString name;
   //QStrList accessedBy;
-  QPtrList<SmallLogItem> accessed;
+  Q3PtrList<SmallLogItem> accessed;
   int count;
   SmallLogItem* itemInList(QString name);
   void addItem (QString host);
@@ -68,7 +68,7 @@ class SambaLog
 	{
 	  items.setAutoDelete(TRUE);
 	};
-  QPtrList<LogItem> items;
+  Q3PtrList<LogItem> items;
   void addItem (QString share, QString host);
   void printItems();
  private:
@@ -84,11 +84,11 @@ public:
   void saveSettings() {};
   void loadSettings() {};
   public slots:
-	void setListInfo(QListView *list, int nrOfFiles, int nrOfConnections);
+	void setListInfo(Q3ListView *list, int nrOfFiles, int nrOfConnections);
 private:
   KConfig *configFile;
-  QListView *dataList;
-  QListView* viewStatistics;
+  Q3ListView *dataList;
+  Q3ListView* viewStatistics;
   QLabel* connectionsL, *filesL;
   QComboBox* eventCb;
   QLabel* eventL;

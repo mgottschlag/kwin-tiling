@@ -22,9 +22,12 @@
 
 #include <kcmoduleinfo.h>
 #include <qobject.h>
-#include <qdict.h>
+#include <q3dict.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <Q3PtrList>
 
-template<class ConfigModule> class QPtrList;
+template<class ConfigModule> class Q3PtrList;
 class QStringList;
 class KAboutData;
 class KCModule;
@@ -32,7 +35,7 @@ class ProxyWidget;
 class KProcess;
 class QXEmbed;
 class QVBoxLayout;
-class QVBox;
+class Q3VBox;
 
 class ConfigModule : public QObject, public KCModuleInfo
 {
@@ -78,11 +81,11 @@ private:
   QXEmbed     *_embedWidget;
   KProcess    *_rootProcess;
   QVBoxLayout *_embedLayout;
-  QVBox       *_embedFrame;
+  Q3VBox       *_embedFrame;
 
 };
 
-class ConfigModuleList : public QPtrList<ConfigModule>
+class ConfigModuleList : public Q3PtrList<ConfigModule>
 {
 public:
 
@@ -94,7 +97,7 @@ public:
   /**
    * Returns all submenus of the submenu identified by path
    */
-  QPtrList<ConfigModule> modules(const QString &path);
+  Q3PtrList<ConfigModule> modules(const QString &path);
   
   /**
    * Returns all modules of the submenu identified by path
@@ -111,11 +114,11 @@ protected:
   class Menu
   {
   public:
-    QPtrList<ConfigModule> modules;
+    Q3PtrList<ConfigModule> modules;
     QStringList submenus;
   };
 
-  QDict<Menu> subMenus;
+  Q3Dict<Menu> subMenus;
 };
 
 #endif

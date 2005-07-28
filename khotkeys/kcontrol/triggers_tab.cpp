@@ -19,10 +19,12 @@
 #include <assert.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qheader.h>
+#include <q3header.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -46,12 +48,12 @@ namespace KHotKeys
 Triggers_tab::Triggers_tab( QWidget* parent_P, const char* name_P )
     : Triggers_tab_ui( parent_P, name_P ), selected_item( NULL )
     {
-    QPopupMenu* popup = new QPopupMenu; // CHECKME looks like setting parent doesn't work
+    Q3PopupMenu* popup = new Q3PopupMenu; // CHECKME looks like setting parent doesn't work
     popup->insertItem( i18n( "Shortcut Trigger..." ), TYPE_SHORTCUT_TRIGGER );
     popup->insertItem( i18n( "Gesture Trigger..." ), TYPE_GESTURE_TRIGGER );
     popup->insertItem( i18n( "Window Trigger..." ), TYPE_WINDOW_TRIGGER );
     connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
-    connect( triggers_listview, SIGNAL( doubleClicked ( QListViewItem *, const QPoint &, int ) ),
+    connect( triggers_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
              this, SLOT( modify_pressed() ) );
 
     new_button->setPopup( popup );
@@ -106,7 +108,7 @@ void Triggers_tab::set_data( const Trigger_list* data_P )
 Trigger_list* Triggers_tab::get_data( Action_data* data_P ) const
     {
     Trigger_list* list = new Trigger_list( comment_lineedit->text());
-    for( QListViewItem* pos = triggers_listview->firstChild();
+    for( Q3ListViewItem* pos = triggers_listview->firstChild();
          pos != NULL;
          pos = pos->nextSibling())
         list->append( static_cast< Trigger_list_item* >( pos )->trigger()->copy( data_P ));
@@ -157,7 +159,7 @@ void Triggers_tab::modify_pressed()
     edit_listview_item( selected_item );
     }
 
-void Triggers_tab::current_changed( QListViewItem* item_P )
+void Triggers_tab::current_changed( Q3ListViewItem* item_P )
     {
 //    if( item_P == selected_item )
 //        return;
@@ -169,7 +171,7 @@ void Triggers_tab::current_changed( QListViewItem* item_P )
     }
 
 Trigger_list_item* Triggers_tab::create_listview_item( Trigger* trigger_P,
-    QListView* parent_P, QListViewItem* after_P, bool copy_P )
+    Q3ListView* parent_P, Q3ListViewItem* after_P, bool copy_P )
     {
     Trigger* new_trg = copy_P ? trigger_P->copy( NULL ) : trigger_P; // CHECKME NULL ?
 // CHECKME uz by nemelo byt treba    if( after_P == NULL )

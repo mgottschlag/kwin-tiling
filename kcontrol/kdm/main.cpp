@@ -24,6 +24,9 @@
 #include <config.h>
 
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QDropEvent>
 
 #include <kaboutdata.h>
 #include <kgenericfactory.h>
@@ -79,7 +82,7 @@ KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 KSimpleConfig *config;
 
 KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(KDMFactory::instance(), parent, name)
+  : KCModule(KDMFactory::instance(), parent)
   , minshowuid(0)
   , maxshowuid(0)
   , updateOK(false)
@@ -137,7 +140,7 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
       if ((tgmapi = tgmap.find( ps->pw_gid )) != tgmap.end())
         (*tgmapi).append( un );
       else
-	tgmap[ps->pw_gid] = un;
+	tgmap[ps->pw_gid] = QStringList(un);
     }
   }
   endpwent();
@@ -273,7 +276,7 @@ void KDModule::propagateUsers()
   groupmap.clear();
   emit clearUsers();
   QMap<QString,int> lusers;
-  QMapConstIterator<QString, QPair<int,QStringList> > it;
+  QMap<QString, QPair<int,QStringList> >::const_iterator it;
   QStringList::ConstIterator jt;
   QMap<QString,int>::Iterator gmapi;
   for (it = usermap.begin(); it != usermap.end(); ++it) {
@@ -296,7 +299,7 @@ void KDModule::slotMinMaxUID(int min, int max)
 {
   if (updateOK) {
     QMap<QString,int> alusers, dlusers;
-    QMapConstIterator<QString, QPair<int,QStringList> > it;
+    QMap<QString, QPair<int,QStringList> >::const_iterator it;
     QStringList::ConstIterator jt;
     QMap<QString,int>::Iterator gmapi;
     for (it = usermap.begin(); it != usermap.end(); ++it) {

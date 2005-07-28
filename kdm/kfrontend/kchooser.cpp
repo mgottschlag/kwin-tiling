@@ -35,17 +35,21 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 #include <qsocketnotifier.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qlineedit.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QBoxLayout>
 
 #include <stdlib.h> // for free()
 
-class ChooserListViewItem : public QListViewItem {
+class ChooserListViewItem : public Q3ListViewItem {
   public:
-	ChooserListViewItem( QListView* parent, int _id, const QString& nam, const QString& sts )
-		: QListViewItem( parent, nam, sts ) { id = _id; };
+	ChooserListViewItem( Q3ListView* parent, int _id, const QString& nam, const QString& sts )
+		: Q3ListViewItem( parent, nam, sts ) { id = _id; };
 
 	int id;
 };
@@ -54,20 +58,20 @@ class ChooserListViewItem : public QListViewItem {
 ChooserDlg::ChooserDlg()
 	: inherited()
 {
-	completeMenu( LOGIN_REMOTE_ONLY, ex_greet, i18n("&Local Login"), ALT+Key_L );
+	completeMenu( LOGIN_REMOTE_ONLY, ex_greet, i18n("&Local Login"), Qt::ALT+Qt::Key_L );
 
 	QBoxLayout *vbox = new QVBoxLayout( this, 10, 10 );
 
 	QLabel *title = new QLabel( i18n("XDMCP Host Menu"), this );
-	title->setAlignment( AlignCenter );
+	title->setAlignment( Qt::AlignCenter );
 	vbox->addWidget( title );
 
-	host_view = new QListView( this, "hosts" );
+	host_view = new Q3ListView( this, "hosts" );
 	host_view->addColumn( i18n("Hostname") );
 	host_view->setColumnWidth( 0, fontMetrics().width( "login.crap.net" ) );
 	host_view->addColumn( i18n("Status") );
 	host_view->setMinimumWidth( fontMetrics().width( "login.crap.com Display not authorized to connect this server" ) );
-	host_view->setResizeMode( QListView::LastColumn );
+	host_view->setResizeMode( Q3ListView::LastColumn );
 	host_view->setAllColumnsShowFocus( true );
 	vbox->addWidget( host_view );
 
@@ -112,7 +116,7 @@ ChooserDlg::ChooserDlg()
 	connect( pingButton, SIGNAL(clicked()), SLOT(pingHosts()) );
 	connect( acceptButton, SIGNAL(clicked()), SLOT(accept()) );
 //	connect( helpButton, SIGNAL(clicked()), SLOT(slotHelp()) );
-	connect( host_view, SIGNAL(doubleClicked(QListViewItem *)), SLOT(accept()) );
+	connect( host_view, SIGNAL(doubleClicked(Q3ListViewItem *)), SLOT(accept()) );
 
 	adjustGeometry();
 }
@@ -153,7 +157,7 @@ void ChooserDlg::accept()
 		}
 		return;
 	} else /*if (focusWidget() == host_view)*/ {
-		QListViewItem *item = host_view->currentItem();
+		Q3ListViewItem *item = host_view->currentItem();
 		if (item) {
 			GSendInt( G_Ready );
 			GSendInt( ((ChooserListViewItem *)item)->id );
@@ -177,10 +181,10 @@ QString ChooserDlg::recvStr()
 		return i18n("<unknown>");
 }
 
-QListViewItem *ChooserDlg::findItem( int id )
+Q3ListViewItem *ChooserDlg::findItem( int id )
 {
-	QListViewItem *itm;
-	for (QListViewItemIterator it( host_view ); (itm = it.current()); ++it)
+	Q3ListViewItem *itm;
+	for (Q3ListViewItemIterator it( host_view ); (itm = it.current()); ++it)
 		if (((ChooserListViewItem *)itm)->id == id)
 			return itm;
 	return 0;
@@ -203,7 +207,7 @@ void ChooserDlg::slotReadPipe()
 			host_view->insertItem(
 				new ChooserListViewItem( host_view, id, nam, sts ) );
 		else {
-			QListViewItem *itm = findItem( id );
+			Q3ListViewItem *itm = findItem( id );
 			itm->setText( 0, nam );
 			itm->setText( 1, sts );
 		}

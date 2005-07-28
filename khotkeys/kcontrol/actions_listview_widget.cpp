@@ -16,11 +16,11 @@
 
 #include "actions_listview_widget.h"
 
-#include <qheader.h>
+#include <q3header.h>
 
 #include <klocale.h>
 #include <kdebug.h>
-#include <qdragobject.h>
+#include <q3dragobject.h>
 
 #include <khlistview.h>
 #include <actions.h>
@@ -39,10 +39,10 @@ Actions_listview_widget::Actions_listview_widget( QWidget* parent_P, const char*
     actions_listview->header()->hide();
     actions_listview->addColumn( "" );
     actions_listview->setRootIsDecorated( true ); // CHECKME
-    connect( actions_listview, SIGNAL( current_changed( QListViewItem* )),
-        SLOT( current_changed( QListViewItem* )));
-    connect( actions_listview, SIGNAL( moved( QListViewItem*, QListViewItem*, QListViewItem* )),
-        SLOT( item_moved( QListViewItem*, QListViewItem*, QListViewItem* )));
+    connect( actions_listview, SIGNAL( current_changed( Q3ListViewItem* )),
+        SLOT( current_changed( Q3ListViewItem* )));
+    connect( actions_listview, SIGNAL( moved( Q3ListViewItem*, Q3ListViewItem*, Q3ListViewItem* )),
+        SLOT( item_moved( Q3ListViewItem*, Q3ListViewItem*, Q3ListViewItem* )));
     // KHotKeys::Module::changed()
     }
 
@@ -63,7 +63,7 @@ void Actions_listview_widget::set_action_data( Action_data_base* data_P, bool re
         saved_current_item->set_data( data_P );
     }
 
-void Actions_listview_widget::current_changed( QListViewItem* item_P )
+void Actions_listview_widget::current_changed( Q3ListViewItem* item_P )
     {
     kdDebug( 1217 ) << "current_changed:" << item_P << endl;
     set_current_action( static_cast< Action_listview_item* >( item_P ));
@@ -86,7 +86,7 @@ void Actions_listview_widget::set_current_action( Action_listview_item* item_P )
 
 void Actions_listview_widget::new_action( Action_data_base* data_P )
     {
-    QListViewItem* parent = NULL;
+    Q3ListViewItem* parent = NULL;
     if( current_action() != NULL )
         {
         if( dynamic_cast< Action_data_group* >( current_action()->data()) != NULL )
@@ -120,7 +120,7 @@ void Actions_listview_widget::delete_action()
 //        saved_current_item = NULL;
     }
 
-void Actions_listview_widget::item_moved( QListViewItem* item_P, QListViewItem*, QListViewItem* )
+void Actions_listview_widget::item_moved( Q3ListViewItem* item_P, Q3ListViewItem*, Q3ListViewItem* )
     {
     Action_listview_item* item = static_cast< Action_listview_item* >( item_P );
     Action_listview_item* parent = static_cast< Action_listview_item* >( item->parent());
@@ -153,25 +153,13 @@ void Actions_listview_widget::build_up_recursively( Action_data_group* parent_P,
         }
     }
     
-Action_listview_item* Actions_listview_widget::create_item( QListViewItem* parent_P,
-    QListViewItem* after_P, Action_data_base* data_P )
+Action_listview_item* Actions_listview_widget::create_item( Q3ListViewItem* parent_P,
+    Q3ListViewItem* after_P, Action_data_base* data_P )
     {
     if( parent_P != NULL )
         return new Action_listview_item( parent_P, after_P, data_P );
     else
         return new Action_listview_item( actions_listview, after_P, data_P );
-    }
-
-// Actions_listview
-
-Actions_listview::Actions_listview( QWidget* parent_P, const char* name_P )
-    : KHListView( parent_P, name_P ), _widget( static_cast< Actions_listview_widget* >( parent_P->parent()))
-    {
-    // this relies on the way designer creates the .cpp file from .ui (yes, I'm lazy)
-    assert( dynamic_cast< Actions_listview_widget_ui* >( parent_P->parent()));
-    setDragEnabled( true );
-    setDropVisualizer( true );
-    setAcceptDrops( true );
     }
 
 // Action_listview_item

@@ -13,6 +13,7 @@
 
 #include <qstringlist.h>
 #include <qcolor.h>
+#include <QMap>
 
 template <class QString, class T> class QMap;
 class KStandardDirs;

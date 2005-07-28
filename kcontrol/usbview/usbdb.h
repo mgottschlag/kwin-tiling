@@ -13,7 +13,7 @@
 #define __USB_DB_H__
 
 
-#include <qdict.h>
+#include <q3dict.h>
 
 
 class USBDB
@@ -31,7 +31,7 @@ public:
 
 private:
 
-  QDict<QString> _classes, _ids;
+  Q3Dict<QString> _classes, _ids;
 
 };
 

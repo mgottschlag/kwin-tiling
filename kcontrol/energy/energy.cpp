@@ -25,7 +25,11 @@
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qwhatsthis.h>
+
+//Added by qt3to4:
+#include <QPixmap>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include <kconfig.h>
 #include <kcursor.h>
@@ -44,6 +48,7 @@
 #include <X11/Xos.h>
 
 #include "energy.h"
+#include <QX11Info>
 
 
 #ifdef HAVE_DPMS
@@ -94,7 +99,7 @@ extern "C" {
         KConfig *cfg = new KConfig("kcmdisplayrc", true /*readonly*/, false /*no globals*/);
         cfg->setGroup("DisplayEnergy");
 
-	Display *dpy = qt_xdisplay();
+	Display *dpy = QX11Info::display();
 	CARD16 pre_configured_status;
 	BOOL pre_configured_enabled;
 	CARD16 pre_configured_standby;
@@ -153,7 +158,7 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
 
 #ifdef HAVE_DPMS
     int dummy;
-    m_bDPMS = DPMSQueryExtension(qt_xdisplay(), &dummy, &dummy);
+    m_bDPMS = DPMSQueryExtension(QX11Info::display(), &dummy, &dummy);
 #endif
 
     QVBoxLayout *top = new QVBoxLayout(this, 0, KDialog::spacingHint());
@@ -165,7 +170,7 @@ KEnergy::KEnergy(QWidget *parent, const char *name)
     m_pCBEnable= new QCheckBox(i18n("&Enable display power management" ), this);
     connect(m_pCBEnable, SIGNAL(toggled(bool)), SLOT(slotChangeEnable(bool)));
     hbox->addWidget(m_pCBEnable);
-        QWhatsThis::add( m_pCBEnable, i18n("Check this option to enable the"
+        m_pCBEnable->setWhatsThis( i18n("Check this option to enable the"
            " power saving features of your display.") );
     } else {
         lbl = new QLabel(i18n("Your display does not support power saving."), this);
@@ -190,7 +195,7 @@ connect(logo, SIGNAL(leftClickedURL(const QString&)), SLOT(openURL(const QString
     m_pStandbySlider->setSpecialValueText(i18n("Disabled"));
     connect(m_pStandbySlider, SIGNAL(valueChanged(int)), SLOT(slotChangeStandby(int)));
     top->addWidget(m_pStandbySlider);
-    QWhatsThis::add( m_pStandbySlider, i18n("Choose the period of inactivity"
+    m_pStandbySlider->setWhatsThis( i18n("Choose the period of inactivity"
        " after which the display should enter \"standby\" mode. This is the"
        " first level of power saving.") );
 
@@ -201,7 +206,7 @@ connect(logo, SIGNAL(leftClickedURL(const QString&)), SLOT(openURL(const QString
     m_pSuspendSlider->setSpecialValueText(i18n("Disabled"));
     connect(m_pSuspendSlider, SIGNAL(valueChanged(int)), SLOT(slotChangeSuspend(int)));
     top->addWidget(m_pSuspendSlider);
-    QWhatsThis::add( m_pSuspendSlider, i18n("Choose the period of inactivity"
+    m_pSuspendSlider->setWhatsThis( i18n("Choose the period of inactivity"
        " after which the display should enter \"suspend\" mode. This is the"
        " second level of power saving, but may not be different from the first"
        " level for some displays.") );
@@ -213,7 +218,7 @@ connect(logo, SIGNAL(leftClickedURL(const QString&)), SLOT(openURL(const QString
     m_pOffSlider->setSpecialValueText(i18n("Disabled"));
     connect(m_pOffSlider, SIGNAL(valueChanged(int)), SLOT(slotChangeOff(int)));
     top->addWidget(m_pOffSlider);
-    QWhatsThis::add( m_pOffSlider, i18n("Choose the period of inactivity"
+    m_pOffSlider->setWhatsThis( i18n("Choose the period of inactivity"
        " after which the display should be powered off. This is the"
        " greatest level of power saving that can be achieved while the"
        " display is still physically turned on.") );
@@ -338,7 +343,7 @@ void KEnergy::applySettings(bool enable, int standby, int suspend, int off)
     XErrFunc defaultHandler;
     defaultHandler = XSetErrorHandler(dropError);
 
-    Display *dpy = qt_xdisplay();
+    Display *dpy = QX11Info::display();
 
     int dummy;
     bool hasDPMS = DPMSQueryExtension(dpy, &dummy, &dummy);

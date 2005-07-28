@@ -25,11 +25,18 @@
 #include <qcursor.h>
 #include <qdatetime.h>
 #include <qfile.h>
-#include <qintdict.h>
+#include <q3intdict.h>
 #include <qpainter.h>
 #include <qtooltip.h>
 #include <qmime.h>
-#include <qdragobject.h>
+#include <q3dragobject.h>
+//Added by qt3to4:
+#include <QPaintEvent>
+#include <Q3PtrList>
+#include <QMouseEvent>
+#include <QX11Info>
+//Added by qt3to4:
+#include <Q3PopupMenu>
 
 #include <kaboutdata.h>
 #include <kaction.h>
@@ -137,7 +144,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     ensureGlobalSyncOff(m_config);
 
     updateTimestamp(); // read initial X user time
-    setBackgroundMode( X11ParentRelative );
+    setBackgroundMode( Qt::X11ParentRelative );
     clip = kapp->clipboard();
 
     connect( &m_overflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
@@ -274,7 +281,7 @@ void KlipperWidget::clearClipboardHistory()
 
 void KlipperWidget::mousePressEvent(QMouseEvent *e)
 {
-    if ( e->button() != LeftButton && e->button() != RightButton )
+    if ( e->button() != Qt::LeftButton && e->button() != Qt::RightButton )
         return;
 
     // if we only hid the menu less than a third of a second ago,
@@ -306,7 +313,7 @@ void KlipperWidget::slotStartShowTimer()
     showTimer->start();
 }
 
-void KlipperWidget::showPopupMenu( QPopupMenu *menu )
+void KlipperWidget::showPopupMenu( Q3PopupMenu *menu )
 {
     Q_ASSERT( menu != 0L );
 
@@ -344,7 +351,7 @@ bool KlipperWidget::loadHistory() {
     if ( !history_file.exists() ) {
         return false;
     }
-    if ( !history_file.open( IO_ReadOnly ) ) {
+    if ( !history_file.open( QIODevice::ReadOnly ) ) {
         kdWarning() << failed_load_warning << ": " << history_file.errorString() << endl;
         return false;
     }
@@ -356,7 +363,7 @@ bool KlipperWidget::loadHistory() {
     // youngest-first to keep the most important clipboard
     // items at the top, but the history is created oldest
     // first.
-    QPtrList<HistoryItem> reverseList;
+    Q3PtrList<HistoryItem> reverseList;
     for ( HistoryItem* item = HistoryItem::create( history_stream );
           item;
           item = HistoryItem::create( history_stream ) )
@@ -389,7 +396,7 @@ void KlipperWidget::saveHistory() {
         return;
     }
     QFile history_file( history_file_name );
-    if ( !history_file.open( IO_WriteOnly | IO_Truncate ) ) {
+    if ( !history_file.open( QIODevice::WriteOnly | QIODevice::Truncate ) ) {
         kdWarning() << failed_save_warning << ": " << history_file.errorString() << endl;
         return;
     }
@@ -580,8 +587,8 @@ void KlipperWidget::slotRepeatAction()
 {
     if ( !myURLGrabber ) {
         myURLGrabber = new URLGrabber( m_config );
-        connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
-                 SLOT( showPopupMenu( QPopupMenu * )) );
+        connect( myURLGrabber, SIGNAL( sigPopup( Q3PopupMenu * )),
+                 SLOT( showPopupMenu( Q3PopupMenu * )) );
         connect( myURLGrabber, SIGNAL( sigDisablePopup() ),
                  this, SLOT( disableURLGrabber() ) );
     }
@@ -611,8 +618,8 @@ void KlipperWidget::setURLGrabberEnabled( bool enable )
         toggleURLGrabAction->setText(i18n("&Actions Enabled"));
         if ( !myURLGrabber ) {
             myURLGrabber = new URLGrabber( m_config );
-            connect( myURLGrabber, SIGNAL( sigPopup( QPopupMenu * )),
-                     SLOT( showPopupMenu( QPopupMenu * )) );
+            connect( myURLGrabber, SIGNAL( sigPopup( Q3PopupMenu * )),
+                     SLOT( showPopupMenu( Q3PopupMenu * )) );
             connect( myURLGrabber, SIGNAL( sigDisablePopup() ),
                      this, SLOT( disableURLGrabber() ) );
         }
@@ -730,9 +737,9 @@ bool KlipperWidget::blockFetchingNewData()
 //   while the user is doing a selection using the mouse, OOo stops updating the clipboard
 //   contents, so in practice it's like the user has selected only the part which was
 //   selected when Klipper asked first.
-    ButtonState buttonstate = kapp->keyboardMouseState();
-    if( ( buttonstate & ( ShiftButton | LeftButton )) == ShiftButton // #85198
-        || ( buttonstate & LeftButton ) == LeftButton ) { // #80302
+	Qt::ButtonState buttonstate = kapp->keyboardMouseState();
+    if( ( buttonstate & ( Qt::ShiftButton | Qt::LeftButton )) == Qt::ShiftButton // #85198
+        || ( buttonstate & Qt::LeftButton ) == Qt::LeftButton ) { // #80302
         m_pendingContentsCheck = true;
         m_pendingCheckTimer.start( 100, true );
         return true;
@@ -837,10 +844,10 @@ void KlipperWidget::checkClipData( bool selectionMode )
 
     if ( bURLGrabber &&
          myURLGrabber &&
-         QTextDrag::canDecode( data ))
+         Q3TextDrag::canDecode( data ))
     {
         QString text;
-        QTextDrag::decode( data, text );
+        Q3TextDrag::decode( data, text );
         const HistoryStringItem* topItem = dynamic_cast<const HistoryStringItem*>( history()->first() );
         if ( !topItem || text != topItem->text() ) {
             if ( myURLGrabber->checkNewData( text ) )
@@ -1006,19 +1013,19 @@ void KlipperWidget::updateTimestamp()
     if ( !w )
         w = new QWidget;
     unsigned char data[ 1 ];
-    XChangeProperty( qt_xdisplay(), w->winId(), XA_ATOM, XA_ATOM, 8, PropModeAppend, data, 1 );
+    XChangeProperty( QX11Info::display(), w->winId(), XA_ATOM, XA_ATOM, 8, PropModeAppend, data, 1 );
     next_x_time = CurrentTime;
     XEvent dummy;
-    XCheckIfEvent( qt_xdisplay(), &dummy, update_x_time_predicate, NULL );
+    XCheckIfEvent( QX11Info::display(), &dummy, update_x_time_predicate, NULL );
     if( next_x_time == CurrentTime )
         {
-        XSync( qt_xdisplay(), False );
-        XCheckIfEvent( qt_xdisplay(), &dummy, update_x_time_predicate, NULL );
+        XSync( QX11Info::display(), False );
+        XCheckIfEvent( QX11Info::display(), &dummy, update_x_time_predicate, NULL );
         }
     Q_ASSERT( next_x_time != CurrentTime );
     time = next_x_time;
     XEvent ev; // remove the PropertyNotify event from the events queue
-    XWindowEvent( qt_xdisplay(), w->winId(), PropertyChangeMask, &ev );
+    XWindowEvent( QX11Info::display(), w->winId(), PropertyChangeMask, &ev );
 }
 
 static const char * const description =

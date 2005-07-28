@@ -23,6 +23,9 @@
 #include <qpixmap.h>
 #include <qstring.h>
 #include <qcursor.h>
+//Added by qt3to4:
+#include <QMouseEvent>
+#include <QPaintEvent>
 
 #include <kglobal.h>
 
@@ -314,11 +317,12 @@ void PreviewWidget::paintEvent( QPaintEvent * )
 	p.fillRect( rect(), colorGroup().brush( QColorGroup::Background ) );
 	Picture dest;
 
-	if ( !qt_has_xft || !qt_use_xrender ) {
+	if ( buffer.x11PictureHandle()==0 ) {
 		XRenderPictFormat *fmt = XRenderFindVisualFormat( x11Display(), (Visual*)buffer.x11Visual() );
 		dest = XRenderCreatePicture( x11Display(), buffer.handle(), fmt, 0, NULL );
 	} else
-		dest = buffer.x11RenderHandle();
+#warning make sure x11PictureHandle is the substitute of x11RenderHandle
+		dest = buffer.x11PictureHandle();
 
 	int rwidth = width() / numCursors;
 
@@ -334,7 +338,7 @@ void PreviewWidget::paintEvent( QPaintEvent * )
 
 	bitBlt( this, 0, 0, &buffer );
 
-	if ( !qt_has_xft || !qt_use_xrender )
+	if ( buffer.x11PictureHandle()==0 )
 		XRenderFreePicture( x11Display(), dest );
 }
 

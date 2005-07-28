@@ -19,6 +19,8 @@
 #include "randr.h"
 
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -28,7 +30,7 @@
 #include <dcopclient.h>
 #include <kipc.h>
 #include <kactivelabel.h>
-
+#include <QDesktopWidget>
 #include "ktimerdialog.h"
 
 #include <X11/Xlib.h>
@@ -38,6 +40,7 @@
 #undef INT8
 #undef INT32
 #include <X11/extensions/Xrandr.h>
+#include <QX11Info>
 
 class RandRScreenPrivate
 {
@@ -71,7 +74,7 @@ void RandRScreen::loadSettings()
 	if (d->config)
 		XRRFreeScreenConfigInfo(d->config);
 
-	d->config = XRRGetScreenInfo(qt_xdisplay(), RootWindow(qt_xdisplay(), m_screen));
+	d->config = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), m_screen));
 	Q_ASSERT(d->config);
 
 	Rotation rotation;
@@ -81,13 +84,13 @@ void RandRScreen::loadSettings()
 	m_pixelSizes.clear();
 	m_mmSizes.clear();
 	int numSizes;
-	XRRScreenSize* sizes = XRRSizes(qt_xdisplay(), m_screen, &numSizes);
+	XRRScreenSize* sizes = XRRSizes(QX11Info::display(), m_screen, &numSizes);
 	for (int i = 0; i < numSizes; i++) {
 		m_pixelSizes.append(QSize(sizes[i].width, sizes[i].height));
 		m_mmSizes.append(QSize(sizes[i].mwidth, sizes[i].mheight));
 	}
 
-	m_rotations = XRRRotations(qt_xdisplay(), m_screen, &rotation);
+	m_rotations = XRRRotations(QX11Info::display(), m_screen, &rotation);
 
 	m_currentRefreshRate = m_proposedRefreshRate = refreshRateHzToIndex(m_currentSize, XRRConfigCurrentRate(d->config));
 }
@@ -106,12 +109,12 @@ bool RandRScreen::applyProposed()
 	Status status;
 
 	if (proposedRefreshRate() < 0)
-		status = XRRSetScreenConfig(qt_xdisplay(), d->config, DefaultRootWindow(qt_xdisplay()), (SizeID)proposedSize(), (Rotation)proposedRotation(), CurrentTime);
+		status = XRRSetScreenConfig(QX11Info::display(), d->config, DefaultRootWindow(QX11Info::display()), (SizeID)proposedSize(), (Rotation)proposedRotation(), CurrentTime);
 	else {
 		if( refreshRateIndexToHz(proposedSize(), proposedRefreshRate()) <= 0 ) {
 			m_proposedRefreshRate = 0;
 		}
-		status = XRRSetScreenConfigAndRate(qt_xdisplay(), d->config, DefaultRootWindow(qt_xdisplay()), (SizeID)proposedSize(), (Rotation)proposedRotation(), refreshRateIndexToHz(proposedSize(), proposedRefreshRate()), CurrentTime);
+		status = XRRSetScreenConfigAndRate(QX11Info::display(), d->config, DefaultRootWindow(QX11Info::display()), (SizeID)proposedSize(), (Rotation)proposedRotation(), refreshRateIndexToHz(proposedSize(), proposedRefreshRate()), CurrentTime);
 	}
 
 	//kdDebug() << "New size: " << WidthOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << ", " << HeightOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << endl;
@@ -385,7 +388,7 @@ int RandRScreen::currentMMHeight() const
 QStringList RandRScreen::refreshRates(int size) const
 {
 	int nrates;
-	short* rates = XRRRates(qt_xdisplay(), m_screen, (SizeID)size, &nrates);
+	short* rates = XRRRates(QX11Info::display(), m_screen, (SizeID)size, &nrates);
 
 	QStringList ret;
 	for (int i = 0; i < nrates; i++)
@@ -437,7 +440,7 @@ int RandRScreen::proposedRefreshRate() const
 int RandRScreen::refreshRateHzToIndex(int size, int hz) const
 {
 	int nrates;
-	short* rates = XRRRates(qt_xdisplay(), m_screen, (SizeID)size, &nrates);
+	short* rates = XRRRates(QX11Info::display(), m_screen, (SizeID)size, &nrates);
 
 	for (int i = 0; i < nrates; i++)
 		if (hz == rates[i])
@@ -453,7 +456,7 @@ int RandRScreen::refreshRateHzToIndex(int size, int hz) const
 int RandRScreen::refreshRateIndexToHz(int size, int index) const
 {
 	int nrates;
-	short* rates = XRRRates(qt_xdisplay(), m_screen, (SizeID)size, &nrates);
+	short* rates = XRRRates(QX11Info::display(), m_screen, (SizeID)size, &nrates);
 
 	if (nrates == 0 || index < 0)
 		return 0;
@@ -482,7 +485,7 @@ const QSize& RandRScreen::mmSize(int index) const
 
 int RandRScreen::sizeIndex(QSize pixelSize) const
 {
-	for (uint i = 0; i < m_pixelSizes.count(); i++)
+	for (int i = 0; i < m_pixelSizes.count(); i++)
 		if (m_pixelSizes[i] == pixelSize)
 			return i;
 
@@ -554,7 +557,7 @@ RandRDisplay::RandRDisplay()
 	: m_valid(true)
 {
 	// Check extension
-	Status s = XRRQueryExtension(qt_xdisplay(), &m_eventBase, &m_errorBase);
+	Status s = XRRQueryExtension(QX11Info::display(), &m_eventBase, &m_errorBase);
 	if (!s) {
 		m_errorCode = QString("%1, base %1").arg(s).arg(m_errorBase);
 		m_valid = false;
@@ -562,14 +565,14 @@ RandRDisplay::RandRDisplay()
 	}
 
 	int major_version, minor_version;
-	XRRQueryVersion(qt_xdisplay(), &major_version, &minor_version);
+	XRRQueryVersion(QX11Info::display(), &major_version, &minor_version);
 
 	m_version = QString("X Resize and Rotate extension version %1.%1").arg(major_version).arg(minor_version);
 
-	m_numScreens = ScreenCount(qt_xdisplay());
+	m_numScreens = ScreenCount(QX11Info::display());
 
 	// This assumption is WRONG with Xinerama
-	// Q_ASSERT(QApplication::desktop()->numScreens() == ScreenCount(qt_xdisplay()));
+	// Q_ASSERT(QApplication::desktop()->numScreens() == ScreenCount(QX11Info::display()));
 
 	m_screens.setAutoDelete(true);
 	for (int i = 0; i < m_numScreens; i++) {

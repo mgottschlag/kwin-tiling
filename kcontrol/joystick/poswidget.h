@@ -22,6 +22,8 @@
 #define _POSWIDGET_H_
 
 #include <qwidget.h>
+//Added by qt3to4:
+#include <QPaintEvent>
 
 /**
   Widget to display the joystick-selected (x,y) position

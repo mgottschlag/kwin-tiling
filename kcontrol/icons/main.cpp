@@ -22,6 +22,8 @@
  */
 
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <kgenericfactory.h>
 #include <kaboutdata.h>
@@ -36,8 +38,8 @@ K_EXPORT_COMPONENT_FACTORY( kcm_icons, IconsFactory("kcmicons") )
 
 /**** IconModule ****/
 
-IconModule::IconModule(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(IconsFactory::instance(), parent, name)
+IconModule::IconModule(QWidget *parent, const char *, const QStringList &)
+  : KCModule(IconsFactory::instance(), parent)
 {
   QVBoxLayout *layout = new QVBoxLayout(this);
   tab = new QTabWidget(this);

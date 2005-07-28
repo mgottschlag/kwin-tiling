@@ -30,6 +30,8 @@
 #include <input.h>
 #include <action_data.h>
 #include <gestures.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 namespace KHotKeys
 {
@@ -94,7 +96,7 @@ int KDE_EXPORT kdemain( int argc, char** argv )
     {
         {
 	// multiheaded hotkeys
-        QCString multiHead = getenv("KDE_MULTIHEAD");
+        Q3CString multiHead = getenv("KDE_MULTIHEAD");
         if (multiHead.lower() == "true") {
 	    Display *dpy = XOpenDisplay(NULL);
 	    if (! dpy) {
@@ -106,14 +108,14 @@ int KDE_EXPORT kdemain( int argc, char** argv )
 	    int number_of_screens = ScreenCount(dpy);
 	    khotkeys_screen_number = DefaultScreen(dpy);
 	    int pos;
-	    QCString displayname = XDisplayString(dpy);
+	    Q3CString displayname = XDisplayString(dpy);
 	    XCloseDisplay(dpy);
 	    dpy = 0;
 
 	    if ((pos = displayname.findRev('.')) != -1)
 		displayname.remove(pos, 10);
 
-	    QCString env;
+	    Q3CString env;
 	    if (number_of_screens != 1) {
 		for (int i = 0; i < number_of_screens; i++) {
 		    if (i != khotkeys_screen_number && fork() == 0) {
@@ -135,7 +137,7 @@ int KDE_EXPORT kdemain( int argc, char** argv )
 	}
         }
 
-    QCString appname;
+    Q3CString appname;
     if (khotkeys_screen_number == 0)
 	appname = "khotkeys";
     else

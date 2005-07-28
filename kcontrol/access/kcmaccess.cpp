@@ -12,12 +12,15 @@
 
 #include <qtabwidget.h>
 #include <qlayout.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qradiobutton.h>
-#include <qwhatsthis.h>
+
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 
 #include <kstandarddirs.h>
@@ -180,7 +183,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   QVBoxLayout *vbox = new QVBoxLayout(bell, KDialogBase::marginHint(), 
       KDialogBase::spacingHint());
 
-  QGroupBox *grp = new QGroupBox(i18n("Audible Bell"), bell);
+  Q3GroupBox *grp = new Q3GroupBox(i18n("Audible Bell"), bell);
   grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
@@ -191,10 +194,10 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   vvbox->addWidget(systemBell);
   customBell = new QCheckBox(i18n("Us&e customized bell"), grp);
   vvbox->addWidget(customBell);
-  QWhatsThis::add( systemBell, i18n("If this option is checked, the default system bell will be used. See the"
+  systemBell->setWhatsThis( i18n("If this option is checked, the default system bell will be used. See the"
     " \"System Bell\" control module for how to customize the system bell."
     " Normally, this is just a \"beep\".") );
-  QWhatsThis::add( customBell, i18n("Check this option if you want to use a customized bell, playing"
+  customBell->setWhatsThis( i18n("Check this option if you want to use a customized bell, playing"
     " a sound file. If you do this, you will probably want to turn off the system bell.<p> Please note"
     " that on slow machines this may cause a \"lag\" between the event causing the bell and the sound being played.") );
 
@@ -208,9 +211,9 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   hbox->addWidget(soundButton);
   QString wtstr = i18n("If the option \"Use customized bell\" is enabled, you can choose a sound file here."
     " Click \"Browse...\" to choose a sound file using the file dialog.");
-  QWhatsThis::add( soundEdit, wtstr );
-  QWhatsThis::add( soundLabel, wtstr );
-  QWhatsThis::add( soundButton, wtstr );
+  soundEdit->setWhatsThis( wtstr );
+  soundLabel->setWhatsThis( wtstr );
+  soundButton->setWhatsThis( wtstr );
 
   connect(soundButton, SIGNAL(clicked()), this, SLOT(selectSound()));
 
@@ -223,7 +226,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   // -----------------------------------------------------
 
   // visible bell ----------------------------------------
-  grp = new QGroupBox(i18n("Visible Bell"), bell);
+  grp = new Q3GroupBox(i18n("Visible Bell"), bell);
   grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
@@ -231,7 +234,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   visibleBell = new QCheckBox(i18n("&Use visible bell"), grp);
   vvbox->addWidget(visibleBell);
-  QWhatsThis::add( visibleBell, i18n("This option will turn on the \"visible bell\", i.e. a visible"
+  visibleBell->setWhatsThis( i18n("This option will turn on the \"visible bell\", i.e. a visible"
     " notification shown every time that normally just a bell would occur. This is especially useful"
     " for deaf people.") );
 
@@ -240,17 +243,17 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   invertScreen = new QRadioButton(i18n("I&nvert screen"), grp);
   hbox->addWidget(invertScreen);
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
-  QWhatsThis::add( invertScreen, i18n("All screen colors will be inverted for the amount of time specified below.") );
+  invertScreen->setWhatsThis( i18n("All screen colors will be inverted for the amount of time specified below.") );
   hbox->addSpacing(24);
   flashScreen = new QRadioButton(i18n("F&lash screen"), grp);
   hbox->addWidget(flashScreen);
-  QWhatsThis::add( flashScreen, i18n("The screen will turn to a custom color for the amount of time specified below.") );
+  flashScreen->setWhatsThis( i18n("The screen will turn to a custom color for the amount of time specified below.") );
   hbox->addSpacing(12);
   colorButton = new KColorButton(grp);
   colorButton->setFixedWidth(colorButton->sizeHint().height()*2);
   hbox->addWidget(colorButton);
   hbox->addStretch();
-  QWhatsThis::add( colorButton, i18n("Click here to choose the color used for the \"flash screen\" visible bell.") );
+  colorButton->setWhatsThis( i18n("Click here to choose the color used for the \"flash screen\" visible bell.") );
 
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
@@ -260,7 +263,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   durationSlider->setLabel(i18n("Duration:"));
   durationSlider->setSuffix(i18n(" msec"));
   hbox->addWidget(durationSlider);
-  QWhatsThis::add( durationSlider, i18n("Here you can customize the duration of the \"visible bell\" effect being shown.") );
+  durationSlider->setWhatsThis( i18n("Here you can customize the duration of the \"visible bell\" effect being shown.") );
 
   connect(invertScreen, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(flashScreen, SIGNAL(clicked()), this, SLOT(configChanged()));
@@ -285,7 +288,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   vbox = new QVBoxLayout(keys, KDialog::marginHint(), KDialog::spacingHint());
 
-  grp = new QGroupBox(i18n("S&ticky Keys"), keys);
+  grp = new Q3GroupBox(i18n("S&ticky Keys"), keys);
   grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
@@ -299,7 +302,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   stickyKeysLock = new QCheckBox(i18n("&Lock sticky keys"), grp);
   hbox->addWidget(stickyKeysLock);
 
-  grp = new QGroupBox(i18n("Slo&w Keys"), keys);
+  grp = new Q3GroupBox(i18n("Slo&w Keys"), keys);
   grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
@@ -317,7 +320,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   hbox->addWidget(slowKeysDelay);
 
 
-  grp = new QGroupBox(i18n("Bounce Keys"), keys);
+  grp = new Q3GroupBox(i18n("Bounce Keys"), keys);
   grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
@@ -334,7 +337,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   bounceKeysDelay->setLabel(i18n("D&elay:"));
   hbox->addWidget(bounceKeysDelay);
 
-  grp = new QGroupBox(i18n("Activation Gestures"), keys);
+  grp = new Q3GroupBox(i18n("Activation Gestures"), keys);
   grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
@@ -344,11 +347,11 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   vvbox->addWidget(gestures);
   QString shortcut = mouseKeysShortcut(this->x11Display());
   if (shortcut.isEmpty())
-    QWhatsThis::add (gestures, i18n("Here you can activate keyboard gestures that turn on the following features: \n"
+    gestures->setWhatsThis( i18n("Here you can activate keyboard gestures that turn on the following features: \n"
     "Sticky keys: Press Shift key 5 consecutive times\n"
     "Slow keys: Hold down Shift for 8 seconds"));
   else
-    QWhatsThis::add (gestures, i18n("Here you can activate keyboard gestures that turn on the following features: \n"
+    gestures->setWhatsThis( i18n("Here you can activate keyboard gestures that turn on the following features: \n"
     "Mouse Keys: %1\n"
     "Sticky keys: Press Shift key 5 consecutive times\n"
     "Slow keys: Hold down Shift for 8 seconds").arg(shortcut));
@@ -357,7 +360,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   hbox->addSpacing(24);
   gestureConfirmation = new QCheckBox(i18n("Show a confirmation dialog whenever a gesture is used"), grp);
   hbox->addWidget(gestureConfirmation);
-  QWhatsThis::add (gestureConfirmation, i18n("KDE will show a confirmation dialog whenever a gesture is used if this option is checked.\nBe carefull do know what yo do if you uncheck it as then the AccessX settings will always be applied without confirmation.") );
+  gestureConfirmation->setWhatsThis( i18n("KDE will show a confirmation dialog whenever a gesture is used if this option is checked.\nBe carefull do know what yo do if you uncheck it as then the AccessX settings will always be applied without confirmation.") );
 
 //XK_MouseKeys_Enable,XK_Pointer_EnableKeys
   connect(stickyKeys, SIGNAL(clicked()), this, SLOT(configChanged()));

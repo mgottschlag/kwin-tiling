@@ -75,12 +75,12 @@ bool KPrivacyManager::clearThumbnails()
 
 bool KPrivacyManager::clearRunCommandHistory() const
 {
-  return kapp->dcopClient()->send( "kdesktop", "KDesktopIface", "clearCommandHistory()", "" );
+  return kapp->dcopClient()->send( "kdesktop", "KDesktopIface", "clearCommandHistory()", QString("") );
 }
 
 bool KPrivacyManager::clearAllCookies() const
 {
-  return kapp->dcopClient()->send( "kded", "kcookiejar", "deleteAllCookies()", "" );
+  return kapp->dcopClient()->send( "kded", "kcookiejar", "deleteAllCookies()", QString("") );
 }
 
 bool KPrivacyManager::clearSavedClipboardContents()
@@ -98,7 +98,7 @@ bool KPrivacyManager::clearSavedClipboardContents()
     return true;
   }
 
-  return kapp->dcopClient()->send( "klipper", "klipper", "clearClipboardHistory()", "" );
+  return kapp->dcopClient()->send( "klipper", "klipper", "clearClipboardHistory()", QString ("") );
 }
 
 bool KPrivacyManager::clearFormCompletion() const
@@ -123,7 +123,7 @@ bool KPrivacyManager::clearRecentDocuments() const
 
 bool KPrivacyManager::clearQuickStartMenu() const
 {
-  return kapp->dcopClient()->send( "kicker", "kicker", "clearQuickStartMenu()", "" );
+  return kapp->dcopClient()->send( "kicker", "kicker", "clearQuickStartMenu()", QString ("") );
 }
 
 bool KPrivacyManager::clearWebHistory()
@@ -138,7 +138,7 @@ bool KPrivacyManager::clearWebHistory()
   }
 
   return kapp->dcopClient()->send( "konqueror*", "KonqHistoryManager",
-                                   "notifyClear(QCString)", "" );
+                                   "notifyClear(QCString)", QString ("") );
 }
 
 bool KPrivacyManager::clearFavIcons()
@@ -157,10 +157,9 @@ bool KPrivacyManager::clearFavIcons()
 
 bool KPrivacyManager::isApplicationRegistered(const QString &appName)
 {
+  DCOPCStringList regApps = kapp->dcopClient()->registeredApplications();
 
-  QCStringList regApps = kapp->dcopClient()->registeredApplications();
-
-  for ( QCStringList::Iterator it = regApps.begin(); it != regApps.end(); ++it )
+  for ( DCOPCStringList::Iterator it = regApps.begin(); it != regApps.end(); ++it )
     if((*it).find(appName.latin1()) != -1) return true;
 
   return false;

@@ -24,8 +24,10 @@
 #ifndef kcmioslaveinfo_h_included
 #define kcmioslaveinfo_h_included
 
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kaboutdata.h>
 #include <kcmodule.h>
@@ -47,13 +49,13 @@ public:
 protected:
     KListBox *m_ioslavesLb;
     KTextBrowser *m_info;
-    QCString helpData;
+    Q3CString helpData;
     KIO::Job *m_tfj;
 
 protected slots:
 
     void showInfo(const QString& protocol);
-    void showInfo(QListBoxItem *item);
+    void showInfo(Q3ListBoxItem *item);
     void slaveHelp( KIO::Job *, const QByteArray &data);
     void slotResult( KIO::Job * );
 

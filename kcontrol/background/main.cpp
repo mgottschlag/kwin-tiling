@@ -16,6 +16,9 @@
  */
 
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <Q3CString>
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <kconfig.h>
@@ -23,13 +26,14 @@
 #include <dcopclient.h>
 #include <kimageio.h>
 #include <kgenericfactory.h>
-
+#include <kdialog.h>
 #include "bgdialog.h"
 
 #include "main.h"
 
 /* as late as possible, as it includes some X headers without protecting them */
 #include <X11/Xlib.h>
+#include <QX11Info>
 
 /**** DLL Interface ****/
 typedef KGenericFactory<KBackground, QWidget> KBackGndFactory;
@@ -41,13 +45,13 @@ KBackground::~KBackground( )
     delete m_pConfig;
 }
 
-KBackground::KBackground(QWidget *parent, const char *name, const QStringList &/* */)
-    : KCModule(KBackGndFactory::instance(), parent, name)
+KBackground::KBackground(QWidget *parent, const char *name, const QStringList &args)
+    : KCModule(KBackGndFactory::instance(), parent, args)
 {
     int screen_number = 0;
-    if (qt_xdisplay())
-	screen_number = DefaultScreen(qt_xdisplay());
-    QCString configname;
+    if (QX11Info::display())
+	screen_number = DefaultScreen(QX11Info::display());
+    Q3CString configname;
     if (screen_number == 0)
 	configname = "kdesktoprc";
     else
@@ -100,15 +104,15 @@ void KBackground::save()
 	client->attach();
 
     int screen_number = 0;
-    if (qt_xdisplay())
-	screen_number = DefaultScreen(qt_xdisplay());
-    QCString appname;
+    if (QX11Info::display())
+	screen_number = DefaultScreen(QX11Info::display());
+    QString appname;
     if (screen_number == 0)
 	appname = "kdesktop";
-    else
+    else 
 	appname.sprintf("kdesktop-screen-%d", screen_number);
 
-    client->send(appname, "KBackgroundIface", "configure()", "");
+    client->send(appname.latin1(), "KBackgroundIface", "configure()", QByteArray());
 }
 
 void KBackground::defaults()

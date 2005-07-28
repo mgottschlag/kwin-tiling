@@ -31,7 +31,8 @@
             </property>
             <property name="font">
                 <font>
-                    <bold>1</bold>
+						<bold>1</bold>
+						<pointSize>8</pointSize>
                 </font>
             </property>
             <property name="text">
@@ -360,6 +361,11 @@ Recommended if you want sound.</string>
     </vbox>
 </widget>
 <customwidgets>
+	<customwidget>
+		<class>KIntNumInput</class>
+		<header location="global">knuminput.h</header>
+		<container>0</container>
+	</customwidget>
 </customwidgets>
 <includes>
     <include location="local" impldecl="in implementation">krichtextlabel.h</include>

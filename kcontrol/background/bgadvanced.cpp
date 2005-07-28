@@ -20,9 +20,9 @@
    Boston, MA 02110-1301, USA.
  */
 
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qcheckbox.h>
-#include <qheader.h>
+#include <q3header.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
@@ -30,7 +30,11 @@
 #include <qpushbutton.h>
 #include <qslider.h>
 #include <qspinbox.h>
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
+//Added by qt3to4:
+#include <QFrame>
+#include <QGridLayout>
+#include <Q3CString>
 
 #include <kconfig.h>
 #include <kcolorbutton.h>
@@ -45,15 +49,16 @@
 #include "bgadvanced_ui.h"
 
 #include <X11/Xlib.h>
+#include <QX11Info>
 
 /**** BGAdvancedDialog ****/
 
-static QCString desktopConfigname()
+static Q3CString desktopConfigname()
 {
     int desktop=0;
-    if (qt_xdisplay())
-        desktop = DefaultScreen(qt_xdisplay());
-    QCString name;
+    if (QX11Info::display())
+        desktop = DefaultScreen(QX11Info::display());
+    Q3CString name;
     if (desktop == 0)
         name = "kdesktoprc";
     else
@@ -77,8 +82,8 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    dlg->m_listPrograms->header()->setStretchEnabled ( true, 1 );
    dlg->m_listPrograms->setAllColumnsShowFocus(true);
 
-   connect(dlg->m_listPrograms, SIGNAL(clicked(QListViewItem *)),
-         SLOT(slotProgramItemClicked(QListViewItem *)));
+   connect(dlg->m_listPrograms, SIGNAL(clicked(Q3ListViewItem *)),
+         SLOT(slotProgramItemClicked(Q3ListViewItem *)));
 
    // Load programs
    QStringList lst = KBackgroundProgram::list();
@@ -95,7 +100,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
          dlg->m_groupIconText->hide();
       }
 
-      dlg->m_spinCache->setSteps(512, 1024);
+      dlg->m_spinCache->setSingleStep(512);
       dlg->m_spinCache->setRange(0, 40960);
       dlg->m_spinCache->setSpecialValueText(i18n("Unlimited"));
       dlg->m_spinCache->setSuffix(i18n(" KB"));
@@ -107,8 +112,8 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
       connect(dlg->m_buttonModify, SIGNAL(clicked()),
          SLOT(slotModify()));
 
-      connect(dlg->m_listPrograms, SIGNAL(doubleClicked(QListViewItem *)),
-         SLOT(slotProgramItemDoubleClicked(QListViewItem *)));
+      connect(dlg->m_listPrograms, SIGNAL(doubleClicked(Q3ListViewItem *)),
+         SLOT(slotProgramItemDoubleClicked(Q3ListViewItem *)));
    }
    else
    {
@@ -255,7 +260,7 @@ void BGAdvancedDialog::addProgram(const QString &name)
    if (prog.command().isEmpty() || (prog.isGlobal() && !prog.isAvailable()))
       return;
 
-   QListViewItem *item = new QListViewItem(dlg->m_listPrograms);
+   Q3ListViewItem *item = new Q3ListViewItem(dlg->m_listPrograms);
    item->setText(0, prog.name());
    item->setText(1, prog.comment());
    item->setText(2, i18n("%1 min.").arg(prog.refresh()));
@@ -267,7 +272,7 @@ void BGAdvancedDialog::selectProgram(const QString &name)
 {
    if (m_programItems.find(name))
    {
-      QListViewItem *item = m_programItems[name];
+      Q3ListViewItem *item = m_programItems[name];
       dlg->m_listPrograms->ensureItemVisible(item);
       dlg->m_listPrograms->setSelected(item, true);
       m_selectedProgram = name;
@@ -336,14 +341,14 @@ void BGAdvancedDialog::slotModify()
    }
 }
 
-void BGAdvancedDialog::slotProgramItemClicked(QListViewItem *item)
+void BGAdvancedDialog::slotProgramItemClicked(Q3ListViewItem *item)
 {
    if (item)
       m_selectedProgram = item->text(0);
    slotProgramChanged();
 }
 
-void BGAdvancedDialog::slotProgramItemDoubleClicked(QListViewItem *item)
+void BGAdvancedDialog::slotProgramItemDoubleClicked(Q3ListViewItem *item)
 {
    slotProgramItemClicked(item);
    slotModify();
@@ -369,7 +374,7 @@ void BGAdvancedDialog::slotEnableProgram(bool b)
    if (b)
    {
       dlg->m_listPrograms->blockSignals(true);
-      QListViewItem *cur = dlg->m_listPrograms->currentItem();
+      Q3ListViewItem *cur = dlg->m_listPrograms->currentItem();
       dlg->m_listPrograms->setSelected(cur, true);
       dlg->m_listPrograms->ensureItemVisible(cur);
       dlg->m_listPrograms->blockSignals(false);
@@ -426,11 +431,11 @@ KProgramEditDialog::KProgramEditDialog(const QString &program, QWidget *parent, 
     grid->addWidget(lbl, 5, 0);
     m_RefreshEdit = new QSpinBox(frame);
     m_RefreshEdit->setRange(5, 60);
-    m_RefreshEdit->setSteps(5, 10);
+    m_RefreshEdit->setSingleStep(5);
     m_RefreshEdit->setSuffix(i18n(" min"));
     m_RefreshEdit->setFixedSize(m_RefreshEdit->sizeHint());
     lbl->setBuddy(m_RefreshEdit);
-    grid->addWidget(m_RefreshEdit, 5, 1, AlignLeft);
+    grid->addWidget(m_RefreshEdit, 5, 1, Qt::AlignLeft);
 
     m_Program = program;
     if (m_Program.isEmpty()) {

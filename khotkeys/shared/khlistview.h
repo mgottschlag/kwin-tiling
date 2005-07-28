@@ -12,6 +12,8 @@
 #define _KHLISTVIEW_H_
 
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QDropEvent>
 
 #include <klistview.h>
 
@@ -26,21 +28,21 @@ class KHListView
     public:
         KHListView( QWidget* parent_P, const char* name_P = NULL );
         virtual void clear();
-        virtual void insertItem( QListViewItem* item_P );
+        virtual void insertItem( Q3ListViewItem* item_P );
         virtual void clearSelection();
         bool forceSelect() const;
         void setForceSelect( bool force_P );
     signals:
-        void current_changed( QListViewItem* item_P );
+        void current_changed( Q3ListViewItem* item_P );
     protected:
         virtual void contentsDropEvent (QDropEvent*);
     private slots:
-        void slot_selection_changed( QListViewItem* item_P );
+        void slot_selection_changed( Q3ListViewItem* item_P );
         void slot_selection_changed();
-        void slot_current_changed( QListViewItem* item_P );
+        void slot_current_changed( Q3ListViewItem* item_P );
         void slot_insert_select();
     private:
-        QListViewItem* saved_current_item;
+        Q3ListViewItem* saved_current_item;
         bool in_clear;
         bool ignore;
         bool force_select;

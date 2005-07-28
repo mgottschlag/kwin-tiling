@@ -25,8 +25,10 @@
 #ifndef __KURISearchFILTERENGINE_H__
 #define __KURISearchFILTERENGINE_H__
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kservice.h>
 
@@ -41,7 +43,7 @@ public:
   KURISearchFilterEngine();
   ~KURISearchFilterEngine() {};
 
-  QCString name() const;
+  Q3CString name() const;
   
   QString webShortcutQuery (const QString&) const;
   

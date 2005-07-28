@@ -19,7 +19,7 @@
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 
 #include <kdebug.h>
 

@@ -24,6 +24,8 @@
 #define _KNOTIFY_H
 
 #include <qstring.h>
+//Added by qt3to4:
+#include <QLabel>
 
 #include <kcmodule.h>
 #include <kdialogbase.h>

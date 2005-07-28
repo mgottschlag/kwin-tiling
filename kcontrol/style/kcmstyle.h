@@ -27,8 +27,15 @@
 #ifndef __KCMSTYLE_H
 #define __KCMSTYLE_H
 
+#include <qhash.h>
 #include <qstring.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QGridLayout>
+#include <Q3Frame>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QVBoxLayout>
 
 #include <kcmodule.h>
 
@@ -38,11 +45,11 @@
 class KComboBox;
 class QCheckBox;
 class QComboBox;
-class QFrame;
-class QGroupBox;
+class Q3Frame;
+class Q3GroupBox;
 class QLabel;
-class QListBox;
-class QListViewItem;
+class Q3ListBox;
+class Q3ListViewItem;
 class QSettings;
 class QSlider;
 class QSpacerItem;
@@ -98,8 +105,8 @@ private:
 	QString currentStyle();
 
 	bool m_bEffectsDirty, m_bStyleDirty, m_bToolbarsDirty;
-	QDict<StyleEntry> styleEntries;
-	QMap <QString,QString> nameToStyleKey;
+	QHash <QString,StyleEntry*> styleEntries;
+	QMap  <QString,QString>     nameToStyleKey;
 
 	QVBoxLayout* mainLayout;
 	QTabWidget* tabWidget;
@@ -109,7 +116,7 @@ private:
 	QVBoxLayout* page3Layout;
 
 	// Page1 widgets
-	QGroupBox* gbWidgetStyle;
+	Q3GroupBox* gbWidgetStyle;
 	QVBoxLayout* gbWidgetStyleLayout;
 	QHBoxLayout* hbLayout;
 	KComboBox* cbStyle;
@@ -122,7 +129,7 @@ private:
 	// Page2 widgets
 	QCheckBox* cbEnableEffects;
 
-	QFrame* containerFrame;
+	Q3Frame* containerFrame;
 	QGridLayout* containerLayout;
 	QComboBox* comboTooltipEffect;
 	QComboBox* comboComboEffect;
@@ -135,10 +142,10 @@ private:
 	QLabel* lblMenuHandle;
 	QSpacerItem* comboSpacer;
 
-	QFrame* menuContainer;
+	Q3Frame* menuContainer;
 	QGridLayout* menuContainerLayout;
 	MenuPreview* menuPreview;
-	QVBox* sliderBox;
+	Q3VBox* sliderBox;
 	QSlider* slOpacity;
 	QComboBox* comboMenuEffectType;
 	QLabel* lblMenuEffectType;
@@ -146,7 +153,7 @@ private:
 	QCheckBox* cbMenuShadow;
 
 	// Page3 widgets
-	QGroupBox* gbVisualAppearance;
+	Q3GroupBox* gbVisualAppearance;
 
 	QCheckBox* cbHoverButtons;
 	QCheckBox* cbTransparentToolbars;

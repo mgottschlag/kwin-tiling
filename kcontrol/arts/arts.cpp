@@ -32,7 +32,10 @@
 #include <qregexp.h>
 #include <qslider.h>
 #include <qtabwidget.h>
-#include <qwhatsthis.h>
+
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <Q3CString>
 
 #include <dcopref.h>
 
@@ -124,7 +127,7 @@ void KArtsModule::slotProcessArtsdOutput(KProcess*, char* buf, int len)
 {
 	// XXX(gioele): I suppose this will be called with full lines, am I wrong?
 
-	QStringList availableIOs = QStringList::split("\n", QCString(buf, len));
+	QStringList availableIOs = QStringList::split("\n", Q3CString(buf, len));
 	// valid entries have two leading spaces
 	availableIOs = availableIOs.grep(QRegExp("^ {2}"));
 	availableIOs.sort();
@@ -185,12 +188,12 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 
 	QString optionsHint = i18n("This configuration module is intended to cover almost every aspect of the aRts sound server that you can configure. However, there are some things which may not be available here, so you can add <b>command line options</b> here which will be passed directly to <b>artsd</b>. The command line options will override the choices made in the GUI. To see the possible choices, open a Konsole window, and type <b>artsd -h</b>.");
 
-	QWhatsThis::add(customDevice, deviceHint);
-	QWhatsThis::add(deviceName, deviceHint);
-	QWhatsThis::add(customRate, rateHint);
-	QWhatsThis::add(samplingRate, rateHint);
-	QWhatsThis::add(hardware->customOptions, optionsHint);
-	QWhatsThis::add(hardware->addOptions, optionsHint);
+	customDevice->setWhatsThis( deviceHint);
+	deviceName->setWhatsThis( deviceHint);
+	customRate->setWhatsThis( rateHint);
+	samplingRate->setWhatsThis( rateHint);
+	hardware->customOptions->setWhatsThis( optionsHint);
+	hardware->addOptions->setWhatsThis( optionsHint);
 
 	hardware->audioIO->insertItem( i18n( "Autodetect" ) );
 	for (AudioIOElement *a = audioIOList.first(); a != 0; a = audioIOList.next())

@@ -22,6 +22,8 @@
 
 #include <qlabel.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <dcopclient.h>
 
@@ -40,7 +42,7 @@ typedef KGenericFactory<KclockModule, QWidget> KlockModuleFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_clock, KlockModuleFactory("kcmkclock"))
 
 KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(KlockModuleFactory::instance(), parent, name)
+  : KCModule(KlockModuleFactory::instance(), parent/*, name*/)
 {
   KAboutData *about =
   new KAboutData(I18N_NOOP("kcmclock"), I18N_NOOP("KDE Clock Control Module"),

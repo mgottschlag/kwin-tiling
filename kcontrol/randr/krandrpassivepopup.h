@@ -20,8 +20,11 @@
 #define __RANDRPASSIVEPOPUP_H__
 
 #include <kpassivepopup.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QEvent>
 #include <X11/Xlib.h>
 
 class KRandrPassivePopup
@@ -37,10 +40,10 @@ class KRandrPassivePopup
     private slots:
 	void slotPositionSelf();
     private:
-        KRandrPassivePopup( QWidget *parent=0, const char *name=0, WFlags f=0 );
+        KRandrPassivePopup( QWidget *parent=0, const char *name=0, Qt::WFlags f=0 );
 	void startWatchingWidget( QWidget* w );
-	QValueList< QWidget* > watched_widgets;
-	QValueList< Window > watched_windows;
+	Q3ValueList< QWidget* > watched_widgets;
+	Q3ValueList< Window > watched_windows;
 	QTimer update_timer;
     };
 

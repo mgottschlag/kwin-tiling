@@ -12,7 +12,9 @@
 #ifndef GESTURE_RECORD_PAGE_H
 #define GESTURE_RECORD_PAGE_H
 
-#include <qvbox.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <QLabel>
 
 #include "gesturedrawer.h"
 
@@ -26,7 +28,7 @@ namespace KHotKeys
 class Gesture;
 class GestureRecorder;
 
-class GestureRecordPage : public QVBox
+class GestureRecordPage : public Q3VBox
     {
     Q_OBJECT
 

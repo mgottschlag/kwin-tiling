@@ -23,18 +23,21 @@
 #ifndef _BGWALLPAPER_H_
 #define _BGWALLPAPER_H_
 
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <QDragEnterEvent>
+#include <QDropEvent>
 
 #include <kdialogbase.h>
 
 class BGMultiWallpaperBase;
 class KBackgroundSettings;
 
-class BGMultiWallpaperList : public QListBox
+class BGMultiWallpaperList : public Q3ListBox
 {
 public:
-   BGMultiWallpaperList(QWidget *parent, const char *name);
+   BGMultiWallpaperList(QWidget *parent, const char *name = 0);
 
    void dragEnterEvent(QDragEnterEvent *ev);
    void dropEvent(QDropEvent *ev);
@@ -54,7 +57,7 @@ public slots:
    void slotMoveUp();
    void slotMoveDown();
    void slotOk();
-   void slotItemSelected( QListBoxItem * );
+   void slotItemSelected( Q3ListBoxItem * );
 private:
    void setEnabledMoveButtons();
 

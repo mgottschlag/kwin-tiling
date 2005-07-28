@@ -43,8 +43,8 @@ class Action_list_widget
     public slots:
         void clear_data();
     protected:
-        Action_list_item* create_listview_item( Action* action_P, QListView* parent1_P,
-            QListViewItem* parent2_P, QListViewItem* after_P, bool copy_P );
+        Action_list_item* create_listview_item( Action* action_P, Q3ListView* parent1_P,
+            Q3ListViewItem* parent2_P, Q3ListViewItem* after_P, bool copy_P );
         void edit_listview_item( Action_list_item* item_P );
         enum type_t { TYPE_COMMAND_URL_ACTION, TYPE_MENUENTRY_ACTION, TYPE_DCOP_ACTION,
             TYPE_KEYBOARD_INPUT_ACTION, TYPE_ACTIVATE_WINDOW_ACTION };
@@ -53,7 +53,7 @@ class Action_list_widget
         virtual void copy_pressed();
         virtual void delete_pressed();
         virtual void modify_pressed();
-        virtual void current_changed( QListViewItem* item_P );
+        virtual void current_changed( Q3ListViewItem* item_P );
     protected:
         Action_list_item* selected_item;
     };
@@ -61,13 +61,13 @@ class Action_list_widget
 typedef Action_list_widget Action_list_tab;
 
 class Action_list_item
-    : public QListViewItem
+    : public Q3ListViewItem
     {
     public:
-        Action_list_item( QListView* parent_P, Action* action_P );
-        Action_list_item( QListViewItem* parent_P, Action* action_P );
-        Action_list_item( QListView* parent_P, QListViewItem* after_P, Action* action_P );
-        Action_list_item( QListViewItem* parent_P, QListViewItem* after_P, Action* action_P );
+        Action_list_item( Q3ListView* parent_P, Action* action_P );
+        Action_list_item( Q3ListViewItem* parent_P, Action* action_P );
+        Action_list_item( Q3ListView* parent_P, Q3ListViewItem* after_P, Action* action_P );
+        Action_list_item( Q3ListViewItem* parent_P, Q3ListViewItem* after_P, Action* action_P );
         virtual ~Action_list_item();
         virtual QString text( int column_P ) const;
         Action* action() const;
@@ -155,28 +155,28 @@ class Activate_window_action_dialog
 // Action_list_item
 
 inline
-Action_list_item::Action_list_item( QListView* parent_P, Action* action_P )
-    : QListViewItem( parent_P ), _action( action_P )
+Action_list_item::Action_list_item( Q3ListView* parent_P, Action* action_P )
+    : Q3ListViewItem( parent_P ), _action( action_P )
     {
     }
     
 inline
-Action_list_item::Action_list_item( QListViewItem* parent_P, Action* action_P )
-    : QListViewItem( parent_P ), _action( action_P )
+Action_list_item::Action_list_item( Q3ListViewItem* parent_P, Action* action_P )
+    : Q3ListViewItem( parent_P ), _action( action_P )
     {
     }
 
 inline
-Action_list_item::Action_list_item( QListView* parent_P, QListViewItem* after_P,
+Action_list_item::Action_list_item( Q3ListView* parent_P, Q3ListViewItem* after_P,
     Action* action_P )
-    : QListViewItem( parent_P, after_P ), _action( action_P )
+    : Q3ListViewItem( parent_P, after_P ), _action( action_P )
     {
     }
 
 inline
-Action_list_item::Action_list_item( QListViewItem* parent_P, QListViewItem* after_P,
+Action_list_item::Action_list_item( Q3ListViewItem* parent_P, Q3ListViewItem* after_P,
     Action* action_P )
-    : QListViewItem( parent_P, after_P ), _action( action_P )
+    : Q3ListViewItem( parent_P, after_P ), _action( action_P )
     {
     }
 

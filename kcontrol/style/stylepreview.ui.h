@@ -27,22 +27,20 @@
  ** a constructor, and a destroy() slot in place of a destructor.
  *****************************************************************************/
 
-#include <qobjectlist.h>
+#include <qobject.h>
+//Added by qt3to4:
+#include <QEvent>
 
 void StylePreview::init()
 {
     // Ensure that the user can't toy with the child widgets.
     // Method borrowed from Qt's qtconfig.
-    QObjectList* l = queryList("QWidget");
-    QObjectListIt it(*l);
-    QObject* obj;
-    while ((obj = it.current()) != 0)
+    QList<QWidget*> widgets = findChildren<QWidget*>();
+    foreach (QWidget* widget, widgets)
     {
-        ++it;
-        obj->installEventFilter(this);
-        ((QWidget*)obj)->setFocusPolicy(NoFocus);
+        widget->installEventFilter(this);
+        widget->setFocusPolicy(Qt::NoFocus);
     }
-    delete l;
 }
 
 bool StylePreview::eventFilter( QObject* /* obj */, QEvent* ev )

@@ -29,6 +29,9 @@
 #include "toplevel.h"
 #include "history.h"
 #include "klipperpopup.h"
+//Added by qt3to4:
+#include <QResizeEvent>
+#include <Q3CString>
 
 extern "C"
 {
@@ -113,7 +116,7 @@ void KlipperAppletWidget::init()
 {
     // if there's klipper process running, quit it
     QByteArray arg1, arg2;
-    QCString str;
+    DCOPCString str;
     // call() - wait for finishing
     kapp->dcopClient()->call("klipper", "klipper", "quitProcess()", arg1, str, arg2 );
     // register ourselves, so if klipper process is started,

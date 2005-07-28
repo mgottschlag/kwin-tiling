@@ -16,6 +16,10 @@
 #include <qtimer.h>
 #include <qpainter.h>
 #include <qimage.h>
+#include <QDesktopWidget>
+#include <QPaintEngine>
+//Added by qt3to4:
+#include <QPixmap>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -36,6 +40,8 @@
 #include <X11/Xlib.h>
 
 #include <config.h>
+#include <QX11Info>
+#include <QDesktopWidget>
 
 /**** KBackgroundRenderer ****/
 
@@ -175,7 +181,7 @@ int KBackgroundRenderer::doBackground(bool quit)
     // some dithering may be needed even with bpb==15/16, so don't use tileWidth==1
     // for them
     // with tileWidth>2, repainting the desktop causes nasty effect (XFree86 4.1.0 )
-        if( XQueryBestTile( qt_xdisplay(), qt_xrootwin(), tile_val, tile_val,
+        if( XQueryBestTile( QX11Info::display(), QX11Info::appRootWindow(), tile_val, tile_val,
             &tileWidth, &tileHeight ) != Success )
             tileWidth = tileHeight = tile_val; // some defaults
     }
@@ -364,7 +370,7 @@ wp_load:
 	    wpmode = NoWallpaper;
 	    goto wp_out;
 	}
-	wp = wp.convertDepth(32, DiffuseAlphaDither);
+	wp = wp.convertDepth(32, Qt::DiffuseAlphaDither);
 
 	// If we're previewing, scale the wallpaper down to make the preview
 	// look more like the real desktop.
@@ -475,11 +481,10 @@ wp_out:
     return retval;
 }
 
-extern bool qt_use_xrender; // in Qt ( qapplication_x11.cpp )
-
 void KBackgroundRenderer::wallpaperBlend( const QRect& d, QImage& wp, int ww, int wh )
 {
-    if( !enabled() || (blendMode() == NoBlending && ( qt_use_xrender || !wp.hasAlphaBuffer()))) {
+    if( !enabled() || (blendMode() == NoBlending && 
+        ( QApplication::desktop()->paintEngine()->hasFeature(QPaintEngine::Antialiasing) || !wp.hasAlphaBuffer()))) {
         fastWallpaperBlend( d, wp, ww, wh );
     }
     else {
@@ -547,7 +552,7 @@ void KBackgroundRenderer::fullWallpaperBlend( const QRect& d, QImage& wp, int ww
 	*m_pImage = m_pBackground->copy();
 
 	if (m_pImage->depth() < 32)
-	    *m_pImage = m_pImage->convertDepth(32, DiffuseAlphaDither);
+	    *m_pImage = m_pImage->convertDepth(32, Qt::DiffuseAlphaDither);
 
     } else {
 	m_pImage->create(w, h, 32);

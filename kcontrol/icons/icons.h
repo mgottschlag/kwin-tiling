@@ -14,7 +14,10 @@
 
 #include <qcolor.h>
 #include <qimage.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
+//Added by qt3to4:
+#include <QGridLayout>
+#include <QLabel>
 
 #include <kcmodule.h>
 #include <kdialogbase.h>
@@ -23,11 +26,11 @@ class QCheckBox;
 class QColor;
 class QComboBox;
 class QGridLayout;
-class QGroupBox;
-class QIconView;
+class Q3GroupBox;
+class Q3IconView;
 class QLabel;
-class QListBox;
-class QListView;
+class Q3ListBox;
+class Q3ListView;
 class QPushButton;
 class QSlider;
 class QTabWidget;
@@ -87,7 +90,7 @@ private:
 
     bool mbDP[6], mbChanged[6], mbAnimated[6];
     int mSizes[6];
-    QValueList<int> mAvSizes[6];
+    Q3ValueList<int> mAvSizes[6];
 
     Effect mEffects[6][3];
     Effect mDefaultEffect[3];
@@ -104,7 +107,7 @@ private:
     typedef QLabel *QLabelPtr;
     QLabelPtr mpPreview[3];
 
-    QListBox *mpUsageList;
+    Q3ListBox *mpUsageList;
     QComboBox *mpSizeBox;
     QCheckBox *mpDPCheck, *wordWrapCB, *underlineCB, *mpAnimatedCheck;
     QTabWidget *m_pTabWidget;
@@ -136,7 +139,7 @@ protected slots:
 
 private:
     KIconEffect *mpEffect;
-    QListBox *mpEffectBox;
+    Q3ListBox *mpEffectBox;
     QCheckBox *mpSTCheck;
     QSlider *mpEffectSlider;
     KColorButton *mpEColButton;
@@ -144,7 +147,7 @@ private:
     Effect mEffect;
     Effect mDefaultEffect;
     QImage mExample;
-    QGroupBox *mpEffectGroup;
+    Q3GroupBox *mpEffectGroup;
     QLabel *mpPreview, *mpEffectLabel, *mpEffectColor, *mpEffectColor2;
 };                      
                       

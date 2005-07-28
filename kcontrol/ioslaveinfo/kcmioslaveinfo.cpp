@@ -23,13 +23,12 @@
  */
 
 #include <qfile.h>
-#include <qhbox.h>
+#include <q3hbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qspinbox.h>
 #include <qtabwidget.h>
 #include <qtextcodec.h>
-#include <qvbox.h>
 #include <qwhatsthis.h>
 
 #include <kconfig.h>
@@ -49,7 +48,7 @@ typedef KGenericFactory<KCMIOSlaveInfo, QWidget> SlaveFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_ioslaveinfo, SlaveFactory("kcmioslaveinfo") )
 
 KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringList &)
-               :KCModule(SlaveFactory::instance(), parent,name),m_ioslavesLb(0),m_tfj(0)
+               :KCModule(SlaveFactory::instance(), parent),m_ioslavesLb(0),m_tfj(0)
 {
    QVBoxLayout *layout=new QVBoxLayout(this, 0, KDialog::spacingHint());
 
@@ -57,24 +56,28 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
    setButtons( KCModule::Help );
 
    QLabel* label=new QLabel(i18n("Available IO slaves:"),this);
-   QHBox *hbox=new QHBox(this);
+   QWidget *hbox=new QWidget(this);
+   QHBoxLayout *hboxLayout1 = new QHBoxLayout(hbox);
+   hbox->setLayout(hboxLayout1);
    m_ioslavesLb=new KListBox(hbox);
    m_ioslavesLb->setMinimumSize(fontMetrics().width("blahfaselwhatever----"),10);
-   connect( m_ioslavesLb, SIGNAL( selectionChanged( QListBoxItem * ) ), SLOT( showInfo( QListBoxItem * ) ) );
+   hboxLayout1->addWidget( m_ioslavesLb );
+   connect( m_ioslavesLb, SIGNAL( selectionChanged( Q3ListBoxItem * ) ), SLOT( showInfo( Q3ListBoxItem * ) ) );
    //TODO make something useful after 2.1 is released
    m_info=new KTextBrowser(hbox);
-   hbox->setSpacing(KDialog::spacingHint());
+   hboxLayout1->setSpacing(KDialog::spacingHint());
+   hboxLayout1->addWidget( m_info );
 
    layout->addWidget(label);
    layout->addWidget(hbox);
-   hbox->setStretchFactor(m_ioslavesLb,1);
-   hbox->setStretchFactor(m_info,5);
+   hboxLayout1->setStretchFactor(m_ioslavesLb,1);
+   hboxLayout1->setStretchFactor(m_info,5);
 
    QStringList protocols=KProtocolInfo::protocols();
    for (QStringList::Iterator it=protocols.begin(); it!=protocols.end(); ++it)
    {
       QString proto = *it;
-      m_ioslavesLb->insertItem( SmallIcon( KProtocolInfo::icon( proto )), 
+      m_ioslavesLb->insertItem( SmallIcon( KProtocolInfo::icon( proto )),
                                 proto );
    };
    m_ioslavesLb->sort();
@@ -137,7 +140,7 @@ void KCMIOSlaveInfo::showInfo(const QString& protocol)
    m_info->setText(i18n("Some info about protocol %1:/ ...").arg(protocol));
 }
 
-void KCMIOSlaveInfo::showInfo(QListBoxItem *item)
+void KCMIOSlaveInfo::showInfo(Q3ListBoxItem *item)
 {
    if (item==0)
       return;

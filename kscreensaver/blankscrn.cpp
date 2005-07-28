@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <QFrame>
+#include <QGridLayout>
 #include <kapplication.h>
 #include <klocale.h>
 #include <kconfig.h>
@@ -61,7 +63,7 @@ KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
 
 	preview = new QWidget( main );
 	preview->setFixedSize( 220, 165 );
-	preview->setBackgroundColor( black );
+	preview->setBackgroundColor( Qt::black );
 	preview->show();    // otherwise saver does not get correct size
 	saver = new KBlankSaver( preview->winId() );
 	grid->addMultiCellWidget(preview, 0, 2, 1, 1);
@@ -78,7 +80,8 @@ void KBlankSetup::readSettings()
 	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
-	color = config->readColorEntry( "Color", &black );
+	QColor aux = Qt::black;
+	color = config->readColorEntry( "Color", &aux );
 }
 
 void KBlankSetup::slotColor( const QColor &col )
@@ -124,7 +127,8 @@ void KBlankSaver::readSettings()
 	KConfig *config = KGlobal::config();
 	config->setGroup( "Settings" );
 
-	color = config->readColorEntry( "Color", &black );
+	QColor aux = Qt::black;
+	color = config->readColorEntry( "Color", &aux );
 }
 
 void KBlankSaver::blank()

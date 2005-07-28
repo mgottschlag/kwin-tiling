@@ -26,6 +26,8 @@
 #include <qlayout.h>
 #include <qmap.h>
 #include <qtabwidget.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <dcopclient.h>
 #include <kdialog.h>
@@ -41,7 +43,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kurifilt, KURIFactory("kcmkurifilt") )
 class FilterOptions;
 
 KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name, const QStringList &)
-                 :KCModule(KURIFactory::instance(), parent, name)
+                 :KCModule(KURIFactory::instance(), parent)
 {
 
     filter = KURIFilter::self();
@@ -67,7 +69,7 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name, const QStr
     modules.setAutoDelete(true);
 
     QMap<QString,KCModule*> helper;
-    QPtrListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
+    Q3PtrListIterator<KURIFilterPlugin> it = filter->pluginsIterator();
     for (; it.current(); ++it)
     {
         KCModule *module = it.current()->configModule(this, 0);
@@ -83,7 +85,7 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name, const QStr
     {
         QTabWidget *tab = new QTabWidget(this);
 
-        QMapIterator<QString,KCModule*> it2;
+        QMap<QString,KCModule*>::iterator it2;
         for (it2 = helper.begin(); it2 != helper.end(); ++it2)
         {
             tab->addTab(it2.data(), it2.key());
@@ -103,7 +105,7 @@ KURIFilterModule::KURIFilterModule(QWidget *parent, const char *name, const QStr
 
 void KURIFilterModule::load()
 {
-    QPtrListIterator<KCModule> it(modules);
+    Q3PtrListIterator<KCModule> it(modules);
     for (; it.current(); ++it)
     {
 	  it.current()->load();
@@ -112,7 +114,7 @@ void KURIFilterModule::load()
 
 void KURIFilterModule::save()
 {
-    QPtrListIterator<KCModule> it(modules);
+    Q3PtrListIterator<KCModule> it(modules);
     for (; it.current(); ++it)
     {
 	  it.current()->save();
@@ -121,7 +123,7 @@ void KURIFilterModule::save()
 
 void KURIFilterModule::defaults()
 {
-    QPtrListIterator<KCModule> it(modules);
+    Q3PtrListIterator<KCModule> it(modules);
     for (; it.current(); ++it)
     {
 	  it.current()->defaults();

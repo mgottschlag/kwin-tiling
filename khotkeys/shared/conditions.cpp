@@ -29,6 +29,8 @@
 #include <fixx11h.h>
 
 #include "action_data.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 namespace KHotKeys
 {
@@ -99,7 +101,7 @@ void Condition::debug( int depth_P )
     kdDebug( 1217 ) << tmp << description() << ":(" << this << ")" << endl;
     }
 
-void Condition::debug_list( const QPtrList< Condition >& list_P, int depth_P )
+void Condition::debug_list( const Q3PtrList< Condition >& list_P, int depth_P )
     {
     char tmp[ 1024 ];
     int i;
@@ -108,7 +110,7 @@ void Condition::debug_list( const QPtrList< Condition >& list_P, int depth_P )
          ++i )
         tmp[ i ] = ' ';
     tmp[ i ] = '\0';
-    for( QPtrListIterator< Condition > it( list_P );
+    for( Q3PtrListIterator< Condition > it( list_P );
          it;
          ++it )
         (*it)->debug( depth_P + 1 );

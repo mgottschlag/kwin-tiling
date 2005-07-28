@@ -22,7 +22,7 @@
 #include <config.h>
 #endif
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qstringlist.h>
 #include <kapplication.h>
 #include <qwidget.h>
@@ -61,8 +61,8 @@ class SessionEditor : public SessionDialog
     bool sesMod;
     int oldSession;
     bool loaded;
-    QPtrList<QString> keytabFilename;
-    QPtrList<QString> schemaFilename;
+    Q3PtrList<QString> keytabFilename;
+    Q3PtrList<QString> schemaFilename;
 };
 
 #endif

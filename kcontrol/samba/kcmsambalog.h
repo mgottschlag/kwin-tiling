@@ -24,10 +24,10 @@
 #define kcmsambalog_h_included
  
 #include <qlabel.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qevent.h>
 #include <kconfig.h>
 
@@ -48,25 +48,25 @@ class LogView: public QWidget
       int filesCount, connectionsCount;
       KURLRequester logFileName;
       QLabel label;
-      QListView viewHistory;
+      Q3ListView viewHistory;
       QCheckBox showConnOpen, showConnClose, showFileOpen, showFileClose;
       QPushButton updateButton;
    private slots:
       void updateList();
    signals:
-      void contentsChanged(QListView* list, int nrOfFiles, int nrOfConnections);
+      void contentsChanged(Q3ListView* list, int nrOfFiles, int nrOfConnections);
 };
 
-class QListViewItemX:public QListViewItem
+class QListViewItemX:public Q3ListViewItem
 {
    public:
       //a faster constructor saves a lot time
-      QListViewItemX( QListView * parent,
+      QListViewItemX( Q3ListView * parent,
                       const char *c0,     const char *c1 = 0,
                       const char *c2 = 0, const char *c3 = 0,
                       const char *c4 = 0, const char *c5 = 0,
                       const char *c6 = 0, const char *c7 = 0 )
-         :QListViewItem(parent)
+         :Q3ListViewItem(parent)
       {
          setText( 0, c0 );
          setText( 1, c1 );

@@ -36,6 +36,8 @@
 #include <qimage.h>
 #ifdef DRAW_OUTLINE
 # include <qpainter.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 #endif
 
 KdmItem::KdmItem( KdmItem *parent, const QDomNode &node, const char *name )
@@ -68,7 +70,7 @@ KdmItem::KdmItem( KdmItem *parent, const QDomNode &node, const char *name )
 	// Read the mandatory Pos tag. Other tags such as normal, prelighted,
 	// etc.. are read under specific implementations.
 	QDomNodeList childList = node.childNodes();
-	for (uint nod = 0; nod < childList.count(); nod++) {
+	for (int nod = 0; nod < childList.count(); nod++) {
 		QDomNode child = childList.item( nod );
 		QDomElement el = child.toElement();
 		QString tagName = el.tagName(), attr;
@@ -103,9 +105,9 @@ KdmItem::show( bool force )
 	if (isShown != InitialHidden && !force)
 		return;
 
-	QValueList<KdmItem *>::Iterator it;
-	for (it = m_children.begin(); it != m_children.end(); ++it)
-		(*it)->show();
+	QListIterator<KdmItem *> it(m_children);
+	while (it.hasNext())	
+		it.next()->show();
 
 	isShown = Shown;
 
@@ -127,9 +129,9 @@ KdmItem::hide( bool force )
 		return;		// no need for further action
 	}
 
-	QValueList<KdmItem *>::Iterator it;
-	for (it = m_children.begin(); it != m_children.end(); ++it)
-		(*it)->hide();
+	QListIterator<KdmItem *> it(m_children);
+	while (it.hasNext())
+		it.next()->hide();
 
 	isShown = force ? ExplicitlyHidden : InitialHidden;
 
@@ -146,9 +148,9 @@ KdmItem::inheritFromButton( KdmItem *button )
 	if (button)
 		buttonParent = button;
 
-	QValueList<KdmItem *>::Iterator it;
-	for (it = m_children.begin(); it != m_children.end(); ++it)
-		(*it)->inheritFromButton( button );
+	QListIterator<KdmItem *> it(m_children);
+	while (it.hasNext())
+		it.next()->inheritFromButton( button );
 }
 
 KdmItem *
@@ -157,9 +159,9 @@ KdmItem::findNode( const QString &_id ) const
 	if (id == _id)
 		return const_cast<KdmItem *>( this );
 
-	QValueList<KdmItem *>::ConstIterator it;
-	for (it = m_children.begin(); it != m_children.end(); ++it) {
-		KdmItem *t = (*it)->findNode( _id );
+        QListIterator<KdmItem *> it(m_children);
+        while (it.hasNext()) {
+		KdmItem *t = it.next()->findNode( _id );
 		if (t)
 			return t;
 	}
@@ -260,9 +262,9 @@ KdmItem::paint( QPainter *p, const QRect &rect )
 		return;
 
 	// Dispatch paint events to children
-	QValueList<KdmItem *>::Iterator it;
-	for (it = m_children.begin(); it != m_children.end(); ++it)
-		(*it)->paint( p, rect );
+	QListIterator<KdmItem *> it(m_children);
+        while (it.hasNext())
+		it.next()->paint( p, rect );
 }
 
 KdmItem *KdmItem::currentActive = 0;
@@ -299,9 +301,9 @@ KdmItem::mouseEvent( int x, int y, bool pressed, bool released )
 	}
 
 	if (!buttonParent) {
-		QValueList<KdmItem *>::Iterator it;
-		for (it = m_children.begin(); it != m_children.end(); ++it)
-			(*it)->mouseEvent( x, y, pressed, released );
+		QListIterator<KdmItem *> it(m_children);
+		while (it.hasNext())
+			it.next()->mouseEvent( x, y, pressed, released );
 	}
 
 	if (oldState != state)
@@ -312,10 +314,11 @@ void
 KdmItem::statusChanged()
 {
 	if (buttonParent == this) {
-		QValueList<KdmItem *>::Iterator it;
-		for (it = m_children.begin(); it != m_children.end(); ++it) {
-			(*it)->state = state;
-			(*it)->statusChanged();
+                QListIterator<KdmItem *> it(m_children);
+                while (it.hasNext()) {
+			KdmItem *o = it.next();
+			o->state = state;
+			o->statusChanged();
 		}
 	}
 }

@@ -20,7 +20,7 @@
 #ifndef _BGDIALOG_H_
 #define _BGDIALOG_H_
 
-#include <qptrvector.h>
+#include <q3ptrvector.h>
 #include <qmap.h>
 
 #include "bgdialog_ui.h"
@@ -85,7 +85,7 @@ protected:
    int m_Max;
    int m_Desk;
    int m_eDesk;
-   QPtrVector<KBackgroundRenderer> m_Renderer;
+   Q3PtrVector<KBackgroundRenderer> m_Renderer;
    QMap<QString,int> m_Wallpaper;
    QStringList m_Patterns;
    int m_slideShowRandom; // Remembers last Slide Show setting

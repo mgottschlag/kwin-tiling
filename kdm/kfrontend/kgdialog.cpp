@@ -30,11 +30,12 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <klocale.h>
 
-#include <qaccel.h>
+#include <q3accel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 #include <qapplication.h>
+#include <QMenu>
 
 #include <stdlib.h>
 
@@ -57,21 +58,21 @@ KGDialog::completeMenu()
 {
 #ifdef HAVE_VTS
 	if (_isLocal) {
-		dpyMenu = new QPopupMenu( this );
-		int id = inserten( i18n("Sw&itch User"), ALT+Key_I, dpyMenu );
+		dpyMenu = new QMenu( this );
+		int id = inserten( i18n("Sw&itch User"), Qt::ALT+Qt::Key_I, dpyMenu );
 		connect( dpyMenu, SIGNAL(activated( int )),
 		         SLOT(slotDisplaySelected( int )) );
 		connect( dpyMenu, SIGNAL(aboutToShow()),
 		         SLOT(slotPopulateDisplays()) );
-		QAccel *accel = new QAccel( this );
-		accel->insertItem( ALT+CTRL+Key_Insert, id );
+		Q3Accel *accel = new Q3Accel( this );
+		accel->insertItem( Qt::ALT+Qt::CTRL+Qt::Key_Insert, id );
 		connect( accel, SIGNAL(activated( int )), SLOT(slotActivateMenu( int )) );
 	}
 #endif
 
 	if (_allowClose)
 		inserten( _isLocal ? i18n("R&estart X Server") : i18n("Clos&e Connection"),
-		          ALT+Key_E, SLOT(slotExit()) );
+		          Qt::ALT+Qt::Key_E, SLOT(slotExit()) );
 
 #ifdef XDMCP
 	if (_isLocal && _loginMode != _switchIf) {
@@ -81,18 +82,18 @@ KGDialog::completeMenu()
 #endif
 
 	if (_hasConsole)
-		inserten( i18n("Co&nsole Login"), ALT+Key_N, SLOT(slotConsole()) );
+		inserten( i18n("Co&nsole Login"), Qt::ALT+Qt::Key_N, SLOT(slotConsole()) );
 
 	if (_allowShutdown != SHUT_NONE) {
-		inserten( i18n("&Shutdown..."), ALT+Key_S, SLOT(slotShutdown( int )) );
-		QAccel *accel = new QAccel( this );
-		accel->insertItem( ALT+CTRL+Key_Delete );
+		inserten( i18n("&Shutdown..."), Qt::ALT+Qt::Key_S, SLOT(slotShutdown( int )) );
+		Q3Accel *accel = new Q3Accel( this );
+		accel->insertItem( Qt::ALT+Qt::CTRL+Qt::Key_Delete );
 		connect( accel, SIGNAL(activated( int )), SLOT(slotShutdown( int )) );
-		accel = new QAccel( this );
-		accel->insertItem( SHIFT+ALT+CTRL+Key_PageUp, SHUT_REBOOT );
+		accel = new Q3Accel( this );
+		accel->insertItem( Qt::SHIFT+Qt::ALT+Qt::CTRL+Qt::Key_PageUp, SHUT_REBOOT );
 		connect( accel, SIGNAL(activated( int )), SLOT(slotShutdown( int )) );
-		accel = new QAccel( this );
-		accel->insertItem( SHIFT+ALT+CTRL+Key_PageDown, SHUT_HALT );
+		accel = new Q3Accel( this );
+		accel->insertItem( Qt::SHIFT+Qt::ALT+Qt::CTRL+Qt::Key_PageDown, SHUT_HALT );
 		connect( accel, SIGNAL(activated( int )), SLOT(slotShutdown( int )) );
 	}
 }
@@ -101,7 +102,7 @@ void
 KGDialog::ensureMenu()
 {
 	if (!optMenu) {
-		optMenu = new QPopupMenu( this );
+		optMenu = new QMenu( this );
 		optMenu->setCheckable( false );
 		needSep = false;
 	} else if (needSep) {
@@ -118,7 +119,7 @@ KGDialog::inserten( const QString& txt, int accel, const char *member )
 }
 
 int
-KGDialog::inserten( const QString& txt, int accel, QPopupMenu *cmnu )
+KGDialog::inserten( const QString& txt, int accel, QMenu *cmnu )
 {
 	ensureMenu();
 	int id = optMenu->insertItem( txt, cmnu );
@@ -131,9 +132,12 @@ KGDialog::inserten( const QString& txt, int accel, QPopupMenu *cmnu )
 void
 KGDialog::slotActivateMenu( int id )
 {
-	QPopupMenu *cmnu = optMenu->findItem( id )->popup();
+#warning I do not get QMenu
+/*
+	QMenu *cmnu = optMenu->findItem( id )->popup();
 	QSize sh( cmnu->sizeHint() / 2 );
 	cmnu->exec( geometry().center() - QPoint( sh.width(), sh.height() ) );
+*/
 }
 
 void

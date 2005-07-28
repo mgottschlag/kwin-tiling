@@ -13,7 +13,7 @@
 
 
 #include <qstring.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qtimer.h>
 
 #include <kservice.h>
@@ -47,13 +47,13 @@ class Action
     };
 
 class Action_list
-    : public QPtrList< Action >
+    : public Q3PtrList< Action >
     {
     public:
         Action_list( const QString& comment_P ); // CHECKME nebo i data ?
         Action_list( KConfig& cfg_P, Action_data* data_P );
         void cfg_write( KConfig& cfg_P ) const;
-        typedef QPtrListIterator< Action > Iterator;
+        typedef Q3PtrListIterator< Action > Iterator;
         const QString& comment() const;
     private:
         QString _comment;
@@ -186,7 +186,7 @@ Action::~Action()
         
 inline
 Action_list::Action_list( const QString& comment_P )
-    : QPtrList< Action >(), _comment( comment_P )
+    : Q3PtrList< Action >(), _comment( comment_P )
     {
     setAutoDelete( true );
     }

@@ -23,7 +23,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
-#include <qwidgetstack.h>
+#include <q3widgetstack.h>
 
 #include <dcopclient.h>
 
@@ -38,10 +38,10 @@
 #include <ktrader.h>
 #include <kurlrequester.h>
 
-class MyListBoxItem: public QListBoxText
+class MyListBoxItem: public Q3ListBoxText
 {
 public:
-	MyListBoxItem(const QString& text, const QString &file):QListBoxText(text),File(file){}
+	MyListBoxItem(const QString& text, const QString &file):Q3ListBoxText(text),File(file){}
 	virtual ~MyListBoxItem(){;}
 	QString File;
 };
@@ -381,7 +381,7 @@ void CfgBrowser::selectBrowser()
 ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
 	ComponentChooser_UI(parent,name), configWidget(0) {
 
-	ComponentChooser_UILayout->setRowStretch(1, 1);
+	static_cast<QGridLayout*>(layout())->setRowStretch(1, 1);
 	somethingChanged=false;
 	latestEditedService="";
 
@@ -395,13 +395,13 @@ ComponentChooser::ComponentChooser(QWidget *parent, const char *name):
 	}
 	ServiceChooser->setFixedWidth(ServiceChooser->sizeHint().width());
 	ServiceChooser->sort();
-	connect(ServiceChooser,SIGNAL(highlighted(QListBoxItem*)),this,SLOT(slotServiceSelected(QListBoxItem*)));
+	connect(ServiceChooser,SIGNAL(highlighted(Q3ListBoxItem*)),this,SLOT(slotServiceSelected(Q3ListBoxItem*)));
 	ServiceChooser->setSelected(0,true);
 	slotServiceSelected(ServiceChooser->item(0));
 
 }
 
-void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
+void ComponentChooser::slotServiceSelected(Q3ListBoxItem* it) {
 	if (!it) return;
 
 	if (somethingChanged) {
@@ -417,7 +417,7 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	QWidget *newConfigWidget = 0;
 	if (cfgType.isEmpty() || (cfgType=="component"))
 	{
-		if (!(configWidget && configWidget->qt_cast("CfgComponent")))
+		if (!(configWidget && qobject_cast<CfgComponent*>(configWidget)))
 		{
 			CfgComponent* cfgcomp = new CfgComponent(configContainer);
                         cfgcomp->ChooserDocu->setText(i18n("Choose from the list below which component should be used by default for the %1 service.").arg(it->text()));
@@ -430,7 +430,7 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	}
 	else if (cfgType=="internal_email")
 	{
-		if (!(configWidget && configWidget->qt_cast("CfgEmailClient")))
+		if (!(configWidget && qobject_cast<CfgEmailClient*>(configWidget)))
 		{
 			newConfigWidget = new CfgEmailClient(configContainer);
 		}
@@ -438,7 +438,7 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	}
 	else if (cfgType=="internal_terminal")
 	{
-		if (!(configWidget && configWidget->qt_cast("CfgTerminalEmulator")))
+		if (!(configWidget && qobject_cast<CfgTerminalEmulator*>(configWidget)))
 		{
 			newConfigWidget = new CfgTerminalEmulator(configContainer);
 		}
@@ -446,7 +446,7 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	}
 	else if (cfgType=="internal_browser")
 	{
-		if (!(configWidget && configWidget->qt_cast("CfgBrowser")))
+		if (!(configWidget && qobject_cast<CfgBrowser*>(configWidget)))
 		{
 			newConfigWidget = new CfgBrowser(configContainer);
 		}
@@ -465,7 +465,7 @@ void ComponentChooser::slotServiceSelected(QListBoxItem* it) {
 	}
 	
 	if (configWidget)
-		static_cast<CfgPlugin*>(configWidget->qt_cast("CfgPlugin"))->load(&cfg);
+		dynamic_cast<CfgPlugin*>(configWidget)->load(&cfg);
 	
 	emitChanged(false);
 	latestEditedService=static_cast<MyListBoxItem*>(it)->File;
@@ -486,8 +486,7 @@ ComponentChooser::~ComponentChooser()
 void ComponentChooser::load() {
 	if( configWidget )
 	{
-		CfgPlugin * plugin = static_cast<CfgPlugin*>(
-				configWidget->qt_cast( "CfgPlugin" ) );
+		CfgPlugin * plugin = dynamic_cast<CfgPlugin*>( configWidget );
 		if( plugin )
 		{
 			KSimpleConfig cfg(latestEditedService);
@@ -499,8 +498,7 @@ void ComponentChooser::load() {
 void ComponentChooser::save() {
 	if( configWidget )
 	{
-		CfgPlugin * plugin = static_cast<CfgPlugin*>(
-				configWidget->qt_cast( "CfgPlugin" ) );
+		CfgPlugin* plugin = dynamic_cast<CfgPlugin*>( configWidget );
 		if( plugin )
 		{
 			KSimpleConfig cfg(latestEditedService);
@@ -512,7 +510,7 @@ void ComponentChooser::save() {
 void ComponentChooser::restoreDefault() {
     if (configWidget)
     {
-        static_cast<CfgPlugin*>(configWidget->qt_cast("CfgPlugin"))->defaults();
+        dynamic_cast<CfgPlugin*>(configWidget)->defaults();
         emitChanged(true);
     }
 

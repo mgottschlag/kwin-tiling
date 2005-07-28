@@ -24,7 +24,7 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 
 enum IndexViewMode {Icon, Tree};
 
@@ -50,7 +50,7 @@ public:
 
   static void setIsInfoCenter(bool b) { _infocenter = b; }
   static void setRoot(bool r) { _root = r; }
-  static void setType(const QCString& s);
+  static void setType(const Q3CString& s);
   static void setUserName(const QString& n){ _uname = n; }
   static void setHostName(const QString& n){ _hname = n; }
   static void setKDEVersion(const QString& n){ _kdeversion = n; }

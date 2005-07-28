@@ -25,7 +25,7 @@
 
 class QStringList;
 class QPushButton;
-class QListView;
+class Q3ListView;
 
 class KCMNic:public KCModule
 {
@@ -37,7 +37,7 @@ class KCMNic:public KCModule
       void update();
 
    protected:
-      QListView *m_list;
+      Q3ListView *m_list;
       QPushButton *m_updateButton;
 };
 

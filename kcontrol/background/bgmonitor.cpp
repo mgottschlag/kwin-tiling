@@ -23,6 +23,9 @@
 #include <kurldrag.h>
 
 #include "bgmonitor.h"
+//Added by qt3to4:
+#include <QDragEnterEvent>
+#include <QDropEvent>
 
 BGMonitor::BGMonitor(QWidget *parent, const char *name)
     : QWidget(parent, name)

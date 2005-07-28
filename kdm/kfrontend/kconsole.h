@@ -24,14 +24,14 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef KCONSOLE_H
 #define KCONSOLE_H
 
-#include <qtextedit.h>
+#include <q3textedit.h>
 
 class QSocketNotifier;
 class KPty;
 
-class KConsole : public QTextEdit {
+class KConsole : public Q3TextEdit {
 	Q_OBJECT
-	typedef QTextEdit inherited;
+	typedef Q3TextEdit inherited;
 
   public:
 	KConsole( QWidget *_parent = 0 );

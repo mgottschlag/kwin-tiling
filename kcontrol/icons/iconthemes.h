@@ -21,6 +21,8 @@
 
 #include <kcmodule.h>
 #include <qmap.h>
+//Added by qt3to4:
+#include <QLabel>
 #include <klistview.h>
 
 class QPushButton;
@@ -50,12 +52,12 @@ public:
   int buttons();
 
 protected slots:
-  void themeSelected(QListViewItem *item);
+  void themeSelected(Q3ListViewItem *item);
   void installNewTheme();
   void removeSelectedTheme();
 
 private:
-  QListViewItem *iconThemeItem(const QString &name);
+  Q3ListViewItem *iconThemeItem(const QString &name);
 
   KListView *m_iconThemes;
   QPushButton *m_removeButton;
@@ -63,7 +65,7 @@ private:
   QLabel *m_previewExec;
   QLabel *m_previewFolder;
   QLabel *m_previewDocument;
-  QListViewItem *m_defaultTheme;
+  Q3ListViewItem *m_defaultTheme;
   QMap <QString, QString>m_themeNames;
   bool m_bChanged;
 };

@@ -1,3 +1,10 @@
+//Added by qt3to4:
+#include <QPixmap>
+#include <QDragLeaveEvent>
+#include <QDragMoveEvent>
+#include <QKeyEvent>
+#include <QDropEvent>
+#include <QDragEnterEvent>
 #ifndef __KFILE_FONT_VIEW_H__
 #define __KFILE_FONT_VIEW_H__
 
@@ -52,7 +59,7 @@ class CFontListViewItem : public KListViewItem
 {
     public:
 
-    CFontListViewItem(QListView *parent, const QString &text, const QPixmap &icon, KFileItem *fi)
+    CFontListViewItem(Q3ListView *parent, const QString &text, const QPixmap &icon, KFileItem *fi)
 	: KListViewItem(parent, text),
           itsInf(fi)
     {
@@ -60,14 +67,14 @@ class CFontListViewItem : public KListViewItem
         setText(0, text);
     }
 
-    CFontListViewItem(QListView *parent, KFileItem *fi)
+    CFontListViewItem(Q3ListView *parent, KFileItem *fi)
         : KListViewItem(parent),
           itsInf(fi)
     {
         init();
     }
 
-    CFontListViewItem(QListView *parent, const QString &text, const QPixmap &icon, KFileItem *fi, QListViewItem *after)
+    CFontListViewItem(Q3ListView *parent, const QString &text, const QPixmap &icon, KFileItem *fi, Q3ListViewItem *after)
 	: KListViewItem(parent, after),
           itsInf(fi)
     {
@@ -152,7 +159,7 @@ class CKFileFontView : public KListView, public KFileView
     // for KMimeTypeResolver
     void                mimeTypeDeterminationFinished();
     void                determineIcon(CFontListViewItem *item);
-    QScrollView *       scrollWidget() const { return (QScrollView*) this; }
+    Q3ScrollView *       scrollWidget() const { return (Q3ScrollView*) this; }
 
     signals:
     // The user dropped something.
@@ -168,7 +175,7 @@ class CKFileFontView : public KListView, public KFileView
 
     virtual void        keyPressEvent(QKeyEvent *e);
     // DND support
-    QDragObject *       dragObject();
+    Q3DragObject *       dragObject();
     void                contentsDragEnterEvent(QDragEnterEvent *e);
     void                contentsDragMoveEvent(QDragMoveEvent *e);
     void                contentsDragLeaveEvent(QDragLeaveEvent *e);
@@ -184,17 +191,17 @@ class CKFileFontView : public KListView, public KFileView
     private slots:
 
     void                slotSortingChanged(int c);
-    void                selected(QListViewItem *item);
-    void                slotActivate(QListViewItem *item);
-    void                highlighted(QListViewItem *item);
-    void                slotActivateMenu(QListViewItem *item, const QPoint& pos);
+    void                selected(Q3ListViewItem *item);
+    void                slotActivate(Q3ListViewItem *item);
+    void                highlighted(Q3ListViewItem *item);
+    void                slotActivateMenu(Q3ListViewItem *item, const QPoint& pos);
     void                slotAutoOpen();
 
     private:
 
-    virtual void        insertItem(QListViewItem *i)          { KListView::insertItem(i); }
+    virtual void        insertItem(Q3ListViewItem *i)          { KListView::insertItem(i); }
     virtual void        setSorting(int i, bool b)             { KListView::setSorting(i, b); }
-    virtual void        setSelected(QListViewItem *i, bool b) { KListView::setSelected(i, b); }
+    virtual void        setSelected(Q3ListViewItem *i, bool b) { KListView::setSelected(i, b); }
 
     inline CFontListViewItem * viewItem( const KFileItem *item ) const
     {

@@ -11,7 +11,7 @@
 #ifndef _TRIGGERS_H_
 #define _TRIGGERS_H_
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qtimer.h>
 #include <qmap.h>
 
@@ -44,14 +44,14 @@ class Trigger
     };
 
 class Trigger_list
-    : public QPtrList< Trigger >
+    : public Q3PtrList< Trigger >
     {
     public:
         Trigger_list( const QString& comment_P ); // CHECKME nebo i data ?
         Trigger_list( KConfig& cfg_P, Action_data* data_P );
         void activate( bool activate_P );
         void cfg_write( KConfig& cfg_P ) const;
-        typedef QPtrListIterator< Trigger > Iterator;
+        typedef Q3PtrListIterator< Trigger > Iterator;
         const QString& comment() const;
         Trigger_list* copy( Action_data* data_P ) const;
     private:
@@ -166,7 +166,7 @@ Trigger::~Trigger()
     
 inline
 Trigger_list::Trigger_list( const QString& comment_P )
-    : QPtrList< Trigger >(), _comment( comment_P )
+    : Q3PtrList< Trigger >(), _comment( comment_P )
     {
     setAutoDelete( true );
     }

@@ -28,6 +28,8 @@
 
 #include <qregexp.h>
 #include <qtextcodec.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <kurl.h>
 #include <kdebug.h>
@@ -114,7 +116,7 @@ QString KURISearchFilterEngine::autoWebSearchQuery( const QString& typedString )
   return result;
 }
 
-QCString KURISearchFilterEngine::name() const
+Q3CString KURISearchFilterEngine::name() const
 {
   return "kuriikwsfilter";
 }
@@ -170,7 +172,7 @@ QStringList KURISearchFilterEngine::modifySubstitutionMap(SubstMap& map,
 
   PIDDBG << "Generating substitution map:\n";
   // Generate substitution map from user query:
-  for (unsigned int i=0; i<=l.count(); i++)
+  for (int i=0; i<=l.count(); i++)
   {
     int j = 0;
     int pos = 0;
@@ -263,7 +265,7 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
 
       // TODO: strip whitespaces around commas
       QStringList rl = QStringList::split(",", rlstring);
-      unsigned int i = 0;
+      int i = 0;
 
       while ((i<rl.count()) && !found)
       {
@@ -359,7 +361,7 @@ QString KURISearchFilterEngine::substituteQuery(const QString& url, SubstMap &ma
       PDVAR ("  newurl", newurl);
       // Generate list of unmatched strings:
       QString v = "";
-      for (unsigned int i=0; i<ql.count(); i++) {
+      for (int i=0; i<ql.count(); i++) {
         v += " " + ql[i];
       }
       v = v.simplifyWhiteSpace();

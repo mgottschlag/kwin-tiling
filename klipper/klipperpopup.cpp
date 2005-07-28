@@ -36,6 +36,9 @@
 #include "history.h"
 #include "toplevel.h"
 #include "popupproxy.h"
+//Added by qt3to4:
+#include <QKeyEvent>
+#include <QEvent>
 
 namespace {
     static const int TOP_HISTORY_ITEM_INDEX = 2;
@@ -46,16 +49,16 @@ namespace {
 #ifdef DEBUG_EVENTS__
 kdbgstream& operator<<( kdbgstream& stream,  const QKeyEvent& e ) {
     stream << "(QKeyEvent(text=" << e.text() << ",key=" << e.key() << ( e.isAccepted()?",accepted":",ignored)" ) << ",count=" << e.count();
-    if ( e.state() & Qt::AltButton ) {
+    if ( e.state() & Qt::AltModifier ) {
         stream << ",ALT";
     }
-    if ( e.state() & Qt::ControlButton ) {
+    if ( e.state() & Qt::ControlModifier ) {
         stream << ",CTRL";
     }
-    if ( e.state() & Qt::MetaButton ) {
+    if ( e.state() & Qt::MetaModifier ) {
         stream << ",META";
     }
-    if ( e.state() & Qt::ShiftButton ) {
+    if ( e.state() & Qt::ShiftModifier ) {
         stream << ",SHIFT";
     }
     if ( e.isAutoRepeat() ) {
@@ -146,7 +149,7 @@ void KlipperPopup::buildFromScratch() {
     m_filterWidget = new KLineEditBlackKey( this, "Klipper filter widget" );
     insertTitle( SmallIcon( "klipper" ), i18n("Klipper - Clipboard Tool"));
     m_filterWidgetId = insertItem( m_filterWidget, m_filterWidgetId, 1 );
-    m_filterWidget->setFocusPolicy( QWidget::NoFocus );
+    m_filterWidget->setFocusPolicy( Qt::NoFocus );
     setItemVisible( m_filterWidgetId,  false );
     m_filterWidget->hide();
     QString lastGroup;
@@ -229,7 +232,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
         QKeyEvent ke( QEvent::KeyPress,
                       e->key(),
                       e->ascii(),
-                      e->state() ^ Qt::AltButton,
+                      e->state() ^ Qt::AltModifier,
                       e->text(),
                       e->isAutoRepeat(),
                       e->count() );

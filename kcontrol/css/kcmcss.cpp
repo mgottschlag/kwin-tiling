@@ -3,7 +3,9 @@
 #include <qcombobox.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
-#include <qtextbrowser.h>
+#include <q3textbrowser.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <kapplication.h>
 #include <kcolorbutton.h>
@@ -25,8 +27,8 @@
 typedef KGenericFactory<CSSConfig, QWidget> CSSFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_css, CSSFactory("kcmcss") )
 
-CSSConfig::CSSConfig(QWidget *parent, const char *name, const QStringList &)
-  : KCModule(CSSFactory::instance(), parent, name)
+CSSConfig::CSSConfig(QWidget *parent, const char *, const QStringList &)
+  : KCModule(CSSFactory::instance(), parent)
 {
   customDialogBase = new KDialogBase(this, "customCSSDialog", true, QString::null, 
         KDialogBase::Close, KDialogBase::Close, true );
@@ -72,9 +74,9 @@ CSSConfig::CSSConfig(QWidget *parent, const char *name, const QStringList &)
 	  SLOT(changed()));
   connect(customDialog->customColor, SIGNAL(clicked()),
 	  SLOT(changed()));
-  connect(customDialog->foregroundColor, SIGNAL(changed(const QColor &)),
+  connect(customDialog->foregroundColorButton, SIGNAL(changed(const QColor &)),
 	  SLOT(changed()));
-  connect(customDialog->backgroundColor, SIGNAL(changed(const QColor &)),
+  connect(customDialog->backgroundColorButton, SIGNAL(changed(const QColor &)),
 	  SLOT(changed()));
   connect(customDialog->fontFamily, SIGNAL(highlighted(int)),
 	  SLOT(changed()));
@@ -128,8 +130,11 @@ void CSSConfig::load()
   customDialog->blackOnWhite->setChecked(m == "black-on-white");
   customDialog->whiteOnBlack->setChecked(m == "white-on-black");
   customDialog->customColor->setChecked(m == "custom");
-  customDialog->backgroundColor->setColor(c->readColorEntry("BackColor", &Qt::white));
-  customDialog->foregroundColor->setColor(c->readColorEntry("ForeColor", &Qt::black));
+  
+  QColor white (Qt::white);
+  QColor black (Qt::black);
+  customDialog->backgroundColorButton->setColor(c->readColorEntry("BackColor", &white));
+  customDialog->foregroundColorButton->setColor(c->readColorEntry("ForeColor", &black));
   customDialog->sameColor->setChecked(c->readBoolEntry("SameColor", false));
 
   // Images
@@ -168,8 +173,8 @@ void CSSConfig::save()
     c->writeEntry("Mode", "white-on-black");
   if (customDialog->customColor->isChecked())
     c->writeEntry("Mode", "custom");
-  c->writeEntry("BackColor", customDialog->backgroundColor->color());
-  c->writeEntry("ForeColor", customDialog->foregroundColor->color());
+  c->writeEntry("BackColor", customDialog->backgroundColorButton->color());
+  c->writeEntry("ForeColor", customDialog->foregroundColorButton->color());
   c->writeEntry("SameColor", customDialog->sameColor->isChecked());
 
   c->setGroup("Images");
@@ -231,8 +236,8 @@ void CSSConfig::defaults()
   customDialog->blackOnWhite->setChecked(true);
   customDialog->whiteOnBlack->setChecked(false);
   customDialog->customColor->setChecked(false);
-  customDialog->backgroundColor->setColor(Qt::white);
-  customDialog->foregroundColor->setColor(Qt::black);
+  customDialog->backgroundColorButton->setColor(Qt::white);
+  customDialog->foregroundColorButton->setColor(Qt::black);
   customDialog->sameColor->setChecked(false);
 
   customDialog->hideImages->setChecked(false);
@@ -293,8 +298,8 @@ QMap<QString,QString> CSSConfig::cssDict()
     }
   else
     {
-      dict.insert("background-color", customDialog->backgroundColor->color().name());
-      dict.insert("foreground-color", customDialog->foregroundColor->color().name());
+      dict.insert("background-color", customDialog->backgroundColorButton->color().name());
+      dict.insert("foreground-color", customDialog->foregroundColorButton->color().name());
     }
 
   if (customDialog->sameColor->isChecked())
@@ -333,10 +338,10 @@ void CSSConfig::slotCustomize()
 void CSSConfig::slotPreview()
 {
 
-  QStyleSheetItem *h1 = new QStyleSheetItem(QStyleSheet::defaultSheet(), "h1");
-  QStyleSheetItem *h2 = new QStyleSheetItem(QStyleSheet::defaultSheet(), "h2");
-  QStyleSheetItem *h3 = new QStyleSheetItem(QStyleSheet::defaultSheet(), "h3");
-  QStyleSheetItem *text = new QStyleSheetItem(QStyleSheet::defaultSheet(), "p");
+  Q3StyleSheetItem *h1 = new Q3StyleSheetItem(Q3StyleSheet::defaultSheet(), "h1");
+  Q3StyleSheetItem *h2 = new Q3StyleSheetItem(Q3StyleSheet::defaultSheet(), "h2");
+  Q3StyleSheetItem *h3 = new Q3StyleSheetItem(Q3StyleSheet::defaultSheet(), "h3");
+  Q3StyleSheetItem *text = new Q3StyleSheetItem(Q3StyleSheet::defaultSheet(), "p");
 
   // Fontsize
 
@@ -371,8 +376,8 @@ void CSSConfig::slotPreview()
     }
   else
     {
-      back = customDialog->backgroundColor->color();
-      fore = customDialog->foregroundColor->color();
+      back = customDialog->backgroundColorButton->color();
+      fore = customDialog->foregroundColorButton->color();
     }
 
   h1->setColor(fore);

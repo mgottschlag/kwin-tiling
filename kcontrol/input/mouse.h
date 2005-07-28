@@ -85,7 +85,7 @@ public:
 
  #ifdef HAVE_LIBUSB
  // TODO: In Qt4, replace with a better container.
- QPtrList <LogitechMouse> logitechMouseList;
+ Q3PtrList <LogitechMouse> logitechMouseList;
  #endif
 };
 
@@ -125,7 +125,7 @@ private:
   KIntNumInput *dragStartDist;
   KIntNumInput *wheelScrollLines;
 
-  QButtonGroup *handedBox;
+  Q3ButtonGroup *handedBox;
 //  QRadioButton *leftHanded, *rightHanded;
 //  QCheckBox *doubleClick;
 //  QCheckBox *cbAutoSelect;

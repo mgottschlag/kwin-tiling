@@ -23,10 +23,12 @@
 
 #include <qlayout.h>
 #include <qfile.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qradiobutton.h>
 #include <qtimer.h>
 #include <qtabwidget.h>
+//Added by qt3to4:
+#include <QTextStream>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -100,7 +102,7 @@ void KCMDnssd::wdchanged()
 void KCMDnssd::loadMdnsd()
 {
 	QFile f(MDNSD_CONF);
-	if (!f.open(IO_ReadWrite)) return;
+	if (!f.open(QIODevice::ReadWrite)) return;
 	QTextStream stream(&f);
 	QString line;
 	while (!stream.atEnd()) {
@@ -121,7 +123,7 @@ bool KCMDnssd::saveMdnsd()
 		else mdnsdLines.remove("secret-64");
 	QFile f(MDNSD_CONF);
 	bool newfile=!f.exists();
-	if (!f.open(IO_WriteOnly)) return false; 
+	if (!f.open(QIODevice::WriteOnly)) return false; 
 	QTextStream stream(&f);
 	for (QMap<QString,QString>::ConstIterator it=mdnsdLines.begin();it!=mdnsdLines.end();
 		++it) stream << it.key() << " " << (*it) << "\n";
@@ -130,9 +132,9 @@ bool KCMDnssd::saveMdnsd()
 	// secret for dns server. 
 	if (newfile) chmod(MDNSD_CONF,0600); 
 	f.setName(MDNSD_PID);
-	if (!f.open(IO_ReadOnly)) return true; // it is not running so no need to signal
+	if (!f.open(QIODevice::ReadOnly)) return true; // it is not running so no need to signal
 	QString line;
-	if (f.readLine(line,16)<1) return true;
+	if ((line = f.readLine()).isNull()) return true;
 	unsigned int pid = line.toUInt();
 	if (pid==0) return true;           // not a pid
 	kill(pid,SIGHUP);

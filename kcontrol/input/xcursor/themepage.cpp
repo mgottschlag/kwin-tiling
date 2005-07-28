@@ -38,7 +38,7 @@
 #include <qpixmap.h>
 #include <qimage.h>
 #include <qlabel.h>
-#include <qhbox.h>
+#include <q3hbox.h>
 #include <qpainter.h>
 #include <qfileinfo.h>
 #include <qpushbutton.h>
@@ -84,7 +84,7 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	new QLabel( i18n("Select the cursor theme you want to use (hover preview to test cursor):"), this );
 
 	// Create the preview widget
-	preview = new PreviewWidget( new QHBox( this ) );
+	preview = new PreviewWidget( new Q3HBox( this ) );
 
 	// Create the theme list view
 	listview = new KListView( this );
@@ -93,13 +93,13 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	listview->addColumn( i18n("Name") );
 	listview->addColumn( i18n("Description") );
 
-	connect( listview, SIGNAL(selectionChanged(QListViewItem*)),
-			SLOT(selectionChanged(QListViewItem*)) );
+	connect( listview, SIGNAL(selectionChanged(Q3ListViewItem*)),
+			SLOT(selectionChanged(Q3ListViewItem*)) );
 
 	themeDirs = getThemeBaseDirs();
 	insertThemes();
 
-	QHBox *hbox = new QHBox( this );
+	Q3HBox *hbox = new Q3HBox( this );
 	hbox->setSpacing( KDialog::spacingHint() );
 	installButton = new QPushButton( i18n("Install New Theme..."), hbox );
 	removeButton = new QPushButton( i18n("Remove Theme"), hbox );
@@ -158,7 +158,7 @@ void ThemePage::load()
             currentTheme = "system";
 
 	// Find the theme in the listview and select it
-	QListViewItem *item = listview->findItem( currentTheme, DirColumn );
+	Q3ListViewItem *item = listview->findItem( currentTheme, DirColumn );
         if( !item )
                 item = listview->findItem( "system", DirColumn );
 	selectedTheme = item->text( DirColumn );
@@ -180,7 +180,7 @@ void ThemePage::defaults()
 }
 
 
-void ThemePage::selectionChanged( QListViewItem *item )
+void ThemePage::selectionChanged( Q3ListViewItem *item )
 {
 	if ( !item )
 	{
@@ -608,7 +608,7 @@ QPixmap ThemePage::createIcon( const QString &theme, const QString &sample ) con
 
 		// Scale down the image if we need to
 		if ( image.width() > iconSize || image.height() > iconSize )
-			image = image.smoothScale( iconSize, iconSize, QImage::ScaleMin );
+			image = image.scaled( iconSize, iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation );
 
 		pix.convertFromImage( image );
 		XcursorImageDestroy( xcur );

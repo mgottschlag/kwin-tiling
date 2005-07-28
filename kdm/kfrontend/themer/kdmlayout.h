@@ -27,7 +27,7 @@
  * but can be treated like a usual widget
  */
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qsize.h>
 
 class KdmItem;
@@ -51,7 +51,7 @@ public:
 //	virtual void update( const QRect &parentGeometry ) = 0;
 
 protected:
-	QValueList<KdmItem *> m_children;
+	Q3ValueList<KdmItem *> m_children;
 };
 
 class KdmLayoutFixed : public KdmLayout {

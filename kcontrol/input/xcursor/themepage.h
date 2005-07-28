@@ -19,14 +19,14 @@
 #ifndef __THEMEPAGE_H
 #define __THEMEPAGE_H
 
-#include <qdict.h>
+#include <q3dict.h>
 
 
 class KListView;
 class QString;
 class PreviewWidget;
 class QStringList;
-class QListViewItem;
+class Q3ListViewItem;
 class QPushButton;
 
 struct ThemeInfo;
@@ -49,7 +49,7 @@ class ThemePage : public QWidget
 		void changed( bool );
 
 	private slots:
-		void selectionChanged( QListViewItem * );
+		void selectionChanged( Q3ListViewItem * );
 		void installClicked();
 		void removeClicked();
 
@@ -67,7 +67,7 @@ class ThemePage : public QWidget
 		QString selectedTheme;
 		QString currentTheme;
 		QStringList themeDirs;
-		QDict<ThemeInfo> themeInfo;
+		Q3Dict<ThemeInfo> themeInfo;
 };
 
 #endif // __THEMEPAGE_H

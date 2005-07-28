@@ -29,7 +29,7 @@
 #include "KfiPrint.h"
 #include "FcEngine.h"
 #include <qpainter.h>
-#include <qpaintdevicemetrics.h>
+#include <q3paintdevicemetrics.h>
 #include <qsettings.h>
 #include <qstringlist.h>
 #include <kprinter.h>
@@ -93,7 +93,7 @@ void printItems(const QStringList &items, int size, QWidget *parent, CFcEngine &
         printer.setResolution(72);
         painter.begin(&printer);
 
-        QPaintDeviceMetrics metrics(painter.device());
+        Q3PaintDeviceMetrics metrics(painter.device());
         int                 margin=(int)((2/2.54)*metrics.logicalDpiY()), // 2 cm margins
                             pageWidth=metrics.width()-(2*margin),
                             pageHeight=metrics.height()-(2*margin),

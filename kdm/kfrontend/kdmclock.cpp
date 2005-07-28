@@ -31,6 +31,10 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qpixmap.h>
 #include <qpainter.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <QShowEvent>
+#include <QPaintEvent>
+#include <Q3PointArray>
 
 KdmClock::KdmClock( QWidget *parent, const char *name )
 	: inherited( parent, name )
@@ -75,7 +79,7 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
 
 	//setBackgroundOrigin( WindowOrigin );
 	mBackgroundBrush = backgroundBrush();
-	setBackgroundMode( NoBackground );
+	setBackgroundMode( Qt::NoBackground );
 	repaint();
 }
 
@@ -121,13 +125,13 @@ void KdmClock::paintEvent( QPaintEvent * )
 		paint.drawText( contentsRect(),AlignHCenter|AlignVCenter, buf,-1,0,0 );
 	} else {
 */
-		QPointArray pts;
+		Q3PointArray pts;
 		QPoint cp = contentsRect().center() - QPoint( 2,2 );
 		int d = QMIN( contentsRect().width()-15,contentsRect().height()-15 );
 		paint.setPen( foregroundColor() );
 		paint.setBrush( foregroundColor() );
 
-		QWMatrix matrix;
+		QMatrix matrix;
 		matrix.translate( cp.x(), cp.y() );
 		matrix.scale( d/1000.0F, d/1000.0F );
 

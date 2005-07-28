@@ -1,9 +1,11 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <qcombobox.h>
+//Added by qt3to4:
+#include <QPixmap>
 #include <kdebug.h>
 
-#include <qwhatsthis.h>
+
 #include <qstring.h>
 
 #include "advanceddialog.h"
@@ -123,19 +125,19 @@ void KScreenSaverAdvancedDialog::slotChangeTopLeftCorner(int)
 AdvancedDialog::AdvancedDialog(QWidget *parent, const char *name) : AdvancedDialogImpl(parent, name)
 {
 	monitorLabel->setPixmap(QPixmap(locate("data", "kcontrol/pics/monitor.png")));
-	QWhatsThis::add(qcbPriority, "<qt>" + i18n("Specify the priority that the screensaver will run at. A higher priority may mean that the screensaver runs faster, though may reduce the speed that other programs run at while the screensaver is active.") + "</qt>");
+	qcbPriority->setWhatsThis( "<qt>" + i18n("Specify the priority that the screensaver will run at. A higher priority may mean that the screensaver runs faster, though may reduce the speed that other programs run at while the screensaver is active.") + "</qt>");
 	QString qsTopLeft("<qt>" +  i18n("The action to take when the mouse cursor is located in the top left corner of the screen for 15 seconds.") + "</qt>");
         QString qsTopRight("<qt>" +  i18n("The action to take when the mouse cursor is located in the top right corner of the screen for 15 seconds.") + "</qt>");
         QString qsBottomLeft("<qt>" +  i18n("The action to take when the mouse cursor is located in the bottom left corner of the screen for 15 seconds.") + "</qt>");
         QString qsBottomRight("<qt>" +  i18n("The action to take when the mouse cursor is located in the bottom right corner of the screen for 15 seconds.") + "</qt>");
-	QWhatsThis::add(qlTopLeft, qsTopLeft);
-	QWhatsThis::add(qcbTopLeft, qsTopLeft);
-	QWhatsThis::add(qlTopRight, qsTopRight);
-	QWhatsThis::add(qcbTopRight, qsTopRight);
-	QWhatsThis::add(qlBottomLeft, qsBottomLeft);
-	QWhatsThis::add(qcbBottomLeft, qsBottomLeft);
-	QWhatsThis::add(qlBottomRight, qsBottomRight);
-	QWhatsThis::add(qcbBottomRight, qsBottomRight);
+	qlTopLeft->setWhatsThis( qsTopLeft);
+	qcbTopLeft->setWhatsThis( qsTopLeft);
+	qlTopRight->setWhatsThis( qsTopRight);
+	qcbTopRight->setWhatsThis( qsTopRight);
+	qlBottomLeft->setWhatsThis( qsBottomLeft);
+	qcbBottomLeft->setWhatsThis( qsBottomLeft);
+	qlBottomRight->setWhatsThis( qsBottomRight);
+	qcbBottomRight->setWhatsThis( qsBottomRight);
 }
 
 AdvancedDialog::~AdvancedDialog()

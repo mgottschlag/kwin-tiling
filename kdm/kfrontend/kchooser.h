@@ -27,10 +27,10 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "kgdialog.h"
 
 class QSocketNotifier;
-class QPopupMenu;
+class Q3PopupMenu;
 class QLineEdit;
-class QListView;
-class QListViewItem;
+class Q3ListView;
+class Q3ListViewItem;
 
 class ChooserDlg : public KGDialog {
 	Q_OBJECT
@@ -49,9 +49,9 @@ class ChooserDlg : public KGDialog {
 
   private:
 	QString recvStr();
-	QListViewItem *findItem( int id );
+	Q3ListViewItem *findItem( int id );
 
-	QListView *host_view;
+	Q3ListView *host_view;
 	QLineEdit *iline;
 	QSocketNotifier *sn;
 };

@@ -38,6 +38,7 @@
 #include "main.moc"
 
 #include <X11/Xlib.h>
+#include <QX11Info>
 
 KickerConfig *KickerConfig::m_self = 0;
 static KStaticDeleter<KickerConfig> staticKickerConfigDeleter;
@@ -57,7 +58,7 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
     configFileWatch(new KDirWatch(this)),
     m_currentPanelIndex(0)
 {
-    m_screenNumber = qt_xdisplay() ? DefaultScreen(qt_xdisplay()) : 0;
+    m_screenNumber = QX11Info::display() ? DefaultScreen(QX11Info::display()) : 0;
 
     KickerSettings::instance(configName().latin1());
 

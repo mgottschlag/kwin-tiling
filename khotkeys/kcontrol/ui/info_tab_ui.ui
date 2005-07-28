@@ -34,7 +34,7 @@
 &lt;p&gt;&lt;b&gt;NOTE: &lt;/b&gt;If you are not an experienced user, you should be careful with modifying the actions, and should limit your changes mainly to enabling/disabling actions, and changing triggers.&lt;/p&gt;</string>
             </property>
             <property name="alignment">
-                <set>WordBreak|AlignVCenter</set>
+                <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
             </property>
         </widget>
         <spacer>
@@ -42,7 +42,7 @@
                 <cstring>Spacer7</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
@@ -57,7 +57,7 @@
     </vbox>
 </widget>
 <includes>
-    <include location="global" impldecl="in implementation">kdialog.h</include>
+    <include location="global" impldecl="in declaration">kdialog.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>

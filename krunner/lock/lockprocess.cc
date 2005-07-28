@@ -44,7 +44,9 @@
 #include <qtimer.h>
 #include <qfile.h>
 #include <qsocketnotifier.h>
-#include <qvaluevector.h>
+#include <QDesktopWidget>
+#include <QX11Info>
+#include <QTextStream>
 
 #include <qdatetime.h>
 
@@ -98,7 +100,7 @@ static Atom   gXA_SCREENSAVER_VERSION;
 // starting screensaver hacks, and password entry.f
 //
 LockProcess::LockProcess(bool child, bool useBlankOnly)
-    : QWidget(0L, "saver window", WX11BypassWM),
+    : QWidget(0L, "saver window", Qt::WX11BypassWM),
       mOpenGLVisual(0),
       child_saver(child),
       mParent(0),
@@ -115,11 +117,12 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
 
     // Get root window size
     XWindowAttributes rootAttr;
-    XGetWindowAttributes(qt_xdisplay(), RootWindow(qt_xdisplay(),
-                        qt_xscreen()), &rootAttr);
+	QX11Info info;
+    XGetWindowAttributes(QX11Info::display(), RootWindow(QX11Info::display(),
+                        info.screen()), &rootAttr);
     mRootWidth = rootAttr.width;
     mRootHeight = rootAttr.height;
-    XSelectInput( qt_xdisplay(), qt_xrootwin(),
+    XSelectInput( QX11Info::display(), QX11Info::appRootWindow(),
         SubstructureNotifyMask | rootAttr.your_event_mask );
 
     // Add non-KDE path
@@ -140,8 +143,8 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
                                      relPath);
 
     // virtual root property
-    gXA_VROOT = XInternAtom (qt_xdisplay(), "__SWM_VROOT", False);
-    gXA_SCREENSAVER_VERSION = XInternAtom (qt_xdisplay(), "_SCREENSAVER_VERSION", False);
+    gXA_VROOT = XInternAtom (QX11Info::display(), "__SWM_VROOT", False);
+    gXA_SCREENSAVER_VERSION = XInternAtom (QX11Info::display(), "_SCREENSAVER_VERSION", False);
 
     connect(&mHackProc, SIGNAL(processExited(KProcess *)),
                         SLOT(hackExited(KProcess *)));
@@ -161,7 +164,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     if (mDPMSDepend) {
         BOOL on;
         CARD16 state;
-        DPMSInfo(qt_xdisplay(), &state, &on);
+        DPMSInfo(QX11Info::display(), &state, &on);
         if (on)
         {
             connect(&mCheckDPMS, SIGNAL(timeout()), SLOT(checkDPMSActive()));
@@ -356,11 +359,11 @@ void LockProcess::readSaver()
 	bool opengl = kapp->authorize("opengl_screensavers");
 	bool manipulatescreen = kapp->authorize("manipulatescreen_screensavers");
         KDesktopFile config(file, true);
-	if (config.readEntry("X-KDE-Type").utf8())
+	if (!config.readEntry("X-KDE-Type").utf8().isEmpty())
 	{
 		QString saverType = config.readEntry("X-KDE-Type").utf8();
 		QStringList saverTypes = QStringList::split(";", saverType);
-		for (uint i = 0; i < saverTypes.count(); i++)
+		for (int i = 0; i < saverTypes.count(); i++)
 		{
 			if ((saverTypes[i] == "ManipulateScreen") && !manipulatescreen)
 			{
@@ -421,23 +424,23 @@ void LockProcess::createSaverWindow()
 
     // Some xscreensaver hacks check for this property
     const char *version = "KDE 2.0";
-    XChangeProperty (qt_xdisplay(), winId(),
+    XChangeProperty (QX11Info::display(), winId(),
                      gXA_SCREENSAVER_VERSION, XA_STRING, 8, PropModeReplace,
                      (unsigned char *) version, strlen(version));
 
     XSetWindowAttributes attr;
     attr.event_mask = KeyPressMask | ButtonPressMask | PointerMotionMask |
                         VisibilityChangeMask | ExposureMask;
-    XChangeWindowAttributes(qt_xdisplay(), winId(),
+    XChangeWindowAttributes(QX11Info::display(), winId(),
                             CWEventMask, &attr);
 
     // erase();
 
     // set NoBackground so that the saver can capture the current
     // screen state if necessary
-    setBackgroundMode(QWidget::NoBackground);
+    setBackgroundMode(Qt::NoBackground);
 
-    setCursor( blankCursor );
+    setCursor( Qt::BlankCursor );
     setGeometry(0, 0, mRootWidth, mRootHeight);
     hide();
 
@@ -453,14 +456,14 @@ void LockProcess::hideSaverWindow()
   hide();
   lower();
   removeVRoot(winId());
-  XDeleteProperty(qt_xdisplay(), winId(), gXA_SCREENSAVER_VERSION);
+  XDeleteProperty(QX11Info::display(), winId(), gXA_SCREENSAVER_VERSION);
   if ( gVRoot ) {
       unsigned long vroot_data[1] = { gVRootData };
-      XChangeProperty(qt_xdisplay(), gVRoot, gXA_VROOT, XA_WINDOW, 32,
+      XChangeProperty(QX11Info::display(), gVRoot, gXA_VROOT, XA_WINDOW, 32,
                       PropModeReplace, (unsigned char *)vroot_data, 1);
       gVRoot = 0;
   }
-  XSync(qt_xdisplay(), False);
+  XSync(QX11Info::display(), False);
 }
 
 //---------------------------------------------------------------------------
@@ -477,7 +480,8 @@ void LockProcess::saveVRoot()
 {
   Window rootReturn, parentReturn, *children;
   unsigned int numChildren;
-  Window root = RootWindowOfScreen(ScreenOfDisplay(qt_xdisplay(), qt_xscreen()));
+  QX11Info info;
+  Window root = RootWindowOfScreen(ScreenOfDisplay(QX11Info::display(), info.screen()));
 
   gVRoot = 0;
   gVRootData = 0;
@@ -485,7 +489,7 @@ void LockProcess::saveVRoot()
   int (*oldHandler)(Display *, XErrorEvent *);
   oldHandler = XSetErrorHandler(ignoreXError);
 
-  if (XQueryTree(qt_xdisplay(), root, &rootReturn, &parentReturn,
+  if (XQueryTree(QX11Info::display(), root, &rootReturn, &parentReturn,
       &children, &numChildren))
   {
     for (unsigned int i = 0; i < numChildren; i++)
@@ -495,7 +499,7 @@ void LockProcess::saveVRoot()
       unsigned long nitems, bytesafter;
       Window *newRoot = (Window *)0;
 
-      if ((XGetWindowProperty(qt_xdisplay(), children[i], gXA_VROOT, 0, 1,
+      if ((XGetWindowProperty(QX11Info::display(), children[i], gXA_VROOT, 0, 1,
           False, XA_WINDOW, &actual_type, &actual_format, &nitems, &bytesafter,
           (unsigned char **) &newRoot) == Success) && newRoot)
       {
@@ -522,14 +526,15 @@ void LockProcess::setVRoot(Window win, Window vr)
     if (gVRoot)
         removeVRoot(gVRoot);
 
-    unsigned long rw = RootWindowOfScreen(ScreenOfDisplay(qt_xdisplay(), qt_xscreen()));
+	QX11Info info;
+    unsigned long rw = RootWindowOfScreen(ScreenOfDisplay(QX11Info::display(), info.screen()));
     unsigned long vroot_data[1] = { vr };
 
     Window rootReturn, parentReturn, *children;
     unsigned int numChildren;
     Window top = win;
     while (1) {
-        XQueryTree(qt_xdisplay(), top , &rootReturn, &parentReturn,
+        XQueryTree(QX11Info::display(), top , &rootReturn, &parentReturn,
                                  &children, &numChildren);
         if (children)
             XFree((char *)children);
@@ -539,7 +544,7 @@ void LockProcess::setVRoot(Window win, Window vr)
             top = parentReturn;
     }
 
-    XChangeProperty(qt_xdisplay(), top, gXA_VROOT, XA_WINDOW, 32,
+    XChangeProperty(QX11Info::display(), top, gXA_VROOT, XA_WINDOW, 32,
                      PropModeReplace, (unsigned char *)vroot_data, 1);
 }
 
@@ -549,7 +554,7 @@ void LockProcess::setVRoot(Window win, Window vr)
 //
 void LockProcess::removeVRoot(Window win)
 {
-    XDeleteProperty (qt_xdisplay(), win, gXA_VROOT);
+    XDeleteProperty (QX11Info::display(), win, gXA_VROOT);
 }
 
 //---------------------------------------------------------------------------
@@ -558,7 +563,7 @@ void LockProcess::removeVRoot(Window win)
 //
 bool LockProcess::grabKeyboard()
 {
-    int rv = XGrabKeyboard( qt_xdisplay(), QApplication::desktop()->winId(),
+    int rv = XGrabKeyboard( QX11Info::display(), QApplication::desktop()->winId(),
         True, GrabModeAsync, GrabModeAsync, CurrentTime );
 
     return (rv == GrabSuccess);
@@ -573,9 +578,9 @@ bool LockProcess::grabKeyboard()
 //
 bool LockProcess::grabMouse()
 {
-    int rv = XGrabPointer( qt_xdisplay(), QApplication::desktop()->winId(),
+    int rv = XGrabPointer( QX11Info::display(), QApplication::desktop()->winId(),
             True, GRABEVENTS, GrabModeAsync, GrabModeAsync, None,
-            blankCursor.handle(), CurrentTime );
+            QCursor(Qt::BlankCursor).handle(), CurrentTime );
 
     return (rv == GrabSuccess);
 }
@@ -586,7 +591,7 @@ bool LockProcess::grabMouse()
 //
 bool LockProcess::grabInput()
 {
-    XSync(qt_xdisplay(), False);
+    XSync(QX11Info::display(), False);
 
     if (!grabKeyboard())
     {
@@ -602,7 +607,7 @@ bool LockProcess::grabInput()
         sleep(1);
         if (!grabMouse())
         {
-            XUngrabKeyboard(qt_xdisplay(), CurrentTime);
+            XUngrabKeyboard(QX11Info::display(), CurrentTime);
             return false;
         }
     }
@@ -618,8 +623,8 @@ bool LockProcess::grabInput()
 //
 void LockProcess::ungrabInput()
 {
-    XUngrabKeyboard(qt_xdisplay(), CurrentTime);
-    XUngrabPointer(qt_xdisplay(), CurrentTime);
+    XUngrabKeyboard(QX11Info::display(), CurrentTime);
+    XUngrabPointer(QX11Info::display(), CurrentTime);
     unlockXF86();
 }
 
@@ -645,10 +650,10 @@ bool LockProcess::startSaver()
     createSaverWindow();
     move(0, 0);
     show();
-    setCursor( blankCursor );
+    setCursor( Qt::BlankCursor );
 
     raise();
-    XSync(qt_xdisplay(), False);
+    XSync(QX11Info::display(), False);
     setVRoot( winId(), winId() );
     startHack();
     return true;
@@ -670,7 +675,7 @@ void LockProcess::stopSaver()
             DM().setLock( false );
         ungrabInput();
         const char *out = "GOAWAY!";
-        for (QValueList<int>::ConstIterator it = child_sockets.begin(); it != child_sockets.end(); ++it)
+        for (QList<int>::ConstIterator it = child_sockets.begin(); it != child_sockets.end(); ++it)
             write(*it, out, sizeof(out));
     }
 }
@@ -796,7 +801,7 @@ bool LockProcess::startHack()
 	// we aren't allowed to start the specified screensaver either because it didn't run for some reason
 	// according to the kiosk restrictions forbid it
 	{
-		setBackgroundColor(black);
+		setBackgroundColor(Qt::black);
 	}
     }
     return false;
@@ -818,7 +823,7 @@ void LockProcess::hackExited(KProcess *)
 {
 	// Hack exited while we're supposed to be saving the screen.
 	// Make sure the saver window is black.
-        setBackgroundColor(black);
+        setBackgroundColor(Qt::black);
 }
 
 void LockProcess::suspend()
@@ -868,12 +873,12 @@ static void fakeFocusIn( WId window )
     // window, so that it will correctly show cursor in the dialog.
     XEvent ev;
     memset(&ev, 0, sizeof(ev));
-    ev.xfocus.display = qt_xdisplay();
+    ev.xfocus.display = QX11Info::display();
     ev.xfocus.type = FocusIn;
     ev.xfocus.window = window;
     ev.xfocus.mode = NotifyNormal;
     ev.xfocus.detail = NotifyAncestor;
-    XSendEvent( qt_xdisplay(), window, False, NoEventMask, &ev );
+    XSendEvent( QX11Info::display(), window, False, NoEventMask, &ev );
 }
 
 int LockProcess::execDialog( QDialog *dlg )
@@ -887,16 +892,18 @@ int LockProcess::execDialog( QDialog *dlg )
     if (mDialogs.isEmpty())
     {
         suspend();
-        XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
-                arrowCursor.handle(), CurrentTime);
+        XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
+                QCursor(Qt::ArrowCursor).handle(), CurrentTime);
     }
     mDialogs.prepend( dlg );
     fakeFocusIn( dlg->winId());
     int rt = dlg->exec();
-    mDialogs.remove( dlg );
+    int pos = mDialogs.indexOf( dlg );
+    if (pos != -1)
+        mDialogs.remove( pos );
     if( mDialogs.isEmpty() ) {
-        XChangeActivePointerGrab( qt_xdisplay(), GRABEVENTS,
-                blankCursor.handle(), CurrentTime);
+        XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
+                QCursor(Qt::BlankCursor).handle(), CurrentTime);
         resume();
     } else
         fakeFocusIn( mDialogs.first()->winId());
@@ -913,7 +920,9 @@ void LockProcess::preparePopup()
 void LockProcess::cleanupPopup()
 {
     QWidget *dlg = (QWidget *)sender();
-    mDialogs.remove( dlg );
+    
+    int pos = mDialogs.indexOf( dlg );
+    mDialogs.remove( pos );
     fakeFocusIn( mDialogs.first()->winId() );
 }
 
@@ -962,11 +971,11 @@ bool LockProcess::x11Event(XEvent *event)
             break;
 
         case ConfigureNotify: // from SubstructureNotifyMask on the root window
-            if(event->xconfigure.event == qt_xrootwin())
+            if(event->xconfigure.event == QX11Info::appRootWindow())
                 stayOnTop();
             break;
         case MapNotify: // from SubstructureNotifyMask on the root window
-            if( event->xmap.event == qt_xrootwin())
+            if( event->xmap.event == QX11Info::appRootWindow())
                 stayOnTop();
             break;
     }
@@ -1000,11 +1009,11 @@ void LockProcess::stayOnTop()
         // all restacking operations will be no-op,
         // and no ConfigureNotify will be generated,
         // thus avoiding possible infinite loops
-        XRaiseWindow( qt_xdisplay(), mDialogs.first()->winId()); // raise topmost
+        XRaiseWindow( QX11Info::display(), mDialogs.first()->winId()); // raise topmost
         // and stack others below it
         Window* stack = new Window[ mDialogs.count() + 1 ];
         int count = 0;
-        for( QValueList< QWidget* >::ConstIterator it = mDialogs.begin();
+        for( QVector< QWidget* >::ConstIterator it = mDialogs.begin();
              it != mDialogs.end();
              ++it )
             stack[ count++ ] = (*it)->winId();
@@ -1013,7 +1022,7 @@ void LockProcess::stayOnTop()
         delete[] stack;
     }
     else
-        XRaiseWindow(qt_xdisplay(), winId());
+        XRaiseWindow(QX11Info::display(), winId());
 }
 
 void LockProcess::checkDPMSActive()
@@ -1021,7 +1030,7 @@ void LockProcess::checkDPMSActive()
 #ifdef HAVE_DPMS
     BOOL on;
     CARD16 state;
-    DPMSInfo(qt_xdisplay(), &state, &on);
+    DPMSInfo(QX11Info::display(), &state, &on);
     if (state == DPMSModeStandby || state == DPMSModeSuspend || state == DPMSModeOff)
     {
        suspend();
@@ -1039,7 +1048,7 @@ void LockProcess::lockXF86()
     if( can_do_xf86_lock == Unknown )
     {
         int major, minor;
-        if( XF86MiscQueryVersion( qt_xdisplay(), &major, &minor )
+        if( XF86MiscQueryVersion( QX11Info::display(), &major, &minor )
             && major >= 0 && minor >= 5 )
             can_do_xf86_lock = Yes;
         else
@@ -1049,7 +1058,7 @@ void LockProcess::lockXF86()
         return;
     if( mRestoreXF86Lock )
         return;
-    if( XF86MiscSetGrabKeysState( qt_xdisplay(), False ) != MiscExtGrabStateSuccess )
+    if( XF86MiscSetGrabKeysState( QX11Info::display(), False ) != MiscExtGrabStateSuccess )
         return;
     // success
     mRestoreXF86Lock = true;
@@ -1061,7 +1070,7 @@ void LockProcess::unlockXF86()
         return;
     if( !mRestoreXF86Lock )
         return;
-    XF86MiscSetGrabKeysState( qt_xdisplay(), True );
+    XF86MiscSetGrabKeysState( QX11Info::display(), True );
     mRestoreXF86Lock = false;
 }
 #else
@@ -1076,7 +1085,7 @@ void LockProcess::unlockXF86()
 
 void LockProcess::msgBox( QMessageBox::Icon type, const QString &txt )
 {
-    QDialog box( 0, "messagebox", true, WX11BypassWM );
+    QDialog box( 0, "messagebox", true, Qt::WX11BypassWM );
     QFrame *winFrame = new QFrame( &box );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );

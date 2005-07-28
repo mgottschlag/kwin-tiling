@@ -17,10 +17,13 @@
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qwhatsthis.h>
+
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QGridLayout>
 
 #include <dcopclient.h>
 
@@ -37,7 +40,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_launch, LaunchFactory("kcmlaunch") )
 
 
 LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringList &)
-  : KCModule(LaunchFactory::instance(), parent, name)
+  : KCModule(LaunchFactory::instance(), parent)
 {
     QVBoxLayout* Form1Layout = new QVBoxLayout( this, 0, 
         KDialog::spacingHint() );
@@ -45,9 +48,9 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     setQuickHelp( i18n ( "<h1>Launch Feedback</h1>"
      " You can configure the application-launch feedback here."));
 
-    QGroupBox* GroupBox1 = new QGroupBox( this, "GroupBox1" );
+    Q3GroupBox* GroupBox1 = new Q3GroupBox( this, "GroupBox1" );
     GroupBox1->setTitle( i18n( "Bus&y Cursor" ) );
-    QWhatsThis::add(GroupBox1, i18n(
+    GroupBox1->setWhatsThis( i18n(
      "<h1>Busy Cursor</h1>\n"
      "KDE offers a busy cursor for application startup notification.\n"
      "To enable the busy cursor, select one kind of visual feedback\n"
@@ -78,7 +81,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     lbl_cursorTimeout = new QLabel( GroupBox1, "TextLabel1" );
     lbl_cursorTimeout->setText( i18n( "&Startup indication timeout:" ) );
     GroupBox1Layout->addWidget( lbl_cursorTimeout, 2, 0 );
-    sb_cursorTimeout = new KIntNumInput( GroupBox1, "sb_cursorTimeout" );
+    sb_cursorTimeout = new KIntNumInput( GroupBox1);
     sb_cursorTimeout->setRange( 0, 99, 1, true );
     sb_cursorTimeout->setSuffix( i18n(" sec") );
     GroupBox1Layout->addWidget( sb_cursorTimeout, 2, 1 );
@@ -86,9 +89,9 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     connect( sb_cursorTimeout, SIGNAL( valueChanged(int) ), 
             SLOT( checkChanged() ) );
 
-    QGroupBox* GroupBox2 = new QGroupBox( this, "GroupBox2" );
+    Q3GroupBox* GroupBox2 = new Q3GroupBox( this, "GroupBox2" );
     GroupBox2->setTitle( i18n( "Taskbar &Notification" ) );
-    QWhatsThis::add(GroupBox2, i18n("<H1>Taskbar Notification</H1>\n"
+    GroupBox2->setWhatsThis( i18n("<H1>Taskbar Notification</H1>\n"
     "You can enable a second method of startup notification which is\n"
     "used by the taskbar where a button with a rotating hourglass appears,\n"
     "symbolizing that your started application is loading.\n"
@@ -115,7 +118,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     lbl_taskbarTimeout = new QLabel( GroupBox2, "TextLabel2" );
     lbl_taskbarTimeout->setText( i18n( "Start&up indication timeout:" ) );
     GroupBox2Layout->addWidget( lbl_taskbarTimeout, 1, 0 );
-    sb_taskbarTimeout = new KIntNumInput( GroupBox2, "sb_taskbarTimeout" );
+    sb_taskbarTimeout = new KIntNumInput( GroupBox2);
     sb_taskbarTimeout->setRange( 0, 99, 1, true );
     sb_taskbarTimeout->setSuffix( i18n(" sec") );
     GroupBox2Layout->addWidget( sb_taskbarTimeout, 1, 1 );

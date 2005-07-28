@@ -65,7 +65,7 @@
                 <enum>Sunken</enum>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Qt::Vertical</enum>
             </property>
         </widget>
         <widget class="QPushButton">
@@ -79,7 +79,7 @@
     </hbox>
 </widget>
 <includes>
-    <include location="global" impldecl="in implementation">kdialog.h</include>
+    <include location="global" impldecl="in declaration">kdialog.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>

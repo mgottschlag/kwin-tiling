@@ -18,6 +18,8 @@
 
 #include <qtimer.h>
 #include <qtooltip.h>
+//Added by qt3to4:
+#include <QMouseEvent>
 
 #include <kaction.h>
 #include <kapplication.h>
@@ -48,7 +50,7 @@ KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
 void KRandRSystemTray::mousePressEvent(QMouseEvent* e)
 {
 	// Popup the context menu with left-click
-	if (e->button() == LeftButton) {
+	if (e->button() == Qt::LeftButton) {
 		contextMenuAboutToShow(contextMenu());
 		contextMenu()->popup(e->globalPos());
 		e->accept();
@@ -164,7 +166,7 @@ void KRandRSystemTray::populateMenu(KPopupMenu* menu)
 
 		for (int i = 0; i < 6; i++) {
 			if ((1 << i) & currentScreen()->rotations()) {
-				lastIndex = menu->insertItem(currentScreen()->rotationIcon(1 << i), RandRScreen::rotationName(1 << i));
+				lastIndex = menu->insertItem(QIcon(currentScreen()->rotationIcon(1 << i)), RandRScreen::rotationName(1 << i));
 
 				if (currentScreen()->proposedRotation() & (1 << i))
 					menu->setItemChecked(lastIndex, true);

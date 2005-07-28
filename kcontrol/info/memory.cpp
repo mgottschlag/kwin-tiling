@@ -28,6 +28,11 @@
 #include <qpainter.h>
 #include <qdrawutil.h>
 #include <qtooltip.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include <kglobal.h>
 #include <kdialog.h>
@@ -163,7 +168,7 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 	    break;
 	};
 	Widget = new QLabel(title, this);
-	Widget->setAlignment(AlignLeft);
+	Widget->setAlignment( Qt::AlignLeft );
 	vbox->addWidget(Widget, 1);
     }
 
@@ -174,7 +179,7 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 	    if (i == SWAP_MEM)
 		vbox->addSpacing(SPACING);
 	    Widget = new QLabel(this);
-	    Widget->setAlignment(AlignRight);
+	    Widget->setAlignment( Qt::AlignRight );
 	    MemSizeLabel[i][j] = Widget;
 	    vbox->addWidget(Widget, 1);
 	}
@@ -229,7 +234,7 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 	  hint = "<qt>" + hint + "</qt>";
 
 	Widget = new QLabel("<b>" + title + "</b>", this);
-	Widget->setAlignment(AlignCenter);
+	Widget->setAlignment( Qt::AlignCenter );
 	QToolTip::add(Widget, hint);
 	vbox->addWidget(Widget);
 	vbox->addSpacing(SPACING / 2);
@@ -237,14 +242,14 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 	QWidget *g = new QWidget(this);
 	g->setMinimumWidth(2 * SPACING);
 	g->setMinimumHeight(3 * SPACING);
-	g->setBackgroundMode(NoBackground);
+	g->setBackgroundMode( Qt::NoBackground );
 	QToolTip::add(g, hint); // add the tooltip
 	Graph[i] = g;
 	vbox->addWidget(g, 2);
 	vbox->addSpacing(SPACING / 2);
 
 	Widget = new QLabel(this);	/* xx MB used. */
-	Widget->setAlignment(AlignCenter);
+	Widget->setAlignment( Qt::AlignCenter );
 	QToolTip::add(Widget, hint);
 	GraphLabel[i] = Widget;
 	vbox->addWidget(Widget);
@@ -328,7 +333,7 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
 
     		if (localheight >= SPACING) {
 			paint.drawText(0, startline-localheight, width, localheight,
-				AlignCenter | WordBreak, 
+				Qt::AlignCenter | Qt::WordBreak, 
 				QString("%1 %2%").arg(*text).arg(percent));
 		}
     	}

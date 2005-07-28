@@ -52,7 +52,7 @@ KdmPixmap::KdmPixmap( KdmItem *parent, const QDomNode &node, const char *name )
 
 	// Read PIXMAP TAGS
 	QDomNodeList childList = node.childNodes();
-	for (uint nod = 0; nod < childList.count(); nod++) {
+	for (int nod = 0; nod < childList.count(); nod++) {
 		QDomNode child = childList.item( nod );
 		QDomElement el = child.toElement();
 		QString tagName = el.tagName();

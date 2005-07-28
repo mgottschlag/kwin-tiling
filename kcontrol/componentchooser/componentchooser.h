@@ -21,12 +21,14 @@
 #include "emailclientconfig_ui.h"
 #include "terminalemulatorconfig_ui.h"
 #include "browserconfig_ui.h"
-#include <qdict.h>
+#include <q3dict.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <kservice.h>
 
-class QListBoxItem;
+class Q3ListBoxItem;
 class KEMailSettings;
 class KConfig;
 
@@ -55,7 +57,7 @@ public:
 	virtual void defaults();
 
 protected:
-	QDict<QString>  m_lookupDict,m_revLookupDict;
+	Q3Dict<QString>  m_lookupDict,m_revLookupDict;
 
 protected slots:
 	void slotComponentChanged(const QString&);
@@ -143,7 +145,7 @@ private:
 	QVBoxLayout *myLayout;
 protected slots:
 	void emitChanged(bool);
-	void slotServiceSelected(QListBoxItem *);
+	void slotServiceSelected(Q3ListBoxItem *);
 
 signals:
 	void changed(bool);

@@ -20,6 +20,9 @@
 #include <config.h>
 
 #include <qfile.h>
+//Added by qt3to4:
+#include <Q3StrList>
+#include <Q3CString>
 
 #include <kapplication.h>
 #include <kcmdlineargs.h>
@@ -31,6 +34,7 @@
 #include <kconfig.h>
 
 #include <X11/Xlib.h>
+#include <QX11Info>
 
 static KCmdLineOptions options[] =
 {
@@ -73,7 +77,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   KLocale::setMainCatalogue(0);
 
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-  QCString arg;
+  Q3CString arg;
   if (args->count() == 1) {
     arg = args->arg(0);
   }
@@ -127,17 +131,19 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   KConfig config("kcmdisplayrc", true );
   config.setGroup("X11");
   bool multihead = !config.readBoolEntry( "disableMultihead", false) &&
-                    (ScreenCount(qt_xdisplay()) > 1);
+                    (ScreenCount(QX11Info::display()) > 1);
   // Pass env. var to kdeinit.
-  QCString name = "KDE_MULTIHEAD";
-  QCString value = multihead ? "true" : "false";
+  Q3CString name = "KDE_MULTIHEAD";
+  Q3CString value = multihead ? "true" : "false";
   QByteArray params;
-  QDataStream stream(params, IO_WriteOnly);
+  QDataStream stream(&params, QIODevice::WriteOnly);
+
+  stream.setVersion(QDataStream::Qt_3_1);
   stream << name << value;
   kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
   setenv( name, value, 1 ); // apply effect also to itself
 
-  QStrList alreadyInitialized;
+  Q3StrList alreadyInitialized;
 
   // look for X-KDE-Init=... entries
   for(KService::List::Iterator it = list.begin();

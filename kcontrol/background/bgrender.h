@@ -11,6 +11,8 @@
 #define BGRender_h_Included
 
 #include <qobject.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 #include "bgsettings.h"
 

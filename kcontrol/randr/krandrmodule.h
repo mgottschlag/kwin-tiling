@@ -21,7 +21,7 @@
 
 #include "randr.h"
 
-class QButtonGroup;
+class Q3ButtonGroup;
 class KComboBox;
 class QCheckBox;
 
@@ -54,7 +54,7 @@ protected:
 
 	KComboBox*		m_screenSelector;
 	KComboBox*		m_sizeCombo;
-	QButtonGroup*	m_rotationGroup;
+	Q3ButtonGroup*	m_rotationGroup;
 	KComboBox*		m_refreshRates;
 	QCheckBox*		m_applyOnStartup;
 	QCheckBox*		m_syncTrayApp;

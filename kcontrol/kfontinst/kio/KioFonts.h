@@ -35,9 +35,9 @@
 #include <kurl.h>
 #include <klocale.h>
 #include <qstring.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 #include <qmap.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include "Misc.h"
 #include "KfiConstants.h"
 
@@ -89,12 +89,12 @@ class CKioFonts : public KIO::SlaveBase
     {
         QString                                 location;
         CDirList                                modified;
-        QMap<QString, QValueList<FcPattern *> > fontMap;   // Maps from "Times New Roman" -> $HOME/.fonts/times.ttf
+        QMap<QString, Q3ValueList<FcPattern *> > fontMap;   // Maps from "Times New Roman" -> $HOME/.fonts/times.ttf
     };
 
     public:
 
-    CKioFonts(const QCString &pool, const QCString &app);
+    CKioFonts(const Q3CString &pool, const Q3CString &app);
     virtual ~CKioFonts();
 
     static QString getSect(const QString &f) { return f.section('/', 1, 1); }
@@ -110,10 +110,10 @@ class CKioFonts : public KIO::SlaveBase
 
     private:
 
-    bool     putReal(const QString &destOrig, const QCString &destOrigC, bool origExists, int mode, bool resume);
+    bool     putReal(const QString &destOrig, const Q3CString &destOrigC, bool origExists, int mode, bool resume);
     void     modified(EFolder folder, const CDirList &dirs=CDirList());
     void     special(const QByteArray &a);
-    void     createRootRefreshCmd(QCString &cmd, const CDirList &dirs=CDirList(), bool reparseCfg=true);
+    void     createRootRefreshCmd(Q3CString &cmd, const CDirList &dirs=CDirList(), bool reparseCfg=true);
     void     doModified();
     QString  getRootPasswd(bool askPasswd=true);
     bool     doRootCmd(const char *cmd, const QString &passwd);
@@ -122,14 +122,14 @@ class CKioFonts : public KIO::SlaveBase
     void     clearFontList();
     bool     updateFontList();
     EFolder  getFolder(const KURL &url);
-    QMap<QString, QValueList<FcPattern *> >::Iterator getMap(const KURL &url);
-    QValueList<FcPattern *> * getEntries(const KURL &url);
+    QMap<QString, Q3ValueList<FcPattern *> >::Iterator getMap(const KURL &url);
+    Q3ValueList<FcPattern *> * getEntries(const KURL &url);
     FcPattern * getEntry(EFolder folder, const QString &file, bool full=false);
     bool     checkFile(const QString &file);
     bool     getSourceFiles(const KURL &src, QStringList &files);
     bool     checkDestFiles(const KURL &src, QMap<QString, QString> &map, const KURL &dest, EFolder destFolder, bool overwrite);
     bool     confirmMultiple(const KURL &url, const QStringList &files, EFolder folder, EOp op);
-    bool     confirmMultiple(const KURL &url, QValueList<FcPattern *> *patterns, EFolder folder, EOp op);
+    bool     confirmMultiple(const KURL &url, Q3ValueList<FcPattern *> *patterns, EFolder folder, EOp op);
     bool     checkUrl(const KURL &u, bool rootOk=false);
     bool     checkAllowed(const KURL &u);
     void     createAfm(const QString &file, bool nrs=false, const QString &passwd=QString::null);

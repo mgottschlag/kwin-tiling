@@ -18,10 +18,10 @@
 */
 
 #include <qlabel.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 #include <qpixmap.h>
 #include <qfont.h>
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
 #include <qapplication.h>
 
 #include <kapplication.h>
@@ -38,7 +38,7 @@
 #include "modules.h"
 #include "proxywidget.h"
 
-class ModuleTitle : public QHBox
+class ModuleTitle : public Q3HBox
 {
   public:
     ModuleTitle( QWidget *parent, const char *name=0 );
@@ -53,7 +53,7 @@ class ModuleTitle : public QHBox
 };
 
 ModuleTitle::ModuleTitle( QWidget *parent, const char *name )
-    : QHBox( parent, name )
+    : Q3HBox( parent, name )
 {
   QWidget *spacer = new QWidget( this );
   spacer->setFixedWidth( KDialog::marginHint()-KDialog::spacingHint() );
@@ -80,8 +80,8 @@ void ModuleTitle::showTitleFor( ConfigModule *config )
   if ( !config )
     return;
 
-  QWhatsThis::remove( this );
-  QWhatsThis::add( this, config->comment() );
+  Q3WhatsThis::remove( this );
+  Q3WhatsThis::add( this, config->comment() );
   KIconLoader *loader = KGlobal::instance()->iconLoader();
   QPixmap icon = loader->loadIcon( config->icon(), KIcon::NoGroup, 22 );
   m_icon->setPixmap( icon );
@@ -97,7 +97,7 @@ void ModuleTitle::clear()
   kapp->processEvents();
 }
 
-class ModuleWidget : public QVBox
+class ModuleWidget : public QWidget
 {
   public:
     ModuleWidget( QWidget *parent, const char *name );
@@ -106,16 +106,16 @@ class ModuleWidget : public QVBox
     ProxyWidget* load( ConfigModule *module );
 
   protected:
+    QVBoxLayout *m_layout;
     ModuleTitle *m_title;
-    QVBox *m_body;
 };
 
-ModuleWidget::ModuleWidget( QWidget *parent, const char *name )
-    : QVBox( parent, name )
+ModuleWidget::ModuleWidget( QWidget *parent, const char * )
+    : QWidget( parent )
+    , m_layout (new QVBoxLayout (this))
+    , m_title (new ModuleTitle (this))
 {
-  m_title = new ModuleTitle( this, "m_title" );
-  m_body = new QVBox( this, "m_body" );
-  setStretchFactor( m_body, 10 );
+  m_layout->addWidget (m_title);
 }
 
 ProxyWidget *ModuleWidget::load( ConfigModule *module )
@@ -125,8 +125,10 @@ ProxyWidget *ModuleWidget::load( ConfigModule *module )
 
   if ( proxy )
   {
-    proxy->reparent(m_body, 0, QPoint(0,0), false);
+    proxy->reparent(this, 0, QPoint(0,0), false);
+    m_layout->addWidget (proxy);
     proxy->show();
+    proxy->setSizePolicy (QSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding));
     m_title->showTitleFor( module );
   }
 
@@ -134,13 +136,13 @@ ProxyWidget *ModuleWidget::load( ConfigModule *module )
 }
 
 DockContainer::DockContainer(QWidget *parent)
-  : QWidgetStack(parent, "DockContainer")
+  : QStackedWidget(parent)
   , _basew(0L)
   , _module(0L)
 {
   _busyw = new QLabel(i18n("<big><b>Loading...</b></big>"), this);
-  _busyw->setAlignment(AlignCenter);
-  _busyw->setTextFormat(RichText);
+  _busyw->setAlignment(Qt::AlignCenter);
+  _busyw->setTextFormat(Qt::RichText);
   _busyw->setGeometry(0,0, width(), height());
   addWidget( _busyw );
 
@@ -163,14 +165,14 @@ void DockContainer::setBaseWidget(QWidget *widget)
   _basew = widget;
 
   addWidget( _basew );
-  raiseWidget( _basew );
+  setCurrentWidget( _basew );
 
   emit newModule(widget->caption(), "", "");
 }
 
 ProxyWidget* DockContainer::loadModule( ConfigModule *module )
 {
-  QApplication::setOverrideCursor( waitCursor );
+  QApplication::setOverrideCursor( Qt::WaitCursor );
 
   ProxyWidget *widget = _modulew->load( module );
 
@@ -182,12 +184,12 @@ ProxyWidget* DockContainer::loadModule( ConfigModule *module )
             SIGNAL(changedModule(ConfigModule *)));
     connect(widget, SIGNAL(quickHelpChanged()), SLOT(quickHelpChanged()));
 
-    raiseWidget( _modulew );
+    setCurrentWidget( _modulew );
     emit newModule(widget->caption(), module->docPath(), widget->quickHelp());
   }
   else
   {
-    raiseWidget( _basew );
+    setCurrentWidget( _basew );
     emit newModule(_basew->caption(), "", "");
   }
 
@@ -220,7 +222,7 @@ i18n("There are unsaved changes in the active module.\n"
         return false;
     }
 
-  raiseWidget( _busyw );
+  setCurrentWidget( _busyw );
   kapp->processEvents();
 
   deleteModule();
@@ -234,7 +236,7 @@ i18n("There are unsaved changes in the active module.\n"
 
 void DockContainer::removeModule()
 {
-  raiseWidget( _basew );
+  setCurrentWidget( _basew );
   deleteModule();
 
   if (_basew)

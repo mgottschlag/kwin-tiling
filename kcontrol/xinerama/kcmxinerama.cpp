@@ -32,12 +32,15 @@
 #include <kwin.h>
 
 #include <qcheckbox.h>
+#include <qdesktopwidget.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qcombobox.h>
-#include <qtable.h>
 #include <qcolor.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <Q3Frame>
+#include <QGridLayout>
 
 
 KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
@@ -170,7 +173,8 @@ void KCMXinerama::save() {
 
 		if (!kapp->dcopClient()->isAttached())
 			kapp->dcopClient()->attach();
-		kapp->dcopClient()->send("kwin", "", "reconfigure()", "");
+		QByteArray data;
+		kapp->dcopClient()->send("kwin", "", "reconfigure()", data);
 
 		ksplashrc->setGroup("Xinerama");
 		ksplashrc->writeEntry("KSplashScreen", xw->_enableXinerama->isChecked() ? xw->_ksplashDisplay->currentItem() : -2 /* ignore Xinerama */);
@@ -222,13 +226,13 @@ void KCMXinerama::windowIndicator(int dpy) {
 }
 
 QWidget *KCMXinerama::indicator(int dpy) {
-	QLabel *si = new QLabel(QString::number(dpy+1), 0, "Screen Indicator", WStyle_StaysOnTop | WStyle_Customize | WStyle_NoBorder);
+	QLabel *si = new QLabel(QString::number(dpy+1), 0, "Screen Indicator", Qt::WStyle_StaysOnTop | Qt::WStyle_Customize | Qt::WStyle_NoBorder);
 
 	QFont fnt = KGlobalSettings::generalFont();
 	fnt.setPixelSize(100);
 	si->setFont(fnt);
-	si->setFrameStyle(QFrame::Panel);
-	si->setFrameShadow(QFrame::Plain);
+	si->setFrameStyle(Q3Frame::Panel);
+	si->setFrameShadow(Q3Frame::Plain);
 	si->setAlignment(Qt::AlignCenter);
 
 	QPoint screenCenter(QApplication::desktop()->screenGeometry(dpy).center());

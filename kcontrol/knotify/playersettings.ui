@@ -38,15 +38,12 @@
                 <enum>Sunken</enum>
             </property>
             <property name="orientation">
-                <enum>Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
             </property>
         </widget>
         <widget class="QButtonGroup">
             <property name="name">
                 <cstring>grpPlayers</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>NoFrame</enum>
             </property>
             <property name="title">
                 <string></string>
@@ -79,7 +76,7 @@
                         <cstring>spacer2</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Fixed</enum>
@@ -104,7 +101,7 @@
                                 <cstring>spacer4</cstring>
                             </property>
                             <property name="orientation">
-                                <enum>Vertical</enum>
+                                <enum>Qt::Vertical</enum>
                             </property>
                             <property name="sizeType">
                                 <enum>Expanding</enum>
@@ -135,7 +132,7 @@
                                         <cstring>spacer1</cstring>
                                     </property>
                                     <property name="orientation">
-                                        <enum>Horizontal</enum>
+                                        <enum>Qt::Horizontal</enum>
                                     </property>
                                     <property name="sizeType">
                                         <enum>Expanding</enum>
@@ -177,7 +174,7 @@
                                         <number>100</number>
                                     </property>
                                     <property name="orientation">
-                                        <enum>Horizontal</enum>
+                                        <enum>Qt::Horizontal</enum>
                                     </property>
                                 </widget>
                             </grid>
@@ -200,7 +197,7 @@
                         <cstring>spacer3</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Fixed</enum>
@@ -260,7 +257,7 @@
                 <cstring>spacer5</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>

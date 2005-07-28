@@ -34,15 +34,19 @@
 #include <klocale.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qframe.h>
+#include <q3frame.h>
 #include <qfile.h>
 #include <qlabel.h>
 #include <qpainter.h>
-#include <qpaintdevicemetrics.h>
+#include <q3paintdevicemetrics.h>
 #include <qvalidator.h>
 #include <qregexp.h>
 #include <qsettings.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
 #include <kio/netaccess.h>
 #include <kinstance.h>
 #include <kmessagebox.h>
@@ -70,21 +74,21 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
 {
     bool kcm=0==strcmp(name, "kcmfontinst");
 
-    itsFrame=new QFrame(parent, "frame");
+    itsFrame=new Q3Frame(parent, "frame");
 
-    QFrame *previewFrame=new QFrame(itsFrame);
+    Q3Frame *previewFrame=new Q3Frame(itsFrame);
 
-    itsToolsFrame=new QFrame(itsFrame);
+    itsToolsFrame=new Q3Frame(itsFrame);
 
     QVBoxLayout *layout=new QVBoxLayout(itsFrame, kcm ? 0 : KDialog::marginHint(), kcm ? 0 : KDialog::spacingHint());
     QGridLayout *previewLayout=new QGridLayout(previewFrame, 1, 1, 1, 1);
     QHBoxLayout *toolsLayout=new QHBoxLayout(itsToolsFrame, 0, KDialog::spacingHint());
 
-    itsFrame->setFrameShape(QFrame::NoFrame);
-    itsFrame->setFocusPolicy(QWidget::ClickFocus);
-    itsToolsFrame->setFrameShape(QFrame::NoFrame);
-    previewFrame->setFrameShadow(kcm ? QFrame::Sunken : QFrame::Raised);
-    previewFrame->setFrameShape(QFrame::Panel);
+    itsFrame->setFrameShape(Q3Frame::NoFrame);
+    itsFrame->setFocusPolicy(Qt::ClickFocus);
+    itsToolsFrame->setFrameShape(Q3Frame::NoFrame);
+    previewFrame->setFrameShadow(kcm ? Q3Frame::Sunken : Q3Frame::Raised);
+    previewFrame->setFrameShape(Q3Frame::Panel);
     setInstance(new KInstance("kfontview"));
 
     itsPreview=new CFontPreview(previewFrame, "FontViewPart::Preview");

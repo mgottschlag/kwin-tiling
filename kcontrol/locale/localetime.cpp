@@ -24,9 +24,15 @@
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qwhatsthis.h>
+
 #include <qcombobox.h>
-#include <qvaluevector.h>
+#include <q3valuevector.h>
+//Added by qt3to4:
+#include <QShowEvent>
+#include <Q3ValueList>
+#include <QGridLayout>
+//Should have been:
+#include <QtAlgorithms>
 
 #include <kdialog.h>
 #include <ksimpleconfig.h>
@@ -44,9 +50,9 @@ public:
   QChar storeName;
   QString userName;
 
-  static StringPair find( const QValueList <StringPair> &list, const QChar &c)
+  static StringPair find( const Q3ValueList <StringPair> &list, const QChar &c)
   {
-    for ( QValueList<StringPair>::ConstIterator it = list.begin();
+    for ( Q3ValueList<StringPair>::ConstIterator it = list.begin();
 	it != list.end();
 	++it )
       if ((*it).storeName==c) return (*it);
@@ -88,9 +94,9 @@ StringPair KLocaleConfigTime::buildStringPair(const QChar &c, const QString &s) 
   return pair;
 }
 
-QValueList<StringPair> KLocaleConfigTime::timeMap() const
+QList<StringPair> KLocaleConfigTime::timeMap() const
 {
-  QValueList < StringPair > list;
+  QList < StringPair > list;
   list+=buildStringPair('H',m_locale->translate("HH"));
   list+=buildStringPair('k',m_locale->translate("hH"));
   list+=buildStringPair('I',m_locale->translate("PH"));
@@ -99,14 +105,14 @@ QValueList<StringPair> KLocaleConfigTime::timeMap() const
   list+=buildStringPair('S',m_locale->translate("SS"));
   list+=buildStringPair('p',m_locale->translate("AMPM"));
 
-  qHeapSort( list );
+  qSort( list );
 
   return list;
 }
 
-QValueList <StringPair> KLocaleConfigTime::dateMap() const
+QList <StringPair> KLocaleConfigTime::dateMap() const
 {
-  QValueList < StringPair > list;
+  QList < StringPair > list;
   list+=buildStringPair('Y',m_locale->translate("YYYY"));
   list+=buildStringPair('y',m_locale->translate("YY"));
   list+=buildStringPair('n',m_locale->translate("mM"));
@@ -118,20 +124,20 @@ QValueList <StringPair> KLocaleConfigTime::dateMap() const
   list+=buildStringPair('a',m_locale->translate("SHORTWEEKDAY"));
   list+=buildStringPair('A',m_locale->translate("WEEKDAY"));
 
-  qHeapSort( list );
+  qSort( list );
 
   return list;
 }
 
-QString KLocaleConfigTime::userToStore(const QValueList<StringPair> & list,
+QString KLocaleConfigTime::userToStore(const QList<StringPair> & list,
 		    const QString & userFormat) const
 {
   QString result;
 
-  for ( uint pos = 0; pos < userFormat.length(); ++pos )
+  for ( int pos = 0; pos < userFormat.length(); ++pos )
     {
       bool bFound = false;
-      for ( QValueList<StringPair>::ConstIterator it = list.begin();
+      for ( QList<StringPair>::ConstIterator it = list.begin();
 	    it != list.end() && !bFound;
 	    ++it )
 	{
@@ -161,13 +167,13 @@ QString KLocaleConfigTime::userToStore(const QValueList<StringPair> & list,
   return result;
 }
 
-QString KLocaleConfigTime::storeToUser(const QValueList<StringPair> & list,
+QString KLocaleConfigTime::storeToUser(const QList<StringPair> & list,
 				       const QString & storeFormat) const
 {
   QString result;
 
   bool escaped = false;
-  for ( uint pos = 0; pos < storeFormat.length(); ++pos )
+  for ( int pos = 0; pos < storeFormat.length(); ++pos )
     {
       QChar c = storeFormat.at(pos);
       if ( escaped )
@@ -314,7 +320,7 @@ void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
 {
   kdDebug() << "CalendarSystem: " << calendarSystem << endl;
 
-  typedef QValueVector<QString> CalendarVector;
+  typedef Q3ValueVector<QString> CalendarVector;
   CalendarVector calendars(4);
   calendars[0] = "gregorian";
   calendars[1] = "hijri";
@@ -335,7 +341,7 @@ void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
 
 void KLocaleConfigTime::slotLocaleChanged()
 {
-  typedef QValueVector<QString> CalendarVector;
+  typedef Q3ValueVector<QString> CalendarVector;
   CalendarVector calendars(4);
   calendars[0] = "gregorian";
   calendars[1] = "hijri";
@@ -480,8 +486,8 @@ void KLocaleConfigTime::slotTranslate()
      "given time value. Noon is treated as \"pm\" and midnight as \"am\"."
      "</td></tr>"
      "</table>");
-  QWhatsThis::add( m_labTimeFmt, str );
-  QWhatsThis::add( m_comboTimeFmt,  str );
+  m_labTimeFmt->setWhatsThis( str );
+  m_comboTimeFmt->setWhatsThis(  str );
 
   QString datecodes = m_locale->translate(
     "<table>"
@@ -507,27 +513,27 @@ void KLocaleConfigTime::slotTranslate()
   str = m_locale->translate
     ( "<p>The text in this textbox will be used to format long "
       "dates. The sequences below will be replaced:</p>") + datecodes;
-  QWhatsThis::add( m_labDateFmt, str );
-  QWhatsThis::add( m_comboDateFmt,  str );
+  m_labDateFmt->setWhatsThis( str );
+  m_comboDateFmt->setWhatsThis(  str );
 
   str = m_locale->translate
     ( "<p>The text in this textbox will be used to format short "
       "dates. For instance, this is used when listing files. "
       "The sequences below will be replaced:</p>") + datecodes;
-  QWhatsThis::add( m_labDateFmtShort, str );
-  QWhatsThis::add( m_comboDateFmtShort,  str );
+  m_labDateFmtShort->setWhatsThis( str );
+  m_comboDateFmtShort->setWhatsThis(  str );
 
   str = m_locale->translate
     ("<p>This option determines which day will be considered as "
      "the first one of the week.</p>");
-  QWhatsThis::add( m_comboWeekStartDay,  str );
+  m_comboWeekStartDay->setWhatsThis(  str );
 
   if ( m_locale->nounDeclension() )
   {
     str = m_locale->translate
       ("<p>This option determines whether possessive form of month "
        "names should be used in dates.</p>");
-    QWhatsThis::add( m_chDateMonthNamePossessive,  str );
+    m_chDateMonthNamePossessive->setWhatsThis(  str );
   }
 }
 

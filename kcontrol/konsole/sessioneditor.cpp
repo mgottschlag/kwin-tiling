@@ -35,10 +35,10 @@
 #include <kshell.h>
 
 // SessionListBoxText is a list box text item with session filename
-class SessionListBoxText : public QListBoxText
+class SessionListBoxText : public Q3ListBoxText
 {
   public:
-    SessionListBoxText(const QString &title, const QString &filename): QListBoxText(title)
+    SessionListBoxText(const QString &title, const QString &filename): Q3ListBoxText(title)
     {
       m_filename = filename;
     };
@@ -162,7 +162,7 @@ void SessionEditor::loadAllSession(QString currentFile)
   QStringList list = KGlobal::dirs()->findAllResources("data", "konsole/*.desktop", false, true);
   sessionList->clear();
 
-  QListBoxItem* currentItem = 0;
+  Q3ListBoxItem* currentItem = 0;
   for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it) {
 
     QString name = (*it);

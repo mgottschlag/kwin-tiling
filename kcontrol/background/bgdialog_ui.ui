@@ -70,7 +70,7 @@
                 <cstring>Spacer37</cstring>
             </property>
             <property name="orientation">
-                <enum>Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
@@ -112,7 +112,7 @@
                         <string>Monitor</string>
                     </property>
                     <property name="alignment">
-                        <set>AlignCenter</set>
+                        <set>Qt::AlignCenter</set>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>This picture of a monitor contains a preview of what the current settings will look like on your desktop.</string>
@@ -135,7 +135,7 @@
                                 <cstring>spacer80</cstring>
                             </property>
                             <property name="orientation">
-                                <enum>Horizontal</enum>
+                                <enum>Qt::Horizontal</enum>
                             </property>
                             <property name="sizeType">
                                 <enum>Minimum</enum>
@@ -171,7 +171,7 @@
                                 <cstring>spacer81</cstring>
                             </property>
                             <property name="orientation">
-                                <enum>Horizontal</enum>
+                                <enum>Qt::Horizontal</enum>
                             </property>
                             <property name="sizeType">
                                 <enum>Minimum</enum>
@@ -193,7 +193,7 @@
                                 <cstring>spacer80</cstring>
                             </property>
                             <property name="orientation">
-                                <enum>Horizontal</enum>
+                                <enum>Qt::Horizontal</enum>
                             </property>
                             <property name="sizeType">
                                 <enum>Minimum</enum>
@@ -229,7 +229,7 @@
                                 <cstring>spacer81</cstring>
                             </property>
                             <property name="orientation">
-                                <enum>Horizontal</enum>
+                                <enum>Qt::Horizontal</enum>
                             </property>
                             <property name="sizeType">
                                 <enum>Minimum</enum>
@@ -249,7 +249,7 @@
                         <cstring>spacer13</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Vertical</enum>
+                        <enum>Qt::Vertical</enum>
                     </property>
                     <property name="sizeType">
                         <enum>MinimumExpanding</enum>
@@ -395,7 +395,7 @@
                                 <number>1</number>
                             </property>
                             <property name="orientation">
-                                <enum>Horizontal</enum>
+                                <enum>Qt::Horizontal</enum>
                             </property>
                             <property name="tickmarks">
                                 <enum>NoMarks</enum>
@@ -438,7 +438,7 @@
                         <cstring>spacer6_2_2</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Vertical</enum>
+                        <enum>Qt::Vertical</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Fixed</enum>
@@ -455,7 +455,7 @@
                         <cstring>spacer6_2</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Vertical</enum>
+                        <enum>Qt::Vertical</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Fixed</enum>
@@ -535,7 +535,7 @@
                         <cstring>spacer20</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
@@ -563,7 +563,7 @@
                         <cstring>spacer19</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>

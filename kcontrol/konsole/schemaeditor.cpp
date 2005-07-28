@@ -25,8 +25,11 @@
 
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <qwmatrix.h>
+#include <qmatrix.h>
 #include <qcombobox.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QTextStream>
 #include <kdebug.h>
 #include <qcheckbox.h>
 #include <kstandarddirs.h>
@@ -44,10 +47,10 @@
 #include <qimage.h>
 
 // SchemaListBoxText is a list box text item with schema filename
-class SchemaListBoxText : public QListBoxText
+class SchemaListBoxText : public Q3ListBoxText
 {
   public:
-    SchemaListBoxText(const QString &title, const QString &filename): QListBoxText(title)
+    SchemaListBoxText(const QString &title, const QString &filename): Q3ListBoxText(title)
     {
       m_filename = filename;
     };
@@ -82,7 +85,10 @@ SchemaEditor::SchemaEditor(QWidget * parent, const char *name)
 	client->attach();
     QByteArray data;
 
-    QDataStream args(data, IO_WriteOnly);
+    QDataStream args(&data, QIODevice::WriteOnly);
+
+
+    args.setVersion(QDataStream::Qt_3_1);
     args << 1;
     client->send("kdesktop", "KBackgroundIface", "setExport(int)", data);
 
@@ -192,7 +198,7 @@ void SchemaEditor::updatePreview()
 void SchemaEditor::previewLoaded(bool l)
 {
     if (l) {
-	QWMatrix mat;
+	QMatrix mat;
 	pix =
 	    spix->xForm(mat.
 			scale(180.0 / spix->QPixmap::width(),
@@ -233,7 +239,7 @@ void SchemaEditor::loadAllSchema(QString currentFile)
     disconnect(schemaList, SIGNAL(highlighted(int)), this, SLOT(readSchema(int)));
     schemaList->clear();
 
-    QListBoxItem* currentItem = 0;
+    Q3ListBoxItem* currentItem = 0;
     for (it = list.begin(); it != list.end(); ++it) {
 
 	QString name = (*it);
@@ -241,7 +247,7 @@ void SchemaEditor::loadAllSchema(QString currentFile)
 	QString title = readSchemaTitle(name);
 
 	// Only insert new items so that local items override global
-	if (schemaList->findItem(title, ExactMatch) == 0) {
+	if (schemaList->findItem(title, Q3ListBox::ExactMatch) == 0) {
 	    if (title.isNull() || title.isEmpty())
 		title=i18n("untitled");
 
@@ -364,7 +370,7 @@ void SchemaEditor::saveCurrent()
         fullpath = KGlobal::dirs()->saveLocation("data", "konsole/") + fullpath;
 
     QFile f(fullpath);
-    if (f.open(IO_WriteOnly)) {
+    if (f.open(QIODevice::WriteOnly)) {
 	QTextStream t(&f);
         t.setEncoding( QTextStream::UnicodeUTF8 );
 

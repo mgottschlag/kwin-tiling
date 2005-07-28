@@ -20,6 +20,8 @@
 #include <qapplication.h>
 #include <qlayout.h>
 #include <qtabwidget.h>
+#include <QVBoxLayout>
+#include <QDesktopWidget>
 
 #include <kcmoduleloader.h>
 #include <kdialog.h>

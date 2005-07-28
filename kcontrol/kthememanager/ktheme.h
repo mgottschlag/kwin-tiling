@@ -20,7 +20,7 @@
 #define KTHEME_H
 
 #include <qdom.h>
-#include <qguardedptr.h>
+#include <qpointer.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qwidget.h>
@@ -218,7 +218,7 @@ private:
 
     KStandardDirs * m_kgd;
 
-    QGuardedPtr<QWidget> m_parent;
+    QPointer<QWidget> m_parent;
 };
 
 #endif

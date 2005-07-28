@@ -18,6 +18,9 @@
 
 #include <assert.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <Q3ValueList>
+#include <Q3PtrList>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -29,8 +32,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-
-extern Atom qt_window_role;
+#include <QX11Info>
 
 namespace KHotKeys
 {
@@ -94,13 +96,13 @@ void Windows::window_changed_slot( WId window_P, unsigned int flags_P )
 QString Windows::get_window_role( WId id_P )
     {
     // TODO this is probably just a hack
-    return KWin::readNameProperty( id_P, qt_window_role );
+    return KWin::windowInfo( id_P, 0, NET::WM2WindowRole ).windowRole();
     }
 
 QString Windows::get_window_class( WId id_P )
     {
     XClassHint hints_ret;
-    if( XGetClassHint( qt_xdisplay(), id_P, &hints_ret ) == 0 ) // 0 means error
+    if( XGetClassHint( QX11Info::display(), id_P, &hints_ret ) == 0 ) // 0 means error
 	return "";
     QString ret( hints_ret.res_name );
     ret += ' ';
@@ -127,7 +129,7 @@ void Windows::set_action_window( WId window_P )
 
 WId Windows::find_window( const Windowdef_list* window_P )
     {
-    for( QValueList< WId >::ConstIterator it = kwin_module->windows().begin();
+    for( QList< WId >::const_iterator it = kwin_module->windows().begin();
          it != kwin_module->windows().end();
          ++it )
         {
@@ -141,19 +143,19 @@ WId Windows::find_window( const Windowdef_list* window_P )
 WId Windows::window_at_position( int x, int y )
     {
     Window child, dummy;
-    Window parent = qt_xrootwin();
-    Atom wm_state = XInternAtom( qt_xdisplay(), "WM_STATE", False );
+    Window parent = QX11Info::appRootWindow();
+    Atom wm_state = XInternAtom( QX11Info::display(), "WM_STATE", False );
     for( int i = 0;
          i < 10;
          ++i )
         {
         int destx, desty;
         // find child at that position
-        if( !XTranslateCoordinates( qt_xdisplay(), parent, parent, x, y, &destx, &desty, &child )
+        if( !XTranslateCoordinates( QX11Info::display(), parent, parent, x, y, &destx, &desty, &child )
             || child == None )
             return 0;
         // and now transform coordinates to the child
-        if( !XTranslateCoordinates( qt_xdisplay(), parent, child, x, y, &destx, &desty, &dummy ))
+        if( !XTranslateCoordinates( QX11Info::display(), parent, child, x, y, &destx, &desty, &dummy ))
             return 0;
         x = destx;
         y = desty;
@@ -161,7 +163,7 @@ WId Windows::window_at_position( int x, int y )
         int format;
         unsigned long nitems, after;
         unsigned char* prop;
-        if( XGetWindowProperty( qt_xdisplay(), child, wm_state, 0, 0, False, AnyPropertyType,
+        if( XGetWindowProperty( QX11Info::display(), child, wm_state, 0, 0, False, AnyPropertyType,
 	    &type, &format, &nitems, &after, &prop ) == Success )
             {
 	    if( prop != NULL )
@@ -224,7 +226,7 @@ Windowdef* Windowdef::create_cfg_read( KConfig& cfg_P )
 // Windowdef_list
 
 Windowdef_list::Windowdef_list( KConfig& cfg_P )
-    : QPtrList< Windowdef >()
+    : Q3PtrList< Windowdef >()
     {
     setAutoDelete( true );
     QString save_cfg_group = cfg_P.group();

@@ -30,8 +30,10 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "kdmconfig.h"
 #include "kfdialog.h"
+//Added by qt3to4:
+#include <QGridLayout>
 
-class QPopupMenu;
+class QMenu;
 class QGridLayout;
 class KConsole;
 class KGVerify;
@@ -62,10 +64,10 @@ class KGDialog : public FDialog {
 	void completeMenu();
 #endif
 	void inserten( const QString& txt, int accel, const char *member );
-	int inserten( const QString& txt, int accel, QPopupMenu *cmnu );
+	int inserten( const QString& txt, int accel, QMenu *cmnu );
 
 	bool needSep;
-	QPopupMenu *optMenu;
+	QMenu *optMenu;
 	KGVerify *verify;
 #ifdef WITH_KDM_XCONSOLE
 	KConsole *consoleView;
@@ -79,7 +81,7 @@ class KGDialog : public FDialog {
 	void ensureMenu();
 
 #ifdef HAVE_VTS
-	QPopupMenu *dpyMenu;
+	QMenu *dpyMenu;
 #endif
 	int switchCode;
 };

@@ -29,7 +29,7 @@
                 </sizepolicy>
             </property>
             <property name="frameShape">
-                <enum>GroupBoxPanel</enum>
+                <enum>Box</enum>
             </property>
             <property name="frameShadow">
                 <enum>Sunken</enum>
@@ -371,7 +371,7 @@
     <tabstop>cbVisualActivate</tabstop>
 </tabstops>
 <includes>
-    <include location="global" impldecl="in implementation">kdialog.h</include>
+    <include location="global" impldecl="in declaration">kdialog.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>

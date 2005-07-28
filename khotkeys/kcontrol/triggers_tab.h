@@ -44,8 +44,8 @@ class Triggers_tab
     public slots:
         void clear_data();
     protected:
-        Trigger_list_item* create_listview_item( Trigger* trigger_P, QListView* parent_P,
-            QListViewItem* after_P, bool copy_P );
+        Trigger_list_item* create_listview_item( Trigger* trigger_P, Q3ListView* parent_P,
+            Q3ListViewItem* after_P, bool copy_P );
         void edit_listview_item( Trigger_list_item* item_P );
         Trigger_list_item* selected_item;
         enum type_t { TYPE_SHORTCUT_TRIGGER, TYPE_GESTURE_TRIGGER, TYPE_WINDOW_TRIGGER };
@@ -54,15 +54,15 @@ class Triggers_tab
         virtual void copy_pressed();
         virtual void delete_pressed();
         virtual void modify_pressed();
-        virtual void current_changed( QListViewItem* item_P );
+        virtual void current_changed( Q3ListViewItem* item_P );
     };
 
 class Trigger_list_item
-    : public QListViewItem
+    : public Q3ListViewItem
     {
     public:
-        Trigger_list_item( QListView* parent_P, Trigger* trigger_P );
-        Trigger_list_item( QListView* parent_P, QListViewItem* after_P, Trigger* trigger_P );
+        Trigger_list_item( Q3ListView* parent_P, Trigger* trigger_P );
+        Trigger_list_item( Q3ListView* parent_P, Q3ListViewItem* after_P, Trigger* trigger_P );
         virtual ~Trigger_list_item();
         virtual QString text( int column_P ) const;
         Trigger* trigger() const;
@@ -146,15 +146,15 @@ class Gesture_trigger_dialog
 // Trigger_list_item
 
 inline
-Trigger_list_item::Trigger_list_item( QListView* parent_P, Trigger* trigger_P )
-    : QListViewItem( parent_P ), _trigger( trigger_P )
+Trigger_list_item::Trigger_list_item( Q3ListView* parent_P, Trigger* trigger_P )
+    : Q3ListViewItem( parent_P ), _trigger( trigger_P )
     {
     }
     
 inline
-Trigger_list_item::Trigger_list_item( QListView* parent_P, QListViewItem* after_P,
+Trigger_list_item::Trigger_list_item( Q3ListView* parent_P, Q3ListViewItem* after_P,
     Trigger* trigger_P )
-    : QListViewItem( parent_P, after_P ), _trigger( trigger_P )
+    : Q3ListViewItem( parent_P, after_P ), _trigger( trigger_P )
     {
     }
     

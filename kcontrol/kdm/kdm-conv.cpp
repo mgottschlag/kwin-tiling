@@ -25,11 +25,14 @@
 
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qhgroupbox.h>
-#include <qvgroupbox.h>
-#include <qvbuttongroup.h>
-#include <qwhatsthis.h>
-#include <qheader.h>
+#include <q3groupbox.h>
+#include <q3buttongroup.h>
+
+#include <q3header.h>
+//Added by qt3to4:
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QBoxLayout>
 
 #include <kdialog.h>
 #include <ksimpleconfig.h>
@@ -48,11 +51,13 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
     QSizePolicy vpref( QSizePolicy::Minimum, QSizePolicy::Fixed );
 
-    alGroup = new QVGroupBox( i18n("Enable Au&to-Login"), this );
+    alGroup = new Q3GroupBox( i18n("Enable Au&to-Login"), this );
+    alGroup->setOrientation( Qt::Vertical );
     alGroup->setCheckable( true );
     alGroup->setSizePolicy( vpref );
+    QVBoxLayout *laygroup2 = new QVBoxLayout(alGroup->layout(), KDialog::spacingHint() );
 
-    QWhatsThis::add( alGroup, i18n("Turn on the auto-login feature."
+    alGroup->setWhatsThis( i18n("Turn on the auto-login feature."
 	" This applies only to KDM's graphical login."
 	" Think twice before enabling this!") );
     connect(alGroup, SIGNAL(toggled(bool)), SLOT(slotChanged()));
@@ -66,51 +71,64 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     hlpl1->addStretch( 1 );
     connect(userlb, SIGNAL(highlighted(int)), SLOT(slotChanged()));
     wtstr = i18n("Select the user to be logged in automatically.");
-    QWhatsThis::add( u_label, wtstr );
-    QWhatsThis::add( userlb, wtstr );
+    u_label->setWhatsThis( wtstr );
+    userlb->setWhatsThis( wtstr );
     autoLockCheck = new QCheckBox( i18n("Loc&k session"), alGroup );
     connect( autoLockCheck, SIGNAL(toggled(bool)), SLOT(slotChanged()) );
-    QWhatsThis::add( autoLockCheck, i18n("The automatically started session "
+    autoLockCheck->setWhatsThis( i18n("The automatically started session "
 	"will be locked immediately (provided it is a KDE session). This can "
 	"be used to obtain a super-fast login restricted to one user.") );
 
 
-    puGroup = new QVButtonGroup(i18n("Preselect User"), this );
+    puGroup = new Q3ButtonGroup(i18n("Preselect User"), this );
+    puGroup->setOrientation( Qt::Vertical );
+    QVBoxLayout *laygroup5 = new QVBoxLayout(puGroup->layout(), KDialog::spacingHint() );
+
     puGroup->setSizePolicy( vpref );
 
     connect(puGroup, SIGNAL(clicked(int)), SLOT(slotPresChanged()));
     connect(puGroup, SIGNAL(clicked(int)), SLOT(slotChanged()));
     npRadio = new QRadioButton(i18n("preselected user", "&None"), puGroup);
+    laygroup5->addWidget( npRadio );
     ppRadio = new QRadioButton(i18n("Prev&ious"), puGroup);
-    QWhatsThis::add( ppRadio, i18n("Preselect the user that logged in previously. "
+    ppRadio->setWhatsThis( i18n("Preselect the user that logged in previously. "
 	"Use this if this computer is usually used several consecutive times by one user.") );
+    laygroup5->addWidget( ppRadio );
     spRadio = new QRadioButton(i18n("Specif&y"), puGroup);
-    QWhatsThis::add( spRadio, i18n("Preselect the user specified in the combo box below. "
+    spRadio->setWhatsThis( i18n("Preselect the user specified in the combo box below. "
 	"Use this if this computer is predominantly used by a certain user.") );
+    laygroup5->addWidget( spRadio );
+
     QWidget *hlpw = new QWidget(puGroup);
+    laygroup5->addWidget( hlpw );
     puserlb = new KComboBox(true, hlpw);
+
     pu_label = new QLabel(puserlb, i18n("Us&er:"), hlpw);
     connect(puserlb, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
     wtstr = i18n("Select the user to be preselected for login. "
 	"This box is editable, so you can specify an arbitrary non-existent "
 	"user to mislead possible attackers.");
-    QWhatsThis::add( pu_label, wtstr );
-    QWhatsThis::add( puserlb, wtstr );
+    pu_label->setWhatsThis( wtstr );
+    puserlb->setWhatsThis( wtstr );
     QBoxLayout *hlpl = new QHBoxLayout(hlpw, 0, KDialog::spacingHint());
     hlpl->addWidget(pu_label);
     hlpl->addWidget(puserlb);
     hlpl->addStretch( 1 );
     cbjumppw = new QCheckBox(i18n("Focus pass&word"), puGroup);
-    QWhatsThis::add( cbjumppw, i18n("When this option is on, KDM will place the cursor "
+    laygroup5->addWidget( cbjumppw );
+    cbjumppw->setWhatsThis( i18n("When this option is on, KDM will place the cursor "
 	"in the password field instead of the user field after preselecting a user. "
 	"Use this to save one key press per login, if the preselection usually does not need to "
 	"be changed.") );
     connect(cbjumppw, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
-    npGroup = new QVGroupBox(i18n("Enable Password-&Less Logins"), this );
+    npGroup = new Q3GroupBox(i18n("Enable Password-&Less Logins"), this );
+    npGroup->setOrientation( Qt::Vertical );
+    QVBoxLayout *laygroup3 = new QVBoxLayout(npGroup->layout(), KDialog::spacingHint() );
+
     npGroup->setCheckable( true );
 
-    QWhatsThis::add( npGroup, i18n("When this option is checked, the checked users from"
+    npGroup->setWhatsThis( i18n("When this option is checked, the checked users from"
 	" the list below will be allowed to log in without entering their"
 	" password. This applies only to KDM's graphical login."
 	" Think twice before enabling this!") );
@@ -118,24 +136,29 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     connect(npGroup, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
     pl_label = new QLabel(i18n("No password re&quired for:"), npGroup);
+    laygroup3->addWidget( pl_label );
     npuserlv = new KListView(npGroup);
+    laygroup3->addWidget( npuserlv );
     pl_label->setBuddy(npuserlv);
     npuserlv->addColumn(QString::null);
     npuserlv->header()->hide();
-    npuserlv->setResizeMode(QListView::LastColumn);
-    QWhatsThis::add(npuserlv, i18n("Check all users you want to allow a password-less login for."
+    npuserlv->setResizeMode(Q3ListView::LastColumn);
+    npuserlv->setWhatsThis( i18n("Check all users you want to allow a password-less login for."
 	" Entries denoted with '@' are user groups. Checking a group is like checking all users in that group."));
-    connect( npuserlv, SIGNAL(clicked( QListViewItem * )),
+    connect( npuserlv, SIGNAL(clicked( Q3ListViewItem * )),
 	     SLOT(slotChanged()) );
 
-    btGroup = new QVGroupBox( i18n("Miscellaneous"), this );
+    btGroup = new Q3GroupBox( i18n("Miscellaneous"), this );
+    btGroup->setOrientation( Qt::Vertical );
+    QVBoxLayout *laygroup4 = new QVBoxLayout(btGroup->layout(), KDialog::spacingHint() );
 
     cbarlen = new QCheckBox(i18n("Automatically log in again after &X server crash"), btGroup);
-    QWhatsThis::add( cbarlen, i18n("When this option is on, a user will be"
+    cbarlen->setWhatsThis( i18n("When this option is on, a user will be"
 	" logged in again automatically when their session is interrupted by an"
 	" X server crash; note that this can open a security hole: if you use"
 	" a screen locker than KDE's integrated one, this will make"
 	" circumventing a password-secured screen lock possible.") );
+    laygroup4->addWidget( cbarlen );
     connect(cbarlen, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
     QGridLayout *main = new QGridLayout(this, 5, 2, 10);
@@ -152,8 +175,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 	     SLOT(slotSetAutoUser( const QString & )) );
     connect( puserlb, SIGNAL(textChanged( const QString & )),
 	     SLOT(slotSetPreselUser( const QString & )) );
-    connect( npuserlv, SIGNAL(clicked( QListViewItem * )),
-	     SLOT(slotUpdateNoPassUser( QListViewItem * )) );
+    connect( npuserlv, SIGNAL(clicked( Q3ListViewItem * )),
+	     SLOT(slotUpdateNoPassUser( Q3ListViewItem * )) );
 
 }
 
@@ -265,11 +288,11 @@ void KDMConvenienceWidget::slotSetPreselUser( const QString &user )
     preselUser = user;
 }
 
-void KDMConvenienceWidget::slotUpdateNoPassUser( QListViewItem *item )
+void KDMConvenienceWidget::slotUpdateNoPassUser( Q3ListViewItem *item )
 {
     if ( !item )
         return;
-    QCheckListItem *itm = (QCheckListItem *)item;
+    Q3CheckListItem *itm = (Q3CheckListItem *)item;
     QStringList::iterator it = noPassUsers.find( itm->text() );
     if (itm->isOn()) {
 	if (it == noPassUsers.end())
@@ -293,7 +316,7 @@ void KDMConvenienceWidget::slotClearUsers()
 
 void KDMConvenienceWidget::slotAddUsers(const QMap<QString,int> &users)
 {
-    QMapConstIterator<QString,int> it;
+    QMap<QString,int>::const_iterator it;
     for (it = users.begin(); it != users.end(); ++it) {
         if (it.data() > 0) {
             if (it.key() != autoUser)
@@ -302,15 +325,15 @@ void KDMConvenienceWidget::slotAddUsers(const QMap<QString,int> &users)
                 puserlb->insertItem(it.key());
         }
         if (it.data() != 0)
-            (new QCheckListItem(npuserlv, it.key(), QCheckListItem::CheckBox))->
+            (new Q3CheckListItem(npuserlv, it.key(), Q3CheckListItem::CheckBox))->
     	        setOn(noPassUsers.find(it.key()) != noPassUsers.end());
     }
 
-    if (userlb->listBox())
-        userlb->listBox()->sort();
+    if (userlb->model())
+        userlb->model()->sort(0);
 
-    if (puserlb->listBox())
-        puserlb->listBox()->sort();
+    if (puserlb->model())
+        puserlb->model()->sort(0);
 
     npuserlv->sort();
     userlb->setCurrentItem(autoUser);
@@ -319,15 +342,15 @@ void KDMConvenienceWidget::slotAddUsers(const QMap<QString,int> &users)
 
 void KDMConvenienceWidget::slotDelUsers(const QMap<QString,int> &users)
 {
-    QMapConstIterator<QString,int> it;
+    QMap<QString,int>::const_iterator it;
     for (it = users.begin(); it != users.end(); ++it) {
 	if (it.data() > 0) {
-	    if (it.key() != autoUser && userlb->listBox())
-	        delete userlb->listBox()->
-		  findItem( it.key(), ExactMatch | CaseSensitive );
-	    if (it.key() != preselUser && puserlb->listBox())
-	        delete puserlb->listBox()->
-		  findItem( it.key(), ExactMatch | CaseSensitive );
+	    int idx = userlb->findText( it.key() );
+	    if (it.key() != autoUser && idx != -1)
+	        userlb->removeItem( idx );
+	    idx     = puserlb->findText( it.key() );
+	    if (it.key() != preselUser && idx != -1)
+	        puserlb->removeItem( idx );
 	}
 	if (it.data() != 0)
 	    delete npuserlv->findItem( it.key(), 0 );

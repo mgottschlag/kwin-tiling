@@ -26,6 +26,8 @@
 #include <dcopobject.h>
 #include <kgenericfactory.h>
 #include <kurifilter.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 class KInstance;
 
@@ -103,7 +105,7 @@ private:
         KURIFilterData::URITypes type;
     };
 
-    QValueList<URLHint> m_urlHints;
+    Q3ValueList<URLHint> m_urlHints;
     QString m_strDefaultProtocol;
     bool m_bVerbose;
 };

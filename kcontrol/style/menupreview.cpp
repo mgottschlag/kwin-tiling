@@ -21,6 +21,9 @@
 
 #include <qpainter.h>
 #include <qimage.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QPaintEvent>
 
 #include <kpixmap.h>
 #include <kpixmapeffect.h>
@@ -30,11 +33,11 @@
 
 
 MenuPreview::MenuPreview( QWidget* parent, int opacity, PreviewMode pvm )
-	: QWidget( parent, 0, WStyle_Customize | WRepaintNoErase ),
+	: QWidget( parent, 0, Qt::WStyle_Customize | Qt::WNoAutoErase ),
 	pixBackground(NULL), pixOverlay(NULL), pixBlended(NULL)
 {
 	setFixedSize(150, 150);
-	setFocusPolicy( NoFocus );
+	setFocusPolicy( Qt::NoFocus );
 
 	mode = pvm;
 	if (opacity < 0)   opacity = 0;
@@ -157,7 +160,7 @@ void MenuPreview::paintEvent( QPaintEvent* /* pe */ )
 	QRect r = rect();
 	r.moveBy(6,3);
 	p.setPen( cg.text() );
-	p.drawText( r, AlignTop | AlignLeft, QString::number((int)(menuOpacity*100))+i18n("%") );
+	p.drawText( r, Qt::AlignTop | Qt::AlignLeft, QString::number((int)(menuOpacity*100))+i18n("%") );
 }
 
 #include "menupreview.moc"

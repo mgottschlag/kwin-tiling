@@ -23,12 +23,12 @@
 #include "poswidget.h"
 #include "caldialog.h"
 
-#include <qhbox.h>
-#include <qvbox.h>
-#include <qtable.h>
+#include <q3hbox.h>
+#include <q3vbox.h>
+#include <q3table.h>
 #include <qlabel.h>
 #include <qcombobox.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qcheckbox.h>
 #include <qtimer.h>
 #include <qfontmetrics.h>
@@ -39,6 +39,8 @@
 #include <kdebug.h>
 #include <kmessagebox.h>
 
+#include <stdio.h>
+
 //--------------------------------------------------------------
 static QString PRESSED = I18N_NOOP("PRESSED");
 //--------------------------------------------------------------
@@ -46,23 +48,23 @@ static QString PRESSED = I18N_NOOP("PRESSED");
 JoyWidget::JoyWidget(QWidget *parent, const char *name)
  : QWidget(parent, name), idle(0), joydev(0)
 {
-  QVBox *mainVbox = new QVBox(parent);
+  Q3VBox *mainVbox = new Q3VBox(parent);
   mainVbox->setSpacing(KDialog::spacingHint());
 
   message = new QLabel(mainVbox);
   message->hide();
 
-  QHBox *devHbox = new QHBox(mainVbox);
+  Q3HBox *devHbox = new Q3HBox(mainVbox);
   new QLabel(i18n("Device:"), devHbox);
   device = new QComboBox(true, devHbox);
   device->setInsertionPolicy(QComboBox::NoInsertion);
   connect(device, SIGNAL(activated(const QString &)), this, SLOT(deviceChanged(const QString &)));
   devHbox->setStretchFactor(device, 3);
 
-  QHBox *hbox = new QHBox(mainVbox);
+  Q3HBox *hbox = new Q3HBox(mainVbox);
   hbox->setSpacing(KDialog::spacingHint());
 
-  QVBox *vboxLeft = new QVBox(hbox);
+  Q3VBox *vboxLeft = new Q3VBox(hbox);
   vboxLeft->setSpacing(KDialog::spacingHint());
 
   new QLabel(i18n("Position:"), vboxLeft);
@@ -70,10 +72,10 @@ JoyWidget::JoyWidget(QWidget *parent, const char *name)
   trace = new QCheckBox(i18n("Show trace"), mainVbox);
   connect(trace, SIGNAL(toggled(bool)), this, SLOT(traceChanged(bool)));
 
-  QVBox *vboxMid = new QVBox(hbox);
+  Q3VBox *vboxMid = new Q3VBox(hbox);
   vboxMid->setSpacing(KDialog::spacingHint());
 
-  QVBox *vboxRight = new QVBox(hbox);
+  Q3VBox *vboxRight = new Q3VBox(hbox);
   vboxRight->setSpacing(KDialog::spacingHint());
 
   // calculate the column width we need
@@ -81,7 +83,7 @@ JoyWidget::JoyWidget(QWidget *parent, const char *name)
   int colWidth = QMAX(fm.width(PRESSED), fm.width("-32767")) + 10;  // -32767 largest string
 
   new QLabel(i18n("Buttons:"), vboxMid);
-  buttonTbl = new QTable(0, 1, vboxMid);
+  buttonTbl = new Q3Table(0, 1, vboxMid);
   buttonTbl->setReadOnly(true);
   buttonTbl->horizontalHeader()->setLabel(0, i18n("State"));
   buttonTbl->horizontalHeader()->setClickEnabled(false);
@@ -91,7 +93,7 @@ JoyWidget::JoyWidget(QWidget *parent, const char *name)
   buttonTbl->setColumnWidth(0, colWidth);
 
   new QLabel(i18n("Axes:"), vboxRight);
-  axesTbl = new QTable(0, 1, vboxRight);
+  axesTbl = new Q3Table(0, 1, vboxRight);
   axesTbl->setReadOnly(true);
   axesTbl->horizontalHeader()->setLabel(0, i18n("Value"));
   axesTbl->horizontalHeader()->setClickEnabled(false);
@@ -204,13 +206,12 @@ void JoyWidget::restoreCurrDev()
   else
   {
     // try to find the current open device in the combobox list
-    QListBoxItem *item;
-    item = device->listBox()->findItem(joydev->device(), Qt::Contains);
+    int index = device->findText(joydev->device(), Qt::MatchContains);
 
-    if ( !item )  // the current open device is one the user entered (not in the list)
-      device->setCurrentText(joydev->device());
+    if ( index == -1 )  // the current open device is one the user entered (not in the list)
+      device->setEditText(joydev->device());
     else
-      device->setCurrentText(item->text());
+      device->setEditText(device->itemText(index));
   }
 }
 

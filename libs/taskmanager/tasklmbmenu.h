@@ -25,11 +25,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __tasklmbmenu_h__
 #define __tasklmbmenu_h__
 
-#include <qpopupmenu.h>
-#include <qtimer.h>
+#include <QMenu>
+#include <QTimer>
+#include <QAction>
+#include <QDragEnterEvent>
+#include <QMouseEvent>
+#include <QDragLeaveEvent>
+#include <QDragMoveEvent>
+#include <QList>
 
 #include "taskmanager.h"
 
+#warning "Need custom menu item support, which isn't there in Qt4!"
+#if 0
 class TaskMenuItem : public QCustomMenuItem
 {
 public:
@@ -48,10 +56,14 @@ private:
     bool m_demandsAttention;
     bool m_attentionState;
 };
+#endif
+
+typedef QAction TaskMenuItem;
+
 
 /*****************************************************************************/
 
-class KDE_EXPORT TaskLMBMenu : public QPopupMenu
+class KDE_EXPORT TaskLMBMenu : public QMenu
 {
     Q_OBJECT
 
@@ -79,7 +91,7 @@ private:
     QTimer*    m_attentionTimer;
     QTimer*    m_dragSwitchTimer;
     QPoint     m_dragStartPos;
-    QValueList<TaskMenuItem*> m_attentionMap;
+    QList<TaskMenuItem*> m_attentionMap;
 };
 
 #endif

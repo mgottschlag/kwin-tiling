@@ -23,6 +23,7 @@ Boston, MA 02110-1301, USA.
 
 #include <kcmdlineargs.h>
 #include <ksimpleconfig.h>
+#include <qdesktopwidget.h>
 #include <klocale.h>
 
 #include <qfile.h>
@@ -32,6 +33,7 @@ Boston, MA 02110-1301, USA.
 #include <X11/Xlib.h>
 
 #include <stdlib.h>
+#include <QX11Info>
 
 static const char description[] =
 	I18N_NOOP( "Fancy desktop background for kdm" );
@@ -107,7 +109,7 @@ main( int argc, char *argv[] )
 	app.flushX();
 
 	// Keep color resources after termination
-	XSetCloseDownMode( qt_xdisplay(), RetainTemporary );
+	XSetCloseDownMode( QX11Info::display(), RetainTemporary );
 
 	return 0;
 }

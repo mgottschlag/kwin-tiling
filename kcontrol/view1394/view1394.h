@@ -27,7 +27,9 @@
 #include <qsocketnotifier.h>
 #include <qstring.h>
 #include <qtimer.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include "view1394widget.h"
 
@@ -55,8 +57,8 @@ class View1394: public KCModule
 
    private:
       View1394Widget *m_view;
-      QValueList<raw1394handle_t> m_handles;
-      QPtrList<QSocketNotifier> m_notifiers;
+      Q3ValueList<raw1394handle_t> m_handles;
+      Q3PtrList<QSocketNotifier> m_notifiers;
       bool readConfigRom(raw1394handle_t handle, nodeid_t nodeid, quadlet_t& firstQuad, quadlet_t& cap, octlet_t& guid);
       bool m_insideRescanBus;
       QTimer m_rescanTimer;

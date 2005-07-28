@@ -14,6 +14,8 @@
 
 #include <qlayout.h>
 #include <qtabwidget.h>
+//Added by qt3to4:
+#include <QHBoxLayout>
 
 #include <kaboutdata.h>
 #include <kcmodule.h>
@@ -45,8 +47,8 @@ K_EXPORT_COMPONENT_FACTORY( kcm_ksplashthemes, KSplashThemeMgrFactory("ksplashth
 
 // -----------------------------------------------------------------------------------------
 
-KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const char *name, const QStringList &)
-  : KCModule( KSplashThemeMgrFactory::instance(), parent, name ), mInstaller(new SplashInstaller(this))
+KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const char *, const QStringList &args)
+  : KCModule( KSplashThemeMgrFactory::instance(), parent, args ), mInstaller(new SplashInstaller(this))
 {
   init();
 

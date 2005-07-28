@@ -25,9 +25,16 @@
 #include <qlabel.h>
 #include <qtooltip.h>
 #include <qvalidator.h>
-#include <qwhatsthis.h>
-#include <qvgroupbox.h>
+
+#include <q3groupbox.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <QGridLayout>
+#include <QEvent>
+#include <QHBoxLayout>
+#include <QDropEvent>
+#include <QVBoxLayout>
+#include <QDragEnterEvent>
 
 #include <kfiledialog.h>
 #include <kimageio.h>
@@ -84,8 +91,8 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 
     QString wtstr;
 
-    minGroup = new QGroupBox( 2, Horizontal, i18n("System U&IDs"), this );
-    QWhatsThis::add( minGroup, i18n("Users with a UID (numerical user identification) outside this range will not be listed by KDM and this setup dialog."
+    minGroup = new Q3GroupBox( 2, Qt::Horizontal, i18n("System U&IDs"), this );
+    minGroup->setWhatsThis( i18n("Users with a UID (numerical user identification) outside this range will not be listed by KDM and this setup dialog."
       " Note that users with the UID 0 (typically root) are not affected by this and must be"
       " explicitly hidden in \"Not hidden\" mode."));
     QSizePolicy sp_ign_fix( QSizePolicy::Ignored, QSizePolicy::Fixed );
@@ -105,48 +112,49 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     connect(lemaxuid, SIGNAL(textChanged( const QString & )), SLOT(slotChanged()) );
     connect(lemaxuid, SIGNAL(textChanged( const QString & )), SLOT(slotMinMaxChanged()) );
 
-    usrGroup = new QButtonGroup( 5, Qt::Vertical, i18n("Users"), this );
+    usrGroup = new Q3ButtonGroup( 5, Qt::Vertical, i18n("Users"), this );
     connect( usrGroup, SIGNAL(clicked( int )), SLOT(slotShowOpts()) );
     connect( usrGroup, SIGNAL(clicked( int )), SLOT(slotChanged()) );
     cbshowlist = new QCheckBox( i18n("Show list"), usrGroup );
-    QWhatsThis::add( cbshowlist, i18n("If this option is checked, KDM will show a list of users,"
+    cbshowlist->setWhatsThis( i18n("If this option is checked, KDM will show a list of users,"
       " so users can click on their name or image rather than typing in their login.") );
     cbcomplete = new QCheckBox( i18n("Autocompletion"), usrGroup );
-    QWhatsThis::add( cbcomplete, i18n("If this option is checked, KDM will automatically complete"
+    cbcomplete->setWhatsThis( i18n("If this option is checked, KDM will automatically complete"
       " user names while they are typed in the line edit.") );
     cbinverted = new QCheckBox( i18n("Inverse selection"), usrGroup );
-    QWhatsThis::add( cbinverted, i18n("This option specifies how the users for \"Show list\" and \"Autocompletion\""
+    cbinverted->setWhatsThis( i18n("This option specifies how the users for \"Show list\" and \"Autocompletion\""
       " are selected in the \"Select users and groups\" list: "
       "If not checked, select only the checked users. "
       "If checked, select all non-system users, except the checked ones."));
     cbusrsrt = new QCheckBox( i18n("Sor&t users"), usrGroup );
     connect( cbusrsrt, SIGNAL(toggled( bool )), SLOT(slotChanged()) );
-    QWhatsThis::add( cbusrsrt, i18n("If this is checked, KDM will alphabetically sort the user list."
+    cbusrsrt->setWhatsThis( i18n("If this is checked, KDM will alphabetically sort the user list."
       " Otherwise users are listed in the order they appear in the password file.") );
 
-    wstack = new QWidgetStack( this );
+    wstack = new Q3WidgetStack( this );
     s_label = new QLabel( wstack, i18n("S&elect users and groups:"), this );
     optinlv = new KListView( this );
     optinlv->addColumn( i18n("Selected Users") );
-    optinlv->setResizeMode( QListView::LastColumn );
-    QWhatsThis::add( optinlv, i18n("KDM will show all checked users. Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );
+    optinlv->setResizeMode( Q3ListView::LastColumn );
+    optinlv->setWhatsThis( i18n("KDM will show all checked users. Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );
     wstack->addWidget( optinlv );
-    connect( optinlv, SIGNAL(clicked( QListViewItem * )),
-	     SLOT(slotUpdateOptIn( QListViewItem * )) );
-    connect( optinlv, SIGNAL(clicked( QListViewItem * )),
+    connect( optinlv, SIGNAL(clicked( Q3ListViewItem * )),
+	     SLOT(slotUpdateOptIn( Q3ListViewItem * )) );
+    connect( optinlv, SIGNAL(clicked( Q3ListViewItem * )),
 	     SLOT(slotChanged()) );
     optoutlv = new KListView( this );
     optoutlv->addColumn( i18n("Hidden Users") );
-    optoutlv->setResizeMode( QListView::LastColumn );
-    QWhatsThis::add( optoutlv, i18n("KDM will show all non-checked non-system users. Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );
+    optoutlv->setResizeMode( Q3ListView::LastColumn );
+    optoutlv->setWhatsThis( i18n("KDM will show all non-checked non-system users. Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );
     wstack->addWidget( optoutlv );
-    connect( optoutlv, SIGNAL(clicked( QListViewItem * )),
-	     SLOT(slotUpdateOptOut( QListViewItem * )) );
-    connect( optoutlv, SIGNAL(clicked( QListViewItem * )),
+    connect( optoutlv, SIGNAL(clicked( Q3ListViewItem * )),
+	     SLOT(slotUpdateOptOut( Q3ListViewItem * )) );
+    connect( optoutlv, SIGNAL(clicked( Q3ListViewItem * )),
 	     SLOT(slotChanged()) );
 
-    faceGroup = new QButtonGroup( 5, Qt::Vertical, i18n("User Image Source"), this );
-    QWhatsThis::add( faceGroup, i18n("Here you can specify where KDM will obtain the images that represent users."
+    faceGroup = new Q3ButtonGroup( 5, Qt::Vertical, i18n("User Image Source"), this );
+
+    faceGroup->setWhatsThis( i18n("Here you can specify where KDM will obtain the images that represent users."
       " \"Admin\" represents the global folder; these are the pictures you can set below."
       " \"User\" means that KDM should read the user's $HOME/.face.icon file."
       " The two selections in the middle define the order of preference if both sources are available.") );
@@ -157,33 +165,37 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     rbprefusr = new QRadioButton( i18n("User, admin"), faceGroup );
     rbusronly = new QRadioButton( i18n("User"), faceGroup );
 
-    QGroupBox *picGroup = new QVGroupBox( i18n("User Images"), this );
+    Q3GroupBox *picGroup = new Q3GroupBox( i18n("User Images"), this );
+    picGroup->setOrientation( Qt::Vertical );
+    QVBoxLayout *laygroup2 = new QVBoxLayout(picGroup->layout(), KDialog::spacingHint() );
+
     QWidget *hlpw = new QWidget( picGroup );
+    laygroup2->addWidget( hlpw );
     usercombo = new KComboBox( hlpw );
-    QWhatsThis::add( usercombo, i18n("The user the image below belongs to.") );
+    usercombo->setWhatsThis( i18n("The user the image below belongs to.") );
     connect( usercombo, SIGNAL(activated( int )),
 	     SLOT(slotUserSelected()) );
     QLabel *userlabel = new QLabel( usercombo, i18n("User:"), hlpw );
     userbutton = new QPushButton( hlpw );
     userbutton->setAcceptDrops( true );
     userbutton->installEventFilter( this ); // for drag and drop
-    uint sz = style().pixelMetric( QStyle::PM_ButtonMargin ) * 2 + 48;
+    uint sz = style()->pixelMetric( QStyle::PM_ButtonMargin ) * 2 + 48;
     userbutton->setFixedSize( sz, sz );
     connect( userbutton, SIGNAL(clicked()),
 	     SLOT(slotUserButtonClicked()) );
     QToolTip::add( userbutton, i18n("Click or drop an image here") );
-    QWhatsThis::add( userbutton, i18n("Here you can see the image assigned to the user selected in the combo box above. Click on the image button to select from a list"
+    userbutton->setWhatsThis( i18n("Here you can see the image assigned to the user selected in the combo box above. Click on the image button to select from a list"
       " of images or drag and drop your own image on to the button (e.g. from Konqueror).") );
     rstuserbutton = new QPushButton( i18n("Unset"), hlpw );
-    QWhatsThis::add( rstuserbutton, i18n("Click this button to make KDM use the default image for the selected user.") );
+    rstuserbutton->setWhatsThis( i18n("Click this button to make KDM use the default image for the selected user.") );
     connect( rstuserbutton, SIGNAL(clicked()),
 	     SLOT(slotUnsetUserPix()) );
     QGridLayout *hlpl = new QGridLayout( hlpw, 3, 2, 0, KDialog::spacingHint() );
     hlpl->addWidget( userlabel, 0, 0 );
 //    hlpl->addSpacing( KDialog::spacingHint() );
     hlpl->addWidget( usercombo, 0, 1 );
-    hlpl->addMultiCellWidget( userbutton, 1,1, 0,1, AlignHCenter );
-    hlpl->addMultiCellWidget( rstuserbutton, 2,2, 0,1, AlignHCenter );
+    hlpl->addMultiCellWidget( userbutton, 1,1, 0,1, Qt::AlignHCenter );
+    hlpl->addMultiCellWidget( rstuserbutton, 2,2, 0,1, Qt::AlignHCenter );
 
     QHBoxLayout *main = new QHBoxLayout( this, 10 );
 
@@ -262,7 +274,7 @@ void KDMUsersWidget::slotUserSelected()
 	p.load( m_userPixDir + ".default.face.icon" );
 	rstuserbutton->setEnabled( false );
     }
-    userbutton->setPixmap( p.smoothScale( 48, 48, QImage::ScaleMin ) );
+    userbutton->setPixmap( QPixmap::fromImage( p.smoothScale( 48, 48, Qt::ScaleMin ) ) );
 }
 
 
@@ -285,7 +297,7 @@ void KDMUsersWidget::changeUserPix(const QString &pix)
 	return;
     }
 
-    p = p.smoothScale( 48, 48, QImage::ScaleMin );
+    p = p.smoothScale( 48, 48, Qt::ScaleMin );
     QString userpix = m_userPixDir + user + ".face.icon";
     if (!p.save( userpix, "PNG" ))
         KMessageBox::sorry(this,
@@ -373,11 +385,11 @@ void KDMUsersWidget::save()
 }
 
 
-void KDMUsersWidget::updateOptList( QListViewItem *item, QStringList &list )
+void KDMUsersWidget::updateOptList( Q3ListViewItem *item, QStringList &list )
 {
     if ( !item )
         return;
-    QCheckListItem *itm = (QCheckListItem *)item;
+    Q3CheckListItem *itm = (Q3CheckListItem *)item;
     QStringList::iterator it = list.find( itm->text() );
     if (itm->isOn()) {
 	if (it == list.end())
@@ -388,12 +400,12 @@ void KDMUsersWidget::updateOptList( QListViewItem *item, QStringList &list )
     }
 }
 
-void KDMUsersWidget::slotUpdateOptIn( QListViewItem *item )
+void KDMUsersWidget::slotUpdateOptIn( Q3ListViewItem *item )
 {
     updateOptList( item, selectedUsers );
 }
 
-void KDMUsersWidget::slotUpdateOptOut( QListViewItem *item )
+void KDMUsersWidget::slotUpdateOptOut( Q3ListViewItem *item )
 {
     updateOptList( item, hiddenUsers );
 }
@@ -408,28 +420,29 @@ void KDMUsersWidget::slotClearUsers()
 
 void KDMUsersWidget::slotAddUsers(const QMap<QString,int> &users)
 {
-    QMapConstIterator<QString,int> it;
+    QMap<QString,int>::const_iterator it;
     for (it = users.begin(); it != users.end(); ++it) {
       const QString *name = &it.key();
-      (new QCheckListItem(optinlv, *name, QCheckListItem::CheckBox))->
+      (new Q3CheckListItem(optinlv, *name, Q3CheckListItem::CheckBox))->
 	      setOn(selectedUsers.find(*name) != selectedUsers.end());
-      (new QCheckListItem(optoutlv, *name, QCheckListItem::CheckBox))->
+      (new Q3CheckListItem(optoutlv, *name, Q3CheckListItem::CheckBox))->
 	      setOn(hiddenUsers.find(*name) != hiddenUsers.end());
       usercombo->insertItem(*name);
     }
     optinlv->sort();
     optoutlv->sort();
-    if (usercombo->listBox())
-        usercombo->listBox()->sort();
+    if (usercombo->model())
+        usercombo->model()->sort(0);
 }
 
 void KDMUsersWidget::slotDelUsers(const QMap<QString,int> &users)
 {
-    QMapConstIterator<QString,int> it;
+    QMap<QString,int>::const_iterator it;
     for (it = users.begin(); it != users.end(); ++it) {
         const QString *name = &it.key();
-        if (usercombo->listBox())
-            delete usercombo->listBox()->findItem( *name, ExactMatch | CaseSensitive );
+        int idx = usercombo->findText( *name );
+        if (idx != -1)
+           usercombo->removeItem( idx );
         delete optinlv->findItem( *name, 0 );
         delete optoutlv->findItem( *name, 0 );
     }

@@ -22,12 +22,14 @@
 #ifndef __KDMCONV_H__
 #define __KDMCONV_H__
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qstring.h>
 #include <qimage.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <QLabel>
 
 #include <klistbox.h>
 #include <kcombobox.h>
@@ -64,10 +66,10 @@ private slots:
 	void slotChanged();
 	void slotSetAutoUser( const QString &user );
 	void slotSetPreselUser( const QString &user );
-	void slotUpdateNoPassUser( QListViewItem *item );
+	void slotUpdateNoPassUser( Q3ListViewItem *item );
 
 private:
-	QGroupBox	*alGroup, *puGroup, *npGroup, *btGroup;
+	Q3GroupBox	*alGroup, *puGroup, *npGroup, *btGroup;
 	QCheckBox	*cbarlen, *cbjumppw, *autoLockCheck;
 	QRadioButton	*npRadio, *ppRadio, *spRadio;
 	KComboBox	*userlb, *puserlb;

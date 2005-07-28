@@ -13,10 +13,16 @@
 
 #include <qcheckbox.h>
 #include <qcombobox.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qslider.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QGridLayout>
+#include <QBoxLayout>
+#include <Q3ValueList>
+#include <QVBoxLayout>
 
 #include <kcolorbutton.h>
 #include <kconfig.h>
@@ -42,13 +48,13 @@ KIconConfig::KIconConfig(QWidget *parent, const char *name)
     top->setColStretch(1, 1);
 
     // Use of Icon at (0,0) - (1, 0)
-    QGroupBox *gbox = new QGroupBox(i18n("Use of Icon"), this);
+    Q3GroupBox *gbox = new Q3GroupBox(i18n("Use of Icon"), this);
     top->addMultiCellWidget(gbox, 0, 1, 0, 0);
     QBoxLayout *g_vlay = new QVBoxLayout(gbox,
                                         KDialog::marginHint(),
                                         KDialog::spacingHint());
     g_vlay->addSpacing(fontMetrics().lineSpacing());
-    mpUsageList = new QListBox(gbox);
+    mpUsageList = new Q3ListBox(gbox);
     connect(mpUsageList, SIGNAL(highlighted(int)), SLOT(slotUsage(int)));
     g_vlay->addWidget(mpUsageList);
 
@@ -109,13 +115,13 @@ KIconConfig::~KIconConfig()
 QPushButton *KIconConfig::addPreviewIcon(int i, const QString &str, QWidget *parent, QGridLayout *lay)
 {
     QLabel *lab = new QLabel(str, parent);
-    lay->addWidget(lab, 1, i, AlignCenter);
+    lay->addWidget(lab, 1, i, Qt::AlignCenter);
     mpPreview[i] = new QLabel(parent);
-    mpPreview[i]->setAlignment(AlignCenter);
+    mpPreview[i]->setAlignment(Qt::AlignCenter);
     mpPreview[i]->setMinimumSize(105, 105);
     lay->addWidget(mpPreview[i], 2, i);
     QPushButton *push = new QPushButton(i18n("Set Effect..."), parent);
-    lay->addWidget(push, 3, i, AlignCenter);
+    lay->addWidget(push, 3, i, Qt::AlignCenter);
     return push;
 }
 
@@ -223,7 +229,7 @@ void KIconConfig::read()
     else
     {
         for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++)
-            mAvSizes[i] = QValueList<int>();
+            mAvSizes[i] = Q3ValueList<int>();
 
         mTheme = QString::null;
         mExample = QString::null;
@@ -272,7 +278,7 @@ void KIconConfig::apply()
     mpUsageList->setCurrentItem(mUsage);
 
     int delta = 1000, dw, index = -1, size = 0, i;
-    QValueList<int>::Iterator it;
+    Q3ValueList<int>::Iterator it;
     mpSizeBox->clear();
     if (mUsage < KIcon::LastGroup) {
         for (it=mAvSizes[mUsage].begin(), i=0; it!=mAvSizes[mUsage].end(); ++it, i++)
@@ -515,7 +521,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpEffect = new KIconEffect;
 
     QLabel *lbl;
-    QGroupBox *frame;
+    Q3GroupBox *frame;
     QGridLayout *grid;
 
     QWidget *page = new QWidget(this);
@@ -530,7 +536,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     lbl = new QLabel(i18n("&Effect:"), page);
     lbl->setFixedSize(lbl->sizeHint());
     top->addWidget(lbl, 0, 0, Qt::AlignLeft);
-    mpEffectBox = new QListBox(page);
+    mpEffectBox = new Q3ListBox(page);
     mpEffectBox->insertItem(i18n("No Effect"));
     mpEffectBox->insertItem(i18n("To Gray"));
     mpEffectBox->insertItem(i18n("Colorize"));
@@ -546,25 +552,25 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     connect(mpSTCheck, SIGNAL(toggled(bool)), SLOT(slotSTCheck(bool)));
     top->addWidget(mpSTCheck, 3, 0, Qt::AlignLeft);
 
-    frame = new QGroupBox(i18n("Preview"), page);
+    frame = new Q3GroupBox(i18n("Preview"), page);
     top->addMultiCellWidget(frame, 0, 1, 1, 1);
     grid = new QGridLayout(frame, 2, 1, marginHint(), spacingHint());
     grid->addRowSpacing(0, fontMetrics().lineSpacing());
     grid->setRowStretch(1, 1);
 
     mpPreview = new QLabel(frame);
-    mpPreview->setAlignment(AlignCenter);
+    mpPreview->setAlignment(Qt::AlignCenter);
     mpPreview->setMinimumSize(105, 105);
     grid->addWidget(mpPreview, 1, 0);
 
-    mpEffectGroup = new QGroupBox(i18n("Effect Parameters"), page);
+    mpEffectGroup = new Q3GroupBox(i18n("Effect Parameters"), page);
     top->addMultiCellWidget(mpEffectGroup, 2, 3, 1, 1);
     grid = new QGridLayout(mpEffectGroup, 3, 2, marginHint(), spacingHint());
     grid->addRowSpacing(0, fontMetrics().lineSpacing());
 
     mpEffectLabel = new QLabel(i18n("&Amount:"), mpEffectGroup);
     grid->addWidget(mpEffectLabel, 1, 0);
-    mpEffectSlider = new QSlider(0, 100, 5, 10, QSlider::Horizontal, mpEffectGroup);
+    mpEffectSlider = new QSlider(0, 100, 5, 10, Qt::Horizontal, mpEffectGroup);
     mpEffectLabel->setBuddy( mpEffectSlider );
     connect(mpEffectSlider, SIGNAL(valueChanged(int)), SLOT(slotEffectValue(int)));
     grid->addWidget(mpEffectSlider, 1, 1);

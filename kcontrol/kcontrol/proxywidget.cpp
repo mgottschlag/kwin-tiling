@@ -21,6 +21,12 @@
 
 #include <kpushbutton.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3CString>
+#include <Q3Frame>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QResizeEvent>
 #include <klocale.h>
 #include <kapplication.h>
 #include <kcmodule.h>
@@ -29,7 +35,7 @@
 #include <kstdguiitem.h>
 #include <dcopclient.h>
 
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
 #include <qlabel.h>
 
 #include "global.h"
@@ -39,11 +45,11 @@
 #include <kdebug.h>
 #include <qtimer.h>
 
-class WhatsThis : public QWhatsThis
+class WhatsThis : public Q3WhatsThis
 {
 public:
     WhatsThis( ProxyWidget* parent )
-    : QWhatsThis( parent ), proxy( parent ) {}
+    : Q3WhatsThis( parent ), proxy( parent ) {}
     ~WhatsThis(){};
 
 
@@ -82,14 +88,14 @@ public:
 RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
     : QLabel(parent, name)
 {
-    setFrameShape(QFrame::Box);
-    setFrameShadow(QFrame::Raised);
+    setFrameShape(Q3Frame::Box);
+    setFrameShadow(Q3Frame::Raised);
 
     setText(i18n("<b>Changes in this module require root access.</b><br>"
                       "Click the \"Administrator Mode\" button to "
                       "allow modifications in this module."));
 
-	QWhatsThis::add(this, i18n("This module requires special permissions, probably "
+	Q3WhatsThis::add(this, i18n("This module requires special permissions, probably "
                               "for system-wide modifications; therefore, it is "
                               "required that you provide the root password to be "
                               "able to change the module's properties.  If you "
@@ -100,7 +106,7 @@ RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class ProxyView : public QScrollView
+class ProxyView : public Q3ScrollView
 {
 public:
     ProxyView(KCModule *client, const QString& title, QWidget *parent, bool run_as_root, const char *name);
@@ -125,9 +131,9 @@ public:
 
 
 ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, bool run_as_root, const char *name)
-    : QScrollView(parent, name), client(_client)
+    : Q3ScrollView(parent, name), client(_client)
 {
-  setResizePolicy(QScrollView::AutoOneFit);
+  setResizePolicy(Q3ScrollView::AutoOneFit);
   setFrameStyle( NoFrame );
   contentWidget = new ProxyContentWidget( viewport() );
 
@@ -150,7 +156,7 @@ ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, bool ru
 
 void ProxyView::resizeEvent(QResizeEvent *e)
 {
-    QScrollView::resizeEvent(e);
+    Q3ScrollView::resizeEvent(e);
 }
 
 
@@ -166,13 +172,13 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 
  if (getuid()==0 ) {
 	 // Make root modules look as similar as possible...
-	 QCString replyType;
+	 DCOPCString replyType;
 	 QByteArray replyData;
 	 
 	 if (kapp->dcopClient()->call("kcontrol", "moduleIface", "getPalette()", QByteArray(),
 				 replyType, replyData))
 		 if ( replyType == "QPalette") {
-			 QDataStream reply( replyData, IO_ReadOnly );
+			 QDataStream reply( replyData );
 			 QPalette pal;
 			 reply >> pal;
 			 setPalette(pal);
@@ -190,7 +196,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 	 if (kapp->dcopClient()->call("kcontrol", "moduleIface", "getFont()", QByteArray(),
 				 replyType, replyData))
 		 if ( replyType == "QFont") {
-			 QDataStream reply( replyData, IO_ReadOnly );
+			 QDataStream reply( replyData );
 			 QFont font;
 			 reply >> font;
 			 setFont(font);
@@ -215,11 +221,11 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 
   // only enable the requested buttons
   int b = _client->buttons();
-  setVisible(_help, false & (b & KCModule::Help));
-  setVisible(_default, mayModify && (b & KCModule::Default));
-  setVisible(_apply, mayModify && (b & KCModule::Apply));
-  setVisible(_reset, mayModify && (b & KCModule::Apply));
-  setVisible(_root, run_as_root);
+  _help->setVisible(false & (b & KCModule::Help));
+  _default->setVisible(mayModify && (b & KCModule::Default));
+  _apply->setVisible(mayModify && (b & KCModule::Apply));
+  _reset->setVisible(mayModify && (b & KCModule::Apply));
+  _root->setVisible(run_as_root);
 
   // disable initial buttons
   _apply->setEnabled( false );

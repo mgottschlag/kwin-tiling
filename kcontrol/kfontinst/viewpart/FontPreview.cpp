@@ -31,6 +31,9 @@
 #include <klocale.h>
 #include <qpainter.h>
 #include <qimage.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QPaintEvent>
 #include <stdlib.h>
 
 namespace KFI
@@ -87,7 +90,7 @@ void CFontPreview::paintEvent(QPaintEvent *)
     if(itsPixmap.isNull())
     {
         paint.setPen(kapp->palette().active().text());
-        paint.drawText(rect(), AlignCenter, i18n(" No preview available"));
+        paint.drawText(rect(), Qt::AlignCenter, i18n(" No preview available"));
     }
     else
     {

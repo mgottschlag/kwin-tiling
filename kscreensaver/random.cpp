@@ -16,9 +16,11 @@
 
 #include <qtextstream.h>
 #include <qlayout.h>
-#include <qframe.h>
+#include <q3frame.h>
 #include <qcheckbox.h>
 #include <qwidget.h>
+//Added by qt3to4:
+#include <QGridLayout>
 
 #include <kapplication.h>
 #include <kstandarddirs.h>
@@ -33,6 +35,8 @@
 
 #include "kscreensaver_vroot.h"
 #include "random.h"
+#include <QX11Info>
+#include <QFrame>
 
 #define MAX_ARGS    20
 
@@ -87,7 +91,8 @@ int main(int argc, char *argv[])
 
 	if (args->isSet("root"))
 	{
-		windowId = RootWindow(qt_xdisplay(), qt_xscreen());
+		QX11Info info;
+		windowId = RootWindow(QX11Info::display(), info.screen());
 	}
 
 	KGlobal::dirs()->addResourceType("scrsav",
@@ -107,7 +112,7 @@ int main(int argc, char *argv[])
 	bool manipulatescreen = type.readBoolEntry("ManipulateScreen");
         bool fortune = !KStandardDirs::findExe("fortune").isEmpty();
 
-	for (uint i = 0; i < tempSaverFileList.count(); i++)
+	for (int i = 0; i < tempSaverFileList.count(); i++)
 	{
 		kdDebug() << "Looking at " << tempSaverFileList[i] << endl;
 		KDesktopFile saver(tempSaverFileList[i], true);
@@ -152,7 +157,7 @@ int main(int argc, char *argv[])
 
 	KRandomSequence rnd;
 	int indx = rnd.getLong(saverFileList.count());
-	QString filename = *(saverFileList.at(indx));
+	QString filename = saverFileList.at(indx);
 
 	KDesktopFile config(filename, true);
 
@@ -167,7 +172,7 @@ int main(int argc, char *argv[])
 	}
 	cmd = config.readPathEntry("Exec");
 
-	QTextStream ts(&cmd, IO_ReadOnly);
+	QTextStream ts(&cmd, QIODevice::ReadOnly);
 	QString word;
 	ts >> word;
 	QString exeFile = KStandardDirs::findExe(word);
@@ -201,10 +206,11 @@ int main(int argc, char *argv[])
 
 	// If we end up here then we couldn't start a saver.
 	// If we have been supplied a window id or root window then blank it.
-	Window win = windowId ? windowId : RootWindow(qt_xdisplay(), qt_xscreen());
-	XSetWindowBackground(qt_xdisplay(), win,
-			BlackPixel(qt_xdisplay(), qt_xscreen()));
-	XClearWindow(qt_xdisplay(), win);
+	QX11Info info;
+	Window win = windowId ? windowId : RootWindow(QX11Info::display(), info.screen());
+	XSetWindowBackground(QX11Info::display(), win,
+			BlackPixel(QX11Info::display(), info.screen()));
+	XClearWindow(QX11Info::display(), win);
 }
 
 

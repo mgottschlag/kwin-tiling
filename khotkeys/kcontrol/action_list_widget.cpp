@@ -17,9 +17,9 @@
 #include "action_list_widget.h"
 
 #include <assert.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 #include <qpushbutton.h>
-#include <qheader.h>
+#include <q3header.h>
 #include <qlineedit.h>
 
 #include <klocale.h>
@@ -42,7 +42,7 @@ namespace KHotKeys
 Action_list_widget::Action_list_widget( QWidget* parent_P, const char* name_P )
     : Action_list_widget_ui( parent_P, name_P ), selected_item( NULL )
     {
-    QPopupMenu* popup = new QPopupMenu; // CHECKME looks like setting parent doesn't work
+    Q3PopupMenu* popup = new Q3PopupMenu; // CHECKME looks like setting parent doesn't work
     popup->insertItem( i18n( "Command/URL..." ), TYPE_COMMAND_URL_ACTION );
     popup->insertItem( i18n( "K-Menu Entry..." ), TYPE_MENUENTRY_ACTION );
     popup->insertItem( i18n( "DCOP Call..." ), TYPE_DCOP_ACTION );
@@ -58,7 +58,7 @@ Action_list_widget::Action_list_widget( QWidget* parent_P, const char* name_P )
     modify_button->setEnabled( false );
     delete_button->setEnabled( false );
     clear_data();
-    connect( actions_listview, SIGNAL( doubleClicked ( QListViewItem *, const QPoint &, int ) ),
+    connect( actions_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
              this, SLOT( modify_pressed() ) );
 
     // KHotKeys::Module::changed()
@@ -105,7 +105,7 @@ Action_list* Action_list_widget::get_data( Action_data* data_P ) const
     {
 // CHECKME TODO hmm, tady to bude chtit asi i children :(
     Action_list* list = new Action_list( comment_lineedit->text());
-    for( QListViewItem* pos = actions_listview->firstChild();
+    for( Q3ListViewItem* pos = actions_listview->firstChild();
          pos != NULL;
          pos = pos->nextSibling())
         list->append( static_cast< Action_list_item* >( pos )->action()->copy( data_P ));
@@ -168,7 +168,7 @@ void Action_list_widget::modify_pressed()
     edit_listview_item( selected_item );
     }
 
-void Action_list_widget::current_changed( QListViewItem* item_P )
+void Action_list_widget::current_changed( Q3ListViewItem* item_P )
     {
 //    if( item_P == selected_item )
 //        return;
@@ -180,7 +180,7 @@ void Action_list_widget::current_changed( QListViewItem* item_P )
     }
 
 Action_list_item* Action_list_widget::create_listview_item( Action* action_P,
-    QListView* parent1_P, QListViewItem* parent2_P, QListViewItem* after_P, bool copy_P )
+    Q3ListView* parent1_P, Q3ListViewItem* parent2_P, Q3ListViewItem* after_P, bool copy_P )
     {
     Action* new_win = copy_P ? action_P->copy( NULL ) : action_P;
 // CHECKME uz by nemelo byt treba

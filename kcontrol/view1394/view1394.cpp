@@ -20,9 +20,12 @@
 
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qfile.h>
 #include <qtextstream.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <Q3ValueList>
 
 #include <kdialog.h>
 #include <kglobal.h>
@@ -78,9 +81,9 @@ View1394::View1394(QWidget *parent, const char *name)
    QVBoxLayout *box=new QVBoxLayout(this, 0, KDialog::spacingHint());
    m_view=new View1394Widget(this);
    for (int i=2; i<8; i++)
-      m_view->m_listview->setColumnAlignment(i, AlignHCenter);
-   m_view->m_listview->setColumnAlignment(8, AlignRight);
-   m_view->m_listview->setColumnAlignment(9, AlignRight);
+      m_view->m_listview->setColumnAlignment(i, Qt::AlignHCenter);
+   m_view->m_listview->setColumnAlignment(8, Qt::AlignRight);
+   m_view->m_listview->setColumnAlignment(9, Qt::AlignRight);
    box->addWidget(m_view);
    connect(m_view->m_busResetPb, SIGNAL(clicked()), this, SLOT(generateBusReset()));
    connect(&m_rescanTimer, SIGNAL(timeout()), this, SLOT(rescanBus()));
@@ -139,7 +142,7 @@ bool View1394::readConfigRom(raw1394handle_t handle, nodeid_t nodeid, quadlet_t&
 
 void View1394::callRaw1394EventLoop(int fd)
 {
-   for (QValueList<raw1394handle_t>::iterator it= m_handles.begin(); it!=m_handles.end(); ++it)
+   for (Q3ValueList<raw1394handle_t>::iterator it= m_handles.begin(); it!=m_handles.end(); ++it)
       if (raw1394_get_fd(*it)==fd)
       {
          raw1394_loop_iterate(*it);
@@ -158,7 +161,7 @@ void View1394::rescanBus()
 //   static int depth=0;
 //   depth++;
    m_notifiers.clear();
-   for (QValueList<raw1394handle_t>::iterator it=m_handles.begin(); it!=m_handles.end(); ++it)
+   for (Q3ValueList<raw1394handle_t>::iterator it=m_handles.begin(); it!=m_handles.end(); ++it)
       raw1394_destroy_handle(*it);
    m_handles.clear();
    m_view->m_listview->clear();
@@ -189,7 +192,7 @@ void View1394::rescanBus()
       m_notifiers.append(notif);
       m_handles.append(handle);
       
-      QListViewItem *card=new QListViewItem(m_view->m_listview,i18n("Port %1:\"%2\"").arg(i).arg(p_info[i].name));
+      Q3ListViewItem *card=new Q3ListViewItem(m_view->m_listview,i18n("Port %1:\"%2\"").arg(i).arg(p_info[i].name));
       int num_of_nodes=raw1394_get_nodecount(handle);
 
       int localNodeId=raw1394_get_local_id(handle);
@@ -205,14 +208,14 @@ void View1394::rescanBus()
          QString nodeStr=i18n("Node %1").arg(j);
          if (!success)
          {
-            new QListViewItem(card,nodeStr, i18n("Not ready"));
+            new Q3ListViewItem(card,nodeStr, i18n("Not ready"));
             continue;
          }
          if (((firstQuad>>24) & 0xff)==1) //minimal config rom
          {
             QString guidStr=QString::number(firstQuad,16);
             guidStr="0x"+guidStr.rightJustify(6,'0');
-            new QListViewItem(card,nodeStr, guidStr);
+            new Q3ListViewItem(card,nodeStr, guidStr);
          }
          else  //general config rom
          {
@@ -246,7 +249,7 @@ void View1394::rescanBus()
                speedStr="100";
                break;
             }
-            QListViewItem* node=new QListViewItem(card);
+            Q3ListViewItem* node=new Q3ListViewItem(card);
             node->setText(0,nodeStr);
             node->setText(1, guidStr);
             node->setText(2,local);
@@ -268,7 +271,7 @@ void View1394::rescanBus()
 
 void View1394::generateBusReset()
 {
-   for (QValueList<raw1394handle_t>::iterator it=m_handles.begin(); it!=m_handles.end(); ++it)
+   for (Q3ValueList<raw1394handle_t>::iterator it=m_handles.begin(); it!=m_handles.end(); ++it)
       raw1394_reset_bus(*it);
 }
 
@@ -279,7 +282,7 @@ OuiDb::OuiDb()
    if (filename.isEmpty())
       return;
    QFile f(filename);
-   if (!f.open(IO_ReadOnly))
+   if (!f.open(QIODevice::ReadOnly))
       return;
 
    QByteArray ba=f.readAll();

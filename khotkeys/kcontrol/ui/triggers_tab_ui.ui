@@ -119,8 +119,8 @@
             <verstretch>0</verstretch>
         </sizepolicy>
         <pixmap>image0</pixmap>
-        <signal>currentChanged(QListViewItem*)</signal>
-        <signal>current_changed(QListViewItem*)</signal>
+        <signal>currentChanged(Q3ListViewItem*)</signal>
+        <signal>current_changed(Q3ListViewItem*)</signal>
     </customwidget>
 </customwidgets>
 <images>
@@ -149,17 +149,17 @@
     </connection>
     <connection>
         <sender>triggers_listview</sender>
-        <signal>current_changed(QListViewItem*)</signal>
+        <signal>current_changed(Q3ListViewItem*)</signal>
         <receiver>Triggers_tab_ui</receiver>
-        <slot>current_changed(QListViewItem*)</slot>
+        <slot>current_changed(Q3ListViewItem*)</slot>
     </connection>
 </connections>
 <forwards>
-    <forward>class QListViewItem;</forward>
+    <forward>class Q3ListViewItem;</forward>
 </forwards>
 <slots>
     <slot access="protected" specifier="pure virtual">copy_pressed()</slot>
-    <slot access="protected" specifier="pure virtual">current_changed(QListViewItem*)</slot>
+    <slot access="protected" specifier="pure virtual">current_changed(Q3ListViewItem*)</slot>
     <slot access="protected" specifier="pure virtual">delete_pressed()</slot>
     <slot access="protected" specifier="pure virtual">modify_pressed()</slot>
 </slots>

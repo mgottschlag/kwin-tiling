@@ -22,9 +22,12 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qfileinfo.h>
-#include <qgroupbox.h>
-#include <qhbox.h>
-#include <qwhatsthis.h>
+#include <q3groupbox.h>
+#include <q3hbox.h>
+
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QGridLayout>
 
 #include <klocale.h>
 #include <kstandarddirs.h>
@@ -58,7 +61,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
                                           KDialog::spacingHint());
 
     // general group
-    QGroupBox *general_group = new QGroupBox(this);
+    Q3GroupBox *general_group = new Q3GroupBox(this);
     QGridLayout *grid = new QGridLayout(general_group, 5, 2,
                                         KDialog::marginHint(),
                                         KDialog::spacingHint());
@@ -74,7 +77,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _commentEdit->setAcceptDrops(false);
     _execEdit = new KURLRequester(general_group);
     _execEdit->lineEdit()->setAcceptDrops(false);
-    QWhatsThis::add(_execEdit,i18n(
+    _execEdit->setWhatsThis(i18n(
     "Following the command, you can have several place holders which will be replaced "
     "with the actual values when the actual program is run:\n"
     "%f - a single file name\n"
@@ -133,16 +136,19 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     layout->addMultiCellWidget(general_group, 0, 0, 0, 1);
 
     // path group
-    _path_group = new QGroupBox(this);
+    _path_group = new Q3GroupBox(this);
     QVBoxLayout *vbox = new QVBoxLayout(_path_group, KDialog::marginHint(),
                                         KDialog::spacingHint());
 
-    QHBox *hbox = new QHBox(_path_group);
-    hbox->setSpacing(KDialog::spacingHint());
+    QWidget *hbox = new QWidget(_path_group);
+    QHBoxLayout *hboxLayout1 = new QHBoxLayout(hbox);
+    hbox->setLayout(hboxLayout1);
+    hboxLayout1->setSpacing(KDialog::spacingHint());
 
     _pathLabel = new QLabel(i18n("&Work path:"), hbox);
-
+	hboxLayout1->addWidget(_pathLabel);
     _pathEdit = new KURLRequester(hbox);
+	hboxLayout1->addWidget(_pathEdit);
     _pathEdit->setMode(KFile::Directory | KFile::LocalOnly);
     _pathEdit->lineEdit()->setAcceptDrops(false);
 
@@ -154,7 +160,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     layout->addMultiCellWidget(_path_group, 1, 1, 0, 1);
 
     // terminal group
-    _term_group = new QGroupBox(this);
+    _term_group = new Q3GroupBox(this);
     vbox = new QVBoxLayout(_term_group, KDialog::marginHint(),
 			   KDialog::spacingHint());
 
@@ -162,10 +168,14 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     connect(_terminalCB, SIGNAL(clicked()), SLOT(termcb_clicked()));
     vbox->addWidget(_terminalCB);
 
-    hbox = new QHBox(_term_group);
-    hbox->setSpacing(KDialog::spacingHint());
+    hbox = new QWidget(_term_group);
+    QHBoxLayout *hboxLayout2 = new QHBoxLayout(hbox);
+    hbox->setLayout(hboxLayout2);
+    hboxLayout2->setSpacing(KDialog::spacingHint());
     _termOptLabel = new QLabel(i18n("Terminal &options:"), hbox);
+	hboxLayout2->addWidget(_termOptLabel);
     _termOptEdit = new KLineEdit(hbox);
+	hboxLayout2->addWidget(_termOptEdit);
     _termOptEdit->setAcceptDrops(false);
     _termOptLabel->setBuddy(_termOptEdit);
 
@@ -177,7 +187,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _termOptEdit->setEnabled(false);
 
     // uid group
-    _uid_group = new QGroupBox(this);
+    _uid_group = new Q3GroupBox(this);
     vbox = new QVBoxLayout(_uid_group, KDialog::marginHint(),
                            KDialog::spacingHint());
 
@@ -185,10 +195,14 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     connect(_uidCB, SIGNAL(clicked()), SLOT(uidcb_clicked()));
     vbox->addWidget(_uidCB);
 
-    hbox = new QHBox(_uid_group);
-    hbox->setSpacing(KDialog::spacingHint());
+    hbox = new QWidget(_uid_group);
+    QHBoxLayout *hboxLayout3 = new QHBoxLayout(hbox);
+    hbox->setLayout(hboxLayout3);
+    hboxLayout3->setSpacing(KDialog::spacingHint());
     _uidLabel = new QLabel(i18n("&Username:"), hbox);
+	hboxLayout3->addWidget(_uidLabel);
     _uidEdit = new KLineEdit(hbox);
+	hboxLayout3->addWidget(_uidEdit);
     _uidEdit->setAcceptDrops(false);
     _uidLabel->setBuddy(_uidEdit);
 
@@ -202,7 +216,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     layout->setRowStretch(0, 2);
 
     // key binding group
-    general_group_keybind = new QGroupBox(this);
+    general_group_keybind = new Q3GroupBox(this);
     layout->addMultiCellWidget( general_group_keybind, 4, 4, 0, 1 );
     // dummy widget in order to make it look a bit better
     layout->addWidget( new QWidget(this), 5, 0 );

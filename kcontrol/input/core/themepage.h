@@ -20,7 +20,7 @@
 #define __THEMEPAGE_H
 
 class KListView;
-class QListViewItem;
+class Q3ListViewItem;
 
 class ThemePage : public QWidget
 {
@@ -39,7 +39,7 @@ class ThemePage : public QWidget
 		void changed( bool );
 
 	private slots:
-		void selectionChanged( QListViewItem * );
+		void selectionChanged( Q3ListViewItem * );
 
 	private:
 		void insertThemes();

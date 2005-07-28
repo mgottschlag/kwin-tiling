@@ -29,7 +29,7 @@
 #include <kgenericfactory.h>
 
 class QTabWidget;
-class QGroupBox;
+class Q3GroupBox;
 
 class KConfig;
 class KLocale;
@@ -74,7 +74,7 @@ private:
   KLocaleConfigTime   *m_localetime;
   KLocaleConfigOther  *m_localeother;
 
-  QGroupBox           *m_gbox;
+  Q3GroupBox           *m_gbox;
   KLocaleSample       *m_sample;
 
   KConfig * m_globalConfig;

@@ -37,8 +37,15 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpainter.h>
-#include <qpaintdevicemetrics.h>
+#include <q3paintdevicemetrics.h>
 #include <qsettings.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QSpacerItem>
+#include <Q3Frame>
+#include <Q3ValueList>
+#include <QGridLayout>
+#include <QDropEvent>
 #include <kaboutdata.h>
 #include <kgenericfactory.h>
 #include <kdiroperator.h>
@@ -98,8 +105,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
                      KCmdLineArgs::parsedArgs()->isSet("embed"));
 
     itsStatusLabel = new QLabel(this);
-    itsStatusLabel->setFrameShape(QFrame::Panel);
-    itsStatusLabel->setFrameShadow(QFrame::Sunken);
+    itsStatusLabel->setFrameShape(Q3Frame::Panel);
+    itsStatusLabel->setFrameShadow(Q3Frame::Sunken);
     itsStatusLabel->setLineWidth(1);
 
     itsConfig.setGroup(CFG_GROUP);
@@ -115,7 +122,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         itsPreview=(KParts::ReadOnlyPart *)factory->create(itsSplitter, "kcmfontinst", "KParts::ReadOnlyPart");
         itsSplitter->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-        QValueList<int> sizes(itsConfig.readIntListEntry(CFG_SPLITTER_SIZES));
+        Q3ValueList<int> sizes(itsConfig.readIntListEntry(CFG_SPLITTER_SIZES));
 
         if(2!=sizes.count())
         {
@@ -128,7 +135,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     else
     {
 #endif
-        fontsFrame=new QFrame(this);
+        fontsFrame=new Q3Frame(this);
         fontsFrame->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 #ifdef HAVE_XFT
     }
@@ -158,7 +165,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     connect(button, SIGNAL(clicked()), SLOT(addFonts()));
     button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     fontsLayout->addWidget(button, 1, 0);
-    fontsLayout->addItem(new QSpacerItem(4, 4, QSizePolicy::Expanding, QSizePolicy::Minimum));
+	fontsLayout->addItem(new QSpacerItem(4, 4, QSizePolicy::Expanding, QSizePolicy::Minimum),0,0);
 
     layout->addWidget(toolbar);
 #ifdef HAVE_XFT
@@ -398,13 +405,13 @@ void CKCmFontInst::fileHighlighted(const KFileItem *item)
 
 void CKCmFontInst::loadingFinished()
 {
-    QListView *lView=dynamic_cast<QListView *>(itsDirOp->view());
+    Q3ListView *lView=dynamic_cast<Q3ListView *>(itsDirOp->view());
 
     if(lView)
         lView->sort();
     else
     {
-        QIconView *iView=dynamic_cast<QIconView *>(itsDirOp->view());
+        Q3IconView *iView=dynamic_cast<Q3IconView *>(itsDirOp->view());
 
         if(iView)
             iView->sort();
@@ -506,7 +513,7 @@ void CKCmFontInst::print()
             static const int constSizes[]={0, 12, 18, 24, 36, 48};
     
             QStringList       items;
-            QValueVector<int> sizes;
+            Q3ValueVector<int> sizes;
             CFcEngine         engine;
 
             if(dlg.outputAll())

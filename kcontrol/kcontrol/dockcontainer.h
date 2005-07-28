@@ -20,15 +20,15 @@
 #ifndef __dockcontainer_h__
 #define __dockcontainer_h__
 
-#include <qwidgetstack.h>
+#include <QStackedWidget>
+#include <QLabel>
 
 class ConfigModule;
 class ModuleWidget;
 class ProxyWidget;
-class QLabel;
-class QVBox;
+class Q3VBox;
 
-class DockContainer : public QWidgetStack
+class DockContainer : public QStackedWidget
 {
   Q_OBJECT
 

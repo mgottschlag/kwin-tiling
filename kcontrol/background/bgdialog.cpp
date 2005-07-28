@@ -26,7 +26,7 @@
 
 #include <config.h>
 
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qpainter.h>
@@ -34,8 +34,10 @@
 #include <qslider.h>
 #include <qtimer.h>
 #include <qtooltip.h>
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
 #include <qapplication.h>
+#include <QPixmap>
+#include <QDesktopWidget>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -93,8 +95,8 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
      }
 
    // background image settings
-   QIconSet iconSet = SmallIconSet(QString::fromLatin1("fileopen"));
-   QPixmap pixMap = iconSet.pixmap( QIconSet::Small, QIconSet::Normal );
+   QIcon iconSet = SmallIconSet(QString::fromLatin1("fileopen"));
+   QPixmap pixMap = iconSet.pixmap( QIcon::Small, QIcon::Normal );
    m_urlWallpaperButton->setIconSet( iconSet );
    m_urlWallpaperButton->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
    QToolTip::add(m_urlWallpaperButton, i18n("Open file dialog"));
@@ -133,7 +135,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
            SLOT(slotGetNewStuff()));
 
    // renderers
-   m_Renderer = QPtrVector<KBackgroundRenderer>( m_Max + 1 );
+   m_Renderer = Q3PtrVector<KBackgroundRenderer>( m_Max + 1 );
    m_Renderer.setAutoDelete(true);
 
    // set up the common desktop renderer

@@ -13,12 +13,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <qsocketnotifier.h>
-#include <qptrlist.h>
-#include <qvaluelist.h>
-#include <qcstring.h>
-#include <qdict.h>
-#include <qptrqueue.h>
-#include <qptrdict.h>
 #include <kapplication.h>
 #include <qtimer.h>
 #include <dcopobject.h>
@@ -30,7 +24,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #define SESSION_PREVIOUS_LOGOUT "saved at previous logout"
 #define SESSION_BY_USER  "saved by user"
 
-typedef QValueList<QCString> QCStringList;
+typedef QList<Q3CString> QCStringList;
 class KSMListener;
 class KSMConnection;
 class KSMClient
@@ -48,7 +42,7 @@ public:
     uint waitForPhase2 : 1;
     uint wasPhase2 : 1;
 
-    QPtrList<SmProp> properties;
+    QList<SmProp*> properties;
     SmProp* property( const char* name ) const;
 
     QString program() const;
@@ -162,7 +156,7 @@ private:
     QStringList windowWmCommand(WId w);
     QString windowWmClientMachine(WId w);
     WId windowWmClientLeader(WId w);
-    QCString windowSessionId(WId w, WId leader);
+    QByteArray windowSessionId(WId w, WId leader);
 #endif
 
     // public dcop interface
@@ -173,8 +167,8 @@ private:
     void saveCurrentSessionAs( QString );
 
  private:
-    QPtrList<KSMListener> listener;
-    QPtrList<KSMClient> clients;
+    QList<KSMListener*> listener;
+    QList<KSMClient*> clients;
 
     enum State { Idle, Shutdown, Checkpoint, Killing, Killing2, WaitingForKNotify };
     State state;
@@ -193,7 +187,7 @@ private:
     QString wm;
     QString sessionGroup;
     QString sessionName;
-    QCString launcher;
+    Q3CString launcher;
     QTimer protectionTimer;
     QTimer restoreTimer;
     QString xonCommand;

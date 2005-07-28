@@ -12,13 +12,13 @@
 #ifndef _KCMUSB_H
 #define _KCMUSB_H
 
-#include <qintdict.h>
+#include <q3intdict.h>
 
 #include <kcmodule.h>
 
-class QListView;
-class QListViewItem;
-class QTextView;
+class Q3ListView;
+class Q3ListViewItem;
+class Q3TextView;
 
 
 class USBViewer : public KCModule
@@ -33,14 +33,14 @@ public:
 
 protected slots:
 
-  void selectionChanged(QListViewItem *item);
+  void selectionChanged(Q3ListViewItem *item);
   void refresh();
 
 private:
 
-  QIntDict<QListViewItem> _items;
-  QListView *_devices;
-  QTextView *_details;
+  Q3IntDict<Q3ListViewItem> _items;
+  Q3ListView *_devices;
+  Q3TextView *_details;
 };
 
 

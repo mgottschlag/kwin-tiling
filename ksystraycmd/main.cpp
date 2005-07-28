@@ -9,6 +9,9 @@
 #include "ksystraycmd.h"
 
 #include <X11/Xlib.h>
+//Added by qt3to4:
+#include <Q3CString>
+#include <QX11Info>
 #ifndef KDE_USE_FINAL
 const int XFocusOut = FocusOut;
 const int XFocusIn = FocusIn;
@@ -88,13 +91,14 @@ int main( int argc, char *argv[] )
   if ( !title.isEmpty() )
       cmd.setPattern( title );
 
-  if ( !title && !wid && (args->count() == 0) )
+#warning !QString? did that meant title.isEmpty?
+  if ( title.isEmpty() && wid.isEmpty() && (args->count() == 0) )
     KCmdLineArgs::usage(i18n("No command or window specified"));
 
   // Read the command
   QString command;
   for ( int i = 0; i < args->count(); i++ )
-    command += QCString( args->arg(i) ) + " ";
+    command += Q3CString( args->arg(i) ) + " ";
   if ( !command.isEmpty() )
       cmd.setCommand( command );
 
@@ -134,7 +138,7 @@ int main( int argc, char *argv[] )
       return 1;
   }
 
-  fcntl(ConnectionNumber(qt_xdisplay()), F_SETFD, 1);
+  fcntl(ConnectionNumber(QX11Info::display()), F_SETFD, 1);
   args->clear();
 
   return app.exec();

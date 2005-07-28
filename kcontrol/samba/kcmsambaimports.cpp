@@ -65,7 +65,7 @@ void ImportsView::updateList()
    list.clear();
    char *e;
    char buf[250];
-   QCString s(""),strSource, strMount, strType;
+   Q3CString s(""),strSource, strMount, strType;
    FILE *f=popen("mount","r");
    if (f==0) return;
    do
@@ -85,7 +85,7 @@ void ImportsView::updateList()
             int pos(strMount.find(" type "));
             if (pos==-1) pos=strMount.find(" read/");
             strMount=strMount.left(pos);
-            new QListViewItem(&list,strType,strSource,strMount);
+            new Q3ListViewItem(&list,strType,strSource,strMount);
          };
       };
    }

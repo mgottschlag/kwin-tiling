@@ -108,7 +108,7 @@ private:
   };
 
   void initAudioIOList();
-  QPtrList<AudioIOElement> audioIOList;
+  Q3PtrList<AudioIOElement> audioIOList;
 
   void restartServer();
   bool realtimeIsPossible();

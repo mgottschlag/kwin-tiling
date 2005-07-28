@@ -21,9 +21,9 @@ that is intentional :-]
 */
 
 
-#include <qheader.h>
+#include <q3header.h>
 #include <qstring.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qpoint.h>
 #include <qcursor.h>
 
@@ -79,7 +79,7 @@ void ModuleMenu::fill(KPopupMenu *parentMenu, const QString &parentPath)
   }
 
   ConfigModule *module;
-  QPtrList<ConfigModule> moduleList = _modules->modules(parentPath);
+  Q3PtrList<ConfigModule> moduleList = _modules->modules(parentPath);
   for (module=moduleList.first(); module != 0; module=moduleList.next())
   {
      // Item names may contain ampersands. To avoid them being converted to 

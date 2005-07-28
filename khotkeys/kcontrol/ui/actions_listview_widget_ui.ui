@@ -51,7 +51,7 @@
 <customwidgets>
     <customwidget>
         <class>KHotKeys::Actions_listview</class>
-        <header location="global">actions_listview_widget.h</header>
+        <header location="global">actions_listview.h</header>
         <sizehint>
             <width>-1</width>
             <height>-1</height>
@@ -72,15 +72,12 @@
     </image>
 </images>
 <forwards>
-    <forward>class QListViewItem;</forward>
+    <forward>class Q3ListViewItem;</forward>
 </forwards>
 <includes>
-    <include location="global" impldecl="in implementation">kdialog.h</include>
-    <include location="global" impldecl="in implementation">config.h</include>
+    <include location="global" impldecl="in declaration">kdialog.h</include>
+    <include location="global" impldecl="in declaration">config.h</include>
 </includes>
 <layoutdefaults spacing="6" margin="11"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-<includehints>
-    <includehint>khotkeys::actions_listview.h</includehint>
-</includehints>
 </UI>

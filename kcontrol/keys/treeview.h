@@ -24,7 +24,7 @@
 #include <qstring.h>
 #include <klistview.h>
 
-class QPopupMenu;
+class Q3PopupMenu;
 class KActionCollection;
 class KDesktopFile;
 
@@ -32,10 +32,10 @@ class AppTreeItem : public KListViewItem
 {
 
 public:
-    AppTreeItem(QListViewItem *parent, const QString& storageId);
-    AppTreeItem(QListViewItem *parent, QListViewItem *after, const QString& storageId);
-    AppTreeItem(QListView *parent, const QString& storageId);
-    AppTreeItem(QListView *parent, QListViewItem* after, const QString& storageId);
+    AppTreeItem(Q3ListViewItem *parent, const QString& storageId);
+    AppTreeItem(Q3ListViewItem *parent, Q3ListViewItem *after, const QString& storageId);
+    AppTreeItem(Q3ListView *parent, const QString& storageId);
+    AppTreeItem(Q3ListView *parent, Q3ListViewItem* after, const QString& storageId);
 
     QString storageId() const { return m_storageId; }
     void setDirectoryPath(const QString& path) { m_directoryPath = path; }
@@ -71,7 +71,7 @@ signals:
     void entrySelected(const QString&, const QString &, bool);
 
 protected slots:
-    void itemSelected(QListViewItem *);
+    void itemSelected(Q3ListViewItem *);
 
 protected:
     void fillBranch(const QString& relPath, AppTreeItem* parent);

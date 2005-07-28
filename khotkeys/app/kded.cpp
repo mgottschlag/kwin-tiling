@@ -31,9 +31,11 @@
 #include <input.h>
 #include <action_data.h>
 #include <gestures.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 extern "C" 
-KDE_EXPORT KDEDModule *create_khotkeys( const QCString& obj )
+KDE_EXPORT KDEDModule *create_khotkeys( const Q3CString& obj )
     {
     return new KHotKeys::KHotKeysModule( obj );
     }
@@ -43,7 +45,7 @@ namespace KHotKeys
 
 // KhotKeysModule
 
-KHotKeysModule::KHotKeysModule( const QCString& obj )
+KHotKeysModule::KHotKeysModule( const Q3CString& obj )
     : KDEDModule( obj )
     {
     for( int i = 0;
@@ -53,7 +55,7 @@ KHotKeysModule::KHotKeysModule( const QCString& obj )
         if( kapp->dcopClient()->isApplicationRegistered( "khotkeys" ))
             {
             QByteArray data, replyData;
-            QCString reply;
+            DCOPCString reply;
             // wait for it to finish
             kapp->dcopClient()->call( "khotkeys*", "khotkeys", "quit()", data, reply, replyData );
             sleep( 1 );

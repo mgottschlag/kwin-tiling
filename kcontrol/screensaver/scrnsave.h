@@ -10,6 +10,11 @@
 #define __SCRNSAVE_H__
 
 #include <qwidget.h>
+//Added by qt3to4:
+#include <QMouseEvent>
+#include <QLabel>
+#include <QResizeEvent>
+#include <QKeyEvent>
 #include <kcmodule.h>
 
 #include "kssmonitor.h"
@@ -24,8 +29,8 @@ class QSpinBox;
 class QSlider;
 class QCheckBox;
 class QLabel;
-class QListView;
-class QListViewItem;
+class Q3ListView;
+class Q3ListViewItem;
 class QPushButton;
 class KIntNumInput;
 class KProcess;
@@ -47,7 +52,7 @@ public:
 
 protected slots:
     void slotEnable( bool );
-    void slotScreenSaver( QListViewItem* );
+    void slotScreenSaver( Q3ListViewItem* );
     void slotSetup();
     void slotAdvanced();
     void slotTest();
@@ -80,7 +85,7 @@ protected:
     KSSMonitor  *mMonitor;
     QPushButton *mSetupBt;
     QPushButton *mTestBt;
-    QListView   *mSaverListView;
+    Q3ListView   *mSaverListView;
     QSpinBox	*mWaitEdit;
     QSpinBox    *mWaitLockEdit;
     QCheckBox   *mLockCheckBox;
@@ -93,8 +98,8 @@ protected:
     QStringList mSaverFileList;
     SaverList   mSaverList;
     QTimer      *mLoadTimer;
-    QGroupBox   *mSaverGroup;
-    QGroupBox   *mSettingsGroup;
+    Q3GroupBox   *mSaverGroup;
+    Q3GroupBox   *mSettingsGroup;
 
     int         mSelected;
     int         mPrevSelected;

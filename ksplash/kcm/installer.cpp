@@ -15,7 +15,15 @@
 #include <qdir.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qtextedit.h>
+#include <q3textedit.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3Frame>
+#include <QHBoxLayout>
+#include <QDropEvent>
+#include <QVBoxLayout>
+#include <QDragEnterEvent>
+#include <QMouseEvent>
 
 #include "installer.h"
 
@@ -36,8 +44,8 @@ ThemeListBox::ThemeListBox(QWidget *parent)
   : KListBox(parent)
 {
    setAcceptDrops(true);
-   connect(this, SIGNAL(mouseButtonPressed(int, QListBoxItem *, const QPoint &)),
-           this, SLOT(slotMouseButtonPressed(int, QListBoxItem *, const QPoint &)));
+   connect(this, SIGNAL(mouseButtonPressed(int, Q3ListBoxItem *, const QPoint &)),
+           this, SLOT(slotMouseButtonPressed(int, Q3ListBoxItem *, const QPoint &)));
 }
 
 void ThemeListBox::dragEnterEvent(QDragEnterEvent* event)
@@ -54,9 +62,9 @@ void ThemeListBox::dropEvent(QDropEvent* event)
    }
 }
 
-void ThemeListBox::slotMouseButtonPressed(int button, QListBoxItem *item, const QPoint &p)
+void ThemeListBox::slotMouseButtonPressed(int button, Q3ListBoxItem *item, const QPoint &p)
 {
-   if ((button & LeftButton) == 0) return;
+   if ((button & Qt::LeftButton) == 0) return;
    mOldPos = p;
    mDragFile = QString::null;
    int cur = index(item);
@@ -66,7 +74,7 @@ void ThemeListBox::slotMouseButtonPressed(int button, QListBoxItem *item, const 
 
 void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
 {
-   if (((e->state() & LeftButton) != 0) && !mDragFile.isEmpty())
+   if (((e->state() & Qt::LeftButton) != 0) && !mDragFile.isEmpty())
    {
       int delay = KGlobalSettings::dndEventDelay();
       QPoint newPos = e->globalPos();
@@ -121,13 +129,13 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
 
   mPreview = new QLabel(this);
   mPreview->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
-  mPreview->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+  mPreview->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
   mPreview->setMinimumSize(QSize(320,240));
   mPreview->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
   rightbox->addWidget(mPreview);
   rightbox->setStretchFactor( mPreview, 3 );
 
-  mText = new QTextEdit(this);
+  mText = new Q3TextEdit(this);
   mText->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred );
   mText->setMinimumSize(mText->sizeHint());
   mText->setReadOnly(true);
@@ -184,7 +192,7 @@ void SplashInstaller::addNewTheme(const KURL &srcURL)
 
   // Extract into theme directory: we may have multiple themes in one tarball!
   KTar tarFile(url.path());
-  if (!tarFile.open(IO_ReadOnly))
+  if (!tarFile.open(QIODevice::ReadOnly))
   {
     kdDebug() << "Unable to open archive: " << url.path() << endl;
     return;

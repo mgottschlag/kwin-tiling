@@ -23,11 +23,14 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlayout.h>
-#include <qwhatsthis.h>
+
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <kdebug.h>
+#include <kdialog.h>
 #include <klocale.h>
 #include <dcopclient.h>
 #include "../background/bgsettings.h"
@@ -45,7 +48,7 @@ KBackground::KBackground(QWidget *parent, const char *name)
 
     // Enabling checkbox
     m_pCBEnable = new QCheckBox( i18n("E&nable background"), this );
-    QWhatsThis::add( m_pCBEnable,
+    m_pCBEnable->setWhatsThis(
              i18n("If this is checked, KDM will use the settings below for the background."
 		" If it is disabled, you have to look after the background yourself."
 		" This is done by running some program (possibly xsetroot) in the script"

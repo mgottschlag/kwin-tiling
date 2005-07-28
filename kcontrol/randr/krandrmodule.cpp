@@ -16,17 +16,18 @@
  *  Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qcheckbox.h>
 #include <qdesktopwidget.h>
-#include <qhbox.h>
+#include <q3hbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
-#include <qvbox.h>
-#include <qvbuttongroup.h>
-#include <qwhatsthis.h>
 
+
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QtGui>
 #include <kcmodule.h>
 #include <kcombobox.h>
 #include <kdebug.h>
@@ -34,12 +35,13 @@
 #include <kgenericfactory.h>
 #include <kglobal.h>
 #include <klocale.h>
-
+#include <QDesktopWidget>
 #include "krandrmodule.h"
 #include "krandrmodule.moc"
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
+#include <QX11Info>
 
 // DLL Interface for kcontrol
 typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
@@ -55,7 +57,7 @@ extern "C"
 	KDE_EXPORT bool test_randr()
 	{
 	        int eventBase, errorBase;
-		if( XRRQueryExtension(qt_xdisplay(), &eventBase, &errorBase ) )
+		if( XRRQueryExtension(QX11Info::display(), &eventBase, &errorBase ) )
 			return true;
 		return false;
 	}
@@ -86,7 +88,9 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 
 	QVBoxLayout* topLayout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
-	QHBox* screenBox = new QHBox(this);
+	QWidget* screenBox = new QWidget(this);
+	QHBoxLayout *hboxLayout1 = new QHBoxLayout( screenBox );
+	 screenBox ->setLayout(hboxLayout1);
 	topLayout->addWidget(screenBox);
 	QLabel *screenLabel = new QLabel(i18n("Settings for screen:"), screenBox);
 	m_screenSelector = new KComboBox(screenBox);
@@ -97,44 +101,50 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 
 	m_screenSelector->setCurrentItem(currentScreenIndex());
         screenLabel->setBuddy( m_screenSelector );
-	QWhatsThis::add(m_screenSelector, i18n("The screen whose settings you would like to change can be selected using this drop-down list."));
+	m_screenSelector->setWhatsThis( i18n("The screen whose settings you would like to change can be selected using this drop-down list."));
 
 	connect(m_screenSelector, SIGNAL(activated(int)), SLOT(slotScreenChanged(int)));
 
 	if (numScreens() <= 1)
 		m_screenSelector->setEnabled(false);
 
-	QHBox* sizeBox = new QHBox(this);
+	QWidget* sizeBox = new QWidget(this);
+	QHBoxLayout *hboxLayout2 = new QHBoxLayout( sizeBox );
+	 sizeBox ->setLayout(hboxLayout2);
 	topLayout->addWidget(sizeBox);
 	QLabel *sizeLabel = new QLabel(i18n("Screen size:"), sizeBox);
 	m_sizeCombo = new KComboBox(sizeBox);
-	QWhatsThis::add(m_sizeCombo, i18n("The size, otherwise known as the resolution, of your screen can be selected from this drop-down list."));
+	m_sizeCombo->setWhatsThis( i18n("The size, otherwise known as the resolution, of your screen can be selected from this drop-down list."));
 	connect(m_sizeCombo, SIGNAL(activated(int)), SLOT(slotSizeChanged(int)));
         sizeLabel->setBuddy( m_sizeCombo );
 
-	QHBox* refreshBox = new QHBox(this);
+	QWidget* refreshBox = new QWidget(this);
+	QHBoxLayout *hboxLayout3 = new QHBoxLayout( refreshBox );
+	 refreshBox ->setLayout(hboxLayout3);
 	topLayout->addWidget(refreshBox);
 	QLabel *rateLabel = new QLabel(i18n("Refresh rate:"), refreshBox);
 	m_refreshRates = new KComboBox(refreshBox);
-	QWhatsThis::add(m_refreshRates, i18n("The refresh rate of your screen can be selected from this drop-down list."));
+	m_refreshRates->setWhatsThis( i18n("The refresh rate of your screen can be selected from this drop-down list."));
 	connect(m_refreshRates, SIGNAL(activated(int)), SLOT(slotRefreshChanged(int)));
         rateLabel->setBuddy( m_refreshRates );
 
-	m_rotationGroup = new QButtonGroup(2, Qt::Horizontal, i18n("Orientation (degrees counterclockwise)"), this);
+	m_rotationGroup = new Q3ButtonGroup(2, Qt::Horizontal, i18n("Orientation (degrees counterclockwise)"), this);
 	topLayout->addWidget(m_rotationGroup);
 	m_rotationGroup->setRadioButtonExclusive(true);
-	QWhatsThis::add(m_rotationGroup, i18n("The options in this section allow you to change the rotation of your screen."));
+	m_rotationGroup->setWhatsThis( i18n("The options in this section allow you to change the rotation of your screen."));
 
 	m_applyOnStartup = new QCheckBox(i18n("Apply settings on KDE startup"), this);
 	topLayout->addWidget(m_applyOnStartup);
-	QWhatsThis::add(m_applyOnStartup, i18n("If this option is enabled the size and orientation settings will be used when KDE starts."));
+	m_applyOnStartup->setWhatsThis( i18n("If this option is enabled the size and orientation settings will be used when KDE starts."));
 	connect(m_applyOnStartup, SIGNAL(clicked()), SLOT(setChanged()));
 
-	QHBox* syncBox = new QHBox(this);
+	QWidget* syncBox = new QWidget(this);
+	QHBoxLayout *hboxLayout4 = new QHBoxLayout( syncBox );
+	 syncBox ->setLayout(hboxLayout4);
 	syncBox->layout()->addItem(new QSpacerItem(20, 1, QSizePolicy::Maximum));
 	m_syncTrayApp = new QCheckBox(i18n("Allow tray application to change startup settings"), syncBox);
 	topLayout->addWidget(syncBox);
-	QWhatsThis::add(m_syncTrayApp, i18n("If this option is enabled, options set by the system tray applet will be saved and loaded when KDE starts instead of being temporary."));
+	m_syncTrayApp->setWhatsThis( i18n("If this option is enabled, options set by the system tray applet will be saved and loaded when KDE starts instead of being temporary."));
 	connect(m_syncTrayApp, SIGNAL(clicked()), SLOT(setChanged()));
 
 	topLayout->addStretch(1);

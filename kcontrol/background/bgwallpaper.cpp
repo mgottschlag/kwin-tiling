@@ -26,6 +26,9 @@
 #include <qevent.h>
 #include <qpushbutton.h>
 #include <qspinbox.h>
+//Added by qt3to4:
+#include <QDragEnterEvent>
+#include <QDropEvent>
 
 #include <kfiledialog.h>
 #include <kimageio.h>
@@ -40,10 +43,10 @@
 /**** BGMultiWallpaperList ****/
 
 BGMultiWallpaperList::BGMultiWallpaperList(QWidget *parent, const char *name)
-	: QListBox(parent, name)
+	: Q3ListBox(parent, name)
 {
    setAcceptDrops(true);
-   setSelectionMode(QListBox::Extended);
+   setSelectionMode(Q3ListBox::Extended);
 }
 
 
@@ -103,7 +106,7 @@ BGMultiWallpaperDialog::BGMultiWallpaperDialog(KBackgroundSettings *settings,
    setMainWidget(dlg);
 
    dlg->m_spinInterval->setRange(1, 99999);
-   dlg->m_spinInterval->setSteps(1, 15);
+   dlg->m_spinInterval->setSingleStep(15);
    dlg->m_spinInterval->setSuffix(i18n(" min"));
 
    // Load
@@ -118,14 +121,14 @@ BGMultiWallpaperDialog::BGMultiWallpaperDialog(KBackgroundSettings *settings,
    connect(dlg->m_buttonRemove, SIGNAL(clicked()), SLOT(slotRemove()));
    connect(dlg->m_buttonMoveUp, SIGNAL(clicked()), SLOT(slotMoveUp()));
    connect(dlg->m_buttonMoveDown, SIGNAL(clicked()), SLOT(slotMoveDown()));
-   connect(dlg->m_listImages,  SIGNAL(clicked ( QListBoxItem * )), SLOT(slotItemSelected( QListBoxItem *)));
+   connect(dlg->m_listImages,  SIGNAL(clicked ( Q3ListBoxItem * )), SLOT(slotItemSelected( Q3ListBoxItem *)));
    dlg->m_buttonRemove->setEnabled( false );
    dlg->m_buttonMoveUp->setEnabled( false );
    dlg->m_buttonMoveDown->setEnabled( false );
 
 }
 
-void BGMultiWallpaperDialog::slotItemSelected( QListBoxItem * )
+void BGMultiWallpaperDialog::slotItemSelected( Q3ListBoxItem * )
 {
     dlg->m_buttonRemove->setEnabled( dlg->m_listImages->hasSelection() );
     setEnabledMoveButtons();
@@ -134,7 +137,7 @@ void BGMultiWallpaperDialog::slotItemSelected( QListBoxItem * )
 void BGMultiWallpaperDialog::setEnabledMoveButtons()
 {
     bool hasSelection = dlg->m_listImages->hasSelection();
-    QListBoxItem * item;
+    Q3ListBoxItem * item;
 
     item = dlg->m_listImages->firstItem();
     dlg->m_buttonMoveUp->setEnabled( hasSelection && item && !item->isSelected() );
@@ -172,7 +175,7 @@ void BGMultiWallpaperDialog::slotRemove()
     int current = -1;
     for ( unsigned i = 0; i < dlg->m_listImages->count();)
     {
-        QListBoxItem * item = dlg->m_listImages->item( i );
+        Q3ListBoxItem * item = dlg->m_listImages->item( i );
         if ( item && item->isSelected())
         {
             dlg->m_listImages->removeItem(i);
@@ -194,7 +197,7 @@ void BGMultiWallpaperDialog::slotMoveUp()
 {
     for ( unsigned i = 1; i < dlg->m_listImages->count(); i++)
     {
-        QListBoxItem * item = dlg->m_listImages->item( i );
+        Q3ListBoxItem * item = dlg->m_listImages->item( i );
         if ( item && item->isSelected() )
         {
             dlg->m_listImages->takeItem( item );
@@ -209,7 +212,7 @@ void BGMultiWallpaperDialog::slotMoveDown()
 {
     for ( unsigned i = dlg->m_listImages->count() - 1; i > 0; i--)
     {
-        QListBoxItem * item = dlg->m_listImages->item( i - 1 );
+        Q3ListBoxItem * item = dlg->m_listImages->item( i - 1 );
         if ( item && item->isSelected())
         {
             dlg->m_listImages->takeItem( item );

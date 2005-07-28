@@ -205,7 +205,7 @@ process will be recursive.</string>
                                     <cstring>spacer4</cstring>
                                 </property>
                                 <property name="orientation">
-                                    <enum>Horizontal</enum>
+                                    <enum>Qt::Horizontal</enum>
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
@@ -265,7 +265,7 @@ process will be recursive.</string>
                                     <cstring>spacer1</cstring>
                                 </property>
                                 <property name="orientation">
-                                    <enum>Horizontal</enum>
+                                    <enum>Qt::Horizontal</enum>
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
@@ -282,7 +282,7 @@ process will be recursive.</string>
                                     <cstring>spacer5</cstring>
                                 </property>
                                 <property name="orientation">
-                                    <enum>Horizontal</enum>
+                                    <enum>Qt::Horizontal</enum>
                                 </property>
                                 <property name="sizeType">
                                     <enum>Expanding</enum>
@@ -301,7 +301,7 @@ process will be recursive.</string>
                             <cstring>spacer7</cstring>
                         </property>
                         <property name="orientation">
-                            <enum>Vertical</enum>
+                            <enum>Qt::Vertical</enum>
                         </property>
                         <property name="sizeType">
                             <enum>Expanding</enum>
@@ -322,6 +322,16 @@ process will be recursive.</string>
     <slot>radioButton2_2_toggled(bool)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
+<includes>
+    <include location="global" impldecl="in declaration">kpassdlg.h</include>
+</includes>
+<customwidgets>
+    <customwidget>
+        <class>KPasswordEdit</class>
+        <header location="global">kpassdlg.h</header>
+        <container>0</container>
+    </customwidget>
+</customwidgets>
 <includehints>
     <includehint>kcmodule.h</includehint>
     <includehint>keditlistbox.h</includehint>

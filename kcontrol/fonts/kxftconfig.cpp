@@ -26,6 +26,9 @@
 #include <qregexp.h>
 #include <qfile.h>
 #include <qpaintdevice.h>
+//Added by qt3to4:
+#include <Q3CString>
+#include <Q3PtrList>
 #include <klocale.h>
 #include <klargefile.h>
 #include <qdir.h>
@@ -47,7 +50,7 @@ QString KXftConfig::contractHome(QString path)
 
         if(path.startsWith(home))
         {
-            unsigned int len = home.length();
+            int len = home.length();
 
             if(path.length() == len || path[len] == '/')
                 return path.replace(0, len, QString::fromLatin1("~"));
@@ -117,7 +120,7 @@ static QString xDirSyntax(const QString &d)
 static bool check(const QString &path, unsigned int fmt, bool checkW=false)
 {
     KDE_struct_stat info;
-    QCString        pathC(QFile::encodeName(path));
+    Q3CString        pathC(QFile::encodeName(path));
 
     return 0==KDE_lstat(pathC, &info) && (info.st_mode&S_IFMT)==fmt && (!checkW || 0==::access(pathC, W_OK));
 }
@@ -381,7 +384,7 @@ static bool readNum(char **ptr, double *num)
     return false;
 }
 
-static KXftConfig::ListItem * getFirstItem(QPtrList<KXftConfig::ListItem> &list)
+static KXftConfig::ListItem * getFirstItem(Q3PtrList<KXftConfig::ListItem> &list)
 {
     KXftConfig::ListItem *cur;
 
@@ -392,7 +395,7 @@ static KXftConfig::ListItem * getFirstItem(QPtrList<KXftConfig::ListItem> &list)
 }
 #endif
 
-static KXftConfig::ListItem * getLastItem(QPtrList<KXftConfig::ListItem> &list)
+static KXftConfig::ListItem * getLastItem(Q3PtrList<KXftConfig::ListItem> &list)
 {
     KXftConfig::ListItem *cur;
 
@@ -478,7 +481,7 @@ bool KXftConfig::reset()
 #ifdef HAVE_FONTCONFIG
     QFile f(m_file);
 
-    if(f.open(IO_ReadOnly))
+    if(f.open(QIODevice::ReadOnly))
     {
         m_time=getTimeStamp(m_file);
         ok=true;
@@ -500,7 +503,7 @@ bool KXftConfig::reset()
     delete [] m_data;
     m_data=NULL;
 
-    if(f.open(IO_Raw|IO_ReadOnly))
+    if(f.open(IO_Raw|QIODevice::ReadOnly))
     {
         m_time=getTimeStamp(m_file);
         m_size=f.size();
@@ -964,7 +967,7 @@ bool KXftConfig::hasDir(const QString &d)
 #endif
 }
 
-KXftConfig::ListItem * KXftConfig::findItem(QPtrList<ListItem> &list, const QString &i)
+KXftConfig::ListItem * KXftConfig::findItem(Q3PtrList<ListItem> &list, const QString &i)
 {   
     ListItem *item;
 
@@ -975,7 +978,7 @@ KXftConfig::ListItem * KXftConfig::findItem(QPtrList<ListItem> &list, const QStr
     return item;
 }
 
-void KXftConfig::clearList(QPtrList<ListItem> &list)
+void KXftConfig::clearList(Q3PtrList<ListItem> &list)
 {
     ListItem *item;
 
@@ -983,7 +986,7 @@ void KXftConfig::clearList(QPtrList<ListItem> &list)
         removeItem(list, item);
 }
 
-QStringList KXftConfig::getList(QPtrList<ListItem> &list)
+QStringList KXftConfig::getList(Q3PtrList<ListItem> &list)
 {
     QStringList res;
     ListItem    *item;
@@ -995,7 +998,7 @@ QStringList KXftConfig::getList(QPtrList<ListItem> &list)
     return res;
 }
 
-void KXftConfig::addItem(QPtrList<ListItem> &list, const QString &i)
+void KXftConfig::addItem(Q3PtrList<ListItem> &list, const QString &i)
 {
     ListItem *item=findItem(list, i);
 
@@ -1012,7 +1015,7 @@ void KXftConfig::addItem(QPtrList<ListItem> &list, const QString &i)
         item->toBeRemoved=false;
 }
 
-void KXftConfig::removeItem(QPtrList<ListItem> &list, ListItem *item)
+void KXftConfig::removeItem(Q3PtrList<ListItem> &list, ListItem *item)
 {
     if(item)
     {
@@ -1409,7 +1412,7 @@ void KXftConfig::applyExcludeRange(bool pixel)
     }
 }
 
-void KXftConfig::removeItems(QPtrList<ListItem> &list)
+void KXftConfig::removeItems(Q3PtrList<ListItem> &list)
 {
     ListItem    *item;
     QDomElement docElem = m_doc.documentElement();

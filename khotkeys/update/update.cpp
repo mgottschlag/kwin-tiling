@@ -21,6 +21,8 @@
 #include <kdebug.h>
 
 #include <settings.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 using namespace KHotKeys;
 
@@ -39,7 +41,7 @@ int main( int argc, char* argv[] )
     KApplication::disableAutoDcopRegistration();
     KApplication app( false, true ); // X11 connection is necessary for KKey* stuff :-/
     KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
-    QCString id = args->getOption( "id" );
+    Q3CString id = args->getOption( "id" );
     QString file = locate( "data", "khotkeys/" + id + ".khotkeys" );
     if( file.isEmpty())
         {

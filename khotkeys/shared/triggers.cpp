@@ -32,6 +32,8 @@
 #include "input.h"
 #include "gestures.h"
 #include "windows.h"
+//Added by qt3to4:
+#include <Q3PtrList>
 
 namespace KHotKeys
 {
@@ -59,7 +61,7 @@ Trigger* Trigger::create_cfg_read( KConfig& cfg_P, Action_data* data_P )
 // Trigger_list
 
 Trigger_list::Trigger_list( KConfig& cfg_P, Action_data* data_P )
-    : QPtrList< Trigger >()
+    : Q3PtrList< Trigger >()
     {
     setAutoDelete( true );
     _comment = cfg_P.readEntry( "Comment" );

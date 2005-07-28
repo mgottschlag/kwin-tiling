@@ -18,7 +18,9 @@
 
 */
 
-#include <qlistview.h>
+#include <q3listview.h>
+//Added by qt3to4:
+#include <QResizeEvent>
 
 
 #include "indexwidget.h"
@@ -26,8 +28,8 @@
 #include "moduletreeview.h"
 #include "moduleiconview.h"
 
-IndexWidget::IndexWidget(ConfigModuleList *modules, QWidget *parent ,const char *name)
-  : QWidgetStack(parent, name)
+IndexWidget::IndexWidget(ConfigModuleList *modules, QWidget *parent ,const char *)
+  : QStackedWidget(parent)
   , _tree(0L)
   , _icon(0L)
   , _modules(modules)
@@ -44,18 +46,12 @@ void IndexWidget::reload()
     _icon->fill();
 }
 
-QListViewItem *IndexWidget::firstTreeViewItem()
+Q3ListViewItem *IndexWidget::firstTreeViewItem()
 {
   if (_tree)
     return _tree->firstChild();
   else
 	return 0L;
-}
-
-
-void IndexWidget::resizeEvent(QResizeEvent *e)
-{
-  QWidgetStack::resizeEvent( e );
 }
 
 void IndexWidget::moduleSelected(ConfigModule *m)
@@ -120,23 +116,25 @@ void IndexWidget::activateView(IndexViewMode mode)
     if (!_icon)
     {
       _icon=new ModuleIconView(_modules, this);
+      addWidget (_icon);
       _icon->fill();
 	  connect(_icon, SIGNAL(moduleSelected(ConfigModule*)),
 		  this, SLOT(moduleSelected(ConfigModule*)));
     }
-    raiseWidget( _icon );
+    setCurrentWidget( _icon );
   }
   else
   {
     if (!_tree)
     {
       _tree=new ModuleTreeView(_modules, this);
+      addWidget (_tree);
       _tree->fill();
       connect(_tree, SIGNAL(moduleSelected(ConfigModule*)),
 		  this, SLOT(moduleSelected(ConfigModule*)));
-	  connect(_tree, SIGNAL(categorySelected(QListViewItem*)),
-		  this, SIGNAL(categorySelected(QListViewItem*)));
+	  connect(_tree, SIGNAL(categorySelected(Q3ListViewItem*)),
+		  this, SIGNAL(categorySelected(Q3ListViewItem*)));
     }
-    raiseWidget( _tree );
+    setCurrentWidget( _tree );
   }
 }

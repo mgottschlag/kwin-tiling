@@ -6,8 +6,10 @@
 #endif
 
 #include <qstring.h>
-#include <qvaluevector.h>
+#include <q3valuevector.h>
 #include <qfont.h>
+//Added by qt3to4:
+#include <QPixmap>
 #include <kurl.h>
 #include <kdeversion.h>
 #include <fontconfig/fontconfig.h>
@@ -64,7 +66,7 @@ class KDE_EXPORT CFcEngine
                     QString &spacing, QString &slant);
     QFont   getQFont(const QString &name, int size);
 
-    const QValueVector<int> & sizes() const { return itsSizes; }
+    const Q3ValueVector<int> & sizes() const { return itsSizes; }
     int                       alphaSize() const { return itsAlphaSize; }
 
     static QString getPreviewString();
@@ -108,7 +110,7 @@ class KDE_EXPORT CFcEngine
                       itsSlant,
                       itsSpacing,
                       itsAlphaSize;
-    QValueVector<int> itsSizes;
+    Q3ValueVector<int> itsSizes;
     KURL              itsLastUrl;
     FcBool            itsScalable;
 };

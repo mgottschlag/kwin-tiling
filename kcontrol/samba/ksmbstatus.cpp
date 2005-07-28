@@ -53,7 +53,7 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
         KDialog::spacingHint());
     topLayout->setAutoAdd(true);
 
-    list=new QListView(this,"Hello");
+    list=new Q3ListView(this,"Hello");
     version=new QLabel(this);
 
     list->setAllColumnsShowFocus(true);
@@ -76,14 +76,14 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
 
 void NetMon::processNFSLine(char *bufline, int)
 {
-   QCString line(bufline);
+   Q3CString line(bufline);
    if (line.contains(":/"))
-      new QListViewItem(list,"NFS",After(":",line),Before(":/",line));
+      new Q3ListViewItem(list,"NFS",After(":",line),Before(":/",line));
 }
 
 void NetMon::processSambaLine(char *bufline, int)
 {
-   QCString line(bufline);
+   Q3CString line(bufline);
    rownumber++;
    if (rownumber == 2)
       version->setText(bufline); // second line = samba version
@@ -107,7 +107,7 @@ void NetMon::processSambaLine(char *bufline, int)
 
       line=line.mid(iMachine,line.length());
       strMachine=line;
-      new QListViewItem(list,"SMB",strShare,strMachine, strUser,strGroup,strPid/*,strSince*/);
+      new Q3ListViewItem(list,"SMB",strShare,strMachine, strUser,strGroup,strPid/*,strSince*/);
    }
    else if (readingpart==connexions)
       readingpart=locked_files;
@@ -185,7 +185,7 @@ void NetMon::update()
    else
    {
       // ok -> count the number of locked files for each pid
-      for (QListViewItem *row=list->firstChild();row!=0;row=row->itemBelow())
+      for (Q3ListViewItem *row=list->firstChild();row!=0;row=row->itemBelow())
       {
 //         cerr<<"NetMon::update: this should be the pid: "<<row->text(5)<<endl;
          int pid=row->text(5).toInt();

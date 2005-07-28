@@ -22,14 +22,11 @@
 #include <qtimer.h>
 #include <qlabel.h>
 #include <kprocess.h>
-#include <qcstring.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <kconfig.h>
 
 #define SCREEN_XY_OFFSET 20
 
-class QListView;
-class QListViewItem;
 class KProcess;
 
 class NetMon : public QWidget
@@ -42,10 +39,10 @@ public:
 private:
    KConfig *configFile;
    KProcess *showmountProc;
-   QListView *list;
+   Q3ListView *list;
    QLabel *version;
    QTimer *timer;
-   QListViewItem *killrow;
+   Q3ListViewItem *killrow;
    int rownumber;
    enum {header, connexions, locked_files, finished, nfs} readingpart;
    int lo[65536];
@@ -53,7 +50,7 @@ private:
    void processNFSLine(char *bufline, int linelen);
    void processSambaLine(char *bufline, int linelen);
 
-   QCString strShare, strUser, strGroup, strMachine, strSince, strPid;
+   Q3CString strShare, strUser, strGroup, strMachine, strSince, strPid;
    int iUser, iGroup, iMachine, iPid;
 
 private slots:

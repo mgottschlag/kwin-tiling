@@ -10,9 +10,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qapplication.h>
 #include <qlayout.h>
 #include <qgroupbox.h>
-#include <qvbuttongroup.h>
 #include <qlabel.h>
-#include <qvbox.h>
 #include <qtimer.h>
 #include <qstyle.h>
 #include <qcombobox.h>
@@ -20,7 +18,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qmessagebox.h>
 #include <qbuttongroup.h>
 #include <qiconset.h>
-#include <qpopupmenu.h>
+#include <Q3PopupMenu>
 
 #include <klocale.h>
 #include <kapplication.h>
@@ -45,14 +43,16 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <X11/Xlib.h>
 
 #include "shutdown.moc"
+#include <QX11Info>
+#include <QDesktopWidget>
 
 KSMShutdownFeedback * KSMShutdownFeedback::s_pSelf = 0L;
 
 KSMShutdownFeedback::KSMShutdownFeedback()
- : QWidget( 0L, "feedbackwidget", WType_Popup ),
+ : QWidget( 0L, "feedbackwidget", Qt::Popup ),
    m_currentY( 0 )
 {
-    setBackgroundMode( QWidget::NoBackground );
+    setBackgroundMode( Qt::NoBackground );
     setGeometry( QApplication::desktop()->geometry() );
     QTimer::singleShot( 10, this, SLOT( slotPaintEffect() ) );
 }
@@ -64,7 +64,7 @@ void KSMShutdownFeedback::slotPaintEffect()
         return;
 
     KPixmap pixmap;
-    pixmap = QPixmap::grabWindow( qt_xrootwin(), 0, m_currentY, width(), 10 );
+    pixmap = QPixmap::grabWindow( QX11Info::appRootWindow(), 0, m_currentY, width(), 10 );
     pixmap = KPixmapEffect::fade( pixmap, 0.4, Qt::black );
     pixmap = KPixmapEffect::toGray( pixmap, true );
     bitBlt( this, 0, m_currentY, &pixmap );
@@ -76,14 +76,14 @@ void KSMShutdownFeedback::slotPaintEffect()
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, KApplication::ShutdownType sdtype )
-  : QDialog( parent, 0, TRUE, WType_Popup ), targets(0)
+  : QDialog( parent, 0, TRUE, Qt::Popup ), targets(0)
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
     QVBoxLayout* vbox = new QVBoxLayout( this );
     QFrame* frame = new QFrame( this );
     frame->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
-    frame->setLineWidth( style().pixelMetric( QStyle::PM_DefaultFrameWidth, frame ) );
+    frame->setLineWidth( style()->pixelMetric( QStyle::PM_DefaultFrameWidth, 0, frame ) );
     vbox->addWidget( frame );
     vbox = new QVBoxLayout( frame, 2 * KDialog::marginHint(),
                             2 * KDialog::spacingHint() );
@@ -93,14 +93,14 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     fnt.setBold( true );
     fnt.setPointSize( fnt.pointSize() * 3 / 2 );
     label->setFont( fnt );
-    vbox->addWidget( label, 0, AlignHCenter );
+    vbox->addWidget( label, 0, Qt::AlignHCenter );
 
     QHBoxLayout* hbox = new QHBoxLayout( vbox, 2 * KDialog::spacingHint() );
 
     // konqy
     QFrame* lfrm = new QFrame( frame );
     lfrm->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-    hbox->addWidget( lfrm, AlignCenter );
+    hbox->addWidget( lfrm, Qt::AlignCenter );
 
     QLabel* icon = new QLabel( lfrm );
     icon->setPixmap( UserIcon( "shutdownkonq" ) );
@@ -140,7 +140,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
         int def, cur;
         if ( DM().bootOptions( rebootOptions, def, cur ) ) {
-	  targets = new QPopupMenu( frame );
+	  targets = new Q3PopupMenu( frame );
 	  if ( cur == -1 )
 	    cur = def;
 
@@ -237,10 +237,11 @@ KSMDelayedPushButton::KSMDelayedPushButton( const KGuiItem &item,
   connect(popt, SIGNAL(timeout()), SLOT(slotTimeout()));
 }
 
-void KSMDelayedPushButton::setPopup(QPopupMenu *p)
+void KSMDelayedPushButton::setPopup(Q3PopupMenu *p)
 {
   pop = p;
-  setIsMenuButton(p != 0);
+  if ( p!=0 )
+	  setPopup(p);
 }
 
 void KSMDelayedPushButton::slotPressed()

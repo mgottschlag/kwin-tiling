@@ -11,6 +11,9 @@
 
 #include <qcolor.h>
 #include <qevent.h>
+//Added by qt3to4:
+#include <QMouseEvent>
+#include <Q3Frame>
 
 #include "gesturerecorder.h"
 
@@ -18,10 +21,10 @@ namespace KHotKeys
 {
 
 GestureRecorder::GestureRecorder(QWidget *parent, const char *name)
-  : QFrame(parent, name), _mouseButtonDown(false)
+  : Q3Frame(parent, name), _mouseButtonDown(false)
     {
     setBackgroundColor( colorGroup().base());
-    setFrameStyle(QFrame::Sunken | QFrame::Panel);
+    setFrameStyle(Q3Frame::Sunken | Q3Frame::Panel);
     setLineWidth(2);
     setMidLineWidth(0);
     }
@@ -32,7 +35,7 @@ GestureRecorder::~GestureRecorder()
 
 void GestureRecorder::mousePressEvent(QMouseEvent *ev)
     {
-    if (ev->button() == QMouseEvent::LeftButton)
+    if (ev->button() == Qt::LeftButton)
         {
         _mouseButtonDown = true;
         stroke.reset();
@@ -43,7 +46,7 @@ void GestureRecorder::mousePressEvent(QMouseEvent *ev)
 
 void GestureRecorder::mouseReleaseEvent(QMouseEvent *ev)
     {
-    if ((ev->button() == QMouseEvent::LeftButton) && (_mouseButtonDown))
+    if ((ev->button() == Qt::LeftButton) && (_mouseButtonDown))
         {
         QPoint pos = ev->pos();
         stroke.record(pos.x(), pos.y());

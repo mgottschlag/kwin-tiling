@@ -23,11 +23,15 @@
 #define __treeview_h__
 
 #include <qstring.h>
+//Added by qt3to4:
+#include <QMenu>
+#include <QDropEvent>
 #include <klistview.h>
 #include <kservice.h>
 #include <kservicegroup.h>
+#include <QMenu>
 
-class QPopupMenu;
+class QMenu;
 class KActionCollection;
 class KDesktopFile;
 class MenuFile;
@@ -36,11 +40,11 @@ class MenuEntryInfo;
 class MenuSeparatorInfo;
 class KShortcut;
 
-class TreeItem : public QListViewItem
+class TreeItem : public Q3ListViewItem
 {
 public:
-  TreeItem(QListViewItem *parent, QListViewItem *after, const QString &menuIdn, bool __init = false);
-    TreeItem(QListView *parent, QListViewItem* after, const QString &menuId, bool __init = false);
+  TreeItem(Q3ListViewItem *parent, Q3ListViewItem *after, const QString &menuIdn, bool __init = false);
+    TreeItem(Q3ListView *parent, Q3ListViewItem* after, const QString &menuId, bool __init = false);
 
     QString menuId() const { return _menuId; }
 
@@ -112,9 +116,9 @@ signals:
     void entrySelected(MenuEntryInfo *entryInfo);
     void disableAction();
 protected slots:
-    void itemSelected(QListViewItem *);
-    void slotDropped(QDropEvent *, QListViewItem *, QListViewItem *);
-    void slotRMBPressed(QListViewItem*, const QPoint&);
+    void itemSelected(Q3ListViewItem *);
+    void slotDropped(QDropEvent *, Q3ListViewItem *, Q3ListViewItem *);
+    void slotRMBPressed(Q3ListViewItem*, const QPoint&);
 
     void newsubmenu();
     void newitem();
@@ -126,16 +130,16 @@ protected slots:
     void del();
 
 protected:
-    TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuFolderInfo *folderInfo, bool _init = false);
-    TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuEntryInfo *entryInfo, bool _init = false);
-    TreeItem *createTreeItem(TreeItem *parent, QListViewItem *after, MenuSeparatorInfo *sepInfo, bool _init = false);
+    TreeItem *createTreeItem(TreeItem *parent, Q3ListViewItem *after, MenuFolderInfo *folderInfo, bool _init = false);
+    TreeItem *createTreeItem(TreeItem *parent, Q3ListViewItem *after, MenuEntryInfo *entryInfo, bool _init = false);
+    TreeItem *createTreeItem(TreeItem *parent, Q3ListViewItem *after, MenuSeparatorInfo *sepInfo, bool _init = false);
 
     void del(TreeItem *, bool deleteInfo);
     void fill();
     void fillBranch(MenuFolderInfo *folderInfo, TreeItem *parent);
     QString findName(KDesktopFile *df, bool deleted);
 
-    void closeAllItems(QListViewItem *item);
+    void closeAllItems(Q3ListViewItem *item);
 
     // moving = src will be removed later
     void copy( bool moving );
@@ -150,12 +154,12 @@ protected:
     QStringList dirList(const QString& relativePath);
 
     virtual bool acceptDrag(QDropEvent* event) const;
-    virtual QDragObject *dragObject();
+    virtual Q3DragObject *dragObject();
     virtual void startDrag();
 
 private:
     KActionCollection *m_ac;
-    QPopupMenu        *m_rmb;
+    QMenu        *m_rmb;
     int                m_clipboard;
     MenuFolderInfo    *m_clipboardFolderInfo;
     MenuEntryInfo     *m_clipboardEntryInfo;

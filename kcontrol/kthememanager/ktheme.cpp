@@ -41,12 +41,13 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301  USA
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
+#include <QX11Info>
 
                              KTheme::KTheme( QWidget *parent, const QString & xmlFile )
                                  : m_parent(parent)
 {
     QFile file( xmlFile );
-    file.open( IO_ReadOnly );
+    file.open( QIODevice::ReadOnly );
     m_dom.setContent( file.readAll() );
     file.close();
 
@@ -99,13 +100,13 @@ bool KTheme::load( const KURL & url )
     // unpack the tarball
     QString location = m_kgd->saveLocation( "themes",  m_name + "/" );
     KTar tar( tmpFile );
-    tar.open( IO_ReadOnly );
+    tar.open( QIODevice::ReadOnly );
     tar.directory()->copyTo( location );
     tar.close();
 
     // create the DOM
     QFile file( location + m_name + ".xml" );
-    file.open( IO_ReadOnly );
+    file.open( QIODevice::ReadOnly );
     m_dom.setContent( file.readAll() );
     file.close();
 
@@ -343,7 +344,7 @@ QString KTheme::createYourself( bool pack )
 
     // Save the XML
     QFile file( m_kgd->saveLocation( "themes", m_name + "/" ) + m_name + ".xml" );
-    if ( file.open( IO_WriteOnly ) ) {
+    if ( file.open( QIODevice::WriteOnly ) ) {
         QTextStream stream( &file );
         m_dom.save( stream, 2 );
         file.close();
@@ -354,7 +355,7 @@ QString KTheme::createYourself( bool pack )
     {
         // Pack the whole theme
         KTar tar( m_kgd->saveLocation( "themes" ) + m_name + ".kth", "application/x-gzip" );
-        tar.open( IO_WriteOnly );
+        tar.open( QIODevice::WriteOnly );
 
         kdDebug() << "Packing everything under: " << m_kgd->saveLocation( "themes", m_name + "/" ) << endl;
 
@@ -382,7 +383,7 @@ void KTheme::apply()
     KConfig desktopConf( "kdesktoprc" );
     desktopConf.setGroup( "Background Common" );
 
-    for ( uint i = 0; i <= desktopList.count(); i++ )
+    for ( int i = 0; i <= desktopList.count(); i++ )
     {
         QDomElement desktopElem = desktopList.item( i ).toElement();
         if ( !desktopElem.isNull() )
@@ -424,7 +425,8 @@ void KTheme::apply()
     DCOPClient *client = kapp->dcopClient();
     if ( !client->isAttached() )
         client->attach();
-    client->send("kdesktop", "KBackgroundIface", "configure()", "");
+	QByteArray data;
+    client->send("kdesktop", "KBackgroundIface", "configure()", data);
     // FIXME Xinerama
 
     // 3. Icons
@@ -436,7 +438,7 @@ void KTheme::apply()
         iconConf->writeEntry( "Theme", iconElem.attribute( "name", "crystalsvg" ), true, true );
 
         QDomNodeList iconList = iconElem.childNodes();
-        for ( uint i = 0; i < iconList.count(); i++ )
+        for ( int i = 0; i < iconList.count(); i++ )
         {
             QDomElement iconSubElem = iconList.item( i ).toElement();
             QString object = iconSubElem.attribute( "object" );
@@ -478,7 +480,7 @@ void KTheme::apply()
         KConfig soundConf( "knotify.eventsrc" );
         KConfig kwinSoundConf( "kwin.eventsrc" );
         QDomNodeList eventList = soundsElem.elementsByTagName( "event" );
-        for ( uint i = 0; i < eventList.count(); i++ )
+        for ( int i = 0; i < eventList.count(); i++ )
         {
             QDomElement eventElem = eventList.item( i ).toElement();
             QString object = eventElem.attribute( "object" );
@@ -499,7 +501,8 @@ void KTheme::apply()
 
         soundConf.sync();
         kwinSoundConf.sync();
-        client->send("knotify", "", "reconfigure()", "");
+		QByteArray data;
+        client->send("knotify", "", "reconfigure()", data);
         // TODO signal kwin sounds change?
     }
 
@@ -515,7 +518,7 @@ void KTheme::apply()
         KSimpleConfig *colorScheme = new KSimpleConfig( sCurrentScheme );
         colorScheme->setGroup("Color Scheme" );
 
-        for ( uint i = 0; i < colorList.count(); i++ )
+        for ( int i = 0; i < colorList.count(); i++ )
         {
             QDomElement colorElem = colorList.item( i ).toElement();
             QString object = colorElem.attribute( "object" );
@@ -576,7 +579,7 @@ void KTheme::apply()
         kwinConf.writeEntry( "BorderSize", getProperty( wmElem, "border", "size" ) );
 
         kwinConf.sync();
-        client->send( "kwin", "", "reconfigure()", "" );
+        client->send( DCOPCString("kwin"), DCOPCString(""), DCOPCString("reconfigure()"), DCOPCString("") );
     }
 
     // 8. Konqueror
@@ -590,7 +593,8 @@ void KTheme::apply()
         konqConf.writeEntry( "BgColor", QColor( getProperty( konqElem, "bgcolor", "rgb" ) ) );
 
         konqConf.sync();
-        client->send("konqueror*", "KonquerorIface", "reparseConfiguration()", ""); // FIXME seems not to work :(
+		QByteArray data;
+        client->send("konqueror*", "KonquerorIface", "reparseConfiguration()", data); // FIXME seems not to work :(
     }
 
     // 9. Kicker
@@ -612,7 +616,8 @@ void KTheme::apply()
                                static_cast<bool>( getProperty( panelElem, "transparent", "value" ).toUInt() ) );
 
         kickerConf.sync();
-        client->send("kicker", "Panel", "configure()", "");
+		QByteArray data;
+        client->send("kicker", "Panel", "configure()", data);
     }
 
     // 10. Widget style
@@ -636,7 +641,7 @@ void KTheme::apply()
         kde1xConf->setGroup( "General" );
 
         QDomNodeList fontList = fontsElem.childNodes();
-        for ( uint i = 0; i < fontList.count(); i++ )
+        for ( int i = 0; i < fontList.count(); i++ )
         {
             QDomElement fontElem = fontList.item( i ).toElement();
             QString fontName  = fontElem.tagName();
@@ -844,7 +849,7 @@ void KTheme::addPreview()
 {
     QString file = m_kgd->saveLocation( "themes", m_name + "/" ) + m_name + ".preview.png";
     kdDebug() << "Adding preview: " << file << endl;
-    QPixmap snapshot = QPixmap::grabWindow( qt_xrootwin() );
+    QPixmap snapshot = QPixmap::grabWindow( QX11Info::appRootWindow() );
     snapshot.save( file, "PNG" );
 }
 

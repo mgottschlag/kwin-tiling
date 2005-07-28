@@ -23,8 +23,8 @@
 #ifndef BGADVANCED_H
 #define BGADVANCED_H
 
-#include <qdict.h>
-#include <qlistview.h>
+#include <q3dict.h>
+#include <q3listview.h>
 #include <qstringlist.h>
 
 #include <kdialogbase.h>
@@ -70,8 +70,8 @@ protected:
    void selectProgram(const QString &name);
 
 protected slots:
-   void slotProgramItemClicked(QListViewItem *item);
-   void slotProgramItemDoubleClicked(QListViewItem *item);
+   void slotProgramItemClicked(Q3ListViewItem *item);
+   void slotProgramItemDoubleClicked(Q3ListViewItem *item);
    void slotProgramChanged();
    void slotEnableProgram(bool b);
 
@@ -81,7 +81,7 @@ private:
    BGAdvancedBase *dlg;
 
    QWidget *m_pMonitor;
-   QDict<QListViewItem> m_programItems;
+   Q3Dict<Q3ListViewItem> m_programItems;
    QString m_selectedProgram;
    int m_oldBackgroundMode;
 };

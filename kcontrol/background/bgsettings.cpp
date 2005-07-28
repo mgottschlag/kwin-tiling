@@ -18,6 +18,8 @@
 
 #include <qdir.h>
 #include <qpixmap.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include <dcopclient.h>
 #include <kapplication.h>
@@ -29,17 +31,18 @@
 
 #include "bgdefaults.h"
 #include "bgsettings.h"
+#include <QX11Info>
 
 
 /*
  * QString -> int hash. From Qt's QGDict::hashKeyString().
  */
 
-static int QHash(QString key)
+static int BGHash(QString key)
 {
     int g, h = 0;
     const QChar *p = key.unicode();
-    for (unsigned i=0; i < key.length(); i++) {
+    for (int i=0; i < key.length(); i++) {
         h = (h << 4) + p[i].cell();
         if ((g = (h & 0xf0000000)))
             h ^= (g >> 24);
@@ -187,7 +190,7 @@ QString KBackgroundPattern::fingerprint()
 int KBackgroundPattern::hash()
 {
     if (hashdirty) {
-	m_Hash = QHash(fingerprint());
+	m_Hash = BGHash(fingerprint());
 	hashdirty = false;
     }
     return m_Hash;
@@ -398,7 +401,7 @@ QString KBackgroundProgram::fingerprint()
 int KBackgroundProgram::hash()
 {
     if (hashdirty) {
-	m_Hash = QHash(fingerprint());
+	m_Hash = BGHash(fingerprint());
 	hashdirty = false;
     }
     return m_Hash;
@@ -506,9 +509,9 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
 
     if (!config) {
         int screen_number = 0;
-        if (qt_xdisplay())
-            screen_number = DefaultScreen(qt_xdisplay());
-        QCString configname;
+        if (QX11Info::display())
+            screen_number = DefaultScreen(QX11Info::display());
+        Q3CString configname;
         if (screen_number == 0)
             configname = "kdesktoprc";
         else
@@ -896,10 +899,8 @@ void KBackgroundSettings::randomizeWallpaperFiles()
    tmpList.pop_front();
    while(tmpList.count())
    {
-      randomList.insert(randomList.at(
-         rseq.getLong(randomList.count()+1)),
-         1, tmpList.front());
-
+      long t = rseq.getLong(randomList.count()+1);
+      randomList.insert(t, tmpList.front());
       tmpList.pop_front();
    }
    m_WallpaperFiles = randomList;
@@ -1041,7 +1042,7 @@ QString KBackgroundSettings::fingerprint()
 int KBackgroundSettings::hash()
 {
     if (hashdirty) {
-        m_Hash = QHash(fingerprint());
+        m_Hash = BGHash(fingerprint());
 	hashdirty = false;
     }
     return m_Hash;
@@ -1185,7 +1186,7 @@ void KGlobalBackgroundSettings::readSettings()
     m_textWidth = m_pConfig->readNumEntry("TextWidth", DEFAULT_TEXTWIDTH);
 
     m_Names.clear();
-    NETRootInfo info( qt_xdisplay(), NET::DesktopNames | NET::NumberOfDesktops );
+    NETRootInfo info( QX11Info::display(), NET::DesktopNames | NET::NumberOfDesktops );
     for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
       m_Names.append( QString::fromUtf8(info.desktopName(i+1)) );
 

@@ -21,24 +21,27 @@
 #define __moduletreeview_h__
 
 #include <qpalette.h>
-#include <qptrlist.h>
-#include <qlistview.h>
+#include <q3ptrlist.h>
+#include <q3listview.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QKeyEvent>
 #include <klistview.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 
 class ConfigModule;
 class ConfigModuleList;
 class QPainter;
 
-class ModuleTreeItem : public QListViewItem
+class ModuleTreeItem : public Q3ListViewItem
 {
 
 public:
-  ModuleTreeItem(QListViewItem *parent, ConfigModule *module = 0);
-  ModuleTreeItem(QListViewItem *parent, const QString& text);
-  ModuleTreeItem(QListView *parent, ConfigModule *module = 0);
-  ModuleTreeItem(QListView *parent, const QString& text);
+  ModuleTreeItem(Q3ListViewItem *parent, ConfigModule *module = 0);
+  ModuleTreeItem(Q3ListViewItem *parent, const QString& text);
+  ModuleTreeItem(Q3ListView *parent, ConfigModule *module = 0);
+  ModuleTreeItem(Q3ListView *parent, const QString& text);
 
   void setTag(const QString& tag) { _tag = tag; }
   void setCaption(const QString& caption) { _caption = caption; }
@@ -76,10 +79,10 @@ public:
 
 signals:
   void moduleSelected(ConfigModule*);
-  void categorySelected(QListViewItem*);
+  void categorySelected(Q3ListViewItem*);
 
 protected slots:
-  void slotItemSelected(QListViewItem*);
+  void slotItemSelected(Q3ListViewItem*);
 
 protected:
   void updateItem(ModuleTreeItem *item, ConfigModule* module); 

@@ -24,6 +24,9 @@
 
 #include <qobject.h>
 #include <qdom.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QEvent>
 
 class KdmThemer;
 class KdmItem;

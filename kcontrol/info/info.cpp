@@ -27,9 +27,13 @@
 	be copied to kde/applnk/Settings/Information !!
 */
 
-#include <qheader.h>
-#include <qwhatsthis.h>
+#include <q3header.h>
+
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QTextStream>
 
 #include <kglobalsettings.h>
 #include <kiconloader.h>
@@ -119,7 +123,7 @@ static struct _event_table {
     { 0L, 0 }};
 
 
-static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewItem *last,
+static Q3ListViewItem* XServer_fill_screen_info( Q3ListViewItem *lBox, Q3ListViewItem *last,
 	    Display *dpy, int scr, int default_scr)
 {
     unsigned	width, height;
@@ -128,7 +132,7 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
 		ndepths,
 		*depths;
     Screen 	*s = ScreenOfDisplay(dpy,scr);  /* opaque structure */
-    QListViewItem *item;
+    Q3ListViewItem *item;
 
     /*
      * there are 2.54 centimeters to an inch; so there are 25.4 millimeters.
@@ -141,19 +145,19 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
     xres = ((double)(DisplayWidth(dpy,scr) *25.4)/DisplayWidthMM(dpy,scr) );
     yres = ((double)(DisplayHeight(dpy,scr)*25.4)/DisplayHeightMM(dpy,scr));
 
-    item = new QListViewItem(lBox,last, i18n("Screen # %1").arg((int)scr,-1),
+    item = new Q3ListViewItem(lBox,last, i18n("Screen # %1").arg((int)scr,-1),
 		(scr==default_scr) ? i18n("(Default Screen)") : QString::null );
     item->setExpandable(true);
     if (scr==default_scr)
 	item->setOpen(true);
-    last = new QListViewItem(item, i18n("Dimensions"),
+    last = new Q3ListViewItem(item, i18n("Dimensions"),
 		i18n("%1 x %2 Pixel (%3 x %4 mm)")
 		.arg( (int)DisplayWidth(dpy,scr) )
 		.arg( (int)DisplayHeight(dpy,scr) )
 		.arg( (int)DisplayWidthMM(dpy,scr) )
 		.arg( (int)DisplayHeightMM (dpy,scr) ));
 
-    last = new QListViewItem(item, last, i18n("Resolution"),
+    last = new Q3ListViewItem(item, last, i18n("Resolution"),
 		i18n("%1 x %2 dpi")
 		.arg( (int)(xres+0.5) )
 		.arg( (int)(yres+0.5) ));
@@ -170,31 +174,31 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
                 txt = txt + QString::fromLatin1(", ");
         }
 
-        last = new QListViewItem(item, last, i18n("Depths (%1)").arg(ndepths,-1), txt);
+        last = new Q3ListViewItem(item, last, i18n("Depths (%1)").arg(ndepths,-1), txt);
         XFree((char *) depths);
     }
 
-    last = new QListViewItem(item, last, i18n("Root Window ID"),
+    last = new Q3ListViewItem(item, last, i18n("Root Window ID"),
 		HexStr((unsigned long)RootWindow(dpy,scr),HEXDIGITS));
-    last = new QListViewItem(item, last, i18n("Depth of Root Window"),
+    last = new Q3ListViewItem(item, last, i18n("Depth of Root Window"),
 		(DisplayPlanes (dpy, scr) == 1)
 		?	i18n("%1 plane").arg(DisplayPlanes(dpy,scr))   /*singular*/
 		:	i18n("%1 planes").arg(DisplayPlanes(dpy,scr)));/*plural*/
-    last = new QListViewItem(item, last, i18n("Number of Colormaps"),
+    last = new Q3ListViewItem(item, last, i18n("Number of Colormaps"),
 		i18n("minimum %1, maximum %2")
 		    .arg((int)MinCmapsOfScreen(s)).arg((int)MaxCmapsOfScreen(s)));
-    last = new QListViewItem(item, last, i18n("Default Colormap"),
+    last = new Q3ListViewItem(item, last, i18n("Default Colormap"),
 		Value((int)DefaultColormap(dpy,scr)));
-    last = new QListViewItem(item, last, i18n("Default Number of Colormap Cells"),
+    last = new Q3ListViewItem(item, last, i18n("Default Number of Colormap Cells"),
 		Value((int)DisplayCells(dpy, scr)));
-    last = new QListViewItem(item, last, i18n("Preallocated Pixels"),
+    last = new Q3ListViewItem(item, last, i18n("Preallocated Pixels"),
 		i18n("Black %1, White %2")
 		.arg(KGlobal::locale()->formatNumber(BlackPixel(dpy,scr), 0))
 		.arg(KGlobal::locale()->formatNumber(WhitePixel(dpy,scr), 0)));
 
     QString YES(i18n("Yes"));
     QString NO(i18n("No"));
-    last = new QListViewItem(item, last, i18n("Options"),
+    last = new Q3ListViewItem(item, last, i18n("Options"),
 		i18n("backing-store: %1, save-unders: %2")
 		.arg( (DoesBackingStore(s) == NotUseful) ? NO :
 		      ((DoesBackingStore(s) == Always) ? YES : i18n("When mapped")) )
@@ -202,17 +206,17 @@ static QListViewItem* XServer_fill_screen_info( QListViewItem *lBox, QListViewIt
 
     XQueryBestSize (dpy, CursorShape, RootWindow(dpy,scr), 65535, 65535,
 		    &width, &height);
-    last = new QListViewItem(item, last, i18n("Largest Cursor"),
+    last = new Q3ListViewItem(item, last, i18n("Largest Cursor"),
 		(width == 65535 && height == 65535)
 		? i18n("unlimited") : QString::fromLatin1("%1 x %2").arg(width).arg(height));
 
-    last = new QListViewItem(item, last, i18n("Current Input Event Mask"),
+    last = new Q3ListViewItem(item, last, i18n("Current Input Event Mask"),
 		HexStr((unsigned long)EventMaskOfScreen(s),HEXDIGITS));
     item = last;
     struct _event_table *etp;
     for (etp=event_table; etp->name; etp++) {
 	if (EventMaskOfScreen(s) & etp->value)
-	    item = new QListViewItem(last, item,
+	    item = new Q3ListViewItem(last, item,
 		i18n("Event = %1").arg(HexStr(etp->value,HEXDIGITS)),
 		etp->name );
     }
@@ -242,7 +246,7 @@ static const QString ByteString( unsigned long n )
 		.arg(KGlobal::locale()->formatNumber(n,0));
 }
 
-static bool GetInfo_XServer_Generic( QListView *lBox )
+static bool GetInfo_XServer_Generic( Q3ListView *lBox )
 {
     /* Many parts of this source are taken from the X11-program "xdpyinfo" */
 
@@ -253,7 +257,7 @@ static bool GetInfo_XServer_Generic( QListView *lBox )
     XPixmapFormatValues *pmf;
 
     QString str,txt;
-    QListViewItem *last, *item, *next;
+    Q3ListViewItem *last, *item, *next;
 
     dpy = XOpenDisplay(0);
     if (!dpy)
@@ -263,24 +267,24 @@ static bool GetInfo_XServer_Generic( QListView *lBox )
     lBox->addColumn(i18n("Value") );
     sorting_allowed = false;
 
-    next = new QListViewItem(lBox, i18n("Server Information"));
+    next = new Q3ListViewItem(lBox, i18n("Server Information"));
     next->setPixmap(0, SmallIcon("kcmx"));
     next->setOpen(true);
     next->setSelectable(false);
     next->setExpandable(false);
 
-    last = new QListViewItem(next, i18n("Name of the Display"),
+    last = new Q3ListViewItem(next, i18n("Name of the Display"),
 		DisplayString(dpy));
 
-    last = new QListViewItem(next, last, i18n("Vendor String"), QString::fromLatin1(ServerVendor(dpy)));
-    last = new QListViewItem(next, last, i18n("Vendor Release Number"),
+    last = new Q3ListViewItem(next, last, i18n("Vendor String"), QString::fromLatin1(ServerVendor(dpy)));
+    last = new Q3ListViewItem(next, last, i18n("Vendor Release Number"),
 		Value((int)VendorRelease(dpy)));
 
-    last = new QListViewItem(next, last, i18n("Version Number"),
+    last = new Q3ListViewItem(next, last, i18n("Version Number"),
 		QString::fromLatin1("%1.%2").arg((int)ProtocolVersion(dpy))
     		                  .arg((int)ProtocolRevision(dpy)));
 
-    last = item = new QListViewItem(next, last, i18n("Available Screens"));
+    last = item = new Q3ListViewItem(next, last, i18n("Available Screens"));
     last->setOpen(true);
     last->setExpandable(true);
     for (i=0; i<ScreenCount(dpy); i++) {
@@ -288,22 +292,22 @@ static bool GetInfo_XServer_Generic( QListView *lBox )
 	if (i==0) item->setOpen(true);
     }
 
-    last = new QListViewItem( next, last, i18n("Supported Extensions") );
+    last = new Q3ListViewItem( next, last, i18n("Supported Extensions") );
     item = last;
 
     int extCount;
     char **extensions = XListExtensions( dpy, &extCount );
     for ( i = 0; i < extCount; i++ ) {
-       item = new QListViewItem( last, item, QString::fromLatin1( extensions[i] ) );
+       item = new Q3ListViewItem( last, item, QString::fromLatin1( extensions[i] ) );
     }
     XFreeExtensionList( extensions );
 
     pmf = XListPixmapFormats(dpy, &n);
-    last = item = new QListViewItem(next, last, i18n("Supported Pixmap Formats"));
+    last = item = new Q3ListViewItem(next, last, i18n("Supported Pixmap Formats"));
     if (pmf) {
 	last->setExpandable(true);
 	for (i=0; i<n; i++) {
-	    item = new QListViewItem(last, item,
+	    item = new Q3ListViewItem(last, item,
 			i18n("Pixmap Format #%1").arg(i+1),
 			i18n("%1 BPP, Depth: %2, Scanline padding: %3")
 				.arg(pmf[i].bits_per_pixel)
@@ -315,21 +319,21 @@ static bool GetInfo_XServer_Generic( QListView *lBox )
 
     req_size = XExtendedMaxRequestSize(dpy);
     if (!req_size) req_size = XMaxRequestSize(dpy);
-    last = new QListViewItem(next, last, i18n("Maximum Request Size"),
+    last = new Q3ListViewItem(next, last, i18n("Maximum Request Size"),
 		ByteString(req_size*4));
-    last = new QListViewItem(next, last, i18n("Motion Buffer Size"),
+    last = new Q3ListViewItem(next, last, i18n("Motion Buffer Size"),
 		ByteString(XDisplayMotionBufferSize(dpy)));
 
-    last = item = new QListViewItem(next, last, i18n("Bitmap"));
+    last = item = new Q3ListViewItem(next, last, i18n("Bitmap"));
     last->setExpandable(true);
-    item = new QListViewItem(last, item, i18n("Unit"),
+    item = new Q3ListViewItem(last, item, i18n("Unit"),
 		Value(BitmapUnit(dpy)) );
-    item = new QListViewItem(last, item, i18n("Order"),
+    item = new Q3ListViewItem(last, item, i18n("Order"),
 		Order(BitmapBitOrder(dpy)));
-    item = new QListViewItem(last, item, i18n("Padding"),
+    item = new Q3ListViewItem(last, item, i18n("Padding"),
 		Value(BitmapPad(dpy)));
 
-    last = new QListViewItem(next, last, i18n("Image Byte Order"),
+    last = new Q3ListViewItem(next, last, i18n("Image Byte Order"),
 		Order(ImageByteOrder(dpy)));
 
     XCloseDisplay (dpy);
@@ -398,7 +402,7 @@ QString KInfoListWidget::quickHelp() const
 
 
 KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const char *name,
-                                 bool _getlistbox(QListView *lbox))
+                                 bool _getlistbox(Q3ListView *lbox))
     : KCModule(parent, name),
       title(_title)
 {
@@ -415,17 +419,17 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
     getlistbox 	= _getlistbox;
     GetInfo_ErrorString = 0;
     QHBoxLayout *layout = new QHBoxLayout(this, 0, KDialog::spacingHint());
-    widgetStack = new QWidgetStack(this);
+    widgetStack = new Q3WidgetStack(this);
     layout->addWidget(widgetStack);
-    lBox 	= new QListView(widgetStack);
+    lBox 	= new Q3ListView(widgetStack);
     widgetStack->addWidget(lBox, 0);
     lBox->setMinimumSize(200,120);
     lBox->setFont(KGlobalSettings::generalFont()); /* default font */
     lBox->setAllColumnsShowFocus(true);
-    QWhatsThis::add( lBox, i18n( "This list displays system information on the selected category." ) );
+    lBox->setWhatsThis( i18n( "This list displays system information on the selected category." ) );
     NoInfoText  = new QLabel(widgetStack);
     widgetStack->addWidget(NoInfoText, 1);
-    NoInfoText->setAlignment(AlignCenter | WordBreak);
+    NoInfoText->setAlignment( Qt::AlignCenter | Qt::WordBreak);
     widgetStack->raiseWidget(NoInfoText);
     load();
 }
@@ -433,10 +437,10 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
 
 
 /* Helper-function to read output from an external program */
-static int GetInfo_ReadfromPipe( QListView *lBox, const char *FileName, bool WithEmptyLines = true )
+static int GetInfo_ReadfromPipe( Q3ListView *lBox, const char *FileName, bool WithEmptyLines = true )
 {
     FILE *pipe;
-    QListViewItem* olditem = 0L;
+    Q3ListViewItem* olditem = 0L;
     QString s;
 
     if ((pipe = popen(FileName, "r")) == NULL) {
@@ -444,13 +448,13 @@ static int GetInfo_ReadfromPipe( QListView *lBox, const char *FileName, bool Wit
 	return 0;
     }
 
-    QTextStream t(pipe, IO_ReadOnly);
+    QTextStream t(pipe, QIODevice::ReadOnly);
 
     while (!t.atEnd()) {
 	s = t.readLine();
 	if (!WithEmptyLines && s.length()==0)
 		continue;
-       	olditem = new QListViewItem(lBox, olditem, s);
+       	olditem = new Q3ListViewItem(lBox, olditem, s);
     }
 
     pclose(pipe);

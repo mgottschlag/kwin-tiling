@@ -26,7 +26,13 @@
 
 #include <qdir.h>
 #include <qlayout.h>
-#include <qwhatsthis.h>
+
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QResizeEvent>
+//Should have been added:
+#include <Q3ButtonGroup>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -130,7 +136,7 @@ void ShortcutsModule::initGUI()
 	// (o) [Current      ] <Remove>   ( ) New <Save>
 
 	QHBoxLayout *pHLayout = new QHBoxLayout( pVLayout, KDialog::spacingHint() );
-	QButtonGroup* pGroup = new QButtonGroup( this );
+	Q3ButtonGroup* pGroup = new Q3ButtonGroup( this );
 	pGroup->hide();
 
 	m_prbPre = new QRadioButton( "", this );
@@ -149,7 +155,7 @@ void ShortcutsModule::initGUI()
 	m_pbtnRemove = new QPushButton( i18n("&Remove"), this );
 	m_pbtnRemove->setEnabled( false );
 	connect( m_pbtnRemove, SIGNAL(clicked()), SLOT(slotRemoveScheme()) );
-	QWhatsThis::add( m_pbtnRemove, i18n("Click here to remove the selected key bindings scheme. You cannot"
+	m_pbtnRemove->setWhatsThis( i18n("Click here to remove the selected key bindings scheme. You cannot"
 		" remove the standard system-wide schemes 'Current scheme' and 'KDE default'.") );
 	pHLayout->addWidget( m_pbtnRemove );
 
@@ -162,7 +168,7 @@ void ShortcutsModule::initGUI()
 
 	m_pbtnSave = new QPushButton( i18n("&Save..."), this );
 	m_pbtnSave->setEnabled( false );
-	QWhatsThis::add( m_pbtnSave, i18n("Click here to add a new key bindings scheme. You will be prompted for a name.") );
+	m_pbtnSave->setWhatsThis( i18n("Click here to add a new key bindings scheme. You will be prompted for a name.") );
 	connect( m_pbtnSave, SIGNAL(clicked()), SLOT(slotSaveSchemeAs()) );
 	pHLayout->addWidget( m_pbtnSave );
 

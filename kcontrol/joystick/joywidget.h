@@ -22,12 +22,14 @@
 #define _JOYWIDGET_H_
 
 #include <qwidget.h>
+//Added by qt3to4:
+#include <QLabel>
 
 class JoyDevice;
 
 class PosWidget;
 class QLabel;
-class QTable;
+class Q3Table;
 class QTimer;
 class QComboBox;
 class QPushButton;
@@ -64,8 +66,8 @@ class JoyWidget : public QWidget
     QLabel *message;  // in case of no device, show here a message rather than in a dialog
     QComboBox *device;
     PosWidget *xyPos;
-    QTable *buttonTbl;
-    QTable *axesTbl;
+    Q3Table *buttonTbl;
+    Q3Table *axesTbl;
     QCheckBox *trace;
     QPushButton *calibrate;
 

@@ -22,6 +22,8 @@
 
 #include <qwidget.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <QLabel>
 
 #include <klineedit.h>
 
@@ -29,7 +31,7 @@ class KKeyButton;
 class KLineEdit;
 class KIconButton;
 class QCheckBox;
-class QGroupBox;
+class Q3GroupBox;
 class QLabel;
 class KURLRequester;
 class KComboBox;
@@ -75,7 +77,7 @@ protected:
     KLineEdit    *_termOptEdit, *_uidEdit;
     QCheckBox    *_terminalCB, *_uidCB, *_launchCB, *_systrayCB;
     KIconButton  *_iconButton;
-    QGroupBox    *_path_group, *_term_group, *_uid_group, *general_group_keybind;
+    Q3GroupBox    *_path_group, *_term_group, *_uid_group, *general_group_keybind;
     QLabel *_termOptLabel, *_uidLabel, *_pathLabel, *_nameLabel, *_commentLabel, *_execLabel;
     QLabel	*_descriptionLabel;
 

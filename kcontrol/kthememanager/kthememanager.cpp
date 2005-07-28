@@ -22,6 +22,11 @@
 #include <qpushbutton.h>
 #include <qtoolbutton.h>
 #include <qtooltip.h>
+//Added by qt3to4:
+#include <QDragEnterEvent>
+#include <QVBoxLayout>
+#include <QDropEvent>
+#include <QBoxLayout>
 
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -66,7 +71,7 @@ kthememanager::kthememanager( QWidget *parent, const char *name )
     dlg = new KThemeDlg(this);
     top->addWidget( dlg );
 
-    dlg->lvThemes->setColumnWidthMode( 0, QListView::Maximum );
+    dlg->lvThemes->setColumnWidthMode( 0, Q3ListView::Maximum );
 
     connect( ( QObject * )dlg->btnInstall, SIGNAL( clicked() ),
              this, SLOT( slotInstallTheme() ) );
@@ -77,13 +82,13 @@ kthememanager::kthememanager( QWidget *parent, const char *name )
     connect( ( QObject * )dlg->btnCreate, SIGNAL( clicked() ),
              this, SLOT( slotCreateTheme() ) );
 
-    connect( ( QObject * )dlg->lvThemes, SIGNAL( clicked( QListViewItem * ) ),
-             this, SLOT( slotThemeChanged( QListViewItem * ) ) );
+    connect( ( QObject * )dlg->lvThemes, SIGNAL( clicked( Q3ListViewItem * ) ),
+             this, SLOT( slotThemeChanged( Q3ListViewItem * ) ) );
 
     connect( this, SIGNAL( filesDropped( const KURL::List& ) ),
              this, SLOT( updateButton() ) );
 
-    connect( ( QObject * )dlg->lvThemes, SIGNAL( clicked( QListViewItem * ) ),
+    connect( ( QObject * )dlg->lvThemes, SIGNAL( clicked( Q3ListViewItem * ) ),
              this, SLOT( updateButton() ) );
 
     m_origTheme = new KTheme( this, true ); // stores the defaults to get back to
@@ -109,7 +114,7 @@ void kthememanager::init()
 
 void kthememanager::updateButton()
 {
-    QListViewItem * cur = dlg->lvThemes->currentItem();
+    Q3ListViewItem * cur = dlg->lvThemes->currentItem();
     dlg->btnRemove->setEnabled( cur != 0 );
 }
 
@@ -121,7 +126,7 @@ void kthememanager::load()
     KConfig conf("kcmthememanagerrc", false, false);
     conf.setGroup( "General" );
     QString themeName = conf.readEntry( "CurrentTheme" );
-    QListViewItem * cur =  dlg->lvThemes->findItem( themeName, 0 );
+    Q3ListViewItem * cur =  dlg->lvThemes->findItem( themeName, 0 );
     if ( cur )
     {
         dlg->lvThemes->setSelected( cur, true );
@@ -138,7 +143,7 @@ void kthememanager::defaults()
 
 void kthememanager::save()
 {
-    QListViewItem * cur = dlg->lvThemes->currentItem();
+    Q3ListViewItem * cur = dlg->lvThemes->currentItem();
 
     if ( cur )
     {
@@ -173,7 +178,7 @@ void kthememanager::listThemes()
         KTheme theme( this, ( *it ) );
         QString name = theme.name();
         if ( name != ORIGINAL_THEME ) // skip the "original" theme
-            ( void ) new QListViewItem( dlg->lvThemes, name, theme.comment() );
+            ( void ) new Q3ListViewItem( dlg->lvThemes, name, theme.comment() );
     }
 
     kdDebug() << "Available themes: " << themes << endl;
@@ -230,7 +235,7 @@ void kthememanager::addNewTheme( const KURL & url )
 void kthememanager::slotRemoveTheme()
 {
     // get the selected item from the listview
-    QListViewItem * cur = dlg->lvThemes->currentItem();
+    Q3ListViewItem * cur = dlg->lvThemes->currentItem();
     // ask and remove it
     if ( cur )
     {
@@ -302,7 +307,7 @@ void kthememanager::slotCreateTheme()
     }
 }
 
-void kthememanager::slotThemeChanged( QListViewItem * item )
+void kthememanager::slotThemeChanged( Q3ListViewItem * item )
 {
     if ( item )
     {
@@ -391,7 +396,7 @@ void kthememanager::updatePreview( const QString & pixFile )
      QImage preview( pixFile, "PNG" );
      if (preview.width()>dlg->lbPreview->contentsRect().width() ||
          preview.height()>dlg->lbPreview->contentsRect().height() )
-         preview = preview.smoothScale( dlg->lbPreview->contentsRect().size(), QImage::ScaleMin );
+         preview = preview.smoothScale( dlg->lbPreview->contentsRect().size(), Qt::ScaleMin );
      QPixmap pix;
      pix.convertFromImage( preview );
      dlg->lbPreview->setPixmap( pix );

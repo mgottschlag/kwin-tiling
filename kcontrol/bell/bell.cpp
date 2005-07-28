@@ -20,10 +20,15 @@
 */
 
 #include <qcheckbox.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qwhatsthis.h>
+
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
+#include <QBoxLayout>
 
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -70,7 +75,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   QBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
   int row = 0;
-  QGroupBox *box = new QGroupBox( i18n("Bell Settings"), this );
+  Q3GroupBox *box = new Q3GroupBox( i18n("Bell Settings"), this );
   box->setColumnLayout( 0, Qt::Horizontal );
   layout->addWidget(box);
   layout->addStretch();
@@ -80,7 +85,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   grid->addColSpacing(0, 30);
 
   m_useBell = new QCheckBox( i18n("&Use system bell instead of system notification" ), box );
-  QWhatsThis::add(m_useBell, i18n("You can use the standard system bell (PC speaker) or a "
+  m_useBell->setWhatsThis( i18n("You can use the standard system bell (PC speaker) or a "
 				  "more sophisticated system notification, see the "
 				  "\"System Notifications\" control module for the "
 				  "\"Something Special Happened in the Program\" event."));
@@ -99,7 +104,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   m_volume->setSuffix("%");
   m_volume->setSteps(5,25);
   grid->addWidget(m_volume, ++row, 1);
-  QWhatsThis::add( m_volume, i18n("Here you can customize the volume of the system bell. For further"
+  m_volume->setWhatsThis( i18n("Here you can customize the volume of the system bell. For further"
     " customization of the bell, see the \"Accessibility\" control module.") );
 
   m_pitch = new KIntNumInput(m_volume, 800, box);
@@ -108,7 +113,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   m_pitch->setSuffix(i18n(" Hz"));
   m_pitch->setSteps(40,200);
   grid->addWidget(m_pitch, ++row, 1);
-  QWhatsThis::add( m_pitch, i18n("Here you can customize the pitch of the system bell. For further"
+  m_pitch->setWhatsThis( i18n("Here you can customize the pitch of the system bell. For further"
     " customization of the bell, see the \"Accessibility\" control module.") );
 
   m_duration = new KIntNumInput(m_pitch, 100, box);
@@ -117,15 +122,15 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   m_duration->setSuffix(i18n(" msec"));
   m_duration->setSteps(20,100);
   grid->addWidget(m_duration, ++row, 1);
-  QWhatsThis::add( m_duration, i18n("Here you can customize the duration of the system bell. For further"
+  m_duration->setWhatsThis( i18n("Here you can customize the duration of the system bell. For further"
     " customization of the bell, see the \"Accessibility\" control module.") );
 
   QBoxLayout *boxLayout = new QHBoxLayout();
   m_testButton = new QPushButton(i18n("&Test"), box, "test");
-  boxLayout->addWidget(m_testButton, 0, AlignRight);
+  boxLayout->addWidget(m_testButton, 0, Qt::AlignRight);
   grid->addLayout( boxLayout, ++row, 1 );
   connect( m_testButton, SIGNAL(clicked()), SLOT(ringBell()));
-  QWhatsThis::add( m_testButton, i18n("Click \"Test\" to hear how the system bell will sound using your changed settings.") );
+  m_testButton->setWhatsThis( i18n("Click \"Test\" to hear how the system bell will sound using your changed settings.") );
 
   // watch for changes
   connect(m_volume, SIGNAL(valueChanged(int)), SLOT(changed()));

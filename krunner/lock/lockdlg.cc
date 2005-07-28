@@ -32,27 +32,37 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qmessagebox.h>
-#include <qsimplerichtext.h>
+#include <q3simplerichtext.h>
 #include <qlabel.h>
 #include <qstringlist.h>
 #include <qfontmetrics.h>
 #include <qstyle.h>
 #include <qapplication.h>
-#include <qlistview.h>
-#include <qheader.h>
+#include <q3listview.h>
+#include <q3header.h>
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <QGridLayout>
+#include <QEvent>
+#include <Q3Frame>
+#include <QHBoxLayout>
+#include <QBoxLayout>
+#include <QTimerEvent>
+#include <QVBoxLayout>
 
 #include <ctype.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <pwd.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <fixx11h.h>
+#include <QX11Info>
 
 #ifndef AF_LOCAL
 # define AF_LOCAL	AF_UNIX
@@ -65,13 +75,13 @@
 // Simple dialog for entering a password.
 //
 PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
-    : QDialog(parent, "password dialog", true, WX11BypassWM),
+    : QDialog(parent, "password dialog", true, Qt::WX11BypassWM),
       mPlugin( plugin ),
       mCapsLocked(-1),
       mUnlockingFailed(false)
 {
-    frame = new QFrame( this );
-    frame->setFrameStyle( QFrame::Panel | QFrame::Raised );
+    frame = new Q3Frame( this );
+    frame->setFrameStyle( Q3Frame::Panel | Q3Frame::Raised );
     frame->setLineWidth( 2 );
 
     QLabel *pixLabel = new QLabel( frame, "pixlabel" );
@@ -83,7 +93,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
             i18n("<nobr><b>The session was locked by %1</b><br>").arg( user.fullName() ), frame );
 
     mStatusLabel = new QLabel( "<b> </b>", frame );
-    mStatusLabel->setAlignment( QLabel::AlignCenter );
+    mStatusLabel->setAlignment( Qt::AlignCenter );
 
     mLayoutButton = new QPushButton( frame );
     mLayoutButton->setFlat( true );
@@ -112,7 +122,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     layButtons->addWidget( cancel );
 
     frameLayout = new QGridLayout( frame, 1, 1, KDialog::marginHint(), KDialog::spacingHint() );
-    frameLayout->addMultiCellWidget( pixLabel, 0, 2, 0, 0, AlignTop );
+    frameLayout->addMultiCellWidget( pixLabel, 0, 2, 0, 0, Qt::AlignTop );
     frameLayout->addWidget( greetLabel, 0, 1 );
     frameLayout->addItem( greet->getLayoutItem(), 1, 1 );
     frameLayout->addLayout( layStatus, 2, 1 );
@@ -179,7 +189,7 @@ void PasswordDlg::setLayoutText( const QString &txt )
 {
     mLayoutButton->setText( txt );
     QSize sz = mLayoutButton->fontMetrics().size( 0, txt );
-    int mrg = mLayoutButton->style().pixelMetric( QStyle::PM_ButtonMargin ) * 2;
+    int mrg = mLayoutButton->style()->pixelMetric( QStyle::PM_ButtonMargin ) * 2;
     mLayoutButton->setFixedSize( sz.width() + mrg, sz.height() + mrg );
 }
 
@@ -468,9 +478,9 @@ void PasswordDlg::gplugActivity()
 
 void PasswordDlg::gplugMsgBox( QMessageBox::Icon type, const QString &text )
 {
-    QDialog dialog( this, 0, true, WX11BypassWM );
-    QFrame *winFrame = new QFrame( &dialog );
-    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
+    QDialog dialog( this, 0, true, Qt::WX11BypassWM );
+    Q3Frame *winFrame = new Q3Frame( &dialog );
+    winFrame->setFrameStyle( Q3Frame::WinPanel | Q3Frame::Raised );
     winFrame->setLineWidth( 2 );
     QVBoxLayout *vbox = new QVBoxLayout( &dialog );
     vbox->addWidget( winFrame );
@@ -513,9 +523,9 @@ void PasswordDlg::slotStartNewSession()
     killTimer(mTimeoutTimerId);
     mTimeoutTimerId = 0;
 
-    QDialog *dialog = new QDialog( this, "warnbox", true, WX11BypassWM );
-    QFrame *winFrame = new QFrame( dialog );
-    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
+    QDialog *dialog = new QDialog( this, "warnbox", true, Qt::WX11BypassWM );
+    Q3Frame *winFrame = new Q3Frame( dialog );
+    winFrame->setFrameStyle( Q3Frame::WinPanel | Q3Frame::Raised );
     winFrame->setLineWidth( 2 );
     QVBoxLayout *vbox = new QVBoxLayout( dialog );
     vbox->addWidget( winFrame );
@@ -563,7 +573,7 @@ void PasswordDlg::slotStartNewSession()
     int pref_height = 0;
     // Calculate a proper size for the text.
     {
-       QSimpleRichText rt(qt_text, dialog->font());
+       Q3SimpleRichText rt(qt_text, dialog->font());
        QRect rect = KGlobalSettings::desktopGeometry(dialog);
 
        pref_width = rect.width() / 3;
@@ -608,11 +618,11 @@ void PasswordDlg::slotStartNewSession()
     mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
 }
 
-class LockListViewItem : public QListViewItem {
+class LockListViewItem : public Q3ListViewItem {
 public:
-    LockListViewItem( QListView *parent,
+    LockListViewItem( Q3ListView *parent,
 		      const QString &sess, const QString &loc, int _vt )
-	: QListViewItem( parent )
+	: Q3ListViewItem( parent )
 	, vt( _vt )
     {
 	setText( 0, sess );
@@ -627,9 +637,9 @@ void PasswordDlg::slotSwitchUser()
     int p = 0;
     DM dm;
 
-    QDialog dialog( this, "sessbox", true, WX11BypassWM );
-    QFrame *winFrame = new QFrame( &dialog );
-    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
+    QDialog dialog( this, "sessbox", true, Qt::WX11BypassWM );
+    Q3Frame *winFrame = new Q3Frame( &dialog );
+    winFrame->setFrameStyle( Q3Frame::WinPanel | Q3Frame::Raised );
     winFrame->setLineWidth( 2 );
     QBoxLayout *vbox = new QVBoxLayout( &dialog );
     vbox->addWidget( winFrame );
@@ -644,15 +654,15 @@ void PasswordDlg::slotSwitchUser()
     SessList sess;
     if (dm.localSessions( sess )) {
 
-        lv = new QListView( winFrame );
-        connect( lv, SIGNAL(doubleClicked(QListViewItem *, const QPoint&, int)), SLOT(slotSessionActivated()) );
-        connect( lv, SIGNAL(doubleClicked(QListViewItem *, const QPoint&, int)), &dialog, SLOT(reject()) );
+        lv = new Q3ListView( winFrame );
+        connect( lv, SIGNAL(doubleClicked(Q3ListViewItem *, const QPoint&, int)), SLOT(slotSessionActivated()) );
+        connect( lv, SIGNAL(doubleClicked(Q3ListViewItem *, const QPoint&, int)), &dialog, SLOT(reject()) );
         lv->setAllColumnsShowFocus( true );
         lv->addColumn( i18n("Session") );
         lv->addColumn( i18n("Location") );
-        lv->setColumnWidthMode( 0, QListView::Maximum );
-        lv->setColumnWidthMode( 1, QListView::Maximum );
-        QListViewItem *itm = 0;
+        lv->setColumnWidthMode( 0, Q3ListView::Maximum );
+        lv->setColumnWidthMode( 1, Q3ListView::Maximum );
+        Q3ListViewItem *itm = 0;
         QString user, loc;
         int ns = 0;
         for (SessList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
@@ -669,7 +679,7 @@ void PasswordDlg::slotSwitchUser()
         int fw = lv->frameWidth() * 2;
         QSize hds( lv->header()->sizeHint() );
         lv->setMinimumWidth( fw + hds.width() +
-            (ns > 10 ? style().pixelMetric(QStyle::PM_ScrollBarExtent) : 0 ) );
+            (ns > 10 ? style()->pixelMetric(QStyle::PM_ScrollBarExtent) : 0 ) );
         lv->setFixedHeight( fw + hds.height() +
             itm->height() * (ns < 6 ? 6 : ns > 10 ? 10 : ns) );
         lv->header()->adjustHeaderSize();
@@ -712,7 +722,7 @@ void PasswordDlg::capsLocked()
     unsigned int lmask;
     Window dummy1, dummy2;
     int dummy3, dummy4, dummy5, dummy6;
-    XQueryPointer(qt_xdisplay(), DefaultRootWindow( qt_xdisplay() ), &dummy1, &dummy2, &dummy3, &dummy4, &dummy5, &dummy6, &lmask);
+    XQueryPointer(QX11Info::display(), DefaultRootWindow( QX11Info::display() ), &dummy1, &dummy2, &dummy3, &dummy4, &dummy5, &dummy6, &lmask);
     mCapsLocked = lmask & LockMask;
     updateLabel();
 }

@@ -11,8 +11,9 @@
 #ifndef _CONDITIONS_H_
 #define _CONDITIONS_H_
 
+#include "config.h"
 #include <qobject.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qstring.h>
 
 #include "khotkeysglobal.h"
@@ -50,18 +51,18 @@ class Condition
     };
         
 class Condition_list_base
-    : public Condition, public QPtrList< Condition > // inheritance ?
+    : public Condition, public Q3PtrList< Condition > // inheritance ?
     {
     typedef Condition base;
     public:
         Condition_list_base( Condition_list_base* parent_P );
-        Condition_list_base( const QPtrList< Condition >& children_P,
+        Condition_list_base( const Q3PtrList< Condition >& children_P,
             Condition_list_base* parent_P );
         Condition_list_base( KConfig& cfg_P, Condition_list_base* parent_P );
         virtual ~Condition_list_base();
         virtual void cfg_write( KConfig& cfg_P ) const;
         virtual bool accepts_children() const;
-        typedef QPtrListIterator< Condition > Iterator;
+        typedef Q3PtrListIterator< Condition > Iterator;
     };
 
 class Condition_list
@@ -202,14 +203,14 @@ Condition_list_base* Condition::parent()
 
 inline
 Condition_list_base::Condition_list_base( Condition_list_base* parent_P )
-    : Condition( parent_P ), QPtrList< Condition >()
+    : Condition( parent_P ), Q3PtrList< Condition >()
     {
     }
 
 inline
-Condition_list_base::Condition_list_base( const QPtrList< Condition >& children_P,
+Condition_list_base::Condition_list_base( const Q3PtrList< Condition >& children_P,
     Condition_list_base* parent_P )
-    : Condition( parent_P ), QPtrList< Condition >( children_P )
+    : Condition( parent_P ), Q3PtrList< Condition >( children_P )
     {
     }
 

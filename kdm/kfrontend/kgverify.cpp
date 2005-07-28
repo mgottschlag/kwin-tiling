@@ -39,10 +39,15 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kpushbutton.h>
 
 #include <qregexp.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 #include <qlayout.h>
 #include <qfile.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <QGridLayout>
+#include <QEvent>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include <pwd.h>
 #include <sys/types.h>
@@ -51,6 +56,7 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <X11/Xlib.h> // for updateLockStatus()
 #include <fixx11h.h> // ... and make eventFilter() work again
+#include <QX11Info>
 
 
 void KGVerifyHandler::updateStatus( bool, bool )
@@ -91,14 +97,14 @@ KGVerify::~KGVerify()
 	delete greet;
 }
 
-QPopupMenu *
+Q3PopupMenu *
 KGVerify::getPlugMenu()
 {
 	// assert( !cont );
 	if (!plugMenu) {
 		uint np = pluginList.count();
 		if (np > 1) {
-			plugMenu = new QPopupMenu( parent );
+			plugMenu = new Q3PopupMenu( parent );
 			connect( plugMenu, SIGNAL(activated( int )),
 			         SLOT(slotPluginSelected( int )) );
 			for (uint i = 0; i < np; i++)
@@ -410,13 +416,13 @@ KGVerify::handleFailVerify( QWidget *parent )
 				QStringList::ConstIterator it;
 				for (it = pgs.begin(); it != pgs.end(); ++it)
 					if (*it == "classic" || *it == "modern") {
-						pgs = *it;
+						pgs = QStringList(*it);
 						goto gotit;
 					} else if (*it == "generic") {
-						pgs = "modern";
+						pgs = QStringList("modern");
 						goto gotit;
 					}
-				pgs = "classic";
+				pgs = QStringList("classic");
 			  gotit:
 				KGChTok chtok( parent, user, init( pgs ), 0,
 				               KGreeterPlugin::AuthChAuthTok,
@@ -698,7 +704,7 @@ KGVerify::updateLockStatus()
 	unsigned int lmask;
 	Window dummy1, dummy2;
 	int dummy3, dummy4, dummy5, dummy6;
-	XQueryPointer( qt_xdisplay(), DefaultRootWindow( qt_xdisplay() ),
+	XQueryPointer( QX11Info::display(), DefaultRootWindow( QX11Info::display() ),
 	               &dummy1, &dummy2, &dummy3, &dummy4, &dummy5, &dummy6,
 	               &lmask );
 	capsLocked = lmask & LockMask;
@@ -729,7 +735,7 @@ KGVerify::getConf( void *, const char *key, const QVariant &dflt )
 	}
 }
 
-QValueVector<GreeterPluginHandle> KGVerify::greetPlugins;
+Q3ValueVector<GreeterPluginHandle> KGVerify::greetPlugins;
 
 PluginList
 KGVerify::init( const QStringList &plugins )
@@ -776,7 +782,7 @@ KGVerify::init( const QStringList &plugins )
 void
 KGVerify::done()
 {
-	for (uint i = 0; i < greetPlugins.count(); i++) {
+	for (int i = 0; i < greetPlugins.count(); i++) {
 		if (greetPlugins[i].info->done)
 			greetPlugins[i].info->done();
 		greetPlugins[i].library->unload();
@@ -794,11 +800,11 @@ KGStdVerify::KGStdVerify( KGVerifyHandler *_handler, QWidget *_parent,
 	, failedLabelState( -1 )
 {
 	grid = new QGridLayout;
-	grid->setAlignment( AlignCenter );
+	grid->setAlignment( Qt::AlignCenter );
 
 	failedLabel = new QLabel( parent );
 	failedLabel->setFont( _failFont );
-	grid->addWidget( failedLabel, 1, 0, AlignCenter );
+	grid->addWidget( failedLabel, 1, 0, Qt::AlignCenter );
 
 	updateLockStatus();
 }
@@ -949,7 +955,7 @@ KGChTok::KGChTok( QWidget *_parent, const QString &user,
 
 	QVBoxLayout *box = new QVBoxLayout( this, 10 );
 
-	box->addWidget( new QLabel( i18n("Changing authentication token"), this ), 0, AlignHCenter );
+	box->addWidget( new QLabel( i18n("Changing authentication token"), this ), 0, Qt::AlignHCenter );
 
 	box->addLayout( verify->getLayout() );
 

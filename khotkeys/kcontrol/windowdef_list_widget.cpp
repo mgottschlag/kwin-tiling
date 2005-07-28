@@ -18,9 +18,9 @@
 
 #include <assert.h>
 #include <qpushbutton.h>
-#include <qheader.h>
+#include <q3header.h>
 #include <qlineedit.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -41,11 +41,11 @@ Windowdef_list_widget::Windowdef_list_widget( QWidget* parent_P, const char* nam
     : Windowdef_list_widget_ui( parent_P, name_P ), autodetect_object( NULL ),
         autodetect_slot( NULL ), selected_item( NULL )
     {
-    QPopupMenu* popup = new QPopupMenu; // CHECKME looks like setting parent doesn't work
+    Q3PopupMenu* popup = new Q3PopupMenu; // CHECKME looks like setting parent doesn't work
     popup->insertItem( i18n( "Simple Window..." ), TYPE_WINDOWDEF_SIMPLE );
     connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
 
-    connect( windows_listview, SIGNAL( doubleClicked ( QListViewItem *, const QPoint &, int ) ),
+    connect( windows_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
              this, SLOT( modify_pressed() ) );
     new_button->setPopup( popup );
     windows_listview->header()->hide();
@@ -100,7 +100,7 @@ Windowdef_list* Windowdef_list_widget::get_data() const
     {
 // CHECKME TODO hmm, tady to bude chtit asi i children :(
     Windowdef_list* list = new Windowdef_list( comment_lineedit->text());
-    for( QListViewItem* pos = windows_listview->firstChild();
+    for( Q3ListViewItem* pos = windows_listview->firstChild();
          pos != NULL;
          pos = pos->nextSibling())
         list->append( static_cast< Windowdef_list_item* >( pos )->window()->copy());
@@ -148,7 +148,7 @@ void Windowdef_list_widget::modify_pressed()
     edit_listview_item( selected_item );
     }
 
-void Windowdef_list_widget::current_changed( QListViewItem* item_P )
+void Windowdef_list_widget::current_changed( Q3ListViewItem* item_P )
     {
 //    if( item_P == selected_item )
 //        return;
@@ -160,7 +160,7 @@ void Windowdef_list_widget::current_changed( QListViewItem* item_P )
     }
 
 Windowdef_list_item* Windowdef_list_widget::create_listview_item( Windowdef* window_P,
-    QListView* parent1_P, QListViewItem* parent2_P, QListViewItem* after_P, bool copy_P )
+    Q3ListView* parent1_P, Q3ListViewItem* parent2_P, Q3ListViewItem* after_P, bool copy_P )
     {
     Windowdef* new_win = copy_P ? window_P->copy() : window_P;
 // CHECKME uz by nemelo byt treba

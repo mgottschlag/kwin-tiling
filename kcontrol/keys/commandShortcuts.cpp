@@ -21,11 +21,14 @@
 #include "commandShortcuts.h"
 #include "treeview.h"
 
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
-#include <qwhatsthis.h>
+
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include <kactivelabel.h>
 #include <kapplication.h>
@@ -92,30 +95,30 @@ void CommandShortcutsModule::initGUI()
     m_tree->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     mainLayout->setStretchFactor(m_tree, 10);
     mainLayout->addWidget(m_tree);
-    QWhatsThis::add(m_tree,
+    m_tree->setWhatsThis(
                     i18n("This is a list of all the desktop applications and commands "
                          "currently defined on this system. Click to select a command to "
                          "assign a keyboard shortcut to. Complete management of these "
                          "entries can be done via the menu editor program."));
     connect(m_tree, SIGNAL(entrySelected(const QString&, const QString &, bool)),
             this, SLOT(commandSelected(const QString&, const QString &, bool)));
-    connect(m_tree, SIGNAL(doubleClicked(QListViewItem *, const QPoint &, int)),
-            this, SLOT(commandDoubleClicked(QListViewItem *, const QPoint &, int)));
-    m_shortcutBox = new QButtonGroup(i18n("Shortcut for Selected Command"), this);
+    connect(m_tree, SIGNAL(doubleClicked(Q3ListViewItem *, const QPoint &, int)),
+            this, SLOT(commandDoubleClicked(Q3ListViewItem *, const QPoint &, int)));
+    m_shortcutBox = new Q3ButtonGroup(i18n("Shortcut for Selected Command"), this);
     mainLayout->addWidget(m_shortcutBox);
     QHBoxLayout* buttonLayout = new QHBoxLayout(m_shortcutBox, KDialog::marginHint() * 2);
     buttonLayout->addSpacing( KDialog::marginHint() );
 
     m_noneRadio = new QRadioButton(i18n("no key", "&None"), m_shortcutBox);
-    QWhatsThis::add(m_noneRadio, i18n("The selected command will not be associated with any key."));
+    m_noneRadio->setWhatsThis( i18n("The selected command will not be associated with any key."));
     buttonLayout->addWidget(m_noneRadio);
     m_customRadio = new QRadioButton(i18n("C&ustom"), m_shortcutBox);
-    QWhatsThis::add(m_customRadio,
+    m_customRadio->setWhatsThis(
                     i18n("If this option is selected you can create a customized key binding for the"
                          " selected command using the button to the right.") );
     buttonLayout->addWidget(m_customRadio);
     m_shortcutButton = new KKeyButton(m_shortcutBox);
-    QWhatsThis::add(m_shortcutButton,
+    m_shortcutButton->setWhatsThis(
                     i18n("Use this button to choose a new shortcut key. Once you click it, "
                          "you can press the key-combination which you would like to be assigned "
                          "to the currently selected command."));
@@ -156,7 +159,7 @@ void CommandShortcutsModule::shortcutRadioToggled(bool remove)
 
     if (remove)
     {
-        m_shortcutButton->setShortcut(QString::null, false);
+        m_shortcutButton->setShortcut(QString(), false);
         item->setAccel(QString::null);
         if (m_changedItems.findRef(item) == -1)
         {
@@ -227,7 +230,7 @@ void CommandShortcutsModule::commandSelected(const QString& /* path */, const QS
     m_noneRadio->blockSignals(false);
 }
 
-void CommandShortcutsModule::commandDoubleClicked(QListViewItem *item, const QPoint &, int)
+void CommandShortcutsModule::commandDoubleClicked(Q3ListViewItem *item, const QPoint &, int)
 {
     if (!item)
     {

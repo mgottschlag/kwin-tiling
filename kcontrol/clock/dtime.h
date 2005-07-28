@@ -30,6 +30,8 @@
 #include <qvalidator.h>
 #include <qwidget.h>
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <QPaintEvent>
 
 #include <kdatepicker.h>
 #include <knuminput.h>
@@ -40,7 +42,7 @@ class HMSTimeWidget : public KIntSpinBox
 {
   Q_OBJECT
  public:
-  HMSTimeWidget(QWidget *parent=0, const char *name=0);
+  HMSTimeWidget(QWidget *parent=0);
  protected:
   QString mapValueToText(int);
 };

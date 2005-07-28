@@ -29,6 +29,8 @@
 #include "Encodings.h"
 #include "Misc.h"
 #include <qfile.h>
+//Added by qt3to4:
+#include <QTextStream>
 #include <ctype.h>
 #include <fstream>
 
@@ -707,7 +709,7 @@ CEncodings::CEncodings()
     {
         QFile sys(sysFile);
 
-        if(sys.open(IO_ReadOnly ))
+        if(sys.open(QIODevice::ReadOnly ))
         {
             QTextStream stream(&sys);
             QString     line;

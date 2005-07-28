@@ -21,13 +21,17 @@
 #define __KDMUSERS_H__
 
 #include <qwidget.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qstring.h>
 #include <qimage.h>
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
-#include <qwidgetstack.h>
+#include <q3widgetstack.h>
+//Added by qt3to4:
+#include <QEvent>
+#include <QDropEvent>
+#include <QLabel>
 
 #include <klineedit.h>
 #include <klistview.h>
@@ -63,8 +67,8 @@ signals:
 private slots:
 	void slotMinMaxChanged();
 	void slotShowOpts();
-	void slotUpdateOptIn( QListViewItem *item );
-	void slotUpdateOptOut( QListViewItem *item );
+	void slotUpdateOptIn( Q3ListViewItem *item );
+	void slotUpdateOptOut( Q3ListViewItem *item );
 	void slotUserSelected();
 	void slotUnsetUserPix();
 	void slotFaceOpts();
@@ -72,21 +76,21 @@ private slots:
 	void slotChanged();
 
 private:
-	void updateOptList( QListViewItem *item, QStringList &list );
+	void updateOptList( Q3ListViewItem *item, QStringList &list );
 	void userButtonDropEvent( QDropEvent *e );
 	void changeUserPix( const QString & );
 
-	QGroupBox	*minGroup;	// top left
+	Q3GroupBox	*minGroup;	// top left
 	QLineEdit	*leminuid, *lemaxuid;
 
-	QButtonGroup	*usrGroup; // right below
+	Q3ButtonGroup	*usrGroup; // right below
 	QCheckBox	*cbshowlist, *cbcomplete, *cbinverted, *cbusrsrt;
 
 	QLabel		*s_label; // middle
-	QWidgetStack	*wstack;
+	Q3WidgetStack	*wstack;
 	KListView	*optoutlv, *optinlv;
 
-	QButtonGroup	*faceGroup; // right
+	Q3ButtonGroup	*faceGroup; // right
 	QRadioButton	*rbadmonly, *rbprefadm, *rbprefusr, *rbusronly;
 
 	KComboBox	*usercombo; // right below

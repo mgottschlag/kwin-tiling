@@ -156,7 +156,7 @@ Select the search engine to use for input boxes that provide automatic lookup se
                         <cstring>spacer1</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Vertical</enum>
+                        <enum>Qt::Vertical</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>

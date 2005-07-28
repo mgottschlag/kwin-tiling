@@ -11,8 +11,6 @@
 #ifndef _ACTIONS_LISTVIEW_WIDGET_H_
 #define _ACTIONS_LISTVIEW_WIDGET_H_
 
-#include <khlistview.h>
-
 #include <action_data.h>
 
 #include <actions_listview_widget_ui.h>
@@ -41,40 +39,29 @@ class Actions_listview_widget
         void new_action( Action_data_base* data_P );
         void delete_action();
     private:
-        Action_listview_item* create_item( QListViewItem* parent_P, QListViewItem* after_P, Action_data_base* data_P );
+        Action_listview_item* create_item( Q3ListViewItem* parent_P, Q3ListViewItem* after_P, Action_data_base* data_P );
         void build_up_recursively( Action_data_group* parent_P,
             Action_listview_item* item_parent_P );
         Action_listview_item* recent_item;
         Action_listview_item* saved_current_item;
     private slots:
-        void item_moved( QListViewItem* item_P, QListViewItem* was_after_P, QListViewItem* after_P );
-        void current_changed( QListViewItem* item_P );
+        void item_moved( Q3ListViewItem* item_P, Q3ListViewItem* was_after_P, Q3ListViewItem* after_P );
+        void current_changed( Q3ListViewItem* item_P );
     signals:
         void current_action_changed();
     };
 
-class Actions_listview
-    : public KHListView    
-    {
-    Q_OBJECT
-    public:
-        Actions_listview( QWidget* parent_P = NULL, const char* name_P = NULL );
-        Actions_listview_widget* widget();
-    private:
-        Actions_listview_widget* _widget;
-    };
-
 // CHECKME a jak to bude s parent itemu, kdyz Action_data uz maji vlastni parent ?
 class Action_listview_item
-    : public QListViewItem
+    : public Q3ListViewItem
     {
     public:
         virtual QString text( int column_P ) const;
         Action_data_base* data() const;
         void set_data( Action_data_base* data_P );
-        Action_listview_item( QListView* parent_P, QListViewItem* after_P,
+        Action_listview_item( Q3ListView* parent_P, Q3ListViewItem* after_P,
             Action_data_base* data_P );
-        Action_listview_item( QListViewItem* parent_P, QListViewItem* after_P,
+        Action_listview_item( Q3ListViewItem* parent_P, Q3ListViewItem* after_P,
             Action_data_base* data_P );
     protected:
         Action_data_base* _data; // CHECKME doesn't own !!!
@@ -117,18 +104,18 @@ Actions_listview_widget* Actions_listview::widget()
 // Action_listview_item
 
 inline
-Action_listview_item::Action_listview_item( QListView* parent_P, QListViewItem* after_P,
+Action_listview_item::Action_listview_item( Q3ListView* parent_P, Q3ListViewItem* after_P,
     Action_data_base* data_P )
-    : QListViewItem( parent_P, after_P ), _data( data_P )
+    : Q3ListViewItem( parent_P, after_P ), _data( data_P )
     {
     if( dynamic_cast< Action_data_group* >( data_P ))
         setExpandable( true );
     }
 
 inline
-Action_listview_item::Action_listview_item( QListViewItem* parent_P, QListViewItem* after_P,
+Action_listview_item::Action_listview_item( Q3ListViewItem* parent_P, Q3ListViewItem* after_P,
     Action_data_base* data_P )
-    : QListViewItem( parent_P, after_P ), _data( data_P )
+    : Q3ListViewItem( parent_P, after_P ), _data( data_P )
     {
     if( dynamic_cast< Action_data_group* >( data_P ))
         setExpandable( true );

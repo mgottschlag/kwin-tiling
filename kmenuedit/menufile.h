@@ -21,6 +21,8 @@
 
 #include <qdom.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 class MenuFile
 {
@@ -106,7 +108,7 @@ private:
    QDomDocument m_doc;
    bool m_bDirty;
    
-   QPtrList<ActionAtom> m_actionList;
+   Q3PtrList<ActionAtom> m_actionList;
    QStringList m_removedEntries;
 };
 

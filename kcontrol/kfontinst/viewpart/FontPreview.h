@@ -34,6 +34,8 @@
 #include <qsize.h>
 #include <qwidget.h>
 #include <qcolor.h>
+//Added by qt3to4:
+#include <QPaintEvent>
 #include <kurl.h>
 #include "FcEngine.h"
 

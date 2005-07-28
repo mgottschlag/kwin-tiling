@@ -20,11 +20,13 @@
 #ifndef URLGRABBER_H
 #define URLGRABBER_H
 
-#include <qptrlist.h>
-#include <qintdict.h>
+#include <q3ptrlist.h>
+#include <q3intdict.h>
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <Q3PopupMenu>
 
 #include <kprocess.h>
 
@@ -36,8 +38,8 @@ class KPopupMenu;
 
 class ClipAction;
 struct ClipCommand;
-typedef QPtrList<ClipAction> ActionList;
-typedef QPtrListIterator<ClipAction> ActionListIterator;
+typedef Q3PtrList<ClipAction> ActionList;
+typedef Q3PtrListIterator<ClipAction> ActionListIterator;
 
 class URLGrabber : public QObject
 {
@@ -82,7 +84,7 @@ private:
   QStringList myAvoidWindows;
   QString myClipData;
   ClipAction *myCurrentAction;
-  QIntDict<ClipCommand> myCommandMapper;
+  Q3IntDict<ClipCommand> myCommandMapper;
   KPopupMenu *myMenu;
   QTimer *myPopupKillTimer;
   int myPopupKillTimeout;
@@ -96,7 +98,7 @@ private slots:
 
 
 signals:
-    void sigPopup( QPopupMenu * );
+    void sigPopup( Q3PopupMenu * );
     void sigDisablePopup();
 
 };
@@ -140,7 +142,7 @@ public:
   void clearCommands() { myCommands.clear(); }
 
   void  addCommand( const QString& command, const QString& description, bool, const QString& icon = "" );
-  const QPtrList<ClipCommand>& commands() 	const { return myCommands; }
+  const Q3PtrList<ClipCommand>& commands() 	const { return myCommands; }
 
   /**
    * Saves this action to a a given KConfig object
@@ -151,7 +153,7 @@ public:
 private:
   QRegExp 		myRegExp;
   QString 		myDescription;
-  QPtrList<ClipCommand> 	myCommands;
+  Q3PtrList<ClipCommand> 	myCommands;
 
 };
 

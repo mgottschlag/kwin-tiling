@@ -34,12 +34,6 @@
             <property name="name">
                 <cstring>ButtonGroup2</cstring>
             </property>
-            <property name="frameShape">
-                <enum>NoFrame</enum>
-            </property>
-            <property name="lineWidth">
-                <number>0</number>
-            </property>
             <property name="title">
                 <string></string>
             </property>
@@ -226,7 +220,7 @@
     <tabstop>chkRunTerminal</tabstop>
 </tabstops>
 <includes>
-    <include location="local" impldecl="in implementation">kdialog.h</include>
+    <include location="local" impldecl="in declaration">kdialog.h</include>
 </includes>
 <slots>
     <slot access="protected">selectEmailClient()</slot>

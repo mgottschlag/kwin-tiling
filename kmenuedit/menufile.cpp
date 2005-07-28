@@ -62,7 +62,7 @@ bool MenuFile::load()
       return false;
 
    QFile file( m_fileName );
-   if (!file.open( IO_ReadOnly ))
+   if (!file.open( QIODevice::ReadOnly ))
    {
       kdWarning() << "Could not read " << m_fileName << endl;
       create();
@@ -94,7 +94,7 @@ bool MenuFile::save()
 {
    QFile file( m_fileName );
    
-   if (!file.open( IO_WriteOnly ))
+   if (!file.open( QIODevice::WriteOnly ))
    {
       kdWarning() << "Could not write " << m_fileName << endl;
       m_error = i18n("Could not write to %1").arg(m_fileName);
@@ -399,8 +399,8 @@ void MenuFile::moveMenu(const QString &oldMenu, const QString &newMenu)
    QStringList oldMenuParts = QStringList::split('/', oldMenu);
    QStringList newMenuParts = QStringList::split('/', newMenu);
    QString commonMenuName;
-   uint max = QMIN(oldMenuParts.count(), newMenuParts.count());
-   uint i = 0;
+   int max = QMIN(oldMenuParts.count(), newMenuParts.count());
+   int i = 0;
    for(; i < max; i++)
    {
       if (oldMenuParts[i] != newMenuParts[i])
@@ -408,14 +408,14 @@ void MenuFile::moveMenu(const QString &oldMenu, const QString &newMenu)
       commonMenuName += '/' + oldMenuParts[i];
    }
    QString oldMenuName;
-   for(uint j = i; j < oldMenuParts.count(); j++)
+   for(int j = i; j < oldMenuParts.count(); j++)
    {
       if (i != j)
          oldMenuName += '/';
       oldMenuName += oldMenuParts[j];
    }
    QString newMenuName;
-   for(uint j = i; j < newMenuParts.count(); j++)
+   for(int j = i; j < newMenuParts.count(); j++)
    {
       if (i != j)
          newMenuName += '/';

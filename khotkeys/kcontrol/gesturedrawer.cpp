@@ -11,6 +11,9 @@
 
 #include <qcolor.h>
 #include <qpainter.h>
+//Added by qt3to4:
+#include <Q3Frame>
+#include <QPaintEvent>
 
 #include "gesturedrawer.h"
 
@@ -18,10 +21,10 @@ namespace KHotKeys
 {
 
 GestureDrawer::GestureDrawer(QWidget *parent, const char *name)
-  : QFrame(parent, name), _data(QString::null)
+  : Q3Frame(parent, name), _data(QString::null)
     {
     setBackgroundColor( colorGroup().base());
-    setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    setFrameStyle(Q3Frame::Panel | Q3Frame::Sunken);
     setMinimumSize(30, 30);
     }
 
@@ -51,7 +54,7 @@ void GestureDrawer::paintEvent(QPaintEvent *ev)
         startCell = QString(_data[0]).toUInt();
         }
 
-    for (Q_UINT32 index = 1; index < _data.length(); ++index)
+    for (Q_INT32 index = 1; index < _data.length(); ++index)
         {
         endCell = QString(_data[index]).toUInt();
 
@@ -63,7 +66,7 @@ void GestureDrawer::paintEvent(QPaintEvent *ev)
       // Draw something to show the starting point
             p.drawRect(startPoint.x()-2, startPoint.y()-2, 4, 4);
             p.fillRect(startPoint.x()-2, startPoint.y()-2, 4, 4,
-                       QBrush(black));
+                       QBrush(Qt::black));
             }
 
         p.drawLine(startPoint, endPoint);
@@ -74,7 +77,7 @@ void GestureDrawer::paintEvent(QPaintEvent *ev)
 
     p.end();
 
-    QFrame::paintEvent(ev);
+    Q3Frame::paintEvent(ev);
     }
 
 QPoint GestureDrawer::lookupCellCoords(Q_UINT32 cell)

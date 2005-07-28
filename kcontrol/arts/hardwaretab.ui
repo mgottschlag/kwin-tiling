@@ -24,7 +24,7 @@
                 <cstring>groupBox4</cstring>
             </property>
             <property name="frameShape">
-                <enum>GroupBoxPanel</enum>
+                <enum>Box</enum>
             </property>
             <property name="frameShadow">
                 <enum>Sunken</enum>

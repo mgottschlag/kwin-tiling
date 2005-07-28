@@ -25,7 +25,7 @@
 #define kcmsambaimports_h_included
  
 #include <qtimer.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <kconfig.h>
 
 class ImportsView: public QWidget
@@ -38,7 +38,7 @@ class ImportsView: public QWidget
       void loadSettings() {};
 private:
    KConfig *configFile;
-   QListView list;
+   Q3ListView list;
    QTimer timer;
 private slots:
    void updateList();

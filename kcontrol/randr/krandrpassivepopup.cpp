@@ -19,13 +19,17 @@
 #include "krandrpassivepopup.h"
 
 #include <kapplication.h>
+#include <QX11Info>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QEvent>
 
 // this class is just like KPassivePopup, but it keeps track of the widget
 // it's supposed to be positioned next to, and adjust its position if that
 // widgets moves (needed because after a resolution switch Kicker will
 // reposition itself, causing normal KPassivePopup to stay at weird places)
 
-KRandrPassivePopup::KRandrPassivePopup( QWidget *parent, const char *name, WFlags f )
+KRandrPassivePopup::KRandrPassivePopup( QWidget *parent, const char *name, Qt::WFlags f )
     : KPassivePopup( parent, name, f )
     {
     connect( &update_timer, SIGNAL( timeout()), SLOT( slotPositionSelf()));
@@ -45,7 +49,7 @@ KRandrPassivePopup* KRandrPassivePopup::message( const QString &caption, const Q
 
 void KRandrPassivePopup::startWatchingWidget( QWidget* widget_P )
     {
-    static Atom wm_state = XInternAtom( qt_xdisplay() , "WM_STATE", False );
+    static Atom wm_state = XInternAtom( QX11Info::display() , "WM_STATE", False );
     Window win = widget_P->winId();
     bool x11_events = false;
     for(;;)
@@ -53,7 +57,7 @@ void KRandrPassivePopup::startWatchingWidget( QWidget* widget_P )
 	Window root, parent;
 	Window* children;
 	unsigned int nchildren;
-	XQueryTree( qt_xdisplay(), win, &root, &parent, &children, &nchildren );
+	XQueryTree( QX11Info::display(), win, &root, &parent, &children, &nchildren );
 	if( children != NULL )
 	    XFree( children );
 	if( win == root ) // huh?
@@ -69,8 +73,8 @@ void KRandrPassivePopup::startWatchingWidget( QWidget* widget_P )
 	else
 	    {
 	    XWindowAttributes attrs;
-	    XGetWindowAttributes( qt_xdisplay(), win, &attrs );
-	    XSelectInput( qt_xdisplay(), win, attrs.your_event_mask | StructureNotifyMask );
+	    XGetWindowAttributes( QX11Info::display(), win, &attrs );
+	    XSelectInput( QX11Info::display(), win, attrs.your_event_mask | StructureNotifyMask );
 	    watched_windows.append( win );
 	    x11_events = true;
 	    }
@@ -78,7 +82,7 @@ void KRandrPassivePopup::startWatchingWidget( QWidget* widget_P )
 	int format;
 	unsigned long nitems, after;
 	unsigned char* data;
-	if( XGetWindowProperty( qt_xdisplay(), win, wm_state, 0, 0, False, AnyPropertyType,
+	if( XGetWindowProperty( QX11Info::display(), win, wm_state, 0, 0, False, AnyPropertyType,
 	    &type, &format, &nitems, &after, &data ) == Success )
 	    {
 	    if( data != NULL )

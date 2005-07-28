@@ -32,14 +32,19 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kpushbutton.h>
 
 #include <qradiobutton.h>
+//Added by qt3to4:
+#include <QMouseEvent>
+#include <QLabel>
+#include <QVBoxLayout>
 
 class QLabel;
 class KPushButton;
-class QButtonGroup;
-class QGroupBox;
+class Q3ButtonGroup;
+class Q3GroupBox;
 class QComboBox;
 class QCheckBox;
 class QLineEdit;
+class QMenu;
 
 enum { Authed = QDialog::Accepted + 1, Schedule };
 
@@ -110,8 +115,8 @@ class KDMShutdown : public KDMShutdownBase {
 	void slotWhenChanged();
 
   private:
-	QButtonGroup *howGroup;
-	QGroupBox *schedGroup;
+	Q3ButtonGroup *howGroup;
+	Q3GroupBox *schedGroup;
 	QRadioButton *restart_rb;
 	QLineEdit *le_start, *le_timeout;
 	QCheckBox *cb_force;
@@ -142,7 +147,7 @@ class KDMDelayedPushButton : public KPushButton {
 
   public:
 	KDMDelayedPushButton( const KGuiItem &item, QWidget *parent, const char *name = 0 );
-	void setPopup( QPopupMenu *pop );
+	void setPopup( QMenu *pop );
 
   private slots:
 	void slotTimeout();
@@ -150,7 +155,7 @@ class KDMDelayedPushButton : public KPushButton {
 	void slotReleased();
 
   private:
-	QPopupMenu *pop;
+	QMenu *pop;
 	QTimer popt;
 };
 

@@ -29,7 +29,9 @@
 #include <kiconloader.h>
 
 #include <qtabwidget.h>
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include "indexwidget.h"
 #include "searchwidget.h"
@@ -43,7 +45,7 @@
 #include "toplevel.moc"
 
 TopLevel::TopLevel(const char* name)
-  : KMainWindow( 0, name, WStyle_ContextHelp  )
+  : KMainWindow( 0, name, Qt::WStyle_ContextHelp  )
   , _active(0), dummyAbout(0)
 {
   setCaption(QString::null);
@@ -78,12 +80,12 @@ TopLevel::TopLevel(const char* name)
       connect( m, SIGNAL( helpRequest() ), this, SLOT( slotHelpRequest() ) );
 
   // create the layout box
-  _splitter = new QSplitter( QSplitter::Horizontal, this );
+  _splitter = new QSplitter( Qt::Horizontal, this );
 
   // create the left hand side (the tab view)
   _tab = new QTabWidget( _splitter );
 
-  QWhatsThis::add( _tab, i18n("Choose between Index, Search and Quick Help") );
+  Q3WhatsThis::add( _tab, i18n("Choose between Index, Search and Quick Help") );
 
   // index tab
   _indextab = new IndexWidget(_modules, _tab);
@@ -91,8 +93,8 @@ TopLevel::TopLevel(const char* name)
                   this, SLOT(activateModule(ConfigModule*)));
   _tab->addTab(_indextab, SmallIconSet("kcontrol"), i18n("&Index"));
 
-  connect(_indextab, SIGNAL(categorySelected(QListViewItem*)),
-                  this, SLOT(categorySelected(QListViewItem*)));
+  connect(_indextab, SIGNAL(categorySelected(Q3ListViewItem*)),
+                  this, SLOT(categorySelected(Q3ListViewItem*)));
 
   // search tab
   _searchtab = new SearchWidget(_tab);
@@ -110,7 +112,7 @@ TopLevel::TopLevel(const char* name)
 
  // Restore sizes
   config->setGroup("General");
-  QValueList<int> sizes = config->readIntListEntry(  "SplitterSizes" );
+  Q3ValueList<int> sizes = config->readIntListEntry(  "SplitterSizes" );
   if (!sizes.isEmpty())
      _splitter->setSizes(sizes);
 
@@ -333,7 +335,7 @@ void TopLevel::changedModule(ConfigModule *changed)
     setCaption(changed->moduleName(), changed->isChanged() );
 }
 
-void TopLevel::categorySelected(QListViewItem *category)
+void TopLevel::categorySelected(Q3ListViewItem *category)
 {
   if (_active)
   {
@@ -357,11 +359,11 @@ void TopLevel::categorySelected(QListViewItem *category)
   }
   _dock->removeModule();
   about_module->setText( i18n( "About Current Module" ) );
-  about_module->setIconSet( QIconSet() );
+  about_module->setIconSet( QIcon() );
   about_module->setEnabled( false );
 
   // insert the about widget
-  QListViewItem *firstItem = category->firstChild();
+  Q3ListViewItem *firstItem = category->firstChild();
   QString caption = static_cast<ModuleTreeItem*>(category)->caption();
   if( _dock->baseWidget()->isA( "AboutWidget" ) )
   {
@@ -411,7 +413,7 @@ void TopLevel::activateModule(ConfigModule *mod)
   else
   {
      about_module->setText(i18n("About Current Module"));
-     about_module->setIconSet(QIconSet());
+     about_module->setIconSet(QIcon());
      about_module->setEnabled(false);
   }
 }

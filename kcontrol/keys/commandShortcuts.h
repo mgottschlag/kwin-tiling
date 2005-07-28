@@ -23,17 +23,17 @@
 
 #include <qtabwidget.h>
 #include <kshortcut.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 class AppTreeView;
 class AppTreeItem;
-class QButtonGroup;
+class Q3ButtonGroup;
 class QRadioButton;
 class KKeyButton;
-class QListViewItem;
+class Q3ListViewItem;
 
-typedef QPtrList<AppTreeItem> treeItemList;
-typedef QPtrListIterator<AppTreeItem> treeItemListIterator;
+typedef Q3PtrList<AppTreeItem> treeItemList;
+typedef Q3PtrListIterator<AppTreeItem> treeItemListIterator;
 
 class CommandShortcutsModule : public QWidget
 {
@@ -57,7 +57,7 @@ class CommandShortcutsModule : public QWidget
         void commandSelected(const QString&, const QString &, bool);
         void shortcutChanged(const KShortcut& shortcut);
         void shortcutRadioToggled(bool remove);
-        void commandDoubleClicked(QListViewItem *item, const QPoint &, int);
+        void commandDoubleClicked(Q3ListViewItem *item, const QPoint &, int);
         void launchMenuEditor();
 
     protected:
@@ -65,7 +65,7 @@ class CommandShortcutsModule : public QWidget
 
     private:
         AppTreeView* m_tree;
-        QButtonGroup* m_shortcutBox;
+        Q3ButtonGroup* m_shortcutBox;
         QRadioButton* m_noneRadio;
         QRadioButton* m_customRadio;
         KKeyButton* m_shortcutButton;

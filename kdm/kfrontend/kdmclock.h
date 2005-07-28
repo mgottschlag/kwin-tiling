@@ -24,11 +24,14 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef _KDM_CLOCK_H_
 #define _KDM_CLOCK_H_
 
-#include <qframe.h>
+#include <q3frame.h>
+//Added by qt3to4:
+#include <QShowEvent>
+#include <QPaintEvent>
 
-class KdmClock : public QFrame {
+class KdmClock : public Q3Frame {
 	Q_OBJECT
-	typedef QFrame inherited;
+	typedef Q3Frame inherited;
 
   public:
 	KdmClock( QWidget *parent=0, const char *name=0 );

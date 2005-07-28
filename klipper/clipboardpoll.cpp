@@ -27,6 +27,7 @@
 #include <time.h>
 
 #include "toplevel.h"
+#include <QX11Info>
 
 /*
 
@@ -64,7 +65,7 @@ ClipboardPoll::ClipboardPoll( QWidget* parent )
             "KLIPPER_SELECTION_TIMESTAMP",
             "KLIPPER_CLIPBOARD_TIMESTAMP" };
     Atom atoms[ 6 ];
-    XInternAtoms( qt_xdisplay(), const_cast< char** >( names ), 6, False, atoms );
+    XInternAtoms( QX11Info::display(), const_cast< char** >( names ), 6, False, atoms );
     selection.sentinel_atom = atoms[ 0 ];
     clipboard.sentinel_atom = atoms[ 1 ];
     xa_clipboard = atoms[ 2 ];
@@ -74,11 +75,11 @@ ClipboardPoll::ClipboardPoll( QWidget* parent )
     selection.atom = XA_PRIMARY;
     clipboard.atom = xa_clipboard;
     selection.last_change = clipboard.last_change = qt_x_time; // don't trigger right after startup
-    selection.last_owner = XGetSelectionOwner( qt_xdisplay(), XA_PRIMARY );
+    selection.last_owner = XGetSelectionOwner( QX11Info::display(), XA_PRIMARY );
 #ifdef NOISY_KLIPPER_
     kdDebug() << "(1) Setting last_owner for =" << "selection" << ":" << selection.last_owner << endl;
 #endif
-    clipboard.last_owner = XGetSelectionOwner( qt_xdisplay(), xa_clipboard );
+    clipboard.last_owner = XGetSelectionOwner( QX11Info::display(), xa_clipboard );
 #ifdef NOISY_KLIPPER
     kdDebug() << "(2) Setting last_owner for =" << "clipboard" << ":" << clipboard.last_owner << endl;
 #endif
@@ -119,7 +120,7 @@ void ClipboardPoll::updateQtOwnership( SelectionData& data )
     unsigned long nitems;
     unsigned long after;
     unsigned char* prop = NULL;
-    if( XGetWindowProperty( qt_xdisplay(), qt_xrootwin( 0 ), data.sentinel_atom, 0, 2, False,
+    if( XGetWindowProperty( QX11Info::display(), QX11Info::appRootWindow( 0 ), data.sentinel_atom, 0, 2, False,
         XA_WINDOW, &type, &format, &nitems, &after, &prop ) != Success
         || type != XA_WINDOW || format != 32 || nitems != 2 || prop == NULL )
     {
@@ -133,7 +134,7 @@ void ClipboardPoll::updateQtOwnership( SelectionData& data )
     }
     Window owner = reinterpret_cast< long* >( prop )[ 0 ]; // [0] is new owner, [1] is previous
     XFree( prop );
-    Window current_owner = XGetSelectionOwner( qt_xdisplay(), data.atom );
+    Window current_owner = XGetSelectionOwner( QX11Info::display(), data.atom );
     data.owner_is_qt = ( owner == current_owner );
 #ifdef REALLY_NOISY_KLIPPER_
     kdDebug() << "owner=" << owner << "; current_owner=" << current_owner << endl;
@@ -161,7 +162,7 @@ void ClipboardPoll::timeout()
 
 bool ClipboardPoll::checkTimestamp( SelectionData& data )
 {
-    Window current_owner = XGetSelectionOwner( qt_xdisplay(), data.atom );
+    Window current_owner = XGetSelectionOwner( QX11Info::display(), data.atom );
     bool signal = false;
     updateQtOwnership( data );
     if( data.owner_is_qt )
@@ -195,8 +196,8 @@ bool ClipboardPoll::checkTimestamp( SelectionData& data )
         // We're already waiting for the timestamp of the last check
         return false;
     }
-    XDeleteProperty( qt_xdisplay(), winId(), data.timestamp_atom );
-    XConvertSelection( qt_xdisplay(), data.atom, xa_timestamp, data.timestamp_atom, winId(), qt_x_time );
+    XDeleteProperty( QX11Info::display(), winId(), data.timestamp_atom );
+    XConvertSelection( QX11Info::display(), data.atom, xa_timestamp, data.timestamp_atom, winId(), qt_x_time );
     data.waiting_for_timestamp = true;
     data.waiting_x_time = qt_x_time;
 #ifdef REALLY_NOISY_KLIPPER_
@@ -226,7 +227,7 @@ bool ClipboardPoll::changedTimestamp( SelectionData& data, const XEvent& ev )
     unsigned long nitems;
     unsigned long after;
     unsigned char* prop = NULL;
-    if( XGetWindowProperty( qt_xdisplay(), winId(), ev.xselection.property, 0, 1, False,
+    if( XGetWindowProperty( QX11Info::display(), winId(), ev.xselection.property, 0, 1, False,
         AnyPropertyType, &type, &format, &nitems, &after, &prop ) != Success
         || format != 32 || nitems != 1 || prop == NULL )
     {

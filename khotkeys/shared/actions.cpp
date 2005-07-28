@@ -34,6 +34,9 @@
 #include "action_data.h"
 
 #include <X11/X.h>
+#include <QX11Info>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 namespace KHotKeys
 {
@@ -65,7 +68,7 @@ void Action::cfg_write( KConfig& cfg_P ) const
 // Action_list
 
 Action_list::Action_list( KConfig& cfg_P, Action_data* data_P )
-    : QPtrList< Action >()
+    : Q3PtrList< Action >()
     {
     setAutoDelete( true );
     QString save_cfg_group = cfg_P.group();
@@ -246,7 +249,7 @@ void Dcop_action::execute()
     QString args_str = args;
     while( !args_str.isEmpty())
         {
-        unsigned int pos = 0;
+        int pos = 0;
         while( args_str[ pos ] == ' ' )
             ++pos;
         if( args_str[ pos ] == '\"' || args_str[ pos ] == '\'' )
@@ -379,7 +382,7 @@ void Keyboard_input_action::execute()
     if( key == "Enter" && KKey( key ).keyCodeQt() == 0 )
         key = "Return";
     keyboard_handler->send_macro_key( KKey( key ).keyCodeQt(), w ); // the rest
-    XFlush( qt_xdisplay());
+    XFlush( QX11Info::display());
     }
     
 const QString Keyboard_input_action::description() const

@@ -9,6 +9,9 @@
 #define FONTS_H
 
 #include <qobject.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <Q3PtrList>
 
 #include <kcmodule.h>
 #include <kdialogbase.h>
@@ -109,7 +112,7 @@ protected slots:
 private:
     bool useAA, useAA_original;
     QCheckBox *cbAA;
-    QPtrList <FontUseItem> fontUseList;
+    Q3PtrList <FontUseItem> fontUseList;
     FontAASettings *aaSettings;
 };
 

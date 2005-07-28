@@ -24,12 +24,12 @@ that is intentional :-]
 #define __modulemenu_h__
 
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qstringlist.h>
-#include <qintdict.h>
+#include <q3intdict.h>
 #include <qstring.h>
 #include <qwidget.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 #include <kpopupmenu.h>
 
@@ -58,7 +58,7 @@ private:
   int id;
 
   ConfigModuleList       *_modules;
-  QIntDict<ConfigModule> _moduleDict;
+  Q3IntDict<ConfigModule> _moduleDict;
 };
 
 

@@ -108,7 +108,7 @@ private slots:
     /**
      * Update the theme's info and preview
      */
-    void slotThemeChanged( QListViewItem * item );
+    void slotThemeChanged( Q3ListViewItem * item );
 
     /**
      * Invoked when one drag and drops @p urls onto the kcm

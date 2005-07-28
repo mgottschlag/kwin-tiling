@@ -22,6 +22,9 @@
  */
 
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QResizeEvent>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -157,9 +160,6 @@ extern "C"
 	kdDebug(125) << "KeyModule::init() - Load Included Bindings\n";
 // this should match the included files above
 #define NOSLOTS
-#define SHIFT Qt::SHIFT
-#define CTRL Qt::CTRL
-#define ALT Qt::ALT
 #include "../../klipper/klipperbindings.cpp"
 #include "../../kwin/kwinbindings.cpp"
 #define KICKER_ALL_BINDINGS

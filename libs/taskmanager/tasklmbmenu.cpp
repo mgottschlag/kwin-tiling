@@ -27,12 +27,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <qpainter.h>
 #include <qstyle.h>
+#include <QMenuItem>
+//Added by qt3to4:
+#include <QDragLeaveEvent>
+#include <QDragMoveEvent>
+#include <QList>
+#include <QDragEnterEvent>
+#include <QMouseEvent>
 
 #include <kdebug.h>
 #include <kglobalsettings.h>
 
-#include "global.h"
+#include <kpopupmenu.h>
 
+#include "utils.h"
+
+#if 0
 TaskMenuItem::TaskMenuItem(const QString &text,
                            bool active, bool minimized, bool attention)
   : QCustomMenuItem(),
@@ -65,14 +75,14 @@ void TaskMenuItem::paint(QPainter *p, const QColorGroup &cg,
     }
     else if (m_isMinimized)
     {
-        p->setPen(QPen(KickerLib::blendColors(cg.background(), cg.text())));
+        p->setPen(QPen(Plasma::blendColors(cg.background(), cg.text())));
     }
     else if (m_demandsAttention && !m_attentionState)
     {
         p->setPen(cg.mid());
     }
 
-    p->drawText(x, y, w, h, AlignAuto|AlignVCenter|DontClip|ShowPrefix, m_text);
+    p->drawText(x, y, w, h, Qt::AlignLeft|Qt::AlignVCenter|Qt::TextDontClip|Qt::TextShowMnemonic, m_text);
 }
 
 QSize TaskMenuItem::sizeHint()
@@ -85,15 +95,17 @@ QSize TaskMenuItem::sizeHint()
     return QFontMetrics(font).size(AlignAuto|AlignVCenter|DontClip|ShowPrefix,
                                    m_text);
 }
+#endif
 
 /*****************************************************************************/
 
 TaskLMBMenu::TaskLMBMenu(const Task::List& tasks, QWidget *parent, const char *name)
-  : QPopupMenu(parent, name),
+  : QMenu(parent),
     m_tasks(tasks),
     m_lastDragId(-1),
     m_attentionState(false)
 {
+    setName(name);
     fillMenu();
 
     setAcceptDrops(true); // Always enabled to activate task during drag&drop.
@@ -109,22 +121,24 @@ void TaskLMBMenu::fillMenu()
     Task::List::iterator itEnd = m_tasks.end();
     for (Task::List::iterator it = m_tasks.begin(); it != itEnd; ++it)
     {
-        Task::Ptr t = (*it);
+        Task::TaskPtr t = (*it);
 
         QString text = t->visibleName().replace("&", "&&");
 
-        TaskMenuItem *menuItem = new TaskMenuItem(text,
+        //### KDE4
+/*        TaskMenuItem *menuItem = new TaskMenuItem(text,
                                                   t->isActive(),
                                                   t->isIconified(),
-                                                  t->demandsAttention());
-        int id = insertItem(QIconSet(t->pixmap()), menuItem);
+                                                  t->demandsAttention());*/
+        //QAction* menuItem = 
+        int id = insertItem(QIcon(t->pixmap()), text);
         connectItem(id, t, SLOT(activateRaiseOrIconify()));
         setItemChecked(id, t->isActive());
 
         if (t->demandsAttention())
         {
             m_attentionState = true;
-            m_attentionMap.append(menuItem);
+            m_attentionMap.append(actions().at(indexOf(id)));
         }
     }
 
@@ -140,12 +154,15 @@ void TaskLMBMenu::attentionTimeout()
 {
     m_attentionState = !m_attentionState;
 
-    for (QValueList<TaskMenuItem*>::const_iterator it = m_attentionMap.constBegin();
+    //### KDE4
+#if 0
+    for (Q3ValueList<TaskMenuItem*>::const_iterator it = m_attentionMap.constBegin();
          it != m_attentionMap.constEnd();
          ++it)
     {
         (*it)->setAttentionState(m_attentionState);
     }
+#endif
 
     update();
 
@@ -160,7 +177,7 @@ void TaskLMBMenu::dragEnterEvent( QDragEnterEvent* e )
         return;
     }
 
-    int id = idAt(e->pos());
+    int id = KPopupMenu::actionId(actionAt(e->pos()));
 
     if (id == -1)
     {
@@ -173,7 +190,7 @@ void TaskLMBMenu::dragEnterEvent( QDragEnterEvent* e )
         m_dragSwitchTimer->start(1000, true);
     }
 
-    QPopupMenu::dragEnterEvent( e );
+    QMenu::dragEnterEvent( e );
 }
 
 void TaskLMBMenu::dragLeaveEvent( QDragLeaveEvent* e )
@@ -181,7 +198,7 @@ void TaskLMBMenu::dragLeaveEvent( QDragLeaveEvent* e )
     m_dragSwitchTimer->stop();
     m_lastDragId = -1;
 
-    QPopupMenu::dragLeaveEvent(e);
+    QMenu::dragLeaveEvent(e);
 
     hide();
 }
@@ -194,7 +211,7 @@ void TaskLMBMenu::dragMoveEvent( QDragMoveEvent* e )
         return;
     }
 
-    int id = idAt(e->pos());
+    int id = KPopupMenu::actionId(actionAt(e->pos()));
 
     if (id == -1)
     {
@@ -207,14 +224,13 @@ void TaskLMBMenu::dragMoveEvent( QDragMoveEvent* e )
         m_dragSwitchTimer->start(1000, true);
     }
 
-    QPopupMenu::dragMoveEvent(e);
+    QMenu::dragMoveEvent(e);
 }
 
 void TaskLMBMenu::dragSwitch()
 {
-    bool ok = false;
-    Task::Ptr t = m_tasks.at(indexOf(m_lastDragId), &ok);
-    if (ok)
+    Task::TaskPtr t = m_tasks.at(indexOf(m_lastDragId));
+    if (t)
     {
         t->activate();
 
@@ -229,7 +245,7 @@ void TaskLMBMenu::dragSwitch()
 
 void TaskLMBMenu::mousePressEvent( QMouseEvent* e )
 {
-    if (e->button() == LeftButton)
+    if (e->button() == Qt::LeftButton)
     {
         m_dragStartPos = e->pos();
     }
@@ -238,20 +254,20 @@ void TaskLMBMenu::mousePressEvent( QMouseEvent* e )
         m_dragStartPos = QPoint();
     }
 
-    QPopupMenu::mousePressEvent(e);
+    QMenu::mousePressEvent(e);
 }
 
 void TaskLMBMenu::mouseReleaseEvent(QMouseEvent* e)
 {
     m_dragStartPos = QPoint();
-    QPopupMenu::mouseReleaseEvent(e);
+    QMenu::mouseReleaseEvent(e);
 }
 
 void TaskLMBMenu::mouseMoveEvent(QMouseEvent* e)
 {
     if (m_dragStartPos.isNull())
     {
-        QPopupMenu::mouseMoveEvent(e);
+        QMenu::mouseMoveEvent(e);
         return;
     }
 
@@ -260,12 +276,11 @@ void TaskLMBMenu::mouseMoveEvent(QMouseEvent* e)
 
     if ((m_dragStartPos - newPos).manhattanLength() > delay)
     {
-        int index = indexOf(idAt(m_dragStartPos));
+        int index = actions().indexOf(actionAt(e->pos()));
         if (index != -1)
         {
-            bool ok = false;
-            Task::Ptr task = m_tasks.at(index, &ok);
-            if (ok)
+            Task::TaskPtr task = m_tasks.at(index);
+            if (task)
             {
                 Task::List tasks;
                 tasks.append(task);
@@ -276,6 +291,6 @@ void TaskLMBMenu::mouseMoveEvent(QMouseEvent* e)
         }
     }
 
-    QPopupMenu::mouseMoveEvent(e);
+    QMenu::mouseMoveEvent(e);
 }
 

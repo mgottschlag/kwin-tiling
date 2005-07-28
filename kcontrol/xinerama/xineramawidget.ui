@@ -309,7 +309,7 @@
     </connection>
 </connections>
 <includes>
-    <include location="local" impldecl="in implementation">kdialog.h</include>
+    <include location="local" impldecl="in declaration">kdialog.h</include>
     <include location="local" impldecl="in implementation">xineramawidget.ui.h</include>
 </includes>
 <signals>

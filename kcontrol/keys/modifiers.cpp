@@ -1,10 +1,12 @@
 #include "modifiers.h"
 
 #include <qcheckbox.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qwhatsthis.h>
+
+//Added by qt3to4:
+#include <QGridLayout>
 
 #include <kapplication.h>
 #include <kconfig.h>
@@ -22,6 +24,7 @@
 #include <X11/Xutil.h>
 #include <X11/keysymdef.h>
 #include <ctype.h>
+#include <QX11Info>
 #undef NONE
 
 /*Modifier Scheme
@@ -150,10 +153,10 @@ void ModifiersModule::setupMacModifierKeys()
 	//const int CODE_Alt_L  = 0x40, CODE_Alt_R  = 0x71;
 	int keyCodeMin, keyCodeMax, nKeyCodes, nSymsPerCode;
 
-	XDisplayKeycodes( qt_xdisplay(), &keyCodeMin, &keyCodeMax );
+	XDisplayKeycodes( QX11Info::display(), &keyCodeMin, &keyCodeMax );
 	nKeyCodes = keyCodeMax - keyCodeMin + 1;
-	KeySym* rgKeySyms = XGetKeyboardMapping( qt_xdisplay(), keyCodeMin, nKeyCodes, &nSymsPerCode );
-	XModifierKeymap* xmk = XGetModifierMapping( qt_xdisplay() );
+	KeySym* rgKeySyms = XGetKeyboardMapping( QX11Info::display(), keyCodeMin, nKeyCodes, &nSymsPerCode );
+	XModifierKeymap* xmk = XGetModifierMapping( QX11Info::display() );
 
 	SET_CODE_SYM( CODE_Ctrl_L, XK_Super_L )
 	SET_CODE_SYM( CODE_Ctrl_R, XK_Super_R )
@@ -170,8 +173,8 @@ void ModifiersModule::setupMacModifierKeys()
 	//SET_MOD_CODE( Mod1MapIndex,    CODE_Win_L, CODE_Win_R );
 	//SET_MOD_CODE( Mod4MapIndex,    CODE_Ctrl_L, CODE_Ctrl_R );
 
-	XSetModifierMapping( qt_xdisplay(), xmk );
-	XChangeKeyboardMapping( qt_xdisplay(), keyCodeMin, nSymsPerCode, rgKeySyms, nKeyCodes );
+	XSetModifierMapping( QX11Info::display(), xmk );
+	XChangeKeyboardMapping( QX11Info::display(), keyCodeMin, nSymsPerCode, rgKeySyms, nKeyCodes );
 	XFree( rgKeySyms );
 	XFreeModifiermap( xmk );
 }
@@ -182,7 +185,7 @@ void ModifiersModule::initGUI()
 	QGridLayout* pLayoutTop = new QGridLayout( this, 6, 2, KDialog::marginHint() );
 	pLayoutTop->setColStretch( 1, 1 );
 
-	QGroupBox* pGroup = new QGroupBox( 2, Qt::Horizontal, i18n("KDE Modifiers"), this );
+	Q3GroupBox* pGroup = new Q3GroupBox( 2, Qt::Horizontal, i18n("KDE Modifiers"), this );
 	pLayoutTop->addWidget( pGroup, 0, 0 );
 
 	QLabel* plbl = new QLabel( i18n("Modifier"), pGroup );
@@ -222,7 +225,7 @@ void ModifiersModule::initGUI()
 
 	m_pchkMacSwap = new QCheckBox( i18n("MacOS-style modifier usage"), this );
 	m_pchkMacSwap->setChecked( m_bMacSwapOrig );
-	QWhatsThis::add( m_pchkMacSwap,
+	m_pchkMacSwap->setWhatsThis(
 		i18n("Checking this box will change your X Modifier Mapping to "
 			"better reflect the standard MacOS modifier key usage. "
 			"It allows you to use <i>Command+C</i> for <i>Copy</i>, for instance, "
@@ -236,12 +239,12 @@ void ModifiersModule::initGUI()
 	//------------------
 	pLayoutTop->addRowSpacing( 3, KDialog::spacingHint() * 3 );
 
-	pGroup = new QGroupBox( 1, Qt::Horizontal, i18n("X Modifier Mapping"), this );
+	pGroup = new Q3GroupBox( 1, Qt::Horizontal, i18n("X Modifier Mapping"), this );
 	pLayoutTop->addWidget( pGroup, 4, 0 );
 
 	m_plstXMods = new KListView( pGroup );
 	m_plstXMods->setSorting( -1 );
-	m_plstXMods->setSelectionMode( QListView::NoSelection );
+	m_plstXMods->setSelectionMode( Q3ListView::NoSelection );
 	m_plstXMods->setAllColumnsShowFocus( true );
 	m_plstXMods->addColumn( i18n("X11-Mod") );
 
@@ -302,7 +305,7 @@ void ModifiersModule::updateWidgets()
 		m_pchkMacSwap->setEnabled( false );
 	}
 
-	XModifierKeymap* xmk = XGetModifierMapping( qt_xdisplay() );
+	XModifierKeymap* xmk = XGetModifierMapping( QX11Info::display() );
 
 	for( int iKey = m_plstXMods->columns()-1; iKey < xmk->max_keypermod; iKey++ )
 		m_plstXMods->addColumn( i18n("Key %1").arg(iKey+1) );
@@ -311,7 +314,7 @@ void ModifiersModule::updateWidgets()
 	for( int iMod = 0; iMod < 8; iMod++ ) {
 		// Find the default modifier index for the Win key.
 		/*if( iMod > Mod2Index ) {
-			uint symX = XKeycodeToKeysym( qt_xdisplay(), xmk->modifiermap[xmk->max_keypermod * iMod], 0 );
+			uint symX = XKeycodeToKeysym( QX11Info::display(), xmk->modifiermap[xmk->max_keypermod * iMod], 0 );
 			if( symX == XK_Super_L || symX == XK_Super_R )
 				iModWinDef = iMod;
 			else if( iModWinDef == -1 && (symX == XK_Meta_L || symX == XK_Meta_R) )
@@ -320,7 +323,7 @@ void ModifiersModule::updateWidgets()
 
 		// Insert items into X modifier map list
 		for( int iKey = 0; iKey < xmk->max_keypermod; iKey++ ) {
-			uint symX = XKeycodeToKeysym( qt_xdisplay(), xmk->modifiermap[xmk->max_keypermod * iMod + iKey], 0 );
+			uint symX = XKeycodeToKeysym( QX11Info::display(), xmk->modifiermap[xmk->max_keypermod * iMod + iKey], 0 );
 			m_plstXMods->itemAtIndex( iMod )->setText( 1 + iKey, XKeysymToString( symX ) );
 		}
 	}

@@ -24,6 +24,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kglobal.h>
 #include <kconfig.h>
 #include "server.h"
+#include <QX11Info>
 
 
 static const char version[] = "0.4";
@@ -46,7 +47,7 @@ void IoErrorHandler ( IceConn iceConn)
     the_server->ioError( iceConn );
 }
 
-bool writeTest(QCString path)
+bool writeTest(Q3CString path)
 {
    path += "/XXXXXX";
    int fd = mkstemp(path.data());
@@ -67,9 +68,9 @@ bool writeTest(QCString path)
 
 void sanity_check( int argc, char* argv[] )
 {
-  QCString msg;
-  QCString path = getenv("HOME");
-  QCString readOnly = getenv("KDE_HOME_READONLY");
+  QByteArray msg;
+  QByteArray path = getenv("HOME");
+  QByteArray readOnly = getenv("KDE_HOME_READONLY");
   if (path.isEmpty())
   {
      msg = "$HOME not set!";
@@ -93,8 +94,8 @@ void sanity_check( int argc, char* argv[] )
      if (errno == ENOSPC)
         msg = "$HOME directory (%s) is out of disk space.";
      else
-        msg = "Writing to the $HOME directory (%s) failed with\n    "
-              "the error '"+QCString(strerror(errno))+"'";
+        msg = QByteArray("Writing to the $HOME directory (%s) failed with\n    "
+              "the error '")+QByteArray(strerror(errno))+QByteArray("'");
   }
   if (msg.isEmpty())
   {
@@ -131,7 +132,7 @@ void sanity_check( int argc, char* argv[] )
            msg = "Temp directory (%s) is out of disk space.";
         else
            msg = "Writing to the temp directory (%s) failed with\n    "
-                 "the error '"+QCString(strerror(errno))+"'";
+                 "the error '"+QByteArray(strerror(errno))+QByteArray("'");
      }
   }
   if (msg.isEmpty() && (path != "/tmp"))
@@ -143,7 +144,7 @@ void sanity_check( int argc, char* argv[] )
            msg = "Temp directory (%s) is out of disk space.";
         else
            msg = "Writing to the temp directory (%s) failed with\n    "
-                 "the error '"+QCString(strerror(errno))+"'";
+                 "the error '"+QByteArray(strerror(errno))+QByteArray("'");
      }
   }
   if (msg.isEmpty())
@@ -166,7 +167,7 @@ void sanity_check( int argc, char* argv[] )
     fputs(msg_post, stderr);
 
     QApplication a(argc, argv);
-    QCString qmsg(256+path.length());
+    Q3CString qmsg(256+path.length());
     qmsg.sprintf(msg.data(), path.data());
     qmsg = msg_pre+qmsg+msg_post;
     QMessageBox::critical(0, "KDE Installation Problem!",
@@ -190,7 +191,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
 
     putenv((char*)"SESSION_MANAGER=");
     KApplication a(false, true); // Disable styles until we need them.
-    fcntl(ConnectionNumber(qt_xdisplay()), F_SETFD, 1);
+    fcntl(ConnectionNumber(QX11Info::display()), F_SETFD, 1);
 
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -202,7 +203,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
        return 1;
     }
 
-    QCString wm = args->getOption("windowmanager");
+    QByteArray wm = args->getOption("windowmanager");
     if ( wm.isEmpty() )
 	wm = "kwin";
 
@@ -226,7 +227,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
     KConfig *config = KGlobal::config();
     config->setGroup( "General" );
 
-    int realScreenCount = ScreenCount( qt_xdisplay() );
+    int realScreenCount = ScreenCount( QX11Info::display() );
     bool screenCountChanged =
          ( config->readNumEntry( "screenCount", realScreenCount ) != realScreenCount );
 

@@ -78,7 +78,7 @@ void KMenuEdit::setupActions()
 
 void KMenuEdit::setupView()
 {
-    m_splitter = new QSplitter(Horizontal, this);
+    m_splitter = new QSplitter(Qt::Horizontal, this);
     m_tree = new TreeView(m_controlCenter, actionCollection(), m_splitter);
     m_basicTab = new BasicTab(m_splitter);
 
@@ -100,7 +100,7 @@ void KMenuEdit::setupView()
 
     // restore splitter sizes
     KConfig* config = KGlobal::config();
-    QValueList<int> sizes = config->readIntListEntry("SplitterSizes");
+    QList<int> sizes = config->readIntListEntry("SplitterSizes");
 
     if (sizes.isEmpty())
         sizes << 1 << 3;
@@ -124,7 +124,7 @@ void KMenuEdit::slotChangeView()
 
     delete m_actionDelete;
 
-    m_actionDelete = new KAction(i18n("&Delete"), "editdelete", Key_Delete, actionCollection(), "delete");
+    m_actionDelete = new KAction(i18n("&Delete"), "editdelete", Qt::Key_Delete, actionCollection(), "delete");
 
     if (!m_splitter)
        setupView();

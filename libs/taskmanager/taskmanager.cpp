@@ -25,6 +25,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qcursor.h>
 #include <qimage.h>
 #include <qtimer.h>
+#include <QX11Info>
+#include <QDesktopWidget>
+#include <QPixmap>
+#include <QList>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -35,6 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstaticdeleter.h>
 #include <kwinmodule.h>
 #include <netwm.h>
+#include <QX11Info>
 
 #include "taskmanager.h"
 #include "taskmanager.moc"
@@ -72,9 +77,9 @@ TaskManager::TaskManager()
             this,        SLOT(windowChanged(WId,unsigned int)));
 
     // register existing windows
-    const QValueList<WId> windows = m_winModule->windows();
-    QValueList<WId>::ConstIterator end(windows.end());
-    for (QValueList<WId>::ConstIterator it = windows.begin(); it != end; ++it)
+    const QList<WId> windows = m_winModule->windows();
+    QList<WId>::ConstIterator end(windows.end());
+    for (QList<WId>::ConstIterator it = windows.begin(); it != end; ++it)
     {
         windowAdded(*it);
     }
@@ -206,7 +211,7 @@ void TaskManager::setXCompositeEnabled(bool)
 }
 #endif // !THUMBNAILING_POSSIBLE
 
-Task::Ptr TaskManager::findTask(WId w)
+Task::TaskPtr TaskManager::findTask(WId w)
 {
     // TODO: might be able to be made more efficient if
     // we check to see if w is a transient first?
@@ -226,16 +231,16 @@ Task::Ptr TaskManager::findTask(WId w)
     return 0;
 }
 
-Task::Ptr TaskManager::findTask(int desktop, const QPoint& p)
+Task::TaskPtr TaskManager::findTask(int desktop, const QPoint& p)
 {
-    QValueList<WId> list = winModule()->stackingOrder();
+    QList<WId> list = winModule()->stackingOrder();
 
-    Task::Ptr task = 0;
+    Task::TaskPtr task = 0;
     int currentIndex = -1;
     Task::Dict::iterator itEnd = m_tasksByWId.end();
     for (Task::Dict::iterator it = m_tasksByWId.begin(); it != itEnd; ++it)
     {
-        Task::Ptr t = it.data();
+        Task::TaskPtr t = it.data();
         if (!t->isOnAllDesktops() && t->desktop() != desktop)
         {
             continue;
@@ -262,7 +267,7 @@ Task::Ptr TaskManager::findTask(int desktop, const QPoint& p)
 
 void TaskManager::windowAdded(WId w )
 {
-    NETWinInfo info(qt_xdisplay(),  w, qt_xrootwin(),
+    NETWinInfo info(QX11Info::display(),  w, QX11Info::appRootWindow(),
                     NET::WMWindowType | NET::WMPid | NET::WMState);
 
     // ignore NET::Tool and other special window types
@@ -289,7 +294,7 @@ void TaskManager::windowAdded(WId w )
     }
 
     Window transient_for_tmp;
-    if (XGetTransientForHint( qt_xdisplay(), (Window) w, &transient_for_tmp ))
+    if (XGetTransientForHint( QX11Info::display(), (Window) w, &transient_for_tmp ))
     {
         WId transient_for = (WId) transient_for_tmp;
 
@@ -298,11 +303,11 @@ void TaskManager::windowAdded(WId w )
             return;
 
         // lets see if this is a transient for an existing task
-        if( transient_for != qt_xrootwin()
+        if( transient_for != QX11Info::appRootWindow()
             && transient_for != 0
             && wType != NET::Utility )
         {
-            Task::Ptr t = findTask(transient_for);
+            Task::TaskPtr t = findTask(transient_for);
             if (t)
             {
                 if (t->window() != w)
@@ -315,7 +320,7 @@ void TaskManager::windowAdded(WId w )
         }
     }
 
-    Task::Ptr t = new Task(w, this);
+    Task::TaskPtr t = new Task(w, this);
     m_tasksByWId[w] = t;
 
     // kdDebug() << "TM: Task added for WId: " << w << endl;
@@ -328,7 +333,7 @@ void TaskManager::windowRemoved(WId w)
     _skiptaskbar_windows.remove(w);
 
     // find task
-    Task::Ptr t = findTask(w);
+    Task::TaskPtr t = findTask(w);
     if (!t)
     {
         return;
@@ -357,7 +362,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
 {
     if (dirty & NET::WMState)
     {
-        NETWinInfo info (qt_xdisplay(),  w, qt_xrootwin(),
+        NETWinInfo info (QX11Info::display(),  w, QX11Info::appRootWindow(),
                          NET::WMState | NET::XAWMState);
         if (info.state() & NET::SkipTaskbar)
         {
@@ -387,7 +392,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     }
 
     // find task
-    Task::Ptr t = findTask(w);
+    Task::TaskPtr t = findTask(w);
     if (!t)
     {
         return;
@@ -444,7 +449,7 @@ void TaskManager::updateWindowPixmap(WId w)
         return;
     }
 
-    Task::Ptr task = findTask(w);
+    Task::TaskPtr task = findTask(w);
     if (task)
     {
         task->updateWindowPixmap();
@@ -455,7 +460,7 @@ void TaskManager::activeWindowChanged(WId w )
 {
     //kdDebug() << "TaskManager::activeWindowChanged" << endl;
 
-    Task::Ptr t = findTask( w );
+    Task::TaskPtr t = findTask( w );
     if (!t) {
         if (_active) {
             _active->setActive(false);
@@ -478,7 +483,7 @@ void TaskManager::currentDesktopChanged(int desktop)
 
 void TaskManager::gotNewStartup( const KStartupInfoId& id, const KStartupInfoData& data )
 {
-    Startup::Ptr s = new Startup( id, data, this );
+    Startup::StartupPtr s = new Startup( id, data, this );
     _startups.append(s);
 
     emit startupAdded(s);
@@ -501,7 +506,7 @@ void TaskManager::killStartup( const KStartupInfoId& id )
 {
     Startup::List::iterator sIt = _startups.begin();
     Startup::List::iterator itEnd = _startups.end();
-    Startup::Ptr s = 0;
+    Startup::StartupPtr s = 0;
     for (; sIt != itEnd; ++sIt)
     {
         if ((*sIt)->id() == id)
@@ -520,7 +525,7 @@ void TaskManager::killStartup( const KStartupInfoId& id )
     emit startupRemoved(s);
 }
 
-void TaskManager::killStartup(Startup::Ptr s)
+void TaskManager::killStartup(Startup::StartupPtr s)
 {
     if (!s)
     {
@@ -558,15 +563,15 @@ bool TaskManager::isOnTop(const Task* task)
         return false;
     }
 
-    QValueList<WId>::ConstIterator begin(m_winModule->stackingOrder().constBegin());
-    QValueList<WId>::ConstIterator it = m_winModule->stackingOrder().fromLast();
+    QList<WId>::const_iterator begin(m_winModule->stackingOrder().constBegin());
+    QList<WId>::const_iterator it = m_winModule->stackingOrder().begin() + (m_winModule->stackingOrder().size() - 1);
     do
     {
         Task::Dict::iterator taskItEnd = m_tasksByWId.end();
         for (Task::Dict::iterator taskIt = m_tasksByWId.begin();
              taskIt != taskItEnd; ++taskIt)
         {
-            Task::Ptr t = taskIt.data();
+            Task::TaskPtr t = taskIt.data();
             if ((*it) == t->window())
             {
                 if (t == task)
@@ -825,7 +830,7 @@ void Task::updateDemandsAttentionState( WId w )
     if (window() != w)
     {
         // 'w' is a transient for this task
-        NETWinInfo i( qt_xdisplay(), w, qt_xrootwin(), NET::WMState );
+        NETWinInfo i( QX11Info::display(), w, QX11Info::appRootWindow(), NET::WMState );
         if(i.state() & NET::DemandsAttention)
         {
             if (!_transients_demanding_attention.contains(w))
@@ -859,7 +864,7 @@ void Task::removeTransient(WId w)
 QString Task::className()
 {
     XClassHint hint;
-    if(XGetClassHint(qt_xdisplay(), _win, &hint)) {
+    if(XGetClassHint(QX11Info::display(), _win, &hint)) {
         QString nh( hint.res_name );
         XFree( hint.res_name );
         XFree( hint.res_class );
@@ -871,7 +876,7 @@ QString Task::className()
 QString Task::classClass()
 {
     XClassHint hint;
-    if(XGetClassHint(qt_xdisplay(), _win, &hint)) {
+    if(XGetClassHint(QX11Info::display(), _win, &hint)) {
         QString ch( hint.res_class );
         XFree( hint.res_name );
         XFree( hint.res_class );
@@ -1009,7 +1014,7 @@ void Task::move()
     QRect geom = _info.geometry();
     QCursor::setPos(geom.center());
 
-    NETRootInfo ri(qt_xdisplay(), NET::WMMoveResize);
+    NETRootInfo ri(QX11Info::display(), NET::WMMoveResize);
     ri.moveResizeRequest(_win, geom.center().x(),
                          geom.center().y(), NET::Move);
 }
@@ -1032,7 +1037,7 @@ void Task::resize()
     QRect geom = _info.geometry();
     QCursor::setPos(geom.bottomRight());
 
-    NETRootInfo ri(qt_xdisplay(), NET::WMMoveResize);
+    NETRootInfo ri(QX11Info::display(), NET::WMMoveResize);
     ri.moveResizeRequest(_win, geom.bottomRight().x(),
                          geom.bottomRight().y(), NET::BottomRight);
 }
@@ -1052,7 +1057,7 @@ void Task::setMaximized(bool maximize)
         KWin::deIconifyWindow(_win);
     }
 
-    NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMState);
+    NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
 
     if (maximize)
     {
@@ -1089,7 +1094,7 @@ void Task::restore()
         KWin::deIconifyWindow(_win);
     }
 
-    NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMState);
+    NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
     ni.setState(0, NET::Max);
 
     if (!on_current)
@@ -1130,7 +1135,7 @@ void Task::toggleIconified()
 
 void Task::close()
 {
-    NETRootInfo ri( qt_xdisplay(),  NET::CloseWindow );
+    NETRootInfo ri( QX11Info::display(),  NET::CloseWindow );
     ri.closeWindowRequest( _win );
 }
 
@@ -1175,7 +1180,7 @@ void Task::activateRaiseOrIconify()
 
 void Task::toDesktop(int desk)
 {
-    NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMDesktop);
+    NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMDesktop);
     if (desk == 0)
     {
         if (_info.valid() && _info.onAllDesktops())
@@ -1202,7 +1207,7 @@ void Task::toCurrentDesktop()
 
 void Task::setAlwaysOnTop(bool stay)
 {
-    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
+    NETWinInfo ni( QX11Info::display(),  _win, QX11Info::appRootWindow(), NET::WMState);
     if(stay)
         ni.setState( NET::StaysOnTop, NET::StaysOnTop );
     else
@@ -1216,7 +1221,7 @@ void Task::toggleAlwaysOnTop()
 
 void Task::setKeptBelowOthers(bool below)
 {
-    NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMState);
+    NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
 
     if (below)
     {
@@ -1235,7 +1240,7 @@ void Task::toggleKeptBelowOthers()
 
 void Task::setFullScreen(bool fullscreen)
 {
-    NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), NET::WMState);
+    NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
 
     if (fullscreen)
     {
@@ -1254,7 +1259,7 @@ void Task::toggleFullScreen()
 
 void Task::setShaded(bool shade)
 {
-    NETWinInfo ni( qt_xdisplay(),  _win, qt_xrootwin(), NET::WMState);
+    NETWinInfo ni( QX11Info::display(),  _win, QX11Info::appRootWindow(), NET::WMState);
     if(shade)
         ni.setState( NET::Shaded, NET::Shaded );
     else
@@ -1274,7 +1279,7 @@ void Task::publishIconGeometry(QRect rect)
     }
 
     m_iconGeometry = rect;
-    NETWinInfo ni(qt_xdisplay(), _win, qt_xrootwin(), 0);
+    NETWinInfo ni(QX11Info::display(), _win, QX11Info::appRootWindow(), 0);
     NETRect r;
 
     if (rect.isValid())
@@ -1409,7 +1414,7 @@ QPixmap Task::thumbnail(int maxDimension)
                      PictOpOver, // we're filtering, alpha values are probable
                      picture, // src
                      None, // mask
-                     thumbnail.x11RenderHandle(), // dst
+                     thumbnail.x11PictureHandle(), // dst
                      0, 0, // src offset
                      0, 0, // mask offset
                      0, 0, // dst offset
@@ -1468,15 +1473,17 @@ int TaskManager::currentDesktop() const
 }
 
 TaskDrag::TaskDrag(const Task::List& tasks, QWidget* source, const char* name)
-  : QStoredDrag("taskbar/task", source, name)
+  : Q3StoredDrag("taskbar/task", source, name)
 {
     QByteArray data;
-    QDataStream stream(data, IO_WriteOnly);
+    QDataStream stream(&data, QIODevice::WriteOnly);
+
+    stream.setVersion(QDataStream::Qt_3_1);
 
     Task::List::const_iterator itEnd = tasks.constEnd();
     for (Task::List::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
     {
-        stream << (*it)->window();
+        stream << (quint32)(*it)->window();
     }
 
     setEncodedData(data);
@@ -1498,12 +1505,12 @@ Task::List TaskDrag::decode( const QMimeSource* e )
 
     if (data.size())
     {
-        QDataStream stream(data, IO_ReadOnly);
+        QDataStream stream(data);
         while (!stream.atEnd())
         {
-            WId id;
+            quint32 id;
             stream >> id;
-            if (Task::Ptr task = TaskManager::the()->findTask(id))
+            if (Task::TaskPtr task = TaskManager::the()->findTask(id))
             {
                 tasks.append(task);
             }

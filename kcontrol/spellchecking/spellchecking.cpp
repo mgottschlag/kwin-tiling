@@ -16,7 +16,10 @@
 */
 
 #include <qlayout.h>
-#include <qvgroupbox.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QBoxLayout>
+#include <Q3GroupBox>
 
 #include <dcopclient.h>
 
@@ -24,6 +27,7 @@
 #include <kdialog.h>
 #include <kgenericfactory.h>
 #include <kspell.h>
+#include <klocale.h>
 
 #include "spellchecking.h"
 
@@ -31,11 +35,11 @@ typedef KGenericFactory<KSpellCheckingConfig, QWidget > SpellFactory;
 K_EXPORT_COMPONENT_FACTORY (kcm_spellchecking, SpellFactory("kcmspellchecking") )
 
 
-KSpellCheckingConfig::KSpellCheckingConfig(QWidget *parent, const char *name, const QStringList &):
-    KCModule(SpellFactory::instance(), parent, name)
+KSpellCheckingConfig::KSpellCheckingConfig(QWidget *parent, const char *, const QStringList &):
+    KCModule(SpellFactory::instance(), parent)
 {
   QBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
-  QGroupBox *box = new QVGroupBox( i18n("Spell Checking Settings"), this );
+  Q3GroupBox *box = new Q3GroupBox( 1, Qt::Vertical, i18n("Spell Checking Settings"), this  );
   box->layout()->setSpacing( KDialog::spacingHint() );
   layout->addWidget(box);
 

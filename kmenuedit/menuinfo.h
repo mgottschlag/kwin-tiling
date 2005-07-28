@@ -21,6 +21,8 @@
 #define __menuinfo_h__
 
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kshortcut.h>
 #include <kservice.h>
@@ -132,9 +134,9 @@ public:
     QString comment; // Comment
     QString directoryFile; // File describing this folder.
     QString icon; // Icon
-    QPtrList<MenuFolderInfo> subFolders; // Sub menus in this folder
-    QPtrList<MenuEntryInfo> entries; // Menu entries in this folder
-    QPtrList<MenuInfo> initialLayout; // Layout of menu entries according to sycoca
+    Q3PtrList<MenuFolderInfo> subFolders; // Sub menus in this folder
+    Q3PtrList<MenuEntryInfo> entries; // Menu entries in this folder
+    Q3PtrList<MenuInfo> initialLayout; // Layout of menu entries according to sycoca
     bool dirty;
     bool hidden;
 };

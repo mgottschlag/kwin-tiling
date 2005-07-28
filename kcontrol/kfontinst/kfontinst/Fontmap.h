@@ -31,6 +31,7 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
+#include <q3ptrlist.h>
 
 namespace KFI
 {
@@ -66,9 +67,9 @@ namespace Fontmap
 
         private:
 
-        QString          itsDir;
-        QPtrList<TEntry> itsEntries;
-        unsigned int     itsLineCount;
+        QString           itsDir;
+        Q3PtrList<TEntry> itsEntries;
+        unsigned int      itsLineCount;
     };
 
     extern bool create(const QString &dir, CFontEngine &fe);

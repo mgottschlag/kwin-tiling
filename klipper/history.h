@@ -22,11 +22,13 @@
 #define _HISTORY_H_
 
 #include <qobject.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
+//Added by qt3to4:
+#include <Q3PopupMenu>
 #include "historyitem.h"
 
 class KlipperPopup;
-class QPopupMenu;
+class Q3PopupMenu;
 class QWidget;
 class QptrListIterator;
 
@@ -39,7 +41,7 @@ public:
     /**
      * Iterator for history
      */
-    typedef QPtrListIterator<HistoryItem> iterator;
+    typedef Q3PtrListIterator<HistoryItem> iterator;
 
     /**
      * Return (toplevel) popup menu (or default view, of you like)
@@ -135,7 +137,7 @@ private:
     /**
      * The history
      */
-    QPtrList<HistoryItem> itemList;
+    Q3PtrList<HistoryItem> itemList;
 
     /**
      * ensure that the number of items does not exceed max_size()

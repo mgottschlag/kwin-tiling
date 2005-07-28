@@ -40,8 +40,8 @@ class Windowdef_list_widget
     public slots:
         void clear_data();
     protected:
-        Windowdef_list_item* create_listview_item( Windowdef* window_P, QListView* parent1_P,
-            QListViewItem* parent2_P, QListViewItem* after_P, bool copy_P );
+        Windowdef_list_item* create_listview_item( Windowdef* window_P, Q3ListView* parent1_P,
+            Q3ListViewItem* parent2_P, Q3ListViewItem* after_P, bool copy_P );
         void edit_listview_item( Windowdef_list_item* item_P );
         enum type_t { TYPE_WINDOWDEF_SIMPLE };
     protected slots:
@@ -49,7 +49,7 @@ class Windowdef_list_widget
         virtual void copy_pressed();
         virtual void delete_pressed();
         virtual void modify_pressed();
-        virtual void current_changed( QListViewItem* item_P );
+        virtual void current_changed( Q3ListViewItem* item_P );
     protected:
         QObject* autodetect_object;
         const char* autodetect_slot;
@@ -59,13 +59,13 @@ class Windowdef_list_widget
 typedef Windowdef_list_widget Windowdef_list_tab;
 
 class Windowdef_list_item
-    : public QListViewItem
+    : public Q3ListViewItem
     {
     public:
-        Windowdef_list_item( QListView* parent_P, Windowdef* window_P );
-        Windowdef_list_item( QListViewItem* parent_P, Windowdef* window_P );
-        Windowdef_list_item( QListView* parent_P, QListViewItem* after_P, Windowdef* window_P );
-        Windowdef_list_item( QListViewItem* parent_P, QListViewItem* after_P, Windowdef* window_P );
+        Windowdef_list_item( Q3ListView* parent_P, Windowdef* window_P );
+        Windowdef_list_item( Q3ListViewItem* parent_P, Windowdef* window_P );
+        Windowdef_list_item( Q3ListView* parent_P, Q3ListViewItem* after_P, Windowdef* window_P );
+        Windowdef_list_item( Q3ListViewItem* parent_P, Q3ListViewItem* after_P, Windowdef* window_P );
         virtual ~Windowdef_list_item();
         virtual QString text( int column_P ) const;
         Windowdef* window() const;
@@ -110,28 +110,28 @@ void Windowdef_list_widget::set_autodetect( QObject* obj_P, const char* slot_P )
 // Windowdef_list_item
 
 inline
-Windowdef_list_item::Windowdef_list_item( QListView* parent_P, Windowdef* window_P )
-    : QListViewItem( parent_P ), _window( window_P )
+Windowdef_list_item::Windowdef_list_item( Q3ListView* parent_P, Windowdef* window_P )
+    : Q3ListViewItem( parent_P ), _window( window_P )
     {
     }
     
 inline
-Windowdef_list_item::Windowdef_list_item( QListViewItem* parent_P, Windowdef* window_P )
-    : QListViewItem( parent_P ), _window( window_P )
+Windowdef_list_item::Windowdef_list_item( Q3ListViewItem* parent_P, Windowdef* window_P )
+    : Q3ListViewItem( parent_P ), _window( window_P )
     {
     }
 
 inline
-Windowdef_list_item::Windowdef_list_item( QListView* parent_P, QListViewItem* after_P,
+Windowdef_list_item::Windowdef_list_item( Q3ListView* parent_P, Q3ListViewItem* after_P,
     Windowdef* window_P )
-    : QListViewItem( parent_P, after_P ), _window( window_P )
+    : Q3ListViewItem( parent_P, after_P ), _window( window_P )
     {
     }
 
 inline
-Windowdef_list_item::Windowdef_list_item( QListViewItem* parent_P, QListViewItem* after_P,
+Windowdef_list_item::Windowdef_list_item( Q3ListViewItem* parent_P, Q3ListViewItem* after_P,
     Windowdef* window_P )
-    : QListViewItem( parent_P, after_P ), _window( window_P )
+    : Q3ListViewItem( parent_P, after_P ), _window( window_P )
     {
     }
 

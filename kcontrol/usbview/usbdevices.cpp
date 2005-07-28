@@ -17,6 +17,8 @@
 
 #include <qfile.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -29,7 +31,7 @@
 #include <sys/param.h>
 #endif
 
-QPtrList<USBDevice> USBDevice::_devices;
+Q3PtrList<USBDevice> USBDevice::_devices;
 USBDB *USBDevice::_db;
 
 
@@ -88,7 +90,7 @@ void USBDevice::parseLine(QString line)
 
 USBDevice *USBDevice::find(int bus, int device)
 {
-  QPtrListIterator<USBDevice> it(_devices);
+  Q3PtrListIterator<USBDevice> it(_devices);
   for ( ; it.current(); ++it)
     if (it.current()->bus() == bus && it.current()->device() == device)
       return it.current();
@@ -137,7 +139,7 @@ QString USBDevice::dump()
 #ifndef Q_OS_FREEBSD
   r += i18n("<tr><td><i>USB Version</i></td><td>%1.%2</td></tr>")
     .arg(_verMajor,0,16)
-    .arg(QString::number(_verMinor,16).prepend('0').right(2));
+    .arg(QString::number(_verMinor,16).prepend(QChar::fromLatin1('0')).right(2));
 #endif
   r += "<tr><td></td></tr>";
 
@@ -153,7 +155,7 @@ QString USBDevice::dump()
   r += i18n("<tr><td><i>Product ID</i></td><td>0x%1</td></tr>").arg(p);
   r += i18n("<tr><td><i>Revision</i></td><td>%1.%2</td></tr>")
     .arg(_revMajor,0,16)
-    .arg(QString::number(_revMinor,16).prepend('0').right(2));
+    .arg(QString::number(_revMinor,16).prepend(QChar::fromLatin1('0')).right(2));
   r += "<tr><td></td></tr>";
 
   r += i18n("<tr><td><i>Speed</i></td><td>%1 Mbit/s</td></tr>").arg(_speed);
@@ -313,7 +315,7 @@ bool USBDevice::parse(QString fname)
 	while ( controller.exists() )
 	{
 		// If the devicenode exists, continue with further inspection
-		if ( controller.open(IO_ReadOnly) )
+		if ( controller.open(QIODevice::ReadOnly) )
 		{
 			for ( int addr = 1; addr < USB_MAX_DEVICES; ++addr ) 
 			{

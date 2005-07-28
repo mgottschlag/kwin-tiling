@@ -69,7 +69,7 @@ KConsole::KConsole( QWidget *_parent )
 {
 	setReadOnly( true );
 	setWordWrap( NoWrap );
-	setTextFormat( PlainText );
+	setTextFormat( Qt::PlainText );
 
 	if (!OpenConsole())
 		append( i18n("Cannot open console") );

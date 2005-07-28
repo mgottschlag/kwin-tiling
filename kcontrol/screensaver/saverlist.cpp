@@ -2,9 +2,9 @@
 #include "saverlist.h"
 
 class SaverConfig;
-class QPtrCollection;
+class Q3PtrCollection;
 
-int SaverList::compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2)
+int SaverList::compareItems(Q3PtrCollection::Item item1, Q3PtrCollection::Item item2)
 {
     SaverConfig *s1 = (SaverConfig *)item1;
     SaverConfig *s2 = (SaverConfig *)item2;

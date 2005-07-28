@@ -37,6 +37,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <qregexp.h>
+#include <qtextstream.h>
 #include <fstream>
 #include <unistd.h>
 
@@ -157,7 +158,7 @@ static const char * getItalicStr(KFI::CFontEngine::EItalic it)
 static QString createName(const QString &family, const QString &weight, const char *italic)
 {
     QString      name;
-    QTextOStream str(&name);
+    QTextStream str(&name);
 
     str << family;
     if(!weight.isEmpty() || NULL!=italic)
@@ -242,25 +243,18 @@ static QString locateFile(const char *dir, const char *file, int level=0)
 
         if(d.isReadable())
         {
-            const QFileInfoList *fList=d.entryInfoList();
-
-            if(fList)
-            {
-                QFileInfoListIterator it(*fList);
-                QFileInfo             *fInfo;
-                QString               str;
-
-                for(; NULL!=(fInfo=it.current()); ++it)
-                    if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
-                        if(fInfo->isDir())
-                        {
-                            if(!(str=locateFile(QFile::encodeName(fInfo->filePath()+"/"), file, level+1)).isEmpty())
-                                return str;
-                        }
-                        else
-                            if(fInfo->fileName()==file)
-                                return fInfo->filePath();
-            }
+            QString               str;
+            
+            foreach(QFileInfo fInfo, d.entryInfoList())
+                if("."!=fInfo.fileName() && ".."!=fInfo.fileName())
+                    if(fInfo.isDir())
+                    {
+                        if(!(str=locateFile(QFile::encodeName(fInfo.filePath()+"/"), file, level+1)).isEmpty())
+                            return str;
+                    }
+                    else
+                        if(fInfo.fileName()==file)
+                            return fInfo.filePath();
         }
     }
 
@@ -411,7 +405,7 @@ bool create(const QString &dir, CFontEngine &fe)
 
             if(in)
             {
-                QCString fmap(QFile::encodeName(fmapDir+FONTMAP));
+                QByteArray fmap(QFile::encodeName(fmapDir+FONTMAP));
                 int      lineNum=0,
                          kfiLine=-1,
                          gsLine=-1,

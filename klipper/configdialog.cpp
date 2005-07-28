@@ -19,11 +19,13 @@
 */
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qtooltip.h>
-#include <qwhatsthis.h>
-#include <qvbuttongroup.h>
+
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3Frame>
 #include <assert.h>
 
 #include <kiconloader.h>
@@ -44,7 +46,7 @@ ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel,
     if ( isApplet )
         setHelp( QString::null, "klipper" );
 
-    QFrame *w = 0L; // the parent for the widgets
+    Q3Frame *w = 0L; // the parent for the widgets
 
     w = addVBoxPage( i18n("&General") );
     generalWidget = new GeneralWidget( w, "general widget" );
@@ -92,7 +94,7 @@ void ConfigDialog::commitShortcuts()
 
 
 GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
-    : QVBox( parent, name )
+    : Q3VBox( parent, name )
 {
     setSpacing(KDialog::spacingHint());
 
@@ -101,29 +103,29 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     cbSaveContents = new QCheckBox( i18n("Save clipboard contents on e&xit"),
                                     this );
     cbStripWhitespace = new QCheckBox( i18n("Remove whitespace when executing actions"), this );
-    QWhatsThis::add( cbStripWhitespace,
+    cbStripWhitespace->setWhatsThis(
                      i18n("Sometimes, the selected text has some whitespace at the end, which, if loaded as URL in a browser would cause an error. Enabling this option removes any whitespace at the beginning or end of the selected string (the original clipboard contents will not be modified).") );
 
     cbReplayAIH = new QCheckBox( i18n("&Replay actions on an item selected from history"),
                                     this );
 
     cbNoNull = new QCheckBox( i18n("Pre&vent empty clipboard"), this );
-    QWhatsThis::add( cbNoNull,
+    cbNoNull->setWhatsThis(
                      i18n("Selecting this option has the effect, that the "
                           "clipboard can never be emptied. E.g. when an "
                           "application exits, the clipboard would usually be "
                           "emptied.") );
 
     cbIgnoreSelection = new QCheckBox( i18n("&Ignore selection"), this );
-    QWhatsThis::add( cbIgnoreSelection,
+    cbIgnoreSelection->setWhatsThis(
                      i18n("This option prevents the selection being recorded "
                           "in the clipboard history. Only explicit clipboard "
                           "changes are recorded.") );
 
-    QVButtonGroup *group = new QVButtonGroup( i18n("Clipboard/Selection Behavior"), this );
+    Q3VButtonGroup *group = new Q3VButtonGroup( i18n("Clipboard/Selection Behavior"), this );
     group->setExclusive( true );
 
-    QWhatsThis::add( group,
+    group->setWhatsThis(
      i18n("<qt>There are two different clipboard buffers available:<br><br>"
           "<b>Clipboard</b> is filled by selecting something "
           "and pressing Ctrl+C, or by clicking \"Copy\" in a toolbar or "
@@ -137,14 +139,13 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     cbSynchronize = new QRadioButton(
         i18n("Sy&nchronize contents of the clipboard and the selection"),
         group );
-    QWhatsThis::add( cbSynchronize,
+    cbSynchronize->setWhatsThis(
       i18n("Selecting this option synchronizes these two buffers, so they "
            "work the same way as in KDE 1.x and 2.x.") );
 
     cbSeparate = new QRadioButton(
         i18n("Separate clipboard and selection"), group );
-    QWhatsThis::add(
-        cbSeparate,
+    cbSeparate->setWhatsThis(
         i18n("Using this option will only set the selection when highlighting "
              "something and the clipboard when choosing e.g. \"Copy\" "
              "in a menubar.") );
@@ -191,7 +192,7 @@ void GeneralWidget::slotClipConfigChanged()
 /////////////////////////////////////////
 ////
 
-void ListView::rename( QListViewItem* item, int c )
+void ListView::rename( Q3ListViewItem* item, int c )
 {
   bool gui = false;
   if ( item->childCount() != 0 && c == 0) {
@@ -220,7 +221,7 @@ void ListView::rename( QListViewItem* item, int c )
 
 ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, QWidget *parent,
                             const char *name )
-    : QVBox( parent, name ),
+    : Q3VBox( parent, name ),
       advancedWidget( 0L )
 {
     Q_ASSERT( list != 0L );
@@ -244,33 +245,33 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
     listView->setRootIsDecorated( true );
     listView->setMultiSelection( false );
     listView->setAllColumnsShowFocus( true );
-    listView->setSelectionMode( QListView::Single );
-    connect( listView, SIGNAL(executed( QListViewItem*, const QPoint&, int )),
-             SLOT( slotItemChanged( QListViewItem*, const QPoint& , int ) ));
-    connect( listView, SIGNAL( selectionChanged ( QListViewItem * )),
-             SLOT(selectionChanged ( QListViewItem * )));
+    listView->setSelectionMode( Q3ListView::Single );
+    connect( listView, SIGNAL(executed( Q3ListViewItem*, const QPoint&, int )),
+             SLOT( slotItemChanged( Q3ListViewItem*, const QPoint& , int ) ));
+    connect( listView, SIGNAL( selectionChanged ( Q3ListViewItem * )),
+             SLOT(selectionChanged ( Q3ListViewItem * )));
     connect(listView,
-            SIGNAL(contextMenu(KListView *, QListViewItem *, const QPoint&)),
-            SLOT( slotContextMenu(KListView*, QListViewItem*, const QPoint&)));
+            SIGNAL(contextMenu(KListView *, Q3ListViewItem *, const QPoint&)),
+            SLOT( slotContextMenu(KListView*, Q3ListViewItem*, const QPoint&)));
 
     ClipAction *action   = 0L;
     ClipCommand *command = 0L;
-    QListViewItem *item  = 0L;
-    QListViewItem *child = 0L;
-    QListViewItem *after = 0L; // QListView's default inserting really sucks
+    Q3ListViewItem *item  = 0L;
+    Q3ListViewItem *child = 0L;
+    Q3ListViewItem *after = 0L; // QListView's default inserting really sucks
     ActionListIterator it( *list );
 
     const QPixmap& doc = SmallIcon( "misc" );
     const QPixmap& exec = SmallIcon( "exec" );
 
     for ( action = it.current(); action; action = ++it ) {
-        item = new QListViewItem( listView, after,
+        item = new Q3ListViewItem( listView, after,
                                   action->regExp(), action->description() );
         item->setPixmap( 0, doc );
 
-        QPtrListIterator<ClipCommand> it2( action->commands() );
+        Q3PtrListIterator<ClipCommand> it2( action->commands() );
         for ( command = it2.current(); command; command = ++it2 ) {
-            child = new QListViewItem( item, after,
+            child = new Q3ListViewItem( item, after,
                                        command->command, command->description);
         if ( command->pixmap.isEmpty() )
             child->setPixmap( 0, exec );
@@ -290,7 +291,7 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
 	cbUseGUIRegExpEditor->setChecked( false );
     }
 
-    QHBox *box = new QHBox( this );
+    Q3HBox *box = new Q3HBox( this );
     box->setSpacing( KDialog::spacingHint() );
     QPushButton *button = new QPushButton( i18n("&Add Action"), box );
     connect( button, SIGNAL( clicked() ), SLOT( slotAddAction() ));
@@ -299,11 +300,11 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
     connect( delActionButton, SIGNAL( clicked() ), SLOT( slotDeleteAction() ));
 
     QLabel *label = new QLabel(i18n("Click on a highlighted item's column to change it. \"%s\" in a command will be replaced with the clipboard contents."), box);
-    label->setAlignment( WordBreak | AlignLeft | AlignVCenter );
+    label->setAlignment( Qt::WordBreak | Qt::AlignLeft | Qt::AlignVCenter );
 
     box->setStretchFactor( label, 5 );
 
-    box = new QHBox( this );
+    box = new Q3HBox( this );
     QPushButton *advanced = new QPushButton( i18n("Advanced..."), box );
     advanced->setFixedSize( advanced->sizeHint() );
     connect( advanced, SIGNAL( clicked() ), SLOT( slotAdvanced() ));
@@ -316,12 +317,12 @@ ActionWidget::~ActionWidget()
 {
 }
 
-void ActionWidget::selectionChanged ( QListViewItem * item)
+void ActionWidget::selectionChanged ( Q3ListViewItem * item)
 {
     delActionButton->setEnabled(item!=0);
 }
 
-void ActionWidget::slotContextMenu( KListView *, QListViewItem *item,
+void ActionWidget::slotContextMenu( KListView *, Q3ListViewItem *item,
                                     const QPoint& pos )
 {
     if ( !item )
@@ -338,8 +339,8 @@ void ActionWidget::slotContextMenu( KListView *, QListViewItem *item,
 
     int id = menu->exec( pos );
     if ( id == addCmd ) {
-        QListViewItem *p = item->parent() ? item->parent() : item;
-        QListViewItem *cmdItem = new QListViewItem( p, item,
+        Q3ListViewItem *p = item->parent() ? item->parent() : item;
+        Q3ListViewItem *cmdItem = new Q3ListViewItem( p, item,
                          i18n("Click here to set the command to be executed"),
                          i18n("<new command>") );
         cmdItem->setPixmap( 0, SmallIcon( "exec" ) );
@@ -350,7 +351,7 @@ void ActionWidget::slotContextMenu( KListView *, QListViewItem *item,
     delete menu;
 }
 
-void ActionWidget::slotItemChanged( QListViewItem *item, const QPoint&, int col )
+void ActionWidget::slotItemChanged( Q3ListViewItem *item, const QPoint&, int col )
 {
     if ( !item->parent() || col != 0 )
         return;
@@ -361,7 +362,7 @@ void ActionWidget::slotItemChanged( QListViewItem *item, const QPoint&, int col 
 
 void ActionWidget::slotAddAction()
 {
-    QListViewItem *item = new QListViewItem( listView );
+    Q3ListViewItem *item = new Q3ListViewItem( listView );
     item->setPixmap( 0, SmallIcon( "misc" ));
     item->setText( 0, i18n("Click here to set the regexp"));
     item->setText( 1, i18n("<new action>"));
@@ -370,7 +371,7 @@ void ActionWidget::slotAddAction()
 
 void ActionWidget::slotDeleteAction()
 {
-    QListViewItem *item = listView->currentItem();
+    Q3ListViewItem *item = listView->currentItem();
     if ( item && item->parent() )
         item = item->parent();
     delete item;
@@ -379,8 +380,8 @@ void ActionWidget::slotDeleteAction()
 
 ActionList * ActionWidget::actionList()
 {
-    QListViewItem *item = listView->firstChild();
-    QListViewItem *child = 0L;
+    Q3ListViewItem *item = listView->firstChild();
+    Q3ListViewItem *child = 0L;
     ClipAction *action = 0L;
     ActionList *list = new ActionList;
     list->setAutoDelete( true );
@@ -406,7 +407,7 @@ void ActionWidget::slotAdvanced()
     KDialogBase dlg( 0L, "advanced dlg", true,
                      i18n("Advanced Settings"),
                      KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok );
-    QVBox *box = dlg.makeVBoxMainWidget();
+    Q3VBox *box = dlg.makeVBoxMainWidget();
     AdvancedWidget *widget = new AdvancedWidget( box );
     widget->setWMClasses( m_wmClasses );
 
@@ -419,11 +420,11 @@ void ActionWidget::slotAdvanced()
 }
 
 AdvancedWidget::AdvancedWidget( QWidget *parent, const char *name )
-    : QVBox( parent, name )
+    : Q3VBox( parent, name )
 {
     editListBox = new KEditListBox( i18n("D&isable Actions for Windows of Type WM_CLASS"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
 
-    QWhatsThis::add( editListBox,
+    editListBox->setWhatsThis(
           i18n("<qt>This lets you specify windows in which Klipper should "
 	       "not invoke \"actions\". Use<br><br>"
 	       "<center><b>xprop | grep WM_CLASS</b></center><br>"

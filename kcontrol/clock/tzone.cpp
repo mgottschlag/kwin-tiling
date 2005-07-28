@@ -26,7 +26,17 @@
 #include <config.h>
 
 #include <qlabel.h>
+#include <qcombobox.h>
+#include <q3groupbox.h>
+#include <qlayout.h>
 #include <qfile.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <Q3Frame>
+#include <QHBoxLayout>
+#include <QTextStream>
+#include <Q3CString>
+#include <QBoxLayout>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -47,7 +57,7 @@
 #endif
 
 Tzone::Tzone(QWidget * parent, const char *name)
-  : QVGroupBox(parent, name)
+  : QGroupBox(parent, name)
 {
     setTitle(i18n("To change the timezone, select your area from the list below"));
 
@@ -72,12 +82,12 @@ void Tzone::load()
 void Tzone::currentZone()
 {
     QString localZone(i18n("Current local timezone: %1 (%2)"));
-    QCString result(100);
+    QByteArray result(100);
 
     time_t now = time(0);
     tzset();
     strftime(result.data(), result.size(), "%Z", localtime(&now));
-    m_local->setText(localZone.arg(KTimezoneWidget::displayName(m_zoneDb.local())).arg(result));
+    m_local->setText(localZone.arg(KTimezoneWidget::displayName(m_zoneDb.local())).arg(QString::fromLatin1(result)));
 }
 
 // FIXME: Does the logic in this routine actually work correctly? For example,
@@ -100,7 +110,7 @@ void Tzone::save()
         QFile fTimezoneFile(INITFILE);
         bool updatedFile = false;
 
-        if (tf.status() == 0 && fTimezoneFile.open(IO_ReadOnly))
+        if (tf.status() == 0 && fTimezoneFile.open(QIODevice::ReadOnly))
         {
             bool found = false;
 
@@ -134,7 +144,7 @@ void Tzone::save()
             ts->device()->reset();
             fTimezoneFile.remove();
 
-            if (fTimezoneFile.open(IO_WriteOnly | IO_Truncate))
+            if (fTimezoneFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
             {
                 QTextStream os(&fTimezoneFile);
 
@@ -156,7 +166,7 @@ void Tzone::save()
 #else
         QFile fTimezoneFile("/etc/timezone");
 
-        if (fTimezoneFile.open(IO_WriteOnly | IO_Truncate) )
+        if (fTimezoneFile.open(QIODevice::WriteOnly | QIODevice::Truncate) )
         {
             QTextStream t(&fTimezoneFile);
             t << selectedzone;

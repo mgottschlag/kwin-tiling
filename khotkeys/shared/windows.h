@@ -15,7 +15,8 @@
 
 #include <qobject.h>
 #include <qstring.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
+#include <qwindowdefs.h>
 
 #include <netwm_def.h>
 
@@ -94,7 +95,7 @@ class Windowdef
     };
 
 class Windowdef_list
-    : public QPtrList< Windowdef >
+    : public Q3PtrList< Windowdef >
     {
     public:
         Windowdef_list( const QString& comment_P );
@@ -102,7 +103,7 @@ class Windowdef_list
         void cfg_write( KConfig& cfg_P ) const;
         bool match( const Window_data& window_P ) const;
         Windowdef_list* copy( /*Action_data_base* data_P*/ ) const;
-        typedef QPtrListIterator< Windowdef > Iterator;
+        typedef Q3PtrListIterator< Windowdef > Iterator;
         const QString& comment() const;
     private:
         QString _comment;
@@ -190,7 +191,7 @@ Windowdef::~Windowdef()
 
 inline
 Windowdef_list::Windowdef_list( const QString& comment_P )
-    : QPtrList< Windowdef >(), _comment( comment_P )
+    : Q3PtrList< Windowdef >(), _comment( comment_P )
     {
     setAutoDelete( true );
     }

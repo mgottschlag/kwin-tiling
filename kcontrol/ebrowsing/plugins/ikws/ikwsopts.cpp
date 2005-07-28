@@ -19,13 +19,14 @@
 
 #include <qcheckbox.h>
 #include <qfile.h>
-#include <qgroupbox.h>
-#include <qheader.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qvbox.h>
-#include <qwhatsthis.h>
+#include <q3vbox.h>
+#include <q3whatsthis.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <kdebug.h>
 
@@ -49,11 +50,11 @@
 #include "searchproviderdlg.h"
 
 
-class SearchProviderItem : public QCheckListItem
+class SearchProviderItem : public Q3CheckListItem
 {
 public:
-    SearchProviderItem(QListView *parent, SearchProvider *provider)
-    :QCheckListItem(parent, provider->name(), CheckBox), m_provider(provider)
+    SearchProviderItem(Q3ListView *parent, SearchProvider *provider)
+    :Q3CheckListItem(parent, provider->name(), CheckBox), m_provider(provider)
     {
       update();
     }
@@ -76,7 +77,7 @@ private:
 };
 
 FilterOptions::FilterOptions(KInstance *instance, QWidget *parent, const char *name)
-              :KCModule(instance, parent, name)
+              :KCModule(instance, parent)
 {
     QVBoxLayout *mainLayout = new QVBoxLayout( this, KDialog::marginHint(),
         KDialog::spacingHint());
@@ -144,11 +145,11 @@ void FilterOptions::load()
     connect(m_dlg->cbEnableShortcuts, SIGNAL(clicked()), this,
             SLOT(configChanged()));
 
-    connect(m_dlg->lvSearchProviders, SIGNAL(selectionChanged(QListViewItem *)),
+    connect(m_dlg->lvSearchProviders, SIGNAL(selectionChanged(Q3ListViewItem *)),
            this, SLOT(updateSearchProvider()));
-    connect(m_dlg->lvSearchProviders, SIGNAL(doubleClicked(QListViewItem *)),
+    connect(m_dlg->lvSearchProviders, SIGNAL(doubleClicked(Q3ListViewItem *)),
            this, SLOT(changeSearchProvider()));
-    connect(m_dlg->lvSearchProviders, SIGNAL(returnPressed(QListViewItem *)),
+    connect(m_dlg->lvSearchProviders, SIGNAL(returnPressed(Q3ListViewItem *)),
            this, SLOT(changeSearchProvider()));
     connect(m_dlg->lvSearchProviders, SIGNAL(executed(QListViewItem *)),
            this, SLOT(checkFavoritesChanged()));
@@ -210,7 +211,7 @@ void FilterOptions::save()
 
   m_favoriteEngines.clear();
 
-  for (QListViewItemIterator it(m_dlg->lvSearchProviders); it.current(); ++it)
+  for (Q3ListViewItemIterator it(m_dlg->lvSearchProviders); it.current(); ++it)
   {
     SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(it.current());
 
@@ -325,7 +326,7 @@ void FilterOptions::configChanged()
 void FilterOptions::checkFavoritesChanged()
 {
   QStringList currentFavoriteEngines;
-  for (QListViewItemIterator it(m_dlg->lvSearchProviders); it.current(); ++it)
+  for (Q3ListViewItemIterator it(m_dlg->lvSearchProviders); it.current(); ++it)
   {
     SearchProviderItem *item = dynamic_cast<SearchProviderItem *>(it.current());
 
@@ -423,7 +424,7 @@ SearchProviderItem *FilterOptions::displaySearchProvider(SearchProvider *p, bool
   // Show the provider in the list.
   SearchProviderItem *item = 0L;
 
-  QListViewItemIterator it(m_dlg->lvSearchProviders);
+  Q3ListViewItemIterator it(m_dlg->lvSearchProviders);
 
   for (; it.current(); ++it)
   {

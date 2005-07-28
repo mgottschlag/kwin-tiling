@@ -17,12 +17,15 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <qheader.h>
+#include <q3header.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qtimer.h>
-#include <qvgroupbox.h>
-#include <qwhatsthis.h>
+#include <q3groupbox.h>
+
+//Added by qt3to4:
+#include <Q3CString>
+#include <QVBoxLayout>
 
 #include <dcopclient.h>
 #include <dcopref.h>
@@ -47,7 +50,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kded, KDEDFactory( "kcmkded" ) )
 
 
 KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
-	KCModule( KDEDFactory::instance(), parent, name )
+	KCModule( KDEDFactory::instance(), parent )
 {
 	KAboutData *about =
 		new KAboutData( I18N_NOOP( "kcmkded" ), I18N_NOOP( "KDE Service Manager" ),
@@ -69,8 +72,8 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 
 	QVBoxLayout *lay = new QVBoxLayout( this, 0, KDialog::spacingHint() );
 
-	QGroupBox *gb = new QVGroupBox(i18n("Load-on-Demand Services"), this );
-	QWhatsThis::add(gb, i18n("This is a list of available KDE services which will "
+	Q3GroupBox *gb = new Q3GroupBox(1, Qt::Vertical, i18n("Load-on-Demand Services"), this );
+	gb->setWhatsThis( i18n("This is a list of available KDE services which will "
 			"be started on demand. They are only listed for convenience, as you "
 			"cannot manipulate these services."));
 	lay->addWidget( gb );
@@ -82,8 +85,8 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	_lvLoD->setAllColumnsShowFocus(true);
 	_lvLoD->header()->setStretchEnabled(true, 1);
 
- 	gb = new QVGroupBox(i18n("Startup Services"), this );
-	QWhatsThis::add(gb, i18n("This shows all KDE services that can be loaded "
+ 	gb = new Q3GroupBox(1, Qt::Horizontal, i18n("Startup Services"), this );
+	gb->setWhatsThis( i18n("This shows all KDE services that can be loaded "
 				"on KDE startup. Checked services will be invoked on next startup. "
 				"Be careful with deactivation of unknown services."));
 	lay->addWidget( gb );
@@ -96,7 +99,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	_lvStartup->setAllColumnsShowFocus(true);
 	_lvStartup->header()->setStretchEnabled(true, 2);
 
-	KButtonBox *buttonBox = new KButtonBox( gb, Horizontal);
+	KButtonBox *buttonBox = new KButtonBox( gb, Qt::Horizontal);
 	_pbStart = buttonBox->addButton( i18n("Start"));
 	_pbStop = buttonBox->addButton( i18n("Stop"));
 
@@ -105,7 +108,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 
 	connect(_pbStart, SIGNAL(clicked()), SLOT(slotStartService()));
 	connect(_pbStop,  SIGNAL(clicked()), SLOT(slotStopService()));
-	connect(_lvStartup, SIGNAL(selectionChanged(QListViewItem*)), SLOT(slotEvalItem(QListViewItem*)) );
+	connect(_lvStartup, SIGNAL(selectionChanged(Q3ListViewItem*)), SLOT(slotEvalItem(Q3ListViewItem*)) );
 
 	load();
 }
@@ -146,7 +149,7 @@ void KDEDConfig::load() {
 			QString::fromLatin1( "kded/*.desktop" ),
 			true, true, files );
 
-	QListViewItem* item = 0L;
+	Q3ListViewItem* item = 0L;
 	CheckListItem* clitem;
 	for ( QStringList::ConstIterator it = files.begin(); it != files.end(); ++it ) {
 
@@ -155,7 +158,7 @@ void KDEDConfig::load() {
 
 			if ( file.readBoolEntry("X-KDE-Kded-autoload") ) {
 				clitem = new CheckListItem(_lvStartup, QString::null);
-				connect(clitem, SIGNAL(changed(QCheckListItem*)), SLOT(slotItemChecked(QCheckListItem*)));
+				connect(clitem, SIGNAL(changed(Q3CheckListItem*)), SLOT(slotItemChecked(Q3CheckListItem*)));
 				clitem->setOn(autoloadEnabled(&kdedrc, *it));
 				item = clitem;
 				item->setText(1, file.readName());
@@ -164,7 +167,7 @@ void KDEDConfig::load() {
 				item->setText(4, file.readEntry("X-KDE-Library"));
 			}
 			else if ( file.readBoolEntry("X-KDE-Kded-load-on-demand") ) {
-				item = new QListViewItem(_lvLoD, file.readName());
+				item = new Q3ListViewItem(_lvLoD, file.readName());
 				item->setText(1, file.readComment());
 				item->setText(2, NOT_RUNNING);
 				item->setText(4, file.readEntry("X-KDE-Library"));
@@ -176,7 +179,7 @@ void KDEDConfig::load() {
 }
 
 void KDEDConfig::save() {
-	QCheckListItem* item = 0L;
+	Q3CheckListItem* item = 0L;
 
 	QStringList files;
 	KGlobal::dirs()->findAllResources( "services",
@@ -194,7 +197,7 @@ void KDEDConfig::save() {
 
 			if (file.readBoolEntry("X-KDE-Kded-autoload")){
 
-				item = static_cast<QCheckListItem *>(_lvStartup->findItem(file.readEntry("X-KDE-Library"),4));
+				item = static_cast<Q3CheckListItem *>(_lvStartup->findItem(file.readEntry("X-KDE-Library"),4));
 				if (item) {
 					// we found a match, now compare and see what changed
 					setAutoloadEnabled(&kdedrc, *it, item->isOn());
@@ -211,10 +214,10 @@ void KDEDConfig::save() {
 
 void KDEDConfig::defaults()
 {
-	QListViewItemIterator it( _lvStartup);
+	Q3ListViewItemIterator it( _lvStartup);
 	while ( it.current() != 0 ) {
 		if (it.current()->rtti()==1) {
-			QCheckListItem *item = static_cast<QCheckListItem *>(it.current());
+			Q3CheckListItem *item = static_cast<Q3CheckListItem *>(it.current());
 			item->setOn(false);
 		}
 		++it;
@@ -226,8 +229,8 @@ void KDEDConfig::defaults()
 
 void KDEDConfig::getServiceStatus()
 {
-	QCStringList modules;
-	QCString replyType;
+	DCOPCStringList modules;
+	DCOPCString replyType;
 	QByteArray replyData;
 
 
@@ -242,24 +245,24 @@ void KDEDConfig::getServiceStatus()
 	else {
 
 		if ( replyType == "QCStringList" ) {
-			QDataStream reply(replyData, IO_ReadOnly);
+			QDataStream reply(replyData);
 			reply >> modules;
 		}
 	}
 
-	for( QListViewItemIterator it( _lvLoD); it.current() != 0; ++it )
+	for( Q3ListViewItemIterator it( _lvLoD); it.current() != 0; ++it )
                 it.current()->setText(2, NOT_RUNNING);
-	for( QListViewItemIterator it( _lvStartup); it.current() != 0; ++it )
+	for( Q3ListViewItemIterator it( _lvStartup); it.current() != 0; ++it )
                 it.current()->setText(3, NOT_RUNNING);
-	for ( QCStringList::Iterator it = modules.begin(); it != modules.end(); ++it )
+	foreach( DCOPCString module, modules )
 	{
-		QListViewItem *item = _lvLoD->findItem(*it, 4);
+		Q3ListViewItem *item = _lvLoD->findItem(module, 4);
 		if ( item )
 		{
 			item->setText(2, RUNNING);
 		}
 
-		item = _lvStartup->findItem(*it, 4);
+		item = _lvStartup->findItem(module, 4);
 		if ( item )
 		{
 			item->setText(3, RUNNING);
@@ -271,12 +274,12 @@ void KDEDConfig::slotReload()
 {
 	QString current = _lvStartup->currentItem()->text(4);
 	load();
-	QListViewItem *item = _lvStartup->findItem(current, 4);
+	Q3ListViewItem *item = _lvStartup->findItem(current, 4);
 	if (item)
 		_lvStartup->setCurrentItem(item);
 }
 
-void KDEDConfig::slotEvalItem(QListViewItem * item)
+void KDEDConfig::slotEvalItem(Q3ListViewItem * item)
 {
 	if (!item)
 		return;
@@ -306,14 +309,16 @@ void KDEDConfig::slotServiceRunningToggled()
 
 void KDEDConfig::slotStartService()
 {
-	QCString service = _lvStartup->currentItem()->text(4).latin1();
+	DCOPCString service = _lvStartup->currentItem()->text(4).latin1();
 
 	QByteArray data, replyData;
-	QCString replyType;
-	QDataStream arg( data, IO_WriteOnly );
+	DCOPCString replyType;
+	QDataStream arg( &data, QIODevice::WriteOnly );
+
+	arg.setVersion(QDataStream::Qt_3_1);
 	arg << service;
 	if (kapp->dcopClient()->call( "kded", "kded", "loadModule(QCString)", data, replyType, replyData ) ) {
-		QDataStream reply(replyData, IO_ReadOnly);
+		QDataStream reply(replyData);
 		if ( replyType == "bool" )
 		{
 			bool result;
@@ -333,10 +338,12 @@ void KDEDConfig::slotStartService()
 
 void KDEDConfig::slotStopService()
 {
-	QCString service = _lvStartup->currentItem()->text(4).latin1();
+	DCOPCString service = _lvStartup->currentItem()->text(4).latin1();
 	kdDebug() << "Stopping: " << service << endl;
 	QByteArray data;
-	QDataStream arg( data, IO_WriteOnly );
+	QDataStream arg( &data, QIODevice::WriteOnly );
+
+	arg.setVersion(QDataStream::Qt_3_1);
 
 	arg << service;
 	if (kapp->dcopClient()->send( "kded", "kded", "unloadModule(QCString)", data ) ) {
@@ -348,18 +355,18 @@ void KDEDConfig::slotStopService()
 
 }
 
-void KDEDConfig::slotItemChecked(QCheckListItem*)
+void KDEDConfig::slotItemChecked(Q3CheckListItem*)
 {
 	emit changed(true);
 }
 
-CheckListItem::CheckListItem(QListView *parent, const QString &text)
+CheckListItem::CheckListItem(Q3ListView *parent, const QString &text)
 	: QObject(parent),
-	  QCheckListItem(parent, text, CheckBox)
+	  Q3CheckListItem(parent, text, CheckBox)
 { }
 
 void CheckListItem::stateChange(bool on)
 {
-	QCheckListItem::stateChange(on);
+	Q3CheckListItem::stateChange(on);
 	emit changed(this);
 }

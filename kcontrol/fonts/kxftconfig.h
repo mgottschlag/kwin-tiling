@@ -26,7 +26,7 @@
 
 #include <qstringlist.h>
 #include <qstring.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <stdio.h>
 #include <fstream>
 #include <time.h>
@@ -201,12 +201,12 @@ class KXftConfig
 
     private:
 
-    ListItem *  findItem(QPtrList<ListItem> &list, const QString &i);
-    void        clearList(QPtrList<ListItem> &list);
-    static QStringList getList(QPtrList<ListItem> &list);
-    void        addItem(QPtrList<ListItem> &list, const QString &i);
-    void        removeItem(QPtrList<ListItem> &list, ListItem *item);
-    void        removeItem(QPtrList<ListItem> &list, const QString &i) { removeItem(list, findItem(list, i)); }
+    ListItem *  findItem(Q3PtrList<ListItem> &list, const QString &i);
+    void        clearList(Q3PtrList<ListItem> &list);
+    static QStringList getList(Q3PtrList<ListItem> &list);
+    void        addItem(Q3PtrList<ListItem> &list, const QString &i);
+    void        removeItem(Q3PtrList<ListItem> &list, ListItem *item);
+    void        removeItem(Q3PtrList<ListItem> &list, const QString &i) { removeItem(list, findItem(list, i)); }
     void        readContents();
 #ifdef HAVE_FONTCONFIG
     void        applyDirs();
@@ -218,7 +218,7 @@ class KXftConfig
     void        setHinting(bool set);
     void        applyHinting();
     void        applyExcludeRange(bool pixel);
-    void        removeItems(QPtrList<ListItem> &list);
+    void        removeItems(Q3PtrList<ListItem> &list);
 #else
     void        outputDir(std::ofstream &f, const QString &str);
     void        outputNewDirs(std::ofstream &f);
@@ -237,9 +237,9 @@ class KXftConfig
     Hint               m_hint;
     Hinting            m_hinting;
 #else
-    QPtrList<ListItem> m_symbolFamilies;
+    Q3PtrList<ListItem> m_symbolFamilies;
 #endif
-    QPtrList<ListItem> m_dirs;
+    Q3PtrList<ListItem> m_dirs;
     QString            m_file;
     int                m_required;
 #ifdef HAVE_FONTCONFIG

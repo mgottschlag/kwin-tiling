@@ -13,6 +13,7 @@
 
 #include <qwidget.h>
 #include <qtimer.h>
+#include <qmap.h>
 
 #include <X11/Xlib.h>
 #include <fixx11h.h>

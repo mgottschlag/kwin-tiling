@@ -23,14 +23,22 @@
 #include <sys/types.h>
 
 #include <qcombobox.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qpushbutton.h>
 #include <qpainter.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qwhatsthis.h>
+
 #include <qcheckbox.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <QPaintEvent>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+//Added by qt3to4:
+#include <Q3PointArray>
+#include <QApplication>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -42,8 +50,8 @@
 #include "dtime.h"
 #include "dtime.moc"
 
-HMSTimeWidget::HMSTimeWidget(QWidget *parent, const char *name) :
-	KIntSpinBox(parent, name)
+HMSTimeWidget::HMSTimeWidget(QWidget *parent) :
+	KIntSpinBox(parent)
 {
 }
 
@@ -84,17 +92,17 @@ Dtime::Dtime(QWidget * parent, const char *name)
   findNTPutility();
 
   // Date box
-  QGroupBox* dateBox = new QGroupBox( this, "dateBox" );
+  Q3GroupBox* dateBox = new Q3GroupBox( this, "dateBox" );
 
   QVBoxLayout *l1 = new QVBoxLayout( dateBox, KDialog::spacingHint() );
 
   cal = new KDatePicker( dateBox );
   cal->setMinimumSize(cal->sizeHint());
   l1->addWidget( cal );
-  QWhatsThis::add( cal, i18n("Here you can change the system date's day of the month, month and year.") );
+  cal->setWhatsThis( i18n("Here you can change the system date's day of the month, month and year.") );
 
   // Time frame
-  QGroupBox* timeBox = new QGroupBox( this, "timeBox" );
+  Q3GroupBox* timeBox = new Q3GroupBox( this, "timeBox" );
 
   QVBoxLayout *v2 = new QVBoxLayout( timeBox, KDialog::spacingHint() );
 
@@ -115,31 +123,31 @@ Dtime::Dtime(QWidget * parent, const char *name)
   hour = new HMSTimeWidget( timeBox );
   hour->setWrapping(true);
   hour->setMaxValue(23);
-  hour->setValidator(new KStrictIntValidator(0, 23, hour));
+  #warning fixme hour->setValidator(new KStrictIntValidator(0, 23, hour));
   v3->addMultiCellWidget(hour, 0, 1, isRTL ? 6 : 2, isRTL ? 6 : 2 );
 
   QLabel *dots1 = new QLabel(":", timeBox);
   dots1->setMinimumWidth( 7 );
-  dots1->setAlignment( QLabel::AlignCenter );
+  dots1->setAlignment( Qt::AlignCenter );
   v3->addMultiCellWidget(dots1, 0, 1, 3, 3 );
 
   minute = new HMSTimeWidget( timeBox );
   minute->setWrapping(true);
   minute->setMinValue(0);
   minute->setMaxValue(59);
-  minute->setValidator(new KStrictIntValidator(0, 59, minute));
+  #warning fixme minute->setValidator(new KStrictIntValidator(0, 59, minute));
   v3->addMultiCellWidget(minute, 0, 1, 4, 4 );
 
   QLabel *dots2 = new QLabel(":", timeBox);
   dots2->setMinimumWidth( 7 );
-  dots2->setAlignment( QLabel::AlignCenter );
+  dots2->setAlignment( Qt::AlignCenter );
   v3->addMultiCellWidget(dots2, 0, 1, 5, 5 );
 
   second = new HMSTimeWidget( timeBox );
   second->setWrapping(true);
   second->setMinValue(0);
   second->setMaxValue(59);
-  second->setValidator(new KStrictIntValidator(0, 59, second));
+  #warning fixme second->setValidator(new KStrictIntValidator(0, 59, second));
   v3->addMultiCellWidget(second, 0, 1, isRTL ? 2 : 6, isRTL ? 2 : 6 );
 
   v3->addColSpacing(7, 7);
@@ -147,9 +155,9 @@ Dtime::Dtime(QWidget * parent, const char *name)
   QString wtstr = i18n("Here you can change the system time. Click into the"
     " hours, minutes or seconds field to change the relevant value, either"
     " using the up and down buttons to the right or by entering a new value.");
-  QWhatsThis::add( hour, wtstr );
-  QWhatsThis::add( minute, wtstr );
-  QWhatsThis::add( second, wtstr );
+  hour->setWhatsThis( wtstr );
+  minute->setWhatsThis( wtstr );
+  second->setWhatsThis( wtstr );
 
   QSpacerItem *spacer3 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
   v3->addMultiCell(spacer3, 0, 1, 9, 9);
@@ -379,7 +387,7 @@ void Kclock::paintEvent( QPaintEvent * )
   QPainter paint;
   paint.begin( this );
 
-  QPointArray pts;
+  Q3PointArray pts;
   QPoint cp = rect().center();
   int d = QMIN(width(),height());
   QColor hands =  colorGroup().dark();
@@ -390,7 +398,7 @@ void Kclock::paintEvent( QPaintEvent * )
 
   for ( int c=0 ; c < 2 ; c++ )
     {
-      QWMatrix matrix;
+      QMatrix matrix;
       matrix.translate( cp.x(), cp.y() );
       matrix.scale( d/1000.0F, d/1000.0F );
 

@@ -13,7 +13,7 @@
 
 #include <assert.h>
 #include <qstring.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include <kdebug.h>
 
@@ -74,13 +74,13 @@ class Action_data_group
         virtual ~Action_data_group();
         virtual void update_triggers();
         virtual void cfg_write( KConfig& cfg_P ) const;
-        typedef QPtrListIterator< Action_data_base > Iterator; // CHECKME neni const :(
+        typedef Q3PtrListIterator< Action_data_base > Iterator; // CHECKME neni const :(
         Iterator first_child() const;
         bool is_system_group() const;
         system_group_t system_group() const;
         using Action_data_base::set_conditions; // make public
     protected:
-        QPtrList< Action_data_base > list;
+        Q3PtrList< Action_data_base > list;
         system_group_t _system_group; // e.g. menuedit entries, can't be deleted or renamed
         friend class Action_data_base; // CHECKME
         void add_child( Action_data_base* child_P );

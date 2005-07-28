@@ -18,6 +18,8 @@
 
 #include <assert.h>
 #include <qwidget.h>
+//Added by qt3to4:
+#include <Q3ValueList>
 
 #include <kglobalaccel.h>
 #include <kdebug.h>
@@ -30,6 +32,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
+#include <QX11Info>
 
 #include "windows.h"
 
@@ -77,7 +80,7 @@ void Kbd::activate_receiver( Kbd_receiver* receiver_P )
     if( rcv.active )
         return;
     rcv.active = true;
-    for( QValueList< KShortcut >::ConstIterator it( rcv.shortcuts.begin());
+    for( Q3ValueList< KShortcut >::ConstIterator it( rcv.shortcuts.begin());
          it != rcv.shortcuts.end();
          ++it )
         grab_shortcut( *it );
@@ -89,7 +92,7 @@ void Kbd::deactivate_receiver( Kbd_receiver* receiver_P )
     if( !rcv.active )
         return;
     rcv.active = false;
-    for( QValueList< KShortcut >::ConstIterator it( rcv.shortcuts.begin());
+    for( Q3ValueList< KShortcut >::ConstIterator it( rcv.shortcuts.begin());
          it != rcv.shortcuts.end();
          ++it )
         ungrab_shortcut( *it );
@@ -169,7 +172,7 @@ static bool xtest()
     xtest_inited = true;
     int dummy1, dummy2, dummy3, dummy4;
     xtest_available =
-        ( XTestQueryExtension( qt_xdisplay(), &dummy1, &dummy2, &dummy3, &dummy4 ) == True );
+        ( XTestQueryExtension( QX11Info::display(), &dummy1, &dummy2, &dummy3, &dummy4 ) == True );
     return xtest_available;
     }
 #endif
@@ -178,7 +181,7 @@ static bool xtest()
 bool Kbd::send_macro_key( unsigned int keycode, Window window_P )
     {
     unsigned int keysym = KKeyNative( KKey( keycode )).sym();
-    KeyCode x_keycode = XKeysymToKeycode( qt_xdisplay(), keysym );
+    KeyCode x_keycode = XKeysymToKeycode( QX11Info::display(), keysym );
     if( x_keycode == NoSymbol )
 	return false;
     unsigned int x_mod = KKeyNative( KKey( keycode )).mod();
@@ -186,8 +189,8 @@ bool Kbd::send_macro_key( unsigned int keycode, Window window_P )
     if( xtest() && window_P == None )
         {
         // CHECKME tohle jeste potrebuje modifikatory
-        bool ret = XTestFakeKeyEvent( qt_xdisplay(), x_keycode, True, CurrentTime );
-        ret = ret && XTestFakeKeyEvent( qt_xdisplay(), x_keycode, False, CurrentTime );
+        bool ret = XTestFakeKeyEvent( QX11Info::display(), x_keycode, True, CurrentTime );
+        ret = ret && XTestFakeKeyEvent( QX11Info::display(), x_keycode, False, CurrentTime );
         return ret;
         }
 #endif
@@ -197,9 +200,9 @@ bool Kbd::send_macro_key( unsigned int keycode, Window window_P )
         window_P = InputFocus;
     XKeyEvent ev;
     ev.type = KeyPress;
-    ev.display = qt_xdisplay();
+    ev.display = QX11Info::display();
     ev.window = window_P;
-    ev.root = qt_xrootwin();   // I don't know whether these have to be set
+    ev.root = QX11Info::appRootWindow();   // I don't know whether these have to be set
     ev.subwindow = None;       // to these values, but it seems to work, hmm
     ev.time = CurrentTime;
     ev.x = 0;
@@ -209,12 +212,12 @@ bool Kbd::send_macro_key( unsigned int keycode, Window window_P )
     ev.keycode = x_keycode;
     ev.state = x_mod;
     ev.same_screen = True;
-    bool ret = XSendEvent( qt_xdisplay(), window_P, True, KeyPressMask, ( XEvent* )&ev );
+    bool ret = XSendEvent( QX11Info::display(), window_P, True, KeyPressMask, ( XEvent* )&ev );
 #if 1
     ev.type = KeyRelease;  // is this actually really needed ??
-    ev.display = qt_xdisplay();
+    ev.display = QX11Info::display();
     ev.window = window_P;
-    ev.root = qt_xrootwin();
+    ev.root = QX11Info::appRootWindow();
     ev.subwindow = None;
     ev.time = CurrentTime;
     ev.x = 0;
@@ -224,11 +227,11 @@ bool Kbd::send_macro_key( unsigned int keycode, Window window_P )
     ev.state = x_mod;
     ev.keycode = x_keycode;
     ev.same_screen = True;
-    ret = ret && XSendEvent( qt_xdisplay(), window_P, True, KeyReleaseMask, ( XEvent* )&ev );
+    ret = ret && XSendEvent( QX11Info::display(), window_P, True, KeyReleaseMask, ( XEvent* )&ev );
 #endif
     // Qt's autorepeat compression is broken and can create "aab" from "aba"
     // XSync() should create delay longer than Qt's max autorepeat interval
-    XSync( qt_xdisplay(), False );
+    XSync( QX11Info::display(), False );
     return ret;
     }
 
@@ -239,9 +242,9 @@ bool Mouse::send_mouse_button( int button_P, bool release_P )
         {
         // CHECKME tohle jeste potrebuje modifikatory
         // a asi i spravnou timestamp misto CurrentTime
-        bool ret = XTestFakeButtonEvent( qt_xdisplay(), button_P, True, CurrentTime );
+        bool ret = XTestFakeButtonEvent( QX11Info::display(), button_P, True, CurrentTime );
         if( release_P )
-            ret = ret && XTestFakeButtonEvent( qt_xdisplay(), button_P, False, CurrentTime );
+            ret = ret && XTestFakeButtonEvent( QX11Info::display(), button_P, False, CurrentTime );
         return ret;
         }
 #endif

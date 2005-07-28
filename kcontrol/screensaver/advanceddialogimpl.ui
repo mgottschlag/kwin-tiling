@@ -2,7 +2,7 @@
 <class>AdvancedDialogImpl</class>
 <widget class="QWidget">
     <property name="name">
-        <cstring>Form1</cstring>
+        <cstring>AdvancedDialogImpl</cstring>
     </property>
     <property name="geometry">
         <rect>
@@ -22,12 +22,6 @@
         <widget class="QGroupBox" row="1" column="0">
             <property name="name">
                 <cstring>qgbPriority</cstring>
-            </property>
-            <property name="frameShape">
-                <enum>GroupBoxPanel</enum>
-            </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
             </property>
             <property name="title">
                 <string>Screensaver Priority</string>

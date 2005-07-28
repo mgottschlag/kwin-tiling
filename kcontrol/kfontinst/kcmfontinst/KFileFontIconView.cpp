@@ -27,6 +27,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <qevent.h>
+//Added by qt3to4:
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
 #include <kfileitem.h>
 #include <kurldrag.h>
 #include "KFileFontIconView.h"

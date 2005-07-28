@@ -18,16 +18,21 @@
 
 */
 
-#include <qheader.h>
+#include <q3header.h>
 #include <qimage.h>
 #include <qpainter.h>
 #include <qbitmap.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3PtrList>
+#include <QKeyEvent>
+#include <Q3Frame>
 
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kservicegroup.h>
 #include <kdebug.h>
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
 #include <qbitmap.h>
 
 #include "moduletreeview.h"
@@ -49,11 +54,11 @@ static QPixmap appIcon(const QString &iconName)
      return normal;
 }
 
-class ModuleTreeWhatsThis : public QWhatsThis
+class ModuleTreeWhatsThis : public Q3WhatsThis
 {
 public:
     ModuleTreeWhatsThis( ModuleTreeView* tree)
-        : QWhatsThis( tree ), treeView( tree ) {}
+        : Q3WhatsThis( tree ), treeView( tree ) {}
     ~ModuleTreeWhatsThis(){};
 
 
@@ -76,17 +81,17 @@ ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const c
   , _modules(list)
 {
   addColumn(QString::null);
-  setColumnWidthMode (0, QListView::Maximum);
+  setColumnWidthMode (0, Q3ListView::Maximum);
   setAllColumnsShowFocus(true);
-  setResizeMode(QListView::AllColumns);
+  setResizeMode(Q3ListView::AllColumns);
   setRootIsDecorated(true);
   setHScrollBarMode(AlwaysOff);
   header()->hide();
 
   new ModuleTreeWhatsThis( this );
 
-  connect(this, SIGNAL(clicked(QListViewItem*)),
-                  this, SLOT(slotItemSelected(QListViewItem*)));
+  connect(this, SIGNAL(clicked(Q3ListViewItem*)),
+                  this, SLOT(slotItemSelected(Q3ListViewItem*)));
 }
 
 void ModuleTreeView::fill()
@@ -104,7 +109,7 @@ void ModuleTreeView::fill()
   }
 
   ConfigModule *module;
-  QPtrList<ConfigModule> moduleList = _modules->modules(KCGlobal::baseGroup());
+  Q3PtrList<ConfigModule> moduleList = _modules->modules(KCGlobal::baseGroup());
   for (module=moduleList.first(); module != 0; module=moduleList.next())
   {
      new ModuleTreeItem(this, module);
@@ -124,7 +129,7 @@ void ModuleTreeView::fill(ModuleTreeItem *parent, const QString &parentPath)
   }
 
   ConfigModule *module;
-  QPtrList<ConfigModule> moduleList = _modules->modules(parentPath);
+  Q3PtrList<ConfigModule> moduleList = _modules->modules(parentPath);
   for (module=moduleList.first(); module != 0; module=moduleList.next())
   {
      new ModuleTreeItem(parent, module);
@@ -135,7 +140,7 @@ void ModuleTreeView::fill(ModuleTreeItem *parent, const QString &parentPath)
 
 QSize ModuleTreeView::sizeHint() const
 {
-    return QListView::sizeHint().boundedTo( 
+    return Q3ListView::sizeHint().boundedTo( 
 	QSize( fontMetrics().maxWidth()*35, QWIDGETSIZE_MAX) );
 }
 
@@ -209,7 +214,7 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
     ensureItemVisible(item);
 }
 
-void ModuleTreeView::slotItemSelected(QListViewItem* item)
+void ModuleTreeView::slotItemSelected(Q3ListViewItem* item)
 {
   if (!item) return;
 
@@ -254,9 +259,9 @@ void ModuleTreeView::keyPressEvent(QKeyEvent *e)
 {
   if (!currentItem()) return;
 
-  if(e->key() == Key_Return
-     || e->key() == Key_Enter
-        || e->key() == Key_Space)
+  if(e->key() == Qt::Key_Return
+     || e->key() == Qt::Key_Enter
+        || e->key() == Qt::Key_Space)
     {
       //QCursor::setPos(mapToGlobal(QPoint(10, currentItem()->itemPos()+5)));
       slotItemSelected(currentItem());
@@ -266,8 +271,8 @@ void ModuleTreeView::keyPressEvent(QKeyEvent *e)
 }
 
 
-ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, ConfigModule *module)
-  : QListViewItem(parent)
+ModuleTreeItem::ModuleTreeItem(Q3ListViewItem *parent, ConfigModule *module)
+  : Q3ListViewItem(parent)
   , _module(module)
   , _tag(QString::null)
   , _maxChildIconWidth(0)
@@ -279,8 +284,8 @@ ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, ConfigModule *module)
         }
 }
 
-ModuleTreeItem::ModuleTreeItem(QListView *parent, ConfigModule *module)
-  : QListViewItem(parent)
+ModuleTreeItem::ModuleTreeItem(Q3ListView *parent, ConfigModule *module)
+  : Q3ListViewItem(parent)
   , _module(module)
   , _tag(QString::null)
   , _maxChildIconWidth(0)
@@ -292,15 +297,15 @@ ModuleTreeItem::ModuleTreeItem(QListView *parent, ConfigModule *module)
         }
 }
 
-ModuleTreeItem::ModuleTreeItem(QListViewItem *parent, const QString& text)
-  : QListViewItem(parent, " " + text)
+ModuleTreeItem::ModuleTreeItem(Q3ListViewItem *parent, const QString& text)
+  : Q3ListViewItem(parent, " " + text)
   , _module(0)
   , _tag(QString::null)
   , _maxChildIconWidth(0)
   {}
 
-ModuleTreeItem::ModuleTreeItem(QListView *parent, const QString& text)
-  : QListViewItem(parent, " " + text)
+ModuleTreeItem::ModuleTreeItem(Q3ListView *parent, const QString& text)
+  : Q3ListViewItem(parent, " " + text)
   , _module(0)
   , _tag(QString::null)
   , _maxChildIconWidth(0)
@@ -315,7 +320,7 @@ void ModuleTreeItem::setPixmap(int column, const QPixmap& pm)
       p->regChildIconWidth(pm.width());
   }
 
-  QListViewItem::setPixmap(column, pm);
+  Q3ListViewItem::setPixmap(column, pm);
 }
 
 void ModuleTreeItem::regChildIconWidth(int width)
@@ -342,11 +347,11 @@ void ModuleTreeItem::paintCell( QPainter * p, const QColorGroup & cg, int column
       pixmap.setMask(pixmap.createHeuristicMask());
       QBitmap mask( pixmap.size(), true );
       pixmap.setMask( mask );
-      QListViewItem::setPixmap(0, pixmap);
+      Q3ListViewItem::setPixmap(0, pixmap);
     }
   }
 
-  QListViewItem::paintCell( p, cg, column, width, align );
+  Q3ListViewItem::paintCell( p, cg, column, width, align );
 }
 
 

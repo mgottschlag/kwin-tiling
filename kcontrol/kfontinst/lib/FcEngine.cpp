@@ -533,13 +533,13 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                     {
                         int bSize=fSize;
 
-                        for(unsigned int s=0; s<itsSizes.size(); ++s)
+                        for(int s=0; s<itsSizes.size(); ++s)
                             if (itsSizes[s]<=fSize)
                                 bSize=itsSizes[s];
                         fSize=bSize;
                     }
 
-                    unsigned int ch;
+                    int ch;
 
                     xftFont=getFont(fSize, &pix);
 
@@ -625,7 +625,7 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                                 previewString=previewString.lower();
                         }
 
-                        for(unsigned int s=0; s<itsSizes.size(); ++s)
+                        for(int s=0; s<itsSizes.size(); ++s)
                         {
                             xftFont=getFont(itsSizes[s], &pix);
 
@@ -941,7 +941,7 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
         QFile file(url.path());
         bool  isThumbnailUrl=false;
 
-        if(file.size()<2048 && file.open(IO_ReadOnly)) // Urls should be less than 2k, and fonts usually above!
+        if(file.size()<2048 && file.open(QIODevice::ReadOnly)) // Urls should be less than 2k, and fonts usually above!
         {
             QString     thumbUrl;
             QTextStream stream(&file);

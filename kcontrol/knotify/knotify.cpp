@@ -18,12 +18,16 @@
 
 */
 
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
 #include <qslider.h>
-#include <qvbox.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QFrame>
+#include <QHBoxLayout>
 
 #include <dcopclient.h>
 
@@ -48,7 +52,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_knotify, NotifyFactory("kcmnotify") )
 using namespace KNotify;
 
 KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
-    : KCModule(NotifyFactory::instance(), parent, name),
+    : KCModule(NotifyFactory::instance(), parent/*, name*/),
       m_playerSettings( 0L )
 {
     setButtons( Help | Default | Apply );
@@ -276,7 +280,7 @@ void PlayerSettingsDialog::slotApply()
     save();
     dataChanged = false;
     enableButton(Apply, false);
-    kapp->dcopClient()->send("knotify", "", "reconfigure()", "");
+    kapp->dcopClient()->send("knotify", "", "reconfigure()", QString());
 
     KDialogBase::slotApply();
 }

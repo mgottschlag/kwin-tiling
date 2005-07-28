@@ -22,7 +22,7 @@
 #define __TOPLEVEL_H__
 
 #include <kmainwindow.h>
-#include <qlistview.h>
+#include <q3listview.h>
 
 
 class QSplitter;
@@ -52,7 +52,7 @@ protected:
 
 protected slots:
   void activateModule(ConfigModule *);
-  void categorySelected(QListViewItem *category);
+  void categorySelected(Q3ListViewItem *category);
   void newModule(const QString &name, const QString& docPath, const QString &quickhelp);
   void activateIconView();
   void activateTreeView();

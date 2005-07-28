@@ -34,7 +34,7 @@ class KLocale;
 class KLocaleSample;
 
 class QLabel;
-class QListBox;
+class Q3ListBox;
 class QPushButton;
 
 class KLocaleConfig : public QWidget
@@ -85,7 +85,7 @@ private:
   QLabel *m_labCountry;
   QLabel *m_labLang;
 
-  QListBox * m_languages;
+  Q3ListBox * m_languages;
   KLanguageButton * m_addLanguage;
   QPushButton * m_removeLanguage;
   QPushButton * m_upButton;

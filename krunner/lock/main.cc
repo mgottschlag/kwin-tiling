@@ -28,7 +28,10 @@
 #include <kdebug.h>
 #include <kglobalsettings.h>
 
+#include <QList>
+
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <X11/Xlib.h>
 #include <fixx11h.h>
@@ -75,7 +78,7 @@ int main( int argc, char **argv )
 
     bool child = false;
     int parent_connection = 0; // socket to the parent saver
-    QValueList<int> child_sockets;
+    QList<int> child_sockets;
 
     if (KGlobalSettings::isMultiHead())
     {
@@ -90,7 +93,7 @@ int main( int argc, char **argv )
         int number_of_screens = ScreenCount(dpy);
         starting_screen = kdesktop_screen_number = DefaultScreen(dpy);
         int pos;
-        QCString display_name = XDisplayString(dpy);
+        QByteArray display_name = XDisplayString(dpy);
         XCloseDisplay(dpy);
         kdDebug() << "screen " << number_of_screens << " " << kdesktop_screen_number << " " << display_name << " " << starting_screen << endl;
         dpy = 0;
@@ -98,7 +101,7 @@ int main( int argc, char **argv )
         if ((pos = display_name.findRev('.')) != -1)
             display_name.remove(pos, 10);
 
-        QCString env;
+        QString env;
         if (number_of_screens != 1) {
             for (int i = 0; i < number_of_screens; i++) {
                 if (i != starting_screen) {
@@ -124,7 +127,7 @@ int main( int argc, char **argv )
                         kdesktop_screen_number);
             kdDebug() << "env " << env << endl;
 
-            if (putenv(strdup(env.data()))) {
+            if (putenv(strdup(env.toLatin1().data()))) {
                 fprintf(stderr,
                         "%s: WARNING: unable to set DISPLAY environment variable\n",
                         argv[0]);

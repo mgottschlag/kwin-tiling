@@ -3,9 +3,10 @@
 
 #include <qtimer.h>
 #include <qpainter.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
+#include <qdesktopwidget.h>
 
 #include <kdialogbase.h>
 #include <kmessagebox.h>
@@ -28,6 +29,7 @@
 
 
 #include "kaccess.moc"
+#include <QX11Info>
 
 
 KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
@@ -48,7 +50,7 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   // if yes, the XKB extension is initialized
   int opcode_rtrn;
   int error_rtrn;
-  if (!XkbQueryExtension(qt_xdisplay(), &opcode_rtrn, &xkb_opcode, &error_rtrn,
+  if (!XkbQueryExtension(QX11Info::display(), &opcode_rtrn, &xkb_opcode, &error_rtrn,
 			 &major, &minor))
     {
       kdError() << "X server has not matching XKB extension" << endl;
@@ -92,23 +94,23 @@ void KAccessApp::readSettings()
 
   // select bell events if we need them
   int state = (_artsBell || _visibleBell) ? XkbBellNotifyMask : 0;
-  XkbSelectEvents(qt_xdisplay(), XkbUseCoreKbd, XkbBellNotifyMask, state);
+  XkbSelectEvents(QX11Info::display(), XkbUseCoreKbd, XkbBellNotifyMask, state);
 
   // deactivate system bell if not needed
   if (!_systemBell)
-    XkbChangeEnabledControls(qt_xdisplay(), XkbUseCoreKbd, XkbAudibleBellMask, 0);
+    XkbChangeEnabledControls(QX11Info::display(), XkbUseCoreKbd, XkbAudibleBellMask, 0);
   else
-    XkbChangeEnabledControls(qt_xdisplay(), XkbUseCoreKbd, XkbAudibleBellMask, XkbAudibleBellMask);
+    XkbChangeEnabledControls(QX11Info::display(), XkbUseCoreKbd, XkbAudibleBellMask, XkbAudibleBellMask);
 
   // keyboard -------------------------------------------------------------
 
   config->setGroup("Keyboard");
 
   // get keyboard state
-  XkbDescPtr xkb = XkbGetMap(qt_xdisplay(), 0, XkbUseCoreKbd);
+  XkbDescPtr xkb = XkbGetMap(QX11Info::display(), 0, XkbUseCoreKbd);
   if (!xkb)
     return;
-  if (XkbGetControls(qt_xdisplay(), XkbAllControlsMask, xkb) != Success)
+  if (XkbGetControls(QX11Info::display(), XkbAllControlsMask, xkb) != Success)
     return;
 
   // sticky keys
@@ -173,16 +175,16 @@ void KAccessApp::readSettings()
    if (dialog == 0)
       requestedFeatures = features;
   // set state
-  XkbSetControls(qt_xdisplay(), XkbControlsEnabledMask | XkbMouseKeysAccelMask | XkbStickyKeysMask | XkbAccessXKeysMask, xkb);
+  XkbSetControls(QX11Info::display(), XkbControlsEnabledMask | XkbMouseKeysAccelMask | XkbStickyKeysMask | XkbAccessXKeysMask, xkb);
 
   // select AccessX events if we need them
   state = _gestures && _gestureConfirmation ? XkbControlsNotifyMask : 0;
-  XkbSelectEvents(qt_xdisplay(), XkbUseCoreKbd, XkbControlsNotifyMask, state);
+  XkbSelectEvents(QX11Info::display(), XkbUseCoreKbd, XkbControlsNotifyMask, state);
 
   // reset them after program exit
   uint ctrls = XkbStickyKeysMask | XkbSlowKeysMask | XkbBounceKeysMask | XkbMouseKeysMask | XkbAudibleBellMask | XkbControlsNotifyMask;
   uint values = XkbAudibleBellMask;
-  XkbSetAutoResetControls(qt_xdisplay(), ctrls, &ctrls, &values);
+  XkbSetAutoResetControls(QX11Info::display(), ctrls, &ctrls, &values);
 
   delete overlay;
   overlay = 0;
@@ -238,7 +240,7 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
       WId id = _activeWindow;
 
       NETRect frame, window;
-      NETWinInfo net(qt_xdisplay(), id, desktop()->winId(), 0);
+      NETWinInfo net(QX11Info::display(), id, desktop()->winId(), 0);
 
       net.kdeGeometry(frame, window);
 
@@ -247,11 +249,17 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
       if (_visibleBellInvert)
         {
 	  QPixmap screen = QPixmap::grabWindow(id, 0, 0, window.size.width, window.size.height);
-	  QPixmap invert(window.size.width, window.size.height);
+#warning is this the best way to invert a pixmap?
+//	  QPixmap invert(window.size.width, window.size.height);
+	  QImage i = screen.toImage();
+	  i.invertPixels();
+	  overlay->setBackgroundPixmap(QPixmap::fromImage(i));
+/*
 	  QPainter p(&invert);
 	  p.setRasterOp(QPainter::NotCopyROP);
 	  p.drawPixmap(0, 0, screen);
 	  overlay->setBackgroundPixmap(invert);
+*/
 	}
       else
 	overlay->setBackgroundColor(_visibleBellColor);
@@ -373,7 +381,7 @@ void KAccessApp::createDialogContents() {
             0, "AccessXWarning", true, true,
             KStdGuiItem::yes(), KStdGuiItem::no());
 
-      QVBox *topcontents = new QVBox (dialog);
+      Q3VBox *topcontents = new Q3VBox (dialog);
       topcontents->setSpacing(KDialog::spacingHint()*2);
       topcontents->setMargin(KDialog::marginHint());
 
@@ -393,7 +401,7 @@ void KAccessApp::createDialogContents() {
       QVBoxLayout * vlay = new QVBoxLayout(lay);
 
       featuresLabel = new QLabel( "", contents );
-      featuresLabel->setAlignment( WordBreak|AlignVCenter );
+      featuresLabel->setAlignment( Qt::WordBreak|Qt::AlignVCenter );
       vlay->addWidget( featuresLabel );
       vlay->addStretch();
 
@@ -539,7 +547,7 @@ void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
               else if ((enabled | disabled) == XkbStickyKeysMask)
                  explanation = i18n("You pressed the Shift key 5 consecutive times or an application has requested to change this setting.");
               else if ((enabled | disabled) == XkbMouseKeysMask) {
-                 QString shortcut = mouseKeysShortcut(qt_xdisplay());
+                 QString shortcut = mouseKeysShortcut(QX11Info::display());
                  if (!shortcut.isEmpty() && !shortcut.isNull())
                     explanation = i18n("You pressed %1 or an application has requested to change this setting.").arg(shortcut);
               }

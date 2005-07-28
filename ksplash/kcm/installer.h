@@ -13,12 +13,17 @@
 
 #include <qmap.h>
 #include <qpoint.h>
+//Added by qt3to4:
+#include <QDragEnterEvent>
+#include <QMouseEvent>
+#include <QLabel>
+#include <QDropEvent>
 
 #include <klistbox.h>
 #include <kurl.h>
 
 class QLabel;
-class QTextEdit;
+class Q3TextEdit;
 class QPushButton;
 class ThemeListBox;
 
@@ -55,7 +60,7 @@ private:
   bool mGui;
   ThemeListBox *mThemesList;
   QPushButton *mBtnAdd, *mBtnRemove, *mBtnTest;
-  QTextEdit *mText;
+  Q3TextEdit *mText;
   QLabel *mPreview;
 };
 
@@ -75,7 +80,7 @@ protected:
   void mouseMoveEvent(QMouseEvent *e);
 
 protected slots:
-  void slotMouseButtonPressed(int button, QListBoxItem *item, const QPoint &p);
+  void slotMouseButtonPressed(int button, Q3ListBoxItem *item, const QPoint &p);
 
 private:
   QString mDragFile;

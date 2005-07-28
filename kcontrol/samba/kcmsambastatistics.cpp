@@ -23,8 +23,9 @@
 #include "kcmsambastatistics.h"
 #include "kcmsambastatistics.moc"
 
+#include <qapplication.h>
 #include <qlayout.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
@@ -45,7 +46,7 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    ,filesCount(0)
    ,calcCount(0)
 {
-  viewStatistics = new QListView( this );
+  viewStatistics = new Q3ListView( this );
   connectionsL = new QLabel( i18n( "Connections: 0" ), this );
   filesL = new QLabel( i18n( "File accesses: 0" ), this );
   eventCb = new QComboBox( false, this );
@@ -60,7 +61,7 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
   expandedUserCb = new QCheckBox( i18n( "Show expanded host info" ), this );
 
    viewStatistics->setAllColumnsShowFocus(TRUE);
-   viewStatistics->setFocusPolicy(QWidget::ClickFocus);
+   viewStatistics->setFocusPolicy(Qt::ClickFocus);
    viewStatistics->setShowSortIndicator(true);
    
    viewStatistics->addColumn(i18n("Nr"),30);
@@ -121,7 +122,7 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    setListInfo(0,0,0);
 }
 
-void StatisticsView::setListInfo(QListView *list, int nrOfFiles, int nrOfConnections)
+void StatisticsView::setListInfo(Q3ListView *list, int nrOfFiles, int nrOfConnections)
 {
    dataList=list;
    filesCount=nrOfFiles;
@@ -134,7 +135,7 @@ void StatisticsView::setListInfo(QListView *list, int nrOfFiles, int nrOfConnect
 void StatisticsView::calculate()
 {
    if (dataList==0) return;
-   QApplication::setOverrideCursor(waitCursor);
+   QApplication::setOverrideCursor(Qt::waitCursor);
    int connCount(0);
    if (eventCb->currentText()==i18n("Connection"))
       connCount=1;
@@ -145,7 +146,7 @@ void StatisticsView::calculate()
       QRegExp rService(serviceLe->text(),FALSE,TRUE);
       QRegExp rHost(hostLe->text(),FALSE,TRUE);
       QString item2, item3;
-      QListViewItem* item=dataList->firstChild();
+      Q3ListViewItem* item=dataList->firstChild();
       while (item!=0)
       {
          if (connCount)
@@ -185,7 +186,7 @@ void StatisticsView::calculate()
             number.sprintf("%6d",calcCount);
             QString hits("");
             hits.sprintf("%7d",tmpStr->count);
-            new QListViewItem(viewStatistics,number,eventCb->currentText(),tmpItem->name,tmpStr->name,hits);
+            new Q3ListViewItem(viewStatistics,number,eventCb->currentText(),tmpItem->name,tmpStr->name,hits);
          };
       };
    }
@@ -196,7 +197,7 @@ void StatisticsView::calculate()
       int count(0);
       QRegExp rService(serviceLe->text(),FALSE,TRUE);
       QRegExp rHost(hostLe->text(),FALSE,TRUE);
-      QListViewItem* item=dataList->firstChild();
+      Q3ListViewItem* item=dataList->firstChild();
       while (item!=0)
       {
          if (connCount)
@@ -217,7 +218,7 @@ void StatisticsView::calculate()
       number.sprintf("%6d",calcCount);
       QString hits("");
       hits.sprintf("%7d",count);
-      new QListViewItem(viewStatistics,number,eventCb->currentText(),serviceLe->text(),hostLe->text(),hits);
+      new Q3ListViewItem(viewStatistics,number,eventCb->currentText(),serviceLe->text(),hostLe->text(),hits);
    };
    QApplication::restoreOverrideCursor();
 }

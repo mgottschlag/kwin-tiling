@@ -18,10 +18,12 @@
 */
 
 #include <qpainter.h>
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
 #include <qregexp.h>
 #include <qlayout.h>
 #include <qfile.h>
+//Added by qt3to4:
+#include <QTextStream>
 
 #include <kstandarddirs.h>
 #include <klocale.h>
@@ -70,8 +72,8 @@ static const char system_text[] = I18N_NOOP("System:");
 static const char release_text[] = I18N_NOOP("Release:");
 static const char machine_text[] = I18N_NOOP("Machine:");
 
-AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* category, const QString &caption)
-   : QHBox(parent, name),
+AboutWidget::AboutWidget(QWidget *parent , const char *name, Q3ListViewItem* category, const QString &caption)
+   : Q3HBox(parent, name),
       _moduleList(false),
       _category(category),
       _caption(caption)
@@ -82,7 +84,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* cate
     setMinimumSize(400, 400);
 
     // set qwhatsthis help
-    QWhatsThis::add(this, i18n(intro_text));
+    Q3WhatsThis::add(this, i18n(intro_text));
     _viewer = new KHTMLPart( this, "_viewer" );
     _viewer->widget()->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
     connect( _viewer->browserExtension(),
@@ -91,7 +93,7 @@ AboutWidget::AboutWidget(QWidget *parent , const char *name, QListViewItem* cate
     updatePixmap();
 }
 
-void AboutWidget::setCategory( QListViewItem* category, const QString &caption )
+void AboutWidget::setCategory( Q3ListViewItem* category, const QString &caption )
 {
   _caption = caption;
   _category = category;
@@ -108,7 +110,7 @@ void AboutWidget::updatePixmap()
 {
     QString file = locate(  "data", "kcontrol/about/main.html" );
     QFile f( file );
-    f.open( IO_ReadOnly );
+    f.open( QIODevice::ReadOnly );
     QTextStream t(  &f );
     QString res = t.read();
 
@@ -155,7 +157,7 @@ void AboutWidget::updatePixmap()
 
         content += "<table class=\"kc_table\">\n";
         // traverse the list
-        QListViewItem* pEntry = _category;
+        Q3ListViewItem* pEntry = _category;
         while (pEntry != NULL)
         {
             QString szName;

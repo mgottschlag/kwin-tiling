@@ -66,8 +66,8 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	listview->addColumn( i18n("Name") );
 	listview->addColumn( i18n("Description") );
 
-	connect( listview, SIGNAL(selectionChanged(QListViewItem*)),
-			SLOT(selectionChanged(QListViewItem*)) );
+	connect( listview, SIGNAL(selectionChanged(Q3ListViewItem*)),
+			SLOT(selectionChanged(Q3ListViewItem*)) );
 
 	insertThemes();
 }
@@ -78,7 +78,7 @@ ThemePage::~ThemePage()
 }
 
 
-void ThemePage::selectionChanged( QListViewItem *item )
+void ThemePage::selectionChanged( Q3ListViewItem *item )
 {
 	selectedTheme = item->text( DirColumn );
 	emit changed( selectedTheme != currentTheme );
@@ -123,7 +123,7 @@ void ThemePage::load()
 		currentTheme = whiteCursor ? "SmallWhite" : "SmallBlack";
 
 	selectedTheme = currentTheme;
-	QListViewItem *item = listview->findItem( currentTheme, DirColumn );
+	Q3ListViewItem *item = listview->findItem( currentTheme, DirColumn );
 	item->setSelected( true );
 }
 
@@ -131,7 +131,7 @@ void ThemePage::load()
 void ThemePage::defaults()
 {
 	currentTheme = selectedTheme = "SmallBlack";
-	QListViewItem *item = listview->findItem( currentTheme, DirColumn );
+	Q3ListViewItem *item = listview->findItem( currentTheme, DirColumn );
 	item->setSelected( true );
 }
 

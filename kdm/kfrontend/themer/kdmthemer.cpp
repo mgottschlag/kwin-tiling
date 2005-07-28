@@ -37,10 +37,15 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 //#include <qtimer.h>		// animation timer - TODO
-#include <qobjectlist.h>
+#include <qobject.h>
 #include <qpainter.h>
 #include <qwidget.h>
 #include <qregion.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <QPaintEvent>
+#include <QEvent>
+#include <QMouseEvent>
 
 #include <unistd.h>
 
@@ -63,7 +68,7 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *pa
 		filename += '/' + cfg.readEntry( "Greeter" );
 	}
 	QFile opmlFile( filename );
-	if (!opmlFile.open( IO_ReadOnly )) {
+	if (!opmlFile.open( QIODevice::ReadOnly )) {
 		FDialog::box( widget(), errorbox, i18n( "Cannot open theme file %1" ).arg(filename) );
 		return;
 	}
@@ -206,7 +211,7 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 	/*
 	 * Go through each of the child nodes
 	 */
-	for (uint nod = 0; nod < subnodeList.count(); nod++) {
+	for (int nod = 0; nod < subnodeList.count(); nod++) {
 		QDomNode subnode = subnodeList.item( nod );
 		QDomElement el = subnode.toElement();
 		QString tagName = el.tagName();
@@ -296,17 +301,17 @@ void
 KdmThemer::showStructure( QObject *obj )
 {
 
-	const QObjectList *wlist = obj->children();
+	QObjectList wlist = obj->children();
 	static int counter = 0;
 	if (counter == 0)
 		kdDebug() << "\n\n<=======  Widget tree =================" << endl;
-	if (wlist) {
+	if (!wlist.isEmpty()) {
 		counter++;
-		QObjectListIterator it( *wlist );
+		QListIterator<QObject*> it( wlist );
 		QObject *object;
 
-		while ((object = it.current()) != 0) {
-			++it;
+		while (it.hasNext()) {
+			object = it.next();
 			QString node;
 			for (int i = 1; i < counter; i++)
 				node += "-";

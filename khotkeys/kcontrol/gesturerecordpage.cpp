@@ -25,7 +25,7 @@ namespace KHotKeys
 
 GestureRecordPage::GestureRecordPage(const QString &gesture,
                                      QWidget *parent, const char *name)
-  : QVBox(parent, name),
+  : Q3VBox(parent, name),
     _recorder(NULL), _resetButton(NULL),
     _tryOne(NULL), _tryTwo(NULL), _tryThree(NULL), _gest(QString::null),
     _tryCount(1)
@@ -43,8 +43,8 @@ GestureRecordPage::GestureRecordPage(const QString &gesture,
                    "button below.\n\nDraw here:");
 
     QLabel *label = new QLabel(message, this, "label");
-    label->setAlignment(QLabel::AlignLeft | QLabel::WordBreak |
-                        QLabel::AlignVCenter);
+    label->setAlignment(Qt::AlignLeft | Qt::WordBreak |
+                        Qt::AlignVCenter);
 
     _recorder = new GestureRecorder(this, "recorder");
     _recorder->setMinimumHeight(150);
@@ -52,7 +52,7 @@ GestureRecordPage::GestureRecordPage(const QString &gesture,
     connect(_recorder, SIGNAL(recorded(const QString &)),
             this, SLOT(slotRecorded(const QString &)));
 
-    QHBox *hBox = new QHBox(this, "hbox");
+    Q3HBox *hBox = new Q3HBox(this, "hbox");
 
     _tryOne = new GestureDrawer(hBox, "tryOne");
     _tryTwo = new GestureDrawer(hBox, "tryTwo");

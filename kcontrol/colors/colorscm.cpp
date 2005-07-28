@@ -19,7 +19,7 @@
 #include <qlayout.h>
 #include <qpainter.h>
 #include <qslider.h>
-#include <qvgroupbox.h>
+#include <q3groupbox.h>
 #include <qwhatsthis.h>
 
 #include <kcolorbutton.h>
@@ -35,15 +35,15 @@
 #include <kstandarddirs.h>
 #include <kaboutdata.h>
 
+#include "../krdb/krdb.h"
+
+#include "colorscm.h"
+#include <QX11Info>
+
 #if defined Q_WS_X11 && !defined K_WS_QTONLY
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #endif
-
-#include "../krdb/krdb.h"
-
-#include "colorscm.h"
-
 
 /**** DLL Interface ****/
 typedef KGenericFactory<KColorScheme , QWidget> KolorFactory;
@@ -59,12 +59,12 @@ public:
     bool local;
 };
 
-class KColorSchemeList : public QPtrList<KColorSchemeEntry> {
+class KColorSchemeList : public Q3PtrList<KColorSchemeEntry> {
 public:
     KColorSchemeList()
         { setAutoDelete(true); }
 
-    int compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2)
+    int compareItems(Q3PtrCollection::Item item1, Q3PtrCollection::Item item2)
         {
            KColorSchemeEntry *i1 = (KColorSchemeEntry*)item1;
            KColorSchemeEntry *i2 = (KColorSchemeEntry*)item2;
@@ -93,7 +93,7 @@ QPixmap mkColorPreview(const WidgetCanvas *cs)
 /**** KColorScheme ****/
 
 KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList &)
-    : KCModule(KolorFactory::instance(), parent, name)
+    : KCModule(KolorFactory::instance(), parent)
 {
     nSysSchemes = 2;
 
@@ -142,7 +142,9 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
          SLOT( slotColorForWidget( int, const QColor&)));
     topLayout->addMultiCellWidget( cs, 0, 0, 0, 1 );
 
-    QGroupBox *group = new QVGroupBox( i18n("Color Scheme"), this );
+    Q3GroupBox *group = new Q3GroupBox( i18n("Color Scheme"), this );
+    group->setOrientation( Qt::Horizontal );
+    group->setColumns( 1 );
     topLayout->addWidget( group, 1, 0 );
 
     sList = new KListBox( group );
@@ -185,7 +187,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     QBoxLayout *stackLayout = new QVBoxLayout;
     topLayout->addLayout(stackLayout, 1, 1);
 
-    group = new QGroupBox(i18n("&Widget Color"), this);
+    group = new Q3GroupBox(i18n("&Widget Color"), this);
     stackLayout->addWidget(group);
     QBoxLayout *groupLayout = new QVBoxLayout(group, 10);
     groupLayout->addSpacing(10);
@@ -246,7 +248,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     QWhatsThis::add(cbShadeList,
        i18n("Check this box to show the sorted column in a list with a shaded background"));
 
-    group = new QGroupBox(  i18n("Con&trast"), this );
+    group = new Q3GroupBox(  i18n("Con&trast"), this );
     stackLayout->addWidget(group);
 
     QVBoxLayout *groupLayout2 = new QVBoxLayout(group, 10);
@@ -254,9 +256,9 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     groupLayout = new QHBoxLayout;
     groupLayout2->addLayout(groupLayout);
 
-    sb = new QSlider( QSlider::Horizontal,group,"Slider" );
+    sb = new QSlider( Qt::Horizontal,group,"Slider" );
     sb->setRange( 0, 10 );
-    sb->setFocusPolicy( QWidget::StrongFocus );
+    sb->setFocusPolicy( Qt::StrongFocus );
     connect(sb, SIGNAL(valueChanged(int)), SLOT(sliderValueChanged(int)));
 
     QWhatsThis::add(sb, i18n("Use this slider to change the contrast level"
@@ -394,7 +396,7 @@ void KColorScheme::save()
 #if defined Q_WS_X11 && !defined K_WS_QTONLY
         // Undo the property xrdb has placed on the root window (if any),
         // i.e. remove all entries, including ours
-        XDeleteProperty( qt_xdisplay(), qt_xrootwin(), XA_RESOURCE_MANAGER );
+        XDeleteProperty( QX11Info::display(), QX11Info::appRootWindow(), XA_RESOURCE_MANAGER );
 #endif
     }
     runRdb( flags );	// Save the palette to qtrc for KStyles
@@ -767,20 +769,20 @@ void KColorScheme::readScheme( int index )
     // note: keep default color scheme in sync with default Current Scheme
     if (index == 1) {
       sCurrentScheme  = "<default>";
-      cs->txt         = black;
+      cs->txt         = Qt::black;
       cs->back        = widget;
       cs->select      = kde34Blue;
-      cs->selectTxt   = white;
-      cs->window      = white;
-      cs->windowTxt   = black;
+      cs->selectTxt   = Qt::white;
+      cs->window      = Qt::white;
+      cs->windowTxt   = Qt::black;
       cs->iaTitle     = inactiveBackground;
       cs->iaTxt       = inactiveForeground;
       cs->iaBlend     = inactiveBlend;
       cs->aTitle      = activeBackground;
-      cs->aTxt        = white;
+      cs->aTxt        = Qt::white;
       cs->aBlend      = activeBlend;
       cs->button      = button;
-      cs->buttonTxt   = black;
+      cs->buttonTxt   = Qt::black;
       cs->aTitleBtn   = activeTitleBtnBg;
       cs->iTitleBtn   = inactiveTitleBtnBg;
       cs->aFrame      = cs->back;
@@ -816,14 +818,17 @@ void KColorScheme::readScheme( int index )
     cs->shadeSortColumn = config->readBoolEntry( "shadeSortColumn", KDE_DEFAULT_SHADE_SORT_COLUMN );
 
     // note: defaults should be the same as the KDE default
-    cs->txt = config->readColorEntry( "foreground", &black );
+    QColor auxBlack, auxWhite;
+    auxBlack = Qt::black;
+    auxWhite = Qt::white;
+    cs->txt = config->readColorEntry( "foreground", &auxBlack );
     cs->back = config->readColorEntry( "background", &widget );
     cs->select = config->readColorEntry( "selectBackground", &kde34Blue );
-    cs->selectTxt = config->readColorEntry( "selectForeground", &white );
-    cs->window = config->readColorEntry( "windowBackground", &white );
-    cs->windowTxt = config->readColorEntry( "windowForeground", &black );
+    cs->selectTxt = config->readColorEntry( "selectForeground", &auxWhite );
+    cs->window = config->readColorEntry( "windowBackground", &auxWhite );
+    cs->windowTxt = config->readColorEntry( "windowForeground", &auxBlack );
     cs->button = config->readColorEntry( "buttonBackground", &button );
-    cs->buttonTxt = config->readColorEntry( "buttonForeground", &black );
+    cs->buttonTxt = config->readColorEntry( "buttonForeground", &auxBlack );
     cs->link = config->readColorEntry( "linkColor", &link );
     cs->visitedLink = config->readColorEntry( "visitedLinkColor", &visitedLink );
     QColor alternate = KGlobalSettings::calculateAlternateBackgroundColor(cs->window);
@@ -838,7 +843,7 @@ void KColorScheme::readScheme( int index )
     cs->iaFrame = config->readColorEntry("inactiveFrame", &cs->back);
     cs->iaHandle = config->readColorEntry("inactiveHandle", &cs->back);
     cs->aTitle = config->readColorEntry("activeBackground", &activeBackground);
-    cs->aTxt = config->readColorEntry("activeForeground", &white);
+    cs->aTxt = config->readColorEntry("activeForeground", &auxWhite);
     cs->aBlend = config->readColorEntry("activeBlend", &activeBlend);
     cs->aFrame = config->readColorEntry("frame", &cs->back);
     cs->aHandle = config->readColorEntry("handle", &cs->back);

@@ -309,7 +309,7 @@
             </widget>
             <widget class="QWidget">
                 <property name="name">
-                    <cstring>tab</cstring>
+                    <cstring>tab_2</cstring>
                 </property>
                 <attribute name="title">
                     <string>&amp;Schema</string>
@@ -327,7 +327,7 @@
             </widget>
             <widget class="QWidget">
                 <property name="name">
-                    <cstring>tab</cstring>
+                    <cstring>tab_3</cstring>
                 </property>
                 <attribute name="title">
                     <string>S&amp;ession</string>
@@ -383,6 +383,13 @@
     <include location="global" impldecl="in declaration">knuminput.h</include>
     <include location="local" impldecl="in implementation">kdialog.h</include>
 </includes>
+<customwidgets>
+    <customwidget>
+        <class>KIntNumInput</class>
+        <header location="global">knuminput.h</header>
+        <container>0</container>
+    </customwidget>
+</customwidgets>
 <layoutdefaults spacing="3" margin="6"/>
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>

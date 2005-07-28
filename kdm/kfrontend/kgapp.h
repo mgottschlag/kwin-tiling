@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 #define KGAPP_H
 
 #include <kapplication.h>
+//Added by qt3to4:
+#include <QTimerEvent>
 
 class GreeterApp : public KApplication {
 	typedef KApplication inherited;

@@ -29,6 +29,8 @@
 #include <qpainter.h>
 #include <qwidget.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 KdmRect::KdmRect( KdmItem *parent, const QDomNode &node, const char *name )
     : KdmItem( parent, node, name )
@@ -51,7 +53,7 @@ KdmRect::KdmRect( KdmItem *parent, const QDomNode &node, const char *name )
 
 	// Read RECT TAGS
 	QDomNodeList childList = node.childNodes();
-	for (uint nod = 0; nod < childList.count(); nod++) {
+	for (int nod = 0; nod < childList.count(); nod++) {
 		QDomNode child = childList.item( nod );
 		QDomElement el = child.toElement();
 		QString tagName = el.tagName();

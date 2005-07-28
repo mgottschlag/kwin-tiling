@@ -31,9 +31,6 @@
             <property name="name">
                 <cstring>buttonGroup1</cstring>
             </property>
-            <property name="frameShape">
-                <enum>NoFrame</enum>
-            </property>
             <property name="title">
                 <string></string>
             </property>
@@ -164,7 +161,7 @@
     </connection>
 </connections>
 <includes>
-    <include location="local" impldecl="in implementation">kdialog.h</include>
+    <include location="local" impldecl="in declaration">kdialog.h</include>
 </includes>
 <slots>
     <slot access="protected">selectBrowser()</slot>

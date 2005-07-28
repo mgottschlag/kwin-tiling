@@ -26,6 +26,10 @@
 #include <qdir.h>
 #include <qsettings.h>
 #include <qtooltip.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3CString>
+#include <QTextStream>
 
 #include <dcopclient.h>
 
@@ -43,6 +47,7 @@
 #include "krdb.h"
 
 #include <X11/Xlib.h>
+#include <QX11Info>
 
 inline const char * gtkEnvVar(int version)
 {
@@ -76,7 +81,7 @@ inline const char * userGtkrc(int version)
 static void applyGtkStyles(bool active, int version)
 {
    QString gtkkde = locateLocal("config", 2==version?"gtkrc-2.0":"gtkrc");
-   QCString gtkrc = getenv(gtkEnvVar(version));
+   Q3CString gtkrc = getenv(gtkEnvVar(version));
    QStringList list = QStringList::split(':', QFile::decodeName(gtkrc));
    if (list.count() == 0)
    {
@@ -89,10 +94,12 @@ static void applyGtkStyles(bool active, int version)
       ::unlink(QFile::encodeName(gtkkde));
 
    // Pass env. var to kdeinit.
-   QCString name = gtkEnvVar(version);
-   QCString value = QFile::encodeName(list.join(":"));
+   Q3CString name = gtkEnvVar(version);
+   Q3CString value = QFile::encodeName(list.join(":"));
    QByteArray params;
-   QDataStream stream(params, IO_WriteOnly);
+   QDataStream stream(&params, QIODevice::WriteOnly);
+
+   stream.setVersion(QDataStream::Qt_3_1);
    stream << name << value;
    kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
 }
@@ -174,7 +181,7 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
     // end it with.. So keep a QMap to bool, specifying whether the path is KDE-specified..
 
   QString qversion = qVersion();
-  if ( qversion.contains( '.' ) > 1 )
+  if ( qversion.count( '.' ) > 1 )
      qversion.truncate( qversion.findRev( '.' ) );
   if ( qversion.contains( '-' ) )
      qversion.truncate( qversion.findRev( '-' ) );
@@ -248,7 +255,10 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
 
   /* export widget style */
   kglobals.setGroup("General");
-  QString style = kglobals.readEntry("widgetStyle", KStyle::defaultStyle() );
+  
+#warning FIXME KDE4: need replacement for defaultStyle()
+  // KStyle::defaultStyle()
+  QString style = kglobals.readEntry("widgetStyle", "plastique" );
   if (!style.isEmpty())
     settings.writeEntry("/qt/style", style);
 
@@ -302,8 +312,8 @@ static void addColorDef(QString& s, const char* n, const QColor& col)
 static void copyFile(QFile& tmp, QString const& filename, bool )
 {
   QFile f( filename );
-  if ( f.open(IO_ReadOnly) ) {
-      QCString buf( 8192 );
+  if ( f.open(QIODevice::ReadOnly) ) {
+      Q3CString buf( 8192 );
       while ( !f.atEnd() ) {
           int read = f.readBlock( buf.data(), buf.size() );
           if ( read > 0 )
@@ -576,13 +586,13 @@ void runRdb( uint flags )
     if (!qt_settings_timestamp) {
 	 QString atomname("_QT_SETTINGS_TIMESTAMP_");
 	 atomname += XDisplayName( 0 ); // Use the $DISPLAY envvar.
-	 qt_settings_timestamp = XInternAtom( qt_xdisplay(), atomname.latin1(), False);
+	 qt_settings_timestamp = XInternAtom( QX11Info::display(), atomname.latin1(), False);
     }
 
     QBuffer stamp;
-    QDataStream s(stamp.buffer(), IO_WriteOnly);
+    QDataStream s(&stamp.buffer(), QIODevice::WriteOnly);
     s << settingsstamp;
-    XChangeProperty( qt_xdisplay(), qt_xrootwin(), qt_settings_timestamp,
+    XChangeProperty( QX11Info::display(), QX11Info::appRootWindow(), qt_settings_timestamp,
 		     qt_settings_timestamp, 8, PropModeReplace,
 		     (unsigned char*) stamp.buffer().data(),
 		     stamp.buffer().size() );

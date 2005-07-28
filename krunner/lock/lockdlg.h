@@ -13,14 +13,20 @@
 
 #include <qdialog.h>
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <QTimerEvent>
+#include <Q3Frame>
+#include <QGridLayout>
+#include <QEvent>
 
 struct GreeterPluginHandle;
 class LockProcess;
-class QFrame;
+class Q3Frame;
 class QGridLayout;
 class QLabel;
 class KPushButton;
-class QListView;
+class Q3ListView;
 
 //===========================================================================
 //
@@ -73,7 +79,7 @@ private:
     void cantCheck();
     GreeterPluginHandle *mPlugin;
     KGreeterPlugin *greet;
-    QFrame      *frame;
+    Q3Frame      *frame;
     QGridLayout *frameLayout;
     QLabel      *mStatusLabel;
     KPushButton *mNewSessButton, *ok, *cancel;
@@ -85,7 +91,7 @@ private:
     QStringList layoutsList;
     QStringList::iterator currLayout;
     int         sPid, sFd;
-    QListView   *lv;
+    Q3ListView   *lv;
 };
 
 #endif

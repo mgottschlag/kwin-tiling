@@ -20,7 +20,7 @@
 #ifndef _POPUPPROXY_H_
 #define _POPUPPROXY_H_
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qobject.h>
 #include <qstring.h>
 #include <qregexp.h>

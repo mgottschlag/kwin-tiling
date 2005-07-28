@@ -5,13 +5,15 @@
 // Copyright (c)  Mark Donohoe 1998
 //
 
+#include <qevent.h>
 #include <qdrawutil.h>
 #include <qpainter.h>
 #include <qscrollbar.h>
 #include <qbitmap.h>
 #include <qtooltip.h>
 #include <qstyle.h>
-#include <qpopupmenu.h>
+#include <qstyleoption.h>
+#include <q3popupmenu.h>
 
 #include <kcolordrag.h>
 #include <kpixmapeffect.h>
@@ -45,7 +47,7 @@ WidgetCanvas::WidgetCanvas( QWidget *parent, const char *name )
 	: QWidget( parent, name  ), shadeSortColumn( true )
 {
     setMouseTracking( true );
-    setBackgroundMode( NoBackground );
+    setBackgroundMode( Qt::NoBackground );
     setAcceptDrops( true);
     setMinimumSize(200, 100);
     currentHotspot = -1;
@@ -306,29 +308,32 @@ void WidgetCanvas::drawSampleWidgets()
                     back.dark(lowlightVal),
                     back.dark(120),
                     txt, window );
+    QPalette palette(cg, cg, cg);
 
     // We will need this brush.
 
-    QBrush brush(SolidPattern);
+    QBrush brush(Qt::SolidPattern);
     brush.setColor( back );
 
     // Create a scrollbar and redirect drawing into a temp. pixmap to save a
     // lot of fiddly drawing later.
 
-    QScrollBar *vertScrollBar = new QScrollBar( QScrollBar::Vertical, this );
+    QScrollBar *vertScrollBar = new QScrollBar( Qt::Vertical, this );
     // TODO: vertScrollBar->setStyle( new QMotifStyle() );
     vertScrollBar->setGeometry( 400, 400, SCROLLBAR_SIZE, height());
     vertScrollBar->setRange( 0,  0 );
-    vertScrollBar->setPalette( QPalette(cg,cg,cg));
+    vertScrollBar->setPalette( palette );
     vertScrollBar->show();
 
     QPixmap pm( vertScrollBar->width(), vertScrollBar->height() );
     pm.fill( back );
 #ifndef __osf__
-    QPainter::redirect( vertScrollBar, &pm );
+    QPainter::setRedirected( vertScrollBar, &pm );
 #endif
     vertScrollBar->repaint();
-    QPainter::redirect( vertScrollBar, 0 );
+#ifndef __osf__
+    QPainter::restoreRedirected( vertScrollBar );
+#endif
     vertScrollBar->hide();
 
     // Reset the titlebar pixmaps
@@ -435,16 +440,26 @@ void WidgetCanvas::drawSampleWidgets()
     // Menu bar
 
     //qDrawShadePanel ( &paint, 25, 55, width()-52, 28, cg, FALSE, 2, &brush);
-    kapp->style().drawPrimitive(QStyle::PE_PanelMenuBar, &paint, 
-			QRect(QPoint(25, 55), QSize(width()-52, 28)), cg);
+    {
+	QStyleOption option;
+	option.rect = QRect(25, 55, width()-52, 28);
+        option.palette = palette;
+	kapp->style()->drawPrimitive(QStyle::PE_PanelMenuBar, &option, &paint); 
+    }
 
     paint.setFont( menuFont );
     paint.setPen(txt );
 	QString file = i18n("File");
     textLen = paint.fontMetrics().width( file );
+    
     //qDrawShadePanel ( &paint, 30, 59, textLen + 10, 21, cg, FALSE, 2, &brush);
-	kapp->style().drawPrimitive(QStyle::PE_Panel, &paint,
-			QRect(30, 59, textLen + 10, 21), cg);
+    {
+	QStyleOptionMenuItem option;
+	option.rect = QRect(30, 59, textLen + 10, 21);
+        option.palette = palette;
+	option.state = QStyle::State_Selected;
+	kapp->style()->drawControl(QStyle::CE_MenuBarItem, &option, &paint);
+    }
     paint.drawText( 35, 74, file );
 
     hotspots[ spot++ ] =
@@ -528,10 +543,12 @@ void WidgetCanvas::drawSampleWidgets()
     cg2.setColor(QColorGroup::Button, button);
     cg2.setColor(QColorGroup::Background, window);
     //qDrawWinButton(&paint, xpos, ypos, textLen+32, 28, cg, false, &brush);
+/*
 	kapp->style().drawPrimitive(QStyle::PE_ButtonCommand, &paint,
 			QRect(xpos, ypos, textLen+32, 28), cg2, QStyle::Style_Enabled | QStyle::Style_Raised);
+*/
     paint.setPen(buttonTxt);
-    paint.drawText(xpos, ypos, textLen+32, 28, AlignCenter,
+    paint.drawText(xpos, ypos, textLen+32, 28, Qt::AlignCenter,
                    i18n("Push Button"));
 
     // Scrollbar
@@ -558,9 +575,9 @@ void WidgetCanvas::drawSampleWidgets()
     paint.setFont( menuFont );
     textLenSave = paint.fontMetrics().width( i18n("Menu item", "Save") );
 
-	QPopupMenu *popup = new QPopupMenu( this );
+	Q3PopupMenu *popup = new Q3PopupMenu( this );
 	popup->setFont( menuFont );
-	popup->setPalette( QPalette(cg,cg,cg));
+	popup->setPalette( palette );
 	popup->insertItem(i18n("New"));
 	popup->insertItem(i18n("Menu item", "Open"));
 	int id = popup->insertItem(i18n("Menu item", "Save"));

@@ -32,7 +32,10 @@
  * to newInstance().
  */
 
-#include <qpaintdevicemetrics.h>
+#include <q3paintdevicemetrics.h>
+//Added by qt3to4:
+#include <Q3CString>
+#include <QDesktopWidget>
 
 #include <kcmdlineargs.h>
 #include <dcopclient.h>
@@ -72,7 +75,7 @@ KControlApp::KControlApp()
   // 800x600 on 72 dpi, 12 pt font
   // --> 368 + 6 x dpiX, 312 + 4 x dpiY
   // Adjusted for font size
-  QPaintDeviceMetrics pdm(toplevel);
+  Q3PaintDeviceMetrics pdm(toplevel);
   int fontSize = toplevel->fontInfo().pointSize();
   if (fontSize == 0)
     fontSize = (toplevel->fontInfo().pixelSize() * 72) / pdm.logicalDpiX();
@@ -89,7 +92,7 @@ KControlApp::~KControlApp()
     {
       KConfig *config = KGlobal::config();
       config->setGroup("General");
-      QWidget *desk = QApplication::desktop();
+      QDesktopWidget *desk = QApplication::desktop();
       config->writeEntry(QString::fromLatin1("InitialWidth %1").arg(desk->width()), toplevel->width());
       config->writeEntry(QString::fromLatin1("InitialHeight %1").arg(desk->height()), toplevel->height());
       config->sync();
@@ -108,7 +111,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
     KCONTROL_VERSION, I18N_NOOP("The KDE Info Center"), KAboutData::License_GPL,
     I18N_NOOP("(c) 1998-2004, The KDE Control Center Developers"));
 
-  QCString argv_0 = argv[0];
+  Q3CString argv_0 = argv[0];
   KAboutData *aboutData;
   if (argv_0.right(11) == "kinfocenter")
   {

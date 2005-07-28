@@ -31,7 +31,11 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <qlayout.h>
 #include <qtimer.h>
-#include <qvaluevector.h>
+#include <q3valuevector.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <QGridLayout>
+#include <QEvent>
 
 #include <sys/time.h>
 #include <time.h>
@@ -72,7 +76,7 @@ class KGVerifyHandler {
 
 class QWidget;
 class QLabel;
-class QPopupMenu;
+class Q3PopupMenu;
 class QTimer;
 class KPushButton;
 class KLibrary;
@@ -82,7 +86,7 @@ struct GreeterPluginHandle {
 	kgreeterplugin_info *info;
 };
 
-typedef QValueVector<int> PluginList;
+typedef Q3ValueVector<int> PluginList;
 
 class KGVerify : public QObject, public KGreeterPluginHandler {
 	Q_OBJECT
@@ -94,7 +98,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	          const QString &fixedEntity, const PluginList &pluginList,
 	          KGreeterPlugin::Function func, KGreeterPlugin::Context ctx );
 	virtual ~KGVerify();
-	QPopupMenu *getPlugMenu();
+	Q3PopupMenu *getPlugMenu();
 	void loadUsers( const QStringList &users );
 	void presetEntity( const QString &entity, int field );
 	QString getEntity() const;
@@ -134,7 +138,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	KdmThemer *themer;
 	QWidget *parent, *predecessor;
 	KGreeterPlugin *greet;
-	QPopupMenu *plugMenu;
+	Q3PopupMenu *plugMenu;
 	int curPlugin;
 	KGreeterPlugin::Function func;
 	KGreeterPlugin::Context ctx;
@@ -146,7 +150,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	static void VErrBox( QWidget *parent, const QString &user, const char *msg );
 	static void VInfoBox( QWidget *parent, const QString &user, const char *msg );
 
-	static QValueVector<GreeterPluginHandle> greetPlugins;
+	static Q3ValueVector<GreeterPluginHandle> greetPlugins;
 
   private slots:
 	//virtual void slotPluginSelected( int id ) = 0;

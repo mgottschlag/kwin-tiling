@@ -489,7 +489,7 @@ bool CXConfig::processX11(bool read)
                                     if(TPath::DIR!=path->type || Misc::dExists(path->dir))
                                     {
                                         of << "    FontPath \t\"";
-                                        of << QFile::encodeName(Misc::xDirSyntax(path->dir));
+                                        of << QFile::encodeName(Misc::xDirSyntax(path->dir)).constData();
                                         if(path->unscaled)
                                             of << UNSCALED;
                                         of << "\"\n";
@@ -710,7 +710,7 @@ bool CXConfig::processXfs(bool read)
                                                                         of << ',';
                                                                         of << endl;
                                                                     }
-                                                                    of << QFile::encodeName(Misc::xDirSyntax(p->dir));
+                                                                    of << QFile::encodeName(Misc::xDirSyntax(p->dir)).constData();
                                                                     if(p->unscaled)
                                                                         of << UNSCALED;
                                                                     first=false;
@@ -749,129 +749,118 @@ bool CXConfig::createFontsDotDir(const QString &dir, CFontEngine &fe)
 
     if(d.isReadable())
     {
-        CFontsFile          fd(QFile::encodeName(QString(ds+"fonts.dir"))),
-                            fs(QFile::encodeName(QString(ds+"fonts.scale")));
-        const QFileInfoList *files=d.entryInfoList();
-        QStringList         fdir,
-                            fscale;
-        bool                addedFd=false,
-                            addedFs=false;
+        CFontsFile    fd(QFile::encodeName(QString(ds+"fonts.dir"))),
+                      fs(QFile::encodeName(QString(ds+"fonts.scale")));
+        QStringList   fdir,
+                      fscale;
+        bool          addedFd=false,
+                      addedFs=false;
  
-        if(files)
+        foreach(QFileInfo fInfo, d.entryInfoList())
         {
-            QFileInfoListIterator it(*files);
-            QFileInfo             *fInfo;
- 
-            for(; NULL!=(fInfo=it.current()); ++it)
+            QByteArray        cName(QFile::encodeName(fInfo.fileName()));
+            const QStringList *origfd=NULL,
+                              *origfs=NULL;
+
+            if("."!=fInfo.fileName() && ".."!=fInfo.fileName())
             {
-                QCString          cName(QFile::encodeName(fInfo->fileName()));
-                const QStringList *origfd=NULL,
-                                  *origfs=NULL;
+                origfd=fd.getXlfds(fInfo.fileName());
+                origfs=fs.getXlfds(fInfo.fileName());
 
-                if("."!=fInfo->fileName() && ".."!=fInfo->fileName())
+                if(origfd)
+                    fdir+=*origfd;
+                else if(origfs)
+                    fdir+=*origfs;
+
+                if(origfs)
+                    fscale+=*origfs;
+
+                if(!origfd && !origfs)
                 {
-                    origfd=fd.getXlfds(fInfo->fileName());
-                    origfs=fs.getXlfds(fInfo->fileName());
+                    int face=0,
+                        numFaces=0;
 
-                    if(origfd)
-                        fdir+=*origfd;
-                    else if(origfs)
-                        fdir+=*origfs;
-
-                    if(origfs)
-                        fscale+=*origfs;
-
-                    if(!origfd && !origfs)
+                    do
                     {
-                        int face=0,
-                            numFaces=0;
-
-                        do
+                        if(fe.openFont(fInfo.filePath(), face))
                         {
-                            if(fe.openFont(fInfo->filePath(), face))
+                            if(CFontEngine::BITMAP!=fe.getType())
                             {
-                                if(CFontEngine::BITMAP!=fe.getType())
-                                {
-                                     QStringList encodings=fe.getEncodings();
+                                 QStringList encodings=fe.getEncodings();
 
-                                     numFaces=fe.getNumFaces();   // Only really for TTC files..
+                                 numFaces=fe.getNumFaces();   // Only really for TTC files..
 
-                                     if(encodings.count())
+                                 if(!encodings.isEmpty())
+                                 {
+                                     QByteArray xlfd;
+                                     QString    family=fe.getFamilyName();
+
+                                     if(face>0)  // Again, only really for TTC files...
                                      {
-                                         QCString xlfd;
-                                         QString  family=fe.getFamilyName();
-
-                                         if(face>0)  // Again, only really for TTC files...
-                                         {
-                                             QCString fc;
-                                             fc.setNum(face);
-                                             xlfd+=':';
-                                             xlfd+=fc;
-                                             xlfd+=':';
-                                         }
-
-                                         xlfd+=QFile::encodeName(fInfo->fileName());
-                                         xlfd+=" -";
-                                         xlfd+=fe.getFoundry().latin1();
-                                         xlfd+="-";
-                                         xlfd+=family.latin1();
-                                         xlfd+="-";
-                                         xlfd+=CFontEngine::weightStr(fe.getWeight()).latin1();
-                                         xlfd+="-";
-                                         xlfd+=CFontEngine::italicStr(fe.getItalic()).latin1();
-                                         xlfd+="-";
-                                         xlfd+=CFontEngine::widthStr(fe.getWidth()).latin1();
-                                         xlfd+="-";
-                                         if(!fe.getAddStyle().isEmpty())
-                                             xlfd+=fe.getAddStyle().latin1();
-                                         //CPD: TODO Bitmap only ttfs!!!
-                                         xlfd+="-0-0-0-0-";
-
-                                         QStringList::Iterator it;
-
-                                         for(it=encodings.begin(); it!=encodings.end(); ++it)
-                                         {
-                                             QCString entry(xlfd);
-
-                                             // Taken from ttmkfdir...
-                                             if((*it).find("jisx")!=-1 || (*it).find("gb2312")!=-1 ||
-                                                (*it).find("big5")!=-1 || (*it).find("ksc")!=-1)
-                                                 entry+='c';
-                                             else
-                                                 entry+=CFontEngine::spacingStr(fe.getSpacing()).latin1();
-
-                                             entry+="-0-";
-                                             entry+=(*it).latin1();
-
-                                             if(-1==fscale.findIndex(entry))
-                                                 fscale.append(entry);
-                                             if(-1==fdir.findIndex(entry))
-                                                 fdir.append(entry);
-                                             addedFd=addedFs=true;
-#ifndef HAVE_FONTCONFIG
-                                             if(CFontEngine::isATtf(QFile::encodeName(fInfo->fileName())) &&
-                                                CEncodings::constTTSymbol==*it &&
-                                                !symbolFamilies.contains(family))
-                                                 symbolFamilies.append(family);
-#endif
-                                         }
+                                         xlfd+=':';
+                                         xlfd+=QByteArray::number(face);
+                                         xlfd+=':';
                                      }
-                                }
-                                else
-                                {
-                                    QCString entry(QFile::encodeName(fInfo->fileName()));
-        
-                                    entry+=" ";
-                                    entry+=fe.getXlfdBmp().latin1();
-                                    fdir.append(entry);
-                                    addedFd=true;
-                                }
-                                fe.closeFont();
-                             }
+
+                                     xlfd+=QFile::encodeName(fInfo.fileName());
+                                     xlfd+=" -";
+                                     xlfd+=fe.getFoundry().latin1();
+                                     xlfd+="-";
+                                     xlfd+=family.latin1();
+                                     xlfd+="-";
+                                     xlfd+=CFontEngine::weightStr(fe.getWeight()).latin1();
+                                     xlfd+="-";
+                                     xlfd+=CFontEngine::italicStr(fe.getItalic()).latin1();
+                                     xlfd+="-";
+                                     xlfd+=CFontEngine::widthStr(fe.getWidth()).latin1();
+                                     xlfd+="-";
+                                     if(!fe.getAddStyle().isEmpty())
+                                         xlfd+=fe.getAddStyle().latin1();
+                                     //CPD: TODO Bitmap only ttfs!!!
+                                     xlfd+="-0-0-0-0-";
+
+                                     foreach(QString encoding, encodings)
+                                     {
+                                         QByteArray entry(xlfd);
+
+                                         // Taken from ttmkfdir...
+                                         if(encoding.find("jisx")!=-1 || encoding.find("gb2312")!=-1 ||
+                                            encoding.find("big5")!=-1 || encoding.find("ksc")!=-1)
+                                             entry+='c';
+                                         else
+                                             entry+=CFontEngine::spacingStr(fe.getSpacing()).latin1();
+
+                                         entry+="-0-";
+                                         entry+=encoding.latin1();
+
+                                         if(-1==fscale.findIndex(entry))
+                                             fscale.append(QString(entry));
+                                         if(-1==fdir.findIndex(entry))
+                                             fdir.append(QString(entry));
+                                         addedFd=addedFs=true;
+#ifndef HAVE_FONTCONFIG
+                                         if(CFontEngine::isATtf(QFile::encodeName(fInfo->fileName())) &&
+                                            CEncodings::constTTSymbol==encoding &&
+                                            !symbolFamilies.contains(family))
+                                             symbolFamilies.append(family);
+#endif
+                                     }
+                                 }
+                            }
+                            else
+                            {
+                                QByteArray entry(QFile::encodeName(fInfo.fileName()));
+    
+                                entry+=" ";
+                                entry+=fe.getXlfdBmp().latin1();
+                                fdir.append(QString(entry));
+                                addedFd=true;
+                            }
+                            fe.closeFont();
                          }
-                         while(++face<numFaces);
-                      }
-                }
+                     }
+                     while(++face<numFaces);
+                  }
             }
         }
 
@@ -888,7 +877,7 @@ bool CXConfig::createFontsDotDir(const QString &dir, CFontEngine &fe)
 
                 fontsDotDir << fdir.count() << endl;
                 for(sIt=fdir.begin(); sIt!=fdir.end(); ++sIt)
-                    fontsDotDir << (*sIt).local8Bit() << endl;
+                    fontsDotDir << (*sIt).toLocal8Bit().constData() << endl;
 
                 fontsDotDir.close();
             }
@@ -906,7 +895,7 @@ bool CXConfig::createFontsDotDir(const QString &dir, CFontEngine &fe)
 
                 fontsDotScale << fscale.count() << endl;
                 for(sIt=fscale.begin(); sIt!=fscale.end(); ++sIt)
-                    fontsDotScale << (*sIt).local8Bit() << endl;
+                    fontsDotScale << (*sIt).toLocal8Bit().constData() << endl;
 
                 fontsDotScale.close();
             }

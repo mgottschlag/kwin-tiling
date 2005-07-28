@@ -4,6 +4,9 @@
 
 #include <qwidget.h>
 #include <qcolor.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <QPaintEvent>
 
 
 #include <kuniqueapplication.h>
@@ -86,7 +89,7 @@ class VisualBell : public QWidget
 public:
 
   VisualBell(int pause) 
-    : QWidget(0, 0, WX11BypassWM), _pause(pause)
+    : QWidget(0, 0, Qt::WX11BypassWM), _pause(pause)
     {};
 
   

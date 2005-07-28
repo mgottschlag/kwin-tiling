@@ -18,7 +18,7 @@
    Boston, MA 02110-1301, USA.
 */
 #include <qmime.h>
-#include <qdragobject.h>
+#include <q3dragobject.h>
 #include <qstring.h>
 #include <qpixmap.h>
 
@@ -44,13 +44,13 @@ HistoryItem* HistoryItem::create( const QMimeSource& aSource )
         kdDebug() << "format(" << i <<"): " << f << endl;
     }
 #endif
-    if ( QTextDrag::canDecode( &aSource ) ) {
+    if ( Q3TextDrag::canDecode( &aSource ) ) {
         QString text;
-        QTextDrag::decode( &aSource, text );
+        Q3TextDrag::decode( &aSource, text );
         return text.isNull() ? 0 : new HistoryStringItem( text );
-    } else if ( QImageDrag::canDecode( &aSource ) ) {
+    } else if ( Q3ImageDrag::canDecode( &aSource ) ) {
         QPixmap image;
-        QImageDrag::decode( &aSource, image );
+        Q3ImageDrag::decode( &aSource, image );
         return image.isNull() ? 0 : new HistoryImageItem( image );
     }
 

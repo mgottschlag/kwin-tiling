@@ -2,7 +2,7 @@
 <class>BGMultiWallpaperBase</class>
 <widget class="QWidget">
     <property name="name">
-        <cstring>BGMultiWallPaperBase</cstring>
+        <cstring>BGMultiWallpaperBase</cstring>
     </property>
     <property name="geometry">
         <rect>
@@ -64,7 +64,7 @@
                         <cstring>spacer4</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
@@ -118,7 +118,7 @@
                         <cstring>spacer5</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Vertical</enum>
+                        <enum>Qt::Vertical</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
@@ -158,8 +158,14 @@
         </widget>
     </grid>
 </widget>
+<customwidgets>
+    <customwidget>
+        <class>BGMultiWallpaperList</class>
+        <header location="local">bgwallpaper.h</header>
+        <container>0</container>
+    </customwidget>
+</customwidgets>
 <includes>
-    <include location="local" impldecl="in declaration">bgwallpaper.h</include>
     <include location="local" impldecl="in implementation">kdialog.h</include>
 </includes>
 <layoutdefaults spacing="3" margin="6"/>

@@ -12,6 +12,9 @@
             <height>456</height>
         </rect>
     </property>
+    <property name="caption">
+        <string>CSSCustomDialog</string>
+    </property>
     <property name="whatsThis" stdset="0">
         <string>&lt;b&gt;Stylesheets&lt;/b&gt;&lt;p&gt;See http://www.w3.org/Style/CSS for further information on cascading style sheets.&lt;/p&gt;</string>
     </property>
@@ -268,7 +271,7 @@
                 <cstring>Spacer5_2</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Horizontal</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>
@@ -346,7 +349,7 @@
                         <cstring>blackOnWhite</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;Black on white</string>
+                        <string>&amp;Black on Qt::white</string>
                     </property>
                     <property name="checked">
                         <bool>true</bool>
@@ -360,7 +363,7 @@
                         <cstring>whiteOnBlack</cstring>
                     </property>
                     <property name="text">
-                        <string>&amp;White on black</string>
+                        <string>&amp;White on Qt::black</string>
                     </property>
                     <property name="whatsThis" stdset="0">
                         <string>&lt;b&gt;White on Black&lt;/b&gt;&lt;p&gt;This is your classic inverse color scheme.&lt;/p&gt;</string>
@@ -393,7 +396,7 @@
                         </property>
                         <widget class="KColorButton" row="1" column="2">
                             <property name="name">
-                                <cstring>foregroundColor</cstring>
+                                <cstring>foregroundColorButton</cstring>
                             </property>
                             <property name="text">
                                 <string></string>
@@ -478,7 +481,7 @@
                                 <string>&amp;Foreground:</string>
                             </property>
                             <property name="buddy" stdset="0">
-                                <cstring>foregroundColor</cstring>
+                                <cstring>foregroundColorButton</cstring>
                             </property>
                             <property name="whatsThis" stdset="0">
                                 <string>&lt;b&gt;Foreground color&lt;/b&gt;&lt;p&gt;The foreground color is the color that the text is drawn in.&lt;/p&gt;</string>
@@ -486,7 +489,7 @@
                         </widget>
                         <widget class="KColorButton" row="0" column="2">
                             <property name="name">
-                                <cstring>backgroundColor</cstring>
+                                <cstring>backgroundColorButton</cstring>
                             </property>
                             <property name="text">
                                 <string></string>
@@ -503,7 +506,7 @@
                                 <string>Bac&amp;kground:</string>
                             </property>
                             <property name="buddy" stdset="0">
-                                <cstring>backgroundColor</cstring>
+                                <cstring>backgroundColorButton</cstring>
                             </property>
                             <property name="whatsThis" stdset="0">
                                 <string>&lt;b&gt;Background&lt;/b&gt;&lt;p&gt;This background color is the one displayed behind the text by default. A background image will override this.&lt;/p&gt;</string>
@@ -526,16 +529,14 @@
         </widget>
     </grid>
 </widget>
-<customwidgets>
-</customwidgets>
 <tabstops>
     <tabstop>fontFamily</tabstop>
     <tabstop>sameFamily</tabstop>
     <tabstop>basefontsize</tabstop>
     <tabstop>dontScale</tabstop>
     <tabstop>blackOnWhite</tabstop>
-    <tabstop>backgroundColor</tabstop>
-    <tabstop>foregroundColor</tabstop>
+    <tabstop>backgroundColorButton</tabstop>
+    <tabstop>foregroundColorButton</tabstop>
     <tabstop>sameColor</tabstop>
     <tabstop>hideImages</tabstop>
     <tabstop>hideBackground</tabstop>

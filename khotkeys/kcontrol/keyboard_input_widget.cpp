@@ -16,7 +16,7 @@
 
 #include "keyboard_input_widget.h"
 
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 

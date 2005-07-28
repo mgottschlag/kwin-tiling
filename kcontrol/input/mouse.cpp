@@ -92,7 +92,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     top->addWidget(tabwidget);
 
     tab1 = new KMouseDlg(this);
-    QButtonGroup *group = new QButtonGroup( tab1 );
+    Q3ButtonGroup *group = new Q3ButtonGroup( tab1 );
     group->setExclusive( true );
     group->hide();
     group->insert( tab1->singleClick );
@@ -185,7 +185,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
     QBoxLayout *lay = new QVBoxLayout(tab2, KDialog::marginHint(),
               KDialog::spacingHint());
 
-    accel = new KDoubleNumInput(1, 20, 2, 0.1, 1, tab2);
+    accel = new KDoubleNumInput(1, 20, 2, tab2,0.1, 1);
     accel->setLabel(i18n("Pointer acceleration:"));
     accel->setSuffix("x");
     lay->addWidget(accel);
@@ -296,7 +296,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   QBoxLayout *hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_delay = new KIntNumInput(mouse);
-  mk_delay->setLabel(i18n("&Acceleration delay:"), AlignVCenter);
+  mk_delay->setLabel(i18n("&Acceleration delay:"), Qt::AlignVCenter);
   mk_delay->setSuffix(i18n(" msec"));
   mk_delay->setRange(1, 1000, 50);
   hbox->addWidget(mk_delay);
@@ -304,7 +304,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_interval = new KIntNumInput(mk_delay, 0, mouse);
-  mk_interval->setLabel(i18n("R&epeat interval:"), AlignVCenter);
+  mk_interval->setLabel(i18n("R&epeat interval:"), Qt::AlignVCenter);
   mk_interval->setSuffix(i18n(" msec"));
   mk_interval->setRange(1, 1000, 10);
   hbox->addWidget(mk_interval);
@@ -312,21 +312,21 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_time_to_max = new KIntNumInput(mk_interval, 0, mouse);
-  mk_time_to_max->setLabel(i18n("Acceleration &time:"), AlignVCenter);
+  mk_time_to_max->setLabel(i18n("Acceleration &time:"), Qt::AlignVCenter);
   mk_time_to_max->setRange(1, 5000, 250);
   hbox->addWidget(mk_time_to_max);
 
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_max_speed = new KIntNumInput(mk_time_to_max, 0, mouse);
-  mk_max_speed->setLabel(i18n("Ma&ximum speed:"), AlignVCenter);
+  mk_max_speed->setLabel(i18n("Ma&ximum speed:"), Qt::AlignVCenter);
   mk_max_speed->setRange(1, 1000, 10);
   hbox->addWidget(mk_max_speed);
 
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_curve = new KIntNumInput(mk_max_speed, 0, mouse);
-  mk_curve->setLabel(i18n("Acceleration &profile:"), AlignVCenter);
+  mk_curve->setLabel(i18n("Acceleration &profile:"), Qt::AlignVCenter);
   mk_curve->setRange(-1000, 1000, 100);
   hbox->addWidget(mk_curve);
 
@@ -673,7 +673,8 @@ void MouseSettings::load(KConfig *config)
     handed = RIGHT_HANDED;
   else if (key == "LeftHanded")
     handed = LEFT_HANDED;
-  else if (key == NULL)
+#warning was key == NULL how was this working? is key.isNull() what the coder meant?
+  else if (key.isNull())
     handed = h;
   reverseScrollPolarity = config->readBoolEntry( "ReverseScrollPolarity", false );
   m_handedNeedsApply = false;

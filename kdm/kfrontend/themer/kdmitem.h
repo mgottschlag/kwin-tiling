@@ -23,9 +23,9 @@
 #define KDMITEM_H
 
 #include <qobject.h>
-#include <qvaluelist.h>
 #include <qrect.h>
 #include <qdom.h>
+#include <QFont>
 
 class KdmItem;
 class KdmLayoutBox;
@@ -140,7 +140,7 @@ public:
 	QString baseDir() const
 	{
 		if (basedir.isEmpty() && parent())
-			return static_cast<KdmItem *>( parent()->qt_cast( "KdmItem" ) )->baseDir();
+			return static_cast<KdmItem *>( qobject_cast <KdmItem*>( parent() ) )->baseDir();
 		return basedir;
 	}
 
@@ -229,7 +229,7 @@ protected:
 	void inheritFromButton( KdmItem *button );
 
 	QString itemType, id;
-	QValueList<KdmItem *> m_children;
+	QList<KdmItem *> m_children;
 
 	// Layouting related variables
 	enum { MNone = 0, MFixed = 1, MBox = 2 } currentManager;

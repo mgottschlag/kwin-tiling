@@ -19,7 +19,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
-#include <qwhatsthis.h>
+#include <q3whatsthis.h>
 
 #include <kapplication.h>
 #include <klocale.h>

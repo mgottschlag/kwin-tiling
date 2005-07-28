@@ -55,7 +55,7 @@
                         <cstring>keyboard_input_multilineedit</cstring>
                     </property>
                     <property name="textFormat">
-                        <enum>PlainText</enum>
+                        <enum>Qt::PlainText</enum>
                     </property>
                 </widget>
                 <widget class="QPushButton">

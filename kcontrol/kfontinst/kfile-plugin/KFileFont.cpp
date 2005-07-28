@@ -42,7 +42,8 @@ static void addEntry(int face, QString &existing, const QString &add)
 
 static int strToWeight(const QString &str)
 {
-    if(NULL==str)
+#warning QString == NULL -> QString.isNull() ??
+    if(str.isNull())
         return FC_WEIGHT_MEDIUM;
     else if(str.contains("Bold", false))
         return FC_WEIGHT_BOLD;
@@ -188,7 +189,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
           intSlant=FC_SLANT_ROMAN,
           intItalic=FC_SLANT_ROMAN;
 
-    if(f.open(IO_ReadOnly))
+    if(f.open(QIODevice::ReadOnly))
     {
         QTextStream stream(&f);
         QString     line;

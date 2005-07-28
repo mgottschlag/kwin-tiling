@@ -77,10 +77,10 @@
 
 #define MAXCOLUMNWIDTH 600
 
-bool GetInfo_ReadfromFile(QListView * lbox, const char *FileName,
+bool GetInfo_ReadfromFile(Q3ListView * lbox, const char *FileName,
 			  const QChar& splitChar,
-			  QListViewItem * lastitem = 0,
-			  QListViewItem ** newlastitem = 0)
+			  Q3ListViewItem * lastitem = 0,
+			  Q3ListViewItem ** newlastitem = 0)
 {
     bool added = false;
     QFile file(FileName);
@@ -111,7 +111,7 @@ bool GetInfo_ReadfromFile(QListView * lbox, const char *FileName,
 	    else
 	        s1 = line;
 	}
-	lastitem = new QListViewItem(lbox, lastitem, s1, s2);
+	lastitem = new Q3ListViewItem(lbox, lastitem, s1, s2);
 	added = true;
     }
 
@@ -125,7 +125,7 @@ bool GetInfo_ReadfromFile(QListView * lbox, const char *FileName,
 
 
 
-bool GetInfo_CPU(QListView * lBox)
+bool GetInfo_CPU(Q3ListView * lBox)
 {
     lBox->addColumn(i18n("Information"));
     lBox->addColumn(i18n("Value"));
@@ -133,13 +133,13 @@ bool GetInfo_CPU(QListView * lBox)
 }
 
 
-bool GetInfo_IRQ(QListView * lBox)
+bool GetInfo_IRQ(Q3ListView * lBox)
 {
     lBox->setFont(KGlobalSettings::fixedFont());
     return GetInfo_ReadfromFile(lBox, INFO_IRQ, 0);
 }
 
-bool GetInfo_DMA(QListView * lBox)
+bool GetInfo_DMA(Q3ListView * lBox)
 {
     QFile file(INFO_DMA);
     
@@ -149,14 +149,14 @@ bool GetInfo_DMA(QListView * lBox)
     if (file.exists() && file.open(IO_ReadOnly)) {
 	QTextStream stream(&file);
 	QString line;
-	QListViewItem *child=0L;
+	Q3ListViewItem *child=0L;
 	
 	while (!stream.atEnd()) {
 	    line = stream.readLine();
 	    if (!line.isEmpty()) {
 		QRegExp rx("^\\s*(\\S+)\\s*:\\s*(\\S+)");
 		if (-1 != rx.search(line)) {
-		    child = new QListViewItem(lBox,child,rx.cap(1),rx.cap(2));
+		    child = new Q3ListViewItem(lBox,child,rx.cap(1),rx.cap(2));
 		}
 	    }
 	}
@@ -168,7 +168,7 @@ bool GetInfo_DMA(QListView * lBox)
     return true;
 }
 
-bool GetInfo_PCI(QListView * lBox)
+bool GetInfo_PCI(Q3ListView * lBox)
 {
     int num;
     sorting_allowed = false;	/* no sorting by user */
@@ -184,14 +184,14 @@ bool GetInfo_PCI(QListView * lBox)
     return GetInfo_ReadfromFile(lBox, INFO_PCI, 0);
 }
 
-bool GetInfo_IO_Ports(QListView * lBox)
+bool GetInfo_IO_Ports(Q3ListView * lBox)
 {
     lBox->addColumn(i18n("I/O-Range"));
     lBox->addColumn(i18n("Used By"));
     return GetInfo_ReadfromFile(lBox, INFO_IOPORTS, ':');
 }
 
-bool GetInfo_Sound(QListView * lBox)
+bool GetInfo_Sound(Q3ListView * lBox)
 {
     sorting_allowed = false;	/* no sorting by user */
     if (GetInfo_ReadfromFile(lBox, INFO_DEV_SNDSTAT, 0))
@@ -204,10 +204,10 @@ bool GetInfo_Sound(QListView * lBox)
 	return GetInfo_ReadfromFile(lBox, INFO_ASOUND09, 0);
 }
 
-bool GetInfo_Devices(QListView * lBox)
+bool GetInfo_Devices(Q3ListView * lBox)
 {
     QFile file;
-    QListViewItem *misc=0L;
+    Q3ListViewItem *misc=0L;
 
     lBox->setRootIsDecorated(true);
     lBox->addColumn(i18n("Devices"));
@@ -218,26 +218,26 @@ bool GetInfo_Devices(QListView * lBox)
     if (file.exists() && file.open(IO_ReadOnly)) {
 	QTextStream stream(&file);
 	QString line;
-	QListViewItem *parent=0L, *child=0L;
+	Q3ListViewItem *parent=0L, *child=0L;
 	
 	while (!stream.atEnd()) {
 	    line = stream.readLine();
 	    if (!line.isEmpty()) {
 		if (-1 != line.find("character device",0,false)) {
-		    parent = new QListViewItem(lBox,parent,i18n("Character Devices"));
+		    parent = new Q3ListViewItem(lBox,parent,i18n("Character Devices"));
 		    parent->setPixmap(0,SmallIcon("chardevice"));
 		    parent->setOpen(true);
 		} else if (-1 != line.find("block device",0,false)) {
-		    parent = new QListViewItem(lBox,parent,i18n("Block Devices"));
+		    parent = new Q3ListViewItem(lBox,parent,i18n("Block Devices"));
 		    parent->setPixmap(0,SmallIcon("blockdevice"));
 		    parent->setOpen(true);
 		} else {
 		    QRegExp rx("^\\s*(\\S+)\\s+(\\S+)");
 		    if (-1 != rx.search(line)) {
 			if (parent) {
-			    child = new QListViewItem(parent,child,rx.cap(2),rx.cap(1));
+			    child = new Q3ListViewItem(parent,child,rx.cap(2),rx.cap(1));
 			} else {
-			    child = new QListViewItem(lBox,parent,rx.cap(2),rx.cap(1));
+			    child = new Q3ListViewItem(lBox,parent,rx.cap(2),rx.cap(1));
 			}
 			if (rx.cap(2)=="misc") {
 			    misc=child;
@@ -255,7 +255,7 @@ bool GetInfo_Devices(QListView * lBox)
     if (misc && file.exists() && file.open(IO_ReadOnly)) {
 	QTextStream stream(&file);
 	QString line;
-	QListViewItem *child=0L;
+	Q3ListViewItem *child=0L;
 	
 	misc->setText(0,i18n("Miscellaneous Devices"));
 	misc->setPixmap(0,SmallIcon("memory"));
@@ -266,7 +266,7 @@ bool GetInfo_Devices(QListView * lBox)
 	    if (!line.isEmpty()) {
 		QRegExp rx("^\\s*(\\S+)\\s+(\\S+)");
 		if (-1 != rx.search(line)) {
-		    child = new QListViewItem(misc,child,rx.cap(2),"10",rx.cap(1));
+		    child = new Q3ListViewItem(misc,child,rx.cap(2),"10",rx.cap(1));
 		}
 	    }
 	}
@@ -276,7 +276,7 @@ bool GetInfo_Devices(QListView * lBox)
     return true;
 }
 
-bool GetInfo_SCSI(QListView * lBox)
+bool GetInfo_SCSI(Q3ListView * lBox)
 {
     return GetInfo_ReadfromFile(lBox, INFO_SCSI, 0);
 }
@@ -300,7 +300,7 @@ static void cleanPassword(QString & str)
 
 #ifndef INFO_PARTITIONS_FULL_INFO
 
-bool GetInfo_Partitions(QListView * lBox)
+bool GetInfo_Partitions(Q3ListView * lBox)
 {
     return GetInfo_ReadfromFile(lBox, INFO_PARTITIONS, 0);
 }
@@ -336,7 +336,7 @@ bool GetInfo_Partitions(QListView * lBox)
 /*
  * get raw device bindings and information
  */
-void Get_LinuxRawDevices(QListView *lbox)
+void Get_LinuxRawDevices(Q3ListView *lbox)
 {
     int f, i, err;
     int new_raw_devs = 1;
@@ -414,7 +414,7 @@ void Get_LinuxRawDevices(QListView *lbox)
 	/* TODO: get device size */
 	QString size = "";
 
-	new QListViewItem(lbox, devname,
+	new Q3ListViewItem(lbox, devname,
 		QString(new_raw_devs ? "/dev/raw/raw%1" : "/dev/raw%1").arg(i),
 		"raw", size, " ", "");
     }
@@ -424,7 +424,7 @@ void Get_LinuxRawDevices(QListView *lbox)
 #define Get_LinuxRawDevices(x)	/* nothing */
 #endif
 
-bool GetInfo_Partitions(QListView * lbox)
+bool GetInfo_Partitions(Q3ListView * lbox)
 {
 #define NUMCOLS 6
     QString Title[NUMCOLS];
@@ -513,7 +513,7 @@ bool GetInfo_Partitions(QListView * lbox)
 	mountopts = FS_MNTOPS;
 	cleanPassword(mountopts);
 	if (total)
-	    new QListViewItem(lbox, QString(FS_NAME) + "  ",
+	    new Q3ListViewItem(lbox, QString(FS_NAME) + "  ",
 			      QString(FS_FILE) + "  ",
 			      QString(FS_TYPE) + "  ",
 			      Value((int) (((total / 1024) + 512) / 1024),
@@ -521,7 +521,7 @@ bool GetInfo_Partitions(QListView * lbox)
 			      Value((int) (((avail / 1024) + 512) / 1024),
 				    6) + MB, mountopts);
 	else
-	    new QListViewItem(lbox, QString(FS_NAME), QString(FS_FILE),
+	    new Q3ListViewItem(lbox, QString(FS_NAME), QString(FS_FILE),
 			      QString(FS_TYPE), " ", " ", mountopts);
     }
 
@@ -544,7 +544,7 @@ bool GetInfo_Partitions(QListView * lbox)
 
 
 
-bool GetInfo_XServer_and_Video(QListView * lBox)
+bool GetInfo_XServer_and_Video(Q3ListView * lBox)
 {
     return GetInfo_XServer_Generic(lBox);
 }

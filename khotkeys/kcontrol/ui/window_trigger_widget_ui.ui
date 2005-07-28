@@ -101,7 +101,7 @@
 </widget>
 <customwidgets>
     <customwidget>
-        <class>Windowdef_list_widget</class>
+        <class>KHotKeys::Windowdef_list_widget</class>
         <header location="local">windowdef_list_widget.h</header>
         <sizehint>
             <width>200</width>

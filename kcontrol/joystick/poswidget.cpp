@@ -21,6 +21,8 @@
 #include "poswidget.h"
 
 #include <qpainter.h>
+//Added by qt3to4:
+#include <QPaintEvent>
 
 #define XY_WIDTH 220
 #define MARK_WIDTH 10
@@ -28,7 +30,7 @@
 //-----------------------------------------------------------------
 
 PosWidget::PosWidget(QWidget *parent, const char *name)
-  : QWidget(parent, name, WRepaintNoErase), x(0), y(0), trace(false)
+  : QWidget(parent, name, Qt::WNoAutoErase), x(0), y(0), trace(false)
 {
   setMinimumSize(XY_WIDTH, XY_WIDTH);
   setMaximumSize(XY_WIDTH, XY_WIDTH);

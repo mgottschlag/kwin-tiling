@@ -35,6 +35,7 @@
 #include <kmacroexpander.h>
 
 #include "urlgrabber.h"
+#include <QX11Info>
 
 // TODO:
 // - script-interface?
@@ -166,7 +167,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
                  SLOT( slotItemSelected( int )));
 
         for ( action = it.current(); action; action = ++it ) {
-            QPtrListIterator<ClipCommand> it2( action->commands() );
+            Q3PtrListIterator<ClipCommand> it2( action->commands() );
             if ( it2.count() > 0 )
                 myMenu->insertTitle( SmallIcon( "klipper" ), action->description() +
 				     i18n(" - Actions For: ") +
@@ -323,7 +324,7 @@ void URLGrabber::writeConfiguration( KConfig *kc )
 // digged a little bit in netwm.cpp
 bool URLGrabber::isAvoidedWindow() const
 {
-    Display *d = qt_xdisplay();
+    Display *d = QX11Info::display();
     static Atom wm_class = XInternAtom( d, "WM_CLASS", true );
     static Atom active_window = XInternAtom( d, "_NET_ACTIVE_WINDOW", true );
     Atom type_ret;
@@ -420,7 +421,7 @@ ClipAction::ClipAction( const ClipAction& action )
     myDescription = action.myDescription;
 
     ClipCommand *command = 0L;
-    QPtrListIterator<ClipCommand> it( myCommands );
+    Q3PtrListIterator<ClipCommand> it( myCommands );
     for ( ; it.current(); ++it ) {
         command = it.current();
         addCommand(command->command, command->description, command->isEnabled);
@@ -475,7 +476,7 @@ void ClipAction::save( KConfig *kc ) const
 
     QString actionGroup = kc->group();
     struct ClipCommand *cmd;
-    QPtrListIterator<struct ClipCommand> it( myCommands );
+    Q3PtrListIterator<struct ClipCommand> it( myCommands );
 
     // now iterate over all commands of this action
     int i = 0;

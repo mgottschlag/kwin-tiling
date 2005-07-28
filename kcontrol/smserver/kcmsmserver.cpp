@@ -18,10 +18,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  */
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
 
 #include <dcopclient.h>
 
@@ -37,7 +39,7 @@ typedef KGenericFactory<SMServerConfig, QWidget > SMSFactory;
 K_EXPORT_COMPONENT_FACTORY (kcm_smserver, SMSFactory("kcmsmserver") )
 
 SMServerConfig::SMServerConfig( QWidget *parent, const char* name, const QStringList & )
-  : KCModule (SMSFactory::instance(), parent, name)
+  : KCModule (SMSFactory::instance(), parent)
 {
     setQuickHelp( i18n("<h1>Session Manager</h1>"
     " You can configure the session manager here."

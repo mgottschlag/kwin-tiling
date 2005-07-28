@@ -38,14 +38,19 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <ksimpleconfig.h>
 
 #include <qtimer.h>
+#include <qdesktopwidget.h>
 #include <qcursor.h>
 #include <qpalette.h>
+//Added by qt3to4:
+#include <QTimerEvent>
+#include <Q3CString>
 
 #include <stdlib.h> // free(), exit()
 #include <unistd.h> // alarm()
 
 #include <X11/Xlib.h>
 #include <X11/cursorfont.h>
+#include <QX11Info>
 
 extern "C" {
 
@@ -75,7 +80,7 @@ void
 GreeterApp::timerEvent( QTimerEvent * )
 {
 	alarm( 0 );
-	if (!PingServer( qt_xdisplay() ))
+	if (!PingServer( QX11Info::display() ))
 		::exit( EX_RESERVER_DPY );
 	alarm( pingInterval * 70 ); // sic! give the "proper" pinger enough time
 }
@@ -125,7 +130,7 @@ kg_main( const char *argv0 )
 	GreeterApp app;
 	XSetIOErrorHandler( xIOErr );
 
-	Display *dpy = qt_xdisplay();
+	Display *dpy = QX11Info::display();
 
 	if (!_GUIStyle.isEmpty())
 		app.setStyle( _GUIStyle );
@@ -145,7 +150,7 @@ kg_main( const char *argv0 )
 	if (!_grabServer) {
 		if (_useBackground) {
 			proc = new KProcess;
-			*proc << QCString( argv0, strrchr( argv0, '/' ) - argv0 + 2 ) + "krootimage";
+			*proc << Q3CString( argv0, strrchr( argv0, '/' ) - argv0 + 2 ) + "krootimage";
 			*proc << _backgroundCfg;
 			proc->start();
 		}
@@ -229,7 +234,7 @@ kg_main( const char *argv0 )
 	UnsecureDisplay( dpy );
 	restore_modifiers();
 
-	XSetInputFocus( qt_xdisplay(), PointerRoot, PointerRoot, CurrentTime );
+	XSetInputFocus( QX11Info::display(), PointerRoot, PointerRoot, CurrentTime );
 }
 
 } // extern "C"

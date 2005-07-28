@@ -23,14 +23,21 @@
 #include <sys/types.h>
 
 
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
-#include <qwhatsthis.h>
+
 #include <qvalidator.h>
 #include <qstylefactory.h>
 #include <qstyle.h>
+//Added by qt3to4:
+#include <QGridLayout>
+#include <QEvent>
+#include <QHBoxLayout>
+#include <QDropEvent>
+#include <QVBoxLayout>
+#include <QDragEnterEvent>
 
 #include <klocale.h>
 #include <klineedit.h>
@@ -56,7 +63,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
   QVBoxLayout *vbox = new QVBoxLayout(this, KDialog::marginHint(),
                       KDialog::spacingHint(), "vbox");
-  QGroupBox *group = new QGroupBox(i18n("Appearance"), this);
+  Q3GroupBox *group = new Q3GroupBox(i18n("Appearance"), this);
   vbox->addWidget(group);
 
   QGridLayout *grid = new QGridLayout( group, 5, 2, KDialog::marginHint(),
@@ -85,8 +92,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
            "<li>%m -> the machine (hardware) type</li>"
            "<li>%% -> a single %</li>"
            "</ul>" );
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( greetstr_lined, wtstr );
+  label->setWhatsThis( wtstr );
+  greetstr_lined->setWhatsThis( wtstr );
 
 
   QGridLayout *hglay = new QGridLayout( 3, 4, KDialog::spacingHint() );
@@ -99,7 +106,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   noneRadio = new QRadioButton( i18n("logo area", "&None"), group );
   clockRadio = new QRadioButton( i18n("Show cloc&k"), group );
   logoRadio = new QRadioButton( i18n("Sho&w logo"), group );
-  QButtonGroup *buttonGroup = new QButtonGroup( group );
+  Q3ButtonGroup *buttonGroup = new Q3ButtonGroup( group );
   label->setBuddy( buttonGroup );
   connect( buttonGroup, SIGNAL(clicked(int)), SLOT(slotAreaRadioClicked(int)) );
   connect( buttonGroup, SIGNAL(clicked(int)), SLOT(changed()) );
@@ -111,10 +118,10 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   vlay->addWidget(clockRadio);
   vlay->addWidget(logoRadio);
   wtstr = i18n("You can choose to display a custom logo (see below), a clock or no logo at all.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( noneRadio, wtstr );
-  QWhatsThis::add( logoRadio, wtstr );
-  QWhatsThis::add( clockRadio, wtstr );
+  label->setWhatsThis( wtstr );
+  noneRadio->setWhatsThis( wtstr );
+  logoRadio->setWhatsThis( wtstr );
+  clockRadio->setWhatsThis( wtstr );
 
   logoLabel = new QLabel(i18n("&Logo:"), group);
   logobutton = new QPushButton(group);
@@ -124,13 +131,13 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   logobutton->installEventFilter(this); // for drag and drop
   connect(logobutton, SIGNAL(clicked()), SLOT(slotLogoButtonClicked()));
   hglay->addWidget(logoLabel, 1, 0);
-  hglay->addWidget(logobutton, 1, 1, AlignCenter);
+  hglay->addWidget(logobutton, 1, 1, Qt::AlignCenter);
   hglay->addRowSpacing(1, 110);
   wtstr = i18n("Click here to choose an image that KDM will display. "
 	       "You can also drag and drop an image onto this button "
 	       "(e.g. from Konqueror).");
-  QWhatsThis::add( logoLabel, wtstr );
-  QWhatsThis::add( logobutton, wtstr );
+  logoLabel->setWhatsThis( wtstr );
+  logobutton->setWhatsThis( wtstr );
   hglay->addRowSpacing( 2, KDialog::spacingHint());
   hglay->setColStretch( 3, 1);
 
@@ -139,7 +146,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   grid->addLayout(hglay, 2, 1);
 
   label = new QLabel(i18n("Position:"), group);
-  hglay->addMultiCellWidget(label, 0,1, 0,0, AlignVCenter);
+  hglay->addMultiCellWidget(label, 0,1, 0,0, Qt::AlignVCenter);
   QValidator *posValidator = new QIntValidator(0, 100, group);
   QLabel *xLineLabel = new QLabel(i18n("&X:"), group);
   hglay->addWidget(xLineLabel, 0, 1);
@@ -156,11 +163,11 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   yLineLabel->setBuddy(yLineEdit);
   yLineEdit->setValidator(posValidator);
   wtstr = i18n("Here you specify the relative coordinates (in percent) of the login dialog's <em>center</em>.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( xLineLabel, wtstr );
-  QWhatsThis::add( xLineEdit, wtstr );
-  QWhatsThis::add( yLineLabel, wtstr );
-  QWhatsThis::add( yLineEdit, wtstr );
+  label->setWhatsThis( wtstr );
+  xLineLabel->setWhatsThis( wtstr );
+  xLineEdit->setWhatsThis( wtstr );
+  yLineLabel->setWhatsThis( wtstr );
+  yLineEdit->setWhatsThis( wtstr );
   hglay->setColStretch( 3, 1);
   hglay->setRowStretch( 2, 1);
 
@@ -178,8 +185,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay->addWidget(guicombo, 0, 1);
   wtstr = i18n("You can choose a basic GUI style here that will be "
         "used by KDM only.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( guicombo, wtstr );
+  label->setWhatsThis( wtstr );
+  guicombo->setWhatsThis( wtstr );
 
   colcombo = new KBackedComboBox(group);
   colcombo->insertItem( "", i18n("<default>") );
@@ -190,8 +197,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay->addWidget(colcombo, 1, 1);
   wtstr = i18n("You can choose a basic Color Scheme here that will be "
         "used by KDM only.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( colcombo, wtstr );
+  label->setWhatsThis( wtstr );
+  colcombo->setWhatsThis( wtstr );
 
   echocombo = new KBackedComboBox(group);
   echocombo->insertItem("NoEcho", i18n("No Echo"));
@@ -202,12 +209,12 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay->addWidget(label, 2, 0);
   hglay->addWidget(echocombo, 2, 1);
   wtstr = i18n("You can choose whether and how KDM shows your password when you type it.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( echocombo, wtstr );
+  label->setWhatsThis( wtstr );
+  echocombo->setWhatsThis( wtstr );
 
 
   // The Language group box
-  group = new QGroupBox(0, Vertical, i18n("Locale"), this);
+  group = new Q3GroupBox(0, Qt::Vertical, i18n("Locale"), this);
   vbox->addWidget(group);
 
   langcombo = new KLanguageButton(group);
@@ -220,8 +227,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hbox->addWidget(langcombo, 1, 1);
   wtstr = i18n("Here you can choose the language used by KDM. This setting does not affect"
     " a user's personal settings; that will take effect after login.");
-  QWhatsThis::add( label, wtstr );
-  QWhatsThis::add( langcombo, wtstr );
+  label->setWhatsThis( wtstr );
+  langcombo->setWhatsThis( wtstr );
 
 
   vbox->addStretch(1);
@@ -320,9 +327,9 @@ bool KDMAppearanceWidget::setLogo(QString logo)
     if (p.isNull())
         return false;
     if (p.width() > 100 || p.height() > 100)
-        p = p.smoothScale(100, 100, QImage::ScaleMin);
-    logobutton->setPixmap(p);
-    uint bd = style().pixelMetric( QStyle::PM_ButtonMargin ) * 2;
+        p = p.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    logobutton->setPixmap(QPixmap::fromImage(p));
+    uint bd = style()->pixelMetric( QStyle::PM_ButtonMargin ) * 2;
     logobutton->setFixedSize(p.width() + bd, p.height() + bd);
     logopath = logo;
     return true;

@@ -16,11 +16,13 @@
 
 #include <qwidget.h>
 #include <qtimer.h>
-#include <qvaluestack.h>
+#include <QStack>
+#include <QList>
 #include <qmessagebox.h>
 #include <qpixmap.h>
 
 #include <X11/Xlib.h>
+#include <fixx11h.h>
 
 class KLibrary;
 
@@ -48,7 +50,7 @@ public:
 
     bool dontLock();
 
-    void setChildren(QValueList<int> children) { child_sockets = children; }
+    void setChildren(QList<int> children) { child_sockets = children; }
     void setParent(int fd) { mParent = fd; }
 
     void msgBox( QMessageBox::Icon type, const QString &txt );
@@ -107,7 +109,7 @@ private:
     QString     mSaver;
     bool        mOpenGLVisual;
     bool        child_saver;
-    QValueList<int> child_sockets;
+    QList<int> child_sockets;
     int         mParent;
     bool        mUseBlankOnly;
     bool        mSuspended;
@@ -115,7 +117,7 @@ private:
     bool        mVisibility;
     bool        mDPMSDepend;
     QTimer      mCheckDPMS;
-    QValueStack< QWidget* > mDialogs;
+    QStack< QWidget* > mDialogs;
     bool        mRestoreXF86Lock;
     bool        mForbidden;
     QStringList mPlugins, mPluginOptions;

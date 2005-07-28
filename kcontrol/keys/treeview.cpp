@@ -20,10 +20,14 @@
 
 #include <unistd.h>
 
+#include <qapplication.h>
 #include <qdir.h>
 #include <qimage.h>
 #include <qstringlist.h>
 #include <qcursor.h>
+//Added by qt3to4:
+#include <QPixmap>
+#include <Q3Frame>
 
 #include <kstandarddirs.h>
 #include <klocale.h>
@@ -34,16 +38,16 @@
 #include "treeview.moc"
 #include "khotkeys.h"
 
-AppTreeItem::AppTreeItem(QListViewItem *parent, const QString& storageId)
+AppTreeItem::AppTreeItem(Q3ListViewItem *parent, const QString& storageId)
     : KListViewItem(parent), m_init(false), m_storageId(storageId) {}
 
-AppTreeItem::AppTreeItem(QListViewItem *parent, QListViewItem *after, const QString& storageId)
+AppTreeItem::AppTreeItem(Q3ListViewItem *parent, Q3ListViewItem *after, const QString& storageId)
     : KListViewItem(parent, after), m_init(false), m_storageId(storageId) {}
 
-AppTreeItem::AppTreeItem(QListView *parent, const QString& storageId)
+AppTreeItem::AppTreeItem(Q3ListView *parent, const QString& storageId)
     : KListViewItem(parent), m_init(false), m_storageId(storageId) {}
 
-AppTreeItem::AppTreeItem(QListView *parent, QListViewItem *after, const QString& storageId)
+AppTreeItem::AppTreeItem(Q3ListView *parent, Q3ListViewItem *after, const QString& storageId)
     : KListViewItem(parent, after), m_init(false), m_storageId(storageId) {}
 
 void AppTreeItem::setName(const QString &name)
@@ -76,7 +80,7 @@ void AppTreeItem::setOpen(bool o)
        AppTreeView *tv = static_cast<AppTreeView *>(listView());
        tv->fillBranch(m_directoryPath, this);
     }
-    QListViewItem::setOpen(o);
+    Q3ListViewItem::setOpen(o);
 }
 
 static QPixmap appIcon(const QString &iconName)
@@ -96,7 +100,7 @@ static QPixmap appIcon(const QString &iconName)
 AppTreeView::AppTreeView( QWidget *parent, const char *name )
     : KListView(parent, name)
 {
-    setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
+    setFrameStyle(Q3Frame::WinPanel | Q3Frame::Sunken);
     setAllColumnsShowFocus(true);
     setRootIsDecorated(true);
     setSorting(-1);
@@ -109,11 +113,11 @@ AppTreeView::AppTreeView( QWidget *parent, const char *name )
     addColumn(i18n("Shortcut"));
     addColumn(i18n("Alternate"));
 
-    connect(this, SIGNAL(clicked( QListViewItem* )),
-            SLOT(itemSelected( QListViewItem* )));
+    connect(this, SIGNAL(clicked( Q3ListViewItem* )),
+            SLOT(itemSelected( Q3ListViewItem* )));
 
-    connect(this,SIGNAL(selectionChanged ( QListViewItem * )),
-            SLOT(itemSelected( QListViewItem* )));
+    connect(this,SIGNAL(selectionChanged ( Q3ListViewItem * )),
+            SLOT(itemSelected( Q3ListViewItem* )));
 }
 
 AppTreeView::~AppTreeView()
@@ -143,7 +147,7 @@ void AppTreeView::fillBranch(const QString& rPath, AppTreeItem *parent)
 
     KServiceGroup::List list = root->entries(true);
 
-    QListViewItem *after = 0;
+    Q3ListViewItem *after = 0;
 
     for(KServiceGroup::List::ConstIterator it = list.begin();
         it != list.end(); ++it) 
@@ -195,7 +199,7 @@ void AppTreeView::fillBranch(const QString& rPath, AppTreeItem *parent)
     }
 }
 
-void AppTreeView::itemSelected(QListViewItem *item)
+void AppTreeView::itemSelected(Q3ListViewItem *item)
 {
     AppTreeItem *_item = static_cast<AppTreeItem*>(item);
 

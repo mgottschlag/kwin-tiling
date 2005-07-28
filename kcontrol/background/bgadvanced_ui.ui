@@ -86,7 +86,7 @@
                         <cstring>spacer</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Vertical</enum>
+                        <enum>Qt::Vertical</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
@@ -218,7 +218,7 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                         <cstring>spacer7</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
@@ -371,7 +371,7 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                         <cstring>spacer2</cstring>
                     </property>
                     <property name="orientation">
-                        <enum>Horizontal</enum>
+                        <enum>Qt::Horizontal</enum>
                     </property>
                     <property name="sizeType">
                         <enum>Expanding</enum>
@@ -390,7 +390,7 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                 <cstring>spacer4</cstring>
             </property>
             <property name="orientation">
-                <enum>Vertical</enum>
+                <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
                 <enum>Expanding</enum>

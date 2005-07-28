@@ -23,13 +23,16 @@
  *  Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <qhbox.h>
+#include <q3hbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qpushbutton.h>
 #include <qtooltip.h>
-#include <qwhatsthis.h>
+
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QGridLayout>
 
 #include <kdebug.h>
 #include <kdialog.h>
@@ -58,9 +61,9 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
            this, SLOT(changedCountry(const QString &)) );
 
   m_labLang = new QLabel(this, I18N_NOOP("Languages:"));
-  m_labLang->setAlignment( AlignTop );
+  m_labLang->setAlignment( Qt::AlignTop );
 
-  m_languages = new QListBox(this);
+  m_languages = new Q3ListBox(this);
   connect(m_languages, SIGNAL(selectionChanged()),
           SLOT(slotCheckButtons()));
 
@@ -117,9 +120,7 @@ void KLocaleConfig::slotAddLanguage(const QString & code)
   if ( oldPos != -1 && oldPos < pos )
     --pos;
 
-  QStringList::Iterator it = languageList.at( pos );
-
-  languageList.insert( it, code );
+  languageList.insert( pos, code );
 
   m_locale->setLanguage( languageList );
 
@@ -133,7 +134,7 @@ void KLocaleConfig::slotRemoveLanguage()
   QStringList languageList = m_locale->languageList();
   int pos = m_languages->currentItem();
 
-  QStringList::Iterator it = languageList.at( pos );
+  QStringList::iterator it = languageList.begin() + pos;
 
   if ( it != languageList.end() )
     {
@@ -152,8 +153,8 @@ void KLocaleConfig::slotLanguageUp()
   QStringList languageList = m_locale->languageList();
   int pos = m_languages->currentItem();
 
-  QStringList::Iterator it1 = languageList.at( pos - 1 );
-  QStringList::Iterator it2 = languageList.at( pos );
+  QStringList::Iterator it1 = languageList.begin() + pos - 1;
+  QStringList::Iterator it2 = languageList.begin() + pos;
 
   if ( it1 != languageList.end() && it2 != languageList.end()  )
   {
@@ -174,8 +175,8 @@ void KLocaleConfig::slotLanguageDown()
   QStringList languageList = m_locale->languageList();
   int pos = m_languages->currentItem();
 
-  QStringList::Iterator it1 = languageList.at( pos );
-  QStringList::Iterator it2 = languageList.at( pos + 1 );
+  QStringList::Iterator it1 = languageList.begin() + pos;
+  QStringList::Iterator it2 = languageList.begin() + pos + 1;
 
   if ( it1 != languageList.end() && it2 != languageList.end()  )
     {
@@ -292,7 +293,7 @@ void KLocaleConfig::loadCountryList()
     QString map( locate( "locale",
                           QString::fromLatin1( "l10n/%1.png" )
                           .arg(tag) ) );
-    QIconSet icon;
+    QIcon icon;
     if ( !map.isNull() )
       icon = KGlobal::iconLoader()->loadIconSet(map, KIcon::Small);
     m_comboCountry->insertSubmenu( icon, name, tag, sub, -2 );
@@ -321,7 +322,7 @@ void KLocaleConfig::loadCountryList()
     QString flag( locate( "locale",
                           QString::fromLatin1( "l10n/%1/flag.png" )
                           .arg(tag) ) );
-    QIconSet icon( KGlobal::iconLoader()->loadIconSet(flag, KIcon::Small) );
+    QIcon icon( KGlobal::iconLoader()->loadIconSet(flag, KIcon::Small) );
     m_comboCountry->insertItem( icon, name, tag, submenu, menu_index );
   }
 
@@ -420,8 +421,8 @@ void KLocaleConfig::slotTranslate()
     ( "Here you can choose your country or region. The settings "
       "for languages, numbers etc. will automatically switch to the "
       "corresponding values." );
-  QWhatsThis::add( m_labCountry, str );
-  QWhatsThis::add( m_comboCountry, str );
+  m_labCountry->setWhatsThis( str );
+  m_comboCountry->setWhatsThis( str );
 
   str = m_locale->translate
     ( "Here you can choose the languages that will be used by KDE. If the "
@@ -431,10 +432,10 @@ void KLocaleConfig::slotTranslate()
       "languages from the place you got KDE from.<p>"
       "Note that some applications may not be translated to your languages; "
       "in this case, they will automatically fall back to US English." );
-  QWhatsThis::add( m_labLang, str );
-  QWhatsThis::add( m_languages, str );
-  QWhatsThis::add( m_addLanguage, str );
-  QWhatsThis::add( m_removeLanguage, str );
+  m_labLang->setWhatsThis( str );
+  m_languages->setWhatsThis( str );
+  m_addLanguage->setWhatsThis( str );
+  m_removeLanguage->setWhatsThis( str );
 }
 
 QStringList KLocaleConfig::languageList() const

@@ -21,8 +21,10 @@
 #define __aboutwidget_h__
 
 #include <qwidget.h>
-#include <qlistview.h>
-#include <qhbox.h>
+#include <q3listview.h>
+#include <q3hbox.h>
+//Added by qt3to4:
+#include <QPixmap>
 
 class KCModuleInfo;
 class QPixmap;
@@ -31,18 +33,18 @@ class ConfigModule;
 class KHTMLPart;
 class KURL;
 
-class AboutWidget : public QHBox
+class AboutWidget : public Q3HBox
 {  
   Q_OBJECT    
   
 public:   
-  AboutWidget(QWidget *parent, const char *name=0, QListViewItem* category=0, const QString &caption=QString::null);
+  AboutWidget(QWidget *parent, const char *name=0, Q3ListViewItem* category=0, const QString &caption=QString::null);
 
     /**
      * Set a new category without creating a new AboutWidget if there is
      * one visible already (reduces flicker)
      */
-    void setCategory( QListViewItem* category, const QString& caption);
+    void setCategory( Q3ListViewItem* category, const QString& caption);
 
 signals:
     void moduleSelected(ConfigModule *);
@@ -58,7 +60,7 @@ private:
     void updatePixmap();
 
     bool    _moduleList;
-    QListViewItem* _category;
+    Q3ListViewItem* _category;
     QString _caption;
     KHTMLPart *_viewer;
     QMap<QString,ConfigModule*> _moduleMap;

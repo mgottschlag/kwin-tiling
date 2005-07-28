@@ -26,8 +26,10 @@
 #include <kapplication.h>
 #include <kuser.h>
 
-#include <qobjectlist.h>
-#include <qaccel.h>
+#include <qobject.h>
+#include <q3accel.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include "global.h"
 
@@ -68,7 +70,7 @@ void KCGlobal::init()
   setSystemMachine(info.machine);
 }
 
-void KCGlobal::setType(const QCString& s)
+void KCGlobal::setType(const Q3CString& s)
 {
   QString string = s.lower();
   _types = QStringList::split(',', string);
@@ -105,12 +107,12 @@ QString KCGlobal::baseGroup()
 
 void KCGlobal::repairAccels( QWidget * tw )
 {
-    QObjectList * l = tw->queryList( "QAccel" );
-    QObjectListIt it( *l );             // iterate over the buttons
-    QObject * obj;
-    while ( (obj=it.current()) != 0 ) { // for each found object...
-        ++it;
-        ((QAccel*)obj)->repairEventFilter();
-    }
-    delete l;                           // delete the list, not the objects
+  const QList<QObject*> &l = tw->children();
+  for (QList<QObject*>::const_iterator it( l.begin() ); it != l.end(); ++it)
+  {
+    QObject *obj = *it;
+   
+    if (qobject_cast<Q3Accel*>(obj))
+      qobject_cast<Q3Accel*>(obj)->repairEventFilter();
+  }
 }

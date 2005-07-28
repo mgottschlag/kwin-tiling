@@ -144,7 +144,7 @@ QString MenuFolderInfo::uniqueItemCaption(const QString &caption, const QString 
       if (result == exclude)
          ok = false;
       MenuEntryInfo *entryInfo;
-      for(QPtrListIterator<MenuEntryInfo> it(entries);
+      for(Q3PtrListIterator<MenuEntryInfo> it(entries);
           ok && (entryInfo = it.current()); ++it)
       {
          if (entryInfo->caption == result)
@@ -223,7 +223,7 @@ void MenuFolderInfo::save(MenuFile *menuFile)
 
    // Save entries
    MenuEntryInfo *entryInfo;
-   for(QPtrListIterator<MenuEntryInfo> it(entries);
+   for(Q3PtrListIterator<MenuEntryInfo> it(entries);
        (entryInfo = it.current()); ++it)
    {
       if (entryInfo->needInsertion())
@@ -245,7 +245,7 @@ bool MenuFolderInfo::hasDirt()
 
    // Check entries
    MenuEntryInfo *entryInfo;
-   for(QPtrListIterator<MenuEntryInfo> it(entries);
+   for(Q3PtrListIterator<MenuEntryInfo> it(entries);
        (entryInfo = it.current()); ++it)
    {
       if (entryInfo->dirty) return true;
@@ -268,7 +268,7 @@ KService::Ptr MenuFolderInfo::findServiceShortcut(const KShortcut&cut)
 
    // Check entries
    MenuEntryInfo *entryInfo;
-   for(QPtrListIterator<MenuEntryInfo> it(entries);
+   for(Q3PtrListIterator<MenuEntryInfo> it(entries);
        (entryInfo = it.current()); ++it)
    {
       if (entryInfo->shortCut == cut)
@@ -288,7 +288,7 @@ void MenuFolderInfo::setInUse(bool inUse)
 
    // Propagate to entries
    MenuEntryInfo *entryInfo;
-   for(QPtrListIterator<MenuEntryInfo> it(entries);
+   for(Q3PtrListIterator<MenuEntryInfo> it(entries);
        (entryInfo = it.current()); ++it)
    {
       entryInfo->setInUse(inUse);

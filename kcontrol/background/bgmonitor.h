@@ -24,6 +24,9 @@
 #define _BGMONITOR_H_
 
 #include <qwidget.h>
+//Added by qt3to4:
+#include <QDragEnterEvent>
+#include <QDropEvent>
 
 /**
  * This class handles drops on the preview monitor.

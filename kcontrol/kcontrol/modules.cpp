@@ -23,7 +23,11 @@
 
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qvbox.h>
+#include <q3vbox.h>
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <Q3Frame>
+#include <Q3PtrList>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kservicegroup.h>
@@ -41,9 +45,10 @@
 #include "kcrootonly.h"
 
 #include <X11/Xlib.h>
+#include <QX11Info>
 
 
-template class QPtrList<ConfigModule>;
+template class Q3PtrList<ConfigModule>;
 
 
 ConfigModule::ConfigModule(const KService::Ptr &s)
@@ -89,7 +94,7 @@ ProxyWidget *ConfigModule::module()
 void ConfigModule::deleteClient()
 {
   if (_embedWidget)
-    XKillClient(qt_xdisplay(), _embedWidget->embeddedWinId());
+    XKillClient(QX11Info::display(), _embedWidget->embeddedWinId());
 
   delete _rootProcess;
   _rootProcess = 0;
@@ -139,9 +144,9 @@ void ConfigModule::runAsRoot()
   // create an embed widget that will embed the
   // kcmshell running as root
   _embedLayout = new QVBoxLayout(_module->parentWidget());
-  _embedFrame = new QVBox( _module->parentWidget() );
-  _embedFrame->setFrameStyle( QFrame::Box | QFrame::Raised );
-  QPalette pal( red );
+  _embedFrame = new Q3VBox( _module->parentWidget() );
+  _embedFrame->setFrameStyle( Q3Frame::Box | Q3Frame::Raised );
+  QPalette pal( Qt::red );
   pal.setColor( QColorGroup::Background,
 		_module->parentWidget()->colorGroup().background() );
   _embedFrame->setPalette( pal );
@@ -152,8 +157,8 @@ void ConfigModule::runAsRoot()
   _module->hide();
   _embedFrame->show();
   QLabel *_busy = new QLabel(i18n("<big>Loading...</big>"), _embedWidget);
-  _busy->setAlignment(AlignCenter);
-  _busy->setTextFormat(RichText);
+  _busy->setAlignment(Qt::AlignCenter);
+  _busy->setTextFormat(Qt::RichText);
   _busy->setGeometry(0,0, _module->width(), _module->height());
   _busy->show();
 
@@ -219,7 +224,7 @@ void ConfigModule::runAsRoot()
 void ConfigModule::rootExited(KProcess *)
 {
   if (_embedWidget->embeddedWinId())
-    XDestroyWindow(qt_xdisplay(), _embedWidget->embeddedWinId());
+    XDestroyWindow(QX11Info::display(), _embedWidget->embeddedWinId());
 
   delete _embedWidget;
   _embedWidget = 0;
@@ -299,13 +304,13 @@ bool ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
   return true;
 }
 
-QPtrList<ConfigModule> ConfigModuleList::modules(const QString &path)
+Q3PtrList<ConfigModule> ConfigModuleList::modules(const QString &path)
 {
   Menu *menu = subMenus.find(path);
   if (menu)
      return menu->modules;
 
-  return QPtrList<ConfigModule>();
+  return Q3PtrList<ConfigModule>();
 }
 
 QStringList ConfigModuleList::submenus(const QString &path)
@@ -319,7 +324,7 @@ QStringList ConfigModuleList::submenus(const QString &path)
 
 QString ConfigModuleList::findModule(ConfigModule *module)
 {
-  QDictIterator<Menu> it(subMenus);
+  Q3DictIterator<Menu> it(subMenus);
   Menu *menu;
   for(;(menu = it.current());++it)
   {

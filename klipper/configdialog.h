@@ -22,10 +22,10 @@
 
 #include <qcheckbox.h>
 #include <qevent.h>
-#include <qgroupbox.h>
-#include <qheader.h>
+#include <q3groupbox.h>
+#include <q3header.h>
 #include <qradiobutton.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 
 #include <kdialogbase.h>
 #include <keditlistbox.h>
@@ -42,7 +42,7 @@ class QPushButton;
 class QDialog;
 class ConfigDialog;
 
-class GeneralWidget : public QVBox
+class GeneralWidget : public Q3VBox
 {
     Q_OBJECT
 
@@ -66,7 +66,7 @@ private:
 
 
 // only for use inside ActionWidget
-class AdvancedWidget : public QVBox
+class AdvancedWidget : public Q3VBox
 {
     Q_OBJECT
 
@@ -81,7 +81,7 @@ private:
     KEditListBox *editListBox;
 };
 
-class ActionWidget : public QVBox
+class ActionWidget : public Q3VBox
 {
     Q_OBJECT
 
@@ -104,10 +104,10 @@ public:
 private slots:
     void slotAddAction();
     void slotDeleteAction();
-    void slotItemChanged( QListViewItem *, const QPoint& , int );
+    void slotItemChanged( Q3ListViewItem *, const QPoint& , int );
     void slotAdvanced();
-    void slotContextMenu( KListView *, QListViewItem *, const QPoint& );
-    void selectionChanged ( QListViewItem *);
+    void slotContextMenu( KListView *, Q3ListViewItem *, const QPoint& );
+    void selectionChanged ( Q3ListViewItem *);
 
 private:
     KListView *listView;
@@ -244,7 +244,7 @@ public:
 	h += viewport()->sizeHint().height();
 	h += horizontalScrollBar()->height();
 	
-	QListViewItem *item = firstChild();
+	Q3ListViewItem *item = firstChild();
 	while ( item ) {
 	    h += item->totalHeight();
 	    item = item->nextSibling();
@@ -254,7 +254,7 @@ public:
     }
 
 protected:
-    virtual void rename( QListViewItem* item, int c );
+    virtual void rename( Q3ListViewItem* item, int c );
 private:
     ConfigDialog* _configWidget;
     QDialog* _regExpEditor;

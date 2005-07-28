@@ -21,6 +21,7 @@
  *  Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <qapplication.h>
 #include <qfile.h>
 #include <qlayout.h>
 #include <qwhatsthis.h>
@@ -91,7 +92,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
    logFileName.setURL("/var/log/samba.log");
 
    viewHistory.setAllColumnsShowFocus(TRUE);
-   viewHistory.setFocusPolicy(QWidget::ClickFocus);
+   viewHistory.setFocusPolicy(Qt::ClickFocus);
    viewHistory.setShowSortIndicator(true);
 
    viewHistory.addColumn(i18n("Date & Time"),130);
@@ -161,7 +162,7 @@ void LogView::updateList()
    QFile logFile(logFileName.url());
    if (logFile.open(IO_ReadOnly))
    {
-      QApplication::setOverrideCursor(waitCursor);
+      QApplication::setOverrideCursor(Qt::waitCursor);
       viewHistory.clear();
       filesCount=0;
       connectionsCount=0;

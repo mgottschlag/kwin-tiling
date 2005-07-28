@@ -1,6 +1,8 @@
 
 
 #include <qfile.h>
+//Added by qt3to4:
+#include <QTextStream>
 
 
 #include "template.h"
@@ -9,17 +11,17 @@
 bool CSSTemplate::expand(QString destname, const QMap<QString,QString> &dict)
 {
   QFile inf(_filename);
-  if (!inf.open(IO_ReadOnly))
+  if (!inf.open(QIODevice::ReadOnly))
     return false;
   QTextStream is(&inf);
   
   QFile outf(destname);
-  if (!outf.open(IO_WriteOnly))
+  if (!outf.open(QIODevice::WriteOnly))
     return false;
   QTextStream os(&outf);
 
   QString line;
-  while (!is.eof())
+  while (!is.atEnd())
     {
       line = is.readLine();
 

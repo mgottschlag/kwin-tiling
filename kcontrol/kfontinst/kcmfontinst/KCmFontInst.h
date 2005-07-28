@@ -34,6 +34,9 @@
 #endif
 
 #include <qstringlist.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <QDropEvent>
 #include <kcmodule.h>
 #include <kurl.h>
 #include <kconfig.h>

@@ -27,12 +27,16 @@ if include_kcontrol_joystick
 JOYSTICK_SUBDIR=joystick
 endif
 
+# readd kicker and taskbar later
 # 'colors' and 'fonts' should come after 'krdb'
-SUBDIRS = bell background dnssd filetypes samba krdb input info ioslaveinfo kdm\
-	kicker locale launch keys kio konq style kded \
+#
+# FIXME : readd dnssd
+# 
+SUBDIRS = bell background filetypes samba krdb input info ioslaveinfo kdm\
+	locale launch keys kio konq style kded \
 	konqhtml ebrowsing arts kcontrol knotify\
 	clock pics $(ACCESS_SUBDIR) colors energy fonts css \
-	icons screensaver taskbar crypto privacy smserver \
+	icons screensaver crypto privacy smserver \
 	konsole spellchecking $(USBVIEW_SUBDIR) \
 	$(KSMCARD_SUBDIR) nics $(FONTINST_SUBDIR) $(RANDR_SUBDIR) \
 	componentchooser performance xinerama $(VIEW1394_SUBDIR) display kthememanager \

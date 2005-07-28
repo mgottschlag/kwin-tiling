@@ -20,7 +20,9 @@
 #ifndef __indexwidget_h__
 #define __indexwidget_h__
 
-#include <qwidgetstack.h>
+#include <QStackedWidget>
+//Added by qt3to4:
+#include <QResizeEvent>
 
 #include "global.h"
 
@@ -29,7 +31,7 @@ class ConfigModule;
 class ModuleTreeView;
 class ModuleIconView;
 
-class IndexWidget : public QWidgetStack
+class IndexWidget : public QStackedWidget
 {
   Q_OBJECT
   
@@ -37,7 +39,7 @@ public:
   IndexWidget(ConfigModuleList *list, QWidget *parent, const char *name=0);
   virtual ~IndexWidget();
 
-  QListViewItem *firstTreeViewItem();
+  Q3ListViewItem *firstTreeViewItem();
 public slots:
   void makeVisible(ConfigModule *module);
   void makeSelected(ConfigModule *module);
@@ -49,10 +51,7 @@ protected slots:
 
 signals:
   void moduleActivated(ConfigModule *module);
-  void categorySelected(QListViewItem *);
-
-protected:
-  void resizeEvent(QResizeEvent *e);
+  void categorySelected(Q3ListViewItem *);
 
 private:
   ModuleTreeView   *_tree;
