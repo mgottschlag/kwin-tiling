@@ -31,7 +31,8 @@ class KCMKonsole
 	Q_OBJECT
 
 public:
-	KCMKonsole (QWidget *parent = 0, const char *name = 0, const QStringList& = 0);
+	KCMKonsole (QWidget *parent = 0, const char *name = 0, 
+                      const QStringList& = QStringList());
 	
 	void load();
 	void load(bool useDefaults);
