@@ -31,7 +31,8 @@
 #include "version.h"
 
 #if defined Q_WS_X11
-#include <qxembed.h> // schroder
+//#include <qxembed.h> // schroder
+#include <QX11EmbedWidget>
 #endif
 
 
@@ -53,7 +54,8 @@ extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
   // Make Klipper conform to freedesktop system tray standard, see
   // http://bugs.kde.org/show_bug.cgi?id=69119
 #if defined Q_WS_X11 && ! defined K_WS_QTONLY
-  QXEmbed::initialize();
+#warning "Qt4 port me to QX11EmbedWidget ";
+  //QXEmbed::initialize();
 #endif
 
   KWin::setSystemTrayWindowFor( toplevel->winId(), 0 );
