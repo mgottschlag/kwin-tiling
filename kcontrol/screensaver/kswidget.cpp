@@ -7,8 +7,8 @@
 #include <GL/glx.h>
 #endif
 
-KSWidget::KSWidget( QWidget* parent, const char* name, Qt::WFlags f )
-    : QXEmbed( parent, name, f )
+KSWidget::KSWidget( QWidget* parent, const char* , Qt::WFlags )
+    : QX11EmbedWidget( parent )
 {
 // use visual with support for double-buffering, for opengl
 // this code is duplicated in kdebase/kdesktop/lock/

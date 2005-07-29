@@ -1,10 +1,10 @@
 #ifndef KSWIDGET_H
 #define KSWIDGET_H
 
-#include <qxembed.h>
+#include <qx11embed_x11.h>
 #include <qwidget.h>
 
-class KSWidget : public QXEmbed
+class KSWidget : public QX11EmbedWidget
 {
     Q_OBJECT
 public:
