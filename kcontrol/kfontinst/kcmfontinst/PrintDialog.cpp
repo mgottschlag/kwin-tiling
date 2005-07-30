@@ -45,8 +45,8 @@ CPrintDialog::CPrintDialog(QWidget *parent)
 
     layout->addWidget(new QLabel(i18n("Output:"), page), 0, 0);
     itsOutput=new QComboBox(page);
-    itsOutput->insertItem(i18n("All fonts"), 0);
-    itsOutput->insertItem(i18n("Selected fonts"), 1);
+    itsOutput->insertItem(i18n("All Fonts"), 0);
+    itsOutput->insertItem(i18n("Selected Fonts"), 1);
     layout->addWidget(itsOutput, 0, 1);
     layout->addWidget(new QLabel(i18n("Font size:"), page), 1, 0);
     itsSize=new QComboBox(page);

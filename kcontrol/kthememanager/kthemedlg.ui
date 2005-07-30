@@ -430,10 +430,10 @@
                         <bool>true</bool>
                     </property>
                     <property name="textLabel">
-                        <string>Screensaver</string>
+                        <string>Screen Saver</string>
                     </property>
                     <property name="toolTip" stdset="0">
-                        <string>Customize the screensaver</string>
+                        <string>Customize the screen saver</string>
                     </property>
                 </widget>
             </hbox>

@@ -298,7 +298,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                                             <bool>false</bool>
                                                         </property>
                                                         <property name="text">
-                                                            <string>F&amp;lash screen</string>
+                                                            <string>F&amp;lash screen:</string>
                                                         </property>
                                                     </widget>
                                                     <widget class="KColorButton">

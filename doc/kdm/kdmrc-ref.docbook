@@ -1,4 +1,4 @@
-<!-- generated from /space/prod/kde4/kdebase/kdm/config.def - DO NOT EDIT! -->
+<!-- generated from /usr/src/kde-4/kdebase/kdm/config.def - DO NOT EDIT! -->
 
 <chapter id="kdm-files">
 <title>The Files &kdm; Uses for Configuration</title>
@@ -663,8 +663,10 @@ How many seconds &kdm; should wait for a local &X-Server; to come up.
 <para>
 The command line to start the &X-Server;, without display number and VT spec.
 This string is subject to word splitting.
+</para><para>
+The default is something reasonable for the system on which &kdm; was built,
+like <command>/usr/X11R6/bin/X</command>.
 </para>
-<para>The default is <quote>DEF_SERVER_CMD</quote>.</para>
 </listitem>
 </varlistentry>
 
@@ -1361,7 +1363,7 @@ The following character pairs are replaced by their value:
 <para>
 The font for the greeter headline.
 </para>
-<para>The default is <quote>charter,24,bold</quote>.</para>
+<para>The default is <quote>Serif,20,bold</quote>.</para>
 </listitem>
 </varlistentry>
 
@@ -1371,7 +1373,7 @@ The font for the greeter headline.
 <para>
 The normal font used in the greeter.
 </para>
-<para>The default is <quote>helvetica,12</quote>.</para>
+<para>The default is <quote>Sans Serif,10</quote>.</para>
 </listitem>
 </varlistentry>
 
@@ -1381,7 +1383,7 @@ The normal font used in the greeter.
 <para>
 The font used for the <quote>Login Failed</quote> message.
 </para>
-<para>The default is <quote>helvetica,12,bold</quote>.</para>
+<para>The default is <quote>Sans Serif,10,bold</quote>.</para>
 </listitem>
 </varlistentry>
 

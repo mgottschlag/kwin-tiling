@@ -24,7 +24,7 @@
                 <cstring>qgbPriority</cstring>
             </property>
             <property name="title">
-                <string>Screensaver Priority</string>
+                <string>Screen Saver Priority</string>
             </property>
             <grid>
                 <property name="name">
