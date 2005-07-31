@@ -914,6 +914,7 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
         KIO::UDSEntry udsEntry;
         QString       name;
 
+        FcInitReinitialize();
         if(KIO::NetAccess::stat(url, udsEntry, NULL))  // Need to stat the url to get its font name...
         {
             KIO::UDSEntry::Iterator it(udsEntry.begin()),
