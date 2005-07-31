@@ -7,7 +7,7 @@
 #include <GL/glx.h>
 #endif
 
-KSWidget::KSWidget( QWidget* parent, const char* , Qt::WFlags )
+KSWidget::KSWidget( QWidget* parent )
     : QX11EmbedWidget( parent )
 {
 // use visual with support for double-buffering, for opengl
