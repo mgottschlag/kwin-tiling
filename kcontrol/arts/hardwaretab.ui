@@ -12,9 +12,6 @@
             <height>357</height>
         </rect>
     </property>
-    <property name="caption">
-        <string>hardwareTab</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -108,9 +105,6 @@
                     </property>
                     <property name="text">
                         <string>Use other custom &amp;options:</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+O</string>
                     </property>
                 </widget>
                 <widget class="QCheckBox" row="4" column="0">
@@ -210,9 +204,6 @@
                     </property>
                     <property name="text">
                         <string>Use &amp;custom sampling rate:</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+C</string>
                     </property>
                 </widget>
                 <widget class="QLayoutWidget" row="2" column="1">

@@ -55,9 +55,6 @@
                         <property name="text">
                             <string>Browse local networ&amp;k</string>
                         </property>
-                        <property name="accel">
-                            <string>Alt+K</string>
-                        </property>
                         <property name="whatsThis" stdset="0">
                             <string>Browse local network (domain .local) using multicast DNS.</string>
                         </property>
@@ -112,9 +109,6 @@ is configured with 'Browse local network' option above.</string>
                             <property name="text">
                                 <string>Loc&amp;al network</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+A</string>
-                            </property>
                             <property name="checked">
                                 <bool>false</bool>
                             </property>
@@ -140,9 +134,6 @@ is configured with 'Browse local network' option above.</string>
                             <property name="text">
                                 <string>&amp;Wide area network</string>
                             </property>
-                            <property name="accel">
-                                <string>Alt+W</string>
-                            </property>
                             <property name="whatsThis" stdset="0">
                                 <string>Advertise services on Internet domain using public IP. To have this option working you need to configure wide area operation in using administrator mode</string>
                             </property>
@@ -162,9 +153,6 @@ is configured with 'Browse local network' option above.</string>
                         </property>
                         <property name="text">
                             <string>D&amp;iscover more domains</string>
-                        </property>
-                        <property name="accel">
-                            <string>Alt+I</string>
                         </property>
                         <property name="whatsThis" stdset="0">
                             <string>If selected every configured domain will be queried for list of domain to browse. This 

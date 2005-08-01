@@ -18,9 +18,6 @@
             <height>450</height>
         </size>
     </property>
-    <property name="caption">
-        <string>generalTab</string>
-    </property>
     <vbox>
         <property name="name">
             <cstring>unnamed</cstring>
@@ -282,9 +279,6 @@ Recommended if you want sound.</string>
                     <property name="text">
                         <string>Test &amp;Sound</string>
                     </property>
-                    <property name="accel">
-                        <string>Alt+S</string>
-                    </property>
                 </widget>
                 <spacer>
                     <property name="name">
@@ -317,9 +311,6 @@ Recommended if you want sound.</string>
                     </property>
                     <property name="text">
                         <string>Test &amp;MIDI</string>
-                    </property>
-                    <property name="accel">
-                        <string>Alt+M</string>
                     </property>
                 </widget>
                 <spacer>

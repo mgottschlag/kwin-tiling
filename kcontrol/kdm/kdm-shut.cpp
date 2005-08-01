@@ -95,7 +95,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 #if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
       bm_combo->insertItem("Lilo", i18n("Lilo"));
 #endif
-      QLabel *bm_label = new QLabel( bm_combo, i18n("Boot Manager:"), group4 );
+      QLabel *bm_label = new QLabel( bm_combo, i18n("Boot manager:"), group4 );
       connect(bm_combo, SIGNAL(activated(int)), SLOT(changed()));
       wtstr = i18n("Enable boot options in the \"Shutdown...\" dialog.");
       QWhatsThis::add( bm_label, wtstr );
