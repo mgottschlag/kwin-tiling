@@ -123,7 +123,7 @@ private:
 
 extern bool qt_qclipboard_bailout_hack;
 #if KDE_IS_VERSION( 3, 9, 0 )
-#error Check status of #80072 with Qt4.
+#warning Check status of #80072 with Qt4.
 #endif
 
 static void ensureGlobalSyncOff(KConfig* config);
@@ -813,7 +813,8 @@ void KlipperWidget::checkClipData( bool selectionMode )
         kdWarning("No data in clipboard. This not not supposed to happen." );
         return;
     }
-
+    // TODO: Rewrite to Qt4 !!!
+#if 0
     int lastSerialNo = selectionMode ? m_lastSelection : m_lastClipboard;
     bool changed = data->serialNumber() != lastSerialNo;
     bool clipEmpty = ( data->format() == 0L );
@@ -829,7 +830,7 @@ void KlipperWidget::checkClipData( bool selectionMode )
         }
         return;
     }
-
+#endif
     // this must be below the "bNoNullClipboard" handling code!
     // XXX: I want a better handling of selection/clipboard in general.
     // XXX: Order sensitive code. Must die.
@@ -837,10 +838,12 @@ void KlipperWidget::checkClipData( bool selectionMode )
         return;
 
     // store old contents:
+#if 0
     if ( selectionMode )
         m_lastSelection = data->serialNumber();
     else
         m_lastClipboard = data->serialNumber();
+#endif
 
     if ( bURLGrabber &&
          myURLGrabber &&
@@ -857,7 +860,7 @@ void KlipperWidget::checkClipData( bool selectionMode )
 
         }
     }
-
+#if 0
     if (changed) {
         applyClipChanges( *data );
 #ifdef NOISY_KLIPPER
@@ -870,7 +873,7 @@ void KlipperWidget::checkClipData( bool selectionMode )
             }
         }
     }
-
+#endif
 }
 
 void KlipperWidget::setClipboard( const HistoryItem& item, int mode )
@@ -888,7 +891,9 @@ void KlipperWidget::setClipboard( const HistoryItem& item, int mode )
         } else {
             clip->setPixmap( item.image(), QClipboard::Selection );
         }
-        m_lastSelection = clip->data()->serialNumber();
+#if 0
+        m_lastSelection = clip->data()->serialNumber();<
+#endif
     }
     if ( mode & Clipboard ) {
 #ifdef NOSIY_KLIPPER
@@ -899,7 +904,9 @@ void KlipperWidget::setClipboard( const HistoryItem& item, int mode )
         } else {
             clip->setPixmap( item.image(), QClipboard::Clipboard );
         }
+#if 0
         m_lastClipboard = clip->data()->serialNumber();
+#endif
     }
 
 }

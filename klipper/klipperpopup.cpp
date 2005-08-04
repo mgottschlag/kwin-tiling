@@ -148,7 +148,10 @@ void KlipperPopup::ensureClean() {
 void KlipperPopup::buildFromScratch() {
     m_filterWidget = new KLineEditBlackKey( this, "Klipper filter widget" );
     insertTitle( SmallIcon( "klipper" ), i18n("Klipper - Clipboard Tool"));
+#warning "KlipperPopup::buildFromScratch, insertItem do not take a QWidget as first parameter"
+#if 0
     m_filterWidgetId = insertItem( m_filterWidget, m_filterWidgetId, 1 );
+#endif
     m_filterWidget->setFocusPolicy( Qt::NoFocus );
     setItemVisible( m_filterWidgetId,  false );
     m_filterWidget->hide();
@@ -267,7 +270,10 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
 #endif
         KPopupMenu::keyPressEvent( e );
         if ( isItemActive( m_filterWidgetId ) ) {
+#warning setActiveItem do not exist in Q3PopupMenu class
+#if 0
             setActiveItem( TOP_HISTORY_ITEM_INDEX );
+#endif
         }
         break;
     }

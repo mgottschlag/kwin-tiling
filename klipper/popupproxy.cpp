@@ -21,6 +21,7 @@
 #include <qstyle.h>
 #include <qpixmap.h>
 #include <qimage.h>
+#include <QStyleOption>
 
 #include <kstringhandler.h>
 #include <klocale.h>
@@ -109,10 +110,14 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
     Q_ASSERT( id != -1 ); // Be sure that the item was inserted.
     QMenuItem* mi = proxy_for_menu->findItem( id );
     int fontheight = QFontMetrics( proxy_for_menu->fontMetrics()  ).height();
+#warning Use old-style QStyle and QStyleOption API
+    int itemheight = fontheight;
+#if 0
     int itemheight = proxy_for_menu->style().sizeFromContents(QStyle::CT_PopupMenuItem,
                                                               proxy_for_menu,
                                                               QSize( 0, fontheight ),
                                                               QStyleOption(mi,10,0) ).height();
+#endif
     // Test if there was enough space
     remainingHeight -= itemheight;
     History* history = parent()->history();

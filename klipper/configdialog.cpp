@@ -26,6 +26,8 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <Q3Frame>
+#include <Q3VButtonGroup>
+
 #include <assert.h>
 
 #include <kiconloader.h>
@@ -205,14 +207,17 @@ void ListView::rename( Q3ListViewItem* item, int c )
   if ( gui ) {
     if ( ! _regExpEditor )
       _regExpEditor = KParts::ComponentFactory::createInstanceFromQuery<QDialog>( "KRegExpEditor/KRegExpEditor", QString::null, this );
+#warning "qt_cast doesn't exist anymore, but tried qobject_cast but without success"
+#if 0
     KRegExpEditorInterface *iface = static_cast<KRegExpEditorInterface *>( _regExpEditor->qt_cast( "KRegExpEditorInterface" ) );
+    
     assert( iface );
     iface->setRegExp( item->text( 0 ) );
 
     bool ok = _regExpEditor->exec();
     if ( ok )
       item->setText( 0, iface->regExp() );
-
+#endif
   }
   else
     KListView::rename( item ,c );
