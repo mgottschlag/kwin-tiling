@@ -131,7 +131,6 @@ class CKFileFontView : public KListView, public KFileView
 
     virtual QWidget *   widget() { return this; }
     virtual void        clearView();
-    virtual void        setAutoUpdate(bool) {} // ### unused. remove in KDE4
     virtual void        setSelectionMode( KFile::SelectionMode sm );
     virtual void        updateView(bool b);
     virtual void        updateView(const KFileItem *i);
