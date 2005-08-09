@@ -60,7 +60,7 @@
 #include <qdatastream.h>
 #include <qregexp.h>
 #include <kinstance.h>
-#include <klargefile.h>
+#include <kde_file.h>
 #include <ktempfile.h>
 #include <kdesu/su.h>
 #include <kprocess.h>

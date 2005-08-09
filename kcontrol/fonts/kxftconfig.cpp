@@ -30,7 +30,7 @@
 #include <Q3CString>
 #include <Q3PtrList>
 #include <klocale.h>
-#include <klargefile.h>
+#include <kde_file.h>
 #include <qdir.h>
 
 #ifdef HAVE_FONTCONFIG

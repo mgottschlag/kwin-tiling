@@ -32,7 +32,7 @@
 #include <Q3CString>
 #include <kprocess.h> 
 #include <kstandarddirs.h>
-#include <klargefile.h>
+#include <kde_file.h>
 #include <kio/netaccess.h>
 #include <unistd.h>
 
