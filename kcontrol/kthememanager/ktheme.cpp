@@ -187,7 +187,7 @@ QString KTheme::createYourself( bool pack )
     // 3. Icons
     globalConf->setGroup( "Icons" );
     QDomElement iconElem = m_dom.createElement( "icons" );
-    iconElem.setAttribute( "name", globalConf->readEntry( "Theme" ) );
+    iconElem.setAttribute( "name", globalConf->readEntry( "Theme",KIconTheme::current() ) );
     createIconElems( "DesktopIcons", "desktop", iconElem, globalConf );
     createIconElems( "MainToolbarIcons", "mainToolbar", iconElem, globalConf );
     createIconElems( "PanelIcons", "panel", iconElem, globalConf );
