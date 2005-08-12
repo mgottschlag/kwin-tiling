@@ -30,12 +30,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qobject.h>
 #include <qpixmap.h>
 #include <qpoint.h>
-#include <q3ptrlist.h>
+#include <QMimeData>
+#include <QMap>
 #include <qpixmap.h>
-#include <q3dragobject.h>
+#include <QDrag>
 #include <qrect.h>
-#include <q3valuelist.h>
-#include <q3valuevector.h>
+#include <QVector>
 
 #include <ksharedptr.h>
 #include <kstartupinfo.h>
@@ -479,7 +479,7 @@ private:
 /**
  * Provids a drag object for tasks across desktops.
  */
-class KDE_EXPORT TaskDrag : public Q3StoredDrag
+class KDE_EXPORT TaskDrag : public QDrag
 {
 public:
     /**
@@ -492,13 +492,13 @@ public:
     /**
      * Returns true if the mime source can be decoded to a TaskDrag.
      */
-    static bool canDecode( const QMimeSource* e );
+    static bool canDecode( const QMimeData* e );
 
     /**
      * Decodes the tasks from the mime source and returns them if successful.
      * Otherwise an empty task list is returned.
      */
-    static Task::List decode( const QMimeSource* e );
+    static Task::List decode( const QMimeData* e );
 };
 
 

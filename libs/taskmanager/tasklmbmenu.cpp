@@ -172,7 +172,7 @@ void TaskLMBMenu::attentionTimeout()
 void TaskLMBMenu::dragEnterEvent( QDragEnterEvent* e )
 {
     // ignore task drags
-    if (TaskDrag::canDecode(e))
+    if (TaskDrag::canDecode(e->mimeData()))
     {
         return;
     }
@@ -206,7 +206,7 @@ void TaskLMBMenu::dragLeaveEvent( QDragLeaveEvent* e )
 void TaskLMBMenu::dragMoveEvent( QDragMoveEvent* e )
 {
     // ignore task drags
-    if (TaskDrag::canDecode(e))
+    if (TaskDrag::canDecode(e->mimeData()))
     {
         return;
     }
@@ -286,7 +286,7 @@ void TaskLMBMenu::mouseMoveEvent(QMouseEvent* e)
                 tasks.append(task);
                 TaskDrag* drag = new TaskDrag(tasks, this);
                 drag->setPixmap(task->pixmap());
-                drag->dragMove();
+                drag->start();
             }
         }
     }

@@ -1473,7 +1473,7 @@ int TaskManager::currentDesktop() const
 }
 
 TaskDrag::TaskDrag(const Task::List& tasks, QWidget* source, const char* name)
-  : Q3StoredDrag("taskbar/task", source, name)
+  : QDrag(source)
 {
     QByteArray data;
     QDataStream stream(&data, QIODevice::WriteOnly);
@@ -1486,21 +1486,23 @@ TaskDrag::TaskDrag(const Task::List& tasks, QWidget* source, const char* name)
         stream << (quint32)(*it)->window();
     }
 
-    setEncodedData(data);
+    QMimeData* mimeData = new QMimeData();
+    mimeData->setData("taskbar/task", data);
+    setMimeData(mimeData);
 }
 
 TaskDrag::~TaskDrag()
 {
 }
 
-bool TaskDrag::canDecode(const QMimeSource* e)
+bool TaskDrag::canDecode(const QMimeData* e)
 {
-    return e->provides("taskbar/task");
+    return e->hasFormat("taskbar/task");
 }
 
-Task::List TaskDrag::decode( const QMimeSource* e )
+Task::List TaskDrag::decode( const QMimeData* e )
 {
-    QByteArray data(e->encodedData("taskbar/task"));
+    QByteArray data(e->data("taskbar/task"));
     Task::List tasks;
 
     if (data.size())
