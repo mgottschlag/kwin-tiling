@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301  USA
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
+#include <kstyle.h>
 #include <QX11Info>
 
                              KTheme::KTheme( QWidget *parent, const QString & xmlFile )
@@ -308,7 +309,7 @@ QString KTheme::createYourself( bool pack )
     // 10. Widget style
     globalConf->setGroup( "General" );
     QDomElement widgetsElem = m_dom.createElement( "widgets" );
-    widgetsElem.setAttribute( "name", globalConf->readEntry( "widgetStyle" ) );
+    widgetsElem.setAttribute( "name", globalConf->readEntry( "widgetStyle",KStyle::defaultStyle()  ) );
     m_root.appendChild( widgetsElem );
 
     // 12.
