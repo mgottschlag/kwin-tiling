@@ -58,7 +58,7 @@ void KCMDisplay::addTab( const QString &name, const QString &label )
   QWidget *page = new QWidget( m_tabs, name.latin1() );
   QVBoxLayout *top = new QVBoxLayout( page, KDialog::marginHint() );
 
-  KCModule *kcm = KCModuleLoader::loadModule( name, page );
+  KCModule *kcm = KCModuleLoader::loadModule( name, KCModuleLoader::None,page );
 
   if ( kcm )
   {
