@@ -944,7 +944,7 @@ void CFontEngine::setPsNameFt()
         // Must not start with a digit
         if(!itsPsName.isEmpty())
         {
-            unsigned int ch,
+            int ch,
                          ch2;
 
             if(itsPsName[0].isDigit())
