@@ -49,9 +49,9 @@
 #include <fstab.h>
 #include <string.h>
 
-#include <qdict.h>
+#include <q3dict.h>
 #include <qfile.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <qstring.h>
 #include <qtextstream.h>
 
@@ -75,7 +75,7 @@ extern "C" {
 }
 #endif
 
-bool GetInfo_CPU (QListView *lBox)
+bool GetInfo_CPU (Q3ListView *lBox)
 {
 	// Modified 13 July 2000 for SMP by Brad Hughes - bhughes@trolltech.com
 
@@ -105,7 +105,7 @@ bool GetInfo_CPU (QListView *lBox)
 		}
 
 		/* Put everything in the listbox */
-		new QListViewItem(lBox, cpustring);
+		new Q3ListViewItem(lBox, cpustring);
 
 		/* Clean up after ourselves, this time I mean it ;-) */
 		delete buf;
@@ -114,7 +114,7 @@ bool GetInfo_CPU (QListView *lBox)
 	return true;
 }
 
-bool GetInfo_IRQ (QListView *lbox)
+bool GetInfo_IRQ (Q3ListView *lbox)
 {
 #ifdef HAVE_DEVINFO_H
 	/* systat lists the interrupts assigned to devices as well as how many were
@@ -131,7 +131,7 @@ bool GetInfo_IRQ (QListView *lbox)
 #endif
 }
 
-bool GetInfo_DMA (QListView *lbox)
+bool GetInfo_DMA (Q3ListView *lbox)
 {
 #ifdef HAVE_DEVINFO_H
 	/* Oh neat, current now has a neat little utility called devinfo */
@@ -144,7 +144,7 @@ bool GetInfo_DMA (QListView *lbox)
 #endif
 }
 
-bool GetInfo_IO_Ports (QListView *lbox)
+bool GetInfo_IO_Ports (Q3ListView *lbox)
 {
 #ifdef HAVE_DEVINFO_H
 	/* Oh neat, current now has a neat little utility called devinfo */
@@ -157,21 +157,21 @@ bool GetInfo_IO_Ports (QListView *lbox)
 #endif
 }
 
-bool GetInfo_Sound (QListView *lbox)
+bool GetInfo_Sound (Q3ListView *lbox)
 {
 	QFile *sndstat = new QFile("/dev/sndstat");
 	QTextStream *t;
 	QString s;
-	QListViewItem *olditem = 0;
+	Q3ListViewItem *olditem = 0;
 
-	if (!sndstat->exists() || !sndstat->open(IO_ReadOnly)) {
+	if (!sndstat->exists() || !sndstat->open(QIODevice::ReadOnly)) {
 
 		s = i18n("Your sound system could not be queried.  /dev/sndstat does not exist or is not readable.");
-		olditem = new QListViewItem(lbox, olditem, s);
+		olditem = new Q3ListViewItem(lbox, olditem, s);
 	} else {
 		t = new QTextStream(sndstat);
 		while (!(s=t->readLine()).isNull()) {
-			olditem = new QListViewItem(lbox, olditem, s);
+			olditem = new Q3ListViewItem(lbox, olditem, s);
 		}
 
 		delete t;
@@ -182,32 +182,32 @@ bool GetInfo_Sound (QListView *lbox)
 	return true;
 }
 
-bool GetInfo_SCSI (QListView *lbox)
+bool GetInfo_SCSI (Q3ListView *lbox)
 {
 	FILE *pipe;
 	QFile *camcontrol = new QFile("/sbin/camcontrol");
 	QTextStream *t;
 	QString s;
-	QListViewItem *olditem = 0;
+	Q3ListViewItem *olditem = 0;
 
 	if (!camcontrol->exists()) {
 		s = i18n ("SCSI subsystem could not be queried: /sbin/camcontrol could not be found");
-		olditem = new QListViewItem(lbox, olditem, s);
+		olditem = new Q3ListViewItem(lbox, olditem, s);
 	} else if ((pipe = popen("/sbin/camcontrol devlist 2>&1", "r")) == NULL) {
 		s = i18n ("SCSI subsystem could not be queried: /sbin/camcontrol could not be executed");
-		olditem = new QListViewItem(lbox, olditem, s);
+		olditem = new Q3ListViewItem(lbox, olditem, s);
 	} else {
 
 		/* This prints out a list of all the scsi devies, perhaps eventually we could
 		   parse it as opposed to schlepping it into a listbox */
 
-		t = new QTextStream(pipe, IO_ReadOnly);
+		t = new QTextStream(pipe, QIODevice::ReadOnly);
 
 		while (true) {
 			s = t->readLine();
 			if ( s.isEmpty() )
 				break;
-			olditem = new QListViewItem(lbox, olditem, s);
+			olditem = new Q3ListViewItem(lbox, olditem, s);
 		}
 
 		delete t;
@@ -222,12 +222,12 @@ bool GetInfo_SCSI (QListView *lbox)
 	return true;
 }
 
-bool GetInfo_PCI (QListView *lbox)
+bool GetInfo_PCI (Q3ListView *lbox)
 {
 	FILE *pipe;
 	QFile *pcicontrol;
 	QString s, cmd;
-	QListViewItem *olditem = 0;
+	Q3ListViewItem *olditem = 0;
 
 	pcicontrol = new QFile("/usr/sbin/pciconf");
 
@@ -240,7 +240,7 @@ bool GetInfo_PCI (QListView *lbox)
 			if (!pcicontrol->exists()) {
 				QString s;
 				s = i18n("Could not find any programs with which to query your system's PCI information");
-				(void) new QListViewItem(lbox, 0, s);
+				(void) new Q3ListViewItem(lbox, 0, s);
 				delete pcicontrol;
 				return true;
 			} else {
@@ -256,7 +256,7 @@ bool GetInfo_PCI (QListView *lbox)
 
 	if ((pipe = popen(cmd.latin1(), "r")) == NULL) {
 		s = i18n ("PCI subsystem could not be queried: %1 could not be executed").arg(cmd);
-		olditem = new QListViewItem(lbox, olditem, s);
+		olditem = new Q3ListViewItem(lbox, olditem, s);
 	} else {
 
 		/* This prints out a list of all the pci devies, perhaps eventually we could
@@ -268,14 +268,14 @@ bool GetInfo_PCI (QListView *lbox)
 
 	if (!lbox->childCount()) {
 		s = i18n("The PCI subsystem could not be queried, this may need root privileges.");
-		olditem = new QListViewItem(lbox, olditem, s);
+		olditem = new Q3ListViewItem(lbox, olditem, s);
 		return true;
 	}
 
 	return true;
 }
 
-bool GetInfo_Partitions (QListView *lbox)
+bool GetInfo_Partitions (Q3ListView *lbox)
 {
 	struct fstab *fstab_ent;
 
@@ -284,7 +284,7 @@ bool GetInfo_Partitions (QListView *lbox)
 		QString s;
 		s = i18n("Could not check filesystem info: ");
 		s += strerror(s_err);
-		(void)new QListViewItem(lbox, 0, s);
+		(void)new Q3ListViewItem(lbox, 0, s);
 	} else {
 		lbox->addColumn(i18n("Device"));
 		lbox->addColumn(i18n("Mount Point"));
@@ -292,7 +292,7 @@ bool GetInfo_Partitions (QListView *lbox)
 		lbox->addColumn(i18n("Mount Options"));
 
 		while ((fstab_ent=getfsent())!=NULL) {
-			new QListViewItem(lbox, fstab_ent->fs_spec,
+			new Q3ListViewItem(lbox, fstab_ent->fs_spec,
 					  fstab_ent->fs_file, fstab_ent->fs_vfstype,
 					  fstab_ent->fs_mntops);
 		}
@@ -305,17 +305,17 @@ bool GetInfo_Partitions (QListView *lbox)
 	return true;
 }
 
-bool GetInfo_XServer_and_Video (QListView *lBox)
+bool GetInfo_XServer_and_Video (Q3ListView *lBox)
 {
 	return GetInfo_XServer_Generic( lBox );
 }
 
-bool GetInfo_Devices (QListView *lbox)
+bool GetInfo_Devices (Q3ListView *lbox)
 {
 	QFile *f = new QFile("/var/run/dmesg.boot");
-	if (f->open(IO_ReadOnly)) {
+	if (f->open(QIODevice::ReadOnly)) {
 		QTextStream qts(f);
-		QDict<QListViewItem> lv_items;
+		Q3Dict<Q3ListViewItem> lv_items;
 		Device *dev;
 		QString line, controller;
 		lbox->setRootIsDecorated(true);
@@ -331,12 +331,12 @@ bool GetInfo_Devices (QListView *lbox)
 			// Ewww assuing motherboard is the only toplevel controller is rather gross
 			if (controller == "motherboard") {
 				if (!lv_items[dev->name]) {
-					lv_items.insert(dev->name, new QListViewItem(lbox, dev->name, dev->description) );
+					lv_items.insert(dev->name, new Q3ListViewItem(lbox, dev->name, dev->description) );
 				}
 			} else {
-				QListViewItem *parent=lv_items[controller];
+				Q3ListViewItem *parent=lv_items[controller];
 				if (parent && !lv_items[dev->name]) {
-					lv_items.insert(dev->name, new QListViewItem(parent, dev->name, dev->description) );
+					lv_items.insert(dev->name, new Q3ListViewItem(parent, dev->name, dev->description) );
 				}
 			}
 		}
@@ -387,9 +387,9 @@ Device *GetDevice(const QString &line)
 
 int print_irq(struct devinfo_rman *rman, void *arg)
 {
-	QListView *lbox = (QListView *)arg;
+	Q3ListView *lbox = (Q3ListView *)arg;
         if (strcmp(rman->dm_desc, "Interrupt request lines")==0) {
-		(void)new QListViewItem(lbox, 0, rman->dm_desc);
+		(void)new Q3ListViewItem(lbox, 0, rman->dm_desc);
 		devinfo_foreach_rman_resource(rman, print_resource, arg);
         }
         return(0);
@@ -397,9 +397,9 @@ int print_irq(struct devinfo_rman *rman, void *arg)
 
 int print_dma(struct devinfo_rman *rman, void *arg)
 {
-	QListView *lbox = (QListView *)arg;
+	Q3ListView *lbox = (Q3ListView *)arg;
         if (strcmp(rman->dm_desc, "DMA request lines")==0) {
-		(void)new QListViewItem(lbox, lbox->lastItem(), rman->dm_desc);
+		(void)new Q3ListViewItem(lbox, lbox->lastItem(), rman->dm_desc);
 		devinfo_foreach_rman_resource(rman, print_resource, arg);
         }
         return(0);
@@ -407,14 +407,14 @@ int print_dma(struct devinfo_rman *rman, void *arg)
 
 int print_ioports(struct devinfo_rman *rman, void *arg)
 {
-	QListView *lbox = (QListView *)arg;
+	Q3ListView *lbox = (Q3ListView *)arg;
 
 	if (strcmp(rman->dm_desc, "I/O ports")==0) {
-		(void)new QListViewItem(lbox, lbox->lastItem(), rman->dm_desc);
+		(void)new Q3ListViewItem(lbox, lbox->lastItem(), rman->dm_desc);
 		devinfo_foreach_rman_resource(rman, print_resource, arg);
         }
 	else if (strcmp(rman->dm_desc, "I/O memory addresses")==0) {
-		(void)new QListViewItem(lbox, lbox->lastItem(), rman->dm_desc);
+		(void)new Q3ListViewItem(lbox, lbox->lastItem(), rman->dm_desc);
 		devinfo_foreach_rman_resource(rman, print_resource, arg);
 	}
         return(0);
@@ -426,9 +426,9 @@ int print_resource(struct devinfo_res *res, void *arg)
         struct devinfo_rman     *rman;
         int                     hexmode;
 
-	QListView *lbox;
+	Q3ListView *lbox;
 
-	lbox = (QListView *)arg;
+	lbox = (Q3ListView *)arg;
 
 	QString s, tmp;
 
@@ -450,7 +450,7 @@ int print_resource(struct devinfo_res *res, void *arg)
         }
 	s += tmp;
 
-	(void)new QListViewItem(lbox, lbox->lastItem(), s);
+	(void)new Q3ListViewItem(lbox, lbox->lastItem(), s);
         return(0);
 }
 
