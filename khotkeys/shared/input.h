@@ -29,6 +29,7 @@ namespace KHotKeys
 class Kbd_receiver
     {
     public:
+		virtual ~Kbd_receiver() {};
         virtual bool handle_key( const KShortcut& shortcut_P ) = 0;
     };
 
