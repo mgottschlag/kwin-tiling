@@ -165,10 +165,13 @@ QString USBDevice::dump()
 		r += i18n("<tr><td><i>Power Consumption</i></td><td>%1 mA</td></tr>").arg(_power);
 	else
 		r += i18n("<tr><td><i>Power Consumption</i></td><td>self powered</td></tr>");
-	r += i18n("<tr><td><i>Attached Devicenodes</i></td><td>%1</td></tr>").arg(*_devnodes.at(0));
-	if ( _devnodes.count() > 1 )
-		for ( QStringList::Iterator it = _devnodes.at(1); it != _devnodes.end(); ++it )
+	r += i18n("<tr><td><i>Attached Devicenodes</i></td><td>%1</td></tr>").arg(_devnodes.at(0));
+	if ( _devnodes.count() > 1 ) {
+		QStringList::Iterator it = _devnodes.begin();
+		++it;
+		for ( ; it != _devnodes.end(); ++it )
 			r += "<tr><td></td><td>" + *it + "</td></tr>";
+	}
 #else  
   r += i18n("<tr><td><i>Max. Packet Size</i></td><td>%1</td></tr>").arg(_maxPacketSize);
 #endif  
