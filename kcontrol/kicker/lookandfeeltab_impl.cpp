@@ -145,7 +145,7 @@ void LookAndFeelTab::previewBackground(const QString& themepath, bool isNew)
 
 void LookAndFeelTab::load()
 {
-    KConfig config(KickerConfig::the()->configName(), false, false);
+    KConfig config(KickerConfig::self()->configName(), false, false);
 
     config.setGroup("General");
 
@@ -216,7 +216,7 @@ void LookAndFeelTab::load()
 
 void LookAndFeelTab::save()
 {
-    KConfig config(KickerConfig::the()->configName(), false, false);
+    KConfig config(KickerConfig::self()->configName(), false, false);
 
     config.setGroup("General");
 

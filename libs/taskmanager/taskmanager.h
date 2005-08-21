@@ -568,7 +568,7 @@ class KDE_EXPORT TaskManager : public QObject
     Q_PROPERTY( int numberOfDesktops READ numberOfDesktops )
 
 public:
-    static TaskManager* the();
+    static TaskManager* self();
     ~TaskManager();
 
     /**

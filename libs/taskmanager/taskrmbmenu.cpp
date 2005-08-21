@@ -71,7 +71,7 @@ void TaskRMBMenu::fillMenu(Task::TaskPtr t)
     insertItem(i18n("Ad&vanced"), makeAdvancedMenu(t));
     bool checkActions = KWin::allowedActionsSupported();
 
-    if (TaskManager::the()->numberOfDesktops() > 1)
+    if (TaskManager::self()->numberOfDesktops() > 1)
     {
         id = insertItem(i18n("To &Desktop"), makeDesktopsMenu(t));
 
@@ -133,7 +133,7 @@ void TaskRMBMenu::fillMenu()
 
     bool enable = false;
 
-    if (TaskManager::the()->numberOfDesktops() > 1)
+    if (TaskManager::self()->numberOfDesktops() > 1)
     {
         id = insertItem(i18n("All to &Desktop"), makeDesktopsMenu());
 
@@ -237,8 +237,8 @@ QMenu* TaskRMBMenu::makeDesktopsMenu(Task::TaskPtr t)
 
 	m->insertSeparator();
 
-	for (int i = 1; i <= TaskManager::the()->numberOfDesktops(); i++) {
-		QString name = QString("&%1 %2").arg(i).arg(TaskManager::the()->desktopName(i).replace('&', "&&"));
+	for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
+		QString name = QString("&%1 %2").arg(i).arg(TaskManager::self()->desktopName(i).replace('&', "&&"));
 		id = m->insertItem( name, t, SLOT( toDesktop(int) ) );
 		m->setItemParameter( id, i );
 		m->setItemChecked( id, !t->isOnAllDesktops() && t->desktop() == i );
@@ -257,8 +257,8 @@ QMenu* TaskRMBMenu::makeDesktopsMenu()
 
 	m->insertSeparator();
 
-	for (int i = 1; i <= TaskManager::the()->numberOfDesktops(); i++) {
-		QString name = QString("&%1 %2").arg(i).arg(TaskManager::the()->desktopName(i).replace('&', "&&"));
+	for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
+		QString name = QString("&%1 %2").arg(i).arg(TaskManager::self()->desktopName(i).replace('&', "&&"));
 		id = m->insertItem( name, this, SLOT( slotAllToDesktop(int) ) );
 		m->setItemParameter( id, i );
 	}

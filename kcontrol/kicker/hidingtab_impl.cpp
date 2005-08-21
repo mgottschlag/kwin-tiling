@@ -53,26 +53,26 @@ HidingTab::HidingTab(QWidget *parent, const char* name)
     connect(m_lHB, SIGNAL(toggled(bool)), SIGNAL(changed()));
     connect(m_rHB, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
-    connect(KickerConfig::the(), SIGNAL(extensionInfoChanged()),
+    connect(KickerConfig::self(), SIGNAL(extensionInfoChanged()),
             SLOT(infoUpdated()));
-    connect(KickerConfig::the(), SIGNAL(extensionAdded(ExtensionInfo*)),
+    connect(KickerConfig::self(), SIGNAL(extensionAdded(ExtensionInfo*)),
             SLOT(extensionAdded(ExtensionInfo*)));
-    connect(KickerConfig::the(), SIGNAL(extensionRemoved(ExtensionInfo*)),
+    connect(KickerConfig::self(), SIGNAL(extensionRemoved(ExtensionInfo*)),
             SLOT(extensionRemoved(ExtensionInfo*)));
     // position tab tells hiding tab about extension selections and vice versa
-    connect(KickerConfig::the(), SIGNAL(positionPanelChanged(int)),
+    connect(KickerConfig::self(), SIGNAL(positionPanelChanged(int)),
             SLOT(switchPanel(int)));
     connect(m_panelList, SIGNAL(activated(int)),
-            KickerConfig::the(), SIGNAL(hidingPanelChanged(int)));
+            KickerConfig::self(), SIGNAL(hidingPanelChanged(int)));
 }
 
 void HidingTab::load()
 {
     m_panelInfo = 0;
-    KickerConfig::the()->populateExtensionInfoList(m_panelList);
+    KickerConfig::self()->populateExtensionInfoList(m_panelList);
     m_panelsGroupBox->setHidden(m_panelList->count() < 2);
 
-    switchPanel(KickerConfig::the()->currentPanelIndex());
+    switchPanel(KickerConfig::self()->currentPanelIndex());
 }
 
 void HidingTab::extensionAdded(ExtensionInfo* info)
@@ -84,11 +84,11 @@ void HidingTab::extensionAdded(ExtensionInfo* info)
 void HidingTab::extensionRemoved(ExtensionInfo* info)
 {
     int count = m_panelList->count();
-    int extensionCount = KickerConfig::the()->extensionsInfo().count();
+    int extensionCount = KickerConfig::self()->extensionsInfo().count();
     int index = 0;
     for (; index < count && index < extensionCount; ++index)
     {
-        if (KickerConfig::the()->extensionsInfo()[index] == info)
+        if (KickerConfig::self()->extensionsInfo()[index] == info)
         {
             break;
         }
@@ -107,12 +107,12 @@ void HidingTab::extensionRemoved(ExtensionInfo* info)
 void HidingTab::switchPanel(int panelItem)
 {
     blockSignals(true);
-    ExtensionInfo* panelInfo = (KickerConfig::the()->extensionsInfo())[panelItem];
+    ExtensionInfo* panelInfo = (KickerConfig::self()->extensionsInfo())[panelItem];
 
     if (!panelInfo)
     {
         m_panelList->setCurrentItem(0);
-        panelInfo = (KickerConfig::the()->extensionsInfo())[panelItem];
+        panelInfo = (KickerConfig::self()->extensionsInfo())[panelItem];
 
         if (!panelInfo)
         {
@@ -170,7 +170,7 @@ void HidingTab::switchPanel(int panelItem)
 void HidingTab::save()
 {
     storeInfo();
-    KickerConfig::the()->saveExtentionInfo();
+    KickerConfig::self()->saveExtentionInfo();
 }
 
 void HidingTab::storeInfo()

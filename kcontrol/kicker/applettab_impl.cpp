@@ -89,7 +89,7 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
 
 void AppletTab::load()
 {
-    KConfig c(KickerConfig::the()->configName(), false, false);
+    KConfig c(KickerConfig::self()->configName(), false, false);
   c.setGroup("General");
 
   available.clear();
@@ -146,7 +146,7 @@ void AppletTab::load()
 
 void AppletTab::save()
 {
-    KConfig c(KickerConfig::the()->configName(), false, false);
+    KConfig c(KickerConfig::self()->configName(), false, false);
   c.setGroup("General");
 
   int level = 0;

@@ -73,7 +73,7 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
 
 void MenuTab::load()
 {
-    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::the()->configName());
+    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::self()->configName());
 
     c->setGroup("menus");
 
@@ -119,7 +119,7 @@ void MenuTab::load()
 
 void MenuTab::save()
 {
-    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::the()->configName());
+    KSharedConfig::Ptr c = KSharedConfig::openConfig(KickerConfig::self()->configName());
 
     c->setGroup("menus");
 

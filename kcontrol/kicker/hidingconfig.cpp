@@ -36,14 +36,14 @@ HidingConfig::HidingConfig(QWidget *parent, const char *name)
     layout->addWidget(m_widget);
     layout->addStretch();
 
-    setQuickHelp(KickerConfig::the()->quickHelp());
-    setAboutData(KickerConfig::the()->aboutData());
+    setQuickHelp(KickerConfig::self()->quickHelp());
+    setAboutData(KickerConfig::self()->aboutData());
 
     //addConfig(KickerSettings::self(), m_widget);
 
     connect(m_widget, SIGNAL(changed()),
             this, SLOT(changed()));
-    connect(KickerConfig::the(), SIGNAL(aboutToNotifyKicker()),
+    connect(KickerConfig::self(), SIGNAL(aboutToNotifyKicker()),
             this, SLOT(aboutToNotifyKicker()));
 
     load();
@@ -79,7 +79,7 @@ void HidingConfig::save()
     // KickerConfig object sends a signal before the
     // notification. On this signal all existing modules,
     // including this object, save their settings.
-    KickerConfig::the()->notifyKicker();
+    KickerConfig::self()->notifyKicker();
 }
 
 void HidingConfig::defaults()

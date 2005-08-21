@@ -43,7 +43,7 @@
 KickerConfig *KickerConfig::m_self = 0;
 static KStaticDeleter<KickerConfig> staticKickerConfigDeleter;
 
-KickerConfig *KickerConfig::the()
+KickerConfig *KickerConfig::self()
 {
     if (!m_self)
     {

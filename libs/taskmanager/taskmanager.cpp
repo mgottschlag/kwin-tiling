@@ -48,7 +48,7 @@ TaskManager* TaskManager::m_self = 0;
 static KStaticDeleter<TaskManager> staticTaskManagerDeleter;
 uint TaskManager::m_xCompositeEnabled = 0;
 
-TaskManager* TaskManager::the()
+TaskManager* TaskManager::self()
 {
     if (!m_self)
     {
@@ -801,7 +801,7 @@ bool Task::isActive() const
 
 bool Task::isOnTop() const
 {
-    return TaskManager::the()->isOnTop(this);
+    return TaskManager::self()->isOnTop(this);
 }
 
 bool Task::isModified() const
@@ -1185,7 +1185,7 @@ void Task::toDesktop(int desk)
     {
         if (_info.valid() && _info.onAllDesktops())
         {
-            ni.setDesktop(TaskManager::the()->winModule()->currentDesktop());
+            ni.setDesktop(TaskManager::self()->winModule()->currentDesktop());
             KWin::forceActiveWindow(_win);
         }
         else
@@ -1196,13 +1196,13 @@ void Task::toDesktop(int desk)
         return;
     }
     ni.setDesktop(desk);
-    if(desk == TaskManager::the()->winModule()->currentDesktop())
+    if(desk == TaskManager::self()->winModule()->currentDesktop())
         KWin::forceActiveWindow(_win);
 }
 
 void Task::toCurrentDesktop()
 {
-    toDesktop(TaskManager::the()->winModule()->currentDesktop());
+    toDesktop(TaskManager::self()->winModule()->currentDesktop());
 }
 
 void Task::setAlwaysOnTop(bool stay)
@@ -1512,7 +1512,7 @@ Task::List TaskDrag::decode( const QMimeData* e )
         {
             quint32 id;
             stream >> id;
-            if (Task::TaskPtr task = TaskManager::the()->findTask(id))
+            if (Task::TaskPtr task = TaskManager::self()->findTask(id))
             {
                 tasks.append(task);
             }
