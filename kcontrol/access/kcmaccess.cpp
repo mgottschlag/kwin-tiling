@@ -17,6 +17,7 @@
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qradiobutton.h>
+#include <qx11info_x11.h>
 
 //Added by qt3to4:
 #include <QVBoxLayout>
@@ -40,12 +41,59 @@
 
 #include "kcmaccess.moc"
 
-static bool needToRunKAccessDaemon( KConfig * )
+static bool needToRunKAccessDaemon( KConfig *config )
 {
-   // Since we have the gesture settings we always have to start
-   // the KAccess daemon as we do not know whether the gestures
-   // are activated by default in the X configuration or not.
-   return true;
+    KConfigGroup bell( config, "Bell" );
+    
+    if (!bell.readBoolEntry("SystemBell", true))
+        return true;
+    if (bell.readBoolEntry("ArtsBell", false))
+        return true;
+    if (bell.readBoolEntry("VisibleBell", false))
+        return true;
+    
+  KConfigGroup keyboard( config, "Keyboard" );
+
+  if (keyboard.readBoolEntry("StickyKeys", false))
+        return true;
+  if (keyboard.readBoolEntry("SlowKeys", false))
+        return true;
+  if (keyboard.readBoolEntry("BounceKeys", false))
+        return true;
+  if (keyboard.readBoolEntry("Gestures", true))
+        return true;
+  // Find out whether the gestures are activated by default in the X configuration or not.
+  int major = XkbMajorVersion;
+  int minor = XkbMinorVersion;
+  if (XkbLibraryVersion(&major, &minor))
+    {
+    int opcode_rtrn;
+    int error_rtrn;
+    int xkb_opcode;
+    if (XkbQueryExtension(QX11Info::display(), &opcode_rtrn, &xkb_opcode, &error_rtrn,
+			 &major, &minor))
+      {
+      if(XkbDescPtr xkbdesc = XkbGetMap(QX11Info::display(), 0, XkbUseCoreKbd))
+        {
+        if(XkbGetControls(QX11Info::display(), XkbAllControlsMask/*XkbAccessXKeysMask*/, xkbdesc ) == Success )
+          {
+          if(xkbdesc->ctrls->enabled_ctrls & XkbAccessXKeysMask)
+            {
+            XkbFreeClientMap(xkbdesc,0,True);
+            return true;
+            }
+          }
+        XkbFreeClientMap(xkbdesc,0,True);
+        }
+      }
+    }
+
+  KConfigGroup mouse( config, "Mouse" );
+  
+  if (mouse.readBoolEntry("MouseKeys", false))
+        return true;
+
+    return false; // don't need it
 }
 
 QString mouseKeysShortcut (Display *display) {
@@ -500,7 +548,9 @@ void KAccessConfig::save()
   }
 
   // make kaccess reread the configuration
-  if ( needToRunKAccessDaemon( config ) )
+  // When turning things off, it needs to be done by kaccess,
+  // so don't actually kill it *shrug*.
+  if ( true /*needToRunKAccessDaemon( config )*/ )
       kapp->startServiceByDesktopName("kaccess");
 
   else // don't need it -> kill it
