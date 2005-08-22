@@ -1,4 +1,4 @@
-<!-- generated from /usr/src/kde-4/kdebase/kdm/config.def - DO NOT EDIT! -->
+<!-- generated from /sauvegarde/kde4/kdebase/kdm/config.def - DO NOT EDIT! -->
 
 <chapter id="kdm-files">
 <title>The Files &kdm; Uses for Configuration</title>
@@ -1179,6 +1179,17 @@ option, you should <command>chmod&nbsp;<option>600</option>&nbsp;<filename>kdmrc
 </varlistentry>
 
 <varlistentry>
+<term id="option-autologinlocked"><option>AutoLoginLocked</option></term>
+<listitem>
+<para>
+Immediately lock the automatically started session. This works only with
+KDE sessions.
+</para>
+<para>The default is <quote>false</quote>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
 <term id="option-sessionsdirs"><option>SessionsDirs</option></term>
 <listitem>
 <para>
@@ -1358,6 +1369,16 @@ The following character pairs are replaced by their value:
 </varlistentry>
 
 <varlistentry>
+<term id="option-antialiasing"><option>AntiAliasing</option></term>
+<listitem>
+<para>
+Whether the fonts used in the greeter should be antialiased.
+</para>
+<para>The default is <quote>false</quote>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
 <term id="option-greetfont"><option>GreetFont</option></term>
 <listitem>
 <para>
@@ -1384,16 +1405,6 @@ The normal font used in the greeter.
 The font used for the <quote>Login Failed</quote> message.
 </para>
 <para>The default is <quote>Sans Serif,10,bold</quote>.</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term id="option-antialiasing"><option>AntiAliasing</option></term>
-<listitem>
-<para>
-Whether the fonts used in the greeter should be antialiased.
-</para>
-<para>The default is <quote>false</quote>.</para>
 </listitem>
 </varlistentry>
 
