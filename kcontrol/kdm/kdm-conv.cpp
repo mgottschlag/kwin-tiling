@@ -65,19 +65,26 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     QWidget *hlpw1 = new QWidget( alGroup );
     userlb = new KComboBox( hlpw1 );
     u_label = new QLabel( userlb, i18n("Use&r:"), hlpw1 );
-    QBoxLayout *hlpl1 = new QHBoxLayout(hlpw1, 0, KDialog::spacingHint());
+    QHBoxLayout *hlpl1 = new QHBoxLayout(alGroup->layout(), KDialog::spacingHint());
     hlpl1->addWidget(u_label);
     hlpl1->addWidget(userlb);
     hlpl1->addStretch( 1 );
+    laygroup2->addWidget( hlpw1 );
     connect(userlb, SIGNAL(highlighted(int)), SLOT(slotChanged()));
     wtstr = i18n("Select the user to be logged in automatically.");
     u_label->setWhatsThis( wtstr );
     userlb->setWhatsThis( wtstr );
     autoLockCheck = new QCheckBox( i18n("Loc&k session"), alGroup );
+    laygroup2->addWidget(autoLockCheck);
     connect( autoLockCheck, SIGNAL(toggled(bool)), SLOT(slotChanged()) );
     autoLockCheck->setWhatsThis( i18n("The automatically started session "
 	"will be locked immediately (provided it is a KDE session). This can "
 	"be used to obtain a super-fast login restricted to one user.") );
+
+
+
+
+
 
 
     puGroup = new Q3ButtonGroup(i18n("Preselect User"), this );
