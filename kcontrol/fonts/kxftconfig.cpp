@@ -503,7 +503,7 @@ bool KXftConfig::reset()
     delete [] m_data;
     m_data=NULL;
 
-    if(f.open(IO_Raw|QIODevice::ReadOnly))
+    if(f.open(QIODevice::Unbuffered|QIODevice::ReadOnly))
     {
         m_time=getTimeStamp(m_file);
         m_size=f.size();
@@ -1424,7 +1424,7 @@ void KXftConfig::removeItems(Q3PtrList<ListItem> &list)
 #else
 void KXftConfig::outputDir(std::ofstream &f, const QString &str)
 {
-    f << "dir \"" << contractHome(xDirSyntax(str)).local8Bit() << "\"" << endl;
+    f << "dir \"" << contractHome(xDirSyntax(str)).toLocal8Bit().data() << "\"" << endl;
 }
 
 void KXftConfig::outputNewDirs(std::ofstream &f)
@@ -1439,7 +1439,7 @@ void KXftConfig::outputNewDirs(std::ofstream &f)
 
 void KXftConfig::outputSymbolFamily(std::ofstream &f, const QString &str)
 {
-    f << "match any family == \"" << str.local8Bit() << "\" edit encoding = " << constSymEnc << ';' << endl;
+    f << "match any family == \"" << str.toLocal8Bit().data() << "\" edit encoding = " << constSymEnc << ';' << endl;
 }
 
 void KXftConfig::outputNewSymbolFamilies(std::ofstream &f)
