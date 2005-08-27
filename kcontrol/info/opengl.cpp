@@ -237,6 +237,9 @@ print_limits(Q3ListViewItem *l1, const char * glExtensions, bool GetProcAddress)
       GL_COMPRESSED_TEXTURE_FORMATS
 */
 
+  if (!glExtensions)
+	return;
+
   struct token_name {
       GLuint type;  // count and flags, !!! count must be <=2 for now
       GLenum token;
