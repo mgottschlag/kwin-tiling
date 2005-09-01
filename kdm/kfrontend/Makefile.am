@@ -3,7 +3,7 @@ GENKDMCONF_FLAGS =
 
 SUBDIRS = themer themes pics sessions
 
-AM_CPPFLAGS = -I$(srcdir)/../backend -I.. -I$(top_srcdir)/kcontrol/background \
+AM_CPPFLAGS = -I$(srcdir)/../backend -I.. -I$(top_srcdir)/workspace/kcontrol/background \
     -I$(top_srcdir)/kdmlib $(all_includes)
 
 bin_PROGRAMS = kdm_config kdm_greet krootimage genkdmconf kdmctl
@@ -28,7 +28,7 @@ kdm_greet_LDADD = themer/libkdmthemer.a $(LIB_KDEUI) $(XTESTLIB) $(LIBPOSIX4)
 
 krootimage_SOURCES = krootimage.cpp
 krootimage_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-krootimage_LDADD = $(top_builddir)/kcontrol/background/libbgnd.la $(LIB_KIO)
+krootimage_LDADD = $(top_builddir)/workspace/kcontrol/background/libbgnd.la $(LIB_KIO)
 
 METASOURCES = AUTO
 

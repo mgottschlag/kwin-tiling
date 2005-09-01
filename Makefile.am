@@ -1,3 +1,3 @@
 ## (C) 2005 Benjamin Meyer
 
-SUBDIRS = kwin
+SUBDIRS = kwin kcontrol
