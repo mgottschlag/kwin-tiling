@@ -313,14 +313,16 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
   hbox->addSpacing(24);
   mk_time_to_max = new KIntNumInput(mk_interval, 0, mouse);
   mk_time_to_max->setLabel(i18n("Acceleration &time:"), Qt::AlignVCenter);
-  mk_time_to_max->setRange(1, 5000, 250);
+  mk_time_to_max->setRange(100, 10000, 200);
+  mk_time_to_max->setSuffix(i18n(" msec"));
   hbox->addWidget(mk_time_to_max);
 
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_max_speed = new KIntNumInput(mk_time_to_max, 0, mouse);
   mk_max_speed->setLabel(i18n("Ma&ximum speed:"), Qt::AlignVCenter);
-  mk_max_speed->setRange(1, 1000, 10);
+  mk_max_speed->setRange(1, 2000, 20);
+  mk_max_speed->setSuffix(i18n(" pixel/sec"));
   hbox->addWidget(mk_max_speed);
 
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
@@ -506,9 +508,27 @@ void MouseConfig::load()
   ac.setGroup("Mouse");
   mouseKeys->setChecked(ac.readBoolEntry("MouseKeys", false));
   mk_delay->setValue(ac.readNumEntry("MKDelay", 160));
-  mk_interval->setValue(ac.readNumEntry("MKInterval", 5));
-  mk_time_to_max->setValue(ac.readNumEntry("MKTimeToMax", 1000));
-  mk_max_speed->setValue(ac.readNumEntry("MKMaxSpeed", 500));
+
+  int interval = ac.readNumEntry("MKInterval", 5);
+  mk_interval->setValue(interval);
+
+  // Default time to reach maximum speed: 5000 msec
+  int time_to_max = ac.readNumEntry("MKTimeToMax",
+												(5000+interval/2)/interval);
+  time_to_max = ac.readNumEntry("MK-TimeToMax",
+										  time_to_max*interval);
+  mk_time_to_max->setValue(time_to_max);
+
+  // Default maximum speed: 1000 pixels/sec
+  //     (The old default maximum speed from KDE <= 3.4
+  //     (100000 pixels/sec) was way too fast)
+  long max_speed = ac.readNumEntry("MKMaxSpeed", interval);
+  max_speed = max_speed * 1000 / interval;
+  if (max_speed > 2000)
+     max_speed = 2000;
+  max_speed = ac.readNumEntry("MK-MaxSpeed", max_speed);
+  mk_max_speed->setValue(max_speed);
+
   mk_curve->setValue(ac.readNumEntry("MKCurve", 0));
 
   themetab->load();
@@ -542,11 +562,18 @@ void MouseConfig::save()
 
   ac.setGroup("Mouse");
 
+  int interval = mk_interval->value();
   ac.writeEntry("MouseKeys", mouseKeys->isChecked());
   ac.writeEntry("MKDelay", mk_delay->value());
-  ac.writeEntry("MKInterval", mk_interval->value());
-  ac.writeEntry("MKTimeToMax", mk_time_to_max->value());
-  ac.writeEntry("MKMaxSpeed", mk_max_speed->value());
+  ac.writeEntry("MKInterval", interval);
+  ac.writeEntry("MK-TimeToMax", mk_time_to_max->value());
+  ac.writeEntry("MKTimeToMax",
+                (mk_time_to_max->value() + interval/2)/interval);
+  ac.writeEntry("MK-MaxSpeed", mk_max_speed->value());
+  ac.writeEntry("MKMaxSpeed",
+					 (mk_max_speed->value()*interval + 500)/1000);
+   ac.writeEntry("MKCurve", mk_curve->value());
+  ac.sync();
   ac.writeEntry("MKCurve", mk_curve->value());
 
   themetab->save();
@@ -579,8 +606,8 @@ void MouseConfig::defaults()
   mouseKeys->setChecked(false);
   mk_delay->setValue(160);
   mk_interval->setValue(5);
-  mk_time_to_max->setValue(1000);
-  mk_max_speed->setValue(500);
+  mk_time_to_max->setValue(5000);
+  mk_max_speed->setValue(1000);
   mk_curve->setValue(0);
 
   checkAccess();
