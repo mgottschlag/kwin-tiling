@@ -22,6 +22,9 @@ xdg_apps_DATA = kcmaccess.desktop
 services_DATA = kaccess.desktop
 servicesdir = $(kde_servicesdir)
 
+eventsrcdir = $(kde_datadir)/kaccess/
+eventsrc_DATA = eventsrc
+
 messages:
 	$(XGETTEXT) $(kaccess_la_SOURCES) -o $(podir)/kaccess.pot
 	$(XGETTEXT) $(kcm_access_la_SOURCES) -o $(podir)/kcmaccess.pot

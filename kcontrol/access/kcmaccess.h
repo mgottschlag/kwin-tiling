@@ -10,9 +10,11 @@
 
 
 #include <kcmodule.h>
+#include <knuminput.h>
 
 
 class QCheckBox;
+class QComboBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
@@ -21,6 +23,39 @@ class KColorButton;
 class QSlider;
 class KNumInput;
 class KAboutData;
+
+class ExtendedIntNumInput : public KIntNumInput
+{
+	Q_OBJECT
+
+	public:
+    /**
+	  * Constructs an input control for integer values
+	  * with base 10 and initial value 0.
+	  */
+		ExtendedIntNumInput(QWidget *parent=0);
+		
+    /**
+	  * Destructor
+	  */
+		virtual ~ExtendedIntNumInput();
+
+    /**
+	  * @param min  minimum value
+	  * @param max  maximum value
+	  * @param step step size for the QSlider
+	  * @param slider whether the slider is created or not
+	  */
+		void setRange(int min, int max, int step=1, bool slider=true);
+
+	private slots:
+		void slotSpinValueChanged(int);
+		void slotSliderValueChanged(int);
+	
+	private:
+		int min, max;
+		int sliderMax;
+};
 
 class KAccessConfig : public KCModule
 {
@@ -43,8 +78,8 @@ protected slots:
   void flashClicked();
   void selectSound();
   void changeFlashScreenColor();
+  void configureKNotify();
 
-      
 private:
 
   QCheckBox *systemBell, *customBell, *visibleBell;
@@ -53,15 +88,22 @@ private:
   QLineEdit *soundEdit;
   QPushButton *soundButton;
   KColorButton *colorButton;
-  KIntNumInput *durationSlider;
+  ExtendedIntNumInput *durationSlider;
 
-  QCheckBox *stickyKeys, *stickyKeysLock;
+  QCheckBox *stickyKeys, *stickyKeysLock, *stickyKeysAutoOff;
+  QCheckBox *stickyKeysBeep, *toggleKeysBeep, *kNotifyModifiers;
+  QPushButton *kNotifyModifiersButton;
 
-  QCheckBox *slowKeys, *bounceKeys;    
-  KIntNumInput *slowKeysDelay, *bounceKeysDelay;
-  
-  QCheckBox *gestures;
-  QCheckBox *gestureConfirmation;
+  QCheckBox *slowKeys, *bounceKeys;
+  ExtendedIntNumInput *slowKeysDelay, *bounceKeysDelay;
+  QCheckBox *slowKeysPressBeep, *slowKeysAcceptBeep;
+  QCheckBox *slowKeysRejectBeep, *bounceKeysRejectBeep;
+
+  QCheckBox *gestures, *gestureConfirmation;
+  QCheckBox *timeout;
+  KIntNumInput *timeoutDelay;
+  QCheckBox *accessxBeep, *kNotifyAccessX;
+  QPushButton *kNotifyAccessXButton;
 };
 
 

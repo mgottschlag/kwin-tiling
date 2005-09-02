@@ -1,0 +1,83 @@
+[!Global!]
+IconName=kaccess
+Comment=KDE Accessibility Tool
+Comment[br]=Ostilh haezadusted ar KDE
+Comment[cy]=Erfyn Hygyrchedd KDE
+Comment[ga]=Uirlis Inrochtaineachta KDE
+Comment[pa]=KDE ਸਹੂਲਤ ਸੰਦ
+
+[modifierkey-latched]
+Name=A modifier key has become active
+Name[el]=Ενεργοποιήθηκε ένα πλήκτρο τροποποιητή
+Name[pa]=ਇੱਕ ਸਵਿੱਚ ਸੋਧਕ ਸਰਗਰਮ ਹੋ ਗਿਆ ਹA
+Comment=A modifier key (e.g., Shift or Control) has changed its state and is now active
+Comment[el]=Άλλαξε η κατάσταση ενός πλήκτρου τροποποιητή (π.χ. Shift ή Control) και τώρα είναι ενεργό
+default_sound=KDE_Click.wav
+default_presentation=0
+nopresentation=236
+
+[modifierkey-unlatched]
+Name=A modifier key has become inactive
+Name[el]=Απενεργοποιήθηκε ένα πλήκτρο τροποποιητή
+Comment=A modifier key (e.g., Shift or Control) has changed its state and is now inactive
+Comment[el]=Άλλαξε η κατάσταση ενός πλήκτρου τροποποιητή (π.χ. Shift ή Control) και τώρα είναι ανενεργό
+default_sound=KDE_Click.wav
+default_presentation=0
+nopresentation=236
+
+[modifierkey-locked]
+Name=A modifier key has been locked
+Name[el]=Ένα πλήκτρο τροποποιητή κλειδώθηκε
+Comment=A modifier key (e.g., Shift or Control) has been locked and is now active for all of the following keypresses
+Comment[el]=Ένα πλήκτρο τροποποιητή (π.χ. Shift ή Control) κλειδώθηκε και τώρα είναι ανενεργό και είναι τώρα ενεργό για τα επόμενα πατήματα πλήκτρων
+default_sound=KDE_Click.wav
+default_presentation=0
+nopresentation=236
+
+[lockkey-locked]
+Name=A lock key has been activated
+Name[el]=Ένα πλήκτρο τροποποιητή ξεκλειδώθηκε
+Comment=A lock key (e.g., Caps Lock or Num Lock) has changed its state and and is now active
+Comment[el]=Ένα πλήκτρο κλειδώματος (π.χ. Caps Lock ή Num Lock) άλλαξε κατάσταση και είναι τώρα ενεργό
+default_sound=KDE_Click.wav
+default_presentation=0
+nopresentation=236
+
+[lockkey-unlocked]
+Name=A lock key has been deactivated
+Name[el]=Ένα πλήκτρο κλειδώματος απενεργοποιήθηκε
+Comment=A lock key (e.g., Caps Lock or Num Lock) has changed its state and is now inactive
+Comment[el]=Ένα πλήκτρο κλειδώματος (π.χ. Caps Lock ή Num Lock) άλλαξε κατάσταση και είναι τώρα ανενεργό
+default_sound=KDE_Click.wav
+default_presentation=0
+nopresentation=236
+
+[stickykeys]
+Name=Sticky keys has been enabled or disabled
+Comment=Sticky keys has been enabled or disabled
+default_sound=KDE_Click.wav
+default_presentation=16
+nopresentation=236
+
+[slowkeys]
+Name=Slow keys has been enabled or disabled
+Comment=Slow keys has been enabled or disabled
+default_sound=KDE_Click.wav
+default_presentation=16
+nopresentation=236
+
+[bouncekeys]
+Name=Bounce keys has been enabled or disabled
+Name[el]=Τα πλήκτρα αναπήδησης ενεργοποιήθηκαν ή απενεργοποιήθηκαν
+Comment=Bounce keys has been enabled or disabled
+Comment[el]=Τα πλήκτρα αναπήδησης ενεργοποιήθηκαν ή απενεργοποιήθηκαν
+default_sound=KDE_Click.wav
+default_presentation=16
+nopresentation=236
+
+[mousekeys]
+Name=Mouse keys has been enabled or disabled
+Comment=Mouse keys has been enabled or disabled
+default_sound=KDE_Click.wav
+default_presentation=16
+nopresentation=236

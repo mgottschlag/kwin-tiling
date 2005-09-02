@@ -14,6 +14,7 @@
 #include <kiconloader.h>
 #include <kdebug.h>
 #include <kaudioplayer.h>
+#include <knotifyclient.h>
 #include <kconfig.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -30,6 +31,66 @@
 
 #include "kaccess.moc"
 #include <QX11Info>
+
+struct ModifierKey {
+   const unsigned int mask;
+   const KeySym keysym;
+   const char *name;
+   const char *lockedText;
+   const char *latchedText;
+   const char *unlatchedText;
+};
+
+static ModifierKey modifierKeys[] = {
+    { ShiftMask, 0, "Shift",
+      I18N_NOOP("The Shift key has been locked and is now active for all of the following keypresses."),
+      I18N_NOOP("The Shift key is now active."),
+      I18N_NOOP("The Shift key is now inactive.") },
+    { ControlMask, 0, "Control",
+      I18N_NOOP("The Control key has been locked and is now active for all of the following keypresses."),
+      I18N_NOOP("The Control key is now active."),
+      I18N_NOOP("The Control key is now inactive.") },
+    { 0, XK_Alt_L, "Alt",
+      I18N_NOOP("The Alt key has been locked and is now active for all of the following keypresses."),
+      I18N_NOOP("The Alt key is now active."),
+      I18N_NOOP("The Alt key is now inactive.") },
+    { 0, 0, "Win",
+      I18N_NOOP("The Win key has been locked and is now active for all of the following keypresses."),
+      I18N_NOOP("The Win key is now active."),
+      I18N_NOOP("The Win key is now inactive.") },
+    { 0, XK_Meta_L, "Meta",
+      I18N_NOOP("The Meta key has been locked and is now active for all of the following keypresses."),
+      I18N_NOOP("The Meta key is now active."),
+      I18N_NOOP("The Meta key is now inactive.") },
+    { 0, XK_Super_L, "Super",
+      I18N_NOOP("The Super key has been locked and is now active for all of the following keypresses."),
+      I18N_NOOP("The Super key is now active."),
+      I18N_NOOP("The Super key is now inactive.") },
+    { 0, XK_Hyper_L, "Hyper",
+      I18N_NOOP("The Hyper key has been locked and is now active for all of the following keypresses."),
+      I18N_NOOP("The Hyper key is now active."),
+      I18N_NOOP("The Hyper key is now inactive.") },
+    { 0, 0, "Alt Graph",
+      I18N_NOOP("The Alt Graph key has been locked and is now active for all of the following keypresses."),
+      I18N_NOOP("The Alt Graph key is now active."),
+      I18N_NOOP("The Alt Graph key is now inactive.") },
+    { 0, XK_Num_Lock, "Num Lock",
+      I18N_NOOP("The Num Lock key has been activated."),
+      "",
+      I18N_NOOP("The Num Lock key is now inactive.") },
+    { LockMask, 0, "Caps Lock",
+      I18N_NOOP("The Caps Lock key has been activated."),
+      "",
+      I18N_NOOP("The Caps Lock key is now inactive.") },
+    { 0, XK_Scroll_Lock, "Scroll Lock",
+      I18N_NOOP("The Scroll Lock key has been activated."),
+      "",
+      I18N_NOOP("The Scroll Lock key is now inactive.") },
+    { 0, 0, "", "", "", "" }
+};
+
+
+/********************************************************************/
 
 
 KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
@@ -67,6 +128,13 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   features = 0;
   requestedFeatures = 0;
   dialog = 0;
+
+  initMasks();
+  XkbStateRec state_return;
+  XkbGetState (QX11Info::display(), XkbUseCoreKbd, &state_return);
+  unsigned char latched = XkbStateMods (&state_return);
+  unsigned char locked  = XkbModLocks  (&state_return);
+  state = ((int)locked)<<8 | latched;
 }
 
 int KAccessApp::newInstance()
@@ -117,41 +185,90 @@ void KAccessApp::readSettings()
   if (config->readBoolEntry("StickyKeys", false))
     {
       if (config->readBoolEntry("StickyKeysLatch", true))
-	xkb->ctrls->ax_options |= XkbAX_LatchToLockMask;
+        xkb->ctrls->ax_options |= XkbAX_LatchToLockMask;
       else
-	xkb->ctrls->ax_options &= ~XkbAX_LatchToLockMask;
+        xkb->ctrls->ax_options &= ~XkbAX_LatchToLockMask;
+      if (config->readBoolEntry("StickyKeysAutoOff", false))
+         xkb->ctrls->ax_options |= XkbAX_TwoKeysMask;
+      else
+         xkb->ctrls->ax_options &= ~XkbAX_TwoKeysMask;
+      if (config->readBoolEntry("StickyKeysBeep", false))
+         xkb->ctrls->ax_options |= XkbAX_StickyKeysFBMask;
+      else
+         xkb->ctrls->ax_options &= ~XkbAX_StickyKeysFBMask;
       xkb->ctrls->enabled_ctrls |= XkbStickyKeysMask;
     }
   else
     xkb->ctrls->enabled_ctrls &= ~XkbStickyKeysMask;
 
-  // turn off two-keys-disable sticky keys option
-  xkb->ctrls->ax_options &= ~XkbAX_TwoKeysMask;
-
-  // turn off timeout
-  xkb->ctrls->enabled_ctrls &= ~XkbAccessXTimeoutMask;
+  // toggle keys
+  if (config->readBoolEntry("ToggleKeysBeep", false))
+     xkb->ctrls->ax_options |= XkbAX_IndicatorFBMask;
+  else
+     xkb->ctrls->ax_options &= ~XkbAX_IndicatorFBMask;
 
   // slow keys
-  if (config->readBoolEntry("SlowKeys", false))
+  if (config->readBoolEntry("SlowKeys", false)) {
+      if (config->readBoolEntry("SlowKeysPressBeep", false))
+         xkb->ctrls->ax_options |= XkbAX_SKPressFBMask;
+      else
+         xkb->ctrls->ax_options &= ~XkbAX_SKPressFBMask;
+      if (config->readBoolEntry("SlowKeysAcceptBeep", false))
+         xkb->ctrls->ax_options |= XkbAX_SKAcceptFBMask;
+      else
+         xkb->ctrls->ax_options &= ~XkbAX_SKAcceptFBMask;
+      if (config->readBoolEntry("SlowKeysRejectBeep", false))
+         xkb->ctrls->ax_options |= XkbAX_SKRejectFBMask;
+      else
+         xkb->ctrls->ax_options &= ~XkbAX_SKRejectFBMask;
       xkb->ctrls->enabled_ctrls |= XkbSlowKeysMask;
+    }
   else
       xkb->ctrls->enabled_ctrls &= ~XkbSlowKeysMask;
   xkb->ctrls->slow_keys_delay = config->readNumEntry("SlowKeysDelay", 500);
 
   // bounce keys
-  if (config->readBoolEntry("BounceKeys", false))
+  if (config->readBoolEntry("BounceKeys", false)) {
+      if (config->readBoolEntry("BounceKeysRejectBeep", false))
+         xkb->ctrls->ax_options |= XkbAX_BKRejectFBMask;
+      else
+         xkb->ctrls->ax_options &= ~XkbAX_BKRejectFBMask;
       xkb->ctrls->enabled_ctrls |= XkbBounceKeysMask;
+    }
   else
       xkb->ctrls->enabled_ctrls &= ~XkbBounceKeysMask;
   xkb->ctrls->debounce_delay = config->readNumEntry("BounceKeysDelay", 500);
 
   // gestures for enabling the other features
   _gestures = config->readBoolEntry("Gestures", true);
-  _gestureConfirmation = config->readBoolEntry("GestureConfirmation", true);
   if (_gestures)
       xkb->ctrls->enabled_ctrls |= XkbAccessXKeysMask;
   else
       xkb->ctrls->enabled_ctrls &= ~XkbAccessXKeysMask;
+
+  // timeout
+  if (config->readBoolEntry("AccessXTimeout", false))
+    {
+      xkb->ctrls->ax_timeout = config->readNumEntry("AccessXTimeoutDelay", 30)*60;
+      xkb->ctrls->axt_opts_mask = 0;
+      xkb->ctrls->axt_opts_values = 0;
+      xkb->ctrls->axt_ctrls_mask = XkbStickyKeysMask | XkbSlowKeysMask;
+      xkb->ctrls->axt_ctrls_values = 0;
+      xkb->ctrls->enabled_ctrls |= XkbAccessXTimeoutMask;
+    }
+  else
+    xkb->ctrls->enabled_ctrls &= ~XkbAccessXTimeoutMask;
+
+  // gestures for enabling the other features
+  if (config->readBoolEntry("AccessXBeep", true))
+     xkb->ctrls->ax_options |= XkbAX_FeatureFBMask | XkbAX_SlowWarnFBMask;
+  else
+     xkb->ctrls->ax_options &= ~(XkbAX_FeatureFBMask | XkbAX_SlowWarnFBMask);
+
+  _gestureConfirmation = config->readBoolEntry("GestureConfirmation", true);
+
+  _kNotifyModifiers = config->readBoolEntry("kNotifyModifiers", false);
+  _kNotifyAccessX = config->readBoolEntry("kNotifyAccessX", false);
 
   // mouse-by-keyboard ----------------------------------------------
 
@@ -160,9 +277,20 @@ void KAccessApp::readSettings()
   if (config->readBoolEntry("MouseKeys", false))
     {
       xkb->ctrls->mk_delay = config->readNumEntry("MKDelay", 160);
-      xkb->ctrls->mk_interval = config->readNumEntry("MKInterval", 5);
-      xkb->ctrls->mk_time_to_max = config->readNumEntry("MKTimeToMax", 1000);
-      xkb->ctrls->mk_max_speed = config->readNumEntry("MKMaxSpeed", 500);
+
+      // Default for initial velocity: 200 pixels/sec
+      int interval = config->readNumEntry("MKInterval", 5);
+      xkb->ctrls->mk_interval = interval;
+
+      // Default time to reach maximum speed: 5000 msec
+      xkb->ctrls->mk_time_to_max = config->readNumEntry("MKTimeToMax",
+                                             (5000+interval/2)/interval);
+
+      // Default maximum speed: 1000 pixels/sec
+      //     (The old default maximum speed from KDE <= 3.4
+      //     (100000 pixels/sec) was way too fast)
+      xkb->ctrls->mk_max_speed = config->readNumEntry("MKMaxSpeed", interval);
+
       xkb->ctrls->mk_curve = config->readNumEntry("MKCurve", 0);
       xkb->ctrls->mk_dflt_btn = config->readNumEntry("MKDefaultButton", 0);
 
@@ -175,19 +303,59 @@ void KAccessApp::readSettings()
    if (dialog == 0)
       requestedFeatures = features;
   // set state
-  XkbSetControls(QX11Info::display(), XkbControlsEnabledMask | XkbMouseKeysAccelMask | XkbStickyKeysMask | XkbAccessXKeysMask, xkb);
+  XkbSetControls(QX11Info::display(), XkbControlsEnabledMask | XkbMouseKeysAccelMask | XkbStickyKeysMask | XkbSlowKeysMask | XkbBounceKeysMask | XkbAccessXKeysMask | XkbAccessXTimeoutMask, xkb);
 
-  // select AccessX events if we need them
-  state = _gestures && _gestureConfirmation ? XkbControlsNotifyMask : 0;
-  XkbSelectEvents(QX11Info::display(), XkbUseCoreKbd, XkbControlsNotifyMask, state);
+  // select AccessX events
+  XkbSelectEvents(QX11Info::display(), XkbUseCoreKbd, XkbAllEventsMask, XkbAllEventsMask);
 
-  // reset them after program exit
-  uint ctrls = XkbStickyKeysMask | XkbSlowKeysMask | XkbBounceKeysMask | XkbMouseKeysMask | XkbAudibleBellMask | XkbControlsNotifyMask;
-  uint values = XkbAudibleBellMask;
-  XkbSetAutoResetControls(QX11Info::display(), ctrls, &ctrls, &values);
+  if (!_artsBell && !_visibleBell && !_gestureConfirmation
+      && !_kNotifyModifiers && !_kNotifyAccessX) {
+
+     // We will exit, but the features need to stay configured
+     uint ctrls = XkbStickyKeysMask | XkbSlowKeysMask | XkbBounceKeysMask | XkbMouseKeysMask | XkbAudibleBellMask | XkbControlsNotifyMask;
+     uint values = xkb->ctrls->enabled_ctrls & ctrls;
+     XkbSetAutoResetControls(QX11Info::display(), ctrls, &ctrls, &values);
+     exit(0);
+  } else {
+     // reset them after program exit
+     uint ctrls = XkbStickyKeysMask | XkbSlowKeysMask | XkbBounceKeysMask | XkbMouseKeysMask | XkbAudibleBellMask | XkbControlsNotifyMask;
+     uint values = XkbAudibleBellMask;
+     XkbSetAutoResetControls(QX11Info::display(), ctrls, &ctrls, &values);
+  }
 
   delete overlay;
   overlay = 0;
+}
+
+int maskToBit (int mask) {
+   for (int i = 0; i < 8; i++)
+      if (mask & (1 << i))
+         return i;
+   return -1;
+}
+
+void KAccessApp::initMasks() {
+   for (int i = 0; i < 8; i++)
+      keys [i] = -1;
+   state = 0;
+
+   for (int i = 0; modifierKeys[i].name != ""; i++) {
+      int mask = modifierKeys[i].mask;
+      if (mask == 0)
+         if (modifierKeys[i].keysym != 0)
+            mask = XkbKeysymToModifiers (QX11Info::display(), modifierKeys[i].keysym);
+         else if (modifierKeys[i].name == "Win")
+            mask = KKeyNative::modX(KKey::WIN);
+         else
+            mask = XkbKeysymToModifiers (QX11Info::display(), XK_Mode_switch)
+                 | XkbKeysymToModifiers (QX11Info::display(), XK_ISO_Level3_Shift)
+                 | XkbKeysymToModifiers (QX11Info::display(), XK_ISO_Level3_Latch)
+                 | XkbKeysymToModifiers (QX11Info::display(), XK_ISO_Level3_Lock);
+
+      int bit = maskToBit (mask);
+      if (bit != -1 && keys[bit] == -1)
+         keys[bit] = i;
+   }
 }
 
 
@@ -198,11 +366,17 @@ bool KAccessApp::x11EventFilter(XEvent *event)
     {
       XkbAnyEvent *ev = (XkbAnyEvent*) event;
 
-      if (ev->xkb_type == XkbBellNotify)
-	xkbBellNotify((XkbBellNotifyEvent*)event);
-      else if (ev->xkb_type == XkbControlsNotify)
-	xkbControlsNotify((XkbControlsNotifyEvent*)event);
-
+      switch (ev->xkb_type) {
+      case XkbStateNotify:
+         xkbStateNotify();
+         break;
+      case XkbBellNotify:
+         xkbBellNotify((XkbBellNotifyEvent*)event);
+         break;
+      case XkbControlsNotify:
+         xkbControlsNotify((XkbControlsNotifyEvent*)event);
+         break;
+      }
       return true;
     }
 
@@ -223,6 +397,46 @@ void KAccessApp::activeWindowChanged(WId wid)
   _activeWindow = wid;
 }
 
+
+void KAccessApp::xkbStateNotify () {
+   XkbStateRec state_return;
+   XkbGetState (QX11Info::display(), XkbUseCoreKbd, &state_return);
+   unsigned char latched = XkbStateMods (&state_return);
+   unsigned char locked  = XkbModLocks  (&state_return);
+   int mods = ((int)locked)<<8 | latched;
+
+   if (state != mods) {
+      if (_kNotifyModifiers)
+      for (int i = 0; i < 8; i++) {
+         if (keys[i] != -1) {
+            if (    (modifierKeys[keys[i]].latchedText == "")
+                && ( (((mods >> i) & 0x101) != 0) != (((state >> i) & 0x101) != 0) ))
+            {
+               if ((mods >> i) & 1) {
+                  KNotifyClient::event (0, "lockkey-locked", i18n(modifierKeys[keys[i]].lockedText));
+               }
+               else {
+                  KNotifyClient::event (0, "lockkey-unlocked", i18n(modifierKeys[keys[i]].unlatchedText));
+               }
+            }
+            else if ((modifierKeys[keys[i]].latchedText != "")
+                && ( ((mods >> i) & 0x101) != ((state >> i) & 0x101) ))
+            {
+               if ((mods >> i) & 0x100) {
+                  KNotifyClient::event (0, "modifierkey-locked", i18n(modifierKeys[keys[i]].lockedText));
+               }
+               else if ((mods >> i) & 1) {
+                  KNotifyClient::event (0, "modifierkey-latched", i18n(modifierKeys[keys[i]].latchedText));
+               }
+               else {
+                  KNotifyClient::event (0, "modifierkey-unlatched", i18n(modifierKeys[keys[i]].unlatchedText));
+               }
+            }
+         }
+      }
+      state = mods;
+   }
+}
 
 void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
 {
@@ -430,24 +644,26 @@ void KAccessApp::createDialogContents() {
 void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
 {
    unsigned int newFeatures = event->enabled_ctrls & (XkbSlowKeysMask | XkbBounceKeysMask | XkbStickyKeysMask | XkbMouseKeysMask);
+
    if (newFeatures != features) {
      unsigned int enabled  = newFeatures & ~features;
      unsigned int disabled = features & ~newFeatures;
 
-     // set the AccessX features back to what they were. We will
-     // apply the changes later if the user allows us to do that.
-     readSettings();
-
-     requestedFeatures = enabled | (requestedFeatures & ~disabled);
-
-     enabled  = requestedFeatures & ~features;
-     disabled = features & ~requestedFeatures;
-
      if (!_gestureConfirmation) {
-        applyChanges();
-        readSettings();
+        requestedFeatures = enabled | (requestedFeatures & ~disabled);
+        notifyChanges();
+        features = newFeatures;
      }
      else {
+        // set the AccessX features back to what they were. We will
+        // apply the changes later if the user allows us to do that.
+        readSettings();
+
+        requestedFeatures = enabled | (requestedFeatures & ~disabled);
+
+        enabled  = requestedFeatures & ~features;
+        disabled = features & ~requestedFeatures;
+
         QStringList enabledFeatures;
         QStringList disabledFeatures;
 
@@ -571,7 +787,36 @@ void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
   }
 }
 
+void KAccessApp::notifyChanges() {
+   if (!_kNotifyAccessX)
+      return;
+
+   unsigned int enabled  = requestedFeatures & ~features;
+   unsigned int disabled = features & ~requestedFeatures;
+
+   if (enabled & XkbSlowKeysMask)
+      KNotifyClient::event (0, "slowkeys", i18n("Slow keys has been enabled. From now on, you need to press each key a certain time before it gets acceted."));
+   else if (disabled & XkbSlowKeysMask)
+      KNotifyClient::event (0, "slowkeys", i18n("Slow keys has been disabled."));
+
+   if (enabled & XkbBounceKeysMask)
+      KNotifyClient::event (0, "bouncekeys", i18n("Bounce keys has been enabled. From now on, each key will be blocked a certain time after it was used."));
+   else if (disabled & XkbBounceKeysMask)
+      KNotifyClient::event (0, "bouncekeys", i18n("Bounce keys has been disabled."));
+
+   if (enabled & XkbStickyKeysMask)
+      KNotifyClient::event (0, "stickykeys", i18n("Sticky keys has been enabled. From now on, modifier keys will stay latched after you have released them."));
+   else if (disabled & XkbStickyKeysMask)
+      KNotifyClient::event (0, "stickykeys", i18n("Sticky keys has been disabled."));
+
+   if (enabled & XkbMouseKeysMask)
+      KNotifyClient::event (0, "mousekeys", i18n("Mouse keys has been enabled. From now on, you can use the number pad of your keyboard in order to control the mouse."));
+   else if (disabled & XkbMouseKeysMask)
+      KNotifyClient::event (0, "mousekeys", i18n("Mouse keys has been disabled."));
+}
+
 void KAccessApp::applyChanges() {
+   notifyChanges();
    unsigned int enabled  = requestedFeatures & ~features;
    unsigned int disabled = features & ~requestedFeatures;
 
@@ -626,8 +871,10 @@ void KAccessApp::yesClicked() {
    }
    config->sync();
 
-   if (features != requestedFeatures)
+   if (features != requestedFeatures) {
+      notifyChanges();
       applyChanges();
+   }
    readSettings();
 }
 

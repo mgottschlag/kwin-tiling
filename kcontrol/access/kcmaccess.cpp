@@ -7,6 +7,7 @@
 
 
 #include <stdlib.h>
+#include <math.h>
 
 #include <dcopref.h>
 
@@ -17,6 +18,8 @@
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qradiobutton.h>
+#include <qslider.h>
+#include <qspinbox.h>
 #include <qx11info_x11.h>
 
 //Added by qt3to4:
@@ -24,14 +27,15 @@
 #include <QHBoxLayout>
 
 
+#include <kcombobox.h>
 #include <kstandarddirs.h>
 #include <kcolorbutton.h>
 #include <kfiledialog.h>
-#include <knuminput.h>
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <kshortcut.h>
 #include <kkeynative.h>
+#include <knotifydialog.h>
 
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>
@@ -41,59 +45,72 @@
 
 #include "kcmaccess.moc"
 
+
+ExtendedIntNumInput::ExtendedIntNumInput
+				(QWidget* parent)
+	: KIntNumInput(parent)
+{
+}
+
+ExtendedIntNumInput::~ExtendedIntNumInput () {
+}
+
+void ExtendedIntNumInput::setRange(int min, int max, int step, bool slider) {
+	KIntNumInput::setRange (min,max,step, slider);
+
+	if (slider) {
+		disconnect(m_slider, SIGNAL(valueChanged(int)),
+					  m_spin, SLOT(setValue(int)));
+		disconnect(m_spin, SIGNAL(valueChanged(int)),
+					  this, SLOT(spinValueChanged(int)));
+
+		this->min = min;
+		this->max = max;
+		sliderMax = (int)floor (0.5
+				+ 2*(log(max)-log(min)) / (log(max)-log(max-1)));
+		m_slider->setRange(0, sliderMax);
+		m_slider->setSteps(step, sliderMax/10);
+		m_slider->setTickInterval(sliderMax/10);
+
+		double alpha  = sliderMax / (log(max) - log(min));
+		double logVal = alpha * (log(value())-log(min));
+		m_slider->setValue ((int)floor (0.5 + logVal));
+
+		connect(m_slider, SIGNAL(valueChanged(int)),
+				  this, SLOT(slotSliderValueChanged(int)));
+		connect(m_spin, SIGNAL(valueChanged(int)),
+				  this, SLOT(slotSpinValueChanged(int)));
+	}
+}
+
+// Basically the slider values are logarithmic whereas
+// spinbox values are linear.
+
+void ExtendedIntNumInput::slotSpinValueChanged(int val)
+{
+	
+	if(m_slider) {
+		double alpha  = sliderMax / (log(max) - log(min));
+		double logVal = alpha * (log(val)-log(min));
+		m_slider->setValue ((int)floor (0.5 + logVal));
+	}
+
+	emit valueChanged(val);
+}
+
+void ExtendedIntNumInput::slotSliderValueChanged(int val)
+{
+	double alpha  = sliderMax / (log(max) - log(min));
+	double linearVal = exp (val/alpha + log(min));
+	m_spin->setValue ((int)floor(0.5 + linearVal));
+}
+
 static bool needToRunKAccessDaemon( KConfig *config )
 {
-    KConfigGroup bell( config, "Bell" );
-    
-    if (!bell.readBoolEntry("SystemBell", true))
-        return true;
-    if (bell.readBoolEntry("ArtsBell", false))
-        return true;
-    if (bell.readBoolEntry("VisibleBell", false))
-        return true;
-    
-  KConfigGroup keyboard( config, "Keyboard" );
-
-  if (keyboard.readBoolEntry("StickyKeys", false))
-        return true;
-  if (keyboard.readBoolEntry("SlowKeys", false))
-        return true;
-  if (keyboard.readBoolEntry("BounceKeys", false))
-        return true;
-  if (keyboard.readBoolEntry("Gestures", true))
-        return true;
-  // Find out whether the gestures are activated by default in the X configuration or not.
-  int major = XkbMajorVersion;
-  int minor = XkbMinorVersion;
-  if (XkbLibraryVersion(&major, &minor))
-    {
-    int opcode_rtrn;
-    int error_rtrn;
-    int xkb_opcode;
-    if (XkbQueryExtension(QX11Info::display(), &opcode_rtrn, &xkb_opcode, &error_rtrn,
-			 &major, &minor))
-      {
-      if(XkbDescPtr xkbdesc = XkbGetMap(QX11Info::display(), 0, XkbUseCoreKbd))
-        {
-        if(XkbGetControls(QX11Info::display(), XkbAllControlsMask/*XkbAccessXKeysMask*/, xkbdesc ) == Success )
-          {
-          if(xkbdesc->ctrls->enabled_ctrls & XkbAccessXKeysMask)
-            {
-            XkbFreeClientMap(xkbdesc,0,True);
-            return true;
-            }
-          }
-        XkbFreeClientMap(xkbdesc,0,True);
-        }
-      }
-    }
-
-  KConfigGroup mouse( config, "Mouse" );
-  
-  if (mouse.readBoolEntry("MouseKeys", false))
-        return true;
-
-    return false; // don't need it
+	// We always start the KAccess Daemon, if it is not needed,
+	// it will terminate itself after configuring the AccessX
+	// features.
+	return true;
 }
 
 QString mouseKeysShortcut (Display *display) {
@@ -306,7 +323,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
 
-  durationSlider = new KIntNumInput(grp);
+  durationSlider = new ExtendedIntNumInput(grp);
   durationSlider->setRange(100, 2000, 100);
   durationSlider->setLabel(i18n("Duration:"));
   durationSlider->setSuffix(i18n(" msec"));
@@ -331,12 +348,12 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   tab->addTab(bell, i18n("&Bell"));
 
 
-  // keys settings ---------------------------------------
-  QWidget *keys = new QWidget(this);
+  // modifier key settings -------------------------------
+  QWidget *modifiers = new QWidget(this);
 
-  vbox = new QVBoxLayout(keys, KDialog::marginHint(), KDialog::spacingHint());
+  vbox = new QVBoxLayout(modifiers, KDialog::marginHint(), KDialog::spacingHint());
 
-  grp = new Q3GroupBox(i18n("S&ticky Keys"), keys);
+  grp = new Q3GroupBox(i18n("S&ticky Keys"), modifiers);
   grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
@@ -350,7 +367,55 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
   stickyKeysLock = new QCheckBox(i18n("&Lock sticky keys"), grp);
   hbox->addWidget(stickyKeysLock);
 
-  grp = new Q3GroupBox(i18n("Slo&w Keys"), keys);
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox->addSpacing(24);
+  stickyKeysAutoOff = new QCheckBox(i18n("Turn sticky keys off when two keys are pressed simultaneously"), grp);
+  hbox->addWidget(stickyKeysAutoOff);
+
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox->addSpacing(24);
+  stickyKeysBeep = new QCheckBox(i18n("Use system bell whenever a modifier gets latched, locked or unlocked"), grp);
+  hbox->addWidget(stickyKeysBeep);
+
+  grp = new Q3GroupBox(i18n("Locking keys"), modifiers);
+  grp->setColumnLayout( 0, Qt::Horizontal );
+  vbox->addWidget(grp);
+
+  vvbox = new QVBoxLayout(grp->layout(), KDialog::spacingHint());
+
+  toggleKeysBeep = new QCheckBox(i18n("Use system bell whenever a locking key gets activated or deactivated"), grp);
+  vvbox->addWidget(toggleKeysBeep);
+
+  kNotifyModifiers = new QCheckBox(i18n("Use KDE's system notification mechanism whenever a modifier or locking key changes its state"), grp);
+  vvbox->addWidget(kNotifyModifiers);
+
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox->addStretch(1);
+  kNotifyModifiersButton = new QPushButton("Configure system notification", grp);
+  kNotifyModifiersButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  hbox->addWidget(kNotifyModifiersButton);
+
+  connect(stickyKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(stickyKeysLock, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(stickyKeysAutoOff, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(stickyKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
+
+  connect(stickyKeysBeep, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(toggleKeysBeep, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(kNotifyModifiers, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(kNotifyModifiers, SIGNAL(clicked()), this, SLOT(checkAccess()));
+  connect(kNotifyModifiersButton, SIGNAL(clicked()), this, SLOT(configureKNotify()));
+
+  vbox->addStretch();
+
+  tab->addTab(modifiers, i18n("&Modifier keys"));
+
+  // key filter settings ---------------------------------
+  QWidget *filters = new QWidget(this);
+
+  vbox = new QVBoxLayout(filters, KDialog::marginHint(), KDialog::spacingHint());
+
+  grp = new Q3GroupBox(i18n("Slo&w Keys"), filters);
   grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
@@ -361,14 +426,28 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
-  slowKeysDelay = new KIntNumInput(grp);
+  slowKeysDelay = new ExtendedIntNumInput(grp);
   slowKeysDelay->setSuffix(i18n(" msec"));
-  slowKeysDelay->setRange(100, 2000, 100);
-  slowKeysDelay->setLabel(i18n("Dela&y:"));
+  slowKeysDelay->setRange(50, 10000, 100);
+  slowKeysDelay->setLabel(i18n("Acceptance dela&y:"));
   hbox->addWidget(slowKeysDelay);
 
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox->addSpacing(24);
+  slowKeysPressBeep = new QCheckBox(i18n("&Use system bell whenever a key is pressed"), grp);
+  hbox->addWidget(slowKeysPressBeep);
 
-  grp = new Q3GroupBox(i18n("Bounce Keys"), keys);
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox->addSpacing(24);
+  slowKeysAcceptBeep = new QCheckBox(i18n("&Use system bell whenever a key is accepted"), grp);
+  hbox->addWidget(slowKeysAcceptBeep);
+
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox->addSpacing(24);
+  slowKeysRejectBeep = new QCheckBox(i18n("&Use system bell whenever a key is rejected"), grp);
+  hbox->addWidget(slowKeysRejectBeep);
+
+  grp = new Q3GroupBox(i18n("Bounce Keys"), filters);
   grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
@@ -379,56 +458,104 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
-  bounceKeysDelay = new KIntNumInput(grp);
+  bounceKeysDelay = new ExtendedIntNumInput(grp);
   bounceKeysDelay->setSuffix(i18n(" msec"));
-  bounceKeysDelay->setRange(100, 2000, 100);
-  bounceKeysDelay->setLabel(i18n("D&elay:"));
+  bounceKeysDelay->setRange(100, 5000, 100);
+  bounceKeysDelay->setLabel(i18n("D&ebounce time:"));
   hbox->addWidget(bounceKeysDelay);
 
-  grp = new Q3GroupBox(i18n("Activation Gestures"), keys);
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox->addSpacing(24);
+  bounceKeysRejectBeep = new QCheckBox(i18n("Use the system bell whenever a key is rejected"), grp);
+  hbox->addWidget(bounceKeysRejectBeep);
+
+  connect(slowKeysDelay, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
+  connect(slowKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(slowKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
+
+  connect(slowKeysPressBeep, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(slowKeysAcceptBeep, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(slowKeysRejectBeep, SIGNAL(clicked()), this, SLOT(configChanged()));
+
+  connect(bounceKeysDelay, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
+  connect(bounceKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(bounceKeysRejectBeep, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(bounceKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
+
+  vbox->addStretch();
+
+  tab->addTab(filters, i18n("&Keyboard filters"));
+
+  // gestures --------------------------------------------
+  QWidget *features = new QWidget(this);
+
+  vbox = new QVBoxLayout(features, KDialog::marginHint(), KDialog::spacingHint());
+
+  grp = new Q3GroupBox(i18n("Activation Gestures"), features);
   grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
 
   vvbox = new QVBoxLayout(grp->layout(), KDialog::spacingHint());
 
-  gestures = new QCheckBox(i18n("Use gestures for activating the above features"), grp);
+  gestures = new QCheckBox(i18n("Use gestures for activating sticky keys and slow keys"), grp);
   vvbox->addWidget(gestures);
   QString shortcut = mouseKeysShortcut(this->x11Display());
   if (shortcut.isEmpty())
-    gestures->setWhatsThis( i18n("Here you can activate keyboard gestures that turn on the following features: \n"
-    "Sticky keys: Press Shift key 5 consecutive times\n"
-    "Slow keys: Hold down Shift for 8 seconds"));
+	  gestures->setWhatsThis( i18n("Here you can activate keyboard gestures that turn on the following features: \n"
+			  "Sticky keys: Press Shift key 5 consecutive times\n"
+					  "Slow keys: Hold down Shift for 8 seconds"));
   else
-    gestures->setWhatsThis( i18n("Here you can activate keyboard gestures that turn on the following features: \n"
-    "Mouse Keys: %1\n"
-    "Sticky keys: Press Shift key 5 consecutive times\n"
-    "Slow keys: Hold down Shift for 8 seconds").arg(shortcut));
+	  gestures->setWhatsThis( i18n("Here you can activate keyboard gestures that turn on the following features: \n"
+			  "Mouse Keys: %1\n"
+					  "Sticky keys: Press Shift key 5 consecutive times\n"
+					  "Slow keys: Hold down Shift for 8 seconds").arg(shortcut));
+
+  timeout = new QCheckBox(i18n("Turn sticky keys and slow keys off after a certain time of inactivity"), grp);
+  vvbox->addWidget(timeout);
 
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
-  gestureConfirmation = new QCheckBox(i18n("Show a confirmation dialog whenever a gesture is used"), grp);
-  hbox->addWidget(gestureConfirmation);
-  gestureConfirmation->setWhatsThis( i18n("KDE will show a confirmation dialog whenever a gesture is used if this option is checked.\nBe carefull do know what yo do if you uncheck it as then the AccessX settings will always be applied without confirmation.") );
+  timeoutDelay = new KIntNumInput(grp);
+  timeoutDelay->setSuffix(i18n(" minutes"));
+  timeoutDelay->setRange(1, 30, 4);
+  timeoutDelay->setLabel(i18n("Timeout:"));
+  hbox->addWidget(timeoutDelay);
 
-//XK_MouseKeys_Enable,XK_Pointer_EnableKeys
-  connect(stickyKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
-  connect(stickyKeysLock, SIGNAL(clicked()), this, SLOT(configChanged()));
-  connect(slowKeysDelay, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
-  connect(slowKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
-  connect(slowKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
-  connect(stickyKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
+  grp = new Q3GroupBox(i18n("Notification"), features);
+  grp->setColumnLayout( 0, Qt::Horizontal );
+  vbox->addWidget(grp);
 
-  connect(bounceKeysDelay, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
-  connect(bounceKeys, SIGNAL(clicked()), this, SLOT(configChanged()));
-  connect(bounceKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
+  vvbox = new QVBoxLayout(grp->layout(), KDialog::spacingHint());
+
+  accessxBeep = new QCheckBox(i18n("Use the system bell whenever a gesture is used to turn an accessibility feature on or off"), grp);
+  vvbox->addWidget(accessxBeep);
+
+  gestureConfirmation = new QCheckBox(i18n("Show a confirmation dialog whenever a keyboard accessibility feature is turned on or off"), grp);
+  vvbox->addWidget(gestureConfirmation);
+  gestureConfirmation->setWhatsThis( i18n("If this option is checked, KDE will show a confirmation dialog whenever a keyboard accessibility feature is turned on or off.\nBe carefull to know what you are doing if you uncheck it as then the keyboard accessibility settings will always be applied without confirmation.") );
+
+  kNotifyAccessX = new QCheckBox(i18n("Use KDE's system notification mechanism whenever a keyboard accessibility feature is turned on or off"), grp);
+  vvbox->addWidget(kNotifyAccessX);
+
+  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox->addStretch(1);
+  kNotifyAccessXButton = new QPushButton("Configure system notification", grp);
+  kNotifyAccessXButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  hbox->addWidget(kNotifyAccessXButton);
 
   connect(gestures, SIGNAL(clicked()), this, SLOT(configChanged()));
-  connect(gestures, SIGNAL(clicked()), this, SLOT(checkAccess()));
+  connect(timeout, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(timeout, SIGNAL(clicked()), this, SLOT(checkAccess()));
+  connect(timeoutDelay, SIGNAL(valueChanged(int)), this, SLOT(configChanged()));
+  connect(accessxBeep, SIGNAL(clicked()), this, SLOT(configChanged()));
   connect(gestureConfirmation, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(kNotifyAccessX, SIGNAL(clicked()), this, SLOT(configChanged()));
+  connect(kNotifyAccessX, SIGNAL(clicked()), this, SLOT(checkAccess()));
+  connect(kNotifyAccessXButton, SIGNAL(clicked()), this, SLOT(configureKNotify()));
 
   vbox->addStretch();
 
-  tab->addTab(keys, i18n("&Keyboard"));
+  tab->addTab(features, i18n("Activation Gestures"));
 
   load();
 }
@@ -438,11 +565,19 @@ KAccessConfig::~KAccessConfig()
 {
 }
 
+void KAccessConfig::configureKNotify()
+{
+	KAboutData about(I18N_NOOP("kaccess"),
+						  I18N_NOOP("KDE Accessibility Tool"),
+						  0);
+	KNotifyDialog::configure (this, 0, &about);
+}
+
 void KAccessConfig::changeFlashScreenColor()
 {
-    invertScreen->setChecked(false);
-    flashScreen->setChecked(true);
-    configChanged();
+	invertScreen->setChecked(false);
+	flashScreen->setChecked(true);
+	configChanged();
 }
 
 void KAccessConfig::selectSound()
@@ -487,13 +622,28 @@ void KAccessConfig::load()
 
   stickyKeys->setChecked(config->readBoolEntry("StickyKeys", false));
   stickyKeysLock->setChecked(config->readBoolEntry("StickyKeysLatch", true));
+  stickyKeysAutoOff->setChecked(config->readBoolEntry("StickyKeysAutoOff", false));
+  stickyKeysBeep->setChecked(config->readBoolEntry("StickyKeysBeep", true));
+  toggleKeysBeep->setChecked(config->readBoolEntry("ToggleKeysBeep", false));
+  kNotifyModifiers->setChecked(config->readBoolEntry("kNotifyModifiers", false));
+
   slowKeys->setChecked(config->readBoolEntry("SlowKeys", false));
   slowKeysDelay->setValue(config->readNumEntry("SlowKeysDelay", 500));
+  slowKeysPressBeep->setChecked(config->readBoolEntry("SlowKeysPressBeep", true));
+  slowKeysAcceptBeep->setChecked(config->readBoolEntry("SlowKeysAcceptBeep", true));
+  slowKeysRejectBeep->setChecked(config->readBoolEntry("SlowKeysRejectBeep", true));
+
   bounceKeys->setChecked(config->readBoolEntry("BounceKeys", false));
   bounceKeysDelay->setValue(config->readNumEntry("BounceKeysDelay", 500));
-  gestures->setChecked(config->readBoolEntry("Gestures", true));
-  gestureConfirmation->setChecked(config->readBoolEntry("GestureConfirmation", true));
+  bounceKeysRejectBeep->setChecked(config->readBoolEntry("BounceKeysRejectBeep", true));
 
+  gestures->setChecked(config->readBoolEntry("Gestures", true));
+  timeout->setChecked(config->readBoolEntry("AccessXTimeout", false));
+  timeoutDelay->setValue(config->readNumEntry("AccessXTimeoutDelay", 30));
+
+  accessxBeep->setChecked(config->readBoolEntry("AccessXBeep", true));
+  gestureConfirmation->setChecked(config->readBoolEntry("GestureConfirmation", false));
+  kNotifyAccessX->setChecked(config->readBoolEntry("kNotifyAccessX", false));
 
   delete config;
 
@@ -524,15 +674,29 @@ void KAccessConfig::save()
 
   config->writeEntry("StickyKeys", stickyKeys->isChecked());
   config->writeEntry("StickyKeysLatch", stickyKeysLock->isChecked());
+  config->writeEntry("StickyKeysAutoOff", stickyKeysAutoOff->isChecked());
+  config->writeEntry("StickyKeysBeep", stickyKeysBeep->isChecked());
+  config->writeEntry("ToggleKeysBeep", toggleKeysBeep->isChecked());
+  config->writeEntry("kNotifyModifiers", kNotifyModifiers->isChecked());
 
   config->writeEntry("SlowKeys", slowKeys->isChecked());
   config->writeEntry("SlowKeysDelay", slowKeysDelay->value());
+  config->writeEntry("SlowKeysPressBeep", slowKeysPressBeep->isChecked());
+  config->writeEntry("SlowKeysAcceptBeep", slowKeysAcceptBeep->isChecked());
+  config->writeEntry("SlowKeysRejectBeep", slowKeysRejectBeep->isChecked());
+
 
   config->writeEntry("BounceKeys", bounceKeys->isChecked());
   config->writeEntry("BounceKeysDelay", bounceKeysDelay->value());
-  
+  config->writeEntry("BounceKeysRejectBeep", bounceKeysRejectBeep->isChecked());
+
   config->writeEntry("Gestures", gestures->isChecked());
+  config->writeEntry("AccessXTimeout", timeout->isChecked());
+  config->writeEntry("AccessXTimeoutDelay", timeoutDelay->value());
+
+  config->writeEntry("AccessXBeep", accessxBeep->isChecked());
   config->writeEntry("GestureConfirmation", gestureConfirmation->isChecked());
+  config->writeEntry("kNotifyAccessX", kNotifyAccessX->isChecked());
 
 
   config->sync();
@@ -580,15 +744,28 @@ void KAccessConfig::defaults()
 
   slowKeys->setChecked(false);
   slowKeysDelay->setValue(500);
+  slowKeysPressBeep->setChecked(true);
+  slowKeysAcceptBeep->setChecked(true);
+  slowKeysRejectBeep->setChecked(true);
 
   bounceKeys->setChecked(false);
   bounceKeysDelay->setValue(500);
+  bounceKeysRejectBeep->setChecked(true);
 
   stickyKeys->setChecked(false);
   stickyKeysLock->setChecked(true);
+  stickyKeysAutoOff->setChecked(false);
+  stickyKeysBeep->setChecked(true);
+  toggleKeysBeep->setChecked(false);
+  kNotifyModifiers->setChecked(false);
 
   gestures->setChecked(true);
+  timeout->setChecked(false);
+  timeoutDelay->setValue(30);
+
+  accessxBeep->setChecked(true);
   gestureConfirmation->setChecked(true);
+  kNotifyAccessX->setChecked(false);
 
   checkAccess();
 
@@ -619,16 +796,25 @@ void KAccessConfig::checkAccess()
   invertScreen->setEnabled(visible);
   flashScreen->setEnabled(visible);
   colorButton->setEnabled(visible);
-
   durationSlider->setEnabled(visible);
 
-  stickyKeysLock->setEnabled(stickyKeys->isChecked());
+  bool sticky = stickyKeys->isChecked();
+  stickyKeysLock->setEnabled(sticky);
+  stickyKeysAutoOff->setEnabled(sticky);
+  stickyKeysBeep->setEnabled(sticky);
 
-  slowKeysDelay->setEnabled(slowKeys->isChecked());
+  bool slow = slowKeys->isChecked();
+  slowKeysDelay->setEnabled(slow);
+  slowKeysPressBeep->setEnabled(slow);
+  slowKeysAcceptBeep->setEnabled(slow);
+  slowKeysRejectBeep->setEnabled(slow);
 
-  bounceKeysDelay->setEnabled(bounceKeys->isChecked());
+  bool bounce = bounceKeys->isChecked();
+  bounceKeysDelay->setEnabled(bounce);
+  bounceKeysRejectBeep->setEnabled(bounce);
 
-  gestureConfirmation->setEnabled(gestures->isChecked());
+  bool useTimeout = timeout->isChecked();
+  timeoutDelay->setEnabled(useTimeout);
 }
 
 extern "C"
