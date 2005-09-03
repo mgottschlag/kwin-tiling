@@ -19,6 +19,7 @@
 #include <krun.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <kauthorized.h>
 #include <kurifilter.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
@@ -143,7 +144,7 @@ void Command_url_action::execute()
             }
         case KURIFilterData::EXECUTABLE:
             {
-            if (!kapp->authorize("shell_access"))
+            if (!KAuthorized::self()->authorize("shell_access"))
 		return;
             if( !uri.hasArgsAndOptions())
                 {
@@ -158,7 +159,7 @@ void Command_url_action::execute()
             }
         case KURIFilterData::SHELL:
             {
-            if (!kapp->authorize("shell_access"))
+            if (!KAuthorized::self()->authorize("shell_access"))
 		return;
             if( !KRun::runCommand(
                 cmd + ( uri.hasArgsAndOptions() ? uri.argsAndOptions() : "" ),
