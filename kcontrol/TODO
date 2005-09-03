@@ -91,8 +91,6 @@ The desktop file is called "kcm_fonts" with "Name=Fonts" and "Categories=X-KDE-s
 
 ---------Various technical, broad design shifts: --------------------
 
-* Move the various KCMs in kdebase/kcontrol/* out to their respective app, as per the KCM Guidelines.
-
 * Convert KCMs to use ui Designer files
 
 * Namespace the KCMs desktop files to "kcm_*.desktop", as per KCM Guidelines.
@@ -111,16 +109,10 @@ If a binary is not in $PATH it is the distributors fault and not KDE. The reason
 
 Below is some old stuff, which was in this file.
 
-
 File Browsing -> Filemanager
 ----------------------------
 Appearance (Rik was right here and I was wrong): Getting rid of "Standard Font" and "Normal Text Color" by putting "Filemanager Text" into "Look&Feel -> Colors -> Widget color"
 Other: This tab should be removed: "Show network operations in a single window" should go either in "Behaviour" or into "Network -> KDE protocols Information". Also "Terminal program" appears for Konqueror-Settings as well as in the Kicker-Settings. There should only be one place which specifies which terminal should be used for all applications.
-
-
-Help -> Index
--------------
-This looks a bit crowdy. Adding a second Tab "Program Locations" which appears behind the "General tab" might be a good idea as the paths should be set automagically and user-interaction concerning this should only be necessary in case of failure.
 
 Look & Feel -> Desktop
 ----------------------
@@ -135,17 +127,6 @@ Look & Feel -> System-Notifications
 The current dialog resembles a very good "advanced"-tab. It would be nice for the newbie if there was a
 Tab for newbies in the first place which only shows the available Notification-themes ("Minimalistic", "Visually impaired", "Aureal impaired", "KDE-Standard").
 The current dialog should appear as an advanced tab behind the "Theme"-tab.
-
-Network -> Talk Configuration
------------------------------
-Answering Machine: A groupbox around "Address:, Subject:, First Line:" would be nice. That way one wouldn't need to mention "Mail" each time. The Groupbox could be named something like "Anwering Mail".
-That way one would have a much cleaner layout and it would be much easier to see at once what the dialog is about.
-Forward: Way too much text here. I see the point of having a direct explanation in the dialog. But this could look much friendlier using the following solution:
-There should be a Textbox below the "Forward method"-Combobox. This Textbox only contains the information for the Forward-method which is currently selected (So the text changes each time a different Forward-method is selected).
-
-Sound -> Sound Server
----------------------
-As soon as more stuff is being added, a tab "Quality" might be a good idea.
 
 Web Browsing -> User Agent
 --------------------------
