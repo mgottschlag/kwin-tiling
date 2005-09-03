@@ -173,7 +173,7 @@ void KCMKNotify::load()
 
     KConfig config( "knotifyrc", true, false );
     config.setGroup( "Misc" );
-    QString appDesc = config.readEntry( "LastConfiguredApp" );
+    QString appDesc = config.readEntry( "LastConfiguredApp", "KDE System Notifications" );
     if ( !appDesc.isEmpty() )
         m_appCombo->setCurrentItem( appDesc );
 
