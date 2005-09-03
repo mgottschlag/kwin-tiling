@@ -1,14 +1,4 @@
 
-Welcome to the this-is-another-kcontrol-reorganization-attempt-but-this-time-it-will-be-good file! 
-
-This file contain a list of various major changes for KControl(reorganization, broad technical changes etc.) planned for KDE4. I think it is a good idea if small changes in each KCM is not listed(if they not have a meaning in the bigger picture) otherwise this list will grow too big. 
-Feel free to discuss the ideas on kde-usability.
-Of course, nothing in this file is set in stone, or is "correct" or "true" for that matter.
-
-                 ---These are only ideas.---
-
-                 ---These are only ideas!---
-
 ---------- Renaming
 
 * Rename "Appearance & Themes" to "Appearance"
@@ -17,9 +7,6 @@ Of course, nothing in this file is set in stone, or is "correct" or "true" for t
 
 * Rename "Display" to "Monitor", see the KCM guidelines
 
-* Rename "Peripherals" to "Hardware".
- - remove settings-peripherals.directory
- - Update kde-settings.menu and remove the Peripherals menu
  - Convert any kcmmodules that haven't already to X-KDE-settings-hardware
 
 * Rename password & User Account - "User Account"
@@ -27,6 +14,8 @@ Of course, nothing in this file is set in stone, or is "correct" or "true" for t
 * Rename "Component Chooser" to "Default Applications"  Users want to set the default application handlers, not Choose a component (which they wouldn't have a clue what it was anyway)?
 
 ---------- Reorganization/Moving
+
+-Where should CGI scripts go?
 
 * Move Background, Splash Screen, And Screen Saver to Desktop 
 
@@ -42,7 +31,6 @@ Of course, nothing in this file is set in stone, or is "correct" or "true" for t
 
 ---------- Removing
 
-* "KDE Components/File Manager" - It's Konqueror specific.
 
 * "Internet & Network/Web Browser/" - It's Konqueror specific.  Those apps(such as Quanta) which needs the configuration functionality can load the specific KCMs into their own configuration dialogs.
 
