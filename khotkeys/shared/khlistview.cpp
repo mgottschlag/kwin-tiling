@@ -23,8 +23,8 @@
 namespace KHotKeys
 {
 
-KHListView::KHListView( QWidget* parent_P, const char* /* name_P  */)
-    : KListView( parent_P /*, name_P */ ), saved_current_item( NULL ),
+KHListView::KHListView( QWidget* parent_P, const char* name_P )
+    : KListView( parent_P, name_P ), saved_current_item( NULL ),
         in_clear( false ), ignore( false ), force_select( false )
     {
     connect( this, SIGNAL( selectionChanged( Q3ListViewItem* )),
