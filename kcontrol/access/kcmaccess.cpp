@@ -408,7 +408,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   vbox->addStretch();
 
-  tab->addTab(modifiers, i18n("&Modifier keys"));
+  tab->addTab(modifiers, i18n("&Modifier Keys"));
 
   // key filter settings ---------------------------------
   QWidget *filters = new QWidget(this);
@@ -484,7 +484,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const char *)
 
   vbox->addStretch();
 
-  tab->addTab(filters, i18n("&Keyboard filters"));
+  tab->addTab(filters, i18n("&Keyboard Filters"));
 
   // gestures --------------------------------------------
   QWidget *features = new QWidget(this);
