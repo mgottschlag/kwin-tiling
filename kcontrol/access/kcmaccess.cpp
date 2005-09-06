@@ -165,8 +165,8 @@ QString mouseKeysShortcut (Display *display) {
   KKey key = KKey(KKeyNative(&ev));
   QString keyname = key.toString();
 
-  unsigned int AltMask   = KKeyNative::modX(KKey::ALT);
-  unsigned int WinMask   = KKeyNative::modX(KKey::WIN);
+  unsigned int AltMask   = KKeyNative::modXAlt();
+  unsigned int WinMask   = KKeyNative::modXWin();
   unsigned int NumMask   = KKeyNative::modXNumLock();
   unsigned int ScrollMask= KKeyNative::modXScrollLock();
 

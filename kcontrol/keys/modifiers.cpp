@@ -209,7 +209,7 @@ void ModifiersModule::initGUI()
 	m_plblWinModX = new QLabel( "", pGroup );
 	/*m_pcbWinX = newModXComboBox( pGroup );
 	int i;
-	switch( KKeyNative::modX(KKey::WIN) ) {
+	switch( KKeyNative::modXWin() ) {
 		case Mod2Mask: i = 1; break;
 		case Mod3Mask: i = 2; break;
 		case Mod4Mask: i = 3; break;
@@ -331,7 +331,7 @@ void ModifiersModule::updateWidgets()
 	XFreeModifiermap( xmk );
 
 	int i;
-	switch( KKeyNative::modX(KKey::WIN) ) {
+	switch( KKeyNative::modXWin() ) {
 		case Mod2Mask: i = 2; break;
 		case Mod3Mask: i = 3; break;
 		case Mod4Mask: i = 4; break;

@@ -345,7 +345,7 @@ void KAccessApp::initMasks() {
          if (modifierKeys[i].keysym != 0)
             mask = XkbKeysymToModifiers (QX11Info::display(), modifierKeys[i].keysym);
          else if (modifierKeys[i].name == "Win")
-            mask = KKeyNative::modX(KKey::WIN);
+            mask = KKeyNative::modXWin();
          else
             mask = XkbKeysymToModifiers (QX11Info::display(), XK_Mode_switch)
                  | XkbKeysymToModifiers (QX11Info::display(), XK_ISO_Level3_Shift)
@@ -545,8 +545,8 @@ QString mouseKeysShortcut (Display *display) {
   KKey key = KKey(KKeyNative(&ev));
   QString keyname = key.toString();
 
-  unsigned int AltMask   = KKeyNative::modX(KKey::ALT);
-  unsigned int WinMask   = KKeyNative::modX(KKey::WIN);
+  unsigned int AltMask   = KKeyNative::modXAlt();
+  unsigned int WinMask   = KKeyNative::modXWin();
   unsigned int NumMask   = KKeyNative::modXNumLock();
   unsigned int ScrollMask= KKeyNative::modXScrollLock();
 
