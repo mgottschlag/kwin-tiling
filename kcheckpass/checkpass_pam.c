@@ -141,16 +141,17 @@ AuthReturn Authenticate(const char *caller, const char *method,
     sprintf(pservb, "%.31s-%.31s", caller, method);
     pam_service = pservb;
   } else {
-    PAM_data.classic = 1;
+    /* PAM_data.classic = 1; */
     pam_service = caller;
   }
   pam_error = pam_start(pam_service, user, &PAM_conversation, &pamh);
   if (pam_error != PAM_SUCCESS)
     return AuthError;
 
-  tty = getenv ("DISPLAY");
+  tty = ttyname(0);
   if (!tty)
-    tty = ttyname(0);
+    tty = getenv ("DISPLAY");
+
   pam_error = pam_set_item (pamh, PAM_TTY, tty);
   if (pam_error != PAM_SUCCESS) {
     pam_end(pamh, pam_error);

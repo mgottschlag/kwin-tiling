@@ -264,7 +264,12 @@ message(const char *fmt, ...)
 
   va_start(ap, fmt);
   vfprintf(stderr, fmt, ap);
+  va_end(ap);
 }
+
+#ifndef O_NOFOLLOW
+# define O_NOFOLLOW 0
+#endif
 
 static void ATTR_NORETURN
 usage(int exitval)
@@ -286,6 +291,14 @@ usage(int exitval)
   exit(exitval);
 }
 
+static int exclusive_lock(int fd)
+{
+  struct flock lk;
+  lk.l_type = F_WRLCK;
+  lk.l_whence = SEEK_SET;
+  lk.l_start = lk.l_len = 0;
+  return fcntl(fd, F_SETLKW, &lk);
+}
 
 int
 main(int argc, char **argv)
@@ -299,10 +312,13 @@ main(int argc, char **argv)
   char		*p;
 #endif
   struct passwd	*pw;
-  int		c, nfd, lfd, numtries;
+  int		c, nfd, tfd, lfd;
   uid_t		uid;
-  long		lasttime;
+  time_t	lasttime;
   AuthReturn	ret;
+  char tmpname[64], fname[64], fcont[64];
+  time_t left = 3;
+  lfd = tfd = 0;
 
 #ifdef HAVE_OSF_C2_PASSWD
   initialize_osf_security(argc, argv);
@@ -371,6 +387,41 @@ main(int argc, char **argv)
       return AuthError;
     }
   }
+
+  /* see if we had already a failed attempt */
+  if ( uid != geteuid() ) {
+    strcpy(tmpname, "/var/lock/kcheckpass.tmp.XXXXXX");
+    if ((tfd=mkstemp(tmpname)) < 0)
+      return AuthError;
+
+    /* try locking out concurrent kcheckpass processes */
+    exclusive_lock(tfd);
+    
+    write(tfd, fcont, sprintf(fcont, "%lu\n", time(0)+left));
+    (void) lseek(tfd, 0, SEEK_SET);
+
+    sprintf(fname, "/var/lock/kcheckpass.%d", uid );
+
+    if ((lfd = open(fname, O_RDWR | O_NOFOLLOW)) >= 0) {
+      if (exclusive_lock(lfd) == 0) {
+        if ((c = read(lfd, fcont, sizeof(fcont)-1)) > 0 &&
+	    (fcont[c] = '\0', sscanf(fcont, "%ld", &lasttime) == 1))
+	  {
+            time_t ct = time(0);
+
+	    /* in case we were killed early, sleep the remaining time
+	     * to properly enforce invocation throttling and make sure
+	     * that users can't use kcheckpass for bruteforcing password
+             */
+            if(lasttime > ct && lasttime < ct + left)
+              sleep (lasttime - ct);
+          }
+      }
+      close(lfd);
+    }
+    rename(tmpname, fname);
+  }
+
   /* Now do the fandango */
   ret = Authenticate(
 #ifdef HAVE_PAM
@@ -379,35 +430,21 @@ main(int argc, char **argv)
                      method,
                      username, 
                      sfd < 0 ? conv_legacy : conv_server);
+
   if (ret == AuthOk || ret == AuthBad) {
     /* Security: Don't undermine the shadow system. */
     if (uid != geteuid()) {
-      char fname[32], fcont[32];
-      sprintf(fname, "/var/lock/kcheckpass.%d", uid);
-      if ((lfd = open(fname, O_RDWR | O_CREAT)) >= 0) {
-        struct flock lk;
-        lk.l_type = F_WRLCK;
-        lk.l_whence = SEEK_SET;
-        lk.l_start = lk.l_len = 0;
-	if (fcntl(lfd, F_SETLKW, &lk))
-          return AuthError;
-        if ((c = read(lfd, fcont, sizeof(fcont))) > 0 &&
-            (fcont[c] = 0, sscanf(fcont, "%ld %d\n", &lasttime, &numtries) == 2))
-        {
-          time_t left = lasttime - time(0);
-          if (numtries < 20)
-            numtries++;
-          left += 2 << (numtries > 10 ? numtries - 10 : 0);
-          if (left > 0)
-            sleep(left);
-        } else
-          numtries = 0;
-        if (ret == AuthBad) {
-          lseek(lfd, 0, SEEK_SET);
-          write(lfd, fcont, sprintf(fcont, "%ld %d\n", time(0), numtries));
-        } else
-          unlink(fname);
-      }
+      if (ret == AuthBad) {
+        write(tfd, fcont, sprintf(fcont, "%lu\n", time(0)+left));
+      } else
+        unlink(fname);
+	
+      unlink(tmpname);
+
+      if (ret == AuthBad)
+        sleep(left);  
+
+      close(tfd);
     }
     if (ret == AuthBad) {
       message("Authentication failure\n");
@@ -417,6 +454,7 @@ main(int argc, char **argv)
       }
     }
   }
+
   return ret;
 }
 
