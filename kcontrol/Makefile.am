@@ -33,7 +33,7 @@ endif
 # FIXME : readd dnssd
 # 
 SUBDIRS = bell background filetypes samba krdb input info ioslaveinfo kdm\
-	locale launch keys kio style kded \
+	locale launch keys style kded \
 	arts kcontrol knotify\
 	clock pics $(ACCESS_SUBDIR) colors energy fonts \
 	icons screensaver crypto privacy smserver \
