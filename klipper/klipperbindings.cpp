@@ -24,7 +24,7 @@
 # define DEF( name, key3, key4, fnSlot ) \
    keys->insert( name, i18n(name), QString::null, key3, key4 )
 #endif
-#define WIN KKey::QtWIN
+#define WIN Qt::META
 
 	keys->insert( "Program:klipper", i18n("Clipboard") );
 
