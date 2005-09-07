@@ -4,7 +4,7 @@ System Settings is:
 
 System Settings is not:
 -Application Configuration
--System Administration
--Tools
+-System Administration/Configuration
+-Tools/Utilities
 
-On other enviorments the already provided equivilant should be used.
+On other enviorments the already provided equivilant should be used.  In KDE the other enviorment equivilants should not be needed.
