@@ -19,3 +19,5 @@ messages: rc.cpp
 	$(XGETTEXT) -kni18n *.cpp -o $(podir)/kcmfonts.pot
 
 xdg_apps_DATA = fonts.desktop
+
+KDE_ICON=AUTO

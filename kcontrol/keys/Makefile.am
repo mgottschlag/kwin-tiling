@@ -20,3 +20,4 @@ xdg_apps_DATA = keys.desktop
 
 scheme_DATA = wm3.kksrc kde3.kksrc kde4.kksrc win3.kksrc win4.kksrc mac4.kksrc unix3.kksrc
 schemedir = $(kde_datadir)/kcmkeys
+KDE_ICON=AUTO

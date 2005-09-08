@@ -13,3 +13,4 @@ messages:
 	$(XGETTEXT) $(kcm_samba_la_SOURCES) -o $(podir)/kcmsamba.pot
 
 xdg_apps_DATA = smbstatus.desktop
+KDE_ICON=AUTO

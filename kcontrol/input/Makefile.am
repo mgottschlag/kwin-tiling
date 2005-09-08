@@ -45,3 +45,4 @@ install-data-hook:
 ##I'd like to install this automatically, but it only works on Linux, and I don't want to break things...
 ## $(INSTALL_DATA) $(srcdir)/consoleUserPerms $(DESTDIR)/etc/hotplug/usb/consoleUserPerms
 ## $(INSTALL_DATA) $(srcdir)/logitechmouse.usermap $(DESTDIR)/etc/hotplug/usb/logitechmouse.usermap
+KDE_ICON=AUTO

@@ -13,3 +13,5 @@ messages:
 	$(XGETTEXT) $(kcm_clock_la_SOURCES) -o $(podir)/kcmkclock.pot
 
 xdg_apps_DATA = clock.desktop
+
+KDE_ICON=AUTO

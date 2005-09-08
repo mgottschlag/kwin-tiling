@@ -28,3 +28,5 @@ eventsrc_DATA = eventsrc
 messages:
 	$(XGETTEXT) $(kaccess_la_SOURCES) -o $(podir)/kaccess.pot
 	$(XGETTEXT) $(kcm_access_la_SOURCES) -o $(podir)/kcmaccess.pot
+
+KDE_ICON=AUTO

@@ -1,0 +1,23 @@
+- setting up own layout if you're not root - using xkbcomp
+
+- allowing other latin base groups instead of "us" (e.g. "dvorak")
+
+- checking each layout in kxkb.cpp if it's ok for single group
+- checking each layout in kcmlayout.cpp whether it's latin and don't need latin group
+
+- check the problem with gnome apps, first switch of layout with keyboard shortcut locks input
+
+- kdesktop_lock: layouts menu, flag icons, better error handling
+
+- parse xfree86.xml instead of xfree86.lst for XFree86 4.3.0 and higher
+
+- prevent application/window list from growing endlessly
+
+- bug 59203: call kcontrol/keys/modifiers.cpp: 
+	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
+	bool bMacSwap = KGlobal::config()->readBoolEntry( "Mac Modifier Swap", false );
+	if( bMacSwap )
+		ModifiersModule::setupMacModifierKeys();
+    after each switch
+    
+- 

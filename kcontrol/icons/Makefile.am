@@ -23,3 +23,5 @@ xdg_apps_DATA = icons.desktop
 install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/Themes
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/Themes/iconthemes.desktop
+
+KDE_ICON=AUTO

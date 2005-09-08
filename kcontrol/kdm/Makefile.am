@@ -17,3 +17,4 @@ messages:
 	$(XGETTEXT) $(kcm_kdm_la_SOURCES) -o $(podir)/kdmconfig.pot
 
 xdg_apps_DATA = kdm.desktop
+KDE_ICON=AUTO

@@ -13,3 +13,5 @@ messages:
 	$(XGETTEXT) $(kcm_bell_la_SOURCES) -o $(podir)/kcmbell.pot
 
 xdg_apps_DATA = bell.desktop
+
+KDE_ICON=AUTO

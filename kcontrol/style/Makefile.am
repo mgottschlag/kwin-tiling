@@ -16,3 +16,4 @@ messages: rc.cpp
 
 xdg_apps_DATA = style.desktop
 
+KDE_ICON=AUTO

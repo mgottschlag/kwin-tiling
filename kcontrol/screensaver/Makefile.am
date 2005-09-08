@@ -18,3 +18,4 @@ messages: rc.cpp
 
 xdg_apps_DATA = screensaver.desktop
 
+KDE_ICON=AUTO

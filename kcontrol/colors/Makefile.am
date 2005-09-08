@@ -13,3 +13,6 @@ messages:
 	$(XGETTEXT) -kni18n $(kcm_colors_la_SOURCES) -o $(podir)/kcmcolors.pot
 
 xdg_apps_DATA = colors.desktop
+
+KDE_ICON=AUTO
+

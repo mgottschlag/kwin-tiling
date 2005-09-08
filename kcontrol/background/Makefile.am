@@ -26,3 +26,5 @@ messages: rc.cpp
 	$(XGETTEXT) -kni18n *.cpp -o $(podir)/kcmbackground.pot
 
 xdg_apps_DATA = background.desktop
+
+KDE_ICON=AUTO

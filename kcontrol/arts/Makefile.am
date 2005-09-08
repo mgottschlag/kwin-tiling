@@ -13,3 +13,5 @@ messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmarts.pot
 
 xdg_apps_DATA = arts.desktop
+
+KDE_ICON=AUTO

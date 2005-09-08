@@ -38,3 +38,4 @@ install-data-local: uninstall.desktop
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(xdg_appsdir)/panel_appearance.desktop
 
 extensionInfo.lo: ../../kicker/libkicker/kickerSettings.h
+KDE_ICON=AUTO

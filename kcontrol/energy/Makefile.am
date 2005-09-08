@@ -16,3 +16,4 @@ messages:
 
 energy_data_DATA = energy.desktop
 energy_datadir = $(kde_appsdir)/.hidden
+KDE_ICON=AUTO

@@ -25,3 +25,4 @@ install-data-local:
 	rm -f $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/knotify.desktop
 	rm -f $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/kcmnotify.desktop
 
+KDE_ICON=AUTO
