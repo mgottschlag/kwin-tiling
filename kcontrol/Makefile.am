@@ -23,10 +23,6 @@ if include_kcontrol_randr
 RANDR_SUBDIR=randr
 endif
 
-if include_kcontrol_joystick
-JOYSTICK_SUBDIR=joystick
-endif
-
 # readd kicker and taskbar later
 # 'colors' and 'fonts' should come after 'krdb'
 #
@@ -39,5 +35,4 @@ SUBDIRS = bell background filetypes samba krdb input info ioslaveinfo kdm\
 	icons screensaver crypto privacy smserver \
 	 $(USBVIEW_SUBDIR) \
 	$(KSMCARD_SUBDIR) nics $(FONTINST_SUBDIR) $(RANDR_SUBDIR) \
-	componentchooser xinerama $(VIEW1394_SUBDIR) display kthememanager \
-        $(JOYSTICK_SUBDIR)
+	componentchooser xinerama $(VIEW1394_SUBDIR) kthememanager
