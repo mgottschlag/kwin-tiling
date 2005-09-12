@@ -87,7 +87,7 @@ void Tzone::currentZone()
     time_t now = time(0);
     tzset();
     strftime(result.data(), result.size(), "%Z", localtime(&now));
-    m_local->setText(localZone.arg(KTimezoneWidget::displayName(m_zoneDb.local())).arg(QString::fromLatin1(result)));
+    m_local->setText(localZone.arg(KTimezoneWidget::displayName(m_zoneDb.local())).arg(QLatin1String(result)));
 }
 
 // FIXME: Does the logic in this routine actually work correctly? For example,

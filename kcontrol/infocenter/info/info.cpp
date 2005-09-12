@@ -171,7 +171,7 @@ static Q3ListViewItem* XServer_fill_screen_info( Q3ListViewItem *lBox, Q3ListVie
         for (i = 0; i < ndepths; i++) {
             txt = txt + Value(depths[i]);
             if (i < ndepths - 1)
-                txt = txt + QString::fromLatin1(", ");
+                txt = txt + QLatin1String(", ");
         }
 
         last = new Q3ListViewItem(item, last, i18n("Depths (%1)").arg(ndepths,-1), txt);
@@ -276,7 +276,7 @@ static bool GetInfo_XServer_Generic( Q3ListView *lBox )
     last = new Q3ListViewItem(next, i18n("Name of the Display"),
 		DisplayString(dpy));
 
-    last = new Q3ListViewItem(next, last, i18n("Vendor String"), QString::fromLatin1(ServerVendor(dpy)));
+    last = new Q3ListViewItem(next, last, i18n("Vendor String"), QLatin1String(ServerVendor(dpy)));
     last = new Q3ListViewItem(next, last, i18n("Vendor Release Number"),
 		Value((int)VendorRelease(dpy)));
 
@@ -298,7 +298,7 @@ static bool GetInfo_XServer_Generic( Q3ListView *lBox )
     int extCount;
     char **extensions = XListExtensions( dpy, &extCount );
     for ( i = 0; i < extCount; i++ ) {
-       item = new Q3ListViewItem( last, item, QString::fromLatin1( extensions[i] ) );
+       item = new Q3ListViewItem( last, item, QLatin1String( extensions[i] ) );
     }
     XFreeExtensionList( extensions );
 
@@ -360,7 +360,7 @@ void KInfoListWidget::load()
         retrieve-function. If the function wants the widget to show
         another string, then it change *GetInfo_ErrorString ! */
     ErrorString = i18n("No information available about %1.").arg(title)
-		    + QString::fromLatin1("\n\n") + DEFAULT_ERRORSTRING;
+		    + QLatin1String("\n\n") + DEFAULT_ERRORSTRING;
     GetInfo_ErrorString = &ErrorString;  /* save the address of ErrorString */
 
     sorting_allowed = true; 	/* the functions may set that */

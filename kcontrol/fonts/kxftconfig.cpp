@@ -53,7 +53,7 @@ QString KXftConfig::contractHome(QString path)
             int len = home.length();
 
             if(path.length() == len || path[len] == '/')
-                return path.replace(0, len, QString::fromLatin1("~"));
+                return path.replace(0, len, QLatin1String("~"));
         }
     }
 

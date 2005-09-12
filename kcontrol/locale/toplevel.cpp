@@ -61,7 +61,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char* /*name*/,
   m_nullConfig = new KConfig(QString::null, false, false);
   m_globalConfig = new KConfig(QString::null, false, true);
 
-  m_locale = new KLocale(QString::fromLatin1("kcmlocale"), m_nullConfig);
+  m_locale = new KLocale(QLatin1String("kcmlocale"), m_nullConfig);
   QVBoxLayout *l = new QVBoxLayout(this, 0, KDialog::spacingHint());
   l->setAutoAdd(TRUE);
 
@@ -159,7 +159,7 @@ KLocaleApplication::~KLocaleApplication()
 void KLocaleApplication::load()
 {
   m_globalConfig->reparseConfiguration();
-  *m_locale = KLocale(QString::fromLatin1("kcmlocale"), m_globalConfig);
+  *m_locale = KLocale(QLatin1String("kcmlocale"), m_globalConfig);
 
   emit localeChanged();
   emit languageChanged();
@@ -177,7 +177,7 @@ void KLocaleApplication::save()
                             "language of all programs, you will have to "
                             "logout first."),
                            m_locale->translate("Applying Language Settings"),
-                           QString::fromLatin1("LanguageChangesApplyOnlyToNewlyStartedPrograms"));
+                           QLatin1String("LanguageChangesApplyOnlyToNewlyStartedPrograms"));
   // restore the old global locale
   KGlobal::_locale = lsave;
 
@@ -205,7 +205,7 @@ void KLocaleApplication::save()
 
 void KLocaleApplication::defaults()
 {
-  *m_locale = KLocale(QString::fromLatin1("kcmlocale"), m_nullConfig);
+  *m_locale = KLocale(QLatin1String("kcmlocale"), m_nullConfig);
 
   kdDebug() << "defaults: " << m_locale->languageList() << endl;
 

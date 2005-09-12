@@ -93,12 +93,12 @@ QString KCGlobal::baseGroup()
       if (_infocenter)
       {
         kdWarning() << "No K menu group with X-KDE-BaseGroup=info found ! Defaulting to Settings/Information/" << endl;
-        _baseGroup = QString::fromLatin1("Settings/Information/");
+        _baseGroup = QLatin1String("Settings/Information/");
       }
       else
       {
         kdWarning() << "No K menu group with X-KDE-BaseGroup=settings found ! Defaulting to Settings/" << endl;
-        _baseGroup = QString::fromLatin1("Settings/");
+        _baseGroup = QLatin1String("Settings/");
       }
     }
   }

@@ -98,11 +98,11 @@ void KLocaleSample::slotUpdateTime()
 void KLocaleSample::slotLocaleChanged()
 {
   m_numberSample->setText(m_locale->formatNumber(1234567.89) +
-                          QString::fromLatin1(" / ") +
+                          QLatin1String(" / ") +
                           m_locale->formatNumber(-1234567.89));
 
   m_moneySample->setText(m_locale->formatMoney(123456789.00) +
-                         QString::fromLatin1(" / ") +
+                         QLatin1String(" / ") +
                          m_locale->formatMoney(-123456789.00));
 
   slotUpdateTime();

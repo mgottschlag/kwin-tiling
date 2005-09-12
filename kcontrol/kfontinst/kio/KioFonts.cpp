@@ -138,7 +138,7 @@ static QString removeMultipleExtension(const KURL &url)
     QString fname(url.fileName());
     int     pos;
 
-    if(-1!=(pos=fname.findRev(QString::fromLatin1(constMultipleExtension))))
+    if(-1!=(pos=fname.findRev(QLatin1String(constMultipleExtension))))
         fname=fname.left(pos);
 
     return fname;
@@ -301,7 +301,7 @@ static bool createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name, cons
                                                 ? KFI_KIO_FONTS_PROTOCOL"/system-folder" 
                                                 : KFI_KIO_FONTS_PROTOCOL"/folder");
         addAtom(entry, KIO::UDS_GUESSED_MIME_TYPE, 0, "application/octet-stream");
-        QString url(KFI_KIO_FONTS_PROTOCOL+QString::fromLatin1(":/"));
+        QString url(KFI_KIO_FONTS_PROTOCOL+QLatin1String(":/"));
         return true;
     }
     else if (sys && !Misc::root())   // Default system fonts folder does not actually exist yet!
@@ -402,15 +402,15 @@ static bool createFontUDSEntry(KIO::UDSEntry &entry, const QString &name, Q3Valu
             addAtom(entry, KIO::UDS_MIME_TYPE, 0, KMimeType::findByPath(path, 0, true)->name());
             addAtom(entry, KIO::UDS_GUESSED_MIME_TYPE, 0, "application/octet-stream");
 
-        QString url(KFI_KIO_FONTS_PROTOCOL+QString::fromLatin1(":/"));
+        QString url(KFI_KIO_FONTS_PROTOCOL+QLatin1String(":/"));
 
         if(!Misc::root())
         {
             url+=sys ? i18n(KFI_KIO_FONTS_SYS) : i18n(KFI_KIO_FONTS_USER);
-            url+=QString::fromLatin1("/");
+            url+=QLatin1String("/");
         }
         if(multiple)
-            url+=name+QString::fromLatin1(constMultipleExtension);
+            url+=name+QLatin1String(constMultipleExtension);
         else
             url+=Misc::getFile(path);
         addAtom(entry, KIO::UDS_URL, 0, url);
@@ -1192,7 +1192,7 @@ bool CKioFonts::putReal(const QString &destOrig, const Q3CString &destOrigC, boo
 
     if (markPartial)
     {
-        QString  destPart(destOrig+QString::fromLatin1(".part"));
+        QString  destPart(destOrig+QLatin1String(".part"));
         Q3CString destPartC(QFile::encodeName(destPart));
 
         dest = destPart;
@@ -2352,8 +2352,8 @@ bool CKioFonts::checkAllowed(const KURL &u)
 
         if(ds==QString(QChar('/')+i18n(KFI_KIO_FONTS_USER)+QChar('/')) ||
            ds==QString(QChar('/')+i18n(KFI_KIO_FONTS_SYS)+QChar('/')) ||
-           ds==QString(QChar('/')+QString::fromLatin1(KFI_KIO_FONTS_USER)+QChar('/')) ||
-           ds==QString(QChar('/')+QString::fromLatin1(KFI_KIO_FONTS_SYS)+QChar('/')))
+           ds==QString(QChar('/')+QLatin1String(KFI_KIO_FONTS_USER)+QChar('/')) ||
+           ds==QString(QChar('/')+QLatin1String(KFI_KIO_FONTS_SYS)+QChar('/')))
         {
             error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, you cannot rename, move, copy, or delete either \"%1\" or \"%2\".")
                   .arg(i18n(KFI_KIO_FONTS_USER)).arg(i18n(KFI_KIO_FONTS_SYS))); \

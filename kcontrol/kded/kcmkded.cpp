@@ -146,7 +146,7 @@ void KDEDConfig::load() {
 
 	QStringList files;
 	KGlobal::dirs()->findAllResources( "services",
-			QString::fromLatin1( "kded/*.desktop" ),
+			QLatin1String( "kded/*.desktop" ),
 			true, true, files );
 
 	Q3ListViewItem* item = 0L;
@@ -183,7 +183,7 @@ void KDEDConfig::save() {
 
 	QStringList files;
 	KGlobal::dirs()->findAllResources( "services",
-			QString::fromLatin1( "kded/*.desktop" ),
+			QLatin1String( "kded/*.desktop" ),
 			true, true, files );
 
 	KConfig kdedrc("kdedrc", false, false);

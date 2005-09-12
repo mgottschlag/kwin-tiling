@@ -61,7 +61,7 @@ KCMDnssd::KCMDnssd(QWidget *parent, const char *name, const QStringList&)
 		else if (getenv("KDESU_USER")!=0) tabs->removePage(tab); 
 	addConfig(DNSSD::Configuration::self(),this);
 	// it is host-wide setting so it has to be in global config file
-	domain = new KSimpleConfig( QString::fromLatin1( KDE_CONFDIR "/kdnssdrc" ));
+	domain = new KSimpleConfig( QLatin1String( KDE_CONFDIR "/kdnssdrc" ));
 	domain->setGroup("publishing");
 	load();
 	connect(hostedit,SIGNAL(textChanged(const QString&)),this,SLOT(wdchanged()));

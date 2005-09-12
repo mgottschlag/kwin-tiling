@@ -255,7 +255,7 @@ void KDMAppearanceWidget::makeReadOnly()
 void KDMAppearanceWidget::loadLanguageList(KLanguageButton *combo)
 {
   QStringList langlist = KGlobal::dirs()->findAllResources("locale",
-			QString::fromLatin1("*/entry.desktop"));
+			QLatin1String("*/entry.desktop"));
   langlist.sort();
   for ( QStringList::ConstIterator it = langlist.begin();
 	it != langlist.end(); ++it )
@@ -265,9 +265,9 @@ void KDMAppearanceWidget::loadLanguageList(KLanguageButton *combo)
     QString nid = fpath.mid(index + 1);
 
     KSimpleConfig entry(*it);
-    entry.setGroup(QString::fromLatin1("KCM Locale"));
-    QString name = entry.readEntry(QString::fromLatin1("Name"), i18n("without name"));
-    combo->insertLanguage(nid, name, QString::fromLatin1("l10n/"), QString::null);
+    entry.setGroup(QLatin1String("KCM Locale"));
+    QString name = entry.readEntry(QLatin1String("Name"), i18n("without name"));
+    combo->insertLanguage(nid, name, QLatin1String("l10n/"), QString::null);
   }
 }
 
@@ -321,7 +321,7 @@ void KDMAppearanceWidget::loadGuiStyles(KBackedComboBox *combo)
 bool KDMAppearanceWidget::setLogo(QString logo)
 {
     QString flogo = logo.isEmpty() ?
-                    locate("data", QString::fromLatin1("kdm/pics/kdelogo.png") ) :
+                    locate("data", QLatin1String("kdm/pics/kdelogo.png") ) :
                     logo;
     QImage p(flogo);
     if (p.isNull())
@@ -339,7 +339,7 @@ bool KDMAppearanceWidget::setLogo(QString logo)
 void KDMAppearanceWidget::slotLogoButtonClicked()
 {
     KImageIO::registerFormats();
-    KFileDialog dialogue(locate("data", QString::fromLatin1("kdm/pics/")),
+    KFileDialog dialogue(locate("data", QLatin1String("kdm/pics/")),
 			 KImageIO::pattern( KImageIO::Reading ),
 			 this, 0, true);
     dialogue.setOperationMode( KFileDialog::Opening );

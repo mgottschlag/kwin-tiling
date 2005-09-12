@@ -260,21 +260,21 @@ QString flags_tos (unsigned int flags)
 
   if (flags & IFF_BROADCAST) {
     if (tmp.length()) {
-      tmp += QString::fromLatin1(", ");
+      tmp += QLatin1String(", ");
     }
     tmp += i18n("Broadcast");
   }
   
   if (flags & IFF_MULTICAST) {
     if (tmp.length()) {
-      tmp += QString::fromLatin1(", ");
+      tmp += QLatin1String(", ");
     }
     tmp += i18n("Multicast");
   }
   
   if (flags & IFF_LOOPBACK) {
     if (tmp.length()) {
-      tmp += QString::fromLatin1(", ");
+      tmp += QLatin1String(", ");
     }
     tmp += i18n("Loopback");
   }

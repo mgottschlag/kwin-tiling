@@ -169,9 +169,9 @@ void CfgEmailClient::selectEmailClient()
 	QString client = dlg.text();
 
 	// get the preferred Terminal Application 
-	KConfigGroup confGroup( KGlobal::config(), QString::fromLatin1("General") );
-	QString preferredTerminal = confGroup.readPathEntry("TerminalApplication", QString::fromLatin1("konsole"));
-	preferredTerminal += QString::fromLatin1(" -e ");
+	KConfigGroup confGroup( KGlobal::config(), QLatin1String("General") );
+	QString preferredTerminal = confGroup.readPathEntry("TerminalApplication", QLatin1String("konsole"));
+	preferredTerminal += QLatin1String(" -e ");
 	
 	int len = preferredTerminal.length();
 	bool b = client.left(len) == preferredTerminal;

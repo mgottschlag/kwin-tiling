@@ -525,7 +525,7 @@ void KArtsModule::updateWidgets()
 	if (item >= 0)
 	{
 		audioIO = audioIOList.at(item)->name;
-		bool jack = (audioIO == QString::fromLatin1("jack"));
+		bool jack = (audioIO == QLatin1String("jack"));
 		if(jack)
 		{
 			customRate->setChecked(false);
@@ -656,13 +656,13 @@ QString KArtsModule::createArgs(bool netTrans,
 		args += QString::fromLatin1(" -a %1").arg(audioIO);
 
 	if (duplex)
-		args += QString::fromLatin1(" -d");
+		args += QLatin1String(" -d");
 
 	if (netTrans)
-		args += QString::fromLatin1(" -n");
+		args += QLatin1String(" -n");
 
 	if (!deviceName.isEmpty())
-		args += QString::fromLatin1(" -D ") + deviceName;
+		args += QLatin1String(" -D ") + deviceName;
 
 	if (rate)
 		args += QString::fromLatin1(" -r %1").arg(rate);
@@ -676,10 +676,10 @@ QString KArtsModule::createArgs(bool netTrans,
 	if (!addOptions.isEmpty())
 		args += QChar(' ') + addOptions;
 
-	args += QString::fromLatin1(" -m artsmessage");
-	args += QString::fromLatin1(" -c drkonqi");
-	args += QString::fromLatin1(" -l 3");
-	args += QString::fromLatin1(" -f");
+	args += QLatin1String(" -m artsmessage");
+	args += QLatin1String(" -c drkonqi");
+	args += QLatin1String(" -l 3");
+	args += QLatin1String(" -f");
 
 	return args;
 }

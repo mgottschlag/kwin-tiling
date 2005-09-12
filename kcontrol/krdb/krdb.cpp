@@ -85,7 +85,7 @@ static void applyGtkStyles(bool active, int version)
    QStringList list = QStringList::split(':', QFile::decodeName(gtkrc));
    if (list.count() == 0)
    {
-      list.append(QString::fromLatin1(sysGtkrc(version)));
+      list.append(QLatin1String(sysGtkrc(version)));
       list.append(QDir::homeDirPath()+userGtkrc(version));
    }
    list.remove(gtkkde);

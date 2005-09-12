@@ -466,11 +466,11 @@ void KDMUsersWidget::load()
     cbusrsrt->setChecked(config->readBoolEntry("SortUsers", true));
 
     QString ps = config->readEntry( "FaceSource" );
-    if (ps == QString::fromLatin1("UserOnly"))
+    if (ps == QLatin1String("UserOnly"))
 	rbusronly->setChecked(true);
-    else if (ps == QString::fromLatin1("PreferUser"))
+    else if (ps == QLatin1String("PreferUser"))
 	rbprefusr->setChecked(true);
-    else if (ps == QString::fromLatin1("PreferAdmin"))
+    else if (ps == QLatin1String("PreferAdmin"))
 	rbprefadm->setChecked(true);
     else
 	rbadmonly->setChecked(true);
