@@ -198,7 +198,7 @@ QString KSMClient::program() const
     SmProp* p = property( SmProgram );
     if ( !p || qstrcmp( p->type, SmARRAY8) || p->num_vals < 1)
         return QString::null;
-    return QString::fromLatin1( (const char*) p->vals[0].value );
+    return QLatin1String( (const char*) p->vals[0].value );
 }
 
 QStringList KSMClient::restartCommand() const
@@ -208,7 +208,7 @@ QStringList KSMClient::restartCommand() const
     if ( !p || qstrcmp( p->type, SmLISTofARRAY8) || p->num_vals < 1)
         return result;
     for ( int i = 0; i < p->num_vals; i++ )
-        result +=QString::fromLatin1( (const char*) p->vals[i].value );
+        result +=QLatin1String( (const char*) p->vals[i].value );
     return result;
 }
 
@@ -219,7 +219,7 @@ QStringList KSMClient::discardCommand() const
     if ( !p || qstrcmp( p->type, SmLISTofARRAY8) || p->num_vals < 1)
         return result;
     for ( int i = 0; i < p->num_vals; i++ )
-        result +=QString::fromLatin1( (const char*) p->vals[i].value );
+        result +=QLatin1String( (const char*) p->vals[i].value );
     return result;
 }
 
@@ -236,7 +236,7 @@ QString KSMClient::userId() const
     SmProp* p = property( SmUserID );
     if ( !p || qstrcmp( p->type, SmARRAY8) || p->num_vals < 1)
         return QString::null;
-    return QString::fromLatin1( (const char*) p->vals[0].value );
+    return QLatin1String( (const char*) p->vals[0].value );
 }
 
 
@@ -1946,7 +1946,7 @@ static QStringList getQStringListProperty(WId w, Atom prop)
 	if (!data)
 	    return result;
         for (int i=0; i<(int)nitems; i++) {
-            result << QString::fromLatin1( (const char*)data + i );
+            result << QLatin1String( (const char*)data + i );
             while(data[i]) i++;
         }
         XFree(data);
@@ -1992,7 +1992,7 @@ QString KSMServer::windowWmClientMachine(WId w)
             }
         }
     }
-    return QString::fromLatin1(result);
+    return QLatin1String(result);
 }
 
 WId KSMServer::windowWmClientLeader(WId w)
