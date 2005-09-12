@@ -153,7 +153,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
 
     QStringList dmopt =
         QStringList::split(QChar(','),
-                            QString::fromLatin1( ::getenv( "XDM_MANAGED" )));
+                            QLatin1String( ::getenv( "XDM_MANAGED" )));
     for (QStringList::ConstIterator it = dmopt.begin(); it != dmopt.end(); ++it)
         if ((*it).startsWith("method="))
             mMethod = (*it).mid(7);
@@ -684,7 +684,7 @@ void LockProcess::stopSaver()
 QVariant LockProcess::getConf(void *ctx, const char *key, const QVariant &dflt)
 {
     LockProcess *that = (LockProcess *)ctx;
-    QString fkey = QString::fromLatin1( key ) + '=';
+    QString fkey = QLatin1String( key ) + '=';
     for (QStringList::ConstIterator it = that->mPluginOptions.begin();
          it != that->mPluginOptions.end(); ++it)
         if ((*it).startsWith( fkey ))
