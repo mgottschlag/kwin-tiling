@@ -60,6 +60,7 @@
 /* Compatibility: accept some options from environment variables */
 #define ACCEPT_ENV
 
+#define THROTTLE 3
 
 static int havetty, sfd = -1, nullpass;
 
@@ -285,19 +286,10 @@ usage(int exitval)
 	  "  exit codes:\n"
 	  "    0 success\n"
 	  "    1 invalid password\n"
-          "    2 cannot read password database\n"
+	  "    2 cannot read password database\n"
 	  "    Anything else tells you something's badly hosed.\n"
 	);
   exit(exitval);
-}
-
-static int exclusive_lock(int fd)
-{
-  struct flock lk;
-  lk.l_type = F_WRLCK;
-  lk.l_whence = SEEK_SET;
-  lk.l_start = lk.l_len = 0;
-  return fcntl(fd, F_SETLKW, &lk);
 }
 
 int
@@ -312,13 +304,12 @@ main(int argc, char **argv)
   char		*p;
 #endif
   struct passwd	*pw;
-  int		c, nfd, tfd, lfd;
+  int		c, nfd, lfd;
   uid_t		uid;
-  time_t	lasttime;
+  time_t	nexttime;
   AuthReturn	ret;
-  char tmpname[64], fname[64], fcont[64];
-  time_t left = 3;
-  lfd = tfd = 0;
+  struct flock lk;
+  char fname[64], fcont[64];
 
 #ifdef HAVE_OSF_C2_PASSWD
   initialize_osf_security(argc, argv);
@@ -329,11 +320,11 @@ main(int argc, char **argv)
     if (fcntl(c, F_GETFL) == -1) {
       if ((nfd = open("/dev/null", O_WRONLY)) < 0) {
         message("cannot open /dev/null: %s\n", strerror(errno));
-	exit(10);
+        exit(10);
       }
       if (c != nfd) {
-	dup2(nfd, c);
-	close(nfd);
+        dup2(nfd, c);
+        close(nfd);
       }
     }
   }
@@ -388,38 +379,40 @@ main(int argc, char **argv)
     }
   }
 
-  /* see if we had already a failed attempt */
+  /*
+   * Throttle kcheckpass invocations to avoid abusing it for bruteforcing
+   * the password. This delay belongs to the *previous* invocation, where
+   * we can't enforce it reliably (without risking giving away the result
+   * before it is due). We don't differentiate between success and failure -
+   * it's not expected to have a noticable adverse effect.
+   */
   if ( uid != geteuid() ) {
-    strcpy(tmpname, "/var/lock/kcheckpass.tmp.XXXXXX");
-    if ((tfd=mkstemp(tmpname)) < 0)
+    sprintf(fname, "/var/run/kcheckpass.%d", uid);
+    if ((lfd = open(fname, O_RDWR | O_CREAT | O_NOFOLLOW, 0600)) < 0) {
+      message("Cannot open lockfile\n");
       return AuthError;
-
-    /* try locking out concurrent kcheckpass processes */
-    exclusive_lock(tfd);
-    
-    write(tfd, fcont, sprintf(fcont, "%lu\n", time(0)+left));
-    (void) lseek(tfd, 0, SEEK_SET);
-
-    sprintf(fname, "/var/lock/kcheckpass.%d", uid );
-
-    if ((lfd = open(fname, O_RDWR | O_NOFOLLOW)) >= 0) {
-      if (exclusive_lock(lfd) == 0) {
-        if ((c = read(lfd, fcont, sizeof(fcont)-1)) > 0 &&
-	    (fcont[c] = '\0', sscanf(fcont, "%ld", &lasttime) == 1))
-	  {
-            time_t ct = time(0);
-
-	    /* in case we were killed early, sleep the remaining time
-	     * to properly enforce invocation throttling and make sure
-	     * that users can't use kcheckpass for bruteforcing password
-             */
-            if(lasttime > ct && lasttime < ct + left)
-              sleep (lasttime - ct);
-          }
-      }
-      close(lfd);
     }
-    rename(tmpname, fname);
+
+    lk.l_type = F_WRLCK;
+    lk.l_whence = SEEK_SET;
+    lk.l_start = lk.l_len = 0;
+    if (fcntl(lfd, F_SETLKW, &lk)) {
+      message("Cannot obtain lock\n");
+      return AuthError;
+    }
+
+    if ((c = read(lfd, fcont, sizeof(fcont)-1)) > 0 &&
+        (fcont[c] = '\0', sscanf(fcont, "%ld", &nexttime) == 1))
+    {
+      time_t ct = time(0);
+      if (nexttime > ct && nexttime < ct + THROTTLE)
+        sleep(nexttime - ct);
+    }
+
+    lseek(lfd, 0, SEEK_SET);
+    write(lfd, fcont, sprintf(fcont, "%lu\n", time(0) + THROTTLE));
+
+    close(lfd);
   }
 
   /* Now do the fandango */
@@ -431,21 +424,6 @@ main(int argc, char **argv)
                      username, 
                      sfd < 0 ? conv_legacy : conv_server);
 
-  if (ret == AuthOk || ret == AuthBad) {
-    /* Security: Don't undermine the shadow system. */
-    if (uid != geteuid()) {
-      if (ret == AuthBad) {
-        write(tfd, fcont, sprintf(fcont, "%lu\n", time(0)+left));
-      } else
-        unlink(fname);
-	
-      unlink(tmpname);
-
-      if (ret == AuthBad)
-        sleep(left);  
-
-      close(tfd);
-    }
     if (ret == AuthBad) {
       message("Authentication failure\n");
       if (!nullpass) {
@@ -453,7 +431,6 @@ main(int argc, char **argv)
         syslog(LOG_NOTICE, "Authentication failure for %s (invoked by uid %d)", username, uid);
       }
     }
-  }
 
   return ret;
 }
