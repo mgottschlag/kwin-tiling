@@ -117,7 +117,7 @@ void ShortcutsModule::initGUI()
 #include "../../../kicker/taskbar/taskbarbindings.cpp"
 #include "../../../kdesktop/kdesktopbindings.cpp"
 #include "../../../klipper/klipperbindings.cpp"
-#include "../../../kxkb/kxkbbindings.cpp"
+#include "../kxkb/kxkbbindings.cpp"
 
 	kdDebug(125) << "B-----------" << endl;
 	m_actionsSequence.init( m_actionsGeneral );
