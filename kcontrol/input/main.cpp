@@ -55,15 +55,15 @@ extern "C"
 
 #ifdef HAVE_XCURSOR
     config->setGroup("Mouse");
-    Q3CString theme = QFile::encodeName(config->readEntry("cursorTheme", QString()));
-    Q3CString size = config->readEntry("cursorSize", QString()).local8Bit();
+    QByteArray theme = QFile::encodeName(config->readEntry("cursorTheme", QString()));
+    QByteArray size = config->readEntry("cursorSize", QString()).local8Bit();
 
     // Note: If you update this code, update kapplymousetheme as well.
 
     // use a default value for theme only if it's not configured at all, not even in X resources
     if( theme.isEmpty()
-        && Q3CString( XGetDefault( QX11Info::display(), "Xcursor", "theme" )).isEmpty()
-        && Q3CString( XcursorGetTheme( QX11Info::display())).isEmpty())
+        && QByteArray( XGetDefault( QX11Info::display(), "Xcursor", "theme" )).isEmpty()
+        && QByteArray( XcursorGetTheme( QX11Info::display())).isEmpty())
     {
         theme = "default";
     }
@@ -84,9 +84,9 @@ extern "C"
     // variables when launching applications.
     DCOPRef klauncher("klauncher");
     if( !theme.isEmpty())
-        klauncher.send("setLaunchEnv", Q3CString("XCURSOR_THEME"), theme);
+        klauncher.send("setLaunchEnv", QByteArray("XCURSOR_THEME"), theme);
     if( !size.isEmpty())
-        klauncher.send("setLaunchEnv", Q3CString("XCURSOR_SIZE"), size);
+        klauncher.send("setLaunchEnv", QByteArray("XCURSOR_SIZE"), size);
 #endif
 
     delete config;
