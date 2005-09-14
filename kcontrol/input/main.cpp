@@ -55,8 +55,8 @@ extern "C"
 
 #ifdef HAVE_XCURSOR
     config->setGroup("Mouse");
-    QByteArray theme = QFile::encodeName(config->readEntry("cursorTheme", QString()));
-    QByteArray size = config->readEntry("cursorSize", QString()).local8Bit();
+    DCOPCString theme = QFile::encodeName(config->readEntry("cursorTheme", QString()));
+    DCOPCString size = config->readEntry("cursorSize", QString()).local8Bit();
 
     // Note: If you update this code, update kapplymousetheme as well.
 
@@ -84,9 +84,9 @@ extern "C"
     // variables when launching applications.
     DCOPRef klauncher("klauncher");
     if( !theme.isEmpty())
-        klauncher.send("setLaunchEnv", QByteArray("XCURSOR_THEME"), theme);
+        klauncher.send("setLaunchEnv", DCOPCString("XCURSOR_THEME"), theme);
     if( !size.isEmpty())
-        klauncher.send("setLaunchEnv", QByteArray("XCURSOR_SIZE"), size);
+        klauncher.send("setLaunchEnv", DCOPCString("XCURSOR_SIZE"), size);
 #endif
 
     delete config;
