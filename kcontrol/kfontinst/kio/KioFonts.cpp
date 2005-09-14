@@ -52,7 +52,7 @@
 #include <qtextstream.h>
 //Added by qt3to4:
 #include <Q3ValueList>
-#include <Q3CString>
+#include <QByteArray>
 #include <kmimetype.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
@@ -172,7 +172,7 @@ static QString getFcString(FcPattern *pat, const char *val)
     return FcResultMatch==FcPatternGetString(pat, val, 0, &fcStr) ? (char *)fcStr : NULL;
 }
 
-static int getSize(const Q3CString &file)
+static int getSize(const QByteArray &file)
 {
     KDE_struct_stat buff;
 
@@ -254,7 +254,7 @@ static bool createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name, cons
     KFI_DBUG << "createFolderUDSEntry " << name << ' ' << path << ' ' << sys << ' ' << endl;
 
     KDE_struct_stat buff;
-    Q3CString        cPath(QFile::encodeName(path));
+    QByteArray        cPath(QFile::encodeName(path));
 
     entry.clear();
 
@@ -358,7 +358,7 @@ static bool createFontUDSEntry(KIO::UDSEntry &entry, const QString &name, Q3Valu
     for(it=sortedPatterns.begin(); it!=end; ++it)
     {
         QString         path(getFcString(*it, FC_FILE));
-        Q3CString        cPath(QFile::encodeName(path));
+        QByteArray        cPath(QFile::encodeName(path));
         KDE_struct_stat buff;
 
         if(-1!=KDE_lstat(cPath, &buff))
@@ -577,7 +577,7 @@ static bool isAType1(const QString &fname)
     static const unsigned int constPfbOffset=6;
     static const unsigned int constPfbLen=constStrLen+constPfbOffset;
 
-    Q3CString name(QFile::encodeName(fname));
+    QByteArray name(QFile::encodeName(fname));
     char     buffer[constPfbLen];
     bool     match=false;
 
@@ -714,7 +714,7 @@ static bool getFontList(const QStringList &files, QMap<QString, QString> &map)
     return list.count() ? true : false;
 }
 
-CKioFonts::CKioFonts(const Q3CString &pool, const Q3CString &app)
+CKioFonts::CKioFonts(const QByteArray &pool, const Q3CString &app)
          : KIO::SlaveBase(KFI_KIO_FONTS_PROTOCOL, pool, app),
            itsRoot(Misc::root()),
            itsUsingFcFpe(false),
@@ -1008,7 +1008,7 @@ void CKioFonts::get(const KURL &url)
             }
         }
 
-        Q3CString realPathC(QFile::encodeName(realPath));
+        QByteArray realPathC(QFile::encodeName(realPath));
         KFI_DBUG << "real: " << realPathC << endl;
     
         if (-2==KDE_stat(realPathC.data(), &buff))
@@ -1089,7 +1089,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
     EFolder         destFolder(getFolder(url));
     QString         dest=itsFolders[destFolder].location+modifyName(url.fileName()),
                     passwd;
-    Q3CString        destC=QFile::encodeName(dest);
+    QByteArray        destC=QFile::encodeName(dest);
     KDE_struct_stat buffDest;
     bool            destExists=(KDE_lstat(destC.data(), &buffDest)!= -1);
 
@@ -1118,7 +1118,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
     //       an AFM or PFM file
     //    3. If its OK, then get the fonts "name" from 
     KTempFile tmpFile;
-    Q3CString  tmpFileC(QFile::encodeName(tmpFile.name()));
+    QByteArray  tmpFileC(QFile::encodeName(tmpFile.name()));
 
     tmpFile.setAutoDelete(true);
 
@@ -1129,7 +1129,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
    
         if(nrs)  // Ask root to copy the font...
         {
-            Q3CString cmd;
+            QByteArray cmd;
 
             if(!Misc::dExists(itsFolders[destFolder].location))
             {
@@ -1184,7 +1184,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
     }
 }
 
-bool CKioFonts::putReal(const QString &destOrig, const Q3CString &destOrigC, bool origExists,
+bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bool origExists,
                         int mode, bool resume)
 {
     bool    markPartial=config()->readBoolEntry("MarkPartial", true);
@@ -1193,7 +1193,7 @@ bool CKioFonts::putReal(const QString &destOrig, const Q3CString &destOrigC, boo
     if (markPartial)
     {
         QString  destPart(destOrig+QLatin1String(".part"));
-        Q3CString destPartC(QFile::encodeName(destPart));
+        QByteArray destPartC(QFile::encodeName(destPart));
 
         dest = destPart;
 
@@ -1225,7 +1225,7 @@ bool CKioFonts::putReal(const QString &destOrig, const Q3CString &destOrigC, boo
             // Catch errors when we try to open the file.
     }
 
-    Q3CString destC(QFile::encodeName(dest));
+    QByteArray destC(QFile::encodeName(dest));
 
     int fd;
 
@@ -1343,7 +1343,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
             {
                 if(nonRootSys(dest))
                 {
-                    Q3CString cmd;
+                    QByteArray cmd;
                     int      size=0;
 
                     if(!Misc::dExists(itsFolders[destFolder].location))
@@ -1399,7 +1399,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
 
                     for(; fIt!=fEnd; ++fIt)
                     {
-                        Q3CString        realSrc(QFile::encodeName(fIt.key())),
+                        QByteArray        realSrc(QFile::encodeName(fIt.key())),
                                         realDest(QFile::encodeName(itsFolders[destFolder].location+modifyName(fIt.data())));
                         KDE_struct_stat buffSrc;
 
@@ -1534,7 +1534,7 @@ void CKioFonts::rename(const KURL &src, const KURL &d, bool overwrite)
                                                  fEnd(map.end());
                 bool                             askPasswd=true,
                                                  toSys=FOLDER_SYS==destFolder;
-                Q3CString                         userId,
+                QByteArray                         userId,
                                                  groupId,
                                                  destDir(QFile::encodeName(KProcess::quote(itsFolders[destFolder].location)));
 
@@ -1543,7 +1543,7 @@ void CKioFonts::rename(const KURL &src, const KURL &d, bool overwrite)
 
                 for(; fIt!=fEnd; ++fIt)
                 {
-                    Q3CString cmd,
+                    QByteArray cmd,
                              destFile(QFile::encodeName(KProcess::quote(itsFolders[destFolder].location+fIt.data())));
 
                     if(toSys && !Misc::dExists(itsFolders[destFolder].location))
@@ -1617,7 +1617,7 @@ void CKioFonts::del(const KURL &url, bool)
 
         if(nonRootSys(url))
         {
-            Q3CString cmd("rm -f");
+            QByteArray cmd("rm -f");
  
             for(it=entries->begin(); it!=end; ++it)
             {
@@ -1755,7 +1755,7 @@ void CKioFonts::special(const QByteArray &a)
         doModified();
 }
 
-void CKioFonts::createRootRefreshCmd(Q3CString &cmd, const CDirList &dirs, bool reparseCfg)
+void CKioFonts::createRootRefreshCmd(QByteArray &cmd, const CDirList &dirs, bool reparseCfg)
 {
     if(reparseCfg)
         reparseConfig();
@@ -1772,7 +1772,7 @@ void CKioFonts::createRootRefreshCmd(Q3CString &cmd, const CDirList &dirs, bool 
 
         for(; it!=end; ++it)
         {
-            Q3CString tmpCmd;
+            QByteArray tmpCmd;
 
             if(*it==itsFolders[FOLDER_SYS].location)
             {
@@ -1847,7 +1847,7 @@ void CKioFonts::doModified()
         }
         else
         {
-            Q3CString cmd;
+            QByteArray cmd;
 
             createRootRefreshCmd(cmd, itsFolders[FOLDER_SYS].modified, false);
             if(doRootCmd(cmd, false) && itsFolders[FOLDER_SYS].modified.contains(itsFolders[FOLDER_SYS].location))
@@ -2180,7 +2180,7 @@ bool CKioFonts::getSourceFiles(const KURL &src, QStringList &files)
 
         for(it=files.begin(); it!=end; ++it)
         {
-            Q3CString        realSrc=QFile::encodeName(*it);
+            QByteArray        realSrc=QFile::encodeName(*it);
             KDE_struct_stat buffSrc;
 
             if (-1==KDE_stat(realSrc.data(), &buffSrc))
@@ -2403,7 +2403,7 @@ void CKioFonts::createAfm(const QString &file, bool nrs, const QString &passwd)
 
                 if(nrs)
                 {
-                    Q3CString cmd("pf2afm ");
+                    QByteArray cmd("pf2afm ");
                     cmd+=QFile::encodeName(KProcess::quote(name));
                     doRootCmd(cmd, passwd);
                 }

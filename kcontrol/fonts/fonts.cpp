@@ -19,7 +19,7 @@
 
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3CString>
+#include <QByteArray>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <Q3ValueList>
@@ -502,12 +502,12 @@ int FontAASettings::exec()
 
 /**** KFonts ****/
 
-static Q3CString desktopConfigName()
+static QString desktopConfigName()
 {
   int desktop=0;
   if (QX11Info::display())
     desktop = DefaultScreen(QX11Info::display());
-  Q3CString name;
+  QString name;
   if (desktop == 0)
     name = "kdesktoprc";
   else

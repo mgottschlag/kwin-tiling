@@ -76,14 +76,14 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
 
 void NetMon::processNFSLine(char *bufline, int)
 {
-   Q3CString line(bufline);
+   QByteArray line(bufline);
    if (line.contains(":/"))
       new Q3ListViewItem(list,"NFS",After(":",line),Before(":/",line));
 }
 
 void NetMon::processSambaLine(char *bufline, int)
 {
-   Q3CString line(bufline);
+   QByteArray line(bufline);
    rownumber++;
    if (rownumber == 2)
       version->setText(bufline); // second line = samba version

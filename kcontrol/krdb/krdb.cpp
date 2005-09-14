@@ -28,7 +28,7 @@
 #include <qtooltip.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3CString>
+#include <QByteArray>
 #include <QTextStream>
 
 #include <dcopclient.h>
@@ -81,7 +81,7 @@ inline const char * userGtkrc(int version)
 static void applyGtkStyles(bool active, int version)
 {
    QString gtkkde = locateLocal("config", 2==version?"gtkrc-2.0":"gtkrc");
-   Q3CString gtkrc = getenv(gtkEnvVar(version));
+   QByteArray gtkrc = getenv(gtkEnvVar(version));
    QStringList list = QStringList::split(':', QFile::decodeName(gtkrc));
    if (list.count() == 0)
    {
@@ -94,8 +94,8 @@ static void applyGtkStyles(bool active, int version)
       ::unlink(QFile::encodeName(gtkkde));
 
    // Pass env. var to kdeinit.
-   Q3CString name = gtkEnvVar(version);
-   Q3CString value = QFile::encodeName(list.join(":"));
+   QByteArray name = gtkEnvVar(version);
+   QByteArray value = QFile::encodeName(list.join(":"));
    QByteArray params;
    QDataStream stream(&params, QIODevice::WriteOnly);
 
@@ -313,7 +313,7 @@ static void copyFile(QFile& tmp, QString const& filename, bool )
 {
   QFile f( filename );
   if ( f.open(QIODevice::ReadOnly) ) {
-      Q3CString buf( 8192 );
+      QByteArray buf( 8192 );
       while ( !f.atEnd() ) {
           int read = f.readBlock( buf.data(), buf.size() );
           if ( read > 0 )

@@ -34,7 +34,7 @@
 //Added by qt3to4:
 #include <QFrame>
 #include <QGridLayout>
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kconfig.h>
 #include <kcolorbutton.h>
@@ -53,12 +53,12 @@
 
 /**** BGAdvancedDialog ****/
 
-static Q3CString desktopConfigname()
+static QString desktopConfigname()
 {
     int desktop=0;
     if (QX11Info::display())
         desktop = DefaultScreen(QX11Info::display());
-    Q3CString name;
+    QString name;
     if (desktop == 0)
         name = "kdesktoprc";
     else

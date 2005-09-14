@@ -34,7 +34,7 @@
 
 #include <q3paintdevicemetrics.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include <QDesktopWidget>
 
 #include <kcmdlineargs.h>
@@ -111,7 +111,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
     KCONTROL_VERSION, I18N_NOOP("The KDE Info Center"), KAboutData::License_GPL,
     I18N_NOOP("(c) 1998-2004, The KDE Control Center Developers"));
 
-  Q3CString argv_0 = argv[0];
+  QByteArray argv_0 = argv[0];
   KAboutData *aboutData;
   if (argv_0.right(11) == "kinfocenter")
   {

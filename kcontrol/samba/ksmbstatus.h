@@ -50,7 +50,7 @@ private:
    void processNFSLine(char *bufline, int linelen);
    void processSambaLine(char *bufline, int linelen);
 
-   Q3CString strShare, strUser, strGroup, strMachine, strSince, strPid;
+   QByteArray strShare, strUser, strGroup, strMachine, strSince, strPid;
    int iUser, iGroup, iMachine, iPid;
 
 private slots:

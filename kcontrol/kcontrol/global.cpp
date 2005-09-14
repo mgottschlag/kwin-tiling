@@ -29,7 +29,7 @@
 #include <qobject.h>
 #include <q3accel.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include "global.h"
 
@@ -70,7 +70,7 @@ void KCGlobal::init()
   setSystemMachine(info.machine);
 }
 
-void KCGlobal::setType(const Q3CString& s)
+void KCGlobal::setType(const QByteArray& s)
 {
   QString string = s.lower();
   _types = QStringList::split(',', string);

@@ -29,7 +29,7 @@
 #include "Misc.h"
 #include <qfile.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include <kprocess.h> 
 #include <kstandarddirs.h>
 #include <kde_file.h>
@@ -230,7 +230,7 @@ time_t getTimeStamp(const QString &item)
 bool check(const QString &path, unsigned int fmt, bool checkW)
 { 
     KDE_struct_stat info;
-    Q3CString        pathC(QFile::encodeName(path));
+    QByteArray        pathC(QFile::encodeName(path));
 
     return 0==KDE_lstat(pathC, &info) && (info.st_mode&S_IFMT)==fmt && (!checkW || 0==::access(pathC, W_OK));
 }

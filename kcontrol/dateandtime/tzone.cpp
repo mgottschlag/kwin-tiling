@@ -35,7 +35,7 @@
 #include <Q3Frame>
 #include <QHBoxLayout>
 #include <QTextStream>
-#include <Q3CString>
+#include <QByteArray>
 #include <QBoxLayout>
 
 #include <kdebug.h>

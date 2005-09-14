@@ -19,7 +19,7 @@
 #include <qdir.h>
 #include <qpixmap.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <dcopclient.h>
 #include <kapplication.h>
@@ -511,7 +511,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
         int screen_number = 0;
         if (QX11Info::display())
             screen_number = DefaultScreen(QX11Info::display());
-        Q3CString configname;
+        QString configname;
         if (screen_number == 0)
             configname = "kdesktoprc";
         else

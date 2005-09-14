@@ -27,7 +27,7 @@
 #include <q3listbox.h>
 #include <qstring.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 
 #include <kaboutdata.h>
 #include <kcmodule.h>
@@ -49,7 +49,7 @@ public:
 protected:
     KListBox *m_ioslavesLb;
     KTextBrowser *m_info;
-    Q3CString helpData;
+    QByteArray helpData;
     KIO::Job *m_tfj;
 
 protected slots:

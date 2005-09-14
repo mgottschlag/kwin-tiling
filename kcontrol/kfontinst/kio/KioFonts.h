@@ -94,7 +94,7 @@ class CKioFonts : public KIO::SlaveBase
 
     public:
 
-    CKioFonts(const Q3CString &pool, const Q3CString &app);
+    CKioFonts(const QByteArray &pool, const Q3CString &app);
     virtual ~CKioFonts();
 
     static QString getSect(const QString &f) { return f.section('/', 1, 1); }
@@ -110,10 +110,10 @@ class CKioFonts : public KIO::SlaveBase
 
     private:
 
-    bool     putReal(const QString &destOrig, const Q3CString &destOrigC, bool origExists, int mode, bool resume);
+    bool     putReal(const QString &destOrig, const QByteArray &destOrigC, bool origExists, int mode, bool resume);
     void     modified(EFolder folder, const CDirList &dirs=CDirList());
     void     special(const QByteArray &a);
-    void     createRootRefreshCmd(Q3CString &cmd, const CDirList &dirs=CDirList(), bool reparseCfg=true);
+    void     createRootRefreshCmd(QByteArray &cmd, const CDirList &dirs=CDirList(), bool reparseCfg=true);
     void     doModified();
     QString  getRootPasswd(bool askPasswd=true);
     bool     doRootCmd(const char *cmd, const QString &passwd);

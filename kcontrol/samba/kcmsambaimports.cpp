@@ -65,7 +65,7 @@ void ImportsView::updateList()
    list.clear();
    char *e;
    char buf[250];
-   Q3CString s(""),strSource, strMount, strType;
+   QByteArray s(""),strSource, strMount, strType;
    FILE *f=popen("mount","r");
    if (f==0) return;
    do

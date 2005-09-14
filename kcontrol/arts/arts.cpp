@@ -35,7 +35,7 @@
 
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <Q3CString>
+#include <QByteArray>
 
 #include <dcopref.h>
 
@@ -127,7 +127,7 @@ void KArtsModule::slotProcessArtsdOutput(KProcess*, char* buf, int len)
 {
 	// XXX(gioele): I suppose this will be called with full lines, am I wrong?
 
-	QStringList availableIOs = QStringList::split("\n", Q3CString(buf, len));
+	QStringList availableIOs = QStringList::split("\n", QByteArray(buf, len));
 	// valid entries have two leading spaces
 	availableIOs = availableIOs.grep(QRegExp("^ {2}"));
 	availableIOs.sort();

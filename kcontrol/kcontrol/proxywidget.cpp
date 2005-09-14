@@ -22,7 +22,7 @@
 #include <kpushbutton.h>
 #include <qlayout.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include <Q3Frame>
 #include <QHBoxLayout>
 #include <QVBoxLayout>

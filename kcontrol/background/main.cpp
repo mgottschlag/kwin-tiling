@@ -18,7 +18,7 @@
 #include <qlayout.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <Q3CString>
+#include <QByteArray>
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <kconfig.h>
@@ -51,7 +51,7 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &a
     int screen_number = 0;
     if (QX11Info::display())
 	screen_number = DefaultScreen(QX11Info::display());
-    Q3CString configname;
+    QString configname;
     if (screen_number == 0)
 	configname = "kdesktoprc";
     else

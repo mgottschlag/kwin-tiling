@@ -69,7 +69,7 @@
 #include <qregexp.h>
 #include <qfile.h>
 //Added by qt3to4:
-#include <Q3CString>
+#include <QByteArray>
 #include <ft2build.h>
 #include FT_SFNT_NAMES_H
 #include FT_TRUETYPE_IDS_H
@@ -419,10 +419,10 @@ static bool lookupName(FT_Face face, int nid, int pid, int eid, FT_SfntName *nam
     return false;
 }
 
-static Q3CString getName(FT_Face face, int nid)
+static QByteArray getName(FT_Face face, int nid)
 {
     FT_SfntName name;
-    Q3CString    str;
+    QByteArray    str;
 
     if(lookupName(face, nid, TT_PLATFORM_MICROSOFT, TT_MS_ID_UNICODE_CS, &name) ||
        lookupName(face, nid, TT_PLATFORM_APPLE_UNICODE, -1, &name))
