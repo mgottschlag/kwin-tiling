@@ -21,7 +21,6 @@
 
 #include <unistd.h>
 
-#include <q3cstring.h>
 #include <qcursor.h>
 #include <qdatastream.h>
 #include <qdir.h>
