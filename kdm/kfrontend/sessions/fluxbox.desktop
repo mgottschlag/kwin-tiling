@@ -1,8 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=XSession
-Exec=fluxbox
-TryExec=fluxbox
+Exec=startfluxbox
+TryExec=startfluxbox
 Name=Fluxbox
 Name[bn]=ফ্লাক্সবক্স
 Name[cy]=Llif-flwch (Fluxbox)
