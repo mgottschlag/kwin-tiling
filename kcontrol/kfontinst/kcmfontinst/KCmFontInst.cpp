@@ -43,7 +43,6 @@
 #include <QVBoxLayout>
 #include <QSpacerItem>
 #include <Q3Frame>
-#include <Q3ValueList>
 #include <QGridLayout>
 #include <QDropEvent>
 #include <kaboutdata.h>
@@ -122,7 +121,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         itsPreview=(KParts::ReadOnlyPart *)factory->create(itsSplitter, "kcmfontinst", "KParts::ReadOnlyPart");
         itsSplitter->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-        Q3ValueList<int> sizes(itsConfig.readIntListEntry(CFG_SPLITTER_SIZES));
+        QList<int> sizes(itsConfig.readIntListEntry(CFG_SPLITTER_SIZES));
 
         if(2!=sizes.count())
         {

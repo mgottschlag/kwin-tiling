@@ -42,8 +42,8 @@ class KRandrPassivePopup
     private:
         KRandrPassivePopup( QWidget *parent=0, const char *name=0, Qt::WFlags f=0 );
 	void startWatchingWidget( QWidget* w );
-	Q3ValueList< QWidget* > watched_widgets;
-	Q3ValueList< Window > watched_windows;
+	QList< QWidget* > watched_widgets;
+	QList< Window > watched_windows;
 	QTimer update_timer;
     };
 

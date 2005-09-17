@@ -21,7 +21,6 @@
 #include <QPixmap>
 #include <QGridLayout>
 #include <QBoxLayout>
-#include <Q3ValueList>
 #include <QVBoxLayout>
 
 #include <kcolorbutton.h>
@@ -229,7 +228,7 @@ void KIconConfig::read()
     else
     {
         for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++)
-            mAvSizes[i] = Q3ValueList<int>();
+            mAvSizes[i] = QList<int>();
 
         mTheme = QString::null;
         mExample = QString::null;
@@ -278,7 +277,7 @@ void KIconConfig::apply()
     mpUsageList->setCurrentItem(mUsage);
 
     int delta = 1000, dw, index = -1, size = 0, i;
-    Q3ValueList<int>::Iterator it;
+    QList<int>::Iterator it;
     mpSizeBox->clear();
     if (mUsage < KIcon::LastGroup) {
         for (it=mAvSizes[mUsage].begin(), i=0; it!=mAvSizes[mUsage].end(); ++it, i++)

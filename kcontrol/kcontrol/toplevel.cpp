@@ -30,8 +30,6 @@
 
 #include <qtabwidget.h>
 #include <q3whatsthis.h>
-//Added by qt3to4:
-#include <Q3ValueList>
 
 #include "indexwidget.h"
 #include "searchwidget.h"
@@ -112,7 +110,7 @@ TopLevel::TopLevel(const char* name)
 
  // Restore sizes
   config->setGroup("General");
-  Q3ValueList<int> sizes = config->readIntListEntry(  "SplitterSizes" );
+  QList<int> sizes = config->readIntListEntry(  "SplitterSizes" );
   if (!sizes.isEmpty())
      _splitter->setSizes(sizes);
 

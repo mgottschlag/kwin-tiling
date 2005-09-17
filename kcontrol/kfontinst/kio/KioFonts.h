@@ -89,7 +89,7 @@ class CKioFonts : public KIO::SlaveBase
     {
         QString                                 location;
         CDirList                                modified;
-        QMap<QString, Q3ValueList<FcPattern *> > fontMap;   // Maps from "Times New Roman" -> $HOME/.fonts/times.ttf
+        QMap<QString, QList<FcPattern *> > fontMap;   // Maps from "Times New Roman" -> $HOME/.fonts/times.ttf
     };
 
     public:
@@ -122,14 +122,14 @@ class CKioFonts : public KIO::SlaveBase
     void     clearFontList();
     bool     updateFontList();
     EFolder  getFolder(const KURL &url);
-    QMap<QString, Q3ValueList<FcPattern *> >::Iterator getMap(const KURL &url);
-    Q3ValueList<FcPattern *> * getEntries(const KURL &url);
+    QMap<QString, QList<FcPattern *> >::Iterator getMap(const KURL &url);
+    QList<FcPattern *> * getEntries(const KURL &url);
     FcPattern * getEntry(EFolder folder, const QString &file, bool full=false);
     bool     checkFile(const QString &file);
     bool     getSourceFiles(const KURL &src, QStringList &files);
     bool     checkDestFiles(const KURL &src, QMap<QString, QString> &map, const KURL &dest, EFolder destFolder, bool overwrite);
     bool     confirmMultiple(const KURL &url, const QStringList &files, EFolder folder, EOp op);
-    bool     confirmMultiple(const KURL &url, Q3ValueList<FcPattern *> *patterns, EFolder folder, EOp op);
+    bool     confirmMultiple(const KURL &url, QList<FcPattern *> *patterns, EFolder folder, EOp op);
     bool     checkUrl(const KURL &u, bool rootOk=false);
     bool     checkAllowed(const KURL &u);
     void     createAfm(const QString &file, bool nrs=false, const QString &passwd=QString::null);

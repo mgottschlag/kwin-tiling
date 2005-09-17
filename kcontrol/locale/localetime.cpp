@@ -29,7 +29,6 @@
 #include <q3valuevector.h>
 //Added by qt3to4:
 #include <QShowEvent>
-#include <Q3ValueList>
 #include <QGridLayout>
 //Should have been:
 #include <QtAlgorithms>
@@ -50,9 +49,9 @@ public:
   QChar storeName;
   QString userName;
 
-  static StringPair find( const Q3ValueList <StringPair> &list, const QChar &c)
+  static StringPair find( const QList <StringPair> &list, const QChar &c)
   {
-    for ( Q3ValueList<StringPair>::ConstIterator it = list.begin();
+    for ( QList<StringPair>::ConstIterator it = list.begin();
 	it != list.end();
 	++it )
       if ((*it).storeName==c) return (*it);

@@ -90,7 +90,7 @@ private:
 
     bool mbDP[6], mbChanged[6], mbAnimated[6];
     int mSizes[6];
-    Q3ValueList<int> mAvSizes[6];
+    QList<int> mAvSizes[6];
 
     Effect mEffects[6][3];
     Effect mDefaultEffect[3];

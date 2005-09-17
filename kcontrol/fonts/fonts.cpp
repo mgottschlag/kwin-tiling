@@ -22,7 +22,6 @@
 #include <QByteArray>
 #include <QGridLayout>
 #include <QHBoxLayout>
-#include <Q3ValueList>
 #include <QVBoxLayout>
 
 #include <dcopclient.h>
@@ -530,7 +529,7 @@ KFonts::KFonts(QWidget *parent, const char *, const QStringList &args)
     << i18n("Taskbar")        << "General"    << "taskbarFont"  << ""
     << i18n("Desktop")        << "FMSettings" << "StandardFont" << desktopConfigName();
 
-  Q3ValueList<QFont> defaultFontList;
+  QList<QFont> defaultFontList;
 
   // Keep in sync with kdelibs/kdecore/kglobalsettings.cpp
 
@@ -548,7 +547,7 @@ KFonts::KFonts(QWidget *parent, const char *, const QStringList &args)
 
   defaultFontList << f0 << f1 << f2 << f0 << f3 << f4 << f0;
 
-  Q3ValueList<bool> fixedList;
+  QList<bool> fixedList;
 
   fixedList
     <<  false
@@ -580,8 +579,8 @@ KFonts::KFonts(QWidget *parent, const char *, const QStringList &args)
   fontUseLayout->setColStretch(1, 1);
   fontUseLayout->setColStretch(2, 0);
 
-  Q3ValueList<QFont>::ConstIterator defaultFontIt(defaultFontList.begin());
-  Q3ValueList<bool>::ConstIterator fixedListIt(fixedList.begin());
+  QList<QFont>::ConstIterator defaultFontIt(defaultFontList.begin());
+  QList<bool>::ConstIterator fixedListIt(fixedList.begin());
   QStringList::ConstIterator quickHelpIt(quickHelpList.begin());
   QStringList::ConstIterator it(nameGroupKeyRc.begin());
 

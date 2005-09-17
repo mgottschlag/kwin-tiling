@@ -25,7 +25,6 @@
 #include <qtextstream.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <Q3ValueList>
 
 #include <kdialog.h>
 #include <kglobal.h>
@@ -142,7 +141,7 @@ bool View1394::readConfigRom(raw1394handle_t handle, nodeid_t nodeid, quadlet_t&
 
 void View1394::callRaw1394EventLoop(int fd)
 {
-   for (Q3ValueList<raw1394handle_t>::iterator it= m_handles.begin(); it!=m_handles.end(); ++it)
+   for (QList<raw1394handle_t>::iterator it= m_handles.begin(); it!=m_handles.end(); ++it)
       if (raw1394_get_fd(*it)==fd)
       {
          raw1394_loop_iterate(*it);
@@ -161,7 +160,7 @@ void View1394::rescanBus()
 //   static int depth=0;
 //   depth++;
    m_notifiers.clear();
-   for (Q3ValueList<raw1394handle_t>::iterator it=m_handles.begin(); it!=m_handles.end(); ++it)
+   for (QList<raw1394handle_t>::iterator it=m_handles.begin(); it!=m_handles.end(); ++it)
       raw1394_destroy_handle(*it);
    m_handles.clear();
    m_view->m_listview->clear();
@@ -271,7 +270,7 @@ void View1394::rescanBus()
 
 void View1394::generateBusReset()
 {
-   for (Q3ValueList<raw1394handle_t>::iterator it=m_handles.begin(); it!=m_handles.end(); ++it)
+   for (QList<raw1394handle_t>::iterator it=m_handles.begin(); it!=m_handles.end(); ++it)
       raw1394_reset_bus(*it);
 }
 

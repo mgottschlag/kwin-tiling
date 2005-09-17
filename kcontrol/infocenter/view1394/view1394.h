@@ -57,7 +57,7 @@ class View1394: public KCModule
 
    private:
       View1394Widget *m_view;
-      Q3ValueList<raw1394handle_t> m_handles;
+      QList<raw1394handle_t> m_handles;
       Q3PtrList<QSocketNotifier> m_notifiers;
       bool readConfigRom(raw1394handle_t handle, nodeid_t nodeid, quadlet_t& firstQuad, quadlet_t& cap, octlet_t& guid);
       bool m_insideRescanBus;

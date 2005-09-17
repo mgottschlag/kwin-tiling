@@ -51,7 +51,6 @@
 #include <kio/connection.h>
 #include <qtextstream.h>
 //Added by qt3to4:
-#include <Q3ValueList>
 #include <QByteArray>
 #include <kmimetype.h>
 #include <kmessagebox.h>
@@ -228,9 +227,9 @@ static int getFontSize(const QString &file)
     return size;
 }
 
-static int getSize(Q3ValueList<FcPattern *> &patterns)
+static int getSize(QList<FcPattern *> &patterns)
 {
-    Q3ValueList<FcPattern *>::Iterator it,
+    QList<FcPattern *>::Iterator it,
                                       end=patterns.end();
     int                               size=0;
 
@@ -322,7 +321,7 @@ static bool createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name, cons
     return false;
 }
 
-static bool createFontUDSEntry(KIO::UDSEntry &entry, const QString &name, Q3ValueList<FcPattern *> &patterns, bool sys)
+static bool createFontUDSEntry(KIO::UDSEntry &entry, const QString &name, QList<FcPattern *> &patterns, bool sys)
 {
     KFI_DBUG << "createFontUDSEntry " << name << ' ' << patterns.count() << endl;
 
@@ -340,8 +339,8 @@ static bool createFontUDSEntry(KIO::UDSEntry &entry, const QString &name, Q3Valu
 
     //
     // In case of mixed bitmap/scalable - prefer scalable
-    Q3ValueList<FcPattern *>           sortedPatterns;
-    Q3ValueList<FcPattern *>::Iterator it,
+    QList<FcPattern *>           sortedPatterns;
+    QList<FcPattern *>::Iterator it,
                                       end(patterns.end());
     FcBool                            b=FcFalse;
 
@@ -636,7 +635,7 @@ struct FontList
     FontList(const QString &n=QString::null, const QString &p=QString::null) : name(n) { if(!p.isEmpty()) paths.append(Path(p)); }
 
     QString          name;
-    Q3ValueList<Path> paths;
+    QList<Path> paths;
 
     bool operator==(const FontList &f) const { return f.name==name; }
 };
@@ -649,13 +648,13 @@ static bool getFontList(const QStringList &files, QMap<QString, QString> &map)
     // First of all create a list of font files, and their paths
     QStringList::ConstIterator it=files.begin(),
                                end=files.end();
-    Q3ValueList<FontList>       list;
+    QList<FontList>       list;
 
     for(;it!=end; ++it)
     {
         QString                        name(Misc::getFile(*it)),
                                        path(Misc::getDir(*it));
-        Q3ValueList<FontList>::Iterator entry=list.find(FontList(name));
+        QList<FontList>::Iterator entry=list.find(FontList(name));
 
         if(entry!=list.end())
         {
@@ -666,12 +665,12 @@ static bool getFontList(const QStringList &files, QMap<QString, QString> &map)
             list.append(FontList(name, path));
     }
 
-    Q3ValueList<FontList>::Iterator fIt(list.begin()),
+    QList<FontList>::Iterator fIt(list.begin()),
                                    fEnd(list.end());
 
     for(; fIt!=fEnd; ++fIt)
     {
-        Q3ValueList<FontList::Path>::Iterator pBegin((*fIt).paths.begin()),
+        QList<FontList::Path>::Iterator pBegin((*fIt).paths.begin()),
                                              pIt(++pBegin),
                                              pEnd((*fIt).paths.end());
         --pBegin;
@@ -849,7 +848,7 @@ void CKioFonts::listDir(const KURL &url)
             totalSize(itsFolders[folder].fontMap.count());
             if(itsFolders[folder].fontMap.count())
             {
-                QMap<QString, Q3ValueList<FcPattern *> >::Iterator it=itsFolders[folder].fontMap.begin(),
+                QMap<QString, QList<FcPattern *> >::Iterator it=itsFolders[folder].fontMap.begin(),
                                                                   end=itsFolders[folder].fontMap.end();
 
                 for ( ; it != end; ++it)
@@ -934,7 +933,7 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KURL &url, EFolder f
 {
     KFI_DBUG << "createStatEntry " << url.path() << endl;
 
-    QMap<QString, Q3ValueList<FcPattern *> >::Iterator it=getMap(url);
+    QMap<QString, QList<FcPattern *> >::Iterator it=getMap(url);
 
     if(it!=itsFolders[folder].fontMap.end())
         return createFontUDSEntry(entry, it.key(), it.data(), FOLDER_SYS==folder);
@@ -1606,12 +1605,12 @@ void CKioFonts::del(const KURL &url, bool)
 {
     KFI_DBUG << "del " << url.path() << endl;
 
-    Q3ValueList<FcPattern *> *entries;
+    QList<FcPattern *> *entries;
 
     if(updateFontList() && checkUrl(url) && checkAllowed(url) && (entries=getEntries(url)) && entries->count() &&
        confirmMultiple(url, entries, getFolder(url), OP_DELETE))
     {
-        Q3ValueList<FcPattern *>::Iterator it,
+        QList<FcPattern *>::Iterator it,
                                           end=entries->end();
         CDirList                          modifiedDirs;
 
@@ -2030,13 +2029,13 @@ bool CKioFonts::updateFontList()
                     if(!itsRoot && 0==file.find(home))
                         folder=FOLDER_USER;
 
-                    Q3ValueList<FcPattern *> &patterns=
+                    QList<FcPattern *> &patterns=
                                                 itsFolders[folder].fontMap[CFcEngine::createName(itsFontList->fonts[i])];
                     bool                    use=true;
 
                     if(patterns.count()) // Check for duplicates...
                     {
-                        Q3ValueList<FcPattern *>::Iterator it,
+                        QList<FcPattern *>::Iterator it,
                                                           end=patterns.end();
 
                         for(it=patterns.begin(); use && it!=end; ++it)
@@ -2064,10 +2063,10 @@ CKioFonts::EFolder CKioFonts::getFolder(const KURL &url)
     return itsRoot || isSysFolder(getSect(url.path())) ? FOLDER_SYS : FOLDER_USER;
 }
 
-QMap<QString, Q3ValueList<FcPattern *> >::Iterator CKioFonts::getMap(const KURL &url)
+QMap<QString, QList<FcPattern *> >::Iterator CKioFonts::getMap(const KURL &url)
 {
     EFolder                                           folder(getFolder(url));
-    QMap<QString, Q3ValueList<FcPattern *> >::Iterator it=itsFolders[folder].fontMap.find(removeMultipleExtension(url));
+    QMap<QString, QList<FcPattern *> >::Iterator it=itsFolders[folder].fontMap.find(removeMultipleExtension(url));
 
     if(it==itsFolders[folder].fontMap.end()) // Perhaps it was fonts:/System/times.ttf ???
     {
@@ -2080,9 +2079,9 @@ QMap<QString, Q3ValueList<FcPattern *> >::Iterator CKioFonts::getMap(const KURL 
     return it;
 }
 
-Q3ValueList<FcPattern *> * CKioFonts::getEntries(const KURL &url)
+QList<FcPattern *> * CKioFonts::getEntries(const KURL &url)
 {
-    QMap<QString, Q3ValueList<FcPattern *> >::Iterator it=getMap(url);
+    QMap<QString, QList<FcPattern *> >::Iterator it=getMap(url);
 
     if(it!=itsFolders[getFolder(url)].fontMap.end())
         return &(it.data());
@@ -2093,12 +2092,12 @@ Q3ValueList<FcPattern *> * CKioFonts::getEntries(const KURL &url)
 
 FcPattern * CKioFonts::getEntry(EFolder folder, const QString &file, bool full)
 {
-    QMap<QString, Q3ValueList<FcPattern *> >::Iterator it,
+    QMap<QString, QList<FcPattern *> >::Iterator it,
                                                       end=itsFolders[folder].fontMap.end();
 
     for(it=itsFolders[folder].fontMap.begin(); it!=end; ++it)
     {
-        Q3ValueList<FcPattern *>::Iterator patIt,
+        QList<FcPattern *>::Iterator patIt,
                                           patEnd=it.data().end();
 
         for(patIt=it.data().begin(); patIt!=patEnd; ++patIt)
@@ -2132,11 +2131,11 @@ bool CKioFonts::getSourceFiles(const KURL &src, QStringList &files)
 {
     if(KFI_KIO_FONTS_PROTOCOL==src.protocol())
     {
-        Q3ValueList<FcPattern *> *entries=getEntries(src);
+        QList<FcPattern *> *entries=getEntries(src);
 
         if(entries && entries->count())
         {
-            Q3ValueList<FcPattern *>::Iterator it,
+            QList<FcPattern *>::Iterator it,
                                               end=entries->end();
 
             for(it=entries->begin(); it!=end; ++it)
@@ -2295,7 +2294,7 @@ bool CKioFonts::confirmMultiple(const KURL &url, const QStringList &files, EFold
     return true;
 }
 
-bool CKioFonts::confirmMultiple(const KURL &url, Q3ValueList<FcPattern *> *patterns, EFolder folder, EOp op)
+bool CKioFonts::confirmMultiple(const KURL &url, QList<FcPattern *> *patterns, EFolder folder, EOp op)
 {
     if(KFI_KIO_FONTS_PROTOCOL!=url.protocol())
         return true;
@@ -2304,7 +2303,7 @@ bool CKioFonts::confirmMultiple(const KURL &url, Q3ValueList<FcPattern *> *patte
 
     if(patterns && patterns->count())
     {
-        Q3ValueList<FcPattern *>::Iterator it,
+        QList<FcPattern *>::Iterator it,
                                           end=patterns->end();
 
         for(it=patterns->begin(); it!=end; ++it)
