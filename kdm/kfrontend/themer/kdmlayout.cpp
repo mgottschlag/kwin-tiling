@@ -27,7 +27,7 @@
 #include <qdom.h>
 #include <qrect.h>
 //Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 
 KdmLayoutFixed::KdmLayoutFixed( const QDomNode &/*node*/ )
 {
@@ -45,7 +45,7 @@ KdmLayoutFixed::update( const QRect &parentGeometry, bool force )
 		return;
 	}
 	// For each child in list I ask their hinted size and set it!
-	for (Q3ValueList<KdmItem *>::ConstIterator it = m_children.begin(); it != m_children.end(); ++it)
+	for (QList<KdmItem *>::ConstIterator it = m_children.begin(); it != m_children.end(); ++it)
 		(*it)->setGeometry( (*it)->placementHint( parentGeometry ), force );
 }
 
@@ -89,13 +89,13 @@ KdmLayoutBox::update( const QRect &parentGeometry, bool force )
 	// For each child in list ...
 	if (box.homogeneous) {
 		int ccnt = 0;
-		for (Q3ValueList<KdmItem *>::ConstIterator it = m_children.begin(); it != m_children.end(); ++it)
+		for (QList<KdmItem *>::ConstIterator it = m_children.begin(); it != m_children.end(); ++it)
 			if (!(*it)->isExplicitlyHidden())
 				ccnt++;
 		int height = (childrenRect.height() - (ccnt - 1) * box.spacing) / ccnt;
 		int width = (childrenRect.width() - (ccnt - 1) * box.spacing) / ccnt;
 
-		for (Q3ValueList<KdmItem *>::ConstIterator it = m_children.begin(); it != m_children.end(); ++it) {
+		for (QList<KdmItem *>::ConstIterator it = m_children.begin(); it != m_children.end(); ++it) {
 			if ((*it)->isExplicitlyHidden())
 				continue;
 			if (box.isVertical) {
@@ -111,7 +111,7 @@ KdmLayoutBox::update( const QRect &parentGeometry, bool force )
 			}
 		}
 	} else {
-		for (Q3ValueList<KdmItem *>::ConstIterator it = m_children.begin(); it != m_children.end(); ++it) {
+		for (QList<KdmItem *>::ConstIterator it = m_children.begin(); it != m_children.end(); ++it) {
 			if ((*it)->isExplicitlyHidden())
 				continue;
 
@@ -142,7 +142,7 @@ KdmLayoutBox::sizeHint()
 {
 	// Sum up area taken by children
 	int w = 0, h = 0;
-	for (Q3ValueList<KdmItem *>::ConstIterator it = m_children.begin(); it != m_children.end(); ++it) {
+	for (QList<KdmItem *>::ConstIterator it = m_children.begin(); it != m_children.end(); ++it) {
 		QSize s = (*it)->placementHint( QRect() ).size();
 		if (box.isVertical) {
 			if (s.width() > w)
