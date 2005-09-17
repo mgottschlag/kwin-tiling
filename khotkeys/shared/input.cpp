@@ -19,7 +19,7 @@
 #include <assert.h>
 #include <qwidget.h>
 //Added by qt3to4:
-#include <Q3ValueList>
+#include <QList>
 
 #include <kglobalaccel.h>
 #include <kdebug.h>
@@ -80,7 +80,7 @@ void Kbd::activate_receiver( Kbd_receiver* receiver_P )
     if( rcv.active )
         return;
     rcv.active = true;
-    for( Q3ValueList< KShortcut >::ConstIterator it( rcv.shortcuts.begin());
+    for( QList< KShortcut >::ConstIterator it( rcv.shortcuts.begin());
          it != rcv.shortcuts.end();
          ++it )
         grab_shortcut( *it );
@@ -92,7 +92,7 @@ void Kbd::deactivate_receiver( Kbd_receiver* receiver_P )
     if( !rcv.active )
         return;
     rcv.active = false;
-    for( Q3ValueList< KShortcut >::ConstIterator it( rcv.shortcuts.begin());
+    for( QList< KShortcut >::ConstIterator it( rcv.shortcuts.begin());
          it != rcv.shortcuts.end();
          ++it )
         ungrab_shortcut( *it );

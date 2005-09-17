@@ -20,6 +20,7 @@
 
 #include <X11/X.h>
 #include <fixx11h.h>
+#include <QList>
 
 class KGlobalAccel;
 
@@ -56,7 +57,7 @@ class Kbd
         struct Receiver_data
             {
             Receiver_data();
-            Q3ValueList< KShortcut > shortcuts;
+            QList< KShortcut > shortcuts;
             bool active;
             };
         QMap< Kbd_receiver*, Receiver_data > receivers;
