@@ -5,7 +5,6 @@
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QLabel>
-#include <Q3ValueList>
 
 #include <kdebug.h>
 #include <kapplication.h>
