@@ -42,6 +42,7 @@
 #include "bell.moc"
 
 #include <X11/Xlib.h>
+#include <QX11Info>
 
 extern "C"
 {
@@ -55,7 +56,7 @@ extern "C"
     XKeyboardState kbd;
     XKeyboardControl kbdc;
 
-    XGetKeyboardControl(kapp->getDisplay(), &kbd);
+    XGetKeyboardControl(QX11Info::display(), &kbd);
 
     KConfig config("kcmbellrc", true, false);
     config.setGroup("General");
@@ -63,7 +64,7 @@ extern "C"
     kbdc.bell_percent = config.readNumEntry("Volume", kbd.bell_percent);
     kbdc.bell_pitch = config.readNumEntry("Pitch", kbd.bell_pitch);
     kbdc.bell_duration = config.readNumEntry("Duration", kbd.bell_duration);
-    XChangeKeyboardControl(kapp->getDisplay(),
+    XChangeKeyboardControl(QX11Info::display(),
                            KBBellPercent | KBBellPitch | KBBellDuration,
                            &kbdc);
   }
@@ -154,7 +155,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
 void KBellConfig::load()
 {
   XKeyboardState kbd;
-  XGetKeyboardControl(kapp->getDisplay(), &kbd);
+  XGetKeyboardControl(QX11Info::display(), &kbd);
 
   m_volume->setValue(kbd.bell_percent);
   m_pitch->setValue(kbd.bell_pitch);
@@ -177,7 +178,7 @@ void KBellConfig::save()
   kbd.bell_percent = bellVolume;
   kbd.bell_pitch = bellPitch;
   kbd.bell_duration = bellDuration;
-  XChangeKeyboardControl(kapp->getDisplay(),
+  XChangeKeyboardControl(QX11Info::display(),
                          KBBellPercent | KBBellPitch | KBBellDuration,
                          &kbd);
 
@@ -214,7 +215,7 @@ void KBellConfig::ringBell()
 
   // store the old state
   XKeyboardState old_state;
-  XGetKeyboardControl(kapp->getDisplay(), &old_state);
+  XGetKeyboardControl(QX11Info::display(), &old_state);
 
   // switch to the test state
   XKeyboardControl kbd;
@@ -224,17 +225,17 @@ void KBellConfig::ringBell()
     kbd.bell_duration = m_duration->value();
   else
     kbd.bell_duration = 0;
-  XChangeKeyboardControl(kapp->getDisplay(),
+  XChangeKeyboardControl(QX11Info::display(),
                          KBBellPercent | KBBellPitch | KBBellDuration,
                          &kbd);
   // ring bell
-  XBell(kapp->getDisplay(),0);
+  XBell(QX11Info::display(),0);
 
   // restore old state
   kbd.bell_percent = old_state.bell_percent;
   kbd.bell_pitch = old_state.bell_pitch;
   kbd.bell_duration = old_state.bell_duration;
-  XChangeKeyboardControl(kapp->getDisplay(),
+  XChangeKeyboardControl(QX11Info::display(),
                          KBBellPercent | KBBellPitch | KBBellDuration,
                          &kbd);
 }

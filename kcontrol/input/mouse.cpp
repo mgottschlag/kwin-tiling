@@ -71,6 +71,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <kipc.h>
+#include <QX11Info>
 
 #undef Below
 
@@ -121,7 +122,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
          " check this option.");
     QWhatsThis::add( tab1->doubleClick, wtstr );
 
-    wtstr = i18n("Activates and opens a file or folder with a single click.");
+    wtstr = i18n("Activates and opens a fisingle click.");
     QWhatsThis::add( tab1->singleClick, wtstr );
 
 
@@ -160,7 +161,7 @@ MouseConfig::MouseConfig (QWidget * parent, const char *name)
 
     // Only allow setting reversing scroll polarity if we have scroll buttons
     unsigned char map[20];
-    if ( XGetPointerMapping(kapp->getDisplay(), map, 20) >= 5 )
+    if ( XGetPointerMapping(QX11Info::display(), map, 20) >= 5 )
     {
       tab1->cbScrollPolarity->setEnabled( true );
       tab1->cbScrollPolarity->show();
@@ -641,14 +642,14 @@ void MouseSettings::load(KConfig *config)
 {
   int accel_num, accel_den, threshold;
   double accel;
-  XGetPointerControl( kapp->getDisplay(),
+  XGetPointerControl( QX11Info::display(),
               &accel_num, &accel_den, &threshold );
   accel = float(accel_num) / float(accel_den);
 
   // get settings from X server
   int h = RIGHT_HANDED;
   unsigned char map[20];
-  num_buttons = XGetPointerMapping(kapp->getDisplay(), map, 20);
+  num_buttons = XGetPointerMapping(QX11Info::display(), map, 20);
 
   handedEnabled = true;
 
@@ -721,11 +722,11 @@ void MouseSettings::load(KConfig *config)
 
 void MouseSettings::apply(bool force)
 {
-  XChangePointerControl( kapp->getDisplay(),
+  XChangePointerControl( QX11Info::display(),
                          true, true, int(qRound(accelRate*10)), 10, thresholdMove);
 
   unsigned char map[20];
-  num_buttons = XGetPointerMapping(kapp->getDisplay(), map, 20);
+  num_buttons = XGetPointerMapping(QX11Info::display(), map, 20);
   int remap=(num_buttons>=1);
   if (handedEnabled && (m_handedNeedsApply || force)) {
       if( num_buttons == 1 )
@@ -778,7 +779,7 @@ void MouseSettings::apply(bool force)
       }
       int retval;
       if (remap)
-          while ((retval=XSetPointerMapping(kapp->getDisplay(), map,
+          while ((retval=XSetPointerMapping(QX11Info::display(), map,
                                             num_buttons)) == MappingBusy)
               /* keep trying until the pointer is free */
           { };

@@ -36,6 +36,7 @@
 #include "kcmlayoutwidget.h"
 
 #include <X11/Xlib.h>
+#include <QX11Info>
 
 
 static const char* switchModes[] = {
@@ -695,8 +696,7 @@ void LayoutConfig::defaults()
   widget->chkEnable->setChecked(false);
   ruleChanged();
 
-  widget->comboModel->setCurrentText("pc104");
-  //layoutCombo->setCurrentText("us");
+  widget->comboModel->setCurrentText("pc104>setCurrentText("us");
 
   widget->chkEnableOptions->setChecked( true );
   widget->checkResetOld->setChecked( false );
@@ -736,12 +736,12 @@ extern "C"
     XKeyboardState   kbd;
     XKeyboardControl kbdc;
 
-    XGetKeyboardControl(kapp->getDisplay(), &kbd);
+    XGetKeyboardControl(QX11Info::display(), &kbd);
     bool key = config->readBoolEntry("KeyboardRepeating", true);
     kbdc.key_click_percent = config->readNumEntry("ClickVolume", kbd.key_click_percent);
     kbdc.auto_repeat_mode = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
 
-    XChangeKeyboardControl(kapp->getDisplay(),
+    XChangeKeyboardControl(QX11Info::display(),
                            KBKeyClickPercent | KBAutoRepeatMode,
                            &kbdc);
 

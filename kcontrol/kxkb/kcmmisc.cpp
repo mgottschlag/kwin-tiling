@@ -136,7 +136,7 @@ void KeyboardConfig::load()
 
   XKeyboardState kbd;
 
-  XGetKeyboardControl(kapp->getDisplay(), &kbd);
+  XGetKeyboardControl(QX11Info::display(), &kbd);
 
   config.setGroup("Keyboard");
   bool key = config.readBoolEntry("KeyboardRepeating", true);
@@ -163,7 +163,7 @@ void KeyboardConfig::save()
 
   kbd.key_click_percent = clickVolume;
   kbd.auto_repeat_mode = keyboardRepeat;
-  XChangeKeyboardControl(kapp->getDisplay(),
+  XChangeKeyboardControl(QX11Info::display(),
                            KBKeyClickPercent | KBAutoRepeatMode,
                            &kbd);
   if( keyboardRepeat ) {
