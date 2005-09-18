@@ -38,6 +38,7 @@
 #include <QVBoxLayout>
 
 #include <kcmodule.h>
+#include <kvbox.h>
 
 #include "stylepreview.h"
 #include "menupreview.h"
@@ -145,7 +146,7 @@ private:
 	Q3Frame* menuContainer;
 	QGridLayout* menuContainerLayout;
 	MenuPreview* menuPreview;
-	Q3VBox* sliderBox;
+	KVBox* sliderBox;
 	QSlider* slOpacity;
 	QComboBox* comboMenuEffectType;
 	QLabel* lblMenuEffectType;

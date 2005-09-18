@@ -38,7 +38,7 @@
 #include <qslider.h>
 #include <qstylefactory.h>
 #include <qtabwidget.h>
-#include <q3vbox.h>
+
 #include <qfile.h>
 #include <qsettings.h>
 #include <qobject.h>
@@ -67,6 +67,7 @@
 #include "styleconfdialog.h"
 
 #include <X11/Xlib.h>
+#include <kvbox.h>
 // X11 namespace cleanup
 #undef Below
 #undef KeyPress
@@ -282,15 +283,16 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 #endif
 
 	// So much stuffing around for a simple slider..
-	sliderBox = new Q3VBox( menuContainer );
+	sliderBox = new KVBox( menuContainer );
 	sliderBox->setSpacing( KDialog::spacingHint() );
-	sliderBox->setMargin( 0 );
+#warning "KDE4: fix setMargin"	
+	//sliderBox->setMargin( 0 );
 	slOpacity = new QSlider( 0, 100, 5, /*opacity*/ 90, Qt::Horizontal, sliderBox );
 	slOpacity->setTickmarks( QSlider::Below );
 	slOpacity->setTickInterval( 10 );
-	Q3HBox* box1 = new Q3HBox( sliderBox );
+	KHBox* box1 = new KHBox( sliderBox );
 	box1->setSpacing( KDialog::spacingHint() );
-	box1->setMargin( 0 );
+	//box1->setMargin( 0 );
 	QLabel* lbl = new QLabel( i18n("0%"), box1 );
 	lbl->setAlignment( Qt::AlignLeft );
 	lbl = new QLabel( i18n("50%"), box1 );
