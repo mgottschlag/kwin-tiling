@@ -19,9 +19,9 @@
  *
  */
 
-#include <q3hbox.h>
+
 #include <qlayout.h>
-#include <q3vbox.h>
+
 #include <qtimer.h>
 #include <q3progressbar.h>
 #include <qlabel.h>
@@ -31,6 +31,7 @@
 
 #include <klocale.h>
 #include <kdebug.h>
+#include <kvbox.h>
 
 #include "ktimerdialog.h"
 #include "ktimerdialog.moc"
@@ -60,8 +61,8 @@ KTimerDialog::KTimerDialog( int msec, TimerStyle style, QWidget *parent,
     connect( updateTimer, SIGNAL( timeout() ), SLOT( slotUpdateTime() ) );
 
     // create the widgets
-    mainWidget = new Q3VBox( this, "mainWidget" );
-    timerWidget = new Q3HBox( mainWidget, "timerWidget" );
+    mainWidget = new KVBox( this );
+    timerWidget = new KHBox( mainWidget );
     timerLabel = new QLabel( timerWidget );
     timerProgress = new Q3ProgressBar( timerWidget );
     timerProgress->setTotalSteps( msecTotal );
@@ -93,7 +94,7 @@ int KTimerDialog::exec()
 void KTimerDialog::setMainWidget( QWidget *widget )
 {
     // yuck, here goes.
-    Q3VBox *newWidget = new Q3VBox( this );
+    KVBox *newWidget = new KVBox( this );
 
     if ( widget->parentWidget() != mainWidget ) {
         widget->reparent( newWidget, 0, QPoint(0,0) );

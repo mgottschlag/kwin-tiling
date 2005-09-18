@@ -24,9 +24,10 @@
 #include <kdialogbase.h>
 //Added by qt3to4:
 #include <QLabel>
+#include <kvbox.h>
 
 class QTimer;
-class Q3HBox;
+class KHBox;
 class Q3ProgressBar;
 class QLabel;
 
@@ -157,10 +158,10 @@ class KTimerDialog : public KDialogBase
     ButtonCode buttonOnTimeout;
     TimerStyle tStyle;
     
-    Q3HBox *timerWidget;
+    KHBox *timerWidget;
     Q3ProgressBar *timerProgress;
     QLabel *timerLabel;
-    Q3VBox *mainWidget;
+    KVBox *mainWidget;
 
     class KTimerDialogPrivate;
     KTimerDialogPrivate *d;
