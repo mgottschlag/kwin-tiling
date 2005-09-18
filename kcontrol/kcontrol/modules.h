@@ -26,6 +26,7 @@
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <Q3PtrList>
+#include <kvbox.h>
 
 template<class ConfigModule> class Q3PtrList;
 class QStringList;
@@ -35,7 +36,7 @@ class ProxyWidget;
 class KProcess;
 class QX11EmbedWidget;
 class QVBoxLayout;
-class Q3VBox;
+class KVBox;
 
 class ConfigModule : public QObject, public KCModuleInfo
 {
@@ -81,7 +82,7 @@ private:
   QX11EmbedWidget  *_embedWidget;
   KProcess    *_rootProcess;
   QVBoxLayout *_embedLayout;
-  Q3VBox       *_embedFrame;
+  KVBox       *_embedFrame;
 
 };
 

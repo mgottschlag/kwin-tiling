@@ -23,7 +23,7 @@
 
 #include <qlabel.h>
 #include <qlayout.h>
-#include <q3vbox.h>
+
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <Q3Frame>
@@ -46,6 +46,7 @@
 
 #include <X11/Xlib.h>
 #include <QX11Info>
+#include <kvbox.h>
 
 
 template class Q3PtrList<ConfigModule>;
@@ -144,14 +145,16 @@ void ConfigModule::runAsRoot()
   // create an embed widget that will embed the
   // kcmshell running as root
   _embedLayout = new QVBoxLayout(_module->parentWidget());
-  _embedFrame = new Q3VBox( _module->parentWidget() );
-  _embedFrame->setFrameStyle( Q3Frame::Box | Q3Frame::Raised );
+  _embedFrame = new KVBox( _module->parentWidget() );
+#warning "KDE4 porting ";
+  //_embedFrame->setFrameStyle( Q3Frame::Box | Q3Frame::Raised );
   QPalette pal( Qt::red );
   pal.setColor( QColorGroup::Background,
 		_module->parentWidget()->colorGroup().background() );
-  _embedFrame->setPalette( pal );
-  _embedFrame->setLineWidth( 2 );
-  _embedFrame->setMidLineWidth( 2 );
+#warning "KDE4 porting"
+  //_embedFrame->setPalette( pal );
+  //_embedFrame->setLineWidth( 2 );
+  //_embedFrame->setMidLineWidth( 2 );
   _embedLayout->addWidget(_embedFrame,1);
   _embedWidget = new QX11EmbedWidget(_embedFrame );
   _module->hide();

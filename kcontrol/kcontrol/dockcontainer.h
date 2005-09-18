@@ -22,11 +22,12 @@
 
 #include <QStackedWidget>
 #include <QLabel>
+#include <kvbox.h>
 
 class ConfigModule;
 class ModuleWidget;
 class ProxyWidget;
-class Q3VBox;
+class KVBox;
 
 class DockContainer : public QStackedWidget
 {

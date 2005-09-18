@@ -34,6 +34,7 @@
 #include <kglobalsettings.h>
 #include <khtml_part.h>
 #include <kapplication.h>
+#include <kvbox.h>
 
 #include "global.h"
 #include "aboutwidget.h"
@@ -73,7 +74,7 @@ static const char release_text[] = I18N_NOOP("Release:");
 static const char machine_text[] = I18N_NOOP("Machine:");
 
 AboutWidget::AboutWidget(QWidget *parent , const char *name, Q3ListViewItem* category, const QString &caption)
-   : Q3HBox(parent, name),
+   : KHBox(parent),
       _moduleList(false),
       _category(category),
       _caption(caption)

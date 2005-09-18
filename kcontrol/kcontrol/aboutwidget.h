@@ -22,9 +22,10 @@
 
 #include <qwidget.h>
 #include <q3listview.h>
-#include <q3hbox.h>
+
 //Added by qt3to4:
 #include <QPixmap>
+#include <kvbox.h>
 
 class KCModuleInfo;
 class QPixmap;
@@ -33,7 +34,7 @@ class ConfigModule;
 class KHTMLPart;
 class KURL;
 
-class AboutWidget : public Q3HBox
+class AboutWidget : public KHBox
 {  
   Q_OBJECT    
   

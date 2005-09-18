@@ -18,7 +18,7 @@
 */
 
 #include <qlabel.h>
-#include <q3vbox.h>
+
 #include <qpixmap.h>
 #include <qfont.h>
 #include <q3whatsthis.h>
@@ -30,6 +30,7 @@
 #include <kdebug.h>
 #include <kdialog.h>
 #include <kiconloader.h>
+#include <kvbox.h>
 
 #include "dockcontainer.h"
 #include "dockcontainer.moc"
@@ -38,7 +39,7 @@
 #include "modules.h"
 #include "proxywidget.h"
 
-class ModuleTitle : public Q3HBox
+class ModuleTitle : public KHBox
 {
   public:
     ModuleTitle( QWidget *parent, const char *name=0 );
@@ -53,7 +54,7 @@ class ModuleTitle : public Q3HBox
 };
 
 ModuleTitle::ModuleTitle( QWidget *parent, const char *name )
-    : Q3HBox( parent, name )
+    : KHBox( parent )
 {
   QWidget *spacer = new QWidget( this );
   spacer->setFixedWidth( KDialog::marginHint()-KDialog::spacingHint() );
