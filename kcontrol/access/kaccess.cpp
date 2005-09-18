@@ -3,7 +3,7 @@
 
 #include <qtimer.h>
 #include <qpainter.h>
-#include <q3vbox.h>
+
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qdesktopwidget.h>
@@ -31,6 +31,7 @@
 
 #include "kaccess.moc"
 #include <QX11Info>
+#include <kvbox.h>
 
 struct ModifierKey {
    const unsigned int mask;
@@ -595,9 +596,10 @@ void KAccessApp::createDialogContents() {
             0, "AccessXWarning", true, true,
             KStdGuiItem::yes(), KStdGuiItem::no());
 
-      Q3VBox *topcontents = new Q3VBox (dialog);
+      KVBox *topcontents = new KVBox (dialog);
       topcontents->setSpacing(KDialog::spacingHint()*2);
-      topcontents->setMargin(KDialog::marginHint());
+#warning "kde4 fixme"
+	  //topcontents->setMargin(KDialog::marginHint());
 
       QWidget *contents = new QWidget(topcontents);
       QHBoxLayout * lay = new QHBoxLayout(contents);
