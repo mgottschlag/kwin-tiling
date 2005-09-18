@@ -38,7 +38,7 @@
 #include <qpixmap.h>
 #include <qimage.h>
 #include <qlabel.h>
-#include <q3hbox.h>
+
 #include <qpainter.h>
 #include <qfileinfo.h>
 #include <qpushbutton.h>
@@ -52,6 +52,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xcursor/Xcursor.h>
+#include <kvbox.h>
 
 // Check for older version
 #if !defined(XCURSOR_LIB_MAJOR) && defined(XCURSOR_MAJOR)
@@ -84,7 +85,7 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	new QLabel( i18n("Select the cursor theme you want to use (hover preview to test cursor):"), this );
 
 	// Create the preview widget
-	preview = new PreviewWidget( new Q3HBox( this ) );
+	preview = new PreviewWidget( new KHBox( this ) );
 
 	// Create the theme list view
 	listview = new KListView( this );
@@ -99,7 +100,7 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	themeDirs = getThemeBaseDirs();
 	insertThemes();
 
-	Q3HBox *hbox = new Q3HBox( this );
+	KHBox *hbox = new KHBox( this );
 	hbox->setSpacing( KDialog::spacingHint() );
 	installButton = new QPushButton( i18n("Install New Theme..."), hbox );
 	removeButton = new QPushButton( i18n("Remove Theme"), hbox );
