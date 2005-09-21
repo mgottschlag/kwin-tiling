@@ -78,7 +78,7 @@ TrayWindow::TrayWindow(QWidget *parent, const char *name)
 void TrayWindow::setCurrentLayout(const QString& layout)
 {
     QToolTip::remove(this);
-    QToolTip::add(this, mDescriptionMap[layout]);
+    this->setToolTip( mDescriptionMap[layout]);
 
     KIconEffect iconeffect;
 
@@ -89,7 +89,7 @@ void TrayWindow::setError(const QString& layout)
 {
     QString msg = i18n("Error changing keyboard layout to '%1'").arg(layout);
     QToolTip::remove(this);
-    QToolTip::add(this, msg);
+    this->setToolTip( msg);
 
     setPixmap(LayoutIcon::findPixmap("error", m_showFlag));
 }

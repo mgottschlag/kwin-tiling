@@ -34,7 +34,7 @@
 #include <qslider.h>
 #include <qtimer.h>
 #include <qtooltip.h>
-#include <q3whatsthis.h>
+
 #include <qapplication.h>
 #include <QPixmap>
 #include <QDesktopWidget>
@@ -99,7 +99,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    QPixmap pixMap = iconSet.pixmap( QIcon::Small, QIcon::Normal );
    m_urlWallpaperButton->setIconSet( iconSet );
    m_urlWallpaperButton->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
-   QToolTip::add(m_urlWallpaperButton, i18n("Open file dialog"));
+   m_urlWallpaperButton->setToolTip( i18n("Open file dialog"));
 
    connect(m_buttonGroupBackground, SIGNAL(clicked(int)),
            SLOT(slotWallpaperTypeChanged(int)));

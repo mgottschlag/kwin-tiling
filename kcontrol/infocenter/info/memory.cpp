@@ -235,7 +235,7 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 
 	Widget = new QLabel("<b>" + title + "</b>", this);
 	Widget->setAlignment( Qt::AlignCenter );
-	QToolTip::add(Widget, hint);
+	Widget->setToolTip( hint);
 	vbox->addWidget(Widget);
 	vbox->addSpacing(SPACING / 2);
 
@@ -243,14 +243,14 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
 	g->setMinimumWidth(2 * SPACING);
 	g->setMinimumHeight(3 * SPACING);
 	g->setBackgroundMode( Qt::NoBackground );
-	QToolTip::add(g, hint); // add the tooltip
+	g->setToolTip( hint); // add the tooltip
 	Graph[i] = g;
 	vbox->addWidget(g, 2);
 	vbox->addSpacing(SPACING / 2);
 
 	Widget = new QLabel(this);	/* xx MB used. */
 	Widget->setAlignment( Qt::AlignCenter );
-	QToolTip::add(Widget, hint);
+	Widget->setToolTip( hint);
 	GraphLabel[i] = Widget;
 	vbox->addWidget(Widget);
     }

@@ -79,7 +79,7 @@ void WidgetCanvas::mouseMoveEvent( QMouseEvent *me )
 	    if ( i != currentHotspot ) {
 		QString tip = tips[hotspots[i].number];
 		QToolTip::remove( this );
-		QToolTip::add( this, tip );
+		this->setToolTip( tip );
 		currentHotspot = i;
 	    }
 	    return;

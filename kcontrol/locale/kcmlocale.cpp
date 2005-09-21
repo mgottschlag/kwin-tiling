@@ -400,17 +400,17 @@ void KLocaleConfig::slotTranslate()
 {
   kdDebug() << "slotTranslate()" << endl;
 
-  QToolTip::add(m_comboCountry, m_locale->translate
+  m_comboCountry->setToolTip( m_locale->translate
         ( "This is where you live. KDE will use the defaults for "
           "this country or region.") );
-  QToolTip::add(m_addLanguage, m_locale->translate
+  m_addLanguage->setToolTip( m_locale->translate
         ( "This will add a language to the list. If the language is already "
           "in the list, the old one will be moved instead." ) );
 
-  QToolTip::add(m_removeLanguage, m_locale->translate
+  m_removeLanguage->setToolTip( m_locale->translate
         ( "This will remove the highlighted language from the list." ) );
 
-  QToolTip::add(m_languages, m_locale->translate
+  m_languages->setToolTip( m_locale->translate
         ( "KDE programs will be displayed in the first available language in "
           "this list.\nIf none of the languages are available, US English "
           "will be used.") );

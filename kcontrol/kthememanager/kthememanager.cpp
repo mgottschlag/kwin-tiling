@@ -330,7 +330,7 @@ void kthememanager::slotThemeChanged( Q3ListViewItem * item )
 
         KTheme theme( this, themeDir + themeName + ".xml" );
         QToolTip::remove( dlg->lbPreview );
-        QToolTip::add( dlg->lbPreview, "<qt>" + i18n( "Author: %1<br>Email: %2<br>Version: %3<br>Homepage: %4" )
+        dlg->lbPreview->setToolTip( "<qt>" + i18n( "Author: %1<br>Email: %2<br>Version: %3<br>Homepage: %4" )
                        .arg( theme.author() ).arg( theme.email() )
                        .arg( theme.version() ).arg( theme.homepage() ) + "</qt>");
 

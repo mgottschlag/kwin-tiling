@@ -74,33 +74,33 @@ PositionTab::PositionTab(QWidget *parent, const char* name)
      */
     if (kapp->reverseLayout())
     {
-        QToolTip::add(locationTopRight,     i18n("Top left"));
-        QToolTip::add(locationTop,          i18n("Top center"));
-        QToolTip::add(locationTopLeft,      i18n("Top right" ) );
-        QToolTip::add(locationRightTop,     i18n("Left top"));
-        QToolTip::add(locationRight,        i18n("Left center"));
-        QToolTip::add(locationRightBottom,  i18n("Left bottom"));
-        QToolTip::add(locationBottomRight,  i18n("Bottom left"));
-        QToolTip::add(locationBottom,       i18n("Bottom center"));
-        QToolTip::add(locationBottomLeft,   i18n("Bottom right"));
-        QToolTip::add(locationLeftTop,      i18n("Right top"));
-        QToolTip::add(locationLeft,         i18n("Right center"));
-        QToolTip::add(locationLeftBottom,   i18n("Right bottom"));
+        locationTopRight->setToolTip(     i18n("Top left"));
+        locationTop->setToolTip(          i18n("Top center"));
+        locationTopLeft->setToolTip(      i18n("Top right" ) );
+        locationRightTop->setToolTip(     i18n("Left top"));
+        locationRight->setToolTip(        i18n("Left center"));
+        locationRightBottom->setToolTip(  i18n("Left bottom"));
+        locationBottomRight->setToolTip(  i18n("Bottom left"));
+        locationBottom->setToolTip(       i18n("Bottom center"));
+        locationBottomLeft->setToolTip(   i18n("Bottom right"));
+        locationLeftTop->setToolTip(      i18n("Right top"));
+        locationLeft->setToolTip(         i18n("Right center"));
+        locationLeftBottom->setToolTip(   i18n("Right bottom"));
     }
     else
     {
-        QToolTip::add(locationTopLeft,      i18n("Top left"));
-        QToolTip::add(locationTop,          i18n("Top center"));
-        QToolTip::add(locationTopRight,     i18n("Top right" ) );
-        QToolTip::add(locationLeftTop,      i18n("Left top"));
-        QToolTip::add(locationLeft,         i18n("Left center"));
-        QToolTip::add(locationLeftBottom,   i18n("Left bottom"));
-        QToolTip::add(locationBottomLeft,   i18n("Bottom left"));
-        QToolTip::add(locationBottom,       i18n("Bottom center"));
-        QToolTip::add(locationBottomRight,  i18n("Bottom right"));
-        QToolTip::add(locationRightTop,     i18n("Right top"));
-        QToolTip::add(locationRight,        i18n("Right center"));
-        QToolTip::add(locationRightBottom,  i18n("Right bottom"));
+        locationTopLeft->setToolTip(      i18n("Top left"));
+        locationTop->setToolTip(          i18n("Top center"));
+        locationTopRight->setToolTip(     i18n("Top right" ) );
+        locationLeftTop->setToolTip(      i18n("Left top"));
+        locationLeft->setToolTip(         i18n("Left center"));
+        locationLeftBottom->setToolTip(   i18n("Left bottom"));
+        locationBottomLeft->setToolTip(   i18n("Bottom left"));
+        locationBottom->setToolTip(       i18n("Bottom center"));
+        locationBottomRight->setToolTip(  i18n("Bottom right"));
+        locationRightTop->setToolTip(     i18n("Right top"));
+        locationRight->setToolTip(        i18n("Right center"));
+        locationRightBottom->setToolTip(  i18n("Right bottom"));
     }
 
     // connections

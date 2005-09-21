@@ -183,7 +183,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     userbutton->setFixedSize( sz, sz );
     connect( userbutton, SIGNAL(clicked()),
 	     SLOT(slotUserButtonClicked()) );
-    QToolTip::add( userbutton, i18n("Click or drop an image here") );
+    userbutton->setToolTip( i18n("Click or drop an image here") );
     userbutton->setWhatsThis( i18n("Here you can see the image assigned to the user selected in the combo box above. Click on the image button to select from a list"
       " of images or drag and drop your own image on to the button (e.g. from Konqueror).") );
     rstuserbutton = new QPushButton( i18n("Unset"), hlpw );
