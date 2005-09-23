@@ -278,7 +278,7 @@ void KSmartcardConfig::getSupportingModule( KListViewItem * ant,
 
     QString modName=_cardDB->getModuleName(cardATR);
     if (!modName.isNull()){
-        QStringList mng= QStringList::split(",",modName);
+        QStringList mng= modName.split( ",");
         QString type=mng[0];
         QString subType=mng[1];
         QString subSubType=mng[2];

@@ -185,7 +185,7 @@ void ModuleTreeView::makeVisible(ConfigModule *module)
   if (path.startsWith(KCGlobal::baseGroup()))
      path = path.mid(KCGlobal::baseGroup().length());
 
-  QStringList groups = QStringList::split('/', path);
+  QStringList groups = path.split( '/');
 
   ModuleTreeItem *item = 0;
   QStringList::ConstIterator it;

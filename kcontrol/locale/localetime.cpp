@@ -432,7 +432,7 @@ void KLocaleConfigTime::slotTranslate()
   str = i18n("some reasonable time formats for the language",
 	     "HH:MM:SS\n"
 	     "pH:MM:SS AMPM");
-  m_comboTimeFmt->insertStringList(QStringList::split(sep, str));
+  m_comboTimeFmt->insertStringList(str.split( sep));
   m_comboTimeFmt->setEditText(old);
 
   old = m_comboDateFmt->currentText();
@@ -440,7 +440,7 @@ void KLocaleConfigTime::slotTranslate()
   str = i18n("some reasonable date formats for the language",
 	     "WEEKDAY MONTH dD YYYY\n"
 	     "SHORTWEEKDAY MONTH dD YYYY");
-  m_comboDateFmt->insertStringList(QStringList::split(sep, str));
+  m_comboDateFmt->insertStringList(str.split( sep));
   m_comboDateFmt->setEditText(old);
 
   old = m_comboDateFmtShort->currentText();
@@ -449,7 +449,7 @@ void KLocaleConfigTime::slotTranslate()
 	     "YYYY-MM-DD\n"
 	     "dD.mM.YYYY\n"
 	     "DD.MM.YYYY");
-  m_comboDateFmtShort->insertStringList(QStringList::split(sep, str));
+  m_comboDateFmtShort->insertStringList(str.split( sep));
   m_comboDateFmtShort->setEditText(old);
 
   updateWeekDayNames();

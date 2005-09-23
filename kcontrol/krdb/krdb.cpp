@@ -82,7 +82,7 @@ static void applyGtkStyles(bool active, int version)
 {
    QString gtkkde = locateLocal("config", 2==version?"gtkrc-2.0":"gtkrc");
    QByteArray gtkrc = getenv(gtkEnvVar(version));
-   QStringList list = QStringList::split(':', QFile::decodeName(gtkrc));
+   QStringList list = QFile::decodeName(gtkrc).split( ':');
    if (list.count() == 0)
    {
       list.append(QLatin1String(sysGtkrc(version)));

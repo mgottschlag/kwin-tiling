@@ -64,7 +64,7 @@ KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 	if( KImageIO::canRead(KImageIO::type(url->fileName())) )
 	    return url;
 
-	QStringList qs = QStringList::split('\n', KImageIO::pattern());
+	QStringList qs = KImageIO::pattern().split( '\n');
 	qs.remove(qs.begin());
 
 	QString msg = i18n( "%1 "

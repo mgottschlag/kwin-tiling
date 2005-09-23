@@ -384,7 +384,7 @@ const QStringList ThemePage::getThemeBaseDirs() const
 #endif
 	// Expand all occurences of ~ to the home dir
 	path.replace( "~/", QDir::homeDirPath() + '/' );
-	return QStringList::split( ':', path );
+	return path.split( ':');
 }
 
 
