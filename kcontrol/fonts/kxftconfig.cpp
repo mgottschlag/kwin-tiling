@@ -63,7 +63,7 @@ QString KXftConfig::contractHome(QString path)
 QString KXftConfig::expandHome(QString path)
 {
     if(!path.isEmpty() && '~'==path[0])
-        return 1==path.length() ? QDir::homePath() : path.replace(0, 1, QDir::homeDirPath());
+        return 1==path.length() ? QDir::homePath() : path.replace(0, 1, QDir::homePath());
 
     return path;
 }

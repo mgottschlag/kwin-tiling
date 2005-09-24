@@ -194,7 +194,7 @@ void CKFileFontView::slotActivate(Q3ListViewItem *item)
 
 void CKFileFontView::selected(Q3ListViewItem *item)
 {
-    if (item && !(KApplication::keyboardMouseState() & (Qt::ShiftButton|Qt::ControlButton)) &&
+    if (item && !(KApplication::keyboardMouseState() & (Qt::ShiftModifier|Qt::ControlModifier)) &&
          KGlobalSettings::singleClick())
     {
         const KFileItem *fi = ((CFontListViewItem*)item)->fileInfo();
@@ -435,7 +435,7 @@ void CKFileFontView::keyPressEvent(QKeyEvent *e)
     KListView::keyPressEvent(e);
 
     if (Qt::Key_Return==e->key() || Qt::Key_Enter==e->key())
-        if (e->state() & Qt::ControlButton)
+        if (e->state() & Qt::ControlModifier)
             e->ignore();
         else
             e->accept();
