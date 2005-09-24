@@ -348,7 +348,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 			i18n( "Enter a name for the key scheme:" ), sName, &ok, this );
 
 		if( ok ) {
-			sName = sName.simplifyWhiteSpace();
+			sName = sName.simplified();
 			sFile = sName;
 
 			int ind = 0;

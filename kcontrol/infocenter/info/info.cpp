@@ -77,7 +77,7 @@ static bool	sorting_allowed;	/* is sorting allowed by user ? */
 
 static const QString Value( int val, int numbers=1 )
 {
-  return KGlobal::locale()->formatNumber(val, 0).rightJustify(numbers);
+  return KGlobal::locale()->formatNumber(val, 0).rightJustified(numbers);
 }
 
 static const QString HexStr(unsigned long val, int digits )

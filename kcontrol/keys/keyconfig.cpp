@@ -307,10 +307,10 @@ void KKeyModule::readScheme( int index )
 
     if ( ss.exec() ) {
       sName = ss.nameLine->text();
-      if ( sName.stripWhiteSpace().isEmpty() )
+      if ( sName.trimmed().isEmpty() )
         return;
 
-      sName = sName.simplifyWhiteSpace();
+      sName = sName.simplified();
       sFile = sName;
 
       int ind = 0;

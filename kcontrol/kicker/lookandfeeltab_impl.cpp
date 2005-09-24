@@ -150,7 +150,7 @@ void LookAndFeelTab::load()
     config.setGroup("General");
 
     bool use_theme = kcfg_UseBackgroundTheme->isChecked();
-    QString theme = kcfg_BackgroundTheme->lineEdit()->text().stripWhiteSpace();
+    QString theme = kcfg_BackgroundTheme->lineEdit()->text().trimmed();
 
     bool transparent = kcfg_Transparent->isChecked();
 

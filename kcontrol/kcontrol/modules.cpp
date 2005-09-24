@@ -166,22 +166,22 @@ void ConfigModule::runAsRoot()
   _busy->show();
 
   // prepare the process to run the kcmshell
-  QString cmd = service()->exec().stripWhiteSpace();
+  QString cmd = service()->exec().trimmed();
   bool kdeshell = false;
   if (cmd.left(5) == "kdesu")
     {
-      cmd = cmd.remove(0,5).stripWhiteSpace();
+      cmd = cmd.remove(0,5).trimmed();
       // remove all kdesu switches
       while( cmd.length() > 1 && cmd[ 0 ] == '-' )
         {
           int pos = cmd.find( ' ' );
-          cmd = cmd.remove( 0, pos ).stripWhiteSpace();
+          cmd = cmd.remove( 0, pos ).trimmed();
         }
     }
 
   if (cmd.left(8) == "kcmshell")
     {
-      cmd = cmd.remove(0,8).stripWhiteSpace();
+      cmd = cmd.remove(0,8).trimmed();
       kdeshell = true;
     }
 

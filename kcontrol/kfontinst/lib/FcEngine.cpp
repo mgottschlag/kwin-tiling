@@ -370,7 +370,7 @@ static bool drawChar(QPixmap &pix, XftDraw *xftDraw, XftFont *xftFont, XftColor 
                      int &x, int &y, int w, int h, int fSize, int offset)
 {
     XGlyphInfo     extents;
-    const FcChar16 *str=(FcChar16 *)(&(text.ucs2()[pos]));
+    const FcChar16 *str=(FcChar16 *)(&(text.utf16()[pos]));
 
     XftTextExtents16(pix.x11Display(), xftFont, str, 1, &extents);
 
@@ -393,7 +393,7 @@ static bool drawString(QPixmap &pix, XftDraw *xftDraw, XftFont *xftFont, XftColo
                        int x, int &y, int h, int offset)
 {   
     XGlyphInfo     extents;
-    const FcChar16 *str=(FcChar16 *)(text.ucs2());
+    const FcChar16 *str=(FcChar16 *)(text.utf16());
 
     XftTextExtents16(pix.x11Display(), xftFont, str, text.length(), &extents);
     if(y+extents.height<h)

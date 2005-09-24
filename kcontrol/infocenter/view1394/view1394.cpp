@@ -213,7 +213,7 @@ void View1394::rescanBus()
          if (((firstQuad>>24) & 0xff)==1) //minimal config rom
          {
             QString guidStr=QString::number(firstQuad,16);
-            guidStr="0x"+guidStr.rightJustify(6,'0');
+            guidStr="0x"+guidStr.rightJustified(6,'0');
             new Q3ListViewItem(card,nodeStr, guidStr);
          }
          else  //general config rom
@@ -222,7 +222,7 @@ void View1394::rescanBus()
             char buf[32];
             snprintf(buf, 32, "%llX", guid);
             guidStr=buf;
-            guidStr="0x"+guidStr.rightJustify(16,'0');
+            guidStr="0x"+guidStr.rightJustified(16,'0');
             QString local=((j | 0xffc0) == localNodeId)?"X":"";
             QString irmStr=(cap & 0x80000000) ? "X":"";
             QString cmStr=(cap & 0x40000000) ? "X":"";
@@ -308,7 +308,7 @@ QString OuiDb::vendor(octlet_t guid)
 {
    guid=(guid & 0xffffff0000000000LL)>>40;
    QString key=QString::number((unsigned int)(guid),16);
-   key=key.rightJustify(6, '0').upper();
+   key=key.rightJustified(6, '0').upper();
    QString v=m_vendorIds[key];
    if (v.isEmpty())
       v=i18n("Unknown");

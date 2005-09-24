@@ -198,7 +198,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
         while(!stream.atEnd())
         {
             line=stream.readLine();
-            line=line.simplifyWhiteSpace();
+            line=line.simplified();
     
             if(inMetrics)
             {

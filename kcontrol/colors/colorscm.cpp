@@ -535,7 +535,7 @@ void KColorScheme::slotAdd()
         if (!ok)
             return;
 
-        sName = sName.simplifyWhiteSpace();
+        sName = sName.simplified();
         sFile = sName;
 
         int i = 0;

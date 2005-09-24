@@ -135,8 +135,8 @@ void KArtsModule::slotProcessArtsdOutput(KProcess*, char* buf, int len)
 	QString name, fullName;
 	QStringList::Iterator it;
 	for (it = availableIOs.begin(); it != availableIOs.end(); ++it) {
-		name = (*it).left(12).stripWhiteSpace();
-		fullName = (*it).mid(12).stripWhiteSpace();
+		name = (*it).left(12).trimmed();
+		fullName = (*it).mid(12).trimmed();
 		audioIOList.append(new AudioIOElement(name, fullName));
 	}
 }

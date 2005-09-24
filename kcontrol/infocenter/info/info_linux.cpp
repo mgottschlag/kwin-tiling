@@ -105,8 +105,8 @@ bool GetInfo_ReadfromFile(Q3ListView * lbox, const char *FileName,
 	if (!line.isEmpty()) {
 	    if (!splitChar.isNull()) {
 		int pos = line.find(splitChar);
-		s1 = line.left(pos-1).stripWhiteSpace();
-		s2 = line.mid(pos+1).stripWhiteSpace();
+		s1 = line.left(pos-1).trimmed();
+		s2 = line.mid(pos+1).trimmed();
 	    }
 	    else
 	        s1 = line;

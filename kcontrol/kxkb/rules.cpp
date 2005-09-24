@@ -132,15 +132,15 @@ void KeyRules::loadOldLayouts(QString file)
       m_oldLayouts.clear();
       m_nonLatinLayouts.clear();
       while (!ts.atEnd()) {
-	  line = ts.readLine().simplifyWhiteSpace();
+	  line = ts.readLine().simplified();
 
 	  if( line.find(oldLayoutsTag) == 0 ) {
 
 	    line = line.mid(strlen(oldLayoutsTag));
-	    line = line.mid(line.find('=')+1).simplifyWhiteSpace();
+	    line = line.mid(line.find('=')+1).simplified();
 	    while( !ts.atEnd() && line.endsWith("\\") )
 		line = line.left(line.length()-1) + ts.readLine();
-	    line = line.simplifyWhiteSpace();
+	    line = line.simplified();
 
 	    m_oldLayouts = line.split( "\\s"));
 //	    kdDebug() << "oldlayouts " << m_oldLayouts.join("|") << endl;
@@ -151,11 +151,11 @@ void KeyRules::loadOldLayouts(QString file)
 	  else
 	  if( line.find(nonLatinLayoutsTag) == 0 ) {
 
-	    line = line.mid(strlen(nonLatinLayoutsTag)+1).simplifyWhiteSpace();
-	    line = line.mid(line.find('=')+1).simplifyWhiteSpace();
+	    line = line.mid(strlen(nonLatinLayoutsTag)+1).simplified();
+	    line = line.mid(line.find('=')+1).simplified();
 	    while( !ts.atEnd() && line.endsWith("\\") )
 		line = line.left(line.length()-1) + ts.readLine();
-	    line = line.simplifyWhiteSpace();
+	    line = line.simplified();
 
 	    m_nonLatinLayouts = line.split( "\\s"));
 //	    kdDebug() << "nonlatin " << m_nonLatinLayouts.join("|") << endl;
@@ -182,7 +182,7 @@ void KeyRules::loadGroups(QString file)
 
       while (!ts.atEnd()) {
          ts >> locale >> grp;
-	 locale.simplifyWhiteSpace();
+	 locale.simplified();
 
 	 if (locale[0] == '#' || locale.left(2) == "//" || locale.isEmpty())
 	    continue;
@@ -262,7 +262,7 @@ KeyRules::getVariants(const QString& layout)
 
       while (!ts.atEnd()) {
     	  prev_line = line;
-	  line = ts.readLine().simplifyWhiteSpace();
+	  line = ts.readLine().simplified();
 
 	    if (line[0] == '#' || line.left(2) == "//" || line.isEmpty())
 		continue;
@@ -297,7 +297,7 @@ void KeyRules::parseVariants(const QStringList& vars, Q3Dict<char>& variants, bo
   static const char* VARIANT_PATTERN = "\\([a-z0-9_]*\\)";
   for (QStringList::ConstIterator it = vars.begin(); it != vars.end(); ++it)
   {
-      QString varLine = (*it).stripWhiteSpace();
+      QString varLine = (*it).trimmed();
       QRegExp rx(LAYOUT_PATTERN);
       int pos = rx.search(varLine, 0);
       int len = rx.matchedLength();

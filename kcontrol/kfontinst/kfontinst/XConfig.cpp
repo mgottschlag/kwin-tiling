@@ -958,7 +958,7 @@ CXConfig::CFontsFile::CFontsFile(const char *file)
 
                     //
                     // Check for ttc files, and ttcap entries...
-                    QString fname(QString(line).stripWhiteSpace()), 
+                    QString fname(QString(line).trimmed()), 
                             mod;
                     int     c1=fname.lastIndexOf(':');
 

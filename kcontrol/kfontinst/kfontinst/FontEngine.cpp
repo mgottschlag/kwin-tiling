@@ -341,8 +341,8 @@ static void removeSymbols(QString &str)
         if(str[c].unicode()<0x20 || str[c].unicode()>0x7E)
             str[c]=space;
 
-    str=str.simplifyWhiteSpace();
-    str=str.stripWhiteSpace();
+    str=str.simplified();
+    str=str.trimmed();
 }
 
 static void removeString(QString &str, const QString &remove)
@@ -951,7 +951,7 @@ void CFontEngine::setPsNameFt()
                 itsPsName[0]=itsPsName.toLocal8Bit().at(0)+('A'-'0');
 
             for(ch=1; ch<itsPsName.length(); ++ch)
-                if('_'==itsPsName.toLocal8Bit()[ch] || ' '==itsPsName.local8Bit()[ch])
+                if('_'==itsPsName.toLocal8Bit()[ch] || ' '==itsPsName.toLocal8Bit()[ch])
                     for(ch2=ch; ch2<itsPsName.length()-1; ++ch2)
                         itsPsName[ch2]=itsPsName[ch2+1];
         }
