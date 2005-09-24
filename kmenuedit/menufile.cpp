@@ -396,8 +396,8 @@ void MenuFile::moveMenu(const QString &oldMenu, const QString &newMenu)
 
 // TODO: GET RID OF COMMON PART, IT BREAKS STUFF
    // Find common part
-   QStringList oldMenuParts = QStringList::split('/', oldMenu);
-   QStringList newMenuParts = QStringList::split('/', newMenu);
+   QStringList oldMenuParts = oldMenu.split( '/');
+   QStringList newMenuParts = newMenu.split( '/');
    QString commonMenuName;
    int max = QMIN(oldMenuParts.count(), newMenuParts.count());
    int i = 0;
