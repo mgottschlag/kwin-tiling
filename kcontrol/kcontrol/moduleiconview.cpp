@@ -97,7 +97,7 @@ void ModuleIconView::fill()
      // go-back node
      ModuleIconItem *i = new ModuleIconItem(this, i18n("Back"), icon);
      i->setOrderNo(0);
-     int last_slash = _path.findRev('/', -2);
+     int last_slash = _path.lastIndexOf('/', -2);
      if (last_slash == -1)
         i->setTag(QString::null);
      else

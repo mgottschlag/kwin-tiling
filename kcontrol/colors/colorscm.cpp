@@ -454,7 +454,7 @@ void KColorScheme::slotSave( )
     if (!entry) return;
     sCurrentScheme = entry->path;
     KSimpleConfig *config = new KSimpleConfig(sCurrentScheme );
-    int i = sCurrentScheme.findRev('/');
+    int i = sCurrentScheme.lastIndexOf('/');
     if (i >= 0)
       sCurrentScheme = sCurrentScheme.mid(i+1);
 
@@ -810,7 +810,7 @@ void KColorScheme::readScheme( int index )
       sCurrentScheme = entry->path;
       config = new KSimpleConfig(sCurrentScheme, true);
       config->setGroup("Color Scheme");
-      int i = sCurrentScheme.findRev('/');
+      int i = sCurrentScheme.lastIndexOf('/');
       if (i >= 0)
         sCurrentScheme = sCurrentScheme.mid(i+1);
     }
@@ -918,7 +918,7 @@ int KColorScheme::findSchemeByName(const QString &scheme)
       return 1;
 
    QString search = scheme;
-   int i = search.findRev('/');
+   int i = search.lastIndexOf('/');
    if (i >= 0)
       search = search.mid(i+1);
 

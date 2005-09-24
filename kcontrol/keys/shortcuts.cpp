@@ -209,7 +209,7 @@ void ShortcutsModule::createActionsGeneral()
 	for( uint i = 0; i < actions.count(); i++ ) {
 		QString sConfigKey = actions[i].name();
 		//kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
-		int iLastSpace = sConfigKey.findRev( ' ' );
+		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
 		bool bIsNum = false;
 		if( iLastSpace >= 0 )
 			sConfigKey.mid( iLastSpace+1 ).toInt( &bIsNum );
@@ -230,7 +230,7 @@ void ShortcutsModule::createActionsSequence()
 	for( uint i = 0; i < actions.count(); i++ ) {
 		QString sConfigKey = actions[i].name();
 		//kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
-		int iLastSpace = sConfigKey.findRev( ' ' );
+		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
 		bool bIsNum = false;
 		if( iLastSpace >= 0 )
 			sConfigKey.mid( iLastSpace+1 ).toInt( &bIsNum );

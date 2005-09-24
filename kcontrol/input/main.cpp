@@ -56,7 +56,7 @@ extern "C"
 #ifdef HAVE_XCURSOR
     config->setGroup("Mouse");
     DCOPCString theme = QFile::encodeName(config->readEntry("cursorTheme", QString()));
-    DCOPCString size = config->readEntry("cursorSize", QString()).local8Bit();
+    DCOPCString size = config->readEntry("cursorSize", QString()).toLocal8Bit();
 
     // Note: If you update this code, update kapplymousetheme as well.
 

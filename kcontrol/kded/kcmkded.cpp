@@ -116,10 +116,10 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 void setModuleGroup(KConfig *config, const QString &filename)
 {
 	QString module = filename;
-	int i = module.findRev('/');
+	int i = module.lastIndexOf('/');
 	if (i != -1)
 	   module = module.mid(i+1);
-	i = module.findRev('.');
+	i = module.lastIndexOf('.');
 	if (i != -1)
 	   module = module.left(i);
 

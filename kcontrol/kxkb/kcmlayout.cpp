@@ -331,7 +331,7 @@ QWidget* LayoutConfig::makeOptionsTab()
             Q3CheckListItem::CheckBoxController, it.currentKey());
       }
       parent->setOpen(true);
-      m_optionGroups.insert(i18n(it.currentKey().local8Bit()), parent);
+      m_optionGroups.insert(i18n(it.currentKey().toLocal8Bit()), parent);
     }
   }
 
@@ -433,7 +433,7 @@ void LayoutConfig::load()
   // should ask the X-server about it's settings!
 
   QString m_name = m_rules->models()[model];
-  widget->comboModel->setCurrentText(i18n(m_name.local8Bit()));
+  widget->comboModel->setCurrentText(i18n(m_name.toLocal8Bit()));
 
   QString layout = config->readEntry("Layout", "us");
   QString l_name = m_rules->layouts()[layout];

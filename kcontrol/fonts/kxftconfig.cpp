@@ -91,7 +91,7 @@ static QString dirSyntax(const QString &d)
 
         ds.replace("//", "/");
 
-        int slashPos=ds.findRev('/');
+        int slashPos=ds.lastIndexOf('/');
 
         if(slashPos!=(((int)ds.length())-1))
             ds.append('/');
@@ -107,7 +107,7 @@ static QString xDirSyntax(const QString &d)
     if(!d.isNull())
     {
         QString ds(d);
-        int     slashPos=ds.findRev('/');
+        int     slashPos=ds.lastIndexOf('/');
  
         if(slashPos==(((int)ds.length())-1))
             ds.remove(slashPos, 1);
@@ -144,7 +144,7 @@ static QString getDir(const QString &f)
 {
     QString d(f);
 
-    int slashPos=d.findRev('/');
+    int slashPos=d.lastIndexOf('/');
 
     if(-1!=slashPos)
         d.remove(slashPos+1, d.length());
@@ -655,7 +655,7 @@ bool KXftConfig::apply()
     
                         //
                         // Write to file...
-                        fputs(str.utf8(), f);
+                        fputs(str.toUtf8(), f);
                         fclose(f);
     
                         if(FcAtomicReplaceOrig(atomic))

@@ -123,7 +123,7 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 	}
 
 	QListViewItem *olditem = NULL;
-	while(!(s = t->readLine().local8Bit()).isEmpty()) {
+	while(!(s = t->readLine().toLocal8Bit()).isEmpty()) {
 		if (!seencpu) {
 			if (s.contains("cpu"))
 				seencpu = true;

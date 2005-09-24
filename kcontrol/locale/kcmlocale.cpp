@@ -244,9 +244,9 @@ void KLocaleConfig::loadLanguageList()
                                    m_locale->translate("without name"));
 
     QString tag = *it;
-    int index = tag.findRev('/');
+    int index = tag.lastIndexOf('/');
     tag = tag.left(index);
-    index = tag.findRev('/');
+    index = tag.lastIndexOf('/');
     tag = tag.mid(index + 1);
     m_addLanguage->insertItem(name, tag, submenu, menu_index);
   }
@@ -277,11 +277,11 @@ void KLocaleConfig::loadCountryList()
     QString tag = *it;
     int index;
 
-    index = tag.findRev('/');
+    index = tag.lastIndexOf('/');
     if (index != -1)
       tag = tag.mid(index + 1);
 
-    index = tag.findRev('.');
+    index = tag.lastIndexOf('.');
     if (index != -1)
       tag.truncate(index);
 
@@ -313,9 +313,9 @@ void KLocaleConfig::loadCountryList()
     QString submenu = entry.readEntry("Region");
 
     QString tag = *it;
-    int index = tag.findRev('/');
+    int index = tag.lastIndexOf('/');
     tag.truncate(index);
-    index = tag.findRev('/');
+    index = tag.lastIndexOf('/');
     tag = tag.mid(index + 1);
     int menu_index = submenu.isEmpty() ? -1 : -2;
 

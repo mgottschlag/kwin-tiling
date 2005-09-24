@@ -75,7 +75,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 	for( uint i = 0; i < actions.size(); i++ ) {
 		QString sConfigKey = actions[i].m_sName;
 		//kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
-		int iLastSpace = sConfigKey.findRev( ' ' );
+		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
 		bool bIsNum = false;
 		if( iLastSpace >= 0 )
 			sConfigKey.mid( iLastSpace+1 ).toInt( &bIsNum );

@@ -15,7 +15,7 @@ bool SaverConfig::read(const QString &file)
     mExec = config.readPathEntry("Exec");
     mName = config.readEntry("Name");
     mCategory = i18n("Screen saver category", // Must be same in Makefile.am
-                     config.readEntry("X-KDE-Category").utf8());
+                     config.readEntry("X-KDE-Category").toUtf8());
 
     if (config.hasActionGroup("Setup"))
     {
@@ -29,7 +29,7 @@ bool SaverConfig::read(const QString &file)
       mSaver = config.readPathEntry("Exec");
     }
 
-    int indx = file.findRev('/');
+    int indx = file.lastIndexOf('/');
     if (indx >= 0) {
         mFile = file.mid(indx+1);
     }

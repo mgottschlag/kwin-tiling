@@ -137,7 +137,7 @@ static QString removeMultipleExtension(const KURL &url)
     QString fname(url.fileName());
     int     pos;
 
-    if(-1!=(pos=fname.findRev(QLatin1String(constMultipleExtension))))
+    if(-1!=(pos=fname.lastIndexOf(QLatin1String(constMultipleExtension))))
         fname=fname.left(pos);
 
     return fname;
@@ -148,7 +148,7 @@ static QString modifyName(const QString &fname)
     static const char constSymbols[]={ '-', ' ', ':', 0 };
 
     QString rv(fname);
-    int     dotPos=rv.findRev('.');
+    int     dotPos=rv.lastIndexOf('.');
 
     if(-1!=dotPos)
     {
@@ -1900,7 +1900,7 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
         authInfo.password=itsPasswd;
 
     if(askPasswd)
-        while(!error && 0!=proc.checkInstall(authInfo.password.local8Bit()))
+        while(!error && 0!=proc.checkInstall(authInfo.password.toLocal8Bit()))
         {
             KFI_DBUG << "ATTEMPT : " << attempts << endl;
             if(1==attempts)
@@ -1909,7 +1909,7 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
                 error=true;
         }
     else
-        error=proc.checkInstall(authInfo.password.local8Bit()) ? true : false;
+        error=proc.checkInstall(authInfo.password.toLocal8Bit()) ? true : false;
     return error ? QString::null : authInfo.password;
 }
 
@@ -1926,7 +1926,7 @@ bool CKioFonts::doRootCmd(const char *cmd, const QString &passwd)
 
         KFI_DBUG << "Try to run command" << endl;
         proc.setCommand(cmd);
-        return proc.exec(passwd.local8Bit()) ? false : true;
+        return proc.exec(passwd.toLocal8Bit()) ? false : true;
     }
 
     return false;

@@ -140,7 +140,7 @@ void KBackgroundPattern::readSettings()
     m_Pattern = m_pConfig->readPathEntry("File");
     m_Comment = m_pConfig->readEntry("Comment");
     if (m_Comment.isEmpty())
-       m_Comment = m_File.mid(m_File.findRev('/')+1);
+       m_Comment = m_File.mid(m_File.lastIndexOf('/')+1);
 }
 
 
@@ -208,10 +208,10 @@ QStringList KBackgroundPattern::list()
     QStringList::Iterator it;
     for (it=lst.begin(); it!=lst.end(); ++it) {
         // Strip path and suffix
-        int pos = (*it).findRev('/');
+        int pos = (*it).lastIndexOf('/');
         if (pos != -1)
             (*it) = (*it).mid(pos+1);
-        pos = (*it).findRev('.');
+        pos = (*it).lastIndexOf('.');
         if (pos != -1)
             (*it) = (*it).left(pos);
     }
@@ -419,10 +419,10 @@ QStringList KBackgroundProgram::list()
     QStringList::Iterator it;
     for (it=lst.begin(); it!=lst.end(); ++it) {
         // Strip path and suffix
-        int pos = (*it).findRev('/');
+        int pos = (*it).lastIndexOf('/');
         if (pos != -1)
             (*it) = (*it).mid(pos+1);
-        pos = (*it).findRev('.');
+        pos = (*it).lastIndexOf('.');
         if (pos != -1)
             (*it) = (*it).left(pos);
     }

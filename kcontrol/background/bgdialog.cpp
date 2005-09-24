@@ -391,7 +391,7 @@ void BGDialog::loadWallpaperFilesList() {
          rs = imageCaption + " (" + QString::number(n) + ')';
          lrs = rs.lower();
       }
-      int slash = (*it).findRev('/') + 1;
+      int slash = (*it).lastIndexOf('/') + 1;
       QString directory = (*it).left(slash);
       bool canLoadScaleable = false;
 #ifdef HAVE_LIBART
@@ -418,8 +418,8 @@ void BGDialog::loadWallpaperFilesList() {
 
          if (imageCaption.isEmpty())
          {
-            int slash = (*it).findRev('/') + 1;
-            int endDot = (*it).findRev('.');
+            int slash = (*it).lastIndexOf('/') + 1;
+            int endDot = (*it).lastIndexOf('.');
 
             // strip the extension if it exists
             if (endDot != -1 && endDot > slash)
@@ -468,8 +468,8 @@ void BGDialog::setWallpaper(const QString &s)
    {
       int i = comboWallpaper->count();
       QString imageCaption;
-      int slash = s.findRev('/') + 1;
-      int endDot = s.findRev('.');
+      int slash = s.lastIndexOf('/') + 1;
+      int endDot = s.lastIndexOf('.');
 
       // strip the extension if it exists
       if (endDot != -1 && endDot > slash)

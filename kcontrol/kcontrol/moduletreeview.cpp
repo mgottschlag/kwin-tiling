@@ -359,7 +359,7 @@ void ModuleTreeItem::setGroup(const QString &path)
 {
   KServiceGroup::Ptr group = KServiceGroup::group(path);
   QString defName = path.left(path.length()-1);
-  int pos = defName.findRev('/');
+  int pos = defName.lastIndexOf('/');
   if (pos >= 0)
      defName = defName.mid(pos+1);
   if (group && group->isValid())

@@ -445,7 +445,7 @@ void TopLevel::reportBug()
         else
         {
             snprintf(buffer, sizeof(buffer), "kcm%s", _active->library().latin1());
-            dummyAbout = new KAboutData(buffer, _active->moduleName().utf8(), "2.0");
+            dummyAbout = new KAboutData(buffer, _active->moduleName().toUtf8(), "2.0");
             deleteit = true;
         }
     }

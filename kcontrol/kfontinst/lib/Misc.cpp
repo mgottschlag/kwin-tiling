@@ -69,7 +69,7 @@ QString dirSyntax(const QString &d)
 
         ds.replace("//", "/");
 
-        int slashPos=ds.findRev('/');
+        int slashPos=ds.lastIndexOf('/');
 
         if(slashPos!=(((int)ds.length())-1))
             ds.append('/');
@@ -88,7 +88,7 @@ QString xDirSyntax(const QString &d)
 
         ds.replace("//", "/");
 
-        int slashPos=ds.findRev('/');
+        int slashPos=ds.lastIndexOf('/');
  
         if(slashPos==(((int)ds.length())-1))
             ds.remove(slashPos, 1);
@@ -102,7 +102,7 @@ QString getDir(const QString &f)
 {
     QString d(f);
 
-    int slashPos=d.findRev('/');
+    int slashPos=d.lastIndexOf('/');
  
     if(slashPos!=-1)
         d.remove(slashPos+1, d.length());
@@ -114,7 +114,7 @@ QString getFile(const QString &f)
 {
     QString d(f);
 
-    int slashPos=d.findRev('/');
+    int slashPos=d.lastIndexOf('/');
  
     if(slashPos!=-1)
         d.remove(0, slashPos+1);
@@ -154,7 +154,7 @@ bool doCmd(const QString &cmd, const QString &p1, const QString &p2, const QStri
 QString changeExt(const QString &f, const QString &newExt)
 {
     QString newStr(f);
-    int     dotPos=newStr.findRev('.');
+    int     dotPos=newStr.lastIndexOf('.');
 
     if(-1==dotPos)
         newStr+=QChar('.')+newExt;

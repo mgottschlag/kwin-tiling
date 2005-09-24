@@ -342,7 +342,7 @@ void LookAndFeelTab::fillTileCombos()
     QStringList words = tile.split( "[_ ]"));
     for (QStringList::iterator w = words.begin(); w != words.end(); ++w)
       (*w)[0] = (*w)[0].upper();
-    tile = i18n(words.join(" ").utf8());
+    tile = i18n(words.join(" ").toUtf8());
 
     m_kmenuTile->insertItem(pix, tile);
     m_desktopTile->insertItem(pix, tile);

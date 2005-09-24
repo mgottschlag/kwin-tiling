@@ -197,7 +197,7 @@ KArtsModule::KArtsModule(QWidget *parent, const char *name)
 
 	hardware->audioIO->insertItem( i18n( "Autodetect" ) );
 	for (AudioIOElement *a = audioIOList.first(); a != 0; a = audioIOList.next())
-		hardware->audioIO->insertItem(i18n(a->fullName.utf8()));
+		hardware->audioIO->insertItem(i18n(a->fullName.toUtf8()));
 
 	deviceManager = new DeviceManager();
 	deviceManager->initManager();

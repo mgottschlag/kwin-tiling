@@ -117,8 +117,8 @@ static bool get_dri_device()
 	QRegExp rx = QRegExp("\\b[Pp][Cc][Ii][:]([0-9a-fA-F]+[:])?([0-9a-fA-F]+[:][0-9a-fA-F]+[:.][0-9a-fA-F]+)\\b");
 	if (rx.search(line)>0)	 {
 		dri_info.pci = rx.cap(2);
-		int end = dri_info.pci.findRev(':');
-		int end2 = dri_info.pci.findRev('.');
+		int end = dri_info.pci.lastIndexOf(':');
+		int end2 = dri_info.pci.lastIndexOf('.');
 		if (end2>end) end=end2;
 		dri_info.pci[end]='.';
 

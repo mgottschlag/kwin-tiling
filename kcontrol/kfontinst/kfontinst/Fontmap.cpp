@@ -187,7 +187,7 @@ static QString getEntry(QStringList &list, const QString &name)
 
 inline bool isAlias(const QString &entry)
 {
-    return -1==entry.findRev(QRegExp(")\\s*;\\s*$"));
+    return -1==entry.lastIndexOf(QRegExp(")\\s*;\\s*$"));
 }
 
 static void addEntry(QStringList &list, const QString &name, const QString &file, const QString &fmapDir)

@@ -182,9 +182,9 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
 
   QString qversion = qVersion();
   if ( qversion.count( '.' ) > 1 )
-     qversion.truncate( qversion.findRev( '.' ) );
+     qversion.truncate( qversion.lastIndexOf( '.' ) );
   if ( qversion.contains( '-' ) )
-     qversion.truncate( qversion.findRev( '-' ) );
+     qversion.truncate( qversion.lastIndexOf( '-' ) );
 
   QStringList kdeAdded =
     settings.readListEntry("/qt/KDE/kdeAddedLibraryPaths");

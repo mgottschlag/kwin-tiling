@@ -213,7 +213,7 @@ QStringList AppTreeView::fileList(const QString& rPath)
     QString relativePath = rPath;
 
     // truncate "/.directory"
-    int pos = relativePath.findRev("/.directory");
+    int pos = relativePath.lastIndexOf("/.directory");
     if (pos > 0) relativePath.truncate(pos);
 
     QStringList filelist;
@@ -252,7 +252,7 @@ QStringList AppTreeView::dirList(const QString& rPath)
     QString relativePath = rPath;
 
     // truncate "/.directory"
-    int pos = relativePath.findRev("/.directory");
+    int pos = relativePath.lastIndexOf("/.directory");
     if (pos > 0) relativePath.truncate(pos);
 
     QStringList dirlist;

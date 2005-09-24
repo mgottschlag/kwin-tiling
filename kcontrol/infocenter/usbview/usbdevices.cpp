@@ -53,7 +53,7 @@ USBDevice::USBDevice()
 void USBDevice::parseLine(QString line)
 {
   if (line.startsWith("T:"))
-    sscanf(line.local8Bit().data(),
+    sscanf(line.toLocal8Bit().data(),
 	   "T:  Bus=%2d Lev=%2d Prnt=%2d Port=%d Cnt=%2d Dev#=%3d Spd=%3f MxCh=%2d",
 	   &_bus, &_level, &_parent, &_port, &_count, &_device, &_speed, &_channels);
   else if (line.startsWith("S:  Manufacturer"))
@@ -68,7 +68,7 @@ void USBDevice::parseLine(QString line)
     _serial = line.mid(17);
   else if (line.startsWith("B:"))
     {
-      sscanf(line.local8Bit().data(),
+      sscanf(line.toLocal8Bit().data(),
 	     "B:  Alloc=%3d/%3d us (%2d%%), #Int=%3d, #Iso=%3d",
 	     &_bwUsed, &_bwTotal, &_bwPercent, &_bwIntr, &_bwIso);
       _hasBW = true;
@@ -76,13 +76,13 @@ void USBDevice::parseLine(QString line)
   else if (line.startsWith("D:"))
     {
       char buffer[11];
-      sscanf(line.local8Bit().data(),
+      sscanf(line.toLocal8Bit().data(),
 	     "D:  Ver=%x.%x Cls=%x(%10s) Sub=%x Prot=%x MxPS=%d #Cfgs=%d",
 	     &_verMajor, &_verMinor, &_class, buffer, &_sub, &_prot, &_maxPacketSize, &_configs);
       _className = buffer;
     }
   else if (line.startsWith("P:"))
-    sscanf(line.local8Bit().data(),
+    sscanf(line.toLocal8Bit().data(),
 	   "P:  Vendor=%x ProdID=%x Rev=%x.%x",
 	   &_vendorID, &_prodID, &_revMajor, &_revMinor);
 }

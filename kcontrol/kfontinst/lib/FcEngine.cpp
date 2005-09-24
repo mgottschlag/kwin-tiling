@@ -24,7 +24,7 @@
 #define KFI_DISPLAY(pix) (pix ? pix->x11Display() : QPaintDevice::x11AppDisplay())
 #endif
 
-// CPD: TODO: should I use latin1, local8Bit, or utf8?
+// CPD: TODO: should I use latin1, toLocal8Bit, or toUtf8?
 
 namespace KFI
 {

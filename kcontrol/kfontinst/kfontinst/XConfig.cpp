@@ -960,7 +960,7 @@ CXConfig::CFontsFile::CFontsFile(const char *file)
                     // Check for ttc files, and ttcap entries...
                     QString fname(QString(line).stripWhiteSpace()), 
                             mod;
-                    int     c1=fname.findRev(':');
+                    int     c1=fname.lastIndexOf(':');
 
                     if(-1!=c1)
                     {
