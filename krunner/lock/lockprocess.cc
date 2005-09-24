@@ -362,7 +362,7 @@ void LockProcess::readSaver()
 	if (!config.readEntry("X-KDE-Type").utf8().isEmpty())
 	{
 		QString saverType = config.readEntry("X-KDE-Type").utf8();
-		QStringList saverTypes = QStringList::split(";", saverType);
+		QStringList saverTypes = saverType.split( ";");
 		for (int i = 0; i < saverTypes.count(); i++)
 		{
 			if ((saverTypes[i] == "ManipulateScreen") && !manipulatescreen)
