@@ -86,7 +86,7 @@ static void applyGtkStyles(bool active, int version)
    if (list.count() == 0)
    {
       list.append(QLatin1String(sysGtkrc(version)));
-      list.append(QDir::homeDirPath()+userGtkrc(version));
+      list.append(QDir::homePath()+userGtkrc(version));
    }
    list.remove(gtkkde);
    list.append(gtkkde);
@@ -491,7 +491,7 @@ void runRdb( uint flags )
   }
 
   // Merge ~/.Xresources or fallback to ~/.Xdefaults
-  QString homeDir = QDir::homeDirPath();
+  QString homeDir = QDir::homePath();
   QString xResources = homeDir + "/.Xresources";
 
   // very primitive support for ~/.Xresources by appending it

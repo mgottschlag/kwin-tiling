@@ -753,8 +753,8 @@ CKioFonts::CKioFonts(const QByteArray &pool, const Q3CString &app)
 
     if(!itsRoot)
     {
-        QString home(Misc::dirSyntax(QDir::homeDirPath())),
-                defaultDir(Misc::dirSyntax(QDir::homeDirPath()+"/.fonts/")),
+        QString home(Misc::dirSyntax(QDir::homePath())),
+                defaultDir(Misc::dirSyntax(QDir::homePath()+"/.fonts/")),
                 dir(getFontFolder(defaultDir, home, dirs));
 
         if(dir.isEmpty())  // Then no $HOME/ was found in fontconfigs dirs!
@@ -2017,7 +2017,7 @@ bool CKioFonts::updateFontList()
 
         if (itsFontList)
         {
-            QString home(Misc::dirSyntax(QDir::homeDirPath()));
+            QString home(Misc::dirSyntax(QDir::homePath()));
 
             for (int i = 0; i < itsFontList->nfont; i++)
             {

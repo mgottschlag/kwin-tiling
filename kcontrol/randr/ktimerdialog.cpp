@@ -113,7 +113,7 @@ void KTimerDialog::setRefreshInterval( int msec )
 {
     updateInterval = msec;
     if ( updateTimer->isActive() )
-        updateTimer->changeInterval( updateInterval );
+        updateTimer->start( updateInterval );
 }
 
 int KTimerDialog::timeoutButton() const

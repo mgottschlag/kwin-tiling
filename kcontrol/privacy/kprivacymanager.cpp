@@ -52,20 +52,20 @@ bool KPrivacyManager::clearThumbnails()
   // http://freedesktop.org/Standards/Home
   // http://triq.net/~jens/thumbnail-spec/index.html
 
-  QDir thumbnailDir( QDir::homeDirPath() + "/.thumbnails/normal");
+  QDir thumbnailDir( QDir::homePath() + "/.thumbnails/normal");
   thumbnailDir.setFilter( QDir::Files );
   QStringList entries = thumbnailDir.entryList();
   for( QStringList::Iterator it = entries.begin() ; it != entries.end() ; ++it)
     if(!thumbnailDir.remove(*it)) m_error = true;
   if(m_error) return m_error;
 
-  thumbnailDir.setPath(QDir::homeDirPath() + "/.thumbnails/large");
+  thumbnailDir.setPath(QDir::homePath() + "/.thumbnails/large");
   entries = thumbnailDir.entryList();
   for( QStringList::Iterator it = entries.begin() ; it != entries.end() ; ++it)
     if(!thumbnailDir.remove(*it)) m_error = true;
   if(m_error) return m_error;
 
-  thumbnailDir.setPath(QDir::homeDirPath() + "/.thumbnails/fail");
+  thumbnailDir.setPath(QDir::homePath() + "/.thumbnails/fail");
   entries = thumbnailDir.entryList();
   for( QStringList::Iterator it = entries.begin() ; it != entries.end() ; ++it)
     if(!thumbnailDir.remove(*it)) m_error = true;

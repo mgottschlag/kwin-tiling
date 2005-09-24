@@ -639,7 +639,7 @@ void KTheme::apply()
     if ( !fontsElem.isNull() )
     {
         KConfig * fontsConf = KGlobal::config();
-        KConfig * kde1xConf = new KSimpleConfig( QDir::homeDirPath() + "/.kderc" );
+        KConfig * kde1xConf = new KSimpleConfig( QDir::homePath() + "/.kderc" );
         kde1xConf->setGroup( "General" );
 
         QDomNodeList fontList = fontsElem.childNodes();
@@ -783,26 +783,26 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
     if ( fi.isRelative() )
         fi.setFile( findResource( section, path ) );
 
-    kdDebug() << "Processing file: " << fi.absFilePath() << ", " << fi.fileName() << endl;
+    kdDebug() << "Processing file: " << fi.absoluteFilePath() << ", " << fi.fileName() << endl;
 
     if ( section == "desktop" )
     {
-        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/desktop/" ) + "/" + fi.fileName() ) )
+        if ( copyFile( fi.absoluteFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/desktop/" ) + "/" + fi.fileName() ) )
             return "theme:/wallpapers/desktop/" + fi.fileName();
     }
     else if ( section == "sounds" )
     {
-        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/sounds/" ) + "/" + fi.fileName() ) )
+        if ( copyFile( fi.absoluteFilePath(), m_kgd->saveLocation( "themes", m_name + "/sounds/" ) + "/" + fi.fileName() ) )
             return "theme:/sounds/" + fi.fileName();
     }
     else if ( section == "konqueror" )
     {
-        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/konqueror/" ) + "/" + fi.fileName() ) )
+        if ( copyFile( fi.absoluteFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/konqueror/" ) + "/" + fi.fileName() ) )
             return "theme:/wallpapers/konqueror/" + fi.fileName();
     }
     else if ( section == "panel" )
     {
-        if ( copyFile( fi.absFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/panel/" ) + "/" + fi.fileName() ) )
+        if ( copyFile( fi.absoluteFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/panel/" ) + "/" + fi.fileName() ) )
             return "theme:/wallpapers/panel/" + fi.fileName();
     }
     else

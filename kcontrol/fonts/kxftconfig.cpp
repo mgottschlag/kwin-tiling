@@ -46,7 +46,7 @@ QString KXftConfig::contractHome(QString path)
 {
     if (!path.isEmpty() && '/'==path[0])
     {
-        QString home(QDir::homeDirPath());
+        QString home(QDir::homePath());
 
         if(path.startsWith(home))
         {
@@ -63,7 +63,7 @@ QString KXftConfig::contractHome(QString path)
 QString KXftConfig::expandHome(QString path)
 {
     if(!path.isEmpty() && '~'==path[0])
-        return 1==path.length() ? QDir::homeDirPath() : path.replace(0, 1, QDir::homeDirPath());
+        return 1==path.length() ? QDir::homePath() : path.replace(0, 1, QDir::homeDirPath());
 
     return path;
 }
@@ -184,7 +184,7 @@ QString getConfigFile(bool system)
     FcStrList   *list=FcConfigGetConfigFiles(FcConfigGetCurrent());
     QStringList files;
     FcChar8     *file;
-    QString     home(dirSyntax(QDir::homeDirPath()));
+    QString     home(dirSyntax(QDir::homePath()));
 
     while((file=FcStrListNext(list)))
     {
@@ -445,7 +445,7 @@ KXftConfig::KXftConfig(int required, bool system)
             m_file=defaultPath;
     }
     else
-        m_file= QString(QDir::homeDirPath()+"/"+defaultUserFile);
+        m_file= QString(QDir::homePath()+"/"+defaultUserFile);
 #endif
 #ifndef HAVE_FONTCONFIG
     m_symbolFamilies.setAutoDelete(true);

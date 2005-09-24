@@ -874,7 +874,7 @@ void KBackgroundSettings::updateWallpaperFiles()
 	    QStringList::Iterator it;
 	    for (it=lst.begin(); it!=lst.end(); ++it)
 	    {
-		file = dir.absFilePath(*it);
+		file = dir.absoluteFilePath(*it);
 		QFileInfo fi(file);
 		if (fi.isFile() && fi.isReadable())
 		    m_WallpaperFiles.append(file);

@@ -695,7 +695,7 @@ void KFonts::save()
   KGlobal::config()->sync();
 
   // KDE-1.x support
-  KSimpleConfig* config = new KSimpleConfig( QDir::homeDirPath() + "/.kderc" );
+  KSimpleConfig* config = new KSimpleConfig( QDir::homePath() + "/.kderc" );
   config->setGroup( "General" );
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() ) {
       if("font"==i->rcKey())

@@ -84,8 +84,8 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     m_userPixDir = config->readEntry( "FaceDir", KGlobal::dirs()->resourceDirs("data").last() + "kdm/faces" ) + '/';
     m_notFirst = false;
     QDir testDir( m_userPixDir );
-    if ( !testDir.exists() && !testDir.mkdir( testDir.absPath() ) && !geteuid() )
-        KMessageBox::sorry( this, i18n("Unable to create folder %1").arg( testDir.absPath() ) );
+    if ( !testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid() )
+        KMessageBox::sorry( this, i18n("Unable to create folder %1").arg( testDir.absolutePath() ) );
 
     m_defaultText = i18n("<default>");
 

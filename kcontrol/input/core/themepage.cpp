@@ -174,8 +174,8 @@ void ThemePage::fixCursorFile()
 	// Run mkfontdir to update fonts.dir in that dir.
 
 	KGlobal::dirs()->addResourceType( "font", "share/fonts/" );
-	KIO::mkdir( KURL::fromPathOrURL(QDir::homeDirPath() + "/.fonts/kde-override") );
-	QString overrideDir = QDir::homeDirPath() + "/.fonts/kde-override/";
+	KIO::mkdir( KURL::fromPathOrURL(QDir::homePath() + "/.fonts/kde-override") );
+	QString overrideDir = QDir::homePath() + "/.fonts/kde-override/";
 
 	KURL installedFont;
 	installedFont.setPath( overrideDir + "cursor.pcf.gz" );

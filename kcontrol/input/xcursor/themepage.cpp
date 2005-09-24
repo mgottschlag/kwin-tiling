@@ -109,11 +109,11 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	connect( removeButton, SIGNAL( clicked() ), SLOT( removeClicked() ) );
 
 	// Disable the install button if ~/.icons isn't writable
-	QString path = QDir::homeDirPath() + "/.icons";
+	QString path = QDir::homePath() + "/.icons";
 	QFileInfo icons = QFileInfo( path );
 
 	if ( ( icons.exists() && !icons.isWritable() ) ||
-		( !icons.exists() && !QFileInfo( QDir::homeDirPath() ).isWritable() ) )
+		( !icons.exists() && !QFileInfo( QDir::homePath() ).isWritable() ) )
 		installButton->setEnabled( false );
 
 	if ( !themeDirs.contains( path ) )
@@ -285,7 +285,7 @@ bool ThemePage::installThemes( const QString &file )
 	if ( themeDirs.count() < 1 )
 		return false;
 
-	const QString destDir = QDir::homeDirPath() + "/.icons/";
+	const QString destDir = QDir::homePath() + "/.icons/";
 	KStandardDirs::makeDir( destDir ); // Make sure the directory exists
 
 	for ( QStringList::ConstIterator it = themeDirs.begin(); it != themeDirs.end(); ++it )
@@ -383,7 +383,7 @@ const QStringList ThemePage::getThemeBaseDirs() const
 	QString path = XcursorLibraryPath();
 #endif
 	// Expand all occurences of ~ to the home dir
-	path.replace( "~/", QDir::homeDirPath() + '/' );
+	path.replace( "~/", QDir::homePath() + '/' );
 	return path.split( ':');
 }
 

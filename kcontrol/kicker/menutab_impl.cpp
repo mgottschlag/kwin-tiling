@@ -104,7 +104,7 @@ void MenuTab::load()
         QStringList av = d.entryList();
         for (QStringList::ConstIterator it=av.begin(); it!=av.end(); ++it)
         {
-            KDesktopFile df(d.absFilePath(*it), true);
+            KDesktopFile df(d.absoluteFilePath(*it), true);
             menuItem = new kSubMenuItem(m_subMenus,
                                         df.readName(),
                                         *it,
