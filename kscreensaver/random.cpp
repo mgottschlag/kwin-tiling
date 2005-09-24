@@ -44,7 +44,7 @@ void usage(char *name)
 {
 	puts(i18n("Usage: %1 [-setup] [args]\n"
 				"Starts a random screen saver.\n"
-				"Any arguments (except -setup) are passed on to the screen saver.").arg( name ).local8Bit().data());
+				"Any arguments (except -setup) are passed on to the screen saver.").arg( name ).toLocal8Bit().data());
 }
 
 static const char appName[] = "random";
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			QStringList saverTypes = QStringList::split(";", saverType);
+			QStringList saverTypes = saverType.split( ";");
 			for (QStringList::ConstIterator it =  saverTypes.begin(); it != saverTypes.end(); ++it )
 			{
 				kdDebug() << "saverTypes is "<< *it << endl;

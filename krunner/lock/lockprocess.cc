@@ -359,9 +359,9 @@ void LockProcess::readSaver()
 	bool opengl = kapp->authorize("opengl_screensavers");
 	bool manipulatescreen = kapp->authorize("manipulatescreen_screensavers");
         KDesktopFile config(file, true);
-	if (!config.readEntry("X-KDE-Type").utf8().isEmpty())
+	if (!config.readEntry("X-KDE-Type").toUtf8().isEmpty())
 	{
-		QString saverType = config.readEntry("X-KDE-Type").utf8();
+		QString saverType = config.readEntry("X-KDE-Type").toUtf8();
 		QStringList saverTypes = saverType.split( ";");
 		for (int i = 0; i < saverTypes.count(); i++)
 		{

@@ -98,7 +98,7 @@ int main( int argc, char **argv )
         kdDebug() << "screen " << number_of_screens << " " << kdesktop_screen_number << " " << display_name << " " << starting_screen << endl;
         dpy = 0;
 
-        if ((pos = display_name.findRev('.')) != -1)
+        if ((pos = display_name.lastIndexOf('.')) != -1)
             display_name.remove(pos, 10);
 
         QString env;
