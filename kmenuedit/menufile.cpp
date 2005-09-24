@@ -200,7 +200,7 @@ static QString entryToDirId(const QString &path)
    if (local.isEmpty() || local.startsWith("/"))
    {
       // What now? Use filename only and hope for the best.
-      local = path.mid(path.findRev('/')+1);
+      local = path.mid(path.lastIndexOf('/')+1);
    }
    return local;                                                                                           
 }

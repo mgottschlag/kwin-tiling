@@ -284,7 +284,7 @@ void TreeView::readMenuFolderInfo(MenuFolderInfo *folderInfo, KServiceGroup::Ptr
     folderInfo->directoryFile = folder->directoryEntryPath();
     folderInfo->icon = folder->icon();
     QString id = folder->relPath();
-    int i = id.findRev('/', -2);
+    int i = id.lastIndexOf('/', -2);
     id = id.mid(i+1);
     folderInfo->id = id;
     folderInfo->fullId = prefix + id;
@@ -598,7 +598,7 @@ QStringList TreeView::fileList(const QString& rPath)
     QString relativePath = rPath;
 
     // truncate "/.directory"
-    int pos = relativePath.findRev("/.directory");
+    int pos = relativePath.lastIndexOf("/.directory");
     if (pos > 0) relativePath.truncate(pos);
 
     QStringList filelist;
@@ -637,7 +637,7 @@ QStringList TreeView::dirList(const QString& rPath)
     QString relativePath = rPath;
 
     // truncate "/.directory"
-    int pos = relativePath.findRev("/.directory");
+    int pos = relativePath.lastIndexOf("/.directory");
     if (pos > 0) relativePath.truncate(pos);
 
     QStringList dirlist;
@@ -685,8 +685,8 @@ bool TreeView::acceptDrag(QDropEvent* e) const
 
 static QString createDesktopFile(const QString &file, QString *menuId, QStringList *excludeList)
 {
-   QString base = file.mid(file.findRev('/')+1);
-   base = base.left(base.findRev('.'));
+   QString base = file.mid(file.lastIndexOf('/')+1);
+   base = base.left(base.lastIndexOf('.'));
 
    QRegExp r("(.*)(?=-\\d+)");
    base = (r.search(base) > -1) ? r.cap(1) : base;
@@ -709,8 +709,8 @@ static KDesktopFile *copyDesktopFile(MenuEntryInfo *entryInfo, QString *menuId, 
 
 static QString createDirectoryFile(const QString &file, QStringList *excludeList)
 {
-   QString base = file.mid(file.findRev('/')+1);
-   base = base.left(base.findRev('.'));
+   QString base = file.mid(file.lastIndexOf('/')+1);
+   base = base.left(base.lastIndexOf('.'));
 
    QString result;
    int i = 1;
