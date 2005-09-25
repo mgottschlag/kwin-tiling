@@ -365,13 +365,13 @@ void ShortcutsModule::slotSaveSchemeAs()
 
 				// Make the next letter upper case
 				QString s = sFile.mid( ind, 1 );
-				s = s.upper();
+				s = s.toUpper();
 				sFile.replace( ind, 1, s );
 			}
 
 			iScheme = -1;
 			for( int i = 0; i < (int) m_pcbSchemes->count(); i++ ) {
-				if( sName.lower() == (m_pcbSchemes->text(i)).lower() ) {
+				if( sName.toLower() == (m_pcbSchemes->text(i)).toLower() ) {
 					iScheme = i;
 
 					int result = KMessageBox::warningContinueCancel( 0,

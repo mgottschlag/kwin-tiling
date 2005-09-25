@@ -155,7 +155,7 @@ static QString modifyName(const QString &fname)
         unsigned int rvLen=rv.length();
 
         for(unsigned int i=dotPos+1; i<rvLen; ++i)
-            rv[i]=rv[i].lower();
+            rv[i]=rv[i].toLower();
     }
 
     for(int s=0; constSymbols[s]; ++s)

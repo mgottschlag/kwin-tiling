@@ -368,7 +368,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                             {
                                 // Try to make sure foundry is capitalised, and looks the same as that of
                                 // any AFM.
-                                foundryAll[0]=foundryAll[0].upper();
+                                foundryAll[0]=foundryAll[0].toUpper();
 
                                 const FoundryMap *entry;
 

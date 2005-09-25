@@ -120,16 +120,16 @@ static QString createX11PsName(const QString &font)
             newWord=true;
         else
         {
-            if(newName[ch]==newName[ch].upper())
+            if(newName[ch]==newName[ch].toUpper())
             {
                 if(!newWord)
-                    newName[ch]=newName[ch].lower();
+                    newName[ch]=newName[ch].toLower();
             }
             else
-                if(newName[ch]==newName[ch].lower())
+                if(newName[ch]==newName[ch].toLower())
                 {
                     if(newWord)
-                        newName[ch]=newName[ch].upper();
+                        newName[ch]=newName[ch].toUpper();
                 }
             newWord=false;
         }

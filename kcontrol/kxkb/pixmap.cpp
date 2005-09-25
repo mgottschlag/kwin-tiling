@@ -74,20 +74,20 @@ LayoutIcon::findPixmap(const QString& code_, bool showFlag)
 	|| code_ == "tel" || code_ == "tml" || code_ == "ben" ) // some Indian languages
     flag = locate("locale", flagTemplate.arg("in"));
   else {
-    flag = locate("locale", flagTemplate.arg(code.lower()));
+    flag = locate("locale", flagTemplate.arg(code.toLower()));
     if (flag.isEmpty()) {
       pos = code.find("_");
       if (pos > 0 && code.find("intl") < 1) { // so "us_intl" != "us" layout
-        flag = locate("locale", flagTemplate.arg(code.mid(pos+1).lower()));
+        flag = locate("locale", flagTemplate.arg(code.mid(pos+1).toLower()));
         if (flag.isEmpty())
-        flag = locate("locale", flagTemplate.arg(code.left(pos).lower()));
+        flag = locate("locale", flagTemplate.arg(code.left(pos).toLower()));
       }
       //this is a tiny patch for the el (Hellenic <=> Greek) keyboard
       //which is not named after the country, but after the language
       //unlike all others.
       //remove if it causes trouble, but pls contact first
       // d.kamenopoulos@mail.ntua.gr
-      else if (code.lower() == "el")
+      else if (code.toLower() == "el")
         flag = locate("locale", flagTemplate.arg("gr"));
       //end of patch
     }

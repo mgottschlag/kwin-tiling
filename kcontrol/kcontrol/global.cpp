@@ -72,7 +72,7 @@ void KCGlobal::init()
 
 void KCGlobal::setType(const QByteArray& s)
 {
-  QString string = s.lower();
+  QString string = s.toLower();
   _types = string.split( ',');
 }
 

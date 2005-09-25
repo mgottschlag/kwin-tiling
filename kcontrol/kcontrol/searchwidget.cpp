@@ -131,7 +131,7 @@ void SearchWidget::populateKeywordList(ConfigModuleList *list)
       // loop through the keyword list to populate _keywords
       for(QStringList::ConstIterator it = kw.begin(); it != kw.end(); ++it)
         {
-          QString name = (*it).lower();
+          QString name = (*it).toLower();
           bool found = false;
 
           // look if _keywords already has an entry for this keyword

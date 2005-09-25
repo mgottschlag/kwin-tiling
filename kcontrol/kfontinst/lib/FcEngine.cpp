@@ -620,9 +620,9 @@ bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bo
                         if(!drawGlyphs)
                         {
                             if(!lc && uc)
-                                previewString=previewString.upper();
+                                previewString=previewString.toUpper();
                             if(!uc && lc)
-                                previewString=previewString.lower();
+                                previewString=previewString.toLower();
                         }
 
                         for(int s=0; s<itsSizes.size(); ++s)

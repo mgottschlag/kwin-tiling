@@ -308,7 +308,7 @@ QString OuiDb::vendor(octlet_t guid)
 {
    guid=(guid & 0xffffff0000000000LL)>>40;
    QString key=QString::number((unsigned int)(guid),16);
-   key=key.rightJustified(6, '0').upper();
+   key=key.rightJustified(6, '0').toUpper();
    QString v=m_vendorIds[key];
    if (v.isEmpty())
       v=i18n("Unknown");

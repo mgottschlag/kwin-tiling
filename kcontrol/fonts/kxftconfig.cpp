@@ -1067,7 +1067,7 @@ void KXftConfig::readContents()
                                 else if(!(str=getEntry(ene, "bool", 2, "name", "hinting", "mode", "assign")).isNull())
                                 {
                                     m_hinting.node=n;
-                                    m_hinting.set=str.lower()!="false";
+                                    m_hinting.set=str.toLower()!="false";
                                 }
                         }
                         break;

@@ -331,14 +331,14 @@ void KKeyModule::readScheme( int index )
         // Make the next letter upper case
 
         QString s = sFile.mid( ind, 1 );
-        s = s.upper();
+        s = s.toUpper();
         sFile.replace( ind, 1, s );
 
       }
 
       exists = -1;
       for ( int i = 0; i < (int) sList->count(); i++ ) {
-        if ( sName.lower() == (sList->text(i)).lower() ) {
+        if ( sName.toLower() == (sList->text(i)).toLower() ) {
           exists = i;
 
           int result = KMessageBox::warningContinueCancel( 0,

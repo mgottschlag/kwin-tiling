@@ -341,7 +341,7 @@ void LookAndFeelTab::fillTileCombos()
     // The same is done when generating messages for translation
     QStringList words = tile.split( "[_ ]"));
     for (QStringList::iterator w = words.begin(); w != words.end(); ++w)
-      (*w)[0] = (*w)[0].upper();
+      (*w)[0] = (*w)[0].toUpper();
     tile = i18n(words.join(" ").toUtf8());
 
     m_kmenuTile->insertItem(pix, tile);

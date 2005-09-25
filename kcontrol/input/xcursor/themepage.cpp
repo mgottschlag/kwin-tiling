@@ -275,7 +275,7 @@ bool ThemePage::installThemes( const QString &file )
 	for ( QStringList::ConstIterator it = entries.begin(); it != entries.end(); ++it )
 	{
 		const KArchiveEntry *entry = archiveDir->entry( *it );
-		if ( entry->isDirectory() && entry->name().lower() != "default" ) {
+		if ( entry->isDirectory() && entry->name().toLower() != "default" ) {
 			const KArchiveDirectory *dir = static_cast< const KArchiveDirectory* >( entry );
 			if ( dir->entry( "index.theme" ) && dir->entry( "cursors" ) )
 				themeDirs << dir->name();

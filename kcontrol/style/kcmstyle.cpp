@@ -650,7 +650,7 @@ void KCMStyle::save()
 
 bool KCMStyle::findStyle( const QString& str, int& combobox_item )
 {
-	StyleEntry* se   = styleEntries[str.lower()];
+	StyleEntry* se   = styleEntries[str.toLower()];
 
 	QString     name = se ? se->name : str;
 
@@ -769,7 +769,7 @@ void KCMStyle::loadStyle( KConfig& config )
 		entry->hidden = config.readBoolEntry("Hidden", false);
 
 		// Insert the entry into our dictionary.
-		styleEntries.insert(strWidgetStyle.lower(), entry);
+		styleEntries.insert(strWidgetStyle.toLower(), entry);
 	}
 
 	// Obtain all style names
@@ -780,7 +780,7 @@ void KCMStyle::loadStyle( KConfig& config )
 	StyleEntry* entry;
 	for (QStringList::iterator it = allStyles.begin(); it != allStyles.end(); it++)
 	{
-		QString id = (*it).lower();
+		QString id = (*it).toLower();
 		// Find the entry.
 		if ( (entry = styleEntries[id]) != 0 )
 		{
@@ -815,7 +815,7 @@ void KCMStyle::loadStyle( KConfig& config )
 	// ##### Since Trolltech likes to seemingly copy & paste code,
 	// QStringList::findItem() doesn't have a Qt::StringComparisonMode field.
 	// We roll our own (yuck)
-	cfgStyle = cfgStyle.lower();
+	cfgStyle = cfgStyle.toLower();
 	int item = 0;
 	for( int i = 0; i < cbStyle->count(); i++ )
 	{

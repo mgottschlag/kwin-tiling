@@ -385,11 +385,11 @@ void BGDialog::loadWallpaperFilesList() {
 
       // avoid name collisions
       QString rs = imageCaption;
-      QString lrs = rs.lower();
+      QString lrs = rs.toLower();
       for (int n = 1; papers.find(lrs) != papers.end(); ++n)
       {
          rs = imageCaption + " (" + QString::number(n) + ')';
-         lrs = rs.lower();
+         lrs = rs.toLower();
       }
       int slash = (*it).lastIndexOf('/') + 1;
       QString directory = (*it).left(slash);
@@ -435,11 +435,11 @@ void BGDialog::loadWallpaperFilesList() {
 
          // avoid name collisions
          QString rs = imageCaption;
-         QString lrs = rs.lower();
+         QString lrs = rs.toLower();
          for (int n = 1; papers.find(lrs) != papers.end(); ++n)
          {
             rs = imageCaption + " (" + QString::number(n) + ')';
-            lrs = rs.lower();
+            lrs = rs.toLower();
          }
          papers[lrs] = qMakePair(rs, *it);
       }
