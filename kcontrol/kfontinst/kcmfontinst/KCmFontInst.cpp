@@ -512,7 +512,7 @@ void CKCmFontInst::print()
             static const int constSizes[]={0, 12, 18, 24, 36, 48};
     
             QStringList       items;
-            Q3ValueVector<int> sizes;
+            QVector<int> sizes;
             CFcEngine         engine;
 
             if(dlg.outputAll())

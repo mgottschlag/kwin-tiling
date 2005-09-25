@@ -66,7 +66,7 @@ class KDE_EXPORT CFcEngine
                     QString &spacing, QString &slant);
     QFont   getQFont(const QString &name, int size);
 
-    const Q3ValueVector<int> & sizes() const { return itsSizes; }
+    const QVector<int> & sizes() const { return itsSizes; }
     int                       alphaSize() const { return itsAlphaSize; }
 
     static QString getPreviewString();
@@ -110,7 +110,7 @@ class KDE_EXPORT CFcEngine
                       itsSlant,
                       itsSpacing,
                       itsAlphaSize;
-    Q3ValueVector<int> itsSizes;
+    QVector<int> itsSizes;
     KURL              itsLastUrl;
     FcBool            itsScalable;
 };
