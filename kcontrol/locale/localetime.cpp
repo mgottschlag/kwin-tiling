@@ -319,7 +319,7 @@ void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
 {
   kdDebug() << "CalendarSystem: " << calendarSystem << endl;
 
-  typedef Q3ValueVector<QString> CalendarVector;
+  typedef QVector<QString> CalendarVector;
   CalendarVector calendars(4);
   calendars[0] = "gregorian";
   calendars[1] = "hijri";
@@ -327,10 +327,10 @@ void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
   calendars[3] = "jalali";
 
   QString calendarType;
-  bool ok;
-  calendarType = calendars.at(calendarSystem, &ok);
-  if ( !ok )
-    calendarType = calendars.first();
+  if( calendarSystem >= calendars.size())
+	  calendarType = calendars.first();
+  else
+  	calendarType = calendars.at(calendarSystem);
 
   m_locale->setCalendar(calendarType);
 
@@ -340,7 +340,7 @@ void KLocaleConfigTime::slotCalendarSystemChanged(int calendarSystem)
 
 void KLocaleConfigTime::slotLocaleChanged()
 {
-  typedef Q3ValueVector<QString> CalendarVector;
+  typedef QVector<QString> CalendarVector;
   CalendarVector calendars(4);
   calendars[0] = "gregorian";
   calendars[1] = "hijri";
