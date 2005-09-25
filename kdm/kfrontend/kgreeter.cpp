@@ -458,7 +458,7 @@ KGreeter::slotLoadPrevWM()
 	needLoad = false;
 
 	prevValid = true;
-	name = curUser.local8Bit();
+	name = curUser.toLocal8Bit();
 	GSendInt( G_ReadDmrc );
 	GSendStr( name.data() );
 	GRecvInt(); // ignore status code ...
@@ -550,7 +550,7 @@ KGreeter::verifyOk()
 	if (curSel != -1) {
 		GSendInt( G_PutDmrc );
 		GSendStr( "Session" );
-		GSendStr( sessionTypes[curSel].type.utf8() );
+		GSendStr( sessionTypes[curSel].type.toUtf8() );
 	} else if (!prevValid) {
 		GSendInt( G_PutDmrc );
 		GSendStr( "Session" );
@@ -932,7 +932,7 @@ void
 KThemedGreeter::keyPressEvent( QKeyEvent *e )
 {
 	inherited::keyPressEvent( e );
-	if (!(e->state() & Qt::KeyButtonMask) &&
+	if (!(e->state() & Qt::KeyboardModifierMask) &&
 	    (e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter))
 		accept();
 }

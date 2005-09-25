@@ -66,6 +66,7 @@ class QXTimer : public QObject {
 
 class KGVerifyHandler {
   public:
+	virtual ~KGVerifyHandler(){}
 	virtual void verifyPluginChanged( int id ) = 0;
 	virtual void verifyOk() = 0;
 	virtual void verifyFailed() = 0;

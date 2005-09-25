@@ -81,7 +81,7 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *pa
 	connect( rootItem, SIGNAL(needUpdate( int, int, int, int )),
 	         widget(), SLOT(update( int, int, int, int )) );
 
-	rootItem->setBaseDir( QFileInfo( filename ).dirPath( true ) );
+	rootItem->setBaseDir( QFileInfo( filename ).absolutePath() );
 
 	// generate all the items defined in the theme
 	generateItems( rootItem );

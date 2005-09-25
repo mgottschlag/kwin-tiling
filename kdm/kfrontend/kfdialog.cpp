@@ -134,7 +134,7 @@ FDialog::exec()
 void
 FDialog::box( QWidget *parent, QMessageBox::Icon type, const QString &text )
 {
-	KFMsgBox dlg( parent, type, text.stripWhiteSpace() );
+	KFMsgBox dlg( parent, type, text.trimmed() );
 	dlg.exec();
 }
 

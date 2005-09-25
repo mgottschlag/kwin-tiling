@@ -130,7 +130,7 @@ QString // public
 KGVerify::pluginName() const
 {
 	QString name( greetPlugins[pluginList[curPlugin]].library->fileName() );
-	uint st = name.findRev( '/' ) + 1;
+	uint st = name.lastIndexOf( '/' ) + 1;
 	uint en = name.find( '.', st );
 	if (en - st > 7 && QConstString( name.unicode() + st, 7 ).string() == "kgreet_")
 		st += 7;

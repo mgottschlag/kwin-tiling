@@ -478,7 +478,7 @@ KdmItem::parseAttribute( const QString &s, int &val, enum DataType &dType )
 void
 KdmItem::parseFont( const QString &s, QFont &font )
 {
-	int splitAt = s.findRev( ' ' );
+	int splitAt = s.lastIndexOf( ' ' );
 	if (splitAt < 1)
 		return;
 	font.setFamily( s.left( splitAt ) );
