@@ -162,11 +162,13 @@ void KRandRModule::addRotationButton(int thisRotation, bool checkbox)
 {
 	Q_ASSERT(m_rotationGroup);
 	if (!checkbox) {
-		QRadioButton* thisButton = new QRadioButton(RandRScreen::rotationName(thisRotation), m_rotationGroup);
+		QRadioButton* thisButton = new QRadioButton(RandRScreen::rotationName(thisRotation));
+		 m_rotationGroup->insert( thisButton );
 		thisButton->setEnabled(thisRotation & currentScreen()->rotations());
 		connect(thisButton, SIGNAL(clicked()), SLOT(slotRotationChanged()));
 	} else {
-		QCheckBox* thisButton = new QCheckBox(RandRScreen::rotationName(thisRotation), m_rotationGroup);
+		QCheckBox* thisButton = new QCheckBox(RandRScreen::rotationName(thisRotation));
+		m_rotationGroup->insert( thisButton );
 		thisButton->setEnabled(thisRotation & currentScreen()->rotations());
 		connect(thisButton, SIGNAL(clicked()), SLOT(slotRotationChanged()));
 	}
