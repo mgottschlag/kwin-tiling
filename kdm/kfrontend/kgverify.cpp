@@ -735,7 +735,7 @@ KGVerify::getConf( void *, const char *key, const QVariant &dflt )
 	}
 }
 
-Q3ValueVector<GreeterPluginHandle> KGVerify::greetPlugins;
+QVector<GreeterPluginHandle> KGVerify::greetPlugins;
 
 PluginList
 KGVerify::init( const QStringList &plugins )

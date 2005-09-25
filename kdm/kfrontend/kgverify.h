@@ -87,7 +87,7 @@ struct GreeterPluginHandle {
 	kgreeterplugin_info *info;
 };
 
-typedef Q3ValueVector<int> PluginList;
+typedef QVector<int> PluginList;
 
 class KGVerify : public QObject, public KGreeterPluginHandler {
 	Q_OBJECT
@@ -151,7 +151,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	static void VErrBox( QWidget *parent, const QString &user, const char *msg );
 	static void VInfoBox( QWidget *parent, const QString &user, const char *msg );
 
-	static Q3ValueVector<GreeterPluginHandle> greetPlugins;
+	static QVector<GreeterPluginHandle> greetPlugins;
 
   private slots:
 	//virtual void slotPluginSelected( int id ) = 0;
