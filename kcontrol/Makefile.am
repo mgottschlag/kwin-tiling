@@ -24,6 +24,6 @@ endif
 SUBDIRS = bell background samba krdb input kdm\
 	locale launch dateandtime style kded arts kcontrol knotify\
 	pics $(ACCESS_SUBDIR) colors energy fonts \
-	icons screensaver crypto privacy smserver \
+	icons screensaver crypto smserver \
 	$(KSMCARD_SUBDIR) $(FONTINST_SUBDIR) $(RANDR_SUBDIR) \
 	componentchooser xinerama kthememanager hardware
