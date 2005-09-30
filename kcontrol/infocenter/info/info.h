@@ -2,7 +2,7 @@
 #define _INFO_H_
 
 #include <qwidget.h>
-#include <q3widgetstack.h>
+#include <QStackedWidget>
 #include <q3frame.h>
 #include <qlabel.h>
 #include <q3tabdialog.h>
@@ -46,7 +46,7 @@ private:
   
   QLabel	*NoInfoText;
   QString	ErrorString;
-  Q3WidgetStack  *widgetStack;
+  QStackedWidget  *widgetStack;
 };
 
 #endif

@@ -379,12 +379,12 @@ void KInfoListWidget::load()
 
     if (ok)
     {
-        widgetStack->raiseWidget(lBox);
+        widgetStack->setCurrentWidget(lBox);
     }
     else
     {
         NoInfoText->setText(ErrorString);
-        widgetStack->raiseWidget(NoInfoText);
+        widgetStack->setCurrentWidget(NoInfoText);
     }
 
     emit changed(false);
@@ -419,18 +419,18 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
     getlistbox 	= _getlistbox;
     GetInfo_ErrorString = 0;
     QHBoxLayout *layout = new QHBoxLayout(this, 0, KDialog::spacingHint());
-    widgetStack = new Q3WidgetStack(this);
+    widgetStack = new QStackedWidget(this);
     layout->addWidget(widgetStack);
     lBox 	= new Q3ListView(widgetStack);
-    widgetStack->addWidget(lBox, 0);
+    widgetStack->insertWidget(0,lBox);
     lBox->setMinimumSize(200,120);
     lBox->setFont(KGlobalSettings::generalFont()); /* default font */
     lBox->setAllColumnsShowFocus(true);
     lBox->setWhatsThis( i18n( "This list displays system information on the selected category." ) );
     NoInfoText  = new QLabel(widgetStack);
-    widgetStack->addWidget(NoInfoText, 1);
+    widgetStack->insertWidget(1,NoInfoText);
     NoInfoText->setAlignment( Qt::AlignCenter | Qt::WordBreak);
-    widgetStack->raiseWidget(NoInfoText);
+    widgetStack->setCurrentWidget(NoInfoText);
     load();
 }
 
