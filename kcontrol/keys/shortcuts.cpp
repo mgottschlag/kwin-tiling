@@ -40,6 +40,7 @@
 #include <kkeynative.h>
 #include <kinputdialog.h>
 #include <klocale.h>
+#include <kcombobox.h>
 #include <kmessagebox.h>
 #include <kshortcutlist.h>
 #include <ksimpleconfig.h>
@@ -144,7 +145,7 @@ void ShortcutsModule::initGUI()
 	pGroup->insert( m_prbPre );
 	pHLayout->addWidget( m_prbPre );
 
-	m_pcbSchemes = new KComboBox( this );
+	m_pcbSchemes = new QComboBox( this );
 	m_pcbSchemes->setMinimumWidth( 100 );
 	m_pcbSchemes->setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Fixed );
 	connect( m_pcbSchemes, SIGNAL(activated(int)), SLOT(slotSelectScheme(int)) );

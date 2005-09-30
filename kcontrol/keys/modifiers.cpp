@@ -331,7 +331,7 @@ void ModifiersModule::updateWidgets()
 	XFreeModifiermap( xmk );
 
 	int i;
-	switch( KKeyNative::modXWin() ) {
+	switch( KKeyNative::modX(KKey::WIN) ) {
 		case Mod2Mask: i = 2; break;
 		case Mod3Mask: i = 3; break;
 		case Mod4Mask: i = 4; break;

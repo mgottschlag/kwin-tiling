@@ -1,6 +1,4 @@
 /*
- * shortcuts.h
- *
  * Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
@@ -21,8 +19,8 @@
  *  Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __SHORTCUTS_MODULE_H
-#define __SHORTCUTS_MODULE_H
+#ifndef SHORTCUTS_MODULE_H
+#define SHORTCUTS_MODULE_H
 
 #include <qbuttongroup.h>
 #include <qpushbutton.h>
@@ -65,7 +63,7 @@ class ShortcutsModule : public QWidget
  private:
 	QTabWidget* m_pTab;
 	QRadioButton *m_prbPre, *m_prbNew;
-	KComboBox* m_pcbSchemes;
+	QComboBox* m_pcbSchemes;
 	QPushButton* m_pbtnSave, * m_pbtnRemove;
 	int m_nSysSchemes;
 	QStringList m_rgsSchemeFiles;

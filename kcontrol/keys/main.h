@@ -1,6 +1,4 @@
 /*
- * main.h
- *
  * Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
@@ -21,13 +19,12 @@
  *  Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef __keys_main_h
-#define __keys_main_h
+#ifndef keys_main_h
+#define keys_main_h
 
 #include <qtabwidget.h>
 #include <kcmodule.h>
 
-class CommandShortcutsModule;
 class ShortcutsModule;
 class ModifiersModule;
 
@@ -48,7 +45,6 @@ class KeyModule : public KCModule
 
  private:
 	QTabWidget* m_pTab;
-	CommandShortcutsModule* m_pCommandShortcuts;
 	ShortcutsModule* m_pShortcuts;
 	ModifiersModule* m_pModifiers;
 };

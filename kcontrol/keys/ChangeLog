@@ -1,3 +1,6 @@
+2005-09-30 Benjamin Meyer
+	* Removed Command Shortcuts, it is already in kmenuedit
+
 1999-08-19 Duncan Haldane <duncan@kde.org>
 	* removed left-over commented out code from change
 	decribed below, and adjusted help doc names to

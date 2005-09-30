@@ -1,6 +1,4 @@
 /*
- * main.cpp
- *
  * Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
  *
  * Requires the Qt widget libraries, available at no cost at
@@ -30,7 +28,6 @@
 #include <klocale.h>
 #include <ksimpleconfig.h>
 
-#include "commandShortcuts.h"
 #include "main.h"
 #include "modifiers.h"
 #include "shortcuts.h"
@@ -80,11 +77,6 @@ void KeyModule::initGUI()
 	m_pTab->addTab( m_pShortcuts, i18n("Shortcut Schemes") );
 	connect( m_pShortcuts, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
 
-	m_pCommandShortcuts = new CommandShortcutsModule ( this );
-	m_pTab->addTab( m_pCommandShortcuts, i18n("Command Shortcuts") );
-	connect( m_pCommandShortcuts, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
-    connect( m_pTab, SIGNAL(currentChanged(QWidget*)), m_pCommandShortcuts, SLOT(showing(QWidget*)) );
-
 	m_pModifiers = new ModifiersModule( this );
 	m_pTab->addTab( m_pModifiers, i18n("Modifier Keys") );
 	connect( m_pModifiers, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
@@ -95,7 +87,6 @@ void KeyModule::load()
 {
 	kdDebug(125) << "KeyModule::load()" << endl;
 	m_pShortcuts->load();
-	m_pCommandShortcuts->load();
 	m_pModifiers->load();
 }
 
@@ -104,7 +95,6 @@ void KeyModule::save()
 {
 	kdDebug(125) << "KeyModule::save()" << endl;
 	m_pShortcuts->save();
-	m_pCommandShortcuts->save();
 	m_pModifiers->save();
 }
 
@@ -112,7 +102,6 @@ void KeyModule::defaults()
 {
 	kdDebug(125) << "KeyModule::defaults()" << endl;
 	m_pShortcuts->defaults();
-	m_pCommandShortcuts->defaults();
 	m_pModifiers->defaults();
 }
 
@@ -166,7 +155,7 @@ extern "C"
 #include "../../../kicker/kicker/core/kickerbindings.cpp"
 #include "../../../kicker/taskbar/taskbarbindings.cpp"
 #include "../../../kdesktop/kdesktopbindings.cpp"
-#include "../../../kxkb/kxkbbindings.cpp"
+#include "../kxkb/kxkbbindings.cpp"
 
   // Write all the global keys to kdeglobals.
   // This is needed to be able to check for conflicts with global keys in app's keyconfig

@@ -20,10 +20,9 @@ endif
 #
 # FIXME : readd dnssd
 #
-# add keys
 SUBDIRS = bell background samba krdb input kdm\
 	locale launch dateandtime style kded arts kcontrol knotify\
 	pics $(ACCESS_SUBDIR) colors energy fonts \
-	icons screensaver crypto smserver \
+	icons screensaver crypto smserver keys \
 	$(KSMCARD_SUBDIR) $(FONTINST_SUBDIR) $(RANDR_SUBDIR) \
 	componentchooser xinerama kthememanager hardware
