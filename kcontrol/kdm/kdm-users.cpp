@@ -131,7 +131,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     cbusrsrt->setWhatsThis( i18n("If this is checked, KDM will alphabetically sort the user list."
       " Otherwise users are listed in the order they appear in the password file.") );
 
-    wstack = new Q3WidgetStack( this );
+    wstack = new QStackedWidget( this );
     s_label = new QLabel( wstack, i18n("S&elect users and groups:"), this );
     optinlv = new KListView( this );
     optinlv->addColumn( i18n("Selected Users") );
@@ -241,7 +241,7 @@ void KDMUsersWidget::slotShowOpts()
     cbinverted->setEnabled( en );
     cbusrsrt->setEnabled( en );
     wstack->setEnabled( en );
-    wstack->raiseWidget( cbinverted->isChecked() ? optoutlv : optinlv );
+	wstack->setCurrentWidget( cbinverted->isChecked() ? optoutlv : optinlv );
     en = cbshowlist->isChecked();
     faceGroup->setEnabled( en );
     if (!en) {

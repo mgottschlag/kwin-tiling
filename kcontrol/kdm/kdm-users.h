@@ -27,7 +27,7 @@
 #include <q3buttongroup.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
-#include <q3widgetstack.h>
+#include <QStackedWidget>
 //Added by qt3to4:
 #include <QEvent>
 #include <QDropEvent>
@@ -87,7 +87,7 @@ private:
 	QCheckBox	*cbshowlist, *cbcomplete, *cbinverted, *cbusrsrt;
 
 	QLabel		*s_label; // middle
-	Q3WidgetStack	*wstack;
+	QStackedWidget	*wstack;
 	KListView	*optoutlv, *optinlv;
 
 	Q3ButtonGroup	*faceGroup; // right
