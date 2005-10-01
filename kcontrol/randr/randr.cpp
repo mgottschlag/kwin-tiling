@@ -574,12 +574,17 @@ RandRDisplay::RandRDisplay()
 	// This assumption is WRONG with Xinerama
 	// Q_ASSERT(QApplication::desktop()->numScreens() == ScreenCount(QX11Info::display()));
 
-	m_screens.setAutoDelete(true);
 	for (int i = 0; i < m_numScreens; i++) {
 		m_screens.append(new RandRScreen(i));
 	}
 
 	setCurrentScreen(QApplication::desktop()->primaryScreen());
+}
+
+RandRDisplay::~RandRDisplay()
+{
+		qDeleteAll(m_screens);
+		m_screens.clear();
 }
 
 bool RandRDisplay::isValid() const
@@ -632,8 +637,10 @@ int RandRDisplay::currentScreenIndex() const
 
 void RandRDisplay::refresh()
 {
-	for (RandRScreen* s = m_screens.first(); s; s = m_screens.next())
+	for (int i = 0; i < m_screens.size(); ++i) {
+		RandRScreen* s = m_screens.at(i);
 		s->loadSettings();
+	}
 }
 
 int RandRDisplay::numScreens() const
@@ -654,9 +661,12 @@ RandRScreen* RandRDisplay::currentScreen()
 bool RandRDisplay::loadDisplay(KConfig& config, bool loadScreens)
 {
 	if (loadScreens)
-		for (RandRScreen* s = m_screens.first(); s; s = m_screens.next())
-			s->load(config);
-
+	{
+    	for (int i = 0; i < m_screens.size(); ++i) {
+        	RandRScreen* s = m_screens.at(i);
+        	s->load(config);
+		}
+    }	
 	return applyOnStartup(config);
 }
 
@@ -680,8 +690,10 @@ void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup, bool syncTr
 	config.writeEntry("ApplyOnStartup", applyOnStartup);
 	config.writeEntry("SyncTrayApp", syncTrayApp);
 
-	for (RandRScreen* s = m_screens.first(); s; s = m_screens.next())
-		s->save(config);
+	for (int i = 0; i < m_screens.size(); ++i) {
+		RandRScreen* s = m_screens.at(i);
+        s->save(config);
+	}
 }
 
 void RandRDisplay::applyProposed(bool confirm)

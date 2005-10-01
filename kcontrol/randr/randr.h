@@ -179,13 +179,13 @@ private slots:
 	void		shownDialogDestroyed();
 };
 
-typedef Q3PtrList<RandRScreen> ScreenList;
+typedef QList<RandRScreen*> ScreenList;
 
 class RandRDisplay
 {
 public:
 	RandRDisplay();
-
+	~RandRDisplay();
 	bool			isValid() const;
 	const QString&	errorCode() const;
 	const QString&	version() const;
