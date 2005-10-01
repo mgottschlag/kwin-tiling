@@ -696,7 +696,7 @@ void LayoutConfig::defaults()
   widget->chkEnable->setChecked(false);
   ruleChanged();
 
-  widget->comboModel->setCurrentText("pc104>setCurrentText("us");
+  widget->comboModel->setCurrentText("pc104");
 
   widget->chkEnableOptions->setChecked( true );
   widget->checkResetOld->setChecked( false );

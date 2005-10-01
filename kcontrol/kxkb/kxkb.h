@@ -30,7 +30,7 @@ DESCRIPTION
 #include <qstring.h>
 #include <qstringlist.h>
 #include <q3dict.h>
-#include <q3ptrqueue.h>
+#include <QQueue>
 //Added by qt3to4:
 #include <QMouseEvent>
 
@@ -88,11 +88,11 @@ private:
 
 	QString layout;
 	int group;
-	Q3PtrQueue<QString> *lastLayout;
+	QQueue<QString *> *lastLayout;
 
 	LayoutInfo()
 	 {}	
-	LayoutInfo(const QString& layout_, int group_, Q3PtrQueue<QString> *lastLayout_):
+	LayoutInfo(const QString& layout_, int group_, QQueue<QString *> *lastLayout_):
 	 layout(layout_),
 	 group(group_),
 	 lastLayout(lastLayout_)
@@ -102,7 +102,7 @@ private:
 	 layout = info2.layout; group = info2.group;
 	}
 	 
-	Q3PtrQueue<QString> *getLastLayout() const { return lastLayout; }
+	QQueue<QString *> *getLastLayout() const { return lastLayout; }
 
 	private:
 	 bool operator==(const LayoutInfo& info2)
@@ -191,7 +191,7 @@ private:
     QStringList m_list;
     QMap<QString,QString> m_compiledLayoutFileNames;
     bool m_stickySwitching;
-    Q3PtrQueue<QString> *m_lastLayout;
+    QQueue<QString *> *m_lastLayout;
     int m_stickySwitchingDepth;
     
     XKBExtension *m_extension;

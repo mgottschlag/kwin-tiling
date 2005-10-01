@@ -154,8 +154,8 @@ KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
 #include "kxkbbindings.cpp"
     keys->updateConnections();
 
-    m_lastLayout = new Q3PtrQueue<QString>;
-    m_lastLayout->setAutoDelete(TRUE);
+    m_lastLayout = new QQueue<QString*>;
+    //m_lastLayout->setAutoDelete(TRUE);
 
     connect( this, SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)) );
     addKipcEventMask( KIPC::SettingsChanged );
@@ -165,7 +165,8 @@ KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
 KXKBApp::~KXKBApp()
 {
     deletePrecompiledLayouts();
-  
+  	qDeleteAll(*m_lastLayout);
+	m_lastLayout->clear();
     delete keys;
     delete m_tray;
     delete m_rules;
@@ -440,8 +441,8 @@ void KXKBApp::windowChanged(WId winId)
     
     if( layoutInfo.layout.isEmpty() ) {	// setting default layout/group
 	m_layout = m_defaultLayout;
- 	m_lastLayout = new Q3PtrQueue<QString>();
- 	m_lastLayout->setAutoDelete(TRUE);
+ 	m_lastLayout = new QQueue<QString*>();
+ 	//m_lastLayout->setAutoDelete(TRUE);
 	layoutApply();
 	return;
     }

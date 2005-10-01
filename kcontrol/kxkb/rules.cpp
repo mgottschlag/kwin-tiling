@@ -142,7 +142,7 @@ void KeyRules::loadOldLayouts(QString file)
 		line = line.left(line.length()-1) + ts.readLine();
 	    line = line.simplified();
 
-	    m_oldLayouts = line.split( "\\s"));
+	    m_oldLayouts = line.split( QRegExp("\\s"),QString::SkipEmptyParts);
 //	    kdDebug() << "oldlayouts " << m_oldLayouts.join("|") << endl;
 	    if( !m_nonLatinLayouts.empty() )
 	      break;
@@ -157,7 +157,7 @@ void KeyRules::loadOldLayouts(QString file)
 		line = line.left(line.length()-1) + ts.readLine();
 	    line = line.simplified();
 
-	    m_nonLatinLayouts = line.split( "\\s"));
+	    m_nonLatinLayouts = line.split(QRegExp( "\\s"),QString::SkipEmptyParts);
 //	    kdDebug() << "nonlatin " << m_nonLatinLayouts.join("|") << endl;
 	    if( !m_oldLayouts.empty() )
 	      break;
