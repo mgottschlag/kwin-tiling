@@ -23,8 +23,8 @@
 #include "poswidget.h"
 #include "caldialog.h"
 
-#include <q3hbox.h>
-#include <q3vbox.h>
+
+
 #include <q3table.h>
 #include <qlabel.h>
 #include <qcombobox.h>
@@ -40,6 +40,7 @@
 #include <kmessagebox.h>
 
 #include <stdio.h>
+#include <kvbox.h>
 
 //--------------------------------------------------------------
 static QString PRESSED = I18N_NOOP("PRESSED");
@@ -48,23 +49,23 @@ static QString PRESSED = I18N_NOOP("PRESSED");
 JoyWidget::JoyWidget(QWidget *parent, const char *name)
  : QWidget(parent, name), idle(0), joydev(0)
 {
-  Q3VBox *mainVbox = new Q3VBox(parent);
+  KVBox *mainVbox = new KVBox(parent);
   mainVbox->setSpacing(KDialog::spacingHint());
 
   message = new QLabel(mainVbox);
   message->hide();
 
-  Q3HBox *devHbox = new Q3HBox(mainVbox);
+  KHBox *devHbox = new KHBox(mainVbox);
   new QLabel(i18n("Device:"), devHbox);
   device = new QComboBox(true, devHbox);
   device->setInsertionPolicy(QComboBox::NoInsertion);
   connect(device, SIGNAL(activated(const QString &)), this, SLOT(deviceChanged(const QString &)));
   devHbox->setStretchFactor(device, 3);
 
-  Q3HBox *hbox = new Q3HBox(mainVbox);
+  KHBox *hbox = new KHBox(mainVbox);
   hbox->setSpacing(KDialog::spacingHint());
 
-  Q3VBox *vboxLeft = new Q3VBox(hbox);
+  KVBox *vboxLeft = new KVBox(hbox);
   vboxLeft->setSpacing(KDialog::spacingHint());
 
   new QLabel(i18n("Position:"), vboxLeft);
@@ -72,10 +73,10 @@ JoyWidget::JoyWidget(QWidget *parent, const char *name)
   trace = new QCheckBox(i18n("Show trace"), mainVbox);
   connect(trace, SIGNAL(toggled(bool)), this, SLOT(traceChanged(bool)));
 
-  Q3VBox *vboxMid = new Q3VBox(hbox);
+  KVBox *vboxMid = new KVBox(hbox);
   vboxMid->setSpacing(KDialog::spacingHint());
 
-  Q3VBox *vboxRight = new Q3VBox(hbox);
+  KVBox *vboxRight = new KVBox(hbox);
   vboxRight->setSpacing(KDialog::spacingHint());
 
   // calculate the column width we need

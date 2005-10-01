@@ -25,12 +25,13 @@
 #include <qlabel.h>
 #include <qtimer.h>
 #include <qapplication.h>
-#include <q3vbox.h>
+
 
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kdebug.h>
-
+#include <kvbox.h>
+#include <Q3VBox>
 //--------------------------------------------------------------
 
 CalDialog::CalDialog(QWidget *parent, JoyDevice *joy)
