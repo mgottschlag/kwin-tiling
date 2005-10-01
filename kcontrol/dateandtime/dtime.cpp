@@ -37,9 +37,8 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 //Added by qt3to4:
-#include <Q3PointArray>
 #include <QApplication>
-
+#include <QPolygon>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kprocess.h>
@@ -387,7 +386,7 @@ void Kclock::paintEvent( QPaintEvent * )
   QPainter paint;
   paint.begin( this );
 
-  Q3PointArray pts;
+  QPolygon pts;
   QPoint cp = rect().center();
   int d = QMIN(width(),height());
   QColor hands =  colorGroup().dark();
