@@ -43,7 +43,8 @@
 #include <kglobalsettings.h>
 #include <kconfig.h>
 #include <kdebug.h>
-
+#include <kglobal.h>
+#include <klocale.h>
 #include "main.h"
 #include "main.moc"
 #include "toplevel.h"
@@ -102,7 +103,7 @@ KControlApp::~KControlApp()
 
 extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
-  KLocale::setMainCatalogue("kcontrol");
+  KLocale::setMainCatalog("kcontrol");
   KAboutData aboutKControl( "kcontrol", I18N_NOOP("KDE Control Center"),
     KCONTROL_VERSION, I18N_NOOP("The KDE Control Center"), KAboutData::License_GPL,
     I18N_NOOP("(c) 1998-2004, The KDE Control Center Developers"));
