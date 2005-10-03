@@ -39,11 +39,11 @@ int main(int argc, char **argv)
 	aboutData.addAuthor("Hamish Rodda",I18N_NOOP("Maintainer"), "rodda@kde.org");
 	aboutData.addCredit("Lubos Lunak",I18N_NOOP("Many fixes"), "l.lunak@suse.cz");
 	aboutData.setProductName("krandr/krandrtray");
-	KGlobal::locale()->setMainCatalogue("krandr");
+	KGlobal::locale()->setMainCatalog("krandr");
 
 	KCmdLineArgs::init(argc,argv,&aboutData);
 	KCmdLineArgs::addCmdLineOptions(options);
-	KApplication::addCmdLineOptions();
+	KCmdLineArgs::addStdCmdLineOptions();
 
 	KRandRApp app;
 
