@@ -47,7 +47,7 @@
 #include <kstandarddirs.h>
 #include <kio/netaccess.h>
 #include <kiconloader.h>
-#include <kurldrag.h>
+#include <k3urldrag.h>
 #include <kimagefilepreview.h>
 
 #include "kdm-appear.h"
@@ -379,7 +379,7 @@ bool KDMAppearanceWidget::eventFilter(QObject *, QEvent *e)
 
 void KDMAppearanceWidget::iconLoaderDragEnterEvent(QDragEnterEvent *e)
 {
-  e->accept(KURLDrag::canDecode(e));
+  e->accept(K3URLDrag::canDecode(e));
 }
 
 

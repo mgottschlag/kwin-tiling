@@ -32,7 +32,7 @@
 #include <kgenericfactory.h>
 #include <kimageio.h>
 #include <kmessagebox.h>
-#include <kurldrag.h>
+#include <k3urldrag.h>
 
 #include "kdm-appear.h"
 #include "kdm-font.h"
@@ -57,7 +57,7 @@ KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 {
     KURL::List uris;
 
-    if (KURLDrag::decode(e, uris) && (uris.count() > 0)) {
+    if (K3URLDrag::decode(e, uris) && (uris.count() > 0)) {
 	KURL *url = new KURL(uris.first());
 
 	KImageIO::registerFormats();

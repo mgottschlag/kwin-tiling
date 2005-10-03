@@ -43,7 +43,7 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
-#include <kurldrag.h>
+#include <k3urldrag.h>
 
 #include "kdm-users.h"
 
@@ -336,7 +336,7 @@ bool KDMUsersWidget::eventFilter(QObject *, QEvent *e)
 {
     if (e->type() == QEvent::DragEnter) {
 	QDragEnterEvent *ee = (QDragEnterEvent *) e;
-	ee->accept( KURLDrag::canDecode(ee) );
+	ee->accept( K3URLDrag::canDecode(ee) );
         return true;
     }
 
