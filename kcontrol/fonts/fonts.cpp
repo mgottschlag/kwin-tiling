@@ -26,7 +26,7 @@
 
 #include <dcopclient.h>
 
-#include <kaccelmanager.h>
+#include <kacceleratormanager.h>
 #include <kapplication.h>
 #include <kgenericfactory.h>
 #include <kipc.h>
