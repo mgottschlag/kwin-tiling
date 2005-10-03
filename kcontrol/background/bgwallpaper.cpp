@@ -34,7 +34,7 @@
 #include <kimageio.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
-#include <kurldrag.h>
+#include <k3urldrag.h>
 
 #include "bgsettings.h"
 #include "bgwallpaper.h"
@@ -52,7 +52,7 @@ BGMultiWallpaperList::BGMultiWallpaperList(QWidget *parent, const char *name)
 
 void BGMultiWallpaperList::dragEnterEvent(QDragEnterEvent *ev)
 {
-   ev->accept(KURLDrag::canDecode(ev));
+   ev->accept(K3URLDrag::canDecode(ev));
 }
 
 
@@ -60,7 +60,7 @@ void BGMultiWallpaperList::dropEvent(QDropEvent *ev)
 {
    QStringList files;
    KURL::List urls;
-   KURLDrag::decode(ev, urls);
+   K3URLDrag::decode(ev, urls);
    for(KURL::List::ConstIterator it = urls.begin();
        it != urls.end(); ++it)
    {

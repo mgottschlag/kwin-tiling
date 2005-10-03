@@ -20,7 +20,7 @@
    Boston, MA 02110-1301, USA.
  */
 
-#include <kurldrag.h>
+#include <k3urldrag.h>
 
 #include "bgmonitor.h"
 //Added by qt3to4:
@@ -36,11 +36,11 @@ BGMonitor::BGMonitor(QWidget *parent, const char *name)
 
 void BGMonitor::dropEvent(QDropEvent *e)
 {
-    if (!KURLDrag::canDecode(e))
+    if (!K3URLDrag::canDecode(e))
         return;
 
     KURL::List uris;
-    if (KURLDrag::decode(e, uris) && (uris.count() > 0)) {
+    if (K3URLDrag::decode(e, uris) && (uris.count() > 0)) {
         // TODO: Download remote file
         if (uris.first().isLocalFile())
            emit imageDropped(uris.first().path());
@@ -49,7 +49,7 @@ void BGMonitor::dropEvent(QDropEvent *e)
 
 void BGMonitor::dragEnterEvent(QDragEnterEvent *e)
 {
-    if (KURLDrag::canDecode(e))
+    if (K3URLDrag::canDecode(e))
         e->accept(rect());
     else
         e->ignore(rect());
