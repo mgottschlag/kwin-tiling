@@ -52,7 +52,7 @@
 #include <kservice.h>
 #include <kservicegroup.h>
 #include <kmultipledrag.h>
-#include <kurldrag.h>
+#include <k3urldrag.h>
 #include <QMenu>
 
 #include "treeview.h"
@@ -153,11 +153,12 @@ static QPixmap appIcon(const QString &iconName)
 
 
 TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, const char *name )
-    : KListView(parent, name), m_ac(ac), m_rmb(0), m_clipboard(0),
+    : KListView(parent), m_ac(ac), m_rmb(0), m_clipboard(0),
       m_clipboardFolderInfo(0), m_clipboardEntryInfo(0),
       m_controlCenter(controlCenter), m_layoutDirty(false)
 {
-    setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
+    setObjectName(name);
+	setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
     setAllColumnsShowFocus(true);
     setRootIsDecorated(true);
     setSorting(-1);
@@ -676,7 +677,7 @@ bool TreeView::acceptDrag(QDropEvent* e) const
            (e->source() == const_cast<TreeView *>(this)))
        return true;
     KURL::List urls;
-    if (KURLDrag::decode(e, urls) && (urls.count() == 1) && 
+    if (K3URLDrag::decode(e, urls) && (urls.count() == 1) && 
         urls[0].isLocalFile() && urls[0].path().endsWith(".desktop"))
        return true;
     return false;
@@ -747,7 +748,7 @@ void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewIt
    {
      // External drop
      KURL::List urls;
-     if (!KURLDrag::decode(e, urls) || (urls.count() != 1) || !urls[0].isLocalFile())
+     if (!K3URLDrag::decode(e, urls) || (urls.count() != 1) || !urls[0].isLocalFile())
         return;
      QString path = urls[0].path();
      if (!path.endsWith(".desktop"))
@@ -967,7 +968,7 @@ Q3DragObject *TreeView::dragObject()
        {
           KURL url;
           url.setPath(m_dragPath);
-          drag->addDragObject( new KURLDrag(url, 0));
+          drag->addDragObject( new K3URLDrag(url, 0));
        }
     }
     else

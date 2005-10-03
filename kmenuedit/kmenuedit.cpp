@@ -31,7 +31,7 @@
 #include <kservice.h>
 #include <kstdaction.h>
 #include <kstdaccel.h>
-
+#include <kxmlguifactory.h>
 #include "treeview.h"
 #include "basictab.h"
 #include "kmenuedit.h"
