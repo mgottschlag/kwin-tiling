@@ -66,7 +66,7 @@ static const KCmdLineOptions options[] =
 
 int main(int argc, char *argv[])
 {
-	KLocale::setMainCatalogue("kscreensaver");
+	KLocale::setMainCatalog("kscreensaver");
 	KCmdLineArgs::init(argc, argv, appName, I18N_NOOP("Random screen saver"), description, version);
 
 	KCmdLineArgs::addCmdLineOptions(options);
