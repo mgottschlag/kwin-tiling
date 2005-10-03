@@ -15,7 +15,7 @@
 #include <qstyleoption.h>
 #include <q3popupmenu.h>
 
-#include <kcolordrag.h>
+#include <k3colordrag.h>
 #include <kpixmapeffect.h>
 #include <kglobalsettings.h>
 #include <kconfig.h>
@@ -91,7 +91,7 @@ void WidgetCanvas::mouseMoveEvent( QMouseEvent *me )
 void WidgetCanvas::dropEvent( QDropEvent *e)
 {
     QColor c;
-    if (KColorDrag::decode( e, c)) {
+    if (K3ColorDrag::decode( e, c)) {
 	for ( int i = 0; i < MAX_HOTSPOTS; i++ )
 	    if ( hotspots[i].rect.contains( e->pos() ) ) {
 		emit colorDropped( hotspots[i].number, c);
@@ -103,7 +103,7 @@ void WidgetCanvas::dropEvent( QDropEvent *e)
 
 void WidgetCanvas::dragEnterEvent( QDragEnterEvent *e)
 {
-        e->accept( KColorDrag::canDecode( e));
+        e->accept( K3ColorDrag::canDecode( e));
 }
 
 void WidgetCanvas::paletteChange(const QPalette &)
