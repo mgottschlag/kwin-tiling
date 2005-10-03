@@ -39,7 +39,7 @@
 #include <klistview.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 
 #include "smartcard.h"
 

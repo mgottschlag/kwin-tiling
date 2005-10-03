@@ -30,7 +30,7 @@
 #include <QPixmap>
 #include <QByteArray>
 #include <QTextStream>
-
+#include <QDateTime>
 #include <dcopclient.h>
 
 #include <kapplication.h>

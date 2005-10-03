@@ -52,7 +52,7 @@
 #include "Misc.h"
 #include "KFileFontIconView.h"
 #include "KFileFontView.h"
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <ktoolbar.h>
 #include <ktoolbarbutton.h>
 #include <kstdaccel.h>

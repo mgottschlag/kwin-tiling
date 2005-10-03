@@ -31,7 +31,7 @@ that is intentional :-]
 #include <qwidget.h>
 #include <q3dict.h>
 
-#include <kpopupmenu.h>
+#include <kmenu.h>
 
 
 class ConfigModule;

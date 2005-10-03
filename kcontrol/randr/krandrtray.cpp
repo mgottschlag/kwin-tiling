@@ -28,7 +28,7 @@
 #include <khelpmenu.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kstdaction.h>
 #include <kstdguiitem.h>
 

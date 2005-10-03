@@ -52,7 +52,7 @@ DESCRIPTION
 #include <kstandarddirs.h>
 #include <kipc.h>
 #include <kaction.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <QX11Info>
 
 #include <X11/Xlib.h>
