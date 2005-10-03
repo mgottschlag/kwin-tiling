@@ -23,7 +23,7 @@
 
 #include <kapplication.h>
 #include <kglobalaccel.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <qmap.h>
 #include <qpixmap.h>
 //Added by qt3to4:

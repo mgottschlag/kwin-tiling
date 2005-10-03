@@ -63,6 +63,7 @@
 #include <X11/keysym.h>
 #include <fixx11h.h>
 #include <QX11Info>
+#include <kauthorized.h>
 
 #ifndef AF_LOCAL
 # define AF_LOCAL	AF_UNIX
@@ -692,7 +693,7 @@ void PasswordDlg::slotSwitchUser()
         vbox2->addStretch( 2 );
     }
 
-    if (kapp->authorize("start_new_session") && (p = dm.numReserve()) >= 0)
+    if (KAuthorized::authorizeKAction("start_new_session") && (p = dm.numReserve()) >= 0)
     {
         btn = new KPushButton( KGuiItem(i18n("Start &New Session"), "fork"), winFrame );
         connect( btn, SIGNAL(clicked()), SLOT(slotStartNewSession()) );

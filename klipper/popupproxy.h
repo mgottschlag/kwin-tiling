@@ -25,7 +25,7 @@
 #include <qstring.h>
 #include <qregexp.h>
 
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <history.h>
 
 class HistoryItem;
@@ -81,7 +81,7 @@ private:
     void deleteMoreMenus();
 
 private:
-    KPopupMenu* proxy_for_menu;
+    KMenu* proxy_for_menu;
     History::iterator spillPointer;
     QRegExp m_filter;
     int m_menu_height;

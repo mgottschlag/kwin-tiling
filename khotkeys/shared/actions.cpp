@@ -37,6 +37,7 @@
 #include <QX11Info>
 //Added by qt3to4:
 #include <Q3PtrList>
+#include <kauthorized.h>
 
 namespace KHotKeys
 {
@@ -143,7 +144,7 @@ void Command_url_action::execute()
             }
         case KURIFilterData::EXECUTABLE:
             {
-            if (!kapp->authorize("shell_access"))
+            if (!KAuthorized::authorizeKAction("shell_access"))
 		return;
             if( !uri.hasArgsAndOptions())
                 {
@@ -158,7 +159,7 @@ void Command_url_action::execute()
             }
         case KURIFilterData::SHELL:
             {
-            if (!kapp->authorize("shell_access"))
+            if (!KAuthorized::authorizeKAction("shell_access"))
 		return;
             if( !KRun::runCommand(
                 cmd + ( uri.hasArgsAndOptions() ? uri.argsAndOptions() : "" ),

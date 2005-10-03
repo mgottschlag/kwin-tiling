@@ -20,7 +20,7 @@
 #ifndef _KLIPPERPOPUP_H_
 #define _KLIPPERPOPUP_H_
 
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <q3ptrlist.h>
 #include <qstring.h>
 //Added by qt3to4:
@@ -37,7 +37,7 @@ class KLineEdit;
  * Default view of clipboard history.
  *
  */
-class KlipperPopup : public KPopupMenu
+class KlipperPopup : public KMenu
 {
     Q_OBJECT
 

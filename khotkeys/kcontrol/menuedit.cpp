@@ -39,7 +39,7 @@ static QObject* owner = NULL;
 void khotkeys_init()
     {
     // I hope this works
-    KGlobal::locale()->insertCatalogue("khotkeys");
+    KGlobal::locale()->insertCatalog("khotkeys");
     // CHECKME hack
     assert( owner == NULL );
     owner = new QObject;

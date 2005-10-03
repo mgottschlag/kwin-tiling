@@ -38,7 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdebug.h>
 #include <kglobalsettings.h>
 
-#include <kpopupmenu.h>
+#include <kmenu.h>
 
 #include "utils.h"
 
@@ -177,7 +177,7 @@ void TaskLMBMenu::dragEnterEvent( QDragEnterEvent* e )
         return;
     }
 
-    int id = KPopupMenu::actionId(actionAt(e->pos()));
+    int id = KMenu::actionId(actionAt(e->pos()));
 
     if (id == -1)
     {
@@ -211,7 +211,7 @@ void TaskLMBMenu::dragMoveEvent( QDragMoveEvent* e )
         return;
     }
 
-    int id = KPopupMenu::actionId(actionAt(e->pos()));
+    int id = KMenu::actionId(actionAt(e->pos()));
 
     if (id == -1)
     {

@@ -28,7 +28,7 @@
 #include <kdialogbase.h>
 #include <ktextedit.h>
 #include <klocale.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kservice.h>
 #include <kiconloader.h>
 #include <kdebug.h>
@@ -41,7 +41,7 @@
 
 // TODO:
 // - script-interface?
-// - Bug in KPopupMenu::clear() (insertTitle() doesn't go away sometimes)
+// - Bug in KMenu::clear() (insertTitle() doesn't go away sometimes)
 
 #define URL_EDIT_ITEM 10
 #define DO_NOTHING_ITEM 11
@@ -164,7 +164,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
 
         myPopupKillTimer->stop();
         delete myMenu;
-        myMenu = new KPopupMenu;
+        myMenu = new KMenu;
         connect( myMenu, SIGNAL( activated( int )),
                  SLOT( slotItemSelected( int )));
 

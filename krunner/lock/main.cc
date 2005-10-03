@@ -63,7 +63,7 @@ static KCmdLineOptions options[] =
 
 int main( int argc, char **argv )
 {
-    KLocale::setMainCatalogue("kdesktop");
+    KLocale::setMainCatalog("kdesktop");
 
     KCmdLineArgs::init( argc, argv, "kdesktop_lock", I18N_NOOP("KDesktop Locker"), I18N_NOOP("Session Locker for KDesktop"), "2.0" );
     KCmdLineArgs::addCmdLineOptions( options );
@@ -139,7 +139,7 @@ int main( int argc, char **argv )
     MyApp app;
     kdDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection << endl;
     app.disableSessionManagement();
-    KGlobal::locale()->insertCatalogue("libdmctl");
+    KGlobal::locale()->insertCatalog("libdmctl");
 
     // we need to read from the right rc file - possibly taking screen number in account
     KDesktopSettings::instance("kdesktoprc");

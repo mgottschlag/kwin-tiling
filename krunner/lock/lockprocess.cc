@@ -36,6 +36,7 @@
 #include <kstdguiitem.h>
 #include <kpixmapeffect.h>
 #include <kpixmap.h>
+#include <kauthorized.h>
 
 #include <qframe.h>
 #include <qlabel.h>
@@ -356,8 +357,8 @@ void LockProcess::readSaver()
     {
         QString file = locate("scrsav", mSaver);
 
-	bool opengl = kapp->authorize("opengl_screensavers");
-	bool manipulatescreen = kapp->authorize("manipulatescreen_screensavers");
+	bool opengl = KAuthorized::authorizeKAction("opengl_screensavers");
+	bool manipulatescreen = KAuthorized::authorizeKAction("manipulatescreen_screensavers");
         KDesktopFile config(file, true);
 	if (!config.readEntry("X-KDE-Type").toUtf8().isEmpty())
 	{

@@ -62,7 +62,7 @@ static bool runModule(const QString &libName, KLibLoader *loader, KService::Ptr 
 
 extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 {
-  KLocale::setMainCatalogue("kcontrol");
+  KLocale::setMainCatalog("kcontrol");
   KAboutData aboutData( "kcminit", I18N_NOOP("KCMInit"),
 	"",
 	I18N_NOOP("KCMInit - runs startups initialization for Control Modules."));
@@ -71,7 +71,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
   KApplication app;
-  KLocale::setMainCatalogue(0);
+  KLocale::setMainCatalog(0);
 
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
   QByteArray arg;

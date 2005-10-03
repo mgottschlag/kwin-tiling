@@ -34,7 +34,7 @@
 class QTimer;
 
 class KConfig;
-class KPopupMenu;
+class KMenu;
 
 class ClipAction;
 struct ClipCommand;
@@ -85,7 +85,7 @@ private:
   QString myClipData;
   ClipAction *myCurrentAction;
   Q3IntDict<ClipCommand> myCommandMapper;
-  KPopupMenu *myMenu;
+  KMenu *myMenu;
   QTimer *myPopupKillTimer;
   int myPopupKillTimeout;
   bool m_stripWhiteSpace;

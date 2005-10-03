@@ -50,13 +50,13 @@ void PopupProxy::slotHistoryChanged() {
 }
 
 void PopupProxy::deleteMoreMenus() {
-    const KPopupMenu* myParent = parent();
+    const KMenu* myParent = parent();
     if ( myParent != proxy_for_menu ) {
-        const KPopupMenu* delme = proxy_for_menu;;
-        proxy_for_menu = static_cast<KPopupMenu*>( proxy_for_menu->parent() );
+        const KMenu* delme = proxy_for_menu;;
+        proxy_for_menu = static_cast<KMenu*>( proxy_for_menu->parent() );
         while ( proxy_for_menu != myParent ) {
             delme = proxy_for_menu;
-            proxy_for_menu = static_cast<KPopupMenu*>( proxy_for_menu->parent() );
+            proxy_for_menu = static_cast<KMenu*>( proxy_for_menu->parent() );
         }
         delete delme;
     }
@@ -155,7 +155,7 @@ int PopupProxy::insertFromSpill( int index ) {
     // If there is more items in the history, insert a new "More..." menu and
     // make *this a proxy for that menu ('s content).
     if ( spillPointer.current() ) {
-        KPopupMenu* moreMenu = new KPopupMenu( proxy_for_menu, "a more menu" );
+        KMenu* moreMenu = new KMenu( proxy_for_menu, "a more menu" );
         proxy_for_menu->insertItem( i18n( "&More" ),  moreMenu, -1, index );
         connect( moreMenu, SIGNAL( aboutToShow() ), SLOT( slotAboutToShow() ) );
         proxy_for_menu = moreMenu;

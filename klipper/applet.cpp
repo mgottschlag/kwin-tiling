@@ -32,12 +32,13 @@
 //Added by qt3to4:
 #include <QResizeEvent>
 #include <Q3CString>
+#include <ktoolinvocation.h>
 
 extern "C"
 {
     KDE_EXPORT KPanelApplet* init(QWidget *parent, const QString& configFile)
     {
-        KGlobal::locale()->insertCatalogue("klipper");
+        KGlobal::locale()->insertCatalog("klipper");
         int actions = KPanelApplet::Preferences | KPanelApplet::About | KPanelApplet::Help;
         return new KlipperApplet(configFile, KPanelApplet::Normal, actions, parent, "klipper");
     }
@@ -94,7 +95,7 @@ void KlipperApplet::preferences()
 
 void KlipperApplet::help()
 {
-    kapp->invokeHelp(QString::null, QString::fromLatin1("klipper"));
+    KToolInvocation::invokeHelp(QString::null, QString::fromLatin1("klipper"));
 }
 
 void KlipperApplet::about()

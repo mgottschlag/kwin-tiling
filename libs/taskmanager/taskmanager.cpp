@@ -64,7 +64,7 @@ TaskManager::TaskManager()
       m_winModule(new KWinModule()),
       m_trackGeometry(false)
 {
-    KGlobal::locale()->insertCatalogue("libtaskmanager");
+    KGlobal::locale()->insertCatalog("libtaskmanager");
     connect(m_winModule, SIGNAL(windowAdded(WId)),
             this,        SLOT(windowAdded(WId)));
     connect(m_winModule, SIGNAL(windowRemoved(WId)),

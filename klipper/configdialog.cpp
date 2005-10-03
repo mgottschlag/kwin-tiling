@@ -32,7 +32,7 @@
 
 #include <kiconloader.h>
 #include <klocale.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kwinmodule.h>
 #include <kregexpeditorinterface.h>
 #include <kparts/componentfactory.h>
@@ -334,7 +334,7 @@ void ActionWidget::slotContextMenu( KListView *, Q3ListViewItem *item,
         return;
 
     int addCmd = 0, rmCmd = 0;
-    KPopupMenu *menu = new KPopupMenu;
+    KMenu *menu = new KMenu;
     addCmd = menu->insertItem( i18n("Add Command") );
     rmCmd = menu->insertItem( i18n("Remove Command") );
     if ( !item->parent() ) {// no "command" item
