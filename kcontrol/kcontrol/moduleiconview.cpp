@@ -39,8 +39,8 @@
 #include "global.h"
 
 
-ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent, const char * name)
-  : KListView(parent, name)
+ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent)
+  : KListView(parent)
   , _path(KCGlobal::baseGroup())
   , _modules(list)
 {

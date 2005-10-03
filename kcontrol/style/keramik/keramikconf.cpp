@@ -62,7 +62,7 @@ KeramikStyleConfig::KeramikStyleConfig(QWidget* parent): QWidget(parent)
 
 	origAnimProgressBar = s.readBoolEntry("/keramik/Settings/animateProgressBar", false);
 	animateProgressBar->setChecked(origAnimProgressBar);
-	
+
 	//connect(highlightLineEdits, SIGNAL( toggled(bool) ), SLOT( updateChanged() ) );
 	connect(highlightScrollBar, SIGNAL( toggled(bool) ), SLOT( updateChanged() ) );
 	connect(animateProgressBar, SIGNAL( toggled(bool) ), SLOT( updateChanged() ) );
@@ -70,7 +70,7 @@ KeramikStyleConfig::KeramikStyleConfig(QWidget* parent): QWidget(parent)
 
 KeramikStyleConfig::~KeramikStyleConfig()
 {
-	KGlobal::locale()->removeCatalogue("kstyle_keramik_config");
+	KGlobal::locale()->removeCatalog("kstyle_keramik_config");
 }
 
 

@@ -35,7 +35,7 @@
 #include <kprocess.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
-
+#include <kauthorized.h>
 
 #include "modules.h"
 #include "modules.moc"
@@ -106,7 +106,7 @@ void ConfigModule::deleteClient()
   delete _embedFrame;
   _embedFrame = 0;
   kapp->syncX();
-  
+
   if(_module)
     _module->close(true);
   _module = 0;
@@ -289,7 +289,7 @@ bool ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
         KService *s = static_cast<KService*>(p);
         if (!KAuthorized::authorizeKActionControlModule(s->menuId()))
            continue;
-           
+
         ConfigModule *module = new ConfigModule(s);
         if (module->library().isEmpty())
         {
@@ -300,7 +300,7 @@ bool ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
         append(module);
         menu->modules.append(module);
      }
-     else if (p->isType(KST_KServiceGroup) && 
+     else if (p->isType(KST_KServiceGroup) &&
 		     readDesktopEntriesRecursive(p->entryPath()) )
         	menu->submenus.append(p->entryPath());
 

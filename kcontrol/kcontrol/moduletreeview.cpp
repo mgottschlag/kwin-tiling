@@ -76,8 +76,8 @@ private:
     ModuleTreeView* treeView;
 };
 
-ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent, const char * name)
-  : KListView(parent, name)
+ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent)
+  : KListView(parent)
   , _modules(list)
 {
   addColumn(QString::null);
@@ -140,7 +140,7 @@ void ModuleTreeView::fill(ModuleTreeItem *parent, const QString &parentPath)
 
 QSize ModuleTreeView::sizeHint() const
 {
-    return Q3ListView::sizeHint().boundedTo( 
+    return Q3ListView::sizeHint().boundedTo(
 	QSize( fontMetrics().maxWidth()*35, QWIDGETSIZE_MAX) );
 }
 

@@ -44,6 +44,7 @@
 #include <sys/resource.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <kio/global.h>
 #include <kio/ioslave_defaults.h>
 #include <kio/netaccess.h>

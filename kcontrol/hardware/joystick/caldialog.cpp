@@ -40,7 +40,7 @@ CalDialog::CalDialog(QWidget *parent, JoyDevice *joy)
       KDialogBase::Cancel|KDialogBase::User1, KDialogBase::User1, true, KGuiItem(i18n("Next"))),
     joydev(joy)
 {
-  Q3VBox *main = makeVBoxMainWidget();
+  KVBox *main = makeVBoxMainWidget();
 
   text = new QLabel(main);
   text->setMinimumHeight(200);

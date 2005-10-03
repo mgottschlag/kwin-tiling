@@ -31,6 +31,7 @@
 #include <kdebug.h>
 #include <kaboutdata.h>
 #include <kinstance.h>
+#include <klocale.h>
 #include <assert.h>
 
 extern "C"

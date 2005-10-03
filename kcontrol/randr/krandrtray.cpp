@@ -127,7 +127,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 {
 	int lastIndex = 0;
 
-	menu->insertTitle(SmallIcon("window_fullscreen"), i18n("Screen Size"));
+	menu->addTitle(SmallIcon("window_fullscreen"), i18n("Screen Size"));
 
 	int numSizes = currentScreen()->numSizes();
 	int* sizeSort = new int[numSizes];
@@ -162,7 +162,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 	// Don't display the rotation options if there is no point (ie. none are supported)
 	// XFree86 4.3 does not include rotation support.
 	if (currentScreen()->rotations() != RandRScreen::Rotate0) {
-		menu->insertTitle(SmallIcon("reload"), i18n("Orientation"));
+		menu->addTitle(SmallIcon("reload"), i18n("Orientation"));
 
 		for (int i = 0; i < 6; i++) {
 			if ((1 << i) & currentScreen()->rotations()) {
@@ -180,7 +180,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 	QStringList rr = currentScreen()->refreshRates(currentScreen()->proposedSize());
 
 	if (rr.count())
-		menu->insertTitle(SmallIcon("clock"), i18n("Refresh Rate"));
+		menu->addTitle(SmallIcon("clock"), i18n("Refresh Rate"));
 
 	int i = 0;
 	for (QStringList::Iterator it = rr.begin(); it != rr.end(); ++it, i++) {

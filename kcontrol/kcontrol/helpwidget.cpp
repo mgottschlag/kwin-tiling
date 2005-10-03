@@ -26,6 +26,7 @@
 #include <kprocess.h>
 #include <kapplication.h>
 #include <krun.h>
+#include <ktoolinvocation.h>
 
 #include "global.h"
 #include "quickhelp.h"
@@ -59,7 +60,7 @@ void HelpWidget::setText( const QString& docPath, const QString& text)
   {
     QByteArray a = docPath.toLocal8Bit();
     QString path = QString::fromLocal8Bit (a.data(), a.size());
-  
+
     _browser->setText(text + i18n("<p>Use the \"Whats This\" (Shift+F1) to get help on specific options.</p><p>To read the full manual click <a href=\"%1\">here</a>.</p>")
 		      .arg(path));
   }
@@ -89,11 +90,11 @@ void HelpWidget::urlClicked(const QString & _url)
                 << url.url();
         process.start(KProcess::DontCare);
     } else {
-        new KRun(url);
+        new KRun(url, this);
     }
 }
 
 void HelpWidget::mailClicked(const QString &,const QString & addr)
 {
-  kapp->invokeMailer(addr, QString::null);
+  KToolInvocation::invokeMailer(addr, QString::null);
 }

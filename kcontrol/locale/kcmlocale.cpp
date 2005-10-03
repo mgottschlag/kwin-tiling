@@ -69,13 +69,17 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
 
   QWidget * vb = new QWidget(this);
   QVBoxLayout * boxlay = new QVBoxLayout(vb, 0, KDialog::spacingHint());
-  m_addLanguage = new KLanguageButton(QString::null, vb, I18N_NOOP("Add Language"));
+  m_addLanguage = new KLanguageButton(QString::null, vb );
+  m_addLanguage->setObjectName( I18N_NOOP("Add Language") );
   boxlay->add(m_addLanguage);
   connect(m_addLanguage, SIGNAL(activated(const QString &)),
           SLOT(slotAddLanguage(const QString &)));
-  m_removeLanguage = new QPushButton(vb, I18N_NOOP("Remove Language"));
-  m_upButton = new QPushButton(vb, I18N_NOOP("Move Up"));
-  m_downButton = new QPushButton(vb, I18N_NOOP("Move Down"));
+  m_removeLanguage = new QPushButton( vb );
+  m_removeLanguage->setObjectName( I18N_NOOP("Remove Language") );
+  m_upButton = new QPushButton( vb );
+  m_upButton->setObjectName( I18N_NOOP("Move Up") );
+  m_downButton = new QPushButton( vb );
+  m_downButton->setObjectName( I18N_NOOP("Move Down") );
   boxlay->add(m_removeLanguage);
   boxlay->add(m_upButton);
   boxlay->add(m_downButton);
@@ -217,7 +221,7 @@ void KLocaleConfig::loadLanguageList()
 
   // add all languages to the list
   QStringList alllang = KGlobal::dirs()->findAllResources("locale",
-                               QString::fromLatin1("*/entry.desktop"), 
+                               QString::fromLatin1("*/entry.desktop"),
                                false, true);
   QStringList langlist = prilang;
   if (langlist.count() > 0)
@@ -267,7 +271,7 @@ void KLocaleConfig::loadCountryList()
   m_comboCountry->clear();
 
   QStringList regionlist = KGlobal::dirs()->findAllResources("locale",
-                                 sub + QString::fromLatin1("*.desktop"), 
+                                 sub + QString::fromLatin1("*.desktop"),
                                  false, true );
 
   for ( QStringList::ConstIterator it = regionlist.begin();

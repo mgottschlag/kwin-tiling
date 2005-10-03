@@ -63,7 +63,7 @@ class AppTreeView : public KListView
     friend class AppTreeItem;
     Q_OBJECT
 public:
-    AppTreeView(QWidget *parent=0, const char *name=0);
+    AppTreeView(QWidget *parent=0);
     ~AppTreeView();
     void fill();
 

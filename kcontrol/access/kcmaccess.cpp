@@ -42,6 +42,7 @@
 #define XK_MISCELLANY
 #define XK_XKB_KEYS
 #include <X11/keysymdef.h>
+#include <ktoolinvocation.h>
 
 #include "kcmaccess.moc"
 
@@ -715,7 +716,7 @@ void KAccessConfig::save()
   // When turning things off, it needs to be done by kaccess,
   // so don't actually kill it *shrug*.
   if ( true /*needToRunKAccessDaemon( config )*/ )
-      kapp->startServiceByDesktopName("kaccess");
+      KToolInvocation::startServiceByDesktopName("kaccess");
 
   else // don't need it -> kill it
   {
@@ -834,7 +835,7 @@ extern "C"
 
     delete config;
     if (run)
-      kapp->startServiceByDesktopName("kaccess");
+      KToolInvocation::startServiceByDesktopName("kaccess");
   }
 }
 

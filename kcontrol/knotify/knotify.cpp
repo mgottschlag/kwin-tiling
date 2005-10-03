@@ -71,7 +71,8 @@ KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
     QVBoxLayout *layout = new QVBoxLayout( this, 0, KDialog::spacingHint() );
 
     QLabel *label = new QLabel( i18n( "Event source:" ), this );
-    m_appCombo = new KComboBox( false, this, "app combo" );
+    m_appCombo = new KComboBox( false, this );
+    m_appCombo->setObjectName( "app combo" );
 
     QHBoxLayout *hbox = new QHBoxLayout( layout );
     hbox->addWidget( label );

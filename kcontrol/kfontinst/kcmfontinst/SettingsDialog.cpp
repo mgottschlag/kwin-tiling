@@ -32,6 +32,7 @@
 #include <qlayout.h>
 #include <qcheckbox.h>
 #include <q3vbox.h>
+#include <kvbox.h>
 
 #include <klocale.h>
 #include <kconfig.h>
@@ -46,7 +47,7 @@ CSettingsDialog::CSettingsDialog(QWidget *parent)
                : KDialogBase(parent, "settingsdialog", true, i18n("Settings"),
                              KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true)
 {
-    Q3VBox *page = makeVBoxMainWidget();
+    KVBox *page = makeVBoxMainWidget();
 
     itsDoX=new QCheckBox(i18n("Configure fonts for legacy X applications"), page);
     itsDoX->setWhatsThis( i18n("<p>Modern applications use a system called \"FontConfig\" to obtain the list of fonts. "

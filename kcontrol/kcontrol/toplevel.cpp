@@ -27,6 +27,9 @@
 #include <kaction.h>
 #include <kwin.h>
 #include <kiconloader.h>
+#include <klocale.h>
+#include <kxmlguifactory.h>
+#include <QSplitter>
 
 #include <qtabwidget.h>
 #include <q3whatsthis.h>
@@ -203,7 +206,7 @@ void TopLevel::setupActions()
 {
   KStdAction::quit(this, SLOT(close()), actionCollection());
   KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()),
-actionCollection());
+                          actionCollection());
   icon_view = new KRadioAction
     (i18n("&Icon View"), 0, this, SLOT(activateIconView()),
      actionCollection(), "activate_iconview");

@@ -16,6 +16,7 @@
 #include <klistview.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <ktoolinvocation.h>
 
 #define XK_MISCELLANY
 #define XK_XKB_KEYS
@@ -112,7 +113,7 @@ void ModifiersModule::save()
 		if( bMacSwap )
 			setupMacModifierKeys();
 		else
-			kapp->kdeinitExec("kxkb");
+			KToolInvocation::kdeinitExec("kxkb");
 		m_bMacSwapOrig = bMacSwap;
 		updateWidgets();
 	}

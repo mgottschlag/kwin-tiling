@@ -37,6 +37,7 @@
 
 #include <X11/Xlib.h>
 #include <QX11Info>
+#include <ktoolinvocation.h>
 
 
 static const char* switchModes[] = {
@@ -686,7 +687,7 @@ void LayoutConfig::save()
 
   delete config;
 
-  kapp->kdeinitExec("kxkb");
+  KToolInvocation::kdeinitExec("kxkb");
   emit KCModule::changed( false );
 }
 
@@ -773,7 +774,7 @@ extern "C"
     }
 
     if (config->readBoolEntry("Use", false) == true)
-        kapp->startServiceByDesktopName("kxkb");
+        KToolInvocation::startServiceByDesktopName("kxkb");
     delete config;
   }
 }

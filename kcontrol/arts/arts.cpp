@@ -52,6 +52,7 @@
 #include <kstandarddirs.h>
 #include <kurlrequester.h>
 #include <libkmid/deviceman.h>
+#include <ktoolinvocation.h>
 
 #include "arts.h"
 
@@ -77,7 +78,7 @@ static bool startArts()
 	delete config;
 
 	if (startServer)
-		kapp->kdeinitExec(startRealtime?"artswrapper":"artsd",
+		KToolInvocation::kdeinitExec(startRealtime?"artswrapper":"artsd",
 		                  QStringList::split(" ",args));
 	return startServer;
 }
@@ -616,7 +617,7 @@ void KArtsModule::restartServer()
 	}
 
 	// Restart knotify
-	kapp->startServiceByDesktopName("knotify");
+	KToolInvocation::startServiceByDesktopName("knotify");
 }
 
 bool KArtsModule::artsdIsRunning()

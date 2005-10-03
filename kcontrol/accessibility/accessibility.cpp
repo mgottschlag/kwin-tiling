@@ -28,6 +28,7 @@
 #include <kgenericfactory.h>
 #include <knuminput.h>
 #include <kurlrequester.h>
+#include <ktoolinvocation.h>
 
 #include "accessibility.moc"
 
@@ -180,7 +181,7 @@ void AccessibilityConfig::save(){
 //
 //
 //    if( needToRunKAccessDaemon( config ) ){
-//       kapp->startServiceByDesktopName("kaccess");
+//       KToolInvocation::startServiceByDesktopName("kaccess");
 //    }else{
 //    // don't need it -> kill it
 //       DCOPRef kaccess( "kaccess", "qt/kaccess" );

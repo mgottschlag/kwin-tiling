@@ -34,6 +34,7 @@
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdialog.h>
+#include <klocale.h>
 #include <kglobal.h>
 #include <knotifyclient.h>
 #include <knuminput.h>
@@ -137,7 +138,7 @@ KBellConfig::KBellConfig(QWidget *parent, const char *name):
   connect(m_volume, SIGNAL(valueChanged(int)), SLOT(changed()));
   connect(m_pitch, SIGNAL(valueChanged(int)), SLOT(changed()));
   connect(m_duration, SIGNAL(valueChanged(int)), SLOT(changed()));
-  
+
   KAboutData *about =
     new KAboutData(I18N_NOOP("kcmbell"), I18N_NOOP("KDE Bell Control Module"),
                   0, 0, KAboutData::License_GPL,
@@ -194,7 +195,7 @@ void KBellConfig::save()
   cfg.setGroup("General");
   cfg.writeEntry("UseSystemBell", m_useBell->isChecked());
   cfg.sync();
-  
+
   if (!m_useBell->isChecked())
   {
     KConfig config("kaccessrc", false);

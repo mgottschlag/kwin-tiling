@@ -51,6 +51,7 @@
 #include <kapplication.h>
 #include <kglobalsettings.h>
 #include <kdebug.h>
+#include <klocale.h>
 #include <kipc.h>
 #include <kaboutdata.h>
 #include <kdialog.h>
@@ -171,7 +172,8 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	gbWidgetStyleLayout->setAlignment( Qt::AlignTop );
 	hbLayout = new QHBoxLayout( KDialog::spacingHint(), "hbLayout" );
 
-	cbStyle = new KComboBox( gbWidgetStyle, "cbStyle" );
+	cbStyle = new KComboBox( gbWidgetStyle );
+        cbStyle->setObjectName( "cbStyle" );
 	cbStyle->setEditable( FALSE );
 	hbLayout->addWidget( cbStyle );
 
@@ -285,7 +287,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	// So much stuffing around for a simple slider..
 	sliderBox = new KVBox( menuContainer );
 	sliderBox->setSpacing( KDialog::spacingHint() );
-#warning "KDE4: fix setMargin"	
+#warning "KDE4: fix setMargin"
 	//sliderBox->setMargin( 0 );
 	slOpacity = new QSlider( 0, 100, 5, /*opacity*/ 90, Qt::Horizontal, sliderBox );
 	slOpacity->setTickmarks( QSlider::Below );
@@ -335,7 +337,7 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	cbTransparentToolbars = new QCheckBox( i18n("Transparent tool&bars when moving"), page3 );
 
 	QWidget * dummy = new QWidget( page3 );
-	
+
 	QHBoxLayout* box2 = new QHBoxLayout( dummy, 0, KDialog::spacingHint() );
 	lbl = new QLabel( i18n("Text pos&ition:"), dummy );
 	comboToolbarIcons = new QComboBox( FALSE, dummy );
@@ -349,11 +351,11 @@ KCMStyle::KCMStyle( QWidget* parent, const char* name )
 	box2->addWidget( comboToolbarIcons );
 	QSpacerItem* sp2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
 	box2->addItem( sp2 );
-	
+
 	page3Layout->addWidget( cbHoverButtons );
 	page3Layout->addWidget( cbTransparentToolbars );
 	page3Layout->addWidget( dummy );
-	
+
 	// Layout page3.
 	QSpacerItem* sp3 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
 	page3Layout->addItem( sp3 );
@@ -851,9 +853,9 @@ void KCMStyle::styleChanged()
 void KCMStyle::switchStyle(const QString& styleName, bool force)
 {
 	// Don't flicker the preview if the same style is chosen in the cb
-	if (!force && appliedStyle && appliedStyle->name() == styleName) 
+	if (!force && appliedStyle && appliedStyle->name() == styleName)
 		return;
-         
+
 	// Create an instance of the new style...
 	QStyle* style = QStyleFactory::create(styleName);
 	if (!style)

@@ -47,7 +47,7 @@ static int strToWeight(const QString &str)
         return FC_WEIGHT_MEDIUM;
     else if(str.contains("Bold", false))
         return FC_WEIGHT_BOLD;
-    else if(str.contains("Heavy", false)) 
+    else if(str.contains("Heavy", false))
         return FC_WEIGHT_HEAVY;
     else if(str.contains("Black", false))
         return FC_WEIGHT_BLACK;
@@ -73,7 +73,7 @@ static int strToWeight(const QString &str)
         return FC_WEIGHT_THIN;
     else if(str.contains("Book", false))
         return FC_WEIGHT_NORMAL;
-    else if(str.contains("Demi", false)) 
+    else if(str.contains("Demi", false))
         return FC_WEIGHT_NORMAL;
     else
         return FC_WEIGHT_MEDIUM;
@@ -81,7 +81,7 @@ static int strToWeight(const QString &str)
 
 #ifndef KFI_FC_NO_WIDTHS
 static int strToWidth(const QString &str)
-{   
+{
     if(str.isEmpty())
         return FC_WIDTH_NORMAL;
     else if(str.contains("UltraCondensed", false))
@@ -168,7 +168,7 @@ static const char * getFoundry(const char *notice)
         for(entry=map; NULL!=entry->foundry; entry++)
             if(NULL!=strstr(notice, entry->noticeStr))
                 return entry->foundry;
-    
+
     return NULL;
 }
 
@@ -199,7 +199,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
         {
             line=stream.readLine();
             line=line.simplified();
-    
+
             if(inMetrics)
             {
                 if(0==line.find("FullName "))
@@ -221,7 +221,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
                     intSlant=0.0f==line.mid(12).toFloat() ? FC_SLANT_ROMAN : FC_SLANT_ITALIC;
                 else if(0==line.find("IsFixedPitch "))
                     intSpacing=0==line.mid(13).find("false", 0, false) ? FC_PROPORTIONAL : FC_MONO;
-                else if(0==line.find("Notice "))  
+                else if(0==line.find("Notice "))
                     foundry=getFoundry(line.mid(7).latin1());
                 else if(0==line.find("StartCharMetrics"))
                     break;
@@ -256,9 +256,9 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
 
         return true;
     }
-    
+
     return false;
-}   
+}
 
 typedef KGenericFactory<KFI::KFileFontPlugin> KFileFontPluginFactory;
 K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfontinst"))
@@ -267,7 +267,7 @@ namespace KFI
 {
 
 KFileFontPlugin::KFileFontPlugin(QObject *parent, const char *name, const QStringList& args)
-               : KFilePlugin(parent, name, args)
+               : KFilePlugin(parent, args)
 {
     KGlobal::locale()->insertCatalog(KFI_CATALOGUE);
 

@@ -97,8 +97,8 @@ static QPixmap appIcon(const QString &iconName)
 }
 
 
-AppTreeView::AppTreeView( QWidget *parent, const char *name )
-    : KListView(parent, name)
+AppTreeView::AppTreeView( QWidget *parent )
+    : KListView(parent)
 {
     setFrameStyle(Q3Frame::WinPanel | Q3Frame::Sunken);
     setAllColumnsShowFocus(true);
@@ -150,11 +150,11 @@ void AppTreeView::fillBranch(const QString& rPath, AppTreeItem *parent)
     Q3ListViewItem *after = 0;
 
     for(KServiceGroup::List::ConstIterator it = list.begin();
-        it != list.end(); ++it) 
+        it != list.end(); ++it)
     {
         KSycocaEntry * e = *it;
 
-        if (e->isType(KST_KServiceGroup)) 
+        if (e->isType(KST_KServiceGroup))
         {
             KServiceGroup::Ptr g(static_cast<KServiceGroup *>(e));
             QString groupCaption = g->caption();
@@ -175,7 +175,7 @@ void AppTreeView::fillBranch(const QString& rPath, AppTreeItem *parent)
             item->setExpandable(true);
             after = item;
         }
-        else if (e->isType(KST_KService)) 
+        else if (e->isType(KST_KService))
         {
             KService::Ptr s(static_cast<KService *>(e));
             QString serviceCaption = s->name();

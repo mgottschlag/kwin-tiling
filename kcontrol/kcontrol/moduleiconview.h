@@ -62,7 +62,7 @@ class ModuleIconView : public KListView
   Q_OBJECT
 
 public:
-  ModuleIconView(ConfigModuleList *list, QWidget * parent = 0, const char * name = 0);
+  ModuleIconView(ConfigModuleList *list, QWidget * parent = 0);
   
   void makeSelected(ConfigModule* module);
   void makeVisible(ConfigModule *module);
