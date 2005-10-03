@@ -255,7 +255,7 @@ void KCMXinerama::clearIndicator() {
 
 extern "C" {
         KDE_EXPORT KCModule *create_xinerama(QWidget *parent, const char *name) {
-   	    KGlobal::locale()->insertCatalogue("kcmxinerama");
+   	    KGlobal::locale()->insertCatalog("kcmxinerama");
 	    return new KCMXinerama(parent, name);
         }
 

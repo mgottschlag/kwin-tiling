@@ -100,7 +100,7 @@ void CFontViewerAppMainWindow::fileOpen()
 
 CFontViewerApp::CFontViewerApp()
 {
-    KGlobal::locale()->insertCatalogue(KFI_CATALOGUE);
+    KGlobal::locale()->insertCatalog(KFI_CATALOGUE);
     setMainWidget(new CFontViewerAppMainWindow());
 }
 

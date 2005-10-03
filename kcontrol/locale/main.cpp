@@ -23,7 +23,7 @@
 
 extern "C" {
   KDE_EXPORT void *init_kcm_locale() {
-    KLocale::setMainCatalogue("kcmlocale");
+    KLocale::setMainCatalog("kcmlocale");
     return new KLocaleFactory("kcmlocale");
   }
 }
@@ -31,7 +31,7 @@ extern "C" {
 /*
 extern "C" {
   KCModule *create_locale(QWidget *parent, const char* name) {
-    KLocale::setMainCatalogue("kcmlocale");
+    KLocale::setMainCatalog("kcmlocale");
     return new KLocaleApplication(parent, "kcmlocale");
   }
 }

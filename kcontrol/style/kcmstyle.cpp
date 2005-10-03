@@ -82,7 +82,7 @@ extern "C"
 {
     KDE_EXPORT KCModule *create_style(QWidget *parent, const char*)
     {
-        KGlobal::locale()->insertCatalogue("kcmstyle");
+        KGlobal::locale()->insertCatalog("kcmstyle");
         return new KCMStyle(parent, "kcmstyle");
     }
 

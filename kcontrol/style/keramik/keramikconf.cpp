@@ -42,7 +42,7 @@ KeramikStyleConfig::KeramikStyleConfig(QWidget* parent): QWidget(parent)
 {
 	//Should have no margins here, the dialog provides them
 	QVBoxLayout* layout = new QVBoxLayout(this, 0, 0);
-	KGlobal::locale()->insertCatalogue("kstyle_keramik_config");
+	KGlobal::locale()->insertCatalog("kstyle_keramik_config");
 
 	//highlightLineEdits = new QCheckBox(i18n("Highlight active lineedits"), this);
 	highlightScrollBar = new QCheckBox(i18n("Highlight scroll bar handles"), this);

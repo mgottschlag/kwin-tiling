@@ -87,7 +87,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 #endif
               itsConfig(KFI_UI_CFG_FILE)
 {
-    KGlobal::locale()->insertCatalogue(KFI_CATALOGUE);
+    KGlobal::locale()->insertCatalog(KFI_CATALOGUE);
 
     KAboutData* about = new KAboutData("kcmfontinst",
          I18N_NOOP("KDE Font Installer"),

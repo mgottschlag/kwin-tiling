@@ -69,7 +69,7 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
      base = new SmartcardBase(this);
      layout->add(base);
 
-     _popUpKardChooser = new KPopupMenu(this,"KpopupKardChooser");
+     _popUpKardChooser = new KMenu(this,"KpopupKardChooser");
      _popUpKardChooser->insertItem(i18n("Change Module..."),
 				   this,
 				   SLOT(slotLaunchChooser()));

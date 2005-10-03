@@ -269,7 +269,7 @@ namespace KFI
 KFileFontPlugin::KFileFontPlugin(QObject *parent, const char *name, const QStringList& args)
                : KFilePlugin(parent, name, args)
 {
-    KGlobal::locale()->insertCatalogue(KFI_CATALOGUE);
+    KGlobal::locale()->insertCatalog(KFI_CATALOGUE);
 
     addMimeType("application/x-font-ttf"),
     addMimeType("application/x-font-type1");

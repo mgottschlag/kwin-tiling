@@ -34,7 +34,7 @@
 
 class KConfig;
 class KCardDB;
-class KPopupMenu;
+class KMenu;
 class KListViewItem;
 
 class KSmartcardConfig : public KCModule, public DCOPObject
@@ -76,7 +76,7 @@ private:
   KConfig *config;
   bool _ok;
   KCardDB * _cardDB;
-  KPopupMenu * _popUpKardChooser;
+  KMenu * _popUpKardChooser;
 
   void loadSmartCardSupportTab();
   void getSupportingModule( KListViewItem * ant,

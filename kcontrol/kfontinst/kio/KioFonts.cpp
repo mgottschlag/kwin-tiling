@@ -109,7 +109,7 @@ int kdemain(int argc, char **argv)
         exit(-1);
     }
 
-    KLocale::setMainCatalogue(KFI_CATALOGUE);
+    KLocale::setMainCatalog(KFI_CATALOGUE);
 
     KInstance instance("kio_" KFI_KIO_FONTS_PROTOCOL);
     KFI::CKioFonts slave(argv[2], argv[3]);

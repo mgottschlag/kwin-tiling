@@ -60,7 +60,7 @@ extern "C" {
 
     KDE_EXPORT KCModule *create_arts(QWidget *parent, const char* /*name*/)
 	{
-		KGlobal::locale()->insertCatalogue("kcmarts");
+		KGlobal::locale()->insertCatalog("kcmarts");
 		return new KArtsModule(parent, "kcmarts" );
 	}
 }

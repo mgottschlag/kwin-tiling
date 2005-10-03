@@ -37,7 +37,7 @@ extern "C"
 {
     KDE_EXPORT void* init_libkfontviewpart()
     {
-        KGlobal::locale()->insertCatalogue("kfontinst");
+        KGlobal::locale()->insertCatalog("kfontinst");
         return new KFI::CFontViewPartFactory;
     }
 }

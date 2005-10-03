@@ -49,7 +49,7 @@ namespace KFI
 
 CFontThumbnail::CFontThumbnail()
 {
-    KGlobal::locale()->insertCatalogue(KFI_CATALOGUE);
+    KGlobal::locale()->insertCatalog(KFI_CATALOGUE);
 }
 
 bool CFontThumbnail::create(const QString &path, int width, int height, QImage &img)

@@ -38,7 +38,7 @@ class ConfigModule;
 class ConfigModuleList;
 
 
-class ModuleMenu : public KPopupMenu
+class ModuleMenu : public KMenu
 {
   Q_OBJECT
 
@@ -52,7 +52,7 @@ private slots:
   void moduleSelected(int id);
 
 protected:
-  void fill(KPopupMenu *parentMenu, const QString &parentPath);
+  void fill(KMenu *parentMenu, const QString &parentPath);
 
 private:
   int id;

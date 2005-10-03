@@ -406,7 +406,7 @@ extern "C"
 {
     KDE_EXPORT KCModule *create_kthememanager(QWidget *parent, const char *)
     {
-        KGlobal::locale()->insertCatalogue( "kthememanager" );
+        KGlobal::locale()->insertCatalog( "kthememanager" );
         return new kthememanager( parent, "kthememanager" );
     }
 }

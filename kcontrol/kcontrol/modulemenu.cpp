@@ -41,7 +41,7 @@ that is intentional :-]
 
 
 ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * name)
-  : KPopupMenu(parent, name)
+  : KMenu(parent, name)
   , _modules(list)
 {
   // use large id's to start with...
@@ -52,7 +52,7 @@ ModuleMenu::ModuleMenu(ConfigModuleList *list, QWidget * parent, const char * na
   connect(this, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
 }
 
-void ModuleMenu::fill(KPopupMenu *parentMenu, const QString &parentPath)
+void ModuleMenu::fill(KMenu *parentMenu, const QString &parentPath)
 {
   QStringList subMenus = _modules->submenus(parentPath);
   for(QStringList::ConstIterator it = subMenus.begin();
@@ -64,7 +64,7 @@ void ModuleMenu::fill(KPopupMenu *parentMenu, const QString &parentPath)
         continue;
      
      // create new menu
-     KPopupMenu *menu = new KPopupMenu(parentMenu);
+     KMenu *menu = new KMenu(parentMenu);
      connect(menu, SIGNAL(activated(int)), this, SLOT(moduleSelected(int)));
 
      // Item names may contain ampersands. To avoid them being converted to 

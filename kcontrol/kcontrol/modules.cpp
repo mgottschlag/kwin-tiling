@@ -47,6 +47,7 @@
 #include <X11/Xlib.h>
 #include <QX11Info>
 #include <kvbox.h>
+#include <kauthorized.h>
 
 
 template class Q3PtrList<ConfigModule>;
@@ -286,7 +287,7 @@ bool ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
      if (p->isType(KST_KService))
      {
         KService *s = static_cast<KService*>(p);
-        if (!kapp->authorizeControlModule(s->menuId()))
+        if (!KAuthorized::authorizeKActionControlModule(s->menuId()))
            continue;
            
         ConfigModule *module = new ConfigModule(s);

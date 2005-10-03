@@ -450,7 +450,7 @@ void runRdb( uint flags )
   {
     KGlobal::dirs()->addResourceType("appdefaults", KStandardDirs::kde_default("data") + "kdisplay/app-defaults/");
     QColorGroup cg = newPal.active();
-    KGlobal::locale()->insertCatalogue("krdb");
+    KGlobal::locale()->insertCatalog("krdb");
     createGtkrc( true, cg, 1 );
     createGtkrc( true, cg, 2 );
 

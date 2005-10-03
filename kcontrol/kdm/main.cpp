@@ -124,7 +124,7 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
 
   setlocale( LC_COLLATE, "C" );
 
-  KGlobal::locale()->insertCatalogue("kcmbackground");
+  KGlobal::locale()->insertCatalog("kcmbackground");
 
   QStringList sl;
   QMap<gid_t,QStringList> tgmap;

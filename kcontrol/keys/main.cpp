@@ -117,9 +117,9 @@ extern "C"
   KDE_EXPORT KCModule *create_keys(QWidget *parent, const char * /*name*/)
   {
 	// What does this do?  Why not insert klipper and kxkb, too? --ellis, 2002/01/15
-	KGlobal::locale()->insertCatalogue("kwin");
-	KGlobal::locale()->insertCatalogue("kdesktop");
-	KGlobal::locale()->insertCatalogue("kicker");
+	KGlobal::locale()->insertCatalog("kwin");
+	KGlobal::locale()->insertCatalog("kdesktop");
+	KGlobal::locale()->insertCatalog("kicker");
 	return new KeyModule(parent, "kcmkeys");
   }
 

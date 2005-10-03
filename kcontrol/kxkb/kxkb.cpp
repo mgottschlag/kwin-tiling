@@ -97,7 +97,7 @@ void TrayWindow::setError(const QString& layout)
 void TrayWindow::setLayouts(const QStringList& layouts, const KeyRules& rules)
 {
     int index = contextMenu()->indexOf(0);
-    KPopupMenu* menu = contextMenu();
+    KMenu* menu = contextMenu();
 
     mDescriptionMap.clear();
     menu->clear();

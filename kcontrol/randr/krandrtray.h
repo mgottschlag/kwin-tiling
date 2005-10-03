@@ -28,7 +28,7 @@
 #include "randr.h"
 
 class KHelpMenu;
-class KPopupMenu;
+class KMenu;
 
 class KRandRSystemTray :  public KSystemTray, public RandRDisplay
 {
@@ -37,7 +37,7 @@ class KRandRSystemTray :  public KSystemTray, public RandRDisplay
 public:
 	KRandRSystemTray(QWidget* parent = 0, const char *name = 0);
 
-	virtual void contextMenuAboutToShow(KPopupMenu* menu);
+	virtual void contextMenuAboutToShow(KMenu* menu);
 
 	void configChanged();
 
@@ -52,11 +52,11 @@ protected:
 	void mousePressEvent( QMouseEvent *e );
 
 private:
-	void populateMenu(KPopupMenu* menu);
+	void populateMenu(KMenu* menu);
 
 	bool m_popupUp;
 	KHelpMenu* m_help;
-	Q3PtrList<KPopupMenu> m_screenPopups;
+	Q3PtrList<KMenu> m_screenPopups;
 };
 
 #endif

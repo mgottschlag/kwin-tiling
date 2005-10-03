@@ -60,7 +60,7 @@ void KRandRSystemTray::mousePressEvent(QMouseEvent* e)
 	KSystemTray::mousePressEvent(e);
 }
 
-void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
+void KRandRSystemTray::contextMenuAboutToShow(KMenu* menu)
 {
 	int lastIndex = 0;
 
@@ -79,7 +79,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 				/*lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
 				menu->setItemEnabled(lastIndex, false);*/
 			} else {
-				KPopupMenu* subMenu = new KPopupMenu(menu, QString("screen%1").arg(s+1).latin1());
+				KMenu* subMenu = new KMenu(menu, QString("screen%1").arg(s+1).latin1());
 				m_screenPopups.append(subMenu);
 				populateMenu(subMenu);
 				lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1), subMenu);
@@ -105,7 +105,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KPopupMenu* menu)
 
 void KRandRSystemTray::slotScreenActivated()
 {
-	setCurrentScreen(m_screenPopups.find(static_cast<const KPopupMenu*>(sender())));
+	setCurrentScreen(m_screenPopups.find(static_cast<const KMenu*>(sender())));
 }
 
 void KRandRSystemTray::configChanged()
@@ -123,7 +123,7 @@ void KRandRSystemTray::configChanged()
 	first = false;
 }
 
-void KRandRSystemTray::populateMenu(KPopupMenu* menu)
+void KRandRSystemTray::populateMenu(KMenu* menu)
 {
 	int lastIndex = 0;
 

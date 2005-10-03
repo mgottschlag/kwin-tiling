@@ -57,7 +57,7 @@ public:
     void setError(const QString& layout="");
     void setShowFlag(bool showFlag) { m_showFlag = showFlag; }
 
-    KPopupMenu* contextMenu() { return KSystemTray::contextMenu(); };
+    KMenu* contextMenu() { return KSystemTray::contextMenu(); };
 
 signals:
 
