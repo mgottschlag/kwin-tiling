@@ -94,7 +94,7 @@ main( int argc, char *argv[] )
 {
 	KApplication::disableAutoDcopRegistration();
 
-	KLocale::setMainCatalogue( "kdesktop" );
+	KLocale::setMainCatalog( "kdesktop" );
 	KCmdLineArgs::init( argc, argv, "krootimage", I18N_NOOP( "KRootImage" ), description, version );
 	KCmdLineArgs::addCmdLineOptions( options );
 

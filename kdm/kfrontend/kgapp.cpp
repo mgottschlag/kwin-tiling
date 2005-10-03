@@ -122,7 +122,7 @@ void
 kg_main( const char *argv0 )
 {
 	static char *argv[] = { (char *)"kdmgreet", 0 };
-	KCmdLineArgs::init( 1, argv, *argv, 0, 0, 0, true );
+	KCmdLineArgs::init( 1, argv, *argv, 0, 0, 0, KCmdLineArgs::StdCmdLineArgs(KCmdLineArgs::CmdLineArgNone) );
 
 	kde_have_kipc = false;
 	KApplication::disableAutoDcopRegistration();

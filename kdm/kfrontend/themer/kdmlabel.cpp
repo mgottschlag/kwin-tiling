@@ -30,6 +30,7 @@
 #include <qpainter.h>
 #include <qfontmetrics.h>
 #include <qtimer.h>
+#include <qmap.h>
 
 #include <unistd.h>
 #include <sys/utsname.h>
@@ -206,7 +207,7 @@ KdmLabel::lookupText( const QString &t )
 	text.replace( '_', '&' );
 //	text.remove( '_' ); // FIXME add key accels, remove underscores for now
 
-	QMap<QChar,QString> m;
+	QHash<QChar,QString> m;
 	struct utsname uts;
 	uname( &uts );
 	m['n'] = QString::fromLocal8Bit( uts.nodename );

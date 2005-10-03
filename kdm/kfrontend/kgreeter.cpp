@@ -77,8 +77,8 @@ Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class UserListView : public KListView {
   public:
-	UserListView( QWidget *parent = 0, const char *name = 0 )
-		: KListView( parent, name )
+	UserListView( QWidget *parent = 0 )
+		: KListView( parent )
 		, cachedSizeHint( -1, 0 )
 	{
 		setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Ignored );
