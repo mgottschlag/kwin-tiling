@@ -41,7 +41,7 @@
 #include <kmessagebox.h>
 #include <kservicegroup.h>
 #include <kstandarddirs.h>
-#include <kurldrag.h>
+#include <k3urldrag.h>
 
 #include "kthememanager.h"
 #include "knewthemedlg.h"
@@ -340,13 +340,13 @@ void kthememanager::slotThemeChanged( Q3ListViewItem * item )
 
 void kthememanager::dragEnterEvent( QDragEnterEvent * ev )
 {
-    ev->accept( KURLDrag::canDecode( ev ) );
+    ev->accept( K3URLDrag::canDecode( ev ) );
 }
 
 void kthememanager::dropEvent( QDropEvent * ev )
 {
     KURL::List urls;
-    if ( KURLDrag::decode( ev, urls ) )
+    if ( K3URLDrag::decode( ev, urls ) )
     {
         emit filesDropped( urls );
     }

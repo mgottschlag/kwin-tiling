@@ -10,7 +10,7 @@
 
 void KThemeDlg::startKonqui( const QString & url )
 {
-    (void) new KRun(url);
+    (void) new KRun(url,this);
 }
 
 
