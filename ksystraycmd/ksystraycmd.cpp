@@ -11,7 +11,7 @@
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kprocess.h>
 #include <kwinmodule.h>
 #include <kconfig.h>
@@ -237,13 +237,13 @@ void KSysTrayCmd::quit()
 
 void KSysTrayCmd::execContextMenu( const QPoint &pos )
 {
-    KPopupMenu *menu = new KPopupMenu();
-    menu->insertTitle( *pixmap(), i18n( "KSysTrayCmd" ) );
-    int hideShowId = menu->insertItem( isVisible ? i18n( "&Hide" ) : i18n( "&Restore" ) );
-    int undockId = menu->insertItem( QIcon(SmallIcon("close")), i18n( "&Undock" ) );
-    int quitId = menu->insertItem( QIcon(SmallIcon("exit")), i18n( "&Quit" ) );
+    KMenu *menu = new KMenu();
+    menu->addTitle( *pixmap(), i18n( "KSysTrayCmd" ) );
+    QAction * hideShowId = menu->addAction( isVisible ? i18n( "&Hide" ) : i18n( "&Restore" ) );
+    QAction * undockId = menu->addAction( QIcon(SmallIcon("close")), i18n( "&Undock" ) );
+    QAction * quitId = menu->addAction( QIcon(SmallIcon("exit")), i18n( "&Quit" ) );
 
-    int cmd = menu->exec( pos );
+    QAction * cmd = menu->exec( pos );
 
     if ( cmd == quitId )
       quitClient();
