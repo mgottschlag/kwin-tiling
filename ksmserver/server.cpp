@@ -818,7 +818,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 
     connect( &protectionTimer, SIGNAL( timeout() ), this, SLOT( protectionTimeout() ) );
     connect( &restoreTimer, SIGNAL( timeout() ), this, SLOT( tryRestoreNext() ) );
-    connect( kapp, SIGNAL( shutDown() ), this, SLOT( cleanUp() ) );
+    connect( qApp, SIGNAL( aboutToQuit() ), this, SLOT( cleanUp() ) );
 }
 
 KSMServer::~KSMServer()
