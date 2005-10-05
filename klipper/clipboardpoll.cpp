@@ -48,8 +48,6 @@
 
 */
 
-extern Time qt_x_time;
-
 ClipboardPoll::ClipboardPoll( QWidget* parent )
     :   QWidget( parent )
 {
@@ -74,7 +72,7 @@ ClipboardPoll::ClipboardPoll( QWidget* parent )
     clipboard.timestamp_atom = atoms[ 5 ];
     selection.atom = XA_PRIMARY;
     clipboard.atom = xa_clipboard;
-    selection.last_change = clipboard.last_change = qt_x_time; // don't trigger right after startup
+    selection.last_change = clipboard.last_change = QX11Info::appTime(); // don't trigger right after startup
     selection.last_owner = XGetSelectionOwner( QX11Info::display(), XA_PRIMARY );
 #ifdef NOISY_KLIPPER_
     kdDebug() << "(1) Setting last_owner for =" << "selection" << ":" << selection.last_owner << endl;
@@ -197,9 +195,9 @@ bool ClipboardPoll::checkTimestamp( SelectionData& data )
         return false;
     }
     XDeleteProperty( QX11Info::display(), winId(), data.timestamp_atom );
-    XConvertSelection( QX11Info::display(), data.atom, xa_timestamp, data.timestamp_atom, winId(), qt_x_time );
+    XConvertSelection( QX11Info::display(), data.atom, xa_timestamp, data.timestamp_atom, winId(), QX11Info::appTime() );
     data.waiting_for_timestamp = true;
-    data.waiting_x_time = qt_x_time;
+    data.waiting_x_time = QX11Info::appTime();
 #ifdef REALLY_NOISY_KLIPPER_
     kdDebug() << "WAITING TIMESTAMP:" << ( data.atom == XA_PRIMARY ) << endl;
 #endif

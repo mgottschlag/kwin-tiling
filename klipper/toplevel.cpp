@@ -35,8 +35,6 @@
 #include <Q3PtrList>
 #include <QMouseEvent>
 #include <QX11Info>
-//Added by qt3to4:
-#include <Q3PopupMenu>
 
 #include <kaboutdata.h>
 #include <kaction.h>
@@ -155,7 +153,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 
     // we need that collection, otherwise KToggleAction is not happy :}
     QString defaultGroup( "default" );
-    KActionCollection *collection = new KActionCollection( this, "my collection" );
+    KActionCollection *collection = new KActionCollection( this );
     toggleURLGrabAction = new KToggleAction( collection, "toggleUrlGrabAction" );
     toggleURLGrabAction->setEnabled( true );
     toggleURLGrabAction->setGroup( defaultGroup );
@@ -313,7 +311,7 @@ void KlipperWidget::slotStartShowTimer()
     showTimer->start();
 }
 
-void KlipperWidget::showPopupMenu( Q3PopupMenu *menu )
+void KlipperWidget::showPopupMenu( QMenu *menu )
 {
     Q_ASSERT( menu != 0L );
 
@@ -587,8 +585,8 @@ void KlipperWidget::slotRepeatAction()
 {
     if ( !myURLGrabber ) {
         myURLGrabber = new URLGrabber( m_config );
-        connect( myURLGrabber, SIGNAL( sigPopup( Q3PopupMenu * )),
-                 SLOT( showPopupMenu( Q3PopupMenu * )) );
+        connect( myURLGrabber, SIGNAL( sigPopup( QMenu * )),
+                 SLOT( showPopupMenu( QMenu * )) );
         connect( myURLGrabber, SIGNAL( sigDisablePopup() ),
                  this, SLOT( disableURLGrabber() ) );
     }
@@ -618,8 +616,8 @@ void KlipperWidget::setURLGrabberEnabled( bool enable )
         toggleURLGrabAction->setText(i18n("&Actions Enabled"));
         if ( !myURLGrabber ) {
             myURLGrabber = new URLGrabber( m_config );
-            connect( myURLGrabber, SIGNAL( sigPopup( Q3PopupMenu * )),
-                     SLOT( showPopupMenu( Q3PopupMenu * )) );
+            connect( myURLGrabber, SIGNAL( sigPopup( QMenu * )),
+                     SLOT( showPopupMenu( QMenu * )) );
             connect( myURLGrabber, SIGNAL( sigDisablePopup() ),
                      this, SLOT( disableURLGrabber() ) );
         }
@@ -972,9 +970,6 @@ bool KlipperWidget::ignoreClipboardChanges() const
 // Call KApplication::updateUserTime() only from functions that are
 // called from outside (DCOP), or from QTimer timeout !
 
-extern Time qt_x_time;
-extern Time qt_x_user_time;
-
 static Time next_x_time;
 static Bool update_x_time_predicate( Display*, XEvent* event, XPointer )
 {
@@ -1012,10 +1007,8 @@ static Bool update_x_time_predicate( Display*, XEvent* event, XPointer )
 }
 
 void KlipperWidget::updateTimestamp()
-{ // Qt3.3.0 and 3.3.1 use qt_x_user_time for clipboard operations
-    Time& time = ( strcmp( qVersion(), "3.3.1" ) == 0
-                || strcmp( qVersion(), "3.3.0" ) == 0 )
-                ? qt_x_user_time : qt_x_time;
+{
+    Time time = QX11Info::appTime();
     static QWidget* w = 0;
     if ( !w )
         w = new QWidget;

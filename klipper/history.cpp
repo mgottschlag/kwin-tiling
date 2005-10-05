@@ -27,7 +27,7 @@
 
 History::History( QWidget* parent, const char* name )
     : QObject( parent,  name ),
-      m_popup( new KlipperPopup( this, parent, "main_widget" ) ),
+      m_popup( new KlipperPopup( this, parent ) ),
       m_topIsUserSelected( false )
 {
     connect( this, SIGNAL( changed() ), m_popup,  SLOT( slotHistoryChanged() ) );

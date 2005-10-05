@@ -25,8 +25,6 @@
 #include <qregexp.h>
 #include <qstring.h>
 #include <qstringlist.h>
-//Added by qt3to4:
-#include <Q3PopupMenu>
 
 #include <kprocess.h>
 
@@ -98,7 +96,7 @@ private slots:
 
 
 signals:
-    void sigPopup( Q3PopupMenu * );
+    void sigPopup( QMenu * );
     void sigDisablePopup();
 
 };

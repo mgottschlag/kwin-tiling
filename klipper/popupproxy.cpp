@@ -155,7 +155,7 @@ int PopupProxy::insertFromSpill( int index ) {
     // If there is more items in the history, insert a new "More..." menu and
     // make *this a proxy for that menu ('s content).
     if ( spillPointer.current() ) {
-        KMenu* moreMenu = new KMenu( proxy_for_menu, "a more menu" );
+        KMenu* moreMenu = new KMenu( proxy_for_menu );
         proxy_for_menu->insertItem( i18n( "&More" ),  moreMenu, -1, index );
         connect( moreMenu, SIGNAL( aboutToShow() ), SLOT( slotAboutToShow() ) );
         proxy_for_menu = moreMenu;

@@ -18,21 +18,21 @@
    Boston, MA 02110-1301, USA.
 */
 #ifndef NOSLOTS
-# define DEF( name, key3, key4, fnSlot ) \
-   keys->insert( name, i18n(name), QString::null, key3, key4, this, SLOT(fnSlot) )
+# define DEF( name, key, fnSlot ) \
+   keys->insert( name, i18n(name), QString::null, key, this, SLOT(fnSlot) )
 #else
-# define DEF( name, key3, key4, fnSlot ) \
-   keys->insert( name, i18n(name), QString::null, key3, key4 )
+# define DEF( name, key, fnSlot ) \
+   keys->insert( name, i18n(name), QString::null, key )
 #endif
 #include <Qt>
 #define WIN Qt::META
 
 	keys->insert( "Program:klipper", i18n("Clipboard") );
 
-	DEF( I18N_NOOP("Show Klipper Popup-Menu"), Qt::ALT+Qt::CTRL + Qt::Key_V, WIN + Qt::CTRL + Qt::Key_V, slotPopupMenu() );
+	DEF( I18N_NOOP("Show Klipper Popup-Menu"), WIN + Qt::CTRL + Qt::Key_V, slotPopupMenu() );
 	
-        DEF( I18N_NOOP("Manually Invoke Action on Current Clipboard"), Qt::ALT+Qt::CTRL+Qt::Key_R, WIN+Qt::CTRL+Qt::Key_R, slotRepeatAction() );
-	DEF( I18N_NOOP("Enable/Disable Clipboard Actions"), Qt::ALT+Qt::CTRL+Qt::Key_X, WIN+Qt::CTRL+Qt::Key_X, toggleURLGrabber() );
+        DEF( I18N_NOOP("Manually Invoke Action on Current Clipboard"), WIN+Qt::CTRL+Qt::Key_R, slotRepeatAction() );
+	DEF( I18N_NOOP("Enable/Disable Clipboard Actions"), WIN+Qt::CTRL+Qt::Key_X, toggleURLGrabber() );
 
 #undef DEF
 #undef WIN

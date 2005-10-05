@@ -29,8 +29,6 @@
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QPaintEvent>
-//Added by qt3to4:
-#include <Q3PopupMenu>
 #include <dcopobject.h>
 #include <qtimer.h>
 
@@ -137,7 +135,7 @@ protected:
 
 protected slots:
     void slotPopupMenu();
-    void showPopupMenu( Q3PopupMenu * );
+    void showPopupMenu( QMenu * );
     void slotRepeatAction();
     void setURLGrabberEnabled( bool );
     void toggleURLGrabber();

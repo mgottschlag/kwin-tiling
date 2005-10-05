@@ -36,6 +36,7 @@
 #include <kwinmodule.h>
 #include <kregexpeditorinterface.h>
 #include <kparts/componentfactory.h>
+#include <kvbox.h>
 
 #include "configdialog.h"
 
@@ -48,7 +49,7 @@ ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel,
     if ( isApplet )
         setHelp( QString::null, "klipper" );
 
-    Q3Frame *w = 0L; // the parent for the widgets
+    KVBox *w = 0L; // the parent for the widgets
 
     w = addVBoxPage( i18n("&General") );
     generalWidget = new GeneralWidget( w, "general widget" );
@@ -234,7 +235,7 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
     QLabel *lblAction = new QLabel(
 	  i18n("Action &list (right click to add/remove commands):"), this );
 
-    listView = new ListView( configWidget, this, "list view" );
+    listView = new ListView( configWidget, this );
     lblAction->setBuddy( listView );
     listView->addColumn( i18n("Regular Expression (see http://doc.trolltech.com/qregexp.html#details)") );
     listView->addColumn( i18n("Description") );
@@ -333,24 +334,23 @@ void ActionWidget::slotContextMenu( KListView *, Q3ListViewItem *item,
     if ( !item )
         return;
 
-    int addCmd = 0, rmCmd = 0;
     KMenu *menu = new KMenu;
-    addCmd = menu->insertItem( i18n("Add Command") );
-    rmCmd = menu->insertItem( i18n("Remove Command") );
+    QAction* addCmd = menu->addAction( i18n("Add Command") );
+    QAction* rmCmd = menu->addAction( i18n("Remove Command") );
     if ( !item->parent() ) {// no "command" item
-        menu->setItemEnabled( rmCmd, false );
+        rmCmd->setEnabled( false );
         item->setOpen( true );
     }
 
-    int id = menu->exec( pos );
-    if ( id == addCmd ) {
+    QAction* executed = menu->exec( pos );
+    if ( executed == addCmd ) {
         Q3ListViewItem *p = item->parent() ? item->parent() : item;
         Q3ListViewItem *cmdItem = new Q3ListViewItem( p, item,
                          i18n("Click here to set the command to be executed"),
                          i18n("<new command>") );
         cmdItem->setPixmap( 0, SmallIcon( "exec" ) );
     }
-    else if ( id == rmCmd )
+    else if ( executed == rmCmd )
         delete item;
 
     delete menu;
@@ -412,7 +412,7 @@ void ActionWidget::slotAdvanced()
     KDialogBase dlg( 0L, "advanced dlg", true,
                      i18n("Advanced Settings"),
                      KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok );
-    Q3VBox *box = dlg.makeVBoxMainWidget();
+    KVBox *box = dlg.makeVBoxMainWidget();
     AdvancedWidget *widget = new AdvancedWidget( box );
     widget->setWMClasses( m_wmClasses );
 

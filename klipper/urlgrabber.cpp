@@ -171,7 +171,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
         for ( action = it.current(); action; action = ++it ) {
             Q3PtrListIterator<ClipCommand> it2( action->commands() );
             if ( it2.count() > 0 )
-                myMenu->insertTitle( SmallIcon( "klipper" ), action->description() +
+                myMenu->addTitle( SmallIcon( "klipper" ), action->description() +
 				     i18n(" - Actions For: ") +
 				     KStringHandler::csqueeze(myClipData, 45));
             for ( command = it2.current(); command; command = ++it2 ) {
@@ -236,7 +236,7 @@ void URLGrabber::slotItemSelected( int id )
 void URLGrabber::execute( const struct ClipCommand *command ) const
 {
     if ( command->isEnabled ) {
-        QMap<QChar,QString> map;
+        QHash<QChar,QString> map;
         map.insert( 's', myClipData );
         QString cmdLine = KMacroExpander::expandMacrosShellQuote( command->command, map );
 

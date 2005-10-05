@@ -77,12 +77,12 @@ kdbgstream& operator<<( kdbgstream& stream,  const QKeyEvent& e ) {
  */
 class KLineEditBlackKey : public KLineEdit {
 public:
-    KLineEditBlackKey(const QString& string, QWidget* parent, const char* name )
-        : KLineEdit( string, parent, name )
+    KLineEditBlackKey(const QString& string, QWidget* parent )
+        : KLineEdit( string, parent )
         {}
 
-    KLineEditBlackKey( QWidget* parent, const char* name )
-        : KLineEdit( parent, name )
+    KLineEditBlackKey( QWidget* parent )
+        : KLineEdit( parent )
         {}
 
     ~KLineEditBlackKey() {
@@ -96,8 +96,8 @@ protected:
 
 };
 
-KlipperPopup::KlipperPopup( History* history, QWidget* parent, const char* name )
-    : KPopupMenu( parent, name ),
+KlipperPopup::KlipperPopup( History* history, QWidget* parent )
+    : KMenu( parent ),
       m_dirty( true ),
       QSempty( i18n( "<empty clipboard>" ) ),
       QSnomatch( i18n( "<no matches>" ) ),
@@ -146,8 +146,8 @@ void KlipperPopup::ensureClean() {
 }
 
 void KlipperPopup::buildFromScratch() {
-    m_filterWidget = new KLineEditBlackKey( this, "Klipper filter widget" );
-    insertTitle( SmallIcon( "klipper" ), i18n("Klipper - Clipboard Tool"));
+    m_filterWidget = new KLineEditBlackKey( this );
+    addTitle( SmallIcon( "klipper" ), i18n("Klipper - Clipboard Tool"));
 #warning "KlipperPopup::buildFromScratch, insertItem do not take a QWidget as first parameter"
 #if 0
     m_filterWidgetId = insertItem( m_filterWidget, m_filterWidgetId, 1 );
@@ -239,7 +239,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
                       e->text(),
                       e->isAutoRepeat(),
                       e->count() );
-        KPopupMenu::keyPressEvent( &ke );
+        KMenu::keyPressEvent( &ke );
 #ifdef DEBUG_EVENTS__
         kdDebug() << "Passing this event to ancestor (KPopupMenu): " << e "->" << ke << endl;
 #endif
@@ -268,7 +268,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
 #ifdef DEBUG_EVENTS__
         kdDebug() << "Passing this event to ancestor (KPopupMenu): " << e << endl;
 #endif
-        KPopupMenu::keyPressEvent( e );
+        KMenu::keyPressEvent( e );
         if ( isItemActive( m_filterWidgetId ) ) {
 #warning setActiveItem do not exist in Q3PopupMenu class
 #if 0
