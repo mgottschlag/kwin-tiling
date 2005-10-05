@@ -177,7 +177,7 @@ void TaskLMBMenu::dragEnterEvent( QDragEnterEvent* e )
         return;
     }
 
-    int id = KMenu::actionId(actionAt(e->pos()));
+    int id = static_cast<QMenuItem*>(actionAt(e->pos()))->id();
 
     if (id == -1)
     {
@@ -211,7 +211,7 @@ void TaskLMBMenu::dragMoveEvent( QDragMoveEvent* e )
         return;
     }
 
-    int id = KMenu::actionId(actionAt(e->pos()));
+    int id = static_cast<QMenuItem*>(actionAt(e->pos()))->id();
 
     if (id == -1)
     {

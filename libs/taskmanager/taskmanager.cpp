@@ -92,7 +92,7 @@ TaskManager::TaskManager()
 
 TaskManager::~TaskManager()
 {
-    KGlobal::locale()->removeCatalogue("libtaskmanager");
+    KGlobal::locale()->removeCatalog("libtaskmanager");
 }
 
 void TaskManager::configure_startup()
