@@ -15,6 +15,9 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qsocketnotifier.h>
 #include <kapplication.h>
 #include <qtimer.h>
+#include <q3cstring.h>
+#include <QTime>
+#include <qmap.h>
 #include <dcopobject.h>
 
 #include "server2.h"
