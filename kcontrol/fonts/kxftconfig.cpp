@@ -1074,13 +1074,23 @@ void KXftConfig::readContents()
                                 if(!ene.isNull())
                                     if("test"==ene.tagName())
                                     {
+                                        // kcmfonts used to write incorrectly more or less instead of more_eq and less_eq, so read both,
+                                        // first the old (wrong) one then the right one
                                         if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "more")).isNull())
                                             from=str.toDouble();
-                                        else if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "less")).isNull())
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "more_eq")).isNull())
+                                            from=str.toDouble();
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "less")).isNull())
                                             to=str.toDouble();
-                                        else if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "pixelsize", "compare", "more")).isNull())
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "less_eq")).isNull())
+                                            to=str.toDouble();
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "pixelsize", "compare", "more")).isNull())
                                             pixelFrom=str.toDouble();
-                                        else if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "pixelsize", "compare", "less")).isNull())
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "pixelsize", "compare", "more_eq")).isNull())
+                                            pixelFrom=str.toDouble();
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "pixelsize", "compare", "less")).isNull())
+                                            pixelTo=str.toDouble();
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "pixelsize", "compare", "less_eq")).isNull())
                                             pixelTo=str.toDouble();
                                     }
                                     else if("edit"==ene.tagName() && "false"==getEntry(ene, "bool", 2, "name", "antialias", "mode", "assign"))
@@ -1363,12 +1373,12 @@ void KXftConfig::applyExcludeRange(bool pixel)
         matchNode.setAttribute("target", "font");   // CPD: Is target "font" or "pattern" ????
         fromTestNode.setAttribute("qual", "any");
         fromTestNode.setAttribute("name", pixel ? "pixelsize" : "size");
-        fromTestNode.setAttribute("compare", "more");
+        fromTestNode.setAttribute("compare", "more_eq");
         fromTestNode.appendChild(fromNode);
         fromNode.appendChild(fromText);
         toTestNode.setAttribute("qual", "any");
         toTestNode.setAttribute("name", pixel ? "pixelsize" : "size");
-        toTestNode.setAttribute("compare", "less");
+        toTestNode.setAttribute("compare", "less_eq");
         toTestNode.appendChild(toNode);
         toNode.appendChild(toText);
         editNode.setAttribute("mode", "assign");
