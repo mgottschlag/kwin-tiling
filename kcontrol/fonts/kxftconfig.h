@@ -149,6 +149,16 @@ class KXftConfig
 
         bool set;
     };
+
+    struct AntiAliasing : public Item
+    {
+        AntiAliasing(bool s, QDomNode &n) : Item(n), set(s) {}
+        AntiAliasing(bool s=true)         : set(s)          {}
+
+        void reset() { Item::reset(); set=true; }
+
+        bool set;
+    };
 #endif
 
     public:
@@ -189,6 +199,8 @@ class KXftConfig
     void        clearSymbolFamilies()                { clearList(m_symbolFamilies); }
     QStringList getSymbolFamilies()                  { return getList(m_symbolFamilies); }
 #endif
+    void        setAntiAliasing(bool set);
+    bool        getAntiAliasing() const;
     bool        changed()                            { return m_madeChanges; }
     static QString description(SubPixel::Type t);
     static const char * toStr(SubPixel::Type t);
@@ -214,6 +226,7 @@ class KXftConfig
 #endif
     void        applySubPixelType();
     void        applyHintStyle();
+    void        applyAntiAliasing();
     void        setHinting(bool set);
     void        applyHinting();
     void        applyExcludeRange(bool pixel);
@@ -235,6 +248,8 @@ class KXftConfig
 #ifdef HAVE_FONTCONFIG
     Hint               m_hint;
     Hinting            m_hinting;
+    AntiAliasing       m_antiAliasing;
+    bool               aliasingEnabled();
 #else
     Q3PtrList<ListItem> m_symbolFamilies;
 #endif

@@ -276,7 +276,7 @@ FontAASettings::FontAASettings(QWidget *parent)
 #endif
 }
 
-void FontAASettings::load()
+bool FontAASettings::load()
 {
   double     from, to;
 #ifdef HAVE_FONTCONFIG
@@ -334,9 +334,11 @@ void FontAASettings::load()
 #endif
 
   enableWidgets();
+
+  return xft.getAntiAliasing();
 }
 
-bool FontAASettings::save()
+bool FontAASettings::save( bool useAA )
 {
 #ifdef HAVE_FONTCONFIG
   KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType|KXftConfig::HintStyle);
@@ -344,8 +346,9 @@ bool FontAASettings::save()
   KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType);
 #endif
   KConfig    kglobals("kdeglobals", false, false);
-
   kglobals.setGroup("General");
+
+  xft.setAntiAliasing( useAA );
 
   if(excludeRange->isChecked())
     xft.setExcludeRange(excludeFrom->value(), excludeTo->value());
@@ -623,11 +626,7 @@ KFonts::KFonts(QWidget *parent, const char *, const QStringList &args)
 
    connect(cbAA, SIGNAL(clicked()), SLOT(slotUseAntiAliasing()));
 
-   useAA = QSettings().readBoolEntry("/qt/useXft");
-   useAA_original = useAA;
-
-   cbAA->setChecked(useAA);
-   aaSettingsButton->setEnabled(useAA);
+   load();
 }
 
 KFonts::~KFonts()
@@ -646,7 +645,7 @@ void KFonts::defaults()
   for ( int i = 0; i < (int) fontUseList.count(); i++ )
     fontUseList.at( i )->setDefault();
 
-  useAA = false;
+  useAA = true;
   cbAA->setChecked(useAA);
   aaSettings->defaults();
   emit changed(true);
@@ -657,12 +656,9 @@ void KFonts::load()
   for ( uint i = 0; i < fontUseList.count(); i++ )
     fontUseList.at( i )->readFont();
 
-  useAA = QSettings().readBoolEntry("/qt/useXft");
-  useAA_original = useAA;
+  useAA_original = useAA = aaSettings->load();
   kdDebug(1208) << "AA:" << useAA << endl;
   cbAA->setChecked(useAA);
-
-  aaSettings->load();
 
   emit changed(false);
 }
@@ -687,16 +683,11 @@ void KFonts::save()
   config->sync();
   delete config;
 
-  QSettings().writeEntry("/qt/useXft", useAA);
-
-  if (useAA)
-    QSettings().writeEntry("/qt/enableXft", useAA);
-
   KIPC::sendMessageAll(KIPC::FontChanged);
 
   kapp->processEvents(); // Process font change ourselves
 
-  if(aaSettings->save() || (useAA != useAA_original) ) {
+  if(aaSettings->save( useAA ) || (useAA != useAA_original) ) {
     KMessageBox::information(this,
       i18n(
         "<p>You have changed anti-aliasing related settings. This change will only affect newly started applications.</p>"

@@ -58,8 +58,8 @@ public:
 
     FontAASettings(QWidget *parent);
 
-    bool save();
-    void load();
+    bool save( bool useAA );
+    bool load();
     void defaults();
     int getIndex(KXftConfig::SubPixel::Type spType);
     KXftConfig::SubPixel::Type getSubPixelType();

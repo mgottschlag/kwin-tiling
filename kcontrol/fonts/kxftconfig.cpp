@@ -32,6 +32,8 @@
 #include <klocale.h>
 #include <kde_file.h>
 #include <qdir.h>
+#include <qsettings.h>
+#include <qfont.h>
 
 #ifdef HAVE_FONTCONFIG
 #include <stdarg.h>
@@ -428,6 +430,7 @@ KXftConfig::KXftConfig(int required, bool system)
 #ifdef HAVE_FONTCONFIG
     m_file=getConfigFile(system);
     kdDebug(1208) << "Using fontconfig file:" << m_file << endl;
+    m_antiAliasing = aliasingEnabled();
 #else
     if(system) 
     {
@@ -580,6 +583,7 @@ bool KXftConfig::apply()
 #ifdef HAVE_FONTCONFIG
             if(m_required&HintStyle)
                 newConfig.setHintStyle(m_hint.style);
+            newConfig.setAntiAliasing(m_antiAliasing.set);
 #else
             if(m_required&SymbolFamilies)
             {
@@ -625,6 +629,7 @@ bool KXftConfig::apply()
                             applySubPixelType();
                         if(m_required&HintStyle)
                             applyHintStyle();
+                        applyAntiAliasing();
                         if(m_required&ExcludeRange)
                         {
                             applyExcludeRange(false);
@@ -1054,6 +1059,11 @@ void KXftConfig::readContents()
                                     m_hinting.node=n;
                                     m_hinting.set=str.toLower()!="false";
                                 }
+                                else if(!(str=getEntry(ene, "bool", 2, "name", "antialias", "mode", "assign")).isNull())
+                                {
+                                    m_antiAliasing.node=n;
+                                    m_antiAliasing.set=str.lower()!="false";
+                                }
                         }
                         break;
                     case 3:
@@ -1462,4 +1472,72 @@ void KXftConfig::outputExcludeRange(std::ofstream &f, bool ifNew, bool pixel)
         f << range.to << " edit antialias = false;" << endl;
 }
 }
+
+#endif
+
+#ifdef HAVE_FONTCONFIG
+bool KXftConfig::getAntiAliasing() const
+{
+    return m_antiAliasing.set;
+}
+
+void KXftConfig::setAntiAliasing( bool set )
+{
+    m_antiAliasing.set = set;
+    m_madeChanges = true;
+}
+
+void KXftConfig::applyAntiAliasing()
+{
+    QDomElement matchNode = m_doc.createElement("match"),
+                typeNode  = m_doc.createElement("bool"),
+                editNode  = m_doc.createElement("edit");
+    QDomText    typeText  = m_doc.createTextNode(m_antiAliasing.set ? "true" : "false");
+
+    matchNode.setAttribute("target", "font");
+    editNode.setAttribute("mode", "assign");
+    editNode.setAttribute("name", "antialias");
+    editNode.appendChild(typeNode);
+    typeNode.appendChild(typeText);
+    matchNode.appendChild(editNode);
+    if(m_antiAliasing.node.isNull())
+        m_doc.documentElement().appendChild(matchNode);
+    else
+        m_doc.documentElement().replaceChild(matchNode, m_antiAliasing.node);
+    m_antiAliasing.node=matchNode;
+}
+
+// KXftConfig only parses one config file, user's .fonts.conf usually.
+// If that one doesn't exist, then KXftConfig doesn't know if antialiasing
+// is enabled or not. So try to find out the default value from the default font.
+// Maybe there's a better way *shrug*.
+bool KXftConfig::aliasingEnabled()
+{
+    FcPattern *pattern = FcPatternCreate();
+    FcConfigSubstitute(0, pattern, FcMatchPattern);
+    FcDefaultSubstitute(pattern);
+    FcResult result;
+    FcPattern *f = FcFontMatch( 0, pattern, &result );
+    FcBool antialiased = FcTrue;
+    FcPatternGetBool( f, FC_ANTIALIAS, 0, &antialiased );
+    FcPatternDestroy( f );
+    FcPatternDestroy( pattern );
+    return antialiased == FcTrue;
+}
+
+#else
+
+void KXftConfig::setAntiAliasing( bool set )
+{
+  QSettings().writeEntry("/qt/useXft", set);
+  if (set)
+    QSettings().writeEntry("/qt/enableXft", set);
+}
+
+bool KXftConfig::getAntiAliasing() const
+{
+  return QSettings().readBoolEntry("/qt/useXft");
+}
+
+
 #endif
