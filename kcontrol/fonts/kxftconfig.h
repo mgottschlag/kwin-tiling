@@ -173,7 +173,7 @@ class KXftConfig
     bool        reset();
     bool        apply();
     bool        getSubPixelType(SubPixel::Type &type);
-    void        setSubPixelType(SubPixel::Type type);  // SubPixel::None => turn off sub-pixel hinting
+    void        setSubPixelType(SubPixel::Type type);  // SubPixel::None => turn off sub-pixel rendering
     bool        getExcludeRange(double &from, double &to);
     void        setExcludeRange(double from, double to); // from:0, to:0 => turn off exclude range
     void        addDir(const QString &d);

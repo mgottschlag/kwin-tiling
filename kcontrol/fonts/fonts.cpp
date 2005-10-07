@@ -227,23 +227,25 @@ FontAASettings::FontAASettings(QWidget *parent)
   excludeTo->setSuffix(i18n(" pt"));
   layout->addWidget(excludeTo, 0, 3);
 
-  useSubPixel=new QCheckBox(i18n("&Use sub-pixel hinting:"), mw);
-  layout->addWidget(useSubPixel, 1, 0);
-
-  useSubPixel->setWhatsThis( i18n("If you have a TFT or LCD screen you"
+  QString subPixelWhatsThis = i18n("If you have a TFT or LCD screen you"
        " can further improve the quality of displayed fonts by selecting"
-       " this option.<br>Sub-pixel hinting is also known as ClearType(tm).<br>"
-       "<br><b>This will not work with CRT monitors.</b>"));
-
-  subPixelType=new QComboBox(false, mw);
-  layout->addMultiCellWidget(subPixelType, 1, 1, 1, 3);
-
-  subPixelType->setWhatsThis( i18n("In order for sub-pixel hinting to"
+       " this option.<br>Sub-pixel rendering is also known as ClearType(tm).<br>"
+       " In order for sub-pixel rendering to"
        " work correctly you need to know how the sub-pixels of your display"
        " are aligned.<br>"
        " On TFT or LCD displays a single pixel is actually composed of"
        " three sub-pixels, red, green and blue. Most displays"
-       " have a linear ordering of RGB sub-pixel, some have BGR."));
+       " have a linear ordering of RGB sub-pixel, some have BGR.<br>"
+       " This feature does not work with CRT monitors." );
+
+  useSubPixel=new QCheckBox(i18n("&Use sub-pixel rendering:"), mw);
+  layout->addWidget(useSubPixel, 1, 0);
+  useSubPixel->setWhatsThis( subPixelWhatsThis );
+
+  subPixelType=new QComboBox(false, mw);
+  layout->addMultiCellWidget(subPixelType, 1, 1, 1, 3);
+
+  subPixelType->setWhatsThis( subPixelWhatsThis );
 
   for(int t=KXftConfig::SubPixel::None+1; t<=KXftConfig::SubPixel::Vbgr; ++t)
     subPixelType->insertItem(aaPixmaps[t-1], i18n(KXftConfig::description((KXftConfig::SubPixel::Type)t).toUtf8()));
