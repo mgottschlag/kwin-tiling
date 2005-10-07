@@ -50,26 +50,6 @@
 #undef Unsorted
 #undef None
 
-static const char *aa_greyscale_xpm[]={
-"12 12 6 1",
-"a c #dcdcdc",
-"b c #c3c3c3",
-"c c #a0a0a0",
-"d c #808080",
-"e c #585858",
-"f c #303030",
-"ffeeddccbbaa",
-"ffeeddccbbaa",
-"ffeeddccbbaa",
-"ffeeddccbbaa",
-"ffeeddccbbaa",
-"ffeeddccbbaa",
-"ffeeddccbbaa",
-"ffeeddccbbaa",
-"ffeeddccbbaa",
-"ffeeddccbbaa",
-"ffeeddccbbaa",
-"ffeeddccbbaa"};
 static const char *aa_rgb_xpm[]={
 "12 12 3 1",
 "a c #0000ff",
@@ -139,8 +119,7 @@ static const char *aa_vbgr_xpm[]={
 "aaaaaaaaaaaa",
 "aaaaaaaaaaaa"};
 
-static QPixmap aaPixmaps[]={ QPixmap(aa_greyscale_xpm), QPixmap(aa_rgb_xpm),
-                             QPixmap(aa_bgr_xpm), QPixmap(aa_vrgb_xpm), QPixmap(aa_vbgr_xpm) };
+static QPixmap aaPixmaps[]={ QPixmap(aa_rgb_xpm), QPixmap(aa_bgr_xpm), QPixmap(aa_vrgb_xpm), QPixmap(aa_vbgr_xpm) };
 
 /**** DLL Interface ****/
 typedef KGenericFactory<KFonts, QWidget> FontFactory;

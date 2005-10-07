@@ -257,9 +257,7 @@ static QString getEntry(QDomElement element, const char *type, unsigned int numA
 
 static KXftConfig::SubPixel::Type strToType(const char *str)
 {
-    if(0==strcmp(str, "\0"))
-        return KXftConfig::SubPixel::Greyscale;
-    else if(0==strcmp(str, "rgb"))
+    if(0==strcmp(str, "rgb"))
         return KXftConfig::SubPixel::Rgb;
     else if(0==strcmp(str, "bgr")) 
         return KXftConfig::SubPixel::Bgr;
@@ -286,9 +284,7 @@ static KXftConfig::Hint::Style strToStyle(const char *str)
 #else
 static bool strToType(const char *str, KXftConfig::SubPixel::Type &type)
 {   
-    if(0==memcmp(str, "\0", 1))
-        type=KXftConfig::SubPixel::Greyscale;
-    else if(0==memcmp(str, "rgb", 3))
+    if(0==memcmp(str, "rgb", 3))
         type=KXftConfig::SubPixel::Rgb;
     else if(0==memcmp(str, "bgr", 3))
         type=KXftConfig::SubPixel::Bgr;
@@ -777,21 +773,14 @@ bool KXftConfig::apply()
 
 bool KXftConfig::getSubPixelType(SubPixel::Type &type)
 {
-    if(SubPixel::None!=m_subPixel.type && !m_subPixel.toBeRemoved)
-    {
-        type=m_subPixel.type;
-        return true;
-    }
-    else
-        return false;
+    type=m_subPixel.type;
+    return SubPixel::None!=m_subPixel.type;
 }
 
 void KXftConfig::setSubPixelType(SubPixel::Type type)
 {
-    if((SubPixel::None==type && SubPixel::None!=m_subPixel.type && !m_subPixel.toBeRemoved) ||
-       (SubPixel::None!=type && (type!=m_subPixel.type || m_subPixel.toBeRemoved)) )
+    if(type!=m_subPixel.type)
     {
-        m_subPixel.toBeRemoved=(SubPixel::None==type);
         m_subPixel.type=type;
         m_madeChanges=true;
     }
@@ -881,8 +870,6 @@ QString KXftConfig::description(SubPixel::Type t)
         default:
         case SubPixel::None:
             return i18n("None");
-        case SubPixel::Greyscale:
-            return i18n("Grayscale");
         case SubPixel::Rgb:
             return i18n("RGB");
         case SubPixel::Bgr:
@@ -901,8 +888,6 @@ const char * KXftConfig::toStr(SubPixel::Type t)
         default:
         case SubPixel::None:
             return "none";
-        case SubPixel::Greyscale:
-            return "";
         case SubPixel::Rgb:
             return "rgb";
         case SubPixel::Bgr:
@@ -1273,33 +1258,22 @@ void KXftConfig::applyDirs()
 
 void KXftConfig::applySubPixelType()
 {
-    if(SubPixel::None==m_subPixel.type || m_subPixel.toBeRemoved)
-    {
-        if(!m_subPixel.node.isNull())
-        {
-            m_doc.documentElement().removeChild(m_subPixel.node);
-            m_subPixel.node.clear();
-        }
-    }
-    else
-    {
-        QDomElement matchNode = m_doc.createElement("match"),
-                    typeNode  = m_doc.createElement("const"),
-                    editNode  = m_doc.createElement("edit");
-        QDomText    typeText  = m_doc.createTextNode(toStr(m_subPixel.type));
+    QDomElement matchNode = m_doc.createElement("match"),
+                typeNode  = m_doc.createElement("const"),
+                editNode  = m_doc.createElement("edit");
+    QDomText    typeText  = m_doc.createTextNode(toStr(m_subPixel.type));
 
-        matchNode.setAttribute("target", "font");
-        editNode.setAttribute("mode", "assign");
-        editNode.setAttribute("name", "rgba");
-        editNode.appendChild(typeNode);
-        typeNode.appendChild(typeText);
-        matchNode.appendChild(editNode);
-        if(m_subPixel.node.isNull())
-            m_doc.documentElement().appendChild(matchNode);
-        else
-            m_doc.documentElement().replaceChild(matchNode, m_subPixel.node);
-        m_subPixel.node=matchNode;
-    }
+    matchNode.setAttribute("target", "font");
+    editNode.setAttribute("mode", "assign");
+    editNode.setAttribute("name", "rgba");
+    editNode.appendChild(typeNode);
+    typeNode.appendChild(typeText);
+    matchNode.appendChild(editNode);
+    if(m_subPixel.node.isNull())
+        m_doc.documentElement().appendChild(matchNode);
+    else
+        m_doc.documentElement().replaceChild(matchNode, m_subPixel.node);
+    m_subPixel.node=matchNode;
 }
 
 void KXftConfig::applyHintStyle()
@@ -1454,7 +1428,7 @@ void KXftConfig::outputNewSymbolFamilies(std::ofstream &f)
 
 void KXftConfig::outputSubPixelType(std::ofstream &f, bool ifNew)
 {
-    if(!m_subPixel.toBeRemoved && ((ifNew && NULL==m_subPixel.end) || (!ifNew && NULL!=m_subPixel.end)) && SubPixel::None!=m_subPixel.type)
+    if((ifNew && NULL==m_subPixel.end) || (!ifNew && NULL!=m_subPixel.end))
         f << "match edit rgba = " << toStr(m_subPixel.type) << ';' << endl;
 }
 
