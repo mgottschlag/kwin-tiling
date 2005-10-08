@@ -11,7 +11,7 @@ CLEANFILES = dummy.cpp
 libkmenueditcommon_la_SOURCES = basictab.cpp treeview.cpp kmenuedit.cpp \
 	khotkeys.cpp menufile.cpp menuinfo.cpp
 
-libkmenueditcommon_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO)
+libkmenueditcommon_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO) $(LIB_KDE3SUPPORT)
 libkmenueditcommon_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
 kmenuedit_la_SOURCES = main.cpp

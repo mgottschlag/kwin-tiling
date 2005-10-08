@@ -62,10 +62,10 @@ KMenuEdit::~KMenuEdit()
 
 void KMenuEdit::setupActions()
 {
-    (void)new KAction(i18n("&New Submenu..."), "menu_new", 0, actionCollection(), "newsubmenu");
-    (void)new KAction(i18n("New &Item..."), "filenew", KStdAccel::openNew(), actionCollection(), "newitem");
+    (void)new KAction(i18n("&New Submenu..."), "menu_new", KShortcut(), 0, 0, actionCollection(), "newsubmenu");
+    (void)new KAction(i18n("New &Item..."), "filenew", KStdAccel::openNew(), 0, 0, actionCollection(), "newitem");
     if (!m_controlCenter)
-       (void)new KAction(i18n("New S&eparator"), "menu_new_sep", 0, actionCollection(), "newsep");
+       (void)new KAction(i18n("New S&eparator"), "menu_new_sep", KShortcut(), 0, 0, actionCollection(), "newsep");
 
     m_actionDelete = 0;
 
@@ -124,7 +124,7 @@ void KMenuEdit::slotChangeView()
 
     delete m_actionDelete;
 
-    m_actionDelete = new KAction(i18n("&Delete"), "editdelete", Qt::Key_Delete, actionCollection(), "delete");
+    m_actionDelete = new KAction(i18n("&Delete"), "editdelete", Qt::Key_Delete, 0, 0, actionCollection(), "delete");
 
     if (!m_splitter)
        setupView();
