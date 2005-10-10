@@ -360,7 +360,7 @@ void TopLevel::categorySelected(Q3ListViewItem *category)
   }
   _dock->removeModule();
   about_module->setText( i18n( "About Current Module" ) );
-  about_module->setIconSet( QIcon() );
+  about_module->setIcon( QIcon() );
   about_module->setEnabled( false );
 
   // insert the about widget
@@ -414,7 +414,7 @@ void TopLevel::activateModule(ConfigModule *mod)
   else
   {
      about_module->setText(i18n("About Current Module"));
-     about_module->setIconSet(QIcon());
+     about_module->setIcon(QIcon());
      about_module->setEnabled(false);
   }
 }
