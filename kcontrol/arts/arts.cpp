@@ -53,7 +53,7 @@
 #include <kurlrequester.h>
 #include <libkmid/deviceman.h>
 #include <ktoolinvocation.h>
-
+#include <klocale.h>
 #include "arts.h"
 
 extern "C" {
