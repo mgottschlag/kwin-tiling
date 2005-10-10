@@ -139,7 +139,7 @@ void Command_url_action::execute()
         case KURIFilterData::NET_PROTOCOL:
         case KURIFilterData::HELP:
             {
-            ( void ) new KRun( uri.uri());
+            ( void ) new KRun( uri.uri(),0L);
           break;
             }
         case KURIFilterData::EXECUTABLE:
