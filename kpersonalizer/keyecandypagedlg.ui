@@ -1,0 +1,263 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>KEyeCandyPageDlg</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>KEyeCandyPageDlg</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>598</width>
+            <height>475</height>
+        </rect>
+    </property>
+    <grid>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel" row="0" column="0" rowspan="6" colspan="1">
+            <property name="name">
+                <cstring>px_eyecandySidebar</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>0</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>170</width>
+                    <height>430</height>
+                </size>
+            </property>
+            <property name="frameShape">
+                <enum>Panel</enum>
+            </property>
+            <property name="frameShadow">
+                <enum>Sunken</enum>
+            </property>
+            <property name="scaledContents">
+                <bool>true</bool>
+            </property>
+            <property name="indent">
+                <number>0</number>
+            </property>
+        </widget>
+        <widget class="QLabel" row="0" column="1">
+            <property name="name">
+                <cstring>TextLabel8</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>1</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="text">
+                <string>&lt;P&gt;KDE offers many visually appealing special effects, such as smoothed fonts, previews in the file manager and animated menus. All this beauty, however, comes at a small performance cost. &lt;/P&gt;
+If you have a fast, new processor, you might want to turn them all on, but for those of us with slower processors, starting off with less eye candy helps to keep your desktop more responsive.</string>
+            </property>
+            <property name="alignment">
+                <set>Qt::TextWordWrap|Qt::AlignTop|Qt::AlignLeft</set>
+            </property>
+            <property name="vAlign" stdset="0">
+            </property>
+            <property name="wordwrap" stdset="0">
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="1" column="1">
+            <property name="name">
+                <cstring>Layout8</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>TextLabel3_2</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>Slow Processor
+(fewer effects)</string>
+                    </property>
+                    <property name="textFormat">
+                        <enum>Qt::PlainText</enum>
+                    </property>
+                    <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="hAlign" stdset="0">
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Slow processors perform poorly with effects</string>
+                    </property>
+                    <property name="vAlign" stdset="0">
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer13</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                </spacer>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>Fast_2</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>1</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="text">
+                        <string>Fast Processor
+(more effects)</string>
+                    </property>
+                    <property name="alignment">
+                        <set>Qt::AlignCenter</set>
+                    </property>
+                    <property name="hAlign" stdset="0">
+                    </property>
+                    <property name="toolTip" stdset="0">
+                        <string>Fast processors can support all effects</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QSlider" row="2" column="1">
+            <property name="name">
+                <cstring>sld_effects</cstring>
+            </property>
+            <property name="maxValue">
+                <number>9</number>
+            </property>
+            <property name="pageStep">
+                <number>1</number>
+            </property>
+            <property name="value">
+                <number>4</number>
+            </property>
+            <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="tickmarks">
+                <enum>Qt::DockRight</enum>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="3" column="1">
+            <property name="name">
+                <cstring>Layout7</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>btn_detail</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show &amp;Details &gt;&gt;</string>
+                    </property>
+                    <property name="toggleButton">
+                        <bool>true</bool>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer12</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                </spacer>
+            </hbox>
+        </widget>
+        <spacer row="4" column="1">
+            <property name="name">
+                <cstring>spacer_details</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Minimum</enum>
+            </property>
+        </spacer>
+        <widget class="KListView" row="5" column="1">
+            <property name="name">
+                <cstring>klv_features</cstring>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy>
+                    <hsizetype>5</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                </sizepolicy>
+            </property>
+            <property name="minimumSize">
+                <size>
+                    <width>0</width>
+                    <height>120</height>
+                </size>
+            </property>
+        </widget>
+    </grid>
+</widget>
+<connections>
+    <connection>
+        <sender>btn_detail</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>KEyeCandyPageDlg</receiver>
+        <slot>slotEyeCandyShowDetails(bool)</slot>
+    </connection>
+    <connection>
+        <sender>sld_effects</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>KEyeCandyPageDlg</receiver>
+        <slot>slotEyeCandySliderMoved(int)</slot>
+    </connection>
+    <connection>
+        <sender>sld_effects</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>KEyeCandyPageDlg</receiver>
+        <slot>slotEyeCandySliderMoved(int)</slot>
+    </connection>
+</connections>
+<slots>
+    <slot>slotEyeCandyShowDetails(bool)</slot>
+    <slot>slotEyeCandySliderMoved(int)</slot>
+</slots>
+<includes>
+    <include location="local" impldecl="in declaration">kdialog.h</include>
+</includes>
+<layoutdefaults spacing="3" margin="6"/>
+<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
+</UI>

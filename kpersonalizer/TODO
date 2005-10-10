@@ -1,0 +1,28 @@
+TODO
+====
+o general:
+	- code-cleanups
+	- open Wishlist-Items
+o kospage:
+	- differnt clipboards for mouse c&p and keyboard c&p: enable in windows,kde,mac ; disable in unix
+	- kicker-schemes
+
+DONE for 3.1
+============
+o general:
+	- center kpersonalizer on the screen (Bug #38182)
+	- Layout-Bug on all pages if the content gets to long. Yippie! Finally!
+o kospage:
+	- make keyscheme-saving behave exactly like kcmkeys
+	- Desktop Icons are arranged after dcop-call, but we just want to align them
+o krefinepage:
+	- quit kpersonalizer, if user starts kcontrol
+o kstylepage:
+	- don't hardcode the styles
+	- style preview
+o keyecandypage:
+	- add a switch for mng - animated icons (level 3)
+	- rescue users' soundscheme-settings
+	- take desktop-selection from ospage into account
+	- set a nice font for AA
+	- guess the machines' speed and set the slider-default-position according to it
