@@ -287,7 +287,7 @@ bool ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
      if (p->isType(KST_KService))
      {
         KService *s = static_cast<KService*>(p);
-        if (!KAuthorized::authorizeKActionControlModule(s->menuId()))
+        if (!KAuthorized::authorizeControlModule(s->menuId()))
            continue;
 
         ConfigModule *module = new ConfigModule(s);
