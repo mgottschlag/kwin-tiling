@@ -29,6 +29,7 @@
 #include <kdebug.h>
 #include <dcopclient.h>
 #include <kconfig.h>
+#include <klocale.h>
 
 #include <X11/Xlib.h>
 #include <QX11Info>
