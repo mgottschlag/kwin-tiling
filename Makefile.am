@@ -1,3 +1,3 @@
 ## (C) 2005 Benjamin Meyer
 
-SUBDIRS = kwin kcontrol ksmserver ktip kpersonalizer
+SUBDIRS = kwin kcontrol ksmserver ktip kpersonalizer lib
