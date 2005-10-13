@@ -1,3 +1,3 @@
 ## (C) 2005 Benjamin Meyer
 
-SUBDIRS = kwin kcontrol ksmserver ktip kpersonalizer lib
+SUBDIRS = lib kwin kcontrol ksmserver ktip kpersonalizer ksysguard
