@@ -73,7 +73,7 @@ static const char system_text[] = I18N_NOOP("System:");
 static const char release_text[] = I18N_NOOP("Release:");
 static const char machine_text[] = I18N_NOOP("Machine:");
 
-AboutWidget::AboutWidget(QWidget *parent , const char *name, Q3ListViewItem* category, const QString &caption)
+AboutWidget::AboutWidget(QWidget *parent, Q3ListViewItem* category, const QString &caption)
    : KHBox(parent),
       _moduleList(false),
       _category(category),

@@ -147,7 +147,7 @@ TopLevel::TopLevel(const char* name)
   // insert the about widget
   if (KCGlobal::isInfoCenter())
   {
-      AboutWidget *aw = new AboutWidget( this, 0, _indextab->firstTreeViewItem());
+      AboutWidget *aw = new AboutWidget( this, _indextab->firstTreeViewItem());
       connect( aw, SIGNAL( moduleSelected( ConfigModule * ) ),
                SLOT( activateModule( ConfigModule * ) ) );
       _dock->setBaseWidget( aw );
@@ -372,7 +372,7 @@ void TopLevel::categorySelected(Q3ListViewItem *category)
   }
   else
   {
-    AboutWidget *aw = new AboutWidget( this, 0, firstItem, caption );
+    AboutWidget *aw = new AboutWidget( this, firstItem, caption );
     connect( aw, SIGNAL( moduleSelected( ConfigModule * ) ),
              SLOT( activateModule( ConfigModule * ) ) );
     _dock->setBaseWidget( aw );

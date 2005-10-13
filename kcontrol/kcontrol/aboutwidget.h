@@ -39,7 +39,7 @@ class AboutWidget : public KHBox
   Q_OBJECT    
   
 public:   
-  AboutWidget(QWidget *parent, const char *name=0, Q3ListViewItem* category=0, const QString &caption=QString::null);
+  AboutWidget(QWidget *parent, Q3ListViewItem* category=0, const QString &caption=QString::null);
 
     /**
      * Set a new category without creating a new AboutWidget if there is
