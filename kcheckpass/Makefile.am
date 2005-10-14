@@ -3,6 +3,7 @@
 ##
 
 INCLUDES= $(all_includes)
+KDE_CXXFLAGS = -UQT3_SUPPORT
 
 bin_PROGRAMS = kcheckpass
 
