@@ -863,7 +863,18 @@ bool LockProcess::checkPass()
     killTimer(mAutoLogoutTimerId);
     PasswordDlg passDlg( this, &greetPlugin);
 
-    return execDialog( &passDlg ) == QDialog::Accepted;
+    int ret = execDialog( &passDlg );
+
+    XWindowAttributes rootAttr;
+    XGetWindowAttributes(QX11Info::display(), QX11Info::appRootWindow(), &rootAttr);
+    if(( rootAttr.your_event_mask & SubstructureNotifyMask ) == 0 )
+    {
+        kdWarning() << "ERROR: Something removed SubstructureNotifyMask from the root window!!!" << endl;
+        XSelectInput( QX11Info::display(), QX11Info::appRootWindow(),
+            SubstructureNotifyMask | rootAttr.your_event_mask );
+    }
+
+    return ret == QDialog::Accepted;
 }
 
 static void fakeFocusIn( WId window )
