@@ -33,7 +33,7 @@ class QWidget;
 class KCMXinerama : public KCModule {
 	Q_OBJECT
 public:
-	KCMXinerama(QWidget *parent = 0L, const char *name = 0L);
+	KCMXinerama(KInstance *inst, QWidget *parent);
 	virtual ~KCMXinerama();
 
 	void load();

@@ -61,8 +61,8 @@ extern "C" {
 
     KDE_EXPORT KCModule *create_arts(QWidget *parent, const char* /*name*/)
 	{
-		KGlobal::locale()->insertCatalog("kcmarts");
-		return new KArtsModule(parent, "kcmarts" );
+            KInstance *arts = new KInstance( "kcmarts" );
+            return new KArtsModule(arts, parent );
 	}
 }
 
@@ -142,8 +142,8 @@ void KArtsModule::slotProcessArtsdOutput(KProcess*, char* buf, int len)
 	}
 }
 
-KArtsModule::KArtsModule(QWidget *parent, const char *name)
-  : KCModule(parent, name), configChanged(false)
+KArtsModule::KArtsModule(KInstance *inst, QWidget *parent)
+  : KCModule(inst, parent), configChanged(false)
 {
 	setButtons(Default|Apply);
 
@@ -724,7 +724,7 @@ KStartArtsProgressDialog::slotProgress()
 	     	m_shutdown = true;
      }
   }
-  
+
   // Shut down completed? Wait for artsd to come up again
   if (m_shutdown && m_module->artsdIsRunning())
      slotFinished(); // Restart complete

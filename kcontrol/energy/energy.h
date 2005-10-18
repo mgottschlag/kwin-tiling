@@ -20,6 +20,7 @@
 class QCheckBox;
 class KIntNumInput;
 class KConfig;
+class KInstance;
 
 extern "C" void init_energy();
 
@@ -31,7 +32,7 @@ class KEnergy: public KCModule
     Q_OBJECT
 
 public:
-    KEnergy(QWidget *parent, const char *name);
+    KEnergy(KInstance *inst, QWidget *parent);
     ~KEnergy();
 
     virtual void load();

@@ -43,16 +43,16 @@
 #include <QGridLayout>
 
 
-KCMXinerama::KCMXinerama(QWidget *parent, const char *name)
-  : KCModule(parent, name) {
-	_indicators.setAutoDelete(true);
+KCMXinerama::KCMXinerama(KInstance *inst, QWidget *parent )
+  : KCModule(inst, parent) {
+    _indicators.setAutoDelete(true);
 
 	KAboutData *about =
 	new KAboutData(I18N_NOOP("kcmxinerama"),
 			I18N_NOOP("KDE Multiple Monitor Configurator"),
 			0, 0, KAboutData::License_GPL,
 			I18N_NOOP("(c) 2002-2003 George Staikos"));
- 
+
 	about->addAuthor("George Staikos", 0, "staikos@kde.org");
 	setAboutData( about );
 
@@ -255,8 +255,8 @@ void KCMXinerama::clearIndicator() {
 
 extern "C" {
         KDE_EXPORT KCModule *create_xinerama(QWidget *parent, const char *name) {
-   	    KGlobal::locale()->insertCatalog("kcmxinerama");
-	    return new KCMXinerama(parent, name);
+            KInstance *inst = new KInstance( "kcmxinerama" );
+	    return new KCMXinerama(inst, parent);
         }
 
 	KDE_EXPORT bool test_xinerama() {

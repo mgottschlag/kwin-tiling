@@ -42,7 +42,7 @@ class KIconEffect;
 class KIconLoader;
 class KIconTheme;
 
-struct Effect 
+struct Effect
 {
     int type;
     float value;
@@ -60,7 +60,7 @@ class KIconConfig: public KCModule
     Q_OBJECT
 
 public:
-    KIconConfig(QWidget *parent, const char *name=0);
+    KIconConfig(KInstance *inst, QWidget *parent);
     ~KIconConfig();
 
     virtual void load();
@@ -72,7 +72,7 @@ private slots:
     void slotEffectSetup0() { EffectSetup(0); }
     void slotEffectSetup1() { EffectSetup(1); }
     void slotEffectSetup2() { EffectSetup(2); }
-    
+
     void slotUsage(int index);
     void slotSize(int index);
     void slotDPCheck(bool check);
@@ -94,7 +94,7 @@ private:
 
     Effect mEffects[6][3];
     Effect mDefaultEffect[3];
-    
+
     int mUsage;
     QString mTheme, mExample;
     QStringList mGroups, mStates;
@@ -111,13 +111,13 @@ private:
     QComboBox *mpSizeBox;
     QCheckBox *mpDPCheck, *wordWrapCB, *underlineCB, *mpAnimatedCheck;
     QTabWidget *m_pTabWidget;
-    QWidget *m_pTab1;                                    
+    QWidget *m_pTab1;
 };
 
 class KIconEffectSetupDialog: public KDialogBase
 {
     Q_OBJECT
-     
+
 public:
     KIconEffectSetupDialog(const Effect &, const Effect &,
                            const QString &, const QImage &,
@@ -149,6 +149,6 @@ private:
     QImage mExample;
     Q3GroupBox *mpEffectGroup;
     QLabel *mpPreview, *mpEffectLabel, *mpEffectColor, *mpEffectColor2;
-};                      
-                      
+};
+
 #endif

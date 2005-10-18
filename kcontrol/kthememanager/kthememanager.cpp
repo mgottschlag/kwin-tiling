@@ -47,8 +47,8 @@
 #include "knewthemedlg.h"
 #include "config.h"
 
-kthememanager::kthememanager( QWidget *parent, const char *name )
-    : KCModule( parent, name ), m_theme( 0 ), m_origTheme( 0 )
+kthememanager::kthememanager( KInstance *inst, QWidget *parent )
+    : KCModule( inst, parent ), m_theme( 0 ), m_origTheme( 0 )
 {
 
     KAboutData *about = new KAboutData("kthememanager", I18N_NOOP("KDE Theme Manager"),
@@ -406,8 +406,8 @@ extern "C"
 {
     KDE_EXPORT KCModule *create_kthememanager(QWidget *parent, const char *)
     {
-        KGlobal::locale()->insertCatalog( "kthememanager" );
-        return new kthememanager( parent, "kthememanager" );
+        KInstance *inst = new KInstance( "kthememanager" );
+        return new kthememanager( inst, parent );
     }
 }
 

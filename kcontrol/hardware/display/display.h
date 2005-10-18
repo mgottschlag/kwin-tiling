@@ -38,7 +38,7 @@ class KCMDisplay : public KCModule
 
   private:
     void addTab( const QString &name, const QString &label );
-    
+
     QTabWidget *m_tabs;
     QMap<KCModule*, bool> m_modules;
     bool m_changed;

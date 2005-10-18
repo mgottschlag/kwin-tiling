@@ -52,7 +52,7 @@ class KArtsModule : public KCModule
 
 public:
 
-  KArtsModule(QWidget *parent=0, const char *name=0);
+  KArtsModule(KInstance *inst, QWidget *parent);
   ~KArtsModule();
   void saveParams( void );
 
@@ -121,7 +121,7 @@ class KStartArtsProgressDialog : public KProgressDialog
 public:
    KStartArtsProgressDialog(KArtsModule *parent, const char *name,
                           const QString &caption, const QString &text);
-public slots:   
+public slots:
    void slotProgress();
    void slotFinished();
 

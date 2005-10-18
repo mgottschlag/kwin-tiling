@@ -52,7 +52,7 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kdebug.h>
-#include <kurldrag.h>
+#include <k3urldrag.h>
 #include "KFileFontView.h"
 
 #define COL_NAME 0
@@ -69,8 +69,8 @@ class CKFileFontView::CKFileFontViewPrivate
     QTimer            itsAutoOpenTimer;
 };
 
-CKFileFontView::CKFileFontView(QWidget *parent, const char *name)
-              : KListView(parent, name),
+CKFileFontView::CKFileFontView(QWidget *parent)
+              : KListView(parent),
                 KFileView(),
                 d(new CKFileFontViewPrivate())
 {
@@ -387,7 +387,7 @@ void CKFileFontView::ensureItemVisible(const KFileItem *i)
     if (i)
     {
         CFontListViewItem *item = (CFontListViewItem*) i->extraData(this);
-        
+
         if ( item )
             KListView::ensureItemVisible(item);
     }
@@ -479,7 +479,7 @@ Q3DragObject *CKFileFontView::dragObject()
     hotspot.setX(pixmap.width() / 2);
     hotspot.setY(pixmap.height() / 2);
 
-    Q3DragObject *dragObject=new KURLDrag(urls, widget());
+    Q3DragObject *dragObject=new K3URLDrag(urls, widget());
 
     if(dragObject)
         dragObject->setPixmap(pixmap, hotspot);
@@ -509,7 +509,7 @@ bool CKFileFontView::acceptDrag(QDropEvent *e) const
 
     if((e->source()!=const_cast<CKFileFontView *>(this)) &&
        (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action()) &&
-       KURLDrag::decode(e, urls) && !urls.isEmpty())
+       K3URLDrag::decode(e, urls) && !urls.isEmpty())
     {
         KURL::List::Iterator it;
 
@@ -522,7 +522,7 @@ bool CKFileFontView::acceptDrag(QDropEvent *e) const
     return ok;
 #endif
 
-    return KURLDrag::canDecode(e) && (e->source()!= const_cast<CKFileFontView*>(this)) &&
+    return K3URLDrag::canDecode(e) && (e->source()!= const_cast<CKFileFontView*>(this)) &&
            (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action());
 }
 
@@ -603,7 +603,7 @@ void CKFileFontView::contentsDropEvent(QDropEvent *e)
 
         emit dropped(e, fileItem);
 
-        if(KURLDrag::decode(e, urls) && !urls.isEmpty())
+        if(K3URLDrag::decode(e, urls) && !urls.isEmpty())
         {
             emit dropped(e, urls, fileItem ? fileItem->url() : KURL());
             sig->dropURLs(fileItem, e, urls);

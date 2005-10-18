@@ -126,7 +126,7 @@ class CKFileFontView : public KListView, public KFileView
 
     public:
 
-    CKFileFontView(QWidget *parent, const char *name);
+    CKFileFontView(QWidget *parent);
     virtual ~CKFileFontView();
 
     virtual QWidget *   widget() { return this; }

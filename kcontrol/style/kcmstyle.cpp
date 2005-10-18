@@ -83,8 +83,8 @@ extern "C"
 {
     KDE_EXPORT KCModule *create_style(QWidget *parent, const char*)
     {
-        KGlobal::locale()->insertCatalog("kcmstyle");
-        return new KCMStyle(parent, "kcmstyle");
+        KInstance *style = new KInstance( "kcmstyle" );
+        return new KCMStyle(style, parent);
     }
 
     KDE_EXPORT void init_style()
@@ -123,8 +123,8 @@ K_EXPORT_COMPONENT_FACTORY( kcm_kcmstyle, GeneralFactory )
 */
 
 
-KCMStyle::KCMStyle( QWidget* parent, const char* name )
-	: KCModule( parent, name ), appliedStyle(NULL)
+KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
+	: KCModule( inst, parent ), appliedStyle(NULL)
 {
     setQuickHelp( i18n("<h1>Style</h1>"
 			"This module allows you to modify the visual appearance "

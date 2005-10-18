@@ -30,7 +30,7 @@ class KRandRModule : public KCModule, public RandRDisplay
 	Q_OBJECT
 
 public:
-	KRandRModule(QWidget *parent, const char *name, const QStringList& _args);
+	KRandRModule(QWidget *parent, const char *, const QStringList& _args);
 
 	virtual void load();
 	virtual void save();

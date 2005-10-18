@@ -27,6 +27,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <ksimpleconfig.h>
+#include <kinstance.h>
 
 #include "main.h"
 #include "modifiers.h"
@@ -48,8 +49,8 @@ o Pre-set scheme   <Remove Scheme>
 
 Global Shortcuts
 */
-KeyModule::KeyModule( QWidget *parent, const char *name )
-: KCModule( parent, name )
+KeyModule::KeyModule( KInstance *inst, QWidget *parent )
+    : KCModule( inst, parent )
 {
     setQuickHelp( i18n("<h1>Keyboard Shortcuts</h1> Using shortcuts you can configure certain actions to be"
     " triggered when you press a key or a combination of keys, e.g. Ctrl+C is normally bound to"
@@ -120,7 +121,8 @@ extern "C"
 	KGlobal::locale()->insertCatalog("kwin");
 	KGlobal::locale()->insertCatalog("kdesktop");
 	KGlobal::locale()->insertCatalog("kicker");
-	return new KeyModule(parent, "kcmkeys");
+        KInstance *keys = new KInstance( "kcmkeys" );
+	return new KeyModule(keys, parent);
   }
 
   KDE_EXPORT void initModifiers()

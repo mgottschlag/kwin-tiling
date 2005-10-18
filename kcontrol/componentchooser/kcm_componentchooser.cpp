@@ -20,13 +20,14 @@
 
 #include <kaboutdata.h>
 #include <kglobal.h>
+#include <kinstance.h>
 
 #include "kcm_componentchooser.h"
 #include "kcm_componentchooser.moc"
 
 
-KCMComponentChooser::KCMComponentChooser( QWidget *parent, const char *name ):
-	KCModule(parent,name) {
+KCMComponentChooser::KCMComponentChooser( KInstance *inst, QWidget *parent ):
+	KCModule(inst, parent) {
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	m_chooser=new ComponentChooser(this,"ComponentChooser");
@@ -60,8 +61,8 @@ extern "C"
 {
     KDE_EXPORT KCModule *create_componentchooser( QWidget *parent, const char * )
     {
-        KGlobal::locale()->insertCatalog("kcmcomponentchooser");
-        return new KCMComponentChooser( parent, "kcmcomponentchooser" );
+        KInstance *inst = new KInstance( "kcmcomponentchooser" );
+        return new KCMComponentChooser( inst, parent );
     }
 }
 

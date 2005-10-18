@@ -72,7 +72,7 @@ class KCMStyle : public KCModule
 	Q_OBJECT
 
 public:
-	KCMStyle( QWidget* parent = 0, const char* name = 0 );
+	KCMStyle( KInstance *inst, QWidget* parent );
 	~KCMStyle();
 
 	virtual void load();
@@ -92,7 +92,7 @@ protected:
 protected slots:
 	void styleSpecificConfig();
 	void updateConfigButton();
-	
+
 	void setEffectsDirty();
 	void setToolbarsDirty();
 	void setStyleDirty();

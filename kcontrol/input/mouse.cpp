@@ -76,8 +76,8 @@
 
 #undef Below
 
-MouseConfig::MouseConfig (QWidget * parent, const char *name)
-  : KCModule(parent, name)
+MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
+  : KCModule(inst, parent)
 {
 
 

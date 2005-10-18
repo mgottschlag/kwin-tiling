@@ -32,7 +32,7 @@ class KeyModule : public KCModule
 {
 	Q_OBJECT
  public:
-	KeyModule( QWidget *parent, const char *name );
+	KeyModule( KInstance *inst, QWidget *parent );
         ~KeyModule();
 
 	void load();

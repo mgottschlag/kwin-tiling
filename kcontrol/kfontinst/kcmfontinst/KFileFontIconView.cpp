@@ -32,7 +32,7 @@
 #include <QDragMoveEvent>
 #include <QDropEvent>
 #include <kfileitem.h>
-#include <kurldrag.h>
+#include <k3urldrag.h>
 #include "KFileFontIconView.h"
 
 namespace KFI
@@ -71,9 +71,9 @@ bool CKFileFontIconView::acceptDrag(QDropEvent *e) const
     bool       ok=false;
     KURL::List urls;
 
-    if(KURLDrag::canDecode(e) && (e->source()!=const_cast<CKFileFontIconView *>(this)) &&
+    if(K3URLDrag::canDecode(e) && (e->source()!=const_cast<CKFileFontIconView *>(this)) &&
        (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action()) &&
-       KURLDrag::decode(e, urls) && !urls.isEmpty())
+       K3URLDrag::decode(e, urls) && !urls.isEmpty())
     {
         KURL::List::Iterator it;
 
@@ -85,7 +85,7 @@ bool CKFileFontIconView::acceptDrag(QDropEvent *e) const
 
     return ok;
 #endif
-    return KURLDrag::canDecode(e) && (e->source()!= const_cast<CKFileFontIconView*>(this)) &&
+    return K3URLDrag::canDecode(e) && (e->source()!= const_cast<CKFileFontIconView*>(this)) &&
            (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action());
 }
 

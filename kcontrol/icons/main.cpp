@@ -45,11 +45,13 @@ IconModule::IconModule(QWidget *parent, const char *, const QStringList &)
   tab = new QTabWidget(this);
   layout->addWidget(tab);
 
-  tab1 = new IconThemesConfig(this, "themes");
+  tab1 = new IconThemesConfig(IconsFactory::instance(), this);
+  tab1->setObjectName( "themes" );
   tab->addTab(tab1, i18n("&Theme"));
   connect(tab1, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 
-  tab2 = new KIconConfig(this, "effects");
+  tab2 = new KIconConfig(IconsFactory::instance(), this);
+  tab2->setObjectName( "effects" );
   tab->addTab(tab2, i18n("Ad&vanced"));
   connect(tab2, SIGNAL(changed(bool)), this, SLOT(moduleChanged(bool)));
 

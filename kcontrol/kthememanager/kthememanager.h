@@ -63,7 +63,7 @@ class kthememanager: public KCModule
 {
     Q_OBJECT
 public:
-    kthememanager( QWidget *parent=0, const char *name=0 );
+    kthememanager( KInstance *inst, QWidget *parent );
     virtual ~kthememanager();
 
     /**

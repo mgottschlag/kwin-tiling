@@ -33,7 +33,7 @@ typedef KGenericFactory<KCMDisplay, QWidget> DisplayFactory;
 K_EXPORT_COMPONENT_FACTORY ( kcm_display, DisplayFactory( "display" ) )
 
 KCMDisplay::KCMDisplay( QWidget *parent, const char *name, const QStringList& )
-    : KCModule( parent, name )
+    : KCModule( DisplayFactory::instance(), parent )
     , m_changed(false)
 {
   m_tabs = new QTabWidget( this );
@@ -91,18 +91,18 @@ void KCMDisplay::moduleChanged( bool isChanged )
   Q_ASSERT(currentModule != m_modules.end());
   if (currentModule.data() == isChanged)
     return;
-    
+
   currentModule.data() = isChanged;
 
   bool c = false;
-  
+
   for (QMap<KCModule*, bool>::ConstIterator it = m_modules.begin(); it != m_modules.end(); ++it) {
     if (it.data()) {
       c = true;
       break;
     }
   }
-    
+
   if (m_changed != c) {
     m_changed = c;
     emit changed(c);

@@ -80,8 +80,8 @@ K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory("kcmfontinst"))
 namespace KFI
 {
 
-CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
-            : KCModule(parent, "kfontinst"),
+CKCmFontInst::CKCmFontInst(QWidget *parent, const char *name, const QStringList&)
+    : KCModule( FontInstallFactory::instance(), parent),
 #ifdef HAVE_XFT
               itsPreview(NULL),
 #endif
@@ -216,7 +216,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         itsListAct->plug(toolbar);
     }
 
-    itsShowBitmapAct=new KToggleAction(i18n("Show Bitmap Fonts"), "font_bitmap", 0, this, SLOT(filterFonts()), 
+    itsShowBitmapAct=new KToggleAction(i18n("Show Bitmap Fonts"), "font_bitmap", 0, this, SLOT(filterFonts()),
                                        itsDirOp->actionCollection(), "showbitmap");
     itsShowBitmapAct->setChecked(showBitmap);
     itsShowBitmapAct->plug(toolbar);
@@ -344,7 +344,8 @@ QString CKCmFontInst::quickHelp() const
 
 void CKCmFontInst::listView()
 {
-    CKFileFontView *newView=new CKFileFontView(itsDirOp, "detailed view");
+    CKFileFontView *newView=new CKFileFontView( itsDirOp );
+    newView->setObjectName( "detailed view" );
 
     itsDirOp->setView(newView);
     itsListAct->setChecked(true);
@@ -510,7 +511,7 @@ void CKCmFontInst::print()
         if(dlg.exec(select, itsConfig.readNumEntry(CFG_FONT_SIZE, 1)))
         {
             static const int constSizes[]={0, 12, 18, 24, 36, 48};
-    
+
             QStringList       items;
             QVector<int> sizes;
             CFcEngine         engine;

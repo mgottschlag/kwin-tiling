@@ -46,6 +46,7 @@
 // DLL Interface for kcontrol
 typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
 K_EXPORT_COMPONENT_FACTORY (kcm_randr, KSSFactory("krandr") )
+
 extern "C"
 
 {
@@ -76,8 +77,8 @@ void KRandRModule::performApplyOnStartup()
 }
 
 KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&)
-    : KCModule(parent, name)
-	, m_changed(false)
+    : KCModule(KSSFactory::instance(), parent)
+    , m_changed(false)
 {
 	if (!isValid()) {
 		QVBoxLayout *topLayout = new QVBoxLayout(this);

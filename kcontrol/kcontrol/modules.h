@@ -76,7 +76,7 @@ signals:
 
 
 private:
-  
+
   bool         _changed;
   ProxyWidget *_module;
   QX11EmbedWidget  *_embedWidget;
@@ -99,7 +99,7 @@ public:
    * Returns all submenus of the submenu identified by path
    */
   Q3PtrList<ConfigModule> modules(const QString &path);
-  
+
   /**
    * Returns all modules of the submenu identified by path
    */
@@ -109,7 +109,7 @@ public:
    * Returns the path of the submenu the module is in
    */
   QString findModule(ConfigModule *module);
- 
+
 protected:
 
   class Menu

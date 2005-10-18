@@ -36,8 +36,8 @@
 
 /**** KIconConfig ****/
 
-KIconConfig::KIconConfig(QWidget *parent, const char *name)
-    : KCModule(parent, name)
+KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
+    : KCModule(inst, parent)
 {
 
     QGridLayout *top = new QGridLayout(this, 2, 2,

@@ -43,7 +43,8 @@ extern "C"
 {
   KDE_EXPORT KCModule *create_mouse(QWidget *parent, const char *)
   {
-    return new MouseConfig(parent, "kcminput");
+      KInstance *minst = new KInstance( "kcminput" );
+      return new MouseConfig(minst, parent);
   }
 
   KDE_EXPORT void init_mouse()

@@ -49,7 +49,8 @@ extern "C"
 {
   KDE_EXPORT KCModule *create_bell(QWidget *parent, const char *)
   {
-    return new KBellConfig(parent, "kcmbell");
+      KInstance *bell = new KInstance( "kcmbell" );
+      return new KBellConfig(bell, parent);
   }
 
   KDE_EXPORT void init_bell()
@@ -71,8 +72,8 @@ extern "C"
   }
 }
 
-KBellConfig::KBellConfig(QWidget *parent, const char *name):
-    KCModule(parent, name)
+KBellConfig::KBellConfig(KInstance *inst, QWidget *parent):
+    KCModule(inst, parent)
 {
   QBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
 

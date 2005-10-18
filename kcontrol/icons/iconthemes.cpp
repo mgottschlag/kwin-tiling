@@ -56,8 +56,8 @@
 
 #include "iconthemes.h"
 
-IconThemesConfig::IconThemesConfig(QWidget *parent, const char *name)
-  : KCModule(parent, name)
+IconThemesConfig::IconThemesConfig(KInstance *inst, QWidget *parent)
+  : KCModule(inst, parent)
 {
   QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
                                            KDialog::spacingHint());
@@ -339,7 +339,7 @@ void IconThemesConfig::updateRemoveButton()
     QFileInfo fi(icontheme.dir());
     enabled = fi.isWritable();
     // Don't let users remove the current theme.
-    if(m_themeNames[selected->text(0)] == KIconTheme::current() || 
+    if(m_themeNames[selected->text(0)] == KIconTheme::current() ||
 			 m_themeNames[selected->text(0)] == KIconTheme::defaultThemeName())
       enabled = false;
   }
@@ -350,7 +350,7 @@ void IconThemesConfig::themeSelected(Q3ListViewItem *item)
 {
 #ifdef HAVE_LIBART
   KSVGIconEngine engine;
-#endif 
+#endif
   QString dirName(m_themeNames[item->text(0)]);
   KIconTheme icontheme(dirName);
   if (!icontheme.isValid()) kdDebug() << "notvalid\n";
@@ -403,9 +403,9 @@ void IconThemesConfig::themeSelected(Q3ListViewItem *item)
           }
 #endif
   }
-  else  
+  else
 	  m_previewDocument->setPixmap(QPixmap(icon.path));
-  
+
   emit changed(true);
   m_bChanged = true;
 }

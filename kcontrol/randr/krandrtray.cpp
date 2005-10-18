@@ -79,11 +79,12 @@ void KRandRSystemTray::contextMenuAboutToShow(KMenu* menu)
 				/*lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
 				menu->setItemEnabled(lastIndex, false);*/
 			} else {
-				KMenu* subMenu = new KMenu(menu, QString("screen%1").arg(s+1).latin1());
-				m_screenPopups.append(subMenu);
-				populateMenu(subMenu);
-				lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1), subMenu);
-				connect(subMenu, SIGNAL(activated(int)), SLOT(slotScreenActivated()));
+                            KMenu* subMenu = new KMenu(menu );
+                            subMenu->setObjectName( QString("screen%1").arg(s+1) );
+                            m_screenPopups.append(subMenu);
+                            populateMenu(subMenu);
+                            lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1), subMenu);
+                            connect(subMenu, SIGNAL(activated(int)), SLOT(slotScreenActivated()));
 			}
 		}
 
@@ -95,7 +96,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KMenu* menu)
 
 	KAction *actPrefs = new KAction( i18n( "Configure Display..." ),
 		SmallIconSet( "configure" ), KShortcut(), this, SLOT( slotPrefs() ),
-		actionCollection() );
+		actionCollection(), 0 );
 	actPrefs->plug( menu );
 
 	menu->insertItem(SmallIcon("help"),KStdGuiItem::help().text(), m_help->menu());

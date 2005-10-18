@@ -25,6 +25,7 @@
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
+#include <kinstance.h>
 
 //Added by qt3to4:
 #include <QPixmap>
@@ -91,7 +92,8 @@ static const int DFLT_OFF   = 60;
 extern "C" {
 
     KDE_EXPORT KCModule *create_energy(QWidget *parent, char *) {
-	return new KEnergy(parent, "kcmenergy");
+        KInstance *energy = new KInstance("kcmenergy");
+	return new KEnergy(energy, parent);
     }
 
     KDE_EXPORT void init_energy() {
@@ -136,8 +138,8 @@ extern "C" {
 
 /**** KEnergy ****/
 
-KEnergy::KEnergy(QWidget *parent, const char *name)
-    : KCModule(parent, name)
+KEnergy::KEnergy(KInstance *inst, QWidget *parent)
+    : KCModule(inst, parent)
 {
     m_bChanged = false;
     m_bEnabled = false;
