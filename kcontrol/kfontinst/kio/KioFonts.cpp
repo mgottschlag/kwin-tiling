@@ -240,15 +240,6 @@ static int getSize(QList<FcPattern *> &patterns)
     return size;
 }
 
-static void addAtom(KIO::UDSEntry &entry, unsigned int ID, long l, const QString &s=QString::null)
-{
-    KIO::UDSAtom atom;
-    atom.m_uds = ID;
-    atom.m_long = l;
-    atom.m_str = s;
-    entry.append(atom);
-}
-
 static bool createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name, const QString &path, bool sys)
 {
     KFI_DBUG << "createFolderUDSEntry " << name << ' ' << path << ' ' << sys << ' ' << endl;
@@ -260,7 +251,7 @@ static bool createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name, cons
 
     if(-1!=KDE_lstat(cPath, &buff))
     {
-        addAtom(entry, KIO::UDS_NAME, 0, name);
+        entry.insert( KIO::UDS_NAME, name );
 
         if (S_ISLNK(buff.st_mode))
         {
@@ -271,49 +262,50 @@ static bool createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name, cons
             if(n!= -1)
                 buffer2[n]='\0';
 
-            addAtom(entry, KIO::UDS_LINK_DEST, 0, QString::fromLocal8Bit(buffer2));
+            entry.insert( KIO::UDS_LINK_DEST, QString::fromLocal8Bit(buffer2) );
 
             if(-1==KDE_stat(cPath, &buff))
             {
                 // It is a link pointing to nowhere
-                addAtom(entry, KIO::UDS_FILE_TYPE, S_IFMT - 1);
-                addAtom(entry, KIO::UDS_ACCESS, S_IRWXU | S_IRWXG | S_IRWXO);
-                addAtom(entry, KIO::UDS_SIZE, 0);
+                entry.insert( KIO::UDS_FILE_TYPE, S_IFMT - 1 );
+                entry.insert( KIO::UDS_ACCESS, S_IRWXU | S_IRWXG | S_IRWXO );
+                entry.insert( KIO::UDS_SIZE, 0 );
                 goto notype;
             }
         }
 
-        addAtom(entry, KIO::UDS_FILE_TYPE, buff.st_mode&S_IFMT);
-        addAtom(entry, KIO::UDS_ACCESS, buff.st_mode&07777);
-        addAtom(entry, KIO::UDS_SIZE, buff.st_size);
+        entry.insert( KIO::UDS_FILE_TYPE, buff.st_mode&S_IFMT );
+        entry.insert( KIO::UDS_ACCESS, buff.st_mode&07777 );
+        entry.insert( KIO::UDS_SIZE, buff.st_size );
 
         notype:
-        addAtom(entry, KIO::UDS_MODIFICATION_TIME, buff.st_mtime);
+        entry.insert( KIO::UDS_MODIFICATION_TIME, buff.st_mtime );
 
         struct passwd *user = getpwuid(buff.st_uid);
-        addAtom(entry, KIO::UDS_USER, 0, user ? user->pw_name : QString::number(buff.st_uid).latin1());
+        entry.insert( KIO::UDS_USER, user ? QString::fromLocal8Bit(user->pw_name) : QString::number(buff.st_uid) );
 
         struct group *grp = getgrgid(buff.st_gid);
-        addAtom(entry, KIO::UDS_GROUP, 0, grp ? grp->gr_name : QString::number(buff.st_gid).latin1());
+        entry.insert( KIO::UDS_GROUP, grp ? QString::fromLocal8Bit(grp->gr_name) : QString::number(buff.st_gid) );
 
-        addAtom(entry, KIO::UDS_ACCESS_TIME, buff.st_atime);
-        addAtom(entry, KIO::UDS_MIME_TYPE, 0, sys
-                                                ? KFI_KIO_FONTS_PROTOCOL"/system-folder" 
-                                                : KFI_KIO_FONTS_PROTOCOL"/folder");
-        addAtom(entry, KIO::UDS_GUESSED_MIME_TYPE, 0, "application/octet-stream");
-        QString url(KFI_KIO_FONTS_PROTOCOL+QLatin1String(":/"));
+        entry.insert( KIO::UDS_ACCESS_TIME, buff.st_atime);
+        entry.insert( KIO::UDS_MIME_TYPE, QString::fromLatin1(
+                          sys
+                          ? KFI_KIO_FONTS_PROTOCOL"/system-folder"
+                          : KFI_KIO_FONTS_PROTOCOL"/folder") );
+        entry.insert( KIO::UDS_GUESSED_MIME_TYPE, QString::fromLatin1("application/octet-stream"));
+        //QString url(KFI_KIO_FONTS_PROTOCOL+QLatin1String(":/")); //####
         return true;
     }
     else if (sys && !Misc::root())   // Default system fonts folder does not actually exist yet!
     {
         KFI_DBUG << "Default system folder (" << path << ") does not yet exist, so create dummy entry" << endl;
-        addAtom(entry, KIO::UDS_NAME, 0, name);
-        addAtom(entry, KIO::UDS_FILE_TYPE, S_IFDIR);
-        addAtom(entry, KIO::UDS_ACCESS, 0744);
-        addAtom(entry, KIO::UDS_USER, 0, "root");
-        addAtom(entry, KIO::UDS_GROUP, 0, "root");
-        addAtom(entry, KIO::UDS_MIME_TYPE, 0, KFI_KIO_FONTS_PROTOCOL"/system-folder");
-        addAtom(entry, KIO::UDS_GUESSED_MIME_TYPE, 0, "application/octet-stream");
+        entry.insert( KIO::UDS_NAME, name);
+        entry.insert( KIO::UDS_FILE_TYPE, S_IFDIR);
+        entry.insert( KIO::UDS_ACCESS, 0744);
+        entry.insert( KIO::UDS_USER, QString::fromLatin1("root"));
+        entry.insert( KIO::UDS_GROUP, QString::fromLatin1("root"));
+        entry.insert( KIO::UDS_MIME_TYPE, QString::fromLatin1(KFI_KIO_FONTS_PROTOCOL"/system-folder"));
+        entry.insert( KIO::UDS_GUESSED_MIME_TYPE, QString::fromLatin1("application/octet-stream"));
 
         return true;
     }
@@ -353,7 +345,7 @@ static bool createFontUDSEntry(KIO::UDSEntry &entry, const QString &name, QList<
 
     end=sortedPatterns.end();
     entry.clear();
-    addAtom(entry, KIO::UDS_SIZE, getSize(patterns));
+    entry.insert( KIO::UDS_SIZE, getSize(patterns) );
 
     for(it=sortedPatterns.begin(); it!=end; ++it)
     {
@@ -363,7 +355,7 @@ static bool createFontUDSEntry(KIO::UDSEntry &entry, const QString &name, QList<
 
         if(-1!=KDE_lstat(cPath, &buff))
         {
-            addAtom(entry, KIO::UDS_NAME, 0, name);
+            entry.insert( KIO::UDS_NAME, name );
 
             if (S_ISLNK(buff.st_mode))
             {
@@ -375,32 +367,32 @@ static bool createFontUDSEntry(KIO::UDSEntry &entry, const QString &name, QList<
                 if(n!= -1)
                     buffer2[n]='\0';
 
-                addAtom(entry, KIO::UDS_LINK_DEST, 0, QString::fromLocal8Bit(buffer2));
+                entry.insert( KIO::UDS_LINK_DEST, QString::fromLocal8Bit(buffer2) );
 
                 if(-1==KDE_stat(cPath, &buff))
                 {
                     // It is a link pointing to nowhere
-                    addAtom(entry, KIO::UDS_FILE_TYPE, S_IFMT - 1);
-                    addAtom(entry, KIO::UDS_ACCESS, S_IRWXU | S_IRWXG | S_IRWXO);
+                    entry.insert( KIO::UDS_FILE_TYPE, S_IFMT - 1);
+                    entry.insert( KIO::UDS_ACCESS, S_IRWXU | S_IRWXG | S_IRWXO);
                     goto notype;
                 }
             }
 
-            addAtom(entry, KIO::UDS_FILE_TYPE, buff.st_mode&S_IFMT);
-            addAtom(entry, KIO::UDS_ACCESS, buff.st_mode&07777);
+            entry.insert( KIO::UDS_FILE_TYPE, buff.st_mode&S_IFMT);
+            entry.insert( KIO::UDS_ACCESS, buff.st_mode&07777);
 
             notype:
-            addAtom(entry, KIO::UDS_MODIFICATION_TIME, buff.st_mtime);
+            entry.insert( KIO::UDS_MODIFICATION_TIME, buff.st_mtime);
 
             struct passwd *user = getpwuid(buff.st_uid);
-            addAtom(entry, KIO::UDS_USER, 0, user ? user->pw_name : QString::number(buff.st_uid).latin1());
+            entry.insert( KIO::UDS_USER, user ? QString::fromLocal8Bit(user->pw_name) : QString::number(buff.st_uid));
 
             struct group *grp = getgrgid(buff.st_gid);
-            addAtom(entry, KIO::UDS_GROUP, 0, grp ? grp->gr_name : QString::number(buff.st_gid).latin1());
+            entry.insert( KIO::UDS_GROUP, grp ? QString::fromLocal8Bit(grp->gr_name) : QString::number(buff.st_gid));
 
-            addAtom(entry, KIO::UDS_ACCESS_TIME, buff.st_atime);
-            addAtom(entry, KIO::UDS_MIME_TYPE, 0, KMimeType::findByPath(path, 0, true)->name());
-            addAtom(entry, KIO::UDS_GUESSED_MIME_TYPE, 0, "application/octet-stream");
+            entry.insert( KIO::UDS_ACCESS_TIME, buff.st_atime);
+            entry.insert( KIO::UDS_MIME_TYPE, KMimeType::findByPath(path, 0, true)->name());
+            entry.insert( KIO::UDS_GUESSED_MIME_TYPE, QString::fromLatin1("application/octet-stream"));
 
         QString url(KFI_KIO_FONTS_PROTOCOL+QLatin1String(":/"));
 
@@ -413,7 +405,7 @@ static bool createFontUDSEntry(KIO::UDSEntry &entry, const QString &name, QList<
             url+=name+QLatin1String(constMultipleExtension);
         else
             url+=Misc::getFile(path);
-        addAtom(entry, KIO::UDS_URL, 0, url);
+        entry.insert( KIO::UDS_URL, url);
         return true;  // This file was OK, so use its values...
         }
     }
@@ -1010,7 +1002,7 @@ void CKioFonts::get(const KURL &url)
 
         QByteArray realPathC(QFile::encodeName(realPath));
         KFI_DBUG << "real: " << realPathC << endl;
-    
+
         if (-2==KDE_stat(realPathC.data(), &buff))
             error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, url.prettyURL());
         else if (S_ISDIR(buff.st_mode))
@@ -1028,13 +1020,13 @@ void CKioFonts::get(const KURL &url)
                 // Determine the mimetype of the file to be retrieved, and emit it.
                 // This is mandatory in all slaves (for KRun/BrowserRun to work).
                 emit mimeType(useMime.isEmpty() ? KMimeType::findByPath(realPathC, buff.st_mode, true)->name() : useMime);
-    
+
                 totalSize(buff.st_size);
-    
+
                 KIO::filesize_t processed=0;
                 char            buffer[MAX_IPC_SIZE];
                 QByteArray      array;
-    
+
                 while(1)
                 {
                     int n=::read(fd, buffer, MAX_IPC_SIZE);
@@ -1048,18 +1040,18 @@ void CKioFonts::get(const KURL &url)
                     }
                     if (0==n)
                         break; // Finished
-    
+
                     array.setRawData(buffer, n);
                     data(array);
                     array.resetRawData(buffer, n);
-    
+
                     processed+=n;
                     processedSize(processed);
                 }
-    
+
                 data(QByteArray());
                 close(fd);
-    
+
                 processedSize(buff.st_size);
                 finished();
             }
@@ -1100,9 +1092,9 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
     }
 
     if(nrs) // Need to check can get root passwd before start download...
-    { 
-        passwd=getRootPasswd(); 
- 
+    {
+        passwd=getRootPasswd();
+
         if(passwd.isEmpty())
         {
             error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_SYS)));
@@ -1116,7 +1108,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
     //    1. Download to a temporary file
     //    2. Check with FreeType that the file is a font, or that it is
     //       an AFM or PFM file
-    //    3. If its OK, then get the fonts "name" from 
+    //    3. If its OK, then get the fonts "name" from
     KTempFile tmpFile;
     QByteArray  tmpFileC(QFile::encodeName(tmpFile.name()));
 
@@ -1126,7 +1118,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
     {
         if(!checkFile(tmpFile.name()))  // error logged in checkFile
             return;
-   
+
         if(nrs)  // Ask root to copy the font...
         {
             QByteArray cmd;
@@ -1280,7 +1272,7 @@ bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bo
         {
            KDE_struct_stat buff;
 
-           if ((-1==KDE_stat(destC.data(), &buff)) || 
+           if ((-1==KDE_stat(destC.data(), &buff)) ||
                (buff.st_size<config()->readNumEntry("MinimumKeepSize", DEFAULT_MINIMUM_KEEP_SIZE)))
                ::remove(destC.data());
         }
@@ -1374,9 +1366,9 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
 
                     if(!itsCanStorePasswd)
                         createRootRefreshCmd(cmd);
-    
+
                     totalSize(size);
-  
+
                     QString passwd=getRootPasswd();
 
                     if(doRootCmd(cmd, passwd))
@@ -1410,37 +1402,37 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
                         }
 
                         int srcFd=KDE_open(realSrc.data(), O_RDONLY);
-    
+
                         if (srcFd<0)
                         {
                             error(KIO::ERR_CANNOT_OPEN_FOR_READING, src.prettyURL());
                             return;
                         }
-    
+
                         if(!Misc::dExists(itsFolders[destFolder].location))
                             Misc::createDir(itsFolders[destFolder].location);
-    
+
                         // WABA: Make sure that we keep writing permissions ourselves,
                         // otherwise we can be in for a surprise on NFS.
                         int destFd=KDE_open(realDest.data(), O_CREAT | O_TRUNC | O_WRONLY, -1==mode ? 0666 : mode | S_IWUSR);
-    
+
                         if (destFd<0)
                         {
                             error(EACCES==errno ? KIO::ERR_WRITE_ACCESS_DENIED : KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyURL());
                             close(srcFd);
                             return;
                         }
-    
+
                         totalSize(buffSrc.st_size);
 
                         KIO::filesize_t processed = 0;
                         char            buffer[MAX_IPC_SIZE];
                         QByteArray      array;
-    
+
                         while(1)
                         {
                             int n=::read(srcFd, buffer, MAX_IPC_SIZE);
-    
+
                             if(-1==n && EINTR!=errno)
                             {
                                 error(KIO::ERR_COULD_NOT_READ, src.prettyURL());
@@ -1450,7 +1442,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
                             }
                             if(0==n)
                                 break; // Finished
-    
+
                            if(!writeAll(destFd, buffer, n))
                            {
                                 close(srcFd);
@@ -1464,28 +1456,28 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
                                     error(KIO::ERR_COULD_NOT_WRITE, dest.prettyURL());
                                 return;
                             }
-    
+
                             processed += n;
                             processedSize(processed);
                         }
-    
+
                         close(srcFd);
-    
+
                         if(close(destFd))
                         {
                             error(KIO::ERR_COULD_NOT_WRITE, dest.prettyURL());
                             return;
                         }
-    
+
                         ::chmod(realDest.data(), Misc::FILE_PERMS);
-    
+
                         // copy access and modification time
                         struct utimbuf ut;
-    
+
                         ut.actime = buffSrc.st_atime;
                         ut.modtime = buffSrc.st_mtime;
                         ::utime(realDest.data(), &ut);
-    
+
                         processedSize(buffSrc.st_size);
                         modified(destFolder);
                     }
@@ -1493,9 +1485,9 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
                     if(src.isLocalFile() && 1==srcFiles.count())
                         createAfm(itsFolders[destFolder].location+modifyName(map.begin().data()));
                 }
-    
+
                 finished();
-    
+
                 if(changed)
                     itsLastDestTime=time(NULL);
             }
@@ -1618,7 +1610,7 @@ void CKioFonts::del(const KURL &url, bool)
         if(nonRootSys(url))
         {
             QByteArray cmd("rm -f");
- 
+
             for(it=entries->begin(); it!=end; ++it)
             {
                 QString file(getFcString(*it, FC_FILE));
@@ -1643,10 +1635,10 @@ void CKioFonts::del(const KURL &url, bool)
                     }
                 }
             }
-    
+
             if(!itsCanStorePasswd)
                 createRootRefreshCmd(cmd, modifiedDirs);
-    
+
             if(doRootCmd(cmd))
                 modified(FOLDER_SYS, modifiedDirs);
             else
@@ -1710,7 +1702,7 @@ void CKioFonts::modified(EFolder folder, const CDirList &dirs)
         {
             setTimeoutSpecialCommand(0); // Cancel timer
             doModified();
-        } 
+        }
         else
             setTimeoutSpecialCommand(TIMEOUT);
     }
@@ -1818,7 +1810,7 @@ void CKioFonts::doModified()
 
             //
             // If a non-default folder has been modified, always configure X
-            if(NULL==strchr(itsKfiParams, 'x') && 
+            if(NULL==strchr(itsKfiParams, 'x') &&
                (itsFolders[FOLDER_SYS].modified.count()>1 || !itsFolders[FOLDER_SYS].modified.contains(itsFolders[FOLDER_SYS].location)))
             {
                 if(0==itsKfiParams[0])
@@ -2261,7 +2253,7 @@ bool CKioFonts::confirmMultiple(const KURL &url, const QStringList &files, EFold
                 fonts.append(name);
         }
     }
-    
+
     if(fonts.count()>1)
     {
         QString               out;
