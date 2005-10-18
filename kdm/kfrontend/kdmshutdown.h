@@ -146,7 +146,7 @@ class KDMDelayedPushButton : public KPushButton {
 	typedef KPushButton inherited;
 
   public:
-	KDMDelayedPushButton( const KGuiItem &item, QWidget *parent, const char *name = 0 );
+	KDMDelayedPushButton( const KGuiItem &item, QWidget *parent );
 	void setPopup( QMenu *pop );
 
   private slots:

@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2002 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _KHLISTVIEW_CPP_
@@ -23,8 +23,8 @@
 namespace KHotKeys
 {
 
-KHListView::KHListView( QWidget* parent_P, const char* name_P )
-    : KListView( parent_P, name_P ), saved_current_item( NULL ),
+KHListView::KHListView( QWidget* parent_P )
+    : KListView( parent_P ), saved_current_item( NULL ),
         in_clear( false ), ignore( false ), force_select( false )
     {
     connect( this, SIGNAL( selectionChanged( Q3ListViewItem* )),
@@ -47,7 +47,7 @@ void KHListView::slot_selection_changed()
     else if( !saved_current_item->isSelected()) // no way
         setSelected( saved_current_item, true );
     }
-    
+
 void KHListView::slot_selection_changed( Q3ListViewItem* item_P )
     {
     if( ignore )
@@ -58,7 +58,7 @@ void KHListView::slot_selection_changed( Q3ListViewItem* item_P )
     setCurrentItem( saved_current_item );
     emit current_changed( saved_current_item );
     }
-    
+
 void KHListView::slot_current_changed( Q3ListViewItem* item_P )
     {
     if( ignore )
@@ -78,7 +78,7 @@ void KHListView::clear()
     in_clear = false;
     slot_selection_changed( NULL );
     }
-    
+
 void KHListView::insertItem( Q3ListViewItem* item_P )
     {
     bool set = false;

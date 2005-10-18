@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2002 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #ifndef _KHLISTVIEW_H_
@@ -26,7 +26,7 @@ class KHListView
     Q_OBJECT
     Q_PROPERTY( bool forceSelect READ forceSelect WRITE setForceSelect )
     public:
-        KHListView( QWidget* parent_P, const char* name_P = NULL );
+        KHListView( QWidget* parent_P );
         virtual void clear();
         virtual void insertItem( Q3ListViewItem* item_P );
         virtual void clearSelection();
@@ -58,13 +58,13 @@ void KHListView::setForceSelect( bool force_P )
     {
     force_select = force_P;
     }
-    
+
 inline
 bool KHListView::forceSelect() const
     {
     return force_select;
     }
-    
+
 } // namespace KHotKeys
 
 #endif

@@ -30,7 +30,7 @@
 	keys->insert( "Program:klipper", i18n("Clipboard") );
 
 	DEF( I18N_NOOP("Show Klipper Popup-Menu"), WIN + Qt::CTRL + Qt::Key_V, slotPopupMenu() );
-	
+
         DEF( I18N_NOOP("Manually Invoke Action on Current Clipboard"), WIN+Qt::CTRL+Qt::Key_R, slotRepeatAction() );
 	DEF( I18N_NOOP("Enable/Disable Clipboard Actions"), WIN+Qt::CTRL+Qt::Key_X, toggleURLGrabber() );
 

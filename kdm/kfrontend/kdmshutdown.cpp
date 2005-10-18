@@ -433,9 +433,8 @@ KDMRadioButton::mouseDoubleClickEvent( QMouseEvent * )
 
 
 KDMDelayedPushButton::KDMDelayedPushButton( const KGuiItem &item,
-                                            QWidget *parent, 
-                                            const char *name )
-	: inherited( item, parent, name )
+                                            QWidget *parent )
+	: inherited( item, parent )
 	, pop( 0 )
 {
 	connect( this, SIGNAL(pressed()), SLOT(slotPressed()) );
