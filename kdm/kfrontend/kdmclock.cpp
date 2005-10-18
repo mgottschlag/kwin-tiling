@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //Added by qt3to4:
 #include <QShowEvent>
 #include <QPaintEvent>
-#include <Q3PointArray>
+#include <QPolygon>
 
 KdmClock::KdmClock( QWidget *parent, const char *name )
 	: inherited( parent, name )
@@ -125,7 +125,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 		paint.drawText( contentsRect(),AlignHCenter|AlignVCenter, buf,-1,0,0 );
 	} else {
 */
-		Q3PointArray pts;
+		QPolygon pts;
 		QPoint cp = contentsRect().center() - QPoint( 2,2 );
 		int d = QMIN( contentsRect().width()-15,contentsRect().height()-15 );
 		paint.setPen( foregroundColor() );
