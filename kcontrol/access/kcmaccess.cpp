@@ -25,7 +25,7 @@
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-
+#include <klocale.h>
 
 #include <kcombobox.h>
 #include <kstandarddirs.h>
@@ -227,7 +227,7 @@ QString mouseKeysShortcut (Display *display) {
 }
 
 KAccessConfig::KAccessConfig(QWidget *parent, const char *)
-  : KCModule(parent, "kcmaccess")
+  : KCModule(parent)
 {
 
   KAboutData *about =

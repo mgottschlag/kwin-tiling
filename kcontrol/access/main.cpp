@@ -2,7 +2,7 @@
 #include "kaccess.h"
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
-
+#include <klocale.h>
 extern "C" KDE_EXPORT int kdemain(int argc, char * argv[] )
 {
   KAboutData about(I18N_NOOP("kaccess"), I18N_NOOP("KDE Accessibility Tool"),
