@@ -37,7 +37,7 @@
 #include <kstandarddirs.h>
 #include <ktar.h>
 #include <ktrader.h>
-#include <kurldrag.h>
+#include <k3urldrag.h>
 #include <kio/netaccess.h>
 
 ThemeListBox::ThemeListBox(QWidget *parent)
@@ -50,13 +50,13 @@ ThemeListBox::ThemeListBox(QWidget *parent)
 
 void ThemeListBox::dragEnterEvent(QDragEnterEvent* event)
 {
-   event->accept((event->source() != this) && KURLDrag::canDecode(event));
+   event->accept((event->source() != this) && K3URLDrag::canDecode(event));
 }
 
 void ThemeListBox::dropEvent(QDropEvent* event)
 {
    KURL::List urls;
-   if (KURLDrag::decode(event, urls))
+   if (K3URLDrag::decode(event, urls))
    {
       emit filesDropped(urls);
    }
@@ -85,7 +85,7 @@ void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
          url.setPath(mDragFile);
          KURL::List urls;
          urls.append(url);
-         KURLDrag *d = new KURLDrag(urls, this);
+         K3URLDrag *d = new K3URLDrag(urls, this);
          d->dragCopy();
       }
    }
