@@ -31,6 +31,7 @@
 #include <kconfig.h>
 #include <kgenericfactory.h>
 #include <klineedit.h>
+#include <kworkspace.h>
 
 #include "kcmsmserver.h"
 #include "smserverconfigimpl.h"
@@ -75,11 +76,11 @@ void SMServerConfig::load()
   else // "restorePreviousLogout"
       dialog->previousSessionRadio->setChecked(true);
 
-  switch (c->readNumEntry("shutdownType", int(KApplication::ShutdownTypeNone))) {
-  case int(KApplication::ShutdownTypeHalt):
+  switch (c->readNumEntry("shutdownType", int(KWorkSpace::ShutdownTypeNone))) {
+  case int(KWorkSpace::ShutdownTypeHalt):
     dialog->haltRadio->setChecked(true);
     break;
-  case int(KApplication::ShutdownTypeReboot):
+  case int(KWorkSpace::ShutdownTypeReboot):
     dialog->rebootRadio->setChecked(true);
     break;
   default:
@@ -108,10 +109,10 @@ void SMServerConfig::save()
 
   c->writeEntry( "shutdownType",
                  dialog->haltRadio->isChecked() ?
-                   int(KApplication::ShutdownTypeHalt) :
+                   int(KWorkSpace::ShutdownTypeHalt) :
                    dialog->rebootRadio->isChecked() ?
-                     int(KApplication::ShutdownTypeReboot) :
-                     int(KApplication::ShutdownTypeNone));
+                     int(KWorkSpace::ShutdownTypeReboot) :
+                     int(KWorkSpace::ShutdownTypeNone));
   c->writeEntry("excludeApps", dialog->excludeLineedit->text());
   c->sync();
   delete c;
