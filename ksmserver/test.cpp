@@ -3,6 +3,7 @@
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kiconloader.h>
+#include <kworkspace.h>
 
 int
 main(int argc, char *argv[])
@@ -14,7 +15,7 @@ main(int argc, char *argv[])
    a.iconLoader()->addAppDir("ksmserver");
    KSMShutdownFeedback::start();
 
-   KApplication::ShutdownType sdtype = KApplication::ShutdownTypeNone;
+   KWorkSpace::ShutdownType sdtype = KWorkSpace::ShutdownTypeNone;
    (void)KSMShutdownDlg::confirmShutdown( true,
                                           sdtype );
 /*   (void)KSMShutdownDlg::confirmShutdown( false,
