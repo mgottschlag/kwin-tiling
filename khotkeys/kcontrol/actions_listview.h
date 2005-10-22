@@ -24,7 +24,7 @@ class Actions_listview
     {
     Q_OBJECT
     public:
-        Actions_listview( QWidget* parent_P = NULL, const char* name_P = NULL );
+        Actions_listview( QWidget* parent_P );
         Actions_listview_widget* widget();
     private:
         Actions_listview_widget* _widget;

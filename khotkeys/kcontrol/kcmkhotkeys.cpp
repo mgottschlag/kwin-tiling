@@ -10,9 +10,7 @@
 
 #define _KCMKHOTKEYS_CPP_
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 #include "kcmkhotkeys.h"
 
@@ -38,6 +36,7 @@
 #include <ksimpleconfig.h>
 #include <kfiledialog.h>
 #include <dcopref.h>
+#include <ktoolinvocation.h>
 
 #include <input.h>
 #include <triggers.h>
@@ -49,11 +48,11 @@
 
 extern "C"
 {
-    KDE_EXPORT KCModule* create_khotkeys( QWidget* parent_P, const char* name_P )
+    KDE_EXPORT KCModule* create_khotkeys( QWidget* parent_P, const char* name )
     {
 //    sleep( 20 ); // CHECKME DEBUG
-    KGlobal::locale()->insertCatalogue("khotkeys");
-    KHotKeys::Module* ret = new KHotKeys::Module( parent_P, name_P );
+    KInstance *inst = new KInstance( "khotkeys");
+    KHotKeys::Module* ret = new KHotKeys::Module( inst, parent_P );
     ret->load(); // CHECKME
     return ret;
     }
@@ -69,14 +68,14 @@ extern "C"
     // kded modules in such case.
     Q3CString multiHead = getenv("KDE_MULTIHEAD");
     if (multiHead.lower() == "true")
-        kapp->kdeinitExec( "khotkeys" );
+        KToolInvocation::kdeinitExec( "khotkeys" );
     else
         {
         DCOPRef ref( "kded", "kded" );
         if( !ref.call( "loadModule", Q3CString( "khotkeys" )))
             {
             kdWarning( 1217 ) << "Loading of khotkeys module failed." << endl;
-            kapp->kdeinitExec( "khotkeys" );
+            KToolInvocation::kdeinitExec( "khotkeys" );
             }
         }
     }
@@ -85,8 +84,8 @@ extern "C"
 namespace KHotKeys
 {
 
-Module::Module( QWidget* parent_P, const char* )
-    : KCModule( parent_P, "khotkeys" ), _actions_root( NULL ), _current_action_data( NULL ),
+Module::Module( KInstance *inst, QWidget* parent_P )
+    : KCModule( inst, parent_P ), _actions_root( NULL ), _current_action_data( NULL ),
         listview_is_changed( false ), deleting_action( false )
     {
     setButtons( Help | Cancel | Apply | Ok );
@@ -156,7 +155,7 @@ void Module::save()
         if( !kapp->dcopClient()->isApplicationRegistered( "khotkeys" ))
             {
             kdDebug( 1217 ) << "launching new khotkeys daemon" << endl;
-            KApplication::kdeinitExec( "khotkeys" );
+            KToolInvocation::kdeinitExec( "khotkeys" );
             }
         else
             {

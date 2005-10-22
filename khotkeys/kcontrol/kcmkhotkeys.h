@@ -29,7 +29,7 @@ class Module
     {
     Q_OBJECT
     public:
-        Module( QWidget *parent_P, const char *name_P );
+        Module( KInstance *inst_P, QWidget *parent_P );
         virtual ~Module();
         virtual void load();
         virtual void save();

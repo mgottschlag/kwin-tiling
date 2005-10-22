@@ -30,6 +30,7 @@
 
 #include <settings.h>
 #include <action_data.h>
+#include <ktoolinvocation.h>
 
 namespace KHotKeys
 {
@@ -194,7 +195,7 @@ void khotkeys_send_reread_config()
     if( !kapp->dcopClient()->isApplicationRegistered( "khotkeys" ))
         {
         kdDebug( 1217 ) << "launching new khotkeys daemon" << endl;
-        KApplication::kdeinitExec( "khotkeys" );
+        KToolInvocation::kdeinitExec( "khotkeys" );
         }
     else
         {
