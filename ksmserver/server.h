@@ -14,6 +14,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qstringlist.h>
 #include <qsocketnotifier.h>
 #include <kapplication.h>
+#include <kworkspace.h>
 #include <qtimer.h>
 #include <q3cstring.h>
 #include <QTime>
@@ -105,9 +106,9 @@ public:
     // public API
     void restoreSession( QString sessionName );
     void startDefaultSession();
-    void shutdown( KApplication::ShutdownConfirm confirm,
-                   KApplication::ShutdownType sdtype,
-                   KApplication::ShutdownMode sdmode );
+    void shutdown( KWorkSpace::ShutdownConfirm confirm,
+                   KWorkSpace::ShutdownType sdtype,
+                   KWorkSpace::ShutdownMode sdmode );
 
     virtual void suspendStartup();
     virtual void resumeStartup();
@@ -148,7 +149,7 @@ private:
         const QString& clientMachine = QString::null,
         const QString& userId = QString::null );
     void executeCommand( const QStringList& command );
-    
+
     bool isWM( const KSMClient* client ) const;
 
 #ifndef NO_LEGACY_SESSION_MANAGEMENT
@@ -181,8 +182,8 @@ private:
     int saveType;
     int startupSuspendCount;
 
-    KApplication::ShutdownType shutdownType;
-    KApplication::ShutdownMode shutdownMode;
+    KWorkSpace::ShutdownType shutdownType;
+    KWorkSpace::ShutdownMode shutdownMode;
     QString bootOption;
 
     bool clean;
@@ -206,7 +207,7 @@ private:
     int appsToStart;
     int lastAppStarted;
     QString lastIdStarted;
-    
+
     QStringList excludeApps;
 
 #ifndef NO_LEGACY_SESSION_MANAGEMENT

@@ -17,7 +17,7 @@
 
 SUBDIRS = .
 
-INCLUDES= -I$(top_srcdir)/kdmlib $(all_includes)
+INCLUDES= -I$(top_srcdir)/kdmlib -I$(srcdir)/../lib $(all_includes)
 
 bin_PROGRAMS =
 lib_LTLIBRARIES =

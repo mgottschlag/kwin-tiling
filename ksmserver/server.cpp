@@ -341,10 +341,10 @@ void KSMSaveYourselfRequestProc (
 {
     if ( shutdown ) {
         the_server->shutdown( fast ?
-                              KApplication::ShutdownConfirmNo :
-                              KApplication::ShutdownConfirmDefault,
-                              KApplication::ShutdownTypeDefault,
-                              KApplication::ShutdownModeDefault );
+                              KWorkSpace::ShutdownConfirmNo :
+                              KWorkSpace::ShutdownConfirmDefault,
+                              KWorkSpace::ShutdownTypeDefault,
+                              KWorkSpace::ShutdownModeDefault );
     } else if ( !global ) {
         SmsSaveYourself( smsConn, saveType, false, interactStyle, fast );
         SmsSaveComplete( smsConn );
@@ -538,9 +538,9 @@ Status SetAuthentication (int count, IceListenObj *listenObjs,
 {
     KTempFile addAuthFile;
     addAuthFile.setAutoDelete(true);
-    
+
     remAuthFile = new KTempFile;
-    remAuthFile->setAutoDelete(true);    
+    remAuthFile->setAutoDelete(true);
 
     if ((addAuthFile.status() != 0) || (remAuthFile->status() != 0))
         return 0;
@@ -614,7 +614,7 @@ void FreeAuthenticationData(int count, IceAuthDataEntry *authDataEntries)
         qWarning("KSMServer: could not find iceauth");
         return;
     }
-    
+
     KProcess p;
     p << iceAuth << "source" << remAuthFile->name();
     p.start(KProcess::Block);
@@ -635,7 +635,7 @@ static int Xio_ErrorHandler( Display * )
        server->cleanUp();
        // Don't delete server!!
     }
-    
+
     exit(0); // Don't report error, it's not our fault.
 }
 
@@ -726,7 +726,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     wm = windowManager;
     startupSuspendCount = 0;
 
-    shutdownType = KApplication::ShutdownTypeNone;
+    shutdownType = KWorkSpace::ShutdownTypeNone;
 
     state = Idle;
     dialogActive = false;
@@ -736,7 +736,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     config->setGroup("General" );
     clientInteracting = 0;
     xonCommand = config->readEntry( "xonCommand", "xon" );
-    
+
     connect( &knotifyTimeoutTimer, SIGNAL( timeout()), SLOT( knotifyTimeout()));
     connect( &startupSuspendTimeoutTimer, SIGNAL( timeout()), SLOT( startupSuspendTimeout()));
 
@@ -937,8 +937,8 @@ void KSMServer::newConnection( int /*socket*/ )
 }
 
 
-void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
-    KApplication::ShutdownType sdtype, KApplication::ShutdownMode sdmode )
+void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
+    KWorkSpace::ShutdownType sdtype, KWorkSpace::ShutdownMode sdmode )
 {
     if ( state != Idle || dialogActive )
         return;
@@ -947,25 +947,25 @@ void KSMServer::shutdown( KApplication::ShutdownConfirm confirm,
     config->reparseConfiguration(); // config may have changed in the KControl module
 
     config->setGroup("General" );
-    excludeApps = QStringList::split( QRegExp( "[,:]" ), config->readEntry( "excludeApps" ).lower()); 
+    excludeApps = QStringList::split( QRegExp( "[,:]" ), config->readEntry( "excludeApps" ).lower());
     bool logoutConfirmed =
-        (confirm == KApplication::ShutdownConfirmYes) ? false :
-       (confirm == KApplication::ShutdownConfirmNo) ? true :
+        (confirm == KWorkSpace::ShutdownConfirmYes) ? false :
+       (confirm == KWorkSpace::ShutdownConfirmNo) ? true :
                   !config->readBoolEntry( "confirmLogout", true );
     bool maysd = false;
     if (config->readBoolEntry( "offerShutdown", true ) && DM().canShutdown())
         maysd = true;
     if (!maysd) {
-        if (sdtype != KApplication::ShutdownTypeNone &&
-            sdtype != KApplication::ShutdownTypeDefault &&
+        if (sdtype != KWorkSpace::ShutdownTypeNone &&
+            sdtype != KWorkSpace::ShutdownTypeDefault &&
             logoutConfirmed)
             return; /* unsupported fast shutdown */
-        sdtype = KApplication::ShutdownTypeNone;
-    } else if (sdtype == KApplication::ShutdownTypeDefault)
-        sdtype = (KApplication::ShutdownType)
-                 config->readNumEntry( "shutdownType", (int)KApplication::ShutdownTypeNone );
-    if (sdmode == KApplication::ShutdownModeDefault)
-        sdmode = KApplication::ShutdownModeInteractive;
+        sdtype = KWorkSpace::ShutdownTypeNone;
+    } else if (sdtype == KWorkSpace::ShutdownTypeDefault)
+        sdtype = (KWorkSpace::ShutdownType)
+                 config->readNumEntry( "shutdownType", (int)KWorkSpace::ShutdownTypeNone );
+    if (sdmode == KWorkSpace::ShutdownModeDefault)
+        sdmode = KWorkSpace::ShutdownModeInteractive;
 
     dialogActive = true;
     QString bopt;
@@ -1522,9 +1522,9 @@ void KSMServer::startDefaultSession()
 
 void KSMServer::logout( int confirm, int sdtype, int sdmode )
 {
-    shutdown( (KApplication::ShutdownConfirm)confirm,
-              (KApplication::ShutdownType)sdtype,
-              (KApplication::ShutdownMode)sdmode );
+    shutdown( (KWorkSpace::ShutdownConfirm)confirm,
+              (KWorkSpace::ShutdownType)sdtype,
+              (KWorkSpace::ShutdownMode)sdmode );
 }
 
 void KSMServer::autoStart()
@@ -1911,7 +1911,7 @@ void KSMServer::restoreLegacySessionInternal( KConfig* config, char sep )
                           config->readEntry( QString("userId")+n ));
     }
 }
-    
+
 static QByteArray getQCStringProperty(WId w, Atom prop)
 {
     Atom type;

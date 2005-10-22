@@ -75,7 +75,7 @@ void KSMShutdownFeedback::slotPaintEffect()
 //////
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
-                                bool maysd, KApplication::ShutdownType sdtype )
+                                bool maysd, KWorkSpace::ShutdownType sdtype )
   : QDialog( parent, 0, TRUE, Qt::Popup ), targets(0)
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
@@ -126,7 +126,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         btnHalt->setFont( btnFont );
         buttonlay->addWidget( btnHalt );
         connect(btnHalt, SIGNAL(clicked()), SLOT(slotHalt()));
-        if ( sdtype == KApplication::ShutdownTypeHalt )
+        if ( sdtype == KWorkSpace::ShutdownTypeHalt )
             btnHalt->setFocus();
 
         // Reboot
@@ -135,7 +135,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         buttonlay->addWidget( btnReboot );
 
         connect(btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
-        if ( sdtype == KApplication::ShutdownTypeReboot )
+        if ( sdtype == KWorkSpace::ShutdownTypeReboot )
             btnReboot->setFocus();
 
         int def, cur;
@@ -173,7 +173,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
 void KSMShutdownDlg::slotLogout()
 {
-    m_shutdownType = KApplication::ShutdownTypeNone;
+    m_shutdownType = KWorkSpace::ShutdownTypeNone;
     accept();
 }
 
@@ -182,7 +182,7 @@ void KSMShutdownDlg::slotReboot()
 {
     // no boot option selected -> current
     m_bootOption = QString::null;
-    m_shutdownType = KApplication::ShutdownTypeReboot;
+    m_shutdownType = KWorkSpace::ShutdownTypeReboot;
     accept();
 }
 
@@ -190,7 +190,7 @@ void KSMShutdownDlg::slotReboot(int opt)
 {
     if (int(rebootOptions.size()) > opt)
         m_bootOption = rebootOptions[opt];
-    m_shutdownType = KApplication::ShutdownTypeReboot;
+    m_shutdownType = KWorkSpace::ShutdownTypeReboot;
     accept();
 }
 
@@ -198,12 +198,12 @@ void KSMShutdownDlg::slotReboot(int opt)
 void KSMShutdownDlg::slotHalt()
 {
     m_bootOption = QString::null;
-    m_shutdownType = KApplication::ShutdownTypeHalt;
+    m_shutdownType = KWorkSpace::ShutdownTypeHalt;
     accept();
 }
 
 
-bool KSMShutdownDlg::confirmShutdown( bool maysd, KApplication::ShutdownType& sdtype, QString& bootOption )
+bool KSMShutdownDlg::confirmShutdown( bool maysd, KWorkSpace::ShutdownType& sdtype, QString& bootOption )
 {
     kapp->enableStyles();
     KSMShutdownDlg* l = new KSMShutdownDlg( 0,
@@ -227,9 +227,8 @@ bool KSMShutdownDlg::confirmShutdown( bool maysd, KApplication::ShutdownType& sd
 }
 
 KSMDelayedPushButton::KSMDelayedPushButton( const KGuiItem &item,
-					    QWidget *parent,
-					    const char *name)
-  : KPushButton( item, parent, name), pop(0), popt(0)
+					    QWidget *parent )
+  : KPushButton( item, parent), pop(0), popt(0)
 {
   connect(this, SIGNAL(pressed()), SLOT(slotPressed()));
   connect(this, SIGNAL(released()), SLOT(slotReleased()));
