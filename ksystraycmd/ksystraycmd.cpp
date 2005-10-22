@@ -155,7 +155,8 @@ void KSysTrayCmd::refresh()
     // ksystraycmd's icon or app's icon
     if (ownIcon)
     {
-      setPixmap( KSystemTray::loadIcon( kapp->iconName() ) );
+      // Icefox ### double check after next kdelibs snapshot merge that this does it right
+      setPixmap( KSystemTray::loadIcon( qApp->applicationName() ) );
     }
     else
     {
@@ -172,7 +173,8 @@ void KSysTrayCmd::refresh()
     else
       QToolTip::add( this, window );
 
-    setPixmap( KSystemTray::loadIcon( kapp->iconName() ) );
+    // Icefox ### double check after next kdelibs snapshot merge that this does it right
+    setPixmap( KSystemTray::loadIcon( qApp->applicationName() ) );
   }
 }
 
