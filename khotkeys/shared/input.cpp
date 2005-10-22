@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _INPUT_CPP_
@@ -49,13 +49,13 @@ Kbd::Kbd( bool grabbing_enabled_P, QObject* parent_P )
     kga = new KGlobalAccel( NULL );
     kga->setEnabled( grabbing_enabled_P );
     }
-    
+
 Kbd::~Kbd()
     {
     keyboard_handler = NULL;
     delete kga;
     }
-    
+
 void Kbd::insert_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P )
     {
     Receiver_data& rcv = receivers[ receiver_P ];
@@ -73,7 +73,7 @@ void Kbd::remove_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P )
     if( rcv.shortcuts.count() == 0 )
         receivers.remove( receiver_P );
     }
-    
+
 void Kbd::activate_receiver( Kbd_receiver* receiver_P )
     {
     Receiver_data& rcv = receivers[ receiver_P ];
@@ -112,12 +112,12 @@ void Kbd::grab_shortcut( const KShortcut& shortcut_P )
         kga->connectItem( name, this, SLOT( key_slot( int )));
 #endif
         QString name = ' ' + shortcut_P.toStringInternal();
-        kga->insert( name, name, QString::null, shortcut_P, shortcut_P,
+        kga->insert( name, name, QString::null, shortcut_P,
             this, SLOT( key_slot( QString )));
         QTimer::singleShot( 0, this, SLOT( update_connections()));
         }
     }
-    
+
 void Kbd::ungrab_shortcut( const KShortcut& shortcut_P )
     {
     if( !grabs.contains( shortcut_P ))
@@ -140,7 +140,7 @@ void Kbd::update_connections()
     {
     kga->updateConnections();
     }
-    
+
 void Kbd::key_slot( QString key_P )
     {
     kdDebug( 1217 ) << "Key pressed:" << key_P << endl;
@@ -154,7 +154,7 @@ void Kbd::key_slot( QString key_P )
             && it.key()->handle_key( shortcut ))
             return;
     }
-    
+
 
 #ifdef HAVE_XTEST
 
@@ -250,7 +250,7 @@ bool Mouse::send_mouse_button( int button_P, bool release_P )
 #endif
     return false;
     }
-    
+
 } // namespace KHotKeys
 
 #include "input.moc"

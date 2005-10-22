@@ -31,6 +31,7 @@
 #include <qfontmetrics.h>
 #include <qtimer.h>
 #include <qmap.h>
+#include <qhash.h>
 
 #include <unistd.h>
 #include <sys/utsname.h>
