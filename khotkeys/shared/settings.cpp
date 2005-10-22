@@ -108,7 +108,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
     cfg_P.setGroup( "Gestures" );
     gestures_disabled_globally = cfg_P.readBoolEntry( "Disabled", true );
     gesture_mouse_button = cfg_P.readNumEntry( "MouseButton", 2 );
-    gesture_mouse_button = KCLAMP( gesture_mouse_button, 2, 9 );
+    gesture_mouse_button = qBound( 2, gesture_mouse_button, 9 );
     gesture_timeout = cfg_P.readNumEntry( "Timeout", 300 );
     cfg_P.setGroup( "GesturesExclude" );
     delete gestures_exclude;
