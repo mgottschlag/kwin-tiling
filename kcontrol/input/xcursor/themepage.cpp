@@ -566,7 +566,7 @@ QPixmap ThemePage::createIcon( const QString &theme, const QString &sample ) con
 		r = r.normalize();
 
 		// Calculate the image size
-		int size = qMax( iconSize, kMax( r.width(), r.height() ) );
+		int size = qMax( iconSize, qMax( r.width(), r.height() ) );
 
 		// Create the intermediate QImage
 		QImage image( size, size, 32 );
