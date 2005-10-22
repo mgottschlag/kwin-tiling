@@ -20,6 +20,8 @@
 #ifndef KWORKSPACE_H
 #define KWORKSPACE_H
 
+#include <kdemacros.h>
+
 namespace KWorkSpace
 {
  
@@ -105,7 +107,7 @@ namespace KWorkSpace
    * @return true on success, false if the session manager could not be
    * contacted.
    */
-  bool requestShutDown( ShutdownConfirm confirm = ShutdownConfirmDefault,
+  KDE_EXPORT bool requestShutDown( ShutdownConfirm confirm = ShutdownConfirmDefault,
                         ShutdownType sdtype = ShutdownTypeDefault,
 			ShutdownMode sdmode = ShutdownModeDefault );
 
@@ -122,7 +124,7 @@ namespace KWorkSpace
    * other processes that should participate in the session.  Examples
    * are kdesktop or kicker.
    */
-   void propagateSessionManager();
+   KDE_EXPORT void propagateSessionManager();
     
 }
 

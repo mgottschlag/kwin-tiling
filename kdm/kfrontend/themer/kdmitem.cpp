@@ -332,8 +332,8 @@ KdmItem::sizeHint()
 		return myWidget->size();
 	if (myLayoutItem)
 		return myLayoutItem->sizeHint();
-	int w = pos.wType == DTpixel ? kAbs( pos.width ) : -1,
-	    h = pos.hType == DTpixel ? kAbs( pos.height ) : -1;
+	int w = pos.wType == DTpixel ? qAbs( pos.width ) : -1,
+	    h = pos.hType == DTpixel ? qAbs( pos.height ) : -1;
 	return QSize( w, h );
 }
 

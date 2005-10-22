@@ -114,12 +114,12 @@ bool GetInfo_IO_Ports (QListView *)
 bool GetInfo_Sound (QListView *lBox)
 {
 #ifdef HAVE_COREAUDIO
-#define kMaxStringSize 1024
+#define qMaxStringSize 1024
 	OSStatus status;
 	AudioDeviceID gOutputDeviceID;
 	unsigned long propertySize;
-	char deviceName[kMaxStringSize];
-	char manufacturer[kMaxStringSize];
+	char deviceName[qMaxStringSize];
+	char manufacturer[qMaxStringSize];
 	propertySize = sizeof(gOutputDeviceID);
 	status = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice, &propertySize, &gOutputDeviceID);
 	if (status) {
@@ -129,7 +129,7 @@ bool GetInfo_Sound (QListView *lBox)
 
 	if (gOutputDeviceID != kAudioDeviceUnknown) {
 
-		propertySize = kMaxStringSize;
+		propertySize = qMaxStringSize;
 
 		/* Device Name */
 		status = AudioDeviceGetProperty(gOutputDeviceID, 1, 0, kAudioDevicePropertyDeviceName, &propertySize, deviceName);

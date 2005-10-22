@@ -304,7 +304,7 @@ void PreviewWidget::setTheme( const QString &theme )
 	}
 
 	current = -1;
-	setFixedSize( ( maxWidth + cursorSpacing ) * numCursors, kMax( maxHeight, minHeight ) );
+	setFixedSize( ( maxWidth + cursorSpacing ) * numCursors, qMax( maxHeight, minHeight ) );
 	setUpdatesEnabled( true );
 	repaint( false );
 }
