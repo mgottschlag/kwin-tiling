@@ -21,6 +21,7 @@
 #include <cstdlib>
 
 #include <qcursor.h>
+#include <QHash>
 #include <qtimer.h>
 
 #include <kapplication.h>
