@@ -31,6 +31,7 @@
 #include <kmessagebox.h>
 #include <knuminput.h>
 #include <kstandarddirs.h>
+#include <ktoolinvocation.h>
 
 #include "main.h"
 
@@ -162,7 +163,7 @@ void MenuTab::defaults()
 
 void MenuTab::launchMenuEditor()
 {
-    if ( KApplication::startServiceByDesktopName( "kmenuedit",
+    if ( KToolInvocation::startServiceByDesktopName( "kmenuedit",
                                                   QString::null /*url*/,
                                                   0 /*error*/,
                                                   0 /*dcopservice*/,

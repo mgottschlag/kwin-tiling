@@ -241,7 +241,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
                       e->count() );
         KMenu::keyPressEvent( &ke );
 #ifdef DEBUG_EVENTS__
-        kdDebug() << "Passing this event to ancestor (KPopupMenu): " << e "->" << ke << endl;
+        kdDebug() << "Passing this event to ancestor (KMenu): " << e "->" << ke << endl;
 #endif
         if ( ke.isAccepted() ) {
             e->accept();
@@ -266,7 +266,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
     case Qt::Key_Enter:
     {
 #ifdef DEBUG_EVENTS__
-        kdDebug() << "Passing this event to ancestor (KPopupMenu): " << e << endl;
+        kdDebug() << "Passing this event to ancestor (KMenu): " << e << endl;
 #endif
         KMenu::keyPressEvent( e );
         if ( isItemActive( m_filterWidgetId ) ) {
