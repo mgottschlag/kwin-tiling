@@ -18,10 +18,10 @@ endif
 # readd kicker and taskbar later
 # 'colors' and 'fonts' should come after 'krdb'
 #
-# FIXME : readd dnssd
+# FIXME : readd dnssd (and arts)
 #
 SUBDIRS = bell background samba krdb input kdm\
-	locale launch dateandtime style kded arts kcontrol knotify\
+	locale launch dateandtime style kded kcontrol knotify\
 	pics $(ACCESS_SUBDIR) colors energy fonts \
 	icons screensaver crypto smserver keys \
 	$(KSMCARD_SUBDIR) $(FONTINST_SUBDIR) $(RANDR_SUBDIR) \

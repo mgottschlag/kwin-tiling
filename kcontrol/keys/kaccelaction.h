@@ -72,7 +72,7 @@ class KAccelAction
 	KAccelAction();
 	KAccelAction( const KAccelAction& );
 	KAccelAction( const QString& sName, const QString& sLabel, const QString& sWhatsThis,
-			const KShortcut& cutDef3, const KShortcut& cutDef4,
+			const KShortcut& cutDef,
 			const QObject* pObjSlot, const char* psMethodSlot,
 			bool bConfigurable, bool bEnabled );
 	~KAccelAction();
@@ -170,7 +170,7 @@ class KAccelActions
 	const KAccelAction& operator []( uint ) const;
 
 	KAccelAction* insert( const QString& sAction, const QString& sLabel, const QString& sWhatsThis,
-			const KShortcut& rgCutDefaults3, const KShortcut& rgCutDefaults4,
+			const KShortcut& rgCutDefaults,
 			const QObject* pObjSlot = 0, const char* psMethodSlot = 0,
 			bool bConfigurable = true, bool bEnabled = true );
 	KAccelAction* insert( const QString& sName, const QString& sLabel );
