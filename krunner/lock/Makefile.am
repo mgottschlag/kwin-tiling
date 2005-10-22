@@ -1,6 +1,6 @@
 ## Makefile.am of kdebase/kdesktop/lock
 
-INCLUDES = -I.. -I$(top_srcdir)/kcheckpass -I$(top_srcdir)/kdmlib $(GLINC) $(all_includes)
+INCLUDES = -I.. -I$(top_srcdir)/workspace/lib -I$(top_srcdir)/kcheckpass -I$(top_srcdir)/kdmlib $(GLINC) $(all_includes)
 kdesktop_lock_LDFLAGS  = $(all_libraries) $(KDE_RPATH)
 kdesktop_lock_LDADD    = ../libkdesktopsettings.la ../../kdmlib/libdmctl.la $(LIB_KIO) $(LIB_XF86MISC) $(GLLIB)
 
