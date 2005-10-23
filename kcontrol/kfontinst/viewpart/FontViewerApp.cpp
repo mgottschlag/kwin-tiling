@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 {
     KCmdLineArgs::init(argc, argv, &aboutData);
     KCmdLineArgs::addCmdLineOptions(options);
-    KFI::CFontViewerApp::addCmdLineOptions();
+    KCmdLineArgs::addStdCmdLineOptions();
 
     KFI::CFontViewerApp app;
 
