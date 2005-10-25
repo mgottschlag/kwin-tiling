@@ -57,6 +57,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <X11/Xlib.h> // for updateLockStatus()
 #include <fixx11h.h> // ... and make eventFilter() work again
 #include <QX11Info>
+#include <krandom.h>
 
 
 void KGVerifyHandler::updateStatus( bool, bool )
@@ -602,7 +603,7 @@ KGVerify::handleVerify()
 			failed = true;
 			updateStatus();
 			handler->verifyFailed();
-			timer.start( 1500 + kapp->random()/(RAND_MAX/1000) );
+			timer.start( 1500 + KRandom::random()/(RAND_MAX/1000) );
 			return;
 		}
 		if (ret != V_FAIL)
