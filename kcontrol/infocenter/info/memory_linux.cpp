@@ -1,5 +1,4 @@
 #include <sys/sysinfo.h>
-#include <linux/kernel.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <qfile.h>
