@@ -120,7 +120,7 @@ KdmLabel::sizeHint()
 	else if (state == Sprelight && label.prelight.present)
 		l = &label.prelight;
 	// get the hint from font metrics
-	QSize hint = QFontMetrics( l->font ).size( Qt::AlignLeft | Qt::SingleLine, cText );
+	QSize hint = QFontMetrics( l->font ).size( Qt::AlignLeft | Qt::TextSingleLine, cText );
 	// clip the result using the max-width label(pos) parameter
 	if (label.maximumWidth > 0 && hint.width() > label.maximumWidth)
 		hint.setWidth( label.maximumWidth );

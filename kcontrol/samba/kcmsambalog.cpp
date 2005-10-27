@@ -162,7 +162,7 @@ void LogView::updateList()
    QFile logFile(logFileName.url());
    if (logFile.open(IO_ReadOnly))
    {
-      QApplication::setOverrideCursor(Qt::waitCursor);
+      QApplication::setOverrideCursor(Qt::WaitCursor);
       viewHistory.clear();
       filesCount=0;
       connectionsCount=0;

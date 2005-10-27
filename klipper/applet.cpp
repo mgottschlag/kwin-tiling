@@ -39,8 +39,8 @@ extern "C"
     KDE_EXPORT KPanelApplet* init(QWidget *parent, const QString& configFile)
     {
         KGlobal::locale()->insertCatalog("klipper");
-        int actions = KPanelApplet::Preferences | KPanelApplet::About | KPanelApplet::Help;
-        return new KlipperApplet(configFile, KPanelApplet::Normal, actions, parent, "klipper");
+        int actions = Plasma::Preferences | Plasma::About | Plasma::Help;
+        return new KlipperApplet(configFile, Plasma::Normal, actions, parent, "klipper");
     }
 }
 

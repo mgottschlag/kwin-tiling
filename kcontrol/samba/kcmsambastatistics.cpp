@@ -135,7 +135,7 @@ void StatisticsView::setListInfo(Q3ListView *list, int nrOfFiles, int nrOfConnec
 void StatisticsView::calculate()
 {
    if (dataList==0) return;
-   QApplication::setOverrideCursor(Qt::waitCursor);
+   QApplication::setOverrideCursor(Qt::WaitCursor);
    int connCount(0);
    if (eventCb->currentText()==i18n("Connection"))
       connCount=1;

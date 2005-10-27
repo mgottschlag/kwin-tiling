@@ -33,7 +33,7 @@ WindowSelector::WindowSelector( QObject* receiver_P, const char* slot_P )
 
 void WindowSelector::select()
     {
-    kapp->desktop()->grabMouse( QCursor( Qt::crossCursor ));
+    kapp->desktop()->grabMouse( QCursor( Qt::CrossCursor ));
     kapp->installX11EventFilter( this );
     }
 
