@@ -333,7 +333,7 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
 
     		if (localheight >= SPACING) {
 			paint.drawText(0, startline-localheight, width, localheight,
-				Qt::AlignCenter | Qt::WordBreak, 
+				Qt::AlignCenter | Qt::TextWordWrap, 
 				QString("%1 %2%").arg(*text).arg(percent));
 		}
     	}

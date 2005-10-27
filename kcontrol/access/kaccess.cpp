@@ -617,7 +617,7 @@ void KAccessApp::createDialogContents() {
       QVBoxLayout * vlay = new QVBoxLayout(lay);
 
       featuresLabel = new QLabel( "", contents );
-      featuresLabel->setAlignment( Qt::WordBreak|Qt::AlignVCenter );
+      featuresLabel->setAlignment( Qt::TextWordWrap|Qt::AlignVCenter );
       vlay->addWidget( featuresLabel );
       vlay->addStretch();
 

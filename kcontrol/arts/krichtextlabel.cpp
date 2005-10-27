@@ -50,7 +50,7 @@ KRichTextLabel::KRichTextLabel( const QString &text , QWidget *parent, const cha
 KRichTextLabel::KRichTextLabel( QWidget *parent, const char *name )
  : QLabel ( parent, name ) {
   m_defaultWidth = QMIN(500, KGlobalSettings::desktopGeometry(this).width()*3/5);
-  setAlignment( Qt::WordBreak );
+  setAlignment( Qt::TextWordWrap );
 }
 
 void KRichTextLabel::setDefaultWidth(int defaultWidth)

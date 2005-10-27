@@ -429,7 +429,7 @@ KInfoListWidget::KInfoListWidget(const QString &_title, QWidget *parent, const c
     lBox->setWhatsThis( i18n( "This list displays system information on the selected category." ) );
     NoInfoText  = new QLabel(widgetStack);
     widgetStack->insertWidget(1,NoInfoText);
-    NoInfoText->setAlignment( Qt::AlignCenter | Qt::WordBreak);
+    NoInfoText->setAlignment( Qt::AlignCenter | Qt::TextWordWrap);
     widgetStack->setCurrentWidget(NoInfoText);
     load();
 }
