@@ -159,7 +159,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
     popupTimeout->setLabel( i18n( "Tim&eout for action popups:" ) );
     popupTimeout->setRange( 0, 200, 1, true );
     popupTimeout->setSuffix( i18n( " sec" ) );
-    QToolTip::add( popupTimeout, i18n("A value of 0 disables the timeout") );
+    popupTimeout->setToolTip( i18n("A value of 0 disables the timeout") );
 
     maxItems = new KIntNumInput( this );
     maxItems->setLabel(  i18n( "C&lipboard history size:" ) );

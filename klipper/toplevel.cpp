@@ -225,7 +225,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
         popup->plugAction( quitAction );
     }
 
-    QToolTip::add( this, i18n("Klipper - clipboard tool") );
+    this->setToolTip( i18n("Klipper - clipboard tool") );
 }
 
 KlipperWidget::~KlipperWidget()

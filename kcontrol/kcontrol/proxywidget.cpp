@@ -35,13 +35,13 @@
 #include <kstdguiitem.h>
 #include <dcopclient.h>
 
-#include <q3whatsthis.h>
+
 #include <qlabel.h>
 
 #include "global.h"
 #include "proxywidget.h"
 #include "proxywidget.moc"
-
+#include <Q3WhatsThis>
 #include <kdebug.h>
 #include <qtimer.h>
 
@@ -95,7 +95,7 @@ RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
                       "Click the \"Administrator Mode\" button to "
                       "allow modifications in this module."));
 
-	Q3WhatsThis::add(this, i18n("This module requires special permissions, probably "
+	this->setWhatsThis( i18n("This module requires special permissions, probably "
                               "for system-wide modifications; therefore, it is "
                               "required that you provide the root password to be "
                               "able to change the module's properties.  If you "

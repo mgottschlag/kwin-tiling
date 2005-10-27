@@ -163,15 +163,15 @@ void KSysTrayCmd::refresh()
       setPixmap( KWin::icon( win, iconWidth, iconWidth, true ) );
     }
 
-    QToolTip::add( this, KWin::windowInfo( win ).name() );
+    this->setToolTip( KWin::windowInfo( win ).name() );
   }
   else {
     if ( !tooltip.isEmpty() )
-      QToolTip::add( this, tooltip );
+      this->setToolTip( tooltip );
     else if ( !command.isEmpty() )
-      QToolTip::add( this, command );
+      this->setToolTip( command );
     else
-      QToolTip::add( this, window );
+      this->setToolTip( window );
 
     // Icefox ### double check after next kdelibs snapshot merge that this does it right
     setPixmap( KSystemTray::loadIcon( qApp->applicationName() ) );

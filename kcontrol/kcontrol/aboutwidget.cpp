@@ -18,7 +18,7 @@
 */
 
 #include <qpainter.h>
-#include <q3whatsthis.h>
+
 #include <qregexp.h>
 #include <qlayout.h>
 #include <qfile.h>
@@ -85,7 +85,7 @@ AboutWidget::AboutWidget(QWidget *parent, Q3ListViewItem* category, const QStrin
     setMinimumSize(400, 400);
 
     // set qwhatsthis help
-    Q3WhatsThis::add(this, i18n(intro_text));
+    this->setWhatsThis( i18n(intro_text));
     _viewer = new KHTMLPart( this, "_viewer" );
     _viewer->widget()->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
     connect( _viewer->browserExtension(),

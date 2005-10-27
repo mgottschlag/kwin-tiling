@@ -21,7 +21,7 @@
 
 #include <qpixmap.h>
 #include <qfont.h>
-#include <q3whatsthis.h>
+
 #include <qapplication.h>
 
 #include <kapplication.h>
@@ -81,8 +81,7 @@ void ModuleTitle::showTitleFor( ConfigModule *config )
   if ( !config )
     return;
 
-  Q3WhatsThis::remove( this );
-  Q3WhatsThis::add( this, config->comment() );
+  this->setWhatsThis( config->comment() );
   KIconLoader *loader = KGlobal::instance()->iconLoader();
   QPixmap icon = loader->loadIcon( config->icon(), KIcon::NoGroup, 22 );
   m_icon->setPixmap( icon );

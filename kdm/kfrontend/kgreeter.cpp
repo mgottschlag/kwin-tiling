@@ -598,7 +598,7 @@ KStdGreeter::KStdGreeter()
 	if (!_authorized && _authComplain) {
 		QLabel *complainLabel = new QLabel(
 			i18n("Warning: this is an unsecured session"), this );
-		QToolTip::add( complainLabel,
+		complainLabel->setToolTip(
 		               i18n("This display requires no X authorization.\n"
 		                    "This means that anybody can connect to it,\n"
 		                    "open windows on it or intercept your input.") );

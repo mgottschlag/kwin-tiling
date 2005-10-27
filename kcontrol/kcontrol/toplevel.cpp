@@ -32,7 +32,7 @@
 #include <QSplitter>
 
 #include <qtabwidget.h>
-#include <q3whatsthis.h>
+
 
 #include "indexwidget.h"
 #include "searchwidget.h"
@@ -86,7 +86,7 @@ TopLevel::TopLevel(const char* name)
   // create the left hand side (the tab view)
   _tab = new QTabWidget( _splitter );
 
-  Q3WhatsThis::add( _tab, i18n("Choose between Index, Search and Quick Help") );
+  _tab->setWhatsThis( i18n("Choose between Index, Search and Quick Help") );
 
   // index tab
   _indextab = new IndexWidget(_modules, _tab);
