@@ -1,0 +1,14 @@
+ <!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
+  "http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd">
+
+<Menu>
+        <!-- The following menu is hidden by default -->
+	<Menu>
+		<Name>System</Name>
+		<Menu>
+			<Name>ScreenSavers</Name>
+			<Directory>kde-system-screensavers.directory</Directory>
+	                <MergeFile>../kde-screensavers.menu</MergeFile>
+		</Menu>
+	</Menu>
+</Menu>

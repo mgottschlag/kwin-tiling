@@ -5,8 +5,8 @@
 // Copyright (c)  Martin R. Jones 1996
 //
 
-#ifndef __BLANKSCRN_H__
-#define __BLANKSCRN_H__
+#ifndef BLANKSCRN_H
+#define BLANKSCRN_H
 
 #include <qcolor.h>
 #include <kdialogbase.h>
