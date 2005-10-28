@@ -1,6 +1,6 @@
 xdg_menu_DATA = kde-settings.menu kde-information.menu
 
-xdg_mergedmenu_DATA = kde-essential.menu
+xdg_mergedmenu_DATA = kde-kcontrol.menu
 xdg_mergedmenudir = $(xdg_menudir)/applications-merged
 
 xdg_directory_DATA = \
