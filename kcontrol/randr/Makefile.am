@@ -20,6 +20,7 @@ xdg_apps_DATA = krandrtray.desktop
 krandr_data_DATA = randr.desktop
 krandr_datadir = $(kde_appsdir)/.hidden
 
+KDE_ICON=AUTO
 
 #install-data-local: uninstall.desktop
 #	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Settings/Desktop
