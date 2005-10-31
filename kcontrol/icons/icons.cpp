@@ -57,7 +57,7 @@ KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
     connect(mpUsageList, SIGNAL(highlighted(int)), SLOT(slotUsage(int)));
     g_vlay->addWidget(mpUsageList);
 
-    KSeparator *sep = new KSeparator( KSeparator::HLine, this );
+    KSeparator *sep = new KSeparator( Qt::Horizontal, this );
     top->addWidget(sep, 1, 1);
     // Preview at (2,0) - (2, 1)
     QGridLayout *g_lay = new QGridLayout(4, 3, KDialog::marginHint(), 0);

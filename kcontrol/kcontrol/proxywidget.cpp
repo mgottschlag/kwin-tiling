@@ -209,7 +209,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   connect(_client, SIGNAL(changed(bool)), SLOT(clientChanged(bool)));
   connect(_client, SIGNAL(quickHelpChanged()), SIGNAL(quickHelpChanged()));
 
-  _sep = new KSeparator(KSeparator::HLine, this);
+  _sep = new KSeparator(Qt::Horizontal, this);
 
   _help =    new KPushButton( KStdGuiItem::help(), this );
   _default = new KPushButton( KStdGuiItem::defaults(), this );

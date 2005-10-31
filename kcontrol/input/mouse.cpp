@@ -137,7 +137,7 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
 
 //    slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, tab1);
     tab1->slAutoSelect->setSteps( 125, 125 );
-    tab1->slAutoSelect->setTickmarks( QSlider::Below );
+    tab1->slAutoSelect->setTickmarks( QSlider::TicksBelow );
     tab1->slAutoSelect->setTickInterval( 250 );
     tab1->slAutoSelect->setTracking( true );
 

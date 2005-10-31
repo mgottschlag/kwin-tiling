@@ -290,7 +290,7 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 #warning "KDE4: fix setMargin"
 	//sliderBox->setMargin( 0 );
 	slOpacity = new QSlider( 0, 100, 5, /*opacity*/ 90, Qt::Horizontal, sliderBox );
-	slOpacity->setTickmarks( QSlider::Below );
+	slOpacity->setTickmarks( QSlider::TicksBelow );
 	slOpacity->setTickInterval( 10 );
 	KHBox* box1 = new KHBox( sliderBox );
 	box1->setSpacing( KDialog::spacingHint() );

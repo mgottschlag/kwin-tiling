@@ -188,7 +188,7 @@ KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
     /* stretch the right side */
     hbox->addStretch();
 
-    KSeparator *line = new KSeparator(KSeparator::HLine, this);
+    KSeparator *line = new KSeparator(Qt::Horizontal, this);
     top->addWidget(line);
 
     /* now the Graphics */

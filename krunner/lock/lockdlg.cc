@@ -99,7 +99,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     mLayoutButton = new QPushButton( frame );
     mLayoutButton->setFlat( true );
 
-    KSeparator *sep = new KSeparator( KSeparator::HLine, frame );
+    KSeparator *sep = new KSeparator( Qt::Horizontal, frame );
 
     mNewSessButton = new KPushButton( KGuiItem(i18n("Sw&itch User..."), "fork"), frame );
     ok = new KPushButton( i18n("Unl&ock"), frame );

@@ -150,7 +150,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   } else
 	preferMetaBt = 0;
 
-  KSeparator* line = new KSeparator( KSeparator::HLine, this );
+  KSeparator* line = new KSeparator( Qt::Horizontal, this );
 
   kc = new KeyChooserSpec( actions, this, isGlobal );
   connect( kc, SIGNAL(keyChange()), this, SLOT(slotKeyChange()) );
