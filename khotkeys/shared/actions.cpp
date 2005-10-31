@@ -28,6 +28,7 @@
 #include <klocale.h>
 #include <kaccel.h>
 #include <kservice.h>
+#include <ksharedptr.h>
 #include <kprocess.h>
 
 #include "windows.h"
@@ -149,7 +150,7 @@ void Command_url_action::execute()
             if( !uri.hasArgsAndOptions())
                 {
                 KService::Ptr service = KService::serviceByDesktopName( cmd );
-                if( service != NULL )
+                if( service != (KService*)0 )
                     {
                     KRun::run( *service, KURL::List());
                   break;
