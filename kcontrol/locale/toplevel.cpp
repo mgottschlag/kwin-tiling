@@ -182,10 +182,10 @@ void KLocaleApplication::save()
   KGlobal::_locale = lsave;
 
   KConfig *config = KGlobal::config();
-  KConfigGroupSaver saver(config, "Locale");
+  KConfigGroup group(config, "Locale");
 
   // ##### this doesn't make sense
-  bool langChanged = config->readEntry("Language")
+  bool langChanged = group.readEntry("Language")
     != m_locale->language();
 
   m_localemain->save();

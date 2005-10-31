@@ -135,7 +135,7 @@ KLocaleConfigMoney::~KLocaleConfigMoney()
 void KLocaleConfigMoney::save()
 {
   KConfig *config = KGlobal::config();
-  KConfigGroupSaver saver(config, "Locale");
+  KConfigGroup group(config, "Locale");
 
   KSimpleConfig ent(locate("locale",
                            QString::fromLatin1("l10n/%1/entry.desktop")
@@ -147,60 +147,60 @@ void KLocaleConfigMoney::save()
   bool b;
 
   str = ent.readEntry("CurrencySymbol", QString::fromLatin1("$"));
-  config->deleteEntry("CurrencySymbol", false, true);
+  group.deleteEntry("CurrencySymbol", false, true);
   if (str != m_locale->currencySymbol())
-    config->writeEntry("CurrencySymbol",
+    group.writeEntry("CurrencySymbol",
                        m_locale->currencySymbol(), true, true);
 
   str = ent.readEntry("MonetaryDecimalSymbol", QString::fromLatin1("."));
-  config->deleteEntry("MonetaryDecimalSymbol", false, true);
+  group.deleteEntry("MonetaryDecimalSymbol", false, true);
   if (str != m_locale->monetaryDecimalSymbol())
-    config->writeEntry("MonetaryDecimalSymbol",
+    group.writeEntry("MonetaryDecimalSymbol",
                        m_locale->monetaryDecimalSymbol(), true, true);
 
   str = ent.readEntry("MonetaryThousandsSeparator", QString::fromLatin1(","));
   str.replace(QString::fromLatin1("$0"), QString::null);
-  config->deleteEntry("MonetaryThousandsSeparator", false, true);
+  group.deleteEntry("MonetaryThousandsSeparator", false, true);
   if (str != m_locale->monetaryThousandsSeparator())
-    config->writeEntry("MonetaryThousandsSeparator",
+    group.writeEntry("MonetaryThousandsSeparator",
                        QString::fromLatin1("$0%1$0")
                        .arg(m_locale->monetaryThousandsSeparator()),
                        true, true);
 
   i = ent.readNumEntry("FracDigits", 2);
-  config->deleteEntry("FracDigits", false, true);
+  group.deleteEntry("FracDigits", false, true);
   if (i != m_locale->fracDigits())
-    config->writeEntry("FracDigits", m_locale->fracDigits(), true, true);
+    group.writeEntry("FracDigits", m_locale->fracDigits(), true, true);
 
   b = ent.readNumEntry("PositivePrefixCurrencySymbol", true);
-  config->deleteEntry("PositivePrefixCurrencySymbol", false, true);
+  group.deleteEntry("PositivePrefixCurrencySymbol", false, true);
   if (b != m_locale->positivePrefixCurrencySymbol())
-    config->writeEntry("PositivePrefixCurrencySymbol",
+    group.writeEntry("PositivePrefixCurrencySymbol",
                        m_locale->positivePrefixCurrencySymbol(), true, true);
 
   b = ent.readNumEntry("NegativePrefixCurrencySymbol", true);
-  config->deleteEntry("NegativePrefixCurrencySymbol", false, true);
+  group.deleteEntry("NegativePrefixCurrencySymbol", false, true);
   if (b != m_locale->negativePrefixCurrencySymbol())
-    config->writeEntry("NegativePrefixCurrencySymbol",
+    group.writeEntry("NegativePrefixCurrencySymbol",
                        m_locale->negativePrefixCurrencySymbol(), true, true);
 
   i = ent.readNumEntry("PositiveMonetarySignPosition",
                        (int)KLocale::BeforeQuantityMoney);
-  config->deleteEntry("PositiveMonetarySignPosition", false, true);
+  group.deleteEntry("PositiveMonetarySignPosition", false, true);
   if (i != m_locale->positiveMonetarySignPosition())
-    config->writeEntry("PositiveMonetarySignPosition",
+    group.writeEntry("PositiveMonetarySignPosition",
                        (int)m_locale->positiveMonetarySignPosition(),
                        true, true);
 
   i = ent.readNumEntry("NegativeMonetarySignPosition",
                        (int)KLocale::ParensAround);
-  config->deleteEntry("NegativeMonetarySignPosition", false, true);
+  group.deleteEntry("NegativeMonetarySignPosition", false, true);
   if (i != m_locale->negativeMonetarySignPosition())
-    config->writeEntry("NegativeMonetarySignPosition",
+    group.writeEntry("NegativeMonetarySignPosition",
                        (int)m_locale->negativeMonetarySignPosition(),
                        true, true);
 
-  config->sync();
+  group.sync();
 }
 
 void KLocaleConfigMoney::slotLocaleChanged()

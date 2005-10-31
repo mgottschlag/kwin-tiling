@@ -86,7 +86,7 @@ void KLocaleConfigNumber::save()
   KGlobal::_locale = m_locale;
 
   KConfig *config = KGlobal::config();
-  KConfigGroupSaver saver(config, "Locale");
+  KConfigGroup group(config, "Locale");
 
   KSimpleConfig ent(locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
@@ -97,29 +97,29 @@ void KLocaleConfigNumber::save()
 
   str = ent.readEntry("DecimalSymbol",
 		      QString::fromLatin1("."));
-  config->deleteEntry("DecimalSymbol", false, true);
+  group.deleteEntry("DecimalSymbol", false, true);
   if (str != m_locale->decimalSymbol())
-    config->writeEntry("DecimalSymbol",
+    group.writeEntry("DecimalSymbol",
 		       m_locale->decimalSymbol(), true, true);
 
   str = ent.readEntry("ThousandsSeparator",
 		      QString::fromLatin1(","));
-  config->deleteEntry("ThousandsSeparator", false, true);
+  group.deleteEntry("ThousandsSeparator", false, true);
   str.replace(QString::fromLatin1("$0"), QString::null);
   if (str != m_locale->thousandsSeparator())
-    config->writeEntry("ThousandsSeparator",
+    group.writeEntry("ThousandsSeparator",
 		       QString::fromLatin1("$0%1$0")
 		       .arg(m_locale->thousandsSeparator()), true, true);
 
   str = ent.readEntry("PositiveSign");
-  config->deleteEntry("PositiveSign", false, true);
+  group.deleteEntry("PositiveSign", false, true);
   if (str != m_locale->positiveSign())
-    config->writeEntry("PositiveSign", m_locale->positiveSign(), true, true);
+    group.writeEntry("PositiveSign", m_locale->positiveSign(), true, true);
 
   str = ent.readEntry("NegativeSign", QString::fromLatin1("-"));
-  config->deleteEntry("NegativeSign", false, true);
+  group.deleteEntry("NegativeSign", false, true);
   if (str != m_locale->negativeSign())
-    config->writeEntry("NegativeSign", m_locale->negativeSign(), true, true);
+    group.writeEntry("NegativeSign", m_locale->negativeSign(), true, true);
 
   // restore the old global locale
   KGlobal::_locale = lsave;

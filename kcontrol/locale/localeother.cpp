@@ -77,7 +77,7 @@ KLocaleConfigOther::~KLocaleConfigOther()
 void KLocaleConfigOther::save()
 {
   KConfig *config = KGlobal::config();
-  KConfigGroupSaver saver(config, "Locale");
+  KConfigGroup group(config, "Locale");
 
   KSimpleConfig ent(locate("locale",
                            QString::fromLatin1("l10n/%1/entry.desktop")
@@ -87,18 +87,18 @@ void KLocaleConfigOther::save()
   // ### HPB: Add code here
   int i;
   i = ent.readNumEntry("PageSize", (int)QPrinter::A4);
-  config->deleteEntry("PageSize", false, true);
+  group.deleteEntry("PageSize", false, true);
   if (i != m_locale->pageSize())
-    config->writeEntry("PageSize",
+    group.writeEntry("PageSize",
                        m_locale->pageSize(), true, true);
 
   i = ent.readNumEntry("MeasureSystem", (int)KLocale::Metric);
-  config->deleteEntry("MeasureSystem", false, true);
+  group.deleteEntry("MeasureSystem", false, true);
   if (i != m_locale->measureSystem())
-    config->writeEntry("MeasureSystem",
+    group.writeEntry("MeasureSystem",
                        m_locale->measureSystem(), true, true);
 
-  config->sync();
+  group.sync();
 }
 
 void KLocaleConfigOther::slotLocaleChanged()

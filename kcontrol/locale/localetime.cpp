@@ -255,7 +255,7 @@ void KLocaleConfigTime::save()
   KGlobal::_locale = m_locale;
 
   KConfig *config = KGlobal::config();
-  KConfigGroupSaver saver(config, "Locale");
+  KConfigGroup group(config, "Locale");
 
   KSimpleConfig ent(locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
@@ -265,43 +265,43 @@ void KLocaleConfigTime::save()
   QString str;
 
   str = ent.readEntry("CalendarSystem", QString::fromLatin1("gregorian"));
-  config->deleteEntry("CalendarSystem", false, true);
+  group.deleteEntry("CalendarSystem", false, true);
   if (str != m_locale->calendarType())
-    config->writeEntry("CalendarSystem", m_locale->calendarType(), true, true);
+    group.writeEntry("CalendarSystem", m_locale->calendarType(), true, true);
 
   str = ent.readEntry("TimeFormat", QString::fromLatin1("%H:%M:%S"));
-  config->deleteEntry("TimeFormat", false, true);
+  group.deleteEntry("TimeFormat", false, true);
   if (str != m_locale->timeFormat())
-    config->writeEntry("TimeFormat", m_locale->timeFormat(), true, true);
+    group.writeEntry("TimeFormat", m_locale->timeFormat(), true, true);
 
   str = ent.readEntry("DateFormat", QString::fromLatin1("%A %d %B %Y"));
-  config->deleteEntry("DateFormat", false, true);
+  group.deleteEntry("DateFormat", false, true);
   if (str != m_locale->dateFormat())
-    config->writeEntry("DateFormat", m_locale->dateFormat(), true, true);
+    group.writeEntry("DateFormat", m_locale->dateFormat(), true, true);
 
   str = ent.readEntry("DateFormatShort", QString::fromLatin1("%Y-%m-%d"));
-  config->deleteEntry("DateFormatShort", false, true);
+  group.deleteEntry("DateFormatShort", false, true);
   if (str != m_locale->dateFormatShort())
-    config->writeEntry("DateFormatShort",
+    group.writeEntry("DateFormatShort",
 		       m_locale->dateFormatShort(), true, true);
 
   int firstDay;
   firstDay = ent.readNumEntry("WeekStartDay", 1);
-  config->deleteEntry("WeekStartDay", false, true);
+  group.deleteEntry("WeekStartDay", false, true);
   if (firstDay != m_locale->weekStartDay())
-      config->writeEntry("WeekStartDay", m_locale->weekStartDay(), true, true);
+      group.writeEntry("WeekStartDay", m_locale->weekStartDay(), true, true);
 
   if ( m_locale->nounDeclension() )
   {
     bool b;
     b = ent.readNumEntry("DateMonthNamePossessive", false);
-    config->deleteEntry("DateMonthNamePossessive", false, true);
+    group.deleteEntry("DateMonthNamePossessive", false, true);
     if (b != m_locale->dateMonthNamePossessive())
-      config->writeEntry("DateMonthNamePossessive",
+      group.writeEntry("DateMonthNamePossessive",
 		         m_locale->dateMonthNamePossessive(), true, true);
   }
 
-  config->sync();
+  group.sync();
 
   // restore the old global locale
   KGlobal::_locale = lsave;
