@@ -11,7 +11,6 @@ kde-games-roguelikes.directory \
 kde-games-strategy.directory \
 kde-games.directory \
 kde-graphics.directory \
-kde-information.directory \
 kde-internet-terminal.directory \
 kde-internet.directory \
 kde-more.directory \
@@ -19,7 +18,6 @@ kde-multimedia.directory \
 kde-office.directory \
 kde-science.directory \
 kde-settingsmenu.directory \
-kde-system-screensavers.directory \
 kde-system-terminal.directory \
 kde-system.directory \
 kde-toys.directory \
