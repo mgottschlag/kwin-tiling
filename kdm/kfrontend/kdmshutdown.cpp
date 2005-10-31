@@ -114,7 +114,7 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 		connect( accel, SIGNAL(activated( int )), SLOT(slotActivatePlugMenu()) );
 	}
 
-	box->addWidget( new KSeparator( KSeparator::HLine, this ) );
+	box->addWidget( new KSeparator( Qt::Horizontal, this ) );
 
 	QBoxLayout *hlay = new QHBoxLayout( box, KDsh );
 	hlay->addStretch( 1 );

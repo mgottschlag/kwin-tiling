@@ -675,7 +675,7 @@ KStdGreeter::KStdGreeter()
 	sverify->selectPlugin( curPlugin );
 	verify = sverify;
 
-	inner_box->addWidget( new KSeparator( KSeparator::HLine, this ) );
+	inner_box->addWidget( new KSeparator( Qt::Horizontal, this ) );
 
 	QBoxLayout *hbox2 = new QHBoxLayout( inner_box, 10 );
 	hbox2->addWidget( goButton );

@@ -960,7 +960,7 @@ KGChTok::KGChTok( QWidget *_parent, const QString &user,
 
 	box->addLayout( verify->getLayout() );
 
-	box->addWidget( new KSeparator( KSeparator::HLine, this ) );
+	box->addWidget( new KSeparator( Qt::Horizontal, this ) );
 
 	QHBoxLayout *hlay = new QHBoxLayout( box );
 	hlay->addStretch( 1 );
