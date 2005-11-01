@@ -39,12 +39,12 @@
 #include <qpainter.h>
 #include <qpixmap.h>
 //Added by qt3to4:
+#include <QApplication>
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
 #include <QDragMoveEvent>
 #include <QKeyEvent>
 #include <QDropEvent>
-#include <kapplication.h>
 #include <kfileitem.h>
 #include <kglobal.h>
 #include <kglobalsettings.h>
@@ -194,7 +194,7 @@ void CKFileFontView::slotActivate(Q3ListViewItem *item)
 
 void CKFileFontView::selected(Q3ListViewItem *item)
 {
-    if (item && !(KApplication::keyboardMouseState() & (Qt::ShiftModifier|Qt::ControlModifier)) &&
+    if (item && !(QApplication::keyboardModifiers() & (Qt::ShiftModifier|Qt::ControlModifier)) &&
          KGlobalSettings::singleClick())
     {
         const KFileItem *fi = ((CFontListViewItem*)item)->fileInfo();
