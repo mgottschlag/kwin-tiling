@@ -72,9 +72,9 @@ CFontViewerAppMainWindow::CFontViewerAppMainWindow()
             itsPreview->openURL(openURL);
 
         QSize             defSize(450, 380);
-        KConfigGroupSaver saver(kapp->config(), CFG_GROUP);
+        KConfigGroup cg(KGlobal::config(), CFG_GROUP);
 
-        resize(kapp->config()->readSizeEntry(CFG_SIZE_KEY, &defSize));
+        resize(cg.readSizeEntry(CFG_SIZE_KEY, &defSize));
         show();
     }
     else
@@ -83,9 +83,9 @@ CFontViewerAppMainWindow::CFontViewerAppMainWindow()
 
 CFontViewerAppMainWindow::~CFontViewerAppMainWindow()
 {
-    KConfigGroupSaver saver(kapp->config(), CFG_GROUP);
-    kapp->config()->writeEntry(CFG_SIZE_KEY, size());
-    kapp->config()->sync();
+    KConfigGroup cg(KGlobal::config(), CFG_GROUP);
+    cg.writeEntry(CFG_SIZE_KEY, size());
+    cg.sync();
 }
 
 void CFontViewerAppMainWindow::fileOpen()
