@@ -150,7 +150,7 @@ void Command_url_action::execute()
             if( !uri.hasArgsAndOptions())
                 {
                 KService::Ptr service = KService::serviceByDesktopName( cmd );
-                if( service != (KService*)0 )
+                if( service )
                     {
                     KRun::run( *service, KURL::List());
                   break;
