@@ -706,7 +706,7 @@ static bool getFontList(const QStringList &files, QMap<QString, QString> &map)
     return list.count() ? true : false;
 }
 
-CKioFonts::CKioFonts(const QByteArray &pool, const Q3CString &app)
+CKioFonts::CKioFonts(const QByteArray &pool, const QByteArray &app)
          : KIO::SlaveBase(KFI_KIO_FONTS_PROTOCOL, pool, app),
            itsRoot(Misc::root()),
            itsUsingFcFpe(false),

@@ -94,7 +94,7 @@ class CKioFonts : public KIO::SlaveBase
 
     public:
 
-    CKioFonts(const QByteArray &pool, const Q3CString &app);
+    CKioFonts(const QByteArray &pool, const QByteArray &app);
     virtual ~CKioFonts();
 
     static QString getSect(const QString &f) { return f.section('/', 1, 1); }
