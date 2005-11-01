@@ -1849,7 +1849,7 @@ void KSMServer::storeLegacySession( KConfig* config )
 {
     // Write LegacySession data
     config->deleteGroup( "Legacy" + sessionGroup );
-    KConfigGroupSaver saver( config, "Legacy" + sessionGroup );
+    KConfigGroup group( config, "Legacy" + sessionGroup );
     int count = 0;
     for (WindowMap::ConstIterator it = legacyWindows.begin(); it != legacyWindows.end(); ++it) {
         if ( (*it).type != SM_ERROR) {
@@ -1859,12 +1859,12 @@ void KSMServer::storeLegacySession( KConfig* config )
             if ( !(*it).wmCommand.isEmpty() && !(*it).wmClientMachine.isEmpty() ) {
                 count++;
                 QString n = QString::number(count);
-                config->writeEntry( QString("command")+n, (*it).wmCommand );
-                config->writeEntry( QString("clientMachine")+n, (*it).wmClientMachine );
+                group.writeEntry( QString("command")+n, (*it).wmCommand );
+                group.writeEntry( QString("clientMachine")+n, (*it).wmClientMachine );
             }
         }
     }
-    config->writeEntry( "count", count );
+    group.writeEntry( "count", count );
 }
 
 /*!
@@ -1873,14 +1873,14 @@ void KSMServer::storeLegacySession( KConfig* config )
 void KSMServer::restoreLegacySession( KConfig* config )
 {
     if( config->hasGroup( "Legacy" + sessionGroup )) {
-        KConfigGroupSaver saver( config, "Legacy" + sessionGroup );
+        KConfigGroup group( config, "Legacy" + sessionGroup );
         restoreLegacySessionInternal( config );
     } else if( wm == "kwin" ) { // backwards comp. - get it from kwinrc
-	KConfigGroupSaver saver( config, sessionGroup );
-	int count =  config->readNumEntry( "count", 0 );
+	KConfigGroup group( config, sessionGroup );
+	int count =  group.readNumEntry( "count", 0 );
 	for ( int i = 1; i <= count; i++ ) {
     	    QString n = QString::number(i);
-    	    if ( config->readEntry( QString("program")+n ) != wm )
+    	    if ( group.readEntry( QString("program")+n ) != wm )
                 continue;
     	    QStringList restartCommand =
                 config->readListEntry( QString("restartCommand")+n );
