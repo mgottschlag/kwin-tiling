@@ -599,12 +599,14 @@ void KlipperWidget::slotRepeatAction()
 
 void KlipperWidget::setURLGrabberEnabled( bool enable )
 {
-    bURLGrabber = enable;
+    if (enable != bURLGrabber) {
+      bURLGrabber = enable;
+      KConfig *kc = m_config;
+      kc->setGroup("General");
+      kc->writeEntry("URLGrabberEnabled", bURLGrabber);
+    }
+
     toggleURLGrabAction->setChecked( enable );
-    KConfig *kc = m_config;
-    kc->setGroup("General");
-    kc->writeEntry("URLGrabberEnabled", bURLGrabber);
-    kc->sync();
 
     if ( !bURLGrabber ) {
         delete myURLGrabber;
