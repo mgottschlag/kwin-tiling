@@ -820,9 +820,9 @@ void KAccessConfig::checkAccess()
 
 extern "C"
 {
-  KDE_EXPORT KCModule *create_access(QWidget *parent, const char *name)
+  KDE_EXPORT KCModule *create_access(QWidget *parent)
   {
-	KInstance *inst = new KInstance(name);
+	KInstance *inst = new KInstance("kcmaccess");
     return new KAccessConfig(inst,parent);
   }
 
