@@ -226,8 +226,8 @@ QString mouseKeysShortcut (Display *display) {
   return result.arg(keyname);
 }
 
-KAccessConfig::KAccessConfig(QWidget *parent, const char *)
-  : KCModule(parent)
+KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
+  : KCModule(inst, parent)
 {
 
   KAboutData *about =
@@ -822,7 +822,8 @@ extern "C"
 {
   KDE_EXPORT KCModule *create_access(QWidget *parent, const char *name)
   {
-    return new KAccessConfig(parent, name);
+	KInstance *inst = new KInstance(name);
+    return new KAccessConfig(inst,parent);
   }
 
   /* This one gets called by kcminit
