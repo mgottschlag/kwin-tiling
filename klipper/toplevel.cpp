@@ -416,8 +416,8 @@ void KlipperWidget::readProperties(KConfig *kc)
         if ( !loadHistory() ) {
             // Try to load from the old config file.
             // Remove this at some point.
-            KConfigGroupSaver groupSaver(kc, "General");
-            dataList = kc->readListEntry("ClipboardData");
+            KConfigGroup configGroup(kc, "General");
+            dataList = configGroup.readListEntry("ClipboardData");
 
             for (QStringList::ConstIterator it = dataList.end();
                  it != dataList.begin();
@@ -737,7 +737,7 @@ bool KlipperWidget::blockFetchingNewData()
 //   while the user is doing a selection using the mouse, OOo stops updating the clipboard
 //   contents, so in practice it's like the user has selected only the part which was
 //   selected when Klipper asked first.
-	Qt::ButtonState buttonstate = kapp->keyboardMouseState();
+	Qt::ButtonState buttonstate = QApplication::mouseButtons();
     if( ( buttonstate & ( Qt::ShiftButton | Qt::LeftButton )) == Qt::ShiftButton // #85198
         || ( buttonstate & Qt::LeftButton ) == Qt::LeftButton ) { // #80302
         m_pendingContentsCheck = true;
