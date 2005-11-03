@@ -51,7 +51,7 @@
 #include <kapplication.h>
 #include <kservice.h>
 #include <kservicegroup.h>
-#include <kmultipledrag.h>
+#include <k3multipledrag.h>
 #include <k3urldrag.h>
 #include <QMenu>
 
@@ -292,21 +292,18 @@ void TreeView::readMenuFolderInfo(MenuFolderInfo *folderInfo, KServiceGroup::Ptr
 
     KServiceGroup::List list = folder->entries(true, !m_showHidden, true, m_detailedMenuEntries && !m_detailedEntriesNamesFirst);
 
-    for(KServiceGroup::List::ConstIterator it = list.begin();
-        it != list.end(); ++it)
+	foreach(const KSycocaEntry::Ptr &e, folder->entries(true, !m_showHidden, true, m_detailedMenuEntries && !m_detailedEntriesNamesFirst))
     {
-        KSycocaEntry * e = *it;
-
         if (e->isType(KST_KServiceGroup))
         {
-            KServiceGroup::Ptr g(static_cast<KServiceGroup *>(e));
+	        KServiceGroup::Ptr g(KServiceGroup::Ptr::staticCast(e));
             MenuFolderInfo *subFolderInfo = new MenuFolderInfo();
             readMenuFolderInfo(subFolderInfo, g, folderInfo->fullId);
             folderInfo->add(subFolderInfo, true);
         }
         else if (e->isType(KST_KService))
         {
-            folderInfo->add(new MenuEntryInfo(static_cast<KService *>(e)), true);
+            folderInfo->add(new MenuEntryInfo(KService::Ptr::staticCast(e)), true);
         }
         else if (e->isType(KST_KServiceSeparator))
         {
@@ -947,7 +944,7 @@ Q3DragObject *TreeView::dragObject()
     TreeItem *item = (TreeItem*)selectedItem();
     if(item == 0) return 0;
 
-    KMultipleDrag *drag = new KMultipleDrag( this );
+    K3MultipleDrag *drag = new K3MultipleDrag( this );
 
     if (item->isDirectory())
     {
