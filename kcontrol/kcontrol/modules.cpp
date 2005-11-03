@@ -272,21 +272,19 @@ bool ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
 
   if (!group || !group->isValid()) return false;
 
-  KServiceGroup::List list = group->entries(true, true);
-
+	KServiceGroup::List list = group->entries(true, true);
+  
   if( list.isEmpty() )
 	  return false;
 
   Menu *menu = new Menu;
   subMenus.insert(path, menu);
 
-  for( KServiceGroup::List::ConstIterator it = list.begin();
-       it != list.end(); it++)
+  foreach(const KSycocaEntry::Ptr &p, group->entries(true, true))
   {
-     KSycocaEntry *p = (*it);
      if (p->isType(KST_KService))
      {
-        KService *s = static_cast<KService*>(p);
+		KService::Ptr s(KService::Ptr::staticCast(p));
         if (!KAuthorized::authorizeControlModule(s->menuId()))
            continue;
 
