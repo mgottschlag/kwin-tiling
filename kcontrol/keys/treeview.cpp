@@ -145,18 +145,13 @@ void AppTreeView::fillBranch(const QString& rPath, AppTreeItem *parent)
     if (!root || !root->isValid())
         return;
 
-    KServiceGroup::List list = root->entries(true);
-
     Q3ListViewItem *after = 0;
 
-    for(KServiceGroup::List::ConstIterator it = list.begin();
-        it != list.end(); ++it)
+    foreach(const KSycocaEntry::Ptr &e, root->entries(true))
     {
-        KSycocaEntry * e = *it;
-
         if (e->isType(KST_KServiceGroup))
         {
-            KServiceGroup::Ptr g(static_cast<KServiceGroup *>(e));
+            KServiceGroup::Ptr g(KServiceGroup::Ptr::staticCast(e));
             QString groupCaption = g->caption();
 
             // Item names may contain ampersands. To avoid them being converted
@@ -177,7 +172,7 @@ void AppTreeView::fillBranch(const QString& rPath, AppTreeItem *parent)
         }
         else if (e->isType(KST_KService))
         {
-            KService::Ptr s(static_cast<KService *>(e));
+            KService::Ptr s(KService::Ptr::staticCast(e));
             QString serviceCaption = s->name();
 
             // Item names may contain ampersands. To avoid them being converted
