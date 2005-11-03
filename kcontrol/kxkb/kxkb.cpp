@@ -59,6 +59,7 @@ DESCRIPTION
 #include <X11/Xatom.h>
 #define explicit int_explicit        // avoid compiler name clash in XKBlib.h
 #include <X11/XKBlib.h>
+#include <ktoolinvocation.h>
 #undef explicit
 
 #include "kxkb.h"
@@ -101,7 +102,7 @@ void TrayWindow::setLayouts(const QStringList& layouts, const KeyRules& rules)
 
     mDescriptionMap.clear();
     menu->clear();
-    menu->insertTitle( kapp->miniIcon(), kapp->caption() );
+    menu->insertTitle( qApp->windowIcon().pixmap(IconSize(KIcon::Small),IconSize(KIcon::Small)), kapp->caption() );
     
     KIconEffect iconeffect;
 
@@ -482,7 +483,7 @@ void KXKBApp::menuActivated(int id)
     }
     else if (id == (int)m_list.count()+1)
     {
-	KApplication::kApplication()->invokeHelp(0, "kxkb");
+	KToolInvocation::invokeHelp(0, "kxkb");
     }
     else
     {
