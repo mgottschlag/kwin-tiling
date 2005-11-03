@@ -78,7 +78,7 @@ void TaskRMBMenu::fillMenu(Task::TaskPtr t)
         if (showAll)
         {
             id = insertItem(i18n("&To Current Desktop"),
-                            t, SLOT(toCurrentDesktop()));
+                            t.data(), SLOT(toCurrentDesktop()));
             setItemEnabled( id, !t->isOnCurrentDesktop() );
         }
 
@@ -88,27 +88,27 @@ void TaskRMBMenu::fillMenu(Task::TaskPtr t)
         }
     }
 
-    id = insertItem(SmallIconSet("move"), i18n("&Move"), t, SLOT(move()));
+    id = insertItem(SmallIconSet("move"), i18n("&Move"), t.data(), SLOT(move()));
     setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionMove));
 
-    id = insertItem(i18n("Re&size"), t, SLOT(resize()));
+    id = insertItem(i18n("Re&size"), t.data(), SLOT(resize()));
     setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionResize));
 
-    id = insertItem(i18n("Mi&nimize"), t, SLOT(toggleIconified()));
+    id = insertItem(i18n("Mi&nimize"), t.data(), SLOT(toggleIconified()));
     setItemChecked(id, t->isIconified());
     setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionMinimize));
 
-    id = insertItem(i18n("Ma&ximize"), t, SLOT(toggleMaximized()));
+    id = insertItem(i18n("Ma&ximize"), t.data(), SLOT(toggleMaximized()));
     setItemChecked(id, t->isMaximized());
     setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionMax));
 
-    id = insertItem(i18n("&Shade"), t, SLOT(toggleShaded()));
+    id = insertItem(i18n("&Shade"), t.data(), SLOT(toggleShaded()));
     setItemChecked(id, t->isShaded());
     setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionShade));
 
     insertSeparator();
 
-    id = insertItem(SmallIcon("fileclose"), i18n("&Close"), t, SLOT(close()));
+    id = insertItem(SmallIcon("fileclose"), i18n("&Close"), t.data(), SLOT(close()));
     setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionClose));
 }
 
@@ -126,7 +126,7 @@ void TaskRMBMenu::fillMenu()
 				 t->visibleNameWithState(),
 		                 new TaskRMBMenu(t, this) );
 		setItemChecked( id, t->isActive() );
-		connectItem( id, t, SLOT( activateRaiseOrIconify() ) );
+		connectItem( id, t.data(), SLOT( activateRaiseOrIconify() ) );
 	}
 
 	insertSeparator();
@@ -205,17 +205,17 @@ QMenu* TaskRMBMenu::makeAdvancedMenu(Task::TaskPtr t)
 
     id = menu->insertItem(SmallIconSet("up"),
                           i18n("Keep &Above Others"),
-                          t, SLOT(toggleAlwaysOnTop()));
+                          t.data(), SLOT(toggleAlwaysOnTop()));
     menu->setItemChecked(id, t->isAlwaysOnTop());
 
     id = menu->insertItem(SmallIconSet("down"),
                           i18n("Keep &Below Others"),
-                          t, SLOT(toggleKeptBelowOthers()));
+                          t.data(), SLOT(toggleKeptBelowOthers()));
     menu->setItemChecked(id, t->isKeptBelowOthers());
 
     id = menu->insertItem(SmallIconSet("window_fullscreen"),
                           i18n("&Fullscreen"),
-                          t, SLOT(toggleFullScreen()));
+                          t.data(), SLOT(toggleFullScreen()));
     menu->setItemChecked(id, t->isFullScreen());
 
     if (KWin::allowedActionsSupported())
@@ -231,7 +231,7 @@ QMenu* TaskRMBMenu::makeDesktopsMenu(Task::TaskPtr t)
 	QMenu* m = new QMenu( this );
 	m->setCheckable( true );
 
-	int id = m->insertItem( i18n("&All Desktops"), t, SLOT( toDesktop(int) ) );
+	int id = m->insertItem( i18n("&All Desktops"), t.data(), SLOT( toDesktop(int) ) );
 	m->setItemParameter( id, 0 ); // 0 means all desktops
 	m->setItemChecked( id, t->isOnAllDesktops() );
 
@@ -239,7 +239,7 @@ QMenu* TaskRMBMenu::makeDesktopsMenu(Task::TaskPtr t)
 
 	for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
 		QString name = QString("&%1 %2").arg(i).arg(TaskManager::self()->desktopName(i).replace('&', "&&"));
-		id = m->insertItem( name, t, SLOT( toDesktop(int) ) );
+		id = m->insertItem( name, t.data(), SLOT( toDesktop(int) ) );
 		m->setItemParameter( id, i );
 		m->setItemChecked( id, !t->isOnAllDesktops() && t->desktop() == i );
 	}
