@@ -132,7 +132,7 @@ void TaskLMBMenu::fillMenu()
                                                   t->demandsAttention());*/
         //QAction* menuItem = 
         int id = insertItem(QIcon(t->pixmap()), text);
-        connectItem(id, t, SLOT(activateRaiseOrIconify()));
+        connectItem(id, t.data(), SLOT(activateRaiseOrIconify()));
         setItemChecked(id, t->isActive());
 
         if (t->demandsAttention())
