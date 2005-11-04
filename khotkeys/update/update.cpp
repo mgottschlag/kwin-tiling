@@ -41,7 +41,7 @@ int main( int argc, char* argv[] )
     KApplication::disableAutoDcopRegistration();
     KApplication app( false, true ); // X11 connection is necessary for KKey* stuff :-/
     KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
-    Q3CString id = args->getOption( "id" );
+    QByteArray id = args->getOption( "id" );
     QString file = locate( "data", "khotkeys/" + id + ".khotkeys" );
     if( file.isEmpty())
         {

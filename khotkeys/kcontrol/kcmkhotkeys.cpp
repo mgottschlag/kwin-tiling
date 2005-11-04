@@ -66,7 +66,7 @@ extern "C"
     // Non-xinerama multhead support in KDE is just a hack
     // involving forking apps per-screen. Don't bother with
     // kded modules in such case.
-    Q3CString multiHead = getenv("KDE_MULTIHEAD");
+    QByteArray multiHead = getenv("KDE_MULTIHEAD");
     if (multiHead.lower() == "true")
         KToolInvocation::kdeinitExec( "khotkeys" );
     else
