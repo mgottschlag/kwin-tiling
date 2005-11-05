@@ -2,6 +2,6 @@ This contains the basic componants of the KDE Screensaver system.
 
 The application that actually launches the screensavers is kdedesktop
 
-KDE's screensavers use the kscreensaver library which is in kdelibs
+KDE's screensavers use the kscreensaver library which is in libkscreensaver
 
 More screensavers can be found in kdeartwork/kscreensaver
