@@ -1,0 +1,4 @@
+File=kwebdesktop.kcfg
+ClassName=KWebDesktopSettings
+Singleton=true
+Mutators=true

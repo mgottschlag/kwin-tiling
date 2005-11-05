@@ -1,0 +1,4 @@
+File=kdesktop.kcfg
+ClassName=KDesktopSettings
+Singleton=true
+Mutators=true

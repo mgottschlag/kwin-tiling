@@ -1,0 +1,34 @@
+xss_save_ldflags="$LDFLAGS"
+LDFLAGS="$X_LDFLAGS"
+
+LIB_XSS=
+
+KDE_CHECK_HEADER(X11/extensions/scrnsaver.h,
+    [
+    AC_CHECK_LIB(Xext,XScreenSaverQueryInfo,
+	[
+        AC_DEFINE(HAVE_XSCREENSAVER, 1, [Define if you have the XScreenSaver extension])
+	LIB_XSS="-lXext"
+        ],
+        [
+        ld_shared_flag=
+        xss_save_cxxflags="$CXXFLAGS"
+        CXXFLAGS="$CXXFLAGS $lt_prog_compiler_pic_CXX"
+        KDE_CHECK_COMPILER_FLAG(shared, [ld_shared_flag="-shared"])
+        AC_CHECK_LIB(Xss,XScreenSaverQueryInfo,
+            [
+            AC_DEFINE(HAVE_XSCREENSAVER, 1, [Define if you have the XScreenSaver extension])
+            LIB_XSS="-lXss"
+            ],
+            [],
+            [ $ld_shared_flag $X_PRE_LIBS -lXext -lX11 $X_EXTRA_LIBS ])
+        CXXFLAGS="$xss_save_cxxflags"
+        ],
+        [ $X_PRE_LIBS -lX11 $X_EXTRA_LIBS ])
+     ], [],
+     [
+     #include <X11/Xlib.h>
+     ] )
+
+AC_SUBST(LIB_XSS)
+LDFLAGS="$xss_save_ldflags"

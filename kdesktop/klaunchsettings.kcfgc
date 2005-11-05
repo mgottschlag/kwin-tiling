@@ -1,0 +1,4 @@
+File=klaunch.kcfg
+ClassName=KLaunchSettings
+Singleton=true
+Mutators=true

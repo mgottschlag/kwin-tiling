@@ -1,0 +1,37 @@
+xss_save_ldflags="$LDFLAGS"
+LDFLAGS="$X_LDFLAGS"
+
+LIB_XF86MISC=
+
+KDE_CHECK_HEADER(X11/extensions/xf86misc.h,
+    [
+    AC_CHECK_LIB(Xxf86misc,XF86MiscQueryVersion,
+	[
+        AC_DEFINE(HAVE_XF86MISC, 1, [Define if you have the xf86misc extension])
+	LIB_XF86MISC="-lXxf86misc"
+        ],
+        [], [ $X_PRE_LIBS -lXext -lX11 $X_EXTRA_LIBS ])
+    ],[],
+    [
+    #include <X11/Xlib.h>
+    ])
+AC_SUBST(LIB_XF86MISC)
+
+if test -n "$LIB_XF86MISC"; then
+    AC_CHECK_LIB(Xxf86misc,XF86MiscSetGrabKeysState,
+	[
+        AC_DEFINE(HAVE_XF86MISCSETGRABKEYSSTATE, 1, [Define if you have XF86MiscSetGrabKeysState()])
+        ],
+        [], [ $X_PRE_LIBS -lXext -lX11 $X_EXTRA_LIBS ])
+fi
+
+LDFLAGS="$xss_save_ldflags"
+
+AC_HAVE_GL(
+    [
+    AC_CHECK_LIB(GL,glXChooseVisual,
+        [
+        AC_DEFINE(HAVE_GLXCHOOSEVISUAL, 1, [Define if you have glXChooseVisual()])
+        ])
+    ],[]
+    )

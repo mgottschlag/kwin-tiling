@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+                           http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile arg="true" />
+
+  <group name="Background Common"> 
+    <entry key="CommonDesktop" type="Bool">
+      <default>true</default>
+      <label>Common settings for all desktops</label>
+      <whatsthis>If you want the same background settings to be applied to all desktops enable this option.</whatsthis>
+    </entry>
+    <entry key="LimitCache" type="Bool">
+      <default>true</default>
+      <label>Limit background cache</label>
+      <whatsthis>Enable this option if you want to limit the cache size for the background.</whatsthis>
+    </entry>
+    <entry key="CacheSize" type="Int">
+      <default>2048</default>
+      <label>Background cache size</label>
+      <whatsthis>Here you can enter how much memory KDE should use for caching the background(s). If you have different backgrounds for the different desktops caching can make switching desktops smoother at the expense of higher memory use.</whatsthis>
+    </entry>
+  </group>
+  <group name="General"> 
+    <entry name="DesktopEnabled" key="Enabled" type="Bool">
+      <default>true</default>
+      <label>Show icons on desktop</label>
+      <whatsthis>Uncheck this option if you do not want to have icons on the desktop. Without icons the desktop will be somewhat faster but you will no longer be able to drag files to the desktop.</whatsthis>
+    </entry>
+    <entry key="SetVRoot" type="Bool">
+      <default>false</default>
+      <label>Allow programs in desktop window</label>
+      <whatsthis>Check this option if you want to run X11 programs that draw into the desktop such as xsnow, xpenguin or xmountain. If you have problems with applications like netscape that check the root window for running instances, disable this option.</whatsthis>
+    </entry>
+    <entry key="CopyDesktopLinks" type="Bool">
+      <default>true</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- init.cc:138 -->
+      <!--     if (!config->readBoolEntry("CopyDesktopLinks", true)) -->
+    </entry>
+    <entry key="AutoLineUpIcons" type="Bool">
+      <default>false</default>
+      <label>Automatically line up icons</label>
+      <whatsthis>Check this option if you want to see your icons automatically aligned to the grid when you move them.</whatsthis>
+    </entry>
+    <entry key="SortDirectoriesFirst" type="Bool">
+      <default>true</default>
+      <label>Sort directories first</label>
+      <whatsthis></whatsthis>
+      <!-- krootwm.cc:251 -->
+      <!--         aSortDirsFirst->setChecked( kconfig->readBoolEntry("SortDirectoriesFirst", true)); -->
+      <!-- krootwm.cc:496 -->
+      <!--     config->writeEntry( "SortDirectoriesFirst", b ); -->
+    </entry>
+  </group>
+  <group name="Mouse Buttons"> 
+    <entry key="WheelSwitchesWorkspace" type="Bool">
+      <default>false</default>
+      <label>Mouse wheel over desktop background switches desktop</label>
+      <whatsthis>You can switch between the virtual desktops by using the mouse wheel over the desktop background.</whatsthis>
+    </entry>
+    <entry key="WheelDirection" type="String">
+      <default>Forward</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- desktop.cc:397 -->
+      <!--             (config->readEntry("WheelDirection", default_dir_string) == forward_string) ? Forward : Reverse; -->
+    </entry>
+    <entry key="TerminalApplication" type="Path">
+      <default>konsole</default>
+      <label>Terminal application</label>
+      <whatsthis>Defines which terminal application is used.</whatsthis>
+    </entry>
+    <entry key="Left" type="String">
+      <default></default>
+      <label>Left Mouse Button Action</label>
+      <whatsthis>You can choose what happens when you click the left button of your pointing device on the desktop.</whatsthis>
+    </entry>
+    <entry key="Middle" type="String">
+      <default>WindowListMenu</default>
+      <label>Middle Mouse Button Action</label>
+      <whatsthis>You can choose what happens when you click the middle button of your pointing device on the desktop.</whatsthis>
+    </entry>
+    <entry key="Right" type="String">
+      <default>DesktopMenu</default>
+      <label>Right Mouse Button Action</label>
+      <whatsthis>You can choose what happens when you click the right button of your pointing device on the desktop.</whatsthis>
+    </entry>
+  </group>
+  <group name="Version"> 
+    <entry key="KDEVersionMajor" type="Int">
+      <default>0</default>
+      <label>KDE major version number</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry key="KDEVersionMinor" type="Int">
+      <default>0</default>
+      <label>KDE minor version number</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry key="KDEVersionRelease" type="Int">
+      <default>0</default>
+      <label>KDE release version number</label>
+      <whatsthis></whatsthis>
+    </entry>
+  </group>
+  <group name="FMSettings"> 
+    <entry key="NormalTextColor" type="Color"> <!--SHARED-->
+      <default>Qt::white</default>
+      <label>Normal text color used for icon labels</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry key="ItemTextBackground" type="Color"> <!--SHARED-->
+      <label>Background color used for icon labels</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry key="ShadowEnabled" type="Bool">
+      <default>true</default>
+      <label>Enable text shadow</label>
+      <whatsthis>Check here to enable a shadow outline around the desktop font. This also improves the readability of the desktop text against backgrounds of a similar color.</whatsthis>
+    </entry>
+    <entry key="ShadowParameters" type="String">
+      <default>0,0,4.0,120.0,2,1,1,0,0,0</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- kdesktopshadowsettings.cpp:84 -->
+      <!-- 	fromString(config->readEntry(SHADOW_CONFIG_ENTRY)); -->
+    </entry>
+  </group>
+  <group name="Desktop Icons"> 
+    <entry key="ShowHidden" type="Bool">
+      <default>false</default>
+      <label>Show hidden files</label>
+      <whatsthis><p>If you check this option, any files in your desktop directory that begin with a period (.) will be shown. Usually, such files contain configuration information, and remain hidden from view.</p>\n<p>For example, files which are named \".directory\" are plain text files which contain information for Konqueror, such as the icon to use in displaying a directory, the order in which files should be sorted, etc. You should not change or delete these files unless you know what you are doing.</p></whatsthis>
+    </entry>
+    <entry key="VertAlign" type="Bool">
+      <default>true</default>
+      <label>Align direction</label>
+      <whatsthis>If this is enabled, icons are aligned vertically, otherwise horizontally.</whatsthis>
+    </entry>
+    <entry key="Preview" type="StringList">
+      <default></default>
+      <label>Show Icon Previews For</label>
+      <whatsthis>Select for which types of files you want to enable preview images.</whatsthis>
+    </entry>
+    <entry key="SortCriterion" type="Int">
+<!--
+    <entry key="SortCriterion" type="Enum">
+      <choices>
+        <choice name="NameCaseSensitive" />
+        <choice name="NameCaseInsensitive" />
+        <choice name="Size" />
+        <choice name="Type" />
+        <choice name="Date" />
+      </choices>
+-->
+      <default>0</default>
+      <label>Sort criterion</label>
+      <whatsthis>Sets the sort criterion. Possible choices are NameCaseSensitive = 0, NameCaseInsensitive = 1, Size = 2, Type = 3, Date = 4.</whatsthis>
+    </entry>
+    <entry key="DirectoriesFirst" type="Bool">
+      <default>true</default>
+      <label>Sort directories first</label>
+      <whatsthis>Enable this to place directories in front of the sorted list, otherwise they are amongst the files.</whatsthis>
+    </entry>
+    <entry key="LockIcons" type="Bool">
+      <default>false</default>
+      <label>Lock in Place</label>
+      <whatsthis>Check this option if you want to keep your icons from moving.</whatsthis>
+    </entry>
+
+    <entry key="AlwaysFirstItems" type="StringList">
+      <default></default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- kdiconview.cc:254 -->
+      <!--     m_itemsAlwaysFirst = config->readListEntry("AlwaysFirstItems"); // Distributor plug-in -->
+    </entry>
+  </group>
+  <group name="Media"> 
+    <entry name="MediaEnabled" key="enabled" type="Bool">
+      <default>false</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- kdiconview.cc:258 -->
+      <!--         m_enableMedia=config->readBoolEntry("enabled",false); -->
+    </entry>
+    <entry key="exclude" type="String">
+      <default>media/hdd_mounted,media/hdd_unmounted,media/floppy_unmounted,media/cdrom_unmounted,media/floppy5_unmounted</default>
+      <label>Device Types to exclude</label>
+      <whatsthis>The device types which you do not want to see on the desktop.</whatsthis>
+      <!-- kdiconview.cc:261 -->
+      <!--     QString tmpList=config->readEntry("exclude","media/hdd_mounted,media/hdd_unmounted,media/floppy_unmounted,media/cdrom_unmounted,media/floppy5_unmounted"); -->
+    </entry>
+  </group>
+  <group name="KDE"> 
+    <entry key="macStyle" type="Bool">
+      <default>false</default>
+      <label>Current application's menu bar (Mac OS-style)</label>
+      <whatsthis>If this option is selected, applications will not have their menu bar attached to their own window anymore. Instead, there is one menu bar at the top of the screen which shows the menus of the currently active application. You might recognize this behavior from Mac OS.</whatsthis>
+    </entry>
+  </group>
+  <group name="Menubar"> 
+    <entry key="ShowMenubar" type="Bool">
+      <default>false</default>
+      <label>Desktop menu bar</label>
+      <whatsthis>If this option is selected, there is one menu bar at the top of the screen which shows the desktop menus.</whatsthis>
+    </entry>
+  </group>
+  <group name="ScreenSaver"> 
+    <entry name="ScreenSaverEnabled" key="Enabled" type="Bool">
+      <default>false</default>
+      <label>Enable screen saver</label>
+      <whatsthis>Enables the screen saver.</whatsthis>
+    </entry>
+    <entry key="Timeout" type="Int">
+      <default>300</default>
+      <label>Screen saver timeout</label>
+      <whatsthis>Sets the seconds after which the screen saver is started.</whatsthis>
+    </entry>
+    <entry name="DpmsDependent" key="DPMS-dependent" type="Bool">
+      <default>false</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- lockeng.cc:185 -->
+      <!--     mDPMS = config->readBoolEntry("DPMS-dependent", false); -->
+      <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:329 -->
+      <!--     mDPMSDepend = config.readBoolEntry("DPMS-dependent", false); -->
+    </entry>
+    <entry key="ActionTopLeft" type="Int">
+      <default>0</default>
+      <label></label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry key="ActionTopRight" type="Int">
+      <default>0</default>
+      <label></label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry key="ActionBottomLeft" type="Int">
+      <default>0</default>
+      <label></label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry key="ActionBottomRight" type="Int">
+      <default>0</default>
+      <label></label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry key="Lock" type="Bool">
+      <default>false</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:308 -->
+      <!--     if(config.readBoolEntry("Lock", false)) -->
+    </entry>
+    <entry key="LockGrace" type="Int">
+      <default>5000</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:310 -->
+      <!--         mLockGrace = config.readNumEntry("LockGrace", LOCK_GRACE_DEFAULT); -->
+    </entry>
+    <entry key="AutoLogout" type="Bool">
+      <default>false</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:319 -->
+      <!--     if (config.readBoolEntry("AutoLogout", false)) -->
+    </entry>
+    <entry key="AutoLogoutTimeout" type="Int">
+      <default>600</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:322 -->
+      <!--         mAutoLogoutTimeout = config.readNumEntry("AutoLogoutTimeout", AUTOLOGOUT_DEFAULT); -->
+    </entry>
+    <entry key="Priority" type="Int">
+      <default>19</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:332 -->
+      <!--     mPriority = config.readNumEntry("Priority", 19); -->
+    </entry>
+    <entry key="Saver" type="String">
+      <default></default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:336 -->
+      <!--     mSaver = config.readEntry("Saver"); -->
+    </entry>
+    <entry key="PluginsUnlock" type="StringList">
+      <default></default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:342 -->
+      <!--     mPlugins = config.readListEntry("PluginsUnlock"); -->
+    </entry>
+    <entry key="PluginOptions" type="StringList">
+      <default></default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:345 -->
+      <!--     mPluginOptions = config.readListEntry("PluginOptions"); -->
+    </entry>
+  </group>
+  <group name="MiniCli"> 
+    <entry key="History" type="PathList">
+      <default></default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- minicli.cpp:191 -->
+      <!--   QStringList histList = config->readPathListEntry("History"); -->
+      <!-- minicli.cpp:242 -->
+      <!--   config->writePathEntry( "History", m_dlg->cbCommand->historyItems() ); -->
+    </entry>
+    <entry key="HistoryLength" type="Int">
+      <default>50</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- minicli.cpp:192 -->
+      <!--   int maxHistory = config->readNumEntry("HistoryLength", 50); -->
+    </entry>
+    <entry key="TerminalApps" type="PathList">
+      <default></default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- minicli.cpp:193 -->
+      <!--   m_terminalAppList = config->readPathListEntry("TerminalApps"); -->
+      <!-- minicli.cpp:243 -->
+      <!--   config->writePathEntry( "TerminalApps", m_terminalAppList ); -->
+    </entry>
+    <entry key="CompletionItems" type="PathList">
+      <default></default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- minicli.cpp:204 -->
+      <!--   QStringList compList = config->readPathListEntry("CompletionItems"); -->
+      <!-- minicli.cpp:244 -->
+      <!--   config->writePathEntry( "CompletionItems", m_dlg->cbCommand->completionObject()->items() ); -->
+    </entry>
+    <entry key="CompletionMode" type="Int">
+      <default code="true">KGlobalSettings::completionMode()</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- minicli.cpp:210 -->
+      <!--   int mode = config->readNumEntry( "CompletionMode", KGlobalSettings::completionMode() ); -->
+      <!-- minicli.cpp:252 -->
+      <!--     config->writeEntry( "CompletionMode", m_dlg->cbCommand->completionMode() ); -->
+    </entry>
+    <entry key="MaxUsernameCompletions" type="Int">
+      <default>30</default>
+      <label></label>
+      <whatsthis></whatsthis>
+      <!-- minicli.cpp:220 -->
+      <!--   int maxEntries = config->readNumEntry("MaxUsernameCompletions", 30); -->
+    </entry>
+  </group>
+
+</kcfg>
