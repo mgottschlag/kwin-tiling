@@ -24,7 +24,7 @@
 #include "kdmpixmap.h"
 
 #include <kimageeffect.h>
-#ifdef HAVE_LIBART
+#ifdef HAVE_LIBAGG
 #include <ksvgiconengine.h>
 #endif
 
@@ -118,7 +118,7 @@ KdmPixmap::loadPixmap( const QString &fileName, QPixmap &map, QString &fullName 
 void
 KdmPixmap::renderSvg( PixmapStruct::PixmapClass *pClass, const QRect &area )
 {
-#ifdef HAVE_LIBART
+#ifdef HAVE_LIBAGG
 	// Special stuff for SVG icons
 	KSVGIconEngine *svgEngine = new KSVGIconEngine();
 

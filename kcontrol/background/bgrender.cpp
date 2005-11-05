@@ -31,7 +31,7 @@
 #include <kcursor.h>
 #include <kmimetype.h>
 
-#ifdef HAVE_LIBART
+#ifdef HAVE_LIBAGG
 #include <ksvgiconengine.h>
 #endif
 
@@ -304,7 +304,7 @@ wp_load:
         // don't want in krootimage (kdm context).
         //if ( KMimeType::findByPath( file )->is( "image/svg+xml" ) ) {
         if (file.endsWith(".svg") || file.endsWith(".svgz")) {
-#ifdef HAVE_LIBART
+#ifdef HAVE_LIBAGG
 	    // Special stuff for SVG icons
 	    KSVGIconEngine* svgEngine = new KSVGIconEngine();
 
@@ -357,9 +357,9 @@ wp_load:
 	    }
 
 	    delete svgEngine;
-#else //not libart
+#else //not libagg
 	    kdWarning() << k_funcinfo
-			<< "tried to load SVG file but libart not installed" << endl;
+			<< "tried to load SVG file but libagg not installed" << endl;
 #endif
 	} else {
 	    wp.load(file);
