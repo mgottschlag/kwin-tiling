@@ -384,14 +384,8 @@ AccNoPass( const char *un, struct passwd *pw )
 	if (!*un)
 		return 0;
 
-	switch (cursource) {
-	case PWSRC_RELOGIN:
+	if (cursource != PWSRC_MANUAL)
 		return 1;
-	case PWSRC_AUTOLOGIN:
-		if (!strcmp( un, td->autoUser ))
-			return 1;
-		return 0;
-	}
 
 	for (hg = 0, fp = td->noPassUsers; *fp; fp++)
 		if (**fp == '@')

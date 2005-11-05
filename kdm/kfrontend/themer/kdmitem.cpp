@@ -85,7 +85,7 @@ KdmItem::KdmItem( KdmItem *parent, const QDomNode &node, const char *name )
 	}
 
 	QDomNode tnode = node;
-	id = tnode.toElement().attribute( "id", QString::null );
+	id = tnode.toElement().attribute( "id", QString::number( (ulong)this, 16 ) );
 
 	// Tell 'parent' to add 'me' to its children
 	KdmItem *parentItem = static_cast<KdmItem *>( parent );
@@ -97,6 +97,17 @@ KdmItem::~KdmItem()
 	delete boxManager;
 	delete fixedManager;
 	delete image;
+}
+
+void
+KdmItem::update()
+{
+}
+
+void
+KdmItem::needUpdate()
+{
+	emit needUpdate( area.x(), area.y(), area.width(), area.height() );
 }
 
 void
@@ -115,7 +126,7 @@ KdmItem::show( bool force )
 		myWidget->show();
 	// XXX showing of layouts not implemented, prolly pointless anyway
 
-	needUpdate( area.x(), area.y(), area.width(), area.height() );
+	needUpdate();
 }
 
 void
@@ -139,7 +150,7 @@ KdmItem::hide( bool force )
 		myWidget->hide();
 	// XXX hiding of layouts not implemented, prolly pointless anyway
 
-	needUpdate( area.x(), area.y(), area.width(), area.height() );
+	needUpdate();
 }
 
 void
@@ -214,7 +225,7 @@ KdmItem::layoutItemGone()
 void
 KdmItem::setGeometry( const QRect &newGeometry, bool force )
 {
-	kdDebug() << this << " setGeometry " << newGeometry << endl;
+	kdDebug() << " KdmItem::setGeometry " << id << newGeometry << endl;
 	// check if already 'in place'
 	if (!force && area == newGeometry)
 		return;
@@ -348,7 +359,7 @@ KdmItem::placementHint( const QRect &parentRect )
 	    w = parentRect.width(),
 	    h = parentRect.height();
 
-	kdDebug() << "KdmItem::placementHint parentRect=" << parentRect << " hintedSize=" << hintedSize << endl;
+	kdDebug() << "KdmItem::placementHint parentRect=" << id << parentRect << " hintedSize=" << hintedSize << endl;
 	// check if width or height are set to "box"
 	if (pos.wType == DTbox || pos.hType == DTbox) {
 		if (myLayoutItem || myWidget)
@@ -358,7 +369,7 @@ KdmItem::placementHint( const QRect &parentRect )
 				return parentRect;
 			boxHint = boxManager->sizeHint();
 		}
-		kdDebug() << "boxHint " << boxHint << endl;
+		kdDebug() << " => boxHint " << boxHint << endl;
 	}
 
 	if (pos.xType == DTpixel)
@@ -416,7 +427,7 @@ KdmItem::placementHint( const QRect &parentRect )
 			dx = -w;
 	}
 	// KdmItem *p = static_cast<KdmItem*>( parent() );
-	kdDebug() << "placementHint " << this << " x=" << x << " dx=" << dx << " w=" << w << " y=" << y << " dy=" << dy << " h=" << h << " " << parentRect << endl;
+	kdDebug() << "KdmItem::placementHint " << id << " x=" << x << " dx=" << dx << " w=" << w << " y=" << y << " dy=" << dy << " h=" << h << " " << parentRect << endl;
 	y += dy;
 	x += dx;
 

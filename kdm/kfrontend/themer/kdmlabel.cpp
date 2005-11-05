@@ -20,6 +20,7 @@
  */
 
 #include "kdmlabel.h"
+#include <kgreeter.h>
 
 #include <kglobal.h>
 #include <klocale.h>
@@ -98,7 +99,7 @@ KdmLabel::KdmLabel( KdmItem *parent, const QDomNode &node, const char *name )
 	if (label.isTimer) {
 		timer = new QTimer( this );
 		timer->start( 1000 );
-		connect( timer, SIGNAL(timeout()), SLOT(updateTimer()) );
+		connect( timer, SIGNAL(timeout()), SLOT(update()) );
 	}
 	cText = lookupText( label.text );
 }
@@ -107,7 +108,7 @@ void
 KdmLabel::setText( const QString &txt )
 {
 	label.text = txt;
-	cText = lookupText( label.text );
+	update();
 }
 
 QSize
@@ -152,16 +153,16 @@ KdmLabel::statusChanged()
 	if ((state == Sprelight && !label.prelight.present) ||
 	    (state == Sactive && !label.active.present))
 		return;
-	needUpdate( area.x(), area.y(), area.width(), area.height() );
+	needUpdate();
 }
 
 void
-KdmLabel::updateTimer()
+KdmLabel::update()
 {
 	QString text = lookupText( label.text );
 	if (text != cText) {
 		cText = text;
-		needUpdate( area.x(), area.y(), area.width(), area.height() );
+		needUpdate();
 	}
 }
 
@@ -220,9 +221,9 @@ KdmLabel::lookupText( const QString &t )
 #elif defined(HAVE_SYSINFO)
 	m['o'] = (unsigned)sysinfo( SI_SRPC_DOMAIN, buf, sizeof(buf) ) > sizeof(buf) ? "localdomain" : QString::fromLocal8Bit( buf );
 #endif
-	//m['d'] = delay;	not implemented (yet)
-	//m['s'] = delayuser;	not implemented (yet)
-        // xgettext:no-c-format
+	m['d'] = QString::number( KThemedGreeter::timedDelay );
+	m['s'] = KThemedGreeter::timedUser;
+	// xgettext:no-c-format
 	KGlobal::locale()->setDateFormat( i18n("date format", "%a %d %B") );
 	m['c'] = KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), false, false );
 

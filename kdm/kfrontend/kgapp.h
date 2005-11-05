@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTimerEvent>
 
 class GreeterApp : public KApplication {
+	Q_OBJECT
 	typedef KApplication inherited;
 
   public:
@@ -39,6 +40,9 @@ class GreeterApp : public KApplication {
 
   protected:
 	virtual void timerEvent( QTimerEvent * );
+
+  signals:
+    void activity();
 
   private:
 	int pingInterval;

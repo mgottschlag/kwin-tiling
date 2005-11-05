@@ -940,7 +940,12 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 			}
 			DisposeProtoDisplay( pdpy );
 			Debug( "starting display %s,%s\n", d->name, d->class2 );
-			StartDisplay( d );
+			if (LoadDisplayResources( d ) < 0) {
+				LogError( "Unable to read configuration for display %s; "
+				          "stopping it.\n", d->name );
+				StopDisplay( d );
+			} else
+				StartDisplay( d );
 			CloseGetter();
 		}
 	}

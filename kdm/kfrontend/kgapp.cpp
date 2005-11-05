@@ -49,6 +49,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <unistd.h> // alarm()
 
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/keysym.h>
 #include <X11/cursorfont.h>
 #include <QX11Info>
 
@@ -88,13 +90,21 @@ GreeterApp::timerEvent( QTimerEvent * )
 bool
 GreeterApp::x11EventFilter( XEvent * ev )
 {
+	KeySym sym;
+
 	switch (ev->type) {
 	case FocusIn:
 	case FocusOut:
 		// Hack to tell dialogs to take focus when the keyboard is grabbed
 		ev->xfocus.mode = NotifyNormal;
 		break;
+	case KeyPress:
+		sym = XLookupKeysym( &ev->xkey, 0 );
+		if (sym != XK_Return && !IsModifierKey( sym ))
+			emit activity();
+		break;
 	case ButtonPress:
+		emit activity();
 	case ButtonRelease:
 		// Hack to let the RMB work as LMB
 		if (ev->xbutton.button == 3)
@@ -172,12 +182,14 @@ kg_main( const char *argv0 )
 			if (os)
 				free( os );
 			GSendInt( G_Ready );
+			_autoLoginDelay = 0;
 			continue;
 		}
 
 		if (cmd == G_ErrorGreet) {
 			if (KGVerify::handleFailVerify( qApp->desktop()->screen( _greeterScreen ) ))
 				break;
+			_autoLoginDelay = 0;
 			cmd = G_Greet;
 		}
 
@@ -192,6 +204,9 @@ kg_main( const char *argv0 )
 		} else
 #endif
 		{
+			if ((cmd != G_GreetTimed && !_autoLoginAgain) ||
+			    _autoLoginUser.isEmpty())
+				_autoLoginDelay = 0;
 			if (_useTheme && !_theme.isEmpty()) {
 				KThemedGreeter *tgrt;
 				dialog = tgrt = new KThemedGreeter;
@@ -238,3 +253,5 @@ kg_main( const char *argv0 )
 }
 
 } // extern "C"
+
+#include "kgapp.moc"

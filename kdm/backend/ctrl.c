@@ -479,6 +479,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 						Reply( "shutdown root\t" );
 					else
 						Reply( "shutdown\t" );
+					Reply( "shutdown ask\t" );
 					if (d->allowNuke != SHUT_NONE) {
 						if (d->allowNuke == SHUT_ROOT && d->userSess)
 							Reply( "nuke root\t" );

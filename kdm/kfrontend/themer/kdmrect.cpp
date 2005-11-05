@@ -113,7 +113,7 @@ KdmRect::statusChanged()
 	if ((state == Sprelight && !rect.prelight.present) ||
 	    (state == Sactive && !rect.active.present))
 		return;
-	needUpdate( area.x(), area.y(), area.width(), area.height() );
+	needUpdate();
 }
 
 /*

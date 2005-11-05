@@ -102,6 +102,7 @@ from the copyright holder.
 #endif
 #define G_SessMan           4	/* start "session manager" */
 #define G_ConfShutdown      5	/* confirm forced shutdown */
+#define G_GreetTimed        6	/* get login; timed login permitted */
 
 #ifdef XDMCP
 #define G_Ch_Refresh       10	/* XXX change */
@@ -155,6 +156,7 @@ from the copyright holder.
 # define BO_NOENT  -2
 # define BO_IO     -3
 #define G_Console       116 /* ; async */
+#define G_AutoLogin     117 /* ; async */
 
 /*
  * Command codes core -> config reader

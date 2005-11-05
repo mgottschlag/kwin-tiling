@@ -390,7 +390,10 @@ KGreeter::slotUserEntered()
 		userView->clearSelection();
 	}
   oke:
-	QTimer::singleShot( 0, this, SLOT(slotLoadPrevWM()) );
+	if (isVisible())
+		slotLoadPrevWM();
+	else
+		QTimer::singleShot( 0, this, SLOT(slotLoadPrevWM()) );
 }
 
 void
@@ -410,6 +413,7 @@ KGreeter::slotSessionSelected( int id )
 		sessMenu->setItemChecked( curSel, false );
 		sessMenu->setItemChecked( id, true );
 		curSel = id;
+		verify->gplugActivity();
 	}
 }
 
@@ -417,9 +421,6 @@ void
 KGreeter::reject()
 {
 	verify->reject();
-	curUser = QString::null;
-	slotUserEntered();
-	slotSessionSelected( -1 );
 }
 
 void
@@ -514,7 +515,7 @@ KGreeter::pluginSetup()
 
 	if (_preselUser != PRESEL_PREV)
 		stsFile->deleteEntry( verify->entitiesLocal() ? dName : dn, false );
-	if (_preselUser != PRESEL_NONE) {
+	if (_preselUser != PRESEL_NONE && verify->entityPresettable()) {
 		if (verify->entitiesLocal())
 			ent = _preselUser == PRESEL_PREV ?
 				stsFile->readEntry( dName ) : _defaultUser;
@@ -526,8 +527,7 @@ KGreeter::pluginSetup()
 			verify->getConf( 0, (pn + ".FocusField").latin1(), QVariant( 0 ) ).toInt() :
 			_focusPasswd;
 	}
-	if (!ent.isEmpty())
-		verify->presetEntity( ent, field );
+	verify->presetEntity( ent, field );
 	if (userList)
 		verify->loadUsers( *userList );
 }
@@ -540,9 +540,17 @@ KGreeter::verifyPluginChanged( int id )
 }
 
 void
+KGreeter::verifyClear()
+{
+	curUser = QString::null;
+	slotUserEntered();
+	slotSessionSelected( -1 );
+}
+
+void
 KGreeter::verifyOk()
 {
-	if (_preselUser == PRESEL_PREV)
+	if (_preselUser == PRESEL_PREV && verify->entityPresettable())
 		stsFile->writeEntry( verify->entitiesLocal() ?
 		                       dName :
 		                       dName + '_' + verify->pluginName(),
@@ -715,7 +723,7 @@ KStdGreeter::pluginSetup()
 {
 	inherited::pluginSetup();
 	if (userView) {
-		if (verify->entitiesLocal())
+		if (verify->entitiesLocal() && verify->entityPresettable())
 			userView->show();
 		else
 			userView->hide();
@@ -728,6 +736,8 @@ void
 KStdGreeter::verifyFailed()
 {
 	goButton->setEnabled( false );
+	if (userView)
+		userView->setEnabled( false );
 	inherited::verifyFailed();
 }
 
@@ -735,6 +745,8 @@ void
 KStdGreeter::verifyRetry()
 {
 	goButton->setEnabled( true );
+	if (userView)
+		userView->setEnabled( true );
 }
 
 
@@ -764,14 +776,13 @@ KThemedGreeter::KThemedGreeter()
 	caps_warning = themer->findNode( "caps-lock-warning" );
 	xauth_warning = themer->findNode( "xauth-warning" ); // kdm ext
 	pam_error = themer->findNode( "pam-error" );
+	timed_label = themer->findNode( "timed-label" );
 	if (pam_error && pam_error->isA( "KdmLabel" ))
 		static_cast<KdmLabel*>(pam_error)->setText( i18n("Login Failed.") );
 
 	KdmItem *itm;
 	if ((itm = themer->findNode( "pam-message" ))) // done via msgboxes
 		itm->hide( true );
-//	if ((itm = themer->findNode( "timed-label" ))) // unsupported ... actually, this will be shown in the timed mode only anyway
-//		itm->hide( true );
 	if ((itm = themer->findNode( "language_button" ))) // not implemented yet
 		itm->hide( true );
 
@@ -859,7 +870,7 @@ KThemedGreeter::pluginSetup()
 {
 	inherited::pluginSetup();
 
-	if (userView && verify->entitiesLocal() && userlist_rect) {
+	if (userView && verify->entitiesLocal() && verify->entityPresettable() && userlist_rect) {
 		userlist_rect->setWidget( userView );
 		userView->show();
 	} else {
@@ -885,8 +896,11 @@ KThemedGreeter::verifyRetry()
 //	goButton->setEnabled( true );
 }
 
+QString KThemedGreeter::timedUser = QString::null;
+int KThemedGreeter::timedDelay = -1;
+
 void
-KThemedGreeter::updateStatus( bool fail, bool caps )
+KThemedGreeter::updateStatus( bool fail, bool caps, int timedleft )
 {
 	if (pam_error) {
 		if (fail)
@@ -899,6 +913,19 @@ KThemedGreeter::updateStatus( bool fail, bool caps )
 			caps_warning->show( true );
 		else
 			caps_warning->hide( true );
+	}
+	if (timed_label) {
+		if (timedleft) {
+			if (timedleft != timedDelay) {
+				timedDelay = timedleft;
+				timedUser = curUser;
+				timed_label->show( true );
+				timed_label->update();
+			}
+		} else {
+			timedDelay = -1;
+			timed_label->hide( true );
+		}
 	}
 }
 
@@ -916,16 +943,16 @@ KThemedGreeter::slotThemeActivated( const QString &id )
 void
 KThemedGreeter::slotSessMenu()
 {
-	sessMenu->popup( session_button->rect().center() );
+	sessMenu->popup( mapToGlobal( session_button->rect().center() ) );
 }
 
 void
 KThemedGreeter::slotActionMenu()
 {
 	if (system_button)
-		optMenu->popup( system_button->rect().center() );
+		optMenu->popup( mapToGlobal( system_button->rect().center() ) );
 	else
-		optMenu->popup( rect().center() );
+		optMenu->popup( mapToGlobal( rect().center() ) );
 }
 
 void

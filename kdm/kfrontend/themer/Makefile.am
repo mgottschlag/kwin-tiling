@@ -1,5 +1,6 @@
 AM_CPPFLAGS = -I$(srcdir)/../../backend -I$(srcdir)/.. -I../.. \
-    $(all_includes)
+	-I$(top_srcdir)/kdmlib \
+	$(all_includes)
 
 noinst_LIBRARIES = libkdmthemer.a
 libkdmthemer_a_SOURCES = \

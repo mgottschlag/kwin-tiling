@@ -1,14 +1,3 @@
-
-dnl this is for kdm:
-
-KDE_EXPAND_MAKEVAR(KDE_CONFDIR, kde_confdir)
-AC_DEFINE_UNQUOTED(KDE_CONFDIR, "$KDE_CONFDIR", [KDE's configuration directory])
-KDE_EXPAND_MAKEVAR(KDE_DATADIR, kde_datadir)
-AC_DEFINE_UNQUOTED(KDE_DATADIR, "$KDE_DATADIR", [KDE's static data directory])
-KDE_EXPAND_MAKEVAR(KDE_BINDIR, kde_bindir)
-AC_DEFINE_UNQUOTED(KDE_BINDIR, "$KDE_BINDIR", [KDE's binaries directory])
-AC_SUBST(KDE_BINDIR)
-
 KDE_FIND_PATH(xmkmf, XMKMF, [], [AC_MSG_ERROR([xmkmf/imake not found. Please make sure it's in PATH!])])
 
 dnl ask imake about various X settings
@@ -92,9 +81,12 @@ done
 AC_CHECK_FUNC(vsyslog, [
   AC_DEFINE(USE_SYSLOG, 1, [Define if kdm should be built with syslog support])])
 
+kdm_no_Xau=false
+kdm_no_Xdmcp=false
+
 AC_CHECK_LIB(Xau, main, [:], 
 	[
-	  AC_MSG_WARN([Cannot build KDM! Make sure that libXau.a is installed!])
+	  kdm_no_Xau=true
 	  DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
 	], 
 	  $X_LDFLAGS -lX11 $LIBSOCKET)
@@ -111,8 +103,7 @@ if test "x$with_xdmcp" = xyes; then
     CPPFLAGS=$cppflags_safe
   fi
   if test -z "$HAVE_X11_XDMCP_H"; then
-    AC_MSG_WARN([Cannot build KDM! Make sure that libXdmcp.a and Xdmcp.h 
-are installed or use --without-xdmcp to disable XDMCP support!])
+    kdm_no_Xdmcp=true
     DO_NOT_COMPILE="$DO_NOT_COMPILE kdm"
   fi
   AC_DEFINE(XDMCP, 1, [Define if kdm should be built with XDMCP support])

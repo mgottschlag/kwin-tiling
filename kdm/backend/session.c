@@ -118,12 +118,17 @@ conv_auto( int what, const char *prompt ATTR_UNUSED )
 	}
 }
 
-static int
-AutoLogon()
+static void
+DoAutoLogon( void )
 {
-	Time_t tdiff;
+	StrDup( &curuser, td->autoUser );
+	StrDup( &curpass, td->autoPass );
+	cursource = PWSRC_AUTOLOGIN;
+}
 
-	tdiff = time( 0 ) - td->hstent->lastExit - td->openDelay;
+static int
+AutoLogon( Time_t tdiff )
+{
 	Debug( "autoLogon, tdiff = %d, rLogin = %d, goodexit = %d, nuser = %s\n",
 	       tdiff, td->hstent->rLogin, td->hstent->goodExit, td->hstent->nuser );
 	if (td->hstent->rLogin == 2 ||
@@ -137,7 +142,8 @@ AutoLogon()
 		newdmrc = td->hstent->nargs;
 		td->hstent->nargs = 0;
 		cursource = (td->hstent->rLogin == 1) ? PWSRC_RELOGIN : PWSRC_MANUAL;
-	} else if (*td->autoUser && tdiff > 0) {
+	} else if (*td->autoUser && !td->autoDelay && (tdiff > 0 || td->autoAgain))
+	{
 		unsigned int lmask;
 		Window dummy1, dummy2;
 		int dummy3, dummy4, dummy5, dummy6;
@@ -146,9 +152,7 @@ AutoLogon()
 		               &lmask );
 		if (lmask & ShiftMask)
 			return 0;
-		StrDup( &curuser, td->autoUser );
-		StrDup( &curpass, td->autoPass );
-		cursource = PWSRC_AUTOLOGIN;
+		DoAutoLogon();
 	} else {
 		cursource = PWSRC_MANUAL;
 		return 0;
@@ -371,6 +375,16 @@ CtrlGreeterWait( int wreply )
 			} else
 				Debug( " -> failure returned\n" );
 			break;
+		case G_AutoLogin:
+			Debug( "G_AutoLogin\n" );
+			DoAutoLogon();
+			StrDup( &curtype, "classic" );
+			if (Verify( conv_auto, FALSE )) {
+				Debug( " -> return success\n" );
+				GSendInt( V_OK );
+			} else
+				Debug( " -> failure returned\n" );
+			break;
 		case G_SetupDpy:
 			Debug( "G_SetupDpy\n" );
 			SetupDisplay( 0 );
@@ -510,6 +524,7 @@ ManageSession( struct display *d )
 {
 	int ex, cmd;
 	volatile int clientPid = 0;
+	Time_t tdiff;
 
 	td = d;
 	Debug( "ManageSession %s\n", d->name );
@@ -547,7 +562,9 @@ ManageSession( struct display *d )
 		}
 	}
 
-	if (AutoLogon()) {
+	tdiff = td->autoAgain ? 
+	           1 : time( 0 ) - td->hstent->lastExit - td->openDelay;
+	if (AutoLogon( tdiff )) {
 		if (!StrDup( &curtype, "classic" ) || !Verify( conv_auto, FALSE ))
 			goto gcont;
 		if (greeter)
@@ -567,7 +584,9 @@ ManageSession( struct display *d )
 			goto choose;
 #endif
 		for (;;) {
-			GSendInt( G_Greet );
+			Debug( "ManageSession, greeting, tdiff = %d\n", tdiff );
+			GSendInt( *td->autoUser && td->autoDelay && tdiff > 0 ?
+			             G_GreetTimed : G_Greet );
 		  gcont:
 			cmd = CtrlGreeterWait( TRUE );
 #ifdef XDMCP

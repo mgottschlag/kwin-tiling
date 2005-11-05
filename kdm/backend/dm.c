@@ -1204,6 +1204,13 @@ CheckDisplayStatus( struct display *d )
 	else if ((d->displayType & d_lifetime) == dReserve &&
 	         d->status == running && d->userSess < 0 && !d->idleTimeout)
 		rStopDisplay( d, DS_RESERVE );
+	else if (d->status == notRunning)
+		if (LoadDisplayResources( d ) < 0) {
+			LogError( "Unable to read configuration for display %s; "
+			          "stopping it.\n", d->name );
+			StopDisplay( d );
+			return;
+		}
 }
 
 static void
@@ -1242,7 +1249,7 @@ AllocateVT( struct display *d )
 	int i, tvt, volun;
 
 	if ((d->displayType & d_location) == dLocal &&
-	    d->status == notRunning && !d->serverVT)
+	    d->status == notRunning && !d->serverVT && d->reqSrvVT >= 0)
 	{
 		if (d->reqSrvVT && d->reqSrvVT < 16)
 			d->serverVT = d->reqSrvVT;
@@ -1291,12 +1298,12 @@ static void
 StartDisplays( void )
 {
 	ForEachDisplay( CheckDisplayStatus );
+	CloseGetter();
 #ifdef HAVE_VTS
 	active_vts = -1;
 	ForEachDisplayRev( AllocateVT );
 #endif
 	ForEachDisplay( KickDisplay );
-	CloseGetter();
 }
 
 void
@@ -1312,13 +1319,6 @@ StartDisplay( struct display *d )
 	if (d->serverVT < 0)
 		return;
 #endif
-
-	if (LoadDisplayResources( d ) < 0) {
-		LogError( "Unable to read configuration for display %s; stopping it.\n",
-		          d->name );
-		StopDisplay( d );
-		return;
-	}
 
 	d->status = running;
 	if ((d->displayType & d_location) == dLocal) {

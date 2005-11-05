@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qlayout.h>
 #include <qtimer.h>
 #include <q3valuevector.h>
+#include <q3cstring.h>
 //Added by qt3to4:
 #include <QLabel>
 #include <QGridLayout>
@@ -68,11 +69,12 @@ class KGVerifyHandler {
   public:
 	virtual ~KGVerifyHandler(){}
 	virtual void verifyPluginChanged( int id ) = 0;
+	virtual void verifyClear();
 	virtual void verifyOk() = 0;
 	virtual void verifyFailed() = 0;
 	virtual void verifyRetry() = 0;
 	virtual void verifySetUser( const QString &user ) = 0;
-	virtual void updateStatus( bool fail, bool caps ); // for themed only
+	virtual void updateStatus( bool fail, bool caps, int left ); // for themed only
 };
 
 class QWidget;
@@ -107,6 +109,8 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	/* virtual */ void selectPlugin( int id );
 	bool entitiesLocal() const;
 	bool entitiesFielded() const;
+	bool entityPresettable() const;
+	bool isClassic() const;
 	QString pluginName() const;
 	void setEnabled( bool on );
 	void abort();
@@ -133,19 +137,20 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	void handleVerify();
 
 	QXTimer timer;
-	QString fixedEntity, curUser;
+	QString fixedEntity, presEnt, curUser;
 	PluginList pluginList;
 	KGVerifyHandler *handler;
 	KdmThemer *themer;
 	QWidget *parent, *predecessor;
 	KGreeterPlugin *greet;
 	Q3PopupMenu *plugMenu;
-	int curPlugin;
+	int curPlugin, presFld, timedLeft, deadTicks;
+	Q3CString pName;
 	KGreeterPlugin::Function func;
 	KGreeterPlugin::Context ctx;
 	bool capsLocked;
 	bool enabled, running, suspended, failed, delayed, cont;
-	bool authTok, hasBegun;
+	bool authTok, isClear, timeable;
 
 	static void VMsgBox( QWidget *parent, const QString &user, QMessageBox::Icon type, const QString &mesg );
 	static void VErrBox( QWidget *parent, const QString &user, const char *msg );
@@ -153,9 +158,16 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 
 	static QVector<GreeterPluginHandle> greetPlugins;
 
+  private:
+	bool applyPreset();
+	void performAutoLogin();
+	bool scheduleAutoLogin( bool initial );
+	void doReject( bool initial );
+
   private slots:
 	//virtual void slotPluginSelected( int id ) = 0;
 	void slotTimeout();
+	void slotActivity();
 
   public: // from KGreetPluginHandler
 	virtual void gplugReturnText( const char *text, int tag );

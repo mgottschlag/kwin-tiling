@@ -1384,10 +1384,14 @@ Default: 0
 User: core(reqSrvVT)
 Instance: #:0/7
 Comment:
- The VT the &X-Server; should run on. Better use ServerVTs.
+ The VT the &X-Server; should run on; auto-assign if zero, don't assign if -1.
+ Better leave it zero and use ServerVTs.
 Description:
  The VT the &X-Server; should run on.
  <option>ServerVTs</option> should be used instead of this option.
+ Leave it zero to let &kdm; assign a <acronym>VT</acronym> automatically.
+ Set it to <literal>-1</literal> to avoid assigning a <acronym>VT</acronym>
+ alltogether - this is required for setups with multiple physical consoles.
  Currently Linux only.
 
 Key: ServerTTY
@@ -1857,11 +1861,35 @@ Comment: &
 Description:
  Enable automatic login. <emphasis>Use with extreme care!</emphasis>
 
+Key: AutoLoginAgain
+Type: bool
+Default: false
+User: core(autoAgain)
+User: greeter
+Instance: #:0/true
+Comment: &
+Description:
+ If true, auto-login after logout. If false, auto-login is performed only
+ when a display session starts up.
+
+Key: AutoLoginDelay
+Type: int
+Default: 0
+User: core(autoDelay)
+User: greeter
+Instance: #:0/10
+Comment:
+ The delay in seconds before automatic login kicks in.
+Description:
+ The delay in seconds before automatic login kicks in. This is also known as
+ <quote>Timed Login</quote>.
+
 Key: AutoLoginUser
 Type: string
 Default: ""
 PostProc: PautoLoginX
 User: core(autoUser)
+User: greeter
 Instance: #:0/"fred"
 Merge: xdm:autoUser(P_autoUser)
 Comment: &

@@ -105,6 +105,7 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 
   public: // from KGVerifyHandler
 	virtual void verifyPluginChanged( int id );
+	virtual void verifyClear();
 	virtual void verifyOk();
 	virtual void verifyFailed();
 //	virtual void verifyRetry();
@@ -138,6 +139,8 @@ class KThemedGreeter : public KGreeter {
   public:
 	KThemedGreeter();
 	bool isOK() { return themer != 0; }
+	static QString timedUser;
+	static int timedDelay;
 
   public slots:
 	void slotThemeActivated( const QString &id );
@@ -145,7 +148,7 @@ class KThemedGreeter : public KGreeter {
 	void slotActionMenu();
 
   protected:
-	virtual void updateStatus( bool fail, bool caps );
+	virtual void updateStatus( bool fail, bool caps, int timedleft );
 	virtual void pluginSetup();
 	virtual void keyPressEvent( QKeyEvent * );
 	virtual bool event( QEvent *e );
@@ -153,7 +156,7 @@ class KThemedGreeter : public KGreeter {
   private:
 //	KdmClock *clock;
 	KdmThemer *themer;
-	KdmItem *caps_warning, *xauth_warning, *pam_error,
+	KdmItem *caps_warning, *xauth_warning, *pam_error, *timed_label,
 	        *console_rect, *userlist_rect,
 	        *session_button, *system_button;
 

@@ -65,8 +65,8 @@ protected:
 
 	QTimer *timer;
 
-protected slots:
-	void updateTimer();
+public slots:
+	void update();
 
 private:
 	/* Method to lookup the caption associated with an item */

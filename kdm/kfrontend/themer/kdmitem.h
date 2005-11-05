@@ -107,6 +107,11 @@ public:
 	void paint( QPainter *painter, const QRect &boundaries );
 
 	/**
+	 * Update representation of contents and repaint.
+	 */
+	virtual void update();
+
+	/**
 	 * Handle mouse motion and dispatch events to children. This
 	 * leads to items prelighting, activation() on click and more..
 	 */
@@ -187,6 +192,11 @@ protected:
 	 * handle item's repaint.
 	 */
 	virtual void statusChanged();
+
+	/**
+	 * emits needUpdate( int, int, int, int ) with the full widget area.
+	 */
+	void needUpdate();
 
 	// This enum identifies in which state the item is
 	enum ItemState { Snormal, Sactive, Sprelight } state;

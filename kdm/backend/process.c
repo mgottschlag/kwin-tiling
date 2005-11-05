@@ -392,7 +392,7 @@ GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 {
 	char **margv;
 	int pip[2];
-	char coninfo[20];
+	char coninfo[32];
 
 /* ###	GSet (proc->pipe); */
 	if (proc->pid) {
@@ -450,10 +450,8 @@ GOpen( GProc *proc, char **argv, const char *what, char **env, char *cname,
 			         proc->pipe.rfd, proc->pipe.wfd );
 		env = putEnv( coninfo, env );
 		if (debugLevel & DEBUG_VALGRIND) {
-			char **nmargv = xCopyStrArr( 3, margv );
+			char **nmargv = xCopyStrArr( 1, margv );
 			nmargv[0] = locate( "valgrind" );
-			nmargv[1] = (char *)"--tool=memcheck";
-			nmargv[2] = (char *)"--num-callers=8";
 			execute( nmargv, env );
 		} else if (debugLevel & DEBUG_STRACE) {
 			char **nmargv = xCopyStrArr( 1, margv );

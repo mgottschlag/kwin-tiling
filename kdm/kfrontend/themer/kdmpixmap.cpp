@@ -234,7 +234,7 @@ KdmPixmap::statusChanged()
 	if ((state == Sprelight && !pixmap.prelight.present) ||
 	    (state == Sactive && !pixmap.active.present))
 		return;
-	needUpdate( area.x(), area.y(), area.width(), area.height() );
+	needUpdate();
 }
 
 #include "kdmpixmap.moc"

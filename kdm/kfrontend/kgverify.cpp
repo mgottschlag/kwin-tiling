@@ -59,8 +59,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QX11Info>
 #include <krandom.h>
 
+#define FULL_GREET_TO 40 // normal inactivity timeout
+#define TIMED_GREET_TO 20 // inactivity timeout when persisting timed login
+#define MIN_TIMED_TO 5 // minimal timed login delay
+#define DEAD_TIMED_TO 2 // <enter> dead time after re-activating timed login
+#define SECONDS 1000 // reduce to 100 to speed up testing
 
-void KGVerifyHandler::updateStatus( bool, bool )
+void KGVerifyHandler::verifyClear()
+{
+}
+
+void KGVerifyHandler::updateStatus( bool, bool, int )
 {
 }
 
@@ -80,21 +89,24 @@ KGVerify::KGVerify( KGVerifyHandler *_handler, KdmThemer *_themer,
 	, predecessor( _predecessor )
 	, plugMenu( 0 )
 	, curPlugin( -1 )
+	, timedLeft( 0 )
 	, func( _func )
 	, ctx( _ctx )
 	, enabled( true )
 	, running( false )
 	, suspended( false )
 	, failed( false )
+	, isClear( true )
 {
 	connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
+	connect( kapp, SIGNAL(activity()), SLOT(slotActivity()) );
 
 	_parent->installEventFilter( this );
 }
 
 KGVerify::~KGVerify()
 {
-	Debug( "delete greet\n" );
+	Debug( "delete %s\n", pName.data() );
 	delete greet;
 }
 
@@ -125,6 +137,18 @@ bool // public
 KGVerify::entitiesFielded() const
 {
 	return greetPlugins[pluginList[curPlugin]].info->flags & kgreeterplugin_info::Fielded;
+}
+
+bool // public
+KGVerify::entityPresettable() const
+{
+	return greetPlugins[pluginList[curPlugin]].info->flags & kgreeterplugin_info::Presettable;
+}
+
+bool // public
+KGVerify::isClassic() const
+{
+	return !strcmp( greetPlugins[pluginList[curPlugin]].info->method, "classic" );
 }
 
 QString // public
@@ -163,29 +187,82 @@ KGVerify::selectPlugin( int id )
 	curPlugin = id;
 	if (plugMenu)
 		plugMenu->setItemChecked( id, true );
+	pName = ("greet_" + pluginName()).latin1();
+	Debug( "new %s\n", pName.data() );
 	greet = greetPlugins[pluginList[id]].info->create( this, themer, parent, predecessor, fixedEntity, func, ctx );
+	timeable = _autoLoginDelay && entityPresettable() && isClassic();
 }
 
 void // public
 KGVerify::loadUsers( const QStringList &users )
 {
-	Debug( "greet->loadUsers(...)\n" );
+	Debug( "%s->loadUsers(...)\n", pName.data() );
 	greet->loadUsers( users );
 }
 
 void // public
 KGVerify::presetEntity( const QString &entity, int field )
 {
-	Debug( "greet->presetEntity(%\"s, %d)\n", entity.latin1(), field );
-	greet->presetEntity( entity, field );
-	timer.stop();
+	presEnt = entity;
+	presFld = field;
+}
+
+bool // private
+KGVerify::applyPreset()
+{
+	if (!presEnt.isEmpty()) {
+		Debug( "%s->presetEntity(%\"s, %d)\n", pName.data(),
+		       presEnt.latin1(), presFld );
+		greet->presetEntity( presEnt, presFld );
+		if (entitiesLocal()) {
+			curUser = presEnt;
+			handler->verifySetUser( presEnt );
+		}
+		return true;
+	}
+	return false;
+}
+
+bool // private
+KGVerify::scheduleAutoLogin( bool initial )
+{
+	if (timeable) {
+		Debug( "%s->presetEntity(%\"s, -1)\n", pName.data(),
+		       _autoLoginUser.latin1(), -1 );
+		greet->presetEntity( _autoLoginUser, -1 );
+		curUser = _autoLoginUser;
+		handler->verifySetUser( _autoLoginUser );
+		timer.start( 1000 );
+		if (initial) {
+			timedLeft = _autoLoginDelay;
+			deadTicks = 0;
+		} else {
+			timedLeft = QMAX( _autoLoginDelay - TIMED_GREET_TO, MIN_TIMED_TO );
+			deadTicks = DEAD_TIMED_TO;
+		}
+		updateStatus();
+		running = false;
+		isClear = true;
+		return true;
+	}
+	return false;
+}
+
+void // private
+KGVerify::performAutoLogin()
+{
+//	timer.stop();
+	GSendInt( G_AutoLogin );
+	handleVerify();
 }
 
 QString // public
 KGVerify::getEntity() const
 {
-	Debug( "greet->getEntity()\n" );
-	return greet->getEntity();
+	Debug( "%s->getEntity()\n", pName.data() );
+	QString ent = greet->getEntity();
+	Debug( "  entity: %s\n", ent.latin1() );
+	return ent;
 }
 
 void
@@ -193,21 +270,27 @@ KGVerify::setUser( const QString &user )
 {
 	// assert( fixedEntity.isEmpty() );
 	curUser = user;
-	Debug( "greet->setUser(%\"s)\n", user.latin1() );
+	Debug( "%s->setUser(%\"s)\n", pName.data(), user.latin1() );
 	greet->setUser( user );
-	hasBegun = true;
-	setTimer();
+	gplugActivity();
 }
 
 void
 KGVerify::start()
 {
-	hasBegun = false;
 	authTok = (func == KGreeterPlugin::ChAuthTok);
-	running = true;
-	Debug( "greet->start()\n" );
-	greet->start();
 	cont = false;
+	if (func == KGreeterPlugin::Authenticate) {
+		if (scheduleAutoLogin( true )) {
+			if (!_autoLoginAgain)
+				_autoLoginDelay = 0, timeable = false;
+			return;
+		} else
+			applyPreset();
+	}
+	running = true;
+	Debug( "%s->start()\n", pName.data() );
+	greet->start();
 	if (!(func == KGreeterPlugin::Authenticate ||
 	      ctx == KGreeterPlugin::ChangeTok ||
 	      ctx == KGreeterPlugin::ExChangeTok))
@@ -220,7 +303,7 @@ KGVerify::start()
 void
 KGVerify::abort()
 {
-	Debug( "greet->abort()\n" );
+	Debug( "%s->abort()\n", pName.data() );
 	greet->abort();
 	running = false;
 }
@@ -230,61 +313,71 @@ KGVerify::suspend()
 {
 	// assert( !cont );
 	if (running) {
-		Debug( "greet->abort()\n" );
+		Debug( "%s->abort()\n", pName.data() );
 		greet->abort();
 	}
 	suspended = true;
 	updateStatus();
+	timer.suspend();
 }
 
 void
 KGVerify::resume()
 {
+	timer.resume();
 	suspended = false;
 	updateLockStatus();
 	if (running) {
-		Debug( "greet->start()\n" );
+		Debug( "%s->start()\n", pName.data() );
 		greet->start();
 	} else if (delayed) {
 		delayed = false;
 		running = true;
-		Debug( "greet->start()\n" );
+		Debug( "%s->start()\n", pName.data() );
 		greet->start();
-		setTimer();
 	}
 }
 
-void
+void // not a slot - called manually by greeter
 KGVerify::accept()
 {
-	Debug( "greet->next()\n" );
+	Debug( "%s->next()\n", pName.data() );
 	greet->next();
 }
 
-void
-KGVerify::reject()
+void // private
+KGVerify::doReject( bool initial )
 {
 	// assert( !cont );
-	curUser = QString::null;
 	if (running) {
-		Debug( "greet->abort()\n" );
+		Debug( "%s->abort()\n", pName.data() );
 		greet->abort();
 	}
-	Debug( "greet->clear()\n" );
+	handler->verifyClear();
+	Debug( "%s->clear()\n", pName.data() );
 	greet->clear();
-	if (running) {
-		Debug( "greet->start()\n" );
-		greet->start();
+	curUser = QString::null;
+	if (!scheduleAutoLogin( initial )) {
+		isClear = !(isClear && applyPreset());
+		if (running) {
+			Debug( "%s->start()\n", pName.data() );
+			greet->start();
+		}
+		if (!failed)
+			timer.stop();
 	}
-	hasBegun = false;
-	if (!failed)
-		timer.stop();
+}
+
+void // not a slot - called manually by greeter
+KGVerify::reject()
+{
+	doReject( true );
 }
 
 void
 KGVerify::setEnabled( bool on )
 {
-	Debug( "greet->setEnabled(%s)\n", on ? "true" : "false" );
+	Debug( "%s->setEnabled(%s)\n", pName.data(), on ? "true" : "false" );
 	greet->setEnabled( on );
 	enabled = on;
 	updateStatus();
@@ -296,33 +389,48 @@ KGVerify::slotTimeout()
 	if (failed) {
 		failed = false;
 		updateStatus();
-		Debug( "greet->revive()\n" );
+		Debug( "%s->revive()\n", pName.data() );
 		greet->revive();
 		handler->verifyRetry();
 		if (suspended)
 			delayed = true;
 		else {
 			running = true;
-			Debug( "greet->start()\n" );
+			Debug( "%s->start()\n", pName.data() );
 			greet->start();
-			setTimer();
+			slotActivity();
+			gplugActivity();
 			if (cont)
 				handleVerify();
 		}
+	} else if (timedLeft) {
+		deadTicks--;
+		if (!--timedLeft)
+			performAutoLogin();
+		else
+			timer.start( 1000 );
+		updateStatus();
 	} else {
 		// assert( ctx == Login );
-		reject();
-		handler->verifySetUser( QString::null );
+		isClear = true;
+		doReject( false );
 	}
 }
 
-void // private
-KGVerify::setTimer()
+void
+KGVerify::slotActivity()
 {
-	if (func == KGreeterPlugin::Authenticate &&
-	    ctx == KGreeterPlugin::Login &&
-	    !failed && hasBegun)
-		timer.start( 40000 );
+	if (timedLeft) {
+		Debug( "%s->revive()\n", pName.data() );
+		greet->revive();
+		Debug( "%s->start()\n", pName.data() );
+		greet->start();
+		running = true;
+		timedLeft = 0;
+		updateStatus();
+		timer.start( TIMED_GREET_TO * SECONDS );
+	} else if (timeable)
+		timer.start( TIMED_GREET_TO * SECONDS );
 }
 
 
@@ -488,7 +596,7 @@ KGVerify::handleVerify()
 			echo = GRecvInt();
 			Debug( "  echo = %d\n", echo );
 			ndelay = GRecvInt();
-			Debug( "  ndelay = %d\ngreet->textPrompt(...)\n", ndelay );
+			Debug( "  ndelay = %d\n%s->textPrompt(...)\n", ndelay, pName.data() );
 			greet->textPrompt( msg, echo, ndelay );
 			if (msg)
 				free( msg );
@@ -498,7 +606,7 @@ KGVerify::handleVerify()
 			msg = GRecvArr( &ret );
 			Debug( "  %d bytes prompt\n", ret );
 			ndelay = GRecvInt();
-			Debug( "  ndelay = %d\ngreet->binaryPrompt(...)\n", ndelay );
+			Debug( "  ndelay = %d\n%s->binaryPrompt(...)\n", ndelay, pName.data() );
 			greet->binaryPrompt( msg, ndelay );
 			if (msg)
 				free( msg );
@@ -511,11 +619,10 @@ KGVerify::handleVerify()
 		case V_PUT_USER:
 			Debug( " V_PUT_USER\n" );
 			msg = GRecvStr();
-			Debug( "  user %\"s\n", msg );
 			curUser = user = QString::fromLocal8Bit( msg );
 			// greet needs this to be able to return something useful from
 			// getEntity(). but the backend is still unable to tell a domain ...
-			Debug( "  greet->setUser()\n" );
+			Debug( "  %s->setUser(%\"s)\n", pName.data(), user.latin1() );
 			greet->setUser( curUser );
 			handler->verifySetUser( curUser );
 			if (msg)
@@ -529,7 +636,7 @@ KGVerify::handleVerify()
 			// is not implemented yet.
 			authTok = true;
 			cont = true;
-			Debug( "greet->succeeded()\n" );
+			Debug( "%s->succeeded()\n", pName.data() );
 			greet->succeeded();
 			continue;
 		case V_CHTOK_AUTH:
@@ -544,7 +651,7 @@ KGVerify::handleVerify()
 		  dchtok:
 			{
 				timer.stop();
-				Debug( "greet->succeeded()\n" );
+				Debug( "%s->succeeded()\n", pName.data() );
 				greet->succeeded();
 				KGChTok chtok( parent, user, pluginList, curPlugin, nfunc, KGreeterPlugin::Login );
 				if (!chtok.exec())
@@ -555,18 +662,24 @@ KGVerify::handleVerify()
 		case V_MSG_ERR:
 			Debug( " V_MSG_ERR\n" );
 			msg = GRecvStr();
-			Debug( "  message %\"s\n", msg );
-			if (!greet->textMessage( msg, true ))
+			Debug( "  %s->textMessage(%\"s, true)\n", pName.data(), msg );
+			if (!greet->textMessage( msg, true )) {
+				Debug( "  message passed\n" );
 				VErrBox( parent, user, msg );
+			} else
+				Debug( "  message swallowed\n" );
 			if (msg)
 				free( msg );
 			continue;
 		case V_MSG_INFO:
 			Debug( " V_MSG_INFO\n" );
 			msg = GRecvStr();
-			Debug( "  message %\"s\n", msg );
-			if (!greet->textMessage( msg, false ))
+			Debug( "  %s->textMessage(%\"s, false)\n", pName.data(), msg );
+			if (!greet->textMessage( msg, false )) {
+				Debug( "  message passed\n" );
 				VInfoBox( parent, user, msg );
+			} else
+				Debug( "  message swallowed\n" );
 			free( msg );
 			continue;
 		}
@@ -579,9 +692,11 @@ KGVerify::handleVerify()
 		if (ret == V_OK) {
 			Debug( " V_OK\n" );
 			if (!fixedEntity.isEmpty()) {
+				Debug( "  %s->getEntity()\n", pName.data() );
 				QString ent = greet->getEntity();
+				Debug( "  entity %\"s\n", ent.latin1() );
 				if (ent != fixedEntity) {
-					Debug( "greet->failed()\n" );
+					Debug( "%s->failed()\n", pName.data() );
 					greet->failed();
 					MsgBox( sorrybox,
 					        i18n("Authenticated user (%1) does not match requested user (%2).\n")
@@ -589,13 +704,13 @@ KGVerify::handleVerify()
 					goto retry;
 				}
 			}
-			Debug( "greet->succeeded()\n" );
+			Debug( "%s->succeeded()\n", pName.data() );
 			greet->succeeded();
 			handler->verifyOk();
 			return;
 		}
 
-		Debug( "greet->failed()\n" );
+		Debug( "%s->failed()\n", pName.data() );
 		greet->failed();
 
 		if (ret == V_AUTH) {
@@ -610,10 +725,10 @@ KGVerify::handleVerify()
 			LogPanic( "Unknown V_xxx code %d from core\n", ret );
 		Debug( " V_FAIL\n" );
 	  retry:
-		Debug( "greet->revive()\n" );
+		Debug( "%s->revive()\n", pName.data() );
 		greet->revive();
 		running = true;
-		Debug( "greet->start()\n" );
+		Debug( "%s->start()\n", pName.data() );
 		greet->start();
 		if (!cont)
 			return;
@@ -624,13 +739,11 @@ KGVerify::handleVerify()
 void
 KGVerify::gplugReturnText( const char *text, int tag )
 {
-	Debug( "gplugReturnText(%\"s, %d)\n",
+	Debug( "%s: gplugReturnText(%\"s, %d)\n", pName.data(),
 	       tag & V_IS_SECRET ? "<masked>" : text, tag );
 	GSendStr( text );
 	if (text) {
 		GSendInt( tag );
-		hasBegun = true;
-		setTimer();
 		handleVerify();
 	} else
 		coreLock = 0;
@@ -642,13 +755,11 @@ KGVerify::gplugReturnBinary( const char *data )
 	if (data) {
 		unsigned const char *up = (unsigned const char *)data;
 		int len = up[3] | (up[2] << 8) | (up[1] << 16) | (up[0] << 24);
-		Debug( "gplugReturnBinary(%d bytes)\n", len );
+		Debug( "%s: gplugReturnBinary(%d bytes)\n", pName.data(), len );
 		GSendArr( len, data );
-		hasBegun = true;
-		setTimer();
 		handleVerify();
 	} else {
-		Debug( "gplugReturnBinary(NULL)\n" );
+		Debug( "%s: gplugReturnBinary(NULL)\n", pName.data() );
 		GSendArr( 0, 0 );
 		coreLock = 0;
 	}
@@ -657,18 +768,16 @@ KGVerify::gplugReturnBinary( const char *data )
 void
 KGVerify::gplugSetUser( const QString &user )
 {
-	Debug( "gplugSetUser(%\"s)\n", user.latin1() );
+	Debug( "%s: gplugSetUser(%\"s)\n", pName.data(), user.latin1() );
 	curUser = user;
 	handler->verifySetUser( user );
-	hasBegun = !user.isEmpty();
-	setTimer();
 }
 
 void
 KGVerify::gplugStart()
 {
 	// XXX handle func != Authenticate
-	Debug( "gplugStart()\n" );
+	Debug( "%s: gplugStart()\n", pName.data() );
 	GSendInt( ctx == KGreeterPlugin::Shutdown ? G_VerifyRootOK : G_Verify );
 	GSendStr( greetPlugins[pluginList[curPlugin]].info->method );
 	handleVerify();
@@ -677,12 +786,20 @@ KGVerify::gplugStart()
 void
 KGVerify::gplugActivity()
 {
-	setTimer();
+	Debug( "%s: gplugActivity()\n", pName.data() );
+	if (func == KGreeterPlugin::Authenticate &&
+	    ctx == KGreeterPlugin::Login)
+	{
+		isClear = false;
+		if (!timeable)
+			timer.start( FULL_GREET_TO * SECONDS );
+	}
 }
 
 void
 KGVerify::gplugMsgBox( QMessageBox::Icon type, const QString &text )
 {
+	Debug( "%s: gplugMsgBox(%d, %\"s)\n", pName.data(), type, text.latin1() );
 	MsgBox( type, text );
 }
 
@@ -691,6 +808,16 @@ KGVerify::eventFilter( QObject *o, QEvent *e )
 {
 	switch (e->type()) {
 	case QEvent::KeyPress:
+		if (timedLeft) {
+			QKeyEvent *ke = (QKeyEvent *)e;
+			if (ke->key() == Qt::Key_Return || ke->key() == Qt::Key_Enter) {
+				if (deadTicks <= 0) {
+					timedLeft = 0;
+					performAutoLogin();
+				}
+				return true;
+			}
+		}
 	case QEvent::KeyRelease:
 		updateLockStatus();
 	default:
@@ -798,7 +925,7 @@ KGStdVerify::KGStdVerify( KGVerifyHandler *_handler, QWidget *_parent,
                           KGreeterPlugin::Context _ctx )
 	: inherited( _handler, 0, _parent, _predecessor, _fixedUser,
 	             _pluginList, _func, _ctx )
-	, failedLabelState( -1 )
+	, failedLabelState( 0 )
 {
 	grid = new QGridLayout;
 	grid->setAlignment( Qt::AlignCenter );
@@ -832,7 +959,7 @@ KGStdVerify::slotPluginSelected( int id )
 		plugMenu->setItemChecked( curPlugin, false );
 		parent->setUpdatesEnabled( false );
 		grid->removeItem( greet->getLayoutItem() );
-		Debug( "delete greet\n" );
+		Debug( "delete %s\n", pName.data() );
 		delete greet;
 		selectPlugin( id );
 		handler->verifyPluginChanged( id );
@@ -848,30 +975,41 @@ KGStdVerify::updateStatus()
 	int nfls;
 
 	if (!enabled)
-		nfls = 0;
+		nfls = 1;
 	else if (failed)
 		nfls = 2;
+	else if (timedLeft)
+		nfls = -timedLeft;
 	else if (!suspended && capsLocked)
-		nfls = 1;
+		nfls = 3;
 	else
-		nfls = 0;
+		nfls = 1;
 
 	if (failedLabelState != nfls) {
 		failedLabelState = nfls;
-		switch (nfls) {
-		default:
-			failedLabel->clear();
-			break;
-		case 1:
-			failedLabel->setPaletteForegroundColor( Qt::red );
-			failedLabel->setText( i18n("Warning: Caps Lock on") );
-			break;
-		case 2:
+		if (nfls < 0) {
 			failedLabel->setPaletteForegroundColor( Qt::black );
-			failedLabel->setText( authTok ? i18n("Change failed") :
-			                      fixedEntity.isEmpty() ?
-			                      i18n("Login failed") : i18n("Authentication failed") );
-			break;
+			failedLabel->setText( i18n( "Automatic login in 1 second ...",
+			                            "Automatic login in %n seconds ...",
+			                            timedLeft ) );
+		} else {
+			switch (nfls) {
+			default:
+				failedLabel->clear();
+				break;
+			case 3:
+				failedLabel->setPaletteForegroundColor( Qt::red );
+				failedLabel->setText( i18n("Warning: Caps Lock on") );
+				break;
+			case 2:
+				failedLabel->setPaletteForegroundColor( Qt::black );
+				failedLabel->setText( authTok ?
+				                         i18n("Change failed") :
+				                         fixedEntity.isEmpty() ?
+				                            i18n("Login failed") :
+				                            i18n("Authentication failed") );
+				break;
+			}
 		}
 	}
 }
@@ -920,7 +1058,7 @@ KGThemedVerify::slotPluginSelected( int id )
 		return;
 	if (id != curPlugin) {
 		plugMenu->setItemChecked( curPlugin, false );
-		Debug( "delete greet\n" );
+		Debug( "delete %s\n", pName.data() );
 		delete greet;
 		selectPlugin( id );
 		handler->verifyPluginChanged( id );
@@ -933,7 +1071,8 @@ void
 KGThemedVerify::updateStatus()
 {
 	handler->updateStatus( enabled && failed,
-	                       enabled && !suspended && capsLocked );
+	                       enabled && !suspended && capsLocked,
+	                       timedLeft );
 }
 
 

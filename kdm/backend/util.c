@@ -578,7 +578,7 @@ ListSessions( int flags, struct display *d, void *ctx,
 					continue;
 			} else {
 				/* hack around broken konsole which does not set ut_host. */
-				/* this chech is probably linux-specific. */
+				/* this check is probably linux-specific. */
 				/* alternatively we could open the device and try VT_OPENQRY. */
 				if (memcmp( ut->ut_line, "tty", 3 ) ||
 				    !isdigit( ut->ut_line[3] ))

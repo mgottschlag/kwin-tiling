@@ -59,7 +59,7 @@ UpdateListenSockets( void )
 
 	if (c_request_port == request_port)
 		return;
-	c_request_port == request_port;
+	c_request_port = request_port;
 
 	if (xdmcpFd != -1) {
 		CloseNClearCloseOnFork( xdmcpFd );

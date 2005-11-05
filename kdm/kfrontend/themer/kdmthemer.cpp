@@ -280,8 +280,10 @@ bool KdmThemer::willDisplay( const QDomNode &node )
 	}
 
 	QString type = el.attribute( "type" );
-	if (type == "timed" || type == "config" || type == "suspend")
+	if (type == "config" || type == "suspend")
 		return false;	// not implemented (yet)
+	if (type == "timed")
+		return _autoLoginDelay != 0;
 	if (type == "chooser")
 #ifdef XDMCP
 		return _loginMode != LOGIN_LOCAL_ONLY;
@@ -318,7 +320,7 @@ KdmThemer::showStructure( QObject *obj )
 
 			if (object->inherits( "KdmItem" )) {
 				KdmItem *widget = (KdmItem *)object;
-				kdDebug() << node << "|" << widget->type() << " me=" << widget << " " << widget->area << endl;
+				kdDebug() << node << "|" << widget->type() << " me=" << widget->id << " " << widget->area << endl;
 			}
 
 			showStructure( object );
