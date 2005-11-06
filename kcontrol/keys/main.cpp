@@ -156,7 +156,7 @@ extern "C"
 #define KICKER_ALL_BINDINGS
 #include "../../../kicker/kicker/core/kickerbindings.cpp"
 #include "../../../kicker/taskbar/taskbarbindings.cpp"
-#include "../../../kdesktop/kdesktopbindings.cpp"
+#include "../../../workspace/kdesktop/kdesktopbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 
   // Write all the global keys to kdeglobals.

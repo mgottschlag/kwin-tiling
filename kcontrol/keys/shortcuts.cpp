@@ -116,7 +116,7 @@ void ShortcutsModule::initGUI()
 #include "../../kwin/kwinbindings.cpp"
 #include "../../../kicker/kicker/core/kickerbindings.cpp"
 #include "../../../kicker/taskbar/taskbarbindings.cpp"
-#include "../../../kdesktop/kdesktopbindings.cpp"
+#include "../../../workspace/kdesktop/kdesktopbindings.cpp"
 #include "../../../klipper/klipperbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 
