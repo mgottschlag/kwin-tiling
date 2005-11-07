@@ -101,9 +101,9 @@ KCustomMenu::insertMenuItem(KService::Ptr & s, int nId, int nIndex/*= -1*/)
         active.convertFromImage(tmp);
     }
 
-    QIconSet iconset;
-    iconset.setPixmap(normal, QIconSet::Small, QIconSet::Normal);
-    iconset.setPixmap(active, QIconSet::Small, QIconSet::Active);
+    QIcon iconset;
+    iconset.setPixmap(normal, QIcon::Small, QIcon::Normal);
+    iconset.setPixmap(active, QIcon::Small, QIcon::Active);
 
     int newId = insertItem(iconset, serviceName, nId, nIndex);
     d->entryMap.insert(newId, s);
