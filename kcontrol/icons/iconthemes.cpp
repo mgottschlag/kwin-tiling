@@ -50,7 +50,7 @@
 #include <kio/netaccess.h>
 #include <ktar.h>
 
-#ifdef HAVE_LIBART
+#ifdef HAVE_LIBAGG
 #include <ksvgiconengine.h>
 #endif
 
@@ -348,7 +348,7 @@ void IconThemesConfig::updateRemoveButton()
 
 void IconThemesConfig::themeSelected(Q3ListViewItem *item)
 {
-#ifdef HAVE_LIBART
+#ifdef HAVE_LIBAGG
   KSVGIconEngine engine;
 #endif
   QString dirName(m_themeNames[item->text(0)]);
@@ -360,7 +360,7 @@ void IconThemesConfig::themeSelected(Q3ListViewItem *item)
 
   KIcon icon=icontheme.iconPath("exec.png", size, KIcon::MatchBest);
   if (!icon.isValid()) {
-#ifdef HAVE_LIBART
+#ifdef HAVE_LIBAGG
 	  icon=icontheme.iconPath("exec.svg", size, KIcon::MatchBest);
 	  if(engine.load(size, size, icon.path))
               m_previewExec->setPixmap(QPixmap(*engine.image()));
@@ -376,7 +376,7 @@ void IconThemesConfig::themeSelected(Q3ListViewItem *item)
 
   icon=icontheme.iconPath("folder.png",size,KIcon::MatchBest);
   if (!icon.isValid()) {
-#ifdef HAVE_LIBART
+#ifdef HAVE_LIBAGG
 	  icon=icontheme.iconPath("folder.svg", size, KIcon::MatchBest);
 	  if(engine.load(size, size, icon.path))
               m_previewFolder->setPixmap(QPixmap(*engine.image()));
@@ -392,7 +392,7 @@ void IconThemesConfig::themeSelected(Q3ListViewItem *item)
 
   icon=icontheme.iconPath("txt.png",size,KIcon::MatchBest);
   if (!icon.isValid()) {
-#ifdef HAVE_LIBART
+#ifdef HAVE_LIBAGG
 	  icon=icontheme.iconPath("txt.svg", size, KIcon::MatchBest);
 	  if(engine.load(size, size, icon.path))
               m_previewDocument->setPixmap(QPixmap(*engine.image()));
