@@ -31,6 +31,7 @@
 #include <QPaintEvent>
 #include <dcopobject.h>
 #include <qtimer.h>
+#include <kglobal.h>
 
 class QClipboard;
 class KToggleAction;
@@ -131,7 +132,7 @@ protected:
     bool ignoreClipboardChanges() const;
 
     KConfig* config() const { return m_config; }
-    bool isApplet() const { return m_config != kapp->config(); }
+    bool isApplet() const { return m_config != KGlobal::config(); }
 
 protected slots:
     void slotPopupMenu();

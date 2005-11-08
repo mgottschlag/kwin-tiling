@@ -373,14 +373,14 @@ void Keyboard_input_action::execute()
     int last_index = -1, start = 0;
     while(( last_index = input().find( ':', last_index + 1 )) != -1 ) // find next ';'
 	{
-        QString key = input().mid( start, last_index - start ).stripWhiteSpace();
+        QString key = input().mid( start, last_index - start ).trimmed();
         if( key == "Enter" && KKey( key ).keyCodeQt() == 0 )
             key = "Return"; // CHECKE hack
 	keyboard_handler->send_macro_key( KKey( key ).keyCodeQt(), w );
 	start = last_index + 1;
 	}
     // and the last one
-    QString key = input().mid( start, input().length()).stripWhiteSpace();
+    QString key = input().mid( start, input().length()).trimmed();
     if( key == "Enter" && KKey( key ).keyCodeQt() == 0 )
         key = "Return";
     keyboard_handler->send_macro_key( KKey( key ).keyCodeQt(), w ); // the rest

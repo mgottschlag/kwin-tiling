@@ -43,6 +43,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <ksimpleconfig.h>
+#include <kglobal.h>
 
 // for multihead
 extern int kdesktop_screen_number;
@@ -136,7 +137,7 @@ static QString realDesktopPath()
  */
 static void copyDesktopLinks()
 {
-    KConfig *config = kapp->config();
+    KConfig *config = KGlobal::config();
     config->setGroup("General");
     if (!config->readBoolEntry("CopyDesktopLinks", true))
        return;

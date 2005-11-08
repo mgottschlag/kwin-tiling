@@ -126,7 +126,7 @@ extern bool qt_qclipboard_bailout_hack;
 
 static void ensureGlobalSyncOff(KConfig* config);
 
-// config == kapp->config for process, otherwise applet
+// config == KGlobal::config for process, otherwise applet
 KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     : QWidget( parent )
     , DCOPObject( "klipper" )
@@ -234,7 +234,7 @@ KlipperWidget::~KlipperWidget()
     delete showTimer;
     delete hideTimer;
     delete myURLGrabber;
-    if( m_config != kapp->config())
+    if( m_config != KGlobal::config())
         delete m_config;
     qt_qclipboard_bailout_hack = false;
 }
@@ -509,7 +509,7 @@ void KlipperWidget::slotConfigure()
                                           globalKeys, isApplet() );
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
-    dlg->setStripWhiteSpace( myURLGrabber->stripWhiteSpace() );
+    dlg->setStripWhiteSpace( myURLGrabber->trimmed() );
     dlg->setReplayActionInHistory( bReplayActionInHistory );
     dlg->setNoNullClipboard( bNoNullClipboard );
     dlg->setUseGUIRegExpEditor( bUseGUIRegExpEditor );
@@ -535,7 +535,7 @@ void KlipperWidget::slotConfigure()
 
         myURLGrabber->setActionList( dlg->actionList() );
         myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
-        myURLGrabber->setStripWhiteSpace( dlg->stripWhiteSpace() );
+        myURLGrabber->setStripWhiteSpace( dlg->trimmed() );
         myURLGrabber->setAvoidWindows( dlg->noActionsFor() );
 
         history()->max_size( dlg->maxItems() );
@@ -738,7 +738,7 @@ bool KlipperWidget::blockFetchingNewData()
 //   contents, so in practice it's like the user has selected only the part which was
 //   selected when Klipper asked first.
 	Qt::ButtonState buttonstate = QApplication::mouseButtons();
-    if( ( buttonstate & ( Qt::ShiftButton | Qt::LeftButton )) == Qt::ShiftButton // #85198
+    if( ( buttonstate & ( Qt::ShiftModifier | Qt::LeftButton )) == Qt::ShiftButton // #85198
         || ( buttonstate & Qt::LeftButton ) == Qt::LeftButton ) { // #80302
         m_pendingContentsCheck = true;
         m_pendingCheckTimer.start( 100, true );
@@ -1076,7 +1076,7 @@ KAboutData* KlipperWidget::aboutData()
 }
 
 Klipper::Klipper( QWidget* parent )
-    : KlipperWidget( parent, kapp->config())
+    : KlipperWidget( parent, KGlobal::config())
 {
 }
 

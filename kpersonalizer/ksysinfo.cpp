@@ -69,7 +69,7 @@ void KSysInfo::initXInfo() {
 	char **extensions = XListExtensions( dpy, &extCount );
 	for (int i = 0; i < extCount; i++ ) {
 		extension=QString( extensions[i] );
-		extension=extension.stripWhiteSpace();
+		extension=extension.trimmed();
 		if (!extension.compare("RENDER"))
 			m_xrender=true;
 	}
@@ -202,8 +202,8 @@ QFont KSysInfo::getFixedWidthFont(){
 			QString s1 = QString::fromLocal8Bit(buf);
 			QString s2 = s1.mid(s1.find(":") + 1);
 			s1.truncate(s1.find(":"));
-			s1=s1.stripWhiteSpace();
-			s2=s2.stripWhiteSpace();
+			s1=s1.trimmed();
+			s2=s2.trimmed();
 			if(s1.contains("MHz")){
 				float fspeed = s2.toFloat(0);
 				fspeed = floor(fspeed);

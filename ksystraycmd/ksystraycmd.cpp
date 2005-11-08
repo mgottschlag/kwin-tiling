@@ -148,7 +148,7 @@ void KSysTrayCmd::refresh()
 
   QToolTip::remove( this );
   if ( win ) {
-    KConfig *appCfg = kapp->config();
+    KConfig *appCfg = KGlobal::config();
     KConfigGroup configSaver(appCfg, "System Tray");
     int iconWidth = configSaver.readNumEntry("systrayIconWidth", 22);
 

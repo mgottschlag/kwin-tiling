@@ -191,7 +191,7 @@ void KStylePage::saveColors(bool curSettings){
 	////////////////////////////////////////////////////
 	// KDE-1.x support
 	KSimpleConfig *kconfig =
-	new KSimpleConfig( QDir::homeDirPath() + "/.kderc" );
+	new KSimpleConfig( QDir::homePath() + "/.kderc" );
 	kconfig->setGroup( "General" );
 	kconfig->writeEntry("background", toSave->background );
 	kconfig->writeEntry("selectBackground", toSave->selectBackground );

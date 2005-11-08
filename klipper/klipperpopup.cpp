@@ -231,7 +231,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
     // If alt-something is pressed, select a shortcut
     // from the menu. Do this by sending a keyPress
     // without the alt-modifier to the superobject.
-    if ( e->state() & Qt::AltButton ) {
+    if ( e->state() & Qt::AltModifier ) {
         QKeyEvent ke( QEvent::KeyPress,
                       e->key(),
                       e->ascii(),

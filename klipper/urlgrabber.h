@@ -67,8 +67,8 @@ public:
   const QStringList& avoidWindows() const { return myAvoidWindows; }
   void setAvoidWindows( const QStringList& list ) { myAvoidWindows = list; }
 
-  bool stripWhiteSpace() const { return m_stripWhiteSpace; }
-  void setStripWhiteSpace( bool enable ) { m_stripWhiteSpace = enable; }
+  bool trimmed() const { return m_trimmed; }
+  void setStripWhiteSpace( bool enable ) { m_trimmed = enable; }
     
 private:
   const ActionList& matchingActions( const QString& );
@@ -86,7 +86,7 @@ private:
   KMenu *myMenu;
   QTimer *myPopupKillTimer;
   int myPopupKillTimeout;
-  bool m_stripWhiteSpace;
+  bool m_trimmed;
   KConfig* m_config;
 
 private slots:

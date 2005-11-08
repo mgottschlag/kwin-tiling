@@ -60,10 +60,10 @@ KPersonalizer::KPersonalizer(QWidget *parent, const char *name)
 
 	// first, reset the startup from true (see desktop file in share/autostart) to false
 	setCaption(kapp->caption());
-	kapp->config()->setGroup("General");
+	KGlobal::config()->setGroup("General");
 	os_dirty = eye_dirty = style_dirty=false;
-	kapp->config()->writeEntry("FirstLogin", false);
-	kapp->config()->sync();
+	KGlobal::config()->writeEntry("FirstLogin", false);
+	KGlobal::config()->sync();
 
 	countrypage= new KCountryPage(this);
 	addPage( countrypage, i18n( "Step 1: Introduction" ) );
