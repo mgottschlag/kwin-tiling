@@ -888,7 +888,7 @@ QString Minicli::calculate(const QString &exp)
    FILE *fs = popen(QFile::encodeName(cmd).data(), "r");
    if (fs)
    {
-      QTextStream ts(fs, IO_ReadOnly);
+      QTextStream ts(fs, QIODevice::ReadOnly);
       result = ts.read().trimmed();
       pclose(fs);
    }

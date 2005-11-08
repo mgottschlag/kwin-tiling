@@ -24,7 +24,7 @@ void KMemoryWidget::update()
   Memory_Info[FREESWAP_MEM] = MEMORY(info.freeswap)  * mem_unit; // free memory in swap-partitions
   
   QFile file("/proc/meminfo");
-  if (file.open(IO_ReadOnly)) {
+  if (file.open(QIODevice::ReadOnly)) {
 	char buf[512];
 	while (file.readLine(buf, sizeof(buf) - 1) > 0) {
 		if (strncmp(buf,"Cached:",7)==0) {

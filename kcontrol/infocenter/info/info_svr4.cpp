@@ -35,7 +35,7 @@ bool GetInfo_ReadfromFile( QListView *lBox, char *Name, char splitchar  )
   QFile *file = new QFile(Name);
   QListViewItem* olditem = 0;
 
-  if(!file->open(IO_ReadOnly)) {
+  if(!file->open(QIODevice::ReadOnly)) {
     delete file; 
     return false;
   }

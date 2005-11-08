@@ -378,7 +378,7 @@ bool GetInfo_CPU( QListView *lBox )
   model = new QFile(INFO_CPU_MODEL);  
   if (model->exists()) 
   {	if ((pipe = popen(INFO_CPU_MODEL, "r"))) 
-	{	QTextStream *t = new QTextStream(pipe, IO_ReadOnly);
+	{	QTextStream *t = new QTextStream(pipe, QIODevice::ReadOnly);
 		str = t->readLine();
         olditem = new QListViewItem(lBox, olditem, i18n("Model"), str);
 		delete t;
@@ -454,7 +454,7 @@ bool GetInfo_ReadfromFile( QListView *lBox, const char *Name )
   QFile *file = new QFile(Name);
   QListViewItem* olditem = 0;
 
-  if(!file->open(IO_ReadOnly)) {
+  if(!file->open(QIODevice::ReadOnly)) {
     delete file; 
     return false;
   }

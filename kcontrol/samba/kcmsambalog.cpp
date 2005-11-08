@@ -160,7 +160,7 @@ void LogView::saveSettings()
 void LogView::updateList()
 {
    QFile logFile(logFileName.url());
-   if (logFile.open(IO_ReadOnly))
+   if (logFile.open(QIODevice::ReadOnly))
    {
       QApplication::setOverrideCursor(Qt::WaitCursor);
       viewHistory.clear();

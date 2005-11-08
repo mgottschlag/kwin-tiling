@@ -265,7 +265,7 @@ bool ThemePage::installThemes( const QString &file )
 {
 	KTar archive( file );
 
-	if ( !archive.open( IO_ReadOnly ) )
+	if ( !archive.open( QIODevice::ReadOnly ) )
 		return false;
 
 	const KArchiveDirectory *archiveDir = archive.directory();

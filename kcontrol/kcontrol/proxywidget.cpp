@@ -187,7 +187,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 	 if (kapp->dcopClient()->call("kcontrol", "moduleIface", "getStyle()", QByteArray(),
 				 replyType, replyData))
 		 if ( replyType == "QString") {
-			 QDataStream reply( replyData, IO_ReadOnly );
+			 QDataStream reply( replyData, QIODevice::ReadOnly );
 			 QString style; 
 			 reply >> style;
 			 setStyle(style);

@@ -765,7 +765,7 @@ bool LockProcess::startHack()
 
     mHackProc.clearArguments();
 
-    QTextStream ts(&mSaverExec, IO_ReadOnly);
+    QTextStream ts(&mSaverExec, QIODevice::ReadOnly);
     QString word;
     ts >> word;
     QString path = KStandardDirs::findExe(word);

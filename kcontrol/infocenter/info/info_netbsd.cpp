@@ -111,7 +111,7 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 	QString s;
 	bool found = false;
 
-	if (dmesg->exists() && dmesg->open(IO_ReadOnly)) {
+	if (dmesg->exists() && dmesg->open(QIODevice::ReadOnly)) {
 		t = new QTextStream(dmesg);
 	}
 	else {
@@ -119,7 +119,7 @@ static bool GetDmesgInfo(QListView *lBox, const char *filter,
 		pipe = popen("/sbin/dmesg", "r");
 		if (!pipe) return false;
 		usepipe = true;
-		t = new QTextStream(pipe, IO_ReadOnly);
+		t = new QTextStream(pipe, QIODevice::ReadOnly);
 	}
 
 	QListViewItem *olditem = NULL;

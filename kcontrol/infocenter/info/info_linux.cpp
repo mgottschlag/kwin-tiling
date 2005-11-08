@@ -89,7 +89,7 @@ bool GetInfo_ReadfromFile(Q3ListView * lbox, const char *FileName,
 	return false;
     }
 
-    if (!file.open(IO_ReadOnly)) {
+    if (!file.open(QIODevice::ReadOnly)) {
 	/*   *GetInfo_ErrorString =
 	   i18n("You do not have read-access for the file %1!\nPlease ask your system-administrator for advice!")
 	   .arg(FileName);
@@ -146,7 +146,7 @@ bool GetInfo_DMA(Q3ListView * lBox)
     lBox->addColumn(i18n("DMA-Channel"));
     lBox->addColumn(i18n("Used By"));
 
-    if (file.exists() && file.open(IO_ReadOnly)) {
+    if (file.exists() && file.open(QIODevice::ReadOnly)) {
 	QTextStream stream(&file);
 	QString line;
 	Q3ListViewItem *child=0L;
@@ -215,7 +215,7 @@ bool GetInfo_Devices(Q3ListView * lBox)
     lBox->addColumn(i18n("Minor Number"));
 
     file.setName(INFO_DEVICES);
-    if (file.exists() && file.open(IO_ReadOnly)) {
+    if (file.exists() && file.open(QIODevice::ReadOnly)) {
 	QTextStream stream(&file);
 	QString line;
 	Q3ListViewItem *parent=0L, *child=0L;
@@ -252,7 +252,7 @@ bool GetInfo_Devices(Q3ListView * lBox)
     }
     
     file.setName(INFO_MISC);
-    if (misc && file.exists() && file.open(IO_ReadOnly)) {
+    if (misc && file.exists() && file.open(QIODevice::ReadOnly)) {
 	QTextStream stream(&file);
 	QString line;
 	Q3ListViewItem *child=0L;
@@ -463,7 +463,7 @@ bool GetInfo_Partitions(Q3ListView * lbox)
 
     /* read the list of already mounted file-systems.. */
     QFile *file = new QFile(INFO_MOUNTED_PARTITIONS);
-    if (file->open(IO_ReadOnly)) {
+    if (file->open(QIODevice::ReadOnly)) {
 	char buf[1024];
 	while (file->readLine(buf, sizeof( buf )) > 0) {
 	    str = QString::fromLocal8Bit(buf);
