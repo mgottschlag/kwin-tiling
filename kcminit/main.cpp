@@ -47,7 +47,7 @@ static bool runModule(const QString &libName, KLibLoader *loader, KService::Ptr 
     if (lib) {
 	// get the init_ function
 	QString factory = QString("init_%1").arg(service->init());
-	void *init = lib->symbol(factory.utf8());
+	void *init = lib->symbol(factory.toUtf8());
 	if (init) {
 	    // initialize the module
 	    kdDebug(1208) << "Initializing " << libName << ": " << factory << endl;
