@@ -190,7 +190,7 @@ void KSmartcardConfig::loadReadersTab( QStringList lr){
   //Prepare data for dcop calls
   QByteArray data, retval;
   QCString rettype;
-  QDataStream arg(&data, IO_WriteOnly);
+  QDataStream arg(&data, QIODevice::WriteOnly);
 
   arg.setVersion(QDataStream::Qt_3_1);
   QCString modName = "kardsvc";
@@ -236,7 +236,7 @@ void KSmartcardConfig::loadReadersTab( QStringList lr){
 
 
    QByteArray dataATR;
-   QDataStream argATR(&dataATR,IO_WriteOnly);
+   QDataStream argATR(&dataATR,QIODevice::WriteOnly);
 
    argATR.setVersion(QDataStream::Qt_3_1);
    argATR << *_slot;
@@ -306,7 +306,7 @@ void KSmartcardConfig::load()
   //Prepare data for dcop calls
   QByteArray data, retval;
   QCString rettype;
-  QDataStream arg(&data, IO_WriteOnly);
+  QDataStream arg(&data, QIODevice::WriteOnly);
 
   arg.setVersion(QDataStream::Qt_3_1);
   QCString modName = "kardsvc";
@@ -342,7 +342,7 @@ if (_ok) {
 
   QByteArray data, retval;
   QCString rettype;
-  QDataStream arg(&data, IO_WriteOnly);
+  QDataStream arg(&data, QIODevice::WriteOnly);
 
   arg.setVersion(QDataStream::Qt_3_1);
   QCString modName = "kardsvc";
@@ -407,7 +407,7 @@ extern "C"
     if (start) {
 	QByteArray data, retval;
 	QCString rettype;
-	QDataStream arg(&data, IO_WriteOnly);
+	QDataStream arg(&data, QIODevice::WriteOnly);
 
 	arg.setVersion(QDataStream::Qt_3_1);
 	QCString modName = "kardsvc";

@@ -193,7 +193,7 @@ void PositionTab::defaults()
     m_expandCheckBox->setChecked( true ); // expand as required
     m_xineramaScreenComboBox->setCurrentItem(QApplication::desktop()->primaryScreen());
 
-    if (QApplication::reverseLayout())
+    if (QApplication::isRightToLeft())
     {
         // RTL lang aligns right
         m_panelAlign = AlignRight;

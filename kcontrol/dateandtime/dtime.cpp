@@ -114,7 +114,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // Even if the module's widgets are reversed (usually when using RTL
   // languages), the placing of the time fields must always be H:M:S, from
   // left to right.
-  bool isRTL = QApplication::reverseLayout();
+  bool isRTL = QApplication::isRightToLeft();
 
   QSpacerItem *spacer1 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
   v3->addMultiCell(spacer1, 0, 1, 1, 1);

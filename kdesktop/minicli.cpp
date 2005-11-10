@@ -600,7 +600,7 @@ void Minicli::notifyServiceStarted(KService::Ptr service)
     // Inform other applications (like the quickstarter applet)
     // that an application was started
     QByteArray params;
-    QDataStream stream(&params, IO_WriteOnly);
+    QDataStream stream(&params, QIODevice::WriteOnly);
 
     stream.setVersion(QDataStream::Qt_3_1);
     stream << "minicli" << service->storageId();

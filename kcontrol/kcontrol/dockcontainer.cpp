@@ -67,7 +67,7 @@ ModuleTitle::ModuleTitle( QWidget *parent, const char *name )
   m_name->setFont( font );
 
   setSpacing( KDialog::spacingHint() );
-  if ( QApplication::reverseLayout() )
+  if ( QApplication::isRightToLeft() )
   {
       spacer = new QWidget( this );
       setStretchFactor( spacer, 10 );
