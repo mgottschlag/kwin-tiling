@@ -770,6 +770,9 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 			case BO_NOMAN:
 				fLog( d, fd, "notsup", "boot options unavailable" );
 				goto bust;
+			case BO_IO:
+				fLog( d, fd, "io", "io error" );
+				goto bust;
 			}
 			Reply( "ok\t" );
 			for (i = 0; opts[i]; i++) {
