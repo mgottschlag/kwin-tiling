@@ -32,7 +32,6 @@
 #include <string.h>
 #include <errno.h>
 
-#include <Q3VBox>
 #include <qlabel.h>
 #include <qbitmap.h>
 #include <qfile.h>
