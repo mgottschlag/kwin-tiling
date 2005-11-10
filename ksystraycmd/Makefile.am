@@ -2,6 +2,7 @@
 
 INCLUDES = $(all_includes)
 LDADD    = $(LIB_KDEUI)
+KDE_CXXFLAGS = -UQT3_SUPPORT
 
 #######	Files
 

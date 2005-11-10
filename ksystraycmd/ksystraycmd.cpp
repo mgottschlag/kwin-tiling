@@ -25,10 +25,11 @@
 
 
 KSysTrayCmd::KSysTrayCmd()
-  : QLabel( 0, "systray_cmd" ),
+  : QLabel( 0 ),
     isVisible(true), lazyStart( false ), noquit( false ), quitOnHide( false ), onTop(false), ownIcon(false),
     win(0), client(0), kwinmodule(0), top(0), left(0)
 {
+  setObjectName("systray_cmd" );
   setAlignment( Qt::AlignCenter );
   kwinmodule = new KWinModule( this );
   refresh();
@@ -146,7 +147,7 @@ void KSysTrayCmd::refresh()
 {
   KWin::setSystemTrayWindowFor( winId(), win ? win : winId() );
 
-  QToolTip::remove( this );
+  this->setToolTip( QString() );
   if ( win ) {
     KConfig *appCfg = KGlobal::config();
     KConfigGroup configSaver(appCfg, "System Tray");
@@ -283,7 +284,7 @@ void KSysTrayCmd::checkExistingWindows()
 
 void KSysTrayCmd::windowAdded(WId w)
 {
-  if ( !window.isEmpty() && ( QRegExp( window ).search( KWin::windowInfo(w).name() ) == -1 ) )
+  if ( !window.isEmpty() && ( QRegExp( window ).indexIn( KWin::windowInfo(w).name() ) == -1 ) )
     return; // no match
   setTargetWindow( w );
 }

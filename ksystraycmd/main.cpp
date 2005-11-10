@@ -9,8 +9,6 @@
 #include "ksystraycmd.h"
 
 #include <X11/Xlib.h>
-//Added by qt3to4:
-#include <Q3CString>
 #include <QX11Info>
 #ifndef KDE_USE_FINAL
 const int XFocusOut = FocusOut;
@@ -98,7 +96,7 @@ int main( int argc, char *argv[] )
   // Read the command
   QString command;
   for ( int i = 0; i < args->count(); i++ )
-    command += Q3CString( args->arg(i) ) + " ";
+    command += QString( args->arg(i) ) + " ";
   if ( !command.isEmpty() )
       cmd.setCommand( command );
 
