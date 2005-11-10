@@ -226,7 +226,7 @@ void StartupId::update_startupid()
     startup_widget->show();
     XRaiseWindow( QX11Info::display(), startup_widget->winId());
     update_timer.start( bouncing ? 30 : 100, true );
-    QApplication::flushX();
+    QApplication::flush();
     }
 
 #include "startupid.moc"

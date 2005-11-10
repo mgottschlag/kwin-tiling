@@ -110,7 +110,7 @@ void AutoLogout::logout()
 void AutoLogout::show()
 {
     QDialog::show();
-    QApplication::flushX();
+    QApplication::flush();
 }
 
 #include "autologout.moc"

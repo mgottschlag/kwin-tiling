@@ -482,7 +482,7 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
       // flash the overlay widget
       overlay->raise();
       overlay->show();
-      flushX();
+      flush();
     }
 
   // ask artsd to ring a nice bell

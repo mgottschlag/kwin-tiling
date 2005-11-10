@@ -766,7 +766,7 @@ void KScreenSaver::slotSetup()
         }
 
         mSetupBt->setEnabled( false );
-        kapp->flushX();
+        kapp->flush();
 
         mSetupProc->start();
     }

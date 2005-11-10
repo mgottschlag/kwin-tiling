@@ -106,7 +106,7 @@ main( int argc, char *argv[] )
 
 	app.exec();
 
-	app.flushX();
+	app.flush();
 
 	// Keep color resources after termination
 	XSetCloseDownMode( QX11Info::display(), RetainTemporary );

@@ -443,7 +443,7 @@ int Minicli::runCommand()
       }
     }
 
-    QApplication::flushX();
+    QApplication::flush();
 
     int pid = fork();
 

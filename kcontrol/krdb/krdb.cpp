@@ -571,7 +571,7 @@ void runRdb( uint flags )
       applyQtSettings( kglobals, *settings );          // For kcmstyle
 
     delete settings;
-    QApplication::flushX();
+    QApplication::flush();
 
     // We let KIPC take care of ourselves, as we are in a KDE app with
     // QApp::setDesktopSettingsAware(false);
@@ -596,7 +596,7 @@ void runRdb( uint flags )
 		     qt_settings_timestamp, 8, PropModeReplace,
 		     (unsigned char*) stamp.buffer().data(),
 		     stamp.buffer().size() );
-    QApplication::flushX();
+    QApplication::flush();
   }
 }
 

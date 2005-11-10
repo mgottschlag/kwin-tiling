@@ -511,7 +511,7 @@ void PasswordDlg::slotOK()
 void PasswordDlg::show()
 {
     QDialog::show();
-    QApplication::flushX();
+    QApplication::flush();
 }
 
 void PasswordDlg::slotStartNewSession()

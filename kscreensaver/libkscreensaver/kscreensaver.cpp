@@ -172,7 +172,7 @@ void KBlankEffect::blankSweepRight()
 {
     QPainter p( d->widget );
     p.fillRect( d->effectProgress, 0, 50, d->widget->height(), Qt::black );
-    qApp->flushX();
+    qApp->flush();
     d->effectProgress += 50;
     if ( d->effectProgress >= d->widget->width() )
         finished();
@@ -183,7 +183,7 @@ void KBlankEffect::blankSweepDown()
 {
     QPainter p( d->widget );
     p.fillRect( 0, d->effectProgress, d->widget->width(), 50, Qt::black );
-    qApp->flushX();
+    qApp->flush();
     d->effectProgress += 50;
     if ( d->effectProgress >= d->widget->height() )
         finished();
@@ -220,7 +220,7 @@ void KBlankEffect::blankBlocks()
         d->effectProgress++;
     }
 
-    qApp->flushX();
+    qApp->flush();
 
     if ( d->effectProgress >= bx*by ) {
         delete block;
