@@ -13,8 +13,6 @@
 
 #include <kdedmodule.h>
 #include <dcopclient.h>
-//Added by qt3to4:
-#include <Q3CString>
 
 namespace KHotKeys
 {
@@ -30,7 +28,7 @@ class KHotKeysModule
         ASYNC reread_configuration();
         ASYNC quit(); 
     public:
-        KHotKeysModule( const Q3CString& obj );
+        KHotKeysModule( const DCOPCString& obj );
         virtual ~KHotKeysModule();
     private:
         Action_data_group* actions_root;

@@ -31,11 +31,9 @@
 #include <input.h>
 #include <action_data.h>
 #include <gestures.h>
-//Added by qt3to4:
-#include <Q3CString>
 
 extern "C" 
-KDE_EXPORT KDEDModule *create_khotkeys( const Q3CString& obj )
+KDE_EXPORT KDEDModule *create_khotkeys( const DCOPCString& obj )
     {
     return new KHotKeys::KHotKeysModule( obj );
     }
@@ -45,7 +43,7 @@ namespace KHotKeys
 
 // KhotKeysModule
 
-KHotKeysModule::KHotKeysModule( const Q3CString& obj )
+KHotKeysModule::KHotKeysModule( const DCOPCString& obj )
     : KDEDModule( obj )
     {
     for( int i = 0;
