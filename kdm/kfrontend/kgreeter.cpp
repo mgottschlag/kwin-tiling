@@ -273,7 +273,7 @@ KGreeter::insertUsers()
 		QSize ns( 48, 48 );
 		if (default_pix.size() != ns)
 			default_pix =
-			  default_pix.convertDepth( 32 ).smoothScale( ns, Qt::ScaleMin );
+			  default_pix.convertDepth( 32 ).smoothScale( ns, Qt::KeepAspectRatio );
 	}
 	if (_showUsers == SHOW_ALL) {
 		UserList noUsers( _noUsers );

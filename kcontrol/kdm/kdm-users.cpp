@@ -274,7 +274,7 @@ void KDMUsersWidget::slotUserSelected()
 	p.load( m_userPixDir + ".default.face.icon" );
 	rstuserbutton->setEnabled( false );
     }
-    userbutton->setPixmap( QPixmap::fromImage( p.smoothScale( 48, 48, Qt::ScaleMin ) ) );
+    userbutton->setPixmap( QPixmap::fromImage( p.smoothScale( 48, 48, Qt::KeepAspectRatio ) ) );
 }
 
 
@@ -297,7 +297,7 @@ void KDMUsersWidget::changeUserPix(const QString &pix)
 	return;
     }
 
-    p = p.smoothScale( 48, 48, Qt::ScaleMin );
+    p = p.smoothScale( 48, 48, Qt::KeepAspectRatio );
     QString userpix = m_userPixDir + user + ".face.icon";
     if (!p.save( userpix, "PNG" ))
         KMessageBox::sorry(this,

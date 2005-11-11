@@ -396,7 +396,7 @@ void kthememanager::updatePreview( const QString & pixFile )
      QImage preview( pixFile, "PNG" );
      if (preview.width()>dlg->lbPreview->contentsRect().width() ||
          preview.height()>dlg->lbPreview->contentsRect().height() )
-         preview = preview.smoothScale( dlg->lbPreview->contentsRect().size(), Qt::ScaleMin );
+         preview = preview.smoothScale( dlg->lbPreview->contentsRect().size(), Qt::KeepAspectRatio );
      QPixmap pix;
      pix.convertFromImage( preview );
      dlg->lbPreview->setPixmap( pix );
