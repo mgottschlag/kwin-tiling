@@ -173,7 +173,7 @@ void KFileIVIDesktop::drawShadowedText( QPainter *p, const QColorGroup &cg )
   int textX = textRect( FALSE ).x() + 2;
   int textY = textRect( FALSE ).y();
   int align = ((KIconView *) iconView())->itemTextPos() == Q3IconView::Bottom
-    ? Qt::AlignHCenter : Qt::AlignAuto;
+    ? Qt::AlignHCenter : Qt::AlignLeft;
   bool rebuild = shouldUpdateShadow(isSelected());
 
   KDesktopShadowSettings *settings = (KDesktopShadowSettings *) (m_shadow->shadowSettings());
