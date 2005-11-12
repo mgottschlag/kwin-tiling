@@ -163,7 +163,7 @@ GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
 
     maxItems = new KIntNumInput( this );
     maxItems->setLabel(  i18n( "C&lipboard history size:" ) );
-    maxItems->setRange( 2, 2048, 100, true );
+    maxItems->setRange( 2, 2048, 1, true );
     connect( maxItems, SIGNAL( valueChanged( int )),
              SLOT( historySizeChanged( int ) ));
 
