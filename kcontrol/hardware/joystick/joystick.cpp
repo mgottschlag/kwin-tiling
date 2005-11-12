@@ -41,25 +41,25 @@ extern "C"
   { /* Code stolen from JoyWidget::init() */
     int i;
     char dev[30];
-  
+
     for (i = 0; i < 5; i++)  // check the first 5 devices
     {
       sprintf(dev, "/dev/js%d", i);  // first look in /dev
       JoyDevice *joy = new JoyDevice(dev);
-  
+
       if ( joy->open() != JoyDevice::SUCCESS )
       {
         delete joy;
         sprintf(dev, "/dev/input/js%d", i);  // then look in /dev/input
         joy = new JoyDevice(dev);
-  
+
         if ( joy->open() != JoyDevice::SUCCESS )
         {
           delete joy;
           continue;    // try next number
         }
       }
-  
+
       return true; /* We have at least one joystick and should hence be shown */
     }
     return false;
@@ -68,10 +68,10 @@ extern "C"
 
 //---------------------------------------------------------------------------------------------
 
-joystick::joystick(QWidget *parent, const char *name, const QStringList &)
+joystick::joystick(QWidget *parent, const char *, const QStringList &)
   : KCModule(JoystickFactory::instance(), parent)
 {
-  setAboutData( new KAboutData("kcmjoystick", I18N_NOOP("KDE Joystick Control Module"), "1.0",
+  setAboutData(new KAboutData("kcmjoystick", I18N_NOOP("KDE Joystick Control Module"), "1.0",
                                I18N_NOOP("KDE Control Center Module to test Joysticks"),
                                KAboutData::License_GPL, "(c) 2004, Martin Koller",
                                0, "m.koller@surfeu.at"));
@@ -117,8 +117,6 @@ void joystick::defaults()
 
   emit changed(true);
 }
-
-//---------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------
 

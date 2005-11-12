@@ -23,21 +23,20 @@
 #include "poswidget.h"
 #include "caldialog.h"
 
-
-
-#include <q3table.h>
+#include <qtablewidget.h>
 #include <qlabel.h>
 #include <qcombobox.h>
-#include <q3listbox.h>
 #include <qcheckbox.h>
 #include <qtimer.h>
 #include <qfontmetrics.h>
 #include <qpushbutton.h>
 
+#include <QHeaderView>
+
 #include <klocale.h>
 #include <kdialog.h>
-#include <kdebug.h>
 #include <kmessagebox.h>
+#include <kiconloader.h>
 
 #include <stdio.h>
 #include <kvbox.h>
@@ -52,8 +51,17 @@ JoyWidget::JoyWidget(QWidget *parent, const char *name)
   KVBox *mainVbox = new KVBox(parent);
   mainVbox->setSpacing(KDialog::spacingHint());
 
-  message = new QLabel(mainVbox);
-  message->hide();
+  // create area to show an icon + message if no joystick was detected
+  {
+    messageBox = new KHBox(mainVbox);
+    messageBox->setSpacing(KDialog::spacingHint());
+    QLabel *icon = new QLabel(messageBox);
+    icon->setPixmap(KGlobal::iconLoader()->loadIcon("messagebox_warning", KIcon::NoGroup,
+                                                    KIcon::SizeMedium, KIcon::DefaultState, 0, true));
+    icon->setFixedSize(icon->sizeHint());
+    message = new QLabel(messageBox);
+    messageBox->hide();
+  }
 
   KHBox *devHbox = new KHBox(mainVbox);
   new QLabel(i18n("Device:"), devHbox);
@@ -84,24 +92,26 @@ JoyWidget::JoyWidget(QWidget *parent, const char *name)
   int colWidth = QMAX(fm.width(PRESSED), fm.width("-32767")) + 10;  // -32767 largest string
 
   new QLabel(i18n("Buttons:"), vboxMid);
-  buttonTbl = new Q3Table(0, 1, vboxMid);
-  buttonTbl->setReadOnly(true);
-  buttonTbl->horizontalHeader()->setLabel(0, i18n("State"));
-  buttonTbl->horizontalHeader()->setClickEnabled(false);
-  buttonTbl->horizontalHeader()->setResizeEnabled(false);
-  buttonTbl->verticalHeader()->setClickEnabled(false);
-  buttonTbl->verticalHeader()->setResizeEnabled(false);
-  buttonTbl->setColumnWidth(0, colWidth);
+  buttonTbl = new QTableWidget(0, 1, vboxMid);
+  buttonTbl->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  buttonTbl->setHorizontalHeaderLabels(QStringList(i18n("State")));
+  buttonTbl->setSortingEnabled(false);
+  buttonTbl->horizontalHeader()->setClickable(false);
+  buttonTbl->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+  buttonTbl->verticalHeader()->setClickable(false);
+  buttonTbl->verticalHeader()->setResizeMode(QHeaderView::Stretch);
+  buttonTbl->horizontalHeader()->resizeSection(0, colWidth);
 
   new QLabel(i18n("Axes:"), vboxRight);
-  axesTbl = new Q3Table(0, 1, vboxRight);
-  axesTbl->setReadOnly(true);
-  axesTbl->horizontalHeader()->setLabel(0, i18n("Value"));
-  axesTbl->horizontalHeader()->setClickEnabled(false);
-  axesTbl->horizontalHeader()->setResizeEnabled(false);
-  axesTbl->verticalHeader()->setClickEnabled(false);
-  axesTbl->verticalHeader()->setResizeEnabled(false);
-  axesTbl->setColumnWidth(0, colWidth);
+  axesTbl = new QTableWidget(0, 1, vboxRight);
+  axesTbl->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  axesTbl->setHorizontalHeaderLabels(QStringList(i18n("Value")));
+  axesTbl->setSortingEnabled(false);
+  axesTbl->horizontalHeader()->setClickable(false);
+  axesTbl->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+  axesTbl->verticalHeader()->setClickable(false);
+  axesTbl->verticalHeader()->setResizeMode(QHeaderView::Stretch);
+  axesTbl->horizontalHeader()->resizeSection(0, colWidth);
 
   // calibrate button
   calibrate = new QPushButton(i18n("Calibrate"), mainVbox);
@@ -141,8 +151,8 @@ void JoyWidget::init()
   char dev[30];
 
   device->clear();
-  buttonTbl->setNumRows(0);
-  axesTbl->setNumRows(0);
+  buttonTbl->setRowCount(0);
+  axesTbl->setRowCount(0);
 
   for (i = 0; i < 5; i++)  // check the first 5 devices
   {
@@ -179,12 +189,11 @@ void JoyWidget::init()
   /* KDE 4: Remove this check(and i18n) when all KCM wrappers properly test modules */
   if ( device->count() == 0 )
   {
-    message->show();
+    messageBox->show();
     message->setText(QString("<qt><b>%1</b></qt>").arg(
-      i18n("No joystick device automatically found on this computer.\n"
-           "Checks were done in /dev/js[0-4] and /dev/input/js[0-4]\n"
-           "If you know that there is one attached, please enter the correct device file.")
-      .replace("\n", "<br>")));  // hack because we're in string freeze
+      i18n("No joystick device automatically found on this computer.<br>"
+           "Checks were done in /dev/js[0-4] and /dev/input/js[0-4]<br>"
+           "If you know that there is one attached, please enter the correct device file.")));
   }
 }
 
@@ -263,22 +272,22 @@ void JoyWidget::showDeviceProps(JoyDevice *joy)
 {
   joydev = joy;
 
-  buttonTbl->setNumRows(joydev->numButtons());
+  buttonTbl->setRowCount(joydev->numButtons());
 
-  axesTbl->setNumRows(joydev->numAxes());
+  axesTbl->setRowCount(joydev->numAxes());
   if ( joydev->numAxes() >= 2 )
   {
-    axesTbl->verticalHeader()->setLabel(0, "1(x)");
-    axesTbl->verticalHeader()->setLabel(1, "2(y)");
+    axesTbl->verticalHeaderItem(0)->setText("1(x)");
+    axesTbl->verticalHeaderItem(1)->setText("2(y)");
   }
 
   calibrate->setEnabled(true);
   idle->start(0);
 
   // make both tables use the same space for header; this looks nicer
-  buttonTbl->setLeftMargin(QMAX(buttonTbl->verticalHeader()->width(),
-                                  axesTbl->verticalHeader()->width()));
-  axesTbl->setLeftMargin(buttonTbl->verticalHeader()->width());
+  buttonTbl->verticalHeader()->setFixedWidth(QMAX(buttonTbl->verticalHeader()->width(),
+                                                    axesTbl->verticalHeader()->width()));
+  axesTbl->verticalHeader()->setFixedWidth(buttonTbl->verticalHeader()->width());
 }
 
 //--------------------------------------------------------------
@@ -296,9 +305,9 @@ void JoyWidget::checkDevice()
   if ( type == JoyDevice::BUTTON )
   {
     if ( value == 0 )  // button release
-      buttonTbl->setText(number, 0, "-");
+      buttonTbl->item(number, 0)->setText("-");
     else
-      buttonTbl->setText(number, 0, PRESSED);
+      buttonTbl->item(number, 0)->setText(PRESSED);
   }
 
   if ( type == JoyDevice::AXIS )
@@ -309,7 +318,7 @@ void JoyWidget::checkDevice()
     if ( number == 1 ) // y-axis
       xyPos->changeY(value);
 
-    axesTbl->setText(number, 0, QString("%1").arg(int(value)));
+    axesTbl->item(number, 0)->setText(QString("%1").arg(int(value)));
   }
 }
 

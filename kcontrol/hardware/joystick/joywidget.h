@@ -22,18 +22,17 @@
 #define _JOYWIDGET_H_
 
 #include <qwidget.h>
-//Added by qt3to4:
-#include <QLabel>
 
 class JoyDevice;
 
 class PosWidget;
 class QLabel;
-class Q3Table;
+class QTableWidget;
 class QTimer;
 class QComboBox;
 class QPushButton;
 class QCheckBox;
+class KHBox;
 
 // the widget which displays all buttons, values, etc.
 class JoyWidget : public QWidget
@@ -63,11 +62,12 @@ class JoyWidget : public QWidget
     void restoreCurrDev(); // restores the content of the combobox to reflect the current open device
 
   private:
+    KHBox  *messageBox;
     QLabel *message;  // in case of no device, show here a message rather than in a dialog
     QComboBox *device;
     PosWidget *xyPos;
-    Q3Table *buttonTbl;
-    Q3Table *axesTbl;
+    QTableWidget *buttonTbl;
+    QTableWidget *axesTbl;
     QCheckBox *trace;
     QPushButton *calibrate;
 
