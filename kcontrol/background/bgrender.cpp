@@ -820,11 +820,8 @@ QImage *KBackgroundRenderer::image()
     if (m_State & AllDone) {
         if( m_pImage->isNull()) {
             if( m_pPixmap->size() != m_Size ) {
-                QPainter p( m_pPixmap );
-                QPixmap pm( m_Size ); // the pixmap may be smaller, so tile it
-                pm.convertFromImage( *m_pBackground );
-                p.drawTiledPixmap( 0, 0, m_Size.width(), m_Size.height(), pm );
-                *m_pImage = pm.convertToImage();
+                m_pImage->create(m_Size.width(), m_Size.height(), 32);
+                tile(m_pImage, QRect(0, 0, m_Size.width(), m_Size.height()), m_pBackground);
             }
             else
                 *m_pImage = m_pPixmap->convertToImage();
