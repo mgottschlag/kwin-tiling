@@ -807,7 +807,7 @@ void KDIconView::slotNewMenuActivated()
 void KDIconView::slotEnableAction( const char * name, bool enabled )
 {
   //kdDebug(1204) << "slotEnableAction " << name << " enabled=" << enabled << endl;
-  Q3CString sName( name );
+  QByteArray sName( name );
   // No such actions here... konqpopupmenu provides them.
   if ( sName == "properties" || sName == "editMimeType" )
     return;
