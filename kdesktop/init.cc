@@ -32,8 +32,6 @@
 #include <qdir.h>
 #include <qfile.h>
 #include <qregexp.h>
-//Added by qt3to4:
-#include <Q3CString>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -64,7 +62,7 @@ static bool testDir( const QString &_name )
     QString m = _name;
     if ( m.endsWith( "/" ) )
       m.truncate( m.length() - 1 );
-    Q3CString path = QFile::encodeName(m);
+    QByteArray path = QFile::encodeName(m);
 
     bool ok = ::mkdir( path, S_IRWXU ) == 0;
     if ( !ok && errno == EEXIST ) {
@@ -113,7 +111,7 @@ static void copyDirectoryFile(const QString &fileName, const QString& dir, bool 
 
 static void copyFile( const QString& src, const QString& dest )
 {
-    Q3CString cmd = "cp ";
+    QByteArray cmd = "cp ";
     cmd += QFile::encodeName(KProcess::quote(src));
     cmd += " ";
     cmd += QFile::encodeName(KProcess::quote(dest));
