@@ -93,10 +93,9 @@ void printItems(const QStringList &items, int size, QWidget *parent, CFcEngine &
         printer.setResolution(72);
         painter.begin(&printer);
 
-        Q3PaintDeviceMetrics metrics(painter.device());
-        int                 margin=(int)((2/2.54)*metrics.logicalDpiY()), // 2 cm margins
-                            pageWidth=metrics.width()-(2*margin),
-                            pageHeight=metrics.height()-(2*margin),
+        int                 margin=(int)((2/2.54)*painter.device()->logicalDpiY()), // 2 cm margins
+                            pageWidth=painter.device()->width()-(2*margin),
+                            pageHeight=painter.device()->height()-(2*margin),
                             y=margin,
                             oneSize[2]={size, 0};
         const int           *sizes=oneSize;
