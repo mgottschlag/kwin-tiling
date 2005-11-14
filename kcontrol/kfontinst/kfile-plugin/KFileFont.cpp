@@ -202,7 +202,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
 
             if(inMetrics)
             {
-                if(0==line.find("FullName "))
+                if(0==line.indexOf("FullName "))
                 {
                     full=line.mid(9);
 #ifndef KFI_FC_NO_WIDTHS
@@ -210,24 +210,24 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
 #endif
                     foundName=true;
                 }
-                else if(0==line.find("FamilyName "))
+                else if(0==line.indexOf("FamilyName "))
                 {
                     family=line.mid(11);
                     foundFamily=true;
                 }
-                else if(0==line.find("Weight "))
+                else if(0==line.indexOf("Weight "))
                     intWeight=strToWeight(line.mid(7));
-                else if(0==line.find("ItalicAngle "))
+                else if(0==line.indexOf("ItalicAngle "))
                     intSlant=0.0f==line.mid(12).toFloat() ? FC_SLANT_ROMAN : FC_SLANT_ITALIC;
-                else if(0==line.find("IsFixedPitch "))
+                else if(0==line.indexOf("IsFixedPitch "))
                     intSpacing=0==line.mid(13).find("false", 0, false) ? FC_PROPORTIONAL : FC_MONO;
-                else if(0==line.find("Notice "))
-                    foundry=getFoundry(line.mid(7).latin1());
-                else if(0==line.find("StartCharMetrics"))
+                else if(0==line.indexOf("Notice "))
+                    foundry=getFoundry(line.mid(7).toLatin1());
+                else if(0==line.indexOf("StartCharMetrics"))
                     break;
             }
             else
-                if(0==line.find("StartFontMetrics"))
+                if(0==line.indexOf("StartFontMetrics"))
                     inMetrics=true;
         };
         f.close();
@@ -238,7 +238,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
             foundFamily=true;
         }
 
-        if(foundName && FC_SLANT_ITALIC==intItalic && (-1!=full.find("Oblique") || -1!=full.find("Slanted")))
+        if(foundName && FC_SLANT_ITALIC==intItalic && (-1!=full.indexOf("Oblique") || -1!=full.indexOf("Slanted")))
             intItalic=FC_SLANT_OBLIQUE;
     }
 
