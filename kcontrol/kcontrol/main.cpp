@@ -32,7 +32,6 @@
  * to newInstance().
  */
 
-#include <q3paintdevicemetrics.h>
 //Added by qt3to4:
 #include <QByteArray>
 #include <QDesktopWidget>
@@ -76,14 +75,13 @@ KControlApp::KControlApp()
   // 800x600 on 72 dpi, 12 pt font
   // --> 368 + 6 x dpiX, 312 + 4 x dpiY
   // Adjusted for font size
-  Q3PaintDeviceMetrics pdm(toplevel);
   int fontSize = toplevel->fontInfo().pointSize();
   if (fontSize == 0)
-    fontSize = (toplevel->fontInfo().pixelSize() * 72) / pdm.logicalDpiX();
+    fontSize = (toplevel->fontInfo().pixelSize() * 72) / toplevel->logicalDpiX();
   int x = config->readNumEntry(QString::fromLatin1("InitialWidth %1").arg(desk.width()), 
-			       QMIN( desk.width(), 368 + (6*pdm.logicalDpiX()*fontSize)/12 ) );
+			       QMIN( desk.width(), 368 + (6*toplevel->logicalDpiX()*fontSize)/12 ) );
   int y = config->readNumEntry(QString::fromLatin1("InitialHeight %1").arg(desk.height()), 
-			       QMIN( desk.height(), 312 + (4*pdm.logicalDpiX()*fontSize)/12 ) );
+			       QMIN( desk.height(), 312 + (4*toplevel->logicalDpiX()*fontSize)/12 ) );
   toplevel->resize(x,y);
 }
 
