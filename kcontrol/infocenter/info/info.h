@@ -34,7 +34,7 @@ extern bool GetInfo_OpenGL( Q3ListView *lBox );
 class KInfoListWidget : public KCModule
 {
 public:
-  KInfoListWidget(const QString &_title, QWidget *parent, const char *name=0, bool _getlistbox (Q3ListView *)=0);
+  KInfoListWidget(KInstance *inst,const QString &_title, QWidget *parent, bool _getlistbox (Q3ListView *)=0);
 
   virtual void load();
   virtual QString quickHelp() const;

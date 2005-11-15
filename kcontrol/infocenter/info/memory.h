@@ -28,7 +28,7 @@ class KMemoryWidget:public KCModule {
   Q_OBJECT 
 	  
   public:
-    KMemoryWidget(QWidget * parent, const char *name = 0);
+    KMemoryWidget(KInstance *inst,QWidget * parent);
     ~KMemoryWidget();
 
     QString quickHelp() const;

@@ -33,7 +33,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-
+#include <klocale.h>
 #include <kglobal.h>
 #include <kdialog.h>
 #include <kseparator.h>
@@ -92,8 +92,8 @@ static QString formatted_unit(t_memsize value)
         return i18n("%1 KB").arg(KGlobal::locale()->formatNumber(value / 1024.0, 2));
 }
 
-KMemoryWidget::KMemoryWidget(QWidget * parent, const char *name)
-:  KCModule(parent, name)
+KMemoryWidget::KMemoryWidget(KInstance *inst,QWidget * parent)
+:  KCModule(inst,parent)
 {
 
     KAboutData *about =
