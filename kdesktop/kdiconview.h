@@ -27,7 +27,7 @@
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QShowEvent>
-#include <Q3ValueList>
+#include <QList>
 #include <QWheelEvent>
 #include <QDropEvent>
 
@@ -116,7 +116,7 @@ protected slots:
     void slotMouseButtonClickedKDesktop(int _button, Q3IconViewItem* _item, const QPoint& _global);
     void slotContextMenuRequested(Q3IconViewItem* _item, const QPoint& _global);
     void slotEnableAction( const char * name, bool enabled );
-    void slotAboutToCreate(const QPoint &pos, const Q3ValueList<KIO::CopyInfo> &files);
+    void slotAboutToCreate(const QPoint &pos, const QList<KIO::CopyInfo> &files);
 
     void slotItemRenamed(Q3IconViewItem*, const QString &name);
 

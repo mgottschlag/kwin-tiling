@@ -55,7 +55,7 @@
 #include <QWheelEvent>
 #include <Q3CString>
 #include <QDropEvent>
-#include <Q3ValueList>
+#include <QList>
 #include <QShowEvent>
 #include <QMouseEvent>
 #include <QDesktopWidget>
@@ -1261,7 +1261,7 @@ void KDIconView::slotItemRenamed(Q3IconViewItem* _item, const QString &name)
    KonqIconViewWidget::slotItemRenamed(_item, newName);
 }
 
-void KDIconView::slotAboutToCreate(const QPoint &pos, const Q3ValueList<KIO::CopyInfo> &files)
+void KDIconView::slotAboutToCreate(const QPoint &pos, const QList<KIO::CopyInfo> &files)
 {
    if (pos.isNull())
       return;
@@ -1274,7 +1274,7 @@ void KDIconView::slotAboutToCreate(const QPoint &pos, const Q3ValueList<KIO::Cop
 
     QString dir = url().path(-1); // Strip trailing /
 
-    Q3ValueList<KIO::CopyInfo>::ConstIterator it = files.begin();
+    QList<KIO::CopyInfo>::ConstIterator it = files.begin();
     int gridX = gridXValue();
     int gridY = 120; // 120 pixels should be enough for everyone (tm)
     QRect desk = desktopRect();
