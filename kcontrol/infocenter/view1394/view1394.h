@@ -48,7 +48,7 @@ class View1394: public KCModule
 {
    Q_OBJECT
    public:
-      View1394(QWidget *parent = 0L, const char *name = 0L);
+      View1394(KInstance *inst,QWidget *parent = 0L);
       virtual ~View1394();
 
    public slots: // Public slots

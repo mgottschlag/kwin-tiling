@@ -25,7 +25,7 @@
 #include <qtextstream.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
-
+#include <kinstance.h>
 #include <kdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
@@ -56,8 +56,8 @@ int my_reset_handler(raw1394handle_t handle, unsigned int )
 }
 
 
-View1394::View1394(QWidget *parent, const char *name)
-:KCModule(parent,name)
+View1394::View1394(KInstance *inst,QWidget *parent)
+:KCModule(inst, parent)
 ,m_insideRescanBus(false)
 {
    setQuickHelp( i18n("On the right hand side you can see some information about "
@@ -322,10 +322,11 @@ QString OuiDb::vendor(octlet_t guid)
 extern "C"
 {
 
-   KDE_EXPORT KCModule *create_view1394(QWidget *parent, const char *name)
+   KDE_EXPORT KCModule *create_view1394(QWidget *parent, const char */*name*/)
    {
       KGlobal::locale()->insertCatalog("kcmview1394");
-      return new View1394(parent, name);
+	  KInstance *inst = new KInstance("kcmview1394");
+      return new View1394(inst,parent);
    }
 }
 
