@@ -17,7 +17,7 @@
 #include <qtimer.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <Q3ValueList>
+#include <QList>
 
 #include <kaboutdata.h>
 #include <kdialog.h>
@@ -54,7 +54,7 @@ USBViewer::USBViewer(QWidget *parent, const char *, const QStringList &)
   _devices->setMinimumWidth(200);
   _devices->setColumnWidthMode(0, Q3ListView::Maximum);
 
-  Q3ValueList<int> sizes;
+  QList<int> sizes;
   sizes.append(200);
   splitter->setSizes(sizes);
 
