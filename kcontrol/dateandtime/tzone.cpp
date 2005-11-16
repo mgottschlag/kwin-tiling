@@ -61,7 +61,7 @@ Tzone::Tzone(QWidget * parent, const char *name)
 {
     setTitle(i18n("To change the timezone, select your area from the list below"));
 
-    tzonelist = new KTimezoneWidget(this, "ComboBox_1", &m_zoneDb);
+    tzonelist = new KTimezoneWidget(this, &m_zoneDb);
     connect( tzonelist, SIGNAL(selectionChanged()), SLOT(handleZoneChange()) );
 
     m_local = new QLabel(this);

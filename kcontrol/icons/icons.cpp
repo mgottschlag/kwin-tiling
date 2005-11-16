@@ -22,7 +22,7 @@
 #include <QGridLayout>
 #include <QBoxLayout>
 #include <QVBoxLayout>
-
+#include <Q3ListBox>
 #include <kcolorbutton.h>
 #include <kconfig.h>
 #include <kdebug.h>

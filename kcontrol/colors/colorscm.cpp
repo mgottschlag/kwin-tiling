@@ -34,7 +34,7 @@
 #include <kprocess.h>
 #include <kstandarddirs.h>
 #include <kaboutdata.h>
-
+#include <klistbox.h>
 #include "../krdb/krdb.h"
 
 #include "colorscm.h"

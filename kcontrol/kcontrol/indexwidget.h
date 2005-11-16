@@ -30,7 +30,7 @@ class ConfigModuleList;
 class ConfigModule;
 class ModuleTreeView;
 class ModuleIconView;
-
+class Q3ListViewItem;
 class IndexWidget : public QStackedWidget
 {
   Q_OBJECT

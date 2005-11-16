@@ -205,7 +205,6 @@ void KSMShutdownDlg::slotHalt()
 
 bool KSMShutdownDlg::confirmShutdown( bool maysd, KWorkSpace::ShutdownType& sdtype, QString& bootOption )
 {
-    kapp->enableStyles();
     KSMShutdownDlg* l = new KSMShutdownDlg( 0,
                                             //KSMShutdownFeedback::self(),
                                             maysd, sdtype );
@@ -222,7 +221,6 @@ bool KSMShutdownDlg::confirmShutdown( bool maysd, KWorkSpace::ShutdownType& sdty
 
     delete l;
 
-    kapp->disableStyles();
     return result;
 }
 
