@@ -9,7 +9,7 @@ AM_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 bin_PROGRAMS = kblankscrn.kss
 
 kblankscrn_kss_SOURCES = blankscrn.cpp
-kblankscrn_kss_LDADD = $(LIB_KDEUI) -lkscreensaver -lm 
+kblankscrn_kss_LDADD = $(LIB_KDEUI) $(top_builddir)/workspace/kscreensaver/libkscreensaver/libkscreensaver.la -lm 
 
 METASOURCES = AUTO
 

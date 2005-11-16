@@ -1,2 +1,2 @@
-SUBDIRS = applnk kblank_screensaver krandom_screensaver
+SUBDIRS = libkscreensaver applnk kblank_screensaver krandom_screensaver
 
