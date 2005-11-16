@@ -39,7 +39,7 @@ int main( int argc, char* argv[] )
 	"KHotKeys update utility", "1.0" );
     KCmdLineArgs::addCmdLineOptions( options );
     KApplication::disableAutoDcopRegistration();
-    KApplication app( false, true ); // X11 connection is necessary for KKey* stuff :-/
+    KApplication app( true ); // X11 connection is necessary for KKey* stuff :-/
     KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
     QByteArray id = args->getOption( "id" );
     QString file = locate( "data", "khotkeys/" + id + ".khotkeys" );
