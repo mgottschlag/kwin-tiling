@@ -191,11 +191,11 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
     testLocalInstallation();
 
     // Mark kdeskop as immutable if all of its config modules have been disabled
-    if (!app.config()->isImmutable() && 
+    if (!app.sessionConfig()->isImmutable() && 
         KAuthorized::authorizeControlModules(KRootWm::configModules()).isEmpty())
     {
-       app.config()->setReadOnly(true);
-       app.config()->reparseConfiguration();
+       app.sessionConfig()->setReadOnly(true);
+       app.sessionConfig()->reparseConfiguration();
     }
 
     // for the KDE-already-running check in startkde
