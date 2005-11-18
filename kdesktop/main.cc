@@ -29,6 +29,7 @@
 #include <kglobalsettings.h>
 #include <kconfig.h>
 #include <kmanagerselection.h>
+#include <kglobal.h>
 
 #include "desktop.h"
 #include "lockeng.h"
@@ -191,11 +192,11 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
     testLocalInstallation();
 
     // Mark kdeskop as immutable if all of its config modules have been disabled
-    if (!app.sessionConfig()->isImmutable() && 
+    if (!KGlobal::config()->isImmutable() && 
         KAuthorized::authorizeControlModules(KRootWm::configModules()).isEmpty())
     {
-       app.sessionConfig()->setReadOnly(true);
-       app.sessionConfig()->reparseConfiguration();
+		KGlobal::config()->setReadOnly(true);
+       	KGlobal::config()->reparseConfiguration();
     }
 
     // for the KDE-already-running check in startkde
