@@ -140,7 +140,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
         int def, cur;
         if ( DM().bootOptions( rebootOptions, def, cur ) ) {
-	  targets = new Q3PopupMenu( frame );
+	  targets = new QMenu( frame );
 	  if ( cur == -1 )
 	    cur = def;
 
@@ -234,11 +234,11 @@ KSMDelayedPushButton::KSMDelayedPushButton( const KGuiItem &item,
   connect(popt, SIGNAL(timeout()), SLOT(slotTimeout()));
 }
 
-void KSMDelayedPushButton::setPopup(Q3PopupMenu *p)
+void KSMDelayedPushButton::setPopup(QMenu *p)
 {
   pop = p;
   if ( p!=0 )
-	  setPopup(p);
+	  setMenu(p);
 }
 
 void KSMDelayedPushButton::slotPressed()

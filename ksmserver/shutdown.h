@@ -11,10 +11,9 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qdialog.h>
 #include <kpushbutton.h>
 #include <kworkspace.h>
-#include <Q3PopupMenu>
+#include <QMenu>
 class QPushButton;
 class QVButtonGroup;
-class Q3PopupMenu;
 class QTimer;
 
 #include <kapplication.h>
@@ -63,7 +62,7 @@ private:
     KSMShutdownDlg( QWidget* parent, bool maysd, KWorkSpace::ShutdownType sdtype );
     KWorkSpace::ShutdownType m_shutdownType;
     QString m_bootOption;
-    Q3PopupMenu *targets;
+    QMenu *targets;
     QStringList rebootOptions;
 };
 
@@ -74,7 +73,7 @@ class KSMDelayedPushButton : public KPushButton
 public:
 
   KSMDelayedPushButton( const KGuiItem &item, QWidget *parent );
-  void setPopup( Q3PopupMenu *pop);
+  void setPopup( QMenu *pop);
 
 private slots:
   void slotTimeout();
@@ -82,7 +81,7 @@ private slots:
   void slotReleased();
 
 private:
-  Q3PopupMenu *pop;
+  QMenu *pop;
   QTimer *popt;
 };
 
