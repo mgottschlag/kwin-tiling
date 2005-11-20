@@ -1,0 +1,1481 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+  <!ENTITY kappname "&kdm;">
+  <!ENTITY package "kdebase">
+  <!ENTITY kdmrc "<filename>kdmrc</filename>">
+  <!ENTITY ksmserver "<application>ksmserver</application>">
+  <!ENTITY kdesktop "<application>kdesktop</application>">
+  <!ENTITY XDMCP "<acronym>XDMCP</acronym>">
+  <!ENTITY xdm "<application>xdm</application>">
+  <!ENTITY kdmrc-ref SYSTEM "kdmrc-ref.docbook">
+  <!ENTITY % addindex "INCLUDE">
+  <!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<book lang="&language;">
+<bookinfo>
+<title>The &kdm; Handbook</title>
+
+<authorgroup>
+<author>
+&Oswald.Buddenhagen; &Oswald.Buddenhagen.mail;
+</author><!-- 
+<othercredit role="developer">
+&Oswald.Buddenhagen; &Oswald.Buddenhagen.mail;
+<contrib>Developer</contrib>
+</othercredit>
+<othercredit role="reviewer">
+&Lauri.Watts; &Lauri.Watts.mail;
+<contrib>Reviewer</contrib>
+</othercredit> -->
+
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+
+</authorgroup>
+
+<copyright>
+<year>2000</year>
+<holder>&Neal.Crook;</holder>
+</copyright>
+
+<copyright>
+<year>2002</year>
+<holder>&Oswald.Buddenhagen;</holder>
+</copyright>
+
+<copyright>
+<year>2003</year>
+<holder>&Lauri.Watts;</holder>
+</copyright>
+
+<date>2003-03-01</date>
+<releaseinfo>0.05.02</releaseinfo>
+
+<abstract>
+<para>This document describes &kdm; the &kde; Display Manager. &kdm;
+is also known as the <quote>Login Manager</quote>.</para>
+</abstract>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>kdm</keyword>
+<keyword>xdm</keyword>
+<keyword>display manager</keyword>
+<keyword>login manager</keyword>
+</keywordset>
+</bookinfo>
+
+<!-- ********************************************************************** -->  
+<chapter id="introduction">
+<title>Introduction</title>
+
+<para>&kdm; provides a graphical interface that allows you to log in to a
+system. It prompts for login (username) and password, authenticates the user
+and starts a <quote>session</quote>.  &kdm; is superior to &xdm;, the X
+Display Manager, in a number of ways.</para>
+
+</chapter>
+
+<!-- Chapters to write -->
+<!-- * Just enough config to get it to run and login to KDE 
+     * Adding more session types (GNOME, etc)
+     * Adding other customizations to XSession (ssh/gpg-agent, etc)
+     * Further customization to KDM (via the kcontrol module, and by 
+       hand)
+     * XDMCP by query
+     * XDMCP by broadcast
+     * Sound transparency (if Ade can tell me how!)
+     * Document all Keys in the Config File
+     * Pull in all options from the KControl Module
+     * More resources
+-->
+
+<chapter id="quickstart">
+<title>Quick Start Guide</title>
+
+<para>This is a quick start guide for users who fit the following
+pattern:</para>
+
+<itemizedlist>
+<listitem>
+<para>X is configured and works with the command
+<command>startx</command> from the commandline.</para>
+</listitem>
+<listitem>
+<para>Each user will generally only use a single window manager or
+desktop environment, and does not change this choice very
+often, or is comfortable editing a single text file in order to change
+their choice.</para>
+</listitem>
+</itemizedlist>
+
+<para>This scenario will be sufficient for many environments where a single
+user or several users normally boot the computer and log into their
+preferred environment.</para>
+
+<procedure>
+<title>Setting up a Default Session</title>
+<step>
+<para>Create or open the file <filename>~/.xinitrc</filename></para>
+<para>If you already have a working <filename>~/.xinitrc</filename>, go to
+the next step</para>
+</step>
+<step>
+<para>If one does not already exist, add a line to the
+<filename>~/.xinitrc</filename> to start your preferred window manager
+or desktop environment.</para>
+<para>For &kde; you should enter:</para>
+<screen><userinput>startkde</userinput></screen>
+<para>For other window managers or desktop environments, you should
+look in their documentation for the correct command.</para>
+</step>
+<step><para>Make a link as follows:</para>
+<screen><userinput><command>ln</command> <option>-s</option> <parameter>~/.xinitrc ~/.xsession</parameter></userinput></screen>
+</step>
+</procedure>
+
+<para>At this point, typing <userinput><command>startx</command></userinput>
+on the commandline should start X, with a &kde; session.  The next task is
+to try &kdm;.</para>
+
+<para>As <systemitem class="username">root</systemitem>, type
+<userinput><command>kdm</command></userinput> at the prompt.</para>
+
+<para>You should see a login window, which is described more fully in<xref
+linkend="login" />.</para>
+
+<para>Typing your normal username and password in the fields provided, and
+leaving <option>default</option> selected as the session type should now
+open a &kde; session for your user.</para>
+
+<para>If you have other users to configure, you should repeat the procedure
+above for each of them.</para>
+
+<note>
+<para>This is a quick guide to getting up and running only.  You probably
+will want to customize &kdm; further, for example, to hide the names of the
+system accounts, to allow further sessions, and much more.  Please read
+through the rest of this manual to find out how to do these things.</para>
+</note>
+
+</chapter>
+
+<chapter id="login"> 
+<title>The Login Window</title> 
+
+<para> The user interface to &kdm; consists of two dialog boxes.  The main
+dialog box has these controls:</para>
+
+<itemizedlist> 
+<listitem>
+<para>A <guilabel>Username:</guilabel> field for you to enter your
+username.</para>
+</listitem>
+
+<listitem>
+<para>A <guilabel>Password:</guilabel> field for you to enter your
+password.</para>
+</listitem>
+
+<listitem>
+<para>(Optionally) a graphical image of each user (for example, a digitized
+photograph). Clicking on an image is equivalent to typing the associated
+username into the <guilabel>Username:</guilabel> field. (This feature is an
+imitation of the login box on &IRIX;).</para> 
+</listitem>
+
+<listitem>
+<para>A <guilabel>Menu</guilabel> drop down box that allows &kdm; to be used
+to start sessions with various different window managers or desktop
+environments installed on the system.</para>
+</listitem>
+
+<listitem>
+<para>(Optionally) a region to the right of the
+<guilabel>Username:</guilabel>, <guilabel>Password:</guilabel> and
+<guilabel>Session Type:</guilabel> fields which can be used to display
+either a static image or an analog clock.</para>
+</listitem>
+
+<listitem>
+<para>A <guibutton>Login</guibutton> button that validates the
+username/password combination and attempts to start a session of the
+selected type.</para>
+</listitem>
+
+<listitem>
+<para>A <guibutton>Clear</guibutton> button that clears the text from
+the <guilabel>Login</guilabel> and <guilabel>Pass</guilabel>
+fields.</para>
+</listitem> 
+
+<listitem>
+<para>(Optionally) A <guibutton>Shutdown</guibutton> button that displays
+the <guibutton>Shutdown</guibutton> dialog box.</para>
+</listitem>
+<listitem>
+<para>A <guibutton>Menu</guibutton> button that opens an action menu
+with the following items:</para>
+ 
+<itemizedlist>
+<listitem>
+<para>(On local displays) a <guimenuitem>Restart X Server</guimenuitem> item
+that terminates the currently running &X-Server;, starts a new one and
+displays the login dialog again. You can use this if the display content
+seems to be broken somehow.</para>
+</listitem>
+
+<listitem>
+<para>(On remote displays) A <guimenuitem>Close Connection</guimenuitem>
+item that closes the connection to the &XDMCP; server you are currently
+connected to. If you got to this server through a host chooser, this will
+bring you back to the chooser, otherwise it will only reset the &X-Server;
+and bring up the login dialog again.</para>
+</listitem>
+
+<listitem>
+<para>(Optionally on local displays) A <guimenuitem>Console
+Mode</guimenuitem> item that terminates the currently running &X-Server; and
+leaves you alone with a console login. &kdm; will resume the graphical login
+if nobody is logged in at the console for some time.</para>
+</listitem>
+</itemizedlist>
+</listitem>
+
+<listitem>
+<para>(Optionally) A <guibutton>Shutdown...</guibutton> button that displays
+the shutdown dialog box.</para>
+</listitem>
+</itemizedlist>
+
+<para>The <guilabel>Shutdown</guilabel> dialog box presents a set of
+radio buttons that allow one of these options to be selected:</para>
+
+<variablelist>
+<varlistentry>
+<term>Shutdown</term> 
+<listitem>
+<para>Shut the system down in a controlled manner, ready for
+power-down.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Restart</term>
+<listitem>
+<para>Shut the system down and reboot. For systems that use
+<application>Lilo</application>, an optional drop down box allows you to
+select a particular operating-system kernel to be used for the
+reboot.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Restart X Server</term> 
+<listitem>
+<para>Stop and then restart the X-server. Typically, you might need to use
+this option if you have changed your X11 configuration in some way.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Console Mode</term>
+<listitem>
+<para>Stop the &X-Server; and return the system to console mode. This is
+achieved by bringing the system down to run-level 3. Typically, the system
+manager might need to use this option before upgrading or re-configuring X11
+software.</para> 
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>Pressing the <guibutton>OK</guibutton> button initiates the selected
+action; pressing the <guibutton>Cancel</guibutton> button returns to the
+main &kdm; dialog box. </para>
+
+</chapter>
+
+<!-- *********************************************************************** -->
+<chapter id="configuring-kdm">
+<title>Configuring &kdm;</title>
+
+<para>This chapter assumes that &kdm; is already up and running on your
+system, and that you simply want to change its behavior in some way.</para>
+
+<para>When &kdm; starts up, it reads its configuration from the folder
+<filename class="directory">$KDEDIR/share/config/kdm/</filename> (this may
+be <filename class="directory">/etc/kde3/kdm/</filename> or something else
+on your system).</para>
+
+<para>The main configuration file is &kdmrc;; all other files are
+referenced from there and could be stored under any name anywhere on
+the system - but usually that would not make much sense for obvious
+reasons (one particular exception is referencing configuration files
+of an already installed &xdm; - however when a new &kdm; is installed,
+it will import settings from those files if it finds an already installed
+&xdm;).</para>
+
+<para>Since &kdm; must run before any user is logged in, it is not
+associated with any particular user. Therefore, it is not possible to have
+user-specific configuration files; all users share the common &kdmrc;.  It
+follows from this that the configuration of &kdm; can only be altered by
+those users that have write access to
+<filename>$<envar>KDEDIR</envar>/share/config/kdm/kdmrc</filename> (normally
+restricted to system administrators logged in as <systemitem
+class="username">root</systemitem>).</para>
+
+<para>You can view the &kdmrc; file currently in use on your system, and you
+can configure &kdm; by editing this file. Alternatively, you can use the
+graphical configuration tool provided by the &kcontrolcenter; (under
+<menuchoice><guisubmenu>System Administration</guisubmenu><guimenuitem>Login
+Manager</guimenuitem></menuchoice>), which is described in <ulink
+url="help:/kcontrol/login-manager.html">the &kcontrolcenter; help files</ulink>.
+</para>
+
+<para>The remainder of this chapter describes configuration of &kdm;
+via the &kcontrolcenter; module, and the <link linkend="kdm-files">next
+chapter</link> describes the options available in &kdmrc; itself. If
+you only need to configure for local users, the &kcontrolcenter; module
+should be sufficient for your needs.  If you need to configure remote
+logins, or have multiple &kdm; sessions running, you will need to read
+on.</para>
+
+<sect1 id="kdm-kcontrol-module">
+<sect1info>
+<authorgroup>
+<author>&Thomas.Tanghus; &Thomas.Tanghus.mail;</author>
+<author>&Steffen.Hansen; &Steffen.Hansen.mail;</author>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+</authorgroup>
+</sect1info>
+
+<title>The Login Manager &kcontrolcenter; Module</title>
+
+<para>Using this module, you can configure the &kde; graphical login
+manager, &kdm;.  You can change how the login screen looks, who has
+access using the login manager and who can shutdown the
+computer.</para>
+
+<note><para>All settings will be written to the configuration file
+&kdmrc;, which in it's original state has many comments to help you
+configure &kdm;.  Using this &kcontrolcenter; module will strip these
+comments from the file.  All available options in &kdmrc; are covered
+in <xref linkend="kdm-files"/>.</para>
+
+<para>The options listed in this chapter are cross referenced with
+their equivalents in &kdmrc;. All options available in the &kcontrol;
+module are also available directly in &kdmrc; but the reverse is not
+true.</para></note>
+
+<para>In order to organize all of these options, this module is
+divided into several sections: <link
+linkend="kdmconfig-appearance"><guilabel>Appearance</guilabel></link>,
+<link linkend="kdmconfig-font"><guilabel>Font</guilabel></link>, <link
+linkend="kdmconfig-background"><guilabel>Background</guilabel></link>,
+<link
+linkend="kdmconfig-shutdown"><guilabel>Shutdown</guilabel></link>,
+<link linkend="kdmconfig-users"><guilabel>Users</guilabel></link> and
+<link
+linkend="kdmconfig-convenience"><guilabel>Convenience</guilabel></link>.</para>
+
+<para>You can switch between the sections using the tabs at the top of
+the window.</para>
+
+<note><para>If you are not currently logged in as a superuser, you
+will need to click the <guibutton>Administrator Mode</guibutton>
+Button. You will then be asked for a superuser password.  Entering a
+correct password will allow you to modify the settings of this
+module.</para></note>
+
+<sect2 id="kdmconfig-appearance">
+<title>Appearance</title>
+
+<para>From this page you can change the visual appearance of &kdm;,
+&kde;'s graphical login manager.</para>
+
+<para>The <guilabel>Greeting:</guilabel> is the title of the login
+ screen.  Setting this is especially useful if you have many servers users
+ may log in to.  You may use various placeholders, which are described
+ along with the corresponding key
+ <link linkend="option-greetstring"><option>GreetString</option></link>
+ in &kdmrc;.
+</para>
+
+<para>You can then choose to show either the current system time, a logo or
+nothing special in the login box.  Make your choice in the radio buttons
+labeled <guilabel>Logo area:</guilabel>. This corresponds to <link
+linkend="option-logoarea"><option>LogoArea</option></link> in &kdmrc;</para>
+
+<para>If you chose <guilabel>Show logo</guilabel> you can now choose a
+logo:</para>
+
+<itemizedlist>
+<listitem>
+<para>Drop an image file on the image button.</para>
+</listitem>
+<listitem>
+<para>Click on the image button and select a new image from the image chooser
+dialog.</para>
+</listitem>
+</itemizedlist>
+
+<para>If you do not specify a logo the default
+<filename>$<envar>KDEDIR</envar>/share/apps/kdm/pics/kdelogo.xpm</filename>
+will be displayed.</para>
+
+<para>Normally the login box is centered on the screen.  Use the
+<guilabel>Position:</guilabel> options if you want it to appear
+elsewhere on the screen.  You can specify the relative position
+(percentage of the screen size) for the center of the login window,
+relative to the top left of the display, in the fields labelled
+<guilabel>X:</guilabel> and <guilabel>Y:</guilabel> respectively.
+These correspond to the key
+<link linkend="option-greeterpos"><option>GreeterPos</option></link>
+in &kdmrc;.</para>
+
+<para>While &kde;'s style depends on the settings of the user logged
+in, the style used by &kdm; can be configured using the <guilabel>GUI
+Style:</guilabel> and <guilabel>Color Scheme:</guilabel> options.
+These correspond to the keys <link
+linkend="option-guistyle"><option>GUIStyle</option></link> and <link
+linkend="option-colorscheme"><option>ColorScheme</option></link> in
+&kdmrc; respectively.</para>
+
+<para>Below that, you have a drop down box to choose the language for
+your login box, corresponding to setting <option>Language</option> in
+&kdmrc;.</para>
+
+</sect2>
+
+<sect2 id="kdmconfig-font">
+<title>Font</title>
+
+<para>From this section of the module you can change the fonts used in the
+login window.  Only fonts available to all users are available here, not
+fonts you have installed on a per user basis.</para>
+
+<para>You can select three different font styles from the drop down box
+(<guilabel>General:</guilabel>, <guilabel>Failures:</guilabel>,
+<guilabel>Greeting</guilabel>).  When you click on the
+<guibutton>Choose...</guibutton> button a dialog appears from which you can
+select the new characteristics for the font style.</para>
+
+<itemizedlist>
+<listitem>
+<para>The <guilabel>General:</guilabel> font is used in all other places in the
+login window.</para>
+</listitem>
+<listitem>
+<para>The <guilabel>Failures:</guilabel> font is used when a login
+fails.</para>
+</listitem>
+<listitem>
+<para>The <guilabel>Greeting:</guilabel> font is the font used for the title
+(Greeting String).</para>
+</listitem>
+</itemizedlist>
+
+<para>You can also check the box labelled <guilabel>Use anti-aliasing for
+fonts</guilabel> if you want smoothed fonts in the login dialog.</para>
+
+</sect2>
+
+<sect2 id="kdmconfig-background">
+<title>Background</title>
+
+<para>Here you can change the desktop background which will be displayed
+before a user logs in. You can have a single color or an image as a
+background. If you have an image as the background and select center, the
+selected background color will be used around the image if it is not
+large enough to cover the entire desktop.</para>
+
+<para>The background colors and effects are controlled by the options on
+the tab labeled <guilabel>Background</guilabel> and you select a
+background image and its placement from the options on the tab labeled
+<guilabel>Wallpaper</guilabel>.</para>
+
+<para>To change the default background color(s) simply click either of
+the color buttons and select a new color.</para>
+
+<para>The drop down box above the color buttons provides you with several
+different blend effects.  Choose one from the list, and it will be
+previewed on the small monitor at the top of the window.  Your choices
+are:</para>
+
+<variablelist>
+<varlistentry>
+<term>Flat</term>
+<listitem><para>By choosing this mode, you select one color (using the color
+button labeled <guibutton>Color 1</guibutton>), and the entire background is
+covered with this one color.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Pattern</term>
+<listitem><para>By choosing this mode, you select two colors (using both color
+buttons). </para> <para>You then select a pattern by clicking
+<guilabel>Setup</guilabel>.  This opens a new dialog window, which gives you
+the opportunity to select a pattern.  Simply click once on the pattern of your
+choice, then click on <guilabel>OK</guilabel>, and &kde; will render the pattern
+you selected using the two colors you selected.  For more on patterns, see the
+section <ulink url="help:/kcontrol/background/index.html#bkgnd-patterns">Background: Adding, Removing and Modifying
+Patterns</ulink>.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Background Program</term>
+<listitem><para>By selecting this option, you can have &kde; use an external
+program to determine the background.  This can be any program of your choosing.
+For more information on this option, see the section entitled <ulink
+url="help:/kcontrol/background/index.html#bkgnd-programs">Background: Using an external program</ulink>.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Horizontal Gradient</term>
+<listitem><para>By choosing this mode, you select two colors (using both color
+buttons).  &kde; will then start with the color selected by <guilabel>Color
+1</guilabel> on the left edge of the screen, and slowly transform into the
+color selected by <guilabel>Color 2</guilabel> by the time it gets to the
+right edge of the screen.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Vertical Gradient</term>
+<listitem><para>By choosing this mode, you select two colors (using both color
+buttons).  &kde; will then start with the color selected by <guilabel>Color
+1</guilabel> on the top edge of the screen, and slowly transform into the color
+selected by <guilabel>Color 2</guilabel> as it moves to the bottom of the
+screen.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Pyramid Gradient</term>
+<listitem><para>By choosing this mode, you select two colors (using both color
+buttons).  &kde; will then start with the color selected by <guilabel>Color
+1</guilabel> in each corner of the screen, and slowly transform into the color
+selected by <guilabel>Color 2</guilabel> as it moves to the center of the
+screen.</para></listitem> 
+</varlistentry>
+<varlistentry>
+<term>Pipecross Gradient</term>
+<listitem><para>By choosing this mode, you select two colors (using both color
+buttons).  &kde; will then start with the color selected by <guilabel>Color
+1</guilabel> in each corner of the screen, and slowly transform into the color
+selected by <guilabel>Color 2</guilabel> as it moves to the center of the
+screen. The <quote>shape</quote> of this gradient is  different then the pyramid
+gradient.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term>Elliptic Gradient</term>
+<listitem><para>By choosing this mode, you select two colors (using both color
+buttons).  &kde; will then start with the color selected by <guilabel>Color
+2</guilabel> in the center of the screen, and slowly transform into the color
+selected by <guilabel>Color 1</guilabel> as it moves to the edges, in an
+elliptical pattern.</para></listitem> 
+</varlistentry>
+</variablelist>
+
+<para>The setup button is only needed for if you select <guilabel>Background
+program</guilabel> or <guilabel>Patterns</guilabel>.  In these instances,
+another window will appear to configure the specifics.</para>
+<para><emphasis>Wallpaper</emphasis></para>
+<para>To select a new background image first, click on the
+<guilabel>Wallpapers</guilabel> tab, then  you can either select an image from the
+
+drop-down list labeled <guilabel>Wallpaper</guilabel> or select
+<guibutton>Browse...</guibutton> and select an image file from a file
+selector.</para>
+
+<para>The image can be displayed in six different ways:</para>
+<variablelist>
+<varlistentry>
+<term>No wallpaper</term> 
+<listitem><para>No image is displayed.  Just the background colors.</para>
+</listitem></varlistentry>
+<varlistentry>
+<term>Centered</term> 
+<listitem><para>The image will be centered on the screen.  The background colors
+will be present anywhere the image does not cover.</para> </listitem>
+</varlistentry>
+<varlistentry>
+<term>Tiled</term>
+<listitem><para>The image will be duplicated until it fills the entire
+desktop. The first image will be placed in the upper left corner of the screen,
+and duplicated downward and to the right.</para> </listitem>
+</varlistentry>
+<varlistentry>
+<term>Center Tiled</term>
+<listitem><para>The image will be duplicated until it fills the entire
+desktop. The first image will be placed in the center of the screen, and
+duplicated upward, downward to the right, and to the left.</para> </listitem>
+</varlistentry>
+<varlistentry>
+<term>Centered Maxpect</term>
+<listitem><para>The image will be placed in the center of the screen.  It will
+be scaled to fit the desktop, but it will not change the aspect ratio of the
+original image.  This will provide you with an image that is not distorted.
+</para> </listitem>
+</varlistentry>
+<varlistentry>
+<term>Scaled</term>
+<listitem><para>The image will be scaled to fit the desktop.  It will be
+stretched to fit all four corners.</para> </listitem>
+</varlistentry>
+</variablelist>
+
+</sect2>
+
+<sect2 id="kdmconfig-shutdown">
+<title><guilabel>Shutdown</guilabel></title>
+
+<para><guilabel>Allow Shutdown</guilabel></para>
+<para>Use these drop down box to choose who is allowed to shut down:</para>
+<itemizedlist>
+<listitem>
+<para><guilabel>Nobody</guilabel>: No one can shutdown the computer using
+&kdm;.  You must be logged in, and execute a command.</para>
+</listitem>
+<listitem>
+<para><guilabel>Everybody</guilabel>:  Everyone can shutdown the computer using
+&kdm;.</para>
+</listitem>
+<listitem><para><guilabel>Only Root</guilabel>: &kdm; requires that the
+<systemitem>root</systemitem> password be entered before shutting down the
+computer.</para></listitem> 
+</itemizedlist>
+
+<para>You can independently configure who is allowed to issue a
+shutdown command for the <guilabel>Local:</guilabel> and
+<guilabel>Remote:</guilabel> users.</para>
+
+<para><emphasis>Commands</emphasis></para> <para>Use these text fields to
+define the exact shutdown command.</para> <para>The
+<guilabel>Halt:</guilabel> command defaults to <!-- Are these defaults still
+correct? they disagree with what's in --> <!-- kdmrc -->
+<command>/sbin/halt</command>.  The restart command defaults to
+<command>/sbin/reboot</command>.</para>
+
+<para>When <guilabel>Show boot options</guilabel> is enabled, &kdm;
+will on reboot offer you options for the lilo boot manager. For this
+feature to work, you will need to supply the correct paths to your
+<command>lilo</command> command and to lilo's map file.  Note that this
+option is not available on all operating systems.</para>
+
+</sect2>
+
+<sect2 id="kdmconfig-users">
+<title>Users</title>
+
+<para>From here you can change the way users are represented in the
+login window.</para>
+
+<para>You may disable the user list in &kdm; entirely in the
+<guilabel>Show Users</guilabel> section.  You can choose from:</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Show List</guilabel></term>
+<listitem>
+<para>Only show users you have specifically enabled in the list
+alongside</para>
+<para>If you do not check this box, no list will be shown. This is the most secure setting, since an
+attacker would then have to guess a valid login name as well as a
+password. It's also the preferred option if you have more than a
+handful of users to list, or the list itself would become
+unwieldy.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Inverse selection</guilabel></term>
+<listitem>
+<para>Allows you to intead select a list of users that should
+<emphasis>not</emphasis> be shown, and all other users will be
+listed.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>Independently of the users you specify by name, you can use the
+<guilabel>System UIDs</guilabel> to specify a range of valid
+<acronym>UID</acronym>s that are shown in the list.  By default user
+id's under 1000, which are often system or daemon users, and user id's
+over 65000, are not shown.</para>
+
+<para>You can also enable the <guilabel>Sort users</guilabel>
+checkbox, to have the user list sorted alphabetically.  If this is
+disabled, users will appear in the order they are listed in the
+password file.  &kdm; will also autocomplete user names if you enable the
+<guilabel>Autocompletion</guilabel> option.</para>
+
+<para>If you choose to show users, then the login window will show
+images (which you select), of a list of users.  When someone is ready
+to login, they may select their user name/image, enter their password,
+and they are granted access.</para>
+
+<para>If you permit a user image, then you can configure the source
+for those images.</para>
+
+<para>You can configure the admin picture here, for each user on the
+system.  Depending on the order selected above, users may be able to
+override your selection.</para>
+
+<para>If you choose not to show users, then the login window will be
+more traditional.  Users will need to type their username and password
+to gain entrance.  This is the preferred way if you have many users on
+this terminal.</para>
+
+</sect2>
+
+<sect2 id="kdmconfig-convenience">
+<title>Convenience</title>
+
+<para>In the <guilabel>convenience</guilabel> tab you can configure
+some options that make life easier for lazy people, like automatic
+login or disabling passwords.</para>
+
+<important><para>Please think more than twice before using these
+options. Every option in the <guilabel>Convenience</guilabel> tab is
+well-suited to seriously compromise your system security. Practically,
+these options are only to be used in a completely non-critical
+environment, &eg; a private computer at home.  </para></important>
+
+<sect3 id="loginmanager-convenience-autologin">
+<title>Automatic Login</title>
+
+<para>Automatic login will give anyone access to a certain account on
+your system without doing any authentication.  You can enable it using
+the option <guilabel>Enable Auto-login</guilabel>.</para>
+
+<para>You can choose the account to be used for automatic login from
+the list labelled <guilabel>User:</guilabel>.</para>
+
+</sect3>
+
+<sect3 id="loginmanager-convenience-nopasswd">
+<title><guilabel>Password-Less Login</guilabel></title>
+
+<para>Using this feature, you can allow certain users to login without
+having to provide their password. Enable this feature using the
+<guilabel>Enable Password-less logins</guilabel> option.</para>
+
+<para>Below this option you'll see a list of users on the system.
+Enable password-less login for specific users by checking the checkbox
+next to the login names.  By default, this feature is disabled for
+all users.</para>
+
+<important><para>Again, this option should only be used in a safe
+environment. If you enable it on a rather public system you should
+take care that only users with heavy access restrictions are granted
+password-less login, &eg;
+<systemitem>guest</systemitem>.</para></important>
+
+<para>You can also choose which user is <quote>preselected</quote>
+when &kdm; starts. The default is <guilabel>None</guilabel>, but you
+can choose <guilabel>Previous</guilabel> to have &kdm; default to the
+last successfully logged in user, or you can
+<guilabel>Specify</guilabel> a particular user to always be selected
+from the list.  You can also have &kdm; set the focus to the password
+field, so that when you reach the &kdm; login screen, you can type the
+password immediately.</para>
+
+<para>The <guilabel>Automatically login after X server crash</guilabel>
+option allows you to skip the authentication procedure when your X
+server accidentally crashed.</para>
+
+</sect3>
+
+</sect2>
+
+</sect1>
+
+</chapter>
+
+&kdmrc-ref;
+
+<!-- ************************************************************ -->   
+<chapter id="configuring-your-system-for-kdm">
+<title>Configuring your system to use &kdm;</title>
+
+<para>This chapter assumes that your system is already configured to
+run the &X-Window;, and that you only need to reconfigure it to
+allow graphical login.</para>
+
+<sect1 id="setting-up-kdm">
+<title>Setting up &kdm;</title>
+
+<para>The fundamental thing that controls whether your computer boots to a
+terminal prompt (console mode) or a graphical login prompt is the default
+runlevel.  The runlevel is set by the program <application> <ulink
+url="man:init">/sbin/init</ulink></application> under the control of the
+configuration file <filename>/etc/inittab</filename>. The default runlevels
+used by different &UNIX; systems (and different &Linux; distributions) vary,
+but if you look at <filename>/etc/inittab</filename> the start of it should
+be something like this:</para>
+
+<screen># Default runlevel. The runlevels used by RHS are:
+# 0 - halt (Do NOT set initdefault to this)
+# 1 - Single user mode
+# 2 - Multiuser, without NFS
+# 3 - Full multiuser mode
+# 4 - unused
+# 5 - X11
+# 6 - reboot (Do NOT set initdefault to this)
+
+id:3:initdefault:  
+</screen>
+
+<para>All but the last line of this extract are comments. The comments
+show that runlevel 5 is used for X11 and that runlevel 3 is used for
+multi-user mode without X11 (console mode). The final line specifies
+that the default runlevel of the system is 3 (console mode). If your
+system currently uses graphical login (for example, using &xdm;) its
+default runlevel will match the runlevel specified for X11.</para>
+
+<para>The runlevel with graphical login (&xdm;) for some common &Linux;
+distributions are:</para>
+
+<itemizedlist>
+<listitem><para>5 for &RedHat; 3.x and later, and for &Mandrake;</para></listitem>
+<listitem><para>4 for Slackware</para></listitem>
+<listitem><para>3 for &SuSE;. 4.x and 5.x</para></listitem>
+</itemizedlist>
+
+<para>The first step in configuring your system is to ensure that you
+can start &kdm; from the command line. Once this is working, you can
+change your system configuration so that &kdm; starts automatically
+each time you reboot your system.</para>
+
+<para>To test &kdm;, you must first bring your system to a runlevel
+that does not run &xdm;. To do so, issue a command like this:</para>
+
+<screen><command>/sbin/init <option>3</option></command></screen>
+
+<para>Instead of the number <option>3</option> you should specify the
+appropriate runlevel for console mode on your system.</para>
+
+<para>If your system uses Pluggable Authentication Modules
+(<abbrev>PAM</abbrev>), which is normal with recent &Linux; and &Solaris;
+systems, you should check that your <abbrev>PAM</abbrev> configuration permits
+login through the service named <literal>kde</literal>. If you previously used
+&xdm; successfully, you should not need to make any
+changes to your <abbrev>PAM</abbrev> configuration in order to use
+&kdm;. <filename>/etc/pam.conf</filename> or
+<filename>/etc/pam.d/kde</filename>. Information on configuring
+<abbrev>PAM</abbrev> is beyond the scope of this handbook, but
+<abbrev>PAM</abbrev> comes with comprehensive documentation (try looking in
+<filename>/usr/share/doc/*pam*/html/</filename>).</para>
+
+<para>Now it's time for you to test &kdm; by issuing the following
+command:</para>
+
+<screen><command>kdm <option>-nodaemon</option></command>
+</screen>
+
+<para>If you get a &kdm; login dialog and you are able to log in,
+things are going well.  The main thing that can go wrong here is that
+the run-time linker might not find the shared &Qt; or &kde; libraries.
+If you have a binary distribution of the &kde; libraries, make sure
+&kdm; is installed where the libraries believe &kde; is installed and
+try setting some environment variables to point to your &kde; and &Qt;
+libraries.</para>
+
+<para>For example:</para>
+
+<screen><command>export 
+<option>KDEDIR=<replaceable>/opt/kde</replaceable></option></command>
+<command>export 
+<option>QTDIR=<replaceable>/usr/lib/qt2</replaceable></option></command>
+<command>export 
+<option>PATH=<replaceable>$KDEDIR/bin:$QTDIR/bin:$PATH</replaceable></option></command>
+<command>export 
+<option>LD_LIBRARY_PATH=<replaceable>$KDEDIR/lib:$QTDIR/lib</replaceable></option></command>
+</screen>
+
+<para>If you are still unsuccessful, try starting &xdm; instead, to
+make sure that you are not suffering from a more serious X
+configuration problem.</para>
+
+<para>When you are able to start &kdm; successfully, you can start to
+replace &xdm; by &kdm;. Again, this is distribution-dependent.</para>
+
+<itemizedlist>
+<listitem>
+<para>For &RedHat;, edit <filename>/etc/inittab</filename>, look for this
+ line:</para>
+<screen>x:5:respawn:/usr/X11/bin/xdm -nodaemon</screen>
+<para>and replace with:</para>
+<screen>x:5:respawn:/opt/kde/bin/kdm</screen>
+<para>This tells <command>init</command>(8) to respawn &kdm; when the
+system is in run level  5. Note that &kdm; does not need the
+ <option>-nodaemon</option> option.</para>
+</listitem>
+<listitem>
+<para>For &Mandrake;, the X11 runlevel in
+<filename>/etc/inittab</filename> invokes the shell script
+<filename>/etc/X11/prefdm</filename>, which is set up to select from
+amongst several display managers, including &kdm;. Make sure that all
+the paths are correct for your installation.</para> 
+</listitem>
+<listitem>
+<para>For &SuSE;, edit <filename>/sbin/init.d/xdm</filename> to add a
+first line:</para>
+
+<screen>. /etc/rc.config
+DISPLAYMANAGER=kdm
+export DISPLAYMANAGER</screen>
+</listitem>
+<listitem><para>For FreeBSD, edit <filename>/etc/ttys</filename> and find
+the line like this:</para>
+<screen>ttyv8   "/usr/X11R6/bin/xdm -nodaemon"  xterm   off secure</screen>
+<para>and edit it to this:</para>
+<screen>ttyv8   "/usr/local/bin/kdm"  xterm   on secure</screen>
+</listitem>
+
+<listitem><para>Most other distributions are a variation of one of
+these.</para></listitem>
+</itemizedlist>
+
+<para>At this stage, you can test &kdm; again by bringing your system
+to the runlevel that should now run &kdm;. To do so, issue a command
+like this:</para>
+
+<screen><command>/sbin/init <option>5</option></command>
+</screen>
+
+<para>Instead of the number <option>5</option> you should specify the
+appropriate runlevel for running X11 on your system.</para>
+
+<para>The final step is to edit the <parameter>initdefault</parameter>
+entry in <filename>/etc/inittab</filename> to specify the appropriate
+runlevel for X11.</para>
+
+<warning><para>Before you make this change, ensure that you have a way
+to reboot your system if a problem occurs. This might be a
+<quote>rescue</quote> floppy-disk provided by your operating system
+distribution or a specially-designed <quote>rescue</quote>
+floppy-disk, such as <literal>tomsrtbt</literal>. Ignore this advice
+at your peril.</para></warning>
+
+<para>This usually involves changing the line:</para>
+<screen>id:3:initdefault:</screen>
+<para>to</para>
+<screen>id:5:initdefault:</screen>
+
+<para>When you reboot your system, you should end up with the
+graphical &kdm; login dialog.</para>
+
+<para>If this step is unsuccessful the most likely problem is that the
+environment used at boot time differs from the environment that you used for
+testing at the command line.  If you are trying to get two versions of &kde;
+to co-exist, be particularly careful that the settings you use for your
+<envar>PATH</envar> and <envar>LD_LIBRARY_PATH</envar> environment variables
+are consistent, and that the startup scripts are not over-riding them in
+some way.</para>
+
+</sect1>
+
+</chapter>
+
+<chapter id="different-window-managers-with-kdm">
+<title>Supporting multiple window managers</title>
+
+<para>&kdm; detects most available window manager and desktop environments when
+it is run.  Installing a new one should make it automatically available in
+the &kdm; main dialog <guilabel>Session Type:</guilabel>.</para>
+
+<para>If you have a very new window manager, or something that &kdm; does
+not support, the first thing you should check is that the application to be
+run is in the <envar>PATH</envar> and has not been renamed during the
+install into something unexpected.</para>
+
+<para>If the case is that the application is too new and not yet supported
+by &kdm;, you can quite simply add a new session.</para>
+
+<para>The sessions are defined in <firstterm>.desktop</firstterm> files in
+<filename
+class="directory">$<envar>KDEDIR</envar>/share/apps/kdm/sessions</filename>.
+You can simply add an appropriately named <literal
+role="extension">.desktop</literal> file in this directory. The fields
+are:</para>
+
+<programlisting>[Desktop Entry]
+Encoding=UTF-8 <lineannotation>This is fixed to <option>UTF-8</option> and
+may be omitted</lineannotation>
+Type=XSession <lineannotation>This is fixed to <option>XSession</option> and
+may be omitted</lineannotation>
+Exec=<replaceable>executable name</replaceable> <lineannotation>Passed to
+<command>eval exec</command> in a Bourne shell</lineannotation>
+TryExec=<replaceable>executable name</replaceable> <lineannotation>Supported
+but not required</lineannotation>
+Name=<replaceable>name to show in the &kdm; session list</replaceable></programlisting>
+
+<para>There are also three <quote>magic</quote>:</para>
+
+<variablelist>
+<varlistentry>
+<term>default</term>
+<listitem>
+<para>
+The default session for &kdm; is normally &kde; but can be configured by the
+system administrator.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>custom</term>
+<listitem>
+<para>
+The Custom session will run the users ~/.xsession if it exists.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>failsafe</term>
+<listitem>
+<para>
+Failsafe will run a very plain session, and is useful only for debugging
+purposes.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>To override a session type, copy the .desktop file from the data dir
+to the config dir and edit it at will. Removing the shipped session types
+can be accomplished by <quote>shadowing</quote> them with .desktop files
+containing Hidden=true.  For the magic session types no .desktop files exist
+by default, but &kdm; pretends they would, so you can override them like any
+other type.  I guess you already know how to add a new session type by
+now. ;-)</para>
+
+</chapter>
+
+<chapter id="xdmcp-with-kdm">
+<title>Using &kdm; for Remote Logins (&XDMCP;)</title>
+
+<para>&XDMCP; is the Open Group standard, the <quote>X Display Manager
+Control Protocol</quote>.  This is used to set up connections between
+remote systems over the network.</para>
+
+<para>&XDMCP; is useful in multiuser situations where there are users
+with workstations and a more powerful server that can provide the
+resources to run multiple X sessions.  For example, &XDMCP; is a good
+way to reuse old computers - a Pentium or even 486 computer with 16 Mb
+RAM is sufficient to run X itself, and using &XDMCP; such a computer can
+run a full modern &kde; session from a server.  For the server part,
+once a single &kde; (or other environment) session is running, running
+another one requires very few extra resources.</para>
+
+<para>However, allowing another method of login to your machine
+obviously has security implications.  You should run this service only
+if you need to allow remote X Servers to start login sessions on your
+system. Users with a single &UNIX; computer should not need to run
+this.</para>
+
+</chapter>
+
+<chapter id="advanced-topics">
+<title>Advanced Topics</title>
+
+<sect1 id="command-sockets">
+<title>Command Sockets</title>
+
+<para>This is a feature you can use to remote-control &kdm;. It's mostly
+intended for use by &ksmserver; and &kdesktop; from a running session, but
+other applications are possible as well.</para>
+
+<para>The sockets are &UNIX; domain sockets which live in subdirectories of the
+directory specified by <option>FifoDir</option>=. The subdir is the key to
+addressing and security; the sockets all have the file name
+<filename>socket</filename> and file permissions
+<literal>rw-rw-rw-</literal> (0666). This is because some systems don't care
+for the file permission of the socket files.</para>
+
+<para>There are two types of sockets: the global one (dmctl) and the
+per-display ones (dmctl-&lt;display&gt;).</para>
+
+<para>The global one's subdir is owned by root, the subdirs of the per-display
+ones' are owned by the user currently owning the session (root or the
+logged in user). Group ownership of the subdirs can be set via FifoGroup=,
+otherwise it's root. The file permissions of the subdirs are rwxr-x---
+(0750).</para>
+
+<para>The fields of a command are separated by tabs (<token>\t</token>), the
+fields of a list are separated by spaces, literal spaces in list fields are
+denoted by <token>\s</token>.</para>
+
+<para>The command is terminated by a newline (<token>\n</token>).</para>
+
+<para>The same applies to replies. The reply on success is
+<returnvalue>ok</returnvalue>, possibly followed by the requested
+information. The reply on error is an errno-style word (&eg;
+<returnvalue>perm</returnvalue>, <returnvalue>noent</returnvalue>, &etc;)
+followed by a longer explanation.</para>
+
+<variablelist>
+<title>Global commands:</title>
+<varlistentry>
+<term><command>login</command> <option>display</option>
+(<parameter>now</parameter> | <parameter>schedule</parameter>) <parameter>user</parameter> <parameter>password</parameter>
+[session_arguments]</term>
+<listitem>
+<para>login user at specified display. if <parameter>now</parameter> is
+specified, a possibly running session is killed, otherwise the login is done
+after the session exits. session_arguments are printf-like escaped contents
+for .dmrc. Unlisted keys will default to previously saved values.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<variablelist>
+<title>Per-display commands:</title>
+<varlistentry>
+<term><command>lock</command></term>
+<listitem>
+<para>The display is marked as locked. If the &X-Server; crashes in this
+state, no auto-relogin will be performed even if the option is on.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><command>unlock</command></term>
+<listitem>
+<para>Reverse the effect of <command>lock</command>, and re-enable
+auto-relogin.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><command>suicide</command></term>
+<listitem>
+<para>The currently running session is forcibly terminated. No auto-relogin
+is attempted, but a scheduled "login" command will be executed.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<variablelist>
+<title>Commands for all sockets</title>
+<varlistentry>
+<term><command>caps</command></term>
+<listitem>
+<para>Returns a list of this socket's capabilities:</para>
+
+<variablelist>
+<varlistentry>
+<term><returnvalue>kdm</returnvalue></term>
+<listitem>
+<para>identifies &kdm;, in case some other DM implements this protocol,
+too</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><returnvalue>list</returnvalue>, <returnvalue>lock</returnvalue>,
+<returnvalue>suicide</returnvalue>, <returnvalue>login</returnvalue></term>
+<listitem>
+<para>The respective command is supported</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><returnvalue>bootoptions</returnvalue></term>
+<listitem>
+<para>The <command>listbootoptions</command> command and the
+<option>=</option> to <command>shutdown</command> are supported</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><returnvalue>shutdown &lt;list&gt;</returnvalue></term>
+<listitem>
+<para><command>shutdown</command> is supported and allowed for the listed
+users (a comma separated list.)  <returnvalue>*</returnvalue> means all
+authenticated users.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><returnvalue>nuke &lt;list&gt;</returnvalue></term>
+<listitem>
+<para>Forced shutdown may be performed by the listed users.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><returnvalue>nuke</returnvalue></term>
+<listitem>
+<para>Forced shutdown may be performed by everybody</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><returnvalue>reserve &lt;number&gt;</returnvalue></term>
+<listitem>
+<para>Reserve displays are configured, and <returnvalue>number</returnvalue>
+are available at this time</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><command>list</command> [<parameter>all</parameter> |
+<parameter>alllocal</parameter>]</term>
+<listitem>
+<para>Return a list of running sessions.  By default all active sessions are
+listed.  if <parameter>all</parameter> is specified, passive sessions are
+listed as well.  If <parameter>alllocal</parameter> is specified, passive
+sessions are listed as well, but all incoming remote sessions are
+skipped.</para>
+<para>Each session entry is a comma separated tuple of:</para>
+<itemizedlist>
+<listitem><para>Display or TTY name</para></listitem>
+<listitem><para>VT name for local sessions</para></listitem>
+<listitem><para>Logged in user's name, empty for passive sessions and
+outgoing remote sessions (local chooser mode)</para></listitem>
+<listitem><para>Session type or <quote>&lt;remote&gt;</quote> for outgoing
+remote sessions, empty for passive sessions.</para></listitem>
+<listitem><para>A Flag field:</para>
+<itemizedlist><listitem><para><literal>*</literal> for the display belonging
+to the requesting socket.</para></listitem>
+<listitem><para><literal>!</literal> for sessions that cannot be killed by the
+reqeusting socket.</para></listitem>
+</itemizedlist>
+</listitem>
+</itemizedlist>
+<para>New fields may be added in the future.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><command>reserve</command> [<parameter>timeout in
+seconds</parameter>]</term>
+<listitem>
+<para>Start a reserve login screen. If nobody logs in within the specified
+amount of time (one minute by default), the display is removed again. When
+the session on the display exits, the display is removed, too.</para>
+<para>Permitted only on sockets of local displays and the global
+socket.</para> 
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><command>activate</command>
+(<parameter>vt</parameter>|<parameter>display</parameter>)</term>
+<listitem>
+<para>Switch to a particular VT (virtual terminal). The VT may be specified
+either directly (&eg; <parameter>vt3</parameter>) or by a display using it
+(eg; <parameter>:2</parameter>).</para>
+<para>Permitted only on sockets of local displays and the global
+socket.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><command>listbootoptions</command></term>
+<listitem>
+<para>List available boot options.</para>
+<!--FIXME: "ok" list default current
+    default and current are indices into the list and are -1 if unset or
+    undeterminable. -->
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><command>shutdown</command> (<parameter>reboot</parameter> |
+<parameter>halt</parameter>)
+[<parameter>=<replaceable>bootchoice</replaceable></parameter>]
+(<parameter>ask</parameter>|<parameter>trynow</parameter>|<parameter>forcenow</parameter>|<parameter>schedule</parameter>|<parameter>start
+(<parameter>-1</parameter>|<parameter>end
+(<parameter>force</parameter>|<parameter>forcemy</parameter>|<parameter>cancel)</parameter>)</parameter>)</parameter>)</term>
+<listitem>
+<para>Request a system shutdown, either a reboot or a halt/poweroff.</para>
+<para>An OS choice for the next boot may be specified from the list returned
+by <command>listbootoptions</command></para>
+<para>Shutdowns requested from per-display sockets are executed when the
+current sessino on that display exits.  Such a request may pop up a dialog
+asking for confirmation and/or authentication</para>
+<para><parameter>start</parameter> is the time for which the shutdown is
+scheduled.  If it starts with a plus-sign, the current time is added.  Zero
+means immediately.</para>
+<para><parameter>end</parameter> is the latest time at which the shutdown
+should be performed if active sessions are still running.  If it starts with
+a plus-sign, the start time is added.  -1 means wait infinitely.  If end is
+through and active sessions are still running, &kdm; can do one of the
+following:</para>
+<itemizedlist>
+<listitem><para><parameter>cancel</parameter> - give up the
+shutdown</para></listitem>
+<listitem><para><parameter>force</parameter> - shut down
+nonetheless</para></listitem>
+<listitem><para><parameter>forcemy</parameter> - shut down nonetheless if
+all active sessions belong to the requesting user.  Only for per-display sockets.</para></listitem>
+</itemizedlist>
+<para><parameter>start</parameter> and <parameter>end</parameter> are
+specified in seconds since the &UNIX; epoch.</para>
+<para><parameter>trynow</parameter> is a synonym for <parameter>0 0
+cancel</parameter>, <parameter>forcenow</parameter> for <parameter>0 0
+force</parameter> and <parameter>schedule</parameter> for <parameter>0
+-1</parameter>.</para>
+<para><parameter>ask</parameter> attempts an immediate shutdown and
+interacts with the user if active sessions are still running.  Only for
+per-display sockets.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><command>shutdown cancel</command>
+[<parameter>local</parameter>|<parameter>global</parameter>}</term>
+<listitem>
+<para>Cancel a scheduled shutdown. The global socket always cancels the
+currently pending shutdown, while per-display sockets default to cancelling
+their queued request.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><command>shutdown status</command></term>
+<listitem>
+<para>Return a list with information about shutdowns.</para>
+<para>The entries are a comma-separated tuples of:</para>
+<itemizedlist>
+<listitem>
+<para>(<returnvalue>global</returnvalue>|<returnvalue>local</returnvalue>) -
+pending vs. queued shutdown. A local entry can be returned only by a
+per-display socket.</para>
+</listitem>
+<listitem><para>(<returnvalue>halt</returnvalue>|<returnvalue>reboot</returnvalue>)</para></listitem>
+<listitem><para>start</para></listitem>
+<listitem><para>end</para></listitem>
+<listitem><para>("ask"|"force"|"forcemy"|"cancel")</para></listitem>
+<listitem><para>Numeric user ID of the requesting user, -1 for the global
+socket.</para></listitem>
+<listitem><para>The next boot OS choice or "-" for none.</para></listitem>
+</itemizedlist>
+<para>New fields might be added later</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+</variablelist>
+<para>There are two ways of using the sockets:</para>
+<itemizedlist>
+<listitem>
+<para>Connecting them directly. FifoDir is exported as
+$<envar>DM_CONTROL</envar>; the name of per-display sockets can be derived
+from $<envar>DISPLAY</envar>.</para>
+</listitem>
+<listitem>
+<para>By using the <command>kdmctl</command> command (&eg; from within a
+shell script). Try <command>kdmctl</command> <option>-h</option> to find out
+more.</para>
+</listitem>
+</itemizedlist>
+
+<para>Here is an example bash script <quote>reboot into FreeBSD</quote>:</para>
+
+<programlisting>if kdmctl | grep -q shutdown; then
+  IFS=$'\t'
+  set -- `kdmctl listbootoptions`
+  if [ "$1" = ok ]; then
+        fbsd=$(echo "$2" | tr ' ' '\n' | sed -ne 's,\\s, ,g;/freebsd/I{p;q}')
+        if [ -n "$fbsd" ]; then
+      kdmctl shutdown reboot "=$fbsd" ask &gt; /dev/null
+        else
+          echo "FreeBSD boot unavailable."
+        fi
+  else
+    echo "Boot options unavailable."
+  fi
+else
+  echo "Cannot reboot system."
+fi</programlisting>
+
+</sect1>
+<!-- Riddell: so there's no GUI you need to edit kdmrc to say UseTheme=true and Theme=/path/to/theme.xml
+[13:31] <Riddell> jriddell.org/programs has an example theme 
+
+<sect1 id="dm-themes">
+<title>Themes</title>
+
+&kdm; has limited support for desktop manager themes.  You may enable them
+by adding <userinput>UseTheme=true</userinput> to <filename>kdmrc</filename>
+and <userinput>Theme=/path/to/theme.xml</userinput>.  
+</sect1>
+-->
+</chapter>
+
+<chapter id="Other-Information">
+<title>Other sources of information</title>
+
+<para>Since &kdm; is descended from &xdm;, the <ulink
+url="man:xdm">xdm man page</ulink> may provide useful background
+information. For X-related problems try the man pages <ulink
+url="man:X">X</ulink> and <ulink url="man:startx">startx</ulink>. If you have
+questions about &kdm; that are not answered by this handbook, take advantage of
+the fact the &kdm; is provided under the terms of the &GNU;
+General Public License: look at the source code.
+</para>
+
+</chapter>
+
+
+<chapter id="credits"><title>Credits and License</title>
+
+<para>&kdm; is derived from, and includes code from,
+&xdm; (C) Keith Packard, MIT X Consortium.</para>
+
+<para>&kdm; 0.1 was written by &Matthias.Ettrich;.  Later versions till &kde;
+2.0.x were written by &Steffen.Hansen;.  Some new features for &kde; 2.1.x and
+a major rewrite for &kde; 2.2.x made by &Oswald.Buddenhagen;.</para>
+
+<para>Other parts of the &kdm; code are copyright by the authors, and
+licensed under the terms of the <ulink url="common/gpl-license.html">&GNU;
+GPL</ulink>. Anyone is allowed to change &kdm; and redistribute the result
+as long as the names of the authors are mentioned.</para>
+
+<para>&kdm; requires the &Qt; library, which is copyright Troll Tech AS.</para>
+
+<para>Documentation contributors:
+<itemizedlist>
+
+<listitem><para>Documentation written by &Steffen.Hansen;
+&Steffen.Hansen.mail;</para></listitem>
+
+<listitem><para>Documentation extended by Gregor
+Zumstein<email>zumstein@ssd.ethz.ch</email>. Last update August 9,
+1998</para></listitem>
+
+<listitem><para>Documentation revised for &kde; 2 by &Neal.Crook;
+&Neal.Crook.mail;. Last update August 6,
+2000</para></listitem>
+
+<listitem><para>Documentation extended and revised for &kde; 2.2 by 
+&Oswald.Buddenhagen; &Oswald.Buddenhagen.mail;.  Last update August,
+2001</para></listitem>
+
+</itemizedlist></para>
+
+<para>Documentation copyright &Steffen.Hansen;, Gregor Zumstein, &Neal.Crook;
+and &Oswald.Buddenhagen;. This document also includes large parts of the &xdm;
+man page, which is (C) Keith Packard.</para>
+
+<!--TRANS:CREDIT_FOR_TRANSLATORS -->
+
+&underFDL;
+&underGPL;
+
+</chapter>
+
+<glossary id="glossary">
+<title>Glossary</title>
+
+<glossentry id="gloss-greeter">
+<glossterm>greeter</glossterm>
+<glossdef><para>The greeter is the login dialog, &ie; the part of &kdm;
+which the user sees.</para>
+</glossdef>
+</glossentry>
+
+<glossentry>
+<glossterm id="gloss-entropy">entropy</glossterm>
+<glossdef><para>The entropy of a system is the measure of it's
+unpredictability.  This is used during the generation of random numbers.
+Truly r</para></glossdef>
+</glossentry>
+
+</glossary>
+</book>
+<!--
+Local Variables:
+mode: xml
+sgml-omittag: nil
+sgml-shorttag: t
+End:
+-->
+
