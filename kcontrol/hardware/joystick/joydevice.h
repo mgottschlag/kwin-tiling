@@ -23,6 +23,7 @@
 
 #include <qstring.h>
 
+#include <sys/types.h>
 #include <linux/joystick.h>
 
 // helper class which holds all current values, file descriptor, etc. for
