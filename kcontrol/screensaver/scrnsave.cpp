@@ -575,7 +575,7 @@ void KScreenSaver::findSavers()
             mSaverListView->setCurrentItem(selectedItem);
             mSaverListView->ensureItemVisible(selectedItem);
             mSetupBt->setEnabled(!mSaverList.at(mSelected)->setup().isEmpty());
-            mTestBt->setEnabled(!mSaverList.at(mSelected)->setup().isEmpty());
+            mTestBt->setEnabled(true);
         }
 
         connect( mSaverListView, SIGNAL( currentChanged( Q3ListViewItem * ) ),
