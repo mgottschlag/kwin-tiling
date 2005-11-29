@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qstyle.h>
 #include <qlayout.h>
 #include <q3accel.h>
-#include <q3popupmenu.h>
+#include <QMenu>
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <qlabel.h>
@@ -52,7 +52,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QBoxLayout>
-#include <Q3Frame>
+#include <QFrame>
 #include <QVBoxLayout>
 #include <QMouseEvent>
 #include <Q3VButtonGroup>
@@ -149,7 +149,7 @@ void
 KDMShutdownBase::slotActivatePlugMenu()
 {
 	if (needRoot) {
-		Q3PopupMenu *cmnu = verify->getPlugMenu();
+		QMenu *cmnu = verify->getPlugMenu();
 		if (!cmnu)
 			return;
 		QSize sh( cmnu->sizeHint() / 2 );
@@ -474,8 +474,8 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 {
 	QHBoxLayout *hbox = new QHBoxLayout( this, KDmh, KDsh );
 
-	Q3Frame *lfrm = new Q3Frame( this );
-	lfrm->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
+	QFrame *lfrm = new QFrame( this );
+	lfrm->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 	hbox->addWidget( lfrm, Qt::AlignCenter );
 	QLabel *icon = new QLabel( lfrm );
 	icon->setPixmap( QPixmap( locate( "data", "kdm/pics/shutdown.jpg" ) ) );

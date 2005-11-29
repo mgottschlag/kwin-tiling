@@ -29,7 +29,6 @@
 #include <klistview.h>
 #include <kservice.h>
 #include <kservicegroup.h>
-#include <QMenu>
 
 class QMenu;
 class KActionCollection;

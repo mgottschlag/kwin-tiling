@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kpushbutton.h>
 
 #include <qregexp.h>
-#include <q3popupmenu.h>
+#include <QMenu>
 #include <qlayout.h>
 #include <qfile.h>
 #include <qlabel.h>
@@ -110,14 +110,14 @@ KGVerify::~KGVerify()
 	delete greet;
 }
 
-Q3PopupMenu *
+QMenu *
 KGVerify::getPlugMenu()
 {
 	// assert( !cont );
 	if (!plugMenu) {
 		uint np = pluginList.count();
 		if (np > 1) {
-			plugMenu = new Q3PopupMenu( parent );
+			plugMenu = new QMenu( parent );
 			connect( plugMenu, SIGNAL(activated( int )),
 			         SLOT(slotPluginSelected( int )) );
 			for (uint i = 0; i < np; i++)

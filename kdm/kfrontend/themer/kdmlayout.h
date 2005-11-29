@@ -27,7 +27,6 @@
  * but can be treated like a usual widget
  */
 
-#include <q3valuelist.h>
 #include <qsize.h>
 #include <QList>
 

@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qpalette.h>
 //Added by qt3to4:
 #include <QTimerEvent>
-#include <Q3CString>
+#include <QByteArray>
 
 #include <stdlib.h> // free(), exit()
 #include <unistd.h> // alarm()
@@ -160,7 +160,7 @@ kg_main( const char *argv0 )
 	if (!_grabServer) {
 		if (_useBackground) {
 			proc = new KProcess;
-			*proc << Q3CString( argv0, strrchr( argv0, '/' ) - argv0 + 2 ) + "krootimage";
+			*proc << QByteArray( argv0, strrchr( argv0, '/' ) - argv0 + 2 ) + "krootimage";
 			*proc << _backgroundCfg;
 			proc->start();
 		}

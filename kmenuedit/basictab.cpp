@@ -22,8 +22,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qfileinfo.h>
-#include <q3groupbox.h>
-#include <q3hbox.h>
+#include <qgroupbox.h>
 
 //Added by qt3to4:
 #include <QVBoxLayout>
@@ -43,6 +42,8 @@
 #include <kcombobox.h>
 #include <kkeydialog.h>
 #include <kprocess.h>
+#include <khbox.h>
+
 #include "khotkeys.h"
 
 #include "menuinfo.h"
@@ -61,7 +62,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
                                           KDialog::spacingHint());
 
     // general group
-    Q3GroupBox *general_group = new Q3GroupBox(this);
+    QGroupBox *general_group = new QGroupBox(this);
     QGridLayout *grid = new QGridLayout(general_group, 5, 2,
                                         KDialog::marginHint(),
                                         KDialog::spacingHint());
@@ -136,7 +137,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     layout->addMultiCellWidget(general_group, 0, 0, 0, 1);
 
     // path group
-    _path_group = new Q3GroupBox(this);
+    _path_group = new QGroupBox(this);
     QVBoxLayout *vbox = new QVBoxLayout(_path_group, KDialog::marginHint(),
                                         KDialog::spacingHint());
 
@@ -160,7 +161,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     layout->addMultiCellWidget(_path_group, 1, 1, 0, 1);
 
     // terminal group
-    _term_group = new Q3GroupBox(this);
+    _term_group = new QGroupBox(this);
     vbox = new QVBoxLayout(_term_group, KDialog::marginHint(),
 			   KDialog::spacingHint());
 
@@ -187,7 +188,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _termOptEdit->setEnabled(false);
 
     // uid group
-    _uid_group = new Q3GroupBox(this);
+    _uid_group = new QGroupBox(this);
     vbox = new QVBoxLayout(_uid_group, KDialog::marginHint(),
                            KDialog::spacingHint());
 
@@ -216,7 +217,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     layout->setRowStretch(0, 2);
 
     // key binding group
-    general_group_keybind = new Q3GroupBox(this);
+    general_group_keybind = new QGroupBox(this);
     layout->addMultiCellWidget( general_group_keybind, 4, 4, 0, 1 );
     // dummy widget in order to make it look a bit better
     layout->addWidget( new QWidget(this), 5, 0 );

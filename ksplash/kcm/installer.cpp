@@ -18,7 +18,7 @@
 #include <q3textedit.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3Frame>
+#include <QFrame>
 #include <QHBoxLayout>
 #include <QDropEvent>
 #include <QVBoxLayout>
@@ -129,7 +129,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
 
   mPreview = new QLabel(this);
   mPreview->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
-  mPreview->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
+  mPreview->setFrameStyle(QFrame::Panel|QFrame::Sunken);
   mPreview->setMinimumSize(QSize(320,240));
   mPreview->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
   rightbox->addWidget(mPreview);

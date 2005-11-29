@@ -31,7 +31,6 @@
 #include "klipperpopup.h"
 //Added by qt3to4:
 #include <QResizeEvent>
-#include <Q3CString>
 #include <ktoolinvocation.h>
 
 extern "C"

@@ -22,16 +22,15 @@
 
 #include <qcheckbox.h>
 #include <qevent.h>
-#include <q3groupbox.h>
 #include <q3header.h>
 #include <qradiobutton.h>
-#include <q3vbox.h>
 
 #include <kdialogbase.h>
 #include <keditlistbox.h>
 #include <kkeydialog.h>
 #include <klistview.h>
 #include <knuminput.h>
+#include <kvbox.h>
 
 #include "urlgrabber.h"
 
@@ -42,7 +41,7 @@ class QPushButton;
 class QDialog;
 class ConfigDialog;
 
-class GeneralWidget : public Q3VBox
+class GeneralWidget : public KVBox
 {
     Q_OBJECT
 
@@ -66,7 +65,7 @@ private:
 
 
 // only for use inside ActionWidget
-class AdvancedWidget : public Q3VBox
+class AdvancedWidget : public KVBox
 {
     Q_OBJECT
 
@@ -81,7 +80,7 @@ private:
     KEditListBox *editListBox;
 };
 
-class ActionWidget : public Q3VBox
+class ActionWidget : public KVBox
 {
     Q_OBJECT
 

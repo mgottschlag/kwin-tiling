@@ -29,7 +29,6 @@
 #include <qfileinfo.h>
 #include <q3header.h>
 #include <qpainter.h>
-#include <q3popupmenu.h>
 #include <qregexp.h>
 #include <qstringlist.h>
 //Added by qt3to4:

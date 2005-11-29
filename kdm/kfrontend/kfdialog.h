@@ -29,10 +29,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qdialog.h>
 #include <qmessagebox.h>
 //Added by qt3to4:
-#include <Q3Frame>
+#include <QFrame>
 #include <QResizeEvent>
 
-class Q3Frame;
+class QFrame;
 
 class FDialog : public QDialog {
 	typedef QDialog inherited;
@@ -53,7 +53,7 @@ class FDialog : public QDialog {
 	void adjustGeometry();
 
   private:
-	Q3Frame *winFrame;
+	QFrame *winFrame;
 };
 
 class KFMsgBox : public FDialog {

@@ -25,7 +25,7 @@
 
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3Frame>
+#include <QFrame>
 #include <Q3VButtonGroup>
 
 #include <assert.h>
@@ -37,6 +37,7 @@
 #include <kregexpeditorinterface.h>
 #include <kparts/componentfactory.h>
 #include <kvbox.h>
+#include <khbox.h>
 
 #include "configdialog.h"
 
@@ -97,8 +98,9 @@ void ConfigDialog::commitShortcuts()
 
 
 GeneralWidget::GeneralWidget( QWidget *parent, const char *name )
-    : Q3VBox( parent, name )
+    : KVBox( parent )
 {
+    setObjectName(name);
     setSpacing(KDialog::spacingHint());
 
     cbMousePos = new QCheckBox( i18n("&Popup menu at mouse-cursor position"),
@@ -227,9 +229,11 @@ void ListView::rename( Q3ListViewItem* item, int c )
 
 ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, QWidget *parent,
                             const char *name )
-    : Q3VBox( parent, name ),
+    : KVBox( parent ),
       advancedWidget( 0L )
 {
+    setObjectName(name);
+
     Q_ASSERT( list != 0L );
 
     QLabel *lblAction = new QLabel(
@@ -297,7 +301,7 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
 	cbUseGUIRegExpEditor->setChecked( false );
     }
 
-    Q3HBox *box = new Q3HBox( this );
+    KHBox *box = new KHBox( this );
     box->setSpacing( KDialog::spacingHint() );
     QPushButton *button = new QPushButton( i18n("&Add Action"), box );
     connect( button, SIGNAL( clicked() ), SLOT( slotAddAction() ));
@@ -310,7 +314,7 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
 
     box->setStretchFactor( label, 5 );
 
-    box = new Q3HBox( this );
+    box = new KHBox( this );
     QPushButton *advanced = new QPushButton( i18n("Advanced..."), box );
     advanced->setFixedSize( advanced->sizeHint() );
     connect( advanced, SIGNAL( clicked() ), SLOT( slotAdvanced() ));
@@ -425,8 +429,10 @@ void ActionWidget::slotAdvanced()
 }
 
 AdvancedWidget::AdvancedWidget( QWidget *parent, const char *name )
-    : Q3VBox( parent, name )
+    : KVBox( parent )
 {
+    setObjectName(name);
+
     editListBox = new KEditListBox( i18n("D&isable Actions for Windows of Type WM_CLASS"), this, "editlistbox", true, KEditListBox::Add | KEditListBox::Remove );
 
     editListBox->setWhatsThis(

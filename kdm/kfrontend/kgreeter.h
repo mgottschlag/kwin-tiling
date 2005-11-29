@@ -44,7 +44,7 @@ class KSimpleConfig;
 
 class QLabel;
 class QPushButton;
-class Q3PopupMenu;
+class QMenu;
 class Q3ListViewItem;
 
 struct SessType {
@@ -90,7 +90,7 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 	KSimpleConfig *stsFile;
 	UserListView *userView;
 	QStringList *userList;
-	Q3PopupMenu *sessMenu;
+	QMenu *sessMenu;
 	QVector<SessType> sessionTypes;
 	int nNormals, nSpecials;
 	int curPrev, curSel;

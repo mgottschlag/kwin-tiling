@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qfile.h>
 #include <qimage.h>
 #include <qmovie.h>
-#include <q3popupmenu.h>
+#include <QMenu>
 #include <qtimer.h>
 #include <q3header.h>
 #include <qstyle.h>
@@ -57,12 +57,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qeventloop.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3CString>
 #include <QEvent>
 #include <QKeyEvent>
 #include <QBoxLayout>
 #include <QHBoxLayout>
-#include <Q3Frame>
+#include <QFrame>
 #include <Q3ValueList>
 #include <QVBoxLayout>
 #include <QAbstractEventDispatcher>
@@ -140,7 +139,7 @@ KGreeter::KGreeter( bool framed )
 	if (userView || userList)
 		insertUsers();
 
-	sessMenu = new Q3PopupMenu( this );
+	sessMenu = new QMenu( this );
 	connect( sessMenu, SIGNAL(activated( int )),
 	         SLOT(slotSessionSelected( int )) );
 	insertSessions();
@@ -216,7 +215,7 @@ KGreeter::insertUser( const QImage &default_pix,
 	}
 }
 
-class KCStringList : public Q3ValueList<Q3CString> {
+class KCStringList : public Q3ValueList<QByteArray> {
   public:
 	bool contains( const char *str ) const
 	{
@@ -449,7 +448,7 @@ KGreeter::slotLoadPrevWM()
 {
 	int len, i, b;
 	unsigned long crc, by;
-	Q3CString name;
+	QByteArray name;
 	char *sess;
 
 	if (verify->coreLock) {
@@ -636,11 +635,11 @@ KStdGreeter::KStdGreeter()
 					if (!movie.framePixmap().isNull()) {
 						pixLabel->setMovie( &movie );
 						if (!movie.framePixmap().hasAlpha())
-							pixLabel->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
+							pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 					} else {
 						pixLabel->setPixmap( pixmap );
 						if (!pixmap.hasAlpha())
-							pixLabel->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
+							pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 					}
 					pixLabel->setIndent( 0 );
 				}
@@ -696,7 +695,7 @@ KStdGreeter::KStdGreeter()
 		needSep = true;
 	}
 
-	Q3PopupMenu *plugMenu = verify->getPlugMenu();
+	QMenu *plugMenu = verify->getPlugMenu();
 	if (plugMenu) {
 		inserten( i18n("&Authentication Method"), Qt::ALT+Qt::Key_A, plugMenu );
 		needSep = true;
@@ -835,7 +834,7 @@ KThemedGreeter::KThemedGreeter()
 		}
 	}
 
-	Q3PopupMenu *plugMenu = verify->getPlugMenu();
+	QMenu *plugMenu = verify->getPlugMenu();
 	if (plugMenu) {
 		inserten( i18n("&Authentication Method"), Qt::ALT+Qt::Key_A, plugMenu );
 		needSep = true;

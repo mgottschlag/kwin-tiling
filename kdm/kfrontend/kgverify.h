@@ -31,8 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <qlayout.h>
 #include <qtimer.h>
-#include <q3valuevector.h>
-#include <q3cstring.h>
+#include <QByteArray>
 //Added by qt3to4:
 #include <QLabel>
 #include <QGridLayout>
@@ -79,7 +78,7 @@ class KGVerifyHandler {
 
 class QWidget;
 class QLabel;
-class Q3PopupMenu;
+class QMenu;
 class QTimer;
 class KPushButton;
 class KLibrary;
@@ -101,7 +100,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	          const QString &fixedEntity, const PluginList &pluginList,
 	          KGreeterPlugin::Function func, KGreeterPlugin::Context ctx );
 	virtual ~KGVerify();
-	Q3PopupMenu *getPlugMenu();
+	QMenu *getPlugMenu();
 	void loadUsers( const QStringList &users );
 	void presetEntity( const QString &entity, int field );
 	QString getEntity() const;
@@ -143,9 +142,9 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	KdmThemer *themer;
 	QWidget *parent, *predecessor;
 	KGreeterPlugin *greet;
-	Q3PopupMenu *plugMenu;
+	QMenu *plugMenu;
 	int curPlugin, presFld, timedLeft, deadTicks;
-	Q3CString pName;
+	QByteArray pName;
 	KGreeterPlugin::Function func;
 	KGreeterPlugin::Context ctx;
 	bool capsLocked;

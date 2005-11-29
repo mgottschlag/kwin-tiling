@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qapplication.h>
 #include <qcursor.h>
 //Added by qt3to4:
-#include <Q3Frame>
+#include <QFrame>
 #include <QGridLayout>
 #include <QResizeEvent>
 #include <QDesktopWidget>
@@ -45,8 +45,8 @@ FDialog::FDialog( QWidget *parent, bool framed )
 	: inherited( parent, 0, true/*, framed ? 0 : WStyle_NoBorder*/ )
 {
 	if (framed) {
-		winFrame = new Q3Frame( this, 0, Qt::WNoAutoErase );
-		winFrame->setFrameStyle( Q3Frame::WinPanel | Q3Frame::Raised );
+		winFrame = new QFrame( this, 0, Qt::WNoAutoErase );
+		winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
 		winFrame->setLineWidth( 2 );
 	} else
 		winFrame = 0;

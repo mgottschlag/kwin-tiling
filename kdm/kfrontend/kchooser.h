@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "kgdialog.h"
 
 class QSocketNotifier;
-class Q3PopupMenu;
 class QLineEdit;
 class Q3ListView;
 class Q3ListViewItem;

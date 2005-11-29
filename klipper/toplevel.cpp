@@ -25,7 +25,6 @@
 #include <qcursor.h>
 #include <qdatetime.h>
 #include <qfile.h>
-#include <q3intdict.h>
 #include <qpainter.h>
 #include <qtooltip.h>
 #include <qmime.h>
@@ -535,7 +534,7 @@ void KlipperWidget::slotConfigure()
 
         myURLGrabber->setActionList( dlg->actionList() );
         myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
-        myURLGrabber->setStripWhiteSpace( dlg->trimmed() );
+        myURLGrabber->setStripWhiteSpace( dlg->stripWhiteSpace() );
         myURLGrabber->setAvoidWindows( dlg->noActionsFor() );
 
         history()->max_size( dlg->maxItems() );
