@@ -8,7 +8,7 @@
 #endif
 
 KSWidget::KSWidget( QWidget* parent )
-    : QX11EmbedWidget( parent )
+    : QX11EmbedWidget( parent ), colormap( None )
 {
 // use visual with support for double-buffering, for opengl
 // this code is duplicated in kdebase/kdesktop/lock/
@@ -22,9 +22,6 @@ KSWidget::KSWidget( QWidget* parent )
         if( XVisualInfo* i = glXChooseVisual( x11Display(), x11Screen(), attribs ))
         {
             visual = i->visual;
-            static Colormap colormap = 0;
-            if( colormap != 0 )
-                XFreeColormap( x11Display(), colormap );
             colormap = XCreateColormap( x11Display(), RootWindow( x11Display(), x11Screen()), visual, AllocNone );
             attrs.colormap = colormap;
             flags |= CWColormap;
@@ -35,6 +32,12 @@ KSWidget::KSWidget( QWidget* parent )
         x(), y(), width(), height(), 0, x11Depth(), InputOutput, visual, flags, &attrs );
     create( w );
 #endif
+}
+
+KSWidget::~KSWidget()
+{
+    if( colormap != None )
+        XFreeColormap( x11Display(), colormap );
 }
 
 #include "kswidget.moc"
