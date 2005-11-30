@@ -12,7 +12,7 @@
 #include <qcolor.h>
 #include <qpainter.h>
 //Added by qt3to4:
-#include <Q3Frame>
+#include <QFrame>
 #include <QPaintEvent>
 
 #include "gesturedrawer.h"
@@ -21,10 +21,11 @@ namespace KHotKeys
 {
 
 GestureDrawer::GestureDrawer(QWidget *parent, const char *name)
-  : Q3Frame(parent, name), _data(QString::null)
+  : QFrame(parent), _data(QString::null)
     {
+    setObjectName(name);
     setBackgroundColor( colorGroup().base());
-    setFrameStyle(Q3Frame::Panel | Q3Frame::Sunken);
+    setFrameStyle(QFrame::Panel | QFrame::Sunken);
     setMinimumSize(30, 30);
     }
 
@@ -77,7 +78,7 @@ void GestureDrawer::paintEvent(QPaintEvent *ev)
 
     p.end();
 
-    Q3Frame::paintEvent(ev);
+    QFrame::paintEvent(ev);
     }
 
 QPoint GestureDrawer::lookupCellCoords(Q_UINT32 cell)

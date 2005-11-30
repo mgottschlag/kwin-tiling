@@ -32,7 +32,6 @@
 #include <qregexp.h>
 //Added by qt3to4:
 #include <QGridLayout>
-#include <Q3VBox>
 #include <knuminput.h>
 #include <kdialog.h>
 #include <ksimpleconfig.h>

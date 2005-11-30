@@ -12,7 +12,7 @@
 #ifndef GESTURE_DRAWER_H
 #define GESTURE_DRAWER_H
 
-#include <q3frame.h>
+#include <qframe.h>
 #include <qstring.h>
 #include <qevent.h>
 #include <qpoint.h>
@@ -22,7 +22,7 @@
 namespace KHotKeys
 {
 
-class GestureDrawer : public Q3Frame
+class GestureDrawer : public QFrame
     {
     Q_OBJECT
     public:

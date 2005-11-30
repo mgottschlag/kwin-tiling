@@ -2,9 +2,7 @@
 #define _MEMORY_H_KDEINFO_INCLUDED_
 
 #include <qwidget.h>
-#include <q3frame.h>
 #include <qlabel.h>
-#include <q3tabdialog.h>
 #include <qpushbutton.h>
 #include <qtimer.h>
 

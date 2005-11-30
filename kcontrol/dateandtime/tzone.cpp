@@ -27,12 +27,10 @@
 
 #include <qlabel.h>
 #include <qcombobox.h>
-#include <q3groupbox.h>
 #include <qlayout.h>
 #include <qfile.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <Q3Frame>
 #include <QHBoxLayout>
 #include <QTextStream>
 #include <QByteArray>

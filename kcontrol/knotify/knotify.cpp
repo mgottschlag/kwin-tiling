@@ -18,12 +18,10 @@
 
 */
 
-#include <q3buttongroup.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
 #include <qslider.h>
-#include <q3vbox.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QFrame>

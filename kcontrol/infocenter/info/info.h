@@ -3,9 +3,7 @@
 
 #include <qwidget.h>
 #include <QStackedWidget>
-#include <q3frame.h>
 #include <qlabel.h>
-#include <q3tabdialog.h>
 #include <qpushbutton.h>
 #include <qtimer.h>
 #include <q3listview.h>

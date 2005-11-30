@@ -25,11 +25,13 @@ namespace KHotKeys
 
 GestureRecordPage::GestureRecordPage(const QString &gesture,
                                      QWidget *parent, const char *name)
-  : Q3VBox(parent, name),
+  : KVBox(parent),
     _recorder(NULL), _resetButton(NULL),
     _tryOne(NULL), _tryTwo(NULL), _tryThree(NULL), _gest(QString::null),
     _tryCount(1)
     {
+    setObjectName(name);
+
     QString message;
 
     message = i18n("Draw the gesture you would like to record below. Press "
@@ -52,7 +54,7 @@ GestureRecordPage::GestureRecordPage(const QString &gesture,
     connect(_recorder, SIGNAL(recorded(const QString &)),
             this, SLOT(slotRecorded(const QString &)));
 
-    Q3HBox *hBox = new Q3HBox(this, "hbox");
+    KHBox *hBox = new KHBox(this);
 
     _tryOne = new GestureDrawer(hBox, "tryOne");
     _tryTwo = new GestureDrawer(hBox, "tryTwo");

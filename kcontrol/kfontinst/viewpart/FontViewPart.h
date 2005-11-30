@@ -30,13 +30,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <kparts/part.h>
-#include <q3valuevector.h>
 //Added by qt3to4:
 #include <QLabel>
-#include <Q3Frame>
+#include <QFrame>
 
 class QPushButton;
-class Q3Frame;
+class QFrame;
 class QLabel;
 class QStringList;
 class KIntNumInput;
@@ -75,7 +74,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
 
     CFontPreview  *itsPreview;
     QPushButton   *itsInstallButton;
-    Q3Frame        *itsFrame,
+    QFrame        *itsFrame,
                   *itsToolsFrame;
     QLabel        *itsFaceLabel;
     KIntNumInput  *itsFaceSelector;

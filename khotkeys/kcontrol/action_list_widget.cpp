@@ -17,7 +17,7 @@
 #include "action_list_widget.h"
 
 #include <assert.h>
-#include <q3popupmenu.h>
+#include <qmenu.h>
 #include <qpushbutton.h>
 #include <q3header.h>
 #include <qlineedit.h>
@@ -42,7 +42,7 @@ namespace KHotKeys
 Action_list_widget::Action_list_widget( QWidget* parent_P, const char* name_P )
     : Action_list_widget_ui( parent_P, name_P ), selected_item( NULL )
     {
-    Q3PopupMenu* popup = new Q3PopupMenu; // CHECKME looks like setting parent doesn't work
+    QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
     popup->insertItem( i18n( "Command/URL..." ), TYPE_COMMAND_URL_ACTION );
     popup->insertItem( i18n( "K-Menu Entry..." ), TYPE_MENUENTRY_ACTION );
     popup->insertItem( i18n( "DCOP Call..." ), TYPE_DCOP_ACTION );

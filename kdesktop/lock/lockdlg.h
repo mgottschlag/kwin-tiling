@@ -16,13 +16,13 @@
 //Added by qt3to4:
 #include <QLabel>
 #include <QTimerEvent>
-#include <Q3Frame>
+#include <QFrame>
 #include <QGridLayout>
 #include <QEvent>
 
 struct GreeterPluginHandle;
 class LockProcess;
-class Q3Frame;
+class QFrame;
 class QGridLayout;
 class QLabel;
 class KPushButton;
@@ -79,7 +79,7 @@ private:
     void cantCheck();
     GreeterPluginHandle *mPlugin;
     KGreeterPlugin *greet;
-    Q3Frame      *frame;
+    QFrame      *frame;
     QGridLayout *frameLayout;
     QLabel      *mStatusLabel;
     KPushButton *mNewSessButton, *ok, *cancel;

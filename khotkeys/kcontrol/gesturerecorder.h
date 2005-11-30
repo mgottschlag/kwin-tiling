@@ -12,7 +12,7 @@
 #ifndef GESTURE_RECORDER_H
 #define GESTURE_RECORDER_H
 
-#include <q3frame.h>
+#include <qframe.h>
 #include <qstring.h>
 
 #include <gestures.h>
@@ -22,7 +22,7 @@ class QMouseEvent;
 namespace KHotKeys
 {
 
-class GestureRecorder : public Q3Frame
+class GestureRecorder : public QFrame
     {
     Q_OBJECT
 

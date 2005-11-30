@@ -44,7 +44,7 @@
 //Added by qt3to4:
 #include <QGridLayout>
 #include <QEvent>
-#include <Q3Frame>
+#include <QFrame>
 #include <QHBoxLayout>
 #include <QBoxLayout>
 #include <QTimerEvent>
@@ -81,8 +81,8 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
       mCapsLocked(-1),
       mUnlockingFailed(false)
 {
-    frame = new Q3Frame( this );
-    frame->setFrameStyle( Q3Frame::Panel | Q3Frame::Raised );
+    frame = new QFrame( this );
+    frame->setFrameStyle( QFrame::Panel | QFrame::Raised );
     frame->setLineWidth( 2 );
 
     QLabel *pixLabel = new QLabel( frame, "pixlabel" );
@@ -480,8 +480,8 @@ void PasswordDlg::gplugActivity()
 void PasswordDlg::gplugMsgBox( QMessageBox::Icon type, const QString &text )
 {
     QDialog dialog( this, 0, true, Qt::WX11BypassWM );
-    Q3Frame *winFrame = new Q3Frame( &dialog );
-    winFrame->setFrameStyle( Q3Frame::WinPanel | Q3Frame::Raised );
+    QFrame *winFrame = new QFrame( &dialog );
+    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );
     QVBoxLayout *vbox = new QVBoxLayout( &dialog );
     vbox->addWidget( winFrame );
@@ -525,8 +525,8 @@ void PasswordDlg::slotStartNewSession()
     mTimeoutTimerId = 0;
 
     QDialog *dialog = new QDialog( this, "warnbox", true, Qt::WX11BypassWM );
-    Q3Frame *winFrame = new Q3Frame( dialog );
-    winFrame->setFrameStyle( Q3Frame::WinPanel | Q3Frame::Raised );
+    QFrame *winFrame = new QFrame( dialog );
+    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );
     QVBoxLayout *vbox = new QVBoxLayout( dialog );
     vbox->addWidget( winFrame );
@@ -639,8 +639,8 @@ void PasswordDlg::slotSwitchUser()
     DM dm;
 
     QDialog dialog( this, "sessbox", true, Qt::WX11BypassWM );
-    Q3Frame *winFrame = new Q3Frame( &dialog );
-    winFrame->setFrameStyle( Q3Frame::WinPanel | Q3Frame::Raised );
+    QFrame *winFrame = new QFrame( &dialog );
+    winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );
     QBoxLayout *vbox = new QVBoxLayout( &dialog );
     vbox->addWidget( winFrame );

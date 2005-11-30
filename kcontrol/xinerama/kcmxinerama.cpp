@@ -39,7 +39,7 @@
 #include <qcolor.h>
 #include <qpushbutton.h>
 //Added by qt3to4:
-#include <Q3Frame>
+#include <QFrame>
 #include <QGridLayout>
 
 
@@ -231,8 +231,8 @@ QWidget *KCMXinerama::indicator(int dpy) {
 	QFont fnt = KGlobalSettings::generalFont();
 	fnt.setPixelSize(100);
 	si->setFont(fnt);
-	si->setFrameStyle(Q3Frame::Panel);
-	si->setFrameShadow(Q3Frame::Plain);
+	si->setFrameStyle(QFrame::Panel);
+	si->setFrameShadow(QFrame::Plain);
 	si->setAlignment(Qt::AlignCenter);
 
 	QPoint screenCenter(QApplication::desktop()->screenGeometry(dpy).center());

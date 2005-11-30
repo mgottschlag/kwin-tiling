@@ -9,8 +9,6 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qdir.h>
-#include <q3groupbox.h>
-#include <q3hbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>

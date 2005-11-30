@@ -19,7 +19,7 @@
 #include <assert.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
-#include <q3popupmenu.h>
+#include <qmenu.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <q3header.h>
@@ -34,6 +34,7 @@
 #include <kshortcutlist.h>
 #include <kkeybutton.h>
 #include <kkeydialog.h>
+#include <kvbox.h>
 
 #include "kcmkhotkeys.h"
 #include "windowdef_list_widget.h"
@@ -48,7 +49,7 @@ namespace KHotKeys
 Triggers_tab::Triggers_tab( QWidget* parent_P, const char* name_P )
     : Triggers_tab_ui( parent_P, name_P ), selected_item( NULL )
     {
-    Q3PopupMenu* popup = new Q3PopupMenu; // CHECKME looks like setting parent doesn't work
+    QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
     popup->insertItem( i18n( "Shortcut Trigger..." ), TYPE_SHORTCUT_TRIGGER );
     popup->insertItem( i18n( "Gesture Trigger..." ), TYPE_GESTURE_TRIGGER );
     popup->insertItem( i18n( "Window Trigger..." ), TYPE_WINDOW_TRIGGER );

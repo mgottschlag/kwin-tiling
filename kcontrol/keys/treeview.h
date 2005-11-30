@@ -24,7 +24,6 @@
 #include <qstring.h>
 #include <klistview.h>
 
-class Q3PopupMenu;
 class KActionCollection;
 class KDesktopFile;
 

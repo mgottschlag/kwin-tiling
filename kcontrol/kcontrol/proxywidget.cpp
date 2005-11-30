@@ -23,10 +23,12 @@
 #include <qlayout.h>
 //Added by qt3to4:
 #include <QByteArray>
-#include <Q3Frame>
+#include <QFrame>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QResizeEvent>
+#include <Q3ScrollView>
+
 #include <klocale.h>
 #include <kapplication.h>
 #include <kcmodule.h>
@@ -88,8 +90,8 @@ public:
 RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
     : QLabel(parent, name)
 {
-    setFrameShape(Q3Frame::Box);
-    setFrameShadow(Q3Frame::Raised);
+    setFrameShape(QFrame::Box);
+    setFrameShadow(QFrame::Raised);
 
     setText(i18n("<b>Changes in this module require root access.</b><br>"
                       "Click the \"Administrator Mode\" button to "

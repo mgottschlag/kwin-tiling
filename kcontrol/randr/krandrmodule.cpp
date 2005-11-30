@@ -19,7 +19,6 @@
 #include <q3buttongroup.h>
 #include <qcheckbox.h>
 #include <qdesktopwidget.h>
-#include <q3hbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qradiobutton.h>

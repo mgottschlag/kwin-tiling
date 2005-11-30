@@ -19,7 +19,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <qmessagebox.h>
 #include <qbuttongroup.h>
 #include <qiconset.h>
-#include <Q3PopupMenu>
 
 #include <klocale.h>
 #include <kapplication.h>

@@ -37,12 +37,10 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpainter.h>
-#include <q3paintdevicemetrics.h>
 #include <qsettings.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QSpacerItem>
-#include <Q3Frame>
 #include <QGridLayout>
 #include <QDropEvent>
 #include <kaboutdata.h>
@@ -104,8 +102,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *name, const QStringList&
                      KCmdLineArgs::parsedArgs()->isSet("embed"));
 
     itsStatusLabel = new QLabel(this);
-    itsStatusLabel->setFrameShape(Q3Frame::Panel);
-    itsStatusLabel->setFrameShadow(Q3Frame::Sunken);
+    itsStatusLabel->setFrameShape(QFrame::Panel);
+    itsStatusLabel->setFrameShadow(QFrame::Sunken);
     itsStatusLabel->setLineWidth(1);
 
     itsConfig.setGroup(CFG_GROUP);
@@ -134,7 +132,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *name, const QStringList&
     else
     {
 #endif
-        fontsFrame=new Q3Frame(this);
+        fontsFrame=new QFrame(this);
         fontsFrame->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 #ifdef HAVE_XFT
     }

@@ -20,7 +20,7 @@
 #include <qpushbutton.h>
 #include <q3header.h>
 #include <qlineedit.h>
-#include <q3popupmenu.h>
+#include <qmenu.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -43,7 +43,7 @@ Condition_list_widget::Condition_list_widget( QWidget* parent_P, const char* nam
     : Condition_list_widget_ui( parent_P, name_P ), selected_item( NULL )
     {
     conditions.setAutoDelete( true );
-    Q3PopupMenu* popup = new Q3PopupMenu; // CHECKME looks like setting parent doesn't work
+    QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
     popup->insertItem( i18n( "Active Window..." ), TYPE_ACTIVE_WINDOW );
     popup->insertItem( i18n( "Existing Window..." ), TYPE_EXISTING_WINDOW );
     popup->insertItem( i18n( "Not_condition", "Not" ), TYPE_NOT );

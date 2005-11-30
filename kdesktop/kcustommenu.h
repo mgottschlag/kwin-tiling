@@ -20,14 +20,14 @@
 #ifndef __kcustommenu_h__
 #define __kcustommenu_h__
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <kservice.h>
 
 /*
  * This class provides a Popup Menu with programs that can be executed and
  * that reads its configuration from a config file.
  */
-class KCustomMenu : public Q3PopupMenu
+class KCustomMenu : public QMenu
 {
    Q_OBJECT
 public:

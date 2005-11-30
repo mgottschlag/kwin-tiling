@@ -33,7 +33,7 @@ typedef XID Window;
 
 class KMenuBar;
 class KDesktop;
-class Q3PopupMenu;
+class QMenu;
 class KNewMenu;
 class KWinModule;
 class KBookmarkMenu;
@@ -124,10 +124,10 @@ private:
 
   // The five root menus :
   KWindowListMenu* windowListMenu;
-  Q3PopupMenu* desktopMenu;
+  QMenu* desktopMenu;
   // the appMenu is (will be) provided by kicker
-  Q3PopupMenu* customMenu1;
-  Q3PopupMenu* customMenu2;
+  QMenu* customMenu1;
+  QMenu* customMenu2;
 
   // Configuration for the root menus :
   typedef enum { NOTHING = 0, WINDOWLISTMENU, DESKTOPMENU, APPMENU, CUSTOMMENU1, CUSTOMMENU2, BOOKMARKSMENU, SESSIONSMENU } menuChoice;
@@ -150,14 +150,14 @@ private:
   bool m_bDesktopEnabled;
   KMenuBar *menuBar;
 
-  Q3PopupMenu *file;
-  Q3PopupMenu *desk;
+  QMenu *file;
+  QMenu *desk;
   KHelpMenu *help;
 
   QPixmap defaultPixmap;
 
   void doNewSession( bool lock );
-  Q3PopupMenu *sessionsMenu;
+  QMenu *sessionsMenu;
 
   static KRootWm * s_rootWm;
 

@@ -20,7 +20,7 @@
 #include <qpushbutton.h>
 #include <q3header.h>
 #include <qlineedit.h>
-#include <q3popupmenu.h>
+#include <qmenu.h>
 
 #include <kdebug.h>
 #include <klocale.h>
@@ -41,7 +41,7 @@ Windowdef_list_widget::Windowdef_list_widget( QWidget* parent_P, const char* nam
     : Windowdef_list_widget_ui( parent_P, name_P ), autodetect_object( NULL ),
         autodetect_slot( NULL ), selected_item( NULL )
     {
-    Q3PopupMenu* popup = new Q3PopupMenu; // CHECKME looks like setting parent doesn't work
+    QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
     popup->insertItem( i18n( "Simple Window..." ), TYPE_WINDOWDEF_SIMPLE );
     connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
 

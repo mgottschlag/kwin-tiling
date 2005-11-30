@@ -28,7 +28,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <QVBoxLayout>
-#include <Q3Frame>
+#include <QFrame>
 #include <QHBoxLayout>
 
 #include <kdebug.h>
@@ -62,7 +62,7 @@ IconThemesConfig::IconThemesConfig(KInstance *inst, QWidget *parent)
   QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
                                            KDialog::spacingHint());
 
-  Q3Frame *m_preview=new Q3Frame(this);
+  QFrame *m_preview=new QFrame(this);
   m_preview->setMinimumHeight(50);
 
   QHBoxLayout *lh2=new QHBoxLayout( m_preview );

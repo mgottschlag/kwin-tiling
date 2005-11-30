@@ -114,7 +114,7 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   
   // The windowList and desktop menus can be part of a menubar (Mac style)
   // so we create them here
-  desktopMenu = new Q3PopupMenu;
+  desktopMenu = new QMenu;
   windowListMenu = new KWindowListMenu;
   connect( windowListMenu, SIGNAL( aboutToShow() ),
            this, SLOT( slotWindowListAboutToShow() ) );
@@ -285,15 +285,15 @@ void KRootWm::buildMenus()
     }
 
     // create Arrange menu
-    Q3PopupMenu *pArrangeMenu = 0;
-    Q3PopupMenu *pLineupMenu = 0;
+    QMenu *pArrangeMenu = 0;
+    QMenu *pLineupMenu = 0;
     KAction *action;
     help = new KHelpMenu(0, 0, false);
     // help->menu()->removeItem( KHelpMenu::menuAboutApp );
 
     if (m_bDesktopEnabled && m_actionCollection->action("realign"))
     {
-        pArrangeMenu = new Q3PopupMenu;
+        pArrangeMenu = new QMenu;
         m_actionCollection->action("sort_ncs")->plug( pArrangeMenu );
         m_actionCollection->action("sort_nci")->plug( pArrangeMenu );
         m_actionCollection->action("sort_size")->plug( pArrangeMenu );
@@ -302,7 +302,7 @@ void KRootWm::buildMenus()
         pArrangeMenu->insertSeparator();
         m_actionCollection->action("sort_directoriesfirst")->plug( pArrangeMenu );
 
-        pLineupMenu = new Q3PopupMenu;
+        pLineupMenu = new QMenu;
         m_actionCollection->action( "lineupHoriz" )->plug( pLineupMenu );
         m_actionCollection->action( "lineupVert" )->plug( pLineupMenu );
         pLineupMenu->insertSeparator();
@@ -312,14 +312,14 @@ void KRootWm::buildMenus()
     sessionsMenu = 0;
     if (m_actionCollection->action("newsession"))
     {
-        sessionsMenu = new Q3PopupMenu;
+        sessionsMenu = new QMenu;
         connect( sessionsMenu, SIGNAL(aboutToShow()), SLOT(slotPopulateSessions()) );
         connect( sessionsMenu, SIGNAL(activated(int)), SLOT(slotSessionActivated(int)) );
     }
 
     if (menuBar) {
         bool needSeparator = false;
-        file = new Q3PopupMenu;
+        file = new QMenu;
 
         action = m_actionCollection->action("exec");
         if (action)
@@ -336,7 +336,7 @@ void KRootWm::buildMenus()
         if (action)
             action->plug( file );
 
-        desk = new Q3PopupMenu;
+        desk = new QMenu;
 
         if (m_bDesktopEnabled)
         {
@@ -421,7 +421,7 @@ void KRootWm::buildMenus()
 
     if (m_bDesktopEnabled && m_actionCollection->action("realign"))
     {
-       Q3PopupMenu* pIconOperationsMenu = new Q3PopupMenu;
+       QMenu* pIconOperationsMenu = new QMenu;
 
        pIconOperationsMenu->insertItem(i18n("Sort Icons"), pArrangeMenu);
        pIconOperationsMenu->insertSeparator();
@@ -436,7 +436,7 @@ void KRootWm::buildMenus()
        desktopMenu->insertItem(SmallIconSet("icons"), i18n("Icons"), pIconOperationsMenu);
     }
 
-    Q3PopupMenu* pWindowOperationsMenu = new Q3PopupMenu;
+    QMenu* pWindowOperationsMenu = new QMenu;
     m_actionCollection->action("cascade")->plug( pWindowOperationsMenu );
     m_actionCollection->action("unclutter")->plug( pWindowOperationsMenu );
     desktopMenu->insertItem(SmallIconSet("window_list"), i18n("Windows"), pWindowOperationsMenu);

@@ -23,7 +23,6 @@
  */
 
 #include <qfile.h>
-#include <q3hbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qspinbox.h>

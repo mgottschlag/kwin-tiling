@@ -13,7 +13,7 @@
 #include <qevent.h>
 //Added by qt3to4:
 #include <QMouseEvent>
-#include <Q3Frame>
+#include <QFrame>
 
 #include "gesturerecorder.h"
 
@@ -21,10 +21,11 @@ namespace KHotKeys
 {
 
 GestureRecorder::GestureRecorder(QWidget *parent, const char *name)
-  : Q3Frame(parent, name), _mouseButtonDown(false)
+  : QFrame(parent), _mouseButtonDown(false)
     {
+    setObjectName(name);
     setBackgroundColor( colorGroup().base());
-    setFrameStyle(Q3Frame::Sunken | Q3Frame::Panel);
+    setFrameStyle(QFrame::Sunken | QFrame::Panel);
     setLineWidth(2);
     setMidLineWidth(0);
     }

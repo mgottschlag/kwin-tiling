@@ -16,7 +16,6 @@
 
 #include <qtextstream.h>
 #include <qlayout.h>
-#include <q3frame.h>
 #include <qcheckbox.h>
 #include <qwidget.h>
 //Added by qt3to4:

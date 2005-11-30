@@ -19,13 +19,13 @@
 
 #include "quickhelp.h"
 #include "quickhelp.moc"
-//Added by qt3to4:
-#include <Q3Frame>
+
+#include <QFrame>
 
 QuickHelp::QuickHelp(QWidget *parent , const char *name)
     : KTextBrowser( parent, name)
 {
-  setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
+  setFrameStyle( QFrame::Panel | QFrame::Sunken );
   setFocusPolicy( Qt::ClickFocus );
   setHScrollBarMode( Q3ScrollView::AlwaysOff );
   setNotifyClick(true);

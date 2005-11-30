@@ -34,8 +34,9 @@ public:
 };
 
 KCustomMenu::KCustomMenu(const QString &configfile, QWidget *parent)
-   : Q3PopupMenu(parent, "kcustom_menu")
+   : QMenu(parent)
 {
+  setObjectName("kcustom_menu");
   d = new KCustomMenuPrivate; 
   
   KConfig cfg(configfile, true, false);

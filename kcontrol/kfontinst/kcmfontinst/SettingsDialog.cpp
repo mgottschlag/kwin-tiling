@@ -31,7 +31,6 @@
 #include "Misc.h"
 #include <qlayout.h>
 #include <qcheckbox.h>
-#include <q3vbox.h>
 #include <kvbox.h>
 
 #include <klocale.h>

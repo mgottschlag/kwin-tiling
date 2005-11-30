@@ -1,5 +1,3 @@
-//Added by qt3to4:
-#include <Q3Frame>
 /*
 
   Copyright (c) 1999 Matthias Hoelzer-Kluepfel <hoelzer@kde.org>
@@ -20,8 +18,6 @@
 
 */
 
-
-
 #ifndef __PROXYWIDGET_H__
 #define __PROXYWIDGET_H__
 
@@ -34,7 +30,6 @@ class KCModule;
 class KAboutData;
 
 #include "dockcontainer.h"
-#include <q3scrollview.h>
 
 class ProxyView;
 

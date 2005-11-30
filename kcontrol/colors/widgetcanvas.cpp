@@ -13,7 +13,7 @@
 #include <qtooltip.h>
 #include <qstyle.h>
 #include <qstyleoption.h>
-#include <q3popupmenu.h>
+#include <qmenu.h>
 
 #include <k3colordrag.h>
 #include <kpixmapeffect.h>
@@ -575,7 +575,7 @@ void WidgetCanvas::drawSampleWidgets()
     paint.setFont( menuFont );
     textLenSave = paint.fontMetrics().width( i18n("Menu item", "Save") );
 
-	Q3PopupMenu *popup = new Q3PopupMenu( this );
+	QMenu *popup = new QMenu( this );
 	popup->setFont( menuFont );
 	popup->setPalette( palette );
 	popup->insertItem(i18n("New"));

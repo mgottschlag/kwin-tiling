@@ -26,7 +26,6 @@
 #include <QPixmap>
 #include <Q3PtrList>
 #include <QKeyEvent>
-#include <Q3Frame>
 
 #include <klocale.h>
 #include <kiconloader.h>

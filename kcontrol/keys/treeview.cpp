@@ -27,7 +27,7 @@
 #include <qcursor.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include <Q3Frame>
+#include <QFrame>
 
 #include <kstandarddirs.h>
 #include <klocale.h>
@@ -100,7 +100,7 @@ static QPixmap appIcon(const QString &iconName)
 AppTreeView::AppTreeView( QWidget *parent )
     : KListView(parent)
 {
-    setFrameStyle(Q3Frame::WinPanel | Q3Frame::Sunken);
+    setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
     setAllColumnsShowFocus(true);
     setRootIsDecorated(true);
     setSorting(-1);

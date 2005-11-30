@@ -26,7 +26,7 @@
 
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <Q3Frame>
+#include <QFrame>
 #include <Q3PtrList>
 #include <QX11EmbedWidget>
 #include <kapplication.h>
@@ -148,7 +148,7 @@ void ConfigModule::runAsRoot()
   _embedLayout = new QVBoxLayout(_module->parentWidget());
   _embedFrame = new KVBox( _module->parentWidget() );
 #warning "KDE4 porting ";
-  //_embedFrame->setFrameStyle( Q3Frame::Box | Q3Frame::Raised );
+  //_embedFrame->setFrameStyle( QFrame::Box | QFrame::Raised );
   QPalette pal( Qt::red );
   pal.setColor( QColorGroup::Background,
 		_module->parentWidget()->colorGroup().background() );
