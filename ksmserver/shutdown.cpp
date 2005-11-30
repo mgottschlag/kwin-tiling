@@ -75,10 +75,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <dcopclient.h>
 #include <dcopref.h>
 #include <kwinmodule.h>
+#include <knotifyclient.h>
 
 #include "server.h"
 #include "global.h"
-#include "shutdown.h"
+#include "client.h"
+#include "shutdowndlg.h"
+
 
 #include <kdebug.h>
 

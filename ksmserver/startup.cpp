@@ -75,6 +75,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <dcopclient.h>
 #include <dcopref.h>
 #include <kwinmodule.h>
+#include <knotifyclient.h>
 
 #include "global.h"
 #include "server.h"
@@ -265,7 +266,7 @@ void KSMServer::restoreSessionDoneInternal()
 #endif
     upAndRunning( "session ready" );
     DCOPRef( "knotify" ).send( "sessionReady" ); // knotify startup optimization
-    KNotifyClient::event( 0, "startkde" ); // this is the time KDE is up
+    KNotifyClient::event( 0/*, "startkde"*/ ); // this is the time KDE is up
 
     setupXIOErrorHandler(); // From now on handle X errors as normal shutdown.
 }
