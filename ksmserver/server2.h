@@ -12,3 +12,5 @@ extern "C" {
 #include <X11/SM/SM.h>
 #include <X11/SM/SMlib.h>
 }
+
+#include <fixx11h.h>

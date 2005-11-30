@@ -1,4 +1,4 @@
-#include <shutdown.h>
+#include "shutdowndlg.h"
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -16,10 +16,13 @@ main(int argc, char *argv[])
    KSMShutdownFeedback::start();
 
    KWorkSpace::ShutdownType sdtype = KWorkSpace::ShutdownTypeNone;
+   QString bopt
    (void)KSMShutdownDlg::confirmShutdown( true,
-                                          sdtype );
+                                          sdtype,
+                                          bopt );
 /*   (void)KSMShutdownDlg::confirmShutdown( false,
-                                          sdtype ); */
+                                          sdtype,
+                                          bopt ); */
 
    KSMShutdownFeedback::stop();
 }

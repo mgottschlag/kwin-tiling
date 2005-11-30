@@ -31,37 +31,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 typedef QList<Q3CString> QCStringList;
 class KSMListener;
 class KSMConnection;
-class KSMClient
-{
-public:
-    KSMClient( SmsConn );
-    ~KSMClient();
+class KSMClient;
 
-    void registerClient( const char* previousId  = 0 );
-    SmsConn connection() const { return smsConn; }
-
-    void resetState();
-    uint saveYourselfDone : 1;
-    uint pendingInteraction : 1;
-    uint waitForPhase2 : 1;
-    uint wasPhase2 : 1;
-
-    QList<SmProp*> properties;
-    SmProp* property( const char* name ) const;
-
-    QString program() const;
-    QStringList restartCommand() const;
-    QStringList discardCommand() const;
-    int restartStyleHint() const;
-    QString userId() const;
-    const char* clientId() { return id ? id : ""; }
-
-private:
-    const char* id;
-    SmsConn smsConn;
-};
-
-#ifndef NO_LEGACY_SESSION_MANAGEMENT
 enum SMType { SM_ERROR, SM_WMCOMMAND, SM_WMSAVEYOURSELF };
 struct SMData
     {
@@ -71,7 +42,6 @@ struct SMData
     QString wmclass1, wmclass2;
     };
 typedef QMap<WId,SMData> WindowMap;
-#endif
 
 class KSMServer : public QObject, public KSMServerInterface
 {
@@ -83,6 +53,8 @@ k_dcop:
 public:
     KSMServer( const QString& windowManager, bool only_local );
     ~KSMServer();
+
+    static KSMServer* self();
 
     void* watchConnection( IceConn iceConn );
     void removeConnection( KSMConnection* conn );
@@ -151,8 +123,8 @@ private:
     void executeCommand( const QStringList& command );
 
     bool isWM( const KSMClient* client ) const;
+    void setupXIOErrorHandler();
 
-#ifndef NO_LEGACY_SESSION_MANAGEMENT
     void performLegacySessionSave();
     void storeLegacySession( KConfig* config );
     void restoreLegacySession( KConfig* config );
@@ -161,7 +133,6 @@ private:
     QString windowWmClientMachine(WId w);
     WId windowWmClientLeader(WId w);
     QByteArray windowSessionId(WId w, WId leader);
-#endif
 
     // public dcop interface
     void logout( int, int, int );
@@ -210,10 +181,7 @@ private:
 
     QStringList excludeApps;
 
-#ifndef NO_LEGACY_SESSION_MANAGEMENT
     WindowMap legacyWindows;
-#endif
 };
 
 #endif
-

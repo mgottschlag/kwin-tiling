@@ -22,11 +22,13 @@ INCLUDES= -I$(top_srcdir)/kdmlib -I$(srcdir)/../lib $(all_includes)
 bin_PROGRAMS =
 lib_LTLIBRARIES =
 kdeinit_LTLIBRARIES = ksmserver.la
-noinst_HEADERS = global.h server.h shutdown.h
+noinst_HEADERS = global.h server.h
 
 ksmserver_la_METASOURCES = AUTO
 # Order is important for --enable-final!
-ksmserver_la_SOURCES = main.cpp server.cpp shutdown.cpp KSMServerInterface.skel server.skel
+ksmserver_la_SOURCES = main.cpp server.cpp shutdowndlg.cpp \
+	legacy.cpp startup.cpp shutdown.cpp client.cpp \
+	KSMServerInterface.skel server.skel
 
 ksmserver_la_LDFLAGS = $(all_libraries) -avoid-version -module
 ksmserver_la_LIBADD = ../../kdmlib/libdmctl.la $(LIB_KDEUI)
@@ -42,7 +44,7 @@ updatedir = $(kde_datadir)/kconf_update
 EXTRA_PROGRAMS = testsh
 testsh_SOURCES = test.cpp
 testsh_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-testsh_LDADD = $(LIB_KDEUI) shutdown.lo ../../kdmlib/libdmctl.la
+testsh_LDADD = $(LIB_KDEUI) shutdowndlg.lo ../../kdmlib/libdmctl.la
 
 messages:
 	$(XGETTEXT) *.cpp -o $(podir)/ksmserver.pot
