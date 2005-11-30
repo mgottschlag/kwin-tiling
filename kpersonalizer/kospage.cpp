@@ -18,7 +18,6 @@
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
-#include <q3textview.h>
 #include <qmap.h>
 
 #include <ksimpleconfig.h>

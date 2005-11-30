@@ -14,7 +14,6 @@
 
 #include <qcolor.h>
 #include <qimage.h>
-#include <q3valuelist.h>
 //Added by qt3to4:
 #include <QGridLayout>
 #include <QLabel>
@@ -27,7 +26,6 @@ class QColor;
 class QComboBox;
 class QGridLayout;
 class Q3GroupBox;
-class Q3IconView;
 class QLabel;
 class Q3ListBox;
 class Q3ListView;

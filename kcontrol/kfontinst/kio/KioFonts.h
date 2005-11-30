@@ -35,9 +35,7 @@
 #include <kurl.h>
 #include <klocale.h>
 #include <qstring.h>
-#include <q3cstring.h>
 #include <qmap.h>
-#include <q3valuelist.h>
 #include "Misc.h"
 #include "KfiConstants.h"
 

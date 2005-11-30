@@ -22,7 +22,6 @@
 #ifndef __KDMCONV_H__
 #define __KDMCONV_H__
 
-#include <q3ptrlist.h>
 #include <qstring.h>
 #include <qimage.h>
 #include <q3groupbox.h>

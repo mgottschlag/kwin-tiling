@@ -29,7 +29,6 @@
 #include "KfiPrint.h"
 #include "FcEngine.h"
 #include <qpainter.h>
-#include <q3paintdevicemetrics.h>
 #include <qsettings.h>
 #include <qstringlist.h>
 #include <kprinter.h>

@@ -18,7 +18,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  */
-#include <q3buttongroup.h>
+
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qradiobutton.h>

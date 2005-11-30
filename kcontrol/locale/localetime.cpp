@@ -26,7 +26,6 @@
 #include <qlayout.h>
 
 #include <qcombobox.h>
-#include <q3valuevector.h>
 //Added by qt3to4:
 #include <QShowEvent>
 #include <QGridLayout>

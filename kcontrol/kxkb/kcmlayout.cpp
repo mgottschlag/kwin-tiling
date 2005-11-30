@@ -7,11 +7,9 @@
 #include <qpushbutton.h>
 #include <q3listview.h>
 #include <q3header.h>
-#include <q3whatsthis.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
 #include <qlineedit.h>
-#include <q3listview.h>
 #include <q3buttongroup.h>
 #include <qspinbox.h>
 //Added by qt3to4:

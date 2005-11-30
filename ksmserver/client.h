@@ -16,7 +16,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kapplication.h>
 #include <kworkspace.h>
 #include <qtimer.h>
-#include <q3cstring.h>
 #include <QTime>
 #include <qmap.h>
 #include <dcopobject.h>

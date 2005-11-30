@@ -20,7 +20,6 @@
    Boston, MA 02110-1301, USA.
  */
 
-#include <q3buttongroup.h>
 #include <qcheckbox.h>
 #include <q3header.h>
 #include <qlabel.h>
@@ -30,7 +29,6 @@
 #include <qpushbutton.h>
 #include <qslider.h>
 #include <qspinbox.h>
-#include <q3whatsthis.h>
 //Added by qt3to4:
 #include <QFrame>
 #include <QGridLayout>

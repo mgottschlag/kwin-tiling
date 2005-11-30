@@ -15,7 +15,6 @@
  *                                                                         *
  ***************************************************************************/
 #include <qpushbutton.h>
-#include <q3buttongroup.h>
 #include <qlabel.h>
 #include <qstring.h>
 #include <qstringlist.h>

@@ -24,12 +24,10 @@ that is intentional :-]
 #define __modulemenu_h__
 
 
-#include <q3ptrlist.h>
 #include <qstringlist.h>
 #include <q3intdict.h>
 #include <qstring.h>
 #include <qwidget.h>
-#include <q3dict.h>
 
 #include <kmenu.h>
 

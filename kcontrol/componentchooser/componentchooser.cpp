@@ -23,7 +23,6 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qradiobutton.h>
-#include <q3widgetstack.h>
 
 #include <dcopclient.h>
 

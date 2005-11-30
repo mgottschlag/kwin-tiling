@@ -24,7 +24,6 @@
 #define kcmsambalog_h_included
  
 #include <qlabel.h>
-#include <q3cstring.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
 #include <q3listview.h>

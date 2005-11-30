@@ -21,7 +21,6 @@
 #define __KDMUSERS_H__
 
 #include <qwidget.h>
-#include <q3ptrlist.h>
 #include <qstring.h>
 #include <qimage.h>
 #include <q3buttongroup.h>

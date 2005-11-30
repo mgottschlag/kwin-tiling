@@ -23,9 +23,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <q3groupbox.h>
 #include <qlayout.h>
-
 //Added by qt3to4:
 #include <QVBoxLayout>
 

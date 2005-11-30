@@ -20,7 +20,6 @@
 
 #include <qlabel.h>
 #include <qlayout.h>
-#include <q3sortedlist.h>
 #include <qregexp.h>
 //Added by qt3to4:
 #include <QVBoxLayout>

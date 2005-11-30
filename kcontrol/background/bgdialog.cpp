@@ -26,7 +26,6 @@
 
 #include <config.h>
 
-#include <q3buttongroup.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qpainter.h>

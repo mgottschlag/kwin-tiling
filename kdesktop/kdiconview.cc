@@ -53,7 +53,6 @@
 #include <qregexp.h>
 //Added by qt3to4:
 #include <QWheelEvent>
-#include <Q3CString>
 #include <QDropEvent>
 #include <QList>
 #include <QShowEvent>

@@ -24,7 +24,6 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
-#include <q3cstring.h>
 
 enum IndexViewMode {Icon, Tree};
 
