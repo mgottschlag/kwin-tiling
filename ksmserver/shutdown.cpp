@@ -76,7 +76,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <dcopref.h>
 #include <kwinmodule.h>
 #include <knotifyclient.h>
-
+#include <dmctl.h>
 #include "server.h"
 #include "global.h"
 #include "client.h"

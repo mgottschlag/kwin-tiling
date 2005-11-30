@@ -46,6 +46,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <krandom.h>
 #include "server.h"
 
+extern KSMServer* the_server;
+
 KSMClient::KSMClient( SmsConn conn)
 {
     smsConn = conn;
