@@ -76,10 +76,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <dcopref.h>
 #include <kwinmodule.h>
 
-#include "server.h"
 #include "global.h"
-#include "shutdown.h"
-
+#include "server.h"
+#include "client.h"
 #include <kdebug.h>
 
 #include <QX11Info>

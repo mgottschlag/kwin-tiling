@@ -22,7 +22,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <dcopobject.h>
 
 #include "server2.h"
-
+#include "server.h"
 #include "KSMServerInterface.h"
 
 #define SESSION_PREVIOUS_LOGOUT "saved at previous logout"

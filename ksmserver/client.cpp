@@ -43,7 +43,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <time.h>
 
 #include <kstaticdeleter.h>
-
+#include <krandom.h>
 #include "server.h"
 
 KSMClient::KSMClient( SmsConn conn)
