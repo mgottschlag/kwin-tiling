@@ -4,8 +4,8 @@ ksmserver - the KDE session management server
 Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 ******************************************************************/
 
-#ifndef SHUTDOWN_H
-#define SHUTDOWN_H
+#ifndef SHUTDOWNDLG_H
+#define SHUTDOWNDLG_H
 
 #include <qpixmap.h>
 #include <qdialog.h>

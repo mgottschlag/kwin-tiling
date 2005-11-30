@@ -6,7 +6,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include <config.h>
 
-#include "shutdown.h"
+#include "shutdowndlg.h"
+
 #include <qapplication.h>
 #include <qlayout.h>
 #include <qgroupbox.h>
@@ -42,7 +43,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include <X11/Xlib.h>
 
-#include "shutdown.moc"
+#include "shutdowndlg.moc"
 #include <QX11Info>
 #include <QDesktopWidget>
 
