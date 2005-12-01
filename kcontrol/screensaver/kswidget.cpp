@@ -2,6 +2,7 @@
 
 #include <kwin.h>
 #include "testwin.h"
+#include <X11/Xlib.h>
 
 #ifdef HAVE_GLXCHOOSEVISUAL
 #include <GL/glx.h>
