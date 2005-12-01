@@ -308,7 +308,7 @@ void CKFileFontView::removeItem(const KFileItem *i)
 
 void CKFileFontView::slotSortingChanged(int col)
 {
-    QDir::SortSpec sort = sorting();
+    QDir::SortFlags sort = sorting();
     int sortSpec = -1;
     bool reversed = col == itsSortingCol && (sort & QDir::Reversed) == 0;
     itsSortingCol = col;
@@ -341,7 +341,7 @@ void CKFileFontView::slotSortingChanged(int col)
         sortSpec&=~QDir::IgnoreCase;
 
 
-    KFileView::setSorting(static_cast<QDir::SortSpec>(sortSpec));
+    KFileView::setSorting(static_cast<QDir::SortFlags>(sortSpec));
 
     KFileItem             *item;
     KFileItemListIterator it(*items());
@@ -357,11 +357,11 @@ void CKFileFontView::slotSortingChanged(int col)
     KListView::sort();
 
     if (!itsBlockSortingSignal)
-        sig->changeSorting( static_cast<QDir::SortSpec>( sortSpec ) );
+        sig->changeSorting( static_cast<QDir::SortFlags>( sortSpec ) );
 }
 
 
-void CKFileFontView::setSorting(QDir::SortSpec spec)
+void CKFileFontView::setSorting(QDir::SortFlags spec)
 {
     if (spec & QDir::Size)
         itsSortingCol=COL_SIZE;
@@ -370,11 +370,11 @@ void CKFileFontView::setSorting(QDir::SortSpec spec)
 
     // inversed, because slotSortingChanged will reverse it
     if (spec & QDir::Reversed)
-        spec = (QDir::SortSpec) (spec & ~QDir::Reversed);
+        spec = (QDir::SortFlags) (spec & ~QDir::Reversed);
     else
-        spec = (QDir::SortSpec) (spec | QDir::Reversed);
+        spec = (QDir::SortFlags) (spec | QDir::Reversed);
 
-    KFileView::setSorting((QDir::SortSpec) spec);
+    KFileView::setSorting((QDir::SortFlags) spec);
 
     // don't emit sortingChanged() when called via setSorting()
     itsBlockSortingSignal = true; // can't use blockSignals()

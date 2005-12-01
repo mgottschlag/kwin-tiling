@@ -152,7 +152,7 @@ class CKFileFontView : public KListView, public KFileView
     void                writeConfig(KConfig *kc, const QString &group);
 
     // implemented to get noticed about sorting changes (for sortingIndicator)
-    virtual void        setSorting(QDir::SortSpec s);
+    virtual void        setSorting(QDir::SortFlags s);
     void                ensureItemVisible(const KFileItem *i);
 
     // for KMimeTypeResolver
