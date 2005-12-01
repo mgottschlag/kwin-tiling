@@ -266,7 +266,7 @@ void KSMServer::restoreSessionDoneInternal()
 #endif
     upAndRunning( "session ready" );
     DCOPRef( "knotify" ).send( "sessionReady" ); // knotify startup optimization
-    KNotifyClient::event( 0/*, "startkde"*/ ); // this is the time KDE is up
+    KNotifyClient::event( 0, "startkde" ); // this is the time KDE is up
 
     setupXIOErrorHandler(); // From now on handle X errors as normal shutdown.
 }
