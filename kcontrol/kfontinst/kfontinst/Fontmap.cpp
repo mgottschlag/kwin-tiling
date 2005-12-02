@@ -109,7 +109,7 @@ static bool parseLine(const char *line, QString &ps, QString &fname, bool &isAli
 static QString createX11PsName(const QString &font)
 {
     QString       newName(font);
-    unsigned int  ch;
+    int  ch;
     bool          newWord=true;
 
     newName.replace(QRegExp("\\-"), "_");
