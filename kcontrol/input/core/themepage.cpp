@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Fredrik Höglund <fredrik@kde.org>
+ * Copyright (C) 2003 Fredrik HÃ¶glund <fredrik@kde.org>
  *
  * Based on the large cursor code written by Rik Hemsley,
  * Copyright (c) 2000 Rik Hemsley <rik@kde.org>

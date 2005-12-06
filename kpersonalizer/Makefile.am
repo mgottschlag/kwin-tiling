@@ -41,7 +41,7 @@ KDE_ICON= AUTO
 kpersonalizer_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 # Uncomment the following two lines if you add a ui.rc file for your application to make use of
-# KDE´s XML GUI builing
+# KDE's XML GUI builing
 #rcdir = $(kde_datadir)/kpersonalizer
 #rc_DATA = kpersonalizerui.rc
 

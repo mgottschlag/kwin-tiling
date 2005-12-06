@@ -89,7 +89,7 @@ protected slots: // Public slots
 	void slotRestart();
 
 protected: // Protected methods
-	// the close button on the titlebar sets e->accept() which we don´t want.
+	// the close button on the titlebar sets e->accept() which we don't want.
 	virtual void closeEvent(QCloseEvent*);
 	bool askClose();
 };

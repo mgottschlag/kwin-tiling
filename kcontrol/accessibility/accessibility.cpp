@@ -2,11 +2,11 @@
   accessibility.cpp
   KDE Control Accessibility module to control Bell, Keyboard and ?Mouse?
   -------------------
-  Copyright : (c) 2000 Matthias Hölzer-Klüpfel
+  Copyright : (c) 2000 Matthias HÃ¶lzer-KlÃ¼pfel
   -------------------
-  Original Author: Matthias Hölzer-Klüpfel
-  Contributors: José Pablo Ezequiel "Pupeno" Fernández <pupeno@kde.org>
-  Current Maintainer: José Pablo Ezequiel "Pupeno" Fernández <pupeno@kde.org>
+  Original Author: Matthias HÃ¶lzer-KlÃ¼pfel
+  Contributors: JosÃ© Pablo Ezequiel "Pupeno" FernÃ¡ndez <pupeno@kde.org>
+  Current Maintainer: JosÃ© Pablo Ezequiel "Pupeno" FernÃ¡ndez <pupeno@kde.org>
  ****************************************************************************/
 
 /****************************************************************************
@@ -63,7 +63,7 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, cons
                   I18N_NOOP("(c) 2000, Matthias Hoelzer-Kluepfel"));
 
    about->addAuthor("Matthias Hoelzer-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
-   about->addAuthor("José Pablo Ezequiel Fernández", I18N_NOOP("Author") , "pupeno@kde.org");
+   about->addAuthor("JosÃ© Pablo Ezequiel FernÃ¡ndez", I18N_NOOP("Author") , "pupeno@kde.org");
    setAboutData( about );
 
    kdDebug() << "Running: AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)" << endl;
