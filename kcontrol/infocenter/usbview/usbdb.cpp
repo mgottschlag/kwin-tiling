@@ -38,6 +38,7 @@ USBDB::USBDB()
   if (f.open(QIODevice::ReadOnly))
     {
       QTextStream ts(&f);
+      ts.setCodec("UTF-8");
 
       QString line, name;
       int id=0, subid=0, protid=0;

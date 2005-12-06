@@ -296,7 +296,7 @@ OuiDb::OuiDb()
          break;
       data[6]='\0';
       *eol='\0';
-      m_vendorIds.insert(data, data+7);
+      m_vendorIds.insert(QLatin1String(data), QString::fromUtf8(data+7));
       bytesLeft-=(eol+1-data);
       data=eol+1;
    }
