@@ -24,7 +24,14 @@
 #include <qstring.h>
 
 #include <sys/types.h>
+
+#ifdef Q_OS_LINUX
 #include <linux/joystick.h>
+#endif
+
+#ifdef Q_OS_FREEBSD
+#include <sys/joystick.h>
+#endif
 
 // helper class which holds all current values, file descriptor, etc. for
 // one device
