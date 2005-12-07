@@ -22,7 +22,6 @@
 #define __PROXYWIDGET_H__
 
 
-class QWidget;
 class QPushButton;
 
 class KSeparator;
@@ -30,6 +29,8 @@ class KCModule;
 class KAboutData;
 
 #include "dockcontainer.h"
+
+#include <qpointer.h>
 
 class ProxyView;
 
@@ -68,9 +69,11 @@ private:
 
   QPushButton *_help, *_default, *_apply, *_reset, *_root;
   KSeparator      *_sep;
-  KCModule    *_client;
-    ProxyView *view;
 
+  // Just in case the module was deleted from outside (i.e. by unloading the module)
+  QPointer<KCModule> _client;
+
+  ProxyView *view;
 };
 
 
