@@ -803,10 +803,21 @@ void KDesktop::slotNewWallpaper(const KURL &url)
 {
     // This is called when a file containing an image is dropped
     // (called by KonqOperations)
-    QString tmpFile;
-    // We pass 0 as parent window because passing the desktop is not a good idea
-    KIO::NetAccess::download( url, tmpFile, 0 );
-    bgMgr->setWallpaper(tmpFile);
+    if ( url.isLocalFile() )
+        bgMgr->setWallpaper( url.path() );
+    else
+    {
+        // Figure out extension
+        QString fileName = url.fileName();
+        QFileInfo fileInfo( fileName );
+        QString ext = fileInfo.extension();
+        // Store tempfile in a place where it will still be available after a reboot
+        KTempFile tmpFile( KGlobal::dirs()->saveLocation("wallpaper"), "." + ext );
+        KURL localURL; localURL.setPath( tmpFile.name() );
+        // We pass 0 as parent window because passing the desktop is not a good idea
+        KIO::NetAccess::file_copy( url, localURL, -1, true /*overwrite*/ );
+        bgMgr->setWallpaper( localURL.path() );
+    }
 }
 
 // for dcop interface backward compatibility
