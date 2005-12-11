@@ -238,7 +238,7 @@ void TreeView::setViewMode(bool showHidden)
         connect(action, SIGNAL(activated()), SLOT(paste()));
     }
 
-    m_rmb->insertSeparator();
+    m_rmb->addSeparator();
 
     action = m_ac->action("delete");
     if(action) {
@@ -247,7 +247,7 @@ void TreeView::setViewMode(bool showHidden)
         connect(action, SIGNAL(activated()), SLOT(del()));
     }
 
-    m_rmb->insertSeparator();
+    m_rmb->addSeparator();
 
     if(m_ac->action("newitem"))
 	m_ac->action("newitem")->plug(m_rmb);
