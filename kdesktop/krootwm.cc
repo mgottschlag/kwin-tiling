@@ -299,13 +299,13 @@ void KRootWm::buildMenus()
         m_actionCollection->action("sort_size")->plug( pArrangeMenu );
         m_actionCollection->action("sort_type")->plug( pArrangeMenu );
         m_actionCollection->action("sort_date" )->plug( pArrangeMenu );
-        pArrangeMenu->insertSeparator();
+        pArrangeMenu->addSeparator();
         m_actionCollection->action("sort_directoriesfirst")->plug( pArrangeMenu );
 
         pLineupMenu = new QMenu;
         m_actionCollection->action( "lineupHoriz" )->plug( pLineupMenu );
         m_actionCollection->action( "lineupVert" )->plug( pLineupMenu );
-        pLineupMenu->insertSeparator();
+        pLineupMenu->addSeparator();
         m_actionCollection->action( "realign" )->plug( pLineupMenu );
     }
 
@@ -325,7 +325,7 @@ void KRootWm::buildMenus()
         if (action)
         {
             action->plug( file );
-            file->insertSeparator();
+            file->addSeparator();
         }
 
         action = m_actionCollection->action("lock");
@@ -342,7 +342,7 @@ void KRootWm::buildMenus()
         {
             m_actionCollection->action("unclutter")->plug( desk );
             m_actionCollection->action("cascade")->plug( desk );
-            desk->insertSeparator();
+            desk->addSeparator();
 
             if (pArrangeMenu)
                 desk->insertItem(i18n("Sort Icons"), pArrangeMenu);
@@ -356,7 +356,7 @@ void KRootWm::buildMenus()
         if (action)
         {
            if (needSeparator)
-              desk->insertSeparator();
+              desk->addSeparator();
            action->plug( desk );
            needSeparator = true;
         }
@@ -365,7 +365,7 @@ void KRootWm::buildMenus()
         if (action)
         {
            if (needSeparator)
-              desk->insertSeparator();
+              desk->addSeparator();
            action->plug( desk );
            action->setText(i18n("Disable Desktop Menu"));
         }
@@ -404,7 +404,7 @@ void KRootWm::buildMenus()
 
     if (needSeparator)
     {
-        desktopMenu->insertSeparator();
+        desktopMenu->addSeparator();
         needSeparator = false;
     }
 
@@ -416,7 +416,7 @@ void KRootWm::buildMenus()
         action = m_pDesktop->actionCollection()->action( "paste" );
         if (action)
            action->plug( desktopMenu );
-        desktopMenu->insertSeparator();
+        desktopMenu->addSeparator();
     }
 
     if (m_bDesktopEnabled && m_actionCollection->action("realign"))
@@ -424,10 +424,10 @@ void KRootWm::buildMenus()
        QMenu* pIconOperationsMenu = new QMenu;
 
        pIconOperationsMenu->insertItem(i18n("Sort Icons"), pArrangeMenu);
-       pIconOperationsMenu->insertSeparator();
+       pIconOperationsMenu->addSeparator();
        m_actionCollection->action( "lineupHoriz" )->plug( pIconOperationsMenu );
        m_actionCollection->action( "lineupVert" )->plug( pIconOperationsMenu );
-       pIconOperationsMenu->insertSeparator();
+       pIconOperationsMenu->addSeparator();
        m_actionCollection->action( "realign" )->plug( pIconOperationsMenu );
        KAction *aLockIcons = m_actionCollection->action( "lock_icons" );
        if ( aLockIcons )
@@ -799,7 +799,7 @@ void KRootWm::slotPopulateSessions()
             action->plug( sessionsMenu );
             action->setEnabled( p );
         }
-        sessionsMenu->insertSeparator();
+        sessionsMenu->addSeparator();
     }
     SessList sess;
     if (dm.localSessions( sess ))
