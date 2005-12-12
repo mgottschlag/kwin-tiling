@@ -27,7 +27,6 @@
 #include <qcheckbox.h>
 //Added by qt3to4:
 #include <QGridLayout>
-#include <Q3Frame>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <kcombobox.h>
@@ -214,9 +213,9 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	// Add Page2 (Effects)
 	// -------------------
 	cbEnableEffects = new QCheckBox( i18n("&Enable GUI effects"), page2 );
-	containerFrame = new Q3Frame( page2 );
-	containerFrame->setFrameStyle( Q3Frame::NoFrame | Q3Frame::Plain );
-	containerFrame->setMargin(0);
+	containerFrame = new QFrame( page2 );
+	containerFrame->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
+	//containerFrame->setMargin(0);
 	containerLayout = new QGridLayout( containerFrame, 1, 1,	// rows, columns
 		KDialog::marginHint(), KDialog::spacingHint() );
 
@@ -264,13 +263,13 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	containerLayout->addItem( comboSpacer, 1, 2 );
 
 	// Separator.
-	Q3Frame* hline = new Q3Frame ( page2 );
-	hline->setFrameStyle( Q3Frame::HLine | Q3Frame::Sunken );
+	QFrame* hline = new QFrame ( page2 );
+	hline->setFrameStyle( QFrame::HLine | QFrame::Sunken );
 
 	// Now implement the Menu Transparency container.
-	menuContainer = new Q3Frame( page2 );
-	menuContainer->setFrameStyle( Q3Frame::NoFrame | Q3Frame::Plain );
-	menuContainer->setMargin(0);
+	menuContainer = new QFrame( page2 );
+	menuContainer->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
+	//menuContainer->setMargin(0);
 	menuContainerLayout = new QGridLayout( menuContainer, 1, 1,    // rows, columns
 		KDialog::marginHint(), KDialog::spacingHint() );
 

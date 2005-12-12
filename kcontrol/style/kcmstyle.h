@@ -32,7 +32,6 @@
 #include <qtimer.h>
 //Added by qt3to4:
 #include <QGridLayout>
-#include <Q3Frame>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QVBoxLayout>
@@ -46,7 +45,7 @@
 class KComboBox;
 class QCheckBox;
 class QComboBox;
-class Q3Frame;
+class QFrame;
 class Q3GroupBox;
 class QLabel;
 class Q3ListBox;
@@ -130,7 +129,7 @@ private:
 	// Page2 widgets
 	QCheckBox* cbEnableEffects;
 
-	Q3Frame* containerFrame;
+	QFrame* containerFrame;
 	QGridLayout* containerLayout;
 	QComboBox* comboTooltipEffect;
 	QComboBox* comboComboEffect;
@@ -143,7 +142,7 @@ private:
 	QLabel* lblMenuHandle;
 	QSpacerItem* comboSpacer;
 
-	Q3Frame* menuContainer;
+	QFrame* menuContainer;
 	QGridLayout* menuContainerLayout;
 	MenuPreview* menuPreview;
 	KVBox* sliderBox;
