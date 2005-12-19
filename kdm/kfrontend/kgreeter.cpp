@@ -55,7 +55,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qtooltip.h>
 #include <q3accel.h>
 #include <qeventloop.h>
-//Added by qt3to4:
+#include <QSet>
 #include <QPixmap>
 #include <QEvent>
 #include <QKeyEvent>
@@ -276,7 +276,7 @@ KGreeter::insertUsers()
 	}
 	if (_showUsers == SHOW_ALL) {
 		UserList noUsers( _noUsers );
-		Q3Dict<int> dupes( 1000 );
+		QSet<QString> dupes;
 		for (setpwent(); (ps = getpwent()) != 0;) {
 			if (*ps->pw_dir && *ps->pw_shell &&
 			    (ps->pw_uid >= (unsigned)_lowUserId ||
@@ -286,8 +286,8 @@ KGreeter::insertUsers()
 			    !noUsers.hasGroup( ps->pw_gid ))
 			{
 				QString username( QFile::decodeName( ps->pw_name ) );
-				if (!dupes.find( username )) {
-					dupes.insert( username, (int *)-1 );
+				if (!dupes.contains( username )) {
+					dupes.insert( username );
 					insertUser( default_pix, username, ps );
 				}
 			}
@@ -295,7 +295,7 @@ KGreeter::insertUsers()
 	} else {
 		UserList users( _users );
 		if (users.hasGroups()) {
-			Q3Dict<int> dupes( 1000 );
+			QSet<QString> dupes;
 			for (setpwent(); (ps = getpwent()) != 0;) {
 				if (*ps->pw_dir && *ps->pw_shell &&
 				    (ps->pw_uid >= (unsigned)_lowUserId ||
@@ -305,8 +305,8 @@ KGreeter::insertUsers()
 				     users.hasGroup( ps->pw_gid )))
 				{
 					QString username( QFile::decodeName( ps->pw_name ) );
-					if (!dupes.find( username )) {
-						dupes.insert( username, (int *)-1 );
+					if (!dupes.contains( username )) {
+						dupes.insert( username );
 						insertUser( default_pix, username, ps );
 					}
 				}
