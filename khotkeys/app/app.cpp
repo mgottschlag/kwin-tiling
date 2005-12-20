@@ -39,8 +39,7 @@ namespace KHotKeys
 // KhotKeysApp
 
 KHotKeysApp::KHotKeysApp()
-    :   KUniqueApplication( false, true ), // no styles
-        delete_helper( new QObject )
+    :   delete_helper( new QObject )
     {
     init_global_data( true, delete_helper ); // grab keys
     // CHECKME triggery a dalsi vytvaret az tady za inicializaci
