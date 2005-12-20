@@ -94,8 +94,8 @@ static void applyGtkStyles(bool active, int version)
       ::unlink(QFile::encodeName(gtkkde));
 
    // Pass env. var to kdeinit.
-   QByteArray name = gtkEnvVar(version);
-   QByteArray value = QFile::encodeName(list.join(":"));
+   DCOPCString name = gtkEnvVar(version);
+   DCOPCString value = QFile::encodeName(list.join(":"));
    QByteArray params;
    QDataStream stream(&params, QIODevice::WriteOnly);
 

@@ -131,8 +131,8 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   bool multihead = !config.readBoolEntry( "disableMultihead", false) &&
                     (ScreenCount(QX11Info::display()) > 1);
   // Pass env. var to kdeinit.
-  QByteArray name = "KDE_MULTIHEAD";
-  QByteArray value = multihead ? "true" : "false";
+  DCOPCString name = "KDE_MULTIHEAD";
+  DCOPCString value = multihead ? "true" : "false";
   QByteArray params;
   QDataStream stream(&params, QIODevice::WriteOnly);
 
