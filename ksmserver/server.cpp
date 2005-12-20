@@ -119,8 +119,8 @@ void KSMServer::startApplication( QStringList command, const QString& clientMach
 	command.prepend( xonCommand ); // "xon" by default
     }
     int n = command.count();
-    QByteArray app = command[0].latin1();
-    QList<QByteArray> argList;
+    DCOPCString app = command[0].latin1();
+    DCOPCStringList argList;
     for ( int i=1; i < n; i++)
        argList.append( command[i].latin1());
     DCOPRef( launcher ).send( "exec_blind", app, DCOPArg( argList, "QValueList<QCString>" ) );
@@ -133,10 +133,9 @@ void KSMServer::executeCommand( const QStringList& command )
 {
     if ( command.isEmpty() )
         return;
+
     KProcess proc;
-    for ( QStringList::ConstIterator it = command.begin();
-          it != command.end(); ++it )
-        proc << (*it).latin1();
+    proc << command;
     proc.start( KProcess::Block );
 }
 
@@ -291,7 +290,7 @@ void KSMGetPropertiesProc (
     KSMClient* client = ( KSMClient* ) managerData;
     SmProp** props = new SmProp*[client->properties.count()];
     int i = 0;
-	foreach( SmProp *prop, client->properties )
+    foreach( SmProp *prop, client->properties )
         props[i++] = prop;
 
     SmsReturnProperties( smsConn, i, props );
@@ -684,9 +683,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 
 KSMServer::~KSMServer()
 {
-	foreach( KSMListener*l, listener ) {
-		delete l;
-	}
+    qDeleteAll( listener );
     the_server = 0;
     cleanUp();
 }
@@ -744,9 +741,10 @@ void KSMServer::processData( int /*socket*/ )
     if ( status == IceProcessMessagesIOError ) {
         IceSetShutdownNegotiation( iceConn, False );
         QList<KSMClient*>::iterator it = clients.begin();
-        while ( *it && SmsGetIceConnection( ( *it )->connection() ) != iceConn )
+        QList<KSMClient*>::iterator const itEnd = clients.end();
+        while ( ( it != itEnd ) && *it && ( SmsGetIceConnection( ( *it )->connection() ) != iceConn ) )
             ++it;
-        if ( *it ) {
+        if ( ( it != itEnd ) && *it ) {
             SmsConn smsConn = (*it)->connection();
             deleteClient( *it );
             SmsCleanUp( smsConn );
@@ -838,11 +836,12 @@ void KSMServer::storeSession()
         // check that non of the new clients uses the exactly same
         // discardCommand before we execute it. This used to be the
         // case up to KDE and Qt < 3.1
-		QList<KSMClient*>::iterator it = clients.begin();
-		while ( *it && discardCommand != ( *it )->discardCommand() )
-			++it;
-		if ( *it )
-			continue;
+        QList<KSMClient*>::iterator it = clients.begin();
+        QList<KSMClient*>::iterator const itEnd = clients.end();
+        while ( ( it != itEnd ) && *it && (discardCommand != ( *it )->discardCommand() ) )
+            ++it;
+        if ( ( it != itEnd ) && *it )
+            continue;
         executeCommand( discardCommand );
     }
     config->deleteGroup( sessionGroup ); //### does not work with global config object...
@@ -851,15 +850,15 @@ void KSMServer::storeSession()
 
     if ( !wm.isEmpty() ) {
         // put the wm first
-		foreach ( KSMClient *c, clients )
+        foreach ( KSMClient *c, clients )
             if ( c->program() == wm ) {
-				clients.remove( c );
-				clients.prepend( c );
+                clients.remove( c );
+                clients.prepend( c );
                 break;
             }
     }
 
-	foreach ( KSMClient *c, clients ) {
+    foreach ( KSMClient *c, clients ) {
         int restartHint = c->restartStyleHint();
         if (restartHint == SmRestartNever)
            continue;
