@@ -228,13 +228,9 @@ void KLocaleApplication::slotTranslate()
 {
   // The untranslated string for QLabel are stored in
   // the name() so we use that when retranslating
-  QObject *wc;
   QObjectList list = queryList("QWidget");
-  QObjectList::iterator it = list.begin();
-  while ( (wc = *it) != 0 )
+  foreach ( QObject* wc, list )
   {
-    ++it;
-
     // unnamed labels will cause errors and should not be
     // retranslated. E.g. the example box should not be
     // retranslated from here.
