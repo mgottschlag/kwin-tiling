@@ -26,6 +26,7 @@
 #
 
 use strict;
+use Cwd 'abs_path';
 
 sub pegout($)
 {
@@ -35,8 +36,8 @@ sub pegout($)
 
 sub relpath($$)
 {
-  my @src = split(/\//, shift);
-  my @dst = split(/\//, shift);
+  my @src = split(/\//, abs_path(shift));
+  my @dst = split(/\//, abs_path(shift));
   pop @dst;
   while (@src && @dst && $src[0] eq $dst[0]) {
     shift @src;
@@ -683,13 +684,14 @@ emit_section();
 close INFILE;
 
 my $srcf = relpath($ARGV[0], $ARGV[1]);
+my $exen = relpath($0, $ARGV[1]);
 
 open (OUTFILE, ">".$ARGV[1]) || pegout("$0: cannot create output file ".$ARGV[1]);
 
 if (!$do_doc) {
 
 print OUTFILE
-  "/* generated from $srcf by $0 - DO NOT EDIT! */\n\n".
+  "/* generated from $srcf by $exen - DO NOT EDIT! */\n\n".
   "#ifndef CONFIG_DEFS\n".
   "#define CONFIG_DEFS\n\n".
   $raw_out."\n\n".
