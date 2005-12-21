@@ -557,7 +557,7 @@ ManageSession( struct display *d )
 		GSendInt( d->hstent->sdRec.uid );
 		GSendStr( d->hstent->sdRec.osname );
 		if (CtrlGreeterWait( TRUE ) != G_Ready) {
-			LogError( "Received unknown command %d from greeter\n", cmd );
+			LogError( "Received unknown response from greeter\n" );
 			CloseGreeter( TRUE );
 		}
 	}
