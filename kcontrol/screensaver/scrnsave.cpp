@@ -30,7 +30,6 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <QTextStream>
-#include <Q3PtrList>
 #include <QKeyEvent>
 #include <QHBoxLayout>
 #include <QBoxLayout>
@@ -61,7 +60,7 @@
 
 #include <fixx11h.h>
 
-template class Q3PtrList<SaverConfig>;
+template class QList<SaverConfig*>;
 
 const uint widgetEventMask =                 // X event mask
 (uint)(
@@ -376,7 +375,7 @@ void KScreenSaver::load()
 //    mSelected = -1;
     int i = 0;
     Q3ListViewItem *selectedItem = 0;
-    for (SaverConfig* saver = mSaverList.first(); saver != 0; saver = mSaverList.next()) {
+	Q_FOREACH( SaverConfig* saver, mSaverList ){
         if (saver->file() == mSaver)
         {
             selectedItem = mSaverListView->findItem ( saver->name(), 0 );
@@ -529,11 +528,11 @@ void KScreenSaver::findSavers()
 
         mLoadTimer->stop();
         delete mLoadTimer;
-        mSaverList.sort();
-
+		qSort(mSaverList.begin(), mSaverList.end());
+		
         mSelected = -1;
         mSaverListView->clear();
-        for ( SaverConfig *s = mSaverList.first(); s != 0; s = mSaverList.next())
+        Q_FOREACH( SaverConfig *s, mSaverList ) 
         {
             Q3ListViewItem *item;
             if (s->category().isEmpty())
@@ -675,7 +674,7 @@ void KScreenSaver::slotScreenSaver(Q3ListViewItem *item)
       return;
 
     int i = 0, indx = -1;
-    for (SaverConfig* saver = mSaverList.first(); saver != 0; saver = mSaverList.next()) {
+	Q_FOREACH( SaverConfig* saver , mSaverList ){
         if ( item->parent() )
         {
             if (  item->parent()->text( 0 ) == saver->category() && saver->name() == item->text (0))
