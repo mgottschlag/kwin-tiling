@@ -85,7 +85,7 @@ public:
 
  #ifdef HAVE_LIBUSB
  // TODO: In Qt4, replace with a better container.
- Q3PtrList <LogitechMouse> logitechMouseList;
+ QList <LogitechMouse*> logitechMouseList;
  #endif
 };
 
