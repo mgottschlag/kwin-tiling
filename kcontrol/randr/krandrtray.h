@@ -19,8 +19,6 @@
 #ifndef KRANDRTRAY_H
 #define KRANDRTRAY_H
 
-#include <q3ptrlist.h>
-//Added by qt3to4:
 #include <QMouseEvent>
 
 #include <ksystemtray.h>
@@ -56,7 +54,7 @@ private:
 
 	bool m_popupUp;
 	KHelpMenu* m_help;
-	Q3PtrList<KMenu> m_screenPopups;
+	QList<KMenu*> m_screenPopups;
 };
 
 #endif
