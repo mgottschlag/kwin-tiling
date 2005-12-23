@@ -95,7 +95,7 @@ int KDE_EXPORT kdemain( int argc, char** argv )
     {
         {
 	// multiheaded hotkeys
-        Q3CString multiHead = getenv("KDE_MULTIHEAD");
+        QByteArray multiHead = getenv("KDE_MULTIHEAD");
         if (multiHead.lower() == "true") {
 	    Display *dpy = XOpenDisplay(NULL);
 	    if (! dpy) {
@@ -107,7 +107,7 @@ int KDE_EXPORT kdemain( int argc, char** argv )
 	    int number_of_screens = ScreenCount(dpy);
 	    khotkeys_screen_number = DefaultScreen(dpy);
 	    int pos;
-	    Q3CString displayname = XDisplayString(dpy);
+	    QByteArray displayname = XDisplayString(dpy);
 	    XCloseDisplay(dpy);
 	    dpy = 0;
 
