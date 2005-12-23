@@ -110,7 +110,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
 	    int number_of_screens = ScreenCount(dpy);
 	    kdesktop_screen_number = DefaultScreen(dpy);
 	    int pos;
-	    Q3CString display_name = XDisplayString(dpy);
+	    QString display_name = XDisplayString(dpy);
 	    XCloseDisplay(dpy);
 	    dpy = 0;
 
