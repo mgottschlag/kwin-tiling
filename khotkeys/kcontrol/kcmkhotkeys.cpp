@@ -21,7 +21,6 @@
 #include <qsplitter.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <Q3CString>
 
 #include <kcmodule.h>
 #include <kaboutdata.h>
@@ -72,7 +71,7 @@ extern "C"
     else
         {
         DCOPRef ref( "kded", "kded" );
-        if( !ref.call( "loadModule", Q3CString( "khotkeys" )))
+        if( !ref.call( "loadModule", DCOPCString( "khotkeys" )))
             {
             kdWarning( 1217 ) << "Loading of khotkeys module failed." << endl;
             KToolInvocation::kdeinitExec( "khotkeys" );
