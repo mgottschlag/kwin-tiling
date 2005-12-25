@@ -193,7 +193,7 @@ void KSmartcardConfig::loadReadersTab( QStringList lr){
   QDataStream arg(&data, QIODevice::WriteOnly);
 
   arg.setVersion(QDataStream::Qt_3_1);
-  QCString modName = "kardsvc";
+  DCOPCString modName = "kardsvc";
   arg << modName;
 
   //  New view items
@@ -309,7 +309,7 @@ void KSmartcardConfig::load()
   QDataStream arg(&data, QIODevice::WriteOnly);
 
   arg.setVersion(QDataStream::Qt_3_1);
-  QCString modName = "kardsvc";
+  DCOPCString modName = "kardsvc";
   arg << modName;
 
   loadSmartCardSupportTab();
@@ -345,7 +345,7 @@ if (_ok) {
   QDataStream arg(&data, QIODevice::WriteOnly);
 
   arg.setVersion(QDataStream::Qt_3_1);
-  QCString modName = "kardsvc";
+  DCOPCString modName = "kardsvc";
   arg << modName;
 
   // Start or stop the server as needed
@@ -410,7 +410,7 @@ extern "C"
 	QDataStream arg(&data, QIODevice::WriteOnly);
 
 	arg.setVersion(QDataStream::Qt_3_1);
-	QCString modName = "kardsvc";
+	DCOPCString modName = "kardsvc";
 	arg << modName;
 	kapp->dcopClient()->call("kded", "kded", "loadModule(QCString)",
 			         data, rettype, retval);
