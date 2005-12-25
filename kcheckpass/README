@@ -46,5 +46,5 @@ Christian Esken <esken@kde.org>   Shadow and /etc/passwd support
 
 Some parts were taken from kscreensaver's passwd.cpp
 
-Currently this Software is maintained by Christian Esken (esken@kde.org).
+Currently this Software is maintained by Oswald Buddenhagen <ossi@kde.org>.
 Please send new authentication modules (checkpass_*.cpp) to me.
