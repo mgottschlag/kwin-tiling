@@ -191,8 +191,6 @@ closeCtrl( struct display *d )
 		unlink( cr->path );
 		*strrchr( cr->path, '/' ) = 0;
 		rmdir( cr->path );
-		*strrchr( cr->path, '/' ) = 0;
-		rmdir( cr->path );
 		free( cr->path );
 		cr->path = 0;
 		while (cr->css) {
@@ -206,8 +204,6 @@ closeCtrl( struct display *d )
 		CloseNClearCloseOnFork( cr->fifo.fd );
 		cr->fifo.fd = -1;
 		unlink( cr->fpath );
-		*strrchr( cr->fpath, '/' ) = 0;
-		rmdir( cr->fpath );
 		free( cr->fpath );
 		cr->fpath = 0;
 		if (cr->fifo.buffer)
