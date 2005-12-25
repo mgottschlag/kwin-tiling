@@ -7,16 +7,12 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #ifndef SHUTDOWNDLG_H
 #define SHUTDOWNDLG_H
 
-#include <qpixmap.h>
 #include <qdialog.h>
 #include <kpushbutton.h>
 #include <kworkspace.h>
-#include <QMenu>
-class QPushButton;
-class QVButtonGroup;
-class QTimer;
 
-#include <kapplication.h>
+class QMenu;
+class QTimer;
 
 // The (singleton) widget that makes the desktop gray.
 class KSMShutdownFeedback : public QWidget
@@ -30,6 +26,8 @@ public:
 
 protected:
     ~KSMShutdownFeedback() {}
+
+    virtual void paintEvent( QPaintEvent* );
 
 private slots:
     void slotPaintEffect();

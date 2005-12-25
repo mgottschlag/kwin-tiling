@@ -9,30 +9,24 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include "shutdowndlg.h"
 
 #include <qapplication.h>
-#include <qlayout.h>
-#include <qgroupbox.h>
-#include <qlabel.h>
-#include <qtimer.h>
-#include <qstyle.h>
-#include <qcombobox.h>
 #include <qcursor.h>
-#include <qmessagebox.h>
-#include <qbuttongroup.h>
-#include <qiconset.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qpainter.h>
+#include <qmenu.h>
+#include <qstyle.h>
+#include <qtimer.h>
 
-#include <klocale.h>
-#include <kapplication.h>
 #include <kdebug.h>
-#include <kpushbutton.h>
-#include <kstdguiitem.h>
-#include <kiconloader.h>
+#include <kdialog.h>
 #include <kglobalsettings.h>
-#include <kwin.h>
-#include <kuser.h>
+#include <kiconloader.h>
+#include <klocale.h>
 #include <kpixmap.h>
 #include <kpixmapeffect.h>
-#include <kdialog.h>
 #include <kseparator.h>
+#include <kstdguiitem.h>
+#include <kuser.h>
 
 #include <sys/types.h>
 #include <sys/utsname.h>
@@ -52,13 +46,13 @@ KSMShutdownFeedback::KSMShutdownFeedback()
  : QWidget( 0L, "feedbackwidget", Qt::Popup ),
    m_currentY( 0 )
 {
-    setBackgroundMode( Qt::NoBackground );
+    setAttribute( Qt::WA_NoSystemBackground );
     setGeometry( QApplication::desktop()->geometry() );
     QTimer::singleShot( 10, this, SLOT( slotPaintEffect() ) );
 }
 
 
-void KSMShutdownFeedback::slotPaintEffect()
+void KSMShutdownFeedback::paintEvent( QPaintEvent* )
 {
     if ( m_currentY >= height() )
         return;
@@ -67,8 +61,22 @@ void KSMShutdownFeedback::slotPaintEffect()
     pixmap = QPixmap::grabWindow( QX11Info::appRootWindow(), 0, m_currentY, width(), 10 );
     pixmap = KPixmapEffect::fade( pixmap, 0.4, Qt::black );
     pixmap = KPixmapEffect::toGray( pixmap, true );
-    bitBlt( this, 0, m_currentY, &pixmap );
+
+    QPainter painter( this );
+    painter.drawPixmap( 0, m_currentY, pixmap );
+}
+
+
+void KSMShutdownFeedback::slotPaintEffect()
+{
+    if ( m_currentY >= height() )
+        return;
+
     m_currentY += 10;
+
+    // don't use update, as paint events could be merged
+    repaint();
+
     QTimer::singleShot( 1, this, SLOT( slotPaintEffect() ) );
 }
 
@@ -81,6 +89,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     // having a popup here has severe side effects.
 {
     QVBoxLayout* vbox = new QVBoxLayout( this );
+    vbox->setMargin( 0 );
     QFrame* frame = new QFrame( this );
     frame->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
     frame->setLineWidth( style()->pixelMetric( QStyle::PM_DefaultFrameWidth, 0, frame ) );
