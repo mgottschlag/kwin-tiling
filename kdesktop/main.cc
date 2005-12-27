@@ -43,7 +43,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 //Added by qt3to4:
-#include <Q3CString>
 #include <kauthorized.h>
 
 static const char description[] =
@@ -110,14 +109,14 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
 	    int number_of_screens = ScreenCount(dpy);
 	    kdesktop_screen_number = DefaultScreen(dpy);
 	    int pos;
-	    QString display_name = XDisplayString(dpy);
+	    QByteArray display_name = XDisplayString(dpy);
 	    XCloseDisplay(dpy);
 	    dpy = 0;
 
 	    if ((pos = display_name.lastIndexOf('.')) != -1)
 		display_name.remove(pos, 10);
 
-            Q3CString env;
+            QByteArray env;
 	    if (number_of_screens != 1) {
 		for (int i = 0; i < number_of_screens; i++) {
 		    if (i != kdesktop_screen_number && fork() == 0) {
@@ -128,8 +127,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
 		    }
 		}
 
-		env.sprintf("DISPLAY=%s.%d", display_name.data(),
-			    kdesktop_screen_number);
+            	env = "DISPLAY=" + display_name + '.' + QByteArray::number( kdesktop_screen_number );
 
 		if (putenv(strdup(env.data()))) {
 		    fprintf(stderr,
@@ -141,11 +139,11 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
 	}
     }
 
-    Q3CString appname;
+    QByteArray appname;
     if (kdesktop_screen_number == 0)
 	appname = "kdesktop";
     else
-	appname.sprintf("kdesktop-screen-%d", kdesktop_screen_number);
+	appname = "kdesktop-screen-" + QByteArray::number( kdesktop_screen_number );
 
     KAboutData aboutData( appname.data(), I18N_NOOP("KDesktop"),
 			  version, description, KAboutData::License_GPL,
