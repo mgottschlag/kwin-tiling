@@ -45,7 +45,6 @@
 
 KCMXinerama::KCMXinerama(KInstance *inst, QWidget *parent )
   : KCModule(inst, parent) {
-    _indicators.setAutoDelete(true);
 
 	KAboutData *about =
 	new KAboutData(I18N_NOOP("kcmxinerama"),
@@ -250,6 +249,7 @@ QWidget *KCMXinerama::indicator(int dpy) {
 }
 
 void KCMXinerama::clearIndicator() {
+	qDeleteAll(_indicators);
 	_indicators.clear();
 }
 

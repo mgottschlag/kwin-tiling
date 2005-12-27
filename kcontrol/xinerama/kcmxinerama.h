@@ -51,7 +51,7 @@ private:
 	KConfig *config, *ksplashrc;
 	XineramaWidget *xw;
 	QTimer _timer;
-	Q3PtrList<QWidget> _indicators;
+	QList<QWidget *> _indicators;
 
 	int _displays;
 
