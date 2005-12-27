@@ -1,0 +1,496 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" 
+"dtd/kdex.dtd" [
+  <!ENTITY kappname "&ksysguard;">
+  <!ENTITY package "kdebase">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<book lang="&language;">
+<bookinfo>
+<title>The &ksysguard; Handbook</title>
+
+<authorgroup>
+<author>
+&Chris.Schlaeger;&Chris.Schlaeger.mail;
+</author>
+
+<othercredit role="developer">
+&Chris.Schlaeger;&Chris.Schlaeger.mail;
+<!-- <contrib>Developer</contrib> -->
+</othercredit>
+
+<othercredit role="developer">
+&Tobias.Koenig;&Tobias.Koenig.mail;
+<!-- <contrib>Developer</contrib> -->
+</othercredit>
+
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+
+</authorgroup>
+
+<copyright>
+<year>2000</year>
+<holder>&Chris.Schlaeger;</holder>
+</copyright>
+
+<legalnotice>&FDLNotice;</legalnotice>
+
+<date>2000-12-14</date>
+<releaseinfo>1.00.00</releaseinfo>
+
+<abstract><para>&ksysguard; is a network enabled task manager and system monitor
+application, with the additional functionality of
+<application>top</application>.</para></abstract> 
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KSysGuard</keyword>
+<keyword>process monitor</keyword>
+<keyword>top</keyword>
+<keyword>ps</keyword>
+</keywordset>
+</bookinfo>
+
+<chapter id="introduction">
+<title>Introduction</title>
+
+<para>&ksysguard; is the &kde; Task Manager and Performance Monitor. It features 
+
+a
+client/server architecture that allows monitoring of local as well as remote
+hosts. The graphical front end uses so-called sensors to retrieve the
+information it displays. A sensor can return simple values or more complex
+information like tables. For each type of information, one or more displays are
+provided. Displays are organized in work sheets that can be saved and loaded
+independently from each other. So, &ksysguard; is not only a simple task manager
+but also a very powerful tool to control large server farms.</para>
+
+</chapter>
+
+
+<chapter id="usingtheksysguard">
+<title>Using &ksysguard;</title>
+
+<sect1 id="getting-started">
+<title>Getting started</title>
+
+<para>&ksysguard; can be started from the &kmenu;, using the entry 
+<guimenuitem>KDE System
+Guard</guimenuitem> in the <guimenu>Systems</guimenu> menu. Alternatively, you
+can start it by typing <command>ksysguard</command> in a terminal.</para>
+
+<para>The &ksysguard; main window consists of a menu bar, an optional tool bar 
+and
+status bar, the sensor browser and the work space. When first started you see
+your local machine listed as <guilabel>localhost</guilabel> in the sensor
+browser and 2 pages in the work space area. This is the default setup.</para>
+
+<para>This default setup is sufficient enough for an inexperienced user to do
+some system management. An experienced user or even a system administrator of a
+large computer lab has different needs. To address a wide range of users, 
+&ksysguard;
+is highly flexible.</para>
+</sect1>
+
+<sect1 id="the-sensor-browser">
+<title>The Sensor Browser</title>
+
+<para>The sensor browser displays the registered hosts and their sensors in a
+tree form. Click on the tree handles to open or close a branch. Each sensor
+monitors a certain system value.</para>
+
+<sect2 id="connectingtootherhosts">
+<title>Connecting to other hosts</title>
+
+<para>To connect to a new host use <guimenuitem>Connect Hosts</guimenuitem>
+from the <guimenu>File</guimenu> menu. A dialog box will appear and allows you 
+to
+enter the name of the host you want to connect to. Below the name you can choose
+the connection method. The default is <application>ssh</application>, the secure
+shell. Alternatively the <application>rsh</application>, the remote shell, or
+the daemon mode can be used. Click <guibutton>OK</guibutton> to
+establish the connection. Shortly afterwards the new host will appear in the
+sensor browser and you can browse the list of sensors.</para>
+
+<para>To establish a connection, a program called
+<application>ksysguardd</application>, that can be started in the following
+two modes, must be installed on the new host.</para>
+
+<variablelist>
+<varlistentry>
+<term>daemon mode</term>
+<listitem>
+<para>You can start <application>ksysguardd</application> at boot time in
+<guilabel>Daemon</guilabel> mode by adding <parameter>-d</parameter> as the
+argument. In this case, you have to select daemon mode at the connection
+dialog of <application>ksysguard</application>.
+A disadvantage of this connection type is that you won't be able to kill or
+renice a process with the <guilabel>Process Controller</guilabel> and
+the data exchange over network won't be encrypted.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>shell mode</term>
+<listitem>
+<para>In this mode <application>ksysguardd</application> is started at
+connecting time by <application>ksysguard</application>. To make that possible,
+its location needs to be included in your <envar>PATH</envar>.
+Unfortunately the ssh does not source your <filename>.profile</filename> file,
+so your regular <envar>PATH</envar> setting will not be available.
+Instead it uses a default <envar>PATH</envar> like
+<parameter>/bin:/usr/bin</parameter>.
+Since it is very likely that &kde; is not installed in these folders you need
+to create or update a file in your home folder. The file is called
+<filename>environment</filename> and needs to be in a hidden folder called
+<filename>.ssh</filename>. See the manual page for
+<application>ssh</application> for more details. The file needs to contain a
+line similar to:</para>
+
+<screen>
+<userinput>PATH=/bin:/usr/bin:/opt/kde/bin</userinput>
+</screen>
+
+<para>assuming that <application>ksysguardd</application> can be found under
+<filename>/opt/kde/bin/ksysguardd</filename>.</para>
+
+<tip><para>When using <application>ssh</application> you should make sure that
+you have your <filename>identity.pub</filename> installed on the remote machine
+and the host key of the remote machine is already registered on your machine.
+The easiest way to check this is to type <command>ssh <option>remotehost
+ksysguardd</option></command> in a shell. If you are greeted by
+<application>ksysguardd</application> you can type <userinput>quit</userinput>
+and everything is in order.</para></tip>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<note><para>For experts: <application>ksysguardd</application> is a
+very small program that is only linked against the libc. So it can
+also be used on machines that do not have a full blown &kde;
+installed, such as servers. If you choose the custom command option in
+the host connector you need to specify the complete command to start
+<application>ksysguardd</application>.</para></note>
+
+</sect2>
+
+<sect2 id="disconnecting-hosts">
+<title>Disconnecting hosts</title>
+
+<para>To disconnect from a host, select the host in the sensor browser and
+choose <guimenuitem>Disconnect Host</guimenuitem> from the
+<guimenu>File</guimenu> menu. If you still have sensors in use, the display
+frames will be grayed and the displays won't update any longer.</para>
+</sect2>
+</sect1>
+
+<sect1 id="the-workspace">
+<title>The Work Space</title>
+
+<para>The work space is organized as work sheets. Select
+<guimenuitem>New</guimenuitem> from the <guimenu>File</guimenu> menu to create a
+new work sheet. A dialog will appear where you can set the name, the
+dimension and the update interval of the work sheet. To remove a work sheet 
+again, select
+<guimenuitem>Close</guimenuitem> from the <guimenu>File</guimenu> menu. Any
+modifications will be saved to the work sheet file. If a work sheet has
+never been saved, you will be asked for a file name. Work sheets consist of 
+cells
+organized as a grid.</para>
+
+<para>Each cell can be filled with a display for one or more sensors. You can
+fill a cell by dragging a sensor from the sensor browser and dropping it over
+the cell. If there is more than one type of display available for that type
+of sensor, a popup menu will appear. You can then select which display you 
+prefer
+to use. Certain types of displays can display more than one sensor. Add more
+sensors to a display by dragging them over from the sensor browser and dropping
+them over the already existing display.</para>
+
+<para>Work sheets can be configured by clicking <guimenuitem>Configure Worksheet
+</guimenuitem> at the <guimenu>Edit</guimenu> menu. In the appearing dialog
+you can set the dimension and the update interval. This update interval is
+used by all displays of the worksheet, which has the <guilabel>use update
+interval of worksheet</guilabel> set in its timer configuration dialog.</para>
+
+<para>The entry <guimenuitem>Configure Style</guimenuitem> of the
+<guimenu>Settings</guimenu> menu gives you the possibility to configure the
+global style attributes and apply them to the current active worksheet.</para>
+
+<para>Displays can be configured by clicking with the right mouse button on
+them. A popup menu appear where you can select whether you want to change the
+properties of that display, remove it from the work sheet, change its update
+interval type and value or pause and restart its updating.</para>
+
+<sect2 id="signal-plotter">
+<title>Signal Plotter</title>
+
+<para>The signal plotter prints samples of one or more sensors over time. If, 
+several sensors are displayed, the values are piled in different colors. If
+the display is large enough a grid will be displayed to show the range of the
+plotted samples. By default, the automatic range mode is active so the minimum
+and maximum values will be set automatically. Sometimes you want fixed
+minimum and maximum values. In that case, you can deactivate automatic range
+mode and set the values in the properties dialog.</para>
+</sect2>
+
+<sect2 id="multimeter">
+<title>Multimeter</title>
+
+<para>The multimeter displays the sensor values as a digital meter. In the
+properties dialog you can specify a lower and upper limit. If the range
+is exceeded, the display is colored in the alarm color.</para>
+</sect2>
+
+<sect2 id="process-controller">
+<title>Process Controller</title>
+
+<para>The Process Controller gives you a list of processes on your
+system. The list can be sorted by each column. Just press the left
+mouse button at the head of the column. </para>
+
+<para>The list shows the following information about each process. Please note
+that not all properties are available on every operating system.</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Name</guilabel></term>
+<listitem><para>The name of the executable that started the process.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>PID</guilabel></term>
+<listitem><para>The Process <abbrev>ID</abbrev>.  A unique number for each
+process.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>PPID</guilabel></term>
+<listitem><para>The Process <abbrev>ID</abbrev> of the process parent.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>UID</guilabel></term>
+<listitem><para>The <abbrev>ID</abbrev> of the user that started the
+process.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>GID</guilabel></term>
+<listitem><para>The <abbrev>ID</abbrev> of the group the process
+belongs to.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Status</guilabel></term>
+<listitem><para>The process status.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>User%</guilabel></term>
+<listitem>
+<para>The processor load of the process in user space (in percent).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>System%</guilabel></term>
+<listitem>
+<para>The processor load of the process in system space (in percent).</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Nice</guilabel></term>
+<listitem><para>The scheduling priority.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>VmSize</guilabel></term>
+<listitem><para>The total amount of virtual memory used by the process
+(in kBytes).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>VmRss</guilabel></term>
+<listitem><para>The total amount of physical memory used by the process
+(in kBytes).</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Login</guilabel></term>
+<listitem><para>The login name of the user that started the process.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Command</guilabel></term>
+<listitem><para>The complete start command of the process.</para></listitem>
+</varlistentry>
+</variablelist>
+
+<para>Underneath the table you find four buttons which will be described now
+from left to right.</para>
+
+<sect3 id="the-tree-view">
+<title>The <guibutton>Tree</guibutton> View</title>
+
+<para>The tree view has been designed to show the relationships between the
+running processes. A process that is started by another process is called the
+child of that process. A tree is an elegant way to show this parent-child
+relationship. The <emphasis>init</emphasis> process is the ancestor of all
+processes.</para>
+
+<para>If you are not interested in the children of a particular process you can
+click on the little box to the left of the parent and the subtree will
+collapse. Another click on that box will unfold the subtree again.</para>
+
+</sect3>
+
+<sect3 id="the-process-filter">
+<title>The Process Filter </title>
+
+<para>The Process Filter can be used to reduce the number of processes displayed
+in the table. You can filter out processes you are not interested in. Currently
+you can display all processes, system processes only, user processes only or
+your processes only.</para>
+
+</sect3>
+
+<sect3 id="therefreshbutton">
+<title>The <guibutton>Refresh</guibutton> Button </title>
+
+<para>This button can be used to force an immediate update of the process
+list.</para>
+
+</sect3>
+
+<sect3 id="thekillbutton">
+<title>The <guibutton>Kill</guibutton> Button </title>
+
+<para>If you have selected one or more processes you can press the kill button
+to kill them. A so called <errorcode>SIGKIL</errorcode> is sent to the processes 
+
+which causes them to
+terminate immediately. If these applications still have unsaved data this data
+will be lost. So use this button with care.</para>
+
+</sect3>
+</sect2>
+
+<sect2 id="bargraph">
+<title>BarGraph</title>
+
+<para>The bargraph displays the sensor values as dancing bars. In the
+properties dialog you can specify minimum and maximum values of range and
+a lower and upper limit. If the range is exceeded, the display is
+colored in the alarm color.</para>
+</sect2>
+
+<sect2 id="sensorlogger">
+<title>Sensor Logger</title>
+
+<para>The sensor logger does not display any values, but logs them in
+a file with additional date and time information. For each sensor
+you can specify a lower and upper limit in the properties dialog.
+If the range is exceeded, the entry of the sensor table is colored in
+the alarm color and a <application>knotify</application> event is sent.</para>
+</sect2>
+
+<sect2 id="logfile">
+<title>Log File</title>
+
+<para>The log file monitor displays the content of a file &eg; 
+<filename>/var/log/messages</filename>.
+In the properties dialog, you can compose a list of regular expressions that
+will be compared with the content of the file. If one of the expressions match, 
+a <application>knotify</application>
+event will be sent.
+</para>
+</sect2>
+
+<sect2 id="listview">
+<title>List View</title>
+
+<para>The listview displays the data of some sensors in the form of a 
+table.</para>
+</sect2>
+
+</sect1>
+</chapter>
+
+<chapter id="multiple-platforms">
+<title>Configuring <application>ksysguardd</application></title>
+
+<para>The graphical front-end is available on any platform that &kde; runs
+on. The back-end is at the moment available on the following flavors of
+&UNIX;:</para>
+
+<variablelist>
+<varlistentry>
+<term>&Linux; 2.x</term>
+<listitem><para> For <application>ksysguardd</application> to work it
+is necessary to compile the &Linux; Kernel
+with the <filename>/proc</filename> Filesystem enabled. This is the default
+setting and most &Linux; Distributions have it already.</para> </listitem>
+</varlistentry>
+<varlistentry>
+<term>FreeBSD</term>
+<listitem><para>The <application>ksysguardd</application> program
+needs to be owned by the <systemitem
+class="groupname">kmem</systemitem> group and needs to have the setgid
+bit set.</para></listitem> 
+</varlistentry>
+<varlistentry>
+<term>&Solaris;</term>
+<listitem><para>To be written</para></listitem>
+</varlistentry>
+</variablelist>
+
+<para>Support for other platforms is in progress. Your help is greatly
+appreciated.</para>
+</chapter>
+
+<chapter id="credits-and-licenses">
+<title>Credits and Licenses</title>
+
+<para>&ksysguard; is currently developed and maintained by Chris Schl&auml;ger
+<email>cs@kde.org</email>. &ksysguard; is a rewrite of
+<application>KTop</application>, the KDE 1.x task manager. Several other people
+have worked on <application>KTop</application>:</para>
+
+<itemizedlist>
+<listitem><para> A. Sanda <email>alex@darkstar.ping.at</email></para></listitem>
+<listitem><para> Ralf Mueller <email>ralf@bj-ig.de</email></para></listitem>
+<listitem><para> Bernd Johannes Wuebben
+<email>wuebben@math.cornell.edu</email></para></listitem>
+<listitem><para> Nicolas Leclercq
+<email>nicknet@planete.net</email></para></listitem>
+</itemizedlist>
+
+<para>The porting to other platforms than &Linux; was done by:</para>
+
+<itemizedlist>
+<listitem><para> FreeBSD: Hans Petter Bieker
+<email>zerium@traad.lavvu.no</email></para></listitem>
+</itemizedlist>
+
+&underFDL;
+&underGPL;
+
+</chapter>
+
+</book>
+<!--
+Local Variables:
+mode: sgml
+sgml-omittag: nil
+sgml-shorttag: t
+End:
+-->
+
