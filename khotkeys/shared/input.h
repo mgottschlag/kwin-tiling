@@ -15,7 +15,7 @@
 #include <qwindowdefs.h>
 #include <qmap.h>
 #include <qwidget.h>
-#include <q3valuelist.h>
+
 #include <kshortcut.h>
 
 #include <X11/X.h>

@@ -6,7 +6,7 @@
 #endif
 
 #include <qstring.h>
-#include <q3valuevector.h>
+#include <QVector>
 #include <qfont.h>
 //Added by qt3to4:
 #include <QPixmap>
