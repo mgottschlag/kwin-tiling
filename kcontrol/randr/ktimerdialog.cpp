@@ -23,7 +23,7 @@
 #include <qlayout.h>
 
 #include <qtimer.h>
-#include <q3progressbar.h>
+#include <qprogressbar.h>
 #include <qlabel.h>
 
 #include <kwin.h>
@@ -64,9 +64,9 @@ KTimerDialog::KTimerDialog( int msec, TimerStyle style, QWidget *parent,
     mainWidget = new KVBox( this );
     timerWidget = new KHBox( mainWidget );
     timerLabel = new QLabel( timerWidget );
-    timerProgress = new Q3ProgressBar( timerWidget );
-    timerProgress->setTotalSteps( msecTotal );
-    timerProgress->setPercentageVisible( false );
+    timerProgress = new QProgressBar( timerWidget );
+    timerProgress->setRange( 0, msecTotal );
+    timerProgress->setTextVisible( false );
 
     KDialogBase::setMainWidget( mainWidget );
 
@@ -149,8 +149,8 @@ void KTimerDialog::slotUpdateTime( bool update )
             case Manual:
                 break;
         }
-    
-    timerProgress->setProgress( msecRemaining );
+
+    timerProgress->setValue( msecRemaining );
 
     timerLabel->setText( i18n("1 second remaining:","%n seconds remaining:",msecRemaining/1000) );
 }

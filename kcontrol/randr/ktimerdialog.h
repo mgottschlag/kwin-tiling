@@ -28,7 +28,7 @@
 
 class QTimer;
 class KHBox;
-class Q3ProgressBar;
+class QProgressBar;
 class QLabel;
 
 /**
@@ -157,9 +157,9 @@ class KTimerDialog : public KDialogBase
 
     ButtonCode buttonOnTimeout;
     TimerStyle tStyle;
-    
+
     KHBox *timerWidget;
-    Q3ProgressBar *timerProgress;
+    QProgressBar *timerProgress;
     QLabel *timerLabel;
     KVBox *mainWidget;
 
