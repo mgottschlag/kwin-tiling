@@ -65,6 +65,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <Q3ValueList>
 #include <QVBoxLayout>
 #include <QAbstractEventDispatcher>
+#include <q3dict.h>
 
 #include <pwd.h>
 #include <grp.h>
