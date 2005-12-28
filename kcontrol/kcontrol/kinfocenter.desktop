@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kinfocenter -caption "%c" %i %m
+Exec=kinfocenter -caption "%c" %i
 Icon=hwinfo
 Type=Application
 DocPath=kinfocenter/index.html

@@ -2,7 +2,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Application
-Exec=kpersonalizer -caption "%c" %i %m
+Exec=kpersonalizer -caption "%c"
 Icon=kpersonalizer
 Terminal=false
 Name=Desktop Settings Wizard

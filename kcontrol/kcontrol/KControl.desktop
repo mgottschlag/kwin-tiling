@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=kcontrol -caption "%c" %i %m
+Exec=kcontrol -caption "%c"
 Icon=kcontrol
 Type=Application
 DocPath=kcontrol/index.html
