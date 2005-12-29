@@ -116,7 +116,6 @@ TaskLMBMenu::TaskLMBMenu(const Task::List& tasks, QWidget *parent, const char *n
 
 void TaskLMBMenu::fillMenu()
 {
-    setCheckable(true);
 
     Task::List::iterator itEnd = m_tasks.end();
     for (Task::List::iterator it = m_tasks.begin(); it != itEnd; ++it)

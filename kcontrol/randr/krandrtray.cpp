@@ -65,7 +65,6 @@ void KRandRSystemTray::contextMenuAboutToShow(KMenu* menu)
 	int lastIndex = 0;
 
 	menu->clear();
-	menu->setCheckable(true);
 
 	if (!isValid()) {
 		lastIndex = menu->insertItem(i18n("Required X Extension Not Available"));
