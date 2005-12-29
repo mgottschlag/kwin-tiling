@@ -1,0 +1,287 @@
+The Short Story
+---------------
+Four space tabs, braces on their own lines, 80 character lines.
+Code should look something like this:
+
+QString ExtensionManager::uniqueId()
+{
+    QString idBase = "Extension_%1";
+    QString newId;
+    int i = 0;
+    bool unique = false;
+
+    while (!unique)
+    {
+        ++i;
+        newId = idBase.arg(i);
+
+        unique = true;
+        ExtensionList::iterator itEnd = _containers.end();
+        for (ExtensionList::iterator it = _containers.begin();
+             it != itEnd;
+             ++it)
+        {
+            if ((*it)->extensionId() == newId)
+            {
+                unique = false;
+                break;
+            }
+        }
+    }
+
+    return newId;
+}
+
+Full Explanation
+----------------
+All development should follow the coding style as described below so as to have
+a consistent and more easily readable and maintable code base.
+
+General Principles
+------------------
+Never use modal dialogs. This blocks EVERYTHING else in the UI, not just what
+popped up the dialog. Since Plasma is one of the primary means for the user to
+interact with their desktop environment, Plasma must *always* be available for
+user interaction.
+
+NULL vs 0
+---------
+The use of 0 to express a null pointer is preferred over the use of NULL.
+0 is not a magic value, it's the defined value of the null pointer in C++.
+NULL, on the other hand, is a preprocessor directive (#define) and not only is
+it more typing than '0' but I find preprocessor directives less elegant.
+
+    SomeClass* instance = 0;
+
+Naming Conventions
+------------------
+Class names start with a capital letter, member variables begin with m_ and
+static variabls with s_. Methods and functions start with a lower case letter
+with each subsequent word being capitalized ("camel case": myMethodName).
+Acronyms in methods follow this as well (myScubaOverHtmlUsingXmlMethod).
+
+Names should be descriptive. If you can't tell what a variable or a method
+does by its name, the name is wrong. Saving a dozen keystrokes today by
+using cryptic variable names will only lead to maintenance headaches tomorrow.
+Names longer than 20 characters is probably going overboard, however. Just
+use your best judgement.
+
+Singletons will use a static method called self() to return the instatiated
+object. Pimpl (or "d-pointer") classes will be named "Private". Everything
+should be wrapped within the Plasma namespace.
+
+Use 'true' and 'false', not 'TRUE' and 'FALSE'
+
+Comments
+--------
+Code should be written with enough clarity that comments are not needed
+above each line. However, if the code does something in a particular way
+for a specific reason that may not be obvious to the next person who has to
+work on it do provide a short comment describing what it does and why.
+
+Excessive commenting should be avoided since if there are too many comments
+they tend to get ignored and won't be maintained, causing the comments and
+the actual code to drift apart. Innacurate comments are worse than accurate
+comments!
+
+While using the /* style */ of comments is ok, comments should use // wherever
+possible.
+
+Comments can also provide notes for future work, including:
+
+    // TODO: this is a todo item
+    //       and should explain the todo in detail
+
+    // BIC: this is a binary incompatible change, or a massive change that
+    //      should wait until we are doing massive things like breaking binary
+    //      compat
+
+    // BUG: this is documenting a bug. It is preferred that they are fixed.
+    //      but if you don't fix it, at least document it to save the next
+    //      person some time in tracking down the problem.
+
+Indenting
+---------
+Tabstop is 4 spaces. No tabs, only spaces.
+
+Try to keep lines under 80 characters in width. When wrapping a single
+logical line of code across multiple lines, new lines should be indented
+at least once and should preferably line up with parentheses, if any, on
+the line above. e.g.:
+
+    someMethod(parameterOne, parameterTwo,
+               parameterThree, parameterFour);
+
+If a boolean expression is spread out over several lines, the boolean
+operator is always the last item on the line, e.g.:
+
+    if ((condition1 || condition2) &&
+        condition3 &&
+        (condition4 || condition5))
+    {
+
+Switch statements should have the case line indented and the case block
+itsel further indented, e.g.:
+
+    switch (condition)
+    {
+        case 1:
+            ...
+            break;
+        case 2:
+            ...
+            break;
+        default:
+            ...;
+    }
+
+Spaces
+------
+A single space should appear between keywords and parentheses, eg:
+
+    if (
+    while (
+    for (
+
+No spaces appear between function/method names and parentheses:
+
+    function(
+    someObject->method(
+
+No spaces appear between opening closing parens and the arguments:
+
+    for (int i = 0; i < count; ++i)
+
+Spaces appear between operators, e.g.:
+
+    int i = i + 3;
+    someObject.setValue(someObject.currentValue() + 1)
+
+
+Braces
+------
+Braces always appear on a line by themself, indented to align with the
+above keyword:
+
+    if (foo)
+    {
+        ...
+    }
+    else
+    {
+        ...
+    }
+
+Unless it uglifies the code, use braces even for one-liner conditionals:
+
+    if (foo)
+    {
+        return 1;
+    }
+
+Always use braces if the conditional expression wraps across multiple
+physical lines.
+
+Braces around case blocks in switch statements are optional.
+
+
+Constructors
+------------
+Constructors are written as:
+
+    MyClass::MyClass(...)
+        : SuperClass(...),
+          m_member1(...),
+          m_member2(...),
+          ...
+    {
+
+
+Class Definitions
+-----------------
+Class definitions will follow the following order:
+
+    class <name> : <scope> <superclass>
+    {
+        <macros[1]>
+        <typedefs>
+
+        public:
+            <ctors>
+            <dtors>
+            <operators>
+            <other methods>
+
+            <members>
+
+        public slots:
+            <methods>
+
+        signals:
+            <methods>
+
+        protected:
+            <ctors>
+            <dtors>
+            <operators>
+
+            <members>
+
+        protected slots:
+            <methods>
+
+        private:
+            <ctors>
+            <dtors>
+            <operators>
+
+            <members>
+
+        private slots:
+            <methods>
+    };
+
+Methods implementations may be in the class definition if doing so will
+result in a measurable performance enhancement (e.g. it is called very often
+from tight loops or is in a hot path) or if it is a simple, one-liner
+setter/getter method. Otherwise methods should be implemented outside of
+the class definition.
+
+
+Classes in Public Libraries
+---------------------------
+All classes in shared libraries with publicly installed headers must have a
+d-pointer[2]. the definition for them should appear at the end of the private:
+declarations:
+
+        private:
+            <ctors>
+            <dtors>
+            <operators>
+
+            <members>
+
+            class Private;
+            Private* d;
+
+The d-pointer class should only be defined if necessary, and should appear at
+the top of the class's source file after #include directives but before the
+class' ctors.
+
+There should be no inline methods in these classes unless there is a very good
+reason for doing so as that makes it more difficult to maintain compatiblity
+should that method ever need to change behaviour.
+
+All public methods, slots and signals must be documented using the standard KDE
+doxygen style documentation[3]
+
+
+
+[1] macros include things like Q_OBJECT and K_DCOP. the should ONLY appear in
+files where they are actually necessary and not just randomly thrown in there
+for fun. ;-)
+
+[2] d-pointer's are used to maintain binary compatibility. see:
+    http://developer.kde.org/documentation/other/binarycompatibility.html
+
+[3] http://wiki.kde.org/tiki-index.php?page=Doxygenation#id687185
