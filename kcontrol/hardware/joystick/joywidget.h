@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2003 by Martin Koller                                   *
+ *   Copyright (C) 2003,2005,2006 by Martin Koller                         *
  *   m.koller@surfeu.at                                                    *
  *   This file is part of the KDE Control Center Module for Joysticks      *
  *                                                                         *
@@ -16,7 +16,7 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 #ifndef _JOYWIDGET_H_
 #define _JOYWIDGET_H_
@@ -40,7 +40,7 @@ class JoyWidget : public QWidget
   Q_OBJECT
   
   public:
-    JoyWidget(QWidget *parent = 0, const char *name = 0);
+    JoyWidget(QWidget *parent = 0);
 
     ~JoyWidget();
 

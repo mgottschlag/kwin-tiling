@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2003 by Martin Koller                                   *
+ *   Copyright (C) 2003,2005,2006 by Martin Koller                         *
  *   m.koller@surfeu.at                                                    *
  *   This file is part of the KDE Control Center Module for Joysticks      *
  *                                                                         *
@@ -16,21 +16,20 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 #include "poswidget.h"
 
 #include <qpainter.h>
-//Added by qt3to4:
-#include <QPaintEvent>
 
 #define XY_WIDTH 220
 #define MARK_WIDTH 10
+#define MAX_POINTS 500
 
 //-----------------------------------------------------------------
 
-PosWidget::PosWidget(QWidget *parent, const char *name)
-  : QWidget(parent, name, Qt::WNoAutoErase), x(0), y(0), trace(false)
+PosWidget::PosWidget(QWidget *parent)
+  : QWidget(parent), x(0), y(0), trace(false)
 {
   setMinimumSize(XY_WIDTH, XY_WIDTH);
   setMaximumSize(XY_WIDTH, XY_WIDTH);
@@ -43,7 +42,8 @@ void PosWidget::paintEvent(QPaintEvent *)
 {
   QPainter paint(this);
 
-  paint.drawRect(0, 0, width(), height());
+  // draw a frame
+  paint.drawRect(0, 0, width()-1, height()-1);
   paint.setPen(Qt::gray);
 
   // draw a center grid
@@ -52,6 +52,18 @@ void PosWidget::paintEvent(QPaintEvent *)
 
   paint.drawLine(1,            XY_WIDTH/2,
                  XY_WIDTH - 2, XY_WIDTH/2);
+
+  // draw the trace of previous points
+  if ( trace )
+  {
+    paint.setPen(Qt::black);
+
+    for (int i = 0; i < tracePoints.count()-2; i++)
+      paint.drawLine(tracePoints[i], tracePoints[i+1]);
+
+    if ( tracePoints.count() > 0 )
+      paint.drawLine(tracePoints[tracePoints.count()-1], QPoint(x, y));
+  }
 
   // draw the current position marker
   paint.setPen(Qt::blue);
@@ -72,9 +84,15 @@ void PosWidget::changeX(int newX)
 
   if ( x == newX ) return;  // avoid unnecessary redraw
 
-  eraseOld();
+  if ( trace )
+  {
+    tracePoints.append(QPoint(x, y));
+    if ( tracePoints.count() == MAX_POINTS )
+      tracePoints.removeFirst();
+  }
 
   x = newX;
+  update();
 }
 
 //-----------------------------------------------------------------
@@ -86,9 +104,15 @@ void PosWidget::changeY(int newY)
 
   if ( y == newY ) return;  // avoid unnecessary redraw
 
-  eraseOld();
+  if ( trace )
+  {
+    tracePoints.append(QPoint(x, y));
+    if ( tracePoints.count() == MAX_POINTS )
+      tracePoints.removeFirst();
+  }
 
   y = newY;
+  update();
 }
 
 //-----------------------------------------------------------------
@@ -96,41 +120,7 @@ void PosWidget::changeY(int newY)
 void PosWidget::showTrace(bool t)
 {
   trace = t;
-
-  if ( !trace )
-  {
-    erase();
-    update();
-  }
-}
-
-//-----------------------------------------------------------------
-
-void PosWidget::eraseOld()
-{
-  QPainter paint(this);
-
-  //paint.eraseRect(x - MARK_WIDTH/2, y - MARK_WIDTH/2, MARK_WIDTH + 1, MARK_WIDTH + 1);
-
-  // erase previous cross (don't use eraseRect() so that trace flags will be not destroyed so much)
-  paint.setPen(Qt::white);
-
-  paint.drawLine(x - MARK_WIDTH/2, y - MARK_WIDTH/2,
-                 x + MARK_WIDTH/2, y + MARK_WIDTH/2);
-
-  paint.drawLine(x - MARK_WIDTH/2, y + MARK_WIDTH/2,
-                 x + MARK_WIDTH/2, y - MARK_WIDTH/2);
-
-  if ( trace )  // show previous position with a smaller black cross
-  {
-    paint.setPen(Qt::black);
-
-    paint.drawLine(x - 2, y - 2,
-                   x + 2, y + 2);
-
-    paint.drawLine(x - 2, y + 2,
-                   x + 2, y - 2);
-  }
+  tracePoints.clear();
 
   update();
 }

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2003 by Martin Koller                                   *
+ *   Copyright (C) 2003,2005,2006 by Martin Koller                         *
  *   m.koller@surfeu.at                                                    *
  *   This file is part of the KDE Control Center Module for Joysticks      *
  *                                                                         *
@@ -16,14 +16,14 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 #ifndef _POSWIDGET_H_
 #define _POSWIDGET_H_
 
-#include <qwidget.h>
-//Added by qt3to4:
-#include <QPaintEvent>
+#include <QWidget>
+#include <QList>
+class QPaintEvent;
 
 /**
   Widget to display the joystick-selected (x,y) position
@@ -31,27 +31,24 @@
 class PosWidget : public QWidget
 {
   Q_OBJECT
-  
+
   public:
-    PosWidget(QWidget *parent = 0, const char *name = 0);
+    PosWidget(QWidget *parent = 0);
 
     void changeX(int x);
     void changeY(int y);
 
     // define if a trace of the moving joystick shall be displayed
-    // setting it to false will erase all previous marks from the widget
-    // NOTE: the traced positions are not stored and will be erased if the widget is covered/redisplayed
+    // changing it will erase all previous marks from the widget
     void showTrace(bool t);
 
   protected:
     virtual void paintEvent(QPaintEvent *);
 
   private:
-    void eraseOld();
-
-  private:
     int x, y;
     bool trace;
+    QList<QPoint> tracePoints;
 };
 
 #endif

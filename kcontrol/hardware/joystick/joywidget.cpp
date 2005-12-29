@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2003 by Martin Koller                                   *
+ *   Copyright (C) 2003,2005,2006 by Martin Koller                         *
  *   m.koller@surfeu.at                                                    *
  *   This file is part of the KDE Control Center Module for Joysticks      *
  *                                                                         *
@@ -16,7 +16,7 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.         *
  ***************************************************************************/
 #include "joywidget.h"
 #include "joydevice.h"
@@ -40,15 +40,15 @@
 
 #include <stdio.h>
 #include <kvbox.h>
-
+#include <kdebug.h>
 //--------------------------------------------------------------
 static QString PRESSED = I18N_NOOP("PRESSED");
 //--------------------------------------------------------------
 
-JoyWidget::JoyWidget(QWidget *parent, const char *name)
- : QWidget(parent, name), idle(0), joydev(0)
+JoyWidget::JoyWidget(QWidget *parent)
+ : QWidget(parent), idle(0), joydev(0)
 {
-  KVBox *mainVbox = new KVBox(parent);
+  KVBox *mainVbox = new KVBox(this);
   mainVbox->setSpacing(KDialog::spacingHint());
 
   // create area to show an icon + message if no joystick was detected
@@ -93,25 +93,25 @@ JoyWidget::JoyWidget(QWidget *parent, const char *name)
 
   new QLabel(i18n("Buttons:"), vboxMid);
   buttonTbl = new QTableWidget(0, 1, vboxMid);
+  buttonTbl->setSelectionMode(QAbstractItemView::NoSelection);
   buttonTbl->setEditTriggers(QAbstractItemView::NoEditTriggers);
   buttonTbl->setHorizontalHeaderLabels(QStringList(i18n("State")));
   buttonTbl->setSortingEnabled(false);
   buttonTbl->horizontalHeader()->setClickable(false);
   buttonTbl->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-  buttonTbl->verticalHeader()->setClickable(false);
-  buttonTbl->verticalHeader()->setResizeMode(QHeaderView::Stretch);
   buttonTbl->horizontalHeader()->resizeSection(0, colWidth);
+  buttonTbl->verticalHeader()->setClickable(false);
 
   new QLabel(i18n("Axes:"), vboxRight);
   axesTbl = new QTableWidget(0, 1, vboxRight);
+  axesTbl->setSelectionMode(QAbstractItemView::NoSelection);
   axesTbl->setEditTriggers(QAbstractItemView::NoEditTriggers);
   axesTbl->setHorizontalHeaderLabels(QStringList(i18n("Value")));
   axesTbl->setSortingEnabled(false);
   axesTbl->horizontalHeader()->setClickable(false);
   axesTbl->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-  axesTbl->verticalHeader()->setClickable(false);
-  axesTbl->verticalHeader()->setResizeMode(QHeaderView::Stretch);
   axesTbl->horizontalHeader()->resizeSection(0, colWidth);
+  axesTbl->verticalHeader()->setClickable(false);
 
   // calibrate button
   calibrate = new QPushButton(i18n("Calibrate"), mainVbox);
@@ -277,17 +277,21 @@ void JoyWidget::showDeviceProps(JoyDevice *joy)
   axesTbl->setRowCount(joydev->numAxes());
   if ( joydev->numAxes() >= 2 )
   {
-    axesTbl->verticalHeaderItem(0)->setText("1(x)");
-    axesTbl->verticalHeaderItem(1)->setText("2(y)");
+    axesTbl->setVerticalHeaderItem(0, new QTableWidgetItem(i18n("1(x)")));
+    axesTbl->setVerticalHeaderItem(1, new QTableWidgetItem(i18n("2(y)")));
   }
 
   calibrate->setEnabled(true);
   idle->start(0);
 
   // make both tables use the same space for header; this looks nicer
+  // TODO: Don't know how to do this in Qt4; the following does no longer work
+  // Probably by setting a sizeHint for every single header item ?
+  /*
   buttonTbl->verticalHeader()->setFixedWidth(QMAX(buttonTbl->verticalHeader()->width(),
                                                     axesTbl->verticalHeader()->width()));
   axesTbl->verticalHeader()->setFixedWidth(buttonTbl->verticalHeader()->width());
+  */
 }
 
 //--------------------------------------------------------------
@@ -304,6 +308,9 @@ void JoyWidget::checkDevice()
 
   if ( type == JoyDevice::BUTTON )
   {
+    if ( ! buttonTbl->item(number, 0) )
+      buttonTbl->setItem(number, 0, new QTableWidgetItem());
+
     if ( value == 0 )  // button release
       buttonTbl->item(number, 0)->setText("-");
     else
@@ -317,6 +324,9 @@ void JoyWidget::checkDevice()
 
     if ( number == 1 ) // y-axis
       xyPos->changeY(value);
+
+    if ( ! axesTbl->item(number, 0) )
+      axesTbl->setItem(number, 0, new QTableWidgetItem());
 
     axesTbl->item(number, 0)->setText(QString("%1").arg(int(value)));
   }
