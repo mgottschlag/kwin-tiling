@@ -1,4 +1,4 @@
-<!-- generated from /home/kdeuser/svn/KDE/kdebase/kdm/config.def - DO NOT EDIT! -->
+<!-- generated from ../../kdm/config.def - DO NOT EDIT! -->
 
 <chapter id="kdm-files">
 <title>The Files &kdm; Uses for Configuration</title>
@@ -698,6 +698,9 @@ This string is subject to word splitting.
 <para>
 The VT the &X-Server; should run on.
 <option>ServerVTs</option> should be used instead of this option.
+Leave it zero to let &kdm; assign a <acronym>VT</acronym> automatically.
+Set it to <literal>-1</literal> to avoid assigning a <acronym>VT</acronym>
+alltogether - this is required for setups with multiple physical consoles.
 Currently Linux only.
 </para>
 </listitem>
@@ -1153,6 +1156,27 @@ user group named by that item.
 Enable automatic login. <emphasis>Use with extreme care!</emphasis>
 </para>
 <para>The default is <quote>false</quote>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term id="option-autologinagain"><option>AutoLoginAgain</option></term>
+<listitem>
+<para>
+If true, auto-login after logout. If false, auto-login is performed only
+when a display session starts up.
+</para>
+<para>The default is <quote>false</quote>.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term id="option-autologindelay"><option>AutoLoginDelay</option></term>
+<listitem>
+<para>
+The delay in seconds before automatic login kicks in. This is also known as
+<quote>Timed Login</quote>.
+</para>
 </listitem>
 </varlistentry>
 
