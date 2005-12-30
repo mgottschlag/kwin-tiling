@@ -28,8 +28,7 @@ static void signalHandler(int sigId)
         kapp->quit(); // turn catchable signals into clean shutdown
 }
 
-extern "C" KDE_EXPORT
-int kdemain(int argc, char **argv)
+int main(int argc, char **argv)
 {
     //setup signal handling
     signal(SIGTERM, signalHandler);
