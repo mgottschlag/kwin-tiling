@@ -19,7 +19,7 @@
 #include "krichtextlabel.h"
 
 #include <qtooltip.h>
-#include <q3stylesheet.h>
+#include <QTextDocument>
 #include <q3simplerichtext.h>
 //Added by qt3to4:
 #include <QLabel>
@@ -34,7 +34,7 @@ static QString qrichtextify( const QString& text )
   QStringList lines = text.split( '\n');
   for(QStringList::Iterator it = lines.begin(); it != lines.end(); ++it)
   {
-    *it = Q3StyleSheet::convertFromPlainText( *it, Q3StyleSheetItem::WhiteSpaceNormal );
+    *it = Qt::convertFromPlainText( *it, Qt::WhiteSpaceNormal );
   }
 
   return lines.join(QString::null);
