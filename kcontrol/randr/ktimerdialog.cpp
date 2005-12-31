@@ -169,7 +169,7 @@ void KTimerDialog::slotInternalTimeout()
             slotOk();
             break;
         case Apply:
-            applyPressed();
+            slotApply();
             break;
         case Try:
             slotTry();
