@@ -73,7 +73,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QTextStream>
-#include <Q3StyleSheet>
+#include <QTextDocument>
 #include <kauthorized.h>
 
 #define KDESU_ERR strerror(errno)
@@ -550,7 +550,7 @@ int Minicli::runCommand()
             KMessageBox::sorry( this, i18n("<center><b>%1</b></center>\n"
                                       "You do not have permission to execute "
                                       "this command.")
-                                      .arg( Q3StyleSheet::convertFromPlainText(cmd) ));
+                                      .arg( Qt::convertFromPlainText(cmd) ));
             return 1;
           }
         }
@@ -577,7 +577,7 @@ int Minicli::runCommand()
 
           KMessageBox::sorry( this, i18n("<center><b>%1</b></center>\n"
                                     "Could not run the specified command.")
-                                    .arg( Q3StyleSheet::convertFromPlainText(cmd) ));
+                                    .arg( Qt::convertFromPlainText(cmd) ));
           return 1;
         }
       }
