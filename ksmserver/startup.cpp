@@ -104,7 +104,7 @@ void KSMServer::restoreSession( QString sessionName )
     if ( !wm.isEmpty() ) {
 	for ( int i = 1; i <= count; i++ ) {
 	    QString n = QString::number(i);
-	    if ( wm == config->readEntry( QString("program")+n ) ) {
+	    if ( wm == config->readEntry( QString("program")+n, QString() ) ) {
 		wmCommands << config->readListEntry( QString("restartCommand")+n );
 	    }
 	}
@@ -237,12 +237,12 @@ void KSMServer::restoreNext()
              (config->readNumEntry( QString("restartStyleHint")+n ) == SmRestartNever)) {
             continue;
         }
-        if ( wm == config->readEntry( QString("program")+n ) )
+        if ( wm == config->readEntry( QString("program")+n, QString() ) )
             continue;
         startApplication( restartCommand,
-                          config->readEntry( QString("clientMachine")+n ),
-                          config->readEntry( QString("userId")+n ));
-        lastIdStarted = config->readEntry( QString("clientId")+n );
+                          config->readEntry( QString("clientMachine")+n, QString() ),
+                          config->readEntry( QString("userId")+n, QString() ));
+        lastIdStarted = config->readEntry( QString("clientId")+n, QString() );
         if ( !lastIdStarted.isEmpty() ) {
             restoreTimer.start( 2000, TRUE );
             return; // we get called again from the clientRegistered handler
