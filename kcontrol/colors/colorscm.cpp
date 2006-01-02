@@ -21,6 +21,7 @@
 #include <qslider.h>
 #include <q3groupbox.h>
 #include <qwhatsthis.h>
+#include <Q3PtrList>
 
 #include <kcolorbutton.h>
 #include <kcursor.h>
