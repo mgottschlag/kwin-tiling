@@ -518,10 +518,10 @@ KGreeter::pluginSetup()
 	if (_preselUser != PRESEL_NONE && verify->entityPresettable()) {
 		if (verify->entitiesLocal())
 			ent = _preselUser == PRESEL_PREV ?
-				stsFile->readEntry( dName ) : _defaultUser;
+				stsFile->readEntry( dName, QString() ) : _defaultUser;
 		else
 			ent = _preselUser == PRESEL_PREV ?
-				stsFile->readEntry( dn ) :
+				stsFile->readEntry( dn, QString() ) :
 				verify->getConf( 0, (pn + ".DefaultEntity").latin1(), QVariant() ).toString();
 		field = verify->entitiesFielded() ?
 			verify->getConf( 0, (pn + ".FocusField").latin1(), QVariant( 0 ) ).toInt() :
