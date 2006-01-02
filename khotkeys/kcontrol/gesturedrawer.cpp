@@ -21,7 +21,7 @@ namespace KHotKeys
 {
 
 GestureDrawer::GestureDrawer(QWidget *parent, const char *name)
-  : QFrame(parent), _data(QString::null)
+  : QFrame(parent), _data(QString())
     {
     setObjectName(name);
     setBackgroundColor( colorGroup().base());

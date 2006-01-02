@@ -45,13 +45,13 @@ Gesture_triggers_tab::Gesture_triggers_tab( QWidget* parent_P, const char* name_
 
 void Gesture_triggers_tab::clear_data()
     {
-    gesture1 = gesture2 = gesture3 = QString::null;
+    gesture1 = gesture2 = gesture3 = QString();
     gesture_lineedit1->clear();
     gesture_lineedit2->clear();
     gesture_lineedit3->clear();
-    gesture_drawer1->setData( QString::null );
-    gesture_drawer2->setData( QString::null );
-    gesture_drawer3->setData( QString::null );
+    gesture_drawer1->setData( QString() );
+    gesture_drawer2->setData( QString() );
+    gesture_drawer3->setData( QString() );
     }
     
 void Gesture_triggers_tab::set_data( const Trigger_list* triggers_P )
@@ -70,7 +70,7 @@ void Gesture_triggers_tab::set_data( const Trigger_list* triggers_P )
         }
     else
         trig = NULL;
-    gesture1 = trig ? trig->gesturecode() : QString::null;
+    gesture1 = trig ? trig->gesturecode() : QString();
     gesture_lineedit1->setText( gesture1 );
     gesture_drawer1->setData( gesture1 );
     ++it;
@@ -81,7 +81,7 @@ void Gesture_triggers_tab::set_data( const Trigger_list* triggers_P )
         }
     else
         trig = NULL;
-    gesture2 = trig ? trig->gesturecode() : QString::null;
+    gesture2 = trig ? trig->gesturecode() : QString();
     gesture_lineedit2->setText( gesture2 );
     gesture_drawer2->setData( gesture2 );
     ++it;
@@ -92,7 +92,7 @@ void Gesture_triggers_tab::set_data( const Trigger_list* triggers_P )
         }
     else
         trig = NULL;
-    gesture3 = trig ? trig->gesturecode() : QString::null;
+    gesture3 = trig ? trig->gesturecode() : QString();
     gesture_lineedit3->setText( gesture3 );
     gesture_drawer3->setData( gesture3 );
     }

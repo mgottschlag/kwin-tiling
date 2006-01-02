@@ -168,7 +168,7 @@ KConsole::slotData()
 				removeParagraph( 0 );
 			if (!leftover.isEmpty()) {
 				append( leftover + str.mid( opos, pos - opos ) );
-				leftover = QString::null;
+				leftover.clear();
 			} else
 				append( str.mid( opos, pos - opos ) );
 		}

@@ -76,10 +76,10 @@ KdmItem::KdmItem( KdmItem *parent, const QDomNode &node, const char *name )
 		QString tagName = el.tagName(), attr;
 
 		if (tagName == "pos") {
-			parseAttribute( el.attribute( "x", QString::null ), pos.x, pos.xType );
-			parseAttribute( el.attribute( "y", QString::null ), pos.y, pos.yType );
-			parseAttribute( el.attribute( "width", QString::null ), pos.width, pos.wType );
-			parseAttribute( el.attribute( "height", QString::null ), pos.height, pos.hType );
+			parseAttribute( el.attribute( "x", QString() ), pos.x, pos.xType );
+			parseAttribute( el.attribute( "y", QString() ), pos.y, pos.yType );
+			parseAttribute( el.attribute( "width", QString() ), pos.width, pos.wType );
+			parseAttribute( el.attribute( "height", QString() ), pos.height, pos.hType );
 			pos.anchor = el.attribute( "anchor", "nw" );
 		}
 	}

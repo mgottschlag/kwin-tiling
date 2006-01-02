@@ -201,7 +201,7 @@ void Windowdef_list_widget::edit_listview_item( Windowdef_list_item* item_P )
 
 QString Windowdef_list_item::text( int column_P ) const
     {
-    return column_P == 0 ? window()->description() : QString::null;
+    return column_P == 0 ? window()->description() : QString();
     }
 
 Windowdef_list_item::~Windowdef_list_item()

@@ -27,7 +27,7 @@ GestureRecordPage::GestureRecordPage(const QString &gesture,
                                      QWidget *parent, const char *name)
   : KVBox(parent),
     _recorder(NULL), _resetButton(NULL),
-    _tryOne(NULL), _tryTwo(NULL), _tryThree(NULL), _gest(QString::null),
+    _tryOne(NULL), _tryTwo(NULL), _tryThree(NULL), _gest(QString()),
     _tryCount(1)
     {
     setObjectName(name);
@@ -133,11 +133,11 @@ void GestureRecordPage::slotRecorded(const QString &data)
 
 void GestureRecordPage::slotResetClicked()
     {
-    _gest = QString::null;
+    _gest.clear();
 
-    _tryOne->setData(QString::null);
-    _tryTwo->setData(QString::null);
-    _tryThree->setData(QString::null);
+    _tryOne->setData(QString());
+    _tryTwo->setData(QString());
+    _tryThree->setData(QString());
 
     _tryCount = 1;
 

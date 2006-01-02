@@ -112,7 +112,7 @@ KdmPixmap::loadPixmap( const QString &fileName, QPixmap &map, QString &fullName 
 
 	if (!fullName.endsWith( ".svg" ))	// we delay it for svgs
 		if (!map.load( fullName ))
-			fullName = QString::null;
+			fullName.clear();
 }
 
 void
@@ -128,7 +128,7 @@ KdmPixmap::renderSvg( PixmapStruct::PixmapClass *pClass, const QRect &area )
 		pClass->readyPixmap.resize( 0, 0 );
 	} else {
 		kdWarning() << "failed to load " << pClass->fullpath << endl;
-		pClass->fullpath = QString::null;
+		pClass->fullpath.clear();
 	}
 
 	delete svgEngine;

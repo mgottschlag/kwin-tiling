@@ -118,7 +118,7 @@ void init_config( void )
 	struct utsname tuname;
 	uname( &tuname );
 	QString gst = _greetString;
-	_greetString = QString::null;
+	_greetString.clear();
 	int i, j, l = gst.length();
 	for (i = 0; i < l; i++) {
 		if (gst[i] == '%') {

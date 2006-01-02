@@ -61,7 +61,7 @@ public slots:
     void slotAboutToShow();
 
 private:
-    void rebuild( const QString& filter = QString::null );
+    void rebuild( const QString& filter = QString() );
     void buildFromScratch();
 
     void insertSearchFilter();

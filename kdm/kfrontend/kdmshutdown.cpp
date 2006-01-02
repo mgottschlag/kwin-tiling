@@ -622,7 +622,7 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 	                            .arg( os ?
 	                                  i18n("<br>(Next boot: %1)")
 	                                  .arg( QString::fromLocal8Bit( os ) ) :
-	                                  QString::null ),
+	                                  QString() ),
 	                            this ) );
 
 	if (sess) {
@@ -706,7 +706,7 @@ KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
 		.arg( strt ).arg( end )
 		.arg( os ?
 		      i18n("\nNext boot: %1").arg( QString::fromLocal8Bit( os ) ) :
-		      QString::null );
+		      QString() );
 	if (timeout != TO_INF)
 		trg += i18n("\nAfter timeout: %1")
 		       .arg( force == SHUT_FORCE ?

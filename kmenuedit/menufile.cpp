@@ -87,7 +87,7 @@ void MenuFile::create()
 {
    QDomImplementation impl;
    QDomDocumentType docType = impl.createDocumentType( MF_MENU, MF_PUBLIC_ID, MF_SYSTEM_ID );
-   m_doc = impl.createDocument(QString::null, MF_MENU, docType);
+   m_doc = impl.createDocument(QString(), MF_MENU, docType);
 }
 
 bool MenuFile::save()
@@ -474,7 +474,7 @@ QString MenuFile::uniqueMenuName(const QString &menuName, const QString &newMenu
       result.truncate(trunc);
       result.append(QString("-%1/").arg(n));
    }
-   return QString::null; // Never reached
+   return QString(); // Never reached
 }
 
 void MenuFile::performAction(const ActionAtom *atom)

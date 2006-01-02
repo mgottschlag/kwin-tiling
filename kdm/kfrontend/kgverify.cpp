@@ -356,7 +356,7 @@ KGVerify::doReject( bool initial )
 	handler->verifyClear();
 	Debug( "%s->clear()\n", pName.data() );
 	greet->clear();
-	curUser = QString::null;
+	curUser.clear();
 	if (!scheduleAutoLogin( initial )) {
 		isClear = !(isClear && applyPreset());
 		if (running) {
@@ -647,7 +647,7 @@ KGVerify::handleVerify()
 		case V_CHTOK:
 			Debug( " V_CHTOK\n" );
 			nfunc = KGreeterPlugin::ChAuthTok;
-			user = QString::null;
+			user.clear();
 		  dchtok:
 			{
 				timer.stop();
@@ -732,7 +732,7 @@ KGVerify::handleVerify()
 		greet->start();
 		if (!cont)
 			return;
-		user = QString::null;
+		user.clear();
 	}
 }
 
@@ -893,7 +893,7 @@ KGVerify::init( const QStringList &plugins )
 			continue;
 		}
 		plugin.info = (kgreeterplugin_info*)plugin.library->symbol( "kgreeterplugin_info" );
-		if (!plugin.info->init( QString::null, getConf, 0 )) {
+		if (!plugin.info->init( QString(), getConf, 0 )) {
 			LogError( "GreeterPlugin %s (%s) refuses to serve\n",
 			          (*it).latin1(), path.latin1() );
 			plugin.library->unload();

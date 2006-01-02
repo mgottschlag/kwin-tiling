@@ -231,7 +231,7 @@ void Action_list_widget::edit_listview_item( Action_list_item* item_P )
 
 QString Action_list_item::text( int column_P ) const
     {
-    return column_P == 0 ? action()->description() : QString::null;
+    return column_P == 0 ? action()->description() : QString();
     }
 
 Action_list_item::~Action_list_item()

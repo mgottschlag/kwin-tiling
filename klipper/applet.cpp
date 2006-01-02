@@ -95,7 +95,7 @@ void KlipperApplet::preferences()
 
 void KlipperApplet::help()
 {
-    KToolInvocation::invokeHelp(QString::null, QString::fromLatin1("klipper"));
+    KToolInvocation::invokeHelp(QString(), QString::fromLatin1("klipper"));
 }
 
 void KlipperApplet::about()

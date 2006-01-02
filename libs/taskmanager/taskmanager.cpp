@@ -870,7 +870,7 @@ QString Task::className()
         XFree( hint.res_class );
         return nh;
     }
-    return QString::null;
+    return QString();
 }
 
 QString Task::classClass()
@@ -882,7 +882,7 @@ QString Task::classClass()
         XFree( hint.res_class );
         return ch;
     }
-    return QString::null;
+    return QString();
 }
 
 QPixmap Task::icon( int width, int height, bool allowResize )

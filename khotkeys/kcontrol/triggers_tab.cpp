@@ -127,7 +127,7 @@ void Triggers_tab::new_selected( int type_P )
           break;
         case TYPE_GESTURE_TRIGGER: // Gesture trigger
             dlg = new Gesture_trigger_dialog(
-                new Gesture_trigger( NULL, QString::null )); // CHECKME NULL ?
+                new Gesture_trigger( NULL, QString() )); // CHECKME NULL ?
           break;
         case TYPE_WINDOW_TRIGGER: // Window trigger
             dlg = new Window_trigger_dialog( new Window_trigger( NULL, new Windowdef_list( "" ),
@@ -203,7 +203,7 @@ void Triggers_tab::edit_listview_item( Trigger_list_item* item_P )
 
 QString Trigger_list_item::text( int column_P ) const
     {
-    return column_P == 0 ? trigger()->description() : QString::null;
+    return column_P == 0 ? trigger()->description() : QString();
     }
 
 // Shortcut_trigger_widget

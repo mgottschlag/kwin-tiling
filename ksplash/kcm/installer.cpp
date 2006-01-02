@@ -66,7 +66,7 @@ void ThemeListBox::slotMouseButtonPressed(int button, Q3ListBoxItem *item, const
 {
    if ((button & Qt::LeftButton) == 0) return;
    mOldPos = p;
-   mDragFile = QString::null;
+   mDragFile.clear();
    int cur = index(item);
    if (cur >= 0)
       mDragFile = text2path[text(cur)];
@@ -321,13 +321,13 @@ void SplashInstaller::slotRemove()
 void SplashInstaller::slotSetTheme(int id)
 {
   bool enabled;
-  QString path(QString::null);
+  QString path = QString();
   QString infoTxt;
 
   if (id < 0)
   {
-    mPreview->setText(QString::null);
-    mText->setText(QString::null);
+    mPreview->setText(QString());
+    mText->setText(QString());
     enabled = false;
   }
   else

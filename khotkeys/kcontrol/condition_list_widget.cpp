@@ -156,7 +156,7 @@ void Condition_list_widget::new_selected( int type_P )
         if( tmp && tmp->accepts_children())
             {
             int ret = KMessageBox::questionYesNoCancel( NULL,
-                i18n( "A group is selected.\nAdd the new condition in this selected group?" ), QString::null, i18n("Add in Group"), i18n("Ignore Group"));
+                i18n( "A group is selected.\nAdd the new condition in this selected group?" ), QString(), i18n("Add in Group"), i18n("Ignore Group"));
             if( ret == KMessageBox::Cancel )
                 return;
             else if( ret == KMessageBox::Yes )
@@ -329,7 +329,7 @@ void Condition_list_widget::edit_listview_item( Condition_list_item* item_P )
 
 QString Condition_list_item::text( int column_P ) const
     {
-    return column_P == 0 ? condition()->description() : QString::null;
+    return column_P == 0 ? condition()->description() : QString();
     }
 
 // Active_window_condition_dialog

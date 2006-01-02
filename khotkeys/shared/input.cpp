@@ -112,7 +112,7 @@ void Kbd::grab_shortcut( const KShortcut& shortcut_P )
         kga->connectItem( name, this, SLOT( key_slot( int )));
 #endif
         QString name = ' ' + shortcut_P.toStringInternal();
-        kga->insert( name, name, QString::null, shortcut_P,
+        kga->insert( name, name, QString(), shortcut_P,
             this, SLOT( key_slot( QString )));
         QTimer::singleShot( 0, this, SLOT( update_connections()));
         }

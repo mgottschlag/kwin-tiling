@@ -166,7 +166,7 @@ Action_listview_item* Actions_listview_widget::create_item( Q3ListViewItem* pare
 
 QString Action_listview_item::text( int column_P ) const
     {
-    return column_P == 0 ? data()->name() : QString::null;
+    return column_P == 0 ? data()->name() : QString();
     }
 
 // CHECKME poradne tohle zkontrolovat po tom prekopani

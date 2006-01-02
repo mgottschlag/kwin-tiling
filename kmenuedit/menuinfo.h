@@ -72,7 +72,7 @@ public:
 
     // Return a unique item caption inspired by @p caption but different
     // from @p exclude
-    QString uniqueItemCaption(const QString &caption, const QString &exclude = QString::null);
+    QString uniqueItemCaption(const QString &caption, const QString &exclude = QString());
 
     // Update full id's for this item and all submenus
     void updateFullId(const QString &parentId);

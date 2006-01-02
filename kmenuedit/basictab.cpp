@@ -330,19 +330,19 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     
     if (!entryInfo)
     {
-       _nameEdit->setText(QString::null);
-       _descriptionEdit->setText(QString::null);
-       _commentEdit->setText(QString::null);
-       _iconButton->setIcon(QString::null);
+       _nameEdit->setText(QString());
+       _descriptionEdit->setText(QString());
+       _commentEdit->setText(QString());
+       _iconButton->setIcon(QString());
 
        // key binding part
        _keyEdit->setShortcut( KShortcut(), false );
-       _execEdit->lineEdit()->setText(QString::null);
+       _execEdit->lineEdit()->setText(QString());
        _systrayCB->setChecked(false);
 
-       _pathEdit->lineEdit()->setText(QString::null);
-       _termOptEdit->setText(QString::null);
-       _uidEdit->setText(QString::null);
+       _pathEdit->lineEdit()->setText(QString());
+       _termOptEdit->setText(QString());
+       _uidEdit->setText(QString());
 
        _launchCB->setChecked(false);
        _terminalCB->setChecked(false);

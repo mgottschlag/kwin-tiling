@@ -127,7 +127,7 @@ QString MenuFolderInfo::uniqueMenuCaption(const QString &caption)
 
       result = cap + QString("-%1").arg(n);
    }
-   return QString::null; // Never reached
+   return QString(); // Never reached
 }
 
 // Return a unique item caption inspired by @p caption
@@ -155,7 +155,7 @@ QString MenuFolderInfo::uniqueItemCaption(const QString &caption, const QString 
 
       result = cap + QString("-%1").arg(n);
    }
-   return QString::null; // Never reached
+   return QString(); // Never reached
 }
 
 // Return a list of existing submenu ids

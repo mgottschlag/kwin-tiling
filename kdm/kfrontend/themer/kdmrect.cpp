@@ -59,17 +59,17 @@ KdmRect::KdmRect( KdmItem *parent, const QDomNode &node, const char *name )
 		QString tagName = el.tagName();
 
 		if (tagName == "normal") {
-			parseColor( el.attribute( "color", QString::null ), rect.normal.color );
+			parseColor( el.attribute( "color", QString() ), rect.normal.color );
 			rect.normal.alpha = el.attribute( "alpha", "1.0" ).toFloat();
 			parseFont( el.attribute( "font", "Sans 14" ), rect.normal.font );
 		} else if (tagName == "active") {
 			rect.active.present = true;
-			parseColor( el.attribute( "color", QString::null ), rect.active.color );
+			parseColor( el.attribute( "color", QString() ), rect.active.color );
 			rect.active.alpha = el.attribute( "alpha", "1.0" ).toFloat();
 			parseFont( el.attribute( "font", "Sans 14" ), rect.active.font );
 		} else if (tagName == "prelight") {
 			rect.prelight.present = true;
-			parseColor( el.attribute( "color", QString::null ), rect.prelight.color );
+			parseColor( el.attribute( "color", QString() ), rect.prelight.color );
 			rect.prelight.alpha = el.attribute( "alpha", "1.0" ).toFloat();
 			parseFont( el.attribute( "font", "Sans 14" ), rect.prelight.font );
 		} else if (tagName == "border")

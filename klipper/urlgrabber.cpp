@@ -406,7 +406,7 @@ ClipCommand::ClipCommand(const QString &_command, const QString &_description,
     if (service)
         pixmap = service->icon();
     else
-        pixmap = QString::null;
+        pixmap.clear();
     }
 }
 

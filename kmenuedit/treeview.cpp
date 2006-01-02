@@ -323,7 +323,7 @@ QString TreeView::findName(KDesktopFile *df, bool deleted)
     if (deleted)
     {
        if (name == "empty")
-          name = QString::null;
+          name.clear();
        if (name.isEmpty())
        {
           QString file = df->fileName();
@@ -356,9 +356,9 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, Q3ListViewItem *after, Menu
 {
    TreeItem *item;
    if (parent == 0)
-     item = new TreeItem(this, after, QString::null, _init);
+     item = new TreeItem(this, after, QString(), _init);
    else
-     item = new TreeItem(parent, after, QString::null, _init);
+     item = new TreeItem(parent, after, QString(), _init);
 
    item->setMenuFolderInfo(folderInfo);
    item->setName(folderInfo->caption);
@@ -408,16 +408,16 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, Q3ListViewItem *after, Menu
 {
    TreeItem* item;
    if (parent == 0)
-     item = new TreeItem(this, after, QString::null, _init);
+     item = new TreeItem(this, after, QString(), _init);
    else
-     item = new TreeItem(parent, after, QString::null,_init);
+     item = new TreeItem(parent, after, QString(),_init);
 
    return item;
 }
 
 void TreeView::fillBranch(MenuFolderInfo *folderInfo, TreeItem *parent)
 {
-    QString relPath = parent ? parent->directory() : QString::null;
+    QString relPath = parent ? parent->directory() : QString();
     Q3PtrListIterator<MenuInfo> it( folderInfo->initialLayout );
     TreeItem *after = 0;
     for (MenuInfo *info; (info = it.current()); ++it)
@@ -735,7 +735,7 @@ void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewIt
 
    // get destination folder
    TreeItem *parentItem = static_cast<TreeItem*>(parent);
-   QString folder = parentItem ? parentItem->directory() : QString::null;
+   QString folder = parentItem ? parentItem->directory() : QString();
    MenuFolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : m_rootFolder;
 
    if (e->source() != this) 
@@ -937,7 +937,7 @@ void TreeView::startDrag()
 
 Q3DragObject *TreeView::dragObject()
 {
-    m_dragPath = QString::null;
+    m_dragPath.clear();
     TreeItem *item = (TreeItem*)selectedItem();
     if(item == 0) return 0;
 
@@ -993,7 +993,7 @@ void TreeView::newsubmenu()
 
    bool ok;
    QString caption = KInputDialog::getText( i18n( "New Submenu" ),
-        i18n( "Submenu name:" ), QString::null, &ok, this );
+        i18n( "Submenu name:" ), QString(), &ok, this );
 
    if (!ok) return;
 
@@ -1008,7 +1008,7 @@ void TreeView::newsubmenu()
    if(!item)
    {
       parentItem = 0;
-      folder = QString::null;
+      folder.clear();
    }
    else if(item->isDirectory())
    {
@@ -1019,7 +1019,7 @@ void TreeView::newsubmenu()
    else
    {
       parentItem = static_cast<TreeItem*>(item->parent());
-      folder = parentItem ? parentItem->directory() : QString::null;
+      folder = parentItem ? parentItem->directory() : QString();
    }
 
    MenuFolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : m_rootFolder;
@@ -1064,7 +1064,7 @@ void TreeView::newitem()
 
    bool ok;
    QString caption = KInputDialog::getText( i18n( "New Item" ),
-        i18n( "Item name:" ), QString::null, &ok, this );
+        i18n( "Item name:" ), QString(), &ok, this );
 
    if (!ok) return;
 
@@ -1084,7 +1084,7 @@ void TreeView::newitem()
    if(!item)
    {
       parentItem = 0;
-      folder = QString::null;
+      folder.clear();
    }
    else if(item->isDirectory())
    {
@@ -1095,7 +1095,7 @@ void TreeView::newitem()
    else
    {
       parentItem = static_cast<TreeItem*>(item->parent());
-      folder = parentItem ? parentItem->directory() : QString::null;
+      folder = parentItem ? parentItem->directory() : QString();
    }
 
    MenuFolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : m_rootFolder;
@@ -1258,7 +1258,7 @@ void TreeView::paste()
    else
    {
       parentItem = static_cast<TreeItem*>(item->parent());
-      folder = parentItem ? parentItem->directory() : QString::null;
+      folder = parentItem ? parentItem->directory() : QString();
    }
 
    MenuFolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : m_rootFolder;
@@ -1413,7 +1413,7 @@ void TreeView::del(TreeItem *item, bool deleteInfo)
 
         // Remove from menu
         // m_menuFile->removeMenu(item->directory());
-        m_menuFile->pushAction(MenuFile::REMOVE_MENU, item->directory(), QString::null);
+        m_menuFile->pushAction(MenuFile::REMOVE_MENU, item->directory(), QString());
 
         // Remove tree item
         delete item;
@@ -1440,7 +1440,7 @@ void TreeView::del(TreeItem *item, bool deleteInfo)
         }
 
         // Remove from menu
-        QString folder = parentItem ? parentItem->directory() : QString::null;
+        QString folder = parentItem ? parentItem->directory() : QString();
         // m_menuFile->removeEntry(folder, menuId);
         m_menuFile->pushAction(MenuFile::REMOVE_ENTRY, folder, menuId);
 

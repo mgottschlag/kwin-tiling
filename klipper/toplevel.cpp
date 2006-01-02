@@ -936,7 +936,7 @@ QString KlipperWidget::getClipboardHistoryItem(int i)
             return item->text();
         }
     }
-    return QString::null;
+    return QString();
 
 }
 

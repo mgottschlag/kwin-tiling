@@ -293,7 +293,7 @@ void Module::set_gestures_exclude( Windowdef_list* windows )
 
 void Module::import()
     {
-    QString file = KFileDialog::getOpenFileName( QString::null, "*.khotkeys", topLevelWidget(),
+    QString file = KFileDialog::getOpenFileName( QString(), "*.khotkeys", topLevelWidget(),
         i18n( "Select File with Actions to Be Imported" ));
     if( file.isEmpty())
         return;

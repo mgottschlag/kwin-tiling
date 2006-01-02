@@ -19,10 +19,10 @@
 */
 #ifndef NOSLOTS
 # define DEF( name, key, fnSlot ) \
-   keys->insert( name, i18n(name), QString::null, key, this, SLOT(fnSlot) )
+   keys->insert( name, i18n(name), QString(), key, this, SLOT(fnSlot) )
 #else
 # define DEF( name, key, fnSlot ) \
-   keys->insert( name, i18n(name), QString::null, key )
+   keys->insert( name, i18n(name), QString(), key )
 #endif
 #include <Qt>
 #define WIN Qt::META

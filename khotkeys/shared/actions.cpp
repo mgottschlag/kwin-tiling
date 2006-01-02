@@ -214,7 +214,7 @@ void Menuentry_action::execute()
 const QString Menuentry_action::description() const
     {
     (void) service();
-    return i18n( "Menuentry : " ) + (_service ? _service->name() : QString::null);
+    return i18n( "Menuentry : " ) + (_service ? _service->name() : QString());
     }
 
 Action* Menuentry_action::copy( Action_data* data_P ) const

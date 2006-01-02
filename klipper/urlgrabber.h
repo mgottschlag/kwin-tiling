@@ -54,7 +54,7 @@ public:
    * otherwise true.
    */
   bool checkNewData( const QString& clipData );
-  void invokeAction( const QString& clip = QString::null );
+  void invokeAction( const QString& clip = QString() );
 
   const ActionList * actionList() const { return myActions; }
   void setActionList( ActionList * );

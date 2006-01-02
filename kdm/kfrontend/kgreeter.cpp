@@ -83,7 +83,7 @@ class UserListView : public KListView {
 	{
 		setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Ignored );
 		header()->hide();
-		addColumn( QString::null );
+		addColumn( QString() );
 		setColumnAlignment( 0, Qt::AlignVCenter );
 		setResizeMode( Q3ListView::LastColumn );
 	}
@@ -542,7 +542,7 @@ KGreeter::verifyPluginChanged( int id )
 void
 KGreeter::verifyClear()
 {
-	curUser = QString::null;
+	curUser.clear();
 	slotUserEntered();
 	slotSessionSelected( -1 );
 }
@@ -676,7 +676,7 @@ KStdGreeter::KStdGreeter()
 	else
 		prec = menuButton;
 	KGStdVerify *sverify =
-		new KGStdVerify( this, this, prec, QString::null,
+		new KGStdVerify( this, this, prec, QString(),
 		                 pluginList, KGreeterPlugin::Authenticate,
 		                 KGreeterPlugin::Login );
 	inner_box->addLayout( sverify->getLayout() );
@@ -812,7 +812,7 @@ KThemedGreeter::KThemedGreeter()
 	else
 		prec = 0;
 	KGThemedVerify *tverify =
-		new KGThemedVerify( this, themer, this, prec, QString::null,
+		new KGThemedVerify( this, themer, this, prec, QString(),
 		                    pluginList, KGreeterPlugin::Authenticate,
 		                    KGreeterPlugin::Login );
 	tverify->selectPlugin( curPlugin );
@@ -896,7 +896,7 @@ KThemedGreeter::verifyRetry()
 //	goButton->setEnabled( true );
 }
 
-QString KThemedGreeter::timedUser = QString::null;
+QString KThemedGreeter::timedUser.clear();
 int KThemedGreeter::timedDelay = -1;
 
 void
