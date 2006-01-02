@@ -896,7 +896,7 @@ KThemedGreeter::verifyRetry()
 //	goButton->setEnabled( true );
 }
 
-QString KThemedGreeter::timedUser.clear();
+QString KThemedGreeter::timedUser = QString();
 int KThemedGreeter::timedDelay = -1;
 
 void
