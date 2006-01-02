@@ -329,8 +329,8 @@ void Minicli::reset()
   m_dlg->lePassword->erase();
 
   m_FocusWidget = 0;
-  m_iconName = QString::null;
-  m_prevIconName = QString::null;
+  m_iconName.clear();
+  m_prevIconName.clear();
 
   m_prevCached = false;
   updateAuthLabel();
@@ -759,7 +759,7 @@ void Minicli::updateAuthLabel()
       m_prevCached = true;
     }
     if (m_dlg->leUsername->text() != QLatin1String("root"))
-      m_dlg->lePassword->setText(QString::null);
+      m_dlg->lePassword->setText(QString());
     m_dlg->leUsername->setText(QLatin1String("root"));
     m_dlg->cbRunAsOther->setChecked(true);
     m_dlg->cbRunAsOther->setEnabled(false);
@@ -855,7 +855,7 @@ void Minicli::slotRealtime(bool enabled)
                 i18n("Running a realtime application can be very dangerous. "
                     "If the application misbehaves, the system might hang "
                     "unrecoverably.\nAre you sure you want to continue?"),
-                i18n("Warning - Run Command"), KGuiItem(i18n("&Run Realtime")),QString::null,KMessageBox::Notify|KMessageBox::PlainCaption)
+                i18n("Warning - Run Command"), KGuiItem(i18n("&Run Realtime")),QString(),KMessageBox::Notify|KMessageBox::PlainCaption)
         != KMessageBox::Continue )
     {
       m_iScheduler = StubProcess::SchedNormal;

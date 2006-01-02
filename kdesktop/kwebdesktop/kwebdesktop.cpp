@@ -173,7 +173,7 @@ KParts::ReadOnlyPart* KWebDesktop::createPart( const QString& mimeType )
     } else {
         // Try to find an appropriate viewer component
         m_part = KParts::ComponentFactory::createPartInstanceFromQuery<KParts::ReadOnlyPart>
-                 ( mimeType, QString::null, 0, 0, this, 0 );
+                 ( mimeType, QString(), 0, 0, this, 0 );
         if ( !m_part )
             kdWarning() << "No handler found for " << mimeType << endl;
         else {

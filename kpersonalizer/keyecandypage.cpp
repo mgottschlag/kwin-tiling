@@ -359,7 +359,7 @@ void KEyeCandyPage::enableBackgroundsKonqueror(bool enable){
 			konqbgimage="kde4ever.png";
 		konquerorconf->writePathEntry("BgImage", konqbgimage);
 	} else
-		konquerorconf->writePathEntry("BgImage", QString::null);
+		konquerorconf->writePathEntry("BgImage", QString());
 }
 //----------------------------BACKGROUNDS-------------------------------------------------
 

@@ -1,13 +1,13 @@
 #ifndef NOSLOTS
 # define DEF( name, key3, key4, fnSlot ) \
-   keys->insert( name, i18n(name), QString::null, key3, this, SLOT(fnSlot) )
+   keys->insert( name, i18n(name), QString(), key3, this, SLOT(fnSlot) )
 # define DEF2( name, key3, key4, receiver, slot ) \
-   keys->insert( name, i18n(name), QString::null, key3, receiver, slot );
+   keys->insert( name, i18n(name), QString(), key3, receiver, slot );
 #else
 # define DEF( name, key3, key4, fnSlot ) \
-   keys->insert( name, i18n(name), QString::null, key3 )
+   keys->insert( name, i18n(name), QString(), key3 )
 # define DEF2( name, key3, key4, receiver, slot ) \
-   keys->insert( name, i18n(name), QString::null, key3 )
+   keys->insert( name, i18n(name), QString(), key3 )
 #endif
 #define WIN Qt::META
 

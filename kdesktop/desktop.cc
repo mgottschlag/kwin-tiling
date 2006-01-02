@@ -760,7 +760,7 @@ void KDesktop::handleImageDropEvent(QDropEvent * e)
     if (result == saveToDesktop)
     {
         bool ok = true;
-        QString filename = KInputDialog::getText(QString::null, i18n("Enter a name for the image below:"), QString::null, &ok, m_pIconView);
+        QString filename = KInputDialog::getText(QString(), i18n("Enter a name for the image below:"), QString(), &ok, m_pIconView);
 
         if (!ok)
         {
@@ -778,7 +778,7 @@ void KDesktop::handleImageDropEvent(QDropEvent * e)
 
         QImage i;
         Q3ImageDrag::decode(e, i);
-        KTempFile tmpFile(QString::null, filename);
+        KTempFile tmpFile(QString(), filename);
         i.save(tmpFile.name(), "PNG");
         // We pass 0 as parent window because passing the desktop is not a good idea
         KURL src;

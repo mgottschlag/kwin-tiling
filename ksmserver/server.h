@@ -118,8 +118,8 @@ private:
     void endProtection() { protectionTimer.stop(); }
 
     void startApplication( QStringList command,
-        const QString& clientMachine = QString::null,
-        const QString& userId = QString::null );
+        const QString& clientMachine = QString(),
+        const QString& userId = QString() );
     void executeCommand( const QStringList& command );
 
     bool isWM( const KSMClient* client ) const;

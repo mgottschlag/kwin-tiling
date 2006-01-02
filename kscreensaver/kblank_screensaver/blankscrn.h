@@ -10,7 +10,7 @@
 
 #include <qcolor.h>
 #include <kdialogbase.h>
-#include <kscreensaver.h>
+#include "kscreensaver.h"
 
 class KColorButton;
 

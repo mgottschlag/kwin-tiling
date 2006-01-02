@@ -141,7 +141,7 @@ void KCountryPage::fillLanguageMenu(KLanguageButton *combo) {
 		if ((*it).isNull()) {
 			combo->insertSeparator();
 			submenu = QLatin1String("all");
-			combo->insertSubmenu(i18n("All"), submenu, QString::null);
+			combo->insertSubmenu(i18n("All"), submenu, QString());
 			continue;
 		}
 		combo->insertItem(langmap[(*it)], (*it), submenu );
@@ -175,7 +175,7 @@ bool KCountryPage::save(KLanguageButton *comboCountry, KLanguageButton *comboLan
 		proc.start(KProcess::DontCare);
 		kdDebug() << "KLocaleConfig::save : sending signal to kdesktop" << endl;
 		// inform kicker and kdeskop about the new language
-		kapp->dcopClient()->send( "kicker", "Panel", "restart()", QString::null);
+		kapp->dcopClient()->send( "kicker", "Panel", "restart()", QString());
 		// call, not send, so that we know it's done before coming back
 		// (we both access kdeglobals...)
 		kapp->dcopClient()->call( "kdesktop", "KDesktopIface", "languageChanged(QString)", data, replyType, replyData );

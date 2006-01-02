@@ -208,7 +208,7 @@ void KSMServer::restoreSessionInternal()
     disconnectDCOPSignal( launcher, launcher, "autoStartDone()",
                           "restoreSessionInternal()");
     lastAppStarted = 0;
-    lastIdStarted = QString::null;
+    lastIdStarted.clear();
     tryRestoreNext();
 }
 
@@ -250,7 +250,7 @@ void KSMServer::restoreNext()
     }
 
     appsToStart = 0;
-    lastIdStarted = QString::null;
+    lastIdStarted.clear();
     publishProgress( 0 );
 
     autoStart2();

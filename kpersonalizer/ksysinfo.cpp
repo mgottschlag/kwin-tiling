@@ -55,7 +55,7 @@ KSysInfo::~KSysInfo() {
 void KSysInfo::initXInfo() {
 	Display *dpy = XOpenDisplay(0);
 	// vendor
-	m_xvendor = !dpy ? QString::null : (QString)ServerVendor(dpy);
+	m_xvendor = !dpy ? QString() : (QString)ServerVendor(dpy);
 	// XFree-Inc?
 	m_xfree_inc = m_xvendor.contains("XFree86");
 	// X.org ?
@@ -99,8 +99,8 @@ bool KSysInfo::getRenderSupport(){
 void KSysInfo::initFontFamilies() {
 	QFontDatabase fdb;
 	QStringList families = fdb.families();
-	m_normal_font = QString::null;
-	m_fixed_font = QString::null;
+	m_normal_font.clear();
+	m_fixed_font.clear();
 	int normal_priority = 0, fixed_priority = 0;
 	for (int i=0; i < families.count(); i++) {
 		const QString font( families.at(i) );

@@ -190,7 +190,7 @@ void KSMShutdownDlg::slotLogout()
 void KSMShutdownDlg::slotReboot()
 {
     // no boot option selected -> current
-    m_bootOption = QString::null;
+    m_bootOption.clear();
     m_shutdownType = KWorkSpace::ShutdownTypeReboot;
     accept();
 }
@@ -206,7 +206,7 @@ void KSMShutdownDlg::slotReboot(int opt)
 
 void KSMShutdownDlg::slotHalt()
 {
-    m_bootOption = QString::null;
+    m_bootOption.clear();
     m_shutdownType = KWorkSpace::ShutdownTypeHalt;
     accept();
 }

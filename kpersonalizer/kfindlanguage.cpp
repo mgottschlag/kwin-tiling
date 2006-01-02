@@ -73,7 +73,7 @@ KFindLanguage::KFindLanguage() {
 	alllang.sort();
 	QStringList langlist = prilang;
 	if (langlist.count() > 0)
-		langlist << QString::null; // separator
+		langlist << QString(); // separator
 	langlist += alllang;
 
 	for ( QStringList::ConstIterator it = langlist.begin();	it != langlist.end(); ++it ) {
