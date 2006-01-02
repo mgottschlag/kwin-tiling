@@ -284,7 +284,7 @@ void KDMUsersWidget::changeUserPix(const QString &pix)
     if (user == m_defaultText)
     {
        user = ".default";
-       if (KMessageBox::questionYesNo(this, i18n("Save image as default image?"),QString::null,KStdGuiItem::save(),KStdGuiItem::cancel())
+       if (KMessageBox::questionYesNo(this, i18n("Save image as default image?"),QString(),KStdGuiItem::save(),KStdGuiItem::cancel())
             != KMessageBox::Yes)
           return;
     }
@@ -309,7 +309,7 @@ void KDMUsersWidget::changeUserPix(const QString &pix)
 
 void KDMUsersWidget::slotUserButtonClicked()
 {
-    KFileDialog dlg(m_notFirst ? QString::null :
+    KFileDialog dlg(m_notFirst ? QString() :
 	KGlobal::dirs()->resourceDirs("data").last() + "kdm/pics/users",
                     KImageIO::pattern( KImageIO::Reading ),
                     this, 0, true);

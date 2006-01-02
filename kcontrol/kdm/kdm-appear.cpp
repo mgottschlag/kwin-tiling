@@ -267,7 +267,7 @@ void KDMAppearanceWidget::loadLanguageList(KLanguageButton *combo)
     KSimpleConfig entry(*it);
     entry.setGroup(QLatin1String("KCM Locale"));
     QString name = entry.readEntry(QLatin1String("Name"), i18n("without name"));
-    combo->insertLanguage(nid, name, QLatin1String("l10n/"), QString::null);
+    combo->insertLanguage(nid, name, QLatin1String("l10n/"), QString());
   }
 }
 

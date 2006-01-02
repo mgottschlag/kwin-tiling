@@ -131,7 +131,7 @@ bool CFontEngine::openFont(const QString &file, int face)
         itsWidth=WIDTH_NORMAL;
         itsSpacing=SPACING_PROPORTIONAL;
         itsItalic=ITALIC_NONE;
-        itsAddStyle=QString::null;
+        itsAddStyle=QString();
         itsPath=file;
         itsFaceIndex=face;
 
@@ -145,7 +145,7 @@ bool CFontEngine::openFont(const QString &file, int face)
 void CFontEngine::closeFont()
 {
     closeFaceFt();
-    itsPath=QString::null;
+    itsPath=QString();
     itsFaceIndex=-1;
     itsType=NONE;
 }
@@ -376,7 +376,7 @@ void CFontEngine::createAddStyle()
         removeSymbols(itsAddStyle);
     }
     else
-        itsAddStyle=QString::null;
+        itsAddStyle=QString();
 }
 
 static bool lookupName(FT_Face face, int nid, int pid, int eid, FT_SfntName *nameReturn)

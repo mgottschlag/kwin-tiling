@@ -83,7 +83,7 @@ void MenuTab::load()
     // show the bookmark menu?
     m_bookmarkMenu = new kSubMenuItem(m_subMenus,
                                       i18n("Bookmarks"),
-                                      QString::null,
+                                      QString(),
                                       SmallIcon("bookmark"),
                                       c->readBoolEntry("UseBookmarks", true));
     connect(m_bookmarkMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
@@ -91,7 +91,7 @@ void MenuTab::load()
     // show the quick menus menu?
     m_quickBrowserMenu = new kSubMenuItem(m_subMenus,
                                           i18n("Quick Browser"),
-                                          QString::null,
+                                          QString(),
                                           SmallIcon("kdisknav"),
                                           c->readBoolEntry("UseBrowser", true));
     connect(m_quickBrowserMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
@@ -164,7 +164,7 @@ void MenuTab::defaults()
 void MenuTab::launchMenuEditor()
 {
     if ( KToolInvocation::startServiceByDesktopName( "kmenuedit",
-                                                  QString::null /*url*/,
+                                                  QString() /*url*/,
                                                   0 /*error*/,
                                                   0 /*dcopservice*/,
                                                   0 /*pid*/,

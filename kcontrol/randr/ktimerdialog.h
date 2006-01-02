@@ -72,7 +72,7 @@ class KTimerDialog : public KDialogBase
      */
     KTimerDialog( int msec, TimerStyle style=CountDown, QWidget *parent=0,
                  const char *name=0, bool modal=true,
-                 const QString &caption=QString::null,
+                 const QString &caption=QString(),
                  int buttonMask=Ok|Apply|Cancel, ButtonCode defaultButton=Ok,
                  bool separator=false,
                  const KGuiItem &user1=KGuiItem(),

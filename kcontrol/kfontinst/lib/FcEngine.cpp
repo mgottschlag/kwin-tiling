@@ -787,7 +787,7 @@ QString CFcEngine::weightStr(int weight, bool emptyNormal)
         case FC_WEIGHT_LIGHT:
             return i18n(KFI_WEIGHT_LIGHT);
         case FC_WEIGHT_NORMAL:
-            return emptyNormal ? QString::null : i18n(KFI_WEIGHT_NORMAL);
+            return emptyNormal ? QString() : i18n(KFI_WEIGHT_NORMAL);
         case FC_WEIGHT_MEDIUM:
             return i18n(KFI_WEIGHT_MEDIUM);
         case FC_WEIGHT_DEMIBOLD:
@@ -815,7 +815,7 @@ QString CFcEngine::widthStr(int width, bool emptyNormal)
         case FC_WIDTH_SEMICONDENSED:
             return i18n(KFI_WIDTH_SEMICONDENSED);
         case FC_WIDTH_NORMAL:
-            return emptyNormal ? QString::null : i18n(KFI_WIDTH_NORMAL);
+            return emptyNormal ? QString() : i18n(KFI_WIDTH_NORMAL);
         case FC_WIDTH_SEMIEXPANDED:
             return i18n(KFI_WIDTH_SEMIEXPANDED);
         case FC_WIDTH_EXPANDED:
@@ -837,7 +837,7 @@ QString CFcEngine::slantStr(int slant, bool emptyNormal)
         case FC_SLANT_ITALIC:
             return i18n(KFI_SLANT_ITALIC);
         default:
-            return emptyNormal ? QString::null : i18n(KFI_SLANT_ROMAN);
+            return emptyNormal ? QString() : i18n(KFI_SLANT_ROMAN);
     }
 }
 
@@ -974,7 +974,7 @@ bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
                 FcPatternDestroy(pat);
             }
             else
-                itsDescriptiveName=QString::null;
+                itsDescriptiveName=QString();
 
             itsInstalled=false;
             itsIndex=faceNo;

@@ -17,7 +17,7 @@ public:
   const Q3Dict<char> &options() const { return m_options; };
 
   void parseVariants(const QStringList& vars, Q3Dict<char>& variants, bool chkVars=true);
-//  static QStringList rules(QString path = QString::null);
+//  static QStringList rules(QString path = QString());
 
   QStringList getVariants(const QString& layout);
   unsigned int getGroup(const QString& layout, const char* baseGr);

@@ -209,7 +209,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   connect(m_comboCalendarSystem, SIGNAL(activated(int)),
 	  this, SLOT(slotCalendarSystemChanged(int)));
   QStringList tmpCalendars;
-  tmpCalendars << QString::null << QString::null;
+  tmpCalendars << QString() << QString();
   m_comboCalendarSystem->insertStringList(tmpCalendars);
 
   m_labTimeFmt = new QLabel(this, I18N_NOOP("Time format:"));
@@ -454,7 +454,7 @@ void KLocaleConfigTime::slotTranslate()
   updateWeekDayNames();
 
   while ( m_comboCalendarSystem->count() < 4 )
-    m_comboCalendarSystem->insertItem(QString::null);
+    m_comboCalendarSystem->insertItem(QString());
   m_comboCalendarSystem->changeItem
     (m_locale->translate("Calendar System Gregorian", "Gregorian"), 0);
   m_comboCalendarSystem->changeItem

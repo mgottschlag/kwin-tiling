@@ -265,9 +265,9 @@ void KArtsModule::GetSettings( void )
 	fullDuplex->setChecked(config->readBoolEntry("FullDuplex",false));
 	autoSuspend->setChecked(config->readBoolEntry("AutoSuspend",true));
 	suspendTime->setValue(config->readNumEntry("SuspendTime",60));
-	deviceName->setText(config->readEntry("DeviceName",QString::null));
+	deviceName->setText(config->readEntry("DeviceName",QString()));
 	customDevice->setChecked(!deviceName->text().isEmpty());
-	hardware->addOptions->setText(config->readEntry("AddOptions",QString::null));
+	hardware->addOptions->setText(config->readEntry("AddOptions",QString()));
 	hardware->customOptions->setChecked(!hardware->addOptions->text().isEmpty());
 	general->latencySlider->setValue(config->readNumEntry("Latency",250));
 
@@ -295,7 +295,7 @@ void KArtsModule::GetSettings( void )
 		break;
 	}
 
-	QString audioIO = config->readEntry("AudioIO", QString::null);
+	QString audioIO = config->readEntry("AudioIO", QString());
 	hardware->audioIO->setCurrentItem(0);
 	for(AudioIOElement *a = audioIOList.first(); a != 0; a = audioIOList.next())
 	{
@@ -341,7 +341,7 @@ void KArtsModule::saveParams( void )
 		audioIO = audioIOList.at(item)->name;
 	}
 
-	QString dev = customDevice->isChecked() ? deviceName->text() : QString::null;
+	QString dev = customDevice->isChecked() ? deviceName->text() : QString();
 	int rate = customRate->isChecked()?samplingRate->value() : 0;
 	QString addOptions;
 	if(hardware->customOptions->isChecked())
@@ -462,12 +462,12 @@ void KArtsModule::defaults()
 	autoSuspend->setChecked(true);
 	suspendTime->setValue(60);
 	customDevice->setChecked(false);
-	deviceName->setText(QString::null);
+	deviceName->setText(QString());
 	customRate->setChecked(false);
 	samplingRate->setValue(44100);
 	general->latencySlider->setValue(250);
 	hardware->customOptions->setChecked(false);
-	hardware->addOptions->setText(QString::null);
+	hardware->addOptions->setText(QString());
 	hardware->audioIO->setCurrentItem(0);
 	hardware->soundQuality->setCurrentItem(0);
 	hardware->midiUseMapper->setChecked(false);

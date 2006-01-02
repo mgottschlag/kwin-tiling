@@ -312,7 +312,7 @@ void BGAdvancedDialog::slotRemove()
 
    prog.remove();
    removeProgram(m_selectedProgram);
-   m_selectedProgram = QString::null;
+   m_selectedProgram.clear();
 }
 
 /*
@@ -476,7 +476,7 @@ void KProgramEditDialog::slotOk()
     if ((s != m_Program) && !prog.command().isEmpty()) {
 	int ret = KMessageBox::warningContinueCancel(this,
 	    i18n("There is already a program with the name `%1'.\n"
-	    "Do you want to overwrite it?").arg(s),QString::null,i18n("Overwrite"));
+	    "Do you want to overwrite it?").arg(s),QString(),i18n("Overwrite"));
 	if (ret != KMessageBox::Continue)
 	    return;
     }

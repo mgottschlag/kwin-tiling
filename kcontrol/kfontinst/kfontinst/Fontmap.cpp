@@ -135,7 +135,7 @@ static QString createX11PsName(const QString &font)
         }
     }
 
-    newName.replace(" ", QString::null);
+    newName.replace(" ", QString());
     return newName;
 }
 
@@ -182,7 +182,7 @@ static QString getEntry(QStringList &list, const QString &name)
         if(0==(*it).find('/'+name+' '))
             return *it;
 
-    return QString::null;
+    return QString();
 }
 
 inline bool isAlias(const QString &entry)
@@ -258,7 +258,7 @@ static QString locateFile(const char *dir, const char *file, int level=0)
         }
     }
 
-    return QString::null;
+    return QString();
 }
 
 static QString locateFile(const char *file, const char **dirs)
@@ -270,7 +270,7 @@ static QString locateFile(const char *file, const char **dirs)
         if(!(str=locateFile(dirs[d], file)).isEmpty())
             return str;
 
-    return QString::null;
+    return QString();
 }
 
 #define FONTMAP "Fontmap"

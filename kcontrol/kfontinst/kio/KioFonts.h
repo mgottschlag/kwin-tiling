@@ -130,7 +130,7 @@ class CKioFonts : public KIO::SlaveBase
     bool     confirmMultiple(const KURL &url, QList<FcPattern *> *patterns, EFolder folder, EOp op);
     bool     checkUrl(const KURL &u, bool rootOk=false);
     bool     checkAllowed(const KURL &u);
-    void     createAfm(const QString &file, bool nrs=false, const QString &passwd=QString::null);
+    void     createAfm(const QString &file, bool nrs=false, const QString &passwd=QString());
     void     reparseConfig();
 
     private:

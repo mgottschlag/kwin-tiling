@@ -93,7 +93,7 @@ void ModuleTitle::showTitleFor( ConfigModule *config )
 void ModuleTitle::clear()
 {
   m_icon->setPixmap( QPixmap() );
-  m_name->setText( QString::null );
+  m_name->setText( QString() );
   kapp->processEvents();
 }
 

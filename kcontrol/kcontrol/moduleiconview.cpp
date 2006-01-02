@@ -45,7 +45,7 @@ ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent)
   , _modules(list)
 {
   setSorting(1, true);
-  addColumn(QString::null);
+  addColumn(QString());
 
   // Needed to enforce a cut of the items label rather than
   // showing a horizontal scrollbar
@@ -99,7 +99,7 @@ void ModuleIconView::fill()
      i->setOrderNo(0);
      int last_slash = _path.lastIndexOf('/', -2);
      if (last_slash == -1)
-        i->setTag(QString::null);
+        i->setTag(QString());
      else
         i->setTag(_path.left(last_slash+1));
   }

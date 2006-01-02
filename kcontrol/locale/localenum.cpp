@@ -105,7 +105,7 @@ void KLocaleConfigNumber::save()
   str = ent.readEntry("ThousandsSeparator",
 		      QString::fromLatin1(","));
   group.deleteEntry("ThousandsSeparator", false, true);
-  str.replace(QString::fromLatin1("$0"), QString::null);
+  str.replace(QString::fromLatin1("$0"), QString());
   if (str != m_locale->thousandsSeparator())
     group.writeEntry("ThousandsSeparator",
 		       QString::fromLatin1("$0%1$0")

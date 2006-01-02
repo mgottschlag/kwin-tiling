@@ -333,5 +333,5 @@ QString ConfigModuleList::findModule(ConfigModule *module)
      if (menu->modules.containsRef(module))
         return it.currentKey();
   }
-  return QString::null;
+  return QString();
 }

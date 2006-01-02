@@ -361,7 +361,7 @@ QString KTheme::createYourself( bool pack )
 
         kdDebug() << "Packing everything under: " << m_kgd->saveLocation( "themes", m_name + "/" ) << endl;
 
-        if ( tar.addLocalDirectory( m_kgd->saveLocation( "themes", m_name + "/" ), QString::null ) )
+        if ( tar.addLocalDirectory( m_kgd->saveLocation( "themes", m_name + "/" ), QString() ) )
             result = tar.fileName();
 
         tar.close();
@@ -690,7 +690,7 @@ QString KTheme::getProperty( const QString & name ) const
     else
     {
         kdWarning() << "Found no such property: " << name << endl;
-        return QString::null;
+        return QString();
     }
 }
 
@@ -705,7 +705,7 @@ QString KTheme::getProperty( QDomElement parent, const QString & tag,
     {
         kdWarning() << QString( "No such property found: %1->%2->%3" )
             .arg( parent.tagName() ).arg( tag ).arg( attr ) << endl;
-        return QString::null;
+        return QString();
     }
 }
 
@@ -808,7 +808,7 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
     else
         kdWarning() << "Unsupported theme resource type" << endl;
 
-    return QString::null;       // an error occured or the resource doesn't exist
+    return QString();       // an error occured or the resource doesn't exist
 }
 
 QString KTheme::unprocessFilePath( const QString & section, QString path )
@@ -874,6 +874,6 @@ QString KTheme::findResource( const QString & section, const QString & path )
     else
     {
         kdWarning() << "Requested unknown resource: " << section << endl;
-        return QString::null;
+        return QString();
     }
 }

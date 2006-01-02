@@ -147,7 +147,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     npuserlv = new KListView(npGroup);
     laygroup3->addWidget( npuserlv );
     pl_label->setBuddy(npuserlv);
-    npuserlv->addColumn(QString::null);
+    npuserlv->addColumn(QString());
     npuserlv->header()->hide();
     npuserlv->setResizeMode(Q3ListView::LastColumn);
     npuserlv->setWhatsThis( i18n("Check all users you want to allow a password-less login for."

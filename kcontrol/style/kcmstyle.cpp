@@ -762,7 +762,7 @@ void KCMStyle::loadStyle( KConfig& config )
 		config.setGroup("Misc");
 		entry->name = config.readEntry("Name");
 		entry->desc = config.readEntry("Comment", i18n("No description available."));
-		entry->configPage = config.readEntry("ConfigPage", QString::null);
+		entry->configPage = config.readEntry("ConfigPage", QString());
 
 		// Check if this style should be shown
 		config.setGroup("Desktop Entry");

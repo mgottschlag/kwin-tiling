@@ -160,7 +160,7 @@ void IconThemesConfig::loadThemes()
 
 void IconThemesConfig::installNewTheme()
 {
-  KURL themeURL = KURLRequesterDlg::getURL(QString::null, this,
+  KURL themeURL = KURLRequesterDlg::getURL(QString(), this,
                                            i18n("Drag or Type Theme URL"));
   kdDebug() << themeURL.prettyURL() << endl;
 
@@ -215,7 +215,7 @@ bool IconThemesConfig::installThemes(const QStringList &themes, const QString &a
 
   KProgressDialog progressDiag(this, "themeinstallprogress",
                                i18n("Installing icon themes"),
-                               QString::null,
+                               QString(),
                                true);
   progressDiag.setAutoClose(true);
   progressDiag.progressBar()->setTotalSteps(themes.count());

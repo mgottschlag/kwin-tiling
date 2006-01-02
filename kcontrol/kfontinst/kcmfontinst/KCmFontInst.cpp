@@ -419,7 +419,7 @@ void CKCmFontInst::loadingFinished()
 
 void CKCmFontInst::addFonts()
 {
-    KURL::List list=KFileDialog::getOpenURLs(QString::null, "application/x-font-ttf application/x-font-otf "
+    KURL::List list=KFileDialog::getOpenURLs(QString(), "application/x-font-ttf application/x-font-otf "
                                                             "application/x-font-ttc application/x-font-type1 "
                                                             "application/x-font-pcf application/x-font-bdf",
                                                             //"application/x-font-snf application/x-font-speedo",

@@ -34,7 +34,7 @@ class ModuleIconItem : public KListViewItem
 public:
   ModuleIconItem(Q3ListView *parent, const QString& text, const QPixmap& pm, ConfigModule *m = 0)
 	: KListViewItem(parent, text)
-	, _tag(QString::null)
+	, _tag(QString())
 	, _module(m)
 	{
 	  setPixmap(0, pm);

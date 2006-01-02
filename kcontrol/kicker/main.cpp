@@ -109,7 +109,7 @@ void KickerConfig::init()
     if (m_extensionInfo.isEmpty())
     {
         // our list is empty, so add the main kicker config
-        m_extensionInfo.append(new ExtensionInfo(QString::null, configname, configpath));
+        m_extensionInfo.append(new ExtensionInfo(QString(), configname, configpath));
         configFileWatch->addFile(configpath);
     }
     else

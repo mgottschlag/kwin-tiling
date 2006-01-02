@@ -58,8 +58,8 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char* /*name*/,
         0, 0, "bieker@kde.org");
   setAboutData( aboutData );
 
-  m_nullConfig = new KConfig(QString::null, false, false);
-  m_globalConfig = new KConfig(QString::null, false, true);
+  m_nullConfig = new KConfig(QString(), false, false);
+  m_globalConfig = new KConfig(QString(), false, true);
 
   m_locale = new KLocale(QLatin1String("kcmlocale"), m_nullConfig);
   QVBoxLayout *l = new QVBoxLayout(this, 0, KDialog::spacingHint());
@@ -68,15 +68,15 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char* /*name*/,
   m_tab = new QTabWidget(this);
 
   m_localemain = new KLocaleConfig(m_locale, this);
-  m_tab->addTab( m_localemain, QString::null);
+  m_tab->addTab( m_localemain, QString());
   m_localenum = new KLocaleConfigNumber(m_locale, this);
-  m_tab->addTab( m_localenum, QString::null );
+  m_tab->addTab( m_localenum, QString() );
   m_localemon = new KLocaleConfigMoney(m_locale, this);
-  m_tab->addTab( m_localemon, QString::null );
+  m_tab->addTab( m_localemon, QString() );
   m_localetime = new KLocaleConfigTime(m_locale, this);
-  m_tab->addTab( m_localetime, QString::null );
+  m_tab->addTab( m_localetime, QString() );
   m_localeother = new KLocaleConfigOther(m_locale, this);
-  m_tab->addTab( m_localeother, QString::null );
+  m_tab->addTab( m_localeother, QString() );
 
   // Examples
   m_gbox = new Q3GroupBox(this);

@@ -94,7 +94,7 @@ class KProgramEditDialog: public KDialogBase
     Q_OBJECT
 
 public:
-    KProgramEditDialog(const QString &program=QString::null, QWidget *parent=0L,
+    KProgramEditDialog(const QString &program=QString(), QWidget *parent=0L,
 	    char *name=0L);
 
     /** The program name is here in case the user changed it */

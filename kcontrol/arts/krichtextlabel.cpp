@@ -37,7 +37,7 @@ static QString qrichtextify( const QString& text )
     *it = Qt::convertFromPlainText( *it, Qt::WhiteSpaceNormal );
   }
 
-  return lines.join(QString::null);
+  return lines.join(QString());
 }
 
 KRichTextLabel::KRichTextLabel( const QString &text , QWidget *parent, const char *name )

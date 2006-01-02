@@ -195,7 +195,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     wcCombo = new QComboBox(false, group);
     for(int i=0; i < CSM_LAST;i++)
     {
-       wcCombo->insertItem(QString::null);
+       wcCombo->insertItem(QString());
     }
 
     setColorName(i18n("Inactive Title Bar") , CSM_Inactive_title_bar);
@@ -442,7 +442,7 @@ void KColorScheme::sliderValueChanged( int val )
     cs->contrast = val;
     cs->drawSampleWidgets();
 
-    sCurrentScheme = QString::null;
+    sCurrentScheme.clear();
 
     emit changed(true);
 }
@@ -592,7 +592,7 @@ void KColorScheme::slotImport()
 {
 	QString location = locateLocal( "data", "kdisplay/color-schemes/" );
 
-	KURL file ( KFileDialog::getOpenFileName(QString::null, "*.kcsrc", this) );
+	KURL file ( KFileDialog::getOpenFileName(QString(), "*.kcsrc", this) );
 	if ( file.isEmpty() )
 		return;
 
@@ -697,7 +697,7 @@ void KColorScheme::slotSelectColor(const QColor &col)
 
     cs->drawSampleWidgets();
 
-    sCurrentScheme = QString::null;
+    sCurrentScheme.clear();
 
     emit changed(true);
 }
@@ -732,7 +732,7 @@ void KColorScheme::slotColorForWidget(int indx, const QColor& col)
 void KColorScheme::slotShadeSortColumnChanged(bool b)
 {
     cs->shadeSortColumn = b;
-    sCurrentScheme = QString::null;
+    sCurrentScheme.clear();
 
     emit changed(true);
 }

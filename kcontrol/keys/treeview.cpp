@@ -68,7 +68,7 @@ void AppTreeItem::setAccel(const QString &accel)
     else
     {
         setText(1, m_accel);
-        setText(2, QString::null);
+        setText(2, QString());
     }
 }
 
@@ -128,7 +128,7 @@ void AppTreeView::fill()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     clear();
-    fillBranch(QString::null, 0);
+    fillBranch(QString(), 0);
     QApplication::restoreOverrideCursor();
 }
 
@@ -160,9 +160,9 @@ void AppTreeView::fillBranch(const QString& rPath, AppTreeItem *parent)
 
             AppTreeItem *item;
             if (parent == 0)
-                item = new AppTreeItem(this,  after, QString::null);
+                item = new AppTreeItem(this,  after, QString());
             else
-                item = new AppTreeItem(parent, after, QString::null);
+                item = new AppTreeItem(parent, after, QString());
 
             item->setName(groupCaption);
             item->setPixmap(0, appIcon(g->icon()));

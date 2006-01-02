@@ -57,7 +57,7 @@
 
 class Device {
 public:
-	Device (QString n=QString::null, QString d=QString::null)
+	Device (QString n=QString(), QString d=QString())
 		{name=n; description=d;}
 	QString name, description;
 };
@@ -355,7 +355,7 @@ QString GetController(const QString &line)
 			} else if (controller.find("-master") != -1) {
 				controller.remove(controller.find("-master"), controller.length());
 			} else
-				controller=QString::null;
+				controller=QString();
 			if (!controller.isNull())
 				return controller;
 		}
@@ -367,7 +367,7 @@ QString GetController(const QString &line)
 				controller.remove(controller.find(" "), controller.length());
 			return controller;
 		}
-			return QString::null;
+			return QString();
 }
 
 Device *GetDevice(const QString &line)

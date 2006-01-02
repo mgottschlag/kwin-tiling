@@ -96,5 +96,5 @@ void HelpWidget::urlClicked(const QString & _url)
 
 void HelpWidget::mailClicked(const QString &,const QString & addr)
 {
-  KToolInvocation::invokeMailer(addr, QString::null);
+  KToolInvocation::invokeMailer(addr, QString());
 }

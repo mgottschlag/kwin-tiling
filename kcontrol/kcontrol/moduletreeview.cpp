@@ -79,7 +79,7 @@ ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent)
   : KListView(parent)
   , _modules(list)
 {
-  addColumn(QString::null);
+  addColumn(QString());
   setColumnWidthMode (0, Q3ListView::Maximum);
   setAllColumnsShowFocus(true);
   setResizeMode(Q3ListView::AllColumns);
@@ -273,7 +273,7 @@ void ModuleTreeView::keyPressEvent(QKeyEvent *e)
 ModuleTreeItem::ModuleTreeItem(Q3ListViewItem *parent, ConfigModule *module)
   : Q3ListViewItem(parent)
   , _module(module)
-  , _tag(QString::null)
+  , _tag(QString())
   , _maxChildIconWidth(0)
 {
   if (_module)
@@ -286,7 +286,7 @@ ModuleTreeItem::ModuleTreeItem(Q3ListViewItem *parent, ConfigModule *module)
 ModuleTreeItem::ModuleTreeItem(Q3ListView *parent, ConfigModule *module)
   : Q3ListViewItem(parent)
   , _module(module)
-  , _tag(QString::null)
+  , _tag(QString())
   , _maxChildIconWidth(0)
 {
   if (_module)
@@ -299,14 +299,14 @@ ModuleTreeItem::ModuleTreeItem(Q3ListView *parent, ConfigModule *module)
 ModuleTreeItem::ModuleTreeItem(Q3ListViewItem *parent, const QString& text)
   : Q3ListViewItem(parent, " " + text)
   , _module(0)
-  , _tag(QString::null)
+  , _tag(QString())
   , _maxChildIconWidth(0)
   {}
 
 ModuleTreeItem::ModuleTreeItem(Q3ListView *parent, const QString& text)
   : Q3ListViewItem(parent, " " + text)
   , _module(0)
-  , _tag(QString::null)
+  , _tag(QString())
   , _maxChildIconWidth(0)
   {}
 

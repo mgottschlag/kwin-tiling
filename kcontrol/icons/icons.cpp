@@ -230,8 +230,8 @@ void KIconConfig::read()
         for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++)
             mAvSizes[i] = QList<int>();
 
-        mTheme = QString::null;
-        mExample = QString::null;
+        mTheme.clear();
+        mExample.clear();
     }
 
     initDefaults();

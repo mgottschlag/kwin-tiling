@@ -969,12 +969,12 @@ void KBackgroundSettings::changeWallpaper(bool init)
 QString KBackgroundSettings::currentWallpaper()
 {
     if ( m_WallpaperMode == NoWallpaper )
-	return QString::null;
+	return QString();
     if (m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom)
 	return m_Wallpaper;
     if (m_CurrentWallpaper < (int) m_WallpaperFiles.count())
 	return m_WallpaperFiles[m_CurrentWallpaper];
-    return QString::null;
+    return QString();
 }
 
 bool KBackgroundSettings::discardCurrentWallpaper()

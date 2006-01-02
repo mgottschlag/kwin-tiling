@@ -31,7 +31,7 @@ class QImage;
 class KBackgroundPattern
 {
 public:
-    KBackgroundPattern(QString name=QString::null);
+    KBackgroundPattern(QString name=QString());
     ~KBackgroundPattern();
 
     void copyConfig(const KBackgroundPattern*);
@@ -89,7 +89,7 @@ private:
 class KBackgroundProgram
 {
 public:
-    KBackgroundProgram(QString name=QString::null);
+    KBackgroundProgram(QString name=QString());
     ~KBackgroundProgram();
 
     void copyConfig(const KBackgroundProgram*);

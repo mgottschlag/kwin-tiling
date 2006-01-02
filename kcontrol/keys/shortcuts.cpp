@@ -219,7 +219,7 @@ void ShortcutsModule::createActionsGeneral()
 		//	<< " bIsNum: " << bIsNum << endl;
 		if( bIsNum && !sConfigKey.contains( ':' ) ) {
 			actions[i].setConfigurable( false );
-			actions[i].setName( QString::null );
+			actions[i].setName( QString() );
 		}
 	}
 }
@@ -240,7 +240,7 @@ void ShortcutsModule::createActionsSequence()
 		//	<< " bIsNum: " << bIsNum << endl;
 		if( !bIsNum && !sConfigKey.contains( ':' ) ) {
 			actions[i].setConfigurable( false );
-			actions[i].setName( QString::null );
+			actions[i].setName( QString() );
 		}
 	}
 }

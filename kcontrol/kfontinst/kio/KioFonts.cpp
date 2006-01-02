@@ -455,7 +455,7 @@ static QString getFontFolder(const QString &defaultDir, const QString &root, QSt
                 return *it;
     }
 
-    return QString::null;
+    return QString();
 }
 
 static bool writeAll(int fd, const char *buf, size_t len)
@@ -605,7 +605,7 @@ static QString getMatch(const QString &file, const char *extension)
 {
     QString f(Misc::changeExt(file, extension));
 
-    return Misc::fExists(f) ? f : QString::null;
+    return Misc::fExists(f) ? f : QString();
 }
 
 inline bool isHidden(const KURL &u)
@@ -617,7 +617,7 @@ struct FontList
 {
     struct Path
     {
-        Path(const QString &p=QString::null) : orig(p) { }
+        Path(const QString &p=QString()) : orig(p) { }
 
         QString orig,
                 modified;
@@ -625,7 +625,7 @@ struct FontList
         bool operator==(const Path &p) const { return p.orig==orig; }
     };
 
-    FontList(const QString &n=QString::null, const QString &p=QString::null) : name(n) { if(!p.isEmpty()) paths.append(Path(p)); }
+    FontList(const QString &n=QString(), const QString &p=QString()) : name(n) { if(!p.isEmpty()) paths.append(Path(p)); }
 
     QString          name;
     QList<Path> paths;
@@ -1903,7 +1903,7 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
         }
     else
         error=proc.checkInstall(authInfo.password.toLocal8Bit()) ? true : false;
-    return error ? QString::null : authInfo.password;
+    return error ? QString() : authInfo.password;
 }
 
 bool CKioFonts::doRootCmd(const char *cmd, const QString &passwd)

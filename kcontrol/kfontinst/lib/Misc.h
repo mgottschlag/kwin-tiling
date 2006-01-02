@@ -64,7 +64,7 @@ namespace Misc
     extern KDE_EXPORT QString getFile(const QString &f);
     extern KDE_EXPORT bool    createDir(const QString &dir);
     extern KDE_EXPORT QString changeExt(const QString &f, const QString &newExt);
-    extern KDE_EXPORT bool    doCmd(const QString &cmd, const QString &p1=QString::null, const QString &p2=QString::null, const QString &p3=QString::null);
+    extern KDE_EXPORT bool    doCmd(const QString &cmd, const QString &p1=QString(), const QString &p2=QString(), const QString &p3=QString());
     inline KDE_EXPORT bool    root() { return 0==getuid(); }
     extern KDE_EXPORT void    getAssociatedUrls(const KURL &url, KURL::List &list, bool afmAndPfm=true, QWidget *widget=NULL);
     extern KDE_EXPORT void    createBackup(const QString &f);

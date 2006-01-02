@@ -68,7 +68,7 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
 
   QWidget * vb = new QWidget(this);
   QVBoxLayout * boxlay = new QVBoxLayout(vb, 0, KDialog::spacingHint());
-  m_addLanguage = new KLanguageButton(QString::null, vb );
+  m_addLanguage = new KLanguageButton(QString(), vb );
   m_addLanguage->setObjectName( I18N_NOOP("Add Language") );
   boxlay->add(m_addLanguage);
   connect(m_addLanguage, SIGNAL(activated(const QString &)),
@@ -224,7 +224,7 @@ void KLocaleConfig::loadLanguageList()
                                false, true);
   QStringList langlist = prilang;
   if (langlist.count() > 0)
-    langlist << QString::null; // separator
+    langlist << QString(); // separator
   langlist += alllang;
 
   int menu_index = -2;
@@ -237,7 +237,7 @@ void KLocaleConfig::loadLanguageList()
       m_addLanguage->insertSeparator();
       submenu = QString::fromLatin1("other");
       m_addLanguage->insertSubmenu(m_locale->translate("Other"),
-                                   submenu, QString::null, -1);
+                                   submenu, QString(), -1);
       menu_index = -2; // first entries should _not_ be sorted
       continue;
     }
@@ -390,7 +390,7 @@ void KLocaleConfig::slotLocaleChanged()
         ++it )
   {
     QString name;
-    readLocale(*it, name, QString::null);
+    readLocale(*it, name, QString());
 
     m_languages->insertItem(name);
   }
@@ -465,7 +465,7 @@ void KLocaleConfig::changedCountry(const QString & code)
         ++it )
   {
     QString name;
-    readLocale(*it, name, QString::null);
+    readLocale(*it, name, QString());
 
     if (!name.isEmpty())
       newLanguageList += *it;

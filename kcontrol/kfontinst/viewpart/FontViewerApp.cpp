@@ -90,7 +90,7 @@ CFontViewerAppMainWindow::~CFontViewerAppMainWindow()
 
 void CFontViewerAppMainWindow::fileOpen()
 {
-    KURL url(KFileDialog::getOpenURL(QString::null, "application/x-font-ttf application/x-font-otf "
+    KURL url(KFileDialog::getOpenURL(QString(), "application/x-font-ttf application/x-font-otf "
                                                     "application/x-font-ttc application/x-font-type1 "
                                                     "application/x-font-bdf application/x-font-pcf ",
                                      this, i18n("Select Font to View")));

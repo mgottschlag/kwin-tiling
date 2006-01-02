@@ -161,7 +161,7 @@ void CfgEmailClient::configChanged()
 void CfgEmailClient::selectEmailClient()
 {
 	KURL::List urlList;
-	KOpenWithDlg dlg(urlList, i18n("Select preferred email client:"), QString::null, this);
+	KOpenWithDlg dlg(urlList, i18n("Select preferred email client:"), QString(), this);
 	// hide "Do not &close when command exits" here, we don't need it for a mail client
 	dlg.hideNoCloseOnExit();
 	if (dlg.exec() != QDialog::Accepted) return;
@@ -187,7 +187,7 @@ void CfgEmailClient::save(KConfig *)
 {
 	if (kmailCB->isChecked())
 	{
-		pSettings->setSetting(KEMailSettings::ClientProgram, QString::null);
+		pSettings->setSetting(KEMailSettings::ClientProgram, QString());
 		pSettings->setSetting(KEMailSettings::ClientTerminal, "false");
 	}
 	else
@@ -261,7 +261,7 @@ void CfgTerminalEmulator::save(KConfig *) {
 	delete config;
 
 	KIPC::sendMessageAll(KIPC::SettingsChanged);
-	kapp->dcopClient()->send("klauncher", "klauncher","reparseConfiguration()", QString::null);
+	kapp->dcopClient()->send("klauncher", "klauncher","reparseConfiguration()", QString());
 
 	emit changed(false);
 }
@@ -269,7 +269,7 @@ void CfgTerminalEmulator::save(KConfig *) {
 void CfgTerminalEmulator::selectTerminalApp()
 {
 	KURL::List urlList;
-	KOpenWithDlg dlg(urlList, i18n("Select preferred terminal application:"), QString::null, this);
+	KOpenWithDlg dlg(urlList, i18n("Select preferred terminal application:"), QString(), this);
 	// hide "Run in &terminal" here, we don't need it for a Terminal Application
 	dlg.hideRunInTerminal();
 	if (dlg.exec() != QDialog::Accepted) return;
@@ -329,7 +329,7 @@ void CfgBrowser::load(KConfig *) {
 	      if (m_browserService)
   	         m_browserExec = m_browserService->desktopEntryName();
   	      else
-  	         m_browserExec = QString::null;
+  	         m_browserExec.clear();
 	   }
 	}
 	
@@ -364,7 +364,7 @@ void CfgBrowser::save(KConfig *) {
 void CfgBrowser::selectBrowser()
 {
 	KURL::List urlList;
-	KOpenWithDlg dlg(urlList, i18n("Select preferred Web browser application:"), QString::null, this);
+	KOpenWithDlg dlg(urlList, i18n("Select preferred Web browser application:"), QString(), this);
 	if (dlg.exec() != QDialog::Accepted) return;
 	m_browserService = dlg.service();
 	if (m_browserService)
@@ -404,7 +404,7 @@ void ComponentChooser::slotServiceSelected(Q3ListBoxItem* it) {
 	if (!it) return;
 
 	if (somethingChanged) {
-		if (KMessageBox::questionYesNo(this,i18n("<qt>You changed the default component of your choice, do want to save that change now ?</qt>"),QString::null,KStdGuiItem::save(),KStdGuiItem::discard())==KMessageBox::Yes) save();
+		if (KMessageBox::questionYesNo(this,i18n("<qt>You changed the default component of your choice, do want to save that change now ?</qt>"),QString(),KStdGuiItem::save(),KStdGuiItem::discard())==KMessageBox::Yes) save();
 	}
 	KSimpleConfig cfg(static_cast<MyListBoxItem*>(it)->File);
 

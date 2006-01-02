@@ -20,7 +20,7 @@ endif
 #
 # FIXME : readd dnssd (and arts)
 #
-SUBDIRS = applnk bell background samba krdb input kdm\
+SUBDIRS = applnk bell background samba krdb input \
 	locale launch dateandtime style kded kcontrol knotify\
 	pics $(ACCESS_SUBDIR) colors energy fonts \
 	icons screensaver crypto smserver keys \

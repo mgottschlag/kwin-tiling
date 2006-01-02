@@ -56,9 +56,9 @@ static bool	sorting_allowed;	/* is sorting allowed by user ? */
 
 
 #if defined(__linux__)
-# define DEFAULT_ERRORSTRING QString::null /* i18n("Maybe the proc-filesystem is not enabled in Linux-Kernel.") */
+# define DEFAULT_ERRORSTRING QString() /* i18n("Maybe the proc-filesystem is not enabled in Linux-Kernel.") */
 #elif defined(__hpux)
-# define DEFAULT_ERRORSTRING QString::null
+# define DEFAULT_ERRORSTRING QString()
 #else
 #define DEFAULT_ERRORSTRING  i18n("Maybe this system is not completely supported yet :-(")
 #endif
@@ -146,7 +146,7 @@ static Q3ListViewItem* XServer_fill_screen_info( Q3ListViewItem *lBox, Q3ListVie
     yres = ((double)(DisplayHeight(dpy,scr)*25.4)/DisplayHeightMM(dpy,scr));
 
     item = new Q3ListViewItem(lBox,last, i18n("Screen # %1").arg((int)scr,-1),
-		(scr==default_scr) ? i18n("(Default Screen)") : QString::null );
+		(scr==default_scr) ? i18n("(Default Screen)") : QString() );
     item->setExpandable(true);
     if (scr==default_scr)
 	item->setOpen(true);

@@ -135,7 +135,7 @@ void ThemePage::save()
 
 	KConfig c( "kcminputrc" );
 	c.setGroup( "Mouse" );
-	c.writeEntry( "cursorTheme", selectedTheme != "system" ? selectedTheme : QString::null );
+	c.writeEntry( "cursorTheme", selectedTheme != "system" ? selectedTheme : QString() );
 
 	KMessageBox::information( this, i18n("You have to restart KDE for these "
 				"changes to take effect."), i18n("Cursor Settings Changed"),
@@ -204,7 +204,7 @@ void ThemePage::selectionChanged( Q3ListViewItem *item )
 void ThemePage::installClicked()
 {
 	// Get the URL for the theme we're going to install
-	KURL url = KURLRequesterDlg::getURL( QString::null, this, i18n( "Drag or Type Theme URL" ) );
+	KURL url = KURLRequesterDlg::getURL( QString(), this, i18n( "Drag or Type Theme URL" ) );
 	if ( url.isEmpty() )
 		return;
 

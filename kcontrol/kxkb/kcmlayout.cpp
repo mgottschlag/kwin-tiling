@@ -52,7 +52,7 @@ static QString lookupLocalized(const Q3Dict<char> &dict, const QString& text)
       ++it;
     }
 
-  return QString::null;
+  return QString();
 }
 
 OptionListItem::OptionListItem( OptionListItem *parent, const QString &text,

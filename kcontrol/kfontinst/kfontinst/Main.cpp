@@ -323,7 +323,7 @@ int main(int argc, char *argv[])
                 refresh(refreshX, refreshXfs, root);
 
                 if(0==rv && doGs)
-                    rv=KFI::Fontmap::create(root ? QString::null : folder, fe) ? 0 : -6;
+                    rv=KFI::Fontmap::create(root ? QString() : folder, fe) ? 0 : -6;
             }
             else if(0==rv)
                 refresh(refreshX, refreshXfs, root);

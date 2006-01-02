@@ -186,7 +186,7 @@ void KeyboardConfig::defaults()
 
 QString KeyboardConfig::quickHelp() const
 {
-  return QString::null;
+  return QString();
 
   /* "<h1>Keyboard</h1> This module allows you to choose options"
      " for the way in which your keyboard works. The actual effect of"

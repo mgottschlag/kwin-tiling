@@ -183,7 +183,7 @@ private:
      * used when creating themes
      * @param section The theme section to work on, corresponds to toplevel XML tags
      * @param path The original path, relative or absolute
-     * @return an internal path suitable for writing into the XML file or QString::null
+     * @return an internal path suitable for writing into the XML file or QString()
      * in case the resource couldn't be found
      */
     QString processFilePath( const QString & section, const QString & path );

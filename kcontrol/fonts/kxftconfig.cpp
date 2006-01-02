@@ -254,7 +254,7 @@ static QString getEntry(QDomElement element, const char *type, unsigned int numA
         }
     }
 
-    return QString::null;
+    return QString();
 }
 
 static KXftConfig::SubPixel::Type strToType(const char *str)
@@ -413,7 +413,7 @@ static const QString constConfigFiles[]=
     defaultPath,
 
     "/etc/X11/XftConfig",
-    QString::null
+    QString()
 };
 #endif
 

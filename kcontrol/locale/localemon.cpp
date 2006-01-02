@@ -117,8 +117,8 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   int i = 5;
   while (i--)
   {
-    m_cmbMonPosMonSignPos->insertItem(QString::null);
-    m_cmbMonNegMonSignPos->insertItem(QString::null);
+    m_cmbMonPosMonSignPos->insertItem(QString());
+    m_cmbMonNegMonSignPos->insertItem(QString());
   }
 
   lay->setColStretch(1, 1);
@@ -158,7 +158,7 @@ void KLocaleConfigMoney::save()
                        m_locale->monetaryDecimalSymbol(), true, true);
 
   str = ent.readEntry("MonetaryThousandsSeparator", QString::fromLatin1(","));
-  str.replace(QString::fromLatin1("$0"), QString::null);
+  str.replace(QString::fromLatin1("$0"), QString());
   group.deleteEntry("MonetaryThousandsSeparator", false, true);
   if (str != m_locale->monetaryThousandsSeparator())
     group.writeEntry("MonetaryThousandsSeparator",

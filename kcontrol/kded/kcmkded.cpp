@@ -157,7 +157,7 @@ void KDEDConfig::load() {
 			KDesktopFile file( *it, true, "services" );
 
 			if ( file.readBoolEntry("X-KDE-Kded-autoload") ) {
-				clitem = new CheckListItem(_lvStartup, QString::null);
+				clitem = new CheckListItem(_lvStartup, QString());
 				connect(clitem, SIGNAL(changed(Q3CheckListItem*)), SLOT(slotItemChecked(Q3CheckListItem*)));
 				clitem->setOn(autoloadEnabled(&kdedrc, *it));
 				item = clitem;

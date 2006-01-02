@@ -105,7 +105,7 @@ QString USBDB::vendor(int id)
     {
       return *s;
     }
-  return QString::null;
+  return QString();
 }
 
 
@@ -114,7 +114,7 @@ QString USBDB::device(int vendor, int id)
   QString *s = _ids[QString("%1-%2").arg(vendor).arg(id)];
   if ((id != 0) && (vendor != 0) && s)
     return *s;
-  return QString::null;
+  return QString();
 }
 
 
@@ -123,7 +123,7 @@ QString USBDB::cls(int cls)
   QString *s = _classes[QString("%1").arg(cls)];
   if (s)
     return *s;
-  return QString::null;
+  return QString();
 }
 
 
@@ -132,7 +132,7 @@ QString USBDB::subclass(int cls, int sub)
   QString *s = _classes[QString("%1-%2").arg(cls).arg(sub)];
   if (s)
     return *s;
-  return QString::null;
+  return QString();
 }
 
 
@@ -141,6 +141,6 @@ QString USBDB::protocol(int cls, int sub, int prot)
   QString *s = _classes[QString("%1-%2-%2").arg(cls).arg(sub).arg(prot)];
   if (s)
     return *s;
-  return QString::null;
+  return QString();
 }
 

@@ -306,7 +306,7 @@ bool GetInfo_Partitions (QListView *lbox)
 				.arg(mnt->f_ffree)
 				.arg(mnt->f_files ? mnt->f_ffree*100/mnt->f_files : 0);
 
-		vv[4] = QString::null;
+		vv[4].clear();
 #define MNTF(x) if (mnt->f_flags & MNT_##x) vv[4] += QLatin1String(#x " ");
 		MNTF(ASYNC)
 		MNTF(DEFEXPORTED)
