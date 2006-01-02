@@ -94,9 +94,9 @@ void CfgComponent::load(KConfig *cfg) {
 
 	KConfig *store = new KConfig(cfg->readPathEntry("storeInFile","null"));
         store->setGroup(cfg->readEntry("valueSection"));
-	QString setting=store->readEntry(cfg->readEntry("valueName","kcm_componenchooser_null"));
+	QString setting=store->readEntry(cfg->readEntry("valueName","kcm_componenchooser_null"), QString());
         delete store;
-	if (setting.isEmpty()) setting=cfg->readEntry("defaultImplementation");
+	if (setting.isEmpty()) setting=cfg->readEntry("defaultImplementation", QString());
 	QString *tmp=m_revLookupDict[setting];
 	if (tmp)
 		for (int i=0;i<ComponentSelector->count();i++)

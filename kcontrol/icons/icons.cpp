@@ -249,7 +249,7 @@ void KIconConfig::read()
 
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); ++it2, j++)
 	{
-	    QString tmp = mpConfig->readEntry(*it2 + "Effect");
+	    QString tmp = mpConfig->readEntry(*it2 + "Effect", QString());
 	    if (tmp == "togray")
 		effect = KIconEffect::ToGray;
 	    else if (tmp == "colorize")

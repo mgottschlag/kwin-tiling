@@ -82,7 +82,7 @@ void KDesktopShadowSettings::setConfig(KConfig *val)
 #endif
 
     if (config->hasKey(SHADOW_CONFIG_ENTRY))
-	fromString(config->readEntry(SHADOW_CONFIG_ENTRY));
+	fromString(config->readEntry(SHADOW_CONFIG_ENTRY, QString()));
     
 #ifdef DEBUG
     // debug

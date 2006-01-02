@@ -331,11 +331,11 @@ QString KTheme::createYourself( bool pack )
 
         if ( group == "FMSettings" ) {
             desktopConf.setGroup( group );
-            value = desktopConf.readEntry( key );
+            value = desktopConf.readEntry( key, QString() );
         }
         else {
             globalConf->setGroup( group );
-            value = globalConf->readEntry( key );
+            value = globalConf->readEntry( key, QString() );
         }
         QDomElement fontElem = m_dom.createElement( key );
         fontElem.setAttribute( "object", group );
@@ -732,7 +732,7 @@ void KTheme::createIconElems( const QString & group, const QString & object,
             if ( (*it).contains( "Value" ) || *it == "Size" )
                 tmpCol.setAttribute( "value", cfg->readNumEntry( *it, 1 ) );
             else if ( (*it).contains( "Effect" ) )
-                tmpCol.setAttribute( "name", cfg->readEntry( *it, "none" ) );
+                tmpCol.setAttribute( "name", cfg->readEntry( *it, QString("none") ) );
             else
                 tmpCol.setAttribute( "value", cfg->readBoolEntry( *it, false ) );
             parent.appendChild( tmpCol );
