@@ -112,10 +112,12 @@ Application * KCMKNotify::applicationByDescription( const QString& text )
     // not really efficient, but this is not really time-critical
     ApplicationList& allApps = m_notifyWidget->allApps();
     ApplicationListIterator it ( allApps );
-    for ( ; it.current(); ++it )
+    while ( it.hasNext() )
     {
-        if ( it.current()->text() == text )
-            return it.current();
+        if ( it.peekNext()->text() == text )
+            return it.peekNext();
+
+        it.next();
     }
 
     return 0L;
@@ -163,12 +165,14 @@ void KCMKNotify::load()
         m_notifyWidget->addApplicationEvents( *it );
 
     ApplicationList allApps = m_notifyWidget->allApps();
-    allApps.sort();
+    // FIXME: Need to do a manual sort here now. Is it necessary?
+    // allApps.sort();
     m_notifyWidget->setEnabled( !allApps.isEmpty() );
 
     ApplicationListIterator appIt( allApps );
-    for ( ; appIt.current(); ++appIt )
-        m_appCombo->insertItem( appIt.current()->text() );
+    while ( appIt.hasNext() ) {
+        m_appCombo->insertItem( appIt.next()->text() );
+    }
 
     KConfig config( "knotifyrc", true, false );
     config.setGroup( "Misc" );
