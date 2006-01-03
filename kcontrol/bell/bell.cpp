@@ -34,9 +34,8 @@
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdialog.h>
+#include <knotification.h>
 #include <klocale.h>
-#include <kglobal.h>
-#include <knotifyclient.h>
 #include <knuminput.h>
 
 #include "bell.h"
@@ -211,7 +210,7 @@ void KBellConfig::save()
 void KBellConfig::ringBell()
 {
   if (!m_useBell->isChecked()) {
-    KNotifyClient::beep();
+    KNotification::beep(QString(), this);
     return;
   }
 
