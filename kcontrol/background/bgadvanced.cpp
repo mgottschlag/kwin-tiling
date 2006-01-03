@@ -93,7 +93,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    {
       KConfig cfg(desktopConfigname(), false, false);
       cfg.setGroup( "General" );
-      if (!cfg.readBoolEntry( "Enabled", true ))
+      if (!cfg.readEntry( "Enabled", QVariant(true )).toBool())
       {
          dlg->m_groupIconText->hide();
       }

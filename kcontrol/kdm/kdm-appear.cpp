@@ -305,7 +305,7 @@ void KDMAppearanceWidget::loadGuiStyles(KBackedComboBox *combo)
 	continue;
 
     config.setGroup("Desktop Entry");
-    if (config.readBoolEntry("Hidden", false))
+    if (config.readEntry("Hidden", QVariant(false)).toBool())
 	continue;
 
     config.setGroup("KDE");

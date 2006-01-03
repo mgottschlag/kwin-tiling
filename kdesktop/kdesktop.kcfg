@@ -38,7 +38,7 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- init.cc:138 -->
-      <!--     if (!config->readBoolEntry("CopyDesktopLinks", true)) -->
+      <!--     if (!config->readEntry("CopyDesktopLinks", QVariant(true)).toBool()) -->
     </entry>
     <entry key="AutoLineUpIcons" type="Bool">
       <default>false</default>
@@ -50,7 +50,7 @@
       <label>Sort directories first</label>
       <whatsthis></whatsthis>
       <!-- krootwm.cc:251 -->
-      <!--         aSortDirsFirst->setChecked( kconfig->readBoolEntry("SortDirectoriesFirst", true)); -->
+      <!--         aSortDirsFirst->setChecked( kconfig->readEntry("SortDirectoriesFirst", QVariant(true)).toBool()); -->
       <!-- krootwm.cc:496 -->
       <!--     config->writeEntry( "SortDirectoriesFirst", b ); -->
     </entry>
@@ -185,7 +185,7 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- kdiconview.cc:258 -->
-      <!--         m_enableMedia=config->readBoolEntry("enabled",false); -->
+      <!--         m_enableMedia=config->readEntry("enabled", QVariant(false)).toBool(); -->
     </entry>
     <entry key="exclude" type="String">
       <default>media/hdd_mounted,media/hdd_unmounted,media/floppy_unmounted,media/cdrom_unmounted,media/floppy5_unmounted</default>
@@ -225,9 +225,9 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- lockeng.cc:185 -->
-      <!--     mDPMS = config->readBoolEntry("DPMS-dependent", false); -->
+      <!--     mDPMS = config->readEntry("DPMS-dependent", QVariant(false)).toBool(); -->
       <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:329 -->
-      <!--     mDPMSDepend = config.readBoolEntry("DPMS-dependent", false); -->
+      <!--     mDPMSDepend = config.readEntry("DPMS-dependent", QVariant(false)).toBool(); -->
     </entry>
     <entry key="ActionTopLeft" type="Int">
       <default>0</default>
@@ -254,7 +254,7 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:308 -->
-      <!--     if(config.readBoolEntry("Lock", false)) -->
+      <!--     if(config.readEntry("Lock", QVariant(false)).toBool()) -->
     </entry>
     <entry key="LockGrace" type="Int">
       <default>5000</default>
@@ -268,7 +268,7 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:319 -->
-      <!--     if (config.readBoolEntry("AutoLogout", false)) -->
+      <!--     if (config.readEntry("AutoLogout", QVariant(false)).toBool()) -->
     </entry>
     <entry key="AutoLogoutTimeout" type="Int">
       <default>600</default>

@@ -121,7 +121,7 @@ void KDMFontWidget::load()
   font = greetingFontChooser->font();
   greetingFontChooser->setFont(config->readFontEntry("GreetFont",  &font));
 
-  aacb->setChecked(config->readBoolEntry("AntiAliasing"));
+  aacb->setChecked(config->readEntry("AntiAliasing", QVariant(false)).toBool());
 }
 
 

@@ -313,7 +313,7 @@ void ShortcutsModule::slotSelectScheme( int )
 		// If the user's keyboard layout doesn't support the Win key,
 		//  but this layout scheme requires it,
 		if( !KKeyNative::keyboardHasWinKey()
-		    && config.readBoolEntry( "Uses Win Modifier", false ) ) {
+		    && config.readEntry( "Uses Win Modifier", QVariant(false )).toBool() ) {
 			// TODO: change "Win" to Win's label.
 			int ret = KMessageBox::warningContinueCancel( this,
 				i18n("This scheme requires the \"%1\" modifier key, which is not "

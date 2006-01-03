@@ -196,10 +196,10 @@ TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, 
     KSharedConfig::Ptr		pConfig = KSharedConfig::openConfig("kickerrc");
 	
     pConfig->setGroup("menus");
-    m_detailedMenuEntries = pConfig->readBoolEntry("DetailedMenuEntries",true);
+    m_detailedMenuEntries = pConfig->readEntry("DetailedMenuEntries", QVariant(true)).toBool();
     if (m_detailedMenuEntries)
     {
-        m_detailedEntriesNamesFirst = pConfig->readBoolEntry("DetailedEntriesNamesFirst",false);
+        m_detailedEntriesNamesFirst = pConfig->readEntry("DetailedEntriesNamesFirst", QVariant(false)).toBool();
     }
 }
 

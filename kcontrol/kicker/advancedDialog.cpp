@@ -75,8 +75,8 @@ void advancedDialog::load()
     KConfig c(KickerConfig::self()->configName(), false, false);
     c.setGroup("General");
 
-    bool fadedOut = c.readBoolEntry("FadeOutAppletHandles", false);
-    bool hideHandles = c.readBoolEntry("HideAppletHandles", false);
+    bool fadedOut = c.readEntry("FadeOutAppletHandles", QVariant(false)).toBool();
+    bool hideHandles = c.readEntry("HideAppletHandles", QVariant(false)).toBool();
     if (hideHandles)
         m_advancedWidget->hideHandles->setChecked(true);
     else if (fadedOut)
@@ -91,7 +91,7 @@ void advancedDialog::load()
     int tintValue = c.readNumEntry( "TintValue", 0 );
     m_advancedWidget->tintSlider->setValue( tintValue );
     
-    bool transparentMenubarPanel = c.readBoolEntry("MenubarPanelTransparent", false);
+    bool transparentMenubarPanel = c.readEntry("MenubarPanelTransparent", QVariant(false)).toBool();
     m_advancedWidget->menubarPanelTransparent->setChecked( transparentMenubarPanel );
 
     enableButtonApply(false);

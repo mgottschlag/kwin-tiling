@@ -117,7 +117,7 @@ extern "C" {
 	    DPMSGetTimeouts(dpy, &pre_configured_standby, &pre_configured_suspend, &pre_configured_off);
 	    DPMSInfo(dpy, &pre_configured_status, &pre_configured_enabled);
 	    /* let the user override the settings */
-	    enabled = cfg->readBoolEntry("displayEnergySaving", pre_configured_enabled);
+	    enabled = cfg->readEntry("displayEnergySaving", QVariant(pre_configured_enabled)).toBool();
 	    standby = cfg->readNumEntry("displayStandby", pre_configured_standby);
 	    suspend = cfg->readNumEntry("displaySuspend", pre_configured_suspend);
 	    off = cfg->readNumEntry("displayPowerOff", pre_configured_off);
@@ -282,7 +282,7 @@ void KEnergy::defaults()
 
 void KEnergy::readSettings()
 {
-    m_bEnabled = m_pConfig->readBoolEntry("displayEnergySaving", false);
+    m_bEnabled = m_pConfig->readEntry("displayEnergySaving", QVariant(false)).toBool();
     m_Standby = m_pConfig->readNumEntry("displayStandby", DFLT_STANDBY);
     m_Suspend = m_pConfig->readNumEntry("displaySuspend", DFLT_SUSPEND);
     m_Off = m_pConfig->readNumEntry("displayPowerOff", DFLT_OFF);

@@ -1536,7 +1536,7 @@ void KXftConfig::setAntiAliasing( bool set )
 
 bool KXftConfig::getAntiAliasing() const
 {
-  return QSettings().readBoolEntry("/qt/useXft");
+  return QSettings().readEntry("/qt/useXft", QVariant(false)).toBool();
 }
 
 

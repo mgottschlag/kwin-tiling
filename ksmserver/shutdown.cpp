@@ -109,9 +109,9 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
     bool logoutConfirmed =
         (confirm == KWorkSpace::ShutdownConfirmYes) ? false :
        (confirm == KWorkSpace::ShutdownConfirmNo) ? true :
-                  !config->readBoolEntry( "confirmLogout", true );
+                  !config->readEntry( "confirmLogout", QVariant(true )).toBool();
     bool maysd = false;
-    if (config->readBoolEntry( "offerShutdown", true ) && DM().canShutdown())
+    if (config->readEntry( "offerShutdown", QVariant(true )).toBool() && DM().canShutdown())
         maysd = true;
     if (!maysd) {
         if (sdtype != KWorkSpace::ShutdownTypeNone &&

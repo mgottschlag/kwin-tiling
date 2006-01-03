@@ -42,7 +42,7 @@ Action_data_base::Action_data_base( KConfig& cfg_P, Action_data_group* parent_P 
     QString save_cfg_group = cfg_P.group();
     _name = cfg_P.readEntry( "Name" );
     _comment = cfg_P.readEntry( "Comment" );
-    _enabled = cfg_P.readBoolEntry( "Enabled", true );
+    _enabled = cfg_P.readEntry( "Enabled", QVariant(true )).toBool();
     cfg_P.setGroup( save_cfg_group + "Conditions" );
     _conditions = new Condition_list( cfg_P, this );
     cfg_P.setGroup( save_cfg_group );
@@ -97,7 +97,7 @@ Action_data_base* Action_data_base::create_cfg_read( KConfig& cfg_P, Action_data
     
 bool Action_data_base::cfg_is_enabled( KConfig& cfg_P )
     {
-    return cfg_P.readBoolEntry( "Enabled", true );
+    return cfg_P.readEntry( "Enabled", QVariant(true )).toBool();
     }
     
 void Action_data_base::reparent( Action_data_group* new_parent_P )

@@ -314,7 +314,7 @@ Keyboard_input_action::Keyboard_input_action( KConfig& cfg_P, Action_data* data_
     : Action( cfg_P, data_P )
     {
     _input = cfg_P.readEntry( "Input" );
-    if( cfg_P.readBoolEntry( "IsDestinationWindow" ))
+    if( cfg_P.readEntry( "IsDestinationWindow" , QVariant(false)).toBool())
         {
         QString save_cfg_group = cfg_P.group();
         cfg_P.setGroup( save_cfg_group + "DestinationWindow" );
@@ -325,7 +325,7 @@ Keyboard_input_action::Keyboard_input_action( KConfig& cfg_P, Action_data* data_
     else
         {
         _dest_window = NULL;
-        _active_window = cfg_P.readBoolEntry( "ActiveWindow" );
+        _active_window = cfg_P.readEntry( "ActiveWindow" , QVariant(false)).toBool();
         }
     }
 

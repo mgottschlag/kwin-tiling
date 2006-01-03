@@ -128,7 +128,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   // This key has no GUI apparently
   KConfig config("kcmdisplayrc", true );
   config.setGroup("X11");
-  bool multihead = !config.readBoolEntry( "disableMultihead", false) &&
+  bool multihead = !config.readEntry( "disableMultihead", QVariant(false)).toBool() &&
                     (ScreenCount(QX11Info::display()) > 1);
   // Pass env. var to kdeinit.
   DCOPCString name = "KDE_MULTIHEAD";

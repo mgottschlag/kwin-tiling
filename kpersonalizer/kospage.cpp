@@ -395,13 +395,13 @@ void KOSPage::slotMacDescription(){
 /** retrieves the user's local values. In case he doesn't have these set, use the default values of KDE */
 void KOSPage::getUserDefaults(){
 	ckcmdisplay->setGroup("KDE");
-	b_MacMenuBar = ckcmdisplay->readBoolEntry("macStyle", false);
+	b_MacMenuBar = ckcmdisplay->readEntry("macStyle", QVariant(false)).toBool();
 
 	cglobal->setGroup("KDE");
-	b_SingleClick = cglobal->readBoolEntry("SingleClick", true);
+	b_SingleClick = cglobal->readEntry("SingleClick", QVariant(true)).toBool();
 
 	claunch->setGroup("FeedbackStyle");
-	b_BusyCursor = claunch->readBoolEntry("BusyCursor", true);
+	b_BusyCursor = claunch->readEntry("BusyCursor", QVariant(true)).toBool();
 
 	cwin->setGroup("Windows");
 	s_TitlebarDCC = cwin->readEntry("TitlebarDoubleClickCommand", "Shade");
@@ -412,26 +412,26 @@ void KOSPage::getUserDefaults(){
 	s_TitlebarRMB = cwin->readEntry("CommandActiveTitlebar3", "Operations menu");
 
 	cdesktop->setGroup( "Menubar" );
-	b_ShowMenuBar = cdesktop->readBoolEntry("ShowMenubar", false);
+	b_ShowMenuBar = cdesktop->readEntry("ShowMenubar", QVariant(false)).toBool();
 	cdesktop->setGroup( "Mouse Buttons" );
 	s_MMB = cdesktop->readEntry("Middle", "WindowListMenu");
 	cdesktop->setGroup( "FMSettings" );
-	b_DesktopUnderline = cdesktop->readBoolEntry("UnderlineLinks", true);
+	b_DesktopUnderline = cdesktop->readEntry("UnderlineLinks", QVariant(true)).toBool();
 
 	ckonqueror->setGroup( "FMSettings" );
-	b_KonqUnderline = ckonqueror->readBoolEntry("UnderlineLinks", true);
+	b_KonqUnderline = ckonqueror->readEntry("UnderlineLinks", QVariant(true)).toBool();
 
 	ckcminput->setGroup("KDE");
-	b_ChangeCursor = ckcminput->readBoolEntry("ChangeCursor", true);
+	b_ChangeCursor = ckcminput->readEntry("ChangeCursor", QVariant(true)).toBool();
 
 	cklipper->setGroup("General");
-	b_syncClipboards = cklipper->readBoolEntry("SynchronizeClipboards", false);
+	b_syncClipboards = cklipper->readEntry("SynchronizeClipboards", QVariant(false)).toBool();
 
 	map_GlobalUserKeys = cglobal->entryMap("Global Shortcuts");
 	map_AppUserKeys = cglobal->entryMap("Shortcuts");
 
 	ckaccess->setGroup("Keyboard");
-	b_Gestures = ckaccess->readBoolEntry("Gestures", true);
+	b_Gestures = ckaccess->readEntry("Gestures", QVariant(true)).toBool();
 }
 
 

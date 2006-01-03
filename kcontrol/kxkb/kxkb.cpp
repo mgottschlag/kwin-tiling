@@ -193,15 +193,15 @@ bool KXKBApp::settingsRead()
 
 // Even if the layouts have been disabled we still want to set Xkb options
 // user can always switch them off now in the "Options" tab
-    bool enableXkbOptions = config->readBoolEntry("EnableXkbOptions", true);
+    bool enableXkbOptions = config->readEntry("EnableXkbOptions", QVariant(true)).toBool();
     if( enableXkbOptions ) {
-	m_resetOldOptions = config->readBoolEntry("ResetOldOptions", false);
+	m_resetOldOptions = config->readEntry("ResetOldOptions", QVariant(false)).toBool();
 	m_options = config->readEntry("Options", "");
 	if( !m_extension->setXkbOptions(m_options, m_resetOldOptions) ) {
 	    kdDebug() << "Setting XKB options failed!" << endl;
 	}
     }
-    bool enabled = config->readBoolEntry("Use", false);
+    bool enabled = config->readEntry("Use", QVariant(false)).toBool();
     if (!enabled)
     {
         delete config;
@@ -263,7 +263,7 @@ bool KXKBApp::settingsRead()
 	    kdDebug() << "Error switching to single layout " << m_layout << endl;
 // kapp->quit();
 	}
-	bool showSingle = config->readBoolEntry("ShowSingle", false);
+	bool showSingle = config->readEntry("ShowSingle", QVariant(false)).toBool();
 	if( !showSingle ) {
     	    delete config;
 	    kapp->quit();
@@ -271,7 +271,7 @@ bool KXKBApp::settingsRead()
 	}
     }
 
-    m_stickySwitching = config->readBoolEntry("StickySwitching", false);
+    m_stickySwitching = config->readEntry("StickySwitching", QVariant(false)).toBool();
     m_stickySwitchingDepth = config->readEntry("StickySwitchingDepth", "1").toInt();
 
     if( !m_tray )
@@ -281,7 +281,7 @@ bool KXKBApp::settingsRead()
 	connect(m_tray, SIGNAL(toggled()), this, SLOT(toggled()));
     }
 
-    bool showFlag = config->readBoolEntry("ShowFlag", true);
+    bool showFlag = config->readEntry("ShowFlag", QVariant(true)).toBool();
     m_tray->setShowFlag(showFlag);
     m_tray->setLayouts(m_list, *m_rules);
     m_tray->setCurrentLayout(m_layout);

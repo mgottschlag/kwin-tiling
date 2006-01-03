@@ -85,7 +85,7 @@ void KBackground::makeReadOnly()
 
 void KBackground::load()
 {
-    m_pCBEnable->setChecked( config->readBoolEntry( "UseBackground", true ) );
+    m_pCBEnable->setChecked( config->readEntry( "UseBackground", QVariant(true )).toBool() );
     m_background->load();
     slotEnableChanged();
     emit changed(false);

@@ -384,16 +384,16 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     _uidEdit->setText(df->readEntry("X-KDE-Username"));
 
     if( df->hasKey( "StartupNotify" ))
-        _launchCB->setChecked(df->readBoolEntry("StartupNotify", true));
+        _launchCB->setChecked(df->readEntry("StartupNotify", QVariant(true)).toBool());
     else // backwards comp.
-        _launchCB->setChecked(df->readBoolEntry("X-KDE-StartupNotify", true));
+        _launchCB->setChecked(df->readEntry("X-KDE-StartupNotify", QVariant(true)).toBool());
 
     if(df->readNumEntry("Terminal", 0) == 1)
         _terminalCB->setChecked(true);
     else
         _terminalCB->setChecked(false);
 
-    _uidCB->setChecked(df->readBoolEntry("X-KDE-SubstituteUID", false));
+    _uidCB->setChecked(df->readEntry("X-KDE-SubstituteUID", QVariant(false)).toBool());
 
     enableWidgets(true, entryInfo->hidden);
     blockSignals(false);

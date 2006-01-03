@@ -783,7 +783,7 @@ void KBackgroundSettings::readSettings(bool reparse)
     if (value > -201 && value < 201)
       m_BlendBalance = value;
 
-    m_ReverseBlending = m_pConfig->readBoolEntry( "ReverseBlending", defReverseBlending);
+    m_ReverseBlending = m_pConfig->readEntry( "ReverseBlending", QVariant(defReverseBlending)).toBool();
 
     // Multiple wallpaper config
     m_WallpaperList = m_pConfig->readPathListEntry("WallpaperList");
@@ -814,7 +814,7 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     m_MinOptimizationDepth = m_pConfig->readNumEntry( "MinOptimizationDepth",
         _defMinOptimizationDepth );
-    m_bShm = m_pConfig->readBoolEntry( "UseSHM", _defShm );
+    m_bShm = m_pConfig->readEntry( "UseSHM", QVariant(_defShm )).toBool();
 
     dirty = false; hashdirty = true;
 }
@@ -1175,17 +1175,17 @@ void KGlobalBackgroundSettings::setTextWidth(int width)
 void KGlobalBackgroundSettings::readSettings()
 {
     m_pConfig->setGroup("Background Common");
-    m_bCommon = m_pConfig->readBoolEntry("CommonDesktop", _defCommon);
-    m_bDock = m_pConfig->readBoolEntry("Dock", _defDock);
-    m_bExport = m_pConfig->readBoolEntry("Export", _defExport);
-    m_bLimitCache = m_pConfig->readBoolEntry("LimitCache", _defLimitCache);
+    m_bCommon = m_pConfig->readEntry("CommonDesktop", QVariant(_defCommon)).toBool();
+    m_bDock = m_pConfig->readEntry("Dock", QVariant(_defDock)).toBool();
+    m_bExport = m_pConfig->readEntry("Export", QVariant(_defExport)).toBool();
+    m_bLimitCache = m_pConfig->readEntry("LimitCache", QVariant(_defLimitCache)).toBool();
     m_CacheSize = m_pConfig->readNumEntry("CacheSize", _defCacheSize);
 
     m_TextColor = KGlobalSettings::textColor();
     m_pConfig->setGroup("FMSettings");
     m_TextColor = m_pConfig->readColorEntry("NormalTextColor", &m_TextColor);
     m_TextBackgroundColor = m_pConfig->readColorEntry("ItemTextBackground");
-    m_shadowEnabled = m_pConfig->readBoolEntry("ShadowEnabled", true);
+    m_shadowEnabled = m_pConfig->readEntry("ShadowEnabled", QVariant(true)).toBool();
     m_textLines = m_pConfig->readNumEntry("TextHeight", DEFAULT_TEXTHEIGHT);
     m_textWidth = m_pConfig->readNumEntry("TextWidth", DEFAULT_TEXTWIDTH);
 

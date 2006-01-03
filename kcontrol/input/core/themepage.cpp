@@ -114,8 +114,8 @@ void ThemePage::load()
 
 	KConfig c( "kcminputrc" );
 	c.setGroup( "Mouse" );
-	largeCursor = c.readBoolEntry( "LargeCursor", false );
-	whiteCursor = c.readBoolEntry( "WhiteCursor", false );
+	largeCursor = c.readEntry( "LargeCursor", QVariant(false )).toBool();
+	whiteCursor = c.readEntry( "WhiteCursor", QVariant(false )).toBool();
 
 	if ( largeCursor )
 		currentTheme = whiteCursor ? "LargeWhite" : "LargeBlack";

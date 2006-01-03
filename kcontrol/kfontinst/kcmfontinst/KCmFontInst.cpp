@@ -141,7 +141,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *name, const QStringList&
     QGridLayout *fontsLayout=new QGridLayout(fontsFrame, 1, 1, 0, 1);
     QVBoxLayout *layout=new QVBoxLayout(this, 0, KDialog::spacingHint());
     KToolBar    *toolbar=new KToolBar(this);
-    bool        showBitmap(itsConfig.readBoolEntry(CFG_SHOW_BITMAP, false));
+    bool        showBitmap(itsConfig.readEntry(CFG_SHOW_BITMAP, QVariant(false)).toBool());
 
     fontsFrame->setLineWidth(0);
     toolbar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
@@ -263,7 +263,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *name, const QStringList&
 
     //
     // Set view...
-    if(itsConfig.readBoolEntry(CFG_LISTVIEW, true))
+    if(itsConfig.readEntry(CFG_LISTVIEW, QVariant(true)).toBool())
         listView();
     else
         iconView();

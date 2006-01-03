@@ -335,7 +335,7 @@ void ThemePage::insertTheme( const QString &path )
 	c.setGroup( "Icon Theme" );
 
 	// Don't insert the theme if it's hidden.
-	if ( c.readBoolEntry( "Hidden", false ) )
+	if ( c.readEntry( "Hidden", QVariant(false )).toBool() )
 		return;
 
 	// ### If the theme is hidden, the user will probably find it strange that it
@@ -485,7 +485,7 @@ void ThemePage::insertThemes()
 				c.setGroup( "Icon Theme" );
 
 				// Skip this theme if it's hidden.
-				if ( c.readBoolEntry( "Hidden", false ) )
+				if ( c.readEntry( "Hidden", QVariant(false )).toBool() )
 					continue;
 
 				// If there's no cursors subdirectory we'll do a recursive scan

@@ -204,7 +204,7 @@ void KSmartcardConfig::loadReadersTab( QStringList lr){
 
   base->_readerHostsListView->clear();
 
-  if (!config->readBoolEntry("Enable Support", false)){
+  if (!config->readEntry("Enable Support", QVariant(false)).toBool()){
 
 
 
@@ -401,7 +401,7 @@ extern "C"
   KDE_EXPORT void init_smartcard()
   {
     KConfig *config = new KConfig("ksmartcardrc", false, false);
-    bool start = config->readBoolEntry("Enable Support", false);
+    bool start = config->readEntry("Enable Support", QVariant(false)).toBool();
     delete config;
 
     if (start) {

@@ -460,10 +460,10 @@ void KDMUsersWidget::load()
     leminuid->setText(config->readEntry("MinShowUID", defminuid));
     lemaxuid->setText(config->readEntry("MaxShowUID", defmaxuid));
 
-    cbshowlist->setChecked( config->readBoolEntry( "UserList", true ) );
-    cbcomplete->setChecked( config->readBoolEntry( "UserCompletion", false ) );
+    cbshowlist->setChecked( config->readEntry( "UserList", QVariant(true )).toBool() );
+    cbcomplete->setChecked( config->readEntry( "UserCompletion", QVariant(false )).toBool() );
     cbinverted->setChecked( config->readEntry( "ShowUsers" ) != "Selected" );
-    cbusrsrt->setChecked(config->readBoolEntry("SortUsers", true));
+    cbusrsrt->setChecked(config->readEntry("SortUsers", QVariant(true)).toBool());
 
     QString ps = config->readEntry( "FaceSource" );
     if (ps == QLatin1String("UserOnly"))

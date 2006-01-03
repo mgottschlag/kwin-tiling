@@ -65,16 +65,16 @@ CSettingsDialog::CSettingsDialog(QWidget *parent)
 
     KConfig cfg(Misc::root() ? KFI_ROOT_CFG_FILE : KFI_CFG_FILE);
 
-    itsDoX->setChecked(cfg.readBoolEntry(KFI_CFG_X_KEY, KFI_DEFAULT_CFG_X));
-    itsDoGs->setChecked(cfg.readBoolEntry(KFI_CFG_GS_KEY, KFI_DEFAULT_CFG_GS));
+    itsDoX->setChecked(cfg.readEntry(KFI_CFG_X_KEY, QVariant(KFI_DEFAULT_CFG_X)).toBool());
+    itsDoGs->setChecked(cfg.readEntry(KFI_CFG_GS_KEY, QVariant(KFI_DEFAULT_CFG_GS)).toBool());
 }
 
 void CSettingsDialog::slotOk()
 {
     KConfig cfg(Misc::root() ? KFI_ROOT_CFG_FILE : KFI_CFG_FILE);
 
-    bool oldDoX=cfg.readBoolEntry(KFI_CFG_X_KEY, KFI_DEFAULT_CFG_X),
-         oldDoGs=cfg.readBoolEntry(KFI_CFG_GS_KEY, KFI_DEFAULT_CFG_GS);
+    bool oldDoX=cfg.readEntry(KFI_CFG_X_KEY, QVariant(KFI_DEFAULT_CFG_X)).toBool(),
+         oldDoGs=cfg.readEntry(KFI_CFG_GS_KEY, QVariant(KFI_DEFAULT_CFG_GS)).toBool();
 
     cfg.writeEntry(KFI_CFG_X_KEY, itsDoX->isChecked());
     cfg.writeEntry(KFI_CFG_GS_KEY, itsDoGs->isChecked());

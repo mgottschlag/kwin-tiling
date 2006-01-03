@@ -408,11 +408,11 @@ void KScreenSaver::readSettings()
 
     config->setGroup( "ScreenSaver" );
 
-    mEnabled = config->readBoolEntry("Enabled", false);
+    mEnabled = config->readEntry("Enabled", QVariant(false)).toBool();
     mTimeout = config->readNumEntry("Timeout", 300);
     mLockTimeout = config->readNumEntry("LockGrace", 60000);
-    mDPMS = config->readBoolEntry("DPMS-dependent", false);
-    mLock = config->readBoolEntry("Lock", false);
+    mDPMS = config->readEntry("DPMS-dependent", QVariant(false)).toBool();
+    mLock = config->readEntry("Lock", QVariant(false)).toBool();
     mSaver = config->readEntry("Saver");
 
     if (mTimeout < 60) mTimeout = 60;

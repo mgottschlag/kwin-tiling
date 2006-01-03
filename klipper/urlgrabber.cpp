@@ -143,7 +143,7 @@ bool URLGrabber::checkNewData( const QString& clipData )
     actionMenu( true ); // also creates myMatches
 
     return ( !myMatches.isEmpty() &&
-             (!m_config->readBoolEntry("Put Matching URLs in history", true)));
+             (!m_config->readEntry("Put Matching URLs in history", QVariant(true)).toBool()));
 }
 
 
@@ -292,7 +292,7 @@ void URLGrabber::readConfiguration( KConfig *kc )
     int num = kc->readNumEntry("Number of Actions", 0);
     myAvoidWindows = kc->readListEntry("No Actions for WM_CLASS");
     myPopupKillTimeout = kc->readNumEntry( "Timeout for Action popups (seconds)", 8 );
-    m_trimmed = kc->readBoolEntry("Strip Whitespace before exec", true);
+    m_trimmed = kc->readEntry("Strip Whitespace before exec", QVariant(true)).toBool();
     QString group;
     for ( int i = 0; i < num; i++ ) {
         group = QString("Action_%1").arg( i );
@@ -448,7 +448,7 @@ ClipAction::ClipAction( KConfig *kc )
 
         addCommand( kc->readPathEntry( "Commandline" ),
                     kc->readEntry( "Description" ), // i18n'ed
-                    kc->readBoolEntry( "Enabled" ),
+                    kc->readEntry( "Enabled" , QVariant(false)).toBool(),
                     kc->readEntry( "Icon") );
     }
 }

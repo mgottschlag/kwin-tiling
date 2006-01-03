@@ -255,7 +255,7 @@ asia.pool.ntp.org,\
 europe.pool.ntp.org,\
 north-america.pool.ntp.org,\
 oceania.pool.ntp.org"))));
-  setDateTimeAuto->setChecked(config.readBoolEntry("enabled", false));
+  setDateTimeAuto->setChecked(config.readEntry("enabled", QVariant(false)).toBool());
 
   // Reset to the current date and time
   time = QTime::currentTime();

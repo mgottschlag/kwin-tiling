@@ -137,7 +137,7 @@ void KeyboardConfig::load()
   XGetKeyboardControl(QX11Info::display(), &kbd);
 
   config.setGroup("Keyboard");
-  bool key = config.readBoolEntry("KeyboardRepeating", true);
+  bool key = config.readEntry("KeyboardRepeating", QVariant(true)).toBool();
   keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
   ui->delay->setValue(config.readNumEntry( "RepeatDelay", 660 ));
   ui->rate->setValue(config.readDoubleNumEntry( "RepeatRate", 25 ));

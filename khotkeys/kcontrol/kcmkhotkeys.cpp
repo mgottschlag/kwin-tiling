@@ -60,7 +60,7 @@ extern "C"
     {
     KConfig cfg( "khotkeysrc", true );
     cfg.setGroup( "Main" );
-    if( !cfg.readBoolEntry( "Autostart", false ))
+    if( !cfg.readEntry( "Autostart", QVariant(false )).toBool())
         return;
     // Non-xinerama multhead support in KDE is just a hack
     // involving forking apps per-screen. Don't bother with

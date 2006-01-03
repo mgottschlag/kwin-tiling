@@ -417,7 +417,7 @@ void LayoutConfig::load()
   KConfig *config = new KConfig("kxkbrc", true);
   config->setGroup("Layout");
 
-  bool use = config->readBoolEntry( "Use", false );
+  bool use = config->readEntry( "Use", QVariant(false )).toBool();
 
   // find out which rule applies
   //QString rule = "xfree86"; //config->readEntry("Rule", "xfree86");
@@ -463,15 +463,15 @@ void LayoutConfig::load()
   QStringList incs = config->readListEntry( "Includes" );
   m_rules->parseVariants( incs, m_includes, false );
 
-  bool showSingle = config->readBoolEntry( "ShowSingle", false );
+  bool showSingle = config->readEntry( "ShowSingle", QVariant(false )).toBool();
   widget->chkShowSingle->setChecked(showSingle);
 
-  bool showFlag = config->readBoolEntry( "ShowFlag", true );
+  bool showFlag = config->readEntry( "ShowFlag", QVariant(true )).toBool();
   widget->chkShowFlag->setChecked(showFlag);
 
-  bool enableXkbOptions = config->readBoolEntry( "EnableXkbOptions", true );
+  bool enableXkbOptions = config->readEntry( "EnableXkbOptions", QVariant(true )).toBool();
   widget->chkEnableOptions->setChecked( enableXkbOptions );
-  bool resetOld = config->readBoolEntry("ResetOldOptions", false);
+  bool resetOld = config->readEntry("ResetOldOptions", QVariant(false)).toBool();
   widget->checkResetOld->setChecked(resetOld);
   QStringList options = config->readListEntry("Options");
 
@@ -501,7 +501,7 @@ void LayoutConfig::load()
     if( swMode == switchModes[ii] )
       widget->grpSwitching->setButton(ii);
 
-  bool stickySwitching = config->readBoolEntry("StickySwitching", false);
+  bool stickySwitching = config->readEntry("StickySwitching", QVariant(false)).toBool();
   widget->chkEnableSticky->setChecked(stickySwitching);
   widget->spinStickyDepth->setEnabled(stickySwitching);
   widget->spinStickyDepth->setValue( config->readEntry("StickySwitchingDepth", "1").toInt() + 1);
@@ -736,7 +736,7 @@ extern "C"
     XKeyboardControl kbdc;
 
     XGetKeyboardControl(QX11Info::display(), &kbd);
-    bool key = config->readBoolEntry("KeyboardRepeating", true);
+    bool key = config->readEntry("KeyboardRepeating", QVariant(true)).toBool();
     kbdc.key_click_percent = config->readNumEntry("ClickVolume", kbd.key_click_percent);
     kbdc.auto_repeat_mode = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
 
@@ -762,16 +762,16 @@ extern "C"
 
 // Even if the layouts have been disabled we still want to set Xkb options
 // user can always switch them off now in the "Options" tab
-    bool enableXkbOptions = config->readBoolEntry("EnableXkbOptions", true);
+    bool enableXkbOptions = config->readEntry("EnableXkbOptions", QVariant(true)).toBool();
     if( enableXkbOptions ) {
-	bool resetOldOptions = config->readBoolEntry("ResetOldOptions", false);
+	bool resetOldOptions = config->readEntry("ResetOldOptions", QVariant(false)).toBool();
 	QString options = config->readEntry("Options", "");
 	if( !XKBExtension::setXkbOptions(options, resetOldOptions) ) {
 	    kdDebug() << "Setting XKB options failed!" << endl;
 	}
     }
 
-    if (config->readBoolEntry("Use", false) == true)
+    if (config->readEntry("Use", QVariant(false)).toBool() == true)
         KToolInvocation::startServiceByDesktopName("kxkb");
     delete config;
   }

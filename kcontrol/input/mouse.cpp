@@ -508,7 +508,7 @@ void MouseConfig::load()
   KConfig ac("kaccessrc", true);
 
   ac.setGroup("Mouse");
-  mouseKeys->setChecked(ac.readBoolEntry("MouseKeys", false));
+  mouseKeys->setChecked(ac.readEntry("MouseKeys", QVariant(false)).toBool());
   mk_delay->setValue(ac.readNumEntry("MKDelay", 160));
 
   int interval = ac.readNumEntry("MKInterval", 5);
@@ -705,7 +705,7 @@ void MouseSettings::load(KConfig *config)
 #warning was key == NULL how was this working? is key.isNull() what the coder meant?
   else if (key.isNull())
     handed = h;
-  reverseScrollPolarity = config->readBoolEntry( "ReverseScrollPolarity", false );
+  reverseScrollPolarity = config->readEntry( "ReverseScrollPolarity", QVariant(false )).toBool();
   m_handedNeedsApply = false;
 
   // SC/DC/AutoSelect/ChangeCursor
@@ -715,10 +715,10 @@ void MouseSettings::load(KConfig *config)
   dragStartDist = config->readNumEntry("StartDragDist", 4);
   wheelScrollLines = config->readNumEntry("WheelScrollLines", 3);
 
-  singleClick = config->readBoolEntry("SingleClick", KDE_DEFAULT_SINGLECLICK);
+  singleClick = config->readEntry("SingleClick", QVariant(KDE_DEFAULT_SINGLECLICK)).toBool();
   autoSelectDelay = config->readNumEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
-  visualActivate = config->readBoolEntry("VisualActivate", KDE_DEFAULT_VISUAL_ACTIVATE);
-  changeCursor = config->readBoolEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
+  visualActivate = config->readEntry("VisualActivate", QVariant(KDE_DEFAULT_VISUAL_ACTIVATE)).toBool();
+  changeCursor = config->readEntry("ChangeCursor", QVariant(KDE_DEFAULT_CHANGECURSOR)).toBool();
 }
 
 void MouseSettings::apply(bool force)

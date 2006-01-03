@@ -440,15 +440,15 @@ void KlipperWidget::readProperties(KConfig *kc)
 void KlipperWidget::readConfiguration( KConfig *kc )
 {
     kc->setGroup("General");
-    bPopupAtMouse = kc->readBoolEntry("PopupAtMousePosition", false);
-    bKeepContents = kc->readBoolEntry("KeepClipboardContents", true);
-    bURLGrabber = kc->readBoolEntry("URLGrabberEnabled", false);
-    bReplayActionInHistory = kc->readBoolEntry("ReplayActionInHistory", false);
-    bNoNullClipboard = kc->readBoolEntry("NoEmptyClipboard", true);
-    bUseGUIRegExpEditor = kc->readBoolEntry("UseGUIRegExpEditor", true );
+    bPopupAtMouse = kc->readEntry("PopupAtMousePosition", QVariant(false)).toBool();
+    bKeepContents = kc->readEntry("KeepClipboardContents", QVariant(true)).toBool();
+    bURLGrabber = kc->readEntry("URLGrabberEnabled", QVariant(false)).toBool();
+    bReplayActionInHistory = kc->readEntry("ReplayActionInHistory", QVariant(false)).toBool();
+    bNoNullClipboard = kc->readEntry("NoEmptyClipboard", QVariant(true)).toBool();
+    bUseGUIRegExpEditor = kc->readEntry("UseGUIRegExpEditor", QVariant(true )).toBool();
     history()->max_size( kc->readNumEntry("MaxClipItems", 7) );
-    bIgnoreSelection = kc->readBoolEntry("IgnoreSelection", false);
-    bSynchronize = kc->readBoolEntry("Synchronize", false);
+    bIgnoreSelection = kc->readEntry("IgnoreSelection", QVariant(false)).toBool();
+    bSynchronize = kc->readEntry("Synchronize", QVariant(false)).toBool();
 }
 
 void KlipperWidget::writeConfiguration( KConfig *kc )
@@ -1101,7 +1101,7 @@ void Klipper::quitProcess()
 
 static void ensureGlobalSyncOff(KConfig* config) {
     config->setGroup("General");
-    if ( config->readBoolEntry( "SynchronizeClipboardAndSelection" ) ) {
+    if ( config->readEntry( "SynchronizeClipboardAndSelection" , QVariant(false)).toBool() ) {
         kdDebug() << "Shutting off global synchronization" << endl;
         config->writeEntry("SynchronizeClipboardAndSelection",
                            false,

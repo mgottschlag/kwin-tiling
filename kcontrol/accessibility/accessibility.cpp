@@ -42,13 +42,13 @@ K_EXPORT_COMPONENT_FACTORY( kcm_accessibility, AccessibilityFactory("kcmaccessib
 // static bool needToRunKAccessDaemon( KConfig *config ){
 //    KConfigGroup group( config, "Bell" );
 //
-//    if(!group.readBoolEntry("SystemBell", true)){
+//    if(!group.readEntry("SystemBell", QVariant(true)).toBool()){
 //       return true;
 //    }
-//    if(group.readBoolEntry("ArtsBell", false)){
+//    if(group.readEntry("ArtsBell", QVariant(false)).toBool()){
 //       return true;
 //    }
-//    if(group.readBoolEntry("VisibleBell", false)){
+//    if(group.readEntry("VisibleBell", QVariant(false)).toBool()){
 //       return true;
 //    }
 //    return false; // don't need it
@@ -83,16 +83,16 @@ void AccessibilityConfig::load(){
    KConfig *bell = new KConfig("bellrc", true);
    
    bell->setGroup("General");
-   systemBell->setChecked(bell->readBoolEntry("SystemBell", false));
-   customBell->setChecked(bell->readBoolEntry("CustomBell", false));
-   visibleBell->setChecked(bell->readBoolEntry("VisibleBell", false));
+   systemBell->setChecked(bell->readEntry("SystemBell", QVariant(false)).toBool());
+   customBell->setChecked(bell->readEntry("CustomBell", QVariant(false)).toBool());
+   visibleBell->setChecked(bell->readEntry("VisibleBell", QVariant(false)).toBool());
    
    bell->setGroup("CustomBell");
    soundToPlay->setURL(bell->readPathEntry("Sound", ""));
 
    bell->setGroup("Visible");
-   invertScreen->setChecked(bell->readBoolEntry("Invert", true));
-   flashScreen->setChecked(bell->readBoolEntry("Flash", false));
+   invertScreen->setChecked(bell->readEntry("Invert", QVariant(true)).toBool());
+   flashScreen->setChecked(bell->readEntry("Flash", QVariant(false)).toBool());
    // TODO: There has to be a cleaner way.
    QColor *redColor = new QColor(Qt::red);
    flashScreenColor->setColor(bell->readColorEntry("FlashColor", redColor));
@@ -104,12 +104,12 @@ void AccessibilityConfig::load(){
 //
 //    config->setGroup("Bell");
 //
-//    systemBell->setChecked(config->readBoolEntry("SystemBell", true));
-//    customBell->setChecked(config->readBoolEntry("ArtsBell", false));
+//    systemBell->setChecked(config->readEntry("SystemBell", QVariant(true)).toBool());
+//    customBell->setChecked(config->readEntry("ArtsBell", QVariant(false)).toBool());
 //    soundEdit->setText(config->readPathEntry("ArtsBellFile"));
 //
-//    visibleBell->setChecked(config->readBoolEntry("VisibleBell", false));
-//    invertScreen->setChecked(config->readBoolEntry("VisibleBellInvert", true));
+//    visibleBell->setChecked(config->readEntry("VisibleBell", QVariant(false)).toBool());
+//    invertScreen->setChecked(config->readEntry("VisibleBellInvert", QVariant(true)).toBool());
 //    flashScreen->setChecked(!invertScreen->isChecked());
 //    QColor def(Qt::red);
 //    colorButton->setColor(config->readColorEntry("VisibleBellColor", &def));
@@ -119,11 +119,11 @@ void AccessibilityConfig::load(){
 //
 //    config->setGroup("Keyboard");
 //
-//    stickyKeys->setChecked(config->readBoolEntry("StickyKeys", false));
-//    stickyKeysLock->setChecked(config->readBoolEntry("StickyKeysLatch", true));
-//    slowKeys->setChecked(config->readBoolEntry("SlowKeys", false));
+//    stickyKeys->setChecked(config->readEntry("StickyKeys", QVariant(false)).toBool());
+//    stickyKeysLock->setChecked(config->readEntry("StickyKeysLatch", QVariant(true)).toBool());
+//    slowKeys->setChecked(config->readEntry("SlowKeys", QVariant(false)).toBool());
 //    slowKeysDelay->setValue(config->readNumEntry("SlowKeysDelay", 500));
-//    bounceKeys->setChecked(config->readBoolEntry("BounceKeys", false));
+//    bounceKeys->setChecked(config->readEntry("BounceKeys", QVariant(false)).toBool());
 //    bounceKeysDelay->setValue(config->readNumEntry("BounceKeysDelay", 500));
 //
 //

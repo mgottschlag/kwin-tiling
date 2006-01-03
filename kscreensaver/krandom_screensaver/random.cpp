@@ -107,8 +107,8 @@ int main(int argc, char *argv[])
 
 	KConfig type("krandom.kssrc");
 	type.setGroup("Settings");
-	bool opengl = type.readBoolEntry("OpenGL");
-	bool manipulatescreen = type.readBoolEntry("ManipulateScreen");
+	bool opengl = type.readEntry("OpenGL", QVariant(false)).toBool();
+	bool manipulatescreen = type.readEntry("ManipulateScreen", QVariant(false)).toBool();
         bool fortune = !KStandardDirs::findExe("fortune").isEmpty();
 
 	for (int i = 0; i < tempSaverFileList.count(); i++)
@@ -231,8 +231,8 @@ KRandomSetup::KRandomSetup( QWidget *parent, const char *name )
 
 	KConfig config("krandom.kssrc");
 	config.setGroup("Settings");
-	openGL->setChecked(config.readBoolEntry("OpenGL", true));
-	manipulateScreen->setChecked(config.readBoolEntry("ManipulateScreen", true));
+	openGL->setChecked(config.readEntry("OpenGL", QVariant(true)).toBool());
+	manipulateScreen->setChecked(config.readEntry("ManipulateScreen", QVariant(true)).toBool());
 }
 
 void KRandomSetup::slotOk()

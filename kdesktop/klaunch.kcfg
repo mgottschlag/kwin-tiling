@@ -19,14 +19,14 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- startupid.cpp:59 -->
-      <!--     blinking = c.readBoolEntry( "Blinking", false ); -->
+      <!--     blinking = c.readEntry( "Blinking", QVariant(false )).toBool(); -->
     </entry>
     <entry key="Bouncing" type="Bool">
       <default>true</default>
       <label></label>
       <whatsthis></whatsthis>
       <!-- startupid.cpp:60 -->
-      <!--     bouncing = c.readBoolEntry( "Bouncing", true ); -->
+      <!--     bouncing = c.readEntry( "Bouncing", QVariant(true )).toBool(); -->
     </entry>
   </group>
   <group name="FeedbackStyle">

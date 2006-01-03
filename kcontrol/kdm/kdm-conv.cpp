@@ -235,19 +235,19 @@ void KDMConvenienceWidget::save()
 void KDMConvenienceWidget::load()
 {
     config->setGroup("X-:0-Core");
-    bool alenable = config->readBoolEntry( "AutoLoginEnable", false);
+    bool alenable = config->readEntry( "AutoLoginEnable", QVariant(false)).toBool();
     autoUser = config->readEntry( "AutoLoginUser" );
-    autoLockCheck->setChecked( config->readBoolEntry( "AutoLoginLocked", false ) );
+    autoLockCheck->setChecked( config->readEntry( "AutoLoginLocked", QVariant(false )).toBool() );
     if (autoUser.isEmpty())
 	alenable=false;
     alGroup->setChecked( alenable );
 
     config->setGroup("X-:*-Core");
-    npGroup->setChecked(config->readBoolEntry( "NoPassEnable", false) );
+    npGroup->setChecked(config->readEntry( "NoPassEnable", QVariant(false)).toBool() );
     noPassUsers = config->readListEntry( "NoPassUsers");
 
     config->setGroup("X-*-Core");
-    cbarlen->setChecked(config->readBoolEntry( "AutoReLogin", false) );
+    cbarlen->setChecked(config->readEntry( "AutoReLogin", QVariant(false)).toBool() );
 
     config->setGroup("X-:*-Greeter");
     QString presstr = config->readEntry( "PreselectUser", "None" );
@@ -258,7 +258,7 @@ void KDMConvenienceWidget::load()
     else
 	npRadio->setChecked(true);
     preselUser = config->readEntry( "DefaultUser" );
-    cbjumppw->setChecked(config->readBoolEntry( "FocusPasswd", false) );
+    cbjumppw->setChecked(config->readEntry( "FocusPasswd", QVariant(false)).toBool() );
 
     slotPresChanged();
 }

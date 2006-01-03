@@ -870,10 +870,10 @@ bool KDIconView::makeFriendlyText( KFileIVI *fileIVI )
     {
         KSimpleConfig cfg( desktopFile, true );
         cfg.setDesktopGroup();
-        if (cfg.readBoolEntry("Hidden"))
+        if (cfg.readEntry("Hidden", QVariant(false)).toBool())
             return false;
 
-        if (cfg.readBoolEntry( "NoDisplay", false ))
+        if (cfg.readEntry( "NoDisplay", QVariant(false )).toBool())
             return false;
 
         QStringList tmpList;

@@ -244,8 +244,8 @@ void KIconConfig::read()
 
 	mpConfig->setGroup(*it + "Icons");
 	mSizes[i] = mpConfig->readNumEntry("Size", mSizes[i]);
-	mbDP[i] = mpConfig->readBoolEntry("DoublePixels", mbDP[i]);
-	mbAnimated[i] = mpConfig->readBoolEntry("Animated", mbAnimated[i]);
+	mbDP[i] = mpConfig->readEntry("DoublePixels", QVariant(mbDP[i])).toBool();
+	mbAnimated[i] = mpConfig->readEntry("Animated", QVariant(mbAnimated[i])).toBool();
 
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); ++it2, j++)
 	{
@@ -267,7 +267,7 @@ void KIconConfig::read()
 	    mEffects[i][j].value = mpConfig->readDoubleNumEntry(*it2 + "Value");
 	    mEffects[i][j].color = mpConfig->readColorEntry(*it2 + "Color");
 	    mEffects[i][j].color2 = mpConfig->readColorEntry(*it2 + "Color2");
-	    mEffects[i][j].transparant = mpConfig->readBoolEntry(*it2 + "SemiTransparent");
+	    mEffects[i][j].transparant = mpConfig->readEntry(*it2 + "SemiTransparent", QVariant(false)).toBool();
 	}
     }
 }
