@@ -150,7 +150,7 @@ void KCMKNotify::load()
 	{
 		int slash = fullPath.lastIndexOf( '/' ) - 1;
 		int slash2 = fullPath.lastIndexOf( '/', slash );
-		QString appname= slash2 < 0 ? QString::null :  fullPath.mid( slash2+1 , slash-slash2  );
+		QString appname= slash2 < 0 ? QString() :  fullPath.mid( slash2+1 , slash-slash2  );
 		if ( !appname.isEmpty() )
 			m_appCombo->insertItem( appname );
 	}
