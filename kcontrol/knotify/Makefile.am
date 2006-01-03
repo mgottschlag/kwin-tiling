@@ -1,11 +1,11 @@
-SUBDIRS= . sounds
 
 kde_module_LTLIBRARIES = kcm_knotify.la
 
 kcm_knotify_la_SOURCES = knotify.cpp playersettings.ui
 
 kcm_knotify_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
-kcm_knotify_la_LIBADD = $(LIB_KIO)
+kcm_knotify_la_LIBADD = $(LIB_KIO)  -lknotifyconfig
+
 AM_CPPFLAGS = $(all_includes)
  
 METASOURCES = AUTO 
@@ -17,8 +17,6 @@ messages: rc.cpp
 
 xdg_apps_DATA = kcmnotify.desktop
 
-pics_DATA = play.png
-picsdir = $(kde_datadir)/kcontrol/pics
 
 # the following should be gone at release time.
 install-data-local:
@@ -26,3 +24,4 @@ install-data-local:
 	rm -f $(DESTDIR)$(kde_appsdir)/Settings/LookNFeel/kcmnotify.desktop
 
 KDE_ICON=AUTO
+

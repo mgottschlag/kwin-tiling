@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2000,2002 Carsten Pfeiffer <pfeiffer@kde.org>
+    Copyright (C) 2005,2006 Olivier Goffart <ogoffart at kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public
@@ -22,7 +23,6 @@
 #include <qlayout.h>
 #include <qradiobutton.h>
 #include <qslider.h>
-//Added by qt3to4:
 #include <QVBoxLayout>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -32,7 +32,7 @@
 #include <kapplication.h>
 #include <kcombobox.h>
 #include <kconfig.h>
-#include <knotifydialog.h>
+#include <knotifyconfigwidget.h>
 #include <kparts/genericfactory.h>
 #include <kstandarddirs.h>
 #include <kurlcompletion.h>
@@ -47,9 +47,7 @@ static const int COL_FILENAME = 1;
 typedef KGenericFactory<KCMKNotify, QWidget> NotifyFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_knotify, NotifyFactory("kcmnotify") )
 
-using namespace KNotify;
-
-KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
+		KCMKNotify::KCMKNotify(QWidget *parent, const char */*name*/, const QStringList & )
     : KCModule(NotifyFactory::instance(), parent/*, name*/),
       m_playerSettings( 0L )
 {
@@ -66,37 +64,50 @@ KCMKNotify::KCMKNotify(QWidget *parent, const char *name, const QStringList & )
                 "any additional visual or audible alert."
                 "</ul>"));
 
-    QVBoxLayout *layout = new QVBoxLayout( this, 0, KDialog::spacingHint() );
+	QVBoxLayout *layout = new QVBoxLayout( this, 0, KDialog::spacingHint() );
+	QTabWidget *tab = new QTabWidget(this);
+	layout->addWidget(tab);
 
-    QLabel *label = new QLabel( i18n( "Event source:" ), this );
-    m_appCombo = new KComboBox( false, this );
-    m_appCombo->setObjectName( "app combo" );
+	QWidget * app_tab = new QWidget(tab);
+	QVBoxLayout *app_layout = new QVBoxLayout( app_tab );
+	
+	QLabel *label = new QLabel( i18n( "Event source:" ), app_tab );
+	m_appCombo = new KComboBox( false, app_tab );
+	m_appCombo->setObjectName( "app combo" );
+	QHBoxLayout *hbox = new QHBoxLayout( app_layout );
+	hbox->addWidget( label );
+	hbox->addWidget( m_appCombo, 10 );
 
-    QHBoxLayout *hbox = new QHBoxLayout( layout );
-    hbox->addWidget( label );
-    hbox->addWidget( m_appCombo, 10 );
+	m_notifyWidget = new KNotifyConfigWidget( app_tab );
+	app_layout->addWidget( m_notifyWidget );
 
-    m_notifyWidget = new KNotifyWidget( this, "knotify widget", true );
-    connect( m_notifyWidget, SIGNAL( changed( bool )), SIGNAL( changed(bool)));
+//    connect( m_notifyWidget, SIGNAL( changed( bool )), SIGNAL( changed(bool)));
+	changed (true);
+	
+	m_playerSettings = new PlayerSettingsDialog(tab);
 
-    layout->addWidget( m_notifyWidget );
+/*	general->layout()->setMargin( KDialog::marginHint() );
+	hardware->layout()->setMargin( KDialog::marginHint() );*/
+	tab->addTab(app_tab, i18n("&Applications"));
+	tab->addTab(m_playerSettings, i18n("&Player settings"));
 
     connect( m_appCombo, SIGNAL( activated( const QString& ) ),
              SLOT( slotAppActivated( const QString& )) );
 
-    connect( m_notifyWidget->m_playerButton, SIGNAL( clicked() ),
-             SLOT( slotPlayerSettings()));
-
     KAboutData* ab = new KAboutData(
-        "kcmknotify", I18N_NOOP("KNotify"), "3.0",
+        "kcmknotify", I18N_NOOP("KNotify"), "4.0",
         I18N_NOOP("System Notification Control Panel Module"),
-        KAboutData::License_GPL, "(c) 2002 Carsten Pfeiffer", 0, 0 );
+        KAboutData::License_GPL, "(c) 2002-2006 KDE Team", 0, 0 );
+	
+	ab->addAuthor( "Olivier Goffart", 0, "ogoffart@kde.org" );
     ab->addAuthor( "Carsten Pfeiffer", 0, "pfeiffer@kde.org" );
     ab->addCredit( "Charles Samuels", I18N_NOOP("Original implementation"),
 	       "charles@altair.dhs.org" );
     setAboutData( ab );
 
     load();
+	
+
 }
 
 KCMKNotify::~KCMKNotify()
@@ -107,73 +118,43 @@ KCMKNotify::~KCMKNotify()
     config.sync();
 }
 
-Application * KCMKNotify::applicationByDescription( const QString& text )
-{
-    // not really efficient, but this is not really time-critical
-    ApplicationList& allApps = m_notifyWidget->allApps();
-    ApplicationListIterator it ( allApps );
-    while ( it.hasNext() )
-    {
-        if ( it.peekNext()->text() == text )
-            return it.peekNext();
-
-        it.next();
-    }
-
-    return 0L;
-}
-
 void KCMKNotify::slotAppActivated( const QString& text )
 {
-    Application *app = applicationByDescription( text );
-    if ( app )
-    {
-        m_notifyWidget->clearVisible();
-        m_notifyWidget->addVisibleApp( app );
-    }
+	m_notifyWidget->save();
+	m_notifyWidget->setApplication( text );
+	emit changed(true);
 }
 
 void KCMKNotify::slotPlayerSettings()
 {
-    // kcmshell is a modal dialog, and apparently, we can't put a non-modal
-    // dialog besides a modal dialog. sigh.
-    if ( !m_playerSettings )
-        m_playerSettings = new PlayerSettingsDialog( this, true );
-
-    m_playerSettings->exec();
 }
 
 
 void KCMKNotify::defaults()
 {
-    m_notifyWidget->resetDefaults( true ); // ask user
+//    m_notifyWidget->resetDefaults( true ); // ask user
 }
 
 void KCMKNotify::load()
 {
-    setEnabled( false );
+    //setEnabled( false );
     // setCursor( KCursor::waitCursor() );
 
     m_appCombo->clear();
-    m_notifyWidget->clear();
+//    m_notifyWidget->clear();
 
     QStringList fullpaths =
-        KGlobal::dirs()->findAllResources("data", "*/eventsrc", false, true );
+        KGlobal::dirs()->findAllResources("data", "*/*.notifyrc", false, true );
 
-    QStringList::ConstIterator it = fullpaths.begin();
-    for ( ; it != fullpaths.end(); ++it)
-        m_notifyWidget->addApplicationEvents( *it );
-
-    ApplicationList allApps = m_notifyWidget->allApps();
-    // FIXME: Need to do a manual sort here now. Is it necessary?
-    // allApps.sort();
-    m_notifyWidget->setEnabled( !allApps.isEmpty() );
-
-    ApplicationListIterator appIt( allApps );
-    while ( appIt.hasNext() ) {
-        m_appCombo->insertItem( appIt.next()->text() );
-    }
-
+	foreach (const QString &fullPath ,  fullpaths )
+	{
+		int slash = fullPath.lastIndexOf( '/' ) - 1;
+		int slash2 = fullPath.lastIndexOf( '/', slash );
+		QString appname= slash2 < 0 ? QString::null :  fullPath.mid( slash2+1 , slash-slash2  );
+		if ( !appname.isEmpty() )
+			m_appCombo->insertItem( appname );
+	}
+	/*        
     KConfig config( "knotifyrc", true, false );
     config.setGroup( "Misc" );
     QString appDesc = config.readEntry( "LastConfiguredApp", "KDE System Notifications" );
@@ -186,6 +167,12 @@ void KCMKNotify::load()
     // unsetCursor(); // unsetting doesn't work. sigh.
     setEnabled( true );
     emit changed( false );
+	*/
+	
+	m_playerSettings->load();
+	
+	emit changed(true);
+	
 }
 
 void KCMKNotify::save()
@@ -194,28 +181,23 @@ void KCMKNotify::save()
         m_playerSettings->save();
 
     m_notifyWidget->save(); // will dcop knotify about its new config
+	m_playerSettings->save();
 
-    emit changed( false );
+    emit changed( true );
 }
 
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 
-PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent, bool modal )
-    : KDialogBase( parent, "player settings dialog", modal,
-                   i18n("Player Settings"), Ok|Apply|Cancel, Ok, true )
+PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent )
+	: QWidget(parent)
 {
-    QFrame *frame = makeMainWidget();
 
-    QVBoxLayout *topLayout = new QVBoxLayout( frame, 0,
-        KDialog::spacingHint() );
-
-    m_ui = new PlayerSettingsUI(frame);
-    topLayout->addWidget(m_ui);
+	m_ui = new Ui::PlayerSettingsUI();
+	m_ui->setupUi( this );
 
     load();
     dataChanged = false;
-    enableButton(Apply, false);
 
     connect( m_ui->cbExternal, SIGNAL( toggled( bool ) ), this, SLOT( externalToggled( bool ) ) );
     connect( m_ui->grpPlayers, SIGNAL( clicked( int ) ), this, SLOT( slotChanged() ) );
@@ -280,26 +262,24 @@ void PlayerSettingsDialog::save()
 // reimplements KDialogBase::slotApply()
 void PlayerSettingsDialog::slotApply()
 {
-    save();
+/*    save();
     dataChanged = false;
     enableButton(Apply, false);
-    kapp->dcopClient()->send("knotify", "", "reconfigure()", QString());
-
-    KDialogBase::slotApply();
+    kapp->dcopClient()->send("knotify", "", "reconfigure()", QString());*/
 }
 
 // reimplements KDialogBase::slotOk()
 void PlayerSettingsDialog::slotOk()
 {
-    if( dataChanged )
+/*    if( dataChanged )
         slotApply();
-    KDialogBase::slotOk();
+    KDialogBase::slotOk();*/
 }
 
 void PlayerSettingsDialog::slotChanged()
 {
     dataChanged = true;
-    enableButton(Apply, true);
+//    enableButton(Apply, true);
 }
 
 void PlayerSettingsDialog::externalToggled( bool on )
@@ -308,6 +288,11 @@ void PlayerSettingsDialog::externalToggled( bool on )
         m_ui->reqExternal->setFocus();
     else
         m_ui->reqExternal->clearFocus();
+}
+
+PlayerSettingsDialog::~ PlayerSettingsDialog( )
+{
+	delete m_ui;
 }
 
 #include "knotify.moc"

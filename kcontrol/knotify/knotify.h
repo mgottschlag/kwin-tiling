@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2000,2002 Carsten Pfeiffer <pfeiffer@kde.org>
-
+    Copyright (C) 2005,2006 Olivier Goffart <ogoffart at kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public
@@ -38,13 +38,12 @@ class KAboutData;
 class KComboBox;
 class KURLRequester;
 class PlayerSettingsDialog;
+namespace Ui{
 class PlayerSettingsUI;
-
-namespace KNotify
-{
-    class Application;
-    class KNotifyWidget;
 }
+class QPushButton;
+class KNotifyConfigWidget;
+
 
 class KCMKNotify : public KCModule
 {
@@ -65,20 +64,21 @@ private slots:
     void slotPlayerSettings();
 
 private:
-    KNotify::Application *applicationByDescription( const QString& text );
 
     KComboBox *m_appCombo;
-    KNotify::KNotifyWidget *m_notifyWidget;
+    KNotifyConfigWidget *m_notifyWidget;
     PlayerSettingsDialog *m_playerSettings;
+	QPushButton *m_psb;
 
 };
 
-class PlayerSettingsDialog : public KDialogBase
+class PlayerSettingsDialog : public QWidget
 {
     Q_OBJECT
 
 public:
-    PlayerSettingsDialog( QWidget *parent, bool modal );
+    PlayerSettingsDialog( QWidget *parent );
+	~PlayerSettingsDialog();
     void load();
     void save();
 
@@ -89,7 +89,7 @@ protected slots:
     void slotChanged();
 
 private:
-    PlayerSettingsUI* m_ui;
+	Ui::PlayerSettingsUI* m_ui;
     bool dataChanged;
 };
 
