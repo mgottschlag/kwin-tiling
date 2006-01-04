@@ -155,10 +155,10 @@ void TaskLMBMenu::attentionTimeout()
 
     //### KDE4
 #if 0
-    for (Q3ValueList<TaskMenuItem*>::const_iterator it = m_attentionMap.constBegin();
-         it != m_attentionMap.constEnd();
-         ++it)
+    QLinkedList<TaskMenuItem*>::const_iterator it = m_attentionMap.constBegin();
+    while (it != m_attentionMap.constEnd())
     {
+        ++it;
         (*it)->setAttentionState(m_attentionState);
     }
 #endif
