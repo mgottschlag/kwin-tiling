@@ -143,3 +143,4 @@ Comment[xx]=xxContains removed filesxx
 Comment[zh_CN]=保存临时删除的文件
 Comment[zh_TW]=包含刪除的檔案
 Comment[zu]=Iqukethe amafayela agudluziwe
+OnlyShowIn=KDE
