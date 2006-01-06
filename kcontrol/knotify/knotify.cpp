@@ -158,6 +158,9 @@ void KCMKNotify::load()
     KConfig config( "knotifyrc", true, false );
     config.setGroup( "Misc" );
     QString appDesc = config.readEntry( "LastConfiguredApp", "KDE System Notifications" );
+    
+    if this code gets enabled again, make sure to apply r494965
+    
     if ( !appDesc.isEmpty() )
         m_appCombo->setCurrentItem( appDesc );
 
