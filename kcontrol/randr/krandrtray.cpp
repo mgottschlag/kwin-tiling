@@ -105,7 +105,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KMenu* menu)
 
 void KRandRSystemTray::slotScreenActivated()
 {
-	setCurrentScreen(m_screenPopups.indexOf(static_cast<const KMenu*>(sender())));
+	setCurrentScreen(m_screenPopups.indexOf(static_cast<KMenu*>(sender())));
 }
 
 void KRandRSystemTray::configChanged()

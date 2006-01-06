@@ -778,7 +778,7 @@ void KDesktop::handleImageDropEvent(QDropEvent * e)
 
         QImage i;
         Q3ImageDrag::decode(e, i);
-        KTempFile tmpFile(QString(), filename);
+        KTempFile tmpFile(QString::null, filename);
         i.save(tmpFile.name(), "PNG");
         // We pass 0 as parent window because passing the desktop is not a good idea
         KURL src;
