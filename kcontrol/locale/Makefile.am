@@ -12,10 +12,18 @@ noinst_HEADERS = toplevel.h kcmlocale.h klocalesample.h localenum.h localemon.h 
 kcm_locale_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 kcm_locale_la_LIBADD = $(LIB_KIO)
 
+# Note: newer glibc (e.g. zonetab version 1.31 (cvs revision 1.22) have more/other data than older ones (e.g. zonetab version 1.28)
+
+# timezones-manual is for adding entried from a zone.tab downloaded from glibc's CVS
+timezones-manual:
+	grep -v '^#' zone.tab | tr '	' ' ' | sed -e "s#  *# #" | cut -d' ' -f3 | sed -e 's,^,i18n(",; s,$$,");,' >> $(srcdir)/TIMEZONES
+	sort -u $(srcdir)/TIMEZONES > t && mv t $(srcdir)/TIMEZONES
+
 timezones:
 	grep -v '^#' /usr/share/zoneinfo/zone.tab | tr '	' ' ' | sed -e "s#  *# #" | cut -d' ' -f3 | sed -e 's,^,i18n(",; s,$$,");,' >> $(srcdir)/TIMEZONES
 	sort -u $(srcdir)/TIMEZONES > t && mv t $(srcdir)/TIMEZONES
 	
+
 messages:
 	$(XGETTEXT) -ktranslate $(kcm_locale_la_SOURCES) -o $(podir)/kcmlocale.pot
 	$(XGETTEXT) TIMEZONES -o $(podir)/../kdelibs/timezones.pot
