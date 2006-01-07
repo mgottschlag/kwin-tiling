@@ -2,5 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Peripherals
+Name[x-test]=xxPeripheralsxx
 Icon=input_devices_settings
 Comment=Peripherals
+Comment[x-test]=xxPeripheralsxx

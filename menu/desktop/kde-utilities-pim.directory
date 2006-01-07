@@ -2,5 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=PIM
+Name[x-test]=xxPIMxx
 Icon=korganizer
 Comment=PIM
+Comment[x-test]=xxPIMxx

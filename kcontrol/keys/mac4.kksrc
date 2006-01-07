@@ -1,31 +1,6 @@
 [Settings]
 Name=Mac Scheme
-Name[bg]=Mac
-Name[cs]=Mac schéma
-Name[cy]=Cynllun Mac
-Name[da]=Mac-farvesammensætning
-Name[el]=Μορφή Mac
-Name[eo]=Makintoŝa aranĝo
-Name[es]=Tema Mac
-Name[et]=Maci skeem
-Name[eu]=Mac tema
-Name[ga]=Scéim Mac
-Name[hu]=Mac
-Name[lo]=ຊຸດຮູບແບບ Mac
-Name[mn]=Mac-Схем
-Name[nso]=Leano la Mac
-Name[pa]=Mac ਸਰੂਪ
-Name[pt_BR]=Esquema Mac
-Name[ro]=Schemă Mac
-Name[ru]=Mac
-Name[sv]=Mac schema
-Name[tr]=Mac Şeması
-Name[ven]=Tshikimu tsha Mac
-Name[vi]=Phối hợp của Mac
-Name[xh]=Udweliso lwe Mac
-Name[zh_CN]=Mac 方案
-Name[zh_TW]=Mac 按鍵配置
-Name[zu]=Iplani le-Mac
+Name[x-test]=xxMac Schemexx
 Uses Win Modifier=true
 
 [Global Shortcuts]

@@ -1,31 +1,6 @@
 [Settings]
 Name=UNIX Scheme
-Name[bg]=UNIX
-Name[cs]=Unixové schéma
-Name[cy]=Cynllun UNIX
-Name[da]=UNIX-farvesammensætning
-Name[el]=UNIX Μορφή
-Name[eo]=Uniksa aranĝo
-Name[es]=Esquema UNIX
-Name[et]=UNIX-i skeem
-Name[eu]=Unix tema
-Name[ga]=Scéim UNIX
-Name[hu]=UNIX
-Name[lo]=ຊຸດຮູບແບບ KWM
-Name[mn]=UNIX-Схем
-Name[nso]=Leano la UNIX
-Name[pa]=UNIX ਸਰੂਪ
-Name[pt_BR]=Esquema UNIX
-Name[ro]=Schemă UNIX
-Name[ru]=UNIX
-Name[sv]=Unix schema
-Name[tr]=UNIX Şeması
-Name[ven]=Tshikimu tsha UNIX
-Name[vi]=Phối hợp của Unix
-Name[xh]=Udweliso lwe UNIX
-Name[zh_CN]=Unix 方案
-Name[zh_TW]=UNIX 按鍵配置
-Name[zu]=iplani le-UNIX
+Name[x-test]=xxUNIX Schemexx
 Uses Win Modifier=false
 
 [Global Shortcuts]

@@ -1,18 +1,6 @@
 [Color Scheme]
 Name=Redmond XP
-Name[af]=Redmond Xp
-Name[bn]=রেডমন্ড এক্স-পি
-Name[eo]=Redmondo XP
-Name[fa]=ردموند XP
-Name[hi]=रेडमण्ड एक्सपी
-Name[lo]=ເຣດມອນ XP
-Name[lv]=Redmonda XP
-Name[mn]=Улаан сар XP
-Name[ta]=ரெட்மாண்ட் XP
-Name[th]=เรดมอนด์ XP
-Name[uk]=Редмонд XP
-Name[uz]=Редмонд XP
-Name[xx]=xxRedmond XPxx
+Name[x-test]=xxRedmond XPxx
 activeBackground=47,103,255
 activeBlend=41,93,180
 activeForeground=255,255,255

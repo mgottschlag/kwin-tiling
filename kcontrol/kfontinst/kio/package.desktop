@@ -5,18 +5,7 @@ MimeType=fonts/package
 Icon=font
 Patterns=*.fonts.tar.gz
 Comment=Fonts Package
-Comment[bg]=Пакет с шрифтове
-Comment[da]=Skrifttypepakke
-Comment[es]=Paquete de tipos de letra
-Comment[et]=Fondipakett
-Comment[eu]=Letra-tipo paketea
-Comment[ga]=Pacáiste na gClónna
-Comment[pa]=ਫੋਂਟ ਪੈਕੇਜ
-Comment[pt_BR]=Pacote de Fontes
-Comment[ru]=Пакет шрифтов
-Comment[sv]=Teckensnittspaket
-Comment[tr]=Yazıtipi Paketi
-Comment[zh_CN]=字体包
+Comment[x-test]=xxFonts Packagexx
 
 [Property::X-KDE-LocalProtocol]
 Type=QString

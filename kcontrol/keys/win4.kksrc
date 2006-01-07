@@ -1,29 +1,6 @@
 [Settings]
 Name=Windows Scheme (With Win Key)
-Name[bg]=Windows (с клавиша Win)
-Name[cy]=Cynllun Windows (Gyda'r Allwedd Win)
-Name[da]=Windows schema (med Win-tast)
-Name[el]=Μορφή Windows (Με Win Πλήκτρο)
-Name[eo]=Vindoza aranĝo (kun Vindozoklavo)
-Name[es]=Esquema Windows (Con tecla Win)
-Name[et]=Windowsi skeem (Win-klahviga)
-Name[eu]=Windows tema (Win teklarekin)
-Name[hu]=Windows (Win billentyűvel)
-Name[lo]=ຊຸດຮູບແບບວິນໂດ (ມີປຸ່ມ Win)
-Name[mn]=Windows-Схем (Win-Товчтой)
-Name[nso]=Leano la Window (Le Senotlelo sa Phenyo)
-Name[pa]=Windows ਸਕੀਮ (Win ਸਵਿੱਚ ਨਾਲ)
-Name[pt_BR]=Esquema Windows (com a tecla Win)
-Name[ro]=Schemă Windows (cu tasta Win)
-Name[ru]=Windows (поддержка клавиши Win)
-Name[sv]=Windows schema (med Win-tangent)
-Name[tr]=Windows Şeması (Win Key İle)
-Name[ven]=TShikimu tsha dziwindo (irena Meta/Win-Key)
-Name[vi]=Phối hợp của Windows (có phím Win)
-Name[xh]=Windows Ezingagqibekanga (Nge Win-key)
-Name[zh_CN]=Windows 方案(有 Win 键)
-Name[zh_TW]=Windows 按鍵配置 (有 Win 鍵)
-Name[zu]=Iplani lama-Window (Kukhona ukhiye we-Win)
+Name[x-test]=xxWindows Scheme (With Win Key)xx
 Uses Win Modifier=true
 
 [Global Shortcuts]

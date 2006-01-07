@@ -1,12 +1,6 @@
 [Color Scheme]
 Name=EveX
-Name[af]=Evex
-Name[hi]=एवेक्स
-Name[ko]=이브X
-Name[lo]=ແບບ EveX
-Name[pl]=WigiliaX
-Name[th]=แบบ EveX
-Name[xx]=xxEveXxx
+Name[x-test]=xxEveXxx
 activeBackground=233,233,233
 activeBlend=233,233,233
 activeForeground=2,2,2

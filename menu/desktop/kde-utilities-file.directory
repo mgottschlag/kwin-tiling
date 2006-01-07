@@ -2,5 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=File
+Name[x-test]=xxFilexx
 Icon=kfm
 Comment=File
+Comment[x-test]=xxFilexx
