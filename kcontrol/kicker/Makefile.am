@@ -19,7 +19,7 @@ noinst_HEADERS = positiontab_impl.h hidingtab_impl.h lookandfeeltab_impl.h menut
 # Translation of tiles is used by lookandfeeltab_impl.cpp
 # Tile names are transformed to words with title case
 messages: rc.cpp
-	(cd ../../kicker/kicker/data/tiles ; ls *_tiny_up.png) | perl -p -e \
+	(cd ../../../kicker/kicker/data/tiles ; ls *_tiny_up.png) | perl -p -e \
 	  's/(.*)_tiny_up\.png/i18n\(\"\u$$1\"\)\;/; s/[_ ]+(.)/ \u$$1/g' >> rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kcmkicker.pot
 
