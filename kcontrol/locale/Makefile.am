@@ -22,4 +22,3 @@ messages:
 
 xdg_apps_DATA = language.desktop
 
-KDE_ICON=AUTO
