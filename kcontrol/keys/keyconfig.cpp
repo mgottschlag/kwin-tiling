@@ -62,11 +62,11 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 #define NOSLOTS
 #define KShortcuts KAccelShortcuts
 #include "../../kwin/kwinbindings.cpp"
-#include "../../kicker/kicker/core/kickerbindings.cpp"
-#include "../../kicker/taskbar/taskbarbindings.cpp"
+#include "../../../kicker/kicker/core/kickerbindings.cpp"
+#include "../../../kicker/taskbar/taskbarbindings.cpp"
 #include "../../kdesktop/kdesktopbindings.cpp"
-#include "../../klipper/klipperbindings.cpp"
-#include "../../kxkb/kxkbbindings.cpp"
+#include "../../../klipper/klipperbindings.cpp"
+#include "../kxkb/kxkbbindings.cpp"
 #undef KShortcuts
     KeyScheme = "Global Key Scheme";
     KeySet    = "Global Keys";
