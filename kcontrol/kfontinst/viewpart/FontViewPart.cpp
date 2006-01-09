@@ -258,8 +258,7 @@ void CFontViewPart::changeText()
     QRegExpValidator validator(QRegExp(".*"), 0L);
     QString          oldStr(itsPreview->engine().getPreviewString()),
                      newStr(KInputDialog::getText(i18n("Preview String"), i18n("Please enter new string:"),
-                                                  oldStr, &status, itsFrame,
-                                                  "preview string dialog", &validator));
+                                                  oldStr, &status, itsFrame, &validator));
 
     if(status && newStr!=oldStr)
     {

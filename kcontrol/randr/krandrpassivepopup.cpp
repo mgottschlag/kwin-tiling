@@ -29,16 +29,16 @@
 // widgets moves (needed because after a resolution switch Kicker will
 // reposition itself, causing normal KPassivePopup to stay at weird places)
 
-KRandrPassivePopup::KRandrPassivePopup( QWidget *parent, const char *name, Qt::WFlags f )
-    : KPassivePopup( parent, name, f )
+KRandrPassivePopup::KRandrPassivePopup( QWidget *parent, Qt::WFlags f )
+    : KPassivePopup( parent, f )
     {
     connect( &update_timer, SIGNAL( timeout()), SLOT( slotPositionSelf()));
     }
     
 KRandrPassivePopup* KRandrPassivePopup::message( const QString &caption, const QString &text,
-    const QPixmap &icon, QWidget *parent, const char *name, int timeout )
+    const QPixmap &icon, QWidget *parent, int timeout )
     {
-    KRandrPassivePopup *pop = new KRandrPassivePopup( parent, name );
+    KRandrPassivePopup *pop = new KRandrPassivePopup( parent );
     pop->setAutoDelete( true );
     pop->setView( caption, text, icon );
     pop->setTimeout( timeout );

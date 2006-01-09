@@ -26,9 +26,10 @@
 #include <X11/Xlib.h>
 
 KRandRApp::KRandRApp()
-	: m_tray(new KRandRSystemTray(0L, "RANDRTray"))
+	: m_tray(new KRandRSystemTray(0L))
 {
 	m_tray->show();
+	m_tray->setObjectName("RANDRTray");
 }
 
 bool KRandRApp::x11EventFilter(XEvent* e)

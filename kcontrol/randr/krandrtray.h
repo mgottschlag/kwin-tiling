@@ -33,7 +33,7 @@ class KRandRSystemTray :  public KSystemTray, public RandRDisplay
 	Q_OBJECT
 
 public:
-	KRandRSystemTray(QWidget* parent = 0, const char *name = 0);
+	KRandRSystemTray(QWidget* parent = 0);
 
 	virtual void contextMenuAboutToShow(KMenu* menu);
 

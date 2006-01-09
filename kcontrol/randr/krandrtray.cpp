@@ -36,8 +36,8 @@
 #include "krandrpassivepopup.h"
 #include "krandrtray.moc"
 
-KRandRSystemTray::KRandRSystemTray(QWidget* parent, const char *name)
-	: KSystemTray(parent, name)
+KRandRSystemTray::KRandRSystemTray(QWidget* parent)
+	: KSystemTray(parent)
 	, m_popupUp(false)
 	, m_help(new KHelpMenu(this, KGlobal::instance()->aboutData(), false, actionCollection()))
 {
@@ -118,7 +118,7 @@ void KRandRSystemTray::configChanged()
 		KRandrPassivePopup::message(
 		i18n("Screen configuration has changed"),
 		currentScreen()->changedMessage(), SmallIcon("window_fullscreen"),
-		this, "ScreenChangeNotification");
+		this);
 
 	first = false;
 }
