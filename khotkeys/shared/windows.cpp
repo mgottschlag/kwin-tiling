@@ -309,11 +309,11 @@ void Windowdef_simple::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Title", title());
-    cfg_P.writeEntry( "TitleType", title_type );
+    cfg_P.writeEntry( "TitleType", int(title_type) );
     cfg_P.writeEntry( "Class", wclass());
-    cfg_P.writeEntry( "ClassType", wclass_type );
+    cfg_P.writeEntry( "ClassType", int(wclass_type) );
     cfg_P.writeEntry( "Role", role());
-    cfg_P.writeEntry( "RoleType", role_type );
+    cfg_P.writeEntry( "RoleType", int(role_type) );
     cfg_P.writeEntry( "WindowTypes", window_types());
     cfg_P.writeEntry( "Type", "SIMPLE" ); // overwrites value set in base::cfg_write()
     }

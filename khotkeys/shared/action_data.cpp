@@ -137,7 +137,7 @@ Action_data_group::Action_data_group( KConfig& cfg_P, Action_data_group* parent_
 void Action_data_group::cfg_write( KConfig& cfg_P ) const
     {
     Action_data_base::cfg_write( cfg_P );
-    cfg_P.writeEntry( "SystemGroup", system_group());
+    cfg_P.writeEntry( "SystemGroup", int(system_group()));
     cfg_P.writeEntry( "Type", "ACTION_DATA_GROUP" );
     }
     
