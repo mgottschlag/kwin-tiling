@@ -30,6 +30,8 @@ public:
     //
     void setTimeout(int t);
     
+    void setDPMS(bool s);
+    
     //-----------------------------------------------------------------------
     //
     // Start watching Activity
@@ -62,6 +64,7 @@ protected:
     time_t  mTrigger;
     bool    mActive;
     time_t  mLastTimeout;
+    bool    mDPMS;
 };
 
 #endif

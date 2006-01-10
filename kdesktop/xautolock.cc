@@ -26,6 +26,19 @@
 #include <QTimerEvent>
 #include <QX11Info>
 
+#ifdef HAVE_DPMS
+extern "C" {
+#include <X11/Xmd.h>
+#ifndef Bool
+#define Bool BOOL
+#endif
+#include <X11/extensions/dpms.h>
+
+#ifndef HAVE_DPMSINFO_PROTO
+Status DPMSInfo ( Display *, CARD16 *, BOOL * );
+#endif
+}
+#endif
 
 int xautolock_useXidle = 0;
 int xautolock_useMit = 0;
@@ -69,6 +82,7 @@ XAutoLock::XAutoLock()
     }
 
     mTimeout = DEFAULT_TIMEOUT;
+    mDPMS = true;
     resetTrigger();
 
     time(&mLastTimeout);
@@ -95,6 +109,11 @@ void XAutoLock::setTimeout(int t)
 {
     mTimeout = t;
     resetTrigger();
+}
+
+void XAutoLock::setDPMS(bool s)
+{
+    mDPMS = s;
 }
 
 //---------------------------------------------------------------------------
@@ -174,12 +193,32 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     if( !xautolock_useXidle && !xautolock_useMit )
         XSetErrorHandler(oldHandler);
 
+    bool activate = false;
+
     if (now >= mTrigger)
     {
         resetTrigger();
-        if (mActive)
-            emit timeout();
+        activate = true;
     }
+
+#ifdef HAVE_DPMS
+    BOOL on;
+    CARD16 state;
+    DPMSInfo( QX11Info::display(), &state, &on );
+    // If DPMS is active, it makes XScreenSaverQueryInfo() report idle time
+    // that is always smaller than DPMS timeout (X bug I guess). So if DPMS
+    // saving is active, simply always activate our saving too, otherwise
+    // this could prevent locking from working.
+    if(state == DPMSModeStandby || state == DPMSModeSuspend || state == DPMSModeOff)
+        activate = true;
+    if(!on && mDPMS) {
+        activate = false;
+        resetTrigger();
+    }
+#endif
+    
+    if(mActive && activate)
+        emit timeout();
 }
 
 bool XAutoLock::x11Event( XEvent* ev )

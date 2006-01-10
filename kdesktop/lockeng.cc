@@ -23,22 +23,6 @@
 #include "kdesktopsettings.h"
 #include <QX11Info>
 
-#include <X11/Xlib.h>
-
-#ifdef HAVE_DPMS
-extern "C" {
-#include <X11/Xmd.h>
-#ifndef Bool
-#define Bool BOOL
-#endif
-#include <X11/extensions/dpms.h>
-
-#ifndef HAVE_DPMSINFO_PROTO
-Status DPMSInfo ( Display *, CARD16 *, BOOL * );
-#endif
-}
-#endif
-
 #include "xautolock_c.h"
 extern xautolock_corner_t xautolock_corners[ 4 ];
 
@@ -137,6 +121,7 @@ bool SaverEngine::enable( bool e )
 	    connect(mXAutoLock, SIGNAL(timeout()), SLOT(idleTimeout()));
 	}
         mXAutoLock->setTimeout(mTimeout);
+        mXAutoLock->setDPMS(mDPMS);
 	//mXAutoLock->changeCornerLockStatus( mLockCornerTopLeft, mLockCornerTopRight, mLockCornerBottomLeft, mLockCornerBottomRight);
 
         mXAutoLock->start();
@@ -178,13 +163,9 @@ void SaverEngine::configure()
     
     bool e  = KDesktopSettings::screenSaverEnabled();
     mTimeout = KDesktopSettings::timeout();
+    mDPMS = KDesktopSettings::dpmsDependent();
 
     mEnabled = !e;   // force the enable()
-#ifdef HAVE_DPMS
-    mDPMS = KDesktopSettings::dpmsDependent();
-#endif
-
-
 
     int action;
     action = KDesktopSettings::actionTopLeft();
@@ -217,10 +198,7 @@ void SaverEngine::setBlankOnly( bool blankOnly )
 void SaverEngine::startLockProcess( LockType lock_type )
 {
     if (mState != Waiting)
-    {
-        kdWarning(1204) << "SaverEngine::startSaver() saver already active" << endl;
         return;
-    }
 
     kdDebug(1204) << "SaverEngine: starting saver" << endl;
     emitDCOPSignal("KDE_start_screensaver()", QByteArray());
@@ -307,20 +285,6 @@ void SaverEngine::lockProcessExited()
 //
 void SaverEngine::idleTimeout()
 {
-#ifdef HAVE_DPMS
-    if (mDPMS) {
-        BOOL on;
-        CARD16 state;
-        DPMSInfo( QX11Info::display(), &state, &on );
-        if (!on) {
-            kdDebug(1204) << "Skip enabling screen saver because DPMS is off" << endl;
-            mXAutoLock->stop();
-            mXAutoLock->start();
-            return;
-        }
-    }
-#endif
-
     startLockProcess( DefaultLock );
 }
 
