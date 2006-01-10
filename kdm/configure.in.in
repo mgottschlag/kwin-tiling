@@ -43,6 +43,7 @@ AC_CHECK_FUNCS([getttyent])
 case $host_os in
 	linux*) ac_cv_func_getutxent=no;;
 	darwin*) ac_cv_func_getutxent=no;;
+	kfreebsd*-gnu) ac_cv_func_getutxent=no;;
 	*) AC_CHECK_FUNC([getutxent]);;
 esac
 if test $ac_cv_func_getutxent = yes; then

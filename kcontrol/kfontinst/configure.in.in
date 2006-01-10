@@ -88,6 +88,7 @@ if test "$KFI_FOUND_FREETYPE" -eq 1; then
         case "$host" in
             *-*-linux*) UNAME='Linux' ;;
             *-*-freebsd*) UNAME='FreeBSD' ;;
+            *-*-kfreebsd*-gnu) UNAME='GNU/kFreeBSD' ;;
             *-*-netbsd*) UNAME='NetBSD' ;;
             *-*-solaris*) UNAME='Solaris' ;;
             *-*-irix*) UNAME='Irix' ;;

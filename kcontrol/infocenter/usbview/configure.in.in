@@ -2,6 +2,9 @@ case "$host" in
   *-*-linux*)
 	FOUND_USBVIEW=yes
 	;;
+  *-*-kfreebsd*-gnu)
+	FOUND_USBVIEW=yes
+	;;
   *-*-freebsd*)
 	FOUND_USBVIEW=yes
 	;;
