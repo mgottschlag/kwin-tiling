@@ -343,14 +343,13 @@ void CKFileFontView::slotSortingChanged(int col)
 
     KFileView::setSorting(static_cast<QDir::SortFlags>(sortSpec));
 
-    KFileItem             *item;
-    KFileItemListIterator it(*items());
-
-    for (; (item = it.current()); ++it )
+    KFileItemList list = *items();
+    KFileItemList::const_iterator kit = list.begin();
+    const KFileItemList::const_iterator kend = list.end();
+    for (  ; kit != kend; ++kit )
     {
-        CFontListViewItem *i = viewItem(item);
-
-        i->setKey(sortingKey(i->text(itsSortingCol), item->isDir(), sortSpec));
+        CFontListViewItem *i = viewItem(*kit);
+        i->setKey(sortingKey(i->text(itsSortingCol), (*kit)->isDir(), sortSpec));
     }
 
     KListView::setSorting(itsSortingCol, !reversed);
@@ -463,13 +462,9 @@ void CKFileFontView::listingCompleted()
 Q3DragObject *CKFileFontView::dragObject()
 {
     // create a list of the URL:s that we want to drag
-    KURL::List            urls;
-    KFileItemListIterator it(* KFileView::selectedItems());
+    KURL::List            urls = KFileView::selectedItems()->urlList();
     QPixmap               pixmap;
     QPoint                hotspot;
-
-    for ( ; it.current(); ++it )
-        urls.append( (*it)->url() );
 
     if(urls.count()> 1)
         pixmap = DesktopIcon("kmultiple", KIcon::SizeSmall);

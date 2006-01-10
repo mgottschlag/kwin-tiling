@@ -65,7 +65,7 @@ class CKCmFontInst : public KCModule
 
     public:
 
-    CKCmFontInst(QWidget *parent, const char *name, const QStringList &list=QStringList());
+    CKCmFontInst(QWidget *parent, const char *, const QStringList &list=QStringList());
     virtual ~CKCmFontInst();
 
     void    setMimeTypes(bool showBitmap);

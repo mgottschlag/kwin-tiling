@@ -78,7 +78,7 @@ K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory("kcmfontinst"))
 namespace KFI
 {
 
-CKCmFontInst::CKCmFontInst(QWidget *parent, const char *name, const QStringList&)
+CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     : KCModule( FontInstallFactory::instance(), parent),
 #ifdef HAVE_XFT
               itsPreview(NULL),
@@ -389,13 +389,12 @@ void CKCmFontInst::fileHighlighted(const KFileItem *item)
     {
         //
         // Generate preview...
-        const KFileItem *previewItem=item
-                                       ? item
-                                       : list && 1==list->count()
-                                             ? list->getFirst()
+        const KFileItem *previewItem=item ? item
+                                    : list && 1==list->count()
+                                             ? list->first()
                                              : NULL;
 
-        if(previewItem && list && list->contains(previewItem))  // OK, check its been selected - not deselected!!!
+        if(previewItem && list && list->contains(const_cast<KFileItem *>(previewItem)))  // OK, check its been selected - not deselected!!!
             itsPreview->openURL(previewItem->url());
     }
 #endif
@@ -437,12 +436,14 @@ void CKCmFontInst::removeFonts()
     {
         KURL::List            urls;
         QStringList           files;
-        KFileItemListIterator it(*(itsDirOp->selectedItems()));
+        const KFileItemList list = *(itsDirOp->selectedItems());
 
-        for(; it.current(); ++it)
+        KFileItemList::const_iterator kit = list.begin();
+        const KFileItemList::const_iterator kend = list.end();
+        for ( ; kit != kend; ++kit )
         {
-            files.append((*it)->text());
-            urls.append((*it)->url());
+            files.append((*kit)->text());
+            urls.append((*kit)->url());
         }
 
         bool doIt=false;
@@ -495,11 +496,10 @@ void CKCmFontInst::print()
 
         if(list)
         {
-            KFileItemList::Iterator it(list->begin()),
-                                    end(list->end());
-
-            for(; it!=end && !select; ++it)
-                if(Print::printable((*it)->mimetype()))
+            KFileItemList::const_iterator kit = list->begin();
+            const KFileItemList::const_iterator kend = list->end();
+            for ( ; kit != kend && !select; ++kit )
+                if(Print::printable((*kit)->mimetype()))
                     select=true;
         }
 
@@ -521,11 +521,10 @@ void CKCmFontInst::print()
             }
             else
             {
-                KFileItemList::Iterator it(list->begin()),
-                                        end(list->end());
-
-                for(; it!=end; ++it)
-                    items.append((*it)->name());
+                KFileItemList::const_iterator kit = list->begin();
+                const KFileItemList::const_iterator kend = list->end();
+                for(; kit!=kend; ++kit)
+                    items.append((*kit)->name());
             }
             Print::printItems(items, constSizes[dlg.chosenSize()], this, engine);
             itsConfig.writeEntry(CFG_FONT_SIZE, dlg.chosenSize());
