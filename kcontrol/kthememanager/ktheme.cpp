@@ -437,7 +437,7 @@ void KTheme::apply()
     {
         KConfig * iconConf = KGlobal::config();
         iconConf->setGroup( "Icons" );
-        iconConf->writeEntry( "Theme", iconElem.attribute( "name", "crystalsvg" ), true, true );
+        iconConf->writeEntry( "Theme", iconElem.attribute( "name", "crystalsvg" ), KConfigBase::Persistent|KConfigBase::Global);
 
         QDomNodeList iconList = iconElem.childNodes();
         for ( int i = 0; i < iconList.count(); i++ )
@@ -459,14 +459,14 @@ void KTheme::apply()
             if ( iconName.contains( "Color" ) )
             {
                 QColor iconColor = QColor( iconSubElem.attribute( "rgb" ) );
-                iconConf->writeEntry( iconName, iconColor, true, true );
+                iconConf->writeEntry( iconName, iconColor, KConfigBase::Persistent|KConfigBase::Global);
             }
             else if ( iconName.contains( "Value" ) || iconName == "Size" )
-                iconConf->writeEntry( iconName, iconSubElem.attribute( "value" ).toUInt(), true, true );
+                iconConf->writeEntry( iconName, iconSubElem.attribute( "value" ).toUInt(), KConfigBase::Persistent|KConfigBase::Global);
             else if ( iconName.contains( "Effect" ) )
-                iconConf->writeEntry( iconName, iconSubElem.attribute( "name" ), true, true );
+                iconConf->writeEntry( iconName, iconSubElem.attribute( "name" ), KConfigBase::Persistent|KConfigBase::Global);
             else
-                iconConf->writeEntry( iconName, static_cast<bool>( iconSubElem.attribute( "value" ).toUInt() ), true, true );
+                iconConf->writeEntry( iconName, static_cast<bool>( iconSubElem.attribute( "value" ).toUInt() ), KConfigBase::Persistent|KConfigBase::Global);
         }
         iconConf->sync();
 
@@ -531,13 +531,13 @@ void KTheme::apply()
 
             QString colName = colorElem.tagName();
             QColor curColor = QColor( colorElem.attribute( "rgb" ) );
-            colorConf->writeEntry( colName, curColor, true, true ); // kdeglobals
+            colorConf->writeEntry( colName, curColor, KConfigBase::Persistent|KConfigBase::Global); // kdeglobals
             colorScheme->writeEntry( colName, curColor ); // thememgr.kcsrc
         }
 
         colorConf->setGroup( "KDE" );
-        colorConf->writeEntry( "colorScheme", "thememgr.kcsrc", true, true );
-        colorConf->writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ), true, true );
+        colorConf->writeEntry( "colorScheme", "thememgr.kcsrc", KConfigBase::Persistent|KConfigBase::Global);
+        colorConf->writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ), KConfigBase::Persistent|KConfigBase::Global);
         colorScheme->writeEntry( "contrast", colorsElem.attribute( "contrast", "7" ) );
         colorConf->sync();
         delete colorScheme;
@@ -629,7 +629,7 @@ void KTheme::apply()
     {
         KConfig * widgetConf = KGlobal::config();
         widgetConf->setGroup( "General" );
-        widgetConf->writeEntry( "widgetStyle", widgetsElem.attribute( "name" ), true, true );
+        widgetConf->writeEntry( "widgetStyle", widgetsElem.attribute( "name" ), KConfigBase::Persistent|KConfigBase::Global);
         widgetConf->sync();
         KIPC::sendMessageAll( KIPC::StyleChanged );
     }
@@ -652,14 +652,14 @@ void KTheme::apply()
 
             if ( fontObject == "FMSettings" ) {
                 desktopConf.setGroup( fontObject );
-                desktopConf.writeEntry( fontName, fontValue, true, true );
+                desktopConf.writeEntry( fontName, fontValue, KConfigBase::Persistent|KConfigBase::Global);
                 desktopConf.sync();
             }
             else {
                 fontsConf->setGroup( fontObject );
-                fontsConf->writeEntry( fontName, fontValue, true, true );
+                fontsConf->writeEntry( fontName, fontValue, KConfigBase::Persistent|KConfigBase::Global);
             }
-            kde1xConf->writeEntry( fontName, fontValue, true, true );
+            kde1xConf->writeEntry( fontName, fontValue, KConfigBase::Persistent|KConfigBase::Global);
         }
 
         fontsConf->sync();
