@@ -146,58 +146,58 @@ void KLocaleConfigMoney::save()
   bool b;
 
   str = ent.readEntry("CurrencySymbol", QString::fromLatin1("$"));
-  group.deleteEntry("CurrencySymbol", false, true);
+  group.deleteEntry("CurrencySymbol", KConfigBase::Global);
   if (str != m_locale->currencySymbol())
     group.writeEntry("CurrencySymbol",
-                       m_locale->currencySymbol(), true, true);
+                       m_locale->currencySymbol(), KConfigBase::Persistent|KConfigBase::Global);
 
   str = ent.readEntry("MonetaryDecimalSymbol", QString::fromLatin1("."));
-  group.deleteEntry("MonetaryDecimalSymbol", false, true);
+  group.deleteEntry("MonetaryDecimalSymbol", KConfigBase::Global);
   if (str != m_locale->monetaryDecimalSymbol())
     group.writeEntry("MonetaryDecimalSymbol",
-                       m_locale->monetaryDecimalSymbol(), true, true);
+                       m_locale->monetaryDecimalSymbol(), KConfigBase::Persistent|KConfigBase::Global);
 
   str = ent.readEntry("MonetaryThousandsSeparator", QString::fromLatin1(","));
   str.replace(QString::fromLatin1("$0"), QString());
-  group.deleteEntry("MonetaryThousandsSeparator", false, true);
+  group.deleteEntry("MonetaryThousandsSeparator", KConfigBase::Global);
   if (str != m_locale->monetaryThousandsSeparator())
     group.writeEntry("MonetaryThousandsSeparator",
                        QString::fromLatin1("$0%1$0")
                        .arg(m_locale->monetaryThousandsSeparator()),
-                       true, true);
+                       KConfigBase::Persistent|KConfigBase::Global);
 
   i = ent.readNumEntry("FracDigits", 2);
-  group.deleteEntry("FracDigits", false, true);
+  group.deleteEntry("FracDigits", KConfigBase::Global);
   if (i != m_locale->fracDigits())
-    group.writeEntry("FracDigits", m_locale->fracDigits(), true, true);
+    group.writeEntry("FracDigits", m_locale->fracDigits(), KConfigBase::Persistent|KConfigBase::Global);
 
   b = ent.readNumEntry("PositivePrefixCurrencySymbol", true);
-  group.deleteEntry("PositivePrefixCurrencySymbol", false, true);
+  group.deleteEntry("PositivePrefixCurrencySymbol", KConfigBase::Global);
   if (b != m_locale->positivePrefixCurrencySymbol())
     group.writeEntry("PositivePrefixCurrencySymbol",
-                       m_locale->positivePrefixCurrencySymbol(), true, true);
+                       m_locale->positivePrefixCurrencySymbol(), KConfigBase::Persistent|KConfigBase::Global);
 
   b = ent.readNumEntry("NegativePrefixCurrencySymbol", true);
-  group.deleteEntry("NegativePrefixCurrencySymbol", false, true);
+  group.deleteEntry("NegativePrefixCurrencySymbol", KConfigBase::Global);
   if (b != m_locale->negativePrefixCurrencySymbol())
     group.writeEntry("NegativePrefixCurrencySymbol",
-                       m_locale->negativePrefixCurrencySymbol(), true, true);
+                       m_locale->negativePrefixCurrencySymbol(), KConfigBase::Persistent|KConfigBase::Global);
 
   i = ent.readNumEntry("PositiveMonetarySignPosition",
                        (int)KLocale::BeforeQuantityMoney);
-  group.deleteEntry("PositiveMonetarySignPosition", false, true);
+  group.deleteEntry("PositiveMonetarySignPosition", KConfigBase::Global);
   if (i != m_locale->positiveMonetarySignPosition())
     group.writeEntry("PositiveMonetarySignPosition",
                        (int)m_locale->positiveMonetarySignPosition(),
-                       true, true);
+                       KConfigBase::Persistent|KConfigBase::Global);
 
   i = ent.readNumEntry("NegativeMonetarySignPosition",
                        (int)KLocale::ParensAround);
-  group.deleteEntry("NegativeMonetarySignPosition", false, true);
+  group.deleteEntry("NegativeMonetarySignPosition", KConfigBase::Global);
   if (i != m_locale->negativeMonetarySignPosition())
     group.writeEntry("NegativeMonetarySignPosition",
                        (int)m_locale->negativeMonetarySignPosition(),
-                       true, true);
+                       KConfigBase::Persistent|KConfigBase::Global);
 
   group.sync();
 }

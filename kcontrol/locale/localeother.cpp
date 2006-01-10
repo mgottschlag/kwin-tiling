@@ -87,16 +87,16 @@ void KLocaleConfigOther::save()
   // ### HPB: Add code here
   int i;
   i = ent.readNumEntry("PageSize", (int)QPrinter::A4);
-  group.deleteEntry("PageSize", false, true);
+  group.deleteEntry("PageSize", KConfigBase::Global);
   if (i != m_locale->pageSize())
     group.writeEntry("PageSize",
-                       m_locale->pageSize(), true, true);
+                       m_locale->pageSize(), KConfigBase::Persistent|KConfigBase::Global);
 
   i = ent.readNumEntry("MeasureSystem", (int)KLocale::Metric);
-  group.deleteEntry("MeasureSystem", false, true);
+  group.deleteEntry("MeasureSystem", KConfigBase::Global);
   if (i != m_locale->measureSystem())
     group.writeEntry("MeasureSystem",
-                       m_locale->measureSystem(), true, true);
+                       int(m_locale->measureSystem()), KConfigBase::Persistent|KConfigBase::Global);
 
   group.sync();
 }

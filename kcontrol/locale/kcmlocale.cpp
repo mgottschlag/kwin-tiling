@@ -359,12 +359,12 @@ void KLocaleConfig::save()
 
   config->setGroup("Locale");
 
-  config->writeEntry("Country", m_locale->country(), true, true);
+  config->writeEntry("Country", m_locale->country(), KConfigBase::Persistent|KConfigBase::Global);
   if ( m_locale->languageList().isEmpty() )
-    config->writeEntry("Language", QString::fromLatin1(""), true, true);
+    config->writeEntry("Language", QString::fromLatin1(""), KConfigBase::Persistent|KConfigBase::Global);
   else
     config->writeEntry("Language",
-                       m_locale->languageList(), ':', true, true);
+                       m_locale->languageList(), ':', KConfigBase::Persistent|KConfigBase::Global);
 
   config->sync();
 }

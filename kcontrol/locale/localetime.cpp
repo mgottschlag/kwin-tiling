@@ -264,40 +264,40 @@ void KLocaleConfigTime::save()
   QString str;
 
   str = ent.readEntry("CalendarSystem", QString::fromLatin1("gregorian"));
-  group.deleteEntry("CalendarSystem", false, true);
+  group.deleteEntry("CalendarSystem", KConfigBase::Global);
   if (str != m_locale->calendarType())
-    group.writeEntry("CalendarSystem", m_locale->calendarType(), true, true);
+    group.writeEntry("CalendarSystem", m_locale->calendarType(), KConfigBase::Persistent|KConfigBase::Global);
 
   str = ent.readEntry("TimeFormat", QString::fromLatin1("%H:%M:%S"));
-  group.deleteEntry("TimeFormat", false, true);
+  group.deleteEntry("TimeFormat", KConfigBase::Global);
   if (str != m_locale->timeFormat())
-    group.writeEntry("TimeFormat", m_locale->timeFormat(), true, true);
+    group.writeEntry("TimeFormat", m_locale->timeFormat(), KConfigBase::Persistent|KConfigBase::Global);
 
   str = ent.readEntry("DateFormat", QString::fromLatin1("%A %d %B %Y"));
-  group.deleteEntry("DateFormat", false, true);
+  group.deleteEntry("DateFormat", KConfigBase::Global);
   if (str != m_locale->dateFormat())
-    group.writeEntry("DateFormat", m_locale->dateFormat(), true, true);
+    group.writeEntry("DateFormat", m_locale->dateFormat(), KConfigBase::Persistent|KConfigBase::Global);
 
   str = ent.readEntry("DateFormatShort", QString::fromLatin1("%Y-%m-%d"));
-  group.deleteEntry("DateFormatShort", false, true);
+  group.deleteEntry("DateFormatShort", KConfigBase::Global);
   if (str != m_locale->dateFormatShort())
     group.writeEntry("DateFormatShort",
-		       m_locale->dateFormatShort(), true, true);
+		       m_locale->dateFormatShort(), KConfigBase::Persistent|KConfigBase::Global);
 
   int firstDay;
   firstDay = ent.readNumEntry("WeekStartDay", 1);
-  group.deleteEntry("WeekStartDay", false, true);
+  group.deleteEntry("WeekStartDay",KConfigBase::Global);
   if (firstDay != m_locale->weekStartDay())
-      group.writeEntry("WeekStartDay", m_locale->weekStartDay(), true, true);
+      group.writeEntry("WeekStartDay", m_locale->weekStartDay(), KConfigBase::Persistent|KConfigBase::Global);
 
   if ( m_locale->nounDeclension() )
   {
     bool b;
     b = ent.readNumEntry("DateMonthNamePossessive", false);
-    group.deleteEntry("DateMonthNamePossessive", false, true);
+    group.deleteEntry("DateMonthNamePossessive", KConfigBase::Global);
     if (b != m_locale->dateMonthNamePossessive())
       group.writeEntry("DateMonthNamePossessive",
-		         m_locale->dateMonthNamePossessive(), true, true);
+		         m_locale->dateMonthNamePossessive(), KConfigBase::Persistent|KConfigBase::Global);
   }
 
   group.sync();
