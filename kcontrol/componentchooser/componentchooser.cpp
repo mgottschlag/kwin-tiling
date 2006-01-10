@@ -256,7 +256,7 @@ void CfgTerminalEmulator::save(KConfig *) {
 
 	KConfig *config = new KConfig("kdeglobals");
 	config->setGroup("General");
-	config->writePathEntry("TerminalApplication",terminalCB->isChecked()?"konsole":terminalLE->text(), true, true);
+	config->writePathEntry("TerminalApplication", terminalCB->isChecked()?"konsole":terminalLE->text(), KConfigBase::Normal|KConfigBase::Global);
 	config->sync();
 	delete config;
 
@@ -352,7 +352,7 @@ void CfgBrowser::save(KConfig *) {
 	   else
 	      exec = "!" + exec; // Litteral command
 	}
-	config->writePathEntry("BrowserApplication", exec, true, true);
+	config->writePathEntry("BrowserApplication", exec, KConfigBase::Normal|KConfigBase::Global);
 	config->sync();
 	delete config;
 
