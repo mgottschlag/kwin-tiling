@@ -833,11 +833,11 @@ void KBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("Color2", m_ColorB);
     m_pConfig->writePathEntry("Pattern", KBackgroundPattern::name());
     m_pConfig->writeEntry("Program", KBackgroundProgram::name());
-    m_pConfig->writeEntry("BackgroundMode", m_BMRevMap[m_BackgroundMode]);
+    m_pConfig->writeEntry("BackgroundMode", int(m_BMRevMap[m_BackgroundMode]));
     m_pConfig->writePathEntry("Wallpaper", m_Wallpaper);
-    m_pConfig->writeEntry("WallpaperMode", m_WMRevMap[m_WallpaperMode]);
-    m_pConfig->writeEntry("MultiWallpaperMode", m_MMRevMap[m_MultiMode]);
-    m_pConfig->writeEntry("BlendMode", m_BlMRevMap[m_BlendMode]);
+    m_pConfig->writeEntry("WallpaperMode", int(m_WMRevMap[m_WallpaperMode]));
+    m_pConfig->writeEntry("MultiWallpaperMode", int(m_MMRevMap[m_MultiMode]));
+    m_pConfig->writeEntry("BlendMode", int(m_BlMRevMap[m_BlendMode]));
     m_pConfig->writeEntry("BlendBalance", m_BlendBalance);
     m_pConfig->writeEntry("ReverseBlending", m_ReverseBlending);
     m_pConfig->writeEntry("MinOptimizationDepth", m_MinOptimizationDepth);
