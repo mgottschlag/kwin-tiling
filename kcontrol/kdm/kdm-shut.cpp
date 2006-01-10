@@ -171,8 +171,8 @@ void KDMSessionsWidget::save()
     writeSD(sdrcombo);
 
     config->setGroup("Shutdown");
-    config->writeEntry("HaltCmd", shutdown_lined->url(), true);
-    config->writeEntry("RebootCmd", restart_lined->url(), true);
+    config->writeEntry("HaltCmd", shutdown_lined->url(), KConfigBase::Persistent);
+    config->writeEntry("RebootCmd", restart_lined->url(), KConfigBase::Persistent);
 
     config->writeEntry("BootManager", bm_combo->currentId());
 }
