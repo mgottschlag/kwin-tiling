@@ -154,8 +154,8 @@ bool KCountryPage::save(KLanguageButton *comboCountry, KLanguageButton *comboLan
 	KConfigBase *config = KGlobal::config();
 
 	config->setGroup(QLatin1String("Locale"));
-	config->writeEntry(QLatin1String("Country"), comboCountry->current(), true, true);
-	config->writeEntry(QLatin1String("Language"), comboLang->current(), true, true);
+	config->writeEntry(QLatin1String("Country"), comboCountry->current(), KConfigBase::Normal|KConfigBase::Global);
+	config->writeEntry(QLatin1String("Language"), comboLang->current(), KConfigBase::Normal|KConfigBase::Global);
 	config->sync();
 
 	// only make the system reload the language, if the selected one deferes from the old saved one.

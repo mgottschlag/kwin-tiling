@@ -314,7 +314,7 @@ void KOSPage::writeKeyEntrys(QString keyfile){
 	// we need the entries from the default - file, so we can compare with them
 	QMap<QString, QString> defMap = defScheme->entryMap("Global Shortcuts");
 	// first delete the group in kdeglobals, then write the non-default entries from the global .kksrc - file
-	cglobal->deleteGroup("Global Shortcuts", true, true);
+	cglobal->deleteGroup("Global Shortcuts", KConfigBase::Global);
 	// get the Global - Shortcuts and write them to kdeglobals
 	cglobal->setGroup("Global Shortcuts");
 	QMap<QString, QString> givenMap = scheme->entryMap("Global Shortcuts");
@@ -329,7 +329,7 @@ void KOSPage::writeKeyEntrys(QString keyfile){
 	// we need the entries from the default - file, so we can compare with them
 	defMap = defScheme->entryMap("Shortcuts");
 	// first delete the group in kdeglobals, then write the non-default entries from the global .kksrc - file
-	cglobal->deleteGroup("Shortcuts", true, true);
+	cglobal->deleteGroup("Shortcuts", KConfigBase::Global);
 	cglobal->setGroup("Shortcuts");
 	givenMap = scheme->entryMap("Shortcuts");
 	for ( QMap<QString, QString>::Iterator it = givenMap.begin(); it != givenMap.end(); ++it ) {
@@ -488,10 +488,10 @@ void KOSPage::writeUserKeys(){
 		cglobal->writeEntry(it.key(), it.data(), KConfigBase::Persistent|KConfigBase::Global);
 	}
 
-	cglobal->deleteGroup("Shortcuts", true, true);
+	cglobal->deleteGroup("Shortcuts", KConfigBase::Global);
 	cglobal->setGroup("Shortcuts");
 	for ( it = map_AppUserKeys.begin(); it != map_AppUserKeys.end(); ++it ) {
-		cglobal->writeEntry(it.key(), it.data(), true, true);
+		cglobal->writeEntry(it.key(), it.data(), KConfigBase::Normal|KConfigBase::Global);
 	}
 }
 
