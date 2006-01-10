@@ -196,7 +196,7 @@ void KDIconView::initDotDirectories()
         QStringList::ConstIterator gEnd = groups.end();
         for (; gIt != gEnd; ++gIt )
         {
-            m_dotDirectory->deleteGroup(*gIt, true);
+            m_dotDirectory->deleteGroup(*gIt);
         }
     }
     QRect desk = desktopRect();
@@ -763,16 +763,17 @@ void KDIconView::popupMenu( const QPoint &_global, const KFileItemList& _items )
     if (!KAuthorized::authorizeKAction("action/kdesktop_rmb")) return;
     if (!m_dirLister) return;
     if ( _items.count() == 1 )
-        m_popupURL = _items.getFirst()->url();
+        m_popupURL = _items.first()->url();
 
     KAction* pasteTo = m_actionCollection.action( "pasteto" );
     if (pasteTo)
         pasteTo->setEnabled( m_actionCollection.action( "paste" )->isEnabled() );
 
     bool hasMediaFiles = false;
-    KFileItemListIterator it(_items);
-    for (; it.current() && !hasMediaFiles; ++it) {
-        hasMediaFiles = it.current()->url().protocol() == "media";
+    KFileItemList::const_iterator it = _items.begin();
+    const KFileItemList::const_iterator end = _items.end();
+    for (; it != end && !hasMediaFiles; ++it) {
+        hasMediaFiles = (*it)->url().protocol() == "media";
     }
 
     KParts::BrowserExtension::PopupFlags itemFlags = KParts::BrowserExtension::DefaultPopupItems;
@@ -923,11 +924,12 @@ void KDIconView::slotNewItems( const KFileItemList & entries )
   // We have new items, so we'll need to repaint in slotCompleted
   m_bNeedRepaint = true;
   kdDebug(1214) << "KDIconView::slotNewItems count=" << entries.count() << endl;
-  KFileItemListIterator it(entries);
+  KFileItemList::const_iterator it = entries.begin();
+  const KFileItemList::const_iterator end = entries.end();
   KFileIVI* fileIVI = 0L;
-  for (; it.current(); ++it)
+  for (; it != end; ++it)
   {
-    KURL url = it.current()->url();
+    KURL url = (*it)->url();
     if (!desktopPath.isEmpty() && url.isLocalFile() && !url.path().startsWith(desktopPath))
     {
       QString fileName = url.fileName();
@@ -940,8 +942,8 @@ void KDIconView::slotNewItems( const KFileItemList & entries )
     }
 
     // No delayed mimetype determination on the desktop
-    it.current()->determineMimeType();
-    fileIVI = new KFileIVIDesktop( this, it.current(), iconSize(), m_shadowEngine );
+    (*it)->determineMimeType();
+    fileIVI = new KFileIVIDesktop( this, *it, iconSize(), m_shadowEngine );
     if (!makeFriendlyText( fileIVI ))
     {
       delete fileIVI;
@@ -1021,19 +1023,20 @@ void KDIconView::slotRefreshItems( const KFileItemList & entries )
 {
     kdDebug(1204) << "KDIconView::slotRefreshItems" << endl;
     bool bNeedPreviewJob = false;
-    KFileItemListIterator rit(entries);
-    for (; rit.current(); ++rit)
+    KFileItemList::const_iterator rit = entries.begin();
+    const KFileItemList::const_iterator end = entries.end();
+    for ( ; rit != end; ++rit )
     {
         bool found = false;
         Q3IconViewItem *it = firstItem();
         for ( ; it ; it = it->nextItem() )
         {
             KFileIVI * fileIVI = static_cast<KFileIVI *>(it);
-            if ( fileIVI->item() == rit.current() ) // compare the pointers
+            if ( fileIVI->item() == *rit ) // compare the pointers
             {
                 kdDebug(1204) << "KDIconView::slotRefreshItems refreshing icon " << fileIVI->item()->url().url() << endl;
                 found = true;
-                fileIVI->setText( rit.current()->text() );
+                fileIVI->setText( (*rit)->text() );
                 if (!makeFriendlyText( fileIVI ))
                 {
                     delete fileIVI;
@@ -1045,13 +1048,13 @@ void KDIconView::slotRefreshItems( const KFileItemList & entries )
                 }
                 else
                     fileIVI->refreshIcon( true );
-                if ( rit.current()->isMimeTypeKnown() )
-                    fileIVI->setMouseOverAnimation( rit.current()->iconName() );
+                if ( (*rit)->isMimeTypeKnown() )
+                    fileIVI->setMouseOverAnimation( (*rit)->iconName() );
                 break;
             }
         }
 	if ( !found )
-            kdDebug(1204) << "Item not found: " << rit.current()->url().url() << endl;
+            kdDebug(1204) << "Item not found: " << (*rit)->url().url() << endl;
     }
     if ( bNeedPreviewJob && previewSettings().count() )
     {
@@ -1214,8 +1217,8 @@ void KDIconView::renameDesktopFile(const QString &path, const QString &name)
     if ( cfg.readName() == name )
       return;
 
-    cfg.writeEntry( "Name", name, true, false, false );
-    cfg.writeEntry( "Name", name, true, false, true );
+    cfg.writeEntry( "Name", name );
+    cfg.writeEntry( "Name", name, KConfigBase::Normal|KConfigBase::NLS );
     cfg.sync();
 }
 
