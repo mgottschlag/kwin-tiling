@@ -160,25 +160,25 @@ void KTimerDialog::slotInternalTimeout()
     emit timerTimeout();
     switch ( buttonOnTimeout ) {
         case Help:
-            slotHelp();
+            slotButtonClicked(KDialog::Help);
             break;
         case Default:
-            slotDefault();
+            slotButtonClicked(KDialog::Default);
             break;
         case Ok:
-            slotOk();
+            slotButtonClicked(KDialog::Ok);
             break;
         case Apply:
-            slotApply();
+            slotButtonClicked(KDialog::Apply);
             break;
         case Try:
-            slotTry();
+            slotButtonClicked(KDialog::Try);
             break;
         case Cancel:
             slotCancel();
             break;
         case Close:
-            slotClose();
+            slotButtonClicked(KDialog::Close);
             break;
         /*case User1:
             slotUser1();
@@ -187,16 +187,16 @@ void KTimerDialog::slotInternalTimeout()
             slotUser2();
             break;*/
         case User3:
-            slotUser3();
+            slotButtonClicked(KDialog::User3);
             break;
         case No:
-            slotNo();
+            slotButtonClicked(KDialog::No);
             break;
         case Yes:
-            slotCancel();
+            slotButtonClicked(KDialog::Cancel);
             break;
         case Details:
-            slotDetails();
+            slotButtonClicked(KDialog::Details);
             break;
         case Filler:
         case Stretch:
