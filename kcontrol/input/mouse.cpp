@@ -808,14 +808,14 @@ void MouseSettings::save(KConfig *config)
   config->writeEntry( "ReverseScrollPolarity", reverseScrollPolarity );
 
   config->setGroup("KDE");
-  config->writeEntry("DoubleClickInterval", doubleClickInterval, true, true);
-  config->writeEntry("StartDragTime", dragStartTime, true, true);
-  config->writeEntry("StartDragDist", dragStartDist, true, true);
-  config->writeEntry("WheelScrollLines", wheelScrollLines, true, true);
-  config->writeEntry("SingleClick", singleClick, true, true);
-  config->writeEntry("AutoSelectDelay", autoSelectDelay, true, true );
-  config->writeEntry("VisualActivate", visualActivate, true, true);
-  config->writeEntry("ChangeCursor", changeCursor, true, true);
+  config->writeEntry("DoubleClickInterval", doubleClickInterval, KConfigBase::Persistent|KConfigBase::Global);
+  config->writeEntry("StartDragTime", dragStartTime, KConfigBase::Persistent|KConfigBase::Global);
+  config->writeEntry("StartDragDist", dragStartDist, KConfigBase::Persistent|KConfigBase::Global);
+  config->writeEntry("WheelScrollLines", wheelScrollLines, KConfigBase::Persistent|KConfigBase::Global);
+  config->writeEntry("SingleClick", singleClick, KConfigBase::Persistent|KConfigBase::Global);
+  config->writeEntry("AutoSelectDelay", autoSelectDelay, KConfigBase::Persistent|KConfigBase::Global);
+  config->writeEntry("VisualActivate", visualActivate, KConfigBase::Persistent|KConfigBase::Global);
+  config->writeEntry("ChangeCursor", changeCursor,KConfigBase::Persistent|KConfigBase::Global);
   // This iterates through the various Logitech mice, if we have support.
 #ifdef HAVE_LIBUSB
   LogitechMouse *logitechMouse;
