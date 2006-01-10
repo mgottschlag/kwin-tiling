@@ -74,7 +74,7 @@ void ShortcutsModule::save()
 	// FIXME: This isn't working.  Why? -- ellis, 2002/01/27
 	// Check for old group,
 	if( KGlobal::config()->hasGroup( "Keys" ) ) {
-		KGlobal::config()->deleteGroup( "Keys", true, true );
+		KGlobal::config()->deleteGroup( "Keys", KConfigBase::Global);
 	}
 	KGlobal::config()->sync();
 

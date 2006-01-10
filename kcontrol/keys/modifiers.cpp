@@ -82,30 +82,30 @@ void ModifiersModule::save()
 	KConfigGroup cg( KGlobal::config(), "Keyboard" );
 
 	if( m_plblCtrl->text() != "Ctrl" )
-		cg.writeEntry( "Label Ctrl", m_plblCtrl->text(), true, true );
+		cg.writeEntry( "Label Ctrl", m_plblCtrl->text(), KConfigBase::Normal|KConfigBase::Global);
 	else
-		cg.deleteEntry( "Label Ctrl", false, true );
+		cg.deleteEntry( "Label Ctrl", KConfigBase::Global);
 
 	if( m_plblAlt->text() != "Alt" )
-		cg.writeEntry( "Label Alt", m_plblAlt->text(), true, true );
+		cg.writeEntry( "Label Alt", m_plblAlt->text(), KConfigBase::Normal|KConfigBase::Global);
 	else
-		cg.deleteEntry( "Label Alt", false, true );
+		cg.deleteEntry( "Label Alt", KConfigBase::Global);
 
 	if( m_plblWin->text() != "Win" )
-		cg.writeEntry( "Label Win", m_plblWin->text(), true, true );
+		cg.writeEntry( "Label Win", m_plblWin->text(), KConfigBase::Normal|KConfigBase::Global);
 	else
-		cg.deleteEntry( "Label Win", false, true );
+		cg.deleteEntry( "Label Win", KConfigBase::Global);
 
 	if( m_pchkMacKeyboard->isChecked() )
-		cg.writeEntry( "Mac Keyboard", true, true, true );
+		cg.writeEntry( "Mac Keyboard", true, KConfigBase::Normal|KConfigBase::Global);
 	else
-		cg.deleteEntry( "Mac Keyboard", false, true );
+		cg.deleteEntry( "Mac Keyboard", KConfigBase::Global);
 
 	bool bMacSwap = m_pchkMacKeyboard->isChecked() && m_pchkMacSwap->isChecked();
 	if( bMacSwap )
-		cg.writeEntry( "Mac Modifier Swap", true, true, true );
+		cg.writeEntry( "Mac Modifier Swap", true, KConfigBase::Normal|KConfigBase::Global);
 	else
-		cg.deleteEntry( "Mac Modifier Swap", false, true );
+		cg.deleteEntry( "Mac Modifier Swap", KConfigBase::Global);
 
 	KGlobal::config()->sync();
 

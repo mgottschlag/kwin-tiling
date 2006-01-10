@@ -476,7 +476,7 @@ void KKeyModule::init()
   QString fourMods = KGlobal::config()->readEntry( "Use Four Modifier Keys", KAccel::keyboardHasMetaKey() ? "true" : "false" );
   KAccel::useFourModifierKeys( fourMods == "true" );
   bool bUseFourModifierKeys = KAccel::useFourModifierKeys();
-  KGlobal::config()->writeEntry( "User Four Modifier Keys", bUseFourModifierKeys ? "true" : "false", true, true );
+  KGlobal::config()->writeEntry( "User Four Modifier Keys", bUseFourModifierKeys ? "true" : "false", KConfigBase::Normal|KConfigBase::Global);
   */
   KAccelActions* keys = new KAccelActions();
 

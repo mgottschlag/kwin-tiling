@@ -144,7 +144,7 @@ extern "C"
 	QString fourMods = KGlobal::config()->readEntry( "Use Four Modifier Keys", KAccel::keyboardHasMetaKey() ? "true" : "false" );
 	KAccel::useFourModifierKeys( fourMods == "true" );
 	bool bUseFourModifierKeys = KAccel::useFourModifierKeys();
-	KGlobal::config()->writeEntry( "User Four Modifier Keys", bUseFourModifierKeys ? "true" : "false", true, true );
+	KGlobal::config()->writeEntry( "User Four Modifier Keys", bUseFourModifierKeys ? "true" : "false", KConfigBase::Normal|KConfigBase::Global);
 	*/
 	KAccelActions* keys = new KAccelActions();
 
@@ -169,14 +169,14 @@ extern "C"
 	    // Check for old group,
 	    if( KGlobal::config()->hasGroup( "Global Keys" ) ) {
 		keys->readActions( "Global Keys" );
-		KGlobal::config()->deleteGroup( "Global Keys", true, true );
+		KGlobal::config()->deleteGroup( "Global Keys", KConfigBase::Global);
 	    }
 	    keys->readActions( "Global Shortcuts" );
-            KGlobal::config()->deleteGroup( "Global Shortcuts", true, true );
+            KGlobal::config()->deleteGroup( "Global Shortcuts", KConfigBase::Global);
 
 	    kdDebug(125) << "KeyModule::init() - Write Config Bindings\n";
 	    keys->writeActions( "Global Shortcuts", 0, true, true );
-            group.writeEntry( "Defaults timestamp", __DATE__ __TIME__, true, true );
+            group.writeEntry( "Defaults timestamp", __DATE__ __TIME__, KConfigBase::Normal|KConfigBase::Global);
         }
 	delete keys;
 
