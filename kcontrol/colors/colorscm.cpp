@@ -335,37 +335,37 @@ void KColorScheme::save()
 {
     KConfig *cfg = KGlobal::config();
     cfg->setGroup( "General" );
-    cfg->writeEntry("background", cs->back, true, true);
-    cfg->writeEntry("selectBackground", cs->select, true, true);
-    cfg->writeEntry("foreground", cs->txt, true, true);
-    cfg->writeEntry("windowForeground", cs->windowTxt, true, true);
-    cfg->writeEntry("windowBackground", cs->window, true, true);
-    cfg->writeEntry("selectForeground", cs->selectTxt, true, true);
-    cfg->writeEntry("buttonBackground", cs->button, true, true);
-    cfg->writeEntry("buttonForeground", cs->buttonTxt, true, true);
-    cfg->writeEntry("linkColor", cs->link, true, true);
-    cfg->writeEntry("visitedLinkColor", cs->visitedLink, true, true);
-    cfg->writeEntry("alternateBackground", cs->alternateBackground, true, true);
+    cfg->writeEntry("background", cs->back, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("selectBackground", cs->select, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("foreground", cs->txt, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("windowForeground", cs->windowTxt, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("windowBackground", cs->window, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("selectForeground", cs->selectTxt, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("buttonBackground", cs->button, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("buttonForeground", cs->buttonTxt, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("linkColor", cs->link, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("visitedLinkColor", cs->visitedLink, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("alternateBackground", cs->alternateBackground, KConfigBase::Normal|KConfigBase::Global);
 
-    cfg->writeEntry("shadeSortColumn", cs->shadeSortColumn, true, true);
+    cfg->writeEntry("shadeSortColumn", cs->shadeSortColumn, KConfigBase::Normal|KConfigBase::Global);
 
     cfg->setGroup( "WM" );
-    cfg->writeEntry("activeForeground", cs->aTxt, true, true);
-    cfg->writeEntry("inactiveBackground", cs->iaTitle, true, true);
-    cfg->writeEntry("inactiveBlend", cs->iaBlend, true, true);
-    cfg->writeEntry("activeBackground", cs->aTitle, true, true);
-    cfg->writeEntry("activeBlend", cs->aBlend, true, true);
-    cfg->writeEntry("inactiveForeground", cs->iaTxt, true, true);
-    cfg->writeEntry("activeTitleBtnBg", cs->aTitleBtn, true, true);
-    cfg->writeEntry("inactiveTitleBtnBg", cs->iTitleBtn, true, true);
-    cfg->writeEntry("frame", cs->aFrame, true, true);
-    cfg->writeEntry("inactiveFrame", cs->iaFrame, true, true);
-    cfg->writeEntry("handle", cs->aHandle, true, true);
-    cfg->writeEntry("inactiveHandle", cs->iaHandle, true, true);
+    cfg->writeEntry("activeForeground", cs->aTxt, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("inactiveBackground", cs->iaTitle, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("inactiveBlend", cs->iaBlend, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("activeBackground", cs->aTitle, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("activeBlend", cs->aBlend, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("inactiveForeground", cs->iaTxt, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("activeTitleBtnBg", cs->aTitleBtn, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("inactiveTitleBtnBg", cs->iTitleBtn, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("frame", cs->aFrame, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("inactiveFrame", cs->iaFrame, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("handle", cs->aHandle, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("inactiveHandle", cs->iaHandle, KConfigBase::Normal|KConfigBase::Global);
 
     cfg->setGroup( "KDE" );
-    cfg->writeEntry("contrast", cs->contrast, true, true);
-    cfg->writeEntry("colorScheme", sCurrentScheme, true, true);
+    cfg->writeEntry("contrast", cs->contrast, KConfigBase::Normal|KConfigBase::Global);
+    cfg->writeEntry("colorScheme", sCurrentScheme, KConfigBase::Normal|KConfigBase::Global);
     cfg->sync();
 
     // KDE-1.x support
@@ -374,7 +374,7 @@ void KColorScheme::save()
     config->setGroup( "General" );
     config->writeEntry("background", cs->back );
     config->writeEntry("selectBackground", cs->select );
-    config->writeEntry("foreground", cs->txt, true, true);
+    config->writeEntry("foreground", cs->txt, KConfigBase::Normal|KConfigBase::Global);
     config->writeEntry("windowForeground", cs->windowTxt );
     config->writeEntry("windowBackground", cs->window );
     config->writeEntry("selectForeground", cs->selectTxt );

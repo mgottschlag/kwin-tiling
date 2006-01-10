@@ -134,7 +134,7 @@ FontUseItem::FontUseItem(
   const QFont &default_fnt,
   bool f
 )
-  : KFontRequester(parent, 0L, f),
+  : KFontRequester(parent, f),
     _rcfile(rc),
     _rcgroup(grp),
     _rckey(key),
@@ -176,7 +176,7 @@ void FontUseItem::writeFont()
   if (_rcfile.isEmpty()) {
     config = KGlobal::config();
     config->setGroup(_rcgroup);
-    config->writeEntry(_rckey, font(), true, true);
+    config->writeEntry(_rckey, font(), KConfigBase::Normal|KConfigBase::Global);
   } else {
     config = new KSimpleConfig(locateLocal("config", _rcfile));
     config->setGroup(_rcgroup);
