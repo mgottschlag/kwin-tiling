@@ -586,15 +586,15 @@ void KCMStyle::save()
 	}
 
 	// Misc page
-	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), true, true );
-	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), true, true );
+	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), KConfigBase::Normal|KConfigBase::Global);
+	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), KConfigBase::Normal|KConfigBase::Global);
 
 	config.setGroup("General");
 	config.writeEntry( "widgetStyle", currentStyle() );
 
 	config.setGroup("Toolbar style");
-	config.writeEntry( "Highlighting", cbHoverButtons->isChecked(), true, true );
-	config.writeEntry( "TransparentMoving", cbTransparentToolbars->isChecked(), true, true );
+	config.writeEntry( "Highlighting", cbHoverButtons->isChecked(), KConfigBase::Normal|KConfigBase::Global);
+	config.writeEntry( "TransparentMoving", cbTransparentToolbars->isChecked(), KConfigBase::Normal|KConfigBase::Global);
 	QString tbIcon;
 	switch( comboToolbarIcons->currentItem() )
 	{
@@ -604,7 +604,7 @@ void KCMStyle::save()
 		case 0:
 		default: tbIcon = "IconOnly"; break;
 	}
-	config.writeEntry( "IconText", tbIcon, true, true );
+	config.writeEntry( "IconText", tbIcon, KConfigBase::Normal|KConfigBase::Global);
 	config.sync();
 
 	// Export the changes we made to qtrc, and update all qt-only
