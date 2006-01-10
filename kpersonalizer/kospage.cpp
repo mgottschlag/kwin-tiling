@@ -123,7 +123,7 @@ void KOSPage::saveCheckState(bool currSettings){
 		}
 
 		ckaccess->setGroup("Keyboard");
-		ckaccess->writeEntry("Gestures", cb_gestures->isChecked(), true, true);
+		ckaccess->writeEntry("Gestures", cb_gestures->isChecked(), KConfigBase::Persistent|KConfigBase::Global);
 
 	}
 	else {  // User has pressed "cancel & dismiss", so his old settings are written back
@@ -137,10 +137,10 @@ void KOSPage::writeKDE(){
 	kdDebug() << "KOSPage::writeKDE()" << endl;
 
 	ckcmdisplay->setGroup("KDE");
-	ckcmdisplay->writeEntry("macStyle", false, true, true);
+	ckcmdisplay->writeEntry("macStyle", false, KConfigBase::Persistent|KConfigBase::Global);
 
 	cglobal->setGroup("KDE");
-	cglobal->writeEntry("SingleClick", true, true, true);
+	cglobal->writeEntry("SingleClick", true, KConfigBase::Persistent|KConfigBase::Global);
 
 	claunch->setGroup("FeedbackStyle");
 	claunch->writeEntry("BusyCursor", true);
@@ -164,7 +164,7 @@ void KOSPage::writeKDE(){
 	ckonqueror->writeEntry("UnderlineLinks", true);
 
 	ckcminput->setGroup("KDE");
-	ckcminput->writeEntry("ChangeCursor", true, true, true );
+	ckcminput->writeEntry("ChangeCursor", true, KConfigBase::Persistent|KConfigBase::Global);
 
 	cklipper->setGroup("General");
 	cklipper->writeEntry("SynchronizeClipboards", false);
@@ -178,10 +178,10 @@ void KOSPage::writeUNIX(){
 	kdDebug() << "KOSPage::writeUNIX()" << endl;
 
 	ckcmdisplay->setGroup("KDE");
-	ckcmdisplay->writeEntry("macStyle", false, true, true);
+	ckcmdisplay->writeEntry("macStyle", false, KConfigBase::Persistent|KConfigBase::Global);
 
 	cglobal->setGroup("KDE");
-	cglobal->writeEntry("SingleClick", true, true, true);
+	cglobal->writeEntry("SingleClick", true, KConfigBase::Persistent|KConfigBase::Global);
 
 	claunch->setGroup("FeedbackStyle");
 	claunch->writeEntry("BusyCursor", false);
@@ -205,7 +205,7 @@ void KOSPage::writeUNIX(){
 	ckonqueror->writeEntry("UnderlineLinks", false);
 
 	ckcminput->setGroup("KDE");
-	ckcminput->writeEntry("ChangeCursor", false, true, true );
+	ckcminput->writeEntry("ChangeCursor", false, KConfigBase::Persistent|KConfigBase::Global);
 
 	cklipper->setGroup("General");
 	cklipper->writeEntry("SynchronizeClipboards", true);
@@ -219,10 +219,10 @@ void KOSPage::writeWindows(){
 	kdDebug() << "KOSPage::writeWindows()" << endl;
 
 	ckcmdisplay->setGroup("KDE");
-	ckcmdisplay->writeEntry("macStyle", false, true, true);
+	ckcmdisplay->writeEntry("macStyle", false, KConfigBase::Persistent|KConfigBase::Global);
 
 	cglobal->setGroup("KDE");
-	cglobal->writeEntry("SingleClick", false, true, true);
+	cglobal->writeEntry("SingleClick", false, KConfigBase::Persistent|KConfigBase::Global);
 
 	claunch->setGroup("FeedbackStyle");
 	claunch->writeEntry("BusyCursor", true);
@@ -246,7 +246,7 @@ void KOSPage::writeWindows(){
 	ckonqueror->writeEntry("UnderlineLinks", false);
 
 	ckcminput->setGroup("KDE");
-	ckcminput->writeEntry("ChangeCursor", false, true, true );
+	ckcminput->writeEntry("ChangeCursor", false, KConfigBase::Persistent|KConfigBase::Global);
 
 	cklipper->setGroup("General");
 	cklipper->writeEntry("SynchronizeClipboards", false);
@@ -266,10 +266,10 @@ void KOSPage::writeMacOS(){
 	kdDebug() << "KOSPage::writeMacOS()" << endl;
 
 	ckcmdisplay->setGroup("KDE");
-	ckcmdisplay->writeEntry("macStyle", true, true, true);
+	ckcmdisplay->writeEntry("macStyle", true, KConfigBase::Persistent|KConfigBase::Global);
 
 	cglobal->setGroup("KDE");
-	cglobal->writeEntry("SingleClick", true, true, true);
+	cglobal->writeEntry("SingleClick", true, KConfigBase::Persistent|KConfigBase::Global);
 
 	claunch->setGroup("FeedbackStyle");
 	claunch->writeEntry("BusyCursor", false);
@@ -293,7 +293,7 @@ void KOSPage::writeMacOS(){
 	ckonqueror->writeEntry("UnderlineLinks", false);
 
 	ckcminput->setGroup("KDE");
-	ckcminput->writeEntry("ChangeCursor", true, true, true );
+	ckcminput->writeEntry("ChangeCursor", true, KConfigBase::Persistent|KConfigBase::Global);
 
 	cklipper->setGroup("General");
 	cklipper->writeEntry("SynchronizeClipboards", false);
@@ -320,9 +320,9 @@ void KOSPage::writeKeyEntrys(QString keyfile){
 	QMap<QString, QString> givenMap = scheme->entryMap("Global Shortcuts");
 	for ( QMap<QString, QString>::Iterator it = givenMap.begin(); it != givenMap.end(); ++it ) {
 		if ( (defMap[it.key()] == it.data()) && (it.data() != "none") ) {
-			cglobal->writeEntry(it.key(), "default("+it.data()+")", true, true);
+			cglobal->writeEntry(it.key(), "default("+it.data()+")", KConfigBase::Persistent|KConfigBase::Global);
 		} else {
-			cglobal->writeEntry(it.key(), it.data(), true, true);
+			cglobal->writeEntry(it.key(), it.data(), KConfigBase::Persistent|KConfigBase::Global);
 		}
 	}
 
@@ -335,7 +335,7 @@ void KOSPage::writeKeyEntrys(QString keyfile){
 	for ( QMap<QString, QString>::Iterator it = givenMap.begin(); it != givenMap.end(); ++it ) {
 		// only write the entry, if it defers from kde3.kksrc
 		if ( defMap[it.key()] != it.data() ) {
-			cglobal->writeEntry(it.key(), it.data(), true, true);
+			cglobal->writeEntry(it.key(), it.data(), KConfigBase::Persistent|KConfigBase::Global);
 		}
 	}
 
@@ -440,10 +440,10 @@ void KOSPage::writeUserDefaults(){
 	kdDebug() << "KOSPage::writeUserDefaults()" << endl;
 
 	ckcmdisplay->setGroup("KDE");
-	ckcmdisplay->writeEntry("macStyle", b_MacMenuBar, true, true);
+	ckcmdisplay->writeEntry("macStyle", b_MacMenuBar, KConfigBase::Persistent|KConfigBase::Global);
 
 	cglobal->setGroup("KDE");
-	cglobal->writeEntry("SingleClick", b_SingleClick, true, true);
+	cglobal->writeEntry("SingleClick", b_SingleClick, KConfigBase::Persistent|KConfigBase::Global);
 
 	claunch->setGroup("FeedbackStyle");
 	claunch->writeEntry("BusyCursor", b_BusyCursor);
@@ -467,13 +467,13 @@ void KOSPage::writeUserDefaults(){
 	ckonqueror->writeEntry("UnderlineLinks", b_KonqUnderline);
 
 	ckcminput->setGroup("KDE");
-	ckcminput->writeEntry("ChangeCursor", b_ChangeCursor, true, true );
+	ckcminput->writeEntry("ChangeCursor", b_ChangeCursor, KConfigBase::Persistent|KConfigBase::Global);
 
 	cklipper->setGroup("General");
 	cklipper->writeEntry("SynchronizeClipboards", b_syncClipboards);
 
 	ckaccess->setGroup("Keyboard");
-	ckaccess->writeEntry("Gestures", b_Gestures, true, true);
+	ckaccess->writeEntry("Gestures", b_Gestures, KConfigBase::Persistent|KConfigBase::Global);
 
 	writeUserKeys();
 }
@@ -485,7 +485,7 @@ void KOSPage::writeUserKeys(){
 	cglobal->setGroup("Global Shortcuts");
 	QMap<QString, QString>::Iterator it;	
 	for ( it = map_GlobalUserKeys.begin(); it != map_GlobalUserKeys.end(); ++it ) {
-		cglobal->writeEntry(it.key(), it.data(), true, true);
+		cglobal->writeEntry(it.key(), it.data(), KConfigBase::Persistent|KConfigBase::Global);
 	}
 
 	cglobal->deleteGroup("Shortcuts", true, true);

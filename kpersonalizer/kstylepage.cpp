@@ -111,7 +111,7 @@ void KStylePage::saveStyle(bool curSettings){
 	QString style = curSettings ? currentStyle : origStyle;
 	KConfig cfg( "kdeglobals" );
 	cfg.setGroup("General");
-	cfg.writeEntry( "widgetStyle", style, true, true );
+	cfg.writeEntry( "widgetStyle", style, KConfigBase::Persistent|KConfigBase::Global );
 	cfg.sync();
 	kdDebug() << "KStylePage::saveStyle(): " << style << endl;
 }
@@ -165,29 +165,29 @@ void KStylePage::saveColors(bool curSettings){
 	// equals that the file is <default> which is no file. TODO: use the default values in that case (kde selected)
 	KConfig *config = KGlobal::config();
 	config->setGroup( "General" );
-	config->writeEntry("foreground", toSave->foreground, true, true);
-	config->writeEntry("background", toSave->background, true, true);
-	config->writeEntry("windowForeground", toSave->windowForeground, true, true);
-	config->writeEntry("windowBackground", toSave->windowBackground, true, true);
-	config->writeEntry("selectForeground",  toSave->selectForeground, true, true);
-	config->writeEntry("selectBackground", toSave->selectBackground, true, true);
-	config->writeEntry("buttonForeground", toSave->buttonForeground, true, true);
-	config->writeEntry("buttonBackground", toSave->buttonBackground, true, true);
-	config->writeEntry("linkColor", toSave->linkColor, true, true);
-	config->writeEntry("visitedLinkColor", toSave->visitedLinkColor, true, true);
+	config->writeEntry("foreground", toSave->foreground, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("background", toSave->background, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("windowForeground", toSave->windowForeground, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("windowBackground", toSave->windowBackground, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("selectForeground",  toSave->selectForeground, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("selectBackground", toSave->selectBackground, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("buttonForeground", toSave->buttonForeground, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("buttonBackground", toSave->buttonBackground, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("linkColor", toSave->linkColor, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("visitedLinkColor", toSave->visitedLinkColor, KConfigBase::Persistent|KConfigBase::Global);
 
 	// set to the WM group, *only* the KGlobal one, a kcsrc file only has the group "Color Scheme"  hmpf...
 	config->setGroup( "WM" );
-	config->writeEntry("activeForeground", toSave->activeForeground, true, true);
-	config->writeEntry("inactiveForeground", toSave->inactiveForeground, true, true);
-	config->writeEntry("activeBackground", toSave->activeBackground, true, true);
-	config->writeEntry("inactiveBackground", toSave->inactiveBackground, true, true);
-	config->writeEntry("activeBlend", toSave->activeBlend, true, true);
-	config->writeEntry("inactiveBlend", toSave->inactiveBlend, true, true);
-	config->writeEntry("activeTitleBtnBg", toSave->activeTitleBtnBg, true, true);
-	config->writeEntry("inactiveTitleBtnBg", toSave->inactiveTitleBtnBg, true, true);
-        config->writeEntry("alternateBackground", toSave->alternateBackground, true, true);
-
+	config->writeEntry("activeForeground", toSave->activeForeground, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("inactiveForeground", toSave->inactiveForeground, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("activeBackground", toSave->activeBackground, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("inactiveBackground", toSave->inactiveBackground, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("activeBlend", toSave->activeBlend, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("inactiveBlend", toSave->inactiveBlend, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("activeTitleBtnBg", toSave->activeTitleBtnBg, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("inactiveTitleBtnBg", toSave->inactiveTitleBtnBg, KConfigBase::Persistent|KConfigBase::Global);
+        config->writeEntry("alternateBackground", toSave->alternateBackground,KConfigBase::Persistent|KConfigBase::Global);
+		
 	////////////////////////////////////////////////////
 	// KDE-1.x support
 	KSimpleConfig *kconfig =
@@ -204,8 +204,9 @@ void KStylePage::saveColors(bool curSettings){
 
 	config->setGroup("KDE");
 	// write the color scheme filename and the contrast, default 7, otherwise from file
-	config->writeEntry("colorScheme", toSave->colorFile,true, true);
-	config->writeEntry("contrast", toSave->contrast, true, true);
+	config->writeEntry("colorScheme", toSave->colorFile,KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("contrast", toSave->contrast, KConfigBase::Persistent|KConfigBase::Global);
+		
 	config->sync();
 
 	// background color changes
@@ -235,7 +236,7 @@ void KStylePage::saveIcons(bool curSettings) {
 	}
 	// save, what we got
 	KGlobal::config()->setGroup("Icons");
-	KGlobal::config()->writeEntry("Theme", theme, true, true);
+	KGlobal::config()->writeEntry("Theme", theme, KConfigBase::Persistent|KConfigBase::Global);
 	KIconTheme icontheme(theme);
 	const char * const groups[] = { "Desktop", "Toolbar", "MainToolbar", "Small", 0L };
 	for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++) {

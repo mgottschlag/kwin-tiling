@@ -329,16 +329,16 @@ void KEyeCandyPage::enableDesktopWindowMovingContents(bool enable, bool restore)
 	if (enable){
 		kwinconf->writeEntry("ResizeMode","Opaque");
 		kwinconf->writeEntry("MoveMode","Opaque");
-		KGlobal::config()->writeEntry("OpaqueResize", true, true, true);
+		KGlobal::config()->writeEntry("OpaqueResize", true, KConfigBase::Persistent|KConfigBase::Global);
 	} else {
 		kwinconf->writeEntry("ResizeMode","Transparent");
 		kwinconf->writeEntry("MoveMode","Transparent");
-		KGlobal::config()->writeEntry("OpaqueResize", false, true, true);
+		KGlobal::config()->writeEntry("OpaqueResize", false, KConfigBase::Persistent|KConfigBase::Global);
 	}
 	if(restore){
 		kwinconf->writeEntry("ResizeMode",s_ResizeMode);
 		kwinconf->writeEntry("MoveMode",s_MoveMode);
-		KGlobal::config()->writeEntry("OpaqueResize", b_OpaqueResize, true, true);
+		KGlobal::config()->writeEntry("OpaqueResize", b_OpaqueResize, KConfigBase::Persistent|KConfigBase::Global);
 	}
 }
 
@@ -377,31 +377,31 @@ void KEyeCandyPage::enableIconZoomingPanel(bool enable){
 void KEyeCandyPage::enableIconEffectGamma(bool enable, bool user){
 	if(enable){
 		KGlobal::config()->setGroup("DesktopIcons");
-		KGlobal::config()->writeEntry("ActiveEffect", "togamma", true, true);
-		KGlobal::config()->writeEntry("ActiveValue", "0.7", true, true);
+		KGlobal::config()->writeEntry("ActiveEffect", "togamma", KConfigBase::Persistent|KConfigBase::Global);
+		KGlobal::config()->writeEntry("ActiveValue", "0.7", KConfigBase::Persistent|KConfigBase::Global);
 		KGlobal::config()->setGroup("PanelIcons");
-		KGlobal::config()->writeEntry("ActiveEffect", "togamma", true, true);
-		KGlobal::config()->writeEntry("ActiveValue", "0.7", true, true);
+		KGlobal::config()->writeEntry("ActiveEffect", "togamma", KConfigBase::Persistent|KConfigBase::Global);
+		KGlobal::config()->writeEntry("ActiveValue", "0.7", KConfigBase::Persistent|KConfigBase::Global);
 	} else {
 		if(user){
 			KGlobal::config()->setGroup("DesktopIcons");
-			KGlobal::config()->writeEntry("ActiveEffect", st_UserGamma.EffectDesktop, true, true);
-			KGlobal::config()->writeEntry("ActiveValue", st_UserGamma.ValueDesktop, true, true);
+			KGlobal::config()->writeEntry("ActiveEffect", st_UserGamma.EffectDesktop, KConfigBase::Persistent|KConfigBase::Global);
+			KGlobal::config()->writeEntry("ActiveValue", st_UserGamma.ValueDesktop, KConfigBase::Persistent|KConfigBase::Global);
 			KGlobal::config()->setGroup("PanelIcons");
-			KGlobal::config()->writeEntry("ActiveEffect", st_UserGamma.EffectPanel, true, true);
-			KGlobal::config()->writeEntry("ActiveValue", st_UserGamma.ValuePanel, true, true);
+			KGlobal::config()->writeEntry("ActiveEffect", st_UserGamma.EffectPanel, KConfigBase::Persistent|KConfigBase::Global);
+			KGlobal::config()->writeEntry("ActiveValue", st_UserGamma.ValuePanel, KConfigBase::Persistent|KConfigBase::Global);
 		} else {
 			KGlobal::config()->setGroup("DesktopIcons");
-			KGlobal::config()->writeEntry("ActiveEffect", "none", true, true);
+			KGlobal::config()->writeEntry("ActiveEffect", "none", KConfigBase::Persistent|KConfigBase::Global);
 			KGlobal::config()->setGroup("PanelIcons");
-			KGlobal::config()->writeEntry("ActiveEffect", "none", true, true);
+			KGlobal::config()->writeEntry("ActiveEffect", "none", KConfigBase::Persistent|KConfigBase::Global);
 		}
 	}
 }
 
 void KEyeCandyPage::enableIconMngAnimation(bool enable) {
 	KGlobal::config()->setGroup("DesktopIcons");
-	KGlobal::config()->writeEntry("Animated", enable, true, true);
+	KGlobal::config()->writeEntry("Animated", enable, KConfigBase::Persistent|KConfigBase::Global);
 }
 
 /** No descriptions */
@@ -423,9 +423,9 @@ void KEyeCandyPage::enableIconEffectSizePanel(bool enable){
 void KEyeCandyPage::enableIconEffectSizeDesktop(bool enable){
 	KGlobal::config()->setGroup("DesktopIcons");
 	if( enable ) {	// use 48x48 icons
-		KGlobal::config()->writeEntry("Size", 48, true, true);
+		KGlobal::config()->writeEntry("Size", 48, KConfigBase::Persistent|KConfigBase::Global);
 	} else {
-		KGlobal::config()->writeEntry("Size", desktopiconsize, true, true);
+		KGlobal::config()->writeEntry("Size", desktopiconsize, KConfigBase::Persistent|KConfigBase::Global);
 	}
 }
 //----------------------------ICON STUFF-------------------------------------------------
@@ -436,32 +436,32 @@ void KEyeCandyPage::enableIconEffectSizeDesktop(bool enable){
 /** Enable fading tooltips in Level 7 */
 void KEyeCandyPage::enableFadingToolTips(bool enable){
 	KGlobal::config()->setGroup("KDE");
-	KGlobal::config()->writeEntry( "EffectFadeTooltip", enable, true, true);
+	KGlobal::config()->writeEntry( "EffectFadeTooltip", enable, KConfigBase::Persistent|KConfigBase::Global);
 }
 
 /** enables/disables fading menus which are off by default in KDE. Enable this in Level 9 */
 void KEyeCandyPage::enableFadingMenus(bool enable){
 	KGlobal::config()->setGroup("KDE");
-	KGlobal::config()->writeEntry("EffectFadeMenu", enable,true, true);
+	KGlobal::config()->writeEntry("EffectFadeMenu", enable,KConfigBase::Persistent|KConfigBase::Global);
 }
 
 /** enables/disables icons on pushbuttons, which are off by default in KDE. Enable this in Level 5 */
 void KEyeCandyPage::enablePushButtonIcons(bool enable){
 	KGlobal::config()->setGroup("KDE");
-	KGlobal::config()->writeEntry("ShowIconsOnPushButtons", enable,true, true);
+	KGlobal::config()->writeEntry("ShowIconsOnPushButtons", enable,KConfigBase::Persistent|KConfigBase::Global);
 }
 
 /** Enable animated combo boxes, see styles kcontrol module. Enable in Level 6 (disabled by default anyway, so doesn't need to be
 disabled in levels below 4) */
 void KEyeCandyPage::enableAnimatedCombo(bool enable){
 	KGlobal::config()->setGroup("KDE");
-	KGlobal::config()->writeEntry("EffectAnimateCombo", enable, true, true);
+	KGlobal::config()->writeEntry("EffectAnimateCombo", enable, KConfigBase::Persistent|KConfigBase::Global);
 }
 
 /** generally enable/disable style-Effects, depending on if one of the three is enabled. */
 void KEyeCandyPage::enableEffects(bool enable){
 	KGlobal::config()->setGroup("KDE");
-	KGlobal::config()->writeEntry("EffectsEnabled", enable, true, true);
+	KGlobal::config()->writeEntry("EffectsEnabled", enable,KConfigBase::Persistent|KConfigBase::Global);
 }
 //----------------------------STYLE EFFECTS-------------------------------------------------
 
