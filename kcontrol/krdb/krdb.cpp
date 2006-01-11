@@ -273,10 +273,10 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
 
   /* export effects settings */
   kglobals.setGroup("KDE");
-  bool effectsEnabled = kglobals.readBoolEntry("EffectsEnabled", false);
-  bool fadeMenus = kglobals.readBoolEntry("EffectFadeMenu", false);
-  bool fadeTooltips = kglobals.readBoolEntry("EffectFadeTooltip", false);
-  bool animateCombobox = kglobals.readBoolEntry("EffectAnimateCombo", false);
+  bool effectsEnabled = kglobals.readEntry("EffectsEnabled", false);
+  bool fadeMenus = kglobals.readEntry("EffectFadeMenu", false);
+  bool fadeTooltips = kglobals.readEntry("EffectFadeTooltip", false);
+  bool animateCombobox = kglobals.readEntry("EffectAnimateCombo", false);
 
   QStringList guieffects;
   if (effectsEnabled) {
