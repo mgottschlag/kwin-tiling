@@ -266,7 +266,7 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
   settings.writeEntry("/qt/font", KGlobalSettings::generalFont().toString());
 
   /* ##### looks like kcmfonts skips this, so we don't do this here */
-/*bool usexft = kglobals.readBoolEntry("AntiAliasing", false);
+/*bool usexft = kglobals.readEntry("AntiAliasing", false);
   kconfig.setGroup("General");
   settings.writeEntry("/qt/enableXft", usexft);
   settings.writeEntry("/qt/useXft", usexft); */

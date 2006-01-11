@@ -686,7 +686,7 @@ void KEyeCandyPage::getUserDefaults(){
 	QColor tempcolor=KGlobalSettings::textColor();
 	desktopTextColor = kdesktopconf->readColorEntry("NormalTextColor", &tempcolor );
 	kdesktopconf->setGroup("Background Common");
-	st_UserWallpaper.CommonDesktop = kdesktopconf->readBoolEntry("CommonDesktop", true);
+	st_UserWallpaper.CommonDesktop = kdesktopconf->readEntry("CommonDesktop", true);
 	kdesktopconf->setGroup("Desktop0"); // we only need to set one desktop
 	st_UserWallpaper.MultiWallpaperMode = kdesktopconf->readEntry("MultiWallpaperMode", "NoMulti");
 	st_UserWallpaper.WallpaperMode = kdesktopconf->readEntry("WallpaperMode", "Scaled");
@@ -708,18 +708,18 @@ void KEyeCandyPage::getUserDefaults(){
 	st_UserGamma.EffectDesktop=KGlobal::config()->readEntry("ActiveEffect", "none");
 	st_UserGamma.ValueDesktop=KGlobal::config()->readEntry("ActiveValue", "0.7");
 	desktopiconsize=KGlobal::config()->readNumEntry("Size", 32);
-	b_iconMngAnim = KGlobal::config()->readBoolEntry( "Animated", true );
+	b_iconMngAnim = KGlobal::config()->readEntry( "Animated", true );
 
 	KGlobal::config()->setGroup("KDE");
-	b_EffectFadeTooltip=KGlobal::config()->readBoolEntry( "EffectFadeTooltip", false );
-	b_PushButtonIcons=KGlobal::config()->readBoolEntry("ShowIconsOnPushButtons", false);
-	b_EffectFadeMenu=KGlobal::config()->readBoolEntry("EffectFadeMenu", false);
-	b_EffectAnimateCombo=KGlobal::config()->readBoolEntry("EffectAnimateCombo", false);
-	b_EffectsEnabled=KGlobal::config()->readBoolEntry("EffectsEnabled", false);
-	b_OpaqueResize=KGlobal::config()->readBoolEntry("OpaqueResize", true);
+	b_EffectFadeTooltip=KGlobal::config()->readEntry( "EffectFadeTooltip", false );
+	b_PushButtonIcons=KGlobal::config()->readEntry("ShowIconsOnPushButtons", false);
+	b_EffectFadeMenu=KGlobal::config()->readEntry("EffectFadeMenu", false);
+	b_EffectAnimateCombo=KGlobal::config()->readEntry("EffectAnimateCombo", false);
+	b_EffectsEnabled=KGlobal::config()->readEntry("EffectsEnabled", false);
+	b_OpaqueResize=KGlobal::config()->readEntry("OpaqueResize", true);
 
 	kickerconf->setGroup("buttons");
-	b_EnableIconZoom=kickerconf->readBoolEntry("EnableIconZoom", true);
+	b_EnableIconZoom=kickerconf->readEntry("EnableIconZoom", true);
 
 	konquerorconf->setGroup("Settings");
 	konqbgimage=konquerorconf->readPathEntry("BgImage", "");
@@ -728,16 +728,16 @@ void KEyeCandyPage::getUserDefaults(){
 	kdesktop_prev=kdesktopconf->readListEntry("Preview");
 	konqiconconf->setGroup("Settings");
 	konq_dont_prev=konqiconconf->readListEntry("DontPreview");
-	b_konq_prev_sound=konqiconconf->readBoolEntry("EnableSoundPreviews", false);
-	b_konq_prev_enable=konqiconconf->readBoolEntry("PreviewsEnabled", true);
+	b_konq_prev_sound=konqiconconf->readEntry("EnableSoundPreviews", false);
+	b_konq_prev_enable=konqiconconf->readEntry("PreviewsEnabled", true);
 	kwinconf->setGroup( "Windows" );
 	s_ResizeMode=kwinconf->readEntry("ResizeMode", "Transparent");
 	s_MoveMode=kwinconf->readEntry("MoveMode", "Opaque");
 
-	b_AnimateMinimize=kwinconf->readBoolEntry("AnimateMinimize", true );
-	b_AnimateShade=kwinconf->readBoolEntry("AnimateShade", true );
-	b_MoveResizeMaximizedWindows=kwinconf->readBoolEntry("MoveResizeMaximizedWindows",true);
-	b_ShadeHover = kwinconf->readBoolEntry("ShadeHover", false);
+	b_AnimateMinimize=kwinconf->readEntry("AnimateMinimize", true );
+	b_AnimateShade=kwinconf->readEntry("AnimateShade", true );
+	b_MoveResizeMaximizedWindows=kwinconf->readEntry("MoveResizeMaximizedWindows",true);
+	b_ShadeHover = kwinconf->readEntry("ShadeHover", false);
 
 	getUserSoundScheme();
 }

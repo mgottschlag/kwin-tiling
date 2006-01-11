@@ -92,7 +92,7 @@ extern "C"
         config.setGroup("X11");
 
         // This key is written by the "colors" module.
-        bool exportKDEColors = config.readBoolEntry("exportKDEColors", true);
+        bool exportKDEColors = config.readEntry("exportKDEColors", true);
         if (exportKDEColors)
             flags |= KRdbExportColors;
         runRdb( flags );
@@ -615,7 +615,7 @@ void KCMStyle::save()
 		uint flags = KRdbExportQtSettings;
 		KConfig kconfig("kcmdisplayrc", true /*readonly*/, false /*no globals*/);
 		kconfig.setGroup("X11");
-		bool exportKDEColors = kconfig.readBoolEntry("exportKDEColors", true);
+		bool exportKDEColors = kconfig.readEntry("exportKDEColors", true);
 		if (exportKDEColors)
 			flags |= KRdbExportColors;
 		runRdb( flags );
@@ -766,7 +766,7 @@ void KCMStyle::loadStyle( KConfig& config )
 
 		// Check if this style should be shown
 		config.setGroup("Desktop Entry");
-		entry->hidden = config.readBoolEntry("Hidden", false);
+		entry->hidden = config.readEntry("Hidden", false);
 
 		// Insert the entry into our dictionary.
 		styleEntries.insert(strWidgetStyle.toLower(), entry);
@@ -911,23 +911,23 @@ void KCMStyle::loadEffects( KConfig& config )
 	// Load effects.
 	config.setGroup("KDE");
 
-	cbEnableEffects->setChecked( config.readBoolEntry( "EffectsEnabled", false) );
+	cbEnableEffects->setChecked( config.readEntry( "EffectsEnabled", false) );
 
-	if ( config.readBoolEntry( "EffectAnimateCombo", false) )
+	if ( config.readEntry( "EffectAnimateCombo", false) )
 		comboComboEffect->setCurrentItem( 1 );
 	else
 		comboComboEffect->setCurrentItem( 0 );
 
-	if ( config.readBoolEntry( "EffectAnimateTooltip", false) )
+	if ( config.readEntry( "EffectAnimateTooltip", false) )
 		comboTooltipEffect->setCurrentItem( 1 );
-	else if ( config.readBoolEntry( "EffectFadeTooltip", false) )
+	else if ( config.readEntry( "EffectFadeTooltip", false) )
 		comboTooltipEffect->setCurrentItem( 2 );
 	else
 		comboTooltipEffect->setCurrentItem( 0 );
 
-	if ( config.readBoolEntry( "EffectAnimateMenu", false) )
+	if ( config.readEntry( "EffectAnimateMenu", false) )
 		comboMenuEffect->setCurrentItem( 1 );
-	else if ( config.readBoolEntry( "EffectFadeMenu", false) )
+	else if ( config.readEntry( "EffectFadeMenu", false) )
 		comboMenuEffect->setCurrentItem( 2 );
 	else
 		comboMenuEffect->setCurrentItem( 0 );
@@ -1023,8 +1023,8 @@ void KCMStyle::loadMisc( KConfig& config )
 {
 	// KDE's Part via KConfig
 	config.setGroup("Toolbar style");
-	cbHoverButtons->setChecked(config.readBoolEntry("Highlighting", true));
-	cbTransparentToolbars->setChecked(config.readBoolEntry("TransparentMoving", true));
+	cbHoverButtons->setChecked(config.readEntry("Highlighting", true));
+	cbTransparentToolbars->setChecked(config.readEntry("TransparentMoving", true));
 
 	QString tbIcon = config.readEntry("IconText", "IconOnly");
 	if (tbIcon == "TextOnly")
@@ -1037,9 +1037,9 @@ void KCMStyle::loadMisc( KConfig& config )
 		comboToolbarIcons->setCurrentItem(0);
 
 	config.setGroup("KDE");
-	cbIconsOnButtons->setChecked(config.readBoolEntry("ShowIconsOnPushButtons", false));
-	cbEnableTooltips->setChecked(!config.readBoolEntry("EffectNoTooltip", false));
-	cbTearOffHandles->setChecked(config.readBoolEntry("InsertTearOffHandle", false));
+	cbIconsOnButtons->setChecked(config.readEntry("ShowIconsOnPushButtons", false));
+	cbEnableTooltips->setChecked(!config.readEntry("EffectNoTooltip", false));
+	cbTearOffHandles->setChecked(config.readEntry("InsertTearOffHandle", false));
 
 	m_bToolbarsDirty = false;
 }
