@@ -97,7 +97,7 @@ void AccessibilityConfig::load(){
    QColor *redColor = new QColor(Qt::red);
    flashScreenColor->setColor(bell->readColorEntry("FlashColor", redColor));
    delete redColor;
-   visibleBellDuration->setValue(bell->readNumEntry("Duration", 500));
+   visibleBellDuration->setValue(bell->readEntry("Duration", 500));
   
    delete bell;   
 //    KConfig *config = new KConfig("kaccessrc", true);
@@ -114,7 +114,7 @@ void AccessibilityConfig::load(){
 //    QColor def(Qt::red);
 //    colorButton->setColor(config->readColorEntry("VisibleBellColor", &def));
 //
-//    durationSlider->setValue(config->readNumEntry("VisibleBellPause", 500));
+//    durationSlider->setValue(config->readEntry("VisibleBellPause", 500));
 //
 //
 //    config->setGroup("Keyboard");
@@ -122,9 +122,9 @@ void AccessibilityConfig::load(){
 //    stickyKeys->setChecked(config->readEntry("StickyKeys", QVariant(false)).toBool());
 //    stickyKeysLock->setChecked(config->readEntry("StickyKeysLatch", QVariant(true)).toBool());
 //    slowKeys->setChecked(config->readEntry("SlowKeys", QVariant(false)).toBool());
-//    slowKeysDelay->setValue(config->readNumEntry("SlowKeysDelay", 500));
+//    slowKeysDelay->setValue(config->readEntry("SlowKeysDelay", 500));
 //    bounceKeys->setChecked(config->readEntry("BounceKeys", QVariant(false)).toBool());
-//    bounceKeysDelay->setValue(config->readNumEntry("BounceKeysDelay", 500));
+//    bounceKeysDelay->setValue(config->readEntry("BounceKeysDelay", 500));
 //
 //
 //    delete config;

@@ -62,9 +62,9 @@ extern "C"
     KConfig config("kcmbellrc", true, false);
     config.setGroup("General");
 
-    kbdc.bell_percent = config.readNumEntry("Volume", kbd.bell_percent);
-    kbdc.bell_pitch = config.readNumEntry("Pitch", kbd.bell_pitch);
-    kbdc.bell_duration = config.readNumEntry("Duration", kbd.bell_duration);
+    kbdc.bell_percent = config.readEntry("Volume", kbd.bell_percent);
+    kbdc.bell_pitch = config.readEntry("Pitch", kbd.bell_pitch);
+    kbdc.bell_duration = config.readEntry("Duration", kbd.bell_duration);
     XChangeKeyboardControl(QX11Info::display(),
                            KBBellPercent | KBBellPitch | KBBellDuration,
                            &kbdc);

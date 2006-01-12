@@ -737,7 +737,7 @@ extern "C"
 
     XGetKeyboardControl(QX11Info::display(), &kbd);
     bool key = config->readEntry("KeyboardRepeating", QVariant(true)).toBool();
-    kbdc.key_click_percent = config->readNumEntry("ClickVolume", kbd.key_click_percent);
+    kbdc.key_click_percent = config->readEntry("ClickVolume", kbd.key_click_percent);
     kbdc.auto_repeat_mode = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
 
     XChangeKeyboardControl(QX11Info::display(),
@@ -745,13 +745,13 @@ extern "C"
                            &kbdc);
 
     if( key ) {
-        int delay_ = config->readNumEntry("RepeatDelay", 250);
+        int delay_ = config->readEntry("RepeatDelay", 250);
         double rate_ = config->readDoubleNumEntry("RepeatRate", 30);
         set_repeatrate(delay_, rate_);
     }
 
 
-    int numlockState = config->readNumEntry( "NumLock", 2 );
+    int numlockState = config->readEntry( "NumLock", 2 );
     if( numlockState != 2 )
         numlockx_change_numlock_state( numlockState == 0 );
 

@@ -285,7 +285,7 @@ void KLocaleConfigTime::save()
 		       m_locale->dateFormatShort(), KConfigBase::Persistent|KConfigBase::Global);
 
   int firstDay;
-  firstDay = ent.readNumEntry("WeekStartDay", 1);
+  firstDay = ent.readEntry("WeekStartDay", 1);
   group.deleteEntry("WeekStartDay",KConfigBase::Global);
   if (firstDay != m_locale->weekStartDay())
       group.writeEntry("WeekStartDay", m_locale->weekStartDay(), KConfigBase::Persistent|KConfigBase::Global);
@@ -293,7 +293,7 @@ void KLocaleConfigTime::save()
   if ( m_locale->nounDeclension() )
   {
     bool b;
-    b = ent.readNumEntry("DateMonthNamePossessive", false);
+    b = ent.readEntry("DateMonthNamePossessive", false);
     group.deleteEntry("DateMonthNamePossessive", KConfigBase::Global);
     if (b != m_locale->dateMonthNamePossessive())
       group.writeEntry("DateMonthNamePossessive",

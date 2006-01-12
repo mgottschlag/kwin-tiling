@@ -76,7 +76,7 @@ void SMServerConfig::load()
   else // "restorePreviousLogout"
       dialog->previousSessionRadio->setChecked(true);
 
-  switch (c->readNumEntry("shutdownType", int(KWorkSpace::ShutdownTypeNone))) {
+  switch (c->readEntry("shutdownType", int(KWorkSpace::ShutdownTypeNone))) {
   case int(KWorkSpace::ShutdownTypeHalt):
     dialog->haltRadio->setChecked(true);
     break;

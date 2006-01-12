@@ -166,24 +166,24 @@ void KLocaleConfigMoney::save()
                        .arg(m_locale->monetaryThousandsSeparator()),
                        KConfigBase::Persistent|KConfigBase::Global);
 
-  i = ent.readNumEntry("FracDigits", 2);
+  i = ent.readEntry("FracDigits", 2);
   group.deleteEntry("FracDigits", KConfigBase::Global);
   if (i != m_locale->fracDigits())
     group.writeEntry("FracDigits", m_locale->fracDigits(), KConfigBase::Persistent|KConfigBase::Global);
 
-  b = ent.readNumEntry("PositivePrefixCurrencySymbol", true);
+  b = ent.readEntry("PositivePrefixCurrencySymbol", true);
   group.deleteEntry("PositivePrefixCurrencySymbol", KConfigBase::Global);
   if (b != m_locale->positivePrefixCurrencySymbol())
     group.writeEntry("PositivePrefixCurrencySymbol",
                        m_locale->positivePrefixCurrencySymbol(), KConfigBase::Persistent|KConfigBase::Global);
 
-  b = ent.readNumEntry("NegativePrefixCurrencySymbol", true);
+  b = ent.readEntry("NegativePrefixCurrencySymbol", true);
   group.deleteEntry("NegativePrefixCurrencySymbol", KConfigBase::Global);
   if (b != m_locale->negativePrefixCurrencySymbol())
     group.writeEntry("NegativePrefixCurrencySymbol",
                        m_locale->negativePrefixCurrencySymbol(), KConfigBase::Persistent|KConfigBase::Global);
 
-  i = ent.readNumEntry("PositiveMonetarySignPosition",
+  i = ent.readEntry("PositiveMonetarySignPosition",
                        (int)KLocale::BeforeQuantityMoney);
   group.deleteEntry("PositiveMonetarySignPosition", KConfigBase::Global);
   if (i != m_locale->positiveMonetarySignPosition())
@@ -191,7 +191,7 @@ void KLocaleConfigMoney::save()
                        (int)m_locale->positiveMonetarySignPosition(),
                        KConfigBase::Persistent|KConfigBase::Global);
 
-  i = ent.readNumEntry("NegativeMonetarySignPosition",
+  i = ent.readEntry("NegativeMonetarySignPosition",
                        (int)KLocale::ParensAround);
   group.deleteEntry("NegativeMonetarySignPosition", KConfigBase::Global);
   if (i != m_locale->negativeMonetarySignPosition())

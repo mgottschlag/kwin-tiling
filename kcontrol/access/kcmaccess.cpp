@@ -616,7 +616,7 @@ void KAccessConfig::load()
   QColor def(Qt::red);
   colorButton->setColor(config->readColorEntry("VisibleBellColor", &def));
 
-  durationSlider->setValue(config->readNumEntry("VisibleBellPause", 500));
+  durationSlider->setValue(config->readEntry("VisibleBellPause", 500));
 
 
   config->setGroup("Keyboard");
@@ -629,18 +629,18 @@ void KAccessConfig::load()
   kNotifyModifiers->setChecked(config->readEntry("kNotifyModifiers", QVariant(false)).toBool());
 
   slowKeys->setChecked(config->readEntry("SlowKeys", QVariant(false)).toBool());
-  slowKeysDelay->setValue(config->readNumEntry("SlowKeysDelay", 500));
+  slowKeysDelay->setValue(config->readEntry("SlowKeysDelay", 500));
   slowKeysPressBeep->setChecked(config->readEntry("SlowKeysPressBeep", QVariant(true)).toBool());
   slowKeysAcceptBeep->setChecked(config->readEntry("SlowKeysAcceptBeep", QVariant(true)).toBool());
   slowKeysRejectBeep->setChecked(config->readEntry("SlowKeysRejectBeep", QVariant(true)).toBool());
 
   bounceKeys->setChecked(config->readEntry("BounceKeys", QVariant(false)).toBool());
-  bounceKeysDelay->setValue(config->readNumEntry("BounceKeysDelay", 500));
+  bounceKeysDelay->setValue(config->readEntry("BounceKeysDelay", 500));
   bounceKeysRejectBeep->setChecked(config->readEntry("BounceKeysRejectBeep", QVariant(true)).toBool());
 
   gestures->setChecked(config->readEntry("Gestures", QVariant(true)).toBool());
   timeout->setChecked(config->readEntry("AccessXTimeout", QVariant(false)).toBool());
-  timeoutDelay->setValue(config->readNumEntry("AccessXTimeoutDelay", 30));
+  timeoutDelay->setValue(config->readEntry("AccessXTimeoutDelay", 30));
 
   accessxBeep->setChecked(config->readEntry("AccessXBeep", QVariant(true)).toBool());
   gestureConfirmation->setChecked(config->readEntry("GestureConfirmation", QVariant(false)).toBool());

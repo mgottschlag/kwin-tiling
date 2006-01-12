@@ -932,7 +932,7 @@ void KCMStyle::loadEffects( KConfig& config )
 	else
 		comboMenuEffect->setCurrentItem( 0 );
 
-	comboMenuHandle->setCurrentItem(config.readNumEntry("InsertTearOffHandle", 0));
+	comboMenuHandle->setCurrentItem(config.readEntry("InsertTearOffHandle", 0));
 
 	// KStyle Menu transparency and drop-shadow options...
 	QSettings settings;

@@ -84,11 +84,11 @@ void advancedDialog::load()
     else
         m_advancedWidget->visibleHandles->setChecked(true);
 
-    int defaultHideButtonSize = c.readNumEntry("HideButtonSize", 14);
+    int defaultHideButtonSize = c.readEntry("HideButtonSize", 14);
     m_advancedWidget->hideButtonSize->setValue(defaultHideButtonSize);
     QColor color = c.readColorEntry( "TintColor", &colorGroup().mid() );
     m_advancedWidget->tintColorB->setColor( color );
-    int tintValue = c.readNumEntry( "TintValue", 0 );
+    int tintValue = c.readEntry( "TintValue", 0 );
     m_advancedWidget->tintSlider->setValue( tintValue );
     
     bool transparentMenubarPanel = c.readEntry("MenubarPanelTransparent", QVariant(false)).toBool();

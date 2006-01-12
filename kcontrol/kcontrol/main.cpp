@@ -78,9 +78,9 @@ KControlApp::KControlApp()
   int fontSize = toplevel->fontInfo().pointSize();
   if (fontSize == 0)
     fontSize = (toplevel->fontInfo().pixelSize() * 72) / toplevel->logicalDpiX();
-  int x = config->readNumEntry(QString::fromLatin1("InitialWidth %1").arg(desk.width()), 
+  int x = config->readEntry(QString::fromLatin1("InitialWidth %1").arg(desk.width()), 
 			       QMIN( desk.width(), 368 + (6*toplevel->logicalDpiX()*fontSize)/12 ) );
-  int y = config->readNumEntry(QString::fromLatin1("InitialHeight %1").arg(desk.height()), 
+  int y = config->readEntry(QString::fromLatin1("InitialHeight %1").arg(desk.height()), 
 			       QMIN( desk.height(), 312 + (4*toplevel->logicalDpiX()*fontSize)/12 ) );
   toplevel->resize(x,y);
 }

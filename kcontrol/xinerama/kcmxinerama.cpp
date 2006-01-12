@@ -135,7 +135,7 @@ void KCMXinerama::load() {
 		xw->_enablePlacement->setChecked(config->readEntry(KWIN_XINERAMA_PLACEMENT, QVariant(true)).toBool());
 		xw->_enableMaximize->setChecked(config->readEntry(KWIN_XINERAMA_MAXIMIZE, QVariant(true)).toBool());
 		xw->_enableFullscreen->setChecked(config->readEntry(KWIN_XINERAMA_FULLSCREEN, QVariant(true)).toBool());
-		item = config->readNumEntry("Unmanaged", QApplication::desktop()->primaryScreen());
+		item = config->readEntry("Unmanaged", QApplication::desktop()->primaryScreen());
 		if ((item < 0 || item >= _displays) && (item != -3))
 			xw->_unmanagedDisplay->setCurrentItem(QApplication::desktop()->primaryScreen());
 		else if (item == -3) // pointer warp
@@ -143,7 +143,7 @@ void KCMXinerama::load() {
 		else	xw->_unmanagedDisplay->setCurrentItem(item);
 
 		ksplashrc->setGroup("Xinerama");
-		item = ksplashrc->readNumEntry("KSplashScreen", QApplication::desktop()->primaryScreen());
+		item = ksplashrc->readEntry("KSplashScreen", QApplication::desktop()->primaryScreen());
 		if (item < 0 || item >= _displays)
 			xw->_ksplashDisplay->setCurrentItem(QApplication::desktop()->primaryScreen());
 		else xw->_ksplashDisplay->setCurrentItem(item);

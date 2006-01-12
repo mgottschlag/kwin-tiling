@@ -227,7 +227,7 @@ QString KTheme::createYourself( bool pack )
     // 5. Colors
     QDomElement colorsElem = m_dom.createElement( "colors" );
     globalConf->setGroup( "KDE" );
-    colorsElem.setAttribute( "contrast", globalConf->readNumEntry( "contrast", 7 ) );
+    colorsElem.setAttribute( "contrast", globalConf->readEntry( "contrast", 7 ) );
     QStringList stdColors;
     stdColors << "background" << "selectBackground" << "foreground" << "windowForeground"
               << "windowBackground" << "selectForeground" << "buttonBackground"
@@ -269,7 +269,7 @@ QString KTheme::createYourself( bool pack )
         wmElem.appendChild( buttonsElem );
     }
     QDomElement borderElem = m_dom.createElement( "border" );
-    borderElem.setAttribute( "size", kwinConf.readNumEntry( "BorderSize", 1 ) );
+    borderElem.setAttribute( "size", kwinConf.readEntry( "BorderSize", 1 ) );
     wmElem.appendChild( borderElem );
     m_root.appendChild( wmElem );
 
@@ -491,13 +491,13 @@ void KTheme::apply()
             {
                 soundConf.setGroup( eventElem.attribute( "name" ) );
                 soundConf.writeEntry( "soundfile", unprocessFilePath( "sounds", eventElem.attribute( "url" ) ) );
-                soundConf.writeEntry( "presentation", soundConf.readNumEntry( "presentation" ) | 1 );
+                soundConf.writeEntry( "presentation", soundConf.readEntry( "presentation" ,0) | 1 );
             }
             else if ( object == "kwin" )
             {
                 kwinSoundConf.setGroup( eventElem.attribute( "name" ) );
                 kwinSoundConf.writeEntry( "soundfile", unprocessFilePath( "sounds", eventElem.attribute( "url" ) ) );
-                kwinSoundConf.writeEntry( "presentation", soundConf.readNumEntry( "presentation" ) | 1 );
+                kwinSoundConf.writeEntry( "presentation", soundConf.readEntry( "presentation",0 ) | 1 );
             }
         }
 
@@ -730,7 +730,7 @@ void KTheme::createIconElems( const QString & group, const QString & object,
             tmpCol.setAttribute( "object", object );
 
             if ( (*it).contains( "Value" ) || *it == "Size" )
-                tmpCol.setAttribute( "value", cfg->readNumEntry( *it, 1 ) );
+                tmpCol.setAttribute( "value", cfg->readEntry( *it, 1 ) );
             else if ( (*it).contains( "Effect" ) )
                 tmpCol.setAttribute( "name", cfg->readEntry( *it, QString("none") ) );
             else
@@ -763,7 +763,7 @@ void KTheme::createSoundList( const QStringList & events, const QString & object
         {
             cfg->setGroup( group );
             QString soundURL = cfg->readPathEntry( "soundfile" );
-            int pres = cfg->readNumEntry( "presentation", 0 );
+            int pres = cfg->readEntry( "presentation", 0 );
             if ( !soundURL.isEmpty() && ( ( pres & 1 ) == 1 ) )
             {
                 QDomElement eventElem = m_dom.createElement( "event" );

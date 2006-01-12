@@ -509,29 +509,29 @@ void MouseConfig::load()
 
   ac.setGroup("Mouse");
   mouseKeys->setChecked(ac.readEntry("MouseKeys", QVariant(false)).toBool());
-  mk_delay->setValue(ac.readNumEntry("MKDelay", 160));
+  mk_delay->setValue(ac.readEntry("MKDelay", 160));
 
-  int interval = ac.readNumEntry("MKInterval", 5);
+  int interval = ac.readEntry("MKInterval", 5);
   mk_interval->setValue(interval);
 
   // Default time to reach maximum speed: 5000 msec
-  int time_to_max = ac.readNumEntry("MKTimeToMax",
+  int time_to_max = ac.readEntry("MKTimeToMax",
 												(5000+interval/2)/interval);
-  time_to_max = ac.readNumEntry("MK-TimeToMax",
+  time_to_max = ac.readEntry("MK-TimeToMax",
 										  time_to_max*interval);
   mk_time_to_max->setValue(time_to_max);
 
   // Default maximum speed: 1000 pixels/sec
   //     (The old default maximum speed from KDE <= 3.4
   //     (100000 pixels/sec) was way too fast)
-  long max_speed = ac.readNumEntry("MKMaxSpeed", interval);
+  long max_speed = ac.readEntry("MKMaxSpeed", interval);
   max_speed = max_speed * 1000 / interval;
   if (max_speed > 2000)
      max_speed = 2000;
-  max_speed = ac.readNumEntry("MK-MaxSpeed", max_speed);
+  max_speed = ac.readEntry("MK-MaxSpeed", int(max_speed));
   mk_max_speed->setValue(max_speed);
 
-  mk_curve->setValue(ac.readNumEntry("MKCurve", 0));
+  mk_curve->setValue(ac.readEntry("MKCurve", 0));
 
   themetab->load();
 
@@ -691,7 +691,7 @@ void MouseSettings::load(KConfig *config)
   else
     accelRate = a;
 
-  int t = config->readNumEntry("Threshold",-1);
+  int t = config->readEntry("Threshold",-1);
   if (t == -1)
     thresholdMove = threshold;
   else
@@ -710,13 +710,13 @@ void MouseSettings::load(KConfig *config)
 
   // SC/DC/AutoSelect/ChangeCursor
   config->setGroup("KDE");
-  doubleClickInterval = config->readNumEntry("DoubleClickInterval", 400);
-  dragStartTime = config->readNumEntry("StartDragTime", 500);
-  dragStartDist = config->readNumEntry("StartDragDist", 4);
-  wheelScrollLines = config->readNumEntry("WheelScrollLines", 3);
+  doubleClickInterval = config->readEntry("DoubleClickInterval", 400);
+  dragStartTime = config->readEntry("StartDragTime", 500);
+  dragStartDist = config->readEntry("StartDragDist", 4);
+  wheelScrollLines = config->readEntry("WheelScrollLines", 3);
 
   singleClick = config->readEntry("SingleClick", QVariant(KDE_DEFAULT_SINGLECLICK)).toBool();
-  autoSelectDelay = config->readNumEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
+  autoSelectDelay = config->readEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
   visualActivate = config->readEntry("VisualActivate", QVariant(KDE_DEFAULT_VISUAL_ACTIVATE)).toBool();
   changeCursor = config->readEntry("ChangeCursor", QVariant(KDE_DEFAULT_CHANGECURSOR)).toBool();
 }

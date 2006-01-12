@@ -506,7 +506,7 @@ void CKCmFontInst::print()
         CPrintDialog dlg(this);
 
         itsConfig.setGroup(CFG_GROUP);
-        if(dlg.exec(select, itsConfig.readNumEntry(CFG_FONT_SIZE, 1)))
+        if(dlg.exec(select, itsConfig.readEntry(CFG_FONT_SIZE, 1)))
         {
             static const int constSizes[]={0, 12, 18, 24, 36, 48};
 

@@ -164,7 +164,7 @@ static void applyQtColors( KConfig& kglobals, QSettings& settings, QPalette& new
   settings.writeEntry("/qt/KWinPalette/inactiveTitleBtnBg", clr.name());
 
   kglobals.setGroup("KDE");
-  settings.writeEntry("/qt/KDE/contrast", kglobals.readNumEntry("contrast", 7));
+  settings.writeEntry("/qt/KDE/contrast", kglobals.readEntry("contrast", 7));
 }
 
 // -----------------------------------------------------------------------------

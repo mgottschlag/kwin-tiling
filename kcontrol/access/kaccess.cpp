@@ -159,7 +159,7 @@ void KAccessApp::readSettings()
   _visibleBellInvert = config->readEntry("VisibleBellInvert", QVariant(false)).toBool();
   QColor def(Qt::red);
   _visibleBellColor = config->readColorEntry("VisibleBellColor", &def);
-  _visibleBellPause = config->readNumEntry("VisibleBellPause", 500);
+  _visibleBellPause = config->readEntry("VisibleBellPause", 500);
 
   // select bell events if we need them
   int state = (_artsBell || _visibleBell) ? XkbBellNotifyMask : 0;
@@ -226,7 +226,7 @@ void KAccessApp::readSettings()
     }
   else
       xkb->ctrls->enabled_ctrls &= ~XkbSlowKeysMask;
-  xkb->ctrls->slow_keys_delay = config->readNumEntry("SlowKeysDelay", 500);
+  xkb->ctrls->slow_keys_delay = config->readEntry("SlowKeysDelay", 500);
 
   // bounce keys
   if (config->readEntry("BounceKeys", QVariant(false)).toBool()) {
@@ -238,7 +238,7 @@ void KAccessApp::readSettings()
     }
   else
       xkb->ctrls->enabled_ctrls &= ~XkbBounceKeysMask;
-  xkb->ctrls->debounce_delay = config->readNumEntry("BounceKeysDelay", 500);
+  xkb->ctrls->debounce_delay = config->readEntry("BounceKeysDelay", 500);
 
   // gestures for enabling the other features
   _gestures = config->readEntry("Gestures", QVariant(true)).toBool();
@@ -250,7 +250,7 @@ void KAccessApp::readSettings()
   // timeout
   if (config->readEntry("AccessXTimeout", QVariant(false)).toBool())
     {
-      xkb->ctrls->ax_timeout = config->readNumEntry("AccessXTimeoutDelay", 30)*60;
+      xkb->ctrls->ax_timeout = config->readEntry("AccessXTimeoutDelay", 30)*60;
       xkb->ctrls->axt_opts_mask = 0;
       xkb->ctrls->axt_opts_values = 0;
       xkb->ctrls->axt_ctrls_mask = XkbStickyKeysMask | XkbSlowKeysMask;
@@ -277,23 +277,23 @@ void KAccessApp::readSettings()
 
   if (config->readEntry("MouseKeys", QVariant(false)).toBool())
     {
-      xkb->ctrls->mk_delay = config->readNumEntry("MKDelay", 160);
+      xkb->ctrls->mk_delay = config->readEntry("MKDelay", 160);
 
       // Default for initial velocity: 200 pixels/sec
-      int interval = config->readNumEntry("MKInterval", 5);
+      int interval = config->readEntry("MKInterval", 5);
       xkb->ctrls->mk_interval = interval;
 
       // Default time to reach maximum speed: 5000 msec
-      xkb->ctrls->mk_time_to_max = config->readNumEntry("MKTimeToMax",
+      xkb->ctrls->mk_time_to_max = config->readEntry("MKTimeToMax",
                                              (5000+interval/2)/interval);
 
       // Default maximum speed: 1000 pixels/sec
       //     (The old default maximum speed from KDE <= 3.4
       //     (100000 pixels/sec) was way too fast)
-      xkb->ctrls->mk_max_speed = config->readNumEntry("MKMaxSpeed", interval);
+      xkb->ctrls->mk_max_speed = config->readEntry("MKMaxSpeed", interval);
 
-      xkb->ctrls->mk_curve = config->readNumEntry("MKCurve", 0);
-      xkb->ctrls->mk_dflt_btn = config->readNumEntry("MKDefaultButton", 0);
+      xkb->ctrls->mk_curve = config->readEntry("MKCurve", 0);
+      xkb->ctrls->mk_dflt_btn = config->readEntry("MKDefaultButton", 0);
 
       xkb->ctrls->enabled_ctrls |= XkbMouseKeysMask;
     }

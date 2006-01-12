@@ -1273,7 +1273,7 @@ bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bo
            KDE_struct_stat buff;
 
            if ((-1==KDE_stat(destC.data(), &buff)) ||
-               (buff.st_size<config()->readNumEntry("MinimumKeepSize", DEFAULT_MINIMUM_KEEP_SIZE)))
+               (buff.st_size<config()->readEntry("MinimumKeepSize", DEFAULT_MINIMUM_KEEP_SIZE)))
                ::remove(destC.data());
         }
         ::exit(255);

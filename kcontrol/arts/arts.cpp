@@ -264,14 +264,14 @@ void KArtsModule::GetSettings( void )
 	networkTransparent->setChecked(config->readEntry("NetworkTransparent", QVariant(false)).toBool());
 	fullDuplex->setChecked(config->readEntry("FullDuplex", QVariant(false)).toBool());
 	autoSuspend->setChecked(config->readEntry("AutoSuspend", QVariant(true)).toBool());
-	suspendTime->setValue(config->readNumEntry("SuspendTime",60));
+	suspendTime->setValue(config->readEntry("SuspendTime",60));
 	deviceName->setText(config->readEntry("DeviceName",QString()));
 	customDevice->setChecked(!deviceName->text().isEmpty());
 	hardware->addOptions->setText(config->readEntry("AddOptions",QString()));
 	hardware->customOptions->setChecked(!hardware->addOptions->text().isEmpty());
-	general->latencySlider->setValue(config->readNumEntry("Latency",250));
+	general->latencySlider->setValue(config->readEntry("Latency",250));
 
-	int rate = config->readNumEntry("SamplingRate",0);
+	int rate = config->readEntry("SamplingRate",0);
 	if(rate)
 	{
 		customRate->setChecked(true);
@@ -283,7 +283,7 @@ void KArtsModule::GetSettings( void )
 		samplingRate->setValue(44100);
 	}
 
-	switch (config->readNumEntry("Bits", 0)) {
+	switch (config->readEntry("Bits", 0)) {
 	case 0:
 		hardware->soundQuality->setCurrentItem(0);
 		break;
@@ -313,7 +313,7 @@ void KArtsModule::GetSettings( void )
 	KConfig *midiConfig = new KConfig( "kcmmidirc", true );
 
 	midiConfig->setGroup( "Configuration" );
-	hardware->midiDevice->setCurrentItem( midiConfig->readNumEntry( "midiDevice", 0 ) );
+	hardware->midiDevice->setCurrentItem( midiConfig->readEntry( "midiDevice", 0 ) );
 	QString mapurl( midiConfig->readPathEntry( "mapFilename" ) );
 	hardware->midiMapper->setURL( mapurl );
 	hardware->midiUseMapper->setChecked( midiConfig->readEntry( "useMidiMapper", QVariant(false )).toBool() );

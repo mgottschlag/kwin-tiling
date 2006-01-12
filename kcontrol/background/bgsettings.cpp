@@ -342,7 +342,7 @@ void KBackgroundProgram::readSettings()
     m_Executable = m_pConfig->readPathEntry("Executable");
     m_Command = m_pConfig->readPathEntry("Command");
     m_PreviewCommand = m_pConfig->readPathEntry("PreviewCommand", m_Command);
-    m_Refresh = m_pConfig->readNumEntry("Refresh", 300);
+    m_Refresh = m_pConfig->readEntry("Refresh", 300);
 }
 
 
@@ -779,7 +779,7 @@ void KBackgroundSettings::readSettings(bool reparse)
     }
 
     m_BlendBalance = defBlendBalance;
-    int value = m_pConfig->readNumEntry( "BlendBalance", defBlendBalance);
+    int value = m_pConfig->readEntry( "BlendBalance", defBlendBalance);
     if (value > -201 && value < 201)
       m_BlendBalance = value;
 
@@ -788,9 +788,9 @@ void KBackgroundSettings::readSettings(bool reparse)
     // Multiple wallpaper config
     m_WallpaperList = m_pConfig->readPathListEntry("WallpaperList");
 
-    m_Interval = m_pConfig->readNumEntry("ChangeInterval", 60);
-    m_LastChange = m_pConfig->readNumEntry("LastChange", 0);
-    m_CurrentWallpaper = m_pConfig->readNumEntry("CurrentWallpaper", 0);
+    m_Interval = m_pConfig->readEntry("ChangeInterval", 60);
+    m_LastChange = m_pConfig->readEntry("LastChange", 0);
+    m_CurrentWallpaper = m_pConfig->readEntry("CurrentWallpaper", 0);
 
     m_MultiMode = defMultiMode;
     s = m_pConfig->readEntry("MultiWallpaperMode");
@@ -812,7 +812,7 @@ void KBackgroundSettings::readSettings(bool reparse)
             m_WallpaperMode = mode;
     }
 
-    m_MinOptimizationDepth = m_pConfig->readNumEntry( "MinOptimizationDepth",
+    m_MinOptimizationDepth = m_pConfig->readEntry( "MinOptimizationDepth",
         _defMinOptimizationDepth );
     m_bShm = m_pConfig->readEntry( "UseSHM", QVariant(_defShm )).toBool();
 
@@ -1179,15 +1179,15 @@ void KGlobalBackgroundSettings::readSettings()
     m_bDock = m_pConfig->readEntry("Dock", QVariant(_defDock)).toBool();
     m_bExport = m_pConfig->readEntry("Export", QVariant(_defExport)).toBool();
     m_bLimitCache = m_pConfig->readEntry("LimitCache", QVariant(_defLimitCache)).toBool();
-    m_CacheSize = m_pConfig->readNumEntry("CacheSize", _defCacheSize);
+    m_CacheSize = m_pConfig->readEntry("CacheSize", _defCacheSize);
 
     m_TextColor = KGlobalSettings::textColor();
     m_pConfig->setGroup("FMSettings");
     m_TextColor = m_pConfig->readColorEntry("NormalTextColor", &m_TextColor);
     m_TextBackgroundColor = m_pConfig->readColorEntry("ItemTextBackground");
     m_shadowEnabled = m_pConfig->readEntry("ShadowEnabled", QVariant(true)).toBool();
-    m_textLines = m_pConfig->readNumEntry("TextHeight", DEFAULT_TEXTHEIGHT);
-    m_textWidth = m_pConfig->readNumEntry("TextWidth", DEFAULT_TEXTWIDTH);
+    m_textLines = m_pConfig->readEntry("TextHeight", DEFAULT_TEXTHEIGHT);
+    m_textWidth = m_pConfig->readEntry("TextWidth", DEFAULT_TEXTWIDTH);
 
     m_Names.clear();
     NETRootInfo info( QX11Info::display(), NET::DesktopNames | NET::NumberOfDesktops );

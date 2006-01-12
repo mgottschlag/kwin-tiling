@@ -118,9 +118,9 @@ extern "C" {
 	    DPMSInfo(dpy, &pre_configured_status, &pre_configured_enabled);
 	    /* let the user override the settings */
 	    enabled = cfg->readEntry("displayEnergySaving", QVariant(pre_configured_enabled)).toBool();
-	    standby = cfg->readNumEntry("displayStandby", pre_configured_standby);
-	    suspend = cfg->readNumEntry("displaySuspend", pre_configured_suspend);
-	    off = cfg->readNumEntry("displayPowerOff", pre_configured_off);
+	    standby = cfg->readEntry("displayStandby", int(pre_configured_standby));
+	    suspend = cfg->readEntry("displaySuspend", int(pre_configured_suspend));
+	    off = cfg->readEntry("displayPowerOff", int(pre_configured_off));
 	} else {
 	/* provide our defauts */
 	    enabled = true;
@@ -283,9 +283,9 @@ void KEnergy::defaults()
 void KEnergy::readSettings()
 {
     m_bEnabled = m_pConfig->readEntry("displayEnergySaving", QVariant(false)).toBool();
-    m_Standby = m_pConfig->readNumEntry("displayStandby", DFLT_STANDBY);
-    m_Suspend = m_pConfig->readNumEntry("displaySuspend", DFLT_SUSPEND);
-    m_Off = m_pConfig->readNumEntry("displayPowerOff", DFLT_OFF);
+    m_Standby = m_pConfig->readEntry("displayStandby", DFLT_STANDBY);
+    m_Suspend = m_pConfig->readEntry("displaySuspend", DFLT_SUSPEND);
+    m_Off = m_pConfig->readEntry("displayPowerOff", DFLT_OFF);
 
     m_StandbyDesired = m_Standby;
     m_SuspendDesired = m_Suspend;

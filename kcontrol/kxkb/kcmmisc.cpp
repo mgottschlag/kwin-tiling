@@ -139,10 +139,10 @@ void KeyboardConfig::load()
   config.setGroup("Keyboard");
   bool key = config.readEntry("KeyboardRepeating", QVariant(true)).toBool();
   keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
-  ui->delay->setValue(config.readNumEntry( "RepeatDelay", 660 ));
+  ui->delay->setValue(config.readEntry( "RepeatDelay", 660 ));
   ui->rate->setValue(config.readDoubleNumEntry( "RepeatRate", 25 ));
-  clickVolume = config.readNumEntry("ClickVolume", kbd.key_click_percent);
-  numlockState = config.readNumEntry( "NumLock", 2 );
+  clickVolume = config.readEntry("ClickVolume", kbd.key_click_percent);
+  numlockState = config.readEntry( "NumLock", 2 );
 
   setClick(kbd.key_click_percent);
   setRepeat(kbd.global_auto_repeat, ui->delay->value(), ui->rate->value());

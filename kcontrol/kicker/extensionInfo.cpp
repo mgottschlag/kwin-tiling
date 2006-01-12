@@ -60,10 +60,10 @@ void ExtensionInfo::load()
         if (_resizeable)
         {
             _useStdSizes = df.readEntry("X-KDE-PanelExt-StdSizes", QVariant(_useStdSizes)).toBool();
-            _size = df.readNumEntry("X-KDE-PanelExt-StdSizeDefault", _size);
-            _customSizeMin = df.readNumEntry("X-KDE-PanelExt-CustomSizeMin", _customSizeMin);
-            _customSizeMax = df.readNumEntry("X-KDE-PanelExt-CustomSizeMax", _customSizeMax);
-            _customSize = df.readNumEntry("X-KDE-PanelExt-CustomSizeDefault", _customSize);
+            _size = df.readEntry("X-KDE-PanelExt-StdSizeDefault", _size);
+            _customSizeMin = df.readEntry("X-KDE-PanelExt-CustomSizeMin", _customSizeMin);
+            _customSizeMax = df.readEntry("X-KDE-PanelExt-CustomSizeMax", _customSizeMax);
+            _customSize = df.readEntry("X-KDE-PanelExt-CustomSizeDefault", _customSize);
         }
 	QStringList allowedPos=QStringList::split(",",df.readEntry("X-KDE-PanelExt-Positions","Left,Top,Right,Bottom").toUpper());
 	for (int i=0;i<4;i++) _allowedPosition[i]=false;
@@ -86,26 +86,26 @@ void ExtensionInfo::load()
     KConfig c(_configFile);
     c.setGroup("General");
 
-    _position       = c.readNumEntry ("Position",            _position);
-    _alignment      = c.readNumEntry ("Alignment",           _alignment);
-    _xineramaScreen = c.readNumEntry ("XineramaScreen",      _xineramaScreen);
+    _position       = c.readEntry ("Position",            _position);
+    _alignment      = c.readEntry ("Alignment",           _alignment);
+    _xineramaScreen = c.readEntry ("XineramaScreen",      _xineramaScreen);
     _showLeftHB     = c.readEntry("ShowLeftHideButton", QVariant(_showLeftHB)).toBool();
     _showRightHB    = c.readEntry("ShowRightHideButton", QVariant(_showRightHB)).toBool();
-    _hideButtonSize = c.readNumEntry ("HideButtonSize",      _hideButtonSize);
+    _hideButtonSize = c.readEntry ("HideButtonSize",      _hideButtonSize);
     _autohidePanel  = c.readEntry("AutoHidePanel", QVariant(_autohidePanel)).toBool();
     _backgroundHide = c.readEntry("BackgroundHide", QVariant(_backgroundHide)).toBool();
     _autoHideSwitch = c.readEntry("AutoHideSwitch", QVariant(_autoHideSwitch)).toBool();
-    _autoHideDelay  = c.readNumEntry ("AutoHideDelay",       _autoHideDelay);
+    _autoHideDelay  = c.readEntry ("AutoHideDelay",       _autoHideDelay);
     _hideAnim       = c.readEntry("HideAnimation", QVariant(_hideAnim)).toBool();
-    _hideAnimSpeed  = c.readNumEntry ("HideAnimationSpeed",  _hideAnimSpeed);
-    _unhideLocation = c.readNumEntry ("UnhideLocation",      _unhideLocation);
-    _sizePercentage = c.readNumEntry ("SizePercentage",      _sizePercentage);
+    _hideAnimSpeed  = c.readEntry ("HideAnimationSpeed",  _hideAnimSpeed);
+    _unhideLocation = c.readEntry ("UnhideLocation",      _unhideLocation);
+    _sizePercentage = c.readEntry ("SizePercentage",      _sizePercentage);
     _expandSize     = c.readEntry("ExpandSize", QVariant(_expandSize)).toBool();
 
     if (_resizeable)
     {
-        _size           = c.readNumEntry ("Size",       _size);
-        _customSize     = c.readNumEntry ("CustomSize", _customSize);
+        _size           = c.readEntry ("Size",       _size);
+        _customSize     = c.readEntry ("CustomSize", _customSize);
     }
 
     _orig_position = _position;
@@ -126,13 +126,13 @@ void ExtensionInfo::configChanged()
     // check to see if the new value is different from both
     // the original value and the currently set value, then it
     // must be a newly set value, external to the panel!
-    int position  = c.readNumEntry ("Position",  _position);
+    int position  = c.readEntry ("Position",  _position);
     if (position != _position && position != _orig_position)
     {
         _orig_position = _position = position;
     }
 
-    int alignment = c.readNumEntry ("Alignment", _alignment);
+    int alignment = c.readEntry ("Alignment", _alignment);
     if (alignment != _alignment && alignment != _orig_alignment)
     {
         _orig_alignment = _alignment = alignment;
@@ -140,13 +140,13 @@ void ExtensionInfo::configChanged()
 
     if (_resizeable)
     {
-        int size = c.readNumEntry ("Size", _size);
+        int size = c.readEntry ("Size", _size);
         if (size != _size && size != _orig_size)
         {
             _orig_size = _size = size;
         }
 
-        int customSize = c.readNumEntry ("CustomSize", _customSize);
+        int customSize = c.readEntry ("CustomSize", _customSize);
         if (customSize != _customSize && customSize != _orig_customSize)
         {
             _orig_customSize = _customSize = customSize;

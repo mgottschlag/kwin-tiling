@@ -215,7 +215,7 @@ void PlayerSettingsDialog::load()
     bool useExternal = config.readEntry( "Use external player", QVariant(false )).toBool();
     m_ui->cbExternal->setChecked( useExternal );
     m_ui->reqExternal->setURL( config.readPathEntry( "External player" ) );
-    m_ui->volumeSlider->setValue( config.readNumEntry( "Volume", 100 ) );
+    m_ui->volumeSlider->setValue( config.readEntry( "Volume", 100 ) );
 
     if ( !m_ui->cbExternal->isChecked() )
     {

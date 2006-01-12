@@ -46,14 +46,14 @@ void KScreenSaverAdvancedDialog::readSettings()
 	KConfig *config = new KConfig("kdesktoprc");
 	config->setGroup("ScreenSaver");
 	
-	mPriority = config->readNumEntry("Priority", 19);
+	mPriority = config->readEntry("Priority", 19);
 	if (mPriority < 0) mPriority = 0;
 	if (mPriority > 19) mPriority = 19;
 	
-	dialog->qcbTopLeft->setCurrentItem(config->readNumEntry("ActionTopLeft", 0));    
-	dialog->qcbTopRight->setCurrentItem(config->readNumEntry("ActionTopRight", 0));
-	dialog->qcbBottomLeft->setCurrentItem(config->readNumEntry("ActionBottomLeft", 0));
-	dialog->qcbBottomRight->setCurrentItem(config->readNumEntry("ActionBottomRight", 0));
+	dialog->qcbTopLeft->setCurrentItem(config->readEntry("ActionTopLeft", 0));    
+	dialog->qcbTopRight->setCurrentItem(config->readEntry("ActionTopRight", 0));
+	dialog->qcbBottomLeft->setCurrentItem(config->readEntry("ActionBottomLeft", 0));
+	dialog->qcbBottomRight->setCurrentItem(config->readEntry("ActionBottomRight", 0));
 	mChanged = false;
 	delete config;
 }

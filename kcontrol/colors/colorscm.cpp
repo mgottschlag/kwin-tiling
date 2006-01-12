@@ -855,7 +855,7 @@ void KColorScheme::readScheme( int index )
     if (index == 0)
       config->setGroup( "KDE" );
 
-    cs->contrast = config->readNumEntry( "contrast", 7 );
+    cs->contrast = config->readEntry( "contrast", 7 );
     if (index != 0)
       delete config;
 }

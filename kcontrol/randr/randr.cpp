@@ -536,10 +536,10 @@ void RandRScreen::load(KConfig& config)
 {
 	config.setGroup(QString("Screen%1").arg(m_screen));
 
-	if (proposeSize(sizeIndex(QSize(config.readNumEntry("width", currentPixelWidth()), config.readNumEntry("height", currentPixelHeight())))))
-		proposeRefreshRate(refreshRateHzToIndex(proposedSize(), config.readNumEntry("refresh", currentRefreshRate())));
+	if (proposeSize(sizeIndex(QSize(config.readEntry("width", currentPixelWidth()), config.readEntry("height", currentPixelHeight())))))
+		proposeRefreshRate(refreshRateHzToIndex(proposedSize(), config.readEntry("refresh", currentRefreshRate())));
 
-	proposeRotation(rotationDegreeToIndex(config.readNumEntry("rotation", 0)) + (config.readBoolEntry("reflectX") ? ReflectX : 0) + (config.readBoolEntry("reflectY") ? ReflectY : 0));
+	proposeRotation(rotationDegreeToIndex(config.readEntry("rotation", 0)) + (config.readEntry("reflectX", false) ? ReflectX : 0) + (config.readEntry("reflectY",false) ? ReflectY : 0));
 }
 
 void RandRScreen::save(KConfig& config) const
@@ -673,13 +673,13 @@ bool RandRDisplay::loadDisplay(KConfig& config, bool loadScreens)
 bool RandRDisplay::applyOnStartup(KConfig& config)
 {
 	config.setGroup("Display");
-	return config.readBoolEntry("ApplyOnStartup", false);
+	return config.readEntry("ApplyOnStartup", false);
 }
 
 bool RandRDisplay::syncTrayApp(KConfig& config)
 {
 	config.setGroup("Display");
-	return config.readBoolEntry("SyncTrayApp", false);
+	return config.readEntry("SyncTrayApp", false);
 }
 
 void RandRDisplay::saveDisplay(KConfig& config, bool applyOnStartup, bool syncTrayApp)

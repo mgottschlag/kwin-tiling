@@ -96,7 +96,7 @@ void AppletTab::load()
   l_available.clear();
   l_trusted.clear();
 
-  int level = c.readNumEntry("SecurityLevel", 1);
+  int level = c.readEntry("SecurityLevel", 1);
 
   switch(level)
     {
