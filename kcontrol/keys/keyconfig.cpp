@@ -484,12 +484,12 @@ void KKeyModule::init()
 // this should match the included files above
 #define NOSLOTS
 #define KShortcuts KAccelShortcuts
-#include "../../klipper/klipperbindings.cpp"
+#include "../../../klipper/klipperbindings.cpp"
 #include "../../kwin/kwinbindings.cpp"
-#include "../../kicker/kicker/core/kickerbindings.cpp"
-#include "../../kicker/taskbar/taskbarbindings.cpp"
+#include "../../../kicker/kicker/core/kickerbindings.cpp"
+#include "../../../kicker/taskbar/taskbarbindings.cpp"
 #include "../../kdesktop/kdesktopbindings.cpp"
-#include "../../kxkb/kxkbbindings.cpp"
+#include "../kxkb/kxkbbindings.cpp"
 #undef KShortcuts
 
   kdDebug(125) << "KKeyModule::init() - Read Config Bindings\n";
