@@ -97,7 +97,7 @@ void KSMServer::restoreSession( QString sessionName )
     sessionGroup = "Session: " + sessionName;
 
     config->setGroup( sessionGroup );
-    int count =  config->readNumEntry( "count" );
+    int count =  config->readEntry( "count", 0 );
     appsToStart = count;
 
     QList<QStringList> wmCommands;
@@ -234,7 +234,7 @@ void KSMServer::restoreNext()
         QString n = QString::number(lastAppStarted);
         QStringList restartCommand = config->readListEntry( QString("restartCommand")+n );
         if ( restartCommand.isEmpty() ||
-             (config->readNumEntry( QString("restartStyleHint")+n ) == SmRestartNever)) {
+             (config->readEntry( QString("restartStyleHint")+n, 0 ) == SmRestartNever)) {
             continue;
         }
         if ( wm == config->readEntry( QString("program")+n, QString() ) )

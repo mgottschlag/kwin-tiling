@@ -121,7 +121,7 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
         sdtype = KWorkSpace::ShutdownTypeNone;
     } else if (sdtype == KWorkSpace::ShutdownTypeDefault)
         sdtype = (KWorkSpace::ShutdownType)
-                 config->readNumEntry( "shutdownType", (int)KWorkSpace::ShutdownTypeNone );
+                 config->readEntry( "shutdownType", (int)KWorkSpace::ShutdownTypeNone );
     if (sdmode == KWorkSpace::ShutdownModeDefault)
         sdmode = KWorkSpace::ShutdownModeInteractive;
 

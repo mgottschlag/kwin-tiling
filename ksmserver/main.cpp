@@ -229,7 +229,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
 
     int realScreenCount = ScreenCount( QX11Info::display() );
     bool screenCountChanged =
-         ( config->readNumEntry( "screenCount", realScreenCount ) != realScreenCount );
+         ( config->readEntry( "screenCount", realScreenCount ) != realScreenCount );
 
     QString loginMode = config->readEntry( "loginMode", "restorePreviousLogout" );
 

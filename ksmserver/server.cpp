@@ -807,7 +807,7 @@ void KSMServer::discardSession()
 {
     KConfig* config = KGlobal::config();
     config->setGroup( sessionGroup );
-    int count =  config->readNumEntry( "count", 0 );
+    int count =  config->readEntry( "count", 0 );
 	foreach ( KSMClient *c, clients ) {
         QStringList discardCommand = c->discardCommand();
         if ( discardCommand.isEmpty())
@@ -828,7 +828,7 @@ void KSMServer::storeSession()
 {
     KConfig* config = KGlobal::config();
     config->setGroup( sessionGroup );
-    int count =  config->readNumEntry( "count" );
+    int count =  config->readEntry( "count", 0 );
     for ( int i = 1; i <= count; i++ ) {
         QStringList discardCommand = config->readPathListEntry( QString("discardCommand") + QString::number(i) );
         if ( discardCommand.isEmpty())

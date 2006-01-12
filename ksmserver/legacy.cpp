@@ -233,7 +233,7 @@ void KSMServer::restoreLegacySession( KConfig* config )
         restoreLegacySessionInternal( config );
     } else if( wm == "kwin" ) { // backwards comp. - get it from kwinrc
 	KConfigGroup group( config, sessionGroup );
-	int count =  group.readNumEntry( "count", 0 );
+	int count =  group.readEntry( "count", 0 );
 	for ( int i = 1; i <= count; i++ ) {
     	    QString n = QString::number(i);
     	    if ( group.readEntry( QString("program")+n, QString() ) != wm )
@@ -258,7 +258,7 @@ void KSMServer::restoreLegacySession( KConfig* config )
 
 void KSMServer::restoreLegacySessionInternal( KConfig* config, char sep )
 {
-    int count = config->readNumEntry( "count" );
+    int count = config->readEntry( "count",0 );
     for ( int i = 1; i <= count; i++ ) {
         QString n = QString::number(i);
         QStringList wmCommand = config->readListEntry( QString("command")+n, sep );
