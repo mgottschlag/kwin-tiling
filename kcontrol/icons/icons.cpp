@@ -265,9 +265,9 @@ void KIconConfig::read()
 	    else continue;
 	    mEffects[i][j].type = effect;
 	    mEffects[i][j].value = mpConfig->readDoubleNumEntry(*it2 + "Value");
-	    mEffects[i][j].color = mpConfig->readColorEntry(*it2 + "Color");
-	    mEffects[i][j].color2 = mpConfig->readColorEntry(*it2 + "Color2");
-	    mEffects[i][j].transparant = mpConfig->readEntry(*it2 + "SemiTransparent", QVariant(false)).toBool();
+	    mEffects[i][j].color = mpConfig->readEntry(*it2 + "Color",QColor());
+	    mEffects[i][j].color2 = mpConfig->readEntry(*it2 + "Color2", QColor());
+	    mEffects[i][j].transparant = mpConfig->readEntry(*it2 + "SemiTransparent", false);
 	}
     }
 }

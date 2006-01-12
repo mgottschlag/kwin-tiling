@@ -95,7 +95,7 @@ void AccessibilityConfig::load(){
    flashScreen->setChecked(bell->readEntry("Flash", QVariant(false)).toBool());
    // TODO: There has to be a cleaner way.
    QColor *redColor = new QColor(Qt::red);
-   flashScreenColor->setColor(bell->readColorEntry("FlashColor", redColor));
+   flashScreenColor->setColor(bell->readEntry("FlashColor", redColor));
    delete redColor;
    visibleBellDuration->setValue(bell->readEntry("Duration", 500));
   
@@ -112,7 +112,7 @@ void AccessibilityConfig::load(){
 //    invertScreen->setChecked(config->readEntry("VisibleBellInvert", QVariant(true)).toBool());
 //    flashScreen->setChecked(!invertScreen->isChecked());
 //    QColor def(Qt::red);
-//    colorButton->setColor(config->readColorEntry("VisibleBellColor", &def));
+//    colorButton->setColor(config->readEntry("VisibleBellColor", &def));
 //
 //    durationSlider->setValue(config->readEntry("VisibleBellPause", 500));
 //

@@ -158,7 +158,7 @@ void KAccessApp::readSettings()
   _visibleBell = config->readEntry("VisibleBell", QVariant(false)).toBool();
   _visibleBellInvert = config->readEntry("VisibleBellInvert", QVariant(false)).toBool();
   QColor def(Qt::red);
-  _visibleBellColor = config->readColorEntry("VisibleBellColor", &def);
+  _visibleBellColor = config->readEntry("VisibleBellColor", &def);
   _visibleBellPause = config->readEntry("VisibleBellPause", 500);
 
   // select bell events if we need them

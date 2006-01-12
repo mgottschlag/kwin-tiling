@@ -131,36 +131,36 @@ static void applyQtColors( KConfig& kglobals, QSettings& settings, QPalette& new
 
   // active colors
   QColor clr = newPal.active().background();
-  clr = kglobals.readColorEntry("activeBackground", &clr);
+  clr = kglobals.readEntry("activeBackground", clr);
   settings.writeEntry("/qt/KWinPalette/activeBackground", clr.name());
   if (QPixmap::defaultDepth() > 8)
     clr = clr.dark(110);
-  clr = kglobals.readColorEntry("activeBlend", &clr);
+  clr = kglobals.readEntry("activeBlend", clr);
   settings.writeEntry("/qt/KWinPalette/activeBlend", clr.name());
   clr = newPal.active().highlightedText();
-  clr = kglobals.readColorEntry("activeForeground", &clr);
+  clr = kglobals.readEntry("activeForeground", clr);
   settings.writeEntry("/qt/KWinPalette/activeForeground", clr.name());
   clr = newPal.active().background();
-  clr = kglobals.readColorEntry("frame", &clr);
+  clr = kglobals.readEntry("frame", clr);
   settings.writeEntry("/qt/KWinPalette/frame", clr.name());
-  clr = kglobals.readColorEntry("activeTitleBtnBg", &clr);
+  clr = kglobals.readEntry("activeTitleBtnBg", clr);
   settings.writeEntry("/qt/KWinPalette/activeTitleBtnBg", clr.name());
 
   // inactive colors
   clr = newPal.inactive().background();
-  clr = kglobals.readColorEntry("inactiveBackground", &clr);
+  clr = kglobals.readEntry("inactiveBackground", clr);
   settings.writeEntry("/qt/KWinPalette/inactiveBackground", clr.name());
   if (QPixmap::defaultDepth() > 8)
     clr = clr.dark(110);
-  clr = kglobals.readColorEntry("inactiveBlend", &clr);
+  clr = kglobals.readEntry("inactiveBlend", clr);
   settings.writeEntry("/qt/KWinPalette/inactiveBlend", clr.name());
   clr = newPal.inactive().background().dark();
-  clr = kglobals.readColorEntry("inactiveForeground", &clr);
+  clr = kglobals.readEntry("inactiveForeground", clr);
   settings.writeEntry("/qt/KWinPalette/inactiveForeground", clr.name());
   clr = newPal.inactive().background();
-  clr = kglobals.readColorEntry("inactiveFrame", &clr);
+  clr = kglobals.readEntry("inactiveFrame", clr);
   settings.writeEntry("/qt/KWinPalette/inactiveFrame", clr.name());
-  clr = kglobals.readColorEntry("inactiveTitleBtnBg", &clr);
+  clr = kglobals.readEntry("inactiveTitleBtnBg", clr);
   settings.writeEntry("/qt/KWinPalette/inactiveTitleBtnBg", clr.name());
 
   kglobals.setGroup("KDE");

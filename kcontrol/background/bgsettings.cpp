@@ -748,8 +748,8 @@ void KBackgroundSettings::readSettings(bool reparse)
     m_pConfig->setGroup(QString("Desktop%1").arg(m_Desk));
 
     // Background mode (Flat, div. Gradients, Pattern or Program)
-    m_ColorA = m_pConfig->readColorEntry("Color1", &defColorA);
-    m_ColorB = m_pConfig->readColorEntry("Color2", &defColorB);
+    m_ColorA = m_pConfig->readEntry("Color1", defColorA);
+    m_ColorB = m_pConfig->readEntry("Color2", defColorB);
 
     QString s = m_pConfig->readPathEntry("Pattern");
     if (!s.isEmpty())
@@ -814,7 +814,7 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     m_MinOptimizationDepth = m_pConfig->readEntry( "MinOptimizationDepth",
         _defMinOptimizationDepth );
-    m_bShm = m_pConfig->readEntry( "UseSHM", QVariant(_defShm )).toBool();
+    m_bShm = m_pConfig->readEntry( "UseSHM", _defShm );
 
     dirty = false; hashdirty = true;
 }
@@ -1183,9 +1183,9 @@ void KGlobalBackgroundSettings::readSettings()
 
     m_TextColor = KGlobalSettings::textColor();
     m_pConfig->setGroup("FMSettings");
-    m_TextColor = m_pConfig->readColorEntry("NormalTextColor", &m_TextColor);
-    m_TextBackgroundColor = m_pConfig->readColorEntry("ItemTextBackground");
-    m_shadowEnabled = m_pConfig->readEntry("ShadowEnabled", QVariant(true)).toBool();
+    m_TextColor = m_pConfig->readEntry("NormalTextColor", m_TextColor);
+    m_TextBackgroundColor = m_pConfig->readEntry("ItemTextBackground");
+    m_shadowEnabled = m_pConfig->readEntry("ShadowEnabled", true);
     m_textLines = m_pConfig->readEntry("TextHeight", DEFAULT_TEXTHEIGHT);
     m_textWidth = m_pConfig->readEntry("TextWidth", DEFAULT_TEXTWIDTH);
 

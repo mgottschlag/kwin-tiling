@@ -149,11 +149,11 @@ QString KTheme::createYourself( bool pack )
         desktopElem.appendChild( modeElem );
 
         QDomElement c1Elem = m_dom.createElement( "color1" );
-        c1Elem.setAttribute( "rgb", desktopConf.readColorEntry( "Color1" ).name() );
+        c1Elem.setAttribute( "rgb", desktopConf.readEntry( "Color1",QColor() ).name() );
         desktopElem.appendChild( c1Elem );
 
         QDomElement c2Elem = m_dom.createElement( "color2" );
-        c2Elem.setAttribute( "rgb", desktopConf.readColorEntry( "Color2" ).name() );
+        c2Elem.setAttribute( "rgb", desktopConf.readEntry( "Color2",QColor() ).name() );
         desktopElem.appendChild( c2Elem );
 
         QDomElement blendElem = m_dom.createElement( "blending" );
@@ -282,7 +282,7 @@ QString KTheme::createYourself( bool pack )
     konqWallElem.setAttribute( "url", processFilePath( "konqueror", bgImagePath ) );
     konqElem.appendChild( konqWallElem );
     QDomElement konqBgColorElem = m_dom.createElement( "bgcolor" );
-    konqBgColorElem.setAttribute( "rgb", konqConf.readColorEntry( "BgColor" ).name() );
+    konqBgColorElem.setAttribute( "rgb", konqConf.readEntry( "BgColor",QColor() ).name() );
     konqElem.appendChild( konqBgColorElem );
     m_root.appendChild( konqElem );
 
@@ -743,7 +743,7 @@ void KTheme::createIconElems( const QString & group, const QString & object,
 void KTheme::createColorElem( const QString & name, const QString & object,
                               QDomElement parent, KConfig * cfg )
 {
-    QColor color = cfg->readColorEntry( name );
+    QColor color = cfg->readEntry( name,QColor() );
     if ( color.isValid() )
     {
         QDomElement tmpCol = m_dom.createElement( name );

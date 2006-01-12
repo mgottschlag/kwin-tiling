@@ -86,7 +86,7 @@ void advancedDialog::load()
 
     int defaultHideButtonSize = c.readEntry("HideButtonSize", 14);
     m_advancedWidget->hideButtonSize->setValue(defaultHideButtonSize);
-    QColor color = c.readColorEntry( "TintColor", &colorGroup().mid() );
+    QColor color = c.readEntry( "TintColor", &colorGroup().mid() );
     m_advancedWidget->tintColorB->setColor( color );
     int tintValue = c.readEntry( "TintValue", 0 );
     m_advancedWidget->tintSlider->setValue( tintValue );
