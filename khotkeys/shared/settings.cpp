@@ -84,7 +84,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
                 return true;
             }
         }
-    int version = cfg_P.readNumEntry( "Version", -1234576 );
+    int version = cfg_P.readEntry( "Version", -1234576 );
     switch( version )
         {
         case 1:
@@ -107,9 +107,9 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
     daemon_disabled = cfg_P.readEntry( "Disabled", QVariant(false )).toBool();
     cfg_P.setGroup( "Gestures" );
     gestures_disabled_globally = cfg_P.readEntry( "Disabled", QVariant(true )).toBool();
-    gesture_mouse_button = cfg_P.readNumEntry( "MouseButton", 2 );
+    gesture_mouse_button = cfg_P.readEntry( "MouseButton", 2 );
     gesture_mouse_button = qBound( 2, gesture_mouse_button, 9 );
-    gesture_timeout = cfg_P.readNumEntry( "Timeout", 300 );
+    gesture_timeout = cfg_P.readEntry( "Timeout", 300 );
     cfg_P.setGroup( "GesturesExclude" );
     delete gestures_exclude;
     gestures_exclude = new Windowdef_list( cfg_P );
@@ -181,7 +181,7 @@ void Settings::read_actions_recursively_v2( KConfig& cfg_P, Action_data_group* p
     bool include_disabled_P )
     {
     QString save_cfg_group = cfg_P.group();
-    int cnt = cfg_P.readNumEntry( "DataCount" );
+    int cnt = cfg_P.readEntry( "DataCount",0 );
     for( int i = 1;
          i <= cnt;
          ++i )
@@ -201,7 +201,7 @@ void Settings::read_actions_recursively_v2( KConfig& cfg_P, Action_data_group* p
 // backward compatibility
 void Settings::read_settings_v1( KConfig& cfg_P )
     {    
-    int sections = cfg_P.readNumEntry( "Num_Sections", 0 );
+    int sections = cfg_P.readEntry( "Num_Sections", 0 );
     Action_data_group* menuentries = NULL;
     for( Action_data_group::Iterator it( actions->first_child());
          *it;

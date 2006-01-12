@@ -124,7 +124,7 @@ Condition_list_base::Condition_list_base( KConfig& cfg_P, Condition_list_base* p
     : Condition( parent_P )
     {
     QString save_cfg_group = cfg_P.group();
-    int cnt = cfg_P.readNumEntry( "ConditionsCount", 0 );
+    int cnt = cfg_P.readEntry( "ConditionsCount", 0 );
     for( int i = 0;
          i < cnt;
          ++i )

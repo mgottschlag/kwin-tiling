@@ -230,7 +230,7 @@ Windowdef_list::Windowdef_list( KConfig& cfg_P )
     setAutoDelete( true );
     QString save_cfg_group = cfg_P.group();
     _comment = cfg_P.readEntry( "Comment" );
-    int cnt = cfg_P.readNumEntry( "WindowsCount", 0 );
+    int cnt = cfg_P.readEntry( "WindowsCount", 0 );
     for( int i = 0;
          i < cnt;
          ++i )
@@ -297,12 +297,12 @@ Windowdef_simple::Windowdef_simple( KConfig& cfg_P )
     : Windowdef( cfg_P )
     {
     _title = cfg_P.readEntry( "Title" );
-    title_type = static_cast< substr_type_t >( cfg_P.readNumEntry( "TitleType" ));
+    title_type = static_cast< substr_type_t >( cfg_P.readEntry( "TitleType",0 ));
     _wclass = cfg_P.readEntry( "Class" );
-    wclass_type = static_cast< substr_type_t >( cfg_P.readNumEntry( "ClassType" ));
+    wclass_type = static_cast< substr_type_t >( cfg_P.readEntry( "ClassType",0 ));
     _role = cfg_P.readEntry( "Role" );
-    role_type = static_cast< substr_type_t >( cfg_P.readNumEntry( "RoleType" ));
-    _window_types = cfg_P.readNumEntry( "WindowTypes" );
+    role_type = static_cast< substr_type_t >( cfg_P.readEntry( "RoleType", 0 ));
+    _window_types = cfg_P.readEntry( "WindowTypes",0 );
     }
 
 void Windowdef_simple::cfg_write( KConfig& cfg_P ) const

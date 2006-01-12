@@ -74,7 +74,7 @@ Action_list::Action_list( KConfig& cfg_P, Action_data* data_P )
     {
     setAutoDelete( true );
     QString save_cfg_group = cfg_P.group();
-    int cnt = cfg_P.readNumEntry( "ActionsCount", 0 );
+    int cnt = cfg_P.readEntry( "ActionsCount", 0 );
     for( int i = 0;
          i < cnt;
          ++i )

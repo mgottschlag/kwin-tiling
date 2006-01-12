@@ -66,7 +66,7 @@ Trigger_list::Trigger_list( KConfig& cfg_P, Action_data* data_P )
     setAutoDelete( true );
     _comment = cfg_P.readEntry( "Comment" );
     QString save_cfg_group = cfg_P.group();
-    int cnt = cfg_P.readNumEntry( "TriggersCount", 0 );
+    int cnt = cfg_P.readEntry( "TriggersCount", 0 );
     for( int i = 0;
          i < cnt;
          ++i )
@@ -181,7 +181,7 @@ Window_trigger::Window_trigger( KConfig& cfg_P, Action_data* data_P )
     cfg_P.setGroup( save_cfg_group + "Windows" );
     _windows = new Windowdef_list( cfg_P );
     cfg_P.setGroup( save_cfg_group );
-    window_actions = cfg_P.readNumEntry( "WindowActions" );
+    window_actions = cfg_P.readEntry( "WindowActions",0 );
     init();
     }
 
