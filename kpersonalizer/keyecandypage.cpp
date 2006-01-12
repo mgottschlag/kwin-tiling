@@ -684,7 +684,7 @@ void KEyeCandyPage::getUserDefaults(){
 	// Wallpaper-User-Defaults
 	kdesktopconf->setGroup("FMSettings");
 	QColor tempcolor=KGlobalSettings::textColor();
-	desktopTextColor = kdesktopconf->readColorEntry("NormalTextColor", &tempcolor );
+	desktopTextColor = kdesktopconf->readEntry("NormalTextColor", tempcolor );
 	kdesktopconf->setGroup("Background Common");
 	st_UserWallpaper.CommonDesktop = kdesktopconf->readEntry("CommonDesktop", true);
 	kdesktopconf->setGroup("Desktop0"); // we only need to set one desktop

@@ -81,7 +81,7 @@ void KBlankSetup::readSettings()
 	config->setGroup( "Settings" );
 
 	QColor aux = Qt::black;
-	color = config->readColorEntry( "Color", &aux );
+	color = config->readEntry( "Color", aux );
 }
 
 void KBlankSetup::slotColor( const QColor &col )
@@ -128,7 +128,7 @@ void KBlankSaver::readSettings()
 	config->setGroup( "Settings" );
 
 	QColor aux = Qt::black;
-	color = config->readColorEntry( "Color", &aux );
+	color = config->readEntry( "Color", aux );
 }
 
 void KBlankSaver::blank()

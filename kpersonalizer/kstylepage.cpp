@@ -379,8 +379,8 @@ void KStylePage::getColors(colorSet *set, bool colorfile ){
 		set->bgMode=kdesktop.readEntry("BackgroundMode", "Flat");
                 QColor tmp1("#003082");
 		QColor tmp2("#C0C0C0");
-		set->usrCol1=kdesktop.readColorEntry("Color1", &tmp1);
-		set->usrCol2=kdesktop.readColorEntry("Color2", &tmp2);
+		set->usrCol1=kdesktop.readEntry("Color1", tmp1);
+		set->usrCol2=kdesktop.readEntry("Color2", tmp2);
 		// write the color scheme filename and the contrast, default 7, otherwise from file
 		config=KGlobal::config();
 		config->setGroup("KDE");
@@ -390,28 +390,28 @@ void KStylePage::getColors(colorSet *set, bool colorfile ){
 		kdDebug() << "KStylePage::getColors(): schemefile: "<< set->colorFile << endl;
     }
 	QColor black( Qt::black ), white( Qt::white );
-	set->foreground=config->readColorEntry( "foreground", &black );
-	set->background=config->readColorEntry( "background", &widget );
-	set->windowForeground=config->readColorEntry( "windowForeground", &black );
-	set->windowBackground=config->readColorEntry( "windowBackground", &white );
-	set->selectForeground=config->readColorEntry( "selectForeground", &white );
-	set->selectBackground=config->readColorEntry( "selectBackground", &kde34Blue );
-	set->buttonForeground=config->readColorEntry( "buttonForeground", &black );
-	set->buttonBackground=config->readColorEntry( "buttonBackground", &button );
-	set->linkColor=config->readColorEntry( "linkColor", &link );
-	set->visitedLinkColor=config->readColorEntry( "visitedLinkColor", &visitedLink );
+	set->foreground=config->readEntry( "foreground", black );
+	set->background=config->readEntry( "background", widget );
+	set->windowForeground=config->readEntry( "windowForeground", black );
+	set->windowBackground=config->readEntry( "windowBackground", white );
+	set->selectForeground=config->readEntry( "selectForeground", white );
+	set->selectBackground=config->readEntry( "selectBackground", kde34Blue );
+	set->buttonForeground=config->readEntry( "buttonForeground", black );
+	set->buttonBackground=config->readEntry( "buttonBackground", button );
+	set->linkColor=config->readEntry( "linkColor", link );
+	set->visitedLinkColor=config->readEntry( "visitedLinkColor", visitedLink );
 	// it's necessary to set the group, when reading from globalrc
 	if(!colorfile)
 		config->setGroup( "WM" );
-	set->activeForeground=config->readColorEntry("activeForeground", &white);
-        set->inactiveForeground=config->readColorEntry("inactiveForeground", &inactiveForeground);
-        set->activeBackground=config->readColorEntry("activeBackground", &activeBackground);
-        set->inactiveBackground=config->readColorEntry("inactiveBackground", &inactiveBackground);
-        set->activeBlend=config->readColorEntry("activeBlend", &activeBlend);
-        set->inactiveBlend=config->readColorEntry("inactiveBlend", &inactiveBackground);
-        set->activeTitleBtnBg=config->readColorEntry("activeTitleBtnBg", &activeTitleBtnBg);
-        set->inactiveTitleBtnBg=config->readColorEntry("inactiveTitleBtnBg", &inactiveTitleBtnBg);
-        set->alternateBackground=config->readColorEntry("alternateBackground", &alternateBackground);
+	set->activeForeground=config->readEntry("activeForeground", white);
+        set->inactiveForeground=config->readEntry("inactiveForeground", inactiveForeground);
+        set->activeBackground=config->readEntry("activeBackground", activeBackground);
+        set->inactiveBackground=config->readEntry("inactiveBackground", inactiveBackground);
+        set->activeBlend=config->readEntry("activeBlend", activeBlend);
+        set->inactiveBlend=config->readEntry("inactiveBlend", inactiveBackground);
+        set->activeTitleBtnBg=config->readEntry("activeTitleBtnBg", activeTitleBtnBg);
+        set->inactiveTitleBtnBg=config->readEntry("inactiveTitleBtnBg", inactiveTitleBtnBg);
+        set->alternateBackground=config->readEntry("alternateBackground", alternateBackground);
         if ( deleteConfig)
             delete config;
 }
