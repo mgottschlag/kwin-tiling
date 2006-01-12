@@ -261,7 +261,7 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:310 -->
-      <!--         mLockGrace = config.readNumEntry("LockGrace", LOCK_GRACE_DEFAULT); -->
+      <!--         mLockGrace = config.readEntry("LockGrace", LOCK_GRACE_DEFAULT); -->
     </entry>
     <entry key="AutoLogout" type="Bool">
       <default>false</default>
@@ -275,14 +275,14 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:322 -->
-      <!--         mAutoLogoutTimeout = config.readNumEntry("AutoLogoutTimeout", AUTOLOGOUT_DEFAULT); -->
+      <!--         mAutoLogoutTimeout = config.readEntry("AutoLogoutTimeout", AUTOLOGOUT_DEFAULT); -->
     </entry>
     <entry key="Priority" type="Int">
       <default>19</default>
       <label></label>
       <whatsthis></whatsthis>
       <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:332 -->
-      <!--     mPriority = config.readNumEntry("Priority", 19); -->
+      <!--     mPriority = config.readEntry("Priority", 19); -->
     </entry>
     <entry key="Saver" type="String">
       <default></default>
@@ -321,7 +321,7 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- minicli.cpp:192 -->
-      <!--   int maxHistory = config->readNumEntry("HistoryLength", 50); -->
+      <!--   int maxHistory = config->readEntry("HistoryLength", 50); -->
     </entry>
     <entry key="TerminalApps" type="PathList">
       <default></default>
@@ -346,7 +346,7 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- minicli.cpp:210 -->
-      <!--   int mode = config->readNumEntry( "CompletionMode", KGlobalSettings::completionMode() ); -->
+      <!--   int mode = config->readEntry( "CompletionMode", KGlobalSettings::completionMode() ); -->
       <!-- minicli.cpp:252 -->
       <!--     config->writeEntry( "CompletionMode", m_dlg->cbCommand->completionMode() ); -->
     </entry>
@@ -355,7 +355,7 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- minicli.cpp:220 -->
-      <!--   int maxEntries = config->readNumEntry("MaxUsernameCompletions", 30); -->
+      <!--   int maxEntries = config->readEntry("MaxUsernameCompletions", 30); -->
     </entry>
   </group>
 

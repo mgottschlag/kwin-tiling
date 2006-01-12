@@ -82,11 +82,11 @@ do { \
 
 #define readIconPosition(config, x, y, iconArea) \
 do { \
-    x = (config)->readNumEntry( X_w, -9999 ); \
-    if ( x == -9999 ) x = (config)->readNumEntry( "X" ); \
+    x = (config)->readEntry( X_w, -9999 ); \
+    if ( x == -9999 ) x = (config)->readEntry( "X", 0 ); \
     if (x < 0) x += iconArea.width(); \
-    y = (config)->readNumEntry( Y_h, -9999 ); \
-    if ( y == -9999 ) y = (config)->readNumEntry( "Y" ); \
+    y = (config)->readEntry( Y_h, -9999 ); \
+    if ( y == -9999 ) y = (config)->readEntry( "Y", 0 ); \
     if (y < 0) y += iconArea.height(); \
     x += iconArea.x(); \
     y += iconArea.y(); \

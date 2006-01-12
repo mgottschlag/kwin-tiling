@@ -40,7 +40,7 @@ KCustomMenu::KCustomMenu(const QString &configfile, QWidget *parent)
   d = new KCustomMenuPrivate; 
   
   KConfig cfg(configfile, true, false);
-  int count = cfg.readNumEntry("NrOfItems");
+  int count = cfg.readEntry("NrOfItems", 0);
   for(int i = 0; i < count; i++)
   {
      QString entry = cfg.readEntry(QString("Item%1").arg(i+1), QString());
