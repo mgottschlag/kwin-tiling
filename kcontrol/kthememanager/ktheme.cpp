@@ -130,7 +130,7 @@ QString KTheme::createYourself( bool pack )
 
     KConfig kwinConf( "kwinrc", true );
     kwinConf.setGroup( "Desktops" );
-    uint numDesktops = kwinConf.readUnsignedNumEntry( "Number", 4 );
+    uint numDesktops = kwinConf.readEntry( "Number", 4 );
 
     KConfig desktopConf( "kdesktoprc", true );
     desktopConf.setGroup( "Background Common" );
