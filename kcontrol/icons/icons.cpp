@@ -264,7 +264,7 @@ void KIconConfig::read()
 		effect = KIconEffect::NoEffect;
 	    else continue;
 	    mEffects[i][j].type = effect;
-	    mEffects[i][j].value = mpConfig->readDoubleNumEntry(*it2 + "Value");
+	    mEffects[i][j].value = mpConfig->readEntry(*it2 + "Value", 0.0);
 	    mEffects[i][j].color = mpConfig->readEntry(*it2 + "Color",QColor());
 	    mEffects[i][j].color2 = mpConfig->readEntry(*it2 + "Color2", QColor());
 	    mEffects[i][j].transparant = mpConfig->readEntry(*it2 + "SemiTransparent", false);
