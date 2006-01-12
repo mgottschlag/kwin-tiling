@@ -385,7 +385,7 @@ void KStylePage::getColors(colorSet *set, bool colorfile ){
 		config=KGlobal::config();
 		config->setGroup("KDE");
 		set->colorFile=config->readEntry("colorScheme", "<default>");
-		set->contrast=config->readNumEntry("contrast", 7);
+		set->contrast=config->readEntry("contrast", 7);
 		config->setGroup( "General" );
 		kdDebug() << "KStylePage::getColors(): schemefile: "<< set->colorFile << endl;
     }

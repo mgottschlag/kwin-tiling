@@ -707,7 +707,7 @@ void KEyeCandyPage::getUserDefaults(){
 	KGlobal::config()->setGroup("DesktopIcons");
 	st_UserGamma.EffectDesktop=KGlobal::config()->readEntry("ActiveEffect", "none");
 	st_UserGamma.ValueDesktop=KGlobal::config()->readEntry("ActiveValue", "0.7");
-	desktopiconsize=KGlobal::config()->readNumEntry("Size", 32);
+	desktopiconsize=KGlobal::config()->readEntry("Size", 32);
 	b_iconMngAnim = KGlobal::config()->readEntry( "Animated", true );
 
 	KGlobal::config()->setGroup("KDE");
@@ -745,48 +745,48 @@ void KEyeCandyPage::getUserDefaults(){
 /** gets the users sound-settings */
 void KEyeCandyPage::getUserSoundScheme() {
 	kwineventconf->setGroup("desktop1");
-	st_UserSnd.desktop1 = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.desktop1 = kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("desktop2");
-	st_UserSnd.desktop2 = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.desktop2 = kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("desktop3");
-	st_UserSnd.desktop3	= kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.desktop3	= kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("desktop4");
-	st_UserSnd.desktop4 = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.desktop4 = kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("desktop5");
-	st_UserSnd.desktop5	= kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.desktop5	= kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("desktop6");
-	st_UserSnd.desktop6 = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.desktop6 = kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("desktop7");
-	st_UserSnd.desktop7	= kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.desktop7	= kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("desktop8");
-	st_UserSnd.desktop8 = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.desktop8 = kwineventconf->readEntry("presentation", 0);
 
 	kwineventconf->setGroup("new");
-	st_UserSnd.notold = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.notold = kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("close");
-	st_UserSnd.close = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.close = kwineventconf->readEntry("presentation", 0);
 
 	kwineventconf->setGroup("transnew");
-	st_UserSnd.transnew = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.transnew = kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("transdelete");
-	st_UserSnd.transdelete = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.transdelete = kwineventconf->readEntry("presentation", 0);
 
 	kwineventconf->setGroup("iconify");
-	st_UserSnd.iconify = kwineventconf->readNumEntry("presentation", 0 );
+	st_UserSnd.iconify = kwineventconf->readEntry("presentation", 0 );
 	kwineventconf->setGroup("deiconify");
-	st_UserSnd.deiconify = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.deiconify = kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("maximize");
-	st_UserSnd.maximize = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.maximize = kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("unmaximize");
-	st_UserSnd.unmaximize = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.unmaximize = kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("shadeup");
-	st_UserSnd.shadeup = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.shadeup = kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("shadedown");
-	st_UserSnd.shadedown = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.shadedown = kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("sticky");
-	st_UserSnd.sticky = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.sticky = kwineventconf->readEntry("presentation", 0);
 	kwineventconf->setGroup("unsticky");
-	st_UserSnd.unsticky = kwineventconf->readNumEntry("presentation", 0);
+	st_UserSnd.unsticky = kwineventconf->readEntry("presentation", 0);
 }
 
 /** calls all enable functions with the state of the checkboxes. This is needed for save() only,
