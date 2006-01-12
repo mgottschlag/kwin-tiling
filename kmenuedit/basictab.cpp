@@ -388,7 +388,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     else // backwards comp.
         _launchCB->setChecked(df->readEntry("X-KDE-StartupNotify", QVariant(true)).toBool());
 
-    if(df->readNumEntry("Terminal", 0) == 1)
+    if(df->readEntry("Terminal", 0) == 1)
         _terminalCB->setChecked(true);
     else
         _terminalCB->setChecked(false);
