@@ -128,7 +128,7 @@ bool Action_data_base::conditions_match() const
 Action_data_group::Action_data_group( KConfig& cfg_P, Action_data_group* parent_P )
     : Action_data_base( cfg_P, parent_P )
     {
-    unsigned int system_group_tmp = cfg_P.readUnsignedNumEntry( "SystemGroup", 0 );
+    unsigned int system_group_tmp = cfg_P.readEntry( "SystemGroup", 0 );
     if( system_group_tmp >= SYSTEM_MAX )
         system_group_tmp = 0;
     _system_group = static_cast< system_group_t >( system_group_tmp );
