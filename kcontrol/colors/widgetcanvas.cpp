@@ -288,11 +288,11 @@ void WidgetCanvas::drawSampleWidgets()
     windowFontGuess.setPixelSize(12);
 
     c->setGroup("WM");
-    QFont windowFont = c->readFontEntry("activeFont", &windowFontGuess);
+    QFont windowFont = c->readEntry("activeFont", windowFontGuess);
 
     c->setGroup("General");
     QFont defaultMenuFont = KGlobalSettings::menuFont();
-    QFont menuFont = c->readFontEntry("menuFont", &defaultMenuFont);
+    QFont menuFont = c->readEntry("menuFont", defaultMenuFont);
 
     delete c;
     c = 0;

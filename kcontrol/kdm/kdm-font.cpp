@@ -115,13 +115,13 @@ void KDMFontWidget::load()
 
   // Read the fonts
   QFont font = stdFontChooser->font();
-  stdFontChooser->setFont(config->readFontEntry("StdFont", &font));
+  stdFontChooser->setFont(config->readEntry("StdFont", font));
   font = failFontChooser->font();
-  failFontChooser->setFont(config->readFontEntry("FailFont", &font));
+  failFontChooser->setFont(config->readEntry("FailFont", font));
   font = greetingFontChooser->font();
-  greetingFontChooser->setFont(config->readFontEntry("GreetFont",  &font));
+  greetingFontChooser->setFont(config->readEntry("GreetFont",  font));
 
-  aacb->setChecked(config->readEntry("AntiAliasing", QVariant(false)).toBool());
+  aacb->setChecked(config->readEntry("AntiAliasing", false));
 }
 
 

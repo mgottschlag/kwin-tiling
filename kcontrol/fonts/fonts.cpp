@@ -165,7 +165,7 @@ void FontUseItem::readFont()
 
   config->setGroup(_rcgroup);
   QFont tmpFnt(_default);
-  setFont( config->readFontEntry(_rckey, &tmpFnt), isFixedOnly() );
+  setFont( config->readEntry(_rckey, tmpFnt), isFixedOnly() );
   if (deleteme) delete config;
 }
 

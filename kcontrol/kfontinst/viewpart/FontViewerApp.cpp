@@ -74,7 +74,7 @@ CFontViewerAppMainWindow::CFontViewerAppMainWindow()
         QSize             defSize(450, 380);
         KConfigGroup cg(KGlobal::config(), CFG_GROUP);
 
-        resize(cg.readSizeEntry(CFG_SIZE_KEY, &defSize));
+        resize(cg.readEntry(CFG_SIZE_KEY, defSize));
         show();
     }
     else
