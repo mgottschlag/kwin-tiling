@@ -446,7 +446,7 @@ void KlipperWidget::readConfiguration( KConfig *kc )
     bReplayActionInHistory = kc->readEntry("ReplayActionInHistory", QVariant(false)).toBool();
     bNoNullClipboard = kc->readEntry("NoEmptyClipboard", QVariant(true)).toBool();
     bUseGUIRegExpEditor = kc->readEntry("UseGUIRegExpEditor", QVariant(true )).toBool();
-    history()->max_size( kc->readNumEntry("MaxClipItems", 7) );
+    history()->max_size( kc->readEntry("MaxClipItems", 7) );
     bIgnoreSelection = kc->readEntry("IgnoreSelection", QVariant(false)).toBool();
     bSynchronize = kc->readEntry("Synchronize", QVariant(false)).toBool();
 }

@@ -289,9 +289,9 @@ void URLGrabber::readConfiguration( KConfig *kc )
 {
     myActions->clear();
     kc->setGroup( "General" );
-    int num = kc->readNumEntry("Number of Actions", 0);
+    int num = kc->readEntry("Number of Actions", 0);
     myAvoidWindows = kc->readListEntry("No Actions for WM_CLASS");
-    myPopupKillTimeout = kc->readNumEntry( "Timeout for Action popups (seconds)", 8 );
+    myPopupKillTimeout = kc->readEntry( "Timeout for Action popups (seconds)", 8 );
     m_trimmed = kc->readEntry("Strip Whitespace before exec", QVariant(true)).toBool();
     QString group;
     for ( int i = 0; i < num; i++ ) {
@@ -438,7 +438,7 @@ ClipAction::ClipAction( KConfig *kc )
       myDescription( kc->readEntry( "Description" ) )
 {
     myCommands.setAutoDelete( true );
-    int num = kc->readNumEntry( "Number of commands" );
+    int num = kc->readEntry( "Number of commands" );
 
     // read the commands
     QString actionGroup = kc->group();
