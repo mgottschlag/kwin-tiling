@@ -112,7 +112,7 @@ void TaskManager::configure_startup()
         SIGNAL( gotRemoveStartup( const KStartupInfoId&, const KStartupInfoData& )),
         SLOT( killStartup( const KStartupInfoId& )));
     c.setGroup( "TaskbarButtonSettings" );
-    _startup_info->setTimeout( c.readUnsignedNumEntry( "Timeout", 30 ));
+    _startup_info->setTimeout( c.readEntry( "Timeout", 30 ));
 }
 
 #ifdef THUMBNAILING_POSSIBLE
