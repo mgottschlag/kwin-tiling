@@ -48,17 +48,17 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
 	//KConfig *config = kapp->config();
 
 	//config->setGroup( "Option" );
-	mDate = false;//config->readNumEntry( "date", FALSE );
-	mSecond = true;//config->readNumEntry( "second", TRUE );
-	mDigital = false;//config->readNumEntry( "digital", FALSE );
-	mBorder = false;//config->readNumEntry( "border", FALSE );
+	mDate = false;//config->readEntry( "date", FALSE );
+	mSecond = true;//config->readEntry( "second", TRUE );
+	mDigital = false;//config->readEntry( "digital", FALSE );
+	mBorder = false;//config->readEntry( "border", FALSE );
 
 	//config->setGroup( "Font" );
 	mFont.setFamily( QString::fromLatin1("Utopia")/*config->readEntry( "Family", "Utopia")*/ );
-	mFont.setPointSize( 51/*config->readNumEntry( "Point Size", 51)*/ );
-	mFont.setWeight( 75/*config->readNumEntry( "Weight", 75)*/ );
-	mFont.setItalic( TRUE/*config->readNumEntry( "Italic",TRUE )*/ );
-	mFont.setBold( TRUE/*config->readNumEntry( "Bold",TRUE )*/ );
+	mFont.setPointSize( 51/*config->readEntry( "Point Size", 51)*/ );
+	mFont.setWeight( 75/*config->readEntry( "Weight", 75)*/ );
+	mFont.setItalic( TRUE/*config->readEntry( "Italic",TRUE )*/ );
+	mFont.setBold( TRUE/*config->readEntry( "Bold",TRUE )*/ );
 
 	setFixedSize( 100, 100 );
 
