@@ -151,7 +151,7 @@ void KSysTrayCmd::refresh()
   if ( win ) {
     KConfig *appCfg = KGlobal::config();
     KConfigGroup configSaver(appCfg, "System Tray");
-    int iconWidth = configSaver.readNumEntry("systrayIconWidth", 22);
+    int iconWidth = configSaver.readEntry("systrayIconWidth", 22);
 
     // ksystraycmd's icon or app's icon
     if (ownIcon)
