@@ -60,7 +60,6 @@ KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
     if (K3URLDrag::decode(e, uris) && (uris.count() > 0)) {
 	KURL *url = new KURL(uris.first());
 
-	KImageIO::registerFormats();
 	if( KImageIO::canRead(KImageIO::type(url->fileName())) )
 	    return url;
 

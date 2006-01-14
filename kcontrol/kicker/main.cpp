@@ -22,7 +22,6 @@
 #include <kapplication.h>
 #include <kcmodulecontainer.h>
 #include <kdirwatch.h>
-#include <kimageio.h>
 #include <klistview.h>
 #include <kstaticdeleter.h>
 #include <kstandarddirs.h>
@@ -389,7 +388,6 @@ extern "C"
 
     KDE_EXPORT KCModule *create_kicker_appearance(QWidget *parent, const char * /*name*/)
     {
-        KImageIO::registerFormats();
         KGlobal::dirs()->addResourceType("tiles", KStandardDirs::kde_default("data") +
                 "kicker/tiles");
         KGlobal::dirs()->addResourceType("hb_pics", KStandardDirs::kde_default("data") +

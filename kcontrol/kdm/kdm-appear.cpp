@@ -338,7 +338,6 @@ bool KDMAppearanceWidget::setLogo(QString logo)
 
 void KDMAppearanceWidget::slotLogoButtonClicked()
 {
-    KImageIO::registerFormats();
     KFileDialog dialogue(locate("data", QLatin1String("kdm/pics/")),
 			 KImageIO::pattern( KImageIO::Reading ),
 			 this, 0, true);

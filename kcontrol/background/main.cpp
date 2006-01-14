@@ -24,7 +24,6 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <dcopclient.h>
-#include <kimageio.h>
 #include <kgenericfactory.h>
 #include <kdialog.h>
 #include "bgdialog.h"
@@ -63,8 +62,6 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &a
     setQuickHelp( m_base->quickHelp());
     layout->add(m_base);
     layout->addStretch();
-
-    KImageIO::registerFormats();
 
     // reparenting that is done.
     setAcceptDrops(true);
