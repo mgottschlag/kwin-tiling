@@ -585,6 +585,9 @@ void KBackgroundManager::slotTimeout()
 // Return a valid desk number.
 int KBackgroundManager::validateDesk(int desk)
 {
+    if (desk > (int)m_Renderer.size())
+        slotChangeNumberOfDesktops( m_pKwinmodule->numberOfDesktops() );
+
     if ( (desk <= 0) || (desk > (int)m_Renderer.size()) )
         return realDesktop();
 
