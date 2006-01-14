@@ -318,6 +318,36 @@ displace( const char *fn )
 }
 
 
+static char *
+locate( const char *exe )
+{
+	int len;
+	char *path, *pathe, *name, *thenam, nambuf[PATH_MAX+1];
+
+	if (!(path = getenv( "PATH" )))
+		return 0;
+	len = strlen( exe );
+	name = nambuf + PATH_MAX - len;
+	memcpy( name, exe, len + 1 );
+	*--name = '/';
+	do {
+		if (!(pathe = strchr( path, ':' )))
+			pathe = path + strlen( path );
+		len = pathe - path;
+		if (len && !(len == 1 && *path == '.')) {
+			thenam = name - len;
+			if (thenam >= nambuf) {
+				memcpy( thenam, path, len );
+				if (!access( thenam, X_OK ))
+					return mstrdup( thenam );
+			}
+		}
+		path = pathe;
+	} while (*path++ != '\0');
+	return 0;
+}
+
+
 /*
  * target data to be written to kdmrc
  */
@@ -606,7 +636,7 @@ static const char def_reset[] =
 #endif /* _AIX */
 " $USER\n";
 
-static const char def_session[] =
+static const char def_session1[] =
 "#! /bin/sh\n"
 "# Xsession - run as user\n"
 "\n"
@@ -640,7 +670,12 @@ static const char def_session[] =
 "  */csh|*/tcsh)\n"
 "    # [t]cshrc is always sourced automatically.\n"
 "    # Note that sourcing csh.login after .cshrc is non-standard.\n"
-"    eval `$SHELL -c 'if (-f /etc/csh.login) source /etc/csh.login > /dev/null; if (-f ~/.login) source ~/.login > /dev/null; /bin/sh -c export'`\n"
+"    xsess_tmp=";
+static const char def_session2[] =
+"\n"
+"    $SHELL -c \"if (-f /etc/csh.login) source /etc/csh.login; if (-f ~/.login) source ~/.login; /bin/sh -c export > $xsess_tmp\"\n"
+"    . $xsess_tmp\n"
+"    rm -f $xsess_tmp\n"
 "    ;;\n"
 "  *) # Plain sh, ksh, and anything we don't know.\n"
 "    [ -f /etc/profile ] && . /etc/profile\n"
@@ -1641,10 +1676,19 @@ mk_reset( Entry *ce, Section *cs ATTR_UNUSED )
 static void
 mk_session( Entry *ce, Section *cs ATTR_UNUSED )
 {
+	char *def_session;
+	const char *tmpf;
+
 	if ((old_scripts || (ce->active && inNewDir( ce->value ))) &&
 	    oldver >= 0x202)
 		linkfile( ce );
 	else {
+		tmpf = locate( "mktemp" ) ?
+		           "`mktemp`" :
+		           locate( "tempfile" ) ?
+		               "`tempfile`" :
+		               "$HOME/.xsession-env-$$";
+		ASPrintf( &def_session, "%s%s%s", def_session1, tmpf, def_session2 );
 		ce->value = KDMCONF "/Xsession";
 		ce->active = ce->written = 1;
 		writefile( ce->value, 0755, def_session );
