@@ -139,9 +139,9 @@ Krb5DisplayCCache( const char *dname, krb5_ccache *ccache_return, char **name )
 	if (!(ccname = Krb5CCacheName( dname )))
 		return ENOMEM;
 	Debug( "resolving Kerberos cache %s\n", ccname );
-	if ((code = krb5_cc_resolve( ctx, ccname, ccache_return )))
+	if ((code = krb5_cc_resolve( ctx, ccname, ccache_return )) || !name)
 		free( ccname );
-	else if (name)
+	else
 		*name = ccname;
 	return code;
 }
@@ -155,6 +155,9 @@ Krb5Init( const char *user, const char *passwd, const char *dname )
 	krb5_creds my_creds;
 	krb5_ccache ccache;
 	char *ccname;
+
+	if (!ctx)
+		return 0;
 
 	if ((code = krb5_parse_name( ctx, user, &me ))) {
 		LogError( "%s while parsing Krb5 user %\"s\n",
@@ -223,6 +226,9 @@ Krb5Destroy( const char *dname )
 {
 	krb5_error_code code;
 	krb5_ccache ccache;
+
+	if (!ctx)
+		return;
 
 	if ((code = Krb5DisplayCCache( dname, &ccache, 0 )))
 		LogError( "%s while getting Krb5 ccache to destroy\n",
