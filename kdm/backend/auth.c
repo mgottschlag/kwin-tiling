@@ -271,7 +271,7 @@ int
 SaveServerAuthorizations( struct display *d, Xauth **auths, int count )
 {
 	FILE *auth_file;
-	int i, ret;
+	int i;
 
 	if (!d->authFile && d->clientAuthFile && *d->clientAuthFile)
 		StrDup( &d->authFile, d->clientAuthFile );
@@ -289,7 +289,6 @@ SaveServerAuthorizations( struct display *d, Xauth **auths, int count )
 		}
 	}
 	Debug( "file: %s  auth: %p\n", d->authFile, auths );
-	ret = TRUE;
 	for (i = 0; i < count; i++) {
 		/*
 		 * User-based auths may not have data until
@@ -300,15 +299,16 @@ SaveServerAuthorizations( struct display *d, Xauth **auths, int count )
 			if (!XauWriteAuth( auth_file, auths[i] ) ||
 			    fflush( auth_file ) == EOF)
 			{
+				fclose( auth_file );
 				LogError( "Cannot write X server authorization file %s\n",
 				          d->authFile );
-				ret = FALSE;
 				free( d->authFile );
 				d->authFile = NULL;
+				return FALSE;
 			}
 	}
 	fclose( auth_file );
-	return ret;
+	return TRUE;
 }
 
 void
@@ -455,10 +455,8 @@ checkEntry( Xauth *auth )
 	return 0;
 }
 
-static int doWrite;
-
 static void
-writeAuth( FILE *file, Xauth *auth )
+writeAuth( FILE *file, Xauth *auth, int *ok )
 {
 	if (debugLevel & DEBUG_AUTH) /* normally too verbose */
 		Debug( "writeAuth: doWrite = %d\n"
@@ -467,29 +465,30 @@ writeAuth( FILE *file, Xauth *auth )
 		       "number:  %02[*:hhx\n"
 		       "name:    %02[*:hhx\n"
 		       "data:    %02[*:hhx\n",
-		       doWrite, auth->family,
+		       ok != 0, auth->family,
 		       auth->address_length, auth->address,
 		       auth->number_length, auth->number,
 		       auth->name_length, auth->name,
 		       auth->data_length, auth->data );
-	if (doWrite)
-		XauWriteAuth( file, auth );
+	if (ok && !XauWriteAuth( file, auth ))
+		*ok = FALSE;
 }
 
 static void
-writeAddr( int family, int addr_length, char *addr, FILE *file, Xauth *auth )
+writeAddr( int family, int addr_length, char *addr,
+           FILE *file, Xauth *auth, int *ok )
 {
 	auth->family = (unsigned short)family;
 	auth->address_length = addr_length;
 	auth->address = addr;
 	Debug( "writeAddr: writing and saving an entry\n" );
-	writeAuth( file, auth );
+	writeAuth( file, auth, ok );
 	if (!checkEntry( auth ))
 		saveEntry( auth );
 }
 
 static void
-DefineLocal( FILE *file, Xauth *auth )
+DefineLocal( FILE *file, Xauth *auth, int *ok )
 {
 #if !defined(NEED_UTSNAME) || defined(__hpux)
 	char displayname[100];
@@ -517,7 +516,8 @@ DefineLocal( FILE *file, Xauth *auth )
 	 * see), whereas gethostname() kindly truncates it for me.
 	 */
 	uname( &name );
-	writeAddr( FamilyLocal, strlen( name.nodename ), name.nodename, file, auth );
+	writeAddr( FamilyLocal, strlen( name.nodename ), name.nodename,
+	           file, auth, ok );
 #endif
 
 #if !defined(NEED_UTSNAME) || defined(__hpux)
@@ -543,7 +543,7 @@ DefineLocal( FILE *file, Xauth *auth )
 	if (strcmp( displayname, name.nodename ))
 # endif
 		writeAddr( FamilyLocal, strlen( displayname ), displayname,
-		           file, auth );
+		           file, auth, ok );
 #endif
 }
 
@@ -579,7 +579,7 @@ ifioctl (int fd, int cmd, char *arg)
 # include <ifaddrs.h>
 
 static void
-DefineSelf( FILE *file, Xauth *auth )
+DefineSelf( FILE *file, Xauth *auth, int *ok )
 {
 	struct ifaddrs *ifap, *ifr;
 	char *addr;
@@ -620,7 +620,7 @@ DefineSelf( FILE *file, Xauth *auth )
 			}
 		}
 # endif
-		writeAddr( family, len, addr, file, auth );
+		writeAddr( family, len, addr, file, auth, ok );
 	}
 	freeifaddrs( ifap );
 }
@@ -635,7 +635,7 @@ DefineSelf( FILE *file, Xauth *auth )
  * TLI version, written without sufficient documentation.
  */
 static void
-DefineSelf( int fd, FILE *file, Xauth *auth )
+DefineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 {
 	struct netbuf netb;
 	char addrret[1024]; /* easier than t_alloc */
@@ -645,7 +645,7 @@ DefineSelf( int fd, FILE *file, Xauth *auth )
 	if (t_getname( fd, &netb, LOCALNAME ) == -1)
 		t_error( "t_getname" );
 	/* what a kludge */
-	writeAddr( FamilyInternet, 4, netb.buf+4, file, auth );
+	writeAddr( FamilyInternet, 4, netb.buf+4, file, auth, ok );
 }
 
 #else
@@ -663,7 +663,7 @@ DefineSelf( int fd, FILE *file, Xauth *auth )
 #include <netinet/in_var.h>
 
 static void
-DefineSelf( int fd, FILE *file, Xauth *auth )
+DefineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 {
 	/*
 	 * The Wollongong drivers used by NCR SVR4/MP-RAS don't understand the
@@ -714,9 +714,10 @@ DefineSelf( int fd, FILE *file, Xauth *auth )
 		 * Ignore the 127.0.0.1 entry.
 		 */
 		if (IA_SIN( &ifaddr )->sin_addr.s_addr == htonl( 0x7f000001 ) )
-				continue;
+			continue;
 
-		writeAddr( FamilyInternet, 4, (char *)&(IA_SIN( &ifaddr )->sin_addr), file, auth );
+		writeAddr( FamilyInternet, 4, (char *)&(IA_SIN( &ifaddr )->sin_addr),
+		           file, auth, ok );
 
 	}
 	close( ipfd );
@@ -776,7 +777,7 @@ DefineSelf( int fd, FILE *file, Xauth *auth )
  * for this fd and add them to the selfhosts list.
  */
 static void
-DefineSelf( int fd, FILE *file, Xauth *auth )
+DefineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 {
 	char buf[2048], *cp, *cplim;
 	int len;
@@ -878,7 +879,7 @@ DefineSelf( int fd, FILE *file, Xauth *auth )
 #endif
 		}
 		Debug( "DefineSelf: write network address, length %d\n", len );
-		writeAddr( family, len, addr, file, auth );
+		writeAddr( family, len, addr, file, auth, ok );
 	}
 #if defined(SIOCGLIFNUM) && defined(SIOCGLIFCONF)
 	if (bufptr != buf)
@@ -892,7 +893,7 @@ DefineSelf( int fd, FILE *file, Xauth *auth )
  * for this fd and add them to the selfhosts list.
  */
 static void
-DefineSelf( int fd, int file, int auth )
+DefineSelf( int fd, int file, int auth, int *ok )
 {
 	int len;
 	caddr_t addr;
@@ -922,7 +923,7 @@ DefineSelf( int fd, int file, int auth )
 		         (int)hp->h_length );
 		if ( (family = ConvertAddr( &(saddr.sa), &len, &addr )) >= 0)
 			writeAddr( FamilyInternet, sizeof(inetaddr->sin_addr),
-			           (char *)(&inetaddr->sin_addr), file, auth );
+			           (char *)(&inetaddr->sin_addr), file, auth, ok );
 	}
 }
 
@@ -953,7 +954,7 @@ setAuthNumber( Xauth *auth, const char *name )
 }
 
 static void
-writeLocalAuth( FILE *file, Xauth *auth, const char *name )
+writeLocalAuth( FILE *file, Xauth *auth, const char *name, int *ok )
 {
 #if defined(STREAMSCONN) || !defined(HAVE_GETIFADDRS)
 	int fd;
@@ -964,11 +965,11 @@ writeLocalAuth( FILE *file, Xauth *auth, const char *name )
 # ifdef STREAMSCONN
 	fd = t_open( "/dev/tcp", O_RDWR, 0 );
 	t_bind( fd, NULL, NULL );
-	DefineSelf( fd, file, auth );
+	DefineSelf( fd, file, auth, ok );
 	t_unbind( fd );
 	t_close( fd );
 # elif defined(HAVE_GETIFADDRS)
-	DefineSelf( file, auth );
+	DefineSelf( file, auth, ok );
 # else
 #  ifdef TCPCONN
 #   if defined(IPv6) && defined(AF_INET6)
@@ -976,16 +977,16 @@ writeLocalAuth( FILE *file, Xauth *auth, const char *name )
 	if (fd < 0)
 #   endif
 	fd = socket( AF_INET, SOCK_STREAM, 0 );
-	DefineSelf( fd, file, auth );
+	DefineSelf( fd, file, auth, ok );
 	close( fd );
 #  endif
 #  ifdef DNETCONN
 	fd = socket( AF_DECnet, SOCK_STREAM, 0 );
-	DefineSelf( fd, file, auth );
+	DefineSelf( fd, file, auth, ok );
 	close( fd );
 #  endif
 # endif /* HAVE_GETIFADDRS */
-	DefineLocal( file, auth );
+	DefineLocal( file, auth, ok );
 }
 
 #ifdef XDMCP
@@ -1007,7 +1008,8 @@ ConvertAuthAddr( char *saddr, int *len, char **addr )
 }
 
 static void
-writeRemoteAuth( FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, const char *name )
+writeRemoteAuth( FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen,
+                 const char *name, int *ok )
 {
 	int family = FamilyLocal;
 	char *addr;
@@ -1021,9 +1023,9 @@ writeRemoteAuth( FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen, const 
 	if (family != FamilyLocal) {
 		Debug( "writeRemoteAuth: %d, %02[*:hhx\n",
 		       family, peerlen, addr );
-		writeAddr( family, peerlen, addr, file, auth );
+		writeAddr( family, peerlen, addr, file, auth, ok );
 	} else
-		writeLocalAuth( file, auth, name );
+		writeLocalAuth( file, auth, name, ok );
 }
 
 #endif /* XDMCP */
@@ -1051,8 +1053,8 @@ startUserAuth( char *buf, char *nbuf, FILE **old, FILE **new )
 		LogInfo( "Can't update authorization file in home dir %s\n", home );
 }
 
-static void
-endUserAuth( FILE *old, FILE *new, const char *nname )
+static int
+endUserAuth( FILE *old, FILE *new, const char *nname, int ok )
 {
 	Xauth *entry;
 	struct stat statb;
@@ -1064,14 +1066,25 @@ endUserAuth( FILE *old, FILE *new, const char *nname )
 		while ((entry = XauReadAuth( old ))) {
 			if (!checkEntry( entry )) {
 				Debug( "writing an entry\n" );
-				writeAuth( new, entry );
+				writeAuth( new, entry, &ok );
 			}
 			XauDisposeAuth( entry );
 		}
 		fclose( old );
 	}
+	if (fflush( new ) == EOF)
+		ok = FALSE;
 	fclose( new );
 	doneAddrs();
+	return ok;
+}
+
+static void
+undoUserAuth( const char *name, const char *new_name )
+{
+	LogInfo( "Can't save user authorization in home dir\n" );
+	unlink( new_name );
+	XauUnlockAuth( name );
 }
 
 static char *
@@ -1081,7 +1094,7 @@ moveUserAuth( const char *name, char *new_name, char *envname )
 		Debug( "unlink %s failed\n", name );
 	if (link( new_name, name )) {
 		Debug( "link failed %s %s\n", new_name, name );
-		LogError( "Can't move authorization into place\n" );
+		LogError( "Can't move user authorization into place\n" );
 		envname = new_name;
 	} else {
 		Debug( "new authorization moved into place\n" );
@@ -1098,7 +1111,7 @@ SetUserAuthorization( struct display *d )
 	char *name;
 	char *envname;
 	Xauth **auths;
-	int i;
+	int i, ok;
 	int magicCookie;
 	int data_len;
 	char name_buf[NBSIZE], new_name[NBSIZE + 2];
@@ -1111,6 +1124,7 @@ SetUserAuthorization( struct display *d )
 			envname = 0;
 			name = name_buf;
 		} else {
+		  fallback:
 			if (strlen( d->userAuthDir ) >= NBSIZE - 13)
 				return;
 			/*
@@ -1140,7 +1154,7 @@ SetUserAuthorization( struct display *d )
 			envname = name_buf;
 			old = 0;
 		}
-		doWrite = 1;
+		ok = TRUE;
 		Debug( "%d authorization protocols for %s\n", d->authNum, d->name );
 		/*
 		 * Write MIT-MAGIC-COOKIE-1 authorization first, so that
@@ -1154,11 +1168,11 @@ SetUserAuthorization( struct display *d )
 			{
 				magicCookie = i;
 				if ((d->displayType & d_location) == dLocal)
-					writeLocalAuth( new, auths[i], d->name );
+					writeLocalAuth( new, auths[i], d->name, &ok );
 #ifdef XDMCP
 				else
 					writeRemoteAuth( new, auths[i], (XdmcpNetaddr)d->peer.data,
-					                 d->peer.length, d->name );
+					                 d->peer.length, d->name, &ok );
 #endif
 				break;
 			}
@@ -1174,16 +1188,24 @@ SetUserAuthorization( struct display *d )
 				    !strncmp( auths[i]->name, "MIT-KERBEROS-5", 14 ))
 					auths[i]->data_length = 0;
 				if ((d->displayType & d_location) == dLocal)
-					writeLocalAuth( new, auths[i], d->name );
+					writeLocalAuth( new, auths[i], d->name, &ok );
 #ifdef XDMCP
 				else
 					writeRemoteAuth( new, auths[i], (XdmcpNetaddr)d->peer.data,
-					                 d->peer.length, d->name );
+					                 d->peer.length, d->name, &ok );
 #endif
 				auths[i]->data_length = data_len;
 			}
 		}
-		endUserAuth( old, new, new_name );
+		if (!endUserAuth( old, new, new_name, ok )) {
+			if (!name) {
+				LogError( "Can't save user authorization\n" );
+				return;
+			}
+			undoUserAuth( name, new_name );
+			initAddrs();
+			goto fallback;
+		}
 		if (name)
 			envname = moveUserAuth( name, new_name, envname );
 		if (envname) {
@@ -1208,19 +1230,19 @@ RemoveUserAuthorization( struct display *d )
 	Debug( "RemoveUserAuthorization\n" );
 	startUserAuth( name, new_name, &old, &new );
 	if (new) {
-		doWrite = 0;
 		for (i = 0; i < d->authNum; i++) {
 			if ((d->displayType & d_location) == dLocal)
-				writeLocalAuth( new, auths[i], d->name );
+				writeLocalAuth( new, auths[i], d->name, 0 );
 #ifdef XDMCP
 			else
 				writeRemoteAuth( new, auths[i], (XdmcpNetaddr)d->peer.data,
-				                 d->peer.length, d->name );
+				                 d->peer.length, d->name, 0 );
 #endif
 		}
-		doWrite = 1;
-		endUserAuth( old, new, new_name );
-		(void)moveUserAuth( name, new_name, 0 );
+		if (endUserAuth( old, new, new_name, TRUE ))
+			(void)moveUserAuth( name, new_name, 0 );
+		else
+			undoUserAuth( name, new_name );
 	}
 	Debug( "done RemoveUserAuthorization\n" );
 }
