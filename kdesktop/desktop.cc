@@ -397,7 +397,9 @@ KDesktop::slotStart()
 KDesktop::~KDesktop()
 {
   delete m_miniCli;
+  m_miniCli = 0; // see #120382
   delete bgMgr;
+  bgMgr = 0;
   delete startup_id;
 }
 
