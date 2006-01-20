@@ -93,7 +93,7 @@ public:
    */
   static QStringList configModules();
 
-public slots:
+public Q_SLOTS:
   void slotArrangeByNameCS();
   void slotArrangeByNameCI();
   void slotArrangeBySize();
@@ -162,7 +162,7 @@ private:
   static KRootWm * s_rootWm;
 
 
-private slots:
+private Q_SLOTS:
 
   void slotMenuItemActivated(int);
   void slotFileNewAboutToShow();

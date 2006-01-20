@@ -51,7 +51,7 @@ public:
 private:
     NewThemeWidget * m_base;
 
-private slots:
+private Q_SLOTS:
     void slotThemeNameChanged( const QString &_text );
 };
 

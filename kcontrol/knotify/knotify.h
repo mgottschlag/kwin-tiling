@@ -56,10 +56,10 @@ public:
     virtual void defaults();
     virtual void save();
 
-public slots:
+public Q_SLOTS:
     virtual void load();
 
-private slots:
+private Q_SLOTS:
     void slotAppActivated( const QString& app );
     void slotPlayerSettings();
 
@@ -82,7 +82,7 @@ public:
     void load();
     void save();
 
-protected slots:
+protected Q_SLOTS:
     virtual void slotApply();
     virtual void slotOk();
     void externalToggled( bool on );

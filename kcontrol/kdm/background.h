@@ -31,10 +31,10 @@ public:
     void save();
     void defaults();
     void makeReadOnly();
-signals:
+Q_SIGNALS:
     void changed(bool);
 
-private slots:
+private Q_SLOTS:
     void slotEnableChanged();
 private:
     void init();

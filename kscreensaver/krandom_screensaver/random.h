@@ -29,7 +29,7 @@ class KRandomSetup : public KDialogBase
 		QCheckBox *openGL;
 		QCheckBox *manipulateScreen;
 
-		private slots:
+		private Q_SLOTS:
 
 		void slotOk();
 

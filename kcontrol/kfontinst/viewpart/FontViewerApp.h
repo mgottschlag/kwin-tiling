@@ -45,7 +45,7 @@ class CFontViewerAppMainWindow : public KParts::MainWindow
     CFontViewerAppMainWindow();
     virtual ~CFontViewerAppMainWindow();
 
-    public slots:
+    public Q_SLOTS:
 
     void fileOpen();
 

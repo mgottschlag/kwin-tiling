@@ -24,9 +24,9 @@ class General_settings_tab
         General_settings_tab( QWidget* parent = NULL, const char* name = NULL );
         void read_data();
         void write_data() const;
-    public slots:
+    public Q_SLOTS:
         void clear_data();
-    protected slots:
+    protected Q_SLOTS:
         virtual void import_clicked();
     };
 

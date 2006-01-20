@@ -30,10 +30,10 @@ class SMServerConfigImpl : public SMServerConfigDlg  {
 public:
 	SMServerConfigImpl(QWidget *parent=0, const char *name=0);
 	~SMServerConfigImpl();
-public slots: // Public slots
+public Q_SLOTS: // Public slots
   /** No descriptions */
   void configChanged();
-signals: // Signals
+Q_SIGNALS: // Signals
   /** No descriptions */
   void changed();
 };

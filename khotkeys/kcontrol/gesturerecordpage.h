@@ -40,11 +40,11 @@ class GestureRecordPage : public KVBox
 
         const QString &getGesture() const { return _gest; }
 
-    protected slots:
+    protected Q_SLOTS:
         void slotRecorded(const QString &data);
          void slotResetClicked();
 
-    signals:
+    Q_SIGNALS:
         void gestureRecorded(bool);
 
     private:

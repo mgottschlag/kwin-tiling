@@ -40,7 +40,7 @@ private:
    KConfig *configFile;
    Q3ListView list;
    QTimer timer;
-private slots:
+private Q_SLOTS:
    void updateList();
 };
 

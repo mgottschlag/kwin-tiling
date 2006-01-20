@@ -34,7 +34,7 @@ public:
   void setText( const QString& docPath, const QString& text);
   void setBaseText();
 
-protected slots:
+protected Q_SLOTS:
   void urlClicked(const QString &);
   void mailClicked(const QString &,const QString &);
 

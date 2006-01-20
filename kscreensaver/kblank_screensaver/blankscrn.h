@@ -41,7 +41,7 @@ public:
 protected:
 	void readSettings();
 
-private slots:
+private Q_SLOTS:
 	void slotColor( const QColor & );
 	void slotOk();
 

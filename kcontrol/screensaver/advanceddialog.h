@@ -31,10 +31,10 @@ class KScreenSaverAdvancedDialog : public KDialogBase
 public:
     KScreenSaverAdvancedDialog(QWidget *parent, const char* name = 0);
       
-public slots:
+public Q_SLOTS:
     void slotOk();
          
-protected slots:
+protected Q_SLOTS:
     void slotPriorityChanged(int val);
     void slotChangeBottomRightCorner(int);
     void slotChangeBottomLeftCorner(int);

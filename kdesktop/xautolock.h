@@ -51,7 +51,7 @@ public:
     // internal
     bool ignoreWindow( WId );
     
-signals:
+Q_SIGNALS:
     void timeout();
 
 protected:

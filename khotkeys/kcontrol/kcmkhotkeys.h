@@ -51,7 +51,7 @@ class Module
         void set_daemon_disabled( bool disable );
         bool daemon_disabled() const;
         void import();
-    public slots:
+    public Q_SLOTS:
         void changed();
     protected:
         void set_new_current_action( bool save_old_P );
@@ -63,7 +63,7 @@ class Module
         bool listview_is_changed;
         bool deleting_action;
         Settings settings;
-    protected slots:
+    protected Q_SLOTS:
         void listview_current_action_changed();
         void new_action();
         void new_action_group();

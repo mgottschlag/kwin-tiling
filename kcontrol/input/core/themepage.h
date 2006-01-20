@@ -35,10 +35,10 @@ class ThemePage : public QWidget
 		void load();
 		void defaults();
 
-	signals:
+	Q_SIGNALS:
 		void changed( bool );
 
-	private slots:
+	private Q_SLOTS:
 		void selectionChanged( Q3ListViewItem * );
 
 	private:

@@ -66,10 +66,10 @@ public:
     ~AppTreeView();
     void fill();
 
-signals:
+Q_SIGNALS:
     void entrySelected(const QString&, const QString &, bool);
 
-protected slots:
+protected Q_SLOTS:
     void itemSelected(Q3ListViewItem *);
 
 protected:

@@ -117,7 +117,7 @@ public:
 	void getUserDefaults();
 	void getUserSoundScheme();
 
-public slots:
+public Q_SLOTS:
 	/** enables/disables the QCheckListItems in the klv_features
 		according to the level the slider moved. */
 	void slotEyeCandySliderMoved(int value);

@@ -70,7 +70,7 @@ class CKCmFontInst : public KCModule
 
     void    setMimeTypes(bool showBitmap);
 
-    public slots:
+    public Q_SLOTS:
 
     void    filterFonts();
     QString quickHelp() const;

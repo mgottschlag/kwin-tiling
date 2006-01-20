@@ -54,16 +54,16 @@ public:
 
 	bool eventFilter( QObject *o, QEvent *e );
 
-public slots:
+public Q_SLOTS:
 	void slotClearUsers();
 	void slotAddUsers( const QMap<QString,int> & );
 	void slotDelUsers( const QMap<QString,int> & );
 
-signals:
+Q_SIGNALS:
 	void changed( bool state );
 	void setMinMaxUID( int, int );
 
-private slots:
+private Q_SLOTS:
 	void slotMinMaxChanged();
 	void slotShowOpts();
 	void slotUpdateOptIn( Q3ListViewItem *item );

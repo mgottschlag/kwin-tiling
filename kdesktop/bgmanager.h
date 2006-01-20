@@ -71,10 +71,10 @@ public:
     QStringList wallpaperList(int desk);
     QStringList wallpaperFiles(int desk);
 
-signals:
+Q_SIGNALS:
     void initDone();
 
-private slots:
+private Q_SLOTS:
     void slotTimeout();
     void slotImageDone(int desk);
     void slotChangeDesktop(int);

@@ -48,7 +48,7 @@ public:
 	void slotKDEDescription();
 	/** resets the radio button selected to kde */
 	void setDefaults();
-signals: // Signals
+Q_SIGNALS: // Signals
 	/** emits either of: KDE, CDE, win or mac in save() depending
 	on the selection made by the user. */
 	void selectedOS(const QString&);

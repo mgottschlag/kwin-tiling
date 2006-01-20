@@ -36,7 +36,7 @@ public:
 	~KCMDnssd();
 	virtual void save();
 	virtual void load();
-private slots:
+private Q_SLOTS:
 	void wdchanged();
 private: 
 	void loadMdnsd();

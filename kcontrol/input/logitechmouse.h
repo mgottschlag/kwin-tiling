@@ -54,7 +54,7 @@ public:
     void applyChanges();
     void save(KConfig *config);
 
-protected slots:
+protected Q_SLOTS:
     void setChannel1();
     void setChannel2();
     void updateGUI();

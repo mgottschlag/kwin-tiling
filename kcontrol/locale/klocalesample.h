@@ -40,10 +40,10 @@ public:
                 QWidget *parent = 0, const char*name = 0);
   virtual ~KLocaleSample();
 
-public slots:
+public Q_SLOTS:
   void slotLocaleChanged();
 
-protected slots:
+protected Q_SLOTS:
   void slotUpdateTime();
 
 private:

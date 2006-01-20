@@ -51,16 +51,16 @@ public:
 	void defaults();
 	void makeReadOnly();
 
-public slots:
+public Q_SLOTS:
 	void slotClearUsers();
 	void slotAddUsers(const QMap<QString,int> &);
 	void slotDelUsers(const QMap<QString,int> &);
 
 
-signals:
+Q_SIGNALS:
 	void changed( bool state );
 
-private slots:
+private Q_SLOTS:
 	void slotPresChanged();
 	void slotChanged();
 	void slotSetAutoUser( const QString &user );

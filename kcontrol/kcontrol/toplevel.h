@@ -50,7 +50,7 @@ public:
 protected:
   void setupActions();
 
-protected slots:
+protected Q_SLOTS:
   void activateModule(ConfigModule *);
   void categorySelected(Q3ListViewItem *category);
   void newModule(const QString &name, const QString& docPath, const QString &quickhelp);

@@ -25,7 +25,7 @@ class WindowSelector
         void select();
     protected:
         virtual bool x11Event( XEvent* e );
-    signals:
+    Q_SIGNALS:
         void selected_signal( WId w );
     private:
         WId findRealWindow( WId w, int depth = 0 );

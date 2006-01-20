@@ -60,11 +60,11 @@ class CFontPreview : public QWidget
 
     CFcEngine & engine() { return itsEngine; }
 
-    public slots:
+    public Q_SLOTS:
 
     void        showFace(int face);
 
-    signals:
+    Q_SIGNALS:
 
     void        status(bool);
 

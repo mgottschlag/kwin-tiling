@@ -44,7 +44,7 @@ protected:
   void xkbControlsNotify(XkbControlsNotifyEvent *event);
 
 
-private slots:
+private Q_SLOTS:
 
   void activeWindowChanged(WId wid);
   void slotArtsBellTimeout();

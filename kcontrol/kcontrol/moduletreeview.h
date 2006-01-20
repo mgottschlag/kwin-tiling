@@ -77,11 +77,11 @@ public:
   void fill();
   QSize sizeHint() const;
 
-signals:
+Q_SIGNALS:
   void moduleSelected(ConfigModule*);
   void categorySelected(Q3ListViewItem*);
 
-protected slots:
+protected Q_SLOTS:
   void slotItemSelected(Q3ListViewItem*);
 
 protected:

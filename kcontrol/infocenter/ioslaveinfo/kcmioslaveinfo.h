@@ -52,7 +52,7 @@ protected:
     QByteArray helpData;
     KIO::Job *m_tfj;
 
-protected slots:
+protected Q_SLOTS:
 
     void showInfo(const QString& protocol);
     void showInfo(Q3ListBoxItem *item);

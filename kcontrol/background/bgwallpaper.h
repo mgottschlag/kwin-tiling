@@ -51,7 +51,7 @@ class BGMultiWallpaperDialog : public KDialogBase
 public:
    BGMultiWallpaperDialog(KBackgroundSettings *settings, QWidget *parent, const char *name=0);
 
-public slots:
+public Q_SLOTS:
    void slotAdd();
    void slotRemove();
    void slotMoveUp();

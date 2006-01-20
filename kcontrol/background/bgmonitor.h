@@ -38,7 +38,7 @@ public:
 
     BGMonitor(QWidget *parent, const char *name=0L);
 
-signals:
+Q_SIGNALS:
     void imageDropped(const QString &);
 
 protected:

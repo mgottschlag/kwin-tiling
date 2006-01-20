@@ -57,14 +57,14 @@ public:
 
   void populateKeywordList(ConfigModuleList *list);
 
-signals:
+Q_SIGNALS:
   void moduleSelected(ConfigModule *);
 
 protected:
   void populateKeyListBox(const QString& regexp);
   void populateResultListBox(const QString& keyword);
 
-protected slots:
+protected Q_SLOTS:
   void slotSearchTextChanged(const QString &);
   void slotKeywordSelected(const QString &);
   void slotModuleSelected(Q3ListBoxItem *item);

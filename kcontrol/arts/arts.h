@@ -62,7 +62,7 @@ public:
 
   bool artsdIsRunning();
 
-private slots:
+private Q_SLOTS:
 
   void slotChanged();
   void slotTestSound();
@@ -121,7 +121,7 @@ class KStartArtsProgressDialog : public KProgressDialog
 public:
    KStartArtsProgressDialog(KArtsModule *parent, const char *name,
                           const QString &caption, const QString &text);
-public slots:
+public Q_SLOTS:
    void slotProgress();
    void slotFinished();
 

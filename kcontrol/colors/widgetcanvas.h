@@ -97,7 +97,7 @@ public:
     int contrast;
     bool shadeSortColumn;
 
-signals:
+Q_SIGNALS:
     void widgetSelected( int );
     void colorDropped( int, const QColor&);
 	

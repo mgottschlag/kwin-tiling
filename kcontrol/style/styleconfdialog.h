@@ -32,10 +32,10 @@ public:
 
   bool isDirty() const;
 
-public slots:
+public Q_SLOTS:
   void setDirty(bool dirty);
 
-signals:
+Q_SIGNALS:
   void defaults();
   void save();
 

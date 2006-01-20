@@ -55,7 +55,7 @@ public:
 	static void setBeforeSession();
 	static bool beforeSession() { return before_session; }
 
-public slots: // Public slots
+public Q_SLOTS: // Public slots
 	/** calls all save functions after resetting all features/ OS/ theme selections to KDE default */
 	void setDefaults();
 	/** the cancel button is connected to the reject() slot of QDialog,
@@ -84,7 +84,7 @@ private:
 	bool os_dirty, eye_dirty, style_dirty;
 	static bool before_session;
 
-protected slots: // Public slots
+protected Q_SLOTS: // Public slots
 	/** restart kpersonalizer to run it in new language */
 	void slotRestart();
 

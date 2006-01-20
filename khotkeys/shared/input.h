@@ -50,7 +50,7 @@ class Kbd
         bool x11EventFilter( const XEvent* );                                                              
         void grab_shortcut( const KShortcut& shortcut_P );
         void ungrab_shortcut( const KShortcut& shortcut_P );
-    private slots:
+    private Q_SLOTS:
         void key_slot( QString key_P );
         void update_connections();
     private:

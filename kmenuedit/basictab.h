@@ -48,16 +48,16 @@ public:
     BasicTab( QWidget *parent=0, const char *name=0 );
 
     void apply();
-signals:
+Q_SIGNALS:
     void changed( MenuFolderInfo * );
     void changed( MenuEntryInfo * );
     void findServiceShortcut(const KShortcut&, KService::Ptr &);
 
-public slots:
+public Q_SLOTS:
     void setFolderInfo(MenuFolderInfo *folderInfo);
     void setEntryInfo(MenuEntryInfo *entryInfo);
     void slotDisableAction();
-protected slots:
+protected Q_SLOTS:
     void slotChanged();
     void launchcb_clicked();
     void systraycb_clicked();

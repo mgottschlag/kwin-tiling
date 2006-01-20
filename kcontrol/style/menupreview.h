@@ -38,7 +38,7 @@ public:
 	MenuPreview( QWidget* parent, int opacity, PreviewMode pvm );
 	~MenuPreview();
 
-public slots:
+public Q_SLOTS:
 	void setOpacity( int opacity );
 	void setPreviewMode( PreviewMode pvm );
 

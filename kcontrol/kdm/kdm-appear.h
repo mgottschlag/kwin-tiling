@@ -61,7 +61,7 @@ public:
 
 	bool eventFilter(QObject *, QEvent *);
 
-signals:
+Q_SIGNALS:
 	void changed( bool state );
 
 protected:
@@ -69,7 +69,7 @@ protected:
 	void iconLoaderDropEvent(QDropEvent *event);
 	bool setLogo(QString logo);
 
-private slots:
+private Q_SLOTS:
 	void slotAreaRadioClicked(int id);
 	void slotLogoButtonClicked();
 	void changed();

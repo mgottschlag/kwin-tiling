@@ -53,11 +53,11 @@ public:
   virtual void defaults();
   virtual QString quickHelp() const;
 
-signals:
+Q_SIGNALS:
   void languageChanged();
   void localeChanged();
 
-public slots:
+public Q_SLOTS:
   /**
    * Retranslates the current widget.
    */

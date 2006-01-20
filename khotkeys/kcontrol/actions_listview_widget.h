@@ -44,10 +44,10 @@ class Actions_listview_widget
             Action_listview_item* item_parent_P );
         Action_listview_item* recent_item;
         Action_listview_item* saved_current_item;
-    private slots:
+    private Q_SLOTS:
         void item_moved( Q3ListViewItem* item_P, Q3ListViewItem* was_after_P, Q3ListViewItem* after_P );
         void current_changed( Q3ListViewItem* item_P );
-    signals:
+    Q_SIGNALS:
         void current_action_changed();
     };
 

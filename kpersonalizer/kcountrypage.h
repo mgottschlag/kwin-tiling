@@ -49,7 +49,7 @@ private:
 	QString s_oldlocale;
 	KFindLanguage *flang;
 
-private slots: // Private slots
+private Q_SLOTS: // Private slots
 	void setLangForCountry(const QString &);
 	void setLanguageChanged();
 

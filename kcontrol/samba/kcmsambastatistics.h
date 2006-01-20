@@ -83,7 +83,7 @@ public:
   virtual ~StatisticsView() {};
   void saveSettings() {};
   void loadSettings() {};
-  public slots:
+  public Q_SLOTS:
 	void setListInfo(Q3ListView *list, int nrOfFiles, int nrOfConnections);
 private:
   KConfig *configFile;
@@ -99,7 +99,7 @@ private:
   QPushButton* calcButton, *clearButton;
   QCheckBox* expandedInfoCb, *expandedUserCb;
   int connectionsCount, filesCount, calcCount;
-private slots:
+private Q_SLOTS:
 	void clearStatistics();
   void calculate();
 };

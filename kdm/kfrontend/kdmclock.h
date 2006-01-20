@@ -37,7 +37,7 @@ class KdmClock : public QFrame {
 	virtual void showEvent( QShowEvent * );
 	virtual void paintEvent( QPaintEvent * );
 
-  private slots:
+  private Q_SLOTS:
 	void timeout();
 
   private:

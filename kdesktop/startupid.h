@@ -42,7 +42,7 @@ class StartupId
     protected:
         void start_startupid( const QString& icon );
         void stop_startupid();
-    protected slots:
+    protected Q_SLOTS:
         void update_startupid();
         void gotNewStartup( const KStartupInfoId& id, const KStartupInfoData& data );
         void gotStartupChange( const KStartupInfoId& id, const KStartupInfoData& data );

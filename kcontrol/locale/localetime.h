@@ -49,7 +49,7 @@ public:
 protected:
   void showEvent( QShowEvent *e );
 
-public slots:
+public Q_SLOTS:
   /**
    * Loads all settings from the current locale into the current widget.
    */
@@ -59,10 +59,10 @@ public slots:
    */
   void slotTranslate();
 
-signals:
+Q_SIGNALS:
   void localeChanged();
 
-private slots:
+private Q_SLOTS:
   // Time & dates
   void slotTimeFmtChanged(const QString &t);
   void slotDateFmtChanged(const QString &t);

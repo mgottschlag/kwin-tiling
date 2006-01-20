@@ -34,7 +34,7 @@ public:
     void defaults();
     QString quickHelp() const;
 
-public slots:
+public Q_SLOTS:
     void configChanged();
 
 private:

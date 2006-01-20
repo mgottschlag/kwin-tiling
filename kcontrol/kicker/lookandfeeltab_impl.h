@@ -39,14 +39,14 @@ public:
 
     QString quickHelp() const;
 
-signals:
+Q_SIGNALS:
     void changed();
 
 protected:
     void fillTileCombos();
     void previewBackground(const QString& themepath, bool isNew);
 
-protected slots:
+protected Q_SLOTS:
     void browseTheme();
     void browseTheme(const QString&);
     void enableTransparency( bool );

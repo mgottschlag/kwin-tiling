@@ -32,7 +32,7 @@ class advancedDialog : public KDialogBase
         advancedDialog(QWidget* parent, const char* name);
         ~advancedDialog();
 
-    protected slots:
+    protected Q_SLOTS:
         void load();
         void save();
         void changed();

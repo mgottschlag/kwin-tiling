@@ -59,9 +59,9 @@ public:
 protected:
 	Q3Dict<QString>  m_lookupDict,m_revLookupDict;
 
-protected slots:
+protected Q_SLOTS:
 	void slotComponentChanged(const QString&);
-signals:
+Q_SIGNALS:
 	void changed(bool);
 };
 
@@ -79,10 +79,10 @@ public:
 private:
 	KEMailSettings *pSettings;
 
-protected slots:
+protected Q_SLOTS:
 	void selectEmailClient();
 	void configChanged();
-signals:
+Q_SIGNALS:
 	void changed(bool);
 };
 
@@ -96,11 +96,11 @@ public:
 	virtual void save(KConfig *cfg);
 	virtual void defaults();
 
-protected slots:
+protected Q_SLOTS:
 	void selectTerminalApp();
 	void configChanged();
 
-signals:
+Q_SIGNALS:
 	void changed(bool);
 };
 
@@ -114,11 +114,11 @@ public:
 	virtual void save(KConfig *cfg);
 	virtual void defaults();
 
-protected slots:
+protected Q_SLOTS:
 	void selectBrowser();
 	void configChanged();
 
-signals:
+Q_SIGNALS:
 	void changed(bool);
 private:
 	QString m_browserExec;
@@ -143,11 +143,11 @@ private:
 	bool somethingChanged;
 	QWidget *configWidget;
 	QVBoxLayout *myLayout;
-protected slots:
+protected Q_SLOTS:
 	void emitChanged(bool);
 	void slotServiceSelected(Q3ListBoxItem *);
 
-signals:
+Q_SIGNALS:
 	void changed(bool);
 
 };

@@ -122,19 +122,19 @@ class KTimerDialog : public KDialogBase
      */
     void setMainWidget( QWidget *widget );
 
-  signals:
+  Q_SIGNALS:
     /**
      * Signal which is emitted once the timer has timed out.
      */
     void timerTimeout();
 
-  public slots:
+  public Q_SLOTS:
     /**
      * Execute the dialog modally - see @see QDialog .
      */
     int exec();
 
-  private slots:
+  private Q_SLOTS:
     /**
      * Updates the dialog with the current progress levels.
      */

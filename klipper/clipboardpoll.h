@@ -31,11 +31,11 @@ class ClipboardPoll
     Q_OBJECT
     public:
         ClipboardPoll( QWidget* parent );
-    signals:
+    Q_SIGNALS:
         void clipboardChanged( bool selectionMode );
     protected:
         virtual bool x11Event( XEvent* );
-    private slots:
+    private Q_SLOTS:
         void timeout();
     private:
         struct SelectionData

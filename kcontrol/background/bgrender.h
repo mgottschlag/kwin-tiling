@@ -54,17 +54,17 @@ public:
     bool isActive() { return m_State & Rendering; }
     void cleanup();
 
-public slots:
+public Q_SLOTS:
     void start(bool enableBusyCursor = false);
     void stop();
     void desktopResized();
 
-signals:
+Q_SIGNALS:
     void imageDone(int desk);
     void programFailure(int desk, int exitstatus); //Guaranteed either programFailure or 
     void programSuccess(int desk);                //programSuccess is emitted after imageDone
 
-private slots:
+private Q_SLOTS:
     void slotBackgroundDone(KProcess *);
     void render();
     void done();

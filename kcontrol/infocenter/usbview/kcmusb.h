@@ -31,7 +31,7 @@ public:
 
   void load();
 
-protected slots:
+protected Q_SLOTS:
 
   void selectionChanged(Q3ListViewItem *item);
   void refresh();

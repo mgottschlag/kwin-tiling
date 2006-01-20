@@ -30,7 +30,7 @@ public:
     MyApp() : KApplication(), lastTick( 0 ) {}
 protected:
     bool x11EventFilter( XEvent * );
-signals:
+Q_SIGNALS:
     void activity();
 private:
     time_t lastTick;

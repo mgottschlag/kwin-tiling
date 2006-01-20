@@ -35,7 +35,7 @@ class Gesture_triggers_tab
         virtual void edit_gesture_pressed1();
         virtual void edit_gesture_pressed2();
         virtual void edit_gesture_pressed3();
-    public slots:
+    public Q_SLOTS:
         void clear_data();
     private:
         QString gesture1, gesture2, gesture3;

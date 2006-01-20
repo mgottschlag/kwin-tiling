@@ -83,13 +83,13 @@ protected:
     void dragEnterEvent ( QDragEnterEvent * ev );
     void dropEvent ( QDropEvent * ev );
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted when some @p urls are dropped onto the kcm
      */
     void filesDropped(const KURL::List &urls);
 
-private slots:
+private Q_SLOTS:
     /**
      * Install a theme from a tarball (*.kth)
      */

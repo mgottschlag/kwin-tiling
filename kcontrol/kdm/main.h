@@ -49,11 +49,11 @@ public:
   void save();
   void defaults();
 
-public slots:
+public Q_SLOTS:
 
   void slotMinMaxUID(int min, int max);
 
-signals:
+Q_SIGNALS:
 
   void clearUsers();
   void addUsers(const QMap<QString,int> &);

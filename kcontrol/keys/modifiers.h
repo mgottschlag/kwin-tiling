@@ -20,7 +20,7 @@ class ModifiersModule : public QWidget
 
 	static void setupMacModifierKeys();
 
- signals:
+ Q_SIGNALS:
 	void changed( bool );
 
  protected:
@@ -42,7 +42,7 @@ class ModifiersModule : public QWidget
 	//  and also reads in the X modifier map.
 	void updateWidgets();
 
- protected slots:
+ protected Q_SLOTS:
 	void slotMacKeyboardClicked();
 	void slotMacSwapClicked();
 };

@@ -68,10 +68,10 @@ public:
   void makeVisible(ConfigModule *module);
   void fill();
 
-signals:
+Q_SIGNALS:
   void moduleSelected(ConfigModule*);
 
-protected slots:
+protected Q_SLOTS:
   void slotItemSelected(Q3ListViewItem*);
 
 protected:

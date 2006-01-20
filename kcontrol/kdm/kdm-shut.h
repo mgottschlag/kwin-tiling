@@ -42,10 +42,10 @@ public:
 
 	enum SdModes { SdAll, SdRoot, SdNone };
 
-signals:
+Q_SIGNALS:
 	void changed( bool state );
 	
-protected slots:
+protected Q_SLOTS:
 	void changed();
 
 private:

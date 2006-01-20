@@ -50,9 +50,9 @@ class LogView: public QWidget
       Q3ListView viewHistory;
       QCheckBox showConnOpen, showConnClose, showFileOpen, showFileClose;
       QPushButton updateButton;
-   private slots:
+   private Q_SLOTS:
       void updateList();
-   signals:
+   Q_SIGNALS:
       void contentsChanged(Q3ListView* list, int nrOfFiles, int nrOfConnections);
 };
 

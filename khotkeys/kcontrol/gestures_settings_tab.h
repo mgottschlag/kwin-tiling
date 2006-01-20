@@ -24,7 +24,7 @@ class Gestures_settings_tab
         Gestures_settings_tab( QWidget* parent = NULL, const char* name = NULL );
         void read_data();
         void write_data() const;
-    public slots:
+    public Q_SLOTS:
         void clear_data();
     };
 

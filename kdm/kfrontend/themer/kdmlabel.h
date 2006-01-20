@@ -65,7 +65,7 @@ protected:
 
 	QTimer *timer;
 
-public slots:
+public Q_SLOTS:
 	void update();
 
 private:

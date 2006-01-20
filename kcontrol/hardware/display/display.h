@@ -33,7 +33,7 @@ class KCMDisplay : public KCModule
     void load();
     void save();
 
-  private slots:
+  private Q_SLOTS:
     void moduleChanged(bool isChanged);
 
   private:

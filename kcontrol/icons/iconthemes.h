@@ -51,7 +51,7 @@ public:
 
   int buttons();
 
-protected slots:
+protected Q_SLOTS:
   void themeSelected(Q3ListViewItem *item);
   void installNewTheme();
   void removeSelectedTheme();

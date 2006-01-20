@@ -62,7 +62,7 @@ public:
 	 */
 	bool		applyProposedAndConfirm();
 
-public slots:
+public Q_SLOTS:
 	bool		confirm();
 
 public:
@@ -173,7 +173,7 @@ private:
 
 	KTimerDialog*	m_shownDialog;
 
-private slots:
+private Q_SLOTS:
 	void		desktopResized();
 	void		shownDialogDestroyed();
 };

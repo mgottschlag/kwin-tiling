@@ -33,7 +33,7 @@ public:
     void save();
     void defaults();
 
-public slots:
+public Q_SLOTS:
     void notChanged();
     void aboutToNotifyKicker();
 

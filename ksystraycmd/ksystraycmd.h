@@ -38,7 +38,7 @@ public:
 
   static WId findRealWindow( WId w, int depth = 0 );
 
-public slots:
+public Q_SLOTS:
   void refresh();
 
   void showWindow();
@@ -51,7 +51,7 @@ public slots:
   void quit();
   void quitClient();
 
-protected slots:
+protected Q_SLOTS:
   void clientExited();
 
   void windowAdded(WId w);

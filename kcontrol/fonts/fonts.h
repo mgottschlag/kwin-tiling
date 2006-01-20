@@ -70,7 +70,7 @@ public:
     void enableWidgets();
     int exec();
 
-protected slots:
+protected Q_SLOTS:
 
     void changed();
 
@@ -103,7 +103,7 @@ public:
     virtual void save();
     virtual void defaults();
 
-protected slots:
+protected Q_SLOTS:
     void fontSelected();
     void slotApplyFontDiff(); 
     void slotUseAntiAliasing();

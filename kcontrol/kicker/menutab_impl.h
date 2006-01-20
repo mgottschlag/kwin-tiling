@@ -36,7 +36,7 @@ class kSubMenuItem : public QObject, public QCheckListItem
 
         QString desktopFile();
 
-    signals:
+    Q_SIGNALS:
         void toggled(bool);
 
     protected:
@@ -56,10 +56,10 @@ public:
     void save();
     void defaults();
 
-signals:
+Q_SIGNALS:
     void changed();
 
-public slots:
+public Q_SLOTS:
     void launchMenuEditor();
 
 protected:

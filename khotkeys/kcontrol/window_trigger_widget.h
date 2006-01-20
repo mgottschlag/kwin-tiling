@@ -27,7 +27,7 @@ class Window_trigger_widget
         Window_trigger_widget( QWidget* parent_P = NULL, const char* name_P = NULL );
         void set_data( const Window_trigger* trigger_P );
         Window_trigger* get_data( Action_data* data_P ) const;
-    public slots:
+    public Q_SLOTS:
         void clear_data();
     };
 

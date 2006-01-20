@@ -36,7 +36,7 @@ class MyApplication : public KApplication
   public:
 	MyApplication( const char * );
 
-  private slots:
+  private Q_SLOTS:
 	void renderDone();
 	void slotTimeout();
 

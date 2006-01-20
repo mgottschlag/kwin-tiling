@@ -59,7 +59,7 @@ public:
 
     KMenu* contextMenu() { return KSystemTray::contextMenu(); };
 
-signals:
+Q_SIGNALS:
 
     void toggled();
 
@@ -155,7 +155,7 @@ k_dcop:
     QStringList getLayoutsList() { return m_list; }
     void forceSetXKBMap( bool set );
 
-protected slots:
+protected Q_SLOTS:
 
     void menuActivated(int id);
     void toggled();

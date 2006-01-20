@@ -47,7 +47,7 @@ public:
 protected:
   QString createOptionString();
 
-protected slots:
+protected Q_SLOTS:
 
   void moveUp();
   void moveDown();

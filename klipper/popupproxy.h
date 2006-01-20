@@ -56,7 +56,7 @@ public:
      */
     int buildParent( int index, const QRegExp& filter = QRegExp() );
 
-public slots:
+public Q_SLOTS:
     void slotAboutToShow();
     void slotHistoryChanged();
 private:

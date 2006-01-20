@@ -105,16 +105,16 @@ public:
     void selectMenu(const QString &menu);
     void selectMenuEntry(const QString &menuEntry);
     
-public slots:
+public Q_SLOTS:
     void currentChanged(MenuFolderInfo *folderInfo);
     void currentChanged(MenuEntryInfo *entryInfo);
     void findServiceShortcut(const KShortcut&, KService::Ptr &);
 
-signals:
+Q_SIGNALS:
     void entrySelected(MenuFolderInfo *folderInfo);
     void entrySelected(MenuEntryInfo *entryInfo);
     void disableAction();
-protected slots:
+protected Q_SLOTS:
     void itemSelected(Q3ListViewItem *);
     void slotDropped(QDropEvent *, Q3ListViewItem *, Q3ListViewItem *);
     void slotRMBPressed(Q3ListViewItem*, const QPoint&);

@@ -36,7 +36,7 @@ class KRandrPassivePopup
     protected:
 	virtual bool eventFilter( QObject* o, QEvent* e );
 	virtual bool x11Event( XEvent* e );
-    private slots:
+    private Q_SLOTS:
 	void slotPositionSelf();
     private:
         KRandrPassivePopup( QWidget *parent=0, Qt::WFlags f=0 );

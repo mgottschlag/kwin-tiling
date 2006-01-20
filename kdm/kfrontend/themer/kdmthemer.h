@@ -80,7 +80,7 @@ public:
 	// must be called by parent widget
 	void widgetEvent( QEvent *e );
 
-signals:
+Q_SIGNALS:
 	void activated( const QString &id );
 
 private:

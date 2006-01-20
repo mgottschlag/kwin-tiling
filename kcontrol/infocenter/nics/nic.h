@@ -33,7 +33,7 @@ class KCMNic:public KCModule
    public:
       KCMNic(QWidget *parent=0, const char * name=0, const QStringList &list = QStringList( ));
 
-   protected slots:
+   protected Q_SLOTS:
       void update();
 
    protected:

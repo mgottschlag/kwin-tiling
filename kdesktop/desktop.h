@@ -46,7 +46,7 @@ class KRootWidget : public QObject
 public:
    KRootWidget();
    bool eventFilter( QObject *, QEvent * e );
-signals:
+Q_SIGNALS:
    void wheelRolled( int delta );
    void colorDropEvent( QDropEvent* e );
    void imageDropEvent( QDropEvent* e );
@@ -99,7 +99,7 @@ public:
   // ## hack ##
   KDIconView *iconView() const { return m_pIconView; }
 
-private slots:
+private Q_SLOTS:
 
   void workAreaChanged();
 
@@ -163,7 +163,7 @@ protected:
   virtual void setIconsEnabled( bool enable );
   virtual bool event ( QEvent * e );
 
-private slots:
+private Q_SLOTS:
   void desktopResized();
 
 private:

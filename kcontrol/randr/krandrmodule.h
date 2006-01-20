@@ -38,7 +38,7 @@ public:
 
 	static void performApplyOnStartup();
 
-protected slots:
+protected Q_SLOTS:
 	void slotScreenChanged(int screen);
 	void slotRotationChanged();
 	void slotSizeChanged(int index);

@@ -44,10 +44,10 @@ class AppletTab : public AppletTabBase
 
   QString quickHelp() const;
 
- signals:
+ Q_SIGNALS:
   void changed();
 
- protected slots:
+ protected Q_SLOTS:
   void level_changed(int level);
   void trusted_selection_changed(QListViewItem *);
   void available_selection_changed(QListViewItem *);

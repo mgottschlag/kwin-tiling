@@ -44,7 +44,7 @@ public:
 	bool writeSettings( const QString& sGroup, KConfig* pConfig );
 	bool writeSettingsGlobal( const QString& sGroup );
 
-public slots:
+public Q_SLOTS:
 	//void slotPreviewScheme( int );
 	//void slotAdd();
 	//void slotSave();
@@ -54,7 +54,7 @@ public slots:
         //void updateKeys( const KAccelActions* map_P );
 	//void readSchemeNames();
 
-signals:
+Q_SIGNALS:
 	void keyChange();
         //void keysChanged( const KAccelActions* map_P );
 

@@ -32,11 +32,11 @@ class KHListView
         virtual void clearSelection();
         bool forceSelect() const;
         void setForceSelect( bool force_P );
-    signals:
+    Q_SIGNALS:
         void current_changed( Q3ListViewItem* item_P );
     protected:
         virtual void contentsDropEvent (QDropEvent*);
-    private slots:
+    private Q_SLOTS:
         void slot_selection_changed( Q3ListViewItem* item_P );
         void slot_selection_changed();
         void slot_current_changed( Q3ListViewItem* item_P );

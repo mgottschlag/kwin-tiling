@@ -43,10 +43,10 @@ class ModuleMenu : public KMenu
 public:
   ModuleMenu(ConfigModuleList *list, QWidget * parent = 0, const char * name = 0);
 
-signals:
+Q_SIGNALS:
   void moduleActivated(ConfigModule*);
 
-private slots:
+private Q_SLOTS:
   void moduleSelected(int id);
 
 protected:

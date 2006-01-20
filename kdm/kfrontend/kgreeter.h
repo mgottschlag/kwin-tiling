@@ -70,7 +70,7 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 	KGreeter( bool themed = false );
 	~KGreeter();
 
-  public slots:
+  public Q_SLOTS:
 	void accept();
 	void reject();
 	void slotUserClicked( Q3ListViewItem * );
@@ -100,7 +100,7 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 	static int curPlugin;
 	static PluginList pluginList;
 
-  private slots:
+  private Q_SLOTS:
 	void slotLoadPrevWM();
 
   public: // from KGVerifyHandler
@@ -142,7 +142,7 @@ class KThemedGreeter : public KGreeter {
 	static QString timedUser;
 	static int timedDelay;
 
-  public slots:
+  public Q_SLOTS:
 	void slotThemeActivated( const QString &id );
 	void slotSessMenu();
 	void slotActionMenu();

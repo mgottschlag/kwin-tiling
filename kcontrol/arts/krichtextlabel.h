@@ -49,7 +49,7 @@ public:
   virtual QSize sizeHint() const;
   QSizePolicy sizePolicy() const;
 
-public slots:
+public Q_SLOTS:
   void setText( const QString & );
 
 protected:

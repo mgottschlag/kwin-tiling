@@ -37,7 +37,7 @@ class KConsole : public Q3TextEdit {
 	KConsole( QWidget *_parent = 0 );
 	~KConsole();
 
-  private slots:
+  private Q_SLOTS:
 	void slotData();
 
   private:

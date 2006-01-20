@@ -27,9 +27,9 @@ class Command_url_widget
         Command_url_widget( QWidget* parent_P = NULL, const char* name_P = NULL );
         void set_data( const Command_url_action* data_P );
         Command_url_action* get_data( Action_data* data_P ) const;
-    public slots:
+    public Q_SLOTS:
         void clear_data();
-    protected slots:
+    protected Q_SLOTS:
         virtual void browse_pressed();
     };
 

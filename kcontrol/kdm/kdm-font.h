@@ -37,10 +37,10 @@ public:
 	void defaults();
 	void makeReadOnly();
 
-signals:
+Q_SIGNALS:
 	void changed( bool state );
 
-protected slots:
+protected Q_SLOTS:
     void configChanged();
     void set_def();
 

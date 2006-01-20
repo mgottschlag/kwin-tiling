@@ -40,7 +40,7 @@ class Action_list_widget
         virtual ~Action_list_widget();
         void set_data( const Action_list* data_P );
         Action_list* get_data( Action_data* data_P ) const;
-    public slots:
+    public Q_SLOTS:
         void clear_data();
     protected:
         Action_list_item* create_listview_item( Action* action_P, Q3ListView* parent1_P,
@@ -48,7 +48,7 @@ class Action_list_widget
         void edit_listview_item( Action_list_item* item_P );
         enum type_t { TYPE_COMMAND_URL_ACTION, TYPE_MENUENTRY_ACTION, TYPE_DCOP_ACTION,
             TYPE_KEYBOARD_INPUT_ACTION, TYPE_ACTIVATE_WINDOW_ACTION };
-    protected slots:
+    protected Q_SLOTS:
         void new_selected( int type_P );
         virtual void copy_pressed();
         virtual void delete_pressed();

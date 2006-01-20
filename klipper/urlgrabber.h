@@ -89,13 +89,13 @@ private:
   bool m_trimmed;
   KConfig* m_config;
 
-private slots:
+private Q_SLOTS:
   void slotActionMenu() { actionMenu( true ); }
   void slotItemSelected( int );
   void slotKillPopupMenu();
 
 
-signals:
+Q_SIGNALS:
     void sigPopup( QMenu * );
     void sigDisablePopup();
 

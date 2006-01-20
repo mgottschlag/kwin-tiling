@@ -39,7 +39,7 @@ public:
 	void       save();
 	void       defaults();
 
-protected slots:
+protected Q_SLOTS:
 	void slotReload();
 	void slotStartService();
 	void slotStopService();
@@ -67,7 +67,7 @@ class CheckListItem : public QObject, public Q3CheckListItem
 public:
 	CheckListItem(Q3ListView* parent, const QString &text);
 	~CheckListItem() { }
-signals:
+Q_SIGNALS:
 	void changed(Q3CheckListItem*);
 protected:
 	virtual void stateChange(bool);

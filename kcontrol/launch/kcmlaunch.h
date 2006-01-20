@@ -40,7 +40,7 @@ class LaunchConfig : public KCModule
     void save();
     void defaults();
 
-  protected slots:
+  protected Q_SLOTS:
 
     void checkChanged();
     void slotBusyCursor(int);

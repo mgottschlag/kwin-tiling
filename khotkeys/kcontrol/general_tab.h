@@ -30,11 +30,11 @@ class General_tab
         General_tab( QWidget* parent_P = NULL, const char* name_P = NULL );
         void set_data( const Action_data* data_P );
         void get_data( QString& name_O, QString& comment_O, bool& enabled_O );
-    public slots:
+    public Q_SLOTS:
         void clear_data();
-    signals:
+    Q_SIGNALS:
         void action_type_changed( int type_P );
-    protected slots:
+    protected Q_SLOTS:
         void action_name_changed( const QString& name_P );
     };
     

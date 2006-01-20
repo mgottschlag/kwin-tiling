@@ -51,7 +51,7 @@ public:
     GeneralWidget( QWidget *parent, const char *name );
     ~GeneralWidget();
 
-private slots:
+private Q_SLOTS:
     void historySizeChanged( int value );
     void slotClipConfigChanged();
 
@@ -100,7 +100,7 @@ public:
     void setWMClasses( const QStringList& items ) { m_wmClasses = items; }
     QStringList wmClasses() const                 { return m_wmClasses; }
 
-private slots:
+private Q_SLOTS:
     void slotAddAction();
     void slotDeleteAction();
     void slotItemChanged( Q3ListViewItem *, const QPoint& , int );

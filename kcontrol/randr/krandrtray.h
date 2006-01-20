@@ -39,7 +39,7 @@ public:
 
 	void configChanged();
 
-protected slots:
+protected Q_SLOTS:
 	void slotScreenActivated();
 	void slotResolutionChanged(int parameter);
 	void slotOrientationChanged(int parameter);

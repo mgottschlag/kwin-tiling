@@ -9,10 +9,10 @@ class KDE_EXPORT BackgroundPlugin
     public:
         BackgroundPlugin();
 
-    signals:
+    Q_SIGNALS:
         void update();
 
-    protected slots:
+    protected Q_SLOTS:
         virtual void compose(QPainter *p, const QRect &dirtyRect) =0;
         virtual void loadFile(const QString &fileName);
 

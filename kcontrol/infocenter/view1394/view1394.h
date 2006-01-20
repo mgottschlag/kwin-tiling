@@ -50,7 +50,7 @@ class View1394: public KCModule
       View1394(KInstance *inst,QWidget *parent = 0L);
       virtual ~View1394();
 
-   public slots: // Public slots
+   public Q_SLOTS: // Public slots
       void rescanBus();
       void generateBusReset();
 
@@ -62,7 +62,7 @@ class View1394: public KCModule
       bool m_insideRescanBus;
       QTimer m_rescanTimer;
       OuiDb *m_ouiDb;
-   private slots:
+   private Q_SLOTS:
       void callRaw1394EventLoop(int fd);
 };
 #endif

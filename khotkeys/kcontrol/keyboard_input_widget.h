@@ -27,9 +27,9 @@ class Keyboard_input_widget
         Keyboard_input_widget( QWidget* parent_P = NULL, const char* name_P = NULL );
         void set_data( const Keyboard_input_action* data_P );
         Keyboard_input_action* get_data( Action_data* data_P ) const;
-    public slots:
+    public Q_SLOTS:
         void clear_data();
-    protected slots:
+    protected Q_SLOTS:
         virtual void modify_pressed(); 
     };
 

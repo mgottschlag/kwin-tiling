@@ -96,7 +96,7 @@ public:
      */
     void setOwner(QString name);
 
-signals:
+Q_SIGNALS:
     /** 
      * This signal is emitted when the selection providing the named pixmap
      * is disowned. This means that said pixmap won't be served anymore by 

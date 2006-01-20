@@ -70,7 +70,7 @@ public:
      */
     virtual void setBlankOnly( bool blankOnly );
 
-protected slots:
+protected Q_SLOTS:
     void idleTimeout();
     void lockProcessExited();
 

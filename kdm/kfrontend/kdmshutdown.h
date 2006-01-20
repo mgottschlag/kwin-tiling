@@ -56,7 +56,7 @@ class KDMShutdownBase : public FDialog, public KGVerifyHandler {
 	KDMShutdownBase( int _uid, QWidget *_parent );
 	virtual ~KDMShutdownBase();
 
-  protected slots:
+  protected Q_SLOTS:
 	virtual void accept();
 
   protected:
@@ -74,7 +74,7 @@ class KDMShutdownBase : public FDialog, public KGVerifyHandler {
 #endif
 	bool mayNuke, doesNuke, mayOk, maySched;
 
-  private slots:
+  private Q_SLOTS:
 	void slotSched();
 	void slotActivatePlugMenu();
 
@@ -104,13 +104,13 @@ class KDMShutdown : public KDMShutdownBase {
 	KDMShutdown( int _uid, QWidget *_parent = 0 );
 	static void scheduleShutdown( QWidget *_parent = 0 );
 
-  protected slots:
+  protected Q_SLOTS:
 	virtual void accept();
 
   protected:
 	virtual void accepted();
 
-  private slots:
+  private Q_SLOTS:
 	void slotTargetChanged();
 	void slotWhenChanged();
 
@@ -136,7 +136,7 @@ class KDMRadioButton : public QRadioButton {
   private:
 	virtual void mouseDoubleClickEvent( QMouseEvent * );
 
-  signals:
+  Q_SIGNALS:
 	void doubleClicked();
 
 };
@@ -149,7 +149,7 @@ class KDMDelayedPushButton : public KPushButton {
 	KDMDelayedPushButton( const KGuiItem &item, QWidget *parent );
 	void setPopup( QMenu *pop );
 
-  private slots:
+  private Q_SLOTS:
 	void slotTimeout();
 	void slotPressed();
 	void slotReleased();
@@ -168,7 +168,7 @@ class KDMSlimShutdown : public FDialog {
 	~KDMSlimShutdown();
 	static void externShutdown( int type, const char *os, int uid );
 
-  private slots:
+  private Q_SLOTS:
 	void slotHalt();
 	void slotReboot();
 	void slotReboot( int );

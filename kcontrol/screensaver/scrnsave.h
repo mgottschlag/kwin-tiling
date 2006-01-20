@@ -50,7 +50,7 @@ public:
     void updateValues();
     void readSettings();
 
-protected slots:
+protected Q_SLOTS:
     void slotEnable( bool );
     void slotScreenSaver( Q3ListViewItem* );
     void slotSetup();

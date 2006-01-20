@@ -55,12 +55,12 @@ public:
   const KAboutData *aboutData() const;
 
 
-public slots:
+public Q_SLOTS:
 
   void deleteClient();
 
 
-private slots:
+private Q_SLOTS:
 
   void clientClosed();
   void clientChanged(bool state);
@@ -68,7 +68,7 @@ private slots:
   void rootExited(KProcess *proc);
 
 
-signals:
+Q_SIGNALS:
 
   void changed(ConfigModule *module);
   void childClosed();

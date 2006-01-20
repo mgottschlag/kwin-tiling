@@ -38,7 +38,7 @@ class ChooserDlg : public KGDialog {
   public:
 	ChooserDlg();
 
-  public slots:
+  public Q_SLOTS:
 	void slotReadPipe();
 	void addHostname();
 //	void slotHelp();

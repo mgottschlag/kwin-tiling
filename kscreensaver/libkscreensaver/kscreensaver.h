@@ -113,13 +113,13 @@ public:
 
     typedef void (KBlankEffect::*BlankEffect)();
 
-signals:
+Q_SIGNALS:
     /**
      * emitted when a blanking effect has completed.
      */
     void doneBlank();
 
-protected slots:
+protected Q_SLOTS:
     void timeout();
 
 protected:

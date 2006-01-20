@@ -52,10 +52,10 @@ class QXTimer : public QObject {
 	void suspend();
 	void resume();
 
-  signals:
+  Q_SIGNALS:
 	void timeout();
 
-  private slots:
+  private Q_SLOTS:
 	void slotTimeout();
 
   private:
@@ -124,7 +124,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	static PluginList init( const QStringList &plugins );
 	static void done();
 
-  public slots:
+  public Q_SLOTS:
 	void start();
 
   protected:
@@ -163,7 +163,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	bool scheduleAutoLogin( bool initial );
 	void doReject( bool initial );
 
-  private slots:
+  private Q_SLOTS:
 	//virtual void slotPluginSelected( int id ) = 0;
 	void slotTimeout();
 	void slotActivity();
@@ -200,7 +200,7 @@ class KGStdVerify : public KGVerify {
 	QLabel *failedLabel;
 	int failedLabelState;
 
-  private slots:
+  private Q_SLOTS:
 	void slotPluginSelected( int id );
 };
 
@@ -221,7 +221,7 @@ class KGThemedVerify : public KGVerify {
   protected:
 	void updateStatus();
 
-  private slots:
+  private Q_SLOTS:
 	void slotPluginSelected( int id );
 };
 
@@ -235,7 +235,7 @@ class KGChTok : public FDialog, public KGVerifyHandler {
 	         KGreeterPlugin::Function func, KGreeterPlugin::Context ctx );
 	~KGChTok();
 
-  public slots:
+  public Q_SLOTS:
 	void accept();
 
   private:

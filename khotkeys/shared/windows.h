@@ -50,13 +50,13 @@ class Windows
         WId find_window( const Windowdef_list* window_P );
         static WId window_at_position( int x, int y );
         static void activate_window( WId id_P );
-    signals:
+    Q_SIGNALS:
         void window_added( WId window_P );
         void window_removed( WId window_P );
         void active_window_changed( WId window_P );
         void window_changed( WId window_P );
         void window_changed( WId window_P, unsigned int flags_P );
-    protected slots:
+    protected Q_SLOTS:
         void window_added_slot( WId window_P );
         void window_removed_slot( WId window_P );
         void active_window_changed_slot( WId window_P );

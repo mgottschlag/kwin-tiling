@@ -35,13 +35,13 @@ public:
     void save();
     void defaults();
 
-signals:
+Q_SIGNALS:
     void changed();
 
-public slots:
+public Q_SLOTS:
     void panelPositionChanged(int);
 
-protected slots:
+protected Q_SLOTS:
     void backgroundModeClicked();
     void infoUpdated();
     void storeInfo();

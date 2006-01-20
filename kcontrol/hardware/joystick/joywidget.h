@@ -47,11 +47,11 @@ class JoyWidget : public QWidget
     // initialize list of possible devices and open the first available
     void init();
 
-  public slots:
+  public Q_SLOTS:
     // reset calibration values to their value when this KCM was started
     void resetCalibration();
 
-  private slots:
+  private Q_SLOTS:
     void checkDevice();
     void deviceChanged(const QString &dev);
     void traceChanged(bool);

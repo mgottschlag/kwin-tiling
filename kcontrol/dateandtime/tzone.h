@@ -41,10 +41,10 @@ public:
   void	save();
   void  load();
 
-signals:
+Q_SIGNALS:
 	void zoneChanged(bool);
 
-protected slots:
+protected Q_SLOTS:
   void handleZoneChange() {emit zoneChanged( TRUE );}
 
 private:

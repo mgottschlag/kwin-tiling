@@ -36,14 +36,14 @@ class Condition_list_widget
         virtual ~Condition_list_widget();
         void set_data( const Condition_list* data_P );
         Condition_list* get_data( Action_data_base* data_P ) const;
-    public slots:
+    public Q_SLOTS:
         void clear_data();
     protected:
         Condition_list_item* create_listview_item( Condition* condition_P, Q3ListView* parent1_P,
             Condition_list_item* parent2_P, Q3ListViewItem* after_P, bool copy_P );
         void edit_listview_item( Condition_list_item* item_P );
         enum type_t { TYPE_ACTIVE_WINDOW, TYPE_EXISTING_WINDOW, TYPE_NOT, TYPE_AND, TYPE_OR };
-    protected slots:
+    protected Q_SLOTS:
         void new_selected( int type_P );
         virtual void copy_pressed();
         virtual void delete_pressed();

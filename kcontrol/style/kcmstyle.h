@@ -88,7 +88,7 @@ protected:
 	void loadMisc( KConfig& config );
 	void addWhatsThis();
 
-protected slots:
+protected Q_SLOTS:
 	void styleSpecificConfig();
 	void updateConfigButton();
 

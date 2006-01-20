@@ -47,10 +47,10 @@ public:
      */
     void setCategory( Q3ListViewItem* category, const QString& caption);
 
-signals:
+Q_SIGNALS:
     void moduleSelected(ConfigModule *);
 
-private slots:
+private Q_SLOTS:
     void slotModuleLinkClicked( const KURL& );
 
 private:

@@ -160,7 +160,7 @@ class CKFileFontView : public KListView, public KFileView
     void                determineIcon(CFontListViewItem *item);
     Q3ScrollView *       scrollWidget() const { return (Q3ScrollView*) this; }
 
-    signals:
+    Q_SIGNALS:
     // The user dropped something.
     // fileItem points to the item dropped on or can be 0 if the
     // user dropped on empty space.
@@ -183,11 +183,11 @@ class CKFileFontView : public KListView, public KFileView
 
     int itsSortingCol;
 
-    protected slots:
+    protected Q_SLOTS:
 
     void                slotSelectionChanged();
 
-    private slots:
+    private Q_SLOTS:
 
     void                slotSortingChanged(int c);
     void                selected(Q3ListViewItem *item);

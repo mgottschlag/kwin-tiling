@@ -59,7 +59,7 @@ public:
 
    void makeReadOnly();
 
-public slots:
+public Q_SLOTS:
    void slotAdd();
    void slotRemove();
    void slotModify();
@@ -69,7 +69,7 @@ protected:
    void removeProgram(const QString &name);
    void selectProgram(const QString &name);
 
-protected slots:
+protected Q_SLOTS:
    void slotProgramItemClicked(Q3ListViewItem *item);
    void slotProgramItemDoubleClicked(Q3ListViewItem *item);
    void slotProgramChanged();
@@ -100,7 +100,7 @@ public:
     /** The program name is here in case the user changed it */
     QString program()const;
 
-public slots:
+public Q_SLOTS:
     void slotOk();
 
 private:

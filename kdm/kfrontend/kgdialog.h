@@ -49,7 +49,7 @@ class KGDialog : public FDialog {
   public:
 	KGDialog( bool themed = false );
 
-  public slots:
+  public Q_SLOTS:
 	void slotActivateMenu( int id );
 	void slotExit();
 	void slotSwitch();
@@ -73,7 +73,7 @@ class KGDialog : public FDialog {
 	KConsole *consoleView;
 #endif
 
-  private slots:
+  private Q_SLOTS:
 	void slotDisplaySelected( int vt );
 	void slotPopulateDisplays();
 

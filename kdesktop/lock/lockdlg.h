@@ -54,7 +54,7 @@ protected:
     virtual void timerEvent(QTimerEvent *);
     virtual bool eventFilter(QObject *, QEvent *);
 
-private slots:
+private Q_SLOTS:
     void slotSwitchUser();
     void slotSessionActivated();
     void slotStartNewSession();

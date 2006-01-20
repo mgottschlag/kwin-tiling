@@ -52,7 +52,7 @@ public:
 k_dcop:
     void jumpToPanel(const QString& panelConfig);
 
-signals:
+Q_SIGNALS:
     void positionPanelChanged(int);
     void hidingPanelChanged(int);
     void extensionInfoChanged();
@@ -66,7 +66,7 @@ protected:
     void init();
     void setupExtensionInfo(KConfig& c, bool checkExists, bool reloadIfExists = false);
 
-protected slots:
+protected Q_SLOTS:
     void configChanged(const QString&);
     void setCurrentPanelIndex(int);
 

@@ -48,7 +48,7 @@ class ExtendedIntNumInput : public KIntNumInput
 	  */
 		void setRange(int min, int max, int step=1, bool slider=true);
 
-	private slots:
+	private Q_SLOTS:
 		void slotSpinValueChanged(int);
 		void slotSliderValueChanged(int);
 	
@@ -70,7 +70,7 @@ public:
   void save();
   void defaults();
 
-protected slots:
+protected Q_SLOTS:
 
   void configChanged();
   void checkAccess();

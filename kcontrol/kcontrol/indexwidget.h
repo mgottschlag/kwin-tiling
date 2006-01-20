@@ -40,16 +40,16 @@ public:
   virtual ~IndexWidget();
 
   Q3ListViewItem *firstTreeViewItem();
-public slots:
+public Q_SLOTS:
   void makeVisible(ConfigModule *module);
   void makeSelected(ConfigModule *module);
   void activateView(IndexViewMode);
   void reload();
 
-protected slots:
+protected Q_SLOTS:
   void moduleSelected(ConfigModule *);
 
-signals:
+Q_SIGNALS:
   void moduleActivated(ConfigModule *module);
   void categorySelected(Q3ListViewItem *);
 

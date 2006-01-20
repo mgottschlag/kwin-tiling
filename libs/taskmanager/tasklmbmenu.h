@@ -70,7 +70,7 @@ class KDE_EXPORT TaskLMBMenu : public QMenu
 public:
     TaskLMBMenu(const Task::List& list, QWidget *parent = 0, const char *name = 0);
 
-protected slots:
+protected Q_SLOTS:
     void dragSwitch();
     void attentionTimeout();
 

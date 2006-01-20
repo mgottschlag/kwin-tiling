@@ -41,7 +41,7 @@ public:
     */
    ~KCustomMenu();
    
-protected slots:
+protected Q_SLOTS:
    void slotActivated(int id);
 
 protected:      

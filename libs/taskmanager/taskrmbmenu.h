@@ -42,7 +42,7 @@ private:
 	QMenu* makeDesktopsMenu(Task::TaskPtr);
 	QMenu* makeDesktopsMenu();
 
-private slots:
+private Q_SLOTS:
 	void slotMinimizeAll();
 	void slotMaximizeAll();
 	void slotRestoreAll();

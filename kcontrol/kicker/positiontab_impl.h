@@ -42,11 +42,11 @@ public:
     void save();
     void defaults();
 
-signals:
+Q_SIGNALS:
     void changed();
     void panelPositionChanged(int);
 
-protected slots:
+protected Q_SLOTS:
     void movePanel(int);
     void lengthenPanel(int);
     void panelDimensionsChanged();

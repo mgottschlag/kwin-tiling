@@ -64,7 +64,7 @@ public:
                           QString atr);
  void loadReadersTab (QStringList lr);
 
-  private slots:
+  private Q_SLOTS:
 
   void slotShowPopup(QListViewItem * item ,const QPoint & _point,int i);
   void slotLaunchChooser();

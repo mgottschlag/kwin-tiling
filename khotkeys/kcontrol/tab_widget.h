@@ -42,9 +42,9 @@ class Tab_widget
         void load_current_action();
         void clear_pages();
         static action_type_t type( const Action_data* data_P );
-    signals: // internal
+    Q_SIGNALS: // internal
         void clear_pages_signal();
-    protected slots:
+    protected Q_SLOTS:
         void set_action_type_slot( int type_P );
     protected:
         void check_action_type();

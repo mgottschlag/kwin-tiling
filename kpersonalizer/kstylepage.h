@@ -103,7 +103,7 @@ private:
 	// icon-theme-existence
 	bool icon_crystalsvg_exist, icon_kdeclassic_exist, icon_Locolor_exist;
 
-public slots: // Public slots
+public Q_SLOTS: // Public slots
 	/** to be connected to the OS page. Catches either KDE, CDE, win or mac and pre-sets the style.  */
 	void presetStyle(const QString& style);
 
@@ -121,7 +121,7 @@ private:
 	void changeCurrentStyle();
 	QPalette createPalette();
 
-private slots:
+private Q_SLOTS:
 	void slotCurrentChanged();
 };
 

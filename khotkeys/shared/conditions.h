@@ -103,7 +103,7 @@ class Active_window_condition
         virtual Condition* copy( Condition_list_base* parent_P ) const;
 #endif
         virtual const QString description() const;
-    public slots:
+    public Q_SLOTS:
         void active_window_changed( WId );
     private:
         void init();
@@ -130,7 +130,7 @@ class Existing_window_condition
         virtual Condition* copy( Condition_list_base* parent_P ) const;
 #endif
         virtual const QString description() const;
-    public slots:
+    public Q_SLOTS:
         void window_added( WId w_P );
         void window_removed( WId w_P );
     private:

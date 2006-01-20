@@ -100,7 +100,7 @@ public:
   void load();
   void defaults();
 
-private slots:
+private Q_SLOTS:
 
   void slotClick();
   /** No descriptions */

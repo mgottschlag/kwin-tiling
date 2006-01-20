@@ -66,7 +66,7 @@ public:
     virtual void defaults();
     void preview();
 
-private slots:
+private Q_SLOTS:
     void slotEffectSetup0() { EffectSetup(0); }
     void slotEffectSetup1() { EffectSetup(1); }
     void slotEffectSetup2() { EffectSetup(2); }
@@ -127,7 +127,7 @@ protected:
     void preview();
     void init();
 
-protected slots:
+protected Q_SLOTS:
     void slotEffectValue(int value);
     void slotEffectColor(const QColor &col);
     void slotEffectColor2(const QColor &col);

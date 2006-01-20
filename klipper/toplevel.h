@@ -75,7 +75,7 @@ public:
     static void destroyAboutData();
     static KAboutData* aboutData();
 
-public slots:
+public Q_SLOTS:
     void saveSession();
     void slotSettingsChanged( int category );
     void slotHistoryTopChanged();
@@ -134,7 +134,7 @@ protected:
     KConfig* config() const { return m_config; }
     bool isApplet() const { return m_config != KGlobal::config(); }
 
-protected slots:
+protected Q_SLOTS:
     void slotPopupMenu();
     void showPopupMenu( QMenu * );
     void slotRepeatAction();
@@ -142,7 +142,7 @@ protected slots:
     void toggleURLGrabber();
     void disableURLGrabber();
 
-private slots:
+private Q_SLOTS:
     void newClipData( bool selectionMode );
     void slotClearClipboard();
 

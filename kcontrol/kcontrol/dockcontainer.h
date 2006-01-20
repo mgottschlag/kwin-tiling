@@ -43,17 +43,17 @@ public:
   bool dockModule(ConfigModule *module);
   ConfigModule *module() { return _module; }
 
-public slots:
+public Q_SLOTS:
   void removeModule();
 
-protected slots:
+protected Q_SLOTS:
   void quickHelpChanged();
 
 protected:
   void deleteModule();
   ProxyWidget* loadModule( ConfigModule *module );
 
-signals:
+Q_SIGNALS:
   void newModule(const QString &name, const QString& docPath, const QString &quickhelp);
   void changedModule(ConfigModule *module);
 

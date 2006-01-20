@@ -41,7 +41,7 @@ class GreeterApp : public KApplication {
   protected:
 	virtual void timerEvent( QTimerEvent * );
 
-  signals:
+  Q_SIGNALS:
     void activity();
 
   private:

@@ -56,7 +56,7 @@ public:
     History* history() { return m_history; }
     const History* history() const { return m_history; }
 
-public slots:
+public Q_SLOTS:
     void slotHistoryChanged() { m_dirty = true; }
     void slotAboutToShow();
 
@@ -119,7 +119,7 @@ private:
      */
     int n_history_items;
 
-signals:
+Q_SIGNALS:
     void clearHistory();
     void configure();
     void quit();

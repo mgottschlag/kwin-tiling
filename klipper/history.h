@@ -110,7 +110,7 @@ public:
         return m_topIsUserSelected;
     }
 
-public slots:
+public Q_SLOTS:
     /**
      * move the history in position pos to top
      */
@@ -121,7 +121,7 @@ public slots:
      */
     void slotClear();
 
-signals:
+Q_SIGNALS:
     void changed();
 
     /**

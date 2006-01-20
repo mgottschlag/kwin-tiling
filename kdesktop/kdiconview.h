@@ -108,7 +108,7 @@ public:
     virtual void FilesRemoved( const KURL::List & fileList );
     virtual void FilesChanged( const KURL::List & ) {}
 
-protected slots:
+protected Q_SLOTS:
     // slots connected to the icon view
     void slotReturnPressed( Q3IconViewItem *item );
     void slotExecuted( Q3IconViewItem *item );
@@ -141,14 +141,14 @@ protected slots:
     void slotNewMenuActivated();
 
     // For communication with KDesktop
-signals:
+Q_SIGNALS:
     void colorDropEvent( QDropEvent *e );
     void imageDropEvent( QDropEvent *e );
     void newWallpaper( const KURL & );
     void iconMoved();
     void wheelRolled( int delta );
 
-public slots:
+public Q_SLOTS:
     /**
      * Lineup the desktop icons.
      */
@@ -181,7 +181,7 @@ protected:
 private:
     void refreshTrashIcon();
 
-private slots:
+private Q_SLOTS:
     void desktopResized();
 
 private:

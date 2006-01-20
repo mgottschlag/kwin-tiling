@@ -47,7 +47,7 @@ public:
 
   void save();
 
-public slots:
+public Q_SLOTS:
   /**
    * Loads all settings from the current locale into the current widget.
    */
@@ -57,11 +57,11 @@ public slots:
    */
   void slotTranslate();
 
-signals:
+Q_SIGNALS:
   void localeChanged();
   void languageChanged();
 
-private slots:
+private Q_SLOTS:
   void loadLanguageList();
   void loadCountryList();
 

@@ -57,7 +57,7 @@ public:
   
   virtual void show();
 
-protected slots:
+protected Q_SLOTS:
   virtual void accept();
   virtual void reject();
   void updateAuthLabel();
@@ -68,7 +68,7 @@ protected:
   virtual void keyPressEvent( QKeyEvent* );
   virtual void fontChange( const QFont & );
 
-private slots:
+private Q_SLOTS:
   void slotAdvanced();
   void slotParseTimer();
   void slotPriority(int);

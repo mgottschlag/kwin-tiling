@@ -23,7 +23,7 @@ class Main_buttons_widget
     public:
         Main_buttons_widget( QWidget* parent_P = NULL, const char* name_P = NULL );
         void enable_delete( bool enable_P );
-    signals:
+    Q_SIGNALS:
         void new_action_pressed();
         void new_action_group_pressed();
         void delete_action_pressed();

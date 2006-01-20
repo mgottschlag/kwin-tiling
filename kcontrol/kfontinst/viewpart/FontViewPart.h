@@ -63,7 +63,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
 
     bool openFile();
 
-    private slots:
+    private Q_SLOTS:
 
     void previewStatus(bool st);
     void install();

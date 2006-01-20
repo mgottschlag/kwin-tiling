@@ -110,7 +110,7 @@ class Window_trigger
         typedef QMap< WId, bool > Windows_map;
         Windows_map existing_windows;
         WId last_active_window;
-    protected slots:
+    protected Q_SLOTS:
         void window_added( WId window_P );
         void window_removed( WId window_P );
         void active_window_changed( WId window_P );
@@ -133,7 +133,7 @@ class Gesture_trigger
         virtual const QString description() const;
         const QString& gesturecode() const;
         virtual void activate( bool activate_P );
-    protected slots:
+    protected Q_SLOTS:
         void handle_gesture( const QString& gesture_P, WId window_P );
     private:
         QString _gesturecode;

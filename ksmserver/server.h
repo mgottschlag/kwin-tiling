@@ -85,10 +85,10 @@ public:
     virtual void suspendStartup();
     virtual void resumeStartup();
 
-public slots:
+public Q_SLOTS:
     void cleanUp();
 
-private slots:
+private Q_SLOTS:
     void newConnection( int socket );
     void processData( int socket );
     void restoreSessionInternal();

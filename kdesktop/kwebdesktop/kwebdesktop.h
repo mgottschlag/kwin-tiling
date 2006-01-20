@@ -40,7 +40,7 @@ public:
 
     KParts::ReadOnlyPart* createPart( const QString& mimeType );
 
-private slots:
+private Q_SLOTS:
     void slotCompleted();
 
 private:
@@ -58,7 +58,7 @@ public:
     KWebDesktopRun( KWebDesktop* webDesktop, const KURL & url );
     ~KWebDesktopRun() {}
 
-protected slots:
+protected Q_SLOTS:
     void slotMimetype( KIO::Job *job, const QString &_type );
     void slotFinished( KIO::Job * job );
 

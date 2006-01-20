@@ -53,7 +53,7 @@ private:
    QByteArray strShare, strUser, strGroup, strMachine, strSince, strPid;
    int iUser, iGroup, iMachine, iPid;
 
-private slots:
+private Q_SLOTS:
    void killShowmount();
    void update();
    void slotReceivedData(KProcess *proc, char *buffer, int buflen);

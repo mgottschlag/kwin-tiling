@@ -46,7 +46,7 @@ public:
 
    QString quickHelp() const;
 
-signals:
+Q_SIGNALS:
    void changed(bool);
 
 protected:
@@ -57,7 +57,7 @@ protected:
 
    void loadWallpaperFilesList();
 
-protected slots:
+protected Q_SLOTS:
    void slotSelectDesk(int desk);
    void slotWallpaperTypeChanged(int i);
    void slotWallpaper(int i);

@@ -46,7 +46,7 @@ public:
     virtual void save();
     virtual void defaults();
 
-private slots:
+private Q_SLOTS:
     void sliderValueChanged(int val);
     void slotSave();
     void slotAdd();

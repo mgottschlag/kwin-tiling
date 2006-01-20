@@ -29,7 +29,7 @@ protected:
 
     virtual void paintEvent( QPaintEvent* );
 
-private slots:
+private Q_SLOTS:
     void slotPaintEffect();
 
 private:
@@ -47,7 +47,7 @@ class KSMShutdownDlg : public QDialog
 public:
     static bool confirmShutdown( bool maysd, KWorkSpace::ShutdownType& sdtype, QString& bopt );
 
-public slots:
+public Q_SLOTS:
     void slotLogout();
     void slotHalt();
     void slotReboot();
@@ -73,7 +73,7 @@ public:
   KSMDelayedPushButton( const KGuiItem &item, QWidget *parent );
   void setPopup( QMenu *pop);
 
-private slots:
+private Q_SLOTS:
   void slotTimeout();
   void slotPressed();
   void slotReleased();

@@ -46,7 +46,7 @@ public:
   QString quickHelp() const;
   const KAboutData *aboutData() const;
 
-public slots:
+public Q_SLOTS:
 
   void helpClicked();
   void defaultClicked();
@@ -57,7 +57,7 @@ public slots:
   void clientChanged(bool state);
 
 
-signals:
+Q_SIGNALS:
 
   void closed();
   void helpRequest();

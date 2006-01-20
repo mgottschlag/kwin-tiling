@@ -37,14 +37,14 @@ class Windowdef_list_widget
         void set_data( const Windowdef_list* data_P );
         Windowdef_list* get_data() const;
         void set_autodetect( QObject* obj_P, const char* slot_P );
-    public slots:
+    public Q_SLOTS:
         void clear_data();
     protected:
         Windowdef_list_item* create_listview_item( Windowdef* window_P, Q3ListView* parent1_P,
             Q3ListViewItem* parent2_P, Q3ListViewItem* after_P, bool copy_P );
         void edit_listview_item( Windowdef_list_item* item_P );
         enum type_t { TYPE_WINDOWDEF_SIMPLE };
-    protected slots:
+    protected Q_SLOTS:
         void new_selected( int type_P );
         virtual void copy_pressed();
         virtual void delete_pressed();

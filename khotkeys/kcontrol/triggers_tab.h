@@ -41,7 +41,7 @@ class Triggers_tab
         virtual ~Triggers_tab();
         void set_data( const Trigger_list* data_P );
         Trigger_list* get_data( Action_data* data_P ) const;
-    public slots:
+    public Q_SLOTS:
         void clear_data();
     protected:
         Trigger_list_item* create_listview_item( Trigger* trigger_P, Q3ListView* parent_P,
@@ -49,7 +49,7 @@ class Triggers_tab
         void edit_listview_item( Trigger_list_item* item_P );
         Trigger_list_item* selected_item;
         enum type_t { TYPE_SHORTCUT_TRIGGER, TYPE_GESTURE_TRIGGER, TYPE_WINDOW_TRIGGER };
-    protected slots:
+    protected Q_SLOTS:
         void new_selected( int type_P );
         virtual void copy_pressed();
         virtual void delete_pressed();
@@ -87,9 +87,9 @@ class Shortcut_trigger_widget
         Shortcut_trigger_widget( QWidget* parent_P = NULL, const char* name_P = NULL );
         void set_data( const Shortcut_trigger* trigger_P );
         Shortcut_trigger* get_data( Action_data* data_P ) const;
-    public slots:
+    public Q_SLOTS:
         void clear_data();
-    private slots:
+    private Q_SLOTS:
         void capturedShortcut( const KShortcut& );
     private:
         KKeyButton* bt;

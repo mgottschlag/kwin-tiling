@@ -27,9 +27,9 @@ class Menuentry_widget
         Menuentry_widget( QWidget* parent_P = NULL, const char* name_P = NULL );
         void set_data( const Menuentry_action* data_P );
         Menuentry_action* get_data( Action_data* data_P ) const;
-    public slots:
+    public Q_SLOTS:
         void clear_data();
-    protected slots:
+    protected Q_SLOTS:
         virtual void browse_pressed();
     };
 

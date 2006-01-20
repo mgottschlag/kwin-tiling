@@ -50,10 +50,10 @@ class ShortcutsModule : public QWidget
 	void saveScheme();
 	void resizeEvent(QResizeEvent *e);
 
- signals:
+ Q_SIGNALS:
 	void changed( bool );
 
- protected slots:
+ protected Q_SLOTS:
 	void slotSchemeCur();
 	void slotKeyChange();
 	void slotSelectScheme( int = 0 );

@@ -56,7 +56,7 @@ public:
     void msgBox( QMessageBox::Icon type, const QString &txt );
     int execDialog( QDialog* dlg );
     
-public slots:
+public Q_SLOTS:
     void quitSaver();
     void preparePopup();
     void cleanupPopup();
@@ -65,7 +65,7 @@ protected:
     virtual bool x11Event(XEvent *);
     virtual void timerEvent(QTimerEvent *);
 
-private slots:
+private Q_SLOTS:
     void hackExited(KProcess *);
     void sigtermPipeSignal();
     bool startLock();

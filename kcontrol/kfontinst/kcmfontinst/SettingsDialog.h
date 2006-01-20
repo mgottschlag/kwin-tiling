@@ -42,7 +42,7 @@ class CSettingsDialog : public KDialogBase
 
     CSettingsDialog(QWidget *parent);
 
-    private slots:
+    private Q_SLOTS:
 
     void slotOk();
 

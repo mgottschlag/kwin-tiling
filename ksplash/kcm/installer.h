@@ -38,10 +38,10 @@ public:
   virtual void save();
   virtual void defaults();
 
-signals:
+Q_SIGNALS:
   void changed( bool state );
 
-protected slots:
+protected Q_SLOTS:
   virtual void slotAdd();
   virtual void slotRemove();
   virtual void slotTest();
@@ -71,7 +71,7 @@ public:
   ThemeListBox(QWidget *parent);
   QMap<QString, QString> text2path;
 
-signals:
+Q_SIGNALS:
   void filesDropped(const KURL::List &urls);
 
 protected:
@@ -79,7 +79,7 @@ protected:
   void dropEvent(QDropEvent* event);
   void mouseMoveEvent(QMouseEvent *e);
 
-protected slots:
+protected Q_SLOTS:
   void slotMouseButtonPressed(int button, Q3ListBoxItem *item, const QPoint &p);
 
 private:

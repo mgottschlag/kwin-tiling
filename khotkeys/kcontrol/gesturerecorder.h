@@ -35,7 +35,7 @@ class GestureRecorder : public QFrame
         void mouseReleaseEvent(QMouseEvent *);
         void mouseMoveEvent(QMouseEvent *);
 
-    signals:
+    Q_SIGNALS:
         void recorded(const QString &data);
 
     private:

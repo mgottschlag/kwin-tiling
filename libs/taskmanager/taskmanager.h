@@ -314,7 +314,7 @@ public:
 
     void updateWindowPixmap();
 
-public slots:
+public Q_SLOTS:
     // actions
 
     /**
@@ -419,7 +419,7 @@ public slots:
      */
     void updateThumbnail();
 
-signals:
+Q_SIGNALS:
     /**
      * Indicates that this task has changed in some way.
      */
@@ -445,7 +445,7 @@ signals:
      */
     void thumbnailChanged();
 
-protected slots:
+protected Q_SLOTS:
     //* @internal
     void generateThumbnail();
 
@@ -541,7 +541,7 @@ public:
     void update( const KStartupInfoData& data );
     const KStartupInfoId& id() const { return _id; }
 
-signals:
+Q_SIGNALS:
     /**
      * Indicates that this startup has changed in some way.
      */
@@ -630,7 +630,7 @@ public:
     void setXCompositeEnabled(bool state);
     static bool xCompositeEnabled() { return m_xCompositeEnabled != 0; }
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted when a new task has started.
      */
@@ -664,7 +664,7 @@ signals:
     void windowChanged(Task::TaskPtr);
     void windowChangedGeometry(Task::TaskPtr);
 
-protected slots:
+protected Q_SLOTS:
     //* @internal
     void windowAdded(WId);
     //* @internal

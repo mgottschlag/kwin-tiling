@@ -56,7 +56,7 @@ class KMemoryWidget:public KCModule {
 		      t_memsize *used, 
 		      QColor *color,
 		      QString *text);
-    public slots:
+    public Q_SLOTS:
     void update_Values();
 };
 

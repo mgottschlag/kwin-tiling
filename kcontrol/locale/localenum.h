@@ -45,7 +45,7 @@ public:
 
   void save();
 
-public slots:
+public Q_SLOTS:
   /**
    * Loads all settings from the current locale into the current widget.
    */
@@ -55,10 +55,10 @@ public slots:
    */
   void slotTranslate();
 
-signals:
+Q_SIGNALS:
   void localeChanged();
 
-private slots:
+private Q_SLOTS:
   // Numbers
   void slotMonPosSignChanged(const QString &t);
   void slotMonNegSignChanged(const QString &t);

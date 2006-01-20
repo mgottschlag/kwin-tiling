@@ -78,10 +78,10 @@ class Gesture
         void unregister_handler( QObject* receiver_P, const char* slot_P );
     protected:
 	virtual bool x11Event( XEvent* ev_P );
-    private slots:
+    private Q_SLOTS:
         void stroke_timeout();
         void active_window_changed( WId window_P );
-    signals:
+    Q_SIGNALS:
         void handle_gesture( const QString &gesture, WId window );
     private:
         void update_grab();

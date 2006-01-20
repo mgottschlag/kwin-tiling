@@ -55,12 +55,12 @@ public:
     TaskbarConfig(QWidget *parent = 0, const char* name = 0,
                   const QStringList &list = QStringList());
 
-public slots:
+public Q_SLOTS:
     void load();
     void save();
     void defaults();
 
-protected slots:
+protected Q_SLOTS:
     void slotUpdateComboBox();
     void appearanceChanged(int);
     void notChanged();

@@ -41,7 +41,7 @@ public:
   void defaults();
   QString quickHelp() const;
 
-protected slots:
+protected Q_SLOTS:
   void moduleChanged(bool state);
 
 private:

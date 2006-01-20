@@ -44,7 +44,7 @@ protected:
     void setupActions();
     bool queryClose();
 
-protected slots:
+protected Q_SLOTS:
     void slotSave();
     void slotChangeView();
     void slotConfigureToolbars();

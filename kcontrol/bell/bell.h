@@ -38,7 +38,7 @@ class KBellConfig : public KCModule
   void save();
   void defaults();
 
- protected slots:
+ protected Q_SLOTS:
   void ringBell();
   void useBell( bool );
 

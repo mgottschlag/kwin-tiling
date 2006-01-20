@@ -29,9 +29,9 @@ class KHListBox
         virtual void insertItem( Q3ListBoxItem* item_P );
         bool forceSelect() const;
         void setForceSelect( bool force_P );
-    signals:
+    Q_SIGNALS:
         void current_changed( Q3ListBoxItem* item_P );
-    private slots:
+    private Q_SLOTS:
         void slot_selection_changed( Q3ListBoxItem* item_P );
         void slot_selection_changed();
         void slot_current_changed( Q3ListBoxItem* item_P );

@@ -40,7 +40,7 @@ public:
 	void save();
 	void defaults();
 
-public slots:
+public Q_SLOTS:
 	void windowIndicator(int dpy);
 	void clearIndicator();
 

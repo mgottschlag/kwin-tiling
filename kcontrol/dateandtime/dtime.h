@@ -58,10 +58,10 @@ class Dtime : public QWidget
 
   QString quickHelp() const;
 
-signals:
+Q_SIGNALS:
   void	timeChanged(bool);
 
- private slots:
+ private Q_SLOTS:
   void	configChanged();
   void	serverTimeCheck(); 
   void	timeout();
