@@ -506,6 +506,7 @@ void LockProcess::saveVRoot()
       {
         gVRoot = children[i];
         gVRootData = *newRoot;
+        XFree ((char*) newRoot);
         break;
       }
     }
