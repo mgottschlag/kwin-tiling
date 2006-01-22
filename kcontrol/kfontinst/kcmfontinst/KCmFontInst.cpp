@@ -119,7 +119,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         itsPreview=(KParts::ReadOnlyPart *)factory->create(itsSplitter, "kcmfontinst", "KParts::ReadOnlyPart");
         itsSplitter->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-        QList<int> sizes(itsConfig.readIntListEntry(CFG_SPLITTER_SIZES));
+        QList<int> sizes(itsConfig.readEntry(CFG_SPLITTER_SIZES,QList<int>()));
 
         if(2!=sizes.count())
         {

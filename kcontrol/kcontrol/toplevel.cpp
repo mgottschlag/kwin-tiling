@@ -113,7 +113,7 @@ TopLevel::TopLevel(const char* name)
 
  // Restore sizes
   config->setGroup("General");
-  QList<int> sizes = config->readIntListEntry(  "SplitterSizes" );
+  QList<int> sizes = config->readEntry(  "SplitterSizes",QList<int>() );
   if (!sizes.isEmpty())
      _splitter->setSizes(sizes);
 

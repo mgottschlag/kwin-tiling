@@ -100,7 +100,7 @@ void KMenuEdit::setupView()
 
     // restore splitter sizes
     KConfig* config = KGlobal::config();
-    QList<int> sizes = config->readIntListEntry("SplitterSizes");
+    QList<int> sizes = config->readEntry("SplitterSizes",QList<int>());
 
     if (sizes.isEmpty())
         sizes << 1 << 3;
