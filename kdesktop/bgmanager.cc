@@ -129,6 +129,7 @@ KBackgroundManager::~KBackgroundManager()
     if( pm == m_xrootpmap )
 	XDeleteProperty(QX11Info::display(), QX11Info::appRootWindow(), prop_root);
     m_xrootpmap = None;
+    XFree ((char*)data_root);
 
     if (m_bExport)
         return;
