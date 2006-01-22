@@ -121,15 +121,17 @@ KBackgroundManager::~KBackgroundManager()
     int format;
     unsigned long length, after;
     unsigned char* data_root;
-    XGetWindowProperty( QX11Info::display(), QX11Info::appRootWindow(), prop_root, 0L, 1L, False, AnyPropertyType,
-	&type, &format, &length, &after, &data_root);
-    if (type == XA_PIXMAP)
-	pm = *((Pixmap*)data_root);
+    if( XGetWindowProperty( QX11Info::display(), QX11Info::appRootWindow(), prop_root, 0L, 1L, False, AnyPropertyType,
+	&type, &format, &length, &after, &data_root) == Success && data_root != NULL )
+    {
+	if (type == XA_PIXMAP)
+	    pm = *((Pixmap*)data_root);
+        XFree( data_root );
+    }
     // only if it's our pixmap
     if( pm == m_xrootpmap )
 	XDeleteProperty(QX11Info::display(), QX11Info::appRootWindow(), prop_root);
     m_xrootpmap = None;
-    XFree ((char*)data_root);
 
     if (m_bExport)
         return;
