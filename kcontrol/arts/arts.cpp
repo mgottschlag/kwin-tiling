@@ -71,8 +71,8 @@ static bool startArts()
 	KConfig *config = new KConfig("kcmartsrc", true, false);
 
 	config->setGroup("Arts");
-	bool startServer = config->readEntry("StartServer", QVariant(true)).toBool();
-	bool startRealtime = config->readEntry("StartRealtime", QVariant(true)).toBool();
+	bool startServer = config->readEntry("StartServer", true);
+	bool startRealtime = config->readEntry("StartRealtime", true);
 	QString args = config->readEntry("Arguments","-F 10 -S 4096 -s 60 -m artsmessage -c drkonqi -l 3 -f");
 
 	delete config;
@@ -258,12 +258,12 @@ KArtsModule::KArtsModule(KInstance *inst, QWidget *parent)
 void KArtsModule::GetSettings( void )
 {
 	config->setGroup("Arts");
-	startServer->setChecked(config->readEntry("StartServer", QVariant(true)).toBool());
-	startRealtime->setChecked(config->readEntry("StartRealtime", QVariant(true)).toBool() &&
+	startServer->setChecked(config->readEntry("StartServer", true));
+	startRealtime->setChecked(config->readEntry("StartRealtime", true) &&
 	                          realtimeIsPossible());
-	networkTransparent->setChecked(config->readEntry("NetworkTransparent", QVariant(false)).toBool());
-	fullDuplex->setChecked(config->readEntry("FullDuplex", QVariant(false)).toBool());
-	autoSuspend->setChecked(config->readEntry("AutoSuspend", QVariant(true)).toBool());
+	networkTransparent->setChecked(config->readEntry("NetworkTransparent", false));
+	fullDuplex->setChecked(config->readEntry("FullDuplex", false));
+	autoSuspend->setChecked(config->readEntry("AutoSuspend", true));
 	suspendTime->setValue(config->readEntry("SuspendTime",60));
 	deviceName->setText(config->readEntry("DeviceName",QString()));
 	customDevice->setChecked(!deviceName->text().isEmpty());
@@ -308,7 +308,7 @@ void KArtsModule::GetSettings( void )
 	}
 
 //	config->setGroup( "Mixer" );
-//	general->volumeSystray->setChecked( config->readEntry( "VolumeControlOnSystray", QVariant(true )).toBool() );
+//	general->volumeSystray->setChecked( config->readEntry( "VolumeControlOnSystray", true) );
 
 	KConfig *midiConfig = new KConfig( "kcmmidirc", true );
 
@@ -316,7 +316,7 @@ void KArtsModule::GetSettings( void )
 	hardware->midiDevice->setCurrentItem( midiConfig->readEntry( "midiDevice", 0 ) );
 	QString mapurl( midiConfig->readPathEntry( "mapFilename" ) );
 	hardware->midiMapper->setURL( mapurl );
-	hardware->midiUseMapper->setChecked( midiConfig->readEntry( "useMidiMapper", QVariant(false )).toBool() );
+	hardware->midiUseMapper->setChecked( midiConfig->readEntry( "useMidiMapper", false ) );
 	hardware->midiMapper->setEnabled( hardware->midiUseMapper->isChecked() );
 
 	delete midiConfig;
@@ -595,7 +595,7 @@ bool KArtsModule::realtimeIsPossible()
 void KArtsModule::restartServer()
 {
 	config->setGroup("Arts");
-        bool starting = config->readEntry("StartServer", QVariant(true)).toBool();
+        bool starting = config->readEntry("StartServer", true);
 	bool restarting = artsdIsRunning();
 
 	// Shut down knotify

@@ -130,11 +130,11 @@ void KCMXinerama::load() {
 	if (QApplication::desktop()->isVirtualDesktop()) {
 		int item = 0;
 		config->setGroup("Windows");
-		xw->_enableXinerama->setChecked(config->readEntry(KWIN_XINERAMA, QVariant(true)).toBool());
-		xw->_enableResistance->setChecked(config->readEntry(KWIN_XINERAMA_MOVEMENT, QVariant(true)).toBool());
-		xw->_enablePlacement->setChecked(config->readEntry(KWIN_XINERAMA_PLACEMENT, QVariant(true)).toBool());
-		xw->_enableMaximize->setChecked(config->readEntry(KWIN_XINERAMA_MAXIMIZE, QVariant(true)).toBool());
-		xw->_enableFullscreen->setChecked(config->readEntry(KWIN_XINERAMA_FULLSCREEN, QVariant(true)).toBool());
+		xw->_enableXinerama->setChecked(config->readEntry(KWIN_XINERAMA, true));
+		xw->_enableResistance->setChecked(config->readEntry(KWIN_XINERAMA_MOVEMENT, true));
+		xw->_enablePlacement->setChecked(config->readEntry(KWIN_XINERAMA_PLACEMENT, true));
+		xw->_enableMaximize->setChecked(config->readEntry(KWIN_XINERAMA_MAXIMIZE, true));
+		xw->_enableFullscreen->setChecked(config->readEntry(KWIN_XINERAMA_FULLSCREEN, true));
 		item = config->readEntry("Unmanaged", QApplication::desktop()->primaryScreen());
 		if ((item < 0 || item >= _displays) && (item != -3))
 			xw->_unmanagedDisplay->setCurrentItem(QApplication::desktop()->primaryScreen());

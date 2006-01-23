@@ -417,7 +417,7 @@ void LayoutConfig::load()
   KConfig *config = new KConfig("kxkbrc", true);
   config->setGroup("Layout");
 
-  bool use = config->readEntry( "Use", QVariant(false )).toBool();
+  bool use = config->readEntry( "Use", false);
 
   // find out which rule applies
   //QString rule = "xfree86"; //config->readEntry("Rule", "xfree86");
@@ -437,7 +437,7 @@ void LayoutConfig::load()
   QString layout = config->readEntry("Layout", "us");
   QString l_name = m_rules->layouts()[layout];
 
-  QStringList otherLayouts = config->readListEntry("Additional");
+  QStringList otherLayouts = config->readEntry("Additional", QStringList());
   if( !l_name.isEmpty() ) {
     otherLayouts.prepend(layout);
   }
@@ -456,24 +456,24 @@ void LayoutConfig::load()
   }
 
 // reading variants
-  QStringList vars = config->readListEntry("Variants");
+  QStringList vars = config->readEntry("Variants", QStringList());
   m_rules->parseVariants(vars, m_variants);
 //  m_rules->parseVariants( vars, m_variants );
 
-  QStringList incs = config->readListEntry( "Includes" );
+  QStringList incs = config->readEntry( "Includes", QStringList() );
   m_rules->parseVariants( incs, m_includes, false );
 
-  bool showSingle = config->readEntry( "ShowSingle", QVariant(false )).toBool();
+  bool showSingle = config->readEntry( "ShowSingle", false );
   widget->chkShowSingle->setChecked(showSingle);
 
-  bool showFlag = config->readEntry( "ShowFlag", QVariant(true )).toBool();
+  bool showFlag = config->readEntry( "ShowFlag", true );
   widget->chkShowFlag->setChecked(showFlag);
 
-  bool enableXkbOptions = config->readEntry( "EnableXkbOptions", QVariant(true )).toBool();
+  bool enableXkbOptions = config->readEntry( "EnableXkbOptions", true );
   widget->chkEnableOptions->setChecked( enableXkbOptions );
-  bool resetOld = config->readEntry("ResetOldOptions", QVariant(false)).toBool();
+  bool resetOld = config->readEntry("ResetOldOptions", false);
   widget->checkResetOld->setChecked(resetOld);
-  QStringList options = config->readListEntry("Options");
+  QStringList options = config->readEntry("Options", QStringList());
 
   for (QStringList::Iterator it = options.begin(); it != options.end(); ++it)
     {
@@ -501,10 +501,10 @@ void LayoutConfig::load()
     if( swMode == switchModes[ii] )
       widget->grpSwitching->setButton(ii);
 
-  bool stickySwitching = config->readEntry("StickySwitching", QVariant(false)).toBool();
+  bool stickySwitching = config->readEntry("StickySwitching", false);
   widget->chkEnableSticky->setChecked(stickySwitching);
   widget->spinStickyDepth->setEnabled(stickySwitching);
-  widget->spinStickyDepth->setValue( config->readEntry("StickySwitchingDepth", "1").toInt() + 1);
+  widget->spinStickyDepth->setValue( config->readEntry("StickySwitchingDepth", 1) + 1);
 
   updateStickyLimit();
 
@@ -736,7 +736,7 @@ extern "C"
     XKeyboardControl kbdc;
 
     XGetKeyboardControl(QX11Info::display(), &kbd);
-    bool key = config->readEntry("KeyboardRepeating", QVariant(true)).toBool();
+    bool key = config->readEntry("KeyboardRepeating", true);
     kbdc.key_click_percent = config->readEntry("ClickVolume", kbd.key_click_percent);
     kbdc.auto_repeat_mode = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
 
@@ -746,7 +746,7 @@ extern "C"
 
     if( key ) {
         int delay_ = config->readEntry("RepeatDelay", 250);
-        double rate_ = config->readDoubleNumEntry("RepeatRate", 30);
+        double rate_ = config->readEntry("RepeatRate", 30.0);
         set_repeatrate(delay_, rate_);
     }
 
@@ -762,16 +762,16 @@ extern "C"
 
 // Even if the layouts have been disabled we still want to set Xkb options
 // user can always switch them off now in the "Options" tab
-    bool enableXkbOptions = config->readEntry("EnableXkbOptions", QVariant(true)).toBool();
+    bool enableXkbOptions = config->readEntry("EnableXkbOptions", true);
     if( enableXkbOptions ) {
-	bool resetOldOptions = config->readEntry("ResetOldOptions", QVariant(false)).toBool();
+	bool resetOldOptions = config->readEntry("ResetOldOptions", false);
 	QString options = config->readEntry("Options", "");
 	if( !XKBExtension::setXkbOptions(options, resetOldOptions) ) {
 	    kdDebug() << "Setting XKB options failed!" << endl;
 	}
     }
 
-    if (config->readEntry("Use", QVariant(false)).toBool() == true)
+    if ( config->readEntry("Use", true) )
         KToolInvocation::startServiceByDesktopName("kxkb");
     delete config;
   }

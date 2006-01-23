@@ -335,7 +335,7 @@ void ThemePage::insertTheme( const QString &path )
 	c.setGroup( "Icon Theme" );
 
 	// Don't insert the theme if it's hidden.
-	if ( c.readEntry( "Hidden", QVariant(false )).toBool() )
+	if ( c.readEntry( "Hidden", false) )
 		return;
 
 	// ### If the theme is hidden, the user will probably find it strange that it
@@ -419,7 +419,7 @@ bool ThemePage::isCursorTheme( const QString &theme, const int depth ) const
 			{
 				KSimpleConfig c( indexfile, true ); // Open read-only
 				c.setGroup( "Icon Theme" );
-				inherit = c.readListEntry( "Inherits" );
+				inherit = c.readEntry( "Inherits", QStringList() );
 			}
 
 			// Recurse through the list of inherited themes
@@ -485,7 +485,7 @@ void ThemePage::insertThemes()
 				c.setGroup( "Icon Theme" );
 
 				// Skip this theme if it's hidden.
-				if ( c.readEntry( "Hidden", QVariant(false )).toBool() )
+				if ( c.readEntry( "Hidden", false) )
 					continue;
 
 				// If there's no cursors subdirectory we'll do a recursive scan
@@ -493,7 +493,7 @@ void ThemePage::insertThemes()
 				if ( !haveCursors )
 				{
 					bool result = false;
-					QStringList inherit = c.readListEntry( "Inherits" );
+					QStringList inherit = c.readEntry( "Inherits", QStringList() );
 					for ( QStringList::ConstIterator it2 = inherit.begin(); it2 != inherit.end(); ++it2 )
 						if ( result = isCursorTheme( *it2 ) )
 							break;

@@ -55,11 +55,11 @@ void ExtensionInfo::load()
     {
         KDesktopFile df(_desktopFile);
         _name = df.readName();
-        _resizeable = df.readEntry("X-KDE-PanelExt-Resizeable", QVariant(_resizeable)).toBool();
+        _resizeable = df.readEntry("X-KDE-PanelExt-Resizeable", _resizeable);
 
         if (_resizeable)
         {
-            _useStdSizes = df.readEntry("X-KDE-PanelExt-StdSizes", QVariant(_useStdSizes)).toBool();
+            _useStdSizes = df.readEntry("X-KDE-PanelExt-StdSizes", _useStdSizes);
             _size = df.readEntry("X-KDE-PanelExt-StdSizeDefault", _size);
             _customSizeMin = df.readEntry("X-KDE-PanelExt-CustomSizeMin", _customSizeMin);
             _customSizeMax = df.readEntry("X-KDE-PanelExt-CustomSizeMax", _customSizeMax);
@@ -89,18 +89,18 @@ void ExtensionInfo::load()
     _position       = c.readEntry ("Position",            _position);
     _alignment      = c.readEntry ("Alignment",           _alignment);
     _xineramaScreen = c.readEntry ("XineramaScreen",      _xineramaScreen);
-    _showLeftHB     = c.readEntry("ShowLeftHideButton", QVariant(_showLeftHB)).toBool();
-    _showRightHB    = c.readEntry("ShowRightHideButton", QVariant(_showRightHB)).toBool();
+    _showLeftHB     = c.readEntry ("ShowLeftHideButton",  _showLeftHB);
+    _showRightHB    = c.readEntry ("ShowRightHideButton", _showRightHB);
     _hideButtonSize = c.readEntry ("HideButtonSize",      _hideButtonSize);
-    _autohidePanel  = c.readEntry("AutoHidePanel", QVariant(_autohidePanel)).toBool();
-    _backgroundHide = c.readEntry("BackgroundHide", QVariant(_backgroundHide)).toBool();
-    _autoHideSwitch = c.readEntry("AutoHideSwitch", QVariant(_autoHideSwitch)).toBool();
+    _autohidePanel  = c.readEntry ("AutoHidePanel",       _autohidePanel);
+    _backgroundHide = c.readEntry ("BackgroundHide",      _backgroundHide);
+    _autoHideSwitch = c.readEntry ("AutoHideSwitch",      _autoHideSwitch);
     _autoHideDelay  = c.readEntry ("AutoHideDelay",       _autoHideDelay);
-    _hideAnim       = c.readEntry("HideAnimation", QVariant(_hideAnim)).toBool();
+    _hideAnim       = c.readEntry ("HideAnimation",       _hideAnim);
     _hideAnimSpeed  = c.readEntry ("HideAnimationSpeed",  _hideAnimSpeed);
     _unhideLocation = c.readEntry ("UnhideLocation",      _unhideLocation);
     _sizePercentage = c.readEntry ("SizePercentage",      _sizePercentage);
-    _expandSize     = c.readEntry("ExpandSize", QVariant(_expandSize)).toBool();
+    _expandSize     = c.readEntry ("ExpandSize",          _expandSize);
 
     if (_resizeable)
     {

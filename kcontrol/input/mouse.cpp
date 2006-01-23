@@ -508,17 +508,15 @@ void MouseConfig::load()
   KConfig ac("kaccessrc", true);
 
   ac.setGroup("Mouse");
-  mouseKeys->setChecked(ac.readEntry("MouseKeys", QVariant(false)).toBool());
+  mouseKeys->setChecked(ac.readEntry("MouseKeys", false));
   mk_delay->setValue(ac.readEntry("MKDelay", 160));
 
   int interval = ac.readEntry("MKInterval", 5);
   mk_interval->setValue(interval);
 
   // Default time to reach maximum speed: 5000 msec
-  int time_to_max = ac.readEntry("MKTimeToMax",
-												(5000+interval/2)/interval);
-  time_to_max = ac.readEntry("MK-TimeToMax",
-										  time_to_max*interval);
+  int time_to_max = ac.readEntry("MKTimeToMax", (5000+interval/2)/interval);
+  time_to_max = ac.readEntry("MK-TimeToMax", time_to_max*interval);
   mk_time_to_max->setValue(time_to_max);
 
   // Default maximum speed: 1000 pixels/sec
@@ -705,7 +703,7 @@ void MouseSettings::load(KConfig *config)
 #warning was key == NULL how was this working? is key.isNull() what the coder meant?
   else if (key.isNull())
     handed = h;
-  reverseScrollPolarity = config->readEntry( "ReverseScrollPolarity", QVariant(false )).toBool();
+  reverseScrollPolarity = config->readEntry( "ReverseScrollPolarity", false);
   m_handedNeedsApply = false;
 
   // SC/DC/AutoSelect/ChangeCursor
@@ -715,10 +713,10 @@ void MouseSettings::load(KConfig *config)
   dragStartDist = config->readEntry("StartDragDist", 4);
   wheelScrollLines = config->readEntry("WheelScrollLines", 3);
 
-  singleClick = config->readEntry("SingleClick", QVariant(KDE_DEFAULT_SINGLECLICK)).toBool();
+  singleClick = config->readEntry("SingleClick", KDE_DEFAULT_SINGLECLICK);
   autoSelectDelay = config->readEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
-  visualActivate = config->readEntry("VisualActivate", QVariant(KDE_DEFAULT_VISUAL_ACTIVATE)).toBool();
-  changeCursor = config->readEntry("ChangeCursor", QVariant(KDE_DEFAULT_CHANGECURSOR)).toBool();
+  visualActivate = config->readEntry("VisualActivate", KDE_DEFAULT_VISUAL_ACTIVATE);
+  changeCursor = config->readEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
 }
 
 void MouseSettings::apply(bool force)

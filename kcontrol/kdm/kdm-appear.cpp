@@ -305,7 +305,7 @@ void KDMAppearanceWidget::loadGuiStyles(KBackedComboBox *combo)
 	continue;
 
     config.setGroup("Desktop Entry");
-    if (config.readEntry("Hidden", QVariant(false)).toBool())
+    if (config.readEntry("Hidden", false))
 	continue;
 
     config.setGroup("KDE");
@@ -473,7 +473,7 @@ void KDMAppearanceWidget::load()
   // Check the echo mode
   echocombo->setCurrentId(config->readEntry("EchoMode", "OneStar"));
 
-  QStringList sl = config->readListEntry( "GreeterPos" );
+  QStringList sl = config->readEntry( "GreeterPos", QStringList() );
   if (sl.count() != 2) {
     xLineEdit->setText( "50" );
     yLineEdit->setText( "50" );

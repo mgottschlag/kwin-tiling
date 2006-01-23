@@ -162,7 +162,7 @@ void KickerConfig::notifyKicker()
 void KickerConfig::setupExtensionInfo(KConfig& config, bool checkExists, bool reloadIfExists)
 {
     config.setGroup("General");
-    QStringList elist = config.readListEntry("Extensions2");
+    QStringList elist = config.readEntry("Extensions2", QStringList());
 
     // all of our existing extensions
     // we'll remove ones we find which are still there the oldExtensions, and delete

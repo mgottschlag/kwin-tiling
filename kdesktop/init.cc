@@ -137,7 +137,7 @@ static void copyDesktopLinks()
 {
     KConfig *config = KGlobal::config();
     config->setGroup("General");
-    if (!config->readEntry("CopyDesktopLinks", QVariant(true)).toBool())
+    if (!config->readEntry("CopyDesktopLinks", true))
        return;
 
     QStringList list =
@@ -147,7 +147,7 @@ static void copyDesktopLinks()
 
     for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++) {
         KDesktopFile desk( *it );
-        if (desk.readEntry("Hidden", QVariant(false)).toBool())
+        if (desk.readEntry("Hidden", false))
            continue;
         copyFile( *it, desktopPath );
     }

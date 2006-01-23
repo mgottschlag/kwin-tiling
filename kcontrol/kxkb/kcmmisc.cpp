@@ -137,10 +137,10 @@ void KeyboardConfig::load()
   XGetKeyboardControl(QX11Info::display(), &kbd);
 
   config.setGroup("Keyboard");
-  bool key = config.readEntry("KeyboardRepeating", QVariant(true)).toBool();
+  bool key = config.readEntry("KeyboardRepeating", true);
   keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
   ui->delay->setValue(config.readEntry( "RepeatDelay", 660 ));
-  ui->rate->setValue(config.readDoubleNumEntry( "RepeatRate", 25 ));
+  ui->rate->setValue(config.readEntry( "RepeatRate", 25.0 ));
   clickVolume = config.readEntry("ClickVolume", kbd.key_click_percent);
   numlockState = config.readEntry( "NumLock", 2 );
 

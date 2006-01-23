@@ -85,7 +85,7 @@ void MenuTab::load()
                                       i18n("Bookmarks"),
                                       QString(),
                                       SmallIcon("bookmark"),
-                                      c->readEntry("UseBookmarks", QVariant(true)).toBool());
+                                      c->readEntry("UseBookmarks", true));
     connect(m_bookmarkMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
     // show the quick menus menu?
@@ -93,10 +93,10 @@ void MenuTab::load()
                                           i18n("Quick Browser"),
                                           QString(),
                                           SmallIcon("kdisknav"),
-                                          c->readEntry("UseBrowser", QVariant(true)).toBool());
+                                          c->readEntry("UseBrowser", true));
     connect(m_quickBrowserMenu, SIGNAL(toggled(bool)), SIGNAL(changed()));
 
-    QStringList ext = c->readListEntry("Extensions");
+    QStringList ext = c->readEntry("Extensions", QStringList());
     QStringList dirs = KGlobal::dirs()->findDirs("data", "kicker/menuext");
     kSubMenuItem* menuItem(0);
     for (QStringList::ConstIterator dit=dirs.begin(); dit!=dirs.end(); ++dit)

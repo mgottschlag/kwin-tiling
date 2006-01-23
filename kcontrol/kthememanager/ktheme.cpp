@@ -134,7 +134,7 @@ QString KTheme::createYourself( bool pack )
 
     KConfig desktopConf( "kdesktoprc", true );
     desktopConf.setGroup( "Background Common" );
-    bool common = desktopConf.readEntry( "CommonDesktop", QVariant(true )).toBool();
+    bool common = desktopConf.readEntry( "CommonDesktop", true );
 
     for ( uint i=0; i < numDesktops-1; i++ )
     {
@@ -159,7 +159,7 @@ QString KTheme::createYourself( bool pack )
         QDomElement blendElem = m_dom.createElement( "blending" );
         blendElem.setAttribute( "mode", desktopConf.readEntry( "BlendMode", QString( "NoBlending" ) ) );
         blendElem.setAttribute( "balance", desktopConf.readEntry( "BlendBalance", QString::number( 100 ) ) );
-        blendElem.setAttribute( "reverse", desktopConf.readEntry( "ReverseBlending", QVariant(false )).toBool() );
+        blendElem.setAttribute( "reverse", desktopConf.readEntry( "ReverseBlending", false ) );
         desktopElem.appendChild( blendElem );
 
         QDomElement patElem = m_dom.createElement( "pattern" );
@@ -261,7 +261,7 @@ QString KTheme::createYourself( bool pack )
     QDomElement wmElem = m_dom.createElement( "wm" );
     wmElem.setAttribute( "name", kwinConf.readEntry( "PluginLib" ) );
     wmElem.setAttribute( "type", "builtin" );    // TODO support pixmap themes when the kwin client gets ported
-    if ( kwinConf.readEntry( "CustomButtonPositions" , QVariant(false)).toBool()  )
+    if ( kwinConf.readEntry( "CustomButtonPositions" , false)  )
     {
         QDomElement buttonsElem = m_dom.createElement( "buttons" );
         buttonsElem.setAttribute( "left", kwinConf.readEntry( "ButtonsOnLeft" ) );
@@ -292,17 +292,17 @@ QString KTheme::createYourself( bool pack )
 
     QDomElement panelElem = m_dom.createElement( "panel" );
 
-    if ( kickerConf.readEntry( "UseBackgroundTheme" , QVariant(false)).toBool() )
+    if ( kickerConf.readEntry( "UseBackgroundTheme" , false) )
     {
         QDomElement backElem = m_dom.createElement( "background" );
         QString kbgPath = kickerConf.readPathEntry( "BackgroundTheme" );
         backElem.setAttribute( "url", processFilePath( "panel", kbgPath ) );
-        backElem.setAttribute( "colorize", kickerConf.readEntry( "ColorizeBackground" , QVariant(false)).toBool() );
+        backElem.setAttribute( "colorize", kickerConf.readEntry( "ColorizeBackground" , false) );
         panelElem.appendChild( backElem );
     }
 
     QDomElement transElem = m_dom.createElement( "transparent" );
-    transElem.setAttribute( "value", kickerConf.readEntry( "Transparent" , QVariant(false)).toBool() );
+    transElem.setAttribute( "value", kickerConf.readEntry( "Transparent" , false) );
     panelElem.appendChild( transElem );
     m_root.appendChild( panelElem );
 
@@ -734,7 +734,7 @@ void KTheme::createIconElems( const QString & group, const QString & object,
             else if ( (*it).contains( "Effect" ) )
                 tmpCol.setAttribute( "name", cfg->readEntry( *it, QString("none") ) );
             else
-                tmpCol.setAttribute( "value", cfg->readEntry( *it, QVariant(false )).toBool() );
+                tmpCol.setAttribute( "value", cfg->readEntry( *it, false ) );
             parent.appendChild( tmpCol );
         }
     }

@@ -450,7 +450,7 @@ QStringList KLocaleConfig::languageList() const
   KSimpleConfig entry(fileName);
   entry.setGroup("KCM Locale");
 
-  return entry.readListEntry("Languages");
+  return entry.readEntry("Languages", QStringList());
 }
 
 void KLocaleConfig::changedCountry(const QString & code)

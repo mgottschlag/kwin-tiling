@@ -113,7 +113,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
 
     KConfig *cfg = new KConfig("kcmdisplayrc");
     cfg->setGroup("X11");
-    useRM = cfg->readEntry("useResourceManager", QVariant(true)).toBool();
+    useRM = cfg->readEntry("useResourceManager", true);
     delete cfg;
 
     cs = new WidgetCanvas( this );
@@ -324,7 +324,7 @@ void KColorScheme::load()
 
     KConfig cfg("kcmdisplayrc", true, false);
     cfg.setGroup("X11");
-    bool exportColors = cfg.readEntry("exportKDEColors", QVariant(true)).toBool();
+    bool exportColors = cfg.readEntry("exportKDEColors", true);
     cbExportColors->setChecked(exportColors);
 
     emit changed(false);
@@ -816,7 +816,7 @@ void KColorScheme::readScheme( int index )
         sCurrentScheme = sCurrentScheme.mid(i+1);
     }
 
-    cs->shadeSortColumn = config->readEntry( "shadeSortColumn", QVariant(KDE_DEFAULT_SHADE_SORT_COLUMN )).toBool();
+    cs->shadeSortColumn = config->readEntry( "shadeSortColumn", KDE_DEFAULT_SHADE_SORT_COLUMN );
 
     // note: defaults should be the same as the KDE default
     QColor auxBlack, auxWhite;

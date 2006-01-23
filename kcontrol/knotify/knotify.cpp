@@ -212,7 +212,7 @@ void PlayerSettingsDialog::load()
 {
     KConfig config( "knotifyrc", true, false );
     config.setGroup( "Misc" );
-    bool useExternal = config.readEntry( "Use external player", QVariant(false )).toBool();
+    bool useExternal = config.readEntry( "Use external player", false );
     m_ui->cbExternal->setChecked( useExternal );
     m_ui->reqExternal->setURL( config.readPathEntry( "External player" ) );
     m_ui->volumeSlider->setValue( config.readEntry( "Volume", 100 ) );
@@ -220,7 +220,7 @@ void PlayerSettingsDialog::load()
     if ( !m_ui->cbExternal->isChecked() )
     {
         config.setGroup( "StartProgress" );
-        if ( config.readEntry( "Use Arts", QVariant(true )).toBool() )
+        if ( config.readEntry( "Use Arts", true ) )
         {
             m_ui->cbArts->setChecked( true );
         }

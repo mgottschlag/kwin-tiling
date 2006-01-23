@@ -164,7 +164,7 @@ void KBellConfig::load()
 
   KConfig cfg("kdeglobals", false, false);
   cfg.setGroup("General");
-  m_useBell->setChecked(cfg.readEntry("UseSystemBell", QVariant(false)).toBool());
+  m_useBell->setChecked(cfg.readEntry("UseSystemBell", false));
   useBell(m_useBell->isChecked());
 }
 

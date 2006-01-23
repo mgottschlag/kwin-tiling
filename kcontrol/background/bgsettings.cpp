@@ -783,7 +783,7 @@ void KBackgroundSettings::readSettings(bool reparse)
     if (value > -201 && value < 201)
       m_BlendBalance = value;
 
-    m_ReverseBlending = m_pConfig->readEntry( "ReverseBlending", QVariant(defReverseBlending)).toBool();
+    m_ReverseBlending = m_pConfig->readEntry( "ReverseBlending", defReverseBlending );
 
     // Multiple wallpaper config
     m_WallpaperList = m_pConfig->readPathListEntry("WallpaperList");
@@ -1175,10 +1175,10 @@ void KGlobalBackgroundSettings::setTextWidth(int width)
 void KGlobalBackgroundSettings::readSettings()
 {
     m_pConfig->setGroup("Background Common");
-    m_bCommon = m_pConfig->readEntry("CommonDesktop", QVariant(_defCommon)).toBool();
-    m_bDock = m_pConfig->readEntry("Dock", QVariant(_defDock)).toBool();
-    m_bExport = m_pConfig->readEntry("Export", QVariant(_defExport)).toBool();
-    m_bLimitCache = m_pConfig->readEntry("LimitCache", QVariant(_defLimitCache)).toBool();
+    m_bCommon = m_pConfig->readEntry("CommonDesktop", _defCommon);
+    m_bDock = m_pConfig->readEntry("Dock", _defDock);
+    m_bExport = m_pConfig->readEntry("Export", _defExport);
+    m_bLimitCache = m_pConfig->readEntry("LimitCache", _defLimitCache);
     m_CacheSize = m_pConfig->readEntry("CacheSize", _defCacheSize);
 
     m_TextColor = KGlobalSettings::textColor();

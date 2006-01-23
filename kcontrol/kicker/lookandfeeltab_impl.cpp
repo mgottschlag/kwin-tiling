@@ -172,39 +172,39 @@ void LookAndFeelTab::load()
     browserTileChanged(m_browserTile->currentItem());
     wlTileChanged(m_windowListTile->currentItem());
 
-    if (config.readEntry("EnableTileBackground", QVariant(false)).toBool())
+    if (config.readEntry("EnableTileBackground", false))
     {
         config.setGroup("button_tiles");
 
-        if (config.readEntry("EnableKMenuTiles", QVariant(false)).toBool())
+        if (config.readEntry("EnableKMenuTiles", false))
         {
             tile = config.readEntry("KMenuTile", "solid_blue");
             m_kmenuTile->setCurrentItem(m_tilename.findIndex(tile));
             kcfg_KMenuTileColor->setEnabled(tile == "Colorize");
         }
 
-        if (config.readEntry("EnableDesktopButtonTiles", QVariant(false)).toBool())
+        if (config.readEntry("EnableDesktopButtonTiles", false))
         {
             tile = config.readEntry("DesktopButtonTile", "solid_orange");
             m_desktopTile->setCurrentItem(m_tilename.findIndex(tile));
             kcfg_DesktopButtonTileColor->setEnabled(tile == "Colorize");
         }
 
-        if (config.readEntry("EnableURLTiles", QVariant(false)).toBool())
+        if (config.readEntry("EnableURLTiles", false))
         {
             tile = config.readEntry("URLTile", "solid_gray");
             m_urlTile->setCurrentItem(m_tilename.findIndex(tile));
             kcfg_URLTileColor->setEnabled(tile == "Colorize");
         }
 
-        if (config.readEntry("EnableBrowserTiles", QVariant(false)).toBool())
+        if (config.readEntry("EnableBrowserTiles", false))
         {
             tile = config.readEntry("BrowserTile", "solid_green");
             m_browserTile->setCurrentItem(m_tilename.findIndex(tile));
             kcfg_BrowserTileColor->setEnabled(tile == "Colorize");
         }
 
-        if (config.readEntry("EnableWindowListTiles", QVariant(false)).toBool())
+        if (config.readEntry("EnableWindowListTiles", false))
         {
             tile = config.readEntry("WindowListTile", "solid_green");
             m_windowListTile->setCurrentItem(m_tilename.findIndex(tile));

@@ -70,8 +70,8 @@ void ModifiersModule::readConfig()
 	m_sLabelAltOrig = cg.readEntry( "Label Alt", "Alt" );
 	m_sLabelWinOrig = cg.readEntry( "Label Win", "Win" );
 
-	m_bMacKeyboardOrig = cg.readEntry( "Mac Keyboard", QVariant(false )).toBool();
-	m_bMacSwapOrig = m_bMacKeyboardOrig && cg.readEntry( "Mac Modifier Swap", QVariant(false )).toBool();
+	m_bMacKeyboardOrig = cg.readEntry( "Mac Keyboard", false );
+	m_bMacSwapOrig = m_bMacKeyboardOrig && cg.readEntry( "Mac Modifier Swap", false );
 }
 
 // When [Apply] or [OK] are clicked.

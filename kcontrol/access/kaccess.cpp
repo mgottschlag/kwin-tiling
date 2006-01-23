@@ -152,13 +152,12 @@ void KAccessApp::readSettings()
   // bell ---------------------------------------------------------------
 
   config->setGroup("Bell");
-  _systemBell = config->readEntry("SystemBell", QVariant(true)).toBool();
-  _artsBell = config->readEntry("ArtsBell", QVariant(false)).toBool();
+  _systemBell = config->readEntry("SystemBell", true);
+  _artsBell = config->readEntry("ArtsBell", false);
   _artsBellFile = config->readPathEntry("ArtsBellFile");
-  _visibleBell = config->readEntry("VisibleBell", QVariant(false)).toBool();
-  _visibleBellInvert = config->readEntry("VisibleBellInvert", QVariant(false)).toBool();
-  QColor def(Qt::red);
-  _visibleBellColor = config->readEntry("VisibleBellColor", &def);
+  _visibleBell = config->readEntry("VisibleBell", false);
+  _visibleBellInvert = config->readEntry("VisibleBellInvert", false);
+  _visibleBellColor = config->readEntry("VisibleBellColor", Qt::red);
   _visibleBellPause = config->readEntry("VisibleBellPause", 500);
 
   // select bell events if we need them
@@ -183,17 +182,17 @@ void KAccessApp::readSettings()
     return;
 
   // sticky keys
-  if (config->readEntry("StickyKeys", QVariant(false)).toBool())
+  if (config->readEntry("StickyKeys", false))
     {
-      if (config->readEntry("StickyKeysLatch", QVariant(true)).toBool())
+      if (config->readEntry("StickyKeysLatch", true))
         xkb->ctrls->ax_options |= XkbAX_LatchToLockMask;
       else
         xkb->ctrls->ax_options &= ~XkbAX_LatchToLockMask;
-      if (config->readEntry("StickyKeysAutoOff", QVariant(false)).toBool())
+      if (config->readEntry("StickyKeysAutoOff", false))
          xkb->ctrls->ax_options |= XkbAX_TwoKeysMask;
       else
          xkb->ctrls->ax_options &= ~XkbAX_TwoKeysMask;
-      if (config->readEntry("StickyKeysBeep", QVariant(false)).toBool())
+      if (config->readEntry("StickyKeysBeep", false))
          xkb->ctrls->ax_options |= XkbAX_StickyKeysFBMask;
       else
          xkb->ctrls->ax_options &= ~XkbAX_StickyKeysFBMask;
@@ -203,22 +202,22 @@ void KAccessApp::readSettings()
     xkb->ctrls->enabled_ctrls &= ~XkbStickyKeysMask;
 
   // toggle keys
-  if (config->readEntry("ToggleKeysBeep", QVariant(false)).toBool())
+  if (config->readEntry("ToggleKeysBeep", false))
      xkb->ctrls->ax_options |= XkbAX_IndicatorFBMask;
   else
      xkb->ctrls->ax_options &= ~XkbAX_IndicatorFBMask;
 
   // slow keys
-  if (config->readEntry("SlowKeys", QVariant(false)).toBool()) {
-      if (config->readEntry("SlowKeysPressBeep", QVariant(false)).toBool())
+  if (config->readEntry("SlowKeys", false)) {
+      if (config->readEntry("SlowKeysPressBeep", false))
          xkb->ctrls->ax_options |= XkbAX_SKPressFBMask;
       else
          xkb->ctrls->ax_options &= ~XkbAX_SKPressFBMask;
-      if (config->readEntry("SlowKeysAcceptBeep", QVariant(false)).toBool())
+      if (config->readEntry("SlowKeysAcceptBeep", false))
          xkb->ctrls->ax_options |= XkbAX_SKAcceptFBMask;
       else
          xkb->ctrls->ax_options &= ~XkbAX_SKAcceptFBMask;
-      if (config->readEntry("SlowKeysRejectBeep", QVariant(false)).toBool())
+      if (config->readEntry("SlowKeysRejectBeep", false))
          xkb->ctrls->ax_options |= XkbAX_SKRejectFBMask;
       else
          xkb->ctrls->ax_options &= ~XkbAX_SKRejectFBMask;
@@ -229,8 +228,8 @@ void KAccessApp::readSettings()
   xkb->ctrls->slow_keys_delay = config->readEntry("SlowKeysDelay", 500);
 
   // bounce keys
-  if (config->readEntry("BounceKeys", QVariant(false)).toBool()) {
-      if (config->readEntry("BounceKeysRejectBeep", QVariant(false)).toBool())
+  if (config->readEntry("BounceKeys", false)) {
+      if (config->readEntry("BounceKeysRejectBeep", false))
          xkb->ctrls->ax_options |= XkbAX_BKRejectFBMask;
       else
          xkb->ctrls->ax_options &= ~XkbAX_BKRejectFBMask;
@@ -241,14 +240,14 @@ void KAccessApp::readSettings()
   xkb->ctrls->debounce_delay = config->readEntry("BounceKeysDelay", 500);
 
   // gestures for enabling the other features
-  _gestures = config->readEntry("Gestures", QVariant(true)).toBool();
+  _gestures = config->readEntry("Gestures", true);
   if (_gestures)
       xkb->ctrls->enabled_ctrls |= XkbAccessXKeysMask;
   else
       xkb->ctrls->enabled_ctrls &= ~XkbAccessXKeysMask;
 
   // timeout
-  if (config->readEntry("AccessXTimeout", QVariant(false)).toBool())
+  if (config->readEntry("AccessXTimeout", false))
     {
       xkb->ctrls->ax_timeout = config->readEntry("AccessXTimeoutDelay", 30)*60;
       xkb->ctrls->axt_opts_mask = 0;
@@ -261,21 +260,21 @@ void KAccessApp::readSettings()
     xkb->ctrls->enabled_ctrls &= ~XkbAccessXTimeoutMask;
 
   // gestures for enabling the other features
-  if (config->readEntry("AccessXBeep", QVariant(true)).toBool())
+  if (config->readEntry("AccessXBeep", true))
      xkb->ctrls->ax_options |= XkbAX_FeatureFBMask | XkbAX_SlowWarnFBMask;
   else
      xkb->ctrls->ax_options &= ~(XkbAX_FeatureFBMask | XkbAX_SlowWarnFBMask);
 
-  _gestureConfirmation = config->readEntry("GestureConfirmation", QVariant(true)).toBool();
+  _gestureConfirmation = config->readEntry("GestureConfirmation", true);
 
-  _kNotifyModifiers = config->readEntry("kNotifyModifiers", QVariant(false)).toBool();
-  _kNotifyAccessX = config->readEntry("kNotifyAccessX", QVariant(false)).toBool();
+  _kNotifyModifiers = config->readEntry("kNotifyModifiers", false);
+  _kNotifyAccessX = config->readEntry("kNotifyAccessX", false);
 
   // mouse-by-keyboard ----------------------------------------------
 
   config->setGroup("Mouse");
 
-  if (config->readEntry("MouseKeys", QVariant(false)).toBool())
+  if (config->readEntry("MouseKeys", false))
     {
       xkb->ctrls->mk_delay = config->readEntry("MKDelay", 160);
 

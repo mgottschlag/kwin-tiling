@@ -244,8 +244,8 @@ void KIconConfig::read()
 
 	mpConfig->setGroup(*it + "Icons");
 	mSizes[i] = mpConfig->readEntry("Size", mSizes[i]);
-	mbDP[i] = mpConfig->readEntry("DoublePixels", QVariant(mbDP[i])).toBool();
-	mbAnimated[i] = mpConfig->readEntry("Animated", QVariant(mbAnimated[i])).toBool();
+	mbDP[i] = mpConfig->readEntry("DoublePixels", mbDP[i]);
+	mbAnimated[i] = mpConfig->readEntry("Animated", mbAnimated[i]);
 
 	for (it2=mStates.begin(), j=0; it2!=mStates.end(); ++it2, j++)
 	{

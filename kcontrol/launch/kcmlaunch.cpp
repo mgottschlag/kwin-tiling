@@ -157,17 +157,17 @@ LaunchConfig::load()
   c.setGroup("FeedbackStyle");
 
   bool busyCursor =
-    c.readEntry("BusyCursor", QVariant(Default & BusyCursor)).toBool();
+    c.readEntry("BusyCursor", (Default & BusyCursor));
 
   bool taskbarButton =
-    c.readEntry("TaskbarButton", QVariant(Default & TaskbarButton)).toBool();
+    c.readEntry("TaskbarButton", (Default & TaskbarButton));
 
   cb_taskbarButton->setChecked(taskbarButton);
 
   c.setGroup( "BusyCursorSettings" );
   sb_cursorTimeout->setValue( c.readEntry( "Timeout", 30 ));
-  bool busyBlinking =c.readEntry("Blinking", QVariant(false)).toBool();
-  bool busyBouncing =c.readEntry("Bouncing", QVariant(true)).toBool();
+  bool busyBlinking =c.readEntry("Blinking", false);
+  bool busyBouncing =c.readEntry("Bouncing", true);
   if ( !busyCursor )
      cb_busyCursor->setCurrentItem(0);
   else if ( busyBlinking )
@@ -237,15 +237,15 @@ LaunchConfig::checkChanged()
   c.setGroup("FeedbackStyle");
 
   bool savedBusyCursor =
-    c.readEntry("BusyCursor", QVariant(Default & BusyCursor)).toBool();
+    c.readEntry("BusyCursor", (Default & BusyCursor));
 
   bool savedTaskbarButton =
-    c.readEntry("TaskbarButton", QVariant(Default & TaskbarButton)).toBool();
+    c.readEntry("TaskbarButton", (Default & TaskbarButton));
 
   c.setGroup( "BusyCursorSettings" );
   unsigned int savedCursorTimeout = c.readEntry( "Timeout", 30 );
-  bool savedBusyBlinking =c.readEntry("Blinking", QVariant(false)).toBool();
-  bool savedBusyBouncing =c.readEntry("Bouncing", QVariant(true)).toBool();
+  bool savedBusyBlinking =c.readEntry("Blinking", false);
+  bool savedBusyBouncing =c.readEntry("Bouncing", true);
 
   c.setGroup( "TaskbarButtonSettings" );
   unsigned int savedTaskbarTimeout = c.readEntry( "Timeout", 30 );

@@ -75,8 +75,8 @@ void advancedDialog::load()
     KConfig c(KickerConfig::self()->configName(), false, false);
     c.setGroup("General");
 
-    bool fadedOut = c.readEntry("FadeOutAppletHandles", QVariant(false)).toBool();
-    bool hideHandles = c.readEntry("HideAppletHandles", QVariant(false)).toBool();
+    bool fadedOut = c.readEntry("FadeOutAppletHandles", false);
+    bool hideHandles = c.readEntry("HideAppletHandles", false);
     if (hideHandles)
         m_advancedWidget->hideHandles->setChecked(true);
     else if (fadedOut)
@@ -86,12 +86,12 @@ void advancedDialog::load()
 
     int defaultHideButtonSize = c.readEntry("HideButtonSize", 14);
     m_advancedWidget->hideButtonSize->setValue(defaultHideButtonSize);
-    QColor color = c.readEntry( "TintColor", &colorGroup().mid() );
+    QColor color = c.readEntry( "TintColor", colorGroup().mid() );
     m_advancedWidget->tintColorB->setColor( color );
     int tintValue = c.readEntry( "TintValue", 0 );
     m_advancedWidget->tintSlider->setValue( tintValue );
     
-    bool transparentMenubarPanel = c.readEntry("MenubarPanelTransparent", QVariant(false)).toBool();
+    bool transparentMenubarPanel = c.readEntry("MenubarPanelTransparent", false);
     m_advancedWidget->menubarPanelTransparent->setChecked( transparentMenubarPanel );
 
     enableButtonApply(false);
@@ -115,7 +115,7 @@ void advancedDialog::save()
     c.writeEntry("MenubarPanelTransparent",
                  m_advancedWidget->menubarPanelTransparent->isChecked());
 
-    QStringList elist = c.readListEntry("Extensions2");
+    QStringList elist = c.readEntry("Extensions2", QStringList());
     for (QStringList::Iterator it = elist.begin(); it != elist.end(); ++it)
     {
         // extension id

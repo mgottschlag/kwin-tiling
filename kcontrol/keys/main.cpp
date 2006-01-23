@@ -130,7 +130,7 @@ extern "C"
 	kdDebug(125) << "KeyModule::initModifiers()" << endl;
 
 	KConfigGroup cg( KGlobal::config(), "Keyboard" );
-	bool bMacSwap = cg.readEntry( "Mac Modifier Swap", QVariant(false )).toBool();
+	bool bMacSwap = cg.readEntry( "Mac Modifier Swap", false );
 	if( bMacSwap )
 		ModifiersModule::setupMacModifierKeys();
   }

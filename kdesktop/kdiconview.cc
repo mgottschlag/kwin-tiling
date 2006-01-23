@@ -871,21 +871,21 @@ bool KDIconView::makeFriendlyText( KFileIVI *fileIVI )
     {
         KSimpleConfig cfg( desktopFile, true );
         cfg.setDesktopGroup();
-        if (cfg.readEntry("Hidden", QVariant(false)).toBool())
+        if (cfg.readEntry( "Hidden", false ))
             return false;
 
-        if (cfg.readEntry( "NoDisplay", QVariant(false )).toBool())
+        if (cfg.readEntry( "NoDisplay", false ))
             return false;
 
         QStringList tmpList;
         if (cfg.hasKey("OnlyShowIn"))
         {
-            if (!cfg.readListEntry("OnlyShowIn", ';').contains("KDE"))
+            if (!cfg.readEntry("OnlyShowIn", QStringList(), ';').contains("KDE"))
                 return false;
         }
         if (cfg.hasKey("NotShowIn"))
         {
-            if (cfg.readListEntry("NotShowIn", ';').contains("KDE"))
+            if (cfg.readEntry("NotShowIn", QStringList(), ';').contains("KDE"))
                 return false;
         }
 

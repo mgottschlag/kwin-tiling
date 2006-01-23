@@ -255,7 +255,7 @@ asia.pool.ntp.org,\
 europe.pool.ntp.org,\
 north-america.pool.ntp.org,\
 oceania.pool.ntp.org"))));
-  setDateTimeAuto->setChecked(config.readEntry("enabled", QVariant(false)).toBool());
+  setDateTimeAuto->setChecked(config.readEntry("enabled", false));
 
   // Reset to the current date and time
   time = QTime::currentTime();
@@ -285,7 +285,7 @@ void Dtime::save()
     if( list.count() == 10)
       break;
   }
-  config.writeEntry("servers", list.join(","));
+  config.writeEntry("servers", list);
   config.writeEntry("enabled", setDateTimeAuto->isChecked());
 
   if(setDateTimeAuto->isChecked() && !ntpUtility.isEmpty()){

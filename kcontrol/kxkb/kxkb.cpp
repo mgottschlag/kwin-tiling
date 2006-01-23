@@ -193,15 +193,15 @@ bool KXKBApp::settingsRead()
 
 // Even if the layouts have been disabled we still want to set Xkb options
 // user can always switch them off now in the "Options" tab
-    bool enableXkbOptions = config->readEntry("EnableXkbOptions", QVariant(true)).toBool();
+    bool enableXkbOptions = config->readEntry("EnableXkbOptions", true);
     if( enableXkbOptions ) {
-	m_resetOldOptions = config->readEntry("ResetOldOptions", QVariant(false)).toBool();
+	m_resetOldOptions = config->readEntry("ResetOldOptions", false);
 	m_options = config->readEntry("Options", "");
 	if( !m_extension->setXkbOptions(m_options, m_resetOldOptions) ) {
 	    kdDebug() << "Setting XKB options failed!" << endl;
 	}
     }
-    bool enabled = config->readEntry("Use", QVariant(false)).toBool();
+    bool enabled = config->readEntry("Use", false);
     if (!enabled)
     {
         delete config;
@@ -235,7 +235,7 @@ bool KXKBApp::settingsRead()
     m_defaultLayout = m_layout;
 
 
-    m_list = config->readListEntry("Additional");
+    m_list = config->readEntry("Additional", QStringList());
     if (!m_list.contains(m_layout))
     {
         m_list.prepend(m_layout);
@@ -245,12 +245,12 @@ bool KXKBApp::settingsRead()
 
 // reading variants
     m_variants.clear();
-    QStringList vars = config->readListEntry("Variants");
+    QStringList vars = config->readEntry("Variants", QStringList());
     m_rules->parseVariants(vars, m_variants);
 
     m_includes.clear();
     if( m_rules->isXFree_v43() ) {
-	QStringList incs = config->readListEntry("Includes");
+	QStringList incs = config->readEntry("Includes", QStringList());
 	m_rules->parseVariants(incs, m_includes, false);
     }
 
@@ -263,7 +263,7 @@ bool KXKBApp::settingsRead()
 	    kdDebug() << "Error switching to single layout " << m_layout << endl;
 // kapp->quit();
 	}
-	bool showSingle = config->readEntry("ShowSingle", QVariant(false)).toBool();
+	bool showSingle = config->readEntry("ShowSingle", false);
 	if( !showSingle ) {
     	    delete config;
 	    kapp->quit();
@@ -271,8 +271,8 @@ bool KXKBApp::settingsRead()
 	}
     }
 
-    m_stickySwitching = config->readEntry("StickySwitching", QVariant(false)).toBool();
-    m_stickySwitchingDepth = config->readEntry("StickySwitchingDepth", "1").toInt();
+    m_stickySwitching = config->readEntry("StickySwitching", false);
+    m_stickySwitchingDepth = config->readEntry("StickySwitchingDepth", 1);
 
     if( !m_tray )
     {
@@ -281,7 +281,7 @@ bool KXKBApp::settingsRead()
 	connect(m_tray, SIGNAL(toggled()), this, SLOT(toggled()));
     }
 
-    bool showFlag = config->readEntry("ShowFlag", QVariant(true)).toBool();
+    bool showFlag = config->readEntry("ShowFlag", true);
     m_tray->setShowFlag(showFlag);
     m_tray->setLayouts(m_list, *m_rules);
     m_tray->setCurrentLayout(m_layout);

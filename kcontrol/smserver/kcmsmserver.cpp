@@ -63,8 +63,8 @@ void SMServerConfig::load()
 {
   KConfig *c = new KConfig("ksmserverrc", false, false);
   c->setGroup("General");
-  dialog->confirmLogoutCheck->setChecked(c->readEntry("confirmLogout", QVariant(true)).toBool());
-  bool en = c->readEntry("offerShutdown", QVariant(true)).toBool();
+  dialog->confirmLogoutCheck->setChecked(c->readEntry("confirmLogout", true));
+  bool en = c->readEntry("offerShutdown", true);
   dialog->offerShutdownCheck->setChecked(en);
   dialog->sdGroup->setEnabled(en);
 

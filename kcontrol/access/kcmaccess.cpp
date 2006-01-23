@@ -606,45 +606,44 @@ void KAccessConfig::load()
 
   config->setGroup("Bell");
 
-  systemBell->setChecked(config->readEntry("SystemBell", QVariant(true)).toBool());
-  customBell->setChecked(config->readEntry("ArtsBell", QVariant(false)).toBool());
+  systemBell->setChecked(config->readEntry("SystemBell", true));
+  customBell->setChecked(config->readEntry("ArtsBell", false));
   soundEdit->setText(config->readPathEntry("ArtsBellFile"));
 
-  visibleBell->setChecked(config->readEntry("VisibleBell", QVariant(false)).toBool());
-  invertScreen->setChecked(config->readEntry("VisibleBellInvert", QVariant(true)).toBool());
+  visibleBell->setChecked(config->readEntry("VisibleBell", false));
+  invertScreen->setChecked(config->readEntry("VisibleBellInvert", true));
   flashScreen->setChecked(!invertScreen->isChecked());
-  QColor def(Qt::red);
-  colorButton->setColor(config->readEntry("VisibleBellColor", &def));
+  colorButton->setColor(config->readEntry("VisibleBellColor", Qt::red));
 
   durationSlider->setValue(config->readEntry("VisibleBellPause", 500));
 
 
   config->setGroup("Keyboard");
 
-  stickyKeys->setChecked(config->readEntry("StickyKeys", QVariant(false)).toBool());
-  stickyKeysLock->setChecked(config->readEntry("StickyKeysLatch", QVariant(true)).toBool());
-  stickyKeysAutoOff->setChecked(config->readEntry("StickyKeysAutoOff", QVariant(false)).toBool());
-  stickyKeysBeep->setChecked(config->readEntry("StickyKeysBeep", QVariant(true)).toBool());
-  toggleKeysBeep->setChecked(config->readEntry("ToggleKeysBeep", QVariant(false)).toBool());
-  kNotifyModifiers->setChecked(config->readEntry("kNotifyModifiers", QVariant(false)).toBool());
+  stickyKeys->setChecked(config->readEntry("StickyKeys", false));
+  stickyKeysLock->setChecked(config->readEntry("StickyKeysLatch", true));
+  stickyKeysAutoOff->setChecked(config->readEntry("StickyKeysAutoOff", false));
+  stickyKeysBeep->setChecked(config->readEntry("StickyKeysBeep", true));
+  toggleKeysBeep->setChecked(config->readEntry("ToggleKeysBeep", false));
+  kNotifyModifiers->setChecked(config->readEntry("kNotifyModifiers", false));
 
-  slowKeys->setChecked(config->readEntry("SlowKeys", QVariant(false)).toBool());
+  slowKeys->setChecked(config->readEntry("SlowKeys", false));
   slowKeysDelay->setValue(config->readEntry("SlowKeysDelay", 500));
-  slowKeysPressBeep->setChecked(config->readEntry("SlowKeysPressBeep", QVariant(true)).toBool());
-  slowKeysAcceptBeep->setChecked(config->readEntry("SlowKeysAcceptBeep", QVariant(true)).toBool());
-  slowKeysRejectBeep->setChecked(config->readEntry("SlowKeysRejectBeep", QVariant(true)).toBool());
+  slowKeysPressBeep->setChecked(config->readEntry("SlowKeysPressBeep", true));
+  slowKeysAcceptBeep->setChecked(config->readEntry("SlowKeysAcceptBeep", true));
+  slowKeysRejectBeep->setChecked(config->readEntry("SlowKeysRejectBeep", true));
 
-  bounceKeys->setChecked(config->readEntry("BounceKeys", QVariant(false)).toBool());
+  bounceKeys->setChecked(config->readEntry("BounceKeys", false));
   bounceKeysDelay->setValue(config->readEntry("BounceKeysDelay", 500));
-  bounceKeysRejectBeep->setChecked(config->readEntry("BounceKeysRejectBeep", QVariant(true)).toBool());
+  bounceKeysRejectBeep->setChecked(config->readEntry("BounceKeysRejectBeep", true));
 
-  gestures->setChecked(config->readEntry("Gestures", QVariant(true)).toBool());
-  timeout->setChecked(config->readEntry("AccessXTimeout", QVariant(false)).toBool());
+  gestures->setChecked(config->readEntry("Gestures", true));
+  timeout->setChecked(config->readEntry("AccessXTimeout", false));
   timeoutDelay->setValue(config->readEntry("AccessXTimeoutDelay", 30));
 
-  accessxBeep->setChecked(config->readEntry("AccessXBeep", QVariant(true)).toBool());
-  gestureConfirmation->setChecked(config->readEntry("GestureConfirmation", QVariant(false)).toBool());
-  kNotifyAccessX->setChecked(config->readEntry("kNotifyAccessX", QVariant(false)).toBool());
+  accessxBeep->setChecked(config->readEntry("AccessXBeep", true));
+  gestureConfirmation->setChecked(config->readEntry("GestureConfirmation", false));
+  kNotifyAccessX->setChecked(config->readEntry("kNotifyAccessX", false));
 
   delete config;
 

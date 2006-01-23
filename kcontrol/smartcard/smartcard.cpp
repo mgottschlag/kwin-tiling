@@ -147,13 +147,13 @@ void KSmartcardConfig::loadSmartCardSupportTab(){
   //Update the toggle buttons with the current configuration
 
   if (_ok) {
-  base->enableSupport->setChecked(config->readBoolEntry("Enable Support",
+  base->enableSupport->setChecked(config->readEntry("Enable Support",
 							false));
-  base->enablePolling->setChecked(config->readBoolEntry("Enable Polling",
+  base->enablePolling->setChecked(config->readEntry("Enable Polling",
 							true));
-  base->beepOnInsert->setChecked(config->readBoolEntry("Beep on Insert",
+  base->beepOnInsert->setChecked(config->readEntry("Beep on Insert",
 						       true));
-  base->launchManager->setChecked(config->readBoolEntry("Launch Manager",
+  base->launchManager->setChecked(config->readEntry("Launch Manager",
 							true));
 
 
@@ -204,7 +204,7 @@ void KSmartcardConfig::loadReadersTab( QStringList lr){
 
   base->_readerHostsListView->clear();
 
-  if (!config->readEntry("Enable Support", QVariant(false)).toBool()){
+  if (!config->readEntry("Enable Support", false)) {
 
 
 
@@ -401,7 +401,7 @@ extern "C"
   KDE_EXPORT void init_smartcard()
   {
     KConfig *config = new KConfig("ksmartcardrc", false, false);
-    bool start = config->readEntry("Enable Support", QVariant(false)).toBool();
+    bool start = config->readEntry("Enable Support", false);
     delete config;
 
     if (start) {

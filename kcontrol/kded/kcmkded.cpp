@@ -129,7 +129,7 @@ void setModuleGroup(KConfig *config, const QString &filename)
 bool KDEDConfig::autoloadEnabled(KConfig *config, const QString &filename)
 {
 	setModuleGroup(config, filename);
-	return config->readEntry("autoload", QVariant(true)).toBool();
+	return config->readEntry("autoload", true);
 }
 
 void KDEDConfig::setAutoloadEnabled(KConfig *config, const QString &filename, bool b)
@@ -156,7 +156,7 @@ void KDEDConfig::load() {
 		if ( KDesktopFile::isDesktopFile( *it ) ) {
 			KDesktopFile file( *it, true, "services" );
 
-			if ( file.readEntry("X-KDE-Kded-autoload", QVariant(false)).toBool() ) {
+			if ( file.readEntry("X-KDE-Kded-autoload", false) ) {
 				clitem = new CheckListItem(_lvStartup, QString());
 				connect(clitem, SIGNAL(changed(Q3CheckListItem*)), SLOT(slotItemChecked(Q3CheckListItem*)));
 				clitem->setOn(autoloadEnabled(&kdedrc, *it));
@@ -166,7 +166,7 @@ void KDEDConfig::load() {
 				item->setText(3, NOT_RUNNING);
 				item->setText(4, file.readEntry("X-KDE-Library"));
 			}
-			else if ( file.readEntry("X-KDE-Kded-load-on-demand", QVariant(false)).toBool() ) {
+			else if ( file.readEntry("X-KDE-Kded-load-on-demand", false) ) {
 				item = new Q3ListViewItem(_lvLoD, file.readName());
 				item->setText(1, file.readComment());
 				item->setText(2, NOT_RUNNING);
@@ -195,7 +195,7 @@ void KDEDConfig::save() {
 			KConfig file( *it, false, false, "services" );
 			file.setGroup("Desktop Entry");
 
-			if (file.readEntry("X-KDE-Kded-autoload", QVariant(false)).toBool()){
+			if (file.readEntry("X-KDE-Kded-autoload", false)){
 
 				item = static_cast<Q3CheckListItem *>(_lvStartup->findItem(file.readEntry("X-KDE-Library"),4));
 				if (item) {

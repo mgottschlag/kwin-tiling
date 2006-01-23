@@ -454,16 +454,16 @@ void KDMUsersWidget::load()
 
     config->setGroup("X-*-Greeter");
 
-    selectedUsers = config->readListEntry( "SelectedUsers");
-    hiddenUsers = config->readListEntry( "HiddenUsers");
+    selectedUsers = config->readEntry( "SelectedUsers", QStringList() );
+    hiddenUsers = config->readEntry( "HiddenUsers", QStringList() );
 
     leminuid->setText(config->readEntry("MinShowUID", defminuid));
     lemaxuid->setText(config->readEntry("MaxShowUID", defmaxuid));
 
-    cbshowlist->setChecked( config->readEntry( "UserList", QVariant(true )).toBool() );
-    cbcomplete->setChecked( config->readEntry( "UserCompletion", QVariant(false )).toBool() );
+    cbshowlist->setChecked( config->readEntry( "UserList", true ) );
+    cbcomplete->setChecked( config->readEntry( "UserCompletion", false ) );
     cbinverted->setChecked( config->readEntry( "ShowUsers" ) != "Selected" );
-    cbusrsrt->setChecked(config->readEntry("SortUsers", QVariant(true)).toBool());
+    cbusrsrt->setChecked(config->readEntry("SortUsers", true));
 
     QString ps = config->readEntry( "FaceSource" );
     if (ps == QLatin1String("UserOnly"))

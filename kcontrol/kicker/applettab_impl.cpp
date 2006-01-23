@@ -123,7 +123,7 @@ void AppletTab::load()
 
   if(c.hasKey("TrustedApplets"))
     {
-      QStringList list = c.readListEntry("TrustedApplets");
+      QStringList list = c.readEntry("TrustedApplets", QStringList());
       for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
         {
           if(available.contains(*it))

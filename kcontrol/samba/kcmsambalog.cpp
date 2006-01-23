@@ -133,10 +133,10 @@ void LogView::loadSettings()
    configFile->setGroup(LOGGROUPNAME);
    logFileName.setURL(configFile->readPathEntry( "SambaLogFile", "/var/log/samba.log"));
 
-   showConnOpen.setChecked(configFile->readEntry( "ShowConnectionOpen", QVariant(TRUE)).toBool());
-   showConnClose.setChecked(configFile->readEntry( "ShowConnectionClose", QVariant(FALSE)).toBool());
-   showFileOpen.setChecked(configFile->readEntry( "ShowFileOpen", QVariant(TRUE)).toBool());
-   showFileClose.setChecked(configFile->readEntry( "ShowFileClose", QVariant(FALSE)).toBool());
+   showConnOpen.setChecked(configFile->readEntry( "ShowConnectionOpen", true));
+   showConnClose.setChecked(configFile->readEntry( "ShowConnectionClose", false));
+   showFileOpen.setChecked(configFile->readEntry( "ShowFileOpen", true));
+   showFileClose.setChecked(configFile->readEntry( "ShowFileClose", false));
 }
 
 void LogView::saveSettings()

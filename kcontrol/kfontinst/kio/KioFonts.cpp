@@ -1179,7 +1179,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
 bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bool origExists,
                         int mode, bool resume)
 {
-    bool    markPartial=config()->readEntry("MarkPartial", QVariant(true)).toBool();
+    bool    markPartial=config()->readEntry("MarkPartial", true);
     QString dest;
 
     if (markPartial)
@@ -2420,8 +2420,8 @@ void CKioFonts::reparseConfig()
     if(itsRoot)
     {
         KConfig cfg(KFI_ROOT_CFG_FILE);
-        bool    doX=cfg.readEntry(KFI_CFG_X_KEY, QVariant(KFI_DEFAULT_CFG_X)).toBool(),
-                doGs=cfg.readEntry(KFI_CFG_GS_KEY, QVariant(KFI_DEFAULT_CFG_GS)).toBool();
+        bool    doX=cfg.readEntry(KFI_CFG_X_KEY, KFI_DEFAULT_CFG_X),
+                doGs=cfg.readEntry(KFI_CFG_GS_KEY, KFI_DEFAULT_CFG_GS);
 
         if(doX || !doGs)
         {
@@ -2443,8 +2443,8 @@ void CKioFonts::reparseConfig()
     else
     {
         KConfig rootCfg(KFI_ROOT_CFG_FILE);
-        bool    rootDoX=rootCfg.readEntry(KFI_CFG_X_KEY, QVariant(KFI_DEFAULT_CFG_X)).toBool(),
-                rootDoGs=rootCfg.readEntry(KFI_CFG_GS_KEY, QVariant(KFI_DEFAULT_CFG_GS)).toBool();
+        bool    rootDoX=rootCfg.readEntry(KFI_CFG_X_KEY, KFI_DEFAULT_CFG_X),
+                rootDoGs=rootCfg.readEntry(KFI_CFG_GS_KEY, KFI_DEFAULT_CFG_GS);
 
         strcpy(itsNrsKfiParams, "-");
 
@@ -2477,8 +2477,8 @@ void CKioFonts::reparseConfig()
             itsNrsKfiParams[0]=0;
 
         KConfig cfg(KFI_CFG_FILE);
-        bool    doX=cfg.readEntry(KFI_CFG_X_KEY, QVariant(KFI_DEFAULT_CFG_X)).toBool(),
-                doGs=cfg.readEntry(KFI_CFG_GS_KEY, QVariant(KFI_DEFAULT_CFG_GS)).toBool();
+        bool    doX=cfg.readEntry(KFI_CFG_X_KEY, KFI_DEFAULT_CFG_X),
+                doGs=cfg.readEntry(KFI_CFG_GS_KEY, KFI_DEFAULT_CFG_GS);
 
         strcpy(itsKfiParams, doGs ? "-g" : "-");
 
