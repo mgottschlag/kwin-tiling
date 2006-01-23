@@ -27,7 +27,7 @@ QuickHelp::QuickHelp(QWidget *parent , const char *name)
 {
   setFrameStyle( QFrame::Panel | QFrame::Sunken );
   setFocusPolicy( Qt::ClickFocus );
-  setHScrollBarMode( Q3ScrollView::AlwaysOff );
+  setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
   setNotifyClick(true);
 }
 

@@ -43,9 +43,9 @@
 #include <klistview.h>
 #include <kurlrequesterdlg.h>
 #include <kmessagebox.h>
-#include <kprogress.h>
+#include <kprogressbar.h>
 #include <kiconloader.h>
-
+#include <kprogressdialog.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
 #include <ktar.h>
@@ -213,12 +213,12 @@ bool IconThemesConfig::installThemes(const QStringList &themes, const QString &a
   bool everythingOk = true;
   QString localThemesDir(locateLocal("icon", "./"));
 
-  KProgressDialog progressDiag(this, "themeinstallprogress",
+  KProgressDialog progressDiag(this,
                                i18n("Installing icon themes"),
                                QString(),
                                true);
   progressDiag.setAutoClose(true);
-  progressDiag.progressBar()->setTotalSteps(themes.count());
+  progressDiag.progressBar()->setMaximum(themes.count());
   progressDiag.show();
 
   KTar archive(archiveName);

@@ -579,7 +579,7 @@
     <include location="global" impldecl="in declaration">fixx11h.h</include>
     <include location="local" impldecl="in implementation">kdialog.h</include>
     <include location="local" impldecl="in implementation">kiconloader.h</include>
-    <include location="local" impldecl="in implementation">kpassdlg.h</include>
+    <include location="local" impldecl="in implementation">kpassworddialog.h</include>
     <include location="local" impldecl="in implementation">kcombobox.h</include>
     <include location="local" impldecl="in implementation">klineedit.h</include>
     <include location="local" impldecl="in implementation">kpushbutton.h</include>
@@ -591,7 +591,7 @@
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
     <includehint>kpushbutton.h</includehint>
-    <includehint>kpassdlg.h</includehint>
+    <includehint>kpassworddialog.h</includehint>
     <includehint>klineedit.h</includehint>
     <includehint>kcombobox.h</includehint>
     <includehint>klineedit.h</includehint>
@@ -603,7 +603,7 @@
     </customwidget>
     <customwidget>
 	<class>KPasswordEdit</class>
-	<header>kpassdlg.h</header>
+	<header>kpassworddialog.h</header>
     </customwidget>
 </customwidgets>
 </UI>

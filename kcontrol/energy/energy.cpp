@@ -179,7 +179,7 @@ KEnergy::KEnergy(KInstance *inst, QWidget *parent)
          hbox->addWidget(lbl);
     }
 
-    KURLLabel *logo = new KURLLabel(this);
+    KUrlLabel *logo = new KUrlLabel(this);
     logo->setURL("http://www.energystar.gov");
     logo->setPixmap(QPixmap(locate("data", "kcontrol/pics/energybig.png")));
     logo->setTipText(i18n("Learn more about the Energy Star program"));

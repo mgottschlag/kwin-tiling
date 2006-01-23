@@ -50,7 +50,7 @@ Q_SIGNALS:
    void wheelRolled( int delta );
    void colorDropEvent( QDropEvent* e );
    void imageDropEvent( QDropEvent* e );
-   void newWallpaper( const KURL& url );
+   void newWallpaper( const KUrl& url );
 };
 
 /**
@@ -94,7 +94,7 @@ public:
   KActionCollection *actionCollection();
 
   // The URL (for the File/New menu)
-  KURL url() const;
+  KUrl url() const;
 
   // ## hack ##
   KDIconView *iconView() const { return m_pIconView; }
@@ -143,7 +143,7 @@ private Q_SLOTS:
   /** Connected to KDIconView */
   void handleImageDropEvent( QDropEvent * );
   void handleColorDropEvent( QDropEvent * );
-  void slotNewWallpaper(const KURL &url);
+  void slotNewWallpaper(const KUrl &url);
 
   void updateWorkArea();
 

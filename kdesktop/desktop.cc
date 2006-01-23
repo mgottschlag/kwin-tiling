@@ -101,7 +101,8 @@ bool KRootWidget::eventFilter ( QObject *, QEvent * e )
        {
          KURL url = KURL::List::fromMimeData( de->mimeData() ).first();
          KMimeType::Ptr mime = KMimeType::findByURL( url );
-         if ( !KImageIO::type( url.path() ).isEmpty() ||
+#warning "kde4: is it correct ?"		 
+         if ( !mime.isNull() ||
               KImageIO::isSupported( mime->name(), KImageIO::Reading ) || mime->is( "image/svg+xml" ) )
            imageURL = true;
        }
@@ -337,8 +338,6 @@ KDesktop::slotStart()
   XSendEvent( QX11Info::display(), QX11Info::appRootWindow(), False, SubstructureNotifyMask, &e );
 #endif
 
-  // In case we started without database
-  KImageIO::registerFormats();
 
   initConfig();
 
