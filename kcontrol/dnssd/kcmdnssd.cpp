@@ -34,7 +34,7 @@
 #include <kparts/genericfactory.h>
 #include <kprocess.h>
 #include <klineedit.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 #include <ksimpleconfig.h>
 
 #include "kcmdnssd.h"

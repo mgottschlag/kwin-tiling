@@ -50,7 +50,7 @@
 #include <klineedit.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 #include <krun.h>
 #include <kwin.h>
 #include <kdesu/su.h>

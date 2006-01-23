@@ -23,7 +23,7 @@
 #include <kconfig.h>
 #include <kiconloader.h>
 #include <kdesu/defaults.h>
-#include <kpassdlg.h>
+#include <kpassworddialog.h>
 #include <kdebug.h>
 #include <kuser.h>
 #include <dcopref.h>
