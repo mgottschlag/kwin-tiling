@@ -40,7 +40,7 @@ class QLabel;
 class QStringList;
 class KIntNumInput;
 class KAction;
-class KURL;
+class KUrl;
 
 namespace KFI
 {

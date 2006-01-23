@@ -76,7 +76,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _descriptionEdit->setAcceptDrops(false);
     _commentEdit = new KLineEdit(general_group);
     _commentEdit->setAcceptDrops(false);
-    _execEdit = new KURLRequester(general_group);
+    _execEdit = new KUrlRequester(general_group);
     _execEdit->lineEdit()->setAcceptDrops(false);
     _execEdit->setWhatsThis(i18n(
     "Following the command, you can have several place holders which will be replaced "
@@ -148,7 +148,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     _pathLabel = new QLabel(i18n("&Work path:"), hbox);
 	hboxLayout1->addWidget(_pathLabel);
-    _pathEdit = new KURLRequester(hbox);
+    _pathEdit = new KUrlRequester(hbox);
 	hboxLayout1->addWidget(_pathEdit);
     _pathEdit->setMode(KFile::Directory | KFile::LocalOnly);
     _pathEdit->lineEdit()->setAcceptDrops(false);

@@ -32,7 +32,7 @@ class QPixmap;
 class KPixmap;
 class ConfigModule;
 class KHTMLPart;
-class KURL;
+class KUrl;
 
 class AboutWidget : public KHBox
 {  

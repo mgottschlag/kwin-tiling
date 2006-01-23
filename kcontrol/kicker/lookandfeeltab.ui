@@ -449,7 +449,7 @@
                         <string>This is a preview for the selected background image.</string>
                     </property>
                 </widget>
-                <widget class="KURLRequester" row="2" column="1" rowspan="1" colspan="2">
+                <widget class="KUrlRequester" row="2" column="1" rowspan="1" colspan="2">
                     <property name="name">
                         <cstring>kcfg_BackgroundTheme</cstring>
                     </property>

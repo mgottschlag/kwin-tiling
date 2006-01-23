@@ -204,7 +204,7 @@ void ThemePage::selectionChanged( Q3ListViewItem *item )
 void ThemePage::installClicked()
 {
 	// Get the URL for the theme we're going to install
-	KURL url = KURLRequesterDlg::getURL( QString(), this, i18n( "Drag or Type Theme URL" ) );
+	KURL url = KUrlRequesterDlg::getURL( QString(), this, i18n( "Drag or Type Theme URL" ) );
 	if ( url.isEmpty() )
 		return;
 

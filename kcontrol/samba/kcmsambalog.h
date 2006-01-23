@@ -45,7 +45,7 @@ class LogView: public QWidget
    private:
       KConfig *configFile;
       int filesCount, connectionsCount;
-      KURLRequester logFileName;
+      KUrlRequester logFileName;
       QLabel label;
       Q3ListView viewHistory;
       QCheckBox showConnOpen, showConnClose, showFileOpen, showFileClose;

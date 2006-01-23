@@ -36,7 +36,7 @@ class QSlider;
 
 class KAboutData;
 class KComboBox;
-class KURLRequester;
+class KUrlRequester;
 class PlayerSettingsDialog;
 namespace Ui{
 class PlayerSettingsUI;

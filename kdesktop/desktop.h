@@ -27,7 +27,7 @@
 
 #include <kworkspace.h>	// for logout parameters
 
-class KURL;
+class KUrl;
 class QCloseEvent;
 class QDropEvent;
 class QPopupMenu;

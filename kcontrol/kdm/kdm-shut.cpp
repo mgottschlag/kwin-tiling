@@ -70,7 +70,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
 
-      shutdown_lined = new KURLRequester(group1);
+      shutdown_lined = new KUrlRequester(group1);
       QLabel *shutdown_label = new QLabel(shutdown_lined, i18n("H&alt:"), group1);
       connect(shutdown_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(changed()));
@@ -78,7 +78,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( shutdown_label, wtstr );
       QWhatsThis::add( shutdown_lined, wtstr );
 
-      restart_lined = new KURLRequester(group1);
+      restart_lined = new KUrlRequester(group1);
       QLabel *restart_label = new QLabel(restart_lined, i18n("Reb&oot:"), group1);
       connect(restart_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(changed()));

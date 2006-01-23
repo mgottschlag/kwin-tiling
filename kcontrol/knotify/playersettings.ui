@@ -168,7 +168,7 @@
          </widget>
         </item>
         <item>
-         <widget class="KURLRequester" name="reqExternal" >
+         <widget class="KUrlRequester" name="reqExternal" >
           <property name="enabled" >
            <bool>false</bool>
           </property>
@@ -213,7 +213,7 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>KURLRequester</class>
+   <class>KUrlRequester</class>
    <extends>QWidget</extends>
    <header>kurlrequester.h</header>
    <container>1</container>

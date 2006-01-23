@@ -33,7 +33,7 @@ class KIconButton;
 class QCheckBox;
 class QGroupBox;
 class QLabel;
-class KURLRequester;
+class KUrlRequester;
 class KComboBox;
 class KService;
 
@@ -73,7 +73,7 @@ protected:
     KLineEdit    *_nameEdit, *_commentEdit;
     KLineEdit	 *_descriptionEdit;
     KKeyButton   *_keyEdit;
-    KURLRequester *_execEdit, *_pathEdit;
+    KUrlRequester *_execEdit, *_pathEdit;
     KLineEdit    *_termOptEdit, *_uidEdit;
     QCheckBox    *_terminalCB, *_uidCB, *_launchCB, *_systrayCB;
     KIconButton  *_iconButton;
