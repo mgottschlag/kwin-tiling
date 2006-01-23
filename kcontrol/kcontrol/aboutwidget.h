@@ -51,7 +51,7 @@ Q_SIGNALS:
     void moduleSelected(ConfigModule *);
 
 private Q_SLOTS:
-    void slotModuleLinkClicked( const KURL& );
+    void slotModuleLinkClicked( const KUrl& );
 
 private:
     /**
