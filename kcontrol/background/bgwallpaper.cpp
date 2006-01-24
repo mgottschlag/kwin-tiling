@@ -59,9 +59,9 @@ void BGMultiWallpaperList::dragEnterEvent(QDragEnterEvent *ev)
 void BGMultiWallpaperList::dropEvent(QDropEvent *ev)
 {
    QStringList files;
-   KURL::List urls;
+   KUrl::List urls;
    K3URLDrag::decode(ev, urls);
-   for(KURL::List::ConstIterator it = urls.begin();
+   for(KUrl::List::ConstIterator it = urls.begin();
        it != urls.end(); ++it)
    {
       // TODO: Download remote files

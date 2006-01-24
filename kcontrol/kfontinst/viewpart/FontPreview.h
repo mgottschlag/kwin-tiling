@@ -55,7 +55,7 @@ class CFontPreview : public QWidget
     QSize       sizeHint() const;
     QSize       minimumSizeHint() const;
 
-    void        showFont(const KURL &url);
+    void        showFont(const KUrl &url);
     void        showFont();
 
     CFcEngine & engine() { return itsEngine; }
@@ -72,7 +72,7 @@ class CFontPreview : public QWidget
 
     CFcEngine itsEngine;
     QPixmap   itsPixmap;
-    KURL      itsCurrentUrl;
+    KUrl      itsCurrentUrl;
     int       itsCurrentFace,
               itsLastWidth,
               itsLastHeight;

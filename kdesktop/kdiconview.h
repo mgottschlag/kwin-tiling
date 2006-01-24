@@ -98,15 +98,15 @@ public:
     /**
      * Reimplemented from KonqIconViewWidget (for image drops)
      */
-    virtual void setWallpaper(const KURL &url) { emit newWallpaper( url ); }
+    virtual void setWallpaper(const KUrl &url) { emit newWallpaper( url ); }
     void setLastIconPosition( const QPoint & );
 
-    static KURL desktopURL();
+    static KUrl desktopURL();
 
     /// KDirNotify interface, for trash:/
-    virtual void FilesAdded( const KURL & directory );
-    virtual void FilesRemoved( const KURL::List & fileList );
-    virtual void FilesChanged( const KURL::List & ) {}
+    virtual void FilesAdded( const KUrl & directory );
+    virtual void FilesRemoved( const KUrl::List & fileList );
+    virtual void FilesChanged( const KUrl::List & ) {}
 
 protected Q_SLOTS:
     // slots connected to the icon view
@@ -122,7 +122,7 @@ protected Q_SLOTS:
 
     // slots connected to the directory lister
     void slotClear();
-    void slotStarted( const KURL& url );
+    void slotStarted( const KUrl& url );
     void slotCompleted();
     void slotNewItems( const KFileItemList& );
     void slotDeleteItem( KFileItem * );
@@ -144,7 +144,7 @@ protected Q_SLOTS:
 Q_SIGNALS:
     void colorDropEvent( QDropEvent *e );
     void imageDropEvent( QDropEvent *e );
-    void newWallpaper( const KURL & );
+    void newWallpaper( const KUrl & );
     void iconMoved();
     void wheelRolled( int delta );
 
@@ -211,7 +211,7 @@ private:
     KDirLister* m_dirLister;
 
     /** The list of urls to be merged into the desktop, in addition to desktopURL */
-    KURL::List m_mergeDirs;
+    KUrl::List m_mergeDirs;
 
     /** The list of dirs to be merged into the desktop, in addition to desktopURL **/
     QStringList m_desktopDirs;
@@ -243,7 +243,7 @@ private:
     QPoint m_lastDropPos;
 
     /** URL of the items which is being RMB'ed - when only one */
-    KURL m_popupURL;
+    KUrl m_popupURL;
 
     /** media list management */
     bool m_enableMedia;

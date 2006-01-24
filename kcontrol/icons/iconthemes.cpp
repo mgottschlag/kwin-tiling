@@ -160,7 +160,7 @@ void IconThemesConfig::loadThemes()
 
 void IconThemesConfig::installNewTheme()
 {
-  KURL themeURL = KUrlRequesterDlg::getURL(QString(), this,
+  KUrl themeURL = KUrlRequesterDlg::getURL(QString(), this,
                                            i18n("Drag or Type Theme URL"));
   kdDebug() << themeURL.prettyURL() << endl;
 

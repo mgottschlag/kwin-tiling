@@ -272,8 +272,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     connect(itsDirOp, SIGNAL(fileHighlighted(const KFileItem *)), SLOT(fileHighlighted(const KFileItem *)));
     connect(itsDirOp, SIGNAL(finishedLoading()), SLOT(loadingFinished()));
-    connect(itsDirOp, SIGNAL(dropped(const KFileItem *, QDropEvent *, const KURL::List &)),
-                      SLOT(dropped(const KFileItem *, QDropEvent *, const KURL::List &)));
+    connect(itsDirOp, SIGNAL(dropped(const KFileItem *, QDropEvent *, const KUrl::List &)),
+                      SLOT(dropped(const KFileItem *, QDropEvent *, const KUrl::List &)));
     connect(itsDirOp->dirLister(), SIGNAL(infoMessage(const QString &)), SLOT(infoMessage(const QString &)));
     connect(itsDirOp, SIGNAL(updateInformation(int, int)), SLOT(updateInformation(int, int)));
 }
@@ -418,7 +418,7 @@ void CKCmFontInst::loadingFinished()
 
 void CKCmFontInst::addFonts()
 {
-    KURL::List list=KFileDialog::getOpenURLs(QString(), "application/x-font-ttf application/x-font-otf "
+    KUrl::List list=KFileDialog::getOpenURLs(QString(), "application/x-font-ttf application/x-font-otf "
                                                             "application/x-font-ttc application/x-font-type1 "
                                                             "application/x-font-pcf application/x-font-bdf",
                                                             //"application/x-font-snf application/x-font-speedo",
@@ -434,7 +434,7 @@ void CKCmFontInst::removeFonts()
         KMessageBox::information(this, i18n("You did not select anything to delete."), i18n("Nothing to Delete"));
     else
     {
-        KURL::List            urls;
+        KUrl::List            urls;
         QStringList           files;
         const KFileItemList list = *(itsDirOp->selectedItems());
 
@@ -538,7 +538,7 @@ void CKCmFontInst::print()
 #endif
 }
 
-void CKCmFontInst::dropped(const KFileItem *i, QDropEvent *, const KURL::List &urls)
+void CKCmFontInst::dropped(const KFileItem *i, QDropEvent *, const KUrl::List &urls)
 {
     if(urls.count())
         addFonts(urls, i && i->isDir() ?  i->url() : itsDirOp->url());
@@ -607,18 +607,18 @@ void CKCmFontInst::jobResult(KIO::Job *job)
     }
 }
 
-void CKCmFontInst::addFonts(const KURL::List &src, const KURL &dest)
+void CKCmFontInst::addFonts(const KUrl::List &src, const KUrl &dest)
 {
     if(src.count())
     {
-        KURL::List                copy(src);
-        KURL::List::ConstIterator it;
+        KUrl::List                copy(src);
+        KUrl::List::ConstIterator it;
 
         //
         // Check if font has any associated AFM or PFM file...
         for(it=src.begin(); it!=src.end(); ++it)
         {
-            KURL::List associatedUrls;
+            KUrl::List associatedUrls;
 
             Misc::getAssociatedUrls(*it, associatedUrls);
             copy+=associatedUrls;

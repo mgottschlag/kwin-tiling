@@ -97,9 +97,9 @@ bool KRootWidget::eventFilter ( QObject *, QEvent * e )
        b &= !KGlobal::dirs()->isRestrictedResource( "wallpaper" );
 
        bool imageURL = false;
-       if ( KURL::List::canDecode( de->mimeData() ) )
+       if ( KUrl::List::canDecode( de->mimeData() ) )
        {
-         KURL url = KURL::List::fromMimeData( de->mimeData() ).first();
+         KUrl url = KUrl::List::fromMimeData( de->mimeData() ).first();
          KMimeType::Ptr mime = KMimeType::findByURL( url );
 #warning "kde4: is it correct ?"		 
          if ( !mime.isNull() ||
@@ -118,8 +118,8 @@ bool KRootWidget::eventFilter ( QObject *, QEvent * e )
          emit colorDropEvent( de );
        else if ( Q3ImageDrag::canDecode( de ) )
          emit imageDropEvent( de );
-       else if ( KURL::List::canDecode( de->mimeData() ) ) {
-         KURL url = KURL::List::fromMimeData( de->mimeData() ).first();
+       else if ( KUrl::List::canDecode( de->mimeData() ) ) {
+         KUrl url = KUrl::List::fromMimeData( de->mimeData() ).first();
          emit newWallpaper( url );
        }
        return true;
@@ -232,7 +232,7 @@ KDesktop::initRoot()
      connect(m_pRootWidget, SIGNAL(wheelRolled(int)), this, SLOT(slotSwitchDesktops(int)));
      connect(m_pRootWidget, SIGNAL(colorDropEvent(QDropEvent*)), this, SLOT(handleColorDropEvent(QDropEvent*)) );
      connect(m_pRootWidget, SIGNAL(imageDropEvent(QDropEvent*)), this, SLOT(handleImageDropEvent(QDropEvent*)) );
-     connect(m_pRootWidget, SIGNAL(newWallpaper(const KURL&)), this, SLOT(slotNewWallpaper(const KURL&)) );
+     connect(m_pRootWidget, SIGNAL(newWallpaper(const KUrl&)), this, SLOT(slotNewWallpaper(const KUrl&)) );
      
      // Geert Jansen: backgroundmanager belongs here
      // TODO tell KBackgroundManager if we change widget()
@@ -258,8 +258,8 @@ KDesktop::initRoot()
               this, SLOT( handleImageDropEvent( QDropEvent * ) ) );
      connect( m_pIconView, SIGNAL( colorDropEvent( QDropEvent * ) ),
               this, SLOT( handleColorDropEvent( QDropEvent * ) ) );
-     connect( m_pIconView, SIGNAL( newWallpaper( const KURL & ) ),
-              this, SLOT( slotNewWallpaper( const KURL & ) ) );
+     connect( m_pIconView, SIGNAL( newWallpaper( const KUrl & ) ),
+              this, SLOT( slotNewWallpaper( const KUrl & ) ) );
      connect( m_pIconView, SIGNAL( wheelRolled( int ) ),
               this, SLOT( slotSwitchDesktops( int ) ) );
 
@@ -379,7 +379,7 @@ KDesktop::slotStart()
                  ( (*it)[0] != '%' || (*it).right(1) != "%" ) &&
                  ( (*it)[0] != '#' || (*it).right(1) != "#" ) )
             {
-                KURL url;
+                KUrl url;
                 url.setPath( dir.absolutePath() + '/' + (*it) );
                 (void) new KRun( url, 0, true );
             }
@@ -561,7 +561,7 @@ KActionCollection * KDesktop::actionCollection()
     return m_pIconView->actionCollection();
 }
 
-KURL KDesktop::url() const
+KUrl KDesktop::url() const
 {
     if (m_pIconView)
         return m_pIconView->url();
@@ -782,9 +782,9 @@ void KDesktop::handleImageDropEvent(QDropEvent * e)
         KTempFile tmpFile(QString::null, filename);
         i.save(tmpFile.name(), "PNG");
         // We pass 0 as parent window because passing the desktop is not a good idea
-        KURL src;
+        KUrl src;
         src.setPath( tmpFile.name() );
-        KURL dest( KDIconView::desktopURL() );
+        KUrl dest( KDIconView::desktopURL() );
         dest.addPath( filename );
         KIO::NetAccess::copy( src, dest, 0 );
         tmpFile.unlink();
@@ -800,7 +800,7 @@ void KDesktop::handleImageDropEvent(QDropEvent * e)
     }
 }
 
-void KDesktop::slotNewWallpaper(const KURL &url)
+void KDesktop::slotNewWallpaper(const KUrl &url)
 {
     // This is called when a file containing an image is dropped
     // (called by KonqOperations)
@@ -814,7 +814,7 @@ void KDesktop::slotNewWallpaper(const KURL &url)
         QString ext = fileInfo.extension();
         // Store tempfile in a place where it will still be available after a reboot
         KTempFile tmpFile( KGlobal::dirs()->saveLocation("wallpaper"), "." + ext );
-        KURL localURL; localURL.setPath( tmpFile.name() );
+        KUrl localURL; localURL.setPath( tmpFile.name() );
         // We pass 0 as parent window because passing the desktop is not a good idea
         KIO::NetAccess::file_copy( url, localURL, -1, true /*overwrite*/ );
         bgMgr->setWallpaper( localURL.path() );

@@ -55,7 +55,7 @@ void ThemeListBox::dragEnterEvent(QDragEnterEvent* event)
 
 void ThemeListBox::dropEvent(QDropEvent* event)
 {
-   KURL::List urls;
+   KUrl::List urls;
    if (K3URLDrag::decode(event, urls))
    {
       emit filesDropped(urls);
@@ -81,9 +81,9 @@ void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
       if(newPos.x() > mOldPos.x()+delay || newPos.x() < mOldPos.x()-delay ||
          newPos.y() > mOldPos.y()+delay || newPos.y() < mOldPos.y()-delay)
       {
-         KURL url;
+         KUrl url;
          url.setPath(mDragFile);
-         KURL::List urls;
+         KUrl::List urls;
          urls.append(url);
          K3URLDrag *d = new K3URLDrag(urls, this);
          d->dragCopy();
@@ -109,7 +109,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   mThemesList = new ThemeListBox(this);
   mThemesList->setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Expanding );
   connect(mThemesList, SIGNAL(highlighted(int)), SLOT(slotSetTheme(int)));
-  connect(mThemesList, SIGNAL(filesDropped(const KURL::List&)), SLOT(slotFilesDropped(const KURL::List&)));
+  connect(mThemesList, SIGNAL(filesDropped(const KUrl::List&)), SLOT(slotFilesDropped(const KUrl::List&)));
   leftbox->addWidget(mThemesList);
 
   mBtnAdd = new KPushButton( i18n("Add..."), this );
@@ -167,10 +167,10 @@ int SplashInstaller::addTheme(const QString &path, const QString &name)
 }
 
 // Copy theme package into themes directory
-void SplashInstaller::addNewTheme(const KURL &srcURL)
+void SplashInstaller::addNewTheme(const KUrl &srcURL)
 {
   QString dir = KGlobal::dirs()->saveLocation("ksplashthemes");
-  KURL url;
+  KUrl url;
   QString filename = srcURL.fileName();
   int i = filename.findRev('.');
   // Convert extension to lower case.
@@ -298,7 +298,7 @@ void SplashInstaller::slotRemove()
   QString themeDir = mThemesList->text2path[themeName];
   if (!themeDir.isEmpty())
   {
-     KURL url;
+     KUrl url;
      url.setPath(themeDir);
      if (KMessageBox::warningContinueCancel(this,i18n("Delete folder %1 and its contents?").arg(themeDir),"",KGuiItem(i18n("&Delete"),"editdelete"))==KMessageBox::Continue)
        rc = KIO::NetAccess::del(url,this);
@@ -337,7 +337,7 @@ void SplashInstaller::slotSetTheme(int id)
     if ( mThemesList->text2path.contains( path ) )
         path = mThemesList->text2path[path];
     enabled = false;
-    KURL url;
+    KUrl url;
     QString themeName;
     if (!path.isEmpty())
     {
@@ -430,9 +430,9 @@ void SplashInstaller::slotAdd()
 }
 
 //-----------------------------------------------------------------------------
-void SplashInstaller::slotFilesDropped(const KURL::List &urls)
+void SplashInstaller::slotFilesDropped(const KUrl::List &urls)
 {
-  for(KURL::List::ConstIterator it = urls.begin();
+  for(KUrl::List::ConstIterator it = urls.begin();
       it != urls.end();
       ++it)
       addNewTheme(*it);

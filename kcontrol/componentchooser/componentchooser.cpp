@@ -160,7 +160,7 @@ void CfgEmailClient::configChanged()
 
 void CfgEmailClient::selectEmailClient()
 {
-	KURL::List urlList;
+	KUrl::List urlList;
 	KOpenWithDlg dlg(urlList, i18n("Select preferred email client:"), QString(), this);
 	// hide "Do not &close when command exits" here, we don't need it for a mail client
 	dlg.hideNoCloseOnExit();
@@ -268,7 +268,7 @@ void CfgTerminalEmulator::save(KConfig *) {
 
 void CfgTerminalEmulator::selectTerminalApp()
 {
-	KURL::List urlList;
+	KUrl::List urlList;
 	KOpenWithDlg dlg(urlList, i18n("Select preferred terminal application:"), QString(), this);
 	// hide "Run in &terminal" here, we don't need it for a Terminal Application
 	dlg.hideRunInTerminal();
@@ -363,7 +363,7 @@ void CfgBrowser::save(KConfig *) {
 
 void CfgBrowser::selectBrowser()
 {
-	KURL::List urlList;
+	KUrl::List urlList;
 	KOpenWithDlg dlg(urlList, i18n("Select preferred Web browser application:"), QString(), this);
 	if (dlg.exec() != QDialog::Accepted) return;
 	m_browserService = dlg.service();

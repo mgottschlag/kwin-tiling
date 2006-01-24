@@ -87,7 +87,7 @@ Q_SIGNALS:
     /**
      * Emitted when some @p urls are dropped onto the kcm
      */
-    void filesDropped(const KURL::List &urls);
+    void filesDropped(const KUrl::List &urls);
 
 private Q_SLOTS:
     /**
@@ -114,7 +114,7 @@ private Q_SLOTS:
      * Invoked when one drag and drops @p urls onto the kcm
      * @see signal filesDropped
      */
-    void slotFilesDropped( const KURL::List & urls );
+    void slotFilesDropped( const KUrl::List & urls );
     void updateButton();
 
 private:
@@ -126,7 +126,7 @@ private:
     /**
      * Performs the actual theme installation.
      */
-    void addNewTheme( const KURL & url );
+    void addNewTheme( const KUrl & url );
 
     /**
      * Perform internal initialization of paths.

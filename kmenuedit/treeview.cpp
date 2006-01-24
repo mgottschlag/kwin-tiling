@@ -670,7 +670,7 @@ bool TreeView::acceptDrag(QDropEvent* e) const
     if (e->provides("application/x-kmenuedit-internal") &&
            (e->source() == const_cast<TreeView *>(this)))
        return true;
-    KURL::List urls;
+    KUrl::List urls;
     if (K3URLDrag::decode(e, urls) && (urls.count() == 1) && 
         urls[0].isLocalFile() && urls[0].path().endsWith(".desktop"))
        return true;
@@ -741,7 +741,7 @@ void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewIt
    if (e->source() != this) 
    {
      // External drop
-     KURL::List urls;
+     KUrl::List urls;
      if (!K3URLDrag::decode(e, urls) || (urls.count() != 1) || !urls[0].isLocalFile())
         return;
      QString path = urls[0].path();
@@ -960,7 +960,7 @@ Q3DragObject *TreeView::dragObject()
           m_dragPath = locate("apps", m_dragPath);
        if (!m_dragPath.isEmpty())
        {
-          KURL url;
+          KUrl url;
           url.setPath(m_dragPath);
           drag->addDragObject( new K3URLDrag(url, 0));
        }

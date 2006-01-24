@@ -46,14 +46,14 @@ protected Q_SLOTS:
   virtual void slotRemove();
   virtual void slotTest();
   virtual void slotSetTheme(int);
-  void slotFilesDropped(const KURL::List &urls);
+  void slotFilesDropped(const KUrl::List &urls);
 
 protected:
   /** Scan Themes directory for available theme packages */
   virtual void readThemesList();
   /** add a theme to the list, returns the list index */
   int addTheme(const QString &path, const QString &name);
-  void addNewTheme(const KURL &srcURL);
+  void addNewTheme(const KUrl &srcURL);
   int findTheme( const QString &theme );
 
 private:
@@ -72,7 +72,7 @@ public:
   QMap<QString, QString> text2path;
 
 Q_SIGNALS:
-  void filesDropped(const KURL::List &urls);
+  void filesDropped(const KUrl::List &urls);
 
 protected:
   void dragEnterEvent(QDragEnterEvent* event);

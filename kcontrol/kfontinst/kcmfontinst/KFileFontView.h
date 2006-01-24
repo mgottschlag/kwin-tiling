@@ -168,7 +168,7 @@ class CKFileFontView : public KListView, public KFileView
     // The user dropped the URLs urls.
     // url points to the item dropped on or can be empty if the
     // user dropped on empty space.
-    void                dropped(QDropEvent *event, const KURL::List &urls, const KURL &url);
+    void                dropped(QDropEvent *event, const KUrl::List &urls, const KUrl &url);
 
     protected:
 

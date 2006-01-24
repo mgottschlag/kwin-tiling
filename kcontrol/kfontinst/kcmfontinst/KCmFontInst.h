@@ -84,19 +84,19 @@ class CKCmFontInst : public KCModule
     void    removeFonts();
     void    configure();
     void    print();
-    void    dropped(const KFileItem *i, QDropEvent *e, const KURL::List &urls);
+    void    dropped(const KFileItem *i, QDropEvent *e, const KUrl::List &urls);
     void    infoMessage(const QString &msg);
     void    updateInformation(int dirs, int fonts);
     void    jobResult(KIO::Job *job);
 
     private:
 
-    void    addFonts(const KURL::List &src, const KURL &dest);
+    void    addFonts(const KUrl::List &src, const KUrl &dest);
 
     private:
 
     KDirOperator         *itsDirOp;
-    KURL                 itsTop;
+    KUrl                 itsTop;
     KToggleAction        *itsShowBitmapAct;
     KAction              *itsSepDirsAct,
                          *itsShowHiddenAct,

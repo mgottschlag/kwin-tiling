@@ -83,7 +83,7 @@ void HelpWidget::setBaseText()
 void HelpWidget::urlClicked(const QString & _url)
 {
     KProcess process;
-    KURL url(KURL("help:/"), _url);
+    KUrl url(KURL("help:/"), _url);
 
     if (url.protocol() == "help" || url.protocol() == "man" || url.protocol() == "info") {
         process << "khelpcenter"

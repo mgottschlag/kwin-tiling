@@ -58,7 +58,7 @@
 #include <string.h>
 #include <fontconfig/fontconfig.h>
 
-static KURL getDest(const KURL &url, bool system)
+static KUrl getDest(const KUrl &url, bool system)
 {
     return KURL(KFI::Misc::root()
                   ? QString("fonts:/") + url.fileName()
@@ -122,7 +122,7 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
     setWidget(itsFrame);
 }
 
-bool CFontViewPart::openURL(const KURL &url)
+bool CFontViewPart::openURL(const KUrl &url)
 {
     if (!url.isValid() || !closeURL())
         return false;
@@ -167,7 +167,7 @@ bool CFontViewPart::openFile()
 
     if(!isFonts)
     {
-        KURL          destUrl;
+        KUrl          destUrl;
         KIO::UDSEntry uds;
 
         //
@@ -218,19 +218,19 @@ void CFontViewPart::install()
 
     if(KMessageBox::Cancel!=resp)
     {
-        KURL destUrl(getDest(m_url, KMessageBox::No==resp));
+        KUrl destUrl(getDest(m_url, KMessageBox::No==resp));
 
         if(KIO::NetAccess::copy(m_url, destUrl, itsFrame->parentWidget()))
         {
             //
             // OK file copied, now look for any AFM or PFM file...
-            KURL::List urls;
+            KUrl::List urls;
 
             Misc::getAssociatedUrls(m_url, urls);
 
             if(urls.count())
             {
-                KURL::List::Iterator it,
+                KUrl::List::Iterator it,
                                      end=urls.end();
 
                 for(it=urls.begin(); it!=end; ++it)

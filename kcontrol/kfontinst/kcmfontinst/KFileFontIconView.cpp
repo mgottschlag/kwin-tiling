@@ -69,13 +69,13 @@ bool CKFileFontIconView::acceptDrag(QDropEvent *e) const
 {
 #if 0 // Crashes - seems to be called to quick???
     bool       ok=false;
-    KURL::List urls;
+    KUrl::List urls;
 
     if(K3URLDrag::canDecode(e) && (e->source()!=const_cast<CKFileFontIconView *>(this)) &&
        (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action()) &&
        K3URLDrag::decode(e, urls) && !urls.isEmpty())
     {
-        KURL::List::Iterator it;
+        KUrl::List::Iterator it;
 
         ok=true;
         for(it=urls.begin(); ok && it!=urls.end(); ++it)

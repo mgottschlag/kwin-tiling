@@ -204,7 +204,7 @@ void ThemePage::selectionChanged( Q3ListViewItem *item )
 void ThemePage::installClicked()
 {
 	// Get the URL for the theme we're going to install
-	KURL url = KUrlRequesterDlg::getURL( QString(), this, i18n( "Drag or Type Theme URL" ) );
+	KUrl url = KUrlRequesterDlg::getURL( QString(), this, i18n( "Drag or Type Theme URL" ) );
 	if ( url.isEmpty() )
 		return;
 
@@ -243,7 +243,7 @@ void ThemePage::removeClicked()
 		return;
 
 	// Delete the theme from the harddrive
-        KURL u;
+        KUrl u;
         u.setPath( themeInfo[  selectedTheme ]->path );
 	KIO::del( u );
 

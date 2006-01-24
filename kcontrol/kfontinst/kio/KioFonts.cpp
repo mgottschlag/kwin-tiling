@@ -133,7 +133,7 @@ inline bool isUserFolder(const QString &sect)
     return i18n(KFI_KIO_FONTS_USER)==sect || KFI_KIO_FONTS_USER==sect;
 }
 
-static QString removeMultipleExtension(const KURL &url)
+static QString removeMultipleExtension(const KUrl &url)
 {
     QString fname(url.fileName());
     int     pos;
@@ -198,7 +198,7 @@ static int getFontSize(const QString &file)
 {
     int size=0;
 
-    KURL::List  urls;
+    KUrl::List  urls;
     QStringList files;
 
     Misc::getAssociatedUrls(KURL(file), urls);
@@ -207,7 +207,7 @@ static int getFontSize(const QString &file)
 
     if(urls.count())
     {
-        KURL::List::Iterator uIt,
+        KUrl::List::Iterator uIt,
                              uEnd=urls.end();
 
         for(uIt=urls.begin(); uIt!=uEnd; ++uIt)
@@ -322,7 +322,7 @@ static bool createFontUDSEntry(KIO::UDSEntry &entry, const QString &name, QList<
 
     if(1==patterns.count()) // Only one font file, but are there any .pfm or .afm files?
     {
-        KURL::List urls;
+        KUrl::List urls;
 
         Misc::getAssociatedUrls(KURL(getFcString(patterns.first(), FC_FILE)), urls);
 
@@ -419,11 +419,11 @@ enum EUrlStatus
     REDIRECT_URL
 };
 
-static KURL getRedirect(const KURL &u)
+static KUrl getRedirect(const KUrl &u)
 {
     // Go from fonts:/System to fonts:/
 
-    KURL    redirect(u);
+    KUrl    redirect(u);
     QString path(u.path()),
             sect(CKioFonts::getSect(path));
 
@@ -435,7 +435,7 @@ static KURL getRedirect(const KURL &u)
     return redirect;
 }
 
-static bool nonRootSys(const KURL &u)
+static bool nonRootSys(const KUrl &u)
 {
     return !Misc::root() && isSysFolder(CKioFonts::getSect(u.path()));
 }
@@ -608,7 +608,7 @@ static QString getMatch(const QString &file, const char *extension)
     return Misc::fExists(f) ? f : QString();
 }
 
-inline bool isHidden(const KURL &u)
+inline bool isHidden(const KUrl &u)
 {
     return QChar('.')==u.fileName()[0];
 }
@@ -825,7 +825,7 @@ CKioFonts::~CKioFonts()
     doModified();
 }
 
-void CKioFonts::listDir(const KURL &url)
+void CKioFonts::listDir(const KUrl &url)
 {
     KFI_DBUG << "listDir " << url.path() << endl;
 
@@ -869,7 +869,7 @@ void CKioFonts::listDir(const KURL &url)
     KFI_DBUG << "listDir - finished!" << endl;
 }
 
-void CKioFonts::stat(const KURL &url)
+void CKioFonts::stat(const KUrl &url)
 {
     KFI_DBUG << "stat " << url.prettyURL() << endl;
 
@@ -922,7 +922,7 @@ void CKioFonts::stat(const KURL &url)
     }
 }
 
-bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KURL &url, EFolder folder)
+bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KUrl &url, EFolder folder)
 {
     KFI_DBUG << "createStatEntry " << url.path() << endl;
 
@@ -933,7 +933,7 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KURL &url, EFolder f
     return false;
 }
 
-void CKioFonts::get(const KURL &url)
+void CKioFonts::get(const KUrl &url)
 {
     KFI_DBUG << "get " << url.path() << " query:" << url.query() << endl;
 
@@ -1061,7 +1061,7 @@ void CKioFonts::get(const KURL &url)
     }
 }
 
-void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
+void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
 {
     KFI_DBUG << "put " << u.path() << endl;
 
@@ -1075,7 +1075,7 @@ void CKioFonts::put(const KURL &u, int mode, bool overwrite, bool resume)
 
     //checkUrl(u) // CPD: Don't need to check URL, as the call to "confirmUrl()" below will sort out any probs!
 
-    KURL            url(u);
+    KUrl            url(u);
     bool            changed=confirmUrl(url),
                     nrs=nonRootSys(url);
     EFolder         destFolder(getFolder(url));
@@ -1301,7 +1301,7 @@ bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bo
     return true;
 }
 
-void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
+void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 {
     //
     // Support:
@@ -1324,7 +1324,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
 
         if(getSourceFiles(src, srcFiles))  // Any error will be logged in getSourceFiles
         {
-            KURL                   dest(d);
+            KUrl                   dest(d);
             bool                   changed=confirmUrl(dest);
             EFolder                destFolder(getFolder(dest));
             QMap<QString, QString> map;
@@ -1495,7 +1495,7 @@ void CKioFonts::copy(const KURL &src, const KURL &d, int mode, bool overwrite)
     }
 }
 
-void CKioFonts::rename(const KURL &src, const KURL &d, bool overwrite)
+void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
 {
     KFI_DBUG << "rename " << src.prettyURL() << " - " << d.prettyURL() << ", " << overwrite << endl;
 
@@ -1513,7 +1513,7 @@ void CKioFonts::rename(const KURL &src, const KURL &d, bool overwrite)
 
         if(getSourceFiles(src, srcFiles))   // Any error will be logged in getSourceFiles
         {
-            KURL                   dest(d);
+            KUrl                   dest(d);
             bool                   changed=confirmUrl(dest);
             EFolder                destFolder(getFolder(dest));
             QMap<QString, QString> map;
@@ -1594,7 +1594,7 @@ void CKioFonts::rename(const KURL &src, const KURL &d, bool overwrite)
     }
 }
 
-void CKioFonts::del(const KURL &url, bool)
+void CKioFonts::del(const KUrl &url, bool)
 {
     KFI_DBUG << "del " << url.path() << endl;
 
@@ -1619,13 +1619,13 @@ void CKioFonts::del(const KURL &url, bool)
                 cmd+=" ";
                 cmd+=QFile::encodeName(KProcess::quote(file));
 
-                KURL::List urls;
+                KUrl::List urls;
 
                 Misc::getAssociatedUrls(KURL(file), urls);
 
                 if(urls.count())
                 {
-                    KURL::List::Iterator uIt,
+                    KUrl::List::Iterator uIt,
                                          uEnd=urls.end();
 
                     for(uIt=urls.begin(); uIt!=uEnd; ++uIt)
@@ -1661,13 +1661,13 @@ void CKioFonts::del(const KURL &url, bool)
                 {
                     modifiedDirs.add(Misc::getDir(file));
 
-                    KURL::List urls;
+                    KUrl::List urls;
 
                     Misc::getAssociatedUrls(KURL(file), urls);
 
                     if(urls.count())
                     {
-                        KURL::List::Iterator uIt,
+                        KUrl::List::Iterator uIt,
                                              uEnd=urls.end();
 
                         for(uIt=urls.begin(); uIt!=uEnd; ++uIt)
@@ -1925,7 +1925,7 @@ bool CKioFonts::doRootCmd(const char *cmd, const QString &passwd)
     return false;
 }
 
-bool CKioFonts::confirmUrl(KURL &url)
+bool CKioFonts::confirmUrl(KUrl &url)
 {
     KFI_DBUG << "confirmUrl " << url.path() << endl;
     if(!itsRoot)
@@ -2051,12 +2051,12 @@ bool CKioFonts::updateFontList()
     return true;
 }
 
-CKioFonts::EFolder CKioFonts::getFolder(const KURL &url)
+CKioFonts::EFolder CKioFonts::getFolder(const KUrl &url)
 {
     return itsRoot || isSysFolder(getSect(url.path())) ? FOLDER_SYS : FOLDER_USER;
 }
 
-QMap<QString, QList<FcPattern *> >::Iterator CKioFonts::getMap(const KURL &url)
+QMap<QString, QList<FcPattern *> >::Iterator CKioFonts::getMap(const KUrl &url)
 {
     EFolder                                           folder(getFolder(url));
     QMap<QString, QList<FcPattern *> >::Iterator it=itsFolders[folder].fontMap.find(removeMultipleExtension(url));
@@ -2072,7 +2072,7 @@ QMap<QString, QList<FcPattern *> >::Iterator CKioFonts::getMap(const KURL &url)
     return it;
 }
 
-QList<FcPattern *> * CKioFonts::getEntries(const KURL &url)
+QList<FcPattern *> * CKioFonts::getEntries(const KUrl &url)
 {
     QMap<QString, QList<FcPattern *> >::Iterator it=getMap(url);
 
@@ -2120,7 +2120,7 @@ bool CKioFonts::checkFile(const QString &file)
     return true;
 }
 
-bool CKioFonts::getSourceFiles(const KURL &src, QStringList &files)
+bool CKioFonts::getSourceFiles(const KUrl &src, QStringList &files)
 {
     if(KFI_KIO_FONTS_PROTOCOL==src.protocol())
     {
@@ -2142,13 +2142,13 @@ bool CKioFonts::getSourceFiles(const KURL &src, QStringList &files)
 
             for(sIt=files.begin(); sIt!=sEnd; ++sIt)
             {
-                KURL::List urls;
+                KUrl::List urls;
 
                 Misc::getAssociatedUrls(KURL(*sIt), urls);
 
                 if(urls.count())
                 {
-                    KURL::List::Iterator uIt,
+                    KUrl::List::Iterator uIt,
                                          uEnd=urls.end();
 
                     for(uIt=urls.begin(); uIt!=uEnd; ++uIt)
@@ -2201,7 +2201,7 @@ bool CKioFonts::getSourceFiles(const KURL &src, QStringList &files)
     return true;
 }
 
-bool CKioFonts::checkDestFiles(const KURL &src, QMap<QString, QString> &map, const KURL &dest, EFolder destFolder, bool overwrite)
+bool CKioFonts::checkDestFiles(const KUrl &src, QMap<QString, QString> &map, const KUrl &dest, EFolder destFolder, bool overwrite)
 {
     //
     // Check whether files exist at destination...
@@ -2232,7 +2232,7 @@ bool CKioFonts::checkDestFiles(const KURL &src, QMap<QString, QString> &map, con
 //
 // Gather the number and names of the font faces located in "files". If there is more than 1 face
 // (such as there would be for a TTC font), then ask the user for confirmation of the action.
-bool CKioFonts::confirmMultiple(const KURL &url, const QStringList &files, EFolder folder, EOp op)
+bool CKioFonts::confirmMultiple(const KUrl &url, const QStringList &files, EFolder folder, EOp op)
 {
     if(KFI_KIO_FONTS_PROTOCOL!=url.protocol())
         return true;
@@ -2287,7 +2287,7 @@ bool CKioFonts::confirmMultiple(const KURL &url, const QStringList &files, EFold
     return true;
 }
 
-bool CKioFonts::confirmMultiple(const KURL &url, QList<FcPattern *> *patterns, EFolder folder, EOp op)
+bool CKioFonts::confirmMultiple(const KUrl &url, QList<FcPattern *> *patterns, EFolder folder, EOp op)
 {
     if(KFI_KIO_FONTS_PROTOCOL!=url.protocol())
         return true;
@@ -2306,7 +2306,7 @@ bool CKioFonts::confirmMultiple(const KURL &url, QList<FcPattern *> *patterns, E
     return confirmMultiple(url, files, folder, op);
 }
 
-bool CKioFonts::checkUrl(const KURL &u, bool rootOk)
+bool CKioFonts::checkUrl(const KUrl &u, bool rootOk)
 {
     if(KFI_KIO_FONTS_PROTOCOL==u.protocol() && (!rootOk || (rootOk && "/"!=u.path())))
     {
@@ -2336,7 +2336,7 @@ bool CKioFonts::checkUrl(const KURL &u, bool rootOk)
     return true;
 }
 
-bool CKioFonts::checkAllowed(const KURL &u)
+bool CKioFonts::checkAllowed(const KUrl &u)
 {
     if (KFI_KIO_FONTS_PROTOCOL==u.protocol())
     {

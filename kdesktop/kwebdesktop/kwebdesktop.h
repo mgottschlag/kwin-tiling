@@ -55,7 +55,7 @@ class KWebDesktopRun : public QObject
 {
     Q_OBJECT
 public:
-    KWebDesktopRun( KWebDesktop* webDesktop, const KURL & url );
+    KWebDesktopRun( KWebDesktop* webDesktop, const KUrl & url );
     ~KWebDesktopRun() {}
 
 protected Q_SLOTS:
@@ -64,7 +64,7 @@ protected Q_SLOTS:
 
 private:
     KWebDesktop* m_webDesktop;
-    KURL m_url;
+    KUrl m_url;
 };
 
 #endif

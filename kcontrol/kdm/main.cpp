@@ -53,12 +53,12 @@
 typedef KGenericFactory<KDModule, QWidget> KDMFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kdm, KDMFactory("kdmconfig") )
 
-KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg)
+KUrl *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 {
-    KURL::List uris;
+    KUrl::List uris;
 
     if (K3URLDrag::decode(e, uris) && (uris.count() > 0)) {
-	KURL *url = new KURL(uris.first());
+	KUrl *url = new KURL(uris.first());
 
 #warning "kde4: I think that we must read extension";
 	if( KImageIO::types(KImageIO::Reading).contains(url->fileName())) 

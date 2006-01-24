@@ -85,7 +85,7 @@ void KTheme::setName( const QString & name )
     m_name = name;
 }
 
-bool KTheme::load( const KURL & url )
+bool KTheme::load( const KUrl & url )
 {
     kdDebug() << "Loading theme from URL: " << url << endl;
 

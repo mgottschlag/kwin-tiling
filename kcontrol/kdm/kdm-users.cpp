@@ -348,11 +348,11 @@ bool KDMUsersWidget::eventFilter(QObject *, QEvent *e)
     return false;
 }
 
-KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg);
+KUrl *decodeImgDrop(QDropEvent *e, QWidget *wdg);
 
 void KDMUsersWidget::userButtonDropEvent(QDropEvent *e)
 {
-    KURL *url = decodeImgDrop(e, this);
+    KUrl *url = decodeImgDrop(e, this);
     if (url) {
 	QString pixpath;
 	KIO::NetAccess::download(*url, pixpath, parentWidget());

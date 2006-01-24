@@ -97,14 +97,14 @@ class CKioFonts : public KIO::SlaveBase
 
     static QString getSect(const QString &f) { return f.section('/', 1, 1); }
 
-    void listDir(const KURL &url);
-    void stat(const KURL &url);
-    bool createStatEntry(KIO::UDSEntry &entry, const KURL &url, EFolder folder);
-    void get(const KURL &url);
-    void put(const KURL &url, int mode, bool overwrite, bool resume);
-    void copy(const KURL &src, const KURL &dest, int mode, bool overwrite);
-    void rename(const KURL &src, const KURL &dest, bool overwrite);
-    void del(const KURL &url, bool isFile);
+    void listDir(const KUrl &url);
+    void stat(const KUrl &url);
+    bool createStatEntry(KIO::UDSEntry &entry, const KUrl &url, EFolder folder);
+    void get(const KUrl &url);
+    void put(const KUrl &url, int mode, bool overwrite, bool resume);
+    void copy(const KUrl &src, const KUrl &dest, int mode, bool overwrite);
+    void rename(const KUrl &src, const KUrl &dest, bool overwrite);
+    void del(const KUrl &url, bool isFile);
 
     private:
 
@@ -116,20 +116,20 @@ class CKioFonts : public KIO::SlaveBase
     QString  getRootPasswd(bool askPasswd=true);
     bool     doRootCmd(const char *cmd, const QString &passwd);
     bool     doRootCmd(const char *cmd, bool askPasswd=true) { return doRootCmd(cmd, getRootPasswd(askPasswd)); }
-    bool     confirmUrl(KURL &url);
+    bool     confirmUrl(KUrl &url);
     void     clearFontList();
     bool     updateFontList();
-    EFolder  getFolder(const KURL &url);
-    QMap<QString, QList<FcPattern *> >::Iterator getMap(const KURL &url);
-    QList<FcPattern *> * getEntries(const KURL &url);
+    EFolder  getFolder(const KUrl &url);
+    QMap<QString, QList<FcPattern *> >::Iterator getMap(const KUrl &url);
+    QList<FcPattern *> * getEntries(const KUrl &url);
     FcPattern * getEntry(EFolder folder, const QString &file, bool full=false);
     bool     checkFile(const QString &file);
-    bool     getSourceFiles(const KURL &src, QStringList &files);
-    bool     checkDestFiles(const KURL &src, QMap<QString, QString> &map, const KURL &dest, EFolder destFolder, bool overwrite);
-    bool     confirmMultiple(const KURL &url, const QStringList &files, EFolder folder, EOp op);
-    bool     confirmMultiple(const KURL &url, QList<FcPattern *> *patterns, EFolder folder, EOp op);
-    bool     checkUrl(const KURL &u, bool rootOk=false);
-    bool     checkAllowed(const KURL &u);
+    bool     getSourceFiles(const KUrl &src, QStringList &files);
+    bool     checkDestFiles(const KUrl &src, QMap<QString, QString> &map, const KUrl &dest, EFolder destFolder, bool overwrite);
+    bool     confirmMultiple(const KUrl &url, const QStringList &files, EFolder folder, EOp op);
+    bool     confirmMultiple(const KUrl &url, QList<FcPattern *> *patterns, EFolder folder, EOp op);
+    bool     checkUrl(const KUrl &u, bool rootOk=false);
+    bool     checkAllowed(const KUrl &u);
     void     createAfm(const QString &file, bool nrs=false, const QString &passwd=QString());
     void     reparseConfig();
 

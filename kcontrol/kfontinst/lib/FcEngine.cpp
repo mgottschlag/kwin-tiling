@@ -457,7 +457,7 @@ CFcEngine::~CFcEngine()
     FcConfigAppFontClear(FcConfigGetCurrent());
 }
 
-QString CFcEngine::getName(const KURL &url, int faceNo)
+QString CFcEngine::getName(const KUrl &url, int faceNo)
 {
     if(url!=itsLastUrl || faceNo!=itsIndex)
         parseUrl(url, faceNo);
@@ -466,7 +466,7 @@ QString CFcEngine::getName(const KURL &url, int faceNo)
 }
 
 #ifdef HAVE_XFT
-bool CFcEngine::draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bool thumb)
+bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bool thumb)
 {
     bool rv=false;
 
@@ -854,7 +854,7 @@ QString CFcEngine::spacingStr(int spacing)
     }
 }
 
-bool CFcEngine::getInfo(const KURL &url, int faceNo, QString &full, QString &family, QString &foundry, QString &weight,
+bool CFcEngine::getInfo(const KUrl &url, int faceNo, QString &full, QString &family, QString &foundry, QString &weight,
 #ifndef KFI_FC_NO_WIDTHS
                         QString &width,
 #endif
@@ -899,7 +899,7 @@ QFont CFcEngine::getQFont(const QString &name, int size)
     return font;
 }
 
-bool CFcEngine::parseUrl(const KURL &url, int faceNo, bool all)
+bool CFcEngine::parseUrl(const KUrl &url, int faceNo, bool all)
 {
     FcInitLoadConfigAndFonts();
 

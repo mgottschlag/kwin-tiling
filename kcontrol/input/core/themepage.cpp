@@ -174,16 +174,16 @@ void ThemePage::fixCursorFile()
 	// Run mkfontdir to update fonts.dir in that dir.
 
 	KGlobal::dirs()->addResourceType( "font", "share/fonts/" );
-	KIO::mkdir( KURL::fromPathOrURL(QDir::homePath() + "/.fonts/kde-override") );
+	KIO::mkdir( KUrl::fromPathOrURL(QDir::homePath() + "/.fonts/kde-override") );
 	QString overrideDir = QDir::homePath() + "/.fonts/kde-override/";
 
-	KURL installedFont;
+	KUrl installedFont;
 	installedFont.setPath( overrideDir + "cursor.pcf.gz" );
 
 	if ( currentTheme == "SmallBlack" )
 		KIO::NetAccess::del( installedFont, this );
 	else {
-		KURL source;
+		KUrl source;
 
 		if ( currentTheme == "LargeBlack" )
 			source.setPath( locate("data", "kcminput/cursor_large_black.pcf.gz") );

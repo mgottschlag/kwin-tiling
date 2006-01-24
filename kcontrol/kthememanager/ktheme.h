@@ -66,7 +66,7 @@ public:
      *
      * @return true on success
      */
-    bool load( const KURL & url );
+    bool load( const KUrl & url );
 
     /**
      * Creates a snapshot of the current configuration in the work directory

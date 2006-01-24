@@ -55,11 +55,11 @@ CFontViewerAppMainWindow::CFontViewerAppMainWindow()
         itsPreview=(KParts::ReadOnlyPart *)factory->create(this, "fontvier", "KParts::ReadOnlyPart");
 
         KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-        KURL         openURL;
+        KUrl         openURL;
 
         if(args->count() > 0)
         {
-            KURL url(args->url(args->count() - 1));
+            KUrl url(args->url(args->count() - 1));
 
             if(url.isValid())
                 openURL = url;
@@ -90,7 +90,7 @@ CFontViewerAppMainWindow::~CFontViewerAppMainWindow()
 
 void CFontViewerAppMainWindow::fileOpen()
 {
-    KURL url(KFileDialog::getOpenURL(QString(), "application/x-font-ttf application/x-font-otf "
+    KUrl url(KFileDialog::getOpenURL(QString(), "application/x-font-ttf application/x-font-otf "
                                                     "application/x-font-ttc application/x-font-type1 "
                                                     "application/x-font-bdf application/x-font-pcf ",
                                      this, i18n("Select Font to View")));

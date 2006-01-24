@@ -382,14 +382,14 @@ void KDMAppearanceWidget::iconLoaderDragEnterEvent(QDragEnterEvent *e)
 }
 
 
-KURL *decodeImgDrop(QDropEvent *e, QWidget *wdg);
+KUrl *decodeImgDrop(QDropEvent *e, QWidget *wdg);
 
 void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 {
-    KURL pixurl;
+    KUrl pixurl;
     bool istmp;
 
-    KURL *url = decodeImgDrop(e, this);
+    KUrl *url = decodeImgDrop(e, this);
     if (url) {
 
 	// we gotta check if it is a non-local file and make a tmp copy at the hd.

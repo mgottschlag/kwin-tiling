@@ -48,7 +48,7 @@ CFontPreview::CFontPreview(QWidget *parent, const char *name)
 {
 }
 
-void CFontPreview::showFont(const KURL &url)
+void CFontPreview::showFont(const KUrl &url)
 {
     itsCurrentUrl=url;
     showFace(1);

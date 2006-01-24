@@ -50,7 +50,7 @@ static KCmdLineOptions options[] =
   KCmdLineLastOption
 };
 
-KWebDesktopRun::KWebDesktopRun( KWebDesktop* webDesktop, const KURL & url )
+KWebDesktopRun::KWebDesktopRun( KWebDesktop* webDesktop, const KUrl & url )
     : m_webDesktop(webDesktop), m_url(url)
 {
     kdDebug() << "KWebDesktopRun::KWebDesktopRun starting get" << endl;
@@ -122,7 +122,7 @@ int main( int argc, char **argv )
     // Apply uri filter
     KURIFilterData uridata = url;
     KURIFilter::self()->filterURI( uridata );
-    KURL u = uridata.uri();
+    KUrl u = uridata.uri();
 
     // Now start getting, to ensure mimetype and possible connection
     KWebDesktopRun * run = new KWebDesktopRun( webDesktop, u );

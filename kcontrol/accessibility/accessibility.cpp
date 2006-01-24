@@ -67,7 +67,7 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, cons
    setAboutData( about );
 
    kdDebug() << "Running: AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)" << endl;
-   // TODO: set the KURL Dialog to open just audio files
+   // TODO: set the KUrl Dialog to open just audio files
    connect( mainTab, SIGNAL(currentChanged(QWidget*)), this, SIGNAL(quickHelpChanged()) );
    load();
 }

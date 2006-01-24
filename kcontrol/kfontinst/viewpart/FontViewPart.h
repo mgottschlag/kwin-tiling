@@ -57,7 +57,7 @@ class CFontViewPart : public KParts::ReadOnlyPart
     CFontViewPart(QWidget *parent=0, const char *name=0);
     virtual ~CFontViewPart() {}
 
-    bool openURL(const KURL &url);
+    bool openURL(const KUrl &url);
 
     protected:
 

@@ -85,7 +85,7 @@ kthememanager::kthememanager( KInstance *inst, QWidget *parent )
     connect( ( QObject * )dlg->lvThemes, SIGNAL( clicked( Q3ListViewItem * ) ),
              this, SLOT( slotThemeChanged( Q3ListViewItem * ) ) );
 
-    connect( this, SIGNAL( filesDropped( const KURL::List& ) ),
+    connect( this, SIGNAL( filesDropped( const KUrl::List& ) ),
              this, SLOT( updateButton() ) );
 
     connect( ( QObject * )dlg->lvThemes, SIGNAL( clicked( Q3ListViewItem * ) ),
@@ -209,7 +209,7 @@ void kthememanager::slotInstallTheme()
                                           i18n( "Select Theme File" ) ) );
 }
 
-void kthememanager::addNewTheme( const KURL & url )
+void kthememanager::addNewTheme( const KUrl & url )
 {
     if ( url.isValid() )
     {
@@ -345,16 +345,16 @@ void kthememanager::dragEnterEvent( QDragEnterEvent * ev )
 
 void kthememanager::dropEvent( QDropEvent * ev )
 {
-    KURL::List urls;
+    KUrl::List urls;
     if ( K3URLDrag::decode( ev, urls ) )
     {
         emit filesDropped( urls );
     }
 }
 
-void kthememanager::slotFilesDropped( const KURL::List & urls )
+void kthememanager::slotFilesDropped( const KUrl::List & urls )
 {
-    for ( KURL::List::ConstIterator it = urls.begin(); it != urls.end(); ++it )
+    for ( KUrl::List::ConstIterator it = urls.begin(); it != urls.end(); ++it )
         addNewTheme( *it );
 }
 

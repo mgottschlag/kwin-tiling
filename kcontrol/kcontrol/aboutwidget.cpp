@@ -89,8 +89,8 @@ AboutWidget::AboutWidget(QWidget *parent, Q3ListViewItem* category, const QStrin
     _viewer = new KHTMLPart( this, "_viewer" );
     _viewer->widget()->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
     connect( _viewer->browserExtension(),
-             SIGNAL(openURLRequest(const KURL&, const KParts::URLArgs&)),
-             this, SLOT(slotModuleLinkClicked(const KURL&)) );
+             SIGNAL(openURLRequest(const KUrl&, const KParts::URLArgs&)),
+             this, SLOT(slotModuleLinkClicked(const KUrl&)) );
     updatePixmap();
 }
 
@@ -171,7 +171,7 @@ void AboutWidget::updatePixmap()
                 szName = module->moduleName();
                 szComment = module->comment();
                 content += "<a href=\"%1\" class=\"kcm_link\">" + szName + "</a></td><td class=\"kc_rightcol\">" + szComment;
-                KURL moduleURL( QString("kcm://%1").arg(QString().sprintf("%p",module)) );
+                KUrl moduleURL( QString("kcm://%1").arg(QString().sprintf("%p",module)) );
                 QString linkURL( moduleURL.url() );
                 content = content.arg( linkURL );
                 _moduleMap.insert( linkURL, module );
@@ -191,7 +191,7 @@ void AboutWidget::updatePixmap()
     _viewer->end();
 }
 
-void AboutWidget::slotModuleLinkClicked( const KURL& url )
+void AboutWidget::slotModuleLinkClicked( const KUrl& url )
 {
 	ConfigModule* module;
 	module = _moduleMap[url.url()];

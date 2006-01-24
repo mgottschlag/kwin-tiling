@@ -462,7 +462,7 @@ void CKFileFontView::listingCompleted()
 Q3DragObject *CKFileFontView::dragObject()
 {
     // create a list of the URL:s that we want to drag
-    KURL::List            urls = KFileView::selectedItems()->urlList();
+    KUrl::List            urls = KFileView::selectedItems()->urlList();
     QPixmap               pixmap;
     QPoint                hotspot;
 
@@ -499,14 +499,14 @@ bool CKFileFontView::acceptDrag(QDropEvent *e) const
 {
 #if 0   // Following doesn't seem to work, why???
     bool       ok=false;
-    KURL::List urls;
+    KUrl::List urls;
 
 
     if((e->source()!=const_cast<CKFileFontView *>(this)) &&
        (QDropEvent::Copy==e->action() || QDropEvent::Move==e->action()) &&
        K3URLDrag::decode(e, urls) && !urls.isEmpty())
     {
-        KURL::List::Iterator it;
+        KUrl::List::Iterator it;
 
         ok=true;
         for(it=urls.begin(); ok && it!=urls.end(); ++it)
@@ -594,7 +594,7 @@ void CKFileFontView::contentsDropEvent(QDropEvent *e)
 
         CFontListViewItem *item = dynamic_cast<CFontListViewItem*>(itemAt(contentsToViewport(e->pos())));
         KFileItem         *fileItem = item ? item->fileInfo() : 0;
-        KURL::List        urls;
+        KUrl::List        urls;
 
         emit dropped(e, fileItem);
 

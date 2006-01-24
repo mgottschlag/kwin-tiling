@@ -181,7 +181,7 @@ void createBackup(const QString &f)
 //
 //    Associated: /home/a/courier.afm /home/a/courier.pfm
 //
-void getAssociatedUrls(const KURL &url, KURL::List &list, bool afmAndPfm, QWidget *widget)
+void getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidget *widget)
 {
     const char *afm[]={"afm", "AFM", "Afm", "AFm", "AfM", "aFM", "aFm", "afM", NULL},
                *pfm[]={"pfm", "PFM", "Pfm", "PFm", "PfM", "pFM", "pFm", "pfM", NULL};
@@ -191,7 +191,7 @@ void getAssociatedUrls(const KURL &url, KURL::List &list, bool afmAndPfm, QWidge
 
     for(e=0; afm[e]; ++e)
     {
-        KURL statUrl(url);
+        KUrl statUrl(url);
         KIO::UDSEntry uds;
 
         statUrl.setPath(changeExt(url.path(), afm[e]));
@@ -207,7 +207,7 @@ void getAssociatedUrls(const KURL &url, KURL::List &list, bool afmAndPfm, QWidge
     if(afmAndPfm || !gotAfm)
         for(e=0; pfm[e]; ++e)
         {
-            KURL          statUrl(url);
+            KUrl          statUrl(url);
             KIO::UDSEntry uds;
 
             statUrl.setPath(changeExt(url.path(), pfm[e]));

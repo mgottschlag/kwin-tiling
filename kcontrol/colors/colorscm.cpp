@@ -593,7 +593,7 @@ void KColorScheme::slotImport()
 {
 	QString location = locateLocal( "data", "kdisplay/color-schemes/" );
 
-	KURL file ( KFileDialog::getOpenFileName(QString(), "*.kcsrc", this) );
+	KUrl file ( KFileDialog::getOpenFileName(QString(), "*.kcsrc", this) );
 	if ( file.isEmpty() )
 		return;
 
@@ -927,7 +927,7 @@ int KColorScheme::findSchemeByName(const QString &scheme)
 
    for(KColorSchemeEntry *entry = mSchemeList->first(); entry; entry = mSchemeList->next())
    {
-      KURL url;
+      KUrl url;
       url.setPath(entry->path);
       if (url.fileName() == search)
          return i+nSysSchemes;

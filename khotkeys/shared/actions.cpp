@@ -152,7 +152,7 @@ void Command_url_action::execute()
                 KService::Ptr service = KService::serviceByDesktopName( cmd );
                 if( service )
                     {
-                    KRun::run( *service, KURL::List());
+                    KRun::run( *service, KUrl::List());
                   break;
                     }
                 }
@@ -207,7 +207,7 @@ void Menuentry_action::execute()
     (void) service();
     if (!_service)
         return;
-    KRun::run( *_service, KURL::List());
+    KRun::run( *_service, KUrl::List());
     timeout.start( 1000, true ); // 1sec timeout
     }
 

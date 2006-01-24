@@ -39,7 +39,7 @@ void BGMonitor::dropEvent(QDropEvent *e)
     if (!K3URLDrag::canDecode(e))
         return;
 
-    KURL::List uris;
+    KUrl::List uris;
     if (K3URLDrag::decode(e, uris) && (uris.count() > 0)) {
         // TODO: Download remote file
         if (uris.first().isLocalFile())

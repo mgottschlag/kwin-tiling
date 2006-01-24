@@ -173,7 +173,7 @@ KDIconView::~KDIconView()
 void KDIconView::initDotDirectories()
 {
     QStringList dirs = m_desktopDirs;
-    KURL u = desktopURL();
+    KUrl u = desktopURL();
     if (u.isLocalFile())
        dirs.prepend(u.path());
 
@@ -327,8 +327,8 @@ void KDIconView::start()
     m_bNeedSave = false;
 
     connect( m_dirLister, SIGNAL( clear() ), this, SLOT( slotClear() ) );
-    connect( m_dirLister, SIGNAL( started(const KURL&) ),
-             this, SLOT( slotStarted(const KURL&) ) );
+    connect( m_dirLister, SIGNAL( started(const KUrl&) ),
+             this, SLOT( slotStarted(const KUrl&) ) );
     connect( m_dirLister, SIGNAL( completed() ), this, SLOT( slotCompleted() ) );
     connect( m_dirLister, SIGNAL( newItems( const KFileItemList & ) ),
              this, SLOT( slotNewItems( const KFileItemList & ) ) );
@@ -348,7 +348,7 @@ void KDIconView::start()
     for ( QStringList::ConstIterator it = m_desktopDirs.begin() ; it != m_desktopDirs.end() ; ++it )
     {
         kdDebug(1204) << "KDIconView::start found merge dir " << *it << endl;
-        KURL u;
+        KUrl u;
         u.setPath( *it );
         m_mergeDirs.append( u );
         // And start listing this dir right now
@@ -367,7 +367,7 @@ void KDIconView::configureMedia()
     updateContents();
     if (m_enableMedia)
     {
-    	for (KURL::List::Iterator it1=m_mergeDirs.begin();it1!=m_mergeDirs.end();++it1)
+    	for (KUrl::List::Iterator it1=m_mergeDirs.begin();it1!=m_mergeDirs.end();++it1)
 	    {
 	    	if ((*it1).url()=="media:/") return;
 	    }
@@ -376,7 +376,7 @@ void KDIconView::configureMedia()
     }
     else
     {
-            for (KURL::List::Iterator it2=m_mergeDirs.begin();it2!=m_mergeDirs.end();++it2)
+            for (KUrl::List::Iterator it2=m_mergeDirs.begin();it2!=m_mergeDirs.end();++it2)
 	    {
 		if ((*it2).url()=="media:/")
 		{
@@ -489,7 +489,7 @@ void KDIconView::desktopResized()
     for ( QStringList::ConstIterator it = m_desktopDirs.begin() ; it != m_desktopDirs.end() ; ++it )
     {
         kdDebug(1204) << "KDIconView::desktopResized found merge dir " << *it << endl;
-        KURL u;
+        KUrl u;
         u.setPath( *it );
         m_mergeDirs.append( u );
         // And start listing this dir right now
@@ -543,7 +543,7 @@ void KDIconView::recheckDesktopURL()
     }
 }
 
-KURL KDIconView::desktopURL()
+KUrl KDIconView::desktopURL()
 {
     // Support both paths and URLs
     QString desktopPath = KGlobalSettings::desktopPath();
@@ -553,7 +553,7 @@ KURL KDIconView::desktopURL()
         desktopPath.replace("Desktop", dn);
     }
 
-    KURL desktopURL;
+    KUrl desktopURL;
     if (desktopPath[0] == '/')
         desktopURL.setPath(desktopPath);
     else
@@ -561,7 +561,7 @@ KURL KDIconView::desktopURL()
 
     Q_ASSERT( desktopURL.isValid() );
     if ( !desktopURL.isValid() ) { // should never happen
-        KURL u;
+        KUrl u;
         u.setPath(  QDir::homePath() + "/" + "Desktop" + "/" );
         return u;
     }
@@ -699,7 +699,7 @@ void KDIconView::slotPopupPasteTo()
  */
 bool KDIconView::deleteGlobalDesktopFiles()
 {
-    KURL desktop_URL = desktopURL();
+    KUrl desktop_URL = desktopURL();
     if (!desktop_URL.isLocalFile())
         return false; // Dunno how to do this.
 
@@ -855,7 +855,7 @@ bool KDIconView::makeFriendlyText( KFileIVI *fileIVI )
     QString desktopFile;
     if ( item->isDir() && item->isLocalFile() )
     {
-        KURL u( item->url() );
+        KUrl u( item->url() );
         u.addPath( ".directory" );
         // using KStandardDirs as this one checks for path being
         // a file instead of a directory
@@ -918,7 +918,7 @@ void KDIconView::slotNewItems( const KFileItemList & entries )
   setIconArea( QRect(  0, 0, -1, -1 ) );
 
   QString desktopPath;
-  KURL desktop_URL = desktopURL();
+  KUrl desktop_URL = desktopURL();
   if (desktop_URL.isLocalFile())
     desktopPath = desktop_URL.path();
   // We have new items, so we'll need to repaint in slotCompleted
@@ -929,7 +929,7 @@ void KDIconView::slotNewItems( const KFileItemList & entries )
   KFileIVI* fileIVI = 0L;
   for (; it != end; ++it)
   {
-    KURL url = (*it)->url();
+    KUrl url = (*it)->url();
     if (!desktopPath.isEmpty() && url.isLocalFile() && !url.path().startsWith(desktopPath))
     {
       QString fileName = url.fileName();
@@ -1083,16 +1083,16 @@ void KDIconView::refreshIcons()
 }
 
 
-void KDIconView::FilesAdded( const KURL & directory )
+void KDIconView::FilesAdded( const KUrl & directory )
 {
     if ( directory.path().length() <= 1 && directory.protocol() == "trash" )
         refreshTrashIcon();
 }
 
-void KDIconView::FilesRemoved( const KURL::List & fileList )
+void KDIconView::FilesRemoved( const KUrl::List & fileList )
 {
     if ( !fileList.isEmpty() ) {
-        const KURL url = fileList.first();
+        const KUrl url = fileList.first();
         if ( url.protocol() == "trash" )
             refreshTrashIcon();
     }
@@ -1145,7 +1145,7 @@ void KDIconView::slotDeleteItem( KFileItem * _fileitem )
 
 // -----------------------------------------------------------------------------
 
-void KDIconView::slotStarted( const KURL& _url )
+void KDIconView::slotStarted( const KUrl& _url )
 {
     kdDebug(1204) << "KDIconView::slotStarted url: " << _url.url() << " url().url(): "<<url().url()<<endl;
 }
@@ -1190,11 +1190,11 @@ void KDIconView::slotClipboardDataChanged()
 {
     // This is very related to KonqDirPart::slotClipboardDataChanged
 
-    KURL::List lst;
+    KUrl::List lst;
     const QMimeData *data = QApplication::clipboard()->mimeData();
     if ( data->hasFormat( "application/x-kde-cutselection" ) && data->hasFormat( "text/uri-list" ) )
         if ( KonqMimeData::decodeIsCutSelection( data ) )
-            lst = KURL::List::fromMimeData( data );
+            lst = KUrl::List::fromMimeData( data );
 
     disableIcons( lst );
 
@@ -1324,7 +1324,7 @@ void KDIconView::contentsDropEvent( QDropEvent * e )
     // that contains the same line "Set as Wallpaper" in void KonqOperations::asyncDrop
     bool isColorDrag = K3ColorDrag::canDecode(e);
     bool isImageDrag = Q3ImageDrag::canDecode(e);
-    bool isUrlDrag = KURL::List::canDecode(e->mimeData());
+    bool isUrlDrag = KUrl::List::canDecode(e->mimeData());
 
     bool isImmutable = KGlobal::config()->isImmutable();
 

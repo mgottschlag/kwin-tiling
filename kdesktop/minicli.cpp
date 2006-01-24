@@ -378,7 +378,7 @@ int Minicli::runCommand()
     return 1;
 
   QString cmd;
-  KURL uri = m_filterData->uri();
+  KUrl uri = m_filterData->uri();
   if ( uri.isLocalFile() && !uri.hasRef() && uri.query().isEmpty() )
     cmd = uri.path();
   else
@@ -529,7 +529,7 @@ int Minicli::runCommand()
             if (service && service->isValid() && service->type() == "Application")
             {
               notifyServiceStarted(service);
-              KRun::run(*service, KURL::List());
+              KRun::run(*service, KUrl::List());
               return 0;
             }
           }
@@ -563,7 +563,7 @@ int Minicli::runCommand()
           if (service && service->isValid() && service->type() == "Application")
           {
             notifyServiceStarted(service);
-            KRun::run(*service, KURL::List());
+            KRun::run(*service, KUrl::List());
             return 0;
           }
 
@@ -571,7 +571,7 @@ int Minicli::runCommand()
           if (service && service->isValid() && service->type() == "Application")
           {
             notifyServiceStarted(service);
-            KRun::run(*service, KURL::List());
+            KRun::run(*service, KUrl::List());
             return 0;
           }
 

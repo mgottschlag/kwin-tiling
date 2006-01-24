@@ -319,7 +319,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
 #endif
             spacingAll,
             slantAll;
-    KURL    url(info.url());
+    KUrl    url(info.url());
     QString fName;
     bool    fontsProt  = KFI_KIO_FONTS_PROTOCOL == url.protocol(),
             fileProt   = "file"             == url.protocol(),

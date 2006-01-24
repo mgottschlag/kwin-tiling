@@ -55,11 +55,11 @@ class KDE_EXPORT CFcEngine
     ~CFcEngine();
 
 #ifdef HAVE_XFT
-    bool    draw(const KURL &url, int w, int h, QPixmap &pix, int faceNo, bool thumb);
+    bool    draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bool thumb);
 #endif
     int     getNumIndexes() { return itsIndexCount; } // Only valid after draw has been called!
-    QString getName(const KURL &url, int faceNo=0);
-    bool    getInfo(const KURL &url, int faceNo, QString &full, QString &family, QString &foundry, QString &weight,
+    QString getName(const KUrl &url, int faceNo=0);
+    bool    getInfo(const KUrl &url, int faceNo, QString &full, QString &family, QString &foundry, QString &weight,
 #ifndef KFI_FC_NO_WIDTHS
                     QString &width,
 #endif
@@ -88,7 +88,7 @@ class KDE_EXPORT CFcEngine
 
     private:
 
-    bool      parseUrl(const KURL &url, int faceNo, bool all=false);
+    bool      parseUrl(const KUrl &url, int faceNo, bool all=false);
     void      parseName(const QString &name, int faceNo, bool all=false);
 #ifdef HAVE_XFT
     XftFont * getFont(int size, QPixmap *pix=NULL);
@@ -111,7 +111,7 @@ class KDE_EXPORT CFcEngine
                       itsSpacing,
                       itsAlphaSize;
     QVector<int> itsSizes;
-    KURL              itsLastUrl;
+    KUrl              itsLastUrl;
     FcBool            itsScalable;
 };
 
