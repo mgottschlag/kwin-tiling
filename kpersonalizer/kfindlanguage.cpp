@@ -56,7 +56,7 @@ KFindLanguage::KFindLanguage() {
 	// get the users primary Languages
 	KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/%1/entry.desktop").arg(m_country)), true);
 	ent.setGroup("KCM Locale");
-	QStringList langs = ent.readListEntry("Languages");
+	QStringList langs = ent.readEntry("Languages",QStringList());
 	if (langs.isEmpty())
 		langs.append("en_US");
 

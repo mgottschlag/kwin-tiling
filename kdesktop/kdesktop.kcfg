@@ -176,7 +176,7 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- kdiconview.cc:254 -->
-      <!--     m_itemsAlwaysFirst = config->readListEntry("AlwaysFirstItems"); // Distributor plug-in -->
+      <!--     m_itemsAlwaysFirst = config->readEntry("AlwaysFirstItems"); // Distributor plug-in -->
     </entry>
   </group>
   <group name="Media"> 
@@ -296,14 +296,14 @@
       <label></label>
       <whatsthis></whatsthis>
       <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:342 -->
-      <!--     mPlugins = config.readListEntry("PluginsUnlock"); -->
+      <!--     mPlugins = config.readEntry("PluginsUnlock"); -->
     </entry>
     <entry key="PluginOptions" type="StringList">
       <default></default>
       <label></label>
       <whatsthis></whatsthis>
       <!-- /home/paco/cvsroot/kdebase/kdesktop/lock/lockprocess.cc:345 -->
-      <!--     mPluginOptions = config.readListEntry("PluginOptions"); -->
+      <!--     mPluginOptions = config.readEntry("PluginOptions"); -->
     </entry>
   </group>
   <group name="MiniCli"> 

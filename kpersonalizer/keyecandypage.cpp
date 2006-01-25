@@ -725,9 +725,9 @@ void KEyeCandyPage::getUserDefaults(){
 	konqbgimage=konquerorconf->readPathEntry("BgImage", "");
 
 	kdesktopconf->setGroup("Desktop Icons");
-	kdesktop_prev=kdesktopconf->readListEntry("Preview");
+	kdesktop_prev=kdesktopconf->readEntry("Preview",QStringList());
 	konqiconconf->setGroup("Settings");
-	konq_dont_prev=konqiconconf->readListEntry("DontPreview");
+	konq_dont_prev=konqiconconf->readEntry("DontPreview", QStringList());
 	b_konq_prev_sound=konqiconconf->readEntry("EnableSoundPreviews", false);
 	b_konq_prev_enable=konqiconconf->readEntry("PreviewsEnabled", true);
 	kwinconf->setGroup( "Windows" );

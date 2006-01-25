@@ -187,7 +187,7 @@ bool KCountryPage::save(KLanguageButton *comboCountry, KLanguageButton *comboLan
 void KCountryPage::setLangForCountry(const QString &country) {
 	KSimpleConfig ent(locate("locale", "l10n/" + country + "/entry.desktop"), true);
 	ent.setGroup(QLatin1String("KCM Locale"));
-	langs = ent.readListEntry(QLatin1String("Languages"));
+	langs = ent.readEntry(QLatin1String("Languages"),QStringList());
 
 	QString lang = QLatin1String("en_US");
 	// use the first INSTALLED langauge in the list, or default to C
