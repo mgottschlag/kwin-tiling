@@ -60,10 +60,10 @@ KUrl *decodeImgDrop(QDropEvent *e, QWidget *wdg)
     if (K3URLDrag::decode(e, uris) && (uris.count() > 0)) {
 	KUrl *url = new KURL(uris.first());
 
-#warning "kde4: I think that we must read extension";
-	if( KImageIO::types(KImageIO::Reading).contains(url->fileName())) 
-	    return url;
-
+        KMimeType::Ptr mime = KMimeType::findByURL( *url );
+	if ( mime && KImageIO::isSupported( mime->name(), KImageIO::Reading ) )
+		return url;
+			    
 	QStringList qs = KImageIO::pattern().split( '\n');
 	qs.remove(qs.begin());
 

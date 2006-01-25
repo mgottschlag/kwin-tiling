@@ -101,9 +101,7 @@ bool KRootWidget::eventFilter ( QObject *, QEvent * e )
        {
          KUrl url = KUrl::List::fromMimeData( de->mimeData() ).first();
          KMimeType::Ptr mime = KMimeType::findByURL( url );
-#warning "kde4: is it correct ?"		 
-         if ( !mime.isNull() ||
-              KImageIO::isSupported( mime->name(), KImageIO::Reading ) || mime->is( "image/svg+xml" ) )
+         if ( mime && ( KImageIO::isSupported( mime->name(), KImageIO::Reading ) || mime->is( "image/svg+xml" ) ) )
            imageURL = true;
        }
 
