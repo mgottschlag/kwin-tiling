@@ -149,7 +149,7 @@ QStringList khotkeys_get_all_shortcuts( )
 KService::Ptr khotkeys_find_menu_entry_internal(const Action_data_group* data_P, const QString &shortcut_P)
     {
     if( !data_P->enabled( false ))
-        return 0;
+        return KService::Ptr();
     for( Action_data_group::Iterator it = data_P->first_child();
          it;
          ++it )
@@ -164,7 +164,7 @@ KService::Ptr khotkeys_find_menu_entry_internal(const Action_data_group* data_P,
                {
                   if (entry->action())
                      return entry->action()->service();
-                  return 0;
+                  return KService::Ptr();
                }
             }
         if( Action_data_group* group = dynamic_cast< Action_data_group* >( *it ))
@@ -174,7 +174,7 @@ KService::Ptr khotkeys_find_menu_entry_internal(const Action_data_group* data_P,
                   return result;
             }
         }
-        return 0;
+      return KService::Ptr();
     }
 
 

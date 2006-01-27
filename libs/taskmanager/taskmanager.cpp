@@ -228,14 +228,14 @@ Task::TaskPtr TaskManager::findTask(WId w)
         }
     }
 
-    return 0;
+    return Task::TaskPtr();
 }
 
 Task::TaskPtr TaskManager::findTask(int desktop, const QPoint& p)
 {
     QList<WId> list = winModule()->stackingOrder();
 
-    Task::TaskPtr task = 0;
+    Task::TaskPtr task;
     int currentIndex = -1;
     Task::Dict::iterator itEnd = m_tasksByWId.end();
     for (Task::Dict::iterator it = m_tasksByWId.begin(); it != itEnd; ++it)
@@ -320,7 +320,7 @@ void TaskManager::windowAdded(WId w )
         }
     }
 
-    Task::TaskPtr t = new Task(w, this);
+    Task::TaskPtr t( new Task( w, this ) );
     m_tasksByWId[w] = t;
 
     // kdDebug() << "TM: Task added for WId: " << w << endl;
@@ -483,7 +483,7 @@ void TaskManager::currentDesktopChanged(int desktop)
 
 void TaskManager::gotNewStartup( const KStartupInfoId& id, const KStartupInfoData& data )
 {
-    Startup::StartupPtr s = new Startup( id, data, this );
+    Startup::StartupPtr s( new Startup( id, data, this ) );
     _startups.append(s);
 
     emit startupAdded(s);
@@ -506,7 +506,7 @@ void TaskManager::killStartup( const KStartupInfoId& id )
 {
     Startup::List::iterator sIt = _startups.begin();
     Startup::List::iterator itEnd = _startups.end();
-    Startup::StartupPtr s = 0;
+    Startup::StartupPtr s;
     for (; sIt != itEnd; ++sIt)
     {
         if ((*sIt)->id() == id)
