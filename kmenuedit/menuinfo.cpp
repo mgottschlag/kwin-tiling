@@ -274,7 +274,7 @@ KService::Ptr MenuFolderInfo::findServiceShortcut(const KShortcut&cut)
       if (entryInfo->shortCut == cut)
          return entryInfo->service;
    }
-   return 0;
+   return KService::Ptr();
 }
 
 void MenuFolderInfo::setInUse(bool inUse)

@@ -754,7 +754,7 @@ void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewIt
      KDesktopFile *df = orig_df.copyTo(result);
      df->deleteEntry("Categories"); // Don't set any categories!
 
-     KService *s = new KService(df);
+     KService::Ptr s(new KService(df));
      s->setMenuId(menuId);
 
      MenuEntryInfo *entryInfo = new MenuEntryInfo(s, df);
@@ -873,7 +873,7 @@ void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewIt
          KDesktopFile *df = copyDesktopFile(entryInfo, &menuId, &m_newMenuIds); // Duplicate
 //UNDO-ACTION: NEW_MENU_ID (menuId)
 
-         KService *s = new KService(df);
+         KService::Ptr s(new KService(df));
          s->setMenuId(menuId);
 
          entryInfo = new MenuEntryInfo(s, df);
@@ -1104,7 +1104,7 @@ void TreeView::newitem()
    // m_menuFile->addEntry(folder, menuId);
    m_menuFile->pushAction(MenuFile::ADD_ENTRY, folder, menuId);
 
-   KService *s = new KService(df);
+   KService::Ptr s(new KService(df));
    s->setMenuId(menuId);
 
    MenuEntryInfo *entryInfo = new MenuEntryInfo(s, df);
@@ -1317,7 +1317,7 @@ void TreeView::paste()
          // Need to copy file and then add it
          KDesktopFile *df = copyDesktopFile(entryInfo, &menuId, &m_newMenuIds); // Duplicate
 
-         KService *s = new KService(df);
+         KService::Ptr s(new KService(df));
          s->setMenuId(menuId);
          entryInfo = new MenuEntryInfo(s, df);
 

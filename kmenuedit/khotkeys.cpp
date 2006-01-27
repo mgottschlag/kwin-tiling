@@ -143,6 +143,6 @@ KService::Ptr KHotKeys::findMenuEntry( const QString &shortcut_P )
     if( !khotkeys_inited )
         init();
     if (!khotkeys_find_menu_entry_2)
-        return 0;
+        return KService::Ptr();
     return khotkeys_find_menu_entry_2(shortcut_P);
 }

@@ -96,7 +96,7 @@ public:
     TreeView(bool controlCenter, KActionCollection *ac, QWidget *parent=0, const char *name=0);
     ~TreeView();
 
-    void readMenuFolderInfo(MenuFolderInfo *folderInfo=0, KServiceGroup::Ptr folder=0, const QString &prefix=QString());
+    void readMenuFolderInfo(MenuFolderInfo *folderInfo=0, KServiceGroup::Ptr folder=KServiceGroup::Ptr(), const QString &prefix=QString());
     void setViewMode(bool showHidden);
     bool save();
 
