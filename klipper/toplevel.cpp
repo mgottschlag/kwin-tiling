@@ -44,6 +44,7 @@
 #include <kkeydialog.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <ksavefile.h>
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 #include <kstringhandler.h>
@@ -65,6 +66,8 @@
 #include "historyitem.h"
 #include "historystringitem.h"
 #include "klipperpopup.h"
+
+#include <zlib.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -340,38 +343,53 @@ bool KlipperWidget::loadHistory() {
     static const char* const failed_load_warning =
         "Failed to load history resource. Clipboard history cannot be read.";
     // don't use "appdata", klipper is also a kicker applet
-    QString history_file_name = ::locateLocal( "data", "klipper/history.lst" );
-    if ( history_file_name.isNull() || history_file_name.isEmpty() ) {
-        kdWarning() << failed_load_warning << endl;
-        return false;
-    }
+    QString history_file_name = ::locateLocal( "data", "klipper/history2.lst" );
     QFile history_file( history_file_name );
-    if ( !history_file.exists() ) {
-        history_file_name = ::locateLocal( "data", "kicker/history.lst" );
-        if ( history_file_name.isNull() || history_file_name.isEmpty() ) {
-            return false;
-        }
+    bool oldfile = false;
+    if ( !history_file.exists() ) { // backwards compatibility
+        oldfile = true;
+        history_file_name = ::locateLocal( "data", "klipper/history.lst" );
         history_file.setName( history_file_name );
         if ( !history_file.exists() ) {
-            return false;
+            history_file_name = ::locateLocal( "data", "kicker/history.lst" );
+            history_file.setName( history_file_name );
+            if ( !history_file.exists() ) {
+                return false;
+            }
         }
     }
     if ( !history_file.open( QIODevice::ReadOnly ) ) {
         kdWarning() << failed_load_warning << ": " << history_file.errorString() << endl;
         return false;
     }
-    QDataStream history_stream( &history_file );
+    QDataStream file_stream( &history_file );
+    if( file_stream.atEnd()) {
+        kdWarning() << failed_load_warning << endl;
+        return false;
+    }
+    QDataStream* history_stream = &file_stream;
+    QByteArray data;
+    QDataStream data_stream( &data, IO_ReadOnly );
+    if( !oldfile ) {
+        Q_UINT32 crc;
+        file_stream >> crc >> data;
+        if( crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() ) != crc ) {
+            kdWarning() << failed_load_warning << ": " << history_file.errorString() << endl;
+            return false;
+        }
+        history_stream = &data_stream;
+    }
     QString version;
-    history_stream >> version;
+    *history_stream >> version;
 
     // The list needs to be reversed, as it is saved
     // youngest-first to keep the most important clipboard
     // items at the top, but the history is created oldest
     // first.
     Q3PtrList<HistoryItem> reverseList;
-    for ( HistoryItem* item = HistoryItem::create( history_stream );
+    for ( HistoryItem* item = HistoryItem::create( *history_stream );
           item;
-          item = HistoryItem::create( history_stream ) )
+          item = HistoryItem::create( *history_stream ) )
     {
         reverseList.prepend( item );
     }
@@ -396,22 +414,24 @@ void KlipperWidget::saveHistory() {
     static const char* const failed_save_warning =
         "Failed to save history. Clipboard history cannot be saved.";
     // don't use "appdata", klipper is also a kicker applet
-    QString history_file_name( ::locateLocal( "data", "klipper/history.lst" ) );
+    QString history_file_name( ::locateLocal( "data", "klipper/history2.lst" ) );
     if ( history_file_name.isNull() || history_file_name.isEmpty() ) {
         kdWarning() << failed_save_warning << endl;
         return;
     }
-    QFile history_file( history_file_name );
-    if ( !history_file.open( QIODevice::WriteOnly | QIODevice::Truncate ) ) {
-        kdWarning() << failed_save_warning << ": " << history_file.errorString() << endl;
+    KSaveFile history_file( history_file_name );
+    if ( history_file.status() != 0  ) {
+        kdWarning() << failed_save_warning << endl;
         return;
     }
-    QDataStream history_stream( &history_file );
+    QByteArray data;
+    QDataStream history_stream( &data, QIODevice::WriteOnly );
     history_stream << klipper_version;
     for (  const HistoryItem* item = history()->first(); item; item = history()->next() ) {
         history_stream << item;
     }
-
+    Q_UINT32 crc = crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() );
+    *history_file.dataStream() << crc << data;
 }
 
 void KlipperWidget::readProperties(KConfig *kc)
