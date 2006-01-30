@@ -83,11 +83,11 @@ private:
                            // of the receiver's CONNECT button
     bool m_waitLock; // true if receiver searching for new mouse because the
                      // CONNECT button on the receiver was pressed
-    Q_UINT8 m_useSecondChannel;
     Q_UINT8 m_batteryLevel;
     Q_UINT8 m_channel;
     Q_UINT8 m_cordlessNameIndex; // this gets convered into a QString in cordlessName()
     Q_UINT16 m_cordlessSecurity;
+    Q_UINT16 m_useSecondChannel;
     Q_UINT8 m_caseShape;
     Q_UINT8 m_numberOfButtons;
     Q_UINT8 m_resolution;
