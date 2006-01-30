@@ -379,8 +379,9 @@ bool KlipperWidget::loadHistory() {
         }
         history_stream = &data_stream;
     }
-    QString version;
+    char* version;
     *history_stream >> version;
+    delete[] version;
 
     // The list needs to be reversed, as it is saved
     // youngest-first to keep the most important clipboard
@@ -426,7 +427,7 @@ void KlipperWidget::saveHistory() {
     }
     QByteArray data;
     QDataStream history_stream( &data, QIODevice::WriteOnly );
-    history_stream << klipper_version;
+    history_stream << klipper_version; // const char*
     for (  const HistoryItem* item = history()->first(); item; item = history()->next() ) {
         history_stream << item;
     }
