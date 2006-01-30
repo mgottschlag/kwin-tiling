@@ -369,7 +369,6 @@ bool KlipperWidget::loadHistory() {
     }
     QDataStream* history_stream = &file_stream;
     QByteArray data;
-    QDataStream data_stream( &data, IO_ReadOnly );
     if( !oldfile ) {
         Q_UINT32 crc;
         file_stream >> crc >> data;
@@ -377,7 +376,7 @@ bool KlipperWidget::loadHistory() {
             kdWarning() << failed_load_warning << ": " << history_file.errorString() << endl;
             return false;
         }
-        history_stream = &data_stream;
+        history_stream = new QDataStream( &data, QIODevice::ReadOnly );
     }
     char* version;
     *history_stream >> version;
@@ -407,6 +406,9 @@ bool KlipperWidget::loadHistory() {
         m_lastClipboard = -1;
         setClipboard( *history()->first(), Clipboard | Selection );
     }
+
+    if( history_stream != &file_stream )
+        delete history_stream;
 
     return true;
 }
