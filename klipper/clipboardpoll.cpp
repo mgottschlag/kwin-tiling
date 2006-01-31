@@ -84,13 +84,13 @@ ClipboardPoll::ClipboardPoll( QWidget* parent )
     kapp->installX11EventFilter( this );
 #ifdef HAVE_XFIXES
     int dummy;
-    if( XFixesQueryExtension( qt_xdisplay(), &xfixes_event_base, &dummy ))
+    if( XFixesQueryExtension( QX11Info::display(), &xfixes_event_base, &dummy ))
     {
-        XFixesSelectSelectionInput( qt_xdisplay(), qt_xrootwin( 0 ), XA_PRIMARY,
+        XFixesSelectSelectionInput( QX11Info::display(), QX11Info::appRootWindow( 0 ), XA_PRIMARY,
             XFixesSetSelectionOwnerNotifyMask |
             XFixesSelectionWindowDestroyNotifyMask |
             XFixesSelectionClientCloseNotifyMask );
-        XFixesSelectSelectionInput( qt_xdisplay(), qt_xrootwin( 0 ), xa_clipboard,
+        XFixesSelectSelectionInput( QX11Info::display(), QX11Info::appRootWindow( 0 ), xa_clipboard,
             XFixesSetSelectionOwnerNotifyMask |
             XFixesSelectionWindowDestroyNotifyMask |
             XFixesSelectionClientCloseNotifyMask );
@@ -154,7 +154,7 @@ bool ClipboardPoll::x11Event( XEvent* e )
 #ifdef NOISY_KLIPPER_
             kdDebug() << "SELECTION CHANGED (XFIXES)" << endl;
 #endif
-            qt_x_time = ev->timestamp;
+            QX11Info::setAppTime( ev->timestamp );
             emit clipboardChanged( true );
         }
         else if( ev->selection == xa_clipboard && !kapp->clipboard()->ownsClipboard())
@@ -162,7 +162,7 @@ bool ClipboardPoll::x11Event( XEvent* e )
 #ifdef NOISY_KLIPPER_
             kdDebug() << "CLIPBOARD CHANGED (XFIXES)" << endl;
 #endif
-            qt_x_time = ev->timestamp;
+            QX11Info::setAppTime( ev->timestamp );
             emit clipboardChanged( false );
         }
     }

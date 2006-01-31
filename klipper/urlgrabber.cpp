@@ -438,7 +438,7 @@ ClipAction::ClipAction( KConfig *kc )
       myDescription( kc->readEntry( "Description" ) )
 {
     myCommands.setAutoDelete( true );
-    int num = kc->readEntry( "Number of commands" );
+    int num = kc->readEntry( "Number of commands", 0 );
 
     // read the commands
     QString actionGroup = kc->group();

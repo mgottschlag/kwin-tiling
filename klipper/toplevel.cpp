@@ -1133,10 +1133,7 @@ static void ensureGlobalSyncOff(KConfig* config) {
     config->setGroup("General");
     if ( config->readEntry( "SynchronizeClipboardAndSelection" , QVariant(false)).toBool() ) {
         kdDebug() << "Shutting off global synchronization" << endl;
-        config->writeEntry("SynchronizeClipboardAndSelection",
-                           false,
-                           true,
-                           true );
+        config->writeEntry("SynchronizeClipboardAndSelection", false, KConfig::Normal | KConfig::Global );
         config->sync();
         KClipboardSynchronizer::setSynchronizing( false );
         KClipboardSynchronizer::setReverseSynchronizing( false );
