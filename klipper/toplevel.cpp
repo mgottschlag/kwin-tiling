@@ -198,8 +198,6 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     poll = new ClipboardPoll( this );
     connect( poll, SIGNAL( clipboardChanged( bool ) ),
              this, SLOT( newClipData( bool ) ) );
-    connect( clip, SIGNAL( selectionChanged() ), SLOT(slotSelectionChanged()));
-    connect( clip, SIGNAL( dataChanged() ), SLOT( slotClipboardChanged() ));
 
     m_pixmap = KSystemTray::loadIcon( "klipper" );
     adjustSize();

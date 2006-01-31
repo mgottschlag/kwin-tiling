@@ -37,6 +37,8 @@ class ClipboardPoll
         virtual bool x11Event( XEvent* );
     private Q_SLOTS:
         void timeout();
+        void qtSelectionChanged();
+        void qtClipboardChanged();
     private:
         struct SelectionData
         {
@@ -52,11 +54,13 @@ class ClipboardPoll
         void updateQtOwnership( SelectionData& data );
         bool checkTimestamp( SelectionData& data );
         bool changedTimestamp( SelectionData& data, const XEvent& e );
+        void initPolling();
         QTimer timer;
         SelectionData selection;
         SelectionData clipboard;
         Atom xa_clipboard;
         Atom xa_timestamp;
+        int xfixes_event_base;
     };
     
 #endif

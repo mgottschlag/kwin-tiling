@@ -8,7 +8,7 @@ kde_module_LTLIBRARIES = klipper_panelapplet.la
 
 CLEANFILES = dummy.cpp
 
-libklipper_common_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) 
+libklipper_common_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_XFIXES)
 libklipper_common_la_SOURCES = main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp \
     toplevel.skel clipboardpoll.cpp history.cpp historyitem.cpp historystringitem.cpp klipperpopup.cpp popupproxy.cpp \
     historyimageitem.cpp
