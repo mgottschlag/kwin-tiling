@@ -479,6 +479,7 @@ void KlipperWidget::readConfiguration( KConfig *kc )
     history()->max_size( kc->readEntry("MaxClipItems", 7) );
     bIgnoreSelection = kc->readEntry("IgnoreSelection", QVariant(false)).toBool();
     bSynchronize = kc->readEntry("Synchronize", QVariant(false)).toBool();
+    bSelectionTextOnly = kc->readEntry("SelectionTextOnly",true);
 }
 
 void KlipperWidget::writeConfiguration( KConfig *kc )
@@ -492,6 +493,7 @@ void KlipperWidget::writeConfiguration( KConfig *kc )
     kc->writeEntry("MaxClipItems", history()->max_size() );
     kc->writeEntry("IgnoreSelection", bIgnoreSelection);
     kc->writeEntry("Synchronize", bSynchronize );
+    kc->writeEntry("SelectionTextOnly", bSelectionTextOnly);
     kc->writeEntry("Version", klipper_version );
 
     if ( myURLGrabber )
@@ -864,6 +866,9 @@ void KlipperWidget::checkClipData( bool selectionMode )
     // XXX: I want a better handling of selection/clipboard in general.
     // XXX: Order sensitive code. Must die.
     if ( selectionMode && bIgnoreSelection )
+        return;
+        
+    if( selectionMode && bSelectionTextOnly && !Q3TextDrag::canDecode( data ))
         return;
 
     // store old contents:
