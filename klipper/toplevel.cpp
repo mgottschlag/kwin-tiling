@@ -480,6 +480,7 @@ void KlipperWidget::readConfiguration( KConfig *kc )
     bIgnoreSelection = kc->readEntry("IgnoreSelection", QVariant(false)).toBool();
     bSynchronize = kc->readEntry("Synchronize", QVariant(false)).toBool();
     bSelectionTextOnly = kc->readEntry("SelectionTextOnly",true);
+    bIgnoreImages = kc->readEntry("IgnoreImages",true);
 }
 
 void KlipperWidget::writeConfiguration( KConfig *kc )
@@ -494,6 +495,7 @@ void KlipperWidget::writeConfiguration( KConfig *kc )
     kc->writeEntry("IgnoreSelection", bIgnoreSelection);
     kc->writeEntry("Synchronize", bSynchronize );
     kc->writeEntry("SelectionTextOnly", bSelectionTextOnly);
+    kc->writeEntry("TrackImages", bIgnoreImages);
     kc->writeEntry("Version", klipper_version );
 
     if ( myURLGrabber )
@@ -869,6 +871,24 @@ void KlipperWidget::checkClipData( bool selectionMode )
         return;
         
     if( selectionMode && bSelectionTextOnly && !Q3TextDrag::canDecode( data ))
+        return;
+
+#ifdef __GNUC__
+#warning This should be maybe extended for KDE4 or at least get a checkbox somewhere in UI
+#endif
+// Limit mimetypes that are tracked by Klipper (this is basically a workaround
+// for #109032). Can't add UI in 3.5 because of string freeze, and I'm not sure
+// if this actually needs to be more configurable than only text vs all klipper knows.
+    if( Q3TextDrag::canDecode( data ))
+        ; // ok
+    else if( Q3ImageDrag::canDecode( data ))
+    {
+        if( bIgnoreImages )
+            return;
+        else
+            ; // ok
+    }
+    else // unknown, ignore
         return;
 
     // store old contents:

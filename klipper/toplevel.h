@@ -187,6 +187,7 @@ private:
     bool bIgnoreSelection       :1;
     bool bSynchronize           :1;
     bool bSelectionTextOnly     :1;
+    bool bIgnoreImages          :1;
 
     /**
      * Avoid reacting to our own changes, using this
