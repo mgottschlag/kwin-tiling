@@ -198,6 +198,7 @@ private:
     int locklevel;
 
     URLGrabber *myURLGrabber;
+    QString m_lastURLGrabberText;
     KConfig* m_config;
     QTimer m_overflowClearTimer;
     QTimer m_pendingCheckTimer;
