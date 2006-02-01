@@ -8,15 +8,15 @@ kde_module_LTLIBRARIES = klipper_panelapplet.la
 
 CLEANFILES = dummy.cpp
 
-libklipper_common_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_XFIXES)
+libklipper_common_la_LIBADD = $(LIB_KDEUI) $(LIB_KSYCOCA) $(LIB_XFIXES) -lkde3support
 libklipper_common_la_SOURCES = main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp \
     toplevel.skel clipboardpoll.cpp history.cpp historyitem.cpp historystringitem.cpp klipperpopup.cpp popupproxy.cpp \
-    historyimageitem.cpp
+    historyimageitem.cpp historyurlitem.cpp
 
 libklipper_common_la_METASOURCES = AUTO
 libklipper_common_la_LDFLAGS = $(all_libraries)
 
-klipper_la_LIBADD = libklipper_common.la
+klipper_la_LIBADD = libklipper_common.la 
 klipper_la_SOURCES = dummy.cpp
 klipper_la_LDFLAGS = $(all_libraries) -module -avoid-version
 

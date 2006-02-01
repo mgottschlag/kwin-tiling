@@ -49,6 +49,7 @@
 #include <ksimpleconfig.h>
 #include <kstringhandler.h>
 #include <ksystemtray.h>
+#include <kurldrag.h>
 #include <kwin.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
@@ -877,13 +878,15 @@ void KlipperWidget::checkClipData( bool selectionMode )
 #ifdef __GNUC__
 #warning This should be maybe extended for KDE4 or at least get a checkbox somewhere in UI
 #endif
-// Limit mimetypes that are tracked by Klipper (this is basically a workaround
-// for #109032). Can't add UI in 3.5 because of string freeze, and I'm not sure
-// if this actually needs to be more configurable than only text vs all klipper knows.
-    if( Q3TextDrag::canDecode( data ))
+    if( KURLDrag::canDecode( data ))
+        ; // ok
+    else if( Q3TextDrag::canDecode( data ))
         ; // ok
     else if( Q3ImageDrag::canDecode( data ))
     {
+// Limit mimetypes that are tracked by Klipper (this is basically a workaround
+// for #109032). Can't add UI in 3.5 because of string freeze, and I'm not sure
+// if this actually needs to be more configurable than only text vs all klipper knows.
         if( bIgnoreImages )
             return;
         else
@@ -950,11 +953,7 @@ void KlipperWidget::setClipboard( const HistoryItem& item, int mode )
 #ifdef NOSIY_KLIPPER
         kdDebug() << "Setting selection to <" << item.text() << ">" << endl;
 #endif
-        if ( item.image().isNull() ) {
-            clip->setText( item.text(), QClipboard::Selection );
-        } else {
-            clip->setPixmap( item.image(), QClipboard::Selection );
-        }
+        clip->setData( item.mimeSource(), QClipboard::Selection );
 #if 0
         m_lastSelection = clip->data()->serialNumber();<
 #endif
@@ -963,11 +962,7 @@ void KlipperWidget::setClipboard( const HistoryItem& item, int mode )
 #ifdef NOSIY_KLIPPER
         kdDebug() << "Setting clipboard to <" << item.text() << ">" << endl;
 #endif
-        if ( item.image().isNull() ) {
-            clip->setText( item.text(), QClipboard::Clipboard );
-        } else {
-            clip->setPixmap( item.image(), QClipboard::Clipboard );
-        }
+        clip->setData( item.mimeSource(), QClipboard::Clipboard );
 #if 0
         m_lastClipboard = clip->data()->serialNumber();
 #endif

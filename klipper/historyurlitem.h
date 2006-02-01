@@ -17,45 +17,33 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-
-#ifndef _HISTORYIMAGEITEM_H_
-#define _HISTORYIMAGEITEM_H_
+#ifndef _HISTORYURLITEM_H_
+#define _HISTORYURLITEM_H_
 
 #include "historyitem.h"
-#include <qpixmap.h>
-#include <q3dragobject.h>
+
+#include <qmap.h>
+#include <kurl.h>
 
 /**
- * A image entry in the clipboard history.
+ * An URL entry in the clipboard history.
  */
-class HistoryImageItem : public HistoryItem
+class HistoryURLItem : public HistoryItem
 {
 public:
-    HistoryImageItem( const QPixmap& data );
-    virtual ~HistoryImageItem() {}
+    HistoryURLItem( const KURL::List &urls, QMap<QString, QString> metaData, bool cut );
     virtual QString text() const;
-    virtual bool operator==( const HistoryItem& rhs) const {
-        if ( const HistoryImageItem* casted_rhs = dynamic_cast<const HistoryImageItem*>( &rhs ) ) {
-            return &casted_rhs->m_data == &m_data; // Not perfect, but better than nothing.
-        }
-        return false;
-    }
-    virtual const QPixmap& image() const { return m_data; }
-    virtual QMimeSource* mimeSource() const { return new Q3ImageDrag( m_data.convertToImage()) ; }
+    virtual bool operator==( const HistoryItem& rhs) const;
+    virtual QMimeSource* mimeSource() const;
 
+    /**
+     * Write object on datastream
+     */
     virtual void write( QDataStream& stream ) const;
-
 private:
-    /**
-     *
-     */
-    const QPixmap m_data;
-    /**
-     * Cache for m_data's string representation
-     */
-    mutable QString m_text;
+    KURL::List urls;
+    QMap<QString, QString> metaData;
+    bool cut;
 };
-
-
 
 #endif

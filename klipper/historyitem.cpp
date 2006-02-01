@@ -19,14 +19,17 @@
 */
 #include <qmime.h>
 #include <q3dragobject.h>
+#include <qmap.h>
 #include <qstring.h>
 #include <qpixmap.h>
 
 #include <kdebug.h>
+#include <k3urldrag.h>
 
 #include "historyitem.h"
 #include "historystringitem.h"
 #include "historyimageitem.h"
+#include "historyurlitem.h"
 
 HistoryItem::HistoryItem() {
 
@@ -44,18 +47,27 @@ HistoryItem* HistoryItem::create( const QMimeSource& aSource )
         kdDebug() << "format(" << i <<"): " << f << endl;
     }
 #endif
+    if( K3URLDrag::canDecode( &aSource )) {
+        KURL::List urls;
+        QMap<QString,QString> metaData;
+        if( K3URLDrag::decode( &aSource, urls, metaData )) {
+            // this is from KonqDrag (libkonq)
+            QByteArray a = aSource.encodedData( "application/x-kde-cutselection" );
+            bool cut = !a.isEmpty() && (a.at(0) == '1'); // true if 1
+            return new HistoryURLItem( urls, metaData, cut );
+        }
+    }
     if ( Q3TextDrag::canDecode( &aSource ) ) {
         QString text;
-        Q3TextDrag::decode( &aSource, text );
-        return text.isNull() ? 0 : new HistoryStringItem( text );
-    } else if ( Q3ImageDrag::canDecode( &aSource ) ) {
-        QPixmap image;
-        Q3ImageDrag::decode( &aSource, image );
-        return image.isNull() ? 0 : new HistoryImageItem( image );
+        if( Q3TextDrag::decode( &aSource, text ))
+            return text.isNull() ? 0 : new HistoryStringItem( text );
     }
-
+    if ( Q3ImageDrag::canDecode( &aSource ) ) {
+        QPixmap image;
+        if( Q3ImageDrag::decode( &aSource, image ))
+            return image.isNull() ? 0 : new HistoryImageItem( image );
+    }
     return 0; // Failed.
-
 }
 
 HistoryItem* HistoryItem::create( QDataStream& aSource ) {
@@ -64,6 +76,15 @@ HistoryItem* HistoryItem::create( QDataStream& aSource ) {
     }
     QString type;
     aSource >> type;
+    if ( type == "url" ) {
+        KURL::List urls;
+        QMap< QString, QString > metaData;
+        int cut;
+        aSource >> urls;
+        aSource >> metaData;
+        aSource >> cut;
+        return new HistoryURLItem( urls, metaData, cut );
+    }
     if ( type == "string" ) {
         QString text;
         aSource >> text;

@@ -39,7 +39,7 @@ public:
      * An image would be returned as a descriptive
      * text, such as 32x43 image.
      */
-    virtual const QString& text() const = 0;
+    virtual QString text() const = 0;
 
     /**
      * Return the current item as text
@@ -47,6 +47,11 @@ public:
      * which is also the default implementation
      */
     inline virtual const QPixmap& image() const;
+
+    /**
+     * Returns QMimeSource suitable for QClipboard::setData().
+     */
+    virtual QMimeSource* mimeSource() const = 0;
 
     /**
      * Write object on datastream

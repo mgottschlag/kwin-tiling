@@ -21,6 +21,7 @@
 #define _HISTORYSTRINGITEM_H_
 
 #include <qstring.h>
+#include <q3dragobject.h>
 
 #include "historyitem.h"
 
@@ -32,13 +33,14 @@ class HistoryStringItem : public HistoryItem
 public:
     HistoryStringItem( const QString& data );
     virtual ~HistoryStringItem() {}
-    virtual const QString& text() const;
+    virtual QString text() const;
     virtual bool operator==( const HistoryItem& rhs) const {
         if ( const HistoryStringItem* casted_rhs = dynamic_cast<const HistoryStringItem*>( &rhs ) ) {
             return casted_rhs->m_data == m_data;
         }
         return false;
     }
+    virtual QMimeSource* mimeSource() const { return new Q3TextDrag( m_data ) ; }
 
     /**
      * Write object on datastream
@@ -49,7 +51,7 @@ private:
     QString m_data;
 };
 
-inline const QString& HistoryStringItem::text() const { return m_data; }
+inline QString HistoryStringItem::text() const { return m_data; }
 
 
 #endif

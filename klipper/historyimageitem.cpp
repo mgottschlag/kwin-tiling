@@ -31,7 +31,7 @@ HistoryImageItem::HistoryImageItem( const QPixmap& data )
 {
 }
 
-const QString& HistoryImageItem::text() const {
+QString HistoryImageItem::text() const {
     if ( m_text.isNull() ) {
         m_text = QString( "%1x%2x%3 %4" )
                  .arg( m_data.width() )
