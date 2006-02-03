@@ -1072,9 +1072,8 @@ endUserAuth( FILE *old, FILE *new, const char *nname, int ok )
 		}
 		fclose( old );
 	}
-	if (fflush( new ) == EOF)
+	if (fclose( new ) == EOF)
 		ok = FALSE;
-	fclose( new );
 	doneAddrs();
 	return ok;
 }
