@@ -447,7 +447,7 @@ void KlipperWidget::readProperties(KConfig *kc)
             // Try to load from the old config file.
             // Remove this at some point.
             KConfigGroup configGroup(kc, "General");
-            dataList = configGroup.readListEntry("ClipboardData");
+            dataList = configGroup.readEntry("ClipboardData",QStringList());
 
             for (QStringList::ConstIterator it = dataList.end();
                  it != dataList.begin();

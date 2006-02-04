@@ -290,9 +290,9 @@ void URLGrabber::readConfiguration( KConfig *kc )
     myActions->clear();
     kc->setGroup( "General" );
     int num = kc->readEntry("Number of Actions", 0);
-    myAvoidWindows = kc->readListEntry("No Actions for WM_CLASS");
+    myAvoidWindows = kc->readEntry("No Actions for WM_CLASS",QStringList());
     myPopupKillTimeout = kc->readEntry( "Timeout for Action popups (seconds)", 8 );
-    m_trimmed = kc->readEntry("Strip Whitespace before exec", QVariant(true)).toBool();
+    m_trimmed = kc->readEntry("Strip Whitespace before exec", true);
     QString group;
     for ( int i = 0; i < num; i++ ) {
         group = QString("Action_%1").arg( i );
