@@ -57,7 +57,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
         return false;
     cfg_P.setGroup( "Main" ); // main group
     if( import_P == ImportNone ) // reading main cfg file
-        already_imported = cfg_P.readListEntry( "AlreadyImported" );
+        already_imported = cfg_P.readEntry( "AlreadyImported",QStringList() );
     else
         {
         QString import_id = cfg_P.readEntry( "ImportId" );
