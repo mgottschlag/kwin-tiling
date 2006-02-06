@@ -64,7 +64,7 @@ bool MenuFile::load()
    QFile file( m_fileName );
    if (!file.open( QIODevice::ReadOnly ))
    {
-      kdWarning() << "Could not read " << m_fileName << endl;
+      kWarning() << "Could not read " << m_fileName << endl;
       create();
       return false;
    }
@@ -73,7 +73,7 @@ bool MenuFile::load()
    int errorRow;
    int errorCol;
    if ( !m_doc.setContent( &file, &errorMsg, &errorRow, &errorCol ) ) {
-      kdWarning() << "Parse error in " << m_fileName << ", line " << errorRow << ", col " << errorCol << ": " << errorMsg << endl;
+      kWarning() << "Parse error in " << m_fileName << ", line " << errorRow << ", col " << errorCol << ": " << errorMsg << endl;
       file.close();
       create();
       return false;
@@ -96,7 +96,7 @@ bool MenuFile::save()
    
    if (!file.open( QIODevice::WriteOnly ))
    {
-      kdWarning() << "Could not write " << m_fileName << endl;
+      kWarning() << "Could not write " << m_fileName << endl;
       m_error = i18n("Could not write to %1").arg(m_fileName);
       return false;
    }
@@ -109,7 +109,7 @@ bool MenuFile::save()
    
    if (file.status() != IO_Ok)
    {
-      kdWarning() << "Could not close " << m_fileName << endl;
+      kWarning() << "Could not close " << m_fileName << endl;
       m_error = i18n("Could not write to %1").arg(m_fileName);
       return false;
    }
