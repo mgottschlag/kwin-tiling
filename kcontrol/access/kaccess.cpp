@@ -103,10 +103,10 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   int minor = XkbMinorVersion;
   if (!XkbLibraryVersion(&major, &minor))
     {
-      kdError() << "Xlib XKB extension does not match" << endl;
+      kError() << "Xlib XKB extension does not match" << endl;
       exit(-1);
     }
-  kdDebug() << "Xlib XKB extension major=" << major << " minor=" << minor << endl;
+  kDebug() << "Xlib XKB extension major=" << major << " minor=" << minor << endl;
 
   // verify the X server has matching XKB extension
   // if yes, the XKB extension is initialized
@@ -115,10 +115,10 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   if (!XkbQueryExtension(QX11Info::display(), &opcode_rtrn, &xkb_opcode, &error_rtrn,
 			 &major, &minor))
     {
-      kdError() << "X server has not matching XKB extension" << endl;
+      kError() << "X server has not matching XKB extension" << endl;
       exit(-1);
     }
-  kdDebug() << "X server XKB extension major=" << major << " minor=" << minor << endl;
+  kDebug() << "X server XKB extension major=" << major << " minor=" << minor << endl;
 
   _activeWindow = wm.activeWindow();
   connect(&wm, SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));

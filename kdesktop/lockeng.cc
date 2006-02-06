@@ -161,7 +161,7 @@ bool SaverEngine::enable( bool e )
 
         mXAutoLock->start();
 
-        kdDebug(1204) << "Saver Engine started, timeout: " << mTimeout << endl;
+        kDebug(1204) << "Saver Engine started, timeout: " << mTimeout << endl;
     }
     else
     {
@@ -171,7 +171,7 @@ bool SaverEngine::enable( bool e )
 	    mXAutoLock = 0;
 	}
 
-        kdDebug(1204) << "Saver Engine disabled" << endl;
+        kDebug(1204) << "Saver Engine disabled" << endl;
     }
 
     return true;
@@ -235,7 +235,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     if (mState != Waiting)
         return true;
 
-    kdDebug(1204) << "SaverEngine: starting saver" << endl;
+    kDebug(1204) << "SaverEngine: starting saver" << endl;
     emitDCOPSignal("KDE_start_screensaver()", QByteArray());
 
     if (mLockProcess.isRunning())
@@ -246,7 +246,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     QString path = KStandardDirs::findExe( "kdesktop_lock" );
     if( path.isEmpty())
     {
-	kdDebug( 1204 ) << "Can't find kdesktop_lock!" << endl;
+	kDebug( 1204 ) << "Can't find kdesktop_lock!" << endl;
 	return false;
     }
     mLockProcess << path;
@@ -266,7 +266,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
 
     if (mLockProcess.start() == false )
     {
-	kdDebug( 1204 ) << "Failed to start kdesktop_lock!" << endl;
+	kDebug( 1204 ) << "Failed to start kdesktop_lock!" << endl;
 	return false;
     }
 
@@ -286,10 +286,10 @@ void SaverEngine::stopLockProcess()
 {
     if (mState == Waiting)
     {
-        kdWarning(1204) << "SaverEngine::stopSaver() saver not active" << endl;
+        kWarning(1204) << "SaverEngine::stopSaver() saver not active" << endl;
         return;
     }
-    kdDebug(1204) << "SaverEngine: stopping lock" << endl;
+    kDebug(1204) << "SaverEngine: stopping lock" << endl;
     emitDCOPSignal("KDE_stop_screensaver()", QByteArray());
 
 
@@ -305,7 +305,7 @@ void SaverEngine::stopLockProcess()
 
 void SaverEngine::lockProcessExited()
 {
-    kdDebug(1204) << "SaverEngine: lock exited" << endl;
+    kDebug(1204) << "SaverEngine: lock exited" << endl;
     if( mState == Waiting )
 	return;
     emitDCOPSignal("KDE_stop_screensaver()", QByteArray());
@@ -330,24 +330,24 @@ xautolock_corner_t SaverEngine::applyManualSettings(int action)
 {
 	if (action == 0)
 	{
-		kdDebug() << "no lock" << endl;
+		kDebug() << "no lock" << endl;
 		return ca_nothing;
 	}
 	else
 	if (action == 1)
 	{
-		kdDebug() << "lock screen" << endl;
+		kDebug() << "lock screen" << endl;
 		return ca_forceLock;
 	}
 	else
 	if (action == 2)
 	{
-		kdDebug() << "prevent lock" << endl;
+		kDebug() << "prevent lock" << endl;
 		return ca_dontLock;
 	}
 	else
 	{
-		kdDebug() << "no lock nothing" << endl;
+		kDebug() << "no lock nothing" << endl;
 		return ca_nothing;
 	}
 }

@@ -231,14 +231,14 @@ void StatisticsView::clearStatistics()
 
 void SambaLog::printItems()
 {
-   kdDebug() << "****** printing items: ******" << endl;
+   kDebug() << "****** printing items: ******" << endl;
    for (LogItem* tmpItem=items.first();tmpItem!=0;tmpItem=items.next())
    {
-      kdDebug() << "SERVICE: " << tmpItem->name << endl;
+      kDebug() << "SERVICE: " << tmpItem->name << endl;
       for (SmallLogItem* tmpLog=tmpItem->accessed.first();tmpLog!=0;tmpLog=tmpItem->accessed.next())
-         kdDebug() << "      accessed by: " << tmpLog->name << "  " << tmpLog->count << endl;
+         kDebug() << "      accessed by: " << tmpLog->name << "  " << tmpLog->count << endl;
    };
-   kdDebug() << "------ end of printing ------" << endl << endl;
+   kDebug() << "------ end of printing ------" << endl << endl;
 }
 
 LogItem* SambaLog::itemInList(QString name)

@@ -207,7 +207,7 @@ void Dtime::findNTPutility(){
   proc.start(KProcess::Block);
   if(proc.exitStatus() == 0) {
     ntpUtility = "ntpdate";
-    kdDebug() << "ntpUtility = " << ntpUtility.latin1() << endl;
+    kDebug() << "ntpUtility = " << ntpUtility.latin1() << endl;
     return;
   }
   proc.clearArguments();
@@ -215,11 +215,11 @@ void Dtime::findNTPutility(){
   proc.start(KProcess::Block);
   if(proc.exitStatus() == 0) {
     ntpUtility = "rdate";
-    kdDebug() << "ntpUtility = " << ntpUtility.latin1() << endl;
+    kDebug() << "ntpUtility = " << ntpUtility.latin1() << endl;
     return;
   }
   privateLayoutWidget->hide();
-  kdDebug() << "ntpUtility not found!" << endl;
+  kDebug() << "ntpUtility not found!" << endl;
 }
 
 void Dtime::set_time()
@@ -305,7 +305,7 @@ void Dtime::save()
     }
     else {
         // success
-        kdDebug() << "Set date from time server " << timeServer.latin1() << " success!" << endl;
+        kDebug() << "Set date from time server " << timeServer.latin1() << " success!" << endl;
     }
   }
   else {
@@ -325,7 +325,7 @@ void Dtime::save()
                date.year(), second->value());
 #endif
 
-    kdDebug() << "Set date " << BufS << endl;
+    kDebug() << "Set date " << BufS << endl;
 
     c_proc << "date" << BufS;
     c_proc.start( KProcess::Block );

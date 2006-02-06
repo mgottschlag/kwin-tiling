@@ -82,7 +82,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	if (!isValid()) {
 		QVBoxLayout *topLayout = new QVBoxLayout(this);
 		topLayout->addWidget(new QLabel(i18n("<qt>Your X server does not support resizing and rotating the display. Please update to version 4.3 or greater. You need the X Resize And Rotate extension (RANDR) version 1.1 or greater to use this feature.</qt>"), this));
-		kdWarning() << "Error: " << errorCode() << endl;
+		kWarning() << "Error: " << errorCode() << endl;
 		return;
 	}
 

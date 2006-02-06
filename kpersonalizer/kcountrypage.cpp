@@ -150,7 +150,7 @@ void KCountryPage::fillLanguageMenu(KLanguageButton *combo) {
 
 /** No descriptions */
 bool KCountryPage::save(KLanguageButton *comboCountry, KLanguageButton *comboLang) {
-	kdDebug() << "KCountryPage::save()" << endl;
+	kDebug() << "KCountryPage::save()" << endl;
 	KConfigBase *config = KGlobal::config();
 
 	config->setGroup(QLatin1String("Locale"));
@@ -173,7 +173,7 @@ bool KCountryPage::save(KLanguageButton *comboCountry, KLanguageButton *comboLan
 		KProcess proc;
 		proc << QLatin1String("kbuildsycoca");
 		proc.start(KProcess::DontCare);
-		kdDebug() << "KLocaleConfig::save : sending signal to kdesktop" << endl;
+		kDebug() << "KLocaleConfig::save : sending signal to kdesktop" << endl;
 		// inform kicker and kdeskop about the new language
 		kapp->dcopClient()->send( "kicker", "Panel", "restart()", QString());
 		// call, not send, so that we know it's done before coming back

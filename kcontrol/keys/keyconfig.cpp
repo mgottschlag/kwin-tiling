@@ -55,7 +55,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 
   bSeriesOnly = _bSeriesOnly;
 
-  kdDebug(125) << "KKeyModule::init() - Get default key bindings." << endl;
+  kDebug(125) << "KKeyModule::init() - Get default key bindings." << endl;
   if ( KeyType == "global" ) {
     KAccelActions* keys = &actions;
 // see also KKeyModule::init() below !!!
@@ -74,13 +74,13 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
     if( bSeriesOnly || bSeriesNone ) {
 	for( uint i = 0; i < actions.size(); i++ ) {
 		QString sConfigKey = actions[i].m_sName;
-		//kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
+		//kDebug(125) << "sConfigKey: " << sConfigKey << endl;
 		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
 		bool bIsNum = false;
 		if( iLastSpace >= 0 )
 			sConfigKey.mid( iLastSpace+1 ).toInt( &bIsNum );
 
-		kdDebug(125) << "sConfigKey: " << sConfigKey
+		kDebug(125) << "sConfigKey: " << sConfigKey
 			<< " bIsNum: " << bIsNum
 			<< " bSeriesOnly: " << bSeriesOnly << endl;
 		if( ((bSeriesOnly && !bIsNum) || (bSeriesNone && bIsNum)) && !sConfigKey.contains( ':' ) ) {
@@ -104,7 +104,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
     KeySet    = "Keys";
   }
 
-  //kdDebug(125) << "KKeyModule::init() - Read current key bindings from config." << endl;
+  //kDebug(125) << "KKeyModule::init() - Read current key bindings from config." << endl;
   //actions.readActions( KeySet );
 
   sFileList = new QStringList();
@@ -174,7 +174,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
 }
 
 KKeyModule::~KKeyModule (){
-  //kdDebug() << "KKeyModule destructor" << endl;
+  //kDebug() << "KKeyModule destructor" << endl;
     delete kc;
     delete sFileList;
 }
@@ -273,7 +273,7 @@ void KKeyModule::slotPreferMeta()
 
 void KKeyModule::readScheme( int index )
 {
-  kdDebug(125) << "readScheme( " << index << " )\n";
+  kDebug(125) << "readScheme( " << index << " )\n";
   if( index == 1 )
     kc->allDefault( false );
   //else if( index == 2 )
@@ -469,9 +469,9 @@ void KKeyModule::readScheme( int index )
 // dialogs, kdeglobals is empty as long as you don't apply any change in controlcenter/keys
 void KKeyModule::init()
 {
-  kdDebug(125) << "KKeyModule::init()\n";
+  kDebug(125) << "KKeyModule::init()\n";
 
-  /*kdDebug(125) << "KKeyModule::init() - Initialize # Modifier Keys Settings\n";
+  /*kDebug(125) << "KKeyModule::init() - Initialize # Modifier Keys Settings\n";
   KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
   QString fourMods = KGlobal::config()->readEntry( "Use Four Modifier Keys", KAccel::keyboardHasMetaKey() ? "true" : "false" );
   KAccel::useFourModifierKeys( fourMods == "true" );
@@ -480,7 +480,7 @@ void KKeyModule::init()
   */
   KAccelActions* keys = new KAccelActions();
 
-  kdDebug(125) << "KKeyModule::init() - Load Included Bindings\n";
+  kDebug(125) << "KKeyModule::init() - Load Included Bindings\n";
 // this should match the included files above
 #define NOSLOTS
 #define KShortcuts KAccelShortcuts
@@ -492,7 +492,7 @@ void KKeyModule::init()
 #include "../kxkb/kxkbbindings.cpp"
 #undef KShortcuts
 
-  kdDebug(125) << "KKeyModule::init() - Read Config Bindings\n";
+  kDebug(125) << "KKeyModule::init() - Read Config Bindings\n";
   keys->readActions( "Global Keys" );
 
   {
@@ -500,7 +500,7 @@ void KKeyModule::init()
     cfg.deleteGroup( "Global Keys" );
   }
 
-  kdDebug(125) << "KKeyModule::init() - Write Config Bindings\n";
+  kDebug(125) << "KKeyModule::init() - Write Config Bindings\n";
   keys->writeActions( "Global Keys", 0, true, true );
 }
 

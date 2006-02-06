@@ -77,7 +77,7 @@ void ModifiersModule::readConfig()
 // When [Apply] or [OK] are clicked.
 void ModifiersModule::save()
 {
-	kdDebug(125) << "ModifiersModule::save()" << endl;
+	kDebug(125) << "ModifiersModule::save()" << endl;
 
 	KConfigGroup cg( KGlobal::config(), "Keyboard" );
 
@@ -123,7 +123,7 @@ void ModifiersModule::save()
 // Called when [Reset] is pressed
 void ModifiersModule::load()
 {
-	kdDebug(125) << "ModifiersModule::load()" << endl;
+	kDebug(125) << "ModifiersModule::load()" << endl;
 
 	readConfig();
 	updateWidgetData();

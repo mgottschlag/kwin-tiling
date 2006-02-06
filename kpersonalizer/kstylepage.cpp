@@ -97,7 +97,7 @@ KStylePage::~KStylePage(){
 }
 
 void KStylePage::save(bool curSettings){
-	kdDebug() << "KStylePage::save()" << endl;
+	kDebug() << "KStylePage::save()" << endl;
 	// First, the style, then the colors as styles overwrite color settings
 	saveStyle(curSettings);
 	saveColors(curSettings);
@@ -113,7 +113,7 @@ void KStylePage::saveStyle(bool curSettings){
 	cfg.setGroup("General");
 	cfg.writeEntry( "widgetStyle", style, KConfigBase::Persistent|KConfigBase::Global );
 	cfg.sync();
-	kdDebug() << "KStylePage::saveStyle(): " << style << endl;
+	kDebug() << "KStylePage::saveStyle(): " << style << endl;
 }
 
 /** save the KWin-style*/
@@ -150,7 +150,7 @@ void KStylePage::saveKWin(bool curSettings){
 	}
 	ckwin->writeEntry("PluginLib", kwin);
 	ckwin->sync();
-	kdDebug() << "KStylePage::saveKWin(): " << kwin << endl;
+	kDebug() << "KStylePage::saveKWin(): " << kwin << endl;
 }
 
 /** Save the color-scheme */
@@ -217,7 +217,7 @@ void KStylePage::saveColors(bool curSettings){
 	kdesktop.writeEntry("Color1", toSave->usrCol1);
 	kdesktop.writeEntry("Color2", toSave->usrCol2);
 	kdesktop.sync();
-	kdDebug() << "KStylePage::saveColors(): colorFile: " << toSave->colorFile << endl;
+	kDebug() << "KStylePage::saveColors(): colorFile: " << toSave->colorFile << endl;
 }
 
 /** save the icon-theme*/
@@ -246,7 +246,7 @@ void KStylePage::saveIcons(bool curSettings) {
 		KGlobal::config()->writeEntry("Size", icontheme.defaultSize(i));
 	}
 	KGlobal::config()->sync();
-	kdDebug() << "KStylePage::saveIcons(): " << theme << endl;
+	kDebug() << "KStylePage::saveIcons(): " << theme << endl;
 }
 
 /** called whenever the selection in the listview changes */
@@ -295,14 +295,14 @@ void KStylePage::changeCurrentStyle() {
 		}
 	}
 	// update the preview-widget
-	kdDebug() << "KStylePage::changeCurrentStyle(): "<< currentStyle << endl;
+	kDebug() << "KStylePage::changeCurrentStyle(): "<< currentStyle << endl;
 }
 
 /** to be connected to the OS page. Catches
  *  either KDE, CDE, win or mac and pre-sets the style.
  */
 void KStylePage::presetStyle(const QString& style){
-	kdDebug() << "KStylePage::presetStyle(): "<< style << endl;
+	kDebug() << "KStylePage::presetStyle(): "<< style << endl;
 	if(style=="KDE") {
 		if (kde_plastik_exist)
 			klv_styles->setSelected(kde,true);
@@ -369,7 +369,7 @@ void KStylePage::getColors(colorSet *set, bool colorfile ){
 		set->contrast=7;
 		config = new KSimpleConfig(set->colorFile, true);
 		config->setGroup("Color Scheme");
-		kdDebug() << "KStylePage::getColors(): schemefile: " << set->colorFile << endl;
+		kDebug() << "KStylePage::getColors(): schemefile: " << set->colorFile << endl;
                 deleteConfig = true;
 	}
 	else {
@@ -387,7 +387,7 @@ void KStylePage::getColors(colorSet *set, bool colorfile ){
 		set->colorFile=config->readEntry("colorScheme", "<default>");
 		set->contrast=config->readEntry("contrast", 7);
 		config->setGroup( "General" );
-		kdDebug() << "KStylePage::getColors(): schemefile: "<< set->colorFile << endl;
+		kDebug() << "KStylePage::getColors(): schemefile: "<< set->colorFile << endl;
     }
 	QColor black( Qt::black ), white( Qt::white );
 	set->foreground=config->readEntry( "foreground", black );
@@ -490,10 +490,10 @@ void KStylePage::getUserDefaults() {
 	KGlobal::config()->setGroup("Icons");
 	origIcons = KGlobal::config()->readEntry("Theme");
 
-	kdDebug() << "KStylePage::getUserDefaults(): style: " << origStyle << endl;
-	kdDebug() << "KStylePage::getUserDefaults(): KWinStyle: " << origKWinStyle << endl;
-	kdDebug() << "KStylePage::getUserDefaults(): Colors: " << usrColors.colorFile << endl;
-	kdDebug() << "KStylePage::getUserDefaults(): Icons: " << origIcons << endl;
+	kDebug() << "KStylePage::getUserDefaults(): style: " << origStyle << endl;
+	kDebug() << "KStylePage::getUserDefaults(): KWinStyle: " << origKWinStyle << endl;
+	kDebug() << "KStylePage::getUserDefaults(): Colors: " << usrColors.colorFile << endl;
+	kDebug() << "KStylePage::getUserDefaults(): Icons: " << origIcons << endl;
 }
 
 /** initialize KDE default color values */

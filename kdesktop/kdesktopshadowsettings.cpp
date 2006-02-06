@@ -77,7 +77,7 @@ void KDesktopShadowSettings::setConfig(KConfig *val)
 
 #ifdef DEBUG
     // debug
-    kdDebug(1204) << "setConfig()" << endl;
+    kDebug(1204) << "setConfig()" << endl;
 #endif
 
     if (config->hasKey(SHADOW_CONFIG_ENTRY))
@@ -85,8 +85,8 @@ void KDesktopShadowSettings::setConfig(KConfig *val)
     
 #ifdef DEBUG
     // debug
-    kdDebug(1204) << "           \t" << SHADOW_TEXT_COLOR << "=" << m_textColor << endl;
-    kdDebug(1204) << "           \t" << SHADOW_TEXT_BACKGROUND << "=" << m_bgColor << endl;
-    kdDebug(1204) << "           \t" << toString() << endl;
+    kDebug(1204) << "           \t" << SHADOW_TEXT_COLOR << "=" << m_textColor << endl;
+    kDebug(1204) << "           \t" << SHADOW_TEXT_BACKGROUND << "=" << m_bgColor << endl;
+    kDebug(1204) << "           \t" << toString() << endl;
 #endif
 }

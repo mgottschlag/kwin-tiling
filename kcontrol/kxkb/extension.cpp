@@ -39,7 +39,7 @@ bool XKBExtension::init()
     int minor = XkbMinorVersion;
     if (!XkbLibraryVersion(&major, &minor))
     {
-        kdError() << "Xlib XKB extension " << major << '.' << minor <<
+        kError() << "Xlib XKB extension " << major << '.' << minor <<
             " != " << XkbMajorVersion << '.' << XkbMinorVersion << endl;
         return false;
     }
@@ -52,7 +52,7 @@ bool XKBExtension::init()
     if (!XkbQueryExtension(m_dpy, &opcode_rtrn, &xkb_opcode, &error_rtrn,
                          &major, &minor))
     {
-        kdError() << "X server XKB extension " << major << '.' << minor <<
+        kError() << "X server XKB extension " << major << '.' << minor <<
             " != " << XkbMajorVersion << '.' << XkbMinorVersion << endl;
         return false;
     }
@@ -172,7 +172,7 @@ bool XKBExtension::setCompiledLayout(const QString &fileName)
     FILE *input = fopen(QFile::encodeName(fileName), "r");
     if (!input)
     {
-        kdDebug() << "Unable to open " << fileName << ": " << strerror(errno) << endl;
+        kDebug() << "Unable to open " << fileName << ": " << strerror(errno) << endl;
         return false;
     }
 
@@ -180,7 +180,7 @@ bool XKBExtension::setCompiledLayout(const QString &fileName)
     memset(&result, 0, sizeof(result));
     if ((result.xkb = XkbAllocKeyboard())==NULL)
     {
-         kdWarning() << "Unable to allocate memory for keyboard description." << endl;
+         kWarning() << "Unable to allocate memory for keyboard description." << endl;
          fclose(input);
          return false;
     }
@@ -188,7 +188,7 @@ bool XKBExtension::setCompiledLayout(const QString &fileName)
     if (retVal == XkmKeymapLegal)
     {
         // this means reading the Xkm didn't manage to read any section
-        kdWarning() << "Unable to load map from file." << endl;
+        kWarning() << "Unable to load map from file." << endl;
         XkbFreeKeyboard(result.xkb, XkbAllControlsMask, True);
         fclose(input);
         return false;
@@ -200,14 +200,14 @@ bool XKBExtension::setCompiledLayout(const QString &fileName)
     {
         if (!XkbWriteToServer(&result))
         {
-            kdWarning() << "Unable to write the keyboard layout to X display." << endl;
+            kWarning() << "Unable to write the keyboard layout to X display." << endl;
             XkbFreeKeyboard(result.xkb, XkbAllControlsMask, True);
             return false;
         }
     }
     else
     {
-        kdWarning() << "Unable prepare the keyboard layout for X display." << endl;
+        kWarning() << "Unable prepare the keyboard layout for X display." << endl;
     }
     
     XkbFreeKeyboard(result.xkb, XkbAllControlsMask, True);

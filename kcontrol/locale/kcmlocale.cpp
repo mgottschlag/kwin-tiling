@@ -401,7 +401,7 @@ void KLocaleConfig::slotLocaleChanged()
 
 void KLocaleConfig::slotTranslate()
 {
-  kdDebug() << "slotTranslate()" << endl;
+  kDebug() << "slotTranslate()" << endl;
 
   m_comboCountry->setToolTip( m_locale->translate
         ( "This is where you live. KDE will use the defaults for "

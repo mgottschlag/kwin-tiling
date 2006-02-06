@@ -113,9 +113,9 @@ int main(int argc, char *argv[])
 
 	for (int i = 0; i < tempSaverFileList.count(); i++)
 	{
-		kdDebug() << "Looking at " << tempSaverFileList[i] << endl;
+		kDebug() << "Looking at " << tempSaverFileList[i] << endl;
 		KDesktopFile saver(tempSaverFileList[i], true);
-		kdDebug() << "read X-KDE-Type" << endl;
+		kDebug() << "read X-KDE-Type" << endl;
 		QString saverType = saver.readEntry("X-KDE-Type");
 		if (saverType.isEmpty()) // no X-KDE-Type defined so must be OK
 		{
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
 			QStringList saverTypes = saverType.split( ";");
 			for (QStringList::ConstIterator it =  saverTypes.begin(); it != saverTypes.end(); ++it )
 			{
-				kdDebug() << "saverTypes is "<< *it << endl;
+				kDebug() << "saverTypes is "<< *it << endl;
 				if (*it == "ManipulateScreen")
 				{
 					if (manipulatescreen)
@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
 
 			sargs[i] = new char [strlen(word.ascii())+1];
 			strcpy(sargs[i], word.ascii());
-			kdDebug() << "word is " << word.ascii() << endl;
+			kDebug() << "word is " << word.ascii() << endl;
 
 			i++;
 		}

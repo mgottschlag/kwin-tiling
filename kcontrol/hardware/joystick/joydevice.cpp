@@ -291,7 +291,7 @@ void JoyDevice::calcPrecision()
   for (i = 0; i < axes; i++)
   {
     corr[i].prec = amax[i] - amin[i];
-    kdDebug() << "Precision for axis: " << i << ": " << corr[i].prec << endl;
+    kDebug() << "Precision for axis: " << i << ": " << corr[i].prec << endl;
   }
 }
 
@@ -385,9 +385,9 @@ void JoyDevice::calcCorrection(int axis, int *min, int *center, int *max)
   corr[axis].coef[2] = (int)rint(c*16384.0);
   corr[axis].coef[3] = (int)rint(d*16384.0);
 
-  kdDebug() << "min min: " << min[0] << " max: " << min[1]  << endl;
-  kdDebug() << "max min: " << max[0] << " max: " << max[1]  << endl;
-  kdDebug() << "Correction values for axis: " << axis << ": "
+  kDebug() << "min min: " << min[0] << " max: " << min[1]  << endl;
+  kDebug() << "max min: " << max[0] << " max: " << max[1]  << endl;
+  kDebug() << "Correction values for axis: " << axis << ": "
             << corr[axis].coef[0] << ", "
             << corr[axis].coef[1] << ", "
             << corr[axis].coef[2] << ", "

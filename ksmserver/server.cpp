@@ -378,7 +378,7 @@ Status SetAuthentication_local (int count, IceListenObj *listenObjs)
                 sock++;
             }
         }
-        kdDebug( 1218 ) << "KSMServer: SetAProc_loc: conn " << (unsigned)i << ", prot=" << prot << ", file=" << sock << endl;
+        kDebug( 1218 ) << "KSMServer: SetAProc_loc: conn " << (unsigned)i << ", prot=" << prot << ", file=" << sock << endl;
         if (sock && !strcmp(prot, "local")) {
             chmod(sock, 0700);
         }
@@ -788,9 +788,9 @@ void KSMServer::newConnection( int /*socket*/ )
 
     if (cstatus != IceConnectAccepted) {
         if (cstatus == IceConnectIOError)
-            kdDebug( 1218 ) << "IO error opening ICE Connection!" << endl;
+            kDebug( 1218 ) << "IO error opening ICE Connection!" << endl;
         else
-            kdDebug( 1218 ) << "ICE Connection rejected!" << endl;
+            kDebug( 1218 ) << "ICE Connection rejected!" << endl;
         (void )IceCloseConnection (iceConn);
     }
 }

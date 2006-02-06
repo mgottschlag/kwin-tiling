@@ -53,7 +53,7 @@ static KCmdLineOptions options[] =
 KWebDesktopRun::KWebDesktopRun( KWebDesktop* webDesktop, const KUrl & url )
     : m_webDesktop(webDesktop), m_url(url)
 {
-    kdDebug() << "KWebDesktopRun::KWebDesktopRun starting get" << endl;
+    kDebug() << "KWebDesktopRun::KWebDesktopRun starting get" << endl;
     KIO::Job * job = KIO::get(m_url, false, false);
     connect( job, SIGNAL( result( KIO::Job *)),
              this, SLOT( slotFinished(KIO::Job *)));
@@ -68,7 +68,7 @@ void KWebDesktopRun::slotMimetype( KIO::Job *job, const QString &_type )
     m_url = sjob->url();
     QString type = _type; // necessary copy if we plan to use it
     sjob->putOnHold();
-    kdDebug() << "slotMimetype : " << type << endl;
+    kDebug() << "slotMimetype : " << type << endl;
 
     KParts::ReadOnlyPart* part = m_webDesktop->createPart( type );
     // Now open the URL in the part
@@ -81,7 +81,7 @@ void KWebDesktopRun::slotFinished( KIO::Job * job )
     // The whole point of all this is to abort silently on error
     if (job->error())
     {
-        kdDebug() << job->errorString() << endl;
+        kDebug() << job->errorString() << endl;
         kapp->quit();
     }
 }
@@ -139,7 +139,7 @@ int main( int argc, char **argv )
 
 void KWebDesktop::slotCompleted()
 {
-    kdDebug() << "KWebDesktop::slotCompleted" << endl;
+    kDebug() << "KWebDesktop::slotCompleted" << endl;
     // Dump image to m_imageFile
     QPixmap snapshot = QPixmap::grabWidget( m_part->widget() );
     snapshot.save( QFile::decodeName(m_imageFile), "PNG" );
@@ -175,9 +175,9 @@ KParts::ReadOnlyPart* KWebDesktop::createPart( const QString& mimeType )
         m_part = KParts::ComponentFactory::createPartInstanceFromQuery<KParts::ReadOnlyPart>
                  ( mimeType, QString(), 0, 0, this, 0 );
         if ( !m_part )
-            kdWarning() << "No handler found for " << mimeType << endl;
+            kWarning() << "No handler found for " << mimeType << endl;
         else {
-            kdDebug() << "Loaded " << m_part->className() << endl;
+            kDebug() << "Loaded " << m_part->className() << endl;
             connect( m_part, SIGNAL( completed() ),
                      this, SLOT( slotCompleted() ) );
         }

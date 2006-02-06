@@ -146,7 +146,7 @@ KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
 {
     m_extension = new XKBExtension;
     if( !m_extension->init() ) {
-	kdDebug() << "xkb initialization failed, exiting..." << endl;
+	kDebug() << "xkb initialization failed, exiting..." << endl;
 	::exit(1);
     }
 
@@ -198,7 +198,7 @@ bool KXKBApp::settingsRead()
 	m_resetOldOptions = config->readEntry("ResetOldOptions", false);
 	m_options = config->readEntry("Options", "");
 	if( !m_extension->setXkbOptions(m_options, m_resetOldOptions) ) {
-	    kdDebug() << "Setting XKB options failed!" << endl;
+	    kDebug() << "Setting XKB options failed!" << endl;
 	}
     }
     bool enabled = config->readEntry("Use", false);
@@ -241,7 +241,7 @@ bool KXKBApp::settingsRead()
         m_list.prepend(m_layout);
     }
 
-    kdDebug() << "found " << m_list.count() << " layouts" << endl;
+    kDebug() << "found " << m_list.count() << " layouts" << endl;
 
 // reading variants
     m_variants.clear();
@@ -260,7 +260,7 @@ bool KXKBApp::settingsRead()
     else {
 	int group = m_rules->getGroup(m_layout, m_includes[m_layout]);
         if( !m_extension->setLayout(m_model, m_layout, m_variants[m_layout], group, m_includes[m_layout]) ) {
-	    kdDebug() << "Error switching to single layout " << m_layout << endl;
+	    kDebug() << "Error switching to single layout " << m_layout << endl;
 // kapp->quit();
 	}
 	bool showSingle = config->readEntry("ShowSingle", false);
@@ -313,7 +313,7 @@ bool KXKBApp::setLayout(const QString& layout)
     if ( m_compiledLayoutFileNames.contains(layout) && !m_forceSetXKBMap )
     {
         res = m_extension->setCompiledLayout(m_compiledLayoutFileNames[layout]);
-//	kdDebug() << "setting compiled for " << layout << ": " << res << endl;
+//	kDebug() << "setting compiled for " << layout << ": " << res << endl;
         if( res )
 	    m_extension->setGroup(m_group);
     }
@@ -321,7 +321,7 @@ bool KXKBApp::setLayout(const QString& layout)
     if ( !res ) // try not compiled layout, store compiled if success
     {
         res = m_extension->setLayout(m_model, layout, m_variants[layout], m_group, baseGr);
-//	kdDebug() << "setting non-compiled for " << layout << ": " << res << endl;
+//	kDebug() << "setting non-compiled for " << layout << ": " << res << endl;
         if( res )
             m_extension->getCompiledLayout(m_compiledLayoutFileNames[layout]);
     }
@@ -361,7 +361,7 @@ void KXKBApp::precompileLayouts()
     		m_compiledLayoutFileNames[layout] = compiledLayoutFileName;
 //	}
 //	else {
-//    	    kdDebug() << "Error precompiling layout " << layout << endl;
+//    	    kDebug() << "Error precompiling layout " << layout << endl;
 //	}
     }
 }
@@ -566,7 +566,7 @@ const LayoutInfo& LayoutMap::getLayout(WId winId)
 	    else {
 		return it.data();
 	    }
-//kdDebug("getLayout: winId %lu, pid %lu, %s", winId, pid, newLayout.latin1()); 
+//kDebug("getLayout: winId %lu, pid %lu, %s", winId, pid, newLayout.latin1()); 
 	}
 	break;
 

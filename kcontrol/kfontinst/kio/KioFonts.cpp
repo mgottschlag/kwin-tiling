@@ -84,7 +84,7 @@ QTextOStream ostr(stderr);
 
 #else
 
-#define KFI_DBUG kdDebug() << "[" << (int)(getpid()) << "] "
+#define KFI_DBUG kDebug() << "[" << (int)(getpid()) << "] "
 
 #endif
 

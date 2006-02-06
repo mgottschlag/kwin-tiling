@@ -94,7 +94,7 @@ void KBackground::load()
 
 void KBackground::save()
 {
-    kdDebug() << "Saving stuff..." << endl;
+    kDebug() << "Saving stuff..." << endl;
     config->writeEntry( "UseBackground", m_pCBEnable->isChecked() );
     m_background->save();
     emit changed(false);

@@ -171,7 +171,7 @@ bool KPixmapServer::x11Event(XEvent *event)
 	// Only convert to pixmap
 	if (ev->target != pixmap) 
 	{
-	    kdDebug(1204) << ID << "illegal target\n";
+	    kDebug(1204) << ID << "illegal target\n";
 	    XSendEvent(QX11Info::display(), ev->requestor, false, 0, &reply);
 	    return true;
 	}
@@ -179,7 +179,7 @@ bool KPixmapServer::x11Event(XEvent *event)
 	// Check if there is no transaction in progress to the same property
 	if (m_Active.contains(ev->property)) 
 	{
-	    kdDebug(1204) << ID << "selection is busy.\n";
+	    kDebug(1204) << ID << "selection is busy.\n";
 	    XSendEvent(QX11Info::display(), ev->requestor, false, 0, &reply);
 	    return true;
 	}
@@ -188,12 +188,12 @@ bool KPixmapServer::x11Event(XEvent *event)
 	DataIterator it2 = m_Data.find(si.handle);
 	if (it2 == m_Data.end()) 
 	{
-	    kdDebug(1204) << ID << "selection has been deleted.\n";
+	    kDebug(1204) << ID << "selection has been deleted.\n";
 	    XSendEvent(QX11Info::display(), ev->requestor, false, 0, &reply);
 	    return true;
 	}
 
-	kdDebug(1204) << ID << "request for " << si.name << "\n";
+	kDebug(1204) << ID << "request for " << si.name << "\n";
 
 	// All OK: pass the pixmap handle.
 	XChangeProperty(QX11Info::display(), ev->requestor, ev->property, pixmap,

@@ -328,7 +328,7 @@ void KDEDConfig::slotStartService()
 			else
 				KMessageBox::error(this, i18n("Unable to start service."));
 		} else {
-			kdDebug() << "loadModule() on kded returned an unexpected type of reply: " << replyType << endl;
+			kDebug() << "loadModule() on kded returned an unexpected type of reply: " << replyType << endl;
 		}
 	}
 	else {
@@ -339,7 +339,7 @@ void KDEDConfig::slotStartService()
 void KDEDConfig::slotStopService()
 {
 	DCOPCString service = _lvStartup->currentItem()->text(4).latin1();
-	kdDebug() << "Stopping: " << service << endl;
+	kDebug() << "Stopping: " << service << endl;
 	QByteArray data;
 	QDataStream arg( &data, QIODevice::WriteOnly );
 

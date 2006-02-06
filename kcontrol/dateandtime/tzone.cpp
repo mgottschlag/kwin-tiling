@@ -173,7 +173,7 @@ void Tzone::save()
 
         QString tz = "/usr/share/zoneinfo/" + selectedzone;
 
-        kdDebug() << "Set time zone " << tz << endl;
+        kDebug() << "Set time zone " << tz << endl;
 
 	if (!QFile::remove("/etc/localtime"))
 	{

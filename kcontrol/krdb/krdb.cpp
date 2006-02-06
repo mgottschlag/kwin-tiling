@@ -439,7 +439,7 @@ void runRdb( uint flags )
 
   if (tmpFile.status() != 0)
   {
-    kdDebug() << "Couldn't open temp file" << endl;
+    kDebug() << "Couldn't open temp file" << endl;
     exit(0);
   }
 

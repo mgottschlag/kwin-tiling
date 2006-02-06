@@ -307,7 +307,7 @@ void KBackgroundManager::slotChangeDesktop(int desk)
 	    continue;
 	if (m_Cache[i]->hash != m_Renderer[edesk]->hash())
 	    continue;
-//        kdDebug() << "slotChangeDesktop i=" << i << endl;
+//        kDebug() << "slotChangeDesktop i=" << i << endl;
 	setPixmap(m_Cache[i]->pixmap, m_Cache[i]->hash, i);
 	m_Cache[i]->atime = m_Serial;
 	exportBackground(i, desk);
@@ -370,7 +370,7 @@ void KBackgroundManager::setPixmap(KPixmap *pm, int hash, int desk)
 
      // and export it via Esetroot-style for gnome/GTK apps to share in the pretties
     Pixmap bgPm = pm->handle(); // fetch the actual X handle to it
-    //kdDebug() << "Esetroot compat:  setting pixmap to " << bgPm << endl;
+    //kDebug() << "Esetroot compat:  setting pixmap to " << bgPm << endl;
 
     // don't set the ESETROOT_PMAP_ID property - that would result in possible XKillClient()
     // done on kdesktop
@@ -397,7 +397,7 @@ void KBackgroundManager::renderBackground(int desk)
     KBackgroundRenderer *r = m_Renderer[desk];
     if (r->isActive())
     {
-        kdDebug() << "renderer " << desk << " already active" << endl;
+        kDebug() << "renderer " << desk << " already active" << endl;
         return;
     }
 
@@ -619,7 +619,7 @@ void KBackgroundManager::changeWallpaper()
 // DCOP exported
 void KBackgroundManager::setExport(int _export)
 {
-    kdDebug() << "KBackgroundManager enabling exports.\n";
+    kDebug() << "KBackgroundManager enabling exports.\n";
     applyExport(_export);
     slotChangeDesktop(0);
 }

@@ -167,13 +167,13 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
         if ((*umapi).second.find( gn ) == (*umapi).second.end())
 	  (*umapi).second.append( gn );
       } else
-        kdWarning() << "group '" << gn << "' contains unknown user '" << un << "'" << endl;
+        kWarning() << "group '" << gn << "' contains unknown user '" << un << "'" << endl;
     } while (*++grp->gr_mem);
   }
   endgrent();
 
   for (tgmapci = tgmap.begin(); tgmapci != tgmap.end(); ++tgmapci)
-    kdWarning() << "user(s) '" << tgmapci.data().join(",")
+    kWarning() << "user(s) '" << tgmapci.data().join(",")
 	<< "' have unknown GID " << tgmapci.key() << endl;
 
   config = new KSimpleConfig( QString::fromLatin1( KDE_CONFDIR "/kdm/kdmrc" ));

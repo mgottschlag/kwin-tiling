@@ -68,7 +68,7 @@ KOSPage::~KOSPage(){
 
 
 void KOSPage::save(bool currSettings){
-	kdDebug() << "KOSPage::save()" << endl;
+	kDebug() << "KOSPage::save()" << endl;
 	// save like we want. Just set the Radiobutton to either how it is set in the dialog (currSettings=true, default)
 	// or, if false, take the settings we got in getUserDefaults()
 	saveCheckState(currSettings);
@@ -134,7 +134,7 @@ void KOSPage::saveCheckState(bool currSettings){
 
 	/** write the settings for KDE-Behavior (called by saveCheckStatus) */
 void KOSPage::writeKDE(){
-	kdDebug() << "KOSPage::writeKDE()" << endl;
+	kDebug() << "KOSPage::writeKDE()" << endl;
 
 	ckcmdisplay->setGroup("KDE");
 	ckcmdisplay->writeEntry("macStyle", false, KConfigBase::Persistent|KConfigBase::Global);
@@ -175,7 +175,7 @@ void KOSPage::writeKDE(){
 
 	/** write the settings for fvwm-like-behavior (called by saveCheckStatus) */
 void KOSPage::writeUNIX(){
-	kdDebug() << "KOSPage::writeUNIX()" << endl;
+	kDebug() << "KOSPage::writeUNIX()" << endl;
 
 	ckcmdisplay->setGroup("KDE");
 	ckcmdisplay->writeEntry("macStyle", false, KConfigBase::Persistent|KConfigBase::Global);
@@ -216,7 +216,7 @@ void KOSPage::writeUNIX(){
 
 	/** write the settings for windows-like-behavior (called by saveCheckStatus) */
 void KOSPage::writeWindows(){
-	kdDebug() << "KOSPage::writeWindows()" << endl;
+	kDebug() << "KOSPage::writeWindows()" << endl;
 
 	ckcmdisplay->setGroup("KDE");
 	ckcmdisplay->writeEntry("macStyle", false, KConfigBase::Persistent|KConfigBase::Global);
@@ -263,7 +263,7 @@ void KOSPage::writeWindows(){
 
 	/** write the settings for MacOS-like-behavior (called by saveCheckStatus) */
 void KOSPage::writeMacOS(){
-	kdDebug() << "KOSPage::writeMacOS()" << endl;
+	kDebug() << "KOSPage::writeMacOS()" << endl;
 
 	ckcmdisplay->setGroup("KDE");
 	ckcmdisplay->writeEntry("macStyle", true, KConfigBase::Persistent|KConfigBase::Global);
@@ -304,7 +304,7 @@ void KOSPage::writeMacOS(){
 
 	/** write Keyscheme to kdeglobals (called by saveCheckState) */
 void KOSPage::writeKeyEntrys(QString keyfile){
-	kdDebug() << "KOSPage::writeKeyEntrys()" << endl;
+	kDebug() << "KOSPage::writeKeyEntrys()" << endl;
 
 	// load the given .kksrc - file
 	KSimpleConfig* scheme = new KSimpleConfig(keyfile, true);
@@ -344,7 +344,7 @@ void KOSPage::writeKeyEntrys(QString keyfile){
 }
 
 void KOSPage::slotKDEDescription(){
-	kdDebug() << "slotKDEDescription()" << endl;
+	kDebug() << "slotKDEDescription()" << endl;
 	textview_ospage->setText("");
 	textview_ospage->setText(i18n(
 	"<b>Window activation:</b> <i>Focus on click</i><br>"
@@ -356,7 +356,7 @@ void KOSPage::slotKDEDescription(){
 }
 
 void KOSPage::slotUnixDescription(){
-	kdDebug() << "slotUnixDescription()" << endl;
+	kDebug() << "slotUnixDescription()" << endl;
 	textview_ospage->setText("" );
 	textview_ospage->setText(i18n(
 	"<b>Window activation:</b> <i>Focus follows mouse</i><br>"
@@ -368,7 +368,7 @@ void KOSPage::slotUnixDescription(){
 }
 
 void KOSPage::slotWindowsDescription(){
-	kdDebug() << "slotWindowsDescription()" << endl;
+	kDebug() << "slotWindowsDescription()" << endl;
 	textview_ospage->setText("");
 	textview_ospage->setText(i18n(
 	"<b>Window activation:</b> <i>Focus on click</i><br>"
@@ -380,7 +380,7 @@ void KOSPage::slotWindowsDescription(){
 }
 
 void KOSPage::slotMacDescription(){
-	kdDebug() << "slotMacDescription()" << endl;
+	kDebug() << "slotMacDescription()" << endl;
 	textview_ospage->setText("");
 	textview_ospage->setText(i18n(
 	"<b>Window activation:</b> <i>Focus on click</i><br>"
@@ -437,7 +437,7 @@ void KOSPage::getUserDefaults(){
 
 	/** writes the user-defaults back */
 void KOSPage::writeUserDefaults(){
-	kdDebug() << "KOSPage::writeUserDefaults()" << endl;
+	kDebug() << "KOSPage::writeUserDefaults()" << endl;
 
 	ckcmdisplay->setGroup("KDE");
 	ckcmdisplay->writeEntry("macStyle", b_MacMenuBar, KConfigBase::Persistent|KConfigBase::Global);
@@ -480,7 +480,7 @@ void KOSPage::writeUserDefaults(){
 
 	/** called by writeUserDefaults() */
 void KOSPage::writeUserKeys(){
-	kdDebug() << "KOSPage::writeUserKeys()" << endl;
+	kDebug() << "KOSPage::writeUserKeys()" << endl;
 
 	cglobal->setGroup("Global Shortcuts");
 	QMap<QString, QString>::Iterator it;	

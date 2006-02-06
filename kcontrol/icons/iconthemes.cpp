@@ -140,7 +140,7 @@ void IconThemesConfig::loadThemes()
   for (it=themelist.begin(); it != themelist.end(); ++it)
   {
     KIconTheme icontheme(*it);
-    if (!icontheme.isValid()) kdDebug() << "notvalid\n";
+    if (!icontheme.isValid()) kDebug() << "notvalid\n";
     if (icontheme.isHidden()) continue;
 
     name=icontheme.name();
@@ -162,7 +162,7 @@ void IconThemesConfig::installNewTheme()
 {
   KUrl themeURL = KUrlRequesterDlg::getURL(QString(), this,
                                            i18n("Drag or Type Theme URL"));
-  kdDebug() << themeURL.prettyURL() << endl;
+  kDebug() << themeURL.prettyURL() << endl;
 
   if (themeURL.url().isEmpty()) return;
 
@@ -353,7 +353,7 @@ void IconThemesConfig::themeSelected(Q3ListViewItem *item)
 #endif
   QString dirName(m_themeNames[item->text(0)]);
   KIconTheme icontheme(dirName);
-  if (!icontheme.isValid()) kdDebug() << "notvalid\n";
+  if (!icontheme.isValid()) kDebug() << "notvalid\n";
 
   updateRemoveButton();
   const int size = icontheme.defaultSize(KIcon::Desktop);

@@ -31,7 +31,7 @@ KeyRules::KeyRules():
     }
 
   if( X11_DIR.isEmpty() ) {
-    kdDebug() << "Cannot find X11 directory!" << endl;
+    kDebug() << "Cannot find X11 directory!" << endl;
     return;
   }
 
@@ -59,7 +59,7 @@ KeyRules::KeyRules():
   }
 
   if( rulesFile.isEmpty() ) {
-    kdDebug() << "Cannot find rules file in " << X11_DIR << endl;
+    kDebug() << "Cannot find rules file in " << X11_DIR << endl;
     return;
   }
 
@@ -88,7 +88,7 @@ static struct {
   XkbRF_RulesPtr rules = XkbRF_Load(QFile::encodeName(file).data(), "", true, true);
 
   if (rules == NULL) {
-     kdDebug() << "Unable to load rules" << endl;
+     kDebug() << "Unable to load rules" << endl;
      return;
   }
 
@@ -143,7 +143,7 @@ void KeyRules::loadOldLayouts(QString file)
 	    line = line.simplified();
 
 	    m_oldLayouts = line.split( QRegExp("\\s"),QString::SkipEmptyParts);
-//	    kdDebug() << "oldlayouts " << m_oldLayouts.join("|") << endl;
+//	    kDebug() << "oldlayouts " << m_oldLayouts.join("|") << endl;
 	    if( !m_nonLatinLayouts.empty() )
 	      break;
 	    
@@ -158,7 +158,7 @@ void KeyRules::loadOldLayouts(QString file)
 	    line = line.simplified();
 
 	    m_nonLatinLayouts = line.split(QRegExp( "\\s"),QString::SkipEmptyParts);
-//	    kdDebug() << "nonlatin " << m_nonLatinLayouts.join("|") << endl;
+//	    kDebug() << "nonlatin " << m_nonLatinLayouts.join("|") << endl;
 	    if( !m_oldLayouts.empty() )
 	      break;
 	    
@@ -250,7 +250,7 @@ KeyRules::getVariants(const QString& layout)
     
   file += layout;
 
-//  kdDebug() << "reading variants from " << file << endl;
+//  kDebug() << "reading variants from " << file << endl;
   
   QFile f(file);
   if (f.open(QIODevice::ReadOnly))
@@ -280,7 +280,7 @@ KeyRules::getVariants(const QString& layout)
 		continue;
 
 	    result->append(line.mid(pos, pos2-pos));
-//  kdDebug() << "adding variant " << line.mid(pos, pos2-pos) << endl;
+//  kDebug() << "adding variant " << line.mid(pos, pos2-pos) << endl;
       }
 
       f.close();

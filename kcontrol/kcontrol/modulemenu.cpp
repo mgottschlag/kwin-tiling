@@ -98,7 +98,7 @@ void ModuleMenu::fill(KMenu *parentMenu, const QString &parentPath)
 
 void ModuleMenu::moduleSelected(int id)
 {
-  kdDebug(1208) << "Item " << id << " selected" << endl;
+  kDebug(1208) << "Item " << id << " selected" << endl;
   ConfigModule *module = _moduleDict[id];
   if (module)
     emit moduleActivated(module);

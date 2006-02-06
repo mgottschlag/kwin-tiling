@@ -655,7 +655,7 @@ void KFonts::load()
     fontUseList.at( i )->readFont();
 
   useAA_original = useAA = aaSettings->load();
-  kdDebug(1208) << "AA:" << useAA << endl;
+  kDebug(1208) << "AA:" << useAA << endl;
   cbAA->setChecked(useAA);
 
   emit changed(false);
@@ -675,7 +675,7 @@ void KFonts::save()
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() ) {
       if("font"==i->rcKey())
           QSettings().writeEntry("/qt/font", i->font().toString());
-      kdDebug(1208) << "write entry " <<  i->rcKey() << endl;
+      kDebug(1208) << "write entry " <<  i->rcKey() << endl;
       config->writeEntry( i->rcKey(), i->font() );
   }
   config->sync();

@@ -64,15 +64,15 @@ void KScreenSaverAdvancedDialog::slotPriorityChanged(int val)
 	{
 		case 1: // Low
 			mPriority = 19;
-			kdDebug() << "low priority" << endl;
+			kDebug() << "low priority" << endl;
 			break;
 		case 2: // Medium
 			mPriority = 10;
-			kdDebug() << "medium priority" << endl;
+			kDebug() << "medium priority" << endl;
 			break;
 		case 3: // High
 			mPriority = 0;
-			kdDebug() << "high priority" << endl;
+			kDebug() << "high priority" << endl;
 			break;
 	}
 	mChanged = true;

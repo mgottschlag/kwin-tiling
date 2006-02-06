@@ -494,7 +494,7 @@ void KEyeCandyPage::enablePreview(bool currSettings){
 	for (KTrader::OfferList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it) {
 		if(prevOther){
 			desktopPreviews.append((*it)->desktopEntryName());
-			kdDebug() << "Adding Preview:" << (*it)->desktopEntryName() << endl;
+			kDebug() << "Adding Preview:" << (*it)->desktopEntryName() << endl;
 		} else {
 			konquerorNoPreviews.append((*it)->desktopEntryName());
 		}
@@ -611,7 +611,7 @@ void KEyeCandyPage::enableAntialiasingFonts(bool enable, bool reset){
 /** save function to enable/disable the according settings that are made in the
     QCheckListItems of the Eyecandy page. */
 void KEyeCandyPage::save(bool currSettings){
-	kdDebug() << "KEyeCandyPage::save()" << endl;
+	kDebug() << "KEyeCandyPage::save()" << endl;
 	// currSettings==true: save selections. currSettings==false: save user-def.
 	saveCheckState(currSettings);
 	// save all the KConfig-objects to their respective files

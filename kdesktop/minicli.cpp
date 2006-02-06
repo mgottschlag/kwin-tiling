@@ -388,7 +388,7 @@ int Minicli::runCommand()
   // the command line (terminal) interface...
   bool useTerminal = m_dlg->cbRunInTerminal->isChecked();
 
-  kdDebug (1207) << "Use terminal ? " << useTerminal << endl;
+  kDebug (1207) << "Use terminal ? " << useTerminal << endl;
 
   if (!KAuthorized::authorizeKAction("shell_access"))
     useTerminal = false;
@@ -449,7 +449,7 @@ int Minicli::runCommand()
 
     if (pid < 0)
     {
-      kdError(1207) << "fork(): " << KDESU_ERR << "\n";
+      kError(1207) << "fork(): " << KDESU_ERR << "\n";
       return -1;
     }
 
@@ -505,7 +505,7 @@ int Minicli::runCommand()
     if (useTerminal)
     {
       cmd = terminalCommand( cmd, m_filterData->argsAndOptions() );
-      kdDebug(1207) << "Terminal command: " << cmd << endl;
+      kDebug(1207) << "Terminal command: " << cmd << endl;
     }
     else
     {
@@ -603,7 +603,7 @@ void Minicli::notifyServiceStarted(KService::Ptr service)
 
     stream.setVersion(QDataStream::Qt_3_1);
     stream << "minicli" << service->storageId();
-    kdDebug() << "minicli appLauncher dcop signal: " << service->storageId() << endl;
+    kDebug() << "minicli appLauncher dcop signal: " << service->storageId() << endl;
     KApplication::kApplication()->dcopClient()->emitDCOPSignal("appLauncher",
         "serviceStartedByStorageId(QString,QString)", params);
 }
@@ -660,7 +660,7 @@ void Minicli::slotAdvanced()
 
 void Minicli::slotParseTimer()
 {
-  //kdDebug (1207) << "Minicli::slotParseTimer: Timed out..." << endl;
+  //kDebug (1207) << "Minicli::slotParseTimer: Timed out..." << endl;
   parseLine( false );
 }
 
@@ -697,8 +697,8 @@ void Minicli::parseLine( bool final )
         m_autoCheckedRunInTerm = true;
   }
 
-  kdDebug (1207) << "Command: " << m_filterData->uri().url() << endl;
-  kdDebug (1207) << "Arguments: " << m_filterData->argsAndOptions() << endl;
+  kDebug (1207) << "Command: " << m_filterData->uri().url() << endl;
+  kDebug (1207) << "Arguments: " << m_filterData->argsAndOptions() << endl;
 }
 
 void Minicli::setIcon ()
@@ -750,7 +750,7 @@ void Minicli::updateAuthLabel()
   {
     if (!m_prevCached && !m_dlg->leUsername->text().isEmpty())
     {
-      //kdDebug(1207) << k_funcinfo << "Caching: user=" << m_dlg->leUsername->text() <<
+      //kDebug(1207) << k_funcinfo << "Caching: user=" << m_dlg->leUsername->text() <<
       //  ", checked=" << m_dlg->cbRunAsOther->isChecked() << endl;
 
       m_prevUser = m_dlg->leUsername->text();

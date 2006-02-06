@@ -279,7 +279,7 @@ KDesktop::initRoot()
      bgMgr->setExport(1);
      connect( bgMgr, SIGNAL( initDone()), SLOT( backgroundInitDone()));
 
-     //kdDebug(1204) << "KDesktop constructor -> workAreaChanged" << endl;
+     //kDebug(1204) << "KDesktop constructor -> workAreaChanged" << endl;
      workAreaChanged();
      if (!m_bInit)
      {
@@ -303,7 +303,7 @@ KDesktop::initRoot()
 void
 KDesktop::backgroundInitDone()
 {
-    //kdDebug(1204) << "KDesktop::backgroundInitDone" << endl;
+    //kDebug(1204) << "KDesktop::backgroundInitDone" << endl;
     DCOPRef r( "ksmserver", "ksmserver" );
     r.send( "resumeStartup" );
 
@@ -321,7 +321,7 @@ KDesktop::backgroundInitDone()
 void
 KDesktop::slotStart()
 {
-  //kdDebug(1204) << "KDesktop::slotStart" << endl;
+  //kDebug(1204) << "KDesktop::slotStart" << endl;
   if (!m_bInit) return;
 
   kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)", QString("kdesktop"));
@@ -501,7 +501,7 @@ void KDesktop::slotShowWindowList()
 
 void KDesktop::slotShowTaskManager()
 {
-    //kdDebug(1204) << "Launching KSysGuard..." << endl;
+    //kDebug(1204) << "Launching KSysGuard..." << endl;
     KProcess* p = new KProcess;
     Q_CHECK_PTR(p);
 
@@ -597,16 +597,16 @@ void KDesktop::configure()
 
 void KDesktop::slotSettingsChanged(int category)
 {
-    //kdDebug(1204) << "KDesktop::slotSettingsChanged" << endl;
+    //kDebug(1204) << "KDesktop::slotSettingsChanged" << endl;
     if (category == KApplication::SETTINGS_PATHS)
     {
-        kdDebug(1204) << "KDesktop::slotSettingsChanged SETTINGS_PATHS" << endl;
+        kDebug(1204) << "KDesktop::slotSettingsChanged SETTINGS_PATHS" << endl;
         if (m_pIconView)
             m_pIconView->recheckDesktopURL();
     }
     else if (category == KApplication::SETTINGS_SHORTCUTS)
     {
-        kdDebug(1204) << "KDesktop::slotSettingsChanged SETTINGS_SHORTCUTS" << endl;
+        kDebug(1204) << "KDesktop::slotSettingsChanged SETTINGS_SHORTCUTS" << endl;
         keys->readSettings();
         keys->updateConnections();
     }
@@ -616,14 +616,14 @@ void KDesktop::slotIconChanged(int group)
 {
     if ( group == KIcon::Desktop )
     {
-        kdDebug(1204) << "KDesktop::slotIconChanged" << endl;
+        kDebug(1204) << "KDesktop::slotIconChanged" << endl;
         refresh();
     }
 }
 
 void KDesktop::slotDatabaseChanged()
 {
-    //kdDebug(1204) << "KDesktop::slotDatabaseChanged" << endl;
+    //kDebug(1204) << "KDesktop::slotDatabaseChanged" << endl;
     if (m_bInit) // kded is done, now we can "start" for real
         slotStart();
     if (m_pIconView && KSycoca::isChanged("mimetypes"))
@@ -699,7 +699,7 @@ void KDesktop::closeEvent(QCloseEvent *e)
 
 void KDesktop::workAreaChanged()
 {
-    //kdDebug(1204) << "KDesktop::workAreaChanged() -> starting timer" << endl;
+    //kDebug(1204) << "KDesktop::workAreaChanged() -> starting timer" << endl;
     updateWorkAreaTimer->stop();
     updateWorkAreaTimer->start( 100, TRUE );
 }
@@ -793,7 +793,7 @@ void KDesktop::handleImageDropEvent(QDropEvent * e)
         Q3ImageDrag::decode(e, i);
         KTempFile tmpFile(KGlobal::dirs()->saveLocation("wallpaper"), ".png");
         i.save(tmpFile.name(), "PNG");
-        kdDebug(1204) << "KDesktop::contentsDropEvent " << tmpFile.name() << endl;
+        kDebug(1204) << "KDesktop::contentsDropEvent " << tmpFile.name() << endl;
         bgMgr->setWallpaper(tmpFile.name());
     }
 }
@@ -867,7 +867,7 @@ void KDesktop::setVRoot( bool enable )
         return;
 
     set_vroot = enable;
-    kdDebug(1204) << "setVRoot " << enable << endl;
+    kDebug(1204) << "setVRoot " << enable << endl;
     KDesktopSettings::setSetVRoot( set_vroot );
     KDesktopSettings::writeConfig();
     slotSetVRoot();
@@ -885,7 +885,7 @@ void KDesktop::setIconsEnabled( bool enable )
         return;
 
     m_bDesktopEnabled = enable;
-    kdDebug(1204) << "setIcons " << enable << endl;
+    kDebug(1204) << "setIcons " << enable << endl;
     KDesktopSettings::setDesktopEnabled( m_bDesktopEnabled );
     KDesktopSettings::writeConfig();
     if (!enable) {

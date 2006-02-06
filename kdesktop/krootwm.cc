@@ -222,7 +222,7 @@ KRootWm::~KRootWm()
 
 void KRootWm::initConfig()
 {
-//  kdDebug() << "KRootWm::initConfig" << endl;
+//  kDebug() << "KRootWm::initConfig" << endl;
 
   // parse the configuration
   m_bGlobalMenuBar = KDesktopSettings::macStyle();
@@ -267,7 +267,7 @@ void KRootWm::initConfig()
 
 void KRootWm::buildMenus()
 {
-//    kdDebug() << "KRootWm::buildMenus" << endl;
+//    kDebug() << "KRootWm::buildMenus" << endl;
 
     delete menuBar;
     menuBar = 0;
@@ -279,7 +279,7 @@ void KRootWm::buildMenus()
 
     if (m_bShowMenuBar)
     {
-//        kdDebug() << "showMenuBar" << endl;
+//        kDebug() << "showMenuBar" << endl;
         menuBar = new KMenuBar;
         menuBar->setCaption("KDE Desktop");
     }
@@ -522,7 +522,7 @@ void KRootWm::slotFileNewAboutToShow()
 {
   if (menuNew)
   {
-//  kdDebug() << " KRootWm:: (" << this << ") slotFileNewAboutToShow() menuNew=" << menuNew << endl;
+//  kDebug() << " KRootWm:: (" << this << ") slotFileNewAboutToShow() menuNew=" << menuNew << endl;
      // As requested by KNewMenu :
      menuNew->slotCheckUpToDate();
      // And set the files that the menu apply on :
@@ -611,7 +611,7 @@ void KRootWm::mousePressed( const QPoint& _global, int _button )
 }
 
 void KRootWm::slotWindowList() {
-//  kdDebug() << "KRootWm::slotWindowList" << endl;
+//  kDebug() << "KRootWm::slotWindowList" << endl;
 // Popup at the center of the screen, this is from keyboard shortcut.
   QDesktopWidget* desktop = KApplication::desktop();
   QRect r = desktop->screenGeometry( desktop->screenNumber(QCursor::pos()));
@@ -626,7 +626,7 @@ void KRootWm::slotWindowList() {
 }
 
 void KRootWm::slotSwitchUser() {
-//  kdDebug() << "KRootWm::slotSwitchUser" << endl;
+//  kDebug() << "KRootWm::slotSwitchUser" << endl;
   if (!sessionsMenu)
     return;
   QDesktopWidget* desktop = KApplication::desktop();

@@ -86,7 +86,7 @@ void KeyModule::initGUI()
 // Called when [Reset] is pressed
 void KeyModule::load()
 {
-	kdDebug(125) << "KeyModule::load()" << endl;
+	kDebug(125) << "KeyModule::load()" << endl;
 	m_pShortcuts->load();
 	m_pModifiers->load();
 }
@@ -94,14 +94,14 @@ void KeyModule::load()
 // When [Apply] or [OK] are clicked.
 void KeyModule::save()
 {
-	kdDebug(125) << "KeyModule::save()" << endl;
+	kDebug(125) << "KeyModule::save()" << endl;
 	m_pShortcuts->save();
 	m_pModifiers->save();
 }
 
 void KeyModule::defaults()
 {
-	kdDebug(125) << "KeyModule::defaults()" << endl;
+	kDebug(125) << "KeyModule::defaults()" << endl;
 	m_pShortcuts->defaults();
 	m_pModifiers->defaults();
 }
@@ -127,7 +127,7 @@ extern "C"
 
   KDE_EXPORT void initModifiers()
   {
-	kdDebug(125) << "KeyModule::initModifiers()" << endl;
+	kDebug(125) << "KeyModule::initModifiers()" << endl;
 
 	KConfigGroup cg( KGlobal::config(), "Keyboard" );
 	bool bMacSwap = cg.readEntry( "Mac Modifier Swap", false );
@@ -137,9 +137,9 @@ extern "C"
 
   KDE_EXPORT void init_keys()
   {
-	kdDebug(125) << "KeyModule::init()\n";
+	kDebug(125) << "KeyModule::init()\n";
 
-	/*kdDebug(125) << "KKeyModule::init() - Initialize # Modifier Keys Settings\n";
+	/*kDebug(125) << "KKeyModule::init() - Initialize # Modifier Keys Settings\n";
 	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
 	QString fourMods = KGlobal::config()->readEntry( "Use Four Modifier Keys", KAccel::keyboardHasMetaKey() ? "true" : "false" );
 	KAccel::useFourModifierKeys( fourMods == "true" );
@@ -148,7 +148,7 @@ extern "C"
 	*/
 	KAccelActions* keys = new KAccelActions();
 
-	kdDebug(125) << "KeyModule::init() - Load Included Bindings\n";
+	kDebug(125) << "KeyModule::init() - Load Included Bindings\n";
 // this should match the included files above
 #define NOSLOTS
 #include "../../../klipper/klipperbindings.cpp"
@@ -165,7 +165,7 @@ extern "C"
   // However, avoid writing at every KDE startup, just update them after every rebuild of this file.
         KConfigGroup group( KGlobal::config(), "Global Shortcuts" );
         if( group.readEntry( "Defaults timestamp" ) != __DATE__ __TIME__ ) {
-	    kdDebug(125) << "KeyModule::init() - Read Config Bindings\n";
+	    kDebug(125) << "KeyModule::init() - Read Config Bindings\n";
 	    // Check for old group,
 	    if( KGlobal::config()->hasGroup( "Global Keys" ) ) {
 		keys->readActions( "Global Keys" );
@@ -174,7 +174,7 @@ extern "C"
 	    keys->readActions( "Global Shortcuts" );
             KGlobal::config()->deleteGroup( "Global Shortcuts", KConfigBase::Global);
 
-	    kdDebug(125) << "KeyModule::init() - Write Config Bindings\n";
+	    kDebug(125) << "KeyModule::init() - Write Config Bindings\n";
 	    keys->writeActions( "Global Shortcuts", 0, true, true );
             group.writeEntry( "Defaults timestamp", __DATE__ __TIME__, KConfigBase::Normal|KConfigBase::Global);
         }

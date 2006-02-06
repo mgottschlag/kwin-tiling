@@ -62,14 +62,14 @@ ShortcutsModule::~ShortcutsModule()
 // Called when [Reset] is pressed
 void ShortcutsModule::load()
 {
-	kdDebug(125) << "ShortcutsModule::load()" << endl;
+	kDebug(125) << "ShortcutsModule::load()" << endl;
 	slotSchemeCur();
 }
 
 // When [Apply] or [OK] are clicked.
 void ShortcutsModule::save()
 {
-	kdDebug(125) << "ShortcutsModule::save()" << endl;
+	kDebug(125) << "ShortcutsModule::save()" << endl;
 
 	// FIXME: This isn't working.  Why? -- ellis, 2002/01/27
 	// Check for old group,
@@ -108,7 +108,7 @@ QString ShortcutsModule::quickHelp() const
 
 void ShortcutsModule::initGUI()
 {
-	kdDebug(125) << "A-----------" << endl;
+	kDebug(125) << "A-----------" << endl;
 	KAccelActions* keys = &m_actionsGeneral;
 // see also KShortcutsModule::init() below !!!
 #define NOSLOTS
@@ -120,16 +120,16 @@ void ShortcutsModule::initGUI()
 #include "../../../klipper/klipperbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 
-	kdDebug(125) << "B-----------" << endl;
+	kDebug(125) << "B-----------" << endl;
 	m_actionsSequence.init( m_actionsGeneral );
 
-	kdDebug(125) << "C-----------" << endl;
+	kDebug(125) << "C-----------" << endl;
 	createActionsGeneral();
-	kdDebug(125) << "D-----------" << endl;
+	kDebug(125) << "D-----------" << endl;
 	createActionsSequence();
-	kdDebug(125) << "E-----------" << endl;
+	kDebug(125) << "E-----------" << endl;
 
-	kdDebug(125) << "F-----------" << endl;
+	kDebug(125) << "F-----------" << endl;
 	QVBoxLayout* pVLayout = new QVBoxLayout( this, KDialog::marginHint() );
 
 	pVLayout->addSpacing( KDialog::marginHint() );
@@ -194,13 +194,13 @@ void ShortcutsModule::initGUI()
 	m_pTab->addTab( m_pkcApplication, i18n("App&lication Shortcuts") );
 	connect( m_pkcApplication, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
-	kdDebug(125) << "G-----------" << endl;
+	kDebug(125) << "G-----------" << endl;
 	readSchemeNames();
 
-	kdDebug(125) << "I-----------" << endl;
+	kDebug(125) << "I-----------" << endl;
 	slotSchemeCur();
 
-	kdDebug(125) << "J-----------" << endl;
+	kDebug(125) << "J-----------" << endl;
 }
 
 void ShortcutsModule::createActionsGeneral()
@@ -209,13 +209,13 @@ void ShortcutsModule::createActionsGeneral()
 
 	for( uint i = 0; i < actions.count(); i++ ) {
 		QString sConfigKey = actions[i].name();
-		//kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
+		//kDebug(125) << "sConfigKey: " << sConfigKey << endl;
 		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
 		bool bIsNum = false;
 		if( iLastSpace >= 0 )
 			sConfigKey.mid( iLastSpace+1 ).toInt( &bIsNum );
 
-		//kdDebug(125) << "sConfigKey: " << sConfigKey
+		//kDebug(125) << "sConfigKey: " << sConfigKey
 		//	<< " bIsNum: " << bIsNum << endl;
 		if( bIsNum && !sConfigKey.contains( ':' ) ) {
 			actions[i].setConfigurable( false );
@@ -230,13 +230,13 @@ void ShortcutsModule::createActionsSequence()
 
 	for( uint i = 0; i < actions.count(); i++ ) {
 		QString sConfigKey = actions[i].name();
-		//kdDebug(125) << "sConfigKey: " << sConfigKey << endl;
+		//kDebug(125) << "sConfigKey: " << sConfigKey << endl;
 		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
 		bool bIsNum = false;
 		if( iLastSpace >= 0 )
 			sConfigKey.mid( iLastSpace+1 ).toInt( &bIsNum );
 
-		//kdDebug(125) << "sConfigKey: " << sConfigKey
+		//kDebug(125) << "sConfigKey: " << sConfigKey
 		//	<< " bIsNum: " << bIsNum << endl;
 		if( !bIsNum && !sConfigKey.contains( ':' ) ) {
 			actions[i].setConfigurable( false );
@@ -280,14 +280,14 @@ void ShortcutsModule::resizeEvent( QResizeEvent * )
 
 void ShortcutsModule::slotSchemeCur()
 {
-	kdDebug(125) << "ShortcutsModule::slotSchemeCur()" << endl;
+	kDebug(125) << "ShortcutsModule::slotSchemeCur()" << endl;
 	//m_pcbSchemes->setCurrentItem( 0 );
 	slotSelectScheme();
 }
 
 void ShortcutsModule::slotKeyChange()
 {
-	kdDebug(125) << "ShortcutsModule::slotKeyChange()" << endl;
+	kDebug(125) << "ShortcutsModule::slotKeyChange()" << endl;
 	m_prbNew->setEnabled( true );
 	m_prbNew->setChecked( true );
 	m_pbtnSave->setEnabled( true );
@@ -297,7 +297,7 @@ void ShortcutsModule::slotKeyChange()
 void ShortcutsModule::slotSelectScheme( int )
 {
 	i18n("Your current changes will be lost if you load another scheme before saving this one.");
-	kdDebug(125) << "ShortcutsModule::slotSelectScheme( " << m_pcbSchemes->currentItem() << " )" << endl;
+	kDebug(125) << "ShortcutsModule::slotSelectScheme( " << m_pcbSchemes->currentItem() << " )" << endl;
 	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentItem() ];
 
 	if( sFilename == "cur" ) {

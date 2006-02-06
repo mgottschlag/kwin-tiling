@@ -76,7 +76,7 @@ static int winsErrorHandler(Display *, XErrorEvent *ev)
 
 void KSMServer::performLegacySessionSave()
 {
-    kdDebug( 1218 ) << "Saving legacy session apps" << endl;
+    kDebug( 1218 ) << "Saving legacy session apps" << endl;
     // Setup error handler
     legacyWindows.clear();
     windowMapPtr = &legacyWindows;
@@ -199,7 +199,7 @@ void KSMServer::performLegacySessionSave()
             (*it).wmClientMachine = windowWmClientMachine(w);
 	}
     }
-    kdDebug( 1218 ) << "Done saving " << legacyWindows.count() << " legacy session apps" << endl;
+    kDebug( 1218 ) << "Done saving " << legacyWindows.count() << " legacy session apps" << endl;
 }
 
 /*!

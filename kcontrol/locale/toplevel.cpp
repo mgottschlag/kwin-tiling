@@ -207,7 +207,7 @@ void KLocaleApplication::defaults()
 {
   *m_locale = KLocale(QLatin1String("kcmlocale"), m_nullConfig);
 
-  kdDebug() << "defaults: " << m_locale->languageList() << endl;
+  kDebug() << "defaults: " << m_locale->languageList() << endl;
 
   emit localeChanged();
   emit languageChanged();

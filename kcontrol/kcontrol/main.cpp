@@ -116,7 +116,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   {
      aboutData = &aboutKInfoCenter;
      KCGlobal::setIsInfoCenter(true);
-     kdDebug(1208) << "Running as KInfoCenter!\n" << endl;
+     kDebug(1208) << "Running as KInfoCenter!\n" << endl;
   }
   else
   {
@@ -141,7 +141,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   KCGlobal::init();
 
   if (!KControlApp::start()) {
-	kdDebug(1208) << "kcontrol is already running!\n" << endl;
+	kDebug(1208) << "kcontrol is already running!\n" << endl;
 	return (0);
   }
 

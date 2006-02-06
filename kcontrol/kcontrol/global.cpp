@@ -84,7 +84,7 @@ QString KCGlobal::baseGroup()
     if (group)
     {
       _baseGroup = group->relPath();
-      kdDebug(1208) << "Found basegroup = " << _baseGroup << endl;
+      kDebug(1208) << "Found basegroup = " << _baseGroup << endl;
       return _baseGroup;
     }
     // Compatibility with old behaviour, in case of missing .directory files.
@@ -92,12 +92,12 @@ QString KCGlobal::baseGroup()
     {
       if (_infocenter)
       {
-        kdWarning() << "No K menu group with X-KDE-BaseGroup=info found ! Defaulting to Settings/Information/" << endl;
+        kWarning() << "No K menu group with X-KDE-BaseGroup=info found ! Defaulting to Settings/Information/" << endl;
         _baseGroup = QLatin1String("Settings/Information/");
       }
       else
       {
-        kdWarning() << "No K menu group with X-KDE-BaseGroup=settings found ! Defaulting to Settings/" << endl;
+        kWarning() << "No K menu group with X-KDE-BaseGroup=settings found ! Defaulting to Settings/" << endl;
         _baseGroup = QLatin1String("Settings/");
       }
     }

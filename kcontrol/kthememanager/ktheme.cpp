@@ -52,7 +52,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
     m_dom.setContent( file.readAll() );
     file.close();
 
-    //kdDebug() << m_dom.toString( 2 ) << endl;
+    //kDebug() << m_dom.toString( 2 ) << endl;
 
     setName( QFileInfo( file ).baseName() );
     m_kgd = KGlobal::dirs();
@@ -87,13 +87,13 @@ void KTheme::setName( const QString & name )
 
 bool KTheme::load( const KUrl & url )
 {
-    kdDebug() << "Loading theme from URL: " << url << endl;
+    kDebug() << "Loading theme from URL: " << url << endl;
 
     QString tmpFile;
     if ( !KIO::NetAccess::download( url, tmpFile, 0L ) )
         return false;
 
-    kdDebug() << "Theme is in temp file: " << tmpFile << endl;
+    kDebug() << "Theme is in temp file: " << tmpFile << endl;
 
     // set theme's name
     setName( QFileInfo( url.fileName() ).baseName() );
@@ -359,7 +359,7 @@ QString KTheme::createYourself( bool pack )
         KTar tar( m_kgd->saveLocation( "themes" ) + m_name + ".kth", "application/x-gzip" );
         tar.open( QIODevice::WriteOnly );
 
-        kdDebug() << "Packing everything under: " << m_kgd->saveLocation( "themes", m_name + "/" ) << endl;
+        kDebug() << "Packing everything under: " << m_kgd->saveLocation( "themes", m_name + "/" ) << endl;
 
         if ( tar.addLocalDirectory( m_kgd->saveLocation( "themes", m_name + "/" ), QString() ) )
             result = tar.fileName();
@@ -367,17 +367,17 @@ QString KTheme::createYourself( bool pack )
         tar.close();
     }
 
-    //kdDebug() << m_dom.toString( 2 ) << endl;
+    //kDebug() << m_dom.toString( 2 ) << endl;
 
     return result;
 }
 
 void KTheme::apply()
 {
-    kdDebug() << "Going to apply theme: " << m_name << endl;
+    kDebug() << "Going to apply theme: " << m_name << endl;
 
     QString themeDir = m_kgd->findResourceDir( "themes", m_name + "/" + m_name + ".xml") + m_name + "/";
-    kdDebug() << "Theme dir: " << themeDir << endl;
+    kDebug() << "Theme dir: " << themeDir << endl;
 
     // 2. Background theme
 
@@ -671,7 +671,7 @@ void KTheme::apply()
 
 bool KTheme::remove( const QString & name )
 {
-    kdDebug() << "Going to remove theme: " << name << endl;
+    kDebug() << "Going to remove theme: " << name << endl;
     return KIO::NetAccess::del( KGlobal::dirs()->saveLocation( "themes", name + "/" ), 0L );
 }
 
@@ -689,7 +689,7 @@ QString KTheme::getProperty( const QString & name ) const
         return _list.item( 0 ).toElement().attribute( "value" );
     else
     {
-        kdWarning() << "Found no such property: " << name << endl;
+        kWarning() << "Found no such property: " << name << endl;
         return QString();
     }
 }
@@ -703,7 +703,7 @@ QString KTheme::getProperty( QDomElement parent, const QString & tag,
         return _list.item( 0 ).toElement().attribute( attr );
     else
     {
-        kdWarning() << QString( "No such property found: %1->%2->%3" )
+        kWarning() << QString( "No such property found: %1->%2->%3" )
             .arg( parent.tagName() ).arg( tag ).arg( attr ) << endl;
         return QString();
     }
@@ -783,7 +783,7 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
     if ( fi.isRelative() )
         fi.setFile( findResource( section, path ) );
 
-    kdDebug() << "Processing file: " << fi.absoluteFilePath() << ", " << fi.fileName() << endl;
+    kDebug() << "Processing file: " << fi.absoluteFilePath() << ", " << fi.fileName() << endl;
 
     if ( section == "desktop" )
     {
@@ -806,7 +806,7 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
             return "theme:/wallpapers/panel/" + fi.fileName();
     }
     else
-        kdWarning() << "Unsupported theme resource type" << endl;
+        kWarning() << "Unsupported theme resource type" << endl;
 
     return QString();       // an error occured or the resource doesn't exist
 }
@@ -850,7 +850,7 @@ void KTheme::setVersion( const QString & version )
 void KTheme::addPreview()
 {
     QString file = m_kgd->saveLocation( "themes", m_name + "/" ) + m_name + ".preview.png";
-    kdDebug() << "Adding preview: " << file << endl;
+    kDebug() << "Adding preview: " << file << endl;
     QPixmap snapshot = QPixmap::grabWindow( QX11Info::appRootWindow() );
     snapshot.save( file, "PNG" );
 }
@@ -873,7 +873,7 @@ QString KTheme::findResource( const QString & section, const QString & path )
         return m_kgd->findResource( "data", "kicker/wallpapers/" + path );
     else
     {
-        kdWarning() << "Requested unknown resource: " << section << endl;
+        kWarning() << "Requested unknown resource: " << section << endl;
         return QString();
     }
 }

@@ -332,7 +332,7 @@ void KSMServer::handlePendingInteractions()
 
 void KSMServer::cancelShutdown( KSMClient* c )
 {
-    kdDebug( 1218 ) << "cancelShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
+    kDebug( 1218 ) << "cancelShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
     clientInteracting = 0;
 	foreach ( KSMClient *c, clients ) {
         SmsShutdownCancelled( c->connection() );
@@ -357,7 +357,7 @@ void KSMServer::protectionTimeout()
 
 	foreach ( KSMClient *c, clients ) {
         if ( !c->saveYourselfDone && !c->waitForPhase2 ) {
-            kdDebug( 1218 ) << "protectionTimeout: client " << c->program() << "(" << c->clientId() << ")" << endl;
+            kDebug( 1218 ) << "protectionTimeout: client " << c->program() << "(" << c->clientId() << ")" << endl;
             c->saveYourselfDone = true;
         }
     }
@@ -428,13 +428,13 @@ void KSMServer::startKilling()
     // kill all clients
     state = Killing;
 	foreach ( KSMClient *c, clients ) {
-        kdDebug( 1218 ) << "completeShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
+        kDebug( 1218 ) << "completeShutdown: client " << c->program() << "(" << c->clientId() << ")" << endl;
         if (c->wasPhase2)
             continue;
         SmsDie( c->connection() );
     }
 
-    kdDebug( 1218 ) << " We killed all clients. We have now clients.count()=" <<
+    kDebug( 1218 ) << " We killed all clients. We have now clients.count()=" <<
        clients.count() << endl;
     completeKilling();
     QTimer::singleShot( 4000, this, SLOT( timeoutQuit() ) );
@@ -442,10 +442,10 @@ void KSMServer::startKilling()
 
 void KSMServer::completeKilling()
 {
-    kdDebug( 1218 ) << "KSMServer::completeKilling clients.count()=" <<
+    kDebug( 1218 ) << "KSMServer::completeKilling clients.count()=" <<
         clients.count() << endl;
     if ( state != Killing && state != Killing2 ) {
-        //      kdWarning() << "Not Killing !!! state=" << state << endl;
+        //      kWarning() << "Not Killing !!! state=" << state << endl;
         return;
     }
 
@@ -512,7 +512,7 @@ void KSMServer::timeoutQuit()
             kill_phase2 = true;
             SmsDie( c->connection() );
         } else {
-            kdWarning( 1218 ) << "SmsDie timeout, client " << c->program() << "(" << c->clientId() << ")" << endl;
+            kWarning( 1218 ) << "SmsDie timeout, client " << c->program() << "(" << c->clientId() << ")" << endl;
         }
     }
     if( !kill_phase2 )

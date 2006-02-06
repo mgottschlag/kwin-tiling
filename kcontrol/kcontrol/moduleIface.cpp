@@ -38,7 +38,7 @@ QFont ModuleIface::getFont() {
 }
 
 QPalette ModuleIface::getPalette(){
-	kdDebug(1208) << "Returned Palette" << endl;
+	kDebug(1208) << "Returned Palette" << endl;
 	return _parent->palette();
 }
 

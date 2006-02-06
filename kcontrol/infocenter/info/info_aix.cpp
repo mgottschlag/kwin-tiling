@@ -76,7 +76,7 @@ list_devices(QListView *lBox, char *criteria)
 
   if (odm_initialize() == -1)
     {
-      kdError(0) << "odm_initialize() failed: odmerrno = " << odmerrno << endl;
+      kError(0) << "odm_initialize() failed: odmerrno = " << odmerrno << endl;
       return(false);         
     }
 
@@ -85,7 +85,7 @@ list_devices(QListView *lBox, char *criteria)
   if ((int)cudv == -1)
     {
       odm_terminate();
-      kdError(0) << "odm_get_list() failed: odmerrno = " << odmerrno << endl;
+      kError(0) << "odm_get_list() failed: odmerrno = " << odmerrno << endl;
       return(false);
     }
     else if (!cudv)  /* empty list */
@@ -117,7 +117,7 @@ list_devices(QListView *lBox, char *criteria)
   if (odm_free_list(cudv, &info) == -1)
     {
       odm_terminate();
-      kdError(0) << "odm_free_list() failed: odmerrno = " << odmerrno << endl;
+      kError(0) << "odm_free_list() failed: odmerrno = " << odmerrno << endl;
       return(false);
     }
     
@@ -300,7 +300,7 @@ GetInfo_CPU( QListView *lBox )
 
   if (uname(&info) == -1)
     {
-      kdError(0) << "uname() failed: errno = " << errno << endl;
+      kError(0) << "uname() failed: errno = " << errno << endl;
       return false;
     }
 
@@ -310,7 +310,7 @@ GetInfo_CPU( QListView *lBox )
   if (strcmp(model_ID, "4C") == 0)  /* need to use a different model_ID and model table */
     {
       if (odm_initialize() == -1)
-        kdError(0) << "odm_initialize() failed: odmerrno = " << odmerrno << endl;
+        kError(0) << "odm_initialize() failed: odmerrno = " << odmerrno << endl;
       else 
         {
           struct CuAt cuat;  /* Customized Device attribute */

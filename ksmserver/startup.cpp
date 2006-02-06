@@ -90,7 +90,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 void KSMServer::restoreSession( QString sessionName )
 {
-    kdDebug( 1218 ) << "KSMServer::restoreSession " << sessionName << endl;
+    kDebug( 1218 ) << "KSMServer::restoreSession " << sessionName << endl;
     upAndRunning( "restore session");
     KConfig* config = KGlobal::config();
 
@@ -198,7 +198,7 @@ void KSMServer::resumeStartup()
 
 void KSMServer::startupSuspendTimeout()
 {
-    kdDebug( 1218 ) << "Startup suspend timeout" << endl;
+    kDebug( 1218 ) << "Startup suspend timeout" << endl;
     startupSuspendCount = 0;
     restoreNext();
 }

@@ -35,7 +35,7 @@ KSysInfo::KSysInfo() {
 	initXInfo();
 	initFontFamilies();
 	initHWInfo();
-	kdDebug() << "KSysInfo: XServer Vendor: " << m_xvendor << endl
+	kDebug() << "KSysInfo: XServer Vendor: " << m_xvendor << endl
 	          << "KSysInfo: XServer from XFree Inc: " << m_xfree_inc << endl
 	          << "KSysInfo: XServer Release Number: " << m_xrelease << endl
 	          << "KSysInfo: XRENDER support is: " << m_xrender << endl

@@ -558,7 +558,7 @@ static Q3ListViewItem *get_gl_info(Display *dpy, int scrnum, Bool allowDirect,Q3
    if (!visinfo) {
       visinfo = glXChooseVisual(dpy, scrnum, attribDouble);
       if (!visinfo) {
-		   kdDebug() << "Error: couldn't find RGB GLX visual\n";
+		   kDebug() << "Error: couldn't find RGB GLX visual\n";
          return result;
       }
    }
@@ -574,7 +574,7 @@ static Q3ListViewItem *get_gl_info(Display *dpy, int scrnum, Bool allowDirect,Q3
 
    ctx = glXCreateContext( dpy, visinfo, NULL, allowDirect );
    if (!ctx) {
-		kdDebug() << "Error: glXCreateContext failed\n";
+		kDebug() << "Error: glXCreateContext failed\n";
       XDestroyWindow(dpy, win);
       return result;
    }
@@ -601,7 +601,7 @@ static Q3ListViewItem *get_gl_info(Display *dpy, int scrnum, Bool allowDirect,Q3
       result = print_screen_info(l1, after);
    }
    else {
-      kdDebug() << "Error: glXMakeCurrent failed\n";
+      kDebug() << "Error: glXMakeCurrent failed\n";
       glXDestroyContext(dpy, ctx);
    }
 
@@ -622,7 +622,7 @@ static bool GetInfo_OpenGL_Generic( Q3ListView *lBox )
 
    dpy = XOpenDisplay(displayName);
    if (!dpy) {
-//      kdDebug() << "Error: unable to open display " << displayName << endl;
+//      kDebug() << "Error: unable to open display " << displayName << endl;
       return false;
    }
 

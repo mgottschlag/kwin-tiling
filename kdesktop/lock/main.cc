@@ -96,7 +96,7 @@ int main( int argc, char **argv )
         int pos;
         QByteArray display_name = XDisplayString(dpy);
         XCloseDisplay(dpy);
-        kdDebug() << "screen " << number_of_screens << " " << kdesktop_screen_number << " " << display_name << " " << starting_screen << endl;
+        kDebug() << "screen " << number_of_screens << " " << kdesktop_screen_number << " " << display_name << " " << starting_screen << endl;
         dpy = 0;
 
         if ((pos = display_name.lastIndexOf('.')) != -1)
@@ -126,7 +126,7 @@ int main( int argc, char **argv )
 
             env.sprintf("DISPLAY=%s.%d", display_name.data(),
                         kdesktop_screen_number);
-            kdDebug() << "env " << env << endl;
+            kDebug() << "env " << env << endl;
 
             if (putenv(strdup(env.toLatin1().data()))) {
                 fprintf(stderr,
@@ -138,7 +138,7 @@ int main( int argc, char **argv )
     }
 
     MyApp app;
-    kdDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection << endl;
+    kDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection << endl;
     app.disableSessionManagement();
     KGlobal::locale()->insertCatalog("libdmctl");
 

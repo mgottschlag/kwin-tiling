@@ -137,7 +137,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     if (servGroup)
     {
       relPath=servGroup->relPath();
-      kdDebug(1204) << "relPath=" << relPath << endl;
+      kDebug(1204) << "relPath=" << relPath << endl;
     }
     KGlobal::dirs()->addResourceType("scrsav",
                                      KGlobal::dirs()->kde_default("apps") +
@@ -368,12 +368,12 @@ void LockProcess::readSaver()
 		{
 			if ((saverTypes[i] == "ManipulateScreen") && !manipulatescreen)
 			{
-				kdDebug(1204) << "Screensaver is type ManipulateScreen and ManipulateScreen is forbidden" << endl;
+				kDebug(1204) << "Screensaver is type ManipulateScreen and ManipulateScreen is forbidden" << endl;
 				mForbidden = true;
 			}
 			if ((saverTypes[i] == "OpenGL") && !opengl)
 			{
-				kdDebug(1204) << "Screensaver is type OpenGL and OpenGL is forbidden" << endl;
+				kDebug(1204) << "Screensaver is type OpenGL and OpenGL is forbidden" << endl;
 				mForbidden = true;
 			}
 			if (saverTypes[i] == "OpenGL")
@@ -383,7 +383,7 @@ void LockProcess::readSaver()
 		}
 	}
 
-	kdDebug(1204) << "mForbidden: " << (mForbidden ? "true" : "false") << endl;
+	kDebug(1204) << "mForbidden: " << (mForbidden ? "true" : "false") << endl;
 
         if (config.hasActionGroup("Root"))
         {
@@ -445,7 +445,7 @@ void LockProcess::createSaverWindow()
     setGeometry(0, 0, mRootWidth, mRootHeight);
     hide();
 
-    kdDebug(1204) << "Saver window Id: " << winId() << endl;
+    kDebug(1204) << "Saver window Id: " << winId() << endl;
 }
 
 //---------------------------------------------------------------------------
@@ -638,7 +638,7 @@ bool LockProcess::startSaver()
 {
     if (!child_saver && !grabInput())
     {
-        kdWarning(1204) << "LockProcess::startSaver() grabInput() failed!!!!" << endl;
+        kWarning(1204) << "LockProcess::startSaver() grabInput() failed!!!!" << endl;
         return false;
     }
     mBusy = false;
@@ -667,7 +667,7 @@ bool LockProcess::startSaver()
 //
 void LockProcess::stopSaver()
 {
-    kdDebug(1204) << "LockProcess: stopping saver" << endl;
+    kDebug(1204) << "LockProcess: stopping saver" << endl;
     resume();
     stopHack();
     hideSaverWindow();
@@ -715,30 +715,30 @@ bool LockProcess::startLock()
         QString path = KLibLoader::self()->findLibrary(
                     ((*it)[0] == '/' ? *it : "kgreet_" + *it ).latin1() );
         if (path.isEmpty()) {
-            kdWarning(1204) << "GreeterPlugin " << *it << " does not exist" << endl;
+            kWarning(1204) << "GreeterPlugin " << *it << " does not exist" << endl;
             continue;
         }
         if (!(plugin.library = KLibLoader::self()->library( path.latin1() ))) {
-            kdWarning(1204) << "Cannot load GreeterPlugin " << *it << " (" << path << ")" << endl;
+            kWarning(1204) << "Cannot load GreeterPlugin " << *it << " (" << path << ")" << endl;
             continue;
         }
         if (!plugin.library->hasSymbol( "kgreeterplugin_info" )) {
-            kdWarning(1204) << "GreeterPlugin " << *it << " (" << path << ") is no valid greet widget plugin" << endl;
+            kWarning(1204) << "GreeterPlugin " << *it << " (" << path << ") is no valid greet widget plugin" << endl;
             plugin.library->unload();
             continue;
         }
         plugin.info = (kgreeterplugin_info*)plugin.library->symbol( "kgreeterplugin_info" );
         if (plugin.info->method && !mMethod.isEmpty() && mMethod != plugin.info->method) {
-            kdDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") serves " << plugin.info->method << ", not " << mMethod << endl;
+            kDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") serves " << plugin.info->method << ", not " << mMethod << endl;
             plugin.library->unload();
             continue;
         }
         if (!plugin.info->init( mMethod, getConf, this )) {
-            kdDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") refuses to serve " << mMethod << endl;
+            kDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") refuses to serve " << mMethod << endl;
             plugin.library->unload();
             continue;
         }
-        kdDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->method << ", " << plugin.info->name << ") loaded" << endl;
+        kDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->method << ", " << plugin.info->name << ") loaded" << endl;
         greetPlugin = plugin;
 	mLocked = true;
 	DM().setLock( true );
@@ -775,7 +775,7 @@ bool LockProcess::startHack()
     {
         mHackProc << path;
 
-        kdDebug(1204) << "Starting hack: " << path << endl;
+        kDebug(1204) << "Starting hack: " << path << endl;
 
         while (!ts.atEnd())
         {
@@ -870,7 +870,7 @@ bool LockProcess::checkPass()
     XGetWindowAttributes(QX11Info::display(), QX11Info::appRootWindow(), &rootAttr);
     if(( rootAttr.your_event_mask & SubstructureNotifyMask ) == 0 )
     {
-        kdWarning() << "ERROR: Something removed SubstructureNotifyMask from the root window!!!" << endl;
+        kWarning() << "ERROR: Something removed SubstructureNotifyMask from the root window!!!" << endl;
         XSelectInput( QX11Info::display(), QX11Info::appRootWindow(),
             SubstructureNotifyMask | rootAttr.your_event_mask );
     }

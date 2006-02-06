@@ -104,7 +104,7 @@ void RandRScreen::setOriginal()
 
 bool RandRScreen::applyProposed()
 {
-	//kdDebug() << k_funcinfo << " size " << (SizeID)proposedSize() << ", rotation " << proposedRotation() << ", refresh " << refreshRateIndexToHz(proposedSize(), proposedRefreshRate()) << endl;
+	//kDebug() << k_funcinfo << " size " << (SizeID)proposedSize() << ", rotation " << proposedRotation() << ", refresh " << refreshRateIndexToHz(proposedSize(), proposedRefreshRate()) << endl;
 
 	Status status;
 
@@ -117,7 +117,7 @@ bool RandRScreen::applyProposed()
 		status = XRRSetScreenConfigAndRate(QX11Info::display(), d->config, DefaultRootWindow(QX11Info::display()), (SizeID)proposedSize(), (Rotation)proposedRotation(), refreshRateIndexToHz(proposedSize(), proposedRefreshRate()), CurrentTime);
 	}
 
-	//kdDebug() << "New size: " << WidthOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << ", " << HeightOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << endl;
+	//kDebug() << "New size: " << WidthOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << ", " << HeightOfScreen(ScreenOfDisplay(QPaintDevice::x11AppDisplay(), screen)) << endl;
 
 	if (status == RRSetConfigSuccess) {
 		m_currentSize = m_proposedSize;

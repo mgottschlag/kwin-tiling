@@ -116,7 +116,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     if (servGroup)
     {
       relPath=servGroup->relPath();
-      kdDebug() << "relPath=" << relPath << endl;
+      kDebug() << "relPath=" << relPath << endl;
     }
 
     KGlobal::dirs()->addResourceType("scrsav",

@@ -338,7 +338,7 @@ wp_load:
 	            break;
 	        case NoWallpaper:
 	        default:
-	            kdWarning() << k_funcinfo << "unknown diagram type" << endl;
+	            kWarning() << k_funcinfo << "unknown diagram type" << endl;
 		    svgHeight = m_Size.height();
 		    svgWidth = svgHeight;
 		    break;
@@ -353,12 +353,12 @@ wp_load:
 	    if (svgEngine->load(svgWidth, svgHeight, file )) {
 		wp = ( *svgEngine->image() );
 	    } else {
-		kdWarning() << "failed to load SVG file " << file << endl;
+		kWarning() << "failed to load SVG file " << file << endl;
 	    }
 
 	    delete svgEngine;
 #else //not libagg
-	    kdWarning() << k_funcinfo
+	    kWarning() << k_funcinfo
 			<< "tried to load SVG file but libagg not installed" << endl;
 #endif
 	} else {

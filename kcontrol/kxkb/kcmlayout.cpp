@@ -487,10 +487,10 @@ void LayoutConfig::load()
         if ( child )
           child->setState( Q3CheckListItem::On );
 	    else
-	      kdDebug() << "load: Unknown option " << option << endl;
+	      kDebug() << "load: Unknown option " << option << endl;
       }
       else {
-	    kdDebug() << "load: Unknown option group " << optionKey << endl;
+	    kDebug() << "load: Unknown option group " << optionKey << endl;
       }
     }
 
@@ -584,7 +584,7 @@ QString LayoutConfig::createOptionString()
       OptionListItem *item = m_optionGroups[optionKey];
 
       if( !item ) {
-        kdDebug() << "WARNING: skipping empty group for " << it.currentKey()
+        kDebug() << "WARNING: skipping empty group for " << it.currentKey()
           << endl;
         continue;
       }
@@ -602,7 +602,7 @@ QString LayoutConfig::createOptionString()
         }
       }
       else
-        kdDebug() << "Empty option button for group " << it.currentKey() << endl;
+        kDebug() << "Empty option button for group " << it.currentKey() << endl;
     }
   }
   return options;
@@ -767,7 +767,7 @@ extern "C"
 	bool resetOldOptions = config->readEntry("ResetOldOptions", false);
 	QString options = config->readEntry("Options", "");
 	if( !XKBExtension::setXkbOptions(options, resetOldOptions) ) {
-	    kdDebug() << "Setting XKB options failed!" << endl;
+	    kDebug() << "Setting XKB options failed!" << endl;
 	}
     }
 

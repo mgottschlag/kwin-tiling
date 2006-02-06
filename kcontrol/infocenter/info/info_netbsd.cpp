@@ -271,7 +271,7 @@ bool GetInfo_Partitions (QListView *lbox)
 
 	// get mount info
 	if (!(num=getmntinfo(&mnt, MNT_WAIT))) {
-		kdError() << "getmntinfo failed" << endl;
+		kError() << "getmntinfo failed" << endl;
 		return false;
 	}
 
