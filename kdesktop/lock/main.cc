@@ -27,6 +27,7 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
+#include <dcopref.h>
 
 #include <QList>
 
@@ -151,14 +152,24 @@ int main( int argc, char **argv )
         process.setParent(parent_connection);
 
     bool rt;
+    bool sig = false;
     if( !child && args->isSet( "forcelock" ))
+    {
         rt = process.lock();
+        sig = true;
+    }
     else if( child || args->isSet( "dontlock" ))
         rt = process.dontLock();
     else
         rt = process.defaultSave();
     if (!rt)
         return 1;
+
+    if( sig )
+    {
+        DCOPRef ref( "kdesktop", "KScreensaverIface");
+        ref.send( "saverLockReady" );
+    }
 
     return app.exec();
 }

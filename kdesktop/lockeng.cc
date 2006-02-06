@@ -16,6 +16,7 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <qfile.h>
+#include <dcopclient.h>
 #include <assert.h>
 
 #include "lockeng.h"
@@ -70,12 +71,46 @@ SaverEngine::~SaverEngine()
 }
 
 //---------------------------------------------------------------------------
+
+// This should be called only using DCOP.
 void SaverEngine::lock()
 {
+    bool ok = true;
     if (mState == Waiting)
     {
-        startLockProcess( ForceLock );
+        ok = startLockProcess( ForceLock );
     }
+// It takes a while for kdesktop_lock to start and lock the screen.
+// Therefore delay the DCOP call until it tells kdesktop that the locking is in effect.
+// This is done only for --forcelock .
+    if( ok && mState != Saving )
+    {
+        DCOPClientTransaction* trans = kapp->dcopClient()->beginTransaction();
+        mLockTransactions.append( trans );
+    }
+}
+
+void SaverEngine::processLockTransactions()
+{
+    for( QVector< DCOPClientTransaction* >::ConstIterator it = mLockTransactions.begin();
+         it != mLockTransactions.end();
+         ++it )
+    {
+        DCOPCString replyType = "void";
+        QByteArray arr;
+        kapp->dcopClient()->endTransaction( *it, replyType, arr );
+    }
+    mLockTransactions.clear();
+}
+
+void SaverEngine::saverLockReady()
+{
+    if( mState != Preparing )
+    {
+	kdDebug( 1204 ) << "Got unexpected saverReady()" << endl;
+    }
+    kdDebug( 1204 ) << "Saver Lock Ready" << endl;
+    processLockTransactions();
 }
 
 //---------------------------------------------------------------------------
@@ -90,7 +125,7 @@ void SaverEngine::save()
 //---------------------------------------------------------------------------
 void SaverEngine::quit()
 {
-    if (mState == Saving)
+    if (mState == Saving || mState == Preparing)
     {
         stopLockProcess();
     }
@@ -195,10 +230,10 @@ void SaverEngine::setBlankOnly( bool blankOnly )
 //
 // Start the screen saver.
 //
-void SaverEngine::startLockProcess( LockType lock_type )
+bool SaverEngine::startLockProcess( LockType lock_type )
 {
     if (mState != Waiting)
-        return;
+        return true;
 
     kdDebug(1204) << "SaverEngine: starting saver" << endl;
     emitDCOPSignal("KDE_start_screensaver()", QByteArray());
@@ -212,7 +247,7 @@ void SaverEngine::startLockProcess( LockType lock_type )
     if( path.isEmpty())
     {
 	kdDebug( 1204 ) << "Can't find kdesktop_lock!" << endl;
-	return;
+	return false;
     }
     mLockProcess << path;
     switch( lock_type )
@@ -232,14 +267,15 @@ void SaverEngine::startLockProcess( LockType lock_type )
     if (mLockProcess.start() == false )
     {
 	kdDebug( 1204 ) << "Failed to start kdesktop_lock!" << endl;
-	return;
+	return false;
     }
 
-    mState = Saving;
+    mState = Preparing;
     if (mXAutoLock)
     {
         mXAutoLock->stop();
     }
+    return true;
 }
 
 //---------------------------------------------------------------------------
@@ -263,6 +299,7 @@ void SaverEngine::stopLockProcess()
     {
         mXAutoLock->start();
     }
+    processLockTransactions();
     mState = Waiting;
 }
 
@@ -276,6 +313,7 @@ void SaverEngine::lockProcessExited()
     {
         mXAutoLock->start();
     }
+    processLockTransactions();
     mState = Waiting;
 }
 

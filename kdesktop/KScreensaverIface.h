@@ -40,7 +40,10 @@ k_dcop:
    */
   virtual void setBlankOnly( bool blankOnly ) = 0;
 
+  /***
+   * @internal
+  */
+  virtual void saverLockReady() = 0;
 };
 
 #endif
-

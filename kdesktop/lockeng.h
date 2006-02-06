@@ -10,9 +10,12 @@
 
 #include <qwidget.h>
 #include <kprocess.h>
+#include <qvector.h>
 #include "KScreensaverIface.h"
 #include "xautolock.h"
 #include "xautolock_c.h"
+
+class DCOPClientTransaction;
 
 //===========================================================================
 /**
@@ -70,19 +73,25 @@ public:
      */
     virtual void setBlankOnly( bool blankOnly );
 
+    /**
+     * Called by kdesktop_lock when locking is in effect.
+     */
+    virtual void saverLockReady();
+
 protected Q_SLOTS:
     void idleTimeout();
     void lockProcessExited();
 
 protected:
     enum LockType { DontLock, DefaultLock, ForceLock };
-    void startLockProcess( LockType lock_type );
+    bool startLockProcess( LockType lock_type );
     void stopLockProcess();
     bool handleKeyPress(XKeyEvent *xke);
+    void processLockTransactions();
     xautolock_corner_t applyManualSettings(int);
 
 protected:
-    enum State { Waiting, Saving };
+    enum State { Waiting, Preparing, Saving };
     bool        mEnabled;
     bool	mDPMS;
 
@@ -98,6 +107,7 @@ protected:
     int         mXExposures;
 
     bool	mBlankOnly;  // only use the blanker, not the defined saver
+    QVector< DCOPClientTransaction* > mLockTransactions;
 };
 
 #endif
