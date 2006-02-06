@@ -73,10 +73,10 @@
                     <property name="name">
                         <cstring>timeout_input</cstring>
                     </property>
-                    <property name="minValue">
+                    <property name="minimum">
                         <number>0</number>
                     </property>
-                    <property name="maxValue">
+                    <property name="maximum">
                         <number>100000</number>
                     </property>
                 </widget>
