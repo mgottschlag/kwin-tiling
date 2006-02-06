@@ -23,7 +23,7 @@
 #endif
 
 #include <kapplication.h>
-#include <kwizard.h>
+#include <k3wizard.h>
 #include <QCloseEvent>
 
 
@@ -37,7 +37,7 @@ class KStylePage;
 class KRefinePage;
 
 /** KPersonalizer is the base class of the project */
-class KPersonalizer : public KWizard {
+class KPersonalizer : public K3Wizard {
 	Q_OBJECT
 public:
 	/** construtor */

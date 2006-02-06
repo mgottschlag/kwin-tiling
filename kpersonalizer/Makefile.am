@@ -5,7 +5,7 @@ kpersonalizer_SOURCES = stylepreview.ui krefinepage.cpp \
       kcountrypagedlg.ui kospagedlg.ui keyecandypagedlg.ui kstylepagedlg.ui \
       krefinepagedlg.ui  ksysinfo.cpp
 
-kpersonalizer_LDADD   = $(LIB_KIO) 
+kpersonalizer_LDADD   = $(LIB_KIO) $(LIB_KDE3SUPPORT) 
 
 EXTRA_DIST = main.cpp kpersonalizer.cpp kpersonalizer.h kpersonalizer.desktop kcountrypage.cpp kcountrypage.h kospage.cpp kospage.h keyecandypage.cpp keyecandypage.h kstylepage.cpp kstylepage.h krefinepage.cpp krefinepage.h cr16-app-kpersonalizer.png cr32-app-kpersonalizer.png README kcountrypagedlg.ui kospage.ui keyecandypagedlg.ui kstylepagedlg.ui krefinepagedlg.ui kfindlanguage.cpp kfindlanguage.h
 

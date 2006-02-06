@@ -56,7 +56,7 @@
 bool KPersonalizer::before_session = false;
 
 KPersonalizer::KPersonalizer(QWidget *parent, const char *name)
-	: KWizard(parent, name, true) {
+	: K3Wizard(parent, name, true) {
 
 	// first, reset the startup from true (see desktop file in share/autostart) to false
 	setCaption(kapp->caption());
