@@ -127,7 +127,7 @@ KdmPixmap::renderSvg( PixmapStruct::PixmapClass *pClass, const QRect &area )
 		pClass->pixmap = *t;
 		pClass->readyPixmap.resize( 0, 0 );
 	} else {
-		kdWarning() << "failed to load " << pClass->fullpath << endl;
+		kWarning() << "failed to load " << pClass->fullpath << endl;
 		pClass->fullpath.clear();
 	}
 
@@ -152,7 +152,7 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 		if (pClass->fullpath.isEmpty())	// if neither is set, we're empty
 			return;
 
-		kdDebug() << "renderSVG\n";
+		kDebug() << "renderSVG\n";
 		renderSvg( pClass, area );
 	}
 
@@ -181,11 +181,11 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 
 		if (area.size() != pClass->pixmap.size()) {
 			if (pClass->fullpath.endsWith( ".svg" )) {
-				kdDebug() << "renderSVG\n";
+				kDebug() << "renderSVG\n";
 				renderSvg( pClass, area );
 				scaledImage = pClass->pixmap.convertToImage();
 			} else {
-				kdDebug() << "convertFromImage\n";
+				kDebug() << "convertFromImage\n";
 				QImage tempImage = pClass->pixmap.convertToImage();
 				scaledImage = tempImage.smoothScale( area.width(), area.height() );
 			}
@@ -221,7 +221,7 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 
 		pClass->readyPixmap.convertFromImage( scaledImage );
 	}
-	// kdDebug() << "Pixmap::drawContents " << pClass->readyPixmap.size() << " " << px << " " << py << " " << sx << " " << sy << " " << sw << " " << sh << endl;
+	// kDebug() << "Pixmap::drawContents " << pClass->readyPixmap.size() << " " << px << " " << py << " " << sx << " " << sy << " " << sw << " " << sh << endl;
 	p->drawPixmap( px, py, pClass->readyPixmap, sx, sy, sw, sh );
 }
 

@@ -37,11 +37,11 @@ KdmLayoutFixed::KdmLayoutFixed( const QDomNode &/*node*/ )
 void
 KdmLayoutFixed::update( const QRect &parentGeometry, bool force )
 {
-	kdDebug() << "KdmLayoutFixed::update " << parentGeometry << endl;
+	kDebug() << "KdmLayoutFixed::update " << parentGeometry << endl;
 
 	// I can't layout children if the parent rectangle is not valid
 	if (parentGeometry.width() < 0 || parentGeometry.height() < 0) {
-		kdDebug() << "invalid\n";
+		kDebug() << "invalid\n";
 		return;
 	}
 	// For each child in list I ask their hinted size and set it!
@@ -66,7 +66,7 @@ KdmLayoutBox::KdmLayoutBox( const QDomNode &node )
 void
 KdmLayoutBox::update( const QRect &parentGeometry, bool force )
 {
-	kdDebug() << this << " update " << parentGeometry << endl;
+	kDebug() << this << " update " << parentGeometry << endl;
 
 	// I can't layout children if the parent rectangle is not valid
 	if (!parentGeometry.isValid() || parentGeometry.isEmpty())
@@ -77,14 +77,14 @@ KdmLayoutBox::update( const QRect &parentGeometry, bool force )
 //	if (!hintedSize.isValid())
 //		sizeHint();
 
-//	kdDebug() << this << " hintedSize " << hintedSize << endl;
+//	kDebug() << this << " hintedSize " << hintedSize << endl;
 
 	//XXX why was this asymmetric? it broke things big time.
 	QRect childrenRect = /*box.isVertical ? QRect( parentGeometry.topLeft(), hintedSize ) :*/ parentGeometry;
 	// Begin cutting the parent rectangle to attach children on the right place
 	childrenRect.addCoords( box.xpadding, box.ypadding, -box.xpadding, -box.ypadding );
 
-	kdDebug() << this << " childrenRect " << childrenRect << endl;
+	kDebug() << this << " childrenRect " << childrenRect << endl;
 
 	// For each child in list ...
 	if (box.homogeneous) {
@@ -104,7 +104,7 @@ KdmLayoutBox::update( const QRect &parentGeometry, bool force )
 				childrenRect.setTop( childrenRect.top() + height + box.spacing );
 			} else {
 				QRect temp( childrenRect.left(), childrenRect.top(), width, childrenRect.height() );
-				kdDebug() << "placement " << *it << " " << temp << " " << (*it)->placementHint( temp ) << endl;
+				kDebug() << "placement " << *it << " " << temp << " " << (*it)->placementHint( temp ) << endl;
 				temp = (*it)->placementHint( temp );
 				(*it)->setGeometry( temp, force );
 				childrenRect.setLeft( childrenRect.left() + width + box.spacing );
@@ -124,13 +124,13 @@ KdmLayoutBox::update( const QRect &parentGeometry, bool force )
 			} else {
 				temp.setWidth( 0 );
 				itemRect = (*it)->placementHint( temp );
-				kdDebug() << this << " placementHint " << *it << " " << temp << " " << itemRect << endl;
+				kDebug() << this << " placementHint " << *it << " " << temp << " " << itemRect << endl;
 				temp.setWidth( itemRect.width() );
 				childrenRect.setLeft( childrenRect.left() + itemRect.size().width() + box.spacing );
-				kdDebug() << "childrenRect after " << *it << " " << childrenRect << endl;
+				kDebug() << "childrenRect after " << *it << " " << childrenRect << endl;
 			}
 			itemRect = (*it)->placementHint( temp );
-			kdDebug() << this << " placementHint2 " << *it << " " << temp << " " << itemRect << endl;
+			kDebug() << this << " placementHint2 " << *it << " " << temp << " " << itemRect << endl;
 			(*it)->setGeometry( itemRect, force );
 		}
 	}

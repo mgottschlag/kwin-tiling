@@ -54,7 +54,7 @@ Trigger* Trigger::create_cfg_read( KConfig& cfg_P, Action_data* data_P )
         return new Window_trigger( cfg_P, data_P );
     if( type == "GESTURE" )
         return new Gesture_trigger(cfg_P, data_P );
-    kdWarning( 1217 ) << "Unknown Trigger type read from cfg file\n";
+    kWarning( 1217 ) << "Unknown Trigger type read from cfg file\n";
     return NULL;
     }
 
@@ -141,7 +141,7 @@ void Shortcut_trigger::cfg_write( KConfig& cfg_P ) const
 
 Shortcut_trigger* Shortcut_trigger::copy( Action_data* data_P ) const
     {
-    kdDebug( 1217 ) << "Shortcut_trigger::copy()" << endl;
+    kDebug( 1217 ) << "Shortcut_trigger::copy()" << endl;
     return new Shortcut_trigger( data_P ? data_P : data, shortcut());
     }
 
@@ -176,7 +176,7 @@ void Shortcut_trigger::activate( bool activate_P )
 Window_trigger::Window_trigger( KConfig& cfg_P, Action_data* data_P )
     : Trigger( cfg_P, data_P ), active( false )
     {
-//    kdDebug( 1217 ) << "Window_trigger" << endl;
+//    kDebug( 1217 ) << "Window_trigger" << endl;
     QString save_cfg_group = cfg_P.group();
     cfg_P.setGroup( save_cfg_group + "Windows" );
     _windows = new Windowdef_list( cfg_P );
@@ -187,14 +187,14 @@ Window_trigger::Window_trigger( KConfig& cfg_P, Action_data* data_P )
 
 Window_trigger::~Window_trigger()
     {
-//    kdDebug( 1217 ) << "~Window_trigger :" << this << endl;
+//    kDebug( 1217 ) << "~Window_trigger :" << this << endl;
     disconnect( windows_handler, NULL, this, NULL );
     delete _windows;
     }
 
 void Window_trigger::init()
     {
-    kdDebug( 1217 ) << "Window_trigger::init()" << endl;
+    kDebug( 1217 ) << "Window_trigger::init()" << endl;
     connect( windows_handler, SIGNAL( window_added( WId )), this, SLOT( window_added( WId )));
     connect( windows_handler, SIGNAL( window_removed( WId )), this, SLOT( window_removed( WId )));
     if( window_actions & ( WINDOW_ACTIVATES | WINDOW_DEACTIVATES /*| WINDOW_DISAPPEARS*/ ))
@@ -213,7 +213,7 @@ void Window_trigger::window_added( WId window_P )
     {
     bool matches = windows()->match( Window_data( window_P ));
     existing_windows[ window_P ] = matches;
-    kdDebug( 1217 ) << "Window_trigger::w_added() : " << matches << endl;
+    kDebug( 1217 ) << "Window_trigger::w_added() : " << matches << endl;
     if( active && matches && ( window_actions & WINDOW_APPEARS ))
         {
         windows_handler->set_action_window( window_P );
@@ -226,7 +226,7 @@ void Window_trigger::window_removed( WId window_P )
     if( existing_windows.contains( window_P ))
         {
         bool matches = existing_windows[ window_P ];
-        kdDebug( 1217 ) << "Window_trigger::w_removed() : " << matches << endl;
+        kDebug( 1217 ) << "Window_trigger::w_removed() : " << matches << endl;
         if( active && matches && ( window_actions & WINDOW_DISAPPEARS ))
             {
             windows_handler->set_action_window( window_P );
@@ -236,7 +236,7 @@ void Window_trigger::window_removed( WId window_P )
         // CHECKME jenze co kdyz se window_removed zavola pred active_window_changed ?
         }
     else
-        kdDebug( 1217 ) << "Window_trigger::w_removed()" << endl;
+        kDebug( 1217 ) << "Window_trigger::w_removed()" << endl;
     }
 
 void Window_trigger::active_window_changed( WId window_P )
@@ -258,7 +258,7 @@ void Window_trigger::active_window_changed( WId window_P )
         windows_handler->set_action_window( window_P );
         data->execute();
         }
-    kdDebug( 1217 ) << "Window_trigger::a_w_changed() : " << was_match << "|" << matches << endl;
+    kDebug( 1217 ) << "Window_trigger::a_w_changed() : " << was_match << "|" << matches << endl;
     last_active_window = window_P;
     }
 
@@ -268,7 +268,7 @@ void Window_trigger::window_changed( WId window_P, unsigned int dirty_P )
       // CHECKME kdyz se zmeni okno z match na non-match, asi to nebrat jako DISAPPEAR
     if( ! ( dirty_P & ( NET::WMName | NET::WMWindowType )))
         return;
-    kdDebug( 1217 ) << "Window_trigger::w_changed()" << endl;
+    kDebug( 1217 ) << "Window_trigger::w_changed()" << endl;
     bool was_match = false;
     if( existing_windows.contains( window_P ))
         was_match = existing_windows[ window_P ];
@@ -285,7 +285,7 @@ void Window_trigger::window_changed( WId window_P, unsigned int dirty_P )
             windows_handler->set_action_window( window_P );
             data->execute();
             }
-    kdDebug( 1217 ) << "Window_trigger::w_changed() : " << was_match << "|" << matches << endl;
+    kDebug( 1217 ) << "Window_trigger::w_changed() : " << was_match << "|" << matches << endl;
     }
 
 void Window_trigger::cfg_write( KConfig& cfg_P ) const
@@ -343,7 +343,7 @@ void Gesture_trigger::cfg_write( KConfig& cfg_P ) const
 
 Trigger* Gesture_trigger::copy( Action_data* data_P ) const
     {
-    kdDebug( 1217 ) << "Gesture_trigger::copy()" << endl;
+    kDebug( 1217 ) << "Gesture_trigger::copy()" << endl;
     return new Gesture_trigger( data_P ? data_P : data, gesturecode());
     }
 

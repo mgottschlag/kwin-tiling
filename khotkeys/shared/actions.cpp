@@ -58,7 +58,7 @@ Action* Action::create_cfg_read( KConfig& cfg_P, Action_data* data_P )
         return new Keyboard_input_action( cfg_P, data_P );
     if( type == "ACTIVATE_WINDOW" )
         return new Activate_window_action( cfg_P, data_P );
-    kdWarning( 1217 ) << "Unknown Action type read from cfg file\n";
+    kWarning( 1217 ) << "Unknown Action type read from cfg file\n";
     return NULL;
     }
 
@@ -290,7 +290,7 @@ void Dcop_action::execute()
             args_str = nxt_pos >= 0 ? args_str.mid( nxt_pos ) : "";
             }
         }
-    kdDebug( 1217 ) << "DCOP call:" << app << ":" << obj << ":" << call << ":" << args_list << endl;
+    kDebug( 1217 ) << "DCOP call:" << app << ":" << obj << ":" << call << ":" << args_list << endl;
     KProcess proc;
     proc << "dcop" << app << obj << call << args_list;
     proc.start( KProcess::DontCare );

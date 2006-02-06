@@ -65,7 +65,7 @@ void Actions_listview_widget::set_action_data( Action_data_base* data_P, bool re
 
 void Actions_listview_widget::current_changed( Q3ListViewItem* item_P )
     {
-    kdDebug( 1217 ) << "current_changed:" << item_P << endl;
+    kDebug( 1217 ) << "current_changed:" << item_P << endl;
     set_current_action( static_cast< Action_listview_item* >( item_P ));
     }
 

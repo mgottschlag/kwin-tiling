@@ -74,7 +74,7 @@ KHotKeysModule::~KHotKeysModule()
 
 void KHotKeysModule::reread_configuration()
     { // TODO
-    kdDebug( 1217 ) << "reading configuration" << endl;
+    kDebug( 1217 ) << "reading configuration" << endl;
     delete actions_root;
     khotkeys_set_active( false );
     Settings settings;

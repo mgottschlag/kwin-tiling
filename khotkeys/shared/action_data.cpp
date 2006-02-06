@@ -52,7 +52,7 @@ Action_data_base::Action_data_base( KConfig& cfg_P, Action_data_group* parent_P 
     
 Action_data_base::~Action_data_base()
     {
-//    kdDebug( 1217 ) << "~Action_data_base() :" << this << endl;
+//    kDebug( 1217 ) << "~Action_data_base() :" << this << endl;
     if( parent())
         parent()->remove_child( this );
     delete _conditions;
@@ -91,7 +91,7 @@ Action_data_base* Action_data_base::create_cfg_read( KConfig& cfg_P, Action_data
         return new Keyboard_input_gesture_action_data( cfg_P, parent_P );
     if( type == "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA" )
         return new Activate_window_shortcut_action_data( cfg_P, parent_P );
-    kdWarning( 1217 ) << "Unknown Action_data_base type read from cfg file\n";
+    kWarning( 1217 ) << "Unknown Action_data_base type read from cfg file\n";
     return NULL;
     }
     
@@ -164,7 +164,7 @@ Action_data::Action_data( KConfig& cfg_P, Action_data_group* parent_P )
 
 Action_data::~Action_data()
     {
-//    kdDebug( 1217 ) << "~Action_data" << this << endl;
+//    kDebug( 1217 ) << "~Action_data" << this << endl;
     delete _triggers;
     delete _actions;
     // CHECKME jeste remove z parenta ?
@@ -253,7 +253,7 @@ void Action_data::set_actions( Action_list* actions_P )
 void Action_data::update_triggers()
     {
     bool activate = conditions_match() && enabled( false );
-    kdDebug( 1217 ) << "Update triggers: " << name() << ":" << activate << endl;
+    kDebug( 1217 ) << "Update triggers: " << name() << ":" << activate << endl;
     for( Trigger_list::Iterator it = ( *triggers());
          it;
          ++it )

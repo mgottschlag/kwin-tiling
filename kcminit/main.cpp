@@ -50,7 +50,7 @@ static bool runModule(const QString &libName, KLibLoader *loader, KService::Ptr 
 	void *init = lib->symbol(factory.toUtf8());
 	if (init) {
 	    // initialize the module
-	    kdDebug(1208) << "Initializing " << libName << ": " << factory << endl;
+	    kDebug(1208) << "Initializing " << libName << ": " << factory << endl;
 	    
 	    void (*func)() = (void(*)())init;
 	    func();
@@ -110,7 +110,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
     KService::Ptr serv = KService::serviceByStorageId( module );
     if ( !serv || serv->library().isEmpty() ||
 	 serv->init().isEmpty()) {
-      kdError(1208) << i18n("Module %1 not found!").arg(module) << endl;
+      kError(1208) << i18n("Module %1 not found!").arg(module) << endl;
       return -1;
     } else
       list.append(serv);

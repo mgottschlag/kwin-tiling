@@ -218,7 +218,7 @@ Windowdef* Windowdef::create_cfg_read( KConfig& cfg_P )
     QString type = cfg_P.readEntry( "Type" );
     if( type == "SIMPLE" )
         return new Windowdef_simple( cfg_P );
-    kdWarning( 1217 ) << "Unknown Windowdef type read from cfg file\n";
+    kWarning( 1217 ) << "Unknown Windowdef type read from cfg file\n";
     return NULL;
     }
 
@@ -328,7 +328,7 @@ bool Windowdef_simple::match( const Window_data& window_P )
         return false;
     if( !is_substr_match( window_P.role, role(), role_type ))
         return false;
-    kdDebug( 1217 ) << "window match:" << window_P.title << ":OK" << endl;
+    kDebug( 1217 ) << "window match:" << window_P.title << ":OK" << endl;
     return true;
     }
 

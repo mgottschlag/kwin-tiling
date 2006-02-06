@@ -197,7 +197,7 @@ KdmLabel::lookupStock( const QString &stock )
 		if (type == stocks[i].type)
 			return i18n(stocks[i].text);
 
-	kdDebug() << "Invalid <stock> element. Check your theme!" << endl;
+	kDebug() << "Invalid <stock> element. Check your theme!" << endl;
 	return stock;
 }
 

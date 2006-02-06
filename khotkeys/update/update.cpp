@@ -43,7 +43,7 @@ int main( int argc, char* argv[] )
     QString file = locate( "data", "khotkeys/" + id + ".khotkeys" );
     if( file.isEmpty())
         {
-        kdWarning() << "File " << id << " not found!" << endl;
+        kWarning() << "File " << id << " not found!" << endl;
         return 1;
         }
     init_global_data( false, &app );
@@ -52,7 +52,7 @@ int main( int argc, char* argv[] )
     KConfig cfg( file, true );
     if( !settings.import( cfg, false ))
         {
-        kdWarning() << "Import of " << id << " failed!" << endl;
+        kWarning() << "Import of " << id << " failed!" << endl;
         return 2;
         }
     settings.write_settings();

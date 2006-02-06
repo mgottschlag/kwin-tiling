@@ -128,7 +128,7 @@ bool Gesture::x11Event( XEvent* ev_P )
     {
     if( ev_P->type == ButtonPress && ev_P->xbutton.button == button )
         {
-        kdDebug( 1217 ) << "GESTURE: mouse press" << endl;
+        kDebug( 1217 ) << "GESTURE: mouse press" << endl;
         stroke.reset();
         stroke.record( ev_P->xbutton.x, ev_P->xbutton.y );
         nostroke_timer.start( timeout, true );
@@ -146,13 +146,13 @@ bool Gesture::x11Event( XEvent* ev_P )
         QString gesture( stroke.translate());
         if( gesture.isEmpty())
             {
-            kdDebug( 1217 ) << "GESTURE: replay" << endl;
+            kDebug( 1217 ) << "GESTURE: replay" << endl;
             XAllowEvents( QX11Info::display(), AsyncPointer, CurrentTime );
             XUngrabPointer( QX11Info::display(), CurrentTime );
             mouse_replay( true );
             return true;
             }
-        kdDebug( 1217 ) << "GESTURE: got: " << gesture << endl;
+        kDebug( 1217 ) << "GESTURE: got: " << gesture << endl;
         emit handle_gesture( gesture, windows_handler->window_at_position( start_x, start_y ));
         return true;
         }
@@ -170,7 +170,7 @@ bool Gesture::x11Event( XEvent* ev_P )
 
 void Gesture::stroke_timeout()
     {
-    kdDebug( 1217 ) << "GESTURE: timeout" << endl;
+    kDebug( 1217 ) << "GESTURE: timeout" << endl;
     XAllowEvents( QX11Info::display(), AsyncPointer, CurrentTime );
     XUngrabPointer( QX11Info::display(), CurrentTime );
     mouse_replay( false );
@@ -212,11 +212,11 @@ void Gesture::grab_mouse( bool grab_P )
                 ButtonPressMask | ButtonReleaseMask | mask[ button ], GrabModeAsync, GrabModeAsync,
                 None, None );
         bool err = handler.error( true );
-        kdDebug( 1217 ) << "Gesture grab:" << err << endl;
+        kDebug( 1217 ) << "Gesture grab:" << err << endl;
         }
     else
         {
-        kdDebug( 1217 ) << "Gesture ungrab" << endl;
+        kDebug( 1217 ) << "Gesture ungrab" << endl;
         XUngrabButton( QX11Info::display(), button, AnyModifier, QX11Info::appRootWindow());
         }
     }

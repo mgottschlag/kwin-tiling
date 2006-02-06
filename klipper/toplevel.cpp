@@ -358,12 +358,12 @@ bool KlipperWidget::loadHistory() {
         }
     }
     if ( !history_file.open( QIODevice::ReadOnly ) ) {
-        kdWarning() << failed_load_warning << ": " << history_file.errorString() << endl;
+        kWarning() << failed_load_warning << ": " << history_file.errorString() << endl;
         return false;
     }
     QDataStream file_stream( &history_file );
     if( file_stream.atEnd()) {
-        kdWarning() << failed_load_warning << endl;
+        kWarning() << failed_load_warning << endl;
         return false;
     }
     QDataStream* history_stream = &file_stream;
@@ -372,7 +372,7 @@ bool KlipperWidget::loadHistory() {
         Q_UINT32 crc;
         file_stream >> crc >> data;
         if( crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() ) != crc ) {
-            kdWarning() << failed_load_warning << ": " << history_file.errorString() << endl;
+            kWarning() << failed_load_warning << ": " << history_file.errorString() << endl;
             return false;
         }
         history_stream = new QDataStream( &data, QIODevice::ReadOnly );
@@ -418,12 +418,12 @@ void KlipperWidget::saveHistory() {
     // don't use "appdata", klipper is also a kicker applet
     QString history_file_name( ::locateLocal( "data", "klipper/history2.lst" ) );
     if ( history_file_name.isNull() || history_file_name.isEmpty() ) {
-        kdWarning() << failed_save_warning << endl;
+        kWarning() << failed_save_warning << endl;
         return;
     }
     KSaveFile history_file( history_file_name );
     if ( history_file.status() != 0  ) {
-        kdWarning() << failed_save_warning << endl;
+        kWarning() << failed_save_warning << endl;
         return;
     }
     QByteArray data;
@@ -695,7 +695,7 @@ void KlipperWidget::slotClearClipboard()
 //XXX: Should die, and the DCOP signal handled sensible.
 QString KlipperWidget::clipboardContents( bool * /*isSelection*/ )
 {
-    kdWarning() << "Obsolete function called. Please fix" << endl;
+    kWarning() << "Obsolete function called. Please fix" << endl;
 
 #if 0
     bool selection = true;
@@ -813,23 +813,23 @@ void KlipperWidget::checkClipData( bool selectionMode )
 
 // debug code
 #ifdef NOISY_KLIPPER
-    kdDebug() << "Checking clip data" << endl;
+    kDebug() << "Checking clip data" << endl;
 #endif
 #if 0
-    kdDebug() << "====== c h e c k C l i p D a t a ============================"
-              << kdBacktrace()
+    kDebug() << "====== c h e c k C l i p D a t a ============================"
+              << kBacktrace()
               << "====== c h e c k C l i p D a t a ============================"
               << endl;;
 #endif
 #if 0
     if ( sender() ) {
-        kdDebug() << "sender=" << sender()->name() << endl;
+        kDebug() << "sender=" << sender()->name() << endl;
     } else {
-        kdDebug() << "no sender" << endl;
+        kDebug() << "no sender" << endl;
     }
 #endif
 #if 0
-    kdDebug() << "\nselectionMode=" << selectionMode
+    kDebug() << "\nselectionMode=" << selectionMode
               << "\nserialNo=" << clip->data()->serialNumber() << " (sel,cli)=(" << m_lastSelection << "," << m_lastClipboard << ")"
               << "\nowning (sel,cli)=(" << clip->ownsSelection() << "," << clip->ownsClipboard() << ")"
               << "\ntext=" << clip->text( selectionMode ? QClipboard::Selection : QClipboard::Clipboard) << endl;
@@ -845,7 +845,7 @@ void KlipperWidget::checkClipData( bool selectionMode )
 #endif
     QMimeSource* data = clip->data( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
     if ( !data ) {
-        kdWarning("No data in clipboard. This not not supposed to happen." );
+        kWarning("No data in clipboard. This not not supposed to happen." );
         return;
     }
     // TODO: Rewrite to Qt4 !!!
@@ -859,7 +859,7 @@ void KlipperWidget::checkClipData( bool selectionMode )
         if ( top ) {
             // keep old clipboard after someone set it to null
 #ifdef NOISY_KLIPPER
-            kdDebug() << "Resetting clipboard (Prevent empty clipboard)" << endl;
+            kDebug() << "Resetting clipboard (Prevent empty clipboard)" << endl;
 #endif
             setClipboard( *top, selectionMode ? Selection : Clipboard );
         }
@@ -931,7 +931,7 @@ void KlipperWidget::checkClipData( bool selectionMode )
     if (changed) {
         applyClipChanges( *data );
 #ifdef NOISY_KLIPPER
-        kdDebug() << "Synchronize?" << ( bSynchronize ? "yes" : "no" ) << endl;
+        kDebug() << "Synchronize?" << ( bSynchronize ? "yes" : "no" ) << endl;
 #endif
         if ( bSynchronize ) {
             const HistoryItem* topItem = history()->first();
@@ -951,7 +951,7 @@ void KlipperWidget::setClipboard( const HistoryItem& item, int mode )
 
     if ( mode & Selection ) {
 #ifdef NOSIY_KLIPPER
-        kdDebug() << "Setting selection to <" << item.text() << ">" << endl;
+        kDebug() << "Setting selection to <" << item.text() << ">" << endl;
 #endif
         clip->setData( item.mimeSource(), QClipboard::Selection );
 #if 0
@@ -960,7 +960,7 @@ void KlipperWidget::setClipboard( const HistoryItem& item, int mode )
     }
     if ( mode & Clipboard ) {
 #ifdef NOSIY_KLIPPER
-        kdDebug() << "Setting clipboard to <" << item.text() << ">" << endl;
+        kDebug() << "Setting clipboard to <" << item.text() << ">" << endl;
 #endif
         clip->setData( item.mimeSource(), QClipboard::Clipboard );
 #if 0
@@ -973,7 +973,7 @@ void KlipperWidget::setClipboard( const HistoryItem& item, int mode )
 void KlipperWidget::slotClearOverflow()
 {
     if( m_overflowCounter > MAX_CLIPBOARD_CHANGES ) {
-        kdDebug() << "App owning the clipboard/selection is lame" << endl;
+        kDebug() << "App owning the clipboard/selection is lame" << endl;
         // update to the latest data - this unfortunately may trigger the problem again
         newClipData( true ); // Always the selection.
     }
@@ -1162,7 +1162,7 @@ void Klipper::quitProcess()
 static void ensureGlobalSyncOff(KConfig* config) {
     config->setGroup("General");
     if ( config->readEntry( "SynchronizeClipboardAndSelection" , QVariant(false)).toBool() ) {
-        kdDebug() << "Shutting off global synchronization" << endl;
+        kDebug() << "Shutting off global synchronization" << endl;
         config->writeEntry("SynchronizeClipboardAndSelection", false, KConfig::Normal | KConfig::Global );
         config->sync();
         KClipboardSynchronizer::setSynchronizing( false );

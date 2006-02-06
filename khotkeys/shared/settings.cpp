@@ -94,7 +94,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
             read_settings_v2( cfg_P, include_disabled_P );
           break;
         default:
-            kdWarning( 1217 ) << "Unknown cfg. file version\n";
+            kWarning( 1217 ) << "Unknown cfg. file version\n";
           return false;
         case -1234576: // no config file
             if( import_P ) // if importing, this is an error

@@ -143,7 +143,7 @@ void Kbd::update_connections()
 
 void Kbd::key_slot( QString key_P )
     {
-    kdDebug( 1217 ) << "Key pressed:" << key_P << endl;
+    kDebug( 1217 ) << "Key pressed:" << key_P << endl;
     KShortcut shortcut( key_P );
     if( !grabs.contains( shortcut ))
         return;

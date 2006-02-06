@@ -73,7 +73,7 @@ extern "C"
         DCOPRef ref( "kded", "kded" );
         if( !ref.call( "loadModule", DCOPCString( "khotkeys" )))
             {
-            kdWarning( 1217 ) << "Loading of khotkeys module failed." << endl;
+            kWarning( 1217 ) << "Loading of khotkeys module failed." << endl;
             KToolInvocation::kdeinitExec( "khotkeys" );
             }
         }
@@ -132,7 +132,7 @@ void Module::load()
     _current_action_data = NULL;
     settings.read_settings( true );
     _actions_root = settings.actions;
-    kdDebug( 1217 ) << "actions_root:" << _actions_root << endl;
+    kDebug( 1217 ) << "actions_root:" << _actions_root << endl;
     actions_listview_widget->build_up();
     tab_widget->load_current_action();
     emit KCModule::changed( false ); // HACK otherwise the module would be changed from the very beginning
@@ -147,20 +147,20 @@ void Module::save()
         {
         QByteArray data;
         kapp->dcopClient()->send( "khotkeys*", "khotkeys", "quit()", data );
-        kdDebug( 1217 ) << "disabling khotkeys daemon" << endl;
+        kDebug( 1217 ) << "disabling khotkeys daemon" << endl;
         }
     else
         {
         if( !kapp->dcopClient()->isApplicationRegistered( "khotkeys" ))
             {
-            kdDebug( 1217 ) << "launching new khotkeys daemon" << endl;
+            kDebug( 1217 ) << "launching new khotkeys daemon" << endl;
             KToolInvocation::kdeinitExec( "khotkeys" );
             }
         else
             {
             QByteArray data;
             kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
-            kdDebug( 1217 ) << "telling khotkeys daemon to reread configuration" << endl;
+            kDebug( 1217 ) << "telling khotkeys daemon to reread configuration" << endl;
             }
         }
     emit KCModule::changed( false );
@@ -192,7 +192,7 @@ void Module::set_new_current_action( bool save_old_P )
     if( save_old_P )
         tab_widget->save_current_action_changes();
     _current_action_data = actions_listview_widget->current_action_data();
-    kdDebug( 1217 ) << "set_new_current_action : " << _current_action_data << endl;
+    kDebug( 1217 ) << "set_new_current_action : " << _current_action_data << endl;
     tab_widget->load_current_action();
     buttons_widget->enable_delete( current_action_data() != NULL );
     }

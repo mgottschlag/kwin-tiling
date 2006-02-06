@@ -103,7 +103,7 @@ void History::slotClear() {
 
 void History::slotMoveToTop(int pos ) {
     if ( pos < 0 || static_cast<unsigned>( pos ) >= itemList.count() ) {
-        kdDebug() << "Argument pos out of range: " << pos << endl;
+        kDebug() << "Argument pos out of range: " << pos << endl;
         return;
     }
 

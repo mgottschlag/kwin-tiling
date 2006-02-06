@@ -154,7 +154,7 @@ SplashInstaller::~SplashInstaller()
 
 int SplashInstaller::addTheme(const QString &path, const QString &name)
 {
-  //kdDebug() << "SplashInstaller::addTheme: " << path << " " << name << endl;
+  //kDebug() << "SplashInstaller::addTheme: " << path << " " << name << endl;
   QString tmp(i18n( name.utf8() ));
   int i = mThemesList->count();
   while((i > 0) && (mThemesList->text(i-1) > tmp))
@@ -185,7 +185,7 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   bool rc = KIO::NetAccess::copy(srcURL, url, 0);
   if (!rc)
   {
-    kdWarning() << "Failed to copy theme " << srcURL.fileName()
+    kWarning() << "Failed to copy theme " << srcURL.fileName()
         << " into temporary directory " << url.path() << endl;
     return;
   }
@@ -194,7 +194,7 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   KTar tarFile(url.path());
   if (!tarFile.open(QIODevice::ReadOnly))
   {
-    kdDebug() << "Unable to open archive: " << url.path() << endl;
+    kDebug() << "Unable to open archive: " << url.path() << endl;
     return;
   }
   KArchiveDirectory const *ad = tarFile.directory();
@@ -231,7 +231,7 @@ void SplashInstaller::readThemesList()
 
   // Read local themes
   QStringList entryList = KGlobal::dirs()->resourceDirs("ksplashthemes");
-  //kdDebug() << "readThemesList: " << entryList << endl;
+  //kDebug() << "readThemesList: " << entryList << endl;
   QDir dir;
   QStringList subdirs;
   QStringList::ConstIterator name;
@@ -241,7 +241,7 @@ void SplashInstaller::readThemesList()
     if (!dir.exists())
       continue;
     subdirs = dir.entryList( QDir::Dirs );
-    // kdDebug() << "readThemesList: " << subdirs << endl;
+    // kDebug() << "readThemesList: " << subdirs << endl;
     // TODO: Make sure it contains a *.rc file.
     for (QStringList::Iterator l = subdirs.begin(); l != subdirs.end(); l++ )
       if ( !(*l).startsWith(QString(".")) )

@@ -156,7 +156,7 @@ KdmThemer::widgetEvent( QEvent *e )
 	case QEvent::Paint:
 		{
 			QRect paintRect = static_cast<QPaintEvent *>(e)->rect();
-			kdDebug() << "paint on: " << paintRect << endl;
+			kDebug() << "paint on: " << paintRect << endl;
 
 			if (!backBuffer)
 				backBuffer = new QPixmap( widget()->size() );
@@ -200,7 +200,7 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 
 		// Get its tag, and check it's correct ("greeter")
 		if (theme.tagName() != "greeter") {
-			kdDebug() << "This does not seem to be a correct theme file." << endl;
+			kDebug() << "This does not seem to be a correct theme file." << endl;
 			return;
 		}
 		// Get the list of child nodes
@@ -306,7 +306,7 @@ KdmThemer::showStructure( QObject *obj )
 	QObjectList wlist = obj->children();
 	static int counter = 0;
 	if (counter == 0)
-		kdDebug() << "\n\n<=======  Widget tree =================" << endl;
+		kDebug() << "\n\n<=======  Widget tree =================" << endl;
 	if (!wlist.isEmpty()) {
 		counter++;
 		QListIterator<QObject*> it( wlist );
@@ -320,7 +320,7 @@ KdmThemer::showStructure( QObject *obj )
 
 			if (object->inherits( "KdmItem" )) {
 				KdmItem *widget = (KdmItem *)object;
-				kdDebug() << node << "|" << widget->type() << " me=" << widget->id << " " << widget->area << endl;
+				kDebug() << node << "|" << widget->type() << " me=" << widget->id << " " << widget->area << endl;
 			}
 
 			showStructure( object );
@@ -328,7 +328,7 @@ KdmThemer::showStructure( QObject *obj )
 		counter--;
 	}
 	if (counter == 0)
-		kdDebug() << "\n\n<=======  Widget tree =================\n\n" << endl;
+		kDebug() << "\n\n<=======  Widget tree =================\n\n" << endl;
 }
 
 #include "kdmthemer.moc"

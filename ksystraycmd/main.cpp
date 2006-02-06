@@ -80,7 +80,7 @@ int main( int argc, char *argv[] )
       if ( ok )
 	  cmd.setTargetWindow( w );
       else {
-	  kdWarning() << "KSysTrayCmd: Got bad win id" << endl;
+	  kWarning() << "KSysTrayCmd: Got bad win id" << endl;
       }
   }
 

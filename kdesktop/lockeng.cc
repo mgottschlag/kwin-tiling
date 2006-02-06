@@ -107,9 +107,9 @@ void SaverEngine::saverLockReady()
 {
     if( mState != Preparing )
     {
-	kdDebug( 1204 ) << "Got unexpected saverReady()" << endl;
+	kDebug( 1204 ) << "Got unexpected saverReady()" << endl;
     }
-    kdDebug( 1204 ) << "Saver Lock Ready" << endl;
+    kDebug( 1204 ) << "Saver Lock Ready" << endl;
     processLockTransactions();
 }
 

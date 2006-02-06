@@ -225,7 +225,7 @@ KdmItem::layoutItemGone()
 void
 KdmItem::setGeometry( const QRect &newGeometry, bool force )
 {
-	kdDebug() << " KdmItem::setGeometry " << id << newGeometry << endl;
+	kDebug() << " KdmItem::setGeometry " << id << newGeometry << endl;
 	// check if already 'in place'
 	if (!force && area == newGeometry)
 		return;
@@ -359,7 +359,7 @@ KdmItem::placementHint( const QRect &parentRect )
 	    w = parentRect.width(),
 	    h = parentRect.height();
 
-	kdDebug() << "KdmItem::placementHint parentRect=" << id << parentRect << " hintedSize=" << hintedSize << endl;
+	kDebug() << "KdmItem::placementHint parentRect=" << id << parentRect << " hintedSize=" << hintedSize << endl;
 	// check if width or height are set to "box"
 	if (pos.wType == DTbox || pos.hType == DTbox) {
 		if (myLayoutItem || myWidget)
@@ -369,7 +369,7 @@ KdmItem::placementHint( const QRect &parentRect )
 				return parentRect;
 			boxHint = boxManager->sizeHint();
 		}
-		kdDebug() << " => boxHint " << boxHint << endl;
+		kDebug() << " => boxHint " << boxHint << endl;
 	}
 
 	if (pos.xType == DTpixel)
@@ -427,7 +427,7 @@ KdmItem::placementHint( const QRect &parentRect )
 			dx = -w;
 	}
 	// KdmItem *p = static_cast<KdmItem*>( parent() );
-	kdDebug() << "KdmItem::placementHint " << id << " x=" << x << " dx=" << dx << " w=" << w << " y=" << y << " dy=" << dy << " h=" << h << " " << parentRect << endl;
+	kDebug() << "KdmItem::placementHint " << id << " x=" << x << " dx=" << dx << " w=" << w << " y=" << y << " dy=" << dy << " h=" << h << " " << parentRect << endl;
 	y += dy;
 	x += dx;
 
