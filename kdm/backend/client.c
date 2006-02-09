@@ -291,50 +291,28 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 	pconv.conv = PAM_conv;
 	pconv.appdata_ptr = (void *)pdata;
 	Debug( " PAM service %s\n", psrv );
-	if (pamh) {
-		pam_get_item( pamh, PAM_SERVICE, &pitem );
+	if ((pretc = pam_start( psrv, curuser, &pconv, &pamh )) != PAM_SUCCESS)
+		goto pam_bail2;
+	if ((pretc = pam_set_item( pamh, PAM_TTY, td->name )) != PAM_SUCCESS) {
+	  pam_bail:
+		pam_end( pamh, pretc );
+		pamh = 0;
+	  pam_bail2:
 		ReInitErrorLog();
-		if (strcmp( (const char *)pitem, psrv )) {
-			Debug( "closing old PAM handle\n" );
-			pam_end( pamh, PAM_SUCCESS );
-			ReInitErrorLog();
-			goto opennew;
-		}
-		Debug( "reusing old PAM handle\n" );
-/*  this makes linux-pam crash ...
-		if ((pretc = pam_set_item (pamh, PAM_SERVICE, psrv)) != PAM_SUCCESS)
-			goto pam_bail;
-*/
-		if ((pretc = pam_set_item( pamh, PAM_CONV, &pconv )) != PAM_SUCCESS) {
-		  pam_bail:
-			pam_end( pamh, pretc );
-			pamh = 0;
-		  pam_bail2:
-			ReInitErrorLog();
-			LogError( "PAM error: %s\n", pam_strerror( pamh, pretc ) );
-			V_RET_FAIL( 0 );
-		}
-		if ((pretc = pam_set_item( pamh, PAM_USER, curuser )) != PAM_SUCCESS)
-			goto pam_bail;
-	} else {
-	  opennew:
-		Debug( "opening new PAM handle\n" );
-		if ((pretc = pam_start( psrv, curuser, &pconv, &pamh )) != PAM_SUCCESS)
-			goto pam_bail2;
-		if ((pretc = pam_set_item( pamh, PAM_TTY, td->name )) != PAM_SUCCESS)
-			goto pam_bail;
-		if ((td->displayType & d_location) == dForeign) {
-			char *cp = strchr( td->name, ':' );
-			*cp = 0;
-			pretc = pam_set_item( pamh, PAM_RHOST, td->name );
-			*cp = ':';
-			if (pretc != PAM_SUCCESS)
-				goto pam_bail;
-		}
-# ifdef PAM_FAIL_DELAY
-		pam_set_item( pamh, PAM_FAIL_DELAY, (void *)fail_delay );
-# endif
+		LogError( "PAM error: %s\n", pam_strerror( 0, pretc ) ); // XXX
+		V_RET_FAIL( 0 );
 	}
+	if ((td->displayType & d_location) == dForeign) {
+		char *cp = strchr( td->name, ':' );
+		*cp = 0;
+		pretc = pam_set_item( pamh, PAM_RHOST, td->name );
+		*cp = ':';
+		if (pretc != PAM_SUCCESS)
+			goto pam_bail;
+	}
+# ifdef PAM_FAIL_DELAY
+	pam_set_item( pamh, PAM_FAIL_DELAY, (void *)fail_delay );
+# endif
 	ReInitErrorLog();
 
 	Debug( " pam_authenticate() ...\n" );
@@ -342,8 +320,11 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 	                          td->allowNullPasswd ? 0 : PAM_DISALLOW_NULL_AUTHTOK );
 	ReInitErrorLog();
 	Debug( " pam_authenticate() returned: %s\n", pam_strerror( pamh, pretc ) );
-	if (pdata->abort)
+	if (pdata->abort) {
+		pam_end( pamh, PAM_SUCCESS );
+		pamh = 0;
 		return 0;
+	}
 	if (!curuser) {
 		Debug( " asking PAM for user ...\n" );
 		pam_get_item( pamh, PAM_USER, &pitem );
@@ -358,8 +339,12 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 		case PAM_AUTH_ERR:
 		case PAM_MAXTRIES: /* should handle this better ... */
 		case PAM_AUTHINFO_UNAVAIL: /* returned for unknown users ... bogus */
+			pam_end( pamh, pretc );
+			pamh = 0;
 			V_RET_AUTH;
 		default:
+			pam_end( pamh, pretc );
+			pamh = 0;
 			V_RET_FAIL( 0 );
 		}
 	}
@@ -704,6 +689,8 @@ Verify( GConvFunc gconv, int rootok )
 		pdata.gconv = conv_interact;
 		/* pam will have output a message already, so no PrepErrorGreet () */
 		if (gconv != conv_interact || pnopass) {
+			pam_end( pamh, PAM_SUCCESS );
+			pamh = 0;
 			GSendInt( V_CHTOK_AUTH );
 			/* this cannot auth the wrong user, as only classic auths get here */
 			while (!doPAMAuth( PAMService, &pdata ))
@@ -717,8 +704,11 @@ Verify( GConvFunc gconv, int rootok )
 			pretc = pam_chauthtok( pamh, PAM_CHANGE_EXPIRED_AUTHTOK );
 			ReInitErrorLog();
 			Debug( " pam_chauthtok() returned: %s\n", pam_strerror( pamh, pretc ) );
-			if (pdata.abort)
+			if (pdata.abort) {
+				pam_end( pamh, PAM_SUCCESS );
+				pamh = 0;
 				return 0;
+			}
 			if (pretc == PAM_SUCCESS)
 				break;
 			/* effectively there is only PAM_AUTHTOK_ERR */
@@ -728,8 +718,11 @@ Verify( GConvFunc gconv, int rootok )
 			free( curpass );
 		curpass = newpass;
 		newpass = 0;
-	} else if (pretc != PAM_SUCCESS)
+	} else if (pretc != PAM_SUCCESS) {
+		pam_end( pamh, pretc );
+		pamh = 0;
 		V_RET_AUTH;
+	}
 
 #elif defined(_AIX) /* USE_PAM */
 
@@ -1481,17 +1474,13 @@ SessionExit( int status )
 		ResetServer( td );
 	if (removeAuth) {
 #ifdef USE_PAM
-		if (pamh) {
-			int pretc;
-			/* shutdown PAM session */
-			if ((pretc = pam_setcred( pamh, PAM_DELETE_CRED )) != PAM_SUCCESS)
-				LogError( "pam_setcred(DELETE_CRED) for %s failed: %s\n",
-				          curuser, pam_strerror( pamh, pretc ) );
-			pam_close_session( pamh, 0 );
-			pam_end( pamh, PAM_SUCCESS );
-			pamh = NULL;
-			ReInitErrorLog();
-		}
+		int pretc;
+		if ((pretc = pam_setcred( pamh, PAM_DELETE_CRED )) != PAM_SUCCESS)
+			LogError( "pam_setcred(DELETE_CRED) for %s failed: %s\n",
+			          curuser, pam_strerror( pamh, pretc ) );
+		pam_close_session( pamh, 0 );
+		pam_end( pamh, PAM_SUCCESS );
+		ReInitErrorLog();
 #endif
 
 		if (source( systemEnviron, td->reset, td_setup ))
@@ -1518,7 +1507,6 @@ SessionExit( int status )
 	} else {
 		if (pamh) {
 			pam_end( pamh, PAM_SUCCESS );
-			pamh = NULL;
 			ReInitErrorLog();
 		}
 #endif
