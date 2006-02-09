@@ -1687,7 +1687,7 @@ mk_session( Entry *ce, Section *cs ATTR_UNUSED )
 		           "`mktemp`" :
 		           locate( "tempfile" ) ?
 		               "`tempfile`" :
-		               "$HOME/.xsession-env-$$";
+		               "$HOME/.xsession-env-$DISPLAY";
 		ASPrintf( &def_session, "%s%s%s", def_session1, tmpf, def_session2 );
 		ce->value = KDMCONF "/Xsession";
 		ce->active = ce->written = 1;
