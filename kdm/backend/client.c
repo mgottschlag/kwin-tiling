@@ -299,7 +299,7 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 		pamh = 0;
 	  pam_bail2:
 		ReInitErrorLog();
-		LogError( "PAM error: %s\n", pam_strerror( 0, pretc ) ); // XXX
+		LogError( "PAM error: %s\n", pam_strerror( 0, pretc ) );
 		V_RET_FAIL( 0 );
 	}
 	if ((td->displayType & d_location) == dForeign) {
