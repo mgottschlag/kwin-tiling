@@ -6,3 +6,4 @@ Name=KDE Desktop
 Name[x-test]=xxKDE Desktopxx
 Type=Service
 X-KDE-StartupNotify=false
+OnlyShowIn=KDE;

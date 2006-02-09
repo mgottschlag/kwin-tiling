@@ -13,3 +13,4 @@ X-KDE-autostart-phase=2
 X-KDE-autostart-condition=ktiprc:TipOfDay:RunOnStart:true
 X-DCOP-ServiceType=Unique
 Categories=Qt;KDE;Utility;X-KDE-Utilities-Desktop;
+OnlyShowIn=KDE;
