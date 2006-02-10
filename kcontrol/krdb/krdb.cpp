@@ -317,7 +317,7 @@ static void copyFile(QFile& tmp, QString const& filename, bool )
       while ( !f.atEnd() ) {
           int read = f.readBlock( buf.data(), buf.size() );
           if ( read > 0 )
-              tmp.writeBlock( buf.data(), read );
+              tmp.write( buf.data(), read );
       }
   }
 }
@@ -470,7 +470,7 @@ void runRdb( uint flags )
     addColorDef(preproc, "ACTIVE_FOREGROUND"  , KGlobalSettings::activeTitleColor());
     //---------------------------------------------------------------
 
-    tmp.writeBlock( preproc.latin1(), preproc.length() );
+    tmp.write( preproc.latin1(), preproc.length() );
 
     QStringList list;
 
@@ -542,7 +542,7 @@ void runRdb( uint flags )
   }
 
   if (contents.length() > 0)
-    tmp.writeBlock( contents.latin1(), contents.length() );
+    tmp.write( contents.latin1(), contents.length() );
 
   tmpFile.close();
 
