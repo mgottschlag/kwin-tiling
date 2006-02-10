@@ -315,7 +315,7 @@ static void copyFile(QFile& tmp, QString const& filename, bool )
   if ( f.open(QIODevice::ReadOnly) ) {
       QByteArray buf( 8192 );
       while ( !f.atEnd() ) {
-          int read = f.readBlock( buf.data(), buf.size() );
+          int read = f.read( buf.data(), buf.size() );
           if ( read > 0 )
               tmp.write( buf.data(), read );
       }

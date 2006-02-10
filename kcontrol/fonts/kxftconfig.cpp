@@ -514,7 +514,7 @@ bool KXftConfig::reset()
 
             if(m_data)
             {
-                f.readBlock(m_data, m_size);
+                f.read(m_data, m_size);
                 m_data[m_size]='\0';
                 readContents();
             }
