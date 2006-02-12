@@ -182,7 +182,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                                 <property name="minValue">
                                                     <number>100</number>
                                                 </property>
-                                                <property name="lineStep">
+                                                <property name="singleStep">
                                                     <number>100</number>
                                                 </property>
                                                 <property name="value">
@@ -202,7 +202,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                                 <property name="maxValue">
                                                     <number>2000</number>
                                                 </property>
-                                                <property name="lineStep">
+                                                <property name="singleStep">
                                                     <number>100</number>
                                                 </property>
                                                 <property name="pageStep">
@@ -479,7 +479,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="minValue">
                                             <number>100</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>100</number>
                                         </property>
                                         <property name="value">
@@ -499,7 +499,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="maxValue">
                                             <number>2000</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>100</number>
                                         </property>
                                         <property name="pageStep">
@@ -590,7 +590,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="maxValue">
                                             <number>2000</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>100</number>
                                         </property>
                                         <property name="pageStep">
@@ -639,7 +639,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="minValue">
                                             <number>100</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>100</number>
                                         </property>
                                         <property name="value">
@@ -734,7 +734,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="minValue">
                                             <number>1</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>250</number>
                                         </property>
                                         <property name="value">
@@ -754,7 +754,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="maxValue">
                                             <number>5000</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>250</number>
                                         </property>
                                         <property name="pageStep">
@@ -817,7 +817,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="maxValue">
                                             <number>1000</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>50</number>
                                         </property>
                                         <property name="pageStep">
@@ -846,7 +846,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="minValue">
                                             <number>1</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>10</number>
                                         </property>
                                         <property name="value">
@@ -869,7 +869,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="minValue">
                                             <number>1</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>10</number>
                                         </property>
                                         <property name="value">
@@ -906,7 +906,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="maxValue">
                                             <number>1000</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>10</number>
                                         </property>
                                         <property name="pageStep">
@@ -966,7 +966,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="minValue">
                                             <number>1</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>50</number>
                                         </property>
                                         <property name="value">
@@ -1003,7 +1003,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="minValue">
                                             <number>-1000</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>100</number>
                                         </property>
                                     </widget>
@@ -1020,7 +1020,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="maxValue">
                                             <number>1000</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>100</number>
                                         </property>
                                         <property name="pageStep">
@@ -1049,7 +1049,7 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="maxValue">
                                             <number>1000</number>
                                         </property>
-                                        <property name="lineStep">
+                                        <property name="singleStep">
                                             <number>10</number>
                                         </property>
                                         <property name="pageStep">

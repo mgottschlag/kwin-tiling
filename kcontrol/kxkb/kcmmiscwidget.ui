@@ -111,7 +111,7 @@
                     <property name="maxValue">
                        <number>10000</number>
                     </property>
-                    <property name="lineStep">
+                    <property name="singleStep">
                        <number>1000</number>
                     </property>
                     <property name="pageStep">
@@ -181,7 +181,7 @@
                     <property name="maxValue">
                        <number>10000</number>
                     </property>
-                    <property name="lineStep">
+                    <property name="singleStep">
                        <number>1000</number>
                     </property>
                     <property name="pageStep">

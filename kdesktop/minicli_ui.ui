@@ -388,7 +388,7 @@
                                             <verstretch>0</verstretch>
                                         </sizepolicy>
                                     </property>
-                                    <property name="lineStep">
+                                    <property name="singleStep">
                                         <number>5</number>
                                     </property>
                                     <property name="orientation">
