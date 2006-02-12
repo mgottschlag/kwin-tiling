@@ -616,7 +616,7 @@ void Minicli::slotCmdChanged(const QString& text)
   if( isEmpty )
   {
     // Reset values to default
-    m_filterData->setData(KURL());
+    m_filterData->setData(KUrl());
 
     // Empty String is certainly no terminal application
     slotTerminal(false);

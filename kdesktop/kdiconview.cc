@@ -339,7 +339,7 @@ void KDIconView::start()
 
     // Start the directory lister !
     m_dirLister->setShowingDotFiles( m_bShowDot );
-    KAuthorized::allowURLAction("list", KURL(), url());
+    KAuthorized::allowURLAction("list", KUrl(), url());
     m_dirLister->openURL( url() );
 
     // Gather the list of directories to merge into the desktop
@@ -352,7 +352,7 @@ void KDIconView::start()
         u.setPath( *it );
         m_mergeDirs.append( u );
         // And start listing this dir right now
-        KAuthorized::allowURLAction("list", KURL(), u);
+        KAuthorized::allowURLAction("list", KUrl(), u);
         m_dirLister->openURL( u, true );
     }
     configureMedia();
@@ -371,8 +371,8 @@ void KDIconView::configureMedia()
 	    {
 	    	if ((*it1).url()=="media:/") return;
 	    }
-    	m_mergeDirs.append(KURL("media:/"));
-    	m_dirLister->openURL(KURL("media:/"),true);
+    	m_mergeDirs.append(KUrl("media:/"));
+    	m_dirLister->openURL(KUrl("media:/"),true);
     }
     else
     {
@@ -493,7 +493,7 @@ void KDIconView::desktopResized()
         u.setPath( *it );
         m_mergeDirs.append( u );
         // And start listing this dir right now
-        KAuthorized::allowURLAction("list", KURL(), u);
+        KAuthorized::allowURLAction("list", KUrl(), u);
         m_dirLister->openURL( u, true );
     }
     configureMedia();
@@ -789,7 +789,7 @@ void KDIconView::popupMenu( const QPoint &_global, const KFileItemList& _items )
 
     popupMenu->exec( _global );
     delete popupMenu;
-    m_popupURL = KURL();
+    m_popupURL = KUrl();
     if (pasteTo)
         pasteTo->setEnabled( false );
 }

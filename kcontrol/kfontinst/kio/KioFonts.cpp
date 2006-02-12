@@ -201,7 +201,7 @@ static int getFontSize(const QString &file)
     KUrl::List  urls;
     QStringList files;
 
-    Misc::getAssociatedUrls(KURL(file), urls);
+    Misc::getAssociatedUrls(KUrl(file), urls);
 
     files.append(file);
 
@@ -324,7 +324,7 @@ static bool createFontUDSEntry(KIO::UDSEntry &entry, const QString &name, QList<
     {
         KUrl::List urls;
 
-        Misc::getAssociatedUrls(KURL(getFcString(patterns.first(), FC_FILE)), urls);
+        Misc::getAssociatedUrls(KUrl(getFcString(patterns.first(), FC_FILE)), urls);
 
         if(0==urls.count())
             multiple=false;
@@ -1621,7 +1621,7 @@ void CKioFonts::del(const KUrl &url, bool)
 
                 KUrl::List urls;
 
-                Misc::getAssociatedUrls(KURL(file), urls);
+                Misc::getAssociatedUrls(KUrl(file), urls);
 
                 if(urls.count())
                 {
@@ -1663,7 +1663,7 @@ void CKioFonts::del(const KUrl &url, bool)
 
                     KUrl::List urls;
 
-                    Misc::getAssociatedUrls(KURL(file), urls);
+                    Misc::getAssociatedUrls(KUrl(file), urls);
 
                     if(urls.count())
                     {
@@ -1885,7 +1885,7 @@ QString CKioFonts::getRootPasswd(bool askPasswd)
     int           attempts=0;
     QString       errorMsg;
 
-    authInfo.url=KURL(KFI_KIO_FONTS_PROTOCOL ":///");
+    authInfo.url=KUrl(KFI_KIO_FONTS_PROTOCOL ":///");
     authInfo.username=SYS_USER;
     authInfo.keepPassword=true;
 
@@ -2144,7 +2144,7 @@ bool CKioFonts::getSourceFiles(const KUrl &src, QStringList &files)
             {
                 KUrl::List urls;
 
-                Misc::getAssociatedUrls(KURL(*sIt), urls);
+                Misc::getAssociatedUrls(KUrl(*sIt), urls);
 
                 if(urls.count())
                 {

@@ -600,7 +600,7 @@ void CKFileFontView::contentsDropEvent(QDropEvent *e)
 
         if(K3URLDrag::decode(e, urls) && !urls.isEmpty())
         {
-            emit dropped(e, urls, fileItem ? fileItem->url() : KURL());
+            emit dropped(e, urls, fileItem ? fileItem->url() : KUrl());
             sig->dropURLs(fileItem, e, urls);
         }
     }

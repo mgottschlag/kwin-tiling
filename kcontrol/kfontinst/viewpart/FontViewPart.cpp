@@ -60,7 +60,7 @@
 
 static KUrl getDest(const KUrl &url, bool system)
 {
-    return KURL(KFI::Misc::root()
+    return KUrl(KFI::Misc::root()
                   ? QString("fonts:/") + url.fileName()
                   : QString("fonts:/") + QString(system ? i18n(KFI_KIO_FONTS_SYS) : i18n(KFI_KIO_FONTS_USER))
                                        + QChar('/') + url.fileName());

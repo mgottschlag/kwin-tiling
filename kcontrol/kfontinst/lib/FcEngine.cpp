@@ -938,7 +938,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo, bool all)
             QTextStream stream(&file);
 
             thumbUrl=stream.readLine();
-            isThumbnailUrl=0==thumbUrl.find(KFI_KIO_FONTS_PROTOCOL) && parseUrl(KURL(thumbUrl), faceNo, all);
+            isThumbnailUrl=0==thumbUrl.find(KFI_KIO_FONTS_PROTOCOL) && parseUrl(KUrl(thumbUrl), faceNo, all);
             file.close();
         }
 
@@ -1038,7 +1038,7 @@ void CFcEngine::parseName(const QString &name, int faceNo, bool all)
     }
 
     itsIndex=0; // Doesn't matter, as we're gonna use font name!
-    itsLastUrl=KURL();
+    itsLastUrl=KUrl();
 }
 
 #ifdef HAVE_XFT

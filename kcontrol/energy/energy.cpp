@@ -448,7 +448,7 @@ void KEnergy::slotChangeOff(int value)
 
 void KEnergy::openURL(const QString &URL)
 {
-      new KRun(KURL( URL ),this);
+      new KRun(KUrl( URL ),this);
 }
 
 #include "energy.moc"

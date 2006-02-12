@@ -180,7 +180,7 @@ void Tzone::save()
 		//After the KDE 3.2 release, need to add an error message
 	}
 	else
-		if (!KIO::NetAccess::file_copy(KURL(tz),KURL("/etc/localtime")))
+		if (!KIO::NetAccess::file_copy(KUrl(tz),KUrl("/etc/localtime")))
 			KMessageBox::error( 0,  i18n("Error setting new timezone."),
                         		    i18n("Timezone Error"));
 

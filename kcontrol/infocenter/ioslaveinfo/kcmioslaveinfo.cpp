@@ -131,7 +131,7 @@ void KCMIOSlaveInfo::showInfo(const QString& protocol)
    if (!file.isEmpty())
    {
        helpData.truncate( 0 );
-       m_tfj = KIO::get( KURL( QString("help:/kioslave/%1.html").arg( protocol ) ), true, false );
+       m_tfj = KIO::get( KUrl( QString("help:/kioslave/%1.html").arg( protocol ) ), true, false );
        connect( m_tfj, SIGNAL( data( KIO::Job *, const QByteArray &) ), SLOT( slaveHelp( KIO::Job *, const QByteArray &) ) );
        connect( m_tfj, SIGNAL( result( KIO::Job * ) ), SLOT( slotResult( KIO::Job * ) ) );
        return;

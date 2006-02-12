@@ -563,7 +563,7 @@ KUrl KDesktop::url() const
 {
     if (m_pIconView)
         return m_pIconView->url();
-    return KURL();
+    return KUrl();
 }
 
 // -----------------------------------------------------------------------------
