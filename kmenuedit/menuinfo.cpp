@@ -411,7 +411,7 @@ static void freeShortcut(const KShortcut &shortCut)
    {
       QString shortcutKey = shortCut.toString();
       if (s_newShortcuts)
-         s_newShortcuts->remove(shortcutKey);
+         s_newShortcuts->removeAll(shortcutKey);
       
       if (!s_freeShortcuts)
          s_freeShortcuts = new QStringList;
@@ -426,7 +426,7 @@ static void allocateShortcut(const KShortcut &shortCut)
    {
       QString shortcutKey = shortCut.toString();
       if (s_freeShortcuts)
-          s_freeShortcuts->remove(shortcutKey);
+          s_freeShortcuts->removeAll(shortcutKey);
 
       if (!s_newShortcuts)
          s_newShortcuts = new QStringList;
@@ -464,7 +464,7 @@ void MenuEntryInfo::setInUse(bool inUse)
       allocateShortcut(shortCut);
 
       if (s_deletedApps)
-         s_deletedApps->remove(service->storageId());
+         s_deletedApps->removeAll(service->storageId());
    }
    else
    {
