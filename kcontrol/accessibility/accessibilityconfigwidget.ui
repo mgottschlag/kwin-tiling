@@ -13,7 +13,7 @@
             <height>419</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Accessibility</string>
     </property>
     <vbox>

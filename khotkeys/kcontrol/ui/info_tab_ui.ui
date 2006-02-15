@@ -12,7 +12,7 @@
             <height>317</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Info_tab_ui</string>
     </property>
     <vbox>

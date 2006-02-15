@@ -12,7 +12,7 @@
             <height>544</height>
         </rect>
     </property>
-    <property name="caption">
+    <property name="windowTitle">
         <string>Keyboard_input_widget_ui</string>
     </property>
     <vbox>
