@@ -26,7 +26,6 @@
 #include <kstandarddirs.h>
 #include <kimageeffect.h>
 #include <kprocess.h>
-#include <kpixmapio.h>
 #include <ktempfile.h>
 #include <kcursor.h>
 #include <kmimetype.h>
@@ -506,12 +505,7 @@ void KBackgroundRenderer::fastWallpaperBlend( const QRect& d, QImage& wp, int ww
     }
     else if( wallpaperMode() == Tiled && !wp.hasAlphaBuffer() && optimize() && !m_bPreview ) {
     // tiles will be tiled by X automatically
-        if( useShm()) {
-            KPixmapIO io;
-            *m_pPixmap = io.convertToPixmap( wp );
-        }
-        else
-            m_pPixmap->convertFromImage( wp );
+        *m_pPixmap = QPixmap::fromImage( wp );
         return;
     }
     else if (m_pBackground->size() == m_Size)
@@ -526,13 +520,7 @@ void KBackgroundRenderer::fastWallpaperBlend( const QRect& d, QImage& wp, int ww
 
     // paint/alpha-blend wallpaper to destination rectangle of m_pPixmap
     if (d.isValid()) {
-        QPixmap wp_pixmap;
-        if( useShm() && !wp.hasAlphaBuffer()) {
-            KPixmapIO io;
-            wp_pixmap = io.convertToPixmap( wp );
-        }
-        else
-            wp_pixmap.convertFromImage( wp );
+        QPixmap wp_pixmap = QPixmap::fromImage( wp );
         for (int y = d.top(); y < d.bottom(); y += wh) {
 	    for (int x = d.left(); x < d.right(); x += ww) {
 		bitBlt( m_pPixmap, x, y, &wp_pixmap, 0, 0, ww, wh );
