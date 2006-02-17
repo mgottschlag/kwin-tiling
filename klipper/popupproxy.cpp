@@ -140,7 +140,7 @@ int PopupProxy::insertFromSpill( int index ) {
     int count = 0;
     int remainingHeight = m_menu_height - proxy_for_menu->sizeHint().height();
     // Force at least one item to be inserted.
-    remainingHeight = QMAX( remainingHeight, 0 );
+    remainingHeight = qMax( remainingHeight, 0 );
     for ( const HistoryItem* item = spillPointer.current();
           item && remainingHeight >= 0;
           nextItemNumber++, item = ++spillPointer )

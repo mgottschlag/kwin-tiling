@@ -399,7 +399,7 @@ void MenuFile::moveMenu(const QString &oldMenu, const QString &newMenu)
    QStringList oldMenuParts = oldMenu.split( '/');
    QStringList newMenuParts = newMenu.split( '/');
    QString commonMenuName;
-   int max = QMIN(oldMenuParts.count(), newMenuParts.count());
+   int max = qMin(oldMenuParts.count(), newMenuParts.count());
    int i = 0;
    for(; i < max; i++)
    {

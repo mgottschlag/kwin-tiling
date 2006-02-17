@@ -469,7 +469,7 @@ void KDIconView::setAutoAlign( bool b )
     else {
         // change maxItemWidth, because when grid-align was active, it changed this for the grid
         int sz = iconSize() ? iconSize() : KGlobal::iconLoader()->currentSize( KIcon::Desktop );
-        setMaxItemWidth( QMAX( QMAX( sz, previewIconSize( iconSize() ) ), KonqFMSettings::settings()->iconTextWidth() ) );
+        setMaxItemWidth( qMax( qMax( sz, previewIconSize( iconSize() ) ), KonqFMSettings::settings()->iconTextWidth() ) );
         setFont( font() );  // Force calcRect()
 
         disconnect( this, SIGNAL( iconMoved() ),

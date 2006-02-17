@@ -119,7 +119,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 			             time.second() );
 		else
 			buf.sprintf( "%02d:%02d", time.hour(), time.minute() );
-		mFont.setPointSize( QMIN( (int)(width()/buf.length()*1.5),height() ) );
+		mFont.setPointSize( qMin( (int)(width()/buf.length()*1.5),height() ) );
 		paint.setFont( mFont );
 		paint.setPen( backgroundColor() );
 		paint.drawText( contentsRect(),AlignHCenter|AlignVCenter, buf,-1,0,0 );
@@ -127,7 +127,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 */
 		QPolygon pts;
 		QPoint cp = contentsRect().center() - QPoint( 2,2 );
-		int d = QMIN( contentsRect().width()-15,contentsRect().height()-15 );
+		int d = qMin( contentsRect().width()-15,contentsRect().height()-15 );
 		paint.setPen( foregroundColor() );
 		paint.setBrush( foregroundColor() );
 

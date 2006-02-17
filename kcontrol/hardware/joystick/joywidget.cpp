@@ -89,7 +89,7 @@ JoyWidget::JoyWidget(QWidget *parent)
 
   // calculate the column width we need
   QFontMetrics fm(font());
-  int colWidth = QMAX(fm.width(PRESSED), fm.width("-32767")) + 10;  // -32767 largest string
+  int colWidth = qMax(fm.width(PRESSED), fm.width("-32767")) + 10;  // -32767 largest string
 
   new QLabel(i18n("Buttons:"), vboxMid);
   buttonTbl = new QTableWidget(0, 1, vboxMid);
@@ -288,7 +288,7 @@ void JoyWidget::showDeviceProps(JoyDevice *joy)
   // TODO: Don't know how to do this in Qt4; the following does no longer work
   // Probably by setting a sizeHint for every single header item ?
   /*
-  buttonTbl->verticalHeader()->setFixedWidth(QMAX(buttonTbl->verticalHeader()->width(),
+  buttonTbl->verticalHeader()->setFixedWidth(qMax(buttonTbl->verticalHeader()->width(),
                                                     axesTbl->verticalHeader()->width()));
   axesTbl->verticalHeader()->setFixedWidth(buttonTbl->verticalHeader()->width());
   */

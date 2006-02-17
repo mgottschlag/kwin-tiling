@@ -268,7 +268,7 @@ void KSMDelayedPushButton::slotTimeout()
   QPoint br = par->mapToGlobal(par->rect().bottomRight());
   // we must avoid painting over the dialog's limits
   // as the feedback area isn't repainted when the popup disappears
-  bl.setX( QMIN( bl.x(), br.x() - pop->sizeHint().width()));
+  bl.setX( qMin( bl.x(), br.x() - pop->sizeHint().width()));
   pop->popup( bl );
   popt->stop();
   setDown(false);

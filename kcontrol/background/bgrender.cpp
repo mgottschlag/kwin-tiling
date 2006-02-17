@@ -206,8 +206,8 @@ int KBackgroundRenderer::doBackground(bool quit)
 	int w = m_pBackground->width();
 	int h = m_pBackground->height();
 	if ((w > m_Size.width()) || (h > m_Size.height())) {
-	    w = QMIN(w, m_Size.width());
-	    h = QMIN(h, m_Size.height());
+	    w = qMin(w, m_Size.width());
+	    h = qMin(h, m_Size.height());
 	    *m_pBackground = m_pBackground->copy(0, 0, w, h);
 	}
 	KImageEffect::flatten(*m_pBackground, colorA(), colorB(), 0);
@@ -556,7 +556,7 @@ void KBackgroundRenderer::fullWallpaperBlend( const QRect& d, QImage& wp, int ww
         for (int y = d.top(); y < d.bottom(); y += wh) {
 	    for (int x = d.left(); x < d.right(); x += ww) {
 		blend(m_pImage, QRect(x, y, ww, wh), &wp,
-			QPoint(-QMIN(x, 0), -QMIN(y, 0)), blendFactor);
+			QPoint(-qMin(x, 0), -qMin(y, 0)), blendFactor);
 	    }
 	}
     }

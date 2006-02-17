@@ -388,7 +388,7 @@ void Kclock::paintEvent( QPaintEvent * )
 
   QPolygon pts;
   QPoint cp = rect().center();
-  int d = QMIN(width(),height());
+  int d = qMin(width(),height());
   QColor hands =  colorGroup().dark();
   QColor shadow =  colorGroup().text();
   paint.setPen( shadow );
