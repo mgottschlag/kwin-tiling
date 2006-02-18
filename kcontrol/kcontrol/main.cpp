@@ -106,7 +106,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
     KCONTROL_VERSION, I18N_NOOP("The KDE Control Center"), KAboutData::License_GPL,
     I18N_NOOP("(c) 1998-2004, The KDE Control Center Developers"));
 
-  KAboutData aboutKInfoCenter( "kinfocenter", I18N_NOOP("KDE Info Center"),
+  KAboutData aboutKInfoCenter( "kcminfo", I18N_NOOP("KDE Info Center"),
     KCONTROL_VERSION, I18N_NOOP("The KDE Info Center"), KAboutData::License_GPL,
     I18N_NOOP("(c) 1998-2004, The KDE Control Center Developers"));
 
