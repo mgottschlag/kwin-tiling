@@ -12,7 +12,7 @@ METASOURCES = AUTO
 noinst_HEADERS = kcmstyle.h stylepreview.h menupreview.h
 
 messages: rc.cpp
-	$(XGETTEXT) -kni18n *.cpp -o $(podir)/kcmstyle.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmstyle.pot
 
 xdg_apps_DATA = style.desktop
 

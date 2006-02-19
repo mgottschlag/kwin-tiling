@@ -16,7 +16,7 @@ METASOURCES = AUTO
 noinst_HEADERS = fonts.h kxftconfig.h
 
 messages: rc.cpp
-	$(XGETTEXT) -kni18n *.cpp -o $(podir)/kcmfonts.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmfonts.pot
 
 xdg_apps_DATA = fonts.desktop
 

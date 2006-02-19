@@ -34,4 +34,4 @@ krandrtray_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 krandrtray_LDADD = librandrinternal.la $(LIB_KFILE) $(LIB_KUTILS) $(LIB_XRANDR)
 
 messages: rc.cpp
-	$(XGETTEXT) -kni18n *.cpp -o $(podir)/krandr.pot
+	$(XGETTEXT) *.cpp -o $(podir)/krandr.pot
