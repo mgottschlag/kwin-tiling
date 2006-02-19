@@ -701,7 +701,7 @@ void KDesktop::workAreaChanged()
 {
     //kDebug(1204) << "KDesktop::workAreaChanged() -> starting timer" << endl;
     updateWorkAreaTimer->stop();
-    updateWorkAreaTimer->start( 100, TRUE );
+    updateWorkAreaTimer->start( 100, true );
 }
 
 void KDesktop::updateWorkArea()

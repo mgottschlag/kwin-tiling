@@ -170,8 +170,8 @@ void KFileIVIDesktop::paintFocus( QPainter *p, const QColorGroup &cg )
 
 void KFileIVIDesktop::drawShadowedText( QPainter *p, const QColorGroup &cg )
 {
-  int textX = textRect( FALSE ).x() + 2;
-  int textY = textRect( FALSE ).y();
+  int textX = textRect( false ).x() + 2;
+  int textY = textRect( false ).y();
   int align = ((KIconView *) iconView())->itemTextPos() == Q3IconView::Bottom
     ? Qt::AlignHCenter : Qt::AlignLeft;
   bool rebuild = shouldUpdateShadow(isSelected());
@@ -235,11 +235,11 @@ QImage *KFileIVIDesktop::buildShadow( QPainter *p, const int align,
   QPainter pixPainter;
   int spread = shadowThickness();
 
-  QPixmap textPixmap(textRect( FALSE ).width() + spread * 2 + 2,
-    textRect( FALSE ).height() + spread * 2 + 2);
+  QPixmap textPixmap(textRect( false ).width() + spread * 2 + 2,
+    textRect( false ).height() + spread * 2 + 2);
 
   textPixmap.fill(QColor(0,0,0));
-  textPixmap.setMask( textPixmap.createHeuristicMask(TRUE) );
+  textPixmap.setMask( textPixmap.createHeuristicMask(true) );
 
   pixPainter.begin(&textPixmap);
   pixPainter.setPen(Qt::white);    // get the pen from the root painter
