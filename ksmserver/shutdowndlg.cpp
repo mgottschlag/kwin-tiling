@@ -84,7 +84,7 @@ void KSMShutdownFeedback::slotPaintEffect()
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, KWorkSpace::ShutdownType sdtype )
-  : QDialog( parent, 0, TRUE, Qt::Popup ), targets(0)
+  : QDialog( parent, 0, true, Qt::Popup ), targets(0)
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {

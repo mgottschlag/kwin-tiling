@@ -114,7 +114,7 @@ private:
     void discardSession();
     void storeSession();
 
-    void startProtection() { protectionTimer.start( 8000, TRUE ); }
+    void startProtection() { protectionTimer.start( 8000, true ); }
     void endProtection() { protectionTimer.stop(); }
 
     void startApplication( QStringList command,

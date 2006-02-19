@@ -244,7 +244,7 @@ void KSMServer::restoreNext()
                           config->readEntry( QString("userId")+n, QString() ));
         lastIdStarted = config->readEntry( QString("clientId")+n, QString() );
         if ( !lastIdStarted.isEmpty() ) {
-            restoreTimer.start( 2000, TRUE );
+            restoreTimer.start( 2000, true );
             return; // we get called again from the clientRegistered handler
         }
     }
