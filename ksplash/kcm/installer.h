@@ -31,7 +31,7 @@ class SplashInstaller : public QWidget
 {
   Q_OBJECT
 public:
-  SplashInstaller(QWidget *parent=0, const char *aName=0, bool aInit=FALSE);
+  SplashInstaller(QWidget *parent=0, const char *aName=0, bool aInit=false);
   ~SplashInstaller();
 
   virtual void load();
