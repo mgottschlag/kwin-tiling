@@ -7,6 +7,7 @@ Greeter=circles.xml
 Name=Circles
 Name[x-test]=xxCirclesxx
 Description=Theme with blue circles
+Description[fr]=Thème avec des cercles bleus
 Description[x-test]=xxTheme with blue circlesxx
 Author=Bond, James Bond
 Copyright=(c) 2002 Bond, James Bond

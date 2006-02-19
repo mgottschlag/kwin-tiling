@@ -6,4 +6,5 @@ TryExec=icewm-session
 Name=IceWM
 Name[x-test]=xxIceWMxx
 Comment=A Windows 95-OS/2-Motif-like window manager
+Comment[fr]=Un gestionnaire de fenêtres ressemblant à Windows 95-OS/2-Motif
 Comment[x-test]=xxA Windows 95-OS/2-Motif-like window managerxx

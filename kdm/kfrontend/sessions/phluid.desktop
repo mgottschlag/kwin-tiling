@@ -6,4 +6,5 @@ TryExec=phluid
 Name=Phluid
 Name[x-test]=xxPhluidxx
 Comment=An Imlib2 based window manager
+Comment[fr]=Un gestionnaire de fenêtres basé sur Imlib2
 Comment[x-test]=xxAn Imlib2 based window managerxx

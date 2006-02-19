@@ -2,5 +2,6 @@
 Encoding=UTF-8
 Type=Directory
 Name=System Administration
+Name[fr]=Administration du système
 Name[x-test]=xxSystem Administrationxx
 Icon=kcmsystem

@@ -5,22 +5,26 @@ Icon=kscreensaver
 Type=Application
 Actions=Setup;InWindow;Root;
 Name=Random
+Name[fr]=Aléatoire
 Name[x-test]=xxRandomxx
 
 [Desktop Action Setup]
 Exec=krandom.kss -setup
 Name=Setup...
+Name[fr]=Configuration...
 Name[x-test]=xxSetup...xx
 Icon=kscreensaver
 
 [Desktop Action InWindow]
 Exec=krandom.kss -window-id %w
 Name=Display in Specified Window
+Name[fr]=Affichage dans la fenêtre spécifiée
 Name[x-test]=xxDisplay in Specified Windowxx
 NoDisplay=true
 
 [Desktop Action Root]
 Exec=krandom.kss -root
 Name=Display in Root Window
+Name[fr]=Affichage dans la fenêtre racine
 Name[x-test]=xxDisplay in Root Windowxx
 NoDisplay=true

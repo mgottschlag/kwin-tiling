@@ -3,4 +3,5 @@ Encoding=UTF-8
 Type=Directory
 Icon=kcmdf
 Name=Science & Math
+Name[fr]=Science et mathématiques
 Name[x-test]=xxScience & Mathxx

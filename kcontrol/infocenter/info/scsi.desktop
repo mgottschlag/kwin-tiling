@@ -14,8 +14,10 @@ Name=SCSI
 Name[x-test]=xxSCSIxx
 
 Comment=SCSI information
+Comment[fr]=Informations SCSI
 Comment[x-test]=xxSCSI informationxx
 
 Keywords=SCSI,SCSI-Bus,System Information
+Keywords[fr]=SCSI,bus SCSI,informations système,scsi
 Keywords[x-test]=xxSCSI,SCSI-Bus,System Informationxx
 Categories=Qt;KDE;X-KDE-information;

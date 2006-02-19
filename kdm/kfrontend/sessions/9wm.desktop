@@ -6,4 +6,5 @@ TryExec=9wm
 Name=9WM
 Name[x-test]=xx9WMxx
 Comment=An emulation of the Plan 9 window manager 8-1/2
+Comment[fr]=Une émulation du gestionnaire de fenêtres Plan 9  8-1/2
 Comment[x-test]=xxAn emulation of the Plan 9 window manager 8-1/2xx

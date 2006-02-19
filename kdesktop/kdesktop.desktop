@@ -3,6 +3,7 @@ Encoding=UTF-8
 Exec=kdesktop
 X-DCOP-ServiceType=wait
 Name=KDE Desktop
+Name[fr]=Bureau de KDE
 Name[x-test]=xxKDE Desktopxx
 Type=Service
 X-KDE-StartupNotify=false

@@ -12,11 +12,14 @@ X-KDE-FactoryName=dma
 X-KDE-ParentApp=kinfocenter
 
 Name=DMA-Channels
+Name[fr]=Canaux DMA
 Name[x-test]=xxDMA-Channelsxx
 
 Comment=DMA information
+Comment[fr]=Informations DMA
 Comment[x-test]=xxDMA informationxx
 
 Keywords=dma,DMA-Channels,System Information
+Keywords[fr]=dma,canaux DMA,informations système
 Keywords[x-test]=xxdma,DMA-Channels,System Informationxx
 

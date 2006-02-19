@@ -9,12 +9,15 @@ X-KDE-Library=view1394
 X-KDE-ParentApp=kinfocenter
 
 Name=IEEE 1394 Devices
+Name[fr]=Périphériques IEEE 1394
 Name[x-test]=xxIEEE 1394 Devicesxx
 
 Comment=View the IEEE 1394 devices attached to this computer
+Comment[fr]=Affiche les périphériques IEEE 1394 rattachés à cet ordinateur
 Comment[x-test]=xxView the IEEE 1394 devices attached to this computerxx
 
 Keywords=1394,Firewire,devices,viewer,control
+Keywords[fr]=1394,Firewire,périphériques,afficheur,contrôle
 Keywords[x-test]=xx1394,Firewire,devices,viewer,controlxx
 
 Categories=Qt;KDE;X-KDE-information;

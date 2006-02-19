@@ -1,5 +1,6 @@
 [Settings]
 Name=WindowMaker (3 Modifier Keys)
+Name[fr]=WindowMaker (3 touches de modifications)
 Name[x-test]=xxWindowMaker (3 Modifier Keys)xx
 
 [Global Shortcuts]

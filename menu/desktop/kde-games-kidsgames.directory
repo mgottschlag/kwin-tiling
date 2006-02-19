@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Games for Kids
+Name[fr]=Jeux pour les enfants
 Name[x-test]=xxGames for Kidsxx
 Icon=package_games_kids
 X-KDE-SuppressGenericNames=Game,Game for Children

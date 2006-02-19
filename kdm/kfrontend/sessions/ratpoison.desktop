@@ -6,4 +6,5 @@ TryExec=ratpoison
 Name=Ratpoison
 Name[x-test]=xxRatpoisonxx
 Comment=A simple keyboard-only window manager modeled after Screen
+Comment[fr]=Un gestionnaire de fenêtres simple uniquement dirigeable au clavier et basé sur Screen
 Comment[x-test]=xxA simple keyboard-only window manager modeled after Screenxx

@@ -6,4 +6,5 @@ TryExec=enlightenment
 Name=Enlightenment
 Name[x-test]=xxEnlightenmentxx
 Comment=An extremely themable very feature-rich window manager
+Comment[fr]=Un gestionnaire de fenêtres avec beaucoup de thèmes et de fonctionnalités
 Comment[x-test]=xxAn extremely themable very feature-rich window managerxx

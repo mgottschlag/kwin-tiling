@@ -11,11 +11,14 @@ X-KDE-FactoryName=launch
 X-KDE-ParentApp=kcontrol
 
 Name=Launch Feedback
+Name[fr]=Témoin de démarrage
 Name[x-test]=xxLaunch Feedbackxx
 
 Comment=Choose application-launch feedback style
+Comment[fr]=Définit le style du témoin de démarrage des applications
 Comment[x-test]=xxChoose application-launch feedback stylexx
 Keywords=application,start,launch,busy,cursor,feedback,mouse,pointer,rotating,spinning,disk,startup,program,report
+Keywords[fr]=application,démarrage,occupé,curseur,souris,pointeur,rotation,disque,programme,rapport
 Keywords[x-test]=xxapplication,start,launch,busy,cursor,feedback,mouse,pointer,rotating,spinning,disk,startup,program,reportxx
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

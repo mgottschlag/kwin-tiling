@@ -6,4 +6,5 @@ TryExec=mwm
 Name=MWM
 Name[x-test]=xxMWMxx
 Comment=The Motif Window Manager
+Comment[fr]=Le gestionnaire de fenêtres Motif
 Comment[x-test]=xxThe Motif Window Managerxx

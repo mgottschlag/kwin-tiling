@@ -1,6 +1,7 @@
 [KDE Desktop Program]
 Command=xplanet --geometry %xx%y --num_times 1 --output %f.jpg && mv %f.jpg %f
 Comment=XPlanet by Hari Nair
+Comment[fr]=XPlanet par Hari Nair
 Comment[x-test]=xxXPlanet by Hari Nairxx
 Executable=xplanet
 PreviewCommand=xplanet --geometry %xx%y --num_times 1 --output %f.jpg && mv %f.jpg %f

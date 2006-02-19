@@ -1,5 +1,6 @@
 [Settings]
 Name=Windows Scheme (With Win Key)
+Name[fr]=Thème Windows (avec la touche « Win »)
 Name[x-test]=xxWindows Scheme (With Win Key)xx
 Uses Win Modifier=true
 

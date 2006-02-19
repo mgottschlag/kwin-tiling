@@ -6,4 +6,5 @@ TryExec=xfwm
 Name=XFce
 Name[x-test]=xxXFcexx
 Comment=The Cholesterol Free Desktop Environment. A desktop environment reminiscent of CDE
+Comment[fr]=The Cholesterol Free Desktop Environment. Un environnement de bureau rappelant CDE
 Comment[x-test]=xxThe Cholesterol Free Desktop Environment. A desktop environment reminiscent of CDExx

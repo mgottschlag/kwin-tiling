@@ -6,4 +6,5 @@ TryExec=matchbox
 Name=Matchbox
 Name[x-test]=xxMatchboxxx
 Comment=A window manager for handheld devices
+Comment[fr]=Un gestionnaire de fenêtres pour les périphériques contrôlés à la main
 Comment[x-test]=xxA window manager for handheld devicesxx

@@ -1,13 +1,14 @@
 [Desktop Entry]
 Comment=Configure service discovery
+Comment[fr]=Configuration de la découverte de service
 Comment[x-test]=xxConfigure service discoveryxx
 Encoding=UTF-8
 Exec=kcmshell kcm_kdnssd
 GenericName=
-GenericName[x-test]=xxxx
 Icon=blockdevice
 MimeType=
 Name=Service Discovery
+Name[fr]=Découverte de service
 Name[x-test]=xxService Discoveryxx
 Path=
 StartupNotify=true

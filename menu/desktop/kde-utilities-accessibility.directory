@@ -2,7 +2,9 @@
 Encoding=UTF-8
 Type=Directory
 Name=Accessibility
+Name[fr]=Accessibilité
 Name[x-test]=xxAccessibilityxx
 Icon=access
 Comment=Accessibility
+Comment[fr]=Accessibilité
 Comment[x-test]=xxAccessibilityxx

@@ -2,5 +2,6 @@
 Encoding=UTF-8
 Type=Directory
 Name=Internal Services
+Name[fr]=Services internes
 Name[x-test]=xxInternal Servicesxx
 NoDisplay=true

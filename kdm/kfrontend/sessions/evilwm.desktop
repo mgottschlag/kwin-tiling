@@ -6,4 +6,5 @@ TryExec=evilwm
 Name=EvilWM
 Name[x-test]=xxEvilWMxx
 Comment=A minimalist window manager based on AEWM
+Comment[fr]=Un gestionnaire de fenêtres basé sur AEWM
 Comment[x-test]=xxA minimalist window manager based on AEWMxx

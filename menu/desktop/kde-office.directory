@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Office
+Name[fr]=Bureautique
 Name[x-test]=xxOfficexx
 Icon=package_wordprocessing
 SortOrder=koshell.desktop,kword.desktop,kspread.desktop,kpresenter.desktop

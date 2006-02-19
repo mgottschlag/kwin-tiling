@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Board Games
+Name[fr]=Jeux de plateau
 Name[x-test]=xxBoard Gamesxx
 Icon=package_games_board
 X-KDE-SuppressGenericNames=Game,Board Game

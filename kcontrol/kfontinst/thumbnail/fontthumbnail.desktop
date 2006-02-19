@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=Font Files
+Name[fr]=Fichiers de polices
 Name[x-test]=xxFont Filesxx
 ServiceTypes=ThumbCreator
 MimeTypes=application/x-font-ttf,application/x-font-type1,application/x-font-bdf,application/x-font-pcf,application/x-font-otf,application/x-font-ttc

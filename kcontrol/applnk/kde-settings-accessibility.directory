@@ -2,5 +2,6 @@
 Encoding=UTF-8
 Type=Directory
 Name=Regional & Accessibility
+Name[fr]=Régionalisation et accessibilité
 Name[x-test]=xxRegional & Accessibilityxx
 Icon=locale

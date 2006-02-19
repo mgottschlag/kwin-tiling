@@ -10,6 +10,7 @@ OnlyShowIn=KDE;
 Name=KInfoCenter
 Name[x-test]=xxKInfoCenterxx
 GenericName=Info Center
+GenericName[fr]=Centre d'informations
 GenericName[x-test]=xxInfo Centerxx
 
 X-DCOP-ServiceType=Unique

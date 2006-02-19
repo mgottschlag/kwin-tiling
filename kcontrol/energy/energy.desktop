@@ -9,11 +9,14 @@ X-KDE-Init=energy
 X-KDE-ParentApp=kcontrol
 
 Name=Power Control
+Name[fr]=Contrôle de l'énergie
 Name[x-test]=xxPower Controlxx
 
 Comment=Settings for display power management
+Comment[fr]=Paramètres de la gestion d'énergie pour l'affichage
 Comment[x-test]=xxSettings for display power managementxx
 
 Keywords=energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,power
+Keywords[fr]=énergie,économie,apm,acpi,suspension,suspendre,tension,éteindre,extinction,veille,mise en veille,alimentation
 Keywords[x-test]=xxenergy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,powerxx
 

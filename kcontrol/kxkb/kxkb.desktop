@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=Keyboard Map Tool
+Name[fr]=Outil de sélection du clavier
 Name[x-test]=xxKeyboard Map Toolxx
 Exec=kxkb
 X-DCOP-ServiceType=Unique

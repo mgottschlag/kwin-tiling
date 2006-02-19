@@ -6,4 +6,5 @@ TryExec=fvwm95
 Name=FVWM95
 Name[x-test]=xxFVWM95xx
 Comment=A Windows 95 look-alike derivative of FVWM
+Comment[fr]=Un gestionnaire de fenêtres ressemblant à Windows 95 dérivant de FVWM
 Comment[x-test]=xxA Windows 95 look-alike derivative of FVWMxx

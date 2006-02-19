@@ -6,4 +6,5 @@ TryExec=larswm
 Name=LarsWM
 Name[x-test]=xxLarsWMxx
 Comment=The Lars Window Manager, based on 9WM, supports tiled windows
+Comment[fr]=The Lars Window Manager, basé sur 9WM, avec une gestion des fenêtres en mosaïque
 Comment[x-test]=xxThe Lars Window Manager, based on 9WM, supports tiled windowsxx

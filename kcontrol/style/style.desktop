@@ -14,9 +14,11 @@ X-KDE-ParentApp=kcontrol
 Name=Style
 Name[x-test]=xxStylexx
 Comment=Allows the manipulation of widget behavior and changing the Style for KDE
+Comment[fr]=Permet la configuration du comportement des éléments graphiques et la modification des styles de KDE
 Comment[x-test]=xxAllows the manipulation of widget behavior and changing the Style for KDExx
 
 Keywords=style,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applications
+Keywords[fr]=style,styles,thème,apparence,widget,élément graphique,barre demenus,MacOS,police,couleur,non KDE,icône,icônes,barre d'outils,barres d'outils,barres de menus,texte,surbrillance,sélection,bouton,souris,transparence,déplacement,écran,applications,programmes,programmes non KDE,applications non KDE
 Keywords[x-test]=xxstyle,styles,look,widget,icons,toolbars,text,highlight,apps,KDE applicationsxx
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

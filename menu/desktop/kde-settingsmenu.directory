@@ -2,5 +2,6 @@
 Encoding=UTF-8
 Type=Directory
 Name=Settings
+Name[fr]=Configuration
 Name[x-test]=xxSettingsxx
 Icon=package_settings

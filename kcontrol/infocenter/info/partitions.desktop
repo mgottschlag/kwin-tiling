@@ -15,9 +15,11 @@ Name=Partitions
 Name[x-test]=xxPartitionsxx
 
 Comment=Partition information
+Comment[fr]=Informations sur les partitions
 Comment[x-test]=xxPartition informationxx
 
 Keywords=Partitions,Harddrive,HD,System Information
+Keywords[fr]=partitions,disque dur,HD,DD,informations système
 Keywords[x-test]=xxPartitions,Harddrive,HD,System Informationxx
 
 Categories=Qt;KDE;X-KDE-information;

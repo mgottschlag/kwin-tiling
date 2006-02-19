@@ -6,4 +6,5 @@ TryExec=wmaker
 Name=WindowMaker
 Name[x-test]=xxWindowMakerxx
 Comment=A simple window manager that resembles the NeXTStep look very closely
+Comment[fr]=Un gestionnaire de fenêtres simple qui ressemble assez précisement à NeXTStep
 Comment[x-test]=xxA simple window manager that resembles the NeXTStep look very closelyxx

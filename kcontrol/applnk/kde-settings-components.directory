@@ -2,5 +2,6 @@
 Encoding=UTF-8
 Type=Directory
 Name=KDE Components
+Name[fr]=Composants de KDE
 Name[x-test]=xxKDE Componentsxx
 Icon=blockdevice

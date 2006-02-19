@@ -11,12 +11,15 @@ X-KDE-FactoryName=background
 X-KDE-ParentApp=kcontrol
 
 Name=Background
+Name[fr]=Fond d'écran
 Name[x-test]=xxBackgroundxx
 
 Comment=Change the background settings
+Comment[fr]=Configuration du fond d'écran
 Comment[x-test]=xxChange the background settingsxx
 
 Keywords=background,desktops,colors,colours,images,wallpapers,blending,balance,cache,multiple wallpapers,pixmap
+Keywords[fr]=fond d'écran,fond,bureau,couleur,image,papier peint,image de fond,dégradé,cache,papiers peints multiples
 Keywords[x-test]=xxbackground,desktops,colors,colours,images,wallpapers,blending,balance,cache,multiple wallpapers,pixmapxx
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

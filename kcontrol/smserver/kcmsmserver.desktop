@@ -11,12 +11,15 @@ X-KDE-FactoryName=smserver
 X-KDE-ParentApp=kcontrol
 
 Name=Session Manager
+Name[fr]=Gestionnaire de session
 Name[x-test]=xxSession Managerxx
 
 Comment=Configure the session manager and logout settings
+Comment[fr]=Configuration du gestionnaire de session et réglages de la sortie
 Comment[x-test]=xxConfigure the session manager and logout settingsxx
 
 Keywords=ksmserver,session,logout,confirmation,save,restore
+Keywords[fr]=ksmserver,session,arrêt,logout,confirmation,enregistrement,enregistrer,restaurer,restauration,connexion,déconnexion
 Keywords[x-test]=xxksmserver,session,logout,confirmation,save,restorexx
 
 Categories=Qt;KDE;X-KDE-settings-components;

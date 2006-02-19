@@ -18,6 +18,7 @@ inactiveTitleBtnBg=66,103,148
 inactiveTitleBtnBlend=0,112,182
 inactiveTitleBtnFg=66,103,148
 Name=Dark Blue
+Name[fr]=Bleu foncé
 Name[x-test]=xxDark Bluexx
 selectBackground=92,179,255
 selectForeground=0,0,0

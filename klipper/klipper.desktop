@@ -3,6 +3,7 @@ Encoding=UTF-8
 Name=Klipper
 Name[x-test]=xxKlipperxx
 GenericName=Clipboard Tool
+GenericName[fr]=Presse-papiers
 GenericName[x-test]=xxClipboard Toolxx
 Exec=klipper
 Icon=klipper
@@ -18,5 +19,6 @@ X-KDE-autostart-condition=klipperrc:General:AutoStart:true
 OnlyShowIn=KDE;
 Categories=Qt;KDE;Utility;X-KDE-Utilities-Desktop;
 Comment=A cut & paste history utility
+Comment[fr]=Un outil d'historique du copier / coller
 Comment[x-test]=xxA cut & paste history utilityxx
 

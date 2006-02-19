@@ -2,5 +2,6 @@
 Encoding=UTF-8
 Type=Directory
 Name=Power Control
+Name[fr]=Contrôle de l'énergie
 Name[x-test]=xxPower Controlxx
 Icon=energy

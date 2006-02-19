@@ -6,4 +6,5 @@ TryExec=startxfce4
 Name=XFce 4
 Name[x-test]=xxXFce 4xx
 Comment=The Cholesterol Free Desktop Environment, version 4. A desktop environment reminiscent of CDE
+Comment[fr]=The Cholesterol Free Desktop Environment, version 4. Un environnement de bureau rappelant CDE
 Comment[x-test]=xxThe Cholesterol Free Desktop Environment, version 4. A desktop environment reminiscent of CDExx

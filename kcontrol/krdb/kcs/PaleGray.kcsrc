@@ -1,6 +1,7 @@
 # KDE Config File
 [Color Scheme]
 Name=Pale Gray
+Name[fr]=Gris pâle
 Name[x-test]=xxPale Grayxx
 background=#d6d6d6
 buttonBackground=#d6d6d6

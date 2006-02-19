@@ -6,4 +6,5 @@ TryExec=sapphire
 Name=Sapphire
 Name[x-test]=xxSapphirexx
 Comment=A minimal but configurable window manager
+Comment[fr]=Un gestionnaire de fenêtres minimaliste mais configurable
 Comment[x-test]=xxA minimal but configurable window managerxx

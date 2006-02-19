@@ -6,4 +6,5 @@ TryExec=blackbox
 Name=Blackbox
 Name[x-test]=xxBlackboxxx
 Comment=A fast & light window manager
+Comment[fr]=Un gestionnaire de fenêtres rapide et léger
 Comment[x-test]=xxA fast & light window managerxx

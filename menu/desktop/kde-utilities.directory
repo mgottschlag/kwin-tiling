@@ -2,7 +2,9 @@
 Encoding=UTF-8
 Type=Directory
 Name=Utilities
+Name[fr]=Utilitaires
 Name[x-test]=xxUtilitiesxx
 Icon=package_utilities
 Comment=Utilities
+Comment[fr]=Utilitaires
 Comment[x-test]=xxUtilitiesxx

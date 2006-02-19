@@ -6,6 +6,7 @@ TryExec=lwm
 Name=LWM
 Name[x-test]=xxLWMxx
 Comment=The Lightweight Window Manager. A non-configurable, bare window manager
+Comment[fr]=The Lightweight Window Manager. Un gestionnaire de fenêtres non configurable et nu
 Comment[x-test]=xxThe Lightweight Window Manager. A non-configurable, bare window managerxx
 # this can't be used as a session in itself
 Hidden=true

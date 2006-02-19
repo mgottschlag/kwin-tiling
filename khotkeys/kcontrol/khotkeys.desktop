@@ -8,12 +8,15 @@ X-KDE-Library=khotkeys
 X-KDE-Init=khotkeys
 
 Name=Input Actions
+Name[fr]=Actions d'entrées
 Name[x-test]=xxInput Actionsxx
 
 Comment=Configure Hotkey settings
+Comment[fr]=Configurer les réglages des raccourcis-clavier
 Comment[x-test]=xxConfigure Hotkey settingsxx
 
 Keywords=Keys,Global key bindings,Key bindings,Gestures,Mouse gestures
+Keywords[fr]=touches,raccourcis clavier globaux,raccourcis clavier,gestes,gestes de la souris
 Keywords[x-test]=xxKeys,Global key bindings,Key bindings,Gestures,Mouse gesturesxx
 
 Categories=Qt;KDE;X-KDE-settings-accessibility;

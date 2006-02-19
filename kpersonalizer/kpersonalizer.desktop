@@ -6,6 +6,7 @@ Exec=kpersonalizer -caption "%c"
 Icon=kpersonalizer
 Terminal=false
 Name=Desktop Settings Wizard
+Name[fr]=KPersonalizer
 Name[x-test]=xxDesktop Settings Wizardxx
 X-KDE-autostart-after=kdesktop
 X-KDE-autostart-condition=kpersonalizerrc:General:FirstLogin:true

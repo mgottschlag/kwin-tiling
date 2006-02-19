@@ -6,4 +6,5 @@ TryExec=metacity
 Name=Metacity
 Name[x-test]=xxMetacityxx
 Comment=A lightweight GTK2 based window manager
+Comment[fr]=Un gestionnaire de fenêtres basé sur GTK2 et léger
 Comment[x-test]=xxA lightweight GTK2 based window managerxx

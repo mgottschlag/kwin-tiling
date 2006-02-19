@@ -2,16 +2,19 @@
 ServiceTypes=image/*
 Actions=setAsBackground;tileAsBackground;
 X-KDE-Submenu=Set as Background
+X-KDE-Submenu[fr]=Définir comme arrière-plan
 X-KDE-Submenu[x-test]=xxSet as Backgroundxx
 
 [Desktop Action setAsBackground]
 Name=Centered
+Name[fr]=Centré
 Name[x-test]=xxCenteredxx
 Icon=background
 Exec=dcop kdesktop KBackgroundIface setWallpaper %u 6
 
 [Desktop Action tileAsBackground]
 Name=Tiled
+Name[fr]=Mosaïque
 Name[x-test]=xxTiledxx
 Icon=background
 Exec=dcop kdesktop KBackgroundIface setWallpaper %u 2

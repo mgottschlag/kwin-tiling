@@ -1,5 +1,6 @@
 [KDE Desktop Program]
 Comment=XGlobe by Thorsten Scheuermann
+Comment[fr]=XGlobe par Thorsten Scheuermann
 Comment[x-test]=xxXGlobe by Thorsten Scheuermannxx
 Executable=xglobe
 Command=xglobe -dump -once -size %x,%y -nomarkers && mv xglobe-dump.bmp %f

@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Graphics
+Name[fr]=Graphisme
 Name[x-test]=xxGraphicsxx
 Icon=package_graphics
 

@@ -11,11 +11,14 @@ X-KDE-FactoryName=memory
 X-KDE-ParentApp=kinfocenter
 
 Name=Memory
+Name[fr]=Mémoire
 Name[x-test]=xxMemoryxx
 
 Comment=Memory information
+Comment[fr]=Informations sur la mémoire
 Comment[x-test]=xxMemory informationxx
 
 Keywords=Memory,RAM,Virtual memory,Physical memory,Shared memory,Swap,System Information
+Keywords[fr]=mémoire,RAM,mémoire virtuelle,mémoire physique,mémoire partagée,swap,partition d'échange,informations système,ram
 Keywords[x-test]=xxMemory,RAM,Virtual memory,Physical memory,Shared memory,Swap,System Informationxx
 Categories=Qt;KDE;X-KDE-information;

@@ -11,9 +11,11 @@ X-KDE-FactoryName=nic
 X-KDE-ParentApp=kinfocenter
 
 Name=Network Interfaces
+Name[fr]=Interfaces réseau
 Name[x-test]=xxNetwork Interfacesxx
 
 Comment=Network interface information
+Comment[fr]=Informations sur l'interface réseau
 Comment[x-test]=xxNetwork interface informationxx
 
 Categories=Qt;KDE;X-KDE-information;

@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=System
+Name[fr]=Système
 Name[x-test]=xxSystemxx
 Icon=package_system
 

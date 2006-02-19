@@ -11,13 +11,16 @@ X-KDE-FactoryName=screensaver
 X-KDE-ParentApp=kcontrol
 
 Name=Screen Saver
+Name[fr]=Écran de veille
 Name[x-test]=xxScreen Saverxx
 
 Comment=Screen Saver Settings
+Comment[fr]=Configuration de l'écran de veille
 Comment[x-test]=xxScreen Saver Settingsxx
 
 
 Keywords=screensavers,Priority
+Keywords[fr]=écrans de veille,priorité,économiseur
 Keywords[x-test]=xxscreensavers,Priorityxx
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

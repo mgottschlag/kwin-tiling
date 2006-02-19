@@ -6,4 +6,5 @@ TryExec=/usr/dt/bin/Xsession
 Name=CDE
 Name[x-test]=xxCDExx
 Comment=The Common Desktop Environment, a proprietary industry standard desktop environment
+Comment[fr]=Le Common Desktop Environment, un environnement de bureau propriétaire standard dans l'industrie
 Comment[x-test]=xxThe Common Desktop Environment, a proprietary industry standard desktop environmentxx

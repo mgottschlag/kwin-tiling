@@ -1,5 +1,6 @@
 [Settings]
 Name=UNIX Scheme
+Name[fr]=Thème UNIX
 Name[x-test]=xxUNIX Schemexx
 Uses Win Modifier=false
 

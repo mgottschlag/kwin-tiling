@@ -12,12 +12,15 @@ X-KDE-Init=keyboard_layout
 X-KDE-ParentApp=kcontrol
 
 Name=Keyboard Layout
+Name[fr]=Disposition du clavier
 Name[x-test]=xxKeyboard Layoutxx
 
 Comment=Keyboard Layout
+Comment[fr]=Disposition du clavier
 Comment[x-test]=xxKeyboard Layoutxx
 
 Keywords=Keyboard,Layout,International
+Keywords[fr]=clavier,disposition du clavier,périphériques d'entrée,International
 Keywords[x-test]=xxKeyboard,Layout,Internationalxx
 
 Categories=Qt;KDE;X-KDE-settings-accessibility;

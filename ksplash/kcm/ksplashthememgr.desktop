@@ -10,10 +10,13 @@ X-KDE-FactoryName=ksplashthemes
 X-KDE-ParentApp=kcontrol
 
 Name=Splash Screen
+Name[fr]=Écran de démarrage
 Name[x-test]=xxSplash Screenxx
 Type=Application
 Comment=Manager for Splash Screen Themes
+Comment[fr]=Gestionnaire de thèmes d'écran de démarrage
 Comment[x-test]=xxManager for Splash Screen Themesxx
 Keywords=splash screen,splash theme,startup
+Keywords[fr]=écran de démarrage,thème de démarrage,démarrage,splash screen
 Keywords[x-test]=xxsplash screen,splash theme,startupxx
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

@@ -1,8 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Home
+Name[fr]=Dossier personnel
 Name[x-test]=xxHomexx
 GenericName=Personal Files
+GenericName[fr]=Fichiers personnels
 GenericName[x-test]=xxPersonal Filesxx
 URL=$HOME
 Icon=kfm_home

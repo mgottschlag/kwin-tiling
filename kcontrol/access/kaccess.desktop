@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=KDE Accessibility Tool
+Name[fr]=Outil d'accessibilité de KDE
 Name[x-test]=xxKDE Accessibility Toolxx
 Exec=kaccess
 X-DCOP-ServiceType=None

@@ -12,11 +12,14 @@ X-KDE-Init=mouse
 X-KDE-ParentApp=kcontrol
 
 Name=Mouse
+Name[fr]=Souris
 Name[x-test]=xxMousexx
 
 Comment=Mouse settings
+Comment[fr]=Configuration de la souris
 Comment[x-test]=xxMouse settingsxx
 
 Keywords=Mouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handed
+Keywords[fr]=souris,accélération de la souris,seuil de la souris,boutons de la souris,sélection,forme du curseur,périphériques d'entrée,curseur,clic,icônes,gaucher,droitier,double clic,simple clic,clic gauche,clic droit
 Keywords[x-test]=xxMouse,Mouse acceleration,Mouse threshold,Mouse buttons,Selection,Cursor Shape,Input Devices,Button Mapping,Click,icons,feedback,Pointers,Drag,DoubleClick,mapping,right handed,left handedxx
 Categories=Qt;KDE;X-KDE-settings-hardware;

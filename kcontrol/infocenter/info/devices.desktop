@@ -12,11 +12,14 @@ X-KDE-FactoryName=devices
 X-KDE-ParentApp=kinfocenter
 
 Name=Devices
+Name[fr]=Périphériques
 Name[x-test]=xxDevicesxx
 
 Comment=Attached devices information
+Comment[fr]=Informations sur les périphériques montés
 Comment[x-test]=xxAttached devices informationxx
 
 Keywords=dev,Devices,System Information,Information
+Keywords[fr]=dev,périphériques,information,informations système
 Keywords[x-test]=xxdev,Devices,System Information,Informationxx
 

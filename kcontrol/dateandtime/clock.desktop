@@ -12,12 +12,15 @@ X-KDE-SubstituteUID=true
 X-KDE-ParentApp=kcontrol
 
 Name=Date & Time
+Name[fr]=Date et heure
 Name[x-test]=xxDate & Timexx
 
 Comment=Date and time settings
+Comment[fr]=Configuration de la date et de l'heure
 Comment[x-test]=xxDate and time settingsxx
 
 Keywords=clock,date,time,time zone
+Keywords[fr]=horloge,date,heure,fuseau horaire
 Keywords[x-test]=xxclock,date,time,time zonexx
 
 Categories=Qt;KDE;X-KDE-settings-system;

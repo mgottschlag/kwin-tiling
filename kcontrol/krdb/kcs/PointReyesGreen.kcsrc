@@ -15,6 +15,7 @@ inactiveForeground=192,179,173
 inactiveTitleBtnBg=162,184,160
 linkColor=14,153,4
 Name=Point Reyes Green
+Name[fr]=Vert doux
 Name[x-test]=xxPoint Reyes Greenxx
 selectBackground=65,127,75
 selectForeground=255,255,255

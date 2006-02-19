@@ -8,6 +8,7 @@ X-KDE-StartupNotify=true
 OnlyShowIn=KDE;
 
 Name=Menu Editor
+Name[fr]=KMenuEdit
 Name[x-test]=xxMenu Editorxx
 
 X-DCOP-ServiceType=Unique

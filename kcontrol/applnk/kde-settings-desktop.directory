@@ -2,5 +2,6 @@
 Encoding=UTF-8
 Type=Directory
 Name=Desktop
+Name[fr]=Bureau
 Name[x-test]=xxDesktopxx
 Icon=desktop

@@ -9,10 +9,13 @@ X-KDE-Library=smartcard
 X-KDE-Init=smartcard
 X-KDE-ParentApp=kcontrol
 Name=Smartcards
+Name[fr]=Cartes à puce
 Name[x-test]=xxSmartcardsxx
 Comment=Configure smartcard support
+Comment[fr]=Configuration de la gestion des cartes à puce
 Comment[x-test]=xxConfigure smartcard supportxx
 Keywords=Smartcard,PKCS,SSL,reader,smart,card
+Keywords[fr]=carte à puce,puce,smartcard,pkcs,ssl,lecteur,carte
 Keywords[x-test]=xxSmartcard,PKCS,SSL,reader,smart,cardxx
 
 Categories=Qt;KDE;X-KDE-settings-peripherals;

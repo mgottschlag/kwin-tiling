@@ -6,4 +6,5 @@ TryExec=ion
 Name=Ion
 Name[x-test]=xxIonxx
 Comment=A keyboard-friendly window manager with tiled windows, based on PWM
+Comment[fr]=Un gestionnaire de fenêtres utilisable au clavier avec des fenêtres en mosaïque, basé sur PWM
 Comment[x-test]=xxA keyboard-friendly window manager with tiled windows, based on PWMxx

@@ -11,12 +11,15 @@ X-KDE-FactoryName=taskbar
 X-KDE-ParentApp=kcontrol
 
 Name=Taskbar
+Name[fr]=Barre des tâches
 Name[x-test]=xxTaskbarxx
 
 Comment=Configure the panel taskbar
+Comment[fr]=Configuration de la barre des tâches du tableau de bord
 Comment[x-test]=xxConfigure the panel taskbarxx
 
 Keywords=kicker,panel,kpanel,taskbar,startbar,launchbar,windows
+Keywords[fr]=kicker,tableau de bord,kpanel,barre des tâches,barre de démarrage,barre de lancement,fenêtres
 Keywords[x-test]=xxkicker,panel,kpanel,taskbar,startbar,launchbar,windowsxx
 
 Categories=Qt;KDE;X-KDE-settings-desktop;

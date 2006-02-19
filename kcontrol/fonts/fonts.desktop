@@ -11,12 +11,15 @@ X-KDE-FactoryName=fonts
 X-KDE-ParentApp=kcontrol
 
 Name=Fonts
+Name[fr]=Polices
 Name[x-test]=xxFontsxx
 
 Comment=Font settings
+Comment[fr]=Configuration des police de caractères
 Comment[x-test]=xxFont settingsxx
 
 Keywords=fonts,font size,styles,charsets,character sets,panel,kicker,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Title
+Keywords[fr]=polices,police,taille de police,jeu de caractères,tableau de bord,kicker,bureau,bureaux,gestionnaire de fichiers,gestion de fichiers,barre d'outils,menu,titre de fenêtre,titre,fenêtre,barre de menus,barres de menus,barres d'outils
 Keywords[x-test]=xxfonts,font size,styles,charsets,character sets,panel,kicker,control panel,desktops,FileManager,Toolbars,Menu,Window Title,Titlexx
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

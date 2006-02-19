@@ -2,5 +2,6 @@
 Encoding=UTF-8
 Type=Directory
 Name=Web Browser
+Name[fr]=Navigateur web
 Name[x-test]=xxWeb Browserxx
 Icon=konqueror

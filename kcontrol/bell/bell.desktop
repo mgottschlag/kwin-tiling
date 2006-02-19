@@ -12,11 +12,14 @@ X-KDE-Init=bell
 X-KDE-ParentApp=kcontrol
 
 Name=System Bell
+Name[fr]=Cloche du système
 Name[x-test]=xxSystem Bellxx
 
 Comment=System Bell Configuration
+Comment[fr]=Configuration de la cloche du système
 Comment[x-test]=xxSystem Bell Configurationxx
 
 Keywords=Bell,Audio,Sound,Volume,Pitch,Duration
+Keywords[fr]=cloche,audio,son,volume,durée,modulation,bip
 Keywords[x-test]=xxBell,Audio,Sound,Volume,Pitch,Durationxx
 

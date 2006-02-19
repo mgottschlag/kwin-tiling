@@ -13,12 +13,15 @@ X-KDE-RootOnly=true
 X-KDE-ParentApp=kcontrol
 
 Name=Login Manager
+Name[fr]=Gestionnaire de connexion
 Name[x-test]=xxLogin Managerxx
 
 Comment=Configure the login manager (KDM)
+Comment[fr]=Configuration du gestionnaire de connexion (KDM)
 Comment[x-test]=xxConfigure the login manager (KDM)xx
 
 Keywords=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
+Keywords[fr]=kdm,gestionnaire d'affichage,xdm,utilisateurs,login,connexion,bienvenue,message de bienvenue,Logo,styles,langue,pays,style,police,fond d'écran,papier peint,session,arrêt,logout,redémarrage,reboot
 Keywords[x-test]=xxkdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restartxx
 
 Categories=Qt;KDE;X-KDE-settings-system;

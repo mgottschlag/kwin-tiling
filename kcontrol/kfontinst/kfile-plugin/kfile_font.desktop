@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Service
 Name=Font Information
+Name[fr]=Informations sur les polices
 Name[x-test]=xxFont Informationxx
 ServiceTypes=KFilePlugin
 X-KDE-Library=kfile_font

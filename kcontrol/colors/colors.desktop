@@ -11,12 +11,15 @@ X-KDE-FactoryName=colors
 X-KDE-ParentApp=kcontrol
 
 Name=Colors
+Name[fr]=Couleurs
 Name[x-test]=xxColorsxx
 
 Comment=Color settings
+Comment[fr]=Configuration des couleurs
 Comment[x-test]=xxColor settingsxx
 
 Keywords=colors,colours,scheme,contrast,Widget colors,Color Scheme
+Keywords[fr]=couleurs,modèles de couleurs,contraste,couleur des éléments graphiques,modèle
 Keywords[x-test]=xxcolors,colours,scheme,contrast,Widget colors,Color Schemexx
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;

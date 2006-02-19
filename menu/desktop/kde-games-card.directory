@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Card Games
+Name[fr]=Jeux de cartes
 Name[x-test]=xxCard Gamesxx
 Icon=package_games_card
 X-KDE-SuppressGenericNames=Game,Card Game

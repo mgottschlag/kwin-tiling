@@ -4,6 +4,7 @@ Actions=installFont;
 
 [Desktop Action installFont]
 Name=Install
+Name[fr]=Installer
 Name[x-test]=xxInstallxx
 Icon=fonts
 Exec=kfmclient copy %U fonts:/

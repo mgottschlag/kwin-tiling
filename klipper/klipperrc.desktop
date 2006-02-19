@@ -1,5 +1,6 @@
 [Action_0]
 Description=Jpeg-Image
+Description[fr]=Image JPEG
 Description[x-test]=xxJpeg-Imagexx
 Number of commands=1
 Regexp=^\\/.+\\.jpg$
@@ -7,11 +8,13 @@ Regexp=^\\/.+\\.jpg$
 [Action_0/Command_0]
 Commandline=kview %s
 Description=Launch K&View
+Description[fr]=Démarrer K&View
 Description[x-test]=xxLaunch K&Viewxx
 Enabled=true
 
 [Action_1]
 Description=Web-URL
+Description[fr]=URL web
 Description[x-test]=xxWeb-URLxx
 Number of commands=5
 Regexp=^https?://.
@@ -19,6 +22,7 @@ Regexp=^https?://.
 [Action_1/Command_0]
 Commandline=kfmclient exec %s
 Description=Open with &Konqueror
+Description[fr]=Ouvrir dans &Konqueror
 Description[x-test]=xxOpen with &Konquerorxx
 Enabled=true
 
@@ -26,12 +30,14 @@ Enabled=true
 Commandline=ps x |grep -q '[m]ozilla' && mozilla -remote openURL\(%s, new-window\) || mozilla %s
 Icon=mozilla
 Description=Open with &Mozilla
+Description[fr]=Ouvrir dans &Mozilla
 Description[x-test]=xxOpen with &Mozillaxx
 Enabled=true
 
 [Action_1/Command_2]
 Commandline=kmail --body  %s
 Description=Send &URL
+Description[fr]=Envoyer l'&URL
 Description[x-test]=xxSend &URLxx
 Enabled=true
 
@@ -39,17 +45,20 @@ Enabled=true
 Commandline=ps x |grep -q '[f]irefox' && firefox -remote openURL\(%s, new-window\) || firefox %s
 Icon=firefox
 Description=Open with &Firefox
+Description[fr]=Ouvrir dans &Firefox
 Description[x-test]=xxOpen with &Firefoxxx
 Enabled=true
 
 [Action_1/Command_4]
 Commandline=kmail  --attach %s
 Description=Send &Page
+Description[fr]=Envoyer la &page
 Description[x-test]=xxSend &Pagexx
 Enabled=true
 
 [Action_2]
 Description=Mail-URL
+Description[fr]=URL de courrier électronique
 Description[x-test]=xxMail-URLxx
 Number of commands=2
 Regexp=^mailto:.
@@ -57,17 +66,20 @@ Regexp=^mailto:.
 [Action_2/Command_0]
 Commandline=kmail --composer `echo %s | sed 's/mailto://g'`
 Description=Launch &Kmail
+Description[fr]=Démarrer K&Mail
 Description[x-test]=xxLaunch &Kmailxx
 Enabled=true
 
 [Action_2/Command_1]
 Commandline=konsole -e mutt `echo %s | sed 's/mailto://g'`
 Description=Launch &mutt
+Description[fr]=Démarrer &Mutt
 Description[x-test]=xxLaunch &muttxx
 Enabled=true
 
 [Action_3]
 Description=Text File
+Description[fr]=Fichier texte
 Description[x-test]=xxText Filexx
 Number of commands=2
 Regexp=^\\/.+\\.txt$
@@ -75,17 +87,20 @@ Regexp=^\\/.+\\.txt$
 [Action_3/Command_0]
 Commandline=kedit %s
 Description=Launch K&Edit
+Description[fr]=Démarrer K&Edit
 Description[x-test]=xxLaunch K&Editxx
 Enabled=true
 
 [Action_3/Command_1]
 Commandline=kwrite %s
 Description=Launch K&Write
+Description[fr]=Démarrer K&Write
 Description[x-test]=xxLaunch K&Writexx
 Enabled=true
 
 [Action_4]
 Description=Local file URL
+Description[fr]=URL locale
 Description[x-test]=xxLocal file URLxx
 Number of commands=2
 Regexp=^file:.
@@ -93,17 +108,20 @@ Regexp=^file:.
 [Action_4/Command_0]
 Commandline=kmail --body  %s
 Description=Send &URL
+Description[fr]=Envoyer l'&URL
 Description[x-test]=xxSend &URLxx
 Enabled=true
 
 [Action_4/Command_1]
 Commandline=kmail  --attach %s
 Description=Send &File
+Description[fr]=Envoyer le &fichier
 Description[x-test]=xxSend &Filexx
 Enabled=true
 
 [Action_5]
 Description=Gopher URL
+Description[fr]=URL Gopher
 Description[x-test]=xxGopher URLxx
 Number of commands=2
 Regexp=^gopher:.
@@ -111,17 +129,20 @@ Regexp=^gopher:.
 [Action_5/Command_0]
 Commandline=kmail --body %s
 Description=Send &URL
+Description[fr]=Envoyer l'&URL
 Description[x-test]=xxSend &URLxx
 Enabled=true
 
 [Action_5/Command_1]
 Commandline=kmail  --attach %s
 Description=Send &File
+Description[fr]=Envoyer le &fichier
 Description[x-test]=xxSend &Filexx
 Enabled=true
 
 [Action_6]
 Description=ftp URL
+Description[fr]=URL FTP
 Description[x-test]=xxftp URLxx
 Number of commands=5
 Regexp=^ftp://.
@@ -129,30 +150,35 @@ Regexp=^ftp://.
 [Action_6/Command_0]
 Commandline=kfmclient exec %s
 Description=Open with &Konqueror
+Description[fr]=Ouvrir dans &Konqueror
 Description[x-test]=xxOpen with &Konquerorxx
 Enabled=true
 
 [Action_6/Command_1]
 Commandline=netscape -no-about-splash -remote openURL\(%s, new-window\)
 Description=Open with &Netscape
+Description[fr]=Ouvrir dans &Netscape
 Description[x-test]=xxOpen with &Netscapexx
 Enabled=true
 
 [Action_6/Command_2]
 Commandline=mozilla -remote openURL\(%s, new-window\)
 Description=Open with &Mozilla
+Description[fr]=Ouvrir dans &Mozilla
 Description[x-test]=xxOpen with &Mozillaxx
 Enabled=true
 
 [Action_6/Command_3]
 Commandline=kmail --body  %s
 Description=Send &URL
+Description[fr]=Envoyer l'&URL
 Description[x-test]=xxSend &URLxx
 Enabled=true
 
 [Action_6/Command_4]
 Commandline=kmail  --attach %s
 Description=Send &File
+Description[fr]=Envoyer le &fichier
 Description[x-test]=xxSend &Filexx
 Enabled=true
 

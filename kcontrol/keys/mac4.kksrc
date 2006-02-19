@@ -1,5 +1,6 @@
 [Settings]
 Name=Mac Scheme
+Name[fr]=Thème Mac
 Name[x-test]=xxMac Schemexx
 Uses Win Modifier=true
 

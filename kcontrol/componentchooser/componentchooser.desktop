@@ -10,11 +10,14 @@ X-KDE-Library=componentchooser
 X-KDE-ParentApp=kcontrol
 
 Name=Component Chooser
+Name[fr]=Sélecteur de composants
 Name[x-test]=xxComponent Chooserxx
 Comment=Choose the default components for various services
+Comment[fr]=Choix des composants par défaut pour différents services
 Comment[x-test]=xxChoose the default components for various servicesxx
 
 Keywords=components,component chooser,resources, email client, terminal emulator
+Keywords[fr]=composant,sélecteur de composants,ressources,client de courrier,email,émulateur de terminal
 Keywords[x-test]=xxcomponents,component chooser,resources, email client, terminal emulatorxx
 
 Categories=Qt;KDE;X-KDE-settings-components;

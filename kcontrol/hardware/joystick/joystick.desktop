@@ -1,11 +1,14 @@
 [Desktop Entry]
 Encoding=UTF-8
 Comment=joystick - a kcontrol module to test joysticks
+Comment[fr]=Manettes de jeu - un module pour tester les manettes de jeu
 Comment[x-test]=xxjoystick - a kcontrol module to test joysticksxx
 Exec=kcmshell joystick
 Keywords=joystick,gamepad
+Keywords[fr]=joystick,gamepad,manette de jeu
 Keywords[x-test]=xxjoystick,gamepadxx
 Name=Joystick
+Name[fr]=Manette de jeu
 Name[x-test]=xxJoystickxx
 Terminal=false
 Type=Application

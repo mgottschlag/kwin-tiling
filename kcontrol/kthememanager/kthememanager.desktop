@@ -1,12 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
 Comment=Manage global KDE visual themes
+Comment[fr]=Gestionnaire de thèmes visuels globaux de KDE
 Comment[x-test]=xxManage global KDE visual themesxx
 Exec=kcmshell kthememanager
 Icon=kthememgr
 Keywords=themes,look and feel
+Keywords[fr]=thèmes,apparence et ergonomie
 Keywords[x-test]=xxthemes,look and feelxx
 Name=Theme Manager
+Name[fr]=Gestionnaire de thèmes
 Name[x-test]=xxTheme Managerxx
 Terminal=false
 Type=Application

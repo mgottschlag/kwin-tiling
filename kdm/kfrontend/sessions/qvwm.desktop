@@ -6,4 +6,5 @@ TryExec=qvwm
 Name=QVWM
 Name[x-test]=xxQVWMxx
 Comment=A Windows 95 like window manager
+Comment[fr]=Un gestionnaire de fenêtres semblable à Windows 95
 Comment[x-test]=xxA Windows 95 like window managerxx

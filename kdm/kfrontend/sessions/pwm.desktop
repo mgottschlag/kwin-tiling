@@ -6,4 +6,5 @@ TryExec=pwm
 Name=PWM
 Name[x-test]=xxPWMxx
 Comment=A lightweight window manager able to attach multiple windows to one frame
+Comment[fr]=Un gestionnaire de fenêtres léger capable d'attacher plusieurs fenêtres à un même cadre
 Comment[x-test]=xxA lightweight window manager able to attach multiple windows to one framexx

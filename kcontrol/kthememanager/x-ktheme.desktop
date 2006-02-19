@@ -2,6 +2,7 @@
 Encoding=UTF-8
 MimeType=application/x-ktheme
 Comment=KDE Theme
+Comment[fr]=Thème KDE
 Comment[x-test]=xxKDE Themexx
 Icon=kthememgr
 Type=MimeType

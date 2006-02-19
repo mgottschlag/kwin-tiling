@@ -6,4 +6,5 @@ TryExec=fvwm
 Name=FVWM
 Name[x-test]=xxFVWMxx
 Comment=A powerful ICCCM-compliant multiple virtual desktop window manager
+Comment[fr]=Un gestionnaire de fenêtres puissant compatible ICCCM avec gestion de bureaux virtuels multiples
 Comment[x-test]=xxA powerful ICCCM-compliant multiple virtual desktop window managerxx

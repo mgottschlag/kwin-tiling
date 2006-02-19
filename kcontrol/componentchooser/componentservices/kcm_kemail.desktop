@@ -1,5 +1,7 @@
 Name=Email Client
+Name[fr]=Client de courrier
 Name[x-test]=xxEmail Clientxx
 Comment=This service allows you to configure your default email client. All KDE applications which need access to an email client application should honor this setting.
+Comment[fr]=Ce service vous permet de configurer votre client de courrier par défaut. Toutes les applications KDE qui ont besoin d'accéder à un client de courrier électronique doivent accepter ce réglage.
 Comment[x-test]=xxThis service allows you to configure your default email client. All KDE applications which need access to an email client application should honor this setting.xx
 configurationType=internal_email

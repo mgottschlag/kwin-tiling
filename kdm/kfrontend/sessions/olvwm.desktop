@@ -6,4 +6,5 @@ TryExec=
 Name=OLVWM
 Name[x-test]=xxOLVWMxx
 Comment=The OpenLook Virtual Window Manager. OLWM enhanced for handling of virtual desktops
+Comment[fr]=The OpenLook Virtual Window Manager. OLWM avec en plus la gestion des bureaux virtuels
 Comment[x-test]=xxThe OpenLook Virtual Window Manager. OLWM enhanced for handling of virtual desktopsxx

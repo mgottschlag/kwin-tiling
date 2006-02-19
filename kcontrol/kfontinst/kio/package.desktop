@@ -5,6 +5,7 @@ MimeType=fonts/package
 Icon=font
 Patterns=*.fonts.tar.gz
 Comment=Fonts Package
+Comment[fr]=Paquet de polices
 Comment[x-test]=xxFonts Packagexx
 
 [Property::X-KDE-LocalProtocol]

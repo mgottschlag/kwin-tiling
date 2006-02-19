@@ -2,5 +2,6 @@
 Encoding=UTF-8
 Type=Directory
 Name=Security & Privacy
+Name[fr]=Sécurité et confidentialité
 Name[x-test]=xxSecurity & Privacyxx
 Icon=password

@@ -6,4 +6,5 @@ TryExec=asclassic
 Name=ASClassic
 Name[x-test]=xxASClassicxx
 Comment=AfterStep Classic, a window manager based on AfterStep v1.1
+Comment[fr]=AfterStep Classic, un gestionnaire de fenêtres basé sur AfterStep v1.1
 Comment[x-test]=xxAfterStep Classic, a window manager based on AfterStep v1.1xx

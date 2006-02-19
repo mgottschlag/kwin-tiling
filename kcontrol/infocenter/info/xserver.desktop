@@ -11,12 +11,15 @@ X-KDE-FactoryName=xserver
 X-KDE-ParentApp=kinfocenter
 
 Name=X-Server
+Name[fr]=Serveur X
 Name[x-test]=xxX-Serverxx
 
 Comment=X-Server information
+Comment[fr]=Informations sur le serveur X
 Comment[x-test]=xxX-Server informationxx
 
 Keywords=X,X-Server,XServer,XFree86,Display,VideoCard,System Information
+Keywords[fr]=X,serveur X,XFree86,XServer,moniteur,affichage,informations système,xfree,carte vidéo,carte graphique
 Keywords[x-test]=xxX,X-Server,XServer,XFree86,Display,VideoCard,System Informationxx
 
 Categories=Qt;KDE;X-KDE-information;

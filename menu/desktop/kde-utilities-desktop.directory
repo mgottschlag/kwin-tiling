@@ -2,7 +2,9 @@
 Encoding=UTF-8
 Type=Directory
 Name=Desktop
+Name[fr]=Bureau
 Name[x-test]=xxDesktopxx
 Icon=desktop
 Comment=Desktop
+Comment[fr]=Bureau
 Comment[x-test]=xxDesktopxx

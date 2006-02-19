@@ -2,5 +2,6 @@
 Encoding=UTF-8
 Type=Directory
 Name=Appearance & Themes
+Name[fr]=Apparence et thèmes
 Name[x-test]=xxAppearance & Themesxx
 Icon=looknfeel

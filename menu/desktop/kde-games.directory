@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Directory
 Name=Games
+Name[fr]=Jeux
 Name[x-test]=xxGamesxx
 Icon=package_games
 

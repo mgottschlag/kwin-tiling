@@ -1,5 +1,6 @@
 [KDE Desktop Program]
 Comment=KDE Web Desktop
+Comment[fr]=Bureau web de KDE
 Comment[x-test]=xxKDE Web Desktopxx
 Executable=kwebdesktop
 Command=kwebdesktop %x %y %f http://www.kde.org/

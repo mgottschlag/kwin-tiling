@@ -6,4 +6,5 @@ TryExec=startfluxbox
 Name=Fluxbox
 Name[x-test]=xxFluxboxxx
 Comment=A highly configurable and low resource window manager based on Blackbox
+Comment[fr]=Un gestionnaire de fenêtres très configurable et utilisant peu de ressources, basé sur Blackbox
 Comment[x-test]=xxA highly configurable and low resource window manager based on Blackboxxx

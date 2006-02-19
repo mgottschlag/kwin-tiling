@@ -11,8 +11,11 @@ X-KDE-FactoryName=kicker_appearance
 X-KDE-ParentApp=kicker
 
 Name=Appearance
+Name[fr]=Apparence
 Name[x-test]=xxAppearancexx
 Comment=You can configure the appearance of the panel here
+Comment[fr]=Configuration de l'apparence du tableau de bord
 Comment[x-test]=xxYou can configure the appearance of the panel herexx
 Keywords=kicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming icons
+Keywords[fr]=kicker,tableau de bord,barre du bas,barre des tâches,barre de démarrage,barre de lancement,emplacement,taille,auto-masquage,cacher,masquer,boutons,animation,fond,arrière-plan,thème,cache de menu,cache,caché,menu K,K,signets,documents récents,document récent,navigateur rapide,navigateur,menu,icône,mosaïque,applet,démarrage,surbrillance,poignée,poignées,zoom,zoom sur les icônes
 Keywords[x-test]=xxkicker,panel,kpanel,taskbar,startbar,launchbar,location,size,auto hide,hide,buttons,animation,background,themes,menu cache,cache,hidden,K-Menu,bookmarks,recent documents,quickbrowser,browser menu,menu,icons,tiles,applets,startup,highlight,handles,zooming iconsxx

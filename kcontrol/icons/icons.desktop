@@ -11,12 +11,15 @@ X-KDE-FactoryName=icons
 X-KDE-ParentApp=kcontrol
 
 Name=Icons
+Name[fr]=Icônes
 Name[x-test]=xxIconsxx
 
 Comment=Customize KDE Icons
+Comment[fr]=Personnalisation des icônes de KDE
 Comment[x-test]=xxCustomize KDE Iconsxx
 
 Keywords=icons,effects,size,hicolor,locolor
+Keywords[fr]=icônes,effets,taille,hicolor,locolor,coloré
 Keywords[x-test]=xxicons,effects,size,hicolor,locolorxx
 
 Categories=Qt;KDE;X-KDE-settings-looknfeel;
