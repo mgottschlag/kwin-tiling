@@ -202,7 +202,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   QGridLayout *lay = new QGridLayout(this, 7, 2,
 				     KDialog::marginHint(),
 				     KDialog::spacingHint());
-  lay->setAutoAdd(TRUE);
+  lay->setAutoAdd(true);
 
   m_labCalendarSystem = new QLabel(this, I18N_NOOP("Calendar system:"));
   m_comboCalendarSystem = new QComboBox(false, this);

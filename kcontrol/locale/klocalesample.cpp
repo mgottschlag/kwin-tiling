@@ -42,7 +42,7 @@ KLocaleSample::KLocaleSample(KLocale *locale,
     m_locale(locale)
 {
   QGridLayout *lay = new QGridLayout(this, 5, 2);
-  lay->setAutoAdd(TRUE);
+  lay->setAutoAdd(true);
 
   // Whatever the color scheme is, we want black text
   QColorGroup a = palette().active();

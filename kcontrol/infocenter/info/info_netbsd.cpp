@@ -24,8 +24,8 @@
 
 
 /*
- * all following functions should return TRUE, when the Information
- * was filled into the lBox-Widget. Returning FALSE indicates that
+ * all following functions should return true, when the Information
+ * was filled into the lBox-Widget. Returning false indicates that
  * information was not available.
  */
 
@@ -180,7 +180,7 @@ bool GetInfo_IRQ (QListView *lBox)
 	lBox->addColumn(i18n("IRQ"));
 	lBox->addColumn(i18n("Device"));
 	lBox->setSorting(0);
-	lBox->setShowSortIndicator(FALSE);
+	lBox->setShowSortIndicator(false);
 	(void) GetDmesgInfo(lBox, " irq ", AddIRQLine);
 	return true;
 }

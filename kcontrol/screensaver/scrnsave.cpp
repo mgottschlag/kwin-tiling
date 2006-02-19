@@ -822,7 +822,7 @@ void KScreenSaver::slotTest()
 	grabMouse();
 	grabKeyboard();
 
-        mTestBt->setEnabled( FALSE );
+        mTestBt->setEnabled( false );
 	mPreviewProc->kill();
 
         while (!ts.atEnd())

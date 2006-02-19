@@ -24,8 +24,8 @@
 
 
 /*
- * all following functions should return TRUE, when the Information
- * was filled into the lBox-Widget. Returning FALSE indicates that
+ * all following functions should return true, when the Information
+ * was filled into the lBox-Widget. Returning false indicates that
  * information was not available.
  */
 

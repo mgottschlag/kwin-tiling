@@ -63,7 +63,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char* /*name*/,
 
   m_locale = new KLocale(QLatin1String("kcmlocale"), m_nullConfig);
   QVBoxLayout *l = new QVBoxLayout(this, 0, KDialog::spacingHint());
-  l->setAutoAdd(TRUE);
+  l->setAutoAdd(true);
 
   m_tab = new QTabWidget(this);
 

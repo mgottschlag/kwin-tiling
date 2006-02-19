@@ -43,7 +43,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
   QGridLayout *lay = new QGridLayout(this, 5, 2,
 				     KDialog::marginHint(),
 				     KDialog::spacingHint());
-  lay->setAutoAdd(TRUE);
+  lay->setAutoAdd(true);
 
   m_labDecSym = new QLabel(this, I18N_NOOP("&Decimal symbol:"));
   m_edDecSym = new QLineEdit(this);

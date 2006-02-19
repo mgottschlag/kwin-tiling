@@ -68,18 +68,18 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
 
     if ( mouseCapabilityFlags & HAS_RES ) {
         updateResolution();
-        resolutionSelector->setEnabled( TRUE );
+        resolutionSelector->setEnabled( true );
 
         connect( button400cpi, SIGNAL( clicked() ), parent, SLOT( changed() ) );
         connect( button800cpi, SIGNAL( clicked() ), parent, SLOT( changed() ) );
 
         if ( 4 == resolution() ) {
-            button800cpi->setChecked( TRUE );
+            button800cpi->setChecked( true );
         } else if ( 3 == resolution() ) {
-            button400cpi->setChecked( TRUE );
+            button400cpi->setChecked( true );
         } else {
             // it must have failed, try to help out
-            resolutionSelector->setEnabled(FALSE);
+            resolutionSelector->setEnabled(false);
             permissionProblemText->show();
         }
     }
@@ -90,20 +90,20 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
 
         // Do a name
         cordlessNameLabel->setText( i18n("Mouse type: %1").arg( cordlessName() ) );
-        cordlessNameLabel->setEnabled( TRUE );
+        cordlessNameLabel->setEnabled( true );
 
         // Display the battery power level - the level gets updated in updateGUI()
-        batteryBox->setEnabled( TRUE );
+        batteryBox->setEnabled( true );
 
         // Channel
-        channelSelector->setEnabled( TRUE );
+        channelSelector->setEnabled( true );
         // if the channel is changed, we need to turn off the timer, otherwise it
         // just resets the button to reflect the current status. The timer is
         // started again when we applyChanges()
         connect( channel1, SIGNAL( clicked() ), this, SLOT( stopTimerForNow() ) );
         connect( channel1, SIGNAL( clicked() ), parent, SLOT( changed() ) );
         if ( isDualChannelCapable() ) {
-            channel2->setEnabled( TRUE );
+            channel2->setEnabled( true );
             connect( channel2, SIGNAL( clicked() ), this, SLOT( stopTimerForNow() ) );
             connect( channel2, SIGNAL( clicked() ), parent, SLOT( changed() ) );
         }
@@ -140,8 +140,8 @@ void LogitechMouse::updateCordlessStatus()
 
     if (0 > result) {
         // We probably have a permission problem
-        channelSelector->setEnabled( FALSE );
-        batteryBox->setEnabled( FALSE );
+        channelSelector->setEnabled( false );
+        batteryBox->setEnabled( false );
         cordlessNameLabel->hide();
         permissionProblemText->show();
     } else {
@@ -194,9 +194,9 @@ void LogitechMouse::updateGUI()
 
     if ( isDualChannelCapable() ) {
         if ( 2 == channel() ) {
-            channel2->setChecked( TRUE );
+            channel2->setChecked( true );
         } else if ( 1 == channel() ) {
-            channel1->setChecked( TRUE );
+            channel1->setChecked( true );
         } // else it might have failed - we don't do anything
     }
 }

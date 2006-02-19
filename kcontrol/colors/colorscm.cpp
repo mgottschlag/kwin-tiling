@@ -170,7 +170,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
        " prompted for a name.") );
 
     removeBt = new QPushButton(i18n("R&emove Scheme"), group);
-    removeBt->setEnabled(FALSE);
+    removeBt->setEnabled(false);
     connect(removeBt, SIGNAL(clicked()), SLOT(slotRemove()));
 
     QWhatsThis::add( removeBt, i18n("Press this button to remove the selected"

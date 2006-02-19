@@ -265,7 +265,7 @@ struct model _4C_models[] =
 };
 
 
-/*  all GetInfo_ functions should return TRUE, when the Information 
+/*  all GetInfo_ functions should return true, when the Information 
     was filled into the lBox-Widget.
     returning false indicates, that information was not available.
 */

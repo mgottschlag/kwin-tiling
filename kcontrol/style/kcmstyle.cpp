@@ -172,12 +172,12 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 
 	cbStyle = new KComboBox( gbWidgetStyle );
         cbStyle->setObjectName( "cbStyle" );
-	cbStyle->setEditable( FALSE );
+	cbStyle->setEditable( false );
 	hbLayout->addWidget( cbStyle );
 
 	pbConfigStyle = new QPushButton( i18n("Con&figure..."), gbWidgetStyle );
 	pbConfigStyle->setSizePolicy( QSizePolicy::Maximum, QSizePolicy::Minimum );
-	pbConfigStyle->setEnabled( FALSE );
+	pbConfigStyle->setEnabled( false );
 	hbLayout->addWidget( pbConfigStyle );
 
 	gbWidgetStyleLayout->addLayout( hbLayout );
@@ -219,7 +219,7 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	containerLayout = new QGridLayout( containerFrame, 1, 1,	// rows, columns
 		KDialog::marginHint(), KDialog::spacingHint() );
 
-	comboComboEffect = new QComboBox( FALSE, containerFrame );
+	comboComboEffect = new QComboBox( false, containerFrame );
 	comboComboEffect->insertItem( i18n("Disable") );
 	comboComboEffect->insertItem( i18n("Animate") );
 	lblComboEffect = new QLabel( i18n("Combobo&x effect:"), containerFrame );
@@ -227,7 +227,7 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	containerLayout->addWidget( lblComboEffect, 0, 0 );
 	containerLayout->addWidget( comboComboEffect, 0, 1 );
 
-	comboTooltipEffect = new QComboBox( FALSE, containerFrame );
+	comboTooltipEffect = new QComboBox( false, containerFrame );
 	comboTooltipEffect->insertItem( i18n("Disable") );
 	comboTooltipEffect->insertItem( i18n("Animate") );
 	comboTooltipEffect->insertItem( i18n("Fade") );
@@ -236,7 +236,7 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	containerLayout->addWidget( lblTooltipEffect, 1, 0 );
 	containerLayout->addWidget( comboTooltipEffect, 1, 1 );
 
-	comboMenuEffect = new QComboBox( FALSE, containerFrame );
+	comboMenuEffect = new QComboBox( false, containerFrame );
 	comboMenuEffect->insertItem( i18n("Disable") );
 	comboMenuEffect->insertItem( i18n("Animate") );
 	comboMenuEffect->insertItem( i18n("Fade") );
@@ -246,7 +246,7 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	containerLayout->addWidget( lblMenuEffect, 2, 0 );
 	containerLayout->addWidget( comboMenuEffect, 2, 1 );
 
-	comboMenuHandle = new QComboBox( FALSE, containerFrame );
+	comboMenuHandle = new QComboBox( false, containerFrame );
 	comboMenuHandle->insertItem( i18n("Disable") );
 	comboMenuHandle->insertItem( i18n("Application Level") );
 //	comboMenuHandle->insertItem( i18n("Enable") );
@@ -275,7 +275,7 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 
 	menuPreview = new MenuPreview( menuContainer, /* opacity */ 90, MenuPreview::Blend );
 
-	comboMenuEffectType = new QComboBox( FALSE, menuContainer );
+	comboMenuEffectType = new QComboBox( false, menuContainer );
 	comboMenuEffectType->insertItem( i18n("Software Tint") );
 	comboMenuEffectType->insertItem( i18n("Software Blend") );
 #ifdef HAVE_XRENDER
@@ -338,7 +338,7 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 
 	QHBoxLayout* box2 = new QHBoxLayout( dummy, 0, KDialog::spacingHint() );
 	lbl = new QLabel( i18n("Text pos&ition:"), dummy );
-	comboToolbarIcons = new QComboBox( FALSE, dummy );
+	comboToolbarIcons = new QComboBox( false, dummy );
 	comboToolbarIcons->insertItem( i18n("Icons Only") );
 	comboToolbarIcons->insertItem( i18n("Text Only") );
 	comboToolbarIcons->insertItem( i18n("Text Alongside Icons") );
@@ -662,11 +662,11 @@ bool KCMStyle::findStyle( const QString& str, int& combobox_item )
 		if ( cbStyle->text(i) == name )
 		{
 			combobox_item = i;
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 

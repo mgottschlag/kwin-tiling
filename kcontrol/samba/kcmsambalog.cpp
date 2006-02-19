@@ -91,7 +91,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
 
    logFileName.setURL("/var/log/samba.log");
 
-   viewHistory.setAllColumnsShowFocus(TRUE);
+   viewHistory.setAllColumnsShowFocus(true);
    viewHistory.setFocusPolicy(Qt::ClickFocus);
    viewHistory.setShowSortIndicator(true);
 
@@ -109,10 +109,10 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
      " If the list is empty, try clicking the \"Update\" button. The samba"
      " log file will be read and the list refreshed.") );
 
-   showConnOpen.setChecked(TRUE);
-   showConnClose.setChecked(TRUE);
-   showFileOpen.setChecked(FALSE);
-   showFileClose.setChecked(FALSE);
+   showConnOpen.setChecked(true);
+   showConnClose.setChecked(true);
+   showFileOpen.setChecked(false);
+   showFileClose.setChecked(false);
 
    connect(&updateButton,SIGNAL(clicked()),this,SLOT(updateList()));
    emit contentsChanged(&viewHistory,0,0);

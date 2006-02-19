@@ -50,7 +50,7 @@ class LogItem
   LogItem():name(""), accessed(),count(0) {};
   LogItem(QString n, QString a):name(n), accessed(), count(1)
 	{
-	  accessed.setAutoDelete(TRUE);
+	  accessed.setAutoDelete(true);
 	  accessed.append(new SmallLogItem(a));
 	};
   QString name;
@@ -66,7 +66,7 @@ class SambaLog
  public:
   SambaLog()
 	{
-	  items.setAutoDelete(TRUE);
+	  items.setAutoDelete(true);
 	};
   Q3PtrList<LogItem> items;
   void addItem (QString share, QString host);

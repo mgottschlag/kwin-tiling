@@ -60,7 +60,7 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
   expandedInfoCb = new QCheckBox( i18n( "Show expanded service info" ), this );
   expandedUserCb = new QCheckBox( i18n( "Show expanded host info" ), this );
 
-   viewStatistics->setAllColumnsShowFocus(TRUE);
+   viewStatistics->setAllColumnsShowFocus(true);
    viewStatistics->setFocusPolicy(Qt::ClickFocus);
    viewStatistics->setShowSortIndicator(true);
    
@@ -74,8 +74,8 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    eventCb->insertItem(i18n("Connection"));
    eventCb->insertItem(i18n("File Access"));
    
-   expandedInfoCb->setChecked(FALSE);
-   expandedUserCb->setChecked(FALSE);
+   expandedInfoCb->setChecked(false);
+   expandedUserCb->setChecked(false);
    clearStatistics();
    serviceLe->setText("*");
    hostLe->setText("*");
@@ -143,8 +143,8 @@ void StatisticsView::calculate()
    if ((expandedInfoCb->isChecked()) || (expandedUserCb->isChecked()))
    {
       SambaLog sLog;
-      QRegExp rService(serviceLe->text(),FALSE,TRUE);
-      QRegExp rHost(hostLe->text(),FALSE,TRUE);
+      QRegExp rService(serviceLe->text(),false,true);
+      QRegExp rHost(hostLe->text(),false,true);
       QString item2, item3;
       Q3ListViewItem* item=dataList->firstChild();
       while (item!=0)
@@ -195,8 +195,8 @@ void StatisticsView::calculate()
    {
       calcCount++;
       int count(0);
-      QRegExp rService(serviceLe->text(),FALSE,TRUE);
-      QRegExp rHost(hostLe->text(),FALSE,TRUE);
+      QRegExp rService(serviceLe->text(),false,true);
+      QRegExp rHost(hostLe->text(),false,true);
       Q3ListViewItem* item=dataList->firstChild();
       while (item!=0)
       {

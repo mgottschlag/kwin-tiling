@@ -45,7 +45,7 @@ Q_SIGNALS:
 	void zoneChanged(bool);
 
 protected Q_SLOTS:
-  void handleZoneChange() {emit zoneChanged( TRUE );}
+  void handleZoneChange() {emit zoneChanged( true );}
 
 private:
   void currentZone();

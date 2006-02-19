@@ -57,11 +57,11 @@ bool StylePreview::eventFilter( QObject* /* obj */, QEvent* ev )
         case QEvent::Leave:
         case QEvent::Wheel:
         case QEvent::ContextMenu:
-            return TRUE; // ignore
+            return true; // ignore
         default:
             break;
     }
-    return FALSE;
+    return false;
 }
 
 // vim: set noet ts=4:

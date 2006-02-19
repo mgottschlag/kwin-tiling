@@ -128,7 +128,7 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   QWhatsThis::add(addBt, i18n("Click here to add a new key bindings scheme. You will be prompted for a name."));
 
   removeBt = new QPushButton(  i18n("&Remove Scheme"), this );
-  removeBt->setEnabled(FALSE);
+  removeBt->setEnabled(false);
   connect( removeBt, SIGNAL( clicked() ), SLOT( slotRemove() ) );
   QWhatsThis::add( removeBt, i18n("Click here to remove the selected key bindings scheme. You can not"
     " remove the standard system wide schemes, 'Current scheme' and 'KDE default'.") );
@@ -303,7 +303,7 @@ void KKeyModule::readScheme( int index )
 
   do {
 
-    nameValid = TRUE;
+    nameValid = true;
 
     if ( ss.exec() ) {
       sName = ss.nameLine->text();
@@ -354,7 +354,7 @@ void KKeyModule::readScheme( int index )
       }
     } else return;
 
-  } while ( nameValid == FALSE );
+  } while ( nameValid == false );
 
   disconnect( sList, SIGNAL( highlighted( int ) ), this,
               SLOT( slotPreviewScheme( int ) ) );
@@ -418,9 +418,9 @@ void KKeyModule::readScheme( int index )
   if ( indx < nSysSchemes ||
        (*sFileList->at(indx)).contains( "/global-" ) ||
        (*sFileList->at(indx)).contains( "/app-" ) ) {
-    removeBt->setEnabled( FALSE );
+    removeBt->setEnabled( false );
   } else {
-    removeBt->setEnabled( TRUE );
+    removeBt->setEnabled( true );
   }
 }*/
 
