@@ -153,8 +153,7 @@ void BGMultiWallpaperDialog::slotAdd()
 #endif
 
     KFileDialog fileDialog(KGlobal::dirs()->findDirs("wallpaper", "").first(),
-			   mimeTypes.join( " " ), this,
-			   0L, true);
+			   mimeTypes.join( " " ), this);
 
     fileDialog.setCaption(i18n("Select Image"));
     KFile::Mode mode = static_cast<KFile::Mode> (KFile::Files |
