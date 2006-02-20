@@ -247,7 +247,7 @@ void BGDialog::defaults()
    m_pGlobals->setCommonBackground(_defCommon);
    m_pGlobals->setLimitCache(_defLimitCache);
    m_pGlobals->setCacheSize(_defCacheSize);
-   m_comboWallpaperPos->setCurrentItem( 0 );
+   m_comboWallpaperPos->setCurrentIndex( 0 );
    m_eDesk = _defCommon ? 0 : m_Desk;
 
    KBackgroundRenderer *r = m_Renderer[m_eDesk];
@@ -482,11 +482,11 @@ void BGDialog::setWallpaper(const QString &s)
       }
       comboWallpaper->insertItem(KStringHandler::rEmSqueeze(imageCaption, m_urlWallpaperBox->fontMetrics(), 11));
       m_Wallpaper[s] = i;
-      comboWallpaper->setCurrentItem(i);
+      comboWallpaper->setCurrentIndex(i);
    }
    else
    {
-      comboWallpaper->setCurrentItem(m_Wallpaper[s]);
+      comboWallpaper->setCurrentIndex(m_Wallpaper[s]);
    }
    comboWallpaper->blockSignals(false);
 }
@@ -539,7 +539,7 @@ void BGDialog::slotWallpaperSelection()
 void BGDialog::updateUI()
 {
    KBackgroundRenderer *r = m_Renderer[m_eDesk];
-   m_comboDesktop->setCurrentItem(m_eDesk);
+   m_comboDesktop->setCurrentIndex(m_eDesk);
 
    m_colorPrimary->setColor(r->colorA());
    m_colorSecondary->setColor(r->colorB());
@@ -594,13 +594,13 @@ void BGDialog::updateUI()
       m_buttonGroupBackground->id(m_radioSlideShow) );
    }
 
-   m_comboWallpaperPos->setCurrentItem(r->wallpaperMode()-1);
+   m_comboWallpaperPos->setCurrentIndex(r->wallpaperMode()-1);
 
    bool bSecondaryEnabled = true;
    m_comboPattern->blockSignals(true);
    switch (r->backgroundMode()) {
      case KBackgroundSettings::Flat:
-        m_comboPattern->setCurrentItem(0);
+        m_comboPattern->setCurrentIndex(0);
         bSecondaryEnabled = false;
         break;
 
@@ -608,19 +608,19 @@ void BGDialog::updateUI()
         {
            int i = m_Patterns.findIndex(r->KBackgroundPattern::name());
            if (i >= 0)
-              m_comboPattern->setCurrentItem(NR_PREDEF_PATTERNS+i);
+              m_comboPattern->setCurrentIndex(NR_PREDEF_PATTERNS+i);
            else
-              m_comboPattern->setCurrentItem(0);
+              m_comboPattern->setCurrentIndex(0);
         }
         break;
 
      case KBackgroundSettings::Program:
-        m_comboPattern->setCurrentItem(0);
+        m_comboPattern->setCurrentIndex(0);
         bSecondaryEnabled = false;
         break;
 
      default: // Gradient
-        m_comboPattern->setCurrentItem(
+        m_comboPattern->setCurrentIndex(
            1 + r->backgroundMode() - KBackgroundSettings::HorizontalGradient);
         break;
     }
@@ -633,7 +633,7 @@ void BGDialog::updateUI()
     m_comboBlend->blockSignals(true);
     m_sliderBlend->blockSignals(true);
 
-    m_comboBlend->setCurrentItem(mode);
+    m_comboBlend->setCurrentIndex(mode);
     m_cbBlendReverse->setChecked(r->reverseBlending());
     m_sliderBlend->setValue( r->blendBalance() / 10 );
 
@@ -714,7 +714,7 @@ void BGDialog::slotWallpaperTypeChanged(int i)
       setBlendingEnabled(true);
 
       m_comboWallpaperPos->blockSignals(true);
-      m_comboWallpaperPos->setCurrentItem(m_wallpaperPos-1);
+      m_comboWallpaperPos->setCurrentIndex(m_wallpaperPos-1);
       m_comboWallpaperPos->blockSignals(false);
 
       if (r->wallpaperList().count() == 0)
@@ -748,7 +748,7 @@ void BGDialog::slotWallpaperTypeChanged(int i)
           it != m_Wallpaper.end();
           ++it)
       {
-         if (it.data() == j)
+         if (it.value() == j)
          {
             uri = it.key();
             break;
@@ -770,7 +770,7 @@ void BGDialog::slotWallpaperTypeChanged(int i)
 
       r->setWallpaperMode(m_wallpaperPos);
       m_comboWallpaperPos->blockSignals(true);
-      m_comboWallpaperPos->setCurrentItem(m_wallpaperPos-1);
+      m_comboWallpaperPos->setCurrentIndex(m_wallpaperPos-1);
       m_comboWallpaperPos->blockSignals(false);
 
       r->setWallpaper(uri);
