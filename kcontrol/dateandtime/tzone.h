@@ -49,7 +49,7 @@ protected Q_SLOTS:
 
 private:
   void currentZone();
-  KTimezones m_zoneDb;
+  KTimeZones m_zoneDb;
   QLabel *m_local;
   KTimezoneWidget *tzonelist;
 };

@@ -340,7 +340,7 @@ void KDMAppearanceWidget::slotLogoButtonClicked()
 {
     KFileDialog dialogue(locate("data", QLatin1String("kdm/pics/")),
 			 KImageIO::pattern( KImageIO::Reading ),
-			 this, 0, true);
+			 this);
     dialogue.setOperationMode( KFileDialog::Opening );
     dialogue.setMode( KFile::File | KFile::LocalOnly );
 

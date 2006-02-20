@@ -312,7 +312,7 @@ void KDMUsersWidget::slotUserButtonClicked()
     KFileDialog dlg(m_notFirst ? QString() :
 	KGlobal::dirs()->resourceDirs("data").last() + "kdm/pics/users",
                     KImageIO::pattern( KImageIO::Reading ),
-                    this, 0, true);
+                    this);
     dlg.setOperationMode( KFileDialog::Opening );
     dlg.setCaption( i18n("Choose Image") );
     dlg.setMode( KFile::File | KFile::LocalOnly );

@@ -74,7 +74,7 @@ void Tzone::load()
     currentZone();
 
     // read the currently set time zone
-    tzonelist->setSelected(KSystemTimezones::local()->name(), true);
+    tzonelist->setSelected(KSystemTimeZones::local()->name(), true);
 }
 
 void Tzone::currentZone()
@@ -85,7 +85,7 @@ void Tzone::currentZone()
     time_t now = time(0);
     tzset();
     strftime(result.data(), result.size(), "%Z", localtime(&now));
-    m_local->setText(localZone.arg(KTimezoneWidget::displayName(KSystemTimezones::local())).arg(QLatin1String(result)));
+    m_local->setText(localZone.arg(KTimezoneWidget::displayName(KSystemTimeZones::local())).arg(QLatin1String(result)));
 }
 
 // FIXME: Does the logic in this routine actually work correctly? For example,
