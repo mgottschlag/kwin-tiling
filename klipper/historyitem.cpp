@@ -48,7 +48,7 @@ HistoryItem* HistoryItem::create( const QMimeSource& aSource )
     }
 #endif
     if( K3URLDrag::canDecode( &aSource )) {
-        KURL::List urls;
+        KUrl::List urls;
         QMap<QString,QString> metaData;
         if( K3URLDrag::decode( &aSource, urls, metaData )) {
             // this is from KonqDrag (libkonq)
@@ -77,7 +77,7 @@ HistoryItem* HistoryItem::create( QDataStream& aSource ) {
     QString type;
     aSource >> type;
     if ( type == "url" ) {
-        KURL::List urls;
+        KUrl::List urls;
         QMap< QString, QString > metaData;
         int cut;
         aSource >> urls;

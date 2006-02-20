@@ -23,7 +23,7 @@
 #include <k3urldrag.h>
 #include <q3cstring.h>
 
-HistoryURLItem::HistoryURLItem( const KURL::List &_urls, QMap<QString, QString> _metaData, bool _cut )
+HistoryURLItem::HistoryURLItem( const KUrl::List &_urls, QMap<QString, QString> _metaData, bool _cut )
     : urls( _urls ), metaData( _metaData ), cut( _cut )
 {
 }
