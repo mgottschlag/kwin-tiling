@@ -90,6 +90,7 @@ if test "$KFI_FOUND_FREETYPE" -eq 1; then
             *-*-freebsd*) UNAME='FreeBSD' ;;
             *-*-kfreebsd*-gnu) UNAME='GNU/kFreeBSD' ;;
             *-*-netbsd*) UNAME='NetBSD' ;;
+            *-*-openbsd*) UNAME='OpenBSD' ;;
             *-*-solaris*) UNAME='Solaris' ;;
             *-*-irix*) UNAME='Irix' ;;
             *-*-aix*) UNAME='AIX' ;;

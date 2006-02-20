@@ -55,6 +55,7 @@
         Linux         Tested on Linux 2.4
         FreeBSD       Tested on FreeBSD 5.1 by Brian Ledbetter <brian@shadowcom.net>
         NetBSD
+        OpenBSD
         Irix
         Solaris       Tested on Solaris 8 x86 by Torsten Kasch <tk@Genetik.Uni-Bielefeld.DE>
         HP-UX         Tested on HP-UX B.11.11 U 9000/800
@@ -160,7 +161,7 @@ unsigned int kfi_getPid(const char *proc, unsigned int ppid)
     return error ? 0 : pid;
 }
 
-#elif defined OS_FreeBSD || defined OS_NetBSD || defined __FreeBSD__ || defined __NetBSD__ || defined OS_Darwin
+#elif defined OS_FreeBSD || defined OS_NetBSD || defined __FreeBSD__ || defined __NetBSD__ || defined OS_Darwin || defined OS_OpenBSD || defined __OpenBSD__
 
 #include <ctype.h>
 #include <dirent.h>
