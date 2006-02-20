@@ -479,7 +479,7 @@ private:
 /**
  * Provids a drag object for tasks across desktops.
  * FIXME: should be folded into the Task class the same way it has been with
- *        AppletInfo and KURL
+ *        AppletInfo and KUrl
  */
 class KDE_EXPORT TaskDrag : public QDrag
 {
