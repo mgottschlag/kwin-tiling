@@ -233,7 +233,7 @@ void testLocalInstallation()
 
         stream.setVersion(QDataStream::Qt_3_1);
         stream << (int)2;
-        KIO::Job* job = KIO::special( "trash:/", packedArgs );
+        KIO::Job* job = KIO::special( KUrl("trash:/"), packedArgs );
         (void)KIO::NetAccess::synchronousRun( job, 0 );
 
         // OK the only thing missing is to convert the icon position...
