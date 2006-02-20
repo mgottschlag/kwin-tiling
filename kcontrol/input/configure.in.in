@@ -1,5 +1,5 @@
 AC_ARG_WITH(libusb,
-    [AS_HELP_STRING(--with-libusb,
+    [AC_HELP_STRING(--with-libusb,
         [enable control of some mouse models through libusb @<:@default=check@:>@])],
     [], with_libusb=check)
 

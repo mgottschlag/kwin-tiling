@@ -1,5 +1,5 @@
 AC_ARG_WITH(libraw1394,
-  [AS_HELP_STRING(--with-libraw1394,
+  [AC_HELP_STRING(--with-libraw1394,
     [enable visualization of ieee1394 devices through libraw1394 @<:@default=check@:>@])],
   [], with_libraw1394=check)
 
