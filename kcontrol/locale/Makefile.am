@@ -25,7 +25,7 @@ timezones:
 	
 
 messages:
-	$(XGETTEXT) -ktranslate $(kcm_locale_la_SOURCES) -o $(podir)/kcmlocale.pot
+	$(XGETTEXT) -ktranslate:1,1t -ktranslate:1c,2,2t *.cpp -o $(podir)/kcmlocale.pot
 	$(XGETTEXT) TIMEZONES -o $(podir)/../kdelibs/timezones.pot
 
 xdg_apps_DATA = language.desktop

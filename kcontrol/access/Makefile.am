@@ -25,8 +25,9 @@ servicesdir = $(kde_servicesdir)
 eventsrcdir = $(kde_datadir)/kaccess/
 eventsrc_DATA = eventsrc
 
+### TODO: why do we need 2 POT files for a single directory?
 messages:
-	$(XGETTEXT) $(kaccess_la_SOURCES) -o $(podir)/kaccess.pot
-	$(XGETTEXT) $(kcm_access_la_SOURCES) -o $(podir)/kcmaccess.pot
+	$(XGETTEXT) kaccess.cpp main.cpp -o $(podir)/kaccess.pot
+	$(XGETTEXT) kcm_access.cpp -o $(podir)/kcmaccess.pot
 
 KDE_ICON=AUTO
