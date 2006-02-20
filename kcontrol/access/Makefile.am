@@ -28,6 +28,6 @@ eventsrc_DATA = eventsrc
 ### TODO: why do we need 2 POT files for a single directory?
 messages:
 	$(XGETTEXT) kaccess.cpp main.cpp -o $(podir)/kaccess.pot
-	$(XGETTEXT) kcm_access.cpp -o $(podir)/kcmaccess.pot
+	$(XGETTEXT) kcmaccess.cpp -o $(podir)/kcmaccess.pot
 
 KDE_ICON=AUTO
