@@ -8,5 +8,4 @@ xdg_apps_DATA = kcm_kdnssd.desktop
 kcm_kdnssd_la_LIBADD = $(LIB_KDNSSD) $(LIB_KDEUI)
 
 messages: rc.cpp
-	$(EXTRACTRC) *.ui *.rc >> rc.cpp
-	$(XGETTEXT) $(kcm_kdnssd_la_SOURCES) rc.cpp -o $(podir)/kcmkdnssd.pot
+	$(XGETTEXT) *.cpp *.h -o $(podir)/kcmkdnssd.pot
