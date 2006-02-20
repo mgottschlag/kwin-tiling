@@ -235,7 +235,7 @@ bool GetInfo_Sound (QListView *lbox)
 		if ((pos = s.find("at ")) >= 0) {
 			pos += 3;	// skip "at "
 			start = end = s.ascii();
-			for(; (*end!=':') && (*end!='\n'); end++);
+			for(; *end && (*end!=':') && (*end!='\n'); end++);
 			len = end - start;
 			dev = (char *) malloc(len + 1);
 			strncpy(dev, start, len);
