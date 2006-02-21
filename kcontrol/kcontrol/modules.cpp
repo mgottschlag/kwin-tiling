@@ -76,7 +76,7 @@ ProxyWidget *ConfigModule::module()
   if (run_as_root && isHiddenByDefault()) // no need for an own instance
       modWidget = new KCRootOnly(KGlobal::instance(), 0);
   else
-      modWidget = KCModuleLoader::loadModule(*this);
+      modWidget = KCModuleLoader::loadModule(*this,/*KCModuleLoader::None*/(KCModuleLoader::ErrorReporting)0);
 
   if (modWidget)
     {
