@@ -226,7 +226,7 @@ KMemoryWidget::KMemoryWidget(KInstance *inst,QWidget * parent)
 			"through one or more swap partitions and/or swap files.");
 	    break;
 	default:
-	    hint = title.clear(); 
+	    hint = title = QString(); 
 	    break;
 	};
 

@@ -25,4 +25,4 @@ SUBDIRS = applnk bell background samba krdb input kdm \
 	pics $(ACCESS_SUBDIR) colors energy fonts \
 	icons screensaver crypto smserver keys \
 	$(KSMCARD_SUBDIR) $(FONTINST_SUBDIR) $(RANDR_SUBDIR) \
-	componentchooser xinerama kthememanager hardware accessibility
+	componentchooser xinerama kthememanager hardware accessibility infocenter
