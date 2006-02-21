@@ -151,7 +151,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     itsDirOp = new KDirOperator(Misc::root() ? QString("fonts:/") : QString("fonts:/")+i18n(KFI_KIO_FONTS_USER),
                                 fontsFrame);
-    itsDirOp->setViewConfig(&itsConfig, "ListView Settings");
+	KConfigGroup confGroup(&itsConfig, "ListView Settings");
+    itsDirOp->setViewConfig(&confGroup);
     itsDirOp->setMinimumSize(QSize(96, 64));
     setMimeTypes(showBitmap);
     itsDirOp->dirLister()->setMainWindow(this);
