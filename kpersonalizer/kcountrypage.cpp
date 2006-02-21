@@ -106,7 +106,7 @@ void KCountryPage::loadCountryList(KLanguageButton *combo) {
 	}
 
 	for ( QMap<QString,QString>::ConstIterator mit = regionnames.begin(); mit != regionnames.end(); ++mit ) {
-		combo->insertSubmenu( mit.key(), '-' + mit.data(), sub );
+		combo->insertSubmenu( mit.key(), '-' + mit.value(), sub );
 	}
 
 	// add all languages to the list

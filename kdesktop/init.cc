@@ -242,7 +242,7 @@ void testLocalInstallation()
             const QMap<QString, QString> entries = cfg.entryMap( "IconPosition::Trash" );
             cfg.setGroup( "IconPosition::trash.desktop" );
             for( QMap<QString,QString>::ConstIterator it = entries.begin(); it != entries.end(); ++it ) {
-                cfg.writeEntry( it.key(), it.data() );
+                cfg.writeEntry( it.key(), it.value() );
             }
         }
     }

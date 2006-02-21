@@ -512,7 +512,7 @@ void BGDialog::slotWallpaperSelection()
        it != m_Wallpaper.end();
        ++it)
    {
-      if (it.data() == j)
+      if (it.value() == j)
       {
          uri = it.key();
          break;

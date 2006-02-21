@@ -325,13 +325,13 @@ void KDMConvenienceWidget::slotAddUsers(const QMap<QString,int> &users)
 {
     QMap<QString,int>::const_iterator it;
     for (it = users.begin(); it != users.end(); ++it) {
-        if (it.data() > 0) {
+        if (it.value() > 0) {
             if (it.key() != autoUser)
                 userlb->insertItem(it.key());
             if (it.key() != preselUser)
                 puserlb->insertItem(it.key());
         }
-        if (it.data() != 0)
+        if (it.value() != 0)
             (new Q3CheckListItem(npuserlv, it.key(), Q3CheckListItem::CheckBox))->
     	        setOn(noPassUsers.find(it.key()) != noPassUsers.end());
     }
@@ -351,7 +351,7 @@ void KDMConvenienceWidget::slotDelUsers(const QMap<QString,int> &users)
 {
     QMap<QString,int>::const_iterator it;
     for (it = users.begin(); it != users.end(); ++it) {
-	if (it.data() > 0) {
+	if (it.value() > 0) {
 	    int idx = userlb->findText( it.key() );
 	    if (it.key() != autoUser && idx != -1)
 	        userlb->removeItem( idx );
@@ -359,7 +359,7 @@ void KDMConvenienceWidget::slotDelUsers(const QMap<QString,int> &users)
 	    if (it.key() != preselUser && idx != -1)
 	        puserlb->removeItem( idx );
 	}
-	if (it.data() != 0)
+	if (it.value() != 0)
 	    delete npuserlv->findItem( it.key(), 0 );
     }
 }

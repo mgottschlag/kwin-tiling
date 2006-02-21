@@ -233,7 +233,7 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
          it != pathDb.end(); ++it)
   {
     QString path = it.key();
-    bool fromKDE = it.data();
+    bool fromKDE = it.value();
 
     char new_path[PATH_MAX+1];
     if (realpath(QFile::encodeName(path), new_path))

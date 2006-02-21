@@ -97,7 +97,7 @@ void KCMDisplay::moduleChanged( bool isChanged )
   bool c = false;
 
   for (QMap<KCModule*, bool>::ConstIterator it = m_modules.begin(); it != m_modules.end(); ++it) {
-    if (it.data()) {
+    if (it.value()) {
       c = true;
       break;
     }

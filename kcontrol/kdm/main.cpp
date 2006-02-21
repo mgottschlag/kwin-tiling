@@ -173,7 +173,7 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
   endgrent();
 
   for (tgmapci = tgmap.begin(); tgmapci != tgmap.end(); ++tgmapci)
-    kWarning() << "user(s) '" << tgmapci.data().join(",")
+    kWarning() << "user(s) '" << tgmapci.value().join(",")
 	<< "' have unknown GID " << tgmapci.key() << endl;
 
   config = new KSimpleConfig( QString::fromLatin1( KDE_CONFDIR "/kdm/kdmrc" ));
@@ -280,10 +280,10 @@ void KDModule::propagateUsers()
   QStringList::ConstIterator jt;
   QMap<QString,int>::Iterator gmapi;
   for (it = usermap.begin(); it != usermap.end(); ++it) {
-    int uid = it.data().first;
+    int uid = it.value().first;
     if (!uid || (uid >= minshowuid && uid <= maxshowuid)) {
       lusers[it.key()] = uid;
-      for (jt = it.data().second.begin(); jt != it.data().second.end(); ++jt)
+      for (jt = it.value().second.begin(); jt != it.value().second.end(); ++jt)
 	if ((gmapi = groupmap.find( *jt )) == groupmap.end()) {
 	  groupmap[*jt] = 1;
 	  lusers['@' + *jt] = -uid;
@@ -303,13 +303,13 @@ void KDModule::slotMinMaxUID(int min, int max)
     QStringList::ConstIterator jt;
     QMap<QString,int>::Iterator gmapi;
     for (it = usermap.begin(); it != usermap.end(); ++it) {
-      int uid = it.data().first;
+      int uid = it.value().first;
       if (!uid) continue;
       if ((uid >= minshowuid && uid <= maxshowuid) &&
 	  !(uid >= min && uid <= max)) {
         dlusers[it.key()] = uid;
-	for (jt = it.data().second.begin();
-	     jt != it.data().second.end(); ++jt) {
+	for (jt = it.value().second.begin();
+	     jt != it.value().second.end(); ++jt) {
 	  gmapi = groupmap.find( *jt );
 	  if (!--(*gmapi)) {
 	    groupmap.remove( gmapi );
@@ -320,8 +320,8 @@ void KDModule::slotMinMaxUID(int min, int max)
       if ((uid >= min && uid <= max) &&
 	  !(uid >= minshowuid && uid <= maxshowuid)) {
         alusers[it.key()] = uid;
-	for (jt = it.data().second.begin();
-	     jt != it.data().second.end(); ++jt)
+	for (jt = it.value().second.begin();
+	     jt != it.value().second.end(); ++jt)
 	  if ((gmapi = groupmap.find( *jt )) == groupmap.end()) {
 	    groupmap[*jt] = 1;
 	    alusers['@' + *jt] = -uid;
