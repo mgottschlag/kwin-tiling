@@ -54,9 +54,10 @@ K_EXPORT_COMPONENT_FACTORY( kcm_accessibility, AccessibilityFactory("kcmaccessib
 //    return false; // don't need it
 // }
 
-AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)
-  : AccessibilityConfigWidget( parent, name){
-
+AccessibilityConfig::AccessibilityConfig(QWidget *parent,const char *name, const QStringList &args)
+  : KCModule( AccessibilityFactory::instance(), parent)
+{
+	widget = new AccessibilityConfigWidget(parent, 0L); 
    KAboutData *about =
    new KAboutData(I18N_NOOP("kcmaccessiblity"), I18N_NOOP("KDE Accessibility Tool"),
                   0, 0, KAboutData::License_GPL,
@@ -64,11 +65,12 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, cons
 
    about->addAuthor("Matthias Hoelzer-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
    about->addAuthor("José Pablo Ezequiel Fernández", I18N_NOOP("Author") , "pupeno@kde.org");
-   setAboutData( about );
+#warning "port it !!!!!!!!!!";   
+   //widget->setAboutData( about );
 
    kDebug() << "Running: AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)" << endl;
    // TODO: set the KUrl Dialog to open just audio files
-   connect( mainTab, SIGNAL(currentChanged(QWidget*)), this, SIGNAL(quickHelpChanged()) );
+   connect( widget->mainTab, SIGNAL(currentChanged(QWidget*)), this, SIGNAL(quickHelpChanged()) );
    load();
 }
 
@@ -83,18 +85,18 @@ void AccessibilityConfig::load(){
    KConfig *bell = new KConfig("bellrc", true);
    
    bell->setGroup("General");
-   systemBell->setChecked(bell->readEntry("SystemBell", false));
-   customBell->setChecked(bell->readEntry("CustomBell", false));
-   visibleBell->setChecked(bell->readEntry("VisibleBell", false));
+   widget->systemBell->setChecked(bell->readEntry("SystemBell", false));
+   widget->customBell->setChecked(bell->readEntry("CustomBell", false));
+   widget->visibleBell->setChecked(bell->readEntry("VisibleBell", false));
    
    bell->setGroup("CustomBell");
-   soundToPlay->setURL(bell->readPathEntry("Sound", ""));
+   widget->soundToPlay->setURL(bell->readPathEntry("Sound", ""));
 
    bell->setGroup("Visible");
-   invertScreen->setChecked(bell->readEntry("Invert", true));
-   flashScreen->setChecked(bell->readEntry("Flash", false));
-   flashScreenColor->setColor(bell->readEntry("FlashColor", Qt::red));
-   visibleBellDuration->setValue(bell->readEntry("Duration", 500));
+   widget->invertScreen->setChecked(bell->readEntry("Invert", true));
+   widget->flashScreen->setChecked(bell->readEntry("Flash", false));
+   widget->flashScreenColor->setColor(bell->readEntry("FlashColor", Qt::red));
+   widget->visibleBellDuration->setValue(bell->readEntry("Duration", 500));
   
    delete bell;   
 //    KConfig *config = new KConfig("kaccessrc", true);
@@ -138,18 +140,18 @@ void AccessibilityConfig::save(){
    KConfig *bell = new KConfig("bellrc");
    
    bell->setGroup("General");
-   bell->writeEntry("SystemBell", systemBell->isChecked());
-   bell->writeEntry("CustomBell", customBell->isChecked());
-   bell->writeEntry("VisibleBell", visibleBell->isChecked());
+   bell->writeEntry("SystemBell", widget->systemBell->isChecked());
+   bell->writeEntry("CustomBell", widget->customBell->isChecked());
+   bell->writeEntry("VisibleBell", widget->visibleBell->isChecked());
    
    bell->setGroup("CustomBell");
-   bell->writePathEntry("Sound", soundToPlay->url());
+   bell->writePathEntry("Sound", widget->soundToPlay->url());
 
    bell->setGroup("Visible");
-   bell->writeEntry("Invert", invertScreen->isChecked());
-   bell->writeEntry("Flash", flashScreen->isChecked());
-   bell->writeEntry("FlashColor", flashScreenColor->color());
-   bell->writeEntry("Duration", visibleBellDuration->value());
+   bell->writeEntry("Invert", widget->invertScreen->isChecked());
+   bell->writeEntry("Flash", widget->flashScreen->isChecked());
+   bell->writeEntry("FlashColor", widget->flashScreenColor->color());
+   bell->writeEntry("Duration", widget->visibleBellDuration->value());
    
    bell->sync();
    delete bell;
@@ -196,35 +198,36 @@ void AccessibilityConfig::defaults(){
 
    // Bell
    // Audibe Bell
-   systemBell->setChecked(false);
-   customBell->setChecked(false);
-   soundToPlay->clear();
+   widget->systemBell->setChecked(false);
+   widget->customBell->setChecked(false);
+   widget->soundToPlay->clear();
 
    // Visible Bell
-   visibleBell->setChecked(false);
-   invertScreen->setChecked(true);
-   flashScreen->setChecked(false);
-   flashScreenColor->setColor(QColor(Qt::red));
-   visibleBellDuration->setValue(500);
+   widget->visibleBell->setChecked(false);
+   widget->invertScreen->setChecked(true);
+   widget->flashScreen->setChecked(false);
+   widget->flashScreenColor->setColor(QColor(Qt::red));
+   widget->visibleBellDuration->setValue(500);
 
    // Keyboard
    // Sticky Keys
-   stickyKeys->setChecked(false);
-   lockWithStickyKeys->setChecked(true);
+   widget->stickyKeys->setChecked(false);
+   widget->lockWithStickyKeys->setChecked(true);
 
    // Slow Keys
-   slowKeys->setChecked(false);
-   slowKeysDelay->setValue(500);
+   widget->slowKeys->setChecked(false);
+   widget->slowKeysDelay->setValue(500);
 
    // Bounce Keys
-   bounceKeys->setChecked(false);
-   bounceKeysDelay->setValue(500);
+   widget->bounceKeys->setChecked(false);
+   widget->bounceKeysDelay->setValue(500);
 
    // Mouse
    // Navigation
-   accelerationDelay->setValue(160);
-   repeatInterval->setValue(5);
-   accelerationTime->setValue(1000);
-   maximumSpeed->setValue(500);
-   accelerationProfile->setValue(0);
+   widget->accelerationDelay->setValue(160);
+   widget->repeatInterval->setValue(5);
+   widget->accelerationTime->setValue(1000);
+   widget->maximumSpeed->setValue(500);
+   widget->accelerationProfile->setValue(0);
 }
+

@@ -22,17 +22,18 @@
 #define _ACCESSIBILITY_H_
 
 #include <kdebug.h>
-
+#include <kcmodule.h>
+#include <kinstance.h>
 #include "accessibilityconfigwidget.h"
 
-class AccessibilityConfig : public AccessibilityConfigWidget {
+class AccessibilityConfig : public KCModule {
    Q_OBJECT
 
    public:
       /**
        * Constructor
        */   
-      AccessibilityConfig(QWidget *parent = 0L, const char *name = 0L, const QStringList &foo = QStringList());
+      AccessibilityConfig(QWidget *parent, const char *name =0L,const QStringList &foo = QStringList());
 
       /**
        * Destructor
@@ -64,7 +65,8 @@ class AccessibilityConfig : public AccessibilityConfigWidget {
        * uses when started without a config file.
        */
       void defaults();
-
+   private:
+	  AccessibilityConfigWidget *widget;
 };
 
 #endif // _ACCESSIBILITY_H_
