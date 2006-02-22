@@ -20,6 +20,7 @@
 #include <qpainter.h>
 #include <qslider.h>
 #include <q3groupbox.h>
+#include <q3ptrlist.h>
 #include <qwhatsthis.h>
 #include <Q3PtrList>
 
