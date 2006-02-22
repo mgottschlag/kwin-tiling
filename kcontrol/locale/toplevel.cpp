@@ -254,7 +254,7 @@ void KLocaleApplication::slotTranslate()
   }
 
   // Here we have the pointer
-  m_gbox->setCaption(m_locale->translate("Examples"));
+  m_gbox->setWindowTitle(m_locale->translate("Examples"));
   m_tab->changeTab(m_localemain, m_locale->translate("&Locale"));
   m_tab->changeTab(m_localenum, m_locale->translate("&Numbers"));
   m_tab->changeTab(m_localemon, m_locale->translate("&Money"));

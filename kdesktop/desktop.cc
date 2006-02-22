@@ -148,7 +148,7 @@ KDesktop::KDesktop( bool x_root_hack, bool auto_start, bool wait_for_kded ) :
   KGlobal::locale()->insertCatalog("libkonq"); // needed for apps using libkonq
   KGlobal::locale()->insertCatalog("libdmctl");
 
-  setCaption( "KDE Desktop");
+  setWindowTitle( "KDE Desktop");
 
   setAcceptDrops(true); // WStyle_Customize seems to disable that
   m_pKwinmodule = new KWinModule( this );

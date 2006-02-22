@@ -159,7 +159,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   : QWidget(0, name)
   , _client(client)
 {
- setCaption(title);
+ setWindowTitle(title);
 
  if (getuid()==0 ) {
 	 // Make root modules look as similar as possible...

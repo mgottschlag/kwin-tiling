@@ -281,7 +281,7 @@ void KRootWm::buildMenus()
     {
 //        kDebug() << "showMenuBar" << endl;
         menuBar = new KMenuBar;
-        menuBar->setCaption("KDE Desktop");
+        menuBar->setWindowTitle("KDE Desktop");
     }
 
     // create Arrange menu

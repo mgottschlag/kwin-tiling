@@ -59,7 +59,7 @@ KPersonalizer::KPersonalizer(QWidget *parent, const char *name)
 	: K3Wizard(parent, name, true) {
 
 	// first, reset the startup from true (see desktop file in share/autostart) to false
-	setCaption(kapp->caption());
+	setWindowTitle(kapp->caption());
 	KGlobal::config()->setGroup("General");
 	os_dirty = eye_dirty = style_dirty=false;
 	KGlobal::config()->writeEntry("FirstLogin", false);
