@@ -116,7 +116,7 @@ void AboutWidget::updatePixmap()
     QString res = t.read();
 
     res = res.arg(  locate(  "data", "kdeui/about/kde_infopage.css" ) );
-    if (  kapp->reverseLayout() )
+    if (  kapp->layoutDirection() == Qt::RightToLeft )
         res = res.arg(  "@import \"%1\";" ).arg(  locate(  "data", "kdeui/about/kde_infopage_rtl.css" ) );
     else
         res = res.arg(  "" );
