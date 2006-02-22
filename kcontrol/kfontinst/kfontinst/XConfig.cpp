@@ -833,9 +833,9 @@ bool CXConfig::createFontsDotDir(const QString &dir, CFontEngine &fe)
                                          entry+="-0-";
                                          entry+=encoding.latin1();
 
-                                         if(-1==fscale.findIndex(entry))
+                                         if(-1==fscale.indexOf(entry))
                                              fscale.append(QString(entry));
-                                         if(-1==fdir.findIndex(entry))
+                                         if(-1==fdir.indexOf(entry))
                                              fdir.append(QString(entry));
                                          addedFd=addedFs=true;
 #ifndef HAVE_FONTCONFIG

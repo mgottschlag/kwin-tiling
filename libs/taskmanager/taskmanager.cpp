@@ -253,7 +253,7 @@ Task::TaskPtr TaskManager::findTask(int desktop, const QPoint& p)
 
         if (t->geometry().contains(p))
         {
-            int index = list.findIndex(t->window());
+            int index = list.indexOf(t->window());
             if (index > currentIndex)
             {
                 currentIndex = index;

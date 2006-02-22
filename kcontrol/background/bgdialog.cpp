@@ -605,7 +605,7 @@ void BGDialog::updateUI()
 
      case KBackgroundSettings::Pattern:
         {
-           int i = m_Patterns.findIndex(r->KBackgroundPattern::name());
+           int i = m_Patterns.indexOf(r->KBackgroundPattern::name());
            if (i >= 0)
               m_comboPattern->setCurrentIndex(NR_PREDEF_PATTERNS+i);
            else

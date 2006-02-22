@@ -684,7 +684,7 @@ void KBackgroundSettings::setWallpaperList(QStringList list)
     }
     updateWallpaperFiles();
     // Try to keep the current wallpaper
-    m_CurrentWallpaper = m_WallpaperFiles.findIndex(currentWallpaper) - 1;
+    m_CurrentWallpaper = m_WallpaperFiles.indexOf(currentWallpaper) - 1;
     changeWallpaper(m_CurrentWallpaper < 0);
 }
 

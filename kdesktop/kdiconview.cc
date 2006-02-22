@@ -1414,7 +1414,7 @@ void KDIconView::setupSortKeys()
         if (!m_itemsAlwaysFirst.isEmpty())
         {
             QString strFileName = static_cast<KFileIVI *>( it )->item()->url().fileName();
-            int nFind = m_itemsAlwaysFirst.findIndex(strFileName);
+            int nFind = m_itemsAlwaysFirst.indexOf(strFileName);
             if (nFind >= 0)
                 strKey = "0" + QString::number(nFind);
         }

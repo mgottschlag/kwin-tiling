@@ -2152,7 +2152,7 @@ bool CKioFonts::getSourceFiles(const KUrl &src, QStringList &files)
                                          uEnd=urls.end();
 
                     for(uIt=urls.begin(); uIt!=uEnd; ++uIt)
-                        if(-1==files.findIndex((*uIt).path()))
+                        if(-1==files.indexOf((*uIt).path()))
                             files.append((*uIt).path());
                 }
            }
@@ -2249,7 +2249,7 @@ bool CKioFonts::confirmMultiple(const KUrl &url, const QStringList &files, EFold
         {
             QString name(CFcEngine::createName(pat));
 
-            if(-1==fonts.findIndex(name))
+            if(-1==fonts.indexOf(name))
                 fonts.append(name);
         }
     }

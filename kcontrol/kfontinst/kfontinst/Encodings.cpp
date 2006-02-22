@@ -724,8 +724,8 @@ CEncodings::CEncodings()
 
                     QString enc(line.section(' ', 0, 0));
 
-                    if(-1!=enc.find('-') && "adobe-dingbats"!=enc && -1==itsList.findIndex(enc) &&
-                       -1==itsExtraList.findIndex(enc))
+                    if(-1!=enc.find('-') && "adobe-dingbats"!=enc && -1==itsList.indexOf(enc) &&
+                       -1==itsExtraList.indexOf(enc))
                         itsList+=enc;
                 }
             }

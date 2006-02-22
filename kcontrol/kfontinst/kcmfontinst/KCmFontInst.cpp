@@ -572,7 +572,7 @@ void CKCmFontInst::updateInformation(int, int fonts)
             QString fam(family(item->text()));
 
             size+=item->size();
-            if(-1==families.findIndex(fam))
+            if(-1==families.indexOf(fam))
                 families+=fam;
         }
     }

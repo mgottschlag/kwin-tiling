@@ -116,7 +116,7 @@ void KLocaleConfig::slotAddLanguage(const QString & code)
     pos = 0;
 
   // If it's already in list, just move it (delete the old, then insert a new)
-  int oldPos = languageList.findIndex( code );
+  int oldPos = languageList.indexOf( code );
   if ( oldPos != -1 )
     languageList.remove( languageList.at(oldPos) );
 
