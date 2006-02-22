@@ -534,7 +534,7 @@ void KCMStyle::save()
 		(comboMenuEffect->currentItem() == 3) )	// Make Translucent
     {
 		warn_string += i18n("Menu translucency is not available.<br>");
-		comboMenuEffect->setCurrentItem(0);    // Disable menu effect.
+		comboMenuEffect->setCurrentIndex(0);    // Disable menu effect.
 		show_warning = true;
 	}
 
@@ -688,18 +688,18 @@ void KCMStyle::defaults()
 	if (!found)
 		found = findStyle( "motif", item );
 
-	cbStyle->setCurrentItem( item );
+	cbStyle->setCurrentIndex( item );
 
 	m_bStyleDirty = true;
 	switchStyle( currentStyle() );	// make resets visible
 
 	// Effects..
 	cbEnableEffects->setChecked(false);
-	comboTooltipEffect->setCurrentItem(0);
-	comboComboEffect->setCurrentItem(0);
-	comboMenuEffect->setCurrentItem(0);
-	comboMenuHandle->setCurrentItem(0);
-	comboMenuEffectType->setCurrentItem(0);
+	comboTooltipEffect->setCurrentIndex(0);
+	comboComboEffect->setCurrentIndex(0);
+	comboMenuEffect->setCurrentIndex(0);
+	comboMenuHandle->setCurrentIndex(0);
+	comboMenuEffectType->setCurrentIndex(0);
 	slOpacity->setValue(90);
 	cbMenuShadow->setChecked(false);
 
@@ -707,7 +707,7 @@ void KCMStyle::defaults()
 	cbHoverButtons->setChecked(true);
 	cbTransparentToolbars->setChecked(true);
 	cbEnableTooltips->setChecked(true);
-	comboToolbarIcons->setCurrentItem(0);
+	comboToolbarIcons->setCurrentIndex(0);
 	cbIconsOnButtons->setChecked(false);
 	cbTearOffHandles->setChecked(false);
 }
@@ -829,7 +829,7 @@ void KCMStyle::loadStyle( KConfig& config )
 			break;
 		item = 0;
 	}
-	cbStyle->setCurrentItem( item );
+	cbStyle->setCurrentIndex( item );
 
 	m_bStyleDirty = false;
 
@@ -914,25 +914,25 @@ void KCMStyle::loadEffects( KConfig& config )
 	cbEnableEffects->setChecked( config.readEntry( "EffectsEnabled", false) );
 
 	if ( config.readEntry( "EffectAnimateCombo", false) )
-		comboComboEffect->setCurrentItem( 1 );
+		comboComboEffect->setCurrentIndex( 1 );
 	else
-		comboComboEffect->setCurrentItem( 0 );
+		comboComboEffect->setCurrentIndex( 0 );
 
 	if ( config.readEntry( "EffectAnimateTooltip", false) )
-		comboTooltipEffect->setCurrentItem( 1 );
+		comboTooltipEffect->setCurrentIndex( 1 );
 	else if ( config.readEntry( "EffectFadeTooltip", false) )
-		comboTooltipEffect->setCurrentItem( 2 );
+		comboTooltipEffect->setCurrentIndex( 2 );
 	else
-		comboTooltipEffect->setCurrentItem( 0 );
+		comboTooltipEffect->setCurrentIndex( 0 );
 
 	if ( config.readEntry( "EffectAnimateMenu", false) )
-		comboMenuEffect->setCurrentItem( 1 );
+		comboMenuEffect->setCurrentIndex( 1 );
 	else if ( config.readEntry( "EffectFadeMenu", false) )
-		comboMenuEffect->setCurrentItem( 2 );
+		comboMenuEffect->setCurrentIndex( 2 );
 	else
-		comboMenuEffect->setCurrentItem( 0 );
+		comboMenuEffect->setCurrentIndex( 0 );
 
-	comboMenuHandle->setCurrentItem(config.readEntry("InsertTearOffHandle", 0));
+	comboMenuHandle->setCurrentIndex(config.readEntry("InsertTearOffHandle", 0));
 
 	// KStyle Menu transparency and drop-shadow options...
 	QSettings settings;
@@ -940,21 +940,21 @@ void KCMStyle::loadEffects( KConfig& config )
 
 #ifdef HAVE_XRENDER
 	if (effectEngine == "XRender") {
-		comboMenuEffectType->setCurrentItem(2);
-		comboMenuEffect->setCurrentItem(3);
+		comboMenuEffectType->setCurrentIndex(2);
+		comboMenuEffect->setCurrentIndex(3);
 	} else if (effectEngine == "SoftwareBlend") {
-		comboMenuEffectType->setCurrentItem(1);
-		comboMenuEffect->setCurrentItem(3);
+		comboMenuEffectType->setCurrentIndex(1);
+		comboMenuEffect->setCurrentIndex(3);
 #else
 	if (effectEngine == "XRender" || effectEngine == "SoftwareBlend") {
-		comboMenuEffectType->setCurrentItem(1);	// Software Blend
-		comboMenuEffect->setCurrentItem(3);
+		comboMenuEffectType->setCurrentIndex(1);	// Software Blend
+		comboMenuEffect->setCurrentIndex(3);
 #endif
 	} else if (effectEngine == "SoftwareTint") {
-		comboMenuEffectType->setCurrentItem(0);
-		comboMenuEffect->setCurrentItem(3);
+		comboMenuEffectType->setCurrentIndex(0);
+		comboMenuEffect->setCurrentIndex(3);
 	} else
-		comboMenuEffectType->setCurrentItem(0);
+		comboMenuEffectType->setCurrentIndex(0);
 
 	if (comboMenuEffect->currentItem() != 3)	// If not translucency...
 		menuPreview->setPreviewMode( MenuPreview::Tint );
@@ -1028,13 +1028,13 @@ void KCMStyle::loadMisc( KConfig& config )
 
 	QString tbIcon = config.readEntry("IconText", "IconOnly");
 	if (tbIcon == "TextOnly")
-		comboToolbarIcons->setCurrentItem(1);
+		comboToolbarIcons->setCurrentIndex(1);
 	else if (tbIcon == "IconTextRight")
-		comboToolbarIcons->setCurrentItem(2);
+		comboToolbarIcons->setCurrentIndex(2);
 	else if (tbIcon == "IconTextBottom")
-		comboToolbarIcons->setCurrentItem(3);
+		comboToolbarIcons->setCurrentIndex(3);
 	else
-		comboToolbarIcons->setCurrentItem(0);
+		comboToolbarIcons->setCurrentIndex(0);
 
 	config.setGroup("KDE");
 	cbIconsOnButtons->setChecked(config.readEntry("ShowIconsOnPushButtons", false));

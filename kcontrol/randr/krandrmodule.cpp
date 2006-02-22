@@ -99,7 +99,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 		m_screenSelector->insertItem(i18n("Screen %1").arg(s+1));
 	}
 
-	m_screenSelector->setCurrentItem(currentScreenIndex());
+	m_screenSelector->setCurrentIndex(currentScreenIndex());
         screenLabel->setBuddy( m_screenSelector );
 	m_screenSelector->setWhatsThis( i18n("The screen whose settings you would like to change can be selected using this drop-down list."));
 
@@ -342,7 +342,7 @@ void KRandRModule::apply()
 void KRandRModule::update()
 {
 	m_sizeCombo->blockSignals(true);
-	m_sizeCombo->setCurrentItem(currentScreen()->proposedSize());
+	m_sizeCombo->setCurrentIndex(currentScreen()->proposedSize());
 	m_sizeCombo->blockSignals(false);
 
 	m_rotationGroup->blockSignals(true);
@@ -369,6 +369,6 @@ void KRandRModule::update()
 	m_rotationGroup->blockSignals(false);
 
 	m_refreshRates->blockSignals(true);
-	m_refreshRates->setCurrentItem(currentScreen()->proposedRefreshRate());
+	m_refreshRates->setCurrentIndex(currentScreen()->proposedRefreshRate());
 	m_refreshRates->blockSignals(false);
 }

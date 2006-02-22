@@ -102,7 +102,7 @@ void CfgComponent::load(KConfig *cfg) {
 		for (int i=0;i<ComponentSelector->count();i++)
 			if ((*tmp)==ComponentSelector->text(i))
 			{
-				ComponentSelector->setCurrentItem(i);
+				ComponentSelector->setCurrentIndex(i);
 				break;
 			}
 	emit changed(false);
