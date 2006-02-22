@@ -158,7 +158,7 @@ void MenuPreview::paintEvent( QPaintEvent* /* pe */ )
 		p.drawPixmap(1, 1, *pixBlended, 0, 0, --x2, --y2);
 
 	QRect r = rect();
-	r.moveBy(6,3);
+	r.translate(6,3);
 	p.setPen( cg.text() );
 	p.drawText( r, Qt::AlignTop | Qt::AlignLeft, QString::number((int)(menuOpacity*100))+i18n("%") );
 }

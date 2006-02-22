@@ -259,7 +259,7 @@ KdmItem::paint( QPainter *p, const QRect &rect )
 
 	if (area.intersects( rect )) {
 		QRect contentsRect = area.intersect( rect );
-		contentsRect.moveBy( qMin( 0, -area.x() ), qMin( 0, -area.y() ) );
+		contentsRect.translate( qMin( 0, -area.x() ), qMin( 0, -area.y() ) );
 		drawContents( p, contentsRect );
 	}
 

@@ -91,13 +91,13 @@ FDialog::adjustGeometry()
 		                        scr.y() + scr.height() * y / 100 ) );
 		int di;
 		if ((di = scr.right() - grt.right()) < 0)
-			grt.moveBy( di, 0 );
+			grt.translate( di, 0 );
 		if ((di = scr.left() - grt.left()) > 0)
-			grt.moveBy( di, 0 );
+			grt.translate( di, 0 );
 		if ((di = scr.bottom() - grt.bottom()) < 0)
-			grt.moveBy( 0, di );
+			grt.translate( 0, di );
 		if ((di = scr.top() - grt.top()) > 0)
-			grt.moveBy( 0, di );
+			grt.translate( 0, di );
 		setGeometry( grt );
 	}
 
