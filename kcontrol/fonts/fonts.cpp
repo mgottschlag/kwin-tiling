@@ -408,7 +408,7 @@ int FontAASettings::getIndex(KXftConfig::SubPixel::Type spType)
   int index;
 
   for(index=0; index<subPixelType->count(); ++index)
-    if(subPixelType->text(index)==i18n(KXftConfig::description(spType).toUtf8()))
+    if(subPixelType->itemText(index)==i18n(KXftConfig::description(spType).toUtf8()))
     {
       pos=index;
       break;
@@ -435,7 +435,7 @@ int FontAASettings::getIndex(KXftConfig::Hint::Style hStyle)
   int index;
 
   for(index=0; index<hintingStyle->count(); ++index)
-    if(hintingStyle->text(index)==i18n(KXftConfig::description(hStyle).toUtf8()))
+    if(hintingStyle->itemText(index)==i18n(KXftConfig::description(hStyle).toUtf8()))
     {
       pos=index;
       break;

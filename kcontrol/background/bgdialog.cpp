@@ -475,7 +475,7 @@ void BGDialog::setWallpaper(const QString &s)
          imageCaption = s.mid(slash, endDot - slash);
       else
          imageCaption = s.mid(slash);
-      if (comboWallpaper->text(i-1) == imageCaption)
+      if (comboWallpaper->itemText(i-1) == imageCaption)
       {
          i--;
          comboWallpaper->removeItem(i);

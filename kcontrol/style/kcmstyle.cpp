@@ -659,7 +659,7 @@ bool KCMStyle::findStyle( const QString& str, int& combobox_item )
 	//look up name
 	for( int i = 0; i < cbStyle->count(); i++ )
 	{
-		if ( cbStyle->text(i) == name )
+		if ( cbStyle->itemText(i) == name )
 		{
 			combobox_item = i;
 			return true;
@@ -819,7 +819,7 @@ void KCMStyle::loadStyle( KConfig& config )
 	int item = 0;
 	for( int i = 0; i < cbStyle->count(); i++ )
 	{
-		QString id = nameToStyleKey[cbStyle->text(i)];
+		QString id = nameToStyleKey[cbStyle->itemText(i)];
 		item = i;
 		if ( id == cfgStyle )	// ExactMatch
 			break;

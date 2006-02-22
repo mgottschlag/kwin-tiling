@@ -372,7 +372,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 
 			iScheme = -1;
 			for( int i = 0; i < (int) m_pcbSchemes->count(); i++ ) {
-				if( sName.toLower() == (m_pcbSchemes->text(i)).toLower() ) {
+				if( sName.toLower() == (m_pcbSchemes->itemText(i)).toLower() ) {
 					iScheme = i;
 
 					int result = KMessageBox::warningContinueCancel( 0,
