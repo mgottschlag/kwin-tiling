@@ -121,7 +121,7 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
   hour = new HMSTimeWidget( timeBox );
   hour->setWrapping(true);
-  hour->setMaxValue(23);
+  hour->setMaximum(23);
   #warning fixme hour->setValidator(new KStrictIntValidator(0, 23, hour));
   v3->addMultiCellWidget(hour, 0, 1, isRTL ? 6 : 2, isRTL ? 6 : 2 );
 
@@ -132,8 +132,8 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
   minute = new HMSTimeWidget( timeBox );
   minute->setWrapping(true);
-  minute->setMinValue(0);
-  minute->setMaxValue(59);
+  minute->setMinimum(0);
+  minute->setMaximum(59);
   #warning fixme minute->setValidator(new KStrictIntValidator(0, 59, minute));
   v3->addMultiCellWidget(minute, 0, 1, 4, 4 );
 
@@ -144,8 +144,8 @@ Dtime::Dtime(QWidget * parent, const char *name)
 
   second = new HMSTimeWidget( timeBox );
   second->setWrapping(true);
-  second->setMinValue(0);
-  second->setMaxValue(59);
+  second->setMinimum(0);
+  second->setMaximum(59);
   #warning fixme second->setValidator(new KStrictIntValidator(0, 59, second));
   v3->addMultiCellWidget(second, 0, 1, isRTL ? 2 : 6, isRTL ? 2 : 6 );
 
