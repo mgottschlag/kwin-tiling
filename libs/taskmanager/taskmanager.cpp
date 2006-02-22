@@ -606,7 +606,7 @@ bool TaskManager::isOnScreen(int screen, const WId wid)
     // edge of the screen, we just contract a bit.
     QRect window = wi.frameGeometry();
     QRect desktop = QApplication::desktop()->screenGeometry(screen);
-    desktop.addCoords(5, 5, -5, -5);
+    desktop.adjust(5, 5, -5, -5);
     return window.intersects(desktop);
 }
 

@@ -82,7 +82,7 @@ KdmLayoutBox::update( const QRect &parentGeometry, bool force )
 	//XXX why was this asymmetric? it broke things big time.
 	QRect childrenRect = /*box.isVertical ? QRect( parentGeometry.topLeft(), hintedSize ) :*/ parentGeometry;
 	// Begin cutting the parent rectangle to attach children on the right place
-	childrenRect.addCoords( box.xpadding, box.ypadding, -box.xpadding, -box.ypadding );
+	childrenRect.adjust( box.xpadding, box.ypadding, -box.xpadding, -box.ypadding );
 
 	kDebug() << this << " childrenRect " << childrenRect << endl;
 
