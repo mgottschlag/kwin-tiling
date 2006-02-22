@@ -207,21 +207,21 @@ void KRandRModule::slotScreenChanged(int screen)
 
 void KRandRModule::slotRotationChanged()
 {
-	if (m_rotationGroup->find(0)->isOn())
+	if (m_rotationGroup->find(0)->isChecked())
 		currentScreen()->proposeRotation(RandRScreen::Rotate0);
-	else if (m_rotationGroup->find(1)->isOn())
+	else if (m_rotationGroup->find(1)->isChecked())
 		currentScreen()->proposeRotation(RandRScreen::Rotate90);
-	else if (m_rotationGroup->find(2)->isOn())
+	else if (m_rotationGroup->find(2)->isChecked())
 		currentScreen()->proposeRotation(RandRScreen::Rotate180);
 	else {
-		Q_ASSERT(m_rotationGroup->find(3)->isOn());
+		Q_ASSERT(m_rotationGroup->find(3)->isChecked());
 		currentScreen()->proposeRotation(RandRScreen::Rotate270);
 	}
 
-	if (m_rotationGroup->find(4)->isOn())
+	if (m_rotationGroup->find(4)->isChecked())
 		currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ RandRScreen::ReflectX);
 
-	if (m_rotationGroup->find(5)->isOn())
+	if (m_rotationGroup->find(5)->isChecked())
 		currentScreen()->proposeRotation(currentScreen()->proposedRotation() ^ RandRScreen::ReflectY);
 
 	setChanged();
