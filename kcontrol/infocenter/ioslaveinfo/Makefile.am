@@ -10,7 +10,7 @@ AM_CPPFLAGS= $(all_includes)
 METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) $(kcm_ioslaveinfo_la_SOURCES) -o $(podir)/kcmioslaveinfo.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmioslaveinfo.pot
 
 xdg_apps_DATA = ioslaveinfo.desktop
 

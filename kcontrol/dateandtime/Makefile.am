@@ -10,7 +10,7 @@ AM_CPPFLAGS = $(all_includes)
 METASOURCES = AUTO
 
 messages:
-	$(XGETTEXT) $(kcm_clock_la_SOURCES) -o $(podir)/kcmkclock.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmkclock.pot
 
 xdg_apps_DATA = clock.desktop
 

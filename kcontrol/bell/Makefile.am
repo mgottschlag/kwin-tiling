@@ -10,7 +10,7 @@ AM_CPPFLAGS= $(all_includes)
 METASOURCES = bell.moc
 
 messages:
-	$(XGETTEXT) $(kcm_bell_la_SOURCES) -o $(podir)/kcmbell.pot
+	$(XGETTEXT) *.cpp -o $(podir)/kcmbell.pot
 
 xdg_apps_DATA = bell.desktop
 
