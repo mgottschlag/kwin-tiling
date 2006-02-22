@@ -1,0 +1,5 @@
+if test -z "$VIEW1394_SUBDIR"; then
+    echo
+    ### TODO: add more text!
+    echo "The library libraw1394 was not found."
+fi
