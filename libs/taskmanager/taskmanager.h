@@ -72,9 +72,6 @@ typedef QList<WId> WindowList;
 class KDE_EXPORT Task: public QObject, public KShared
 {
     Q_OBJECT
-    Q_PROPERTY( QString visibleIconicName READ visibleIconicName )
-    Q_PROPERTY( QString iconicName READ iconicName )
-    Q_PROPERTY( QString visibleIconicNameWithState READ visibleIconicNameWithState )
     Q_PROPERTY( QString visibleName READ visibleName )
     Q_PROPERTY( QString name READ name )
     Q_PROPERTY( QString visibleNameWithState READ visibleNameWithState )
@@ -106,15 +103,6 @@ public:
     WId window() const { return _win; }
     KWin::WindowInfo info() const { return _info; }
 
-#if 0 // this would use (_NET_)WM_ICON_NAME, which is shorter, but can be different from window name
-    QString visibleIconicName() const { return _info.visibleIconName(); }
-    QString visibleIconicNameWithState() const { return _info.visibleIconNameWithState(); }
-    QString iconicName() const { return _info.iconName(); }
-#else
-    QString visibleIconicName() const { return _info.visibleName(); }
-    QString visibleIconicNameWithState() const { return _info.visibleNameWithState(); }
-    QString iconicName() const { return _info.name(); }
-#endif
     QString visibleName() const { return _info.visibleName(); }
     QString visibleNameWithState() const { return _info.visibleNameWithState(); }
     QString name() const { return _info.name(); }

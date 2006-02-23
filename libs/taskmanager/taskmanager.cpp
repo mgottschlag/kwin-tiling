@@ -383,8 +383,8 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     }
 
     // check if any state we are interested in is marked dirty
-    if (!(dirty & (NET::WMVisibleName | NET::WMVisibleIconName | NET::WMName |
-                   NET::WMIconName | NET::WMState | NET::WMIcon |
+    if (!(dirty & (NET::WMVisibleName |NET::WMName |
+                   NET::WMState | NET::WMIcon |
                    NET::XAWMState | NET::WMDesktop) ||
           (m_trackGeometry && dirty & NET::WMGeometry)))
     {
@@ -409,9 +409,10 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     if (dirty & NET::WMIcon)
     {
         t->refreshIcon();
+        dirty ^= NET::WMIcon;
     }
 
-    if (dirty != NET::WMIcon)
+    if (dirty)
     {
         // only refresh this stuff if we have other changes besides icons
         t->refresh(dirty);
@@ -730,10 +731,10 @@ void Task::refreshIcon()
 
 void Task::refresh(unsigned int dirty)
 {
-    QString name = visibleIconicName();
+    QString name = visibleName();
     _info = KWin::windowInfo(_win, 0, NET::WM2AllowedActions);
 
-    if (dirty != NET::WMName || name != visibleIconicName())
+    if (dirty != NET::WMName || name != visibleName())
     {
         emit changed();
     }
