@@ -247,7 +247,7 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
         return false;
     }
 
-    KIO::Job *job;
+    KIO::Job *job = 0;
 
     switch( type )
     {
@@ -262,6 +262,12 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
         break;
     }
 
+    if ( job==0 )
+    {
+        cerr << i18n( "Error: unsupported operation!" ) << endl;
+        return false;
+    }
+    
     connect( job, SIGNAL( result( KIO::Job* ) ),
              this, SLOT( slotResult( KIO::Job* ) ) );
     m_loop.exec();
