@@ -731,6 +731,8 @@ void KTheme::createIconElems( const QString & group, const QString & object,
 
             if ( (*it).contains( "Value" ) || *it == "Size" )
                 tmpCol.setAttribute( "value", cfg->readEntry( *it, 1 ) );
+	    else if ( (*it).contains( "DisabledEffect" ) ) 
+		tmpCol.setAttribute( "name", cfg->readEntry( *it, "togray" ) ); 
             else if ( (*it).contains( "Effect" ) )
                 tmpCol.setAttribute( "name", cfg->readEntry( *it, QString("none") ) );
             else
