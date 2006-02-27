@@ -26,7 +26,7 @@
     <DefaultEffect name="none" object="desktop" />
     <DefaultSemiTransparent value="0" object="desktop" />
     <DefaultValue value="1" object="desktop" />
-    <DisabledEffect name="none" object="desktop" />
+    <DisabledEffect name="togray" object="desktop" />
     <DisabledSemiTransparent value="0" object="desktop" />
     <DisabledValue value="1" object="desktop" />
     <Animated value="0" object="mainToolbar" />
@@ -38,7 +38,7 @@
     <DefaultEffect name="none" object="mainToolbar" />
     <DefaultSemiTransparent value="0" object="mainToolbar" />
     <DefaultValue value="1" object="mainToolbar" />
-    <DisabledEffect name="none" object="mainToolbar" />
+    <DisabledEffect name="" object="mainToolbar" />
     <DisabledSemiTransparent value="0" object="mainToolbar" />
     <DisabledValue value="1" object="mainToolbar" />
     <Animated value="0" object="panel" />
@@ -50,7 +50,7 @@
     <DefaultEffect name="none" object="panel" />
     <DefaultSemiTransparent value="0" object="panel" />
     <DefaultValue value="1" object="panel" />
-    <DisabledEffect name="none" object="panel" />
+    <DisabledEffect name="togray" object="panel" />
     <DisabledSemiTransparent value="0" object="panel" />
     <DisabledValue value="1" object="panel" />
     <Animated value="0" object="small" />
@@ -62,7 +62,7 @@
     <DefaultEffect name="none" object="small" />
     <DefaultSemiTransparent value="0" object="small" />
     <DefaultValue value="1" object="small" />
-    <DisabledEffect name="none" object="small" />
+    <DisabledEffect name="togray" object="small" />
     <DisabledSemiTransparent value="0" object="small" />
     <DisabledValue value="1" object="small" />
     <Animated value="0" object="toolbar" />
@@ -74,7 +74,7 @@
     <DefaultEffect name="none" object="toolbar" />
     <DefaultSemiTransparent value="0" object="toolbar" />
     <DefaultValue value="1" object="toolbar" />
-    <DisabledEffect name="none" object="toolbar" />
+    <DisabledEffect name="togray" object="toolbar" />
     <DisabledSemiTransparent value="0" object="toolbar" />
     <DisabledValue value="1" object="toolbar" />
   </icons>
