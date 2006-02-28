@@ -7,7 +7,12 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 
 ########### next target ###############
 
-set(kcm_background_PART_SRCS main.cpp )
+set( backgroundlib_SRCS bgrender.cpp bgsettings.cpp )
+set( kcmbackgroundlib_SRCS bgdialog.cpp bgadvanced.cpp bgmonitor.cpp bgwallpaper.cpp )
+
+kde4_add_ui3_files(kcmbackgroundlib_SRCS  bgdialog_ui.ui bgwallpaper_ui.ui bgadvanced_ui.ui  )
+
+set(kcm_background_PART_SRCS main.cpp ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS})
 
 kde4_automoc(${kcm_background_PART_SRCS})
 
@@ -15,7 +20,7 @@ kde4_add_plugin(kcm_background ${kcm_background_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_background )
 
-target_link_libraries(kcm_background  ${QT_AND_KDECORE_LIBS} kcmbgnd bgnd knewstuff kde3support )
+target_link_libraries(kcm_background  ${QT_AND_KDECORE_LIBS} knewstuff kde3support ${QT_QTGUI_LIBRARY} DCOP kdefx kdeui ${QT_QT3SUPPORT_LIBRARY} kio ${X11_X11_LIB})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_background )
 
