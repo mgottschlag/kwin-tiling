@@ -24,7 +24,12 @@ install_targets(/bin kcheckrunning )
 
 ########### next target ###############
 
-set(kdesktop_KDEINIT_SRCS 
+set( kdesktop_KCFG_SRCS kdesktopsettings.kcfgc  klaunchsettings.kcfgc )
+
+kde4_add_kcfg_files(kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})
+
+
+set(kdesktop_KDEINIT_SRCS ${kdesktop_LIB_SRCS}
    main.cc 
    krootwm.cc 
    xautolock.cc 
@@ -52,7 +57,7 @@ kde4_add_dcop_skels(kdesktop_KDEINIT_SRCS KDesktopIface.h KScreensaverIface.h KB
 
 kde4_add_kdeinit_executable( kdesktop ${kdesktop_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kdesktop  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(kdeinit_kdesktop  ${QT_AND_KDECORE_LIBS} DCOP ${QT_QTGUI_LIBRARY} kdeui ${QT_QT3SUPPORT_LIBRARY} )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kdesktop )
 
