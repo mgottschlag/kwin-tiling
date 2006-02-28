@@ -5,15 +5,17 @@ add_subdirectory( pixmaps )
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
+set(kmenueditcommon_STAT_SRCS basictab.cpp treeview.cpp kmenuedit.cpp khotkeys.cpp menufile.cpp menuinfo.cpp )
+
 ########### next target ###############
 
-set(kmenuedit_KDEINIT_SRCS main.cpp )
+set(kmenuedit_KDEINIT_SRCS main.cpp ${kmenueditcommon_STAT_SRCS})
 
 kde4_automoc(${kmenuedit_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kmenuedit ${kmenuedit_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmenuedit  ${QT_AND_KDECORE_LIBS} kmenueditcommon )
+target_link_libraries(kdeinit_kmenuedit  ${QT_AND_KDECORE_LIBS}  ${QT_QT3SUPPORT_LIBRARY} ${QT_QTXML_LIBRARY} kio kdeui ${QT_QTGUI_LIBRARY} kde3support DCOP)
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kmenuedit )
 
@@ -22,13 +24,13 @@ install_targets(/bin kmenuedit )
 
 ########### next target ###############
 
-set(kcontroledit_KDEINIT_SRCS kcontrol_main.cpp )
+set(kcontroledit_KDEINIT_SRCS kcontrol_main.cpp ${kmenueditcommon_STAT_SRCS})
 
 kde4_automoc(${kcontroledit_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kcontroledit ${kcontroledit_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kcontroledit  ${QT_AND_KDECORE_LIBS} kmenueditcommon )
+target_link_libraries(kdeinit_kcontroledit  ${QT_AND_KDECORE_LIBS}  ${QT_QT3SUPPORT_LIBRARY} ${QT_QTXML_LIBRARY} kio kdeui ${QT_QTGUI_LIBRARY} kde3support)
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kcontroledit )
 
