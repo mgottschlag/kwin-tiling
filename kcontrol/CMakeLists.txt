@@ -36,7 +36,6 @@ add_subdirectory( infocenter )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(ACCESS_SUBDIR)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(KSMCARD_SUBDIR)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(FONTINST_SUBDIR)")
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(RANDR_SUBDIR)")
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
