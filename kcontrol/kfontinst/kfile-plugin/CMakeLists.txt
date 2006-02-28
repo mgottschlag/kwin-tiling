@@ -1,0 +1,44 @@
+kde4_header()
+
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+
+
+########### next target ###############
+
+set(kfile_font_PART_SRCS KFileFont.cpp )
+
+kde4_automoc(${kfile_font_PART_SRCS})
+
+kde4_add_plugin(kfile_font ${kfile_font_PART_SRCS})
+
+kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kfile_font )
+
+target_link_libraries(kfile_font  ${QT_AND_KDECORE_LIBS} kio kfontinst )
+
+install_targets(${LIB_INSTALL_DIR}/kde4 kfile_font )
+
+
+########### install files ###############
+
+install_files( ${SERVICES_INSTALL_DIR} FILES kfile_font.desktop )
+install_files( ${SERVICES_INSTALL_DIR} FILES  )
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+#kde_module_LTLIBRARIES = kfile_font.la
+#
+#kfile_font_la_SOURCES = KFileFont.cpp
+#kfile_font_la_LDFLAGS = $(all_libraries) $(KDE_RPATH) $(LIBFREETYPE_RPATH) -module $(KDE_PLUGIN)
+#kfile_font_la_LIBADD = $(LIB_KIO) $(LIBFREETYPE_LIBS) ../lib/libkfontinst.la
+#
+#kdelnkdir = $(kde_servicesdir)
+#kde_services_DATA = kfile_font.desktop
+#
+#AM_CPPFLAGS = -I$(srcdir)/../lib -I$(srcdir)/../../fonts $(all_includes) $(LIBFREETYPE_CFLAGS)
+#
+#METASOURCES = AUTO
+#noinst_HEADERS = KFileFont.h
