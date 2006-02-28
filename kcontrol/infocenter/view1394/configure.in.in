@@ -1,0 +1,22 @@
+VIEW1394_SUBDIR=
+
+case $host_os in
+linux*)
+  AC_ARG_WITH(libraw1394,
+    [AC_HELP_STRING(--with-libraw1394,
+      [enable visualization of ieee1394 devices through libraw1394 @<:@default=check@:>@])],
+    [], with_libraw1394=check)
+
+  if test "x$with_libraw1394" != xno; then
+    KDE_CHECK_HEADER(libraw1394/raw1394.h, VIEW1394_SUBDIR=view1394)
+
+    if test "x$with_libraw1394" != xcheck && test -z "$VIEW1394_SUBDIR"; then
+      AC_MSG_FAILURE([--with-libraw1394 was given, but test for libraw1394 failed])
+    fi
+  fi
+  ;;
+*)
+  ;;
+esac
+
+AM_CONDITIONAL(include_kcontrol_view1394, test -n "$VIEW1394_SUBDIR")

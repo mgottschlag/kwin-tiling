@@ -1,0 +1,12 @@
+dnl Configure.in.bot for infocenter usbview.
+dnl
+dnl This file is released under the terms of the Gnu General Public
+dnl Licence (GPL) Version 2.
+
+if test "x$FOUND_USBVIEW" != "xyes" ; then
+    echo ""
+    echo "The kinfocenter tool for viewing attached USB devices will not be installed."
+    echo "kdebase/workspace/kcontrol/infocenter/usbview must be ported to this platform."
+    echo ""
+fi
+

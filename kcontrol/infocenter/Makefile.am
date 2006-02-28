@@ -1,5 +1,9 @@
-if include_kcontrol_view1394
-KCONTROLVIEW1394 = view1394
+if include_kcontrol_usbview
+USBVIEW_SUBDIR = usbview
 endif
 
-SUBDIRS = info  ioslaveinfo  nics  pics  usbview  $(KCONTROLVIEW1394)
+if include include_kcontrol_view1394
+VIEW1394_SUBDIR = view1394
+endif
+
+SUBDIRS = info  ioslaveinfo  nics  pics  $(USBVIEW_SUBDIR) $(VIEW1394_SUBDIR)
