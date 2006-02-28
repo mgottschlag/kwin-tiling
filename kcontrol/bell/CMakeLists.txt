@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_bell ${kcm_bell_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_bell )
 
-target_link_libraries(kcm_bell  ${QT_AND_KDECORE_LIBS} kdeui )
+target_link_libraries(kcm_bell  ${QT_AND_KDECORE_LIBS} kdeui ${QT_QTGUI_LIBRARY})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_bell )
 
