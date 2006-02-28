@@ -1,11 +1,13 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  ${X11_Xrandr_INCLUDE_PATH})
 
 
 ########### next target ###############
 
-set(kcm_randr_PART_SRCS krandrmodule.cpp )
+set(randrinternal_PART_SRCS ktimerdialog.cpp randr.cpp)
+
+set(kcm_randr_PART_SRCS krandrmodule.cpp ${randrinternal_PART_SRCS})
 
 kde4_automoc(${kcm_randr_PART_SRCS})
 
@@ -13,7 +15,7 @@ kde4_add_plugin(kcm_randr ${kcm_randr_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_randr )
 
-target_link_libraries(kcm_randr  ${QT_AND_KDECORE_LIBS} randrinternal kdeui )
+target_link_libraries(kcm_randr  ${QT_AND_KDECORE_LIBS} kdeui ${X11_Xrandr_LIB} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_randr )
 
@@ -27,13 +29,13 @@ set(krandrtray_SRCS
    main.cpp 
    krandrtray.cpp 
    krandrapp.cpp 
-   krandrpassivepopup.cpp )
+   krandrpassivepopup.cpp ${randrinternal_PART_SRCS})
 
 kde4_automoc(${krandrtray_SRCS})
 
 kde4_add_executable(krandrtray ${krandrtray_SRCS})
 
-target_link_libraries(krandrtray  ${QT_AND_KDECORE_LIBS} randrinternal kutils )
+target_link_libraries(krandrtray  ${QT_AND_KDECORE_LIBS} kutils ${X11_Xrandr_LIB} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
 
 install_targets(/bin krandrtray )
 
