@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_icons ${kcm_icons_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_icons )
 
-target_link_libraries(kcm_icons  ${QT_AND_KDECORE_LIBS} kio )
+target_link_libraries(kcm_icons  ${QT_AND_KDECORE_LIBS} kio ${QT_QTGUI_LIBRARY} kdeui ${QT_QT3SUPPORT_LIBRARY})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_icons )
 

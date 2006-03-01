@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_clock ${kcm_clock_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_clock )
 
-target_link_libraries(kcm_clock  ${QT_AND_KDECORE_LIBS} kio )
+target_link_libraries(kcm_clock  ${QT_AND_KDECORE_LIBS} kio kdeui ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} DCOP)
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_clock )
 
