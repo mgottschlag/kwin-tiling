@@ -9,13 +9,13 @@ set(kcm_kthememanager_PART_SRCS knewthemedlg.cpp ktheme.cpp kthememanager.cpp )
 
 kde4_automoc(${kcm_kthememanager_PART_SRCS})
 
-kde4_add_ui_files(kcm_kthememanager_PART_SRCS kthemedlg.ui newthemewidget.ui )
+kde4_add_ui3_files(kcm_kthememanager_PART_SRCS kthemedlg.ui newthemewidget.ui )
 
 kde4_add_plugin(kcm_kthememanager ${kcm_kthememanager_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kthememanager )
 
-target_link_libraries(kcm_kthememanager  ${QT_AND_KDECORE_LIBS} kio kde3support )
+target_link_libraries(kcm_kthememanager  ${QT_AND_KDECORE_LIBS} kio kde3support  ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} kdeui ${QT_QTXML_LIBRARY} DCOP)
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kthememanager )
 
