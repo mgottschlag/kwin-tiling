@@ -21,6 +21,11 @@ FIND_PROGRAM(KDE4_KDECONFIG_EXECUTABLE NAMES kde-config
    )
 
 
+# these are not good
+# they should be named KDE4_KIO_LIBRARIES etc
+# and moved to kdelibs/cmake/modules/FindKDE4Internal.cmake
+# Alex
+
 set(LIB_KDECORE ${QT_AND_KDECORE_LIBS} ${QT_QTGUI_LIBRARY} ${X11_X11_LIB} DCOP ${ZLIB_LIBRARY})
 
 set(LIB_KDEUI ${LIB_KDECORE} kdeui )
@@ -33,6 +38,7 @@ set(LIB_KUTILS ${LIB_KPARTS} kutils)
 
 set(LIB_KDE3SUPPORT ${QT_QT3SUPPORT_LIBRARY} ${LIB_KUTILS})
 
+
 IF (KDE4_KDECONFIG_EXECUTABLE)
 
    EXEC_PROGRAM(${KDE4_KDECONFIG_EXECUTABLE} ARGS --path data OUTPUT_VARIABLE _data_DIR )
@@ -42,7 +48,7 @@ IF (KDE4_KDECONFIG_EXECUTABLE)
 
    MESSAGE(STATUS "datadir: ${_data_DIR}")
 
-   FIND_PATH(KDE4_DATA_DIR cmake/modules/FindKDE4.cmake 
+   FIND_PATH(KDE4_DATA_DIR cmake/modules/FindKDE4Internal.cmake 
       ${_data_DIR}
    )
 
@@ -50,15 +56,15 @@ IF (KDE4_KDECONFIG_EXECUTABLE)
 
       SET(CMAKE_MODULE_PATH  ${KDE4_DATA_DIR}/cmake/modules ${CMAKE_MODULE_PATH})
 
-      IF (KDE4xxx_FIND_QUIETLY)
+      IF (KDE4_FIND_QUIETLY)
          SET(_quiet QUIET)
-      ENDIF (KDE4xxx_FIND_QUIETLY)
+      ENDIF (KDE4_FIND_QUIETLY)
 
-      IF (KDE4xxx_FIND_REQUIRED)
+      IF (KDE4_FIND_REQUIRED)
          SET(_req REQUIRED)
-      ENDIF (KDE4xxx_FIND_REQUIRED)
+      ENDIF (KDE4_FIND_REQUIRED)
 
-      FIND_PACKAGE(KDE4 ${_req} ${_quiet})
+      FIND_PACKAGE(KDE4Internal ${_req} ${_quiet})
 
    ENDIF (KDE4_DATA_DIR)
 
