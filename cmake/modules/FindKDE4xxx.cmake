@@ -2,6 +2,8 @@
 # then ask kde-config for the kde data dirs
 # then check the data dirs for FindKDE4.cmake
 
+#this line includes FindQt.cmake, which searches the Qt library and headers
+FIND_PACKAGE(Qt4 REQUIRED)
 
 MACRO(_MACRO_GETENV_WIN_PATH var name)
    set(${var} $ENV{${name}})
