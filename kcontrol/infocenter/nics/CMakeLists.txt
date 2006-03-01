@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_nic ${kcm_nic_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_nic )
 
-target_link_libraries(kcm_nic  ${QT_AND_KDECORE_LIBS} kdeui kio )
+target_link_libraries(kcm_nic  ${QT_AND_KDECORE_LIBS} kdeui kio ${QT_QT3SUPPORT_LIBRARY} ${QT_QTGUI_LIBRARY})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_nic )
 

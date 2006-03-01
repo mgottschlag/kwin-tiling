@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_usb ${kcm_usb_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_usb )
 
-target_link_libraries(kcm_usb  ${QT_AND_KDECORE_LIBS} kdeui )
+target_link_libraries(kcm_usb  ${QT_AND_KDECORE_LIBS} kdeui ${QT_QT3SUPPORT_LIBRARY} ${QT_QTGUI_LIBRARY})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_usb )
 

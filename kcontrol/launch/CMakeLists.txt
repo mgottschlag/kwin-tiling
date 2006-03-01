@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_launch ${kcm_launch_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_launch )
 
-target_link_libraries(kcm_launch  ${QT_AND_KDECORE_LIBS} kdeui )
+target_link_libraries(kcm_launch  ${QT_AND_KDECORE_LIBS} kdeui ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} DCOP)
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_launch )
 
