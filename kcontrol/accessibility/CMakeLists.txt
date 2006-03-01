@@ -15,7 +15,7 @@ kde4_add_plugin(kcm_accessibility ${kcm_accessibility_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_accessibility )
 
-target_link_libraries(kcm_accessibility  ${QT_AND_KDECORE_LIBS} kio )
+target_link_libraries(kcm_accessibility  ${QT_AND_KDECORE_LIBS} kio ${QT_QTGUI_LIBRARY} kdeui ${QT_QT3SUPPORT_LIBRARY})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_accessibility )
 
