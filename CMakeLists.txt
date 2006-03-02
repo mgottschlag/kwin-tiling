@@ -3,18 +3,22 @@ kde4_header()
 add_subdirectory( lib ) 
 add_subdirectory( kwin ) 
 add_subdirectory( kcontrol ) 
-add_subdirectory( ksmserver ) 
+#add_subdirectory( ksmserver ) 
 add_subdirectory( ktip ) 
 add_subdirectory( kpersonalizer ) 
-add_subdirectory( ksysguard ) 
+#add_subdirectory( ksysguard ) 
 add_subdirectory( wallpapers ) 
 add_subdirectory( menu ) 
-add_subdirectory( kscreensaver ) 
-add_subdirectory( kdesktop ) 
+#add_subdirectory( kscreensaver ) 
+#add_subdirectory( kdesktop ) 
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
+message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd ksmserver )" )
+message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd ksysguard )" )
+message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd kscreensaver )" )
+message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd kdesktop )" )
 ########### install files ###############
 
 
