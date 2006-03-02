@@ -1,11 +1,11 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  ${CMAKE_SOURCE_DIR}/khotkeys/shared/ )
 
 
 ########### next target ###############
 
-set(khotkeys_KDEINIT_SRCS app.cpp )
+set(khotkeys_KDEINIT_SRCS app.cpp ${libshared_SRCS})
 
 kde4_automoc(${khotkeys_KDEINIT_SRCS})
 
@@ -13,7 +13,7 @@ kde4_add_dcop_skels(khotkeys_KDEINIT_SRCS app.h )
 
 kde4_add_kdeinit_executable( khotkeys ${khotkeys_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_khotkeys  ${QT_AND_KDECORE_LIBS} shared )
+target_link_libraries(kdeinit_khotkeys  ${LIB_KDE3SUPPORT}  )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_khotkeys )
 
@@ -22,7 +22,7 @@ install_targets(/bin khotkeys )
 
 ########### next target ###############
 
-set(kded_khotkeys_PART_SRCS kded.cpp )
+set(kded_khotkeys_PART_SRCS kded.cpp ${libshared_SRCS})
 
 kde4_automoc(${kded_khotkeys_PART_SRCS})
 
@@ -32,7 +32,7 @@ kde4_add_plugin(kded_khotkeys ${kded_khotkeys_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kded_khotkeys )
 
-target_link_libraries(kded_khotkeys  ${QT_AND_KDECORE_LIBS} shared )
+target_link_libraries(kded_khotkeys  ${LIB_KDE3SUPPORT}  )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kded_khotkeys )
 
