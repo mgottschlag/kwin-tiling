@@ -56,21 +56,4 @@ IF (KDE4_FIND_REQUIRED AND NOT KDE4_FOUND)
 ENDIF (KDE4_FIND_REQUIRED AND NOT KDE4_FOUND)
 
 
-# these are not good
-# they should be named KDE4_KIO_LIBRARIES etc
-# and moved to kdelibs/cmake/modules/FindKDE4Internal.cmake
-# Alex
-
-set(LIB_KDECORE ${QT_AND_KDECORE_LIBS} ${QT_QTGUI_LIBRARY} ${X11_X11_LIB} DCOP ${ZLIB_LIBRARY})
-
-set(LIB_KDEUI ${LIB_KDECORE} kdeui )
-
-set(LIB_KIO ${LIB_KDEUI} kio)
-
-set(LIB_KPARTS ${LIB_KIO} kparts)
-
-set(LIB_KUTILS ${LIB_KPARTS} kutils)
-
-set(LIB_KDE3SUPPORT ${QT_QT3SUPPORT_LIBRARY} ${LIB_KUTILS} kde3support)
-
 
