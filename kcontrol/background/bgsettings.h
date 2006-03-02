@@ -80,7 +80,7 @@ private:
  * Possible escape sequences:
  *
  *   %x    Horizontal resolution in pixels.
- *   %y    Vertical resulution in pixels.
+ *   %y    Vertical resolution in pixels.
  *   %f    Filename to dump to.
  *
  * An entry for each program is stored as a .desktop file in
