@@ -18,7 +18,7 @@ kde4_add_plugin(kcm_samba ${kcm_samba_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_samba )
 
-target_link_libraries(kcm_samba  ${QT_AND_KDECORE_LIBS} kio )
+target_link_libraries(kcm_samba  ${LIB_KDE3SUPPORT} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_samba )
 

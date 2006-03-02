@@ -19,7 +19,7 @@ kde4_automoc(${kapplymousetheme_SRCS})
 
 kde4_add_executable(kapplymousetheme ${kapplymousetheme_SRCS})
 
-target_link_libraries(kapplymousetheme  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(kapplymousetheme  ${LIB_KDE3SUPPORT} )
 
 install_targets(/bin kapplymousetheme )
 
@@ -36,7 +36,7 @@ kde4_add_plugin(kcm_input ${kcm_input_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_input )
 
-target_link_libraries(kcm_input  ${QT_AND_KDECORE_LIBS} kio )
+target_link_libraries(kcm_input  ${LIB_KDE3SUPPORT} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_input )
 
