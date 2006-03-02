@@ -11,7 +11,7 @@ kde4_automoc(${kcminit_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kcminit ${kcminit_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kcminit  ${QT_AND_KDECORE_LIBS} kdeui kutils DCOP kio ${QT_QTGUI_LIBRARY})
+target_link_libraries(kdeinit_kcminit  ${LIB_KIO} kutils )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kcminit )
 

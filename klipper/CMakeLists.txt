@@ -8,10 +8,9 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 
 ########### next target ###############
 
-set(klipper_common_SRCS main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp toplevel.skel clipboardpoll.cpp history.cpp historyitem.cpp historystringitem.cpp klipperpopup.cpp popupproxy.cpp  historyimageitem.cpp historyurlitem.cpp)
 
 
-set(klipper_KDEINIT_SRCS dummy.cpp ${klipper_common_SRCS})
+set(klipper_KDEINIT_SRCS dummy.cpp)
 
 kde4_automoc(${klipper_KDEINIT_SRCS})
 
