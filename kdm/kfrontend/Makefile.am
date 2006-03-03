@@ -3,8 +3,8 @@ GENKDMCONF_FLAGS =
 
 SUBDIRS = themer themes pics sessions
 
-AM_CPPFLAGS = -I$(srcdir)/../backend -I.. -I$(top_srcdir)/workspace/kcontrol/background \
-    -I$(top_srcdir)/kdmlib $(all_includes)
+INCLUDES = -I$(srcdir)/../backend -I.. -I$(top_srcdir)/workspace/kcontrol/background \
+    -I$(top_srcdir)/workspace/kdmlib $(all_includes)
 
 bin_PROGRAMS = kdm_config kdm_greet krootimage genkdmconf kdmctl
 
