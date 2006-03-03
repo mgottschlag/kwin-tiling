@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Plugin
+Encoding=UTF-8
+Name=System Tray
+Name[fr]=Boîte à miniatures
+Name[x-test]=xxSystem Trayxx
+
+Comment=The system tray panel applet
+Comment[fr]=L'applet de boîte à miniatures du tableau de bord
+Comment[x-test]=xxThe system tray panel appletxx
+Icon=systemtray
+X-KDE-Library=systemtray_panelapplet
+X-KDE-UniqueApplet=true

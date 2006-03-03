@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=System
+Name[fr]=Système
+Name[x-test]=xxSystemxx
+Comment=Easy access to system places
+Icon=system
+
+X-KDE-Library=kickermenu_systemmenu

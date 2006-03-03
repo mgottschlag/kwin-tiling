@@ -1,0 +1,12 @@
+[Desktop Entry]
+Hidden=true
+Type=Plugin
+Encoding=UTF-8
+Name=Menu
+Name[x-test]=xxMenuxx
+Comment=Applet embedding standalone menubars
+Comment[fr]=Une applet intégrant les barres de menu externes
+Comment[x-test]=xxApplet embedding standalone menubarsxx
+
+X-KDE-Library=menu_panelapplet
+X-KDE-UniqueApplet=true

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+
+<include>kapplication.h</include>
+<include>klocale.h</include>
+<kcfgfile arg="true" />
+
+<group name="General">
+
+<entry name="Locked" type="Bool" >
+      <label>When this option is enabled, the panels may not be moved and items cannot be removed or added</label>
+      <default>false</default>
+   </entry>
+
+<entry name="ConserveSpace" type="Bool" >
+      <label>Enable conserve space</label>
+      <default>true</default>
+   </entry>
+
+<entry name="UnhideLocation" type="Int">
+      <label>Raise when the pointer touches the screen here</label>
+      <default>6</default>
+    </entry>
+
+<entry name="FadeOutAppletHandles" type="Bool">
+      <label>Fade out applet handles</label>
+      <default>false</default>
+      <whatsthis>Select this option to make applet handles only visible on mouse hover. Applet handles let you move, remove and configure applets.</whatsthis>
+   </entry>
+
+<entry name="HideAppletHandles" type="Bool">
+      <label>Hide applet handles</label>
+      <default>false</default>
+      <whatsthis>Select this option to always hide the applet handles. Beware this could disable moving, removing or configuring some applets.</whatsthis>
+   </entry>
+
+<entry name="UntrustedApplets" type="StringList">
+      <label>A list of applets that have been loaded at runtime. In the case of a crash these applets will not be loaded at the next Kicker start, in case they caused the crash</label>
+   </entry>
+
+<entry name="UntrustedExtensions" type="StringList">
+      <label>A list of extensions that have been loaded at runtime. In the case of a crash these extensions will not be loaded at the next Kicker start, in case they caused the crash</label>
+   </entry>
+
+</group>
+
+<group name="menus">
+
+    <entry name="MenuEntryFormat" type="Enum" >
+        <choices>
+            <choice name="NameOnly">
+                <label>Show simple menu entries</label>
+            </choice>
+            <choice name="NameAndDescription">
+                <label>Show names first on detailed entries</label>
+            </choice>
+            <choice name="DescriptionOnly">
+                <label>Show only description for menu entries</label>
+            </choice>
+            <choice name="DescriptionAndName">
+                <label>Show detailed menu entries</label>
+            </choice>
+        </choices>
+        <default>DescriptionAndName</default>
+        <label>Formation of the menu entry text</label>
+    </entry>
+
+<entry name="ShowMenuTitles" type="Bool" >
+      <label>Show section titles in Kmenu</label>
+      <default>true</default>
+   </entry>
+
+<entry name="MenuEntryHeight" type="Int" >
+      <label>Height of menu entries in pixels</label>
+      <default>0</default>
+   </entry>
+
+<entry name="ShowHiddenFiles" type="Bool" >
+      <label>Show hidden files in Quick Browser</label>
+      <default>false</default>
+   </entry>
+
+<entry name="MaxEntries2" type="UInt" >
+      <label>Maximum number of entries</label>
+      <default>30</default>
+      <min>1</min>
+   </entry>
+
+<entry name="UseBookmarks" type="Bool" >
+      <label>Show bookmarks in KMenu</label>
+      <default>true</default>
+   </entry>
+
+<entry name="UseBrowser" type="Bool" >
+      <label>Use the Quick Browser</label>
+      <default>true</default>
+   </entry>
+
+<entry name="MenuExtensions" key="Extensions" type="StringList" >
+      <label>Optional Menus</label>
+   </entry>
+
+<entry name="RecentAppsStat" type="StringList" >
+      <label>Recently used applications</label>
+   </entry>
+
+<entry name="NumVisibleEntries" type="UInt" >
+      <label>Number of visible entries</label>
+      <default>5</default>
+      <max>100</max>
+   </entry>
+
+<entry name="RecentVsOften" type="Bool" >
+      <label>Show most recently used applications rather than most frequently used</label>
+      <default>false</default>
+   </entry>
+
+</group>
+
+<group name="KMenu" >
+
+<entry name="UseSidePixmap" type="Bool" >
+      <label>Use side image in Kmenu</label>
+      <default>true</default>
+   </entry>
+
+<entry name="SidePixmapName" key="SideName" type="String" >
+      <label>The name of the file to use as the side image in the K Menu</label>
+      <default>kside.png</default>
+   </entry>
+
+<entry name="SideTileName" key="SideTileName" type="String" >
+      <label>The name of the file used as a tile to fill the height of K Menu that SidePixmapName does not cover</label>
+      <default>kside_tile.png</default>
+   </entry>
+
+<entry name="ShowKMenuText" key="ShowText" type="Bool" >
+      <label>Show text on the K Menu button</label>
+      <default>false</default>
+   </entry>
+
+<entry name="KMenuText" key="Text" type="String" >
+      <label>Text to be shown on K Menu Button</label>
+      <default code="true">i18n("Applications")</default>
+   </entry>
+
+</group>
+
+<group name="buttons" >
+
+<entry name="ShowMouseOverEffects" key="EnableIconZoom" type="Bool" >
+      <label>Enable icon mouse over effects</label>
+      <default>true</default>
+   </entry>
+
+<entry name="MouseOversShowIcon" type="Bool" >
+      <label>Show icons in mouse over effects</label>
+      <default>true</default>
+   </entry>
+
+<entry name="MouseOversShowText" type="Bool" >
+      <label>Show text in mouse over effects</label>
+      <default>true</default>
+   </entry>
+
+<entry name="MouseOversSpeed" type="Int" >
+      <label>Controls how fast the tooltips fade in, measured in thousandths of a second</label>
+      <default>500</default>
+      <min>0</min>
+   </entry>
+
+   <entry name="MouseOversShowDelay" type="UInt" >
+       <label>Mouse over effects are shown after the defined time (in milliseconds)</label>
+       <default>250</default>
+   </entry>
+
+   <entry name="MouseOversHideDelay" type="UInt" >
+       <label>Mouse over effects are hidden after the defined time (in milliseconds)</label>
+       <default>200</default>
+   </entry>
+
+<entry name="IconMargin" key="IconMargin" type="Int" >
+      <label>The margin between panel icons and the panel border</label>
+      <default>3</default>
+   </entry>
+
+<entry name="RemoveButtonsWhenBroken" type="Bool" >
+      <label>Buttons that represent KServices (applications, primarily) watch for the removal of the service and delete themselves when this happens. This setting turns this off.</label>
+      <default>true</default>
+   </entry>
+
+<entry name="ButtonFont" key="Font" type="Font" >
+      <label>Font for the buttons with text.</label>
+      <default code="true">KGlobalSettings::generalFont()</default>
+   </entry>
+
+<entry name="ButtonTextColor" key="TextColor" type="Color" >
+      <label>Text color for the buttons.</label>
+      <default code="true">KGlobalSettings::textColor()</default>
+   </entry>
+
+</group>
+
+</kcfg>
+
+

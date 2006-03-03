@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Konqueror Profiles
+Name[fr]=Profils de Konqueror
+Name[x-test]=xxKonqueror Profilesxx
+Comment=Easy access to the Konqueror profiles
+Icon=konqueror
+
+X-KDE-Library=kickermenu_konqueror

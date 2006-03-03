@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Bookmarks Menu
+Name[fr]=Menu des signets
+Name[x-test]=xxBookmarks Menuxx
+Comment=Your Konqueror bookmarks
+Comment[fr]=Vos signets Konqueror
+Comment[x-test]=xxYour Konqueror bookmarksxx
+Icon=bookmark
+X-KDE-Library=BookmarksButton

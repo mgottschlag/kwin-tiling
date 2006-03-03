@@ -1,0 +1,180 @@
+This is the start of documentation for the design of Kicker. Add as motivated.
+
+Contents
+--------
+1. Kicker Startup
+2. The Extension Manager
+3. The Plugin Manager
+4. Files Important To Kicker That Aren't In kdebase/kicker
+5. Top Level Directories
+6. Class Overview
+7. KIOSK features in Kicker
+
+
+1. Kicker Startup
+   --------------
+NOTE: This is the design which we are working towards, not the design as it
+currently is, but there's no point in documenting yesterday.
+
+The class Kicker is a subclass of KUniqueApplication and is where all the
+fun begins. It is always available via the static Kicker::kicker() method.
+Upon creation, Kicker::kicker() ensures that its resources are added to the
+standard dirs. This includes tile, background and various plugin directories.
+
+Next the global keyboard accels are registered. When registering the "Popup
+Launch Menu" accel, it then references the MenuManager. This creates the KMenu
+and the facilities to update the KMenu when the installed .desktop files
+change. This KMenu is shared by all items that provide access to it to keep
+performance up and memory usage down.
+
+Next the ExtensionManager (EM), another singleton, is created. The EM loads
+and manages all the KPanelExtension subclasses, or "panels". If
+on load there are no extensions loaded by the EM, then Kicker creates a
+default panel with a default setup. This default setup is based off of the
+template file <TODO: decide where to store this file and what it is called>.
+
+Kicker then checks to see if the menubar panel has been selected and if so
+sets up a panel at the top of the screen. It uses the kickermenubarrc
+file for this panel, creating it if it does not exist.
+
+The individual extensions may end up loading various applets and even other
+extensions, which they use the PluginManager (PM) and EM to do.
+
+
+2. The Extension Manager
+   ---------------------
+
+
+3. The Plugin Manager
+   ------------------
+
+
+4. Files Important To Kicker That Aren't In kdebase/kicker
+   -------------------------------------------------------
+There are two important sets of kicker-related files that aren't in this
+source tree. The first is the kicker configuration panels, the second are
+the applet and extentions classes.
+
+For historical reasons, the configuration panels can be found in
+kdebase/kcontrol/kicker. When we move to a better RCS (e.g. subversion)
+these files should be moved to kdebase/kicker/kcm
+
+(... add docu here about the structure of the kcm stuff and how it uses
+DCOP to communicate with the panels ...)
+
+In kdelibs/kdeui there are two classes that are quite important to kicker.
+The first is KPanelApplet, which is the base class of all kicker applets.
+The other class is KPanelExtension, which is the base class of all kicker
+extensions.
+
+These classes are in kdeui so that other applications besides kicker may
+use these facilities, either to provide their own applet/extension
+facilities or so as to provide kicker applets/extensions. This strategy
+should be re-examined in KDE4 and the APIs of both classes cleaned up
+extensively.
+
+5. Top Level Directories
+   ---------------------
+applets/
+The basic set of applets. Everything here subclasses from KPanelApplet found
+in kdelibs/kdeui. These can be assumed to exist at startup and are allowed,
+if not encouraged to, access kicker internals.
+
+buttons/
+Anything button-like that you can click on in kicker. Includes the KMenu,
+quickbrowsers and application buttons.
+
+core/
+As the name suggests, this is the main kicker code. This include the main()
+and various containers and collection classes needed to glue everything
+together.
+
+data/
+Icons, button tiles, backgrounds and the KMenu side images.
+
+extensions/
+Extensions, aka panels. Everything here subclasses from KPanelExtension.
+Includes the external taskbar, kasbar, windowmaker doc applet bar, child
+panel and universal sidebar.
+
+menuext/
+Like buttons, but also like menus. These are plugins that provide both
+a button for the panel and a menu that appear in the KMenu. These are
+generally encouraged over creating buttons in buttons/ that popup menus.
+
+proxy/
+Small applications that wrap applets and extensions allowing for out-of-
+process execution of these items. This is used to safeguard kicker against
+instiating an applet or extension that may crash, taking kicker with it if
+they were loaded internally.
+
+share/
+Some basic classes that were meant for use beyond what is in core/. Should
+probably be moved / consolidated with core/ eventually.
+
+ui/
+Menus and dialogs. Menus tend to contain "_mnu" in the file name. Kicker's
+control panels are not found here, however. Those are in i
+kdebase/kcontrol/kicker.
+
+taskbar/
+The code that implements the actual taskbar widget. This is wrapped by the
+taskbar applet (applets/taskbar) and the taskbar extension (extensions/taskbar)
+
+taskmanager/
+Classes representing tasks and collections of tasks. Used by taskbar/
+
+
+6. Class Overview
+   --------------
+
+
+The Building Blocks Of A Panel
+------------------------------
+Fittslawframe, Panner, ContainerArea, ContainerPanel
+
+
+Applets
+-------
+KPanelApplet, AppletInfo, .desktop file description, PluginManager/PluginLoader
+
+
+Extensions (aka "Panels")
+-------------------------
+KPanelExtension, .desktop file description, PluginLoader, ExtensionContainer,
+ExtensionManager
+
+
+7. KIOSK features in Kicker
+   ------------------------
+
+Several aspects of the panel can be restricted:
+
+* Individual elements (buttons, applets, etc.) can be marked immutable.
+This means that they can not be removed and their properties/configuration
+can not be changed.
+
+How: The configuration group in kickerrc corresponding to the element is
+marked immutable, OR, the configuration file associated with the element
+(ConfigFile= entry, or additionally for Buttons FreeSpace2=) is marked
+immutable.
+
+* The addition/removal of Applets, Application Buttons, Special Buttons
+and Panels can be restricted.
+
+How: "General/Applets2" key is marked immutable. If this is done in the
+kickerrc it applies to ALL panels. If done in a secondary panel's rc
+it applies to that one panel only.
+
+* Panel configuration can be restricted. This affects appearance as wells
+as menu-editing (see below)
+
+How: ??? "General" group in kickerrc is marked immutable (??? that would
+imply that buttons can't be added either, loss of flexibility)
+How: Use "kde-panel.desktop" control module restriction.
+
+* Menu editing can be restricted. Kicker offers several menu items in the
+KDE menu beyond the applications menu itself. See "Configure Panel -> Menus"
+How: Restrict action/menuedit (??? Are their cases where you would want to
+restrict editing of the applications menu but not the other elements in
+the KDE menu?

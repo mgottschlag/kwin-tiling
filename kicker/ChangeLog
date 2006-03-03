@@ -1,0 +1,25 @@
+2004-06-10   Dan Bullok <dan.kde@bullok.com>
+	* Fixed Bug 42278 - Strange layout with Kicker and custom size. Now buttons are never wider (for horizontal) or taller (for vertical) than 58 pixels.
+	* Added some symbolic constants for some kicker values (max size, min size, default custom size), that were previously hard-coded in a few places.
+
+2002-01-03  John Firebaugh <jfirebaugh@kde.org>
+	* Use mouse polling instead of enter/leave events to trigger auto-unhiding. Much more reliable and will allow us to do things like only unhide at the corners or when the mouse hits the edge of the screen with a certain velocity. Also fixes #27660.
+	* New class core/panelmanager.cpp. For now, just has code for auto-hide, but will soon handle the screen layout of the panels.
+
+2002-01-02  John Firebaugh <jfirebaugh@kde.org>
+	* Now you can set the alignment by dnd.
+2002-01-01  John Firebaugh <jfirebaugh@kde.org>
+	* Make the action taken for each mouse button on a task container configurable.
+	* Add Task::lower() method.
+2002-01-01  John Firebaugh <jfirebaugh@kde.org>
+	* Add "Custom" item to size menu, restore checkmark next to current size.
+	* Add "Custom" radio button to kcmkicker, handle custom sizes correctly, i.e. don't keep resetting it to normal.
+2001-12-30  John Firebaugh <jfirebaugh@kde.org>
+	* Split panelbutton.{h|cpp} into separate files.
+	* Rename each Panel*Button to *Button.
+	* Rename PanelExeButton to NonKDEAppButton.
+	* Fix crash in BrowserMenu after changing the directory.
+	* If a button saves its own config, it should also load its own config.
+	* Delete the config groups of removed applets and buttons.
+	* New application buttons are of a new class that saves only the relative path of the .desktop file. (Fixes 18289)
+

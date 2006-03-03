@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Plugin
+Encoding=UTF-8
+Name=Quick Launcher
+Name[fr]=Lanceur d'applications
+Name[x-test]=xxQuick Launcherxx
+Comment=The quick launcher applet
+Icon=launch
+X-KDE-Library=launcher_panelapplet

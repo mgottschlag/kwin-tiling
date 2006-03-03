@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Plugin
+Encoding=UTF-8
+Name=Lock/Logout Applet
+Comment=Adds buttons for locking screen and session logout
+Comment[fr]=Ajoute des boutons permettant de verrouiller l'écran et de déconnecter la session en cours
+Comment[x-test]=xxAdds buttons for locking screen and session logoutxx
+Icon=exit
+X-KDE-Library=lockout_panelapplet

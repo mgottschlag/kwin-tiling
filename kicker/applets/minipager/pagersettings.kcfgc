@@ -1,0 +1,4 @@
+File=pagersettings.kcfg
+Singleton=false
+ClassName=PagerSettings
+Mutators=true

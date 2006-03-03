@@ -1,0 +1,119 @@
+Here are the top things that need to be or are being worked on in Kicker.
+They are rated as to expected difficulty, from one to five stars.
+They are also rated as to desirability, from one to five plusses.
+
+Issues Of Import
+----------------
+Layout management
+    autoexpending panels on the same side of the screen need to stop expanding
+        at the point they run into each other.
+    make autohiding panels respect layout geometry too? e.g. don't overlap
+    autounhiding panels should not obscure other panels
+ContainerArea completness
+    doesn't autoscroll when moving a container
+    doesn't add items near the mouse even position
+Bring some standardization to how the various plugins are handled
+Allow menubar == mainpanel
+Move more of the buttons/ classes into menuext/
+Move appropriate applets into menuext/
+revisit libtaskbar and libtaskmanager
+    coordinate with kasbar authors
+    add support for composite
+revisit DCOP interface
+    remove old/nonsensical calls
+    extend with calls to:
+        retrieve a panel dcop ref
+        hide/unhide
+        ... ?
+libkicker
+    document functions
+    namespace it all (KickerLib?)
+    prep for binary compat
+    move
+        Panner -> core/
+            does taskbar really need to use Panner?
+    rename
+        global.h/cpp -> util.h/cpp
+    add:
+        ServiceMenu?
+        PanelDrag?
+        KPanelExtension
+        KPanelApplet
+            allow usage of KickerTip
+        ExtensionSettings
+        ExtensionButton
+            poor name =/
+            shouldn't be so menu-centric either
+Optimize!
+    hiding: it seems there are more geometry calls made than really needed
+    get rid of movies (which nobody really uses) in PanelButton
+Code clean ups
+    remove pseudo transparency in favour of composite
+        means handling composite properly, e.g. just the background and not
+        the actual icons, text, etc.
+    flatten the PanelExtension -> ContainerArea -> ContainerAreaLayout
+        hierarchy. perhaps merge PanelExtension and ContainerArea?
+    get rid of the insane number of classes in ui/?
+A _good_ theming system
+
+Being Worked On
+---------------
+
+Applets
+-------
+Clock
+    Use styleclock.nextVersion()
+Get rid of swallow applet
+Make trash an extension button
+
+Unnasigned
+-----------------------
++++++ Keyboard accessability
+****
+      We will follow the lead of the GNOME panel accessability work:
+      http://developer.gnome.org/projects/gap/keynav/panelnav.html
+
+      To summarise:
+
+      - Ctrl-Alt-Tab cycles focus between panels [Shift to reverse]
+      - Tab cycles focus between objects on the focused panel [Shift to
+        reverse]
+      - Arrow keys move focus within a focused applet
+      - Space activates focused control (on panel or within an applet)
+
++++++ Settings dialog fix up
+***   Now that we have KConfigXT, use it in the settings dialogs
+      Convert the "Arrangement" and "Hiding" modules. "Menus" and
+      "Appearance" are done as far as possible.
+
+++++  Floating panels
+****  When a panel is set to "floating" the following entries are added
+      to the [General] config group:
+      FloatingPosition <-- geometry.topLeft();
+      FloatingOrientation <-- horizontal or vertical
+
+++++  Drag and drop enhancements
+***   Drag and drop behaviour is broken in various ways in kicker.
+      A popup menu should appear on drop like in Konqueror and KMail.
+      Dropping on buttons like QuickBrowsers, the Home icon, etc should
+      behave consistently and like dropping to a file manager window.
+      There are many DnD reports on bugs.kde.org which can provide
+      further inspiration.
+
+++++  Systray icon layout
+****  The systray applet does a very basic homebrew layout of the icons
+      that currently has several flawed assumptions that break when used
+      with certain applications. These assumptions include that all icons
+      in a given row will be approximately the same width and that things
+      are always LTR (left to right). It should use a QGridLayout and
+      do some semi-intelligent packing of the icons.
+
+++    Dialog for adding elements to the panel
+***   Context menus are primarily used by advanced users, and yet this is
+      the only way to manage the items on the panel. There used to be a
+      control panel that allowed turning on or off applets on the main panel
+      but this is obviously too restrictive and I'd prefer not to see yet
+      another tab in the kicker control panels. A dialog that shows previews
+      of the specials buttons and applets and allows one to either drag and
+      drop or with a button add items to a given panel would make kicker that
+      much more accessable to more of our users.

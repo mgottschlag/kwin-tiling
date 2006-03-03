@@ -1,0 +1,22 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Universal Sidebar
+Name[fr]=Barre latérale universelle
+Name[x-test]=xxUniversal Sidebarxx
+
+Comment=Wrapper around Konqueror's navigation panel
+Comment[fr]=Un enveloppement autour du panneau de navigation de Konqueror
+Comment[x-test]=xxWrapper around Konqueror's navigation panelxx
+
+Icon=view_sidetree
+
+X-KDE-Library=sidebar_panelextension
+X-KDE-UniqueApplet=true
+X-KDE-PanelExt-Resizeable=true
+X-KDE-PanelExt-StdSizes=true
+X-KDE-PanelExt-StdSizeDefault=1
+X-KDE-PanelExt-CustomSizeMin=24
+X-KDE-PanelExt-CustomSizeMax=400
+X-KDE-PanelExt-CustomSizeDefault=200
+X-KDE-UniqueExtension=true
+X-KDE-PanelExt-Positions=Left,Right

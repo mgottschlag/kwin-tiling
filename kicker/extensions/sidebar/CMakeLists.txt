@@ -1,0 +1,46 @@
+kde4_header()
+
+include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+
+
+########### next target ###############
+
+set(sidebar_panelextension_PART_SRCS sidebarextension.cpp )
+
+kde4_automoc(${sidebar_panelextension_PART_SRCS})
+
+kde4_add_plugin(sidebar_panelextension ${sidebar_panelextension_PART_SRCS})
+
+kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} sidebar_panelextension )
+
+target_link_libraries(sidebar_panelextension  ${QT_AND_KDECORE_LIBS} kickermain kdeui kparts konq )
+
+install_targets(${LIB_INSTALL_DIR}/kde4 sidebar_panelextension )
+
+
+########### install files ###############
+
+install_files( ${DATA_INSTALL_DIR}/kicker/extensions FILES sidebarextension.desktop )
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+#INCLUDES = -I$(srcdir)/../../libkicker -I$(top_srcdir)/libkonq $(all_includes)
+#
+#kde_module_LTLIBRARIES = sidebar_panelextension.la
+#
+#sidebar_panelextension_la_SOURCES = sidebarextension.cpp
+#
+#sidebar_panelextension_la_METASOURCES = AUTO
+#sidebar_panelextension_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
+#sidebar_panelextension_la_LIBADD =  ../../libkicker/libkickermain.la $(LIB_KDEUI) $(LIB_KPARTS) ../../../libkonq/libkonq.la
+#
+#
+#lnkdir = $(kde_datadir)/kicker/extensions
+#lnk_DATA = sidebarextension.desktop
+#
+#messages:
+#	$(XGETTEXT) *.cpp *.h -o $(podir)/kickersidebarextension.pot

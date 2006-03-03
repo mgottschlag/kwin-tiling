@@ -1,0 +1,29 @@
+- Don't show systray option if already has one
+- Close detached bar when container dies
+
+
+Bug Fixes
+=========
+
+- Turn the rest of the 'magic numbers' into named constants
+
+- Ensure the boxes load from the screen edges outwards (not done
+  currently correctly right now)
+
+New Features
+============
+
+- Task listing profiles
+
+- Add double buffered updates
+
+- Allow more control over task grouping
+
+Mostly Done
+===========
+
+- Move the generic code from Kasbar and the default taskbar to
+  libtaskmanager
+
+
+

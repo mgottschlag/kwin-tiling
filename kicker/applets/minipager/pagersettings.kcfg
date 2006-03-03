@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+                          http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+
+    <kcfgfile arg="true"/>
+    <group name="General">
+        <entry key="LabelType" type="Enum">
+            <choices>
+                <choice name="LabelNone">
+                    <label>None</label>
+                </choice>
+                <choice name="LabelName">
+                    <label>Name</label>
+                </choice>
+                <choice name="LabelNumber">
+                    <label>Number</label>
+                </choice>
+            </choices>
+            <default>LabelNumber</default>
+            <label>Virtual desktop label type</label>
+        </entry>
+
+        <entry key="BackgroundType" type="Enum">
+            <choices>
+                <choice name="BgPlain">
+                    <label>Plain</label>
+                </choice>
+                <choice name="BgTransparent">
+                    <label>Transparent</label>
+                </choice>
+                <choice name="BgLive">
+                    <label>Live</label>
+                </choice>
+            </choices>
+            <default>BgPlain</default>
+            <label>Virtual desktop background type</label>
+        </entry>
+
+        <entry name="NumberOfRows" type="Int">
+            <label>Number of rows to arrange the desktop previews into</label>
+            <default>0</default>
+            <min>0</min>
+            <max>4</max>
+        </entry>
+
+        <entry name="Preview" type="Bool">
+            <label>Show desktop preview?</label>
+            <default>true</default>
+        </entry>
+
+        <entry name="Icons" type="Bool">
+            <label>Show window icons in previews?</label>
+            <default>true</default>
+        </entry>
+    </group>
+</kcfg>

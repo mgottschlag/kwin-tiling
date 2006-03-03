@@ -1,0 +1,954 @@
+2004-11-20 Saturday 23:27  rich
+
+	* - Ensure the LCD used by the clock is deleted in a timely manner.
+
+	  - Lazy creation of the data picker popup of the clock item.
+
+	  - Save orientation and direction between sessions properly (the
+	  direction is	 now the primary record).
+
+2004-11-20 Saturday 21:18  rich
+
+	* - Update changelog
+
+2004-11-20 Saturday 21:17  rich
+
+	* - Fixed a warning from KImageEffect about the image being invalid
+	  when we draw	 the load gradient and the load is 0.
+
+2004-11-20 Saturday 20:05  rich
+
+	* - Added support for filling the bar from either end.
+
+2004-11-20 Saturday 02:34  rich
+
+	* - Middle click now rotates the bar.
+
+	  - Improved the about dialog.
+
+	  - Made masking of the containing toplevel optional.
+
+	  - Fixed positioning of the clock display in small mode.
+
+2004-11-19 Friday 23:21  rich
+
+	* - The standalone app now remembers its position properly.
+
+2004-11-19 Friday 22:30  rich
+
+	* - Increase version and update changelog.
+
+2004-11-19 Friday 22:29  rich
+
+	* - Moved item bg gradients into KasResources.
+
+	  - More work on improving the painting. This is currently a bit
+	  broken as it is   waiting for me to abandon using KRootPixmap.
+
+2004-11-17 Wednesday 17:56  mueller
+
+	* fix export's
+
+2004-11-14 Sunday 20:52  binner
+
+	* CVS_SILENT i18n style guide fixes
+
+2004-11-13 Saturday 02:37  rich
+
+	* - Totally reworked the way showing and hiding popups works.
+
+	  - Added a command line tool that provides a standalone kasbar.
+
+	  - Added a system load meter item.
+
+	  - Improved config dialog.
+
+2004-10-23 Saturday 19:04  wgreven
+
+	* Fix for unsermake.
+
+2004-10-23 Saturday 13:42  wgreven
+
+	* Sync with HEAD.
+
+2004-10-23 Saturday 04:19  rich
+
+	*
+	  - Totally reworked the way showing and hiding of popups works.
+	  Things   should be a lot more sane now as the popups are reused.
+
+	  - Added a command line tool that provides a standalone kasbar.
+
+	  - Improved the demo in the about dialog.
+
+2004-10-03 Sunday 01:26  rich
+
+	* - Move the startup animation frames into KasResources so they are
+	  shared by   all items. Changed the QPtrList to a QValueVector for
+	  more efficient lookups   and implicit sharing.
+
+	  - Improved the way animations are triggered to support custom
+	  animations.
+
+	  - Added a new clock item type.
+
+2004-09-13 Monday 12:08  coles
+
+	*
+
+	  CVS_SILENT
+
+	  behaviour -> behavior.
+
+2004-09-12 Sunday 02:43  rich
+
+	* - Items store their position. This allows much more efficient
+	  painting.
+
+2004-09-12 Sunday 01:21  rich
+
+	* - Remove floating bars if the extension that they are supposed to
+	  live in is   removed.
+
+2004-09-12 Sunday 00:24  rich
+
+	* - Update changelog
+
+2004-09-12 Sunday 00:24  rich
+
+	* - Support for only showing minimized applications like the old
+	  OLWM.
+
+	  - Improvements to the context menu.
+
+	  - Optionally don't show the frames for inactive items (great if
+	  you want the	 floating mode to blend into your desktop).
+
+	  - Refactored code for drawing state icons.
+
+2004-09-05 Sunday 00:47  rich
+
+	* - Moved most of the config writing code into KasTasker.
+
+2004-09-04 Saturday 02:57  rich
+
+	* - Update changelog
+
+2004-09-04 Saturday 02:56  rich
+
+	* - Began making startup items work like other types of item.
+
+	  - Fixed a regression that broke all the grouping code.
+
+2004-09-04 Saturday 01:42  rich
+
+	* - You can now disable the frame around inactive boxes.
+
+	  - Startup items now spin around their own center.
+
+2004-09-03 Friday 22:32  rich
+
+	* - Added support for the XShape extension, the unused space is now
+	  masked so   that when you have a non-rectangular bar (by using
+	  the 'Boxes per line'	 setting) the unused space is truly unused.
+	  To make this better, I need to   make it so that the box is
+	  always populated from the screen edge outwards.
+
+2004-08-29 Sunday 00:27  rich
+
+	* Update changelog
+
+2004-08-29 Sunday 00:27  rich
+
+	* - Added ability to rotate the bar when it is floating.
+
+	  - Added a context menu item to attach and detach the bar.
+
+	  - Improved repaint performance.
+
+	  - Increased version number.
+
+2004-08-21 Saturday 02:22  rich
+
+	* - Completed support for embedding the thumbnails of tasks in the
+	  icon boxes   instead of only showing them in the tooltip. If the
+	  app changes its WM icon   then this is overlayed on the box as
+	  before.
+
+	  - Fixed popup display.
+
+2004-08-20 Friday 23:18  rich
+
+	* - Merge the kasbar3 code into head:
+
+	    - Better grouping facilities
+	    - Cleaner code
+	    - More efficient
+	    - Send any window to the system tray
+	    - Attention required indicator
+	    - Partial support for more sizes: huge, enourmous and custom
+	  sizes
+	    - Better organisation of the preferences dialog
+	    - More control over the appearance of the bar
+	    - 'Floating' mode
+	    - Group windows on inactive desktops
+
+2004-08-07 Saturday 04:10  rich
+
+	* - Moved almost all of the functionality of KasGroupPopup into
+	  KasPopup in	preparation for the removal of the custom class for
+	  group popups.
+
+	  - Removed the KasGroupPopup class. The functionality it contained
+	  is now all   supported by the KasPopup base-class.
+
+2004-08-07 Saturday 03:39  rich
+
+	* - Ensure the test program reads the current config file properly.
+
+2004-08-07 Saturday 03:34  rich
+
+	* - Improved the handling of inactive desktop grouping.
+
+	  - Fixed a problem with popups not being deleted when their
+	  associated item was	invalidated.
+
+2004-08-07 Saturday 03:00  rich
+
+	* - Ensure that grouping windows on inactive desktops updates
+	  correctly when the   current desktop changes.
+
+2004-08-07 Saturday 02:35  rich
+
+	* - Added kasgrouper class and updated changelog.
+
+2004-08-07 Saturday 02:34  rich
+
+	* - Reworked the configuration dialog to move the 'insanely
+	  detailed' options   into an advanced page. I also added a
+	  graphical way to configure some of the   color options that
+	  previously required hacking the config file to access.
+
+	  - Made the color of the 'attention required' state icon
+	  configurable.
+
+2004-08-07 Saturday 00:00  rich
+
+	* - Emit signals for mouse handling and use them for controlling
+	  the popup.
+
+	  - Split grouping out into a separate class.
+
+2004-08-06 Friday 00:51  rich
+
+	* - Fix breakage of the preferences dialog.
+
+2004-08-06 Friday 00:19  rich
+
+	* - Added an 'ungroup' action to the context menu for group items.
+
+	  - Added a 'Refresh' action to kasbar menu.
+
+2004-08-05 Thursday 23:30  rich
+
+	* - Updated copyrights and added info about the features to docs.h.
+
+2004-08-05 Thursday 23:26  rich
+
+	* - Reworked the popup handling code to massively improve control
+	  over the   lifetime of the popup. This has simplified a bunch of
+	  things and made   more advanced popup handling possible.
+
+2004-08-01 Sunday 02:55  rich
+
+	* - KasItem is now responsible for drawing the main icon of the
+	  boxes.
+
+	  - KasItem now provides a demo childbar as the default
+	  implementation of   createPopup(). This means that you now get a
+	  nice popup when you move   the mouse over the item in the about
+	  dialog.
+
+2004-08-01 Sunday 01:45  rich
+
+	* - Began moving support for child bars to the kasbar base class
+	  rather than	confining it to KasTasker.
+
+	    - New constructor for childbars in KasBar.
+	    - Reworked code for updating child to match parents resources.
+	    - Moved child bar creation to a factory method in KasBar.
+
+2004-08-01 Sunday 00:24  rich
+
+	* - Added support for the 'demands attention' task property.
+
+	  - Centralised the code that creates the kasbar menu.
+
+	  - Modified icon is now accessed via the resource object.
+
+	  - Singleton icons are no longer stored as pointers.
+
+2004-07-25 Sunday 01:15  rich
+
+	* - Fix a problem with the usage of the RMB menu from taskmanger,
+	  passing a   widget as an argument to a bool variable is not
+	  what's supposed to happen.
+
+	  - Fixed menu for group items.
+
+	  CCMAIL: 48825-done@bugs.kde.org
+
+2004-07-25 Sunday 00:58  rich
+
+	* - Fixed menu handling to support the show all flag properly, and
+	  added group	menus.
+
+2004-07-25 Sunday 00:20  rich
+
+	* - Started pulling ui resources into a standalone class
+	  KasResources. Child	bars inherit their parents resources by
+	  default.
+
+	  - Added a hack to prototype the idea of embedding the thumbnails
+	  in the icon	box.
+
+	  - Support for custom sizes (incomplete).
+
+	  - Improvements to the configuration dialog.
+
+	  - Ability to group windows on inactive desktops (still buggy).
+
+2004-07-24 Saturday 00:10  rich
+
+	* - Added the ability to send a window to the system tray.
+
+	  - Broke transparency in preparation for the new implementation.
+
+	  - Started the 'group windows on inactive desktops' option.
+
+2004-07-18 Sunday 00:31  rich
+
+	* The work I've been doing to get kasbar ready for the 3.3 release
+	  has encouraged me to add few new features and do a bit of
+	  redesign. This code is not ready to be released, so I'm keeping
+	  it the newly created kasbar3_branch.
+
+2004-07-10 Saturday 20:38  binner
+
+	* CVS_SILENT i18n style guide fixes
+
+2004-07-10 Saturday 01:57  rich
+
+	* - Fixed the progress indicator code. You can now get a progress
+	  bar in the   label of a task (replacing the broken pie chart
+	  code).
+
+2004-06-29 Tuesday 01:19  wheeler
+
+	* CVS_SILENT Oops.  Didn't mean for this to go in.
+
+2004-06-29 Tuesday 01:16  wheeler
+
+	* Disable the tint color and amount boxes if tinting is disabled.
+
+2004-06-27 Sunday 17:18  binner
+
+	* CVS_SILENT i18n style guide fixes
+
+2004-06-27 Sunday 01:10  rich
+
+	* - Added the ability to choose the colors used for the item
+	  labels.
+
+	  CCMAIL: 60520-done@bugs.kde.org
+
+2004-06-26 Saturday 23:49  rich
+
+	* - Don't show the desktop number if there's only one desktop.
+
+	  CCMAIL: 60520@bugs.kde.org
+
+2004-06-26 Saturday 02:12  rich
+
+	* - Fixed clearing of unused space when the used part of the bar is
+	  not	rectangular. The fix could be improved, but it removes the
+	  essential   problem.
+
+	  CCMAIL: 47078-done@bugs.kde.org
+
+2004-06-26 Saturday 01:48  rich
+
+	* - Fix popup handling.
+
+	  CCMAIL: 68305-done@kde.org
+
+2004-06-26 Saturday 00:28  rich
+
+	* - Fix test program for kwin changes.
+
+2004-06-26 Saturday 00:10  rich
+
+	* - Fix task properties dialog to use the new name of the
+	  visibleiconname   Task property.
+
+2004-06-25 Friday 23:43  rich
+
+	* - Fixed about dialog to take account of the fact the cvs id was
+	  removed.
+
+	  - Fixed the size and wrapping of the license text in the about
+	  dialog.
+
+2004-06-25 Friday 23:10  rich
+
+	* Updated the changelog, it was 2 years out of date
+
+2004-02-24 Tuesday 19:14  mcamen
+
+	* Fix compilation. The remove-id-tag-commit was not correct for
+	  these files.
+
+2004-02-24 Tuesday 11:30  englich
+
+	*
+	  Remove all CVS Id tags from kdebase, if I haven't missed one.
+
+	  Of course, this will multifold break compile as well as a dozen
+	  of people will now object that they actually wanted the Id tags.
+
+2004-01-05 Monday 21:38  adridg
+
+	* Add dual-license GPL/BSD to files as instructed by Rich Moore.
+
+2003-12-20 Saturday 15:14  kossebau
+
+	* hiding a few symbols :)
+
+2003-11-20 Thursday 16:12  mlaurent
+
+	* Clean commit as requested by David.  When we use
+	  K_EXPORT_KICKER_MENUEXT it's automatic => don't use
+	  removeCatalogue otherwise use removeCatalogue.
+
+2003-10-27 Monday 19:12  bwalter
+
+	* CVS_SILENT Changed the "check popup" delay.
+
+2003-10-23 Thursday 21:41  bwalter
+
+	* Use topLevelWidget() instead of parent()->parent()...
+
+2003-10-22 Wednesday 22:15  bwalter
+
+	* Better than a singleShot timer to make popups disappear but not
+	  always enough.
+
+2003-10-21 Tuesday 10:45  bwalter
+
+	* Fix the annoying problem of tooltips which sometimes never
+	  disappear.
+
+2003-10-06 Monday 23:27  rich
+
+	* Fix vertical mode
+
+2003-10-06 Monday 20:11  rich
+
+	* Fix problem with maxBoxes fix.
+
+2003-10-04 Saturday 21:36  rich
+
+	* - Split the 'max boxes' concept into two so we can handle things
+	  properly. The   original max boxes remains, and refers to the
+	  user specified limit on the	number of boxes per line. In
+	  addition there is now a 'boxes per line'   concept which stores
+	  the number of boxes that will actually fit. This change   cleans
+	  up the configuration handling and also means that kasbar can obey
+	  the	size limits placed on it.
+
+	  - Take notice of the size limits passed to the widget. This means
+	  the size   limits for extension that were added in 3.1 will now
+	  work properly.
+
+	  - Disable updates when refreshing the entire task list. This
+	  removes lots of   flicker when changing desktops when you don't
+	  show all the tasks.
+
+	  - Improved the resize handling code so that can handle changes in
+	  the item   size cleanly.
+
+	  - Updated copyright dates.
+
+2003-09-30 Tuesday 22:25  rich
+
+	* - More improvements to bg repainting (much more efficient).
+
+	  - Fixed startup animation problem #39582
+
+	  - Fixed erase problem introduced by the repaint changes in my
+	  last commit.
+
+	  CCMAIL: 39582-done@bugs.kde.org
+
+2003-09-30 Tuesday 19:18  rich
+
+	* - Removed duplicated config loading code from the extension
+	  class.
+
+	  - Removed redundant reload of configuration info.
+
+	  - Reworked painting	- Double buffering is now handled by KasBar
+	  not the items.    - Items now longer force an immediate repaint,
+	  they use update instead.    - Fixes #53735
+
+	  CCMAIL: 53735-done@bugs.kde.org
+
+2003-09-29 Monday 12:24  lunakl
+
+	* Another attempt to get (_NET_)WM_(ICON_)NAME right.
+
+2003-08-07 Thursday 19:51  lunakl
+
+	* Rewrite handling of _NET_WM_ICON_NAME. This together with the
+	  recent KApplication change should hopefully make taskbar again
+	  display what it's supposed to display. Please yell if something
+	  is still wrong.
+
+2003-07-31 Thursday 10:31  lunakl
+
+	* Proper handling of _NET_WM_ICON_NAME - it has nothing to do with
+	  what's usually meant by icons in KDE, but it's the text to be
+	  shown in iconic representations of a window, such as taskbar
+	  entries.
+
+2003-07-19 Saturday 22:35  deller
+
+	* do not use hardcoded fontnames
+
+2003-05-17 Saturday 10:20  coolo
+
+	* fixing quite some compiler warnings
+
+2003-03-29 Saturday 20:29  binner
+
+	* Fixed a layout problem and solution for "only drawing last icon
+	  from a group".
+
+2003-02-09 Sunday 09:51  mfranz
+
+	* fix typo
+
+2002-12-29 Sunday 17:10  mueller
+
+	* use $(KDE_PLUGIN)
+
+2002-10-27 Sunday 16:05  mlaurent
+
+	* Fix a part of crash.	But kastaskbar crash again when we call
+	  "show preference" or "about" when we call it into taskbarpopup.
+	  Because taskitem was deleted when we hide popup => so when we
+	  close dialogbox, kicker crash.  I don't know how to fix it. But
+	  it crashs again...
+
+2002-10-27 Sunday 15:50  mlaurent
+
+	* Remove some if( blabla) delete blabla => delete blabla;
+
+2002-10-27 Sunday 14:46  mlaurent
+
+	* Fix display properties dialogbox when we call it from
+	  kasgroupitem
+
+2002-10-27 Sunday 13:53  mlaurent
+
+	* Fix crash when we call showPreference on item in kasgroupgroup =>
+	  config pointer was null.
+
+2002-10-27 Sunday 12:48  mlaurent
+
+	* Fix crash when we taskbar was re-create after change config.
+
+2002-09-18 Wednesday 17:13  binner
+
+	* CVS_SILENT Style guide fix, use "cvslastchange" or X-WebCVS
+	  header line to view
+
+2002-09-03 Tuesday 16:42  ettrich
+
+	* patch from Benoit Walter <benoit.walter@esstin.uhp-nancy.fr> as
+	  discussed on kde-core-devel
+
+2002-08-31 Saturday 10:44  pfeiffer
+
+	* another font-patch from CCMAIL: Luciano Montanaro
+	  <mikelima@virgilio.it>
+
+2002-08-30 Friday 11:45  mkretz
+
+	* This took me 2 hours to find...
+
+	  -   KConfigGroupSaver( conf, "Appearance" ); +
+	  KConfigGroupSaver saver( conf, "Appearance" );
+
+	  Finally the size is restored correctly.
+
+2002-08-30 Friday 10:37  pfeiffer
+
+	* use KGlobal::taskbarFont(), patch by CCMAIL: Luciano Montanaro
+	  <mikelima@virgilio.it>
+
+2002-08-29 Thursday 17:38  mueller
+
+	* remove outdated #ifdef's
+
+2002-08-13 Tuesday 09:05  binner
+
+	* CVS_SILENT Style guide fix, use "cvslastchange" or X-WebCVS
+	  header line to view
+
+2002-08-09 Friday 23:57  rich
+
+	* - Fixed repaint problem with startup items
+
+2002-07-29 Monday 22:03  coolo
+
+	* this fixes compilation for me +void KasTasker::readConfig() +{ +
+	  readConfig(this->conf); +}
+
+2002-07-27 Saturday 04:26  rich
+
+	* Added kasbar actions to item menus to fix reported ui bug
+
+2002-07-03 Wednesday 11:03  binner
+
+	* CVS_SILENT Style guide fixes
+
+2002-06-10 Monday 03:29  rich
+
+	* - Simplify drawing code - Ensure popup doesn't obscure menu - Fix
+	  bug when window changes desktop - Task properties dialog
+
+2002-05-25 Saturday 14:18  coolo
+
+	* CVS_SILENT ignoring unsermake generated files
+
+2002-05-14 Tuesday 10:31  gioele
+
+	* kapp.h -> kapplication.h
+
+2002-04-23 Tuesday 14:02  binner
+
+	* CVS_SILENT Capitalisation fixes.
+
+2002-04-12 Friday 22:36  rich
+
+	* - kdoc fixes
+
+2002-03-11 Monday 00:23  rich
+
+	* Use all the frames in the startup animation (cleaner fix)
+
+2002-03-11 Monday 00:10  rich
+
+	* Use all the frames in the statup animation
+
+2002-03-08 Friday 15:08  lukas
+
+	* grrr, I fixed that before 2.2.2 and it's back :(
+
+	  + KGlobal::locale()->insertCatalogue("kasbarextension");
+
+2002-02-26 Tuesday 17:04  elter
+
+	* - install extensions into kde's module subdir
+
+2002-02-24 Sunday 21:44  rich
+
+	* Added change log file
+
+2002-02-24 Sunday 21:41  rich
+
+	* - Version++ - Fixed redraw errors when there are no tasks - Now
+	  makes use of the KRootPixmap improvements in KDE 3.  - All
+	  drawing is now double buffered, so the flicker problems of the
+	  past should be solved.  - Changed many methods to remove
+	  coordinate params.  - KasItems are now given a translated
+	  qpainter.  - Added a change log (generated from the cvs log by
+	  cvs2cl).  - Removed old RMB menu code (we use the more reliable
+	  stuff in the	 taskmanager lib instead).
+
+	  ----------------------------------------------------------------------
+
+2002-01-20 Sunday 18:15  wgreven
+
+	* Initialize dragTimer to null.
+
+2001-12-29 Saturday 17:18  mueller
+
+	* CVSSILENT: fixincludes
+
+2001-12-11 Tuesday 02:09  firebaugh
+
+	* Clean up task menu code. Kill memory leaks. Add new items to RMB
+	  menu for grouped tasks.
+
+2001-11-29 Thursday 19:34  rich
+
+	* version++, update homepage
+
+2001-11-29 Thursday 19:23  rich
+
+	* Switch to taskmanager task popup menu instead of kwin (avoids
+	  some problems)
+
+2001-11-25 Sunday 02:03  rich
+
+	* - Updated todo list - Only showing the group popups for 4 ms was
+	  a bit daft - Moved config load code
+
+2001-11-25 Sunday 01:43  rich
+
+	* - Reduced flicker - kasbar widget now supports widget flags -
+	  Version++ - Task grouping popups now auto-hide - Added standalone
+	  version for testing (maybe a user-level feature   in future).
+
+2001-11-11 Sunday 17:26  rich
+
+	* Work the same way as the std taskbar
+
+2001-10-07 Sunday 01:46  mueller
+
+	* whoopsie
+
+2001-09-26 Wednesday 18:37  mueller
+
+	* fixes for QT_NO_COMPAT
+
+2001-09-01 Saturday 22:31  rich
+
+	* Fix popup window for Qt 3 widget flags better
+
+2001-09-01 Saturday 22:23  rich
+
+	* Fix popup window for Qt 3 widget flags
+
+2001-09-01 Saturday 00:55  rich
+
+	* - QList->QPtrList - Improved classdocs build target
+
+2001-08-27 Monday 18:41  lukas
+
+	* make it show translated
+
+2001-07-17 Tuesday 19:59  rich
+
+	* Added some extra guards around KRootPixmap calls and readded the
+	  repaint I removed earlier
+
+2001-07-17 Tuesday 17:03  rich
+
+	* Remove redundant repaint
+
+2001-07-17 Tuesday 16:47  rich
+
+	* Get rid of the warning reported by Dirk
+
+2001-06-04 Monday 22:09  rich
+
+	* Minor fixes
+
+2001-06-04 Monday 19:55  rich
+
+	* Do not refresh on desktop switch if we show all tasks
+
+2001-05-24 Thursday 02:01  rich
+
+	* UI fix for small mode
+
+2001-05-22 Tuesday 05:03  waba
+
+	* Get rid of compiler warnings.  Make it compile with
+	  --enable-final.
+
+2001-05-22 Tuesday 02:22  rich
+
+	* Use shared idmatching code + transparency fix
+
+2001-05-21 Monday 21:59  rich
+
+	* Added support for task grouping (optional)
+
+2001-05-21 Monday 02:09  mhunter
+
+	* Spelling and grammar corrections
+
+2001-05-15 Tuesday 04:37  rich
+
+	* Moved the icon handling code out of Kasbar and into the Task
+	  class.  Task now provides an API for icon loading that allows
+	  access to different icon sizes and uses KIconLoader where needed.
+
+2001-05-15 Tuesday 01:19  rich
+
+	* Improved icon support in task manager api Fixed flicker in kasbar
+	  startup items Kasbar large mode handles dynamically changing
+	  icons nicely
+
+2001-05-14 Monday 21:37  rich
+
+	* Still standardising the method names
+
+2001-05-14 Monday 17:56  rich
+
+	* Changed taskmanager api to follow standard naming conventions
+
+2001-05-14 Monday 16:38  rich
+
+	* Better icon handling in Large mode Fixed config handling of
+	  MaxBoxes
+
+2001-05-14 Monday 03:26  rich
+
+	* Minor tweaks
+
+2001-05-14 Monday 02:52  rich
+
+	* More thumbnail improvements
+
+2001-05-14 Monday 00:40  rich
+
+	* Added new about dialog Fixed some flicker problems Improved
+	  thumbnail heuristics Improved transparent mode repaints
+
+2001-04-27 Friday 19:07  rich
+
+	* Fixed modified indicator
+
+2001-04-27 Friday 18:00  rich
+
+	* You can vary the size of Kasbar!
+
+2001-04-26 Thursday 22:50  rich
+
+	* Fix transparency bug
+
+2001-04-26 Thursday 22:15  rich
+
+	* UI fixes
+
+2001-04-26 Thursday 21:08  rich
+
+	* Improvements to extension support
+
+2001-04-26 Thursday 00:05  rich
+
+	* Fixed whatsthis
+
+2001-04-25 Wednesday 23:56  rich
+
+	* Added whatsthis help
+
+2001-04-25 Wednesday 20:23  rich
+
+	* Nicer config dialog
+
+2001-04-25 Wednesday 19:38  rich
+
+	* Version number++
+
+2001-04-25 Wednesday 18:35  rich
+
+	* Now you turn off thumbnails and a minor memory leak was fixed
+
+2001-04-19 Thursday 01:27  rich
+
+	* All the preferences are now working except for disabling
+	  thumbnails.
+
+2001-04-18 Wednesday 00:01  rich
+
+	* More work on the config dialog
+
+2001-04-16 Monday 14:07  rich
+
+	* Forgot to commit this
+
+2001-04-16 Monday 14:05  rich
+
+	* Added config handling (partial so far) Changed
+	  X-KDE-UniqueExtension to X-KDE-UniqueApplet (the former is
+	  correct according to the docs but doesn't work).
+
+2001-04-10 Tuesday 21:13  rich
+
+	* Fixed startup crash
+
+2001-03-31 Saturday 11:50  elter
+
+	* - fixed extension size hint - fixed compiler warning
+
+2001-03-20 Tuesday 02:15  rich
+
+	* * About dialog now shows a version number.  * Changed modified
+	  icon from blue to black.  * Much improved thumbnailing - now
+	  feels nice and responsive.
+
+2001-03-18 Sunday 17:43  rich
+
+	* Added about dlg and publish icon geometries
+
+2001-03-18 Sunday 16:20  rich
+
+	* Fixed crash in mouse move event
+
+2001-03-16 Friday 03:37  rich
+
+	* - Added task switch on drag over - Tidied up access to TasTasker
+	  - Made gradient code more efficient - Added window menu support
+
+2001-03-06 Tuesday 23:34  rich
+
+	* More efficient startup items
+
+2001-03-06 Tuesday 22:29  porten
+
+	* friend class
+
+2001-03-06 Tuesday 12:32  faure
+
+	* ran includemocs to get this to compile (am_edit was trying to
+	  compile a .moc.cpp into a .moc ... there's still something fishy
+	  in am_edit...)
+
+2001-03-06 Tuesday 02:05  rich
+
+	* First public release of the Kasbar TNG code
+
+	  Kasbar now: - Use the new taskmanager API - Supports the startup
+	  notifier - Supports thumbnails - Supports transparency ...
+
+2000-12-17 Sunday 12:00  elter
+
+	* Fixed totally broken kasbar sizeHint.
+
+2000-12-17 Sunday 11:53  elter
+
+	* - correct initial positioning of extensions - bugfixes
+
+2000-11-14 Tuesday 21:46  rich
+
+	* Added: - Transparency support - Show this-desktop-only mode
+
+	  Fixed: - Icon sizing issue caused by the move to 34x34 icons -
+	  Unique flag in .desktop file
+
+2000-11-12 Sunday 20:21  rich
+
+	* - Tidied up the code - Steps towards startup notifier - Better
+	  left click behaviour - Window menu support using DCOP (needs KWin
+	  update I am committing   in a moment) - Minor bug fixes
+
+2000-11-12 Sunday 01:14  rich
+
+	* Ported kasbar to kicker entensions framework
+

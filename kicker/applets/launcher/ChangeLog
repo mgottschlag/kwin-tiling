@@ -1,0 +1,40 @@
+2004-06-15   Dan Bullok <dan.kde@bullok.com>
+        * Fixed flicker on drop/arrange.
+	* Can now drop more than one item at a time
+	* Empty panel now has size>0, so user can still drop icons on it.
+	* Fixed gcc 3.4 incompatibilities in EasyVector
+	* Fixed Drag and Drop Bugs :
+	  * Crash when non-url dropped on quicklauncher
+	  * Crash panel button dropped on quicklauncher
+	  * Able to drop objects when quicklauncher is locked
+	* Add application context menu now inserts new app at current location
+ 	
+2004-06-14   Dan Bullok <dan.kde@bullok.com>
+	* Fixed License statements (added email & pointer to COPYING)
+	* GUI changes made in previous commit.
+	* continued separating QuickURL and QuickButton.
+	* Rearranged menu items to make more sense
+	
+2004-06-13   Dan Bullok <dan.kde@bullok.com>
+	* Fixes Bugs #42278, #55625, #63506, #67891,  #76868, #79848, #80530 - also makes bacon & eggs for breakfast (toast & jam available for vegetarians)
+	* v2.0alpha
+	* Replaced most of the innards of QuickLauncher class.
+	* Icons are positions evenly across available space.
+	* Drag and drop works for all kicker widths.
+	* Visual Feedback of drop location
+	* Icon Size is user-definable. 	Sensible(?) values are used by default (Icons grow slightly as panel size increases.  #icons per row for given panel size is Tiny,Small: 1, Normal: 2, Large:3, 110pix: 4).
+	* User can lock icon drag and drop (prevents accidentally screwing things up).
+	* Icons can either take up exactly the defined amount of space (ConserveSpace=true - this is the default), or grow slightly to take advantage of unused space.
+	* Spouts tons of debugging info to kdDebug (for now).
+	
+2004-06-12   Dan Bullok <dan.kde@bullok.com>
+	* Fixed bug #75351:  Tooltips change to filenames after rearranging applications in quicklauncher.
+	* Moved the URL->(menuID,service,kurl) functionality from the QuickButton constructor to its own class: QuickURL.  Very similar code is used elsewhere in kicker, and should eventually be merged.
+	* Renamed some methods in QuickButton (getId -> menuId, getURL -> url) This matches the predominant KDE naming style.
+	* Groundwork laid for variable-sized buttons.
+	
+2004-06-12   Dan Bullok <dan.kde@bullok.com>
+	* Changed member variable names: myVar -> _myVar.
+
+2004-06-12   Dan Bullok <dan.kde@bullok.com>
+	* Fixed formatting only - no code changes.  There were a few conflicting indenting styles.  I picked the one that looked like it was the oldest, and applied it to all the files.

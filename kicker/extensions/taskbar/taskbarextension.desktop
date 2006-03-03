@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=External Taskbar
+Name[fr]=Barre des tâches externe
+Name[x-test]=xxExternal Taskbarxx
+Comment=External taskbar panel extension.
+
+Icon=taskbar
+X-KDE-Library=taskbar_panelextension
+X-KDE-UniqueApplet=true
+Icon=childpanel
+X-KDE-PanelExt-Resizeable=true
+X-KDE-PanelExt-StdSizes=true
+X-KDE-PanelExt-StdSizeDefault=1
+X-KDE-PanelExt-CustomSizeMin=24
+X-KDE-PanelExt-CustomSizeMax=400
+X-KDE-PanelExt-CustomSizeDefault=200

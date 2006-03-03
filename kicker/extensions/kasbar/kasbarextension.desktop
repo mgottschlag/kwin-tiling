@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=KasBar
+Name[x-test]=xxKasBarxx
+
+Comment=An alternative taskbar panel applet.
+Comment[fr]=Une autre applet de barre des tâches
+Comment[x-test]=xxAn alternative taskbar panel applet.xx
+
+Icon=kasbar
+
+X-KDE-Library=kasbar_panelextension
+X-KDE-UniqueApplet=true

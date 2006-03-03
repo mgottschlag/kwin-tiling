@@ -1,0 +1,42 @@
+kde4_header()
+
+include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/workspace/lib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+
+
+########### next target ###############
+
+
+########### install files ###############
+
+install_files( ${DATA_INSTALL_DIR}/kicker/builtins FILES bookmarks.desktop browser.desktop desktop.desktop                     exec.desktop kmenu.desktop windowlist.desktop )
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+#INCLUDES = -I$(srcdir)/../core -I$(srcdir)/../../libkicker -I../../libkicker \
+#	-I$(srcdir)/../ui -I$(top_srcdir)/libkonq $(all_includes) -I$(top_srcdir)/workspace/lib
+#
+#noinst_LTLIBRARIES = libkicker_buttons.la
+#
+#libkicker_buttons_la_SOURCES = servicebutton.cpp bookmarksbutton.cpp \
+#	browserbutton.cpp \
+#	desktopbutton.cpp extensionbutton.cpp kbutton.cpp \
+#	nonkdeappbutton.cpp servicemenubutton.cpp urlbutton.cpp \
+#	windowlistbutton.cpp
+#
+#libkicker_buttons_la_LDFLAGS = $(all_libraries)
+#libkicker_buttons_la_LIBADD = $(top_builddir)/workspace/lib/libkworkspace.la
+#libkicker_buttons_la_METASOURCES = AUTO
+#
+#desktopmenu_DATA = bookmarks.desktop browser.desktop desktop.desktop \
+#                   exec.desktop kmenu.desktop windowlist.desktop
+#desktopmenudir = $(kde_datadir)/kicker/builtins
+#
+#browserbutton.lo: ../../libkicker/kickerSettings.h
+#desktopbutton.lo: ../../libkicker/kickerSettings.h
+#panelbutton.lo: ../../libkicker/kickerSettings.h
+#servicebutton.lo: ../../libkicker/kickerSettings.h
+#urlbutton.lo: ../../libkicker/kickerSettings.h

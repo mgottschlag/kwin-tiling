@@ -1,0 +1,8 @@
+TODO:
+      X * Geometry isn't always updated when panel size changes.
+      x * Remove debugging code (makes everything slow).
+	* Tooltip or other popup to alert user that buttons are locked (with a "don't show this again" checkbox).
+	* Docs.
+	* Use old quicklauncher config file if found.  #77959
+      X * "Add application" context menu should add the new application at the index of the button that summoned the context menu.
+      X * Make sure to always have a little space to drop things on, even when there are no buttons.

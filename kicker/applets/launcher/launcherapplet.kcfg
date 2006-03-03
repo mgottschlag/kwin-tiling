@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 
+                          http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+    <kcfgfile arg="true"/>
+    <group name="General">
+        <entry name="ConserveSpace" type="Bool">
+            <label>Conserve Space</label>
+            <default>true</default>
+        </entry>
+        <entry name="DragEnabled" type="Bool">
+            <label>Drag Enabled</label>
+            <default>true</default>
+        </entry>
+        <entry name="IconDim" type="Int">
+            <label>Icon Size</label>
+            <default>0</default>
+        </entry>
+        <entry name="IconDimChoices" type="IntList">
+            <label>Offered Icon Sizes</label>
+            <default>16,20,24,28,32,48,64</default>
+        </entry>
+        <entry name="Buttons" type="StringList">
+            <label>Buttons</label>
+            <default>kde-Home.desktop,kde-konsole.desktop,kde-KControl.desktop,kde-Help.desktop,kde-kwrite.desktop</default>
+        </entry>
+        <entry name="VolatileButtons" type="StringList">
+            <label>Volatile Buttons</label>
+            <whatsthis>Buttons that can be removed dynamically if they become unpopular</whatsthis>
+            <default></default>
+        </entry>
+        <entry name="ShowVolatileButtonIndicator" type="Bool">
+            <label>Show frame for volatile buttons</label>
+            <default>true</default>
+        </entry>
+        <entry name="AutoAdjustEnabled" type="Bool">
+            <label>Auto Adjust Enabled</label>
+            <default>false</default>
+        </entry>
+        <entry name="AutoAdjustMinItems" type="Int">
+            <label>Minimum Number of Items</label>
+            <min>0</min>
+            <default>3</default>
+        </entry>
+        <entry name="AutoAdjustMaxItems" type="Int">
+            <label>Maximum Number of Items</label>
+            <min>0</min>
+            <default>6</default>
+        </entry>
+        <entry name="HistoryHorizon" type="Int">
+            <label>History Weight</label>
+            <min>0</min>
+            <max>100</max>
+            <default>70</default>
+        </entry>
+    </group>
+    <group name="PopularityData">
+        <entry name="ServiceCacheSize" key="ServiceCacheSize" type="Int">
+            <label>Service Cache Size</label>
+            <whatsthis>Number of services to remember</whatsthis>
+            <default>500</default>
+        </entry>
+        <entry name="ServiceNames" key="ServiceNames" type="StringList">
+            <label>Service Names</label>
+            <whatsthis>Name of known services</whatsthis>
+        </entry>
+        <entry name="ServiceInspos" key="ServiceInspos" type="IntList">
+            <label>Service Insertion Positions</label>
+            <whatsthis>Position where services are inserted when they regain popularity</whatsthis>
+        </entry>
+        <entry name="ServiceHistories" key="ServiceHistories" type="StringList">
+            <label>Service History Data</label>
+            <whatsthis>History Data used to determine the popularity of a service</whatsthis>
+        </entry>
+    </group>
+</kcfg>

@@ -1,0 +1,8 @@
+File=kickerSettings.kcfg
+Singleton=true
+ClassName=KickerSettings
+Mutators=true
+Visibility=KDE_EXPORT
+IncludeFiles=qapplication.h
+GlobalEnums=true
+MemberVariables=dpointer

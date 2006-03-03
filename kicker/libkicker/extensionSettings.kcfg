@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+
+<include>QApplication</include>
+<include>utils.h</include>
+<kcfgfile arg="true"/>
+<group name="General">
+
+<entry name="IExist" type="Bool">
+    <label>Whether this panel actually exists or not. Primarly to work around the fact that KConfigXT won't write a config file unless there is at least one non-default entry.</label>
+    <default>false</default>
+</entry>
+<entry name="Position" type="Int" >
+      <label>The position of the panel</label>
+      <default code="true">Plasma::Bottom</default>
+      <min>0</min>
+      <max>3</max>
+   </entry>
+
+<entry name="Alignment" type="Int" >
+      <label>The alignment of the panel</label>
+      <default code="true">Plasma::Left</default>
+      <min>0</min>
+      <max>2</max>
+   </entry>
+
+<entry name="XineramaScreen" type="Int">
+      <label>Primary xinerama screen</label>
+      <default code="true">QApplication::desktop()->primaryScreen()</default>
+   </entry>
+
+<entry name="HideButtonSize" type="Int" >
+      <label>Hide button size</label>
+      <default>14</default>
+      <min>3</min>
+      <max>48</max>
+   </entry>
+
+<entry name="ShowLeftHideButton" type="Bool" >
+      <label>Show left panel hide button</label>
+      <default>false</default>
+   </entry>
+
+<entry name="ShowRightHideButton" type="Bool" >
+      <label>Show right panel hide button</label>
+      <default>true</default>
+   </entry>
+
+<entry name="AutoHidePanel" type="Bool" >
+      <label>Auto hide panel</label>
+      <default>false</default>
+   </entry>
+
+<entry name="AutoHideSwitch" type="Bool" >
+      <label>Enable auto hide</label>
+      <default>false</default>
+   </entry>
+
+<entry name="AutoHideDelay" type="Int" >
+      <label>Delay before auto hide</label>
+      <default>3</default>
+   </entry>
+
+<entry name="UnhideLocation" type="Int" >
+      <label>The trigger location for unhides</label>
+      <default code="true">Plasma::NoEdge</default>
+      <min code="true">Plasma::NoEdge</min>
+      <max code="true">Plasma::TopLeftEdge</max>
+   </entry>
+
+<entry name="BackgroundHide" type="Bool" >
+      <label>Enable background hiding</label>
+      <default>false</default>
+   </entry>
+
+<entry name="HideAnimation" type="Bool" >
+      <label>Animate panel hiding</label>
+      <default>true</default>
+   </entry>
+
+<entry name="HideAnimationSpeed" type="Int" >
+      <label>Panel hiding animation speed</label>
+      <default>40</default>
+   </entry>
+
+<entry name="SizePercentage" type="Int" >
+      <label>Length in percentage</label>
+      <default>100</default>
+      <min>1</min>
+      <max>100</max>
+   </entry>
+
+<entry name="ExpandSize" type="Bool" >
+      <label>Expand as required to fit contents</label>
+      <default>true</default>
+   </entry>
+
+<entry name="Size" type="Int">
+      <label>Size</label>
+      <default code="true">Plasma::SizeNormal</default>
+   </entry>
+
+<entry name="CustomSize" type="Int" >
+      <label>Custom size</label>
+      <default>58</default>
+      <min>16</min>
+   </entry>
+
+</group>
+</kcfg>

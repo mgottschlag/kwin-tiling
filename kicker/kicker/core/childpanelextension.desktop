@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Panel
+Name[fr]=Tableau de bord
+Name[x-test]=xxPanelxx
+Comment=Child panel extension.
+Comment[fr]=Extension du tableau de bord
+Comment[x-test]=xxChild panel extension.xx
+
+Icon=kicker
+X-KDE-Library=childpanel_panelextension
+X-KDE-PanelExt-Resizeable=true
+X-KDE-PanelExt-StdSizes=true
+X-KDE-PanelExt-CustomSizeMin=24
+X-KDE-PanelExt-CustomSizeMax=300
+X-KDE-PanelExt-CustomSizeDefault=58

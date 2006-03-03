@@ -1,0 +1,7 @@
+File=taskbar.kcfg
+Singleton=true
+ClassName=TaskBarSettings
+Mutators=true
+Visibility=KDE_EXPORT
+SetUserTexts=true
+GlobalEnums=true

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Plugin
+Encoding=UTF-8
+Name=Desktop Preview & Pager
+Name[fr]=Gestionnaire et aperçu des bureaux
+Name[x-test]=xxDesktop Preview & Pagerxx
+
+Comment=A virtual desktop switching panel applet
+
+Icon=kpager
+
+X-KDE-Library=minipager_panelapplet
+X-KDE-UniqueApplet=false

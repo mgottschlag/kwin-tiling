@@ -1,3 +1,3 @@
 ## (C) 2005 Benjamin Meyer
 
-SUBDIRS = lib kwin kcontrol ksmserver ktip kpersonalizer ksysguard wallpapers menu kscreensaver kdesktop
+SUBDIRS = lib kwin ksmserver ktip kpersonalizer wallpapers menu kscreensaver kdesktop kicker kcontrol ksysguard

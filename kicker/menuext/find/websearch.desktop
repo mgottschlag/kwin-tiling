@@ -1,0 +1,11 @@
+# KDE Config File
+[Desktop Entry]
+Encoding=UTF-8
+Type=Link
+URL=http://www.google.com
+Icon=enhanced_browsing
+Terminal=false
+Name=Web Search
+Name[fr]=Recherche web
+Name[x-test]=xxWeb Searchxx
+Categories=Qt;KDE;Find;

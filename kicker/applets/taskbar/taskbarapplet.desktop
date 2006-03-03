@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Plugin
+Encoding=UTF-8
+Name=Taskbar
+Name[fr]=Barre des tâches
+Name[x-test]=xxTaskbarxx
+
+Comment=The default taskbar panel applet
+Icon=taskbar
+X-KDE-Library=taskbar_panelapplet

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=kfind %f
+Icon=kfind
+DocPath=kfind/index.html
+Path=
+Type=Application
+Terminal=false
+Name=Find Files
+Name[fr]=Recherche de fichiers
+Name[x-test]=xxFind Filesxx
+X-KDE-StartupNotify=true
+Categories=Qt;KDE;Find;

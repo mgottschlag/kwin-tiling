@@ -1,0 +1,5 @@
+File=extensionSettings.kcfg
+Singleton=false
+ClassName=ExtensionSettings
+Mutators=true
+IncludeFiles=kpanelextension.h,QDesktopWidget

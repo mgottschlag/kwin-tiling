@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Dock Application Bar
+Name[fr]=Barre de stockage des applications
+Name[x-test]=xxDock Application Barxx
+Comment=Dock application bar extension.
+Comment[fr]=Stockage des applications dans une barre.
+Comment[x-test]=xxDock application bar extension.xx
+
+Icon=dockbar
+X-KDE-Library=dockbar_panelextension
+X-KDE-UniqueApplet=true

@@ -1,0 +1,58 @@
+kde4_header()
+
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+
+
+########### next target ###############
+
+set(taskbar_panelextension_PART_SRCS taskbarextension.cpp )
+
+kde4_automoc(${taskbar_panelextension_PART_SRCS})
+
+kde4_add_dcop_skels(taskbar_panelextension_PART_SRCS taskbarextension.h )
+
+kde4_add_plugin(taskbar_panelextension ${taskbar_panelextension_PART_SRCS})
+
+kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} taskbar_panelextension )
+
+target_link_libraries(taskbar_panelextension  ${QT_AND_KDECORE_LIBS} kdeui kparts kickermain taskmanager taskbar )
+
+install_targets(${LIB_INSTALL_DIR}/kde4 taskbar_panelextension )
+
+
+########### install files ###############
+
+install_files( ${DATA_INSTALL_DIR}/kicker/extensions FILES taskbarextension.desktop )
+
+kde4_install_icons( hicolor crystalsvg )
+
+kde4_footer()
+
+
+
+#original Makefile.am contents follow:
+
+#INCLUDES = -I$(srcdir)/../../taskmanager -I$(srcdir)/../../taskbar -I$(srcdir)/../../libkicker -I$(top_builddir)/kicker/libkicker $(all_includes)
+#
+#kde_module_LTLIBRARIES = taskbar_panelextension.la
+#
+#taskbar_panelextension_la_SOURCES = taskbarextension.cpp taskbarextension.skel
+#taskbar_panelextension_la_METASOURCES = AUTO
+#taskbar_panelextension_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
+#taskbar_panelextension_la_LIBADD = $(LIB_KDEUI) $(LIB_KPARTS) \
+#                                   ../../libkicker/libkickermain.la \
+#                                   ../../taskmanager/libtaskmanager.la \
+#                                   ../../taskbar/libtaskbar.la
+#KDE_ICON=AUTO
+#
+#noinst_HEADERS = taskbarextension.h
+#
+#lnkdir = $(kde_datadir)/kicker/extensions
+#lnk_DATA = taskbarextension.desktop
+#
+#EXTRA_DIST = $(lnk_DATA)
+#
+#messages:
+#	$(XGETTEXT) *.cpp *.h -o $(podir)/taskbarextension.pot
+#
+#taskbarextension.lo: ../../libkicker/kickerSettings.h

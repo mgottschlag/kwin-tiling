@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+                          http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+    <kcfgfile name="ktaskbarrc"/>
+
+    <group name="General">
+        <entry key="ShowAllWindows" type="Bool" >
+            <default>true</default>
+            <label>Show windows from all desktops</label>
+            <whatsthis>Turning this option off will cause the taskbar to display <b>only</b> the windows on the current desktop. \n\nBy default, this option is selected and all windows are shown.</whatsthis>
+        </entry>
+        <entry key="ShowOnlyIconified" type="Bool" >
+            <default>false</default>
+            <label>Show only minimized windows</label>
+            <whatsthis>Select this option if you want the taskbar to display <b>only</b> minimized windows. \n\nBy default, this option is not selected and the taskbar will show all windows.</whatsthis>
+        </entry>
+        <entry key="GroupTasks" type="Enum" >
+            <choices>
+                <choice name="GroupNever">
+                    <label>Never</label>
+                </choice>
+                <choice name="GroupWhenFull">
+                    <label>When Taskbar Full</label>
+                </choice>
+                <choice name="GroupAlways">
+                    <label>Always</label>
+                </choice>
+            </choices>
+            <default>GroupWhenFull</default>
+            <label>Group similar tasks:</label>
+            <whatsthis>The taskbar can group similar windows into single buttons. When one of these window group buttons are clicked on a menu appears showing all the windows in that group. This can be especially useful with the <em>Show all windows</em> option.\n\nYou can set the taskbar to <strong>Never</strong> group windows, to <strong>Always</strong> group windows or to group windows only <strong>When the Taskbar is Full</strong>.\n\nBy default the taskbar groups windows when it is full.</whatsthis>
+        </entry>
+        <entry key="SortByDesktop" type="Bool" >
+            <default>true</default>
+            <label>Sort windows by desktop</label>
+            <whatsthis>Selecting this option causes the taskbar to show windows in order of the desktop they appear on.\n\nBy default this option is selected.</whatsthis>
+        </entry>
+        <entry key="SortByApp" type="Bool" >
+            <default>true</default>
+            <label>Sort windows by application</label>
+            <whatsthis>Selecting this option causes the taskbar to show windows ordered by application.\n\nBy default this option is selected.</whatsthis>
+        </entry>
+        <entry key="ShowIcon" type="Bool" >
+            <default>true</default>
+            <label>Show application icons</label>
+            <whatsthis>Select this option if you want window icons to appear along with their titles in the taskbar.\n\nBy default this option is selected.</whatsthis>
+        </entry>
+        <entry key="MaximumButtonWidth" type="Int" >
+            <default>200</default>
+            <min>0</min>
+            <label>The maximum width of a task button</label>
+            <whatsthis>If set to 0 then the hardcoded default is used.</whatsthis>
+        </entry>
+        <entry key="MinimumButtonHeight" type="Int" >
+            <default>18</default>
+            <label>The minimum height of a task buttons in pixels</label>
+            <min>1</min>
+            <whatsthis>This value must be at least 18 due to icons being 16 pixels high.</whatsthis>
+        </entry>
+        <entry key="ShowCurrentScreenOnly" type="Bool" >
+            <default>false</default>
+            <label>Show windows from all screens</label>
+            <whatsthis>Turning this option off will cause the taskbar to display <b>only</b> windows which are on the same Xinerama screen as the taskbar.\n\nBy default, this option is selected and all windows are shown.</whatsthis>
+        </entry>
+        <entry key="taskbarFont" type="Font" >
+            <default></default>
+            <label>The font used in task buttons</label>
+            <whatsthis></whatsthis>
+        </entry>
+        <entry key="ShowWindowListBtn" type="Bool" >
+            <default>false</default>
+            <label>Show window list button</label>
+            <whatsthis>Selecting this option causes the taskbar to display a button that, when clicked, shows a list of all windows in a popup menu.</whatsthis>
+        </entry>
+        <entry key="$(Button)Action" type="Enum" >
+            <parameter name="Button" type="Enum">
+                <values>
+                    <value>LeftButton</value>
+                    <value>MiddleButton</value>
+                    <value>RightButton</value>
+                </values>
+            </parameter>
+            <choices>
+                <choice name="ShowTaskList">
+                    <label>Show Task List</label>
+                </choice>
+                <choice name="ShowOperationsMenu">
+                    <label>Show Operations Menu</label>
+                </choice>
+                <choice name="ActivateRaiseOrMinimize">
+                    <label>Activate, Raise or Minimize Task</label>
+                </choice>
+                 <choice name="Activate">
+                    <label>Activate Task</label>
+                </choice>
+                <choice name="Raise">
+                    <label>Raise Task</label>
+                </choice>
+                <choice name="Lower">
+                    <label>Lower Task</label>
+                </choice>
+                <choice name="Minimize">
+                    <label>Minimize Task</label>
+                </choice>
+                <choice name="ToCurrentDesktop">
+                    <label>Move To Current Desktop</label>
+                </choice>
+            </choices>
+            <default param="LeftButton">ShowTaskList</default>
+            <default param="MiddleButton">ActivateRaiseOrMinimize</default>
+            <default param="RightButton">ShowOperationsMenu</default>
+            <label>Mouse button actions</label>
+            <whatsthis>You can set the actions that occur when using the left, right and middle mouse buttons on task buttons. These include bringing the associated window to the front, minimizing it, showing the context (or operations) menu, etc.</whatsthis>
+        </entry>
+    </group>
+
+    <group name="Appearance">
+        <entry key="DrawButtons" type="Bool" >
+            <default>false</default>
+            <label>Draw taskbar entries "flat" and not as a button</label>
+            <whatsthis>Turning this option on will cause the taskbar to draw visible button frames for each entry in the taskbar. \n\nBy default, this option is off.</whatsthis>
+        </entry>
+        <entry key="HaloText" type="Bool" >
+            <default>false</default>
+            <label>Draw taskbar text with a halo around it</label>
+            <whatsthis>Turning this option on will cause the taskbar to draw fancier text that has an outline around it. While this is useful for transparent panels or particularly dark panel backgrounds, it is slower.</whatsthis>
+        </entry>
+        <entry key="ShowButtonOnHover" type="Bool" >
+            <default>true</default>
+            <label>Show a visible button frame on the task the cursor is positioned over</label>
+        </entry>
+        <entry key="ShowThumbnails" type="Bool" >
+            <default>false</default>
+            <label>Show thumbnails instead of icons in the mouse-over effects</label>
+            <whatsthis>Enabling this option will draw a thumbnail of the window in its mouse-over effect.<p>If a window is minimized or resides on a different desktop while the taskbar is starting, an icon is shown until the window is restored or the appropriate desktop is activated, respectively.</p></whatsthis>
+        </entry>
+        <entry key="ThumbnailMaxDimension" type="UInt" >
+            <default>100</default>
+            <label>Maximum width/height of the thumbnail in pixels</label>
+            <whatsthis>A thumbnail is created by resizing the window. The scaling factor is determined by its largest dimension and this value. In doing so, the thumbnail's size will not exceed this value in any dimension.</whatsthis>
+        </entry>
+    </group>
+</kcfg>

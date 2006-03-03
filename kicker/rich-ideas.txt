@@ -1,0 +1,62 @@
+
+Positioning of extensions
+=========================
+
+How about using the alignment flags (or similar) for position, and the
+direction flags for how to fill?
+
+
+ ---------------
+ |a    b      c|
+ |             |
+ |             |
+ |             |
+ |e           d|
+ ---------------
+
+a = Left | Top
+b = Middle | Top
+c = Right | Top
+d = Right | Bottom
+
+Now here's the filling
+
+12345	   LeftToRight
+54321	   RightToLeft (eg. for a right aligned thing)
+5
+4
+3          BottomToTop
+2
+1
+
+
+etc. etc.
+
+Essentially, this splits the concept of positioning and layout. Now, lets get
+crazy:
+
+Imagine we're in position a and want to have a triangular corner layout:
+
+1247
+35
+6
+
+So, maybe we need some sort of concept of (one of):
+ 1) multiple linked rectangular blocks
+ 2) extensions/bars with a mask
+ 3) each item being considered independently (maybe some sort of magnetic
+ blocks so they can be draggable?)
+
+Finally, let's get really insane:
+
+positions a AND c
+
+12       65
+34        7
+
+This perhaps indicates that the details of placement should be passed off to
+the extensions, but also that extensions might be 'linked'. eg. removing the
+extension in position a should also remove c (and the configurations are also
+linked).
+
+

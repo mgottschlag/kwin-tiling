@@ -1,0 +1,4 @@
+A very simple applet that shows two buttons, one for locking the desktop,
+the other to invoke the logout process.
+
+Carsten Pfeiffer <pfeiffer@kde.org>

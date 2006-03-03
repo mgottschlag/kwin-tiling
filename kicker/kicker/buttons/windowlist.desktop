@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Window List Menu
+Name[fr]=Liste des fenêtres
+Name[x-test]=xxWindow List Menuxx
+Comment=A menu that lists all open windows
+Comment[fr]=Un menu affichant l'ensemble des fenêtres ouvertes
+Comment[x-test]=xxA menu that lists all open windowsxx
+Icon=window_list
+X-KDE-Library=WindowListButton

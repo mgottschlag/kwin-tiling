@@ -1,0 +1,67 @@
+
+Itemized list of works need to be done in kicker for KDE4 porting and
+brand new Plasma framework.
+
+
+Abbreviations:
+
+- Not started yet
+? Not determined if/how we'll do
+* In progress
++ Accomplished
+
+
+Work:
+
+* Port kicker to KDE4/Qt4
+  + get kicker/libkicker building (minimal port)
+  + get applets, extensions and menuext building
+  + move KPanel* classes from kdelibs/kdeui to libkicker
+  * Qt4-ize kicker (remove remaining Qt3* classes)
+  * make the kicker actually run
+
+- Create Plasma libraries (for applets and extentions)
+  - decide what to offer to applets
+    - split libkicker to become libplasma and libplasmaext
+    - wrappers for common needs (like an html widget)
+  - harmonize with superkaramba's library
+  - decide and implement graphics framework
+  - create bindings for libplasma
+  - revisit KPanel* classes
+    - tie the KConfigXT settings into these classes
+    - move hiding/etc code from ContainerExtension to KPanelExtension
+    - rethink placement code
+    - allow for Extentions to communicate the form factor to contained items
+    - allow applets to adapt to various form factors with as little code as possible
+
+- Extend kicker to become the plasma manager
+  - make plugin, etc. management classes ready for plasma
+  - revisit Container* classes
+  - removal of cruft
+
+- Implement desktop widgets
+  - subclass KPanelExtension
+  - start working on a layout and positioning scheme
+    - decide on the requirements 
+      (must be easy, must allow autopositioning/growing of applets, etc.)
+
+- Implement new Plasma elements
+  - revisit kickertip to make it better
+  - agree on a list and overall architecture of the required elements
+    - extenders
+    - new buttons
+    - new applet management UI (handles on panels, $SOMETHING on the destop)
+    ? interoperability of applets over the network
+
+- Use new Plasma library in applets and extentions
+  - port existing applets and extentions
+  - create new noteworthy applets and extentions ;)
+
+? Build an applet creator/studio for packaging JS/Ruby/Python applets
+
+- Provide a development framework
+  - test suite
+  - documentation standards
+    - diagrams of plasma structure
+    * API documents for libplasma
+    - applet development tutorial

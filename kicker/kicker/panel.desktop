@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Exec=kicker
+Name=KDE Panel
+Name[fr]=Tableau de bord de KDE
+Name[x-test]=xxKDE Panelxx
+X-DCOP-ServiceType=wait
+X-KDE-autostart-after=kdesktop
+DocPath=kicker/index.html
+Type=Service
+OnlyShowIn=KDE;

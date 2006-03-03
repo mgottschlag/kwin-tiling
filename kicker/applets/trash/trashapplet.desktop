@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Plugin
+Comment=Displays the trashbin and allows dropping files on it
+Comment[x-test]=xxDisplays the trashbin and allows dropping files on itxx
+Name=Trash
+Name[fr]=Corbeille
+Name[x-test]=xxTrashxx
+Icon=trashcan_empty
+X-KDE-Library=trash_panelapplet

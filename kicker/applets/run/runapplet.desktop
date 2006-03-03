@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Plugin
+Encoding=UTF-8
+Name=Run Command
+Name[fr]=Lancer une commande
+Name[x-test]=xxRun Commandxx
+Comment=A command line applet
+Icon=exec
+X-KDE-Library=run_panelapplet
+X-KDE-UniqueApplet=true

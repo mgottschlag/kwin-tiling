@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Print System
+Name[fr]=Système d'impression
+Name[x-test]=xxPrint Systemxx
+Comment=Easy access to the print system
+Icon=fileprint
+
+X-KDE-Library=kickermenu_kdeprint

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Network Folders
+Name[fr]=Dossiers réseau
+Name[x-test]=xxNetwork Foldersxx
+Comment=Easy access to network folders
+Icon=network
+
+X-KDE-Library=kickermenu_remotemenu

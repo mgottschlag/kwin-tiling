@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Plugin
+Encoding=UTF-8
+Name=Runaway Process Catcher
+Name[fr]=Détecteur de processus fous
+Name[x-test]=xxRunaway Process Catcherxx
+Comment=Runaway process catcher for the KDE panel
+Icon=runprocesscatcher
+X-KDE-Library=naughty_panelapplet
+X-KDE-UniqueApplet=true

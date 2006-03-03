@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Find
+Name[fr]=Recherche
+Name[x-test]=xxFindxx
+Comment=Quickly start a file or web search
+Icon=kfind
+
+X-KDE-Library=kickermenu_find

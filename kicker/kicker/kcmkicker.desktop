@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Icon=kcmkicker
+Type=Application
+Exec=kcmshell %i kicker_config kcmtaskbar
+Name=Configure the Panel
+Name[fr]=Configuration du tableau de bord
+Name[x-test]=xxConfigure the Panelxx
+X-KDE-StartupNotify=true
+OnlyShowIn=KDE;
+Categories=Qt;KDE;Settings;

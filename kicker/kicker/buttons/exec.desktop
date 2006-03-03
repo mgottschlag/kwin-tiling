@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Non-KDE Application Launcher
+Name[fr]=Lancement des applications non KDE
+Name[x-test]=xxNon-KDE Application Launcherxx
+Comment=A launcher for programs not in the K Menu
+Comment[fr]=Lancement des programmes n'étant pas dans le menu K
+Comment[x-test]=xxA launcher for programs not in the K Menuxx
+Icon=exec
+X-KDE-Library=ExecButton
