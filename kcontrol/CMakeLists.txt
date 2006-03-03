@@ -20,15 +20,12 @@ set( kcmbackgroundlib_SRCS
 
 kde4_automoc(${kcmbackgroundlib_SRCS})
 
-kde4_add_ui3_files(kcmbackgroundlib_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgdialog_ui.ui ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgwallpaper_ui.ui ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgadvanced_ui.ui )
-
-
 if( X11_Xrandr_FOUND )
 	add_subdirectory( randr )
 endif(X11_Xrandr_FOUND )
 add_subdirectory( applnk ) 
 add_subdirectory( bell ) 
-#add_subdirectory( background ) 
+add_subdirectory( background ) 
 add_subdirectory( samba ) 
 add_subdirectory( krdb ) 
 
@@ -37,7 +34,7 @@ add_subdirectory( krdb )
 add_subdirectory( locale ) 
 add_subdirectory( launch ) 
 add_subdirectory( dateandtime ) 
-#add_subdirectory( style ) 
+add_subdirectory( style ) 
 add_subdirectory( kded ) 
 add_subdirectory( kcontrol ) 
 add_subdirectory( knotify ) 
@@ -62,7 +59,6 @@ message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(KSMCARD_SUBDIR)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(FONTINST_SUBDIR)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd input )" )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd kdm )" )
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd style )" )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd energy )" )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd fonts )" )
 

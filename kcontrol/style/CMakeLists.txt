@@ -7,7 +7,7 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 
 ########### next target ###############
 
-set(kcm_style_PART_SRCS kcmstyle.cpp menupreview.cpp styleconfdialog.cpp )
+set(kcm_style_PART_SRCS kcmstyle.cpp menupreview.cpp styleconfdialog.cpp ${libkrd_SRCS})
 
 kde4_automoc(${kcm_style_PART_SRCS})
 
@@ -17,7 +17,7 @@ kde4_add_plugin(kcm_style ${kcm_style_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_style )
 
-target_link_libraries(kcm_style  ${QT_AND_KDECORE_LIBS} kio krdb )
+target_link_libraries(kcm_style  ${LIB_KDE3SUPPORT} kdefx )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_style )
 
