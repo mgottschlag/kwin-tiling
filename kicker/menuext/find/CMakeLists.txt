@@ -1,6 +1,6 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/lib/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/lib/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -29,13 +29,13 @@ kde4_footer()
 
 #original Makefile.am contents follow:
 
-#INCLUDES = $(all_includes) -I$(top_srcdir)/kicker/libkicker -I$(top_srcdir)/workspace/lib/
+#INCLUDES = $(all_includes) -I$(top_srcdir)/workspace/kicker/libkicker -I$(top_srcdir)/workspace/lib/
 #
 #kde_module_LTLIBRARIES = kickermenu_find.la
 #
 #kickermenu_find_la_SOURCES = findmenu.cpp
 #kickermenu_find_la_LDFLAGS = $(all_libraries) -module -avoid-version
-#kickermenu_find_la_LIBADD = $(LIB_KDEUI) $(top_builddir)/kicker/libkicker/libkickermain.la $(top_builddir)/workspace/lib/libkworkspace.la
+#kickermenu_find_la_LIBADD = $(LIB_KDEUI) $(top_builddir)/workspace/kicker/libkicker/libkickermain.la $(top_builddir)/workspace/lib/libkworkspace.la
 #
 #kickermenu_find_la_METASOURCES = AUTO
 #

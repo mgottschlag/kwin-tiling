@@ -1,6 +1,6 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/kicker/libkicker ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -28,13 +28,13 @@ kde4_footer()
 
 #original Makefile.am contents follow:
 
-#INCLUDES = $(all_includes) -I$(top_srcdir)/kicker/libkicker
+#INCLUDES = $(all_includes) -I$(top_srcdir)/workspace/kicker/libkicker
 #
 #kde_module_LTLIBRARIES = kickermenu_konqueror.la
 #
 #kickermenu_konqueror_la_SOURCES = konqy_menu.cpp
 #kickermenu_konqueror_la_LDFLAGS = $(all_libraries) -module -avoid-version
-#kickermenu_konqueror_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO) $(top_builddir)/kicker/libkicker/libkickermain.la
+#kickermenu_konqueror_la_LIBADD = $(LIB_KDEUI) $(LIB_KIO) $(top_builddir)/workspace/kicker/libkicker/libkickermain.la
 #
 #kickermenu_konqueror_la_METASOURCES = AUTO
 #

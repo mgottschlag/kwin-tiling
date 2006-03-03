@@ -1,6 +1,6 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/lib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/lib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -28,7 +28,7 @@ kde4_footer()
 
 #original Makefile.am contents follow:
 
-#INCLUDES = -I$(top_srcdir)/kicker/libkicker $(all_includes) -I$(top_srcdir)/workspace/lib $(all_includes)
+#INCLUDES = -I$(top_srcdir)/workspace/kicker/libkicker $(all_includes) -I$(top_srcdir)/workspace/lib $(all_includes)
 #
 #kde_module_LTLIBRARIES = run_panelapplet.la
 #
@@ -43,7 +43,7 @@ kde4_footer()
 #EXTRA_DIST = $(lnk_DATA)
 #
 #run_panelapplet_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
-#run_panelapplet_la_LIBADD = $(top_builddir)/workspace/lib/libkworkspace.la $(LIB_KSYCOCA) $(LIB_KDEUI) $(top_builddir)/kicker/libkicker/libkickermain.la
+#run_panelapplet_la_LIBADD = $(top_builddir)/workspace/lib/libkworkspace.la $(LIB_KSYCOCA) $(LIB_KDEUI) $(top_builddir)/workspace/kicker/libkicker/libkickermain.la
 #
 #messages:
 #	$(XGETTEXT) *.cpp *.h -o $(podir)/krunapplet.pot

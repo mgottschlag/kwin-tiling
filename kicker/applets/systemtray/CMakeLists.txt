@@ -1,6 +1,6 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/kicker/libkicker ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -33,7 +33,7 @@ kde4_footer()
 #original Makefile.am contents follow:
 
 #
-#INCLUDES = -I$(top_srcdir)/kicker/libkicker $(all_includes)
+#INCLUDES = -I$(top_srcdir)/workspace/kicker/libkicker $(all_includes)
 #
 #kde_module_LTLIBRARIES = systemtray_panelapplet.la
 #

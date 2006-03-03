@@ -1,6 +1,6 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/kicker/libkicker ${CMAKE_SOURCE_DIR}/kicker/core ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker ${CMAKE_SOURCE_DIR}/kicker/core ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -28,7 +28,7 @@ kde4_footer()
 
 #original Makefile.am contents follow:
 
-#INCLUDES = -I$(top_srcdir)/libkonq -I$(top_srcdir)/kicker/libkicker -I$(top_srcdir)/kicker/core $(all_includes)
+#INCLUDES = -I$(top_srcdir)/libkonq -I$(top_srcdir)/workspace/kicker/libkicker -I$(top_srcdir)/kicker/core $(all_includes)
 #
 #kde_module_LTLIBRARIES = trash_panelapplet.la
 #trash_panelapplet_la_SOURCES = trashbutton.cpp trashapplet.cpp 

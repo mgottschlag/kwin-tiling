@@ -1,6 +1,6 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/kicker/libkicker ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -34,7 +34,7 @@ kde4_footer()
 #pic_DATA = naughty-happy.png naughty-sad.png
 #picdir = $(kde_datadir)/naughtyapplet/pics
 #
-#INCLUDES = -I$(top_srcdir)/kicker/libkicker $(all_includes)
+#INCLUDES = -I$(top_srcdir)/workspace/kicker/libkicker $(all_includes)
 #
 #kde_module_LTLIBRARIES = naughty_panelapplet.la
 #
@@ -56,7 +56,7 @@ kde4_footer()
 #EXTRA_DIST = $(lnk_DATA)
 #
 #naughty_panelapplet_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
-#naughty_panelapplet_la_LIBADD = $(LIB_KDEUI) $(LIB_KVM) $(top_builddir)/kicker/libkicker/libkickermain.la 
+#naughty_panelapplet_la_LIBADD = $(LIB_KDEUI) $(LIB_KVM) $(top_builddir)/workspace/kicker/libkicker/libkickermain.la 
 #
 #KDE_ICON=AUTO
 #

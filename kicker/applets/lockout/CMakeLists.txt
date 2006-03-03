@@ -1,6 +1,6 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/lib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/lib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -28,14 +28,14 @@ kde4_footer()
 
 #original Makefile.am contents follow:
 
-#INCLUDES = -I$(top_srcdir)/kicker/libkicker -I$(top_srcdir)/workspace/lib $(all_includes)
+#INCLUDES = -I$(top_srcdir)/workspace/kicker/libkicker -I$(top_srcdir)/workspace/lib $(all_includes)
 #METASOURCES = AUTO
 #
 #kde_module_LTLIBRARIES = lockout_panelapplet.la
 #
 #lockout_panelapplet_la_SOURCES = lockout.cpp
 #lockout_panelapplet_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
-#lockout_panelapplet_la_LIBADD = $(LIB_KSYCOCA) $(top_builddir)/kicker/libkicker/libkickermain.la
+#lockout_panelapplet_la_LIBADD = $(LIB_KSYCOCA) $(top_builddir)/workspace/kicker/libkicker/libkickermain.la
 #
 #noinst_HEADERS = lockout.h
 #

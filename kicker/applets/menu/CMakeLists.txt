@@ -1,6 +1,6 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/kicker/libkicker ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -30,7 +30,7 @@ kde4_footer()
 
 #original Makefile.am contents follow:
 
-#INCLUDES = -I$(top_srcdir)/kicker/libkicker $(all_includes)
+#INCLUDES = -I$(top_srcdir)/workspace/kicker/libkicker $(all_includes)
 #
 #kde_module_LTLIBRARIES = menu_panelapplet.la
 #
@@ -46,7 +46,7 @@ kde4_footer()
 #EXTRA_DIST = $(lnk_DATA)
 #
 #menu_panelapplet_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
-#menu_panelapplet_la_LIBADD = $(LIB_KDEUI) $(top_builddir)/kicker/libkicker/libkickermain.la
+#menu_panelapplet_la_LIBADD = $(LIB_KDEUI) $(top_builddir)/workspace/kicker/libkicker/libkickermain.la
 #
 #messages:
 #	$(XGETTEXT) *.cpp *.h -o $(podir)/kmenuapplet.pot
