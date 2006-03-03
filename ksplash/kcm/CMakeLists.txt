@@ -15,7 +15,7 @@ kde4_add_plugin(kcm_ksplashthemes ${kcm_ksplashthemes_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_ksplashthemes )
 
-target_link_libraries(kcm_ksplashthemes  ${QT_AND_KDECORE_LIBS} kio kde3support )
+target_link_libraries(kcm_ksplashthemes  ${LIB_KDE3SUPPORT} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_ksplashthemes )
 
