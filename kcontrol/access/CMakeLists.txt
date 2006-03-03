@@ -39,7 +39,7 @@ install_files( ${XDG_APPS_DIR} FILES kcmaccess.desktop )
 install_files( ${SERVICES_INSTALL_DIR} FILES kaccess.desktop )
 install_files( ${DATA_INSTALL_DIR}/kaccess/ FILES eventsrc )
 
-kde4_install_icons( hicolor crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 kde4_footer()
 

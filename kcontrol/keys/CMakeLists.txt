@@ -29,7 +29,7 @@ install_files( ${XDG_APPS_DIR} FILES keys.desktop )
 install_files( ${DATA_INSTALL_DIR}/kcmkeys FILES wm3.kksrc kde3.kksrc kde4.kksrc win3.kksrc win4.kksrc mac4.kksrc unix3.kksrc )
 install_files( ${DATA_INSTALL_DIR}/kconf_update FILES kaccel.upd )
 
-kde4_install_icons( hicolor crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 kde4_footer()
 

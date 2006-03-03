@@ -24,7 +24,7 @@ install_files( ${XDG_APPS_DIR} FILES ktip.desktop )
 install_files( /share/autostart FILES ktip.desktop )
 install_files( ${DATA_INSTALL_DIR}/kdewizard FILES tips )
 
-kde4_install_icons( hicolor crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 kde4_footer()
 

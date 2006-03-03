@@ -43,7 +43,7 @@ install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kicker )
 install_files( ${APPLNK_INSTALL_DIR}/.hidden FILES kicker_config.desktop                  kicker_config_arrangement.desktop kicker_config_hiding.desktop                  kicker_config_menus.desktop kicker_config_appearance.desktop )
 install_files( ${XDG_APPS_DIR} FILES panel.desktop )
 
-kde4_install_icons( hicolor crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 kde4_footer()
 

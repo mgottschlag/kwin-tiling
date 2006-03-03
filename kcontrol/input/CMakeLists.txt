@@ -47,7 +47,7 @@ install_files( ${XDG_APPS_DIR} FILES mouse.desktop )
 install_files( ${DATA_INSTALL_DIR}/kcminput FILES cursor_large_black.pcf.gz cursor_large_white.pcf.gz cursor_small_white.pcf.gz )
 install_files( ${DATA_INSTALL_DIR}/kconf_update FILES mouse_cursor_theme.upd )
 
-kde4_install_icons( hicolor crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 kde4_footer()
 

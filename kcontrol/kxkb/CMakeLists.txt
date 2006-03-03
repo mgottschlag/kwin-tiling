@@ -53,7 +53,7 @@ install_targets(${LIB_INSTALL_DIR}/kde4 kcm_keyboard )
 install_files( ${XDG_APPS_DIR} FILES keyboard.desktop keyboard_layout.desktop )
 install_files( ${SERVICES_INSTALL_DIR} FILES kxkb.desktop )
 
-kde4_install_icons( hicolor crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 kde4_footer()
 

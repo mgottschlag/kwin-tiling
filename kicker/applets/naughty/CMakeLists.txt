@@ -23,7 +23,7 @@ install_targets(${LIB_INSTALL_DIR}/kde4 naughty_panelapplet )
 install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES naughtyapplet.desktop )
 install_files( ${DATA_INSTALL_DIR}/naughtyapplet/pics FILES naughty-happy.png naughty-sad.png )
 
-kde4_install_icons( hicolor crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 kde4_footer()
 

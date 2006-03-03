@@ -45,7 +45,7 @@ install_targets(/bin krandrtray )
 install_files( ${XDG_APPS_DIR} FILES krandrtray.desktop )
 install_files( ${APPLNK_INSTALL_DIR}/.hidden FILES randr.desktop )
 
-kde4_install_icons( hicolor crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 kde4_footer()
 
