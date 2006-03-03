@@ -1,6 +1,6 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/kicker/taskmanager  ${CMAKE_SOURCE_DIR}/workspace/kicker/taskbar/)
 
 
 ########### next target ###############
@@ -15,7 +15,7 @@ kde4_add_plugin(minipager_panelapplet ${minipager_panelapplet_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} minipager_panelapplet )
 
-target_link_libraries(minipager_panelapplet  ${QT_AND_KDECORE_LIBS} kdeui taskmanager kickermain )
+target_link_libraries(minipager_panelapplet  ${LIB_KDEUI} kdefx taskmanager kickermain )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 minipager_panelapplet )
 
