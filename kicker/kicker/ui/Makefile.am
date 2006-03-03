@@ -1,6 +1,6 @@
 INCLUDES = -I$(srcdir)/../core -I../core -I$(srcdir)/../buttons \
 	-I../../libkicker -I$(srcdir)/../../libkicker \
-	-I$(top_srcdir)/libkonq -I$(top_srcdir)/kdmlib \
+	-I$(top_srcdir)/libkonq -I$(top_srcdir)/workspace/kdmlib \
 	-I$(top_srcdir)/workspace/lib $(all_includes)
 
 noinst_LTLIBRARIES = libkicker_ui.la
@@ -15,7 +15,7 @@ libkicker_ui_la_SOURCES = addbutton_mnu.cpp appletitem.ui appletview.ui addapple
         removeapplet_mnu.cpp removeextension_mnu.cpp removecontainer_mnu.cpp \
         removebutton_mnu.cpp hidebutton.cpp addappletvisualfeedback.cpp
 
-libkicker_ui_la_LIBADD = $(top_builddir)/workspace/lib/libkworkspace.la $(top_builddir)/libkonq/libkonq.la $(top_builddir)/kdmlib/libdmctl.la
+libkicker_ui_la_LIBADD = $(top_builddir)/workspace/lib/libkworkspace.la $(top_builddir)/libkonq/libkonq.la $(top_builddir)/workspace/kdmlib/libdmctl.la
 
 libkicker_ui_la_METASOURCES = AUTO
 

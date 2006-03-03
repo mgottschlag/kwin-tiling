@@ -240,4 +240,4 @@ if test "x$with_kdm_xconsole" = xyes; then
     AC_DEFINE(WITH_KDM_XCONSOLE, 1, [Build kdm with built-in xconsole])
 fi
 
-dnl AC_OUTPUT(kdm/kfrontend/sessions/kde.desktop)
+dnl AC_OUTPUT(workspace/kdm/kfrontend/sessions/kde.desktop)

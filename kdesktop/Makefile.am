@@ -1,8 +1,8 @@
 ## Makefile.am of kdebase/kdesktop
 
-INCLUDES = -I$(top_srcdir)/workspace/lib -I$(top_srcdir)/workspace/kcontrol/background -I$(top_srcdir)/libkonq -I$(top_srcdir)/kdmlib $(all_includes)
+INCLUDES = -I$(top_srcdir)/workspace/lib -I$(top_srcdir)/workspace/kcontrol/background -I$(top_srcdir)/libkonq -I$(top_srcdir)/workspace/kdmlib $(all_includes)
 kdesktop_la_LDFLAGS  = $(all_libraries) -module $(KDE_PLUGIN)
-kdesktop_la_LIBADD   = libkdesktopsettings.la $(top_builddir)/libkonq/libkonq.la $(top_builddir)/workspace/kcontrol/background/libbgnd.la $(top_builddir)/kdmlib/libdmctl.la $(LIB_XSS) $(top_builddir)/workspace/lib/libkworkspace.la 
+kdesktop_la_LIBADD   = libkdesktopsettings.la $(top_builddir)/libkonq/libkonq.la $(top_builddir)/workspace/kcontrol/background/libbgnd.la $(top_builddir)/workspace/kdmlib/libdmctl.la $(LIB_XSS) $(top_builddir)/workspace/lib/libkworkspace.la 
 
 SUBDIRS = . lock patterns programs init kwebdesktop
 
