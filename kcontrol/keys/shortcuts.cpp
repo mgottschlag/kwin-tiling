@@ -114,8 +114,8 @@ void ShortcutsModule::initGUI()
 #define NOSLOTS
 #define KICKER_ALL_BINDINGS
 #include "../../kwin/kwinbindings.cpp"
-#include "../../../kicker/kicker/core/kickerbindings.cpp"
-#include "../../../kicker/taskbar/taskbarbindings.cpp"
+#include "../../../workspace/kicker/kicker/core/kickerbindings.cpp"
+#include "../../../workspace/kicker/taskbar/taskbarbindings.cpp"
 #include "../../../workspace/kdesktop/kdesktopbindings.cpp"
 #include "../../../klipper/klipperbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
