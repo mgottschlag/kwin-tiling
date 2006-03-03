@@ -15,7 +15,7 @@ kde4_add_plugin(kcm_view1394 ${kcm_view1394_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_view1394 )
 
-target_link_libraries(kcm_view1394  ${QT_AND_KDECORE_LIBS} kdeui raw1394 )
+target_link_libraries(kcm_view1394  ${LIB_KDE3SUPPORT} raw1394 )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_view1394 )
 
