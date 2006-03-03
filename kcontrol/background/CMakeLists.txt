@@ -7,11 +7,6 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 
 ########### next target ###############
 
-set( backgroundlib_SRCS bgrender.cpp bgsettings.cpp )
-set( kcmbackgroundlib_SRCS bgdialog.cpp bgadvanced.cpp bgmonitor.cpp bgwallpaper.cpp )
-
-kde4_add_ui3_files(kcmbackgroundlib_SRCS  bgdialog_ui.ui bgwallpaper_ui.ui bgadvanced_ui.ui  )
-
 set(kcm_background_PART_SRCS main.cpp ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS})
 
 kde4_automoc(${kcm_background_PART_SRCS})

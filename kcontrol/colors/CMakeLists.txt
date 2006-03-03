@@ -5,7 +5,7 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 
 ########### next target ###############
 
-set(kcm_colors_PART_SRCS colorscm.cpp widgetcanvas.cpp )
+set(kcm_colors_PART_SRCS colorscm.cpp widgetcanvas.cpp ${libkrd_SRCS})
 
 kde4_automoc(${kcm_colors_PART_SRCS})
 
@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_colors ${kcm_colors_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_colors )
 
-target_link_libraries(kcm_colors  ${QT_AND_KDECORE_LIBS} kdeui kio krdb kde3support )
+target_link_libraries(kcm_colors  ${LIB_KDE3SUPPORT} kdefx )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_colors )
 

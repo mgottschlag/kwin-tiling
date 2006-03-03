@@ -1,11 +1,34 @@
 kde4_header()
 
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/ )
+
+set(libkrd_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/krdb/krdb.cpp)
+
+set( backgroundlib_SRCS 
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgrender.cpp 
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgsettings.cpp 
+)
+
+
+
+set( kcmbackgroundlib_SRCS 
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgdialog.cpp 
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgadvanced.cpp 
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgmonitor.cpp 
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgwallpaper.cpp 
+)
+
+kde4_automoc(${kcmbackgroundlib_SRCS})
+
+kde4_add_ui3_files(kcmbackgroundlib_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgdialog_ui.ui ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgwallpaper_ui.ui ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgadvanced_ui.ui )
+
+
 if( X11_Xrandr_FOUND )
 	add_subdirectory( randr )
 endif(X11_Xrandr_FOUND )
 add_subdirectory( applnk ) 
 add_subdirectory( bell ) 
-add_subdirectory( background ) 
+#add_subdirectory( background ) 
 add_subdirectory( samba ) 
 add_subdirectory( krdb ) 
 
@@ -19,7 +42,7 @@ add_subdirectory( kded )
 add_subdirectory( kcontrol ) 
 add_subdirectory( knotify ) 
 add_subdirectory( pics ) 
-#add_subdirectory( colors ) 
+add_subdirectory( colors ) 
 #add_subdirectory( energy ) 
 #add_subdirectory( fonts ) 
 add_subdirectory( icons ) 
@@ -40,13 +63,10 @@ message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(FONTINST_SUBDIR)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd input )" )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd kdm )" )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd style )" )
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd color )" )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd energy )" )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd fonts )" )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd xinerama )" )
 
-
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### install files ###############
