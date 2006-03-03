@@ -8,15 +8,17 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 
 ########### next target ###############
 
+set(libklipper_common_SRCS main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp clipboardpoll.cpp history.cpp historyitem.cpp historystringitem.cpp klipperpopup.cpp popupproxy.cpp  historyimageitem.cpp historyurlitem.cpp )
 
+kde4_add_dcop_skels(libklipper_common_SRCS toplevel.h )
 
-set(klipper_KDEINIT_SRCS dummy.cpp)
+set(klipper_KDEINIT_SRCS dummy.cpp ${libklipper_common_SRCS})
 
 kde4_automoc(${klipper_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( klipper ${klipper_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_klipper  ${QT_AND_KDECORE_LIBS} klipper_common )
+target_link_libraries(kdeinit_klipper  ${QT_AND_KDECORE_LIBS}  )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_klipper )
 
@@ -25,7 +27,7 @@ install_targets(/bin klipper )
 
 ########### next target ###############
 
-set(klipper_panelapplet_PART_SRCS applet.cpp )
+set(klipper_panelapplet_PART_SRCS applet.cpp ${libklipper_common_SRCS})
 
 kde4_automoc(${klipper_panelapplet_PART_SRCS})
 
@@ -35,7 +37,7 @@ kde4_add_plugin(klipper_panelapplet ${klipper_panelapplet_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} klipper_panelapplet )
 
-target_link_libraries(klipper_panelapplet  ${QT_AND_KDECORE_LIBS} klipper_common )
+target_link_libraries(klipper_panelapplet  ${QT_AND_KDECORE_LIBS} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 klipper_panelapplet )
 
