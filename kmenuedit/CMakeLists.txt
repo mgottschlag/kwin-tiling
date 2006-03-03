@@ -47,7 +47,7 @@ install_files( ${XDG_APPS_DIR} FILES kmenuedit.desktop )
 install_files( ${DATA_INSTALL_DIR}/kcontroledit FILES kcontroleditui.rc )
 install_files( ${DATA_INSTALL_DIR}/kmenuedit FILES kmenueditui.rc )
 
-kde4_install_icons( hicolor crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 kde4_footer()
 
