@@ -1,11 +1,11 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/kdmlib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}   ${CMAKE_SOURCE_DIR}/workspace/lib)
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}   ${CMAKE_SOURCE_DIR}/workspace/lib)
 
 
 ########### next target ###############
 
-set(ksmserver_KDEINIT_SRCS 
+set(ksmserver_KDEINIT_SRCS ${kdmlib_SRCS} 
    main.cpp 
    server.cpp 
    shutdowndlg.cpp 
@@ -20,7 +20,7 @@ kde4_add_dcop_skels(ksmserver_KDEINIT_SRCS KSMServerInterface.h server.h )
 
 kde4_add_kdeinit_executable( ksmserver ${ksmserver_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_ksmserver  ${QT_AND_KDECORE_LIBS} dmctl kdeui )
+target_link_libraries(kdeinit_ksmserver  ${LIB_KDEUI} kdefx )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_ksmserver )
 

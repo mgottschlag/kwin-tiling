@@ -1,4 +1,4 @@
-INCLUDES = -I$(top_srcdir)/workspace/lib -I$(top_srcdir)/workspace/kdm/kfrontend $(all_includes)
+INCLUDES = -I./ -I$(top_srcdir)/workspace/lib -I$(top_srcdir)/workspace/kdm/kfrontend $(all_includes)
 
 kde_module_LTLIBRARIES = kgreet_classic.la kgreet_winbind.la
 

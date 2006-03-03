@@ -29,7 +29,7 @@ set( kdesktop_KCFG_SRCS kdesktopsettings.kcfgc  klaunchsettings.kcfgc )
 kde4_add_kcfg_files(kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})
 
 
-set(kdesktop_KDEINIT_SRCS ${kdesktop_LIB_SRCS}
+set(kdesktop_KDEINIT_SRCS ${kdesktop_LIB_SRCS} ${kdmlib_SRCS}
    main.cc 
    krootwm.cc 
    xautolock.cc 
