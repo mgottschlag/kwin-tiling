@@ -6,7 +6,7 @@ add_subdirectory( programs )
 add_subdirectory( init ) 
 add_subdirectory( kwebdesktop ) 
 
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/lib ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/kdmlib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/lib ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -57,7 +57,7 @@ kde4_add_dcop_skels(kdesktop_KDEINIT_SRCS KDesktopIface.h KScreensaverIface.h KB
 
 kde4_add_kdeinit_executable( kdesktop ${kdesktop_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kdesktop  ${QT_AND_KDECORE_LIBS} DCOP ${QT_QTGUI_LIBRARY} kdeui ${QT_QT3SUPPORT_LIBRARY} konq ${X11_LIBRARIES})
+target_link_libraries(kdeinit_kdesktop  ${LIB_KDE3SUPPORT_LIBRARY} konq ${X11_Xext_LIB})
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kdesktop )
 
