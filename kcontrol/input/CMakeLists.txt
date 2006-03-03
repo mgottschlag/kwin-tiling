@@ -4,9 +4,11 @@ add_subdirectory( pics )
 if(X11_Xcursor_FOUND)
 	add_subdirectory( xcursor )
 	include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/xcursor/ )
+	set( libnoinst_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/input/xcursor/themepage.cpp ${CMAKE_SOURCE_DIR}/workspace/kcontrol/input/xcursor/previewwidget.cpp )
 else(X11_Xcursor_FOUND)
 	add_subdirectory( core )
 	include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/core/ )
+	set(libnoinst_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/input/core/themepage.cpp )
 endif(X11_Xcursor_FOUND)
 
 
@@ -19,14 +21,14 @@ kde4_automoc(${kapplymousetheme_SRCS})
 
 kde4_add_executable(kapplymousetheme ${kapplymousetheme_SRCS})
 
-target_link_libraries(kapplymousetheme  ${LIB_KDE3SUPPORT} )
+target_link_libraries(kapplymousetheme  ${LIB_KDE3SUPPORT} ${LIBUSB_LIBRARIES} ${X11_Xrender_LIB})
 
 install_targets(/bin kapplymousetheme )
 
 
 ########### next target ###############
 
-set(kcm_input_PART_SRCS mouse.cpp main.cpp logitechmouse.cpp )
+set(kcm_input_PART_SRCS mouse.cpp main.cpp logitechmouse.cpp ${libnoinst_SRCS})
 
 kde4_automoc(${kcm_input_PART_SRCS})
 
@@ -36,7 +38,7 @@ kde4_add_plugin(kcm_input ${kcm_input_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_input )
 
-target_link_libraries(kcm_input  ${LIB_KDE3SUPPORT} )
+target_link_libraries(kcm_input  ${LIB_KDE3SUPPORT} ${LIBUSB_LIBRARIES} ${X11_Xcursor_LIB} ${X11_Xrender_LIB})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_input )
 
