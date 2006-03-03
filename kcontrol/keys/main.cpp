@@ -154,8 +154,8 @@ extern "C"
 #include "../../../klipper/klipperbindings.cpp"
 #include "../../kwin/kwinbindings.cpp"
 #define KICKER_ALL_BINDINGS
-#include "../../../kicker/kicker/core/kickerbindings.cpp"
-#include "../../../kicker/taskbar/taskbarbindings.cpp"
+#include "../../../workspace/kicker/kicker/core/kickerbindings.cpp"
+#include "../../../workspace/kicker/taskbar/taskbarbindings.cpp"
 #include "../../../workspace/kdesktop/kdesktopbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 
