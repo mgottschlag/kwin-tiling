@@ -1,6 +1,6 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories(${X11_Xinerama_INCLUDE_PATH} ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -9,13 +9,13 @@ set(kcm_xinerama_PART_SRCS kcmxinerama.cpp )
 
 kde4_automoc(${kcm_xinerama_PART_SRCS})
 
-kde4_add_ui_files(kcm_xinerama_PART_SRCS xineramawidget.ui )
+kde4_add_ui3_files(kcm_xinerama_PART_SRCS xineramawidget.ui )
 
 kde4_add_plugin(kcm_xinerama ${kcm_xinerama_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_xinerama )
 
-target_link_libraries(kcm_xinerama  ${QT_AND_KDECORE_LIBS} kdeui )
+target_link_libraries(kcm_xinerama  ${LIB_KDE3SUPPORT} ${X11_Xinerama_LIB})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_xinerama )
 

@@ -51,7 +51,7 @@ add_subdirectory( crypto )
 add_subdirectory( smserver ) 
 add_subdirectory( keys ) 
 add_subdirectory( componentchooser ) 
-#add_subdirectory( xinerama ) 
+add_subdirectory( xinerama ) 
 add_subdirectory( kthememanager ) 
 add_subdirectory( hardware ) 
 add_subdirectory( accessibility ) 
@@ -65,7 +65,6 @@ message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd kdm )" )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd style )" )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd energy )" )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd fonts )" )
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd xinerama )" )
 
 
 
