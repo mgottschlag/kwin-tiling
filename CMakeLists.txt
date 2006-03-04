@@ -1,5 +1,7 @@
 kde4_header()
 
+set(kdmlib_SRCS ${CMAKE_SOURCE_DIR}/workspace/kdmlib/dmctl.cpp )
+
 add_subdirectory( lib ) 
 add_subdirectory( kdmlib )
 add_subdirectory( kwin ) 
@@ -9,15 +11,13 @@ add_subdirectory( kpersonalizer )
 add_subdirectory( wallpapers ) 
 add_subdirectory( menu ) 
 #add_subdirectory( kscreensaver ) 
-#add_subdirectory( kdesktop ) 
+add_subdirectory( kdesktop ) 
 add_subdirectory( kicker)
 add_subdirectory( ksysguard )
 add_subdirectory( kcontrol )
 #add_subdirectory( kdm )
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
-
-set(kdmlib_SRCS ${CMAKE_SOURCE_DIR}/workspace/kdmlib/dmctl.cpp )
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd ksmserver )" )
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: Readd kscreensaver )" )

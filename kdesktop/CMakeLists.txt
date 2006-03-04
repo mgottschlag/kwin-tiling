@@ -57,7 +57,7 @@ kde4_add_dcop_skels(kdesktop_KDEINIT_SRCS KDesktopIface.h KScreensaverIface.h KB
 
 kde4_add_kdeinit_executable( kdesktop ${kdesktop_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kdesktop  ${LIB_KDE3SUPPORT_LIBRARY} konq ${X11_Xext_LIB})
+target_link_libraries(kdeinit_kdesktop  ${LIB_KDE3SUPPORT_LIBRARY} kdesu konq ${X11_Xext_LIB})
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kdesktop )
 
