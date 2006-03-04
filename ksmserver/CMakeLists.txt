@@ -37,7 +37,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(testsh ${testsh_SRCS})
 
-target_link_libraries(testsh  ${QT_AND_KDECORE_LIBS} kdeui dmctl )
+target_link_libraries(testsh  ${LIB_KDEUI} dmctl )
 
 endif(KDE4_BUILD_TESTS)
 

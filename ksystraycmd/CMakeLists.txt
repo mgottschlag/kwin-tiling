@@ -11,7 +11,7 @@ kde4_automoc(${ksystraycmd_SRCS})
 
 kde4_add_executable(ksystraycmd ${ksystraycmd_SRCS})
 
-target_link_libraries(ksystraycmd  ${QT_AND_KDECORE_LIBS} kdeui )
+target_link_libraries(ksystraycmd  ${LIB_KDEUI} )
 
 install_targets(/bin ksystraycmd )
 

@@ -22,7 +22,7 @@ kde4_add_plugin(kcm_componentchooser ${kcm_componentchooser_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_componentchooser )
 
-target_link_libraries(kcm_componentchooser  ${QT_AND_KDECORE_LIBS} kio ${QT_QTGUI_LIBRARY} kdeui ${QT_QT3SUPPORT_LIBRARY} DCOP)
+target_link_libraries(kcm_componentchooser  ${LIB_KDE3SUPPORT})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_componentchooser )
 
