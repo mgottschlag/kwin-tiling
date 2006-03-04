@@ -20,7 +20,7 @@ kde4_add_dcop_skels(ksmserver_KDEINIT_SRCS KSMServerInterface.h server.h )
 
 kde4_add_kdeinit_executable( ksmserver ${ksmserver_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_ksmserver  ${LIB_KDEUI} kdefx )
+target_link_libraries(kdeinit_ksmserver  ${LIB_KDEUI} ${QT_QT3SUPPORT_LIBRARY} kdefx ${X11_LIBRARIES})
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_ksmserver )
 
