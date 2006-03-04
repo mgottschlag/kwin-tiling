@@ -179,13 +179,11 @@ public:
     void setAlignment(Plasma::Alignment a);
     /**
      * @internal
-     * @since 3.1
      **/
     void setSize(Plasma::Size size, int customSize);
 
     /**
     * @return the extension's size
-     * @since 4.0
     **/
     Plasma::Size size() const;
 
@@ -196,14 +194,12 @@ public:
 
     /**
     * @return the custom sizel setting in pixels
-     * @since 3.1
     **/
     int customSize() const;
 
     /**
      * @return the extension's custom menu, usually the same as the context menu, or 0 if none
      * @see setCustomMenu(QPopupMenu*)
-     * @since 3.4
      */
     QMenu* customMenu() const;
 
@@ -211,7 +207,6 @@ public:
      * @return whether or not to set a desktop geometry claiming strut for this panel
      * defaults to true
      * @see setReservetrut(bool)
-     * @since 3.4
      */
     bool reserveStrut() const;
 
@@ -225,7 +220,6 @@ Q_SIGNALS:
 
     /**
      * Emit this signal to make the panel maintain focus, e.g. don't autohide
-     * @since 3.4
      **/
     void maintainFocus(bool);
 
@@ -305,14 +299,12 @@ protected:
      *
      * If the menu is deleted during the life of the extension, be sure to call this method again
      * with the new menu (or 0) to avoid crashes
-     * @since 3.4
      */
     void setCustomMenu(QMenu*);
 
     /**
      * Use this method to set the return value for reserveStrut
      * @see reserveStrut
-     * @since 3.4
      */
     void setReserveStrut(bool shouldUseStrut);
 

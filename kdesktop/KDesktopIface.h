@@ -51,7 +51,6 @@ k_dcop:
     virtual void popupExecuteCommand() = 0;
     /**
      * Display the "Run Command" dialog (minicli) and prefill
-     * @since 3.4
      */
     virtual void popupExecuteCommand(const QString& command) = 0;
     /**

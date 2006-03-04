@@ -43,7 +43,6 @@ class KShadowEngine;
  * This class replaces KFileIVI in the desktop only.
  * If the shadow object is NULL, then the class should behave almost identical
  * to its parent.
- * @since 3.2
  */
 class KFileIVIDesktop : public KFileIVI
 {

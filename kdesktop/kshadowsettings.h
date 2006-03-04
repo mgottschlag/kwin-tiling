@@ -37,7 +37,6 @@
  * designed to be used as singleton for an application.
  * @see KShadowEngine
  * @author laur.ivan@corvil.com
- * @since 3.2
  */
 class KShadowSettings
 {

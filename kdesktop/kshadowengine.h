@@ -36,7 +36,6 @@ class KShadowSettings;
  * luminosity of the original pixmap for the shadow one.
  * @see KShadowSettings
  * @author laur.ivan@corvil.com
- * @since 3.2
  */
 class KShadowEngine
 {

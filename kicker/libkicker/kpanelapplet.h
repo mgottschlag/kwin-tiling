@@ -242,7 +242,6 @@ Q_SIGNALS:
      * @param focus activate the window and ensure the panel remains visible when true
      * Each and ever time a requestFocus(true) is emitted, it MUST be paired eventually
      * with a requestFocus(false) otherwise the panel may end up never hiding
-     * @since 3.4
      **/
     void requestFocus(bool focus);
 
@@ -328,7 +327,6 @@ protected:
      * This call results in an eventFilter being places on the widget.
      * @param widget the widget to watch for keyboard focus
      * @param watch whether to start watching the widget, or to stop doing so
-     * @since 3.4
      */
     void watchForFocus(QWidget* widget, bool watch = true);
 
@@ -336,7 +334,6 @@ protected:
      * Call this whenever focus is needed or not needed. You do not have to call this method
      * for widgets that have been registered with watchForFocus
      * @param focus whether to or not to request focus
-     * @since 3.4
      */
     void needsFocus(bool focus);
 
