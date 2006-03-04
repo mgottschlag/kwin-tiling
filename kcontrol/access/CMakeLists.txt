@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_access ${kcm_access_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_access )
 
-target_link_libraries(kcm_access  ${QT_AND_KDECORE_LIBS} kio )
+target_link_libraries(kcm_access  ${LIB_KDE3SUPPORT} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_access )
 
@@ -26,7 +26,7 @@ kde4_automoc(${kaccess_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kaccess ${kaccess_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kaccess  ${QT_AND_KDECORE_LIBS} kdeui )
+target_link_libraries(kdeinit_kaccess  ${LIB_KDEUI}  )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kaccess )
 
