@@ -2,7 +2,7 @@ if include_kcontrol_usbview
 USBVIEW_SUBDIR = usbview
 endif
 
-if include include_kcontrol_view1394
+if include_kcontrol_view1394
 VIEW1394_SUBDIR = view1394
 endif
 
