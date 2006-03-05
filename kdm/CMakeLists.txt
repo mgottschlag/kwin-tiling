@@ -1,10 +1,14 @@
 kde4_header()
 
-add_subdirectory( backend ) 
-add_subdirectory( kfrontend ) 
-
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
+add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci COMMAND ${PERL_EXECUTABLE} ARGS -w ${CMAKE_SOURCE_DIR}/workspace/kdm/config.pl -i > ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci DEPENDS ${CMAKE_SOURCE_DIR}/workspace/kdm/config.def )
+
+
+set(kdmconfig_SRCS ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci)
+
+add_subdirectory( backend )
+add_subdirectory( kfrontend )
 
 ########### install files ###############
 
