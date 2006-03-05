@@ -1,6 +1,6 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/lib ${CMAKE_SOURCE_DIR}/kcheckpass ${CMAKE_SOURCE_DIR}/kdmlib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/workspace/kdesktop ${CMAKE_SOURCE_DIR}/workspace/lib ${CMAKE_SOURCE_DIR}/kcheckpass ${CMAKE_SOURCE_DIR}/kdmlib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -13,9 +13,9 @@ set(kdesktop_lock_SRCS
 
 kde4_automoc(${kdesktop_lock_SRCS})
 
-kde4_add_executable(kdesktop_lock ${kdesktop_lock_SRCS})
+kde4_add_executable(kdesktop_lock ${kdesktop_lock_SRCS} ${kdmlib_SRCS} ${kdesktop_LIB_SRCS})
 
-target_link_libraries(kdesktop_lock  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(kdesktop_lock  ${LIB_KIO} )
 
 install_targets(/bin kdesktop_lock )
 
