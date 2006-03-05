@@ -5,7 +5,7 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 
 ########### install files ###############
 
-install_files(  FILES entry.desktop )
+install_files( ${LOCALE_INSTALL_DIR}/en_US FILES entry.desktop )
 
 kde4_footer()
 
