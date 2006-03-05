@@ -1,6 +1,6 @@
 
 if include_kcontrol_access
-#ACCESS_SUBDIR=access
+ACCESS_SUBDIR=access
 endif
 
 if include_kcontrol_kfontinst
