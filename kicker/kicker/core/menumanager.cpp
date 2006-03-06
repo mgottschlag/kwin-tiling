@@ -115,7 +115,7 @@ void MenuManager::registerKButton(PanelPopupButton *button)
 
 void MenuManager::unregisterKButton(PanelPopupButton *button)
 {
-    m_kbuttons.remove(button);
+    m_kbuttons.removeAll(button);
 }
 
 PanelPopupButton* MenuManager::findKButtonFor(QMenu* menu)

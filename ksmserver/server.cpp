@@ -252,7 +252,7 @@ void KSMSetPropertiesProc (
     for ( int i = 0; i < numProps; i++ ) {
         SmProp *p = client->property( props[i]->name );
         if ( p ) {
-            client->properties.remove( p );
+            client->properties.removeAll( p );
             SmFreeProperty( p );
         }
         client->properties.append( props[i] );
@@ -276,7 +276,7 @@ void KSMDeletePropertiesProc (
     for ( int i = 0; i < numProps; i++ ) {
         SmProp *p = client->property( propNames[i] );
         if ( p ) {
-            client->properties.remove( p );
+            client->properties.removeAll( p );
             SmFreeProperty( p );
         }
     }
@@ -764,7 +764,7 @@ void KSMServer::deleteClient( KSMClient* client )
 {
     if ( !clients.contains( client ) ) // paranoia
         return;
-    clients.remove( client );
+    clients.removeAll( client );
     if ( client == clientInteracting ) {
         clientInteracting = 0;
         handlePendingInteractions();
@@ -852,7 +852,7 @@ void KSMServer::storeSession()
         // put the wm first
         foreach ( KSMClient *c, clients )
             if ( c->program() == wm ) {
-                clients.remove( c );
+                clients.removeAll( c );
                 clients.prepend( c );
                 break;
             }

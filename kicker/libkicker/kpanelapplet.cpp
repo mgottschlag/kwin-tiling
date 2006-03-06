@@ -197,7 +197,7 @@ void KPanelApplet::watchForFocus(QWidget* widget, bool watch)
     }
     else if (!d->watchedForFocus.contains(widget))
     {
-        d->watchedForFocus.remove(widget);
+        d->watchedForFocus.removeAll(widget);
         widget->removeEventFilter(this);
     }
 }

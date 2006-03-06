@@ -615,11 +615,11 @@ QStringList TreeView::fileList(const QString& rPath)
             //if (filelist.contains(*it)) continue;
 
             if (relativePath.isEmpty()) {
-                filelist.remove(*it); // hack
+                filelist.removeAll(*it); // hack
                 filelist.append(*it);
             }
             else {
-                filelist.remove(relativePath + "/" + *it); //hack
+                filelist.removeAll(relativePath + "/" + *it); //hack
                 filelist.append(relativePath + "/" + *it);
             }
         }
@@ -653,11 +653,11 @@ QStringList TreeView::dirList(const QString& rPath)
             // if (dirlist.contains(*it)) continue;
 
             if (relativePath.isEmpty()) {
-                dirlist.remove(*it); //hack
+                dirlist.removeAll(*it); //hack
                 dirlist.append(*it);
             }
             else {
-                dirlist.remove(relativePath + "/" + *it); //hack
+                dirlist.removeAll(relativePath + "/" + *it); //hack
                 dirlist.append(relativePath + "/" + *it);
             }
         }

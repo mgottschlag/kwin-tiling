@@ -404,7 +404,7 @@ void ExtensionManager::removeContainer(ExtensionContainer* e)
     }
 
     e->removeSessionConfigFile();
-    _containers.remove(e);
+    _containers.removeAll(e);
     e->deleteLater(); // Wait till we return to the main event loop
     saveContainerConfig();
 }

@@ -197,7 +197,7 @@ static void addEntry(QStringList &list, const QString &name, const QString &file
 
     if(!existing.isEmpty())
         if(isAlias(existing))
-            list.remove(existing);
+            list.removeAll(existing);
         else
             insert=false;
 

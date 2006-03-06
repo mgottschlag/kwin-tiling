@@ -501,21 +501,21 @@ void KEyeCandyPage::enablePreview(bool currSettings){
 	}
 	if(prevImage) {
 		desktopPreviews.append("imagethumbnail");
-		konquerorNoPreviews.remove("imagethumbnail");
+		konquerorNoPreviews.removeAll("imagethumbnail");
 	}
 
 	if(prevText) {
 		desktopPreviews.append("textthumbnail");
-		konquerorNoPreviews.remove("textthumbnail");
+		konquerorNoPreviews.removeAll("textthumbnail");
 	}
 
 	if(prevOther){  // remove text/image if not checked
 		if(!prevImage) {
-			desktopPreviews.remove("imagethumbnail");
+			desktopPreviews.removeAll("imagethumbnail");
 			konquerorNoPreviews.append("imagethumbnail");
 		}
 		if(!prevText) {
-			desktopPreviews.remove("textthumbnail");
+			desktopPreviews.removeAll("textthumbnail");
 			konquerorNoPreviews.append("textthumbnail");
 		}
 	}

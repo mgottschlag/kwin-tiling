@@ -226,10 +226,10 @@ void Minicli::loadConfig()
     box->setActivateOnSelect( false );
 
   m_finalFilters = KURIFilter::self()->pluginNames();
-  m_finalFilters.remove("kuriikwsfilter");
+  m_finalFilters.removeAll("kuriikwsfilter");
 
   m_middleFilters = m_finalFilters;
-  m_middleFilters.remove("localdomainurifilter");
+  m_middleFilters.removeAll("localdomainurifilter");
 
   // Provide username completions. Use saner and configurable maximum values.
   int maxEntries = KDesktopSettings::maxUsernameCompletions();
@@ -685,7 +685,7 @@ void Minicli::parseLine( bool final )
 
   if ( isTerminalApp && final && !m_dlg->cbRunInTerminal->isChecked() )
   {
-    m_terminalAppList.remove( m_filterData->uri().url() );
+    m_terminalAppList.removeAll( m_filterData->uri().url() );
     isTerminalApp = false;
   }
   else

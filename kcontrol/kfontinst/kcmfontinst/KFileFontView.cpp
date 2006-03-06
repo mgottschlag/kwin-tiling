@@ -299,7 +299,7 @@ void CKFileFontView::removeItem(const KFileItem *i)
     {
         CFontListViewItem *item = (CFontListViewItem*) i->extraData(this);
 
-        itsResolver->m_lstPendingMimeIconItems.remove(item);
+        itsResolver->m_lstPendingMimeIconItems.removeAll(item);
         delete item;
 
         KFileView::removeItem(i);

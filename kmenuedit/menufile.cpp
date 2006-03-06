@@ -277,7 +277,7 @@ void MenuFile::addEntry(const QString &menuName, const QString &menuId)
 {
    m_bDirty = true;   
 
-   m_removedEntries.remove(menuId);
+   m_removedEntries.removeAll(menuId);
 
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, true);
 
