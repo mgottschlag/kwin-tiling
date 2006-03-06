@@ -273,9 +273,9 @@ void colorize(QImage& image)
 
     // figure out which color is most suitable for recoloring to
     int h1, s1, v1, h2, s2, v2, h3, s3, v3;
-    activeTitle.hsv(&h1, &s1, &v1);
-    inactiveTitle.hsv(&h2, &s2, &v2);
-    QApplication::palette().active().background().hsv(&h3, &s3, &v3);
+    activeTitle.getHsv(&h1, &s1, &v1);
+    inactiveTitle.getHsv(&h2, &s2, &v2);
+    QApplication::palette().active().background().getHsv(&h3, &s3, &v3);
 
     if ( (qAbs(h1-h3)+qAbs(s1-s3)+qAbs(v1-v3) < qAbs(h2-h3)+qAbs(s2-s3)+qAbs(v2-v3)) &&
             ((qAbs(h1-h3)+qAbs(s1-s3)+qAbs(v1-v3) < 32) || (s1 < 32)) && (s2 > s1))
