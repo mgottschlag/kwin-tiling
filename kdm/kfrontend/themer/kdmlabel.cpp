@@ -191,7 +191,7 @@ QString
 KdmLabel::lookupStock( const QString &stock )
 {
 	//FIXME add key accels!
-	QString type( stock.lower() );
+	QString type( stock.toLower() );
 
 	for (uint i = 0; i < sizeof(stocks)/sizeof(stocks[0]); i++)
 		if (type == stocks[i].type)

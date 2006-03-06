@@ -213,8 +213,8 @@ void KSMServer::storeLegacySession( KConfig* config )
     int count = 0;
     for (WindowMap::ConstIterator it = legacyWindows.begin(); it != legacyWindows.end(); ++it) {
         if ( (*it).type != SM_ERROR) {
-            if( excludeApps.contains( (*it).wmclass1.lower())
-                || excludeApps.contains( (*it).wmclass2.lower()))
+            if( excludeApps.contains( (*it).wmclass1.toLower())
+                || excludeApps.contains( (*it).wmclass2.toLower()))
                 continue;
             if ( !(*it).wmCommand.isEmpty() && !(*it).wmClientMachine.isEmpty() ) {
                 count++;

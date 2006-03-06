@@ -1427,14 +1427,14 @@ void KDIconView::setupSortKeys()
                 strKey = it->text();
                 break;
             case NameCaseInsensitive:
-                strKey = it->text().lower();
+                strKey = it->text().toLower();
                 break;
             case Size:
                 strKey = KIO::number(static_cast<KFileIVI *>( it )->item()->size()).rightJustified(20, '0');
                 break;
             case Type:
                 // Sort by Type + Name (#17014)
-                strKey = static_cast<KFileIVI *>( it )->item()->mimetype() + '~' + it->text().lower();
+                strKey = static_cast<KFileIVI *>( it )->item()->mimetype() + '~' + it->text().toLower();
                 break;
             case Date:
                 QDateTime dayt;

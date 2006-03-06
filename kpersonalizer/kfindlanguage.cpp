@@ -33,7 +33,7 @@ KFindLanguage::KFindLanguage() {
 	config->setGroup("Locale");
 
 	m_oldlang = config->readEntry("Language");
-	m_oldlang = m_oldlang.lower();
+	m_oldlang = m_oldlang.toLower();
 	m_oldlang = m_oldlang.left(m_oldlang.find(':')); // only use the first lang
 
 	m_country = config->readEntry("Country", "C");
@@ -48,7 +48,7 @@ KFindLanguage::KFindLanguage() {
 		if(m_country.contains("@"))
 			m_country = m_country.left(m_country.find("@"));
 		if(m_country != "C")
-			m_country = m_country.lower();
+			m_country = m_country.toLower();
 		if(m_country == "en") // special-case "en" - should be "en_GB" or "en_US", but plain "en" is in use quite often
 			m_country = "C";
 	}
@@ -96,7 +96,7 @@ KFindLanguage::KFindLanguage() {
 	if (m_oldlang.isEmpty()) {
 		compare = langs.first();
 		for(QStringList::Iterator it = langs.begin(); it != langs.end(); ++it) {
-			if (*it == QString::fromLatin1(getenv("LANG")).mid(3, 2).lower())
+			if (*it == QString::fromLatin1(getenv("LANG")).mid(3, 2).toLower())
 				compare = *it;
 		}
 	}

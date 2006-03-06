@@ -76,7 +76,7 @@ ExtensionInfo::ExtensionInfo( const QString& deskFile, const QString& configFile
     if (configFile.isEmpty())
     {
         // generate a config file base name from the library name
-        d->configFile = d->lib.lower();
+        d->configFile = d->lib.toLower();
 
         if (d->unique)
         {
@@ -85,7 +85,7 @@ ExtensionInfo::ExtensionInfo( const QString& deskFile, const QString& configFile
         else
         {
             d->configFile.append("_")
-                        .append(KRandom::randomString(20).lower())
+                        .append(KRandom::randomString(20).toLower())
                         .append("_rc");
         }
     }
@@ -215,16 +215,16 @@ bool ExtensionInfo::operator==( const ExtensionInfo& rhs) const
 
 bool ExtensionInfo::operator<( const ExtensionInfo& rhs ) const
 {
-    return name().lower() < rhs.name().lower();
+    return name().toLower() < rhs.name().toLower();
 }
 
 bool ExtensionInfo::operator> ( const ExtensionInfo& rhs ) const
 {
-    return name().lower() > rhs.name().lower();
+    return name().toLower() > rhs.name().toLower();
 }
 
 bool ExtensionInfo::operator<= ( const ExtensionInfo& rhs ) const
 {
-    return name().lower() <= rhs.name().lower();
+    return name().toLower() <= rhs.name().toLower();
 }
 

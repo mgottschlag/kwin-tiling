@@ -204,7 +204,7 @@ void KCountryPage::setLangForCountry(const QString &country) {
 
 void KCountryPage::setLanguageChanged() {
 	// is the selcted language the same like the one in kdeglobals from before the start?
-	b_savedLanguageChanged = (flang->getOldLang() != cb_language->current().lower());
+	b_savedLanguageChanged = (flang->getOldLang() != cb_language->current().toLower());
 	// is the selected language the same like the one we started kp with from main.cpp?
 	b_startedLanguageChanged = (s_oldlocale != cb_language->current());
 }

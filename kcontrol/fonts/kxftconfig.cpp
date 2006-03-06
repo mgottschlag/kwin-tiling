@@ -1062,7 +1062,7 @@ void KXftConfig::readContents()
                                 else if(!(str=getEntry(ene, "bool", 2, "name", "antialias", "mode", "assign")).isNull())
                                 {
                                     m_antiAliasing.node=n;
-                                    m_antiAliasing.set=str.lower()!="false";
+                                    m_antiAliasing.set=str.toLower()!="false";
                                 }
                         }
                         break;

@@ -62,17 +62,17 @@ class PanelMenuItemInfo
 
         bool operator<(const PanelMenuItemInfo& rh) const
         {
-            return m_name.lower() < rh.m_name.lower();
+            return m_name.toLower() < rh.m_name.toLower();
         }
 
         bool operator<=(const PanelMenuItemInfo& rh) const
         {
-            return m_name.lower() <= rh.m_name.lower();
+            return m_name.toLower() <= rh.m_name.toLower();
         }
 
         bool operator>(const PanelMenuItemInfo& rh) const
         {
-            return m_name.lower() > rh.m_name.lower();
+            return m_name.toLower() > rh.m_name.toLower();
         }
 
         int plug(QMenu* menu)

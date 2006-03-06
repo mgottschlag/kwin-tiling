@@ -866,7 +866,7 @@ void KSMServer::storeSession()
         QStringList restartCommand = c->restartCommand();
         if (program.isEmpty() && restartCommand.isEmpty())
            continue;
-        if (excludeApps.contains( program.lower()))
+        if (excludeApps.contains( program.toLower()))
             continue;
 
         count++;

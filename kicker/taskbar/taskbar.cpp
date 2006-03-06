@@ -430,14 +430,14 @@ void TaskBar::showTaskContainer(TaskContainer* container)
         {
             TaskContainer* c = *it;
 
-            if (container->id().lower() == c->id().lower())
+            if (container->id().toLower() == c->id().toLower())
             {
                 // search for the last occurrence of this app
                 for (; it != containers.end(); ++it)
                 {
                     c = *it;
 
-                    if (container->id().lower() != c->id().lower())
+                    if (container->id().toLower() != c->id().toLower())
                     {
                         break;
                     }
@@ -838,7 +838,7 @@ bool TaskBar::idMatch( const QString& id1, const QString& id2 )
     if ( id1.isEmpty() || id2.isEmpty() )
         return false;
 
-    return id1.lower() == id2.lower();
+    return id1.toLower() == id2.toLower();
 }
 
 int TaskBar::containerCount() const

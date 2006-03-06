@@ -79,7 +79,7 @@ AppletInfo::AppletInfo( const QString& deskFile, const QString& configFile, cons
     if (configFile.isEmpty())
     {
         // generate a config file base name from the library name
-        d->configFile = d->lib.lower();
+        d->configFile = d->lib.toLower();
 
         if (d->unique)
         {
@@ -88,7 +88,7 @@ AppletInfo::AppletInfo( const QString& deskFile, const QString& configFile, cons
         else
         {
             d->configFile.append("_")
-                         .append(KRandom::randomString(20).lower())
+                         .append(KRandom::randomString(20).toLower())
                          .append("_rc");
         }
     }
@@ -247,16 +247,16 @@ bool AppletInfo::operator==( const AppletInfo& rhs) const
 
 bool AppletInfo::operator<( const AppletInfo& rhs ) const
 {
-    return name().lower() < rhs.name().lower();
+    return name().toLower() < rhs.name().toLower();
 }
 
 bool AppletInfo::operator> ( const AppletInfo& rhs ) const
 {
-    return name().lower() > rhs.name().lower();
+    return name().toLower() > rhs.name().toLower();
 }
 
 bool AppletInfo::operator<= ( const AppletInfo& rhs ) const
 {
-    return name().lower() <= rhs.name().lower();
+    return name().toLower() <= rhs.name().toLower();
 }
 

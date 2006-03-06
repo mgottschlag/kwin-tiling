@@ -175,7 +175,7 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   int i = filename.findRev('.');
   // Convert extension to lower case.
   if (i >= 0)
-     filename = filename.left(i)+filename.mid(i).lower();
+     filename = filename.left(i)+filename.mid(i).toLower();
   url.setPath(locateLocal("tmp",filename));
 
   // Remove file from temporary directory if it aleady exists - usually the result of a failed install.
