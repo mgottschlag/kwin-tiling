@@ -1527,7 +1527,7 @@ void KDIconView::moveToFreePosition(Q3IconViewItem *item )
           {
    	     if (!isFreePosition(item,rect))
 		{
-	                rect.moveBy(0,rect.height()+spacing());
+	                rect.translate(0,rect.height()+spacing());
 		}
 	     else
 	      {
