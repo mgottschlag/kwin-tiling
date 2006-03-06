@@ -169,13 +169,13 @@ LaunchConfig::load()
   bool busyBlinking =c.readEntry("Blinking", false);
   bool busyBouncing =c.readEntry("Bouncing", true);
   if ( !busyCursor )
-     cb_busyCursor->setCurrentItem(0);
+     cb_busyCursor->setCurrentIndex(0);
   else if ( busyBlinking )
-     cb_busyCursor->setCurrentItem(2);
+     cb_busyCursor->setCurrentIndex(2);
   else if ( busyBouncing )
-     cb_busyCursor->setCurrentItem(3);
+     cb_busyCursor->setCurrentIndex(3);
   else
-     cb_busyCursor->setCurrentItem(1);
+     cb_busyCursor->setCurrentIndex(1);
 
   c.setGroup( "TaskbarButtonSettings" );
   sb_taskbarTimeout->setValue( c.readEntry( "Timeout", 30 ));
@@ -217,7 +217,7 @@ LaunchConfig::save()
   void
 LaunchConfig::defaults()
 {
-  cb_busyCursor->setCurrentItem(2);
+  cb_busyCursor->setCurrentIndex(2);
   cb_taskbarButton->setChecked(Default & TaskbarButton);
 
   sb_cursorTimeout->setValue( 30 );

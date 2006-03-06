@@ -306,7 +306,7 @@ bool FontAASettings::load()
     if(idx>-1)
     {
       useSubPixel->setChecked(true);
-      subPixelType->setCurrentItem(idx);
+      subPixelType->setCurrentIndex(idx);
     }
     else
       useSubPixel->setChecked(false);
@@ -328,7 +328,7 @@ bool FontAASettings::load()
     runRdb(KRdbExportXftSettings);
   }
 
-  hintingStyle->setCurrentItem(getIndex(hStyle));
+  hintingStyle->setCurrentIndex(getIndex(hStyle));
 #endif
 
   enableWidgets();
@@ -397,7 +397,7 @@ void FontAASettings::defaults()
   excludeTo->setValue(15.0);
   useSubPixel->setChecked(false);
 #ifdef HAVE_FONTCONFIG
-  hintingStyle->setCurrentItem(getIndex(KXftConfig::Hint::Medium));
+  hintingStyle->setCurrentIndex(getIndex(KXftConfig::Hint::Medium));
 #endif
   enableWidgets();
 }

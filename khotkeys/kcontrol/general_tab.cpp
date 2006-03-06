@@ -93,7 +93,7 @@ void General_tab::clear_data()
     disable_checkbox->setChecked( false );
     disable_checkbox->setText( i18n( "&Disable" ));
     comment_multilineedit->clear();
-    action_type_combo->setCurrentItem( Tab_widget::TYPE_GENERIC );
+    action_type_combo->setCurrentIndex( Tab_widget::TYPE_GENERIC );
 //    module->set_action_type( data_P->type()); CHECKME tohle asi tady ne
     }
 
@@ -111,7 +111,7 @@ void General_tab::set_data( const Action_data* data_P )
     else
         disable_checkbox->setText( i18n( "&Disable" ));
     comment_multilineedit->setText( data_P->comment());
-    action_type_combo->setCurrentItem( Tab_widget::type( data_P ));
+    action_type_combo->setCurrentIndex( Tab_widget::type( data_P ));
 //    module->set_action_type( data_P->type());
     connect( action_name_lineedit, SIGNAL( textChanged( const QString& )),
         SLOT( action_name_changed( const QString& )));

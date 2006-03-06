@@ -275,7 +275,7 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 		for (int i = 0; tlist[i]; i++)
 			targets->insertItem( QString::fromLocal8Bit( tlist[i] ) );
 		freeStrArr( tlist );
-		targets->setCurrentItem( oldTarget == -1 ? defaultTarget : oldTarget );
+		targets->setCurrentIndex( oldTarget == -1 ? defaultTarget : oldTarget );
 		QHBoxLayout *hb = new QHBoxLayout( hlp, 0, KDsh );
 		int spc = kapp->style()->pixelMetric( QStyle::PM_ExclusiveIndicatorWidth )
 		          + howGroup->insideSpacing();

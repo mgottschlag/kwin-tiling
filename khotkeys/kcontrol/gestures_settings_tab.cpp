@@ -50,7 +50,7 @@ Gestures_settings_tab::Gestures_settings_tab( QWidget* parent_P, const char* nam
 void Gestures_settings_tab::read_data()
     {
     mouse_gestures_globally->setChecked( module->gestures_disabled());
-    mouse_button_combo->setCurrentItem( module->gesture_button() - 2 );
+    mouse_button_combo->setCurrentIndex( module->gesture_button() - 2 );
     timeout_input->setValue( module->gesture_timeout());
     if( module->gestures_exclude() != NULL )
         windowdef_list_widget->set_data( module->gestures_exclude());

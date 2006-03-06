@@ -67,13 +67,13 @@ Windowdef_simple_widget::Windowdef_simple_widget( QWidget* parent_P, const char*
 void Windowdef_simple_widget::clear_data()
     {
     comment_lineedit->clear();
-    window_title_combo->setCurrentItem( 0 );
+    window_title_combo->setCurrentIndex( 0 );
     window_title_lineedit->clear();    
     window_title_lineedit->setEnabled( false );
-    window_class_combo->setCurrentItem( 0 );
+    window_class_combo->setCurrentIndex( 0 );
     window_class_lineedit->clear();
     window_class_lineedit->setEnabled( false );
-    window_role_combo->setCurrentItem( 0 );
+    window_role_combo->setCurrentIndex( 0 );
     window_role_lineedit->clear();
     window_role_lineedit->setEnabled( false );
     type_normal_checkbox->setChecked( true );
@@ -92,13 +92,13 @@ void Windowdef_simple_widget::set_data( const Windowdef_simple* data_P )
         return;
         }
     comment_lineedit->setText( data_P->comment());
-    window_title_combo->setCurrentItem( data_P->title_match_type());
+    window_title_combo->setCurrentIndex( data_P->title_match_type());
     window_title_lineedit->setText( data_P->title());    
     window_title_lineedit->setEnabled( window_title_combo->currentIndex() != 0 );
-    window_class_combo->setCurrentItem( data_P->wclass_match_type());
+    window_class_combo->setCurrentIndex( data_P->wclass_match_type());
     window_class_lineedit->setText( data_P->wclass());
     window_class_lineedit->setEnabled( window_class_combo->currentIndex() != 0 );
-    window_role_combo->setCurrentItem( data_P->role_match_type());
+    window_role_combo->setCurrentIndex( data_P->role_match_type());
     window_role_lineedit->setText( data_P->role());
     window_role_lineedit->setEnabled( window_role_combo->currentIndex() != 0 );
     type_normal_checkbox->setChecked( data_P->type_match( Windowdef_simple::WINDOW_TYPE_NORMAL ));

@@ -187,7 +187,7 @@ void KDMSessionsWidget::readSD(QComboBox *combo, QString def)
     sdMode = SdRoot;
   else
     sdMode = SdNone;
-  combo->setCurrentItem(sdMode);
+  combo->setCurrentIndex(sdMode);
 }
 
 void KDMSessionsWidget::load()
@@ -212,8 +212,8 @@ void KDMSessionsWidget::defaults()
   restart_lined->setURL("/sbin/reboot");
   shutdown_lined->setURL("/sbin/halt");
 
-  sdlcombo->setCurrentItem(SdAll);
-  sdrcombo->setCurrentItem(SdRoot);
+  sdlcombo->setCurrentIndex(SdAll);
+  sdrcombo->setCurrentIndex(SdRoot);
 
   bm_combo->setCurrentId("None");
 }

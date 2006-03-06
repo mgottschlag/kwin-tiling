@@ -355,7 +355,7 @@ calendarType);
     calendarSystem = it - calendars.begin();
 
   kDebug() << "calSys: " << calendarSystem << ": " << calendarType << endl;
-  m_comboCalendarSystem->setCurrentItem( calendarSystem );
+  m_comboCalendarSystem->setCurrentIndex( calendarSystem );
 
   //  m_edTimeFmt->setText( m_locale->timeFormat() );
   m_comboTimeFmt->setEditText( storeToUser( timeMap(),
@@ -366,7 +366,7 @@ calendarType);
   //m_edDateFmtShort->setText( m_locale->dateFormatShort() );
   m_comboDateFmtShort->setEditText( storeToUser( dateMap(),
 					  m_locale->dateFormatShort() ) );
-  m_comboWeekStartDay->setCurrentItem( m_locale->weekStartDay() - 1 );
+  m_comboWeekStartDay->setCurrentIndex( m_locale->weekStartDay() - 1 );
 
   if ( m_locale->nounDeclension() )
     m_chDateMonthNamePossessive->setChecked( m_locale->dateMonthNamePossessive() );

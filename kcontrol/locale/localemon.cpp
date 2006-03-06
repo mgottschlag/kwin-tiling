@@ -211,8 +211,8 @@ void KLocaleConfigMoney::slotLocaleChanged()
 
   m_chMonPosPreCurSym->setChecked( m_locale->positivePrefixCurrencySymbol() );
   m_chMonNegPreCurSym->setChecked( m_locale->negativePrefixCurrencySymbol() );
-  m_cmbMonPosMonSignPos->setCurrentItem( m_locale->positiveMonetarySignPosition() );
-  m_cmbMonNegMonSignPos->setCurrentItem( m_locale->negativeMonetarySignPosition() );
+  m_cmbMonPosMonSignPos->setCurrentIndex( m_locale->positiveMonetarySignPosition() );
+  m_cmbMonNegMonSignPos->setCurrentIndex( m_locale->negativeMonetarySignPosition() );
 }
 
 void KLocaleConfigMoney::slotMonCurSymChanged(const QString &t)

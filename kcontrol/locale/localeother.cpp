@@ -103,14 +103,14 @@ void KLocaleConfigOther::save()
 
 void KLocaleConfigOther::slotLocaleChanged()
 {
-  m_combMeasureSystem->setCurrentItem(m_locale->measureSystem());
+  m_combMeasureSystem->setCurrentIndex(m_locale->measureSystem());
 
   int pageSize = m_locale->pageSize();
 
   int i = 0; // default to A4
   if ( pageSize == (int)QPrinter::Letter )
     i = 1;
-  m_combPageSize->setCurrentItem(i);
+  m_combPageSize->setCurrentIndex(i);
 }
 
 void KLocaleConfigOther::slotTranslate()

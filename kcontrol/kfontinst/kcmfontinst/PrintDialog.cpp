@@ -64,12 +64,12 @@ bool CPrintDialog::exec(bool select, int size)
 {
     if(!select)
     {
-        itsOutput->setCurrentItem(0);
+        itsOutput->setCurrentIndex(0);
         itsOutput->setEnabled(false);
     }
     else
-        itsOutput->setCurrentItem(1);
-    itsSize->setCurrentItem(size);
+        itsOutput->setCurrentIndex(1);
+    itsSize->setCurrentIndex(size);
     return QDialog::Accepted==QDialog::exec();
 }
 

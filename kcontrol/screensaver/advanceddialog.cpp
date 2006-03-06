@@ -50,10 +50,10 @@ void KScreenSaverAdvancedDialog::readSettings()
 	if (mPriority < 0) mPriority = 0;
 	if (mPriority > 19) mPriority = 19;
 	
-	dialog->qcbTopLeft->setCurrentItem(config->readEntry("ActionTopLeft", 0));    
-	dialog->qcbTopRight->setCurrentItem(config->readEntry("ActionTopRight", 0));
-	dialog->qcbBottomLeft->setCurrentItem(config->readEntry("ActionBottomLeft", 0));
-	dialog->qcbBottomRight->setCurrentItem(config->readEntry("ActionBottomRight", 0));
+	dialog->qcbTopLeft->setCurrentIndex(config->readEntry("ActionTopLeft", 0));    
+	dialog->qcbTopRight->setCurrentIndex(config->readEntry("ActionTopRight", 0));
+	dialog->qcbBottomLeft->setCurrentIndex(config->readEntry("ActionBottomLeft", 0));
+	dialog->qcbBottomRight->setCurrentIndex(config->readEntry("ActionBottomRight", 0));
 	mChanged = false;
 	delete config;
 }
@@ -147,7 +147,7 @@ AdvancedDialog::~AdvancedDialog()
 
 void AdvancedDialog::setMode(QComboBox *box, int i)
 {
-	box->setCurrentItem(i);
+	box->setCurrentIndex(i);
 }
 
 int AdvancedDialog::mode(QComboBox *box)

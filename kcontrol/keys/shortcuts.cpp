@@ -281,7 +281,7 @@ void ShortcutsModule::resizeEvent( QResizeEvent * )
 void ShortcutsModule::slotSchemeCur()
 {
 	kDebug(125) << "ShortcutsModule::slotSchemeCur()" << endl;
-	//m_pcbSchemes->setCurrentItem( 0 );
+	//m_pcbSchemes->setCurrentIndex( 0 );
 	slotSelectScheme();
 }
 
@@ -402,11 +402,11 @@ void ShortcutsModule::slotSaveSchemeAs()
 	if( iScheme == -1 ) {
 		m_pcbSchemes->insertItem( sName );
 		//m_pcbSchemes->setFocus();
-		m_pcbSchemes->setCurrentItem( m_pcbSchemes->count()-1 );
+		m_pcbSchemes->setCurrentIndex( m_pcbSchemes->count()-1 );
 		m_rgsSchemeFiles.append( sFile );
 	} else {
 		//m_pcbSchemes->setFocus();
-		m_pcbSchemes->setCurrentItem( iScheme );
+		m_pcbSchemes->setCurrentIndex( iScheme );
 	}
 
 	KSimpleConfig *config = new KSimpleConfig( sFile );
