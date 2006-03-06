@@ -238,7 +238,7 @@ void PreviewCursor::cropCursorImage( XcursorImage *&image ) const
 	}
 
 	// Normalize the rectangle
-	r = r.normalize();
+	r = r.normalized();
 
 	// Don't crop the image if the size isn't going to change
 	if ( r.width() == int( image->width ) && r.height() == int( image->height ) )
