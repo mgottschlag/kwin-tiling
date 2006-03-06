@@ -87,13 +87,13 @@ void KScreenSaverAdvancedDialog::slotOk()
 	
 		config->writeEntry("Priority", mPriority);
 		config->writeEntry(
-		"ActionTopLeft", dialog->qcbTopLeft->currentItem());
+		"ActionTopLeft", dialog->qcbTopLeft->currentIndex());
 		config->writeEntry(
-		"ActionTopRight", dialog->qcbTopRight->currentItem());
+		"ActionTopRight", dialog->qcbTopRight->currentIndex());
 		config->writeEntry(
-		"ActionBottomLeft", dialog->qcbBottomLeft->currentItem());
+		"ActionBottomLeft", dialog->qcbBottomLeft->currentIndex());
 		config->writeEntry(
-		"ActionBottomRight", dialog->qcbBottomRight->currentItem());
+		"ActionBottomRight", dialog->qcbBottomRight->currentIndex());
 		config->sync();
 		delete config;
 	}
@@ -152,5 +152,5 @@ void AdvancedDialog::setMode(QComboBox *box, int i)
 
 int AdvancedDialog::mode(QComboBox *box)
 {
-	return box->currentItem();
+	return box->currentIndex();
 }

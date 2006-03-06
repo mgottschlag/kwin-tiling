@@ -452,8 +452,8 @@ void BGDialog::loadWallpaperFilesList() {
         it != papers.end();
         ++it)
    {
-      comboWallpaper->insertItem(it.data().first);
-      m_Wallpaper[it.data().second] = i;
+      comboWallpaper->insertItem(it.value().first);
+      m_Wallpaper[it.value().second] = i;
       i++;
    }
 }
@@ -506,7 +506,7 @@ void BGDialog::slotWallpaperSelection()
    dlg.setMode( KFile::File | KFile::ExistingOnly | KFile::LocalOnly );
    dlg.setCaption( i18n("Select Wallpaper") );
 
-   int j = m_urlWallpaperBox->currentItem();
+   int j = m_urlWallpaperBox->currentIndex();
    QString uri;
    for(QMap<QString,int>::ConstIterator it = m_Wallpaper.begin();
        it != m_Wallpaper.end();
@@ -741,7 +741,7 @@ void BGDialog::slotWallpaperTypeChanged(int i)
       else
          r->setMultiWallpaperMode(KBackgroundSettings::NoMultiRandom);
 
-      int j = m_urlWallpaperBox->currentItem();
+      int j = m_urlWallpaperBox->currentIndex();
       QString uri;
       for(QMap<QString,int>::ConstIterator it = m_Wallpaper.begin();
           it != m_Wallpaper.end();

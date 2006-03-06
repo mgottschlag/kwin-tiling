@@ -42,8 +42,8 @@ class CPrintDialog : public KDialogBase
     CPrintDialog(QWidget *parent);
 
     bool exec(bool select, int size);
-    int  chosenSize() { return itsSize->currentItem(); }
-    bool outputAll()  { return 0==itsOutput->currentItem(); }
+    int  chosenSize() { return itsSize->currentIndex(); }
+    bool outputAll()  { return 0==itsOutput->currentIndex(); }
 
     private:
 

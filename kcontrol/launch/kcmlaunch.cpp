@@ -180,7 +180,7 @@ LaunchConfig::load()
   c.setGroup( "TaskbarButtonSettings" );
   sb_taskbarTimeout->setValue( c.readEntry( "Timeout", 30 ));
 
-  slotBusyCursor( cb_busyCursor->currentItem() );
+  slotBusyCursor( cb_busyCursor->currentIndex() );
   slotTaskbarButton( taskbarButton );
 
   emit changed( false );
@@ -192,13 +192,13 @@ LaunchConfig::save()
   KConfig c("klaunchrc", false, false);
 
   c.setGroup("FeedbackStyle");
-  c.writeEntry("BusyCursor",    cb_busyCursor->currentItem() != 0);
+  c.writeEntry("BusyCursor",    cb_busyCursor->currentIndex() != 0);
   c.writeEntry("TaskbarButton", cb_taskbarButton->isChecked());
 
   c.setGroup( "BusyCursorSettings" );
   c.writeEntry( "Timeout", sb_cursorTimeout->value());
-  c.writeEntry("Blinking", cb_busyCursor->currentItem() == 2);
-  c.writeEntry("Bouncing", cb_busyCursor->currentItem() == 3);
+  c.writeEntry("Blinking", cb_busyCursor->currentIndex() == 2);
+  c.writeEntry("Bouncing", cb_busyCursor->currentIndex() == 3);
 
   c.setGroup( "TaskbarButtonSettings" );
   c.writeEntry( "Timeout", sb_taskbarTimeout->value());
@@ -250,12 +250,12 @@ LaunchConfig::checkChanged()
   c.setGroup( "TaskbarButtonSettings" );
   unsigned int savedTaskbarTimeout = c.readEntry( "Timeout", 30 );
 
-  bool newBusyCursor =cb_busyCursor->currentItem()!=0;
+  bool newBusyCursor =cb_busyCursor->currentIndex()!=0;
 
   bool newTaskbarButton =cb_taskbarButton->isChecked();
 
-  bool newBusyBlinking= cb_busyCursor->currentItem()==2;
-  bool newBusyBouncing= cb_busyCursor->currentItem()==3;
+  bool newBusyBlinking= cb_busyCursor->currentIndex()==2;
+  bool newBusyBouncing= cb_busyCursor->currentIndex()==3;
 
   unsigned int newCursorTimeout = sb_cursorTimeout->value();
   

@@ -160,7 +160,7 @@ void PanelExeDialog::slotTextChanged(const QString &str)
     QMap<QString, QString>::iterator it = m_partialPath2full.find(str);
 
     if (it != m_partialPath2full.end())
-        exeLocation = it.data();
+        exeLocation = it.value();
     KMimeType::pixmapForURL(KUrl( exeLocation ), 0, KIcon::Panel, 0, KIcon::DefaultState, &m_icon);
     updateIcon();
 }

@@ -94,13 +94,13 @@ void Windowdef_simple_widget::set_data( const Windowdef_simple* data_P )
     comment_lineedit->setText( data_P->comment());
     window_title_combo->setCurrentItem( data_P->title_match_type());
     window_title_lineedit->setText( data_P->title());    
-    window_title_lineedit->setEnabled( window_title_combo->currentItem() != 0 );
+    window_title_lineedit->setEnabled( window_title_combo->currentIndex() != 0 );
     window_class_combo->setCurrentItem( data_P->wclass_match_type());
     window_class_lineedit->setText( data_P->wclass());
-    window_class_lineedit->setEnabled( window_class_combo->currentItem() != 0 );
+    window_class_lineedit->setEnabled( window_class_combo->currentIndex() != 0 );
     window_role_combo->setCurrentItem( data_P->role_match_type());
     window_role_lineedit->setText( data_P->role());
-    window_role_lineedit->setEnabled( window_role_combo->currentItem() != 0 );
+    window_role_lineedit->setEnabled( window_role_combo->currentIndex() != 0 );
     type_normal_checkbox->setChecked( data_P->type_match( Windowdef_simple::WINDOW_TYPE_NORMAL ));
     type_dialog_checkbox->setChecked( data_P->type_match( Windowdef_simple::WINDOW_TYPE_DIALOG ));
     type_dock_checkbox->setChecked( data_P->type_match( Windowdef_simple::WINDOW_TYPE_DOCK ));
@@ -113,11 +113,11 @@ void Windowdef_simple_widget::set_data( const Windowdef_simple* data_P )
 Windowdef_simple* Windowdef_simple_widget::get_data() const
     {
     return new Windowdef_simple( comment_lineedit->text(), window_title_lineedit->text(),
-        static_cast< Windowdef_simple::substr_type_t >( window_title_combo->currentItem()),
+        static_cast< Windowdef_simple::substr_type_t >( window_title_combo->currentIndex()),
         window_class_lineedit->text(),
-        static_cast< Windowdef_simple::substr_type_t >( window_class_combo->currentItem()),
+        static_cast< Windowdef_simple::substr_type_t >( window_class_combo->currentIndex()),
         window_role_lineedit->text(),
-        static_cast< Windowdef_simple::substr_type_t >( window_role_combo->currentItem()),
+        static_cast< Windowdef_simple::substr_type_t >( window_role_combo->currentIndex()),
             ( type_normal_checkbox->isChecked() ? Windowdef_simple::WINDOW_TYPE_NORMAL : 0 )
             | ( type_dialog_checkbox->isChecked() ? Windowdef_simple::WINDOW_TYPE_DIALOG : 0 )
             | ( type_dock_checkbox->isChecked() ? Windowdef_simple::WINDOW_TYPE_DOCK : 0 )

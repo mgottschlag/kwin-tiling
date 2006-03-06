@@ -297,8 +297,8 @@ void ShortcutsModule::slotKeyChange()
 void ShortcutsModule::slotSelectScheme( int )
 {
 	i18n("Your current changes will be lost if you load another scheme before saving this one.");
-	kDebug(125) << "ShortcutsModule::slotSelectScheme( " << m_pcbSchemes->currentItem() << " )" << endl;
-	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentItem() ];
+	kDebug(125) << "ShortcutsModule::slotSelectScheme( " << m_pcbSchemes->currentIndex() << " )" << endl;
+	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentIndex() ];
 
 	if( sFilename == "cur" ) {
 		// TODO: remove nulls params
@@ -423,7 +423,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 
 void ShortcutsModule::saveScheme()
 {
-	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentItem() ];
+	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentIndex() ];
 	KSimpleConfig config( sFilename );
 
 	m_pkcGeneral->commitChanges();

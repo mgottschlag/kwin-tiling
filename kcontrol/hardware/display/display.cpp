@@ -81,7 +81,7 @@ void KCMDisplay::load()
 void KCMDisplay::save()
 {
   for (QMap<KCModule*, bool>::Iterator it = m_modules.begin(); it != m_modules.end(); ++it)
-    if (it.data())
+    if (it.value())
       it.key()->save();
 }
 
@@ -89,10 +89,10 @@ void KCMDisplay::moduleChanged( bool isChanged )
 {
   QMap<KCModule*, bool>::Iterator currentModule = m_modules.find(static_cast<KCModule*>(const_cast<QObject*>(sender())));
   Q_ASSERT(currentModule != m_modules.end());
-  if (currentModule.data() == isChanged)
+  if (currentModule.value() == isChanged)
     return;
 
-  currentModule.data() = isChanged;
+  currentModule.value() = isChanged;
 
   bool c = false;
 

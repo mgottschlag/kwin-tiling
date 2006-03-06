@@ -154,7 +154,7 @@ void KDMSessionsWidget::makeReadOnly()
 void KDMSessionsWidget::writeSD(QComboBox *combo)
 {
     QString what;
-    switch (combo->currentItem()) {
+    switch (combo->currentIndex()) {
     case SdAll: what = "All"; break;
     case SdRoot: what = "Root"; break;
     default: what = "None"; break;

@@ -166,7 +166,7 @@ void KCMXinerama::save() {
 					xw->_enableMaximize->isChecked());
 		config->writeEntry(KWIN_XINERAMA_FULLSCREEN,
 					xw->_enableFullscreen->isChecked());
-		int item = xw->_unmanagedDisplay->currentItem();
+		int item = xw->_unmanagedDisplay->currentIndex();
 		config->writeEntry("Unmanaged", item == _displays ? -3 : item);
 		config->sync();
 
@@ -176,7 +176,7 @@ void KCMXinerama::save() {
 		kapp->dcopClient()->send("kwin", "", "reconfigure()", data);
 
 		ksplashrc->setGroup("Xinerama");
-		ksplashrc->writeEntry("KSplashScreen", xw->_enableXinerama->isChecked() ? xw->_ksplashDisplay->currentItem() : -2 /* ignore Xinerama */);
+		ksplashrc->writeEntry("KSplashScreen", xw->_enableXinerama->isChecked() ? xw->_ksplashDisplay->currentIndex() : -2 /* ignore Xinerama */);
 		ksplashrc->sync();
 	}
 

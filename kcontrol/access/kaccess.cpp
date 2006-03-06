@@ -856,7 +856,7 @@ void KAccessApp::yesClicked() {
 
    KConfig *config = KGlobal::config();
    config->setGroup("Keyboard");
-   switch (showModeCombobox->currentItem()) {
+   switch (showModeCombobox->currentIndex()) {
       case 0:
          config->writeEntry("Gestures", true);
          config->writeEntry("GestureConfirmation", false);
@@ -887,7 +887,7 @@ void KAccessApp::noClicked() {
 
    KConfig *config = KGlobal::config();
    config->setGroup("Keyboard");
-   switch (showModeCombobox->currentItem()) {
+   switch (showModeCombobox->currentIndex()) {
       case 0:
          config->writeEntry("Gestures", true);
          config->writeEntry("GestureConfirmation", false);

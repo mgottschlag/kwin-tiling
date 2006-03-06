@@ -61,7 +61,7 @@ void Gestures_settings_tab::read_data()
 void Gestures_settings_tab::write_data() const
     {
     module->set_gestures_disabled( mouse_gestures_globally->isChecked());
-    module->set_gesture_button( mouse_button_combo->currentItem() + 2 );
+    module->set_gesture_button( mouse_button_combo->currentIndex() + 2 );
     module->set_gesture_timeout( timeout_input->value());
     module->set_gestures_exclude( windowdef_list_widget->get_data());
     }

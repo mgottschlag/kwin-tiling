@@ -371,7 +371,7 @@ void PanelServiceMenu::activateParent(const QString &child)
         EntryMap::Iterator mapIt;
         for ( mapIt = entryMap_.begin(); mapIt != entryMap_.end(); ++mapIt )
         {
-            KServiceGroup::Ptr g = KServiceGroup::Ptr::staticCast(mapIt.data());
+            KServiceGroup::Ptr g = KServiceGroup::Ptr::staticCast(mapIt.value());
 
             // if the dynamic_cast fails, we are looking at a KService entry
             if (g && (g->relPath() == child))
@@ -396,7 +396,7 @@ bool PanelServiceMenu::highlightMenuItem( const QString &menuItemId )
         {
             continue;
         }
-        KService::Ptr s = KService::Ptr::staticCast(mapIt.data());
+        KService::Ptr s = KService::Ptr::staticCast(mapIt.value());
         if (s && (s->menuId() == menuItemId))
         {
             activateParent(QString());

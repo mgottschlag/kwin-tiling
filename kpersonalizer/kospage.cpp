@@ -319,10 +319,10 @@ void KOSPage::writeKeyEntrys(QString keyfile){
 	cglobal->setGroup("Global Shortcuts");
 	QMap<QString, QString> givenMap = scheme->entryMap("Global Shortcuts");
 	for ( QMap<QString, QString>::Iterator it = givenMap.begin(); it != givenMap.end(); ++it ) {
-		if ( (defMap[it.key()] == it.data()) && (it.data() != "none") ) {
-			cglobal->writeEntry(it.key(), "default("+it.data()+")", KConfigBase::Persistent|KConfigBase::Global);
+		if ( (defMap[it.key()] == it.value()) && (it.value() != "none") ) {
+			cglobal->writeEntry(it.key(), "default("+it.value()+")", KConfigBase::Persistent|KConfigBase::Global);
 		} else {
-			cglobal->writeEntry(it.key(), it.data(), KConfigBase::Persistent|KConfigBase::Global);
+			cglobal->writeEntry(it.key(), it.value(), KConfigBase::Persistent|KConfigBase::Global);
 		}
 	}
 
@@ -334,8 +334,8 @@ void KOSPage::writeKeyEntrys(QString keyfile){
 	givenMap = scheme->entryMap("Shortcuts");
 	for ( QMap<QString, QString>::Iterator it = givenMap.begin(); it != givenMap.end(); ++it ) {
 		// only write the entry, if it defers from kde3.kksrc
-		if ( defMap[it.key()] != it.data() ) {
-			cglobal->writeEntry(it.key(), it.data(), KConfigBase::Persistent|KConfigBase::Global);
+		if ( defMap[it.key()] != it.value() ) {
+			cglobal->writeEntry(it.key(), it.value(), KConfigBase::Persistent|KConfigBase::Global);
 		}
 	}
 
@@ -485,13 +485,13 @@ void KOSPage::writeUserKeys(){
 	cglobal->setGroup("Global Shortcuts");
 	QMap<QString, QString>::Iterator it;	
 	for ( it = map_GlobalUserKeys.begin(); it != map_GlobalUserKeys.end(); ++it ) {
-		cglobal->writeEntry(it.key(), it.data(), KConfigBase::Persistent|KConfigBase::Global);
+		cglobal->writeEntry(it.key(), it.value(), KConfigBase::Persistent|KConfigBase::Global);
 	}
 
 	cglobal->deleteGroup("Shortcuts", KConfigBase::Global);
 	cglobal->setGroup("Shortcuts");
 	for ( it = map_AppUserKeys.begin(); it != map_AppUserKeys.end(); ++it ) {
-		cglobal->writeEntry(it.key(), it.data(), KConfigBase::Normal|KConfigBase::Global);
+		cglobal->writeEntry(it.key(), it.value(), KConfigBase::Normal|KConfigBase::Global);
 	}
 }
 

@@ -531,7 +531,7 @@ void KCMStyle::save()
 	// menu translucency and they enabled it.
     if ( (!allowMenuTransparency) &&
 		(cbEnableEffects->isChecked()) &&
-		(comboMenuEffect->currentItem() == 3) )	// Make Translucent
+		(comboMenuEffect->currentIndex() == 3) )	// Make Translucent
     {
 		warn_string += i18n("Menu translucency is not available.<br>");
 		comboMenuEffect->setCurrentIndex(0);    // Disable menu effect.
@@ -555,21 +555,21 @@ void KCMStyle::save()
 	config.setGroup("KDE");
 
 	config.writeEntry( "EffectsEnabled", cbEnableEffects->isChecked());
-	int item = comboComboEffect->currentItem();
+	int item = comboComboEffect->currentIndex();
 	config.writeEntry( "EffectAnimateCombo", item == 1 );
-	item = comboTooltipEffect->currentItem();
+	item = comboTooltipEffect->currentIndex();
 	config.writeEntry( "EffectAnimateTooltip", item == 1);
 	config.writeEntry( "EffectFadeTooltip", item == 2 );
-	item = comboMenuHandle->currentItem();
+	item = comboMenuHandle->currentIndex();
 	config.writeEntry( "InsertTearOffHandle", item );
-	item = comboMenuEffect->currentItem();
+	item = comboMenuEffect->currentIndex();
 	config.writeEntry( "EffectAnimateMenu", item == 1 );
 	config.writeEntry( "EffectFadeMenu", item == 2 );
 
 	// Handle KStyle's menu effects
 	QString engine("Disabled");
 	if (item == 3 && cbEnableEffects->isChecked())	// Make Translucent
-		switch( comboMenuEffectType->currentItem())
+		switch( comboMenuEffectType->currentIndex())
 		{
 			case 1: engine = "SoftwareBlend"; break;
 			case 2: engine = "XRender"; break;
@@ -596,7 +596,7 @@ void KCMStyle::save()
 	config.writeEntry( "Highlighting", cbHoverButtons->isChecked(), KConfigBase::Normal|KConfigBase::Global);
 	config.writeEntry( "TransparentMoving", cbTransparentToolbars->isChecked(), KConfigBase::Normal|KConfigBase::Global);
 	QString tbIcon;
-	switch( comboToolbarIcons->currentItem() )
+	switch( comboToolbarIcons->currentIndex() )
 	{
 		case 1: tbIcon = "TextOnly"; break;
 		case 2: tbIcon = "IconTextRight"; break;
@@ -956,9 +956,9 @@ void KCMStyle::loadEffects( KConfig& config )
 	} else
 		comboMenuEffectType->setCurrentIndex(0);
 
-	if (comboMenuEffect->currentItem() != 3)	// If not translucency...
+	if (comboMenuEffect->currentIndex() != 3)	// If not translucency...
 		menuPreview->setPreviewMode( MenuPreview::Tint );
-	else if (comboMenuEffectType->currentItem() == 0)
+	else if (comboMenuEffectType->currentIndex() == 0)
 		menuPreview->setPreviewMode( MenuPreview::Tint );
 	else
 		menuPreview->setPreviewMode( MenuPreview::Blend );
@@ -970,7 +970,7 @@ void KCMStyle::loadEffects( KConfig& config )
 
 	if (cbEnableEffects->isChecked()) {
 		containerFrame->setEnabled( true );
-		menuContainer->setEnabled( comboMenuEffect->currentItem() == 3 );
+		menuContainer->setEnabled( comboMenuEffect->currentIndex() == 3 );
 	} else {
 		menuContainer->setEnabled( false );
 		containerFrame->setEnabled( false );
@@ -984,9 +984,9 @@ void KCMStyle::menuEffectTypeChanged()
 {
 	MenuPreview::PreviewMode mode;
 
-	if (comboMenuEffect->currentItem() != 3)
+	if (comboMenuEffect->currentIndex() != 3)
 		mode = MenuPreview::Tint;
-	else if (comboMenuEffectType->currentItem() == 0)
+	else if (comboMenuEffectType->currentIndex() == 0)
 		mode = MenuPreview::Tint;
 	else
 		mode = MenuPreview::Blend;
@@ -1007,7 +1007,7 @@ void KCMStyle::menuEffectChanged()
 void KCMStyle::menuEffectChanged( bool enabled )
 {
 	if (enabled &&
-		comboMenuEffect->currentItem() == 3) {
+		comboMenuEffect->currentIndex() == 3) {
 		menuContainer->setEnabled(true);
 	} else
 		menuContainer->setEnabled(false);

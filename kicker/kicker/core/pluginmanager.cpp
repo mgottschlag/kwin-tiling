@@ -179,7 +179,7 @@ bool PluginManager::hasInstance( const AppletInfo& info ) const
     AppletInfo::Dict::const_iterator it = m_appletDict.constBegin();
     for (; it != m_appletDict.constEnd(); ++it)
     {
-        if (it.data()->library() == info.library())
+        if (it.value()->library() == info.library())
         {
             return true;
         }
@@ -196,7 +196,7 @@ void PluginManager::slotPluginDestroyed(QObject* object)
     {
         if (it.key() == object)
         {
-            info = dynamic_cast<AppletInfo*>(it.data());
+            info = dynamic_cast<AppletInfo*>(it.value());
             m_appletDict.erase(it);
             break;
         }

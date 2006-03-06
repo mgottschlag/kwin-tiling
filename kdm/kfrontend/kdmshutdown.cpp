@@ -386,7 +386,7 @@ KDMShutdown::accepted()
 	GSendInt( cb_force->isChecked() ? SHUT_FORCE : SHUT_CANCEL );
 	GSendInt( _allowShutdown == SHUT_ROOT ? 0 : -2 );
 	GSendStr( (restart_rb->isChecked() &&
-	           targets && targets->currentItem() != oldTarget) ?
+	           targets && targets->currentIndex() != oldTarget) ?
 	          targets->currentText().toLocal8Bit().data() : 0 );
 	GSet( 0 );
 	inherited::accepted();

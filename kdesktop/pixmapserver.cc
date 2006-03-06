@@ -55,7 +55,7 @@ KPixmapServer::~KPixmapServer()
 
     DataIterator it2;
     for (it2=m_Data.begin(); it2!=m_Data.end(); it2++)
-	delete it2.data().pixmap;
+	delete it2.value().pixmap;
 }
 
 
@@ -89,7 +89,7 @@ void KPixmapServer::add(QString name, QPixmap *pm, bool overwrite)
 	data.refcount = 1;
 	m_Data[pm->handle()] = data;
     } else
-	it.data().refcount++;
+	it.value().refcount++;
 
     XSetSelectionOwner(QX11Info::display(), sel, winId(), CurrentTime);
 }
@@ -101,7 +101,7 @@ void KPixmapServer::remove(QString name)
     NameIterator it = m_Names.find(name);
     if (it == m_Names.end())
 	return;
-    KPixmapInode pi = it.data();
+    KPixmapInode pi = it.value();
     m_Names.remove(it);
 
     // Remove and disown the selection
@@ -113,10 +113,10 @@ void KPixmapServer::remove(QString name)
     // Decrease refcount on data
     DataIterator it3 = m_Data.find(pi.handle);
     assert(it3 != m_Data.end());
-    it3.data().refcount--;
-    if (!it3.data().refcount && !it3.data().usecount) 
+    it3.value().refcount--;
+    if (!it3.value().refcount && !it3.value().usecount) 
     {
-	delete it3.data().pixmap;
+	delete it3.value().pixmap;
 	m_Data.remove(it3);
     }
 }
@@ -138,7 +138,7 @@ void KPixmapServer::setOwner(QString name)
     if (it == m_Names.end())
 	return;
 
-    XSetSelectionOwner(QX11Info::display(), it.data().selection, winId(), CurrentTime);
+    XSetSelectionOwner(QX11Info::display(), it.value().selection, winId(), CurrentTime);
 }
 
 
@@ -166,7 +166,7 @@ bool KPixmapServer::x11Event(XEvent *event)
 	SelectionIterator it = m_Selections.find(sel);
 	if (it == m_Selections.end())
 	    return false;
-	KSelectionInode si = it.data();
+	KSelectionInode si = it.value();
 
 	// Only convert to pixmap
 	if (ev->target != pixmap) 
@@ -198,7 +198,7 @@ bool KPixmapServer::x11Event(XEvent *event)
 	// All OK: pass the pixmap handle.
 	XChangeProperty(QX11Info::display(), ev->requestor, ev->property, pixmap,
 		32, PropModeReplace, (unsigned char *) &si.handle, 1);
-	it2.data().usecount++;
+	it2.value().usecount++;
 	m_Active[ev->property] = si.handle;
 
 	// Request PropertyNotify events for the target window
@@ -222,15 +222,15 @@ bool KPixmapServer::x11Event(XEvent *event)
 	AtomIterator it = m_Active.find(ev->atom);
 	if (it == m_Active.end())
 	    return false;
-	Qt::HANDLE handle = it.data();
+	Qt::HANDLE handle = it.value();
 	m_Active.remove(it);
 
 	DataIterator it2 = m_Data.find(handle);
 	assert(it2 != m_Data.end());
-	it2.data().usecount--;
-	if (!it2.data().usecount && !it2.data().refcount) 
+	it2.value().usecount--;
+	if (!it2.value().usecount && !it2.value().refcount) 
 	{
-	    delete it2.data().pixmap;
+	    delete it2.value().pixmap;
 	    m_Data.remove(it2);
 	}
 	return true;
@@ -246,7 +246,7 @@ bool KPixmapServer::x11Event(XEvent *event)
 	if (it == m_Selections.end())
 	    return false;
 
-	emit selectionCleared(it.data().name);
+	emit selectionCleared(it.value().name);
 	return  true;
     }
 

@@ -688,22 +688,22 @@ void KMiniPagerButton::updateTipData(KickerTip::Data &data)
 
     for (Task::Dict::iterator it = tasks.begin(); it != taskEnd; ++it)
     {
-        if (it.data()->desktop() == m_desktop || it.data()->isOnAllDesktops())
+        if (it.value()->desktop() == m_desktop || it.value()->isOnAllDesktops())
         {
             taskCounter++;
             if (taskCounter > taskLimiter)
             {
-                lastWindow = it.data()->visibleName();
+                lastWindow = it.value()->visibleName();
                 continue;
             }
 
-            if (it.data() == m_currentWindow)
+            if (it.value() == m_currentWindow)
             {
-                data.subtext.append("<br>&bull; <u>").append(it.data()->visibleName()).append("</u>");
+                data.subtext.append("<br>&bull; <u>").append(it.value()->visibleName()).append("</u>");
             }
             else
             {
-                data.subtext.append("<br>&bull; ").append(it.data()->visibleName());
+                data.subtext.append("<br>&bull; ").append(it.value()->visibleName());
             }
         }
     }
