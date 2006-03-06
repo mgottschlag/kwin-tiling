@@ -1,4 +1,4 @@
-INCLUDES = $(all_includes) -I$(srcdir)/../libkicker
+INCLUDES = -I$(srcdir)/../libkicker ../libkicker $(all_includes)
 
 lib_LTLIBRARIES = libtaskmanager.la
 libtaskmanager_la_SOURCES = tasklmbmenu.cpp taskrmbmenu.cpp taskmanager.cpp

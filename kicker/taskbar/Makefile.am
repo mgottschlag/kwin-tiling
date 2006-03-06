@@ -1,4 +1,4 @@
-INCLUDES = -I$(srcdir)/../taskmanager -I$(srcdir)/../libkicker -I$(top_builddir)/kicker/libkicker $(all_includes)
+INCLUDES = -I$(srcdir)/../taskmanager -I$(srcdir)/../libkicker -I../libkicker $(all_includes)
 
 # KDE 4: rename to libkickertaskbar.la!
 

@@ -1,4 +1,4 @@
-INCLUDES = -I$(srcdir)/../../taskmanager -I$(srcdir)/../../taskbar -I$(srcdir)/../../libkicker -I$(top_builddir)/kicker/libkicker $(all_includes)
+INCLUDES = -I$(srcdir)/../../taskmanager -I$(srcdir)/../../taskbar -I$(srcdir)/../../libkicker -I../../libkicker $(all_includes)
 
 kde_module_LTLIBRARIES = taskbar_panelextension.la
 
