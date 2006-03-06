@@ -138,7 +138,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 		// Hour
 		float h_angle = 30*(time.hour()%12-3) + time.minute()/2;
 		matrix.rotate( h_angle );
-		paint.setWorldMatrix( matrix );
+		paint.setMatrix( matrix );
 		pts.setPoints( 4, -20,0,  0,-20, 300,0, 0,20 );
 		paint.drawPolygon( pts );
 		matrix.rotate( -h_angle );
@@ -146,7 +146,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 		// Minute
 		float m_angle = (time.minute()-15)*6;
 		matrix.rotate( m_angle );
-		paint.setWorldMatrix( matrix );
+		paint.setMatrix( matrix );
 		pts.setPoints( 4, -10,0, 0,-10, 400,0, 0,10 );
 		paint.drawPolygon( pts );
 		matrix.rotate( -m_angle );
@@ -154,7 +154,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 		// Second
 		float s_angle = (time.second()-15)*6;
 		matrix.rotate( s_angle );
-		paint.setWorldMatrix( matrix );
+		paint.setMatrix( matrix );
 		pts.setPoints( 4,0,0,0,0,400,0,0,0 );
 		if (mSecond)
 			paint.drawPolygon( pts );
@@ -162,7 +162,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 
 		// quadrante
 		for (int i=0 ; i < 60 ; i++) {
-			paint.setWorldMatrix( matrix );
+			paint.setMatrix( matrix );
 			if ((i % 5) == 0)
 				paint.drawLine( 450,0, 500,0 ); // draw hour lines
 			else
