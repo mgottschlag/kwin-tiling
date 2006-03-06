@@ -42,7 +42,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 DesktopButton::DesktopButton( QWidget* parent )
   : PanelButton( parent, "DesktopButton" )
 {
-    setToggleButton(true);
+    setCheckable(true);
 
     this->setToolTip( i18n("Show desktop"));
     setTitle(i18n("Desktop Access"));

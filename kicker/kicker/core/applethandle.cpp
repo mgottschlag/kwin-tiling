@@ -439,7 +439,7 @@ AppletHandleButton::AppletHandleButton(AppletHandle *parent)
 {
     m_moveMouse = false;
     setFocusPolicy(Qt::NoFocus);
-    setToggleButton(true);
+    setCheckable(true);
     setCheckable(true);
 }
 
