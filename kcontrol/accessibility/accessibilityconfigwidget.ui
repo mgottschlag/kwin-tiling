@@ -173,10 +173,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                                 <property name="suffix">
                                                     <string> msec</string>
                                                 </property>
-                                                <property name="maxValue">
+                                                <property name="maximum">
                                                     <number>2000</number>
                                                 </property>
-                                                <property name="minValue">
+                                                <property name="minimum">
                                                     <number>100</number>
                                                 </property>
                                                 <property name="singleStep">
@@ -193,10 +193,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                                 <property name="enabled">
                                                     <bool>false</bool>
                                                 </property>
-                                                <property name="minValue">
+                                                <property name="minimum">
                                                     <number>100</number>
                                                 </property>
-                                                <property name="maxValue">
+                                                <property name="maximum">
                                                     <number>2000</number>
                                                 </property>
                                                 <property name="singleStep">
@@ -470,10 +470,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="suffix">
                                             <string> msec</string>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>2000</number>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>100</number>
                                         </property>
                                         <property name="singleStep">
@@ -490,10 +490,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>100</number>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>2000</number>
                                         </property>
                                         <property name="singleStep">
@@ -581,10 +581,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>100</number>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>2000</number>
                                         </property>
                                         <property name="singleStep">
@@ -630,10 +630,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="suffix">
                                             <string> msec</string>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>2000</number>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>100</number>
                                         </property>
                                         <property name="singleStep">
@@ -725,10 +725,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>5000</number>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
                                         <property name="singleStep">
@@ -745,10 +745,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>5000</number>
                                         </property>
                                         <property name="singleStep">
@@ -808,10 +808,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>1000</number>
                                         </property>
                                         <property name="singleStep">
@@ -837,10 +837,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>1000</number>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
                                         <property name="singleStep">
@@ -860,10 +860,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="suffix">
                                             <string> msec</string>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>1000</number>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
                                         <property name="singleStep">
@@ -897,10 +897,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>1000</number>
                                         </property>
                                         <property name="singleStep">
@@ -957,10 +957,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="suffix">
                                             <string> msec</string>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>1000</number>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
                                         <property name="singleStep">
@@ -994,10 +994,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>1000</number>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>-1000</number>
                                         </property>
                                         <property name="singleStep">
@@ -1011,10 +1011,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>-1000</number>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>1000</number>
                                         </property>
                                         <property name="singleStep">
@@ -1040,10 +1040,10 @@ Please note that on slow machines this may cause a "lag" between the event causi
                                         <property name="enabled">
                                             <bool>false</bool>
                                         </property>
-                                        <property name="minValue">
+                                        <property name="minimum">
                                             <number>1</number>
                                         </property>
-                                        <property name="maxValue">
+                                        <property name="maximum">
                                             <number>1000</number>
                                         </property>
                                         <property name="singleStep">

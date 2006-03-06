@@ -491,10 +491,10 @@
                                 <property name="enabled">
                                     <bool>false</bool>
                                 </property>
-                                <property name="maxValue">
+                                <property name="maximum">
                                     <number>10</number>
                                 </property>
-                                <property name="minValue">
+                                <property name="minimum">
                                     <number>2</number>
                                 </property>
                             </widget>

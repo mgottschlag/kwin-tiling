@@ -304,7 +304,7 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
                     <property name="specialValueText">
                         <string>Auto</string>
                     </property>
-                    <property name="maxValue">
+                    <property name="maximum">
                         <number>99999</number>
                     </property>
                     <property name="value">

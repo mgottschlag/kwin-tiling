@@ -232,7 +232,7 @@
                             <property name="suffix">
                                 <string> Hz </string>
                             </property>
-                            <property name="maxValue">
+                            <property name="maximum">
                                 <number>99999</number>
                             </property>
                             <property name="singleStep">

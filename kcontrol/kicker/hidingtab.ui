@@ -128,10 +128,10 @@
                             <property name="enabled">
                                 <bool>false</bool>
                             </property>
-                            <property name="minValue">
+                            <property name="minimum">
                                 <number>0</number>
                             </property>
-                            <property name="maxValue">
+                            <property name="maximum">
                                 <number>10</number>
                             </property>
                             <property name="suffix">
@@ -497,10 +497,10 @@
                                     <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
-                            <property name="minValue">
+                            <property name="minimum">
                                 <number>1</number>
                             </property>
-                            <property name="maxValue">
+                            <property name="maximum">
                                 <number>10</number>
                             </property>
                             <property name="pageStep">

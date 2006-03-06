@@ -148,7 +148,7 @@
                                 <property name="name">
                                     <cstring>ScrollBar1</cstring>
                                 </property>
-                                <property name="maxValue">
+                                <property name="maximum">
                                     <number>19</number>
                                 </property>
                                 <property name="orientation">

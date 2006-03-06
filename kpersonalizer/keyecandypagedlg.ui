@@ -151,7 +151,7 @@ If you have a fast, new processor, you might want to turn them all on, but for t
             <property name="name">
                 <cstring>sld_effects</cstring>
             </property>
-            <property name="maxValue">
+            <property name="maximum">
                 <number>9</number>
             </property>
             <property name="pageStep">

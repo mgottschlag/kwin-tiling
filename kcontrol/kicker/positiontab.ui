@@ -287,10 +287,10 @@ how it is positioned on the screen and how much of the screen it should use.</st
                                     <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
-                            <property name="minValue">
+                            <property name="minimum">
                                 <number>1</number>
                             </property>
-                            <property name="maxValue">
+                            <property name="maximum">
                                 <number>100</number>
                             </property>
                             <property name="value">
@@ -319,10 +319,10 @@ how it is positioned on the screen and how much of the screen it should use.</st
                             <property name="value">
                                 <number>100</number>
                             </property>
-                            <property name="minValue">
+                            <property name="minimum">
                                 <number>0</number>
                             </property>
-                            <property name="maxValue">
+                            <property name="maximum">
                                 <number>100</number>
                             </property>
                             <property name="suffix">
@@ -456,10 +456,10 @@ how it is positioned on the screen and how much of the screen it should use.</st
                                     <verstretch>0</verstretch>
                                 </sizepolicy>
                             </property>
-                            <property name="minValue">
+                            <property name="minimum">
                                 <number>24</number>
                             </property>
-                            <property name="maxValue">
+                            <property name="maximum">
                                 <number>128</number>
                             </property>
                             <property name="pageStep">
@@ -494,10 +494,10 @@ how it is positioned on the screen and how much of the screen it should use.</st
                             <property name="value">
                                 <number>58</number>
                             </property>
-                            <property name="minValue">
+                            <property name="minimum">
                                 <number>24</number>
                             </property>
-                            <property name="maxValue">
+                            <property name="maximum">
                                 <number>128</number>
                             </property>
                             <property name="suffix">

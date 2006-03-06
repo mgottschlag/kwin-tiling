@@ -126,10 +126,10 @@ Recommended if you want sound.</string>
                     <property name="name">
                         <cstring>latencySlider</cstring>
                     </property>
-                    <property name="minValue">
+                    <property name="minimum">
                         <number>10</number>
                     </property>
-                    <property name="maxValue">
+                    <property name="maximum">
                         <number>500</number>
                     </property>
                     <property name="value">

@@ -51,10 +51,10 @@
                     <property name="suffix">
                         <string> pixels</string>
                     </property>
-                    <property name="maxValue">
+                    <property name="maximum">
                         <number>24</number>
                     </property>
-                    <property name="minValue">
+                    <property name="minimum">
                         <number>3</number>
                     </property>
                     <property name="whatsThis" stdset="0">

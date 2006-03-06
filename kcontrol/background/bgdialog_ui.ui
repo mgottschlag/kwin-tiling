@@ -385,10 +385,10 @@
                             <property name="name">
                                 <cstring>m_sliderBlend</cstring>
                             </property>
-                            <property name="minValue">
+                            <property name="minimum">
                                 <number>-20</number>
                             </property>
-                            <property name="maxValue">
+                            <property name="maximum">
                                 <number>20</number>
                             </property>
                             <property name="pageStep">
