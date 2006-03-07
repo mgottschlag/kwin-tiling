@@ -144,6 +144,9 @@ int main(int argc, char **argv)
                     "             # otherwise only device UDIs are listed.\n" ) << endl;
 
       cout << "  solidshell hardware properties 'udi'" << endl;
+
+      cout << "  solidshell hardware query 'predicate' ['parentUdi']" << endl;
+
       cout << "  solidshell hardware mount 'udi'" << endl;
       cout << "  solidshell hardware unmount 'udi'" << endl;
       cout << "  solidshell hardware eject 'udi'" << endl;
@@ -179,6 +182,20 @@ bool SolidShell::doIt()
             checkArgumentCount( 3, 3 );
             QString udi( args->arg( 2 ) );
             return shell.hwProperties( udi );
+        }
+        else if ( command == "query" )
+        {
+            checkArgumentCount( 3, 4 );
+
+            QString query = args->arg( 2 );
+            QString parent;
+
+            if ( args->count() == 4 )
+            {
+                parent = args->arg( 3 );
+            }
+
+            return shell.hwQuery( parent, query );
         }
         else if ( command == "mount" )
         {
@@ -236,6 +253,21 @@ bool SolidShell::hwProperties( const QString &udi )
     return true;
 }
 
+bool SolidShell::hwQuery( const QString &parentUdi, const QString &query )
+{
+    KDEHW::DeviceManager &manager = KDEHW::DeviceManager::self();
+    KDEHW::DeviceList devices = manager.findDevicesFromQuery( parentUdi,
+                                                              KDEHW::Capability::Unknown,
+                                                              query );
+
+    foreach ( KDEHW::Device device, devices )
+    {
+        cout << "udi = '" << device.udi() << "'" << endl;
+    }
+
+    return true;
+}
+
 bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &udi )
 {
     KDEHW::DeviceManager &manager = KDEHW::DeviceManager::self();
@@ -267,7 +299,7 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
         cerr << i18n( "Error: unsupported operation!" ) << endl;
         return false;
     }
-    
+
     connect( job, SIGNAL( result( KIO::Job* ) ),
              this, SLOT( slotResult( KIO::Job* ) ) );
     m_loop.exec();
