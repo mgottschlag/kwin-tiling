@@ -7,12 +7,12 @@ add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci COMMAND ${
 
 set(kdmconfig_SRCS ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci)
 
+macro_additional_clean_files( ${CMAKE_CURRENT_BINARY_DIR}/config.ci )
 add_subdirectory( backend )
 add_subdirectory( kfrontend )
 
 ########### install files ###############
 
-install_files(  FILES config.ci )
 install_files( /share/doc/kdm FILES README )
 
 kde4_footer()
