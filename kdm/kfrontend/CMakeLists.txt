@@ -5,25 +5,39 @@ add_subdirectory( themes )
 add_subdirectory( pics ) 
 add_subdirectory( sessions ) 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdm/backend ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
+set(libkdmthemer_SRCS
+	${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend/themer/kdmthemer.cpp
+	${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend/themer/kdmitem.cpp
+	${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend/themer/kdmpixmap.cpp
+	${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend/themer/kdmrect.cpp
+	${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend/themer/kdmlabel.cpp
+	${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend/themer/kdmlayout.cpp
+	)
 
-set(kdm_config_SRCS kdm_config.c )
+
+
+add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci COMMAND ${PERL_EXECUTABLE} ARGS -w ${CMAKE_SOURCE_DIR}/workspace/kdm/confproc.pl ${CMAKE_SOURCE_DIR}/workspace/kdm/config.def ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci  DEPENDS ${CMAKE_SOURCE_DIR}/workspace/kdm/config.def )
+
+macro_additional_clean_files( ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci )
+
+set(kdm_config_SRCS kdm_config.c ${kdmconfig_SRCS})
 
 kde4_automoc(${kdm_config_SRCS})
 
 kde4_add_executable(kdm_config ${kdm_config_SRCS})
 
-target_link_libraries(kdm_config  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(kdm_config  ${LIB_KDEUI} )
 
 install_targets(/bin kdm_config )
 
 
 ########### next target ###############
 
-set(kdm_greet_SRCS 
+set(kdm_greet_SRCS ${libkdmthemer_SRCS}
    kdm_greet.c 
    kdmconfig.cpp 
    kdmclock.cpp 
@@ -40,7 +54,7 @@ kde4_automoc(${kdm_greet_SRCS})
 
 kde4_add_executable(kdm_greet ${kdm_greet_SRCS})
 
-target_link_libraries(kdm_greet  ${QT_AND_KDECORE_LIBS} kdeui )
+target_link_libraries(kdm_greet  ${LIB_KDEUI} ${X11_XTest_LIB})
 
 install_targets(/bin kdm_greet )
 
