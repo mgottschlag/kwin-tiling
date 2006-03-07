@@ -31,7 +31,7 @@ using namespace std;
 
 #include <kdehw/devicemanager.h>
 #include <kdehw/device.h>
-#include <kdehw/ifaces/volume.h>
+#include <kdehw/volume.h>
 
 
 static const char appName[] = "solidshell";
@@ -273,7 +273,7 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
     KDEHW::DeviceManager &manager = KDEHW::DeviceManager::self();
     KDEHW::Device device = manager.findDevice( udi );
 
-    if ( !device.is<KDEHW::Ifaces::Volume>() )
+    if ( !device.is<KDEHW::Volume>() )
     {
         cerr << i18n( "Error: %1 doesn't have the capability Volume." ).arg( udi ) << endl;
         return false;
@@ -284,13 +284,13 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
     switch( type )
     {
     case Mount:
-        job = device.as<KDEHW::Ifaces::Volume>()->mount();
+        job = device.as<KDEHW::Volume>()->mount();
         break;
     case Unmount:
-        job = device.as<KDEHW::Ifaces::Volume>()->unmount();
+        job = device.as<KDEHW::Volume>()->unmount();
         break;
     case Eject:
-        job = device.as<KDEHW::Ifaces::Volume>()->eject();
+        job = device.as<KDEHW::Volume>()->eject();
         break;
     }
 
