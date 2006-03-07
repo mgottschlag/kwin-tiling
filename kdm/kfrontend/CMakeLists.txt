@@ -5,7 +5,7 @@ add_subdirectory( themes )
 add_subdirectory( pics ) 
 add_subdirectory( sessions ) 
 
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdm/backend ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/ ${CMAKE_SOURCE_DIR}/workspace/kdm/backend ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -61,13 +61,13 @@ install_targets(/bin kdm_greet )
 
 ########### next target ###############
 
-set(krootimage_SRCS krootimage.cpp )
+set(krootimage_SRCS krootimage.cpp ${backgroundlib_SRCS})
 
 kde4_automoc(${krootimage_SRCS})
 
 kde4_add_executable(krootimage ${krootimage_SRCS})
 
-target_link_libraries(krootimage  ${QT_AND_KDECORE_LIBS} bgnd kio )
+target_link_libraries(krootimage  ${LIB_KIO} )
 
 install_targets(/bin krootimage )
 
