@@ -36,7 +36,13 @@ class KDE_EXPORT AppletInfo
     public:
         typedef QVector<AppletInfo> List;
         typedef QMap<QObject*, AppletInfo*> Dict;
-        enum AppletType { Undefined, Applet, SpecialButton };
+
+        enum AppletType { Undefined = 0,
+                          Applet = 1,
+                          BuiltinButton = 2,
+                          SpecialButton = 4,
+                          Extension = 8,
+                          Button = BuiltinButton | SpecialButton };
 
         AppletInfo(const QString& desktopFile = QString(),
                    const QString& configFile = QString(),
@@ -53,7 +59,6 @@ class KDE_EXPORT AppletInfo
         AppletType type() const;
 
         QString library() const;
-        QString desktopFilePath() const;
         QString desktopFile() const;
         QString configFile() const;
 

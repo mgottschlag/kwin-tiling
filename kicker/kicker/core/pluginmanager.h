@@ -46,8 +46,11 @@ class KDE_EXPORT PluginManager : public QObject
 
 public:
     static PluginManager* self();
-    static AppletInfo::List applets();
-    static AppletInfo::List extensions();
+
+    static AppletInfo::List applets(bool sort = true, AppletInfo::List* list = 0);
+    static AppletInfo::List extensions(bool sort = true, AppletInfo::List* list = 0);
+    static AppletInfo::List builtinButtons(bool sort = true, AppletInfo::List* list = 0);
+    static AppletInfo::List specialButtons(bool sort = true, AppletInfo::List* list = 0);
 
     AppletContainer* createAppletContainer(const QString& desktopFile,
                                            bool isStartup,
@@ -69,7 +72,10 @@ public Q_SLOTS:
     void clearUntrustedLists();
 
 protected:
-    static AppletInfo::List plugins(const QStringList& desktopFiles);
+    static AppletInfo::List plugins(const QStringList& desktopFiles,
+                                    AppletInfo::AppletType,
+                                    bool sort,
+                                    AppletInfo::List* list);
 
 private Q_SLOTS:
     void slotPluginDestroyed(QObject* plugin);

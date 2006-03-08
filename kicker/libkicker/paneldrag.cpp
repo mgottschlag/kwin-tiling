@@ -119,7 +119,7 @@ AppletInfoDrag::AppletInfoDrag(const AppletInfo& info, QWidget *dragSource)
     QDataStream s(&a, QIODevice::WriteOnly);
 
     s.setVersion(QDataStream::Qt_3_1);
-    s << info.desktopFilePath() << info.configFile() << info.type();
+    s << info.desktopFile() << info.configFile() << info.type();
 }
 
 AppletInfoDrag::~AppletInfoDrag()

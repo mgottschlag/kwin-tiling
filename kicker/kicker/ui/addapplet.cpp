@@ -312,85 +312,34 @@ void AddAppletDialog::populateApplets()
      * - We load the special buttons
      * - Then we begin to populate the scrollview with the AppletWidget(s)
      */
-    AppletInfo::List appletInfoList;
 
     // Loading applets
-    appletInfoList = PluginManager::applets();
-    for (AppletInfo::List::iterator it = appletInfoList.begin();
-         it != appletInfoList.end();)
-    {
-        if ((*it).isHidden() || (*it).name().isEmpty() ||
-            ((*it).isUniqueApplet() &&
-             PluginManager::self()->hasInstance(*it)))
-        {
-            it = appletInfoList.erase(it);
-        }
-        else
-        {
-            (*it).setType(AppletInfo::Applet);
-            ++it;
-        }
-    }
+    AppletInfo::List appletInfoList = PluginManager::applets(false, &appletInfoList);
 
     // Loading built in buttons
-    QStringList dirs = KGlobal::dirs()->findDirs("data", "kicker/builtins");
-    for (QStringList::ConstIterator it = dirs.constBegin();
-         it != dirs.constEnd();
-         ++it)
-    {
-        QDir d(*it, "*.desktop");
-        QStringList entries = d.entryList();
-        for (QStringList::ConstIterator e = entries.begin();
-             e != entries.end();
-             ++e)
-        {
-            AppletInfo::List::const_iterator itFind =
-                qFind( appletInfoList.begin(), appletInfoList.end(), *e );
-            if (itFind == appletInfoList.end())
-            {
-                AppletInfo ai(d.absolutePath() + "/" + *e, QString(), AppletInfo::SpecialButton);
-                if (!ai.name().isEmpty())
-                {
-                    appletInfoList.append(ai);
-                }
-            }
-        }
-    }
+    appletInfoList = PluginManager::builtinButtons(false, &appletInfoList);
 
     // Loading special buttons
-    dirs = KGlobal::dirs()->findDirs("data", "kicker/menuext");
-    for (QStringList::ConstIterator it = dirs.constBegin();
-         it != dirs.constEnd();
-         ++it)
-    {
-        QDir d(*it, "*.desktop");
-        QStringList entries = d.entryList();
-        for (QStringList::ConstIterator e = entries.begin();
-             e != entries.end();
-             ++e)
-        {
-            AppletInfo::List::const_iterator itFind =
-                qFind(appletInfoList.begin(), appletInfoList.end(), *e);
-            if (itFind == appletInfoList.end())
-            {
-                AppletInfo ai(d.absolutePath() + "/" + *e, QString(), AppletInfo::SpecialButton);
-                if (!ai.name().isEmpty())
-                {
-                    appletInfoList.append(ai);
-                }
-            }
-        }
-    }
+    appletInfoList = PluginManager::specialButtons(false, &appletInfoList);
 
     qHeapSort(appletInfoList);
 
     int i = 0;
     bool odd = true;
     QWidget* prevTabWidget = m_mainWidget->appletFilter;
-    for (AppletInfo::List::const_iterator it = appletInfoList.constBegin();
-         !m_closing && it != appletInfoList.constEnd();
-         ++it, ++i)
+    for (AppletInfo::List::iterator it = appletInfoList.begin();
+         !m_closing && it != appletInfoList.end();
+         ++i)
     {
+        if ((*it).isHidden() || (*it).name().isEmpty() ||
+            ((*it).isUniqueApplet() &&
+             PluginManager::self()->hasInstance(*it)))
+        {
+            it = appletInfoList.erase(it);
+            --i;
+            continue;
+        }
+
         AppletWidget *itemWidget = new AppletWidget(*it, odd, appletBox);
 
         if (m_mainWidget->appletSearch->text().isEmpty() ||
@@ -422,6 +371,8 @@ void AddAppletDialog::populateApplets()
         {
             return;
         }
+
+        ++it;
     }
 
     m_mainWidget->closeButton->setEnabled(true);
@@ -469,7 +420,7 @@ void AddAppletDialog::addApplet(AppletWidget* applet)
 
     if (applet->info().type() == AppletInfo::Applet)
     {
-        appletContainer = m_containerArea->addApplet(applet->info().desktopFile());
+        appletContainer = m_containerArea->addApplet(applet->info());
 
         if (applet->info().isUniqueApplet() &&
             PluginManager::self()->hasInstance(applet->info()))
@@ -491,7 +442,7 @@ void AddAppletDialog::addApplet(AppletWidget* applet)
             }
         }
     }
-    else if (applet->info().type() == AppletInfo::SpecialButton)
+    else if (applet->info().type() & AppletInfo::Button)
     {
         appletContainer = m_containerArea->addButton(applet->info());
     }
@@ -526,7 +477,7 @@ bool AddAppletDialog::appletMatchesSearch(const AppletWidget* w,
     }
 
     return (m_selectedType == AppletInfo::Undefined ||
-            w->info().type() == m_selectedType) &&
+            w->info().type() & m_selectedType) &&
            (w->info().name().contains(s, false) ||
             w->info().comment().contains(s, false));
 }
@@ -564,7 +515,7 @@ void AddAppletDialog::filter(int i)
     }
     else if (i == 2)
     {
-        m_selectedType = AppletInfo::SpecialButton;
+        m_selectedType = AppletInfo::Button;
     }
 
     QList<AppletWidget*>::const_iterator itEnd = m_appletWidgetList.constEnd();

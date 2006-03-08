@@ -171,7 +171,7 @@ void ExtensionManager::initialize()
 void ExtensionManager::configureMenubar(bool duringInit)
 {
     KConfig menuConfig("kdesktoprc", true);
-    if(KConfigGroup(&menuConfig, "KDE").readEntry("macStyle", QVariant(false)).toBool()
+    if (KConfigGroup(&menuConfig, "KDE").readEntry("macStyle", QVariant(false)).toBool()
         || KConfigGroup(&menuConfig, "Menubar").readEntry("ShowMenubar", QVariant(false)).toBool())
     {
         if (KGlobal::dirs()->findResource("applets", "menuapplet.desktop").isEmpty() ||
@@ -182,7 +182,7 @@ void ExtensionManager::configureMenubar(bool duringInit)
 
         if (duringInit)
         {
-            AppletInfo menubarInfo("menuapplet.desktop");
+            AppletInfo menubarInfo("menuapplet.desktop", QString::null, AppletInfo::Applet);
             if (PluginManager::self()->hasInstance(menubarInfo))
             {
                 // it's already there, in the main panel!
@@ -192,7 +192,8 @@ void ExtensionManager::configureMenubar(bool duringInit)
         }
 
         AppletInfo info("childpanelextension.desktop",
-                        "kicker_menubarpanelrc");
+                        "kicker_menubarpanelrc",
+                        AppletInfo::Extension);
         KPanelExtension* menubar = new MenubarExtension(info);
         m_menubarPanel = new ExtensionContainer(menubar, info, "Menubar Panel");
         m_menubarPanel->setPanelOrder(-1);

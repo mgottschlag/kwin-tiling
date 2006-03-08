@@ -252,7 +252,7 @@ void PanelExtension::addNonKDEAppButton(const QString &title,
 
 void PanelExtension::addApplet(const QString &desktopFile)
 {
-    _containerArea->addApplet(desktopFile);
+    _containerArea->addApplet(AppletInfo(desktopFile, QString::null, AppletInfo::Applet));
 }
 
 void PanelExtension::slotBuildOpMenu()
@@ -383,7 +383,9 @@ void MenubarExtension::populateContainerArea()
 
     if (!m_menubar)
     {
-        m_menubar = _containerArea->addApplet("menuapplet.desktop");
+        m_menubar = _containerArea->addApplet(AppletInfo("menuapplet.desktop",
+                                                         QString::null,
+                                                         AppletInfo::Applet));
     }
 
     // in the pathological case we may not have a menuapplet at all,

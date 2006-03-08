@@ -57,27 +57,62 @@ PluginManager* PluginManager::self()
     return m_self;
 }
 
-AppletInfo::List PluginManager::applets()
+AppletInfo::List PluginManager::applets(bool sort, AppletInfo::List* list)
 {
-    return plugins(KGlobal::dirs()->findAllResources("applets", "*.desktop", false, true));
+    QStringList rel;
+    KGlobal::dirs()->findAllResources("applets", "*.desktop", false, true, rel);
+    return plugins(rel, AppletInfo::Applet, sort, list);
 }
 
-AppletInfo::List PluginManager::extensions()
+AppletInfo::List PluginManager::extensions(bool sort, AppletInfo::List* list)
 {
-    return plugins(KGlobal::dirs()->findAllResources("extensions", "*.desktop", false, true));
+    QStringList rel;
+    KGlobal::dirs()->findAllResources("extensions", "*.desktop", false, true, rel);
+    return plugins(rel, AppletInfo::Extension, sort, list);
 }
 
-AppletInfo::List PluginManager::plugins(const QStringList& desktopFiles)
+AppletInfo::List PluginManager::builtinButtons(bool sort, AppletInfo::List* list)
+{
+    QStringList rel;
+    KGlobal::dirs()->findAllResources("builtinbuttons", "*.desktop", false, true, rel);
+    return plugins(rel, AppletInfo::BuiltinButton, sort, list);
+}
+
+AppletInfo::List PluginManager::specialButtons(bool sort, AppletInfo::List* list)
+{
+    QStringList rel;
+    KGlobal::dirs()->findAllResources("specialbuttons", "*.desktop", false, true, rel);
+    return plugins(rel, AppletInfo::SpecialButton, sort, list);
+}
+
+AppletInfo::List PluginManager::plugins(const QStringList& desktopFiles,
+                                        AppletInfo::AppletType type,
+                                        bool sort,
+                                        AppletInfo::List* list)
 {
     AppletInfo::List plugins;
 
-    for (QStringList::ConstIterator it = desktopFiles.begin();
-         it != desktopFiles.end(); ++it)
+    if (list)
     {
-        plugins.append(AppletInfo(*it, QString(), AppletInfo::Applet));
+        plugins = *list;
     }
 
-    qHeapSort(plugins.begin(), plugins.end());
+    for (QStringList::ConstIterator it = desktopFiles.constBegin();
+         it != desktopFiles.constEnd(); ++it)
+    {
+        AppletInfo info(*it, QString::null, type);
+
+        if (!info.isHidden())
+        {
+            plugins.append(info);
+        }
+    }
+
+    if (sort)
+    {
+        qHeapSort(plugins.begin(), plugins.end());
+    }
+
     return plugins;
 }
 
@@ -226,7 +261,7 @@ AppletContainer* PluginManager::createAppletContainer(
         return 0;
     }
 
-    AppletInfo info( desktopPath, configFile );
+    AppletInfo info( desktopPath, configFile, AppletInfo::Applet );
 
     bool instanceFound = hasInstance(info);
     if (info.isUniqueApplet() && instanceFound)
@@ -276,7 +311,7 @@ ExtensionContainer* PluginManager::createExtensionContainer(const QString& deskt
         return 0;
     }
 
-    AppletInfo info(desktopPath, configFile);
+    AppletInfo info(desktopPath, configFile, AppletInfo::Extension);
 
     bool internal = (info.library() == "childpanel_panelextension");
     bool instance = !internal && hasInstance(info);

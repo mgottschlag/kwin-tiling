@@ -46,7 +46,6 @@ public:
     QString lib;
     QString desktopFile;
     QString configFile;
-    QString desktopFilePath;
     AppletType type;
     bool unique;
     bool hidden;
@@ -57,10 +56,27 @@ AppletInfo::AppletInfo( const QString& deskFile, const QString& configFile, cons
     d = new Private;
     d->type = type;
     QFileInfo fi(deskFile);
-    d->desktopFilePath = fi.absoluteFilePath();
     d->desktopFile = fi.fileName();
 
-    KDesktopFile df(deskFile);
+    const char* resource = "applets";
+    switch (type)
+    {
+        case Extension:
+            resource = "extensions";
+            break;
+        case BuiltinButton:
+            resource = "builtinbuttons";
+            break;
+        case SpecialButton:
+            resource = "specialbuttons";
+            break;
+        case Undefined:
+        case Applet:
+        default:
+            break;
+    }
+
+    KDesktopFile df(d->desktopFile, true, resource);
 
     // set the appletssimple attributes
     setName(df.readName());
@@ -141,11 +157,6 @@ QString AppletInfo::library() const
     return d->lib;
 }
 
-QString AppletInfo::desktopFilePath() const
-{
-    return d->desktopFilePath;
-}
-
 QString AppletInfo::desktopFile() const
 {
     return d->desktopFile;
@@ -180,7 +191,7 @@ void AppletInfo::populateMimeData(QMimeData* mimeData)
 {
     QByteArray a;
     QDataStream s(&a, QIODevice::WriteOnly);
-    s << desktopFilePath() << configFile() << type();
+    s << desktopFile() << configFile() << type();
     mimeData->setData("application/x-kde-plasma-AppletInfo", a);
 }
 

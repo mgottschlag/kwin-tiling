@@ -82,7 +82,7 @@ public:
                                       const QString &icon,
                                       const QString &cmdLine, bool inTerm);
     const QWidget* addExtensionButton(const QString& desktopFile);
-    AppletContainer* addApplet(const QString& desktopFile,
+    AppletContainer* addApplet(const AppletInfo& desktopFile,
                                bool isImmutable = false);
 
     void configure();

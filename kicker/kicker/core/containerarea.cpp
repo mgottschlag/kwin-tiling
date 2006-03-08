@@ -647,7 +647,7 @@ void ContainerArea::completeContainerAddition(BaseContainer* container)
 }
 
 
-AppletContainer* ContainerArea::addApplet(const QString& desktopFile, bool isImmutable)
+AppletContainer* ContainerArea::addApplet(const AppletInfo& info, bool isImmutable)
 {
     if (!canAddContainers())
     {
@@ -655,7 +655,7 @@ AppletContainer* ContainerArea::addApplet(const QString& desktopFile, bool isImm
     }
 
     AppletContainer* a = PluginManager::self()->createAppletContainer(
-        desktopFile,
+        info.desktopFile(),
         false,         // not startup
         QString(), // no config
         m_opMenu,
@@ -1198,13 +1198,13 @@ void ContainerArea::dropEvent(QDropEvent *ev)
         _dragIndicator->hide();
         m_layout->setStretchEnabled(true);
 
-        if (info.type() == AppletInfo::SpecialButton)
+        if (info.type() & AppletInfo::BuiltinButton)
         {
             addButton(info);
         }
         else if (info.type() == AppletInfo::Applet)
         {
-           addApplet(info.desktopFile());
+           addApplet(info);
         }
 
         Kicker::self()->setInsertionPoint(QPoint());

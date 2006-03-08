@@ -119,6 +119,8 @@ Kicker::Kicker()
     QString dataPathBase = KStandardDirs::kde_default("data").append("kicker/");
     KGlobal::dirs()->addResourceType("mini", dataPathBase + "pics/mini");
     KGlobal::dirs()->addResourceType("icon", dataPathBase + "pics");
+    KGlobal::dirs()->addResourceType("builtinbuttons", dataPathBase + "builtins");
+    KGlobal::dirs()->addResourceType("specialbuttons", dataPathBase + "menuext");
     KGlobal::dirs()->addResourceType("applets", dataPathBase + "applets");
     KGlobal::dirs()->addResourceType("tiles", dataPathBase + "tiles");
     KGlobal::dirs()->addResourceType("extensions", dataPathBase +  "extensions");
