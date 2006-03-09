@@ -11,7 +11,7 @@ kde4_automoc(${krandom.kss_SRCS})
 
 kde4_add_executable(krandom.kss ${krandom.kss_SRCS})
 
-target_link_libraries(krandom.kss  ${QT_AND_KDECORE_LIBS} kdeui m )
+target_link_libraries(krandom.kss  ${LIB_KDEUI}  m )
 
 install_targets(/bin krandom.kss )
 

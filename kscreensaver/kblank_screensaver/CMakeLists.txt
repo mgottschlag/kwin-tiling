@@ -11,7 +11,7 @@ kde4_automoc(${kblankscrn.kss_SRCS})
 
 kde4_add_executable(kblankscrn.kss ${kblankscrn.kss_SRCS})
 
-target_link_libraries(kblankscrn.kss  ${QT_AND_KDECORE_LIBS} kdeui kscreensaver m )
+target_link_libraries(kblankscrn.kss  ${LIB_KDEUI} kscreensaver m )
 
 install_targets(/bin kblankscrn.kss )
 
