@@ -56,7 +56,7 @@ MenuManager* MenuManager::self()
 {
     if (!m_self)
     {
-        m_self = new MenuManager(Kicker::self());
+        m_self = new MenuManager();
     }
 
     return m_self;
@@ -73,6 +73,11 @@ MenuManager::MenuManager(QObject *parent)
 
 MenuManager::~MenuManager()
 {
+    if (this == m_self)
+    {
+        m_self = 0;
+    }
+
     delete m_kmenu;
 }
 

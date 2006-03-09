@@ -42,6 +42,7 @@ class MenuManager : public QObject, DCOPObject
     Q_OBJECT
 public:
     static MenuManager* self();
+    ~MenuManager();
 
     // dcop exported
     DCOPCString createMenu(QPixmap icon, QString text);
@@ -73,7 +74,6 @@ protected:
 
 private:
     MenuManager(QObject *parent = 0);
-    ~MenuManager();
 
     static MenuManager* m_self;
     KButtonList m_kbuttons;

@@ -152,6 +152,9 @@ Kicker::Kicker()
 
 Kicker::~Kicker()
 {
+    // deletion order is important here
+    delete ExtensionManager::self();
+    delete MenuManager::self();
 }
 
 void Kicker::setCrashHandler()

@@ -38,6 +38,7 @@ class ExtensionManager : public QObject, public AbstractPanelManager
 
 public:
     static ExtensionManager* self();
+    ~ExtensionManager();
 
     void configureMenubar(bool duringInit);
     void addExtension(const QString &desktopFile);
@@ -59,7 +60,6 @@ protected:
     friend class KStaticDeleter<ExtensionManager>;
 
     ExtensionManager();
-    ~ExtensionManager();
 
     QString uniqueId();
     void saveContainerConfig();
