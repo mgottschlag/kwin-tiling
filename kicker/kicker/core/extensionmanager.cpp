@@ -71,6 +71,11 @@ ExtensionManager::ExtensionManager()
 
 ExtensionManager::~ExtensionManager()
 {
+    if (this == m_self)
+    {
+        m_self = 0;
+    }
+
     while (!_containers.isEmpty())
     {
         delete _containers.takeFirst();
