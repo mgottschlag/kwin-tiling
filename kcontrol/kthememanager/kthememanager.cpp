@@ -290,8 +290,8 @@ void kthememanager::slotCreateTheme()
             m_theme->setComment( dlg.getComment().replace( "\n", "" ) );
             m_theme->setVersion( dlg.getVersion() );
 
-            m_theme->addPreview();
             QString result = m_theme->createYourself( true );
+            m_theme->addPreview();	    
 
             if ( !result.isEmpty() )
                 KMessageBox::information( this, i18n( "Your theme has been successfully created in %1." ).arg( result ),
