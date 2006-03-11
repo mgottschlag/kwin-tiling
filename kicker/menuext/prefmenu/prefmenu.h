@@ -56,8 +56,8 @@ class PrefMenu : public KPanelMenu
                             const QStringList *suppressGenericNames = 0);
         virtual void mousePressEvent(QMouseEvent *);
         virtual void mouseMoveEvent(QMouseEvent *);
-        virtual void dragEnterEvent(QDragEnterEvent *);
-        virtual void dragLeaveEvent(QDragLeaveEvent *);
+        //virtual void dragEnterEvent(QDragEnterEvent *);
+        //virtual void dragLeaveEvent(QDragLeaveEvent *);
 
         bool m_clearOnClose;
         QString m_root;
