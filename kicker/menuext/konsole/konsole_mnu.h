@@ -48,7 +48,7 @@ protected Q_SLOTS:
     void launchProfile(int id);
     void initialize();
     void newSession(const QString& sURL, const QString& title);
-    void makeGUI();
+    //void makeGUI();
 
 
 private:
