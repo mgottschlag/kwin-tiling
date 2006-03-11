@@ -32,7 +32,7 @@ add_subdirectory( kicker)
 add_subdirectory( ksysguard )
 add_subdirectory( kcontrol )
 if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
-	add_subdirectory( kdm )
+	#add_subdirectory( kdm )
 endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )

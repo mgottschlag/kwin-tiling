@@ -55,6 +55,7 @@ set(libkicker_ui_SRCS
     ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/addappletvisualfeedback.cpp
 )
 
+
 add_subdirectory( libkicker ) 
 add_subdirectory( taskmanager ) 
 add_subdirectory( taskbar ) 
