@@ -1,10 +1,19 @@
 kde4_header()
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_SOURCE_DIR}/khotkeys/shared/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### install files ###############
 
+set(khotkeys_update_SRCS update.cpp ${libshared_SRCS})
+
+kde4_automoc(${khotkeys_update_SRCS})
+
+kde4_add_executable( khotkeys_update ${khotkeys_update_SRCS})
+
+target_link_libraries( khotkeys_update ${LIB_KIO} ${X11_XTest_LIB})
+
+install_targets(/lib/kconf_update_bin/ khotkeys_update )
 
 kde4_footer()
 
