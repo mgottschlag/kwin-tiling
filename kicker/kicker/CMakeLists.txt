@@ -29,6 +29,18 @@ install_targets(${LIB_INSTALL_DIR} kdeinit_kicker )
 target_link_libraries( kicker kdeinit_kicker )
 install_targets(/bin kicker )
 
+########### next target ###############
+
+set(kicker_reverseLayout_SRCS kicker-3.4-reverseLayout.cpp)
+
+kde4_automoc(${kicker_reverseLayout_SRCS})
+
+kde4_add_executable( kicker-3.4-reverseLayout ${kicker_reverseLayout_SRCS})
+
+target_link_libraries( kicker-3.4-reverseLayout ${LIB_KDEUI})
+
+install_targets(/lib/kconf_update_bin/ kicker-3.4-reverseLayout)
+
 ########### install files ###############
 
 install_files( ${XDG_APPS_DIR} FILES kcmkicker.desktop )
