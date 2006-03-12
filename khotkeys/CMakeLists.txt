@@ -1,13 +1,5 @@
 kde4_header()
 
-add_subdirectory( shared ) 
-add_subdirectory( kcontrol ) 
-add_subdirectory( app ) 
-add_subdirectory( data ) 
-add_subdirectory( update ) 
-
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
-
 set(libshared_SRCS
     ${CMAKE_SOURCE_DIR}/khotkeys/shared/action_data.cpp
     ${CMAKE_SOURCE_DIR}/khotkeys/shared/khotkeysglobal.cpp
@@ -20,6 +12,16 @@ set(libshared_SRCS
     ${CMAKE_SOURCE_DIR}/khotkeys/shared/khlistview.cpp
     ${CMAKE_SOURCE_DIR}/khotkeys/shared/khlistbox.cpp
     ${CMAKE_SOURCE_DIR}/khotkeys/shared/gestures.cpp )
+
+
+add_subdirectory( shared ) 
+#add_subdirectory( kcontrol ) 
+add_subdirectory( app ) 
+add_subdirectory( data ) 
+add_subdirectory( update ) 
+
+MESSAGE(STATUS "Reactiavte kcontrol")
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### install files ###############

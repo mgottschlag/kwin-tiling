@@ -64,7 +64,7 @@ kde4_add_plugin(kcm_khotkeys ${kcm_khotkeys_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_khotkeys )
 
-target_link_libraries(kcm_khotkeys  ${LIB_KDE3SUPPORT} )
+target_link_libraries(kcm_khotkeys  ${LIB_KDE3SUPPORT} ${X11_XTest_LIB})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_khotkeys )
 
