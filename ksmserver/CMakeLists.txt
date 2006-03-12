@@ -44,7 +44,7 @@ endif(KDE4_BUILD_TESTS)
 ########### install files ###############
 
 install_files( ${DATA_INSTALL_DIR}/ksmserver/pics FILES shutdownkonq.png )
-install_files( ${DATA_INSTALL_DIR}/kconf_update FILES ksmserver.upd )
+install_files( ${DATA_INSTALL_DIR}/kconf_update FILES ksmserver.upd  move_session_config.sh)
 
 kde4_footer()
 
