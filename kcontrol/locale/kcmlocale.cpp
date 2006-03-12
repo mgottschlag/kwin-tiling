@@ -227,6 +227,10 @@ void KLocaleConfig::loadLanguageList()
     langlist << QString(); // separator
   langlist += alllang;
 
+// menu_index has to be removed for the country list, so perhaps there is the sae problem for the language list in KDE4 (see also kpersonalizer).
+#ifdef __GNUC__
+# warning "Check if menu_index is usable for the language list in KDE4"
+#endif
   int menu_index = -2;
   QString submenu; // we are working on this menu
   for ( QStringList::ConstIterator it = langlist.begin();
@@ -296,10 +300,11 @@ void KLocaleConfig::loadCountryList()
     QString map( locate( "locale",
                           QString::fromLatin1( "l10n/%1.png" )
                           .arg(tag) ) );
+    //kDebug() << "REGION: " << (*it) << " Tag: " << tag << " Name: " << name << " Map: " << map << endl;
     QIcon icon;
     if ( !map.isNull() )
       icon = KGlobal::iconLoader()->loadIconSet(map, KIcon::Small);
-    m_comboCountry->insertSubmenu( icon, name, tag, sub, -2 );
+    m_comboCountry->insertSubmenu( icon, name, tag );
   }
 
   // add all languages to the list
@@ -320,13 +325,14 @@ void KLocaleConfig::loadCountryList()
     tag.truncate(index);
     index = tag.lastIndexOf('/');
     tag = tag.mid(index + 1);
-    int menu_index = submenu.isEmpty() ? -1 : -2;
 
     QString flag( locate( "locale",
                           QString::fromLatin1( "l10n/%1/flag.png" )
                           .arg(tag) ) );
+    //kDebug() << "COUNTRY: " << (*it) << " Tag: " << tag << " Submenu: " << submenu << " Flag: " << flag << endl;
     QIcon icon( KGlobal::iconLoader()->loadIconSet(flag, KIcon::Small) );
-    m_comboCountry->insertItem( icon, name, tag, submenu, menu_index );
+
+    m_comboCountry->insertItem( icon, name, tag, submenu );
   }
 
   // restore the old global locale
