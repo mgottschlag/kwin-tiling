@@ -46,6 +46,7 @@ install_targets(/lib/kconf_update_bin/ kicker-3.4-reverseLayout)
 install_files( ${XDG_APPS_DIR} FILES kcmkicker.desktop )
 install_files( /share/autostart FILES panel.desktop )
 install_files( ${DATA_INSTALL_DIR}/kconf_update FILES kickerrc.upd )
+install_files( ${DATA_INSTALL_DIR}/kconf_update FILES kicker-3.1-properSizeSetting.pl kicker-3.5-taskbarEnums.pl kicker-3.5-kconfigXTize.pl )
 
 kde4_footer()
 
