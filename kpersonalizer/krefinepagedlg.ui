@@ -33,9 +33,10 @@
 &lt;p&gt;After closing this dialog you can always restart this Wizard by choosing the entry &lt;b&gt;Desktop Settings Wizard&lt;/b&gt; from the Settings menu.&lt;/p&gt;</string>
             </property>
             <property name="alignment">
-                <set>Qt::TextWordWrap|Qt::AlignVCenter|Qt::AlignLeft</set>
+                <set>Qt::AlignVCenter|Qt::AlignLeft</set>
             </property>
-            <property name="wordwrap" stdset="0">
+            <property name="wordWrap" stdset="0">
+                <bool>1</bool>
             </property>
         </widget>
         <widget class="QFrame" row="2" column="1">
@@ -81,8 +82,9 @@
                         <string>You can refine the settings you made by starting the KDE Control Center by choosing the entry &lt;b&gt;Control Center&lt;/b&gt; in the K menu.</string>
                     </property>
                     <property name="alignment">
-                        <set>Qt::TextWordWrap|Qt::AlignTop|Qt::AlignLeft</set>
+                        <set>Qt::AlignTop|Qt::AlignLeft</set>
                     </property>
+                    <property name="wordWrap"><bool>1</bool></property>
                 </widget>
             </hbox>
         </widget>
@@ -133,8 +135,9 @@
                 <string>You can also start the KDE Control Center using the button below.</string>
             </property>
             <property name="alignment">
-                <set>Qt::TextWordWrap|Qt::AlignCenter</set>
+                <set>Qt::AlignCenter</set>
             </property>
+            <property name="wordWrap"><bool>1</bool></property>
         </widget>
         <spacer row="1" column="1">
             <property name="name">

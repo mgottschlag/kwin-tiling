@@ -85,11 +85,12 @@
                 <enum>Qt::RichText</enum>
             </property>
             <property name="alignment">
-                <set>Qt::TextWordWrap|Qt::AlignTop|Qt::AlignLeft</set>
+                <set>Qt::AlignTop|Qt::AlignLeft</set>
             </property>
             <property name="vAlign" stdset="0">
             </property>
-            <property name="wordwrap" stdset="0">
+            <property name="wordWrap" stdset="1">
+                <bool>1</bool>
             </property>
         </widget>
         <widget class="QLabel" row="0" column="1">

@@ -125,6 +125,7 @@
 Graphical User Interfaces behave differently on various Operating Systems.
 KDE allows you to customize its behavior according to your needs.</string>
             </property>
+            <property name="wordWrap"><bool>1</bool></property>
         </widget>
         <spacer row="1" column="1">
             <property name="name">
@@ -168,8 +169,9 @@ KDE allows you to customize its behavior according to your needs.</string>
                 <string>For motion impaired users, KDE provides keyboard gestures to activate special keyboard settings.</string>
             </property>
             <property name="alignment">
-                <set>Qt::TextWordWrap|Qt::AlignVCenter</set>
+                <set>Qt::AlignVCenter</set>
             </property>
+            <property name="wordWrap"><bool>1</bool></property>
         </widget>
         <widget class="QCheckBox" row="7" column="1">
             <property name="name">

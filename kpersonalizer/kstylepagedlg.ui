@@ -32,10 +32,9 @@
                 <string>Please choose the way your computer should look by selecting one of the items below.</string>
             </property>
             <property name="alignment">
-                <set>Qt::TextWordWrap|Qt::AlignVCenter|Qt::AlignLeft</set>
+                <set>Qt::AlignVCenter|Qt::AlignLeft</set>
             </property>
-            <property name="wordwrap" stdset="0">
-            </property>
+            <property name="wordWrap"><bool>1</bool></property>
         </widget>
         <widget class="QLabel" row="0" column="0" rowspan="4" colspan="1">
             <property name="name">
