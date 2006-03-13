@@ -78,11 +78,11 @@ void PrintMenu::initialize()
     insertItem(SmallIconSet("fileprint"), i18n("Print File..."), KPRINTER_ID);
 
     // printer list
-    QList<KMPrinter*>    *l = KMManager::self()->printerList();
-    if (l && !l->isEmpty())
+    QList<KMPrinter*>    l = KMManager::self()->printerList();
+    if (!l.isEmpty())
     {
         bool separatorInserted = false;
-		QListIterator<KMPrinter*>       it(*l);
+		QListIterator<KMPrinter*>       it(l);
 		while (it.hasNext())
         {
 			KMPrinter *itprt = it.next();
