@@ -159,11 +159,11 @@ KGreeter::~KGreeter()
 	delete stsFile;
 }
 
-class UserListViewItem : public KListViewItem {
+class UserListViewItem : public K3ListViewItem {
   public:
 	UserListViewItem( UserListView *parent, const QString &text,
 	                  const QPixmap &pixmap, const QString &username )
-		: KListViewItem( parent )
+		: K3ListViewItem( parent )
 		, login( username )
 	{
 		setPixmap( 0, pixmap );

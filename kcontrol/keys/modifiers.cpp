@@ -249,14 +249,14 @@ void ModifiersModule::initGUI()
 	m_plstXMods->setAllColumnsShowFocus( true );
 	m_plstXMods->addColumn( i18n("X11-Mod") );
 
-	new KListViewItem( m_plstXMods, "mod5" );
-	new KListViewItem( m_plstXMods, "mod4" );
-	new KListViewItem( m_plstXMods, "mod3" );
-	new KListViewItem( m_plstXMods, "mod2" );
-	new KListViewItem( m_plstXMods, "mod1" );
-	new KListViewItem( m_plstXMods, "control" );
-	new KListViewItem( m_plstXMods, "lock" );
-	new KListViewItem( m_plstXMods, "shift" );
+	new K3ListViewItem( m_plstXMods, "mod5" );
+	new K3ListViewItem( m_plstXMods, "mod4" );
+	new K3ListViewItem( m_plstXMods, "mod3" );
+	new K3ListViewItem( m_plstXMods, "mod2" );
+	new K3ListViewItem( m_plstXMods, "mod1" );
+	new K3ListViewItem( m_plstXMods, "control" );
+	new K3ListViewItem( m_plstXMods, "lock" );
+	new K3ListViewItem( m_plstXMods, "shift" );
 
 	//------------------
 	pLayoutTop->setRowStretch( 5, 1 );

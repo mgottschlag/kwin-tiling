@@ -39,16 +39,16 @@
 #include "khotkeys.h"
 
 AppTreeItem::AppTreeItem(Q3ListViewItem *parent, const QString& storageId)
-    : KListViewItem(parent), m_init(false), m_storageId(storageId) {}
+    : K3ListViewItem(parent), m_init(false), m_storageId(storageId) {}
 
 AppTreeItem::AppTreeItem(Q3ListViewItem *parent, Q3ListViewItem *after, const QString& storageId)
-    : KListViewItem(parent, after), m_init(false), m_storageId(storageId) {}
+    : K3ListViewItem(parent, after), m_init(false), m_storageId(storageId) {}
 
 AppTreeItem::AppTreeItem(Q3ListView *parent, const QString& storageId)
-    : KListViewItem(parent), m_init(false), m_storageId(storageId) {}
+    : K3ListViewItem(parent), m_init(false), m_storageId(storageId) {}
 
 AppTreeItem::AppTreeItem(Q3ListView *parent, Q3ListViewItem *after, const QString& storageId)
-    : KListViewItem(parent, after), m_init(false), m_storageId(storageId) {}
+    : K3ListViewItem(parent, after), m_init(false), m_storageId(storageId) {}
 
 void AppTreeItem::setName(const QString &name)
 {

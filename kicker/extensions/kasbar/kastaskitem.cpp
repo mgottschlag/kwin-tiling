@@ -426,7 +426,7 @@ QWidget *KasTaskItem::createTaskProps( QObject *target, QWidget *parent, bool re
     for ( int i = 0; i < mo->numProperties( recursive ); i++ ) {
 	const QMetaProperty *p = mo->property(i, recursive);
 
-	(void) new KListViewItem( taskprops,
+	(void) new K3ListViewItem( taskprops,
 				  p->name(), p->type(),
 				  target->property( p->name() ).toString() );
     }

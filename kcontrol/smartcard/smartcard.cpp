@@ -165,16 +165,16 @@ void KSmartcardConfig::updateReadersState (QString readerName,
                                            bool isCardPresent,
                                            QString atr) {
 
-    KListViewItem * tID=(KListViewItem *) base->_readerHostsListView->findItem(readerName, 0);
+    K3ListViewItem * tID=(K3ListViewItem *) base->_readerHostsListView->findItem(readerName, 0);
     if (tID==0) return;
 
-    KListViewItem * tIDChild=(KListViewItem*) tID->firstChild();
+    K3ListViewItem * tIDChild=(K3ListViewItem*) tID->firstChild();
     if (tIDChild==NULL) return;
 
     delete tIDChild;
 
     if (!isCardPresent)
-                (void) new KListViewItem(tID,i18n("No card inserted"));
+                (void) new K3ListViewItem(tID,i18n("No card inserted"));
     else{
 
         getSupportingModule(tID,atr);
@@ -197,7 +197,7 @@ void KSmartcardConfig::loadReadersTab( QStringList lr){
   arg << modName;
 
   //  New view items
-  KListViewItem * temp;
+  K3ListViewItem * temp;
 
   //If the smartcard support is disabled we unload the kardsvc KDED module
   //  and return
@@ -210,11 +210,11 @@ void KSmartcardConfig::loadReadersTab( QStringList lr){
 
 
     //  New view items
-    KListViewItem * temp;
+    K3ListViewItem * temp;
     kapp->dcopClient()->call("kded", "kded", "unloadModule(QCString)",
 			     data, rettype, retval);
 
-    (void) new KListViewItem(base->_readerHostsListView,
+    (void) new K3ListViewItem(base->_readerHostsListView,
 			     i18n("Smart card support disabled"));
 
 
@@ -225,14 +225,14 @@ void KSmartcardConfig::loadReadersTab( QStringList lr){
   if (lr.isEmpty()){
 
 
-    (void) new KListViewItem(base->_readerHostsListView,
+    (void) new K3ListViewItem(base->_readerHostsListView,
 			     i18n("No readers found. Check 'pcscd' is running"));
     return;
   }
 
   for (QStringList::Iterator _slot=lr.begin();_slot!=lr.end();++_slot){
 
-   temp= new KListViewItem(base->_readerHostsListView,*_slot);
+   temp= new K3ListViewItem(base->_readerHostsListView,*_slot);
 
 
    QByteArray dataATR;
@@ -251,7 +251,7 @@ void KSmartcardConfig::loadReadersTab( QStringList lr){
 
    if (cardATR.isNull()){
 
-     (void) new KListViewItem(temp,i18n("NO ATR or no card inserted"));
+     (void) new K3ListViewItem(temp,i18n("NO ATR or no card inserted"));
      continue;
    }
 
@@ -265,13 +265,13 @@ void KSmartcardConfig::loadReadersTab( QStringList lr){
 }
 
 
-void KSmartcardConfig::getSupportingModule( KListViewItem * ant,
+void KSmartcardConfig::getSupportingModule( K3ListViewItem * ant,
                                             QString & cardATR) const{
 
 
     if (cardATR.isNull()){
 
-        (void) new KListViewItem(ant,i18n("NO ATR or no card inserted"));
+        (void) new K3ListViewItem(ant,i18n("NO ATR or no card inserted"));
         return;
     }
 
@@ -282,7 +282,7 @@ void KSmartcardConfig::getSupportingModule( KListViewItem * ant,
         QString type=mng[0];
         QString subType=mng[1];
         QString subSubType=mng[2];
-        KListViewItem * hil =new KListViewItem(ant,
+        K3ListViewItem * hil =new K3ListViewItem(ant,
                                                i18n("Managed by: "),
                                                type,
                                                subType,
@@ -292,7 +292,7 @@ void KSmartcardConfig::getSupportingModule( KListViewItem * ant,
     else{
 
 
-        KListViewItem * hil =new KListViewItem(ant,
+        K3ListViewItem * hil =new K3ListViewItem(ant,
                                                i18n("No module managing this card"));
         hil->setSelectable(false);
     }

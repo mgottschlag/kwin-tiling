@@ -28,12 +28,12 @@
 class ConfigModule;
 class ConfigModuleList;
 
-class ModuleIconItem : public KListViewItem
+class ModuleIconItem : public K3ListViewItem
 {
 
 public:
   ModuleIconItem(Q3ListView *parent, const QString& text, const QPixmap& pm, ConfigModule *m = 0)
-	: KListViewItem(parent, text)
+	: K3ListViewItem(parent, text)
 	, _tag(QString())
 	, _module(m)
 	{

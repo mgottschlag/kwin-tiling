@@ -362,7 +362,7 @@ void ThemePage::insertTheme( const QString &path )
 	delete listview->findItem( dirName, DirColumn );
 
 	// Create the listview item and insert it into the list.
-	KListViewItem *item = new KListViewItem( listview, name, desc, /*hidden*/ dirName );
+	K3ListViewItem *item = new K3ListViewItem( listview, name, desc, /*hidden*/ dirName );
 	item->setPixmap( NameColumn, createIcon( dirName, sample ) );
 	listview->insertItem( item );
 }
@@ -517,7 +517,7 @@ void ThemePage::insertThemes()
 			themeInfo.insert( *it, info );
 
 			// Create the listview item and insert it into the list.
-			KListViewItem *item = new KListViewItem( listview, name, desc, /*hidden*/ *it );
+			K3ListViewItem *item = new K3ListViewItem( listview, name, desc, /*hidden*/ *it );
 			item->setPixmap( NameColumn, createIcon( *it, sample ) );
 			listview->insertItem( item );
 		}
@@ -529,9 +529,9 @@ void ThemePage::insertThemes()
 	// Sort the theme list
 	listview->sort();
 
-	KListViewItem *item = new KListViewItem( listview, ' ' + i18n( "No theme" ), i18n( "The old classic X cursors") , /*hidden*/ "none" );
+	K3ListViewItem *item = new K3ListViewItem( listview, ' ' + i18n( "No theme" ), i18n( "The old classic X cursors") , /*hidden*/ "none" );
 	listview->insertItem( item );
-	item = new KListViewItem( listview, ' ' + i18n( "System theme" ), i18n( "Do not change cursor theme") , /*hidden*/ "system" );
+	item = new K3ListViewItem( listview, ' ' + i18n( "System theme" ), i18n( "Do not change cursor theme") , /*hidden*/ "system" );
 	listview->insertItem( item );
         // no ThemeInfo object for this one
 }

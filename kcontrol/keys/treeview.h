@@ -27,7 +27,7 @@
 class KActionCollection;
 class KDesktopFile;
 
-class AppTreeItem : public KListViewItem
+class AppTreeItem : public K3ListViewItem
 {
 
 public:

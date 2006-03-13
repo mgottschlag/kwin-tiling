@@ -55,12 +55,12 @@ class QKeyEvent;
  * An item for the listiew, that has a reference to its corresponding
  * @ref KFileItem.
  */
-class CFontListViewItem : public KListViewItem
+class CFontListViewItem : public K3ListViewItem
 {
     public:
 
     CFontListViewItem(Q3ListView *parent, const QString &text, const QPixmap &icon, KFileItem *fi)
-	: KListViewItem(parent, text),
+	: K3ListViewItem(parent, text),
           itsInf(fi)
     {
         setPixmap(0, icon);
@@ -68,14 +68,14 @@ class CFontListViewItem : public KListViewItem
     }
 
     CFontListViewItem(Q3ListView *parent, KFileItem *fi)
-        : KListViewItem(parent),
+        : K3ListViewItem(parent),
           itsInf(fi)
     {
         init();
     }
 
     CFontListViewItem(Q3ListView *parent, const QString &text, const QPixmap &icon, KFileItem *fi, Q3ListViewItem *after)
-	: KListViewItem(parent, after),
+	: K3ListViewItem(parent, after),
           itsInf(fi)
     {
         setPixmap(0, icon);
