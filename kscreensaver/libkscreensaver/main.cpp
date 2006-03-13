@@ -17,6 +17,9 @@
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
+#include "kscreensaver.h"
+#include "kscreensaver_vroot.h"
+
 #include <config.h>
 
 #include <stdlib.h>
@@ -25,25 +28,16 @@
 
 #include <qdialog.h>
 #include <qevent.h>
-#include <qx11info_x11.h>
+
 #include <klocale.h>
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcmdlineargs.h>
 #include <kapplication.h>
 #include <kcrash.h>
+#include <kaboutdata.h>
 
-#include "kscreensaver.h"
-#include "kscreensaver_vroot.h"
-
-extern "C"
-{
-    extern const char *kss_applicationName;
-    extern const char *kss_description;
-    extern const char *kss_version;
-    KScreenSaver *kss_create( WId d );
-    QDialog *kss_setup();
-}
+#include <qx11info_x11.h>
 
 static const KCmdLineOptions options[] =
 {
@@ -75,7 +69,7 @@ public:
 protected:
     virtual void keyPressEvent(QKeyEvent *e)
     {
-        if (e->ascii() == 'q')
+        if (e->text() == QLatin1String("q"))
         {
             qApp->quit();
         }
@@ -93,10 +87,10 @@ protected:
 typedef WId Window;
 #endif
 
-KDE_EXPORT int main(int argc, char *argv[])
+int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverInterface )
 {
     KLocale::setMainCatalog("libkscreensaver");
-    KCmdLineArgs::init(argc, argv, kss_applicationName, kss_applicationName, kss_description, kss_version);
+    KCmdLineArgs::init(argc, argv, screenSaverInterface.aboutData());
 
     KCmdLineArgs::addCmdLineOptions(options);
 
@@ -114,7 +108,7 @@ KDE_EXPORT int main(int argc, char *argv[])
 
     if (args->isSet("setup"))
     {
-       QDialog *dlg = kss_setup();
+       QDialog *dlg = screenSaverInterface.setup();
        dlg->exec();
        delete dlg;
        exit(0);
@@ -141,13 +135,12 @@ KDE_EXPORT int main(int argc, char *argv[])
     if (saveWin == 0)
     {
         demoWidget = new DemoWindow();
-        demoWidget->setBackgroundMode(Qt::NoBackground);
+        demoWidget->setAttribute(Qt::WA_OpaquePaintEvent);
         saveWin = demoWidget->winId();
-        app.setMainWidget(demoWidget);
         app.processEvents();
     }
 
-    target = kss_create( saveWin );
+    target = screenSaverInterface.create( saveWin );
 
     if ( demoWidget )
     {

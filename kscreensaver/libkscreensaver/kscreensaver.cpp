@@ -58,7 +58,7 @@ KScreenSaver::KScreenSaver( WId id ) : QWidget()
     {
 #ifdef Q_WS_X11 //FIXME
         XGetGeometry(QX11Info::display(), (Drawable)id, &root, &ai, &ai,
-            &w, &h, &au, &au); 
+            &w, &h, &au, &au);
 #endif
 
         create( id, false, true );

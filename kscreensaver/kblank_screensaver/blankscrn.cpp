@@ -6,6 +6,7 @@
 //
 // 1998/04/19 Layout management added by Mario Weilguni <mweilguni@kde.org>
 // 2001/03/04 Converted to use libkscreensaver by Martin R. Jones
+// 2006/03/12 Ported to KScreenSaverInterface by David Faure
 
 #include <stdlib.h>
 #include <qlabel.h>
@@ -20,24 +21,34 @@
 #include <kcolorbutton.h>
 #include <kglobal.h>
 #include "blankscrn.h"
+#include <kaboutdata.h>
 #include "blankscrn.moc"
 
 // libkscreensaver interface
-extern "C"
+class KBlankSaverInterface : public KScreenSaverInterface
 {
-    KDE_EXPORT const char *kss_applicationName = "kblankscrn.kss";
-    KDE_EXPORT const char *kss_description = I18N_NOOP( "KBlankScreen" );
-    KDE_EXPORT const char *kss_version = "2.2.0";
+public:
+    virtual KAboutData* aboutData()
+    {
+        return new KAboutData( "kblankscrn.kss", I18N_NOOP( "KBlankScreen" ),
+                               "4.0.0", I18N_NOOP( "Blank Screen Saver" ) );
+    }
 
-    KDE_EXPORT KScreenSaver* kss_create( WId id )
+    virtual KScreenSaver* create( WId id )
     {
         return new KBlankSaver( id );
     }
 
-    KDE_EXPORT QDialog* kss_setup()
+    virtual QDialog* setup()
     {
         return new KBlankSetup();
     }
+};
+
+int main( int argc, char *argv[] )
+{
+    KBlankSaverInterface kss;
+    return kssMain( argc, argv, kss );
 }
 
 //-----------------------------------------------------------------------------

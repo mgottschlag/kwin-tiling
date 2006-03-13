@@ -1,6 +1,7 @@
 /* This file is part of the KDE libraries
 
     Copyright (c) 2001  Martin R. Jones <mjones@kde.org>
+    Copyright 2006  David Faure <faure@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -24,47 +25,31 @@
 #include <qwidget.h>
 
 #include <kdelibs_export.h>
+#include <kaboutdata.h> // needed by all users of this header, so no point in a forward declaration
 
-class QTimer;
 class KScreenSaverPrivate;
 class KBlankEffectPrivate;
 
 /**
-* Provides a QWidget for a screensaver to draw into.
-*
-* You should derive from this widget and implement your screensaver's
-* functionality.  To use libkss, provide the following constants and
-* functions:
-*
-*   extern "C"
-*   {
-*       const char *kss_applicationName = "yourappname";
-*       const char *kss_description = I18N_NOOP( "Your screensaver" );
-*       const char *kss_version = "1.0";
-*
-*       KScreenSaver *kss_create( WId d )
-*       {
-*           // return your KScreenSaver derived screensaver
-*       }
-*
-*       QDialog *kss_setup()
-*       {
-*           // return your modal setup dialog
-*       }
-*   }
-*
-* @short Provides a QWidget for a screensaver to draw into.
-* @author Martin R. Jones <mjones@kde.org>
-*/
+ * Provides a QWidget for a screensaver to draw into.
+ *
+ * You should derive from this widget and implement your screensaver's
+ * functionality.
+ *
+ * @see KScreenSaverInterface
+ *
+ * @short Provides a QWidget for a screensaver to draw into.
+ * @author Martin R. Jones <mjones@kde.org>
+ */
 class KDE_EXPORT KScreenSaver : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
     /**
      * @param id The winId() of the widget to draw the screensaver into.
      */
-	KScreenSaver( WId id=0 );
-	~KScreenSaver();
+    KScreenSaver( WId id=0 );
+    ~KScreenSaver();
 
 protected:
     /**
@@ -83,6 +68,48 @@ private:
     KScreenSaverPrivate *d;
 };
 
+/**
+ *
+ * To use libkscreensaver, derive from KScreenSaverInterface and reimplement
+ * its virtual methods. Then write
+ * <code>
+ *   int main( int argc, char *argv[] )
+ *   {
+ *       MyKScreenSaverInterface kssi;
+ *       return kScreenSaverMain( argc, argv, kssi );
+ *   }
+ * </code>
+ *
+ * In order to convert a KDE-3 screensaver (which used to export kss_* symbols and had no main function)
+ * to KDE-4, you can use the following python script
+ * kdebase/workspace/kscreensaver/libkscreensaver/kscreensaver-kde3to4-porting.py
+ */
+class KDE_EXPORT KScreenSaverInterface
+{
+public:
+    /**
+     * Destructor
+     */
+    virtual ~KScreenSaverInterface() {}
+    /**
+     * Reimplement this method to return the KAboutData instance describing your screensaver
+     */
+    virtual KAboutData *aboutData() = 0;
+    /**
+     * Reimplement this method to return your KScreenSaver-derived screensaver
+     */
+    virtual KScreenSaver* create( WId id ) = 0;
+    /**
+     * Reimplement this method to return your modal setup dialog
+     */
+    virtual QDialog* setup() { return 0; }
+};
+
+/**
+ * The entry point for the program's main()
+ * @see KScreenSaverInterface
+ */
+KDE_EXPORT int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverInterface );
 
 /**
 *
@@ -93,10 +120,10 @@ private:
 */
 class KBlankEffect : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	KBlankEffect( QObject *parent=0 );
-	~KBlankEffect();
+    KBlankEffect( QObject *parent=0 );
+    ~KBlankEffect();
 
     enum Effect { Random=-1, Blank=0, SweepRight, SweepDown, Blocks,
                   MaximumEffects };

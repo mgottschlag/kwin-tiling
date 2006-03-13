@@ -33,7 +33,7 @@
  * window managers.
  * The function implementing the virtual root lookup remembers the result of
  * its last invocation to avoid overhead in the case of repeated calls
- * on the same display and screen arguments. 
+ * on the same display and screen arguments.
  * The lookup code itself is taken from Tom LaStrange's ssetroot program.
  *
  * Most simple root window changing X programs can be converted to using
@@ -66,6 +66,7 @@ static const char vroot_rcsid[] = "#Id: vroot.h,v 1.4 1991/09/30 19:23:16 stolck
 #include <X11/X.h>
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
+#include <fixx11h.h>
 
 static Window
 #if defined(__STDC__) || defined(__cplusplus) /* ANSIfication added by jwz, to avoid superfluous warnings. */
