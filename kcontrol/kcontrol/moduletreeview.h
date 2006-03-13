@@ -26,7 +26,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <QKeyEvent>
-#include <klistview.h>
+#include <k3listview.h>
 #include <q3dict.h>
 
 
@@ -65,7 +65,7 @@ private:
   int _maxChildIconWidth;
 };
 
-class ModuleTreeView : public KListView
+class ModuleTreeView : public K3ListView
 {
   Q_OBJECT
 

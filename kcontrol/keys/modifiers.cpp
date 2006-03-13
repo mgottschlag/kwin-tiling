@@ -13,7 +13,7 @@
 #include <kdebug.h>
 #include <kdialog.h>
 #include <kkeynative.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <ktoolinvocation.h>
@@ -243,7 +243,7 @@ void ModifiersModule::initGUI()
 	pGroup = new Q3GroupBox( 1, Qt::Horizontal, i18n("X Modifier Mapping"), this );
 	pLayoutTop->addWidget( pGroup, 4, 0 );
 
-	m_plstXMods = new KListView( pGroup );
+	m_plstXMods = new K3ListView( pGroup );
 	m_plstXMods->setSorting( -1 );
 	m_plstXMods->setSelectionMode( Q3ListView::NoSelection );
 	m_plstXMods->setAllColumnsShowFocus( true );

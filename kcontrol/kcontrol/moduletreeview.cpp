@@ -76,7 +76,7 @@ private:
 };
 
 ModuleTreeView::ModuleTreeView(ConfigModuleList *list, QWidget * parent)
-  : KListView(parent)
+  : K3ListView(parent)
   , _modules(list)
 {
   addColumn(QString());
@@ -266,7 +266,7 @@ void ModuleTreeView::keyPressEvent(QKeyEvent *e)
       slotItemSelected(currentItem());
     }
   else
-    KListView::keyPressEvent(e);
+    K3ListView::keyPressEvent(e);
 }
 
 

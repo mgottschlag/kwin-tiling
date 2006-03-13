@@ -70,7 +70,7 @@ class CKFileFontView::CKFileFontViewPrivate
 };
 
 CKFileFontView::CKFileFontView(QWidget *parent)
-              : KListView(parent),
+              : K3ListView(parent),
                 KFileView(),
                 d(new CKFileFontViewPrivate())
 {
@@ -112,7 +112,7 @@ void CKFileFontView::setSelected(const KFileItem *info, bool enable)
         CFontListViewItem *item = (CFontListViewItem*)info->extraData(this);
 
         if (item)
-	    KListView::setSelected(item, enable);
+	    K3ListView::setSelected(item, enable);
     }
 }
 
@@ -123,7 +123,7 @@ void CKFileFontView::setCurrentItem(const KFileItem *item)
         CFontListViewItem *it = (CFontListViewItem*) item->extraData(this);
 
         if (it)
-            KListView::setCurrentItem(it);
+            K3ListView::setCurrentItem(it);
     }
 }
 
@@ -136,18 +136,18 @@ KFileItem * CKFileFontView::currentFileItem() const
 
 void CKFileFontView::clearSelection()
 {
-    KListView::clearSelection();
+    K3ListView::clearSelection();
 }
 
 void CKFileFontView::selectAll()
 {
     if (KFile::NoSelection!=KFileView::selectionMode() && KFile::Single!=KFileView::selectionMode())
-        KListView::selectAll(true);
+        K3ListView::selectAll(true);
 }
 
 void CKFileFontView::invertSelection()
 {
-    KListView::invertSelection();
+    K3ListView::invertSelection();
 }
 
 void CKFileFontView::slotActivateMenu(Q3ListViewItem *item,const QPoint& pos)
@@ -164,7 +164,7 @@ void CKFileFontView::slotActivateMenu(Q3ListViewItem *item,const QPoint& pos)
 void CKFileFontView::clearView()
 {
     itsResolver->m_lstPendingMimeIconItems.clear();
-    KListView::clear();
+    K3ListView::clear();
 }
 
 void CKFileFontView::insertItem(KFileItem *i)
@@ -352,8 +352,8 @@ void CKFileFontView::slotSortingChanged(int col)
         i->setKey(sortingKey(i->text(itsSortingCol), (*kit)->isDir(), sortSpec));
     }
 
-    KListView::setSorting(itsSortingCol, !reversed);
-    KListView::sort();
+    K3ListView::setSorting(itsSortingCol, !reversed);
+    K3ListView::sort();
 
     if (!itsBlockSortingSignal)
         sig->changeSorting( static_cast<QDir::SortFlags>( sortSpec ) );
@@ -388,7 +388,7 @@ void CKFileFontView::ensureItemVisible(const KFileItem *i)
         CFontListViewItem *item = (CFontListViewItem*) i->extraData(this);
 
         if ( item )
-            KListView::ensureItemVisible(item);
+            K3ListView::ensureItemVisible(item);
     }
 }
 
@@ -431,7 +431,7 @@ KFileItem * CKFileFontView::prevItem(const KFileItem *fileItem) const
 
 void CKFileFontView::keyPressEvent(QKeyEvent *e)
 {
-    KListView::keyPressEvent(e);
+    K3ListView::keyPressEvent(e);
 
     if (Qt::Key_Return==e->key() || Qt::Key_Enter==e->key())
         if (e->state() & Qt::ControlModifier)
@@ -629,7 +629,7 @@ void CFontListViewItem::init()
 
 void CKFileFontView::virtual_hook(int id, void *data)
 {
-    KListView::virtual_hook(id, data);
+    K3ListView::virtual_hook(id, data);
     KFileView::virtual_hook(id, data);
 }
 

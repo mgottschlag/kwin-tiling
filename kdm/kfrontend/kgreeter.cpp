@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kseparator.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <ksimpleconfig.h>
 #include <kstringhandler.h>
 #include <qeventloop.h>
@@ -75,10 +75,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <X11/Xlib.h>
 
-class UserListView : public KListView {
+class UserListView : public K3ListView {
   public:
 	UserListView( QWidget *parent = 0 )
-		: KListView( parent )
+		: K3ListView( parent )
 		, cachedSizeHint( -1, 0 )
 	{
 		setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Ignored );

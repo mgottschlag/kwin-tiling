@@ -23,7 +23,7 @@
 #include <klocale.h>
 #include <kaboutdata.h>
 #include <kstandarddirs.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <ksimpleconfig.h>
 #include <kglobalsettings.h>
 #include <kdialog.h>
@@ -88,7 +88,7 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	preview = new PreviewWidget( new KHBox( this ) );
 
 	// Create the theme list view
-	listview = new KListView( this );
+	listview = new K3ListView( this );
 	listview->setFullWidth( true );
 	listview->setAllColumnsShowFocus( true );
 	listview->addColumn( i18n("Name") );

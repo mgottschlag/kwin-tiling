@@ -28,7 +28,7 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kconfig.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <kdialog.h>
 
 #include <qlayout.h>
@@ -60,7 +60,7 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	new QLabel( i18n("Select the cursor theme you want to use:"), this );
 
 	// Create the theme list view
-	listview = new KListView( this );
+	listview = new K3ListView( this );
 	listview->setFullWidth( true );
 	listview->setAllColumnsShowFocus( true );
 	listview->addColumn( i18n("Name") );

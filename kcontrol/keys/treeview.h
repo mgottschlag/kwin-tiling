@@ -22,7 +22,7 @@
 #define __treeview_h__
 
 #include <qstring.h>
-#include <klistview.h>
+#include <k3listview.h>
 
 class KActionCollection;
 class KDesktopFile;
@@ -57,7 +57,7 @@ private:
     QString m_accel;
 };
 
-class AppTreeView : public KListView
+class AppTreeView : public K3ListView
 {
     friend class AppTreeItem;
     Q_OBJECT

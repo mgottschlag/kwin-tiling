@@ -33,7 +33,7 @@
 #include <klistbox.h>
 #include <kcombobox.h>
 #include <kcolorbutton.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <kurl.h>
 
 #include <pwd.h>
@@ -72,7 +72,7 @@ private:
 	QCheckBox	*cbarlen, *cbjumppw, *autoLockCheck;
 	QRadioButton	*npRadio, *ppRadio, *spRadio;
 	KComboBox	*userlb, *puserlb;
-	KListView	*npuserlv;
+	K3ListView	*npuserlv;
 	QLabel		*u_label, *pu_label, *w_label, *n_label, *pl_label;
 	QString		autoUser, preselUser;
 	QStringList	noPassUsers;

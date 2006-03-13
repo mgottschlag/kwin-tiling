@@ -46,7 +46,7 @@ class KFileItem;
 class QWidget;
 class QKeyEvent;
 
-#include <klistview.h>
+#include <k3listview.h>
 #include <kmimetyperesolver.h>
 
 #include "kfileview.h"
@@ -120,7 +120,7 @@ class CFontListViewItem : public KListViewItem
  * @see KCombiView
  * @see KFileIconView
  */
-class CKFileFontView : public KListView, public KFileView
+class CKFileFontView : public K3ListView, public KFileView
 {
     Q_OBJECT
 
@@ -198,9 +198,9 @@ class CKFileFontView : public KListView, public KFileView
 
     private:
 
-    virtual void        insertItem(Q3ListViewItem *i)          { KListView::insertItem(i); }
-    virtual void        setSorting(int i, bool b)             { KListView::setSorting(i, b); }
-    virtual void        setSelected(Q3ListViewItem *i, bool b) { KListView::setSelected(i, b); }
+    virtual void        insertItem(Q3ListViewItem *i)          { K3ListView::insertItem(i); }
+    virtual void        setSorting(int i, bool b)             { K3ListView::setSorting(i, b); }
+    virtual void        setSelected(Q3ListViewItem *i, bool b) { K3ListView::setSelected(i, b); }
 
     inline CFontListViewItem * viewItem( const KFileItem *item ) const
     {

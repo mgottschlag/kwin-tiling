@@ -36,7 +36,7 @@
 #include <kfiledialog.h>
 #include <kglobal.h>
 #include <kiconloader.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kservicegroup.h>

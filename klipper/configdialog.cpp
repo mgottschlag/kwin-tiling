@@ -223,7 +223,7 @@ void ListView::rename( Q3ListViewItem* item, int c )
 #endif
   }
   else
-    KListView::rename( item ,c );
+    K3ListView::rename( item ,c );
 }
 
 
@@ -261,8 +261,8 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
     connect( listView, SIGNAL( selectionChanged ( Q3ListViewItem * )),
              SLOT(selectionChanged ( Q3ListViewItem * )));
     connect(listView,
-            SIGNAL(contextMenu(KListView *, Q3ListViewItem *, const QPoint&)),
-            SLOT( slotContextMenu(KListView*, Q3ListViewItem*, const QPoint&)));
+            SIGNAL(contextMenu(K3ListView *, Q3ListViewItem *, const QPoint&)),
+            SLOT( slotContextMenu(K3ListView*, Q3ListViewItem*, const QPoint&)));
 
     ClipAction *action   = 0L;
     ClipCommand *command = 0L;
@@ -332,7 +332,7 @@ void ActionWidget::selectionChanged ( Q3ListViewItem * item)
     delActionButton->setEnabled(item!=0);
 }
 
-void ActionWidget::slotContextMenu( KListView *, Q3ListViewItem *item,
+void ActionWidget::slotContextMenu( K3ListView *, Q3ListViewItem *item,
                                     const QPoint& pos )
 {
     if ( !item )

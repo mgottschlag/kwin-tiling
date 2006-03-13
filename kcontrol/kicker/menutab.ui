@@ -156,7 +156,7 @@
                         </widget>
                     </vbox>
                 </widget>
-                <widget class="KListView">
+                <widget class="K3ListView">
                     <column>
                         <property name="text">
                             <string>Optional Menus</string>

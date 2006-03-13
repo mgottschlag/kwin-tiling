@@ -26,7 +26,7 @@
 //Added by qt3to4:
 #include <QMenu>
 #include <QDropEvent>
-#include <klistview.h>
+#include <k3listview.h>
 #include <kservice.h>
 #include <kservicegroup.h>
 
@@ -88,7 +88,7 @@ private:
     MenuEntryInfo *m_entryInfo;
 };
 
-class TreeView : public KListView
+class TreeView : public K3ListView
 {
     friend class TreeItem;
     Q_OBJECT

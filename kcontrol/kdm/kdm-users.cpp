@@ -133,7 +133,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 
     wstack = new QStackedWidget( this );
     s_label = new QLabel( wstack, i18n("S&elect users and groups:"), this );
-    optinlv = new KListView( this );
+    optinlv = new K3ListView( this );
     optinlv->addColumn( i18n("Selected Users") );
     optinlv->setResizeMode( Q3ListView::LastColumn );
     optinlv->setWhatsThis( i18n("KDM will show all checked users. Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );
@@ -142,7 +142,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 	     SLOT(slotUpdateOptIn( Q3ListViewItem * )) );
     connect( optinlv, SIGNAL(clicked( Q3ListViewItem * )),
 	     SLOT(slotChanged()) );
-    optoutlv = new KListView( this );
+    optoutlv = new K3ListView( this );
     optoutlv->addColumn( i18n("Hidden Users") );
     optoutlv->setResizeMode( Q3ListView::LastColumn );
     optoutlv->setWhatsThis( i18n("KDM will show all non-checked non-system users. Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );

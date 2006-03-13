@@ -40,7 +40,7 @@
 #undef Unsorted
 #include <kipc.h>
 
-#include <klistview.h>
+#include <k3listview.h>
 #include <kurlrequesterdlg.h>
 #include <kmessagebox.h>
 #include <kprogressbar.h>
@@ -82,7 +82,7 @@ IconThemesConfig::IconThemesConfig(KInstance *inst, QWidget *parent)
   lh2->addStretch(10);
 
 
-  m_iconThemes=new KListView(this/*"IconThemeList"*/);
+  m_iconThemes=new K3ListView(this/*"IconThemeList"*/);
   m_iconThemes->addColumn(i18n("Name"));
   m_iconThemes->addColumn(i18n("Description"));
   m_iconThemes->setAllColumnsShowFocus( true );

@@ -209,7 +209,7 @@ If you have a fast, new processor, you might want to turn them all on, but for t
                 <enum>Minimum</enum>
             </property>
         </spacer>
-        <widget class="KListView" row="5" column="1">
+        <widget class="K3ListView" row="5" column="1">
             <property name="name">
                 <cstring>klv_features</cstring>
             </property>

@@ -6,7 +6,7 @@
 class QCheckBox;
 class QLabel;
 class KComboBox;
-class KListView;
+class K3ListView;
 
 class ModifiersModule : public QWidget
 {
@@ -30,7 +30,7 @@ class ModifiersModule : public QWidget
 	QLabel* m_plblCtrl, * m_plblAlt, * m_plblWin;
 	QLabel* m_plblWinModX;
 	QCheckBox* m_pchkMacKeyboard;
-	KListView* m_plstXMods;
+	K3ListView* m_plstXMods;
 	QCheckBox* m_pchkMacSwap;
 
 	void readConfig();

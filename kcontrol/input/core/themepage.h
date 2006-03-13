@@ -19,7 +19,7 @@
 #ifndef __THEMEPAGE_H
 #define __THEMEPAGE_H
 
-class KListView;
+class K3ListView;
 class Q3ListViewItem;
 
 class ThemePage : public QWidget
@@ -45,7 +45,7 @@ class ThemePage : public QWidget
 		void insertThemes();
 		void fixCursorFile();
 
-		KListView *listview;
+		K3ListView *listview;
 		QString currentTheme, selectedTheme;
 };
 

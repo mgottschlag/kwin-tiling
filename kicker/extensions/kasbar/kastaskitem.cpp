@@ -72,7 +72,7 @@
 #include <kdialog.h>
 #include <kglobal.h>
 #include <kiconloader.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <klocale.h>
 #include <kpassivepopup.h>
 #include <kmenu.h>
@@ -414,7 +414,7 @@ QWidget *KasTaskItem::createTaskProps( QObject *target, QWidget *parent, bool re
     vb->setMargin( KDialog::marginHint() );
 
     // Create List View
-    KListView *taskprops = new KListView( vb );
+    K3ListView *taskprops = new K3ListView( vb );
     taskprops->setObjectName( "props_view" );
     taskprops->setResizeMode( Q3ListView::LastColumn );
     taskprops->addColumn( i18n("Property"), 0 );

@@ -24,7 +24,7 @@ namespace KHotKeys
 {
 
 KHListView::KHListView( QWidget* parent_P )
-    : KListView( parent_P ), saved_current_item( NULL ),
+    : K3ListView( parent_P ), saved_current_item( NULL ),
         in_clear( false ), ignore( false ), force_select( false )
     {
     connect( this, SIGNAL( selectionChanged( Q3ListViewItem* )),
@@ -74,7 +74,7 @@ void KHListView::slot_current_changed( Q3ListViewItem* item_P )
 void KHListView::clear()
     {
     in_clear = true;
-    KListView::clear();
+    K3ListView::clear();
     in_clear = false;
     slot_selection_changed( NULL );
     }
@@ -84,7 +84,7 @@ void KHListView::insertItem( Q3ListViewItem* item_P )
     bool set = false;
     if( !in_clear )
         set = childCount() == 0;
-    KListView::insertItem( item_P );
+    K3ListView::insertItem( item_P );
     if( set && force_select )
         {
         bool block = signalsBlocked();
@@ -99,7 +99,7 @@ void KHListView::insertItem( Q3ListViewItem* item_P )
 void KHListView::clearSelection()
     {
     saved_current_item = NULL;
-    KListView::clearSelection();
+    K3ListView::clearSelection();
     }
 
 // items are often inserted using the QListViewItem constructor,
@@ -115,7 +115,7 @@ void KHListView::contentsDropEvent( QDropEvent* e )
     {
     bool save_ignore = ignore;
     ignore = true;
-    KListView::contentsDropEvent( e );
+    K3ListView::contentsDropEvent( e );
     ignore = save_ignore;
     }
 

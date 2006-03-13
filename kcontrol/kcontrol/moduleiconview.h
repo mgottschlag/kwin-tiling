@@ -20,7 +20,7 @@
 #ifndef __moduleiconview_h__
 #define __moduleiconview_h__
 
-#include <klistview.h>
+#include <k3listview.h>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QKeyEvent>
@@ -57,7 +57,7 @@ private:
   ConfigModule *_module;
 };
 
-class ModuleIconView : public KListView
+class ModuleIconView : public K3ListView
 {
   Q_OBJECT
 

@@ -144,7 +144,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
     pl_label = new QLabel(i18n("No password re&quired for:"), npGroup);
     laygroup3->addWidget( pl_label );
-    npuserlv = new KListView(npGroup);
+    npuserlv = new K3ListView(npGroup);
     laygroup3->addWidget( npuserlv );
     pl_label->setBuddy(npuserlv);
     npuserlv->addColumn(QString());

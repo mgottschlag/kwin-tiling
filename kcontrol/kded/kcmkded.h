@@ -23,7 +23,7 @@
 
 #include <kcmodule.h>
 
-class KListView;
+class K3ListView;
 
 class QStringList;
 class QPushButton;
@@ -52,8 +52,8 @@ protected Q_SLOTS:
         void setAutoloadEnabled(KConfig *config, const QString &filename, bool b);
 
 private:
-	KListView *_lvLoD;
-	KListView *_lvStartup;
+	K3ListView *_lvLoD;
+	K3ListView *_lvStartup;
 	QPushButton *_pbStart;
 	QPushButton *_pbStop;
 	

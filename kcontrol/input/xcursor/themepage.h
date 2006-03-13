@@ -22,7 +22,7 @@
 #include <q3dict.h>
 
 
-class KListView;
+class K3ListView;
 class QString;
 class PreviewWidget;
 class QStringList;
@@ -61,7 +61,7 @@ class ThemePage : public QWidget
 		void insertThemes();
 		QPixmap createIcon( const QString &, const QString & ) const;
 
-		KListView *listview;
+		K3ListView *listview;
 		PreviewWidget *preview;
 		QPushButton *installButton, *removeButton;
 		QString selectedTheme;

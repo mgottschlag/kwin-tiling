@@ -98,7 +98,7 @@ static QPixmap appIcon(const QString &iconName)
 
 
 AppTreeView::AppTreeView( QWidget *parent )
-    : KListView(parent)
+    : K3ListView(parent)
 {
     setFrameStyle(QFrame::WinPanel | QFrame::Sunken);
     setAllColumnsShowFocus(true);

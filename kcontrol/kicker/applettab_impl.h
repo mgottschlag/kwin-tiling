@@ -28,7 +28,7 @@ class QGroupBox;
 class QButtonGroup;
 class QRadioButton;
 class QPushButton;
-class KListView;
+class K3ListView;
 class QListViewItem;
 
 class AppletTab : public AppletTabBase

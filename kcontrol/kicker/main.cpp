@@ -22,7 +22,7 @@
 #include <kapplication.h>
 #include <kcmodulecontainer.h>
 #include <kdirwatch.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <kstaticdeleter.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>

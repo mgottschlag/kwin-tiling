@@ -23,7 +23,7 @@
 #include <qmap.h>
 //Added by qt3to4:
 #include <QLabel>
-#include <klistview.h>
+#include <k3listview.h>
 
 class QPushButton;
 class DeviceManager;
@@ -59,7 +59,7 @@ protected Q_SLOTS:
 private:
   Q3ListViewItem *iconThemeItem(const QString &name);
 
-  KListView *m_iconThemes;
+  K3ListView *m_iconThemes;
   QPushButton *m_removeButton;
 
   QLabel *m_previewExec;

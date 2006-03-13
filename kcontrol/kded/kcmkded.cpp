@@ -37,7 +37,7 @@
 #include <kdesktopfile.h>
 #include <kdialog.h>
 #include <kgenericfactory.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <kmessagebox.h>
 #include <kservice.h>
 #include <kstandarddirs.h>
@@ -78,7 +78,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 			"cannot manipulate these services."));
 	lay->addWidget( gb );
 
-	_lvLoD = new KListView( gb );
+	_lvLoD = new K3ListView( gb );
 	_lvLoD->addColumn(i18n("Service"));
 	_lvLoD->addColumn(i18n("Description"));
 	_lvLoD->addColumn(i18n("Status"));
@@ -91,7 +91,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 				"Be careful with deactivation of unknown services."));
 	lay->addWidget( gb );
 
-	_lvStartup = new KListView( gb );
+	_lvStartup = new K3ListView( gb );
 	_lvStartup->addColumn(i18n("Use"));
 	_lvStartup->addColumn(i18n("Service"));
 	_lvStartup->addColumn(i18n("Description"));

@@ -15,13 +15,13 @@
 //Added by qt3to4:
 #include <QDropEvent>
 
-#include <klistview.h>
+#include <k3listview.h>
 
 namespace KHotKeys
 {
 
 class KHListView
-    : public KListView
+    : public K3ListView
     {
     Q_OBJECT
     Q_PROPERTY( bool forceSelect READ forceSelect WRITE setForceSelect )

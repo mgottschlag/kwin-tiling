@@ -39,7 +39,7 @@ class UserListView;
 class KdmThemer;
 class KdmItem;
 
-class KListView;
+class K3ListView;
 class KSimpleConfig;
 
 class QLabel;

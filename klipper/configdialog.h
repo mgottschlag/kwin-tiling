@@ -28,7 +28,7 @@
 #include <kdialogbase.h>
 #include <keditlistbox.h>
 #include <kkeydialog.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <knuminput.h>
 #include <kvbox.h>
 
@@ -36,7 +36,7 @@
 
 class KGlobalAccel;
 class KKeyChooser;
-class KListView;
+class K3ListView;
 class QPushButton;
 class QDialog;
 class ConfigDialog;
@@ -105,11 +105,11 @@ private Q_SLOTS:
     void slotDeleteAction();
     void slotItemChanged( Q3ListViewItem *, const QPoint& , int );
     void slotAdvanced();
-    void slotContextMenu( KListView *, Q3ListViewItem *, const QPoint& );
+    void slotContextMenu( K3ListView *, Q3ListViewItem *, const QPoint& );
     void selectionChanged ( Q3ListViewItem *);
 
 private:
-    KListView *listView;
+    K3ListView *listView;
     QStringList m_wmClasses;
     AdvancedWidget *advancedWidget;
     QPushButton *delActionButton;
@@ -230,11 +230,11 @@ private:
 
 };
 
-class ListView : public KListView
+class ListView : public K3ListView
 {
 public:
     ListView( ConfigDialog* configWidget, QWidget *parent )
-	: KListView( parent ), _configWidget( configWidget ),
+	: K3ListView( parent ), _configWidget( configWidget ),
           _regExpEditor(0L) {}
     // QListView has a weird idea of a sizeHint...
     virtual QSize sizeHint () const {

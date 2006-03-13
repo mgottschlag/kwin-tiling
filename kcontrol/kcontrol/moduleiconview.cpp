@@ -40,7 +40,7 @@
 
 
 ModuleIconView::ModuleIconView(ConfigModuleList *list, QWidget * parent)
-  : KListView(parent)
+  : K3ListView(parent)
   , _path(KCGlobal::baseGroup())
   , _modules(list)
 {
@@ -160,7 +160,7 @@ void ModuleIconView::keyPressEvent(QKeyEvent *e)
   }
   else
   {
-     KListView::keyPressEvent(e);
+     K3ListView::keyPressEvent(e);
   }
 }
 

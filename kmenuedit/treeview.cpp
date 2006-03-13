@@ -152,7 +152,7 @@ static QPixmap appIcon(const QString &iconName)
 
 
 TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, const char *name )
-    : KListView(parent), m_ac(ac), m_rmb(0), m_clipboard(0),
+    : K3ListView(parent), m_ac(ac), m_rmb(0), m_clipboard(0),
       m_clipboardFolderInfo(0), m_clipboardEntryInfo(0),
       m_controlCenter(controlCenter), m_layoutDirty(false)
 {

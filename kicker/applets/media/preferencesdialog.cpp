@@ -24,7 +24,7 @@
 #include <kvbox.h>
 #include <QLinkedList>
 #include <qwhatsthis.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <kfiledetailview.h>
 
 class MediumTypeItem : public Q3CheckListItem
@@ -64,7 +64,7 @@ PreferencesDialog::PreferencesDialog(KFileItemList media, QWidget *parent,
 	  mMedia(media)
 {
 	KVBox *types_page = addVBoxPage( i18n("Medium Types") );
-	mpMediumTypesListView = new KListView(types_page);
+	mpMediumTypesListView = new K3ListView(types_page);
 
 	//mpMediumTypesListView->setFullWidth(true);
 	mpMediumTypesListView->addColumn( i18n("Types to Display") );
@@ -73,7 +73,7 @@ PreferencesDialog::PreferencesDialog(KFileItemList media, QWidget *parent,
 
 
 	KVBox *media_page = addVBoxPage( i18n("Media") );
-	mpMediaListView = new KListView(media_page);
+	mpMediaListView = new K3ListView(media_page);
 
 	//mpMediaListView->setFullWidth(true);
 	mpMediaListView->addColumn( i18n("Media to Display") );

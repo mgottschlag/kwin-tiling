@@ -33,7 +33,7 @@
 #include <QLabel>
 
 #include <klineedit.h>
-#include <klistview.h>
+#include <k3listview.h>
 #include <kcombobox.h>
 #include <kurl.h>
 
@@ -87,7 +87,7 @@ private:
 
 	QLabel		*s_label; // middle
 	QStackedWidget	*wstack;
-	KListView	*optoutlv, *optinlv;
+	K3ListView	*optoutlv, *optinlv;
 
 	Q3ButtonGroup	*faceGroup; // right
 	QRadioButton	*rbadmonly, *rbprefadm, *rbprefusr, *rbusronly;

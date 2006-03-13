@@ -88,7 +88,7 @@
                 <string>Preview</string>
             </property>
         </widget>
-        <widget class="KListView" row="1" column="1">
+        <widget class="K3ListView" row="1" column="1">
             <property name="name">
                 <cstring>klv_styles</cstring>
             </property>
