@@ -5,8 +5,8 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 
 ########### install files ###############
 
-install_files(  FILES kde-screensavers.menu )
-install_files(  FILES kde-merge-screensavers.menu )
+install_files( ${XDG_DIRECTORY_DIR}/menu FILES kde-screensavers.menu )
+install_files( ${XDG_DIRECTORY_DIR}/menu FILES kde-merge-screensavers.menu )
 install_files( ${XDG_DIRECTORY_DIR} FILES kde-system-screensavers.directory  )
 
 kde4_footer()
