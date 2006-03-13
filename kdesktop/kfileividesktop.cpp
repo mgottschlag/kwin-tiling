@@ -66,7 +66,7 @@ KFileIVIDesktop::~KFileIVIDesktop()
 
 void KFileIVIDesktop::calcRect( const QString& _text )
 {
-    KIconViewItem::calcRect( _text );
+    K3IconViewItem::calcRect( _text );
 
     if ( !iconView() || !m_shadow ||
          !wordWrap() || !( static_cast<KDesktopShadowSettings *>
@@ -102,7 +102,7 @@ void KFileIVIDesktop::paintItem( QPainter *p, const QColorGroup &cg)
 
   p->save();
 
-  // draw the pixmap as in KIconViewItem::paintItem(...)
+  // draw the pixmap as in K3IconViewItem::paintItem(...)
   paintPixmap(p, colors);
 
   //
@@ -172,7 +172,7 @@ void KFileIVIDesktop::drawShadowedText( QPainter *p, const QColorGroup &cg )
 {
   int textX = textRect( false ).x() + 2;
   int textY = textRect( false ).y();
-  int align = ((KIconView *) iconView())->itemTextPos() == Q3IconView::Bottom
+  int align = ((K3IconView *) iconView())->itemTextPos() == Q3IconView::Bottom
     ? Qt::AlignHCenter : Qt::AlignLeft;
   bool rebuild = shouldUpdateShadow(isSelected());
 

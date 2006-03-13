@@ -1314,7 +1314,7 @@ void KDIconView::showEvent( QShowEvent *e )
     if (m_hasExistingPos)
         Q3ScrollView::showEvent( e );
     else
-        KIconView::showEvent( e );
+        K3IconView::showEvent( e );
 }
 
 void KDIconView::contentsDropEvent( QDropEvent * e )
@@ -1334,7 +1334,7 @@ void KDIconView::contentsDropEvent( QDropEvent * e )
         bool bSignals = signalsBlocked();
         setItemsMovable(false);
         blockSignals(true);
-        KIconView::contentsDropEvent( e );
+        K3IconView::contentsDropEvent( e );
         blockSignals(bSignals);
         setItemsMovable(bMovable);
         // End hack

@@ -34,13 +34,13 @@ class KAboutData;
 #define ORIGINAL_THEME "original" // no i18n() here!!!
 
 /*
-class KIconViewItem;
+class K3IconViewItem;
 
-class KThemeDetailsItem: public KIconViewItem
+class KThemeDetailsItem: public K3IconViewItem
 {
 public:
-    KThemeDetailsItem( KIconView * parent, const QString & text, const QPixmap & icon, const QString & execString )
-        : KIconViewItem( parent, text, icon ) { m_exec = execString; }
+    KThemeDetailsItem( K3IconView * parent, const QString & text, const QPixmap & icon, const QString & execString )
+        : K3IconViewItem( parent, text, icon ) { m_exec = execString; }
     virtual ~KThemeDetailsItem() { };
 
     void exec() {
