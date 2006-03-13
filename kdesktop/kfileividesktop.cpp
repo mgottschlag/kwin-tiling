@@ -32,7 +32,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <kwordwrap.h>
-#include <kiconview.h>
+#include <k3iconview.h>
 #include <kdebug.h>
 
 #include <kshadowengine.h>
