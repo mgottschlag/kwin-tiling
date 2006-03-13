@@ -48,7 +48,7 @@ public:
 int main( int argc, char *argv[] )
 {
     KBlankSaverInterface kss;
-    return kssMain( argc, argv, kss );
+    return kScreenSaverMain( argc, argv, kss );
 }
 
 //-----------------------------------------------------------------------------
