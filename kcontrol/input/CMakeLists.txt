@@ -47,7 +47,7 @@ install_targets(${LIB_INSTALL_DIR}/kde4 kcm_input )
 
 install_files( ${XDG_APPS_DIR} FILES mouse.desktop )
 install_files( ${DATA_INSTALL_DIR}/kcminput FILES cursor_large_black.pcf.gz cursor_large_white.pcf.gz cursor_small_white.pcf.gz )
-install_files( ${DATA_INSTALL_DIR}/kconf_update FILES mouse_cursor_theme.upd )
+install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES mouse_cursor_theme.upd )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

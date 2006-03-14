@@ -6,7 +6,7 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 ########### install files ###############
 
 install_files( ${DATA_INSTALL_DIR}/khotkeys FILES kde32b1.khotkeys konqueror_gestures_kde321.khotkeys )
-install_files( ${DATA_INSTALL_DIR}/kconf_update FILES khotkeys_32b1_update.upd konqueror_gestures_kde321_update.upd )
+install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES khotkeys_32b1_update.upd konqueror_gestures_kde321_update.upd )
 
 kde4_footer()
 

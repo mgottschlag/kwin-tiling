@@ -47,7 +47,7 @@ install_targets(${LIB_INSTALL_DIR}/kde4 klipper_panelapplet )
 install_files( ${XDG_APPS_DIR} FILES klipper.desktop )
 install_files( /share/autostart FILES klipper.desktop )
 install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES klipper.desktop )
-install_files( ${DATA_INSTALL_DIR}/kconf_update FILES klipperrc.upd klippershortcuts.upd )
+install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES klipperrc.upd klippershortcuts.upd )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

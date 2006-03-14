@@ -27,8 +27,8 @@ install_targets(${LIB_INSTALL_DIR}/kde4 kcm_keys )
 
 install_files( ${XDG_APPS_DIR} FILES keys.desktop )
 install_files( ${DATA_INSTALL_DIR}/kcmkeys FILES wm3.kksrc kde3.kksrc kde4.kksrc win3.kksrc win4.kksrc mac4.kksrc unix3.kksrc )
-install_files( ${DATA_INSTALL_DIR}/kconf_update FILES kaccel.upd )
-install_files( ${DATA_INSTALL_DIR}/kconf_update FILES convertShortcuts.pl )
+install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES kaccel.upd )
+install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES convertShortcuts.pl )
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 kde4_footer()

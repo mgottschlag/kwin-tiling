@@ -13,7 +13,7 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_D
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kconf_update FILES kcmdisplayrc.upd )
+install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES kcmdisplayrc.upd )
 
 kde4_footer()
 
