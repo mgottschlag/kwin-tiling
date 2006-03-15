@@ -277,18 +277,13 @@ patternMatch( const char *string, const char *pattern )
 }
 
 
-/*
- * calls the given function for each valid indirect entry.  Returns TRUE if
- * the local host exists on any of the lists, else FALSE
- */
-
 #define MAX_DEPTH 32
 
 static void
 scanHostlist( int fh, int nh,
               ARRAY8Ptr clientAddress, CARD16 connectionType,
               ChooserFunc function, char *closure,
-              int depth, int broadcast, int *haveLocalhost )
+              int broadcast, int *haveLocalhost )
 {
 	HostEntry *h;
 	AliasEntry *a;
@@ -297,15 +292,11 @@ scanHostlist( int fh, int nh,
 	for (h = accData->hostList + fh; nh; nh--, h++) {
 		switch (h->type) {
 		case HOST_ALIAS:
-			if (depth == MAX_DEPTH) {
-				LogError( "Alias recursion in XDMCP access control list\n" );
-				break;
-			}
 			for (a = accData->aliasList, na = accData->nAliases; na; na--, a++)
 				if (patternMatch( a->name, h->entry.aliasPattern )) /* XXX originally swapped, no wildcards in alias name matching */
 					scanHostlist( a->hosts, a->nhosts,
 					              clientAddress, connectionType,
-					              function, closure, depth + 1, broadcast,
+					              function, closure, broadcast,
 					              haveLocalhost );
 			break;
 		case HOST_ADDRESS:
@@ -327,7 +318,7 @@ scanHostlist( int fh, int nh,
 static int
 scanEntrylist( int fh, int nh,
                ARRAY8Ptr clientAddress, CARD16 connectionType,
-               char **clientName, int depth )
+               char **clientName )
 {
 	HostEntry *h;
 	AliasEntry *a;
@@ -336,15 +327,11 @@ scanEntrylist( int fh, int nh,
 	for (h = accData->hostList + fh; nh; nh--, h++) {
 		switch (h->type) {
 		case HOST_ALIAS:
-			if (depth == MAX_DEPTH) {
-				LogError( "Alias recursion in XDMCP access control list\n" );
-				break;
-			}
 			for (a = accData->aliasList, na = accData->nAliases; na; na--, a++)
 				if (patternMatch( a->name, h->entry.aliasPattern ))
 					if (scanEntrylist( a->hosts, a->nhosts,
 					                   clientAddress, connectionType,
-					                   clientName, depth + 1 ))
+					                   clientName ))
 						return 1;
 			break;
 		case HOST_PATTERN:
@@ -378,7 +365,7 @@ matchAclEntry( ARRAY8Ptr clientAddress, CARD16 connectionType, int direct )
 		if (!e->nhosts == direct)
 			if (scanEntrylist( e->entries, e->nentries,
 			                   clientAddress, connectionType,
-			                   &clientName, 0 ))
+			                   &clientName ))
 			{
 				re = e;
 				break;
@@ -388,6 +375,10 @@ matchAclEntry( ARRAY8Ptr clientAddress, CARD16 connectionType, int direct )
 	return re;
 }
 
+/*
+ * calls the given function for each valid indirect entry.  Returns TRUE if
+ * the local host exists on any of the lists, else FALSE
+ */
 int
 ForEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
                              CARD16 connectionType,
@@ -408,7 +399,7 @@ ForEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
 				(*function)( connectionType, choice, closure );
 		} else
 			scanHostlist( e->hosts, e->nhosts, clientAddress, connectionType,
-			              function, closure, 0, FALSE, &haveLocalhost );
+			              function, closure, FALSE, &haveLocalhost );
 	}
 	return haveLocalhost;
 }
@@ -433,7 +424,7 @@ ForEachChooserHost( ARRAY8Ptr clientAddress, CARD16 connectionType,
 	e = matchAclEntry( clientAddress, connectionType, 0 );
 	if (e && !(e->flags & a_notAllowed) && (e->flags & a_useChooser))
 		scanHostlist( e->hosts, e->nhosts, clientAddress, connectionType,
-		              function, closure, 0, TRUE, &haveLocalhost );
+		              function, closure, TRUE, &haveLocalhost );
 	if (haveLocalhost)
 		(*function)( connectionType, getLocalAddress(), closure );
 }

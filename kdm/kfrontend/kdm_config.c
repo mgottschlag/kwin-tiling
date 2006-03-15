@@ -944,6 +944,7 @@ ReadWord( File *file, int *len, int EOFatEOL )
 }
 
 #define ALIAS_CHARACTER     '%'
+#define EQUAL_CHARACTER     '='
 #define NEGATE_CHARACTER    '!'
 #define CHOOSER_STRING      "CHOOSER"
 #define BROADCAST_STRING    "BROADCAST"
@@ -975,14 +976,18 @@ typedef struct listenEntry {
 typedef struct aliasEntry {
 	struct aliasEntry *next;
 	char *name;
+	HostEntry **pHosts;
 	int hosts;
 	int nhosts;
+	int hasBad;
 } AliasEntry;
 
 typedef struct aclEntry {
 	struct aclEntry *next;
+	HostEntry **pEntries;
 	int entries;
 	int nentries;
+	HostEntry **pHosts;
 	int hosts;
 	int nhosts;
 	int flags;
@@ -1046,7 +1051,7 @@ ParseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 		if (!(hostent = gethostbyname( hostOrAlias )))
 #endif
 		{
-			LogWarn( "Host \"%s\" not found\n", hostOrAlias );
+			LogWarn( "XDMCP ACL: unresolved host %'s\n", hostOrAlias );
 			free( (char *)(**hostPtr) );
 			return 0;
 		}
@@ -1083,16 +1088,98 @@ ParseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 	return 1;
 }
 
+/* Returns non-0 if string is matched by pattern.  Does case folding. */
+static int
+patternMatch( const char *string, const char *pattern )
+{
+	int p, s;
+
+	if (!string)
+		string = "";
+
+	for (;;) {
+		s = *string++;
+		switch (p = *pattern++) {
+		case '*':
+			if (!*pattern)
+				return 1;
+			for (string--; *string; string++)
+				if (patternMatch( string, pattern ))
+					return 1;
+			return 0;
+		case '?':
+			if (s == '\0')
+				return 0;
+			break;
+		case '\0':
+			return s == '\0';
+		case '\\':
+			p = *pattern++;
+			/* fall through */
+		default:
+			if (tolower( p ) != tolower( s ))
+				return 0;
+		}
+	}
+}
+
+#define MAX_DEPTH     32
+
+#define CHECK_NOT      1
+#define CHECK_NO_PAT   2
+
+static int
+checkHostlist( HostEntry **hosts, int nh, AliasEntry *aliases, int na,
+               int depth, int flags )
+{
+	HostEntry *h;
+	AliasEntry *a;
+	int hn, an, am;
+
+	for (h = *hosts, hn = 0; hn < nh; hn++, h = h->next)
+		if (h->type == HOST_ALIAS) {
+			if (depth == MAX_DEPTH) {
+				LogError( "XDMCP ACL: alias recursion involving %%%s\n",
+				          h->entry.aliasPattern );
+				return 1;
+			}
+			for (a = aliases, an = 0, am = 0; an < na; an++, a = a->next)
+				if (patternMatch( a->name, h->entry.aliasPattern )) {
+					am = 1;
+					if ((flags & CHECK_NOT) && a->hasBad) {
+						LogError( "XDMCP ACL: alias %%%s with unresolved hosts "
+						          "in denying rule\n", a->name );
+						return 1;
+					}
+					if (checkHostlist( a->pHosts, a->nhosts, aliases, na,
+					                   depth + 1, flags ))
+						return 1;
+				}
+			if (!am) {
+				if (flags & CHECK_NOT) {
+					LogError( "XDMCP ACL: unresolved alias pattern %%%s "
+					          "in denying rule\n", h->entry.aliasPattern );
+					return 1;
+				} else
+					LogWarn( "XDMCP ACL: unresolved alias pattern %%%s\n",
+					         h->entry.aliasPattern );
+			}
+		} else if (h->type == HOST_PATTERN && (flags & CHECK_NO_PAT))
+			LogWarn( "XDMCP ACL: wildcarded pattern %'* in host-only context\n",
+			         h->entry.hostPattern );
+	return 0;
+}
+
 static void
 ReadAccessFile( const char *fname )
 {
 	HostEntry *hostList, **hostPtr = &hostList;
 	AliasEntry *aliasList, **aliasPtr = &aliasList;
-	AclEntry *acList, **acPtr = &acList;
+	AclEntry *acList, **acPtr = &acList, *acl;
 	ListenEntry *listenList, **listenPtr = &listenList;
 	char *displayOrAlias, *hostOrAlias;
 	File file;
-	int nHosts, nAliases, nAcls, nListens, nChars, error;
+	int nHosts, nAliases, nAcls, nListens, nChars, error, bad;
 	int i, len;
 
 	nHosts = nAliases = nAcls = nListens = nChars = error = 0;
@@ -1108,12 +1195,15 @@ ReadAccessFile( const char *fname )
 			(*aliasPtr)->name = displayOrAlias + 1;
 			nChars += len;
 			(*aliasPtr)->hosts = nHosts;
+			(*aliasPtr)->pHosts = hostPtr;
 			(*aliasPtr)->nhosts = 0;
+			(*aliasPtr)->hasBad = 0;
 			while ((hostOrAlias = ReadWord( &file, &len, TRUE ))) {
-				if (!ParseHost( &nHosts, &hostPtr, &nChars, hostOrAlias, len,
-				                PARSE_NO_BCAST|PARSE_NO_PAT ))
-					goto sktoeol;
-				(*aliasPtr)->nhosts++;
+				if (ParseHost( &nHosts, &hostPtr, &nChars, hostOrAlias, len,
+				               PARSE_NO_BCAST ))
+					(*aliasPtr)->nhosts++;
+				else
+					(*aliasPtr)->hasBad = 1;
 			}
 			aliasPtr = &(*aliasPtr)->next;
 			nAliases++;
@@ -1152,20 +1242,23 @@ ReadAccessFile( const char *fname )
 			if (*displayOrAlias == NEGATE_CHARACTER) {
 				(*acPtr)->flags |= a_notAllowed;
 				displayOrAlias++;
-			}
+			} else if (*displayOrAlias == EQUAL_CHARACTER)
+				displayOrAlias++;
 			(*acPtr)->entries = nHosts;
+			(*acPtr)->pEntries = hostPtr;
 			(*acPtr)->nentries = 1;
 			if (!ParseHost( &nHosts, &hostPtr, &nChars, displayOrAlias, len,
 			                PARSE_NO_BCAST ))
 			{
+				bad = 1;
 				if ((*acPtr)->flags & a_notAllowed) {
-				  sktoeol:
+					LogError( "XDMCP ACL: unresolved host in denying rule\n" );
 					error = 1;
 				}
-				while (ReadWord( &file, &len, TRUE ));
-				continue;
-			}
+			} else
+				bad = 0;
 			(*acPtr)->hosts = nHosts;
+			(*acPtr)->pHosts = hostPtr;
 			(*acPtr)->nhosts = 0;
 			while ((hostOrAlias = ReadWord( &file, &len, TRUE ))) {
 				if (!strcmp( hostOrAlias, CHOOSER_STRING ))
@@ -1178,8 +1271,10 @@ ReadAccessFile( const char *fname )
 						(*acPtr)->nhosts++;
 				}
 			}
-			acPtr = &(*acPtr)->next;
-			nAcls++;
+			if (!bad) {
+				acPtr = &(*acPtr)->next;
+				nAcls++;
+			}
 		}
 	}
 
@@ -1200,6 +1295,13 @@ ReadAccessFile( const char *fname )
 			nListens++;
 		}
 	}
+
+	for (acl = acList, i = 0; i < nAcls; i++, acl = acl->next)
+		if (checkHostlist( acl->pEntries, acl->nentries, aliasList, nAliases,
+		                   0, (acl->flags & a_notAllowed) ? CHECK_NOT : 0 ) ||
+		    checkHostlist( acl->pHosts, acl->nhosts, aliasList, nAliases,
+		                   0, CHECK_NO_PAT ))
+			error = 1;
 
 	if (error) {
 		nHosts = nAliases = nAcls = nListens = nChars = 0;
