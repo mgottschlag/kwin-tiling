@@ -207,7 +207,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 		slot = 1;
 		if (pid) {
 			if (!(ttys = fopen( TTYS_FILE, "r" )))
-				LogInfo( "Cannot open tty file " TTYS_FILE ": %m\n" );
+				LogWarn( "Cannot open tty file " TTYS_FILE ": %m\n" );
 			else {
 				int column0 = 1;
 				while ((c = getc( ttys )) != EOF)

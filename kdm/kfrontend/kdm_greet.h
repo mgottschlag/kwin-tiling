@@ -64,6 +64,7 @@ void freeStrArr( char **arr );
 
 void Debug( const char *fmt, ... );
 void LogInfo( const char *fmt, ... );
+void LogWarn( const char *fmt, ... );
 void LogError( const char *fmt, ... );
 void LogPanic( const char *fmt, ... ) ATTR_NORETURN;
 

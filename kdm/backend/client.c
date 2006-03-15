@@ -1385,7 +1385,7 @@ StartClient()
 			}
 			ASPrintf( &lname, td->clientLogFile, td->name );
 			if ((lfd = creat( lname, 0600 )) < 0) {
-				LogInfo( "Cannot create session log file %s: %m\n", lname );
+				LogWarn( "Cannot create session log file %s: %m\n", lname );
 				free( lname );
 				goto tmperr;
 			}

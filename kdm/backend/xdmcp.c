@@ -1141,7 +1141,7 @@ NetworkAddressToHostname( CARD16 connectionType, ARRAY8Ptr connectionAddress )
 #else
 				ASPrintf( &name, "%[4|'.'hhu", connectionAddress->data );
 #endif
-				LogInfo( "Cannot convert Internet address %s to host name\n",
+				LogWarn( "Cannot convert Internet address %s to host name\n",
 				         name );
 			}
 			return name;

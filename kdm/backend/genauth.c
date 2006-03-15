@@ -119,17 +119,17 @@ getPrngdBytes( char *buf, int len,
 		rval = -1;
 reopen:
 		if ((fd = socket( af, SOCK_STREAM, 0 )) < 0) {
-				LogInfo( "Couldn't create socket: %m\n" );
+				LogError( "Couldn't create socket: %m\n" );
 				goto done;
 		}
 
 		if (connect( fd, (struct sockaddr *)addr, addr_len )) {
 				if (af == AF_INET)
-						LogInfo( "Couldn't connect to PRNGD port %d: %m\n",
-						         tcp_port );
+						LogError( "Couldn't connect to PRNGD port %d: %m\n",
+						          tcp_port );
 				else
-						LogInfo( "Couldn't connect to PRNGD socket %\"s: %m\n",
-						         socket_path );
+						LogError( "Couldn't connect to PRNGD socket %\"s: %m\n",
+						          socket_path );
 				goto done;
 		}
 
@@ -143,7 +143,7 @@ reopen:
 						errors++;
 						goto reopen;
 				}
-				LogInfo( "Couldn't write to PRNGD socket: %m\n" );
+				LogError( "Couldn't write to PRNGD socket: %m\n" );
 				goto done;
 		}
 
@@ -153,7 +153,7 @@ reopen:
 						errors++;
 						goto reopen;
 				}
-				LogInfo( "Couldn't read from PRNGD socket: %m\n" );
+				LogError( "Couldn't read from PRNGD socket: %m\n" );
 				goto done;
 		}
 

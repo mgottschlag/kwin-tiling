@@ -1046,7 +1046,7 @@ ParseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 		if (!(hostent = gethostbyname( hostOrAlias )))
 #endif
 		{
-			LogError( "Host \"%s\" not found\n", hostOrAlias );
+			LogWarn( "Host \"%s\" not found\n", hostOrAlias );
 			free( (char *)(**hostPtr) );
 			return 0;
 		}

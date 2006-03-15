@@ -1072,7 +1072,7 @@ startUserAuth( char *buf, char *nbuf, FILE **old, FILE **new )
 				XauUnlockAuth( buf );
 	}
 	if (!*new)
-		LogInfo( "Can't update authorization file in home dir %s\n", home );
+		LogWarn( "Can't update authorization file in home dir %s\n", home );
 }
 
 static int
@@ -1103,7 +1103,7 @@ endUserAuth( FILE *old, FILE *new, const char *nname, int ok )
 static void
 undoUserAuth( const char *name, const char *new_name )
 {
-	LogInfo( "Can't save user authorization in home dir\n" );
+	LogWarn( "Can't save user authorization in home dir\n" );
 	unlink( new_name );
 	XauUnlockAuth( name );
 }

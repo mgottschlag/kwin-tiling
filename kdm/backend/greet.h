@@ -189,8 +189,9 @@ from the copyright holder.
  */
 #define DM_DEBUG  0
 #define DM_INFO   1
-#define DM_ERR    2
-#define DM_PANIC  3
+#define DM_WARN   2
+#define DM_ERR    3
+#define DM_PANIC  4
 
 /*
  * Status codes from Verify

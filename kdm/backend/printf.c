@@ -557,12 +557,12 @@ DoPr( OutCh dopr_outch, void *bp, const char *format, va_list args )
 # else
 #  define InitLog() openlog(prog, LOG_PID, LOG_DAEMON)
 # endif
-static int lognums[] = { LOG_DEBUG, LOG_INFO, LOG_ERR, LOG_CRIT };
+static int lognums[] = { LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERR, LOG_CRIT };
 #else
 # define InitLog() while(0)
 #endif
 
-static const char *lognams[] = { "debug", "info", "error", "panic" };
+static const char *lognams[] = { "debug", "info", "warning", "error", "panic" };
 
 static void
 logTime( char *dbuf )
@@ -716,6 +716,18 @@ LogInfo( const char *fmt, ... )
 
 	va_start( args, fmt );
 	Logger( DM_INFO, fmt, args );
+	va_end( args );
+}
+#endif
+
+#ifndef LOG_NO_WARN
+STATIC void
+LogWarn( const char *fmt, ... )
+{
+	va_list args;
+
+	va_start( args, fmt );
+	Logger( DM_WARN, fmt, args );
 	va_end( args );
 }
 #endif
