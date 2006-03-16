@@ -1,5 +1,7 @@
 kde4_header()
 
+project(kdesktop)
+
 set( kdesktop_KCFG_SRCS kdesktopsettings.kcfgc  klaunchsettings.kcfgc )
 
 kde4_add_kcfg_files(kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})

@@ -10,7 +10,6 @@
 #
 # Author: Alexander Neundorf <neundorf@kde.org>
 
-
 # First try to find kde-config
 FIND_PROGRAM(KDE4_KDECONFIG_EXECUTABLE NAMES kde-config
    PATHS
@@ -18,11 +17,19 @@ FIND_PROGRAM(KDE4_KDECONFIG_EXECUTABLE NAMES kde-config
    $ENV{KDEDIR}/bin
    /opt/kde4/bin
    /opt/kde
+   /bin
+   /usr/bin
+   /usr/local/bin
+   NO_SYSTEM_PATH
+   NO_CMAKE_SYSTEM_PATH
    )
+
+IF (NOT KDE4_KDECONFIG_EXECUTABLE)
+   FIND_PROGRAM(KDE4_KDECONFIG_EXECUTABLE NAMES kde-config )
+ENDIF (NOT KDE4_KDECONFIG_EXECUTABLE)
 
 
 IF (KDE4_KDECONFIG_EXECUTABLE)
-
    # then ask kde-config for the kde data dirs
    EXEC_PROGRAM(${KDE4_KDECONFIG_EXECUTABLE} ARGS --path data OUTPUT_VARIABLE _data_DIR )
 

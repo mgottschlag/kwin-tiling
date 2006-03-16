@@ -1,5 +1,7 @@
 kde4_header()
 
+project(khotkeys)
+
 set(libshared_SRCS
     ${CMAKE_SOURCE_DIR}/khotkeys/shared/action_data.cpp
     ${CMAKE_SOURCE_DIR}/khotkeys/shared/khotkeysglobal.cpp

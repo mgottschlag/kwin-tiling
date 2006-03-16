@@ -1,5 +1,7 @@
 kde4_header()
 
+project(kicker)
+
 set(libkicker_core_SRCS
     ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/main.cpp
     ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/kicker.cpp
