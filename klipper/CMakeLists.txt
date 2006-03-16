@@ -48,6 +48,8 @@ install_files( ${XDG_APPS_DIR} FILES klipper.desktop )
 install_files( /share/autostart FILES klipper.desktop )
 install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES klipper.desktop )
 install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES klipperrc.upd klippershortcuts.upd )
+install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES klipper-1-2.pl klipper-kde31.sh)
+
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
