@@ -638,7 +638,8 @@ void KlipperWidget::setURLGrabberEnabled( bool enable )
       KConfig *kc = m_config;
       kc->setGroup("General");
       kc->writeEntry("URLGrabberEnabled", bURLGrabber);
-      m_lastURLGrabberText = QString();
+      m_lastURLGrabberTextSelection = QString();
+      m_lastURLGrabberTextClipboard = QString();
     }
 
     toggleURLGrabAction->setChecked( enable );
@@ -903,6 +904,8 @@ void KlipperWidget::checkClipData( bool selectionMode )
         m_lastClipboard = data->serialNumber();
 #endif
 
+    QString& lastURLGrabberText = selectionMode
+        ? m_lastURLGrabberTextSelection : m_lastURLGrabberTextClipboard;
     if( Q3TextDrag::canDecode( data ))
     {
         if ( bURLGrabber && myURLGrabber )
@@ -913,9 +916,9 @@ void KlipperWidget::checkClipData( bool selectionMode )
             // text all the time (e.g. because XFixes is not available and the application
             // has broken TIMESTAMP target). Using most recent history item may not always
             // work.
-            if ( text != m_lastURLGrabberText )
+            if ( text != lastURLGrabberText )
             {
-                m_lastURLGrabberText = text;
+                lastURLGrabberText = text;
                 if ( myURLGrabber->checkNewData( text ) )
                 {
                     return; // don't add into the history
@@ -923,10 +926,10 @@ void KlipperWidget::checkClipData( bool selectionMode )
             }
         }
         else
-            m_lastURLGrabberText = QString();
+            lastURLGrabberText = QString();
     }
     else
-        m_lastURLGrabberText = QString();
+        lastURLGrabberText = QString();
 #if 0
     if (changed) {
         applyClipChanges( *data );
