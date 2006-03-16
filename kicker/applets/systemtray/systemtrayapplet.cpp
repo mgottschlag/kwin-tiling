@@ -800,6 +800,7 @@ void SystemTrayApplet::layoutTray()
 
     if (iconCount == 0)
     {
+        updateGeometry();
         return;
     }
 
