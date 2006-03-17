@@ -208,7 +208,7 @@ DM::shutdown( KWorkSpace::ShutdownType shutdownType,
 		cmd.append( shutdownType == KWorkSpace::ShutdownTypeReboot ?
 		            "reboot\t" : "halt\t" );
 		if (!bootOption.isNull())
-			cmd.append( "=" ).append( bootOption.local8Bit() ).append( "\t" );
+			cmd.append( "=" ).append( bootOption.toLocal8Bit() ).append( "\t" );
 		cmd.append( shutdownMode == KWorkSpace::ShutdownModeInteractive ?
 		            "ask\n" :
 		            shutdownMode == KWorkSpace::ShutdownModeForceNow ?

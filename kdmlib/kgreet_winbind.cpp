@@ -310,7 +310,7 @@ KWinbindGreeter::returnData()
 {
 	switch (exp) {
 	case 0:
-		handler->gplugReturnText( getEntity().local8Bit(),
+		handler->gplugReturnText( getEntity().toLocal8Bit(),
 		                          KGreeterPluginHandler::IsUser );
 		break;
 	case 1:

@@ -232,7 +232,7 @@ KClassicGreeter::returnData()
 	switch (exp) {
 	case 0:
 		handler->gplugReturnText( (loginEdit ? loginEdit->text() :
-		                                       fixedUser).local8Bit(),
+		                                       fixedUser).toLocal8Bit(),
 		                          KGreeterPluginHandler::IsUser );
 		break;
 	case 1:
