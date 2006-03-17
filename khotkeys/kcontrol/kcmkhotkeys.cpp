@@ -66,7 +66,7 @@ extern "C"
     // involving forking apps per-screen. Don't bother with
     // kded modules in such case.
     QByteArray multiHead = getenv("KDE_MULTIHEAD");
-    if (multiHead.lower() == "true")
+    if (multiHead.toLower() == "true")
         KToolInvocation::kdeinitExec( "khotkeys" );
     else
         {

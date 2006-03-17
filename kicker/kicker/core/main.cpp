@@ -60,7 +60,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
     // TODO: Multihead should be utilizing the QDesktopWidget and QX11Info
     {
         QByteArray multiHead = getenv("KDE_MULTIHEAD");
-        if (multiHead.lower() == "true")
+        if (multiHead.toLower() == "true")
         {
             Display *dpy = XOpenDisplay(NULL);
             if (!dpy)

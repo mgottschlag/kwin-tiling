@@ -96,7 +96,7 @@ int KDE_EXPORT kdemain( int argc, char** argv )
         {
 	// multiheaded hotkeys
         QByteArray multiHead = getenv("KDE_MULTIHEAD");
-        if (multiHead.lower() == "true") {
+        if (multiHead.toLower() == "true") {
 	    Display *dpy = XOpenDisplay(NULL);
 	    if (! dpy) {
 		fprintf(stderr, "%s: FATAL ERROR while trying to open display %s\n",
