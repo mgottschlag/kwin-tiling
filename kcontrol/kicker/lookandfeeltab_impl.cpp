@@ -33,6 +33,7 @@
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 
+#include <kickerSettings.h>
 #include "advancedDialog.h"
 #include "global.h"
 #include "main.h"
@@ -128,6 +129,9 @@ void LookAndFeelTab::previewBackground(const QString& themepath, bool isNew)
             KickerLib::colorize(tmpImg);
         theme_preview.convertFromImage(tmpImg);
         if(!theme_preview.isNull()) {
+            // avoid getting changed(true) from KConfigDialogManager for the default value
+            if( KickerSettings::backgroundTheme() == themepath )
+                KickerSettings::setBackgroundTheme( theme );
             kcfg_BackgroundTheme->lineEdit()->setText(theme);
             m_backgroundLabel->setPixmap(theme_preview);
             if (isNew)
