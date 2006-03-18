@@ -327,7 +327,7 @@ void KAccessApp::readSettings()
   overlay = 0;
 }
 
-int maskToBit (int mask) {
+static int maskToBit (int mask) {
    for (int i = 0; i < 8; i++)
       if (mask & (1 << i))
          return i;
@@ -339,12 +339,12 @@ void KAccessApp::initMasks() {
       keys [i] = -1;
    state = 0;
 
-   for (int i = 0; modifierKeys[i].name != ""; i++) {
+   for (int i = 0; modifierKeys[i].name; i++) {
       int mask = modifierKeys[i].mask;
       if (mask == 0)
          if (modifierKeys[i].keysym != 0)
             mask = XkbKeysymToModifiers (QX11Info::display(), modifierKeys[i].keysym);
-         else if (modifierKeys[i].name == "Win")
+         else if (!strcmp(modifierKeys[i].name, "Win"))
             mask = KKeyNative::modXWin();
          else
             mask = XkbKeysymToModifiers (QX11Info::display(), XK_Mode_switch)
