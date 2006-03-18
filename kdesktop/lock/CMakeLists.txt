@@ -5,15 +5,20 @@ include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/wo
 
 ########### next target ###############
 
-set(kdesktop_lock_SRCS 
+set(kdesktop_lock_SRCS ${kdmlib_SRCS}
    lockprocess.cc 
    lockdlg.cc 
    autologout.cc 
    main.cc )
 
+kde4_add_kcfg_files(kdesktop_lock_SRCS 
+	${CMAKE_SOURCE_DIR}/workspace/kdesktop/kdesktopsettings.kcfgc
+	${CMAKE_SOURCE_DIR}/workspace/kdesktop/klaunchsettings.kcfgc )
+
+
 kde4_automoc(${kdesktop_lock_SRCS})
 
-kde4_add_executable(kdesktop_lock ${kdesktop_lock_SRCS} ${kdmlib_SRCS} ${kdesktop_LIB_SRCS})
+kde4_add_executable(kdesktop_lock ${kdesktop_lock_SRCS} )
 
 target_link_libraries(kdesktop_lock  ${LIB_KIO} )
 

@@ -2,18 +2,18 @@ kde4_header()
 
 project(kdesktop)
 
-set( kdesktop_KCFG_SRCS kdesktopsettings.kcfgc  klaunchsettings.kcfgc )
+set( kdesktop_KCFG_SRCS 
+	${CMAKE_SOURCE_DIR}/workspace/kdesktop/kdesktopsettings.kcfgc  
+	${CMAKE_SOURCE_DIR}/workspace/kdesktop/klaunchsettings.kcfgc )
 
 kde4_add_kcfg_files(kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})
 
-
-add_subdirectory( lock ) 
-add_subdirectory( patterns ) 
-add_subdirectory( programs ) 
-add_subdirectory( init ) 
-add_subdirectory( kwebdesktop ) 
-
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/lib ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( 
+	${CMAKE_SOURCE_DIR}/workspace/lib 
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background 
+	${CMAKE_SOURCE_DIR}/libkonq 
+	${CMAKE_SOURCE_DIR}/workspace/kdmlib 
+	${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### next target ###############
@@ -67,7 +67,11 @@ target_link_libraries( kdesktop kdeinit_kdesktop )
 install_targets(/bin kdesktop )
 
 ########### next target ###############
-
+add_subdirectory( lock )
+add_subdirectory( patterns )
+add_subdirectory( programs )
+add_subdirectory( init )
+add_subdirectory( kwebdesktop )
 
 ########### install files ###############
 
