@@ -153,7 +153,7 @@ Kicker::Kicker()
 Kicker::~Kicker()
 {
     // deletion order is important here
-    delete ExtensionManager::self();
+    //delete ExtensionManager::self();
     delete MenuManager::self();
 }
 
