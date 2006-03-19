@@ -54,7 +54,7 @@ install_files( ${XDG_APPS_DIR} FILES keyboard.desktop keyboard_layout.desktop )
 install_files( ${SERVICES_INSTALL_DIR} FILES kxkb.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
-
+install(FILES kxkb_groups DESTINATION ${CMAKE_INSTALL_PREFIX}${CONFIG_INSTALL_DIR} )
 kde4_footer()
 
 
