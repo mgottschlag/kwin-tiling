@@ -45,6 +45,10 @@ install_files( ${XDG_APPS_DIR} FILES panel.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
+install(FILES uninstall.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}${APPLNK_INSTALL_DIR}/Settings/LookNFeel/ RENAME panel.desktop)
+install(FILES uninstall.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}${APPLNK_INSTALL_DIR}/Settings/LookNFeel/ RENAME panel_appearance.desktop)
+install(FILES uninstall.desktop DESTINATION ${XDG_APPS_DIR} RENAME panel_appearance.desktop)
+
 kde4_footer()
 
 

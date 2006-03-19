@@ -38,6 +38,10 @@ install_files( ${XDG_APPS_DIR} FILES icons.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
+install(FILES uninstall.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}${APPLNK_INSTALL_DIR}/Settings/LookNFeel/Themes/ RENAME iconthemes.desktop)
+
+
+
 kde4_footer()
 
 

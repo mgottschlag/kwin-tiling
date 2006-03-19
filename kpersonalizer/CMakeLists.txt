@@ -43,6 +43,9 @@ install_files( ${XDG_APPS_DIR} FILES kpersonalizer.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
+install(FILES uninstall.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}${APPLNK_INSTALL_DIR}/System/ RENAME kpersonalizer.desktop)
+
+
 kde4_footer()
 
 
