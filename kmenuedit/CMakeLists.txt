@@ -51,7 +51,7 @@ install_files( ${DATA_INSTALL_DIR}/kmenuedit FILES kmenueditui.rc )
 
 install(FILES uninstall.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}${APPLNK_INSTALL_DIR}/System/ RENAME kmenuedit.desktop)
 
-kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR} hicolor )
 
 kde4_footer()
 
