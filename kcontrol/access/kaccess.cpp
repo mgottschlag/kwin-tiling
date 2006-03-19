@@ -339,7 +339,7 @@ void KAccessApp::initMasks() {
       keys [i] = -1;
    state = 0;
 
-   for (int i = 0; modifierKeys[i].name; i++) {
+   for (int i = 0; strcmp (modifierKeys[i].name, "") != 0; i++) {
       int mask = modifierKeys[i].mask;
       if (mask == 0)
          if (modifierKeys[i].keysym != 0)
