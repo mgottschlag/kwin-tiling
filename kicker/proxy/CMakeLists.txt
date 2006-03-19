@@ -22,7 +22,7 @@ kde4_automoc(${appletproxy_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( appletproxy ${appletproxy_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_appletproxy  ${QT_AND_KDECORE_LIBS} kdeui kickermain )
+target_link_libraries(kdeinit_appletproxy  ${LIB_KDEUI} kickermain )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_appletproxy )
 
