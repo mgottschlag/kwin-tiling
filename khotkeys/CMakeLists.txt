@@ -17,12 +17,11 @@ set(libshared_SRCS
 
 
 add_subdirectory( shared ) 
-#add_subdirectory( kcontrol ) 
+add_subdirectory( kcontrol ) 
 add_subdirectory( app ) 
 add_subdirectory( data ) 
 add_subdirectory( update ) 
 
-MESSAGE(STATUS "Reactiavte kcontrol")
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
