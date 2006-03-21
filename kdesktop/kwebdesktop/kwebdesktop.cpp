@@ -167,8 +167,7 @@ KParts::ReadOnlyPart* KWebDesktop::createPart( const QString& mimeType )
         htmlPart->view()->setHScrollBarMode( Q3ScrollView::AlwaysOff );
         htmlPart->view()->setVScrollBarMode( Q3ScrollView::AlwaysOff );
 
-        connect( htmlPart->widget(), SIGNAL( finishedLayout() ),
-                 this, SLOT( slotCompleted() ) );
+        connect( htmlPart, SIGNAL( completed() ), this, SLOT( slotCompleted() ) );
         m_part = htmlPart;
     } else {
         // Try to find an appropriate viewer component
