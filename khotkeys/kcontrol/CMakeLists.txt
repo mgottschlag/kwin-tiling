@@ -30,9 +30,7 @@ kde4_add_ui3_files(libui_SRCS
 	${CMAKE_SOURCE_DIR}/khotkeys/kcontrol/ui/gestures_settings_tab_ui.ui 
 	${CMAKE_SOURCE_DIR}/khotkeys/kcontrol/ui/general_settings_tab_ui.ui )
 
-qt4_generate_moc(actions_listview.h actions_listview.moc.cpp)
-
-set(kcm_khotkeys_PART_SRCS ${libui_SRCS} ${libshared_SRCS} actions_listview.moc.cpp
+set(kcm_khotkeys_PART_SRCS ${libui_SRCS} ${libshared_SRCS}
    menuedit.cpp 
    window_trigger_widget.cpp 
    tab_widget.cpp 
@@ -59,6 +57,10 @@ set(kcm_khotkeys_PART_SRCS ${libui_SRCS} ${libshared_SRCS} actions_listview.moc.
    windowselector.cpp 
    gestures_settings_tab.cpp 
    general_settings_tab.cpp )
+
+
+# run moc on actions_listview.h and add the resulting stuff to the kcm_khotkeys_PART_SRCS list
+qt4_wrap_cpp(kcm_khotkeys_PART_SRCS actions_listview.h)
 
 kde4_automoc(${kcm_khotkeys_PART_SRCS})
 
