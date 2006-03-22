@@ -13,7 +13,7 @@ kde4_add_kcfg_files(kwebdesktop_SRCS kwebdesktopsettings.kcfgc )
 
 kde4_add_executable(kwebdesktop ${kwebdesktop_SRCS})
 
-target_link_libraries(kwebdesktop  ${LIB_KPARTS} khtml )
+target_link_libraries(kwebdesktop  ${KDE4_KPARTS_LIBS} khtml )
 
 install_targets(/bin kwebdesktop )
 

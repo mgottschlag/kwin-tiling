@@ -15,7 +15,7 @@ kde4_add_kcfg_files(taskbar_LIB_SRCS taskbarsettings.kcfgc )
 
 kde4_add_library(taskbar SHARED ${taskbar_LIB_SRCS})
 
-target_link_libraries(taskbar  ${LIB_KDEUI} kdefx kutils kickermain taskmanager )
+target_link_libraries(taskbar  ${KDE4_KDEUI_LIBS} kdefx kutils kickermain taskmanager )
 
 set_target_properties(taskbar PROPERTIES VERSION 1.2.0 SOVERSION 1 )
 install_targets(${LIB_INSTALL_DIR} taskbar )

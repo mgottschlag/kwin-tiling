@@ -26,7 +26,7 @@ kde4_automoc(${kaccess_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kaccess ${kaccess_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kaccess  ${LIB_KDEUI}  )
+target_link_libraries(kdeinit_kaccess  ${KDE4_KDEUI_LIBS}  )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kaccess )
 

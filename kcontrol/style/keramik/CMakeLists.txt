@@ -13,7 +13,7 @@ kde4_add_plugin(kstyle_keramik_config ${kstyle_keramik_config_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kstyle_keramik_config )
 
-target_link_libraries(kstyle_keramik_config  ${LIB_KDEUI} )
+target_link_libraries(kstyle_keramik_config  ${KDE4_KDEUI_LIBS} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kstyle_keramik_config )
 

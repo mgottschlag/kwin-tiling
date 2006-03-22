@@ -30,7 +30,7 @@ kde4_automoc(${kdm_config_SRCS})
 
 kde4_add_executable(kdm_config ${kdm_config_SRCS})
 
-target_link_libraries(kdm_config  ${LIB_KDEUI} )
+target_link_libraries(kdm_config  ${KDE4_KDEUI_LIBS} )
 
 install_targets(/bin kdm_config )
 
@@ -54,7 +54,7 @@ kde4_automoc(${kdm_greet_SRCS})
 
 kde4_add_executable(kdm_greet ${kdm_greet_SRCS})
 
-target_link_libraries(kdm_greet  ${LIB_KDEUI} ${X11_XTest_LIB})
+target_link_libraries(kdm_greet  ${KDE4_KDEUI_LIBS} ${X11_XTest_LIB})
 
 install_targets(/bin kdm_greet )
 

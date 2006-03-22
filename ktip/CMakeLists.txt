@@ -15,7 +15,7 @@ kde4_automoc(${ktip_SRCS})
 
 kde4_add_executable(ktip ${ktip_SRCS})
 
-target_link_libraries(ktip  ${LIB_KDEUI})
+target_link_libraries(ktip  ${KDE4_KDEUI_LIBS})
 
 install_targets(/bin ktip )
 

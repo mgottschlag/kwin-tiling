@@ -13,7 +13,7 @@ kde4_automoc(${ksystraycmd_SRCS})
 
 kde4_add_executable(ksystraycmd ${ksystraycmd_SRCS})
 
-target_link_libraries(ksystraycmd  ${LIB_KDEUI} )
+target_link_libraries(ksystraycmd  ${KDE4_KDEUI_LIBS} )
 
 install_targets(/bin ksystraycmd )
 

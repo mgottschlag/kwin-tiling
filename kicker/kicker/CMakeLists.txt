@@ -37,7 +37,7 @@ kde4_automoc(${kicker_reverseLayout_SRCS})
 
 kde4_add_executable( kicker-3.4-reverseLayout ${kicker_reverseLayout_SRCS})
 
-target_link_libraries( kicker-3.4-reverseLayout ${LIB_KDEUI})
+target_link_libraries( kicker-3.4-reverseLayout ${KDE4_KDEUI_LIBS})
 
 install_targets(/lib/kconf_update_bin/ kicker-3.4-reverseLayout)
 

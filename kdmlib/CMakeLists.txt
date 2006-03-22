@@ -15,7 +15,7 @@ kde4_add_plugin(kgreet_classic ${kgreet_classic_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kgreet_classic )
 
-target_link_libraries(kgreet_classic  ${LIB_KDEUI})
+target_link_libraries(kgreet_classic  ${KDE4_KDEUI_LIBS})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kgreet_classic )
 
@@ -30,7 +30,7 @@ kde4_add_plugin(kgreet_winbind ${kgreet_winbind_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kgreet_winbind )
 
-target_link_libraries(kgreet_winbind  ${LIB_KDEUI})
+target_link_libraries(kgreet_winbind  ${KDE4_KDEUI_LIBS})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kgreet_winbind )
 
