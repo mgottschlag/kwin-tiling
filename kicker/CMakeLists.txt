@@ -57,6 +57,7 @@ set(libkicker_ui_SRCS
     ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/addappletvisualfeedback.cpp
 )
 
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 add_subdirectory( libkicker ) 
 add_subdirectory( taskmanager ) 
@@ -69,7 +70,6 @@ add_subdirectory( proxy )
 add_subdirectory( data ) 
 
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 
 ########### install files ###############

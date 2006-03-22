@@ -18,6 +18,9 @@ set( kcmbackgroundlib_SRCS
     ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgwallpaper.cpp
 )
 
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/lib )
+
 add_subdirectory( lib ) 
 add_subdirectory( kdmlib )
 add_subdirectory( kwin ) 
@@ -35,7 +38,6 @@ if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 	#add_subdirectory( kdm )
 endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
 
 ########### install files ###############
 
