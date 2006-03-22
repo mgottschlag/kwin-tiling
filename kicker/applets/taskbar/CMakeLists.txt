@@ -13,7 +13,7 @@ kde4_add_plugin(taskbar_panelapplet ${taskbar_panelapplet_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} taskbar_panelapplet )
 
-target_link_libraries(taskbar_panelapplet  ${QT_AND_KDECORE_LIBS} kdeui taskbar kickermain )
+target_link_libraries(taskbar_panelapplet  ${KDE4_KDECORE_LIBS} kdeui taskbar kickermain )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 taskbar_panelapplet )
 

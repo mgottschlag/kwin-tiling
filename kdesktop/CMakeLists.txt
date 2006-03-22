@@ -24,7 +24,7 @@ kde4_automoc(${kcheckrunning_SRCS})
 
 kde4_add_executable(kcheckrunning ${kcheckrunning_SRCS})
 
-target_link_libraries(kcheckrunning  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(kcheckrunning  ${KDE4_KDECORE_LIBS} )
 
 install_targets(/bin kcheckrunning )
 

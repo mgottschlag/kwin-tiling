@@ -16,7 +16,7 @@ kde4_add_plugin(kcm_fonts ${kcm_fonts_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_fonts )
 
-target_link_libraries(kcm_fonts  ${QT_AND_KDECORE_LIBS} kxftconfig krdb kdeui )
+target_link_libraries(kcm_fonts  ${KDE4_KDECORE_LIBS} kxftconfig krdb kdeui )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_fonts )
 

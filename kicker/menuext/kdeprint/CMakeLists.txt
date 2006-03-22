@@ -13,7 +13,7 @@ kde4_add_plugin(kickermenu_kdeprint ${kickermenu_kdeprint_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_kdeprint )
 
-target_link_libraries(kickermenu_kdeprint  ${QT_AND_KDECORE_LIBS} kdeui kio kdeprint kickermain )
+target_link_libraries(kickermenu_kdeprint  ${KDE4_KDECORE_LIBS} kdeui kio kdeprint kickermain )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kickermenu_kdeprint )
 

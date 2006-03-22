@@ -11,7 +11,7 @@ kde4_automoc(${extensiondebugger_SRCS})
 
 kde4_add_executable(extensiondebugger ${extensiondebugger_SRCS})
 
-target_link_libraries(extensiondebugger  ${QT_AND_KDECORE_LIBS} kickermain )
+target_link_libraries(extensiondebugger  ${KDE4_KDECORE_LIBS} kickermain )
 
 
 ########### next target ###############

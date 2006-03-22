@@ -11,7 +11,7 @@ kde4_automoc(${taskmanager_LIB_SRCS})
 
 kde4_add_library(taskmanager SHARED ${taskmanager_LIB_SRCS})
 
-target_link_libraries(taskmanager  ${QT_AND_KDECORE_LIBS} kickermain )
+target_link_libraries(taskmanager  ${KDE4_KDECORE_LIBS} kickermain )
 
 set_target_properties(taskmanager PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install_targets(${LIB_INSTALL_DIR} taskmanager )

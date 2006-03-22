@@ -15,7 +15,7 @@ kde4_add_plugin(kcm_arts ${kcm_arts_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_arts )
 
-target_link_libraries(kcm_arts  ${QT_AND_KDECORE_LIBS} kio kutils kmid )
+target_link_libraries(kcm_arts  ${KDE4_KDECORE_LIBS} kio kutils kmid )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_arts )
 

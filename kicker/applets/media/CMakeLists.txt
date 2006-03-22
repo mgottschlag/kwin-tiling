@@ -13,7 +13,7 @@ kde4_add_plugin(media_panelapplet ${media_panelapplet_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} media_panelapplet )
 
-target_link_libraries(media_panelapplet  ${QT_AND_KDECORE_LIBS} konq kickermain kdeui kio kutils )
+target_link_libraries(media_panelapplet  ${KDE4_KDECORE_LIBS} konq kickermain kdeui kio kutils )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 media_panelapplet )
 

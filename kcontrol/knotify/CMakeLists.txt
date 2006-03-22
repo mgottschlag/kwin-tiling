@@ -15,7 +15,7 @@ kde4_add_plugin(kcm_knotify ${kcm_knotify_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_knotify )
 
-target_link_libraries(kcm_knotify  ${QT_AND_KDECORE_LIBS} kio knotifyconfig ${QT_QTGUI_LIBRARY} kdeui)
+target_link_libraries(kcm_knotify  ${KDE4_KDECORE_LIBS} kio knotifyconfig ${QT_QTGUI_LIBRARY} kdeui)
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_knotify )
 

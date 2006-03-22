@@ -13,7 +13,7 @@ kde4_add_plugin(kfile_font ${kfile_font_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kfile_font )
 
-target_link_libraries(kfile_font  ${QT_AND_KDECORE_LIBS} kio kfontinst )
+target_link_libraries(kfile_font  ${KDE4_KDECORE_LIBS} kio kfontinst )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kfile_font )
 

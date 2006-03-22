@@ -24,7 +24,7 @@ kde4_add_plugin(kcm_locale ${kcm_locale_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_locale )
 
-target_link_libraries(kcm_locale  ${QT_AND_KDECORE_LIBS} kio ${QT_QTGUI_LIBRARY} kdeui ${QT_QT3SUPPORT_LIBRARY})
+target_link_libraries(kcm_locale  ${KDE4_KDECORE_LIBS} kio ${QT_QTGUI_LIBRARY} kdeui ${QT_QT3SUPPORT_LIBRARY})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_locale )
 

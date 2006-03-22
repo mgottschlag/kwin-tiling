@@ -13,7 +13,7 @@ kde4_add_plugin(trash_panelapplet ${trash_panelapplet_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} trash_panelapplet )
 
-target_link_libraries(trash_panelapplet  ${QT_AND_KDECORE_LIBS} kickermain konq kdeui kio kutils )
+target_link_libraries(trash_panelapplet  ${KDE4_KDECORE_LIBS} kickermain konq kdeui kio kutils )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 trash_panelapplet )
 

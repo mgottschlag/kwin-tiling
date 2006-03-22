@@ -19,7 +19,7 @@ kde4_automoc(${kcheckpass_SRCS})
 
 kde4_add_executable(kcheckpass ${kcheckpass_SRCS})
 
-target_link_libraries(kcheckpass  ${QT_AND_KDECORE_LIBS} kdefakes )
+target_link_libraries(kcheckpass  ${KDE4_KDECORE_LIBS} kdefakes )
 
 install_targets(/bin kcheckpass )
 

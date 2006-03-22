@@ -20,7 +20,7 @@ kde4_automoc(${klipper_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( klipper ${klipper_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_klipper  ${QT_AND_KDECORE_LIBS}  )
+target_link_libraries(kdeinit_klipper  ${KDE4_KDECORE_LIBS}  )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_klipper )
 
@@ -39,7 +39,7 @@ kde4_add_plugin(klipper_panelapplet ${klipper_panelapplet_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} klipper_panelapplet )
 
-target_link_libraries(klipper_panelapplet  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(klipper_panelapplet  ${KDE4_KDECORE_LIBS} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 klipper_panelapplet )
 

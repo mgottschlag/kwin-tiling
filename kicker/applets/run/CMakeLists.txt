@@ -13,7 +13,7 @@ kde4_add_plugin(run_panelapplet ${run_panelapplet_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} run_panelapplet )
 
-target_link_libraries(run_panelapplet  ${QT_AND_KDECORE_LIBS} kworkspace kdeui kickermain )
+target_link_libraries(run_panelapplet  ${KDE4_KDECORE_LIBS} kworkspace kdeui kickermain )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 run_panelapplet )
 

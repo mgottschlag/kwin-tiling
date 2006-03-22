@@ -13,7 +13,7 @@ kde4_add_plugin(sidebar_panelextension ${sidebar_panelextension_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} sidebar_panelextension )
 
-target_link_libraries(sidebar_panelextension  ${QT_AND_KDECORE_LIBS} kickermain kdeui kparts konq )
+target_link_libraries(sidebar_panelextension  ${KDE4_KDECORE_LIBS} kickermain kdeui kparts konq )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 sidebar_panelextension )
 

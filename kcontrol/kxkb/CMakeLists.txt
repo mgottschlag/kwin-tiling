@@ -19,7 +19,7 @@ kde4_add_dcop_skels(kxkb_KDEINIT_SRCS kxkb.h )
 
 kde4_add_kdeinit_executable( kxkb ${kxkb_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kxkb  ${QT_AND_KDECORE_LIBS} xkbfile X11 Xext kdeui )
+target_link_libraries(kdeinit_kxkb  ${KDE4_KDECORE_LIBS} xkbfile X11 Xext kdeui )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kxkb )
 
@@ -43,7 +43,7 @@ kde4_add_plugin(kcm_keyboard ${kcm_keyboard_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_keyboard )
 
-target_link_libraries(kcm_keyboard  ${QT_AND_KDECORE_LIBS} xkbfile kio )
+target_link_libraries(kcm_keyboard  ${KDE4_KDECORE_LIBS} xkbfile kio )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_keyboard )
 

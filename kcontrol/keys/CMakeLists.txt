@@ -18,7 +18,7 @@ kde4_add_plugin(kcm_keys ${kcm_keys_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_keys )
 
-target_link_libraries(kcm_keys  ${QT_AND_KDECORE_LIBS} kdeui kio ${QT_QT3SUPPORT_LIBRARY} ${QT_QTGUI_LIBRARY} ${X11_X11_LIB})
+target_link_libraries(kcm_keys  ${KDE4_KDECORE_LIBS} kdeui kio ${QT_QT3SUPPORT_LIBRARY} ${QT_QTGUI_LIBRARY} ${X11_X11_LIB})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_keys )
 

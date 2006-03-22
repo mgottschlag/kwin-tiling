@@ -33,7 +33,7 @@ kde4_add_plugin(kcm_kicker ${kcm_kicker_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kicker )
 
-target_link_libraries(kcm_kicker  ${QT_AND_KDECORE_LIBS} kickermain bgnd kio kutils )
+target_link_libraries(kcm_kicker  ${KDE4_KDECORE_LIBS} kickermain bgnd kio kutils )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kicker )
 

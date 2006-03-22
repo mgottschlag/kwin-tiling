@@ -16,7 +16,7 @@ kde4_add_plugin(kfontviewpart WITH_PREFIX ${kfontviewpart_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kfontviewpart )
 
-target_link_libraries(kfontviewpart  ${QT_AND_KDECORE_LIBS} kparts kfontinstprint kfontinst )
+target_link_libraries(kfontviewpart  ${KDE4_KDECORE_LIBS} kparts kfontinstprint kfontinst )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kfontviewpart )
 
@@ -29,7 +29,7 @@ kde4_automoc(${kfontview_SRCS})
 
 kde4_add_executable(kfontview ${kfontview_SRCS})
 
-target_link_libraries(kfontview  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(kfontview  ${KDE4_KDECORE_LIBS} )
 
 install_targets(/bin kfontview )
 

@@ -18,7 +18,7 @@ kde4_automoc(${kfontinst_SRCS})
 
 kde4_add_executable(kfontinst ${kfontinst_SRCS})
 
-target_link_libraries(kfontinst  ${QT_AND_KDECORE_LIBS} kxftconfig kio kfontinst )
+target_link_libraries(kfontinst  ${KDE4_KDECORE_LIBS} kxftconfig kio kfontinst )
 
 install_targets(/bin kfontinst )
 

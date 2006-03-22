@@ -80,7 +80,7 @@ kde4_automoc(${genkdmconf_SRCS})
 
 kde4_add_executable(genkdmconf ${genkdmconf_SRCS})
 
-target_link_libraries(genkdmconf  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(genkdmconf  ${KDE4_KDECORE_LIBS} )
 
 install_targets(/bin genkdmconf )
 
@@ -93,7 +93,7 @@ kde4_automoc(${kdmctl_SRCS})
 
 kde4_add_executable(kdmctl ${kdmctl_SRCS})
 
-target_link_libraries(kdmctl  ${QT_AND_KDECORE_LIBS} )
+target_link_libraries(kdmctl  ${KDE4_KDECORE_LIBS} )
 
 install_targets(/bin kdmctl )
 

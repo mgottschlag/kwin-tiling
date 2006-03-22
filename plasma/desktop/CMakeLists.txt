@@ -11,7 +11,7 @@ kde4_automoc(${pdesktop_SRCS})
 
 kde4_add_executable(pdesktop ${pdesktop_SRCS})
 
-target_link_libraries(pdesktop  ${QT_AND_KDECORE_LIBS} plasma kio )
+target_link_libraries(pdesktop  ${KDE4_KDECORE_LIBS} plasma kio )
 
 install_targets(/bin pdesktop )
 

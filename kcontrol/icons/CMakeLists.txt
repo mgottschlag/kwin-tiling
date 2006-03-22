@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_icons ${kcm_icons_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_icons )
 
-target_link_libraries(kcm_icons  ${QT_AND_KDECORE_LIBS} kio ${QT_QTGUI_LIBRARY} kdeui ${QT_QT3SUPPORT_LIBRARY})
+target_link_libraries(kcm_icons  ${KDE4_KDECORE_LIBS} kio ${QT_QTGUI_LIBRARY} kdeui ${QT_QT3SUPPORT_LIBRARY})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_icons )
 
@@ -28,7 +28,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(testicons ${testicons_SRCS})
 
-target_link_libraries(testicons  ${QT_AND_KDECORE_LIBS} kdeui )
+target_link_libraries(testicons  ${KDE4_KDECORE_LIBS} kdeui )
 
 endif(KDE4_BUILD_TESTS)
 

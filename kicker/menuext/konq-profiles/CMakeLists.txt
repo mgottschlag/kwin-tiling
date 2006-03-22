@@ -13,7 +13,7 @@ kde4_add_plugin(kickermenu_konqueror ${kickermenu_konqueror_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_konqueror )
 
-target_link_libraries(kickermenu_konqueror  ${QT_AND_KDECORE_LIBS} kdeui kio kickermain )
+target_link_libraries(kickermenu_konqueror  ${KDE4_KDECORE_LIBS} kdeui kio kickermain )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kickermenu_konqueror )
 
