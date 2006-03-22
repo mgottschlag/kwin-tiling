@@ -631,7 +631,7 @@ void PanelServiceMenu::mouseMoveEvent(QMouseEvent * ev)
 
         case KST_KService:
         {
-            icon = KService::Ptr::staticCast(e)->pixmap(KIcon::Small);
+            icon = KService::Ptr::staticCast(e)->pixmap(K3Icon::Small);
             QString filePath = KService::Ptr::staticCast(e)->desktopEntryPath();
             if (filePath[0] != '/')
             {
@@ -645,7 +645,7 @@ void PanelServiceMenu::mouseMoveEvent(QMouseEvent * ev)
         {
             KServiceGroup::Ptr g = KServiceGroup::Ptr::staticCast(e);
             icon = KGlobal::iconLoader()
-                   ->loadIcon(g->icon(), KIcon::Small);
+                   ->loadIcon(g->icon(), K3Icon::Small);
             url = "programs:/" + g->relPath();
             break;
         }

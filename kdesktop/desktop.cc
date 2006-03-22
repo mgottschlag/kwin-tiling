@@ -614,7 +614,7 @@ void KDesktop::slotSettingsChanged(int category)
 
 void KDesktop::slotIconChanged(int group)
 {
-    if ( group == KIcon::Desktop )
+    if ( group == K3Icon::Desktop )
     {
         kDebug(1204) << "KDesktop::slotIconChanged" << endl;
         refresh();

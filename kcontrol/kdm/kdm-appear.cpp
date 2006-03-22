@@ -427,7 +427,7 @@ void KDMAppearanceWidget::save()
   config->writeEntry("LogoArea", noneRadio->isChecked() ? "None" :
 			    logoRadio->isChecked() ? "Logo" : "Clock" );
 
-  config->writeEntry("LogoPixmap", KGlobal::iconLoader()->iconPath(logopath, KIcon::Desktop, true));
+  config->writeEntry("LogoPixmap", KGlobal::iconLoader()->iconPath(logopath, K3Icon::Desktop, true));
 
   config->writeEntry("GUIStyle", guicombo->currentId());
 

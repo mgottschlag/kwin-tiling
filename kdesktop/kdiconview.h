@@ -131,7 +131,7 @@ protected Q_SLOTS:
     // slots connected to the popupmenu (actions)
     void slotCut();
     void slotCopy();
-    void slotTrashActivated( KAction::ActivationReason reason, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers );
+    void slotTrash();
     void slotDelete();
     void slotPopupPasteTo();
     void slotProperties();

@@ -72,7 +72,7 @@ void ModuleMenu::fill(KMenu *parentMenu, const QString &parentPath)
      QString name = group->caption();
      name.replace("&", "&&");
   
-     parentMenu->insertItem(KGlobal::iconLoader()->loadIcon(group->icon(), KIcon::Desktop, KIcon::SizeSmall)
+     parentMenu->insertItem(KGlobal::iconLoader()->loadIcon(group->icon(), K3Icon::Desktop, K3Icon::SizeSmall)
                         , name, menu);
 
      fill(menu, path);
@@ -87,7 +87,7 @@ void ModuleMenu::fill(KMenu *parentMenu, const QString &parentPath)
      QString name = module->moduleName();
      name.replace("&", "&&");
 
-     int realid = parentMenu->insertItem(KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall)
+     int realid = parentMenu->insertItem(KGlobal::iconLoader()->loadIcon(module->icon(), K3Icon::Desktop, K3Icon::SizeSmall)
                                      , name, id);
      _moduleDict.insert(realid, module);
 

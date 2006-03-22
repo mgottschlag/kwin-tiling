@@ -41,7 +41,7 @@ class ModuleItem : public Q3ListBoxPixmap
 public:
  ModuleItem(ConfigModule *module, Q3ListBox * listbox = 0) :
 	Q3ListBoxPixmap(listbox,
-      KGlobal::iconLoader()->loadIcon(module->icon(), KIcon::Desktop, KIcon::SizeSmall),
+      KGlobal::iconLoader()->loadIcon(module->icon(), K3Icon::Desktop, K3Icon::SizeSmall),
       module->moduleName())
   , m_module(module)
  { 

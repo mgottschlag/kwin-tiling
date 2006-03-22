@@ -106,8 +106,8 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
         }
 
         QPixmap iconPix(kapp->iconLoader()->loadIcon(icon,
-                                                     KIcon::Small, 0,
-                                                     KIcon::DefaultState,
+                                                     K3Icon::Small, 0,
+                                                     K3Icon::DefaultState,
                                                      0, true));
         insertItem(QIcon(iconPix), i18n("&About %1").arg( titleText ), About);
         needSeparator = !(actions & Plasma::Help);

@@ -125,7 +125,7 @@ void QuickURL::run() const
 }
 
 //similar to MimeType::pixmapForURL
-QPixmap QuickURL::pixmap( mode_t _mode, KIcon::Group _group,
+QPixmap QuickURL::pixmap( mode_t _mode, K3Icon::Group _group,
                           int _force_size, int _state, QString *) const
 {  // Load icon
    QPixmap pxmap = KMimeType::pixmapForURL(_kurl, _mode, _group, _force_size, _state);
@@ -202,8 +202,8 @@ void QuickButton::loadIcon()
 {  // Set Icon Dimension from size
    _iconDim=std::min(size().width(),size().height())-2*ICON_MARGIN;
    // Load icons
-   _icon = _qurl->pixmap(0, KIcon::Panel, _iconDim, KIcon::DefaultState);
-   _iconh = _qurl->pixmap(0, KIcon::Panel, _iconDim, KIcon::ActiveState);
+   _icon = _qurl->pixmap(0, K3Icon::Panel, _iconDim, K3Icon::DefaultState);
+   _iconh = _qurl->pixmap(0, K3Icon::Panel, _iconDim, K3Icon::ActiveState);
 }
 
 void QuickButton::resizeEvent(QResizeEvent *)
@@ -372,7 +372,7 @@ void QuickButton::updateTipData(KickerTip::Data &data)
         data.subtext = data.message;
     }
     data.icon = KMimeType::pixmapForURL(_qurl->kurl(), 0,
-        KIcon::Panel, KIcon::SizeHuge, KIcon::DefaultState);
+        K3Icon::Panel, K3Icon::SizeHuge, K3Icon::DefaultState);
 }
 
 void QuickButton::setPopupDirection(Plasma::Position d)

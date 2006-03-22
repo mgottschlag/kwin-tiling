@@ -631,7 +631,7 @@ void KEyeCandyPage::save(bool currSettings){
 	// kicker stuff: Iconzooming etc.
 	kapp->dcopClient()->send( "kicker", "Panel", "configure()", QByteArray("") );
 	// Icon stuff
-	for (int i=0; i<KIcon::LastGroup; i++) {
+	for (int i=0; i<K3Icon::LastGroup; i++) {
 		KIPC::sendMessageAll(KIPC::IconChanged, i);
 	}
 	// font stuff

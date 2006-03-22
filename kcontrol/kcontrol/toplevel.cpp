@@ -65,13 +65,13 @@ TopLevel::TopLevel(const char* name)
 
   QString size = config->readEntry("IconSize", "Medium");
   if (size == "Small")
-    KCGlobal::setIconSize(KIcon::SizeSmall);
+    KCGlobal::setIconSize(K3Icon::SizeSmall);
   else if (size == "Large")
-    KCGlobal::setIconSize(KIcon::SizeLarge);
+    KCGlobal::setIconSize(K3Icon::SizeLarge);
   else if (size == "Huge")
-    KCGlobal::setIconSize(KIcon::SizeHuge);
+    KCGlobal::setIconSize(K3Icon::SizeHuge);
   else
-    KCGlobal::setIconSize(KIcon::SizeMedium);
+    KCGlobal::setIconSize(K3Icon::SizeMedium);
 
   // initialize the entries
   _modules = new ConfigModuleList();
@@ -152,8 +152,8 @@ TopLevel::TopLevel(const char* name)
                SLOT( activateModule( ConfigModule * ) ) );
       _dock->setBaseWidget( aw );
       KWin::setIcons(  winId(),
-		       KGlobal::iconLoader()->loadIcon("hwinfo",  KIcon::NoGroup,  32 ),
-		       KGlobal::iconLoader()->loadIcon("hwinfo",  KIcon::NoGroup,  16 ) );
+		       KGlobal::iconLoader()->loadIcon("hwinfo",  K3Icon::NoGroup,  32 ),
+		       KGlobal::iconLoader()->loadIcon("hwinfo",  K3Icon::NoGroup,  16 ) );
   }
   else
   {
@@ -175,13 +175,13 @@ TopLevel::~TopLevel()
 
   switch (KCGlobal::iconSize())
     {
-    case KIcon::SizeSmall:
+    case K3Icon::SizeSmall:
       config->writeEntry("IconSize", "Small");
       break;
-    case KIcon::SizeLarge:
+    case K3Icon::SizeLarge:
       config->writeEntry("IconSize", "Large");
       break;
-    case KIcon::SizeHuge:
+    case K3Icon::SizeHuge:
       config->writeEntry("IconSize", "Huge");
       break;
     default:
@@ -207,35 +207,40 @@ void TopLevel::setupActions()
   KStdAction::quit(this, SLOT(close()), actionCollection());
   KStdAction::keyBindings(guiFactory(), SLOT(configureShortcuts()),
                           actionCollection());
-  icon_view = new KRadioAction
+
+  QActionGroup* viewModeGroup = new QActionGroup(this);
+
+  icon_view = new KToggleAction
     (i18n("&Icon View"), 0, this, SLOT(activateIconView()),
      actionCollection(), "activate_iconview");
-  icon_view->setExclusiveGroup( "viewmode" );
+  icon_view->setActionGroup(viewModeGroup);
 
-  tree_view = new KRadioAction
+  tree_view = new KToggleAction
     (i18n("&Tree View"), 0, this, SLOT(activateTreeView()),
      actionCollection(), "activate_treeview");
-  tree_view->setExclusiveGroup( "viewmode" );
+  tree_view->setActionGroup(viewModeGroup);
 
-  icon_small = new KRadioAction
+  QActionGroup* iconSizeGroup = new QActionGroup(this);
+
+  icon_small = new KToggleAction
     (i18n("&Small"), 0, this, SLOT(activateSmallIcons()),
      actionCollection(), "activate_smallicons");
-  icon_small->setExclusiveGroup( "iconsize" );
+  icon_small->setActionGroup(iconSizeGroup);
 
-  icon_medium = new KRadioAction
+  icon_medium = new KToggleAction
     (i18n("&Medium"), 0, this, SLOT(activateMediumIcons()),
      actionCollection(), "activate_mediumicons");
-  icon_medium->setExclusiveGroup( "iconsize" );
+  icon_medium->setActionGroup(iconSizeGroup);
 
-  icon_large = new KRadioAction
+  icon_large = new KToggleAction
     (i18n("&Large"), 0, this, SLOT(activateLargeIcons()),
      actionCollection(), "activate_largeicons");
-  icon_large->setExclusiveGroup( "iconsize" );
+  icon_large->setActionGroup(iconSizeGroup);
 
-  icon_huge = new KRadioAction
+  icon_huge = new KToggleAction
     (i18n("&Huge"), 0, this, SLOT(activateHugeIcons()),
      actionCollection(), "activate_hugeicons");
-  icon_huge->setExclusiveGroup( "iconsize" );
+  icon_huge->setActionGroup(iconSizeGroup);
 
   about_module = new KAction(i18n("About Current Module"), 0, this, SLOT(aboutModule()), actionCollection(), "help_about_module");
   about_module->setEnabled(false);
@@ -265,13 +270,13 @@ void TopLevel::activateIconView()
 
   switch(KCGlobal::iconSize())
     {
-    case KIcon::SizeSmall:
+    case K3Icon::SizeSmall:
       icon_small->setChecked(true);
       break;
-    case KIcon::SizeLarge:
+    case K3Icon::SizeLarge:
       icon_large->setChecked(true);
       break;
-    case KIcon::SizeHuge:
+    case K3Icon::SizeHuge:
       icon_huge->setChecked(true);
       break;
     default:
@@ -293,25 +298,25 @@ void TopLevel::activateTreeView()
 
 void TopLevel::activateSmallIcons()
 {
-  KCGlobal::setIconSize(KIcon::SizeSmall);
+  KCGlobal::setIconSize(K3Icon::SizeSmall);
   _indextab->reload();
 }
 
 void TopLevel::activateMediumIcons()
 {
-  KCGlobal::setIconSize(KIcon::SizeMedium);
+  KCGlobal::setIconSize(K3Icon::SizeMedium);
   _indextab->reload();
 }
 
 void TopLevel::activateLargeIcons()
 {
-  KCGlobal::setIconSize(KIcon::SizeLarge);
+  KCGlobal::setIconSize(K3Icon::SizeLarge);
   _indextab->reload();
 }
 
 void TopLevel::activateHugeIcons()
 {
-  KCGlobal::setIconSize(KIcon::SizeHuge);
+  KCGlobal::setIconSize(K3Icon::SizeHuge);
   _indextab->reload();
 }
 
@@ -360,7 +365,7 @@ void TopLevel::categorySelected(Q3ListViewItem *category)
   }
   _dock->removeModule();
   about_module->setText( i18n( "About Current Module" ) );
-  about_module->setIcon( QIcon() );
+  about_module->setIcon( KIcon() );
   about_module->setEnabled( false );
 
   // insert the about widget
@@ -408,13 +413,13 @@ void TopLevel::activateModule(ConfigModule *mod)
   {
      about_module->setText(i18n("Help menu->about <modulename>", "About %1").arg(
                              handleAmpersand( mod->moduleName())));
-     about_module->setIcon(mod->icon());
+     about_module->setIcon(KIcon(mod->icon()));
      about_module->setEnabled(true);
   }
   else
   {
      about_module->setText(i18n("About Current Module"));
-     about_module->setIcon(QIcon());
+     about_module->setIcon(KIcon());
      about_module->setEnabled(false);
   }
 }

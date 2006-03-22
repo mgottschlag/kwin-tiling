@@ -356,16 +356,16 @@ void IconThemesConfig::themeSelected(Q3ListViewItem *item)
   if (!icontheme.isValid()) kDebug() << "notvalid\n";
 
   updateRemoveButton();
-  const int size = icontheme.defaultSize(KIcon::Desktop);
+  const int size = icontheme.defaultSize(K3Icon::Desktop);
 
-  KIcon icon=icontheme.iconPath("exec.png", size, KIcon::MatchBest);
+  K3Icon icon=icontheme.iconPath("exec.png", size, K3Icon::MatchBest);
   if (!icon.isValid()) {
 #ifdef HAVE_LIBAGG
-	  icon=icontheme.iconPath("exec.svg", size, KIcon::MatchBest);
+	  icon=icontheme.iconPath("exec.svg", size, K3Icon::MatchBest);
 	  if(engine.load(size, size, icon.path))
               m_previewExec->setPixmap(QPixmap(*engine.image()));
           else {
-              icon=icontheme.iconPath("exec.svgz", size, KIcon::MatchBest);
+              icon=icontheme.iconPath("exec.svgz", size, K3Icon::MatchBest);
               if(engine.load(size, size, icon.path))
                   m_previewExec->setPixmap(QPixmap(*engine.image()));
           }
@@ -374,14 +374,14 @@ void IconThemesConfig::themeSelected(Q3ListViewItem *item)
   else
           m_previewExec->setPixmap(QPixmap(icon.path));
 
-  icon=icontheme.iconPath("folder.png",size,KIcon::MatchBest);
+  icon=icontheme.iconPath("folder.png",size,K3Icon::MatchBest);
   if (!icon.isValid()) {
 #ifdef HAVE_LIBAGG
-	  icon=icontheme.iconPath("folder.svg", size, KIcon::MatchBest);
+	  icon=icontheme.iconPath("folder.svg", size, K3Icon::MatchBest);
 	  if(engine.load(size, size, icon.path))
               m_previewFolder->setPixmap(QPixmap(*engine.image()));
           else {
-              icon=icontheme.iconPath("folder.svgz", size, KIcon::MatchBest);
+              icon=icontheme.iconPath("folder.svgz", size, K3Icon::MatchBest);
               if(engine.load(size, size, icon.path))
                   m_previewFolder->setPixmap(QPixmap(*engine.image()));
           }
@@ -390,14 +390,14 @@ void IconThemesConfig::themeSelected(Q3ListViewItem *item)
   else
   	  m_previewFolder->setPixmap(QPixmap(icon.path));
 
-  icon=icontheme.iconPath("txt.png",size,KIcon::MatchBest);
+  icon=icontheme.iconPath("txt.png",size,K3Icon::MatchBest);
   if (!icon.isValid()) {
 #ifdef HAVE_LIBAGG
-	  icon=icontheme.iconPath("txt.svg", size, KIcon::MatchBest);
+	  icon=icontheme.iconPath("txt.svg", size, K3Icon::MatchBest);
 	  if(engine.load(size, size, icon.path))
               m_previewDocument->setPixmap(QPixmap(*engine.image()));
           else {
-              icon=icontheme.iconPath("txt.svgz", size, KIcon::MatchBest);
+              icon=icontheme.iconPath("txt.svgz", size, K3Icon::MatchBest);
               if(engine.load(size, size, icon.path))
                   m_previewDocument->setPixmap(QPixmap(*engine.image()));
           }
@@ -433,7 +433,7 @@ void IconThemesConfig::save()
 
   delete config;
 
-  for (int i=0; i<KIcon::LastGroup; i++)
+  for (int i=0; i<K3Icon::LastGroup; i++)
   {
     // TODO BUG  KAPP::KIPC::IconChanged is _NEVER_ getting called WHY?
     KIPC::sendMessageAll(KIPC::IconChanged, i);

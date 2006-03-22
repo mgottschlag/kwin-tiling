@@ -470,7 +470,7 @@ void KTheme::apply()
         }
         iconConf->sync();
 
-        for ( int i = 0; i < KIcon::LastGroup; i++ )
+        for ( int i = 0; i < K3Icon::LastGroup; i++ )
             KIPC::sendMessageAll( KIPC::IconChanged, i );
         KService::rebuildKSycoca( m_parent );
     }

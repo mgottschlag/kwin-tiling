@@ -47,8 +47,10 @@
 #include <konqmimedata.h>
 
 MediumButton::MediumButton(QWidget *parent, const KFileItem &fileItem)
-	: PanelPopupButton(parent), mActions(this, this), mFileItem(fileItem)
+	: PanelPopupButton(parent), mActions(this), mFileItem(fileItem)
 {
+	mActions.setAssociatedWidget(this);
+
 	KAction *a = KStdAction::paste(this, SLOT(slotPaste()),
 	                               &mActions, "pasteto");
 	a->setShortcut(0);

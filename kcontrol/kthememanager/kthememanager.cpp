@@ -373,7 +373,7 @@ void kthememanager::queryLNFModules()
         if ( p->isType( KST_KService ) )
         {
             KService *s = static_cast<KService *>( p );
-            ( void ) new KThemeDetailsItem( dlg->lvDetails, s->name(), s->pixmap( KIcon::Desktop ), s->exec() );
+            ( void ) new KThemeDetailsItem( dlg->lvDetails, s->name(), s->pixmap( K3Icon::Desktop ), s->exec() );
         }
     }
 
@@ -381,12 +381,12 @@ void kthememanager::queryLNFModules()
 
     // For now use a static list
     KIconLoader * il = KGlobal::iconLoader();
-    dlg->btnBackground->setIcon( il->loadIconSet( "background", KIcon::Desktop, 32 ) );
-    dlg->btnColors->setIcon( il->loadIconSet( "colorscm", KIcon::Desktop, 32 ) );
-    dlg->btnStyle->setIcon( il->loadIconSet( "style", KIcon::Desktop, 32 ) );
-    dlg->btnIcons->setIcon( il->loadIconSet( "icons", KIcon::Desktop, 32 ) );
-    dlg->btnFonts->setIcon( il->loadIconSet( "fonts", KIcon::Desktop, 32 ) );
-    dlg->btnSaver->setIcon( il->loadIconSet( "kscreensaver", KIcon::Desktop, 32 ) );
+    dlg->btnBackground->setIcon( il->loadIconSet( "background", K3Icon::Desktop, 32 ) );
+    dlg->btnColors->setIcon( il->loadIconSet( "colorscm", K3Icon::Desktop, 32 ) );
+    dlg->btnStyle->setIcon( il->loadIconSet( "style", K3Icon::Desktop, 32 ) );
+    dlg->btnIcons->setIcon( il->loadIconSet( "icons", K3Icon::Desktop, 32 ) );
+    dlg->btnFonts->setIcon( il->loadIconSet( "fonts", K3Icon::Desktop, 32 ) );
+    dlg->btnSaver->setIcon( il->loadIconSet( "kscreensaver", K3Icon::Desktop, 32 ) );
 }
 
 void kthememanager::updatePreview( const QString & pixFile )

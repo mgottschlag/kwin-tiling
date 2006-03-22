@@ -86,10 +86,10 @@ KCustomMenu::insertMenuItem(KService::Ptr & s, int nId, int nIndex/*= -1*/)
     // to accelators, replace them with two ampersands.
     serviceName.replace("&", "&&");
 
-    QPixmap normal = KGlobal::instance()->iconLoader()->loadIcon(s->icon(), KIcon::Small,
-                                                                 0, KIcon::DefaultState, 0L, true);
-    QPixmap active = KGlobal::instance()->iconLoader()->loadIcon(s->icon(), KIcon::Small,
-                                                                 0, KIcon::ActiveState, 0L, true);
+    QPixmap normal = KGlobal::instance()->iconLoader()->loadIcon(s->icon(), K3Icon::Small,
+                                                                 0, K3Icon::DefaultState, 0L, true);
+    QPixmap active = KGlobal::instance()->iconLoader()->loadIcon(s->icon(), K3Icon::Small,
+                                                                 0, K3Icon::ActiveState, 0L, true);
     // make sure they are not larger than 16x16
     if (normal.width() > 16 || normal.height() > 16) {
         QImage tmp = normal.convertToImage();

@@ -89,7 +89,7 @@
 #include "kastaskitem.h"
 #include "kasbarextension.h"
 
-#define Icon(x) KGlobal::iconLoader()->loadIcon( x, KIcon::NoGroup, KIcon::SizeMedium )
+#define Icon(x) KGlobal::iconLoader()->loadIcon( x, K3Icon::NoGroup, K3Icon::SizeMedium )
 
 static const int CHECK_ATTENTION_DELAY = 2000;
 
@@ -128,11 +128,11 @@ KasTasker *KasTaskItem::kasbar() const
 
 QPixmap KasTaskItem::icon()
 {
-    int sizes[] = { KIcon::SizeEnormous,
-		    KIcon::SizeHuge,
-		    KIcon::SizeLarge,
-		    KIcon::SizeMedium,
-		    KIcon::SizeSmall };
+    int sizes[] = { K3Icon::SizeEnormous,
+		    K3Icon::SizeHuge,
+		    K3Icon::SizeLarge,
+		    K3Icon::SizeMedium,
+		    K3Icon::SizeSmall };
 
     if ( kasbar()->embedThumbnails() && task_->hasThumbnail() ) {
 	usedIconLoader = true;

@@ -93,8 +93,8 @@ void KonsoleBookmarkMenu::fillBookmarkMenu()
     {
       m_parentMenu->insertSeparator();
 
-      KActionMenu * actionMenu = new KActionMenu( i18n("Netscape Bookmarks"),
-                                                  "netscape",
+      KActionMenu * actionMenu = new KActionMenu( KIcon("netscape"),
+                                                  i18n("Netscape Bookmarks"),
                                                   m_actionCollection, 0L );
       actionMenu->plug( m_parentMenu );
       m_actions.append( actionMenu );
@@ -143,7 +143,7 @@ void KonsoleBookmarkMenu::fillBookmarkMenu()
     else
     {
       // kDebug(1203) << "Creating bookmark submenu named " << bm.text() << endl;
-      KActionMenu * actionMenu = new KActionMenu( text, bm.icon(),
+      KActionMenu * actionMenu = new KActionMenu( KIcon(bm.icon()), text,
                                                   m_actionCollection, 0L );
       actionMenu->plug( m_parentMenu );
       m_actions.append( actionMenu );

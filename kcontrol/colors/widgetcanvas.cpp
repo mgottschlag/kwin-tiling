@@ -443,7 +443,7 @@ void WidgetCanvas::drawSampleWidgets()
 	QStyleOption option;
 	option.rect = QRect(25, 55, width()-52, 28);
         option.palette = palette;
-	kapp->style()->drawPrimitive(QStyle::PE_PanelMenuBar, &option, &paint); 
+	kapp->style()->drawPrimitive(QStyle::PE_PanelMenuBar, &option, &paint, this); 
     }
 
     paint.setFont( menuFont );

@@ -63,7 +63,7 @@ PanelExeDialog::PanelExeDialog(const QString& title, const QString& description,
     ui->m_exec->setURL(path);
     ui->m_commandLine->setText(cmd);
     ui->m_inTerm->setChecked(inTerm);
-    ui->m_icon->setIconType(KIcon::Panel, KIcon::Application);
+    ui->m_icon->setIconType(K3Icon::Panel, K3Icon::Application);
 
     updateIcon();
 
@@ -161,7 +161,7 @@ void PanelExeDialog::slotTextChanged(const QString &str)
 
     if (it != m_partialPath2full.end())
         exeLocation = it.value();
-    KMimeType::pixmapForURL(KUrl( exeLocation ), 0, KIcon::Panel, 0, KIcon::DefaultState, &m_icon);
+    KMimeType::pixmapForURL(KUrl( exeLocation ), 0, K3Icon::Panel, 0, K3Icon::DefaultState, &m_icon);
     updateIcon();
 }
 
@@ -189,7 +189,7 @@ void PanelExeDialog::slotSelect(const QString& exec)
         return;
     }
 
-    KMimeType::pixmapForURL(KUrl( exec ), 0, KIcon::Panel, 0, KIcon::DefaultState, &m_icon);
+    KMimeType::pixmapForURL(KUrl( exec ), 0, K3Icon::Panel, 0, K3Icon::DefaultState, &m_icon);
     updateIcon();
 }
 

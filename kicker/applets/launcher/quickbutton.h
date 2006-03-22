@@ -56,7 +56,7 @@ public:
     QString genericName() const { return m_genericName; }
     KService::Ptr service() const {return _service;};
     void run() const;
-    QPixmap pixmap(mode_t _mode = 0, KIcon::Group _group = KIcon::Desktop,
+    QPixmap pixmap(mode_t _mode = 0, K3Icon::Group _group = K3Icon::Desktop,
                    int _force_size = 0, int _state = 0, QString * _path = 0L) const;
 
 private:

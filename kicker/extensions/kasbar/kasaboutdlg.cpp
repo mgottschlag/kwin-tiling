@@ -81,8 +81,8 @@
 #include "kasaboutdlg.h"
 #include "version.h"
 
-#define Icon(x) KGlobal::iconLoader()->loadIcon( x, KIcon::NoGroup, KIcon::SizeMedium )
-#define LargeIcon(x) KGlobal::iconLoader()->loadIcon( x, KIcon::NoGroup, KIcon::SizeLarge )
+#define Icon(x) KGlobal::iconLoader()->loadIcon( x, K3Icon::NoGroup, K3Icon::SizeMedium )
+#define LargeIcon(x) KGlobal::iconLoader()->loadIcon( x, K3Icon::NoGroup, K3Icon::SizeLarge )
 
 KasAboutDialog::KasAboutDialog( QWidget *parent )
    : KDialogBase( KDialogBase::IconList, i18n("About Kasbar"),

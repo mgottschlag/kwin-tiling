@@ -42,12 +42,12 @@
 static QPixmap appIcon(const QString &iconName)
 {
      QString path;
-     QPixmap normal = KGlobal::iconLoader()->loadIcon(iconName, KIcon::Small, 0, KIcon::DefaultState, &path, true);
-     // make sure they are not larger than KIcon::SizeSmall
-     if (normal.width() > KIcon::SizeSmall || normal.height() > KIcon::SizeSmall)
+     QPixmap normal = KGlobal::iconLoader()->loadIcon(iconName, K3Icon::Small, 0, K3Icon::DefaultState, &path, true);
+     // make sure they are not larger than K3Icon::SizeSmall
+     if (normal.width() > K3Icon::SizeSmall || normal.height() > K3Icon::SizeSmall)
      {
          QImage tmp = normal.convertToImage();
-         tmp = tmp.smoothScale(KIcon::SizeSmall, KIcon::SizeSmall);
+         tmp = tmp.smoothScale(K3Icon::SizeSmall, K3Icon::SizeSmall);
          normal.convertFromImage(tmp);
      }
      return normal;

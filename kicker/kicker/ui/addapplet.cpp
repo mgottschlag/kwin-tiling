@@ -78,7 +78,7 @@ AppletWidget::AppletWidget(const AppletInfo& info, bool odd, QWidget *parent)
     itemDescription->installEventFilter(this);
 
     KIconLoader * ldr = KGlobal::iconLoader();
-    QPixmap icon = ldr->loadIcon(info.icon(), KIcon::Panel, KIcon::SizeLarge);
+    QPixmap icon = ldr->loadIcon(info.icon(), K3Icon::Panel, K3Icon::SizeLarge);
     itemPixmap->setPixmap(icon);
     itemPixmap->installEventFilter(this);
 }

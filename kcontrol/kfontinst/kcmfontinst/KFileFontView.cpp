@@ -267,7 +267,7 @@ void CKFileFontView::updateView(bool b)
         {
             CFontListViewItem *item=static_cast<CFontListViewItem *>(it.current());
 
-            item->setPixmap(0, item->fileInfo()->pixmap(KIcon::SizeSmall));
+            item->setPixmap(0, item->fileInfo()->pixmap(K3Icon::SizeSmall));
         }
     }
 }
@@ -467,9 +467,9 @@ Q3DragObject *CKFileFontView::dragObject()
     QPoint                hotspot;
 
     if(urls.count()> 1)
-        pixmap = DesktopIcon("kmultiple", KIcon::SizeSmall);
+        pixmap = DesktopIcon("kmultiple", K3Icon::SizeSmall);
     if(pixmap.isNull())
-        pixmap = currentFileItem()->pixmap(KIcon::SizeSmall);
+        pixmap = currentFileItem()->pixmap(K3Icon::SizeSmall);
 
     hotspot.setX(pixmap.width() / 2);
     hotspot.setY(pixmap.height() / 2);
@@ -620,7 +620,7 @@ void CKFileFontView::writeConfig(KConfig *kc, const QString &group)
 
 void CFontListViewItem::init()
 {
-    CFontListViewItem::setPixmap(COL_NAME, itsInf->pixmap(KIcon::SizeSmall));
+    CFontListViewItem::setPixmap(COL_NAME, itsInf->pixmap(K3Icon::SizeSmall));
 
     setText(COL_NAME, itsInf->text());
     setText(COL_SIZE, itsInf->isDir() ? "" : KGlobal::locale()->formatNumber(itsInf->size(), 0));

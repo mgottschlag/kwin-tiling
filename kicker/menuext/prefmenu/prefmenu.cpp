@@ -176,7 +176,7 @@ void PrefMenu::mouseMoveEvent(QMouseEvent * ev)
         case KST_KService:
         {
             KService::Ptr service(KService::Ptr::staticCast(e));
-            icon = service->pixmap(KIcon::Small);
+            icon = service->pixmap(K3Icon::Small);
             QString filePath = service->desktopEntryPath();
             if (filePath[0] != '/')
             {
@@ -189,7 +189,7 @@ void PrefMenu::mouseMoveEvent(QMouseEvent * ev)
         case KST_KServiceGroup:
         {
             KServiceGroup::Ptr serviceGroup = KServiceGroup::Ptr::staticCast(e);
-            icon = KGlobal::iconLoader()->loadIcon(serviceGroup->icon(), KIcon::Small);
+            icon = KGlobal::iconLoader()->loadIcon(serviceGroup->icon(), K3Icon::Small);
             url = "programs:/" + serviceGroup->relPath();
             break;
         }

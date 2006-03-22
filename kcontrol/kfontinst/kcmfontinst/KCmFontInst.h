@@ -47,9 +47,8 @@
 
 class KDirOperator;
 class KAction;
-class KRadioAction;
-class KActionMenu;
 class KToggleAction;
+class KActionMenu;
 class KFileItem;
 class QLabel;
 class QSplitter;
@@ -101,7 +100,7 @@ class CKCmFontInst : public KCModule
     KAction              *itsSepDirsAct,
                          *itsShowHiddenAct,
                          *itsDeleteAct;
-    KRadioAction         *itsListAct,
+    KToggleAction         *itsListAct,
                          *itsIconAct;
     KActionMenu          *itsViewMenuAct;
 #ifdef HAVE_XFT

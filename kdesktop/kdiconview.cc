@@ -417,9 +417,9 @@ void KDIconView::createActions()
 
         (void) new KAction( i18n( "&Rename" ), /*"editrename",*/ Qt::Key_F2, this, SLOT( renameSelectedItem() ), &m_actionCollection, "rename" );
         (void) new KAction( i18n( "&Properties" ), Qt::ALT+Qt::Key_Return, this, SLOT( slotProperties() ), &m_actionCollection, "properties" );
-        KAction* trash = new KAction( i18n( "&Move to Trash" ), "edittrash", Qt::Key_Delete, 0, 0, &m_actionCollection, "trash" );
-        connect( trash, SIGNAL( activated( KAction::ActivationReason, Qt::MouseButtons, Qt::KeyboardModifiers ) ),
-                 this, SLOT( slotTrashActivated( KAction::ActivationReason, Qt::MouseButtons, Qt::KeyboardModifiers ) ) );
+        KAction* trash = new KAction( i18n( "&Move to Trash" ), "edittrash", &m_actionCollection, "trash" );
+        trash->setShortcut(Qt::Key_Delete);
+        connect(trash, SIGNAL(triggered(bool)), SLOT(slotTrash()));
 
         KConfig config("kdeglobals", true, false);
         config.setGroup( "KDE" );
@@ -468,7 +468,7 @@ void KDIconView::setAutoAlign( bool b )
     }
     else {
         // change maxItemWidth, because when grid-align was active, it changed this for the grid
-        int sz = iconSize() ? iconSize() : KGlobal::iconLoader()->currentSize( KIcon::Desktop );
+        int sz = iconSize() ? iconSize() : KGlobal::iconLoader()->currentSize( K3Icon::Desktop );
         setMaxItemWidth( qMax( qMax( sz, previewIconSize( iconSize() ) ), KonqFMSettings::settings()->iconTextWidth() ) );
         setFont( font() );  // Force calcRect()
 
@@ -736,12 +736,12 @@ bool KDIconView::deleteGlobalDesktopFiles()
     return !itemsLeft;
 }
 
-void KDIconView::slotTrashActivated( KAction::ActivationReason reason, Qt::MouseButtons, Qt::KeyboardModifiers modifiers )
+void KDIconView::slotTrash()
 {
     if (deleteGlobalDesktopFiles())
        return; // All items deleted
 
-    if ( reason == KAction::PopupMenuActivation && ( modifiers & Qt::ShiftModifier ) )
+    if ( QApplication::keyboardModifiers() & Qt::ShiftModifier )
        KonqOperations::del(this, KonqOperations::DEL, selectedUrls());
     else
        KonqOperations::del(this, KonqOperations::TRASH, selectedUrls());

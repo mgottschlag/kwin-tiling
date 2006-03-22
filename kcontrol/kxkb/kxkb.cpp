@@ -82,7 +82,7 @@ void TrayWindow::setCurrentLayout(const QString& layout)
 
     KIconEffect iconeffect;
 
-    setPixmap( iconeffect.apply(LayoutIcon::findPixmap(layout, m_showFlag), KIcon::Panel, KIcon::DefaultState) );
+    setPixmap( iconeffect.apply(LayoutIcon::findPixmap(layout, m_showFlag), K3Icon::Panel, K3Icon::DefaultState) );
 }
 
 void TrayWindow::setError(const QString& layout)
@@ -100,7 +100,7 @@ void TrayWindow::setLayouts(const QStringList& layouts, const KeyRules& rules)
 
     mDescriptionMap.clear();
     menu->clear();
-    menu->insertTitle( qApp->windowIcon().pixmap(IconSize(KIcon::Small),IconSize(KIcon::Small)), kapp->caption() );
+    menu->insertTitle( qApp->windowIcon().pixmap(IconSize(K3Icon::Small),IconSize(K3Icon::Small)), kapp->caption() );
     
     KIconEffect iconeffect;
 
@@ -108,7 +108,7 @@ void TrayWindow::setLayouts(const QStringList& layouts, const KeyRules& rules)
     QStringList::ConstIterator it;
     for (it=layouts.begin(); it != layouts.end(); ++it)
     {
-        const QPixmap pix = iconeffect.apply(LayoutIcon::findPixmap(*it, m_showFlag), KIcon::Small, KIcon::DefaultState);
+        const QPixmap pix = iconeffect.apply(LayoutIcon::findPixmap(*it, m_showFlag), K3Icon::Small, K3Icon::DefaultState);
         contextMenu()->insertItem(QIcon(pix), i18n((rules.layouts()[*it])), cnt++);
         mDescriptionMap.insert(*it, i18n((rules.layouts()[*it])));
     }    

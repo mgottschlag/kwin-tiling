@@ -239,7 +239,7 @@ void KStylePage::saveIcons(bool curSettings) {
 	KGlobal::config()->writeEntry("Theme", theme, KConfigBase::Persistent|KConfigBase::Global);
 	KIconTheme icontheme(theme);
 	const char * const groups[] = { "Desktop", "Toolbar", "MainToolbar", "Small", 0L };
-	for (KIcon::Group i=KIcon::FirstGroup; i<KIcon::LastGroup; i++) {
+	for (K3Icon::Group i=K3Icon::FirstGroup; i<K3Icon::LastGroup; i++) {
 		if (groups[i] == 0L)
 			break;
 		KGlobal::config()->setGroup(QLatin1String(groups[i]) + "Icons");
@@ -520,7 +520,7 @@ void KStylePage::initColors() {
 /** live-update the system */
 void KStylePage::liveUpdate() {
 	// tell all apps about the changed icons
-	for (int i=0; i<KIcon::LastGroup; i++) {
+	for (int i=0; i<K3Icon::LastGroup; i++) {
 		KIPC::sendMessageAll(KIPC::IconChanged, i);
 	}
 	// tell all apps about the changed style

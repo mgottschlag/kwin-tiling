@@ -78,7 +78,8 @@ extern int kdesktop_screen_number;
 KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
 {
   s_rootWm = this;
-  m_actionCollection = new KActionCollection(_desktop, this);
+  m_actionCollection = new KActionCollection(this);
+  m_actionCollection->setAssociatedWidget(_desktop);
   m_pDesktop = _desktop;
   m_bDesktopEnabled = (m_pDesktop->iconView() != 0);
   customMenu1 = 0;
@@ -99,7 +100,7 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
 
   if (KAuthorized::authorizeKAction("bookmarks"))
   {
-     bookmarks = new KActionMenu( i18n("Bookmarks"), "bookmark", m_actionCollection, "bookmarks" );
+     bookmarks = new KActionMenu( KIcon("bookmark"), i18n("Bookmarks"), m_actionCollection, "bookmarks" );
      // The KBookmarkMenu is needed to fill the Bookmarks menu in the desktop menubar.
      bookmarkMenu = new KBookmarkMenu( KonqBookmarkManager::self(), new KBookmarkOwner(),
                                     bookmarks->popupMenu(),
@@ -165,7 +166,7 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
      new KAction(i18n("By Date"), 0, this, SLOT( slotArrangeByDate() ),
                  m_actionCollection, "sort_date");
 
-     KToggleAction *aSortDirsFirst = new KToggleAction( i18n("Directories First"), 0, m_actionCollection, "sort_directoriesfirst" );
+     KToggleAction *aSortDirsFirst = new KToggleAction( i18n("Directories First"), m_actionCollection, "sort_directoriesfirst" );
      connect( aSortDirsFirst, SIGNAL( toggled( bool ) ),
               this, SLOT( slotToggleDirFirst( bool ) ) );
      new KAction(i18n("Line Up Horizontally"), 0,
@@ -174,11 +175,10 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
      new KAction(i18n("Line Up Vertically"), 0,
                  this, SLOT( slotLineupIconsVert() ),
                  m_actionCollection, "lineupVert" );
-     KToggleAction *aAutoAlign = new KToggleAction(i18n("Align to Grid"), 0,
-                 m_actionCollection, "realign" );
+     KToggleAction *aAutoAlign = new KToggleAction(i18n("Align to Grid"), m_actionCollection, "realign" );
      connect( aAutoAlign, SIGNAL( toggled( bool ) ),
               this, SLOT( slotToggleAutoAlign( bool ) ) );
-     KToggleAction *aLockIcons = new KToggleAction(i18n("Lock in Place"), 0, m_actionCollection, "lock_icons");
+     KToggleAction *aLockIcons = new KToggleAction(i18n("Lock in Place"), m_actionCollection, "lock_icons");
      connect( aLockIcons, SIGNAL( toggled( bool ) ),
               this, SLOT( slotToggleLockIcons( bool ) ) );
   }
@@ -552,7 +552,7 @@ void KRootWm::activateMenu( menuChoice choice, const QPoint& global )
       break;
     case BOOKMARKSMENU:
       if (bookmarks)
-        bookmarks->popup(global);
+        bookmarks->menu()->exec(global);
       break;
     case APPMENU:
     {

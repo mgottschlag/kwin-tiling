@@ -632,9 +632,9 @@ Task::Task(WId win, QObject *parent, const char *name)
     if(_pixmap.isNull())
     {
         KGlobal::iconLoader()->loadIcon(className().lower(),
-                                                    KIcon::Small,
-                                                    KIcon::Small,
-                                                    KIcon::DefaultState,
+                                                    K3Icon::Small,
+                                                    K3Icon::Small,
+                                                    K3Icon::DefaultState,
                                                     0, true);
     }
 
@@ -713,9 +713,9 @@ void Task::refreshIcon()
     if(_pixmap.isNull())
     {
         KGlobal::iconLoader()->loadIcon(className().lower(),
-                                                    KIcon::Small,
-                                                    KIcon::Small,
-                                                    KIcon::DefaultState,
+                                                    K3Icon::Small,
+                                                    K3Icon::Small,
+                                                    K3Icon::DefaultState,
                                                     0, true);
     }
 
@@ -911,20 +911,20 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
   isStaticIcon = false;
 
   switch( size ) {
-  case KIcon::SizeSmall:
+  case K3Icon::SizeSmall:
     {
       pixmap = icon( 16, 16, true  );
 
       // Icon of last resort
       if( pixmap.isNull() ) {
         pixmap = KGlobal::iconLoader()->loadIcon( "go",
-                                                  KIcon::NoGroup,
-                                                  KIcon::SizeSmall );
+                                                  K3Icon::NoGroup,
+                                                  K3Icon::SizeSmall );
         isStaticIcon = true;
       }
     }
     break;
-  case KIcon::SizeMedium:
+  case K3Icon::SizeMedium:
     {
       //
       // Try 34x34 first for KDE 2.1 icons with shadows, if we don't
@@ -941,13 +941,13 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
       // Icon of last resort
       if( pixmap.isNull() ) {
         pixmap = KGlobal::iconLoader()->loadIcon( "go",
-                            KIcon::NoGroup,
-                            KIcon::SizeMedium );
+                            K3Icon::NoGroup,
+                            K3Icon::SizeMedium );
         isStaticIcon = true;
       }
     }
     break;
-  case KIcon::SizeLarge:
+  case K3Icon::SizeLarge:
     {
       // If there's a 48x48 icon in the hints then use it
       pixmap = icon( size, size, false  );
@@ -955,9 +955,9 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
       // If not, try to get one from the classname
       if ( pixmap.isNull() || pixmap.width() != size || pixmap.height() != size ) {
         pixmap = KGlobal::iconLoader()->loadIcon( className(),
-                            KIcon::NoGroup,
+                            K3Icon::NoGroup,
                             size,
-                            KIcon::DefaultState,
+                            K3Icon::DefaultState,
                             0L,
                             true );
         isStaticIcon = true;
@@ -972,7 +972,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
       // Icon of last resort
       if( pixmap.isNull() ) {
         pixmap = KGlobal::iconLoader()->loadIcon( "go",
-                                                  KIcon::NoGroup,
+                                                  K3Icon::NoGroup,
                                                   size );
         isStaticIcon = true;
       }

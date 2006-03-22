@@ -52,7 +52,6 @@
 #include "KFileFontView.h"
 #include <kmenu.h>
 #include <ktoolbar.h>
-#include <ktoolbarbutton.h>
 #include <kstdaccel.h>
 #include <kfiledialog.h>
 #include <kmessagebox.h>
@@ -145,7 +144,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     fontsFrame->setLineWidth(0);
     toolbar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
-    toolbar->setMovingEnabled(false);
+    toolbar->setMovable(false);
 
     QString previousPath=itsConfig.readEntry(CFG_PATH);
 
@@ -201,14 +200,14 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     topMnu->insert(itsViewMenuAct);
 
-    if((itsIconAct=dynamic_cast<KRadioAction *>(itsDirOp->actionCollection()->action("short view"))))
+    if((itsIconAct=qobject_cast<KToggleAction *>(itsDirOp->actionCollection()->action("short view"))))
     {
-        disconnect(itsIconAct, SIGNAL(activated()), itsDirOp, SLOT(slotSimpleView()));
-        connect(itsIconAct, SIGNAL(activated()), SLOT(iconView()));
+        disconnect(itsIconAct, SIGNAL(triggered(bool)), itsDirOp, SLOT(slotSimpleView()));
+        connect(itsIconAct, SIGNAL(triggered(bool)), SLOT(iconView()));
         itsIconAct->plug(toolbar);
     }
 
-    if((itsListAct=dynamic_cast<KRadioAction *>(itsDirOp->actionCollection()->action("detailed view"))))
+    if((itsListAct=dynamic_cast<KToggleAction *>(itsDirOp->actionCollection()->action("detailed view"))))
     {
         disconnect(itsListAct, SIGNAL(activated()), itsDirOp, SLOT(slotDetailedView()));
         connect(itsListAct, SIGNAL(activated()), SLOT(listView()));
@@ -220,7 +219,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     itsShowBitmapAct->setChecked(showBitmap);
     itsShowBitmapAct->plug(toolbar);
 
-    toolbar->insertLineSeparator();
+    toolbar->addSeparator();
 
     act=new KAction(i18n("Add Fonts..."), "newfont", 0, this, SLOT(addFonts()), itsDirOp->actionCollection(), "addfonts");
     act->plug(toolbar);
@@ -235,11 +234,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         connect(itsDeleteAct, SIGNAL(activated()), this, SLOT(removeFonts()));
     }
 
-    toolbar->insertLineSeparator();
+    toolbar->addSeparator();
     act=new KAction(i18n("Configure..."), "configure", 0, this, SLOT(configure()), itsDirOp->actionCollection(), "configure");
     act->plug(toolbar);
 #ifdef HAVE_XFT
-    toolbar->insertLineSeparator();
+    toolbar->addSeparator();
     act=new KAction(i18n("Print..."), "fileprint", 0, this, SLOT(print()), itsDirOp->actionCollection(), "print");
     act->plug(toolbar);
 #endif

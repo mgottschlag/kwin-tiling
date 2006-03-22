@@ -77,7 +77,7 @@ public:
        arrowDirection(Plasma::Up),
        popupDirection(Plasma::Up),
        orientation(Qt::Horizontal),
-       size((KIcon::StdSizes)-1),
+       size((K3Icon::StdSizes)-1),
        fontPercent(0.40)
     {}
 
@@ -164,7 +164,7 @@ void PanelButton::setOrientation(Qt::Orientation o)
 
 void PanelButton::updateIcon(int group)
 {
-    if (group != KIcon::Panel)
+    if (group != K3Icon::Panel)
     {
         return;
     }
@@ -668,9 +668,9 @@ int PanelButton::preferredIconSize(int proposed_size) const
         return -1; // unknown icon size
     }
 
-    QList<int> sizes = ith->querySizes(KIcon::Panel);
+    QList<int> sizes = ith->querySizes(K3Icon::Panel);
 
-    int sz = ith->defaultSize(KIcon::Panel);
+    int sz = ith->defaultSize(K3Icon::Panel);
 
     if (proposed_size < 0)
     {
@@ -739,14 +739,14 @@ void PanelButton::loadIcons()
 {
     KIconLoader * ldr = KGlobal::iconLoader();
     QString nm = d->iconName;
-    KIcon::States defaultState = isEnabled() ? KIcon::DefaultState :
-                                               KIcon::DisabledState;
-    d->icon = ldr->loadIcon(nm, KIcon::Panel, d->size, defaultState, 0L, true);
+    K3Icon::States defaultState = isEnabled() ? K3Icon::DefaultState :
+                                               K3Icon::DisabledState;
+    d->icon = ldr->loadIcon(nm, K3Icon::Panel, d->size, defaultState, 0L, true);
 
     if (d->icon.isNull())
     {
         nm = defaultIcon();
-        d->icon = ldr->loadIcon(nm, KIcon::Panel, d->size, defaultState);
+        d->icon = ldr->loadIcon(nm, K3Icon::Panel, d->size, defaultState);
     }
 
     if (!isEnabled())
@@ -755,11 +755,11 @@ void PanelButton::loadIcons()
     }
     else
     {
-        d->iconh = ldr->loadIcon(nm, KIcon::Panel, d->size,
-                                KIcon::ActiveState, 0L, true);
+        d->iconh = ldr->loadIcon(nm, K3Icon::Panel, d->size,
+                                K3Icon::ActiveState, 0L, true);
     }
 
-    d->iconz = ldr->loadIcon(nm, KIcon::Panel, KIcon::SizeHuge,
+    d->iconz = ldr->loadIcon(nm, K3Icon::Panel, K3Icon::SizeHuge,
                             defaultState, 0L, true );
 }
 
