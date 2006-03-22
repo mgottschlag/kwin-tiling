@@ -194,7 +194,7 @@ QSize TaskBar::sizeHint( Plasma::Position p, QSize maxSize) const
             maxWidth = BUTTON_MAX_WIDTH;
         }
 
-        int actualMax = maxWidth * (containerCount() / rows);
+        int actualMax = maxWidth * ( ( containerCount() != 0 ? containerCount() : 1 ) / rows);
 
         if (containerCount() % rows > 0)
         {
