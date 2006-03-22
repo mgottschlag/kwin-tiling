@@ -67,7 +67,7 @@ kde4_automoc(${krootimage_SRCS})
 
 kde4_add_executable(krootimage ${krootimage_SRCS})
 
-target_link_libraries(krootimage  ${LIB_KIO} )
+target_link_libraries(krootimage  ${KDE4_KIO_LIBS} )
 
 install_targets(/bin krootimage )
 

@@ -13,7 +13,7 @@ kde4_automoc(${kscreensaver_LIB_SRCS})
 
 kde4_add_library(kscreensaver SHARED ${kscreensaver_LIB_SRCS})
 
-target_link_libraries(kscreensaver  ${LIB_KIO} ${X11_X11_LIB})
+target_link_libraries(kscreensaver  ${KDE4_KIO_LIBS} ${X11_X11_LIB})
 
 set_target_properties(kscreensaver PROPERTIES VERSION 4.2.0 SOVERSION 4 )
 install_targets(${LIB_INSTALL_DIR} kscreensaver )

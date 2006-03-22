@@ -13,7 +13,7 @@ kde4_automoc(${kcminit_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kcminit ${kcminit_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kcminit  ${LIB_KIO} kutils )
+target_link_libraries(kdeinit_kcminit  ${KDE4_KIO_LIBS} kutils )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kcminit )
 

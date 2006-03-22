@@ -15,7 +15,7 @@ kde4_add_plugin(kcm_energy ${kcm_energy_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_energy )
 
-target_link_libraries(kcm_energy  ${LIB_KIO} )
+target_link_libraries(kcm_energy  ${KDE4_KIO_LIBS} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_energy )
 
