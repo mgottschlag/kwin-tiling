@@ -611,7 +611,11 @@ void PanelServiceMenu::mouseMoveEvent(QMouseEvent * ev)
     if (p.manhattanLength() <= QApplication::startDragDistance() )
         return;
 
-    int id = static_cast<QMenuItem*>(actionAt(ev->pos()))->id();
+    QMenuItem* item = static_cast<QMenuItem*>(actionAt(ev->pos()));
+    if (!item)
+      return;
+
+    int id = item->id();
 
     // Don't drag items we didn't create.
     if (id < serviceMenuStartId())
