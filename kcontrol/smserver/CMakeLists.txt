@@ -15,7 +15,7 @@ kde4_add_plugin(kcm_smserver ${kcm_smserver_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_smserver )
 
-target_link_libraries(kcm_smserver  ${LIB_KDE3SUPPORT} )
+target_link_libraries(kcm_smserver  ${KDE4_KDE3SUPPORT_LIBS} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_smserver )
 

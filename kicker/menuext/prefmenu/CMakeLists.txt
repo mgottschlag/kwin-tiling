@@ -13,7 +13,7 @@ kde4_add_plugin(kickermenu_prefmenu ${kickermenu_prefmenu_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_prefmenu )
 
-target_link_libraries(kickermenu_prefmenu  ${LIB_KDE3SUPPORT} kickermain kworkspace )
+target_link_libraries(kickermenu_prefmenu  ${KDE4_KDE3SUPPORT_LIBS} kickermain kworkspace )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kickermenu_prefmenu )
 

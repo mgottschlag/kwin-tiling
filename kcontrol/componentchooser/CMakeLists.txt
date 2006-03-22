@@ -22,7 +22,7 @@ kde4_add_plugin(kcm_componentchooser ${kcm_componentchooser_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_componentchooser )
 
-target_link_libraries(kcm_componentchooser  ${LIB_KDE3SUPPORT})
+target_link_libraries(kcm_componentchooser  ${KDE4_KDE3SUPPORT_LIBS})
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_componentchooser )
 

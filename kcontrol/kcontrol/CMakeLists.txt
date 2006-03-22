@@ -30,7 +30,7 @@ kde4_add_dcop_skels(kcontrol_KDEINIT_SRCS moduleIface.h )
 
 kde4_add_kdeinit_executable( kcontrol ${kcontrol_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kcontrol  ${LIB_KDE3SUPPORT} khtml )
+target_link_libraries(kdeinit_kcontrol  ${KDE4_KDE3SUPPORT_LIBS} khtml )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kcontrol )
 

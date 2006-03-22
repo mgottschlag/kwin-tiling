@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_clock ${kcm_clock_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_clock )
 
-target_link_libraries(kcm_clock  ${LIB_KDE3SUPPORT} )
+target_link_libraries(kcm_clock  ${KDE4_KDE3SUPPORT_LIBS} )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_clock )
 

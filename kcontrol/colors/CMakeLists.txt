@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_colors ${kcm_colors_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_colors )
 
-target_link_libraries(kcm_colors  ${LIB_KDE3SUPPORT} kdefx )
+target_link_libraries(kcm_colors  ${KDE4_KDE3SUPPORT_LIBS} kdefx )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_colors )
 

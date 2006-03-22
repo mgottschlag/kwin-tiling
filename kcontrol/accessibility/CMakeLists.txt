@@ -15,7 +15,7 @@ kde4_add_plugin(kcm_accessibility ${kcm_accessibility_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_accessibility )
 
-target_link_libraries(kcm_accessibility  ${LIB_KDE3SUPPORT}) 
+target_link_libraries(kcm_accessibility  ${KDE4_KDE3SUPPORT_LIBS}) 
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_accessibility )
 

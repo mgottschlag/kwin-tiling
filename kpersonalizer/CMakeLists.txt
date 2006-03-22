@@ -32,7 +32,7 @@ kde4_add_ui3_files(kpersonalizer_SRCS
 
 kde4_add_executable(kpersonalizer ${kpersonalizer_SRCS})
 
-target_link_libraries(kpersonalizer  ${LIB_KDE3SUPPORT} )
+target_link_libraries(kpersonalizer  ${KDE4_KDE3SUPPORT_LIBS} )
 
 install_targets(/bin kpersonalizer )
 

@@ -24,7 +24,7 @@ kde4_add_plugin(kcm_kdm ${kcm_kdm_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kdm )
 
-target_link_libraries(kcm_kdm  ${LIB_KDE3SUPPORT}  knewstuff kdefx )
+target_link_libraries(kcm_kdm  ${KDE4_KDE3SUPPORT_LIBS}  knewstuff kdefx )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kdm )
 

@@ -17,7 +17,7 @@ kde4_automoc(${kmenuedit_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kmenuedit ${kmenuedit_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kmenuedit  ${LIB_KDE3SUPPORT} ${QT_QTXML_LIBRARY}
+target_link_libraries(kdeinit_kmenuedit  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY}
 )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kmenuedit )
@@ -33,7 +33,7 @@ kde4_automoc(${kcontroledit_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kcontroledit ${kcontroledit_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kcontroledit  ${LIB_KDE3SUPPORT} ${QT_QTXML_LIBRARY} )
+target_link_libraries(kdeinit_kcontroledit  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kcontroledit )
 
