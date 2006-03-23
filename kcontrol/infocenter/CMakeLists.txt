@@ -12,8 +12,7 @@ macro_optional_find_package(RAW1394)
 if(RAW1394_FOUND)
    add_subdirectory( view1394 )
 endif(RAW1394_FOUND)
-
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
 
 
 ########### install files ###############

@@ -7,13 +7,12 @@ set( kdesktop_KCFG_SRCS
 	${CMAKE_SOURCE_DIR}/workspace/kdesktop/klaunchsettings.kcfgc )
 
 kde4_add_kcfg_files(kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})
-
 include_directories( 
 	${CMAKE_SOURCE_DIR}/workspace/lib 
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background 
 	${CMAKE_SOURCE_DIR}/libkonq 
 	${CMAKE_SOURCE_DIR}/workspace/kdmlib 
-	${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+	  ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
 
 
 ########### next target ###############

@@ -1,6 +1,5 @@
 kde4_header()
-
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR}/workspace/kicker/taskmanager  ${CMAKE_SOURCE_DIR}/workspace/kicker/taskbar/)
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/taskmanager ${CMAKE_SOURCE_DIR}/workspace/kicker/taskbar/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
 
 
 ########### next target ###############

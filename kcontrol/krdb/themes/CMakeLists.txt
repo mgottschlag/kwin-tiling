@@ -12,8 +12,7 @@ add_subdirectory( Plastik )
 add_subdirectory( Platinum ) 
 add_subdirectory( Sunshine ) 
 add_subdirectory( Redmond ) 
-
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
 
 
 ########### install files ###############

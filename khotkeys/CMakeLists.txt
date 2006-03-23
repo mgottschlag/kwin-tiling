@@ -21,8 +21,7 @@ add_subdirectory( kcontrol )
 add_subdirectory( app ) 
 add_subdirectory( data ) 
 add_subdirectory( update ) 
-
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories(  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
 
 
 ########### install files ###############

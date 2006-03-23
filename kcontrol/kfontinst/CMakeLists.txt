@@ -8,7 +8,7 @@ add_subdirectory( kio )
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(FONTINST_TN_SUBDIR)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(FONTINST_VP_SUBDIR)")
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
 
 
 ########### install files ###############

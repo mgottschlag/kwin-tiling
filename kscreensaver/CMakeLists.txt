@@ -4,8 +4,7 @@ add_subdirectory( libkscreensaver )
 add_subdirectory( applnk ) 
 add_subdirectory( kblank_screensaver ) 
 add_subdirectory( krandom_screensaver ) 
-
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  )
+include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
 
 
 ########### install files ###############
