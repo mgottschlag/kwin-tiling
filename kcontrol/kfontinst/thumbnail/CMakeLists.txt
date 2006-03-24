@@ -12,7 +12,7 @@ kde4_add_plugin(fontthumbnail ${fontthumbnail_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} fontthumbnail )
 
-target_link_libraries(fontthumbnail  ${KDE4_KDECORE_LIBS} kio kfontinst )
+target_link_libraries(fontthumbnail  ${KDE4_KIO_LIBS} kfontinst )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 fontthumbnail )
 

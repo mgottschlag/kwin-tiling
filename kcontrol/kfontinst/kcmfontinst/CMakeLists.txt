@@ -17,7 +17,7 @@ kde4_add_plugin(kcm_fontinst ${kcm_fontinst_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_fontinst )
 
-target_link_libraries(kcm_fontinst  ${KDE4_KDECORE_LIBS} kio kfontinst kde3support )
+target_link_libraries(kcm_fontinst  ${KDE4_KIO_LIBS} kfontinst kde3support )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_fontinst )
 
