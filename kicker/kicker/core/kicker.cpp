@@ -95,10 +95,10 @@ Kicker::Kicker()
     }
 
     // Make kicker immutable if configuration modules have been marked immutable
-    if (isImmutable() && KAuthorized::authorizeControlModules(Kicker::configModules(true)).isEmpty())
+    if (isKioskImmutable() && KAuthorized::authorizeControlModules(Kicker::configModules(true)).isEmpty())
     {
-		KInstance::config()->setReadOnly(true);
-		KInstance::config()->reparseConfiguration();
+        KInstance::config()->setReadOnly(true);
+        KInstance::config()->reparseConfiguration();
     }
 
     dcopClient()->setDefaultObject("Panel");

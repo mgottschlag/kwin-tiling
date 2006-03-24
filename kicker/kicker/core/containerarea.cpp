@@ -110,7 +110,6 @@ ContainerArea::ContainerArea(KConfig* _c,
     // m_contents.
     m_contents->installEventFilter(this);
 
-    setAcceptDrops( !Kicker::self()->isImmutable() );
     connect(&_autoScrollTimer, SIGNAL(timeout()), SLOT(autoScroll()));
     connect(Kicker::self(), SIGNAL(immutabilityChanged(bool)),
             SLOT(immutabilityChanged(bool)));
@@ -146,6 +145,9 @@ void ContainerArea::initialize(bool useDefaultConfig)
     {
         defaultContainerConfig();
     }
+
+    setAcceptDrops(!isImmutable());
+    QTimer::singleShot(0, this, SLOT(resizeContents()));
 }
 
 void ContainerArea::defaultContainerConfig()
@@ -1437,6 +1439,8 @@ void ContainerArea::immutabilityChanged(bool immutable)
     {
         it->setImmutable( immutable );
     }
+
+    setAcceptDrops(!isImmutable());
 }
 
 QRect ContainerArea::availableSpaceFollowing(BaseContainer* a)

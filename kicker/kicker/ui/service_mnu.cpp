@@ -446,7 +446,7 @@ void PanelServiceMenu::mousePressEvent(QMouseEvent * ev)
 
 void PanelServiceMenu::mouseReleaseEvent(QMouseEvent * ev)
 {
-    if (ev->button()==Qt::RightButton)
+    if (ev->button() == Qt::RightButton && !Kicker::the()->isKioskImmutable())
     {
         int id = static_cast<QMenuItem*>(actionAt(ev->pos()))->id();
 
