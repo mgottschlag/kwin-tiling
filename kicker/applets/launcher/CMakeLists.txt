@@ -12,11 +12,9 @@ set(launcher_panelapplet_PART_SRCS  ${kdmlib_SRCS}  ${libkicker_core_SRCS} ${lib
    popularity.cpp 
    configdlg.cpp )
 
-kde4_add_dcop_skels(libkicker_core_SRCS ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/kicker.h ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/panelextension.h )
+kde4_add_dcop_skels(launcher_panelapplet_PART_SRCS ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/kicker.h ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/panelextension.h )
 
-kde4_add_ui3_files(libkicker_ui_SRCS ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/appletitem.ui ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/appletview.ui ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/nonKDEButtonSettings.ui)
-
-kde4_add_dcop_skels(libkicker_ui_SRCS ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/k_mnu.h )
+kde4_add_dcop_skels(launcher_panelapplet_PART_SRCS ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/k_mnu.h )
 
 
 kde4_automoc(${launcher_panelapplet_PART_SRCS})
@@ -31,7 +29,7 @@ kde4_add_plugin(launcher_panelapplet ${launcher_panelapplet_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} launcher_panelapplet )
 
-target_link_libraries(launcher_panelapplet  ${KDE4_KDE3SUPPORT_LIBS}  konq kickermain )
+target_link_libraries(launcher_panelapplet DCOP ${KDE4_KDE3SUPPORT_LIBS}  konq kickermain )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 launcher_panelapplet )
 
