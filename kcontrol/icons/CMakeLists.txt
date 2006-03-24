@@ -27,7 +27,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(testicons ${testicons_SRCS})
 
-target_link_libraries(testicons  ${KDE4_KDECORE_LIBS} kdeui )
+target_link_libraries(testicons  ${KDE4_KDEUI_LIBS} )
 
 endif(KDE4_BUILD_TESTS)
 

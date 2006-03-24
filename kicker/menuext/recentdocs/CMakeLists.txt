@@ -12,7 +12,7 @@ kde4_add_plugin(kickermenu_recentdocs ${kickermenu_recentdocs_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_recentdocs )
 
-target_link_libraries(kickermenu_recentdocs  ${KDE4_KDECORE_LIBS} kdeui kickermain kworkspace kde3support)
+target_link_libraries(kickermenu_recentdocs  ${KDE4_KDEUI_LIBS} kickermain kworkspace kde3support)
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kickermenu_recentdocs )
 

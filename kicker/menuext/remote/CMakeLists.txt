@@ -14,7 +14,7 @@ kde4_add_plugin(kickermenu_remotemenu ${kickermenu_remotemenu_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_remotemenu )
 
-target_link_libraries(kickermenu_remotemenu  ${KDE4_KDECORE_LIBS} kdeui kickermain )
+target_link_libraries(kickermenu_remotemenu  ${KDE4_KDEUI_LIBS} kickermain )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kickermenu_remotemenu )
 

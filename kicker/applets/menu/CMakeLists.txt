@@ -14,7 +14,7 @@ kde4_add_plugin(menu_panelapplet ${menu_panelapplet_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} menu_panelapplet )
 
-target_link_libraries(menu_panelapplet  ${KDE4_KDECORE_LIBS} kdeui kickermain )
+target_link_libraries(menu_panelapplet  ${KDE4_KDEUI_LIBS} kickermain )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 menu_panelapplet )
 
