@@ -127,15 +127,15 @@ Press return, and you should see something like the picture below in the main wi
     Now lets fill in the <guilabel>Description:</guilabel>, in this case type <userinput>Web Browser</userinput>. <note><para>The description and name will be displayed on the &kmenu; as <quote>Web Browser (Firefox)</quote>.</para></note> We will need to fill out executable name in the <guilabel>Command:</guilabel> field, in this instance we will type <userinput><command>firefox</command></userinput>.</para>
 <note><para>Following the command, you can have several place holders which will be replaced with actual values when the program is run:
 <simplelist>
-<member>f% - a single file name</member>
-<member>F% - a list of files; use for applications that can open several local files at once</member>
-<member>u% - a single URL</member>
-<member>U% - a list of URLs</member>
-<member>d% - the folder of a file to open</member>
-<member>D% - a list of folders</member>
-<member>i% - the icon</member>
-<member>m% - the mini icon</member>
-<member>c% - the caption</member>
+<member>%f - a single file name</member>
+<member>%F - a list of files; use for applications that can open several local files at once</member>
+<member>%u - a single URL</member>
+<member>%U - a list of URLs</member>
+<member>%d - the folder of a file to open</member>
+<member>%D - a list of folders</member>
+<member>%i - the icon</member>
+<member>%m - the mini icon</member>
+<member>%c - the caption</member>
 </simplelist></para>
 <informalexample><para>For example: if you want to firefox to start your web browsing at www.kde.org - instead of <command>firefox</command> you would type <command>firefox %u www.kde.org</command>.</para></informalexample></note>
 <para>We would like to have a more creative icon, so we will click the generic icon sitting beside <guilabel>Name:</guilabel>. It will bring the <guilabel>Select Icon</guilabel> dialog which will let us choose the new icon, as shown below.
