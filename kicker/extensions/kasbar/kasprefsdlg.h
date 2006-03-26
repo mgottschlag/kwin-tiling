@@ -97,6 +97,9 @@ protected:
    virtual void accept();
    virtual void reject();
 
+private slots:
+   void customSizeChanged ( int value );
+
 private:
 
    QComboBox *itemSizeCombo;

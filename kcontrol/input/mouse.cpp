@@ -208,10 +208,11 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
     thresh = new KIntNumInput(accel, 20, tab2);
     thresh->setLabel(i18n("Pointer threshold:"));
     thresh->setRange(0,20,1);
-    thresh->setSuffix(i18n(" pixels"));
     thresh->setSteps(1,1);
     lay->addWidget(thresh);
     connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+    connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(slotThreshChanged(int)));
+    slotThreshChanged(thresh->value());
 
     wtstr = i18n("The threshold is the smallest distance that the"
          " mouse pointer must move on the screen before acceleration"
@@ -260,10 +261,11 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
     dragStartDist = new KIntNumInput(dragStartTime, 20, tab2);
     dragStartDist->setLabel(i18n("Drag start distance:"));
     dragStartDist->setRange(1, 20, 1);
-    dragStartDist->setSuffix(i18n(" pixels"));
     dragStartDist->setSteps(1,1);
     lay->addWidget(dragStartDist);
     connect(dragStartDist, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+    connect(dragStartDist, SIGNAL(valueChanged(int)), this, SLOT(slotDragStartDistChanged(int)));
+    slotDragStartDistChanged(dragStartDist->value());
 
     wtstr = i18n("If you click with the mouse and begin to move the"
          " mouse at least the drag start distance, a drag"
@@ -273,10 +275,11 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
     wheelScrollLines = new KIntNumInput(dragStartDist, 3, tab2);
     wheelScrollLines->setLabel(i18n("Mouse wheel scrolls by:"));
     wheelScrollLines->setRange(1, 12, 1);
-    wheelScrollLines->setSuffix(i18n(" lines"));
     wheelScrollLines->setSteps(1,1);
     lay->addWidget(wheelScrollLines);
     connect(wheelScrollLines, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+    connect(wheelScrollLines, SIGNAL(valueChanged(int)), SLOT(slotWheelScrollLinesChanged(int)));
+    slotWheelScrollLinesChanged(wheelScrollLines->value());
 
     wtstr = i18n("If you use the wheel of a mouse, this value determines the number of lines to scroll for each wheel movement. Note that if this number exceeds the number of visible lines, it will be ignored and the wheel movement will be handled as a page up/down movement.");
     QWhatsThis::add( wheelScrollLines, wtstr);
@@ -717,6 +720,21 @@ void MouseSettings::load(KConfig *config)
   autoSelectDelay = config->readEntry("AutoSelectDelay", KDE_DEFAULT_AUTOSELECTDELAY);
   visualActivate = config->readEntry("VisualActivate", KDE_DEFAULT_VISUAL_ACTIVATE);
   changeCursor = config->readEntry("ChangeCursor", KDE_DEFAULT_CHANGECURSOR);
+}
+
+void MouseConfig::slotThreshChanged(int value)
+{
+  thresh->setSuffix(i18n(" pixel", " pixels", value));
+}
+
+void MouseConfig::slotDragStartDistChanged(int value)
+{
+  dragStartDist->setSuffix(i18n(" pixel", " pixels", value));
+}
+
+void MouseConfig::slotWheelScrollLinesChanged(int value)
+{
+  wheelScrollLines->setSuffix(i18n(" line", " lines", value));
 }
 
 void MouseSettings::apply(bool force)

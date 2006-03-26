@@ -195,8 +195,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mWaitEdit = new QSpinBox(mSettingsGroup);
     //mWaitEdit->setSteps(1, 10);
     mWaitEdit->setRange(1, INT_MAX);
-    mWaitEdit->setSuffix(i18n(" minutes"));
-    mWaitEdit->setSpecialValueText(i18n("1 minute"));
+    mWaitEdit->setSuffix(i18n(" min"));
     mWaitEdit->setValue(mTimeout/60);
     mWaitEdit->setEnabled(mEnabled);
     connect(mWaitEdit, SIGNAL(valueChanged(int)),
@@ -231,8 +230,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mWaitLockEdit = new QSpinBox(mSettingsGroup);
     //mWaitLockEdit->setSteps(1, 10);
     mWaitLockEdit->setRange(1, 1800);
-    mWaitLockEdit->setSuffix(i18n(" seconds"));
-    mWaitLockEdit->setSpecialValueText(i18n("1 second"));
+    mWaitLockEdit->setSuffix(i18n(" sec"));
     mWaitLockEdit->setValue(mLockTimeout/1000);
     mWaitLockEdit->setEnabled(mEnabled && mLock);
     if ( mWaitLockEdit->sizeHint().width() <

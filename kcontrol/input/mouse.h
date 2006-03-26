@@ -107,6 +107,9 @@ private Q_SLOTS:
   void slotHandedChanged(int val);
   void slotScrollPolarityChanged();
   void checkAccess();
+  void slotThreshChanged(int value);
+  void slotDragStartDistChanged(int value);
+  void slotWheelScrollLinesChanged(int value);
 
 private:
 

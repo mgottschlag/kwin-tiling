@@ -517,7 +517,7 @@ KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
   hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
   hbox->addSpacing(24);
   timeoutDelay = new KIntNumInput(grp);
-  timeoutDelay->setSuffix(i18n(" minutes"));
+  timeoutDelay->setSuffix(i18n(" min"));
   timeoutDelay->setRange(1, 30, 4);
   timeoutDelay->setLabel(i18n("Timeout:"));
   hbox->addWidget(timeoutDelay);

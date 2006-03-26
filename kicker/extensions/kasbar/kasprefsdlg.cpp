@@ -140,11 +140,12 @@ void KasPrefsDialog::addLookPage()
 
    customSize = new QSpinBox( 5, 1000, 1, itemSizeBox );
 
-   customSize->setSuffix( i18n(" Pixels") );
    customSize->setValue( kasbar->itemExtent() );
 
    connect( customSize, SIGNAL( valueChanged( int ) ),
 	    kasbar, SLOT( setItemExtent( int ) ) );
+   connect( customSize, SIGNAL( valueChanged( int ) ),
+	    kasbar, SLOT( customSizeChanged( int ) ) );
 
    int sz = kasbar->itemSize();
    itemSizeCombo->setCurrentItem( sz );
@@ -434,6 +435,11 @@ void KasPrefsDialog::addAdvancedPage()
 
    (void) new QWidget( advancedPage, "spacer" );
    (void) new QWidget( advancedPage, "spacer" );
+}
+
+void KasPrefsDialog::customSizeChanged ( int value )
+{
+   customSize->setSuffix( i18n(" pixel", " pixels", value) );
 }
 
 void KasPrefsDialog::accept()
