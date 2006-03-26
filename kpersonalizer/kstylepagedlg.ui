@@ -98,7 +98,7 @@
 <customwidgets>
     <customwidget>
         <class>StylePreview</class>
-        <header location="global">stylepreview.h</header>
+        <header location="local">stylepreview.h</header>
         <sizehint>
             <width>-1</width>
             <height>-1</height>
