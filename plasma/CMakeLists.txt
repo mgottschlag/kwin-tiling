@@ -4,7 +4,7 @@ project(plasma)
 
 add_subdirectory( lib ) 
 add_subdirectory( desktop ) 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
+include_directories( ${KDE4_INCLUDES} )
 
 
 ########### install files ###############

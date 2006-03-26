@@ -1,7 +1,7 @@
 kde4_header()
 
 project(ksmserver)
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${KDE4_INCLUDES} )
 
 ########### next target ###############
 

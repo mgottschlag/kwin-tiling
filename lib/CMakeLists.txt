@@ -1,7 +1,7 @@
 kde4_header()
 
 project(kworkspacelib)
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
+include_directories( ${KDE4_INCLUDES} )
 
 
 ########### next target ###############

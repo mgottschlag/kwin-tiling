@@ -4,7 +4,7 @@ add_subdirectory( themer )
 add_subdirectory( themes ) 
 add_subdirectory( pics ) 
 add_subdirectory( sessions ) 
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/ ${CMAKE_SOURCE_DIR}/workspace/kdm/backend  ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/ ${CMAKE_SOURCE_DIR}/workspace/kdm/backend  ${KDE4_INCLUDES} )
 
 
 ########### next target ###############

@@ -12,8 +12,7 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core
   ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui
-  ${KDE4_INCLUDE_DIR}
-  ${QT_INCLUDES}
+  ${KDE4_INCLUDES}
 )
 
 

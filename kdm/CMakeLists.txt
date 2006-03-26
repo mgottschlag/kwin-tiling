@@ -1,7 +1,7 @@
 kde4_header()
 
 project(kdm)
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
+include_directories( ${KDE4_INCLUDES} )
 
 add_subdirectory( kfrontend )
 add_subdirectory( backend )

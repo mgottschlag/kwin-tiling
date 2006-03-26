@@ -2,7 +2,7 @@ kde4_header()
 
 add_subdirectory( display ) 
 add_subdirectory( joystick ) 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
+include_directories( ${KDE4_INCLUDES} )
 
 
 ########### install files ###############

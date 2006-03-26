@@ -12,7 +12,7 @@ add_subdirectory( Plastik )
 add_subdirectory( Platinum ) 
 add_subdirectory( Sunshine ) 
 add_subdirectory( Redmond ) 
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
+include_directories( ${KDE4_INCLUDES} )
 
 
 ########### install files ###############

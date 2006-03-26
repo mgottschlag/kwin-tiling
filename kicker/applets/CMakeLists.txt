@@ -12,7 +12,7 @@ add_subdirectory( media )
 add_subdirectory( trash ) 
 
 MESSAGE(STATUS "readd ${CMAKE_CURRENT_SOURCE_DIR} launcher")
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
+include_directories( ${KDE4_INCLUDES} )
 
 
 ########### install files ###############

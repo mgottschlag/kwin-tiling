@@ -12,7 +12,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background 
 	${CMAKE_SOURCE_DIR}/libkonq 
 	${CMAKE_SOURCE_DIR}/workspace/kdmlib 
-	  ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
+	  ${KDE4_INCLUDES} )
 
 
 ########### next target ###############

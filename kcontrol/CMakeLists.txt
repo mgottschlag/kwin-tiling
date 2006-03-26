@@ -1,7 +1,7 @@
 kde4_header()
 
 project(kcontrol)
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/ ${KDE4_INCLUDES} )
 
 if( X11_Xrandr_FOUND )
 	add_subdirectory( randr )
