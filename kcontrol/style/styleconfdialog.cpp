@@ -43,4 +43,4 @@ void StyleConfigDialog::setDirty(bool dirty)
   m_dirty = dirty;
 }
 
-#include <styleconfdialog.moc>
+#include "styleconfdialog.moc"
