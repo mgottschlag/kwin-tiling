@@ -27,7 +27,7 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kdebug.h>
-#include <kdesktopsettings.h>
+#include "kdesktopsettings.h"
 
 #include <qdir.h>
 #include <qfile.h>

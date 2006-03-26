@@ -27,7 +27,7 @@
 #include <kstandarddirs.h>
 #include <kconfig.h>
 
-#include <kshadowsettings.h>
+#include "kshadowsettings.h"
 
 #define FX_GROUP	"FX"
 
