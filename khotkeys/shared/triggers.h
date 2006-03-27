@@ -94,7 +94,7 @@ class Window_trigger
         Window_trigger( KConfig& cfg_P, Action_data* data_P );
         virtual ~Window_trigger();
         virtual void cfg_write( KConfig& cfg_P ) const;
-#ifndef COVARIANT_RETURN_BROKEN    // stupid gcc, it doesn't even warn it can't do this
+#ifdef HAVE_COVARIANT_RETURN    // stupid gcc, it doesn't even warn it can't do this
         virtual Window_trigger* copy( Action_data* data_P ) const;
 #else
         virtual Trigger* copy( Action_data* data_P ) const;

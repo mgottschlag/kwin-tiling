@@ -275,7 +275,7 @@ void Active_window_condition::cfg_write( KConfig& cfg_P ) const
     cfg_P.writeEntry( "Type", "ACTIVE_WINDOW" ); // overwrites value set in base::cfg_write()
     }
 
-#ifndef COVARIANT_RETURN_BROKEN
+#ifdef HAVE_COVARIANT_RETURN
 Active_window_condition* Active_window_condition::copy( Condition_list_base* parent_P ) const
 #else
 Condition* Active_window_condition::copy( Condition_list_base* parent_P ) const
@@ -344,7 +344,7 @@ void Existing_window_condition::cfg_write( KConfig& cfg_P ) const
     cfg_P.writeEntry( "Type", "EXISTING_WINDOW" ); // overwrites value set in base::cfg_write()
     }
 
-#ifndef COVARIANT_RETURN_BROKEN
+#ifdef HAVE_COVARIANT_RETURN
 Existing_window_condition* Existing_window_condition::copy( Condition_list_base* parent_P ) const
 #else
 Condition* Existing_window_condition::copy( Condition_list_base* parent_P ) const

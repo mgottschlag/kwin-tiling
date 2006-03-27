@@ -299,7 +299,7 @@ void Window_trigger::cfg_write( KConfig& cfg_P ) const
     cfg_P.writeEntry( "Type", "WINDOW" ); // overwrites value set in base::cfg_write()
     }
 
-#ifndef COVARIANT_RETURN_BROKEN    // stupid gcc, it doesn't even warn it can't do this
+#ifdef HAVE_COVARIANT_RETURN    // stupid gcc, it doesn't even warn it can't do this
 Window_trigger* Window_trigger::copy( Action_data* data_P ) const
 #else
 Trigger* Window_trigger::copy( Action_data* data_P ) const

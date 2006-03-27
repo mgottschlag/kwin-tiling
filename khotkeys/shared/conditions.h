@@ -97,7 +97,7 @@ class Active_window_condition
         virtual bool match() const;
         virtual void cfg_write( KConfig& cfg_P ) const;
         const Windowdef_list* window() const;
-#ifndef COVARIANT_RETURN_BROKEN
+#ifdef HAVE_COVARIANT_RETURN
         virtual Active_window_condition* copy( Condition_list_base* parent_P ) const;
 #else
         virtual Condition* copy( Condition_list_base* parent_P ) const;
@@ -124,7 +124,7 @@ class Existing_window_condition
         virtual bool match() const;
         virtual void cfg_write( KConfig& cfg_P ) const;
         const Windowdef_list* window() const;
-#ifndef COVARIANT_RETURN_BROKEN
+#ifdef HAVE_COVARIANT_RETURN
         virtual Existing_window_condition* copy( Condition_list_base* parent_P ) const;
 #else
         virtual Condition* copy( Condition_list_base* parent_P ) const;
