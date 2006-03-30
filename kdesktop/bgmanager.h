@@ -13,7 +13,7 @@
 #include <qstring.h>
 #include <QVector>
 
-#include <KBackgroundIface.h>
+#include "KBackgroundIface.h"
 
 class KConfig;
 class QTimer;
