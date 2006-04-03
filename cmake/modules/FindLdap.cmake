@@ -11,23 +11,29 @@ FIND_PATH(LDAP_INCLUDE_DIR ldap.h
    /usr/local/include
 )
 
-FIND_LIBRARY(LDAP_LIBRARIES NAMES ldap
-   PATHS
-   /usr/lib
-   /usr/local/lib
-)
-
-FIND_LIBRARY(LBER_LIBRARIES NAMES lber
-   PATHS
-   /usr/lib
-   /usr/local/lib
-)
-
+if(APPLE)
+   FIND_LIBRARY(LDAP_LIBRARIES NAMES LDAP
+   	PATHS
+   	/System/Library/Frameworks
+   	/Library/Frameworks
+   )
+else(APPLE)
+   FIND_LIBRARY(LDAP_LIBRARIES NAMES ldap
+      PATHS
+      /usr/lib
+      /usr/local/lib
+   )
+   
+   FIND_LIBRARY(LBER_LIBRARIES NAMES lber
+      PATHS
+      /usr/lib
+      /usr/local/lib
+   )
+endif(APPLE)
 
 if(LDAP_INCLUDE_DIR AND LDAP_LIBRARIES)
    set(LDAP_FOUND TRUE)
 endif(LDAP_INCLUDE_DIR AND LDAP_LIBRARIES)
-
 
 if(LDAP_FOUND)
    if(NOT LDAP_FIND_QUIETLY)
