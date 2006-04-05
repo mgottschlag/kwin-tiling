@@ -223,7 +223,7 @@ void KBlankEffect::blankBlocks()
     qApp->flush();
 
     if ( d->effectProgress >= bx*by ) {
-        delete block;
+        delete[] block;
         finished();
     }
 }
