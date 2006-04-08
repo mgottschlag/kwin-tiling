@@ -86,11 +86,11 @@ Str2Font( const QString &aValue )
 		aRetFont.setStyleHint( (QFont::StyleHint)sl[2].toUInt() );
 
 		nFontBits = sl[5].toUInt();
-		aRetFont.setItalic( nFontBits & 0x01 != 0 );
-		aRetFont.setUnderline( nFontBits & 0x02 != 0 );
-		aRetFont.setStrikeOut( nFontBits & 0x04 != 0 );
-		aRetFont.setFixedPitch( nFontBits & 0x08 != 0 );
-		aRetFont.setRawMode( nFontBits & 0x20 != 0 );
+		aRetFont.setItalic( (nFontBits & 0x01) != 0 );
+		aRetFont.setUnderline( (nFontBits & 0x02) != 0 );
+		aRetFont.setStrikeOut( (nFontBits & 0x04) != 0 );
+		aRetFont.setFixedPitch( (nFontBits & 0x08) != 0 );
+		aRetFont.setRawMode( (nFontBits & 0x20) != 0 );
 	}
 	aRetFont.setStyleStrategy( (QFont::StyleStrategy)
 	   (QFont::PreferMatch |
