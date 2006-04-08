@@ -105,6 +105,7 @@ GreeterApp::x11EventFilter( XEvent * ev )
 		break;
 	case ButtonPress:
 		emit activity();
+		/* fall through */
 	case ButtonRelease:
 		// Hack to let the RMB work as LMB
 		if (ev->xbutton.button == 3)

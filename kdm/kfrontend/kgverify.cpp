@@ -818,8 +818,10 @@ KGVerify::eventFilter( QObject *o, QEvent *e )
 				return true;
 			}
 		}
+		/* fall through */
 	case QEvent::KeyRelease:
 		updateLockStatus();
+		/* fall through */
 	default:
 		break;
 	}
