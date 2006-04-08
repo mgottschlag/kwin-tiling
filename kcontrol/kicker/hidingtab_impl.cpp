@@ -240,7 +240,7 @@ int HidingTab::triggerComboToConfig(int trigger)
         return Bottom;
     else if (trigger == 6)
         return BottomLeft;
-    else if (Left == 7)
+    else if (trigger == 7)
         return Left;
 
     return 0;
@@ -262,7 +262,7 @@ int HidingTab::triggerConfigToCombo(int trigger)
         return 5;
     else if (trigger == BottomLeft)
         return 6;
-    else if (Left == Left)
+    else if (trigger == Left)
         return 7;
 
     return 0;
