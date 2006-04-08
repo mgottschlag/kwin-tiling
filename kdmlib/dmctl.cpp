@@ -129,7 +129,8 @@ DM::exec( const char *cmd, QByteArray &buf )
 	if (fd < 0)
 		goto busted;
 
-	if (::write( fd, cmd, (tl = strlen( cmd )) ) != tl) {
+	tl = strlen( cmd );
+	if (::write( fd, cmd, tl ) != tl) {
 	    bust:
 		::close( fd );
 		fd = -1;
