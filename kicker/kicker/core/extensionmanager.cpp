@@ -138,7 +138,7 @@ void ExtensionManager::initialize()
     foreach (QString extensionId, elist)
     {
         // create a matching applet container
-        if (extensionId.find("Extension") == -1)
+        if (extensionId.indexOf("Extension") == -1)
         {
             continue;
         }
@@ -253,7 +253,7 @@ void ExtensionManager::migrateMenubar()
     QStringList elist = config->readEntry("Extensions2", QStringList() );
     foreach (QString extensionId, elist)
     {
-        if (extensionId.find("Extension") == -1)
+        if (extensionId.indexOf("Extension") == -1)
         {
             continue;
         }
@@ -286,7 +286,7 @@ void ExtensionManager::migrateMenubar()
                 if (appletType == "Applet")
                 {
                     QString appletFile = group.readPathEntry("DesktopFile");
-                    if (appletFile.find("menuapplet.desktop") != -1)
+                    if (appletFile.indexOf("menuapplet.desktop") != -1)
                     {
                         QString menubarConfig = locate("config", extension);
                         KIO::NetAccess::copy(menubarConfig,
