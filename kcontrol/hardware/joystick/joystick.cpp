@@ -68,7 +68,7 @@ extern "C"
 
 //---------------------------------------------------------------------------------------------
 
-joystick::joystick(QWidget *parent, const char *, const QStringList &)
+Joystick::Joystick(QWidget *parent, const char *, const QStringList &)
   : KCModule(JoystickFactory::instance(), parent)
 {
   setAboutData(new KAboutData("kcmjoystick", I18N_NOOP("KDE Joystick Control Module"), "1.0",
@@ -104,14 +104,14 @@ joystick::joystick(QWidget *parent, const char *, const QStringList &)
 
 //---------------------------------------------------------------------------------------------
 
-void joystick::load()
+void Joystick::load()
 {
   joyWidget->init();
 }
 
 //---------------------------------------------------------------------------------------------
 
-void joystick::defaults()
+void Joystick::defaults()
 {
   joyWidget->resetCalibration();
 

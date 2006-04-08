@@ -25,12 +25,14 @@
 
 class JoyWidget;
 
-class joystick: public KCModule
+
+/* on FreeBSD the header <sys/joystick.h> already has a struct joystick, so we can't use the same name here, Alex */
+class Joystick: public KCModule
 {
   Q_OBJECT
 
   public:
-    joystick(QWidget *parent = 0, const char *name = 0, const QStringList &list = QStringList());
+    Joystick(QWidget *parent = 0, const char *name = 0, const QStringList &list = QStringList());
 
     virtual void load();
     virtual void defaults();
