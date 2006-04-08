@@ -138,13 +138,13 @@ void ExtensionManager::initialize()
     foreach (QString extensionId, elist)
     {
         // create a matching applet container
-        if(!extensionId.contains("Extension") > 0)
+        if (extensionId.find("Extension") == -1)
         {
             continue;
         }
 
         // is there a config group for this extension?
-        if(!config->hasGroup(extensionId))
+        if (!config->hasGroup(extensionId))
         {
             continue;
         }
@@ -253,13 +253,13 @@ void ExtensionManager::migrateMenubar()
     QStringList elist = config->readEntry("Extensions2", QStringList() );
     foreach (QString extensionId, elist)
     {
-        if(!extensionId.contains("Extension") > 0)
+        if (extensionId.find("Extension") == -1)
         {
             continue;
         }
 
         // is there a config group for this extension?
-        if(!config->hasGroup(extensionId))
+        if (!config->hasGroup(extensionId))
         {
             continue;
         }
