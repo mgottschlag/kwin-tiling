@@ -601,7 +601,7 @@ void PanelServiceMenu::mouseMoveEvent(QMouseEvent * ev)
 {
     KPanelMenu::mouseMoveEvent(ev);
 
-    if (Kicker::self()->isImmutable())
+    if (Kicker::self()->isKioskImmutable())
         return;
 
     if ( (ev->state() & Qt::LeftButton ) != Qt::LeftButton )
