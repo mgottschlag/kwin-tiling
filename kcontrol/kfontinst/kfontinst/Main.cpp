@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
                     bool      found=false;
 
                     while((dir=FcStrListNext(list)))
-                        if(0==KFI::Misc::dirSyntax((const char *)dir).find(folder))
+                        if(0==KFI::Misc::dirSyntax((const char *)dir).indexOf(folder))
                             found=true;
 
                     if(!found)

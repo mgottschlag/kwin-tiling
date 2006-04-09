@@ -34,7 +34,7 @@ KFindLanguage::KFindLanguage() {
 
 	m_oldlang = config->readEntry("Language");
 	m_oldlang = m_oldlang.toLower();
-	m_oldlang = m_oldlang.left(m_oldlang.find(':')); // only use the first lang
+	m_oldlang = m_oldlang.left(m_oldlang.indexOf(':')); // only use the first lang
 
 	m_country = config->readEntry("Country", "C");
 	if (m_country == "C") {
@@ -42,11 +42,11 @@ KFindLanguage::KFindLanguage() {
 		if(m_country.left(5) == "nn_NO") // glibc's nn_NO is KDE's no_NY
 			m_country = "no";
 		if(m_country.contains("_"))
-			m_country = m_country.mid(m_country.find("_")+1);
+			m_country = m_country.mid(m_country.indexOf("_")+1);
 		if(m_country.contains("."))
-			m_country = m_country.left(m_country.find("."));
+			m_country = m_country.left(m_country.indexOf("."));
 		if(m_country.contains("@"))
-			m_country = m_country.left(m_country.find("@"));
+			m_country = m_country.left(m_country.indexOf("@"));
 		if(m_country != "C")
 			m_country = m_country.toLower();
 		if(m_country == "en") // special-case "en" - should be "en_GB" or "en_US", but plain "en" is in use quite often
@@ -82,9 +82,9 @@ KFindLanguage::KFindLanguage() {
 		QString name = entry.readEntry("Name", i18n("without name"));
 
 		QString tag = *it;
-		int index = tag.findRev('/');
+		int index = tag.lastIndexOf('/');
 		tag = tag.left(index);
-		index = tag.findRev('/');
+		index = tag.lastIndexOf('/');
 		tag = tag.mid(index+1);
 
 		m_langlist << tag;
@@ -109,7 +109,7 @@ KFindLanguage::KFindLanguage() {
 	QStringList::ConstIterator it;
 	for( it = m_langlist.begin(); it != m_langlist.end(); ++it) {
 		int match=0;
-		QString l = (*it).left((*it).find(";"));
+		QString l = (*it).left((*it).indexOf(";"));
 		if (l == "C")
 			match++;
 		if(l.contains(compare))

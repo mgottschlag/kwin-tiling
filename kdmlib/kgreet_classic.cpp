@@ -256,7 +256,7 @@ bool // virtual
 KClassicGreeter::textMessage( const char *text, bool err )
 {
 	if (!err &&
-	    QString( text ).find( QRegExp( "^Changing password for [^ ]+$" ) ) >= 0)
+	    QString( text ).indexOf( QRegExp( "^Changing password for [^ ]+$" ) ) >= 0)
 		return true;
 	return false;
 }
@@ -271,11 +271,11 @@ KClassicGreeter::textPrompt( const char *prompt, bool echo, bool nonBlocking )
 		exp = 1;
 	else {
 		QString pr( prompt );
-		if (pr.find( QRegExp( "\\bpassword\\b", false ) ) >= 0) {
-			if (pr.find( QRegExp( "\\b(re-?(enter|type)|again|confirm)\\b",
+		if (pr.indexOf( QRegExp( "\\bpassword\\b", false ) ) >= 0) {
+			if (pr.indexOf( QRegExp( "\\b(re-?(enter|type)|again|confirm)\\b",
 			                      false ) ) >= 0)
 				exp = 3;
-			else if (pr.find( QRegExp( "\\bnew\\b", false ) ) >= 0)
+			else if (pr.indexOf( QRegExp( "\\bnew\\b", false ) ) >= 0)
 				exp = 2;
 			else { // QRegExp( "\\b(old|current)\\b", false ) is too strict
 				handler->gplugReturnText( "",

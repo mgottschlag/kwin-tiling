@@ -179,7 +179,7 @@ static QString getEntry(QStringList &list, const QString &name)
                           end(list.end());
 
     for( ; it!=end; ++it)
-        if(0==(*it).find('/'+name+' '))
+        if(0==(*it).indexOf('/'+name+' '))
             return *it;
 
     return QString();
@@ -208,7 +208,7 @@ static void addEntry(QStringList &list, const QString &name, const QString &file
 
         str << '/' << name << " (";
 
-        if(0==file.find(fmapDir))
+        if(0==file.indexOf(fmapDir))
             str << file.mid(fmapDir.length());
         else
             str << file;
@@ -301,7 +301,7 @@ bool create(const QString &dir, CFontEngine &fe)
         QString fName(Misc::fileSyntax(CFcEngine::getFcString(fs->fonts[i], FC_FILE)));
         FcBool  scalable=FcFalse;
 
-        if(!fName.isEmpty() && (root || dir.isEmpty() || 0==fName.find(dir)) &&
+        if(!fName.isEmpty() && (root || dir.isEmpty() || 0==fName.indexOf(dir)) &&
            FcResultMatch==FcPatternGetBool(fs->fonts[i], FC_SCALABLE, 0, &scalable) && scalable)
         {
             const QStringList *existing=old.getEntries(fName);
@@ -541,7 +541,7 @@ CFile::CFile(const QString &dir)
 
 const QStringList * CFile::getEntries(const QString &fname)
 {
-    TEntry *entry=findEntry(0==fname.find(itsDir) ? fname.mid(itsDir.length()) : fname, false);
+    TEntry *entry=findEntry(0==fname.indexOf(itsDir) ? fname.mid(itsDir.length()) : fname, false);
 
     return entry ? &entry->entries : NULL;
 }

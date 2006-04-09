@@ -61,7 +61,7 @@ QString get_menu_entry_from_path( const QString& path_P )
     for( QStringList::ConstIterator it = dirs.begin();
          it != dirs.end();
          ++it )
-        if( path_P.find( *it ) == 0 )
+        if( path_P.indexOf( *it ) == 0 )
             {
             QString ret = path_P;
             ret.remove( 0, (*it).length());

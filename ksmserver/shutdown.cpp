@@ -410,7 +410,8 @@ void KSMServer::completeShutdownOrCheckpoint()
             waitForKNotify = false;
         if( waitForKNotify ) {
             state = WaitingForKNotify;
-            knotifyTimeoutTimer.start( 20000, true );
+            knotifyTimeoutTimer.setSingleShot( true );
+            knotifyTimeoutTimer.start( 20000 );
             return;
         }
         startKilling();

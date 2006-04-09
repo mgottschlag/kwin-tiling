@@ -551,7 +551,7 @@ void CKCmFontInst::infoMessage(const QString &msg)
 
 static QString family(const QString &name)
 {
-    int commaPos=name.find(',');
+    int commaPos=name.indexOf(',');
 
     return -1==commaPos ? name : name.left(commaPos);
 }

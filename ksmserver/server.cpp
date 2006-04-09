@@ -634,7 +634,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
         // strip the screen number from the display
         display.replace(QRegExp("\\.[0-9]+$"), "");
         int i;
-        while( (i = display.find(':')) >= 0)
+        while( (i = display.indexOf(':')) >= 0)
            display[i] = '_';
 
         fName += "_"+display.toLocal8Bit();
@@ -699,7 +699,7 @@ void KSMServer::cleanUp()
     // strip the screen number from the display
     display.replace(QRegExp("\\.[0-9]+$"), "");
     int i;
-    while( (i = display.find(':')) >= 0)
+    while( (i = display.indexOf(':')) >= 0)
          display[i] = '_';
 
     fName += "_"+display.toLocal8Bit();

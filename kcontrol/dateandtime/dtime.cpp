@@ -291,7 +291,7 @@ void Dtime::save()
   if(setDateTimeAuto->isChecked() && !ntpUtility.isEmpty()){
     // NTP Time setting
     QString timeServer = timeServerList->currentText();
-    if( timeServer.find( QRegExp(".*\\(.*\\)$") ) != -1 ) {
+    if( timeServer.indexOf( QRegExp(".*\\(.*\\)$") ) != -1 ) {
       timeServer.replace( QRegExp(".*\\("), "" );
       timeServer.replace( QRegExp("\\).*"), "" );
       // Would this be better?: s/^.*\(([^)]*)\).*$/\1/

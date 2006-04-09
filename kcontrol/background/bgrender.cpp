@@ -115,7 +115,7 @@ QString KBackgroundRenderer::buildCommand()
     if (cmd.isEmpty())
 	return QString();
 
-    while ((pos = cmd.find('%', pos)) != -1) {
+    while ((pos = cmd.indexOf('%', pos)) != -1) {
 
         if (pos == (int) (cmd.length() - 1))
             break;
@@ -664,7 +664,8 @@ void KBackgroundRenderer::slotBackgroundDone(KProcess *process)
 
     m_Tempfile->unlink();
     delete m_Tempfile; m_Tempfile = 0;
-    m_pTimer->start(0, true);
+    m_pTimer->setSingleShot(true);
+    m_pTimer->start(0);
     setBusyCursor(false);
 }
 
@@ -685,7 +686,8 @@ void KBackgroundRenderer::start(bool enableBusyCursor)
 	m_pPixmap = new QPixmap();
 
     m_State = Rendering;
-    m_pTimer->start(0, true);
+    m_pTimer->setSingleShot(true);
+    m_pTimer->start(0);
 }
 
 
@@ -704,7 +706,8 @@ void KBackgroundRenderer::render()
     if (!(m_State & BackgroundDone)) {
         ret = doBackground();
         if (ret != Wait)
-	    m_pTimer->start(0, true);
+	    m_pTimer->setSingleShot(true);
+	    m_pTimer->start(0);
 	return;
     }
 

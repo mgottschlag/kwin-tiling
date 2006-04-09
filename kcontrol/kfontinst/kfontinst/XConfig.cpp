@@ -824,8 +824,8 @@ bool CXConfig::createFontsDotDir(const QString &dir, CFontEngine &fe)
                                          QByteArray entry(xlfd);
 
                                          // Taken from ttmkfdir...
-                                         if(encoding.find("jisx")!=-1 || encoding.find("gb2312")!=-1 ||
-                                            encoding.find("big5")!=-1 || encoding.find("ksc")!=-1)
+                                         if(encoding.indexOf("jisx")!=-1 || encoding.indexOf("gb2312")!=-1 ||
+                                            encoding.indexOf("big5")!=-1 || encoding.indexOf("ksc")!=-1)
                                              entry+='c';
                                          else
                                              entry+=CFontEngine::spacingStr(fe.getSpacing()).latin1();
@@ -913,7 +913,7 @@ CXConfig::TPath::EType CXConfig::TPath::getType(const QString &d)
 
     str.replace(QRegExp("\\s*"), "");
 
-    return 0==str.find("unix/:")
+    return 0==str.indexOf("unix/:")
                ? FONT_SERVER
                : "fontconfig"==str
                    ? FONT_CONFIG

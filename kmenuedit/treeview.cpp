@@ -473,7 +473,7 @@ void TreeView::selectMenu(const QString &menu)
    TreeItem *item = 0;
    do
    {
-      int i = restMenu.find("/");
+      int i = restMenu.indexOf("/");
       QString subMenu = restMenu.left(i+1);
       restMenu = restMenu.mid(i+1);
    
@@ -684,7 +684,7 @@ static QString createDesktopFile(const QString &file, QString *menuId, QStringLi
    base = base.left(base.lastIndexOf('.'));
 
    QRegExp r("(.*)(?=-\\d+)");
-   base = (r.search(base) > -1) ? r.cap(1) : base;
+   base = (r.indexIn(base) > -1) ? r.cap(1) : base;
 
    QString result = KService::newServicePath(true, base, menuId, excludeList);
    excludeList->append(*menuId);

@@ -194,7 +194,7 @@ QString getConfigFile(bool system)
 
         if(fExists(f))
         {
-            if(system || 0==fileSyntax(f).find(home)) // For nonsystem, only consider file within $HOME
+            if(system || 0==fileSyntax(f).indexOf(home)) // For nonsystem, only consider file within $HOME
                 files.append(f);
         }
 #if (FC_VERSION>=20300)
@@ -211,7 +211,7 @@ QString getConfigFile(bool system)
                               end(files.end());
 
         for(; it!=end; ++it)
-            if(-1!=(*it).find(QRegExp(system ? "/local\\.conf$" : "/\\.?fonts\\.conf$")))
+            if(-1!=(*it).indexOf(QRegExp(system ? "/local\\.conf$" : "/\\.?fonts\\.conf$")))
                 return *it;
         return files.front();  // Just return the 1st one...
     }
@@ -646,12 +646,12 @@ bool KXftConfig::apply()
                         QString str(m_doc.toString());
                         int     idx;
     
-                        if(0!=str.find("<?xml"))
+                        if(0!=str.indexOf("<?xml"))
                             str.insert(0, xmlHeader);
-                        else if(0==str.find(qtXmlHeader))
+                        else if(0==str.indexOf(qtXmlHeader))
                             str.replace(0, strlen(qtXmlHeader), xmlHeader);
     
-                        if(-1!=(idx=str.find(qtDocTypeLine)))
+                        if(-1!=(idx=str.indexOf(qtDocTypeLine)))
                             str.replace(idx, strlen(qtDocTypeLine), docTypeLine);
     
                         //
@@ -948,7 +948,7 @@ bool KXftConfig::hasDir(const QString &d)
     ListItem *item;
 
     for(item=m_dirs.first(); item; item=m_dirs.next())
-        if(0==dir.find(item->str))
+        if(0==dir.indexOf(item->str))
             return true;
 
     return false;

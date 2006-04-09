@@ -163,7 +163,7 @@ void Minicli::setCommand(const QString& command)
 {
   m_dlg->cbCommand->lineEdit()->setText(command);
   m_dlg->cbCommand->lineEdit()->deselect();
-  int firstSpace = command.find(' ');
+  int firstSpace = command.indexOf(' ');
   if (firstSpace > 0) {
     m_dlg->cbCommand->lineEdit()->setSelection(firstSpace+1, command.length());
   }
@@ -270,7 +270,7 @@ void Minicli::accept()
 {
   QString cmd = m_dlg->cbCommand->currentText().trimmed();
   if (!cmd.isEmpty() && (cmd[0].isNumber() || (cmd[0] == '(')) &&
-      (QRegExp("[a-zA-Z\\]\\[]").search(cmd) == -1))
+      (QRegExp("[a-zA-Z\\]\\[]").indexIn(cmd) == -1))
   {
      QString result = calculate(cmd);
      if (!result.isEmpty())
@@ -630,7 +630,8 @@ void Minicli::slotCmdChanged(const QString& text)
     return;
   }
 
-  m_parseTimer->start(250, true);
+  m_parseTimer->setSingleShot(true);
+  m_parseTimer->start(250);
 }
 
 void Minicli::slotAdvanced()

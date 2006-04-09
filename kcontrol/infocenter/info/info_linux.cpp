@@ -104,7 +104,7 @@ bool GetInfo_ReadfromFile(Q3ListView * lbox, const char *FileName,
 	line = stream.readLine();
 	if (!line.isEmpty()) {
 	    if (!splitChar.isNull()) {
-		int pos = line.find(splitChar);
+		int pos = line.indexOf(splitChar);
 		s1 = line.left(pos-1).trimmed();
 		s2 = line.mid(pos+1).trimmed();
 	    }
@@ -155,7 +155,7 @@ bool GetInfo_DMA(Q3ListView * lBox)
 	    line = stream.readLine();
 	    if (!line.isEmpty()) {
 		QRegExp rx("^\\s*(\\S+)\\s*:\\s*(\\S+)");
-		if (-1 != rx.search(line)) {
+		if (-1 != rx.indexIn(line)) {
 		    child = new Q3ListViewItem(lBox,child,rx.cap(1),rx.cap(2));
 		}
 	    }
@@ -223,17 +223,17 @@ bool GetInfo_Devices(Q3ListView * lBox)
 	while (!stream.atEnd()) {
 	    line = stream.readLine();
 	    if (!line.isEmpty()) {
-		if (-1 != line.find("character device",0,false)) {
+		if (-1 != line.indexOf("character device",0,Qt::CaseInsensitive)) {
 		    parent = new Q3ListViewItem(lBox,parent,i18n("Character Devices"));
 		    parent->setPixmap(0,SmallIcon("chardevice"));
 		    parent->setOpen(true);
-		} else if (-1 != line.find("block device",0,false)) {
+		} else if (-1 != line.indexOf("block device",0,Qt::CaseInsensitive)) {
 		    parent = new Q3ListViewItem(lBox,parent,i18n("Block Devices"));
 		    parent->setPixmap(0,SmallIcon("blockdevice"));
 		    parent->setOpen(true);
 		} else {
 		    QRegExp rx("^\\s*(\\S+)\\s+(\\S+)");
-		    if (-1 != rx.search(line)) {
+		    if (-1 != rx.indexIn(line)) {
 			if (parent) {
 			    child = new Q3ListViewItem(parent,child,rx.cap(2),rx.cap(1));
 			} else {
@@ -265,7 +265,7 @@ bool GetInfo_Devices(Q3ListView * lBox)
 	    line = stream.readLine();
 	    if (!line.isEmpty()) {
 		QRegExp rx("^\\s*(\\S+)\\s+(\\S+)");
-		if (-1 != rx.search(line)) {
+		if (-1 != rx.indexIn(line)) {
 		    child = new Q3ListViewItem(misc,child,rx.cap(2),"10",rx.cap(1));
 		}
 	    }
@@ -288,7 +288,7 @@ static void cleanPassword(QString & str)
 
     while (index >= 0)
     {
-	index = str.find(passwd, index, false);
+	index = str.indexOf(passwd, index, Qt::CaseInsensitive);
 	if (index >= 0) {
 	    index += passwd.length();
 	    while (index < (int) str.length() &&
@@ -468,7 +468,7 @@ bool GetInfo_Partitions(Q3ListView * lbox)
 	while (file->readLine(buf, sizeof( buf )) > 0) {
 	    str = QString::fromLocal8Bit(buf);
 	    if (str.length()) {
-		int p = str.find(' ');	/* find first space. */
+		int p = str.indexOf(' ');	/* find first space. */
 		if (p)
 		    str.remove(p, 1024); /* erase all chars including space. */
 		Mounted_Partitions.append(str);

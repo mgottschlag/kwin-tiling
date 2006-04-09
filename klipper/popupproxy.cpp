@@ -145,7 +145,7 @@ int PopupProxy::insertFromSpill( int index ) {
           item && remainingHeight >= 0;
           nextItemNumber++, item = ++spillPointer )
     {
-        if ( m_filter.search( item->text() ) == -1) {
+        if ( m_filter.indexIn( item->text() ) == -1) {
             continue;
         }
         tryInsertItem( item, remainingHeight, index++ );

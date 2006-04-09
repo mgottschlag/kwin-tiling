@@ -99,13 +99,13 @@ KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringL
 void KCMIOSlaveInfo::slaveHelp( KIO::Job *, const QByteArray &data)
 {
     if ( data.size() == 0 ) { // EOF
-        int index = helpData.find( "<meta http-equiv=\"Content-Type\"" );
-        index = helpData.find( "charset=", index ) + 8;
-        QString charset = helpData.mid( index, helpData.find( '\"', index ) - index );
+        int index = helpData.indexOf( "<meta http-equiv=\"Content-Type\"" );
+        index = helpData.indexOf( "charset=", index ) + 8;
+        QString charset = helpData.mid( index, helpData.indexOf( '\"', index ) - index );
         QString text = QTextCodec::codecForName(charset.latin1())->toUnicode( helpData );
-        index = text.find( "<div class=\"titlepage\">" );
+        index = text.indexOf( "<div class=\"titlepage\">" );
         text = text.mid( index );
-        index = text.find( "<table width=\"100%\" class=\"bottom-nav\"" );
+        index = text.indexOf( "<table width=\"100%\" class=\"bottom-nav\"" );
         text = text.left( index );
         m_info->setText(text);
         return;

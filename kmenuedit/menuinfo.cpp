@@ -106,7 +106,7 @@ void MenuFolderInfo::take(MenuEntryInfo *entry)
 QString MenuFolderInfo::uniqueMenuCaption(const QString &caption)
 {
    QRegExp r("(.*)(?=-\\d+)");
-   QString cap = (r.search(caption) > -1) ? r.cap(1) : caption;
+   QString cap = (r.indexIn(caption) > -1) ? r.cap(1) : caption;
 
    QString result = caption;
 
@@ -134,7 +134,7 @@ QString MenuFolderInfo::uniqueMenuCaption(const QString &caption)
 QString MenuFolderInfo::uniqueItemCaption(const QString &caption, const QString &exclude)
 {
    QRegExp r("(.*)(?=-\\d+)");
-   QString cap = (r.search(caption) > -1) ? r.cap(1) : caption;
+   QString cap = (r.indexIn(caption) > -1) ? r.cap(1) : caption;
 
    QString result = caption;
 

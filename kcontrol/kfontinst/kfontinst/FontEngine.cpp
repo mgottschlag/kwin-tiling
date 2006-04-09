@@ -349,7 +349,7 @@ static void removeString(QString &str, const QString &remove)
 {
     static const QChar space(' '),
                        dash('-');
-    int                pos=str.find(remove, 0, false);
+    int                pos=str.indexOf(remove, 0, Qt::CaseInsensitive);
     unsigned int       slen=remove.length();
 
     if((0==pos || (pos>0 && (space==str[pos-1] || dash==str[pos-1]))) &&
@@ -716,7 +716,7 @@ static const char * getFoundry(const FT_Face face, TT_OS2 *os2)
 
 static CFontEngine::EItalic checkItalic(CFontEngine::EItalic it, const QString &full)
 {
-    return (CFontEngine::ITALIC_ITALIC==it && (-1!=full.find(constOblique) || -1!=full.find(constSlanted)))
+    return (CFontEngine::ITALIC_ITALIC==it && (-1!=full.indexOf(constOblique) || -1!=full.indexOf(constSlanted)))
            ? CFontEngine::ITALIC_OBLIQUE
            : it;
 }

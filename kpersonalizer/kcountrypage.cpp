@@ -94,11 +94,11 @@ void KCountryPage::loadCountryList(KLanguageButton *combo) {
 		QString tag = *it;
 		int index;
 
-		index = tag.findRev('/');
+		index = tag.lastIndexOf('/');
 		if (index != -1)
 			tag = tag.mid(index + 1);
 
-		index = tag.findRev('.');
+		index = tag.lastIndexOf('.');
 		if (index != -1)
 			tag.truncate(index);
 
@@ -120,9 +120,9 @@ void KCountryPage::loadCountryList(KLanguageButton *combo) {
 		QString submenu = '-' + entry.readEntry("Region");
 
 		QString tag = *it;
-		int index = tag.findRev('/');
+		int index = tag.lastIndexOf('/');
 		tag.truncate(index);
-		index = tag.findRev('/');
+		index = tag.lastIndexOf('/');
 		tag = tag.mid(index+1);
 
 		QPixmap flag( locate( "locale", QString::fromLatin1("l10n/%1/flag.png").arg(tag) ) );

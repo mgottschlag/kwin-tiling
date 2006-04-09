@@ -451,7 +451,7 @@ static QString getFontFolder(const QString &defaultDir, const QString &root, QSt
         bool                  found=false;
 
         for(it=dirs.begin(); it!=end && !found; ++it)
-            if(0==(*it).find(root))
+            if(0==(*it).indexOf(root))
                 return *it;
     }
 
@@ -809,7 +809,7 @@ CKioFonts::CKioFonts(const QByteArray &pool, const QByteArray &app)
 
                     str.replace(QRegExp("\\s*"), "");
 
-                    if(0==str.find("unix/:"))
+                    if(0==str.indexOf("unix/:"))
                         itsUsingXfsFpe=true;
                     else if("fontconfig"==str)
                         itsUsingFcFpe=true;
@@ -2019,7 +2019,7 @@ bool CKioFonts::updateFontList()
 
                 if(!file.isEmpty())
                 {
-                    if(!itsRoot && 0==file.find(home))
+                    if(!itsRoot && 0==file.indexOf(home))
                         folder=FOLDER_USER;
 
                     QList<FcPattern *> &patterns=

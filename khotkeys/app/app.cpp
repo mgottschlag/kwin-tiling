@@ -111,7 +111,7 @@ int KDE_EXPORT kdemain( int argc, char** argv )
 	    XCloseDisplay(dpy);
 	    dpy = 0;
 
-	    if ((pos = displayname.findRev('.')) != -1)
+	    if ((pos = displayname.lastIndexOf('.')) != -1)
 		displayname.remove(pos, 10);
 
 	    Q3CString env;

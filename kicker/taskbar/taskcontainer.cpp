@@ -88,7 +88,8 @@ TaskContainer::TaskContainer(Task::TaskPtr task, TaskBar* bar,
     // no point in having another timer just for this, and
     // a single shot won't do because we need to stop the timer
     // in case our task is deleted out from under us
-    dragSwitchTimer.start(0, true);
+    dragSwitchTimer.setSingleShot(true);
+    dragSwitchTimer.start(0);
 }
 
 TaskContainer::TaskContainer(Startup::StartupPtr startup, PixmapList& startupFrames,
@@ -113,7 +114,8 @@ TaskContainer::TaskContainer(Startup::StartupPtr startup, PixmapList& startupFra
 
     connect(m_startup.data(), SIGNAL(changed()), SLOT(update()));
 
-    dragSwitchTimer.start(333, true);
+    dragSwitchTimer.setSingleShot(true);
+    dragSwitchTimer.start(333);
 }
 
 void TaskContainer::init()
@@ -573,7 +575,7 @@ void TaskContainer::drawButton(QPainter *p)
 
     // modified overlay
     static QString modStr = "[" + i18n( "modified" ) + "]";
-    int modStrPos = text.find( modStr );
+    int modStrPos = text.indexOf( modStr );
     int textPos = ( taskBar->showIcon() && !pixmap.isNull() ) ? 2 + 16 + 2 : 0;
 
     if (modStrPos >= 0)
@@ -792,7 +794,7 @@ QString TaskContainer::name()
         // in common, and then use everything UP TO that as the name in the button
         while (i < maxLength)
         {
-            QChar check = match.at(i).lower();
+            QChar check = match.at(i).toLower();
             Task::List::iterator itEnd = m_filteredTasks.end();
             for (Task::List::iterator it = m_filteredTasks.begin(); it != itEnd; ++it)
             {
@@ -800,7 +802,7 @@ QString TaskContainer::name()
                 // by repeatedly calling visibleName() =/
                 QString matchAgainst = (*it)->visibleName();
                 if (i >= matchAgainst.length() ||
-                    check != matchAgainst.at(i).lower())
+                    check != matchAgainst.at(i).toLower())
                 {
                     if (i > 0)
                     {
@@ -842,7 +844,7 @@ QString TaskContainer::name()
         text = id();
 
         // Upper case first letter: seems to be the right thing to do for most cases
-        text[0] = text[0].upper();
+        text[0] = text[0].toUpper();
     }
 
     if (m_filteredTasks.count() > 1)
@@ -1286,7 +1288,8 @@ void TaskContainer::dragEnterEvent( QDragEnterEvent* e )
     if (!m_filteredTasks.first()->isActive() ||
         m_filteredTasks.count() > 1)
     {
-        dragSwitchTimer.start(1000, true);
+        dragSwitchTimer.setSingleShot(true);
+        dragSwitchTimer.start(1000);
     }
 
     QToolButton::dragEnterEvent( e );
@@ -1585,7 +1588,7 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
         details.append(i18n("Has unsaved changes"));
 
         static QString modStr = "[" + i18n( "modified" ) + "]";
-        int modStrPos = name.find(modStr);
+        int modStrPos = name.indexOf(modStr);
 
         if (modStrPos >= 0)
         {

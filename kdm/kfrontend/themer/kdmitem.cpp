@@ -417,13 +417,13 @@ KdmItem::placementHint( const QRect &parentRect )
 
 	// anchor the rect to an edge / corner
 	if (pos.anchor.length() > 0 && pos.anchor.length() < 3) {
-		if (pos.anchor.find( 'n' ) >= 0)
+		if (pos.anchor.indexOf( 'n' ) >= 0)
 			dy = 0;
-		if (pos.anchor.find( 's' ) >= 0)
+		if (pos.anchor.indexOf( 's' ) >= 0)
 			dy = -h;
-		if (pos.anchor.find( 'w' ) >= 0)
+		if (pos.anchor.indexOf( 'w' ) >= 0)
 			dx = 0;
-		if (pos.anchor.find( 'e' ) >= 0)
+		if (pos.anchor.indexOf( 'e' ) >= 0)
 			dx = -w;
 	}
 	// KdmItem *p = static_cast<KdmItem*>( parent() );
@@ -468,7 +468,7 @@ KdmItem::parseAttribute( const QString &s, int &val, enum DataType &dType )
 	if (s == "box") {	// box value
 		dType = DTbox;
 		val = 0;
-	} else if ((p = s.find( '%' )) >= 0) {	// percent value
+	} else if ((p = s.indexOf( '%' )) >= 0) {	// percent value
 		dType = DTpercent;
 		QString sCopy = s;
 		sCopy.remove( p, 1 );

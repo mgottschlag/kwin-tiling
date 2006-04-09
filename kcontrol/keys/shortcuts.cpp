@@ -355,7 +355,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 			int ind = 0;
 			while( ind < (int) sFile.length() ) {
 				// parse the string for first white space
-				ind = sFile.find(" ");
+				ind = sFile.indexOf(" ");
 				if( ind == -1 ) {
 					ind = sFile.length();
 					break;

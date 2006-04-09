@@ -156,7 +156,7 @@ KGVerify::pluginName() const
 {
 	QString name( greetPlugins[pluginList[curPlugin]].library->fileName() );
 	uint st = name.lastIndexOf( '/' ) + 1;
-	uint en = name.find( '.', st );
+	uint en = name.indexOf( '.', st );
 	if (en - st > 7 && QConstString( name.unicode() + st, 7 ).string() == "kgreet_")
 		st += 7;
 	return name.mid( st, en - st );
@@ -482,7 +482,7 @@ KGVerify::VInfoBox( QWidget *parent, const QString &user, const char *msg )
 {
 	QString mesg = QString::fromLocal8Bit( msg );
 	QRegExp rx( "^Warning: your account will expire in (\\d+) day" );
-	if (rx.search( mesg ) >= 0) {
+	if (rx.indexIn( mesg ) >= 0) {
 		int expire = rx.cap( 1 ).toInt();
 		mesg = expire ?
 			i18n("Your account expires tomorrow.",
@@ -490,7 +490,7 @@ KGVerify::VInfoBox( QWidget *parent, const QString &user, const char *msg )
 			i18n("Your account expires today.");
 	} else {
 		rx.setPattern( "^Warning: your password will expire in (\\d+) day" );
-		if (rx.search( mesg ) >= 0) {
+		if (rx.indexIn( mesg ) >= 0) {
 			int expire = rx.cap( 1 ).toInt();
 			mesg = expire ?
 				i18n("Your password expires tomorrow.",
@@ -1174,7 +1174,8 @@ void
 QXTimer::start( int msec )
 {
 	left = msec;
-	timer.start( left, true );
+	timer.setSingleShot( true );
+	timer.start( left );
 	gettimeofday( &stv, 0 );
 }
 
@@ -1202,7 +1203,8 @@ void
 QXTimer::resume()
 {
 	if (left >= 0 && !timer.isActive()) {
-		timer.start( left, true );
+		timer.setSingleShot( true );
+		timer.start( left );
 		gettimeofday( &stv, 0 );
 	}
 }

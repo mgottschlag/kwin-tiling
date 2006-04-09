@@ -123,7 +123,7 @@ QDomElement MenuFile::findMenu(QDomElement elem, const QString &menuName, bool c
 {
    QString menuNodeName;
    QString subMenuName; 
-   int i = menuName.find('/');
+   int i = menuName.indexOf('/');
    if (i >= 0)
    {
       menuNodeName = menuName.left(i);
@@ -460,7 +460,7 @@ QString MenuFile::uniqueMenuName(const QString &menuName, const QString &newMenu
        result.truncate(result.length()-1);
        
    QRegExp r("(.*)(?=-\\d+)");
-   result = (r.search(result) > -1) ? r.cap(1) : result;
+   result = (r.indexIn(result) > -1) ? r.cap(1) : result;
      
    int trunc = result.length(); // Position of trailing '/'
    

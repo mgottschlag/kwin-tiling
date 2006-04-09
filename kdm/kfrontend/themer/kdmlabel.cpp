@@ -95,7 +95,7 @@ KdmLabel::KdmLabel( KdmItem *parent, const QDomNode &node, const char *name )
 	}
 
 	// Check if this is a timer label
-	label.isTimer = label.text.find( "%c" ) >= 0;
+	label.isTimer = label.text.indexOf( "%c" ) >= 0;
 	if (label.isTimer) {
 		timer = new QTimer( this );
 		timer->start( 1000 );

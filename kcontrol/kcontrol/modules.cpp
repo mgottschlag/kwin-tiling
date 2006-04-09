@@ -175,7 +175,7 @@ void ConfigModule::runAsRoot()
       // remove all kdesu switches
       while( cmd.length() > 1 && cmd[ 0 ] == '-' )
         {
-          int pos = cmd.find( ' ' );
+          int pos = cmd.indexOf( ' ' );
           cmd = cmd.remove( 0, pos ).trimmed();
         }
     }

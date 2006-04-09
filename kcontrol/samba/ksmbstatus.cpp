@@ -89,10 +89,10 @@ void NetMon::processSambaLine(char *bufline, int)
       version->setText(bufline); // second line = samba version
    if ((readingpart==header) && line.contains("Service"))
    {
-      iUser=line.find("uid");
-      iGroup=line.find("gid");
-      iPid=line.find("pid");
-      iMachine=line.find("machine");
+      iUser=line.indexOf("uid");
+      iGroup=line.indexOf("gid");
+      iPid=line.indexOf("pid");
+      iMachine=line.indexOf("machine");
    }
    else if ((readingpart==header) && (line.contains("---")))
    {
@@ -111,7 +111,7 @@ void NetMon::processSambaLine(char *bufline, int)
    }
    else if (readingpart==connexions)
       readingpart=locked_files;
-   else if ((readingpart==locked_files) && (line.find("No ")==0))
+   else if ((readingpart==locked_files) && (line.indexOf("No ")==0))
       readingpart=finished;
    else if (readingpart==locked_files)
    {

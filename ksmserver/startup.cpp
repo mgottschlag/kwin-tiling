@@ -215,7 +215,8 @@ void KSMServer::restoreSessionInternal()
 void KSMServer::tryRestoreNext()
 {
     if( startupSuspendCount > 0 ) {
-        startupSuspendTimeoutTimer.start( 10000, true );
+        startupSuspendTimeoutTimer.setSingleShot( true );
+        startupSuspendTimeoutTimer.start( 10000 );
         return;
     }
     restoreNext();
@@ -244,7 +245,8 @@ void KSMServer::restoreNext()
                           config->readEntry( QString("userId")+n, QString() ));
         lastIdStarted = config->readEntry( QString("clientId")+n, QString() );
         if ( !lastIdStarted.isEmpty() ) {
-            restoreTimer.start( 2000, true );
+            restoreTimer.setSingleShot( true );
+            restoreTimer.start( 2000 );
             return; // we get called again from the clientRegistered handler
         }
     }

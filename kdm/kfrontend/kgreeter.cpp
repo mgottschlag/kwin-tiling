@@ -207,7 +207,7 @@ KGreeter::insertUser( const QImage &default_pix,
 	p = default_pix;
   gotit:
 	QString realname = KStringHandler::from8Bit( ps->pw_gecos );
-	realname.truncate( realname.find( ',' ) );
+	realname.truncate( realname.indexOf( ',' ) );
 	if (realname.isEmpty() || realname == username)
 		new UserListViewItem( userView, username, QPixmap( p ), username );
 	else {

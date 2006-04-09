@@ -76,14 +76,14 @@ void ImportsView::updateList()
          s=buf;
          if ((s.contains(" nfs ")) || (s.contains(" smbfs ")))
          {
-            strSource=s.left(s.find(" on /"));
-            strMount=s.mid(s.find(" on /")+4,s.length());
+            strSource=s.left(s.indexOf(" on /"));
+            strMount=s.mid(s.indexOf(" on /")+4,s.length());
             if ((s.contains(" nfs ")) || (s.contains("/remote on ")))
                strType="NFS";
             else if (s.contains(" smbfs "))
                strType="SMB";
-            int pos(strMount.find(" type "));
-            if (pos==-1) pos=strMount.find(" read/");
+            int pos(strMount.indexOf(" type "));
+            if (pos==-1) pos=strMount.indexOf(" read/");
             strMount=strMount.left(pos);
             new Q3ListViewItem(&list,strType,strSource,strMount);
          };

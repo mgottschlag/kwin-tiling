@@ -56,7 +56,7 @@ static QString defaultDomain;
 static void
 splitEntity( const QString &ent, QString &dom, QString &usr )
 {
-	int pos = ent.find( separator );
+	int pos = ent.indexOf( separator );
 	if (pos < 0)
 		dom = "<local>", usr = ent;
 	else
@@ -222,7 +222,7 @@ KWinbindGreeter::slotChangedDomain( const QString &dom )
 	QStringList users;
 	if (dom == "<local>") {
 		for (QStringList::ConstIterator it = allUsers.begin(); it != allUsers.end(); ++it)
-			if ((*it).find( separator ) < 0)
+			if ((*it).indexOf( separator ) < 0)
 				users << *it;
 	} else {
 		QString st( dom + separator );
@@ -334,7 +334,7 @@ bool // virtual
 KWinbindGreeter::textMessage( const char *text, bool err )
 {
 	if (!err &&
-	    QString( text ).find( QRegExp( "^Changing password for [^ ]+$" ) ) >= 0)
+	    QString( text ).indexOf( QRegExp( "^Changing password for [^ ]+$" ) ) >= 0)
 		return true;
 	return false;
 }
@@ -349,15 +349,15 @@ KWinbindGreeter::textPrompt( const char *prompt, bool echo, bool nonBlocking )
 		exp = 1;
 	else {
 		QString pr( prompt );
-		if (pr.find( QRegExp( "\\b(old|current)\\b", false ) ) >= 0) {
+		if (pr.indexOf( QRegExp( "\\b(old|current)\\b", false ) ) >= 0) {
 			handler->gplugReturnText( "",
 			                          KGreeterPluginHandler::IsOldPassword |
 			                          KGreeterPluginHandler::IsSecret );
 			return;
-		} else if (pr.find( QRegExp( "\\b(re-?(enter|type)|again|confirm)\\b",
+		} else if (pr.indexOf( QRegExp( "\\b(re-?(enter|type)|again|confirm)\\b",
 		                             false ) ) >= 0)
 			exp = 3;
-		else if (pr.find( QRegExp( "\\bnew\\b", false ) ) >= 0)
+		else if (pr.indexOf( QRegExp( "\\bnew\\b", false ) ) >= 0)
 			exp = 2;
 		else {
 			handler->gplugMsgBox( QMessageBox::Critical,

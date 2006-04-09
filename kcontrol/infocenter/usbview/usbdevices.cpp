@@ -220,7 +220,7 @@ bool USBDevice::parse(QString fname)
   USBDevice *device = 0;
   int start=0, end;
   result.replace(QRegExp("^\n"),"");
-  while ((end = result.find('\n', start)) > 0)
+  while ((end = result.indexOf('\n', start)) > 0)
     {
       QString line = result.mid(start, end-start);
 

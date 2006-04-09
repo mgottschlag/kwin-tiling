@@ -172,7 +172,9 @@ void Command_url_action::execute()
         default: // error
           return;
         }
-    timeout.start( 1000, true ); // 1sec timeout
+    timeout.setSingleShot( true );
+    timeout.start( 1000 ); // 1sec timeout
+
     }
 
 const QString Command_url_action::description() const
@@ -208,7 +210,8 @@ void Menuentry_action::execute()
     if (!_service)
         return;
     KRun::run( *_service, KUrl::List());
-    timeout.start( 1000, true ); // 1sec timeout
+    timeout.setSingleShot( true );
+    timeout.start( 1000 ); // 1sec timeout
     }
 
 const QString Menuentry_action::description() const
@@ -285,7 +288,7 @@ void Dcop_action::execute()
             // one word
             if( pos != 0 )
                 args_str = args_str.mid( pos );
-            int nxt_pos = args_str.find( ' ' );
+            int nxt_pos = args_str.indexOf( ' ' );
             args_list.append( args_str.left( nxt_pos )); // should be ok if nxt_pos is -1
             args_str = nxt_pos >= 0 ? args_str.mid( nxt_pos ) : "";
             }
@@ -371,7 +374,7 @@ void Keyboard_input_action::execute()
             w = InputFocus;
         }
     int last_index = -1, start = 0;
-    while(( last_index = input().find( ':', last_index + 1 )) != -1 ) // find next ';'
+    while(( last_index = input().indexOf( ':', last_index + 1 )) != -1 ) // find next ';'
 	{
         QString key = input().mid( start, last_index - start ).trimmed();
         if( key == "Enter" && KKey( key ).keyCodeQt() == 0 )

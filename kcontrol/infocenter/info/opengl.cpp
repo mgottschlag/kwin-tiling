@@ -109,13 +109,13 @@ static bool get_dri_device()
     QTextStream stream(&file);
     QString line = stream.readLine();
     if (!line.isEmpty()) {
-	dri_info.module = line.mid(0, line.find(0x20));
+	dri_info.module = line.mid(0, line.indexOf(0x20));
 
 	// possible formats, for regression testing
 	// line = " PCI:01:00:0";
 	// line = " pci:0000:01:00.0"
 	QRegExp rx = QRegExp("\\b[Pp][Cc][Ii][:]([0-9a-fA-F]+[:])?([0-9a-fA-F]+[:][0-9a-fA-F]+[:.][0-9a-fA-F]+)\\b");
-	if (rx.search(line)>0)	 {
+	if (rx.indexIn(line)>0)	 {
 		dri_info.pci = rx.cap(2);
 		int end = dri_info.pci.lastIndexOf(':');
 		int end2 = dri_info.pci.lastIndexOf('.');

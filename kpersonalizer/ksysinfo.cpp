@@ -200,8 +200,8 @@ QFont KSysInfo::getFixedWidthFont(){
 		// File Parser
 		while (file->readLine(buf, sizeof(buf) - 1) > 0) {
 			QString s1 = QString::fromLocal8Bit(buf);
-			QString s2 = s1.mid(s1.find(":") + 1);
-			s1.truncate(s1.find(":"));
+			QString s2 = s1.mid(s1.indexOf(":") + 1);
+			s1.truncate(s1.indexOf(":"));
 			s1=s1.trimmed();
 			s2=s2.trimmed();
 			if(s1.contains("MHz")){

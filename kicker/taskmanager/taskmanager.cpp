@@ -631,7 +631,7 @@ Task::Task(WId win, QObject *parent, const char *name)
     // try to guess the icon from the classhint
     if(_pixmap.isNull())
     {
-        KGlobal::iconLoader()->loadIcon(className().lower(),
+        KGlobal::iconLoader()->loadIcon(className().toLower(),
                                                     K3Icon::Small,
                                                     K3Icon::Small,
                                                     K3Icon::DefaultState,
@@ -712,7 +712,7 @@ void Task::refreshIcon()
     // try to guess the icon from the classhint
     if(_pixmap.isNull())
     {
-        KGlobal::iconLoader()->loadIcon(className().lower(),
+        KGlobal::iconLoader()->loadIcon(className().toLower(),
                                                     K3Icon::Small,
                                                     K3Icon::Small,
                                                     K3Icon::DefaultState,
@@ -810,7 +810,7 @@ bool Task::isModified() const
   static QString modStr = QString::fromUtf8("[") +
                           i18n("modified") +
                           QString::fromUtf8("]");
-  int modStrPos = _info.visibleName().find(modStr);
+  int modStrPos = _info.visibleName().indexOf(modStr);
 
   return ( modStrPos != -1 );
 }

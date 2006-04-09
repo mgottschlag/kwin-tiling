@@ -113,7 +113,7 @@ private:
     void discardSession();
     void storeSession();
 
-    void startProtection() { protectionTimer.start( 8000, true ); }
+    void startProtection() { protectionTimer.setSingleShot( true ); protectionTimer.start( 8000 ); }
     void endProtection() { protectionTimer.stop(); }
 
     void startApplication( QStringList command,

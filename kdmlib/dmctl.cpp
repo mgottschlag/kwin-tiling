@@ -86,7 +86,7 @@ DM::DM() : fd( -1 )
 	case OldKDM:
 		{
 			QString tf( ctl );
-			tf.truncate( tf.find( ',' ) );
+			tf.truncate( tf.indexOf( ',' ) );
 			fd = ::open( tf.latin1(), O_WRONLY );
 		}
 		break;
@@ -173,9 +173,9 @@ DM::canShutdown()
 	QByteArray re;
 
 	if (DMType == GDM)
-		return exec( "QUERY_LOGOUT_ACTION\n", re ) && re.find("HALT") >= 0;
+		return exec( "QUERY_LOGOUT_ACTION\n", re ) && re.indexOf( "HALT" ) >= 0;
 
-	return exec( "caps\n", re ) && re.find( "\tshutdown" ) >= 0;
+	return exec( "caps\n", re ) && re.indexOf( "\tshutdown" ) >= 0;
 }
 
 void
@@ -189,7 +189,7 @@ DM::shutdown( KWorkSpace::ShutdownType shutdownType,
 	bool cap_ask;
 	if (DMType == NewKDM) {
 		QByteArray re;
-		cap_ask = exec( "caps\n", re ) && re.find( "\tshutdown ask" ) >= 0;
+		cap_ask = exec( "caps\n", re ) && re.indexOf( "\tshutdown ask" ) >= 0;
 	} else {
 		if (!bootOption.isEmpty())
 			return;
@@ -267,7 +267,7 @@ DM::isSwitchable()
 
 	QByteArray re;
 
-	return exec( "caps\n", re ) && re.find( "\tlocal" ) >= 0;
+	return exec( "caps\n", re ) && re.indexOf( "\tlocal" ) >= 0;
 }
 
 int
@@ -282,7 +282,7 @@ DM::numReserve()
 	QByteArray re;
 	int p;
 
-	if (!(exec( "caps\n", re ) && (p = re.find( "\treserve " )) >= 0))
+	if (!(exec( "caps\n", re ) && (p = re.indexOf( "\treserve " )) >= 0))
 		return -1;
 	return atoi( re.data() + p + 9 );
 }
@@ -333,8 +333,8 @@ DM::localSessions( SessList &list )
 				se.vt = ts[1].mid( 2 ).toInt();
 			se.user = ts[2];
 			se.session = ts[3];
-			se.self = (ts[4].find( '*' ) >= 0);
-			se.tty = (ts[4].find( 't' ) >= 0);
+			se.self = (ts[4].indexOf( '*' ) >= 0);
+			se.tty = (ts[4].indexOf( 't' ) >= 0);
 			list.append( se );
 		}
 	}

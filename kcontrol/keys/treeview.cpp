@@ -59,7 +59,7 @@ void AppTreeItem::setName(const QString &name)
 void AppTreeItem::setAccel(const QString &accel)
 {
     m_accel = accel;
-    int temp = accel.find(';');
+    int temp = accel.indexOf(';');
     if (temp != -1)
     {
         setText(1, accel.left(temp));
