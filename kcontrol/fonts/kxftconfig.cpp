@@ -1137,7 +1137,7 @@ void KXftConfig::readContents()
          *eostr=NULL,
          data[constMaxDataLen];
 
-    if(m_required&&Dirs)
+    if(m_required&Dirs)
         while((ptr=getKey(ptr, "dir")))
         {
             from=ptr;
