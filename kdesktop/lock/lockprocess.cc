@@ -194,7 +194,7 @@ static int sigterm_pipe[2];
 
 static void sigterm_handler(int)
 {
-    char tmp;
+    char tmp = 0;
     ::write( sigterm_pipe[1], &tmp, 1);
 }
 
