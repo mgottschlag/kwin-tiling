@@ -93,8 +93,7 @@ bool KRootWidget::eventFilter ( QObject *, QEvent * e )
      else if ( e->type() == QEvent::DragEnter )
      {
        QDragEnterEvent* de = static_cast<QDragEnterEvent *>( e );
-       bool b = !KGlobal::config()->isImmutable();
-       b &= !KGlobal::dirs()->isRestrictedResource( "wallpaper" );
+       bool b = !KGlobal::config()->isImmutable() && !KGlobal::dirs()->isRestrictedResource( "wallpaper" );
 
        bool imageURL = false;
        if ( KUrl::List::canDecode( de->mimeData() ) )
@@ -105,7 +104,7 @@ bool KRootWidget::eventFilter ( QObject *, QEvent * e )
            imageURL = true;
        }
 
-       b &= K3ColorDrag::canDecode( de ) || Q3ImageDrag::canDecode( de ) || imageURL;
+       b = b && ( K3ColorDrag::canDecode( de ) || Q3ImageDrag::canDecode( de ) || imageURL );
        de->accept( b );
        return true;
      }
