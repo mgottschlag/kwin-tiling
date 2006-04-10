@@ -39,6 +39,7 @@ if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 
 ########### install files ###############
+install_files(/bin FILES startkde )
 
 
 kde4_footer()
