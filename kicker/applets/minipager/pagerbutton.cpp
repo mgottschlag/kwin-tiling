@@ -717,15 +717,15 @@ void KMiniPagerButton::updateTipData(KickerTip::Data &data)
         else
         {
             data.subtext.append("<br>&bull; <i>")
-                        .append(i18n("and %1 others")
-                                    .arg(taskCounter - taskLimiter))
+                        .append(i18n("and %1 others",
+                                     taskCounter - taskLimiter))
                         .append("</i>");
         }
     }
 
     if (taskCounter > 0)
     {
-        data.subtext.prepend(i18n("One window:",
+        data.subtext.prepend(i18np("One window:",
                                   "%n Windows:",
                                   taskCounter));
     }

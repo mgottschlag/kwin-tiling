@@ -149,7 +149,7 @@ bool DockContainer::x11Event( XEvent *e )
 void DockContainer::askNewCommand(bool bad_command)
 {
     bool ok;
-    QString title( i18n("Enter Command Line for Applet %1.%2").arg(resName()).arg(resClass()) );
+    QString title( i18n("Enter Command Line for Applet %1.%2", resName(), resClass()) );
     QString description( i18n("This applet does not behave correctly and the dockbar was unable to "
                               "find the command line necessary to launch it the next time KDE starts up") );
     QString cmd;

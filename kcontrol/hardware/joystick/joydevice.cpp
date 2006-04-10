@@ -8,14 +8,14 @@
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
+ *   This program is distributed in the hope that it will be useful,      *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
+ *   Free Software Foundation, Inc.,                                      *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
  ***************************************************************************/
 
@@ -52,19 +52,19 @@ QString JoyDevice::errText(ErrorCode code) const
 
     case OPEN_FAILED:
     {
-      return i18n("The given device %1 could not be opened: %2")
-                 .arg(devName).arg(strerror(errno));
+      return i18n("The given device %1 could not be opened: %2",
+                  devName, strerror(errno));
     }
 
     case NO_JOYSTICK:
     {
-      return i18n("The given device %1 is not a joystick.").arg(devName);
+      return i18n("The given device %1 is not a joystick.", devName);
     }
 
     case ERR_GET_VERSION:
     {
-      return i18n("Could not get kernel driver version for joystick device %1: %2")
-                 .arg(devName).arg(strerror(errno));
+      return i18n("Could not get kernel driver version for joystick device %1: %2",
+                  devName, strerror(errno));
     }
 
     case WRONG_VERSION:
@@ -77,48 +77,53 @@ QString JoyDevice::errText(ErrorCode code) const
         ::close(fd);
       }
 
-      return i18n("The current running kernel driver version (%1.%2.%3) is not the one this module was compiled for (%4.%5.%6).")
-                 .arg(version    >> 16).arg((version    >> 8) & 0xFF).arg(version    & 0xFF)
-                 .arg(JS_VERSION >> 16).arg((JS_VERSION >> 8) & 0xFF).arg(JS_VERSION & 0xFF);
+      KLocalizedString loc = ki18n("The current running kernel driver version (%1.%2.%3) is not the one this module was compiled for (%4.%5.%6).");
+      loc.subs(version    >> 16);
+      loc.subs((version    >> 8) & 0xFF);
+      loc.subs(version    & 0xFF);
+      loc.subs(JS_VERSION >> 16);
+      loc.subs((JS_VERSION >> 8) & 0xFF);
+      loc.subs(JS_VERSION & 0xFF);
+      return loc.toString();
     }
 
     case ERR_GET_BUTTONS:
     {
-      return i18n("Could not get number of buttons for joystick device %1: %2")
-                 .arg(devName).arg(strerror(errno));
+      return i18n("Could not get number of buttons for joystick device %1: %2",
+                  devName, strerror(errno));
     }
 
     case ERR_GET_AXES:
     {
-      return i18n("Could not get number of axes for joystick device %1: %2")
-                 .arg(devName).arg(strerror(errno));
+      return i18n("Could not get number of axes for joystick device %1: %2",
+                  devName, strerror(errno));
     }
 
     case ERR_GET_CORR:
     {
-      return i18n("Could not get calibration values for joystick device %1: %2")
-                 .arg(devName).arg(strerror(errno));
+      return i18n("Could not get calibration values for joystick device %1: %2",
+                  devName, strerror(errno));
     }
 
     case ERR_RESTORE_CORR:
     {
-      return i18n("Could not restore calibration values for joystick device %1: %2")
-                 .arg(devName).arg(strerror(errno));
+      return i18n("Could not restore calibration values for joystick device %1: %2",
+                  devName, strerror(errno));
     }
 
     case ERR_INIT_CAL:
     {
-      return i18n("Could not initialize calibration values for joystick device %1: %2")
-                 .arg(devName).arg(strerror(errno));
+      return i18n("Could not initialize calibration values for joystick device %1: %2",
+                  devName, strerror(errno));
     }
 
     case ERR_APPLY_CAL:
     {
-      return i18n("Could not apply calibration values for joystick device %1: %2")
-                 .arg(devName).arg(strerror(errno));
+      return i18n("Could not apply calibration values for joystick device %1: %2",
+                  devName, strerror(errno));
     }
 
-    default: return i18n("internal error - code %1 unknown").arg(int(code));
+    default: return i18n("internal error - code %1 unknown", int(code));
   }
 }
 

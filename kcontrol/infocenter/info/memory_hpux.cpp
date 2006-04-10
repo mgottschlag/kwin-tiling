@@ -29,7 +29,7 @@ void KMemoryWidget::update()
   int  		page_size,i;
   unsigned long total_mem, total_free,
 		total_physical, total_swap, free_physical,
-		used_physical,  used_swap,  free_swap;
+		used_physical, used_swap, free_swap;
 
   struct 	pst_static pststatic;
   struct 	pst_dynamic stats;

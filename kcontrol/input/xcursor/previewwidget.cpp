@@ -150,9 +150,9 @@ void PreviewCursor::load( const QString &name, const QString &theme )
 	if ( m_height > previewSize * 2.0 ) {
 		double factor = double( previewSize * 2.0 / m_height );
 		XTransform xform = {
-			{{ XDoubleToFixed(1.0), XDoubleToFixed(0),   XDoubleToFixed(0) },
-			 { XDoubleToFixed(0),   XDoubleToFixed(1.0), XDoubleToFixed(0) },
-			 { XDoubleToFixed(0),   XDoubleToFixed(0),   XDoubleToFixed(factor) }}
+			{{ XDoubleToFixed(1.0), XDoubleToFixed(0),  XDoubleToFixed(0) },
+			 { XDoubleToFixed(0),  XDoubleToFixed(1.0), XDoubleToFixed(0) },
+			 { XDoubleToFixed(0),  XDoubleToFixed(0),  XDoubleToFixed(factor) }}
 		};
 		XRenderSetPictureTransform( dpy, m_pict, &xform );
 		m_width = int( m_width * factor );

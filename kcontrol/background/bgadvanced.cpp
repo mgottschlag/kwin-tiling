@@ -261,7 +261,7 @@ void BGAdvancedDialog::addProgram(const QString &name)
    Q3ListViewItem *item = new Q3ListViewItem(dlg->m_listPrograms);
    item->setText(0, prog.name());
    item->setText(1, prog.comment());
-   item->setText(2, i18n("%1 min.").arg(prog.refresh()));
+   item->setText(2, i18n("%1 min.", prog.refresh()));
 
    m_programItems.insert(name, item);
 }
@@ -304,8 +304,8 @@ void BGAdvancedDialog::slotRemove()
       return;
    }
    if (KMessageBox::warningContinueCancel(this,
-	    i18n("Are you sure you want to remove the program `%1'?")
-	    .arg(prog.name()),
+	    i18n("Are you sure you want to remove the program `%1'?",
+	     prog.name()),
 	    i18n("Remove Background Program"),
 	    i18n("&Remove")) != KMessageBox::Continue)
       return;
@@ -440,7 +440,7 @@ KProgramEditDialog::KProgramEditDialog(const QString &program, QWidget *parent, 
 	KBackgroundProgram prog(i18n("New Command"));
 	int i = 1;
 	while (!prog.command().isEmpty())
-	    prog.load(i18n("New Command <%1>").arg(i++));
+	    prog.load(i18n("New Command <%1>", i++));
 	m_NameEdit->setText(prog.name());
 	m_NameEdit->setSelection(0, 100);
 	m_RefreshEdit->setValue(15);
@@ -476,7 +476,7 @@ void KProgramEditDialog::slotOk()
     if ((s != m_Program) && !prog.command().isEmpty()) {
 	int ret = KMessageBox::warningContinueCancel(this,
 	    i18n("There is already a program with the name `%1'.\n"
-	    "Do you want to overwrite it?").arg(s),QString(),i18n("Overwrite"));
+	    "Do you want to overwrite it?", s),QString(),i18n("Overwrite"));
 	if (ret != KMessageBox::Continue)
 	    return;
     }

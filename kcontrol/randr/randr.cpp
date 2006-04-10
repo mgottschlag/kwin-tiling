@@ -196,16 +196,16 @@ void RandRScreen::desktopResized()
 QString RandRScreen::changedMessage() const
 {
 	if (currentRefreshRate() == -1)
-		return i18n("New configuration:\nResolution: %1 x %2\nOrientation: %3")
-			.arg(currentPixelWidth())
-			.arg(currentPixelHeight())
-			.arg(currentRotationDescription());
+		return i18n("New configuration:\nResolution: %1 x %2\nOrientation: %3",
+			 currentPixelWidth(),
+			 currentPixelHeight(),
+			 currentRotationDescription());
 	else
-		return i18n("New configuration:\nResolution: %1 x %2\nOrientation: %3\nRefresh rate: %4")
-			.arg(currentPixelWidth())
-			.arg(currentPixelHeight())
-			.arg(currentRotationDescription())
-			.arg(currentRefreshRateDescription());
+		return i18n("New configuration:\nResolution: %1 x %2\nOrientation: %3\nRefresh rate: %4",
+			 currentPixelWidth(),
+			 currentPixelHeight(),
+			 currentRotationDescription(),
+			 currentRefreshRateDescription());
 }
 
 bool RandRScreen::changedFromOriginal() const
@@ -399,12 +399,12 @@ QStringList RandRScreen::refreshRates(int size) const
 
 QString RandRScreen::refreshRateDirectDescription(int rate) const
 {
-	return i18n("Refresh rate in Hertz (Hz)", "%1 Hz").arg(rate);
+	return i18nc("Refresh rate in Hertz (Hz)", "%1 Hz", rate);
 }
 
 QString RandRScreen::refreshRateIndirectDescription(int size, int index) const
 {
-	return i18n("Refresh rate in Hertz (Hz)", "%1 Hz").arg(refreshRateIndexToHz(size, index));
+	return i18nc("Refresh rate in Hertz (Hz)", "%1 Hz", refreshRateIndexToHz(size, index));
 }
 
 QString RandRScreen::refreshRateDescription(int size, int index) const

@@ -85,11 +85,11 @@ static QString formatted_unit(t_memsize value)
 {
     if (value > (1024 * 1024))
         if (value > (1024 * 1024 * 1024))
-            return i18n("%1 GB").arg(KGlobal::locale()->formatNumber(value / (1024 * 1024 * 1024.0), 2));
+            return i18n("%1 GB", KGlobal::locale()->formatNumber(value / (1024 * 1024 * 1024.0), 2));
         else
-            return i18n("%1 MB").arg(KGlobal::locale()->formatNumber(value / (1024 * 1024.0), 2));
+            return i18n("%1 MB", KGlobal::locale()->formatNumber(value / (1024 * 1024.0), 2));
     else
-        return i18n("%1 KB").arg(KGlobal::locale()->formatNumber(value / 1024.0, 2));
+        return i18n("%1 KB", KGlobal::locale()->formatNumber(value / 1024.0, 2));
 }
 
 KMemoryWidget::KMemoryWidget(KInstance *inst,QWidget * parent)
@@ -352,7 +352,7 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
     paint.end();
     bitBlt(graph, 0, 0, &pm);
 
-    GraphLabel[widgetindex]->setText(i18n("%1 free").arg(formatted_unit(last_used)));
+    GraphLabel[widgetindex]->setText(i18n("%1 free", formatted_unit(last_used)));
  
     return true;
 }
@@ -373,8 +373,8 @@ void KMemoryWidget::update_Values()
 	if (Memory_Info[i] == NO_MEMORY_INFO)
 	    label->clear();
 	else
-	    label->setText(i18n("%1 bytes =").
-			   arg(KGlobal::locale()->
+	    label->setText(i18n("%1 bytes =", 
+			   KGlobal::locale()->
 			       formatNumber(Memory_Info[i], 0)));
     }
 

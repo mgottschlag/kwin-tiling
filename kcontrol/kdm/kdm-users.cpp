@@ -85,7 +85,7 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     m_notFirst = false;
     QDir testDir( m_userPixDir );
     if ( !testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid() )
-        KMessageBox::sorry( this, i18n("Unable to create folder %1").arg( testDir.absolutePath() ) );
+        KMessageBox::sorry( this, i18n("Unable to create folder %1", testDir.absolutePath() ) );
 
     m_defaultText = i18n("<default>");
 
@@ -293,7 +293,7 @@ void KDMUsersWidget::changeUserPix(const QString &pix)
     if (p.isNull()) {
 	KMessageBox::sorry( this,
 			    i18n("There was an error loading the image\n"
-				 "%1").arg( pix ) );
+				 "%1", pix ) );
 	return;
     }
 
@@ -301,8 +301,8 @@ void KDMUsersWidget::changeUserPix(const QString &pix)
     QString userpix = m_userPixDir + user + ".face.icon";
     if (!p.save( userpix, "PNG" ))
         KMessageBox::sorry(this,
-	    i18n("There was an error saving the image:\n%1")
-		.arg( userpix ) );
+	    i18n("There was an error saving the image:\n%1",
+		  userpix ) );
 
     slotUserSelected();
 }

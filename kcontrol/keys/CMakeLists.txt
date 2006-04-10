@@ -6,7 +6,6 @@ include_directories( ${KDE4_INCLUDES} )
 
 set(kcm_keys_PART_SRCS 
    shortcuts.cpp 
-   modifiers.cpp 
    main.cpp 
    khotkeys.cpp 
    treeview.cpp )

@@ -141,8 +141,8 @@ void LookAndFeelTab::previewBackground(const QString& themepath, bool isNew)
     }
 
     KMessageBox::error(this,
-                       i18n("Error loading theme image file.\n\n%1\n%2")
-                            .arg(theme, themepath));
+                       i18n("Error loading theme image file.\n\n%1\n%2",
+                            theme, themepath));
     kcfg_BackgroundTheme->clear();
     m_backgroundLabel->setPixmap(QPixmap());
 }

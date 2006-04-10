@@ -64,7 +64,7 @@ PrefMenu::PrefMenu(const QString& label,
       m_clearOnClose(false),
       m_root(root)
 {
-    connect(KSycoca::self(),  SIGNAL(databaseChanged()),
+    connect(KSycoca::self(), SIGNAL(databaseChanged()),
             this, SLOT(clearOnClose()));
 
     connect(this, SIGNAL(aboutToHide()),

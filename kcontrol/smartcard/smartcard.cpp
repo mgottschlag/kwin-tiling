@@ -76,7 +76,7 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
      // The config backend
 
      connect(base->launchManager, SIGNAL(clicked()), SLOT( changed() ));
-     connect(base->beepOnInsert,  SIGNAL(clicked()), SLOT( changed() ));
+     connect(base->beepOnInsert, SIGNAL(clicked()), SLOT( changed() ));
      connect(base->enableSupport, SIGNAL(clicked()), SLOT( changed() ));
 
 

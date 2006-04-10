@@ -17,22 +17,23 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
+
 #ifndef NOSLOTS
 # define DEF( name, key, fnSlot ) \
-   keys->insert( name, i18n(name), QString(), key, this, SLOT(fnSlot) )
+   a = new KAction( i18n(name), actionCollection, name ); \
+   a->setShortcut(key); \
+   connect(a, SIGNAL(triggered(bool)), SLOT(fnSlot))
 #else
 # define DEF( name, key, fnSlot ) \
-   keys->insert( name, i18n(name), QString(), key )
+   a = new KAction( i18n(name), actionCollection, name ); \
+   a->setShortcut(key);
 #endif
-#include <Qt>
-#define WIN Qt::META
 
-	keys->insert( "Program:klipper", i18n("Clipboard") );
+	new KAction( i18n("Clipboard"), actionCollection, "Program:klipper" );
 
-	DEF( I18N_NOOP("Show Klipper Popup-Menu"), WIN + Qt::CTRL + Qt::Key_V, slotPopupMenu() );
+	DEF( I18N_NOOP("Show Klipper Popup-Menu"), Qt::META + Qt::CTRL + Qt::Key_V, slotPopupMenu() );
 
-        DEF( I18N_NOOP("Manually Invoke Action on Current Clipboard"), WIN+Qt::CTRL+Qt::Key_R, slotRepeatAction() );
-	DEF( I18N_NOOP("Enable/Disable Clipboard Actions"), WIN+Qt::CTRL+Qt::Key_X, toggleURLGrabber() );
+        DEF( I18N_NOOP("Manually Invoke Action on Current Clipboard"), Qt::META+Qt::CTRL+Qt::Key_R, slotRepeatAction() );
+	DEF( I18N_NOOP("Enable/Disable Clipboard Actions"), Qt::META+Qt::CTRL+Qt::Key_X, toggleURLGrabber() );
 
 #undef DEF
-#undef WIN

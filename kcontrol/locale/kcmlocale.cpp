@@ -240,7 +240,7 @@ void KLocaleConfig::loadLanguageList()
     {
       m_addLanguage->insertSeparator();
       submenu = QString::fromLatin1("other");
-      m_addLanguage->insertSubmenu(m_locale->translate("Other"),
+      m_addLanguage->insertSubmenu(ki18n("Other").toString(m_locale),
                                    submenu, QString(), -1);
       menu_index = -2; // first entries should _not_ be sorted
       continue;
@@ -248,7 +248,7 @@ void KLocaleConfig::loadLanguageList()
     KSimpleConfig entry(*it);
     entry.setGroup("KCM Locale");
     QString name = entry.readEntry("Name",
-                                   m_locale->translate("without name"));
+                                   ki18n("without name").toString(m_locale));
 
     QString tag = *it;
     int index = tag.lastIndexOf('/');
@@ -295,7 +295,7 @@ void KLocaleConfig::loadCountryList()
     KSimpleConfig entry(*it);
     entry.setGroup("KCM Locale");
     QString name = entry.readEntry("Name",
-                                   m_locale->translate("without name"));
+                                   ki18n("without name").toString(m_locale));
 
     QString map( locate( "locale",
                           QString::fromLatin1( "l10n/%1.png" )
@@ -317,7 +317,7 @@ void KLocaleConfig::loadCountryList()
     KSimpleConfig entry(*it);
     entry.setGroup("KCM Locale");
     QString name = entry.readEntry("Name",
-                                   m_locale->translate("without name"));
+                                   ki18n("without name").toString(m_locale));
     QString submenu = entry.readEntry("Region");
 
     QString tag = *it;
@@ -409,38 +409,38 @@ void KLocaleConfig::slotTranslate()
 {
   kDebug() << "slotTranslate()" << endl;
 
-  m_comboCountry->setToolTip( m_locale->translate
+  m_comboCountry->setToolTip( ki18n
         ( "This is where you live. KDE will use the defaults for "
-          "this country or region.") );
-  m_addLanguage->setToolTip( m_locale->translate
+          "this country or region.").toString(m_locale) );
+  m_addLanguage->setToolTip( ki18n
         ( "This will add a language to the list. If the language is already "
-          "in the list, the old one will be moved instead." ) );
+          "in the list, the old one will be moved instead." ).toString(m_locale) );
 
-  m_removeLanguage->setToolTip( m_locale->translate
-        ( "This will remove the highlighted language from the list." ) );
+  m_removeLanguage->setToolTip( ki18n
+        ( "This will remove the highlighted language from the list." ).toString(m_locale) );
 
-  m_languages->setToolTip( m_locale->translate
+  m_languages->setToolTip( ki18n
         ( "KDE programs will be displayed in the first available language in "
           "this list.\nIf none of the languages are available, US English "
-          "will be used.") );
+          "will be used.").toString(m_locale) );
 
   QString str;
 
-  str = m_locale->translate
+  str = ki18n
     ( "Here you can choose your country or region. The settings "
       "for languages, numbers etc. will automatically switch to the "
-      "corresponding values." );
+      "corresponding values." ).toString(m_locale);
   m_labCountry->setWhatsThis( str );
   m_comboCountry->setWhatsThis( str );
 
-  str = m_locale->translate
+  str = ki18n
     ( "Here you can choose the languages that will be used by KDE. If the "
       "first language in the list is not available, the second will be used, "
       "etc. If only US English is available, no translations "
       "have been installed. You can get translation packages for many "
       "languages from the place you got KDE from.<p>"
       "Note that some applications may not be translated to your languages; "
-      "in this case, they will automatically fall back to US English." );
+      "in this case, they will automatically fall back to US English." ).toString(m_locale);
   m_labLang->setWhatsThis( str );
   m_languages->setWhatsThis( str );
   m_addLanguage->setWhatsThis( str );

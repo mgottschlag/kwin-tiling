@@ -658,7 +658,7 @@ AppletContainer* ContainerArea::addApplet(const AppletInfo& info, bool isImmutab
 
     AppletContainer* a = PluginManager::self()->createAppletContainer(
         info.desktopFile(),
-        false,         // not startup
+        false,        // not startup
         QString(), // no config
         m_opMenu,
         m_contents,

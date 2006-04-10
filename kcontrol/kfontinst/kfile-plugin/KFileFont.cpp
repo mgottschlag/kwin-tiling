@@ -114,50 +114,50 @@ struct FoundryMap
 
 static const FoundryMap map[]=   // These are (mainly) taken from type1inst
 {
-    { "Bigelow",                            "B&H",         3},
-    { "Adobe",                              "Adobe",       5},
-    { "Bitstream",                          "Bitstream",   9},
-    { "Monotype",                           "Monotype",    8},
-    { "Linotype",                           "Linotype",    8},
-    { "LINOTYPE-HELL",                      "Linotype",    0},
-    { "IBM",                                "IBM",         3},
-    { "URW",                                "URW",         3},
-    { "International Typeface Corporation", "ITC",         3},
-    { "Tiro Typeworks",                     "Tiro",        4},
-    { "XFree86",                            "XFree86",     7},
-    { "Microsoft",                          "Microsoft",   9},
-    { "Omega",                              "Omega",       5},
-    { "Font21",                             "Hwan",        4},
-    { "HanYang System",                     "Hanyang",     7},
-    { "Richard Mitchell",                   "Mitchell",    8},
-    { "Doug Miles",                         "Miles",       5},
-    { "Hank Gillette",                      "Gillette",    8},
-    { "Three Islands Press",                "3ip",         3},
-    { "MacroMind",                          "Macromind",   9},
-    { "MWSoft",                             "MWSoft",      6},
-    { "Digiteyes Multimedia",               "DigitEyes",   9},
-    { "ZSoft",                              "ZSoft",       5},
-    { "Title Wave",                         "Titlewave",   9},
-    { "Southern Software",                  "Southern",    8},
-    { "Reasonable Solutions",               "Reasonable", 10},
-    { "David Rakowski",                     "Rakowski",    8},
-    { "D. Rakowski",                        "Rakowski",    0},
-    { "S. G. Moye",                         "Moye",        4},
-    { "S.G. Moye",                          "Moye",        0},
-    { "Andrew s. Meit",                     "Meit",        4},
-    { "A.S.Meit",                           "Meit",        0},
-    { "Hershey",                            "Hershey",     7},
-    { "FontBank",                           "FontBank",    8},
-    { "A. Carr",                            "Carr",        4},
-    { "Brendel Informatik",                 "Brendel",     7},
-    { "Jonathan Brecher",                   "Brecher",     7},
-    { "SoftMaker",                          "Softmaker",   9},
-    { "LETRASET",                           "Letraset",    8},
-    { "Corel Corp",                         "Corel",       5},
-    { "PUBLISHERS PARADISE",                "Paradise",    8},
-    { "Publishers Paradise",                "Paradise",    0},
-    { "Allied Corporation",                 "Allied",      6},
-    { NULL,                                 NULL,          0}
+    { "Bigelow",                           "B&H",        3},
+    { "Adobe",                             "Adobe",      5},
+    { "Bitstream",                         "Bitstream",  9},
+    { "Monotype",                          "Monotype",   8},
+    { "Linotype",                          "Linotype",   8},
+    { "LINOTYPE-HELL",                     "Linotype",   0},
+    { "IBM",                               "IBM",        3},
+    { "URW",                               "URW",        3},
+    { "International Typeface Corporation", "ITC",        3},
+    { "Tiro Typeworks",                    "Tiro",       4},
+    { "XFree86",                           "XFree86",    7},
+    { "Microsoft",                         "Microsoft",  9},
+    { "Omega",                             "Omega",      5},
+    { "Font21",                            "Hwan",       4},
+    { "HanYang System",                    "Hanyang",    7},
+    { "Richard Mitchell",                  "Mitchell",   8},
+    { "Doug Miles",                        "Miles",      5},
+    { "Hank Gillette",                     "Gillette",   8},
+    { "Three Islands Press",               "3ip",        3},
+    { "MacroMind",                         "Macromind",  9},
+    { "MWSoft",                            "MWSoft",     6},
+    { "Digiteyes Multimedia",              "DigitEyes",  9},
+    { "ZSoft",                             "ZSoft",      5},
+    { "Title Wave",                        "Titlewave",  9},
+    { "Southern Software",                 "Southern",   8},
+    { "Reasonable Solutions",              "Reasonable", 10},
+    { "David Rakowski",                    "Rakowski",   8},
+    { "D. Rakowski",                       "Rakowski",   0},
+    { "S. G. Moye",                        "Moye",       4},
+    { "S.G. Moye",                         "Moye",       0},
+    { "Andrew s. Meit",                    "Meit",       4},
+    { "A.S.Meit",                          "Meit",       0},
+    { "Hershey",                           "Hershey",    7},
+    { "FontBank",                          "FontBank",   8},
+    { "A. Carr",                           "Carr",       4},
+    { "Brendel Informatik",                "Brendel",    7},
+    { "Jonathan Brecher",                  "Brecher",    7},
+    { "SoftMaker",                         "Softmaker",  9},
+    { "LETRASET",                          "Letraset",   8},
+    { "Corel Corp",                        "Corel",      5},
+    { "PUBLISHERS PARADISE",               "Paradise",   8},
+    { "Publishers Paradise",               "Paradise",   0},
+    { "Allied Corporation",                "Allied",     6},
+    { NULL,                                NULL,         0}
 };
 
 static const char * getFoundry(const char *notice)
@@ -290,11 +290,11 @@ void KFileFontPlugin::addMimeType(const char *mime)
     addItemInfo(group, "Full", i18n("Full Name"), QVariant::String);
     addItemInfo(group, "Family", i18n("Family"), QVariant::String);
     addItemInfo(group, "Foundry", i18n("Foundry"), QVariant::String);
-    addItemInfo(group, "Weight", i18n("Weight"),  QVariant::String);
+    addItemInfo(group, "Weight", i18n("Weight"), QVariant::String);
 #ifndef KFI_FC_NO_WIDTHS
     addItemInfo(group, "Width", i18n("Width"), QVariant::String);
 #endif
-    addItemInfo(group, "Spacing", i18n("Spacing"),  QVariant::String);
+    addItemInfo(group, "Spacing", i18n("Spacing"), QVariant::String);
     addItemInfo(group, "Slant", i18n("Slant"), QVariant::String);
 }
 

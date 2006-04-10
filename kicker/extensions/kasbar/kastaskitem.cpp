@@ -357,7 +357,7 @@ void KasTaskItem::sendToTray()
     if ( !ok ) {
 	kWarning(1345) << "Unable to launch ksystraycmd" << endl;
 	KPassivePopup::message( i18n("Could Not Send to Tray"),
-				i18n("%1").arg(strerror(errno)),
+				i18n("%1", strerror(errno)),
 				Icon("error"),
 				kasbar() );
 	return;

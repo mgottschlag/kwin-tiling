@@ -152,8 +152,8 @@ TopLevel::TopLevel(const char* name)
                SLOT( activateModule( ConfigModule * ) ) );
       _dock->setBaseWidget( aw );
       KWin::setIcons(  winId(),
-		       KGlobal::iconLoader()->loadIcon("hwinfo",  K3Icon::NoGroup,  32 ),
-		       KGlobal::iconLoader()->loadIcon("hwinfo",  K3Icon::NoGroup,  16 ) );
+		       KGlobal::iconLoader()->loadIcon("hwinfo", K3Icon::NoGroup, 32 ),
+		       KGlobal::iconLoader()->loadIcon("hwinfo", K3Icon::NoGroup, 16 ) );
   }
   else
   {
@@ -331,7 +331,7 @@ void TopLevel::newModule(const QString &name, const QString& docPath, const QStr
   if(name.isEmpty())
     report_bug->setText(i18n("&Report Bug..."));
   else
-    report_bug->setText(i18n("Report Bug on Module %1...").arg( handleAmpersand( name)));
+    report_bug->setText(i18n("Report Bug on Module %1...", handleAmpersand( name)));
 }
 
 void TopLevel::changedModule(ConfigModule *changed)
@@ -411,7 +411,7 @@ void TopLevel::activateModule(ConfigModule *mod)
 
   if (mod->aboutData())
   {
-     about_module->setText(i18n("Help menu->about <modulename>", "About %1").arg(
+     about_module->setText(i18nc("Help menu->about <modulename>", "About %1", 
                              handleAmpersand( mod->moduleName())));
      about_module->setIcon(KIcon(mod->icon()));
      about_module->setEnabled(true);

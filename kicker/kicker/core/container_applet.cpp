@@ -105,8 +105,8 @@ AppletContainer::AppletContainer(const AppletInfo& info,
     {
         _valid = false;
         KMessageBox::error(this,
-                           i18n("The %1 applet could not be loaded. Please check your installation.")
-                               .arg(info.name().isEmpty() ? _deskFile : info.name()),
+                           i18n("The %1 applet could not be loaded. Please check your installation.",
+                                info.name().isEmpty() ? _deskFile : info.name()),
                            i18n("Applet Loading Error"));
         return;
     }

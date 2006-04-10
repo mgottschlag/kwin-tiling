@@ -168,7 +168,7 @@ private Q_SLOTS:
 
 private:
 
-  KGlobalAccel *keys;
+  KActionCollection *m_actionCollection;
 
   KWinModule* m_pKwinmodule;
 

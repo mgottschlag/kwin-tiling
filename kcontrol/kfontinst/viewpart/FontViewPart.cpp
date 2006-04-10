@@ -208,11 +208,11 @@ void CFontViewPart::install()
                                                               i18n("Where do you wish to install \"%1\" (%2)?\n"
                                                                    "\"%3\" - only accessible to you, or\n"
                                                                    "\"%4\" - accessible to all (requires administrator "
-                                                                   "password)")
-                                                                   .arg(itsPreview->engine().getName(m_url))
-                                                                   .arg(m_url.fileName())
-                                                                   .arg(i18n(KFI_KIO_FONTS_USER))
-                                                                   .arg(i18n(KFI_KIO_FONTS_SYS)),
+                                                                   "password)",
+                                                                    itsPreview->engine().getName(m_url),
+                                                                    m_url.fileName(),
+                                                                    i18n(KFI_KIO_FONTS_USER),
+                                                                    i18n(KFI_KIO_FONTS_SYS)),
                                                               i18n("Install"), i18n(KFI_KIO_FONTS_USER),
                                                               i18n(KFI_KIO_FONTS_SYS));
 
@@ -240,14 +240,14 @@ void CFontViewPart::install()
                 }
             }
 
-            KMessageBox::information(itsFrame, i18n("%1:%2 successfully installed.").arg(m_url.protocol())
-                                                   .arg(m_url.path()), i18n("Success"),
+            KMessageBox::information(itsFrame, i18n("%1:%2 successfully installed.", m_url.protocol(),
+                                                    m_url.path()), i18n("Success"),
                                      "FontViewPart_DisplayInstallationSuccess");
             itsShowInstallButton=false;
             itsInstallButton->setShown(itsShowInstallButton);
         }
         else
-            KMessageBox::error(itsFrame, i18n("Could not install %1:%2").arg(m_url.protocol()).arg(m_url.path()),
+            KMessageBox::error(itsFrame, i18n("Could not install %1:%2", m_url.protocol(), m_url.path()),
                                i18n("Error"));
     }
 }

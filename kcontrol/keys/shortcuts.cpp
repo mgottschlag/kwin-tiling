@@ -37,26 +37,31 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kipc.h>
-#include <kkeynative.h>
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kcombobox.h>
 #include <kmessagebox.h>
-#include <kshortcutlist.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
+#include <kaction.h>
+#include <kactioncollection.h>
+#include <kglobalaccel.h>
+#include <kkeyserver.h>
 
 ShortcutsModule::ShortcutsModule( QWidget *parent, const char *name )
-: QWidget( parent, name )
+: QWidget( parent )
+, m_actionsGeneral(new KActionCollection(this))
+, m_actionsSequence(new KActionCollection(this))
+, m_listGeneral(new KActionCollection(this))
+, m_listSequence(new KActionCollection(this))
+, m_listApplication(new KActionCollection(this))
 {
+	setObjectName(name);
 	initGUI();
 }
 
 ShortcutsModule::~ShortcutsModule()
 {
-	delete m_pListGeneral;
-	delete m_pListSequence;
-	delete m_pListApplication;
 }
 
 // Called when [Reset] is pressed
@@ -82,8 +87,7 @@ void ShortcutsModule::save()
 	m_pkcSequence->commitChanges();
 	m_pkcApplication->save();
 
-	m_actionsGeneral.writeActions( "Global Shortcuts", 0, true, true );
-	m_actionsSequence.writeActions( "Global Shortcuts", 0, true, true );
+	KGlobalAccel::self()->writeSettings();
 
 	KIPC::sendMessageAll( KIPC::SettingsChanged, KApplication::SETTINGS_SHORTCUTS );
 }
@@ -109,19 +113,19 @@ QString ShortcutsModule::quickHelp() const
 void ShortcutsModule::initGUI()
 {
 	kDebug(125) << "A-----------" << endl;
-	KAccelActions* keys = &m_actionsGeneral;
+	KActionCollection* actionCollection = m_actionsGeneral;
 // see also KShortcutsModule::init() below !!!
+	KAction* a = 0L;
 #define NOSLOTS
 #define KICKER_ALL_BINDINGS
 #include "../../kwin/kwinbindings.cpp"
-#include "../../../workspace/kicker/kicker/core/kickerbindings.cpp"
-#include "../../../workspace/kicker/taskbar/taskbarbindings.cpp"
-#include "../../../workspace/kdesktop/kdesktopbindings.cpp"
+#include "../../kicker/kicker/core/kickerbindings.cpp"
+#include "../../kicker/taskbar/taskbarbindings.cpp"
+#include "../../kdesktop/kdesktopbindings.cpp"
 #include "../../../klipper/klipperbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 
 	kDebug(125) << "B-----------" << endl;
-	m_actionsSequence.init( m_actionsGeneral );
 
 	kDebug(125) << "C-----------" << endl;
 	createActionsGeneral();
@@ -130,13 +134,12 @@ void ShortcutsModule::initGUI()
 	kDebug(125) << "E-----------" << endl;
 
 	kDebug(125) << "F-----------" << endl;
-	QVBoxLayout* pVLayout = new QVBoxLayout( this, KDialog::marginHint() );
-
+	QVBoxLayout* pVLayout = new QVBoxLayout( this );
 	pVLayout->addSpacing( KDialog::marginHint() );
 
 	// (o) [Current      ] <Remove>   ( ) New <Save>
 
-	QHBoxLayout *pHLayout = new QHBoxLayout( pVLayout, KDialog::spacingHint() );
+	QHBoxLayout *pHLayout = new QHBoxLayout( pVLayout);
 	Q3ButtonGroup* pGroup = new Q3ButtonGroup( this );
 	pGroup->hide();
 
@@ -176,21 +179,21 @@ void ShortcutsModule::initGUI()
 	pHLayout->addStretch( 1 );
 
 	m_pTab = new QTabWidget( this );
-	m_pTab->setMargin( KDialog::marginHint() );
 	pVLayout->addWidget( m_pTab );
 
-	m_pListGeneral = new KAccelShortcutList( m_actionsGeneral, true );
-	m_pkcGeneral = new KKeyChooser( m_pListGeneral, this, KKeyChooser::Global, false );
+	m_listGeneral = new KActionCollection( this );
+	//m_listGeneral->addActions(m_actionsGeneral);
+	m_pkcGeneral = new KKeyChooser( m_listGeneral, this, false );
 	m_pTab->addTab( m_pkcGeneral, i18n("&Global Shortcuts") );
 	connect( m_pkcGeneral, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
-	m_pListSequence = new KAccelShortcutList( m_actionsSequence, true );
-	m_pkcSequence = new KKeyChooser( m_pListSequence, this, KKeyChooser::Global, false );
+	m_listSequence = new KActionCollection( this );
+	m_pkcSequence = new KKeyChooser( m_listSequence, this, false );
 	m_pTab->addTab( m_pkcSequence, i18n("Shortcut Se&quences") );
 	connect( m_pkcSequence, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
-	m_pListApplication = new KStdAccel::ShortcutList;
-	m_pkcApplication = new KKeyChooser( m_pListApplication, this, KKeyChooser::Standard, false );
+	m_listApplication = new KActionCollection( this );
+	m_pkcApplication = new KKeyChooser( m_listApplication, this, false );
 	m_pTab->addTab( m_pkcApplication, i18n("App&lication Shortcuts") );
 	connect( m_pkcApplication, SIGNAL(keyChange()), SLOT(slotKeyChange()) );
 
@@ -205,10 +208,8 @@ void ShortcutsModule::initGUI()
 
 void ShortcutsModule::createActionsGeneral()
 {
-	KAccelActions& actions = m_actionsGeneral;
-
-	for( uint i = 0; i < actions.count(); i++ ) {
-		QString sConfigKey = actions[i].name();
+	foreach (KAction* action, m_actionsGeneral->actions()) {
+		QString sConfigKey = action->objectName();
 		//kDebug(125) << "sConfigKey: " << sConfigKey << endl;
 		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
 		bool bIsNum = false;
@@ -218,18 +219,16 @@ void ShortcutsModule::createActionsGeneral()
 		//kDebug(125) << "sConfigKey: " << sConfigKey
 		//	<< " bIsNum: " << bIsNum << endl;
 		if( bIsNum && !sConfigKey.contains( ':' ) ) {
-			actions[i].setConfigurable( false );
-			actions[i].setName( QString() );
+			action->setShortcutConfigurable( false );
+			action->QAction::setObjectName( QString() );
 		}
 	}
 }
 
 void ShortcutsModule::createActionsSequence()
 {
-	KAccelActions& actions = m_actionsSequence;
-
-	for( uint i = 0; i < actions.count(); i++ ) {
-		QString sConfigKey = actions[i].name();
+	foreach (KAction* action, m_actionsSequence->actions()) {
+		QString sConfigKey = action->objectName();
 		//kDebug(125) << "sConfigKey: " << sConfigKey << endl;
 		int iLastSpace = sConfigKey.lastIndexOf( ' ' );
 		bool bIsNum = false;
@@ -239,8 +238,8 @@ void ShortcutsModule::createActionsSequence()
 		//kDebug(125) << "sConfigKey: " << sConfigKey
 		//	<< " bIsNum: " << bIsNum << endl;
 		if( !bIsNum && !sConfigKey.contains( ':' ) ) {
-			actions[i].setConfigurable( false );
-			actions[i].setName( QString() );
+			action->setShortcutConfigurable( false );
+			action->QAction::setObjectName( QString() );
 		}
 	}
 }
@@ -301,10 +300,7 @@ void ShortcutsModule::slotSelectScheme( int )
 	QString sFilename = m_rgsSchemeFiles[ m_pcbSchemes->currentIndex() ];
 
 	if( sFilename == "cur" ) {
-		// TODO: remove nulls params
-		m_pkcGeneral->syncToConfig( "Global Shortcuts", 0, true );
-		m_pkcSequence->syncToConfig( "Global Shortcuts", 0, true );
-		m_pkcApplication->syncToConfig( "Shortcuts", 0, false );
+		KGlobalAccel::self()->readSettings();
 	} else {
 		KSimpleConfig config( sFilename );
 		config.setGroup( "Settings" );
@@ -312,20 +308,18 @@ void ShortcutsModule::slotSelectScheme( int )
 
 		// If the user's keyboard layout doesn't support the Win key,
 		//  but this layout scheme requires it,
-		if( !KKeyNative::keyboardHasWinKey()
+		if( !KKeyServer::keyboardHasMetaKey()
 		    && config.readEntry( "Uses Win Modifier", false ) ) {
 			// TODO: change "Win" to Win's label.
 			int ret = KMessageBox::warningContinueCancel( this,
 				i18n("This scheme requires the \"%1\" modifier key, which is not "
-				"available on your keyboard layout. Do you wish to view it anyway?" )
-				.arg(i18n("Win")) );
+				"available on your keyboard layout. Do you wish to view it anyway?" ,
+				 i18n("Win")) );
 			if( ret == KMessageBox::Cancel )
 				return;
 		}
 
-		m_pkcGeneral->syncToConfig( "Global Shortcuts", &config, true );
-		m_pkcSequence->syncToConfig( "Global Shortcuts", &config, true );
-		m_pkcApplication->syncToConfig( "Shortcuts", &config, false );
+		KGlobalAccel::self()->writeSettings();
 	}
 
 	m_prbPre->setChecked( true );
@@ -377,7 +371,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 
 					int result = KMessageBox::warningContinueCancel( 0,
 					i18n("A key scheme with the name '%1' already exists;\n"
-						"do you want to overwrite it?\n").arg(sName),
+						"do you want to overwrite it?\n", sName),
 					i18n("Save Key Scheme"),
 					i18n("Overwrite"));
 					bNameValid = (result == KMessageBox::Continue);
@@ -430,9 +424,7 @@ void ShortcutsModule::saveScheme()
 	m_pkcSequence->commitChanges();
 	m_pkcApplication->commitChanges();
 
-	m_pListGeneral->writeSettings( "Global Shortcuts", &config, true );
-	m_pListSequence->writeSettings( "Global Shortcuts", &config, true );
-	m_pListApplication->writeSettings( "Shortcuts", &config, true );
+	KGlobalAccel::self()->writeSettings();
 }
 
 void ShortcutsModule::slotRemoveScheme()

@@ -108,7 +108,7 @@ void PanelBrowserDialog::slotOk()
 {
     QDir dir(path());
     if( !dir.exists() ) {
-        KMessageBox::sorry( this, i18n("'%1' is not a valid folder.").arg(path()) );
+        KMessageBox::sorry( this, i18n("'%1' is not a valid folder.", path()) );
         return;
     }
     KDialogBase::slotOk();

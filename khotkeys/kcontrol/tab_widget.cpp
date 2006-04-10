@@ -400,7 +400,7 @@ void Tab_widget::set_action_type_slot( int type_P )
     }
 
 const char* const Tab_widget::tab_labels[ Tab_widget::TAB_END ] = {
-    I18N_NOOP( "Info" ),  // TAB_INFO
+    I18N_NOOP( "Info" ), // TAB_INFO
     I18N_NOOP( "General Settings" ), // TAB_GENERAL_SETTINGS
     I18N_NOOP( "Gestures Settings" ), // TAB_GESTURES_SETTINGS
     I18N_NOOP( "General" ), // TAB_GENERAL

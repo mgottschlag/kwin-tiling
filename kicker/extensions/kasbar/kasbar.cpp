@@ -382,7 +382,7 @@ void KasBar::setDetached( bool detach )
     emit detachedChanged( detached );
 }
 
-QSize KasBar::sizeHint( Qt::Orientation o,  QSize sz )
+QSize KasBar::sizeHint( Qt::Orientation o, QSize sz )
 {
     if ( o == Qt::Horizontal )
 	setBoxesPerLine( sz.width() / itemExtent() );

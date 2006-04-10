@@ -144,7 +144,7 @@ void KStylePage::saveKWin(bool curSettings){
 		}
 		else {
 			// if we get here classic is selected (there's no .desktop file for the
-			// kde2 kwin style),  or none of the other kwin styles were found.
+			// kde2 kwin style), or none of the other kwin styles were found.
 			kwin = "kwin_default";
 		}
 	}
@@ -169,7 +169,7 @@ void KStylePage::saveColors(bool curSettings){
 	config->writeEntry("background", toSave->background, KConfigBase::Persistent|KConfigBase::Global);
 	config->writeEntry("windowForeground", toSave->windowForeground, KConfigBase::Persistent|KConfigBase::Global);
 	config->writeEntry("windowBackground", toSave->windowBackground, KConfigBase::Persistent|KConfigBase::Global);
-	config->writeEntry("selectForeground",  toSave->selectForeground, KConfigBase::Persistent|KConfigBase::Global);
+	config->writeEntry("selectForeground", toSave->selectForeground, KConfigBase::Persistent|KConfigBase::Global);
 	config->writeEntry("selectBackground", toSave->selectBackground, KConfigBase::Persistent|KConfigBase::Global);
 	config->writeEntry("buttonForeground", toSave->buttonForeground, KConfigBase::Persistent|KConfigBase::Global);
 	config->writeEntry("buttonBackground", toSave->buttonBackground, KConfigBase::Persistent|KConfigBase::Global);

@@ -321,7 +321,7 @@ void DockBarExtension::loadContainerConfig()
         }
     }
     if (!fail_list.isEmpty())
-        KMessageBox::queuedMessageBox(0, KMessageBox::Information, i18n("The following dockbar applets could not be started: %1").arg(fail_list.join(", ")), i18n("kicker: information"), 0);
+        KMessageBox::queuedMessageBox(0, KMessageBox::Information, i18n("The following dockbar applets could not be started: %1", fail_list.join(", ")), i18n("kicker: information"), 0);
     saveContainerConfig();
 }
 

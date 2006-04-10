@@ -203,7 +203,7 @@ void PanelKMenu::initialize()
     if (KickerSettings::showMenuTitles())
     {
         int id;
-        id = insertTitle(i18n("All Applications"), -1,  0);
+        id = insertTitle(i18n("All Applications"), -1, 0);
         setItemEnabled( id, false );
         id = insertTitle(i18n("Actions"), -1 , -1);
         setItemEnabled( id, false );
@@ -424,8 +424,8 @@ void PanelKMenu::doNewSession( bool lock )
                "You can switch between sessions by pressing "
                "Ctrl, Alt and the appropriate F-key at the same time. "
                "Additionally, the KDE Panel and Desktop menus have "
-               "actions for switching between sessions.</p>")
-                           .arg(7).arg(8),
+               "actions for switching between sessions.</p>",
+                            7, 8),
         i18n("Warning - New Session"),
         KGuiItem(i18n("&Start New Session"), "fork"),
         ":confirmNewSession",

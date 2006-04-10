@@ -345,7 +345,7 @@ void
 DM::sess2Str2( const SessEnt &se, QString &user, QString &loc )
 {
 	if (se.tty) {
-		user = i18n("user: ...", "%1: TTY login").arg( se.user );
+		user = i18nc("user: ...", "%1: TTY login", se.user );
 		loc = se.vt ? QString("vt%1").arg( se.vt ) : se.display ;
 	} else {
 		user =
@@ -354,11 +354,11 @@ DM::sess2Str2( const SessEnt &se, QString &user, QString &loc )
 					i18n("Unused") :
 					se.session == "<remote>" ?
 						i18n("X login on remote host") :
-						i18n("... host", "X login on %1").arg( se.session ) :
+						i18nc("... host", "X login on %1", se.session ) :
 				se.session == "<unknown>" ?
 					se.user :
-					i18n("user: session type", "%1: %2")
-						.arg( se.user ).arg( se.session );
+					i18nc("user: session type", "%1: %2",
+						  se.user, se.session );
 		loc =
 			se.vt ?
 				QString("%1, vt%2").arg( se.display ).arg( se.vt ) :
@@ -372,7 +372,7 @@ DM::sess2Str( const SessEnt &se )
 	QString user, loc;
 
 	sess2Str2( se, user, loc );
-	return i18n("session (location)", "%1 (%2)").arg( user ).arg( loc );
+	return i18nc("session (location)", "%1 (%2)", user, loc );
 }
 
 bool

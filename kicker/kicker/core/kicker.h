@@ -28,7 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class KCMultiDialog;
 class KDirWatch;
-class KGlobalAccel;
+class KActionCollection;
 class KWinModule;
 class PanelKMenu;
 class PanelPopupButton;
@@ -107,7 +107,7 @@ private Q_SLOTS:
 private:
     static void crashHandler(int signal);
 
-    KGlobalAccel*  keys;
+    KActionCollection* m_actionCollection;
     KWinModule*    m_kwinModule;
     KCMultiDialog* m_configDialog;
     bool           m_canAddContainers;

@@ -256,5 +256,5 @@ void DockContainer::deleteModule()
 void DockContainer::quickHelpChanged()
 {
   if (_module && _module->module())
-	emit newModule(_module->module()->caption(),  _module->docPath(), _module->module()->quickHelp());
+	emit newModule(_module->module()->caption(), _module->docPath(), _module->module()->quickHelp());
 }

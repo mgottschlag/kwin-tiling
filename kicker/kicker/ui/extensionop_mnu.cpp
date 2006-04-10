@@ -63,7 +63,7 @@ PanelExtensionOpMenu::PanelExtensionOpMenu(const QString& extension, int actions
 
     if (!Kicker::self()->isImmutable() && (actions & Plasma::Preferences)) {
 	insertSeparator();
-	insertItem(SmallIconSet("configure"), i18n("&Configure %1...").arg(extension), Preferences);
+	insertItem(SmallIconSet("configure"), i18n("&Configure %1...", extension), Preferences);
     }
 
     adjustSize();

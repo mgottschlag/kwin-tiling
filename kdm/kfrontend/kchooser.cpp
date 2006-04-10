@@ -215,7 +215,7 @@ void ChooserDlg::slotReadPipe()
 		delete findItem( GRecvInt() );
 		break;
 	case G_Ch_BadHost:
-		KFMsgBox::box( this, QMessageBox::Warning, i18n("Unknown host %1").arg( recvStr() ) );
+		KFMsgBox::box( this, QMessageBox::Warning, i18n("Unknown host %1", recvStr() ) );
 		break;
 	case G_Ch_Exit:
 		done( ex_exit );

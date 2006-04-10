@@ -621,8 +621,8 @@ void KMiniPager::aboutToShowContextMenu()
     m_contextMenu->insertItem(SmallIcon("kpager"), i18n("&Launch Pager"), LaunchExtPager);
     m_contextMenu->insertSeparator();
 
-    m_contextMenu->insertItem(i18n("&Rename Desktop \"%1\"")
-                                   .arg(kwin()->desktopName(m_rmbDesk)), RenameDesktop);
+    m_contextMenu->insertItem(i18n("&Rename Desktop \"%1\"",
+                                    kwin()->desktopName(m_rmbDesk)), RenameDesktop);
     m_contextMenu->insertSeparator();
 
     KMenu* showMenu = new KMenu(m_contextMenu);
@@ -632,9 +632,9 @@ void KMiniPager::aboutToShowContextMenu()
     QMenu* rowMenu = new QMenu(showMenu);
     rowMenu->setCheckable(true);
     rowMenu->insertItem(i18n("&Automatic"), 0 + rowOffset);
-    rowMenu->insertItem(i18n("one row or column", "&1"), 1 + rowOffset);
-    rowMenu->insertItem(i18n("two rows or columns", "&2"), 2 + rowOffset);
-    rowMenu->insertItem( i18n("three rows or columns", "&3"), 3 + rowOffset);
+    rowMenu->insertItem(i18nc("one row or column", "&1"), 1 + rowOffset);
+    rowMenu->insertItem(i18nc("two rows or columns", "&2"), 2 + rowOffset);
+    rowMenu->insertItem( i18nc("three rows or columns", "&3"), 3 + rowOffset);
     connect(rowMenu, SIGNAL(activated(int)), SLOT(contextMenuActivated(int)));
     showMenu->insertItem((orientation()==Qt::Horizontal) ? i18n("&Rows"):
                                                        i18n("&Columns"),

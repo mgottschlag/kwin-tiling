@@ -31,8 +31,10 @@
 #include <kconfig.h>
 #include <klocale.h>
 
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <QX11Info>
+#endif
 
 static KCmdLineOptions options[] =
 {
@@ -110,7 +112,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
     KService::Ptr serv = KService::serviceByStorageId( module );
     if ( !serv || serv->library().isEmpty() ||
 	 serv->init().isEmpty()) {
-      kError(1208) << i18n("Module %1 not found!").arg(module) << endl;
+      kError(1208) << i18n("Module %1 not found!", module) << endl;
       return -1;
     } else
       list.append(serv);
@@ -128,8 +130,12 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   // This key has no GUI apparently
   KConfig config("kcmdisplayrc", true );
   config.setGroup("X11");
+#ifdef Q_WS_X11
   bool multihead = !config.readEntry( "disableMultihead", QVariant(false)).toBool() &&
                     (ScreenCount(QX11Info::display()) > 1);
+#else
+  bool multihead = false;
+#endif
   // Pass env. var to kdeinit.
   DCOPCString name = "KDE_MULTIHEAD";
   DCOPCString value = multihead ? "true" : "false";
@@ -171,7 +177,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
       }
   }
 
-  kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)",  QString("kcminit"));
+  kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)", QString("kcminit"));
 
   return 0;
 }

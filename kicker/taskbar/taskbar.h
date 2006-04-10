@@ -41,7 +41,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class Startup;
 class Task;
-class KGlobalAccel;
+class KActionCollection;
 class KShadowEngine;
 class KWindowListMenu;
 class SimpleButton;
@@ -131,7 +131,7 @@ private:
     bool                        shouldGroup() const;
     bool                        isGrouping;
     void                        reGroup();
-    KGlobalAccel*               keys;
+    KActionCollection*          keys;
     KShadowEngine* m_textShadowEngine;
     Plasma::Position            m_direction;
     bool                        m_showWindowListButton;

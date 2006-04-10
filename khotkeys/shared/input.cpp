@@ -21,12 +21,13 @@
 //Added by qt3to4:
 #include <QList>
 
-#include <kglobalaccel.h>
+#include <kactioncollection.h>
+#include <kaction.h>
+#include <kkeyserver.h>
 #include <kdebug.h>
 #include <kapplication.h>
 #include <kdeversion.h>
 #include <qtimer.h>
-#include <kkeynative.h>
 
 #include "khotkeysglobal.h"
 
@@ -46,14 +47,14 @@ Kbd::Kbd( bool grabbing_enabled_P, QObject* parent_P )
     {
     assert( keyboard_handler == NULL );
     keyboard_handler = this;
-    kga = new KGlobalAccel( NULL );
+    kga = new KActionCollection( this );
     kga->setEnabled( grabbing_enabled_P );
+    connect(kga, SIGNAL(actionTriggered(KAction*)), SLOT(actionTriggered(KAction*)));
     }
 
 Kbd::~Kbd()
     {
     keyboard_handler = NULL;
-    delete kga;
     }
 
 void Kbd::insert_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P )
@@ -112,9 +113,8 @@ void Kbd::grab_shortcut( const KShortcut& shortcut_P )
         kga->connectItem( name, this, SLOT( key_slot( int )));
 #endif
         QString name = ' ' + shortcut_P.toStringInternal();
-        kga->insert( name, name, QString(), shortcut_P,
-            this, SLOT( key_slot( QString )));
-        QTimer::singleShot( 0, this, SLOT( update_connections()));
+        KAction* a = new KAction(name, kga, name.toLatin1().constData());
+        a->setGlobalShortcut(shortcut_P);
         }
     }
 
@@ -130,21 +130,14 @@ void Kbd::ungrab_shortcut( const KShortcut& shortcut_P )
         // kga->disconnectItem( ' ' + QString::number( keycode_P ), NULL, NULL );
         kga->removeItem( ' ' + QString::number( keycode_P ));
 #endif
-        kga->remove( ' ' + shortcut_P.toStringInternal());
+        delete kga->action( ' ' + shortcut_P.toStringInternal());
         grabs.remove( shortcut_P );
-        QTimer::singleShot( 0, this, SLOT( update_connections()));
         }
     }
 
-void Kbd::update_connections()
+void Kbd::actionTriggered(KAction* action)
     {
-    kga->updateConnections();
-    }
-
-void Kbd::key_slot( QString key_P )
-    {
-    kDebug( 1217 ) << "Key pressed:" << key_P << endl;
-    KShortcut shortcut( key_P );
+    KShortcut shortcut = action->globalShortcut();
     if( !grabs.contains( shortcut ))
         return;
     for( QMap< Kbd_receiver*, Receiver_data >::ConstIterator it = receivers.begin();
@@ -180,11 +173,12 @@ static bool xtest()
 // CHECKME nevola XFlush(), musi se pak volat rucne
 bool Kbd::send_macro_key( unsigned int keycode, Window window_P )
     {
-    unsigned int keysym = KKeyNative( KKey( keycode )).sym();
+    int keysym;
+    uint x_mod;
+    bool ok = KKeyServer::keyQtToSymX(keycode, keysym) && KKeyServer::keyQtToModX(keycode, x_mod);
     KeyCode x_keycode = XKeysymToKeycode( QX11Info::display(), keysym );
-    if( x_keycode == NoSymbol )
+    if( !ok || x_keycode == NoSymbol )
 	return false;
-    unsigned int x_mod = KKeyNative( KKey( keycode )).mod();
 #ifdef HAVE_XTEST
     if( xtest() && window_P == None )
         {

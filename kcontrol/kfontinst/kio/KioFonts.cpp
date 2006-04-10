@@ -903,7 +903,7 @@ void CKioFonts::stat(const KUrl &url)
                     else
                     {
                         error(KIO::ERR_SLAVE_DEFINED,
-                              i18n("Please specify \"%1\" or \"%2\".").arg(i18n(KFI_KIO_FONTS_USER)).arg(i18n(KFI_KIO_FONTS_SYS)));
+                              i18n("Please specify \"%1\" or \"%2\".", i18n(KFI_KIO_FONTS_USER), i18n(KFI_KIO_FONTS_SYS)));
                         return;
                     }
                 break;
@@ -1097,7 +1097,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
 
         if(passwd.isEmpty())
         {
-            error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_SYS)));
+            error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.", i18n(KFI_KIO_FONTS_SYS)));
             return;
         }
     }
@@ -1149,7 +1149,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
             }
             else
             {
-                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_SYS)));
+                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.", i18n(KFI_KIO_FONTS_SYS)));
                 return;
             }
         }
@@ -1164,7 +1164,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
             }
             else
             {
-                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_USER)));
+                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.", i18n(KFI_KIO_FONTS_USER)));
                 return;
             }
         }
@@ -1380,7 +1380,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
                     }
                     else
                     {
-                        error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_SYS)));
+                        error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.", i18n(KFI_KIO_FONTS_SYS)));
                         return;
                     }
                 }
@@ -1583,7 +1583,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
                     }
                     else
                     {
-                        error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_SYS)));
+                        error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.", i18n(KFI_KIO_FONTS_SYS)));
                         return;
                     }
                 }
@@ -1642,7 +1642,7 @@ void CKioFonts::del(const KUrl &url, bool)
             if(doRootCmd(cmd))
                 modified(FOLDER_SYS, modifiedDirs);
             else
-                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.").arg(i18n(KFI_KIO_FONTS_SYS)));
+                error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\" folder.", i18n(KFI_KIO_FONTS_SYS)));
         }
         else
         {
@@ -1943,8 +1943,8 @@ bool CKioFonts::confirmUrl(KUrl &url)
                                                            i18n("Do you wish to install the font into \"%1\" (in which "
                                                                 "case the font will only be usable by you), or \"%2\" ("
                                                                 "the font will be usable by all users - but you will "
-                                                                "need to know the administrator's password)?")
-                                                               .arg(i18n(KFI_KIO_FONTS_USER)).arg(i18n(KFI_KIO_FONTS_SYS)),
+                                                                "need to know the administrator's password)?",
+                                                                i18n(KFI_KIO_FONTS_USER), i18n(KFI_KIO_FONTS_SYS)),
                                                            i18n("Where to Install"), i18n(KFI_KIO_FONTS_USER),
                                                            i18n(KFI_KIO_FONTS_SYS));
 
@@ -2079,7 +2079,7 @@ QList<FcPattern *> * CKioFonts::getEntries(const KUrl &url)
     if(it!=itsFolders[getFolder(url)].fontMap.end())
         return &(it.data());
 
-    error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\".").arg(url.prettyURL()));
+    error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\".", url.prettyURL()));
     return NULL;
 }
 
@@ -2110,7 +2110,7 @@ bool CKioFonts::checkFile(const QString &file)
     if(!pat && !isAAfm(file) && !isAPfm(file))
     {
         error(KIO::ERR_SLAVE_DEFINED, i18n("<p>Only fonts may be installed.</p><p>If installing a fonts package (*%1), then "
-                                           "extract the components, and install individually.</p>").arg(constMultipleExtension));
+                                           "extract the components, and install individually.</p>", constMultipleExtension));
         return false;
     }
 
@@ -2268,16 +2268,16 @@ bool CKioFonts::confirmMultiple(const KUrl &url, const QStringList &files, EFold
                                                 ? i18n("<p>This font is located in a file alongside other fonts; in order "
                                                        "to proceed with the moving they will all have to be moved. "
                                                        "The other affected fonts are:</p><ul>%1</ul><p>\n Do you wish to "
-                                                       "move all of these?</p>").arg(out)
+                                                       "move all of these?</p>", out)
                                             : OP_COPY==op
                                                 ? i18n("<p>This font is located in a file alongside other fonts; in order "
                                                        "to proceed with the copying they will all have to be copied. "
                                                        "The other affected fonts are:</p><ul>%1</ul><p>\n Do you wish to "
-                                                       "copy all of these?</p>").arg(out)
+                                                       "copy all of these?</p>", out)
                                                 : i18n("<p>This font is located in a file alongside other fonts; in order "
                                                        "to proceed with the deleting they will all have to be deleted. "
                                                        "The other affected fonts are:</p><ul>%1</ul><p>\n Do you wish to "
-                                                       "delete all of these?</p>").arg(out)))
+                                                       "delete all of these?</p>", out)))
         {
             error(KIO::ERR_USER_CANCELED, url.prettyURL());
             return false;
@@ -2327,8 +2327,8 @@ bool CKioFonts::checkUrl(const KUrl &u, bool rootOk)
         else
             if(!isSysFolder(sect) && !isUserFolder(sect))
             {
-                error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"%1\" or \"%2\".")
-                      .arg(i18n(KFI_KIO_FONTS_USER)).arg(i18n(KFI_KIO_FONTS_SYS)));
+                error(KIO::ERR_SLAVE_DEFINED, i18n("Please specify \"%1\" or \"%2\".",
+                       i18n(KFI_KIO_FONTS_USER), i18n(KFI_KIO_FONTS_SYS)));
                 return false;
             }
     }
@@ -2347,8 +2347,8 @@ bool CKioFonts::checkAllowed(const KUrl &u)
            ds==QString(QChar('/')+QLatin1String(KFI_KIO_FONTS_USER)+QChar('/')) ||
            ds==QString(QChar('/')+QLatin1String(KFI_KIO_FONTS_SYS)+QChar('/')))
         {
-            error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, you cannot rename, move, copy, or delete either \"%1\" or \"%2\".")
-                  .arg(i18n(KFI_KIO_FONTS_USER)).arg(i18n(KFI_KIO_FONTS_SYS))); \
+            error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, you cannot rename, move, copy, or delete either \"%1\" or \"%2\".",
+                   i18n(KFI_KIO_FONTS_USER), i18n(KFI_KIO_FONTS_SYS))); \
             return false;
         }
     }

@@ -195,13 +195,13 @@ int main(int argc, char *argv[])
 #ifdef HAVE_GETOPT_H
     static struct option options[]=
     {
-        { "configure_x",    0, 0, 'x' },
-        { "configure_gs",   0, 0, 'g' },
-        { "add_to_fc_cfg",  0, 0, 'f' },
-        { "add_to_x_cfg",   0, 0, 'a' },
-        { "refresh_x",      0, 0, 'r' },
-        { "refresh_xfs",    0, 0, 's' },
-        { 0,                0, 0, 0   }
+        { "configure_x",   0, 0, 'x' },
+        { "configure_gs",  0, 0, 'g' },
+        { "add_to_fc_cfg", 0, 0, 'f' },
+        { "add_to_x_cfg",  0, 0, 'a' },
+        { "refresh_x",     0, 0, 'r' },
+        { "refresh_xfs",   0, 0, 's' },
+        { 0,               0, 0, 0   }
     };
 #endif
 

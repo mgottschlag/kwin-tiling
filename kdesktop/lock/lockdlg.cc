@@ -91,7 +91,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     KUser user;
     QLabel *greetLabel = new QLabel( user.fullName().isEmpty() ?
             i18n("<nobr><b>The session is locked</b><br>") :
-            i18n("<nobr><b>The session was locked by %1</b><br>").arg( user.fullName() ), frame );
+            i18n("<nobr><b>The session was locked by %1</b><br>",  user.fullName() ), frame );
 
     mStatusLabel = new QLabel( "<b> </b>", frame );
     mStatusLabel->setAlignment( Qt::AlignCenter );
@@ -432,7 +432,7 @@ void PasswordDlg::cantCheck()
     greet->failed();
     static_cast< LockProcess* >(parent())->msgBox( QMessageBox::Critical,
         i18n("Cannot unlock the session because the authentication system failed to work;\n"
-             "you must kill kdesktop_lock (pid %1) manually.").arg(getpid()) );
+             "you must kill kdesktop_lock (pid %1) manually.", getpid()) );
     greet->revive();
 }
 
@@ -544,8 +544,8 @@ void PasswordDlg::slotStartNewSession()
                "You can switch between sessions by pressing "
                "Ctrl, Alt and the appropriate F-key at the same time. "
                "Additionally, the KDE Panel and Desktop menus have "
-               "actions for switching between sessions.")
-            .arg(7).arg(8);
+               "actions for switching between sessions.",
+             7, 8);
     QLabel *label2 = new QLabel( qt_text, winFrame );
     KPushButton *okbutton = new KPushButton( KGuiItem(i18n("&Start New Session"), "fork"), winFrame );
     okbutton->setDefault( true );
@@ -686,7 +686,7 @@ void PasswordDlg::slotSwitchUser()
         lv->header()->adjustHeaderSize();
         vbox1->addWidget( lv );
 
-        btn = new KPushButton( KGuiItem(i18n("session", "&Activate"), "fork"), winFrame );
+        btn = new KPushButton( KGuiItem(i18nc("session", "&Activate"), "fork"), winFrame );
         connect( btn, SIGNAL(clicked()), SLOT(slotSessionActivated()) );
         connect( btn, SIGNAL(clicked()), &dialog, SLOT(reject()) );
         vbox2->addWidget( btn );

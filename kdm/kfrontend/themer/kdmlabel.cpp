@@ -169,22 +169,22 @@ KdmLabel::update()
 static const struct {
 	const char *type, *text;
 } stocks[] = {
-	{ "language",           I18N_NOOP("Language") },
-	{ "session",            I18N_NOOP("Session Type") },
-	{ "system",             I18N_NOOP("Menu") },	// i18n("Actions");
-	{ "disconnect",         I18N_NOOP("Disconnect") },
-	{ "quit",               I18N_NOOP("Quit") },
-	{ "halt",               I18N_NOOP("Power off") },
-	{ "suspend",            I18N_NOOP("Suspend") },
-	{ "reboot",             I18N_NOOP("Reboot") },
-	{ "chooser",            I18N_NOOP("XDMCP Chooser") },
-	{ "config",             I18N_NOOP("Configure") },
-	{ "caps-lock-warning",  I18N_NOOP("You have got caps lock on.") },
-	{ "timed-label",        I18N_NOOP("User %s will login in %d seconds") },
-	{ "welcome-label",      I18N_NOOP("Welcome to %h") },	// _greetString
-	{ "username-label",     I18N_NOOP("Username:") },
-	{ "password-label",     I18N_NOOP("Password:") },
-	{ "login",              I18N_NOOP("Login") }
+	{ "language",          I18N_NOOP("Language") },
+	{ "session",           I18N_NOOP("Session Type") },
+	{ "system",            I18N_NOOP("Menu") },	// i18n("Actions");
+	{ "disconnect",        I18N_NOOP("Disconnect") },
+	{ "quit",              I18N_NOOP("Quit") },
+	{ "halt",              I18N_NOOP("Power off") },
+	{ "suspend",           I18N_NOOP("Suspend") },
+	{ "reboot",            I18N_NOOP("Reboot") },
+	{ "chooser",           I18N_NOOP("XDMCP Chooser") },
+	{ "config",            I18N_NOOP("Configure") },
+	{ "caps-lock-warning", I18N_NOOP("You have got caps lock on.") },
+	{ "timed-label",       I18N_NOOP("User %s will login in %d seconds") },
+	{ "welcome-label",     I18N_NOOP("Welcome to %h") },	// _greetString
+	{ "username-label",    I18N_NOOP("Username:") },
+	{ "password-label",    I18N_NOOP("Password:") },
+	{ "login",             I18N_NOOP("Login") }
 };
 
 QString
@@ -224,7 +224,7 @@ KdmLabel::lookupText( const QString &t )
 	m['d'] = QString::number( KThemedGreeter::timedDelay );
 	m['s'] = KThemedGreeter::timedUser;
 	// xgettext:no-c-format
-	KGlobal::locale()->setDateFormat( i18n("date format", "%a %d %B") );
+	KGlobal::locale()->setDateFormat( i18nc("date format", "%a %d %B") );
 	m['c'] = KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), false, false );
 
 	return KMacroExpander::expandMacros( text, m );

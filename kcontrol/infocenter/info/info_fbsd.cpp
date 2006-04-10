@@ -99,9 +99,9 @@ bool GetInfo_CPU (Q3ListView *lBox)
 		// get the TSC speed if we can
 		len = sizeof(i_buf);
 		if (sysctlbyname("machdep.tsc_freq", &i_buf, &len, NULL, 0) != -1) {
-			cpustring = i18n("CPU %1: %2, %3 MHz").arg(i).arg(buf).arg(i_buf/1000000);
+			cpustring = i18n("CPU %1: %2, %3 MHz", i, buf, i_buf/1000000);
 		} else {
-			cpustring = i18n("CPU %1: %2, unknown speed").arg(i).arg(buf);
+			cpustring = i18n("CPU %1: %2, unknown speed", i, buf);
 		}
 
 		/* Put everything in the listbox */
@@ -255,7 +255,7 @@ bool GetInfo_PCI (Q3ListView *lbox)
 	delete pcicontrol;
 
 	if ((pipe = popen(cmd.latin1(), "r")) == NULL) {
-		s = i18n ("PCI subsystem could not be queried: %1 could not be executed").arg(cmd);
+		s = i18n ("PCI subsystem could not be queried: %1 could not be executed", cmd);
 		olditem = new Q3ListViewItem(lbox, olditem, s);
 	} else {
 

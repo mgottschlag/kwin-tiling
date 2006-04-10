@@ -13,7 +13,6 @@
 
 #include <qstring.h>
 #include <kdialogbase.h>
-#include <kaccel.h>
 #include <kservice.h>
 
 // see also kdebase/kmenuedit/khotkeys.h

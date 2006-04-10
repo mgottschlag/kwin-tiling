@@ -95,13 +95,13 @@ StringPair KLocaleConfigTime::buildStringPair(const QChar &c, const QString &s) 
 QList<StringPair> KLocaleConfigTime::timeMap() const
 {
   QList < StringPair > list;
-  list+=buildStringPair('H',m_locale->translate("HH"));
-  list+=buildStringPair('k',m_locale->translate("hH"));
-  list+=buildStringPair('I',m_locale->translate("PH"));
-  list+=buildStringPair('l',m_locale->translate("pH"));
-  list+=buildStringPair('M',m_locale->translate("Minute", "MM"));
-  list+=buildStringPair('S',m_locale->translate("SS"));
-  list+=buildStringPair('p',m_locale->translate("AMPM"));
+  list+=buildStringPair('H',ki18n("HH").toString(m_locale));
+  list+=buildStringPair('k',ki18n("hH").toString(m_locale));
+  list+=buildStringPair('I',ki18n("PH").toString(m_locale));
+  list+=buildStringPair('l',ki18n("pH").toString(m_locale));
+  list+=buildStringPair('M',ki18nc("Minute", "MM").toString(m_locale));
+  list+=buildStringPair('S',ki18n("SS").toString(m_locale));
+  list+=buildStringPair('p',ki18n("AMPM").toString(m_locale));
 
   qSort( list );
 
@@ -111,16 +111,16 @@ QList<StringPair> KLocaleConfigTime::timeMap() const
 QList <StringPair> KLocaleConfigTime::dateMap() const
 {
   QList < StringPair > list;
-  list+=buildStringPair('Y',m_locale->translate("YYYY"));
-  list+=buildStringPair('y',m_locale->translate("YY"));
-  list+=buildStringPair('n',m_locale->translate("mM"));
-  list+=buildStringPair('m',m_locale->translate("Month", "MM"));
-  list+=buildStringPair('b',m_locale->translate("SHORTMONTH"));
-  list+=buildStringPair('B',m_locale->translate("MONTH"));
-  list+=buildStringPair('e',m_locale->translate("dD"));
-  list+=buildStringPair('d',m_locale->translate("DD"));
-  list+=buildStringPair('a',m_locale->translate("SHORTWEEKDAY"));
-  list+=buildStringPair('A',m_locale->translate("WEEKDAY"));
+  list+=buildStringPair('Y',ki18n("YYYY").toString(m_locale));
+  list+=buildStringPair('y',ki18n("YY").toString(m_locale));
+  list+=buildStringPair('n',ki18n("mM").toString(m_locale));
+  list+=buildStringPair('m',ki18nc("Month", "MM").toString(m_locale));
+  list+=buildStringPair('b',ki18n("SHORTMONTH").toString(m_locale));
+  list+=buildStringPair('B',ki18n("MONTH").toString(m_locale));
+  list+=buildStringPair('e',ki18n("dD").toString(m_locale));
+  list+=buildStringPair('d',ki18n("DD").toString(m_locale));
+  list+=buildStringPair('a',ki18n("SHORTWEEKDAY").toString(m_locale));
+  list+=buildStringPair('A',ki18n("WEEKDAY").toString(m_locale));
 
   qSort( list );
 
@@ -428,7 +428,7 @@ void KLocaleConfigTime::slotTranslate()
   // we better use save and restore here..
   old = m_comboTimeFmt->currentText();
   m_comboTimeFmt->clear();
-  str = i18n("some reasonable time formats for the language",
+  str = i18nc("some reasonable time formats for the language",
 	     "HH:MM:SS\n"
 	     "pH:MM:SS AMPM");
   m_comboTimeFmt->insertStringList(str.split( sep));
@@ -436,7 +436,7 @@ void KLocaleConfigTime::slotTranslate()
 
   old = m_comboDateFmt->currentText();
   m_comboDateFmt->clear();
-  str = i18n("some reasonable date formats for the language",
+  str = i18nc("some reasonable date formats for the language",
 	     "WEEKDAY MONTH dD YYYY\n"
 	     "SHORTWEEKDAY MONTH dD YYYY");
   m_comboDateFmt->insertStringList(str.split( sep));
@@ -444,7 +444,7 @@ void KLocaleConfigTime::slotTranslate()
 
   old = m_comboDateFmtShort->currentText();
   m_comboDateFmtShort->clear();
-  str = i18n("some reasonable short date formats for the language",
+  str = i18nc("some reasonable short date formats for the language",
 	     "YYYY-MM-DD\n"
 	     "dD.mM.YYYY\n"
 	     "DD.MM.YYYY");
@@ -456,15 +456,15 @@ void KLocaleConfigTime::slotTranslate()
   while ( m_comboCalendarSystem->count() < 4 )
     m_comboCalendarSystem->insertItem(QString());
   m_comboCalendarSystem->changeItem
-    (m_locale->translate("Calendar System Gregorian", "Gregorian"), 0);
+    (ki18nc("Calendar System Gregorian", "Gregorian").toString(m_locale), 0);
   m_comboCalendarSystem->changeItem
-    (m_locale->translate("Calendar System Hijri", "Hijri"), 1);
+    (ki18nc("Calendar System Hijri", "Hijri").toString(m_locale), 1);
   m_comboCalendarSystem->changeItem
-    (m_locale->translate("Calendar System Hebrew", "Hebrew"), 2);
+    (ki18nc("Calendar System Hebrew", "Hebrew").toString(m_locale), 2);
   m_comboCalendarSystem->changeItem
-    (m_locale->translate("Calendar System Jalali", "Jalali"), 3);
+    (ki18nc("Calendar System Jalali", "Jalali").toString(m_locale), 3);
 
-  str = m_locale->translate
+  str = ki18n
     ("<p>The text in this textbox will be used to format "
      "time strings. The sequences below will be replaced:</p>"
      "<table>"
@@ -483,11 +483,11 @@ void KLocaleConfigTime::slotTranslate()
      "<tr><td><b>AMPM</b></td><td>Either \"am\" or \"pm\" according to the "
      "given time value. Noon is treated as \"pm\" and midnight as \"am\"."
      "</td></tr>"
-     "</table>");
+     "</table>").toString(m_locale);
   m_labTimeFmt->setWhatsThis( str );
   m_comboTimeFmt->setWhatsThis(  str );
 
-  QString datecodes = m_locale->translate(
+  QString datecodes = ki18n(
     "<table>"
     "<tr><td><b>YYYY</b></td><td>The year with century as a decimal number."
     "</td></tr>"
@@ -506,31 +506,31 @@ void KLocaleConfigTime::slotTranslate()
     "<tr><td><b>SHORTWEEKDAY</b></td><td>The first three characters of the weekday name."
     "</td></tr>"
     "<tr><td><b>WEEKDAY</b></td><td>The full weekday name.</td></tr>"
-    "</table>");
+    "</table>").toString(m_locale);
 
-  str = m_locale->translate
+  str = ki18n
     ( "<p>The text in this textbox will be used to format long "
-      "dates. The sequences below will be replaced:</p>") + datecodes;
+      "dates. The sequences below will be replaced:</p>").toString(m_locale) + datecodes;
   m_labDateFmt->setWhatsThis( str );
   m_comboDateFmt->setWhatsThis(  str );
 
-  str = m_locale->translate
+  str = ki18n
     ( "<p>The text in this textbox will be used to format short "
       "dates. For instance, this is used when listing files. "
-      "The sequences below will be replaced:</p>") + datecodes;
+      "The sequences below will be replaced:</p>").toString(m_locale) + datecodes;
   m_labDateFmtShort->setWhatsThis( str );
   m_comboDateFmtShort->setWhatsThis(  str );
 
-  str = m_locale->translate
+  str = ki18n
     ("<p>This option determines which day will be considered as "
-     "the first one of the week.</p>");
+     "the first one of the week.</p>").toString(m_locale);
   m_comboWeekStartDay->setWhatsThis(  str );
 
   if ( m_locale->nounDeclension() )
   {
-    str = m_locale->translate
+    str = ki18n
       ("<p>This option determines whether possessive form of month "
-       "names should be used in dates.</p>");
+       "names should be used in dates.</p>").toString(m_locale);
     m_chDateMonthNamePossessive->setWhatsThis(  str );
   }
 }

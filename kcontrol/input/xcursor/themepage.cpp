@@ -213,18 +213,20 @@ void ThemePage::installClicked()
 		QString text;
 
 		if ( url.isLocalFile() )
-			text = i18n( "Unable to find the cursor theme archive %1." );
+			text = i18n( "Unable to find the cursor theme archive %1.",
+                                     url.prettyURL() );
 		else
 			text = i18n( "Unable to download the cursor theme archive; "
-			             "please check that the address %1 is correct." );
+			             "please check that the address %1 is correct.",
+                                     url.prettyURL() );
 
-		KMessageBox::sorry( this, text.arg( url.prettyURL() ) );
+		KMessageBox::sorry( this, text );
 		return;
 	}
 
 	if ( !installThemes( tmpFile ) )
 		KMessageBox::error( this, i18n( "The file %1 does not appear to be a valid "
-				"cursor theme archive.").arg( url.fileName() ) );
+				"cursor theme archive.", url.fileName() ) );
 
 	KIO::NetAccess::removeTempFile( tmpFile );
 }
@@ -234,8 +236,8 @@ void ThemePage::removeClicked()
 {
 	QString question = i18n( "<qt>Are you sure you want to remove the "
 		"<strong>%1</strong> cursor theme?<br>"
-		"This will delete all the files installed by this theme.</qt>")
-		.arg( listview->currentItem()->text( NameColumn ) );
+		"This will delete all the files installed by this theme.</qt>",
+		  listview->currentItem()->text( NameColumn ) );
 
 	// Get confirmation from the user
 	int answer = KMessageBox::warningContinueCancel( this, question, i18n( "Confirmation" ), KStdGuiItem::del() );
@@ -293,7 +295,7 @@ bool ThemePage::installThemes( const QString &file )
 		// Check if a theme with that name already exists
 		if ( QDir( destDir ).exists( *it ) ) {
 			const QString question = i18n( "A theme named %1 already exists in your icon "
-					"theme folder. Do you want replace it with this one?" ).arg( *it );
+					"theme folder. Do you want replace it with this one?", *it );
 			int answer = KMessageBox::warningContinueCancel( this, question, i18n( "Overwrite Theme?"), i18n("Replace") );
 			if ( answer != KMessageBox::Continue )
 				continue;

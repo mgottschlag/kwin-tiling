@@ -125,21 +125,21 @@ QString USBDevice::dump()
   QString cname = _db->cls(_class);
   if (!cname.isEmpty())
     c += "<td>(" + i18n(cname.latin1()) +")</td>";
-  r += i18n("<tr><td><i>Class</i></td>%1</tr>").arg(c);
+  r += i18n("<tr><td><i>Class</i></td>%1</tr>", c);
   QString sc = QString("<td>%1</td>").arg(_sub);
   QString scname = _db->subclass(_class, _sub);
   if (!scname.isEmpty())
     sc += "<td>(" + i18n(scname.latin1()) +")</td>";
-  r += i18n("<tr><td><i>Subclass</i></td>%1</tr>").arg(sc);
+  r += i18n("<tr><td><i>Subclass</i></td>%1</tr>", sc);
   QString pr = QString("<td>%1</td>").arg(_prot);
   QString prname = _db->protocol(_class, _sub, _prot);
   if (!prname.isEmpty())
     pr += "<td>(" + prname +")</td>";
-  r += i18n("<tr><td><i>Protocol</i></td>%1</tr>").arg(pr);
+  r += i18n("<tr><td><i>Protocol</i></td>%1</tr>", pr);
 #ifndef Q_OS_FREEBSD
-  r += i18n("<tr><td><i>USB Version</i></td><td>%1.%2</td></tr>")
-    .arg(_verMajor,0,16)
-    .arg(QString::number(_verMinor,16).prepend(QChar::fromLatin1('0')).right(2));
+  r += i18n("<tr><td><i>USB Version</i></td><td>%1.%2</td></tr>",
+            QString::number(_verMajor,16),
+            QString::number(_verMinor,16).prepend(QChar::fromLatin1('0')).right(2));
 #endif
   r += "<tr><td></td></tr>";
 
@@ -147,25 +147,25 @@ QString USBDevice::dump()
   QString name = _db->vendor(_vendorID);
   if (!name.isEmpty())
     v += "<td>(" + name +")</td>";
-  r += i18n("<tr><td><i>Vendor ID</i></td><td>0x%1</td></tr>").arg(v);
+  r += i18n("<tr><td><i>Vendor ID</i></td><td>0x%1</td></tr>", v);
   QString p = QString::number(_prodID,16);
   QString pname = _db->device(_vendorID, _prodID);
   if (!pname.isEmpty())
     p += "<td>(" + pname +")</td>";
-  r += i18n("<tr><td><i>Product ID</i></td><td>0x%1</td></tr>").arg(p);
-  r += i18n("<tr><td><i>Revision</i></td><td>%1.%2</td></tr>")
-    .arg(_revMajor,0,16)
-    .arg(QString::number(_revMinor,16).prepend(QChar::fromLatin1('0')).right(2));
+  r += i18n("<tr><td><i>Product ID</i></td><td>0x%1</td></tr>", p);
+  r += i18n("<tr><td><i>Revision</i></td><td>%1.%2</td></tr>",
+            QString::number(_revMajor,16),
+            QString::number(_revMinor,16).prepend(QChar::fromLatin1('0')).right(2));
   r += "<tr><td></td></tr>";
 
-  r += i18n("<tr><td><i>Speed</i></td><td>%1 Mbit/s</td></tr>").arg(_speed);
-  r += i18n("<tr><td><i>Channels</i></td><td>%1</td></tr>").arg(_channels);
+  r += i18n("<tr><td><i>Speed</i></td><td>%1 Mbit/s</td></tr>", _speed);
+  r += i18n("<tr><td><i>Channels</i></td><td>%1</td></tr>", _channels);
 #ifdef Q_OS_FREEBSD
 	if ( _power )
-		r += i18n("<tr><td><i>Power Consumption</i></td><td>%1 mA</td></tr>").arg(_power);
+		r += i18n("<tr><td><i>Power Consumption</i></td><td>%1 mA</td></tr>", _power);
 	else
 		r += i18n("<tr><td><i>Power Consumption</i></td><td>self powered</td></tr>");
-	r += i18n("<tr><td><i>Attached Devicenodes</i></td><td>%1</td></tr>").arg(_devnodes.at(0));
+	r += i18n("<tr><td><i>Attached Devicenodes</i></td><td>%1</td></tr>", _devnodes.at(0));
 	if ( _devnodes.count() > 1 ) {
 		QStringList::Iterator it = _devnodes.begin();
 		++it;
@@ -173,15 +173,15 @@ QString USBDevice::dump()
 			r += "<tr><td></td><td>" + *it + "</td></tr>";
 	}
 #else  
-  r += i18n("<tr><td><i>Max. Packet Size</i></td><td>%1</td></tr>").arg(_maxPacketSize);
+  r += i18n("<tr><td><i>Max. Packet Size</i></td><td>%1</td></tr>", _maxPacketSize);
 #endif  
   r += "<tr><td></td></tr>";
 
   if (_hasBW)
     {
-      r += i18n("<tr><td><i>Bandwidth</i></td><td>%1 of %2 (%3%)</td></tr>").arg(_bwUsed).arg(_bwTotal).arg(_bwPercent);
-      r += i18n("<tr><td><i>Intr. requests</i></td><td>%1</td></tr>").arg(_bwIntr);
-      r += i18n("<tr><td><i>Isochr. requests</i></td><td>%1</td></tr>").arg(_bwIso);
+      r += i18n("<tr><td><i>Bandwidth</i></td><td>%1 of %2 (%3%)</td></tr>", _bwUsed, _bwTotal, _bwPercent);
+      r += i18n("<tr><td><i>Intr. requests</i></td><td>%1</td></tr>", _bwIntr);
+      r += i18n("<tr><td><i>Isochr. requests</i></td><td>%1</td></tr>", _bwIso);
       r += "<tr><td></td></tr>";
     }
 

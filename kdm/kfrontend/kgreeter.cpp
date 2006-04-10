@@ -499,7 +499,7 @@ KGreeter::slotLoadPrevWM()
 				}
 			if (curSel == -1)
 				MsgBox( sorrybox, i18n("Your saved session type '%1' is not valid any more.\n"
-				                       "Please select a new one, otherwise 'default' will be used.").arg( sess ) );
+				                       "Please select a new one, otherwise 'default' will be used.", sess ) );
 			free( sess );
 			prevValid = false;
 		}

@@ -226,7 +226,7 @@ KGDialog::slotPopulateDisplays()
 	for (dpySpec *sess = sessions; sess; sess = sess->next) {
 		decodeSess( sess, user, loc );
 		int id = dpyMenu->insertItem(
-			i18n("session (location)", "%1 (%2)").arg( user ).arg( loc ),
+			i18nc("session (location)", "%1 (%2)", user, loc ),
 			sess->vt ? sess->vt : -1 );
 		if (!sess->vt)
 			dpyMenu->setItemEnabled( id, false );

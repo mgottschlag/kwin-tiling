@@ -353,7 +353,7 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg, int version )
             "# Appearance & Themes -> Colors in the Control Center and disable the checkbox\n"
             "# \"Apply colors to non-KDE applications\"\n"
             "#\n"
-            "#\n").arg(QDateTime::currentDateTime().toString());
+            "#\n", QDateTime::currentDateTime().toString());
 
     t << "style \"default\"" << endl;
     t << "{" << endl;

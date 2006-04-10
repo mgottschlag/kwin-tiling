@@ -30,7 +30,7 @@ KonsoleBookmarkMenu::KonsoleBookmarkMenu( KBookmarkManager* mgr,
 {
     /*
      * First, we disconnect KBookmarkMenu::slotAboutToShow()
-     * Then,  we connect    KonsoleBookmarkMenu::slotAboutToShow().
+     * Then, we connect    KonsoleBookmarkMenu::slotAboutToShow().
      * They are named differently because the SLOT() macro thinks we want
      * KonsoleBookmarkMenu::KBookmarkMenu::slotAboutToShow()
      * Could this be solved if slotAboutToShow() is virtual in KBookmarMenu?

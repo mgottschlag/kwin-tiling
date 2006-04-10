@@ -102,7 +102,7 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
         if ( image.height() > max_size.height() || image.width() > max_size.width() ) {
             image.convertFromImage( image.convertToImage().smoothScale( max_size, Qt::KeepAspectRatio ) );
         }
-        id = proxy_for_menu->insertItem( image,  -1,  index );
+        id = proxy_for_menu->insertItem( image, -1, index );
     }
 
 
@@ -124,7 +124,7 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
     proxy_for_menu->connectItem(  id,
                                   history,
                                   SLOT( slotMoveToTop( int ) ) );
-    proxy_for_menu->setItemParameter(  id,  nextItemNumber );
+    proxy_for_menu->setItemParameter(  id, nextItemNumber );
 
 }
 
@@ -156,7 +156,7 @@ int PopupProxy::insertFromSpill( int index ) {
     // make *this a proxy for that menu ('s content).
     if ( spillPointer.current() ) {
         KMenu* moreMenu = new KMenu( proxy_for_menu );
-        proxy_for_menu->insertItem( i18n( "&More" ),  moreMenu, -1, index );
+        proxy_for_menu->insertItem( i18n( "&More" ), moreMenu, -1, index );
         connect( moreMenu, SIGNAL( aboutToShow() ), SLOT( slotAboutToShow() ) );
         proxy_for_menu = moreMenu;
     }

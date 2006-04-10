@@ -267,11 +267,11 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
        " of the current color scheme. Contrast does not affect all of the"
        " colors, only the edges of 3D objects."));
 
-    QLabel *label = new QLabel(sb, i18n("Low Contrast", "Low"), group);
+    QLabel *label = new QLabel(sb, i18nc("Low Contrast", "Low"), group);
     groupLayout->addWidget(label);
     groupLayout->addWidget(sb, 10);
     label = new QLabel(group);
-    label->setText(i18n("High Contrast", "High"));
+    label->setText(i18nc("High Contrast", "High"));
     groupLayout->addWidget( label );
 
     cbExportColors = new QCheckBox(i18n("Apply colors to &non-KDE applications"), this);
@@ -551,7 +551,7 @@ void KColorScheme::slotAdd()
                 exists = i;
                 int result = KMessageBox::warningContinueCancel( 0,
                    i18n("A color scheme with the name '%1' already exists.\n"
-                        "Do you want to overwrite it?\n").arg(sName),
+                        "Do you want to overwrite it?\n", sName),
                    i18n("Save Color Scheme"),
                    i18n("Overwrite"));
                 if (result == KMessageBox::Cancel)

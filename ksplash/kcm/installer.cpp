@@ -300,14 +300,14 @@ void SplashInstaller::slotRemove()
   {
      KUrl url;
      url.setPath(themeDir);
-     if (KMessageBox::warningContinueCancel(this,i18n("Delete folder %1 and its contents?").arg(themeDir),"",KGuiItem(i18n("&Delete"),"editdelete"))==KMessageBox::Continue)
+     if (KMessageBox::warningContinueCancel(this,i18n("Delete folder %1 and its contents?", themeDir),"",KGuiItem(i18n("&Delete"),"editdelete"))==KMessageBox::Continue)
        rc = KIO::NetAccess::del(url,this);
      else
        return;
   }
   if (!rc)
   {
-    KMessageBox::sorry(this, i18n("Failed to remove theme '%1'").arg(themeName));
+    KMessageBox::sorry(this, i18n("Failed to remove theme '%1'", themeName));
     return;
   }
   //mThemesList->removeItem(cur);
@@ -364,22 +364,22 @@ void SplashInstaller::slotSetTheme(int id)
         // Get theme information.
         infoTxt = "<qt>";
         if ( cnf.hasKey( "Name" ) )
-          infoTxt += i18n( "<b>Name:</b> %1<br>" ).arg( cnf.readEntry( "Name", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Name:</b> %1<br>", cnf.readEntry( "Name", i18n( "Unknown" ) ) );
         if ( cnf.hasKey( "Description" ) )
-          infoTxt += i18n( "<b>Description:</b> %1<br>" ).arg( cnf.readEntry( "Description", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Description:</b> %1<br>", cnf.readEntry( "Description", i18n( "Unknown" ) ) );
         if ( cnf.hasKey( "Version" ) )
-          infoTxt += i18n( "<b>Version:</b> %1<br>" ).arg( cnf.readEntry( "Version", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Version:</b> %1<br>", cnf.readEntry( "Version", i18n( "Unknown" ) ) );
         if ( cnf.hasKey( "Author" ) )
-          infoTxt += i18n( "<b>Author:</b> %1<br>" ).arg( cnf.readEntry( "Author", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Author:</b> %1<br>", cnf.readEntry( "Author", i18n( "Unknown" ) ) );
         if ( cnf.hasKey( "Homepage" ) )
-          infoTxt += i18n( "<b>Homepage:</b> %1<br>" ).arg( cnf.readEntry( "Homepage", i18n( "Unknown" ) ) );
+          infoTxt += i18n( "<b>Homepage:</b> %1<br>", cnf.readEntry( "Homepage", i18n( "Unknown" ) ) );
         infoTxt += "</qt>";
 
         QString pluginName( cnf.readEntry( "Engine", "Default" ) ); // Perhaps no default is better?
         if ((KTrader::self()->query("KSplash/Plugin", QString("[X-KSplash-PluginName] == '%1'").arg(pluginName))).isEmpty())
         {
           enabled = false;
-          error = i18n("This theme requires the plugin %1 which is not installed.").arg(pluginName);
+          error = i18n("This theme requires the plugin %1 which is not installed.", pluginName);
         }
         else
           enabled = true; // Hooray, there is at least one plugin which can handle this theme.

@@ -373,7 +373,7 @@ void KEyeCandyPage::enableIconZoomingPanel(bool enable){
 	kickerconf->writeEntry("EnableIconZoom", enable);
 }
 
-/** enable Icon highlighting,  Level 3 */
+/** enable Icon highlighting, Level 3 */
 void KEyeCandyPage::enableIconEffectGamma(bool enable, bool user){
 	if(enable){
 		KGlobal::config()->setGroup("DesktopIcons");

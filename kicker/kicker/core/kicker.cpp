@@ -38,6 +38,8 @@
 #include <kdirwatch.h>
 #include <kglobal.h>
 #include <kglobalaccel.h>
+#include <kactioncollection.h>
+#include <kaction.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>
@@ -71,7 +73,7 @@ Kicker* Kicker::self()
 
 Kicker::Kicker()
     : KUniqueApplication(),
-      keys(0),
+      m_actionCollection(0),
       m_kwinModule(0),
       m_configDialog(0),
       m_canAddContainers(true)
@@ -131,13 +133,13 @@ Kicker::Kicker()
     KGlobal::locale()->insertCatalog("libdmctl");
     KGlobal::locale()->insertCatalog("libtaskbar");
 
-    // initialize our keys
+    // initialize our m_actionCollection
     // note that this creates the KMenu by calling MenuManager::self()
-    keys = new KGlobalAccel( this );
+    KActionCollection* actionCollection = m_actionCollection = new KActionCollection( this );
+    KAction* a = 0L;
 #define KICKER_ALL_BINDINGS
 #include "kickerbindings.cpp"
-    keys->readSettings();
-    keys->updateConnections();
+    m_actionCollection->readSettings();
 
     // set up our global settings
     configure();
@@ -201,8 +203,7 @@ void Kicker::slotSettingsChanged(int category)
 {
     if (category == (int)KApplication::SETTINGS_SHORTCUTS)
     {
-        keys->readSettings();
-        keys->updateConnections();
+        m_actionCollection->readSettings();
     }
 }
 

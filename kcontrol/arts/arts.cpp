@@ -500,8 +500,8 @@ void KArtsModule::calculateLatency()
 
 		latencyInMs = (fragmentSize*fragmentCount*1000) / rate / sampleSize;
 		general->latencyLabel->setText(
-						  i18n("%1 milliseconds (%2 fragments with %3 bytes)")
-						  .arg(latencyInMs).arg(fragmentCount).arg(fragmentSize));
+						  i18n("%1 milliseconds (%2 fragments with %3 bytes)",
+						   latencyInMs, fragmentCount, fragmentSize));
 	}
 	else
 	{

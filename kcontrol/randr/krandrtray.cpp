@@ -82,7 +82,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KMenu* menu)
                             subMenu->setObjectName( QString("screen%1").arg(s+1) );
                             m_screenPopups.append(subMenu);
                             populateMenu(subMenu);
-                            lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1), subMenu);
+                            lastIndex = menu->insertItem(i18n("Screen %1", s+1), subMenu);
                             connect(subMenu, SIGNAL(activated(int)), SLOT(slotScreenActivated()));
 			}
 		}
@@ -148,7 +148,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 		sizeSort[highestIndex] = -1;
 		Q_ASSERT(highestIndex != -1);
 
-		lastIndex = menu->insertItem(i18n("%1 x %2").arg(currentScreen()->pixelSize(highestIndex).width()).arg(currentScreen()->pixelSize(highestIndex).height()));
+		lastIndex = menu->insertItem(i18n("%1 x %2", currentScreen()->pixelSize(highestIndex).width(), currentScreen()->pixelSize(highestIndex).height()));
 
 		if (currentScreen()->proposedSize() == highestIndex)
 			menu->setItemChecked(lastIndex, true);

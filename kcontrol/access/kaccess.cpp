@@ -20,8 +20,8 @@
 #include <klocale.h>
 #include <netwm.h>
 #include <kshortcut.h>
-#include <kkeynative.h>
 #include <kwin.h>
+#include <kkeyserver.h>
 
 #include <X11/XKBlib.h>
 #define XK_MISCELLANY
@@ -345,7 +345,7 @@ void KAccessApp::initMasks() {
          if (modifierKeys[i].keysym != 0)
             mask = XkbKeysymToModifiers (QX11Info::display(), modifierKeys[i].keysym);
          else if (!strcmp(modifierKeys[i].name, "Win"))
-            mask = KKeyNative::modXWin();
+            mask = KKeyServer::modXMeta();
          else
             mask = XkbKeysymToModifiers (QX11Info::display(), XK_Mode_switch)
                  | XkbKeysymToModifiers (QX11Info::display(), XK_ISO_Level3_Shift)
@@ -542,13 +542,14 @@ QString mouseKeysShortcut (Display *display) {
   ev.xkey.display = display;
   ev.xkey.keycode = code;
   ev.xkey.state = 0;
-  KKey key = KKey(KKeyNative(&ev));
-  QString keyname = key.toString();
+  int key;
+  KKeyServer::xEventToQt(&ev, key);
+  QString keyname = QKeySequence(key).toString();
 
-  unsigned int AltMask   = KKeyNative::modXAlt();
-  unsigned int WinMask   = KKeyNative::modXWin();
-  unsigned int NumMask   = KKeyNative::modXNumLock();
-  unsigned int ScrollMask= KKeyNative::modXScrollLock();
+  unsigned int AltMask   = KKeyServer::modXAlt();
+  unsigned int WinMask   = KKeyServer::modXMeta();
+  unsigned int NumMask   = KKeyServer::modXNumLock();
+  unsigned int ScrollMask= KKeyServer::modXScrollLock();
 
   unsigned int MetaMask  = XkbKeysymToModifiers (display, XK_Meta_L);
   unsigned int SuperMask = XkbKeysymToModifiers (display, XK_Super_L);
@@ -575,13 +576,13 @@ QString mouseKeysShortcut (Display *display) {
   if ((modifiers & WinMask) != 0)
     keyname = i18n("Meta") + "+" + keyname;
   if ((modifiers & WinMask) != 0)
-    keyname = KKey::modFlagLabel(KKey::WIN) + "+" + keyname;
+    keyname = QKeySequence(Qt::META).toString() + "+" + keyname;
   if ((modifiers & AltMask) != 0)
-    keyname = KKey::modFlagLabel(KKey::ALT) + "+" + keyname;
+    keyname = QKeySequence(Qt::ALT).toString() + "+" + keyname;
   if ((modifiers & ControlMask) != 0)
-    keyname = KKey::modFlagLabel(KKey::CTRL) + "+" + keyname;
+    keyname = QKeySequence(Qt::CTRL).toString() + "+" + keyname;
   if ((modifiers & ShiftMask) != 0)
-    keyname = KKey::modFlagLabel(KKey::SHIFT) + "+" + keyname;
+    keyname = QKeySequence(Qt::SHIFT).toString() + "+" + keyname;
 
   return keyname;
 }
@@ -691,67 +692,67 @@ void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
         QString question;
         switch (enabledFeatures.count()) {
            case 0: switch (disabledFeatures.count()) {
-              case 1: question = i18n("Do you really want to deactivate \"%1\"?")
-                    .arg(disabledFeatures[0]);
+              case 1: question = i18n("Do you really want to deactivate \"%1\"?",
+                     disabledFeatures[0]);
               break;
-              case 2: question = i18n("Do you really want to deactivate \"%1\" and \"%2\"?")
-                    .arg(disabledFeatures[0]).arg(disabledFeatures[1]);
+              case 2: question = i18n("Do you really want to deactivate \"%1\" and \"%2\"?",
+                     disabledFeatures[0], disabledFeatures[1]);
               break;
-              case  3: question = i18n("Do you really want to deactivate \"%1\", \"%2\" and \"%3\"?")
-                    .arg(disabledFeatures[0]).arg(disabledFeatures[1])
-                    .arg(disabledFeatures[2]);
+              case  3: question = i18n("Do you really want to deactivate \"%1\", \"%2\" and \"%3\"?",
+                     disabledFeatures[0], disabledFeatures[1],
+                     disabledFeatures[2]);
               break;
-              case 4: question = i18n("Do you really want to deactivate \"%1\", \"%2\", \"%3\" and \"%4\"?")
-                    .arg(disabledFeatures[0]).arg(disabledFeatures[1])
-                    .arg(disabledFeatures[2]).arg(disabledFeatures[3]);
+              case 4: question = i18n("Do you really want to deactivate \"%1\", \"%2\", \"%3\" and \"%4\"?",
+                     disabledFeatures[0], disabledFeatures[1],
+                     disabledFeatures[2], disabledFeatures[3]);
               break;
            }
            break;
            case 1: switch (disabledFeatures.count()) {
-              case 0: question = i18n("Do you really want to activate \"%1\"?")
-                    .arg(enabledFeatures[0]);
+              case 0: question = i18n("Do you really want to activate \"%1\"?",
+                     enabledFeatures[0]);
               break;
-              case 1: question = i18n("Do you really want to activate \"%1\" and to deactivate \"%2\"?")
-                    .arg(enabledFeatures[0]).arg(disabledFeatures[0]);
+              case 1: question = i18n("Do you really want to activate \"%1\" and to deactivate \"%2\"?",
+                     enabledFeatures[0], disabledFeatures[0]);
               break;
-              case 2: question = i18n("Do you really want to activate \"%1\" and to deactivate \"%2\" and \"%3\"?")
-                    .arg(enabledFeatures[0]).arg(disabledFeatures[0])
-                    .arg(disabledFeatures[1]);
+              case 2: question = i18n("Do you really want to activate \"%1\" and to deactivate \"%2\" and \"%3\"?",
+                     enabledFeatures[0], disabledFeatures[0],
+                     disabledFeatures[1]);
               break;
-              case 3: question = i18n("Do you really want to activate \"%1\" and to deactivate \"%2\", \"%3\" and \"%4\"?")
-                    .arg(enabledFeatures[0]).arg(disabledFeatures[0])
-                    .arg(disabledFeatures[1]).arg(disabledFeatures[2]);
+              case 3: question = i18n("Do you really want to activate \"%1\" and to deactivate \"%2\", \"%3\" and \"%4\"?",
+                     enabledFeatures[0], disabledFeatures[0],
+                     disabledFeatures[1], disabledFeatures[2]);
               break;
            }
            break;
            case 2: switch (disabledFeatures.count()) {
-              case 0: question = i18n("Do you really want to activate \"%1\" and \"%2\"?")
-                    .arg(enabledFeatures[0]).arg(enabledFeatures[1]);
+              case 0: question = i18n("Do you really want to activate \"%1\" and \"%2\"?",
+                     enabledFeatures[0], enabledFeatures[1]);
               break;
-              case 1: question = i18n("Do you really want to activate \"%1\" and \"%2\" and to deactivate \"%3\"?")
-                    .arg(enabledFeatures[0]).arg(enabledFeatures[1])
-                    .arg(disabledFeatures[0]);
+              case 1: question = i18n("Do you really want to activate \"%1\" and \"%2\" and to deactivate \"%3\"?",
+                     enabledFeatures[0], enabledFeatures[1],
+                     disabledFeatures[0]);
               break;
-              case 2: question = i18n("Do you really want to activate \"%1\", and \"%2\" and to deactivate \"%3\" and \"%4\"?")
-                    .arg(enabledFeatures[0]).arg(enabledFeatures[1])
-                    .arg(enabledFeatures[0]).arg(disabledFeatures[1]);
+              case 2: question = i18n("Do you really want to activate \"%1\", and \"%2\" and to deactivate \"%3\" and \"%4\"?",
+                     enabledFeatures[0], enabledFeatures[1],
+                     enabledFeatures[0], disabledFeatures[1]);
               break;
            }
            break;
            case 3: switch (disabledFeatures.count()) {
-              case 0: question = i18n("Do you really want to activate \"%1\", \"%2\" and \"%3\"?")
-                    .arg(enabledFeatures[0]).arg(enabledFeatures[1])
-                    .arg(enabledFeatures[2]);
+              case 0: question = i18n("Do you really want to activate \"%1\", \"%2\" and \"%3\"?",
+                     enabledFeatures[0], enabledFeatures[1],
+                     enabledFeatures[2]);
               break;
-              case 1: question = i18n("Do you really want to activate \"%1\", \"%2\" and \"%3\" and to deactivate \"%4\"?")
-                    .arg(enabledFeatures[0]).arg(enabledFeatures[1])
-                    .arg(enabledFeatures[2]).arg(disabledFeatures[0]);
+              case 1: question = i18n("Do you really want to activate \"%1\", \"%2\" and \"%3\" and to deactivate \"%4\"?",
+                     enabledFeatures[0], enabledFeatures[1],
+                     enabledFeatures[2], disabledFeatures[0]);
               break;
            }
            break;
-           case 4: question = i18n("Do you really want to activate \"%1\", \"%2\", \"%3\" and \"%4\"?")
-                 .arg(enabledFeatures[0]).arg(enabledFeatures[1])
-                 .arg(enabledFeatures[2]).arg(enabledFeatures[3]);
+           case 4: question = i18n("Do you really want to activate \"%1\", \"%2\", \"%3\" and \"%4\"?",
+                  enabledFeatures[0], enabledFeatures[1],
+                  enabledFeatures[2], enabledFeatures[3]);
            break;
         }
         QString explanation;
@@ -766,7 +767,7 @@ void KAccessApp::xkbControlsNotify(XkbControlsNotifyEvent *event)
               else if ((enabled | disabled) == XkbMouseKeysMask) {
                  QString shortcut = mouseKeysShortcut(QX11Info::display());
                  if (!shortcut.isEmpty() && !shortcut.isNull())
-                    explanation = i18n("You pressed %1 or an application has requested to change this setting.").arg(shortcut);
+                    explanation = i18n("You pressed %1 or an application has requested to change this setting.", shortcut);
               }
            }
         }

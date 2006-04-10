@@ -79,20 +79,20 @@ NaughtyApplet::NaughtyApplet
 
   connect
     (
-     button_,   SIGNAL(clicked()),
-     this,      SLOT(slotPreferences())
+     button_,  SIGNAL(clicked()),
+     this,     SLOT(slotPreferences())
     );
 
   connect
     (
-     monitor_,  SIGNAL(runawayProcess(ulong, const QString &)),
-     this,      SLOT(slotWarn(ulong, const QString &))
+     monitor_, SIGNAL(runawayProcess(ulong, const QString &)),
+     this,     SLOT(slotWarn(ulong, const QString &))
     );
 
   connect
     (
-     monitor_,  SIGNAL(load(uint)),
-     this,      SLOT(slotLoad(uint))
+     monitor_, SIGNAL(load(uint)),
+     this,     SLOT(slotLoad(uint))
     );
 
   loadSettings();
@@ -114,17 +114,17 @@ NaughtyApplet::slotWarn(ulong pid, const QString & name)
   QString s = i18n("A program called '%1' is slowing down the others "
                    "on your machine. It may have a bug that is causing "
                    "this, or it may just be busy.\n"
-                   "Would you like to try to stop the program?");
+                   "Would you like to try to stop the program?", name);
 
-  int retval = KMessageBox::warningYesNo(this, s.arg(name), QString(), i18n("Stop"), i18n("Keep Running"));
+  int retval = KMessageBox::warningYesNo(this, s, QString(), i18n("Stop"), i18n("Keep Running"));
 
   if (KMessageBox::Yes == retval)
     monitor_->kill(pid);
   else
   {
-    s = i18n("In future, should busy programs called '%1' be ignored?");
+    s = i18n("In future, should busy programs called '%1' be ignored?", name);
 
-    retval = KMessageBox::questionYesNo(this, s.arg(name), QString(), i18n("Ignore"), i18n("Do Not Ignore"));
+    retval = KMessageBox::questionYesNo(this, s, QString(), i18n("Ignore"), i18n("Do Not Ignore"));
 
     if (KMessageBox::Yes == retval)
     {
@@ -216,9 +216,9 @@ NaughtyApplet::loadSettings()
   void
 NaughtyApplet::saveSettings()
 {
-  config()->writeEntry("IgnoreList",      ignoreList_);
-  config()->writeEntry("UpdateInterval",  monitor_->interval());
-  config()->writeEntry("Threshold",       monitor_->triggerLevel());
+  config()->writeEntry("IgnoreList",     ignoreList_);
+  config()->writeEntry("UpdateInterval", monitor_->interval());
+  config()->writeEntry("Threshold",      monitor_->triggerLevel());
   config()->sync();
 }
 

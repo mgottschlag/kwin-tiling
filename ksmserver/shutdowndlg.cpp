@@ -97,7 +97,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     vbox = new QVBoxLayout( frame, 2 * KDialog::marginHint(),
                             2 * KDialog::spacingHint() );
 
-    QLabel* label = new QLabel( i18n("End Session for \"%1\"").arg(KUser().loginName()), frame );
+    QLabel* label = new QLabel( i18n("End Session for \"%1\"", KUser().loginName()), frame );
     QFont fnt = label->font();
     fnt.setBold( true );
     fnt.setPointSize( fnt.pointSize() * 3 / 2 );
@@ -157,7 +157,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 	  for (QStringList::ConstIterator it = rebootOptions.begin(); it != rebootOptions.end(); ++it, ++index)
 	    {
 	      if (index == cur)
-		targets->insertItem( *it + i18n("current option in boot loader", " (current)"), index);
+		targets->insertItem( *it + i18nc("current option in boot loader", " (current)"), index);
 	      else
 		targets->insertItem( *it, index );
 	    }

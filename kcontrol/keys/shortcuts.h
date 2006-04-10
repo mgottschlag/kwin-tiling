@@ -26,7 +26,6 @@
 #include <qpushbutton.h>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
-#include "kaccelaction.h"
 #include <kcombobox.h>
 #include <kkeydialog.h>
 
@@ -67,8 +66,9 @@ class ShortcutsModule : public QWidget
 	QPushButton* m_pbtnSave, * m_pbtnRemove;
 	int m_nSysSchemes;
 	QStringList m_rgsSchemeFiles;
-	KAccelActions m_actionsGeneral, m_actionsSequence;//, m_actionsApplication;
-	KShortcutList* m_pListGeneral, * m_pListSequence, * m_pListApplication;
+	KActionCollection* m_actionsGeneral, * m_actionsSequence;//, m_actionsApplication;
+	KActionCollection* m_listGeneral, * m_listSequence, * m_listApplication;
+
 	KKeyChooser* m_pkcGeneral, * m_pkcSequence, * m_pkcApplication;
 };
 

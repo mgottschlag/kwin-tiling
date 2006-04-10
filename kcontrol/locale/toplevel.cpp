@@ -171,12 +171,12 @@ void KLocaleApplication::save()
   // temperary use of our locale as the global locale
   KLocale *lsave = KGlobal::_locale;
   KGlobal::_locale = m_locale;
-  KMessageBox::information(this, m_locale->translate
+  KMessageBox::information(this, ki18n
                            ("Changed language settings apply only to "
                             "newly started applications.\nTo change the "
                             "language of all programs, you will have to "
-                            "logout first."),
-                           m_locale->translate("Applying Language Settings"),
+                            "logout first.").toString(m_locale),
+                           ki18n("Applying Language Settings").toString(m_locale),
                            QLatin1String("LanguageChangesApplyOnlyToNewlyStartedPrograms"));
   // restore the old global locale
   KGlobal::_locale = lsave;
@@ -215,13 +215,13 @@ void KLocaleApplication::defaults()
 
 QString KLocaleApplication::quickHelp() const
 {
-  return m_locale->translate("<h1>Country/Region & Language</h1>\n"
+  return ki18n("<h1>Country/Region & Language</h1>\n"
           "<p>From here you can configure language, numeric, and time \n"
           "settings for your particular region. In most cases it will be \n"
           "sufficient to choose the country you live in. For instance KDE \n"
           "will automatically choose \"German\" as language if you choose \n"
           "\"Germany\" from the list. It will also change the time format \n"
-          "to use 24 hours and and use comma as decimal separator.</p>\n");
+          "to use 24 hours and and use comma as decimal separator.</p>\n").toString(m_locale);
 }
 
 void KLocaleApplication::slotTranslate()
@@ -242,24 +242,24 @@ void KLocaleApplication::slotTranslate()
       continue;
 
     if (::qstrcmp(wc->className(), "QLabel") == 0)
-      ((QLabel *)wc)->setText( m_locale->translate( wc->name() ) );
+      ((QLabel *)wc)->setText( ki18n( wc->name() ).toString( m_locale ) );
     else if (::qstrcmp(wc->className(), "QGroupBox") == 0 ||
              ::qstrcmp(wc->className(), "QVGroupBox") == 0)
-      ((QGroupBox *)wc)->setTitle( m_locale->translate( wc->name() ) );
+      ((QGroupBox *)wc)->setTitle( ki18n( wc->name() ).toString( m_locale ) );
     else if (::qstrcmp(wc->className(), "QPushButton") == 0 ||
              ::qstrcmp(wc->className(), "KMenuButton") == 0)
-      ((QPushButton *)wc)->setText( m_locale->translate( wc->name() ) );
+      ((QPushButton *)wc)->setText( ki18n( wc->name() ).toString( m_locale ) );
     else if (::qstrcmp(wc->className(), "QCheckBox") == 0)
-      ((QCheckBox *)wc)->setText( m_locale->translate( wc->name() ) );
+      ((QCheckBox *)wc)->setText( ki18n( wc->name() ).toString( m_locale ) );
   }
 
   // Here we have the pointer
-  m_gbox->setWindowTitle(m_locale->translate("Examples"));
-  m_tab->changeTab(m_localemain, m_locale->translate("&Locale"));
-  m_tab->changeTab(m_localenum, m_locale->translate("&Numbers"));
-  m_tab->changeTab(m_localemon, m_locale->translate("&Money"));
-  m_tab->changeTab(m_localetime, m_locale->translate("&Time && Dates"));
-  m_tab->changeTab(m_localeother, m_locale->translate("&Other"));
+  m_gbox->setWindowTitle(ki18n("Examples").toString(m_locale));
+  m_tab->changeTab(m_localemain, ki18n("&Locale").toString(m_locale));
+  m_tab->changeTab(m_localenum, ki18n("&Numbers").toString(m_locale));
+  m_tab->changeTab(m_localemon, ki18n("&Money").toString(m_locale));
+  m_tab->changeTab(m_localetime, ki18n("&Time && Dates").toString(m_locale));
+  m_tab->changeTab(m_localeother, ki18n("&Other").toString(m_locale));
 
   // FIXME: All widgets are done now. However, there are
   // still some problems. Popup menus from the QLabels are

@@ -316,7 +316,7 @@ void BasicTab::setFolderInfo(MenuFolderInfo *folderInfo)
     _systrayCB->setChecked(false);
     _terminalCB->setChecked(false);
     _uidCB->setChecked(false);
-    _keyEdit->setShortcut(0, false);
+    _keyEdit->setShortcut(KShortcut());
 
     enableWidgets(false, folderInfo->hidden);
     blockSignals(false);
@@ -336,7 +336,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
        _iconButton->setIcon(QString());
 
        // key binding part
-       _keyEdit->setShortcut( KShortcut(), false );
+       _keyEdit->setShortcut( KShortcut() );
        _execEdit->lineEdit()->setText(QString());
        _systrayCB->setChecked(false);
 
@@ -364,7 +364,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     // key binding part
     if( KHotKeys::present())
     {
-        _keyEdit->setShortcut( entryInfo->shortcut(), false );
+        _keyEdit->setShortcut( entryInfo->shortcut() );
     }
 
     QString temp = df->readPathEntry("Exec");
@@ -497,18 +497,18 @@ void BasicTab::slotCapturedShortcut(const KShortcut& cut)
              service = KHotKeys::findMenuEntry(cut.toString());
           if (service)
           {
-             KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already used to activate <b>%2</b>.").arg(cut.toString(), service->name()));
+             KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already used to activate <b>%2</b>.", cut.toString(), service->name()));
              return;
           }
           else
           {
-             KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already in use.").arg(cut.toString()));
+             KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already in use.", cut.toString()));
              return;
           }
        }
        _menuEntryInfo->setShortcut( cut );
     }
-    _keyEdit->setShortcut(cut, false);
+    _keyEdit->setShortcut(cut);
     if (_menuEntryInfo)
        emit changed( _menuEntryInfo );
 }

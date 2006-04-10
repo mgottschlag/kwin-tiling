@@ -87,7 +87,7 @@ void TrayWindow::setCurrentLayout(const QString& layout)
 
 void TrayWindow::setError(const QString& layout)
 {
-    QString msg = i18n("Error changing keyboard layout to '%1'").arg(layout);
+    QString msg = i18n("Error changing keyboard layout to '%1'", layout);
     this->setToolTip( msg);
 
     setPixmap(LayoutIcon::findPixmap("error", m_showFlag));

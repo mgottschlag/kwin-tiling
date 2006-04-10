@@ -20,7 +20,7 @@
 #include "historystringitem.h"
 
 HistoryStringItem::HistoryStringItem( const QString& data )
-    : HistoryItem(),  m_data( data )
+    : HistoryItem(), m_data( data )
 {
 
 }

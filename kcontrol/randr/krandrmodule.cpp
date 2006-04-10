@@ -96,7 +96,7 @@ KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&
 	m_screenSelector = new KComboBox(screenBox);
 
 	for (int s = 0; s < numScreens(); s++) {
-		m_screenSelector->insertItem(i18n("Screen %1").arg(s+1));
+		m_screenSelector->insertItem(i18n("Screen %1", s+1));
 	}
 
 	m_screenSelector->setCurrentIndex(currentScreenIndex());
@@ -183,7 +183,7 @@ void KRandRModule::slotScreenChanged(int screen)
 
 	// Add new resolutions
 	for (int i = 0; i < currentScreen()->numSizes(); i++) {
-		m_sizeCombo->insertItem(i18n("%1 x %2").arg(currentScreen()->pixelSize(i).width()).arg(currentScreen()->pixelSize(i).height()));
+		m_sizeCombo->insertItem(i18n("%1 x %2", currentScreen()->pixelSize(i).width(), currentScreen()->pixelSize(i).height()));
 
 		// Aspect ratio
 		/* , aspect ratio %5)*/

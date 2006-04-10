@@ -159,7 +159,7 @@ bool KPersonalizer::askClose(){
 		            "<p>If yes, click <b>Quit</b> and all changes will be lost."
 		            "<br>If not, click <b>Cancel</b> to return and finish your setup.</p>");
 	}
-	int status = KMessageBox::warningContinueCancel(this,  text, i18n("All Changes Will Be Lost"), KStdGuiItem::quit());
+	int status = KMessageBox::warningContinueCancel(this, text, i18n("All Changes Will Be Lost"), KStdGuiItem::quit());
 	if(status==KMessageBox::Continue){
 		setDefaults();
 		return true;

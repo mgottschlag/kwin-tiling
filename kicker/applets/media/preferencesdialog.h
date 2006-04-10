@@ -45,7 +45,7 @@ protected Q_SLOTS:
 	void slotDefault();
 
 private:
-	K3ListView *mpMediumTypesListView;
+	class K3ListView *mpMediumTypesListView;
 	K3ListView *mpMediaListView;
 	KFileItemList mMedia;
 };

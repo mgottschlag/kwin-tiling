@@ -24,7 +24,7 @@
 StyleConfigDialog::StyleConfigDialog(QWidget* parent, QString styleName):
   KDialogBase(parent, "StyleConfigDialog",
            true, /*modal*/
-           i18n("Configure %1").arg(styleName),
+           i18n("Configure %1", styleName),
            KDialogBase::Default | KDialogBase::Ok | KDialogBase::Cancel,
            KDialogBase::Cancel)
 {

@@ -454,12 +454,12 @@ void CKCmFontInst::removeFonts()
                 break;
             case 1:
                 doIt = KMessageBox::Continue==KMessageBox::warningContinueCancel(this,
-                           i18n("<qt>Do you really want to delete\n <b>'%1'</b>?</qt>").arg(files.first()),
+                           i18n("<qt>Do you really want to delete\n <b>'%1'</b>?</qt>", files.first()),
 			   i18n("Delete Font"), KStdGuiItem::del());
             break;
             default:
                 doIt = KMessageBox::Continue==KMessageBox::warningContinueCancelList(this,
-                           i18n("Do you really want to delete this font?", "Do you really want to delete these %n fonts?",
+                           i18np("Do you really want to delete this font?", "Do you really want to delete these %n fonts?",
                                 files.count()),
 			   files, i18n("Delete Fonts"), KStdGuiItem::del());
         }
@@ -559,7 +559,7 @@ static QString family(const QString &name)
 void CKCmFontInst::updateInformation(int, int fonts)
 {
     KIO::filesize_t size=0;
-    QString         text(i18n("One Font", "%n Fonts", fonts));
+    QString         text(i18np("One Font", "%n Fonts", fonts));
     QStringList     families;
 
     if(fonts>0)
@@ -579,10 +579,10 @@ void CKCmFontInst::updateInformation(int, int fonts)
     if(fonts>0)
     {
         text+=" ";
-        text+=i18n("(%1 Total)").arg(KIO::convertSize(size));
+        text+=i18n("(%1 Total)", KIO::convertSize(size));
     }
     text+=" - ";
-    text+=i18n("One Family", "%n Families", families.count());
+    text+=i18np("One Family", "%n Families", families.count());
     itsStatusLabel->setText(text);
 }
 

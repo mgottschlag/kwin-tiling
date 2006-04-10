@@ -72,7 +72,7 @@ void BrowserButton::initialize( const QString& icon, const QString& path )
     _menuTimer = new QTimer( this );
     connect( _menuTimer, SIGNAL(timeout()), SLOT(slotDelayedPopup()) );
 
-    this->setToolTip( i18n("Browse: %1").arg(path));
+    this->setToolTip( i18n("Browse: %1", path));
     setTitle( path );
     setIcon ( _icon );
 }

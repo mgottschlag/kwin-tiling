@@ -23,12 +23,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #ifndef NOSLOTS
 # define DEF( name, key, target, fnSlot ) \
-   keys->insert( name, i18n(name), QString(), key, target, SLOT(fnSlot) )
+   a = new KAction( i18n(name), actionCollection, name ); \
+   a->setShortcut(key); \
+   connect(a, SIGNAL(triggered(bool)), target, SLOT(fnSlot))
 #else
 # define DEF( name, key, target, fnSlot ) \
-   keys->insert( name, i18n(name), QString(), key)
+   a = new KAction( i18n(name), actionCollection, name ); \
+   a->setShortcut(key);
 #endif
-#define WIN Qt::META
 
 #ifdef KICKER_ALL_BINDINGS
 #define LAUNCH_MENU
@@ -36,13 +38,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #ifdef LAUNCH_MENU
-	keys->insert("Program:kicker", i18n("Panel"));
-	DEF(I18N_NOOP("Popup Launch Menu" ), Qt::ALT+Qt::Key_F1, /* KDE4FUBAR WIN+Qt::Key_Menu , */
+	new KAction(i18n("Panel"), actionCollection, "Program:kicker");
+	DEF(I18N_NOOP("Popup Launch Menu" ), KShortcut(Qt::ALT+Qt::Key_F1, Qt::META+Qt::Key_Menu),
                       MenuManager::self(), kmenuAccelActivated());
 #endif
 
 #ifdef SHOW_DESKTOP
-	DEF(I18N_NOOP( "Toggle Showing Desktop" ), Qt::ALT+Qt::CTRL+Qt::Key_D, /* KDE4FUBAR WIN+Qt::CTRL+Qt::Key_D ,*/
+	DEF(I18N_NOOP( "Toggle Showing Desktop" ), KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_D, Qt::META+Qt::CTRL+Qt::Key_D),
             this, slotToggleShowDesktop());
 #endif
 

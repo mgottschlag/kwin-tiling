@@ -86,25 +86,25 @@ void ExtensionInfo::load()
     KConfig c(_configFile);
     c.setGroup("General");
 
-    _position       = c.readEntry ("Position",            _position);
-    _alignment      = c.readEntry ("Alignment",           _alignment);
-    _xineramaScreen = c.readEntry ("XineramaScreen",      _xineramaScreen);
-    _showLeftHB     = c.readEntry ("ShowLeftHideButton",  _showLeftHB);
+    _position       = c.readEntry ("Position",           _position);
+    _alignment      = c.readEntry ("Alignment",          _alignment);
+    _xineramaScreen = c.readEntry ("XineramaScreen",     _xineramaScreen);
+    _showLeftHB     = c.readEntry ("ShowLeftHideButton", _showLeftHB);
     _showRightHB    = c.readEntry ("ShowRightHideButton", _showRightHB);
-    _hideButtonSize = c.readEntry ("HideButtonSize",      _hideButtonSize);
-    _autohidePanel  = c.readEntry ("AutoHidePanel",       _autohidePanel);
-    _backgroundHide = c.readEntry ("BackgroundHide",      _backgroundHide);
-    _autoHideSwitch = c.readEntry ("AutoHideSwitch",      _autoHideSwitch);
-    _autoHideDelay  = c.readEntry ("AutoHideDelay",       _autoHideDelay);
-    _hideAnim       = c.readEntry ("HideAnimation",       _hideAnim);
-    _hideAnimSpeed  = c.readEntry ("HideAnimationSpeed",  _hideAnimSpeed);
-    _unhideLocation = c.readEntry ("UnhideLocation",      _unhideLocation);
-    _sizePercentage = c.readEntry ("SizePercentage",      _sizePercentage);
-    _expandSize     = c.readEntry ("ExpandSize",          _expandSize);
+    _hideButtonSize = c.readEntry ("HideButtonSize",     _hideButtonSize);
+    _autohidePanel  = c.readEntry ("AutoHidePanel",      _autohidePanel);
+    _backgroundHide = c.readEntry ("BackgroundHide",     _backgroundHide);
+    _autoHideSwitch = c.readEntry ("AutoHideSwitch",     _autoHideSwitch);
+    _autoHideDelay  = c.readEntry ("AutoHideDelay",      _autoHideDelay);
+    _hideAnim       = c.readEntry ("HideAnimation",      _hideAnim);
+    _hideAnimSpeed  = c.readEntry ("HideAnimationSpeed", _hideAnimSpeed);
+    _unhideLocation = c.readEntry ("UnhideLocation",     _unhideLocation);
+    _sizePercentage = c.readEntry ("SizePercentage",     _sizePercentage);
+    _expandSize     = c.readEntry ("ExpandSize",         _expandSize);
 
     if (_resizeable)
     {
-        _size           = c.readEntry ("Size",       _size);
+        _size           = c.readEntry ("Size",      _size);
         _customSize     = c.readEntry ("CustomSize", _customSize);
     }
 
@@ -126,7 +126,7 @@ void ExtensionInfo::configChanged()
     // check to see if the new value is different from both
     // the original value and the currently set value, then it
     // must be a newly set value, external to the panel!
-    int position  = c.readEntry ("Position",  _position);
+    int position  = c.readEntry ("Position", _position);
     if (position != _position && position != _orig_position)
     {
         _orig_position = _position = position;
@@ -186,29 +186,29 @@ void ExtensionInfo::save()
     KConfig c(_configFile);
     c.setGroup("General");
 
-    c.writeEntry("Position",            _position);
-    c.writeEntry("Alignment",           _alignment);
-    c.writeEntry("XineramaScreen",      _xineramaScreen);
-    c.writeEntry("ShowLeftHideButton",  _showLeftHB);
+    c.writeEntry("Position",           _position);
+    c.writeEntry("Alignment",          _alignment);
+    c.writeEntry("XineramaScreen",     _xineramaScreen);
+    c.writeEntry("ShowLeftHideButton", _showLeftHB);
     c.writeEntry("ShowRightHideButton", _showRightHB);
-    c.writeEntry("AutoHidePanel",       _autohidePanel);
-    c.writeEntry("BackgroundHide",      _backgroundHide);
-    c.writeEntry("AutoHideSwitch",      _autoHideSwitch);
-    c.writeEntry("AutoHideDelay",       _autoHideDelay);
-    c.writeEntry("HideAnimation",       _hideAnim);
-    c.writeEntry("HideAnimationSpeed",  _hideAnimSpeed);
-    c.writeEntry("UnhideLocation",      _unhideLocation);
-    c.writeEntry("SizePercentage",      _sizePercentage );
-    c.writeEntry("ExpandSize",          _expandSize );
+    c.writeEntry("AutoHidePanel",      _autohidePanel);
+    c.writeEntry("BackgroundHide",     _backgroundHide);
+    c.writeEntry("AutoHideSwitch",     _autoHideSwitch);
+    c.writeEntry("AutoHideDelay",      _autoHideDelay);
+    c.writeEntry("HideAnimation",      _hideAnim);
+    c.writeEntry("HideAnimationSpeed", _hideAnimSpeed);
+    c.writeEntry("UnhideLocation",     _unhideLocation);
+    c.writeEntry("SizePercentage",     _sizePercentage );
+    c.writeEntry("ExpandSize",         _expandSize );
 
     // FIXME: this is set only for the main panel and only in the
     // look 'n feel (aka appearance) tab. so we can't save it here
     // this should be implemented properly. - AJS
-    //c.writeEntry("HideButtonSize",      _hideButtonSize);
+    //c.writeEntry("HideButtonSize",     _hideButtonSize);
 
     if (_resizeable)
     {
-        c.writeEntry("Size",       _size);
+        c.writeEntry("Size",      _size);
         c.writeEntry("CustomSize", _customSize);
     }
 

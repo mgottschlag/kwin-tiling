@@ -97,7 +97,7 @@ bool MenuFile::save()
    if (!file.open( QIODevice::WriteOnly ))
    {
       kWarning() << "Could not write " << m_fileName << endl;
-      m_error = i18n("Could not write to %1").arg(m_fileName);
+      m_error = i18n("Could not write to %1", m_fileName);
       return false;
    }
    QTextStream stream( &file );
@@ -110,7 +110,7 @@ bool MenuFile::save()
    if (file.status() != IO_Ok)
    {
       kWarning() << "Could not close " << m_fileName << endl;
-      m_error = i18n("Could not write to %1").arg(m_fileName);
+      m_error = i18n("Could not write to %1", m_fileName);
       return false;
    }
 

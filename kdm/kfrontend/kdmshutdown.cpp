@@ -508,8 +508,8 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 		for (int i = 0; targetList[i]; i++) {
 			QString t( QString::fromLocal8Bit( targetList[i] ) );
 			targets->insertItem( i == cur ?
-			                     i18n("current option in boot loader",
-			                          "%1 (current)").arg( t ) :
+			                     i18nc("current option in boot loader",
+			                          "%1 (current)", t ) :
 			                     t, i );
 		}
 		btnReboot->setPopup( targets );
@@ -620,8 +620,8 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 #endif
 	                                  i18n("Restart Computer") )
 	                            .arg( os ?
-	                                  i18n("<br>(Next boot: %1)")
-	                                  .arg( QString::fromLocal8Bit( os ) ) :
+	                                  i18n("<br>(Next boot: %1)",
+	                                    QString::fromLocal8Bit( os ) ) :
 	                                  QString() ),
 	                            this ) );
 
@@ -694,22 +694,22 @@ KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
 		i18n("Owner: %1"
 		     "\nType: %2%5"
 		     "\nStart: %3"
-		     "\nTimeout: %4")
-		.arg( uid == -2 ?
+		     "\nTimeout: %4",
+		  uid == -2 ?
 		      i18n("console user") :
 		      uid == -1 ?
 		      i18n("control socket") :
-		      KUser( uid ).loginName() )
-		.arg( how == SHUT_HALT ?
+		      KUser( uid ).loginName() ,
+		  how == SHUT_HALT ?
 		      i18n("turn off computer") :
-		      i18n("restart computer") )
-		.arg( strt ).arg( end )
-		.arg( os ?
-		      i18n("\nNext boot: %1").arg( QString::fromLocal8Bit( os ) ) :
+		      i18n("restart computer") ,
+		  strt, end ,
+		  os ?
+		      i18n("\nNext boot: %1", QString::fromLocal8Bit( os ) ) :
 		      QString() );
 	if (timeout != TO_INF)
-		trg += i18n("\nAfter timeout: %1")
-		       .arg( force == SHUT_FORCE ?
+		trg += i18n("\nAfter timeout: %1",
+		         force == SHUT_FORCE ?
 		             i18n("abort all sessions") :
 		             force == SHUT_FORCEMY ?
 		             i18n("abort own sessions") :

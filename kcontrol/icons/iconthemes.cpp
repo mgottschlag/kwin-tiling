@@ -172,11 +172,13 @@ void IconThemesConfig::installNewTheme()
   if (!KIO::NetAccess::download(themeURL, themeTmpFile, this)) {
     QString sorryText;
     if (themeURL.isLocalFile())
-       sorryText = i18n("Unable to find the icon theme archive %1.");
+       sorryText = i18n("Unable to find the icon theme archive %1.",
+                        themeURL.prettyURL());
     else
        sorryText = i18n("Unable to download the icon theme archive;\n"
-                        "please check that address %1 is correct.");
-    KMessageBox::sorry(this, sorryText.arg(themeURL.prettyURL()));
+                        "please check that address %1 is correct.",
+                        themeURL.prettyURL());
+    KMessageBox::sorry(this, sorryText);
     return;
   }
 
@@ -232,8 +234,8 @@ bool IconThemesConfig::installThemes(const QStringList &themes, const QString &a
        it != themes.end();
        ++it) {
     progressDiag.setLabel(
-        i18n("<qt>Installing <strong>%1</strong> theme</qt>")
-        .arg(*it));
+        i18n("<qt>Installing <strong>%1</strong> theme</qt>",
+         *it));
     kapp->processEvents();
 
     if (progressDiag.wasCancelled())
@@ -295,8 +297,8 @@ void IconThemesConfig::removeSelectedTheme()
   QString question=i18n("<qt>Are you sure you want to remove the "
         "<strong>%1</strong> icon theme?<br>"
         "<br>"
-        "This will delete the files installed by this theme.</qt>").
-	arg(selected->text(0));
+        "This will delete the files installed by this theme.</qt>", 
+	selected->text(0));
 
   bool deletingCurrentTheme=(selected==iconThemeItem(KIconTheme::current()));
 

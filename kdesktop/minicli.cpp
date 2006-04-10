@@ -404,7 +404,7 @@ int Minicli::runCommand()
       if (pw == 0L)
       {
           KMessageBox::sorry( this, i18n("<qt>The user <b>%1</b> "
-          "does not exist on this system.</qt>").arg(m_dlg->leUsername->text()));
+          "does not exist on this system.</qt>", m_dlg->leUsername->text()));
         return 1;
       }
     }
@@ -549,8 +549,8 @@ int Minicli::runCommand()
           {
             KMessageBox::sorry( this, i18n("<center><b>%1</b></center>\n"
                                       "You do not have permission to execute "
-                                      "this command.")
-                                      .arg( Qt::convertFromPlainText(cmd) ));
+                                      "this command.",
+                                        Qt::convertFromPlainText(cmd) ));
             return 1;
           }
         }
@@ -576,8 +576,8 @@ int Minicli::runCommand()
           }
 
           KMessageBox::sorry( this, i18n("<center><b>%1</b></center>\n"
-                                    "Could not run the specified command.")
-                                    .arg( Qt::convertFromPlainText(cmd) ));
+                                    "Could not run the specified command.",
+                                      Qt::convertFromPlainText(cmd) ));
           return 1;
         }
       }
@@ -588,7 +588,7 @@ int Minicli::runCommand()
     else
     {
       KMessageBox::sorry( this, i18n("<center><b>%1</b></center>\n"
-                                "The specified command does not exist.").arg(cmd) );
+                                "The specified command does not exist.", cmd) );
       return 1; // Let the user try again...
     }
   }

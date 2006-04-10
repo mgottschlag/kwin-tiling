@@ -577,7 +577,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                     : itsDescriptiveName);
 
                     if(1==itsSizes.size())
-                        title=i18n("%1 [1 pixel]", "%1 [%n pixels]", itsSizes[0]).arg(title);
+                        title=i18np("%1 [1 pixel]", "%1 [%n pixels]", itsSizes[0], title);
 
                     painter.setFont(KGlobalSettings::generalFont());
                     painter.setPen(Qt::black);
@@ -693,7 +693,7 @@ QString CFcEngine::getPreviewString()
 
     QString str(cfg.readEntry(KFI_PREVIEW_STRING_KEY));
 
-    return str.isEmpty() ? i18n("A sentence that uses all of the letters of the alphabet",
+    return str.isEmpty() ? i18nc("A sentence that uses all of the letters of the alphabet",
                                 "The quick brown fox jumps over the lazy dog")
                          : str;
 }
@@ -708,17 +708,17 @@ void CFcEngine::setPreviewString(const QString &str)
 
 QString CFcEngine::getUppercaseLetters()
 {
-    return i18n("All of the letters of the alphabet, uppercase", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    return i18nc("All of the letters of the alphabet, uppercase", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 }
 
 QString CFcEngine::getLowercaseLetters()
 {
-    return i18n("All of the letters of the alphabet, lowercase", "abcdefghijklmnopqrstuvwxyz");
+    return i18nc("All of the letters of the alphabet, lowercase", "abcdefghijklmnopqrstuvwxyz");
 }
 
 QString CFcEngine::getPunctuation()
 {
-    return i18n("Numbers and characters", "0123456789.:,;(*!?'/\\\")£$€%^&-+@~#<>{}[]");
+    return i18nc("Numbers and characters", "0123456789.:,;(*!?'/\\\")£$€%^&-+@~#<>{}[]");
 }
 
 QString CFcEngine::getFcString(FcPattern *pat, const char *val, int faceNo)
@@ -1070,7 +1070,7 @@ void CFcEngine::getSizes(QPixmap *pix)
     static const int constNumSizes=11;
     static const int constNumSizeRanges=2;
     static const int constSizes[constNumSizeRanges][constNumSizes]= { {8, 10, 12, 14, 16, 18, 24, 36, 48, 72, 96},
-                                                                      {7,  9, 11, 13, 15, 17, 23, 35, 47, 71, 95} };
+                                                                      {7, 9, 11, 13, 15, 17, 23, 35, 47, 71, 95} };
     XftFont *f=getFont(8, pix);
 
     itsScalable=FcTrue;

@@ -162,33 +162,33 @@ void KLocaleConfigNumber::slotTranslate()
 {
   QString str;
 
-  str = m_locale->translate( "Here you can define the decimal separator used "
-			     "to display numbers (i.e. a dot or a comma in "
-			     "most countries).<p>"
-			     "Note that the decimal separator used to "
-			     "display monetary values has to be set "
-			     "separately (see the 'Money' tab)." );
+  str = ki18n( "Here you can define the decimal separator used "
+	       "to display numbers (i.e. a dot or a comma in "
+	       "most countries).<p>"
+	       "Note that the decimal separator used to "
+	       "display monetary values has to be set "
+	       "separately (see the 'Money' tab)." ).toString( m_locale );
   QWhatsThis::add( m_labDecSym, str );
-  QWhatsThis::add( m_edDecSym,  str );
+  QWhatsThis::add( m_edDecSym, str );
 
-  str = m_locale->translate( "Here you can define the thousands separator "
-			     "used to display numbers.<p>"
-			     "Note that the thousands separator used to "
-			     "display monetary values has to be set "
-			     "separately (see the 'Money' tab)." );
+  str = ki18n( "Here you can define the thousands separator "
+	       "used to display numbers.<p>"
+	       "Note that the thousands separator used to "
+	       "display monetary values has to be set "
+	       "separately (see the 'Money' tab)." ).toString( m_locale );
   QWhatsThis::add( m_labThoSep, str );
-  QWhatsThis::add( m_edThoSep,  str );
+  QWhatsThis::add( m_edThoSep, str );
 
-  str = m_locale->translate( "Here you can specify text used to prefix "
-			     "positive numbers. Most people leave this "
-			     "blank." );
+  str = ki18n( "Here you can specify text used to prefix "
+	       "positive numbers. Most people leave this "
+	       "blank." ).toString( m_locale );
   QWhatsThis::add( m_labMonPosSign, str );
-  QWhatsThis::add( m_edMonPosSign,  str );
+  QWhatsThis::add( m_edMonPosSign, str );
 
-  str = m_locale->translate( "Here you can specify text used to prefix "
-			     "negative numbers. This should not be empty, so "
-			     "you can distinguish positive and negative "
-			     "numbers. It is normally set to minus (-)." );
+  str = ki18n( "Here you can specify text used to prefix "
+	       "negative numbers. This should not be empty, so "
+	       "you can distinguish positive and negative "
+	       "numbers. It is normally set to minus (-)." ).toString( m_locale );
   QWhatsThis::add( m_labMonNegSign, str );
-  QWhatsThis::add( m_edMonNegSign,  str );
+  QWhatsThis::add( m_edMonNegSign, str );
 }

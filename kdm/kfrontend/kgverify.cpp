@@ -439,7 +439,7 @@ KGVerify::VMsgBox( QWidget *parent, const QString &user,
                    QMessageBox::Icon type, const QString &mesg )
 {
 	FDialog::box( parent, type, user.isEmpty() ?
-	              mesg : i18n("Authenticating %1 ...\n\n").arg( user ) + mesg );
+	              mesg : i18n("Authenticating %1 ...\n\n", user ) + mesg );
 }
 
 static const char *msgs[]= {
@@ -485,7 +485,7 @@ KGVerify::VInfoBox( QWidget *parent, const QString &user, const char *msg )
 	if (rx.indexIn( mesg ) >= 0) {
 		int expire = rx.cap( 1 ).toInt();
 		mesg = expire ?
-			i18n("Your account expires tomorrow.",
+			i18np("Your account expires tomorrow.",
 			     "Your account expires in %n days.", expire) :
 			i18n("Your account expires today.");
 	} else {
@@ -493,7 +493,7 @@ KGVerify::VInfoBox( QWidget *parent, const QString &user, const char *msg )
 		if (rx.indexIn( mesg ) >= 0) {
 			int expire = rx.cap( 1 ).toInt();
 			mesg = expire ?
-				i18n("Your password expires tomorrow.",
+				i18np("Your password expires tomorrow.",
 				     "Your password expires in %n days.", expire) :
 				i18n("Your password expires today.");
 		}
@@ -699,8 +699,8 @@ KGVerify::handleVerify()
 					Debug( "%s->failed()\n", pName.data() );
 					greet->failed();
 					MsgBox( sorrybox,
-					        i18n("Authenticated user (%1) does not match requested user (%2).\n")
-					        .arg( ent ).arg( fixedEntity ) );
+					        i18n("Authenticated user (%1) does not match requested user (%2).\n",
+					          ent, fixedEntity ) );
 					goto retry;
 				}
 			}
@@ -991,7 +991,7 @@ KGStdVerify::updateStatus()
 		failedLabelState = nfls;
 		if (nfls < 0) {
 			failedLabel->setPaletteForegroundColor( Qt::black );
-			failedLabel->setText( i18n( "Automatic login in 1 second ...",
+			failedLabel->setText( i18np( "Automatic login in 1 second ...",
 			                            "Automatic login in %n seconds ...",
 			                            timedLeft ) );
 		} else {
@@ -1042,8 +1042,8 @@ KGThemedVerify::selectPlugin( int id )
 	if (themer && (l = greet->getLayoutItem())) {
 		if (!(n = themer->findNode( "talker" )))
 			MsgBox( errorbox,
-			        i18n("Theme not usable with authentication method '%1'.")
-			        .arg( i18n(greetPlugins[pluginList[id]].info->name) ) );
+			        i18n("Theme not usable with authentication method '%1'.",
+			          i18n(greetPlugins[pluginList[id]].info->name) ) );
 		else {
 			n->setLayoutItem( l );
 			showWidgets( l );

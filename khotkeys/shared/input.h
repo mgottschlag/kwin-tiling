@@ -22,7 +22,8 @@
 #include <fixx11h.h>
 #include <QList>
 
-class KGlobalAccel;
+class KActionCollection;
+class KAction;
 
 namespace KHotKeys
 {
@@ -51,8 +52,7 @@ class Kbd
         void grab_shortcut( const KShortcut& shortcut_P );
         void ungrab_shortcut( const KShortcut& shortcut_P );
     private Q_SLOTS:
-        void key_slot( QString key_P );
-        void update_connections();
+        void actionTriggered( KAction* action );
     private:
         struct Receiver_data
             {
@@ -62,7 +62,7 @@ class Kbd
             };
         QMap< Kbd_receiver*, Receiver_data > receivers;
         QMap< KShortcut, int > grabs;
-        KGlobalAccel* kga;
+        KActionCollection* kga;
     };
 
 class Mouse

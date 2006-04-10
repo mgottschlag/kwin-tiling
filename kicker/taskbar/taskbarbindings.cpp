@@ -22,11 +22,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #ifndef NOSLOTS
-# define DEF( name, key3, fnSlot ) \
-   keys->insert( name, i18n(name), QString(), key3, this, SLOT(fnSlot) )
+# define DEF( name, key, fnSlot ) \
+   a = new KAction( i18n(name), actionCollection, name ); \
+   a->setGlobalShortcut(key); \
+   connect(a, SIGNAL(triggered(bool)), SLOT(fnSlot))
 #else
-# define DEF( name, key3, fnSlot ) \
-   keys->insert( name, i18n(name), QString(), key3, 0 )
+# define DEF( name, key, fnSlot ) \
+   a = new KAction( i18n(name), actionCollection, name ); \
+   a->setGlobalShortcut(key);
 #endif
 	DEF( I18N_NOOP( "Next Taskbar Entry" ), 0, slotActivateNextTask() );
 	DEF( I18N_NOOP( "Previous Taskbar Entry" ), 0, slotActivatePreviousTask() );

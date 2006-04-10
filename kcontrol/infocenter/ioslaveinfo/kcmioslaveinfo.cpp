@@ -136,7 +136,7 @@ void KCMIOSlaveInfo::showInfo(const QString& protocol)
        connect( m_tfj, SIGNAL( result( KIO::Job * ) ), SLOT( slotResult( KIO::Job * ) ) );
        return;
    }
-   m_info->setText(i18n("Some info about protocol %1:/ ...").arg(protocol));
+   m_info->setText(i18n("Some info about protocol %1:/ ...", protocol));
 }
 
 void KCMIOSlaveInfo::showInfo(Q3ListBoxItem *item)

@@ -320,7 +320,7 @@ void WidgetCanvas::drawSampleWidgets()
     QScrollBar *vertScrollBar = new QScrollBar( Qt::Vertical, this );
     // TODO: vertScrollBar->setStyle( new QMotifStyle() );
     vertScrollBar->setGeometry( 400, 400, SCROLLBAR_SIZE, height());
-    vertScrollBar->setRange( 0,  0 );
+    vertScrollBar->setRange( 0, 0 );
     vertScrollBar->setPalette( palette );
     vertScrollBar->show();
 
@@ -413,7 +413,7 @@ void WidgetCanvas::drawSampleWidgets()
 
     paint.setFont( windowFont );
     paint.setPen( aTxt );
-    paint.drawText( 75, 50,  i18n("Active window") );
+    paint.drawText( 75, 50, i18n("Active window") );
     textLen = paint.fontMetrics().width(  i18n("Active window" ));
 
     tmp = width()-152+65;
@@ -566,20 +566,20 @@ void WidgetCanvas::drawSampleWidgets()
         HotSpot( QRect( 56, 83, textLenNew, 14 ), CSM_Text );
 
     paint.setFont( menuFont );
-    textLenOpen = paint.fontMetrics().width( i18n("Menu item", "Open") );
+    textLenOpen = paint.fontMetrics().width( i18nc("Menu item", "Open") );
 
     hotspots[ spot++ ] =
         HotSpot( QRect( 56, 105, textLenOpen, 14 ), CSM_Text );
 
     paint.setFont( menuFont );
-    textLenSave = paint.fontMetrics().width( i18n("Menu item", "Save") );
+    textLenSave = paint.fontMetrics().width( i18nc("Menu item", "Save") );
 
 	QMenu *popup = new QMenu( this );
 	popup->setFont( menuFont );
 	popup->setPalette( palette );
 	popup->insertItem(i18n("New"));
-	popup->insertItem(i18n("Menu item", "Open"));
-	int id = popup->insertItem(i18n("Menu item", "Save"));
+	popup->insertItem(i18nc("Menu item", "Open"));
+	int id = popup->insertItem(i18nc("Menu item", "Save"));
 	popup->setItemEnabled( id, false );
 
 	// HACK: Force Layouting

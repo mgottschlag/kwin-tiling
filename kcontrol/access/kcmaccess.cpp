@@ -34,8 +34,8 @@
 #include <kapplication.h>
 #include <kaboutdata.h>
 #include <kshortcut.h>
-#include <kkeynative.h>
 #include <knotifydialog.h>
+#include <kkeyserver.h>
 
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>
@@ -163,13 +163,14 @@ QString mouseKeysShortcut (Display *display) {
   ev.xkey.display = display;
   ev.xkey.keycode = code;
   ev.xkey.state = 0;
-  KKey key = KKey(KKeyNative(&ev));
-  QString keyname = key.toString();
+  int key;
+  KKeyServer::xEventToQt(&ev, key);
+  QString keyname = QKeySequence(key).toString();
 
-  unsigned int AltMask   = KKeyNative::modXAlt();
-  unsigned int WinMask   = KKeyNative::modXWin();
-  unsigned int NumMask   = KKeyNative::modXNumLock();
-  unsigned int ScrollMask= KKeyNative::modXScrollLock();
+  unsigned int AltMask   = KKeyServer::modXAlt();
+  unsigned int WinMask   = KKeyServer::modXMeta();
+  unsigned int NumMask   = KKeyServer::modXNumLock();
+  unsigned int ScrollMask= KKeyServer::modXScrollLock();
 
   unsigned int MetaMask  = XkbKeysymToModifiers (display, XK_Meta_L);
   unsigned int SuperMask = XkbKeysymToModifiers (display, XK_Super_L);
@@ -194,36 +195,36 @@ QString mouseKeysShortcut (Display *display) {
   if ((modifiers & SuperMask) != 0)
     keyname = i18n("Super") + "+" + keyname;
   if ((modifiers & WinMask) != 0)
-    keyname = KKey::modFlagLabel(KKey::WIN) + "+" + keyname;
+    keyname = QKeySequence(Qt::META).toString() + "+" + keyname;
   if ((modifiers & AltMask) != 0)
-    keyname = KKey::modFlagLabel(KKey::ALT) + "+" + keyname;
+    keyname = QKeySequence(Qt::ALT).toString() + "+" + keyname;
   if ((modifiers & ControlMask) != 0)
-    keyname = KKey::modFlagLabel(KKey::CTRL) + "+" + keyname;
+    keyname = QKeySequence(Qt::CTRL).toString() + "+" + keyname;
   if ((modifiers & ShiftMask) != 0)
-    keyname = KKey::modFlagLabel(KKey::SHIFT) + "+" + keyname;
+    keyname = QKeySequence(Qt::SHIFT).toString() + "+" + keyname;
 
   QString result;
   if ((modifiers & ScrollMask) != 0)
     if ((modifiers & LockMask) != 0)
       if ((modifiers & NumMask) != 0)
-        result = i18n("Press %1 while NumLock, CapsLock and ScrollLock are active");
+        result = i18n("Press %1 while NumLock, CapsLock and ScrollLock are active", keyname);
       else
-        result = i18n("Press %1 while CapsLock and ScrollLock are active");
+        result = i18n("Press %1 while CapsLock and ScrollLock are active", keyname);
     else if ((modifiers & NumMask) != 0)
-        result = i18n("Press %1 while NumLock and ScrollLock are active");
+        result = i18n("Press %1 while NumLock and ScrollLock are active", keyname);
       else
-        result = i18n("Press %1 while ScrollLock is active");
+        result = i18n("Press %1 while ScrollLock is active", keyname);
   else if ((modifiers & LockMask) != 0)
       if ((modifiers & NumMask) != 0)
-        result = i18n("Press %1 while NumLock and CapsLock are active");
+        result = i18n("Press %1 while NumLock and CapsLock are active", keyname);
       else
-        result = i18n("Press %1 while CapsLock is active");
+        result = i18n("Press %1 while CapsLock is active", keyname);
     else if ((modifiers & NumMask) != 0)
-        result = i18n("Press %1 while NumLock is active");
+        result = i18n("Press %1 while NumLock is active", keyname);
       else
-        result = i18n("Press %1");
+        result = i18n("Press %1", keyname);
   
-  return result.arg(keyname);
+  return result;
 }
 
 KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
@@ -509,7 +510,7 @@ KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
 	  gestures->setWhatsThis( i18n("Here you can activate keyboard gestures that turn on the following features: \n"
 			  "Mouse Keys: %1\n"
 					  "Sticky keys: Press Shift key 5 consecutive times\n"
-					  "Slow keys: Hold down Shift for 8 seconds").arg(shortcut));
+					  "Slow keys: Hold down Shift for 8 seconds", shortcut));
 
   timeout = new QCheckBox(i18n("Turn sticky keys and slow keys off after a certain time of inactivity"), grp);
   vvbox->addWidget(timeout);

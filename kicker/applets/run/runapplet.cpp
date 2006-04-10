@@ -272,7 +272,7 @@ void RunApplet::run_command(const QString& command)
 		default:
 		    KMessageBox::sorry( 0, i18n("<qt>The program name or command <b>%1</b>\n"
 						"cannot be found. Please correct the command\n"
-						"or URL and try again</qt>").arg( cmd ) );
+						"or URL and try again</qt>", cmd ) );
 		    _input->removeFromHistory( _input->currentText() );
                     focusNeeded = true;
 		    goto hide;
@@ -283,7 +283,7 @@ void RunApplet::run_command(const QString& command)
     else
 	{
 	    KMessageBox::sorry( 0, i18n("<qt>Could not run <b>%1</b>.\nPlease correct"
-					" the command or URL and try again.</qt>").arg( cmd ) );
+					" the command or URL and try again.</qt>", cmd ) );
 	    _input->removeFromHistory( _input->currentText() );
             focusNeeded = true;
 	    goto hide;

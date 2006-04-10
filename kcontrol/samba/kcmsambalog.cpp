@@ -247,7 +247,7 @@ void LogView::updateList()
    }
    else
    {
-      QString tmp = i18n("Could not open file %1").arg(logFileName.url());
+      QString tmp = i18n("Could not open file %1", logFileName.url());
       KMessageBox::error(this,tmp);
    };
 }

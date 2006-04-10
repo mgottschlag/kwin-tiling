@@ -81,9 +81,9 @@ bool GetInfo_CPU (QListView *lBox)
 		kDebug() << "got Host Info: (" << basic_info.avail_cpus << ") CPUs available" << endl;
         	const NXArchInfo *archinfo;
         	archinfo=NXGetArchInfoFromCpuType(basic_info.cpu_type, basic_info.cpu_subtype);
-		new QListViewItem(lBox, i18n("Kernel is configured for %1 CPUs").arg(basic_info.max_cpus));
+		new QListViewItem(lBox, i18n("Kernel is configured for %1 CPUs", basic_info.max_cpus));
 		for (int i = 1; i <= basic_info.avail_cpus; i++) {
-			cpustring = i18n("CPU %1: %2").arg(i).arg(archinfo->description);
+			cpustring = i18n("CPU %1: %2", i, archinfo->description);
 			new QListViewItem(lBox, cpustring);
 		}
 		return true;
@@ -137,7 +137,7 @@ bool GetInfo_Sound (QListView *lBox)
 			kDebug() << "get device name failed, status = " << (int)status << endl;
 			return false;
 		}
-		new QListViewItem(lBox, i18n("Device Name: %1").arg(deviceName));
+		new QListViewItem(lBox, i18n("Device Name: %1", deviceName));
 
 		/* Manufacturer */
 		status = AudioDeviceGetProperty(gOutputDeviceID, 1, 0, kAudioDevicePropertyDeviceManufacturer, &propertySize, manufacturer);
@@ -145,7 +145,7 @@ bool GetInfo_Sound (QListView *lBox)
 			kDebug() << "get manufacturer failed, status = " << (int)status << endl;
 			return false;
 		}
-		new QListViewItem(lBox, i18n("Manufacturer: %1").arg(manufacturer));
+		new QListViewItem(lBox, i18n("Manufacturer: %1", manufacturer));
 		return true;
 	} else {
 		return false;

@@ -61,8 +61,8 @@ void HelpWidget::setText( const QString& docPath, const QString& text)
     QByteArray a = docPath.toLocal8Bit();
     QString path = QString::fromLocal8Bit (a.data(), a.size());
 
-    _browser->setText(text + i18n("<p>Use the \"Whats This\" (Shift+F1) to get help on specific options.</p><p>To read the full manual click <a href=\"%1\">here</a>.</p>")
-		      .arg(path));
+    _browser->setText(text + i18n("<p>Use the \"Whats This\" (Shift+F1) to get help on specific options.</p><p>To read the full manual click <a href=\"%1\">here</a>.</p>",
+		       path));
   }
 }
 

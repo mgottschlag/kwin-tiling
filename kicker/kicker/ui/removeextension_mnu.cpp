@@ -65,19 +65,19 @@ void PanelRemoveExtensionMenu::slotAboutToShow()
         switch (container->position())
         {
             case Plasma::Top:
-                name = i18n("%1 (Top)").arg(name);
+                name = i18n("%1 (Top)", name);
             break;
             case Plasma::Right:
-                name = i18n("%1 (Right)").arg(name);
+                name = i18n("%1 (Right)", name);
             break;
             case Plasma::Bottom:
-                name = i18n("%1 (Bottom)").arg(name);
+                name = i18n("%1 (Bottom)", name);
             break;
             case Plasma::Left:
-                name = i18n("%1 (Left)").arg(name);
+                name = i18n("%1 (Left)", name);
             break;
             case Plasma::Floating:
-                name = i18n("%1 (Floating)").arg(name);
+                name = i18n("%1 (Floating)", name);
             break;
          }
         items.append(PanelMenuItemInfo(QString(), name, id));

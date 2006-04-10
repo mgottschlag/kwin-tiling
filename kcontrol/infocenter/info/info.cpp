@@ -145,22 +145,22 @@ static Q3ListViewItem* XServer_fill_screen_info( Q3ListViewItem *lBox, Q3ListVie
     xres = ((double)(DisplayWidth(dpy,scr) *25.4)/DisplayWidthMM(dpy,scr) );
     yres = ((double)(DisplayHeight(dpy,scr)*25.4)/DisplayHeightMM(dpy,scr));
 
-    item = new Q3ListViewItem(lBox,last, i18n("Screen # %1").arg((int)scr,-1),
+    item = new Q3ListViewItem(lBox,last, ki18n("Screen # %1").subs((int)scr,-1).toString(),
 		(scr==default_scr) ? i18n("(Default Screen)") : QString() );
     item->setExpandable(true);
     if (scr==default_scr)
 	item->setOpen(true);
     last = new Q3ListViewItem(item, i18n("Dimensions"),
-		i18n("%1 x %2 Pixel (%3 x %4 mm)")
-		.arg( (int)DisplayWidth(dpy,scr) )
-		.arg( (int)DisplayHeight(dpy,scr) )
-		.arg( (int)DisplayWidthMM(dpy,scr) )
-		.arg( (int)DisplayHeightMM (dpy,scr) ));
+		i18n("%1 x %2 Pixel (%3 x %4 mm)",
+		  (int)DisplayWidth(dpy,scr) ,
+		  (int)DisplayHeight(dpy,scr) ,
+		  (int)DisplayWidthMM(dpy,scr) ,
+		  (int)DisplayHeightMM (dpy,scr) ));
 
     last = new Q3ListViewItem(item, last, i18n("Resolution"),
-		i18n("%1 x %2 dpi")
-		.arg( (int)(xres+0.5) )
-		.arg( (int)(yres+0.5) ));
+		i18n("%1 x %2 dpi",
+		  (int)(xres+0.5) ,
+		  (int)(yres+0.5) ));
 
     ndepths = 0;
     depths  = 0;
@@ -174,7 +174,7 @@ static Q3ListViewItem* XServer_fill_screen_info( Q3ListViewItem *lBox, Q3ListVie
                 txt = txt + QLatin1String(", ");
         }
 
-        last = new Q3ListViewItem(item, last, i18n("Depths (%1)").arg(ndepths,-1), txt);
+        last = new Q3ListViewItem(item, last, ki18n("Depths (%1)").subs(ndepths,-1).toString(), txt);
         XFree((char *) depths);
     }
 
@@ -182,27 +182,27 @@ static Q3ListViewItem* XServer_fill_screen_info( Q3ListViewItem *lBox, Q3ListVie
 		HexStr((unsigned long)RootWindow(dpy,scr),HEXDIGITS));
     last = new Q3ListViewItem(item, last, i18n("Depth of Root Window"),
 		(DisplayPlanes (dpy, scr) == 1)
-		?	i18n("%1 plane").arg(DisplayPlanes(dpy,scr))   /*singular*/
-		:	i18n("%1 planes").arg(DisplayPlanes(dpy,scr)));/*plural*/
+		?	i18n("%1 plane", DisplayPlanes(dpy,scr))   /*singular*/
+		:	i18n("%1 planes", DisplayPlanes(dpy,scr)));/*plural*/
     last = new Q3ListViewItem(item, last, i18n("Number of Colormaps"),
-		i18n("minimum %1, maximum %2")
-		    .arg((int)MinCmapsOfScreen(s)).arg((int)MaxCmapsOfScreen(s)));
+		i18n("minimum %1, maximum %2",
+		     (int)MinCmapsOfScreen(s), (int)MaxCmapsOfScreen(s)));
     last = new Q3ListViewItem(item, last, i18n("Default Colormap"),
 		Value((int)DefaultColormap(dpy,scr)));
     last = new Q3ListViewItem(item, last, i18n("Default Number of Colormap Cells"),
 		Value((int)DisplayCells(dpy, scr)));
     last = new Q3ListViewItem(item, last, i18n("Preallocated Pixels"),
-		i18n("Black %1, White %2")
-		.arg(KGlobal::locale()->formatNumber(BlackPixel(dpy,scr), 0))
-		.arg(KGlobal::locale()->formatNumber(WhitePixel(dpy,scr), 0)));
+		i18n("Black %1, White %2",
+		 KGlobal::locale()->formatNumber(BlackPixel(dpy,scr), 0),
+		 KGlobal::locale()->formatNumber(WhitePixel(dpy,scr), 0)));
 
     QString YES(i18n("Yes"));
     QString NO(i18n("No"));
     last = new Q3ListViewItem(item, last, i18n("Options"),
-		i18n("backing-store: %1, save-unders: %2")
-		.arg( (DoesBackingStore(s) == NotUseful) ? NO :
-		      ((DoesBackingStore(s) == Always) ? YES : i18n("When mapped")) )
-		.arg(  DoesSaveUnders(s) ? YES : NO ));
+		i18n("backing-store: %1, save-unders: %2",
+		  (DoesBackingStore(s) == NotUseful) ? NO :
+		      ((DoesBackingStore(s) == Always) ? YES : i18n("When mapped")) ,
+		   DoesSaveUnders(s) ? YES : NO ));
 
     XQueryBestSize (dpy, CursorShape, RootWindow(dpy,scr), 65535, 65535,
 		    &width, &height);
@@ -217,7 +217,7 @@ static Q3ListViewItem* XServer_fill_screen_info( Q3ListViewItem *lBox, Q3ListVie
     for (etp=event_table; etp->name; etp++) {
 	if (EventMaskOfScreen(s) & etp->value)
 	    item = new Q3ListViewItem(last, item,
-		i18n("Event = %1").arg(HexStr(etp->value,HEXDIGITS)),
+		i18n("Event = %1", HexStr(etp->value,HEXDIGITS)),
 		etp->name );
     }
 
@@ -228,12 +228,12 @@ static const QString Order( int order )
 {
     if (order==LSBFirst) return i18n("LSBFirst"); else
     if (order==MSBFirst) return i18n("MSBFirst"); else
-	return i18n("Unknown Order %1").arg(order);
+	return i18n("Unknown Order %1", order);
 }
 
 static const QString BitString( unsigned long n )
 {
-    return i18n("1 Bit", "%n Bits", n); // singular & plural form of "%d Bit"
+    return i18np("1 Bit", "%n Bits", n); // singular & plural form of "%d Bit"
 }
 
 static const QString ByteString( unsigned long n )
@@ -242,8 +242,8 @@ static const QString ByteString( unsigned long n )
     if (n == 1)
 	return i18n("1 Byte"); // singular form: "1 Byte" (yes, it's "1", not "%1"!)
 
-    return i18n("%1 Bytes")  // plural form: "%1 Bytes"
-		.arg(KGlobal::locale()->formatNumber(n,0));
+    return i18n("%1 Bytes", // plural form: "%1 Bytes"
+		 KGlobal::locale()->formatNumber(n,0));
 }
 
 static bool GetInfo_XServer_Generic( Q3ListView *lBox )
@@ -308,11 +308,11 @@ static bool GetInfo_XServer_Generic( Q3ListView *lBox )
 	last->setExpandable(true);
 	for (i=0; i<n; i++) {
 	    item = new Q3ListViewItem(last, item,
-			i18n("Pixmap Format #%1").arg(i+1),
-			i18n("%1 BPP, Depth: %2, Scanline padding: %3")
-				.arg(pmf[i].bits_per_pixel)
-				.arg(BitString(pmf[i].depth))
-				.arg(BitString(pmf[i].scanline_pad)));
+			i18n("Pixmap Format #%1", i+1),
+			i18n("%1 BPP, Depth: %2, Scanline padding: %3",
+				 pmf[i].bits_per_pixel,
+				 BitString(pmf[i].depth),
+				 BitString(pmf[i].scanline_pad)));
 	}
 	XFree ((char *)pmf);
     }
@@ -359,7 +359,7 @@ void KInfoListWidget::load()
     /*  Delete the user-visible ErrorString, before calling the
         retrieve-function. If the function wants the widget to show
         another string, then it change *GetInfo_ErrorString ! */
-    ErrorString = i18n("No information available about %1.").arg(title)
+    ErrorString = i18n("No information available about %1.", title)
 		    + QLatin1String("\n\n") + DEFAULT_ERRORSTRING;
     GetInfo_ErrorString = &ErrorString;  /* save the address of ErrorString */
 

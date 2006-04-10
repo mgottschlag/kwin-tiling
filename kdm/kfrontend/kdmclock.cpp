@@ -139,7 +139,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 		float h_angle = 30*(time.hour()%12-3) + time.minute()/2;
 		matrix.rotate( h_angle );
 		paint.setMatrix( matrix );
-		pts.setPoints( 4, -20,0,  0,-20, 300,0, 0,20 );
+		pts.setPoints( 4, -20,0, 0,-20, 300,0, 0,20 );
 		paint.drawPolygon( pts );
 		matrix.rotate( -h_angle );
 

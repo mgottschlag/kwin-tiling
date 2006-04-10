@@ -31,7 +31,6 @@
 #include <kapplication.h>
 #include <kshortcut.h>
 #include <kconfig.h>
-#include <kshortcutlist.h>
 #include <kkeybutton.h>
 #include <kkeydialog.h>
 #include <kvbox.h>
@@ -225,7 +224,7 @@ Shortcut_trigger_widget::Shortcut_trigger_widget( QWidget* parent_P, const char*
 
 void Shortcut_trigger_widget::clear_data()
     {
-    bt->setShortcut( KShortcut(), false );
+    bt->setShortcut( KShortcut() );
     }
 
 void Shortcut_trigger_widget::capturedShortcut( const KShortcut& s_P )
@@ -235,7 +234,7 @@ void Shortcut_trigger_widget::capturedShortcut( const KShortcut& s_P )
         return;
     // KHotKeys::Module::changed()
     module->changed();
-    bt->setShortcut( s_P, false );
+    bt->setShortcut( s_P );
     }
 
 void Shortcut_trigger_widget::set_data( const Shortcut_trigger* data_P )
@@ -245,7 +244,7 @@ void Shortcut_trigger_widget::set_data( const Shortcut_trigger* data_P )
         clear_data();
         return;
         }
-    bt->setShortcut( data_P->shortcut(), false );
+    bt->setShortcut( data_P->shortcut() );
     }
 
 Shortcut_trigger* Shortcut_trigger_widget::get_data( Action_data* data_P ) const

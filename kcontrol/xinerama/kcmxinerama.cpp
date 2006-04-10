@@ -73,12 +73,11 @@ KCMXinerama::KCMXinerama(KInstance *inst, QWidget *parent )
 		QStringList dpyList;
 		xw = new XineramaWidget(this);
 		grid->addWidget(xw, 0, 0);
-		QString label = i18n("Display %1");
 
 		xw->headTable->setNumRows(_displays);
 
 		for (int i = 0; i < _displays; i++) {
-			QString l = label.arg(i+1);
+			QString l = i18n("Display %1", i+1);
 			QRect geom = QApplication::desktop()->screenGeometry(i);
 			xw->_unmanagedDisplay->insertItem(l);
 			xw->_ksplashDisplay->insertItem(l);

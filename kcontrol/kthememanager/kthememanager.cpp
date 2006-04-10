@@ -240,7 +240,7 @@ void kthememanager::slotRemoveTheme()
     if ( cur )
     {
         QString themeName = cur->text( 0 );
-        if ( KMessageBox::warningContinueCancel( this, "<qt>" + i18n( "Do you really want to remove the theme <b>%1</b>?" ).arg( themeName ),
+        if ( KMessageBox::warningContinueCancel( this, "<qt>" + i18n( "Do you really want to remove the theme <b>%1</b>?", themeName ),
                                          i18n( "Remove Theme" ),KGuiItem(i18n("&Remove"),"editdelete") )
              == KMessageBox::Continue )
         {
@@ -274,7 +274,7 @@ void kthememanager::slotCreateTheme()
         QString themeName = dlg.getName();
         if ( themeExist(themeName) )
         {
-            KMessageBox::information( this, i18n( "Theme %1 already exists." ).arg( themeName ) );
+            KMessageBox::information( this, i18n( "Theme %1 already exists.", themeName ) );
         }
         else
         {
@@ -294,7 +294,7 @@ void kthememanager::slotCreateTheme()
             m_theme->addPreview();	    
 
             if ( !result.isEmpty() )
-                KMessageBox::information( this, i18n( "Your theme has been successfully created in %1." ).arg( result ),
+                KMessageBox::information( this, i18n( "Your theme has been successfully created in %1.", result ),
                                           i18n( "Theme Created" ), "theme_created_ok" );
             else
                 KMessageBox::error( this, i18n( "An error occurred while creating your theme." ),
@@ -329,9 +329,9 @@ void kthememanager::slotThemeChanged( Q3ListViewItem * item )
         }
 
         KTheme theme( this, themeDir + themeName + ".xml" );
-        dlg->lbPreview->setToolTip( "<qt>" + i18n( "Author: %1<br>Email: %2<br>Version: %3<br>Homepage: %4" )
-                       .arg( theme.author() ).arg( theme.email() )
-                       .arg( theme.version() ).arg( theme.homepage() ) + "</qt>");
+        dlg->lbPreview->setToolTip( "<qt>" + i18n( "Author: %1<br>Email: %2<br>Version: %3<br>Homepage: %4" ,
+                         theme.author(), theme.email() ,
+                         theme.version(), theme.homepage() ) + "</qt>");
 
         emit changed( true );
     }

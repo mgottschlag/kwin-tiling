@@ -724,17 +724,17 @@ void MouseSettings::load(KConfig *config)
 
 void MouseConfig::slotThreshChanged(int value)
 {
-  thresh->setSuffix(i18n(" pixel", " pixels", value));
+  thresh->setSuffix(i18np(" pixel", " pixels", value));
 }
 
 void MouseConfig::slotDragStartDistChanged(int value)
 {
-  dragStartDist->setSuffix(i18n(" pixel", " pixels", value));
+  dragStartDist->setSuffix(i18np(" pixel", " pixels", value));
 }
 
 void MouseConfig::slotWheelScrollLinesChanged(int value)
 {
-  wheelScrollLines->setSuffix(i18n(" line", " lines", value));
+  wheelScrollLines->setSuffix(i18np(" line", " lines", value));
 }
 
 void MouseSettings::apply(bool force)

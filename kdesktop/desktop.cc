@@ -59,9 +59,6 @@
 #include <kapplication.h>
 #include <QX11Info>
 #include <QDesktopWidget>
-// Create the equivalent of KAccelBase::connectItem
-// and then remove this include and fix reconnects in initRoot() -- ellis
-//#include <kaccelbase.h>
 
 // root window hack
 #include <X11/X.h>
@@ -142,7 +139,7 @@ KDesktop::KDesktop( bool x_root_hack, bool auto_start, bool wait_for_kded ) :
   m_bAutoStart = auto_start;
   m_bWaitForKded = wait_for_kded;
   m_miniCli = 0; // created on demand
-  keys = 0; // created later
+  m_actionCollection = 0; // created later
   KGlobal::locale()->insertCatalog("kdesktop");
   KGlobal::locale()->insertCatalog("libkonq"); // needed for apps using libkonq
   KGlobal::locale()->insertCatalog("libdmctl");
@@ -240,8 +237,7 @@ KDesktop::initRoot()
      {
         delete KRootWm::self();
         KRootWm* krootwm = new KRootWm( this ); // handler for root menu (used by kdesktop on RMB click)
-        keys->setSlot("Lock Session", krootwm, SLOT(slotLock()));
-        keys->updateConnections();
+        connect(m_actionCollection->action("Lock Session"), SIGNAL(triggered(bool)), krootwm, SLOT(slotLock()));
      }
   }
   else if (m_bDesktopEnabled && !m_pIconView)
@@ -286,8 +282,7 @@ KDesktop::initRoot()
         m_pIconView->start();
         delete KRootWm::self();
         KRootWm* krootwm = new KRootWm( this ); // handler for root menu (used by kdesktop on RMB click)
-        keys->setSlot("Lock Session", krootwm, SLOT(slotLock()));
-        keys->updateConnections();
+        connect(m_actionCollection->action("Lock Session"), SIGNAL(triggered(bool)), krootwm, SLOT(slotLock()));
      }
    } else {
      DCOPRef r( "ksmserver", "ksmserver" );
@@ -352,13 +347,13 @@ KDesktop::slotStart()
      m_pIconView->start();
 
   // Global keys
-  keys = new KGlobalAccel( this );
+  KActionCollection* actionCollection = m_actionCollection = new KActionCollection( this );
   (void) new KRootWm( this );
+  KAction* a = 0L;
 
 #include "kdesktopbindings.cpp"
 
-  keys->readSettings();
-  keys->updateConnections();
+  m_actionCollection->readSettings();
 
   if ( m_bAutoStart )
   {
@@ -406,10 +401,9 @@ void KDesktop::initConfig()
     if (m_pIconView)
        m_pIconView->initConfig( m_bInit );
 
-    if ( keys )
+    if ( m_actionCollection )
     {
-        keys->readSettings();
-        keys->updateConnections();
+        m_actionCollection->readSettings();
     }
 
     KLaunchSettings::self()->readConfig();
@@ -587,10 +581,9 @@ void KDesktop::configure()
        KRootWm::self()->initConfig();
     }
 
-    if (keys)
+    if (m_actionCollection)
     {
-       keys->readSettings();
-       keys->updateConnections();
+       m_actionCollection->readSettings();
     }
 }
 
@@ -606,8 +599,7 @@ void KDesktop::slotSettingsChanged(int category)
     else if (category == KApplication::SETTINGS_SHORTCUTS)
     {
         kDebug(1204) << "KDesktop::slotSettingsChanged SETTINGS_SHORTCUTS" << endl;
-        keys->readSettings();
-        keys->updateConnections();
+        m_actionCollection->readSettings();
     }
 }
 

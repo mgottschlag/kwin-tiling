@@ -95,7 +95,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
     connect(puGroup, SIGNAL(clicked(int)), SLOT(slotPresChanged()));
     connect(puGroup, SIGNAL(clicked(int)), SLOT(slotChanged()));
-    npRadio = new QRadioButton(i18n("preselected user", "&None"), puGroup);
+    npRadio = new QRadioButton(i18nc("preselected user", "&None"), puGroup);
     laygroup5->addWidget( npRadio );
     ppRadio = new QRadioButton(i18n("Prev&ious"), puGroup);
     ppRadio->setWhatsThis( i18n("Preselect the user that logged in previously. "

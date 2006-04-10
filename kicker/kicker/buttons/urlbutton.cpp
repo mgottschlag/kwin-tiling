@@ -197,8 +197,8 @@ void URLButton::properties()
     if ( (fileItem->isLocalFile() && !QFile::exists(fileItem->url().path()) )
          || !fileItem->url().isValid())
     {
-        KMessageBox::error( 0L, i18n("The file %1 does not exist")
-	                            .arg(fileItem->url().prettyURL()) );
+        KMessageBox::error( 0L, i18n("The file %1 does not exist",
+	                             fileItem->url().prettyURL()) );
         return;
     }
 

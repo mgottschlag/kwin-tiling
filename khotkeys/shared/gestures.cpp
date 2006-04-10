@@ -31,7 +31,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kxerrorhandler.h>
-#include <kkeynative.h>
+#include <kkeyserver.h>
 
 #include "input.h"
 #include "windows.h"
@@ -193,9 +193,9 @@ void Gesture::grab_mouse( bool grab_P )
         static int mask[] = { 0, Button1MotionMask, Button2MotionMask, Button3MotionMask,
             Button4MotionMask, Button5MotionMask, ButtonMotionMask, ButtonMotionMask,
             ButtonMotionMask, ButtonMotionMask };
-#define XCapL KKeyNative::modXLock()
-#define XNumL KKeyNative::modXNumLock()
-#define XScrL KKeyNative::modXScrollLock()
+#define XCapL KKeyServer::modXLock()
+#define XNumL KKeyServer::modXNumLock()
+#define XScrL KKeyServer::modXScrollLock()
         unsigned int mods[ 8 ] = 
             {
             0, XCapL, XNumL, XNumL | XCapL,

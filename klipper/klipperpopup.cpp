@@ -47,7 +47,7 @@ namespace {
 // #define DEBUG_EVENTS__
 
 #ifdef DEBUG_EVENTS__
-kdbgstream& operator<<( kdbgstream& stream,  const QKeyEvent& e ) {
+kdbgstream& operator<<( kdbgstream& stream, const QKeyEvent& e ) {
     stream << "(QKeyEvent(text=" << e.text() << ",key=" << e.key() << ( e.isAccepted()?",accepted":",ignored)" ) << ",count=" << e.count();
     if ( e.state() & Qt::AltModifier ) {
         stream << ",ALT";
@@ -102,7 +102,7 @@ KlipperPopup::KlipperPopup( History* history, QWidget* parent )
       QSempty( i18n( "<empty clipboard>" ) ),
       QSnomatch( i18n( "<no matches>" ) ),
       m_history( history ),
-      helpmenu( new KHelpMenu( this,  KlipperWidget::aboutData(), false ) ),
+      helpmenu( new KHelpMenu( this, KlipperWidget::aboutData(), false ) ),
       m_popupProxy( 0 ),
       m_filterWidget( 0 ),
       m_filterWidgetId( 10 ),
@@ -128,7 +128,7 @@ void KlipperPopup::slotAboutToShow() {
         if ( !m_filterWidget->text().isEmpty() ) {
             m_dirty = true;
             m_filterWidget->clear();
-            setItemVisible( m_filterWidgetId,  false );
+            setItemVisible( m_filterWidgetId, false );
             m_filterWidget->hide();
         }
     }
@@ -153,7 +153,7 @@ void KlipperPopup::buildFromScratch() {
     m_filterWidgetId = insertItem( m_filterWidget, m_filterWidgetId, 1 );
 #endif
     m_filterWidget->setFocusPolicy( Qt::NoFocus );
-    setItemVisible( m_filterWidgetId,  false );
+    setItemVisible( m_filterWidgetId, false );
     m_filterWidget->hide();
     QString lastGroup;
 
@@ -170,7 +170,7 @@ void KlipperPopup::buildFromScratch() {
             insertSeparator();
         }
         lastGroup = group;
-        action->plug( this,  -1 );
+        action->plug( this, -1 );
     }
 
     if ( KGlobalSettings::insertTearOffHandle() ) {

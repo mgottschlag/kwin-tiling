@@ -103,7 +103,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay->addWidget(label, 0, 0);
   QVBoxLayout *vlay = new QVBoxLayout( KDialog::spacingHint() );
   hglay->addMultiCellLayout(vlay, 0,0, 1,2);
-  noneRadio = new QRadioButton( i18n("logo area", "&None"), group );
+  noneRadio = new QRadioButton( i18nc("logo area", "&None"), group );
   clockRadio = new QRadioButton( i18n("Show cloc&k"), group );
   logoRadio = new QRadioButton( i18n("Sho&w logo"), group );
   Q3ButtonGroup *buttonGroup = new Q3ButtonGroup( group );
@@ -408,8 +408,8 @@ void KDMAppearanceWidget::iconLoaderDropEvent(QDropEvent *e)
 	    KIO::NetAccess::del(pixurl, parentWidget());
 	    QString msg = i18n("There was an error loading the image:\n"
 			       "%1\n"
-			       "It will not be saved.")
-			       .arg(pixurl.path());
+			       "It will not be saved.",
+			        pixurl.path());
 	    KMessageBox::sorry(this, msg);
 	}
 

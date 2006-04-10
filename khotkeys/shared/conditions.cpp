@@ -403,7 +403,7 @@ Not_condition* Not_condition::copy( Condition_list_base* parent_P ) const
 
 const QString Not_condition::description() const
     {
-    return i18n( "Not_condition", "Not" );
+    return i18nc( "Not_condition", "Not" );
     }
 
 bool Not_condition::accepts_children() const
@@ -447,7 +447,7 @@ And_condition* And_condition::copy( Condition_list_base* parent_P ) const
 
 const QString And_condition::description() const
     {
-    return i18n( "And_condition", "And" );
+    return i18nc( "And_condition", "And" );
     }
 
 // Or_condition
@@ -488,7 +488,7 @@ Or_condition* Or_condition::copy( Condition_list_base* parent_P ) const
 
 const QString Or_condition::description() const
     {
-    return i18n( "Or_condition", "Or" );
+    return i18nc( "Or_condition", "Or" );
     }
 
 } // namespace KHotKeys

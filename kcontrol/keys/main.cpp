@@ -28,9 +28,11 @@
 #include <klocale.h>
 #include <ksimpleconfig.h>
 #include <kinstance.h>
+#include <kaction.h>
+#include <kactioncollection.h>
+#include <kglobalaccel.h>
 
 #include "main.h"
-#include "modifiers.h"
 #include "shortcuts.h"
 #include "khotkeys.h"
 
@@ -77,10 +79,6 @@ void KeyModule::initGUI()
 	m_pShortcuts = new ShortcutsModule( this );
 	m_pTab->addTab( m_pShortcuts, i18n("Shortcut Schemes") );
 	connect( m_pShortcuts, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
-
-	m_pModifiers = new ModifiersModule( this );
-	m_pTab->addTab( m_pModifiers, i18n("Modifier Keys") );
-	connect( m_pModifiers, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
 }
 
 // Called when [Reset] is pressed
@@ -88,7 +86,6 @@ void KeyModule::load()
 {
 	kDebug(125) << "KeyModule::load()" << endl;
 	m_pShortcuts->load();
-	m_pModifiers->load();
 }
 
 // When [Apply] or [OK] are clicked.
@@ -96,14 +93,12 @@ void KeyModule::save()
 {
 	kDebug(125) << "KeyModule::save()" << endl;
 	m_pShortcuts->save();
-	m_pModifiers->save();
 }
 
 void KeyModule::defaults()
 {
 	kDebug(125) << "KeyModule::defaults()" << endl;
 	m_pShortcuts->defaults();
-	m_pModifiers->defaults();
 }
 
 void KeyModule::resizeEvent( QResizeEvent * )
@@ -125,30 +120,14 @@ extern "C"
 	return new KeyModule(keys, parent);
   }
 
-  KDE_EXPORT void initModifiers()
-  {
-	kDebug(125) << "KeyModule::initModifiers()" << endl;
-
-	KConfigGroup cg( KGlobal::config(), "Keyboard" );
-	bool bMacSwap = cg.readEntry( "Mac Modifier Swap", false );
-	if( bMacSwap )
-		ModifiersModule::setupMacModifierKeys();
-  }
-
   KDE_EXPORT void init_keys()
   {
 	kDebug(125) << "KeyModule::init()\n";
 
-	/*kDebug(125) << "KKeyModule::init() - Initialize # Modifier Keys Settings\n";
-	KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
-	QString fourMods = KGlobal::config()->readEntry( "Use Four Modifier Keys", KAccel::keyboardHasMetaKey() ? "true" : "false" );
-	KAccel::useFourModifierKeys( fourMods == "true" );
-	bool bUseFourModifierKeys = KAccel::useFourModifierKeys();
-	KGlobal::config()->writeEntry( "User Four Modifier Keys", bUseFourModifierKeys ? "true" : "false", KConfigBase::Normal|KConfigBase::Global);
-	*/
-	KAccelActions* keys = new KAccelActions();
-
 	kDebug(125) << "KeyModule::init() - Load Included Bindings\n";
+	
+	KActionCollection* actionCollection = new KActionCollection(static_cast<QObject*>(0L));
+	KAction* a = 0L;
 // this should match the included files above
 #define NOSLOTS
 #include "../../../klipper/klipperbindings.cpp"
@@ -168,19 +147,16 @@ extern "C"
 	    kDebug(125) << "KeyModule::init() - Read Config Bindings\n";
 	    // Check for old group,
 	    if( KGlobal::config()->hasGroup( "Global Keys" ) ) {
-		keys->readActions( "Global Keys" );
+		KGlobalAccel::self()->readSettings();
 		KGlobal::config()->deleteGroup( "Global Keys", KConfigBase::Global);
 	    }
-	    keys->readActions( "Global Shortcuts" );
             KGlobal::config()->deleteGroup( "Global Shortcuts", KConfigBase::Global);
 
 	    kDebug(125) << "KeyModule::init() - Write Config Bindings\n";
-	    keys->writeActions( "Global Shortcuts", 0, true, true );
+            KGlobalAccel::self()->writeSettings();
             group.writeEntry( "Defaults timestamp", __DATE__ __TIME__, KConfigBase::Normal|KConfigBase::Global);
         }
-	delete keys;
-
-	initModifiers();
+	delete actionCollection;
   }
 }
 

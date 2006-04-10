@@ -215,7 +215,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
              this, SLOT( setURLGrabberEnabled( bool )));
 
     KlipperPopup* popup = history()->popup();
-    connect ( history(),  SIGNAL( topChanged() ), SLOT( slotHistoryTopChanged() ) );
+    connect ( history(), SIGNAL( topChanged() ), SLOT( slotHistoryTopChanged() ) );
     connect( popup, SIGNAL( aboutToHide() ), SLOT( slotStartHideTimer() ) );
     connect( popup, SIGNAL( aboutToShow() ), SLOT( slotStartShowTimer() ) );
 

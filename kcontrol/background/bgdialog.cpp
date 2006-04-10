@@ -81,7 +81,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    }
 
    // preview monitor
-   m_monitorImage->setPixmap( QPixmap( locate("data",  "kcontrol/pics/monitor.png") ) );
+   m_monitorImage->setPixmap( QPixmap( locate("data", "kcontrol/pics/monitor.png") ) );
    m_monitorImage->setFixedSize(m_monitorImage->sizeHint());
    m_pMonitor = new BGMonitor(m_monitorImage, "preview monitor");
    m_pMonitor->setGeometry(23, 14, 151, 115);

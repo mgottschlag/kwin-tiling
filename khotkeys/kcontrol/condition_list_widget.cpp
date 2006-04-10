@@ -46,9 +46,9 @@ Condition_list_widget::Condition_list_widget( QWidget* parent_P, const char* nam
     QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
     popup->insertItem( i18n( "Active Window..." ), TYPE_ACTIVE_WINDOW );
     popup->insertItem( i18n( "Existing Window..." ), TYPE_EXISTING_WINDOW );
-    popup->insertItem( i18n( "Not_condition", "Not" ), TYPE_NOT );
-    popup->insertItem( i18n( "And_condition", "And" ), TYPE_AND );
-    popup->insertItem( i18n( "Or_condition", "Or" ), TYPE_OR );
+    popup->insertItem( i18nc( "Not_condition", "Not" ), TYPE_NOT );
+    popup->insertItem( i18nc( "And_condition", "And" ), TYPE_AND );
+    popup->insertItem( i18nc( "Or_condition", "Or" ), TYPE_OR );
     connect( conditions_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
              this, SLOT( modify_pressed() ) );
 

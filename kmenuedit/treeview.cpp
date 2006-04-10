@@ -125,7 +125,7 @@ void TreeItem::paintCell ( QPainter * p, const QColorGroup & cg, int column, int
           p->setPen( cg.highlightedText() );
        else
           p->setPen( cg.text() );
-       p->drawLine(0,  h,
+       p->drawLine(0, h,
                    width, h);
     }
 }

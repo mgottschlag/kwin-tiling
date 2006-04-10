@@ -34,7 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "containerarea.h"
 
 PanelAddButtonMenu::PanelAddButtonMenu(ContainerArea* cArea, const QString & label,
-				       const QString & relPath, QWidget * parent, const char * name,  const QString& _inlineHeader)
+				       const QString & relPath, QWidget * parent, const char * name, const QString& _inlineHeader)
     : PanelServiceMenu(label, relPath, parent, name, true, _inlineHeader), containerArea(cArea)
 {
 }

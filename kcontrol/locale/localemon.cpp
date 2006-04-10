@@ -271,65 +271,65 @@ void KLocaleConfigMoney::slotTranslate()
 
   foreach (QComboBox* wc, list)
   {
-    wc->changeItem(m_locale->translate("Parentheses Around"), 0);
-    wc->changeItem(m_locale->translate("Before Quantity Money"), 1);
-    wc->changeItem(m_locale->translate("After Quantity Money"), 2);
-    wc->changeItem(m_locale->translate("Before Money"), 3);
-    wc->changeItem(m_locale->translate("After Money"), 4);
+    wc->changeItem(ki18n("Parentheses Around").toString(m_locale), 0);
+    wc->changeItem(ki18n("Before Quantity Money").toString(m_locale), 1);
+    wc->changeItem(ki18n("After Quantity Money").toString(m_locale), 2);
+    wc->changeItem(ki18n("Before Money").toString(m_locale), 3);
+    wc->changeItem(ki18n("After Money").toString(m_locale), 4);
   }
 
   QString str;
 
-  str = m_locale->translate( "Here you can enter your usual currency "
-                             "symbol, e.g. $ or DM."
-                             "<p>Please note that the Euro symbol may not be "
-                             "available on your system, depending on the "
-                             "distribution you use." );
+  str = ki18n( "Here you can enter your usual currency "
+               "symbol, e.g. $ or DM."
+               "<p>Please note that the Euro symbol may not be "
+               "available on your system, depending on the "
+               "distribution you use." ).toString( m_locale );
   m_labMonCurSym->setWhatsThis( str );
   m_edMonCurSym->setWhatsThis( str );
-  str = m_locale->translate( "Here you can define the decimal separator used "
-                             "to display monetary values."
-                             "<p>Note that the decimal separator used to "
-                             "display other numbers has to be defined "
-                             "separately (see the 'Numbers' tab)." );
+  str = ki18n( "Here you can define the decimal separator used "
+               "to display monetary values."
+               "<p>Note that the decimal separator used to "
+               "display other numbers has to be defined "
+               "separately (see the 'Numbers' tab)." ).toString( m_locale );
   m_labMonDecSym->setWhatsThis( str );
   m_edMonDecSym->setWhatsThis( str );
 
-  str = m_locale->translate( "Here you can define the thousands separator "
-                             "used to display monetary values."
-                             "<p>Note that the thousands separator used to "
-                             "display other numbers has to be defined "
-                             "separately (see the 'Numbers' tab)." );
+  str = ki18n( "Here you can define the thousands separator "
+               "used to display monetary values."
+               "<p>Note that the thousands separator used to "
+               "display other numbers has to be defined "
+               "separately (see the 'Numbers' tab)." ).toString( m_locale );
   m_labMonThoSep->setWhatsThis( str );
   m_edMonThoSep->setWhatsThis( str );
 
-  str = m_locale->translate( "This determines the number of fract digits for "
-                             "monetary values, i.e. the number of digits you "
-                             "find <em>behind</em> the decimal separator. "
-                             "Correct value is 2 for almost all people." );
+  str = ki18n( "This determines the number of fract digits for "
+               "monetary values, i.e. the number of digits you "
+               "find <em>behind</em> the decimal separator. "
+               "Correct value is 2 for almost all people." ).toString( m_locale );
   m_labMonFraDig->setWhatsThis( str );
   m_inMonFraDig->setWhatsThis( str );
 
-  str = m_locale->translate( "If this option is checked, the currency sign "
-                             "will be prefixed (i.e. to the left of the "
-                             "value) for all positive monetary values. If "
-                             "not, it will be postfixed (i.e. to the right)." );
+  str = ki18n( "If this option is checked, the currency sign "
+               "will be prefixed (i.e. to the left of the "
+               "value) for all positive monetary values. If "
+               "not, it will be postfixed (i.e. to the right)." ).toString( m_locale );
   m_chMonPosPreCurSym->setWhatsThis( str );
 
-  str = m_locale->translate( "If this option is checked, the currency sign "
-                             "will be prefixed (i.e. to the left of the "
-                             "value) for all negative monetary values. If "
-                             "not, it will be postfixed (i.e. to the right)." );
+  str = ki18n( "If this option is checked, the currency sign "
+               "will be prefixed (i.e. to the left of the "
+               "value) for all negative monetary values. If "
+               "not, it will be postfixed (i.e. to the right)." ).toString( m_locale );
   m_chMonNegPreCurSym->setWhatsThis( str );
 
-  str = m_locale->translate( "Here you can select how a positive sign will be "
-                             "positioned. This only affects monetary values." );
+  str = ki18n( "Here you can select how a positive sign will be "
+               "positioned. This only affects monetary values." ).toString( m_locale );
   m_labMonPosMonSignPos->setWhatsThis( str );
   m_cmbMonPosMonSignPos->setWhatsThis( str );
 
-  str = m_locale->translate( "Here you can select how a negative sign will "
-                             "be positioned. This only affects monetary "
-                             "values." );
+  str = ki18n( "Here you can select how a negative sign will "
+               "be positioned. This only affects monetary "
+               "values." ).toString( m_locale );
   m_labMonNegMonSignPos->setWhatsThis( str );
   m_cmbMonNegMonSignPos->setWhatsThis( str );
 }

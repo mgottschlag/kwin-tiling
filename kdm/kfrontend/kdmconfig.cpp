@@ -151,8 +151,8 @@ decodeSess( dpySpec *sess, QString &user, QString &loc )
 {
 	if (sess->flags & isTTY) {
 		user =
-			i18n( "%1: TTY login", "%1: %n TTY logins", sess->count )
-				.arg( sess->user );
+			i18np( "%1: TTY login", "%1: %n TTY logins", sess->count ,
+				  sess->user );
 		loc = 
 #ifdef HAVE_VTS
 			sess->vt ?
@@ -164,9 +164,9 @@ decodeSess( dpySpec *sess, QString &user, QString &loc )
 			!sess->user ?
 				i18n("Unused") :
 				*sess->user ?
-					i18n("user: session type", "%1: %2")
-						.arg( sess->user ).arg( sess->session ) :
-					i18n("... host", "X login on %1").arg( sess->session );
+					i18nc("user: session type", "%1: %2",
+						  sess->user, sess->session ) :
+					i18nc("... host", "X login on %1", sess->session );
 		loc =
 #ifdef HAVE_VTS
 			sess->vt ?

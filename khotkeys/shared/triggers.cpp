@@ -22,7 +22,6 @@
 #include <kwinmodule.h>
 #include <klocale.h>
 #include <netwm_def.h>
-#include <kaccel.h>
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>

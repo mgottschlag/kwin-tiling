@@ -26,7 +26,6 @@
 #include <dcopclient.h>
 #include <kdesktopfile.h>
 #include <klocale.h>
-#include <kaccel.h>
 #include <kservice.h>
 #include <ksharedptr.h>
 #include <kprocess.h>
@@ -377,16 +376,18 @@ void Keyboard_input_action::execute()
     while(( last_index = input().indexOf( ':', last_index + 1 )) != -1 ) // find next ';'
 	{
         QString key = input().mid( start, last_index - start ).trimmed();
-        if( key == "Enter" && KKey( key ).keyCodeQt() == 0 )
+        QKeySequence ks( key );
+        if( key == "Enter" && ks.isEmpty() )
             key = "Return"; // CHECKE hack
-	keyboard_handler->send_macro_key( KKey( key ).keyCodeQt(), w );
+	keyboard_handler->send_macro_key( ks.isEmpty() ? 0 : ks[0], w );
 	start = last_index + 1;
 	}
     // and the last one
     QString key = input().mid( start, input().length()).trimmed();
-    if( key == "Enter" && KKey( key ).keyCodeQt() == 0 )
+    QKeySequence ks( key );
+    if( key == "Enter" && ks.isEmpty() )
         key = "Return";
-    keyboard_handler->send_macro_key( KKey( key ).keyCodeQt(), w ); // the rest
+    keyboard_handler->send_macro_key( ks.isEmpty() ? 0 : ks[0], w ); // the rest
     XFlush( QX11Info::display());
     }
     

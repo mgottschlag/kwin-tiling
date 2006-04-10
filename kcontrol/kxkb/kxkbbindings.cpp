@@ -1,12 +1,15 @@
 #ifndef NOSLOTS
 # define DEF( name, key, fnSlot ) \
-   keys->insert( name, i18n(name), QString(), key, this, SLOT(fnSlot) )
+   a = new KAction( i18n(name), actionCollection, name ); \
+   a->setShortcut(key); \
+   connect(a, SIGNAL(triggered(bool)), SLOT(fnSlot))
 #else
 # define DEF( name, key, fnSlot ) \
-   keys->insert( name, i18n(name), QString(), key )
+   a = new KAction( i18n(name), actionCollection, name ); \
+   a->setShortcut(key);
 #endif
 
-	keys->insert( "Program:kxkb", i18n("Keyboard") );
+	new KAction( i18n("Keyboard"), actionCollection, "Program:kxkb" );
 	DEF( I18N_NOOP("Switch to Next Keyboard Layout"), Qt::ALT+Qt::CTRL+Qt::Key_K, toggled() );
 
 #undef DEF

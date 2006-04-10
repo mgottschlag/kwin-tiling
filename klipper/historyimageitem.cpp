@@ -27,7 +27,7 @@
 #include "historyimageitem.h"
 
 HistoryImageItem::HistoryImageItem( const QPixmap& data )
-    : HistoryItem(),  m_data( data )
+    : HistoryItem(), m_data( data )
 {
 }
 

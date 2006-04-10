@@ -101,9 +101,9 @@ Module::Module( KInstance *inst, QWidget* parent_P )
     vbox->addWidget( buttons_widget );
     connect( actions_listview_widget, SIGNAL( current_action_changed()),
         SLOT( listview_current_action_changed()));
-    connect( buttons_widget, SIGNAL( new_action_pressed()),  SLOT( new_action()));
-    connect( buttons_widget, SIGNAL( new_action_group_pressed()),  SLOT( new_action_group()));
-    connect( buttons_widget, SIGNAL( delete_action_pressed()),  SLOT( delete_action()));
+    connect( buttons_widget, SIGNAL( new_action_pressed()), SLOT( new_action()));
+    connect( buttons_widget, SIGNAL( new_action_group_pressed()), SLOT( new_action_group()));
+    connect( buttons_widget, SIGNAL( delete_action_pressed()), SLOT( delete_action()));
     connect( buttons_widget, SIGNAL( global_settings_pressed()), SLOT( global_settings()));
 //    listview_current_action_changed(); // init
 						

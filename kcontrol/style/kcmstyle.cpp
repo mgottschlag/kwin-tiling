@@ -108,7 +108,7 @@ extern "C"
         // do it for all root windows - multihead support
         int screen_count = ScreenCount(QX11Info::display());
         for (int i = 0; i < screen_count; i++)
-            XChangeProperty(QX11Info::display(),  RootWindow(QX11Info::display(), i),
+            XChangeProperty(QX11Info::display(), RootWindow(QX11Info::display(), i),
                             a, a, 8, PropModeReplace,
                             (unsigned char*) properties.data(), properties.size());
 #endif
@@ -270,7 +270,7 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	menuContainer = new QFrame( page2 );
 	menuContainer->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
 	//menuContainer->setMargin(0);
-	menuContainerLayout = new QGridLayout( menuContainer, 1, 1,    // rows, columns
+	menuContainerLayout = new QGridLayout( menuContainer, 1, 1,   // rows, columns
 		KDialog::marginHint(), KDialog::spacingHint() );
 
 	menuPreview = new MenuPreview( menuContainer, /* opacity */ 90, MenuPreview::Blend );
@@ -321,11 +321,11 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	page2Layout->addItem( sp1 );
 
 	// Data flow stuff.
-	connect( cbEnableEffects,     SIGNAL(toggled(bool)), containerFrame, SLOT(setEnabled(bool)) );
-	connect( cbEnableEffects,     SIGNAL(toggled(bool)), this, SLOT(menuEffectChanged(bool)) );
-	connect( slOpacity,           SIGNAL(valueChanged(int)),menuPreview, SLOT(setOpacity(int)) );
-	connect( comboMenuEffect,     SIGNAL(activated(int)), this, SLOT(menuEffectChanged()) );
-	connect( comboMenuEffect,     SIGNAL(highlighted(int)), this, SLOT(menuEffectChanged()) );
+	connect( cbEnableEffects,    SIGNAL(toggled(bool)), containerFrame, SLOT(setEnabled(bool)) );
+	connect( cbEnableEffects,    SIGNAL(toggled(bool)), this, SLOT(menuEffectChanged(bool)) );
+	connect( slOpacity,          SIGNAL(valueChanged(int)),menuPreview, SLOT(setOpacity(int)) );
+	connect( comboMenuEffect,    SIGNAL(activated(int)), this, SLOT(menuEffectChanged()) );
+	connect( comboMenuEffect,    SIGNAL(highlighted(int)), this, SLOT(menuEffectChanged()) );
 	connect( comboMenuEffectType, SIGNAL(activated(int)), this, SLOT(menuEffectTypeChanged()) );
 	connect( comboMenuEffectType, SIGNAL(highlighted(int)), this, SLOT(menuEffectTypeChanged()) );
 
@@ -364,22 +364,22 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	// Do all the setDirty connections.
 	connect(cbStyle, SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
 	// Page2
-	connect( cbEnableEffects,     SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
-	connect( cbEnableEffects,     SIGNAL(toggled(bool)),    this, SLOT(setStyleDirty()));
-	connect( comboTooltipEffect,  SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
-	connect( comboComboEffect,    SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
-	connect( comboMenuEffect,     SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
-	connect( comboMenuHandle,     SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
+	connect( cbEnableEffects,    SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
+	connect( cbEnableEffects,    SIGNAL(toggled(bool)),   this, SLOT(setStyleDirty()));
+	connect( comboTooltipEffect, SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
+	connect( comboComboEffect,   SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
+	connect( comboMenuEffect,    SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
+	connect( comboMenuHandle,    SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
 	connect( comboMenuEffectType, SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
-	connect( slOpacity,           SIGNAL(valueChanged(int)),this, SLOT(setStyleDirty()));
-	connect( cbMenuShadow,        SIGNAL(toggled(bool)),    this, SLOT(setStyleDirty()));
+	connect( slOpacity,          SIGNAL(valueChanged(int)),this, SLOT(setStyleDirty()));
+	connect( cbMenuShadow,       SIGNAL(toggled(bool)),   this, SLOT(setStyleDirty()));
 	// Page3
-	connect( cbHoverButtons,        SIGNAL(toggled(bool)),    this, SLOT(setToolbarsDirty()));
-	connect( cbTransparentToolbars, SIGNAL(toggled(bool)),    this, SLOT(setToolbarsDirty()));
-	connect( cbEnableTooltips,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
-	connect( cbIconsOnButtons,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
-	connect( cbTearOffHandles,      SIGNAL(toggled(bool)),    this, SLOT(setEffectsDirty()));
-	connect( comboToolbarIcons,     SIGNAL(activated(int)), this, SLOT(setToolbarsDirty()));
+	connect( cbHoverButtons,       SIGNAL(toggled(bool)),   this, SLOT(setToolbarsDirty()));
+	connect( cbTransparentToolbars, SIGNAL(toggled(bool)),   this, SLOT(setToolbarsDirty()));
+	connect( cbEnableTooltips,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
+	connect( cbIconsOnButtons,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
+	connect( cbTearOffHandles,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
+	connect( comboToolbarIcons,    SIGNAL(activated(int)), this, SLOT(setToolbarsDirty()));
 
 	addWhatsThis();
 
@@ -524,7 +524,7 @@ void KCMStyle::save()
 	QString warn_string( i18n("<qt>Selected style: <b>%1</b><br><br>"
 		"One or more effects that you have chosen could not be applied because the selected "
 		"style does not support them; they have therefore been disabled.<br>"
-		"<br>" ).arg( cbStyle->currentText()) );
+		"<br>", cbStyle->currentText()) );
 	bool show_warning = false;
 
 	// Warn the user if they're applying a style that doesn't support
@@ -873,7 +873,7 @@ void KCMStyle::switchStyle(const QString& styleName, bool force)
 	// Set the correct style description
 	StyleEntry* entry = styleEntries[ styleName ];
 	QString desc;
-	desc = i18n("Description: %1").arg( entry ? entry->desc : i18n("No description available.") );
+	desc = i18n("Description: %1", entry ? entry->desc : i18n("No description available.") );
 	lblStyleDesc->setText( desc );
 }
 

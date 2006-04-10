@@ -186,7 +186,7 @@ void GeneralWidget::historySizeChanged( int value )
 {
     // Note there is no %n in this string, because value is not supposed
     // to be put into the suffix of the spinbox.
-    maxItems->setSuffix( i18n( " entry", " entries", value ) );
+    maxItems->setSuffix( i18np( " entry", " entries", value ) );
 }
 
 void GeneralWidget::slotClipConfigChanged()

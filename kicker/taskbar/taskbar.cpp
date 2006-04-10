@@ -43,6 +43,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kglobalaccel.h>
+#include <kactioncollection.h>
+#include <kaction.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
@@ -133,10 +135,11 @@ TaskBar::TaskBar( QWidget *parent, const char *name )
     blocklayout = false;
 
     connect(kapp, SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
-    keys = new KGlobalAccel( this );
+    keys = new KActionCollection( this );
+    KActionCollection* actionCollection = keys;
+    KAction* a = 0L;
 #include "taskbarbindings.cpp"
     keys->readSettings();
-    keys->updateConnections();
 }
 
 TaskBar::~TaskBar()
@@ -1108,7 +1111,6 @@ void TaskBar::slotSettingsChanged( int category )
     if( category == (int) KApplication::SETTINGS_SHORTCUTS )
     {
         keys->readSettings();
-        keys->updateConnections();
     }
 }
 

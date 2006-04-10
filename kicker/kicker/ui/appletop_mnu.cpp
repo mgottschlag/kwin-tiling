@@ -55,10 +55,10 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
 
     if (!Kicker::self()->isImmutable())
     {
-        QString text = isButton ? (isMenu ? i18n("&Move %1 Menu") :
-                                            i18n("&Move %1 Button")) :
-                                  i18n("&Move %1");
-        insertItem(SmallIconSet("move"), text.arg(titleText), Move);
+        QString text = isButton ? (isMenu ? i18n("&Move %1 Menu", titleText) :
+                                            i18n("&Move %1 Button", titleText)) :
+                                   i18n("&Move %1", titleText);
+        insertItem(SmallIconSet("move"), text, Move);
 
         // we look for a container area to see if we can add containers
         // this is part of the kiosk support in kicker, allowing
@@ -79,10 +79,10 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
 
         if  (!area || area->canAddContainers())
         {
-            text = isButton ? (isMenu ? i18n("&Remove %1 Menu") :
-                                        i18n("&Remove %1 Button")) :
-                              i18n("&Remove %1");
-            insertItem(SmallIconSet("remove"), text.arg(titleText), Remove);
+            text = isButton ? (isMenu ? i18n("&Remove %1 Menu", titleText) :
+                                        i18n("&Remove %1 Button", titleText)) :
+                              i18n("&Remove %1", titleText);
+            insertItem(SmallIconSet("remove"), text, Remove);
             needSeparator = true;
         }
     }
@@ -109,7 +109,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
                                                      K3Icon::Small, 0,
                                                      K3Icon::DefaultState,
                                                      0, true));
-        insertItem(QIcon(iconPix), i18n("&About %1").arg( titleText ), About);
+        insertItem(QIcon(iconPix), i18n("&About %1", titleText ), About);
         needSeparator = !(actions & Plasma::Help);
     }
 
@@ -129,12 +129,12 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
         if (isButton)
         {
             insertItem(SmallIconSet("configure"),
-                       i18n("&Configure %1 Button...").arg(titleText), Preferences);
+                       i18n("&Configure %1 Button...", titleText), Preferences);
         }
         else
         {
             insertItem(SmallIconSet("configure"),
-                       i18n("&Configure %1...").arg(titleText), Preferences);
+                       i18n("&Configure %1...", titleText), Preferences);
         }
         needSeparator = true;
     }
@@ -148,7 +148,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
         }
 
         QString text = title.isEmpty() ? i18n("Applet Menu") :
-                                         i18n("%1 Menu").arg(titleText);
+                                         i18n("%1 Menu", titleText);
 
         // the 2 const_cast's below prevents const_cast'ing in multiple places
         // elsewhere in the kicker code base. it's ugly, but unavoidable

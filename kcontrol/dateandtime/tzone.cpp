@@ -79,13 +79,14 @@ void Tzone::load()
 
 void Tzone::currentZone()
 {
-    QString localZone(i18n("Current local timezone: %1 (%2)"));
     QByteArray result(100);
 
     time_t now = time(0);
     tzset();
     strftime(result.data(), result.size(), "%Z", localtime(&now));
-    m_local->setText(localZone.arg(KTimezoneWidget::displayName(KSystemTimeZones::local())).arg(QLatin1String(result)));
+    m_local->setText(i18n("Current local timezone: %1 (%2)",
+                          KTimezoneWidget::displayName(KSystemTimeZones::local()),
+                          QLatin1String(result)));
 }
 
 // FIXME: Does the logic in this routine actually work correctly? For example,
@@ -181,7 +182,7 @@ void Tzone::save()
 	}
 	else
 		if (!KIO::NetAccess::file_copy(KUrl(tz),KUrl("/etc/localtime")))
-			KMessageBox::error( 0,  i18n("Error setting new timezone."),
+			KMessageBox::error( 0, i18n("Error setting new timezone."),
                         		    i18n("Timezone Error"));
 
         QString val = ":" + tz;

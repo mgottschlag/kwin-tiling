@@ -63,8 +63,8 @@ bool KSysTrayCmd::start()
         return true;
       }
 
-      errStr = i18n( "No window matching pattern '%1' and no command specified.\n" )
-	  .arg( window );
+      errStr = i18n( "No window matching pattern '%1' and no command specified.\n" ,
+	    window );
       return false;
   }
 

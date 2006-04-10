@@ -34,7 +34,6 @@
 class KDirLister;
 class KonqSettings;
 class KSimpleConfig;
-class KAccel;
 class KShadowEngine;
 class KDesktopShadowSettings;
 
@@ -187,9 +186,6 @@ private Q_SLOTS:
 private:
     /** Our action collection, parent of all our actions */
     KActionCollection m_actionCollection;
-
-    /** KAccel object, to make the actions shortcuts work */
-    KAccel *m_accel;
 
     bool m_bNeedRepaint;
     bool m_bNeedSave;

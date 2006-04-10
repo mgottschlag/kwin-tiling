@@ -11,7 +11,6 @@
 #include <qpushbutton.h>
 #include <qlistbox.h>
 
-#include <kaccel.h>
 #include <kkeydialog.h>
 //#include <kcmodule.h>
 #include <qdict.h>

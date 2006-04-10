@@ -23,7 +23,6 @@
 #include "kdesktopsettings.h"
 
 #include <kio/paste.h>
-#include <kaccel.h>
 #include <kapplication.h>
 #include <k3colordrag.h>
 #include <kdebug.h>
@@ -101,7 +100,6 @@ static QRect desktopRect() {
 KDIconView::KDIconView( QWidget *parent, const char* name )
     : KonqIconViewWidget( parent, name, Qt::WResizeNoErase, true ),
       m_actionCollection( this ),
-      m_accel( 0L ),
       m_bNeedRepaint( false ),
       m_bNeedSave( false ),
       m_autoAlign( false ),
@@ -407,7 +405,7 @@ void KDIconView::createActions()
 
         KAction* paCut = KStdAction::cut( this, SLOT( slotCut() ), &m_actionCollection, "cut" );
         KShortcut cutShortCut = paCut->shortcut();
-        cutShortCut.remove( KKey( Qt::SHIFT + Qt::Key_Delete ) ); // used for deleting files
+        cutShortCut.remove( Qt::SHIFT + Qt::Key_Delete ); // used for deleting files
         paCut->setShortcut( cutShortCut );
 
         KStdAction::copy( this, SLOT( slotCopy() ), &m_actionCollection, "copy" );

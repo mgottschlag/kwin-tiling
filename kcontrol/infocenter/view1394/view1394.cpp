@@ -191,7 +191,7 @@ void View1394::rescanBus()
       m_notifiers.append(notif);
       m_handles.append(handle);
       
-      Q3ListViewItem *card=new Q3ListViewItem(m_view->m_listview,i18n("Port %1:\"%2\"").arg(i).arg(p_info[i].name));
+      Q3ListViewItem *card=new Q3ListViewItem(m_view->m_listview,i18n("Port %1:\"%2\"", i, p_info[i].name));
       int num_of_nodes=raw1394_get_nodecount(handle);
 
       int localNodeId=raw1394_get_local_id(handle);
@@ -204,7 +204,7 @@ void View1394::rescanBus()
          quadlet_t cap=0;
          bool success=readConfigRom(handle, j, firstQuad, cap, guid);
 
-         QString nodeStr=i18n("Node %1").arg(j);
+         QString nodeStr=i18n("Node %1", j);
          if (!success)
          {
             new Q3ListViewItem(card,nodeStr, i18n("Not ready"));

@@ -28,7 +28,7 @@ int main(int argc, char** argv)
     QStringList stretchableApplets;
     stretchableApplets << "taskbarapplet.desktop";
 
-    QTextStream in (stdin,  QIODevice::ReadOnly);
+    QTextStream in (stdin, QIODevice::ReadOnly);
     QTextStream out(stdout, QIODevice::WriteOnly);
 
     QStringList appletIds;

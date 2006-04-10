@@ -8,14 +8,14 @@
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
+ *   This program is distributed in the hope that it will be useful,      *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
+ *   Free Software Foundation, Inc.,                                      *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
  ***************************************************************************/
 
@@ -87,7 +87,7 @@ void CalDialog::calibrate()
     text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br><br>"
                        "Please move <b>axis %1 %2</b> on your device to the <b>minimum</b> position.<br><br>"
                        "Press any button on the device or click on the 'Next' button "
-                       "to continue with the next step.</qt>").arg(i+1).arg(hint));
+                       "to continue with the next step.</qt>", i+1, hint));
     waitButton(i, true, lastVal);
     joydev->resetMinMax(i, lastVal);
     if ( result() != -2 ) waitButton(i, false, lastVal);
@@ -101,7 +101,7 @@ void CalDialog::calibrate()
     text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br><br>"
                        "Please move <b>axis %1 %2</b> on your device to the <b>center</b> position.<br><br>"
                        "Press any button on the device or click on the 'Next' button "
-                       "to continue with the next step.</qt>").arg(i+1).arg(hint));
+                       "to continue with the next step.</qt>", i+1, hint));
     waitButton(i, true, lastVal);
     joydev->resetMinMax(i, lastVal);
     if ( result() != -2 ) waitButton(i, false, lastVal);
@@ -115,7 +115,7 @@ void CalDialog::calibrate()
     text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br><br>"
                        "Please move <b>axis %1 %2</b> on your device to the <b>maximum</b> position.<br><br>"
                        "Press any button on the device or click on the 'Next' button "
-                       "to continue with the next step.</qt>").arg(i+1).arg(hint));
+                       "to continue with the next step.</qt>", i+1, hint));
     waitButton(i, true, lastVal);
     joydev->resetMinMax(i, lastVal);
     if ( result() != -2 ) waitButton(i, false, lastVal);
@@ -160,7 +160,7 @@ void CalDialog::waitButton(int axis, bool press, int &lastVal)
       button = ( (type == JoyDevice::BUTTON) && (press ? (value == 1) : (value == 0)) );
 
       if ( (type == JoyDevice::AXIS) && (number == axis) )
-        valueLbl->setText(i18n("Value Axis %1: %2").arg(axis+1).arg(lastVal = value));
+        valueLbl->setText(i18n("Value Axis %1: %2", axis+1, lastVal = value));
     }
   }
   while ( !button && (result() == -1) );

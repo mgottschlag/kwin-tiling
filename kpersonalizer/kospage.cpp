@@ -27,10 +27,10 @@
 #include <dcopclient.h>
 #include <kipc.h>
 #include <krun.h>
-#include <kkeynative.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <ktoolinvocation.h>
+#include <kkeyserver.h>
 
 #include "kospage.h"
 
@@ -252,7 +252,7 @@ void KOSPage::writeWindows(){
 	cklipper->writeEntry("SynchronizeClipboards", false);
 
 	// set the schemefile depending on whether or not the keyboard has got Metakeys.
-	if( KKeyNative::keyboardHasWinKey() ) {
+	if( KKeyServer::keyboardHasMetaKey() ) {
 		writeKeyEntrys(locate("keys", "win4.kksrc"));
 	}
 	else {

@@ -436,7 +436,7 @@ void PanelBrowserMenu::dragMoveEvent(QDragMoveEvent *ev)
 void PanelBrowserMenu::dropEvent( QDropEvent *ev )
 {
     KUrl u( path() );
-    KFileItem item( u, QString::fromLatin1( "inode/directory" ),  KFileItem::Unknown );
+    KFileItem item( u, QString::fromLatin1( "inode/directory" ), KFileItem::Unknown );
     KonqOperations::doDrop( &item, u, ev, this );
     KPanelMenu::dropEvent(ev);
     // ### TODO: Update list

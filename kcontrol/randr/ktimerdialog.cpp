@@ -152,7 +152,7 @@ void KTimerDialog::slotUpdateTime( bool update )
 
     timerProgress->setValue( msecRemaining );
 
-    timerLabel->setText( i18n("1 second remaining:","%n seconds remaining:",msecRemaining/1000) );
+    timerLabel->setText( i18np("1 second remaining:","%n seconds remaining:",msecRemaining/1000) );
 }
 
 void KTimerDialog::slotInternalTimeout()

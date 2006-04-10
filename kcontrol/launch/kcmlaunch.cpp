@@ -192,7 +192,7 @@ LaunchConfig::save()
   KConfig c("klaunchrc", false, false);
 
   c.setGroup("FeedbackStyle");
-  c.writeEntry("BusyCursor",    cb_busyCursor->currentIndex() != 0);
+  c.writeEntry("BusyCursor",   cb_busyCursor->currentIndex() != 0);
   c.writeEntry("TaskbarButton", cb_taskbarButton->isChecked());
 
   c.setGroup( "BusyCursorSettings" );

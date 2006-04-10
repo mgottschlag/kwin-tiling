@@ -179,7 +179,7 @@ void PanelServiceMenu::fillMenu(KServiceGroup::Ptr& _root,
                 }
                 */
 
-                fillMenu( rootElement, listElement,  g->relPath(), id );
+                fillMenu( rootElement, listElement, g->relPath(), id );
                 continue;
             }
             // Ignore dotfiles.

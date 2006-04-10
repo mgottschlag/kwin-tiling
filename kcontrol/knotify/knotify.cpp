@@ -146,7 +146,7 @@ void KCMKNotify::load()
     QStringList fullpaths =
         KGlobal::dirs()->findAllResources("data", "*/*.notifyrc", false, true );
 
-	foreach (const QString &fullPath ,  fullpaths )
+	foreach (const QString &fullPath, fullpaths )
 	{
 		int slash = fullPath.lastIndexOf( '/' ) - 1;
 		int slash2 = fullPath.lastIndexOf( '/', slash );

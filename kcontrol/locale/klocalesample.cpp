@@ -109,24 +109,24 @@ void KLocaleSample::slotLocaleChanged()
 
   QString str;
 
-  str = m_locale->translate("This is how numbers will be displayed.");
-  QWhatsThis::add( m_labNumber,  str );
+  str = ki18n("This is how numbers will be displayed.").toString(m_locale);
+  QWhatsThis::add( m_labNumber, str );
   QWhatsThis::add( m_numberSample, str );
 
-  str = m_locale->translate("This is how monetary values will be displayed.");
-  QWhatsThis::add( m_labMoney,    str );
+  str = ki18n("This is how monetary values will be displayed.").toString(m_locale);
+  QWhatsThis::add( m_labMoney,   str );
   QWhatsThis::add( m_moneySample, str );
 
-  str = m_locale->translate("This is how date values will be displayed.");
-  QWhatsThis::add( m_labDate,    str );
+  str = ki18n("This is how date values will be displayed.").toString(m_locale);
+  QWhatsThis::add( m_labDate,   str );
   QWhatsThis::add( m_dateSample, str );
 
-  str = m_locale->translate("This is how date values will be displayed using "
-                            "a short notation.");
+  str = ki18n("This is how date values will be displayed using "
+              "a short notation.").toString(m_locale);
   QWhatsThis::add( m_labDateShort, str );
   QWhatsThis::add( m_dateShortSample, str );
 
-  str = m_locale->translate("This is how the time will be displayed.");
-  QWhatsThis::add( m_labTime,    str );
+  str = ki18n("This is how the time will be displayed.").toString(m_locale);
+  QWhatsThis::add( m_labTime,   str );
   QWhatsThis::add( m_timeSample, str );
 }

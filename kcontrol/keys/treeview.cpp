@@ -160,7 +160,7 @@ void AppTreeView::fillBranch(const QString& rPath, AppTreeItem *parent)
 
             AppTreeItem *item;
             if (parent == 0)
-                item = new AppTreeItem(this,  after, QString());
+                item = new AppTreeItem(this, after, QString());
             else
                 item = new AppTreeItem(parent, after, QString());
 

@@ -20,7 +20,6 @@
 
 #include <kglobal.h>
 #include <klocale.h>
-#include <kaccel.h>
 #include <kapplication.h>
 #include <dcopclient.h>
 #include <qlabel.h>

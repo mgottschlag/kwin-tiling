@@ -157,7 +157,7 @@ void AppletProxy::loadApplet(const QString& desktopFile, const QString& configFi
     if (df.isNull() || !file.exists()) {
 	kError() << "Failed to locate applet desktop file: " << desktopFile << endl;
         KMessageBox::error(0,
-                           i18n("The applet proxy could not load the applet information from %1.").arg(desktopFile), 
+                           i18n("The applet proxy could not load the applet information from %1.", desktopFile), 
                            i18n("Applet Loading Error"));
 	exit(0);
     }
@@ -178,7 +178,7 @@ void AppletProxy::loadApplet(const QString& desktopFile, const QString& configFi
     {
 	kError() << "Failed to load applet: " << _info->library() << endl;
         KMessageBox::error(0,
-                           i18n("The applet %1 could not be loaded via the applet proxy.").arg(_info->name()), 
+                           i18n("The applet %1 could not be loaded via the applet proxy.", _info->name()), 
                            i18n("Applet Loading Error"));
 	exit(0);
     }

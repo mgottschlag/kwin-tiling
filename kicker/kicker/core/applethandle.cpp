@@ -109,10 +109,10 @@ AppletHandle::AppletHandle(AppletContainer* parent)
 
         connect(m_menuButton, SIGNAL(pressed()),
                 this, SLOT(menuButtonPressed()));
-        m_menuButton->setToolTip( i18n("%1 menu").arg(parent->info().name()));
+        m_menuButton->setToolTip( i18n("%1 menu", parent->info().name()));
     }
 
-    this->setToolTip( i18n("%1 applet handle").arg(parent->info().name()));
+    this->setToolTip( i18n("%1 applet handle", parent->info().name()));
     resetLayout();
 }
 

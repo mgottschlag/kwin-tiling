@@ -499,10 +499,10 @@ void TaskContainer::drawButton(QPainter *p)
         }
 
         // blink until blink timeout, then display differently without blinking
-        colors.setColor( QPalette::Button,     colors.highlight() );
+        colors.setColor( QPalette::Button,    colors.highlight() );
         colors.setColor( QPalette::Background, colors.highlight() );
         colors.setColor( QPalette::ButtonText, colors.highlightedText() );
-        colors.setColor( QPalette::Text,       colors.highlightedText() );
+        colors.setColor( QPalette::Text,      colors.highlightedText() );
     }
 
     if (active || aboutToActivate)
@@ -1573,7 +1573,7 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
         else
         {
             QStringList desktopNames = desktopMap.values();
-            details.append(i18n("On %1").arg(desktopNames.join(", ")) + "<br>");
+            details.append(i18n("On %1", desktopNames.join(", ")) + "<br>");
         }
     }
 

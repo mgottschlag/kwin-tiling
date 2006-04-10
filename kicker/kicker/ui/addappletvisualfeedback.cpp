@@ -58,7 +58,7 @@ AddAppletVisualFeedback::AddAppletVisualFeedback(AppletWidget* widget,
     setBackgroundMode(Qt::NoBackground);
     connect(&m_moveTimer, SIGNAL(timeout()), SLOT(swoopCloser()));
 
-    QString m = "<qt><h3>" + i18n("%1 Added").arg(widget->info().name());
+    QString m = "<qt><h3>" + i18n("%1 Added", widget->info().name());
 
     if (widget->info().name() != widget->info().comment())
     {

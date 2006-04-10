@@ -70,7 +70,7 @@
 
 // entries for PA_REVISION[]
 enum V_ENTRIES
-    {	V_1x0,  
+    {	V_1x0, 
 	V_1x1, V_1x1a, V_1x1b, V_1x1c, V_1x1d, V_1x1e, 
 	V_2x0, 
 	V_LAST };
@@ -84,13 +84,13 @@ static const char PA_REVISION[V_LAST][7]
 enum PA_ENTRIES 
     {	PA7000,
 	PA7100, PA7100LC, PA7200, PA7300,
-	PA8000, PA8200,   PA8500,
+	PA8000, PA8200,  PA8500,
 	PARISC_PA_LAST };
 			
 static const char PA_NAME[PARISC_PA_LAST][11]
     = { "PA7000",
 	"PA7100", "PA7100LC", "PA7200", "PA7300",
-	"PA8000", "PA8200",   "PA8500" };
+	"PA8000", "PA8200",  "PA8500" };
 
 struct _type_LOOKUPTABLE {
 	 char 		Name[8]; 
@@ -632,7 +632,7 @@ bool GetInfo_Sound( QListView *lBox )
 
 static const char formatNames[6][15] = {  
     "ADFUnknown",	"ADFMuLaw",	"ADFALaw",
-    "ADFLin16",  	"ADFLin8",  	"ADFLin8Offset" };
+    "ADFLin16", 	"ADFLin8", 	"ADFLin8Offset" };
 
 /* handle typo in 1st release of Alib.h */
 #ifndef ARightOutputChMask
@@ -663,7 +663,7 @@ bool GetInfo_Sound( QListView *lBox )
 
     olditem = new QListViewItem(lBox, olditem, i18n("Audio Name"), QString(audio->audio_name));
     olditem = new QListViewItem(lBox, olditem, i18n("Vendor"), QString(audio->vendor));
-    olditem = new QListViewItem(lBox, olditem, i18n("Alib Version"),     
+    olditem = new QListViewItem(lBox, olditem, i18n("Alib Version"),    
                                 Value(audio->alib_major_version) + QString(".") +
                                 Value(audio->alib_minor_version));
 
@@ -759,7 +759,7 @@ bool GetInfo_Sound( QListView *lBox )
     new QListViewItem(olditem, i18n("Monitor Gain Limits"),
                                 Value(audio->min_monitor_gain) + QString(" ")
                                 + Value(audio->max_monitor_gain));
-    new QListViewItem(olditem, i18n("Gain Restricted"),    
+    new QListViewItem(olditem, i18n("Gain Restricted"),   
                                 Value(audio->gm_gain_restricted));
     olditem->setOpen(true);
     

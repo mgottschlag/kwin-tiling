@@ -195,7 +195,7 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   }
   if (KAuthorized::authorizeKAction("logout"))
   {
-      new KAction(i18n("Log Out \"%1\"...").arg(KUser().loginName()), "exit", 0,
+      new KAction(i18n("Log Out \"%1\"...", KUser().loginName()), "exit", 0,
                   this, SLOT( slotLogout() ), m_actionCollection, "logout" );
   }
 
@@ -841,8 +841,8 @@ void KRootWm::doNewSession( bool lock )
                "You can switch between sessions by pressing "
                "Ctrl, Alt and the appropriate F-key at the same time. "
                "Additionally, the KDE Panel and Desktop menus have "
-               "actions for switching between sessions.</p>")
-                           .arg(7).arg(8),
+               "actions for switching between sessions.</p>",
+                            7, 8),
         i18n("Warning - New Session"),
         KGuiItem(i18n("&Start New Session"), "fork"),
         ":confirmNewSession",

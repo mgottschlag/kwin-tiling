@@ -361,8 +361,8 @@ KWinbindGreeter::textPrompt( const char *prompt, bool echo, bool nonBlocking )
 			exp = 2;
 		else {
 			handler->gplugMsgBox( QMessageBox::Critical,
-			                      i18n("Unrecognized prompt \"%1\"")
-			                      .arg( prompt ) );
+			                      i18n("Unrecognized prompt \"%1\"",
+			                        prompt ) );
 			handler->gplugReturnText( 0, 0 );
 			exp = -1;
 			return;

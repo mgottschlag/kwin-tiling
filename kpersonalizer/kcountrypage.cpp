@@ -47,7 +47,7 @@ KCountryPage::KCountryPage(QWidget *parent, const char *name ) : KCountryPageDlg
 	b_startedLanguageChanged = false;
 
 	// set appropriate KDE version (kapplication.h)
-	txt_welcome->setText(i18n("<h3>Welcome to KDE %1</h3>").arg(KDE_VERSION_STRING));
+	txt_welcome->setText(i18n("<h3>Welcome to KDE %1</h3>", QLatin1String(KDE_VERSION_STRING)));
 
 	flang = new KFindLanguage();
 

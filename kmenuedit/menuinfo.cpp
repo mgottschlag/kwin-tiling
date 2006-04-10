@@ -399,7 +399,7 @@ static bool isEmpty(const KShortcut &shortCut)
 {
    for(int i = shortCut.count(); i--;)
    {
-      if (!shortCut.seq(i).isNull())
+      if (!shortCut.seq(i).isEmpty())
          return false;
    }
    return true;

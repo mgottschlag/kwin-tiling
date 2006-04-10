@@ -439,7 +439,7 @@ void KasPrefsDialog::addAdvancedPage()
 
 void KasPrefsDialog::customSizeChanged ( int value )
 {
-   customSize->setSuffix( i18n(" pixel", " pixels", value) );
+   customSize->setSuffix( i18np(" pixel", " pixels", value) );
 }
 
 void KasPrefsDialog::accept()

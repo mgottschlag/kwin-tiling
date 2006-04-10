@@ -121,7 +121,7 @@ BGMultiWallpaperDialog::BGMultiWallpaperDialog(KBackgroundSettings *settings,
    connect(dlg->m_buttonRemove, SIGNAL(clicked()), SLOT(slotRemove()));
    connect(dlg->m_buttonMoveUp, SIGNAL(clicked()), SLOT(slotMoveUp()));
    connect(dlg->m_buttonMoveDown, SIGNAL(clicked()), SLOT(slotMoveDown()));
-   connect(dlg->m_listImages,  SIGNAL(clicked ( Q3ListBoxItem * )), SLOT(slotItemSelected( Q3ListBoxItem *)));
+   connect(dlg->m_listImages, SIGNAL(clicked ( Q3ListBoxItem * )), SLOT(slotItemSelected( Q3ListBoxItem *)));
    dlg->m_buttonRemove->setEnabled( false );
    dlg->m_buttonMoveUp->setEnabled( false );
    dlg->m_buttonMoveDown->setEnabled( false );

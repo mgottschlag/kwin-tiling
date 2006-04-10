@@ -115,13 +115,11 @@ void KLocaleConfigOther::slotLocaleChanged()
 
 void KLocaleConfigOther::slotTranslate()
 {
-  m_combMeasureSystem->changeItem( m_locale->translate("The Metric System",
-                                                       "Metric"), 0 );
-  m_combMeasureSystem->changeItem( m_locale->translate("The Imperial System",
-                                                       "Imperial"), 1 );
+  m_combMeasureSystem->changeItem( ki18nc("The Metric System", "Metric").toString(m_locale), 0 );
+  m_combMeasureSystem->changeItem( ki18nc("The Imperial System", "Imperial").toString(m_locale), 1 );
 
-  m_combPageSize->changeItem( m_locale->translate("A4"), 0 );
-  m_combPageSize->changeItem( m_locale->translate("US Letter"), 1 );
+  m_combPageSize->changeItem( ki18n("A4").toString(m_locale), 0 );
+  m_combPageSize->changeItem( ki18n("US Letter").toString(m_locale), 1 );
 }
 
 void KLocaleConfigOther::slotPageSizeChanged(int i)

@@ -34,7 +34,7 @@ Dcop_widget::Dcop_widget( QWidget* parent_P, const char* name_P )
     : Dcop_widget_ui( parent_P, name_P )
     {
     clear_data();
-    try_button->setText( i18n( "to try", "&Try" )); // Qt designer can't do this
+    try_button->setText( i18nc( "to try", "&Try" )); // Qt designer can't do this
     // KHotKeys::Module::changed()
     connect( remote_app_lineedit, SIGNAL( textChanged( const QString& )),
         module, SLOT( changed()));

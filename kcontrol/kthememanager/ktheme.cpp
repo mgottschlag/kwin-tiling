@@ -99,7 +99,7 @@ bool KTheme::load( const KUrl & url )
     setName( QFileInfo( url.fileName() ).baseName() );
 
     // unpack the tarball
-    QString location = m_kgd->saveLocation( "themes",  m_name + "/" );
+    QString location = m_kgd->saveLocation( "themes", m_name + "/" );
     KTar tar( tmpFile );
     tar.open( QIODevice::ReadOnly );
     tar.directory()->copyTo( location );

@@ -47,7 +47,7 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
     if ( !name )
         setName( "LogitechMouse" );
 
-    cordlessNameLabel->setText( i18n("Mouse type: %1").arg( this->name() ) );
+    cordlessNameLabel->setText( i18n("Mouse type: %1", this->name() ) );
 
     m_mouseCapabilityFlags = mouseCapabilityFlags;
 
@@ -89,7 +89,7 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
         initCordlessStatusReporting();
 
         // Do a name
-        cordlessNameLabel->setText( i18n("Mouse type: %1").arg( cordlessName() ) );
+        cordlessNameLabel->setText( i18n("Mouse type: %1", cordlessName() ) );
         cordlessNameLabel->setEnabled( true );
 
         // Display the battery power level - the level gets updated in updateGUI()

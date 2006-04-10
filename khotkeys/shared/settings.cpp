@@ -19,7 +19,6 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kaccel.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
 

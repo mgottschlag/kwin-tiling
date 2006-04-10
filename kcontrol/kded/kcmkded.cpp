@@ -107,7 +107,7 @@ KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
 	_pbStop->setEnabled( false );
 
 	connect(_pbStart, SIGNAL(clicked()), SLOT(slotStartService()));
-	connect(_pbStop,  SIGNAL(clicked()), SLOT(slotStopService()));
+	connect(_pbStop, SIGNAL(clicked()), SLOT(slotStopService()));
 	connect(_lvStartup, SIGNAL(selectionChanged(Q3ListViewItem*)), SLOT(slotEvalItem(Q3ListViewItem*)) );
 
 	load();

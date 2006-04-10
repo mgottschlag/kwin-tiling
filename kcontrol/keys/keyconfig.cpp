@@ -295,7 +295,7 @@ void KKeyModule::readScheme( int index )
 
   if ( sList->currentItem() >= nSysSchemes )
      sName = sList->currentText();
-  SaveScm ss( 0,  "save scheme", sName );
+  SaveScm ss( 0, "save scheme", sName );
 
   bool nameValid;
   QString sFile;
@@ -471,15 +471,6 @@ void KKeyModule::init()
 {
   kDebug(125) << "KKeyModule::init()\n";
 
-  /*kDebug(125) << "KKeyModule::init() - Initialize # Modifier Keys Settings\n";
-  KConfigGroupSaver cgs( KGlobal::config(), "Keyboard" );
-  QString fourMods = KGlobal::config()->readEntry( "Use Four Modifier Keys", KAccel::keyboardHasMetaKey() ? "true" : "false" );
-  KAccel::useFourModifierKeys( fourMods == "true" );
-  bool bUseFourModifierKeys = KAccel::useFourModifierKeys();
-  KGlobal::config()->writeEntry( "User Four Modifier Keys", bUseFourModifierKeys ? "true" : "false", KConfigBase::Normal|KConfigBase::Global);
-  */
-  KAccelActions* keys = new KAccelActions();
-
   kDebug(125) << "KKeyModule::init() - Load Included Bindings\n";
 // this should match the included files above
 #define NOSLOTS
@@ -493,7 +484,7 @@ void KKeyModule::init()
 #undef KShortcuts
 
   kDebug(125) << "KKeyModule::init() - Read Config Bindings\n";
-  keys->readActions( "Global Keys" );
+  KGlobalAccel::self()->readSettings();
 
   {
     KSimpleConfig cfg( "kdeglobals" );
@@ -501,7 +492,7 @@ void KKeyModule::init()
   }
 
   kDebug(125) << "KKeyModule::init() - Write Config Bindings\n";
-  keys->writeActions( "Global Keys", 0, true, true );
+  KGlobalAccel::self()->writeSettings();
 }
 
 //-----------------------------------------------------------------

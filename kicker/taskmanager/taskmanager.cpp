@@ -66,15 +66,15 @@ TaskManager::TaskManager()
 {
     KGlobal::locale()->insertCatalog("libtaskmanager");
     connect(m_winModule, SIGNAL(windowAdded(WId)),
-            this,        SLOT(windowAdded(WId)));
+            this,       SLOT(windowAdded(WId)));
     connect(m_winModule, SIGNAL(windowRemoved(WId)),
-            this,        SLOT(windowRemoved(WId)));
+            this,       SLOT(windowRemoved(WId)));
     connect(m_winModule, SIGNAL(activeWindowChanged(WId)),
-            this,        SLOT(activeWindowChanged(WId)));
+            this,       SLOT(activeWindowChanged(WId)));
     connect(m_winModule, SIGNAL(currentDesktopChanged(int)),
-            this,        SLOT(currentDesktopChanged(int)));
+            this,       SLOT(currentDesktopChanged(int)));
     connect(m_winModule, SIGNAL(windowChanged(WId,unsigned int)),
-            this,        SLOT(windowChanged(WId,unsigned int)));
+            this,       SLOT(windowChanged(WId,unsigned int)));
 
     // register existing windows
     const QList<WId> windows = m_winModule->windows();
@@ -267,7 +267,7 @@ Task::TaskPtr TaskManager::findTask(int desktop, const QPoint& p)
 
 void TaskManager::windowAdded(WId w )
 {
-    NETWinInfo info(QX11Info::display(),  w, QX11Info::appRootWindow(),
+    NETWinInfo info(QX11Info::display(), w, QX11Info::appRootWindow(),
                     NET::WMWindowType | NET::WMPid | NET::WMState);
 
     // ignore NET::Tool and other special window types
@@ -362,7 +362,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
 {
     if (dirty & NET::WMState)
     {
-        NETWinInfo info (QX11Info::display(),  w, QX11Info::appRootWindow(),
+        NETWinInfo info (QX11Info::display(), w, QX11Info::appRootWindow(),
                          NET::WMState | NET::XAWMState);
         if (info.state() & NET::SkipTaskbar)
         {
@@ -1136,7 +1136,7 @@ void Task::toggleIconified()
 
 void Task::close()
 {
-    NETRootInfo ri( QX11Info::display(),  NET::CloseWindow );
+    NETRootInfo ri( QX11Info::display(), NET::CloseWindow );
     ri.closeWindowRequest( _win );
 }
 
@@ -1208,7 +1208,7 @@ void Task::toCurrentDesktop()
 
 void Task::setAlwaysOnTop(bool stay)
 {
-    NETWinInfo ni( QX11Info::display(),  _win, QX11Info::appRootWindow(), NET::WMState);
+    NETWinInfo ni( QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
     if(stay)
         ni.setState( NET::StaysOnTop, NET::StaysOnTop );
     else
@@ -1260,7 +1260,7 @@ void Task::toggleFullScreen()
 
 void Task::setShaded(bool shade)
 {
-    NETWinInfo ni( QX11Info::display(),  _win, QX11Info::appRootWindow(), NET::WMState);
+    NETWinInfo ni( QX11Info::display(), _win, QX11Info::appRootWindow(), NET::WMState);
     if(shade)
         ni.setState( NET::Shaded, NET::Shaded );
     else

@@ -70,9 +70,9 @@ KUrl *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 	QString msg = i18n( "%1 "
 			    "does not appear to be an image file.\n"
 			    "Please use files with these extensions:\n"
-			    "%2")
-			    .arg(url->fileName())
-			    .arg(qs.join("\n"));
+			    "%2",
+			     url->fileName(),
+			     qs.join("\n"));
 	KMessageBox::sorry( wdg, msg);
 	delete url;
     }

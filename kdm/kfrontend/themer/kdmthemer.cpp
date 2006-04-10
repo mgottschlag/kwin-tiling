@@ -69,11 +69,11 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *pa
 	}
 	QFile opmlFile( filename );
 	if (!opmlFile.open( QIODevice::ReadOnly )) {
-		FDialog::box( widget(), errorbox, i18n( "Cannot open theme file %1" ).arg(filename) );
+		FDialog::box( widget(), errorbox, i18n( "Cannot open theme file %1" , filename) );
 		return;
 	}
 	if (!domTree.setContent( &opmlFile )) {
-		FDialog::box( widget(), errorbox, i18n( "Cannot parse theme file %1" ).arg(filename) );
+		FDialog::box( widget(), errorbox, i18n( "Cannot parse theme file %1" , filename) );
 		return;
 	}
 	// Set the root (screen) item
