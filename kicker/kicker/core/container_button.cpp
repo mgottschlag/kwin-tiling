@@ -255,30 +255,34 @@ bool ButtonContainer::eventFilter(QObject *o, QEvent *e)
             Kicker::self()->setInsertionPoint(me->globalPos());
 
             KickerTip::enableTipping(false);
-            int selected = static_cast<QMenuItem*>(menu->exec(pos))->id();
-            switch (selected)
-            {
-            case PanelAppletOpMenu::Move:
-                _moveOffset = rect().center();
-                emit moveme(this);
-                break;
-            case PanelAppletOpMenu::Remove:
-                emit removeme(this);
-                break;
-            case PanelAppletOpMenu::Help:
-                help();
-                break;
-            case PanelAppletOpMenu::About:
-                about();
-                break;
-            case PanelAppletOpMenu::Preferences:
-                if (_button)
-                    _button->properties();
-                break;
-            default:
-                break;
+            QMenuItem* selectedItem = static_cast<QMenuItem*>(menu->exec(pos));
+
+	    if (selectedItem) {
+		int selected = selectedItem->id();
+		switch (selected)
+		{
+		case PanelAppletOpMenu::Move:
+		    _moveOffset = rect().center();
+		    emit moveme(this);
+		    break;
+		case PanelAppletOpMenu::Remove:
+		    emit removeme(this);
+		    break;
+		case PanelAppletOpMenu::Help:
+		    help();
+		    break;
+		case PanelAppletOpMenu::About:
+		    about();
+		    break;
+		case PanelAppletOpMenu::Preferences:
+		    if (_button)
+			_button->properties();
+		    break;
+		default:
+		    break;
+		}
             }
-            KickerTip::enableTipping(true);
+	    KickerTip::enableTipping(true);
 
             Kicker::self()->setInsertionPoint(QPoint());
             sentinal = false;
