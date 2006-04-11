@@ -40,7 +40,7 @@
 
 
 #include "knotify.h"
-#include "playersettings.h"
+#include "ui_playersettings.h"
 
 static const int COL_FILENAME = 1;
 
