@@ -159,6 +159,7 @@ void ExtensionContainer::init()
 
     // instantiate the updateLayout event compressor timer
     _updateLayoutTimer = new QTimer(this);
+    _updateLayoutTimer->setSingleShot(true);
     connect(_updateLayoutTimer, SIGNAL(timeout()), SLOT(actuallyUpdateLayout()));
 
     installEventFilter(this); // for mouse event handling
@@ -500,11 +501,11 @@ void ExtensionContainer::updateLayout()
     if (_in_autohide)
     {
         // ... unless we are autohiding
-        _updateLayoutTimer->start(0,true);
+        _updateLayoutTimer->start(0);
     }
     else
     {
-        _updateLayoutTimer->start(500,true);
+        _updateLayoutTimer->start(500);
     }
 }
 

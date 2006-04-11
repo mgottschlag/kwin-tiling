@@ -103,7 +103,8 @@ void KPanelMenu::hideEvent(QHideEvent *ev)
     if(d->clearDelay) {
         disconnect(&(d->t), SIGNAL(timeout()), this, SLOT(slotClear()));
         connect(&(d->t), SIGNAL(timeout()), this, SLOT(slotClear()));
-        d->t.start(d->clearDelay, true);
+        d->t.setSingleShot(true);
+        d->t.start(d->clearDelay);
     }
     KMenu::hideEvent(ev);
 }

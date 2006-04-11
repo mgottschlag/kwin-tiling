@@ -48,7 +48,9 @@ KTimerDialog::KTimerDialog( int msec, TimerStyle style, QWidget *parent,
                  separator, user1, user2, user3 )
 {
     totalTimer = new QTimer( this );
+    totalTimer->setSingleShot( true );
     updateTimer = new QTimer( this );
+    updateTimer->setSingleShot( false );
     msecTotal = msecRemaining = msec;
     updateInterval = 1000;
     tStyle = style;
@@ -80,14 +82,14 @@ KTimerDialog::~KTimerDialog()
 void KTimerDialog::show()
 {
     KDialogBase::show();
-    totalTimer->start( msecTotal, true );
-    updateTimer->start( updateInterval, false );
+    totalTimer->start( msecTotal );
+    updateTimer->start( updateInterval );
 }
 
 int KTimerDialog::exec()
 {
-    totalTimer->start( msecTotal, true );
-    updateTimer->start( updateInterval, false );
+    totalTimer->start( msecTotal );
+    updateTimer->start( updateInterval );
     return KDialogBase::exec();
 }
 

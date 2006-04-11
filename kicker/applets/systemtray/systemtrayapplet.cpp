@@ -339,14 +339,14 @@ void SystemTrayApplet::checkAutoRetract()
         else
         {
             m_autoRetract = true;
-            m_autoRetractTimer->start(2000, true);
+            m_autoRetractTimer->start(2000);
         }
 
     }
     else
     {
         m_autoRetract = false;
-        m_autoRetractTimer->start(250, true);
+        m_autoRetractTimer->start(250);
     }
 }
 
@@ -375,6 +375,7 @@ void SystemTrayApplet::showExpandButton(bool show)
                     this, SLOT(toggleExpanded()));
 
             m_autoRetractTimer = new QTimer(this);
+            m_autoRetractTimer->setSingleShot(true);
             connect(m_autoRetractTimer, SIGNAL(timeout()),
                     this, SLOT(checkAutoRetract()));
         }
@@ -569,7 +570,7 @@ void SystemTrayApplet::expand()
 
     if (m_autoRetractTimer)
     {
-        m_autoRetractTimer->start(250, true);
+        m_autoRetractTimer->start(250);
     }
 }
 

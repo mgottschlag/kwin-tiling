@@ -27,6 +27,8 @@ KHListView::KHListView( QWidget* parent_P )
     : K3ListView( parent_P ), saved_current_item( NULL ),
         in_clear( false ), ignore( false ), force_select( false )
     {
+    insert_select_timer.setSingleShot( true );
+
     connect( this, SIGNAL( selectionChanged( Q3ListViewItem* )),
         SLOT( slot_selection_changed( Q3ListViewItem* )));
     connect( this, SIGNAL( currentChanged( Q3ListViewItem* )),
@@ -92,7 +94,7 @@ void KHListView::insertItem( Q3ListViewItem* item_P )
 // SELI	tohle spis jen blokovat sebe?
         setCurrentItem( item_P );
         blockSignals( block );
-        insert_select_timer.start( 0, true );
+        insert_select_timer.start( 0 );
         }
     }
 

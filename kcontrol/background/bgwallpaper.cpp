@@ -52,7 +52,7 @@ BGMultiWallpaperList::BGMultiWallpaperList(QWidget *parent, const char *name)
 
 void BGMultiWallpaperList::dragEnterEvent(QDragEnterEvent *ev)
 {
-   ev->accept(K3URLDrag::canDecode(ev));
+   ev->setAccepted(K3URLDrag::canDecode(ev));
 }
 
 

@@ -87,6 +87,8 @@ KMiniPagerButton::KMiniPagerButton(int desk, KMiniPager *parent, const char *nam
     connect(this, SIGNAL(toggled(bool)), SLOT(slotToggled(bool)));
     connect(&m_dragSwitchTimer, SIGNAL(timeout()), this, SLOT(slotDragSwitch()));
 
+    m_dragSwitchTimer.setSingleShot(true);
+
     if (m_pager->desktopPreview())
     {
         setMouseTracking(true);
@@ -563,7 +565,7 @@ void KMiniPagerButton::dragEnterEvent(QDragEnterEvent* e)
     {
         // if a dragitem is held for over a pager button for two seconds,
         // activate corresponding desktop
-        m_dragSwitchTimer.start(1000, true);
+        m_dragSwitchTimer.start(1000);
         QAbstractButton::dragEnterEvent( e );
     }
 }

@@ -478,8 +478,8 @@ bool AddAppletDialog::appletMatchesSearch(const AppletWidget* w,
 
     return (m_selectedType == AppletInfo::Undefined ||
             w->info().type() & m_selectedType) &&
-           (w->info().name().contains(s, false) ||
-            w->info().comment().contains(s, false));
+           (w->info().name().contains(s, Qt::CaseInsensitive) ||
+            w->info().comment().contains(s, Qt::CaseInsensitive));
 }
 
 void AddAppletDialog::search(const QString &s)

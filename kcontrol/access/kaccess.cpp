@@ -124,6 +124,7 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   connect(&wm, SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
 
   artsBellTimer = new QTimer( this );
+  artsBellTimer->setSingleShot( true );
   connect( artsBellTimer, SIGNAL( timeout() ), SLOT( slotArtsBellTimeout() ));
 
   features = 0;
@@ -488,7 +489,7 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
   if (_artsBell && !_artsBellBlocked ) {
     KAudioPlayer::play(_artsBellFile);
     _artsBellBlocked = true;
-    artsBellTimer->start( 300, true );
+    artsBellTimer->start( 300 );
   }
 }
 

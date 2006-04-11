@@ -41,13 +41,13 @@ int main(int argc, char** argv)
     QString line;
     while (!(line = in.readLine()).isNull())
     {
-        if (rxGroup.search(line) != -1)
+        if (rxGroup.indexIn(line) != -1)
         {
             currentGroup = rxGroup.cap(1);
             continue;
         }
 
-        if (rxKeyValue.search(line) != -1)
+        if (rxKeyValue.indexIn(line) != -1)
         {
             QString key   = rxKeyValue.cap(1);
             QString value = rxKeyValue.cap(2);

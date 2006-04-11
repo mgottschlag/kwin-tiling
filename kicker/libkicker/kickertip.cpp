@@ -102,6 +102,7 @@ KickerTip::KickerTip(QWidget * parent)
     : QWidget(parent, "animtt", Qt::WX11BypassWM)
 {
     d = new Private;
+    d->timer.setSingleShot(true);
     setFocusPolicy(Qt::NoFocus);
     setBackgroundMode(Qt::NoBackground);
     setPaletteBackgroundColor(colorGroup().background());
@@ -177,7 +178,7 @@ void KickerTip::display()
     {
         disconnect(&d->timer, SIGNAL(timeout()), 0, 0);
         connect(&d->timer, SIGNAL(timeout()), SLOT(hide()));
-        d->timer.start(data.duration, true);
+        d->timer.start(data.duration);
     }
     else
     {
@@ -493,11 +494,11 @@ bool KickerTip::eventFilter(QObject *object, QEvent *event)
                 // a button then out of kicker
                 if (isVisible())
                 {
-                    d->timer.start(KickerSettings::mouseOversShowDelay() / 3, true);
+                    d->timer.start(KickerSettings::mouseOversShowDelay() / 3);
                 }
                 else
                 {
-                    d->timer.start(KickerSettings::mouseOversShowDelay(), true);
+                    d->timer.start(KickerSettings::mouseOversShowDelay());
                 }
             }
             break;
@@ -511,7 +512,7 @@ bool KickerTip::eventFilter(QObject *object, QEvent *event)
             {
                 disconnect(&d->timer, SIGNAL(timeout()), 0, 0);
                 connect(&d->timer, SIGNAL(timeout()), SLOT(hide()));
-                d->timer.start(KickerSettings::mouseOversHideDelay(), true);
+                d->timer.start(KickerSettings::mouseOversHideDelay());
             }
 
             tipFor(0);

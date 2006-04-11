@@ -48,6 +48,7 @@ Gesture::Gesture( bool /*enabled_P*/, QObject* parent_P )
     (void) new DeleteObject( this, parent_P );
     assert( gesture_handler == NULL );
     gesture_handler = this;
+    nostroke_timer.setSingleShot( true );
     connect( &nostroke_timer, SIGNAL( timeout()), SLOT( stroke_timeout()));
     connect( windows_handler, SIGNAL( active_window_changed( WId )),
         SLOT( active_window_changed( WId )));
@@ -131,7 +132,7 @@ bool Gesture::x11Event( XEvent* ev_P )
         kDebug( 1217 ) << "GESTURE: mouse press" << endl;
         stroke.reset();
         stroke.record( ev_P->xbutton.x, ev_P->xbutton.y );
-        nostroke_timer.start( timeout, true );
+        nostroke_timer.start( timeout );
         recording = true;
         start_x = ev_P->xbutton.x_root;
         start_y = ev_P->xbutton.y_root;

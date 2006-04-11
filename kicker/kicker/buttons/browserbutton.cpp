@@ -70,6 +70,7 @@ void BrowserButton::initialize( const QString& icon, const QString& path )
     setPopup(topMenu);
 
     _menuTimer = new QTimer( this );
+    _menuTimer->setSingleShot(true);
     connect( _menuTimer, SIGNAL(timeout()), SLOT(slotDelayedPopup()) );
 
     this->setToolTip( i18n("Browse: %1", path));
@@ -87,7 +88,7 @@ void BrowserButton::dragEnterEvent( QDragEnterEvent *ev )
 {
     if ((ev->source() != this) && KUrl::List::canDecode(ev->mimeData()))
     {
-        _menuTimer->start(500, true);
+        _menuTimer->start(500);
         ev->accept();
     }
     else

@@ -56,7 +56,8 @@ void CalDialog::calibrate()
   // calibrate precision (which min,max delivers the joystick in its center position)
   // get values through the normal idle procedure
   QTimer ti;
-  ti.start(2000, true); // single shot in 2 seconds
+  ti.setSingleShot(true); // single shot
+  ti.start(2000);         // in 2 seconds
 
   // normally I'd like to hide the 'Next' button in this step,
   // but it does not work - which means: in the steps after the first,

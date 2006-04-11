@@ -50,7 +50,7 @@ ThemeListBox::ThemeListBox(QWidget *parent)
 
 void ThemeListBox::dragEnterEvent(QDragEnterEvent* event)
 {
-   event->accept((event->source() != this) && K3URLDrag::canDecode(event));
+   event->setAccepted((event->source() != this) && K3URLDrag::canDecode(event));
 }
 
 void ThemeListBox::dropEvent(QDropEvent* event)

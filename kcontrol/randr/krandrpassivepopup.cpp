@@ -32,6 +32,7 @@
 KRandrPassivePopup::KRandrPassivePopup( QWidget *parent, Qt::WFlags f )
     : KPassivePopup( parent, f )
     {
+    update_timer.setSingleShot( true );
     connect( &update_timer, SIGNAL( timeout()), SLOT( slotPositionSelf()));
     }
     
@@ -105,10 +106,10 @@ bool KRandrPassivePopup::eventFilter( QObject* o, QEvent* e )
 
 bool KRandrPassivePopup::x11Event( XEvent* e )
     {
-    if( e->type == ConfigureNotify && watched_windows.contains( e->xconfigure.window ))
+    if( e->type == ConfigureNotify && watched_windows.contains( e->xconfigure.window ) )
 	{
-	if( !update_timer.isActive())
-	    update_timer.start( 10, true );
+	if( !update_timer.isActive() )
+	    update_timer.start( 10 );
 	return false;
 	}
     return KPassivePopup::x11Event( e );

@@ -111,6 +111,7 @@ TaskLMBMenu::TaskLMBMenu(const Task::List& tasks, QWidget *parent, const char *n
     setAcceptDrops(true); // Always enabled to activate task during drag&drop.
 
     m_dragSwitchTimer = new QTimer(this, "DragSwitchTimer");
+    m_dragSwitchTimer->setSingleShot(true);
     connect(m_dragSwitchTimer, SIGNAL(timeout()), SLOT(dragSwitch()));
 }
 
@@ -145,7 +146,8 @@ void TaskLMBMenu::fillMenu()
     {
         m_attentionTimer = new QTimer(this, "AttentionTimer");
         connect(m_attentionTimer, SIGNAL(timeout()), SLOT(attentionTimeout()));
-        m_attentionTimer->start(500, true);
+        m_attentionTimer->setSingleShot(true);
+        m_attentionTimer->start(500);
     }
 }
 
@@ -163,7 +165,7 @@ void TaskLMBMenu::attentionTimeout()
 
     update();
 
-    m_attentionTimer->start(500, true);
+    m_attentionTimer->start(500);
 }
 
 void TaskLMBMenu::dragEnterEvent( QDragEnterEvent* e )
@@ -184,7 +186,7 @@ void TaskLMBMenu::dragEnterEvent( QDragEnterEvent* e )
     else if (id != m_lastDragId)
     {
         m_lastDragId = id;
-        m_dragSwitchTimer->start(1000, true);
+        m_dragSwitchTimer->start(1000);
     }
 
     QMenu::dragEnterEvent( e );
@@ -218,7 +220,7 @@ void TaskLMBMenu::dragMoveEvent( QDragMoveEvent* e )
     else if (id != m_lastDragId)
     {
         m_lastDragId = id;
-        m_dragSwitchTimer->start(1000, true);
+        m_dragSwitchTimer->start(1000);
     }
 
     QMenu::dragMoveEvent(e);

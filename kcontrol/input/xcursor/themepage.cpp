@@ -452,8 +452,8 @@ void ThemePage::insertThemes()
 			continue;
 
 		QStringList subdirs( dir.entryList( QDir::Dirs ) );
-		subdirs.remove( "." );
-		subdirs.remove( ".." );
+		subdirs.removeAll( "." );
+		subdirs.removeAll( ".." );
 
 		for ( QStringList::ConstIterator it = subdirs.begin(); it != subdirs.end(); ++it )
 		{

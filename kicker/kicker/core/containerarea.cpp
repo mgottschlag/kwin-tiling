@@ -732,7 +732,7 @@ void ContainerArea::removeContainer(BaseContainer *a)
     }
 
     a->slotRemoved( _config );
-    m_containers.remove( a );
+    m_containers.removeAll( a );
     m_layout->remove( a );
     a->deleteLater();
     saveContainerConfig( true );
@@ -756,7 +756,7 @@ void ContainerArea::removeContainers(BaseContainer::List containers)
         }
 
         a->slotRemoved(_config);
-        m_containers.remove(a);
+        m_containers.removeAll(a);
         m_layout->remove(a);
         a->deleteLater();
     }
@@ -788,7 +788,7 @@ void ContainerArea::takeContainer(BaseContainer* a)
     // files untouched.
     _config->deleteGroup(a->appletId().latin1());
     _config->sync();
-    m_containers.remove(a);
+    m_containers.removeAll(a);
     m_layout->remove(a);
     saveContainerConfig(true);
     resizeContents();
@@ -1003,7 +1003,7 @@ void ContainerArea::dragEnterEvent(QDragEnterEvent *ev)
                      (BaseContainer::canDecode(ev->mimeData()) ||
                       AppletInfo::canDecode(ev->mimeData()) ||
                       KUrl::List::canDecode(ev->mimeData()));
-    ev->accept(canAccept);
+    ev->setAccepted(canAccept);
 
     if (!canAccept)
     {

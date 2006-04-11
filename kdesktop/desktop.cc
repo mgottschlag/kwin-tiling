@@ -102,7 +102,7 @@ bool KRootWidget::eventFilter ( QObject *, QEvent * e )
        }
 
        b = b && ( K3ColorDrag::canDecode( de ) || Q3ImageDrag::canDecode( de ) || imageURL );
-       de->accept( b );
+       de->setAccepted( b );
        return true;
      }
      else if ( e->type() == QEvent::Drop )
@@ -761,7 +761,7 @@ void KDesktop::handleImageDropEvent(QDropEvent * e)
         {
             filename = i18n("image.png");
         }
-        else if (filename.right(4).lower() != ".png")
+        else if (filename.right(4).toLower() != ".png")
         {
             filename += ".png";
         }

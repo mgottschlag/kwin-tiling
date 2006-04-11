@@ -330,7 +330,7 @@ void TaskManager::windowAdded(WId w )
 
 void TaskManager::windowRemoved(WId w)
 {
-    _skiptaskbar_windows.remove(w);
+    _skiptaskbar_windows.removeAll(w);
 
     // find task
     Task::TaskPtr t = findTask(w);
@@ -372,7 +372,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         }
         else
         {
-            _skiptaskbar_windows.remove(w);
+            _skiptaskbar_windows.removeAll(w);
             if (info.mappingState() != NET::Withdrawn && !findTask(w))
             {
                 // skipTaskBar state was removed and the window is still
@@ -841,7 +841,7 @@ void Task::updateDemandsAttentionState( WId w )
         }
         else
         {
-            _transients_demanding_attention.remove( w );
+            _transients_demanding_attention.removeAll( w );
         }
     }
 }
@@ -858,8 +858,8 @@ void Task::addTransient( WId w, const NETWinInfo& info )
 
 void Task::removeTransient(WId w)
 {
-    _transients.remove(w);
-    _transients_demanding_attention.remove(w);
+    _transients.removeAll(w);
+    _transients_demanding_attention.removeAll(w);
 }
 
 QString Task::className()

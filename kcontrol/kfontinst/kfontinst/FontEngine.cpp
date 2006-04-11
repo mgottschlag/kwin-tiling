@@ -305,21 +305,21 @@ CFontEngine::EWidth CFontEngine::strToWidth(const QString &str)
 {
     if(str.isEmpty())
         return WIDTH_NORMAL; // WIDTH_UNKNOWN;
-    else if(str.contains("UltraCondensed", false))
+    else if(str.contains("UltraCondensed", Qt::CaseInsensitive))
         return WIDTH_ULTRA_CONDENSED;
-    else if(str.contains("ExtraCondensed", false))
+    else if(str.contains("ExtraCondensed", Qt::CaseInsensitive))
         return WIDTH_EXTRA_CONDENSED;
-    else if(str.contains("SemiCondensed", false))
+    else if(str.contains("SemiCondensed", Qt::CaseInsensitive))
         return WIDTH_SEMI_CONDENSED;
-    else if(str.contains("Condensed", false))
+    else if(str.contains("Condensed", Qt::CaseInsensitive))
         return WIDTH_CONDENSED;
-    else if(str.contains("SemiExpanded", false))
+    else if(str.contains("SemiExpanded", Qt::CaseInsensitive))
         return WIDTH_SEMI_EXPANDED;
-    else if(str.contains("UltraExpanded", false))
+    else if(str.contains("UltraExpanded", Qt::CaseInsensitive))
         return WIDTH_ULTRA_EXPANDED;
-    else if(str.contains("ExtraExpanded", false))
+    else if(str.contains("ExtraExpanded", Qt::CaseInsensitive))
         return WIDTH_EXTRA_EXPANDED;
-    else if(str.contains("Expanded", false))
+    else if(str.contains("Expanded", Qt::CaseInsensitive))
         return WIDTH_EXPANDED;
     else
         return WIDTH_NORMAL;

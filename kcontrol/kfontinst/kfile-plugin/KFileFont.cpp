@@ -45,35 +45,37 @@ static int strToWeight(const QString &str)
 #warning QString == NULL -> QString.isNull() ??
     if(str.isNull())
         return FC_WEIGHT_MEDIUM;
-    else if(str.contains("Bold", false))
+    else if(str.contains("Bold", Qt::CaseInsensitive))
         return FC_WEIGHT_BOLD;
-    else if(str.contains("Heavy", false))
+    else if(str.contains("Heavy", Qt::CaseInsensitive))
         return FC_WEIGHT_HEAVY;
-    else if(str.contains("Black", false))
+    else if(str.contains("Black", Qt::CaseInsensitive))
         return FC_WEIGHT_BLACK;
-    else if(str.contains("ExtraBold", false))
+    else if(str.contains("ExtraBold", Qt::CaseInsensitive))
         return FC_WEIGHT_EXTRABOLD;
-    else if(str.contains("UltraBold", false))
+    else if(str.contains("UltraBold", Qt::CaseInsensitive))
         return FC_WEIGHT_ULTRABOLD;
-    else if(str.contains("ExtraLight", false))
+    else if(str.contains("ExtraLight", Qt::CaseInsensitive))
         return FC_WEIGHT_EXTRALIGHT;
-    else if(str.contains("UltraLight", false))
+    else if(str.contains("UltraLight", Qt::CaseInsensitive))
         return FC_WEIGHT_ULTRALIGHT;
-    else if(str.contains("Light", false))
+    else if(str.contains("Light", Qt::CaseInsensitive))
         return FC_WEIGHT_LIGHT;
-    else if(str.contains("Medium", false) || str.contains("Normal", false) || str.contains("Roman", false))
+    else if(str.contains("Medium", Qt::CaseInsensitive) || 
+		    str.contains("Normal", Qt::CaseInsensitive) || 
+		    str.contains("Roman", Qt::CaseInsensitive))
         return FC_WEIGHT_MEDIUM;
-    else if(str.contains("Regular", false))
+    else if(str.contains("Regular", Qt::CaseInsensitive))
         return FC_WEIGHT_REGULAR;
-    else if(str.contains("SemiBold", false))
+    else if(str.contains("SemiBold", Qt::CaseInsensitive))
         return FC_WEIGHT_SEMIBOLD;
-    else if(str.contains("DemiBold", false))
+    else if(str.contains("DemiBold", Qt::CaseInsensitive))
         return FC_WEIGHT_DEMIBOLD;
-    else if(str.contains("Thin", false))
+    else if(str.contains("Thin", Qt::CaseInsensitive))
         return FC_WEIGHT_THIN;
-    else if(str.contains("Book", false))
+    else if(str.contains("Book", Qt::CaseInsensitive))
         return FC_WEIGHT_NORMAL;
-    else if(str.contains("Demi", false))
+    else if(str.contains("Demi", Qt::CaseInsensitive))
         return FC_WEIGHT_NORMAL;
     else
         return FC_WEIGHT_MEDIUM;
@@ -84,21 +86,21 @@ static int strToWidth(const QString &str)
 {
     if(str.isEmpty())
         return FC_WIDTH_NORMAL;
-    else if(str.contains("UltraCondensed", false))
+    else if(str.contains("UltraCondensed", Qt::CaseInsensitive))
         return FC_WIDTH_ULTRACONDENSED;
-    else if(str.contains("ExtraCondensed", false))
+    else if(str.contains("ExtraCondensed", Qt::CaseInsensitive))
         return FC_WIDTH_EXTRACONDENSED;
-    else if(str.contains("SemiCondensed", false))
+    else if(str.contains("SemiCondensed", Qt::CaseInsensitive))
         return FC_WIDTH_SEMICONDENSED;
-    else if(str.contains("Condensed", false))
+    else if(str.contains("Condensed", Qt::CaseInsensitive))
         return FC_WIDTH_CONDENSED;
-    else if(str.contains("SemiExpanded", false))
+    else if(str.contains("SemiExpanded", Qt::CaseInsensitive))
         return FC_WIDTH_SEMIEXPANDED;
-    else if(str.contains("UltraExpanded", false))
+    else if(str.contains("UltraExpanded", Qt::CaseInsensitive))
         return FC_WIDTH_ULTRAEXPANDED;
-    else if(str.contains("ExtraExpanded", false))
+    else if(str.contains("ExtraExpanded", Qt::CaseInsensitive))
         return FC_WIDTH_EXTRAEXPANDED;
-    else if(str.contains("Expanded", false))
+    else if(str.contains("Expanded", Qt::CaseInsensitive))
         return FC_WIDTH_EXPANDED;
     else
         return FC_WIDTH_NORMAL;
@@ -373,7 +375,7 @@ bool KFileFontPlugin::readInfo(KFileMetaInfo& info, uint what)
                                 const FoundryMap *entry;
 
                                 for(entry=map; NULL!=entry->foundry; entry++)
-                                    if(foundryAll.length()==entry->len && foundryAll.contains(entry->foundry, false))
+                                    if(foundryAll.length()==entry->len && foundryAll.contains(entry->foundry, Qt::CaseInsensitive))
                                     {
                                         foundryAll=entry->foundry;
                                         break;

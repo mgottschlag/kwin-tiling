@@ -38,6 +38,8 @@ StartupId::StartupId( QObject* parent, const char* name )
 	blinking( true ),
 	bouncing( false )
     {
+    update_timer.setSingleShot( true );
+
     connect( &update_timer, SIGNAL( timeout()), SLOT( update_startupid()));
     connect( &startup_info,
         SIGNAL( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )),
@@ -216,7 +218,7 @@ void StartupId::update_startupid()
     if( !XQueryPointer( QX11Info::display(), QX11Info::appRootWindow(), &dummy1, &dummy2, &x, &y, &dummy3, &dummy4, &dummy5 ))
         {
         startup_widget->hide();
-        update_timer.start( 100, true );
+        update_timer.start( 100 );
         return;
         }
     QPoint c_pos( x, y );
@@ -225,7 +227,7 @@ void StartupId::update_startupid()
         startup_widget->move( c_pos.x() + X_DIFF, c_pos.y() + Y_DIFF + yoffset );
     startup_widget->show();
     XRaiseWindow( QX11Info::display(), startup_widget->winId());
-    update_timer.start( bouncing ? 30 : 100, true );
+    update_timer.start( bouncing ? 30 : 100 );
     QApplication::flush();
     }
 

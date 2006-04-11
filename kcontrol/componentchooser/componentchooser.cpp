@@ -100,7 +100,7 @@ void CfgComponent::load(KConfig *cfg) {
 	QString *tmp=m_revLookupDict[setting];
 	if (tmp)
 		for (int i=0;i<ComponentSelector->count();i++)
-			if ((*tmp)==ComponentSelector->text(i))
+			if ((*tmp)==ComponentSelector->itemText(i))
 			{
 				ComponentSelector->setCurrentIndex(i);
 				break;

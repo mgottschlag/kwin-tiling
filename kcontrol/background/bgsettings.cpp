@@ -983,7 +983,7 @@ bool KBackgroundSettings::discardCurrentWallpaper()
     {
        return false;
     }
-    m_WallpaperFiles.remove(m_WallpaperFiles.at(m_CurrentWallpaper));
+    m_WallpaperFiles.removeAll(m_WallpaperFiles.at(m_CurrentWallpaper));
     if (m_CurrentWallpaper >= (int) m_WallpaperFiles.count())
 	m_CurrentWallpaper = 0;
 

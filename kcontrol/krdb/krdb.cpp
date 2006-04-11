@@ -88,7 +88,7 @@ static void applyGtkStyles(bool active, int version)
       list.append(QLatin1String(sysGtkrc(version)));
       list.append(QDir::homePath()+userGtkrc(version));
    }
-   list.remove(gtkkde);
+   list.removeAll(gtkkde);
    list.append(gtkkde);
    if (!active)
       ::unlink(QFile::encodeName(gtkkde));

@@ -65,7 +65,7 @@ KUrl *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 		return url;
 			    
 	QStringList qs = KImageIO::pattern().split( '\n');
-	qs.remove(qs.begin());
+	qs.erase(qs.begin());
 
 	QString msg = i18n( "%1 "
 			    "does not appear to be an image file.\n"

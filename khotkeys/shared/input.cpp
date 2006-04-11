@@ -68,7 +68,7 @@ void Kbd::insert_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P )
 void Kbd::remove_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P )
     {
     Receiver_data& rcv = receivers[ receiver_P ];
-    rcv.shortcuts.remove( shortcut_P );
+    rcv.shortcuts.removeAll( shortcut_P );
     if( rcv.active )
         ungrab_shortcut( shortcut_P );
     if( rcv.shortcuts.count() == 0 )

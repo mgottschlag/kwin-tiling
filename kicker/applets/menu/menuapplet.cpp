@@ -239,7 +239,7 @@ void Applet::menuLost( MenuEmbed* embed )
 	{
 	if( *it == embed )
 	    {
-	    menus.remove( it );
+	    menus.erase( it );
 	    embed->deleteLater();
 //	    kDebug() << "deleting:" << (*it)->mainWindow() << endl;
 	    if( embed == active_menu )

@@ -396,7 +396,7 @@ void KDMUsersWidget::updateOptList( Q3ListViewItem *item, QStringList &list )
 	    list.append( itm->text() );
     } else {
 	if (it != list.end())
-	    list.remove( it );
+	    list.erase( it );
     }
 }
 

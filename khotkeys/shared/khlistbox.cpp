@@ -25,6 +25,8 @@ KHListBox::KHListBox( QWidget* parent_P, const char* name_P )
     : Q3ListBox( parent_P, name_P ), saved_current_item( NULL ),
         in_clear( false ), force_select( false )
     {
+    insert_select_timer.setSingleShot( true );
+    
     connect( this, SIGNAL( selectionChanged( Q3ListBoxItem* )),
         SLOT( slot_selection_changed( Q3ListBoxItem* )));
     connect( this, SIGNAL( currentChanged( Q3ListBoxItem* )),
@@ -86,7 +88,7 @@ void KHListBox::insertItem( Q3ListBoxItem* item_P )
         blockSignals( true );
         setCurrentItem( item_P );
         blockSignals( block );
-        insert_select_timer.start( 0, true );
+        insert_select_timer.start( 0 );
         }
     }
 

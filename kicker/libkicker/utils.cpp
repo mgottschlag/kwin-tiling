@@ -110,7 +110,7 @@ QString newDesktopFile(const KUrl& url)
    if (base.endsWith(".desktop"))
       base.truncate(base.length()-8);
    QRegExp r("(.*)(?=-\\d+)");
-   if (r.search(base) > -1)
+   if (r.indexIn(base) > -1)
       base = r.cap(1);
 
    QString file = base + ".desktop";

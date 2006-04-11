@@ -61,6 +61,7 @@ KCMXinerama::KCMXinerama(KInstance *inst, QWidget *parent )
 	config = new KConfig("kdeglobals", false, false);
 	ksplashrc = new KConfig("ksplashrc", false, false);
 
+	_timer.setSingleShot(true);
 	connect(&_timer, SIGNAL(timeout()), this, SLOT(clearIndicator()));
 
 	QGridLayout *grid = new QGridLayout(this, 1, 1, KDialog::marginHint(),
@@ -208,7 +209,7 @@ void KCMXinerama::indicateWindows() {
 	for (int i = 0; i < _displays; i++)
 		_indicators.append(indicator(i));
 
-	_timer.start(1500, true);
+	_timer.start(1500);
 }
 
 void KCMXinerama::windowIndicator(int dpy) {
@@ -220,7 +221,7 @@ void KCMXinerama::windowIndicator(int dpy) {
 	clearIndicator();
 	_indicators.append(indicator(dpy));
 
-	_timer.start(1500, true);
+	_timer.start(1500);
 }
 
 QWidget *KCMXinerama::indicator(int dpy) {

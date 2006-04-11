@@ -65,6 +65,7 @@ MediumButton::MediumButton(QWidget *parent, const KFileItem &fileItem)
 
 	refreshType();
 
+	mOpenTimer.setSingleShot(true);
 	connect(&mOpenTimer, SIGNAL(timeout()), SLOT(slotDragOpen()));
 
 	// Activate this code only if we find a way to have both an
@@ -155,8 +156,8 @@ void MediumButton::dragEnterEvent(QDragEnterEvent* e)
 {
 	if (mFileItem.isWritable())
 	{
-		mOpenTimer.start(1000, true);
-		e->accept(true);
+		mOpenTimer.start(1000);
+		e->setAccepted(true);
 	}
 }
 

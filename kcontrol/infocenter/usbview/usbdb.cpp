@@ -57,33 +57,33 @@ USBDB::USBDB()
 	  if (line.left(2) == "AT")
 	    continue;
 
-	  if (cls.search(line) == 0 && cls.matchedLength() == 4)
+	  if (cls.indexIn(line) == 0 && cls.matchedLength() == 4)
 	    {
 	      id = line.mid(2,2).toInt(0, 16);
 	      name = line.mid(4).trimmed();
 	      _classes.insert(QString("%1").arg(id), new QString(name));
 	    }
-	  else if (prot.search(line) == 0 && prot.matchedLength() > 5)
+	  else if (prot.indexIn(line) == 0 && prot.matchedLength() > 5)
 	    {
 	      line = line.trimmed();
 	      protid = line.left(2).toInt(0, 16);
 	      name = line.mid(4).trimmed();
 	      _classes.insert(QString("%1-%2-%3").arg(id).arg(subid).arg(protid), new QString(name));
 	    }
-	  else if (subclass.search(line) == 0 && subclass.matchedLength() > 4)
+	  else if (subclass.indexIn(line) == 0 && subclass.matchedLength() > 4)
 	    {
 	      line = line.trimmed();
 	      subid = line.left(2).toInt(0, 16);
 	      name = line.mid(4).trimmed();
 	      _classes.insert(QString("%1-%2").arg(id).arg(subid), new QString(name));
 	    }
-	  else if (vendor.search(line) == 0 && vendor.matchedLength() == 5)
+	  else if (vendor.indexIn(line) == 0 && vendor.matchedLength() == 5)
 	    {
 	      id = line.left(4).toInt(0,16);
 	      name = line.mid(6);
 	      _ids.insert(QString("%1").arg(id), new QString(name));
 	    }
-	  else if (product.search(line) == 0 && product.matchedLength() > 5 )
+	  else if (product.indexIn(line) == 0 && product.matchedLength() > 5 )
 	    {
 	      line = line.trimmed();
 	      subid = line.left(4).toInt(0,16);

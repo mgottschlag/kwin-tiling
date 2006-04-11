@@ -378,7 +378,7 @@ bool KDMAppearanceWidget::eventFilter(QObject *, QEvent *e)
 
 void KDMAppearanceWidget::iconLoaderDragEnterEvent(QDragEnterEvent *e)
 {
-  e->accept(K3URLDrag::canDecode(e));
+  e->setAccepted(K3URLDrag::canDecode(e));
 }
 
 

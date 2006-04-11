@@ -150,6 +150,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     connect(&mHackProc, SIGNAL(processExited(KProcess *)),
                         SLOT(hackExited(KProcess *)));
 
+    mSuspendTimer.setSingleShot(true);
     connect(&mSuspendTimer, SIGNAL(timeout()), SLOT(suspend()));
 
     QStringList dmopt =
@@ -972,8 +973,8 @@ bool LockProcess::x11Event(XEvent *event)
                // e.g. when switched to text console
                 mVisibility = !(event->xvisibility.state == VisibilityFullyObscured);
                 if(!mVisibility)
-                    mSuspendTimer.start(2000, true);
-                else
+                    mSuspendTimer.start(2000);
+		else
                 {
                     mSuspendTimer.stop();
                     resume();

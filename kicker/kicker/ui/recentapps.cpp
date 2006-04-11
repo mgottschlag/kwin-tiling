@@ -70,7 +70,7 @@ void RecentlyLaunchedApps::init()
          it != recentApps.end(); ++it )
     {
         QRegExp re( "(\\d*) (\\d*) (.*)" );
-        if (re.search(*it) != -1)
+        if (re.indexIn(*it) != -1)
         {
             int nCount = re.cap(1).toInt();
             long lTime = re.cap(2).toLong();

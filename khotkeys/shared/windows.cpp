@@ -346,7 +346,7 @@ bool Windowdef_simple::is_substr_match( const QString& str1_P, const QString& st
         case REGEXP :
             {
             QRegExp rg( str2_P );
-          return rg.search( str1_P ) >= 0;
+          return rg.indexIn( str1_P ) >= 0;
             }
         case CONTAINS_NOT :
           return str1_P.contains( str2_P ) == 0;
@@ -355,7 +355,7 @@ bool Windowdef_simple::is_substr_match( const QString& str1_P, const QString& st
         case REGEXP_NOT :
             {
             QRegExp rg( str2_P );
-          return rg.search( str1_P ) < 0;
+          return rg.indexIn( str1_P ) < 0;
             }
         }
     return false;

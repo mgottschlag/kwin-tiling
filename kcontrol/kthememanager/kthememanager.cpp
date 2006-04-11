@@ -339,7 +339,7 @@ void kthememanager::slotThemeChanged( Q3ListViewItem * item )
 
 void kthememanager::dragEnterEvent( QDragEnterEvent * ev )
 {
-    ev->accept( K3URLDrag::canDecode( ev ) );
+    ev->setAccepted( K3URLDrag::canDecode( ev ) );
 }
 
 void kthememanager::dropEvent( QDropEvent * ev )

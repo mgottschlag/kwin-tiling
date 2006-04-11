@@ -61,7 +61,7 @@ void PanelRemoveAppletMenu::slotAboutToShow()
         if (container->isImmutable())
         {
             ++it;
-            m_containers.remove(it);
+            m_containers.erase(it);
             continue;
         }
 
