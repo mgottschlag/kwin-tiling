@@ -165,15 +165,15 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
       QString libName = QString("kcm_%1").arg(library);
 
       // try to load the library
-      if (! alreadyInitialized.contains( libName.ascii() )) {
+      if (! alreadyInitialized.contains( libName.toAscii() )) {
 	  if (!runModule(libName, loader, service)) {
 	      libName = QString("libkcm_%1").arg(library);
-	      if (! alreadyInitialized.contains( libName.ascii() )) {
+	      if (! alreadyInitialized.contains( libName.toAscii() )) {
 		  runModule(libName, loader, service);
-		  alreadyInitialized.append( libName.ascii() );
+		  alreadyInitialized.append( libName.toAscii() );
 	      }
 	  } else 
-	      alreadyInitialized.append( libName.ascii() );
+	      alreadyInitialized.append( libName.toAscii() );
       }
   }
 
