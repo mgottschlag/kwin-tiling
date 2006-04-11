@@ -156,7 +156,7 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
         for (QStringList::ConstIterator it = (*tgmapi).begin();
              it != (*tgmapi).end(); ++it)
           usermap[*it].second.append( gn );
-      tgmap.remove( tgmapi );
+      tgmap.erase( tgmapi );
     }
     if (!*grp->gr_mem ||
         (delme && !grp->gr_mem[1] && gn == QFile::decodeName( *grp->gr_mem )))
@@ -312,7 +312,7 @@ void KDModule::slotMinMaxUID(int min, int max)
 	     jt != it.value().second.end(); ++jt) {
 	  gmapi = groupmap.find( *jt );
 	  if (!--(*gmapi)) {
-	    groupmap.remove( gmapi );
+	    groupmap.erase( gmapi );
 	    dlusers['@' + *jt] = -uid;
 	  }
 	}

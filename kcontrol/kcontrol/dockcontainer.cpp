@@ -167,7 +167,7 @@ void DockContainer::setBaseWidget(QWidget *widget)
   addWidget( _basew );
   setCurrentWidget( _basew );
 
-  emit newModule(widget->caption(), "", "");
+  emit newModule(widget->windowTitle(), "", "");
 }
 
 ProxyWidget* DockContainer::loadModule( ConfigModule *module )
@@ -185,12 +185,12 @@ ProxyWidget* DockContainer::loadModule( ConfigModule *module )
     connect(widget, SIGNAL(quickHelpChanged()), SLOT(quickHelpChanged()));
 
     setCurrentWidget( _modulew );
-    emit newModule(widget->caption(), module->docPath(), widget->quickHelp());
+    emit newModule(widget->windowTitle(), module->docPath(), widget->quickHelp());
   }
   else
   {
     setCurrentWidget( _basew );
-    emit newModule(_basew->caption(), "", "");
+    emit newModule(_basew->windowTitle(), "", "");
   }
 
   QApplication::restoreOverrideCursor();
@@ -240,7 +240,7 @@ void DockContainer::removeModule()
   deleteModule();
 
   if (_basew)
-      emit newModule(_basew->caption(), "", "");
+      emit newModule(_basew->windowTitle(), "", "");
   else
       emit newModule("", "", "");
 }
@@ -256,5 +256,5 @@ void DockContainer::deleteModule()
 void DockContainer::quickHelpChanged()
 {
   if (_module && _module->module())
-	emit newModule(_module->module()->caption(), _module->docPath(), _module->module()->quickHelp());
+	emit newModule(_module->module()->windowTitle(), _module->docPath(), _module->module()->quickHelp());
 }

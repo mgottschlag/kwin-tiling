@@ -488,7 +488,7 @@ void PanelBrowserMenu::slotMimeCheck()
     int id = it.key();
     QString file = _filemap[id];
 
-    _mimemap.remove(it);
+    _mimemap.erase(it);
 
     KUrl url;
     url.setPath( path() + '/' + file );

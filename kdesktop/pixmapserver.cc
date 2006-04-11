@@ -102,12 +102,12 @@ void KPixmapServer::remove(QString name)
     if (it == m_Names.end())
 	return;
     KPixmapInode pi = it.value();
-    m_Names.remove(it);
+    m_Names.erase(it);
 
     // Remove and disown the selection
     SelectionIterator it2 = m_Selections.find(pi.selection);
     assert(it2 != m_Selections.end());
-    m_Selections.remove(it2);
+    m_Selections.erase(it2);
     XSetSelectionOwner(QX11Info::display(), pi.selection, None, CurrentTime);
 
     // Decrease refcount on data
@@ -117,7 +117,7 @@ void KPixmapServer::remove(QString name)
     if (!it3.value().refcount && !it3.value().usecount) 
     {
 	delete it3.value().pixmap;
-	m_Data.remove(it3);
+	m_Data.erase(it3);
     }
 }
 
@@ -223,7 +223,7 @@ bool KPixmapServer::x11Event(XEvent *event)
 	if (it == m_Active.end())
 	    return false;
 	Qt::HANDLE handle = it.value();
-	m_Active.remove(it);
+	m_Active.erase(it);
 
 	DataIterator it2 = m_Data.find(handle);
 	assert(it2 != m_Data.end());
@@ -231,7 +231,7 @@ bool KPixmapServer::x11Event(XEvent *event)
 	if (!it2.value().usecount && !it2.value().refcount) 
 	{
 	    delete it2.value().pixmap;
-	    m_Data.remove(it2);
+	    m_Data.erase(it2);
 	}
 	return true;
     }

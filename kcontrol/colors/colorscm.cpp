@@ -318,7 +318,7 @@ void KColorScheme::load()
     cbShadeList->setChecked(cs->shadeSortColumn);
 
     cs->drawSampleWidgets();
-    slotWidgetColor(wcCombo->currentItem());
+    slotWidgetColor(wcCombo->currentIndex());
     sb->blockSignals(true);
     sb->setValue(cs->contrast);
     sb->blockSignals(false);
@@ -429,7 +429,7 @@ void KColorScheme::defaults()
     cbShadeList->setChecked(cs->shadeSortColumn);
 
     cs->drawSampleWidgets();
-    slotWidgetColor(wcCombo->currentItem());
+    slotWidgetColor(wcCombo->currentIndex());
     sb->blockSignals(true);
     sb->setValue(cs->contrast);
     sb->blockSignals(false);
@@ -681,7 +681,7 @@ QColor &KColorScheme::color(int index)
 void KColorScheme::slotSelectColor(const QColor &col)
 {
     int selection;
-    selection = wcCombo->currentItem();
+    selection = wcCombo->currentIndex();
 
     // Adjust the alternate background color if the standard color changes
     // Only if the previous alternate color was not a user-configured one
@@ -709,7 +709,7 @@ void KColorScheme::slotWidgetColor(int indx)
 {
     if (indx < 0)
         indx = 0;
-    if (wcCombo->currentItem() != indx)
+    if (wcCombo->currentIndex() != indx)
         wcCombo->setCurrentItem( indx );
 
     // Do not emit KCModule::changed()
@@ -725,7 +725,7 @@ void KColorScheme::slotWidgetColor(int indx)
 
 void KColorScheme::slotColorForWidget(int indx, const QColor& col)
 {
-    if (wcCombo->currentItem() != indx)
+    if (wcCombo->currentIndex() != indx)
         wcCombo->setCurrentItem( indx );
 
     slotSelectColor(col);
@@ -951,7 +951,7 @@ void KColorScheme::slotPreviewScheme(int indx)
     sb->blockSignals(true);
     sb->setValue(cs->contrast);
     sb->blockSignals(false);
-    slotWidgetColor(wcCombo->currentItem());
+    slotWidgetColor(wcCombo->currentIndex());
     if (indx < nSysSchemes)
        removeBt->setEnabled(false);
     else
