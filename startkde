@@ -50,10 +50,7 @@ fi
 # * Then kdeinit starts kcminit. kcminit performs initialisation of
 #   certain devices according to the user's settings
 #
-# * Then ksmserver is started which in turn starts
-#   1) the window manager (kwin)
-#   2) everything in $KDEDIR/share/autostart (kdesktop, kicker, etc.)
-#   3) the rest of the session.
+# * Then ksmserver is started which takes control of the rest of the startup sequence
 
 # The user's personal KDE directory is usually ~/.kde, but this setting
 # may be overridden by setting KDEHOME.
@@ -294,7 +291,7 @@ export KDE_FULL_SESSION
 
 # We set LD_BIND_NOW to increase the efficiency of kdeinit.
 # kdeinit unsets this variable before loading applications.
-LD_BIND_NOW=true kdeinit +kcminit
+LD_BIND_NOW=true kdeinit +kcminit_startup
 if test $? -ne 0; then
   # Startup error
   echo 'startkde: Could not start kdeinit. Check your installation.'  1>&2
@@ -312,6 +309,7 @@ if test -n "$DESKTOP_LOCKED"; then
 fi
 
 # finally, give the session control to the session manager
+# see kdebase/ksmserver for the description of the rest of the startup sequence
 # if the KDEWM environment variable has been set, then it will be used as KDE's
 # window manager instead of kwin.
 # if KDEWM is not set, ksmserver will ensure kwin is started.

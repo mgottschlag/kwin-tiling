@@ -90,6 +90,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 void KSMServer::restoreSession( QString sessionName )
 {
+    if( state != Idle )
+        return;
+    state = LaunchingWM;
+
     kDebug( 1218 ) << "KSMServer::restoreSession " << sessionName << endl;
     upAndRunning( "restore session");
     KConfig* config = KGlobal::config();
@@ -113,10 +117,12 @@ void KSMServer::restoreSession( QString sessionName )
         wmCommands << ( QStringList() << wm );
 
     publishProgress( appsToStart, true );
-    connectDCOPSignal( launcher, launcher, "autoStartDone()",
-                       "restoreSessionInternal()", true);
+    connectDCOPSignal( launcher, launcher, "autoStart0Done()",
+                       "autoStart0Done()", true);
+    connectDCOPSignal( launcher, launcher, "autoStart1Done()",
+                       "autoStart1Done()", true);
     connectDCOPSignal( launcher, launcher, "autoStart2Done()",
-                       "restoreSessionDoneInternal()", true);
+                       "autoStart2Done()", true);
     upAndRunning( "ksmserver" );
 
     if ( !wmCommands.isEmpty() ) {
@@ -125,9 +131,9 @@ void KSMServer::restoreSession( QString sessionName )
         // visually more appealing startup.
         for (int i = 0; i < wmCommands.count(); i++)
             startApplication( wmCommands[i] );
-        QTimer::singleShot( 4000, this, SLOT( autoStart() ) );
+        QTimer::singleShot( 4000, this, SLOT( autoStart0() ) );
     } else {
-        autoStart();
+        autoStart0();
     }
 }
 
@@ -138,41 +144,100 @@ void KSMServer::restoreSession( QString sessionName )
  */
 void KSMServer::startDefaultSession()
 {
+    if( state != Idle )
+        return;
+
+    state = LaunchingWM;
     sessionGroup = "";
     publishProgress( 0, true );
     upAndRunning( "ksmserver" );
-    connectDCOPSignal( launcher, launcher, "autoStartDone()",
-                       "autoStart2()", true);
+    connectDCOPSignal( launcher, launcher, "autoStart0Done()",
+                       "autoStart0Done()", true);
+    connectDCOPSignal( launcher, launcher, "autoStart1Done()",
+                       "autoStart1Done()", true);
     connectDCOPSignal( launcher, launcher, "autoStart2Done()",
-                       "restoreSessionDoneInternal()", true);
-    startApplication( QStringList( wm ) );
-    QTimer::singleShot( 4000, this, SLOT( autoStart() ) );
+                       "autoStart2Done()", true);
+    startApplication( QStringList() << wm );
+    QTimer::singleShot( 4000, this, SLOT( autoStart0() ) );
 }
-
-
-void KSMServer::autoStart()
-{
-    static bool beenThereDoneThat = false;
-    if ( beenThereDoneThat )
-        return;
-    beenThereDoneThat = true;
-    DCOPRef( launcher ).send( "autoStart", (int) 1 );
-}
-
-void KSMServer::autoStart2()
-{
-    static bool beenThereDoneThat = false;
-    if ( beenThereDoneThat )
-        return;
-    beenThereDoneThat = true;
-    DCOPRef( launcher ).send( "autoStart", (int) 2 );
-}
-
 
 void KSMServer::clientSetProgram( KSMClient* client )
 {
     if ( !wm.isEmpty() && client->program() == wm )
-        autoStart();
+        autoStart0();
+}
+
+void KSMServer::autoStart0()
+{
+    if( state != LaunchingWM )
+        return;
+    if( !checkStartupSuspend())
+        return;
+    state = AutoStart0;
+    DCOPRef( launcher ).send( "autoStart", (int) 0 );
+}
+
+void KSMServer::autoStart0Done()
+{
+    if( state != AutoStart0 )
+        return;
+    disconnectDCOPSignal( launcher, launcher, "autoStart0Done()",
+                          "autoStart0Done()");
+    if( !checkStartupSuspend())
+        return;
+    kDebug( 1218 ) << "Autostart 0 done" << endl;
+    upAndRunning( "kdesktop" );
+    upAndRunning( "kicker" );
+    connectDCOPSignal( "kcminit", "kcminit", "phase1Done()",
+                       "kcmPhase1Done()", true);
+    state = KcmInitPhase1;
+    QTimer::singleShot( 10000, this, SLOT( kcmPhase1Timeout())); // protection
+    DCOPRef( "kcminit", "kcminit" ).send( "runPhase1" );
+}
+
+void KSMServer::kcmPhase1Done()
+{
+    if( state != KcmInitPhase1 )
+        return;
+    kDebug( 1218 ) << "Kcminit phase 1 done" << endl;
+    disconnectDCOPSignal( "kcminit", "kcminit", "phase1Done()",
+                       "kcmPhase1Done()" );
+    autoStart1();
+}
+
+void KSMServer::kcmPhase1Timeout()
+{
+    if( state != KcmInitPhase1 )
+        return;
+    kDebug( 1218 ) << "Kcminit phase 1 timeout" << endl;
+    kcmPhase1Done();
+}
+
+void KSMServer::autoStart1()
+{
+    if( state != KcmInitPhase1 )
+        return;
+    state = AutoStart1;
+    DCOPRef( launcher ).send( "autoStart", (int) 1 );
+}
+
+void KSMServer::autoStart1Done()
+{
+    if( state != AutoStart1 )
+        return;
+    disconnectDCOPSignal( launcher, launcher, "autoStart1Done()",
+                          "autoStart1Done()");
+    if( !checkStartupSuspend())
+        return;
+    kDebug( 1218 ) << "Autostart 1 done" << endl;
+    lastAppStarted = 0;
+    lastIdStarted = QString::null;
+    state = Restoring;
+    if( defaultSession()) {
+        autoStart2();
+        return;
+    }
+    tryRestoreNext();
 }
 
 void KSMServer::clientRegistered( const char* previousId )
@@ -181,49 +246,10 @@ void KSMServer::clientRegistered( const char* previousId )
         tryRestoreNext();
 }
 
-
-void KSMServer::suspendStartup()
-{
-    ++startupSuspendCount;
-}
-
-void KSMServer::resumeStartup()
-{
-    if( startupSuspendCount > 0 ) {
-        --startupSuspendCount;
-        if( startupSuspendCount == 0 && startupSuspendTimeoutTimer.isActive())
-            restoreNext();
-    }
-}
-
-void KSMServer::startupSuspendTimeout()
-{
-    kDebug( 1218 ) << "Startup suspend timeout" << endl;
-    startupSuspendCount = 0;
-    restoreNext();
-}
-
-void KSMServer::restoreSessionInternal()
-{
-    disconnectDCOPSignal( launcher, launcher, "autoStartDone()",
-                          "restoreSessionInternal()");
-    lastAppStarted = 0;
-    lastIdStarted.clear();
-    tryRestoreNext();
-}
-
 void KSMServer::tryRestoreNext()
 {
-    if( startupSuspendCount > 0 ) {
-        startupSuspendTimeoutTimer.setSingleShot( true );
-        startupSuspendTimeoutTimer.start( 10000 );
+    if( state != Restoring )
         return;
-    }
-    restoreNext();
-}
-
-void KSMServer::restoreNext()
-{
     restoreTimer.stop();
     startupSuspendTimeoutTimer.stop();
     KConfig* config = KGlobal::config();
@@ -258,19 +284,126 @@ void KSMServer::restoreNext()
     autoStart2();
 }
 
-
-void KSMServer::restoreSessionDoneInternal()
+void KSMServer::autoStart2()
 {
+    if( state != Restoring )
+        return;
+    if( !checkStartupSuspend())
+        return;
+    state = FinishingStartup;
+    waitAutoStart2 = true;
+    waitKcmInit2 = true;
+    DCOPRef( launcher ).send( "autoStart", (int) 2 );
+    DCOPRef( "kded", "kded" ).send( "loadSecondPhase" );
+    DCOPRef( "kdesktop", "KDesktopIface" ).send( "runAutoStart" );
+    connectDCOPSignal( "kcminit", "kcminit", "phase2Done()",
+                       "kcmPhase2Done()", true);
+    QTimer::singleShot( 10000, this, SLOT( kcmPhase2Timeout())); // protection
+    DCOPRef( "kcminit", "kcminit" ).send( "runPhase2" );
+    if( !defaultSession())
+        restoreLegacySession( KGlobal::config());
+    KNotifyClient::event( 0, "startkde" ); // this is the time KDE is up, more or less
+}
+
+void KSMServer::autoStart2Done()
+{
+    if( state != FinishingStartup )
+        return;
     disconnectDCOPSignal( launcher, launcher, "autoStart2Done()",
-                          "restoreSessionDoneInternal()");
-#ifndef NO_LEGACY_SESSION_MANAGEMENT
-    restoreLegacySession( KGlobal::config());
-#endif
+                          "autoStart2Done()");
+    kDebug( 1218 ) << "Autostart 2 done" << endl;
+    waitAutoStart2 = false;
+    finishStartup();
+}
+
+void KSMServer::kcmPhase2Done()
+{
+    if( state != FinishingStartup )
+        return;
+    kDebug( 1218 ) << "Kcminit phase 2 done" << endl;
+    disconnectDCOPSignal( "kcminit", "kcminit", "phase2Done()",
+                          "kcmPhase2Done()");
+    waitKcmInit2 = false;
+    finishStartup();
+}
+
+void KSMServer::kcmPhase2Timeout()
+{
+    if( !waitKcmInit2 )
+        return;
+    kDebug( 1218 ) << "Kcminit phase 2 timeout" << endl;
+    kcmPhase2Done();
+}
+
+void KSMServer::finishStartup()
+{
+    if( state != FinishingStartup )
+        return;
+    if( waitAutoStart2 || waitKcmInit2 )
+        return;
+
     upAndRunning( "session ready" );
     DCOPRef( "knotify" ).send( "sessionReady" ); // knotify startup optimization
-    KNotifyClient::event( 0, "startkde" ); // this is the time KDE is up
-
+    state = Idle;
     setupXIOErrorHandler(); // From now on handle X errors as normal shutdown.
+}
+ 
+bool KSMServer::checkStartupSuspend()
+{
+    if( startupSuspendCount.isEmpty())
+        return true;
+    // wait for the phase to finish
+    if( !startupSuspendTimeoutTimer.isActive())
+        startupSuspendTimeoutTimer.start( 10000, true );
+    return false;
+}
+
+void KSMServer::suspendStartup( QString app )
+{
+    if( !startupSuspendCount.contains( app ))
+        startupSuspendCount[ app ] = 0;
+    ++startupSuspendCount[ app ];
+}
+
+void KSMServer::resumeStartup( QString app )
+{
+    if( !startupSuspendCount.contains( app ))
+        return;
+    if( --startupSuspendCount[ app ] == 0 ) {
+        startupSuspendCount.remove( app );
+        if( startupSuspendCount.isEmpty() && startupSuspendTimeoutTimer.isActive()) {
+            startupSuspendTimeoutTimer.stop();
+            resumeStartupInternal();
+        }
+    }
+}
+
+void KSMServer::startupSuspendTimeout()
+{
+    kDebug( 1218 ) << "Startup suspend timeout:" << state << endl;
+    resumeStartupInternal();
+}
+
+void KSMServer::resumeStartupInternal()
+{
+    startupSuspendCount.clear();
+    switch( state ) {
+        case LaunchingWM:
+            autoStart0();
+          break;
+        case AutoStart0:
+            autoStart0Done();
+          break;
+        case AutoStart1:
+            autoStart1Done();
+          break;
+        case Restoring:
+            autoStart2();
+          break;
+        default:
+            kWarning( 1218 ) << "Unknown resume startup state" << endl;
+          break;
+    }
 }
 
 void KSMServer::publishProgress( int progress, bool max  )
@@ -291,4 +424,16 @@ void KSMServer::upAndRunning( const QString& msg )
     assert( strlen( msg.latin1()) < 20 );
     strcpy( e.xclient.data.b, msg.latin1());
     XSendEvent( QX11Info::display(), QX11Info::appRootWindow(), False, SubstructureNotifyMask, &e );
+}
+
+// these two are in the DCOP interface but I have no idea what uses them
+// Remove for KDE4
+void KSMServer::restoreSessionInternal()
+{
+    autoStart1Done();
+}
+
+void KSMServer::restoreSessionDoneInternal()
+{
+    autoStart2Done();
 }

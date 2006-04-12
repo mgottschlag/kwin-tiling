@@ -8,7 +8,6 @@ DocPath=kxkb/index.html
 X-KDE-ModuleType=Library
 X-KDE-Library=keyboard
 X-KDE-FactoryName=keyboard_layout
-X-KDE-Init=keyboard_layout
 X-KDE-ParentApp=kcontrol
 
 Name=Keyboard Layout

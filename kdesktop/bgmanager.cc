@@ -360,6 +360,9 @@ void KBackgroundManager::setPixmap(KPixmap *pm, int hash, int desk)
        { // clear the root window pixmap set by kdm
           root_cleared = true;
 	  QTimer::singleShot( 0, this, SLOT( clearRoot()));
+          // but make the pixmap visible until m_pDesktop is visible
+          QApplication::desktop()->screen()->setErasePixmap(*pm);
+          QApplication::desktop()->screen()->erase();
        }
     }
     else

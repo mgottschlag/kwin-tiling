@@ -584,7 +584,6 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     the_server = this;
     clean = false;
     wm = windowManager;
-    startupSuspendCount = 0;
 
     shutdownType = KWorkSpace::ShutdownTypeNone;
 
@@ -906,4 +905,9 @@ bool KSMServer::isWM( const KSMClient* client ) const
     // it later
     return client->program() == wm
         || client->program() == "kwin";
+}
+
+bool KSMServer::defaultSession() const
+{
+    return sessionGroup.isEmpty();
 }

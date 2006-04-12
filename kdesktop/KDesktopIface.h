@@ -13,6 +13,11 @@ public:
 
 k_dcop:
     /**
+     * @internal
+     */
+    virtual void runAutoStart() = 0;
+
+    /**
      * Re-arrange the desktop icons.
      */
     virtual void rearrangeIcons() = 0;

@@ -53,7 +53,7 @@ static const char version[] = VERSION;
 static KCmdLineOptions options[] =
 {
    { "x-root", I18N_NOOP("Use this if the desktop window appears as a real window"), 0 },
-   { "noautostart", I18N_NOOP("Use this to disable the Autostart folder"), 0 },
+   { "noautostart", I18N_NOOP("Obsolete"), 0 },
    { "waitforkded", I18N_NOOP("Wait for kded to finish building database"), 0 },
    KCmdLineLastOption
 };
@@ -66,7 +66,7 @@ static void crashHandler(int sigId)
 {
     DCOPClient::emergencyClose(); // unregister DCOP
     sleep( 1 );
-    system("kdesktop --noautostart &"); // try to restart
+    system("kdesktop &"); // try to restart
     fprintf(stderr, "*** kdesktop (%ld) got signal %d\n", (long) getpid(), sigId);
     ::exit(1);
 }
@@ -169,7 +169,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
     cl->attach();
     DCOPRef r( "ksmserver", "ksmserver" );
     r.setDCOPClient( cl );
-    r.send( "suspendStartup" );
+    r.send( "suspendStartup", QString( "kdesktop" ));
     delete cl;
     KUniqueApplication app;
     app.disableSessionManagement(); // Do SM, but don't restart.
@@ -178,7 +178,6 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     bool x_root_hack = args->isSet("x-root");
-    bool auto_start = args->isSet("autostart");
     bool wait_for_kded = args->isSet("waitforkded");
 
     // This MUST be created before any widgets are created
@@ -201,7 +200,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
     KSelectionOwner kde_running( "_KDE_RUNNING", 0 );
     kde_running.claim( false );
 
-    KDesktop desktop( x_root_hack, auto_start, wait_for_kded );
+    KDesktop desktop( x_root_hack, wait_for_kded );
 
     args->clear();
 

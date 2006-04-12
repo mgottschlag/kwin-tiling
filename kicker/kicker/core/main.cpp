@@ -162,7 +162,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
     cl->attach();
     DCOPRef r("ksmserver", "ksmserver");
     r.setDCOPClient(cl);
-    r.send("suspendStartup");
+    r.send( "suspendStartup", QString( "kicker" ));
     delete cl;
 
     Kicker kicker;

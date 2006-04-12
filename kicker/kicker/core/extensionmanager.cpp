@@ -170,7 +170,7 @@ void ExtensionManager::initialize()
     pm->clearUntrustedLists();
     connect(Kicker::self(), SIGNAL(configurationChanged()), SLOT(configurationChanged()));
     DCOPRef r("ksmserver", "ksmserver");
-    r.send("resumeStartup");
+    r.send( "resumeStartup", QString( "kicker" ));
 }
 
 void ExtensionManager::configureMenubar(bool duringInit)

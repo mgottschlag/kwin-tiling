@@ -66,7 +66,7 @@ public:
 
   enum WheelDirection { Forward = 0, Reverse };
 
-  KDesktop(bool x_root_hack, bool auto_start, bool wait_for_kded );
+  KDesktop(bool x_root_hack, bool wait_for_kded );
   ~KDesktop();
 
   // Implementation of the DCOP interface
@@ -83,6 +83,7 @@ public:
   virtual void refresh();
   virtual void logout();
   virtual void clearCommandHistory();
+  virtual void runAutoStart();
 
   virtual void switchDesktops( int delta );
 
@@ -186,9 +187,6 @@ private:
 
   /** Set to true until start() has been called */
   bool m_bInit;
-
-  /** Execute files from autoexec folder? */
-  bool m_bAutoStart;
 
   /** Wait for kded to finish building database? */
   bool m_bWaitForKded;

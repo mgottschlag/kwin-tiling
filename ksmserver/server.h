@@ -49,6 +49,11 @@ K_DCOP
 k_dcop:
     void notifySlot(QString,QString,QString,QString,QString,int,int,int,int);
     void logoutSoundFinished(int,int);
+    void autoStart0Done();
+    void autoStart1Done();
+    void autoStart2Done();
+    void kcmPhase1Done();
+    void kcmPhase2Done();
 public:
     KSMServer( const QString& windowManager, bool only_local );
     ~KSMServer();
@@ -81,8 +86,8 @@ public:
                    KWorkSpace::ShutdownType sdtype,
                    KWorkSpace::ShutdownMode sdmode );
 
-    virtual void suspendStartup();
-    virtual void resumeStartup();
+    virtual void suspendStartup( QString app );
+    virtual void resumeStartup( QString app );
 
 public Q_SLOTS:
     void cleanUp();
@@ -96,11 +101,13 @@ private Q_SLOTS:
     void protectionTimeout();
     void timeoutQuit();
     void knotifyTimeout();
+    void kcmPhase1Timeout();
+    void kcmPhase2Timeout();
 
-    void autoStart();
+    void autoStart0();
+    void autoStart1();
     void autoStart2();
     void tryRestoreNext();
-    void restoreNext();
     void startupSuspendTimeout();
 
 private:
@@ -122,6 +129,7 @@ private:
     void executeCommand( const QStringList& command );
 
     bool isWM( const KSMClient* client ) const;
+    bool defaultSession() const; // empty session
     void setupXIOErrorHandler();
 
     void performLegacySessionSave();
@@ -132,6 +140,10 @@ private:
     QString windowWmClientMachine(WId w);
     WId windowWmClientLeader(WId w);
     QByteArray windowSessionId(WId w, WId leader);
+
+    bool checkStartupSuspend();
+    void finishStartup();
+    void resumeStartupInternal();
 
     // public dcop interface
     void logout( int, int, int );
@@ -144,13 +156,18 @@ private:
     QList<KSMListener*> listener;
     QList<KSMClient*> clients;
 
-    enum State { Idle, Shutdown, Checkpoint, Killing, Killing2, WaitingForKNotify };
+    enum State
+        {
+        Idle,
+        LaunchingWM, AutoStart0, KcmInitPhase1, AutoStart1, Restoring, FinishingStartup, // startup
+        Shutdown, Checkpoint, Killing, Killing2, WaitingForKNotify // shutdown
+        };
     State state;
     bool dialogActive;
     bool saveSession;
     int wmPhase1WaitingCount;
     int saveType;
-    int startupSuspendCount;
+    QMap< QString, int > startupSuspendCount;
 
     KWorkSpace::ShutdownType shutdownType;
     KWorkSpace::ShutdownMode shutdownMode;
@@ -168,6 +185,8 @@ private:
     int logoutSoundEvent;
     QTimer knotifyTimeoutTimer;
     QTimer startupSuspendTimeoutTimer;
+    bool waitAutoStart2;
+    bool waitKcmInit2;
 
     // ksplash interface
     void upAndRunning( const QString& msg );

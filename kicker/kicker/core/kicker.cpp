@@ -46,13 +46,7 @@
 #include <kstandarddirs.h>
 #include <kwin.h>
 #include <kwinmodule.h>
-
-#ifdef Q_WS_X11
-#include <X11/Xlib.h>
-#include <fixx11h.h>
-#include <QX11Info>
 #include <kauthorized.h>
-#endif
 
 #include "extensionmanager.h"
 #include "pluginmanager.h"
@@ -104,18 +98,6 @@ Kicker::Kicker()
     }
 
     dcopClient()->setDefaultObject("Panel");
-    dcopClient()->send("ksplash", "", "upAndRunning(QString)", QString::fromLocal8Bit(KCmdLineArgs::appName()));
-
-#ifdef Q_WS_X11
-    XEvent e;
-    e.xclient.type = ClientMessage;
-    e.xclient.message_type = XInternAtom( QX11Info::display(), "_KDE_SPLASH_PROGRESS", False );
-    e.xclient.display = QX11Info::display();
-    e.xclient.window = QX11Info::appRootWindow();
-    e.xclient.format = 8;
-    strcpy( e.xclient.data.b, "kicker" );
-    XSendEvent( QX11Info::display(), QX11Info::appRootWindow(), False, SubstructureNotifyMask, &e );
-#endif
 
     disableSessionManagement();
     QString dataPathBase = KStandardDirs::kde_default("data").append("kicker/");

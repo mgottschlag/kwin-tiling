@@ -60,13 +60,6 @@
 #include <QX11Info>
 #include <QDesktopWidget>
 
-// root window hack
-#include <X11/X.h>
-#include <X11/Xos.h>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-// ----
-
 KRootWidget::KRootWidget() : QObject()
 {
      kapp->desktop()->installEventFilter(this);
@@ -130,13 +123,12 @@ extern int kdesktop_screen_number;
 KDesktop::WheelDirection KDesktop::m_eWheelDirection = KDesktop::m_eDefaultWheelDirection;
 const char* KDesktop::m_wheelDirectionStrings[2] = { "Forward", "Reverse" };
 
-KDesktop::KDesktop( bool x_root_hack, bool auto_start, bool wait_for_kded ) :
+KDesktop::KDesktop( bool x_root_hack, bool wait_for_kded ) :
     DCOPObject( "KDesktopIface" ),
     QWidget( 0L, "desktop", Qt::WResizeNoErase | ( x_root_hack ? (Qt::WStyle_NoBorder) : ( Qt::WFlags )0 ) ),
     // those two WStyle_ break kdesktop when the root-hack isn't used (no Dnd)
    startup_id( NULL )
 {
-  m_bAutoStart = auto_start;
   m_bWaitForKded = wait_for_kded;
   m_miniCli = 0; // created on demand
   m_actionCollection = 0; // created later
@@ -286,7 +278,7 @@ KDesktop::initRoot()
      }
    } else {
      DCOPRef r( "ksmserver", "ksmserver" );
-     r.send( "resumeStartup" );
+     r.send( "resumeStartup", QString( "kdesktop" ));
    }
 
    KWin::setType( winId(), NET::Desktop );
@@ -298,9 +290,6 @@ void
 KDesktop::backgroundInitDone()
 {
     //kDebug(1204) << "KDesktop::backgroundInitDone" << endl;
-    DCOPRef r( "ksmserver", "ksmserver" );
-    r.send( "resumeStartup" );
-
     // avoid flicker
     if (m_bDesktopEnabled)
     {
@@ -309,7 +298,11 @@ KDesktop::backgroundInitDone()
           m_pIconView->setErasePixmap( *bg );
 
        show();
+       kapp->sendPostedEvents();
     }
+
+    DCOPRef r( "ksmserver", "ksmserver" );
+    r.send( "resumeStartup", QString( "kdesktop" ));
 }
 
 void
@@ -317,19 +310,6 @@ KDesktop::slotStart()
 {
   //kDebug(1204) << "KDesktop::slotStart" << endl;
   if (!m_bInit) return;
-
-  kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)", QString("kdesktop"));
-#ifdef Q_WS_X11
-  XEvent e;
-  e.xclient.type = ClientMessage;
-  e.xclient.message_type = XInternAtom( QX11Info::display(), "_KDE_SPLASH_PROGRESS", False );
-  e.xclient.display = QX11Info::display();
-  e.xclient.window = QX11Info::appRootWindow();
-  e.xclient.format = 8;
-  strcpy( e.xclient.data.b, "kdesktop" );
-  XSendEvent( QX11Info::display(), QX11Info::appRootWindow(), False, SubstructureNotifyMask, &e );
-#endif
-
 
   initConfig();
 
@@ -355,8 +335,14 @@ KDesktop::slotStart()
 
   m_actionCollection->readSettings();
 
-  if ( m_bAutoStart )
-  {
+  connect(kapp, SIGNAL(appearanceChanged()), SLOT(slotConfigure()));
+
+  QTimer::singleShot(300, this, SLOT( slotUpAndRunning() ));
+}
+
+void
+KDesktop::runAutoStart()
+{
      // now let's execute all the stuff in the autostart folder.
      // the stuff will actually be really executed when the event loop is
      // entered, since KRun internally uses a QTimer
@@ -376,11 +362,6 @@ KDesktop::slotStart()
                 (void) new KRun( url, 0, true );
             }
      }
-   }
-
-  connect(kapp, SIGNAL(appearanceChanged()), SLOT(slotConfigure()));
-
-  QTimer::singleShot(300, this, SLOT( slotUpAndRunning() ));
 }
 
 // -----------------------------------------------------------------------------

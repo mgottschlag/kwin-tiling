@@ -8,3 +8,4 @@ Name[x-test]=xxKDE Desktopxx
 Type=Service
 X-KDE-StartupNotify=false
 OnlyShowIn=KDE;
+X-KDE-autostart-phase=0

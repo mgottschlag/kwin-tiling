@@ -20,8 +20,8 @@ k_dcop:
 
   virtual void autoStart2() = 0;
   
-  virtual void suspendStartup() = 0;
-  virtual void resumeStartup() = 0;
+  virtual void suspendStartup( QString ) = 0;
+  virtual void resumeStartup( QString ) = 0;
 };
 
 #endif

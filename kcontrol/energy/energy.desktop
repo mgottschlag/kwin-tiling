@@ -7,6 +7,7 @@ Type=Application
 X-KDE-Library=energy
 X-KDE-Init=energy
 X-KDE-ParentApp=kcontrol
+X-KDE-Init-Phase=2
 
 Name=Power Control
 Name[fr]=Contrôle de l'énergie

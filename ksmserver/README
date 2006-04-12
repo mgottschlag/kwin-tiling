@@ -1,8 +1,8 @@
 KDE session manager  (ksmserver)
 --------------------------------
 
-Thu Apr 6 2000
 Matthias Ettrich <ettrich@kde.org>
+Lubos Lunak <l.lunak@kde.org>
 
 ksmserver is KDE's new session management server. It talks the
 standard X11R6 session management protocol (XSMP).  Thus, in theory,
@@ -43,9 +43,66 @@ the specified one. As a special feature, ksmserver always starts the
 specified window manager first, which results in a much nicer startup
 sequence (less flashy).
 
-A typical KDE setup starts all the daemons, initialization programs
-and persistent desktop tools (like kdesktop and kicker) outside the
-session and then gives control to ksmserver.
+KDE startup sequence
+--------------------
+
+Ksmserver controls the second part of the KDE startup sequence,
+after it gets control from the startkde script, which controls
+the first part of the startup sequence. All code related to startup
+should be in startup.cpp and going down in that source file should
+follow the startup order (but note that this is just a documentation
+which may get outdated, so in case of doubts the source wins ;) ).
+
+The startkde scripts already launches kdeinit, which in turns launches
+KDE daemons like dcopserver, klauncher and kded. Kded loads autoloaded
+kded modules, i.e. those that have X-KDE-Kded-autoload=true in .desktop
+files. The exact way autoloading works is controlled by X-KDE-Kded-phase=,
+which may be 0, 1 or 2 (the default). Kded phase 0 means the module is
+always loaded by kded, even outside of KDE session. It should used only
+by kded modules which must be always running. Kded phase 1 modules are
+loaded right after kded startup, but only during KDE startup, i.e. it is
+for modules that are always needed by the KDE session. Phase 2 modules
+will be loaded later.
+
+Startkde also launches kcminit, which performs initialization done by kcontrol
+modules. There are three kcminit phases, 0, 1 and 2, controlled
+by X-KDE-Init-Phase= in the .desktop file, which defaults to 1. Phase 0 kcminit
+modules should be only those that really need to be run early in the startup
+process (and those should probably actually use kstartupconfig in startkde
+to be done even before kdeinit and daemons). After executing phase 0
+modules kcminit returns and waits.
+
+When ksmserver is launched, the first thing it does is launching
+the window manager, as the WM is necessary before any windows are possibly
+shown. When the WM is ready, ksmserver tells klauncher to perform autostart
+phase 0 ($KDEHOME/share/autostart). There are 3 autostart phases, 0, 1 and 2,
+defined by X-KDE-autostart-phase, defaulting to 2. Phase 0 is reserved only
+for the actual visible base components of KDE, i.e. KDesktop and Kicker,
+in order to make the startup appear visually faster. Both KDesktop and Kicker
+use DCOP calls suspendStartup() and resumeStartup() to make ksmserver stay
+waiting for autostart phase 0 until both KDesktop and Kicker are ready.
+
+Next step is telling the waiting kcminit to perform phase 1 - all kcminit
+modules that should be executed before KDE startup is considered done.
+After that ksmserver tells klauncher to perform autostart phase 1,
+i.e. launching normal components of KDE that should be available right
+after KDE startup, and after this session restore is performed,
+i.e. launching all applications that were running during last session
+saving (usually logout).
+
+By this time KDE session is considered to be more or less ready and
+ksmserver does the knotify startkde event (i.e. plays the login sound).
+It also tells klauncher to perform autostart phase 2, kded to load all
+remaining autoload (i.e. kded phase 2) modules, kcminit to execute
+kcminit phase 2 (kcontrol modules that do initialization that can wait,
+like launching daemons) and kdesktop to execute the user Autostart folder.
+
+Technical note: There's a reason why kded modules and items in autostart
+default to the latest phase. Before you explicitly use a different phase,
+read and understand what's above. You should also consider whether something
+really needs to be launched during KDE startup and can't be loaded on-demand
+when really needed. Abusing the phases will result in public spanking
+for making KDE startup slower.
 
 
 Establishing the connection

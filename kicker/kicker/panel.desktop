@@ -9,3 +9,4 @@ X-KDE-autostart-after=kdesktop
 DocPath=kicker/index.html
 Type=Service
 OnlyShowIn=KDE;
+X-KDE-autostart-phase=0

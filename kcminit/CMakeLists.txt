@@ -8,6 +8,8 @@ include_directories(  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${
 
 set(kcminit_KDEINIT_SRCS main.cpp )
 
+kde4_add_dcop_skels(kcminit_KDEINIT_SRCS main.h )
+
 kde4_automoc(${kcminit_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kcminit ${kcminit_KDEINIT_SRCS})
@@ -18,6 +20,25 @@ install_targets(${LIB_INSTALL_DIR} kdeinit_kcminit )
 
 target_link_libraries( kcminit kdeinit_kcminit )
 install_targets(/bin kcminit )
+
+########### next target ###############
+
+# TODO might be simpler to make <whatever>_startup to be a symlink to <whatever>
+
+set(kcminit_startup_KDEINIT_SRCS main.cpp )
+
+kde4_add_dcop_skels(kcminit_startup_KDEINIT_SRCS main.h )
+
+kde4_automoc(${kcminit_startup_KDEINIT_SRCS})
+
+kde4_add_kdeinit_executable( kcminit_startup ${kcminit_startup_KDEINIT_SRCS})
+
+target_link_libraries(kdeinit_kcminit_startup  ${KDE4_KIO_LIBS} kutils )
+
+install_targets(${LIB_INSTALL_DIR} kdeinit_kcminit_startup )
+
+target_link_libraries( kcminit_startup kdeinit_kcminit_startup )
+install_targets(/bin kcminit_startup )
 
 ########### install files ###############
 

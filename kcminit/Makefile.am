@@ -17,14 +17,17 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 # 
 
-kdeinit_LTLIBRARIES = kcminit.la
+kdeinit_LTLIBRARIES = kcminit.la kcminit_startup.la
 bin_PROGRAMS=
 lib_LTLIBRARIES=
 
-kcminit_la_SOURCES = main.cpp
+kcminit_la_SOURCES = main.cpp main.skel
 kcminit_la_LIBADD = $(LIB_KDEUI) $(LIB_KUTILS)
 kcminit_la_LDFLAGS = $(all_libraries) -module -avoid-version
 
+kcminit_startup_la_SOURCES = main.cpp main.skel
+kcminit_startup_la_LIBADD = $(LIB_KDEUI) $(LIB_KUTILS)
+kcminit_startup_la_LDFLAGS = $(all_libraries) -module -avoid-version
+
 AM_CPPFLAGS = $(all_includes)
 METASOURCES = AUTO
-
