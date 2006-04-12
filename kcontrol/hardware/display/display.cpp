@@ -46,7 +46,9 @@ KCMDisplay::KCMDisplay( QWidget *parent, const char *name, const QStringList& )
     addTab( "xinerama", i18n( "Multiple Monitors" ) );
   addTab( "energy", i18n( "Power Control" ) );
 
-  QVBoxLayout *top = new QVBoxLayout( this, 0, KDialog::spacingHint() );
+  QVBoxLayout *top = new QVBoxLayout( this );
+  top->setMargin( 0 );
+  top->setSpacing( KDialog::spacingHint() );
   top->addWidget( m_tabs );
 
   setButtons( Apply|Help );
@@ -56,7 +58,8 @@ KCMDisplay::KCMDisplay( QWidget *parent, const char *name, const QStringList& )
 void KCMDisplay::addTab( const QString &name, const QString &label )
 {
   QWidget *page = new QWidget( m_tabs, name.latin1() );
-  QVBoxLayout *top = new QVBoxLayout( page, KDialog::marginHint() );
+  QVBoxLayout *top = new QVBoxLayout( page );
+  top->setMargin( KDialog::marginHint() );
 
   KCModule *kcm = KCModuleLoader::loadModule( name, KCModuleLoader::None,page );
 

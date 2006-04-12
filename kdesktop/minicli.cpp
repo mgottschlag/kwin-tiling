@@ -85,7 +85,10 @@ Minicli::Minicli( QWidget *parent, const char *name)
   setPlainCaption( i18n("Run Command") );
   KWin::setIcons( winId(), DesktopIcon("run"), SmallIcon("run") );
 
-  QVBoxLayout* mainLayout = new QVBoxLayout( this, 0, KDialog::spacingHint() );
+  QVBoxLayout* mainLayout = new QVBoxLayout( this );
+  mainLayout->setMargin(0);
+  mainLayout->setSpacing(KDialog::spacingHint());
+  
   m_dlg = new MinicliDlgUI (this);
   mainLayout->addWidget(m_dlg);
 

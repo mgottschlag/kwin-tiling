@@ -61,8 +61,10 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 {
   QString wtstr;
 
-  QVBoxLayout *vbox = new QVBoxLayout(this, KDialog::marginHint(),
-                      KDialog::spacingHint(), "vbox");
+  QVBoxLayout *vbox = new QVBoxLayout(this);
+  vbox->setMargin(KDialog::marginHint());
+  vbox->setSpacing(KDialog::spacingHint());
+
   Q3GroupBox *group = new Q3GroupBox(i18n("Appearance"), this);
   vbox->addWidget(group);
 

@@ -191,7 +191,8 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
 
     group = new Q3GroupBox(i18n("&Widget Color"), this);
     stackLayout->addWidget(group);
-    QBoxLayout *groupLayout = new QVBoxLayout(group, 10);
+    QBoxLayout *groupLayout = new QVBoxLayout(group);
+    groupLayout->setMargin(10);
     groupLayout->addSpacing(10);
 
     wcCombo = new QComboBox(false, group);
@@ -253,7 +254,8 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     group = new Q3GroupBox(  i18n("Con&trast"), this );
     stackLayout->addWidget(group);
 
-    QVBoxLayout *groupLayout2 = new QVBoxLayout(group, 10);
+    QVBoxLayout *groupLayout2 = new QVBoxLayout(group);
+    groupLayout2->setMargin(10);
     groupLayout2->addSpacing(10);
     groupLayout = new QHBoxLayout;
     groupLayout2->addLayout(groupLayout);

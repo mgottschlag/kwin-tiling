@@ -93,8 +93,10 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // Date box
   Q3GroupBox* dateBox = new Q3GroupBox( this, "dateBox" );
 
-  QVBoxLayout *l1 = new QVBoxLayout( dateBox, KDialog::spacingHint() );
-
+  QVBoxLayout *l1 = new QVBoxLayout( dateBox ); 
+  l1->setMargin( 0 );
+  l1->setSpacing( KDialog::spacingHint() );
+  
   cal = new KDatePicker( dateBox );
   cal->setMinimumSize(cal->sizeHint());
   l1->addWidget( cal );
@@ -103,7 +105,9 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // Time frame
   Q3GroupBox* timeBox = new Q3GroupBox( this, "timeBox" );
 
-  QVBoxLayout *v2 = new QVBoxLayout( timeBox, KDialog::spacingHint() );
+  QVBoxLayout *v2 = new QVBoxLayout( timeBox );
+  v2->setMargin( 0 );
+  v2->setSpacing( KDialog::spacingHint() );
 
   kclock = new Kclock( timeBox, "kclock" );
   kclock->setMinimumSize(150,150);

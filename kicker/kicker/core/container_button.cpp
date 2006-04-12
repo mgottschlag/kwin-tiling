@@ -131,7 +131,9 @@ void ButtonContainer::embedButton(PanelButton* b)
     if (!b) return;
 
     delete _layout;
-    _layout = new QVBoxLayout(this, 0, 0);
+    _layout = new QVBoxLayout(this);
+    _layout->setMargin(0);
+    _layout->setSpacing(0);
     _button = b;
 
     _button->installEventFilter(this);

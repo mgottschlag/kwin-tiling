@@ -64,7 +64,9 @@ K_EXPORT_COMPONENT_FACTORY( kcm_knotify, NotifyFactory("kcmnotify") )
                 "any additional visual or audible alert."
                 "</ul>"));
 
-	QVBoxLayout *layout = new QVBoxLayout( this, 0, KDialog::spacingHint() );
+	QVBoxLayout *layout = new QVBoxLayout( this );
+	layout->setMargin( 0 );
+	layout->setSpacing( KDialog::spacingHint() );
 	QTabWidget *tab = new QTabWidget(this);
 	layout->addWidget(tab);
 

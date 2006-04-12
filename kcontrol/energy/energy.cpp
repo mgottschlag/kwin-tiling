@@ -163,7 +163,9 @@ KEnergy::KEnergy(KInstance *inst, QWidget *parent)
     m_bDPMS = DPMSQueryExtension(QX11Info::display(), &dummy, &dummy);
 #endif
 
-    QVBoxLayout *top = new QVBoxLayout(this, 0, KDialog::spacingHint());
+    QVBoxLayout *top = new QVBoxLayout(this);
+    top->setMargin(0);
+    top->setSpacing(KDialog::spacingHint());
     QHBoxLayout *hbox = new QHBoxLayout();
     top->addLayout(hbox);
 

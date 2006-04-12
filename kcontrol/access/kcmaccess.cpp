@@ -70,7 +70,8 @@ void ExtendedIntNumInput::setRange(int min, int max, int step, bool slider) {
 		sliderMax = (int)floor (0.5
 				+ 2*(log(max)-log(min)) / (log(max)-log(max-1)));
 		m_slider->setRange(0, sliderMax);
-		m_slider->setSteps(step, sliderMax/10);
+		m_slider->setSingleStep(step);
+		m_slider->setPageStep(sliderMax/10);
 		m_slider->setTickInterval(sliderMax/10);
 
 		double alpha  = sliderMax / (log(max) - log(min));
@@ -240,15 +241,18 @@ KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
 
   setAboutData( about );
 
-  QVBoxLayout *main = new QVBoxLayout(this, 0, KDialogBase::spacingHint());
+  QVBoxLayout *main = new QVBoxLayout(this);
+  main->setMargin(0);
+  main->setSpacing(KDialogBase::spacingHint());
   QTabWidget *tab = new QTabWidget(this);
   main->addWidget(tab);
 
   // bell settings ---------------------------------------
   QWidget *bell = new QWidget(this);
 
-  QVBoxLayout *vbox = new QVBoxLayout(bell, KDialogBase::marginHint(), 
-      KDialogBase::spacingHint());
+  QVBoxLayout *vbox = new QVBoxLayout(bell);
+  vbox->setMargin(KDialogBase::marginHint());
+  vbox->setSpacing(KDialogBase::spacingHint());
 
   Q3GroupBox *grp = new Q3GroupBox(i18n("Audible Bell"), bell);
   grp->setColumnLayout( 0, Qt::Horizontal );
@@ -353,7 +357,9 @@ KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
   // modifier key settings -------------------------------
   QWidget *modifiers = new QWidget(this);
 
-  vbox = new QVBoxLayout(modifiers, KDialog::marginHint(), KDialog::spacingHint());
+  vbox = new QVBoxLayout(modifiers);
+  vbox->setMargin(KDialog::marginHint());
+  vbox->setSpacing(KDialog::spacingHint());
 
   grp = new Q3GroupBox(i18n("S&ticky Keys"), modifiers);
   grp->setColumnLayout( 0, Qt::Horizontal );
@@ -415,8 +421,9 @@ KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
   // key filter settings ---------------------------------
   QWidget *filters = new QWidget(this);
 
-  vbox = new QVBoxLayout(filters, KDialog::marginHint(), KDialog::spacingHint());
-
+  vbox = new QVBoxLayout(filters);
+  vbox->setMargin(KDialog::marginHint());
+  vbox->setSpacing(KDialog::spacingHint());
   grp = new Q3GroupBox(i18n("Slo&w Keys"), filters);
   grp->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(grp);
@@ -491,7 +498,9 @@ KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
   // gestures --------------------------------------------
   QWidget *features = new QWidget(this);
 
-  vbox = new QVBoxLayout(features, KDialog::marginHint(), KDialog::spacingHint());
+  vbox = new QVBoxLayout(features);
+  vbox->setMargin(KDialog::marginHint());
+  vbox->setSpacing(KDialog::spacingHint());
 
   grp = new Q3GroupBox(i18n("Activation Gestures"), features);
   grp->setColumnLayout( 0, Qt::Horizontal );

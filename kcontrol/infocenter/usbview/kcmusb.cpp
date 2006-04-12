@@ -37,7 +37,10 @@ USBViewer::USBViewer(QWidget *parent, const char *, const QStringList &)
   setQuickHelp( i18n("<h1>USB Devices</h1> This module allows you to see"
      " the devices attached to your USB bus(es)."));
 
-  QVBoxLayout *vbox = new QVBoxLayout(this, 0, KDialog::spacingHint());
+  QVBoxLayout *vbox = new QVBoxLayout(this);
+  vbox->setMargin(0);
+  vbox->setSpacing(KDialog::spacingHint());
+
   Q3GroupBox *gbox = new Q3GroupBox(i18n("USB Devices"), this);
   gbox->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(gbox);

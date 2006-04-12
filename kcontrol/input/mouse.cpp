@@ -88,7 +88,9 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
 
     QString wtstr;
 
-    QBoxLayout *top = new QVBoxLayout(this, 0, KDialog::spacingHint());
+    QBoxLayout *top = new QVBoxLayout(this);
+    top->setMargin(0);
+    top->setSpacing(KDialog::spacingHint());
 
     tabwidget = new QTabWidget(this);
     top->addWidget(tabwidget);
@@ -136,8 +138,9 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
     QWhatsThis::add( tab1->cbAutoSelect, wtstr );
 
 //    slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, tab1);
-    tab1->slAutoSelect->setSteps( 125, 125 );
-    tab1->slAutoSelect->setTickmarks( QSlider::TicksBelow );
+    tab1->slAutoSelect->setSingleStep( 125 );
+    tab1->slAutoSelect->setPageStep( 125 );
+    tab1->slAutoSelect->setTickPosition( QSlider::TicksBelow );
     tab1->slAutoSelect->setTickInterval( 250 );
     tab1->slAutoSelect->setTracking( true );
 
@@ -184,8 +187,9 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
     tab2 = new QWidget(0, "Advanced Tab");
     tabwidget->addTab(tab2, i18n("Advanced"));
 
-    QBoxLayout *lay = new QVBoxLayout(tab2, KDialog::marginHint(),
-              KDialog::spacingHint());
+    QBoxLayout *lay = new QVBoxLayout(tab2);
+    lay->setMargin(KDialog::marginHint());
+    lay->setSpacing(KDialog::spacingHint());
 
     accel = new KDoubleNumInput(1, 20, 2, tab2,0.1, 1);
     accel->setLabel(i18n("Pointer acceleration:"));
@@ -290,8 +294,9 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
   tabwidget->addTab(mouse, i18n("Mouse Navigation"));
 
 
-  QBoxLayout *vbox = new QVBoxLayout(mouse, KDialog::marginHint(),
-    KDialog::spacingHint());
+  QBoxLayout *vbox = new QVBoxLayout(mouse);
+  vbox->setMargin(KDialog::marginHint());
+  vbox->setSpacing(KDialog::spacingHint());
 
   QVBoxLayout *vvbox = new QVBoxLayout(mouse->layout(), KDialog::spacingHint());
 

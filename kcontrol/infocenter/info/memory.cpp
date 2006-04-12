@@ -118,7 +118,9 @@ KMemoryWidget::KMemoryWidget(KInstance *inst,QWidget * parent)
     /* default string for no Information... */
     Not_Available_Text = i18n("Not available.");
 
-    QVBoxLayout *top = new QVBoxLayout(this, 0, KDialog::spacingHint());
+    QVBoxLayout *top = new QVBoxLayout(this);
+    top->setMargin(0);
+    top->setSpacing(KDialog::spacingHint());
 
     QHBoxLayout *hbox = new QHBoxLayout();
     top->addLayout(hbox);

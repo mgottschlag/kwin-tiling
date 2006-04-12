@@ -101,7 +101,8 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QWhatsThis::add( bm_label, wtstr );
       QWhatsThis::add( bm_combo, wtstr );
 
-      QBoxLayout *main = new QVBoxLayout( this, 10 );
+      QBoxLayout *main = new QVBoxLayout( this );
+      main->setMargin( 10 );
       QGridLayout *lgroup0 = new QGridLayout( group0, 1, 1, 10);
       QGridLayout *lgroup1 = new QGridLayout( group1, 1, 1, 10);
       QGridLayout *lgroup4 = new QGridLayout( group4, 1, 1, 10);

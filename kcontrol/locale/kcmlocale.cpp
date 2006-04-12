@@ -67,7 +67,9 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
           SLOT(slotCheckButtons()));
 
   QWidget * vb = new QWidget(this);
-  QVBoxLayout * boxlay = new QVBoxLayout(vb, 0, KDialog::spacingHint());
+  QVBoxLayout * boxlay = new QVBoxLayout(vb);
+  boxlay->setMargin(0);
+  boxlay->setSpacing(KDialog::spacingHint());
   m_addLanguage = new KLanguageButton(QString(), vb );
   m_addLanguage->setObjectName( I18N_NOOP("Add Language") );
   boxlay->add(m_addLanguage);

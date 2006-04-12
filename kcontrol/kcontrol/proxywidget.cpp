@@ -228,8 +228,9 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   connect(_reset, SIGNAL(clicked()), SLOT(resetClicked()));
   connect(_root, SIGNAL(clicked()), SLOT(rootClicked()));
 
-  QVBoxLayout *top = new QVBoxLayout(this, KDialog::marginHint(), 
-      KDialog::spacingHint());
+  QVBoxLayout *top = new QVBoxLayout(this);
+  top->setMargin(KDialog::marginHint());
+  top->setSpacing(KDialog::spacingHint());
   top->addWidget(view);
   top->addWidget(_sep);
 

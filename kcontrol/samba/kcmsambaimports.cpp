@@ -36,8 +36,9 @@ ImportsView::ImportsView(QWidget * parent, KConfig *config, const char * name )
    ,configFile(config)
    ,list(this)
 {
-    QBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
-        KDialog::spacingHint());
+    QBoxLayout *topLayout = new QVBoxLayout(this);
+    topLayout->setMargin(KDialog::marginHint());
+    topLayout->setSpacing(KDialog::spacingHint());
     topLayout->setAutoAdd(true);
 
     list.setAllColumnsShowFocus(true);

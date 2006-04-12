@@ -42,11 +42,12 @@ K_EXPORT_COMPONENT_FACTORY( kcm_launch, LaunchFactory("kcmlaunch") )
 LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringList &)
   : KCModule(LaunchFactory::instance(), parent)
 {
-    QVBoxLayout* Form1Layout = new QVBoxLayout( this, 0, 
-        KDialog::spacingHint() );
+    QVBoxLayout* Form1Layout = new QVBoxLayout( this );
+    Form1Layout->setMargin( 0 );
+    Form1Layout->setSpacing( KDialog::spacingHint() );
 
     setQuickHelp( i18n ( "<h1>Launch Feedback</h1>"
-     " You can configure the application-launch feedback here."));
+     " You can configure the application-launch feedback here." ) );
 
     Q3GroupBox* GroupBox1 = new Q3GroupBox( this, "GroupBox1" );
     GroupBox1->setTitle( i18n( "Bus&y Cursor" ) );

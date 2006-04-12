@@ -61,7 +61,9 @@ KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList 
 
   KGlobal::locale()->insertCatalog("timezones"); // For time zone translations
 
-  QVBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
+  QVBoxLayout *layout = new QVBoxLayout(this);
+  layout->setMargin(0);
+  layout->setSpacing(KDialog::spacingHint());
 
   dtime = new Dtime(this);
   layout->addWidget(dtime);

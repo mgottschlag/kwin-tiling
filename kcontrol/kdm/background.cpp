@@ -58,7 +58,9 @@ KBackground::KBackground(QWidget *parent, const char *name)
     connect(m_background, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
 
     // Top layout
-    QVBoxLayout *top = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint() );
+    QVBoxLayout *top = new QVBoxLayout( this );
+    top->setMargin( KDialog::marginHint() );
+    top->setSpacing( KDialog::spacingHint() );
     top->addWidget(m_pCBEnable);
     top->addWidget(m_background);
     top->addStretch();

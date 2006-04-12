@@ -73,7 +73,9 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
 {
   _keywords.setAutoDelete(true);
 
-  QVBoxLayout * l = new QVBoxLayout(this, 0, 2);
+  QVBoxLayout * l = new QVBoxLayout(this);
+  l->setMargin(0);
+  l->setSpacing(2);
 
   // input
   _input = new KLineEdit(this);

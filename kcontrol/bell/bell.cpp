@@ -74,7 +74,9 @@ extern "C"
 KBellConfig::KBellConfig(KInstance *inst, QWidget *parent):
     KCModule(inst, parent)
 {
-  QBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
+  QBoxLayout *layout = new QVBoxLayout(this);
+  layout->setMargin(0);
+  layout->setSpacing(KDialog::spacingHint()); 
 
   int row = 0;
   Q3GroupBox *box = new Q3GroupBox( i18n("Bell Settings"), this );

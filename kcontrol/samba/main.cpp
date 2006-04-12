@@ -58,7 +58,9 @@ SambaContainer::SambaContainer(QWidget *parent, const char* name, const QStringL
 ,logView(&tabs,&config)
 ,statisticsView(&tabs,&config)
 {
-   QVBoxLayout *layout = new QVBoxLayout( this, 0, KDialog::spacingHint() );
+   QVBoxLayout *layout = new QVBoxLayout( this );
+   layout->setMargin(0);
+   layout->setSpacing(KDialog::spacingHint());
    layout->addWidget(&tabs);
    tabs.addTab(&status,i18n("&Exports"));
    tabs.addTab(&imports,i18n("&Imports"));

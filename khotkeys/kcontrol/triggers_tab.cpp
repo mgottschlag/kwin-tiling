@@ -210,7 +210,9 @@ QString Trigger_list_item::text( int column_P ) const
 Shortcut_trigger_widget::Shortcut_trigger_widget( QWidget* parent_P, const char* )
     : QWidget( parent_P )
     {
-    QVBoxLayout* lay = new QVBoxLayout( this, 11, 6 );
+    QVBoxLayout* lay = new QVBoxLayout( this );
+    lay->setMargin( 11 );
+    lay->setSpacing( 6 );
     QLabel* lbl = new QLabel( i18n( "Select keyboard shortcut:" ), this );
     lay->addWidget( lbl );
     lay->addSpacing( 10 );

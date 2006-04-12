@@ -94,8 +94,9 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    expandedInfoCb->setMinimumSize(expandedInfoCb->sizeHint());
    expandedUserCb->setMinimumSize(expandedUserCb->sizeHint());
    
-   QVBoxLayout *topLayout=new QVBoxLayout(this, KDialog::marginHint(),
-      KDialog::spacingHint());
+   QVBoxLayout *topLayout=new QVBoxLayout(this);
+   topLayout->setMargin(KDialog::marginHint());
+   topLayout->setSpacing(KDialog::spacingHint());
    topLayout->addWidget(viewStatistics,1);
    QGridLayout *subLayout=new QGridLayout(topLayout,4,3);
    subLayout->setColStretch(1,1);

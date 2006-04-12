@@ -553,7 +553,9 @@ void PasswordDlg::slotStartNewSession()
     KPushButton *cbutton = new KPushButton( KStdGuiItem::cancel(), winFrame );
     connect( cbutton, SIGNAL( clicked() ), dialog, SLOT( reject() ) );
 
-    QBoxLayout *mbox = new QVBoxLayout( winFrame, KDialog::marginHint(), KDialog::spacingHint() );
+    QBoxLayout *mbox = new QVBoxLayout( winFrame );
+    mbox->setMargin( KDialog::marginHint() );
+    mbox->setSpacing( KDialog::spacingHint() );
 
     QGridLayout *grid = new QGridLayout( mbox, 2, 2, 2 * KDialog::spacingHint() );
     grid->setMargin( KDialog::marginHint() );

@@ -94,8 +94,9 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     frame->setFrameStyle( QFrame::StyledPanel | QFrame::Raised );
     frame->setLineWidth( style()->pixelMetric( QStyle::PM_DefaultFrameWidth, 0, frame ) );
     vbox->addWidget( frame );
-    vbox = new QVBoxLayout( frame, 2 * KDialog::marginHint(),
-                            2 * KDialog::spacingHint() );
+    vbox = new QVBoxLayout( frame );
+    vbox->setMargin( 2 * KDialog::marginHint() );
+    vbox->setSpacing( 2 * KDialog::spacingHint() );
 
     QLabel* label = new QLabel( i18n("End Session for \"%1\"", KUser().loginName()), frame );
     QFont fnt = label->font();

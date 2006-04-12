@@ -49,7 +49,9 @@ K_EXPORT_COMPONENT_FACTORY( kcm_ioslaveinfo, SlaveFactory("kcmioslaveinfo") )
 KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringList &)
                :KCModule(SlaveFactory::instance(), parent),m_ioslavesLb(0),m_tfj(0)
 {
-   QVBoxLayout *layout=new QVBoxLayout(this, 0, KDialog::spacingHint());
+   QVBoxLayout *layout=new QVBoxLayout(this);
+   layout->setMargin(0);
+   layout->setSpacing(KDialog::spacingHint());
 
    setQuickHelp( i18n("<h1>IO slaves</h1> Gives you an overview of the installed ioslaves."));
    setButtons( KCModule::Help );

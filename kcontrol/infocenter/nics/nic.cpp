@@ -90,7 +90,9 @@ NICList* findNICs();
 KCMNic::KCMNic(QWidget *parent, const char *, const QStringList &)
    :KCModule(KCMNicFactory::instance(), parent)
 {
-   QVBoxLayout *box=new QVBoxLayout(this, 0, KDialog::spacingHint());
+   QVBoxLayout *box=new QVBoxLayout(this);
+   box->setMargin(0);
+   box->setSpacing(KDialog::spacingHint());
    m_list=new Q3ListView(this);
    box->addWidget(m_list);
    m_list->addColumn(i18n("Name"));

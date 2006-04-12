@@ -41,7 +41,9 @@ extern "C"
 KeramikStyleConfig::KeramikStyleConfig(QWidget* parent): QWidget(parent)
 {
 	//Should have no margins here, the dialog provides them
-	QVBoxLayout* layout = new QVBoxLayout(this, 0, 0);
+	QVBoxLayout* layout = new QVBoxLayout(this);
+	layout->setMargin(0);
+	layout->setSpacing(0);
 	KGlobal::locale()->insertCatalog("kstyle_keramik_config");
 
 	//highlightLineEdits = new QCheckBox(i18n("Highlight active lineedits"), this);

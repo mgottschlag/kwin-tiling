@@ -153,11 +153,17 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	mainLayout->addWidget( tabWidget );
 
 	page1 = new QWidget( tabWidget );
-	page1Layout = new QVBoxLayout( page1, KDialog::marginHint(), KDialog::spacingHint() );
+	page1Layout = new QVBoxLayout( page1 );
+	page1Layout->setMargin( KDialog::marginHint() );
+	page1Layout->setSpacing( KDialog::spacingHint() );
 	page2 = new QWidget( tabWidget );
-	page2Layout = new QVBoxLayout( page2, KDialog::marginHint(), KDialog::spacingHint() );
+	page2Layout = new QVBoxLayout( page2 );
+	page2Layout->setMargin( KDialog::marginHint() );
+	page2Layout->setSpacing( KDialog::spacingHint() );
 	page3 = new QWidget( tabWidget );
-	page3Layout = new QVBoxLayout( page3, KDialog::marginHint(), KDialog::spacingHint() );
+	page3Layout = new QVBoxLayout( page3 );
+	page3Layout->setMargin( KDialog::marginHint() );
+	page3Layout->setSpacing( KDialog::spacingHint() );
 
 	// Add Page1 (Style)
 	// -----------------
@@ -287,8 +293,11 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	sliderBox->setSpacing( KDialog::spacingHint() );
 #warning "KDE4: fix setMargin"
 	//sliderBox->setMargin( 0 );
-	slOpacity = new QSlider( 0, 100, 5, /*opacity*/ 90, Qt::Horizontal, sliderBox );
-	slOpacity->setTickmarks( QSlider::TicksBelow );
+	slOpacity = new QSlider( Qt::Horizontal, sliderBox );
+	slOpacity->setMinimum( 0 );
+	slOpacity->setMaximum( 100 );
+	slOpacity->setPageStep( 5 );
+	slOpacity->setTickPosition( QSlider::TicksBelow );
 	slOpacity->setTickInterval( 10 );
 	KHBox* box1 = new KHBox( sliderBox );
 	box1->setSpacing( KDialog::spacingHint() );

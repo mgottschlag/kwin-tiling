@@ -59,8 +59,9 @@
 IconThemesConfig::IconThemesConfig(KInstance *inst, QWidget *parent)
   : KCModule(inst, parent)
 {
-  QVBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
-                                           KDialog::spacingHint());
+  QVBoxLayout *topLayout = new QVBoxLayout(this);
+  topLayout->setMargin(KDialog::marginHint());
+  topLayout->setSpacing(KDialog::spacingHint());
 
   QFrame *m_preview=new QFrame(this);
   m_preview->setMinimumHeight(50);

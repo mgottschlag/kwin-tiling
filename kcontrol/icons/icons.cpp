@@ -49,9 +49,9 @@ KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
     // Use of Icon at (0,0) - (1, 0)
     Q3GroupBox *gbox = new Q3GroupBox(i18n("Use of Icon"), this);
     top->addMultiCellWidget(gbox, 0, 1, 0, 0);
-    QBoxLayout *g_vlay = new QVBoxLayout(gbox,
-                                        KDialog::marginHint(),
-                                        KDialog::spacingHint());
+    QBoxLayout *g_vlay = new QVBoxLayout(gbox);
+    g_vlay->setMargin(KDialog::marginHint());
+    g_vlay->setSpacing(KDialog::spacingHint());
     g_vlay->addSpacing(fontMetrics().lineSpacing());
     mpUsageList = new Q3ListBox(gbox);
     connect(mpUsageList, SIGNAL(highlighted(int)), SLOT(slotUsage(int)));
@@ -569,7 +569,10 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
 
     mpEffectLabel = new QLabel(i18n("&Amount:"), mpEffectGroup);
     grid->addWidget(mpEffectLabel, 1, 0);
-    mpEffectSlider = new QSlider(0, 100, 5, 10, Qt::Horizontal, mpEffectGroup);
+    mpEffectSlider = new QSlider(Qt::Horizontal, mpEffectGroup);
+    mpEffectSlider->setMinimum(0);
+    mpEffectSlider->setMaximum(100);
+    mpEffectSlider->setPageStep(5);
     mpEffectLabel->setBuddy( mpEffectSlider );
     connect(mpEffectSlider, SIGNAL(valueChanged(int)), SLOT(slotEffectValue(int)));
     grid->addWidget(mpEffectSlider, 1, 1);

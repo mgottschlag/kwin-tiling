@@ -66,7 +66,9 @@ kthememanager::kthememanager( KInstance *inst, QWidget *parent )
     setAcceptDrops( true );
     init();
 
-    QBoxLayout *top = new QVBoxLayout(this, 0, KDialog::spacingHint());
+    QBoxLayout *top = new QVBoxLayout(this);
+    top->setMargin(0);
+    top->setSpacing(KDialog::spacingHint());
 
     dlg = new KThemeDlg(this);
     top->addWidget( dlg );

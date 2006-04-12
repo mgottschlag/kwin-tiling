@@ -138,8 +138,9 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     // path group
     _path_group = new QGroupBox(this);
-    QVBoxLayout *vbox = new QVBoxLayout(_path_group, KDialog::marginHint(),
-                                        KDialog::spacingHint());
+    QVBoxLayout *vbox = new QVBoxLayout(_path_group);
+    vbox->setMargin(KDialog::marginHint());
+    vbox->setSpacing(KDialog::spacingHint());
 
     QWidget *hbox = new QWidget(_path_group);
     QHBoxLayout *hboxLayout1 = new QHBoxLayout(hbox);
@@ -162,8 +163,9 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     // terminal group
     _term_group = new QGroupBox(this);
-    vbox = new QVBoxLayout(_term_group, KDialog::marginHint(),
-			   KDialog::spacingHint());
+    vbox = new QVBoxLayout(_term_group);
+    vbox->setMargin(KDialog::marginHint());
+    vbox->setSpacing(KDialog::spacingHint());
 
     _terminalCB = new QCheckBox(i18n("Run in term&inal"), _term_group);
     connect(_terminalCB, SIGNAL(clicked()), SLOT(termcb_clicked()));
@@ -189,8 +191,9 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     // uid group
     _uid_group = new QGroupBox(this);
-    vbox = new QVBoxLayout(_uid_group, KDialog::marginHint(),
-                           KDialog::spacingHint());
+    vbox = new QVBoxLayout(_uid_group);
+    vbox->setMargin(KDialog::marginHint());
+    vbox->setSpacing(KDialog::spacingHint());
 
     _uidCB = new QCheckBox(i18n("&Run as a different user"), _uid_group);
     connect(_uidCB, SIGNAL(clicked()), SLOT(uidcb_clicked()));

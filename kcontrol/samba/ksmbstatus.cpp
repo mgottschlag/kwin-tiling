@@ -49,8 +49,9 @@ NetMon::NetMon( QWidget * parent, KConfig *config, const char * name )
    ,iMachine(0)
    ,iPid(0)
 {
-    QBoxLayout *topLayout = new QVBoxLayout(this, KDialog::marginHint(),
-        KDialog::spacingHint());
+    QBoxLayout *topLayout = new QVBoxLayout(this);
+    topLayout->setMargin(KDialog::marginHint());
+    topLayout->setSpacing(KDialog::spacingHint());
     topLayout->setAutoAdd(true);
 
     list=new Q3ListView(this,"Hello");
