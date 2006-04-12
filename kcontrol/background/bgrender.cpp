@@ -380,7 +380,8 @@ wp_load:
 	    {
 	       xs = ys = 1;
 	    }
-	    wp = wp.smoothScale(xs, ys);
+	    if( wp.size() != QSize( xs, ys ))
+		wp = wp.smoothScale(xs, ys);
 	}
     }
 wp_out:
@@ -414,7 +415,10 @@ wp_out:
 	    d.setCoords(-ww + ((w - ww) / 2) % ww, -wh + ((h - wh) / 2) % wh, w-1, h-1);
 	    break;
 	case Scaled:
-	    wp = wp.smoothScale(ww = w, wh = h);
+	    ww = w;
+	    wh = h;
+	    if( wp.size() != QSize( w, h ))
+		wp = wp.smoothScale( w, h );
 	    d.setRect(0, 0, w, h);
 	    break;
         case CentredAutoFit:
@@ -434,7 +438,8 @@ wp_out:
                   wh = (int)(sx * wh);
                   ww = w;
               }
-              wp = wp.smoothScale(ww, wh);
+	      if( wp.size() != QSize( ww, wh ))
+	        wp = wp.smoothScale(ww, wh);
 	      d.setRect((w - ww) / 2, (h - wh) / 2, ww, wh);
 	      break;
             }
@@ -449,7 +454,8 @@ wp_out:
                   wh = (int)(sx * wh);
                   ww = w;
               }
-              wp = wp.smoothScale(ww, wh);
+              if( wp.size() != QSize( ww, wh ))
+                wp = wp.smoothScale(ww, wh);
 	      d.setRect(0, 0, w, h);
 	      break;
             }
@@ -466,7 +472,8 @@ wp_out:
                   wh = h;
                   ww = (int)(sy*ww);
               }
-              wp = wp.smoothScale(ww, wh);
+              if( wp.size() != QSize( ww, wh ))
+                wp = wp.smoothScale(ww, wh);
 	      d.setRect((w - ww) / 2, (h - wh) / 2,w, h);
 	      break;
             }
