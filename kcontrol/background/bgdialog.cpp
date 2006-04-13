@@ -930,19 +930,19 @@ void BGDialog::slotWallpaperTypeChanged(int i)
          r->setMultiWallpaperMode(KBackgroundSettings::NoMultiRandom);
 
       int j = m_urlWallpaperBox->currentIndex();
-      QString uri;
+      QString path;
       for(QMap<QString,int>::ConstIterator it = m_wallpaper.begin();
           it != m_wallpaper.end();
           ++it)
       {
          if (it.value() == j)
          {
-            uri = it.key();
+            path = it.key();
             break;
          }
       }
 
-      KFileMetaInfo metaInfo(uri);
+      KFileMetaInfo metaInfo(path);
       if (metaInfo.isValid() && metaInfo.item("Dimensions").isValid())
       {
          // If the image is greater than 800x600 default to using scaled mode,
@@ -954,13 +954,17 @@ void BGDialog::slotWallpaperTypeChanged(int i)
          else
             m_wallpaperPos = KBackgroundSettings::Tiled;
       }
+      else if (KMimeType::findByPath(path)->is("image/svg+xml"))
+      {
+         m_wallpaperPos = KBackgroundSettings::Scaled;         
+      }
 
       r->setWallpaperMode(m_wallpaperPos);
       m_comboWallpaperPos->blockSignals(true);
       m_comboWallpaperPos->setCurrentIndex(m_wallpaperPos-1);
       m_comboWallpaperPos->blockSignals(false);
 
-      r->setWallpaper(uri);
+      r->setWallpaper(path);
    }
 
    r->start(true);
