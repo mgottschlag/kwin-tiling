@@ -2,6 +2,7 @@ kde4_header()
 
 project(kcontrol)
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/ ${KDE4_INCLUDES} )
+macro_optional_find_package(Freetype)
 
 if( X11_Xrandr_FOUND )
 	add_subdirectory( randr )
@@ -37,7 +38,11 @@ add_subdirectory( hardware )
 add_subdirectory( accessibility ) 
 add_subdirectory( infocenter ) 
 add_subdirectory( access )
-#add_subdirectory( kfontinst )
+
+if(FONTCONFIG_FOUND AND FREETYPE_FOUND)
+	add_subdirectory( kfontinst )
+endif(FONTCONFIG_FOUND AND FREETYPE_FOUND)	
+	
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(KSMCARD_SUBDIR)")
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(FONTINST_SUBDIR)")
 
