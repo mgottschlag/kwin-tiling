@@ -889,16 +889,7 @@ KVirtualBGRenderer::KVirtualBGRenderer( int desk, KConfig *config )
     }
     
     initRenderers();
-    
     m_size = QApplication::desktop()->size();
-    if (m_numRenderers > 1)
-    {
-        m_pPixmap = new QPixmap(m_size);
-        // If are screen sizes do not properly tile the overall virtual screen
-        // size, then we want the untiled parts to be black for use in desktop
-        // previews, etc
-        m_pPixmap->fill(Qt::black);
-    }
 }
 
 KVirtualBGRenderer::~KVirtualBGRenderer()
@@ -1163,6 +1154,9 @@ void KVirtualBGRenderer::start()
     if (m_numRenderers > 1)
     {
         m_pPixmap = new QPixmap(m_size);
+        // If are screen sizes do not properly tile the overall virtual screen
+        // size, then we want the untiled parts to be black for use in desktop
+        // previews, etc
         m_pPixmap->fill(Qt::black);
     }
     
