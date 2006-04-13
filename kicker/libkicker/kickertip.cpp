@@ -74,6 +74,9 @@ public:
     const QWidget* tippingFor;
 };
 
+// putting this #include higher results in compile errors
+#include <netwm.h>
+
 static const int DEFAULT_FRAMES_PER_SECOND = 30;
 
 KickerTip* KickerTip::m_self = 0;
@@ -121,6 +124,15 @@ void KickerTip::display()
     if (!tippingEnabled())
     {
         return;
+
+    {
+        // prevent tips from showing when the active window is fullscreened
+        NETRootInfo ri(qt_xdisplay(), NET::ActiveWindow);
+        NETWinInfo wi(qt_xdisplay(), ri.activeWindow(), ri.rootWindow(), NET::WMState);
+        if (wi.state() & NET::FullScreen)
+        {
+            return;
+        }
     }
 
     QWidget *widget = const_cast<QWidget*>(d->tippingFor);
