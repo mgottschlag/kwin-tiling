@@ -466,7 +466,7 @@ void BGDialog::initUI()
    
    // Screens
    for (unsigned i = 0; i < m_numScreens; ++i)
-      m_comboScreen->insertItem( i18n("Screen %1").arg(QString::number(i+1)) );
+      m_comboScreen->insertItem( i18n("Screen %1", i+1) );
 
    // Patterns
    m_comboPattern->insertItem(i18n("Single Color"));
