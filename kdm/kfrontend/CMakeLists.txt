@@ -8,6 +8,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/ 
 	${CMAKE_SOURCE_DIR}/workspace/kdm/backend  
 	${CMAKE_SOURCE_DIR}/workspace/kdm/
+	${CMAKE_SOURCE_DIR}/workspace/kdmlib/
 	${KDE4_INCLUDES} )
 
 
