@@ -18,7 +18,7 @@ set( kcmbackgroundlib_SRCS
     ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgwallpaper.cpp
 )
 
-include_directories( ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/lib )
+include_directories( ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker ${CMAKE_SOURCE_DIR}/workspace/lib ${CMAKE_SOURCE_DIR}/libkonq )
 
 add_subdirectory( lib ) 
 add_subdirectory( kdmlib )
