@@ -4,8 +4,7 @@ include_directories( ${KDE4_INCLUDES} )
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kdm/pics FILES kdelogo.png kdelogo-crystal.png shutdown.jpg )
-install_files(  FILES default1.png default2.png default3.png root1.png )
+install_files( ${DATA_INSTALL_DIR}/kdm/pics FILES kdelogo.png kdelogo-crystal.png shutdown.jpg default1.png default2.png default3.png root1.png )
 
 kde4_footer()
 
