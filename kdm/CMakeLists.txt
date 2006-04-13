@@ -4,7 +4,8 @@ project(kdm)
 include_directories( ${KDE4_INCLUDES} )
 
 add_subdirectory( kfrontend )
-add_subdirectory( backend )
+MESSAGE(STATUS "Readd Backend when test about pam and co will add")
+#add_subdirectory( backend )
 
 ########### install files ###############
 

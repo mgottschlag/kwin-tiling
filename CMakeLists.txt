@@ -35,7 +35,7 @@ add_subdirectory( ksysguard )
 add_subdirectory( kcontrol )
 add_subdirectory( ksystraycmd )
 if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
-	#add_subdirectory( kdm )
+	add_subdirectory( kdm )
 endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 
 ########### install files ###############

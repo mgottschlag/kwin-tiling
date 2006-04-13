@@ -1,10 +1,14 @@
 kde4_header()
-
+include(AddFileDependencies)
 add_subdirectory( themer ) 
 add_subdirectory( themes ) 
 add_subdirectory( pics ) 
 add_subdirectory( sessions ) 
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/ ${CMAKE_SOURCE_DIR}/workspace/kdm/backend  ${KDE4_INCLUDES} )
+include_directories( 
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/ 
+	${CMAKE_SOURCE_DIR}/workspace/kdm/backend  
+	${CMAKE_SOURCE_DIR}/workspace/kdm/
+	${KDE4_INCLUDES} )
 
 
 ########### next target ###############
@@ -21,9 +25,11 @@ set(libkdmthemer_SRCS
 
 add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci COMMAND ${PERL_EXECUTABLE} ARGS -w ${CMAKE_SOURCE_DIR}/workspace/kdm/confproc.pl ${CMAKE_SOURCE_DIR}/workspace/kdm/config.def ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci  DEPENDS ${CMAKE_SOURCE_DIR}/workspace/kdm/config.def )
 
+
 macro_additional_clean_files( ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci )
 
-set(kdm_config_SRCS kdm_config.c ${kdmconfig_SRCS})
+set(kdm_config_SRCS kdm_config.c ${kdmconfig_SRCS}  )
+
 
 kde4_automoc(${kdm_config_SRCS})
 
@@ -74,6 +80,10 @@ install_targets(/bin krootimage )
 ########### next target ###############
 
 set(genkdmconf_SRCS genkdmconf.c )
+
+#add_file_dependencies(${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci genkdmconf.c )
+add_file_dependencies(genkdmconf.c ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci )
+
 
 kde4_automoc(${genkdmconf_SRCS})
 
