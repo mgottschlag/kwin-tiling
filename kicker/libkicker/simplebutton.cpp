@@ -81,7 +81,7 @@ void SimpleButton::setOrientation(Qt::Orientation orientation)
     update();
 }
 
-QSize SimpleButton::sizeHint()
+QSize SimpleButton::sizeHint() const
 {
     const QPixmap* pm = pixmap();
 

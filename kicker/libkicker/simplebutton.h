@@ -40,7 +40,7 @@ class KDE_EXPORT SimpleButton : public QAbstractButton
         virtual ~SimpleButton();
         void setPixmap(const QPixmap &pix);
         void setOrientation(Qt::Orientation orientaton);
-        QSize sizeHint();
+        QSize sizeHint() const;
 
     protected:
         void drawButton( QPainter *p );
