@@ -11,7 +11,7 @@ kde4_automoc(${kfontinst_LIB_SRCS})
 kde4_add_library(kfontinst SHARED ${kfontinst_LIB_SRCS})
 
 MESSAGE(STATUS "FREETYPE_LIBRARIES: <${FREETYPE_LIBRARIES}>")
-target_link_libraries(kfontinst  ${KDE4_KIO_LIBS} ${FREETYPE_LIBRARIES} ${FONTCONFIG_LIBRARIES} ${X11_Xft_LIB})
+target_link_libraries(kfontinst  ${KDE4_KIO_LIBS} ${FREETYPE_LIBRARIES} ${FONTCONFIG_LIBRARIES} ${XFT_LIBRARIES})
 
 set_target_properties(kfontinst PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install_targets(${LIB_INSTALL_DIR} kfontinst )
