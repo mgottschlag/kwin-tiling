@@ -10,10 +10,10 @@ add_subdirectory( kcmfontinst )
 add_subdirectory( kfile-plugin ) 
 add_subdirectory( kfontinst ) 
 add_subdirectory( kio ) 
+add_subdirectory(thumbnail)
+add_subdirectory(viewpart)
 
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(FONTINST_TN_SUBDIR)")
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(FONTINST_VP_SUBDIR)")
-include_directories( ${KDE4_INCLUDES} )
+
 
 
 ########### install files ###############

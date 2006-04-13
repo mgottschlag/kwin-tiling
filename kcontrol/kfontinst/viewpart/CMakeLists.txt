@@ -1,5 +1,9 @@
 kde4_header()
-include_directories( ${KDE4_INCLUDES} )
+include_directories(
+    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/
+    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/
+    ${KDE4_INCLUDES} )
+
 
 
 ########### next target ###############
@@ -28,7 +32,7 @@ kde4_automoc(${kfontview_SRCS})
 
 kde4_add_executable(kfontview ${kfontview_SRCS})
 
-target_link_libraries(kfontview  ${KDE4_KDECORE_LIBS} )
+target_link_libraries(kfontview  ${KDE4_KPARTS_LIBS} )
 
 install_targets(/bin kfontview )
 
