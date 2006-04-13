@@ -1,4 +1,5 @@
 /* vi: ts=8 sts=4 sw=4
+ * kate: space-indent on; indent-width 4; indent-mode cstyle;
  *
  * This file is part of the KDE project, module kdesktop.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
@@ -23,6 +24,7 @@
 
 #include <dcopclient.h>
 #include <kapplication.h>
+#include <kdebug.h>
 #include <kglobalsettings.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
@@ -433,12 +435,14 @@ QStringList KBackgroundProgram::list()
 /**** KBackgroundSettings ****/
 
 
-KBackgroundSettings::KBackgroundSettings(int desk, KConfig *config)
+KBackgroundSettings::KBackgroundSettings(int desk, int screen, bool drawBackgroundPerScreen, KConfig *config)
     : KBackgroundPattern(),
       KBackgroundProgram()
 {
     dirty = false; hashdirty = true;
+	m_bDrawBackgroundPerScreen = drawBackgroundPerScreen;
     m_Desk = desk;
+    m_Screen = screen;
     m_bEnabled = true;
 
     // Default values.
@@ -564,9 +568,11 @@ void KBackgroundSettings::copyConfig(const KBackgroundSettings *settings)
 }
 
 
-void KBackgroundSettings::load(int desk, bool reparseConfig)
+void KBackgroundSettings::load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig)
 {
     m_Desk = desk;
+    m_Screen = screen;	
+    m_bDrawBackgroundPerScreen = drawBackgroundPerScreen;
     readSettings(reparseConfig);
 }
 
@@ -740,12 +746,20 @@ void KBackgroundSettings::setUseShm(bool use)
     m_bShm = use;
 }
 
+QString KBackgroundSettings::configGroupName() const
+{
+    QString screenName;
+    if (m_bDrawBackgroundPerScreen)
+        screenName = QString("Screen%1").arg(QString::number(m_Screen));
+    return QString("Desktop%1%2").arg(m_Desk).arg(screenName);
+}
+
 void KBackgroundSettings::readSettings(bool reparse)
 {
     if (reparse)
         m_pConfig->reparseConfiguration();
 
-    m_pConfig->setGroup(QString("Desktop%1").arg(m_Desk));
+    m_pConfig->setGroup(configGroupName());
 
     // Background mode (Flat, div. Gradients, Pattern or Program)
     m_ColorA = m_pConfig->readEntry("Color1", defColorA);
@@ -828,7 +842,7 @@ void KBackgroundSettings::writeSettings()
     if (!dirty)
         return;
 
-    m_pConfig->setGroup(QString("Desktop%1").arg(m_Desk));
+    m_pConfig->setGroup(configGroupName());
     m_pConfig->writeEntry("Color1", m_ColorA);
     m_pConfig->writeEntry("Color2", m_ColorB);
     m_pConfig->writePathEntry("Pattern", KBackgroundPattern::name());
@@ -957,7 +971,7 @@ void KBackgroundSettings::changeWallpaper(bool init)
     }
 
     m_LastChange = (int) time(0L);
-    m_pConfig->setGroup(QString("Desktop%1").arg(m_Desk));
+    m_pConfig->setGroup(configGroupName());
     m_pConfig->writeEntry("CurrentWallpaper", m_CurrentWallpaper);
     m_pConfig->writeEntry("LastChange", m_LastChange);
     m_pConfig->sync();
@@ -1106,12 +1120,42 @@ void KGlobalBackgroundSettings::setLimitCache(bool limit)
 }
 
 
-void KGlobalBackgroundSettings::setCommonBackground(bool common)
+bool KGlobalBackgroundSettings::drawBackgroundPerScreen(int desk) const
 {
-    if (common == m_bCommon)
+    if ( desk > int(m_bDrawBackgroundPerScreen.size()) )
+        return _defDrawBackgroundPerScreen;
+    return m_bDrawBackgroundPerScreen[desk];
+}
+
+
+void KGlobalBackgroundSettings::setDrawBackgroundPerScreen(int desk, bool perScreen)
+{
+    if ( desk >= int(m_bDrawBackgroundPerScreen.size()) )
+        return;
+    
+    if ( m_bDrawBackgroundPerScreen[desk] == perScreen )
+        return;
+    
+    dirty = true;
+    m_bDrawBackgroundPerScreen[desk] = perScreen;
+}
+
+
+void KGlobalBackgroundSettings::setCommonScreenBackground(bool common)
+{
+    if (common == m_bCommonScreen)
 	return;
     dirty = true;
-    m_bCommon = common;
+    m_bCommonScreen = common;
+}
+
+
+void KGlobalBackgroundSettings::setCommonDeskBackground(bool common)
+{
+    if (common == m_bCommonDesk)
+	return;
+    dirty = true;
+    m_bCommonDesk = common;
 }
 
 
@@ -1175,11 +1219,17 @@ void KGlobalBackgroundSettings::setTextWidth(int width)
 void KGlobalBackgroundSettings::readSettings()
 {
     m_pConfig->setGroup("Background Common");
-    m_bCommon = m_pConfig->readEntry("CommonDesktop", _defCommon);
+    m_bCommonScreen = m_pConfig->readEntry("CommonScreen", _defCommonScreen);
+    m_bCommonDesk = m_pConfig->readEntry("CommonDesktop", _defCommonDesk);
     m_bDock = m_pConfig->readEntry("Dock", _defDock);
     m_bExport = m_pConfig->readEntry("Export", _defExport);
     m_bLimitCache = m_pConfig->readEntry("LimitCache", _defLimitCache);
     m_CacheSize = m_pConfig->readEntry("CacheSize", _defCacheSize);
+
+    NETRootInfo info( QX11Info::display(), NET::DesktopNames | NET::NumberOfDesktops );
+    m_bDrawBackgroundPerScreen.resize(info.numberOfDesktops());
+    for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
+        m_bDrawBackgroundPerScreen[i] = m_pConfig->readBoolEntry( QString("DrawBackgroundPerScreen_%1").arg(i), _defDrawBackgroundPerScreen );
 
     m_TextColor = KGlobalSettings::textColor();
     m_pConfig->setGroup("FMSettings");
@@ -1190,7 +1240,6 @@ void KGlobalBackgroundSettings::readSettings()
     m_textWidth = m_pConfig->readEntry("TextWidth", DEFAULT_TEXTWIDTH);
 
     m_Names.clear();
-    NETRootInfo info( QX11Info::display(), NET::DesktopNames | NET::NumberOfDesktops );
     for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
       m_Names.append( QString::fromUtf8(info.desktopName(i+1)) );
 
@@ -1203,11 +1252,15 @@ void KGlobalBackgroundSettings::writeSettings()
         return;
 
     m_pConfig->setGroup("Background Common");
-    m_pConfig->writeEntry("CommonDesktop", m_bCommon);
+    m_pConfig->writeEntry("CommonScreen", m_bCommonScreen);
+    m_pConfig->writeEntry("CommonDesktop", m_bCommonDesk);
     m_pConfig->writeEntry("Dock", m_bDock);
     m_pConfig->writeEntry("Export", m_bExport);
     m_pConfig->writeEntry("LimitCache", m_bLimitCache);
     m_pConfig->writeEntry("CacheSize", m_CacheSize);
+
+    for ( int i = 0 ; i < m_bDrawBackgroundPerScreen.size() ; ++i )
+        m_pConfig->writeEntry(QString("DrawBackgroundPerScreen_%1").arg(i), m_bDrawBackgroundPerScreen[i] );
 
     m_pConfig->setGroup("FMSettings");
     m_pConfig->writeEntry("NormalTextColor", m_TextColor);
@@ -1215,6 +1268,7 @@ void KGlobalBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("ShadowEnabled", m_shadowEnabled);
     m_pConfig->writeEntry("TextHeight", m_textLines);
     m_pConfig->writeEntry("TextWidth", m_textWidth);
+    
     m_pConfig->sync();
     dirty = false;
 

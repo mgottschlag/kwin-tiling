@@ -23,7 +23,7 @@
 #include "positiontab.h"
 
 class QFrame;
-class KBackgroundRenderer;
+class KVirtualBGRenderer;
 class KickerConfig;
 class ExtensionInfo;
 
@@ -65,7 +65,7 @@ protected Q_SLOTS:
 private:
     QFrame* m_pretendPanel;
     QWidget* m_pretendDesktop;
-    KBackgroundRenderer* m_desktopPreview;
+    KVirtualBGRenderer* m_desktopPreview;
     ExtensionInfo* m_panelInfo;
 
     unsigned int m_panelPos;

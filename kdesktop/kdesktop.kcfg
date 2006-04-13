@@ -11,6 +11,16 @@
       <label>Common settings for all desktops</label>
       <whatsthis>If you want the same background settings to be applied to all desktops enable this option.</whatsthis>
     </entry>
+    <entry key="CommonScreen" type="Bool">
+      <default>true</default>
+      <label>Common settings for all screens</label>
+      <whatsthis>If you want the same background settings to be applied to all screens enable this option.</whatsthis>
+    </entry>
+    <entry key="DrawBackgroundPerScreen" type="Bool">
+       <default>false</default>
+       <label>Draw backgrounds per screen</label>
+       <whatsthis>If you want to draw to each screen seperately in xinerama mode enable this option.</whatsthis>
+    </entry>
     <entry key="LimitCache" type="Bool">
       <default>true</default>
       <label>Limit background cache</label>

@@ -62,10 +62,15 @@ MyApplication::renderDone()
 {
 	desktop()->setBackgroundPixmap( *renderer.pixmap() );
 	desktop()->repaint( true );
-	if (renderer.backgroundMode() != KBackgroundSettings::Program &&
-	    (renderer.multiWallpaperMode() == KBackgroundSettings::NoMulti ||
-	     renderer.multiWallpaperMode() == KBackgroundSettings::NoMultiRandom))
-		quit();
+	for (unsigned i=0; i<renderer.numRenderers(); ++i)
+	{
+		KBackgroundRenderer * r = renderer.renderer(i);
+		if (r->backgroundMode() == KBackgroundSettings::Program ||
+		    (r->multiWallpaperMode() != KBackgroundSettings::NoMulti &&
+		     r->multiWallpaperMode() != KBackgroundSettings::NoMultiRandom))
+			return;
+	}
+	quit();
 }
 
 void
@@ -73,10 +78,8 @@ MyApplication::slotTimeout()
 {
 	bool change = false;
 
-	if ((renderer.backgroundMode() == KBackgroundSettings::Program) &&
-	    (renderer.KBackgroundProgram::needUpdate()))
-	{
-		renderer.KBackgroundProgram::update();
+	if (renderer.needProgramUpdate()) {
+		renderer.programUpdate();
 		change = true;
 	}
 

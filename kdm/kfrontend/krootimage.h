@@ -41,7 +41,7 @@ class MyApplication : public KApplication
 	void slotTimeout();
 
   private:
-	KBackgroundRenderer renderer;
+	KVirtualBGRenderer renderer;
 	QTimer timer;
 };
 

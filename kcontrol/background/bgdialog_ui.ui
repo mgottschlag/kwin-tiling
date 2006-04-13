@@ -18,7 +18,8 @@
         </property>
         <property name="margin">
             <number>1</number>
-        </property>
+		</property>
+		
         <widget class="QLabel" row="0" column="0">
             <property name="name">
                 <cstring>m_pDesktopLabel</cstring>
@@ -40,32 +41,61 @@
             <property name="whatsThis" stdset="0">
                 <string>Choose the desktop you wish to configure the background for from this list. If you want the same background settings to be applied to all desktops select the "All Desktops" option.</string>
             </property>
-        </widget>
-        <widget class="KComboBox" row="0" column="1">
-            <item>
-                <property name="text">
-                    <string>All Desktops</string>
-                </property>
+		</widget>
+		<widget class="KComboBox" row="0" column="1">
+			<item>
+				<property name="text">
+					<string>All Desktops</string>
+				</property>
             </item>
-            <property name="name">
-                <cstring>m_comboDesktop</cstring>
-            </property>
-            <property name="enabled">
-                <bool>true</bool>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>0</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <property name="whatsThis" stdset="0">
-                <string>Choose the desktop you wish to configure the background for from this list. If you want the same background settings to be applied to all desktops select the "All Desktops" option.</string>
-            </property>
-        </widget>
-        <spacer row="0" column="2" rowspan="1" colspan="2">
+			<property name="name">
+				<cstring>m_comboDesktop</cstring>
+			</property>
+			<property name="enabled">
+				<bool>true</bool>
+			</property>
+			<property name="sizePolicy">
+				<sizepolicy>
+					<hsizetype>0</hsizetype>
+					<vsizetype>0</vsizetype>
+					<horstretch>0</horstretch>
+					<verstretch>0</verstretch>
+				</sizepolicy>
+			</property>
+			<property name="whatsThis" stdset="0">
+				<string>Choose the desktop you wish to configure the background for from this list. If you want the same background settings to be applied to all desktops select the "All Desktops" option.</string>
+			</property>
+		</widget>
+		<widget class="KComboBox" row="0" column="2">
+			<item>
+				<property name="text">
+					<string>Across All Screens</string>
+				</property>
+			</item>
+			<item>
+				<property name="text">
+					<string>On Each Screen</string>
+				</property>
+            </item>
+			<property name="name">
+				<cstring>m_comboScreen</cstring>
+			</property>
+			<property name="enabled">
+				<bool>true</bool>
+			</property>
+			<property name="sizePolicy">
+				<sizepolicy>
+					<hsizetype>0</hsizetype>
+					<vsizetype>0</vsizetype>
+					<horstretch>0</horstretch>
+					<verstretch>0</verstretch>
+				</sizepolicy>
+			</property>
+			<property name="whatsThis" stdset="0">
+				<string>Choose the screen you wish to configure the background for from this list.</string>
+			</property>
+		</widget>
+        <spacer row="0" column="3" rowspan="1" colspan="2">
             <property name="name">
                 <cstring>Spacer37</cstring>
             </property>
@@ -82,7 +112,7 @@
                 </size>
             </property>
         </spacer>
-        <widget class="QLayoutWidget" row="1" column="3" rowspan="2" colspan="1">
+        <widget class="QLayoutWidget" row="1" column="4" rowspan="2" colspan="1">
             <property name="name">
                 <cstring>layout36</cstring>
             </property>
@@ -90,9 +120,9 @@
                 <property name="name">
                     <cstring>unnamed</cstring>
                 </property>
-                <widget class="QLabel">
+                <widget class="QWidget">
                     <property name="name">
-                        <cstring>m_monitorImage</cstring>
+                        <cstring>m_screenArrangement</cstring>
                     </property>
                     <property name="sizePolicy">
                         <sizepolicy>
@@ -108,15 +138,6 @@
                             <height>0</height>
                         </size>
                     </property>
-                    <property name="text">
-                        <string>Monitor</string>
-                    </property>
-                    <property name="alignment">
-                        <set>Qt::AlignCenter</set>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>This picture of a monitor contains a preview of what the current settings will look like on your desktop.</string>
-                    </property>
                 </widget>
                 <widget class="QLayoutWidget">
                     <property name="name">
@@ -125,7 +146,65 @@
                     <vbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
+						</property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
                         </property>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer800</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Minimum</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>4</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>m_buttonIdentifyScreens</cstring>
+                            </property>
+                            <property name="sizePolicy">
+                                <sizepolicy>
+                                    <hsizetype>0</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                </sizepolicy>
+                            </property>
+                            <property name="text">
+                                <string>Identify Screens</string>
+                            </property>
+                            <property name="whatsThis" stdset="0">
+                                <string>Click this button to show the identifying number for each screen.</string>
+                            </property>
+                        </widget>
+                        <spacer>
+                            <property name="name">
+                                <cstring>spacer810</cstring>
+                            </property>
+                            <property name="orientation">
+                                <enum>Horizontal</enum>
+                            </property>
+                            <property name="sizeType">
+                                <enum>Minimum</enum>
+                            </property>
+                            <property name="sizeHint">
+                                <size>
+                                    <width>4</width>
+                                    <height>20</height>
+                                </size>
+                            </property>
+                        </spacer>
+                    </hbox>
                     <hbox>
                         <property name="name">
                             <cstring>unnamed</cstring>
@@ -263,7 +342,7 @@
                 </spacer>
             </vbox>
         </widget>
-        <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="3">
+        <widget class="QGroupBox" row="2" column="0" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>groupBox3</cstring>
             </property>
@@ -489,7 +568,7 @@
                 </widget>
             </grid>
         </widget>
-        <widget class="QButtonGroup" row="1" column="0" rowspan="1" colspan="3">
+        <widget class="QButtonGroup" row="1" column="0" rowspan="1" colspan="4">
             <property name="name">
                 <cstring>m_buttonGroupBackground</cstring>
             </property>
@@ -617,6 +696,7 @@
     </connection>
 </connections>
 <tabstops>
+	<tabstop>m_comboScreen</tabstop>
     <tabstop>m_comboDesktop</tabstop>
     <tabstop>m_radioPicture</tabstop>
     <tabstop>m_urlWallpaperBox</tabstop>

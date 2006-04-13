@@ -1,4 +1,5 @@
 /* vi: ts=8 sts=4 sw=4
+ * kate: space-indent on; tab-width 8; indent-width 4; indent-mode cstyle;
  *
  * This file is part of the KDE project, module kdesktop.
  * Copyright (C) 1999,2000 Geert Jansen <jansen@kde.org>
@@ -87,7 +88,7 @@ KBackgroundManager::KBackgroundManager(QWidget *desktop, KWinModule* kwinModule)
         m_Cache[i]->pixmap = 0L;
         m_Cache[i]->hash = 0;
         m_Cache[i]->exp_from = -1;
-        m_Renderer[i] = new KBackgroundRenderer(i,m_pConfig);
+        m_Renderer[i] = new KVirtualBGRenderer(i,m_pConfig);
         connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotImageDone(int)));
     }
 
@@ -200,7 +201,7 @@ void KBackgroundManager::configure()
     KDesktopSettings::self()->readConfig();
 
     // Read individual settings
-    KBackgroundRenderer *r;
+    KVirtualBGRenderer *r;
     for (int i=0; i<m_Renderer.size(); i++)
     {
         r = m_Renderer[i];
@@ -268,7 +269,7 @@ void KBackgroundManager::slotChangeNumberOfDesktops(int num)
 	    m_Cache[i]->pixmap = 0L;
 	    m_Cache[i]->hash = 0;
 	    m_Cache[i]->exp_from = -1;
-	    m_Renderer[i] = new KBackgroundRenderer(i,m_pConfig);
+	    m_Renderer[i] = new KVirtualBGRenderer(i,m_pConfig);
 	    connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotImageDone(int)));
 	}
     }
@@ -397,7 +398,7 @@ void KBackgroundManager::clearRoot()
  */
 void KBackgroundManager::renderBackground(int desk)
 {
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KVirtualBGRenderer *r = m_Renderer[desk];
     if (r->isActive())
     {
         kDebug() << "renderer " << desk << " already active" << endl;
@@ -414,7 +415,7 @@ void KBackgroundManager::renderBackground(int desk)
 void KBackgroundManager::slotImageDone(int desk)
 {
     KPixmap *pm = new KPixmap();
-    KBackgroundRenderer *r = m_Renderer[desk];
+    KVirtualBGRenderer *r = m_Renderer[desk];
 
     *pm = *r->pixmap();
     r->cleanup();
@@ -562,20 +563,17 @@ void KBackgroundManager::slotTimeout()
 
     for (int i=0; i<NumDesks; i++)
     {
-        KBackgroundRenderer *r = m_Renderer[i];
+        KVirtualBGRenderer *r = m_Renderer[i];
         bool change = false;
-
-        if ((r->backgroundMode() == KBackgroundSettings::Program) &&
-	    (r->KBackgroundProgram::needUpdate()) &&
-            (!running.contains(r->hash()))
-	   )
+        
+        if (r->needProgramUpdate())
         {
-	    r->KBackgroundProgram::update();
+            r->programUpdate();
             change = true;
         }
-
+        
         if (r->needWallpaperChange())
-	{
+        {
             r->changeWallpaper();
             change = true;
         }
@@ -605,7 +603,8 @@ int KBackgroundManager::validateDesk(int desk)
 // 0 is for the current visible desktop.
 QString KBackgroundManager::currentWallpaper(int desk)
 {
-    KBackgroundRenderer *r = m_Renderer[validateDesk(desk)];
+    //TODO Is the behaviour of this function appropriate for multiple screens?
+    KBackgroundRenderer *r = m_Renderer[validateDesk(desk)]->renderer(0);
 
     return r->currentWallpaper();
 }
@@ -613,7 +612,7 @@ QString KBackgroundManager::currentWallpaper(int desk)
 // DCOP exported
 void KBackgroundManager::changeWallpaper()
 {
-    KBackgroundRenderer *r = m_Renderer[effectiveDesktop()];
+    KVirtualBGRenderer *r = m_Renderer[effectiveDesktop()];
 
     r->changeWallpaper();
     slotChangeDesktop(0);
@@ -639,18 +638,23 @@ void KBackgroundManager::setCommon(int common)
 // DCOP exported
 void KBackgroundManager::setWallpaper(QString wallpaper, int mode)
 {
-    KBackgroundRenderer *r = m_Renderer[effectiveDesktop()];
-    r->stop();
-    r->setWallpaperMode(mode);
-    r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
-    r->setWallpaper(wallpaper);
-    r->writeSettings();
+    //TODO Is the behaviour of this function appropriate for multiple screens?
+    for (unsigned i=0; i < m_Renderer[effectiveDesktop()]->numRenderers(); ++i)
+    {
+        KBackgroundRenderer *r = m_Renderer[effectiveDesktop()]->renderer(i);
+        r->stop();
+        r->setWallpaperMode(mode);
+        r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
+        r->setWallpaper(wallpaper);
+        r->writeSettings();
+    }
     slotChangeDesktop(0);
 }
 
 void KBackgroundManager::setWallpaper(QString wallpaper)
 {
-    KBackgroundRenderer *r = m_Renderer[effectiveDesktop()];
+    //TODO Is the behaviour of this function appropriate for multiple screens?
+    KBackgroundRenderer *r = m_Renderer[effectiveDesktop()]->renderer(0);
     int mode = r->wallpaperMode();
     if (mode == KBackgroundSettings::NoWallpaper)
        mode = KBackgroundSettings::Tiled;
@@ -662,7 +666,8 @@ void KBackgroundManager::setWallpaper(QString wallpaper)
 // 0 is for current visible desktop.
 QStringList KBackgroundManager::wallpaperFiles(int desk)
 {
-    KBackgroundRenderer *r = m_Renderer[validateDesk(desk)];
+    //TODO Is the behaviour of this function appropriate for multiple screens?
+    KBackgroundRenderer *r = m_Renderer[validateDesk(desk)]->renderer(0);
 
     return r->wallpaperFiles();
 }
@@ -672,7 +677,8 @@ QStringList KBackgroundManager::wallpaperFiles(int desk)
 // show window) for specified desk.  0 is for current visible desktop.
 QStringList KBackgroundManager::wallpaperList(int desk)
 {
-    KBackgroundRenderer *r = m_Renderer[validateDesk(desk)];
+    //TODO Is the behaviour of this function appropriate for multiple screens?
+    KBackgroundRenderer *r = m_Renderer[validateDesk(desk)]->renderer(0);;
 
     return r->wallpaperList();
 }
@@ -691,15 +697,19 @@ void KBackgroundManager::setWallpaper(int desk, QString wallpaper, int mode)
 {
     int sdesk = validateDesk(desk);
 
-    KBackgroundRenderer *r = m_Renderer[sdesk];
-
-    setCommon(false);   // Force each desktop to have it's own wallpaper
-
-    r->stop();
-    r->setWallpaperMode(mode);
-    r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
-    r->setWallpaper(wallpaper);
-    r->writeSettings();
+    //TODO Is the behaviour of this function appropriate for multiple screens?
+    for (unsigned i=0; i < m_Renderer[sdesk]->numRenderers(); ++i)
+    {
+        KBackgroundRenderer *r = m_Renderer[sdesk]->renderer(i);
+    
+        setCommon(false);   // Force each desktop to have it's own wallpaper
+    
+        r->stop();
+        r->setWallpaperMode(mode);
+        r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
+        r->setWallpaper(wallpaper);
+        r->writeSettings();
+    }
     slotChangeDesktop(sdesk);
 }
 
@@ -715,7 +725,7 @@ void KBackgroundManager::desktopResized()
 {
     for (int i=0; i<m_Renderer.size(); i++)
     {
-        KBackgroundRenderer* r = m_Renderer[i];
+        KVirtualBGRenderer * r = m_Renderer[i];
         if( r->isActive())
             r->stop();
         removeCache(i);
@@ -732,23 +742,27 @@ void KBackgroundManager::desktopResized()
 // DCOP exported
 void KBackgroundManager::setColor(const QColor & c, bool isColorA)
 {
-    KBackgroundRenderer *r = m_Renderer[effectiveDesktop()];
-    r->stop();
-
-    if (isColorA)
-        r->setColorA(c);
-    else
-        r->setColorB(c);
-
-    int mode = r->backgroundMode();
-    if (mode == KBackgroundSettings::Program)
-       mode = KBackgroundSettings::Flat;
-
-    if (!isColorA && (mode == KBackgroundSettings::Flat))
-       mode = KBackgroundSettings::VerticalGradient;
-    r->setBackgroundMode(mode);
-
-    r->writeSettings();
+    //TODO Is the behaviour of this function appropriate for multiple screens?
+    for (unsigned i=0; i < m_Renderer[effectiveDesktop()]->numRenderers(); ++i)
+    {
+        KBackgroundRenderer *r = m_Renderer[effectiveDesktop()]->renderer(i);
+        r->stop();
+    
+        if (isColorA)
+            r->setColorA(c);
+        else
+            r->setColorB(c);
+    
+        int mode = r->backgroundMode();
+        if (mode == KBackgroundSettings::Program)
+        mode = KBackgroundSettings::Flat;
+    
+        if (!isColorA && (mode == KBackgroundSettings::Flat))
+        mode = KBackgroundSettings::VerticalGradient;
+        r->setBackgroundMode(mode);
+    
+        r->writeSettings();
+    }
     slotChangeDesktop(0);
 }
 

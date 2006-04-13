@@ -11,7 +11,9 @@
 
 
 // Globals
-#define _defCommon true
+#define _defDrawBackgroundPerScreen false
+#define _defCommonScreen true
+#define _defCommonDesk true
 #define _defDock true
 #define _defExport false
 #define _defLimitCache true

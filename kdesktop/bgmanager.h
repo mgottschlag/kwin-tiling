@@ -21,7 +21,7 @@ class QPixmap;
 class KMenu;
 class KWinModule;
 class KPixmap;
-class KBackgroundRenderer;
+class KVirtualBGRenderer;
 class KPixmapServer;
 
 /**
@@ -113,7 +113,7 @@ private:
     QWidget *m_pDesktop;
     QTimer *m_pTimer;
 
-    QVector<KBackgroundRenderer*> m_Renderer;
+    QVector<KVirtualBGRenderer*> m_Renderer;
     QVector<KBackgroundCacheEntry*> m_Cache;
 
     KWinModule *m_pKwinmodule;

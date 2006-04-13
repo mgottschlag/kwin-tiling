@@ -28,7 +28,7 @@
 #include "bgsettings.h"
 #include "bgdefaults.h"
 
-class BGMonitor;
+class BGMonitorArrangement;
 class KStandardDirs;
 
 class BGDialog : public BGDialog_UI
@@ -52,12 +52,15 @@ Q_SIGNALS:
 protected:
    void initUI();
    void updateUI();
+   KBackgroundRenderer * eRenderer();
 
    void setWallpaper(const QString &);
 
    void loadWallpaperFilesList();
 
 protected Q_SLOTS:
+   void slotIdentifyScreens();
+   void slotSelectScreen(int screen);
    void slotSelectDesk(int desk);
    void slotWallpaperTypeChanged(int i);
    void slotWallpaper(int i);
@@ -68,7 +71,7 @@ protected Q_SLOTS:
    void slotSecondaryColor(const QColor &color);
    void slotPattern(int pattern);
    void slotImageDropped(const QString &uri);
-   void slotPreviewDone(int);
+   void slotPreviewDone(int desk, int screen);
    void slotAdvanced();
    void slotGetNewStuff();
    void slotBlendMode(int mode);
@@ -78,23 +81,28 @@ protected Q_SLOTS:
    void setBlendingEnabled(bool);
 
 protected:
+   void getEScreen();
    KGlobalBackgroundSettings *m_pGlobals;
    KStandardDirs *m_pDirs;
    bool m_multidesktop;
 
-   int m_Max;
-   int m_Desk;
+   unsigned m_numDesks;
+   unsigned m_numScreens;
+   int m_desk;
+   int m_screen;
    int m_eDesk;
-   Q3PtrVector<KBackgroundRenderer> m_Renderer;
-   QMap<QString,int> m_Wallpaper;
-   QStringList m_Patterns;
+   int m_eScreen;
+   QVector< Q3PtrVector<KBackgroundRenderer> > m_renderer; // m_renderer[desk][screen]
+   QMap<QString,int> m_wallpaper;
+   QStringList m_patterns;
    int m_slideShowRandom; // Remembers last Slide Show setting
    int m_wallpaperPos; // Remembers last wallpaper pos
 
-   BGMonitor *m_pMonitor;
+   BGMonitorArrangement * m_pMonitorArrangement;
 
    bool m_previewUpdates;
    bool m_copyAllDesktops;
+   bool m_copyAllScreens;
 };
 
 #endif

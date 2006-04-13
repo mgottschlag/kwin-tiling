@@ -131,7 +131,7 @@ PositionTab::PositionTab(QWidget *parent, const char* name)
     connect(m_customSlider, SIGNAL(valueChanged(int)), SIGNAL(changed()));
     connect(m_customSpinbox, SIGNAL(valueChanged(int)), SIGNAL(changed()));
 
-    m_desktopPreview = new KBackgroundRenderer(0);
+    m_desktopPreview = new KVirtualBGRenderer(0);
     connect(m_desktopPreview, SIGNAL(imageDone(int)),
             SLOT(slotBGPreviewReady(int)));
 
@@ -487,6 +487,8 @@ void PositionTab::panelDimensionsChanged()
 
 void PositionTab::slotBGPreviewReady(int)
 {
+    m_pretendDesktop->setBackgroundPixmap(*m_desktopPreview->pixmap());
+#if 0
     KPixmap pm;
     if (QPixmap::defaultDepth() < 15)
     {
@@ -498,6 +500,7 @@ void PositionTab::slotBGPreviewReady(int)
     }
 
     m_pretendDesktop->setBackgroundPixmap(pm);
+#endif
 }
 
 void PositionTab::switchPanel(int panelItem)

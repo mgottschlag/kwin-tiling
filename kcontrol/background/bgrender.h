@@ -1,4 +1,5 @@
 /* vi: ts=8 sts=4 sw=4
+ * kate: space-indent on; tab-width 8; indent-width 4; indent-mode cstyle;
  *
  * This file is part of the KDE project, module kdesktop.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
@@ -13,6 +14,7 @@
 #include <qobject.h>
 //Added by qt3to4:
 #include <QPixmap>
+#include <q3ptrvector.h>
 
 #include "bgsettings.h"
 
@@ -42,12 +44,13 @@ class KBackgroundRenderer:
     Q_OBJECT
 
 public:
-    KBackgroundRenderer(int desk, KConfig *config=0);
+    KBackgroundRenderer(int desk, int screen, bool drawBackgroundPerScreen, KConfig *config=0);
     ~KBackgroundRenderer();
     
-    void load(int desk, bool reparseConfig=true);
+    void load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig=true);
 
     void setPreview(const QSize &size);
+    void setSize(const QSize &size);
     
     QPixmap *pixmap();
     QImage *image();
@@ -60,7 +63,7 @@ public Q_SLOTS:
     void desktopResized();
 
 Q_SIGNALS:
-    void imageDone(int desk);
+    void imageDone(int desk, int screen);
     void programFailure(int desk, int exitstatus); //Guaranteed either programFailure or 
     void programSuccess(int desk);                //programSuccess is emitted after imageDone
 
@@ -103,6 +106,68 @@ private:
     KShellProcess *m_pProc;
     
 };
+
+/**
+ * In xinerama mode, each screen is rendered seperately by KBackgroundRenderer.
+ * This class controls a set of renderers for a desktop, and coallates the
+ * images. Usage is similar to KBackgroundRenderer: connect to the imageDone
+ * signal.
+ */
+class KVirtualBGRenderer : public QObject
+{
+    Q_OBJECT
+public:
+    KVirtualBGRenderer(int desk, KConfig *config=0l);
+    ~KVirtualBGRenderer();
+    
+    KBackgroundRenderer * renderer(unsigned screen);
+    unsigned numRenderers() const { return m_numRenderers; }
+
+    QPixmap *pixmap();
+    
+    void setPreview(const QSize & size);
+    
+    bool needProgramUpdate();
+    void programUpdate();
+    
+    bool needWallpaperChange();
+    void changeWallpaper();
+    
+    int hash();
+    bool isActive();
+    void setEnabled( bool enable );
+    void desktopResized();
+    
+    void load(int desk, bool reparseConfig=true);
+    void start();
+    void stop();
+    void cleanup();
+
+signals:
+    void imageDone(int desk);
+
+private slots:
+    void screenDone(int desk, int screen);
+
+private:
+    QSize renderSize(int screen); // the size the renderer should be
+    void initRenderers();
+    
+    KConfig *m_pConfig;
+    float m_scaleX;
+    float m_scaleY;
+    int m_desk;
+    unsigned m_numRenderers;
+    bool m_bDrawBackgroundPerScreen;
+    bool m_bCommonScreen;
+    bool m_bDeleteConfig;
+    QSize m_size;
+    
+    QVector<bool> m_bFinished;
+    Q3PtrVector<KBackgroundRenderer> m_renderer;
+    QPixmap *m_pPixmap;
+};
+
 
 #endif // BGRender_h_Included
 

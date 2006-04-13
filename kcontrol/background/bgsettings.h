@@ -1,4 +1,5 @@
 /* vi: ts=8 sts=4 sw=4
+ * kate: space-indent on; indent-width 4; indent-mode cstyle;
  *
  * This file is part of the KDE project, module kdesktop.
  * Copyright (C) 1999 Geert Jansen <g.t.jansen@stud.tue.nl>
@@ -14,6 +15,7 @@
 #include <qstringlist.h>
 #include <qcolor.h>
 #include <QMap>
+#include <QVector>
 
 template <class QString, class T> class QMap;
 class KStandardDirs;
@@ -150,13 +152,23 @@ class KBackgroundSettings
       public KBackgroundProgram
 {
 public:
-    KBackgroundSettings(int desk, KConfig *config);
+    /**
+     * @param drawBackgroundPerScreen if false, then all screens (in xinerama
+     * mode) will be treated as one big display, and the "screen" paramater
+     * will be ignored.
+     */
+    KBackgroundSettings(int desk, int screen, bool drawBackgroundPerScreen, KConfig *config);
     ~KBackgroundSettings();
 
     void copyConfig(const KBackgroundSettings*);
 
+    bool drawBackgroundPerScreen() const { return m_bDrawBackgroundPerScreen; }
+    void setDrawBackgroundPerScreen(bool draw);
+
     int desk() const { return m_Desk; }
-    void load(int desk, bool reparseConfig=true);
+    int screen() const { return m_Screen; }
+//     void load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig=true);
+    void load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig);
 
     void setColorA(const QColor &color);
     QColor colorA() const { return m_ColorA; }
@@ -237,19 +249,20 @@ public:
 
     void readSettings(bool reparse=false);
     void writeSettings();
+    QString configGroupName() const;
 
     int hash();
+    QString fingerprint();
 
     void setEnabled( const bool enable );
     bool enabled() const { return m_bEnabled; }
 
 private:
     void updateHash();
-    QString fingerprint();
 
     bool dirty;
     bool hashdirty;
-    int m_Desk, m_Hash;
+    int m_Screen, m_Desk, m_Hash;
 
     QColor m_ColorA, defColorA;
     QColor m_ColorB, defColorB;
@@ -263,6 +276,7 @@ private:
     bool m_ReverseBlending, defReverseBlending;
     int m_MinOptimizationDepth;
     bool m_bShm;
+    bool m_bDrawBackgroundPerScreen;
 
     int m_MultiMode, defMultiMode;
     int m_Interval, m_LastChange;
@@ -299,11 +313,17 @@ public:
     int cacheSize() { return m_CacheSize; }
     void setCacheSize(int size);
 
+    bool drawBackgroundPerScreen(int desk) const;
+    void setDrawBackgroundPerScreen(int desk, bool perScreen);
+
     bool limitCache() { return m_bLimitCache; }
     void setLimitCache(bool limit);
 
-    bool commonBackground() { return m_bCommon; }
-    void setCommonBackground(bool common);
+    bool commonScreenBackground() { return m_bCommonScreen; }
+    void setCommonScreenBackground(bool common);
+
+    bool commonDeskBackground() { return m_bCommonDesk; }
+    void setCommonDeskBackground(bool common);
 
     bool dockPanel() { return m_bDock; }
     void setDockPanel(bool dock);
@@ -330,7 +350,9 @@ public:
 
 private:
     bool dirty;
-    bool m_bCommon, m_bDock;
+    bool m_bCommonDesk;
+    bool m_bCommonScreen;
+    bool m_bDock;
     bool m_bLimitCache, m_bExport;
     int m_CacheSize;
     QStringList m_Names;
@@ -340,9 +362,9 @@ private:
     bool m_shadowEnabled;
     int m_textLines;
     int m_textWidth;
-
     KConfig *m_pConfig;
     bool m_bDeleteConfig;
+    QVector<bool> m_bDrawBackgroundPerScreen; // m_bDrawBackgroundPerScreen[desk]
 };
 
 
