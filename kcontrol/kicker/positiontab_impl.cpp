@@ -487,7 +487,7 @@ void PositionTab::panelDimensionsChanged()
 
 void PositionTab::slotBGPreviewReady(int)
 {
-    m_pretendDesktop->setBackgroundPixmap(*m_desktopPreview->pixmap());
+    m_pretendDesktop->setBackgroundPixmap(m_desktopPreview->pixmap());
 #if 0
     KPixmap pm;
     if (QPixmap::defaultDepth() < 15)

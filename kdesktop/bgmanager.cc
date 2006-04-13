@@ -90,6 +90,7 @@ KBackgroundManager::KBackgroundManager(QWidget *desktop, KWinModule* kwinModule)
         m_Cache[i]->exp_from = -1;
         m_Renderer[i] = new KVirtualBGRenderer(i,m_pConfig);
         connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotImageDone(int)));
+        m_Renderer[i]->enableTiling( true ); // optimize
     }
 
     configure();
@@ -271,6 +272,7 @@ void KBackgroundManager::slotChangeNumberOfDesktops(int num)
 	    m_Cache[i]->exp_from = -1;
 	    m_Renderer[i] = new KVirtualBGRenderer(i,m_pConfig);
 	    connect(m_Renderer[i], SIGNAL(imageDone(int)), SLOT(slotImageDone(int)));
+            m_Renderer[i]->enableTiling( true ); // optimize
 	}
     }
 }
@@ -416,10 +418,9 @@ void KBackgroundManager::slotImageDone(int desk)
 {
     KPixmap *pm = new KPixmap();
     KVirtualBGRenderer *r = m_Renderer[desk];
+    bool do_cleanup = true;
 
-    *pm = *r->pixmap();
-    r->cleanup();
-
+    *pm = r->pixmap();
     // If current: paint it
     bool current = (r->hash() == m_Renderer[effectiveDesktop()]->hash());
     if (current)
@@ -429,6 +430,8 @@ void KBackgroundManager::slotImageDone(int desk)
         {
             m_bBgInitDone = true;
             emit initDone();
+            QTimer::singleShot( 30000, this, SLOT( saveImages()));
+            do_cleanup = false;
         }
     }
     if (m_bExport || !m_bCommon)
@@ -438,8 +441,23 @@ void KBackgroundManager::slotImageDone(int desk)
 
     if (current)
         exportBackground(desk, realDesktop());
+
+    if( do_cleanup )
+    {
+        r->saveCacheFile();
+        r->cleanup();
+    }
 }
 
+
+void KBackgroundManager::saveImages()
+{
+    for (unsigned i=0; i<m_Renderer.size(); i++)
+    {
+        m_Renderer[i]->saveCacheFile();
+        m_Renderer[i]->cleanup();
+    }
+}
 
 /*
  * Size in bytes of a QPixmap. For use in the pixmap cache.

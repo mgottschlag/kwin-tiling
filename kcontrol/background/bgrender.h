@@ -14,6 +14,7 @@
 #include <qobject.h>
 //Added by qt3to4:
 #include <QPixmap>
+#include <QImage>
 #include <q3ptrvector.h>
 
 #include "bgsettings.h"
@@ -21,8 +22,6 @@
 class QSize;
 class QRect;
 class QString;
-class QImage;
-class QPixmap;
 class QTimer;
 
 class KConfig;
@@ -52,10 +51,12 @@ public:
     void setPreview(const QSize &size);
     void setSize(const QSize &size);
     
-    QPixmap *pixmap();
-    QImage *image();
+    QPixmap pixmap();
+    QImage image();
     bool isActive() { return m_State & Rendering; }
     void cleanup();
+    void saveCacheFile();
+    void enableTiling( bool enable ) { m_TilingEnabled = enable; }
 
 public Q_SLOTS:
     void start(bool enableBusyCursor = false);
@@ -74,32 +75,38 @@ private Q_SLOTS:
 
 private:
     enum { Error, Wait, WaitUpdate, Done };
-    enum { Rendering = 1, BackgroundStarted = 2,
-	BackgroundDone = 4, WallpaperStarted = 8,
-	WallpaperDone = 0x10, AllDone = 0x20 };
+    enum { Rendering = 1, InitCheck = 2,
+	BackgroundStarted = 4, BackgroundDone = 8,
+	WallpaperStarted = 0x10, WallpaperDone = 0x20,
+	AllDone = 0x40 };
 
     QString buildCommand();
     void createTempFile();
-    void tile(QImage *dst, QRect rect, QImage *src);
-    void blend(QImage *dst, QRect dr, QImage *src, QPoint soffs = QPoint(0, 0), int blendFactor=100);
+    void tile(QImage& dst, QRect rect, const QImage& src);
+    void blend(QImage& dst, QRect dr, const QImage& src, QPoint soffs = QPoint(0, 0), int blendFactor=100);
 
-    void wallpaperBlend( const QRect& d, QImage& wp, int ww, int wh );
-    void fastWallpaperBlend( const QRect& d, QImage& wp, int ww, int wh );
-    void fullWallpaperBlend( const QRect& d, QImage& wp, int ww, int wh );
+    void wallpaperBlend();
+    void fastWallpaperBlend();
+    void fullWallpaperBlend();
 
     int doBackground(bool quit=false);
     int doWallpaper(bool quit=false);
     void setBusyCursor(bool isBusy);
+    QString cacheFileName();
+    bool canTile() const;
     
     bool m_isBusyCursor;
     bool m_enableBusyCursor;
     bool m_bPreview;
     int m_State;
+    bool m_Cached;
+    bool m_TilingEnabled;
 
     KTempFile* m_Tempfile;
     QSize m_Size, m_rSize;
-    QImage *m_pImage, *m_pBackground;
-    QPixmap *m_pPixmap;
+    QRect m_WallpaperRect;
+    QImage m_Image, m_Background, m_Wallpaper;
+    QPixmap m_Pixmap;
     QTimer *m_pTimer;
 
     KStandardDirs *m_pDirs;
@@ -123,7 +130,7 @@ public:
     KBackgroundRenderer * renderer(unsigned screen);
     unsigned numRenderers() const { return m_numRenderers; }
 
-    QPixmap *pixmap();
+    QPixmap pixmap();
     
     void setPreview(const QSize & size);
     
@@ -142,6 +149,8 @@ public:
     void start();
     void stop();
     void cleanup();
+    void saveCacheFile();
+    void enableTiling( bool enable );
 
 signals:
     void imageDone(int desk);

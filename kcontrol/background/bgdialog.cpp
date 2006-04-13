@@ -834,14 +834,16 @@ void BGDialog::slotPreviewDone(int desk_done, int screen_done)
 
    KBackgroundRenderer * r = m_renderer[m_eDesk][(m_eScreen>1) ? (screen_done+2) : m_eScreen];
 
-   if (!r->image())
+   if (r->image().isNull())
       return;
+
+   r->saveCacheFile();
 
    KPixmap pm;
    if (QPixmap::defaultDepth() < 15)
-      pm.convertFromImage(*r->image(), KPixmap::LowColor);
+      pm.convertFromImage(r->image(), KPixmap::LowColor);
    else
-      pm.convertFromImage(*r->image());
+      pm.convertFromImage(r->image());
 
    if ( m_eScreen == 0 )
    {

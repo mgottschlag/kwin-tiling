@@ -82,6 +82,7 @@ private Q_SLOTS:
     void repaintBackground();
     void desktopResized();
     void clearRoot();
+    void saveImages();
     
 private:
     void applyCommon(bool common);

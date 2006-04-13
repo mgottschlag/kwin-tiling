@@ -12,14 +12,17 @@
 
 #include <time.h>
 #include <stdlib.h>
-
+#include <utime.h>
 
 #include <qtimer.h>
 #include <qpainter.h>
 #include <qimage.h>
+#include <qfileinfo.h>
+#include <qdir.h>
 #include <QDesktopWidget>
 #include <QPaintEngine>
 #include <QHash>
+#include <QDateTime>
 //Added by qt3to4:
 #include <QPixmap>
 
@@ -57,10 +60,11 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, int screen, bool drawBackgrou
     m_pDirs = KGlobal::dirs();
     m_rSize = m_Size = drawBackgroundPerScreen ?
             QApplication::desktop()->screenGeometry(screen).size() : QApplication::desktop()->size();
-    m_pBackground = 0L; m_pImage = 0L; m_pPixmap = 0L;
     m_pProc = 0L;
     m_Tempfile = 0L;
     m_bPreview = false;
+    m_Cached = false;
+    m_TilingEnabled = false;
 
     m_pTimer = new QTimer(this);
     connect(m_pTimer, SIGNAL(timeout()), SLOT(render()));
@@ -93,18 +97,18 @@ void KBackgroundRenderer::desktopResized()
 }
 
 
-void KBackgroundRenderer::tile(QImage *dest, QRect rect, QImage *src)
+void KBackgroundRenderer::tile(QImage& dest, QRect rect, const QImage& src)
 {
-    rect &= dest->rect();
+    rect &= dest.rect();
 
     int x, y;
     int h = rect.height(), w = rect.width();
     int offx = rect.x(), offy = rect.y();
-    int sw = src->width(), sh = src->height();
+    int sw = src.width(), sh = src.height();
 
     for (y=offy; y<offy+h; y++)
 	for (x=offx; x<offx+w; x++)
-	    dest->setPixel(x, y, src->pixel(x%sw, y%sh));
+	    dest.setPixel(x, y, src.pixel(x%sw, y%sh));
 }
 
 
@@ -199,8 +203,8 @@ int KBackgroundRenderer::doBackground(bool quit)
 
     case Flat:
         // this can be tiled correctly without problems
-	m_pBackground->create( tileWidth, tileHeight, 32);
-        m_pBackground->fill(colorA().rgb());
+	m_Background.create( tileWidth, tileHeight, 32);
+        m_Background.fill(colorA().rgb());
         break;
 
     case Pattern:
@@ -211,17 +215,17 @@ int KBackgroundRenderer::doBackground(bool quit)
         if (file.isEmpty())
             break;
 
-	m_pBackground->load(file);
-	if (m_pBackground->isNull())
+	m_Background.load(file);
+	if (m_Background.isNull())
 	    break;
-	int w = m_pBackground->width();
-	int h = m_pBackground->height();
+	int w = m_Background.width();
+	int h = m_Background.height();
 	if ((w > m_Size.width()) || (h > m_Size.height())) {
 	    w = qMin(w, m_Size.width());
 	    h = qMin(h, m_Size.height());
-	    *m_pBackground = m_pBackground->copy(0, 0, w, h);
+	    m_Background = m_Background.copy(0, 0, w, h);
 	}
-	KImageEffect::flatten(*m_pBackground, colorA(), colorB(), 0);
+	KImageEffect::flatten(m_Background, colorA(), colorB(), 0);
 	break;
     }
     case Program:
@@ -247,9 +251,9 @@ int KBackgroundRenderer::doBackground(bool quit)
     {
 	QSize size = m_Size;
         // on <16bpp displays the gradient sucks when tiled because of dithering
-        if( optimize())
+        if( canTile())
 	    size.setHeight( tileHeight );
-	*m_pBackground = KImageEffect::gradient(size, colorA(), colorB(),
+	m_Background = KImageEffect::gradient(size, colorA(), colorB(),
 		KImageEffect::HorizontalGradient, 0);
         break;
     }
@@ -257,24 +261,24 @@ int KBackgroundRenderer::doBackground(bool quit)
     {
 	QSize size = m_Size;
         // on <16bpp displays the gradient sucks when tiled because of dithering
-        if( optimize())
+        if( canTile())
 	    size.setWidth( tileWidth );
-        *m_pBackground = KImageEffect::gradient(size, colorA(), colorB(),
+        m_Background = KImageEffect::gradient(size, colorA(), colorB(),
 		KImageEffect::VerticalGradient, 0);
         break;
     }
     case PyramidGradient:
-        *m_pBackground = KImageEffect::gradient(m_Size, colorA(), colorB(),
+        m_Background = KImageEffect::gradient(m_Size, colorA(), colorB(),
 		KImageEffect::PyramidGradient, 0);
         break;
 
     case PipeCrossGradient:
-        *m_pBackground = KImageEffect::gradient(m_Size, colorA(), colorB(),
+        m_Background = KImageEffect::gradient(m_Size, colorA(), colorB(),
 		KImageEffect::PipeCrossGradient, 0);
         break;
 
     case EllipticGradient:
-        *m_pBackground = KImageEffect::gradient(m_Size, colorA(), colorB(),
+        m_Background = KImageEffect::gradient(m_Size, colorA(), colorB(),
 		KImageEffect::EllipticGradient, 0);
         break;
     }
@@ -297,7 +301,7 @@ int KBackgroundRenderer::doWallpaper(bool quit)
 
     int wpmode= enabled()?wallpaperMode():NoWallpaper;
 
-    QImage wp;
+    m_Wallpaper = QImage();
     if (wpmode != NoWallpaper) {
 wp_load:
 	if (currentWallpaper().isEmpty()) {
@@ -361,7 +365,7 @@ wp_load:
 	    }
 
 	    if (svgEngine->load(svgWidth, svgHeight, file )) {
-		wp = ( *svgEngine->image() );
+		m_Wallpaper = ( *svgEngine->image() );
 	    } else {
 		kWarning() << "failed to load SVG file " << file << endl;
 	    }
@@ -372,34 +376,34 @@ wp_load:
 			<< "tried to load SVG file but libagg not installed" << endl;
 #endif
 	} else {
-	    wp.load(file);
+	    m_Wallpaper.load(file);
 	}
-	if (wp.isNull()) {
+	if (m_Wallpaper.isNull()) {
             if (discardCurrentWallpaper())
                goto wp_load;
 	    wpmode = NoWallpaper;
 	    goto wp_out;
 	}
-	wp = wp.convertDepth(32, Qt::DiffuseAlphaDither);
+	m_Wallpaper = m_Wallpaper.convertDepth(32, Qt::DiffuseAlphaDither);
 
 	// If we're previewing, scale the wallpaper down to make the preview
 	// look more like the real desktop.
 	if (m_bPreview) {
-	    int xs = wp.width() * m_Size.width() / m_rSize.width();
-	    int ys = wp.height() * m_Size.height() / m_rSize.height();
+	    int xs = m_Wallpaper.width() * m_Size.width() / m_rSize.width();
+	    int ys = m_Wallpaper.height() * m_Size.height() / m_rSize.height();
 	    if ((xs < 1) || (ys < 1))
 	    {
 	       xs = ys = 1;
 	    }
-	    if( wp.size() != QSize( xs, ys ))
-		wp = wp.smoothScale(xs, ys);
+	    if( m_WallpaperRect.size() != QSize( xs, ys ))
+	        m_Wallpaper = m_Wallpaper.smoothScale(xs, ys);
 	}
     }
 wp_out:
 
-    if (m_pBackground->isNull()) {
-	m_pBackground->create(8, 8, 32);
-	m_pBackground->fill(colorA().rgb());
+    if (m_Background.isNull()) {
+	m_Background.create(8, 8, 32);
+	m_Background.fill(colorA().rgb());
     }
 
     int retval = Done;
@@ -407,34 +411,34 @@ wp_out:
     int w = m_Size.width();	// desktop width/height
     int h = m_Size.height();
 
-    int ww = wp.width();	// wallpaper width/height
-    int wh = wp.height();
+    int ww = m_Wallpaper.width();	// wallpaper width/height
+    int wh = m_Wallpaper.height();
 
-    QRect d;	// to be filled destination rectangle; may exceed desktop!
+    m_WallpaperRect = QRect();	// to be filled destination rectangle; may exceed desktop!
 
     switch (wpmode)
     {
 	case NoWallpaper:
 	    break;
 	case Centred:
-	    d.setRect((w - ww) / 2, (h - wh) / 2, ww, wh);
+	    m_WallpaperRect.setRect((w - ww) / 2, (h - wh) / 2, ww, wh);
 	    break;
 	case Tiled:
-	    d.setRect(0, 0, w, h);
+	    m_WallpaperRect.setRect(0, 0, w, h);
 	    break;
 	case CenterTiled:
-	    d.setCoords(-ww + ((w - ww) / 2) % ww, -wh + ((h - wh) / 2) % wh, w-1, h-1);
+	    m_WallpaperRect.setCoords(-ww + ((w - ww) / 2) % ww, -wh + ((h - wh) / 2) % wh, w-1, h-1);
 	    break;
 	case Scaled:
 	    ww = w;
 	    wh = h;
-	    if( wp.size() != QSize( w, h ))
-		wp = wp.smoothScale( w, h );
-	    d.setRect(0, 0, w, h);
+	    if( m_WallpaperRect.size() != QSize( w, h ))
+		m_Wallpaper = m_Wallpaper.smoothScale( w, h );
+	    m_WallpaperRect.setRect(0, 0, w, h);
 	    break;
         case CentredAutoFit:
             if( ww <= w && wh <= h ) {
-    	        d.setRect((w - ww) / 2, (h - wh) / 2, ww, wh); // like Centred
+    	        m_WallpaperRect.setRect((w - ww) / 2, (h - wh) / 2, ww, wh); // like Centred
 	        break;
             }
             // fall through
@@ -449,9 +453,9 @@ wp_out:
                   wh = (int)(sx * wh);
                   ww = w;
               }
-	      if( wp.size() != QSize( ww, wh ))
-	        wp = wp.smoothScale(ww, wh);
-	      d.setRect((w - ww) / 2, (h - wh) / 2, ww, wh);
+	      if( m_WallpaperRect.size() != QSize( ww, wh ))
+                  m_Wallpaper = m_Wallpaper.smoothScale(ww, wh);
+	      m_WallpaperRect.setRect((w - ww) / 2, (h - wh) / 2, ww, wh);
 	      break;
             }
 	case TiledMaxpect:
@@ -465,9 +469,9 @@ wp_out:
                   wh = (int)(sx * wh);
                   ww = w;
               }
-              if( wp.size() != QSize( ww, wh ))
-                wp = wp.smoothScale(ww, wh);
-	      d.setRect(0, 0, w, h);
+              if( m_WallpaperRect.size() != QSize( ww, wh ))
+                  m_Wallpaper = m_Wallpaper.smoothScale(ww, wh);
+	      m_WallpaperRect.setRect(0, 0, w, h);
 	      break;
             }
 	 case ScaleAndCrop:
@@ -483,14 +487,14 @@ wp_out:
                   wh = h;
                   ww = (int)(sy*ww);
               }
-              if( wp.size() != QSize( ww, wh ))
-                wp = wp.smoothScale(ww, wh);
-	      d.setRect((w - ww) / 2, (h - wh) / 2,w, h);
+              if( m_WallpaperRect.size() != QSize( ww, wh ))
+                  m_Wallpaper = m_Wallpaper.smoothScale(ww, wh);
+	      m_WallpaperRect.setRect((w - ww) / 2, (h - wh) / 2,w, h);
 	      break;
             }
     }
 
-    wallpaperBlend( d, wp, ww, wh );
+    wallpaperBlend();
 
     if (retval == Done)
         m_State |= WallpaperDone;
@@ -498,82 +502,96 @@ wp_out:
     return retval;
 }
 
-void KBackgroundRenderer::wallpaperBlend( const QRect& d, QImage& wp, int ww, int wh )
+bool KBackgroundRenderer::canTile() const
 {
-    if( !enabled() || (blendMode() == NoBlending && 
-        ( QApplication::desktop()->paintEngine()->hasFeature(QPaintEngine::Antialiasing) || !wp.hasAlphaBuffer()))) {
-        fastWallpaperBlend( d, wp, ww, wh );
+    return m_TilingEnabled && optimize();
+}
+
+void KBackgroundRenderer::wallpaperBlend()
+{
+    if( !enabled() || wallpaperMode() == NoWallpaper
+        || (blendMode() == NoBlending && 
+        ( QApplication::desktop()->paintEngine()->hasFeature(QPaintEngine::Antialiasing)
+            || !m_Wallpaper.hasAlphaBuffer()))) {
+        fastWallpaperBlend();
     }
     else {
-        fullWallpaperBlend( d, wp, ww, wh );
+        fullWallpaperBlend();
     }
 }
 
 // works only for NoBlending and no alpha in wallpaper
 // but is much faster than QImage fidling
-void KBackgroundRenderer::fastWallpaperBlend( const QRect& d, QImage& wp, int ww, int wh )
+void KBackgroundRenderer::fastWallpaperBlend()
 {
-    *m_pImage = QImage();
+    m_Image = QImage();
     // copy background to m_pPixmap
-    if( !enabled() || (wallpaperMode() == NoWallpaper && optimize())) {
+    if( !enabled() || (wallpaperMode() == NoWallpaper && canTile())) {
         // if there's no wallpaper, no need to tile the pixmap to the size of desktop, as X does
         // that automatically and using a smaller pixmap should save some memory
-        m_pPixmap->convertFromImage( *m_pBackground );
+        m_Pixmap.convertFromImage( m_Background );
         return;
     }
-    else if( wallpaperMode() == Tiled && !wp.hasAlphaBuffer() && optimize() && !m_bPreview ) {
+    else if( wallpaperMode() == Tiled && !m_Wallpaper.hasAlphaBuffer() && canTile() && !m_bPreview ) {
     // tiles will be tiled by X automatically
-        *m_pPixmap = QPixmap::fromImage( wp );
+        m_Pixmap = QPixmap::fromImage( m_Wallpaper );
         return;
     }
-    else if (m_pBackground->size() == m_Size)
-        m_pPixmap->convertFromImage( *m_pBackground );
+    else if( m_WallpaperRect.contains( QRect( QPoint( 0, 0 ), m_Size ))
+        && !m_Wallpaper.hasAlphaBuffer()) // wallpaper covers all and no blending
+        m_Pixmap = QPixmap( m_Size );
+    else if (m_Background.size() == m_Size)
+        m_Pixmap.convertFromImage( m_Background );
     else {
-        *m_pPixmap = QPixmap( m_Size );
-        QPainter p( m_pPixmap );
+        m_Pixmap = QPixmap( m_Size );
+        QPainter p( &m_Pixmap );
         QPixmap pm;
-        pm.convertFromImage( *m_pBackground );
+        pm.convertFromImage( m_Background );
         p.drawTiledPixmap( 0, 0, m_Size.width(), m_Size.height(), pm );
     }
 
     // paint/alpha-blend wallpaper to destination rectangle of m_pPixmap
-    if (d.isValid()) {
-        QPixmap wp_pixmap = QPixmap::fromImage( wp );
-        for (int y = d.top(); y < d.bottom(); y += wh) {
-	    for (int x = d.left(); x < d.right(); x += ww) {
-		bitBlt( m_pPixmap, x, y, &wp_pixmap, 0, 0, ww, wh );
+    if (m_WallpaperRect.isValid()) {
+        QPixmap wp_pixmap = QPixmap::fromImage( m_Wallpaper );
+        int ww = m_Wallpaper.width();
+        int wh = m_Wallpaper.height();
+        for (int y = m_WallpaperRect.top(); y < m_WallpaperRect.bottom(); y += wh) {
+	    for (int x = m_WallpaperRect.left(); x < m_WallpaperRect.right(); x += ww) {
+		bitBlt( &m_Pixmap, x, y, &wp_pixmap, 0, 0, ww, wh );
 	    }
 	}
     }
 }
 
 
-void KBackgroundRenderer::fullWallpaperBlend( const QRect& d, QImage& wp, int ww, int wh )
+void KBackgroundRenderer::fullWallpaperBlend()
 {
-    *m_pPixmap = QPixmap();
+    m_Pixmap = QPixmap();
     int w = m_Size.width();	// desktop width/height
     int h = m_Size.height();
     // copy background to m_pImage
-    if (m_pBackground->size() == m_Size) {
-	*m_pImage = m_pBackground->copy();
+    if (m_Background.size() == m_Size) {
+	m_Image = m_Background.copy();
 
-	if (m_pImage->depth() < 32)
-	    *m_pImage = m_pImage->convertDepth(32, Qt::DiffuseAlphaDither);
+	if (m_Image.depth() < 32)
+	    m_Image = m_Image.convertDepth(32, Qt::DiffuseAlphaDither);
 
     } else {
-	m_pImage->create(w, h, 32);
-	tile(m_pImage, QRect(0, 0, w, h), m_pBackground);
+	m_Image.create(w, h, 32);
+	tile(m_Image, QRect(0, 0, w, h), m_Background);
     }
 
     // blend wallpaper to destination rectangle of m_pImage
-    if (d.isValid())
+    if (m_WallpaperRect.isValid())
     {
         int blendFactor = 100;
         if (blendMode() == FlatBlending)
             blendFactor = (blendBalance()+200)/4;
-        for (int y = d.top(); y < d.bottom(); y += wh) {
-	    for (int x = d.left(); x < d.right(); x += ww) {
-		blend(m_pImage, QRect(x, y, ww, wh), &wp,
+        int ww = m_Wallpaper.width();
+        int wh = m_Wallpaper.height();
+        for (int y = m_WallpaperRect.top(); y < m_WallpaperRect.bottom(); y += wh) {
+	    for (int x = m_WallpaperRect.left(); x < m_WallpaperRect.right(); x += ww) {
+		blend(m_Image, QRect(x, y, ww, wh), m_Wallpaper,
 			QPoint(-qMin(x, 0), -qMin(y, 0)), blendFactor);
 	    }
 	}
@@ -586,52 +604,52 @@ void KBackgroundRenderer::fullWallpaperBlend( const QRect& d, QImage& wp, int ww
 
       switch( blendMode() ) {
       case HorizontalBlending:
-	KImageEffect::blend( *m_pImage, *m_pBackground,
+	KImageEffect::blend( m_Image, m_Background,
 			     KImageEffect::HorizontalGradient,
 			     bal, 100 );
 	break;
 
       case VerticalBlending:
-	KImageEffect::blend( *m_pImage, *m_pBackground,
+	KImageEffect::blend( m_Image, m_Background,
 			     KImageEffect::VerticalGradient,
 			     100, bal );
 	break;
 
       case PyramidBlending:
-	KImageEffect::blend( *m_pImage, *m_pBackground,
+	KImageEffect::blend( m_Image, m_Background,
 			     KImageEffect::PyramidGradient,
 			     bal, bal );
 	break;
 
       case PipeCrossBlending:
-	KImageEffect::blend( *m_pImage, *m_pBackground,
+	KImageEffect::blend( m_Image, m_Background,
 			     KImageEffect::PipeCrossGradient,
 			     bal, bal );
 	break;
 
       case EllipticBlending:
-	KImageEffect::blend( *m_pImage, *m_pBackground,
+	KImageEffect::blend( m_Image, m_Background,
 			     KImageEffect::EllipticGradient,
 			     bal, bal );
 	break;
 
       case IntensityBlending:
-	KImageEffect::modulate( *m_pImage, *m_pBackground, reverseBlending(),
+	KImageEffect::modulate( m_Image, m_Background, reverseBlending(),
 		    KImageEffect::Intensity, bal, KImageEffect::All );
 	break;
 
       case SaturateBlending:
-	KImageEffect::modulate( *m_pImage, *m_pBackground, reverseBlending(),
+	KImageEffect::modulate( m_Image, m_Background, reverseBlending(),
 		    KImageEffect::Saturation, bal, KImageEffect::Gray );
 	break;
 
       case ContrastBlending:
-	KImageEffect::modulate( *m_pImage, *m_pBackground, reverseBlending(),
+	KImageEffect::modulate( m_Image, m_Background, reverseBlending(),
 		    KImageEffect::Contrast, bal, KImageEffect::All );
 	break;
 
       case HueShiftBlending:
-	KImageEffect::modulate( *m_pImage, *m_pBackground, reverseBlending(),
+	KImageEffect::modulate( m_Image, m_Background, reverseBlending(),
 		    KImageEffect::HueShift, bal, KImageEffect::Gray );
 	break;
 
@@ -646,18 +664,19 @@ void KBackgroundRenderer::fullWallpaperBlend( const QRect& d, QImage& wp, int ww
  * Default offset is QPoint(0, 0).
  * blendfactor = [0, 100%]
  */
-void KBackgroundRenderer::blend(QImage *dst, QRect dr, QImage *src, QPoint soffs, int blendFactor)
+void KBackgroundRenderer::blend(QImage& dst, QRect dr, const QImage& src, QPoint soffs, int blendFactor)
 {
     int x, y, a;
-    dr &= dst->rect();
+    dr &= dst.rect();
 
     for (y = 0; y < dr.height(); y++) {
-	if (dst->scanLine(dr.y() + y) && src->scanLine(soffs.y() + y)) {
-	    QRgb *b, *d;
+	if (dst.scanLine(dr.y() + y) && src.scanLine(soffs.y() + y)) {
+	    QRgb *b;
+            const QRgb *d;
 	    for (x = 0; x < dr.width(); x++) {
-		b = reinterpret_cast<QRgb*>(dst->scanLine(dr.y() + y)
+		b = reinterpret_cast<QRgb*>(dst.scanLine(dr.y() + y)
 			+ (dr.x() + x) * sizeof(QRgb));
-                d = reinterpret_cast<QRgb*>(src->scanLine(soffs.y() + y)
+                d = reinterpret_cast<const QRgb*>(src.scanLine(soffs.y() + y)
 			+ (soffs.x() + x) * sizeof(QRgb));
                 a = (qAlpha(*d) * blendFactor) / 100;
                 *b = qRgb(qRed(*b) - (((qRed(*b) - qRed(*d)) * a) >> 8),
@@ -676,7 +695,7 @@ void KBackgroundRenderer::slotBackgroundDone(KProcess *process)
     m_State |= BackgroundDone;
 
     if (m_pProc->normalExit() && !m_pProc->exitStatus()) {
-        m_pBackground->load(m_Tempfile->name());
+        m_Background.load(m_Tempfile->name());
         m_State |= BackgroundDone;
     }
 
@@ -696,12 +715,8 @@ void KBackgroundRenderer::start(bool enableBusyCursor)
 {
     m_enableBusyCursor = enableBusyCursor;
     setBusyCursor(true);
-    if (m_pBackground == 0L)
-	m_pBackground = new QImage();
-    if (m_pImage == 0L)
-	m_pImage = new QImage();
-    if (m_pPixmap == 0L)
-	m_pPixmap = new QPixmap();
+
+    m_Cached = false;
 
     m_State = Rendering;
     m_pTimer->setSingleShot(true);
@@ -718,6 +733,29 @@ void KBackgroundRenderer::render()
     setBusyCursor(true);
     if (!(m_State & Rendering))
         return;
+
+    if( !(m_State & InitCheck)) {
+        QString f = cacheFileName();
+        if( enabled()?wallpaperMode():NoWallpaper != NoWallpaper ) {
+            QString w = m_pDirs->findResource("wallpaper", currentWallpaper());
+            QFileInfo wi( w );
+            QFileInfo fi( f );
+            if( wi.lastModified().isValid() && fi.lastModified().isValid()
+                && wi.lastModified() < fi.lastModified()) {
+                QImage im;
+                if( im.load( f, "PNG" )) {
+                    m_Image = im;
+                    m_Pixmap = QPixmap( m_Size );
+                    m_Pixmap.convertFromImage( m_Image );
+                    m_Cached = true;
+                    m_State |= InitCheck | BackgroundDone | WallpaperDone;
+                }
+            }
+        }
+        m_pTimer->start(0, true);
+        m_State |= InitCheck;
+        return;
+    }
 
     int ret;
 
@@ -795,11 +833,14 @@ void KBackgroundRenderer::stop()
 void KBackgroundRenderer::cleanup()
 {
     setBusyCursor(false);
-    delete m_pBackground; m_pBackground = 0L;
-    delete m_pImage; m_pImage = 0L;
-    delete m_pPixmap; m_pPixmap = 0L;
+    m_Background = QImage();
+    m_Image = QImage();
+    m_Pixmap = QPixmap();
+    m_Wallpaper = QImage();
     delete m_pProc; m_pProc = 0L;
     m_State = 0;
+    m_WallpaperRect = QRect();
+    m_Cached = false;
 }
 
 
@@ -814,30 +855,24 @@ void KBackgroundRenderer::setPreview(const QSize &size)
 }
 
 
-QPixmap *KBackgroundRenderer::pixmap()
+QPixmap KBackgroundRenderer::pixmap()
 {
     if (m_State & AllDone) {
-        if( m_pPixmap->isNull())
-            m_pPixmap->convertFromImage( *m_pImage );
-        return m_pPixmap;
+        if( m_Pixmap.isNull())
+            m_Pixmap.convertFromImage( m_Image );
+        return m_Pixmap;
     }
-    return 0L;
+    return QPixmap();
 }
 
-QImage *KBackgroundRenderer::image()
+QImage KBackgroundRenderer::image()
 {
     if (m_State & AllDone) {
-        if( m_pImage->isNull()) {
-            if( m_pPixmap->size() != m_Size ) {
-                m_pImage->create(m_Size.width(), m_Size.height(), 32);
-                tile(m_pImage, QRect(0, 0, m_Size.width(), m_Size.height()), m_pBackground);
-            }
-            else
-                *m_pImage = m_pPixmap->convertToImage();
-        }
-        return m_pImage;
+        if( m_Image.isNull())
+            fullWallpaperBlend(); // create from m_Pixmap
+        return m_Image;
     }
-    return 0L;
+    return QImage();
 }
 
 
@@ -859,7 +894,56 @@ void KBackgroundRenderer::createTempFile()
      m_Tempfile = new KTempFile();
 }
 
+QString KBackgroundRenderer::cacheFileName()
+{
+    QString f = fingerprint();
+    f.replace ( ':', '_' ); // avoid characters that shouldn't be in filenames
+    f.replace ( '/', '#' );
+    f = locateLocal( "cache", QString( "background/%1x%2_%3.png" )
+        .arg( m_Size.width()).arg( m_Size.height()).arg( f ));
+    return f;
+}
 
+void KBackgroundRenderer::saveCacheFile()
+{
+    if( !( m_State & AllDone ))
+        return;
+    if( !enabled())
+        return;
+    if( backgroundMode() == Program )
+        return; // don't cache these at all
+    if( wallpaperMode() == NoWallpaper
+        && ( backgroundMode() == Flat
+            || backgroundMode() == HorizontalGradient
+            || backgroundMode() == VerticalGradient ))
+        return; // it's faster to generate these
+    if( m_Image.isNull())
+        fullWallpaperBlend(); // generate from m_Pixmap
+    QString f = cacheFileName();
+    if( KStandardDirs::exists( f ) || m_Cached )
+        utime( QFile::encodeName( f ), NULL );
+    else {
+        m_Image.save( f, "PNG" );
+        // remove old entries from the cache
+        QDir dir( locateLocal( "cache", "background/" ));
+        const QFileInfoList list = dir.entryInfoList( "*.png", QDir::Files, QDir::Time | QDir::Reversed );
+        if( !list.isEmpty()) {
+            int size = 0;
+            Q_FOREACH( QFileInfo info, list )
+                size += info.size();
+            Q_FOREACH( QFileInfo info, list ) {
+                if( size < 8 * 1024 * 1024 )
+                    break;
+                // keep everything newer than 10 minutes if the total size is less than 50M (just in case)
+                if( size < 50 * 1024 * 1024
+                    && ( time_t ) info.lastModified().toTime_t() >= time( NULL ) - 10 * 60 )
+                    break;
+                size -= info.size();
+                QFile::remove( info.absFilePath());
+            }
+        }
+    }
+}
 
 //BEGIN class KVirtualBGRenderer
 KVirtualBGRenderer::KVirtualBGRenderer( int desk, KConfig *config )
@@ -910,12 +994,12 @@ KBackgroundRenderer * KVirtualBGRenderer::renderer(unsigned screen)
 }
 
 
-QPixmap *KVirtualBGRenderer::pixmap()
+QPixmap KVirtualBGRenderer::pixmap()
 {
     if (m_numRenderers == 1)
         return m_renderer[0]->pixmap();
     
-    return m_pPixmap;
+    return *m_pPixmap;
 }
 
 
@@ -1117,18 +1201,18 @@ void KVirtualBGRenderer::screenDone(int _desk, int _screen)
         drawPos.setX( int(drawPos.x() * m_scaleX) );
         drawPos.setY( int(drawPos.y() * m_scaleY) );
         
-        QPixmap * source = m_renderer[screen]->pixmap();
+        QPixmap source = m_renderer[screen]->pixmap();
         QSize renderSize = this->renderSize(screen);
         renderSize.setWidth( int(renderSize.width() * m_scaleX) );
         renderSize.setHeight( int(renderSize.height() * m_scaleY) );
         
         QPainter p(m_pPixmap);
         
-        if (renderSize == source->size())
-            p.drawPixmap( drawPos, *source );
+        if (renderSize == source.size())
+            p.drawPixmap( drawPos, source );
         
         else
-            p.drawTiledPixmap( drawPos.x(), drawPos.y(), renderSize.width(), renderSize.height(), *source );
+            p.drawTiledPixmap( drawPos.x(), drawPos.y(), renderSize.width(), renderSize.height(), source );
         
         p.end();
     }
@@ -1183,6 +1267,19 @@ void KVirtualBGRenderer::cleanup()
     delete m_pPixmap;
     m_pPixmap = 0l;
 }
+
+void KVirtualBGRenderer::saveCacheFile()
+{
+    for (unsigned i=0; i<m_numRenderers; ++i)
+        m_renderer[i]->saveCacheFile();
+}
+
+void KVirtualBGRenderer::enableTiling( bool enable )
+{
+    for (unsigned i=0; i<m_numRenderers; ++i)
+        m_renderer[i]->enableTiling( enable );
+}
+
 //END class KVirtualBGRenderer
 
 
