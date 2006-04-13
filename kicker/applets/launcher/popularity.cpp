@@ -340,7 +340,9 @@ double PopularityStatistics::historyHorizon()
 
 PopularityStatisticsImpl::PopularityStatisticsImpl()
 {
-    static const int rateBaseCount(8);
+    const int rateBaseCount(8);
+
+    m_historyHorizon = 0.0;
     
     for (int n=0; n<rateBaseCount; ++n) 
     {
