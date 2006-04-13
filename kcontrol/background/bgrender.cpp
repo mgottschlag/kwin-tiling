@@ -968,8 +968,7 @@ void KVirtualBGRenderer::changeWallpaper()
 {
     for (unsigned i=0; i<m_numRenderers; ++i)
     {
-        if ( m_renderer[i]->needWallpaperChange() )
-            m_renderer[i]->changeWallpaper();
+        m_renderer[i]->changeWallpaper();
     }
 }
 
