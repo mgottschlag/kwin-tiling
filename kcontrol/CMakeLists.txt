@@ -4,6 +4,9 @@ project(kcontrol)
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/ ${KDE4_INCLUDES} )
 macro_optional_find_package(Freetype)
 
+set(libkxftconfig_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/fonts/kxftconfig.cpp )
+
+
 if( X11_Xrandr_FOUND )
 	add_subdirectory( randr )
 endif(X11_Xrandr_FOUND )
@@ -44,7 +47,6 @@ if(FONTCONFIG_FOUND AND FREETYPE_FOUND)
 endif(FONTCONFIG_FOUND AND FREETYPE_FOUND)	
 	
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(KSMCARD_SUBDIR)")
-message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(FONTINST_SUBDIR)")
 
 
 

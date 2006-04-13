@@ -1,10 +1,13 @@
 kde4_header()
-include_directories(${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/ ${KDE4_INCLUDES} )
+include_directories(
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/ 
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/fonts/
+	${KDE4_INCLUDES} )
 
 
 ########### next target ###############
 
-set(kfontinst_SRCS 
+set(kfontinst_bin_SRCS ${libkxftconfig_SRCS}
    CompressedFile.cpp 
    Main.cpp 
    Encodings.cpp 
@@ -13,13 +16,14 @@ set(kfontinst_SRCS
    GetPid.c 
    XConfig.cpp )
 
-kde4_automoc(${kfontinst_SRCS})
+kde4_automoc(${kfontinst_bin_SRCS})
 
-kde4_add_executable(kfontinst ${kfontinst_SRCS})
+kde4_add_executable(kfontinst_bin ${kfontinst_bin_SRCS})
+set_target_properties(kfontinst_bin PROPERTIES OUTPUT_NAME kfontinst)
 
-target_link_libraries(kfontinst  ${KDE4_KIO_LIBS} kxftconfig kfontinst )
+target_link_libraries(kfontinst_bin  ${KDE4_KIO_LIBS} kfontinst fontenc )
 
-install_targets(/bin kfontinst )
+install_targets(/bin kfontinst_bin )
 
 
 ########### install files ###############

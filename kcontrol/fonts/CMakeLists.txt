@@ -7,7 +7,7 @@ include_directories( ${KDE4_INCLUDES} )
 
 ########### next target ###############
 
-set(kcm_fonts_PART_SRCS fonts.cpp kxftconfig.cpp ${libkrd_SRCS} )
+set(kcm_fonts_PART_SRCS fonts.cpp ${libkxftconfig_SRCS} ${libkrd_SRCS} )
 
 kde4_automoc(${kcm_fonts_PART_SRCS})
 
