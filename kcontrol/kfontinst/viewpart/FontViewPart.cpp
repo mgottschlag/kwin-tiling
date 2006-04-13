@@ -152,7 +152,7 @@ bool CFontViewPart::openFile()
     if(isFonts)
         FcInitReinitialize();
 
-    itsPreview->showFont(isFonts ? m_url.url() : m_file);
+    itsPreview->showFont(KUrl::fromPathOrURL(isFonts ? m_url.url() :m_file));
 
     if(!isFonts && itsPreview->engine().getNumIndexes()>1)
     {
