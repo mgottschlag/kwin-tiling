@@ -1522,10 +1522,10 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
         pixmap = t->thumbnail(TaskBarSettings::thumbnailMaxDimension());
     }
 
-    if (pixmap.isNull())
+    if (pixmap.isNull() && !tasks.isEmpty())
     {
         // try to load icon via net_wm
-        pixmap = KWin::icon(tasks.first()->window(),
+        pixmap = KWin::icon(tasks.last()->window(),
                             K3Icon::SizeMedium,
                             K3Icon::SizeMedium,
                             true);

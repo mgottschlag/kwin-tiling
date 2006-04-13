@@ -989,17 +989,7 @@ void TaskBar::activateNextTask(bool forward)
             return;
         }
     }
-/*
-    for (int i = 0; i < numContainers; ++i)
-    {
-        it = forward ? list.at(i) : list.at(numContainers - i - 1);
 
-        if (it != list.end() && (*it)->activateNextTask(forward, forcenext))
-        {
-            return;
-        }
-    }
-*/
     if (forcenext)
     {
         QList<TaskContainer*>::iterator it2 = forward ? list.begin() : list.end();
@@ -1012,18 +1002,6 @@ void TaskBar::activateNextTask(bool forward)
             }
         }
 
-        // moving forward from the last, or backward from the first, loop around
-/*
-        for (int i = 0; i < numContainers; ++i)
-        {
-            it = forward ? list.at(i) : list.at(numContainers - i - 1);
-
-            if (it != list.end() && (*it)->activateNextTask(forward, forcenext))
-            {
-                return;
-            }
-        }
-*/
         return;
     }
 
@@ -1053,33 +1031,6 @@ void TaskBar::activateNextTask(bool forward)
             return;
         }
     }
-
-/*
-    for (int i = 0; i < numContainers; ++i)
-    {
-        it = forward ? list.at(i) : list.at(numContainers - i - 1);
-
-        if (it == list.end())
-        {
-            break;
-        }
-
-        TaskContainer* c = *it;
-        if (m_sortByDesktop)
-        {
-            if (forward ? c->desktop() < TaskManager::self()->currentDesktop()
-                        : c->desktop() > TaskManager::self()->currentDesktop())
-            {
-                continue;
-            }
-        }
-
-        if (c->activateNextTask(forward, forcenext))
-        {
-            return;
-        }
-    }
-*/
 }
 
 void TaskBar::wheelEvent(QWheelEvent* e)
