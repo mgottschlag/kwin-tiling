@@ -1,10 +1,13 @@
 kde4_header()
-include_directories( ${KDE4_INCLUDES} )
+include_directories( 
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/ 
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/ 
+	${KDE4_INCLUDES} )
 
 
 ########### next target ###############
 
-set(kcm_fontinst_PART_SRCS 
+set(kcm_fontinst_PART_SRCS ${libkfontinstprint_SRCS}
    KCmFontInst.cpp 
    KFileFontIconView.cpp 
    KFileFontView.cpp 
@@ -17,7 +20,7 @@ kde4_add_plugin(kcm_fontinst ${kcm_fontinst_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_fontinst )
 
-target_link_libraries(kcm_fontinst  ${KDE4_KIO_LIBS} kfontinst kde3support )
+target_link_libraries(kcm_fontinst  ${KDE4_KIO_LIBS} kfontinst kdeprint kde3support )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kcm_fontinst )
 

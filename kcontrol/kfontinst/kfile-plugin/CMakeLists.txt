@@ -1,5 +1,5 @@
 kde4_header()
-include_directories( ${KDE4_INCLUDES} )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/ ${KDE4_INCLUDES} )
 
 
 ########### next target ###############
@@ -20,7 +20,6 @@ install_targets(${LIB_INSTALL_DIR}/kde4 kfile_font )
 ########### install files ###############
 
 install_files( ${SERVICES_INSTALL_DIR} FILES kfile_font.desktop )
-install_files( ${SERVICES_INSTALL_DIR} FILES  )
 
 kde4_footer()
 

@@ -1,5 +1,5 @@
 kde4_header()
-include_directories( ${KDE4_INCLUDES} )
+include_directories(${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/ ${KDE4_INCLUDES} )
 
 
 ########### next target ###############
@@ -17,7 +17,7 @@ kde4_automoc(${kfontinst_SRCS})
 
 kde4_add_executable(kfontinst ${kfontinst_SRCS})
 
-target_link_libraries(kfontinst  ${KDE4_KDECORE_LIBS} kxftconfig kio kfontinst )
+target_link_libraries(kfontinst  ${KDE4_KIO_LIBS} kxftconfig kfontinst )
 
 install_targets(/bin kfontinst )
 

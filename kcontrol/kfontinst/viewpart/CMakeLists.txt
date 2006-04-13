@@ -7,7 +7,7 @@ include_directories( ${KDE4_INCLUDES} )
 
 ########### next target ###############
 
-set(kfontviewpart_PART_SRCS FontViewPart.cpp FontViewPartFactory.cpp FontPreview.cpp )
+set(kfontviewpart_PART_SRCS FontViewPart.cpp FontViewPartFactory.cpp FontPreview.cpp ${libkfontinstprint_SRCS})
 
 kde4_automoc(${kfontviewpart_PART_SRCS})
 
@@ -15,7 +15,7 @@ kde4_add_plugin(kfontviewpart WITH_PREFIX ${kfontviewpart_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kfontviewpart )
 
-target_link_libraries(kfontviewpart  ${KDE4_KDECORE_LIBS} kparts kfontinstprint kfontinst )
+target_link_libraries(kfontviewpart  ${KDE4_KPARTS_LIBS} kdeprint kfontinst )
 
 install_targets(${LIB_INSTALL_DIR}/kde4 kfontviewpart )
 

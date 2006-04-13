@@ -1,5 +1,10 @@
 kde4_header()
 
+add_definitions(${FREETYPE_INCLUDE_DIR})
+
+set(libkfontinstprint_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/KfiPrint.cpp )
+
+
 add_subdirectory( lib ) 
 add_subdirectory( kcmfontinst ) 
 add_subdirectory( kfile-plugin ) 

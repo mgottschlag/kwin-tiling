@@ -349,7 +349,7 @@ void CKFileFontView::slotSortingChanged(int col)
     for (  ; kit != kend; ++kit )
     {
         CFontListViewItem *i = viewItem(*kit);
-        i->setKey(sortingKey(i->text(itsSortingCol), (*kit)->isDir(), sortSpec));
+        i->setKey(sortingKey(i->text(itsSortingCol), (*kit)->isDir(), static_cast<QDir::SortFlags>(sortSpec)));
     }
 
     K3ListView::setSorting(itsSortingCol, !reversed);
