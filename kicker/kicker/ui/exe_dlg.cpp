@@ -161,7 +161,7 @@ void PanelExeDialog::slotTextChanged(const QString &str)
 
     if (it != m_partialPath2full.end())
         exeLocation = it.value();
-    KMimeType::pixmapForURL(KUrl( exeLocation ), 0, K3Icon::Panel, 0, K3Icon::DefaultState, &m_icon);
+    m_icon = KMimeType::iconNameForURL(KUrl( exeLocation ));
     updateIcon();
 }
 
@@ -189,7 +189,7 @@ void PanelExeDialog::slotSelect(const QString& exec)
         return;
     }
 
-    KMimeType::pixmapForURL(KUrl( exec ), 0, K3Icon::Panel, 0, K3Icon::DefaultState, &m_icon);
+    m_icon = KMimeType::iconNameForURL(KUrl( exec ));
     updateIcon();
 }
 

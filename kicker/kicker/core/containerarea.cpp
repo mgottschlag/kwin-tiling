@@ -1282,8 +1282,7 @@ void ContainerArea::dropEvent(QDropEvent *ev)
             {
                 // non-KDE executable
                 QString pixmapFile;
-                KMimeType::pixmapForURL(url, 0, K3Icon::Panel, 0,
-                                        K3Icon::DefaultState, &pixmapFile);
+                pixmapFile = KMimeType::iconNameForURL(url);
                 PanelExeDialog dlg(QString::null, QString::null, url.path(),
                                    pixmapFile, QString::null, false, 0);
                 if (dlg.exec() == QDialog::Accepted)
