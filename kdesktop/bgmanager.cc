@@ -71,9 +71,8 @@ KBackgroundManager::KBackgroundManager(QWidget *desktop, KWinModule* kwinModule)
     if (desktop == 0L)
         desktop = QApplication::desktop()->screen();
 
-    // Preallocate 4 desktops, higher ones are allocated when needed.
-    m_Renderer.resize( 4 );
-    m_Cache.resize( 4 );
+    m_Renderer.resize( 1 );
+    m_Cache.resize( 1 );
 
     m_Serial = 0; m_Hash = 0;
     m_pConfig = KGlobal::config();
