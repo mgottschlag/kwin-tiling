@@ -1,5 +1,5 @@
 kde4_header()
-include(AddFileDependencies)
+include(MacroAddFileDependencies)
 add_subdirectory( themer ) 
 add_subdirectory( themes ) 
 add_subdirectory( pics ) 
@@ -83,7 +83,7 @@ install_targets(/bin krootimage )
 set(genkdmconf_SRCS genkdmconf.c )
 
 #add_file_dependencies(${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci genkdmconf.c )
-add_file_dependencies(genkdmconf.c ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci )
+macro_add_file_dependencies(genkdmconf.c ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci )
 
 
 kde4_automoc(${genkdmconf_SRCS})
