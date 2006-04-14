@@ -281,6 +281,7 @@ private:
     int m_MultiMode, defMultiMode;
     int m_Interval, m_LastChange;
     int m_CurrentWallpaper;
+    QString m_CurrentWallpaperName;
 
     KConfig *m_pConfig;
     KStandardDirs *m_pDirs;

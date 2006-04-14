@@ -562,6 +562,7 @@ void KBackgroundSettings::copyConfig(const KBackgroundSettings *settings)
     m_MultiMode = settings->m_MultiMode;
     m_Interval = settings->m_Interval;
     m_CurrentWallpaper = settings->m_CurrentWallpaper;
+    m_CurrentWallpaperName = settings->m_CurrentWallpaperName;
 
     KBackgroundPattern::copyConfig(settings);
     KBackgroundProgram::copyConfig(settings);
@@ -676,10 +677,6 @@ void KBackgroundSettings::setWallpaperList(QStringList list)
     if (m_WallpaperList == list)
 	return;
 
-    QString currentWallpaper;
-    if ((m_MultiMode == InOrder) && (m_CurrentWallpaper < (int) m_WallpaperFiles.count()))
-	currentWallpaper = m_WallpaperFiles[m_CurrentWallpaper];
-
     dirty = hashdirty = true;
     m_WallpaperList.clear();
     for(QStringList::ConstIterator it = list.begin();
@@ -689,8 +686,8 @@ void KBackgroundSettings::setWallpaperList(QStringList list)
        m_WallpaperList.append( !rpath.isEmpty() ? rpath : *it );
     }
     updateWallpaperFiles();
-    // Try to keep the current wallpaper
-    m_CurrentWallpaper = m_WallpaperFiles.indexOf(currentWallpaper) - 1;
+    // Try to keep the current wallpaper (-1 to set position to one before it)
+    m_CurrentWallpaper = m_WallpaperFiles.indexOf(m_CurrentWallpaperName) - 1;
     changeWallpaper(m_CurrentWallpaper < 0);
 }
 
@@ -805,6 +802,7 @@ void KBackgroundSettings::readSettings(bool reparse)
     m_Interval = m_pConfig->readEntry("ChangeInterval", 60);
     m_LastChange = m_pConfig->readEntry("LastChange", 0);
     m_CurrentWallpaper = m_pConfig->readEntry("CurrentWallpaper", 0);
+    m_CurrentWallpaperName = m_pConfig->readEntry("CurrentWallpaperName");
 
     m_MultiMode = defMultiMode;
     s = m_pConfig->readEntry("MultiWallpaperMode");
@@ -814,6 +812,10 @@ void KBackgroundSettings::readSettings(bool reparse)
     }
 
     updateWallpaperFiles();
+    if( !m_CurrentWallpaperName.isEmpty())
+        m_CurrentWallpaper = m_WallpaperFiles.findIndex(m_CurrentWallpaperName);
+    if(m_CurrentWallpaper < 0)
+        m_CurrentWallpaper = 0;
 
     // Wallpaper mode (NoWallpaper, div. tilings)
     m_WallpaperMode = defWallpaperMode;
@@ -860,7 +862,8 @@ void KBackgroundSettings::writeSettings()
     m_pConfig->writePathEntry("WallpaperList", m_WallpaperList);
     m_pConfig->writeEntry("ChangeInterval", m_Interval);
     m_pConfig->writeEntry("LastChange", m_LastChange);
-    m_pConfig->writeEntry("CurrentWallpaper", m_CurrentWallpaper);
+    m_pConfig->deleteEntry("CurrentWallpaper"); // obsolete, remember name
+    m_pConfig->writeEntry("CurrentWallpaperName", m_CurrentWallpaperName);
 
     m_pConfig->sync();
 
@@ -945,8 +948,10 @@ QStringList KBackgroundSettings::wallpaperFiles() const
 void KBackgroundSettings::changeWallpaper(bool init)
 {
     if (m_WallpaperFiles.count() == 0) {
-        if( init )
+        if( init ) {
 	    m_CurrentWallpaper = 0;
+            m_CurrentWallpaperName = QString();
+        }
         return;
     }
 
@@ -970,9 +975,11 @@ void KBackgroundSettings::changeWallpaper(bool init)
 	break;
     }
 
+    m_CurrentWallpaperName = m_WallpaperFiles[ m_CurrentWallpaper ];
     m_LastChange = (int) time(0L);
     m_pConfig->setGroup(configGroupName());
-    m_pConfig->writeEntry("CurrentWallpaper", m_CurrentWallpaper);
+    m_pConfig->deleteEntry("CurrentWallpaper"); // obsolete, remember name
+    m_pConfig->writeEntry("CurrentWallpaperName", m_CurrentWallpaperName);
     m_pConfig->writeEntry("LastChange", m_LastChange);
     m_pConfig->sync();
 
@@ -998,8 +1005,8 @@ bool KBackgroundSettings::discardCurrentWallpaper()
        return false;
     }
     m_WallpaperFiles.removeAll(m_WallpaperFiles.at(m_CurrentWallpaper));
-    if (m_CurrentWallpaper >= (int) m_WallpaperFiles.count())
-	m_CurrentWallpaper = 0;
+    --m_CurrentWallpaper;
+    changeWallpaper();
 
     return true;
 }
