@@ -1,6 +1,7 @@
 kde4_header()
 include_directories( ${KDE4_INCLUDES} )
 
+configure_file(kde.desktop.cmake ${CMAKE_CURRENT_BINARY_DIR}/kde.desktop )
 
 ########### install files ###############
 
