@@ -38,6 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kurlcompletion.h>
 #include <kurlrequester.h>
 #include <kurl.h>
+#include <kicon.h>
 
 #include <kdebug.h>
 
@@ -161,7 +162,9 @@ void PanelExeDialog::slotTextChanged(const QString &str)
 
     if (it != m_partialPath2full.end())
         exeLocation = it.value();
-    m_icon = KMimeType::iconNameForURL(KUrl( exeLocation ));
+    // KMimeType::pixmapForURL(KUrl( exeLocation ), 0, K3Icon::Panel, 0, K3Icon::DefaultState, &m_icon);
+    QString iconName = KMimeType::iconNameForURL(KUrl(exeLocation));
+    KGlobal::iconLoader()->loadIcon(iconName, K3Icon::Panel, 0, K3Icon::DefaultState, &m_icon);
     updateIcon();
 }
 
@@ -189,7 +192,9 @@ void PanelExeDialog::slotSelect(const QString& exec)
         return;
     }
 
-    m_icon = KMimeType::iconNameForURL(KUrl( exec ));
+    // KMimeType::pixmapForURL(KUrl( exec ), 0, K3Icon::Panel, 0, K3Icon::DefaultState, &m_icon);
+    QString iconName = KMimeType::iconNameForURL(KUrl(exec));
+    KGlobal::iconLoader()->loadIcon(iconName, K3Icon::Panel, 0, K3Icon::DefaultState, &m_icon );
     updateIcon();
 }
 
