@@ -420,7 +420,8 @@ void KStylePage::getColors(colorSet *set, bool colorfile ){
 void KStylePage::getAvailability() {
 	// test, wich styles are available
 	kde_keramik_exist = kde_hc_exist = kde_def_exist = cde_exist
-		= kde_plastik_exist = win_exist = platinum_exist = false;
+		= kde_plastik_exist = win_exist = platinum_exist 
+		= kde_light_exist = false;
 	QStringList styles = QStyleFactory::keys();
 	for (QStringList::iterator it = styles.begin(); it != styles.end(); it++) {
 		if (*it == "Keramik") kde_keramik_exist = true;
