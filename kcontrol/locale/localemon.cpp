@@ -271,11 +271,11 @@ void KLocaleConfigMoney::slotTranslate()
 
   foreach (QComboBox* wc, list)
   {
-    wc->changeItem(ki18n("Parentheses Around").toString(m_locale), 0);
-    wc->changeItem(ki18n("Before Quantity Money").toString(m_locale), 1);
-    wc->changeItem(ki18n("After Quantity Money").toString(m_locale), 2);
-    wc->changeItem(ki18n("Before Money").toString(m_locale), 3);
-    wc->changeItem(ki18n("After Money").toString(m_locale), 4);
+    wc->setItemText(0, ki18n("Parentheses Around").toString(m_locale));
+    wc->setItemText(1, ki18n("Before Quantity Money").toString(m_locale));
+    wc->setItemText(2, ki18n("After Quantity Money").toString(m_locale));
+    wc->setItemText(3, ki18n("Before Money").toString(m_locale));
+    wc->setItemText(4, ki18n("After Money").toString(m_locale));
   }
 
   QString str;

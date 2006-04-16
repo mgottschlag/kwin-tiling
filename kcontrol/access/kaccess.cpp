@@ -633,7 +633,7 @@ void KAccessApp::createDialogContents() {
       showModeCombobox->insertItem ( i18n("Change Settings Without Asking"), 0);
       showModeCombobox->insertItem ( i18n("Show This Confirmation Dialog"), 1);
       showModeCombobox->insertItem ( i18n("Deactivate All AccessX Features & Gestures"), 2);
-      showModeCombobox->setCurrentItem (1);
+      showModeCombobox->setCurrentIndex (1);
 
       dialog->setMainWidget(topcontents);
       dialog->enableButtonSeparator(false);

@@ -78,7 +78,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    m_numScreens = QApplication::desktop()->numScreens();
    
    QString multiHead = getenv("KDE_MULTIHEAD");
-   if (multiHead.lower() == "true") 
+   if (multiHead.toLower() == "true") 
    {
       m_numScreens = 1;
    }
@@ -696,7 +696,7 @@ void BGDialog::updateUI()
 {
    KBackgroundRenderer *r = eRenderer();
    m_comboDesktop->setCurrentIndex(m_eDesk);
-   m_comboScreen->setCurrentItem(m_eScreen);
+   m_comboScreen->setCurrentIndex(m_eScreen);
 
    m_colorPrimary->setColor(r->colorA());
    m_colorSecondary->setColor(r->colorB());

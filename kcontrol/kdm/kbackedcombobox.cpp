@@ -31,7 +31,7 @@ void KBackedComboBox::setCurrentId( const QString &id )
     if (id2name.contains( id ))
 	setCurrentItem( id2name[id] );
     else
-	setCurrentItem( 0 );
+	setCurrentIndex( 0 );
 }
 
 const QString &KBackedComboBox::currentId() const

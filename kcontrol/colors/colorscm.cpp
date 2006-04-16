@@ -304,7 +304,7 @@ KColorScheme::~KColorScheme()
 
 void KColorScheme::setColorName( const QString &name, int id )
 {
-    wcCombo->changeItem(name, id);
+    wcCombo->setItemText(id, name);
     cs->addToolTip( id, name );
 }
 

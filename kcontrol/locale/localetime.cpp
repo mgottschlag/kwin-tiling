@@ -455,14 +455,14 @@ void KLocaleConfigTime::slotTranslate()
 
   while ( m_comboCalendarSystem->count() < 4 )
     m_comboCalendarSystem->insertItem(QString());
-  m_comboCalendarSystem->changeItem
-    (ki18nc("Calendar System Gregorian", "Gregorian").toString(m_locale), 0);
-  m_comboCalendarSystem->changeItem
-    (ki18nc("Calendar System Hijri", "Hijri").toString(m_locale), 1);
-  m_comboCalendarSystem->changeItem
-    (ki18nc("Calendar System Hebrew", "Hebrew").toString(m_locale), 2);
-  m_comboCalendarSystem->changeItem
-    (ki18nc("Calendar System Jalali", "Jalali").toString(m_locale), 3);
+  m_comboCalendarSystem->setItemText
+    (0, ki18nc("Calendar System Gregorian", "Gregorian").toString(m_locale));
+  m_comboCalendarSystem->setItemText
+    (1, ki18nc("Calendar System Hijri", "Hijri").toString(m_locale));
+  m_comboCalendarSystem->setItemText
+    (2, ki18nc("Calendar System Hebrew", "Hebrew").toString(m_locale));
+  m_comboCalendarSystem->setItemText
+    (3, ki18nc("Calendar System Jalali", "Jalali").toString(m_locale));
 
   str = ki18n
     ("<p>The text in this textbox will be used to format "
@@ -555,6 +555,6 @@ void KLocaleConfigTime::updateWeekDayNames()
     if ( outsideComboList )
       m_comboWeekStartDay->insertItem(str, i - 1);
     else
-      m_comboWeekStartDay->changeItem(str, i - 1);
+      m_comboWeekStartDay->setItemText(i - 1, str);
   }
 }
