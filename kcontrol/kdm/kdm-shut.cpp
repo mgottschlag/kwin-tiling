@@ -25,7 +25,6 @@
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qwhatsthis.h>
 
 #include <ksimpleconfig.h>
 #include <karrowbutton.h>
@@ -62,7 +61,7 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       sdrcombo->insertItem(SdRoot, i18n("Only Root"));
       sdrcombo->insertItem(SdNone, i18n("Nobody"));
       connect(sdrcombo, SIGNAL(activated(int)), SLOT(changed()));
-      QWhatsThis::add( group0, i18n("Here you can select who is allowed to shutdown"
+      group0->setWhatsThis( i18n("Here you can select who is allowed to shutdown"
         " the computer using KDM. You can specify different values for local (console) and remote displays. "
 	"Possible values are:<ul>"
         " <li><em>Everybody:</em> everybody can shutdown the computer using KDM</li>"
@@ -77,16 +76,16 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       connect(shutdown_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(changed()));
       wtstr = i18n("Command to initiate the system halt. Typical value: /sbin/halt");
-      QWhatsThis::add( shutdown_label, wtstr );
-      QWhatsThis::add( shutdown_lined, wtstr );
+      shutdown_label->setWhatsThis( wtstr );
+      shutdown_lined->setWhatsThis( wtstr );
 
       restart_lined = new KUrlRequester(group1);
       QLabel *restart_label = new QLabel(restart_lined, i18n("Reb&oot:"), group1);
       connect(restart_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(changed()));
       wtstr = i18n("Command to initiate the system reboot. Typical value: /sbin/reboot");
-      QWhatsThis::add( restart_label, wtstr );
-      QWhatsThis::add( restart_lined, wtstr );
+      restart_label->setWhatsThis( wtstr );
+      restart_lined->setWhatsThis( wtstr );
 
 
       QGroupBox *group4 = new QGroupBox( i18n("Miscellaneous"), this );
@@ -100,8 +99,8 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QLabel *bm_label = new QLabel( bm_combo, i18n("Boot manager:"), group4 );
       connect(bm_combo, SIGNAL(activated(int)), SLOT(changed()));
       wtstr = i18n("Enable boot options in the \"Shutdown...\" dialog.");
-      QWhatsThis::add( bm_label, wtstr );
-      QWhatsThis::add( bm_combo, wtstr );
+      bm_label->setWhatsThis( wtstr );
+      bm_combo->setWhatsThis( wtstr );
 
       QBoxLayout *main = new QVBoxLayout( this );
       main->setMargin( 10 );

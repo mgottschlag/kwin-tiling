@@ -25,7 +25,6 @@
 
 #include <qdatetime.h>
 #include <qlabel.h>
-#include <qwhatsthis.h>
 #include <qlayout.h>
 #include <qtimer.h>
 
@@ -110,23 +109,23 @@ void KLocaleSample::slotLocaleChanged()
   QString str;
 
   str = ki18n("This is how numbers will be displayed.").toString(m_locale);
-  QWhatsThis::add( m_labNumber, str );
-  QWhatsThis::add( m_numberSample, str );
+  m_labNumber->setWhatsThis( str );
+  m_numberSample->setWhatsThis( str );
 
   str = ki18n("This is how monetary values will be displayed.").toString(m_locale);
-  QWhatsThis::add( m_labMoney,   str );
-  QWhatsThis::add( m_moneySample, str );
+  m_labMoney->setWhatsThis( str );
+  m_moneySample->setWhatsThis( str );
 
   str = ki18n("This is how date values will be displayed.").toString(m_locale);
-  QWhatsThis::add( m_labDate,   str );
-  QWhatsThis::add( m_dateSample, str );
+  m_labDate->setWhatsThis( str );
+  m_dateSample->setWhatsThis( str );
 
   str = ki18n("This is how date values will be displayed using "
               "a short notation.").toString(m_locale);
-  QWhatsThis::add( m_labDateShort, str );
-  QWhatsThis::add( m_dateShortSample, str );
+  m_labDateShort->setWhatsThis( str );
+  m_dateShortSample->setWhatsThis( str );
 
   str = ki18n("This is how the time will be displayed.").toString(m_locale);
-  QWhatsThis::add( m_labTime,   str );
-  QWhatsThis::add( m_timeSample, str );
+  m_labTime->setWhatsThis( str );
+  m_timeSample->setWhatsThis( str );
 }

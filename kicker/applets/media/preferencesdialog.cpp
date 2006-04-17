@@ -23,7 +23,6 @@
 #include <kmimetype.h>
 #include <kvbox.h>
 #include <QLinkedList>
-#include <qwhatsthis.h>
 #include <k3listview.h>
 #include <kfiledetailview.h>
 
@@ -68,7 +67,7 @@ PreferencesDialog::PreferencesDialog(KFileItemList media, QWidget *parent,
 
 	//mpMediumTypesListView->setFullWidth(true);
 	mpMediumTypesListView->addColumn( i18n("Types to Display") );
-	QWhatsThis::add(mpMediumTypesListView, i18n("Deselect the medium types which you do not want to see in the applet"));
+	mpMediumTypesListView->setWhatsThis( i18n("Deselect the medium types which you do not want to see in the applet"));
 
 
 
@@ -77,7 +76,7 @@ PreferencesDialog::PreferencesDialog(KFileItemList media, QWidget *parent,
 
 	//mpMediaListView->setFullWidth(true);
 	mpMediaListView->addColumn( i18n("Media to Display") );
-	QWhatsThis::add(mpMediaListView, i18n("Deselect the media which you do not want to see in the applet"));
+	mpMediaListView->setWhatsThis( i18n("Deselect the media which you do not want to see in the applet"));
 
 	slotDefault();
 }

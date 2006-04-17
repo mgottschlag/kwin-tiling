@@ -24,7 +24,6 @@
 #include <qapplication.h>
 #include <qfile.h>
 #include <qlayout.h>
-#include <qwhatsthis.h>
 
 #include <kmessagebox.h>
 #include <kdialog.h>
@@ -63,30 +62,30 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
    subLayout->addWidget(&showFileClose,1,1);
    mainLayout->addWidget(&updateButton,0,Qt::AlignLeft);
 
-   QWhatsThis::add( &logFileName, i18n("This page presents the contents of"
+   logFileName.setWhatsThis( i18n("This page presents the contents of"
      " your samba log file in a friendly layout. Check that the correct log"
      " file for your computer is listed here. If you need to, correct the name"
      " or location of the log file, and then click the \"Update\" button.") );
 
-   QWhatsThis::add( &showConnOpen, i18n("Check this option if you want to"
+   showConnOpen.setWhatsThis( i18n("Check this option if you want to"
      " view the details for connections opened to your computer.") );
 
-   QWhatsThis::add( &showConnClose, i18n("Check this option if you want to"
+   showConnClose.setWhatsThis( i18n("Check this option if you want to"
      " view the events when connections to your computer were closed.") );
 
-   QWhatsThis::add( &showFileOpen, i18n("Check this option if you want to"
+   showFileOpen.setWhatsThis( i18n("Check this option if you want to"
      " see the files which were opened on your computer by remote users."
      " Note that file open/close events are not logged unless the samba"
      " log level is set to at least 2 (you cannot set the log level"
      " using this module).") );
 
-   QWhatsThis::add( &showFileClose, i18n("Check this option if you want to"
+   showFileClose.setWhatsThis( i18n("Check this option if you want to"
      " see the events when files opened by remote users were closed."
      " Note that file open/close events are not logged unless the samba"
      " log level is set to at least 2 (you cannot set the log level"
      " using this module).") );
 
-   QWhatsThis::add( &updateButton, i18n("Click here to refresh the information"
+   updateButton.setWhatsThis( i18n("Click here to refresh the information"
      " on this page. The log file (shown above) will be read to obtain the"
      " events logged by samba.") );
 
@@ -101,7 +100,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
    viewHistory.addColumn(i18n("Service/File"),210);
    viewHistory.addColumn(i18n("Host/User"),150);
 
-   QWhatsThis::add( &viewHistory, i18n("This list shows details of the events"
+   viewHistory.setWhatsThis( i18n("This list shows details of the events"
      " logged by samba. Note that events at the file level are not logged"
      " unless you have configured the log level for samba to 2 or greater.<p>"
      " As with many other lists in KDE, you can click on a column heading"

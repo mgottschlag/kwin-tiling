@@ -27,7 +27,6 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qwhatsthis.h>
 
 #include <kdialog.h>
 #include <ksimpleconfig.h>
@@ -46,7 +45,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   QLabel *label = new QLabel(i18n("&General:"), this);
   stdFontChooser = new KFontRequester(this);
   label->setBuddy(stdFontChooser);
-  QWhatsThis::add( stdFontChooser, i18n("This changes the font which is used for all the text in the login manager except for the greeting and failure messages.") );
+  stdFontChooser->setWhatsThis( i18n("This changes the font which is used for all the text in the login manager except for the greeting and failure messages.") );
   connect(stdFontChooser, SIGNAL(fontSelected(const QFont&)),this,SLOT(configChanged()));
   ml->addWidget(label, 1, 0);
   ml->addWidget(stdFontChooser, 1, 1);
@@ -54,7 +53,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   label = new QLabel(i18n("&Failures:"), this);
   failFontChooser = new KFontRequester(this);
   label->setBuddy(failFontChooser);
-  QWhatsThis::add( failFontChooser, i18n("This changes the font which is used for failure messages in the login manager.") );
+  failFontChooser->setWhatsThis( i18n("This changes the font which is used for failure messages in the login manager.") );
   connect(failFontChooser, SIGNAL(fontSelected(const QFont&)),this,SLOT(configChanged()));
   ml->addWidget(label, 2, 0);
   ml->addWidget(failFontChooser, 2, 1);
@@ -62,13 +61,13 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   label = new QLabel(i18n("Gree&ting:"), this);
   greetingFontChooser = new KFontRequester(this);
   label->setBuddy(greetingFontChooser);
-  QWhatsThis::add( greetingFontChooser, i18n("This changes the font which is used for the login manager's greeting.") );
+  greetingFontChooser->setWhatsThis( i18n("This changes the font which is used for the login manager's greeting.") );
   connect(greetingFontChooser, SIGNAL(fontSelected(const QFont&)),this,SLOT(configChanged()));
   ml->addWidget(label, 3, 0);
   ml->addWidget(greetingFontChooser, 3, 1);
 
   aacb = new QCheckBox (i18n("Use anti-aliasing for fonts"), this);
-  QWhatsThis::add( aacb, i18n("If you check this box and your X-Server has the Xft extension, "
+  aacb->setWhatsThis( i18n("If you check this box and your X-Server has the Xft extension, "
 	"fonts will be antialiased (smoothed) in the login dialog.") );
   connect(aacb, SIGNAL(toggled ( bool )),this,SLOT(configChanged()));
   ml->addMultiCellWidget(aacb, 4, 4, 0, 1);

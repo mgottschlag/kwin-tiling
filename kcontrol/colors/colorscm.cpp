@@ -20,8 +20,6 @@
 #include <qpainter.h>
 #include <qslider.h>
 #include <q3groupbox.h>
-#include <q3ptrlist.h>
-#include <qwhatsthis.h>
 #include <Q3PtrList>
 
 #include <kcolorbutton.h>
@@ -132,7 +130,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     cs->setFixedHeight(160);
     cs->setMinimumWidth(440);
 
-    QWhatsThis::add( cs, i18n("This is a preview of the color settings which"
+    cs->setWhatsThis( i18n("This is a preview of the color settings which"
        " will be applied if you click \"Apply\" or \"OK\". You can click on"
        " different parts of this preview image. The widget name in the"
        " \"Widget color\" box will change to reflect the part of the preview"
@@ -155,7 +153,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     sList->setCurrentItem( 0 );
     connect(sList, SIGNAL(highlighted(int)), SLOT(slotPreviewScheme(int)));
 
-    QWhatsThis::add( sList, i18n("This is a list of predefined color schemes,"
+    sList->setWhatsThis( i18n("This is a list of predefined color schemes,"
        " including any that you may have created. You can preview an existing"
        " color scheme by selecting it from the list. The current scheme will"
        " be replaced by the selected color scheme.<p>"
@@ -166,7 +164,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     addBt = new QPushButton(i18n("&Save Scheme..."), group);
     connect(addBt, SIGNAL(clicked()), SLOT(slotAdd()));
 
-    QWhatsThis::add( addBt, i18n("Press this button if you want to save"
+    addBt->setWhatsThis( i18n("Press this button if you want to save"
        " the current color settings as a color scheme. You will be"
        " prompted for a name.") );
 
@@ -174,14 +172,14 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     removeBt->setEnabled(false);
     connect(removeBt, SIGNAL(clicked()), SLOT(slotRemove()));
 
-    QWhatsThis::add( removeBt, i18n("Press this button to remove the selected"
+    removeBt->setWhatsThis( i18n("Press this button to remove the selected"
        " color scheme. Note that this button is disabled if you do not have"
        " permission to delete the color scheme.") );
 
 	importBt = new QPushButton(i18n("I&mport Scheme..."), group);
 	connect(importBt, SIGNAL(clicked()),SLOT(slotImport()));
 
-	QWhatsThis::add( importBt, i18n("Press this button to import a new color"
+	importBt->setWhatsThis( i18n("Press this button to import a new color"
 		" scheme. Note that the color scheme will only be available for the"
 		" current user." ));
 
@@ -230,7 +228,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     connect(wcCombo, SIGNAL(activated(int)), SLOT(slotWidgetColor(int)));
     groupLayout->addWidget(wcCombo);
 
-    QWhatsThis::add( wcCombo, i18n("Click here to select an element of"
+    wcCombo->setWhatsThis( i18n("Click here to select an element of"
        " the KDE desktop whose color you want to change. You may either"
        " choose the \"widget\" here, or click on the corresponding part"
        " of the preview image above.") );
@@ -241,7 +239,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
 
     groupLayout->addWidget( colorButton );
 
-    QWhatsThis::add( colorButton, i18n("Click here to bring up a dialog"
+    colorButton->setWhatsThis( i18n("Click here to bring up a dialog"
        " box where you can choose a color for the \"widget\" selected"
        " in the above list.") );
 
@@ -249,7 +247,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     stackLayout->addWidget(cbShadeList);
     connect(cbShadeList, SIGNAL(toggled(bool)), this, SLOT(slotShadeSortColumnChanged(bool)));
 
-    QWhatsThis::add(cbShadeList,
+    cbShadeList->setWhatsThis(
        i18n("Check this box to show the sorted column in a list with a shaded background"));
 
     group = new Q3GroupBox(  i18n("Con&trast"), this );
@@ -266,7 +264,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     sb->setFocusPolicy( Qt::StrongFocus );
     connect(sb, SIGNAL(valueChanged(int)), SLOT(sliderValueChanged(int)));
 
-    QWhatsThis::add(sb, i18n("Use this slider to change the contrast level"
+    sb->setWhatsThis( i18n("Use this slider to change the contrast level"
        " of the current color scheme. Contrast does not affect all of the"
        " colors, only the edges of 3D objects."));
 
@@ -281,7 +279,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     topLayout->addMultiCellWidget( cbExportColors, 2, 2, 0, 1 );
     connect(cbExportColors, SIGNAL(toggled(bool)), this, SLOT(changed()));
 
-    QWhatsThis::add(cbExportColors, i18n("Check this box to apply the"
+    cbExportColors->setWhatsThis( i18n("Check this box to apply the"
        " current color scheme to non-KDE applications."));
 
     load();

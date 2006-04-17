@@ -48,7 +48,7 @@ ImportsView::ImportsView(QWidget * parent, KConfig *config, const char * name )
     list.addColumn(i18n("Resource"), 200);
     list.addColumn(i18n("Mounted Under"), 190);
 
-    QWhatsThis::add( this, i18n("This list shows the Samba and NFS shared"
+    this->setWhatsThis( i18n("This list shows the Samba and NFS shared"
       " resources mounted on your system from other hosts. The \"Type\""
       " column tells you whether the mounted resource is a Samba or an NFS"
       " type of resource. The \"Resource\" column shows the descriptive name"

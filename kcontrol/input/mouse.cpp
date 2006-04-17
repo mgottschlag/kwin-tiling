@@ -113,7 +113,7 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
          " has more than two buttons, only those that function as the"
          " left and right buttons are affected. For example, if you have"
          " a three-button mouse, the middle button is unaffected.");
-    QWhatsThis::add( tab1->handedBox, wtstr );
+    tab1->handedBox->setWhatsThis( wtstr );
 
     connect(tab1->doubleClick, SIGNAL(clicked()), SLOT(changed()));
 
@@ -123,10 +123,10 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
          " when you click links in most web browsers. If you would prefer"
          " to select with a single click, and activate with a double click,"
          " check this option.");
-    QWhatsThis::add( tab1->doubleClick, wtstr );
+    tab1->doubleClick->setWhatsThis( wtstr );
 
     wtstr = i18n("Activates and opens a file or folder with a single click.");
-    QWhatsThis::add( tab1->singleClick, wtstr );
+    tab1->singleClick->setWhatsThis( wtstr );
 
 
     connect(tab1->cbAutoSelect, SIGNAL(clicked()), this, SLOT(changed()));
@@ -135,7 +135,7 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
          " over an icon on the screen will automatically select that icon."
          " This may be useful when single clicks activate icons, and you"
          " want only to select the icon without activating it.");
-    QWhatsThis::add( tab1->cbAutoSelect, wtstr );
+    tab1->cbAutoSelect->setWhatsThis( wtstr );
 
 //    slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, tab1);
     tab1->slAutoSelect->setSingleStep( 125 );
@@ -147,10 +147,10 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
     wtstr = i18n("If you have checked the option to automatically select"
          " icons, this slider allows you to select how long the mouse pointer"
          " must be paused over the icon before it is selected.");
-    QWhatsThis::add( tab1->slAutoSelect, wtstr );
+    tab1->slAutoSelect->setWhatsThis( wtstr );
 
     wtstr = i18n("Show feedback when clicking an icon");
-    QWhatsThis::add( tab1->cbVisualActivate, wtstr );
+    tab1->cbVisualActivate->setWhatsThis( wtstr );
 
     connect(tab1->slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
     connect(tab1->cbVisualActivate, SIGNAL(clicked()), this, SLOT(changed()));
@@ -207,7 +207,7 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
          " you only make a small movement with the physical device."
          " Selecting very high values may result in the mouse pointer"
          " flying across the screen, making it hard to control.");
-    QWhatsThis::add( accel, wtstr );
+    accel->setWhatsThis( wtstr );
 
     thresh = new KIntNumInput(accel, 20, tab2);
     thresh->setLabel(i18n("Pointer threshold:"));
@@ -227,7 +227,7 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
          " of control over the mouse pointer. With larger movements of"
          " the physical device, you can move the mouse pointer"
          " rapidly to different areas on the screen.");
-    QWhatsThis::add( thresh, wtstr );
+    thresh->setWhatsThis( wtstr );
 
     // It would be nice if the user had a test field.
     // Selecting such values in milliseconds is not intuitive
@@ -245,7 +245,7 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
          " click happens later than this time interval after"
          " the first click, they are recognized as two"
          " separate clicks.");
-    QWhatsThis::add( doubleClickInterval, wtstr );
+    doubleClickInterval->setWhatsThis( wtstr );
 
     lay->addSpacing(15);
 
@@ -260,7 +260,7 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
     wtstr = i18n("If you click with the mouse (e.g. in a multi-line"
          " editor) and begin to move the mouse within the"
          " drag start time, a drag operation will be initiated.");
-    QWhatsThis::add( dragStartTime, wtstr );
+    dragStartTime->setWhatsThis( wtstr );
 
     dragStartDist = new KIntNumInput(dragStartTime, 20, tab2);
     dragStartDist->setLabel(i18n("Drag start distance:"));
@@ -274,7 +274,7 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
     wtstr = i18n("If you click with the mouse and begin to move the"
          " mouse at least the drag start distance, a drag"
          " operation will be initiated.");
-    QWhatsThis::add( dragStartDist, wtstr);
+    dragStartDist->setWhatsThis( wtstr );
 
     wheelScrollLines = new KIntNumInput(dragStartDist, 3, tab2);
     wheelScrollLines->setLabel(i18n("Mouse wheel scrolls by:"));
@@ -286,7 +286,7 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
     slotWheelScrollLinesChanged(wheelScrollLines->value());
 
     wtstr = i18n("If you use the wheel of a mouse, this value determines the number of lines to scroll for each wheel movement. Note that if this number exceeds the number of visible lines, it will be ignored and the wheel movement will be handled as a page up/down movement.");
-    QWhatsThis::add( wheelScrollLines, wtstr);
+    wheelScrollLines->setWhatsThis(wtstr);
     lay->addStretch();
 
 {

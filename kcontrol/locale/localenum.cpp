@@ -24,7 +24,6 @@
 #include <qlabel.h>
 #include <qlineedit.h>
 #include <qlayout.h>
-#include <qwhatsthis.h>
 #include <qregexp.h>
 
 #include <kdialog.h>
@@ -168,27 +167,27 @@ void KLocaleConfigNumber::slotTranslate()
 	       "Note that the decimal separator used to "
 	       "display monetary values has to be set "
 	       "separately (see the 'Money' tab)." ).toString( m_locale );
-  QWhatsThis::add( m_labDecSym, str );
-  QWhatsThis::add( m_edDecSym, str );
+  m_labDecSym->setWhatsThis( str );
+  m_edDecSym->setWhatsThis( str );
 
   str = ki18n( "Here you can define the thousands separator "
 	       "used to display numbers.<p>"
 	       "Note that the thousands separator used to "
 	       "display monetary values has to be set "
 	       "separately (see the 'Money' tab)." ).toString( m_locale );
-  QWhatsThis::add( m_labThoSep, str );
-  QWhatsThis::add( m_edThoSep, str );
+  m_labThoSep->setWhatsThis( str );
+  m_edThoSep->setWhatsThis( str );
 
   str = ki18n( "Here you can specify text used to prefix "
 	       "positive numbers. Most people leave this "
 	       "blank." ).toString( m_locale );
-  QWhatsThis::add( m_labMonPosSign, str );
-  QWhatsThis::add( m_edMonPosSign, str );
+  m_labMonPosSign->setWhatsThis( str );
+  m_edMonPosSign->setWhatsThis( str );
 
   str = ki18n( "Here you can specify text used to prefix "
 	       "negative numbers. This should not be empty, so "
 	       "you can distinguish positive and negative "
 	       "numbers. It is normally set to minus (-)." ).toString( m_locale );
-  QWhatsThis::add( m_labMonNegSign, str );
-  QWhatsThis::add( m_edMonNegSign, str );
+  m_labMonNegSign->setWhatsThis( str );
+  m_edMonNegSign->setWhatsThis( str );
 }
