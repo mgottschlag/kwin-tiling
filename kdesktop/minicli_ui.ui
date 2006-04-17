@@ -1,609 +1,572 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
-<class>MinicliDlgUI</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>MinicliDlgUI</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>325</width>
-            <height>370</height>
-        </rect>
-    </property>
-    <property name="sizePolicy">
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>MinicliDlgUI</class>
+ <widget class="QWidget" name="MinicliDlgUI" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>325</width>
+    <height>370</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy>
+    <hsizetype>5</hsizetype>
+    <vsizetype>5</vsizetype>
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>6</number>
+   </property>
+   <property name="spacing" >
+    <number>3</number>
+   </property>
+   <item row="4" column="0" colspan="2" >
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>3</number>
+     </property>
+     <item>
+      <widget class="KPushButton" name="pbOptions" >
+       <property name="sizePolicy" >
         <sizepolicy>
-            <hsizetype>5</hsizetype>
+         <hsizetype>1</hsizetype>
+         <vsizetype>1</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>80</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="KPushButton" name="pbRun" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>1</hsizetype>
+         <vsizetype>1</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KPushButton" name="pbCancel" >
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>1</hsizetype>
+         <vsizetype>1</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0" colspan="2" >
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>3</number>
+     </property>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>57</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Q3Frame" name="gbAdvanced" >
+       <property name="frameShape" >
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow" >
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>3</number>
+        </property>
+        <item row="6" column="0" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>30</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="7" column="0" colspan="4" >
+         <widget class="QCheckBox" name="cbRealtime" >
+          <property name="whatsThis" >
+           <string>&lt;qt>Select whether realtime scheduling should be enabled for the application. The scheduler governs which process will run and which will have to wait. Two schedulers are available:
+&lt;ul>
+&lt;li>&lt;em>Normal:&lt;/em> This is the standard, timesharing scheduler. It will divide fairly the available processing time between all processes.&lt;/li>
+&lt;li>&lt;em>Realtime:&lt;/em>This scheduler will run your application uninterrupted until it gives up the processor. This can be dangerous. An application that does not give up the processor might hang the system. You need root's password to use the scheduler.&lt;/li>
+&lt;/ul>
+&lt;/qt></string>
+          </property>
+          <property name="text" >
+           <string>Run with realtime &amp;scheduling</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" >
+         <widget class="QLabel" name="lbUsername" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>1</hsizetype>
             <vsizetype>5</vsizetype>
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
-        </sizepolicy>
-    </property>
-    <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="QLayoutWidget" row="4" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>layout4</cstring>
+           </sizepolicy>
+          </property>
+          <property name="whatsThis" >
+           <string>Enter the user you want to run the application as here.</string>
+          </property>
+          <property name="text" >
+           <string>User&amp;name:</string>
+          </property>
+          <property name="buddy" >
+           <cstring>leUsername</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2" colspan="2" >
+         <widget class="KPasswordEdit" name="lePassword" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>0</vsizetype>
+            <horstretch>5</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="whatsThis" >
+           <string>Enter the password here for the user you specified above.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1" >
+         <widget class="QLabel" name="lbPassword" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>1</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="whatsThis" >
+           <string>Enter the password here for the user you specified above.</string>
+          </property>
+          <property name="text" >
+           <string>Pass&amp;word:</string>
+          </property>
+          <property name="buddy" >
+           <cstring>lePassword</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="4" >
+         <widget class="QCheckBox" name="cbRunInTerminal" >
+          <property name="whatsThis" >
+           <string>Check this option if the application you want to run is a text mode application. The application will then be run in a terminal emulator window.</string>
+          </property>
+          <property name="text" >
+           <string>Run in &amp;terminal window</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1" >
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="textLabel1" >
+            <property name="enabled" >
+             <bool>false</bool>
             </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="KPushButton">
-                    <property name="name">
-                        <cstring>pbOptions</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer1</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>MinimumExpanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>80</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="KPushButton">
-                    <property name="name">
-                        <cstring>pbRun</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                </widget>
-                <widget class="KPushButton">
-                    <property name="name">
-                        <cstring>pbCancel</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>1</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-        <widget class="QLayoutWidget" row="2" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>layout4</cstring>
+            <property name="whatsThis" >
+             <string>The priority that the command will be run with can be set here. From left to right, it goes from low to high. The center position is the default value. For priorities higher than the default, you will need to provide the root password.</string>
             </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer6_2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Minimum</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>57</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QFrame">
-                    <property name="name">
-                        <cstring>gbAdvanced</cstring>
-                    </property>
-                    <property name="frameShape">
-                        <enum>NoFrame</enum>
-                    </property>
-                    <property name="frameShadow">
-                        <enum>Raised</enum>
-                    </property>
-                    <grid>
-                        <property name="name">
-                            <cstring>unnamed</cstring>
-                        </property>
-                        <property name="margin">
-                            <number>0</number>
-                        </property>
-                        <spacer row="6" column="0">
-                            <property name="name">
-                                <cstring>spacer3</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>30</height>
-                                </size>
-                            </property>
-                        </spacer>
-                        <widget class="QCheckBox" row="7" column="0" rowspan="1" colspan="4">
-                            <property name="name">
-                                <cstring>cbRealtime</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Run with realtime &amp;scheduling</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>&lt;qt&gt;Select whether realtime scheduling should be enabled for the application. The scheduler governs which process will run and which will have to wait. Two schedulers are available:
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;Normal:&lt;/em&gt; This is the standard, timesharing scheduler. It will divide fairly the available processing time between all processes.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Realtime:&lt;/em&gt;This scheduler will run your application uninterrupted until it gives up the processor. This can be dangerous. An application that does not give up the processor might hang the system. You need root's password to use the scheduler.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/qt&gt;</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="3" column="1">
-                            <property name="name">
-                                <cstring>lbUsername</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>1</hsizetype>
-                                    <vsizetype>5</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>User&amp;name:</string>
-                            </property>
-                            <property name="buddy" stdset="0">
-                                <cstring>leUsername</cstring>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Enter the user you want to run the application as here.</string>
-                            </property>
-                        </widget>
-                        <widget class="KPasswordEdit" row="4" column="2" rowspan="1" colspan="2">
-                            <property name="name">
-                                <cstring>lePassword</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>7</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>5</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Enter the password here for the user you specified above.</string>
-                            </property>
-                        </widget>
-                        <widget class="QLabel" row="4" column="1">
-                            <property name="name">
-                                <cstring>lbPassword</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>1</hsizetype>
-                                    <vsizetype>5</vsizetype>
-                                    <horstretch>0</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="text">
-                                <string>Pass&amp;word:</string>
-                            </property>
-                            <property name="buddy" stdset="0">
-                                <cstring>lePassword</cstring>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Enter the password here for the user you specified above.</string>
-                            </property>
-                        </widget>
-                        <widget class="QCheckBox" row="1" column="0" rowspan="1" colspan="4">
-                            <property name="name">
-                                <cstring>cbRunInTerminal</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Run in &amp;terminal window</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Check this option if the application you want to run is a text mode application. The application will then be run in a terminal emulator window.</string>
-                            </property>
-                        </widget>
-                        <widget class="QLayoutWidget" row="6" column="1">
-                            <property name="name">
-                                <cstring>layout30</cstring>
-                            </property>
-                            <vbox>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <widget class="QLabel">
-                                    <property name="name">
-                                        <cstring>textLabel1</cstring>
-                                    </property>
-                                    <property name="enabled">
-                                        <bool>false</bool>
-                                    </property>
-                                    <property name="text">
-                                        <string>&amp;Priority:</string>
-                                    </property>
-                                    <property name="buddy" stdset="0">
-                                        <cstring>slPriority</cstring>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The priority that the command will be run with can be set here. From left to right, it goes from low to high. The center position is the default value. For priorities higher than the default, you will need to provide the root password.</string>
-                                    </property>
-                                </widget>
-                                <spacer>
-                                    <property name="name">
-                                        <cstring>spacer33</cstring>
-                                    </property>
-                                    <property name="orientation">
-                                        <enum>Vertical</enum>
-                                    </property>
-                                    <property name="sizeType">
-                                        <enum>Minimum</enum>
-                                    </property>
-                                    <property name="sizeHint">
-                                        <size>
-                                            <width>20</width>
-                                            <height>9</height>
-                                        </size>
-                                    </property>
-                                </spacer>
-                            </vbox>
-                        </widget>
-                        <widget class="QCheckBox" row="5" column="0" rowspan="1" colspan="4">
-                            <property name="name">
-                                <cstring>cbPriority</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Run with a &amp;different priority</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Check this option if you want to run the application with a different priority. A higher priority tells the operating system to give more processing time to your application.</string>
-                            </property>
-                        </widget>
-                        <widget class="KLineEdit" row="3" column="2" rowspan="1" colspan="2">
-                            <property name="name">
-                                <cstring>leUsername</cstring>
-                            </property>
-                            <property name="enabled">
-                                <bool>false</bool>
-                            </property>
-                            <property name="sizePolicy">
-                                <sizepolicy>
-                                    <hsizetype>7</hsizetype>
-                                    <vsizetype>0</vsizetype>
-                                    <horstretch>5</horstretch>
-                                    <verstretch>0</verstretch>
-                                </sizepolicy>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Enter the user you want to run the application as here.</string>
-                            </property>
-                        </widget>
-                        <widget class="QLayoutWidget" row="6" column="2" rowspan="1" colspan="2">
-                            <property name="name">
-                                <cstring>layout29</cstring>
-                            </property>
-                            <grid>
-                                <property name="name">
-                                    <cstring>unnamed</cstring>
-                                </property>
-                                <property name="spacing">
-                                    <number>0</number>
-                                </property>
-                                <widget class="QLabel" row="1" column="0">
-                                    <property name="name">
-                                        <cstring>lbLowPriority</cstring>
-                                    </property>
-                                    <property name="enabled">
-                                        <bool>false</bool>
-                                    </property>
-                                    <property name="text">
-                                        <string>Low</string>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The priority that the command will be run with can be set here. From left to right, it goes from low to high. The center position is the default value. For priorities higher than the default, you will need to provide the root password.</string>
-                                    </property>
-                                </widget>
-                                <widget class="QLabel" row="1" column="1">
-                                    <property name="name">
-                                        <cstring>lbHighPriority</cstring>
-                                    </property>
-                                    <property name="enabled">
-                                        <bool>false</bool>
-                                    </property>
-                                    <property name="text">
-                                        <string>High</string>
-                                    </property>
-                                    <property name="alignment">
-                                        <set>AlignVCenter|AlignRight</set>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The priority that the command will be run with can be set here. From left to right, it goes from low to high. The center position is the default value. For priorities higher than the default, you will need to provide the root password.</string>
-                                    </property>
-                                </widget>
-                                <widget class="QSlider" row="0" column="0" rowspan="1" colspan="2">
-                                    <property name="name">
-                                        <cstring>slPriority</cstring>
-                                    </property>
-                                    <property name="enabled">
-                                        <bool>false</bool>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy>
-                                            <hsizetype>7</hsizetype>
-                                            <vsizetype>0</vsizetype>
-                                            <horstretch>1</horstretch>
-                                            <verstretch>0</verstretch>
-                                        </sizepolicy>
-                                    </property>
-                                    <property name="singleStep">
-                                        <number>5</number>
-                                    </property>
-                                    <property name="orientation">
-                                        <enum>Horizontal</enum>
-                                    </property>
-                                    <property name="whatsThis" stdset="0">
-                                        <string>The priority that the command will be run with can be set here. From left to right, it goes from low to high. The center position is the default value. For priorities higher than the default, you will need to provide the root password.</string>
-                                    </property>
-                                </widget>
-                            </grid>
-                        </widget>
-                        <widget class="QCheckBox" row="2" column="0" rowspan="1" colspan="4">
-                            <property name="name">
-                                <cstring>cbRunAsOther</cstring>
-                            </property>
-                            <property name="text">
-                                <string>Run as a different &amp;user</string>
-                            </property>
-                            <property name="whatsThis" stdset="0">
-                                <string>Check this option if you want to run the application with a different user id. Every process has a user id associated with it. This id code determines file access and other permissions. The password of the user is required to do this.</string>
-                            </property>
-                        </widget>
-                        <spacer row="3" column="0" rowspan="2" colspan="1">
-                            <property name="name">
-                                <cstring>spacer6</cstring>
-                            </property>
-                            <property name="orientation">
-                                <enum>Horizontal</enum>
-                            </property>
-                            <property name="sizeType">
-                                <enum>Fixed</enum>
-                            </property>
-                            <property name="sizeHint">
-                                <size>
-                                    <width>20</width>
-                                    <height>40</height>
-                                </size>
-                            </property>
-                        </spacer>
-                    </grid>
-                </widget>
-            </hbox>
-        </widget>
-        <widget class="QFrame" row="3" column="0" rowspan="1" colspan="2">
-            <property name="name">
-                <cstring>separator</cstring>
+            <property name="text" >
+             <string>&amp;Priority:</string>
             </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>1</verstretch>
-                </sizepolicy>
+            <property name="buddy" >
+             <cstring>slPriority</cstring>
             </property>
-            <property name="frameShape">
-                <enum>HLine</enum>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
             </property>
-            <property name="frameShadow">
-                <enum>Sunken</enum>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Minimum</enum>
             </property>
-        </widget>
-        <widget class="QLabel" row="1" column="0">
-            <property name="name">
-                <cstring>lbCommand</cstring>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>9</height>
+             </size>
             </property>
-            <property name="text">
-                <string>Com&amp;mand:</string>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="5" column="0" colspan="4" >
+         <widget class="QCheckBox" name="cbPriority" >
+          <property name="whatsThis" >
+           <string>Check this option if you want to run the application with a different priority. A higher priority tells the operating system to give more processing time to your application.</string>
+          </property>
+          <property name="text" >
+           <string>Run with a &amp;different priority</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2" colspan="2" >
+         <widget class="KLineEdit" name="leUsername" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>0</vsizetype>
+            <horstretch>5</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="whatsThis" >
+           <string>Enter the user you want to run the application as here.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="2" colspan="2" >
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="lbLowPriority" >
+            <property name="enabled" >
+             <bool>false</bool>
             </property>
-            <property name="buddy" stdset="0">
-                <cstring>cbCommand</cstring>
+            <property name="whatsThis" >
+             <string>The priority that the command will be run with can be set here. From left to right, it goes from low to high. The center position is the default value. For priorities higher than the default, you will need to provide the root password.</string>
             </property>
-            <property name="whatsThis" stdset="0">
-                <string>Enter the command you wish to execute or the address of the resource you want to open. This can be a remote URL like "www.kde.org" or a local one like "~/.kderc".</string>
+            <property name="text" >
+             <string>Low</string>
             </property>
-        </widget>
-        <widget class="QLabel" row="0" column="0">
-            <property name="name">
-                <cstring>lbRunIcon</cstring>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QLabel" name="lbHighPriority" >
+            <property name="enabled" >
+             <bool>false</bool>
             </property>
-            <property name="text">
-                <string></string>
+            <property name="whatsThis" >
+             <string>The priority that the command will be run with can be set here. From left to right, it goes from low to high. The center position is the default value. For priorities higher than the default, you will need to provide the root password.</string>
             </property>
-            <property name="alignment">
-                <set>AlignCenter</set>
+            <property name="text" >
+             <string>High</string>
             </property>
-        </widget>
-        <widget class="KHistoryCombo" row="1" column="1">
-            <property name="name">
-                <cstring>cbCommand</cstring>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="2" >
+           <widget class="QSlider" name="slPriority" >
+            <property name="enabled" >
+             <bool>false</bool>
             </property>
-            <property name="whatsThis" stdset="0">
-                <string>Enter the command you wish to execute or the address of the resource you want to open. This can be a remote URL like "www.kde.org" or a local one like "~/.kderc".</string>
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>5</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-        </widget>
-        <widget class="QLabel" row="0" column="1">
-            <property name="name">
-                <cstring>lbComment</cstring>
+            <property name="whatsThis" >
+             <string>The priority that the command will be run with can be set here. From left to right, it goes from low to high. The center position is the default value. For priorities higher than the default, you will need to provide the root password.</string>
             </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>3</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
+            <property name="singleStep" >
+             <number>5</number>
             </property>
-            <property name="text">
-                <string>Enter the name of the application you want to run or the URL you want to view</string>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
             </property>
-            <property name="alignment">
-                <set>WordBreak|AlignVCenter</set>
-            </property>
-        </widget>
-    </grid>
-</widget>
-<connections>
-    <connection>
-        <sender>cbPriority</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>lbLowPriority</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>cbPriority</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>slPriority</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>cbPriority</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>lbHighPriority</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>cbRunAsOther</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>lbUsername</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>cbRunAsOther</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>leUsername</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>cbRunAsOther</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>lbPassword</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>cbRunAsOther</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>lePassword</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>cbPriority</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>textLabel1</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-</connections>
-<tabstops>
-    <tabstop>cbCommand</tabstop>
-    <tabstop>cbRunInTerminal</tabstop>
-    <tabstop>cbRunAsOther</tabstop>
-    <tabstop>leUsername</tabstop>
-    <tabstop>lePassword</tabstop>
-    <tabstop>cbPriority</tabstop>
-    <tabstop>slPriority</tabstop>
-    <tabstop>pbOptions</tabstop>
-    <tabstop>pbRun</tabstop>
-    <tabstop>pbCancel</tabstop>
-</tabstops>
-<includes>
-    <include location="global" impldecl="in declaration">fixx11h.h</include>
-    <include location="local" impldecl="in implementation">kdialog.h</include>
-    <include location="local" impldecl="in implementation">kiconloader.h</include>
-    <include location="local" impldecl="in implementation">kpassworddialog.h</include>
-    <include location="local" impldecl="in implementation">kcombobox.h</include>
-    <include location="local" impldecl="in implementation">klineedit.h</include>
-    <include location="local" impldecl="in implementation">kpushbutton.h</include>
-</includes>
-<pixmapfunction>BarIcon</pixmapfunction>
-<layoutdefaults spacing="3" margin="6"/>
-<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-<includehints>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpushbutton.h</includehint>
-    <includehint>kpassworddialog.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>kcombobox.h</includehint>
-    <includehint>klineedit.h</includehint>
-</includehints>
-<customwidgets>
-    <customwidget>
-	<class>KHistoryCombo</class>
-	<header>kcombobox.h</header>
-    </customwidget>
-    <customwidget>
-	<class>KPasswordEdit</class>
-	<header>kpassworddialog.h</header>
-    </customwidget>
-</customwidgets>
-</UI>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0" colspan="4" >
+         <widget class="QCheckBox" name="cbRunAsOther" >
+          <property name="whatsThis" >
+           <string>Check this option if you want to run the application with a different user id. Every process has a user id associated with it. This id code determines file access and other permissions. The password of the user is required to do this.</string>
+          </property>
+          <property name="text" >
+           <string>Run as a different &amp;user</string>
+          </property>
+         </widget>
+        </item>
+        <item rowspan="2" row="3" column="0" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0" colspan="2" >
+    <widget class="Q3Frame" name="separator" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>1</hsizetype>
+       <vsizetype>0</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::HLine</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Sunken</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="lbCommand" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>1</hsizetype>
+       <vsizetype>5</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="whatsThis" >
+      <string>Enter the command you wish to execute or the address of the resource you want to open. This can be a remote URL like "www.kde.org" or a local one like "~/.kderc".</string>
+     </property>
+     <property name="text" >
+      <string>Com&amp;mand:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>cbCommand</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" >
+    <widget class="QLabel" name="lbRunIcon" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>5</hsizetype>
+       <vsizetype>5</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="KHistoryCombo" name="cbCommand" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>3</hsizetype>
+       <vsizetype>0</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>388</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="whatsThis" >
+      <string>Enter the command you wish to execute or the address of the resource you want to open. This can be a remote URL like "www.kde.org" or a local one like "~/.kderc".</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QLabel" name="lbComment" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>3</hsizetype>
+       <vsizetype>1</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>Enter the name of the application you want to run or the URL you want to view</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignVCenter</set>
+     </property>
+     <property name="wordWrap" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="3" margin="6" />
+ <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
+ <pixmapfunction>BarIcon</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>KPasswordEdit</class>
+   <extends></extends>
+   <header>kpassworddialog.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends></extends>
+   <header>kpushbutton.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends></extends>
+   <header>klineedit.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>KHistoryCombo</class>
+   <extends></extends>
+   <header>kcombobox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Q3Frame</class>
+   <extends></extends>
+   <header>Qt3Support/Q3Frame</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>cbCommand</tabstop>
+  <tabstop>cbRunInTerminal</tabstop>
+  <tabstop>cbRunAsOther</tabstop>
+  <tabstop>leUsername</tabstop>
+  <tabstop>lePassword</tabstop>
+  <tabstop>cbPriority</tabstop>
+  <tabstop>slPriority</tabstop>
+  <tabstop>pbOptions</tabstop>
+  <tabstop>pbRun</tabstop>
+  <tabstop>pbCancel</tabstop>
+ </tabstops>
+ <includes>
+  <include location="global" >fixx11h.h</include>
+ </includes>
+ <resources/>
+ <connections/>
+</ui>

@@ -37,9 +37,13 @@
 #include <kdialog.h>
 #include <kservice.h>
 
+namespace Ui
+{
+  class MinicliDlgUI;
+}
+
 class QTimer;
 class QWidget;
-class MinicliDlgUI;
 class KURIFilterData;
 
 class Minicli : public KDialog
@@ -56,6 +60,7 @@ public:
   void clearHistory();
   
   virtual void show();
+  virtual QSize sizeHint() const;
 
 protected Q_SLOTS:
   virtual void accept();
@@ -83,7 +88,6 @@ private:
   int runCommand();
   void parseLine( bool final );
   QString terminalCommand (const QString&, const QString&);
-  void setMaxCommandBoxWidth();
   QString calculate(const QString &exp);
   void notifyServiceStarted(KService::Ptr service);
 
@@ -99,7 +103,8 @@ private:
 
   QTimer* m_parseTimer;
   QWidget* m_FocusWidget;
-  MinicliDlgUI* m_dlg;
+  Ui::MinicliDlgUI* m_dlg;
+  QWidget* m_dlgWidget;
   KURIFilterData* m_filterData;
 
   // Cached values

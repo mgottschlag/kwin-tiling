@@ -52,7 +52,7 @@ set(kdesktop_KDEINIT_SRCS ${kdesktop_LIB_SRCS} ${kdmlib_SRCS} ${backgroundlib_SR
 
 kde4_automoc(${kdesktop_KDEINIT_SRCS})
 
-kde4_add_ui3_files(kdesktop_KDEINIT_SRCS minicli_ui.ui )
+kde4_add_ui_files(kdesktop_KDEINIT_SRCS minicli_ui.ui )
 
 kde4_add_dcop_skels(kdesktop_KDEINIT_SRCS KDesktopIface.h KScreensaverIface.h KBackgroundIface.h )
 

@@ -89,12 +89,14 @@ Minicli::Minicli( QWidget *parent, const char *name)
   mainLayout->setMargin(0);
   mainLayout->setSpacing(KDialog::spacingHint());
   
-  m_dlg = new MinicliDlgUI (this);
-  mainLayout->addWidget(m_dlg);
+  m_dlgWidget = new QWidget(this);
+  m_dlg = new Ui::MinicliDlgUI();
+  m_dlg->setupUi(m_dlgWidget);
+  
+  mainLayout->addWidget(m_dlgWidget);
 
   m_dlg->lbRunIcon->setPixmap(DesktopIcon("kmenu"));
-  m_dlg->lbComment->setAlignment( Qt::TextWordWrap );
-
+  
   m_dlg->cbCommand->setDuplicatesEnabled( false );
   m_dlg->cbCommand->setTrapReturnKey( true );
 
@@ -130,8 +132,6 @@ Minicli::Minicli( QWidget *parent, const char *name)
 
   m_dlg->leUsername->setText("root");
 
-  setMaxCommandBoxWidth();
-
   // Main widget buttons...
   connect( m_dlg->pbRun, SIGNAL(clicked()), this, SLOT(accept()) );
   connect( m_dlg->pbCancel, SIGNAL(clicked()), this, SLOT(reject()) );
@@ -160,6 +160,7 @@ Minicli::Minicli( QWidget *parent, const char *name)
 Minicli::~Minicli()
 {
   delete m_filterData;
+  delete m_dlg;
 }
 
 void Minicli::setCommand(const QString& command)
@@ -172,9 +173,9 @@ void Minicli::setCommand(const QString& command)
   }
 }
 
-void Minicli::setMaxCommandBoxWidth()
+QSize Minicli::sizeHint() const
 {
-  int maxWidth = qApp->desktop()->screenGeometry(this).width();
+  int maxWidth = qApp->desktop()->screenGeometry((QWidget*)this).width();
   if (maxWidth < 603)
   {
     // a sensible max for smaller screens
@@ -185,19 +186,14 @@ void Minicli::setMaxCommandBoxWidth()
     maxWidth = maxWidth * 2 / 5;
   }
 
-  m_dlg->cbCommand->setMaximumWidth(maxWidth);
+  return QSize(maxWidth, -1);
 }
 
 void Minicli::show()
 {
-  setMaxCommandBoxWidth();
+  adjustSize();
   KWin::setState( winId(), NET::StaysOnTop );
-  setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
-  adjustSize();
-  setFixedSize(size());
   KDialog::show();
-  adjustSize();
-  setFixedSize(size());
 }
 
 void Minicli::loadConfig()
@@ -277,7 +273,10 @@ void Minicli::accept()
   {
      QString result = calculate(cmd);
      if (!result.isEmpty())
-        m_dlg->cbCommand->setCurrentText(result);
+     {
+        int index = m_dlg->cbCommand->currentIndex();
+        m_dlg->cbCommand->setItemText(index, result);
+     }
      return;
   }
 
@@ -305,12 +304,12 @@ void Minicli::reject()
 
 void Minicli::reset()
 {
-  if( m_dlg->gbAdvanced->isShown() )
+  if( !m_dlg->gbAdvanced->isHidden() )
     slotAdvanced();
 
   bool block = m_dlg->cbCommand->signalsBlocked();
   m_dlg->cbCommand->blockSignals( true );
-  m_dlg->cbCommand->clearEdit();
+  m_dlg->cbCommand->clearEditText();
   m_dlg->cbCommand->setFocus();
   m_dlg->cbCommand->reset();
   m_dlg->cbCommand->blockSignals( block );
@@ -892,7 +891,7 @@ QString Minicli::calculate(const QString &exp)
    if (fs)
    {
       QTextStream ts(fs, QIODevice::ReadOnly);
-      result = ts.read().trimmed();
+      result = ts.readLine().trimmed();
       pclose(fs);
    }
    return result;
@@ -900,9 +899,7 @@ QString Minicli::calculate(const QString &exp)
 
 void Minicli::fontChange( const QFont & )
 {
-   setMaxCommandBoxWidth();
    adjustSize();
-   setFixedSize(size());
 }
 
 // vim: set et ts=2 sts=2 sw=2:
