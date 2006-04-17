@@ -125,7 +125,7 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
          " check this option.");
     QWhatsThis::add( tab1->doubleClick, wtstr );
 
-    wtstr = i18n("Activates and opens a fisingle click.");
+    wtstr = i18n("Activates and opens a file or folder with a single click.");
     QWhatsThis::add( tab1->singleClick, wtstr );
 
 
