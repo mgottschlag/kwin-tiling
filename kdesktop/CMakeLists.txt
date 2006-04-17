@@ -2,17 +2,18 @@ kde4_header()
 
 project(kdesktop)
 
-set( kdesktop_KCFG_SRCS 
-	${CMAKE_SOURCE_DIR}/workspace/kdesktop/kdesktopsettings.kcfgc  
+# used by kdesktop but also by lock/
+set( kdesktop_KCFG_SRCS
+	${CMAKE_SOURCE_DIR}/workspace/kdesktop/kdesktopsettings.kcfgc
 	${CMAKE_SOURCE_DIR}/workspace/kdesktop/klaunchsettings.kcfgc )
 
 kde4_add_kcfg_files(kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})
-include_directories( 
-	${CMAKE_SOURCE_DIR}/workspace/lib 
-	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background 
-	${CMAKE_SOURCE_DIR}/libkonq 
-	${CMAKE_SOURCE_DIR}/workspace/kdmlib 
-	  ${KDE4_INCLUDES} )
+include_directories(
+	${CMAKE_SOURCE_DIR}/workspace/lib
+	${CMAKE_SOURCE_DIR}/workspace/kcontrol/background
+	${CMAKE_SOURCE_DIR}/libkonq
+	${CMAKE_SOURCE_DIR}/workspace/kdmlib
+	${KDE4_INCLUDES} )
 
 
 ########### next target ###############
@@ -30,33 +31,33 @@ install_targets(/bin kcheckrunning )
 
 ########### next target ###############
 
-set(kdesktop_KDEINIT_SRCS ${kdesktop_LIB_SRCS} ${kdmlib_SRCS} ${backgroundlib_SRCS}
-   main.cc 
-   krootwm.cc 
-   xautolock.cc 
-   kdiconview.cc 
-   desktop.cc 
-   lockeng.cc 
-   bgmanager.cc 
-   init.cc 
-   minicli.cpp 
-   pixmapserver.cc 
-   kcustommenu.cc 
-   startupid.cpp 
-   xautolock_diy.c 
-   xautolock_engine.c 
-   kshadowengine.cpp 
-   kshadowsettings.cpp 
-   kdesktopshadowsettings.cpp 
+set(kdesktop_SRCS ${kdesktop_LIB_SRCS} ${kdmlib_SRCS} ${backgroundlib_SRCS}
+   main.cc
+   krootwm.cc
+   xautolock.cc
+   kdiconview.cc
+   desktop.cc
+   lockeng.cc
+   bgmanager.cc
+   init.cc
+   minicli.cpp
+   pixmapserver.cc
+   kcustommenu.cc
+   startupid.cpp
+   xautolock_diy.c
+   xautolock_engine.c
+   kshadowengine.cpp
+   kshadowsettings.cpp
+   kdesktopshadowsettings.cpp
    kfileividesktop.cpp )
 
-kde4_automoc(${kdesktop_KDEINIT_SRCS})
+kde4_automoc(${kdesktop_SRCS})
 
-kde4_add_ui_files(kdesktop_KDEINIT_SRCS minicli_ui.ui )
+kde4_add_ui_files(kdesktop_SRCS minicli.ui )
 
-kde4_add_dcop_skels(kdesktop_KDEINIT_SRCS KDesktopIface.h KScreensaverIface.h KBackgroundIface.h )
+kde4_add_dcop_skels(kdesktop_SRCS KDesktopIface.h KScreensaverIface.h KBackgroundIface.h )
 
-kde4_add_kdeinit_executable( kdesktop ${kdesktop_KDEINIT_SRCS})
+kde4_add_kdeinit_executable( kdesktop ${kdesktop_SRCS})
 
 target_link_libraries(kdeinit_kdesktop  ${KDE4_KDE3SUPPORT_LIBS} kworkspace ${KDE4_KDESU_LIBS} konq ${X11_X11_LIB} ${X11_Xext_LIB} ${X11_Xss_LIB})
 
@@ -65,7 +66,8 @@ install_targets(${LIB_INSTALL_DIR} kdeinit_kdesktop )
 target_link_libraries( kdesktop kdeinit_kdesktop )
 install_targets(/bin kdesktop )
 
-########### next target ###############
+########### subdirs ###############
+
 add_subdirectory( lock )
 add_subdirectory( patterns )
 add_subdirectory( programs )
@@ -90,7 +92,7 @@ kde4_footer()
 #
 #INCLUDES = -I$(top_srcdir)/workspace/lib -I$(top_srcdir)/workspace/kcontrol/background -I$(top_srcdir)/libkonq -I$(top_srcdir)/kdmlib $(all_includes)
 #kdesktop_la_LDFLAGS  = $(all_libraries) -module $(KDE_PLUGIN)
-#kdesktop_la_LIBADD   = libkdesktopsettings.la $(top_builddir)/libkonq/libkonq.la $(top_builddir)/workspace/kcontrol/background/libbgnd.la $(top_builddir)/kdmlib/libdmctl.la $(LIB_XSS) $(top_builddir)/workspace/lib/libkworkspace.la 
+#kdesktop_la_LIBADD   = libkdesktopsettings.la $(top_builddir)/libkonq/libkonq.la $(top_builddir)/workspace/kcontrol/background/libbgnd.la $(top_builddir)/kdmlib/libdmctl.la $(LIB_XSS) $(top_builddir)/workspace/lib/libkworkspace.la
 #
 #SUBDIRS = . lock patterns programs init kwebdesktop
 #
@@ -103,7 +105,7 @@ kde4_footer()
 #
 #libkdesktopsettings_la_LDFLAGS = $(all_libraries) -no-undefined
 #libkdesktopsettings_la_LIBADD = $(LIB_KDECORE)
-#libkdesktopsettings_la_SOURCES = kdesktopsettings.kcfgc klaunchsettings.kcfgc 
+#libkdesktopsettings_la_SOURCES = kdesktopsettings.kcfgc klaunchsettings.kcfgc
 #
 #kdesktop_la_SOURCES = main.cc krootwm.cc xautolock.cc kdiconview.cc desktop.cc \
 #	lockeng.cc KDesktopIface.skel \

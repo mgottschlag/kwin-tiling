@@ -66,7 +66,7 @@
 #include <kworkspace.h>
 
 #include "minicli.moc"
-#include "minicli_ui.h"
+#include "ui_minicli.h"
 #include "kdesktopsettings.h"
 
 #include <QDesktopWidget>
