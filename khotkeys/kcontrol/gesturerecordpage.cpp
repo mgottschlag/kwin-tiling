@@ -45,8 +45,8 @@ GestureRecordPage::GestureRecordPage(const QString &gesture,
                    "button below.\n\nDraw here:");
 
     QLabel *label = new QLabel(message, this, "label");
-    label->setAlignment(Qt::AlignLeft | Qt::TextWordWrap |
-                        Qt::AlignVCenter);
+    label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    label->setWordWrap( true );
 
     _recorder = new GestureRecorder(this, "recorder");
     _recorder->setMinimumHeight(150);
