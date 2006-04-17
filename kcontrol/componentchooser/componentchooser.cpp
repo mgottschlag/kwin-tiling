@@ -87,7 +87,7 @@ void CfgComponent::load(KConfig *cfg) {
 
 	for (KTrader::OfferList::Iterator tit = offers.begin(); tit != offers.end(); ++tit)
         {
-		ComponentSelector->insertItem((*tit)->name());
+		ComponentSelector->addItem((*tit)->name());
 		m_lookupDict.insert((*tit)->name(),new QString((*tit)->desktopEntryName()));
 		m_revLookupDict.insert((*tit)->desktopEntryName(),new QString((*tit)->name()));
 	}

@@ -454,7 +454,7 @@ void KLocaleConfigTime::slotTranslate()
   updateWeekDayNames();
 
   while ( m_comboCalendarSystem->count() < 4 )
-    m_comboCalendarSystem->insertItem(QString());
+    m_comboCalendarSystem->addItem(QString());
   m_comboCalendarSystem->setItemText
     (0, ki18nc("Calendar System Gregorian", "Gregorian").toString(m_locale));
   m_comboCalendarSystem->setItemText
@@ -553,7 +553,7 @@ void KLocaleConfigTime::updateWeekDayNames()
     }
         
     if ( outsideComboList )
-      m_comboWeekStartDay->insertItem(str, i - 1);
+      m_comboWeekStartDay->insertItem(i - 1, str);
     else
       m_comboWeekStartDay->setItemText(i - 1, str);
   }

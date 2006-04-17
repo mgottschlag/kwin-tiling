@@ -630,9 +630,9 @@ void KAccessApp::createDialogContents() {
       showModeCombobox = new KComboBox (contents);
       hlay->addWidget( showModeCombobox );
       showModeLabel->setBuddy(showModeCombobox);
-      showModeCombobox->insertItem ( i18n("Change Settings Without Asking"), 0);
-      showModeCombobox->insertItem ( i18n("Show This Confirmation Dialog"), 1);
-      showModeCombobox->insertItem ( i18n("Deactivate All AccessX Features & Gestures"), 2);
+      showModeCombobox->insertItem ( 0, i18n("Change Settings Without Asking"));
+      showModeCombobox->insertItem ( 1, i18n("Show This Confirmation Dialog"));
+      showModeCombobox->insertItem ( 2, i18n("Deactivate All AccessX Features & Gestures"));
       showModeCombobox->setCurrentIndex (1);
 
       dialog->setMainWidget(topcontents);

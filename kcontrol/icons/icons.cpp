@@ -282,7 +282,7 @@ void KIconConfig::apply()
     if (mUsage < K3Icon::LastGroup) {
         for (it=mAvSizes[mUsage].begin(), i=0; it!=mAvSizes[mUsage].end(); ++it, i++)
         {
-            mpSizeBox->insertItem(QString().setNum(*it));
+            mpSizeBox->addItem(QString().setNum(*it));
             dw = abs(mSizes[mUsage] - *it);
             if (dw < delta)
             {

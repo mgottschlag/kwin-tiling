@@ -226,36 +226,36 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 		KDialog::marginHint(), KDialog::spacingHint() );
 
 	comboComboEffect = new QComboBox( false, containerFrame );
-	comboComboEffect->insertItem( i18n("Disable") );
-	comboComboEffect->insertItem( i18n("Animate") );
+	comboComboEffect->addItem( i18n("Disable") );
+	comboComboEffect->addItem( i18n("Animate") );
 	lblComboEffect = new QLabel( i18n("Combobo&x effect:"), containerFrame );
 	lblComboEffect->setBuddy( comboComboEffect );
 	containerLayout->addWidget( lblComboEffect, 0, 0 );
 	containerLayout->addWidget( comboComboEffect, 0, 1 );
 
 	comboTooltipEffect = new QComboBox( false, containerFrame );
-	comboTooltipEffect->insertItem( i18n("Disable") );
-	comboTooltipEffect->insertItem( i18n("Animate") );
-	comboTooltipEffect->insertItem( i18n("Fade") );
+	comboTooltipEffect->addItem( i18n("Disable") );
+	comboTooltipEffect->addItem( i18n("Animate") );
+	comboTooltipEffect->addItem( i18n("Fade") );
 	lblTooltipEffect = new QLabel( i18n("&Tool tip effect:"), containerFrame );
 	lblTooltipEffect->setBuddy( comboTooltipEffect );
 	containerLayout->addWidget( lblTooltipEffect, 1, 0 );
 	containerLayout->addWidget( comboTooltipEffect, 1, 1 );
 
 	comboMenuEffect = new QComboBox( false, containerFrame );
-	comboMenuEffect->insertItem( i18n("Disable") );
-	comboMenuEffect->insertItem( i18n("Animate") );
-	comboMenuEffect->insertItem( i18n("Fade") );
-	comboMenuEffect->insertItem( i18n("Make Translucent") );
+	comboMenuEffect->addItem( i18n("Disable") );
+	comboMenuEffect->addItem( i18n("Animate") );
+	comboMenuEffect->addItem( i18n("Fade") );
+	comboMenuEffect->addItem( i18n("Make Translucent") );
 	lblMenuEffect = new QLabel( i18n("&Menu effect:"), containerFrame );
 	lblMenuEffect->setBuddy( comboMenuEffect );
 	containerLayout->addWidget( lblMenuEffect, 2, 0 );
 	containerLayout->addWidget( comboMenuEffect, 2, 1 );
 
 	comboMenuHandle = new QComboBox( false, containerFrame );
-	comboMenuHandle->insertItem( i18n("Disable") );
-	comboMenuHandle->insertItem( i18n("Application Level") );
-//	comboMenuHandle->insertItem( i18n("Enable") );
+	comboMenuHandle->addItem( i18n("Disable") );
+	comboMenuHandle->addItem( i18n("Application Level") );
+//	comboMenuHandle->addItem( i18n("Enable") );
 	lblMenuHandle = new QLabel( i18n("Me&nu tear-off handles:"), containerFrame );
 	lblMenuHandle->setBuddy( comboMenuHandle );
 	containerLayout->addWidget( lblMenuHandle, 3, 0 );
@@ -282,10 +282,10 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	menuPreview = new MenuPreview( menuContainer, /* opacity */ 90, MenuPreview::Blend );
 
 	comboMenuEffectType = new QComboBox( false, menuContainer );
-	comboMenuEffectType->insertItem( i18n("Software Tint") );
-	comboMenuEffectType->insertItem( i18n("Software Blend") );
+	comboMenuEffectType->addItem( i18n("Software Tint") );
+	comboMenuEffectType->addItem( i18n("Software Blend") );
 #ifdef HAVE_XRENDER
-	comboMenuEffectType->insertItem( i18n("XRender Blend") );
+	comboMenuEffectType->addItem( i18n("XRender Blend") );
 #endif
 
 	// So much stuffing around for a simple slider..
@@ -348,10 +348,10 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	QHBoxLayout* box2 = new QHBoxLayout( dummy, 0, KDialog::spacingHint() );
 	lbl = new QLabel( i18n("Text pos&ition:"), dummy );
 	comboToolbarIcons = new QComboBox( false, dummy );
-	comboToolbarIcons->insertItem( i18n("Icons Only") );
-	comboToolbarIcons->insertItem( i18n("Text Only") );
-	comboToolbarIcons->insertItem( i18n("Text Alongside Icons") );
-	comboToolbarIcons->insertItem( i18n("Text Under Icons") );
+	comboToolbarIcons->addItem( i18n("Icons Only") );
+	comboToolbarIcons->addItem( i18n("Text Only") );
+	comboToolbarIcons->addItem( i18n("Text Alongside Icons") );
+	comboToolbarIcons->addItem( i18n("Text Under Icons") );
 	lbl->setBuddy( comboToolbarIcons );
 
 	box2->addWidget( lbl );

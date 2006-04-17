@@ -45,17 +45,17 @@ CPrintDialog::CPrintDialog(QWidget *parent)
 
     layout->addWidget(new QLabel(i18n("Output:"), page), 0, 0);
     itsOutput=new QComboBox(page);
-    itsOutput->insertItem(i18n("All Fonts"), 0);
-    itsOutput->insertItem(i18n("Selected Fonts"), 1);
+    itsOutput->insertItem(0, i18n("All Fonts"));
+    itsOutput->insertItem(1, i18n("Selected Fonts"));
     layout->addWidget(itsOutput, 0, 1);
     layout->addWidget(new QLabel(i18n("Font size:"), page), 1, 0);
     itsSize=new QComboBox(page);
-    itsSize->insertItem(i18n("Waterfall"), 0);
-    itsSize->insertItem(i18n("12pt"), 1);
-    itsSize->insertItem(i18n("18pt"), 2);
-    itsSize->insertItem(i18n("24pt"), 3);
-    itsSize->insertItem(i18n("36pt"), 4);
-    itsSize->insertItem(i18n("48pt"), 5);
+    itsSize->insertItem(0, i18n("Waterfall"));
+    itsSize->insertItem(1, i18n("12pt"));
+    itsSize->insertItem(2, i18n("18pt"));
+    itsSize->insertItem(3, i18n("24pt"));
+    itsSize->insertItem(4, i18n("36pt"));
+    itsSize->insertItem(5, i18n("48pt"));
     layout->addWidget(itsSize, 1, 1);
     layout->addItem(new QSpacerItem(2, 2), 2, 1);
 }

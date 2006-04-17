@@ -174,7 +174,7 @@ void JoyWidget::init()
 
     // we found one
 
-    device->insertItem(QString("%1 (%2)").arg(joy->text()).arg(joy->device()));
+    device->addItem(QString("%1 (%2)").arg(joy->text()).arg(joy->device()));
 
     // display values for first device
     if ( first )

@@ -273,7 +273,7 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 		QWidget *hlp = new QWidget( howGroup );
 		targets = new QComboBox( hlp );
 		for (int i = 0; tlist[i]; i++)
-			targets->insertItem( QString::fromLocal8Bit( tlist[i] ) );
+			targets->addItem( QString::fromLocal8Bit( tlist[i] ) );
 		freeStrArr( tlist );
 		targets->setCurrentIndex( oldTarget == -1 ? defaultTarget : oldTarget );
 		QHBoxLayout *hb = new QHBoxLayout( hlp, 0, KDsh );

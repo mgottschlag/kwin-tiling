@@ -154,7 +154,7 @@ void KCMKNotify::load()
 		int slash2 = fullPath.lastIndexOf( '/', slash );
 		QString appname= slash2 < 0 ? QString() :  fullPath.mid( slash2+1 , slash-slash2  );
 		if ( !appname.isEmpty() )
-			m_appCombo->insertItem( appname );
+			m_appCombo->addItem( appname );
 	}
 	/*        
     KConfig config( "knotifyrc", true, false );

@@ -354,7 +354,10 @@ bool KSMServer::checkStartupSuspend()
         return true;
     // wait for the phase to finish
     if( !startupSuspendTimeoutTimer.isActive())
-        startupSuspendTimeoutTimer.start( 10000, true );
+    {
+	startupSuspendTimeoutTimer.setSingleShot( true );
+        startupSuspendTimeoutTimer.start( 10000 );
+    }
     return false;
 }
 

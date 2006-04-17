@@ -198,7 +198,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     wcCombo = new QComboBox(false, group);
     for(int i=0; i < CSM_LAST;i++)
     {
-       wcCombo->insertItem(QString());
+       wcCombo->addItem(QString());
     }
 
     setColorName(i18n("Inactive Title Bar") , CSM_Inactive_title_bar);

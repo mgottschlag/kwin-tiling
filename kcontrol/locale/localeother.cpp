@@ -59,10 +59,10 @@ KLocaleConfigOther::KLocaleConfigOther(KLocale *locale,
   connect( m_combMeasureSystem, SIGNAL( activated(int) ),
            SLOT( slotMeasureSystemChanged(int) ) );
 
-  m_combPageSize->insertItem(QString());
-  m_combPageSize->insertItem(QString());
-  m_combMeasureSystem->insertItem(QString());
-  m_combMeasureSystem->insertItem(QString());
+  m_combPageSize->addItem(QString());
+  m_combPageSize->addItem(QString());
+  m_combMeasureSystem->addItem(QString());
+  m_combMeasureSystem->addItem(QString());
 
   lay->setColStretch(1, 1);
   lay->addRowSpacing(2, 0);

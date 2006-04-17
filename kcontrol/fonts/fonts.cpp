@@ -254,7 +254,7 @@ FontAASettings::FontAASettings(QWidget *parent)
   hintingStyle=new QComboBox(false, mw);
   layout->addMultiCellWidget(hintingStyle, 2, 2, 1, 3);
   for(int s=KXftConfig::Hint::NotSet+1; s<=KXftConfig::Hint::Full; ++s)
-    hintingStyle->insertItem(i18n(KXftConfig::description((KXftConfig::Hint::Style)s).toUtf8()));
+    hintingStyle->addItem(i18n(KXftConfig::description((KXftConfig::Hint::Style)s).toUtf8()));
 
   QString hintingText(i18n("Hinting is a process used to enhance the quality of fonts at small sizes."));
   hintingStyle->setWhatsThis( hintingText);

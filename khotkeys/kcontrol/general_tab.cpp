@@ -42,31 +42,31 @@ General_tab::General_tab( QWidget* parent_P, const char* name_P )
         switch( i )
             {
             case Tab_widget::TYPE_GENERIC:
-                action_type_combo->insertItem( i18n( "Generic" ), i );
+                action_type_combo->insertItem( i, i18n( "Generic" ) );
               break;
             case Tab_widget::TYPE_COMMAND_URL_SHORTCUT:
-                action_type_combo->insertItem(
-                    i18n( "Keyboard Shortcut -> Command/URL (simple)" ), i );
+                action_type_combo->insertItem( i,
+                    i18n( "Keyboard Shortcut -> Command/URL (simple)" ) );
               break;
             case Tab_widget::TYPE_MENUENTRY_SHORTCUT:
-                action_type_combo->insertItem(
-                    i18n( "K-Menu Entry (simple)" ), i );
+                action_type_combo->insertItem( i,
+                    i18n( "K-Menu Entry (simple)" ) );
               break;
             case Tab_widget::TYPE_DCOP_SHORTCUT:
-                action_type_combo->insertItem(
-                    i18n( "Keyboard Shortcut -> DCOP Call (simple)" ), i );
+                action_type_combo->insertItem( i,
+                    i18n( "Keyboard Shortcut -> DCOP Call (simple)" ) );
               break;
             case Tab_widget::TYPE_KEYBOARD_INPUT_SHORTCUT:
-                action_type_combo->insertItem(
-                    i18n( "Keyboard Shortcut -> Keyboard Input (simple)" ), i );
+                action_type_combo->insertItem( i,
+                    i18n( "Keyboard Shortcut -> Keyboard Input (simple)" ) );
               break;
             case Tab_widget::TYPE_KEYBOARD_INPUT_GESTURE:
-                action_type_combo->insertItem(
-                    i18n( "Gesture -> Keyboard Input (simple)" ), i );
+                action_type_combo->insertItem( i,
+                    i18n( "Gesture -> Keyboard Input (simple)" ) );
               break;
             case Tab_widget::TYPE_ACTIVATE_WINDOW_SHORTCUT:
-                action_type_combo->insertItem(
-                    i18n( "Keyboard Shortcut -> Activate Window (simple)" ), i );
+                action_type_combo->insertItem( i,
+                    i18n( "Keyboard Shortcut -> Activate Window (simple)" ) );
               break;
             case Tab_widget::TYPE_END:
               assert( false );

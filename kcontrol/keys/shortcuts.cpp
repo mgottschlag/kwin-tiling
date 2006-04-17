@@ -252,7 +252,7 @@ void ShortcutsModule::readSchemeNames()
 	m_rgsSchemeFiles.clear();
 
 	i18n("User-Defined Scheme");
-	m_pcbSchemes->insertItem( i18n("Current Scheme") );
+	m_pcbSchemes->addItem( i18n("Current Scheme") );
 	m_rgsSchemeFiles.append( "cur" );
 
 	// This for system files
@@ -267,7 +267,7 @@ void ShortcutsModule::readSchemeNames()
 		config.setGroup( "Settings" );
 		QString str = config.readEntry( "Name" );
 
-		m_pcbSchemes->insertItem( str );
+		m_pcbSchemes->addItem( str );
 		m_rgsSchemeFiles.append( *it );
 	}
 }
@@ -394,7 +394,7 @@ void ShortcutsModule::slotSaveSchemeAs()
 	sFile.prepend( kksPath );
 	sFile += ".kksrc";
 	if( iScheme == -1 ) {
-		m_pcbSchemes->insertItem( sName );
+		m_pcbSchemes->addItem( sName );
 		//m_pcbSchemes->setFocus();
 		m_pcbSchemes->setCurrentIndex( m_pcbSchemes->count()-1 );
 		m_rgsSchemeFiles.append( sFile );

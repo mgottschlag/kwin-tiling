@@ -50,15 +50,15 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       sdlcombo = new QComboBox( false, group0 );
       sdllabel = new QLabel (sdlcombo, i18n ("&Local:"), group0);
-      sdlcombo->insertItem(i18n("Everybody"), SdAll);
-      sdlcombo->insertItem(i18n("Only Root"), SdRoot);
-      sdlcombo->insertItem(i18n("Nobody"), SdNone);
+      sdlcombo->insertItem(SdAll, i18n("Everybody"));
+      sdlcombo->insertItem(SdRoot, i18n("Only Root"));
+      sdlcombo->insertItem(SdNone, i18n("Nobody"));
       connect(sdlcombo, SIGNAL(activated(int)), SLOT(changed()));
       sdrcombo = new QComboBox( false, group0 );
       sdrlabel = new QLabel (sdrcombo, i18n ("&Remote:"), group0);
-      sdrcombo->insertItem(i18n("Everybody"), SdAll);
-      sdrcombo->insertItem(i18n("Only Root"), SdRoot);
-      sdrcombo->insertItem(i18n("Nobody"), SdNone);
+      sdrcombo->insertItem(SdAll, i18n("Everybody"));
+      sdrcombo->insertItem(SdRoot, i18n("Only Root"));
+      sdrcombo->insertItem(SdNone, i18n("Nobody"));
       connect(sdrcombo, SIGNAL(activated(int)), SLOT(changed()));
       QWhatsThis::add( group0, i18n("Here you can select who is allowed to shutdown"
         " the computer using KDM. You can specify different values for local (console) and remote displays. "

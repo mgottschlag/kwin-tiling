@@ -71,8 +71,8 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    viewStatistics->addColumn(i18n("Hits"),50);
    //viewStatistics->addColumn(i18n("Percentage"),100);
 
-   eventCb->insertItem(i18n("Connection"));
-   eventCb->insertItem(i18n("File Access"));
+   eventCb->addItem(i18n("Connection"));
+   eventCb->addItem(i18n("File Access"));
    
    expandedInfoCb->setChecked(false);
    expandedUserCb->setChecked(false);

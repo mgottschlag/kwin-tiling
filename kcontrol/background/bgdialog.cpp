@@ -462,19 +462,19 @@ void BGDialog::initUI()
 {
    // Desktop names
    for (unsigned i = 0; i < m_numDesks; ++i)
-      m_comboDesktop->insertItem(m_pGlobals->deskName(i));
+      m_comboDesktop->addItem(m_pGlobals->deskName(i));
    
    // Screens
    for (unsigned i = 0; i < m_numScreens; ++i)
-      m_comboScreen->insertItem( i18n("Screen %1", i+1) );
+      m_comboScreen->addItem( i18n("Screen %1", i+1) );
 
    // Patterns
-   m_comboPattern->insertItem(i18n("Single Color"));
-   m_comboPattern->insertItem(i18n("Horizontal Gradient"));
-   m_comboPattern->insertItem(i18n("Vertical Gradient"));
-   m_comboPattern->insertItem(i18n("Pyramid Gradient"));
-   m_comboPattern->insertItem(i18n("Pipecross Gradient"));
-   m_comboPattern->insertItem(i18n("Elliptic Gradient"));
+   m_comboPattern->addItem(i18n("Single Color"));
+   m_comboPattern->addItem(i18n("Horizontal Gradient"));
+   m_comboPattern->addItem(i18n("Vertical Gradient"));
+   m_comboPattern->addItem(i18n("Pyramid Gradient"));
+   m_comboPattern->addItem(i18n("Pipecross Gradient"));
+   m_comboPattern->addItem(i18n("Elliptic Gradient"));
 
    m_patterns = KBackgroundPattern::list();
    m_patterns.sort(); // Defined order
@@ -483,33 +483,33 @@ void BGDialog::initUI()
    {
       KBackgroundPattern pat(*it);
       if (pat.isAvailable())
-         m_comboPattern->insertItem(pat.comment());
+         m_comboPattern->addItem(pat.comment());
    }
 
    loadWallpaperFilesList();
 
    // Wallpaper tilings: again they must match the ones from bgrender.cc
-   m_comboWallpaperPos->insertItem(i18n("Centered"));
-   m_comboWallpaperPos->insertItem(i18n("Tiled"));
-   m_comboWallpaperPos->insertItem(i18n("Center Tiled"));
-   m_comboWallpaperPos->insertItem(i18n("Centered Maxpect"));
-   m_comboWallpaperPos->insertItem(i18n("Tiled Maxpect"));
-   m_comboWallpaperPos->insertItem(i18n("Scaled"));
-   m_comboWallpaperPos->insertItem(i18n("Centered Auto Fit"));
-   m_comboWallpaperPos->insertItem(i18n("Scale & Crop"));
+   m_comboWallpaperPos->addItem(i18n("Centered"));
+   m_comboWallpaperPos->addItem(i18n("Tiled"));
+   m_comboWallpaperPos->addItem(i18n("Center Tiled"));
+   m_comboWallpaperPos->addItem(i18n("Centered Maxpect"));
+   m_comboWallpaperPos->addItem(i18n("Tiled Maxpect"));
+   m_comboWallpaperPos->addItem(i18n("Scaled"));
+   m_comboWallpaperPos->addItem(i18n("Centered Auto Fit"));
+   m_comboWallpaperPos->addItem(i18n("Scale & Crop"));
 
    // Blend modes: make sure these match with kdesktop/bgrender.cc !!
-   m_comboBlend->insertItem(i18n("No Blending"));
-   m_comboBlend->insertItem(i18n("Flat"));
-   m_comboBlend->insertItem(i18n("Horizontal"));
-   m_comboBlend->insertItem(i18n("Vertical"));
-   m_comboBlend->insertItem(i18n("Pyramid"));
-   m_comboBlend->insertItem(i18n("Pipecross"));
-   m_comboBlend->insertItem(i18n("Elliptic"));
-   m_comboBlend->insertItem(i18n("Intensity"));
-   m_comboBlend->insertItem(i18n("Saturation"));
-   m_comboBlend->insertItem(i18n("Contrast"));
-   m_comboBlend->insertItem(i18n("Hue Shift"));
+   m_comboBlend->addItem(i18n("No Blending"));
+   m_comboBlend->addItem(i18n("Flat"));
+   m_comboBlend->addItem(i18n("Horizontal"));
+   m_comboBlend->addItem(i18n("Vertical"));
+   m_comboBlend->addItem(i18n("Pyramid"));
+   m_comboBlend->addItem(i18n("Pipecross"));
+   m_comboBlend->addItem(i18n("Elliptic"));
+   m_comboBlend->addItem(i18n("Intensity"));
+   m_comboBlend->addItem(i18n("Saturation"));
+   m_comboBlend->addItem(i18n("Contrast"));
+   m_comboBlend->addItem(i18n("Hue Shift"));
 }
 
 void BGDialog::loadWallpaperFilesList() {
@@ -609,7 +609,7 @@ void BGDialog::loadWallpaperFilesList() {
         it != papers.end();
         ++it)
    {
-      comboWallpaper->insertItem(it.value().first);
+      comboWallpaper->addItem(it.value().first);
       m_wallpaper[it.value().second] = i;
       i++;
    }
@@ -637,7 +637,7 @@ void BGDialog::setWallpaper(const QString &s)
          i--;
          comboWallpaper->removeItem(i);
       }
-      comboWallpaper->insertItem(KStringHandler::rEmSqueeze(imageCaption, m_urlWallpaperBox->fontMetrics(), 11));
+      comboWallpaper->addItem(KStringHandler::rEmSqueeze(imageCaption, m_urlWallpaperBox->fontMetrics(), 11));
       m_wallpaper[s] = i;
       comboWallpaper->setCurrentIndex(i);
    }

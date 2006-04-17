@@ -70,10 +70,10 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     GroupBox1Layout->setColStretch( 1, 1 );
 
     cb_busyCursor = new QComboBox( GroupBox1, "cb_busyCursor" );
-    cb_busyCursor->insertItem( i18n( "No Busy Cursor" ), 0 );
-    cb_busyCursor->insertItem( i18n( "Passive Busy Cursor" ), 1 );
-    cb_busyCursor->insertItem( i18n( "Blinking Cursor" ), 2 );
-    cb_busyCursor->insertItem( i18n( "Bouncing Cursor" ), 3 );
+    cb_busyCursor->insertItem( 0, i18n( "No Busy Cursor" ) );
+    cb_busyCursor->insertItem( 1, i18n( "Passive Busy Cursor" ) );
+    cb_busyCursor->insertItem( 2, i18n( "Blinking Cursor" ) );
+    cb_busyCursor->insertItem( 3, i18n( "Bouncing Cursor" ) );
     GroupBox1Layout->addWidget( cb_busyCursor, 0, 0 );
     connect( cb_busyCursor, SIGNAL( activated(int) ),
             SLOT ( slotBusyCursor(int)));

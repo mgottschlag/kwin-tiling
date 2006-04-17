@@ -415,7 +415,7 @@ void KDMUsersWidget::slotClearUsers()
     optinlv->clear();
     optoutlv->clear();
     usercombo->clear();
-    usercombo->insertItem( m_defaultText );
+    usercombo->addItem( m_defaultText );
 }
 
 void KDMUsersWidget::slotAddUsers(const QMap<QString,int> &users)
@@ -427,7 +427,7 @@ void KDMUsersWidget::slotAddUsers(const QMap<QString,int> &users)
 	      setOn(selectedUsers.find(*name) != selectedUsers.end());
       (new Q3CheckListItem(optoutlv, *name, Q3CheckListItem::CheckBox))->
 	      setOn(hiddenUsers.find(*name) != hiddenUsers.end());
-      usercombo->insertItem(*name);
+      usercombo->addItem(*name);
     }
     optinlv->sort();
     optoutlv->sort();

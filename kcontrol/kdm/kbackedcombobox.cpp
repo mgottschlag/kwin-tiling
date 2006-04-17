@@ -23,7 +23,7 @@ void KBackedComboBox::insertItem( const QString &id, const QString &name )
 {
     id2name[id] = name;
     name2id[name] = id;
-    KComboBox::insertItem( name );
+    KComboBox::addItem( name );
 }
 
 void KBackedComboBox::setCurrentId( const QString &id )

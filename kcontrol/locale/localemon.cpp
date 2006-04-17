@@ -117,8 +117,8 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   int i = 5;
   while (i--)
   {
-    m_cmbMonPosMonSignPos->insertItem(QString());
-    m_cmbMonNegMonSignPos->insertItem(QString());
+    m_cmbMonPosMonSignPos->addItem(QString());
+    m_cmbMonNegMonSignPos->addItem(QString());
   }
 
   lay->setColStretch(1, 1);

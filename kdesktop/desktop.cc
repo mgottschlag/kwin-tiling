@@ -141,6 +141,8 @@ KDesktop::KDesktop( bool x_root_hack, bool wait_for_kded ) :
   setAcceptDrops(true); // WStyle_Customize seems to disable that
   m_pKwinmodule = new KWinModule( this );
   updateWorkAreaTimer = new QTimer( this );
+  updateWorkAreaTimer->setSingleShot( true );
+
   connect( updateWorkAreaTimer, SIGNAL( timeout() ),
            this, SLOT( updateWorkArea() ) );
   connect( m_pKwinmodule, SIGNAL( workAreaChanged() ),
@@ -673,7 +675,7 @@ void KDesktop::workAreaChanged()
 {
     //kDebug(1204) << "KDesktop::workAreaChanged() -> starting timer" << endl;
     updateWorkAreaTimer->stop();
-    updateWorkAreaTimer->start( 100, true );
+    updateWorkAreaTimer->start( 100 );
 }
 
 void KDesktop::updateWorkArea()

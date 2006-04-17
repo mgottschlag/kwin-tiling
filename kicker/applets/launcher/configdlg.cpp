@@ -44,10 +44,10 @@ ConfigDlg::ConfigDlg(QWidget *parent, const char *name, Prefs *config,
     addPage(m_ui, i18n("Configure"), "config");
 
     m_ui->iconDim->clear();
-    m_ui->iconDim->insertItem(i18n("Automatic"));
+    m_ui->iconDim->addItem(i18n("Automatic"));
     for (int n=0; n<int(m_settings->iconDimChoices().size()); ++n)
     {
-        m_ui->iconDim->insertItem(QString::number(
+        m_ui->iconDim->addItem(QString::number(
             m_settings->iconDimChoices()[n]));
     }
     connect(m_ui->iconDim, SIGNAL(textChanged(const QString&)),

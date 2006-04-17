@@ -80,8 +80,8 @@ KCMXinerama::KCMXinerama(KInstance *inst, QWidget *parent )
 		for (int i = 0; i < _displays; i++) {
 			QString l = i18n("Display %1", i+1);
 			QRect geom = QApplication::desktop()->screenGeometry(i);
-			xw->_unmanagedDisplay->insertItem(l);
-			xw->_ksplashDisplay->insertItem(l);
+			xw->_unmanagedDisplay->addItem(l);
+			xw->_ksplashDisplay->addItem(l);
 			dpyList.append(l);
 			xw->headTable->setText(i, 0, QString::number(geom.x()));
 			xw->headTable->setText(i, 1, QString::number(geom.y()));
@@ -89,7 +89,7 @@ KCMXinerama::KCMXinerama(KInstance *inst, QWidget *parent )
 			xw->headTable->setText(i, 3, QString::number(geom.height()));
 		}
 
-		xw->_unmanagedDisplay->insertItem(i18n("Display Containing the Pointer"));
+		xw->_unmanagedDisplay->addItem(i18n("Display Containing the Pointer"));
 
 		xw->headTable->setRowLabels(dpyList);
 

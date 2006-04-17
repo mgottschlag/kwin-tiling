@@ -30,14 +30,14 @@ namespace KHotKeys
 Gestures_settings_tab::Gestures_settings_tab( QWidget* parent_P, const char* name_P )
     : Gestures_settings_tab_ui( parent_P, name_P )
     {
-    mouse_button_combo->insertItem( i18n( "Button 2 (middle)" ), 0 );
-    mouse_button_combo->insertItem( i18n( "Button 3 (secondary)" ), 1 );
-    mouse_button_combo->insertItem( i18n( "Button 4 (often wheel up)" ), 2 );
-    mouse_button_combo->insertItem( i18n( "Button 5 (often wheel down)" ), 3 );
-    mouse_button_combo->insertItem( i18n( "Button 6 (if available)" ), 4 );
-    mouse_button_combo->insertItem( i18n( "Button 7 (if available)" ), 5 );
-    mouse_button_combo->insertItem( i18n( "Button 8 (if available)" ), 6 );
-    mouse_button_combo->insertItem( i18n( "Button 9 (if available)" ), 7 );
+    mouse_button_combo->insertItem( 0, i18n( "Button 2 (middle)" ) );
+    mouse_button_combo->insertItem( 1, i18n( "Button 3 (secondary)" ) );
+    mouse_button_combo->insertItem( 2, i18n( "Button 4 (often wheel up)" ) );
+    mouse_button_combo->insertItem( 3, i18n( "Button 5 (often wheel down)" ) );
+    mouse_button_combo->insertItem( 4, i18n( "Button 6 (if available)" ) );
+    mouse_button_combo->insertItem( 5, i18n( "Button 7 (if available)" ) );
+    mouse_button_combo->insertItem( 6, i18n( "Button 8 (if available)" ) );
+    mouse_button_combo->insertItem( 7, i18n( "Button 9 (if available)" ) );
     // KHotKeys::Module::changed()
     connect( mouse_gestures_globally, SIGNAL( clicked()),
         module, SLOT( changed()));

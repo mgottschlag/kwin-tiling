@@ -67,6 +67,7 @@ KBackgroundRenderer::KBackgroundRenderer(int desk, int screen, bool drawBackgrou
     m_TilingEnabled = false;
 
     m_pTimer = new QTimer(this);
+    m_pTimer->setSingleShot(true);
     connect(m_pTimer, SIGNAL(timeout()), SLOT(render()));
 }
 
@@ -701,7 +702,6 @@ void KBackgroundRenderer::slotBackgroundDone(KProcess *process)
 
     m_Tempfile->unlink();
     delete m_Tempfile; m_Tempfile = 0;
-    m_pTimer->setSingleShot(true);
     m_pTimer->start(0);
     setBusyCursor(false);
 }
@@ -719,7 +719,6 @@ void KBackgroundRenderer::start(bool enableBusyCursor)
     m_Cached = false;
 
     m_State = Rendering;
-    m_pTimer->setSingleShot(true);
     m_pTimer->start(0);
 }
 
@@ -752,7 +751,7 @@ void KBackgroundRenderer::render()
                 }
             }
         }
-        m_pTimer->start(0, true);
+        m_pTimer->start(0);
         m_State |= InitCheck;
         return;
     }
@@ -762,7 +761,6 @@ void KBackgroundRenderer::render()
     if (!(m_State & BackgroundDone)) {
         ret = doBackground();
         if (ret != Wait)
-	    m_pTimer->setSingleShot(true);
 	    m_pTimer->start(0);
 	return;
     }

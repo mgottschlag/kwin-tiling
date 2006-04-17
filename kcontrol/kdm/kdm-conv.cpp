@@ -316,9 +316,9 @@ void KDMConvenienceWidget::slotClearUsers()
     puserlb->clear();
     npuserlv->clear();
     if (!autoUser.isEmpty())
-	userlb->insertItem(autoUser);
+	userlb->addItem(autoUser);
     if (!preselUser.isEmpty())
-	puserlb->insertItem(preselUser);
+	puserlb->addItem(preselUser);
 }
 
 void KDMConvenienceWidget::slotAddUsers(const QMap<QString,int> &users)
@@ -327,9 +327,9 @@ void KDMConvenienceWidget::slotAddUsers(const QMap<QString,int> &users)
     for (it = users.begin(); it != users.end(); ++it) {
         if (it.value() > 0) {
             if (it.key() != autoUser)
-                userlb->insertItem(it.key());
+                userlb->addItem(it.key());
             if (it.key() != preselUser)
-                puserlb->insertItem(it.key());
+                puserlb->addItem(it.key());
         }
         if (it.value() != 0)
             (new Q3CheckListItem(npuserlv, it.key(), Q3CheckListItem::CheckBox))->
