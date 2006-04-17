@@ -81,7 +81,9 @@ Dtime::Dtime(QWidget * parent, const char *name)
   connect(setDateTimeAuto, SIGNAL(toggled(bool)), SLOT(configChanged()));
   layout1->addWidget( setDateTimeAuto );
 
-  timeServerList = new QComboBox( false, privateLayoutWidget, "timeServerList" );
+  timeServerList = new QComboBox( privateLayoutWidget );
+  timeServerList->setObjectName( "timeServerList" );
+  timeServerList->setEditable(false);
   connect(timeServerList, SIGNAL(activated(int)), SLOT(configChanged()));
   connect(timeServerList, SIGNAL(textChanged(const QString &)), SLOT(configChanged()));
   connect(setDateTimeAuto, SIGNAL(toggled(bool)), timeServerList, SLOT(setEnabled(bool)));

@@ -195,7 +195,8 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     groupLayout->setMargin(10);
     groupLayout->addSpacing(10);
 
-    wcCombo = new QComboBox(false, group);
+    wcCombo = new QComboBox(group);
+    wcCombo->setEditable(false);
     for(int i=0; i < CSM_LAST;i++)
     {
        wcCombo->addItem(QString());

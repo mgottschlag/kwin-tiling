@@ -205,7 +205,8 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   lay->setAutoAdd(true);
 
   m_labCalendarSystem = new QLabel(this, I18N_NOOP("Calendar system:"));
-  m_comboCalendarSystem = new QComboBox(false, this);
+  m_comboCalendarSystem = new QComboBox(this);
+  m_comboCalendarSystem->setEditable(false);
   connect(m_comboCalendarSystem, SIGNAL(activated(int)),
 	  this, SLOT(slotCalendarSystemChanged(int)));
   QStringList tmpCalendars;
@@ -213,24 +214,28 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   m_comboCalendarSystem->insertStringList(tmpCalendars);
 
   m_labTimeFmt = new QLabel(this, I18N_NOOP("Time format:"));
-  m_comboTimeFmt = new QComboBox(true, this);
+  m_comboTimeFmt = new QComboBox(this);
+  m_comboTimeFmt->setEditable(true);
   //m_edTimeFmt = m_comboTimeFmt->lineEdit();
   //m_edTimeFmt = new QLineEdit(this);
   connect( m_comboTimeFmt, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotTimeFmtChanged(const QString &) ) );
 
   m_labDateFmt = new QLabel(this, I18N_NOOP("Date format:"));
-  m_comboDateFmt = new QComboBox(true, this);
+  m_comboDateFmt = new QComboBox(this);
+  m_comboDateFmt->setEditable(true);
   connect( m_comboDateFmt, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotDateFmtChanged(const QString &) ) );
 
   m_labDateFmtShort = new QLabel(this, I18N_NOOP("Short date format:"));
-  m_comboDateFmtShort = new QComboBox(true, this);
+  m_comboDateFmtShort = new QComboBox(this);
+  m_comboDateFmtShort->setEditable(true);
   connect( m_comboDateFmtShort, SIGNAL( textChanged(const QString &) ),
 	   this, SLOT( slotDateFmtShortChanged(const QString &) ) );
 
   m_labWeekStartDay = new QLabel(this, I18N_NOOP("First day of the week:"));
-  m_comboWeekStartDay = new QComboBox(false, this);
+  m_comboWeekStartDay = new QComboBox(this);
+  m_comboWeekStartDay->setEditable(false);
   connect (m_comboWeekStartDay, SIGNAL(activated(int)),
            this, SLOT(slotWeekStartDayChanged(int)));
 

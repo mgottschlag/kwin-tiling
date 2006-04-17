@@ -49,7 +49,7 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
   viewStatistics = new Q3ListView( this );
   connectionsL = new QLabel( i18n( "Connections: 0" ), this );
   filesL = new QLabel( i18n( "File accesses: 0" ), this );
-  eventCb = new QComboBox( false, this );
+  eventCb = new QComboBox( this );
   eventL = new QLabel( eventCb, i18n( "Event: " ), this );
   serviceLe = new QLineEdit( this );
   serviceL = new QLabel( serviceLe, i18n( "Service/File:" ), this );
@@ -71,6 +71,7 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    viewStatistics->addColumn(i18n("Hits"),50);
    //viewStatistics->addColumn(i18n("Percentage"),100);
 
+   eventCb->setEditable(false);
    eventCb->addItem(i18n("Connection"));
    eventCb->addItem(i18n("File Access"));
    
@@ -144,8 +145,8 @@ void StatisticsView::calculate()
    if ((expandedInfoCb->isChecked()) || (expandedUserCb->isChecked()))
    {
       SambaLog sLog;
-      QRegExp rService(serviceLe->text(),false,true);
-      QRegExp rHost(hostLe->text(),false,true);
+      QRegExp rService(serviceLe->text(),Qt::CaseInsensitive,QRegExp::Wildcard);
+      QRegExp rHost(hostLe->text(),Qt::CaseInsensitive,QRegExp::Wildcard);
       QString item2, item3;
       Q3ListViewItem* item=dataList->firstChild();
       while (item!=0)
@@ -196,8 +197,8 @@ void StatisticsView::calculate()
    {
       calcCount++;
       int count(0);
-      QRegExp rService(serviceLe->text(),false,true);
-      QRegExp rHost(hostLe->text(),false,true);
+      QRegExp rService(serviceLe->text(),Qt::CaseInsensitive,QRegExp::Wildcard);
+      QRegExp rHost(hostLe->text(),Qt::CaseInsensitive,QRegExp::Wildcard);
       Q3ListViewItem* item=dataList->firstChild();
       while (item!=0)
       {

@@ -349,15 +349,15 @@ KWinbindGreeter::textPrompt( const char *prompt, bool echo, bool nonBlocking )
 		exp = 1;
 	else {
 		QString pr( prompt );
-		if (pr.indexOf( QRegExp( "\\b(old|current)\\b", false ) ) >= 0) {
+		if (pr.indexOf( QRegExp( "\\b(old|current)\\b", Qt::CaseInsensitive ) ) >= 0) {
 			handler->gplugReturnText( "",
 			                          KGreeterPluginHandler::IsOldPassword |
 			                          KGreeterPluginHandler::IsSecret );
 			return;
 		} else if (pr.indexOf( QRegExp( "\\b(re-?(enter|type)|again|confirm)\\b",
-		                             false ) ) >= 0)
+		                             Qt::CaseInsensitive ) ) >= 0)
 			exp = 3;
-		else if (pr.indexOf( QRegExp( "\\bnew\\b", false ) ) >= 0)
+		else if (pr.indexOf( QRegExp( "\\bnew\\b", Qt::CaseInsensitive ) ) >= 0)
 			exp = 2;
 		else {
 			handler->gplugMsgBox( QMessageBox::Critical,

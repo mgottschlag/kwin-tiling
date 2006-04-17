@@ -240,9 +240,10 @@ FontAASettings::FontAASettings(QWidget *parent)
   layout->addWidget(useSubPixel, 1, 0);
   useSubPixel->setWhatsThis( subPixelWhatsThis );
 
-  subPixelType=new QComboBox(false, mw);
+  subPixelType=new QComboBox(mw);
   layout->addMultiCellWidget(subPixelType, 1, 1, 1, 3);
 
+  subPixelType->setEditable(false);
   subPixelType->setWhatsThis( subPixelWhatsThis );
 
   for(int t=KXftConfig::SubPixel::None+1; t<=KXftConfig::SubPixel::Vbgr; ++t)
@@ -251,7 +252,8 @@ FontAASettings::FontAASettings(QWidget *parent)
 #ifdef HAVE_FONTCONFIG
   QLabel *hintingLabel=new QLabel(i18n("Hinting style: "), mw);
   layout->addWidget(hintingLabel, 2, 0);
-  hintingStyle=new QComboBox(false, mw);
+  hintingStyle=new QComboBox(mw);
+  hintingStyle->setEditable(false);
   layout->addMultiCellWidget(hintingStyle, 2, 2, 1, 3);
   for(int s=KXftConfig::Hint::NotSet+1; s<=KXftConfig::Hint::Full; ++s)
     hintingStyle->addItem(i18n(KXftConfig::description((KXftConfig::Hint::Style)s).toUtf8()));

@@ -48,13 +48,15 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       QGroupBox *group0 = new QGroupBox( i18n("Allow Shutdown"), this );
 
-      sdlcombo = new QComboBox( false, group0 );
+      sdlcombo = new QComboBox( group0 );
+      sdlcombo->setEditable( false );
       sdllabel = new QLabel (sdlcombo, i18n ("&Local:"), group0);
       sdlcombo->insertItem(SdAll, i18n("Everybody"));
       sdlcombo->insertItem(SdRoot, i18n("Only Root"));
       sdlcombo->insertItem(SdNone, i18n("Nobody"));
       connect(sdlcombo, SIGNAL(activated(int)), SLOT(changed()));
-      sdrcombo = new QComboBox( false, group0 );
+      sdrcombo = new QComboBox( group0 );
+      sdrcombo->setEditable( false );
       sdrlabel = new QLabel (sdrcombo, i18n ("&Remote:"), group0);
       sdrcombo->insertItem(SdAll, i18n("Everybody"));
       sdrcombo->insertItem(SdRoot, i18n("Only Root"));
