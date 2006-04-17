@@ -65,7 +65,8 @@ void ExtensionInfo::load()
             _customSizeMax = df.readEntry("X-KDE-PanelExt-CustomSizeMax", _customSizeMax);
             _customSize = df.readEntry("X-KDE-PanelExt-CustomSizeDefault", _customSize);
         }
-	QStringList allowedPos=QStringList::split(",",df.readEntry("X-KDE-PanelExt-Positions","Left,Top,Right,Bottom").toUpper());
+	QStringList allowedPos=
+            df.readEntry("X-KDE-PanelExt-Positions","Left,Top,Right,Bottom").toUpper().split(",", QString::SkipEmptyParts );
 	for (int i=0;i<4;i++) _allowedPosition[i]=false;
 	kDebug()<<"BEFORE X-KDE-PanelExt-Positions parsing"<<endl;
 	for (unsigned int i=0;i<allowedPos.count();i++) {

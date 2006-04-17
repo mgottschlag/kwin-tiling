@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 
             if (key == "Applets")
             {
-                appletIds = QStringList::split(",", value);
+                appletIds = value.split(",", QString::SkipEmptyParts);
             }
             else if (key == "FreeSpace")
             {

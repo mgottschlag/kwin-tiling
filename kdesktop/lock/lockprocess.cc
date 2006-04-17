@@ -154,8 +154,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     connect(&mSuspendTimer, SIGNAL(timeout()), SLOT(suspend()));
 
     QStringList dmopt =
-        QStringList::split(QChar(','),
-                            QLatin1String( ::getenv( "XDM_MANAGED" )));
+        QString::fromLatin1( ::getenv( "XDM_MANAGED" )).split(QChar(','), QString::SkipEmptyParts);
     for (QStringList::ConstIterator it = dmopt.begin(); it != dmopt.end(); ++it)
         if ((*it).startsWith("method="))
             mMethod = (*it).mid(7);

@@ -230,7 +230,7 @@ DM::bootOptions( QStringList &opts, int &defopt, int &current )
 	if (!exec( "listbootoptions\n", re ))
 		return false;
 
-	opts = QStringList::split( '\t', QString::fromLocal8Bit( re.data() ) );
+	opts = QString::fromLocal8Bit( re.data() ).split( '\t', QString::SkipEmptyParts );
 	if (opts.size() < 4)
 		return false;
 
@@ -242,7 +242,7 @@ DM::bootOptions( QStringList &opts, int &defopt, int &current )
 	if (!ok)
 		return false;
 
-	opts = QStringList::split( ' ', opts[1] );
+	opts = opts[1].split( ' ', QString::SkipEmptyParts );
 	for (QStringList::Iterator it = opts.begin(); it != opts.end(); ++it)
 		(*it).replace( "\\s", " " );
 
@@ -307,9 +307,9 @@ DM::localSessions( SessList &list )
 	if (DMType == GDM) {
 		if (!exec( "CONSOLE_SERVERS\n", re ))
 			return false;
-		QStringList sess = QStringList::split( QChar(';'), re.data() + 3 );
+		QStringList sess = QString(re.data() +3).split( QChar(';'), QString::SkipEmptyParts);
 		for (QStringList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
-			QStringList ts = QStringList::split( QChar(','), *it, true );
+			QStringList ts = (*it).split( QChar(',') );
 			SessEnt se;
 			se.display = ts[0];
 			se.user = ts[1];
@@ -322,9 +322,9 @@ DM::localSessions( SessList &list )
 	} else {
 		if (!exec( "list\talllocal\n", re ))
 			return false;
-		QStringList sess = QStringList::split( QChar('\t'), re.data() + 3 );
+		QStringList sess = QString(re.data() + 3).split(QChar('\t'), QString::SkipEmptyParts );
 		for (QStringList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
-			QStringList ts = QStringList::split( QChar(','), *it, true );
+			QStringList ts = (*it).split( QChar(',') );
 			SessEnt se;
 			se.display = ts[0];
 			if (ts[1][0] == '@')

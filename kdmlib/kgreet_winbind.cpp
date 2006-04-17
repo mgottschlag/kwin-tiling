@@ -557,7 +557,10 @@ static bool init( const QString &,
                   void *ctx )
 {
 	echoMode = getConf( ctx, "EchoMode", QVariant( -1 ) ).toInt();
-	domains = QStringList::split( ':', getConf( ctx, "winbind.Domains", QVariant( "<local>" ) ).toString() );
+
+        QString toSplit = getConf( ctx, "winbind.Domains", QVariant( "<local>" ) ).toString();
+	domains = toSplit.split( ':', QString::SkipEmptyParts );
+
 	defaultDomain = getConf( ctx, "winbind.DefaultDomain", QVariant( domains.first() ) ).toString();
 	separator = getConf( ctx, "winbind.Separator", QVariant( '\\' ) ).toChar().toAscii();
 	KGlobal::locale()->insertCatalog( "kgreet_winbind" );

@@ -834,7 +834,7 @@ void CKioFonts::listDir(const KUrl &url)
         KIO::UDSEntry entry;
         int           size=0;
 
-        if(itsRoot || QStringList::split('/', url.path(), false).count()!=0)
+        if(itsRoot || url.path().split('/', QString::SkipEmptyParts).count() !=0)
         {
             EFolder folder=getFolder(url);
 
@@ -883,7 +883,7 @@ void CKioFonts::stat(const KUrl &url)
             return;
         }
 
-        QStringList   pathList(QStringList::split('/', path, false));
+        QStringList   pathList(path.split('/', QString::SkipEmptyParts));
         KIO::UDSEntry entry;
         bool          err=false;
 

@@ -214,7 +214,7 @@ NaughtyProcessMonitor::canKill(ulong pid) const
   while (!t.atEnd() && s.left(4) != "Uid:")
     s = t.readLine();
 
-  QStringList l(QStringList::split('\t', s));
+  QStringList l(s.split('\t', QString::SkipEmptyParts));
 
   uint a(l[1].toUInt());
 
@@ -291,7 +291,7 @@ NaughtyProcessMonitor::processName(ulong pid) const
   free (argv) ;
 #endif
 
-  QStringList parts(QStringList::split(' ', unicode));
+  QStringList parts(unicode.split(' ', QString::SkipEmptyParts));
 
   QString processName = parts[0] == "kdeinit:" ? parts[1] : parts[0];
 
@@ -324,7 +324,7 @@ NaughtyProcessMonitor::cpuLoad() const
 
   QString s = t.readLine();
 
-  QStringList l(QStringList::split(' ', s));
+  QStringList l(s.split(' ', QString::SkipEmptyParts));
 
   uint user  = l[1].toUInt();
   uint sys   = l[3].toUInt();
@@ -450,7 +450,7 @@ NaughtyProcessMonitor::getLoad(ulong pid, uint & load) const
 
   QString line(t.readLine());
 
-  QStringList fields(QStringList::split(' ', line));
+  QStringList fields(line.split(' ', QString::SkipEmptyParts));
 
   uint userTime (fields[13].toUInt());
   uint sysTime  (fields[14].toUInt());

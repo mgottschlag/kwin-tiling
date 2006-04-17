@@ -272,7 +272,7 @@ bool KdmThemer::willDisplay( const QDomNode &node )
 
 	QString modes = el.attribute( "modes" );
 	if (!modes.isNull()) {
-		QStringList modeList = QStringList::split( ",", modes );
+		QStringList modeList = modes.split( ",", QString::SkipEmptyParts );
 
 		// If current mode isn't in this list, do not display item
 		if (modeList.find( m_currentMode ) == modeList.end())

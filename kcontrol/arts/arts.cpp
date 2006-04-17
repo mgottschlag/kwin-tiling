@@ -79,7 +79,7 @@ static bool startArts()
 
 	if (startServer)
 		KToolInvocation::kdeinitExec(startRealtime?"artswrapper":"artsd",
-		                  QStringList::split(" ",args));
+		                  args.split(" ", QString::SkipEmptyParts) );
 	return startServer;
 }
 
@@ -128,7 +128,7 @@ void KArtsModule::slotProcessArtsdOutput(KProcess*, char* buf, int len)
 {
 	// XXX(gioele): I suppose this will be called with full lines, am I wrong?
 
-	QStringList availableIOs = QStringList::split("\n", QByteArray(buf, len));
+	QStringList availableIOs = QString(QByteArray(buf, len)).split("\n", QString::SkipEmptyParts);
 	// valid entries have two leading spaces
 	availableIOs = availableIOs.grep(QRegExp("^ {2}"));
 	availableIOs.sort();

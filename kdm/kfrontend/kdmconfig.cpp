@@ -70,7 +70,7 @@ Str2Font( const QString &aValue )
 	QFont aRetFont;
 	QString chStr;
 
-	QStringList sl = QStringList::split( QString::fromLatin1(","), aValue );
+	QStringList sl = aValue.split( QString::fromLatin1(","), QString::SkipEmptyParts );
 
 	if (sl.count() == 1) {
 		/* X11 font spec */
