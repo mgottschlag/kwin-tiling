@@ -53,13 +53,15 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
                                      KDialog::marginHint(),
                                      KDialog::spacingHint());
 
-  m_labCountry = new QLabel(this, I18N_NOOP("Country or region:"));
+  m_labCountry = new QLabel(this);
+  m_labCountry->setObjectName( I18N_NOOP("Country or region:") );
   m_comboCountry = new KLanguageButton( this );
   m_labCountry->setBuddy(m_comboCountry);
   connect( m_comboCountry, SIGNAL(activated(const QString &)),
            this, SLOT(changedCountry(const QString &)) );
 
-  m_labLang = new QLabel(this, I18N_NOOP("Languages:"));
+  m_labLang = new QLabel(this);
+  m_labLang->setObjectName( I18N_NOOP("Languages:") );
   m_labLang->setAlignment( Qt::AlignTop );
 
   m_languages = new Q3ListBox(this);

@@ -48,27 +48,32 @@ KLocaleSample::KLocaleSample(KLocale *locale,
   a.setColor(QColorGroup::Foreground, Qt::black);
   QPalette pal(a, a, a);
 
-  m_labNumber = new QLabel(this, I18N_NOOP("Numbers:"));
+  m_labNumber = new QLabel(this);
+  m_labNumber->setObjectName( I18N_NOOP("Numbers:") );
   m_labNumber->setPalette(pal);
   m_numberSample = new QLabel(this);
   m_numberSample->setPalette(pal);
 
-  m_labMoney = new QLabel(this, I18N_NOOP("Money:"));
+  m_labMoney = new QLabel(this);
+  m_labMoney->setObjectName( I18N_NOOP("Money:") );
   m_labMoney->setPalette(pal);
   m_moneySample = new QLabel(this);
   m_moneySample->setPalette(pal);
 
-  m_labDate = new QLabel(this, I18N_NOOP("Date:"));
+  m_labDate = new QLabel(this);
+  m_labDate->setObjectName( I18N_NOOP("Date:") );
   m_labDate->setPalette(pal);
   m_dateSample = new QLabel(this);
   m_dateSample->setPalette(pal);
 
-  m_labDateShort = new QLabel(this, I18N_NOOP("Short date:"));
+  m_labDateShort = new QLabel(this);
+  m_labDateShort->setObjectName( I18N_NOOP("Short date:") );
   m_labDateShort->setPalette(pal);
   m_dateShortSample = new QLabel(this);
   m_dateShortSample->setPalette(pal);
 
-  m_labTime = new QLabel(this, I18N_NOOP("Time:"));
+  m_labTime = new QLabel(this);
+  m_labTime->setObjectName( I18N_NOOP("Time:") );
   m_labTime->setPalette(pal);
   m_timeSample = new QLabel(this);
   m_timeSample->setPalette(pal);

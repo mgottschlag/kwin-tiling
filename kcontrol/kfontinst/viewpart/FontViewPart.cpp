@@ -96,7 +96,8 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
     itsPreview->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     itsFaceLabel=new QLabel(i18n("Face:"), itsToolsFrame);
     itsFaceSelector=new KIntNumInput(1, itsToolsFrame);
-    itsInstallButton=new QPushButton(i18n("Install..."), itsToolsFrame, "button");
+    itsInstallButton=new QPushButton(i18n("Install..."), itsToolsFrame);
+    itsInstallButton->setObjectName("button");
     itsInstallButton->hide();
     previewLayout->addWidget(itsPreview, 0, 0);
     layout->addWidget(previewFrame);

@@ -158,8 +158,9 @@ void BGMonitorArrangement::setPixmap( const KPixmap & pm )
 
 //BEGIN class BGMonitorLabel
 BGMonitorLabel::BGMonitorLabel(QWidget *parent, const char *name)
-    : QLabel(parent, name)
+    : QLabel(parent)
 {
+    setObjectName( name );
     setAlignment(Qt::AlignCenter);
     setScaledContents(true);
     setPixmap( QPixmap( locate("data",  "kcontrol/pics/monitor.png") ) );
@@ -189,8 +190,9 @@ void BGMonitorLabel::resizeEvent( QResizeEvent * e )
 
 //BEGIN class BGMonitor
 BGMonitor::BGMonitor(QWidget *parent, const char *name)
-    : QLabel(parent, name)
+    : QLabel(parent)
 {
+    setObjectName( name );
     setAlignment(Qt::AlignCenter);
     setScaledContents(true);
     setAcceptDrops(true);

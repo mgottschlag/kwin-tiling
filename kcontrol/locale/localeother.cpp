@@ -45,14 +45,16 @@ KLocaleConfigOther::KLocaleConfigOther(KLocale *locale,
                                      KDialog::marginHint(),
                                      KDialog::spacingHint());
 
-  m_labPageSize = new QLabel(this, I18N_NOOP("Paper format:"));
+  m_labPageSize = new QLabel(this);
+  m_labPageSize->setObjectName(I18N_NOOP("Paper format:") );
   lay->addWidget(m_labPageSize, 0, 0);
   m_combPageSize = new QComboBox(this);
   lay->addWidget(m_combPageSize, 0, 1);
   connect( m_combPageSize, SIGNAL( activated(int) ),
            SLOT( slotPageSizeChanged(int) ) );
 
-  m_labMeasureSystem = new QLabel(this, I18N_NOOP("Measure system:"));
+  m_labMeasureSystem = new QLabel(this);
+  m_labMeasureSystem->setObjectName( I18N_NOOP("Measure system:") );
   lay->addWidget(m_labMeasureSystem, 1, 0);
   m_combMeasureSystem = new QComboBox(this);
   lay->addWidget(m_combMeasureSystem, 1, 1);

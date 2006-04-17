@@ -79,7 +79,8 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
             SLOT ( slotBusyCursor(int)));
     connect( cb_busyCursor, SIGNAL( activated(int) ), SLOT( checkChanged() ) );
 
-    lbl_cursorTimeout = new QLabel( GroupBox1, "TextLabel1" );
+    lbl_cursorTimeout = new QLabel( GroupBox1 );
+    lbl_cursorTimeout->setObjectName( "TextLabel1" );
     lbl_cursorTimeout->setText( i18n( "&Startup indication timeout:" ) );
     GroupBox1Layout->addWidget( lbl_cursorTimeout, 2, 0 );
     sb_cursorTimeout = new KIntNumInput( GroupBox1);
@@ -116,7 +117,8 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
             SLOT( slotTaskbarButton(bool)));
     connect( cb_taskbarButton, SIGNAL( toggled(bool) ), SLOT( checkChanged()));
 
-    lbl_taskbarTimeout = new QLabel( GroupBox2, "TextLabel2" );
+    lbl_taskbarTimeout = new QLabel( GroupBox2 );
+    lbl_taskbarTimeout->setObjectName( "TextLabel2" );
     lbl_taskbarTimeout->setText( i18n( "Start&up indication timeout:" ) );
     GroupBox2Layout->addWidget( lbl_taskbarTimeout, 1, 0 );
     sb_taskbarTimeout = new KIntNumInput( GroupBox2);

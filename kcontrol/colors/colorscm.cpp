@@ -711,7 +711,7 @@ void KColorScheme::slotWidgetColor(int indx)
     if (indx < 0)
         indx = 0;
     if (wcCombo->currentIndex() != indx)
-        wcCombo->setCurrentItem( indx );
+        wcCombo->setCurrentIndex( indx );
 
     // Do not emit KCModule::changed()
     colorButton->blockSignals( true );
@@ -727,7 +727,7 @@ void KColorScheme::slotWidgetColor(int indx)
 void KColorScheme::slotColorForWidget(int indx, const QColor& col)
 {
     if (wcCombo->currentIndex() != indx)
-        wcCombo->setCurrentItem( indx );
+        wcCombo->setCurrentIndex( indx );
 
     slotSelectColor(col);
 }

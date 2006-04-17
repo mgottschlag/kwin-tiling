@@ -34,7 +34,8 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog",
     frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
     frame->setLineWidth(2);
 
-    QLabel *pixLabel = new QLabel( frame, "pixlabel" );
+    QLabel *pixLabel = new QLabel( frame );
+    pixLabel->setObjectName( "pixlabel" );
     pixLabel->setPixmap(DesktopIcon("exit"));
 
     QLabel *greetLabel = new QLabel(i18n("<nobr><qt><b>Automatic Log Out</b></qt><nobr>"), frame);

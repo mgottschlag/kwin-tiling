@@ -77,8 +77,9 @@ public:
 };
 
 RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
-    : QLabel(parent, name)
+    : QLabel(parent)
 {
+    setObjectName( name );
     setFrameShape(QFrame::Box);
     setFrameShadow(QFrame::Raised);
 

@@ -430,7 +430,8 @@ void BGDialog::slotIdentifyScreens()
    // Taken from PositionTab::showIdentify in kdebase/kcontrol/kicker/positiontab_impl.cpp
    for(unsigned s = 0; s < m_numScreens; s++)
    {
-      QLabel *screenLabel = new QLabel(0,"Screen Identify", Qt::WStyle_StaysOnTop | Qt::WDestructiveClose | Qt::WStyle_Customize | Qt::WStyle_NoBorder);
+      QLabel *screenLabel = new QLabel(0, Qt::WStyle_StaysOnTop | Qt::WDestructiveClose | Qt::WStyle_Customize | Qt::WStyle_NoBorder);
+      screenLabel->setObjectName("Screen Identify");
 
       KWin::setState( screenLabel->winId(), NET::Modal | NET::Sticky | NET::StaysOnTop | NET::SkipTaskbar | NET::SkipPager );
       KWin::setType( screenLabel->winId(), NET::Override );
@@ -563,7 +564,7 @@ void BGDialog::loadWallpaperFilesList() {
    lst = m_pDirs->findAllResources("wallpaper", "*", false, true);
    for (QStringList::ConstIterator it = lst.begin(); it != lst.end(); ++it)
    {
-      if ( !(*it).endsWith(".desktop") && files.grep(*it).empty() ) {
+      if ( !(*it).endsWith(".desktop") && files.filter(*it).empty() ) {
          // First try to see if we have a comment describing the image.  If we do
          // just use the first line of said comment.
          KFileMetaInfo metaInfo(*it);

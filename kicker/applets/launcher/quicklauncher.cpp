@@ -533,13 +533,13 @@ void QuickLauncher::dragEnterEvent(QDragEnterEvent *e)
     KUrl::List kurlList;
     if (!isDragEnabled() || !K3URLDrag::decode(e, kurlList))
     {
-        e->accept(false);
+        e->setAccepted(false);
         return;
     }
 
     if (kurlList.size()<=0)
     {
-        e->accept(false);
+        e->setAccepted(false);
         return;
     }
     m_dragButtons=new ButtonGroup;
@@ -571,10 +571,10 @@ void QuickLauncher::dragEnterEvent(QDragEnterEvent *e)
         m_dragAccepted=true;
         m_newButtons=new ButtonGroup(*m_buttons);
         m_dropPos=NotFound;
-        e->accept(true);
+        e->setAccepted(true);
         return;
     }
-    e->accept(false);
+    e->setAccepted(false);
     clearTempButtons();
 }
 
@@ -585,11 +585,11 @@ void QuickLauncher::dragMoveEvent(QDragMoveEvent *e)
     {
         kWarning() << "QuickLauncher::dragMoveEvent: Drag is not accepted." <<
             m_dragAccepted << endl << flush;
-        e->accept(false);
+        e->setAccepted(false);
         return;
     }
 
-    e->accept(true);
+    e->setAccepted(true);
     int pos=m_manager->indexNearest(e->pos());
     if (pos == m_dropPos)
     {

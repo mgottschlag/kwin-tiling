@@ -102,7 +102,7 @@ void WidgetCanvas::dropEvent( QDropEvent *e)
 
 void WidgetCanvas::dragEnterEvent( QDragEnterEvent *e)
 {
-        e->accept( K3ColorDrag::canDecode( e));
+        e->setAccepted( K3ColorDrag::canDecode( e));
 }
 
 void WidgetCanvas::paletteChange(const QPalette &)

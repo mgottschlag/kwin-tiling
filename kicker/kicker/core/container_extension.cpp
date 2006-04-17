@@ -202,7 +202,7 @@ QSize ExtensionContainer::sizeHint(Plasma::Position p, const QSize &maxSize)
         }
 
         // don't forget we might have a border!
-        width += _layout->colSpacing(0) + _layout->colSpacing(2);
+        width += _layout->columnMinimumWidth(0) + _layout->columnMinimumWidth(2);
     }
     else
     {
@@ -217,7 +217,7 @@ QSize ExtensionContainer::sizeHint(Plasma::Position p, const QSize &maxSize)
         }
 
         // don't forget we might have a border!
-        height += _layout->rowSpacing(0) + _layout->rowSpacing(2);
+        height += _layout->rowMinimumHeight(0) + _layout->rowMinimumHeight(2);
     }
 
     QSize size(width, height);

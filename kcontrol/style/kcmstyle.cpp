@@ -816,7 +816,7 @@ void KCMStyle::loadStyle( KConfig& config )
 
 	// Sort the style list, and add it to the combobox
 	styles.sort();
-	cbStyle->insertStringList( styles );
+	cbStyle->addItems( styles );
 
 	// Find out which style is currently being used
 	config.setGroup( "General" );

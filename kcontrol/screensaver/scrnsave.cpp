@@ -277,7 +277,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     QBoxLayout* advancedLayout = new QHBoxLayout( rightColumnLayout, 3 );
     advancedLayout->addWidget( new QWidget( this ) );
     QPushButton* advancedBt = new QPushButton(
-        i18n( "Advanced &Options" ), this, "advancedBtn" );
+        i18n( "Advanced &Options" ), this );
+    advancedBt->setObjectName("advancedBtn");
     advancedBt->setSizePolicy( QSizePolicy(
         QSizePolicy::Fixed, QSizePolicy::Fixed) );
     connect( advancedBt, SIGNAL( clicked() ),

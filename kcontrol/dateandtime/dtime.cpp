@@ -255,7 +255,7 @@ void Dtime::load()
 {
   KConfig config("kcmclockrc", true, false);
   config.setGroup("NTP");
-  timeServerList->insertStringList(QStringList::split(',', config.readEntry("servers",
+  timeServerList->addItems(QStringList::split(',', config.readEntry("servers",
     i18n("Public Time Server (pool.ntp.org),\
 asia.pool.ntp.org,\
 europe.pool.ntp.org,\

@@ -134,7 +134,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotActivity()) );
 			connect( loginEdit, SIGNAL(textChanged( const QString & )), SLOT(slotActivity()) );
 			connect( loginEdit, SIGNAL(selectionChanged()), SLOT(slotActivity()) );
-			domainCombo->insertStringList( domains );
+			domainCombo->addItems( domains );
 			domainCombo->setCurrentItem( defaultDomain );
 		} else if (ctx != Login && ctx != Shutdown) {
 			domainLabel = new QLabel( i18n("Domain:"), parent );

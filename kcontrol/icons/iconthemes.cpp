@@ -91,11 +91,11 @@ IconThemesConfig::IconThemesConfig(KInstance *inst, QWidget *parent)
   connect(m_iconThemes,SIGNAL(selectionChanged(Q3ListViewItem *)),
 		SLOT(themeSelected(Q3ListViewItem *)));
 
-  QPushButton *installButton=new QPushButton( i18n("Install New Theme..."),
-	this, "InstallNewTheme");
+  QPushButton *installButton=new QPushButton( i18n("Install New Theme..."), this);
+  installButton->setObjectName("InstallNewTheme");
   connect(installButton,SIGNAL(clicked()),SLOT(installNewTheme()));
-  m_removeButton=new QPushButton( i18n("Remove Theme"),
-	this, "RemoveTheme");
+  m_removeButton=new QPushButton( i18n("Remove Theme"), this);
+  m_removeButton->setObjectName("RemoveTheme");
   connect(m_removeButton,SIGNAL(clicked()),SLOT(removeSelectedTheme()));
 
   topLayout->addWidget(

@@ -130,7 +130,8 @@ KBellConfig::KBellConfig(KInstance *inst, QWidget *parent):
     " customization of the bell, see the \"Accessibility\" control module.") );
 
   QBoxLayout *boxLayout = new QHBoxLayout();
-  m_testButton = new QPushButton(i18n("&Test"), box, "test");
+  m_testButton = new QPushButton(i18n("&Test"), box);
+  m_testButton->setObjectName("test");
   boxLayout->addWidget(m_testButton, 0, Qt::AlignRight);
   grid->addLayout( boxLayout, ++row, 1 );
   connect( m_testButton, SIGNAL(clicked()), SLOT(ringBell()));

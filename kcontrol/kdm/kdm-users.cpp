@@ -336,7 +336,7 @@ bool KDMUsersWidget::eventFilter(QObject *, QEvent *e)
 {
     if (e->type() == QEvent::DragEnter) {
 	QDragEnterEvent *ee = (QDragEnterEvent *) e;
-	ee->accept( K3URLDrag::canDecode(ee) );
+	ee->setAccepted( K3URLDrag::canDecode(ee) );
         return true;
     }
 

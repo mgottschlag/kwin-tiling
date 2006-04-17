@@ -294,7 +294,7 @@ void KIconConfig::apply()
         }
         if (index != -1)
         {
-            mpSizeBox->setCurrentItem(index);
+            mpSizeBox->setCurrentIndex(index);
             mSizes[mUsage] = size; // best or exact match
         }
         mpDPCheck->setChecked(mbDP[mUsage]);

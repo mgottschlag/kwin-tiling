@@ -63,7 +63,9 @@ GestureRecordPage::GestureRecordPage(const QString &gesture,
     QWidget *spacer = new QWidget(hBox, "spacer");
     hBox->setStretchFactor(spacer, 1);
 
-    _resetButton = new QPushButton(i18n("&Reset"), hBox, "resetButton");
+    _resetButton = new QPushButton(i18n("&Reset"), hBox);
+    _resetButton->setObjectName("resetButton");
+    
     connect(_resetButton, SIGNAL(clicked()),
             this, SLOT(slotResetClicked()));
 

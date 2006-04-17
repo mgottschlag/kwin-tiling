@@ -122,7 +122,7 @@ void TrashButton::slotPaste()
 
 void TrashButton::dragEnterEvent(QDragEnterEvent* e)
 {
-	e->accept(true);
+	e->setAccepted(true);
 }
 
 void TrashButton::dropEvent(QDropEvent *e)
