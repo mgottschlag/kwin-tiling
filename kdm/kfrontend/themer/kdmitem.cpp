@@ -41,7 +41,7 @@
 #endif
 
 KdmItem::KdmItem( KdmItem *parent, const QDomNode &node, const char *name )
-    : QObject( parent, name )
+    : QObject( parent )
     , boxManager( 0 )
     , fixedManager( 0 )
     , image( 0 )
@@ -49,6 +49,8 @@ KdmItem::KdmItem( KdmItem *parent, const QDomNode &node, const char *name )
     , myLayoutItem( 0 )
     , buttonParent( 0 )
 {
+	setObjectName( name );
+
 	// Set default layout for every item
 	currentManager = MNone;
 	pos.x = pos.y = 0;

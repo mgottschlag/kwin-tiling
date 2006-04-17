@@ -106,11 +106,12 @@ extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
 }
 
 AppletProxy::AppletProxy(QObject* parent, const char* name)
-  : QObject(parent, name)
+  : QObject(parent)
   , DCOPObject("AppletProxy")
   , _info(0)
   , _applet(0)
 {
+    setObjectName( name );
     // try to attach to DCOP server
     if (!kapp->dcopClient()->attach()) {
 	kError() << "Failed to attach to DCOP server." << endl;

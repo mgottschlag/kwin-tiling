@@ -24,8 +24,9 @@
 #include <kconfig.h>
 
 ModuleIface::ModuleIface(QObject *parent, const char *name) 
-	: QObject(parent, name), DCOPObject(name) {
+	: QObject(parent), DCOPObject(name) {
 
+	setObjectName( name );
 	_parent = static_cast<QWidget *>(parent);
 
 }

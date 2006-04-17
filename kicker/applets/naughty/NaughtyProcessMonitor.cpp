@@ -91,8 +91,9 @@ NaughtyProcessMonitor::NaughtyProcessMonitor
    QObject * parent,
    const char * name
   )
-  : QObject(parent, name)
+  : QObject(parent)
 {
+  setObjectName( name );
   d = new NaughtyProcessMonitorPrivate;
   d->interval_ = interval * 1000;
   d->triggerLevel_ = triggerLevel;

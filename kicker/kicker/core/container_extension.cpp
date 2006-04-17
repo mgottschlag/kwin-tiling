@@ -1988,8 +1988,9 @@ bool ExtensionContainer::eventFilter( QObject*, QEvent * e)
 }
 
 PopupWidgetFilter::PopupWidgetFilter( QObject *parent )
-  : QObject( parent, "PopupWidgetFilter" )
+  : QObject( parent )
 {
+	setObjectName( "PopupWidgetFilter" );
 }
 
 bool PopupWidgetFilter::eventFilter( QObject*, QEvent* e )

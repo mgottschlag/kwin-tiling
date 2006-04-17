@@ -18,11 +18,12 @@
 #include "konsolebookmarkhandler.h"
 
 KonsoleBookmarkHandler::KonsoleBookmarkHandler( KonsoleMenu *konsole, bool )
-    : QObject( konsole, "KonsoleBookmarkHandler" ),
+    : QObject( konsole ),
       KBookmarkOwner(),
       m_konsole( konsole ),
       m_importStream( 0L )
 {
+    setObjectName( "KonsoleBookmarkHandler" );
     m_menu = new KMenu(konsole);
     m_menu->setObjectName("bookmark menu");
 

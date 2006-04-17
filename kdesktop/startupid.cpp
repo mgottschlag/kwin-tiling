@@ -32,12 +32,13 @@
 #include <QX11Info>
 
 StartupId::StartupId( QObject* parent, const char* name )
-    :   QObject( parent, name ),
+    :   QObject( parent ),
 	startup_info( KStartupInfo::CleanOnCantDetect ),
 	startup_widget( NULL ),
 	blinking( true ),
 	bouncing( false )
     {
+    setObjectName( name );
     update_timer.setSingleShot( true );
 
     connect( &update_timer, SIGNAL( timeout()), SLOT( update_startupid()));

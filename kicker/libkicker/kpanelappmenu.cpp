@@ -42,23 +42,26 @@ public:
 
 KPanelAppMenu::KPanelAppMenu(const QString &title, QObject *parent,
                        const char *name)
-    : QObject(parent, name), DCOPObject(), d(new Private())
+    : QObject(parent), DCOPObject(), d(new Private())
 {
+    setObjectName( name );
     init(QPixmap(), title);
 }
 
 KPanelAppMenu::KPanelAppMenu(const QPixmap &icon, const QString &title,
                        QObject *parent, const char *name)
-: QObject(parent, name), DCOPObject(), d(new Private())
+: QObject(parent), DCOPObject(), d(new Private())
 {
 
+    setObjectName( name );
     init(icon, title);
 }
 
 
 KPanelAppMenu::KPanelAppMenu(QObject *parent, const char *name)
-  : QObject(parent, name), DCOPObject(name), d(new Private())
+  : QObject(parent), DCOPObject(name), d(new Private())
 {
+    setObjectName( name );
     d->realObjId = name;
 }
 

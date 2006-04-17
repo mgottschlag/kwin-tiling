@@ -612,7 +612,7 @@ bool TaskManager::isOnScreen(int screen, const WId wid)
 }
 
 Task::Task(WId win, QObject *parent, const char *name)
-  : QObject(parent, name),
+  : QObject(parent),
     _active(false),
     _win(win),
     m_frameId(win),
@@ -625,6 +625,8 @@ Task::Task(WId win, QObject *parent, const char *name)
     _thumb(),
     _grab()
 {
+    setObjectName( name );
+
     // try to load icon via net_wm
     _pixmap = KWin::icon(_win, 16, 16, true);
 
@@ -1454,8 +1456,9 @@ void Task::updateWindowPixmap()
 
 Startup::Startup(const KStartupInfoId& id, const KStartupInfoData& data,
                  QObject * parent, const char *name)
-    : QObject(parent, name), _id(id), _data(data)
+    : QObject(parent), _id(id), _data(data)
 {
+    setObjectName( name );
 }
 
 Startup::~Startup()

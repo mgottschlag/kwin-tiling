@@ -63,8 +63,9 @@ MenuManager* MenuManager::self()
 }
 
 MenuManager::MenuManager(QObject *parent)
-    : QObject(parent, "MenuManager"), DCOPObject("MenuManager")
+    : QObject(parent), DCOPObject("MenuManager")
 {
+    setObjectName( "MenuManager" );
     m_kmenu = new PanelKMenu;
     kapp->dcopClient()->setNotifications(true);
     connect(kapp->dcopClient(), SIGNAL(applicationRemoved(const QByteArray&)),
