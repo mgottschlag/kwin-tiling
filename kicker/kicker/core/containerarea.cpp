@@ -705,7 +705,7 @@ void ContainerArea::addContainer(BaseContainer* a, bool arrange)
     }
     else
     {
-        m_layout->add(a);
+        m_layout->addWidget(a);
     }
 
     connect(a, SIGNAL(moveme(BaseContainer*)),

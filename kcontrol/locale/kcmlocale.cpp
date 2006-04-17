@@ -72,7 +72,7 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   boxlay->setSpacing(KDialog::spacingHint());
   m_addLanguage = new KLanguageButton(QString(), vb );
   m_addLanguage->setObjectName( I18N_NOOP("Add Language") );
-  boxlay->add(m_addLanguage);
+  boxlay->addWidget(m_addLanguage);
   connect(m_addLanguage, SIGNAL(activated(const QString &)),
           SLOT(slotAddLanguage(const QString &)));
   m_removeLanguage = new QPushButton( vb );
@@ -81,9 +81,9 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   m_upButton->setObjectName( I18N_NOOP("Move Up") );
   m_downButton = new QPushButton( vb );
   m_downButton->setObjectName( I18N_NOOP("Move Down") );
-  boxlay->add(m_removeLanguage);
-  boxlay->add(m_upButton);
-  boxlay->add(m_downButton);
+  boxlay->addWidget(m_removeLanguage);
+  boxlay->addWidget(m_upButton);
+  boxlay->addWidget(m_downButton);
   connect(m_removeLanguage, SIGNAL(clicked()),
           SLOT(slotRemoveLanguage()));
   connect(m_upButton, SIGNAL(clicked()),

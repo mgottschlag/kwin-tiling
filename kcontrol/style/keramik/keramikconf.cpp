@@ -50,9 +50,9 @@ KeramikStyleConfig::KeramikStyleConfig(QWidget* parent): QWidget(parent)
 	highlightScrollBar = new QCheckBox(i18n("Highlight scroll bar handles"), this);
 	animateProgressBar = new QCheckBox(i18n("Animate progress bars"), this);
 
-	//layout->add(highlightLineEdits);
-	layout->add(highlightScrollBar);
-	layout->add(animateProgressBar);
+	//layout->addWidget(highlightLineEdits);
+	layout->addWidget(highlightScrollBar);
+	layout->addWidget(animateProgressBar);
 	layout->addStretch(1);
 
 	QSettings s;

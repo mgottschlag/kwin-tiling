@@ -206,7 +206,7 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	gbPreview->layout()->setSpacing( KDialog::spacingHint() );
 	gbPreview->setFlat( true );
 	stylePreview = new StylePreview( gbPreview );
-	gbPreview->layout()->add( stylePreview );
+	gbPreview->layout()->addWidget( stylePreview );
 
 	page1Layout->addWidget( gbWidgetStyle );
 	page1Layout->addWidget( gbPreview );

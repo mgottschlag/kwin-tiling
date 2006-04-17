@@ -60,7 +60,7 @@ KBackground::KBackground(QWidget *parent, const char *name, const QStringList &a
     QVBoxLayout *layout = new QVBoxLayout(this);
     m_base = new BGDialog(this, m_pConfig);
     setQuickHelp( m_base->quickHelp());
-    layout->add(m_base);
+    layout->addWidget(m_base);
     layout->addStretch();
 
     // reparenting that is done.

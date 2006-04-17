@@ -140,7 +140,7 @@ void ButtonContainer::embedButton(PanelButton* b)
     _button->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
      //The buttons don't have a size hint, so don't try to use one,
      //use whatever kicker gave us
-    _layout->add(_button);
+    _layout->addWidget(_button);
     connect(_button, SIGNAL(requestSave()), SIGNAL(requestSave()));
     connect(_button, SIGNAL(hideme(bool)), SLOT(hideRequested(bool)));
     connect(_button, SIGNAL(removeme()), SLOT(removeRequested()));

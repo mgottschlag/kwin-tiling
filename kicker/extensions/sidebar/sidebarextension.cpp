@@ -162,14 +162,14 @@ void SidebarExtension::positionChange( Plasma::Position  position ) {
 		m_layout->remove(m_sbWrapper);
 		m_layout->remove(m_resizeHandle);
 
-		m_layout->add(m_resizeHandle);
-		m_layout->add(m_sbWrapper);
+		m_layout->addWidget(m_resizeHandle);
+		m_layout->addWidget(m_sbWrapper);
 	} else 	if (position == Plasma::Left) {
 		m_layout->remove(m_sbWrapper);
 		m_layout->remove(m_resizeHandle);
 
-		m_layout->add(m_sbWrapper);
-		m_layout->add(m_resizeHandle);
+		m_layout->addWidget(m_sbWrapper);
+		m_layout->addWidget(m_resizeHandle);
 
 	}
 
