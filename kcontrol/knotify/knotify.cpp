@@ -186,7 +186,6 @@ void KCMKNotify::save()
         m_playerSettings->save();
 
     m_notifyWidget->save(); // will dcop knotify about its new config
-	m_playerSettings->save();
 
     emit changed( true );
 }
