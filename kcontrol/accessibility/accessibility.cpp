@@ -65,8 +65,7 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent,const char *name, const
 
    about->addAuthor("Matthias Hoelzer-Kluepfel", I18N_NOOP("Author") , "hoelzer@kde.org");
    about->addAuthor("José Pablo Ezequiel Fernández", I18N_NOOP("Author") , "pupeno@kde.org");
-#warning "port it !!!!!!!!!!";   
-   //widget->setAboutData( about );
+   setAboutData( about );
 
    kDebug() << "Running: AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)" << endl;
    // TODO: set the KUrl Dialog to open just audio files
