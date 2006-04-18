@@ -40,6 +40,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QContextMenuEvent>
 #include <QGridLayout>
 
+#include <stdlib.h>
+
 class KDMPasswordEdit : public KPasswordEdit {
 public:
 	KDMPasswordEdit( QWidget *parent ) : KPasswordEdit( parent ) {}
@@ -64,7 +66,7 @@ splitEntity( const QString &ent, QString &dom, QString &usr )
 }
 
 KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
-				  KdmThemer *themer,
+                                  KdmThemer *themer,
                                   QWidget *parent, QWidget *pred,
                                   const QString &_fixedEntity,
                                   Function _func, Context _ctx ) :
@@ -76,7 +78,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 	pExp( -1 ),
 	running( false )
 {
-        KdmItem *user_entry = 0, *pw_entry = 0, *domain_entry = 0;
+	KdmItem *user_entry = 0, *pw_entry = 0, *domain_entry = 0;
 	QGridLayout *grid = 0;
 
 	int line = 0;
@@ -85,7 +87,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 	if (themer &&
 	    (!(user_entry = themer->findNode( "user-entry" )) ||
 	     !(pw_entry = themer->findNode( "pw-entry" )) ||
-	     !(domain_entry = themer->findNode("domain-entry"))))
+	     !(domain_entry = themer->findNode( "domain-entry" ))))
 		themer = 0;
 
 	if (!themer)
@@ -111,7 +113,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			// should handle loss of focus
 			loginEdit = new KLineEdit( parent );
 			loginEdit->setContextMenuEnabled( false );
-						
+
 			if (pred) {
 				parent->setTabOrder( pred, domainCombo );
 				parent->setTabOrder( domainCombo, loginEdit );
@@ -121,9 +123,9 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 				loginEdit->adjustSize();
 				domainCombo->adjustSize();
 				user_entry->setWidget( loginEdit );
-				domain_entry->setWidget( domainCombo);
+				domain_entry->setWidget( domainCombo );
 			} else {
-			        domainLabel = new QLabel( domainCombo, i18n("&Domain:"), parent );
+				domainLabel = new QLabel( domainCombo, i18n("&Domain:"), parent );
 				loginLabel = new QLabel( loginEdit, i18n("&Username:"), parent );
 				grid->addWidget( domainLabel, line, 0 );
 				grid->addWidget( domainCombo, line++, 1 );
@@ -154,24 +156,24 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 		connect( passwdEdit, SIGNAL(lostFocus()), SLOT(slotActivity()) );
 
 		if (!grid) {
-		        passwdEdit->adjustSize();
+			passwdEdit->adjustSize();
 			pw_entry->setWidget( passwdEdit );
 		} else {
-		        passwdLabel = new QLabel( passwdEdit,
-						  func == Authenticate ?
-						  i18n("&Password:") :
-						  i18n("Current &password:"),
-						  parent );
+			passwdLabel = new QLabel( passwdEdit,
+			                          func == Authenticate ?
+			                          i18n("&Password:") :
+			                          i18n("Current &password:"),
+			                          parent );
 			if (pred) {
-			  parent->setTabOrder( pred, passwdEdit );
-			  pred = passwdEdit;
+				parent->setTabOrder( pred, passwdEdit );
+				pred = passwdEdit;
 			}
 			grid->addWidget( passwdLabel, line, 0 );
 			grid->addWidget( passwdEdit, line++, 1 );
 		}
 
-		if (domainCombo)
-			domainCombo->setFocus();
+		if (loginEdit)
+			loginEdit->setFocus();
 		else
 			passwdEdit->setFocus();
 	}
@@ -212,7 +214,7 @@ KWinbindGreeter::~KWinbindGreeter()
 	}
 	QLayoutIterator it = static_cast<QLayout *>(layoutItem)->iterator();
 	for (QLayoutItem *itm = it.current(); itm; itm = ++it)
-	        delete itm->widget();
+		delete itm->widget();
 	delete layoutItem;
 }
 
@@ -560,11 +562,34 @@ static bool init( const QString &,
 {
 	echoMode = getConf( ctx, "EchoMode", QVariant( -1 ) ).toInt();
 
-        QString toSplit = getConf( ctx, "winbind.Domains", QVariant( "<local>" ) ).toString();
-	domains = toSplit.split( ':', QString::SkipEmptyParts );
+ 	domains = QStringList::split( ':', getConf( ctx, "winbind.Domains", QVariant( "" ) ).toString() );
+ 	if (!domains.size()) {
+ 		FILE *domfile = popen( "wbinfo --all-domains 2>/dev/null", "r" );
+ 		if (domfile) {
+ 			QString tmp;
+ 			QTextIStream is( domfile );
+ 			while (!is.atEnd()) {
+ 				is >> tmp;
+ 				domains << tmp;
+ 			}
+ 			if (pclose( domfile )) // error
+ 				domains = QStringList();
+ 		}
+ 		domains << "<local>";
+ 	}
+ 	defaultDomain = getConf( ctx, "winbind.DefaultDomain", QVariant( domains.first() ) ).toString();
+ 	QString sepstr = getConf( ctx, "winbind.Separator", QVariant( QString::null ) ).toString();
+ 	if (sepstr.isNull()) {
+ 		FILE *sepfile = popen( "wbinfo --separator 2>/dev/null", "r" );
+ 		if (sepfile) {
+ 			QTextIStream( sepfile ) >> sepstr;
+ 			if (pclose( sepfile ))
+ 				sepstr = "\\";
+ 		} else
+ 			sepstr = "\\";
+ 	}
+ 	separator = sepstr[0].latin1();
 
-	defaultDomain = getConf( ctx, "winbind.DefaultDomain", QVariant( domains.first() ) ).toString();
-	separator = getConf( ctx, "winbind.Separator", QVariant( '\\' ) ).toChar().toAscii();
 	KGlobal::locale()->insertCatalog( "kgreet_winbind" );
 	return true;
 }
@@ -584,7 +609,7 @@ create( KGreeterPluginHandler *handler, KdmThemer *themer,
         KGreeterPlugin::Function func,
         KGreeterPlugin::Context ctx )
 {
-        return new KWinbindGreeter( handler, themer, parent, predecessor, fixedEntity, func, ctx );
+	return new KWinbindGreeter( handler, themer, parent, predecessor, fixedEntity, func, ctx );
 }
 
 KDE_EXPORT kgreeterplugin_info kgreeterplugin_info = {
