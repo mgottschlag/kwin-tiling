@@ -53,6 +53,16 @@
 namespace KWorkSpace
 {
 
+static SmcConn tmpSmcConnection = 0;
+
+static void cleanup_sm()
+{
+  if (tmpSmcConnection) {
+      SmcCloseConnection( tmpSmcConnection, 0, 0 );
+      tmpSmcConnection = 0;
+  }
+}
+
 bool requestShutDown(
     ShutdownConfirm confirm, ShutdownType sdtype, ShutdownMode sdmode )
 {
@@ -67,8 +77,7 @@ bool requestShutDown(
         arg << (int)confirm << (int)sdtype << (int)sdmode;
 	return kapp->dcopClient()->send( "ksmserver", "ksmserver", "logout(int,int,int)", data );
     }
-    
-    SmcConn tmpSmcConnection = 0;
+
     if (! tmpSmcConnection) {
 	char cerror[256];
 	char* myId = 0;
@@ -83,6 +92,8 @@ bool requestShutDown(
 	::free( myId ); // it was allocated by C
 	if (!tmpSmcConnection )
 	    return false;
+
+        qAddPostRoutine(cleanup_sm);
     }
 
     if ( tmpSmcConnection ) {
@@ -95,7 +106,7 @@ bool requestShutDown(
 	IceFlush(SmcGetIceConnection(tmpSmcConnection));
         return true;
     }
-    
+
     // open a temporary connection, if possible
 
     propagateSessionManager();
@@ -109,7 +120,7 @@ bool requestShutDown(
     // flush the request
     IceFlush(SmcGetIceConnection(tmpSmcConnection));
     SmcCloseConnection( tmpSmcConnection, 0, 0 );
-    
+
     return true;
 }
 
