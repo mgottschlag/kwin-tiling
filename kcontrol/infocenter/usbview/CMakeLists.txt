@@ -14,7 +14,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_usb )
 
 target_link_libraries(kcm_usb  ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTGUI_LIBRARY})
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_usb )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_usb )
 
 
 ########### install files ###############

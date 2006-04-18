@@ -14,7 +14,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_prefmenu )
 
 target_link_libraries(kickermenu_prefmenu  ${KDE4_KDE3SUPPORT_LIBS} kickermain kworkspace )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kickermenu_prefmenu )
+install_targets(${PLUGIN_INSTALL_DIR} kickermenu_prefmenu )
 
 
 ########### install files ###############

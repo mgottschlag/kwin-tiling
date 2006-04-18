@@ -16,7 +16,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} systemtray_panelapplet )
 
 target_link_libraries(systemtray_panelapplet  ${KDE4_KDECORE_LIBS} kickermain kdeui kio )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 systemtray_panelapplet )
+install_targets(${PLUGIN_INSTALL_DIR} systemtray_panelapplet )
 
 
 ########### install files ###############

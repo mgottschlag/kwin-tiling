@@ -14,7 +14,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} dockbar_panelextension )
 
 target_link_libraries(dockbar_panelextension  ${KDE4_KDECORE_LIBS} kickermain kdeui )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 dockbar_panelextension )
+install_targets(${PLUGIN_INSTALL_DIR} dockbar_panelextension )
 
 
 ########### install files ###############

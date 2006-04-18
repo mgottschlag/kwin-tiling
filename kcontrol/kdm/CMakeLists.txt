@@ -25,7 +25,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kdm )
 
 target_link_libraries(kcm_kdm  ${KDE4_KDE3SUPPORT_LIBS}  knewstuff kdefx )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kdm )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kdm )
 
 
 ########### install files ###############

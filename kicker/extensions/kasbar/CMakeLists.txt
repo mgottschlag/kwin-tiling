@@ -43,7 +43,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kasbar_panelextension )
 
 target_link_libraries(kasbar_panelextension  ${KDE4_KDECORE_LIBS} kasbar )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kasbar_panelextension )
+install_targets(${PLUGIN_INSTALL_DIR} kasbar_panelextension )
 
 
 ########### next target ###############

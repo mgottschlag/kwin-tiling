@@ -22,7 +22,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_screensaver )
 
 target_link_libraries(kcm_screensaver  ${KDE4_KDE3SUPPORT_LIBS})
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_screensaver )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_screensaver )
 
 
 ########### install files ###############

@@ -40,7 +40,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_input )
 
 target_link_libraries(kcm_input  ${KDE4_KDE3SUPPORT_LIBS} ${LIBUSB_LIBRARIES} ${X11_Xcursor_LIB} ${X11_Xrender_LIB})
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_input )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_input )
 
 
 ########### install files ###############

@@ -34,7 +34,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} launcher_panelapplet )
 
 target_link_libraries(launcher_panelapplet DCOP ${KDE4_KDE3SUPPORT_LIBS}  konq kickermain )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 launcher_panelapplet )
+install_targets(${PLUGIN_INSTALL_DIR} launcher_panelapplet )
 
 
 ########### install files ###############

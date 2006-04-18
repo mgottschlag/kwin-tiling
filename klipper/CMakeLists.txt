@@ -40,7 +40,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} klipper_panelapplet )
 
 target_link_libraries(klipper_panelapplet  ${KDE4_KDECORE_LIBS} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 klipper_panelapplet )
+install_targets(${PLUGIN_INSTALL_DIR} klipper_panelapplet )
 
 
 ########### install files ###############

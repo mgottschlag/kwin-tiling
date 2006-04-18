@@ -16,7 +16,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_knotify )
 
 target_link_libraries(kcm_knotify  ${KDE4_KIO_LIBS} knotifyconfig ${QT_QTGUI_LIBRARY} kdeui)
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_knotify )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_knotify )
 
 
 ########### install files ###############

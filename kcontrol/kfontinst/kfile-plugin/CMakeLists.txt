@@ -14,7 +14,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kfile_font )
 
 target_link_libraries(kfile_font  ${KDE4_KIO_LIBS} kfontinst )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kfile_font )
+install_targets(${PLUGIN_INSTALL_DIR} kfile_font )
 
 
 ########### install files ###############

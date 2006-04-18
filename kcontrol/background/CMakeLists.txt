@@ -18,7 +18,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_background )
 
 target_link_libraries(kcm_background  ${KDE4_KDE3SUPPORT_LIBS} knewstuff kdefx ${X11_X11_LIB})
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_background )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_background )
 
 
 ########### next target ###############

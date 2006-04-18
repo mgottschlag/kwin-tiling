@@ -16,7 +16,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kthememanager )
 
 target_link_libraries(kcm_kthememanager  ${KDE4_KIO_LIBS} kde3support  ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} kdeui ${QT_QTXML_LIBRARY} DCOP)
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kthememanager )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kthememanager )
 
 
 ########### install files ###############

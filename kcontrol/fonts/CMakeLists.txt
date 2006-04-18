@@ -17,7 +17,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_fonts )
 
 target_link_libraries(kcm_fonts  ${KDE4_KDEUI_LIBS} ${FONTCONFIG_LIBRARIES})
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_fonts )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_fonts )
 
 
 ########### install files ###############

@@ -33,7 +33,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kded_khotkeys )
 
 target_link_libraries(kded_khotkeys  ${KDE4_KDE3SUPPORT_LIBS} ${X11_XTest_LIB} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kded_khotkeys )
+install_targets(${PLUGIN_INSTALL_DIR} kded_khotkeys )
 
 
 ########### install files ###############

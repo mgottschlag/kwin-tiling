@@ -16,7 +16,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} menu_panelapplet )
 
 target_link_libraries(menu_panelapplet  ${KDE4_KDEUI_LIBS} kickermain )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 menu_panelapplet )
+install_targets(${PLUGIN_INSTALL_DIR} menu_panelapplet )
 
 
 ########### install files ###############

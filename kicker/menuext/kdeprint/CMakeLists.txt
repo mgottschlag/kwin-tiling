@@ -14,7 +14,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_kdeprint )
 
 target_link_libraries(kickermenu_kdeprint  ${KDE4_KIO_LIBS} ${KDE4_KDEPRINT_LIBS} kickermain )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kickermenu_kdeprint )
+install_targets(${PLUGIN_INSTALL_DIR} kickermenu_kdeprint )
 
 
 ########### install files ###############

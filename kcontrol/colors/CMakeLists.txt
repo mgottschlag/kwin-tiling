@@ -14,7 +14,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_colors )
 
 target_link_libraries(kcm_colors  ${KDE4_KDE3SUPPORT_LIBS} kdefx )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_colors )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_colors )
 
 
 ########### install files ###############

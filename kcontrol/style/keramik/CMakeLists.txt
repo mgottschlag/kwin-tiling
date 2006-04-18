@@ -14,7 +14,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kstyle_keramik_config )
 
 target_link_libraries(kstyle_keramik_config  ${KDE4_KDEUI_LIBS} )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kstyle_keramik_config )
+install_targets(${PLUGIN_INSTALL_DIR} kstyle_keramik_config )
 
 
 ########### install files ###############

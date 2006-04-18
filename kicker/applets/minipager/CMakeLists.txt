@@ -16,7 +16,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} minipager_panelapplet )
 
 target_link_libraries(minipager_panelapplet  ${KDE4_KDEUI_LIBS} kdefx taskmanager kickermain )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 minipager_panelapplet )
+install_targets(${PLUGIN_INSTALL_DIR} minipager_panelapplet )
 
 
 ########### install files ###############

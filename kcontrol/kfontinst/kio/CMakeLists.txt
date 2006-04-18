@@ -18,7 +18,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kio_fonts )
 
 target_link_libraries(kio_fonts  ${KDE4_KDECORE_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KDESU_LIBS} kfontinst )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kio_fonts )
+install_targets(${PLUGIN_INSTALL_DIR} kio_fonts )
 
 
 ########### install files ###############

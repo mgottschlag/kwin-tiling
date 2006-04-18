@@ -16,7 +16,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_view1394 )
 
 target_link_libraries(kcm_view1394  ${KDE4_KDE3SUPPORT_LIBS} raw1394 )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_view1394 )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_view1394 )
 
 
 ########### install files ###############

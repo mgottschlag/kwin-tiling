@@ -14,7 +14,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_icons )
 
 target_link_libraries(kcm_icons  ${KDE4_KIO_LIBS} ${QT_QTGUI_LIBRARY} kdeui ${QT_QT3SUPPORT_LIBRARY})
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_icons )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_icons )
 
 
 ########### next target ###############

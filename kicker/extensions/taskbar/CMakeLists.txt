@@ -16,7 +16,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} taskbar_panelextension )
 
 target_link_libraries(taskbar_panelextension  ${KDE4_KDEUI_LIBS} kparts kickermain taskmanager taskbar )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 taskbar_panelextension )
+install_targets(${PLUGIN_INSTALL_DIR} taskbar_panelextension )
 
 
 ########### install files ###############

@@ -14,7 +14,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} lockout_panelapplet )
 
 target_link_libraries(lockout_panelapplet  ${KDE4_KDECORE_LIBS} kickermain )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 lockout_panelapplet )
+install_targets(${PLUGIN_INSTALL_DIR} lockout_panelapplet )
 
 
 ########### install files ###############

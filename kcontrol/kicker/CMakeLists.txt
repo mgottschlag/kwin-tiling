@@ -34,7 +34,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kicker )
 
 target_link_libraries(kcm_kicker  ${KDE4_KDECORE_LIBS} kickermain bgnd kio kutils )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kicker )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kicker )
 
 
 ########### install files ###############

@@ -22,7 +22,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_fontinst )
 
 target_link_libraries(kcm_fontinst  ${KDE4_KIO_LIBS} kfontinst kdeprint kde3support )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_fontinst )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_fontinst )
 
 
 ########### install files ###############

@@ -14,7 +14,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kded )
 
 target_link_libraries(kcm_kded  ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} kdeui ${QT_QTGUI_LIBRARY} DCOP)
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kded )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kded )
 
 
 ########### install files ###############

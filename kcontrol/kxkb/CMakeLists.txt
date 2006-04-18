@@ -44,7 +44,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_keyboard )
 
 target_link_libraries(kcm_keyboard  ${KDE4_KDECORE_LIBS} xkbfile kio )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_keyboard )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_keyboard )
 
 
 ########### install files ###############

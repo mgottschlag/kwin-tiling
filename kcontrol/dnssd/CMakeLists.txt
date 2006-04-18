@@ -16,7 +16,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kdnssd )
 
 target_link_libraries(kcm_kdnssd  ${KDE4_KDECORE_LIBS} kdnssd kdeui )
 
-install_targets(${LIB_INSTALL_DIR}/kde4 kcm_kdnssd )
+install_targets(${PLUGIN_INSTALL_DIR} kcm_kdnssd )
 
 
 ########### install files ###############
