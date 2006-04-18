@@ -322,7 +322,13 @@ bool PasswordDlg::GRecvArr (char **ret)
     if (!(buf = (char *)::malloc (len)))
         return false;
     *ret = buf;
-    return GRead (buf, len);
+    if (GRead (buf, len)) {
+	return true;
+    } else {
+	::free(buf);
+	*ret = 0;
+	return false;
+    }
 }
 
 void PasswordDlg::reapVerify()
