@@ -36,11 +36,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qregexp.h>
 #include <qlayout.h>
 #include <qlabel.h>
-//Added by qt3to4:
 #include <QContextMenuEvent>
 #include <QGridLayout>
+#include <QTextStream>
 
 #include <stdlib.h>
+#include <stdio.h>
 
 class KDMPasswordEdit : public KPasswordEdit {
 public:
@@ -567,7 +568,7 @@ static bool init( const QString &,
  		FILE *domfile = popen( "wbinfo --all-domains 2>/dev/null", "r" );
  		if (domfile) {
  			QString tmp;
- 			QTextIStream is( domfile );
+ 			QTextStream is( domfile );
  			while (!is.atEnd()) {
  				is >> tmp;
  				domains << tmp;
@@ -582,7 +583,7 @@ static bool init( const QString &,
  	if (sepstr.isNull()) {
  		FILE *sepfile = popen( "wbinfo --separator 2>/dev/null", "r" );
  		if (sepfile) {
- 			QTextIStream( sepfile ) >> sepstr;
+ 			QTextStream( sepfile ) >> sepstr;
  			if (pclose( sepfile ))
  				sepstr = "\\";
  		} else
