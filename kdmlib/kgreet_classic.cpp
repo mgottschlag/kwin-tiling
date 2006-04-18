@@ -98,7 +98,7 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 				grid->addWidget( loginLabel, line, 0 );
 				grid->addWidget( loginEdit, line++, 1 );
 			}
-		} else if (ctx != Login && ctx != Shutdown) {
+		} else if (ctx != Login && ctx != Shutdown && grid) {
 			loginLabel = new QLabel( i18n("Username:"), parent );
 			grid->addWidget( loginLabel, line, 0 );
 			grid->addWidget( new QLabel( fixedUser, parent ), line++, 1 );
@@ -146,10 +146,12 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 			parent->setTabOrder( pred, passwd1Edit );
 			parent->setTabOrder( passwd1Edit, passwd2Edit );
 		}
-		grid->addWidget( passwd1Label, line, 0 );
-		grid->addWidget( passwd1Edit, line++, 1 );
-		grid->addWidget( passwd2Label, line, 0 );
-		grid->addWidget( passwd2Edit, line, 1 );
+		if (grid) {
+			grid->addWidget( passwd1Label, line, 0 );
+			grid->addWidget( passwd1Edit, line++, 1 );
+			grid->addWidget( passwd2Label, line, 0 );
+			grid->addWidget( passwd2Edit, line, 1 );
+		}
 		if (!passwdEdit)
 			passwd1Edit->setFocus();
 	}

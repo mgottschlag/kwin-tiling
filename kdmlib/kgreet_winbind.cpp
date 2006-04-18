@@ -136,7 +136,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			connect( loginEdit, SIGNAL(selectionChanged()), SLOT(slotActivity()) );
 			domainCombo->addItems( domains );
 			domainCombo->setCurrentItem( defaultDomain );
-		} else if (ctx != Login && ctx != Shutdown) {
+		} else if (ctx != Login && ctx != Shutdown && grid) {
 			domainLabel = new QLabel( i18n("Domain:"), parent );
 			grid->addWidget( domainLabel, line, 0 );
 			grid->addWidget( new QLabel( fixedDomain, parent ), line++, 1 );
@@ -189,10 +189,12 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			parent->setTabOrder( pred, passwd1Edit );
 			parent->setTabOrder( passwd1Edit, passwd2Edit );
 		}
-		grid->addWidget( passwd1Label, line, 0 );
-		grid->addWidget( passwd1Edit, line++, 1 );
-		grid->addWidget( passwd2Label, line, 0 );
-		grid->addWidget( passwd2Edit, line, 1 );
+		if (grid) {
+			grid->addWidget( passwd1Label, line, 0 );
+			grid->addWidget( passwd1Edit, line++, 1 );
+			grid->addWidget( passwd2Label, line, 0 );
+			grid->addWidget( passwd2Edit, line, 1 );
+		}
 		if (!passwdEdit)
 			passwd1Edit->setFocus();
 	}
