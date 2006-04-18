@@ -118,14 +118,18 @@ KFI::CXConfig * getXCfg(bool root)
             if(!xfsConfigFile.isEmpty() && xcfg->xfsInPath())
             {
                 delete xcfg;
+		xcfg=0;
                 xfs=true;
             }
         }
 
         // OK, if still set to X11 config, but this mentions fontconfig FPE, then delete - as we're not interested
         // anymore...
-        if(xcfg && xcfg->fcInPath())
+        if(xcfg && xcfg->fcInPath()) 
+	{
             delete xcfg;
+	    xcfg = 0;
+	}
 
         return xfs ? new KFI::CXConfig(KFI::CXConfig::XFS, xfsConfigFile) : xcfg;
     }
