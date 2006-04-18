@@ -87,7 +87,10 @@ void printItems(const QStringList &items, int size, QWidget *parent, CFcEngine &
 
         // ...if not, then turn on - we may have installed new fonts, without ghostscript being informed, etc.
         if(!entryExists || !embedFonts)
+        {
             settings.writeEntry("/qt/embedFonts", true);
+	    set=true;
+	}
 
         printer.setResolution(72);
         painter.begin(&printer);
