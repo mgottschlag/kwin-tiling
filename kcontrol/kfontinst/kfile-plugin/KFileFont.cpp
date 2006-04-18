@@ -188,8 +188,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
           intWidth=FC_WIDTH_NORMAL,
 #endif
           intWeight=FC_WEIGHT_NORMAL,
-          intSlant=FC_SLANT_ROMAN,
-          intItalic=FC_SLANT_ROMAN;
+          intSlant=FC_SLANT_ROMAN;
 
     if(f.open(QIODevice::ReadOnly))
     {
@@ -240,8 +239,8 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
             foundFamily=true;
         }
 
-        if(foundName && FC_SLANT_ITALIC==intItalic && (-1!=full.indexOf("Oblique") || -1!=full.indexOf("Slanted")))
-            intItalic=FC_SLANT_OBLIQUE;
+        if(foundName && FC_SLANT_ITALIC==intSlant && (-1!=full.indexOf("Oblique") || -1!=full.indexOf("Slanted")))
+            intSlant=FC_SLANT_OBLIQUE;
     }
 
     if(foundName && foundFamily)
