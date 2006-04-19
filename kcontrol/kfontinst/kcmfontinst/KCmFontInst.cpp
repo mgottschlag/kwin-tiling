@@ -526,10 +526,14 @@ void CKCmFontInst::print()
                 for(; kit!=kend; ++kit)
                     items.append((*kit)->name());
             }
-            Print::printItems(items, constSizes[dlg.chosenSize()], this, engine);
-            itsConfig.writeEntry(CFG_FONT_SIZE, dlg.chosenSize());
-            if(itsEmbeddedAdmin)
-                itsConfig.sync();
+	    int cs = dlg.chosenSize(); // can return -1
+	    if (cs >= 0 && cs < sizeof(constSizes)/sizeof(int))
+	    {
+                  Print::printItems(items, constSizes[cs], this, engine);
+                  itsConfig.writeEntry(CFG_FONT_SIZE, cs);
+                  if(itsEmbeddedAdmin)
+                        itsConfig.sync();
+	    }
         }
     }
     else
