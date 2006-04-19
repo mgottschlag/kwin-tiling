@@ -20,6 +20,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <QTime>
 #include <qmap.h>
 #include <dcopobject.h>
+#include <kworkspace.h>
 
 #include "server2.h"
 #include "KSMServerInterface.h"
@@ -103,6 +104,7 @@ private Q_SLOTS:
     void knotifyTimeout();
     void kcmPhase1Timeout();
     void kcmPhase2Timeout();
+    void pendingShutdownTimeout();
 
     void autoStart0();
     void autoStart1();
@@ -187,6 +189,10 @@ private:
     QTimer startupSuspendTimeoutTimer;
     bool waitAutoStart2;
     bool waitKcmInit2;
+    QTimer pendingShutdown;
+    KWorkSpace::ShutdownConfirm pendingShutdown_confirm;
+    KWorkSpace::ShutdownType pendingShutdown_sdtype;
+    KWorkSpace::ShutdownMode pendingShutdown_sdmode;
 
     // ksplash interface
     void upAndRunning( const QString& msg );

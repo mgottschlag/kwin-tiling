@@ -598,6 +598,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 
     connect( &knotifyTimeoutTimer, SIGNAL( timeout()), SLOT( knotifyTimeout()));
     connect( &startupSuspendTimeoutTimer, SIGNAL( timeout()), SLOT( startupSuspendTimeout()));
+    connect( &pendingShutdown, SIGNAL( timeout()), SLOT( pendingShutdownTimeout()));
 
     only_local = _only_local;
 #ifdef HAVE__ICETRANSNOLISTEN

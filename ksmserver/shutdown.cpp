@@ -98,8 +98,23 @@ void KSMServer::logout( int confirm, int sdtype, int sdmode )
 void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
     KWorkSpace::ShutdownType sdtype, KWorkSpace::ShutdownMode sdmode )
 {
-    if ( state != Idle || dialogActive )
+    pendingShutdown.stop();
+    if( dialogActive )
         return;
+    if( state >= Shutdown ) // already performing shutdown
+        return;
+    if( state != Idle ) // performing startup
+    {
+    // perform shutdown as soon as startup is finished, in order to avoid saving partial session
+        if( !pendingShutdown.isActive())
+        {
+            pendingShutdown.start( 1000 );
+            pendingShutdown_confirm = confirm;
+            pendingShutdown_sdtype = sdtype;
+            pendingShutdown_sdmode = sdmode;
+        }
+        return;
+    }
 
     KConfig *config = KGlobal::config();
     config->reparseConfiguration(); // config may have changed in the KControl module
@@ -193,6 +208,11 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
             completeShutdownOrCheckpoint();
     }
     dialogActive = false;
+}
+
+void KSMServer::pendingShutdownTimeout()
+{
+    shutdown( pendingShutdown_confirm, pendingShutdown_sdtype, pendingShutdown_sdmode );
 }
 
 void KSMServer::saveCurrentSession()
