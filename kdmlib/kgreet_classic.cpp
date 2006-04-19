@@ -238,16 +238,19 @@ KClassicGreeter::returnData()
 		                          KGreeterPluginHandler::IsUser );
 		break;
 	case 1:
-		handler->gplugReturnText( passwdEdit->password(),
+		Q_ASSERT(passwdEdit);
+		handler->gplugReturnText( passwdEdit ? passwdEdit->password() : QString:null,
 		                          KGreeterPluginHandler::IsPassword |
 		                          KGreeterPluginHandler::IsSecret );
 		break;
 	case 2:
-		handler->gplugReturnText( passwd1Edit->password(),
+		Q_ASSERT(passwd1Edit);
+		handler->gplugReturnText( passwd1Edit ? passwd1Edit->password() : QString::null,
 		                          KGreeterPluginHandler::IsSecret );
 		break;
 	default: // case 3:
-		handler->gplugReturnText( passwd2Edit->password(),
+		Q_ASSERT(passwd2Edit);
+		handler->gplugReturnText( passwd2Edit ? passwd2Edit->password() : QString::null,
 		                          KGreeterPluginHandler::IsNewPassword |
 		                          KGreeterPluginHandler::IsSecret );
 		break;
