@@ -1580,9 +1580,8 @@ void ExtensionContainer::resetLayout()
     }
 
     updateGeometry();
-    int endBorderWidth = 0; 
-    if (m_extension)
-	endBorderWidth = haveToArrangeButtons ? arrangeHideButtons() : setupBorderSpace();
+    Q_ASSERT(m_extension); // the check further below seems outdated (COOLO)
+    int endBorderWidth = haveToArrangeButtons ? arrangeHideButtons() : setupBorderSpace();
 
     if (orientation() == Horizontal)
     {
