@@ -182,8 +182,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     // Now for the hack!
     KAction     *act;
     KActionMenu *topMnu=dynamic_cast<KActionMenu *>(itsDirOp->actionCollection()->action("popupMenu"));
+    Q_ASSERT(topMnu);
 
     itsViewMenuAct=dynamic_cast<KActionMenu *>(itsDirOp->actionCollection()->action("view menu"));
+    Q_ASSERT(itsViewMenuAct);
+
     topMnu->popupMenu()->clear();
     connect(topMnu->popupMenu(), SIGNAL(aboutToShow()), SLOT(setupMenu()));
     if((act=itsDirOp->actionCollection()->action("up")))
