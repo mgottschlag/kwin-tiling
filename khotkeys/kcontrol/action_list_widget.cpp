@@ -118,24 +118,19 @@ void Action_list_widget::new_selected( int type_P )
     switch( type_P )
         {
         case TYPE_COMMAND_URL_ACTION: // Command_url_action_dialog
-            dlg = new Command_url_action_dialog(
-                new Command_url_action( NULL, "" )); // CHECKME NULL ?
+            dlg = new Command_url_action_dialog( NULL );
           break;
         case TYPE_MENUENTRY_ACTION: // Menuentry_action_dialog
-            dlg = new Menuentry_action_dialog(
-                new Menuentry_action( NULL, "" )); // CHECKME NULL ?
+            dlg = new Menuentry_action_dialog( NULL );
           break;
         case TYPE_DCOP_ACTION: // Dcop_action_dialog
-            dlg = new Dcop_action_dialog(
-                new Dcop_action( NULL, "", "", "", "" ));
+            dlg = new Dcop_action_dialog( NULL );
           break;
         case TYPE_KEYBOARD_INPUT_ACTION: // Keyboard_input_action_dialog
-            dlg = new Keyboard_input_action_dialog(
-                new Keyboard_input_action( NULL, "", NULL, false )); // CHECKME NULL ?
+            dlg = new Keyboard_input_action_dialog( NULL );
           break;
         case TYPE_ACTIVATE_WINDOW_ACTION: // Activate_window_action_dialog
-            dlg = new Activate_window_action_dialog(
-                new Activate_window_action( NULL, new Windowdef_list( "" )));
+            dlg = new Activate_window_action_dialog( NULL );
           break;
         default:
           assert( false );
@@ -333,7 +328,7 @@ Activate_window_action_dialog::Activate_window_action_dialog( Activate_window_ac
     : KDialogBase( NULL, NULL, true, "", Ok | Cancel ), action( NULL ) // CHECKME caption
     {
     widget = new Activate_window_widget( this );
-    widget->set_data( action_P->window());
+    widget->set_data( action_P ? action_P->window() : NULL );
     setMainWidget( widget );
     }
 
