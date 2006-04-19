@@ -173,11 +173,13 @@ void ExtensionContainer::init()
         _userHidden = static_cast<UserHidden>(tmp);
     }
 
-    m_extension->setPosition(ExtensionManager::self()->initialPanelPosition(m_extension->preferredPosition()));
+    if (m_extension) {
+        m_extension->setPosition(ExtensionManager::self()->initialPanelPosition(m_extension->preferredPosition()));
 
-    connect(m_extension, SIGNAL(updateLayout()), SLOT(updateLayout()));
-    connect(m_extension, SIGNAL(maintainFocus(bool)), SLOT(maintainFocus(bool)));
-    _layout->addWidget(m_extension, 1, 1);
+        connect(m_extension, SIGNAL(updateLayout()), SLOT(updateLayout()));
+        connect(m_extension, SIGNAL(maintainFocus(bool)), SLOT(maintainFocus(bool)));
+        _layout->addWidget(m_extension, 1, 1);
+    }
 }
 
 ExtensionContainer::~ExtensionContainer()
@@ -186,6 +188,9 @@ ExtensionContainer::~ExtensionContainer()
 
 QSize ExtensionContainer::sizeHint(Plasma::Position p, const QSize &maxSize)
 {
+    if (!m_extension)
+        return QSize();
+
     int width = 0;
     int height = 0;
     ExtensionSettings* s = m_extension->settings();
@@ -223,10 +228,7 @@ QSize ExtensionContainer::sizeHint(Plasma::Position p, const QSize &maxSize)
     QSize size(width, height);
     size = size.boundedTo(maxSize);
 
-    if (m_extension)
-    {
-        size = m_extension->sizeHint(p, maxSize - size) + size;
-    }
+    size = m_extension->sizeHint(p, maxSize - size) + size;
 
     return size.boundedTo(maxSize);
 }
@@ -239,27 +241,29 @@ static bool isnetwm12_below()
 
 void ExtensionContainer::readConfig()
 {
-//    kDebug(1210) << "ExtensionContainer::readConfig()" << endl;
     ExtensionSettings* s = m_extension->settings();
-    s->readConfig();
+    if (s)
+    {
+        s->readConfig();
 
-    if (s->autoHidePanel())
-    {
-        m_hideMode = AutomaticHide;
-    }
-    else if (s->backgroundHide())
-    {
-        m_hideMode = BackgroundHide;
-    }
-    else
-    {
-        m_hideMode = ManualHide;
-    }
+        if (s->autoHidePanel())
+        {
+            m_hideMode = AutomaticHide;
+        }
+        else if (s->backgroundHide())
+        {
+            m_hideMode = BackgroundHide;
+        }
+        else
+        {
+            m_hideMode = ManualHide;
+        }
 
-    positionChange(position());
-    alignmentChange(alignment());
-    setSize(static_cast<Plasma::Size>(s->size()),
-            s->customSize());
+        positionChange(position());
+        alignmentChange(alignment());
+        setSize(static_cast<Plasma::Size>(s->size()),
+                s->customSize());
+    }
 
     if (m_hideMode != AutomaticHide)
     {
@@ -305,7 +309,8 @@ void ExtensionContainer::writeConfig()
     config->writePathEntry("DesktopFile", _info.desktopFile());
     config->writeEntry("UserHidden", int(userHidden()));
 
-    m_extension->settings()->writeConfig();
+    if(m_extension)
+        m_extension->settings()->writeConfig();
 }
 
 void ExtensionContainer::showPanelMenu( const QPoint& globalPos )
@@ -532,7 +537,7 @@ void ExtensionContainer::enableMouseOverEffects()
 
 bool ExtensionContainer::shouldUnhideForTrigger(Plasma::ScreenEdge t) const
 {
-    int loc = m_extension->settings()->unhideLocation();
+    int loc = m_extension ? m_extension->settings()->unhideLocation() : t;
 
     if (loc == t)
     {
@@ -565,6 +570,8 @@ bool ExtensionContainer::shouldUnhideForTrigger(Plasma::ScreenEdge t) const
 
 void ExtensionContainer::unhideTriggered(Plasma::ScreenEdge tr, int XineramaScreen)
 {
+    if (!m_extension) return;
+
     ExtensionSettings* s = m_extension->settings();
     if (m_hideMode == ManualHide)
     {
@@ -1294,10 +1301,7 @@ void ExtensionContainer::positionChange(Plasma::Position p)
 {
     arrangeHideButtons();
 
-    if (m_extension)
-    {
-        m_extension->setPosition(p);
-    }
+    m_extension->setPosition(p);
 
     update();
 }
