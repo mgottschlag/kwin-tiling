@@ -166,10 +166,6 @@ KClassicGreeter::~KClassicGreeter()
 		delete passwdEdit;
 		return;
 	}
-	QLayoutIterator it = static_cast<QLayout *>(layoutItem)->iterator();
-	for (QLayoutItem *itm = it.current(); itm; itm = ++it)
-		 delete itm->widget();
-	delete layoutItem;
 }
 
 void // virtual
@@ -239,18 +235,18 @@ KClassicGreeter::returnData()
 		break;
 	case 1:
 		Q_ASSERT(passwdEdit);
-		handler->gplugReturnText( passwdEdit ? passwdEdit->password() : QString:null,
+		handler->gplugReturnText( passwdEdit ? passwdEdit->password() : 0,
 		                          KGreeterPluginHandler::IsPassword |
 		                          KGreeterPluginHandler::IsSecret );
 		break;
 	case 2:
 		Q_ASSERT(passwd1Edit);
-		handler->gplugReturnText( passwd1Edit ? passwd1Edit->password() : QString::null,
+		handler->gplugReturnText( passwd1Edit ? passwd1Edit->password() : 0,
 		                          KGreeterPluginHandler::IsSecret );
 		break;
 	default: // case 3:
 		Q_ASSERT(passwd2Edit);
-		handler->gplugReturnText( passwd2Edit ? passwd2Edit->password() : QString::null,
+		handler->gplugReturnText( passwd2Edit ? passwd2Edit->password() : 0,
 		                          KGreeterPluginHandler::IsNewPassword |
 		                          KGreeterPluginHandler::IsSecret );
 		break;
