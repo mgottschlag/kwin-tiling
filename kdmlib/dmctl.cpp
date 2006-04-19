@@ -87,7 +87,7 @@ DM::DM() : fd( -1 )
 		{
 			QString tf( ctl );
 			tf.truncate( tf.indexOf( ',' ) );
-			fd = ::open( tf.latin1(), O_WRONLY );
+			fd = ::open( tf.toLatin1(), O_WRONLY );
 		}
 		break;
 	}
@@ -379,9 +379,9 @@ bool
 DM::switchVT( int vt )
 {
 	if (DMType == GDM)
-		return exec( QString("SET_VT %1\n").arg(vt).latin1() );
+		return exec( QString("SET_VT %1\n").arg(vt).toLatin1() );
 
-	return exec( QString("activate\tvt%1\n").arg(vt).latin1() );
+	return exec( QString("activate\tvt%1\n").arg(vt).toLatin1() );
 }
 
 void
@@ -423,7 +423,7 @@ DM::GDMAuthenticate()
 			for (int i = 0; i < 16; i++)
 				cmd += QString::number( (uchar)xau->data[i], 16 ).rightJustified( 2, '0');
 			cmd += "\n";
-			if (exec( cmd.latin1() )) {
+			if (exec( cmd.toLatin1() )) {
 				XauDisposeAuth( xau );
 				break;
 			}

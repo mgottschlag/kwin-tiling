@@ -188,7 +188,7 @@ void Tzone::save()
         QString val = ":" + tz;
 #endif // !USE_SOLARIS
 
-        setenv("TZ", val.ascii(), 1);
+        setenv("TZ", val.toAscii(), 1);
         tzset();
 
     } else {

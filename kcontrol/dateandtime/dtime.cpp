@@ -213,7 +213,7 @@ void Dtime::findNTPutility(){
   proc.start(KProcess::Block);
   if(proc.exitStatus() == 0) {
     ntpUtility = "ntpdate";
-    kDebug() << "ntpUtility = " << ntpUtility.latin1() << endl;
+    kDebug() << "ntpUtility = " << ntpUtility.toLatin1() << endl;
     return;
   }
   proc.clearArguments();
@@ -221,7 +221,7 @@ void Dtime::findNTPutility(){
   proc.start(KProcess::Block);
   if(proc.exitStatus() == 0) {
     ntpUtility = "rdate";
-    kDebug() << "ntpUtility = " << ntpUtility.latin1() << endl;
+    kDebug() << "ntpUtility = " << ntpUtility.toLatin1() << endl;
     return;
   }
   privateLayoutWidget->hide();
@@ -306,12 +306,12 @@ void Dtime::save()
     proc << ntpUtility << timeServer;
     proc.start( KProcess::Block );
     if( proc.exitStatus() != 0 ){
-      KMessageBox::error( this, i18n(QString("Unable to contact time server: %1.").arg(timeServer).latin1()));
+      KMessageBox::error( this, i18n(QString("Unable to contact time server: %1.").arg(timeServer).toLatin1()));
       setDateTimeAuto->setChecked( false );
     }
     else {
         // success
-        kDebug() << "Set date from time server " << timeServer.latin1() << " success!" << endl;
+        kDebug() << "Set date from time server " << timeServer.toLatin1() << " success!" << endl;
     }
   }
   else {

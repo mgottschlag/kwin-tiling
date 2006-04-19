@@ -1047,12 +1047,12 @@ void KXftConfig::readContents()
                                 if(!(str=getEntry(ene, "const", 2, "name", "rgba", "mode", "assign")).isNull())
                                 {
                                     m_subPixel.node=n;
-                                    m_subPixel.type=strToType(str.latin1());
+                                    m_subPixel.type=strToType(str.toLatin1());
                                 }
                                 else if(!(str=getEntry(ene, "const", 2, "name", "hintstyle", "mode", "assign")).isNull())
                                 {
                                     m_hint.node=n;
-                                    m_hint.style=strToStyle(str.latin1());
+                                    m_hint.style=strToStyle(str.toLatin1());
                                 }
                                 else if(!(str=getEntry(ene, "bool", 2, "name", "hinting", "mode", "assign")).isNull())
                                 {

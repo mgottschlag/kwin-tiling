@@ -82,7 +82,7 @@ static int ReadPipe(QString FileName, QStringList &list)
 {
     FILE *pipe;
 
-    if ((pipe = popen(FileName.ascii(), "r")) == NULL) {
+    if ((pipe = popen(FileName.toAscii(), "r")) == NULL) {
 	pclose(pipe);
 	return 0;
     }

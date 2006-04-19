@@ -63,7 +63,7 @@ AppletContainer::AppletContainer(const AppletInfo& info,
                                  QWidget* parent )
   : BaseContainer(opMenu,
                   parent,
-                  QString(info.library() + "container").latin1()),
+                  QString(info.library() + "container").toLatin1()),
     _info(info),
     _handle(0),
     _layout(0),

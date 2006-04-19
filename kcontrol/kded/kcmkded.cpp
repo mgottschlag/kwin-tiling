@@ -311,7 +311,7 @@ void KDEDConfig::slotServiceRunningToggled()
 
 void KDEDConfig::slotStartService()
 {
-	DCOPCString service = _lvStartup->currentItem()->text(4).latin1();
+	DCOPCString service = _lvStartup->currentItem()->text(4).toLatin1();
 
 	QByteArray data, replyData;
 	DCOPCString replyType;
@@ -340,7 +340,7 @@ void KDEDConfig::slotStartService()
 
 void KDEDConfig::slotStopService()
 {
-	DCOPCString service = _lvStartup->currentItem()->text(4).latin1();
+	DCOPCString service = _lvStartup->currentItem()->text(4).toLatin1();
 	kDebug() << "Stopping: " << service << endl;
 	QByteArray data;
 	QDataStream arg( &data, QIODevice::WriteOnly );

@@ -304,11 +304,11 @@ void KonsoleMenu::newSession(const QString& sURL, const QString& title)
         QString protocol = url.protocol();
         QString host = url.host();
         args << "-T" << title;
-        args << "-e" << protocol.latin1(); /* argv[0] == command to run. */
+        args << "-e" << protocol.toLatin1(); /* argv[0] == command to run. */
         if (url.hasUser()) {
-            args << "-l" << url.user().latin1();
+            args << "-l" << url.user().toLatin1();
         }
-        args << host.latin1();
+        args << host.toLatin1();
         KToolInvocation::kdeinitExec("konsole", args);
         return;
     }

@@ -164,7 +164,7 @@ AddIRQLine(QListView *lBox, QString s)
 	char numstr[3];
 
 	pos = s.find(" irq ");
-	irqnum = (pos < 0) ? 0 : atoi(&s.ascii()[pos+5]);
+	irqnum = (pos < 0) ? 0 : atoi(&s.toAscii()[pos+5]);
 	if (irqnum)
 		snprintf(numstr, 3, "%02d", irqnum);
 	else {
@@ -223,7 +223,7 @@ bool GetInfo_Sound (QListView *lbox)
 		// The autoconf message is in form 'audio0 at auvia0: ...'
 		if (s.find("audio") == 0 && (pos = s.find(" at ")) > 0) {
 			pos += 4;	// skip " at "
-			start = s.ascii() + pos;
+			start = s.toAscii() + pos;
 			len = (int) strcspn(start, ":\n\t ");
 			dev = (char *) malloc(1 + len + 1);
 			sprintf(dev, "^%.*s", len, start);	/* safe */

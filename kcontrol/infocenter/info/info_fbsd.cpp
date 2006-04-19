@@ -254,7 +254,7 @@ bool GetInfo_PCI (Q3ListView *lbox)
 	}
 	delete pcicontrol;
 
-	if ((pipe = popen(cmd.latin1(), "r")) == NULL) {
+	if ((pipe = popen(cmd.toLatin1(), "r")) == NULL) {
 		s = i18n ("PCI subsystem could not be queried: %1 could not be executed", cmd);
 		olditem = new Q3ListViewItem(lbox, olditem, s);
 	} else {
@@ -263,7 +263,7 @@ bool GetInfo_PCI (Q3ListView *lbox)
 		   parse it as opposed to schlepping it into a listbox */
 
 		pclose(pipe);
-		GetInfo_ReadfromPipe(lbox, cmd.latin1(), true);
+		GetInfo_ReadfromPipe(lbox, cmd.toLatin1(), true);
 	}
 
 	if (!lbox->childCount()) {

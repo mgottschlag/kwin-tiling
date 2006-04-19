@@ -70,7 +70,7 @@ QString JoyDevice::errText(ErrorCode code) const
     case WRONG_VERSION:
     {
       int version = 0;
-      int fd = ::open(devName.latin1(), O_RDONLY);
+      int fd = ::open(devName.toLatin1(), O_RDONLY);
       if ( fd != -1 )
       {
         ::ioctl(fd, JSIOCGVERSION, &version);
@@ -133,7 +133,7 @@ JoyDevice::ErrorCode JoyDevice::open()
 {
   if ( joyFd != -1 ) return JoyDevice::SUCCESS;  // already open
 
-  int fd = ::open(devName.latin1(), O_RDONLY);
+  int fd = ::open(devName.toLatin1(), O_RDONLY);
 
   if ( fd == -1 )
     return JoyDevice::OPEN_FAILED;

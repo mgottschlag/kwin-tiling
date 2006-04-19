@@ -544,8 +544,8 @@ QPixmap ThemePage::createIcon( const QString &theme, const QString &sample ) con
 	XcursorImage *xcur;
 	QPixmap pix;
 
-	xcur = XcursorLibraryLoadImage( sample.latin1(), theme.latin1(), iconSize );
-	if ( !xcur ) xcur = XcursorLibraryLoadImage( "left_ptr", theme.latin1(), iconSize );
+	xcur = XcursorLibraryLoadImage( sample.toLatin1(), theme.toLatin1(), iconSize );
+	if ( !xcur ) xcur = XcursorLibraryLoadImage( "left_ptr", theme.toLatin1(), iconSize );
 
 	if ( xcur ) {
 		// Calculate an auto-crop rectangle for the cursor image

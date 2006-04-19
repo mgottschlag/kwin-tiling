@@ -179,8 +179,8 @@ int main(int argc, char *argv[])
 	if (!exeFile.isEmpty())
 	{
 		char *sargs[MAX_ARGS];
-		sargs[0] = new char [strlen(word.ascii())+1];
-		strcpy(sargs[0], word.ascii());
+		sargs[0] = new char [strlen(word.toAscii())+1];
+		strcpy(sargs[0], word.toAscii());
 
 		int i = 1;
 		while (!ts.atEnd() && i < MAX_ARGS-1)
@@ -191,16 +191,16 @@ int main(int argc, char *argv[])
 				word = word.setNum(windowId);
 			}
 
-			sargs[i] = new char [strlen(word.ascii())+1];
-			strcpy(sargs[i], word.ascii());
-			kDebug() << "word is " << word.ascii() << endl;
+			sargs[i] = new char [strlen(word.toAscii())+1];
+			strcpy(sargs[i], word.toAscii());
+			kDebug() << "word is " << word.toAscii() << endl;
 
 			i++;
 		}
 
 		sargs[i] = 0;
 
-		execv(exeFile.ascii(), sargs);
+		execv(exeFile.toAscii(), sargs);
 	}
 
 	// If we end up here then we couldn't start a saver.

@@ -128,11 +128,11 @@ void PreviewCursor::load( const QString &name, const QString &theme )
 
 	// Load the preview cursor image
 	XcursorImage *image =
-		XcursorLibraryLoadImage( name.latin1(), theme.latin1(), previewSize );
+		XcursorLibraryLoadImage( name.toLatin1(), theme.toLatin1(), previewSize );
 
 	// If the theme doesn't have this cursor, load the default cursor for now
 	if ( !image )
-		image = XcursorLibraryLoadImage( "left_ptr", theme.latin1(), previewSize );
+		image = XcursorLibraryLoadImage( "left_ptr", theme.toLatin1(), previewSize );
 
 	// TODO The old classic X cursors
 	if ( !image )
@@ -164,13 +164,13 @@ void PreviewCursor::load( const QString &name, const QString &theme )
 
 	// Load the actual cursor we will use
 	int size = XcursorGetDefaultSize( dpy );
-	XcursorImages *images = XcursorLibraryLoadImages( name.latin1(), theme.latin1(), size );
+	XcursorImages *images = XcursorLibraryLoadImages( name.toLatin1(), theme.toLatin1(), size );
 
 	if ( images ) {
 		m_handle = XcursorImagesLoadCursor( dpy, images );
 		XcursorImagesDestroy( images );
 	} else {
-		images = XcursorLibraryLoadImages( "left_ptr", theme.latin1(), size );
+		images = XcursorLibraryLoadImages( "left_ptr", theme.toLatin1(), size );
 		m_handle = XcursorImagesLoadCursor( dpy, images );
 		XcursorImagesDestroy( images );
 	}
@@ -296,7 +296,7 @@ void PreviewWidget::setTheme( const QString &theme )
 	int maxWidth  = previewSize;      // Widest cursor width
 
 	for ( int i = 0; i < numCursors; i++ ) {
-		cursors[i]->load( cursor_names[i], theme.latin1() );
+		cursors[i]->load( cursor_names[i], theme.toLatin1() );
 		if ( cursors[i]->width() > maxWidth )
 			maxWidth = cursors[i]->width();
 		if ( cursors[i]->height() > maxHeight )

@@ -1052,7 +1052,7 @@ bool CFontEngine::checkEncodingFt(const QString &enc)
 {
     static const float constBigEncodingFuzz = 0.02;
 
-    FontEncPtr encoding=FontEncFind(enc.latin1(), NULL);   // CPD TODO latin1 ???
+    FontEncPtr encoding=FontEncFind(enc.toLatin1(), NULL);   // CPD TODO latin1 ???
 
     if(encoding)
     {

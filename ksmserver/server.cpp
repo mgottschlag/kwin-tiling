@@ -119,10 +119,10 @@ void KSMServer::startApplication( QStringList command, const QString& clientMach
 	command.prepend( xonCommand ); // "xon" by default
     }
     int n = command.count();
-    DCOPCString app = command[0].latin1();
+    DCOPCString app = command[0].toLatin1();
     DCOPCStringList argList;
     for ( int i=1; i < n; i++)
-       argList.append( command[i].latin1());
+       argList.append( command[i].toLatin1());
     DCOPRef( launcher ).send( "exec_blind", app, DCOPArg( argList, "QValueList<QCString>" ) );
 }
 

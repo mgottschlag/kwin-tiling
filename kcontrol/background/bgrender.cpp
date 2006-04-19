@@ -136,7 +136,7 @@ QString KBackgroundRenderer::buildCommand()
         if (pos == (int) (cmd.length() - 1))
             break;
 
-        switch (cmd.at(pos+1).latin1()) {
+        switch (cmd.at(pos+1).toLatin1()) {
         case 'f':
             createTempFile();
             cmd.replace(pos, 2, KShellProcess::quote(m_Tempfile->name()));

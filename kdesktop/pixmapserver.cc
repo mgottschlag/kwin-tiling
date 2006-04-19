@@ -69,7 +69,7 @@ void KPixmapServer::add(QString name, QPixmap *pm, bool overwrite)
     }
 	
     QString str = QString("KDESHPIXMAP:%1").arg(name);
-    Atom sel = XInternAtom(QX11Info::display(), str.latin1(), false);
+    Atom sel = XInternAtom(QX11Info::display(), str.toLatin1(), false);
     KPixmapInode pi;
     pi.handle = pm->handle();
     pi.selection = sel;

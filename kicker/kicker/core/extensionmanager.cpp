@@ -280,7 +280,7 @@ void ExtensionManager::migrateMenubar()
                     continue;
                 }
 
-                KConfigGroup group(&extensionConfig, appletId.latin1());
+                KConfigGroup group(&extensionConfig, appletId.toLatin1());
                 QString appletType = appletId.left(appletId.lastIndexOf('_'));
 
                 if (appletType == "Applet")

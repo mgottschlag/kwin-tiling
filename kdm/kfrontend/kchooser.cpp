@@ -136,7 +136,7 @@ void ChooserDlg::addHostname()
 {
 	if (!iline->text().isEmpty()) {
 		GSendInt( G_Ch_RegisterHost );
-		GSendStr( iline->text().latin1() );
+		GSendStr( iline->text().toLatin1() );
 		iline->clear();
 	}
 }
@@ -151,7 +151,7 @@ void ChooserDlg::accept()
 	if (focusWidget() == iline) {
 		if (!iline->text().isEmpty()) {
 			GSendInt( G_Ch_DirectChoice );
-			GSendStr( iline->text().latin1() );
+			GSendStr( iline->text().toLatin1() );
 			iline->clear();
 		}
 		return;

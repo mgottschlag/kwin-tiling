@@ -104,7 +104,7 @@ void KCMIOSlaveInfo::slaveHelp( KIO::Job *, const QByteArray &data)
         int index = helpData.indexOf( "<meta http-equiv=\"Content-Type\"" );
         index = helpData.indexOf( "charset=", index ) + 8;
         QString charset = helpData.mid( index, helpData.indexOf( '\"', index ) - index );
-        QString text = QTextCodec::codecForName(charset.latin1())->toUnicode( helpData );
+        QString text = QTextCodec::codecForName(charset.toLatin1())->toUnicode( helpData );
         index = text.indexOf( "<div class=\"titlepage\">" );
         text = text.mid( index );
         index = text.indexOf( "<table width=\"100%\" class=\"bottom-nav\"" );

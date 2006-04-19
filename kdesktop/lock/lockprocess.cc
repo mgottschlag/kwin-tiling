@@ -713,12 +713,12 @@ bool LockProcess::startLock()
     for (QStringList::ConstIterator it = mPlugins.begin(); it != mPlugins.end(); ++it) {
         GreeterPluginHandle plugin;
         QString path = KLibLoader::self()->findLibrary(
-                    ((*it)[0] == '/' ? *it : "kgreet_" + *it ).latin1() );
+                    ((*it)[0] == '/' ? *it : "kgreet_" + *it ).toLatin1() );
         if (path.isEmpty()) {
             kWarning(1204) << "GreeterPlugin " << *it << " does not exist" << endl;
             continue;
         }
-        if (!(plugin.library = KLibLoader::self()->library( path.latin1() ))) {
+        if (!(plugin.library = KLibLoader::self()->library( path.toLatin1() ))) {
             kWarning(1204) << "Cannot load GreeterPlugin " << *it << " (" << path << ")" << endl;
             continue;
         }

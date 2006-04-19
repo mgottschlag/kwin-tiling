@@ -234,7 +234,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
     if ( e->state() & Qt::AltModifier ) {
         QKeyEvent ke( QEvent::KeyPress,
                       e->key(),
-                      e->ascii(),
+                      e->toAscii(),
                       e->state() ^ Qt::AltModifier,
                       e->text(),
                       e->isAutoRepeat(),

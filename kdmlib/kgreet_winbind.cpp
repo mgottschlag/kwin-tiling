@@ -563,7 +563,8 @@ static bool init( const QString &,
 {
 	echoMode = getConf( ctx, "EchoMode", QVariant( -1 ) ).toInt();
 
- 	domains = QStringList::split( ':', getConf( ctx, "winbind.Domains", QVariant( "" ) ).toString() );
+ 	domains = getConf( ctx, "winbind.Domains", QVariant( "" ) ).toString().split( ':', 
+QString::SkipEmptyParts );
  	if (!domains.size()) {
  		FILE *domfile = popen( "wbinfo --all-domains 2>/dev/null", "r" );
  		if (domfile) {
@@ -589,7 +590,7 @@ static bool init( const QString &,
  		} else
  			sepstr = "\\";
  	}
- 	separator = sepstr[0].latin1();
+ 	separator = sepstr[0].toLatin1();
 
 	KGlobal::locale()->insertCatalog( "kgreet_winbind" );
 	return true;

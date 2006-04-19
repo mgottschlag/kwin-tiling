@@ -360,7 +360,7 @@ KGreeter::insertSessions()
 				            (dsk.readEntry( "Hidden", QVariant(false )).toBool() ||
 				             (dsk.hasKey( "TryExec" ) &&
 				              KStandardDirs::findExe( dsk.readEntry( "TryExec" ) ).isEmpty())),
-				            dsk.readEntry( "Exec" ).latin1() );
+				            dsk.readEntry( "Exec" ).toLatin1() );
 			}
 	}
 	putSession( "default", i18n("Default"), false, "default" );
@@ -522,9 +522,9 @@ KGreeter::pluginSetup()
 		else
 			ent = _preselUser == PRESEL_PREV ?
 				stsFile->readEntry( dn, QString() ) :
-				verify->getConf( 0, (pn + ".DefaultEntity").latin1(), QVariant() ).toString();
+				verify->getConf( 0, (pn + ".DefaultEntity").toLatin1(), QVariant() ).toString();
 		field = verify->entitiesFielded() ?
-			verify->getConf( 0, (pn + ".FocusField").latin1(), QVariant( 0 ) ).toInt() :
+			verify->getConf( 0, (pn + ".FocusField").toLatin1(), QVariant( 0 ) ).toInt() :
 			_focusPasswd;
 	}
 	verify->presetEntity( ent, field );

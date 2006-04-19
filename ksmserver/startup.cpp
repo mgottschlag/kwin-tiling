@@ -424,8 +424,8 @@ void KSMServer::upAndRunning( const QString& msg )
     e.xclient.display = QX11Info::display();
     e.xclient.window = QX11Info::appRootWindow();
     e.xclient.format = 8;
-    assert( strlen( msg.latin1()) < 20 );
-    strcpy( e.xclient.data.b, msg.latin1());
+    assert( strlen( msg.toLatin1()) < 20 );
+    strcpy( e.xclient.data.b, msg.toLatin1());
     XSendEvent( QX11Info::display(), QX11Info::appRootWindow(), False, SubstructureNotifyMask, &e );
 }
 

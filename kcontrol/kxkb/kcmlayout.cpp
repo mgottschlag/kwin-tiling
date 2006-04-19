@@ -224,7 +224,7 @@ void LayoutConfig::variantChanged()
     }
 
     QString kbdLayout = lookupLocalized( m_rules->layouts(), selLayout->text(1) );
-    m_variants.replace(kbdLayout, widget->comboVariant->currentText().latin1());
+    m_variants.replace(kbdLayout, widget->comboVariant->currentText().toLatin1());
 }
 
 void LayoutConfig::latinChanged()
@@ -287,7 +287,7 @@ void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
     }
     else {
       widget->comboVariant->setCurrentItem(0);
-      m_variants.insert(kbdLayout, widget->comboVariant->currentText().latin1());
+      m_variants.insert(kbdLayout, widget->comboVariant->currentText().toLatin1());
     }
 
     updateLayoutCommand();
@@ -349,10 +349,10 @@ QWidget* LayoutConfig::makeOptionsTab()
         QString text(it.current());
         text = text.replace( "Cap$", "Caps." );
         if( parent->type() == Q3CheckListItem::RadioButtonController )
-            new OptionListItem(parent, i18n(text.latin1()),
+            new OptionListItem(parent, i18n(text.toLatin1()),
                 Q3CheckListItem::RadioButton, key);
         else
-            new OptionListItem(parent, i18n(text.latin1()),
+            new OptionListItem(parent, i18n(text.toLatin1()),
                 Q3CheckListItem::CheckBox, key);
       }
     }

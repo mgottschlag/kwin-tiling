@@ -216,14 +216,14 @@ namespace KHotKeys {
 void check_tree( Action_data_group* b, int lev_P = 0 )
     {
     using namespace std;
-    cerr << setw( lev_P ) << "" << b << ":Group:" << b->name().latin1() << ":" << b->parent() << endl;
+    cerr << setw( lev_P ) << "" << b << ":Group:" << b->name().toLatin1() << ":" << b->parent() << endl;
     for( Action_data_group::Iterator it = b->first_child();
          it;
          ++it )
         if( Action_data_group* g = dynamic_cast< Action_data_group* >( *it ))
             check_tree( g, lev_P + 1 );
         else
-            cerr << setw( lev_P + 1 ) << "" << (*it) << ":Action:" << (*it)->name().latin1() << ":" << (*it)->parent() << endl;
+            cerr << setw( lev_P + 1 ) << "" << (*it) << ":Action:" << (*it)->name().toLatin1() << ":" << (*it)->parent() << endl;
     }
 
 #endif

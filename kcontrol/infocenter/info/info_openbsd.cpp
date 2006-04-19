@@ -165,7 +165,7 @@ void AddIRQLine(QListView *lBox, QString s, void **opaque, bool ending)
 	const char *str;
 	int pos, irqnum=0;
 	const char *p;
-	p = s.latin1();
+	p = s.toLatin1();
 
 	if (!strlist) {
 		strlist = new QStrList();
@@ -188,7 +188,7 @@ void AddIRQLine(QListView *lBox, QString s, void **opaque, bool ending)
 	else {
 		s.sprintf("??%s", p);
 	}
-	strlist->inSort(s.latin1());
+	strlist->inSort(s.toLatin1());
 }
 
 bool GetInfo_IRQ (QListView *lBox)
@@ -234,7 +234,7 @@ bool GetInfo_Sound (QListView *lbox)
 		s = lvitem->text(0);
 		if ((pos = s.find("at ")) >= 0) {
 			pos += 3;	// skip "at "
-			start = end = s.ascii();
+			start = end = s.toAscii();
 			for(; *end && (*end!=':') && (*end!='\n'); end++);
 			len = end - start;
 			dev = (char *) malloc(len + 1);
@@ -284,7 +284,7 @@ bool GetInfo_Partitions (QListView *lbox)
 
 	QListViewItem *olditem = 0;
 	while (!(s = t->readLine()).isNull()) {
-		orig_line = line = strdup(s.latin1());
+		orig_line = line = strdup(s.toLatin1());
 
 		device = strsep(&line, " ");
 

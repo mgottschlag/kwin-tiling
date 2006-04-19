@@ -147,7 +147,7 @@ void BaseContainer::slotRemoved(KConfig* config)
         config = KGlobal::config();
     }
 
-    config->deleteGroup(appletId().latin1());
+    config->deleteGroup(appletId().toLatin1());
     config->sync();
 }
 

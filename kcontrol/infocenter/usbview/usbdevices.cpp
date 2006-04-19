@@ -124,12 +124,12 @@ QString USBDevice::dump()
   QString c = QString("<td>%1</td>").arg(_class);
   QString cname = _db->cls(_class);
   if (!cname.isEmpty())
-    c += "<td>(" + i18n(cname.latin1()) +")</td>";
+    c += "<td>(" + i18n(cname.toLatin1()) +")</td>";
   r += i18n("<tr><td><i>Class</i></td>%1</tr>", c);
   QString sc = QString("<td>%1</td>").arg(_sub);
   QString scname = _db->subclass(_class, _sub);
   if (!scname.isEmpty())
-    sc += "<td>(" + i18n(scname.latin1()) +")</td>";
+    sc += "<td>(" + i18n(scname.toLatin1()) +")</td>";
   r += i18n("<tr><td><i>Subclass</i></td>%1</tr>", sc);
   QString pr = QString("<td>%1</td>").arg(_prot);
   QString prname = _db->protocol(_class, _sub, _prot);

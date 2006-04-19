@@ -59,7 +59,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "panelextension.moc"
 
 PanelExtension::PanelExtension(const QString& configFile, QWidget *parent)
-    : DCOPObject(QByteArray("Panel_") + QString::number((ulong)this).latin1()),
+    : DCOPObject(QByteArray("Panel_") + QString::number((ulong)this).toLatin1()),
       KPanelExtension(configFile, 0, parent),
       m_opMenu(0),
       m_panelAddMenu(0),

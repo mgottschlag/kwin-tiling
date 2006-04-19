@@ -443,7 +443,7 @@ QString KasTaskItem::expandMacros( const QString &format, QObject *data )
     while ( pos >= 0 ) {
         pos = re.search( s, pos );
         if ( pos >= 0 ) {
-	    QVariant val = data->property( re.cap(1).latin1() );
+	    QVariant val = data->property( re.cap(1).toLatin1() );
 	    QString v = val.asString();
 	    s.replace( pos, re.matchedLength(), v );
             pos = pos + v.length();

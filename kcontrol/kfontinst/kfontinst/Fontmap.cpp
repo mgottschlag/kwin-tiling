@@ -376,7 +376,7 @@ bool create(const QString &dir, CFontEngine &fe)
             QStringList::Iterator it;
 
             for(it=entries.begin(); it!=entries.end(); ++it)
-                out << (*it).latin1() << endl;
+                out << (*it).toLatin1().data() << endl;
         }
         else
             status=false;

@@ -477,7 +477,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
         if(!itsInstalled)  // Then add to fontconfig's list, so that Xft can display it...
         {
             FcInitReinitialize();
-            FcConfigAppFontAddFile(FcConfigGetCurrent(), (const FcChar8 *)(itsName.latin1()));
+            FcConfigAppFontAddFile(FcConfigGetCurrent(), (const FcChar8 *)(itsName.toLatin1().data()));
         }
 
         if(thumb && (w!=h || h>128))
@@ -938,7 +938,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo, bool all)
             QTextStream stream(&file);
 
             thumbUrl=stream.readLine();
-            isThumbnailUrl=0==thumbUrl.find(KFI_KIO_FONTS_PROTOCOL) && parseUrl(KUrl(thumbUrl), faceNo, all);
+            isThumbnailUrl=0==thumbUrl.indexOf(KFI_KIO_FONTS_PROTOCOL) && parseUrl(KUrl(thumbUrl), faceNo, all);
             file.close();
         }
 
@@ -1018,7 +1018,7 @@ void CFcEngine::parseName(const QString &name, int faceNo, bool all)
     {
         FcObjectSet *os  = FcObjectSetBuild(FC_SPACING, FC_FOUNDRY, (void *)0);
         FcPattern   *pat = FcPatternBuild(NULL,
-                                            FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.latin1()),
+                                            FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.toLatin1().data()),
                                             FC_WEIGHT, FcTypeInteger, itsWeight,
                                             FC_SLANT, FcTypeInteger, itsSlant,
 #ifndef KFI_FC_NO_WIDTHS
@@ -1046,7 +1046,7 @@ XftFont * CFcEngine::getFont(int size, QPixmap *pix)
 {
     if(itsInstalled)
         return XftFontOpen(KFI_DISPLAY(pix), 0,
-                           FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.latin1()),
+                           FC_FAMILY, FcTypeString, (const FcChar8 *)(itsName.toLatin1().data()),
                            FC_WEIGHT, FcTypeInteger, itsWeight,
                            FC_SLANT, FcTypeInteger, itsSlant,
 #ifndef KFI_FC_NO_WIDTHS
@@ -1142,7 +1142,7 @@ void CFcEngine::getSizes(QPixmap *pix)
                            FcResultMatch==FcPatternGetInteger(f->pattern, FC_WIDTH, 0, &iv) && equalWidth(iv, itsWidth) &&
 #endif
                            FcResultMatch==FcPatternGetString(f->pattern, FC_FAMILY, 0, &str) && str &&
-                           0==strcmp((const char *)str, itsName.latin1()))
+                           0==strcmp((const char *)str, itsName.toLatin1()))
                         {
                             itsSizes.push_back(constSizes[l][i]);
                             gotSizes=true;

@@ -154,7 +154,7 @@ void propagateSessionManager()
         t.setEncoding( QTextStream::Latin1 );
         QString s = t.readLine();
         f.close();
-        ::setenv( "SESSION_MANAGER", s.latin1(), true  );
+        ::setenv( "SESSION_MANAGER", s.toLatin1(), true  );
     }
 }
 

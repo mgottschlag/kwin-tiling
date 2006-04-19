@@ -59,7 +59,7 @@ KickerConfig::KickerConfig(QWidget *parent, const char *name)
 {
     m_screenNumber = QX11Info::display() ? DefaultScreen(QX11Info::display()) : 0;
 
-    KickerSettings::instance(configName().latin1());
+    KickerSettings::instance(configName().toLatin1());
 
     init();
 

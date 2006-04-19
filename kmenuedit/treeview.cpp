@@ -330,7 +330,7 @@ QString TreeView::findName(KDesktopFile *df, bool deleted)
           QString res = df->resource();
 
           bool isLocal = true;
-          QStringList files = KGlobal::dirs()->findAllResources(res.latin1(), file);
+          QStringList files = KGlobal::dirs()->findAllResources(res.toLatin1(), file);
           for(QStringList::ConstIterator it = files.begin();
               it != files.end();
               ++it)

@@ -470,7 +470,7 @@ void runRdb( uint flags )
     addColorDef(preproc, "ACTIVE_FOREGROUND"  , KGlobalSettings::activeTitleColor());
     //---------------------------------------------------------------
 
-    tmp.write( preproc.latin1(), preproc.length() );
+    tmp.write( preproc.toLatin1(), preproc.length() );
 
     QStringList list;
 
@@ -542,7 +542,7 @@ void runRdb( uint flags )
   }
 
   if (contents.length() > 0)
-    tmp.write( contents.latin1(), contents.length() );
+    tmp.write( contents.toLatin1(), contents.length() );
 
   tmpFile.close();
 
@@ -586,7 +586,7 @@ void runRdb( uint flags )
     if (!qt_settings_timestamp) {
 	 QString atomname("_QT_SETTINGS_TIMESTAMP_");
 	 atomname += XDisplayName( 0 ); // Use the $DISPLAY envvar.
-	 qt_settings_timestamp = XInternAtom( QX11Info::display(), atomname.latin1(), False);
+	 qt_settings_timestamp = XInternAtom( QX11Info::display(), atomname.toLatin1(), False);
     }
 
     QBuffer stamp;

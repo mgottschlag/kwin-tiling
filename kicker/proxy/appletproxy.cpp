@@ -95,7 +95,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
         desktopfile.append( ".desktop" );
 
     if ( !QFile::exists( desktopfile ) )
-        desktopfile = locate( "applets", desktopfile ).latin1();
+        desktopfile = locate( "applets", desktopfile ).toLatin1();
 
     proxy.loadApplet( desktopfile, args->getOption("configfile"));
 

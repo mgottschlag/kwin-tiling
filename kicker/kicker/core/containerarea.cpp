@@ -301,7 +301,7 @@ void ContainerArea::loadContainers(const QStringList& containers)
             continue;
         }
 
-        KConfigGroup group( _config, appletId.latin1() );
+        KConfigGroup group( _config, appletId.toLatin1() );
 
         BaseContainer* a = 0;
 
@@ -400,7 +400,7 @@ void ContainerArea::saveContainerConfig(bool layoutOnly)
         BaseContainer *a = dynamic_cast<BaseContainer*>( layout->itemAt(i)->widget() );
         if ( a )
         {
-            KConfigGroup group( _config, a->appletId().latin1() );
+            KConfigGroup group( _config, a->appletId().toLatin1() );
             a->saveConfiguration( group, layoutOnly );
             alist.append( a->appletId() );
         }
@@ -786,7 +786,7 @@ void ContainerArea::takeContainer(BaseContainer* a)
 
     // Just remove the group from our own config file. Leave separate config
     // files untouched.
-    _config->deleteGroup(a->appletId().latin1());
+    _config->deleteGroup(a->appletId().toLatin1());
     _config->sync();
     m_containers.removeAll(a);
     m_layout->remove(a);

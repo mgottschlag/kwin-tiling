@@ -317,7 +317,7 @@ void KeyRules::parseVariants(const QStringList& vars, Q3Dict<char>& variants, bo
       QStringList addVars = getVariants(layout);
       if( !chkVars || (!variant_.isEmpty() && addVars.contains(variant_)) )
       {
-        variants.replace(layout, strdup(variant_.latin1()));
+        variants.replace(layout, strdup(variant_.toLatin1()));
       }
   }
 }

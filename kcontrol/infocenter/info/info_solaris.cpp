@@ -339,7 +339,7 @@ QListViewItem *mktree( QListViewItem *top, const char *path ) {
 		 *        same level of the device tree
 		 */
 		while( result != NULL ) {
-			if( strcmp( token, (*result).text( 0 ).latin1()) == 0 )
+			if( strcmp( token, (*result).text( 0 ).toLatin1()) == 0 )
 				break;
 			previous = result;
 			result = (*result).nextSibling();

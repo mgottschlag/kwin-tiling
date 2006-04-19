@@ -564,7 +564,7 @@ const LayoutInfo& LayoutMap::getLayout(WId winId)
 	    else {
 		return it.data();
 	    }
-//kDebug("getLayout: winId %lu, pid %lu, %s", winId, pid, newLayout.latin1()); 
+//kDebug("getLayout: winId %lu, pid %lu, %s", winId, pid, newLayout.toLatin1()); 
 	}
 	break;
 

@@ -399,7 +399,7 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
 	      if ( (device_table[n].idVendor == dev->descriptor.idVendor) &&
 		   (device_table[n].idProduct == dev->descriptor.idProduct) ) {
 		  // OK, we have a device that appears to be one of the ones we support
-		  LogitechMouse *mouse = new LogitechMouse( dev, device_table[n].flags, this, device_table[n].Name.latin1() );
+		  LogitechMouse *mouse = new LogitechMouse( dev, device_table[n].flags, this, device_table[n].Name.toLatin1() );
 		  settings->logitechMouseList.append(mouse);
 		  tabwidget->addTab( (QWidget*)mouse, device_table[n].Name );
 	      }

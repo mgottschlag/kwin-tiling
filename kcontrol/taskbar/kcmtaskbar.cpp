@@ -92,7 +92,7 @@ QStringList TaskbarConfig::i18nActionList()
 {
    QStringList i18nList;
    for( QStringList::ConstIterator it = actionList().begin(); it != actionList().end(); ++it ) {
-      i18nList << i18n((*it).latin1());
+      i18nList << i18n((*it).toLatin1());
    }
    return i18nList;
 }
@@ -111,7 +111,7 @@ QStringList TaskbarConfig::i18nGroupModeList()
 {
    QStringList i18nList;
    for( QStringList::ConstIterator it = groupModeList().begin(); it != groupModeList().end(); ++it ) {
-      i18nList << i18n((*it).latin1());
+      i18nList << i18n((*it).toLatin1());
    }
    return i18nList;
 }

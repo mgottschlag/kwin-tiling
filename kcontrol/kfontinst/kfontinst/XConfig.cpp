@@ -804,18 +804,18 @@ bool CXConfig::createFontsDotDir(const QString &dir, CFontEngine &fe)
 
                                      xlfd+=QFile::encodeName(fInfo.fileName());
                                      xlfd+=" -";
-                                     xlfd+=fe.getFoundry().latin1();
+                                     xlfd+=fe.getFoundry().toLatin1();
                                      xlfd+="-";
-                                     xlfd+=family.latin1();
+                                     xlfd+=family.toLatin1();
                                      xlfd+="-";
-                                     xlfd+=CFontEngine::weightStr(fe.getWeight()).latin1();
+                                     xlfd+=CFontEngine::weightStr(fe.getWeight()).toLatin1();
                                      xlfd+="-";
-                                     xlfd+=CFontEngine::italicStr(fe.getItalic()).latin1();
+                                     xlfd+=CFontEngine::italicStr(fe.getItalic()).toLatin1();
                                      xlfd+="-";
-                                     xlfd+=CFontEngine::widthStr(fe.getWidth()).latin1();
+                                     xlfd+=CFontEngine::widthStr(fe.getWidth()).toLatin1();
                                      xlfd+="-";
                                      if(!fe.getAddStyle().isEmpty())
-                                         xlfd+=fe.getAddStyle().latin1();
+                                         xlfd+=fe.getAddStyle().toLatin1();
                                      //CPD: TODO Bitmap only ttfs!!!
                                      xlfd+="-0-0-0-0-";
 
@@ -828,10 +828,10 @@ bool CXConfig::createFontsDotDir(const QString &dir, CFontEngine &fe)
                                             encoding.indexOf("big5")!=-1 || encoding.indexOf("ksc")!=-1)
                                              entry+='c';
                                          else
-                                             entry+=CFontEngine::spacingStr(fe.getSpacing()).latin1();
+                                             entry+=CFontEngine::spacingStr(fe.getSpacing()).toLatin1();
 
                                          entry+="-0-";
-                                         entry+=encoding.latin1();
+                                         entry+=encoding.toLatin1();
 
                                          if(-1==fscale.indexOf(entry))
                                              fscale.append(QString(entry));
@@ -852,7 +852,7 @@ bool CXConfig::createFontsDotDir(const QString &dir, CFontEngine &fe)
                                 QByteArray entry(QFile::encodeName(fInfo.fileName()));
     
                                 entry+=" ";
-                                entry+=fe.getXlfdBmp().latin1();
+                                entry+=fe.getXlfdBmp().toLatin1();
                                 fdir.append(QString(entry));
                                 addedFd=true;
                             }
