@@ -1030,8 +1030,10 @@ void CKioFonts::get(const KUrl &url)
                 while(1)
                 {
                     int n=::read(fd, buffer, MAX_IPC_SIZE);
-                    if (-1==n && EINTR!=errno)
+                    if (-1==n)
                     {
+			if (errno == EINTR)
+				continue;
                         error(KIO::ERR_COULD_NOT_READ, url.prettyURL());
                         close(fd);
                         if(multiple)
@@ -1433,8 +1435,10 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
                         {
                             int n=::read(srcFd, buffer, MAX_IPC_SIZE);
 
-                            if(-1==n && EINTR!=errno)
+                            if(-1==n)
                             {
+				if (errno == EINTR)
+					continue;
                                 error(KIO::ERR_COULD_NOT_READ, src.prettyURL());
                                 close(srcFd);
                                 close(destFd);
