@@ -1257,8 +1257,8 @@ void KDIconView::slotItemRenamed(Q3IconViewItem* _item, const QString &name)
              }
           }
        }
+       KonqIconViewWidget::slotItemRenamed(_item, newName);
    }
-   KonqIconViewWidget::slotItemRenamed(_item, newName);
 }
 
 void KDIconView::slotAboutToCreate(const QPoint &pos, const QList<KIO::CopyInfo> &files)
