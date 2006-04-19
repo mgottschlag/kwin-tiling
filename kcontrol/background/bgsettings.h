@@ -239,7 +239,7 @@ public:
     void updateWallpaperFiles();
     void randomizeWallpaperFiles();
 
-    QString currentWallpaper();
+    QString currentWallpaper() const;
     /**
      * @return true if the currentWallpaper has changed
      */

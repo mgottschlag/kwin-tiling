@@ -987,7 +987,7 @@ void KBackgroundSettings::changeWallpaper(bool init)
 }
 
 
-QString KBackgroundSettings::currentWallpaper()
+QString KBackgroundSettings::currentWallpaper() const
 {
     if ( m_WallpaperMode == NoWallpaper )
 	return QString();

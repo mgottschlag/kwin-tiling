@@ -93,6 +93,7 @@ private:
     int doWallpaper(bool quit=false);
     void setBusyCursor(bool isBusy);
     QString cacheFileName();
+    bool useCacheFile() const;
     bool canTile() const;
     
     bool m_isBusyCursor;

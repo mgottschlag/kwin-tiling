@@ -735,7 +735,7 @@ void KBackgroundRenderer::render()
 
     if( !(m_State & InitCheck)) {
         QString f = cacheFileName();
-        if( enabled()?wallpaperMode():NoWallpaper != NoWallpaper ) {
+        if( useCacheFile()) {
             QString w = m_pDirs->findResource("wallpaper", currentWallpaper());
             QFileInfo wi( w );
             QFileInfo fi( f );
@@ -902,19 +902,40 @@ QString KBackgroundRenderer::cacheFileName()
     return f;
 }
 
+bool KBackgroundRenderer::useCacheFile() const
+{
+    if( !enabled())
+        return false;
+    if( backgroundMode() == Program )
+        return false; // don't cache these at all
+    if( wallpaperMode() == NoWallpaper )
+        return false; // generating only background patterns should be always faster
+    QString file = currentWallpaper();
+    if( file.endsWith(".svg") || file.endsWith(".svgz"))
+        return true; // cache these, they can be bloody slow
+    switch( backgroundMode())
+        {
+        case NoWallpaper:
+        case Centred:
+        case Tiled:
+        case CenterTiled:
+            return false; // these don't need scaling
+        case CentredMaxpect:
+        case TiledMaxpect:
+        case Scaled:
+        case CentredAutoFit:
+        case ScaleAndCrop:
+        default:
+            return true;
+        }
+}
+
 void KBackgroundRenderer::saveCacheFile()
 {
     if( !( m_State & AllDone ))
         return;
-    if( !enabled())
+    if( !useCacheFile())
         return;
-    if( backgroundMode() == Program )
-        return; // don't cache these at all
-    if( wallpaperMode() == NoWallpaper
-        && ( backgroundMode() == Flat
-            || backgroundMode() == HorizontalGradient
-            || backgroundMode() == VerticalGradient ))
-        return; // it's faster to generate these
     if( m_Image.isNull())
         fullWallpaperBlend(); // generate from m_Pixmap
     QString f = cacheFileName();
