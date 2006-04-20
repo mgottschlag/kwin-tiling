@@ -161,14 +161,14 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
                                             KDialog::marginHint(),
                                             KDialog::spacingHint());
   topLayout->addWidget(label, 0, 0);
-  topLayout->addMultiCellWidget(sList, 1, 2, 0, 0);
+  topLayout->addWidget(sList, 1, 0, 2, 1);
   topLayout->addWidget(addBt, 1, 1);
   topLayout->addWidget(removeBt, 2, 1);
   if( preferMetaBt )
     topLayout->addWidget(preferMetaBt, 3, 0);
-  topLayout->addMultiCellWidget(line, 4, 4, 0, 1);
+  topLayout->addWidget(line, 4, 0, 1, 2 );
   topLayout->addRowSpacing(3, 15);
-  topLayout->addMultiCellWidget(kc, 5, 5, 0, 1);
+  topLayout->addWidget(kc, 5, 0, 1, 2 );
 
   setMinimumSize(topLayout->sizeHint());
 }

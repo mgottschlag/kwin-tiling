@@ -140,7 +140,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
          SLOT( slotWidgetColor( int ) ) );
     connect( cs, SIGNAL( colorDropped( int, const QColor&)),
          SLOT( slotColorForWidget( int, const QColor&)));
-    topLayout->addMultiCellWidget( cs, 0, 0, 0, 1 );
+    topLayout->addWidget( cs, 0, 0, 1, 2 );
 
     Q3GroupBox *group = new Q3GroupBox( i18n("Color Scheme"), this );
     group->setOrientation( Qt::Horizontal );
@@ -276,7 +276,7 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
     groupLayout->addWidget( label );
 
     cbExportColors = new QCheckBox(i18n("Apply colors to &non-KDE applications"), this);
-    topLayout->addMultiCellWidget( cbExportColors, 2, 2, 0, 1 );
+    topLayout->addWidget( cbExportColors, 2, 0, 1, 2 );
     connect(cbExportColors, SIGNAL(toggled(bool)), this, SLOT(changed()));
 
     cbExportColors->setWhatsThis( i18n("Check this box to apply the"

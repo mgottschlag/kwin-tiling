@@ -194,8 +194,8 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     hlpl->addWidget( userlabel, 0, 0 );
 //    hlpl->addSpacing( KDialog::spacingHint() );
     hlpl->addWidget( usercombo, 0, 1 );
-    hlpl->addMultiCellWidget( userbutton, 1,1, 0,1, Qt::AlignHCenter );
-    hlpl->addMultiCellWidget( rstuserbutton, 2,2, 0,1, Qt::AlignHCenter );
+    hlpl->addWidget( userbutton, 1, 0, 1, 2, Qt::AlignHCenter );
+    hlpl->addWidget( rstuserbutton, 2, 0, 1, 2, Qt::AlignHCenter );
 
     QHBoxLayout *main = new QHBoxLayout( this, 10 );
 

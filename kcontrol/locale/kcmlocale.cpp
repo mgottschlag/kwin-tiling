@@ -99,7 +99,7 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
   //QComboBox * cb = new QComboBox( this );
   //cb->insertStringList( KGlobal::charsets()->descriptiveEncodingNames() );
 
-  lay->addMultiCellWidget(m_labCountry, 0, 0, 0, 1);
+  lay->addWidget(m_labCountry, 0, 0, 1, 2 );
   lay->addWidget(m_comboCountry, 0, 2);
   lay->addWidget(m_labLang, 1, 0);
   lay->addWidget(m_languages, 1, 1);

@@ -48,7 +48,7 @@ KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
 
     // Use of Icon at (0,0) - (1, 0)
     Q3GroupBox *gbox = new Q3GroupBox(i18n("Use of Icon"), this);
-    top->addMultiCellWidget(gbox, 0, 1, 0, 0);
+    top->addWidget(gbox, 0, 0, 2, 1);
     QBoxLayout *g_vlay = new QVBoxLayout(gbox);
     g_vlay->setMargin(KDialog::marginHint());
     g_vlay->setSpacing(KDialog::spacingHint());
@@ -61,7 +61,7 @@ KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
     top->addWidget(sep, 1, 1);
     // Preview at (2,0) - (2, 1)
     QGridLayout *g_lay = new QGridLayout(4, 3, KDialog::marginHint(), 0);
-    top->addMultiCellLayout(g_lay, 2, 2, 0, 1);
+    top->addLayout(g_lay, 2, 0, 1, 2 );
     g_lay->addRowSpacing(0, fontMetrics().lineSpacing());
 
     QPushButton *push;
@@ -92,11 +92,11 @@ KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
 
     mpDPCheck = new QCheckBox(i18n("Double-sized pixels"), m_pTab1);
     connect(mpDPCheck, SIGNAL(toggled(bool)), SLOT(slotDPCheck(bool)));
-    grid->addMultiCellWidget(mpDPCheck, 1, 1, 0, 1, Qt::AlignLeft);
+    grid->addWidget(mpDPCheck, 1, 0, 1, 2, Qt::AlignLeft);
 
     mpAnimatedCheck = new QCheckBox(i18n("Animate icons"), m_pTab1);
     connect(mpAnimatedCheck, SIGNAL(toggled(bool)), SLOT(slotAnimatedCheck(bool)));
-    grid->addMultiCellWidget(mpAnimatedCheck, 2, 2, 0, 1, Qt::AlignLeft);
+    grid->addWidget(mpAnimatedCheck, 2, 0, 1, 2, Qt::AlignLeft);
 
     top->activate();
 
@@ -544,7 +544,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     mpEffectBox->insertItem(i18n("To Monochrome"));
     mpEffectBox->setMinimumWidth( 100 );
     connect(mpEffectBox, SIGNAL(highlighted(int)), SLOT(slotEffectType(int)));
-    top->addMultiCellWidget(mpEffectBox, 1, 2, 0, 0, Qt::AlignLeft);
+    top->addWidget(mpEffectBox, 1, 0, 2, 1, Qt::AlignLeft);
     lbl->setBuddy(mpEffectBox);
 
     mpSTCheck = new QCheckBox(i18n("&Semi-transparent"), page);
@@ -552,7 +552,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     top->addWidget(mpSTCheck, 3, 0, Qt::AlignLeft);
 
     frame = new Q3GroupBox(i18n("Preview"), page);
-    top->addMultiCellWidget(frame, 0, 1, 1, 1);
+    top->addWidget(frame, 0, 1, 2, 1);
     grid = new QGridLayout(frame, 2, 1, marginHint(), spacingHint());
     grid->addRowSpacing(0, fontMetrics().lineSpacing());
     grid->setRowStretch(1, 1);
@@ -563,7 +563,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     grid->addWidget(mpPreview, 1, 0);
 
     mpEffectGroup = new Q3GroupBox(i18n("Effect Parameters"), page);
-    top->addMultiCellWidget(mpEffectGroup, 2, 3, 1, 1);
+    top->addWidget(mpEffectGroup, 2, 1, 2, 1);
     grid = new QGridLayout(mpEffectGroup, 3, 2, marginHint(), spacingHint());
     grid->addRowSpacing(0, fontMetrics().lineSpacing());
 

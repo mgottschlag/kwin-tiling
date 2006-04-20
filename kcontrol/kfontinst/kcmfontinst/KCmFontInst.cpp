@@ -156,7 +156,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     setMimeTypes(showBitmap);
     itsDirOp->dirLister()->setMainWindow(this);
     itsDirOp->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    fontsLayout->addMultiCellWidget(itsDirOp, 0, 0, 0, 1);
+    fontsLayout->addWidget(itsDirOp, 0, 0, 1, 2 );
 
     KPushButton *button=new KPushButton(KGuiItem(i18n("Add Fonts..."), "newfont"), fontsFrame);
     connect(button, SIGNAL(clicked()), SLOT(addFonts()));

@@ -52,7 +52,7 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog",
     unlockDialogLayout->addWidget( frame );
 
     frameLayout = new QGridLayout(frame, 1, 1, KDialog::marginHint(), KDialog::spacingHint());
-    frameLayout->addMultiCellWidget(pixLabel, 0, 2, 0, 0, Qt::AlignCenter | Qt::AlignTop);
+    frameLayout->addWidget(pixLabel, 0, 0, 3, 1, Qt::AlignCenter | Qt::AlignTop);
     frameLayout->addWidget(greetLabel, 0, 1);
     frameLayout->addWidget(mStatusLabel, 1, 1);
     frameLayout->addWidget(infoLabel, 2, 1);

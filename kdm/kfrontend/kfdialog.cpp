@@ -152,5 +152,5 @@ KFMsgBox::KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text
 	QGridLayout *grid = new QGridLayout( this, 2, 2, 10 );
 	grid->addWidget( label1, 0, 0, Qt::AlignCenter );
 	grid->addWidget( label2, 0, 1, Qt::AlignCenter );
-	grid->addMultiCellWidget( button, 1,1, 0,1, Qt::AlignCenter );
+	grid->addWidget( button, 1, 0, 1, 2, Qt::AlignCenter );
 }

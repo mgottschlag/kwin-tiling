@@ -77,7 +77,7 @@ KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
 	preview->setBackgroundColor( Qt::black );
 	preview->show();    // otherwise saver does not get correct size
 	saver = new KBlankSaver( preview->winId() );
-	grid->addMultiCellWidget(preview, 0, 2, 1, 1);
+	grid->addWidget(preview, 0, 1, 3, 1);
 
 	grid->setRowStretch( 2, 10 );
 	grid->setRowStretch( 3, 20 );

@@ -123,37 +123,37 @@ Dtime::Dtime(QWidget * parent, const char *name)
   bool isRTL = QApplication::isRightToLeft();
 
   QSpacerItem *spacer1 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-  v3->addMultiCell(spacer1, 0, 1, 1, 1);
+  v3->addItem(spacer1, 0, 1, 2, 1);
 
   hour = new HMSTimeWidget( timeBox );
   hour->setWrapping(true);
   hour->setMaximum(23);
   #warning fixme hour->setValidator(new KStrictIntValidator(0, 23, hour));
-  v3->addMultiCellWidget(hour, 0, 1, isRTL ? 6 : 2, isRTL ? 6 : 2 );
+  v3->addWidget(hour, 0, isRTL ? 6 : 2, 2, 1);
 
   QLabel *dots1 = new QLabel(":", timeBox);
   dots1->setMinimumWidth( 7 );
   dots1->setAlignment( Qt::AlignCenter );
-  v3->addMultiCellWidget(dots1, 0, 1, 3, 3 );
+  v3->addWidget(dots1, 0, 3, 2, 1);
 
   minute = new HMSTimeWidget( timeBox );
   minute->setWrapping(true);
   minute->setMinimum(0);
   minute->setMaximum(59);
   #warning fixme minute->setValidator(new KStrictIntValidator(0, 59, minute));
-  v3->addMultiCellWidget(minute, 0, 1, 4, 4 );
+  v3->addWidget(minute, 0, 4, 2, 1);
 
   QLabel *dots2 = new QLabel(":", timeBox);
   dots2->setMinimumWidth( 7 );
   dots2->setAlignment( Qt::AlignCenter );
-  v3->addMultiCellWidget(dots2, 0, 1, 5, 5 );
+  v3->addWidget(dots2, 0, 5, 2, 1);
 
   second = new HMSTimeWidget( timeBox );
   second->setWrapping(true);
   second->setMinimum(0);
   second->setMaximum(59);
   #warning fixme second->setValidator(new KStrictIntValidator(0, 59, second));
-  v3->addMultiCellWidget(second, 0, 1, isRTL ? 2 : 6, isRTL ? 2 : 6 );
+  v3->addWidget(second, 0, isRTL ? 2 : 6, 2, 1);
 
   v3->addColSpacing(7, 7);
 
@@ -165,13 +165,13 @@ Dtime::Dtime(QWidget * parent, const char *name)
   second->setWhatsThis( wtstr );
 
   QSpacerItem *spacer3 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-  v3->addMultiCell(spacer3, 0, 1, 9, 9);
+  v3->addItem(spacer3, 0, 9, 2, 1);
 
   QGridLayout *top = new QGridLayout( this, 2,2, KDialog::spacingHint() );
 
   top->addWidget(dateBox, 1,0);
   top->addWidget(timeBox, 1,1);
-  top->addMultiCellWidget(privateLayoutWidget, 0,0, 0,1);
+  top->addWidget(privateLayoutWidget, 0, 0, 1, 2 );
 
   // *************************************************************
   // End Dialog

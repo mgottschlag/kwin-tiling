@@ -124,12 +124,12 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     layButtons->addWidget( cancel );
 
     frameLayout = new QGridLayout( frame, 1, 1, KDialog::marginHint(), KDialog::spacingHint() );
-    frameLayout->addMultiCellWidget( pixLabel, 0, 2, 0, 0, Qt::AlignTop );
+    frameLayout->addWidget( pixLabel, 0, 0, 3, 1, Qt::AlignTop );
     frameLayout->addWidget( greetLabel, 0, 1 );
     frameLayout->addItem( greet->getLayoutItem(), 1, 1 );
     frameLayout->addLayout( layStatus, 2, 1 );
-    frameLayout->addMultiCellWidget( sep, 3, 3, 0, 1 );
-    frameLayout->addMultiCellLayout( layButtons, 4, 4, 0, 1 );
+    frameLayout->addWidget( sep, 3, 0, 1, 2 );
+    frameLayout->addLayout( layButtons, 4, 0, 1, 2 );
 
     setTabOrder( ok, cancel );
     setTabOrder( cancel, mNewSessButton );
@@ -504,7 +504,7 @@ void PasswordDlg::gplugMsgBox( QMessageBox::Icon type, const QString &text )
     QGridLayout *grid = new QGridLayout( winFrame, 2, 2, 10 );
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );
-    grid->addMultiCellWidget( button, 1,1, 0,1, Qt::AlignCenter );
+    grid->addWidget( button, 1, 0, 1, 2, Qt::AlignCenter );
 
     static_cast< LockProcess* >(parent())->execDialog( &dialog );
 }
@@ -569,7 +569,7 @@ void PasswordDlg::slotStartNewSession()
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );
     QCheckBox *cb = new QCheckBox( i18n("&Do not ask again"), winFrame );
-    grid->addMultiCellWidget( cb, 1,1, 0,1 );
+    grid->addWidget( cb, 1, 0, 1, 2 );
 
     QBoxLayout *hbox = new QHBoxLayout( mbox, KDialog::spacingHint() );
     hbox->addStretch( 1 );

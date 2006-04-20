@@ -75,7 +75,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   grid->setColStretch(1, 1);
 
   QHBoxLayout *hlay = new QHBoxLayout( KDialog::spacingHint() );
-  grid->addMultiCellLayout(hlay, 1,1, 0,1);
+  grid->addLayout(hlay, 1, 0, 1, 2 );
   greetstr_lined = new KLineEdit(group);
   QLabel *label = new QLabel(greetstr_lined, i18n("&Greeting:"), group);
   hlay->addWidget(label);
@@ -99,12 +99,12 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
 
   QGridLayout *hglay = new QGridLayout( 3, 4, KDialog::spacingHint() );
-  grid->addMultiCellLayout(hglay, 2,4, 0,0);
+  grid->addLayout(hglay, 2, 0, 3, 1);
 
   label = new QLabel(i18n("Logo area:"), group);
   hglay->addWidget(label, 0, 0);
   QVBoxLayout *vlay = new QVBoxLayout( KDialog::spacingHint() );
-  hglay->addMultiCellLayout(vlay, 0,0, 1,2);
+  hglay->addLayout(vlay, 0, 1, 1,2);
   noneRadio = new QRadioButton( i18nc("logo area", "&None"), group );
   clockRadio = new QRadioButton( i18n("Show cloc&k"), group );
   logoRadio = new QRadioButton( i18n("Sho&w logo"), group );
@@ -148,7 +148,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   grid->addLayout(hglay, 2, 1);
 
   label = new QLabel(i18n("Position:"), group);
-  hglay->addMultiCellWidget(label, 0,1, 0,0, Qt::AlignVCenter);
+  hglay->addWidget(label, 0, 0, 2, 1, Qt::AlignVCenter);
   QValidator *posValidator = new QIntValidator(0, 100, group);
   QLabel *xLineLabel = new QLabel(i18n("&X:"), group);
   hglay->addWidget(xLineLabel, 0, 1);

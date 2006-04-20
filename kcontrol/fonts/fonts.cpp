@@ -241,7 +241,7 @@ FontAASettings::FontAASettings(QWidget *parent)
   useSubPixel->setWhatsThis( subPixelWhatsThis );
 
   subPixelType=new QComboBox(mw);
-  layout->addMultiCellWidget(subPixelType, 1, 1, 1, 3);
+  layout->addWidget(subPixelType, 1, 1, 1, 3);
 
   subPixelType->setEditable(false);
   subPixelType->setWhatsThis( subPixelWhatsThis );
@@ -254,7 +254,7 @@ FontAASettings::FontAASettings(QWidget *parent)
   layout->addWidget(hintingLabel, 2, 0);
   hintingStyle=new QComboBox(mw);
   hintingStyle->setEditable(false);
-  layout->addMultiCellWidget(hintingStyle, 2, 2, 1, 3);
+  layout->addWidget(hintingStyle, 2, 1, 1, 3);
   for(int s=KXftConfig::Hint::NotSet+1; s<=KXftConfig::Hint::Full; ++s)
     hintingStyle->addItem(i18n(KXftConfig::description((KXftConfig::Hint::Style)s).toUtf8()));
 

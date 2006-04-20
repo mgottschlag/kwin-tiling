@@ -88,7 +88,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   QWidget *vbox = new QWidget(this);
   QVBoxLayout *vboxLayout1 = new QVBoxLayout(vbox);
   vbox->setLayout(vboxLayout1);
-  lay->addMultiCellWidget(vbox, 4, 4, 0, 1);
+  lay->addWidget(vbox, 4, 0, 1, 2 );
   Q3GroupBox *vgrp;
   vgrp = new Q3GroupBox( 1, Qt::Horizontal, vbox, I18N_NOOP("Positive") );
   m_chMonPosPreCurSym = new QCheckBox(vgrp, I18N_NOOP("Prefix currency symbol"));

@@ -95,7 +95,7 @@ KBellConfig::KBellConfig(KInstance *inst, QWidget *parent):
 				  "\"Something Special Happened in the Program\" event."));
   connect(m_useBell, SIGNAL( toggled( bool )), SLOT( useBell( bool )));
   row++;
-  grid->addMultiCellWidget(m_useBell, row, row, 0, 1);
+  grid->addWidget(m_useBell, row, 0, 1, 2 );
 
   setQuickHelp( i18n("<h1>System Bell</h1> Here you can customize the sound of the standard system bell,"
     " i.e. the \"beep\" you always hear when there is something wrong. Note that you can further"

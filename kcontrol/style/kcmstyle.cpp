@@ -323,7 +323,7 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	menuContainerLayout->addWidget( comboMenuEffectType, 1, 0 );
 	menuContainerLayout->addWidget( lblMenuOpacity, 2, 0 );
 	menuContainerLayout->addWidget( sliderBox, 3, 0 );
-	menuContainerLayout->addMultiCellWidget( menuPreview, 0, 3, 1, 1 );
+	menuContainerLayout->addWidget( menuPreview, 0, 1, 4, 1);
 
 	// Layout page2.
 	page2Layout->addWidget( cbEnableEffects );

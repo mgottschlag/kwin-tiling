@@ -309,7 +309,7 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 	grid->addWidget( le_start, 1, 1 );
 	grid->addWidget( lab2, 2, 0, Qt::AlignRight );
 	grid->addWidget( le_timeout, 2, 1 );
-	grid->addMultiCellWidget( cb_force, 3,3, 0,1 );
+	grid->addWidget( cb_force, 3, 0, 1, 2 );
 
 	schedGroup->setSizePolicy( fp );
 

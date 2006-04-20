@@ -1115,7 +1115,7 @@ void LockProcess::msgBox( QMessageBox::Icon type, const QString &txt )
     QGridLayout *grid = new QGridLayout( winFrame, 2, 2, 10 );
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );
-    grid->addMultiCellWidget( button, 1,1, 0,1, Qt::AlignCenter );
+    grid->addWidget( button, 1, 0, 1, 2, Qt::AlignCenter );
 
     execDialog( &box );
 }

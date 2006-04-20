@@ -119,22 +119,22 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     connect(_systrayCB, SIGNAL(clicked()), SLOT(systraycb_clicked()));
 
     // add line inputs to the grid
-    grid->addMultiCellWidget(_nameEdit, 0, 0, 1, 1);
-    grid->addMultiCellWidget(_descriptionEdit, 1, 1, 1, 1);
-    grid->addMultiCellWidget(_commentEdit, 2, 2, 1, 2);
-    grid->addMultiCellWidget(_execEdit, 3, 3, 1, 2);
-    grid->addMultiCellWidget(_launchCB, 4, 4, 0, 2);
-    grid->addMultiCellWidget(_systrayCB, 5, 5, 0, 2);
+    grid->addWidget(_nameEdit, 0, 1, 1, 1);
+    grid->addWidget(_descriptionEdit, 1, 1, 1, 1);
+    grid->addWidget(_commentEdit, 2, 1, 1, 2);
+    grid->addWidget(_execEdit, 3, 1, 1, 2);
+    grid->addWidget(_launchCB, 4, 0, 1, 3 );
+    grid->addWidget(_systrayCB, 5, 0, 1, 3 );
 
     // setup icon button
     _iconButton = new KIconButton(general_group);
     _iconButton->setFixedSize(56,56);
     _iconButton->setIconSize(48);
     connect(_iconButton, SIGNAL(iconChanged(QString)), SLOT(slotChanged()));
-    grid->addMultiCellWidget(_iconButton, 0, 1, 2, 2);
+    grid->addWidget(_iconButton, 0, 2, 2, 1);
 
     // add the general group to the main layout
-    layout->addMultiCellWidget(general_group, 0, 0, 0, 1);
+    layout->addWidget(general_group, 0, 0, 1, 2 );
 
     // path group
     _path_group = new QGroupBox(this);
@@ -159,7 +159,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     connect(_pathEdit, SIGNAL(textChanged(const QString&)),
             SLOT(slotChanged()));
     vbox->addWidget(hbox);
-    layout->addMultiCellWidget(_path_group, 1, 1, 0, 1);
+    layout->addWidget(_path_group, 1, 0, 1, 2 );
 
     // terminal group
     _term_group = new QGroupBox(this);
@@ -185,7 +185,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     connect(_termOptEdit, SIGNAL(textChanged(const QString&)),
             SLOT(slotChanged()));
     vbox->addWidget(hbox);
-    layout->addMultiCellWidget(_term_group, 2, 2, 0, 1);
+    layout->addWidget(_term_group, 2, 0, 1, 2 );
 
     _termOptEdit->setEnabled(false);
 
@@ -213,7 +213,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     connect(_uidEdit, SIGNAL(textChanged(const QString&)),
 	    SLOT(slotChanged()));
     vbox->addWidget(hbox);
-    layout->addMultiCellWidget(_uid_group, 3, 3, 0, 1);
+    layout->addWidget(_uid_group, 3, 0, 1, 2 );
 
     _uidEdit->setEnabled(false);
 
@@ -221,7 +221,7 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
 
     // key binding group
     general_group_keybind = new QGroupBox(this);
-    layout->addMultiCellWidget( general_group_keybind, 4, 4, 0, 1 );
+    layout->addWidget( general_group_keybind, 4, 0, 1, 2 );
     // dummy widget in order to make it look a bit better
     layout->addWidget( new QWidget(this), 5, 0 );
     layout->setRowStretch( 5, 4 );

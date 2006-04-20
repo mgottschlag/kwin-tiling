@@ -172,8 +172,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     main->addWidget(paranoia, 0, 0);
     main->addWidget(alGroup, 1, 0);
     main->addWidget(puGroup, 2, 0);
-    main->addMultiCellWidget(npGroup, 0,3, 1,1);
-    main->addMultiCellWidget(btGroup, 4,4, 0,1);
+    main->addWidget(npGroup, 0, 1, 4, 1);
+    main->addWidget(btGroup, 4, 0, 1, 2 );
     main->setColStretch(0, 1);
     main->setColStretch(1, 2);
     main->setRowStretch(3, 1);

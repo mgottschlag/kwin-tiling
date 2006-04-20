@@ -70,7 +70,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   aacb->setWhatsThis( i18n("If you check this box and your X-Server has the Xft extension, "
 	"fonts will be antialiased (smoothed) in the login dialog.") );
   connect(aacb, SIGNAL(toggled ( bool )),this,SLOT(configChanged()));
-  ml->addMultiCellWidget(aacb, 4, 4, 0, 1);
+  ml->addWidget(aacb, 4, 0, 1, 2 );
   ml->setRowStretch(5, 10);
 }
 
