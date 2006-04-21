@@ -560,8 +560,6 @@ void PanelButton::drawButtonLabel(QPainter *p)
         int tX = reverse ? 3 : icon.width() + qMin(25, qMax(5, fm.width('m') / 2));
         int tY = fm.ascent() + ((h - fm.height()) / 2);
 
-        QColor shadCol = Plasma::shadowColor(d->textColor);
-
         // get a transparent pixmap
         QPainter pixPainter;
         QPixmap textPixmap(w, h);
@@ -571,7 +569,7 @@ void PanelButton::drawButtonLabel(QPainter *p)
 
         // draw text
         pixPainter.begin(&textPixmap);
-        pixPainter.setPen(shadCol);
+        pixPainter.setPen(m_textColor);
         pixPainter.setFont(p->font()); // get the font from the root painter
         pixPainter.drawText(tX, tY, d->buttonText, -1, rtl);
         pixPainter.end();
@@ -587,9 +585,13 @@ void PanelButton::drawButtonLabel(QPainter *p)
         }
 
         // draw shadow
+        QColor shadCol = Plasma::shadowColor(d->textColor);
         QImage img = s_textShadowEngine->makeShadow(textPixmap, shadCol);
         p->drawImage(0, 0, img);
+        p->save();
+        pixPainter.setPen(m_textColor);
         p->drawText(tX, tY, d->buttonText, -1, rtl);
+        p->restore();
 
         if (reverse && !icon.isNull())
         {
