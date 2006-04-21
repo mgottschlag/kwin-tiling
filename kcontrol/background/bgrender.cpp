@@ -958,7 +958,7 @@ void KBackgroundRenderer::saveCacheFile()
                     && ( time_t ) info.lastModified().toTime_t() >= time( NULL ) - 10 * 60 )
                     break;
                 size -= info.size();
-                QFile::remove( info.absFilePath());
+                QFile::remove( info.absoluteFilePath());
             }
         }
     }
