@@ -127,7 +127,7 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
     m_cmbMonNegMonSignPos->addItem(QString());
   }
 
-  lay->setColStretch(1, 1);
+  lay->setColumnStretch(1, 1);
   lay->addRowSpacing(5, 0);
 
   adjustSize();

@@ -84,8 +84,8 @@ KBellConfig::KBellConfig(KInstance *inst, QWidget *parent):
   layout->addWidget(box);
   layout->addStretch();
   QGridLayout *grid = new QGridLayout(box->layout(), KDialog::spacingHint());
-  grid->setColStretch(0, 0);
-  grid->setColStretch(1, 1);
+  grid->setColumnStretch(0, 0);
+  grid->setColumnStretch(1, 1);
   grid->addColSpacing(0, 30);
 
   m_useBell = new QCheckBox( i18n("&Use system bell instead of system notification" ), box );

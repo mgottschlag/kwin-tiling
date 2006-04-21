@@ -72,7 +72,7 @@ KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 	   this, SLOT( slotMonNegSignChanged(const QString &) ) );
   m_labMonNegSign->setBuddy(m_edMonNegSign);
 
-  lay->setColStretch(1, 1);
+  lay->setColumnStretch(1, 1);
 
   connect(this, SIGNAL(localeChanged()),
 	  SLOT(slotLocaleChanged()));

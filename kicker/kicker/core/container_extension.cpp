@@ -151,7 +151,7 @@ void ExtensionContainer::init()
     _layout = new QGridLayout(this, 3, 3, 0, 0);
     _layout->setResizeMode(QLayout::FreeResize);
     _layout->setRowStretch(1,10);
-    _layout->setColStretch(1,10);
+    _layout->setColumnStretch(1,10);
 
     // instantiate the autohide timer
     _autohideTimer = new QTimer(this);
@@ -1227,10 +1227,10 @@ int ExtensionContainer::arrangeHideButtons()
 
 int ExtensionContainer::setupBorderSpace()
 {
-    _layout->setRowSpacing(0, 0);
-    _layout->setRowSpacing(2, 0);
-    _layout->setColSpacing(0, 0);
-    _layout->setColSpacing(2, 0);
+    _layout->setRowMinimumHeight(0, 0);
+    _layout->setRowMinimumHeight(2, 0);
+    _layout->setColumnMinimumWidth(0, 0);
+    _layout->setColumnMinimumWidth(2, 0);
 
     if (!needsBorder())
     {
@@ -1246,14 +1246,14 @@ int ExtensionContainer::setupBorderSpace()
         if (h.top() > 0)
         {
             int topHeight = (_ltHB && _ltHB->isVisibleTo(this)) ? _ltHB->height() + 1 : 1;
-            _layout->setRowSpacing(0, topHeight);
+            _layout->setRowMinimumHeight(0, topHeight);
             ++layoutOffset;
         }
 
         if (h.bottom() < r.bottom())
         {
             int bottomHeight = (_rbHB && _rbHB->isVisibleTo(this)) ? _rbHB->height() + 1 : 1;
-            _layout->setRowSpacing(1, bottomHeight);
+            _layout->setRowMinimumHeight(1, bottomHeight);
             ++layoutOffset;
         }
     }
@@ -1262,14 +1262,14 @@ int ExtensionContainer::setupBorderSpace()
         if (h.left() > 0)
         {
             int leftWidth = (_ltHB && _ltHB->isVisibleTo(this)) ? _ltHB->width() + 1 : 1;
-            _layout->setColSpacing(0, leftWidth);
+            _layout->setColumnMinimumWidth(0, leftWidth);
             ++layoutOffset;
         }
 
         if (h.right() < r.right())
         {
             int rightWidth = (_rbHB && _rbHB->isVisibleTo(this)) ? _rbHB->width() + 1 : 1;
-            _layout->setColSpacing(1, rightWidth);
+            _layout->setColumnMinimumWidth(1, rightWidth);
             ++layoutOffset;
         }
     }
@@ -1277,20 +1277,20 @@ int ExtensionContainer::setupBorderSpace()
     switch (position())
     {
         case Plasma::Left:
-            _layout->setColSpacing(2, 1);
+            _layout->setColumnMinimumWidth(2, 1);
             break;
 
         case Plasma::Right:
-            _layout->setColSpacing(0, 1);
+            _layout->setColumnMinimumWidth(0, 1);
             break;
 
         case Plasma::Top:
-            _layout->setRowSpacing(2, 1);
+            _layout->setRowMinimumHeight(2, 1);
             break;
 
         case Plasma::Bottom:
         default:
-            _layout->setRowSpacing(0, 1);
+            _layout->setRowMinimumHeight(0, 1);
             break;
     }
 
@@ -1434,10 +1434,10 @@ void ExtensionContainer::arrange(Plasma::Position p,
     {
         // this ensures that the layout gets rejigged
         // even if position doesn't change
-        _layout->setRowSpacing(0, 0);
-        _layout->setRowSpacing(2, 0);
-        _layout->setColSpacing(0, 0);
-        _layout->setColSpacing(2, 0);
+        _layout->setRowMinimumHeight(0, 0);
+        _layout->setRowMinimumHeight(2, 0);
+        _layout->setColumnMinimumWidth(0, 0);
+        _layout->setColumnMinimumWidth(2, 0);
     }
 
     if (a != s->alignment())

@@ -71,8 +71,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QGridLayout *grid = new QGridLayout( group, 5, 2, KDialog::marginHint(),
                        KDialog::spacingHint(), "grid");
   grid->addRowSpacing(0, group->fontMetrics().height());
-  grid->setColStretch(0, 1);
-  grid->setColStretch(1, 1);
+  grid->setColumnStretch(0, 1);
+  grid->setColumnStretch(1, 1);
 
   QHBoxLayout *hlay = new QHBoxLayout( KDialog::spacingHint() );
   grid->addLayout(hlay, 1, 0, 1, 2 );
@@ -141,7 +141,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   logoLabel->setWhatsThis( wtstr );
   logobutton->setWhatsThis( wtstr );
   hglay->addRowSpacing( 2, KDialog::spacingHint());
-  hglay->setColStretch( 3, 1);
+  hglay->setColumnStretch( 3, 1);
 
 
   hglay = new QGridLayout( 2, 3, KDialog::spacingHint() );
@@ -170,13 +170,13 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   xLineEdit->setWhatsThis( wtstr );
   yLineLabel->setWhatsThis( wtstr );
   yLineEdit->setWhatsThis( wtstr );
-  hglay->setColStretch( 3, 1);
+  hglay->setColumnStretch( 3, 1);
   hglay->setRowStretch( 2, 1);
 
 
   hglay = new QGridLayout( 2, 3, KDialog::spacingHint() );
   grid->addLayout(hglay, 3, 1);
-  hglay->setColStretch(3, 1);
+  hglay->setColumnStretch(3, 1);
 
   guicombo = new KBackedComboBox(group);
   guicombo->insertItem( "", i18n("<default>") );
@@ -224,7 +224,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   connect(langcombo, SIGNAL(activated(const QString &)), SLOT(changed()));
   label = new QLabel(langcombo, i18n("Languag&e:"), group);
   QGridLayout *hbox = new QGridLayout( group->layout(), 2, 2, KDialog::spacingHint() );
-  hbox->setColStretch(1, 1);
+  hbox->setColumnStretch(1, 1);
   hbox->addWidget(label, 1, 0);
   hbox->addWidget(langcombo, 1, 1);
   wtstr = i18n("Here you can choose the language used by KDM. This setting does not affect"

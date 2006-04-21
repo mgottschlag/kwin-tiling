@@ -250,7 +250,7 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
   connect( m_chDateMonthNamePossessive, SIGNAL( clicked() ),
 	     SLOT( slotDateMonthNamePossChanged() ) );
 
-  lay->setColStretch(1, 1);
+  lay->setColumnStretch(1, 1);
 }
 
 KLocaleConfigTime::~KLocaleConfigTime()

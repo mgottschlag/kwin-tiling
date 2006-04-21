@@ -78,8 +78,8 @@ KLocaleSample::KLocaleSample(KLocale *locale,
   m_timeSample = new QLabel(this);
   m_timeSample->setPalette(pal);
 
-  lay->setColStretch(0, 1);
-  lay->setColStretch(1, 3);
+  lay->setColumnStretch(0, 1);
+  lay->setColumnStretch(1, 3);
 
   QTimer *timer = new QTimer(this, "clock_timer");
   connect(timer, SIGNAL(timeout()), this, SLOT(slotUpdateTime()));

@@ -107,8 +107,8 @@ KLocaleConfig::KLocaleConfig(KLocale *locale,
 
   lay->setRowStretch(2, 5);
 
-  lay->setColStretch(1, 1);
-  lay->setColStretch(2, 1);
+  lay->setColumnStretch(1, 1);
+  lay->setColumnStretch(2, 1);
 }
 
 void KLocaleConfig::slotAddLanguage(const QString & code)

@@ -68,8 +68,8 @@ MenuTab::MenuTab( QWidget *parent, const char* name )
     // connections
     connect(m_editKMenuButton, SIGNAL(clicked()), SLOT(launchMenuEditor()));
 
-    m_browserGroupLayout->setColStretch( 1, 1 );
-    m_pRecentOrderGroupLayout->setColStretch( 1, 1 );
+    m_browserGroupLayout->setColumnStretch( 1, 1 );
+    m_pRecentOrderGroupLayout->setColumnStretch( 1, 1 );
 }
 
 void MenuTab::load()

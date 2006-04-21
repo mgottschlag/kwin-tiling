@@ -67,7 +67,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     QGridLayout* GroupBox1Layout = new QGridLayout( GroupBox1->layout(), 3, 2 );
     GroupBox1Layout->setSpacing( 6 );
     GroupBox1Layout->setMargin( 11 );
-    GroupBox1Layout->setColStretch( 1, 1 );
+    GroupBox1Layout->setColumnStretch( 1, 1 );
 
     cb_busyCursor = new QComboBox( GroupBox1, "cb_busyCursor" );
     cb_busyCursor->insertItem( 0, i18n( "No Busy Cursor" ) );
@@ -108,7 +108,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     QGridLayout* GroupBox2Layout = new QGridLayout( GroupBox2->layout(), 2, 2 );
     GroupBox2Layout->setSpacing( 6 );
     GroupBox2Layout->setMargin( 11 );
-    GroupBox2Layout->setColStretch( 1, 1 );
+    GroupBox2Layout->setColumnStretch( 1, 1 );
 
     cb_taskbarButton = new QCheckBox( GroupBox2, "cb_taskbarButton" );
     cb_taskbarButton->setText( i18n( "Enable &taskbar notification" ) );

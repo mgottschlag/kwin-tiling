@@ -43,8 +43,8 @@ KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
     QGridLayout *top = new QGridLayout(this, 2, 2,
                                        KDialog::marginHint(),
                                        KDialog::spacingHint());
-    top->setColStretch(0, 1);
-    top->setColStretch(1, 1);
+    top->setColumnStretch(0, 1);
+    top->setColumnStretch(1, 1);
 
     // Use of Icon at (0,0) - (1, 0)
     Q3GroupBox *gbox = new Q3GroupBox(i18n("Use of Icon"), this);
@@ -77,8 +77,8 @@ KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
     top->addWidget(m_pTab1, 0, 1);
 
     QGridLayout *grid = new QGridLayout(m_pTab1, 4, 3, 10, 10);
-    grid->setColStretch(1, 1);
-    grid->setColStretch(2, 1);
+    grid->setColumnStretch(1, 1);
+    grid->setColumnStretch(2, 1);
 
 
     // Size
@@ -527,9 +527,9 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     setMainWidget(page);
 
     QGridLayout *top = new QGridLayout(page, 4, 2, 0, spacingHint());
-    top->setColStretch(0,1);
+    top->setColumnStretch(0,1);
     top->addColSpacing(1,10);
-    top->setColStretch(2,2);
+    top->setColumnStretch(2,2);
     top->setRowStretch(1,1);
 
     lbl = new QLabel(i18n("&Effect:"), page);

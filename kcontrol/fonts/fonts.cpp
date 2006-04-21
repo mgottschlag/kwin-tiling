@@ -559,9 +559,9 @@ KFonts::KFonts(QWidget *parent, const char *, const QStringList &args)
   QGridLayout * fontUseLayout =
     new QGridLayout(layout, nameGroupKeyRc.count() / 4, 3);
 
-  fontUseLayout->setColStretch(0, 0);
-  fontUseLayout->setColStretch(1, 1);
-  fontUseLayout->setColStretch(2, 0);
+  fontUseLayout->setColumnStretch(0, 0);
+  fontUseLayout->setColumnStretch(1, 1);
+  fontUseLayout->setColumnStretch(2, 0);
 
   QList<QFont>::ConstIterator defaultFontIt(defaultFontList.begin());
   QList<bool>::ConstIterator fixedListIt(fixedList.begin());

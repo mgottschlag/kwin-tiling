@@ -124,8 +124,8 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
         KDialog::spacingHint() );
     topLayout->setRowStretch(0,0);
     topLayout->setRowStretch(1,0);
-    topLayout->setColStretch(0,1);
-    topLayout->setColStretch(1,1);
+    topLayout->setColumnStretch(0,1);
+    topLayout->setColumnStretch(1,1);
 
     cs->setFixedHeight(160);
     cs->setMinimumWidth(440);

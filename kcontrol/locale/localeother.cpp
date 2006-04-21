@@ -66,7 +66,7 @@ KLocaleConfigOther::KLocaleConfigOther(KLocale *locale,
   m_combMeasureSystem->addItem(QString());
   m_combMeasureSystem->addItem(QString());
 
-  lay->setColStretch(1, 1);
+  lay->setColumnStretch(1, 1);
   lay->addRowSpacing(2, 0);
 
   adjustSize();
