@@ -122,9 +122,9 @@ static void applyQtColors( KConfig& kglobals, QSettings& settings, QPalette& new
      discg   << newPal.color(QPalette::Disabled,
                 (QColorGroup::ColorRole) i).name();
 
-  while (!settings.writeEntry("/qt/Palette/active", actcg)) ;
-  settings.writeEntry("/qt/Palette/inactive", inactcg);
-  settings.writeEntry("/qt/Palette/disabled", discg);
+  settings.setValue("/qt/Palette/active", actcg);
+  settings.setValue("/qt/Palette/inactive", inactcg);
+  settings.setValue("/qt/Palette/disabled", discg);
 
   // export kwin's colors to qtrc for kstyle to use
   kglobals.setGroup("WM");
@@ -132,39 +132,39 @@ static void applyQtColors( KConfig& kglobals, QSettings& settings, QPalette& new
   // active colors
   QColor clr = newPal.active().background();
   clr = kglobals.readEntry("activeBackground", clr);
-  settings.writeEntry("/qt/KWinPalette/activeBackground", clr.name());
+  settings.setValue("/qt/KWinPalette/activeBackground", clr.name());
   if (QPixmap::defaultDepth() > 8)
     clr = clr.dark(110);
   clr = kglobals.readEntry("activeBlend", clr);
-  settings.writeEntry("/qt/KWinPalette/activeBlend", clr.name());
+  settings.setValue("/qt/KWinPalette/activeBlend", clr.name());
   clr = newPal.active().highlightedText();
   clr = kglobals.readEntry("activeForeground", clr);
-  settings.writeEntry("/qt/KWinPalette/activeForeground", clr.name());
+  settings.setValue("/qt/KWinPalette/activeForeground", clr.name());
   clr = newPal.active().background();
   clr = kglobals.readEntry("frame", clr);
-  settings.writeEntry("/qt/KWinPalette/frame", clr.name());
+  settings.setValue("/qt/KWinPalette/frame", clr.name());
   clr = kglobals.readEntry("activeTitleBtnBg", clr);
-  settings.writeEntry("/qt/KWinPalette/activeTitleBtnBg", clr.name());
+  settings.setValue("/qt/KWinPalette/activeTitleBtnBg", clr.name());
 
   // inactive colors
   clr = newPal.inactive().background();
   clr = kglobals.readEntry("inactiveBackground", clr);
-  settings.writeEntry("/qt/KWinPalette/inactiveBackground", clr.name());
+  settings.setValue("/qt/KWinPalette/inactiveBackground", clr.name());
   if (QPixmap::defaultDepth() > 8)
     clr = clr.dark(110);
   clr = kglobals.readEntry("inactiveBlend", clr);
-  settings.writeEntry("/qt/KWinPalette/inactiveBlend", clr.name());
+  settings.setValue("/qt/KWinPalette/inactiveBlend", clr.name());
   clr = newPal.inactive().background().dark();
   clr = kglobals.readEntry("inactiveForeground", clr);
-  settings.writeEntry("/qt/KWinPalette/inactiveForeground", clr.name());
+  settings.setValue("/qt/KWinPalette/inactiveForeground", clr.name());
   clr = newPal.inactive().background();
   clr = kglobals.readEntry("inactiveFrame", clr);
-  settings.writeEntry("/qt/KWinPalette/inactiveFrame", clr.name());
+  settings.setValue("/qt/KWinPalette/inactiveFrame", clr.name());
   clr = kglobals.readEntry("inactiveTitleBtnBg", clr);
-  settings.writeEntry("/qt/KWinPalette/inactiveTitleBtnBg", clr.name());
+  settings.setValue("/qt/KWinPalette/inactiveTitleBtnBg", clr.name());
 
   kglobals.setGroup("KDE");
-  settings.writeEntry("/qt/KDE/contrast", kglobals.readEntry("contrast", 7));
+  settings.setValue("/qt/KDE/contrast", kglobals.readEntry("contrast", 7));
 }
 
 // -----------------------------------------------------------------------------
@@ -250,8 +250,8 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
   }
 
    //Write the list out..
-  settings.writeEntry("/qt/KDE/kdeAddedLibraryPaths", kdeAdded);
-  settings.writeEntry(libPathKey, paths, ':');
+  settings.setValue("/qt/KDE/kdeAddedLibraryPaths", kdeAdded);
+  settings.setValue(libPathKey, paths.join(QString(':')));
 
   /* export widget style */
   kglobals.setGroup("General");
@@ -260,10 +260,10 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
   // KStyle::defaultStyle()
   QString style = kglobals.readEntry("widgetStyle", "plastique" );
   if (!style.isEmpty())
-    settings.writeEntry("/qt/style", style);
+    settings.setValue("/qt/style", style);
 
   /* export font settings */
-  settings.writeEntry("/qt/font", KGlobalSettings::generalFont().toString());
+  settings.setValue("/qt/font", KGlobalSettings::generalFont().toString());
 
   /* ##### looks like kcmfonts skips this, so we don't do this here */
 /*bool usexft = kglobals.readEntry("AntiAliasing", false);
@@ -291,7 +291,7 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
   else
     guieffects << QString("none");
 
-  settings.writeEntry("/qt/GUIEffects", guieffects);
+  settings.setValue("/qt/GUIEffects", guieffects);
 }
 
 // -----------------------------------------------------------------------------
@@ -521,7 +521,7 @@ void runRdb( uint flags )
             subPixel(kglobals.readEntry("XftSubPixel"));
 
     contents += "Xft.antialias: ";
-    if(QSettings().readBoolEntry("/qt/useXft"))
+    if(QSettings().value("/qt/useXft", false).toBool())
       contents += "1";
     else
       contents += "0";

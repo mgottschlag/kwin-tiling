@@ -676,7 +676,7 @@ void KFonts::save()
   config->setGroup( "General" );
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() ) {
       if("font"==i->rcKey())
-          QSettings().writeEntry("/qt/font", i->font().toString());
+          QSettings().setValue("/qt/font", i->font().toString());
       kDebug(1208) << "write entry " <<  i->rcKey() << endl;
       config->writeEntry( i->rcKey(), i->font() );
   }

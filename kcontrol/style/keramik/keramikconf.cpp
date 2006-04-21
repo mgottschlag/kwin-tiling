@@ -56,13 +56,13 @@ KeramikStyleConfig::KeramikStyleConfig(QWidget* parent): QWidget(parent)
 	layout->addStretch(1);
 
 	QSettings s;
-	//origHlLineEdit = s.readBoolEntry("/keramik/Settings/highlightLineEdits", false);
+	//origHlLineEdit = s.value("/keramik/Settings/highlightLineEdits", false).toBool();
 	//highlightLineEdits->setChecked(origHlLineEdit);
 
-	origHlScrollbar = s.readBoolEntry("/keramik/Settings/highlightScrollBar", true);
+	origHlScrollbar = s.value("/keramik/Settings/highlightScrollBar", true).toBool();
 	highlightScrollBar->setChecked(origHlScrollbar);
 
-	origAnimProgressBar = s.readBoolEntry("/keramik/Settings/animateProgressBar", false);
+	origAnimProgressBar = s.value("/keramik/Settings/animateProgressBar", false).toBool();
 	animateProgressBar->setChecked(origAnimProgressBar);
 
 	//connect(highlightLineEdits, SIGNAL( toggled(bool) ), SLOT( updateChanged() ) );

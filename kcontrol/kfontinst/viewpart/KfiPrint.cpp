@@ -82,8 +82,9 @@ void printItems(const QStringList &items, int size, QWidget *parent, CFcEngine &
         QString    str(engine.getPreviewString());
 
         //
-        // Cehck whether the user has enabled font embedding...
-        embedFonts=settings.readBoolEntry("/qt/embedFonts", false, &entryExists);
+        // Check whether the user has enabled font embedding...
+	entryExists=settings.contains("/qt/embedFonts");
+        embedFonts=settings.value("/qt/embedFonts", false).toBool();
 
         // ...if not, then turn on - we may have installed new fonts, without ghostscript being informed, etc.
         if(!entryExists || !embedFonts)

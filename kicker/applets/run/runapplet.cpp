@@ -76,7 +76,7 @@ RunApplet::RunApplet(const QString& configFile, Plasma::Type type, int actions,
     // setup history combo
     _input = new KHistoryCombo(this);
     _input->setFocus();
-    _input->clearEdit();
+    _input->clearEditText();
     watchForFocus(_input->lineEdit());
     connect(_input, SIGNAL(activated(const QString&)),
 	    SLOT(run_command(const QString&)));
@@ -222,7 +222,7 @@ void RunApplet::run_command(const QString& command)
     KURIFilter::self()->filterURI( *(_filterData), filters );
 
     _input->addToHistory(command);
-    _input->clearEdit();
+    _input->clearEditText();
 
     QString cmd = (_filterData->uri().isLocalFile() ? _filterData->uri().path():_filterData->uri().url());
 

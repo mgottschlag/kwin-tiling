@@ -594,10 +594,10 @@ void KCMStyle::save()
 
 	{	// Braces force a QSettings::sync()
 		QSettings settings;	// Only for KStyle stuff
-		settings.writeEntry("/KStyle/Settings/MenuTransparencyEngine", engine);
-		settings.writeEntry("/KStyle/Settings/MenuOpacity", slOpacity->value()/100.0);
- 		settings.writeEntry("/KStyle/Settings/MenuDropShadow",
-					   		cbEnableEffects->isChecked() && cbMenuShadow->isChecked() );
+		settings.setValue("/KStyle/Settings/MenuTransparencyEngine", engine);
+		settings.setValue("/KStyle/Settings/MenuOpacity", slOpacity->value()/100.0);
+ 		settings.setValue("/KStyle/Settings/MenuDropShadow",
+					cbEnableEffects->isChecked() && cbMenuShadow->isChecked() );
 	}
 
 	// Misc page
@@ -978,10 +978,10 @@ void KCMStyle::loadEffects( KConfig& config )
 	else
 		menuPreview->setPreviewMode( MenuPreview::Blend );
 
-	slOpacity->setValue( (int)(100 * settings.readDoubleEntry("/KStyle/Settings/MenuOpacity", 0.90)) );
+	slOpacity->setValue( (int)(100 * settings.value("/KStyle/Settings/MenuOpacity", 0.90).toDouble()) );
 
 	// Menu Drop-shadows...
-	cbMenuShadow->setChecked( settings.readBoolEntry("/KStyle/Settings/MenuDropShadow", false) );
+	cbMenuShadow->setChecked( settings.value("/KStyle/Settings/MenuDropShadow", false).toBool() );
 
 	if (cbEnableEffects->isChecked()) {
 		containerFrame->setEnabled( true );
