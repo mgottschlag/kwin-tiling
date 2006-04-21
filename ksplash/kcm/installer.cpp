@@ -94,16 +94,20 @@ void ThemeListBox::mouseMoveEvent(QMouseEvent *e)
 
 //-----------------------------------------------------------------------------
 SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aInit)
-  : QWidget(aParent, aName), mGui(!aInit)
+  : QWidget(aParent), mGui(!aInit)
 {
+  setObjectName(aName);
   KGlobal::dirs()->addResourceType("ksplashthemes", KStandardDirs::kde_default("data") + "ksplash/Themes");
 
   if (!mGui)
     return;
 
-  QHBoxLayout* hbox = new QHBoxLayout( this, 0, KDialog::spacingHint() );
+  QHBoxLayout* hbox = new QHBoxLayout( this );
+  hbox->setMargin( 0 );
+  hbox->setSpacing( KDialog::spacingHint() );
 
-  QVBoxLayout* leftbox = new QVBoxLayout( hbox, KDialog::spacingHint() );
+  QVBoxLayout* leftbox = new QVBoxLayout( hbox );
+  leftbox->setSpacing( KDialog::spacingHint() );
   hbox->setStretchFactor( leftbox, 1 );
 
   mThemesList = new ThemeListBox(this);
@@ -124,7 +128,8 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   leftbox->addWidget( mBtnTest );
   connect(mBtnTest, SIGNAL(clicked()), SLOT(slotTest()));
 
-  QVBoxLayout* rightbox = new QVBoxLayout( hbox, KDialog::spacingHint() );
+  QVBoxLayout* rightbox = new QVBoxLayout( hbox );
+  rightbox->setSpacing( KDialog::spacingHint() );
   hbox->setStretchFactor( rightbox, 3 );
 
   mPreview = new QLabel(this);
