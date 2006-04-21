@@ -124,8 +124,6 @@ void ExtensionManager::initialize()
 
     configureMenubar(true);
 
-    Kicker::self()->setMainWidget(m_mainPanel);
-
     m_mainPanel->readConfig();
     m_mainPanel->show();
     kapp->processEvents();

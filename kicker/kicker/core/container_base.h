@@ -44,7 +44,7 @@ public:
     typedef QList<BaseContainer*>::iterator Iterator;
     typedef QList<BaseContainer*>::const_iterator ConstIterator;
 
-    BaseContainer( QMenu* appletOpMenu, QWidget* parent = 0, const char * name = 0 );
+    BaseContainer( QMenu* appletOpMenu, QWidget* parent = 0 );
     ~BaseContainer();
 
     virtual int widthForHeight(int height) const = 0;

@@ -44,7 +44,7 @@ class KickerClientMenu : public QMenu, DCOPObject
 {
     Q_OBJECT
 public:
-    KickerClientMenu( QWidget *parent=0, const char *name=0);
+    KickerClientMenu( QWidget *parent=0 );
     ~KickerClientMenu();
 
     // dcop exported
@@ -52,7 +52,7 @@ public:
     void insertItem( QPixmap icon, QString text, int id );
     void insertItem( QString text, int id );
 
-    DCOPCString insertMenu( QPixmap icon, QString test, int id );	
+    DCOPCString insertMenu( QPixmap icon, QString test, int id );
 
     // dcop Q_SIGNALS:
     //     void activated(int)

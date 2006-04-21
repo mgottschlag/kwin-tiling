@@ -31,10 +31,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "client_mnu.h"
 #include "client_mnu.moc"
 
-KickerClientMenu::KickerClientMenu( QWidget * parent, const char *name )
-    : QMenu( parent ), DCOPObject( name )
+KickerClientMenu::KickerClientMenu( QWidget * parent )
+    : QMenu( parent ), DCOPObject()
 {
-    setName(name);
 }
 
 KickerClientMenu::~KickerClientMenu()
@@ -61,12 +60,13 @@ void KickerClientMenu::insertItem( QString text, int id )
 DCOPCString KickerClientMenu::insertMenu( QPixmap icon, QString text, int id )
 {
     QString subname("%1-submenu%2");
-    QByteArray subid = subname.arg(QString::fromLocal8Bit(objId())).arg(id).toLocal8Bit();
-    KickerClientMenu *sub = new KickerClientMenu(this, subid);
+    QString subid = subname.arg(QString::fromLocal8Bit(objId())).arg(id);
+    KickerClientMenu *sub = new KickerClientMenu(this);
+    sub->setObjectName(subid);
     int globalid = QMenu::insertItem( icon, text, sub, id);
     setItemParameter( globalid, id );
 
-    return subid;
+    return subid.toLocal8Bit();
 }
 
 void KickerClientMenu::connectDCOPSignal( DCOPCString signal, DCOPCString appId, DCOPCString objId )

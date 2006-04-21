@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "userrectsel.moc"
 
 UserRectSel::UserRectSel(const RectList& rects, const QPoint& _offset)
-  : QWidget(0, 0, Qt::WStyle_Customize | Qt::WX11BypassWM),
+  : QWidget(0, Qt::X11BypassWindowManagerHint),
     rectangles(rects),
     offset(_offset)
 {

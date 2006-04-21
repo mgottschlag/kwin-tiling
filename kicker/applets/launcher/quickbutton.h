@@ -75,7 +75,7 @@ public:
     enum { DEFAULT_ICON_DIM = 16 };
     enum { ICON_MARGIN = 1 };
     QuickButton(const QString &u, KAction* configAction, KActionCollection*,
-                QWidget *parent=0, const char *name=0);
+                QWidget *parent=0);
     ~QuickButton();
     QString url() const;
     QString menuId() const;

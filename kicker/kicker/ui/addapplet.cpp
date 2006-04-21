@@ -135,15 +135,15 @@ void AppletWidget::keyPressEvent(QKeyEvent *e)
     }
     else if (e->key() == Qt::Key_Up)
     {
-        QKeyEvent fakedKeyPress(QEvent::KeyPress, Qt::Key_Backtab, 0, 0);
-        QKeyEvent fakedKeyRelease(QEvent::KeyRelease, Qt::Key_Backtab, 0, 0);
+        QKeyEvent fakedKeyPress(QEvent::KeyPress, Qt::Key_Backtab, 0);
+        QKeyEvent fakedKeyRelease(QEvent::KeyRelease, Qt::Key_Backtab, 0);
         QApplication::sendEvent(this, &fakedKeyPress);
         QApplication::sendEvent(this, &fakedKeyRelease);
     }
     else if (e->key() == Qt::Key_Down)
     {
-        QKeyEvent fakedKeyPress(QEvent::KeyPress, Qt::Key_Tab, 0, 0);
-        QKeyEvent fakedKeyRelease(QEvent::KeyRelease, Qt::Key_Escape, 0, 0);
+        QKeyEvent fakedKeyPress(QEvent::KeyPress, Qt::Key_Tab, 0);
+        QKeyEvent fakedKeyRelease(QEvent::KeyRelease, Qt::Key_Escape, 0);
         QApplication::sendEvent(this, &fakedKeyPress);
         QApplication::sendEvent(this, &fakedKeyRelease);
     }
@@ -206,21 +206,23 @@ void AppletWidget::setSelected(bool selected)
     m_selected = selected;
 
     // for now just used to switch colours around =)
+    QPalette p = palette();
     if (m_selected)
     {
-        setPaletteBackgroundColor(KGlobalSettings::highlightColor());
-        setPaletteForegroundColor(KGlobalSettings::highlightedTextColor());
+        p.setColor(backgroundRole(),KGlobalSettings::highlightColor());
+        p.setColor(foregroundRole(),KGlobalSettings::highlightedTextColor());
     }
     else if (m_odd)
     {
-        setPaletteBackgroundColor(KGlobalSettings::baseColor());
-        setPaletteForegroundColor(KGlobalSettings::textColor());
+        p.setColor(backgroundRole(),KGlobalSettings::baseColor());
+        p.setColor(foregroundRole(),KGlobalSettings::textColor());
     }
     else
     {
-        setPaletteBackgroundColor(KGlobalSettings::alternateBackgroundColor());
-        setPaletteForegroundColor(KGlobalSettings::textColor());
+        p.setColor(backgroundRole(),KGlobalSettings::alternateBackgroundColor());
+        p.setColor(foregroundRole(),KGlobalSettings::textColor());
     }
+    setPalette(p);
 }
 
 void AppletWidget::setOdd(bool odd)
@@ -253,7 +255,8 @@ AddAppletDialog::AddAppletDialog(ContainerArea* cArea,
     Q_UNUSED(name);
     setModal(false);
 
-    m_mainWidget = new AppletView(this, "AddAppletDialog::m_mainWidget");
+    m_mainWidget = new AppletView(this);
+    m_mainWidget->setObjectName("AddAppletDialog::m_mainWidget");
     m_mainWidget->appletScrollView->setWidgetResizable( true );
     setMainWidget(m_mainWidget);
 
@@ -299,7 +302,9 @@ void AddAppletDialog::closeEvent(QCloseEvent* e)
 void AddAppletDialog::populateApplets()
 {
     QWidget *appletBox = new QWidget(m_mainWidget->appletScrollView->viewport());
-    appletBox->setPaletteBackgroundColor(KGlobalSettings::baseColor());
+    QPalette p = palette();
+    p.setColor(backgroundRole(),KGlobalSettings::baseColor());
+    setPalette(p);
     m_mainWidget->appletScrollView->setWidget(appletBox);
     appletBox->show();
 

@@ -92,9 +92,8 @@ AppletHandle::AppletHandle(AppletContainer* parent)
       m_popupDirection(Plasma::Up),
       m_handleHoverTimer(0)
 {
-    setBackgroundOrigin(AncestorOrigin);
     setMinimumSize(widthForHeight(0), heightForWidth(0));
-    m_layout = new QBoxLayout(this, QBoxLayout::BottomToTop, 0, 0);
+    m_layout = new QBoxLayout(QBoxLayout::BottomToTop, this);
 
     m_dragBar = new AppletHandleDrag(this);
     m_dragBar->installEventFilter(this);
@@ -358,7 +357,6 @@ AppletHandleDrag::AppletHandleDrag(AppletHandle* parent)
     : QWidget(parent),
       m_parent(parent)
 {
-   setBackgroundOrigin( AncestorOrigin );
 }
 
 QSize AppletHandleDrag::minimumSizeHint() const
@@ -421,7 +419,7 @@ void AppletHandleDrag::paintEvent(QPaintEvent *)
         //vertical, paint it on top
         opt.rect = QRect(0, 0, width(), 2);
         style()->drawPrimitive(QStyle::PE_FrameDockWidget, &opt, &p, this);
-        r.rTop() += 2;
+        r.setTop(r.top() + 2);
     }
 
     QStyleOption opt2;
@@ -537,14 +535,14 @@ void AppletHandleButton::paintEvent(QPaintEvent*)
         p.drawLine(0, h, 0, 0);
         p.drawLine(0, 0, w, 0);
 
-        p.setPen(palette().dark());
+        p.setPen(palette().dark().color());
         p.drawLine(w, 0, w, h);
         p.drawLine(w, h, 0, h);
     }
 
     if (isChecked() || isDown())
     {
-        p.setPen(palette().dark());
+        p.setPen(palette().dark().color());
         p.drawLine(0, h, 0, 0);
         p.drawLine(0, 0, w, 0);
 

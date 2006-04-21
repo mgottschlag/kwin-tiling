@@ -115,18 +115,18 @@ void URLButton::setToolTip()
 
         if (df.readComment().isEmpty())
         {
-            QToolTip::add(this, df.readName());
+            QWidget::setToolTip(df.readName());
         }
         else
         {
-            QToolTip::add(this, df.readName() + " - " + df.readComment());
+            QWidget::setToolTip(df.readName() + " - " + df.readComment());
         }
 
         setTitle(df.readName());
     }
     else
     {
-        QToolTip::add(this, fileItem->url().prettyURL());
+        QWidget::setToolTip(fileItem->url().prettyURL());
         setTitle(fileItem->url().prettyURL());
     }
 }

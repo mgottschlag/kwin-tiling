@@ -36,7 +36,7 @@ class PanelRemoveButtonMenu : public QMenu
     Q_OBJECT
 
 public:
-    PanelRemoveButtonMenu( ContainerArea *cArea, QWidget *parent=0, const char *name=0 );
+    PanelRemoveButtonMenu( ContainerArea *cArea, QWidget *parent=0 );
     ~PanelRemoveButtonMenu();
 
 protected Q_SLOTS:

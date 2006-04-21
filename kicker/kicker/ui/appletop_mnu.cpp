@@ -39,10 +39,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* appletsMenu,
                                      const QString & title, const QString &icon,
-                                     QWidget *parent, const char *name)
+                                     QWidget *parent)
   : QMenu(parent)
 {
-    setName(name);
     bool needSeparator = false;
     bool isButton = (parent && parent->inherits("ButtonContainer"));
     bool isMenu = false;
@@ -188,7 +187,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
 
         // NOTE: keditbookmarks is from konqueror. seeing as this is in kdebase
         //       as well this should be ok?
-        insertItem(SmallIconSet("keditbookmarks"), 
+        insertItem(SmallIconSet("keditbookmarks"),
                    i18n("&Edit Bookmarks"),
                    Preferences);
     }

@@ -138,7 +138,7 @@ void SimpleButton::drawButtonLabel( QPainter *p )
 
     if (isChecked() || isDown())
     {
-        pix = pix.toImage().scaled(pix.width() - 2, pix.height() - 2, 
+        pix = pix.toImage().scaled(pix.width() - 2, pix.height() - 2,
 			Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 
@@ -203,14 +203,14 @@ void SimpleButton::slotIconChanged( int group )
     }
 
     generateIcons();
-    repaint(false);
+    repaint();
 }
 
 void SimpleButton::enterEvent( QEvent *e )
 {
     d->highlight = true;
 
-    repaint( false );
+    repaint();
     QAbstractButton::enterEvent( e );
 }
 
@@ -218,7 +218,7 @@ void SimpleButton::leaveEvent( QEvent *e )
 {
     d->highlight = false;
 
-    repaint( false );
+    repaint();
     QAbstractButton::enterEvent( e );
 }
 

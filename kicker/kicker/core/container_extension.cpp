@@ -80,7 +80,7 @@ using namespace Qt;
 ExtensionContainer::ExtensionContainer(const AppletInfo& info,
                                        const QString& extensionId,
                                        QWidget *parent)
-  : QFrame(parent, "ExtensionContainer", Qt::WStyle_Customize | Qt::WStyle_NoBorder),
+  : QFrame(parent, Qt::WStyle_Customize | Qt::WStyle_NoBorder),
     m_hideMode(ManualHide),
     m_unhideTriggeredAt(Plasma::NoEdge),
     _autoHidden(false),
@@ -97,6 +97,7 @@ ExtensionContainer::ExtensionContainer(const AppletInfo& info,
     m_maintainFocus(0),
     m_panelOrder(ExtensionManager::self()->nextPanelOrder())
 {
+    setObjectName( "ExtensionContainer" );
     // now actually try to load the extension
     m_extension = PluginManager::self()->loadExtension(info, this);
     init();
@@ -106,7 +107,7 @@ ExtensionContainer::ExtensionContainer(KPanelExtension* extension,
                                        const AppletInfo& info,
                                        const QString& extensionId,
                                        QWidget *parent)
-  : QFrame(parent, "ExtensionContainer", Qt::WStyle_Customize | Qt::WStyle_NoBorder),
+  : QFrame(parent, Qt::WStyle_Customize | Qt::WStyle_NoBorder),
     m_hideMode(ManualHide),
     m_unhideTriggeredAt(Plasma::NoEdge),
     _autoHidden(false),
@@ -123,7 +124,9 @@ ExtensionContainer::ExtensionContainer(KPanelExtension* extension,
     m_maintainFocus(0),
     m_panelOrder(ExtensionManager::self()->nextPanelOrder())
 {
-    m_extension->reparent(this, QPoint(0, 0));
+    setObjectName("ExtensionContainer");
+    m_extension->setParent(this);
+    m_extension->setGeometry(0, 0, width(), height());
     init();
 }
 
@@ -148,8 +151,8 @@ void ExtensionContainer::init()
     connect(_popupWidgetFilter, SIGNAL(popupWidgetHiding()), SLOT(maybeStartAutoHideTimer()));
 
     // layout
-    _layout = new QGridLayout(this, 3, 3, 0, 0);
-    _layout->setResizeMode(QLayout::FreeResize);
+    _layout = new QGridLayout(this);
+    _layout->setSizeConstraint(QLayout::FreeResize);
     _layout->setRowStretch(1,10);
     _layout->setColumnStretch(1,10);
 
@@ -530,7 +533,7 @@ void ExtensionContainer::enableMouseOverEffects()
 
     if (child)
     {
-        QMouseEvent* e = new QMouseEvent(QEvent::Enter, localPos, globalPos, 0, 0);
+        QMouseEvent* e = new QMouseEvent(QEvent::Enter, localPos, globalPos, Qt::NoButton, Qt::NoButton, Qt::NoModifier);
         qApp->sendEvent(child, e);
     }
 }
@@ -1161,7 +1164,7 @@ int ExtensionContainer::arrangeHideButtons()
         {
             _ltHB->setMaximumWidth(maxWidth);
             _ltHB->setMaximumHeight(14);
-            _layout->remove(_ltHB);
+            _layout->removeWidget(_ltHB);
             _layout->addWidget(_ltHB, 0, 1, Qt::AlignBottom | Qt::AlignLeft);
         }
 
@@ -1169,7 +1172,7 @@ int ExtensionContainer::arrangeHideButtons()
         {
             _rbHB->setMaximumWidth(maxWidth);
             _rbHB->setMaximumHeight(14);
-            _layout->remove(_rbHB);
+            _layout->removeWidget(_rbHB);
             _layout->addWidget(_rbHB, 2, 1);
         }
     }
@@ -1189,7 +1192,7 @@ int ExtensionContainer::arrangeHideButtons()
         {
             _ltHB->setMaximumHeight(maxHeight);
             _ltHB->setMaximumWidth(14);
-            _layout->remove(_ltHB);
+            _layout->removeWidget(_ltHB);
             if (kapp->layoutDirection() == Qt::RightToLeft)
             {
                 _layout->addWidget(_ltHB, 1, 2, vertAlignment);
@@ -1204,7 +1207,7 @@ int ExtensionContainer::arrangeHideButtons()
         {
             _rbHB->setMaximumHeight(maxHeight);
             _rbHB->setMaximumWidth(14);
-            _layout->remove(_rbHB);
+            _layout->removeWidget(_rbHB);
             if (kapp->layoutDirection() == Qt::RightToLeft)
             {
                 _layout->addWidget(_rbHB, 1, 0, leftAlignment | vertAlignment);
@@ -1957,7 +1960,7 @@ bool ExtensionContainer::eventFilter( QObject*, QEvent * e)
         {
             QMouseEvent* me = (QMouseEvent*) e;
             if (_is_lmb_down &&
-                ((me->state() & Qt::LeftButton) == Qt::LeftButton) &&
+                ((me->buttons() & Qt::LeftButton) == Qt::LeftButton) &&
                 !Kicker::self()->isImmutable() &&
                 !m_extension->settings()->config()->isImmutable() &&
                 !ExtensionManager::self()->isMenuBar(this))

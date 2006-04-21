@@ -36,10 +36,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "containerarea.h"
 
 RemoveContainerMenu::RemoveContainerMenu( ContainerArea* cArea,
-					  QWidget *parent, const char *name)
+					  QWidget *parent)
     : QMenu( parent ), containerArea( cArea )
 {
-    setName(name);
     appletId = insertItem(i18n("&Applet"),
                           new PanelRemoveAppletMenu(containerArea, this));
     buttonId = insertItem(i18n("Appli&cation"),

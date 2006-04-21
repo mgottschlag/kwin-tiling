@@ -131,7 +131,7 @@ bool PanelKMenu::loadSidePixmap()
     }
 
     Plasma::colorize(image);
-    sidePixmap.convertFromImage(image);
+    sidePixmap.fromImage(image);
 
     image.load(locate("data", "kicker/pics/" + sideTileName));
 
@@ -142,7 +142,7 @@ bool PanelKMenu::loadSidePixmap()
     }
 
     Plasma::colorize(image);
-    sideTilePixmap.convertFromImage(image);
+    sideTilePixmap.fromImage(image);
 
     if (sidePixmap.width() != sideTilePixmap.width())
     {

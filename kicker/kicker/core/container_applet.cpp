@@ -61,9 +61,7 @@ AppletContainer::AppletContainer(const AppletInfo& info,
                                  QMenu* opMenu,
                                  bool immutable,
                                  QWidget* parent )
-  : BaseContainer(opMenu,
-                  parent,
-                  QString(info.library() + "container").toLatin1()),
+  : BaseContainer(opMenu, parent),
     _info(info),
     _handle(0),
     _layout(0),
@@ -72,6 +70,7 @@ AppletContainer::AppletContainer(const AppletInfo& info,
     _heightForWidthHint(0),
     _firstuse(true)
 {
+    setObjectName(QString(info.library() + "container"));
     //setup appletframe
     _appletframe = new KHBox(this);
     _appletframe->layout()->setMargin(0);
@@ -79,14 +78,14 @@ AppletContainer::AppletContainer(const AppletInfo& info,
 
     if (orientation() == Qt::Horizontal)
     {
-        _layout = new QBoxLayout(this, QBoxLayout::LeftToRight, 0, 0);
+        _layout = new QBoxLayout(QBoxLayout::LeftToRight, this);
     }
     else
     {
-        _layout = new QBoxLayout(this, QBoxLayout::TopToBottom, 0, 0);
+        _layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     }
 
-    _layout->setResizeMode( QLayout::SetNoConstraint );
+    _layout->setSizeConstraint( QLayout::SetNoConstraint );
 
     _handle = new AppletHandle(this);
     _layout->addWidget(_handle, 0);

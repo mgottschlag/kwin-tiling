@@ -44,7 +44,7 @@ public:
     enum { KMenuEditor = 1048576, BookmarkEditor = 2097152 };
     PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* appletsMenu = 0,
                       const QString &title = 0, const QString &icon = 0,
-                      QWidget *parent=0, const char *name=0);
+                      QWidget *parent=0);
 
 Q_SIGNALS:
     void escapePressed();

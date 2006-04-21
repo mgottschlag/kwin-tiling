@@ -36,7 +36,7 @@ class PanelAddAppletMenu : public QMenu
     Q_OBJECT
 
 public:
-    PanelAddAppletMenu(ContainerArea *cArea, QWidget *parent=0, const char *name=0);
+    PanelAddAppletMenu(ContainerArea *cArea, QWidget *parent=0);
 
 protected Q_SLOTS:
     virtual void slotExec(int id);

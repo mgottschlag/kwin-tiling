@@ -32,10 +32,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "addapplet_mnu.moc"
 
 
-PanelAddAppletMenu::PanelAddAppletMenu(ContainerArea* cArea, QWidget *parent, const char *name)
+PanelAddAppletMenu::PanelAddAppletMenu(ContainerArea* cArea, QWidget *parent)
     : QMenu(parent), containerArea(cArea)
 {
-    setName(name);
     connect(this, SIGNAL(activated(int)), SLOT(slotExec(int)));
     connect(this, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()));
 }

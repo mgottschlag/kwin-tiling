@@ -41,10 +41,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "removebutton_mnu.moc"
 
 PanelRemoveButtonMenu::PanelRemoveButtonMenu( ContainerArea* cArea,
-                                              QWidget *parent, const char *name )
+                                              QWidget *parent )
     : QMenu( parent ), containerArea( cArea )
 {
-    setName(name);
     connect(this, SIGNAL(activated(int)), SLOT(slotExec(int)));
     connect(this, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()));
 }
@@ -93,7 +92,7 @@ void PanelRemoveButtonMenu::slotAboutToShow()
 
     if (containers.count() > 1)
     {
-        insertSeparator();
+        addSeparator();
         insertItem(i18n("All"), this, SLOT(slotRemoveAll()), 0, id);
     }
 }

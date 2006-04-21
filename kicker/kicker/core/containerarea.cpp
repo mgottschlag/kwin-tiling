@@ -733,7 +733,7 @@ void ContainerArea::removeContainer(BaseContainer *a)
 
     a->slotRemoved( _config );
     m_containers.removeAll( a );
-    m_layout->remove( a );
+    m_layout->removeWidget( a );
     a->deleteLater();
     saveContainerConfig( true );
     resizeContents();
@@ -757,7 +757,7 @@ void ContainerArea::removeContainers(BaseContainer::List containers)
 
         a->slotRemoved(_config);
         m_containers.removeAll(a);
-        m_layout->remove(a);
+        m_layout->removeWidget(a);
         a->deleteLater();
     }
 
@@ -789,7 +789,7 @@ void ContainerArea::takeContainer(BaseContainer* a)
     _config->deleteGroup(a->appletId().toLatin1());
     _config->sync();
     m_containers.removeAll(a);
-    m_layout->remove(a);
+    m_layout->removeWidget(a);
     saveContainerConfig(true);
     resizeContents();
 }
@@ -907,7 +907,7 @@ void ContainerArea::mouseMoveEvent(QMouseEvent *ev)
         return;
     }
 
-    if (ev->state() == LeftButton && !rect().contains(ev->pos()))
+    if (ev->button() == Qt::LeftButton && !rect().contains(ev->pos()))
     {
         // leaveEvent() don't work, while grabbing the mouse
         _autoScrollTimer.stop();
@@ -937,7 +937,7 @@ void ContainerArea::mouseMoveEvent(QMouseEvent *ev)
     {
         int oldX = _moveAC->x() + _moveAC->moveOffset().x();
         int x = ev->pos().x();
-        if (ev->state() & ShiftButton)
+        if (ev->modifiers() & Qt::ShiftModifier)
         {
             m_layout->moveContainerPush(_moveAC, x - oldX);
         }
@@ -970,7 +970,7 @@ void ContainerArea::mouseMoveEvent(QMouseEvent *ev)
     {
         int oldY = _moveAC->y() + _moveAC->moveOffset().y();
         int y = ev->pos().y();
-        if (ev->state() & ShiftButton)
+        if (ev->modifiers() & Qt::ShiftModifier)
         {
             m_layout->moveContainerPush(_moveAC, y - oldY);
         }
@@ -1083,8 +1083,8 @@ void ContainerArea::dragMoveEvent(QDragMoveEvent* ev)
         // then it does work only on every second event.
 
         // Cancel the drag by faking an Escape keystroke.
-        QKeyEvent fakedKeyPress(QEvent::KeyPress, Key_Escape, 0, 0);
-        QKeyEvent fakedKeyRelease(QEvent::KeyRelease, Key_Escape, 0, 0);
+        QKeyEvent fakedKeyPress(QEvent::KeyPress, Key_Escape, Qt::NoModifier);
+        QKeyEvent fakedKeyRelease(QEvent::KeyRelease, Key_Escape, Qt::NoModifier);
         QApplication::sendEvent(this, &fakedKeyPress);
         QApplication::sendEvent(this, &fakedKeyRelease);
         qApp->processEvents();
@@ -1180,7 +1180,9 @@ void ContainerArea::dropEvent(QDropEvent *ev)
 
         // it came from another panel
         Kicker::self()->setInsertionPoint(_dragIndicator->pos());
-        a->reparent(m_contents, 0, _dragIndicator->pos(), true);
+        a->setParent(m_contents);
+        a->setGeometry(_dragIndicator->pos().x(),_dragIndicator->pos().y(),width(),height());
+        a->show();
         a->setAppletId(createUniqueId(a->appletType()));
         addContainer(a, true);
         Kicker::self()->setInsertionPoint(QPoint());
@@ -1328,11 +1330,10 @@ void ContainerArea::dropEvent(QDropEvent *ev)
 
             if (_dragMoveAC)
             {
-                BaseContainer::Iterator it = m_containers.find(a);
-                if (it != m_containers.end() &&
-                        ++it != m_containers.end())
+                int iPos = m_containers.indexOf(a) + 1;
+                if (iPos > 0 && iPos < m_containers.count())
                 {
-                    next = (*it);
+                    next = m_containers[iPos];
                 }
             }
 
@@ -1452,11 +1453,10 @@ QRect ContainerArea::availableSpaceFollowing(BaseContainer* a)
 
     if (a)
     {
-        BaseContainer::Iterator it = m_containers.find(a);
-        if (it != m_containers.end() &&
-            ++it != m_containers.end())
+        int iPos = m_containers.indexOf(a) + 1;
+        if (iPos > 0 && iPos < m_containers.count())
         {
-            b = (*it);
+            b = m_containers[iPos];
         }
     }
 
@@ -1769,7 +1769,7 @@ void DragIndicator::paintEvent(QPaintEvent*)
     QPainter painter(this);
     QStyleOptionFocusRect frOpt;
     frOpt.init(this);
-    frOpt.backgroundColor = palette().base();
+    frOpt.backgroundColor = palette().base().color();
     style()->drawPrimitive( QStyle::PE_FrameFocusRect, &frOpt, &painter, this );
 }
 

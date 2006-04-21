@@ -33,7 +33,7 @@ class RemoveContainerMenu : public QMenu
     Q_OBJECT
 
 public:
-    RemoveContainerMenu(ContainerArea* cArea, QWidget *parent=0, const char *name=0);
+    RemoveContainerMenu(ContainerArea* cArea, QWidget *parent=0);
     ~RemoveContainerMenu();
 
 protected Q_SLOTS:

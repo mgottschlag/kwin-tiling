@@ -168,8 +168,8 @@ class DragIndicator : public QWidget
     Q_OBJECT
 
 public:
-    DragIndicator(QWidget* parent = 0, const char* name = 0)
-    : QWidget(parent, name) {;}
+    DragIndicator(QWidget* parent = 0)
+    : QWidget(parent) {;}
     ~DragIndicator() {;}
 
     QSize preferredSize() const { return _preferredSize; }

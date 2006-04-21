@@ -39,8 +39,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "container_base.moc"
 
 
-BaseContainer::BaseContainer( QMenu* appletOpMenu, QWidget* parent, const char * name )
-  : QWidget( parent, name )
+BaseContainer::BaseContainer( QMenu* appletOpMenu, QWidget* parent )
+  : QWidget( parent )
   , _dir(Plasma::Up)
   , _orient(Qt::Horizontal)
   , _alignment(Plasma::LeftTop)
@@ -93,7 +93,6 @@ void BaseContainer::saveConfiguration(KConfigGroup& group,
 void BaseContainer::configure(Qt::Orientation o,
                               Plasma::Position d)
 {
-    setBackgroundOrigin(AncestorOrigin);
     setOrientation(o);
     setPopupDirection(d);
     configure();

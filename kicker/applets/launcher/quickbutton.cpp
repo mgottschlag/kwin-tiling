@@ -28,7 +28,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qdrawutil.h>
 #include <QMenu>
 #include <qtooltip.h>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QPaintEvent>
 #include <QEvent>
@@ -133,15 +132,15 @@ QPixmap QuickURL::pixmap( mode_t _mode, K3Icon::Group _group,
    QString iconName = KMimeType::iconNameForURL(_kurl, _mode);
    QPixmap pxmap = KGlobal::iconLoader()->loadIcon(iconName, _group, _force_size, _state);
    // Resize to fit button
-   pxmap.convertFromImage(pxmap.convertToImage().scaled(_force_size,_force_size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+   pxmap.fromImage(pxmap.toImage().scaled(_force_size,_force_size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
    return pxmap;
 }
 
 
 QuickButton::QuickButton(const QString &u, KAction* configAction,
                          KActionCollection* actionCollection,
-                         QWidget *parent, const char *name) :
-     QAbstractButton(parent, name),
+                         QWidget *parent) :
+     QAbstractButton(parent),
      m_flashCounter(0),
      m_sticky(false)
 {
@@ -150,7 +149,6 @@ QuickButton::QuickButton(const QString &u, KAction* configAction,
     {
         setBackgroundMode(Qt::X11ParentRelative);
     }
-    setBackgroundOrigin( AncestorOrigin );
     setMouseTracking(true);
     _highlight = false;
     _oldCursor = cursor();
@@ -158,7 +156,6 @@ QuickButton::QuickButton(const QString &u, KAction* configAction,
 
     this->setToolTip( _qurl->comment());
     resize(int(DEFAULT_ICON_DIM),int(DEFAULT_ICON_DIM));
-    QBrush bgbrush(colorGroup().brush(QColorGroup::Background));
 
     QuickAddAppsMenu *addAppsMenu = new QuickAddAppsMenu(
         parent, this, _qurl->url());
@@ -223,8 +220,8 @@ void QuickButton::paintEvent(QPaintEvent *)
 void QuickButton::drawButton(QPainter *p)
 {
    if (isDown() || isChecked()) {
-      p->fillRect(rect(), colorGroup().brush(QColorGroup::Mid));
-      qDrawWinButton(p, 0, 0, width(), height(), colorGroup(), true);
+      p->fillRect(rect(), palette().brush(QColorGroup::Mid));
+      qDrawWinButton(p, 0, 0, width(), height(), palette(), true);
    }
 
    drawButtonLabel(p);
@@ -268,7 +265,7 @@ void QuickButton::mousePressEvent(QMouseEvent *e)
 
 void QuickButton::mouseMoveEvent(QMouseEvent *e)
 {
-   if ((e->state() & Qt::LeftButton) == 0) return;
+   if ((e->buttons() & Qt::LeftButton) == 0) return;
    QPoint p(e->pos() - _dragPos);
    if (p.manhattanLength() <= KGlobalSettings::dndEventDelay())
       return;
