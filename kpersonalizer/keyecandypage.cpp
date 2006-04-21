@@ -597,12 +597,12 @@ void KEyeCandyPage::enableAntialiasingFonts(bool enable, bool reset){
 	if (!reset){
 		if ( ( (sys->isXfromXFreeInc() && (sys->getXRelease() > 40000000)) || sys->isXfromXOrg() )
 		     && sys->getRenderSupport()) {
-			QSettings().writeEntry("/qt/useXft", enable);
-			QSettings().writeEntry("/qt/enableXft", enable);
+			QSettings().setValue("/qt/useXft", enable);
+			QSettings().setValue("/qt/enableXft", enable);
 		}
 	} else {
-		QSettings().writeEntry("/qt/useXft", b_useXft);
-		QSettings().writeEntry("/qt/enableXft", b_enableXft);
+		QSettings().setValue("/qt/useXft", b_useXft);
+		QSettings().setValue("/qt/enableXft", b_enableXft);
 	}
 }
 //----------------------------OTHER STUFF-------------------------------------------------
@@ -697,8 +697,8 @@ void KEyeCandyPage::getUserDefaults(){
 	KGlobal::config()->setGroup("KDE");
 
 	// Font-User-Defaults
-	b_useXft=QSettings().readBoolEntry("/qt/useXft");
-	b_enableXft=QSettings().readBoolEntry("/qt/enableXft");
+	b_useXft=QSettings().value("/qt/useXft", false).toBool();
+	b_enableXft=QSettings().value("/qt/enableXft", false).toBool();
 
 	KGlobal::config()->setGroup("PanelIcons");
 	st_UserGamma.EffectPanel=KGlobal::config()->readEntry("ActiveEffect", "none");
