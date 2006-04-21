@@ -629,7 +629,7 @@ void QuickLauncher::dropEvent(QDropEvent *e)
         " type=" << e->type() << ")" << endl << flush;
     if (!m_dragAccepted)
     {
-        e->accept(false);
+        e->setAccepted(false);
         return;
     }
 

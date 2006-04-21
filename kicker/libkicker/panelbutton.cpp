@@ -526,8 +526,8 @@ void PanelButton::drawButtonLabel(QPainter *p)
 
     if (active)
     {
-        icon = icon.toImage().smoothScale(icon.width() - 2,
-                                          icon.height() - 2);
+        icon = icon.toImage().scaled(icon.width() - 2, icon.height() - 2, 
+			Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 
     if (!d->buttonText.isEmpty() && orientation() == Qt::Horizontal)

@@ -138,8 +138,8 @@ void SimpleButton::drawButtonLabel( QPainter *p )
 
     if (isChecked() || isDown())
     {
-        pix = pix.toImage().smoothScale(pix.width() - 2,
-                                        pix.height() - 2);
+        pix = pix.toImage().scaled(pix.width() - 2, pix.height() - 2, 
+			Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 
     int h = height();

@@ -93,12 +93,12 @@ KCustomMenu::insertMenuItem(KService::Ptr & s, int nId, int nIndex/*= -1*/)
     // make sure they are not larger than 16x16
     if (normal.width() > 16 || normal.height() > 16) {
         QImage tmp = normal.convertToImage();
-        tmp = tmp.smoothScale(16, 16);
+        tmp = tmp.scaled(16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         normal.convertFromImage(tmp);
     }
     if (active.width() > 16 || active.height() > 16) {
         QImage tmp = active.convertToImage();
-        tmp = tmp.smoothScale(16, 16);
+        tmp = tmp.scaled(16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         active.convertFromImage(tmp);
     }
 

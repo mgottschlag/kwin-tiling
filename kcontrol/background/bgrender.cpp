@@ -397,7 +397,7 @@ wp_load:
 	       xs = ys = 1;
 	    }
 	    if( m_WallpaperRect.size() != QSize( xs, ys ))
-	        m_Wallpaper = m_Wallpaper.smoothScale(xs, ys);
+	        m_Wallpaper = m_Wallpaper.scaled(xs, ys, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	}
     }
 wp_out:
@@ -434,7 +434,7 @@ wp_out:
 	    ww = w;
 	    wh = h;
 	    if( m_WallpaperRect.size() != QSize( w, h ))
-		m_Wallpaper = m_Wallpaper.smoothScale( w, h );
+		m_Wallpaper = m_Wallpaper.scaled( w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
 	    m_WallpaperRect.setRect(0, 0, w, h);
 	    break;
         case CentredAutoFit:
@@ -455,7 +455,7 @@ wp_out:
                   ww = w;
               }
 	      if( m_WallpaperRect.size() != QSize( ww, wh ))
-                  m_Wallpaper = m_Wallpaper.smoothScale(ww, wh);
+                  m_Wallpaper = m_Wallpaper.scaled(ww, wh, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	      m_WallpaperRect.setRect((w - ww) / 2, (h - wh) / 2, ww, wh);
 	      break;
             }
@@ -471,7 +471,7 @@ wp_out:
                   ww = w;
               }
               if( m_WallpaperRect.size() != QSize( ww, wh ))
-                  m_Wallpaper = m_Wallpaper.smoothScale(ww, wh);
+                  m_Wallpaper = m_Wallpaper.scaled(ww, wh, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	      m_WallpaperRect.setRect(0, 0, w, h);
 	      break;
             }
@@ -489,7 +489,7 @@ wp_out:
                   ww = (int)(sy*ww);
               }
               if( m_WallpaperRect.size() != QSize( ww, wh ))
-                  m_Wallpaper = m_Wallpaper.smoothScale(ww, wh);
+                  m_Wallpaper = m_Wallpaper.scaled(ww, wh, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 	      m_WallpaperRect.setRect((w - ww) / 2, (h - wh) / 2,w, h);
 	      break;
             }

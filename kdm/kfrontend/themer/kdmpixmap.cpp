@@ -187,7 +187,7 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 			} else {
 				kDebug() << "convertFromImage\n";
 				QImage tempImage = pClass->pixmap.convertToImage();
-				scaledImage = tempImage.smoothScale( area.width(), area.height() );
+				scaledImage = tempImage.scaled( area.width(), area.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
 			}
 		} else
 			scaledImage = pClass->pixmap.convertToImage();

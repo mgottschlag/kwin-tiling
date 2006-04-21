@@ -79,9 +79,9 @@ KeramikStyleConfig::~KeramikStyleConfig()
 void KeramikStyleConfig::save()
 {
 	QSettings s;
-	//s.writeEntry("/keramik/Settings/highlightLineEdits", highlightLineEdits->isChecked());
-	s.writeEntry("/keramik/Settings/highlightScrollBar", highlightScrollBar->isChecked());
-	s.writeEntry("/keramik/Settings/animateProgressBar", animateProgressBar->isChecked());
+	//s.setValue("/keramik/Settings/highlightLineEdits", highlightLineEdits->isChecked());
+	s.setValue("/keramik/Settings/highlightScrollBar", highlightScrollBar->isChecked());
+	s.setValue("/keramik/Settings/animateProgressBar", animateProgressBar->isChecked());
 }
 
 void KeramikStyleConfig::defaults()

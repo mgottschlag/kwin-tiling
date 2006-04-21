@@ -314,7 +314,7 @@ void KIconConfig::preview(int i)
     if (mbDP[viewedGroup])
     {
 	int w = img.width() * 2;
-	img = img.smoothScale(w, w);
+	img = img.scaled(w, w, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 
     Effect &effect = mEffects[viewedGroup][i];
@@ -437,7 +437,7 @@ void KIconConfig::EffectSetup(int state)
     if (mbDP[viewedGroup])
     {
 	int w = img.width() * 2;
-	img = img.smoothScale(w, w);
+	img = img.scaled(w, w, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 
     QString caption;

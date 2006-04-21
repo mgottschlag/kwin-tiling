@@ -90,7 +90,7 @@ static QPixmap appIcon(const QString &iconName)
     if (normal.width() > 20 || normal.height() > 20)
     {
        QImage tmp = normal.convertToImage();
-       tmp = tmp.smoothScale(20, 20);
+       tmp = tmp.scaled(20, 20, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
        normal.convertFromImage(tmp);
     }
     return normal;

@@ -115,7 +115,7 @@ static QPixmap scalePixmap( const QPixmap& pm, int w, int h )
 {
 	QPixmap result( 20, 20 );
 	result.setMask( QBitmap( 20, 20, true ) );
-	QPixmap scaled( pm.convertToImage().smoothScale( w, h ) );
+	QPixmap scaled( pm.convertToImage().scaled( w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) );
 	copyBlt( &result, (20 - w) / 2, (20 - h) / 2, &scaled, 0, 0, w, h );
 	return result;
 }
