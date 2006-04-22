@@ -151,7 +151,7 @@ void HideButton::generateIcons()
     }
 
     QImage image = icon().pixmap().toImage();
-    image = image.smoothScale(size() - QSize(4, 4), Qt::KeepAspectRatio);
+    image = image.scaled(size() - QSize(4, 4), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
     KIconEffect effect;
     m_normalIcon = effect.apply(image, K3Icon::Panel, K3Icon::DefaultState);
