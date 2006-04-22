@@ -41,7 +41,7 @@ public:
         return false;
     }
     virtual const QPixmap& image() const { return m_data; }
-    virtual QMimeSource* mimeSource() const { return new Q3ImageDrag( m_data.convertToImage()) ; }
+    virtual QMimeSource* mimeSource() const { return new Q3ImageDrag( m_data.toImage()) ; }
 
     virtual void write( QDataStream& stream ) const;
 

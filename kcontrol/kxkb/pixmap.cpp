@@ -104,7 +104,7 @@ LayoutIcon::findPixmap(const QString& code_, bool showFlag)
     pm = new QPixmap(flag);
 
 
-  QImage image = pm->convertToImage();
+  QImage image = pm->toImage();
   for (int y=0; y<image.height(); y++)
     for(int x=0; x<image.width(); x++)
       {

@@ -310,7 +310,7 @@ void KIconConfig::preview(int i)
     int viewedGroup = (mUsage == K3Icon::LastGroup) ? K3Icon::FirstGroup : mUsage;
 
     QPixmap pm = mpLoader->loadIcon(mExample, K3Icon::NoGroup, mSizes[viewedGroup]);
-    QImage img = pm.convertToImage();
+    QImage img = pm.toImage();
     if (mbDP[viewedGroup])
     {
 	int w = img.width() * 2;
@@ -433,7 +433,7 @@ void KIconConfig::EffectSetup(int state)
     int viewedGroup = (mUsage == K3Icon::LastGroup) ? K3Icon::FirstGroup : mUsage;
 
     QPixmap pm = mpLoader->loadIcon(mExample, K3Icon::NoGroup, mSizes[viewedGroup]);
-    QImage img = pm.convertToImage();
+    QImage img = pm.toImage();
     if (mbDP[viewedGroup])
     {
 	int w = img.width() * 2;

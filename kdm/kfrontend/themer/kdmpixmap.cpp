@@ -183,14 +183,14 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 			if (pClass->fullpath.endsWith( ".svg" )) {
 				kDebug() << "renderSVG\n";
 				renderSvg( pClass, area );
-				scaledImage = pClass->pixmap.convertToImage();
+				scaledImage = pClass->pixmap.toImage();
 			} else {
 				kDebug() << "convertFromImage\n";
-				QImage tempImage = pClass->pixmap.convertToImage();
+				QImage tempImage = pClass->pixmap.toImage();
 				scaledImage = tempImage.scaled( area.width(), area.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
 			}
 		} else
-			scaledImage = pClass->pixmap.convertToImage();
+			scaledImage = pClass->pixmap.toImage();
 
 		bool haveTint = pClass->tint.rgb() != 0xFFFFFF;
 		bool haveAlpha = pClass->alpha < 1.0;

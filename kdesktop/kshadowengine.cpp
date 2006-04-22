@@ -74,7 +74,7 @@ QImage KShadowEngine::makeShadow(const QPixmap& textPixmap, const QColor &bgColo
   /*
    *	This is the source pixmap
    */
-  QImage img = textPixmap.convertToImage().convertDepth(32);
+  QImage img = textPixmap.toImage().convertDepth(32);
 
   /*
    *	Resize the image if necessary

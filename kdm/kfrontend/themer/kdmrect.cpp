@@ -97,7 +97,7 @@ KdmRect::drawContents( QPainter *p, const QRect &r )
 		backRect.translate( area.x(), area.y() );
 		QPixmap backPixmap( backRect.size() );
 		bitBlt( &backPixmap, QPoint( 0, 0 ), p->device(), backRect );
-		QImage backImage = backPixmap.convertToImage();
+		QImage backImage = backPixmap.toImage();
 		KImageEffect::blend( rClass->color, backImage, rClass->alpha );
 		p->drawImage( backRect.x(), backRect.y(), backImage );
 		//  area.translate(1,1);

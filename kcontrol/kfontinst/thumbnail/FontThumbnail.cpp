@@ -58,7 +58,7 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
 
     if(itsEngine.draw(KUrl(path), width, height, pix, 0, true))
     {
-        img=pix.convertToImage();
+        img=pix.toImage();
         return true;
     }
 

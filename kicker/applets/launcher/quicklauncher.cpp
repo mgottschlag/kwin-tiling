@@ -1047,7 +1047,7 @@ void QuickLauncher::updateStickyHighlightLayer()
                                     QColor(0, 0, 0));
         }
     }
-    QImage areaLayer = areaPix.convertToImage();
+    QImage areaLayer = areaPix.toImage();
     m_stickyHighlightLayer = QImage(width(), height(), 32);
     m_stickyHighlightLayer.setAlphaBuffer(true);
     int pix, tlPix, brPix, w(width()), h(height());

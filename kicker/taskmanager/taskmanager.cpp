@@ -1327,7 +1327,7 @@ void Task::generateThumbnail()
    if ( _grab.isNull() )
       return;
 
-   QImage img = _grab.convertToImage();
+   QImage img = _grab.toImage();
 
    double width = img.width();
    double height = img.height();
@@ -1399,7 +1399,7 @@ QPixmap Task::thumbnail(int maxDimension)
                      winAttr.width, winAttr.height);
 
     KPixmapIO io;
-    QImage image = io.convertToImage(full);
+    QImage image = io.toImage(full);
     thumbnail = io.convertToPixmap(image.smoothScale(thumbnailWidth,
                                                      thumbnailHeight));
 #else // XRENDER scaling

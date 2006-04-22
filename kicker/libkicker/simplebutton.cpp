@@ -169,7 +169,7 @@ void SimpleButton::generateIcons()
         return;
     }
 
-    QImage image = pixmap()->convertToImage();
+    QImage image = pixmap()->toImage();
     KIconEffect effect;
 
     d->normalIcon = effect.apply(image, K3Icon::Panel, K3Icon::DefaultState);

@@ -141,7 +141,7 @@ QPixmap KasTaskItem::icon()
 	QSize sz = thumb.size();
 	sz.scale( sizes[kasbar()->itemSize()], sizes[kasbar()->itemSize()], QSize::ScaleMin );
 
-	QImage img = thumb.convertToImage();
+	QImage img = thumb.toImage();
 	img = img.smoothScale( sz );
 
 	bool ok = thumb.convertFromImage( img );

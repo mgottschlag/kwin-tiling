@@ -103,13 +103,13 @@ void MenuPreview::blendPixmaps()
 	if (pixBlended && pixBackground) 
 	{
 		if (mode == Blend && pixOverlay) {
-			QImage src = pixOverlay->convertToImage();
-			QImage dst = pixBackground->convertToImage();
+			QImage src = pixOverlay->toImage();
+			QImage dst = pixBackground->toImage();
 			KImageEffect::blend(src, dst, menuOpacity);
 			pixBlended->convertFromImage( dst );
 		} else if (mode == Tint) {
 			QColor clr = colorGroup().button();
-			QImage dst = pixBackground->convertToImage();
+			QImage dst = pixBackground->toImage();
 			KImageEffect::blend(clr, dst, menuOpacity);
 			pixBlended->convertFromImage( dst );
 		}
