@@ -569,7 +569,7 @@ void PanelButton::drawButtonLabel(QPainter *p)
 
         // draw text
         pixPainter.begin(&textPixmap);
-        pixPainter.setPen(m_textColor);
+        pixPainter.setPen(d->textColor);
         pixPainter.setFont(p->font()); // get the font from the root painter
         pixPainter.drawText(tX, tY, d->buttonText, -1, rtl);
         pixPainter.end();
@@ -589,7 +589,7 @@ void PanelButton::drawButtonLabel(QPainter *p)
         QImage img = s_textShadowEngine->makeShadow(textPixmap, shadCol);
         p->drawImage(0, 0, img);
         p->save();
-        pixPainter.setPen(m_textColor);
+        pixPainter.setPen(d->textColor);
         p->drawText(tX, tY, d->buttonText, -1, rtl);
         p->restore();
 
