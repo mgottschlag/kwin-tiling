@@ -127,7 +127,7 @@ void MediumButton::refreshType()
 {
     KMimeType::Ptr mime = mFileItem.determineMimeType();
     this->setToolTip( mime->comment());
-    setIcon(mime->icon(KUrl(), true));
+    setIcon(mime->icon(KUrl()));
 }
 
 // Activate this code only if we find a way to have both an
