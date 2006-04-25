@@ -16,7 +16,7 @@ main(int argc, char *argv[])
    KSMShutdownFeedback::start();
 
    KWorkSpace::ShutdownType sdtype = KWorkSpace::ShutdownTypeNone;
-   QString bopt
+   QString bopt;
    (void)KSMShutdownDlg::confirmShutdown( true,
                                           sdtype,
                                           bopt );
