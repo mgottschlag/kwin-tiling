@@ -287,10 +287,7 @@ void KLocaleConfigMoney::slotTranslate()
   QString str;
 
   str = ki18n( "Here you can enter your usual currency "
-               "symbol, e.g. $ or DM."
-               "<p>Please note that the Euro symbol may not be "
-               "available on your system, depending on the "
-               "distribution you use." ).toString( m_locale );
+               "symbol, e.g. $ or €." ).toString( m_locale );
   m_labMonCurSym->setWhatsThis( str );
   m_edMonCurSym->setWhatsThis( str );
   str = ki18n( "Here you can define the decimal separator used "
