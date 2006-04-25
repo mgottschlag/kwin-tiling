@@ -29,7 +29,7 @@ install_targets(/bin ksmserver )
 
 ########### next target ###############
 
-set(testsh_SRCS test.cpp )
+set(testsh_SRCS ${kdmlib_SRCS} test.cpp shutdowndlg.cpp )
 
 kde4_automoc(${testsh_SRCS})
 
@@ -37,7 +37,7 @@ if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(testsh ${testsh_SRCS})
 
-target_link_libraries(testsh  ${KDE4_KDEUI_LIBS} dmctl )
+target_link_libraries(testsh ${KDE4_KDEUI_LIBS})
 
 endif(KDE4_BUILD_TESTS)
 
