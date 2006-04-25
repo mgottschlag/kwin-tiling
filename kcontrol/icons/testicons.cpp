@@ -5,8 +5,8 @@
 
 int main(int argc, char **argv)
 {
-    KApplication app(argc, argv, "testicons");
-    KIconConfig *w = new KIconConfig(0L, "testicons");
+    QApplication app(argc, argv, "testicons");
+    KIconConfig *w = new KIconConfig(KGlobal::instance(), 0L);
     app.setMainWidget(w);
     w->show();
     return app.exec();

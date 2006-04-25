@@ -19,7 +19,7 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_icons )
 
 ########### next target ###############
 
-set(testicons_SRCS testicons.cpp )
+set(testicons_SRCS testicons.cpp icons.cpp )
 
 kde4_automoc(${testicons_SRCS})
 
