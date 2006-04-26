@@ -28,7 +28,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qpixmap.h>
 #include <qtimer.h>
 #include <qtoolbutton.h>
-//Added by qt3to4:
 #include <QDragLeaveEvent>
 #include <QPaintEvent>
 #include <QEvent>
@@ -52,9 +51,9 @@ public:
     typedef QList<TaskContainer*> List;
     typedef QList<TaskContainer*>::iterator Iterator;
 
-    TaskContainer(Task::TaskPtr, TaskBar*, QWidget *parent = 0, const char *name = 0);
+    TaskContainer(Task::TaskPtr, TaskBar*, QWidget *parent = 0);
     TaskContainer(Startup::StartupPtr, PixmapList&, TaskBar*,
-                  QWidget *parent = 0, const char *name = 0);
+                  QWidget *parent = 0);
     virtual ~TaskContainer();
 
     void setArrowType( Qt::ArrowType at );

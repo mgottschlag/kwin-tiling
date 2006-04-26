@@ -35,7 +35,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qtooltip.h>
 #include <q3tl.h>
 #include <QStyleOption>
-//Added by qt3to4:
 #include <QDragLeaveEvent>
 #include <QPaintEvent>
 #include <QEvent>
@@ -66,8 +65,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 QImage TaskContainer::blendGradient = QImage();
 
 TaskContainer::TaskContainer(Task::TaskPtr task, TaskBar* bar,
-                             QWidget *parent, const char *name)
-    : QToolButton(parent, name),
+                             QWidget *parent)
+    : QToolButton(parent),
       currentFrame(0),
       attentionState(-1),
       lastActivated(0),
@@ -93,8 +92,8 @@ TaskContainer::TaskContainer(Task::TaskPtr task, TaskBar* bar,
 }
 
 TaskContainer::TaskContainer(Startup::StartupPtr startup, PixmapList& startupFrames,
-                             TaskBar* bar, QWidget *parent, const char *name)
-    : QToolButton(parent, name),
+                             TaskBar* bar, QWidget *parent)
+    : QToolButton(parent),
       currentFrame(0),
       frames(startupFrames),
       attentionState(-1),
@@ -121,7 +120,6 @@ TaskContainer::TaskContainer(Startup::StartupPtr startup, PixmapList& startupFra
 void TaskContainer::init()
 {
     setBackgroundMode(Qt::NoBackground);
-    setBackgroundOrigin(WidgetOrigin);
     animBg = QPixmap(16, 16);
 
     installEventFilter(KickerTip::self());
@@ -419,7 +417,7 @@ void TaskContainer::paintEvent(QPaintEvent*)
 
     if (!TaskBarSettings::drawButtons())
     {
-        pm->fill(taskBar->paletteBackgroundColor());
+        pm->fill(taskBar->palette().color(taskBar->backgroundRole()));
     }
 
     QPainter p;
@@ -478,7 +476,7 @@ void TaskContainer::drawButton(QPainter *p)
 
     font.setBold(active);
 
-    QPalette colors = palette();
+    QPalette pal = palette();
     if (demandsAttention)
     {
         if (!drawButton)
@@ -486,12 +484,12 @@ void TaskContainer::drawButton(QPainter *p)
             halo = true;
 
             QRect r = rect();
-            QColor line = colors.highlight();
+            QColor line = pal.color(QPalette::Highlight);
             r.adjust(2, 2, -2, -2);
             p->fillRect(r, line);
             for (int i = 0; i < 2; ++i)
             {
-                line = Plasma::blendColors(line, colors.background());
+                line = Plasma::blendColors(line, pal.color(QPalette::Background));
                 p->setPen(QPen(line, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
                 r.adjust(-1, -1, 1, 1);
                 p->drawRect(r);
@@ -499,15 +497,15 @@ void TaskContainer::drawButton(QPainter *p)
         }
 
         // blink until blink timeout, then display differently without blinking
-        colors.setColor( QPalette::Button,    colors.highlight() );
-        colors.setColor( QPalette::Background, colors.highlight() );
-        colors.setColor( QPalette::ButtonText, colors.highlightedText() );
-        colors.setColor( QPalette::Text,      colors.highlightedText() );
+        pal.setColor( QPalette::Button,    pal.color(QPalette::Highlight) );
+        pal.setColor( QPalette::Background,pal.color(QPalette::Highlight) );
+        pal.setColor( QPalette::ButtonText,pal.color(QPalette::HighlightedText) );
+        pal.setColor( QPalette::Text,      pal.color(QPalette::HighlightedText) );
     }
 
     if (active || aboutToActivate)
     {
-        colors.setColor(QPalette::Button, colors.button().color().dark(110));
+        pal.setColor(QPalette::Button, pal.color(QPalette::Button).dark(110));
     }
 
     // get the task icon
@@ -530,7 +528,7 @@ void TaskContainer::drawButton(QPainter *p)
     {
         QStyleOptionHeader hOpt;
         hOpt.init(this);
-        hOpt.palette = colors;
+        hOpt.palette = pal;
         //### SectionPosition?
         style()->drawControl(QStyle::CE_HeaderSection, &hOpt, p, this);
     }
@@ -553,8 +551,7 @@ void TaskContainer::drawButton(QPainter *p)
             // make sure it is no larger than 16x16
             if ( pixmap.width() > 16 || pixmap.height() > 16 )
             {
-                QImage tmp = pixmap.toImage();
-                pixmap = QPixmap::fromImage( tmp.scaled( 16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) );
+                pixmap = pixmap.scaled( 16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
             }
 
             // fade out the icon when minimized
@@ -613,11 +610,11 @@ void TaskContainer::drawButton(QPainter *p)
         // get the color for the text label
         if (iconified)
         {
-            textPen = QPen(Plasma::blendColors(colors.button(), colors.buttonText()));
+            textPen = QPen(Plasma::blendColors(pal.color(QPalette::Button), pal.color(  QPalette::ButtonText)));
         }
         else if (!active)
         {
-            textPen = QPen(colors.buttonText());
+            textPen = QPen(pal.color(QPalette::ButtonText));
         }
         else // hack for the dotNET style and others
         {
@@ -749,7 +746,7 @@ void TaskContainer::drawButton(QPainter *p)
         }
 
         QStyle::State flags = QStyle::State_Enabled;
-        QRect ar = QStyle::visualRect(layoutDirection(), rect(), 
+        QRect ar = QStyle::visualRect(layoutDirection(), rect(),
                                       QRect(br.x() + br.width() - 8 - 2,
                                             br.y(), 8, br.height()));
         if (sunken)
@@ -761,7 +758,7 @@ void TaskContainer::drawButton(QPainter *p)
         opt.init(this);
         opt.state   = flags;
         opt.rect    = ar;
-        opt.palette = colors;
+        opt.palette = pal;
         style()->drawPrimitive(e, &opt, p, this);
     }
 
@@ -1198,7 +1195,7 @@ bool TaskContainer::eventFilter(QObject *o, QEvent *e)
         {
             QMouseEvent *me = (QMouseEvent*)e;
             QPoint p = me->globalPos();
-            if ( QApplication::widgetAt( p, true ) == this )
+            if ( QApplication::widgetAt( p ) == this )
             {
                 if (me->type() == QEvent::MouseButtonPress &&
                     me->button() == Qt::LeftButton)
@@ -1222,8 +1219,8 @@ bool TaskContainer::eventFilter(QObject *o, QEvent *e)
                 QMouseEvent* me = static_cast<QMouseEvent*>(e);
                 QPoint p(me->globalPos());
 
-                if (me->state() & Qt::LeftButton &&
-                    QApplication::widgetAt(p, true) == this)
+                if (me->buttons() & Qt::LeftButton &&
+                    QApplication::widgetAt(p) == this)
                 {
                     kDebug() << "event move" << endl;
                     if (startDrag(mapFromGlobal(p)))

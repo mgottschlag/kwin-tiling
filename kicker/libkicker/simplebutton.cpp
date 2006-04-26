@@ -47,11 +47,26 @@ public:
 };
 
 SimpleButton::SimpleButton(QWidget *parent, const char *name)
-    : QAbstractButton(parent, name),
+    : QAbstractButton(parent),
       d(new Private())
 {
-    setBackgroundOrigin( AncestorOrigin );
+    setObjectName( name );
 
+    connect( kapp, SIGNAL( settingsChanged( int ) ),
+       SLOT( slotSettingsChanged( int ) ) );
+    connect( kapp, SIGNAL( iconChanged( int ) ),
+       SLOT( slotIconChanged( int ) ) );
+
+    kapp->addKipcEventMask( KIPC::SettingsChanged );
+    kapp->addKipcEventMask( KIPC::IconChanged );
+
+    slotSettingsChanged( KApplication::SETTINGS_MOUSE );
+}
+
+SimpleButton::SimpleButton(QWidget *parent)
+    : QAbstractButton(parent),
+      d(new Private())
+{
     connect( kapp, SIGNAL( settingsChanged( int ) ),
        SLOT( slotSettingsChanged( int ) ) );
     connect( kapp, SIGNAL( iconChanged( int ) ),
@@ -68,9 +83,9 @@ SimpleButton::~SimpleButton()
     delete d;
 }
 
-void SimpleButton::setPixmap(const QPixmap &pix)
+void SimpleButton::setIcon(const QIcon &icon)
 {
-    QAbstractButton::setPixmap(pix);
+    QAbstractButton::setIcon(icon);
     generateIcons();
     update();
 }
@@ -109,7 +124,7 @@ void SimpleButton::paintEvent( QPaintEvent * )
 
 void SimpleButton::drawButton( QPainter *p )
 {
-    p->setPen(colorGroup().mid());
+    p->setPen(palette().mid().color());
 
     if (d->orientation == Qt::Vertical)
     {
@@ -134,12 +149,12 @@ void SimpleButton::drawButtonLabel( QPainter *p )
         return;
     }
 
-    QPixmap pix = d->highlight? d->activeIcon : d->normalIcon;
+    QPixmap pix = d->highlight ? d->activeIcon : d->normalIcon;
 
     if (isChecked() || isDown())
     {
-        pix = QPixmap::fromImage( pix.toImage().scaled(pix.width() - 2, pix.height() - 2,
-                                                       Qt::IgnoreAspectRatio, Qt::SmoothTransformation) );
+        pix = pix.scaled(pix.width() - 2, pix.height() - 2,
+                         Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 
     int h = height();
@@ -169,11 +184,11 @@ void SimpleButton::generateIcons()
         return;
     }
 
-    QImage image = pixmap()->toImage();
     KIconEffect effect;
+    QPixmap pix = *pixmap();
 
-    d->normalIcon = QPixmap::fromImage( effect.apply(image, K3Icon::Panel, K3Icon::DefaultState) );
-    d->activeIcon = QPixmap::fromImage( effect.apply(image, K3Icon::Panel, K3Icon::ActiveState) );
+    d->normalIcon = effect.apply(pix, K3Icon::Panel, K3Icon::DefaultState);
+    d->activeIcon = effect.apply(pix, K3Icon::Panel, K3Icon::ActiveState);
 }
 
 void SimpleButton::slotSettingsChanged(int category)

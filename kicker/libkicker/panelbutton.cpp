@@ -109,7 +109,28 @@ public:
 KShadowEngine* PanelButton::s_textShadowEngine = 0L;
 
 PanelButton::PanelButton( QWidget* parent, const char* name )
-    : QAbstractButton(parent, name),
+    : QAbstractButton(parent),
+      d(new Private)
+{
+    setObjectName( name );
+    KGlobal::locale()->insertCatalog("libkicker");
+    calculateIconSize();
+    setAcceptDrops(true);
+
+    d->textColor = KGlobalSettings::textColor();
+
+    updateSettings(KApplication::SETTINGS_MOUSE);
+
+    kapp->addKipcEventMask(KIPC::SettingsChanged | KIPC::IconChanged);
+
+    installEventFilter(KickerTip::self());
+
+    connect(kapp, SIGNAL(settingsChanged(int)), SLOT(updateSettings(int)));
+    connect(kapp, SIGNAL(iconChanged(int)), SLOT(updateIcon(int)));
+}
+
+PanelButton::PanelButton( QWidget* parent )
+    : QAbstractButton(parent),
       d(new Private)
 {
     KGlobal::locale()->insertCatalog("libkicker");
@@ -395,7 +416,7 @@ void PanelButton::enterEvent(QEvent* e)
     if (!d->highlight)
     {
         d->highlight = true;
-        repaint(false);
+        repaint();
     }
 
     QAbstractButton::enterEvent(e);
@@ -406,7 +427,7 @@ void PanelButton::leaveEvent(QEvent* e)
     if (d->highlight)
     {
         d->highlight = false;
-        repaint(false);
+        repaint();
     }
 
     QAbstractButton::leaveEvent(e);
@@ -439,7 +460,7 @@ void PanelButton::dropEvent(QDropEvent* e)
 
 void PanelButton::mouseMoveEvent(QMouseEvent *e)
 {
-    if (!d->isLeftMouseButtonDown || (e->state() & Qt::LeftButton) == 0)
+    if (!d->isLeftMouseButtonDown || (e->buttons () & Qt::LeftButton) == 0)
     {
         return;
     }
@@ -513,7 +534,7 @@ void PanelButton::drawButton(QPainter *p)
         QRect r(x1+2, y1+2, x2-x1-3, y2-y1-3);
         QStyleOptionFocusRect focusOpt;
         focusOpt.init(this);
-        focusOpt.backgroundColor = palette().button();
+        focusOpt.backgroundColor = palette().button().color();
         focusOpt.rect            = r;
         style()->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, p, this);
     }
@@ -526,8 +547,8 @@ void PanelButton::drawButtonLabel(QPainter *p)
 
     if (active)
     {
-        icon = QPixmap::fromImage( icon.toImage().scaled(icon.width() - 2, icon.height() - 2,
-                                                         Qt::IgnoreAspectRatio, Qt::SmoothTransformation) );
+        icon = icon.scaled(icon.width() - 2, icon.height() - 2,
+                           Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 
     if (!d->buttonText.isEmpty() && orientation() == Qt::Horizontal)
@@ -568,10 +589,11 @@ void PanelButton::drawButtonLabel(QPainter *p)
         textPixmap.setMask(textPixmap.createHeuristicMask(true));
 
         // draw text
+        pixPainter.setLayoutDirection(rtl);
         pixPainter.begin(&textPixmap);
         pixPainter.setPen(d->textColor);
         pixPainter.setFont(p->font()); // get the font from the root painter
-        pixPainter.drawText(tX, tY, d->buttonText, -1, rtl);
+        pixPainter.drawText(tX, tY, d->buttonText);
         pixPainter.end();
 
         if (!s_textShadowEngine)
@@ -587,10 +609,11 @@ void PanelButton::drawButtonLabel(QPainter *p)
         // draw shadow
         QColor shadCol = Plasma::shadowColor(d->textColor);
         QImage img = s_textShadowEngine->makeShadow(textPixmap, shadCol);
+        p->setLayoutDirection(rtl);
         p->drawImage(0, 0, img);
         p->save();
         pixPainter.setPen(d->textColor);
-        p->drawText(tX, tY, d->buttonText, -1, rtl);
+        p->drawText(tX, tY, d->buttonText);
         p->restore();
 
         if (reverse && !icon.isNull())
@@ -852,8 +875,8 @@ bool PanelPopupButton::eventFilter(QObject *, QEvent *e)
     {
         QMouseEvent *me = static_cast<QMouseEvent *>(e);
         if (rect().contains(mapFromGlobal(me->globalPos())) &&
-            ((me->state() & Qt::ControlModifier) != 0 ||
-             (me->state() & Qt::ShiftModifier) != 0))
+            ((me->modifiers() & Qt::ControlModifier) != 0 ||
+             (me->modifiers() & Qt::ShiftModifier) != 0))
         {
             PanelButton::mouseMoveEvent(me);
             return true;

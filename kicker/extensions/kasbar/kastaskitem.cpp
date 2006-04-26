@@ -63,7 +63,6 @@
 #include <qtabwidget.h>
 #include <q3textview.h>
 #include <qtimer.h>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QVBoxLayout>
 #include <QMouseEvent>
@@ -141,10 +140,8 @@ QPixmap KasTaskItem::icon()
 	QSize sz = thumb.size();
 	sz.scale( sizes[kasbar()->itemSize()], sizes[kasbar()->itemSize()], QSize::ScaleMin );
 
-	QImage img = thumb.toImage();
-	img = img.smoothScale( sz );
+	thumb = thumb.scaled( sz, Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
 
-	thumb = QPixmap::fromImage( img );
 	if ( !thumb.isNull() )
 	    return thumb;
     }

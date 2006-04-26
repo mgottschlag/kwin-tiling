@@ -367,12 +367,12 @@ QIcon menuIconSet(const QString& icon)
         // make sure they are not larger than 20x20
         if (normal.width() > 20 || normal.height() > 20)
         {
-            normal = QPixmap::fromImage(normal.toImage().scaled(20,20, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+            normal = normal.scaled(20,20, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         }
 
         if (active.width() > 20 || active.height() > 20)
         {
-            active = QPixmap::fromImage(active.toImage().scaled(20,20, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+            active = active.scaled(20,20, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         }
 
         iconset.setPixmap(normal, QIcon::Small, QIcon::Normal);

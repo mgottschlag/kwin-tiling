@@ -36,9 +36,11 @@ class KDE_EXPORT SimpleButton : public QAbstractButton
     Q_OBJECT
 
     public:
-        SimpleButton(QWidget *parent, const char *name = 0);
+        SimpleButton(QWidget *parent);
+        KDE_DEPRECATED SimpleButton(QWidget *parent, const char *name);
         virtual ~SimpleButton();
-        void setPixmap(const QPixmap &pix);
+        KDE_DEPRECATED void setPixmap(const QPixmap &pix) { return setIcon(QIcon(pix)); }
+        void setIcon(const QIcon &icon);
         void setOrientation(Qt::Orientation orientaton);
         QSize sizeHint() const;
 

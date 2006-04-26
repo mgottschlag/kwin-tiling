@@ -222,9 +222,9 @@ Task::TaskPtr TaskManager::findTask(WId w)
 
     for (; it != itEnd; ++it)
     {
-        if (it.key() == w || it.data()->hasTransient(w))
+        if (it.key() == w || it.value()->hasTransient(w))
         {
-            return it.data();
+            return it.value();
         }
     }
 
@@ -240,7 +240,7 @@ Task::TaskPtr TaskManager::findTask(int desktop, const QPoint& p)
     Task::Dict::iterator itEnd = m_tasksByWId.end();
     for (Task::Dict::iterator it = m_tasksByWId.begin(); it != itEnd; ++it)
     {
-        Task::TaskPtr t = it.data();
+        Task::TaskPtr t = it.value();
         if (!t->isOnAllDesktops() && t->desktop() != desktop)
         {
             continue;
@@ -572,7 +572,7 @@ bool TaskManager::isOnTop(const Task* task)
         for (Task::Dict::iterator taskIt = m_tasksByWId.begin();
              taskIt != taskItEnd; ++taskIt)
         {
-            Task::TaskPtr t = taskIt.data();
+            Task::TaskPtr t = taskIt.value();
             if ((*it) == t->window())
             {
                 if (t == task)
@@ -1327,15 +1327,12 @@ void Task::generateThumbnail()
    if ( _grab.isNull() )
       return;
 
-   QImage img = _grab.toImage();
-
-   double width = img.width();
-   double height = img.height();
+   double width = _grab.width();
+   double height = _grab.height();
    width = width * _thumbSize;
    height = height * _thumbSize;
 
-   img = img.scaled( qRound(width), qRound(height), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
-   _thumb = QPixmap::fromImage( img );
+   _thumb = _grab.scaled( qRound(width), qRound(height), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
    _grab = QPixmap(); // Makes grab a null image.
 
    emit thumbnailChanged();

@@ -132,7 +132,7 @@ QPixmap QuickURL::pixmap( mode_t _mode, K3Icon::Group _group,
    QString iconName = KMimeType::iconNameForURL(_kurl, _mode);
    QPixmap pxmap = KGlobal::iconLoader()->loadIcon(iconName, _group, _force_size, _state);
    // Resize to fit button
-   pxmap = QPixmap::fromImage(pxmap.toImage().scaled(_force_size,_force_size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+   pxmap = pxmap.scaled(_force_size, _force_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
    return pxmap;
 }
 

@@ -63,9 +63,14 @@ public:
     /**
      * Create a panel button
      * @param parent the parent widget
+     */
+    PanelButton( QWidget* parent );
+    /**
+     * Create a panel button
+     * @param parent the parent widget
      * @param name the widget's name
      */
-    PanelButton( QWidget* parent, const char* name );
+    KDE_DEPRECATED PanelButton( QWidget* parent, const char* name );
 
     virtual ~PanelButton();
 
@@ -359,7 +364,7 @@ protected Q_SLOTS:
     void scheduleForRemoval();
 
 private:
-    
+
     static KShadowEngine* s_textShadowEngine;
 
     class Private;

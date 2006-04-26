@@ -41,7 +41,7 @@ public:
     KShadowSettings *shadowSettings;
 };
 
-KShadowEngine::KShadowEngine() 
+KShadowEngine::KShadowEngine()
    : d( new Private )
 {
     d->shadowSettings = new KShadowSettings;
@@ -91,18 +91,17 @@ QImage KShadowEngine::makeShadow(const QPixmap& textPixmap, const QColor &bgColo
   /*
    *	This is the source pixmap
    */
-  QImage img = textPixmap.toImage().convertDepth(32);
+  QImage img = textPixmap.toImage().convertToFormat(QImage::Format_ARGB32);
 
   /*
    *	Resize the image if necessary
    */
   if ((result.width() != w) || (result.height() != h))
   {
-    result.create(w, h, 32);
+    result = QImage(w, h, QImage::Format_ARGB32);
   }
 
   result.fill(0); // all black
-  result.setAlphaBuffer(true);
 
   for (int i = thick; i < w - thick; i++)
   {

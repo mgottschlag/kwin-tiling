@@ -30,7 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "taskcontainer.h"
 #include "panner.h"
-//Added by qt3to4:
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QResizeEvent>

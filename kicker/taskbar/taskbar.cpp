@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qpainter.h>
 #include <qstringlist.h>
 #include <q3tl.h>
-//Added by qt3to4:
 #include <QWheelEvent>
 #include <QPixmap>
 #include <QResizeEvent>
@@ -64,6 +63,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 TaskBar::TaskBar( QWidget *parent, const char *name )
     : QWidget( parent, name ),
+      m_showAllWindows(false),
       m_currentScreen(-1),
       m_showOnlyCurrentScreen(false),
       m_textShadowEngine(0),
@@ -71,7 +71,6 @@ TaskBar::TaskBar( QWidget *parent, const char *name )
       m_showWindowListButton(true),
       m_windowListButton(0),
       m_windowListMenu(0),
-      m_showAllWindows(false),
       m_sortByDesktop(false),
       m_showIcon(false)
 {
