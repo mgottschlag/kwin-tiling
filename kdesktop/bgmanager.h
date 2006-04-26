@@ -20,7 +20,7 @@ class QTimer;
 class QPixmap;
 class KMenu;
 class KWinModule;
-class KPixmap;
+class QPixmap;
 class KVirtualBGRenderer;
 class KPixmapServer;
 
@@ -32,7 +32,7 @@ struct KBackgroundCacheEntry
     int hash;
     int atime;
     int exp_from;
-    KPixmap *pixmap;
+    QPixmap *pixmap;
 };
 
 
@@ -99,8 +99,8 @@ private:
     int cacheSize();
     void removeCache(int desk);
     bool freeCache(int size);
-    void addCache(KPixmap *pm, int hash, int desk);
-    void setPixmap(KPixmap *pm, int hash, int desk);
+    void addCache(QPixmap *pm, int hash, int desk);
+    void setPixmap(QPixmap *pm, int hash, int desk);
 
     bool m_bExport, m_bCommon;
     bool m_bLimitCache, m_bInit;

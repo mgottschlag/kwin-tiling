@@ -346,7 +346,7 @@ void KBackgroundManager::exportBackground(int pixmap, int desk)
 /*
  * Paint the pixmap to the root window.
  */
-void KBackgroundManager::setPixmap(KPixmap *pm, int hash, int desk)
+void KBackgroundManager::setPixmap(QPixmap *pm, int hash, int desk)
 {
     if (m_pDesktop)
     {
@@ -415,7 +415,7 @@ void KBackgroundManager::renderBackground(int desk)
  */
 void KBackgroundManager::slotImageDone(int desk)
 {
-    KPixmap *pm = new KPixmap();
+    QPixmap *pm = new QPixmap();
     KVirtualBGRenderer *r = m_Renderer[desk];
     bool do_cleanup = true;
 
@@ -544,7 +544,7 @@ bool KBackgroundManager::freeCache(int size)
  * Try to add a pixmap to the pixmap cache. We don't use QPixmapCache here
  * because if we're exporting pixmaps, this needs special care.
  */
-void KBackgroundManager::addCache(KPixmap *pm, int hash, int desk)
+void KBackgroundManager::addCache(QPixmap *pm, int hash, int desk)
 {
     if (m_Cache[desk]->pixmap)
 	removeCache(desk);
