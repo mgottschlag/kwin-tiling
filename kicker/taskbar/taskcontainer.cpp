@@ -554,7 +554,7 @@ void TaskContainer::drawButton(QPainter *p)
             if ( pixmap.width() > 16 || pixmap.height() > 16 )
             {
                 QImage tmp = pixmap.toImage();
-                pixmap.fromImage( tmp.scaled( 16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) );
+                pixmap = QPixmap::fromImage( tmp.scaled( 16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) );
             }
 
             // fade out the icon when minimized

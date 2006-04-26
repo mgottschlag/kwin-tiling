@@ -144,8 +144,8 @@ QPixmap KasTaskItem::icon()
 	QImage img = thumb.toImage();
 	img = img.smoothScale( sz );
 
-	bool ok = thumb.convertFromImage( img );
-	if ( ok )
+	thumb = QPixmap::fromImage( img );
+	if ( !thumb.isNull() )
 	    return thumb;
     }
 
