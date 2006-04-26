@@ -23,13 +23,11 @@
 #include <qwidget.h>
 #include <q3listview.h>
 
-//Added by qt3to4:
 #include <QPixmap>
 #include <kvbox.h>
 
 class KCModuleInfo;
 class QPixmap;
-class KPixmap;
 class ConfigModule;
 class KHTMLPart;
 class KUrl;
