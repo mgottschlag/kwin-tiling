@@ -57,7 +57,7 @@ protected Q_SLOTS:
     void showInfo(const QString& protocol);
     void showInfo(Q3ListBoxItem *item);
     void slaveHelp( KIO::Job *, const QByteArray &data);
-    void slotResult( KIO::Job * );
+    void slotResult( KJob * );
 
 };
 #endif

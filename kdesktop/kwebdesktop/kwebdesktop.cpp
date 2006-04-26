@@ -55,8 +55,8 @@ KWebDesktopRun::KWebDesktopRun( KWebDesktop* webDesktop, const KUrl & url )
 {
     kDebug() << "KWebDesktopRun::KWebDesktopRun starting get" << endl;
     KIO::Job * job = KIO::get(m_url, false, false);
-    connect( job, SIGNAL( result( KIO::Job *)),
-             this, SLOT( slotFinished(KIO::Job *)));
+    connect( job, SIGNAL( result( KJob *)),
+             this, SLOT( slotFinished(KJob *)));
     connect( job, SIGNAL( mimetype( KIO::Job *, const QString &)),
              this, SLOT( slotMimetype(KIO::Job *, const QString &)));
 }
@@ -76,7 +76,7 @@ void KWebDesktopRun::slotMimetype( KIO::Job *job, const QString &_type )
         part->openURL( m_url );
 }
 
-void KWebDesktopRun::slotFinished( KIO::Job * job )
+void KWebDesktopRun::slotFinished( KJob * job )
 {
     // The whole point of all this is to abort silently on error
     if (job->error())

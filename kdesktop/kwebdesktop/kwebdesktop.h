@@ -60,7 +60,7 @@ public:
 
 protected Q_SLOTS:
     void slotMimetype( KIO::Job *job, const QString &_type );
-    void slotFinished( KIO::Job * job );
+    void slotFinished( KJob * job );
 
 private:
     KWebDesktop* m_webDesktop;

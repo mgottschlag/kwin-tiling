@@ -115,7 +115,7 @@ void KCMIOSlaveInfo::slaveHelp( KIO::Job *, const QByteArray &data)
     helpData += data;
 }
 
-void KCMIOSlaveInfo::slotResult(KIO::Job *)
+void KCMIOSlaveInfo::slotResult(KJob *)
 {
    m_tfj = 0;
 }
@@ -135,7 +135,7 @@ void KCMIOSlaveInfo::showInfo(const QString& protocol)
        helpData.truncate( 0 );
        m_tfj = KIO::get( KUrl( QString("help:/kioslave/%1.html").arg( protocol ) ), true, false );
        connect( m_tfj, SIGNAL( data( KIO::Job *, const QByteArray &) ), SLOT( slaveHelp( KIO::Job *, const QByteArray &) ) );
-       connect( m_tfj, SIGNAL( result( KIO::Job * ) ), SLOT( slotResult( KIO::Job * ) ) );
+       connect( m_tfj, SIGNAL( result( KJob * ) ), SLOT( slotResult( KJob * ) ) );
        return;
    }
    m_info->setText(i18n("Some info about protocol %1:/ ...", protocol));

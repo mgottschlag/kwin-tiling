@@ -470,7 +470,7 @@ void CKCmFontInst::removeFonts()
         if(doIt)
         {
             KIO::DeleteJob *job = KIO::del(urls, false, true);
-            connect(job, SIGNAL(result(KIO::Job *)), this, SLOT(jobResult(KIO::Job *)));
+            connect(job, SIGNAL(result(KJob *)), this, SLOT(jobResult(KJob *)));
             job->setWindow(this);
             job->setAutoErrorHandlingEnabled(true, this);
         }
@@ -593,7 +593,7 @@ void CKCmFontInst::updateInformation(int, int fonts)
     itsStatusLabel->setText(text);
 }
 
-void CKCmFontInst::jobResult(KIO::Job *job)
+void CKCmFontInst::jobResult(KJob *job)
 {
     //
     // Force an update of the view. For some reason the view is not automatically updated when
@@ -632,7 +632,7 @@ void CKCmFontInst::addFonts(const KUrl::List &src, const KUrl &dest)
         }
 
         KIO::CopyJob *job=KIO::copy(copy, dest, true);
-        connect(job, SIGNAL(result(KIO::Job *)), this, SLOT(jobResult(KIO::Job *)));
+        connect(job, SIGNAL(result(KJob *)), this, SLOT(jobResult(KJob *)));
         job->setWindow(this);
         job->setAutoErrorHandlingEnabled(true, this);
     }

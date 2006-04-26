@@ -86,7 +86,7 @@ class CKCmFontInst : public KCModule
     void    dropped(const KFileItem *i, QDropEvent *e, const KUrl::List &urls);
     void    infoMessage(const QString &msg);
     void    updateInformation(int dirs, int fonts);
-    void    jobResult(KIO::Job *job);
+    void    jobResult(KJob *job);
 
     private:
 
