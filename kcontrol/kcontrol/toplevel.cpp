@@ -411,7 +411,7 @@ void TopLevel::activateModule(ConfigModule *mod)
 
   if (mod->aboutData())
   {
-     about_module->setText(i18nc("Help menu->about <modulename>", "About %1", 
+     about_module->setText(i18nc("Help menu->about <modulename>", "About %1",
                              handleAmpersand( mod->moduleName())));
      about_module->setIcon(KIcon(mod->icon()));
      about_module->setEnabled(true);
@@ -452,7 +452,7 @@ void TopLevel::reportBug()
             dummyAbout = const_cast<KAboutData*>(_active->aboutData());
         else
         {
-            snprintf(buffer, sizeof(buffer), "kcm%s", _active->library().latin1());
+            snprintf(buffer, sizeof(buffer), "kcm%s", _active->library().toLatin1().constData());
             dummyAbout = new KAboutData(buffer, _active->moduleName().toUtf8(), "2.0");
             deleteit = true;
         }

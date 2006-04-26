@@ -6,16 +6,16 @@
    Copyright (C) 2002 Laurent Montel <montell@club-internet.fr>
    Copyright (C) 2003 Waldo Bastian <bastian@kde.org>
    Copyright (C) 2005 David Saxton <david@bluehaze.org>
-  
+
    This program is free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License 
+   modify it under the terms of the GNU General Public License
    version 2 as published by the Free Software Foundation.
-   
+
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Library General Public License for more details.
-   
+
    You should have received a copy of the GNU Library General Public License
    along with this library; see the file COPYING.LIB.  If not, write to
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -31,7 +31,6 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QPixmap>
-#include <kpixmap.h>
 #include <klocale.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
@@ -45,15 +44,15 @@ BGMonitorArrangement::BGMonitorArrangement(QWidget *parent, const char *name)
   : QWidget(parent, name)
 {
     m_pBGMonitor.resize( QApplication::desktop()->numScreens());
-    
+
     for (int screen = 0; screen < QApplication::desktop()->numScreens(); ++screen)
     {
         BGMonitorLabel * label = new BGMonitorLabel(this);
         m_pBGMonitor[screen] = label;
-        
+
         connect( label->monitor(), SIGNAL(imageDropped(const QString &)), this, SIGNAL(imageDropped(const QString &)) );
     }
-    
+
     parent->setFixedSize(200, 186);
     setFixedSize(200, 186);
     updateArrangement();
@@ -96,37 +95,37 @@ void BGMonitorArrangement::updateArrangement()
     // value. The expanded value is used for setting the size of the monitor
     // image that contains the preview of the background. The monitor image
     // will set the background preview back to the normal value.
-    
+
     QRect overallGeometry;
     for (int screen = 0; screen < QApplication::desktop()->numScreens(); ++screen)
         overallGeometry |= QApplication::desktop()->screenGeometry(screen);
-    
+
     QRect expandedOverallGeometry = expandToPreview(overallGeometry);
-    
-    double scale = QMIN(
+
+    double scale = qMin(
                 double(width()) / double(expandedOverallGeometry.width()),
                 double(height()) / double(expandedOverallGeometry.height())
                        );
-    
+
     m_combinedPreviewSize = overallGeometry.size() * scale;
-    
+
     m_maxPreviewSize = QSize(0,0);
     int previousMax = 0;
-    
+
     for (int screen = 0; screen < QApplication::desktop()->numScreens(); ++screen)
     {
         QPoint topLeft = (QApplication::desktop()->screenGeometry(screen).topLeft() - overallGeometry.topLeft()) * scale;
         QPoint expandedTopLeft = expandToPreview(topLeft);
-        
+
         QSize previewSize = QApplication::desktop()->screenGeometry(screen).size() * scale;
         QSize expandedPreviewSize = expandToPreview(previewSize);
-        
+
         if ( (previewSize.width() * previewSize.height()) > previousMax )
         {
             previousMax = previewSize.width() * previewSize.height();
             m_maxPreviewSize = previewSize;
         }
-        
+
         m_pBGMonitor[screen]->setPreviewPosition( QRect( topLeft, previewSize ) );
         m_pBGMonitor[screen]->setGeometry( QRect( expandedTopLeft, expandedPreviewSize ) );
         m_pBGMonitor[screen]->updateMonitorGeometry();
@@ -146,7 +145,7 @@ void BGMonitorArrangement::setPixmap( const QPixmap & pm )
     for (unsigned screen = 0; screen < m_pBGMonitor.size(); ++screen)
     {
         QRect position = m_pBGMonitor[screen]->previewPosition();
-        
+
         QPixmap monitorPixmap( position.size());
         copyBlt( &monitorPixmap, 0, 0, &pm, position.x(), position.y(), position.width(), position.height() );
         m_pBGMonitor[screen]->monitor()->setPixmap(monitorPixmap);
@@ -173,7 +172,7 @@ void BGMonitorLabel::updateMonitorGeometry()
 {
     double scaleX = double(width()) / double(sizeHint().width());
     double scaleY = double(height()) / double(sizeHint().height());
-    
+
     kDebug() << k_funcinfo << " Setting geometry to " << QRect( int(23*scaleX), int(14*scaleY), int(151*scaleX), int(115*scaleY) ) << endl;
     m_pBGMonitor->setGeometry( int(23*scaleX), int(14*scaleY), int(151*scaleX), int(115*scaleY) );
 }

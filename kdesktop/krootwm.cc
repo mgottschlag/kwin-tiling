@@ -112,7 +112,7 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
      bookmarks = 0;
      bookmarkMenu = 0;
   }
-  
+
   // The windowList and desktop menus can be part of a menubar (Mac style)
   // so we create them here
   desktopMenu = new QMenu;
@@ -566,7 +566,7 @@ void KRootWm::activateMenu( menuChoice choice, const QPoint& global )
 	  appname = QLatin1String("kicker");
       else
 	  appname.sprintf("kicker-screen-%d", kdesktop_screen_number);
-	  
+
       DCOPCString name = appname.toLatin1();
 
       DCOPRef( name, name ).send( "popupKMenu", global );

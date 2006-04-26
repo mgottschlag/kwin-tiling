@@ -391,7 +391,7 @@ static bool drawChar(QPixmap &pix, XftDraw *xftDraw, XftFont *xftFont, XftColor 
 
 static bool drawString(QPixmap &pix, XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, const QString &text,
                        int x, int &y, int h, int offset)
-{   
+{
     XGlyphInfo     extents;
     const FcChar16 *str=(FcChar16 *)(text.utf16());
 
@@ -490,7 +490,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                        : 4,
             x=offset, y=offset;
 
-        pix.resize(w, h);
+        pix = QPixmap(w, h);
         pix.fill(Qt::white);
 
         QPainter painter(&pix);
@@ -505,7 +505,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
             xrenderCol.red=xrenderCol.green=xrenderCol.blue=0;
             xrenderCol.alpha=0xffff;
             XftColorAllocValue(pix.x11Display(), DefaultVisual(pix.x11Display(),
-                               pix.x11Screen()), 
+                               pix.x11Screen()),
                                DefaultColormap(pix.x11Display(), pix.x11Screen()),
                                &xrenderCol, &xftCol);
 
@@ -772,7 +772,7 @@ QString CFcEngine::createName(FcPattern *pat, int faceNo)
             name+=QChar(' ')+str;
     }
 #endif
- 
+
     return name;
 }
 
@@ -920,7 +920,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo, bool all)
 
         if(!name.isEmpty())
         {
-            parseName(name, faceNo, all); 
+            parseName(name, faceNo, all);
             itsInstalled=true;
         }
         else
@@ -943,7 +943,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo, bool all)
         }
 
         if(!isThumbnailUrl)  // Its not a thumbnail, so read the real font file...
-        { 
+        {
             itsName=url.path();
 
             int       count;

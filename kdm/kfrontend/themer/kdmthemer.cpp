@@ -161,7 +161,7 @@ KdmThemer::widgetEvent( QEvent *e )
 			if (!backBuffer)
 				backBuffer = new QPixmap( widget()->size() );
 			if (backBuffer->size() != widget()->size())
-				backBuffer->resize( widget()->size() );
+				*backBuffer = QPixmap( widget()->size() );
 
 			QPainter p;
 			p.begin( backBuffer );

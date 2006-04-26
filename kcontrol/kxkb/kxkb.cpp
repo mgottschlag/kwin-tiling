@@ -100,7 +100,7 @@ void TrayWindow::setLayouts(const QStringList& layouts, const KeyRules& rules)
 
     mDescriptionMap.clear();
     menu->clear();
-    menu->insertTitle( qApp->windowIcon().pixmap(IconSize(K3Icon::Small),IconSize(K3Icon::Small)), kapp->caption() );
+    menu->insertTitle( qApp->windowIcon().pixmap(IconSize(K3Icon::Small),IconSize(K3Icon::Small)), KInstance::caption() );
     
     KIconEffect iconeffect;
 

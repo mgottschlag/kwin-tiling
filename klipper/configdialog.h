@@ -147,7 +147,7 @@ public:
     bool popupAtMousePos() const {
 	return generalWidget->cbMousePos->isChecked();
     }
-    bool stripWhiteSpace() const {
+    bool trimmed() const {
         return generalWidget->cbStripWhitespace->isChecked();
     }
     bool replayActionInHistory() const {

@@ -238,7 +238,7 @@ void LogitechMouse::save(KConfig * /*config*/)
     kDebug() << "Logitech mouse settings not saved - not implemented yet" << endl;
 }
 
-Q_UINT8 LogitechMouse::resolution()
+quint8 LogitechMouse::resolution()
 {
     // kDebug() << "resolution: " << m_resolution << endl;
     if ( 0 == m_resolution ) {
@@ -299,13 +299,13 @@ void LogitechMouse::setLogitechTo400()
     }
 }
 
-Q_UINT8 LogitechMouse::batteryLevel()
+quint8 LogitechMouse::batteryLevel()
 {
     return m_batteryLevel;
 }
 
 
-Q_UINT8 LogitechMouse::channel()
+quint8 LogitechMouse::channel()
 {
     return m_channel;
 }

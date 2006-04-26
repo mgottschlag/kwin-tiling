@@ -94,9 +94,9 @@ void
 KdmPixmap::setGeometry( const QRect &newGeometry, bool force )
 {
 	KdmItem::setGeometry( newGeometry, force );
-	pixmap.active.readyPixmap.resize( 0, 0 );
-	pixmap.prelight.readyPixmap.resize( 0, 0 );
-	pixmap.normal.readyPixmap.resize( 0, 0 );
+	pixmap.active.readyPixmap = QPixmap();
+	pixmap.prelight.readyPixmap = QPixmap();
+	pixmap.normal.readyPixmap = QPixmap();
 }
 
 
@@ -219,7 +219,7 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 
 		}
 
-		pClass->readyPixmap.convertFromImage( scaledImage );
+		pClass->readyPixmap = QPixmap::fromImage( scaledImage );
 	}
 	// kDebug() << "Pixmap::drawContents " << pClass->readyPixmap.size() << " " << px << " " << py << " " << sx << " " << sy << " " << sw << " " << sh << endl;
 	p->drawPixmap( px, py, pClass->readyPixmap, sx, sy, sw, sh );

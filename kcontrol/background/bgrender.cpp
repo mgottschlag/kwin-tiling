@@ -511,7 +511,7 @@ bool KBackgroundRenderer::canTile() const
 void KBackgroundRenderer::wallpaperBlend()
 {
     if( !enabled() || wallpaperMode() == NoWallpaper
-        || (blendMode() == NoBlending && 
+        || (blendMode() == NoBlending &&
         ( QApplication::desktop()->paintEngine()->hasFeature(QPaintEngine::Antialiasing)
             || !m_Wallpaper.hasAlphaBuffer()))) {
         fastWallpaperBlend();
@@ -530,7 +530,7 @@ void KBackgroundRenderer::fastWallpaperBlend()
     if( !enabled() || (wallpaperMode() == NoWallpaper && canTile())) {
         // if there's no wallpaper, no need to tile the pixmap to the size of desktop, as X does
         // that automatically and using a smaller pixmap should save some memory
-        m_Pixmap.convertFromImage( m_Background );
+        m_Pixmap = QPixmap::fromImage( m_Background );
         return;
     }
     else if( wallpaperMode() == Tiled && !m_Wallpaper.hasAlphaBuffer() && canTile() && !m_bPreview ) {
@@ -542,12 +542,11 @@ void KBackgroundRenderer::fastWallpaperBlend()
         && !m_Wallpaper.hasAlphaBuffer()) // wallpaper covers all and no blending
         m_Pixmap = QPixmap( m_Size );
     else if (m_Background.size() == m_Size)
-        m_Pixmap.convertFromImage( m_Background );
+        m_Pixmap = QPixmap::fromImage( m_Background );
     else {
         m_Pixmap = QPixmap( m_Size );
         QPainter p( &m_Pixmap );
-        QPixmap pm;
-        pm.convertFromImage( m_Background );
+        QPixmap pm = QPixmap::fromImage( m_Background );
         p.drawTiledPixmap( 0, 0, m_Size.width(), m_Size.height(), pm );
     }
 
@@ -744,8 +743,7 @@ void KBackgroundRenderer::render()
                 QImage im;
                 if( im.load( f, "PNG" )) {
                     m_Image = im;
-                    m_Pixmap = QPixmap( m_Size );
-                    m_Pixmap.convertFromImage( m_Image );
+                    m_Pixmap = QPixmap::fromImage( m_Image );
                     m_Cached = true;
                     m_State |= InitCheck | BackgroundDone | WallpaperDone;
                 }
@@ -857,7 +855,7 @@ QPixmap KBackgroundRenderer::pixmap()
 {
     if (m_State & AllDone) {
         if( m_Pixmap.isNull())
-            m_Pixmap.convertFromImage( m_Image );
+            m_Pixmap = QPixmap::fromImage( m_Image );
         return m_Pixmap;
     }
     return QPixmap();
@@ -972,7 +970,7 @@ KVirtualBGRenderer::KVirtualBGRenderer( int desk, KConfig *config )
     m_numRenderers = 0;
     m_scaleX = 1;
     m_scaleY = 1;
-    
+
     // The following code is borrowed from KBackgroundSettings::KBackgroundSettings
     if (!config) {
         int screen_number = 0;
@@ -990,7 +988,7 @@ KVirtualBGRenderer::KVirtualBGRenderer( int desk, KConfig *config )
         m_pConfig = config;
         m_bDeleteConfig = false;
     }
-    
+
     initRenderers();
     m_size = QApplication::desktop()->size();
 }
@@ -999,14 +997,14 @@ KVirtualBGRenderer::~KVirtualBGRenderer()
 {
     for (unsigned i=0; i<m_numRenderers; ++i)
         delete m_renderer[i];
-   
+
     delete m_pPixmap;
-    
+
     if (m_bDeleteConfig)
         delete m_pConfig;
 }
 
-    
+
 KBackgroundRenderer * KVirtualBGRenderer::renderer(unsigned screen)
 {
     return m_renderer[screen];
@@ -1017,7 +1015,7 @@ QPixmap KVirtualBGRenderer::pixmap()
 {
     if (m_numRenderers == 1)
         return m_renderer[0]->pixmap();
-    
+
     return *m_pPixmap;
 }
 
@@ -1075,7 +1073,7 @@ int KVirtualBGRenderer::hash()
         fp += m_renderer[i]->fingerprint();
     }
     int h = qHash(fp);
-    kdDebug() << k_funcinfo << " fp=\""<<fp<<"\" h="<<h<<endl;
+    kDebug() << k_funcinfo << " fp=\""<<fp<<"\" h="<<h<<endl;
     return qHash(fp);
 }
 
@@ -1101,14 +1099,14 @@ void KVirtualBGRenderer::setEnabled(bool enable)
 void KVirtualBGRenderer::desktopResized()
 {
     m_size = QApplication::desktop()->size();
-    
+
     if (m_pPixmap)
     {
         delete m_pPixmap;
         m_pPixmap = new QPixmap(m_size);
         m_pPixmap->fill(Qt::black);
     }
-    
+
     for (unsigned i=0; i<m_numRenderers; ++i)
         m_renderer[i]->desktopResized();
 }
@@ -1118,21 +1116,21 @@ void KVirtualBGRenderer::setPreview(const QSize & size)
 {
     if (m_size == size)
         return;
-    
+
     m_size = size;
-    
+
     if (m_pPixmap)
-        m_pPixmap->resize(m_size);
-    
+        *m_pPixmap = QPixmap(m_size);
+
     // Scaling factors
     m_scaleX = float(m_size.width()) / float(QApplication::desktop()->size().width());
     m_scaleY = float(m_size.height()) / float(QApplication::desktop()->size().height());
-    
+
     // Scale renderers appropriately
     for (unsigned i=0; i<m_renderer.size(); ++i)
     {
         QSize unscaledRendererSize = renderSize(i);
-        
+
         m_renderer[i]->setPreview( QSize(
                 int(unscaledRendererSize.width() * m_scaleX),
                 int(unscaledRendererSize.height() * m_scaleY) ) );
@@ -1151,20 +1149,20 @@ void KVirtualBGRenderer::initRenderers()
 {
     m_pConfig->setGroup("Background Common");
     m_bDrawBackgroundPerScreen = m_pConfig->readBoolEntry( QString("DrawBackgroundPerScreen_%1").arg(m_desk), _defDrawBackgroundPerScreen );
-    
+
     m_bCommonScreen = m_pConfig->readBoolEntry("CommonScreen", _defCommonScreen);
-    
+
     m_numRenderers = m_bDrawBackgroundPerScreen ? QApplication::desktop()->numScreens() : 1;
-    
+
     m_bFinished.resize(m_numRenderers);
     m_bFinished.fill(false);
-    
+
     if (m_numRenderers == m_renderer.size())
         return;
-    
+
     for (unsigned i=0; i<m_renderer.size(); ++i)
         delete m_renderer[i];
-    
+
     m_renderer.resize(m_numRenderers);
     for (unsigned i=0; i<m_numRenderers; ++i)
     {
@@ -1180,12 +1178,12 @@ void KVirtualBGRenderer::initRenderers()
 void KVirtualBGRenderer::load(int desk, bool reparseConfig)
 {
     m_desk = desk;
-    
+
     m_pConfig->setGroup("Background Common");
     m_bCommonScreen = m_pConfig->readBoolEntry("CommonScreen", _defCommonScreen);
-    
+
     initRenderers();
-    
+
     for (unsigned i=0; i<m_numRenderers; ++i)
     {
         unsigned eScreen = m_bCommonScreen ? 0 : i;
@@ -1198,50 +1196,50 @@ void KVirtualBGRenderer::screenDone(int _desk, int _screen)
 {
     Q_UNUSED(_desk);
     Q_UNUSED(_screen);
-    
+
     const KBackgroundRenderer * sender = dynamic_cast<const KBackgroundRenderer*>(this->sender());
     int screen = m_renderer.find(sender);
     if (screen == -1)
         //??
         return;
-    
+
     m_bFinished[screen] = true;
-    
-    
+
+
     if (m_pPixmap)
     {
         // There's more than one renderer, so we are drawing each output to our own pixmap
-        
+
         QRect overallGeometry;
         for (int i=0; i < QApplication::desktop()->numScreens(); ++i)
             overallGeometry |= QApplication::desktop()->screenGeometry(i);
-        
+
         QPoint drawPos = QApplication::desktop()->screenGeometry(screen).topLeft() - overallGeometry.topLeft();
         drawPos.setX( int(drawPos.x() * m_scaleX) );
         drawPos.setY( int(drawPos.y() * m_scaleY) );
-        
+
         QPixmap source = m_renderer[screen]->pixmap();
         QSize renderSize = this->renderSize(screen);
         renderSize.setWidth( int(renderSize.width() * m_scaleX) );
         renderSize.setHeight( int(renderSize.height() * m_scaleY) );
-        
+
         QPainter p(m_pPixmap);
-        
+
         if (renderSize == source.size())
             p.drawPixmap( drawPos, source );
-        
+
         else
             p.drawTiledPixmap( drawPos.x(), drawPos.y(), renderSize.width(), renderSize.height(), source );
-        
+
         p.end();
     }
-    
+
     for (unsigned i=0; i<m_bFinished.size(); ++i)
     {
         if (!m_bFinished[i])
             return;
     }
-    
+
     emit imageDone(m_desk);
 }
 
@@ -1253,7 +1251,7 @@ void KVirtualBGRenderer::start()
         delete m_pPixmap;
         m_pPixmap = 0l;
     }
-    
+
     if (m_numRenderers > 1)
     {
         m_pPixmap = new QPixmap(m_size);
@@ -1262,7 +1260,7 @@ void KVirtualBGRenderer::start()
         // previews, etc
         m_pPixmap->fill(Qt::black);
     }
-    
+
     m_bFinished.fill(false);
     for (unsigned i=0; i<m_numRenderers; ++i)
         m_renderer[i]->start();
@@ -1279,10 +1277,10 @@ void KVirtualBGRenderer::stop()
 void KVirtualBGRenderer::cleanup()
 {
     m_bFinished.fill(false);
-    
+
     for (unsigned i=0; i<m_numRenderers; ++i)
         m_renderer[i]->cleanup();
-    
+
     delete m_pPixmap;
     m_pPixmap = 0l;
 }

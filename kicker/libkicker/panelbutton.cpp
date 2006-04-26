@@ -130,7 +130,7 @@ PanelButton::PanelButton( QWidget* parent, const char* name )
 
 PanelButton::~PanelButton()
 {
-   delete d; 
+   delete d;
 }
 
 void PanelButton::setDrawArrow(bool drawArrow)
@@ -526,8 +526,8 @@ void PanelButton::drawButtonLabel(QPainter *p)
 
     if (active)
     {
-        icon = icon.toImage().scaled(icon.width() - 2, icon.height() - 2, 
-			Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        icon = QPixmap::fromImage( icon.toImage().scaled(icon.width() - 2, icon.height() - 2,
+                                                         Qt::IgnoreAspectRatio, Qt::SmoothTransformation) );
     }
 
     if (!d->buttonText.isEmpty() && orientation() == Qt::Horizontal)

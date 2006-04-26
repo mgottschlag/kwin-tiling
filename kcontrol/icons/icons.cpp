@@ -321,7 +321,7 @@ void KIconConfig::preview(int i)
 
     img = mpEffect->apply(img, effect.type,
 	    effect.value, effect.color, effect.color2, effect.transparant);
-    pm.convertFromImage(img);
+    pm = QPixmap::fromImage(img);
     mpPreview[i]->setPixmap(pm);
 }
 
@@ -663,7 +663,7 @@ void KIconEffectSetupDialog::preview()
     QImage img = mExample.copy();
     img = mpEffect->apply(img, mEffect.type,
           mEffect.value, mEffect.color, mEffect.color2, mEffect.transparant);
-    pm.convertFromImage(img);
+    pm  = QPixmap::fromImage(img);
     mpPreview->setPixmap(pm);
 }
 

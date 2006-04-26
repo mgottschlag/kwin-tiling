@@ -21,6 +21,7 @@
 #include <kconfig.h>
 #include <klocale.h>
 #include <kpixmap.h>
+#include <QPixmap>
 
 #include "widgetcanvas.h"
 #include "widgetcanvas.moc"
@@ -43,8 +44,8 @@ static QPixmap* dis_pindown_pix = 0;
 static QPixmap* dis_menu_pix = 0;
 
 
-WidgetCanvas::WidgetCanvas( QWidget *parent, const char *name )
-	: QWidget( parent, name  ), shadeSortColumn( true )
+WidgetCanvas::WidgetCanvas( QWidget *parent )
+	: QWidget( parent  ), shadeSortColumn( true )
 {
     setMouseTracking( true );
     setBackgroundMode( Qt::NoBackground );
@@ -142,14 +143,14 @@ void WidgetCanvas::resetTitlebarPixmaps(const QColor &actMed,
     if(dis_pinup_pix) delete dis_pinup_pix;
     if(dis_pindown_pix) delete dis_pindown_pix;
     if(dis_menu_pix) delete dis_menu_pix;
-    
+
     QPainter pact, pdis;
     QBitmap bitmap;
     QColor actHigh = actMed.light(150);
     QColor actLow = actMed.dark(120);
     QColor disHigh = disMed.light(150);
     QColor disLow = disMed.dark(120);
-    
+
     close_pix = new QPixmap(16, 16);
     dis_close_pix = new QPixmap(16, 16);
     pact.begin(close_pix); pdis.begin(dis_close_pix);
@@ -181,7 +182,7 @@ void WidgetCanvas::resetTitlebarPixmaps(const QColor &actMed,
     pact.end(); pdis.end();
     bitmap = QBitmap(16, 16, iconify_mask_bits, true);
     minimize_pix->setMask(bitmap); dis_minimize_pix->setMask(bitmap);
-    
+
     maximize_pix = new QPixmap(16, 16);
     dis_maximize_pix = new QPixmap(16, 16);
     pact.begin(maximize_pix); pdis.begin(dis_maximize_pix);
@@ -250,7 +251,7 @@ void WidgetCanvas::resetTitlebarPixmaps(const QColor &actMed,
     pact.end(); pdis.end();
     bitmap = QBitmap(16, 16, pinup_mask_bits, true);
     pinup_pix->setMask(bitmap); dis_pinup_pix->setMask(bitmap);
-    
+
     pindown_pix = new QPixmap(16, 16);
     dis_pindown_pix = new QPixmap(16, 16);
     pact.begin(pindown_pix); pdis.begin(dis_pindown_pix);
@@ -271,7 +272,7 @@ void WidgetCanvas::resetTitlebarPixmaps(const QColor &actMed,
     pact.end(); pdis.end();
     bitmap = QBitmap(16, 16, pindown_mask_bits, true);
     pindown_pix->setMask(bitmap); dis_pindown_pix->setMask(bitmap);
-    
+
 }
 
 void WidgetCanvas::drawSampleWidgets()
@@ -337,10 +338,10 @@ void WidgetCanvas::drawSampleWidgets()
 
     // Reset the titlebar pixmaps
     resetTitlebarPixmaps(aTitleBtn, iTitleBtn);
-	
+
     // Initialize the pixmap which we draw sample widgets into.
 
-    smplw.resize(width(), height());
+    smplw = QPixmap( width(), height() );
     //smplw.fill( parentWidget()->back() );
     smplw.fill( parentWidget()->colorGroup().mid() );
 
@@ -357,8 +358,7 @@ void WidgetCanvas::drawSampleWidgets()
     paint.setPen( iaTitle );
     //paint.drawRect( 20, 10, width()-60, 20 );
 
-    KPixmap pmTitle;
-    pmTitle.resize( width()-160, 20 );
+    KPixmap pmTitle( width()-160, 20 );
 
     // Switched to vertical gradient because those kwin styles that
     // use the gradient have it vertical.
@@ -378,7 +378,7 @@ void WidgetCanvas::drawSampleWidgets()
     paint.drawPixmap(tmp+2, 12, *dis_minimize_pix);
     paint.drawPixmap(tmp+22, 12, *dis_maximize_pix);
     paint.drawPixmap(tmp+42, 12, *dis_close_pix);
-    
+
     int spot = 0;
     hotspots[ spot++ ] =
         HotSpot( QRect( 65, 25-14, textLen, 14 ), CSM_Inactive_title_text );
@@ -391,10 +391,10 @@ void WidgetCanvas::drawSampleWidgets()
                         (width()-160)/2, 20 ), CSM_Inactive_title_blend );
 
     hotspots[spot++] =
-        HotSpot(QRect(20, 12, 40, 20), CSM_Inactive_title_button); 
+        HotSpot(QRect(20, 12, 40, 20), CSM_Inactive_title_button);
     hotspots[spot++] =
         HotSpot(QRect(tmp, 12, 60, 20), CSM_Inactive_title_button);
-    
+
 
     // Active window
 
@@ -406,7 +406,7 @@ void WidgetCanvas::drawSampleWidgets()
 
     // Switched to vertical gradient because those kwin styles that
     // use the gradient have it vertical.
-    pmTitle.resize( width()-152, 20 );
+    pmTitle = QPixmap( width()-152, 20 );
     KPixmapEffect::gradient(pmTitle, aTitle, aBlend,
                             KPixmapEffect::HorizontalGradient);
     paint.drawPixmap( 65, 35, pmTitle );
@@ -435,7 +435,7 @@ void WidgetCanvas::drawSampleWidgets()
         HotSpot(QRect(25, 35, 40, 20), CSM_Active_title_button);
     hotspots[spot++] =
         HotSpot(QRect(tmp, 35, 60, 20), CSM_Active_title_button);
-    
+
     // Menu bar
 
     //qDrawShadePanel ( &paint, 25, 55, width()-52, 28, cg, false, 2, &brush);
@@ -443,14 +443,14 @@ void WidgetCanvas::drawSampleWidgets()
 	QStyleOption option;
 	option.rect = QRect(25, 55, width()-52, 28);
         option.palette = palette;
-	kapp->style()->drawPrimitive(QStyle::PE_PanelMenuBar, &option, &paint, this); 
+	kapp->style()->drawPrimitive(QStyle::PE_PanelMenuBar, &option, &paint, this);
     }
 
     paint.setFont( menuFont );
     paint.setPen(txt );
 	QString file = i18n("File");
     textLen = paint.fontMetrics().width( file );
-    
+
     //qDrawShadePanel ( &paint, 30, 59, textLen + 10, 21, cg, false, 2, &brush);
     {
 	QStyleOptionMenuItem option;
@@ -488,7 +488,7 @@ void WidgetCanvas::drawSampleWidgets()
     paint.drawText( 140, 127-20, i18n( "Standard text") );
     textLen = paint.fontMetrics().width( i18n("Standard text") );
     int column2 = 120 + textLen + 40 + 16;
- 
+
     hotspots[ spot++ ] =
         HotSpot( QRect( 140, 113-20, textLen, 14 ), CSM_Standard_text );
 
@@ -554,11 +554,11 @@ void WidgetCanvas::drawSampleWidgets()
     paint.drawPixmap(width()-55+27-16-2,80+5-2,pm);
 
     // Menu
-	
+
     brush.setColor( back );
-	
+
 	int textLenNew, textLenOpen, textLenSave;
-	
+
 
     textLenNew = paint.fontMetrics().width( i18n("New") );
 

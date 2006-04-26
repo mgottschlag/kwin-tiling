@@ -37,8 +37,8 @@ KCustomMenu::KCustomMenu(const QString &configfile, QWidget *parent)
    : QMenu(parent)
 {
   setObjectName("kcustom_menu");
-  d = new KCustomMenuPrivate; 
-  
+  d = new KCustomMenuPrivate;
+
   KConfig cfg(configfile, true, false);
   int count = cfg.readEntry("NrOfItems", 0);
   for(int i = 0; i < count; i++)
@@ -56,7 +56,7 @@ KCustomMenu::KCustomMenu(const QString &configfile, QWidget *parent)
 
      if (!menuItem->isValid())
         continue;
- 
+
      insertMenuItem( menuItem, -1 );
   }
   connect(this, SIGNAL(activated(int)), this, SLOT(slotActivated(int)));
@@ -77,7 +77,7 @@ KCustomMenu::slotActivated(int id)
 }
 
 // The following is copied from kicker's PanelServiceMenu
-void 
+void
 KCustomMenu::insertMenuItem(KService::Ptr & s, int nId, int nIndex/*= -1*/)
 {
     QString serviceName = s->name();
@@ -94,12 +94,12 @@ KCustomMenu::insertMenuItem(KService::Ptr & s, int nId, int nIndex/*= -1*/)
     if (normal.width() > 16 || normal.height() > 16) {
         QImage tmp = normal.toImage();
         tmp = tmp.scaled(16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        normal.convertFromImage(tmp);
+        normal = QPixmap::fromImage( tmp );
     }
     if (active.width() > 16 || active.height() > 16) {
         QImage tmp = active.toImage();
         tmp = tmp.scaled(16, 16, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        active.convertFromImage(tmp);
+        active = QPixmap::fromImage( tmp );
     }
 
     QIcon iconset;

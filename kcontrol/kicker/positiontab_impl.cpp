@@ -32,7 +32,7 @@
 #include <klocale.h>
 #include <knuminput.h>
 #include <kpanelextension.h>
-#include <kpixmap.h>
+#include <QPixmap>
 #include <kstandarddirs.h>
 #include <kwin.h>
 
@@ -489,10 +489,10 @@ void PositionTab::slotBGPreviewReady(int)
 {
     m_pretendDesktop->setBackgroundPixmap(m_desktopPreview->pixmap());
 #if 0
-    KPixmap pm;
+    QPixmap pm;
     if (QPixmap::defaultDepth() < 15)
     {
-        pm.convertFromImage(*m_desktopPreview->image(), KPixmap::LowColor);
+        pm.convertFromImage(*m_desktopPreview->image(), QPixmap::LowColor);
     }
     else
     {

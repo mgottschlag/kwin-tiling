@@ -93,12 +93,12 @@ void USBViewer::load()
   refresh();
 }
 
-static Q_UINT32 key( USBDevice &dev )
+static quint32 key( USBDevice &dev )
 {
   return dev.bus()*256 + dev.device();
 }
 
-static Q_UINT32 key_parent( USBDevice &dev )
+static quint32 key_parent( USBDevice &dev )
 {
   return dev.bus()*256 + dev.parent();
 }
@@ -136,7 +136,7 @@ void USBViewer::refresh()
       for ( ; it.current(); ++it)
 	if (it.current()->level() == level)
 	  {
-	    Q_UINT32 k = key(*it.current());
+	    quint32 k = key(*it.current());
 	    if (level == 0)
 	      {
 		Q3ListViewItem *item = _items.find(k);
@@ -184,7 +184,7 @@ void USBViewer::selectionChanged(Q3ListViewItem *item)
 {
   if (item)
     {
-      Q_UINT32 busdev = item->text(1).toUInt();
+      quint32 busdev = item->text(1).toUInt();
       USBDevice *dev = USBDevice::find(busdev>>8, busdev&255);
       if (dev)
 	{

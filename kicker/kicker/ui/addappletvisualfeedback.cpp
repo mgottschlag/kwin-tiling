@@ -139,8 +139,8 @@ void AddAppletVisualFeedback::displayInternal()
     }
 
     // resize pixmap, mask and widget
-    m_mask.resize(width, height);
-    m_pixmap.resize(width, height);
+    m_mask = QBitmap(width, height);
+    m_pixmap = QPixmap(width, height);
     resize(width, height);
 
     if (m_frames < 1)

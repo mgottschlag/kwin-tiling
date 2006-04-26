@@ -369,7 +369,7 @@ bool KlipperWidget::loadHistory() {
     QDataStream* history_stream = &file_stream;
     QByteArray data;
     if( !oldfile ) {
-        Q_UINT32 crc;
+        quint32 crc;
         file_stream >> crc >> data;
         if( crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() ) != crc ) {
             kWarning() << failed_load_warning << ": " << history_file.errorString() << endl;
@@ -432,7 +432,7 @@ void KlipperWidget::saveHistory() {
     for (  const HistoryItem* item = history()->first(); item; item = history()->next() ) {
         history_stream << item;
     }
-    Q_UINT32 crc = crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() );
+    quint32 crc = crc32( 0, reinterpret_cast<unsigned char *>( data.data() ), data.size() );
     *history_file.dataStream() << crc << data;
 }
 
@@ -569,7 +569,7 @@ void KlipperWidget::slotConfigure()
 
         myURLGrabber->setActionList( dlg->actionList() );
         myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
-        myURLGrabber->setStripWhiteSpace( dlg->stripWhiteSpace() );
+        myURLGrabber->setStripWhiteSpace( dlg->trimmed() );
         myURLGrabber->setAvoidWindows( dlg->noActionsFor() );
 
         history()->max_size( dlg->maxItems() );
@@ -774,7 +774,7 @@ bool KlipperWidget::blockFetchingNewData()
 //   contents, so in practice it's like the user has selected only the part which was
 //   selected when Klipper asked first.
 	Qt::ButtonState buttonstate = QApplication::mouseButtons();
-    if( ( buttonstate & ( Qt::ShiftModifier | Qt::LeftButton )) == Qt::ShiftButton // #85198
+    if( ( buttonstate & ( Qt::ShiftModifier | Qt::LeftButton )) == Qt::ShiftModifier // #85198
         || ( buttonstate & Qt::LeftButton ) == Qt::LeftButton ) { // #80302
         m_pendingContentsCheck = true;
         m_pendingCheckTimer.start( 100, true );

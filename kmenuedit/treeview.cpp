@@ -145,7 +145,7 @@ static QPixmap appIcon(const QString &iconName)
     {
        QImage tmp = normal.toImage();
        tmp = tmp.scaled(20, 20, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-       normal.convertFromImage(tmp);
+       normal = QPixmap::fromImage(tmp);
     }
     return normal;
 }
@@ -194,7 +194,7 @@ TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, 
 
     //	Read menu format configuration information
     KSharedConfig::Ptr		pConfig = KSharedConfig::openConfig("kickerrc");
-	
+
     pConfig->setGroup("menus");
     m_detailedMenuEntries = pConfig->readEntry("DetailedMenuEntries", QVariant(true)).toBool();
     if (m_detailedMenuEntries)
@@ -380,7 +380,7 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, Q3ListViewItem *after, Menu
      item = new TreeItem(parent, after, entryInfo->menuId(),_init);
 
    QString	name;
-	 
+
    if (m_detailedMenuEntries && entryInfo->description.length() != 0)
    {
       if (m_detailedEntriesNamesFirst)
@@ -428,7 +428,7 @@ void TreeView::fillBranch(MenuFolderInfo *folderInfo, TreeItem *parent)
           after = createTreeItem(parent, after, entry);
           continue;
        }
-       
+
        MenuFolderInfo *subFolder = dynamic_cast<MenuFolderInfo*>(info);
        if (subFolder)
        {
@@ -458,14 +458,14 @@ void TreeView::closeAllItems(Q3ListViewItem *item)
 void TreeView::selectMenu(const QString &menu)
 {
    closeAllItems(firstChild());
-   
+
    if (menu.length() <= 1)
    {
       setCurrentItem(firstChild());
       clearSelection();
       return; // Root menu
    }
-      
+
    QString restMenu = menu.mid(1);
    if (!restMenu.endsWith("/"))
       restMenu += "/";
@@ -476,7 +476,7 @@ void TreeView::selectMenu(const QString &menu)
       int i = restMenu.indexOf("/");
       QString subMenu = restMenu.left(i+1);
       restMenu = restMenu.mid(i+1);
-   
+
       item = (TreeItem*)(item ? item->firstChild() : firstChild());
       while(item)
       {
@@ -568,7 +568,7 @@ void TreeView::currentChanged(MenuEntryInfo *entryInfo)
     if (entryInfo == 0) return;
 
     QString	name;
-	 
+
     if (m_detailedMenuEntries && entryInfo->description.length() != 0)
     {
         if (m_detailedEntriesNamesFirst)
@@ -671,7 +671,7 @@ bool TreeView::acceptDrag(QDropEvent* e) const
            (e->source() == const_cast<TreeView *>(this)))
        return true;
     KUrl::List urls;
-    if (K3URLDrag::decode(e, urls) && (urls.count() == 1) && 
+    if (K3URLDrag::decode(e, urls) && (urls.count() == 1) &&
         urls[0].isLocalFile() && urls[0].path().endsWith(".desktop"))
        return true;
     return false;
@@ -698,7 +698,7 @@ static KDesktopFile *copyDesktopFile(MenuEntryInfo *entryInfo, QString *menuId, 
    QString result = createDesktopFile(entryInfo->file(), menuId, excludeList);
    KDesktopFile *df = entryInfo->desktopFile()->copyTo(result);
    df->deleteEntry("Categories"); // Don't set any categories!
-   
+
    return df;
 }
 
@@ -738,7 +738,7 @@ void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewIt
    QString folder = parentItem ? parentItem->directory() : QString();
    MenuFolderInfo *parentFolderInfo = parentItem ? parentItem->folderInfo() : m_rootFolder;
 
-   if (e->source() != this) 
+   if (e->source() != this)
    {
      // External drop
      KUrl::List urls;
@@ -912,7 +912,7 @@ void TreeView::slotDropped (QDropEvent * e, Q3ListViewItem *parent, Q3ListViewIt
          del(m_dragItem, false);
 
       TreeItem *newItem = createTreeItem(parentItem, after, m_separator, true);
-            
+
       setSelected ( newItem, true);
       itemSelected( newItem);
    }
@@ -1537,7 +1537,7 @@ bool TreeView::save()
 
     m_newMenuIds.clear();
     m_newDirectoryList.clear();
-    
+
     if (success)
     {
        KService::rebuildKSycoca(this);

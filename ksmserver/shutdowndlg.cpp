@@ -22,8 +22,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kglobalsettings.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <kpixmap.h>
 #include <kpixmapeffect.h>
+#include <kpixmap.h>
 #include <kseparator.h>
 #include <kstdguiitem.h>
 #include <kuser.h>

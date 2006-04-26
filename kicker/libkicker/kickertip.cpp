@@ -246,7 +246,7 @@ void KickerTip::dissolveMask()
 
     if (d->dissolveSize > 0)
     {
-#warning "Fix maskPainter.setRasterOp"			
+#warning "Fix maskPainter.setRasterOp"
         //maskPainter.setRasterOp(Qt::EraseROP);
 
         int x, y, s;
@@ -326,8 +326,8 @@ void KickerTip::displayInternal()
     bool firstTime = d->dissolveSize == 24;
     if (firstTime)
     {
-        d->mask.resize(width, height);
-        d->pixmap.resize(width, height);
+        d->mask = QBitmap(width, height);
+        d->pixmap = QPixmap(width, height);
         resize(width, height);
         if (isVisible())
         {
@@ -489,7 +489,7 @@ bool KickerTip::eventFilter(QObject *object, QEvent *event)
                 !qApp->activePopupWidget() &&
                 !isTippingFor(widget))
             {
-#warning "Port QToolTip to qt4"                
+#warning "Port QToolTip to qt4"
 				//d->toolTipsEnabled = QToolTip::isGloballyEnabled();
                 //QToolTip::setGloballyEnabled(false);
 
@@ -512,7 +512,7 @@ bool KickerTip::eventFilter(QObject *object, QEvent *event)
             }
             break;
         case QEvent::Leave:
-#warning "Port QToolTip to QT4"			
+#warning "Port QToolTip to QT4"
             //QToolTip::setGloballyEnabled(d->toolTipsEnabled);
 
             d->timer.stop();

@@ -48,7 +48,7 @@ static QPixmap appIcon(const QString &iconName)
      {
          QImage tmp = normal.toImage();
          tmp = tmp.scaled(K3Icon::SizeSmall, K3Icon::SizeSmall, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-         normal.convertFromImage(tmp);
+         normal = QPixmap::fromImage(tmp);
      }
      return normal;
 }

@@ -138,8 +138,8 @@ void SimpleButton::drawButtonLabel( QPainter *p )
 
     if (isChecked() || isDown())
     {
-        pix = pix.toImage().scaled(pix.width() - 2, pix.height() - 2,
-			Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        pix = QPixmap::fromImage( pix.toImage().scaled(pix.width() - 2, pix.height() - 2,
+                                                       Qt::IgnoreAspectRatio, Qt::SmoothTransformation) );
     }
 
     int h = height();
@@ -172,8 +172,8 @@ void SimpleButton::generateIcons()
     QImage image = pixmap()->toImage();
     KIconEffect effect;
 
-    d->normalIcon = effect.apply(image, K3Icon::Panel, K3Icon::DefaultState);
-    d->activeIcon = effect.apply(image, K3Icon::Panel, K3Icon::ActiveState);
+    d->normalIcon = QPixmap::fromImage( effect.apply(image, K3Icon::Panel, K3Icon::DefaultState) );
+    d->activeIcon = QPixmap::fromImage( effect.apply(image, K3Icon::Panel, K3Icon::ActiveState) );
 }
 
 void SimpleButton::slotSettingsChanged(int category)

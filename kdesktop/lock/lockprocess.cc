@@ -34,8 +34,6 @@
 #include <klibloader.h>
 #include <kpushbutton.h>
 #include <kstdguiitem.h>
-#include <kpixmapeffect.h>
-#include <kpixmap.h>
 #include <kauthorized.h>
 
 #include <qframe.h>
@@ -933,7 +931,7 @@ void LockProcess::preparePopup()
 void LockProcess::cleanupPopup()
 {
     QWidget *dlg = (QWidget *)sender();
-    
+
     int pos = mDialogs.indexOf( dlg );
     mDialogs.remove( pos );
     fakeFocusIn( mDialogs.first()->winId() );

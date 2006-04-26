@@ -28,7 +28,7 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include <kdebug.h>
-#include <kpixmap.h>
+#include <QPixmap>
 #include <kpixmapeffect.h>
 #include <kcursor.h>
 #include <kglobalsettings.h>

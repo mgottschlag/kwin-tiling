@@ -80,7 +80,7 @@ KBackgroundManager::KBackgroundManager(QWidget *desktop, KWinModule* kwinModule)
     m_pKwinmodule = kwinModule;
     m_pPixmapServer = new KPixmapServer();
     m_xrootpmap = None;
-    
+
     for (int i=0; i<m_Renderer.size(); i++)
     {
 	m_Cache[i] = new KBackgroundCacheEntry;
@@ -582,13 +582,13 @@ void KBackgroundManager::slotTimeout()
     {
         KVirtualBGRenderer *r = m_Renderer[i];
         bool change = false;
-        
+
         if (r->needProgramUpdate())
         {
             r->programUpdate();
             change = true;
         }
-        
+
         if (r->needWallpaperChange())
         {
             r->changeWallpaper();
@@ -718,9 +718,9 @@ void KBackgroundManager::setWallpaper(int desk, QString wallpaper, int mode)
     for (unsigned i=0; i < m_Renderer[sdesk]->numRenderers(); ++i)
     {
         KBackgroundRenderer *r = m_Renderer[sdesk]->renderer(i);
-    
+
         setCommon(false);   // Force each desktop to have it's own wallpaper
-    
+
         r->stop();
         r->setWallpaperMode(mode);
         r->setMultiWallpaperMode(KBackgroundSettings::NoMulti);
@@ -764,20 +764,20 @@ void KBackgroundManager::setColor(const QColor & c, bool isColorA)
     {
         KBackgroundRenderer *r = m_Renderer[effectiveDesktop()]->renderer(i);
         r->stop();
-    
+
         if (isColorA)
             r->setColorA(c);
         else
             r->setColorB(c);
-    
+
         int mode = r->backgroundMode();
         if (mode == KBackgroundSettings::Program)
         mode = KBackgroundSettings::Flat;
-    
+
         if (!isColorA && (mode == KBackgroundSettings::Flat))
         mode = KBackgroundSettings::VerticalGradient;
         r->setBackgroundMode(mode);
-    
+
         r->writeSettings();
     }
     slotChangeDesktop(0);

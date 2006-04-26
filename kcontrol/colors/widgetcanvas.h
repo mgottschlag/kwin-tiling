@@ -45,7 +45,7 @@ class QColor;
 class QPainter;
 class QEvent;
 
-class KPixmap;
+class QPixmap;
 
 class HotSpot
 {
@@ -63,7 +63,7 @@ class WidgetCanvas : public QWidget
     Q_OBJECT
 
 public:
-    WidgetCanvas( QWidget *parent=0, const char *name=0 );
+    WidgetCanvas( QWidget *parent=0 );
     void drawSampleWidgets();
     void resetTitlebarPixmaps(const QColor &active,
 			      const QColor &inactive);

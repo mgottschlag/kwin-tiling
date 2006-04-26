@@ -293,7 +293,7 @@ void kthememanager::slotCreateTheme()
             m_theme->setVersion( dlg.getVersion() );
 
             QString result = m_theme->createYourself( true );
-            m_theme->addPreview();	    
+            m_theme->addPreview();
 
             if ( !result.isEmpty() )
                 KMessageBox::information( this, i18n( "Your theme has been successfully created in %1.", result ),
@@ -398,8 +398,7 @@ void kthememanager::updatePreview( const QString & pixFile )
      if (preview.width()>dlg->lbPreview->contentsRect().width() ||
          preview.height()>dlg->lbPreview->contentsRect().height() )
          preview = preview.scaled( dlg->lbPreview->contentsRect().size(), Qt::KeepAspectRatio, Qt::SmoothTransformation );
-     QPixmap pix;
-     pix.convertFromImage( preview );
+     QPixmap pix = QPixmap::fromImage( preview );
      dlg->lbPreview->setPixmap( pix );
 }
 

@@ -1,6 +1,6 @@
 /*
    kate: space-indent on; indent-width 3; indent-mode cstyle;
-   
+
    This file is part of the KDE libraries
 
    Copyright (c) 2005 David Saxton <david@bluehaze.org>
@@ -72,12 +72,12 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    m_pDirs = KGlobal::dirs();
    m_multidesktop = _multidesktop;
    m_previewUpdates = true;
-   
+
    m_numDesks = m_multidesktop ? KWin::numberOfDesktops() : 1;
    m_numScreens = QApplication::desktop()->numScreens();
-   
+
    QString multiHead = getenv("KDE_MULTIHEAD");
-   if (multiHead.toLower() == "true") 
+   if (multiHead.toLower() == "true")
    {
       m_numScreens = 1;
    }
@@ -86,7 +86,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    m_screen = QApplication::desktop()->screenNumber(this);
    if (m_screen >= (int)m_numScreens)
       m_screen = m_numScreens-1;
-   
+
    m_eDesk = m_pGlobals->commonDeskBackground() ? 0 : m_desk;
    getEScreen();
    m_copyAllDesktops = true;
@@ -105,7 +105,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
       m_screen = 0;
       m_eScreen = 0;
    }
-   
+
    connect(m_buttonIdentifyScreens, SIGNAL(clicked()), SLOT(slotIdentifyScreens()));
 
    // preview monitor
@@ -165,26 +165,26 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
 
    // renderers
    m_renderer.resize(m_numDesks+1);
-   
+
    if (m_numScreens > 1)
    {
       for (unsigned i = 0; i < m_numDesks+1; ++i)
       {
          m_renderer[i].resize(m_numScreens+2);
          m_renderer[i].setAutoDelete(true);
-         
+
          int eDesk = i>0 ? i-1 : 0;
-         
+
          // Setup the merged-screen renderer
          KBackgroundRenderer * r = new KBackgroundRenderer(eDesk, 0, false, _config);
          m_renderer[i].insert( 0, r );
          connect( r, SIGNAL(imageDone(int,int)), SLOT(slotPreviewDone(int,int)) );
-         
+
          // Setup the common-screen renderer
          r = new KBackgroundRenderer(eDesk, 0, true, _config);
          m_renderer[i].insert( 1, r );
          connect( r, SIGNAL(imageDone(int,int)), SLOT(slotPreviewDone(int,int)) );
-         
+
          // Setup the remaining renderers for each screen
          for (unsigned j=0; j < m_numScreens; ++j )
          {
@@ -201,7 +201,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
          m_renderer[i].resize(1);
          m_renderer[i].setAutoDelete(true);
       }
-      
+
       // set up the common desktop renderer
       KBackgroundRenderer * r = new KBackgroundRenderer(0, 0, false, _config);
       m_renderer[0].insert(0, r);
@@ -257,7 +257,7 @@ void BGDialog::getEScreen()
       m_eScreen = m_pGlobals->commonScreenBackground() ? 1 : m_screen+2;
    else
       m_eScreen = 0;
-   
+
    if ( m_numScreens == 1 )
       m_eScreen = 0;
    else if ( m_eScreen > int(m_numScreens+1) )
@@ -291,7 +291,7 @@ void BGDialog::load()
    m_pGlobals->readSettings();
    m_eDesk = m_pGlobals->commonDeskBackground() ? 0 : m_desk;
    getEScreen();
-   
+
    for (unsigned desk = 0; desk < m_renderer.size(); ++desk)
    {
       unsigned eDesk = desk>0 ? desk-1 : 0;
@@ -302,7 +302,7 @@ void BGDialog::load()
          m_renderer[desk][screen]->load( eDesk, eScreen, (screen>0), true );
       }
    }
-   
+
    m_copyAllDesktops = true;
    m_copyAllScreens = true;
 
@@ -330,23 +330,23 @@ void BGDialog::save()
    // depending on which are the real settings
    // they both share Desktop[0] in the config file
    // similar for screen...
-   
+
    for (unsigned desk = 0; desk < m_renderer.size(); ++desk)
    {
       if (desk == 0 && !m_pGlobals->commonDeskBackground())
          continue;
-      
+
       if (desk == 1 && m_pGlobals->commonDeskBackground())
          continue;
-      
+
       for (unsigned screen = 0; screen < m_renderer[desk].size(); ++screen)
       {
          if (screen == 1 && !m_pGlobals->commonScreenBackground())
             continue;
-         
+
          if (screen == 2 && m_pGlobals->commonScreenBackground())
             continue;
-         
+
          m_renderer[desk][screen]->writeSettings();
       }
    }
@@ -463,7 +463,7 @@ void BGDialog::initUI()
    // Desktop names
    for (unsigned i = 0; i < m_numDesks; ++i)
       m_comboDesktop->addItem(m_pGlobals->deskName(i));
-   
+
    // Screens
    for (unsigned i = 0; i < m_numScreens; ++i)
       m_comboScreen->addItem( i18n("Screen %1", i+1) );
@@ -655,7 +655,7 @@ void BGDialog::slotWallpaperSelection()
    KImageFilePreview* previewWidget = new KImageFilePreview(&dlg);
    dlg.setPreviewWidget(previewWidget);
 
-   QStringList mimeTypes = KImageIO::mimeTypes( KImageIO::Reading ); 
+   QStringList mimeTypes = KImageIO::mimeTypes( KImageIO::Reading );
 #ifdef HAVE_LIBART
    mimeTypes += "image/svg+xml";
 #endif
@@ -825,7 +825,7 @@ void BGDialog::updateUI()
 void BGDialog::slotPreviewDone(int desk_done, int screen_done)
 {
    int currentDesk = (m_eDesk > 0) ? m_eDesk-1 : 0;
-   
+
    if ( desk_done != currentDesk )
       return;
 
@@ -954,7 +954,7 @@ void BGDialog::slotWallpaperTypeChanged(int i)
       }
       else if (KMimeType::findByPath(path)->is("image/svg+xml"))
       {
-         m_wallpaperPos = KBackgroundSettings::Scaled;         
+         m_wallpaperPos = KBackgroundSettings::Scaled;
       }
 
       r->setWallpaperMode(m_wallpaperPos);
@@ -1101,17 +1101,17 @@ void BGDialog::slotSelectScreen(int screen)
          }
       }
    }
-   
+
    if (screen == m_eScreen )
    {
       return; // Nothing to do
    }
 
    m_copyAllScreens = false;
-   
+
    bool drawBackgroundPerScreen = screen > 0;
    bool commonScreenBackground = screen < 2;
-   
+
    // Update drawBackgroundPerScreen
    if (m_eDesk == 0)
    {
@@ -1122,9 +1122,9 @@ void BGDialog::slotSelectScreen(int screen)
    {
       m_pGlobals->setDrawBackgroundPerScreen(m_eDesk-1, drawBackgroundPerScreen);
    }
-   
+
    m_pGlobals->setCommonScreenBackground(commonScreenBackground);
-   
+
    if (screen < 2)
       emit changed(true);
    else

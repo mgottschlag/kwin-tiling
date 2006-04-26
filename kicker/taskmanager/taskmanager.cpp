@@ -727,7 +727,7 @@ void Task::refreshIcon()
         _pixmap = SmallIcon("kcmx");
     }
 
-    _lastIcon.resize(0,0);
+    _lastIcon = QPixmap();
     emit iconChanged();
 }
 
@@ -1335,8 +1335,8 @@ void Task::generateThumbnail()
    height = height * _thumbSize;
 
    img = img.scaled( qRound(width), qRound(height), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
-   _thumb = img;
-   _grab.resize( 0, 0 ); // Makes grab a null image.
+   _thumb = QPixmap::fromImage( img );
+   _grab = QPixmap(); // Makes grab a null image.
 
    emit thumbnailChanged();
 }
@@ -1476,7 +1476,7 @@ int TaskManager::currentDesktop() const
     return m_winModule->currentDesktop();
 }
 
-TaskDrag::TaskDrag(const Task::List& tasks, QWidget* source, const char* name)
+TaskDrag::TaskDrag(const Task::List& tasks, QWidget* source)
   : QDrag(source)
 {
     QByteArray data;

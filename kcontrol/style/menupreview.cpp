@@ -25,8 +25,9 @@
 #include <QPixmap>
 #include <QPaintEvent>
 
-#include <kpixmap.h>
+#include <QPixmap>
 #include <kpixmapeffect.h>
+#include <kpixmap.h>
 #include <klocale.h>
 #include <kimageeffect.h>
 #include <kiconloader.h>
@@ -65,12 +66,12 @@ void MenuPreview::createPixmaps()
 	int h = height()-2;
 
 	if (pixBackground)
-		pixBackground->resize( w, h );
+		*pixBackground = QPixmap( w, h );
 	if (pixOverlay)
-		pixOverlay->resize( w, h );	
+		*pixOverlay = QPixmap( w, h );
 	if (pixBlended)
-		pixBlended->resize( w, h );
-	
+		*pixBlended = QPixmap( w, h );
+
 	QColorGroup cg = colorGroup();
 	QColor c1 = cg.background();
 	QColor c2 = cg.mid();
@@ -81,10 +82,10 @@ void MenuPreview::createPixmaps()
 		p.begin(pixBackground);
 		for(int x=0; x < pixBackground->width(); x+=5)
 			for(int y=0; y < pixBackground->height(); y+=5)
-				p.fillRect( x, y, 5, 5, 
-								 (x % 2) ? 
+				p.fillRect( x, y, 5, 5,
+								 (x % 2) ?
 								((y % 2) ?  c2 : c1  ) : 	// See the grid? ;-)
-								((y % 2) ?  c1 : c2  ) );	
+								((y % 2) ?  c1 : c2  ) );
 		KIconLoader* icl = KGlobal::iconLoader();
 		QPixmap pix = icl->loadIcon("go", K3Icon::Desktop, K3Icon::SizeLarge, K3Icon::ActiveState);
 		p.drawPixmap( (width()-2-pix.width())/2, (height()-2-pix.height())/2, pix );
@@ -100,18 +101,18 @@ void MenuPreview::createPixmaps()
 void MenuPreview::blendPixmaps()
 {
 	// Rebuild pixmaps, and repaint
-	if (pixBlended && pixBackground) 
+	if (pixBlended && pixBackground)
 	{
 		if (mode == Blend && pixOverlay) {
 			QImage src = pixOverlay->toImage();
 			QImage dst = pixBackground->toImage();
 			KImageEffect::blend(src, dst, menuOpacity);
-			pixBlended->convertFromImage( dst );
+			*pixBlended = QPixmap::fromImage( dst );
 		} else if (mode == Tint) {
 			QColor clr = colorGroup().button();
 			QImage dst = pixBackground->toImage();
 			KImageEffect::blend(clr, dst, menuOpacity);
-			pixBlended->convertFromImage( dst );
+			*pixBlended = QPixmap::fromImage( dst );
 		}
 	}
 }

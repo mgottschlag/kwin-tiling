@@ -154,8 +154,8 @@ void HideButton::generateIcons()
     image = image.scaled(size() - QSize(4, 4), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
     KIconEffect effect;
-    m_normalIcon = effect.apply(image, K3Icon::Panel, K3Icon::DefaultState);
-    m_activeIcon = effect.apply(image, K3Icon::Panel, K3Icon::ActiveState);
+    m_normalIcon = QPixmap::fromImage( effect.apply(image, K3Icon::Panel, K3Icon::DefaultState) );
+    m_activeIcon = QPixmap::fromImage( effect.apply(image, K3Icon::Panel, K3Icon::ActiveState) );
 }
 
 void HideButton::slotSettingsChanged(int category)

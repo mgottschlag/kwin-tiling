@@ -12,7 +12,6 @@
 #include <kgreeterplugin.h>
 
 #include <kprocess.h>
-#include <kpixmap.h>
 
 #include <qwidget.h>
 #include <qtimer.h>

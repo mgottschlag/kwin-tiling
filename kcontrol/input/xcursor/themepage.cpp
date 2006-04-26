@@ -575,7 +575,7 @@ QPixmap ThemePage::createIcon( const QString &theme, const QString &sample ) con
 		image.setAlphaBuffer( true );
 
 		// Clear the image
-		Q_UINT32 *dst = reinterpret_cast<Q_UINT32*>( image.bits() );
+		quint32 *dst = reinterpret_cast<quint32*>( image.bits() );
 		for ( int i = 0; i < image.width() * image.height(); i++ )
 			dst[i] = 0;
 
@@ -583,20 +583,20 @@ QPixmap ThemePage::createIcon( const QString &theme, const QString &sample ) con
 		QPoint dstOffset( (image.width() - r.width()) / 2, (image.height() - r.height()) / 2 );
 		QPoint srcOffset( r.topLeft() );
 
-		dst = reinterpret_cast<Q_UINT32*>( image.scanLine(dstOffset.y()) ) + dstOffset.x();
-		src = reinterpret_cast<Q_UINT32*>( xcur->pixels ) + srcOffset.y() * xcur->width + srcOffset.x();
+		dst = reinterpret_cast<quint32*>( image.scanLine(dstOffset.y()) ) + dstOffset.x();
+		src = reinterpret_cast<quint32*>( xcur->pixels ) + srcOffset.y() * xcur->width + srcOffset.x();
 
 		// Copy the XcursorImage into the QImage, converting it from premultiplied
 		// to non-premultiplied alpha and cropping it if needed.
 		for ( int y = 0; y < r.height(); y++ )
 		{
 			for ( int x = 0; x < r.width(); x++, dst++, src++ ) {
-				const Q_UINT32 pixel = *src;
+				const quint32 pixel = *src;
 
-				const Q_UINT8 a = qAlpha( pixel );
-				const Q_UINT8 r = qRed( pixel );
-				const Q_UINT8 g = qGreen( pixel );
-				const Q_UINT8 b = qBlue( pixel );
+				const quint8 a = qAlpha( pixel );
+				const quint8 r = qRed( pixel );
+				const quint8 g = qGreen( pixel );
+				const quint8 b = qBlue( pixel );
 
 				if ( !a || a == 255 ) {
 					*dst = pixel;
@@ -613,18 +613,18 @@ QPixmap ThemePage::createIcon( const QString &theme, const QString &sample ) con
 		if ( image.width() > iconSize || image.height() > iconSize )
 			image = image.scaled( iconSize, iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation );
 
-		pix.convertFromImage( image );
+		pix = QPixmap::fromImage( image );
 		XcursorImageDestroy( xcur );
 	} else {
 
 		QImage image( iconSize, iconSize, 32 );
 		image.setAlphaBuffer( true );
 
-		Q_UINT32 *data = reinterpret_cast< Q_UINT32* >( image.bits() );
+		quint32 *data = reinterpret_cast< quint32* >( image.bits() );
 		for ( int i = 0; i < image.width() * image.height(); i++ )
 			data[ i ] = 0;
 
-		pix.convertFromImage( image );
+		pix = QPixmap::fromImage( image );
 	}
 
 	return pix;
