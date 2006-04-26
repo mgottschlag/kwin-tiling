@@ -49,7 +49,6 @@
 #include <kiconloader.h>
 #include <kimageio.h>
 #include <klocale.h>
-#include <kpixmap.h>
 #include <kstandarddirs.h>
 #include <kstringhandler.h>
 #include <kurlrequester.h>
@@ -840,11 +839,7 @@ void BGDialog::slotPreviewDone(int desk_done, int screen_done)
 
    r->saveCacheFile();
 
-   KPixmap pm;
-   if (QPixmap::defaultDepth() < 15)
-      pm.convertFromImage(r->image(), KPixmap::LowColor);
-   else
-      pm.convertFromImage(r->image());
+   QPixmap pm = QPixmap::fromImage(r->image());
 
    if ( m_eScreen == 0 )
    {

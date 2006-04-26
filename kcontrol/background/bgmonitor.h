@@ -33,7 +33,7 @@
 
 class BGMonitor;
 class BGMonitorLabel;
-class KPixmap;
+class QPixmap;
 
   /**
  * This class arranges and resizes a set of monitor images according to the
@@ -49,7 +49,7 @@ public:
      * Splits up the pixmap according to monitor geometries and sets each
      * BGMonitor pixmap accordingly.
      */
-    void setPixmap( const KPixmap & pm );
+    void setPixmap( const QPixmap & pm );
     QSize combinedPreviewSize() const { return m_combinedPreviewSize; }
     QSize maxPreviewSize() const { return m_maxPreviewSize; }
     unsigned numMonitors() const { return m_pBGMonitor.size(); }

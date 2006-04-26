@@ -141,7 +141,7 @@ void BGMonitorArrangement::resizeEvent( QResizeEvent * e )
 }
 
 
-void BGMonitorArrangement::setPixmap( const KPixmap & pm )
+void BGMonitorArrangement::setPixmap( const QPixmap & pm )
 {
     for (unsigned screen = 0; screen < m_pBGMonitor.size(); ++screen)
     {

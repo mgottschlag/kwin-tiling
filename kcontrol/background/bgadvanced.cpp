@@ -29,7 +29,6 @@
 #include <qpushbutton.h>
 #include <qslider.h>
 #include <qspinbox.h>
-//Added by qt3to4:
 #include <QFrame>
 #include <QGridLayout>
 #include <QByteArray>
@@ -38,7 +37,6 @@
 #include <kcolorbutton.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <kpixmap.h>
 #include <kstandarddirs.h>
 #include <kwin.h>
 
