@@ -120,7 +120,6 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
     config->reparseConfiguration(); // config may have changed in the KControl module
 
     config->setGroup("General" );
-    excludeApps = config->readEntry( "excludeApps" ).toLower().split( QRegExp( "[,:]" ), QString::SkipEmptyParts ); 
 
     bool logoutConfirmed =
         (confirm == KWorkSpace::ShutdownConfirmYes) ? false :

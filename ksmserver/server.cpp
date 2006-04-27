@@ -827,6 +827,9 @@ void KSMServer::discardSession()
 void KSMServer::storeSession()
 {
     KConfig* config = KGlobal::config();
+    config->reparseConfiguration(); // config may have changed in the KControl module
+    config->setGroup("General" );
+    excludeApps = config->readEntry( "excludeApps" ).toLower().split( QRegExp( "[,:]" ), QString::SkipEmptyParts ); 
     config->setGroup( sessionGroup );
     int count =  config->readEntry( "count", 0 );
     for ( int i = 1; i <= count; i++ ) {
