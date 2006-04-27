@@ -434,15 +434,15 @@ void AddAppletDialog::addApplet(AppletWidget* applet)
 
             // reset the odd/even colouring from this item on down in the list
             bool odd = applet->odd();
-            AppletWidget::List::const_iterator it = m_appletWidgetList.find(applet);
-            for (; it != m_appletWidgetList.constEnd(); ++it)
+            int idx = m_appletWidgetList.indexOf(applet);
+            for (; idx != -1 && idx < m_appletWidgetList.count(); idx++)
             {
-                if ((*it)->isHidden())
+                if (m_appletWidgetList[idx]->isHidden())
                 {
                     continue;
                 }
 
-                (*it)->setOdd(odd);
+                m_appletWidgetList[idx]->setOdd(odd);
                 odd = !odd;
             }
         }

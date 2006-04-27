@@ -383,7 +383,7 @@ void PanelBrowserMenu::mouseMoveEvent(QMouseEvent *e)
 {
     QMenu::mouseMoveEvent(e);
 
-    if (!(e->state() & Qt::LeftButton)) return;
+    if (!(e->buttons() & Qt::LeftButton)) return;
     if(_lastpress == QPoint(-1, -1)) return;
 
     // DND delay
@@ -429,7 +429,7 @@ void PanelBrowserMenu::dragEnterEvent( QDragEnterEvent *ev )
 
 void PanelBrowserMenu::dragMoveEvent(QDragMoveEvent *ev)
 {
-    QMouseEvent mev(QEvent::MouseMove, ev->pos(), Qt::NoButton, Qt::LeftButton);
+    QMouseEvent mev(QEvent::MouseMove, ev->pos(), Qt::NoButton, Qt::LeftButton, Qt::NoModifier);
     QMenu::mouseMoveEvent(&mev);
 }
 

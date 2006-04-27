@@ -119,7 +119,7 @@ TaskContainer::TaskContainer(Startup::StartupPtr startup, PixmapList& startupFra
 
 void TaskContainer::init()
 {
-    setBackgroundMode(Qt::NoBackground);
+    setAttribute(Qt::WA_NoSystemBackground, true);
     animBg = QPixmap(16, 16);
 
     installEventFilter(KickerTip::self());

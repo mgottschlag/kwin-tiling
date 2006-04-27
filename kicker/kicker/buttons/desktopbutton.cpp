@@ -40,8 +40,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "desktopbutton.moc"
 
 DesktopButton::DesktopButton( QWidget* parent )
-  : PanelButton( parent, "DesktopButton" )
+  : PanelButton( parent )
 {
+    setObjectName("DesktopButton");
     setCheckable(true);
 
     this->setToolTip( i18n("Show desktop"));

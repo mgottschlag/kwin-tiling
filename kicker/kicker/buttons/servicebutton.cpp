@@ -44,18 +44,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "servicebutton.moc"
 
 ServiceButton::ServiceButton(const QString& desktopFile, QWidget* parent)
-  : PanelButton(parent, "ServiceButton"),
+  : PanelButton(parent),
     _service(0)
 {
+    setObjectName("ServiceButton");
     loadServiceFromId(desktopFile);
     initialize();
 }
 
 ServiceButton::ServiceButton(const KService::Ptr &service, QWidget* parent)
-  : PanelButton(parent, "ServiceButton"),
+  : PanelButton(parent),
     _service(service),
     _id(service->storageId())
 {
+    setObjectName("ServiceButton");
     if (_id.startsWith("/"))
     {
        QString tmp = KGlobal::dirs()->relativeLocation("appdata", _id);
@@ -66,9 +68,10 @@ ServiceButton::ServiceButton(const KService::Ptr &service, QWidget* parent)
 }
 
 ServiceButton::ServiceButton( const KConfigGroup& config, QWidget* parent )
-  : PanelButton(parent, "ServiceButton"),
+  : PanelButton(parent),
     _service(0)
 {
+    setObjectName("ServiceButton");
     QString id;
     if (config.hasKey("StorageId"))
        id = config.readPathEntry("StorageId");

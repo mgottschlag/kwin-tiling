@@ -57,11 +57,9 @@ TaskbarApplet::TaskbarApplet( const QString& configFile, Plasma::Type type, int 
                              QWidget *parent, const char *name )
     : KPanelApplet( configFile, type, actions, parent, name )
 {
-    setBackgroundOrigin( AncestorOrigin );
     QHBoxLayout* layout = new QHBoxLayout( this );
     layout->setMargin(0);
     container = new TaskBar( this );
-    container->setBackgroundOrigin( AncestorOrigin );
     connect(container, SIGNAL(containerCountChanged()), this, SIGNAL(updateLayout()));
     layout->addWidget( container, 1 );
     container->popupDirectionChange(popupDirection());

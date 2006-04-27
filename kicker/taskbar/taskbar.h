@@ -52,7 +52,7 @@ class KDE_EXPORT TaskBar : public QWidget, public DCOPObject
     K_DCOP
 
 public:
-    TaskBar( QWidget *parent = 0, const char *name = 0 );
+    TaskBar( QWidget *parent = 0 );
     ~TaskBar();
 
     QSize sizeHint() const;

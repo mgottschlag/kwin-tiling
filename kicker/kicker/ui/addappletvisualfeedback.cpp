@@ -45,7 +45,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 AddAppletVisualFeedback::AddAppletVisualFeedback(AppletWidget* widget,
                                                  const QWidget* target,
                                                  Plasma::Position direction)
-    : QWidget(0, "animtt", Qt::WX11BypassWM),
+    : QWidget(0, Qt::X11BypassWindowManagerHint),
       m_target(target),
       m_direction(direction),
       m_icon(*widget->itemPixmap->pixmap()),
@@ -54,8 +54,9 @@ AddAppletVisualFeedback::AddAppletVisualFeedback(AppletWidget* widget,
       m_dissolveDelta(-1),
       m_frames(1)
 {
+    setObjectName("animtt");
     setFocusPolicy(Qt::NoFocus);
-    setBackgroundMode(Qt::NoBackground);
+    setAttribute(Qt::WA_NoSystemBackground, true);
     connect(&m_moveTimer, SIGNAL(timeout()), SLOT(swoopCloser()));
 
     QString m = "<qt><h3>" + i18n("%1 Added", widget->info().name());
@@ -154,7 +155,7 @@ void AddAppletVisualFeedback::displayInternal()
     // draw background
     QPainter bufferPainter(&m_pixmap);
     bufferPainter.setPen(Qt::black);
-    bufferPainter.setBrush(colorGroup().background());
+    bufferPainter.setBrush(palette().window());
     bufferPainter.drawRoundRect(0, 0, width, height,
                                 1600 / width, 1600 / height);
 
@@ -172,15 +173,15 @@ void AddAppletVisualFeedback::displayInternal()
         int textY = (height - textRect.height()) / 2;
 
         // draw text shadow
-        QColorGroup cg = colorGroup();
-        cg.setColor(QColorGroup::Text, cg.background().dark(115));
+        QPalette pal = palette();
+        pal.setColor(QColorGroup::Text, pal.window().color().dark(115));
         int shadowOffset = QApplication::isRightToLeft() ? -1 : 1;
         m_richText->draw(&bufferPainter, 5 + textX + shadowOffset,
-                         textY + 1, QRect(), cg);
+                         textY + 1, QRect(), pal);
 
         // draw text
-        cg = colorGroup();
-        m_richText->draw(&bufferPainter, 5 + textX, textY, rect(), cg);
+        pal = palette();
+        m_richText->draw(&bufferPainter, 5 + textX, textY, rect(), pal);
     }
 }
 
@@ -222,6 +223,6 @@ void AddAppletVisualFeedback::swoopCloser()
 void AddAppletVisualFeedback::internalUpdate()
 {
     m_dirty = true;
-    repaint(false);
+    repaint();
 }
 

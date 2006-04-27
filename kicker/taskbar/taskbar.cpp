@@ -61,24 +61,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskbar.moc"
 
 
-TaskBar::TaskBar( QWidget *parent, const char *name )
-    : QWidget( parent, name ),
+TaskBar::TaskBar( QWidget *parent )
+    : QWidget( parent ),
+      blocklayout(true),
       m_showAllWindows(false),
       m_currentScreen(-1),
       m_showOnlyCurrentScreen(false),
+      m_sortByDesktop(false),
+      m_showIcon(false),
+      arrowType(Qt::LeftArrow),
       m_textShadowEngine(0),
       m_direction(Plasma::Up),
       m_showWindowListButton(true),
       m_windowListButton(0),
-      m_windowListMenu(0),
-      m_sortByDesktop(false),
-      m_showIcon(false)
+      m_windowListMenu(0)
 {
-    setBackgroundOrigin( AncestorOrigin );
-
-    arrowType = Qt::LeftArrow;
-    blocklayout = true;
-
     // init
     setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 
@@ -88,9 +85,10 @@ TaskBar::TaskBar( QWidget *parent, const char *name )
         frames.append(new QPixmap(locate("data", "kicker/pics/disk" + QString::number(i) + ".png")));
     }
 
-    m_layout = new QBoxLayout(this, QApplication::isRightToLeft() ?
-                                    QBoxLayout::RightToLeft :
-                                    QBoxLayout::LeftToRight);
+    m_layout = new QBoxLayout( QApplication::isRightToLeft() ?
+                                QBoxLayout::RightToLeft :
+                                QBoxLayout::LeftToRight,
+                                this );
 
     m_container = new Panner(this);
     m_container->setFrameStyle( QFrame::NoFrame );
@@ -266,7 +264,7 @@ void TaskBar::configure()
 		break;
         }
 
-        m_windowListButton->setPixmap(kapp->iconLoader()->loadIcon(icon,
+        m_windowListButton->setIcon(kapp->iconLoader()->loadIcon(icon,
                                                                  K3Icon::Panel,
                                                                  16));
         m_windowListButton->setMinimumSize(m_windowListButton->sizeHint());
@@ -413,10 +411,10 @@ void TaskBar::add(Startup::StartupPtr startup)
 
 void TaskBar::showTaskContainer(TaskContainer* container)
 {
-    TaskContainer::List::iterator it = m_hiddenContainers.find(container);
-    if (it != m_hiddenContainers.end())
+    int idx = m_hiddenContainers.indexOf(container);
+    if (idx != -1)
     {
-        m_hiddenContainers.erase(it);
+        m_hiddenContainers.removeAt(idx);
     }
 
     if (container->isEmpty())
@@ -508,10 +506,10 @@ void TaskBar::remove(Task::TaskPtr task, TaskContainer* container)
 
     if (container->isEmpty())
     {
-        TaskContainer::List::iterator it = containers.find(container);
-        if (it != containers.end())
+        int idx = containers.indexOf(container);
+        if (idx != -1)
         {
-            containers.erase(it);
+            containers.removeAt(idx);
         }
         container->deleteLater();
 
@@ -573,10 +571,10 @@ void TaskBar::remove(Startup::StartupPtr startup, TaskContainer* container)
         return;
     }
 
-    TaskContainer::List::iterator it = containers.find(container);
-    if (it != containers.end())
+    int idx = containers.indexOf(container);
+    if (idx != -1)
     {
-        containers.erase(it);
+        containers.removeAt(idx);
     }
 
     container->deleteLater();
@@ -1105,7 +1103,7 @@ void TaskBar::drawShadowText(QPainter  &p, QRect tr, int tf, const QString & str
     pixPainter.begin(&textPixmap);
     pixPainter.setPen(Qt::white);
     pixPainter.setFont(p.font()); // get the font from the root painter
-    pixPainter.drawText( tr, tf, str, len, brect );
+    pixPainter.drawText( tr, tf, str.left( len ), brect );
     pixPainter.end();
 
     if (!m_textShadowEngine)
@@ -1123,7 +1121,7 @@ void TaskBar::drawShadowText(QPainter  &p, QRect tr, int tf, const QString & str
 
     // return
     p.drawImage(0, 0, img);
-    p.drawText(tr, tf, str, len, brect);
+    p.drawText(tr, tf, str.left(len), brect);
 }
 
 void TaskBar::sortContainersByDesktop(TaskContainer::List& list)
@@ -1237,7 +1235,7 @@ void TaskBar::popupDirectionChange(Plasma::Position d)
 
     if (m_windowListButton)
     {
-        m_windowListButton->setPixmap(kapp->iconLoader()->loadIcon(icon,
+        m_windowListButton->setIcon(kapp->iconLoader()->loadIcon(icon,
                                                                  K3Icon::Panel,
                                                                  16));
         m_windowListButton->setMinimumSize(m_windowListButton->sizeHint());

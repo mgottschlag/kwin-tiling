@@ -47,7 +47,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "urlbutton.moc"
 
 URLButton::URLButton( const QString& url, QWidget* parent )
-  : PanelButton( parent, "URLButton" )
+  : PanelButton( parent )
   , fileItem( 0 )
   , pDlg( 0 )
 {
@@ -55,7 +55,7 @@ URLButton::URLButton( const QString& url, QWidget* parent )
 }
 
 URLButton::URLButton( const KConfigGroup& config, QWidget* parent )
-  : PanelButton( parent, "URLButton" )
+  : PanelButton( parent )
   , fileItem( 0 )
   , pDlg( 0 )
 {
@@ -69,6 +69,7 @@ URLButton::~URLButton()
 
 void URLButton::initialize( const QString& _url )
 {
+    setObjectName("URLButton");
     KUrl url(_url);
     if (!url.isLocalFile() || !url.path().endsWith(".desktop"))
     {

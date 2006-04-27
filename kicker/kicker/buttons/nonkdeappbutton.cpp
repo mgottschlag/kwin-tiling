@@ -55,7 +55,7 @@ NonKDEAppButton::NonKDEAppButton(const QString& name,
                                  const QString& filePath, const QString& icon,
                                  const QString &cmdLine, bool inTerm,
                                  QWidget* parent)
-  : PanelButton(parent, "NonKDEAppButton") // call our superclass's constructor
+  : PanelButton(parent) // call our superclass's constructor
 {
     // call the initialization method
     initialize(name, description, filePath, icon, cmdLine, inTerm);
@@ -69,7 +69,7 @@ NonKDEAppButton::NonKDEAppButton(const QString& name,
 
 // this constructor is used when restoring a button, usually at startup
 NonKDEAppButton::NonKDEAppButton( const KConfigGroup& config, QWidget* parent )
-  : PanelButton(parent, "NonKDEAppButton") // call our superclass's constructor
+  : PanelButton(parent) // call our superclass's constructor
 {
     // call the initialization method, this time with values from a config file
     initialize(config.readEntry("Name"),
@@ -88,6 +88,7 @@ void NonKDEAppButton::initialize(const QString& name,
                                  const QString& filePath, const QString& icon,
                                  const QString &cmdLine, bool inTerm )
 {
+    setObjectName("NonKDEAppButton");
     // and now we actually set up most of the member variables with the
     // values passed in here. by doing this all in an initialize() method
     // we avoid duplicating this code all over the place
