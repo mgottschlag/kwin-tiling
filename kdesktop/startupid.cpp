@@ -114,15 +114,16 @@ void StartupId::stop_startupid()
 
 static QPixmap scalePixmap( const QPixmap& pm, int w, int h )
 {
-	QPixmap result( 20, 20 );
-	result.setMask( QBitmap( 20, 20, true ) );
-	QPixmap scaled = QPixmap::fromImage( pm.toImage().scaled( w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) );
+    QImage scaled = pm.toImage().scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    if (scaled.format() != QImage::Format_ARGB32_Premultiplied && scaled.format() != QImage::Format_ARGB32)
+        scaled = scaled.convertToFormat(QImage::Format_ARGB32_Premultiplied);
 
-        QImage image = result.toImage();
-        QPainter p(&image);
-        p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.drawPixmap((20 - w) / 2, (20 - h) / 2, scaled, 0, 0, w, h);
-        return QPixmap::fromImage(image);
+    QImage result(20, 20, QImage::Format_ARGB32_Premultiplied);
+    QPainter p(&result);
+    p.setCompositionMode(QPainter::CompositionMode_Source);
+    p.fillRect(result.rect(), Qt::transparent);
+    p.drawImage((20 - w) / 2, (20 - h) / 2, scaled, 0, 0, w, h);
+    return QPixmap::fromImage(result);
 }
 
 void StartupId::start_startupid( const QString& icon_P )
