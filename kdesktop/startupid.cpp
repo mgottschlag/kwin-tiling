@@ -27,6 +27,7 @@
 #include <qbitmap.h>
 //Added by qt3to4:
 #include <QPixmap>
+#include <QPainter>
 #include <kconfig.h>
 #include <X11/Xlib.h>
 #include <QX11Info>
@@ -116,8 +117,12 @@ static QPixmap scalePixmap( const QPixmap& pm, int w, int h )
 	QPixmap result( 20, 20 );
 	result.setMask( QBitmap( 20, 20, true ) );
 	QPixmap scaled = QPixmap::fromImage( pm.toImage().scaled( w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) );
-	copyBlt( &result, (20 - w) / 2, (20 - h) / 2, &scaled, 0, 0, w, h );
-	return result;
+
+        QImage image = result.toImage();
+        QPainter p(&image);
+        p.setCompositionMode(QPainter::CompositionMode_Source);
+        p.drawPixmap((20 - w) / 2, (20 - h) / 2, scaled, 0, 0, w, h);
+        return QPixmap::fromImage(image);
 }
 
 void StartupId::start_startupid( const QString& icon_P )
