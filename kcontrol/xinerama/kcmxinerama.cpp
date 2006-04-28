@@ -225,7 +225,7 @@ void KCMXinerama::windowIndicator(int dpy) {
 }
 
 QWidget *KCMXinerama::indicator(int dpy) {
-	QLabel *si = new QLabel(QString::number(dpy+1), 0, "Screen Indicator", Qt::WStyle_StaysOnTop | Qt::WStyle_Customize | Qt::WStyle_NoBorder);
+	QLabel *si = new QLabel(QString::number(dpy+1), 0, "Screen Indicator", Qt::X11BypassWindowManagerHint);
 
 	QFont fnt = KGlobalSettings::generalFont();
 	fnt.setPixelSize(100);
@@ -238,11 +238,6 @@ QWidget *KCMXinerama::indicator(int dpy) {
 	QRect targetGeometry(QPoint(0,0), si->sizeHint());
         targetGeometry.moveCenter(screenCenter);
 	si->setGeometry(targetGeometry);
-
-	KWin::setOnAllDesktops(si->winId(), true);
-	KWin::setState(si->winId(), NET::StaysOnTop | NET::Sticky | NET::SkipTaskbar | NET::SkipPager);
-        KWin::setType(si->winId(), NET::Override);
-
 	si->show();
 
 	return si;
