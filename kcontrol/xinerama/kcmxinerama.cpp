@@ -180,7 +180,7 @@ void KCMXinerama::save() {
 		ksplashrc->sync();
 	}
 
-	KMessageBox::information(this, i18n("Your settings will only affect newly started applications."), i18n("KDE Multiple Monitors"), "nomorexineramaplease");
+	KMessageBox::information(this, i18n("Some settings may affect only newly started applications."), i18n("KDE Multiple Monitors"), "nomorexineramaplease");
 
 	emit changed(false);
 }
