@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMouseEvent>
 #include <QPixmap>
 #include <QVector>
+#include <QPainter>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -506,7 +507,8 @@ void PanelBrowserMenu::slotMimeCheck()
         if( pm.height() > 16 )
         {
             QPixmap cropped( 16, 16 );
-            copyBlt( &cropped, 0, 0, &pm, 0, 0, 16, 16 );
+	    QPainter p(&cropped);
+            p.drawPixmap(0, 0, pm, 0, 0, 16, 16);
             pm = cropped;
         }
         _icons->insert(icon, pm);

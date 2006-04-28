@@ -34,14 +34,15 @@
 #include <klocale.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
+#include <QPainter>
 
 // Constants used (should they be placed somewhere?)
 // Size of monitor image: 200x186
 // Geometry of "display" part of monitor image: (23,14)-[151x115]
 
 //BEGIN class BGMonitorArrangement
-BGMonitorArrangement::BGMonitorArrangement(QWidget *parent, const char *name)
-  : QWidget(parent, name)
+BGMonitorArrangement::BGMonitorArrangement(QWidget *parent)
+  : QWidget(parent)
 {
     m_pBGMonitor.resize( QApplication::desktop()->numScreens());
 
@@ -142,12 +143,13 @@ void BGMonitorArrangement::resizeEvent( QResizeEvent * e )
 
 void BGMonitorArrangement::setPixmap( const QPixmap & pm )
 {
-    for (unsigned screen = 0; screen < m_pBGMonitor.size(); ++screen)
+    for (int screen = 0; screen < m_pBGMonitor.size(); ++screen)
     {
         QRect position = m_pBGMonitor[screen]->previewPosition();
 
         QPixmap monitorPixmap( position.size());
-        copyBlt( &monitorPixmap, 0, 0, &pm, position.x(), position.y(), position.width(), position.height() );
+	QPainter p(&monitorPixmap);
+	p.drawPixmap(0, 0, pm, position.x(), position.y(), position.width(), position.height() );
         m_pBGMonitor[screen]->monitor()->setPixmap(monitorPixmap);
     }
 }

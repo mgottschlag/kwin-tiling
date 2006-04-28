@@ -109,7 +109,8 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    connect(m_buttonIdentifyScreens, SIGNAL(clicked()), SLOT(slotIdentifyScreens()));
 
    // preview monitor
-   m_pMonitorArrangement = new BGMonitorArrangement(m_screenArrangement, "monitor arrangement");
+   m_pMonitorArrangement = new BGMonitorArrangement(m_screenArrangement);
+   m_pMonitorArrangement->setObjectName("monitor arrangement");
    connect(m_pMonitorArrangement, SIGNAL(imageDropped(const QString &)), SLOT(slotImageDropped(const QString &)));
    if( m_multidesktop)
      {

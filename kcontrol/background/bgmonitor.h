@@ -43,7 +43,7 @@ class BGMonitorArrangement : public QWidget
 {
     Q_OBJECT
 public:
-    BGMonitorArrangement(QWidget *parent, const char *name=0L);
+    BGMonitorArrangement(QWidget *parent);
     
     /**
      * Splits up the pixmap according to monitor geometries and sets each
