@@ -13,9 +13,6 @@
         </rect>
     </property>
     <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
         <property name="margin">
             <number>11</number>
         </property>
@@ -126,9 +123,6 @@
         <widget class="KTextEdit">
             <property name="name">
                 <cstring>comment_multilineedit</cstring>
-            </property>
-            <property name="textFormat">
-                <enum>Qt::PlainText</enum>
             </property>
         </widget>
     </vbox>

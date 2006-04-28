@@ -109,7 +109,7 @@ void KCMIOSlaveInfo::slaveHelp( KIO::Job *, const QByteArray &data)
         text = text.mid( index );
         index = text.indexOf( "<table width=\"100%\" class=\"bottom-nav\"" );
         text = text.left( index );
-        m_info->setText(text);
+        m_info->setHtml(text);
         return;
     }
     helpData += data;
@@ -138,7 +138,7 @@ void KCMIOSlaveInfo::showInfo(const QString& protocol)
        connect( m_tfj, SIGNAL( result( KJob * ) ), SLOT( slotResult( KJob * ) ) );
        return;
    }
-   m_info->setText(i18n("Some info about protocol %1:/ ...", protocol));
+   m_info->setPlainText(i18n("Some info about protocol %1:/ ...", protocol));
 }
 
 void KCMIOSlaveInfo::showInfo(Q3ListBoxItem *item)

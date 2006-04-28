@@ -110,7 +110,7 @@ void General_tab::set_data( const Action_data* data_P )
         disable_checkbox->setText( i18n( "&Disable (group is disabled)" ));
     else
         disable_checkbox->setText( i18n( "&Disable" ));
-    comment_multilineedit->setText( data_P->comment());
+    comment_multilineedit->setPlainText( data_P->comment());
     action_type_combo->setCurrentIndex( Tab_widget::type( data_P ));
 //    module->set_action_type( data_P->type());
     connect( action_name_lineedit, SIGNAL( textChanged( const QString& )),
@@ -122,7 +122,7 @@ void General_tab::set_data( const Action_data* data_P )
 void General_tab::get_data( QString& name_O, QString& comment_O, bool& enabled_O )
     {
     name_O = action_name_lineedit->text();
-    comment_O = comment_multilineedit->text();
+    comment_O = comment_multilineedit->toPlainText();
     enabled_O = !disable_checkbox->isChecked();
     }
     

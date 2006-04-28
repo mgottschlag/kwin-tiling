@@ -70,7 +70,7 @@ void Action_group_tab::set_data( const Action_data_group* data_P )
         disable_checkbox->setText( i18n( "&Disable (group is disabled)" ));
     else
         disable_checkbox->setText( i18n( "&Disable" ));
-    comment_multilineedit->setText( data_P->comment());
+    comment_multilineedit->setPlainText( data_P->comment());
     connect( action_name_lineedit, SIGNAL( textChanged( const QString& )), this,
         SLOT( action_group_name_changed( const QString& )));
     system_group = data_P->system_group();
@@ -80,7 +80,7 @@ Action_data_group* Action_group_tab::get_data( Action_data_group* parent_P,
     Condition_list* conditions_P ) const
     {
     QString name = action_name_lineedit->text();
-    return new Action_data_group( parent_P, name, comment_multilineedit->text(), conditions_P,
+    return new Action_data_group( parent_P, name, comment_multilineedit->toPlainText(), conditions_P,
         system_group, !disable_checkbox->isChecked());
     }
     

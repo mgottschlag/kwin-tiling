@@ -65,7 +65,7 @@ void Keyboard_input_widget::set_data( const Keyboard_input_action* data_P )
         clear_data();
         return;
         }
-    keyboard_input_multilineedit->setText( data_P->input());
+    keyboard_input_multilineedit->setPlainText( data_P->input());
     const Windowdef_list* dest_window = data_P->dest_window();
     specific_window_radio->setChecked( dest_window != NULL );
     window_groupbox->setEnabled( dest_window != NULL );
@@ -86,7 +86,7 @@ Keyboard_input_action* Keyboard_input_widget::get_data( Action_data* data_P ) co
     const Windowdef_list* windows = NULL;
     if( specific_window_radio->isChecked())
         windows = windowdef_list_widget->get_data();
-    return new Keyboard_input_action( data_P, keyboard_input_multilineedit->text(),
+    return new Keyboard_input_action( data_P, keyboard_input_multilineedit->toPlainText(),
         windows, active_window_radio->isChecked());
     }
 

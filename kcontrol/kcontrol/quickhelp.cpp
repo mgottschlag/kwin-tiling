@@ -38,6 +38,6 @@ void QuickHelp::setText(const QString &text)
   //those not having it in the right encoding!
   //s.replace(QRegExp("<[Hh]1>"),"<font face=utopia><h1>");
   //s.replace(QRegExp("</[Hh]1>"),"</h1></font>");
-  KTextBrowser::setText(s);
+  KTextBrowser::setHtml(s);
 }
 

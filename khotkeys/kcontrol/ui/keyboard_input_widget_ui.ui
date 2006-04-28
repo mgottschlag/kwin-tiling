@@ -16,9 +16,6 @@
         <string>Keyboard_input_widget_ui</string>
     </property>
     <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
         <property name="margin">
             <number>11</number>
         </property>
@@ -41,9 +38,6 @@
                 <cstring>Layout2</cstring>
             </property>
             <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
                 <property name="margin">
                     <number>0</number>
                 </property>
@@ -53,9 +47,6 @@
                 <widget class="KTextEdit">
                     <property name="name">
                         <cstring>keyboard_input_multilineedit</cstring>
-                    </property>
-                    <property name="textFormat">
-                        <enum>Qt::PlainText</enum>
                     </property>
                 </widget>
                 <widget class="QPushButton">
@@ -83,9 +74,6 @@
 &lt;/ul&gt;</string>
             </property>
             <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
                 <widget class="QRadioButton">
                     <property name="name">
                         <cstring>action_window_radio</cstring>
@@ -123,9 +111,6 @@
                 <string>Window</string>
             </property>
             <vbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
                 <property name="margin">
                     <number>11</number>
                 </property>
