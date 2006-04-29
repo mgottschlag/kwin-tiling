@@ -499,7 +499,7 @@ bool SystemTrayApplet::isWinManaged(WId w)
 
 bool SystemTrayApplet::shouldHide(WId w)
 {
-    return m_hiddenIconList.find(KWin::windowInfo(w).name()) != m_hiddenIconList.end();
+    return m_hiddenIconList.contains(KWin::windowInfo(w).name());
 }
 
 void SystemTrayApplet::updateVisibleWins()

@@ -813,7 +813,7 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     updateWallpaperFiles();
     if( !m_CurrentWallpaperName.isEmpty())
-        m_CurrentWallpaper = m_WallpaperFiles.findIndex(m_CurrentWallpaperName);
+        m_CurrentWallpaper = m_WallpaperFiles.indexOf(m_CurrentWallpaperName);
     if(m_CurrentWallpaper < 0)
         m_CurrentWallpaper = 0;
 
@@ -1236,7 +1236,7 @@ void KGlobalBackgroundSettings::readSettings()
     NETRootInfo info( QX11Info::display(), NET::DesktopNames | NET::NumberOfDesktops );
     m_bDrawBackgroundPerScreen.resize(info.numberOfDesktops());
     for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
-        m_bDrawBackgroundPerScreen[i] = m_pConfig->readBoolEntry( QString("DrawBackgroundPerScreen_%1").arg(i), _defDrawBackgroundPerScreen );
+        m_bDrawBackgroundPerScreen[i] = m_pConfig->readEntry( QString("DrawBackgroundPerScreen_%1").arg(i), _defDrawBackgroundPerScreen );
 
     m_TextColor = KGlobalSettings::textColor();
     m_pConfig->setGroup("FMSettings");

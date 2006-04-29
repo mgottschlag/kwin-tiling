@@ -164,7 +164,7 @@ KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
     do {
       QString un( QFile::decodeName( *grp->gr_mem ) );
       if ((umapi = usermap.find( un )) != usermap.end()) {
-        if ((*umapi).second.find( gn ) == (*umapi).second.end())
+        if (!(*umapi).second.contains( gn ))
 	  (*umapi).second.append( gn );
       } else
         kWarning() << "group '" << gn << "' contains unknown user '" << un << "'" << endl;

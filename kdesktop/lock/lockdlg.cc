@@ -156,11 +156,11 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
         layoutsList = kxkb.call("getLayoutsList");
         QString currentLayout = kxkb.call("getCurrentLayout");
         if( !currentLayout.isEmpty() && layoutsList.count() > 1 ) {
-            currLayout = layoutsList.find(currentLayout);
-            if (currLayout == layoutsList.end())
+            currLayout = layoutsList.indexOf(currentLayout);
+            if (currLayout < 0)
                 setLayoutText("err");
             else
-                setLayoutText(*currLayout);
+                setLayoutText(layoutsList[currLayout]);
         } else
             mLayoutButton->hide();
     } else {
@@ -179,11 +179,11 @@ PasswordDlg::~PasswordDlg()
 void PasswordDlg::layoutClicked()
 {
 
-    if( ++currLayout == layoutsList.end() )
-        currLayout = layoutsList.begin();
+    if( ++currLayout == layoutsList.size() )
+        currLayout = 0;
 
     DCOPRef kxkb("kxkb", "kxkb");
-    setLayoutText( kxkb.call("setLayout", *currLayout) ? *currLayout : "err" );
+    setLayoutText( kxkb.call("setLayout", layoutsList.at(currLayout) ) );
 
 }
 

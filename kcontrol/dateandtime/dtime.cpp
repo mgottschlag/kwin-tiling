@@ -285,7 +285,7 @@ void Dtime::save()
     list.append(timeServerList->currentText());
   for ( int i=0; i<timeServerList->count();i++ ) {
     QString text = timeServerList->text(i);
-    if( list.find(text) == list.end())
+    if( !list.contains(text) )
       list.append(text);
     // Limit so errors can go away and not stored forever
     if( list.count() == 10)

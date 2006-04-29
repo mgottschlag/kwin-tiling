@@ -390,13 +390,13 @@ void KDMUsersWidget::updateOptList( Q3ListViewItem *item, QStringList &list )
     if ( !item )
         return;
     Q3CheckListItem *itm = (Q3CheckListItem *)item;
-    QStringList::iterator it = list.find( itm->text() );
+    int ind = list.indexOf( itm->text() );
     if (itm->isOn()) {
-	if (it == list.end())
+	if (ind < 0)
 	    list.append( itm->text() );
     } else {
-	if (it != list.end())
-	    list.erase( it );
+	if (ind >= 0)
+	    list.removeAt( ind );
     }
 }
 
@@ -424,9 +424,9 @@ void KDMUsersWidget::slotAddUsers(const QMap<QString,int> &users)
     for (it = users.begin(); it != users.end(); ++it) {
       const QString *name = &it.key();
       (new Q3CheckListItem(optinlv, *name, Q3CheckListItem::CheckBox))->
-	      setOn(selectedUsers.find(*name) != selectedUsers.end());
+	      setOn(selectedUsers.contains(*name));
       (new Q3CheckListItem(optoutlv, *name, Q3CheckListItem::CheckBox))->
-	      setOn(hiddenUsers.find(*name) != hiddenUsers.end());
+	      setOn(hiddenUsers.contains(*name));
       usercombo->addItem(*name);
     }
     optinlv->sort();

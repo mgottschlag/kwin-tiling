@@ -300,13 +300,13 @@ void KDMConvenienceWidget::slotUpdateNoPassUser( Q3ListViewItem *item )
     if ( !item )
         return;
     Q3CheckListItem *itm = (Q3CheckListItem *)item;
-    QStringList::iterator it = noPassUsers.find( itm->text() );
+    int ind = noPassUsers.indexOf( itm->text() );
     if (itm->isOn()) {
-	if (it == noPassUsers.end())
+	if (ind < 0)
 	    noPassUsers.append( itm->text() );
     } else {
-	if (it != noPassUsers.end())
-	    noPassUsers.remove( it );
+	if (ind >= 0)
+	    noPassUsers.removeAt( ind );
     }
 }
 
@@ -333,7 +333,7 @@ void KDMConvenienceWidget::slotAddUsers(const QMap<QString,int> &users)
         }
         if (it.value() != 0)
             (new Q3CheckListItem(npuserlv, it.key(), Q3CheckListItem::CheckBox))->
-    	        setOn(noPassUsers.find(it.key()) != noPassUsers.end());
+    	        setOn(noPassUsers.contains(it.key()));
     }
 
     if (userlb->model())

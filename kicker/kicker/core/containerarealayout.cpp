@@ -540,13 +540,13 @@ void ContainerAreaLayout::insertIntoFreeSpace(QWidget* widget, QPoint insertionP
     if (current)
     {
         m_items.removeLast();
-        ItemList::iterator insertIt = m_items.find(current);
+        int index = m_items.indexOf(current);
 
-        if (insertIt == m_items.begin())
+        if (index == 0)
         {
             m_items.prepend(item);
         }
-        else if (insertIt == itEnd)
+        else if (index < 0)
         {
             // yes, we just removed it from the end, but
             // if we remove it afterwards and it insertIt
@@ -555,7 +555,7 @@ void ContainerAreaLayout::insertIntoFreeSpace(QWidget* widget, QPoint insertionP
         }
         else
         {
-            m_items.insert(insertIt, item);
+            m_items.insert(index, item);
         }
     }
 
@@ -634,10 +634,11 @@ void ContainerAreaLayout::moveContainerSwitch( QWidget* container, int distance 
                          : qMin(newPos, last->leftR() - moving->widthR());
 
         // Move 'moving' to its new position in the container list.
-        ItemList::iterator itMoving = m_items.find(moving);
+        int index = m_items.indexOf(moving);
 
-        if (itMoving != m_items.end())
+        if (index >= 0)
         {
+            ItemList::iterator itMoving = m_items.begin()+index;
             ItemList::iterator itLast = itMoving;
             if (forward)
             {

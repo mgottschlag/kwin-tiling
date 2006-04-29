@@ -647,12 +647,12 @@ static bool getFontList(const QStringList &files, QMap<QString, QString> &map)
     {
         QString                        name(Misc::getFile(*it)),
                                        path(Misc::getDir(*it));
-        QList<FontList>::Iterator entry=list.find(FontList(name));
+        int entry=list.indexOf(FontList(name));
 
-        if(entry!=list.end())
+        if(entry >= 0)
         {
-            if(!(*entry).paths.contains(path))
-                (*entry).paths.append(path);
+            if(!list.value(entry).paths.contains(path))
+                list.value(entry).paths.append(path);
         }
         else
             list.append(FontList(name, path));
