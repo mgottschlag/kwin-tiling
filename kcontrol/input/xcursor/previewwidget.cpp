@@ -33,6 +33,7 @@
 #include <X11/Xutil.h>
 #include <X11/extensions/Xrender.h>
 #include <X11/Xcursor/Xcursor.h>
+#include <QX11Info>
 
 #include "previewwidget.h"
 
@@ -118,7 +119,7 @@ PreviewCursor::PreviewCursor() :
 
 void PreviewCursor::load( const QString &name, const QString &theme )
 {
-	Display *dpy = QPaintDevice::x11AppDisplay();
+        Display *dpy = QX11Info::display();
 
 	if ( m_pict ) XRenderFreePicture( dpy, m_pict );
 	if ( m_handle ) XFreeCursor( dpy, m_handle );
@@ -179,14 +180,14 @@ void PreviewCursor::load( const QString &name, const QString &theme )
 
 PreviewCursor::~PreviewCursor()
 {
-	if ( m_handle ) XFreeCursor( QPaintDevice::x11AppDisplay(), m_handle );
-	if ( m_pict ) XRenderFreePicture( QPaintDevice::x11AppDisplay(), m_pict );
+    if ( m_handle ) XFreeCursor( QX11Info::display() , m_handle );
+    if ( m_pict ) XRenderFreePicture( QX11Info::display(), m_pict );
 }
 
 
 Picture PreviewCursor::createPicture( const XcursorImage* image ) const
 {
-	Display *dpy = QPaintDevice::x11AppDisplay();
+        Display *dpy = QX11Info::display();
 
 	XImage ximage;
 	ximage.width            = image->width;
@@ -265,8 +266,8 @@ void PreviewCursor::cropCursorImage( XcursorImage *&image ) const
 
 
 
-PreviewWidget::PreviewWidget( QWidget *parent, const char *name )
-		: QWidget( parent, name )
+PreviewWidget::PreviewWidget( QWidget *parent )
+		: QWidget( parent )
 {
 	cursors = new PreviewCursor* [ numCursors ];
 	for ( int i = 0; i < numCursors; i++ )
@@ -306,7 +307,7 @@ void PreviewWidget::setTheme( const QString &theme )
 	current = -1;
 	setFixedSize( ( maxWidth + cursorSpacing ) * numCursors, qMax( maxHeight, minHeight ) );
 	setUpdatesEnabled( true );
-	repaint( false );
+	repaint( );
 }
 
 
@@ -314,12 +315,12 @@ void PreviewWidget::paintEvent( QPaintEvent * )
 {
 	QPixmap buffer( size() );
 	QPainter p( &buffer );
-	p.fillRect( rect(), colorGroup().brush( QColorGroup::Background ) );
+	p.fillRect( rect(), palette().brush( QColorGroup::Background ) );
 	Picture dest;
 
 	if ( buffer.x11PictureHandle()==0 ) {
-		XRenderPictFormat *fmt = XRenderFindVisualFormat( x11Display(), (Visual*)buffer.x11Visual() );
-		dest = XRenderCreatePicture( x11Display(), buffer.handle(), fmt, 0, NULL );
+            XRenderPictFormat *fmt = XRenderFindVisualFormat( QX11Info::display(), (Visual*)buffer.x11Info().visual() );
+            dest = XRenderCreatePicture( QX11Info::display(), buffer.handle(), fmt, 0, NULL );
 	} else
 #warning make sure x11PictureHandle is the substitute of x11RenderHandle
 		dest = buffer.x11PictureHandle();
@@ -328,18 +329,18 @@ void PreviewWidget::paintEvent( QPaintEvent * )
 
 	for ( int i = 0; i < numCursors; i++ ) {
 		if ( cursors[i]->picture() ) {
-			XRenderComposite( x11Display(), PictOpOver,
-					cursors[i]->picture(), 0, dest, 0, 0, 0, 0,
-					rwidth * i + (rwidth - cursors[i]->width()) / 2,
-					(height() - cursors[i]->height()) / 2,
-					cursors[i]->width(), cursors[i]->height() );
+                    XRenderComposite( QX11Info::display(), PictOpOver,
+                                      cursors[i]->picture(), 0, dest, 0, 0, 0, 0,
+                                      rwidth * i + (rwidth - cursors[i]->width()) / 2,
+                                      (height() - cursors[i]->height()) / 2,
+                                      cursors[i]->width(), cursors[i]->height() );
 		}
-	}									
+	}
 
 	bitBlt( this, 0, 0, &buffer );
 
 	if ( buffer.x11PictureHandle()==0 )
-		XRenderFreePicture( x11Display(), dest );
+            XRenderFreePicture( QX11Info::display(), dest );
 }
 
 
@@ -348,7 +349,7 @@ void PreviewWidget::mouseMoveEvent( QMouseEvent *e )
 	int pos = e->x() / ( width() / numCursors );
 
 	if ( pos != current && pos < numCursors ) {
-		XDefineCursor( x11Display(), winId(), cursors[pos]->handle() );
+                XDefineCursor( QX11Info::display(), winId(), cursors[pos]->handle() );
 		current = pos;
 	}
 }

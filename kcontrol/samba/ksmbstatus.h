@@ -18,7 +18,7 @@
  */
 #ifndef ksmbstatus_h_included
 #define ksmbstatus_h_included
- 
+
 #include <qtimer.h>
 #include <qlabel.h>
 #include <kprocess.h>
@@ -33,7 +33,7 @@ class NetMon : public QWidget
 {
 Q_OBJECT
 public:
-   NetMon(QWidget *parent, KConfig * config=0, const char * name=0);
+   NetMon(QWidget *parent, KConfig * config=0 );
    void saveSettings() {};
    void loadSettings() {};
 private:

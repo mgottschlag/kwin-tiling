@@ -30,8 +30,8 @@ class KSysInfo;
 
 class KEyeCandyPage : public KEyeCandyPageDlg {
 	Q_OBJECT
-public: 
-	KEyeCandyPage(QWidget *parent=0, const char *name=0);
+public:
+	KEyeCandyPage(QWidget *parent=0);
 	~KEyeCandyPage();
 
 //---------------------------------------------------------------------------------------------------------
@@ -214,7 +214,7 @@ private:
 
 	Q3CheckListItem* fading_menus;
 	Q3CheckListItem* fading_tooltips;
-  
+
 	Q3CheckListItem* pushbutton_icons;
 
 	Q3CheckListItem* preview_text;

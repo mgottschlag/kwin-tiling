@@ -95,13 +95,13 @@ class VisualBell : public QWidget
 
 public:
 
-  VisualBell(int pause) 
-    : QWidget(0, 0, Qt::WX11BypassWM), _pause(pause)
-    {};
+  VisualBell(int pause)
+    : QWidget(( QWidget* )0, Qt::WX11BypassWM), _pause(pause)
+    {}
 
-  
+
 protected:
-  
+
   void paintEvent(QPaintEvent *);
 
 

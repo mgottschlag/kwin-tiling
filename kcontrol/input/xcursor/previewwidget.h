@@ -27,7 +27,7 @@ class PreviewCursor;
 class PreviewWidget : public QWidget
 {
 	public:
-		PreviewWidget( QWidget *parent = NULL, const char *name = NULL );
+		PreviewWidget( QWidget *parent );
 		~PreviewWidget();
 
 		void setTheme( const QString & );

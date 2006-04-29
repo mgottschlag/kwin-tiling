@@ -1,12 +1,12 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 2003 Mike Pilone <mpilone@slac.com>
  Copyright (C) 2003 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #include <qwidget.h>
@@ -60,12 +60,13 @@ GestureRecordPage::GestureRecordPage(const QString &gesture,
     _tryTwo = new GestureDrawer(hBox, "tryTwo");
     _tryThree = new GestureDrawer(hBox, "tryThree");
 
-    QWidget *spacer = new QWidget(hBox, "spacer");
+    QWidget *spacer = new QWidget(hBox);
+    spacer->setObjectName( "spacer" );
     hBox->setStretchFactor(spacer, 1);
 
     _resetButton = new QPushButton(i18n("&Reset"), hBox);
     _resetButton->setObjectName("resetButton");
-    
+
     connect(_resetButton, SIGNAL(clicked()),
             this, SLOT(slotResetClicked()));
 

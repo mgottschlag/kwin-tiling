@@ -92,7 +92,8 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
     previewFrame->setFrameShape(QFrame::Panel);
     setInstance(new KInstance("kfontview"));
 
-    itsPreview=new CFontPreview(previewFrame, "FontViewPart::Preview");
+    itsPreview=new CFontPreview(previewFrame);
+    itsPreview->setObjectName("FontViewPart::Preview");
     itsPreview->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     itsFaceLabel=new QLabel(i18n("Face:"), itsToolsFrame);
     itsFaceSelector=new KIntNumInput(1, itsToolsFrame);

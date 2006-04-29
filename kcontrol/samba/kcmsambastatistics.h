@@ -22,7 +22,7 @@
  */
 #ifndef kcmsambastatistics_h_included
 #define kcmsambastatistics_h_included
- 
+
 #include <q3ptrlist.h>
 #include <qwidget.h>
 
@@ -79,7 +79,7 @@ class StatisticsView: public QWidget
 {
   Q_OBJECT
 public:
-  StatisticsView(QWidget *parent=0, KConfig *config=0, const char *name=0);
+  StatisticsView(QWidget *parent=0, KConfig *config=0);
   virtual ~StatisticsView() {};
   void saveSettings() {};
   void loadSettings() {};

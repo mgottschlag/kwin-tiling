@@ -39,13 +39,13 @@
 namespace KFI
 {
 
-CFontPreview::CFontPreview(QWidget *parent, const char *name)
-            : QWidget(parent, name),
+CFontPreview::CFontPreview(QWidget *parent)
+            : QWidget(parent),
               itsCurrentFace(1),
               itsLastWidth(0),
-              itsLastHeight(0),
-              itsBgndCol(eraseColor())
+              itsLastHeight(0)
 {
+    itsBgndCol = palette().color( backgroundRole() );
 }
 
 void CFontPreview::showFont(const KUrl &url)
@@ -65,10 +65,13 @@ void CFontPreview::showFont()
     itsLastWidth=width();
     itsLastHeight=height();
 
+    QPalette pal = palette();
+
     if(!itsCurrentUrl.isEmpty() &&
        itsEngine.draw(itsCurrentUrl, itsLastWidth, itsLastHeight, itsPixmap, itsCurrentFace-1, false))
     {
-        setEraseColor(Qt::white);
+        pal.setColor(backgroundRole(), Qt::white);
+        setPalette(pal);
         update();
         emit status(true);
     }
@@ -76,7 +79,8 @@ void CFontPreview::showFont()
     {
         QPixmap nullPix;
 
-        setEraseColor(itsBgndCol);
+        pal.setColor(backgroundRole(), itsBgndCol);
+        setPalette(pal);
         itsPixmap=nullPix;
         update();
         emit status(false);
@@ -86,7 +90,7 @@ void CFontPreview::showFont()
 void CFontPreview::paintEvent(QPaintEvent *)
 {
     QPainter paint(this);
- 
+
     if(itsPixmap.isNull())
     {
         paint.setPen(kapp->palette().active().text());
@@ -98,7 +102,7 @@ void CFontPreview::paintEvent(QPaintEvent *)
 
         if(abs(width()-itsLastWidth)>constStepSize || abs(height()-itsLastHeight)>constStepSize)
             showFont();
-        else            
+        else
             paint.drawPixmap(0, 0, itsPixmap);
     }
 }

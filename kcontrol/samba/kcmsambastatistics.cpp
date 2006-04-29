@@ -38,8 +38,8 @@
 #include <kdebug.h>
 #include <kdialog.h>
 
-StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name)
-   :QWidget (parent, name)
+StatisticsView::StatisticsView(QWidget *parent,KConfig *config)
+   :QWidget (parent)
    ,configFile(config)
    ,dataList(0)
    ,connectionsCount(0)
@@ -63,7 +63,7 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    viewStatistics->setAllColumnsShowFocus(true);
    viewStatistics->setFocusPolicy(Qt::ClickFocus);
    viewStatistics->setShowSortIndicator(true);
-   
+
    viewStatistics->addColumn(i18n("Nr"),30);
    viewStatistics->addColumn(i18n("Event"),130);
    viewStatistics->addColumn(i18n("Service/File"),200);
@@ -74,13 +74,13 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    eventCb->setEditable(false);
    eventCb->addItem(i18n("Connection"));
    eventCb->addItem(i18n("File Access"));
-   
+
    expandedInfoCb->setChecked(false);
    expandedUserCb->setChecked(false);
    clearStatistics();
    serviceLe->setText("*");
    hostLe->setText("*");
-   
+
    viewStatistics->setMinimumSize(375,200);
    connectionsL->setMinimumSize(connectionsL->sizeHint());
    filesL->setMinimumSize(filesL->sizeHint());
@@ -94,7 +94,7 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    clearButton->setMinimumSize(clearButton->sizeHint());
    expandedInfoCb->setMinimumSize(expandedInfoCb->sizeHint());
    expandedUserCb->setMinimumSize(expandedUserCb->sizeHint());
-   
+
    QVBoxLayout *topLayout=new QVBoxLayout(this);
    topLayout->setMargin(KDialog::marginHint());
    topLayout->setSpacing(KDialog::spacingHint());
@@ -102,11 +102,11 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config, const char *name
    QGridLayout *subLayout=new QGridLayout(topLayout,4,3);
    subLayout->setColumnStretch(1,1);
    subLayout->setColumnStretch(2,1);
-   
+
    QHBoxLayout *twoButtonsLayout=new QHBoxLayout;
    twoButtonsLayout->addWidget(calcButton,1);
    twoButtonsLayout->addWidget(clearButton,1);
-   
+
    subLayout->addWidget(connectionsL,0,0);
    subLayout->addWidget(filesL,0,1);
    subLayout->addWidget(eventL,1,0);
@@ -174,7 +174,7 @@ void StatisticsView::calculate()
                if (expandedUserCb->isChecked()) item3=item->text(3);
                else item3=hostLe->text();
                sLog.addItem(item2,item3);
-               
+
             };
          };
          item=item->nextSibling();

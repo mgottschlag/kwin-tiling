@@ -48,7 +48,7 @@ class CFontPreview : public QWidget
 
     public:
 
-    CFontPreview(QWidget *parent, const char *name=NULL);
+    CFontPreview(QWidget *parent);
     virtual ~CFontPreview() {}
 
     void        paintEvent(QPaintEvent *);

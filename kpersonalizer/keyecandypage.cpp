@@ -45,7 +45,7 @@
 #include "ksysinfo.h"
 #include "keyecandypage.h"
 
-KEyeCandyPage::KEyeCandyPage(QWidget *parent, const char *name ) : KEyeCandyPageDlg(parent,name) {
+KEyeCandyPage::KEyeCandyPage(QWidget *parent ) : KEyeCandyPageDlg(parent) {
 
 	kwinconf = new KConfig("kwinrc", false, true);
 	kwineventconf = new KConfig("kwin.eventsrc", false, false);

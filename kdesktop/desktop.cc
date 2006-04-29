@@ -101,7 +101,7 @@ bool KRootWidget::eventFilter ( QObject *, QEvent * e )
      else if ( e->type() == QEvent::Drop )
      {
        QDropEvent* de = static_cast<QDropEvent*>( e );
-       if ( K3ColorDrag::canDecode( de ) ) 
+       if ( K3ColorDrag::canDecode( de ) )
          emit colorDropEvent( de );
        else if ( Q3ImageDrag::canDecode( de ) )
          emit imageDropEvent( de );
@@ -125,10 +125,11 @@ const char* KDesktop::m_wheelDirectionStrings[2] = { "Forward", "Reverse" };
 
 KDesktop::KDesktop( bool x_root_hack, bool wait_for_kded ) :
     DCOPObject( "KDesktopIface" ),
-    QWidget( 0L, "desktop", Qt::WResizeNoErase | ( x_root_hack ? (Qt::WStyle_NoBorder) : ( Qt::WFlags )0 ) ),
+    QWidget( 0L, Qt::WResizeNoErase | ( x_root_hack ? (Qt::WStyle_NoBorder) : ( Qt::WFlags )0 ) ),
     // those two WStyle_ break kdesktop when the root-hack isn't used (no Dnd)
    startup_id( NULL )
 {
+  setObjectName( "desktop" );
   m_bWaitForKded = wait_for_kded;
   m_miniCli = 0; // created on demand
   m_actionCollection = 0; // created later
@@ -200,7 +201,7 @@ KDesktop::initRoot()
   Display *dpy = QX11Info::display();
   Window root = RootWindow(dpy, kdesktop_screen_number);
   XDefineCursor(dpy, root, cursor().handle());
-  
+
   m_bDesktopEnabled = KDesktopSettings::desktopEnabled();
   if ( !m_bDesktopEnabled && !m_pRootWidget )
   {
@@ -221,7 +222,7 @@ KDesktop::initRoot()
      connect(m_pRootWidget, SIGNAL(colorDropEvent(QDropEvent*)), this, SLOT(handleColorDropEvent(QDropEvent*)) );
      connect(m_pRootWidget, SIGNAL(imageDropEvent(QDropEvent*)), this, SLOT(handleImageDropEvent(QDropEvent*)) );
      connect(m_pRootWidget, SIGNAL(newWallpaper(const KUrl&)), this, SLOT(slotNewWallpaper(const KUrl&)) );
-     
+
      // Geert Jansen: backgroundmanager belongs here
      // TODO tell KBackgroundManager if we change widget()
      bgMgr = new KBackgroundManager( m_pIconView, m_pKwinmodule );
@@ -256,7 +257,9 @@ KDesktop::initRoot()
      m_pIconView->setHScrollBarMode( Q3ScrollView::AlwaysOff );
      m_pIconView->setDragAutoScroll( false );
      m_pIconView->setFrameStyle( QFrame::NoFrame );
-     m_pIconView->viewport()->setBackgroundMode( Qt::X11ParentRelative );
+     // This is the replacement for X11Relative
+     m_pIconView->viewport()->setBackgroundRole( QPalette::NoRole );
+     m_pIconView->viewport()->setForegroundRole( QPalette::NoRole );
      m_pIconView->setFocusPolicy( Qt::StrongFocus );
      m_pIconView->viewport()->setFocusPolicy( Qt::StrongFocus );
      m_pIconView->setGeometry( geometry() );
@@ -295,10 +298,12 @@ KDesktop::backgroundInitDone()
     // avoid flicker
     if (m_bDesktopEnabled)
     {
+#warning backgroundPixmap in Qt4 is a noop
+        /*
        const QPixmap *bg = QApplication::desktop()->screen()->backgroundPixmap();
        if ( bg )
           m_pIconView->setErasePixmap( *bg );
-
+        */
        show();
        kapp->sendPostedEvents();
     }
@@ -783,7 +788,7 @@ void KDesktop::slotNewWallpaper(const KUrl &url)
         // Figure out extension
         QString fileName = url.fileName();
         QFileInfo fileInfo( fileName );
-        QString ext = fileInfo.extension();
+        QString ext = fileInfo.suffix();
         // Store tempfile in a place where it will still be available after a reboot
         KTempFile tmpFile( KGlobal::dirs()->saveLocation("wallpaper"), "." + ext );
         KUrl localURL; localURL.setPath( tmpFile.name() );

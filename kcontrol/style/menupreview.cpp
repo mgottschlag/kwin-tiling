@@ -34,7 +34,7 @@
 
 
 MenuPreview::MenuPreview( QWidget* parent, int opacity, PreviewMode pvm )
-	: QWidget( parent, 0, Qt::WStyle_Customize | Qt::WNoAutoErase ),
+	: QWidget( parent, Qt::WStyle_Customize | Qt::WNoAutoErase ),
 	pixBackground(NULL), pixOverlay(NULL), pixBlended(NULL)
 {
 	setFixedSize(150, 150);
@@ -72,8 +72,8 @@ void MenuPreview::createPixmaps()
 	if (pixBlended)
 		*pixBlended = QPixmap( w, h );
 
-	QColorGroup cg = colorGroup();
-	QColor c1 = cg.background();
+	QColorGroup cg = QColorGroup( palette() );
+	QColor c1 = cg.color( backgroundRole() );
 	QColor c2 = cg.mid();
 
 	if (pixBackground) {
@@ -109,7 +109,7 @@ void MenuPreview::blendPixmaps()
 			KImageEffect::blend(src, dst, menuOpacity);
 			*pixBlended = QPixmap::fromImage( dst );
 		} else if (mode == Tint) {
-			QColor clr = colorGroup().button();
+			QColor clr = palette().button();
 			QImage dst = pixBackground->toImage();
 			KImageEffect::blend(clr, dst, menuOpacity);
 			*pixBlended = QPixmap::fromImage( dst );
@@ -125,7 +125,7 @@ void MenuPreview::setOpacity( int opacity )
 	if ((int)(menuOpacity*100) != opacity) {
 		menuOpacity = opacity/100.0;
 		blendPixmaps();
-		repaint( false );
+		repaint( );
 	}
 }
 
@@ -134,14 +134,14 @@ void MenuPreview::setPreviewMode( PreviewMode pvm )
 	if (mode != pvm) {
 		mode = pvm;
 		blendPixmaps();
-		repaint( false );
+		repaint( );
 	}
 }
 
 void MenuPreview::paintEvent( QPaintEvent* /* pe */ )
 {
 	// Paint the frame and blended pixmap
-	QColorGroup cg = colorGroup();
+        QColorGroup cg = QColorGroup( palette() );
 	int x2 = width()-1;
 	int y2 = height()-1;
 

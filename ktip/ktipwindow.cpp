@@ -55,7 +55,5 @@ int main(int argc, char *argv[])
 
 	QObject::connect(qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()));
 
-	app.setMainWidget(tipDialog);
-
-	return app.exec();
+        return app.exec();
 }
