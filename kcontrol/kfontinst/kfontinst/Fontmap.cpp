@@ -204,7 +204,7 @@ static void addEntry(QStringList &list, const QString &name, const QString &file
     if(insert)
     {
         QString      entry;
-        QTextOStream str(&entry);
+        QTextStream str(&entry, QIODevice::ReadWrite);
 
         str << '/' << name << " (";
 
@@ -227,7 +227,7 @@ static void addAliasEntry(QStringList &list, const QString &x11Name, const QStri
         if(existing.isEmpty())
         {
             QString      entry;
-            QTextOStream str(&entry);
+            QTextStream str(&entry, QIODevice::ReadWrite);
 
             str << '/' << x11Name << " /" << psName << " ;";
             list.append(entry);
