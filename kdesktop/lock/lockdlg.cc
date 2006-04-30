@@ -123,7 +123,9 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     layButtons->addWidget( ok );
     layButtons->addWidget( cancel );
 
-    frameLayout = new QGridLayout( frame, 1, 1, KDialog::marginHint(), KDialog::spacingHint() );
+    frameLayout = new QGridLayout( frame );
+    frameLayout->setSpacing( KDialog::spacingHint() );
+    frameLayout->setMargin( KDialog::marginHint() );
     frameLayout->addWidget( pixLabel, 0, 0, 3, 1, Qt::AlignTop );
     frameLayout->addWidget( greetLabel, 0, 1 );
     frameLayout->addItem( greet->getLayoutItem(), 1, 1 );
@@ -501,7 +503,8 @@ void PasswordDlg::gplugMsgBox( QMessageBox::Icon type, const QString &text )
     button->setSizePolicy( QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred ) );
     connect( button, SIGNAL( clicked() ), SLOT( accept() ) );
 
-    QGridLayout *grid = new QGridLayout( winFrame, 2, 2, 10 );
+    QGridLayout *grid = new QGridLayout( winFrame );
+    grid->setSpacing( 10 );
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );
     grid->addWidget( button, 1, 0, 1, 2, Qt::AlignCenter );
@@ -564,7 +567,9 @@ void PasswordDlg::slotStartNewSession()
     mbox->setMargin( KDialog::marginHint() );
     mbox->setSpacing( KDialog::spacingHint() );
 
-    QGridLayout *grid = new QGridLayout( mbox, 2, 2, 2 * KDialog::spacingHint() );
+    QGridLayout *grid = new QGridLayout();
+    mbox->addItem( grid );
+    grid->setSpacing( 2 * KDialog::spacingHint() );
     grid->setMargin( KDialog::marginHint() );
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );

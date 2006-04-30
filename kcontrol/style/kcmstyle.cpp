@@ -222,8 +222,9 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	containerFrame = new QFrame( page2 );
 	containerFrame->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
 	//containerFrame->setMargin(0);
-	containerLayout = new QGridLayout( containerFrame, 1, 1,	// rows, columns
-		KDialog::marginHint(), KDialog::spacingHint() );
+	containerLayout = new QGridLayout( containerFrame );
+        containerLayout->setMargin( KDialog::marginHint() );
+        containerLayout->setSpacing( KDialog::spacingHint() );
 
 	comboComboEffect = new QComboBox( containerFrame );
 	comboComboEffect->setEditable( false );
@@ -280,8 +281,9 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	menuContainer = new QFrame( page2 );
 	menuContainer->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
 	//menuContainer->setMargin(0);
-	menuContainerLayout = new QGridLayout( menuContainer, 1, 1,   // rows, columns
-		KDialog::marginHint(), KDialog::spacingHint() );
+	menuContainerLayout = new QGridLayout( menuContainer );
+        menuContainerLayout->setMargin( KDialog::marginHint() );
+        menuContainerLayout->setSpacing( KDialog::spacingHint() );
 
 	menuPreview = new MenuPreview( menuContainer, /* opacity */ 90, MenuPreview::Blend );
 
@@ -868,7 +870,7 @@ void KCMStyle::styleChanged()
 void KCMStyle::switchStyle(const QString& styleName, bool force)
 {
 	// Don't flicker the preview if the same style is chosen in the cb
-	if (!force && appliedStyle && appliedStyle->name() == styleName)
+	if (!force && appliedStyle && appliedStyle->objectName() == styleName)
 		return;
 
 	// Create an instance of the new style...

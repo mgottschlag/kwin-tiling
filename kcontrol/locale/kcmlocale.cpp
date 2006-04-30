@@ -46,12 +46,12 @@
 
 KLocaleConfig::KLocaleConfig(KLocale *locale,
                              QWidget *parent, const char *name)
-  : QWidget (parent, name),
+  : QWidget (parent),
     m_locale(locale)
 {
-  QGridLayout *lay = new QGridLayout(this, 3, 3,
-                                     KDialog::marginHint(),
-                                     KDialog::spacingHint());
+  QGridLayout *lay = new QGridLayout(this );
+  lay->setMargin( KDialog::marginHint() );
+  lay->setSpacing( KDialog::spacingHint());
 
   m_labCountry = new QLabel(this);
   m_labCountry->setObjectName( I18N_NOOP("Country or region:") );

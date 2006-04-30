@@ -64,7 +64,8 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     GroupBox1->layout()->setSpacing( 0 );
     GroupBox1->layout()->setMargin( 0 );
     Form1Layout->addWidget( GroupBox1 );
-    QGridLayout* GroupBox1Layout = new QGridLayout( GroupBox1->layout(), 3, 2 );
+    QGridLayout* GroupBox1Layout = new QGridLayout();
+    GroupBox1->layout()->addItem( GroupBox1Layout );
     GroupBox1Layout->setSpacing( 6 );
     GroupBox1Layout->setMargin( 11 );
     GroupBox1Layout->setColumnStretch( 1, 1 );
@@ -88,7 +89,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     sb_cursorTimeout->setSuffix( i18n(" sec") );
     GroupBox1Layout->addWidget( sb_cursorTimeout, 2, 1 );
     lbl_cursorTimeout->setBuddy( sb_cursorTimeout );
-    connect( sb_cursorTimeout, SIGNAL( valueChanged(int) ), 
+    connect( sb_cursorTimeout, SIGNAL( valueChanged(int) ),
             SLOT( checkChanged() ) );
 
     Q3GroupBox* GroupBox2 = new Q3GroupBox( this, "GroupBox2" );
@@ -105,7 +106,8 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     GroupBox2->layout()->setSpacing( 0 );
     GroupBox2->layout()->setMargin( 0 );
     Form1Layout->addWidget( GroupBox2 );
-    QGridLayout* GroupBox2Layout = new QGridLayout( GroupBox2->layout(), 2, 2 );
+    QGridLayout* GroupBox2Layout = new QGridLayout();
+    GroupBox2->layout()->addItem( GroupBox2Layout );
     GroupBox2Layout->setSpacing( 6 );
     GroupBox2Layout->setMargin( 11 );
     GroupBox2Layout->setColumnStretch( 1, 1 );
@@ -113,7 +115,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     cb_taskbarButton = new QCheckBox( GroupBox2, "cb_taskbarButton" );
     cb_taskbarButton->setText( i18n( "Enable &taskbar notification" ) );
     GroupBox2Layout->addWidget( cb_taskbarButton, 0, 0, 1, 2 );
-    connect( cb_taskbarButton, SIGNAL( toggled(bool) ), 
+    connect( cb_taskbarButton, SIGNAL( toggled(bool) ),
             SLOT( slotTaskbarButton(bool)));
     connect( cb_taskbarButton, SIGNAL( toggled(bool) ), SLOT( checkChanged()));
 
@@ -126,7 +128,7 @@ LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringLis
     sb_taskbarTimeout->setSuffix( i18n(" sec") );
     GroupBox2Layout->addWidget( sb_taskbarTimeout, 1, 1 );
     lbl_taskbarTimeout->setBuddy( sb_taskbarTimeout );
-    connect( sb_taskbarTimeout, SIGNAL( valueChanged(int) ), 
+    connect( sb_taskbarTimeout, SIGNAL( valueChanged(int) ),
             SLOT( checkChanged() ) );
 
     Form1Layout->addStretch();
@@ -138,14 +140,14 @@ LaunchConfig::~LaunchConfig()
 {
 }
 
-  void 
+  void
 LaunchConfig::slotBusyCursor(int i)
 {
     lbl_cursorTimeout->setEnabled( i != 0 );
     sb_cursorTimeout->setEnabled( i != 0 );
 }
 
-  void 
+  void
 LaunchConfig::slotTaskbarButton(bool b)
 {
     lbl_taskbarTimeout->setEnabled( b );
@@ -228,7 +230,7 @@ LaunchConfig::defaults()
 
   slotBusyCursor( 2 );
   slotTaskbarButton( Default & TaskbarButton );
- 
+
   checkChanged();
 }
 
@@ -261,9 +263,9 @@ LaunchConfig::checkChanged()
   bool newBusyBouncing= cb_busyCursor->currentIndex()==3;
 
   unsigned int newCursorTimeout = sb_cursorTimeout->value();
-  
+
   unsigned int newTaskbarTimeout = sb_taskbarTimeout->value();
-  
+
   emit changed(
       savedBusyCursor     != newBusyCursor
       ||

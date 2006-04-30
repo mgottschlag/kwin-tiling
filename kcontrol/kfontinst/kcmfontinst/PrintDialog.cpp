@@ -41,7 +41,9 @@ CPrintDialog::CPrintDialog(QWidget *parent)
             : KDialogBase(Plain, i18n("Print Font Samples"), Ok|Cancel, Ok, parent, NULL, true, false)
 {
     QFrame      *page=plainPage();
-    QGridLayout *layout=new QGridLayout(page, 1, 1, 0, spacingHint());
+    QGridLayout *layout=new QGridLayout(page);
+    layout->setSpacing(spacingHint());
+    layout->setMargin(0);
 
     layout->addWidget(new QLabel(i18n("Output:"), page), 0, 0);
     itsOutput=new QComboBox(page);

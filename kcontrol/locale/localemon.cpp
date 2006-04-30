@@ -43,13 +43,13 @@
 
 KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
                                        QWidget *parent, const char*name)
-  : QWidget(parent, name),
+  : QWidget(parent),
     m_locale(locale)
 {
   // Money
-  QGridLayout *lay = new QGridLayout(this, 6, 2,
-                                     KDialog::marginHint(),
-                                     KDialog::spacingHint());
+  QGridLayout *lay = new QGridLayout(this );
+  lay->setMargin( KDialog::marginHint() );
+  lay->setSpacing( KDialog::spacingHint());
 
   m_labMonCurSym = new QLabel(this);
   m_labMonCurSym->setObjectName( I18N_NOOP("Currency symbol:") );

@@ -368,7 +368,8 @@ void KMiniPager::resizeEvent(QResizeEvent*)
     }
 
     // 1 pixel spacing.
-    m_layout = new QGridLayout(this, nDX, nDY, 0, 1);
+    m_layout = new QGridLayout(this );
+    m_layout->setSpacing( 1 );
 
     QList<KMiniPagerButton*>::Iterator it = m_desktops.begin();
     QList<KMiniPagerButton*>::Iterator itEnd = m_desktops.end();

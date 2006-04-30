@@ -57,15 +57,15 @@ BasicTab::BasicTab( QWidget *parent )
     _menuFolderInfo = 0;
     _menuEntryInfo = 0;
 
-    QGridLayout *layout = new QGridLayout(this, 6, 2,
-                                          KDialog::marginHint(),
-                                          KDialog::spacingHint());
+    QGridLayout *layout = new QGridLayout(this );
+    layout->setMargin( KDialog::marginHint() );
+    layout->setSpacing( KDialog::spacingHint() );
 
     // general group
     QGroupBox *general_group = new QGroupBox(this);
-    QGridLayout *grid = new QGridLayout(general_group, 5, 2,
-                                        KDialog::marginHint(),
-                                        KDialog::spacingHint());
+    QGridLayout *grid = new QGridLayout(general_group );
+    grid->setMargin( KDialog::marginHint() );
+    grid->setSpacing( KDialog::spacingHint() );
 
     general_group->setAcceptDrops(false);
 
@@ -229,9 +229,9 @@ BasicTab::BasicTab( QWidget *parent )
     // dummy widget in order to make it look a bit better
     layout->addWidget( new QWidget(this), 5, 0 );
     layout->setRowStretch( 5, 4 );
-    QGridLayout *grid_keybind = new QGridLayout(general_group_keybind, 3, 1,
-                                                KDialog::marginHint(),
-                                                KDialog::spacingHint());
+    QGridLayout *grid_keybind = new QGridLayout(general_group_keybind );
+    grid_keybind->setMargin( KDialog::marginHint() );
+    grid_keybind->setSpacing( KDialog::spacingHint());
 
     //_keyEdit = new KLineEdit(general_group_keybind);
     //_keyEdit->setReadOnly( true );

@@ -61,7 +61,9 @@ KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
 	readSettings();
 
 	QFrame *main = makeMainWidget();
-	QGridLayout *grid = new QGridLayout(main, 4, 2, 0, spacingHint() );
+	QGridLayout *grid = new QGridLayout(main);
+	grid->setSpacing(spacingHint());
+	grid->setMargin(0);
 
 	QLabel *label = new QLabel( i18n("Color:"), main );
 	grid->addWidget(label, 0, 0);

@@ -36,12 +36,12 @@
 
 KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
 					 QWidget *parent, const char*name)
-  : QWidget(parent, name),
+  : QWidget(parent),
     m_locale(locale)
 {
-  QGridLayout *lay = new QGridLayout(this, 5, 2,
-				     KDialog::marginHint(),
-				     KDialog::spacingHint());
+  QGridLayout *lay = new QGridLayout(this );
+  lay->setMargin( KDialog::marginHint() );
+  lay->setSpacing( KDialog::spacingHint());
   lay->setAutoAdd(true);
 
   m_labDecSym = new QLabel(this);

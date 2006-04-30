@@ -305,7 +305,9 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 	} else
 		cb_force->setEnabled( false );
 
-	QGridLayout *grid = new QGridLayout( schedGroup, 0, 0, KDmh, KDsh );
+	QGridLayout *grid = new QGridLayout( schedGroup );
+	grid->setSpacing( KDsh );
+	grid->setMargin( KDmh );
 	grid->addRowSpacing( 0, schedGroup->fontMetrics().height() - 5 );
 	grid->addWidget( lab1, 1, 0, Qt::AlignRight );
 	grid->addWidget( le_start, 1, 1 );

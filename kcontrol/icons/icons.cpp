@@ -40,9 +40,9 @@ KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
     : KCModule(inst, parent)
 {
 
-    QGridLayout *top = new QGridLayout(this, 2, 2,
-                                       KDialog::marginHint(),
-                                       KDialog::spacingHint());
+    QGridLayout *top = new QGridLayout(this );
+    top->setMargin( KDialog::marginHint() );
+    top->setSpacing( KDialog::spacingHint() );
     top->setColumnStretch(0, 1);
     top->setColumnStretch(1, 1);
 
@@ -60,7 +60,9 @@ KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
     KSeparator *sep = new KSeparator( Qt::Horizontal, this );
     top->addWidget(sep, 1, 1);
     // Preview at (2,0) - (2, 1)
-    QGridLayout *g_lay = new QGridLayout(4, 3, KDialog::marginHint(), 0);
+    QGridLayout *g_lay = new QGridLayout();
+    g_lay->setMargin( KDialog::marginHint() );
+    g_lay->setSpacing( 0);
     top->addLayout(g_lay, 2, 0, 1, 2 );
     g_lay->addRowSpacing(0, fontMetrics().lineSpacing());
 
@@ -76,7 +78,9 @@ KIconConfig::KIconConfig(KInstance *inst, QWidget *parent)
     m_pTab1 = new QWidget(this, "General Tab");
     top->addWidget(m_pTab1, 0, 1);
 
-    QGridLayout *grid = new QGridLayout(m_pTab1, 4, 3, 10, 10);
+    QGridLayout *grid = new QGridLayout(m_pTab1);
+    grid->setSpacing(10);
+    grid->setMargin(10);
     grid->setColumnStretch(1, 1);
     grid->setColumnStretch(2, 1);
 
@@ -526,7 +530,9 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     QWidget *page = new QWidget(this);
     setMainWidget(page);
 
-    QGridLayout *top = new QGridLayout(page, 4, 2, 0, spacingHint());
+    QGridLayout *top = new QGridLayout(page);
+    top->setSpacing(spacingHint());
+    top->setMargin(0);
     top->setColumnStretch(0,1);
     top->addColSpacing(1,10);
     top->setColumnStretch(2,2);
@@ -553,7 +559,9 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
 
     frame = new Q3GroupBox(i18n("Preview"), page);
     top->addWidget(frame, 0, 1, 2, 1);
-    grid = new QGridLayout(frame, 2, 1, marginHint(), spacingHint());
+    grid = new QGridLayout(frame);
+    grid->setSpacing(spacingHint());
+    grid->setMargin(marginHint());
     grid->addRowSpacing(0, fontMetrics().lineSpacing());
     grid->setRowStretch(1, 1);
 
@@ -564,7 +572,9 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
 
     mpEffectGroup = new Q3GroupBox(i18n("Effect Parameters"), page);
     top->addWidget(mpEffectGroup, 2, 1, 2, 1);
-    grid = new QGridLayout(mpEffectGroup, 3, 2, marginHint(), spacingHint());
+    grid = new QGridLayout(mpEffectGroup);
+    grid->setSpacing(spacingHint());
+    grid->setMargin(marginHint());
     grid->addRowSpacing(0, fontMetrics().lineSpacing());
 
     mpEffectLabel = new QLabel(i18n("&Amount:"), mpEffectGroup);

@@ -390,7 +390,9 @@ KProgramEditDialog::KProgramEditDialog(const QString &program, QWidget *parent, 
 {
     QFrame *frame = makeMainWidget();
 
-    QGridLayout *grid = new QGridLayout(frame, 6, 2, 0, spacingHint());
+    QGridLayout *grid = new QGridLayout(frame);
+    grid->setSpacing(spacingHint());
+    grid->setMargin(0);
     grid->addColSpacing(1, 300);
 
     QLabel *lbl = new QLabel(i18n("&Name:"), frame);

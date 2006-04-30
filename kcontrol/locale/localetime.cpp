@@ -199,9 +199,9 @@ KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
    m_locale(_locale)
 {
   // Time
-  QGridLayout *lay = new QGridLayout(this, 7, 2,
-				     KDialog::marginHint(),
-				     KDialog::spacingHint());
+  QGridLayout *lay = new QGridLayout( this );
+  lay->setMargin( KDialog::marginHint() );
+  lay->setSpacing( KDialog::spacingHint());
   lay->setAutoAdd(true);
 
   m_labCalendarSystem = new QLabel(this);
@@ -561,7 +561,7 @@ void KLocaleConfigTime::updateWeekDayNames()
       else
         m_comboWeekStartDay->removeItem(i - 1);
     }
-        
+
     if ( outsideComboList )
       m_comboWeekStartDay->insertItem(i - 1, str);
     else

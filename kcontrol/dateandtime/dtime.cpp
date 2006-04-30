@@ -115,7 +115,8 @@ Dtime::Dtime(QWidget * parent, const char *name)
   kclock->setMinimumSize(150,150);
   v2->addWidget( kclock );
 
-  QGridLayout *v3 = new QGridLayout( v2, 2, 9 );
+  QGridLayout *v3 = new QGridLayout( );
+  v2->addItem( v3 );
 
   // Even if the module's widgets are reversed (usually when using RTL
   // languages), the placing of the time fields must always be H:M:S, from
@@ -167,7 +168,8 @@ Dtime::Dtime(QWidget * parent, const char *name)
   QSpacerItem *spacer3 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
   v3->addItem(spacer3, 0, 9, 2, 1);
 
-  QGridLayout *top = new QGridLayout( this, 2,2, KDialog::spacingHint() );
+  QGridLayout *top = new QGridLayout( this );
+  top->setSpacing( KDialog::spacingHint() );
 
   top->addWidget(dateBox, 1,0);
   top->addWidget(timeBox, 1,1);

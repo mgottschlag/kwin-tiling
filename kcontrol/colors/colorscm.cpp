@@ -120,8 +120,8 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
 
     // LAYOUT
 
-    QGridLayout *topLayout = new QGridLayout( this, 3, 2, 0,
-        KDialog::spacingHint() );
+    QGridLayout *topLayout = new QGridLayout( this );
+    topLayout->setSpacing( KDialog::spacingHint() );
     topLayout->setRowStretch(0,0);
     topLayout->setRowStretch(1,0);
     topLayout->setColumnStretch(0,1);

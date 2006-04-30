@@ -1110,7 +1110,8 @@ void LockProcess::msgBox( QMessageBox::Icon type, const QString &txt )
 
     QVBoxLayout *vbox = new QVBoxLayout( &box );
     vbox->addWidget( winFrame );
-    QGridLayout *grid = new QGridLayout( winFrame, 2, 2, 10 );
+    QGridLayout *grid = new QGridLayout( winFrame );
+    grid->setSpacing( 10 );
     grid->addWidget( label1, 0, 0, Qt::AlignCenter );
     grid->addWidget( label2, 0, 1, Qt::AlignCenter );
     grid->addWidget( button, 1, 0, 1, 2, Qt::AlignCenter );

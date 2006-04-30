@@ -212,7 +212,9 @@ FontAASettings::FontAASettings(QWidget *parent)
                 changesMade(false)
 {
   QWidget     *mw=new QWidget(this);
-  QGridLayout *layout=new QGridLayout(mw, 1, 1, 0, KDialog::spacingHint());
+  QGridLayout *layout=new QGridLayout(mw);
+  layout->setSpacing(KDialog::spacingHint());
+  layout->setMargin(0);
 
   excludeRange=new QCheckBox(i18n("E&xclude range:"), mw),
   layout->addWidget(excludeRange, 0, 0);
@@ -553,12 +555,11 @@ KFonts::KFonts(QWidget *parent, const char *, const QStringList &args)
     << i18n("Used by the taskbar.")
     << i18n("Used for desktop icons.");
 
-  QVBoxLayout * layout =
-    new QVBoxLayout(this, 0, KDialog::spacingHint());
+  QVBoxLayout * layout = new QVBoxLayout(this );
+  layout->setSpacing( KDialog::spacingHint() );
 
-  QGridLayout * fontUseLayout =
-    new QGridLayout(layout, nameGroupKeyRc.count() / 4, 3);
-
+  QGridLayout * fontUseLayout = new QGridLayout( );
+  layout->addItem( fontUseLayout );
   fontUseLayout->setColumnStretch(0, 0);
   fontUseLayout->setColumnStretch(1, 1);
   fontUseLayout->setColumnStretch(2, 0);

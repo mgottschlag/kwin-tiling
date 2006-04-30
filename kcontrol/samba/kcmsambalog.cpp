@@ -48,7 +48,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
 ,showFileClose(i18n("Show closed files"),this)
 ,updateButton(i18n("&Update"),this)
 {
-    label->setBuddy( &logFileName );
+   label.setBuddy( &logFileName );
    QVBoxLayout *mainLayout=new QVBoxLayout(this);
    mainLayout->setMargin(KDialog::marginHint());
    mainLayout->setSpacing(KDialog::spacingHint());

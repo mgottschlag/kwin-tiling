@@ -64,8 +64,9 @@ KCMXinerama::KCMXinerama(KInstance *inst, QWidget *parent )
 	_timer.setSingleShot(true);
 	connect(&_timer, SIGNAL(timeout()), this, SLOT(clearIndicator()));
 
-	QGridLayout *grid = new QGridLayout(this, 1, 1, KDialog::marginHint(),
-							KDialog::spacingHint());
+	QGridLayout *grid = new QGridLayout(this );
+        grid->setMargin( KDialog::marginHint() );
+        grid->setSpacing( KDialog::spacingHint() );
 
 	// Setup the panel
 	_displays = QApplication::desktop()->numScreens();

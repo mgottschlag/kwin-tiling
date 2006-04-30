@@ -102,7 +102,8 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config)
    topLayout->setMargin(KDialog::marginHint());
    topLayout->setSpacing(KDialog::spacingHint());
    topLayout->addWidget(viewStatistics,1);
-   QGridLayout *subLayout=new QGridLayout(topLayout,4,3);
+   QGridLayout *subLayout=new QGridLayout();
+   topLayout->addItem( subLayout );
    subLayout->setColumnStretch(1,1);
    subLayout->setColumnStretch(2,1);
 
