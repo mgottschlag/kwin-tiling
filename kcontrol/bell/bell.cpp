@@ -76,14 +76,16 @@ KBellConfig::KBellConfig(KInstance *inst, QWidget *parent):
 {
   QBoxLayout *layout = new QVBoxLayout(this);
   layout->setMargin(0);
-  layout->setSpacing(KDialog::spacingHint()); 
+  layout->setSpacing(KDialog::spacingHint());
 
   int row = 0;
   Q3GroupBox *box = new Q3GroupBox( i18n("Bell Settings"), this );
   box->setColumnLayout( 0, Qt::Horizontal );
   layout->addWidget(box);
   layout->addStretch();
-  QGridLayout *grid = new QGridLayout(box->layout(), KDialog::spacingHint());
+  QGridLayout *grid = new QGridLayout();
+  grid->setSpacing( KDialog::spacingHint() );
+  box->layout()->addItem( grid );
   grid->setColumnStretch(0, 0);
   grid->setColumnStretch(1, 1);
   grid->addColSpacing(0, 30);

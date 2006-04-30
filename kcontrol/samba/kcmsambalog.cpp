@@ -40,7 +40,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
 ,filesCount(0)
 ,connectionsCount(0)
 ,logFileName("/var/log/samba.log",this)
-,label(&logFileName,i18n("Samba log file: "),this)
+,label(i18n("Samba log file: "),this)
 ,viewHistory(this)
 ,showConnOpen(i18n("Show opened connections"),this)
 ,showConnClose(i18n("Show closed connections"),this)
@@ -48,14 +48,17 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
 ,showFileClose(i18n("Show closed files"),this)
 ,updateButton(i18n("&Update"),this)
 {
+    label->setBuddy( &logFileName );
    QVBoxLayout *mainLayout=new QVBoxLayout(this);
    mainLayout->setMargin(KDialog::marginHint());
    mainLayout->setSpacing(KDialog::spacingHint());
-   QHBoxLayout *leLayout=new QHBoxLayout(mainLayout);
+   QHBoxLayout *leLayout=new QHBoxLayout();
+   mainLayout->addItem( leLayout );
    leLayout->addWidget(&label);
    leLayout->addWidget(&logFileName,1);
    mainLayout->addWidget(&viewHistory,1);
-   QGridLayout *subLayout=new QGridLayout(mainLayout,2,2);
+   QGridLayout *subLayout=new QGridLayout();
+   mainLayout->addItem( subLayout );
    subLayout->addWidget(&showConnOpen,0,0);
    subLayout->addWidget(&showConnClose,1,0);
    subLayout->addWidget(&showFileOpen,0,1);

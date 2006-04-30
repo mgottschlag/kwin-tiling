@@ -126,8 +126,10 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 				user_entry->setWidget( loginEdit );
 				domain_entry->setWidget( domainCombo );
 			} else {
-				domainLabel = new QLabel( domainCombo, i18n("&Domain:"), parent );
-				loginLabel = new QLabel( loginEdit, i18n("&Username:"), parent );
+				domainLabel = new QLabel( i18n("&Domain:"), parent );
+				domainLabel->setBuddy( domainCombo );
+				loginLabel = new QLabel( i18n("&Username:"), parent );
+				loginLabel->setBuddy( loginEdit );
 				grid->addWidget( domainLabel, line, 0 );
 				grid->addWidget( domainCombo, line++, 1 );
 				grid->addWidget( loginLabel, line, 0 );
@@ -160,11 +162,11 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			passwdEdit->adjustSize();
 			pw_entry->setWidget( passwdEdit );
 		} else {
-			passwdLabel = new QLabel( passwdEdit,
-			                          func == Authenticate ?
+			passwdLabel = new QLabel( func == Authenticate ?
 			                          i18n("&Password:") :
 			                          i18n("Current &password:"),
 			                          parent );
+                        passwdLabel->setBuddy( passwdEdit );
 			if (pred) {
 				parent->setTabOrder( pred, passwdEdit );
 				pred = passwdEdit;
@@ -186,8 +188,10 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			passwd1Edit = new KDMPasswordEdit( parent );
 			passwd2Edit = new KDMPasswordEdit( parent );
 		}
-		passwd1Label = new QLabel( passwd1Edit, i18n("&New password:"), parent );
-		passwd2Label = new QLabel( passwd2Edit, i18n("Con&firm password:"), parent );
+		passwd1Label = new QLabel( i18n("&New password:"), parent );
+		passwd1Label->setBuddy( passwd1Edit );
+		passwd2Label = new QLabel( i18n("Con&firm password:"), parent );
+		passwd2Label->setBuddy( passwd2Edit );
 		if (pred) {
 			parent->setTabOrder( pred, passwd1Edit );
 			parent->setTabOrder( passwd1Edit, passwd2Edit );
@@ -563,7 +567,7 @@ static bool init( const QString &,
 {
 	echoMode = getConf( ctx, "EchoMode", QVariant( -1 ) ).toInt();
 
- 	domains = getConf( ctx, "winbind.Domains", QVariant( "" ) ).toString().split( ':', 
+ 	domains = getConf( ctx, "winbind.Domains", QVariant( "" ) ).toString().split( ':',
 QString::SkipEmptyParts );
  	if (!domains.size()) {
  		FILE *domfile = popen( "wbinfo --all-domains 2>/dev/null", "r" );

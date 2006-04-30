@@ -45,7 +45,7 @@ class BasicTab : public QWidget
     Q_OBJECT
 
 public:
-    BasicTab( QWidget *parent=0, const char *name=0 );
+    BasicTab( QWidget *parent=0 );
 
     void apply();
 Q_SIGNALS:

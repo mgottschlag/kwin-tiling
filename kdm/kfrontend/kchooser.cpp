@@ -76,7 +76,8 @@ ChooserDlg::ChooserDlg()
 
 	iline = new QLineEdit( this );
 	iline->setEnabled( TRUE );
-	QLabel *itxt = new QLabel( iline, i18n("Hos&t:"), this );
+	QLabel *itxt = new QLabel( i18n("Hos&t:"), this );
+	itxt->setBuddy( iline );
 	QPushButton *addButton = new QPushButton( i18n("A&dd"), this );
 	connect( addButton, SIGNAL(clicked()), SLOT(addHostname()) );
 	QBoxLayout *hibox = new QHBoxLayout( vbox, 10 );

@@ -44,7 +44,8 @@ GestureRecordPage::GestureRecordPage(const QString &gesture,
                    "restart. If you want to force a restart, use the reset "
                    "button below.\n\nDraw here:");
 
-    QLabel *label = new QLabel(message, this, "label");
+    QLabel *label = new QLabel(message,this);
+    label->setObjectName("label");
     label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     label->setWordWrap( true );
 

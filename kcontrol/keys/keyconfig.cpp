@@ -115,7 +115,8 @@ void KKeyModule::init( bool isGlobal, bool _bSeriesOnly, bool bSeriesNone )
   connect( sList, SIGNAL( highlighted( int ) ),
            SLOT( slotPreviewScheme( int ) ) );
 
-  QLabel *label = new QLabel( sList, i18n("&Key Scheme"), this );
+  QLabel *label = new QLabel( i18n("&Key Scheme"), this );
+  label->setBuddy( sList );
 
   wtstr = i18n("Here you can see a list of the existing key binding schemes with 'Current scheme'"
     " referring to the settings you are using right now. Select a scheme to use, remove or"

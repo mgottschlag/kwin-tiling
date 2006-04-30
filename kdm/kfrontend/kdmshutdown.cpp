@@ -291,10 +291,12 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 	hlay->addWidget( schedGroup, 0, Qt::AlignTop );
 
 	le_start = new QLineEdit( schedGroup );
-	QLabel *lab1 = new QLabel( le_start, i18n("&Start:"), schedGroup );
+	QLabel *lab1 = new QLabel( i18n("&Start:"), schedGroup );
+	lab1->setBuddy( le_start );
 
 	le_timeout = new QLineEdit( schedGroup );
-	QLabel *lab2 = new QLabel( le_timeout, i18n("T&imeout:"), schedGroup );
+	QLabel *lab2 = new QLabel( i18n("T&imeout:"), schedGroup );
+	lab2->setBuddy( le_timeout );
 
 	cb_force = new QCheckBox( i18n("&Force after timeout"), schedGroup );
 	if (_allowNuke != SHUT_NONE) {

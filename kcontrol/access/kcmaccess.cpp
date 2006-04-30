@@ -275,7 +275,8 @@ KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
   QHBoxLayout *hbox = new QHBoxLayout(vvbox, KDialogBase::spacingHint());
   hbox->addSpacing(24);
   soundEdit = new QLineEdit(grp);
-  soundLabel = new QLabel(soundEdit, i18n("Sound &to play:"), grp);
+  soundLabel = new QLabel(i18n("Sound &to play:"), grp);
+  soundLabel->setBuddy(soundEdit);
   hbox->addWidget(soundLabel);
   hbox->addWidget(soundEdit);
   soundButton = new QPushButton(i18n("Browse..."), grp);

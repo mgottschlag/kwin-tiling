@@ -314,9 +314,11 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	lbl = new QLabel( i18n("100%"), box1 );
 	lbl->setAlignment( Qt::AlignRight );
 
-	lblMenuEffectType = new QLabel( comboMenuEffectType, i18n("Menu trans&lucency type:"), menuContainer );
+	lblMenuEffectType = new QLabel( i18n("Menu trans&lucency type:"), menuContainer );
+	lblMenuEffectType->setBuddy( comboMenuEffectType );
 	lblMenuEffectType->setAlignment( Qt::AlignBottom | Qt::AlignLeft );
-	lblMenuOpacity    = new QLabel( slOpacity, i18n("Menu &opacity:"), menuContainer );
+	lblMenuOpacity    = new QLabel( i18n("Menu &opacity:"), menuContainer );
+	lblMenuOpacity->setBuddy( slOpacity );
 	lblMenuOpacity->setAlignment( Qt::AlignBottom | Qt::AlignLeft );
 
 	menuContainerLayout->addWidget( lblMenuEffectType, 0, 0 );

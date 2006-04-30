@@ -80,21 +80,24 @@ SearchWidget::SearchWidget(QWidget *parent , const char *name)
   // input
   _input = new KLineEdit(this);
   _input->setFocus();
-  QLabel *inputl = new QLabel(_input, i18n("Se&arch:"), this);
+  QLabel *inputl = new QLabel(i18n("Se&arch:"), this);
+  inputl->setBuddy(_input);
 
   l->addWidget(inputl);
   l->addWidget(_input);
 
   // keyword list
   _keyList = new KListBox(this);
-  QLabel *keyl = new QLabel(_keyList, i18n("&Keywords:"), this);
+  QLabel *keyl = new QLabel(i18n("&Keywords:"), this);
+  keyl->setBuddy(_keyList);
 
   l->addWidget(keyl);
   l->addWidget(_keyList);
 
   // result list
   _resultList = new KListBox(this);
-  QLabel *resultl = new QLabel(_resultList, i18n("&Results:"), this);
+  QLabel *resultl = new QLabel(i18n("&Results:"), this);
+  resultl->setBuddy(_resultList);
 
   l->addWidget(resultl);
   l->addWidget(_resultList);

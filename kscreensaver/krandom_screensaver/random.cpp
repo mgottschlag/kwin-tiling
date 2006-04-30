@@ -219,7 +219,8 @@ KRandomSetup::KRandomSetup( QWidget *parent, const char *name )
 {
 
 	QFrame *main = makeMainWidget();
-	QGridLayout *grid = new QGridLayout(main, 4, 2, 0, spacingHint() );
+	QGridLayout *grid = new QGridLayout(main );
+        grid->setSpacing( spacingHint() );
 
 	openGL = new QCheckBox( i18n("Use OpenGL screen savers"), main );
 	grid->addWidget(openGL, 0, 0);

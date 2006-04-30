@@ -629,7 +629,7 @@ FindGEnt( int id )
 static Entry *
 FindDEnt( int id, DSpec *dspec )
 {
-	Section *cursec, *bestsec;
+	Section *cursec, *bestsec = 0;
 	Entry *curent, *bestent;
 	int score, bestscore;
 

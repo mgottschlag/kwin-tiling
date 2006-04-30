@@ -94,7 +94,8 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 				loginEdit->adjustSize();
 				user_entry->setWidget( loginEdit );
 			} else {
-				loginLabel = new QLabel( loginEdit, i18n("&Username:"), parent );
+				loginLabel = new QLabel( i18n("&Username:"), parent );
+				loginLabel->setBuddy( loginEdit );
 				grid->addWidget( loginLabel, line, 0 );
 				grid->addWidget( loginEdit, line++, 1 );
 			}
@@ -119,11 +120,11 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 			passwdEdit->adjustSize();
 			pw_entry->setWidget( passwdEdit );
 		} else {
-			passwdLabel = new QLabel( passwdEdit,
-			                          func == Authenticate ?
+                        passwdLabel = new QLabel( func == Authenticate ?
 			                            i18n("&Password:") :
 			                            i18n("Current &password:"),
 			                          parent );
+                        passwdLabel->setBuddy( passwdEdit );
 			grid->addWidget( passwdLabel, line, 0 );
 			grid->addWidget( passwdEdit, line++, 1 );
 		}
@@ -140,8 +141,10 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 			passwd1Edit = new KDMPasswordEdit( parent );
 			passwd2Edit = new KDMPasswordEdit( parent );
 		}
-		passwd1Label = new QLabel( passwd1Edit, i18n("&New password:"), parent );
-		passwd2Label = new QLabel( passwd2Edit, i18n("Con&firm password:"), parent );
+		passwd1Label = new QLabel( i18n("&New password:"), parent );
+		passwd1Label->setBuddy( passwd1Edit );
+		passwd2Label = new QLabel( i18n("Con&firm password:"), parent );
+		passwd2Label->setBuddy( passwd2Edit );
 		if (pred) {
 			parent->setTabOrder( pred, passwd1Edit );
 			parent->setTabOrder( passwd1Edit, passwd2Edit );

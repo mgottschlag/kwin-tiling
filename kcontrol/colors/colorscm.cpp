@@ -268,7 +268,8 @@ KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList 
        " of the current color scheme. Contrast does not affect all of the"
        " colors, only the edges of 3D objects."));
 
-    QLabel *label = new QLabel(sb, i18nc("Low Contrast", "Low"), group);
+    QLabel *label = new QLabel(i18nc("Low Contrast", "Low"), group);
+    label->setBuddy( sb );
     groupLayout->addWidget(label);
     groupLayout->addWidget(sb, 10);
     label = new QLabel(group);

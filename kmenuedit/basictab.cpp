@@ -51,8 +51,8 @@
 #include "basictab.h"
 #include "basictab.moc"
 
-BasicTab::BasicTab( QWidget *parent, const char *name )
-  : QWidget(parent, name)
+BasicTab::BasicTab( QWidget *parent )
+  : QWidget(parent)
 {
     _menuFolderInfo = 0;
     _menuEntryInfo = 0;
@@ -95,10 +95,14 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     _systrayCB = new QCheckBox(i18n("&Place in system tray"), general_group);
 
     // setup labels
-    _nameLabel = new QLabel(_nameEdit, i18n("&Name:"), general_group);
-    _descriptionLabel = new QLabel(_descriptionEdit, i18n("&Description:"), general_group);
-    _commentLabel = new QLabel(_commentEdit, i18n("&Comment:"), general_group);
-    _execLabel = new QLabel(_execEdit, i18n("Co&mmand:"), general_group);
+    _nameLabel = new QLabel(i18n("&Name:"),general_group);
+    _nameLabel->setBuddy(_nameEdit);
+    _descriptionLabel = new QLabel(i18n("&Description:"),general_group);
+    _descriptionLabel->setBuddy(_descriptionEdit);
+    _commentLabel = new QLabel(i18n("&Comment:"),general_group);
+    _commentLabel->setBuddy(_commentEdit);
+    _execLabel = new QLabel(i18n("Co&mmand:"),general_group);
+    _execLabel->setBuddy(_execEdit);
     grid->addWidget(_nameLabel, 0, 0);
     grid->addWidget(_descriptionLabel, 1, 0);
     grid->addWidget(_commentLabel, 2, 0);
@@ -236,7 +240,9 @@ BasicTab::BasicTab( QWidget *parent, const char *name )
     //                                           general_group_keybind );
     //connect( _keyButton, SIGNAL( clicked()), this, SLOT( keyButtonPressed()));
     _keyEdit = new KKeyButton(general_group_keybind);
-    grid_keybind->addWidget(new QLabel(_keyEdit, i18n("Current shortcut &key:"), general_group_keybind), 0, 0);
+    QLabel *l = new QLabel( i18n("Current shortcut &key:"), general_group_keybind);
+    l->setBuddy( _keyEdit );
+    grid_keybind->addWidget(l, 0, 0);
     connect( _keyEdit, SIGNAL(capturedShortcut(const KShortcut&)),
              this, SLOT(slotCapturedShortcut(const KShortcut&)));
     grid_keybind->addWidget(_keyEdit, 0, 1);
@@ -330,7 +336,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     blockSignals(true);
     _menuFolderInfo = 0;
     _menuEntryInfo = entryInfo;
-    
+
     if (!entryInfo)
     {
        _nameEdit->setText(QString());

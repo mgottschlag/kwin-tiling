@@ -50,11 +50,14 @@ StatisticsView::StatisticsView(QWidget *parent,KConfig *config)
   connectionsL = new QLabel( i18n( "Connections: 0" ), this );
   filesL = new QLabel( i18n( "File accesses: 0" ), this );
   eventCb = new QComboBox( this );
-  eventL = new QLabel( eventCb, i18n( "Event: " ), this );
+  eventL = new QLabel( i18n( "Event: " ), this );
+  eventL->setBuddy( eventCb );
   serviceLe = new QLineEdit( this );
-  serviceL = new QLabel( serviceLe, i18n( "Service/File:" ), this );
+  serviceL = new QLabel( i18n( "Service/File:" ), this );
+  serviceL->setBuddy( serviceLe );
   hostLe = new QLineEdit( this );
-  hostL = new QLabel( hostLe, i18n( "Host/User:" ), this );
+  hostL = new QLabel( i18n( "Host/User:" ), this );
+  hostL->setBuddy( hostLe );
   calcButton = new QPushButton( i18n( "&Search" ), this );
   clearButton = new QPushButton( i18n( "Clear Results" ), this );
   expandedInfoCb = new QCheckBox( i18n( "Show expanded service info" ), this );
