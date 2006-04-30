@@ -49,14 +49,16 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       sdlcombo = new QComboBox( group0 );
       sdlcombo->setEditable( false );
-      sdllabel = new QLabel (sdlcombo, i18n ("&Local:"), group0);
+      sdllabel = new QLabel (i18n ("&Local:"),group0);
+      sdllabel->setBuddy(sdlcombo);
       sdlcombo->insertItem(SdAll, i18n("Everybody"));
       sdlcombo->insertItem(SdRoot, i18n("Only Root"));
       sdlcombo->insertItem(SdNone, i18n("Nobody"));
       connect(sdlcombo, SIGNAL(activated(int)), SLOT(changed()));
       sdrcombo = new QComboBox( group0 );
       sdrcombo->setEditable( false );
-      sdrlabel = new QLabel (sdrcombo, i18n ("&Remote:"), group0);
+      sdrlabel = new QLabel (i18n ("&Remote:"),group0);
+      sdrlabel->setBuddy(sdrcombo);
       sdrcombo->insertItem(SdAll, i18n("Everybody"));
       sdrcombo->insertItem(SdRoot, i18n("Only Root"));
       sdrcombo->insertItem(SdNone, i18n("Nobody"));
@@ -72,7 +74,8 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
 
       shutdown_lined = new KUrlRequester(group1);
-      QLabel *shutdown_label = new QLabel(shutdown_lined, i18n("H&alt:"), group1);
+      QLabel *shutdown_label = new QLabel(i18n("H&alt:"),group1);
+      shutdown_label->setBuddy(shutdown_lined);
       connect(shutdown_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(changed()));
       wtstr = i18n("Command to initiate the system halt. Typical value: /sbin/halt");
@@ -80,7 +83,8 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
       shutdown_lined->setWhatsThis( wtstr );
 
       restart_lined = new KUrlRequester(group1);
-      QLabel *restart_label = new QLabel(restart_lined, i18n("Reb&oot:"), group1);
+      QLabel *restart_label = new QLabel(i18n("Reb&oot:"),group1);
+      restart_label->setBuddy(restart_lined);
       connect(restart_lined, SIGNAL(textChanged(const QString&)),
 	      SLOT(changed()));
       wtstr = i18n("Command to initiate the system reboot. Typical value: /sbin/reboot");
@@ -96,7 +100,8 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 #if defined(__linux__) && ( defined(__i386__) || defined(__amd64__) )
       bm_combo->insertItem("Lilo", i18n("Lilo"));
 #endif
-      QLabel *bm_label = new QLabel( bm_combo, i18n("Boot manager:"), group4 );
+      QLabel *bm_label = new QLabel( i18n("Boot manager:"), group4 );
+      bm_label->setBuddy( bm_combo );
       connect(bm_combo, SIGNAL(activated(int)), SLOT(changed()));
       wtstr = i18n("Enable boot options in the \"Shutdown...\" dialog.");
       bm_label->setWhatsThis( wtstr );
@@ -104,9 +109,12 @@ KDMSessionsWidget::KDMSessionsWidget(QWidget *parent, const char *name)
 
       QBoxLayout *main = new QVBoxLayout( this );
       main->setMargin( 10 );
-      QGridLayout *lgroup0 = new QGridLayout( group0, 1, 1, 10);
-      QGridLayout *lgroup1 = new QGridLayout( group1, 1, 1, 10);
-      QGridLayout *lgroup4 = new QGridLayout( group4, 1, 1, 10);
+      QGridLayout *lgroup0 = new QGridLayout( group0 );
+      lgroup0->setSpacing( 10 );
+      QGridLayout *lgroup1 = new QGridLayout( group1 );
+      lgroup1->setSpacing( 10 );
+      QGridLayout *lgroup4 = new QGridLayout( group4 );
+      lgroup4->setSpacing( 10 );
 
       main->addWidget(group0);
       main->addWidget(group1);

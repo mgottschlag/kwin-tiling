@@ -64,7 +64,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
     QWidget *hlpw1 = new QWidget( alGroup );
     userlb = new KComboBox( hlpw1 );
-    u_label = new QLabel( userlb, i18n("Use&r:"), hlpw1 );
+    u_label = new QLabel( i18n("Use&r:"), hlpw1 );
+    u_label->setBuddy( userlb );
     QHBoxLayout *hlpl1 = new QHBoxLayout(alGroup->layout(), KDialog::spacingHint());
     hlpl1->addWidget(u_label);
     hlpl1->addWidget(userlb);
@@ -110,7 +111,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     laygroup5->addWidget( hlpw );
     puserlb = new KComboBox(true, hlpw);
 
-    pu_label = new QLabel(puserlb, i18n("Us&er:"), hlpw);
+    pu_label = new QLabel(i18n("Us&er:"),hlpw);
+    pu_label->setBuddy(puserlb);
     connect(puserlb, SIGNAL(textChanged(const QString &)), SLOT(slotChanged()));
     wtstr = i18n("Select the user to be preselected for login. "
 	"This box is editable, so you can specify an arbitrary non-existent "
@@ -142,7 +144,7 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
     connect(npGroup, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
-    pl_label = new QLabel(i18n("No password re&quired for:"), npGroup);
+    pl_label = new QLabel(i18n("No password re&quired for:"),npGroup);
     laygroup3->addWidget( pl_label );
     npuserlv = new K3ListView(npGroup);
     laygroup3->addWidget( npuserlv );
@@ -168,7 +170,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     laygroup4->addWidget( cbarlen );
     connect(cbarlen, SIGNAL(toggled(bool)), SLOT(slotChanged()));
 
-    QGridLayout *main = new QGridLayout(this, 5, 2, 10);
+    QGridLayout *main = new QGridLayout(this);
+    main->setSpacing(10);
     main->addWidget(paranoia, 0, 0);
     main->addWidget(alGroup, 1, 0);
     main->addWidget(puGroup, 2, 0);

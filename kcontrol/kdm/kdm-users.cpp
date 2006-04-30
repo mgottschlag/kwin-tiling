@@ -132,7 +132,8 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
       " Otherwise users are listed in the order they appear in the password file.") );
 
     wstack = new QStackedWidget( this );
-    s_label = new QLabel( wstack, i18n("S&elect users and groups:"), this );
+    s_label = new QLabel( i18n("S&elect users and groups:"), this );
+    s_label->setBuddy( wstack );
     optinlv = new K3ListView( this );
     optinlv->addColumn( i18n("Selected Users") );
     optinlv->setResizeMode( Q3ListView::LastColumn );
@@ -175,7 +176,8 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     usercombo->setWhatsThis( i18n("The user the image below belongs to.") );
     connect( usercombo, SIGNAL(activated( int )),
 	     SLOT(slotUserSelected()) );
-    QLabel *userlabel = new QLabel( usercombo, i18n("User:"), hlpw );
+    QLabel *userlabel = new QLabel( i18n("User:"), hlpw );
+    userlabel->setBuddy( usercombo );
     userbutton = new QPushButton( hlpw );
     userbutton->setAcceptDrops( true );
     userbutton->installEventFilter( this ); // for drag and drop
@@ -190,7 +192,9 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     rstuserbutton->setWhatsThis( i18n("Click this button to make KDM use the default image for the selected user.") );
     connect( rstuserbutton, SIGNAL(clicked()),
 	     SLOT(slotUnsetUserPix()) );
-    QGridLayout *hlpl = new QGridLayout( hlpw, 3, 2, 0, KDialog::spacingHint() );
+    QGridLayout *hlpl = new QGridLayout( hlpw );
+    hlpl->setSpacing( KDialog::spacingHint() );
+    hlpl->setMargin( 0 );
     hlpl->addWidget( userlabel, 0, 0 );
 //    hlpl->addSpacing( KDialog::spacingHint() );
     hlpl->addWidget( usercombo, 0, 1 );

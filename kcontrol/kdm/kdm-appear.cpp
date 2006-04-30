@@ -68,8 +68,9 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   Q3GroupBox *group = new Q3GroupBox(i18n("Appearance"), this);
   vbox->addWidget(group);
 
-  QGridLayout *grid = new QGridLayout( group, 5, 2, KDialog::marginHint(),
-                       KDialog::spacingHint(), "grid");
+  QGridLayout *grid = new QGridLayout( group);
+  grid->setMargin( KDialog::marginHint() );
+  grid->setSpacing( KDialog::spacingHint() );
   grid->addRowSpacing(0, group->fontMetrics().height());
   grid->setColumnStretch(0, 1);
   grid->setColumnStretch(1, 1);
@@ -77,7 +78,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   QHBoxLayout *hlay = new QHBoxLayout( KDialog::spacingHint() );
   grid->addLayout(hlay, 1, 0, 1, 2 );
   greetstr_lined = new KLineEdit(group);
-  QLabel *label = new QLabel(greetstr_lined, i18n("&Greeting:"), group);
+  QLabel *label = new QLabel(i18n("&Greeting:"),group);
+  label->setBuddy(greetstr_lined);
   hlay->addWidget(label);
   connect(greetstr_lined, SIGNAL(textChanged(const QString&)),
       SLOT(changed()));
@@ -98,10 +100,11 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   greetstr_lined->setWhatsThis( wtstr );
 
 
-  QGridLayout *hglay = new QGridLayout( 3, 4, KDialog::spacingHint() );
+  QGridLayout *hglay = new QGridLayout();
+  hglay->setSpacing( KDialog::spacingHint() );
   grid->addLayout(hglay, 2, 0, 3, 1);
 
-  label = new QLabel(i18n("Logo area:"), group);
+  label = new QLabel(i18n("Logo area:"),group);
   hglay->addWidget(label, 0, 0);
   QVBoxLayout *vlay = new QVBoxLayout( KDialog::spacingHint() );
   hglay->addLayout(vlay, 0, 1, 1,2);
@@ -125,7 +128,7 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   logoRadio->setWhatsThis( wtstr );
   clockRadio->setWhatsThis( wtstr );
 
-  logoLabel = new QLabel(i18n("&Logo:"), group);
+  logoLabel = new QLabel(i18n("&Logo:"),group);
   logobutton = new QPushButton(group);
   logoLabel->setBuddy( logobutton );
   logobutton->setAutoDefault(false);
@@ -144,20 +147,21 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay->setColumnStretch( 3, 1);
 
 
-  hglay = new QGridLayout( 2, 3, KDialog::spacingHint() );
+  hglay = new QGridLayout();
+  hglay->setSpacing( KDialog::spacingHint() );
   grid->addLayout(hglay, 2, 1);
 
-  label = new QLabel(i18n("Position:"), group);
+  label = new QLabel(i18n("Position:"),group);
   hglay->addWidget(label, 0, 0, 2, 1, Qt::AlignVCenter);
   QValidator *posValidator = new QIntValidator(0, 100, group);
-  QLabel *xLineLabel = new QLabel(i18n("&X:"), group);
+  QLabel *xLineLabel = new QLabel(i18n("&X:"),group);
   hglay->addWidget(xLineLabel, 0, 1);
   xLineEdit = new QLineEdit (group);
   connect( xLineEdit, SIGNAL( textChanged(const QString&) ), SLOT( changed() ));
   hglay->addWidget(xLineEdit, 0, 2);
   xLineLabel->setBuddy(xLineEdit);
   xLineEdit->setValidator(posValidator);
-  QLabel *yLineLabel = new QLabel(i18n("&Y:"), group);
+  QLabel *yLineLabel = new QLabel(i18n("&Y:"),group);
   hglay->addWidget(yLineLabel, 1, 1);
   yLineEdit = new QLineEdit (group);
   connect( yLineEdit, SIGNAL( textChanged(const QString&) ), SLOT( changed() ));
@@ -174,14 +178,16 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   hglay->setRowStretch( 2, 1);
 
 
-  hglay = new QGridLayout( 2, 3, KDialog::spacingHint() );
+  hglay = new QGridLayout();
+  hglay->setSpacing( KDialog::spacingHint() );
   grid->addLayout(hglay, 3, 1);
   hglay->setColumnStretch(3, 1);
 
   guicombo = new KBackedComboBox(group);
   guicombo->insertItem( "", i18n("<default>") );
   loadGuiStyles(guicombo);
-  label = new QLabel(guicombo, i18n("GUI s&tyle:"), group);
+  label = new QLabel(i18n("GUI s&tyle:"),group);
+  label->setBuddy(guicombo);
   connect(guicombo, SIGNAL(activated(int)), SLOT(changed()));
   hglay->addWidget(label, 0, 0);
   hglay->addWidget(guicombo, 0, 1);
@@ -193,7 +199,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   colcombo = new KBackedComboBox(group);
   colcombo->insertItem( "", i18n("<default>") );
   loadColorSchemes(colcombo);
-  label = new QLabel(colcombo, i18n("&Color scheme:"), group);
+  label = new QLabel(i18n("&Color scheme:"),group);
+  label->setBuddy(colcombo);
   connect(colcombo, SIGNAL(activated(int)), SLOT(changed()));
   hglay->addWidget(label, 1, 0);
   hglay->addWidget(colcombo, 1, 1);
@@ -206,7 +213,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   echocombo->insertItem("NoEcho", i18n("No Echo"));
   echocombo->insertItem("OneStar", i18n("One Star"));
   echocombo->insertItem("ThreeStars", i18n("Three Stars"));
-  label = new QLabel(echocombo, i18n("Echo &mode:"), group);
+  label = new QLabel(i18n("Echo &mode:"),group);
+  label->setBuddy(echocombo);
   connect(echocombo, SIGNAL(activated(int)), SLOT(changed()));
   hglay->addWidget(label, 2, 0);
   hglay->addWidget(echocombo, 2, 1);
@@ -222,8 +230,11 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
   langcombo = new KLanguageButton(group);
   loadLanguageList(langcombo);
   connect(langcombo, SIGNAL(activated(const QString &)), SLOT(changed()));
-  label = new QLabel(langcombo, i18n("Languag&e:"), group);
-  QGridLayout *hbox = new QGridLayout( group->layout(), 2, 2, KDialog::spacingHint() );
+  label = new QLabel(i18n("Languag&e:"),group);
+  label->setBuddy(langcombo);
+  QGridLayout *hbox = new QGridLayout();
+  group->layout()->addItem(hbox);
+  hbox->setSpacing( KDialog::spacingHint() );
   hbox->setColumnStretch(1, 1);
   hbox->addWidget(label, 1, 0);
   hbox->addWidget(langcombo, 1, 1);

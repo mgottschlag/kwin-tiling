@@ -41,8 +41,10 @@ extern KSimpleConfig *config;
 KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   : QWidget(parent, name)
 {
-  QGridLayout *ml = new QGridLayout(this, 5, 2, KDialog::marginHint(), KDialog::spacingHint());
-  QLabel *label = new QLabel(i18n("&General:"), this);
+  QGridLayout *ml = new QGridLayout(this);
+  ml->setSpacing(KDialog::spacingHint());
+  ml->setMargin(KDialog::marginHint());
+  QLabel *label = new QLabel(i18n("&General:"),this);
   stdFontChooser = new KFontRequester(this);
   label->setBuddy(stdFontChooser);
   stdFontChooser->setWhatsThis( i18n("This changes the font which is used for all the text in the login manager except for the greeting and failure messages.") );
@@ -50,7 +52,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   ml->addWidget(label, 1, 0);
   ml->addWidget(stdFontChooser, 1, 1);
 
-  label = new QLabel(i18n("&Failures:"), this);
+  label = new QLabel(i18n("&Failures:"),this);
   failFontChooser = new KFontRequester(this);
   label->setBuddy(failFontChooser);
   failFontChooser->setWhatsThis( i18n("This changes the font which is used for failure messages in the login manager.") );
@@ -58,7 +60,7 @@ KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
   ml->addWidget(label, 2, 0);
   ml->addWidget(failFontChooser, 2, 1);
 
-  label = new QLabel(i18n("Gree&ting:"), this);
+  label = new QLabel(i18n("Gree&ting:"),this);
   greetingFontChooser = new KFontRequester(this);
   label->setBuddy(greetingFontChooser);
   greetingFontChooser->setWhatsThis( i18n("This changes the font which is used for the login manager's greeting.") );
