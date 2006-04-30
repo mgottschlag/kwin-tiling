@@ -174,7 +174,7 @@ void AddAppletVisualFeedback::displayInternal()
 
         // draw text shadow
         QPalette pal = palette();
-        pal.setColor(QColorGroup::Text, pal.window().color().dark(115));
+        pal.setColor(QPalette::Text, pal.window().color().dark(115));
         int shadowOffset = QApplication::isRightToLeft() ? -1 : 1;
         m_richText->draw(&bufferPainter, 5 + textX + shadowOffset,
                          textY + 1, QRect(), pal);

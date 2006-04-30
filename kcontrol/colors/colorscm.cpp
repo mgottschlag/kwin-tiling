@@ -977,10 +977,10 @@ QPalette KColorScheme::createPalette()
     QColorGroup colgrp(cs->windowTxt, cs->back, cs->back.light(150),
                cs->back.dark(), cs->back.dark(120), cs->txt, cs->window);
 
-    colgrp.setColor(QColorGroup::Highlight, cs->select);
-    colgrp.setColor(QColorGroup::HighlightedText, cs->selectTxt);
-    colgrp.setColor(QColorGroup::Button, cs->button);
-    colgrp.setColor(QColorGroup::ButtonText, cs->buttonTxt);
+    colgrp.setColor(QPalette::Highlight, cs->select);
+    colgrp.setColor(QPalette::HighlightedText, cs->selectTxt);
+    colgrp.setColor(QPalette::Button, cs->button);
+    colgrp.setColor(QPalette::ButtonText, cs->buttonTxt);
     return QPalette( colgrp, disabledgrp, colgrp);
 }
 

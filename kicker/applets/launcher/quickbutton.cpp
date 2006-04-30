@@ -221,7 +221,7 @@ void QuickButton::paintEvent(QPaintEvent *)
 void QuickButton::drawButton(QPainter *p)
 {
    if (isDown() || isChecked()) {
-      p->fillRect(rect(), palette().brush(QColorGroup::Mid));
+      p->fillRect(rect(), palette().brush(QPalette::Mid));
       qDrawWinButton(p, 0, 0, width(), height(), palette(), true);
    }
 

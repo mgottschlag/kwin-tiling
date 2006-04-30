@@ -45,7 +45,7 @@ KLocaleSample::KLocaleSample(KLocale *locale,
 
   // Whatever the color scheme is, we want black text
   QColorGroup a = palette().active();
-  a.setColor(QColorGroup::Foreground, Qt::black);
+  a.setColor(QPalette::Foreground, Qt::black);
   QPalette pal(a, a, a);
 
   m_labNumber = new QLabel(this);

@@ -539,8 +539,8 @@ void WidgetCanvas::drawSampleWidgets()
         HotSpot( QRect(xpos, ypos, textLen+32, 28), CSM_Button_background );
     //brush.setColor( button );
     QColorGroup cg2(cg);
-    cg2.setColor(QColorGroup::Button, button);
-    cg2.setColor(QColorGroup::Background, window);
+    cg2.setColor(QPalette::Button, button);
+    cg2.setColor(QPalette::Background, window);
     //qDrawWinButton(&paint, xpos, ypos, textLen+32, 28, cg, false, &brush);
 /*
 	kapp->style().drawPrimitive(QStyle::PE_ButtonCommand, &paint,

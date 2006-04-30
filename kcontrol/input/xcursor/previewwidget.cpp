@@ -315,7 +315,7 @@ void PreviewWidget::paintEvent( QPaintEvent * )
 {
 	QPixmap buffer( size() );
 	QPainter p( &buffer );
-	p.fillRect( rect(), palette().brush( QColorGroup::Background ) );
+	p.fillRect( rect(), palette().brush( QPalette::Background ) );
 	Picture dest;
 
 	if ( buffer.x11PictureHandle()==0 ) {

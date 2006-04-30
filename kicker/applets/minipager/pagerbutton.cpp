@@ -343,7 +343,7 @@ void KMiniPagerButton::paintEvent(QPaintEvent *)
             }
             else
             {
-                background = palette().brush(QColorGroup::Mid);
+                background = palette().brush(QPalette::Mid);
             }
 
             bp.fillRect(buffer.rect(), background);
@@ -372,12 +372,12 @@ void KMiniPagerButton::paintEvent(QPaintEvent *)
 
                 if (kwin->activeWindow() == info->win())
                 {
-                    QBrush brush = palette().brush(QColorGroup::Highlight);
+                    QBrush brush = palette().brush(QPalette::Highlight);
                     qDrawShadeRect(&bp, r, palette(), false, 1, 0, &brush);
                 }
                 else
                 {
-                    QBrush brush = palette().brush(QColorGroup::Button);
+                    QBrush brush = palette().brush(QPalette::Button);
 
                     if (on)
                     {

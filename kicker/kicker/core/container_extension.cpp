@@ -1317,7 +1317,7 @@ void ExtensionContainer::paintEvent(QPaintEvent *e)
     {
         // draw border
         QPainter p(this);
-        p.setPen(palette().color(QPalette::Active, QColorGroup::Mid));
+        p.setPen(palette().color(QPalette::Active, QPalette::Mid));
         p.drawRect(0, 0, width(), height());
     }
 }

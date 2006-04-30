@@ -112,15 +112,15 @@ static void applyQtColors( KConfig& kglobals, QSettings& settings, QPalette& new
 
   /* export kde color settings */
   int i;
-  for (i = 0; i < QColorGroup::NColorRoles; i++)
+  for (i = 0; i < QPalette::NColorRoles; i++)
      actcg   << newPal.color(QPalette::Active,
-                (QColorGroup::ColorRole) i).name();
-  for (i = 0; i < QColorGroup::NColorRoles; i++)
+                (QPalette::ColorRole) i).name();
+  for (i = 0; i < QPalette::NColorRoles; i++)
      inactcg << newPal.color(QPalette::Inactive,
-                (QColorGroup::ColorRole) i).name();
-  for (i = 0; i < QColorGroup::NColorRoles; i++)
+                (QPalette::ColorRole) i).name();
+  for (i = 0; i < QPalette::NColorRoles; i++)
      discg   << newPal.color(QPalette::Disabled,
-                (QColorGroup::ColorRole) i).name();
+                (QPalette::ColorRole) i).name();
 
   settings.setValue("/qt/Palette/active", actcg);
   settings.setValue("/qt/Palette/inactive", inactcg);

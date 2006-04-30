@@ -576,10 +576,10 @@ QPalette KStylePage::createPalette() {
 	QColorGroup colgrp(cc->windowForeground, cc->background, cc->background.light(150),
 		cc->background.dark(), cc->background.dark(120), cc->foreground,
 		cc->windowBackground);
-	colgrp.setColor(QColorGroup::Highlight, cc->selectBackground);
-	colgrp.setColor(QColorGroup::HighlightedText, cc->selectForeground);
-	colgrp.setColor(QColorGroup::Button, cc->buttonBackground);
-	colgrp.setColor(QColorGroup::ButtonText, cc->buttonForeground);
+	colgrp.setColor(QPalette::Highlight, cc->selectBackground);
+	colgrp.setColor(QPalette::HighlightedText, cc->selectForeground);
+	colgrp.setColor(QPalette::Button, cc->buttonBackground);
+	colgrp.setColor(QPalette::ButtonText, cc->buttonForeground);
 	return QPalette( colgrp, disabledgrp, colgrp);
 }
 

@@ -150,7 +150,7 @@ void ConfigModule::runAsRoot()
 #warning "KDE4 porting ";
   //_embedFrame->setFrameStyle( QFrame::Box | QFrame::Raised );
   QPalette pal( Qt::red );
-  pal.setColor( QColorGroup::Background,
+  pal.setColor( QPalette::Background,
 		_module->parentWidget()->palette().color( QPalette::Background ) );
 #warning "KDE4 porting"
   //_embedFrame->setPalette( pal );
