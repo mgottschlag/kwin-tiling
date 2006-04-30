@@ -221,7 +221,7 @@ NaughtyProcessMonitor::canKill(ulong pid) const
 
 // What are these 3 fields for ? Would be nice if the Linux kernel docs
 // were complete, eh ?
-//  uint b(l[2].toUInt()); 
+//  uint b(l[2].toUInt());
 //  uint c(l[3].toUInt());
 //  uint d(l[4].toUInt());
 
@@ -230,7 +230,7 @@ NaughtyProcessMonitor::canKill(ulong pid) const
   // simply check if entry exists in the uid map and use it
   if (!d->uidMap_.contains(pid))
       return false ;
-  
+
   return geteuid () == d->uidMap_[pid] ;
 #else
   Q_UNUSED( pid );
@@ -252,7 +252,7 @@ NaughtyProcessMonitor::processName(ulong pid) const
 
   while (true)
   {
-    int c = f.getch();
+    int c = f.getChar();
 
     // Stop at NUL
     if (c == -1 || char(c) == '\0')
@@ -268,14 +268,14 @@ NaughtyProcessMonitor::processName(ulong pid) const
   int mib[4] ;
   size_t size ;
   char **argv ;
-  
+
   // fetch argv for the process `pid'
 
   mib[0] = CTL_KERN ;
   mib[1] = KERN_PROC_ARGS ;
   mib[2] = pid ;
   mib[3] = KERN_PROC_ARGV ;
-  
+
   // we assume argv[0]'s size will be less than one page
 
   size = getpagesize () ;
@@ -285,7 +285,7 @@ NaughtyProcessMonitor::processName(ulong pid) const
       free (argv) ;
       return i18n("Unknown") ;
   }
-  
+
  // Now strip 'kdeinit:' prefix.
   QString unicode(QString::fromLocal8Bit(argv[0]));
 
@@ -348,14 +348,14 @@ NaughtyProcessMonitor::cpuLoad() const
   mib[1] = KERN_CPTIME ;
 
   size = CPUSTATES * sizeof(long) ;
-  
+
   if (-1 == sysctl (mib, 2, cp_time, &size, NULL, 0))
       return 0 ;
-  
+
   load = cp_time[CP_USER] + cp_time[CP_SYS] ;
   diff = load - d->oldLoad_ ;
   d->oldLoad_ = load ;
-  
+
   return (forgetThisOne ? 0 : diff);
 #else
   return 0;
@@ -392,28 +392,28 @@ NaughtyProcessMonitor::pidList() const
 
   mib[0] = CTL_KERN ;
   mib[1] = KERN_NPROCS ;
-  
+
   if (-1 == sysctl (mib, 2, &nprocs, &size, NULL, 0))
       return l ;
-  
+
   // magic size evaluation ripped from ps
 
   size = (5 * nprocs * sizeof(struct kinfo_proc)) / 4 ;
   kp = (struct kinfo_proc *)calloc (size, sizeof (char)) ;
-  
+
   // fetch process info
 
   mib[0] = CTL_KERN ;
   mib[1] = KERN_PROC ;
   mib[2] = KERN_PROC_ALL ;
-  
+
   if (-1 == sysctl (mib, 3, kp, &size, NULL, 0)) {
       free (kp) ;
       return l ;
   }
-  
+
   nentries = size / sizeof (struct kinfo_proc) ;
-  
+
   // time statistics and euid data are fetched only for processes in
   // the pidList, so, instead of doing one sysctl per process for
   // getLoad and canKill calls, simply cache the data we already have.
@@ -423,14 +423,14 @@ NaughtyProcessMonitor::pidList() const
   for (i = 0; i < nentries; i++) {
       l << (unsigned long) kp[i].kp_proc.p_pid ;
       d->cacheLoadMap_.insert (kp[i].kp_proc.p_pid,
-			       (kp[i].kp_proc.p_uticks + 
+			       (kp[i].kp_proc.p_uticks +
 				kp[i].kp_proc.p_sticks)) ;
       d->uidMap_.insert (kp[i].kp_proc.p_pid,
 			 kp[i].kp_eproc.e_ucred.cr_uid) ;
   }
 
   free (kp) ;
-  
+
   return l ;
 #else
   QList<ulong> l;
@@ -463,7 +463,7 @@ NaughtyProcessMonitor::getLoad(ulong pid, uint & load) const
   // use cache
   if (!d->cacheLoadMap_.contains(pid))
       return false ;
-  
+
   load = d->cacheLoadMap_[pid] ;
   return true ;
 #else

@@ -107,7 +107,7 @@ bool MenuFile::save()
 
    file.close();
 
-   if (file.status() != IO_Ok)
+   if (file.error() != QFile::NoError)
    {
       kWarning() << "Could not close " << m_fileName << endl;
       m_error = i18n("Could not write to %1", m_fileName);
