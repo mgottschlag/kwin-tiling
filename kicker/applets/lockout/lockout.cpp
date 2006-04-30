@@ -81,8 +81,10 @@ Lockout::Lockout( const QString& configFile, QWidget *parent, const char *name)
     lockButton = new QToolButton( this, "lock");
     logoutButton = new QToolButton( this, "logout");
 
-    lockButton->setBackgroundMode(Qt::X11ParentRelative);
-    logoutButton->setBackgroundMode(Qt::X11ParentRelative);
+    lockButton->setBackgroundRole( QPalette::NoRole );
+    logoutButton->setBackgroundRole( QPalette::NoRole );
+    lockButton->setForegroundRole( QPalette::NoRole );
+    logoutButton->setForegroundRole( QPalette::NoRole );
 
     lockButton->setToolTip( i18n("Lock the session") );
     logoutButton->setToolTip( i18n("Log out") );

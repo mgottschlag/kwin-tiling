@@ -312,16 +312,16 @@ void KMiniPagerButton::paintEvent(QPaintEvent *)
             // transparent windows get an 1 pixel frame...
             if (on)
             {
-                bp.setPen(colorGroup().midlight());
+                bp.setPen(palette().color( QPalette::Midlight ) );
             }
             else if (down)
             {
-                bp.setPen(Plasma::blendColors(colorGroup().mid(),
-                                                 colorGroup().midlight()));
+                bp.setPen(Plasma::blendColors(palette().color( QPalette::Mid ),
+                                              palette().color( QPalette::Midlight ) ) );
             }
             else
             {
-                bp.setPen(colorGroup().dark());
+                bp.setPen( palette().color( QPalette::Dark ) );
             }
 
             bp.drawRect( buffer.rect() );
@@ -334,16 +334,16 @@ void KMiniPagerButton::paintEvent(QPaintEvent *)
 
             if (on)
             {
-                background = colorGroup().brush(QColorGroup::Midlight);
+                background = palette().brush(QPalette::Midlight);
             }
             else if (down)
             {
-                background = Plasma::blendColors(colorGroup().mid(),
-                                                    colorGroup().midlight());
+                background = Plasma::blendColors(palette().color( QPalette::Mid ),
+                                                 palette().color( QPalette::Midlight ) );
             }
             else
             {
-                background = colorGroup().brush(QColorGroup::Mid);
+                background = palette().brush(QColorGroup::Mid);
             }
 
             bp.fillRect(buffer.rect(), background);
@@ -372,12 +372,12 @@ void KMiniPagerButton::paintEvent(QPaintEvent *)
 
                 if (kwin->activeWindow() == info->win())
                 {
-                    QBrush brush = colorGroup().brush(QColorGroup::Highlight);
-                    qDrawShadeRect(&bp, r, colorGroup(), false, 1, 0, &brush);
+                    QBrush brush = palette().brush(QColorGroup::Highlight);
+                    qDrawShadeRect(&bp, r, palette(), false, 1, 0, &brush);
                 }
                 else
                 {
-                    QBrush brush = colorGroup().brush(QColorGroup::Button);
+                    QBrush brush = palette().brush(QColorGroup::Button);
 
                     if (on)
                     {
@@ -385,7 +385,7 @@ void KMiniPagerButton::paintEvent(QPaintEvent *)
                     }
 
                     bp.fillRect(r, brush);
-                    qDrawShadeRect(&bp, r, colorGroup(), true, 1, 0);
+                    qDrawShadeRect(&bp, r, palette(), true, 1, 0);
                 }
 
                 if (transparent)
@@ -413,11 +413,11 @@ void KMiniPagerButton::paintEvent(QPaintEvent *)
         // makes it look a bit more finished.
         if (on)
         {
-            bp.setPen(colorGroup().midlight());
+            bp.setPen(palette().midlight());
         }
         else
         {
-            bp.setPen(colorGroup().mid());
+            bp.setPen(palette().mid());
         }
 
         bp.drawRect(0, 0, w, h);
@@ -530,9 +530,9 @@ void KMiniPagerButton::mouseMoveEvent(QMouseEvent* e)
         QPixmap windowImage(ww, wh);
         QPainter bp(&windowImage); //### copied attributes from this
 
-        bp.setPen(colorGroup().foreground());
+        bp.setPen( palette().color( QPalette::Foreground ) );
         bp.drawRect(0, 0, ww, wh);
-        bp.fillRect(1, 1, ww - 2, wh - 2, colorGroup().background());
+        bp.fillRect(1, 1, ww - 2, wh - 2, palette().color( QPalette::Background) );
 
         Task::List tasklist;
         tasklist.append(m_currentWindow);

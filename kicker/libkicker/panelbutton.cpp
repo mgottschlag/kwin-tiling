@@ -534,7 +534,7 @@ void PanelButton::drawButton(QPainter *p)
         QRect r(x1+2, y1+2, x2-x1-3, y2-y1-3);
         QStyleOptionFocusRect focusOpt;
         focusOpt.init(this);
-        focusOpt.backgroundColor = palette().button().color();
+        focusOpt.backgroundColor = palette().color( QPalette::Button );
         focusOpt.rect            = r;
         style()->drawPrimitive(QStyle::PE_FrameFocusRect, &focusOpt, p, this);
     }

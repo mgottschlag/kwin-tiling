@@ -107,8 +107,8 @@ KickerTip::KickerTip(QWidget * parent)
     d = new Private;
     d->timer.setSingleShot(true);
     setFocusPolicy(Qt::NoFocus);
-    setBackgroundMode(Qt::NoBackground);
-    setPaletteBackgroundColor(colorGroup().background());
+    setAttribute(Qt::WA_NoSystemBackground, true);
+    setPaletteBackgroundColor(palette().color( QPalette::Background ) );
     resize(0, 0);
     hide();
     connect(&d->frameTimer, SIGNAL(timeout()), SLOT(internalUpdate()));

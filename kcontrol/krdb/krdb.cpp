@@ -130,17 +130,17 @@ static void applyQtColors( KConfig& kglobals, QSettings& settings, QPalette& new
   kglobals.setGroup("WM");
 
   // active colors
-  QColor clr = newPal.active().background();
+  QColor clr = newPal.color( QPalette::Active, QPalette::Background );
   clr = kglobals.readEntry("activeBackground", clr);
   settings.setValue("/qt/KWinPalette/activeBackground", clr.name());
   if (QPixmap::defaultDepth() > 8)
     clr = clr.dark(110);
   clr = kglobals.readEntry("activeBlend", clr);
   settings.setValue("/qt/KWinPalette/activeBlend", clr.name());
-  clr = newPal.active().highlightedText();
+  clr = newPal.color( QPalette::Active, QPalette::HighlightedText );
   clr = kglobals.readEntry("activeForeground", clr);
   settings.setValue("/qt/KWinPalette/activeForeground", clr.name());
-  clr = newPal.active().background();
+  clr = newPal.color( QPalette::Active,QPalette::Background );
   clr = kglobals.readEntry("frame", clr);
   settings.setValue("/qt/KWinPalette/frame", clr.name());
   clr = kglobals.readEntry("activeTitleBtnBg", clr);
@@ -359,29 +359,29 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg, int version )
     t << "{" << endl;
     if (exportColors)
     {
-        t << "  bg[NORMAL] = " << color( cg.background() ) << endl;
-        t << "  bg[SELECTED] = " << color( cg.highlight() ) << endl;
+        t << "  bg[NORMAL] = " << color( cg.color( QPalette::Background ) ) << endl;
+        t << "  bg[SELECTED] = " << color( cg.color(QPalette::Highlight) ) << endl;
         t << "  bg[INSENSITIVE] = " << color( cg.background() ) << endl;
         t << "  bg[ACTIVE] = " << color( cg.mid() ) << endl;
         t << "  bg[PRELIGHT] = " << color( cg.background() ) << endl;
         t << endl;
         t << "  base[NORMAL] = " << color( cg.base() ) << endl;
-        t << "  base[SELECTED] = " << color( cg.highlight() ) << endl;
+        t << "  base[SELECTED] = " << color( cg.color(QPalette::Highlight) ) << endl;
         t << "  base[INSENSITIVE] = " << color( cg.background() ) << endl;
-        t << "  base[ACTIVE] = " << color( cg.highlight() ) << endl;
-        t << "  base[PRELIGHT] = " << color( cg.highlight() ) << endl;
+        t << "  base[ACTIVE] = " << color( cg.color(QPalette::Highlight) ) << endl;
+        t << "  base[PRELIGHT] = " << color( cg.color(QPalette::Highlight) ) << endl;
         t << endl;
-        t << "  text[NORMAL] = " << color( cg.text() ) << endl;
-        t << "  text[SELECTED] = " << color( cg.highlightedText() ) << endl;
+        t << "  text[NORMAL] = " << color( cg.color(QPalette::Text) ) << endl;
+        t << "  text[SELECTED] = " << color( cg.color(QPalette::HighlightedText) ) << endl;
         t << "  text[INSENSITIVE] = " << color( cg.mid() ) << endl;
-        t << "  text[ACTIVE] = " << color( cg.highlightedText() ) << endl;
-        t << "  text[PRELIGHT] = " << color( cg.highlightedText() ) << endl;
+        t << "  text[ACTIVE] = " << color( cg.color(QPalette::HighlightedText) ) << endl;
+        t << "  text[PRELIGHT] = " << color( cg.color(QPalette::HighlightedText) ) << endl;
         t << endl;
-        t << "  fg[NORMAL] = " << color( cg.foreground() ) << endl;
-        t << "  fg[SELECTED] = " << color( cg.highlightedText() ) << endl;
+        t << "  fg[NORMAL] = " << color ( cg.color( QPalette::Foreground ) ) << endl;
+        t << "  fg[SELECTED] = " << color( cg.color(QPalette::HighlightedText) ) << endl;
         t << "  fg[INSENSITIVE] = " << color( cg.mid() ) << endl;
-        t << "  fg[ACTIVE] = " << color( cg.foreground() ) << endl;
-        t << "  fg[PRELIGHT] = " << color( cg.foreground() ) << endl;
+        t << "  fg[ACTIVE] = " << color( cg.color( QPalette::Foreground ) ) << endl;
+        t << "  fg[PRELIGHT] = " << color( cg.color( QPalette::Foreground ) ) << endl;
     }
 
     t << "}" << endl;
@@ -402,7 +402,7 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg, int version )
         t << "  bg[NORMAL] = " << color( group.background() ) << endl;
         t << "  base[NORMAL] = " << color( group.base() ) << endl;
         t << "  text[NORMAL] = " << color( group.text() ) << endl;
-        t << "  fg[NORMAL] = " << color( group.foreground() ) << endl;
+        t << "  fg[NORMAL] = " << color( group.color( QPalette::Foreground ) ) << endl;
         t << "}" << endl;
         t << endl;
         t << "widget \"gtk-tooltips\" style \"ToolTip\"" << endl;
@@ -413,7 +413,7 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg, int version )
         // not every button, checkbox, etc.
         t << "style \"MenuItem\"" << endl;
         t << "{" << endl;
-        t << "  bg[PRELIGHT] = " << color( cg.highlight() ) << endl;
+        t << "  bg[PRELIGHT] = " << color( cg.color(QPalette::Highlight) ) << endl;
         t << "}" << endl;
         t << endl;
         t << "class \"*MenuItem\" style \"MenuItem\"" << endl;
@@ -456,14 +456,14 @@ void runRdb( uint flags )
 
     QString preproc;
     QColor backCol = cg.background();
-    addColorDef(preproc, "FOREGROUND"         , cg.foreground());
+    addColorDef(preproc, "FOREGROUND"         , cg.color( QPalette::Foreground ) );
     addColorDef(preproc, "BACKGROUND"         , backCol);
     addColorDef(preproc, "HIGHLIGHT"          , backCol.light(100+(2*KGlobalSettings::contrast()+4)*16/1));
     addColorDef(preproc, "LOWLIGHT"           , backCol.dark(100+(2*KGlobalSettings::contrast()+4)*10));
-    addColorDef(preproc, "SELECT_BACKGROUND"  , cg.highlight());
-    addColorDef(preproc, "SELECT_FOREGROUND"  , cg.highlightedText());
-    addColorDef(preproc, "WINDOW_BACKGROUND"  , cg.base());
-    addColorDef(preproc, "WINDOW_FOREGROUND"  , cg.foreground());
+    addColorDef(preproc, "SELECT_BACKGROUND"  , cg.color( QPalette::Highlight));
+    addColorDef(preproc, "SELECT_FOREGROUND"  , cg.color( QPalette::HighlightedText));
+    addColorDef(preproc, "WINDOW_BACKGROUND"  , cg.color( QPalette::Base ) );
+    addColorDef(preproc, "WINDOW_FOREGROUND"  , cg.color( QPalette::Foreground ) );
     addColorDef(preproc, "INACTIVE_BACKGROUND", KGlobalSettings::inactiveTitleColor());
     addColorDef(preproc, "INACTIVE_FOREGROUND", KGlobalSettings::inactiveTitleColor());
     addColorDef(preproc, "ACTIVE_BACKGROUND"  , KGlobalSettings::activeTitleColor());

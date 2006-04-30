@@ -325,8 +325,8 @@ void KMiniPager::paintEvent(QPaintEvent *)
     // will be shown as 1 Pixel frame because of the grid's spacing...
     QPainter p(this);
     p.fillRect(rect(), (m_settings->backgroundType() == PagerSettings::EnumBackgroundType::BgTransparent) ?
-                           colorGroup().color(QColorGroup::Background) :
-                           (colorGroup().mid()).dark(140));
+               palette().color( QPalette::Background ) :
+               palette().color( QPalette::Mid ).dark(140));
 }
 
 void KMiniPager::resizeEvent(QResizeEvent*)

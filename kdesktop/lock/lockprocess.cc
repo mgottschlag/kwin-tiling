@@ -437,7 +437,7 @@ void LockProcess::createSaverWindow()
 
     // set NoBackground so that the saver can capture the current
     // screen state if necessary
-    setBackgroundMode(Qt::NoBackground);
+    setAttribute(Qt::WA_NoSystemBackground, true);
 
     setCursor( Qt::BlankCursor );
     setGeometry(0, 0, mRootWidth, mRootHeight);

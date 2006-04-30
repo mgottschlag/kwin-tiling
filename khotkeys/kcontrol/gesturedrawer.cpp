@@ -1,12 +1,12 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 2003 Mike Pilone <mpilone@slac.com>
  Copyright (C) 2003 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #include <qcolor.h>
@@ -24,7 +24,7 @@ GestureDrawer::GestureDrawer(QWidget *parent, const char *name)
   : QFrame(parent), _data(QString())
     {
     setObjectName(name);
-    setBackgroundColor( colorGroup().base());
+    setBackgroundColor( palette().color( QPalette::Base ) );
     setFrameStyle(QFrame::Panel | QFrame::Sunken);
     setMinimumSize(30, 30);
     }

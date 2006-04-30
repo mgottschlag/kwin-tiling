@@ -59,7 +59,7 @@ enum {				/* entries for Memory_Info[] */
 };
 
 /*
-   all update()-functions should put either 
+   all update()-functions should put either
    their results _OR_ the value NO_MEMORY_INFO into Memory_Info[]
 */
 static t_memsize Memory_Info[MEM_LAST_ENTRY];
@@ -110,7 +110,7 @@ KMemoryWidget::KMemoryWidget(KInstance *inst,QWidget * parent)
     int i, j;
 
     ram_colors_initialized =
-    swap_colors_initialized = 
+    swap_colors_initialized =
     all_colors_initialized = false;
 
     setButtons(Help);
@@ -228,7 +228,7 @@ KMemoryWidget::KMemoryWidget(KInstance *inst,QWidget * parent)
 			"through one or more swap partitions and/or swap files.");
 	    break;
 	default:
-	    hint = title = QString(); 
+	    hint = title = QString();
 	    break;
 	};
 
@@ -244,7 +244,7 @@ KMemoryWidget::KMemoryWidget(KInstance *inst,QWidget * parent)
 	QWidget *g = new QWidget(this);
 	g->setMinimumWidth(2 * SPACING);
 	g->setMinimumHeight(3 * SPACING);
-	g->setBackgroundMode( Qt::NoBackground );
+	g->setAttribute(Qt::WA_NoSystemBackground, true);
 	g->setToolTip( hint); // add the tooltip
 	Graph[i] = g;
 	vbox->addWidget(g, 2);
@@ -286,7 +286,7 @@ QString KMemoryWidget::quickHelp() const
 bool KMemoryWidget::Display_Graph(int widgetindex,
 				int count,
 			      	t_memsize total,
-			      	t_memsize * used, 
+			      	t_memsize * used,
 			      	QColor * color,
 				QString *text)
 {
@@ -314,10 +314,10 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
     int startline = height-2;
     int	percent, localheight;
     t_memsize last_used = 0;
-    
+
     while (count--) {
 	last_used = *used;
-	
+
 #ifdef HAVE_LONG_LONG
     	percent = (((long long)last_used) * 100) / total;
 #else
@@ -335,18 +335,18 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
 
     		if (localheight >= SPACING) {
 			paint.drawText(0, startline-localheight, width, localheight,
-				Qt::AlignCenter | Qt::TextWordWrap, 
+				Qt::AlignCenter | Qt::TextWordWrap,
 				QString("%1 %2%").arg(*text).arg(percent));
 		}
     	}
-	
+
 	startline -= localheight;
-	
+
 	++used;
 	++color;
 	++text;
     }
-	
+
     /* draw surrounding box */
     paint.setPen(pen);
     QRect r = graph->rect();
@@ -355,7 +355,7 @@ bool KMemoryWidget::Display_Graph(int widgetindex,
     bitBlt(graph, 0, 0, &pm);
 
     GraphLabel[widgetindex]->setText(i18n("%1 free", formatted_unit(last_used)));
- 
+
     return true;
 }
 
@@ -375,7 +375,7 @@ void KMemoryWidget::update_Values()
 	if (Memory_Info[i] == NO_MEMORY_INFO)
 	    label->clear();
 	else
-	    label->setText(i18n("%1 bytes =", 
+	    label->setText(i18n("%1 bytes =",
 			   KGlobal::locale()->
 			       formatNumber(Memory_Info[i], 0)));
     }
@@ -390,9 +390,9 @@ void KMemoryWidget::update_Values()
 
     /* display graphical output (ram, hdd, at last: HDD+RAM) */
     /* be careful ! Maybe we have not all info available ! */
-    
+
     /* RAM usage: */
-    /* don't rely on the SHARED_MEM value since it may refer to 
+    /* don't rely on the SHARED_MEM value since it may refer to
      * the size of the System V sharedmem in 2.4.x. Calculate instead! */
 
     used[1] = 0;
@@ -430,12 +430,12 @@ void KMemoryWidget::update_Values()
     }
     Display_Graph(MEM_HDD, 2, Memory_Info[SWAP_MEM],
 		      used, swap_colors, swap_text);
-    
+
     /* RAM + SWAP usage: */
     if (Memory_Info[SWAP_MEM] == NO_MEMORY_INFO ||
 	Memory_Info[FREESWAP_MEM] == NO_MEMORY_INFO)
 	    Memory_Info[SWAP_MEM] = Memory_Info[FREESWAP_MEM] = 0;
-	  
+
     used[1] = Memory_Info[SWAP_MEM] - Memory_Info[FREESWAP_MEM];
     used[2] = Memory_Info[FREE_MEM] + Memory_Info[FREESWAP_MEM];
     used[0] = (Memory_Info[TOTAL_MEM]+Memory_Info[SWAP_MEM])-used[1]-used[2];

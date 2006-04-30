@@ -95,10 +95,10 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // Date box
   Q3GroupBox* dateBox = new Q3GroupBox( this, "dateBox" );
 
-  QVBoxLayout *l1 = new QVBoxLayout( dateBox ); 
+  QVBoxLayout *l1 = new QVBoxLayout( dateBox );
   l1->setMargin( 0 );
   l1->setSpacing( KDialog::spacingHint() );
-  
+
   cal = new KDatePicker( dateBox );
   cal->setMinimumSize(cal->sizeHint());
   l1->addWidget( cal );
@@ -395,8 +395,8 @@ void Kclock::paintEvent( QPaintEvent * )
   QPolygon pts;
   QPoint cp = rect().center();
   int d = qMin(width(),height());
-  QColor hands =  colorGroup().dark();
-  QColor shadow =  colorGroup().text();
+  QColor hands =  palette().color(QPalette::Dark );
+  QColor shadow =  palette().color( QPalette::Text );
   paint.setPen( shadow );
   paint.setBrush( shadow );
   paint.setViewport(4,4,width(),height());

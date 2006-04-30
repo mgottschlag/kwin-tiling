@@ -267,7 +267,9 @@ void colorize(QImage& image)
 {
     KConfig *config = KGlobal::config();
     config->setGroup("WM");
-    QColor color = QApplication::palette().active().highlight();
+    QPalette pal = QApplication::palette();
+    pal.setCurrentColorGroup( QPalette::Active );
+    QColor color = pal.color( QPalette::Highlight );
     QColor activeTitle = config->readEntry("activeBackground", color);
     QColor inactiveTitle = config->readEntry("inactiveBackground", color);
 

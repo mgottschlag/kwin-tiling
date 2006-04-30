@@ -263,7 +263,7 @@ void SystemTrayApplet::applySettings()
 
     // use the following snippet of code someday to implement ordering
     // of icons
-    // 
+    //
     // m_visibleIconList.clear();
     // QListBoxItem* item = m_iconSelector->availableListBox()->firstItem();
     // for (; item; item = item->next())
@@ -439,7 +439,8 @@ void SystemTrayApplet::embedWindow( WId w, bool kde_tray )
     TrayEmbed* emb = new TrayEmbed(kde_tray, this);
     //emb->setAutoDelete(false);
     emb->setBackgroundOrigin(AncestorOrigin);
-    emb->setBackgroundMode(Qt::X11ParentRelative);
+    emb->setBackgroundRole( QPalette::NoRole );
+    emb->setForegroundRole( QPalette::NoRole );
 
     if (kde_tray)
     {

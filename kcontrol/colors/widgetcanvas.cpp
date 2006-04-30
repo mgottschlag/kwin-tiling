@@ -48,7 +48,7 @@ WidgetCanvas::WidgetCanvas( QWidget *parent )
 	: QWidget( parent  ), shadeSortColumn( true )
 {
     setMouseTracking( true );
-    setBackgroundMode( Qt::NoBackground );
+    setAttribute(Qt::WA_NoSystemBackground, true);
     setAcceptDrops( true);
     setMinimumSize(200, 100);
     currentHotspot = -1;
@@ -343,7 +343,7 @@ void WidgetCanvas::drawSampleWidgets()
 
     smplw = QPixmap( width(), height() );
     //smplw.fill( parentWidget()->back() );
-    smplw.fill( parentWidget()->colorGroup().mid() );
+    smplw.fill( parentWidget()->palette().color( QPalette::Mid ) );
 
     // Actually start painting in
 
@@ -601,7 +601,7 @@ void WidgetCanvas::drawSampleWidgets()
     // Valance
 
     qDrawWinPanel ( &paint, 0, 0, width(), height(),
-                    parentWidget()->colorGroup(), true, 0);
+                    QColorGroup( parentWidget()->palette() ), true, 0);
 
     // Stop the painting
 

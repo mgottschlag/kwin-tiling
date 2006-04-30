@@ -756,7 +756,7 @@ KThemedGreeter::KThemedGreeter()
 //	, clock( 0 )
 {
 	// We do all painting ourselves
-	setBackgroundMode( Qt::NoBackground );
+	setAttribute(Qt::WA_NoSystemBackground, true);
 	// Allow tracking the mouse position
 	setMouseTracking( true );
 

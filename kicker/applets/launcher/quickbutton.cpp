@@ -147,7 +147,8 @@ QuickButton::QuickButton(const QString &u, KAction* configAction,
     installEventFilter(KickerTip::self());
     if (parent && ! parent->parent())
     {
-        setBackgroundMode(Qt::X11ParentRelative);
+        setBackgroundRole( QPalette::NoRole );
+        setForegroundRole( QPalette::NoRole );
     }
     setMouseTracking(true);
     _highlight = false;

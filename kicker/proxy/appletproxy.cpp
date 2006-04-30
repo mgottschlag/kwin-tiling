@@ -158,7 +158,7 @@ void AppletProxy::loadApplet(const QString& desktopFile, const QString& configFi
     if (df.isNull() || !file.exists()) {
 	kError() << "Failed to locate applet desktop file: " << desktopFile << endl;
         KMessageBox::error(0,
-                           i18n("The applet proxy could not load the applet information from %1.", desktopFile), 
+                           i18n("The applet proxy could not load the applet information from %1.", desktopFile),
                            i18n("Applet Loading Error"));
 	exit(0);
     }
@@ -179,7 +179,7 @@ void AppletProxy::loadApplet(const QString& desktopFile, const QString& configFi
     {
 	kError() << "Failed to load applet: " << _info->library() << endl;
         KMessageBox::error(0,
-                           i18n("The applet %1 could not be loaded via the applet proxy.", _info->name()), 
+                           i18n("The applet %1 could not be loaded via the applet proxy.", _info->name()),
                            i18n("Applet Loading Error"));
 	exit(0);
     }
@@ -209,10 +209,10 @@ KPanelApplet* AppletProxy::loadApplet(const AppletInfo& info)
     return init_ptr(0, info.configFile());
 }
 
-void AppletProxy::repaintApplet(QWidget* widget) 
+void AppletProxy::repaintApplet(QWidget* widget)
 {
     widget->repaint();
- 
+
     const QObjectList children = widget->children();
 
     foreach (QObject* object, children)
@@ -335,7 +335,7 @@ bool AppletProxy::process(const DCOPCString &fun, const QByteArray &data,
 	}
     else if ( fun == "setBackground(QPixmap)" )
         {
-            QDataStream dataStream( data ); 
+            QDataStream dataStream( data );
             dataStream >> _bg;
             if(_applet)
                 if ( _bg.isNull() ) { // no transparency
@@ -344,7 +344,8 @@ bool AppletProxy::process(const DCOPCString &fun, const QByteArray &data,
 		}
                 else { //transparency
 		    _applet->blockSignals(true);
-		    _applet->setBackgroundMode(Qt::FixedPixmap);
+#warning FixedPixmap looks weired - port me
+		    //_applet->setBackgroundMode(Qt::FixedPixmap);
 		    _applet->setPaletteBackgroundPixmap(_bg);
 		    repaintApplet(_applet);
 		    _applet->blockSignals(false);

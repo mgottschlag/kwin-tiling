@@ -92,8 +92,8 @@ void MenuPreview::createPixmaps()
 	}
 
 	if (pixOverlay) {
-		c1 = cg.button().light(110);
-		c2 = cg.button().dark(110);
+                c1 = cg.color(QPalette::Button).light(110);
+		c2 = cg.color(QPalette::Button).dark(110);
 		KPixmapEffect::gradient( *pixOverlay, c1, c2, KPixmapEffect::VerticalGradient );
 	}
 }
@@ -109,7 +109,7 @@ void MenuPreview::blendPixmaps()
 			KImageEffect::blend(src, dst, menuOpacity);
 			*pixBlended = QPixmap::fromImage( dst );
 		} else if (mode == Tint) {
-			QColor clr = palette().button();
+                        QColor clr = palette().color( QPalette::Button );
 			QImage dst = pixBackground->toImage();
 			KImageEffect::blend(clr, dst, menuOpacity);
 			*pixBlended = QPixmap::fromImage( dst );
@@ -149,12 +149,12 @@ void MenuPreview::paintEvent( QPaintEvent* /* pe */ )
 	p.setPen(cg.dark());
 	p.drawLine(0, 0, x2, 0);
 	p.drawLine(0, 0, 0, y2);
-	p.setPen(cg.light());
+	p.setPen(cg.color(QPalette::Light));
 	p.drawLine(1, y2, x2, y2);
 	p.drawLine(x2, 1, x2, y2);
 
 	if (mode == NoEffect)
-		p.fillRect(1, 1, --x2, --y2, cg.button());
+            p.fillRect(1, 1, --x2, --y2, cg.color( QPalette::Button ) );
 	else if (mode != NoEffect && pixBlended)
 		p.drawPixmap(1, 1, *pixBlended, 0, 0, --x2, --y2);
 

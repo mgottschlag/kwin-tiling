@@ -122,9 +122,9 @@ void TreeItem::paintCell ( QPainter * p, const QColorGroup & cg, int column, int
        // Draw Separator
        int h = (height() / 2) -1;
        if (isSelected())
-          p->setPen( cg.highlightedText() );
+           p->setPen( cg.color( QPalette::HighlightedText ) );
        else
-          p->setPen( cg.text() );
+           p->setPen( cg.color( QPalette::Text ) );
        p->drawLine(0, h,
                    width, h);
     }

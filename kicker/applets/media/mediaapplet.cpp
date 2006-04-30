@@ -48,8 +48,10 @@ MediaApplet::MediaApplet(const QString& configFile, Plasma::Type type, int actio
 	mButtonSizeSum(0)
 {
 	if (!parent)
-            setBackgroundMode(Qt::X11ParentRelative);
-
+        {
+            setBackgroundRole( QPalette::NoRole );
+            setForegroundRole( QPalette::NoRole );
+	}
 	setAcceptDrops(true);
 
 	loadConfig();

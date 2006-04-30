@@ -1,12 +1,12 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 2003 Mike Pilone <mpilone@slac.com>
  Copyright (C) 2003 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #include <qcolor.h>
@@ -24,7 +24,7 @@ GestureRecorder::GestureRecorder(QWidget *parent, const char *name)
   : QFrame(parent), _mouseButtonDown(false)
     {
     setObjectName(name);
-    setBackgroundColor( colorGroup().base());
+    setBackgroundColor( palette().color( QPalette::Base ) );
     setFrameStyle(QFrame::Sunken | QFrame::Panel);
     setLineWidth(2);
     setMidLineWidth(0);

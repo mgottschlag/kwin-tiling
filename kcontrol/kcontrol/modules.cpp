@@ -151,7 +151,7 @@ void ConfigModule::runAsRoot()
   //_embedFrame->setFrameStyle( QFrame::Box | QFrame::Raised );
   QPalette pal( Qt::red );
   pal.setColor( QColorGroup::Background,
-		_module->parentWidget()->colorGroup().background() );
+		_module->parentWidget()->palette().color( QPalette::Background ) );
 #warning "KDE4 porting"
   //_embedFrame->setPalette( pal );
   //_embedFrame->setLineWidth( 2 );
@@ -273,7 +273,7 @@ bool ConfigModuleList::readDesktopEntriesRecursive(const QString &path)
   if (!group || !group->isValid()) return false;
 
 	KServiceGroup::List list = group->entries(true, true);
-  
+
   if( list.isEmpty() )
 	  return false;
 

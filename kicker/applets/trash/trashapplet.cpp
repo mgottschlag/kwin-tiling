@@ -45,8 +45,10 @@ TrashApplet::TrashApplet(const QString& configFile, Plasma::Type type, int actio
 	mButton = new TrashButton(this);
 
 	if (!parent)
-            setBackgroundMode(Qt::X11ParentRelative);
-
+        {
+            setBackgroundRole( QPalette::NoRole );
+            setForegroundRole( QPalette::NoRole );
+	}
 	mButton->setPanelPosition(position());
 
 	setAcceptDrops(true);

@@ -528,10 +528,10 @@ void KScreenSaver::findSavers()
         mLoadTimer->stop();
         delete mLoadTimer;
 		qSort(mSaverList.begin(), mSaverList.end());
-		
+
         mSelected = -1;
         mSaverListView->clear();
-        Q_FOREACH( SaverConfig *s, mSaverList ) 
+        Q_FOREACH( SaverConfig *s, mSaverList )
         {
             Q3ListViewItem *item;
             if (s->category().isEmpty())
@@ -689,7 +689,7 @@ void KScreenSaver::slotScreenSaver(Q3ListViewItem *item)
                 indx = i;
                 break;
             }
-        }        
+        }
 		i++;
     }
     if (indx == -1) {
@@ -807,7 +807,7 @@ void KScreenSaver::slotTest()
         if (!mTestWin)
         {
             mTestWin = new TestWin();
-            mTestWin->setBackgroundMode(Qt::NoBackground);
+            mTestWin->setAttribute(Qt::WA_NoSystemBackground, true);
             mTestWin->setGeometry(0, 0, kapp->desktop()->width(),
                                     kapp->desktop()->height());
         }

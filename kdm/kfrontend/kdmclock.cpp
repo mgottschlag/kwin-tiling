@@ -79,7 +79,7 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
 
 	//setBackgroundOrigin( WindowOrigin );
 	mBackgroundBrush = backgroundBrush();
-	setBackgroundMode( Qt::NoBackground );
+	setAttribute(Qt::WA_NoSystemBackground, true);
 	repaint();
 }
 
