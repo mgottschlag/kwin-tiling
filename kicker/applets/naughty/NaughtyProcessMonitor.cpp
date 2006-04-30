@@ -252,13 +252,15 @@ NaughtyProcessMonitor::processName(ulong pid) const
 
   while (true)
   {
-    int c = f.getChar();
+    char c;
+    if ( !f.getChar( &c ) )
+      break;
 
     // Stop at NUL
-    if (c == -1 || char(c) == '\0')
+    if (c == '\0')
       break;
     else
-      s += char(c);
+      s += c;
   }
 
  // Now strip 'kdeinit:' prefix.
