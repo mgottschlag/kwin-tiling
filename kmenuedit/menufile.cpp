@@ -2,7 +2,7 @@
  *   Copyright (C) 2003 Waldo Bastian <bastian@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License version 2 as 
+ *   it under the terms of the GNU General Public License version 2 as
  *   published by the Free Software Foundation.
  *
  *   This program is distributed in the hope that it will be useful,
@@ -68,7 +68,7 @@ bool MenuFile::load()
       create();
       return false;
    }
-   
+
    QString errorMsg;
    int errorRow;
    int errorCol;
@@ -93,7 +93,7 @@ void MenuFile::create()
 bool MenuFile::save()
 {
    QFile file( m_fileName );
-   
+
    if (!file.open( QIODevice::WriteOnly ))
    {
       kWarning() << "Could not write " << m_fileName << endl;
@@ -101,12 +101,12 @@ bool MenuFile::save()
       return false;
    }
    QTextStream stream( &file );
-   stream.setEncoding(QTextStream::UnicodeUTF8);
-   
+   stream.setCodec( "UTF-8" );
+
    stream << m_doc.toString();
 
    file.close();
-   
+
    if (file.status() != IO_Ok)
    {
       kWarning() << "Could not close " << m_fileName << endl;
@@ -115,14 +115,14 @@ bool MenuFile::save()
    }
 
    m_bDirty = false;
-   
+
    return true;
 }
 
 QDomElement MenuFile::findMenu(QDomElement elem, const QString &menuName, bool create)
 {
    QString menuNodeName;
-   QString subMenuName; 
+   QString subMenuName;
    int i = menuName.indexOf('/');
    if (i >= 0)
    {
@@ -158,7 +158,7 @@ QDomElement MenuFile::findMenu(QDomElement elem, const QString &menuName, bool c
             }
             n2 = n2.nextSibling();
          }
-         
+
          if (name == menuNodeName)
          {
             if (subMenuName.isEmpty())
@@ -172,7 +172,7 @@ QDomElement MenuFile::findMenu(QDomElement elem, const QString &menuName, bool c
 
    if (!create)
       return QDomElement();
-      
+
    // Create new node.
    QDomElement newElem = m_doc.createElement(MF_MENU);
    QDomElement newNameElem = m_doc.createElement(MF_NAME);
@@ -185,7 +185,7 @@ QDomElement MenuFile::findMenu(QDomElement elem, const QString &menuName, bool c
    else
       return findMenu(newElem, subMenuName, create);
 }
-   
+
 static QString entryToDirId(const QString &path)
 {
    // See also KDesktopFile::locateLocal
@@ -196,13 +196,13 @@ static QString entryToDirId(const QString &path)
       // extract their relative path and then build a local path.
       local = KGlobal::dirs()->relativeLocation("xdgdata-dirs", path);
    }
-   
+
    if (local.isEmpty() || local.startsWith("/"))
    {
       // What now? Use filename only and hope for the best.
       local = path.mid(path.lastIndexOf('/')+1);
    }
-   return local;                                                                                           
+   return local;
 }
 
 static void purgeIncludesExcludes(QDomElement elem, const QString &appId, QDomElement &excludeNode, QDomElement &includeNode)
@@ -248,7 +248,7 @@ static void purgeDeleted(QDomElement elem)
    {
       QDomNode next = n.nextSibling();
       QDomElement e = n.toElement(); // try to convert the node to an element.
-      if ((e.tagName() == MF_DELETED) || 
+      if ((e.tagName() == MF_DELETED) ||
           (e.tagName() == MF_NOTDELETED))
       {
          elem.removeChild(e);
@@ -275,7 +275,7 @@ static void purgeLayout(QDomElement elem)
 
 void MenuFile::addEntry(const QString &menuName, const QString &menuId)
 {
-   m_bDirty = true;   
+   m_bDirty = true;
 
    m_removedEntries.removeAll(menuId);
 
@@ -291,7 +291,7 @@ void MenuFile::addEntry(const QString &menuName, const QString &menuId)
       includeNode = m_doc.createElement(MF_INCLUDE);
       elem.appendChild(includeNode);
    }
-   
+
    QDomElement fileNode = m_doc.createElement(MF_FILENAME);
    fileNode.appendChild(m_doc.createTextNode(menuId));
    includeNode.appendChild(fileNode);
@@ -299,7 +299,7 @@ void MenuFile::addEntry(const QString &menuName, const QString &menuId)
 
 void MenuFile::setLayout(const QString &menuName, const QStringList &layout)
 {
-   m_bDirty = true;   
+   m_bDirty = true;
 
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, true);
 
@@ -354,9 +354,9 @@ void MenuFile::setLayout(const QString &menuName, const QStringList &layout)
 void MenuFile::removeEntry(const QString &menuName, const QString &menuId)
 {
    m_bDirty = true;
-   
+
    m_removedEntries.append(menuId);
-   
+
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, true);
 
    QDomElement excludeNode;
@@ -369,7 +369,7 @@ void MenuFile::removeEntry(const QString &menuName, const QString &menuId)
       excludeNode = m_doc.createElement(MF_EXCLUDE);
       elem.appendChild(excludeNode);
    }
-   
+
    QDomElement fileNode = m_doc.createElement(MF_FILENAME);
    fileNode.appendChild(m_doc.createTextNode(menuId));
    excludeNode.appendChild(fileNode);
@@ -448,29 +448,29 @@ void MenuFile::removeMenu(const QString &menuName)
 }
 
    /**
-    * Returns a unique menu-name for a new menu under @p menuName 
+    * Returns a unique menu-name for a new menu under @p menuName
     * inspired by @p newMenu
     */
 QString MenuFile::uniqueMenuName(const QString &menuName, const QString &newMenu, const QStringList & excludeList)
 {
    QDomElement elem = findMenu(m_doc.documentElement(), menuName, false);
-      
+
    QString result = newMenu;
    if (result.endsWith("/"))
        result.truncate(result.length()-1);
-       
+
    QRegExp r("(.*)(?=-\\d+)");
    result = (r.indexIn(result) > -1) ? r.cap(1) : result;
-     
+
    int trunc = result.length(); // Position of trailing '/'
-   
+
    result.append("/");
-   
+
    for(int n = 1; ++n; )
    {
       if (findMenu(elem, result, false).isNull() && !excludeList.contains(result))
          return result;
-         
+
       result.truncate(trunc);
       result.append(QString("-%1/").arg(n));
    }
@@ -481,7 +481,7 @@ void MenuFile::performAction(const ActionAtom *atom)
 {
    switch(atom->action)
    {
-     case ADD_ENTRY: 
+     case ADD_ENTRY:
         addEntry(atom->arg1, atom->arg2);
         return;
      case REMOVE_ENTRY:
@@ -527,7 +527,7 @@ bool MenuFile::performAllActions()
       performAction(atom);
       delete atom;
    }
-   
+
    // Entries that have been removed from the menu are added to .hidden
    // so that they don't re-appear in Lost & Found
    QStringList removed = m_removedEntries;
@@ -539,10 +539,10 @@ bool MenuFile::performAllActions()
    }
 
    m_removedEntries.clear();
-   
+
    if (!m_bDirty)
       return true;
-   
+
    return save();
 }
 

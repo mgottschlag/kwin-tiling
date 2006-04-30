@@ -113,7 +113,7 @@ void AboutWidget::updatePixmap()
     QFile f( file );
     f.open( QIODevice::ReadOnly );
     QTextStream t(  &f );
-    QString res = t.read();
+    QString res = t.readAll();
 
     res = res.arg(  locate(  "data", "kdeui/about/kde_infopage.css" ) );
     if (  kapp->layoutDirection() == Qt::RightToLeft )

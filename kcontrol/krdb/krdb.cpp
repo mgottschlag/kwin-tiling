@@ -255,7 +255,7 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
 
   /* export widget style */
   kglobals.setGroup("General");
-  
+
 #warning FIXME KDE4: need replacement for defaultStyle()
   // KStyle::defaultStyle()
   QString style = kglobals.readEntry("widgetStyle", "plastique" );
@@ -339,12 +339,12 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg, int version )
     // lukas: why does it create in ~/.kde/share/config ???
     // pfeiffer: so that we don't overwrite the user's gtkrc.
     // it is found via the GTK_RC_FILES environment variable.
-    KSaveFile saveFile( locateLocal( "config", 2==version?"gtkrc-2.0":"gtkrc" ) ); 
+    KSaveFile saveFile( locateLocal( "config", 2==version?"gtkrc-2.0":"gtkrc" ) );
     if ( saveFile.status() != 0 || saveFile.textStream() == 0L )
         return;
 
     QTextStream& t = *saveFile.textStream();
-    t.setEncoding( QTextStream::Locale );
+    t.setCodec( QTextCodec::codecForLocale () );
 
     t << i18n(
             "# created by KDE, %1\n"
@@ -407,8 +407,8 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg, int version )
         t << endl;
         t << "widget \"gtk-tooltips\" style \"ToolTip\"" << endl;
         t << endl;
-        
-    
+
+
         // highlight the current (mouse-hovered) menu-item
         // not every button, checkbox, etc.
         t << "style \"MenuItem\"" << endl;
