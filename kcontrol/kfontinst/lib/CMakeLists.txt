@@ -4,17 +4,21 @@ include_directories( ${KDE4_INCLUDES} )
 
 ########### next target ###############
 
-set(kfontinst_LIB_SRCS Misc.cpp FcEngine.cpp )
+if (X11_XFT_FOUND)
+  set(kfontinst_LIB_SRCS Misc.cpp FcEngine.cpp )
 
-kde4_automoc(${kfontinst_LIB_SRCS})
+  kde4_automoc(${kfontinst_LIB_SRCS})
 
-kde4_add_library(kfontinst SHARED ${kfontinst_LIB_SRCS})
+  kde4_add_library(kfontinst SHARED ${kfontinst_LIB_SRCS})
 
-MESSAGE(STATUS "FREETYPE_LIBRARIES: <${FREETYPE_LIBRARIES}>")
-target_link_libraries(kfontinst  ${KDE4_KIO_LIBS} ${FREETYPE_LIBRARIES} ${FONTCONFIG_LIBRARIES} ${X11_Xft_LIB})
+  MESSAGE(STATUS "FREETYPE_LIBRARIES: <${FREETYPE_LIBRARIES}>")
+  target_link_libraries(kfontinst  ${KDE4_KIO_LIBS} ${FREETYPE_LIBRARIES} ${FONTCONFIG_LIBRARIES} ${X11_Xft_LIB})
 
-set_target_properties(kfontinst PROPERTIES VERSION 1.0.0 SOVERSION 1 )
-install_targets(${LIB_INSTALL_DIR} kfontinst )
+  set_target_properties(kfontinst PROPERTIES VERSION 1.0.0 SOVERSION 1 )
+  install_targets(${LIB_INSTALL_DIR} kfontinst )
+else (X11_XFT_FOUND)
+  message(STATUS Missing Xft - disabling font previews)
+endif (X11_XFT_FOUND)
 
 
 ########### install files ###############
