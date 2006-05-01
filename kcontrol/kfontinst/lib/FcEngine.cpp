@@ -2,6 +2,7 @@
 #include <qpixmap.h>
 #include <qfontmetrics.h>
 #include <qfile.h>
+#include <QX11Info>
 #include <qtextstream.h>
 #include <kurl.h>
 #include <kconfig.h>
@@ -21,7 +22,7 @@
 #define KFI_PREVIEW_STRING_KEY "String"
 
 #ifdef HAVE_XFT
-#define KFI_DISPLAY(pix) (pix ? pix->x11Display() : QPaintDevice::x11AppDisplay())
+#define KFI_DISPLAY(pix) (pix ? pix->x11Display() : QX11Info::display())
 #endif
 
 // CPD: TODO: should I use latin1, toLocal8Bit, or toUtf8?
@@ -372,7 +373,7 @@ static bool drawChar(QPixmap &pix, XftDraw *xftDraw, XftFont *xftFont, XftColor 
     XGlyphInfo     extents;
     const FcChar16 *str=(FcChar16 *)(&(text.utf16()[pos]));
 
-    XftTextExtents16(pix.x11Display(), xftFont, str, 1, &extents);
+    XftTextExtents16( QX11Info::display(), xftFont, str, 1, &extents);
 
     if(x+extents.width+2>w)
     {
@@ -395,7 +396,7 @@ static bool drawString(QPixmap &pix, XftDraw *xftDraw, XftFont *xftFont, XftColo
     XGlyphInfo     extents;
     const FcChar16 *str=(FcChar16 *)(text.utf16());
 
-    XftTextExtents16(pix.x11Display(), xftFont, str, text.length(), &extents);
+    XftTextExtents16(QX11Info::display(), xftFont, str, text.length(), &extents);
     if(y+extents.height<h)
         XftDrawString16(xftDraw, xftCol, xftFont, x, y+extents.y, str, text.length());
     if(extents.height>0)
@@ -411,7 +412,7 @@ static bool drawGlyph(QPixmap &pix, XftDraw *xftDraw, XftFont *xftFont, XftColor
 {
     XGlyphInfo extents;
 
-    XftGlyphExtents(pix.x11Display(), xftFont, &i, 1, &extents);
+    XftGlyphExtents(QX11Info::display(), xftFont, &i, 1, &extents);
 
     if(x+extents.width+2>w)
     {
@@ -504,12 +505,12 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
             xrenderCol.red=xrenderCol.green=xrenderCol.blue=0;
             xrenderCol.alpha=0xffff;
-            XftColorAllocValue(pix.x11Display(), DefaultVisual(pix.x11Display(),
+            XftColorAllocValue(QX11Info::display(), DefaultVisual(pix.x11Display(),
                                pix.x11Screen()),
-                               DefaultColormap(pix.x11Display(), pix.x11Screen()),
+                               DefaultColormap(QX11Info::display(), pix.x11Screen()),
                                &xrenderCol, &xftCol);
 
-            XftDraw *xftDraw=XftDrawCreate(pix.x11Display(), (Pixmap)(pix.handle()),
+            XftDraw *xftDraw=XftDrawCreate(QX11Info::display(), (Pixmap)(pix.handle()),
                                            (Visual*)(pix.x11Visual()), pix.x11Colormap());
 
             if(xftDraw)
@@ -645,7 +646,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                                         for(int i=1; i<face->num_glyphs && y<w && !stop; ++i)
                                         {
-                                            XftGlyphExtents(pix.x11Display(), xftFont, (const FT_UInt *)&i, 1, &extents);
+                                            XftGlyphExtents(QX11Info::display(), xftFont, (const FT_UInt *)&i, 1, &extents);
 
                                             if(y+extents.height>h)
                                                 stop=true;
@@ -670,7 +671,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                 }
                                 else
                                     drawString(pix, xftDraw, xftFont, &xftCol, previewString, x, y, h, offset);
-                                XftFontClose(pix.x11Display(), xftFont);
+                                XftFontClose(QX11Info::display(), xftFont);
                             }
                         }
                     }
@@ -993,7 +994,7 @@ void CFcEngine::parseName(const QString &name, int faceNo, bool all)
 
     itsDescriptiveName=name;
     itsSpacing=FC_PROPORTIONAL;
-    if(-1==(pos=name.find(", ")))   // No style information...
+    if(-1==(pos=name.indexOf(", ")))   // No style information...
     {
         itsWeight=FC_WEIGHT_NORMAL;
 #ifndef KFI_FC_NO_WIDTHS

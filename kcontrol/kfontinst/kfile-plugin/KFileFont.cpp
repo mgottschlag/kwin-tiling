@@ -61,8 +61,8 @@ static int strToWeight(const QString &str)
         return FC_WEIGHT_ULTRALIGHT;
     else if(str.contains("Light", Qt::CaseInsensitive))
         return FC_WEIGHT_LIGHT;
-    else if(str.contains("Medium", Qt::CaseInsensitive) || 
-		    str.contains("Normal", Qt::CaseInsensitive) || 
+    else if(str.contains("Medium", Qt::CaseInsensitive) ||
+		    str.contains("Normal", Qt::CaseInsensitive) ||
 		    str.contains("Roman", Qt::CaseInsensitive))
         return FC_WEIGHT_MEDIUM;
     else if(str.contains("Regular", Qt::CaseInsensitive))
@@ -221,7 +221,7 @@ static bool readAfm(const QString &file, QString &full, QString &family, QString
                 else if(0==line.indexOf("ItalicAngle "))
                     intSlant=0.0f==line.mid(12).toFloat() ? FC_SLANT_ROMAN : FC_SLANT_ITALIC;
                 else if(0==line.indexOf("IsFixedPitch "))
-                    intSpacing=0==line.mid(13).find("false", 0, false) ? FC_PROPORTIONAL : FC_MONO;
+                    intSpacing= ( line.mid(13).contains("false", Qt::CaseInsensitive) ? FC_PROPORTIONAL : FC_MONO );
                 else if(0==line.indexOf("Notice "))
                     foundry=getFoundry(line.mid(7).toLatin1());
                 else if(0==line.indexOf("StartCharMetrics"))
