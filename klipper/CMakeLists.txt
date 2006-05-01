@@ -13,7 +13,7 @@ set(libklipper_common_SRCS main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp
 
 kde4_add_dcop_skels(libklipper_common_SRCS toplevel.h )
 
-set(klipper_KDEINIT_SRCS dummy.cpp ${libklipper_common_SRCS})
+set(klipper_KDEINIT_SRCS ${libklipper_common_SRCS})
 
 kde4_automoc(${klipper_KDEINIT_SRCS})
 
