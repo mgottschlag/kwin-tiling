@@ -38,8 +38,6 @@ install-data-local:
 
 KDE_ICON = klipper
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/klipper.pot
 
 dummy.cpp:
 	echo > dummy.cpp

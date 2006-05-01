@@ -43,8 +43,6 @@ rc_DATA = kmenueditui.rc
 rc2dir = $(kde_datadir)/kcontroledit
 rc2_DATA = kcontroleditui.rc
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kmenuedit.pot
 
 dummy.cpp:
 	echo > dummy.cpp
