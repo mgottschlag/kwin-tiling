@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Comment=KSplash Plugin
+Comment[fr]=Modules de KSplash
+Comment[x-test]=xxKSplash Pluginxx
+Name=KSplashLegacy
+Name[x-test]=xxKSplashLegacyxx
+ServiceTypes=KSplash/Plugin
+X-KDE-Library=ksplashdefault
+X-KSplash-Default=true
+X-KSplash-PluginName=Default
+X-KSplash-ObjectName=ThemeLegacy

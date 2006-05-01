@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Comment=KSplash Plugin
+Comment[fr]=Modules de KSplash
+Comment[x-test]=xxKSplash Pluginxx
+Name=KSplashRedmond
+Name[x-test]=xxKSplashRedmondxx
+ServiceTypes=KSplash/Plugin
+X-KDE-Library=ksplashredmond
+X-KSplash-Default=true
+X-KSplash-PluginName=Redmond
+X-KSplash-ObjectName=ThemeRedmond

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=KSplash
+Name[x-test]=xxKSplashxx
+Exec=ksplash
+Icon=ksplash
+Type=Service
+Terminal=false
+Categories=Application;System;

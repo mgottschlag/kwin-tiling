@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+Comment=KSplash Plugin
+Comment[fr]=Modules de KSplash
+Comment[x-test]=xxKSplash Pluginxx
+Name=KSplashStandard
+Name[x-test]=xxKSplashStandardxx
+ServiceTypes=KSplash/Plugin
+X-KDE-Library=ksplashstandard
+X-KSplash-Default=true
+X-KSplash-PluginName=Standard
+X-KSplash-ObjectName=ThemeStandard
