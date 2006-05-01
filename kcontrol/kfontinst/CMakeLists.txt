@@ -1,17 +1,24 @@
 kde4_header()
 
-add_definitions(${FREETYPE_INCLUDE_DIR})
+if (X11_XFT_FOUND)
 
-set(libkfontinstprint_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/KfiPrint.cpp )
+  add_definitions(${FREETYPE_INCLUDE_DIR})
 
+  set(libkfontinstprint_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/KfiPrint.cpp )
 
-add_subdirectory( lib ) 
-add_subdirectory( kcmfontinst ) 
-add_subdirectory( kfile-plugin ) 
-add_subdirectory( kfontinst ) 
-add_subdirectory( kio ) 
-add_subdirectory(thumbnail)
-add_subdirectory(viewpart)
+  add_subdirectory( lib ) 
+  add_subdirectory( kcmfontinst ) 
+  add_subdirectory( kfile-plugin ) 
+  add_subdirectory( kfontinst ) 
+  add_subdirectory( kio ) 
+  add_subdirectory(thumbnail)
+  add_subdirectory(viewpart)
+
+else (X11_XFT_FOUND)
+
+  message(STATUS Missing Xft - disabling font installer and font previews)
+
+endif (X11_XFT_FOUND)
 
 
 
