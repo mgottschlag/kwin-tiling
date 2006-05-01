@@ -11,5 +11,3 @@ kickermenu_recentdocs_la_METASOURCES = AUTO
 desktopmenu_DATA = recentdocs.desktop
 desktopmenudir = $(kde_datadir)/kicker/menuext
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/libkickermenu_recentdocs.pot

@@ -24,9 +24,6 @@ timezones:
 	sort -u $(srcdir)/TIMEZONES > t && mv t $(srcdir)/TIMEZONES
 	
 
-messages:
-	$(XGETTEXT) -ktranslate:1,1t -ktranslate:1c,2,2t *.cpp -o $(podir)/kcmlocale.pot
-	$(XGETTEXT) TIMEZONES -o $(podir)/../kdelibs/timezones.pot
 
 xdg_apps_DATA = language.desktop
 

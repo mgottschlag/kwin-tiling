@@ -9,8 +9,6 @@ METASOURCES = AUTO
 
 noinst_HEADERS = kcmsmserver.h smserverconfigimpl.h
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcmsmserver.pot
 
 xdg_apps_DATA = kcmsmserver.desktop
 

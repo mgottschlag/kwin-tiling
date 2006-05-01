@@ -42,8 +42,6 @@ kasbar_LDADD = 	libkasbar.la \
 		$(LIB_QT) $(LIB_KDECORE) $(LIB_KDEUI)
 
 
-messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/kasbarextension.pot
 
 srcdoc:
 	$(kde_bindir)/kdoc -a -p -d classdocs -n 'Kasbar2' ../../taskmanager/*.h *.h -lqt -lkdecore -lkdeui

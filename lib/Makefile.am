@@ -13,7 +13,5 @@ METASOURCES = AUTO
 kworkspaceincludedir = $(includedir)/libkworkspace
 kworkspaceinclude_HEADERS = kworkspace.h
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/libkworkspace.pot
 
 config.lo: configbase.h

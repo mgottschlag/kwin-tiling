@@ -13,7 +13,5 @@ noinst_HEADERS  = ksystraycmd.h
 ksystraycmd_SOURCES = ksystraycmd.cpp main.cpp
 ksystraycmd_LDFLAGS  = $(all_libraries) $(KDE_RPATH)
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/ksystraycmd.pot
 
 

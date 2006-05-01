@@ -11,5 +11,3 @@ kcm_componentchooser_la_LIBADD =  $(LIB_KIO)
 
 xdg_apps_DATA = componentchooser.desktop
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcmcomponentchooser.pot

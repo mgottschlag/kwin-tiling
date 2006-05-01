@@ -8,6 +8,4 @@ METASOURCES  = AUTO
 noinst_HEADERS                = kcmlaunch.h
 xdg_apps_DATA = kcmlaunch.desktop
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcmlaunch.pot
 

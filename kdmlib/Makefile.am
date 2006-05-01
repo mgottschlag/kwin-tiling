@@ -21,7 +21,3 @@ noinst_HEADERS = dmctl.h kgreet_classic.h kgreet_winbind.h
 include_HEADERS = kgreeterplugin.h
 
 ### TODO: why do we need 3 POT files for one directory?
-messages:
-	$(XGETTEXT) kgreet_classic.cpp -o $(podir)/kgreet_classic.pot
-	$(XGETTEXT) kgreet_winbind.cpp -o $(podir)/kgreet_winbind.pot
-	$(XGETTEXT) dmctl.cpp -o $(podir)/libdmctl.pot

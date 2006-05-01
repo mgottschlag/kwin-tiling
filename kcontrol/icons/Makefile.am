@@ -15,8 +15,6 @@ testicons_SOURCES = testicons.cpp
 testicons_LDFLAGS = $(all_libraries)
 testicons_LDADD = $(LIB_KDEUI) icons.lo
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/kcmicons.pot
 
 xdg_apps_DATA = icons.desktop
 

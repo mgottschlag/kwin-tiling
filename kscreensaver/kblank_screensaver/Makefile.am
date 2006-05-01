@@ -13,8 +13,6 @@ kblankscrn_kss_LDADD = $(LIB_KDEUI) $(top_builddir)/workspace/kscreensaver/libks
 
 METASOURCES = AUTO
 
-messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/kscreensaver.pot
 
 ########## Meta objects ##########
 

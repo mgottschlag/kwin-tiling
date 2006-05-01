@@ -55,9 +55,6 @@ desktop.lo: klaunchsettings.h
 klaunchsettings.lo: klaunchsettings.h
 startupid.lo: klaunchsettings.h
 
-messages: rc.cpp
-	$(EXTRACTRC) lock/*.ui >> rc.cpp
-	$(XGETTEXT) lock/*.cc *.cc *.cpp *.h -o $(podir)/kdesktop.pot
 
 menu_DATA = kdesktop_custom_menu1 kdesktop_custom_menu2
 menudir = $(kde_confdir)

@@ -13,8 +13,6 @@ krandom_kss_LDADD = $(LIB_KDEUI) -lm
 
 METASOURCES = AUTO
 
-messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/kscreensaver.pot
 
 ########## Meta objects ##########
 

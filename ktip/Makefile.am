@@ -19,10 +19,6 @@ install-data-local: uninstall.desktop
 	$(mkinstalldirs) $(DESTDIR)$(kde_appsdir)/Toys
 	$(INSTALL_DATA) $(srcdir)/uninstall.desktop $(DESTDIR)$(kde_appsdir)/Toys/ktip.desktop
 
-messages: 
-	$(PREPARETIPS) > tips.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/ktip.pot
-	rm -f tips.cpp
 
 appdata_DATA = tips
 appdatadir=$(kde_datadir)/kdewizard

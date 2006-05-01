@@ -27,6 +27,4 @@ naughty_panelapplet_la_LIBADD = $(LIB_KDEUI) $(LIB_KVM) $(top_builddir)/workspac
 
 KDE_ICON=AUTO
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp *.h -o $(podir)/naughtyapplet.pot
 

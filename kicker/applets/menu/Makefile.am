@@ -16,5 +16,3 @@ EXTRA_DIST = $(lnk_DATA)
 menu_panelapplet_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
 menu_panelapplet_la_LIBADD = $(LIB_KDEUI) $(top_builddir)/workspace/kicker/libkicker/libkickermain.la
 
-messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/kmenuapplet.pot

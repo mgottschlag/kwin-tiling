@@ -13,8 +13,6 @@ INCLUDES= -I$(top_builddir)/workspace/kcontrol/background \
 
 METASOURCES = AUTO
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/kdmconfig.pot
 
 xdg_apps_DATA = kdm.desktop
 KDE_ICON=AUTO

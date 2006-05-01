@@ -14,5 +14,3 @@ lnk_DATA = dockbarextension.desktop
 
 EXTRA_DIST = $(lnk_DATA)
 
-messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/dockbarextension.pot

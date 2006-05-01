@@ -9,8 +9,6 @@ AM_CPPFLAGS = -I$(kde_includes)/arts  $(all_includes)
 
 METASOURCES = AUTO
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcmarts.pot
 
 xdg_apps_DATA = arts.desktop
 

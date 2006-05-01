@@ -11,7 +11,5 @@ kickermenu_prefmenu_la_METASOURCES = AUTO
 desktopmenu_DATA = prefmenu.desktop
 desktopmenudir = $(kde_datadir)/kicker/menuext
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/libkickermenu_prefmenu.pot
 
 prefmenu.lo: ../../libkicker/kickerSettings.h

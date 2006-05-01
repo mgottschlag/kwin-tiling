@@ -18,8 +18,6 @@ minipager_panelapplet_la_LIBADD = $(LIB_KDEUI) \
 	../../taskmanager/libtaskmanager.la \
 	../../libkicker/libkickermain.la
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp *.h -o $(podir)/kminipagerapplet.pot
 
 srcdoc:
 	kdoc -a -p -H -d $$HOME/web/src/kminipagerapplet kminipagerapplet *.h -lqt -lkdecore -lkdeui -lkfile

@@ -16,6 +16,4 @@ EXTRA_DIST = $(lnk_DATA)
 trash_panelapplet_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
 trash_panelapplet_la_LIBADD = ../../libkicker/libkickermain.la ../../../../libkonq/libkonq.la $(LIB_KDEUI) $(LIB_KIO) $(LIB_KUTILS)
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp *.h -o $(podir)/trashapplet.pot
 

@@ -18,8 +18,6 @@ systemtray_panelapplet_la_LIBADD = ../../libkicker/libkickermain.la $(LIB_KDEUI)
 
 KDE_ICON=AUTO
 
-messages:
-	$(XGETTEXT)  *.cpp *.h -o $(podir)/ksystemtrayapplet.pot
 
 srcdoc:
 	kdoc -a -p -H -d $$HOME/web/src/ksystemtrayapplet ksystemtrayapplet *.h -lqt -lkdecore -lkdeui -lkfile

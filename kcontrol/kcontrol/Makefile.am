@@ -49,5 +49,3 @@ install-data-local:
 
 KDE_ICON=AUTO
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcontrol.pot

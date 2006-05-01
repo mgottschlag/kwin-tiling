@@ -21,8 +21,6 @@ libkcmbgnd_la_SOURCES = bgdialog.cpp bgdialog_ui.ui bgwallpaper_ui.ui \
 
 main.lo: bgdialog_ui.h
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcmbackground.pot
 
 xdg_apps_DATA = background.desktop
 

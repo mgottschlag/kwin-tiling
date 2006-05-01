@@ -11,7 +11,5 @@ kickermenu_remotemenu_la_METASOURCES = AUTO
 desktopmenu_DATA = remotemenu.desktop
 desktopmenudir = $(kde_datadir)/kicker/menuext
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/libkickermenu_remotemenu.pot
 
 remotemenu.lo: ../../libkicker/kickerSettings.h

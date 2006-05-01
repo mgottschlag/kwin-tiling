@@ -8,9 +8,6 @@ AM_CPPFLAGS= $(all_includes)
 
 METASOURCES = AUTO
 
-messages:
-	customkeys=`grep "^.include .\.\." keyconfig.cpp | sed -e "s#.*\"\(.*\)\"#\1#"` ;\
-	$(XGETTEXT) *.cpp $$customkeys -o $(podir)/kcmkeys.pot
 
 update_DATA = kaccel.upd
 update_SCRIPTS = convertShortcuts.pl

@@ -32,8 +32,5 @@ uninstall-local:
 servicesdir = $(kde_servicesdir)
 services_DATA = kxkb.desktop
 
-messages: rc.cpp
-	$(XGETTEXT) kxkb.cpp rules.cpp extension.cpp pixmap.cpp kxkbbindings.cpp -o $(podir)/kxkb.pot
-	$(XGETTEXT) rules.cpp kcmlayout.cpp pixmap.cpp kcmmisc.cpp rc.cpp kxkbbindings.cpp -o $(podir)/kcmlayout.pot 
 
 KDE_ICON=AUTO

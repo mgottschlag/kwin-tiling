@@ -18,7 +18,5 @@ lnk_DATA = taskbarextension.desktop
 
 EXTRA_DIST = $(lnk_DATA)
 
-messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/taskbarextension.pot
 
 taskbarextension.lo: ../../libkicker/kickerSettings.h

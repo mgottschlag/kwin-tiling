@@ -15,8 +15,6 @@ lnk_DATA = taskbarapplet.desktop
 
 EXTRA_DIST = $(lnk_DATA)
 
-messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/ktaskbarapplet.pot
 
 srcdoc:
 	kdoc -a -p -H -d $$HOME/web/src/ktaskbarapplet ktaskbarapplet *.h -lqt -lkdecore -lkdeui -lkfile

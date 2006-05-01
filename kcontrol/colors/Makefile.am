@@ -9,8 +9,6 @@ METASOURCES = colorscm.moc widgetcanvas.moc
 
 noinst_HEADERS = colorscm.h widgetcanvas.h
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/kcmcolors.pot
 
 xdg_apps_DATA = colors.desktop
 

@@ -11,7 +11,5 @@ METASOURCES = AUTO
 
 noinst_HEADERS = smartcard.h
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcmsmartcard.pot
 
 xdg_apps_DATA = smartcard.desktop

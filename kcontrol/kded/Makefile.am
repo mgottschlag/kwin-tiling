@@ -9,7 +9,5 @@ AM_CPPFLAGS= $(all_includes)
 
 METASOURCES = AUTO
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcmkded.pot
 
 xdg_apps_DATA = kcmkded.desktop

@@ -9,8 +9,6 @@ METASOURCES = AUTO
 
 noinst_HEADERS = kcmtaskbar.h
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcmtaskbar.pot
 
 xdg_apps_DATA = kcmtaskbar.desktop
 

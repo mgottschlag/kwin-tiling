@@ -7,5 +7,3 @@ libtaskmanager_la_METASOURCES = AUTO
 libtaskmanager_la_LDFLAGS = $(all_libraries) -version-info 1:0:0 -no-undefined
 libtaskmanager_la_LIBADD = $(LIB_KDECORE) $(LIB_XFIXES) $(LIB_XRENDER) $(LIB_XCOMPOSITE) ../libkicker/libkickermain.la
 
-messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/libtaskmanager.pot

@@ -15,6 +15,4 @@ EXTRA_DIST = $(lnk_DATA)
 media_panelapplet_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
 media_panelapplet_la_LIBADD = ../../../../libkonq/libkonq.la ../../libkicker/libkickermain.la $(LIB_KDEUI) $(LIB_KIO) $(LIB_KUTILS)
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp *.h -o $(podir)/mediaapplet.pot
 

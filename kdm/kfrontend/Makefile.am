@@ -42,8 +42,6 @@ kdmctl_LDADD = $(LIBSOCKET)
 install-data-local: genkdmconf
 	./genkdmconf --in $(DESTDIR)$(kde_confdir)/kdm --face-src $(srcdir)/pics $(GENKDMCONF_FLAGS)
 
-messages:
-	$(XGETTEXT) `find . -name "*.cpp"` -o $(podir)/kdmgreet.pot
 
 noinst_HEADERS = \
     kdm_greet.h \

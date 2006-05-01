@@ -11,5 +11,3 @@ noinst_HEADERS = accessibility.h
 
 xdg_apps_DATA = accessibility.desktop
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcmaccessibility.pot

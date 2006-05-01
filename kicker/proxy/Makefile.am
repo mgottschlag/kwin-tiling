@@ -17,6 +17,3 @@ extensiondebugger_LDADD = ../libkicker/libkickermain.la
 extensiondebugger_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 
-messages:
-	$(XGETTEXT) appletproxy.cpp -o $(podir)/appletproxy.pot
-	$(XGETTEXT) extensiondebugger.cpp -o $(podir)/extensionproxy.pot

@@ -10,8 +10,6 @@ kcm_joystick_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
 
 xdg_apps_DATA = joystick.desktop
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/joystick.pot
 
 noinst_HEADERS =  joywidget.h joywidget.h poswidget.h joydevice.h caldialog.h
 

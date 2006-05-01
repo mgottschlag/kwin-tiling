@@ -33,5 +33,3 @@ libkickermain_la_include_HEADERS = kpanelapplet.h \
 
 kde_kcfg_DATA = kickerSettings.kcfg extensionSettings.kcfg
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp *.h -o $(podir)/libkicker.pot

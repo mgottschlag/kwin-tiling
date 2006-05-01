@@ -20,8 +20,6 @@ launcher_panelapplet_la_LIBADD = ../../kicker/core/libkicker_core.la  ../../kick
 
 kde_kcfg_DATA = launcherapplet.kcfg
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp *.h -o $(podir)/quicklauncher.pot
 
 srcdoc:
 	kdoc -a -p -H -d $$HOME/web/src/quicklauncher quicklauncher *.h -lqt -lkdecore -lkdeui

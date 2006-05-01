@@ -11,8 +11,6 @@ METASOURCES = AUTO
 
 noinst_HEADERS = kcmxinerama.h
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kcmxinerama.pot
 
 xinerama_datadir = $(kde_appsdir)/.hidden
 xinerama_data_DATA = xinerama.desktop

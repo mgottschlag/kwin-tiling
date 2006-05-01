@@ -12,5 +12,3 @@ sidebar_panelextension_la_LIBADD =  ../../libkicker/libkickermain.la $(LIB_KDEUI
 lnkdir = $(kde_datadir)/kicker/extensions
 lnk_DATA = sidebarextension.desktop
 
-messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/kickersidebarextension.pot

@@ -17,6 +17,4 @@ kthememimedir = $(kde_mimedir)/application
 
 bin_SCRIPTS = kdeinstallktheme
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kthememanager.pot
 KDE_ICON=AUTO

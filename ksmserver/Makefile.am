@@ -46,5 +46,3 @@ testsh_SOURCES = test.cpp
 testsh_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 testsh_LDADD = $(LIB_KDEUI) shutdowndlg.lo ../../workspace/kdmlib/libdmctl.la
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/ksmserver.pot

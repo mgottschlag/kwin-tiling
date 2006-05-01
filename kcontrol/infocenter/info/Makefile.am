@@ -12,8 +12,6 @@ METASOURCES = AUTO
 
 AM_CPPFLAGS= $(all_includes) $(GLINC)
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/kcminfo.pot
 
 
 xdg_apps_DATA = memory.desktop processor.desktop dma.desktop \

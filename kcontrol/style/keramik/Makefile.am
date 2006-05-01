@@ -8,5 +8,3 @@ kstyle_keramik_config_la_SOURCES = keramikconf.cpp
 METASOURCES = AUTO 
 
 
-messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/kstyle_keramik_config.pot

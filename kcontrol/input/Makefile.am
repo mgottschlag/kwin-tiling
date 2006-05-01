@@ -26,8 +26,6 @@ kcm_input_la_LIBADD = $(THEMEPAGE_LIB) $(XTESTLIB) $(LIB_KIO) $(LIB_XCURSOR) $(U
 
 METASOURCES = AUTO 
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp */*.cpp -o $(podir)/kcminput.pot
 
 xdg_apps_DATA = mouse.desktop
 

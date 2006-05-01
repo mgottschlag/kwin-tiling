@@ -19,10 +19,6 @@ autostartdir = $(datadir)/autostart
 
 xdg_apps_DATA = kcmkicker.desktop
 
-messages: rc.cpp
-	$(EXTRACTRC) ui/*ui >> rc.cpp
-	$(EXTRACTRC) core/*.kcfg >> rc.cpp
-	$(XGETTEXT) buttons/*.cpp core/*.cpp ui/*.cpp *.cpp -o $(podir)/kicker.pot
 
 dummy.cpp:
 	echo > $@

@@ -11,5 +11,3 @@ kickermenu_konsole_la_METASOURCES = AUTO
 desktopmenu_DATA = konsolemenu.desktop
 desktopmenudir = $(kde_datadir)/kicker/menuext
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/libkickermenu_konsole.pot

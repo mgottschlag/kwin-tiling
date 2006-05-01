@@ -9,8 +9,6 @@ AM_CPPFLAGS= $(all_includes)
 
 METASOURCES = AUTO
 
-messages:
-	$(XGETTEXT) *.cpp *.i18n -o $(podir)/kcmusb.pot
 
 xdg_apps_DATA = kcmusb.desktop
 

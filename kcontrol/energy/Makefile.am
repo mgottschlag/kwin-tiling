@@ -11,8 +11,6 @@ METASOURCES = energy.moc
 
 noinst_HEADERS = energy.h
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/kcmenergy.pot
 
 energy_data_DATA = energy.desktop
 energy_datadir = $(kde_appsdir)/.hidden

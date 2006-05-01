@@ -14,5 +14,3 @@ desktopmenudir = $(kde_datadir)/kicker/menuext
 findmenu_data_DATA = kfind.desktop websearch.desktop
 findmenu_datadir = $(kde_datadir)/kicker/menuext/find
 
-messages:
-	$(XGETTEXT) *.cpp -o $(podir)/libkickermenu_find.pot

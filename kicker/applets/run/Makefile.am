@@ -15,5 +15,3 @@ EXTRA_DIST = $(lnk_DATA)
 run_panelapplet_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
 run_panelapplet_la_LIBADD = $(top_builddir)/workspace/lib/libkworkspace.la $(LIB_KSYCOCA) $(LIB_KDEUI) $(top_builddir)/workspace/kicker/libkicker/libkickermain.la
 
-messages:
-	$(XGETTEXT) *.cpp *.h -o $(podir)/krunapplet.pot
