@@ -1,14 +1,17 @@
 kde4_header()
 
 add_subdirectory( pics ) 
+
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/xcursor/ ${KDE4_INCLUDES} )
+
+if (LIBUSB_FOUND)
+  include_directories( ${LIBUSB_INCLUDE_DIR} )
+endif (LIBUSB_FOUND)
+
 if(X11_Xcursor_FOUND)
-	add_subdirectory( xcursor )
-	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/xcursor/ ${KDE4_INCLUDES} ${LIBUSB_INCLUDE_DIR} )
-	set( libnoinst_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/input/xcursor/themepage.cpp ${CMAKE_SOURCE_DIR}/workspace/kcontrol/input/xcursor/previewwidget.cpp )
+	set( libnoinst_SRCS xcursor/themepage.cpp xcursor/previewwidget.cpp )
 else(X11_Xcursor_FOUND)
-	add_subdirectory( core )
-	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/xcursor/ ${KDE4_INCLUDES} ${LIBUSB_INCLUDE_DIR} )
-	set(libnoinst_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/input/core/themepage.cpp )
+	set( libnoinst_SRCS core/themepage.cpp )
 endif(X11_Xcursor_FOUND)
 
 
@@ -21,7 +24,7 @@ kde4_automoc(${kapplymousetheme_SRCS})
 
 kde4_add_executable(kapplymousetheme ${kapplymousetheme_SRCS})
 
-target_link_libraries(kapplymousetheme  ${KDE4_KDE3SUPPORT_LIBS} ${LIBUSB_LIBRARIES} ${X11_Xrender_LIB})
+target_link_libraries(kapplymousetheme  ${KDE4_KDE3SUPPORT_LIBS} ${X11_Xrender_LIB})
 
 install_targets(/bin kapplymousetheme )
 
@@ -38,7 +41,16 @@ kde4_add_plugin(kcm_input ${kcm_input_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_input )
 
-target_link_libraries(kcm_input  ${KDE4_KDE3SUPPORT_LIBS} ${LIBUSB_LIBRARIES} ${X11_Xcursor_LIB} ${X11_Xrender_LIB})
+target_link_libraries(kcm_input ${KDE4_KDE3SUPPORT_LIBS})
+if (LIBUSB_FOUND)
+   target_link_libraries(kcm_input ${LIBUSB_LIBRARIES})
+endif (LIBUSB_FOUND)
+if (X11_Xcursor_FOUND)
+   target_link_libraries(kcm_input ${X11_Xcursor_LIB})
+endif (X11_Xcursor_FOUND)
+if (X11_Xrender_FOUND)
+   target_link_libraries(kcm_input ${X11_Xrender_LIB})
+endif (X11_Xrender_FOUND)
 
 install_targets(${PLUGIN_INSTALL_DIR} kcm_input )
 
