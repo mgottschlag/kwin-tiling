@@ -22,8 +22,6 @@ install_targets(${LIB_INSTALL_DIR} kscreensaver )
 
 install_files( /include FILES kscreensaver.h kscreensaver_vroot.h )
 
-kde4_create_doxygen_docs(  )
-
 kde4_footer()
 
 
