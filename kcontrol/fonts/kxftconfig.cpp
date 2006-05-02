@@ -198,7 +198,7 @@ QString getConfigFile(bool system)
                 files.append(f);
         }
 #if (FC_VERSION>=20300)
-        else if(system && dExists(f) && -1!=f.find(QRegExp("/conf\\.d/?$")))
+        else if(system && dExists(f) && f.contains(QRegExp("/conf\\.d/?$")))
             return dirSyntax(f)+constKdeRootFcFile;   // This ones good enough for me!
 #endif
     }

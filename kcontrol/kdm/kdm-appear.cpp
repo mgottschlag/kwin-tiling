@@ -299,7 +299,7 @@ void KDMAppearanceWidget::loadColorSchemes(KBackedComboBox *combo)
 	!(str = config.readEntry("name")).isEmpty())
     {
 	QString str2 = (*it).mid( (*it).lastIndexOf( '/' ) + 1 ); // strip off path
-	str2.setLength( str2.length() - 6 ); // strip off ".kcsrc
+	str2.resize( str2.length() - 6 ); // strip off ".kcsrc
         combo->insertItem( str2, str );
     }
   }
