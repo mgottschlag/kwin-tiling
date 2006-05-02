@@ -231,9 +231,7 @@ fmtstr( OutCh dopr_outch, void *bp,
 	for (; padlen > 0; padlen--)
 		dopr_outch( bp, ' ' );
 #ifdef PRINT_QUOTES
-# if 0	/* gcc's flow analyzer is not the smartest ... */
 	lastcol = 0;
-# endif
 	if (flags & DP_F_SQUOTE)
 		dopr_outch( bp, '\'' );
 	else if (flags & DP_F_DQUOTE)
@@ -304,12 +302,10 @@ DoPr( OutCh dopr_outch, void *bp, const char *format, va_list args )
 	char ch;
 #define NCHR if (!(ch = *format++)) return
 
-#if 0 /* gcc's flow analyzer is not the smartest ... */
 # ifdef PRINT_ARRAYS
 	arlen = 0;
 # endif
 	radix = 0;
-#endif
 	errn = errno;
 	for (;;) {
 		for (;;) {
