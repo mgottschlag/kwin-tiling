@@ -38,7 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskmanager.h"
 #include "kickertip.h"
 
-class QPixmap;
+class KPixmap;
 class KWinModule;
 class KMiniPager;
 class KSharedPixmap;
@@ -99,9 +99,9 @@ private:
     QLineEdit* m_lineEdit;
 
     KSharedPixmap *m_sharedPixmap;
-    QPixmap *m_bgPixmap;
+    KPixmap *m_bgPixmap;
     static KSharedPixmap *s_commonSharedPixmap;
-    static QPixmap *s_commonBgPixmap;
+    static KPixmap *s_commonBgPixmap;
     bool m_isCommon;
 
     Task::TaskPtr m_currentWindow;
