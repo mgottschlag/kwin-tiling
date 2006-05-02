@@ -23,7 +23,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kpixmapeffect.h>
-#include <QPixmap>
+#include <kpixmap.h>
 #include <kseparator.h>
 #include <kstdguiitem.h>
 #include <kuser.h>
@@ -57,7 +57,7 @@ void KSMShutdownFeedback::paintEvent( QPaintEvent* )
     if ( m_currentY >= height() )
         return;
 
-    QPixmap pixmap;
+    KPixmap pixmap;
     pixmap = QPixmap::grabWindow( QX11Info::appRootWindow(), 0, m_currentY, width(), 10 );
     pixmap = KPixmapEffect::fade( pixmap, 0.4, Qt::black );
     pixmap = KPixmapEffect::toGray( pixmap, true );
