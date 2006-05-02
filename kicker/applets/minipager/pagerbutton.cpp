@@ -63,7 +63,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 KSharedPixmap* KMiniPagerButton::s_commonSharedPixmap;
-KPixmap* KMiniPagerButton::s_commonBgPixmap;
+QPixmap* KMiniPagerButton::s_commonBgPixmap;
 
 KMiniPagerButton::KMiniPagerButton(int desk, KMiniPager *parent, const char *name)
     : QAbstractButton(parent, name, Qt::WNoAutoErase),
@@ -235,13 +235,13 @@ void KMiniPagerButton::backgroundLoaded( bool loaded )
     {
         if (!m_bgPixmap)
         {
-            m_bgPixmap = new KPixmap;
+            m_bgPixmap = new QPixmap;
         }
         if (m_isCommon)
         {
             if (!s_commonBgPixmap)
             {
-                s_commonBgPixmap = new KPixmap;
+                s_commonBgPixmap = new QPixmap;
                 *s_commonBgPixmap = scalePixmap(s_commonSharedPixmap->pixmap(), width(), height());
                 s_commonSharedPixmap->deleteLater(); // let others get the signal too
                 s_commonSharedPixmap = 0;
@@ -289,7 +289,7 @@ void KMiniPagerButton::paintEvent(QPaintEvent *)
         {
             if (on)
             {
-                KPixmap tmp = *m_bgPixmap;
+                QPixmap tmp = *m_bgPixmap;
                 KPixmapEffect::intensity(tmp, 0.33);
                 bp.drawPixmap(0, 0, tmp);
             }

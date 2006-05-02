@@ -56,7 +56,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kmimetype.h>
 #include <kprocess.h>
 #include <krootpixmap.h>
-#include <kpixmap.h>
 #include <klocale.h>
 #include <kio/netaccess.h>
 #include <kservice.h>
