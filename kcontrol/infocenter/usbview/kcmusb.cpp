@@ -45,7 +45,9 @@ USBViewer::USBViewer(QWidget *parent, const char *, const QStringList &)
   gbox->setColumnLayout( 0, Qt::Horizontal );
   vbox->addWidget(gbox);
 
-  QVBoxLayout *vvbox = new QVBoxLayout(gbox->layout(), KDialog::spacingHint());
+  QVBoxLayout *vvbox = new QVBoxLayout();
+  gbox->layout()->addItem( vvbox );
+  vvbox->setSpacing(KDialog::spacingHint());
 
   QSplitter *splitter = new QSplitter(gbox);
   vvbox->addWidget(splitter);

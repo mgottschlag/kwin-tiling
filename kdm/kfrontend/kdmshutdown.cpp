@@ -67,7 +67,7 @@ PluginList KDMShutdownBase::pluginList;
 
 KDMShutdownBase::KDMShutdownBase( int _uid, QWidget *_parent )
 	: inherited( _parent )
-	, box( new QVBoxLayout( this, KDmh, KDsh ) )
+	, box( new QVBoxLayout( this ) )
 #ifdef HAVE_VTS
 	, willShut( true )
 #endif
@@ -80,6 +80,8 @@ KDMShutdownBase::KDMShutdownBase( int _uid, QWidget *_parent )
 	, needRoot( -1 )
 	, uid( _uid )
 {
+    box->setSpacing( KDsh );
+    box->setMargin( KDmh );
 }
 
 KDMShutdownBase::~KDMShutdownBase()
@@ -116,7 +118,8 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 
 	box->addWidget( new KSeparator( Qt::Horizontal, this ) );
 
-	QBoxLayout *hlay = new QHBoxLayout( box, KDsh );
+	QBoxLayout *hlay = new QHBoxLayout( box );
+	hlay->setSpacing( KDsh );
 	hlay->addStretch( 1 );
 	if (mayOk) {
 		okButton = new KPushButton( KStdGuiItem::ok(), this );
@@ -249,7 +252,8 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 {
 	QSizePolicy fp( QSizePolicy::Fixed, QSizePolicy::Fixed );
 
-	QHBoxLayout *hlay = new QHBoxLayout( box, KDsh );
+	QHBoxLayout *hlay = new QHBoxLayout( box );
+	hlay->setSpacing( KDsh );
 
 	howGroup = new Q3VButtonGroup( i18n("Shutdown Type"), this );
 	hlay->addWidget( howGroup, 0, Qt::AlignTop );
@@ -276,7 +280,9 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 			targets->addItem( QString::fromLocal8Bit( tlist[i] ) );
 		freeStrArr( tlist );
 		targets->setCurrentIndex( oldTarget == -1 ? defaultTarget : oldTarget );
-		QHBoxLayout *hb = new QHBoxLayout( hlp, 0, KDsh );
+		QHBoxLayout *hb = new QHBoxLayout( hlp );
+		hb->setSpacing( KDsh );
+		hb->setMargin( 0 );
 		int spc = kapp->style()->pixelMetric( QStyle::PM_ExclusiveIndicatorWidth )
 		          + howGroup->insideSpacing();
 		hb->addSpacing( spc );
@@ -476,7 +482,9 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	: inherited( _parent )
 	, targetList( 0 )
 {
-	QHBoxLayout *hbox = new QHBoxLayout( this, KDmh, KDsh );
+	QHBoxLayout *hbox = new QHBoxLayout( this );
+	hbox->setSpacing( KDsh );
+	hbox->setMargin( KDmh );
 
 	QFrame *lfrm = new QFrame( this );
 	lfrm->setFrameStyle( QFrame::Panel | QFrame::Sunken );
@@ -486,7 +494,9 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	QVBoxLayout *iconlay = new QVBoxLayout( lfrm );
 	iconlay->addWidget( icon );
 
-	QVBoxLayout *buttonlay = new QVBoxLayout( hbox, KDsh );
+	QVBoxLayout *buttonlay = new QVBoxLayout(  );
+        hbox->addItem( buttonlay );
+	buttonlay->setSpacing( KDsh );
 
 	buttonlay->addStretch( 1 );
 

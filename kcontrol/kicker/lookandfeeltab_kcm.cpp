@@ -42,7 +42,9 @@ LookAndFeelConfig::LookAndFeelConfig(QWidget *parent, const char *name)
     setAboutData( about );
 
     KickerConfig::initScreenNumber();
-    QVBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->setSpacing(KDialog::spacingHint());
+    layout->setMargin(0);
 
     lookandfeeltab = new LookAndFeelTab(this);
     layout->addWidget(lookandfeeltab);

@@ -133,20 +133,25 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     connect(mPreviewProc, SIGNAL(processExited(KProcess *)),
             this, SLOT(slotPreviewExited(KProcess *)));
 
-    QBoxLayout *topLayout = new QHBoxLayout(this, 0, KDialog::spacingHint());
+    QBoxLayout *topLayout = new QHBoxLayout(this);
+    topLayout->setSpacing(KDialog::spacingHint());
+    topLayout->setMargin(0);
 
     // left column
-    QVBoxLayout *leftColumnLayout =
-        new QVBoxLayout(topLayout, KDialog::spacingHint());
-    QBoxLayout *vLayout =
-        new QVBoxLayout(leftColumnLayout, KDialog::spacingHint());
+    QVBoxLayout *leftColumnLayout = new QVBoxLayout( );
+    topLayout->addItem( leftColumnLayout );
+    leftColumnLayout->setSpacing( KDialog::spacingHint() );
+    QBoxLayout *vLayout = new QVBoxLayout();
+    leftColumnLayout->addItem( vLayout );
+    vLayout->setSpacing( KDialog::spacingHint() );
 
     mSaverGroup = new Q3GroupBox(i18n("Screen Saver"), this );
     mSaverGroup->setColumnLayout( 0, Qt::Horizontal );
     vLayout->addWidget(mSaverGroup);
     vLayout->setStretchFactor( mSaverGroup, 10 );
-    QBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup->layout(),
-        KDialog::spacingHint() );
+    QBoxLayout *groupLayout = new QVBoxLayout();
+    mSaverGroup->layout()->addItem( groupLayout );
+    groupLayout->setSpacing( KDialog::spacingHint() );
 
     mSaverListView = new Q3ListView( mSaverGroup );
     mSaverListView->setMinimumHeight( 120 );
@@ -158,7 +163,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     connect( mSaverListView, SIGNAL(doubleClicked ( Q3ListViewItem *)), this, SLOT( slotSetup()));
     mSaverListView->setWhatsThis( i18n("Select the screen saver to use.") );
 
-    QBoxLayout* hlay = new QHBoxLayout(groupLayout, KDialog::spacingHint());
+    QBoxLayout* hlay = new QHBoxLayout(groupLayout);
+    hlay->setSpacing(KDialog::spacingHint());
     mSetupBt = new QPushButton( i18n("&Setup..."), mSaverGroup );
     connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
     mSetupBt->setEnabled(false);
@@ -174,8 +180,9 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     mSettingsGroup = new Q3GroupBox( i18n("Settings"), this );
     mSettingsGroup->setColumnLayout( 0, Qt::Vertical );
     leftColumnLayout->addWidget( mSettingsGroup );
-    groupLayout = new QVBoxLayout( mSettingsGroup->layout(),
-        KDialog::spacingHint() );
+    groupLayout = new QVBoxLayout();
+    mSettingsGroup->layout()->addItem( groupLayout );
+    groupLayout->setSpacing( KDialog::spacingHint() );
 
     mEnabledCheckBox = new QCheckBox(i18n(
         "Start a&utomatically"), mSettingsGroup);
@@ -264,8 +271,9 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
         "watching TV or movies.") );
 
     // right column
-    QBoxLayout* rightColumnLayout =
-        new QVBoxLayout(topLayout, KDialog::spacingHint());
+    QBoxLayout* rightColumnLayout = new QVBoxLayout();
+    topLayout->addItem( rightColumnLayout );
+    rightColumnLayout->setSpacing( KDialog::spacingHint() );
 
     mMonitorLabel = new QLabel( this );
     mMonitorLabel->setAlignment( Qt::AlignCenter );
@@ -274,7 +282,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     rightColumnLayout->addWidget(mMonitorLabel, 0);
     mMonitorLabel->setWhatsThis( i18n("A preview of the selected screen saver.") );
 
-    QBoxLayout* advancedLayout = new QHBoxLayout( rightColumnLayout, 3 );
+    QBoxLayout* advancedLayout = new QHBoxLayout( rightColumnLayout );
+    advancedLayout->setSpacing( 3 );
     advancedLayout->addWidget( new QWidget( this ) );
     QPushButton* advancedBt = new QPushButton(
         i18n( "Advanced &Options" ), this );

@@ -1095,7 +1095,8 @@ KGChTok::KGChTok( QWidget *_parent, const QString &user,
 	verify = new KGStdVerify( this, this, cancelButton, user, pluginList, func, ctx );
 	verify->selectPlugin( curPlugin );
 
-	QVBoxLayout *box = new QVBoxLayout( this, 10 );
+	QVBoxLayout *box = new QVBoxLayout( this );
+	box->setSpacing( 10 );
 
 	box->addWidget( new QLabel( i18n("Changing authentication token"), this ), 0, Qt::AlignHCenter );
 

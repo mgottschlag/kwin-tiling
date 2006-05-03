@@ -105,7 +105,8 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     label->setFont( fnt );
     vbox->addWidget( label, 0, Qt::AlignHCenter );
 
-    QHBoxLayout* hbox = new QHBoxLayout( vbox, 2 * KDialog::spacingHint() );
+    QHBoxLayout* hbox = new QHBoxLayout( vbox );
+    hbox->setSpacing( 2 * KDialog::spacingHint() );
 
     // konqy
     QFrame* lfrm = new QFrame( frame );
@@ -118,7 +119,9 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     icon->setFixedSize( icon->sizeHint());
 
     // right column (buttons)
-    QVBoxLayout* buttonlay = new QVBoxLayout( hbox, 2 * KDialog::spacingHint() );
+    QVBoxLayout* buttonlay = new QVBoxLayout( );
+    hbox->addItem( buttonlay );
+    buttonlay->setSpacing( 2 * KDialog::spacingHint() );
     buttonlay->setAlignment( Qt::AlignHCenter );
 
     buttonlay->addStretch( 1 );

@@ -601,7 +601,8 @@ KFonts::KFonts(QWidget *parent, const char *, const QStringList &args)
     ++count;
   }
 
-   QHBoxLayout *lay = new QHBoxLayout(layout, KDialog::spacingHint());
+   QHBoxLayout *lay = new QHBoxLayout(layout);
+   lay->setSpacing(KDialog::spacingHint());
    lay->addStretch();
    QPushButton * fontAdjustButton = new QPushButton(i18n("Ad&just All Fonts..."), this);
    fontAdjustButton->setWhatsThis( i18n("Click to change all fonts"));
@@ -610,7 +611,8 @@ KFonts::KFonts(QWidget *parent, const char *, const QStringList &args)
 
    layout->addSpacing(KDialog::spacingHint());
 
-   lay = new QHBoxLayout(layout, KDialog::spacingHint());
+   lay = new QHBoxLayout(layout);
+   lay->setSpacing(KDialog::spacingHint());
    cbAA = new QCheckBox( i18n( "Use a&nti-aliasing for fonts" ), this);
    cbAA->setWhatsThis( i18n("If this option is selected, KDE will smooth the edges of curves in "
                               "fonts."));

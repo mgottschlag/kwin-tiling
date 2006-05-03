@@ -591,17 +591,26 @@ KStdGreeter::KStdGreeter()
 	QBoxLayout *main_box;
 #ifdef WITH_KDM_XCONSOLE
 	if (consoleView) {
-		QBoxLayout *ex_box = new QVBoxLayout( this, 10, 10 );
-		main_box = new QHBoxLayout( ex_box, 10 );
-		ex_box->addWidget( consoleView );
+            QBoxLayout *ex_box = new QVBoxLayout( this );
+            ex_box->setSpacing( 10 );
+            ex_box->setMargin( 10 );
+            main_box = new QHBoxLayout( ex_box );
+            main_box->setMargin( 10 );
+            ex_box->addWidget( consoleView );
 	} else
 #endif
-		main_box = new QHBoxLayout( this, 10, 10 );
+        {
+            main_box = new QHBoxLayout( this, 10, 10 );
+            main_box->setMargin( 10 );
+            main_box->setSpacing( 10 );
+        }
 
 	if (userView)
 		main_box->addWidget( userView );
 
-	QBoxLayout *inner_box = new QVBoxLayout( main_box, 10 );
+	QBoxLayout *inner_box = new QVBoxLayout(  );
+        main_box->addItem( inner_box );
+        inner_box->setMargin( 10 );
 
 	if (!_authorized && _authComplain) {
 		QLabel *complainLabel = new QLabel(
@@ -685,7 +694,8 @@ KStdGreeter::KStdGreeter()
 
 	inner_box->addWidget( new KSeparator( Qt::Horizontal, this ) );
 
-	QBoxLayout *hbox2 = new QHBoxLayout( inner_box, 10 );
+	QBoxLayout *hbox2 = new QHBoxLayout( inner_box );
+	hbox2->setSpacing( 10 );
 	hbox2->addWidget( goButton );
 	hbox2->addStretch( 1 );
 	hbox2->addWidget( menuButton );

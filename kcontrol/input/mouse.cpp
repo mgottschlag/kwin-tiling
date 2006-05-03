@@ -293,17 +293,20 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
   QWidget *mouse = new QWidget(this, "Mouse Navigation");
   tabwidget->addTab(mouse, i18n("Mouse Navigation"));
 
-
   QBoxLayout *vbox = new QVBoxLayout(mouse);
   vbox->setMargin(KDialog::marginHint());
   vbox->setSpacing(KDialog::spacingHint());
 
-  QVBoxLayout *vvbox = new QVBoxLayout(mouse->layout(), KDialog::spacingHint());
+  QVBoxLayout *vvbox = new QVBoxLayout();
+  vbox->addItem( vbox );
+  vvbox->setSpacing(KDialog::spacingHint());
 
   mouseKeys = new QCheckBox(i18n("&Move pointer with keyboard (using the num pad)"), mouse);
   vvbox->addWidget(mouseKeys);
 
-  QBoxLayout *hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  QBoxLayout *hbox = new QHBoxLayout();
+  vvbox->addItem( hbox );
+  hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_delay = new KIntNumInput(mouse);
   mk_delay->setLabel(i18n("&Acceleration delay:"), Qt::AlignVCenter);
@@ -311,7 +314,8 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
   mk_delay->setRange(1, 1000, 50);
   hbox->addWidget(mk_delay);
 
-  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox = new QHBoxLayout(vvbox);
+  hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_interval = new KIntNumInput(mk_delay, 0, mouse);
   mk_interval->setLabel(i18n("R&epeat interval:"), Qt::AlignVCenter);
@@ -319,7 +323,8 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
   mk_interval->setRange(1, 1000, 10);
   hbox->addWidget(mk_interval);
 
-  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox = new QHBoxLayout(vvbox);
+  hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_time_to_max = new KIntNumInput(mk_interval, 0, mouse);
   mk_time_to_max->setLabel(i18n("Acceleration &time:"), Qt::AlignVCenter);
@@ -327,7 +332,8 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
   mk_time_to_max->setSuffix(i18n(" msec"));
   hbox->addWidget(mk_time_to_max);
 
-  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox = new QHBoxLayout(vvbox);
+  hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_max_speed = new KIntNumInput(mk_time_to_max, 0, mouse);
   mk_max_speed->setLabel(i18n("Ma&ximum speed:"), Qt::AlignVCenter);
@@ -335,7 +341,8 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
   mk_max_speed->setSuffix(i18n(" pixel/sec"));
   hbox->addWidget(mk_max_speed);
 
-  hbox = new QHBoxLayout(vvbox, KDialog::spacingHint());
+  hbox = new QHBoxLayout(vvbox);
+  hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_curve = new KIntNumInput(mk_max_speed, 0, mouse);
   mk_curve->setLabel(i18n("Acceleration &profile:"), Qt::AlignVCenter);

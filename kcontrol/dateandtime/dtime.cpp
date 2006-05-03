@@ -73,7 +73,10 @@ Dtime::Dtime(QWidget * parent, const char *name)
   // Time Server
 
   privateLayoutWidget = new QWidget( this, "layout1" );
-  QHBoxLayout *layout1 = new QHBoxLayout( privateLayoutWidget, 0, 0, "ntplayout");
+  QHBoxLayout *layout1 = new QHBoxLayout( privateLayoutWidget );
+  layout1->setObjectName( "ntplayout" );
+  layout1->setSpacing( 0 );
+  layout1->setMargin( 0 );
 
   setDateTimeAuto = new QCheckBox( privateLayoutWidget, "setDateTimeAuto" );
   setDateTimeAuto->setText(i18n("Set date and time &automatically:"));

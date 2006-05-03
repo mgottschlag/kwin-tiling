@@ -129,7 +129,9 @@ KMemoryWidget::KMemoryWidget(KInstance *inst,QWidget * parent)
     hbox->addStretch();
 
     /* first create the Informationtext-Widget */
-    QVBoxLayout *vbox = new QVBoxLayout(hbox, 0);
+    QVBoxLayout *vbox = new QVBoxLayout();
+    hbox->addItem( vbox );
+    vbox->setSpacing(0);
     for (i = TOTAL_MEM; i < MEM_LAST_ENTRY; ++i) {
 	switch (i) {
 	case TOTAL_MEM:
@@ -176,7 +178,9 @@ KMemoryWidget::KMemoryWidget(KInstance *inst,QWidget * parent)
 
     /* then the memory-content-widgets */
     for (j = 0; j < 2; j++) {
-	vbox = new QVBoxLayout(hbox, 0);
+	vbox = new QVBoxLayout();
+        hbox->addItem( vbox );
+	vbox->setSpacing(0);
 	for (i = TOTAL_MEM; i < MEM_LAST_ENTRY; ++i) {
 	    if (i == SWAP_MEM)
 		vbox->addSpacing(SPACING);
@@ -195,10 +199,12 @@ KMemoryWidget::KMemoryWidget(KInstance *inst,QWidget * parent)
 
     /* now the Graphics */
     QString hint;
-    hbox = new QHBoxLayout(top, 1);
+    hbox = new QHBoxLayout(top);
+    hbox->setSpacing(1);
     for (i = MEM_RAM_AND_HDD; i < MEM_LAST; i++) {
 	hbox->addSpacing(SPACING);
-	vbox = new QVBoxLayout(hbox);
+	vbox = new QVBoxLayout();
+        hbox->addItem( vbox );
 
 	switch (i) {
 	case MEM_RAM_AND_HDD:

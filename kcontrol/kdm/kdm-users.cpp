@@ -168,7 +168,9 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
 
     Q3GroupBox *picGroup = new Q3GroupBox( i18n("User Images"), this );
     picGroup->setOrientation( Qt::Vertical );
-    QVBoxLayout *laygroup2 = new QVBoxLayout(picGroup->layout(), KDialog::spacingHint() );
+    QVBoxLayout *laygroup2 = new QVBoxLayout();
+    picGroup->layout()->addItem( laygroup2 );
+    laygroup2->setSpacing(KDialog::spacingHint());
 
     QWidget *hlpw = new QWidget( picGroup );
     laygroup2->addWidget( hlpw );
@@ -201,20 +203,27 @@ KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
     hlpl->addWidget( userbutton, 1, 0, 1, 2, Qt::AlignHCenter );
     hlpl->addWidget( rstuserbutton, 2, 0, 1, 2, Qt::AlignHCenter );
 
-    QHBoxLayout *main = new QHBoxLayout( this, 10 );
+    QHBoxLayout *main = new QHBoxLayout( this );
+    main->setSpacing( 10 );
 
-    QVBoxLayout *lLayout = new QVBoxLayout( main, 10 );
+    QVBoxLayout *lLayout = new QVBoxLayout( );
+    main->addItem( lLayout );
+    lLayout->setSpacing( 10 );
     lLayout->addWidget( minGroup );
     lLayout->addWidget( usrGroup );
     lLayout->addStretch( 1 );
 
-    QVBoxLayout *mLayout = new QVBoxLayout( main, 10 );
+    QVBoxLayout *mLayout = new QVBoxLayout( );
+    main->addItem( mLayout );
+    mLayout->setSpacing( 10 );
     mLayout->addWidget( s_label );
     mLayout->addWidget( wstack );
     mLayout->setStretchFactor( wstack, 1 );
     main->setStretchFactor( mLayout, 1 );
 
-    QVBoxLayout *rLayout = new QVBoxLayout( main, 10 );
+    QVBoxLayout *rLayout = new QVBoxLayout( );
+    main->addItem( rLayout );
+    rLayout->setSpacing( 10 );
     rLayout->addWidget( faceGroup );
     rLayout->addWidget( picGroup );
     rLayout->addStretch( 1 );

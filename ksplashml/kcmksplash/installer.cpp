@@ -106,7 +106,8 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   hbox->setMargin( 0 );
   hbox->setSpacing( KDialog::spacingHint() );
 
-  QVBoxLayout* leftbox = new QVBoxLayout( hbox );
+  QVBoxLayout* leftbox = new QVBoxLayout(  );
+  hbox->addItem( leftbox );
   leftbox->setSpacing( KDialog::spacingHint() );
   hbox->setStretchFactor( leftbox, 1 );
 
@@ -128,7 +129,8 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   leftbox->addWidget( mBtnTest );
   connect(mBtnTest, SIGNAL(clicked()), SLOT(slotTest()));
 
-  QVBoxLayout* rightbox = new QVBoxLayout( hbox );
+  QVBoxLayout* rightbox = new QVBoxLayout(  );
+  hbox->addItem( rightbox );
   rightbox->setSpacing( KDialog::spacingHint() );
   hbox->setStretchFactor( rightbox, 3 );
 

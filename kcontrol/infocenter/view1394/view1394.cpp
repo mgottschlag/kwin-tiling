@@ -77,7 +77,9 @@ View1394::View1394(KInstance *inst,QWidget *parent)
    setButtons( KCModule::Help );
 
    m_ouiDb=new OuiDb();
-   QVBoxLayout *box=new QVBoxLayout(this, 0, KDialog::spacingHint());
+   QVBoxLayout *box=new QVBoxLayout(this);
+   box->setSpacing(KDialog::spacingHint());
+   box->setMargin(0);
    m_view=new View1394Widget(this);
    for (int i=2; i<8; i++)
       m_view->m_listview->setColumnAlignment(i, Qt::AlignHCenter);

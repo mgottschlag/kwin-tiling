@@ -113,11 +113,15 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     QVBoxLayout *unlockDialogLayout = new QVBoxLayout( this );
     unlockDialogLayout->addWidget( frame );
 
-    QHBoxLayout *layStatus = new QHBoxLayout( 0, 0, KDialog::spacingHint());
+    QHBoxLayout *layStatus = new QHBoxLayout();
+    layStatus->setSpacing( KDialog::spacingHint() );
+    layStatus->setMargin( 0 );
     layStatus->addWidget( mStatusLabel );
     layStatus->addWidget( mLayoutButton );
 
-    QHBoxLayout *layButtons = new QHBoxLayout( 0, 0, KDialog::spacingHint());
+    QHBoxLayout *layButtons = new QHBoxLayout();
+    layButtons->setSpacing( KDialog::spacingHint() );
+    layButtons->setMargin( 0 );
     layButtons->addWidget( mNewSessButton );
     layButtons->addStretch();
     layButtons->addWidget( ok );
@@ -576,7 +580,8 @@ void PasswordDlg::slotStartNewSession()
     QCheckBox *cb = new QCheckBox( i18n("&Do not ask again"), winFrame );
     grid->addWidget( cb, 1, 0, 1, 2 );
 
-    QBoxLayout *hbox = new QHBoxLayout( mbox, KDialog::spacingHint() );
+    QBoxLayout *hbox = new QHBoxLayout( mbox );
+    hbox->setSpacing( KDialog::spacingHint() );
     hbox->addStretch( 1 );
     hbox->addWidget( okbutton );
     hbox->addStretch( 1 );
@@ -659,10 +664,16 @@ void PasswordDlg::slotSwitchUser()
     QBoxLayout *vbox = new QVBoxLayout( &dialog );
     vbox->addWidget( winFrame );
 
-    QBoxLayout *hbox = new QHBoxLayout( winFrame, KDialog::marginHint(), KDialog::spacingHint() );
+    QBoxLayout *hbox = new QHBoxLayout( winFrame );
+    hbox->setSpacing( KDialog::spacingHint() );
+    hbox->setMargin( KDialog::marginHint() );
 
-    QBoxLayout *vbox1 = new QVBoxLayout( hbox, KDialog::spacingHint() );
-    QBoxLayout *vbox2 = new QVBoxLayout( hbox, KDialog::spacingHint() );
+    QBoxLayout *vbox1 = new QVBoxLayout( );
+    hbox->addItem( vbox1 );
+    vbox1->setSpacing( KDialog::spacingHint() );
+    QBoxLayout *vbox2 = new QVBoxLayout( );
+    hbox->addItem( vbox2 );
+    vbox2->setSpacing( KDialog::spacingHint() );
 
     KPushButton *btn;
 

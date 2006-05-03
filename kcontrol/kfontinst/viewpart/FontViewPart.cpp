@@ -81,11 +81,15 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
 
     itsToolsFrame=new QFrame(itsFrame);
 
-    QVBoxLayout *layout=new QVBoxLayout(itsFrame, kcm ? 0 : KDialog::marginHint(), kcm ? 0 : KDialog::spacingHint());
+    QVBoxLayout *layout=new QVBoxLayout(itsFrame);
+    layout->setSpacing(kcm ? 0 : KDialog::spacingHint());
+    layout->setMargin(kcm ? 0 : KDialog::marginHint());
     QGridLayout *previewLayout=new QGridLayout(previewFrame);
     previewLayout->setSpacing(1);
     previewLayout->setMargin(1);
-    QHBoxLayout *toolsLayout=new QHBoxLayout(itsToolsFrame, 0, KDialog::spacingHint());
+    QHBoxLayout *toolsLayout=new QHBoxLayout(itsToolsFrame);
+    toolsLayout->setSpacing(KDialog::spacingHint());
+    toolsLayout->setMargin(0);
 
     itsFrame->setFrameShape(QFrame::NoFrame);
     itsFrame->setFocusPolicy(Qt::ClickFocus);

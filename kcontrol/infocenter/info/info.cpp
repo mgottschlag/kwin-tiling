@@ -418,7 +418,9 @@ KInfoListWidget::KInfoListWidget(KInstance *inst,const QString &_title, QWidget 
     setButtons(KCModule::Help);
     getlistbox 	= _getlistbox;
     GetInfo_ErrorString = 0;
-    QHBoxLayout *layout = new QHBoxLayout(this, 0, KDialog::spacingHint());
+    QHBoxLayout *layout = new QHBoxLayout(this);
+    layout->setSpacing(KDialog::spacingHint());
+    layout->setMargin(0);
     widgetStack = new QStackedWidget(this);
     layout->addWidget(widgetStack);
     lBox 	= new Q3ListView(widgetStack);

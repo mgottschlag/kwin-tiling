@@ -85,7 +85,9 @@ LayoutConfig::LayoutConfig(QWidget *parent, const char *name)
   : KCModule(parent, name), 
     m_rules(NULL)
 {
-  QVBoxLayout *main = new QVBoxLayout(this, 0, KDialog::spacingHint());
+  QVBoxLayout *main = new QVBoxLayout(this);
+  main->setSpacing(KDialog::spacingHint());
+  main->setMargin(0);
 
   widget = new LayoutConfigWidget(this, "widget");
   main->addWidget(widget);

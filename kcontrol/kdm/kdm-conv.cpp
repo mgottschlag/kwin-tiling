@@ -55,7 +55,9 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     alGroup->setOrientation( Qt::Vertical );
     alGroup->setCheckable( true );
     alGroup->setSizePolicy( vpref );
-    QVBoxLayout *laygroup2 = new QVBoxLayout(alGroup->layout(), KDialog::spacingHint() );
+    QVBoxLayout *laygroup2 = new QVBoxLayout();
+    alGroup->layout()->addItem( laygroup2 );
+    laygroup2->setSpacing(KDialog::spacingHint());
 
     alGroup->setWhatsThis( i18n("Turn on the auto-login feature."
 	" This applies only to KDM's graphical login."
@@ -66,7 +68,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     userlb = new KComboBox( hlpw1 );
     u_label = new QLabel( i18n("Use&r:"), hlpw1 );
     u_label->setBuddy( userlb );
-    QHBoxLayout *hlpl1 = new QHBoxLayout(alGroup->layout(), KDialog::spacingHint());
+    QHBoxLayout *hlpl1 = new QHBoxLayout(alGroup->layout());
+    hlpl1->setSpacing(KDialog::spacingHint());
     hlpl1->addWidget(u_label);
     hlpl1->addWidget(userlb);
     hlpl1->addStretch( 1 );
@@ -82,15 +85,11 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 	"will be locked immediately (provided it is a KDE session). This can "
 	"be used to obtain a super-fast login restricted to one user.") );
 
-
-
-
-
-
-
     puGroup = new Q3ButtonGroup(i18n("Preselect User"), this );
     puGroup->setOrientation( Qt::Vertical );
-    QVBoxLayout *laygroup5 = new QVBoxLayout(puGroup->layout(), KDialog::spacingHint() );
+    QVBoxLayout *laygroup5 = new QVBoxLayout();
+    puGroup->layout()->addItem( laygroup5 );
+    laygroup5->setSpacing(KDialog::spacingHint());
 
     puGroup->setSizePolicy( vpref );
 
@@ -119,7 +118,9 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 	"user to mislead possible attackers.");
     pu_label->setWhatsThis( wtstr );
     puserlb->setWhatsThis( wtstr );
-    QBoxLayout *hlpl = new QHBoxLayout(hlpw, 0, KDialog::spacingHint());
+    QBoxLayout *hlpl = new QHBoxLayout(hlpw);
+    hlpl->setSpacing(KDialog::spacingHint());
+    hlpl->setMargin(0);
     hlpl->addWidget(pu_label);
     hlpl->addWidget(puserlb);
     hlpl->addStretch( 1 );
@@ -133,7 +134,9 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
     npGroup = new Q3GroupBox(i18n("Enable Password-&Less Logins"), this );
     npGroup->setOrientation( Qt::Vertical );
-    QVBoxLayout *laygroup3 = new QVBoxLayout(npGroup->layout(), KDialog::spacingHint() );
+    QVBoxLayout *laygroup3 = new QVBoxLayout();
+    npGroup->layout()->addItem( laygroup3 );
+    laygroup3->setSpacing(KDialog::spacingHint());
 
     npGroup->setCheckable( true );
 
@@ -159,7 +162,9 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
     btGroup = new Q3GroupBox( i18n("Miscellaneous"), this );
     btGroup->setOrientation( Qt::Vertical );
-    QVBoxLayout *laygroup4 = new QVBoxLayout(btGroup->layout(), KDialog::spacingHint() );
+    QVBoxLayout *laygroup4 = new QVBoxLayout();
+    btGroup->layout()->addItem( laygroup4 );
+    laygroup4->setSpacing(KDialog::spacingHint());
 
     cbarlen = new QCheckBox(i18n("Automatically log in again after &X server crash"), btGroup);
     cbarlen->setWhatsThis( i18n("When this option is on, a user will be"

@@ -83,7 +83,8 @@ KLocaleApplication::KLocaleApplication(QWidget *parent, const char* /*name*/,
   // Examples
   m_gbox = new Q3GroupBox(this);
   m_gbox->setOrientation(Qt::Vertical);
-  QVBoxLayout *laygroup = new QVBoxLayout(m_gbox->layout(), KDialog::spacingHint() );
+  QVBoxLayout *laygroup = new QVBoxLayout(m_gbox);
+  laygroup->setSpacing(KDialog::spacingHint());
   m_sample = new KLocaleSample(m_locale, m_gbox);
   laygroup->addWidget( m_sample );
 

@@ -55,7 +55,9 @@ KeyboardConfig::KeyboardConfig (QWidget * parent, const char *)
     : KCModule (parent, "kcmlayout")
 {
   QString wtstr;
-  QBoxLayout* lay = new QVBoxLayout(this, 0, KDialog::spacingHint());
+  QBoxLayout* lay = new QVBoxLayout(this);
+  lay->setSpacing(KDialog::spacingHint());
+  lay->setMargin(0);
   ui = new KeyboardConfigWidget(this, "ui");
   lay->addWidget(ui);
   lay->addStretch();

@@ -56,8 +56,8 @@
 extern KSimpleConfig *config;
 
 
-KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
-  : QWidget(parent, name)
+KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent)
+  : QWidget(parent)
 {
   QString wtstr;
 
@@ -106,7 +106,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent, const char *name)
 
   label = new QLabel(i18n("Logo area:"),group);
   hglay->addWidget(label, 0, 0);
-  QVBoxLayout *vlay = new QVBoxLayout( KDialog::spacingHint() );
+  QVBoxLayout *vlay = new QVBoxLayout();
+  vlay->setSpacing( KDialog::spacingHint() );
   hglay->addLayout(vlay, 0, 1, 1,2);
   noneRadio = new QRadioButton( i18nc("logo area", "&None"), group );
   clockRadio = new QRadioButton( i18n("Show cloc&k"), group );

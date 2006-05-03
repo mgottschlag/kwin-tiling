@@ -538,7 +538,7 @@ QString mouseKeysShortcut (Display *display) {
 
   if (!found)
      return ""; // Somehow the keycode -> keysym mapping is flawed
-  
+
   XEvent ev;
   ev.xkey.display = display;
   ev.xkey.keycode = code;
@@ -559,7 +559,7 @@ QString mouseKeysShortcut (Display *display) {
                          | XkbKeysymToModifiers (display, XK_ISO_Level3_Shift)
                          | XkbKeysymToModifiers (display, XK_ISO_Level3_Latch)
                          | XkbKeysymToModifiers (display, XK_ISO_Level3_Lock);
-  
+
   unsigned int mods = ShiftMask | ControlMask | AltMask | WinMask
                     | LockMask | NumMask | ScrollMask;
 
@@ -615,7 +615,8 @@ void KAccessApp::createDialogContents() {
       lay->addWidget( label1, 0, Qt::AlignCenter );
       lay->addSpacing(KDialog::spacingHint());
 
-      QVBoxLayout * vlay = new QVBoxLayout(lay);
+      QVBoxLayout * vlay = new QVBoxLayout();
+      lay->addItem( vlay );
 
       featuresLabel = new QLabel( "", contents );
       featuresLabel->setAlignment( Qt::AlignVCenter );

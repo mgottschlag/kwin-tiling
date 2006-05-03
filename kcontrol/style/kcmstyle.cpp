@@ -172,9 +172,12 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 	gbWidgetStyle->layout()->setMargin( KDialog::marginHint() );
 	gbWidgetStyle->layout()->setSpacing( KDialog::spacingHint() );
 
-	gbWidgetStyleLayout = new QVBoxLayout( gbWidgetStyle->layout() );
+	gbWidgetStyleLayout = new QVBoxLayout( );
+        gbWidgetStyle->layout()->addItem( gbWidgetStyleLayout );
 	gbWidgetStyleLayout->setAlignment( Qt::AlignTop );
-	hbLayout = new QHBoxLayout( KDialog::spacingHint(), "hbLayout" );
+	hbLayout = new QHBoxLayout( );
+        hbLayout->setSpacing( KDialog::spacingHint() );
+	hbLayout->setObjectName( "hbLayout" );
 
 	cbStyle = new KComboBox( gbWidgetStyle );
         cbStyle->setObjectName( "cbStyle" );
@@ -354,7 +357,9 @@ KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
 
 	QWidget * dummy = new QWidget( page3 );
 
-	QHBoxLayout* box2 = new QHBoxLayout( dummy, 0, KDialog::spacingHint() );
+	QHBoxLayout* box2 = new QHBoxLayout( dummy );
+	box2->setSpacing( KDialog::spacingHint() );
+	box2->setMargin( 0 );
 	lbl = new QLabel( i18n("Text pos&ition:"), dummy );
 	comboToolbarIcons = new QComboBox( dummy );
 	comboToolbarIcons->setEditable( false );
@@ -955,7 +960,7 @@ void KCMStyle::loadEffects( KConfig& config )
 
 	// KStyle Menu transparency and drop-shadow options...
 	QSettings settings;
-	QString effectEngine = settings.readEntry("/KStyle/Settings/MenuTransparencyEngine", "Disabled");
+	QString effectEngine = settings.readEntry("/KStyle/Settings/MenuTransparencyEngine", "Disabled" );
 
 #ifdef HAVE_XRENDER
 	if (effectEngine == "XRender") {

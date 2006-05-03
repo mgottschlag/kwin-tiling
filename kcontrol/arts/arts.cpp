@@ -155,7 +155,9 @@ KArtsModule::KArtsModule(KInstance *inst, QWidget *parent)
 
 	initAudioIOList();
 
-	QVBoxLayout *layout = new QVBoxLayout(this, 0, KDialog::spacingHint());
+	QVBoxLayout *layout = new QVBoxLayout(this);
+	layout->setSpacing(KDialog::spacingHint());
+	layout->setMargin(0);
 	QTabWidget *tab = new QTabWidget(this);
 	layout->addWidget(tab);
 

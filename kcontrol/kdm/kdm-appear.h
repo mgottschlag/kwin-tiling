@@ -47,7 +47,7 @@ class KDMAppearanceWidget : public QWidget
 	Q_OBJECT
 
 public:
-	KDMAppearanceWidget(QWidget *parent, const char *name=0);
+	KDMAppearanceWidget(QWidget *parent);
 
 	void load();
 	void save();

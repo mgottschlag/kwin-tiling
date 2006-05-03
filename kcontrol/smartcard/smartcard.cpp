@@ -47,7 +47,9 @@ KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
   : KCModule(parent, name),DCOPObject(name)
 {
 
-  QVBoxLayout *layout = new QVBoxLayout(this, KDialog::marginHint(), KDialog::spacingHint());
+  QVBoxLayout *layout = new QVBoxLayout(this);
+  layout->setSpacing(KDialog::spacingHint());
+  layout->setMargin(KDialog::marginHint());
   config = new KConfig("ksmartcardrc", false, false);
 
   DCOPClient *dc = KApplication::kApplication()->dcopClient();

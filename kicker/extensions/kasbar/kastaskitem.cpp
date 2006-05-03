@@ -395,7 +395,9 @@ void KasTaskItem::showPropertiesDialog()
     //
     // Layout Dialog
     //
-    QVBoxLayout *vbl = new QVBoxLayout( dlg, KDialog::marginHint(), KDialog::spacingHint() );
+    QVBoxLayout *vbl = new QVBoxLayout( dlg );
+    vbl->setSpacing( KDialog::spacingHint() );
+    vbl->setMargin( KDialog::marginHint() );
     vbl->addWidget( title );
     vbl->addWidget( tabs );
 

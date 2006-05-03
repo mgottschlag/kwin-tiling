@@ -140,7 +140,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     QGridLayout *fontsLayout=new QGridLayout(fontsFrame);
     fontsLayout->setSpacing(1);
     fontsLayout->setMargin(0);
-    QVBoxLayout *layout=new QVBoxLayout(this, 0, KDialog::spacingHint());
+    QVBoxLayout *layout=new QVBoxLayout(this);
+    layout->setSpacing(KDialog::spacingHint());
+    layout->setMargin(0);
     KToolBar    *toolbar=new KToolBar(this);
     bool        showBitmap(itsConfig.readEntry(CFG_SHOW_BITMAP, false));
 
