@@ -94,7 +94,7 @@ class UserListView : public K3ListView {
 	virtual QSize sizeHint() const
 	{
 		if (!cachedSizeHint.isValid()) {
-			constPolish();
+			ensurePolished();
 			uint maxw = 0;
 			for (Q3ListViewItem *itm = firstChild(); itm; itm = itm->nextSibling()) {
 				uint thisw = itm->width( fontMetrics(), this, 0 );

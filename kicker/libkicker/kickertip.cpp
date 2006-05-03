@@ -432,7 +432,7 @@ void KickerTip::tipperDestroyed(QObject* o)
 void KickerTip::internalUpdate()
 {
     d->dirty = true;
-    repaint(false);
+    repaint();
 }
 
 void KickerTip::enableTipping(bool tip)

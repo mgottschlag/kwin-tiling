@@ -123,7 +123,9 @@ void RunApplet::resizeEvent(QResizeEvent*)
     if(orientation() == Qt::Horizontal)
 	{
 	    _btn->hide();
-	    _input->reparent(this, QPoint(0,0), true);
+	    _input->setParent(this);
+            _input->show();
+	    _input->move(0,0);
 	    _label->setGeometry(0,0, width(), _label->height());
 
 	    if(height() >= _input->sizeHint().height() + _label->height())
@@ -154,7 +156,7 @@ void RunApplet::resizeEvent(QResizeEvent*)
 	{
 	    _btn->show();
 	    _btn->setFixedSize(width(), 22);
-	    _input->reparent( _hbox, QPoint(0, 0), false);
+	    _input->setParent( _hbox );
 	    _label->hide();
 	}
     setButtonText();

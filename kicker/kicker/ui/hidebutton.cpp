@@ -184,14 +184,14 @@ void HideButton::slotIconChanged(int group)
     }
 
     generateIcons();
-    repaint(false);
+    repaint();
 }
 
 void HideButton::enterEvent(QEvent *e)
 {
     m_highlight = true;
 
-    repaint(false);
+    repaint();
     QAbstractButton::enterEvent(e);
 }
 
@@ -199,7 +199,7 @@ void HideButton::leaveEvent(QEvent *e)
 {
     m_highlight = false;
 
-    repaint(false);
+    repaint();
     QAbstractButton::enterEvent(e);
 }
 

@@ -99,12 +99,12 @@ void KTimerDialog::setMainWidget( QWidget *widget )
     KVBox *newWidget = new KVBox( this );
 
     if ( widget->parentWidget() != mainWidget ) {
-        widget->reparent( newWidget, 0, QPoint(0,0) );
+        widget->setParent( newWidget);
     } else {
         newWidget->insertChild( widget );
     }
 
-    timerWidget->reparent( newWidget, 0, QPoint(0, 0) );
+    timerWidget->setParent( newWidget);
 
     delete mainWidget;
     mainWidget = newWidget;

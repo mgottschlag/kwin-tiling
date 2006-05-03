@@ -59,7 +59,7 @@ public Q_SLOTS:
     if( mText != s )
     {
       mText = s;
-      repaint( false );
+      repaint( );
     }
   };
 

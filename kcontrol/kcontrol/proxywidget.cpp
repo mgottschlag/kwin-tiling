@@ -140,7 +140,9 @@ ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, bool ru
 	      infoBox->setRootMsg(msg);
       vbox->setSpacing(KDialog::spacingHint());
   }
-  client->reparent(contentWidget,0,QPoint(0,0),true);
+  client->setParent(contentWidget);
+  client->move(0,0);
+  client->show();
   vbox->addWidget( client );
   vbox->activate(); // make sure we have a proper minimumSizeHint
   addChild(contentWidget);

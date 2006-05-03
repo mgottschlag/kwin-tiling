@@ -149,7 +149,8 @@ ExtensionContainer::ExtensionContainer( KPanelExtension *extension, QWidget *par
     connect( configButton, SIGNAL( clicked() ),
              this, SLOT( showPreferences() ) );
 
-    m_extension->reparent( this, QPoint( 0, 0 ) );
+    m_extension->setParent( this);
+    m_extension->move(0,0);
 }
 
 void ExtensionContainer::resizeEvent( QResizeEvent * )

@@ -125,7 +125,7 @@ ProxyWidget *ModuleWidget::load( ConfigModule *module )
 
   if ( proxy )
   {
-    proxy->reparent(this, 0, QPoint(0,0), false);
+    proxy->setParent(this);
     m_layout->addWidget (proxy);
     proxy->show();
     proxy->setSizePolicy (QSizePolicy (QSizePolicy::Expanding, QSizePolicy::Expanding));

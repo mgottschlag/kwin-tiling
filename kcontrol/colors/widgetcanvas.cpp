@@ -608,5 +608,5 @@ void WidgetCanvas::drawSampleWidgets()
     hotspots[ spot++ ] =
         HotSpot( QRect( 0, 0, width(), height() ), CSM_Background ); // ?
 
-    repaint( false );
+    repaint();
 }

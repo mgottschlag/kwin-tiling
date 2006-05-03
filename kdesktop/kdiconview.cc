@@ -1394,8 +1394,8 @@ void KDIconView::updateWorkArea( const QRect &wr )
             }
         }
         if ( needRepaint ) {
-            viewport()->repaint( false );
-            repaint( false );
+            viewport()->repaint();
+            repaint();
         }
     }
 }

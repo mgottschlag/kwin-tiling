@@ -200,7 +200,7 @@ bool CFontViewPart::openFile()
 void CFontViewPart::previewStatus(bool st)
 {
     itsInstallButton->setShown(st && itsShowInstallButton);
-    itsToolsFrame->setShown(itsInstallButton->isShown()||itsFaceSelector->isShown());
+    itsToolsFrame->setShown(!itsInstallButton->isHidden()||!itsFaceSelector->isHidden());
     itsChangeTextAction->setEnabled(st);
     itsPrintAction->setEnabled(st && KFI_KIO_FONTS_PROTOCOL==m_url.protocol());
 }
