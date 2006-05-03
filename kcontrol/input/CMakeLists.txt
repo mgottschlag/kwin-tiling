@@ -25,6 +25,9 @@ kde4_automoc(${kapplymousetheme_SRCS})
 kde4_add_executable(kapplymousetheme ${kapplymousetheme_SRCS})
 
 target_link_libraries(kapplymousetheme  ${KDE4_KDE3SUPPORT_LIBS} ${X11_Xrender_LIB})
+if (X11_Xcursor_FOUND)
+   target_link_libraries(kapplymousetheme ${X11_Xcursor_LIB})
+endif (X11_Xcursor_FOUND)
 
 install_targets(/bin kapplymousetheme )
 
