@@ -139,7 +139,8 @@ void ShortcutsModule::initGUI()
 
 	// (o) [Current      ] <Remove>   ( ) New <Save>
 
-	QHBoxLayout *pHLayout = new QHBoxLayout( pVLayout);
+	QHBoxLayout *pHLayout = new QHBoxLayout();
+	pVLayout->addItem( pHLayout );
 	Q3ButtonGroup* pGroup = new Q3ButtonGroup( this );
 	pGroup->hide();
 

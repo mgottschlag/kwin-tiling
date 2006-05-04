@@ -314,7 +314,8 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
   mk_delay->setRange(1, 1000, 50);
   hbox->addWidget(mk_delay);
 
-  hbox = new QHBoxLayout(vvbox);
+  hbox = new QHBoxLayout();
+  vvbox->addItem(hbox);
   hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_interval = new KIntNumInput(mk_delay, 0, mouse);
@@ -323,7 +324,8 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
   mk_interval->setRange(1, 1000, 10);
   hbox->addWidget(mk_interval);
 
-  hbox = new QHBoxLayout(vvbox);
+  hbox = new QHBoxLayout();
+  vvbox->addItem(hbox);
   hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_time_to_max = new KIntNumInput(mk_interval, 0, mouse);
@@ -332,7 +334,8 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
   mk_time_to_max->setSuffix(i18n(" msec"));
   hbox->addWidget(mk_time_to_max);
 
-  hbox = new QHBoxLayout(vvbox);
+  hbox = new QHBoxLayout();
+  vvbox->addItem(hbox);
   hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_max_speed = new KIntNumInput(mk_time_to_max, 0, mouse);
@@ -341,7 +344,8 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
   mk_max_speed->setSuffix(i18n(" pixel/sec"));
   hbox->addWidget(mk_max_speed);
 
-  hbox = new QHBoxLayout(vvbox);
+  hbox = new QHBoxLayout();
+  vvbox->addItem(hbox);
   hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
   mk_curve = new KIntNumInput(mk_max_speed, 0, mouse);

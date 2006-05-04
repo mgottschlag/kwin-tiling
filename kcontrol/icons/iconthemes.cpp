@@ -102,7 +102,8 @@ IconThemesConfig::IconThemesConfig(KInstance *inst, QWidget *parent)
 	new QLabel(i18n("Select the icon theme you want to use:"), this));
   topLayout->addWidget(m_preview);
   topLayout->addWidget(m_iconThemes);
-  QHBoxLayout *lg = new QHBoxLayout(topLayout);
+  QHBoxLayout *lg = new QHBoxLayout();
+  topLayout->addItem(lg);
   lg->setSpacing(KDialog::spacingHint());
   lg->addWidget(installButton);
   lg->addWidget(m_removeButton);

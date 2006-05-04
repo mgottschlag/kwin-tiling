@@ -1104,7 +1104,8 @@ KGChTok::KGChTok( QWidget *_parent, const QString &user,
 
 	box->addWidget( new KSeparator( Qt::Horizontal, this ) );
 
-	QHBoxLayout *hlay = new QHBoxLayout( box );
+	QHBoxLayout *hlay = new QHBoxLayout();
+	box->addItem( hlay );
 	hlay->addStretch( 1 );
 	hlay->addWidget( okButton );
 	hlay->addStretch( 1 );

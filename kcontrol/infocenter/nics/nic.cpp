@@ -101,7 +101,8 @@ KCMNic::KCMNic(QWidget *parent, const char *, const QStringList &)
    m_list->addColumn(i18n("Type"));
    m_list->addColumn(i18n("State"));
    m_list->setAllColumnsShowFocus(true);
-   QHBoxLayout *hbox=new QHBoxLayout(box);
+   QHBoxLayout *hbox=new QHBoxLayout();
+   box->addItem(hbox);
    m_updateButton=new QPushButton(i18n("&Update"),this);
    hbox->addWidget(m_updateButton);
    hbox->addStretch(1);

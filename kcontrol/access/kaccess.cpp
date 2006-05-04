@@ -624,7 +624,8 @@ void KAccessApp::createDialogContents() {
       vlay->addWidget( featuresLabel );
       vlay->addStretch();
 
-      QHBoxLayout * hlay = new QHBoxLayout(vlay);
+      QHBoxLayout * hlay = new QHBoxLayout();
+      vlay->addItem(hlay);
 
       QLabel *showModeLabel = new QLabel( i18n("&When a gesture was used:"), contents );
       hlay->addWidget( showModeLabel );

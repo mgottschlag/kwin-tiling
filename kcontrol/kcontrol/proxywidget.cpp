@@ -237,7 +237,8 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   top->addWidget(view);
   top->addWidget(_sep);
 
-  QHBoxLayout *buttons = new QHBoxLayout(top);
+  QHBoxLayout *buttons = new QHBoxLayout();
+  top->addItem(buttons);
   buttons->setSpacing(4);
   buttons->addWidget(_help);
   buttons->addWidget(_default);

@@ -76,7 +76,8 @@ K_EXPORT_COMPONENT_FACTORY( kcm_knotify, NotifyFactory("kcmnotify") )
 	QLabel *label = new QLabel( i18n( "Event source:" ), app_tab );
 	m_appCombo = new KComboBox( false, app_tab );
 	m_appCombo->setObjectName( "app combo" );
-	QHBoxLayout *hbox = new QHBoxLayout( app_layout );
+	QHBoxLayout *hbox = new QHBoxLayout();
+	app_layout->addItem( hbox );
 	hbox->addWidget( label );
 	hbox->addWidget( m_appCombo, 10 );
 

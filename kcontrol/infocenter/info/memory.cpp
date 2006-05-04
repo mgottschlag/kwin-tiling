@@ -199,7 +199,8 @@ KMemoryWidget::KMemoryWidget(KInstance *inst,QWidget * parent)
 
     /* now the Graphics */
     QString hint;
-    hbox = new QHBoxLayout(top);
+    hbox = new QHBoxLayout();
+    top->addItem(hbox);
     hbox->setSpacing(1);
     for (i = MEM_RAM_AND_HDD; i < MEM_LAST; i++) {
 	hbox->addSpacing(SPACING);

@@ -118,7 +118,8 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 
 	box->addWidget( new KSeparator( Qt::Horizontal, this ) );
 
-	QBoxLayout *hlay = new QHBoxLayout( box );
+	QBoxLayout *hlay = new QHBoxLayout();
+	box->addItem( hlay );
 	hlay->setSpacing( KDsh );
 	hlay->addStretch( 1 );
 	if (mayOk) {
@@ -252,7 +253,8 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 {
 	QSizePolicy fp( QSizePolicy::Fixed, QSizePolicy::Fixed );
 
-	QHBoxLayout *hlay = new QHBoxLayout( box );
+	QHBoxLayout *hlay = new QHBoxLayout();
+	box->addItem( hlay );
 	hlay->setSpacing( KDsh );
 
 	howGroup = new Q3VButtonGroup( i18n("Shutdown Type"), this );
