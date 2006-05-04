@@ -70,7 +70,7 @@ public:
      * @param parent the parent widget
      * @param name the widget's name
      */
-    KDE_DEPRECATED PanelButton( QWidget* parent, const char* name );
+    KDE_CONSTRUCTOR_DEPRECATED PanelButton( QWidget* parent, const char* name );
 
     virtual ~PanelButton();
 

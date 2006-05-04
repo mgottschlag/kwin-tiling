@@ -37,7 +37,7 @@ class KDE_EXPORT SimpleButton : public QAbstractButton
 
     public:
         SimpleButton(QWidget *parent);
-        KDE_DEPRECATED SimpleButton(QWidget *parent, const char *name);
+        KDE_CONSTRUCTOR_DEPRECATED SimpleButton(QWidget *parent, const char *name);
         virtual ~SimpleButton();
         KDE_DEPRECATED void setPixmap(const QPixmap &pix) { return setIcon(QIcon(pix)); }
         void setIcon(const QIcon &icon);
