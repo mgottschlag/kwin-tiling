@@ -68,7 +68,8 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
     userlb = new KComboBox( hlpw1 );
     u_label = new QLabel( i18n("Use&r:"), hlpw1 );
     u_label->setBuddy( userlb );
-    QHBoxLayout *hlpl1 = new QHBoxLayout(alGroup->layout());
+    QHBoxLayout *hlpl1 = new QHBoxLayout();
+    alGroup->layout()->addItem(hlpl1);
     hlpl1->setSpacing(KDialog::spacingHint());
     hlpl1->addWidget(u_label);
     hlpl1->addWidget(userlb);
