@@ -694,7 +694,8 @@ KStdGreeter::KStdGreeter()
 
 	inner_box->addWidget( new KSeparator( Qt::Horizontal, this ) );
 
-	QBoxLayout *hbox2 = new QHBoxLayout( inner_box );
+	QBoxLayout *hbox2 = new QHBoxLayout();
+	inner_box->addItem( hbox2 );
 	hbox2->setSpacing( 10 );
 	hbox2->addWidget( goButton );
 	hbox2->addStretch( 1 );

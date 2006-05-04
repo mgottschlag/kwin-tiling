@@ -82,7 +82,8 @@ ChooserDlg::ChooserDlg()
 	itxt->setBuddy( iline );
 	QPushButton *addButton = new QPushButton( i18n("A&dd"), this );
 	connect( addButton, SIGNAL(clicked()), SLOT(addHostname()) );
-	QBoxLayout *hibox = new QHBoxLayout( vbox );
+	QBoxLayout *hibox = new QHBoxLayout();
+	vbox->addItem( hibox );
 	hibox->setSpacing( 10 );
 	hibox->addWidget( itxt );
 	hibox->addWidget( iline );
@@ -93,7 +94,8 @@ ChooserDlg::ChooserDlg()
 	acceptButton->setDefault( true );
 	QPushButton *pingButton = new QPushButton( i18n("&Refresh"), this );
 
-	QBoxLayout *hbox = new QHBoxLayout( vbox );
+	QBoxLayout *hbox = new QHBoxLayout();
+	vbox->addItem( hbox );
 	hbox->setSpacing( 20 );
 	hbox->addWidget( acceptButton );
 	hbox->addWidget( pingButton );

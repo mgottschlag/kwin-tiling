@@ -163,7 +163,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     connect( mSaverListView, SIGNAL(doubleClicked ( Q3ListViewItem *)), this, SLOT( slotSetup()));
     mSaverListView->setWhatsThis( i18n("Select the screen saver to use.") );
 
-    QBoxLayout* hlay = new QHBoxLayout(groupLayout);
+    QBoxLayout* hlay = new QHBoxLayout();
+    groupLayout->addItem(hlay);
     hlay->setSpacing(KDialog::spacingHint());
     mSetupBt = new QPushButton( i18n("&Setup..."), mSaverGroup );
     connect( mSetupBt, SIGNAL( clicked() ), SLOT( slotSetup() ) );
@@ -282,7 +283,8 @@ KScreenSaver::KScreenSaver(QWidget *parent, const char *name, const QStringList&
     rightColumnLayout->addWidget(mMonitorLabel, 0);
     mMonitorLabel->setWhatsThis( i18n("A preview of the selected screen saver.") );
 
-    QBoxLayout* advancedLayout = new QHBoxLayout( rightColumnLayout );
+    QBoxLayout* advancedLayout = new QHBoxLayout();
+    rightColumnLayout->addItem( advancedLayout );
     advancedLayout->setSpacing( 3 );
     advancedLayout->addWidget( new QWidget( this ) );
     QPushButton* advancedBt = new QPushButton(
