@@ -414,7 +414,9 @@ void KDIconView::createActions()
         pasteTo->setEnabled( false ); // only enabled during popupMenu()
 
         (void) new KAction( i18n( "&Rename" ), /*"editrename",*/ Qt::Key_F2, this, SLOT( renameSelectedItem() ), &m_actionCollection, "rename" );
-        (void) new KAction( i18n( "&Properties" ), Qt::ALT+Qt::Key_Return, this, SLOT( slotProperties() ), &m_actionCollection, "properties" );
+        KAction *action = new KAction( i18n( "&Properties" ), &m_actionCollection, "properties" );
+        connect(action, SIGNAL(triggered(bool) ), SLOT( slotProperties() ));
+        action->setShortcut(Qt::ALT+Qt::Key_Return);
         KAction* trash = new KAction( KIcon("edittrash"), i18n( "&Move to Trash" ), &m_actionCollection, "trash" );
         trash->setShortcut(Qt::Key_Delete);
         connect(trash, SIGNAL(triggered(bool)), SLOT(slotTrash()));
