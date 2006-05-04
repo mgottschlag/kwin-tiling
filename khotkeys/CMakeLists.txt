@@ -3,17 +3,17 @@ kde4_header()
 project(khotkeys)
 
 set(libshared_SRCS
-    ${CMAKE_SOURCE_DIR}/khotkeys/shared/action_data.cpp
-    ${CMAKE_SOURCE_DIR}/khotkeys/shared/khotkeysglobal.cpp
-    ${CMAKE_SOURCE_DIR}/khotkeys/shared/triggers.cpp
-    ${CMAKE_SOURCE_DIR}/khotkeys/shared/windows.cpp
-    ${CMAKE_SOURCE_DIR}/khotkeys/shared/settings.cpp
-    ${CMAKE_SOURCE_DIR}/khotkeys/shared/actions.cpp
-    ${CMAKE_SOURCE_DIR}/khotkeys/shared/input.cpp
-    ${CMAKE_SOURCE_DIR}/khotkeys/shared/conditions.cpp
-    ${CMAKE_SOURCE_DIR}/khotkeys/shared/khlistview.cpp
-    ${CMAKE_SOURCE_DIR}/khotkeys/shared/khlistbox.cpp
-    ${CMAKE_SOURCE_DIR}/khotkeys/shared/gestures.cpp )
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/action_data.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/khotkeysglobal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/triggers.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/windows.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/actions.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/input.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/conditions.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/khlistview.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/khlistbox.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/gestures.cpp )
 
 
 add_subdirectory( shared ) 

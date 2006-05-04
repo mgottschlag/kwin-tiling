@@ -4,8 +4,8 @@ project(kdesktop)
 
 # used by kdesktop but also by lock/
 set( kdesktop_KCFG_SRCS
-	${CMAKE_SOURCE_DIR}/workspace/kdesktop/kdesktopsettings.kcfgc
-	${CMAKE_SOURCE_DIR}/workspace/kdesktop/klaunchsettings.kcfgc )
+	${CMAKE_CURRENT_SOURCE_DIR}/kdesktopsettings.kcfgc
+	${CMAKE_CURRENT_SOURCE_DIR}/klaunchsettings.kcfgc )
 
 kde4_add_kcfg_files(kdesktop_LIB_SRCS ${kdesktop_KCFG_SRCS})
 include_directories(

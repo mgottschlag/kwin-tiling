@@ -4,7 +4,7 @@ if (X11_XFT_FOUND)
 
   add_definitions(${FREETYPE_INCLUDE_DIR})
 
-  set(libkfontinstprint_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/KfiPrint.cpp )
+  set(libkfontinstprint_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/KfiPrint.cpp )
 
   add_subdirectory( lib ) 
   add_subdirectory( kcmfontinst ) 

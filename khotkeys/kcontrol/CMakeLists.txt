@@ -1,6 +1,6 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/khotkeys/shared ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR}/khotkeys/kcontrol/ui/ ${KDE4_INCLUDES} )
+include_directories( ${CMAKE_SOURCE_DIR}/khotkeys/shared ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/ui/ ${KDE4_INCLUDES} )
 
 
 ########### next target ###############

@@ -3,58 +3,58 @@ kde4_header()
 project(kicker)
 
 set(libkicker_core_SRCS
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/main.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/kicker.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/userrectsel.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/containerarea.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/applethandle.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/container_base.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/container_button.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/container_applet.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/container_extension.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/extensionmanager.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/menumanager.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/pluginmanager.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/showdesktop.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/containerarealayout.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/unhidetrigger.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/panelextension.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/kicker.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/userrectsel.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/containerarea.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/applethandle.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/container_base.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/container_button.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/container_applet.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/container_extension.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/extensionmanager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/menumanager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/pluginmanager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/showdesktop.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/containerarealayout.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/unhidetrigger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/core/panelextension.cpp
     )
 
 set(libkicker_buttons_SRCS
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons/servicebutton.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons/bookmarksbutton.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons/browserbutton.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons/desktopbutton.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons/extensionbutton.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons/kbutton.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons/nonkdeappbutton.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons/servicemenubutton.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons/urlbutton.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons/windowlistbutton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/buttons/servicebutton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/buttons/bookmarksbutton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/buttons/browserbutton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/buttons/desktopbutton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/buttons/extensionbutton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/buttons/kbutton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/buttons/nonkdeappbutton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/buttons/servicemenubutton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/buttons/urlbutton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/buttons/windowlistbutton.cpp
     )
 
 set(libkicker_ui_SRCS
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/addbutton_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/addapplet.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/addapplet_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/appletop_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/browser_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/client_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/exe_dlg.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/k_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/quickbrowser_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/service_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/addextension_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/extensionop_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/recentapps.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/browser_dlg.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/removeapplet_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/removeextension_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/removecontainer_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/removebutton_mnu.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/hidebutton.cpp
-    ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/addappletvisualfeedback.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/addbutton_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/addapplet.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/addapplet_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/appletop_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/browser_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/client_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/exe_dlg.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/k_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/quickbrowser_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/service_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/addextension_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/extensionop_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/recentapps.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/browser_dlg.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/removeapplet_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/removeextension_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/removecontainer_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/removebutton_mnu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/hidebutton.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/addappletvisualfeedback.cpp
 )
 
 # Those include dirs also apply to all our subdirs

@@ -14,12 +14,12 @@ include_directories(
 
 ########### next target ###############
 set(libkdmthemer_SRCS
-	${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend/themer/kdmthemer.cpp
-	${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend/themer/kdmitem.cpp
-	${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend/themer/kdmpixmap.cpp
-	${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend/themer/kdmrect.cpp
-	${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend/themer/kdmlabel.cpp
-	${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend/themer/kdmlayout.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/themer/kdmthemer.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/themer/kdmitem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/themer/kdmpixmap.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/themer/kdmrect.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/themer/kdmlabel.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/themer/kdmlayout.cpp
 	)
 
 

@@ -1,7 +1,7 @@
 kde4_header()
 include_directories(
-    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/
-    ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/
+    ${CMAKE_CURRENT_SOURCE_DIR}/../lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/
     ${KDE4_INCLUDES} )
 
 
