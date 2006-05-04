@@ -143,28 +143,29 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   {
      new KAction(i18n("Configure Desktop..."), "configure", 0, this, SLOT( slotConfigureDesktop() ),
                  m_actionCollection, "configdesktop" );
-     new KAction(i18n("Disable Desktop Menu"), 0, this, SLOT( slotToggleDesktopMenu() ),
-                 m_actionCollection, "togglemenubar" );
+     KAction *action = new KAction(i18n("Disable Desktop Menu"), m_actionCollection, "togglemenubar" );
+     connect(action, SIGNAL(triggered(bool) ), SLOT( slotToggleDesktopMenu() ));
   }
 
-  new KAction(i18n("Unclutter Windows"), 0, this, SLOT( slotUnclutterWindows() ),
-              m_actionCollection, "unclutter" );
-  new KAction(i18n("Cascade Windows"), 0, this, SLOT( slotCascadeWindows() ),
-              m_actionCollection, "cascade" );
+  KAction *action;
+  action = new KAction(i18n("Unclutter Windows"), m_actionCollection, "unclutter" );
+  connect(action, SIGNAL(triggered(bool) ), SLOT( slotUnclutterWindows() ));
+  action = new KAction(i18n("Cascade Windows"), m_actionCollection, "cascade" );
+  connect(action, SIGNAL(triggered(bool) ), SLOT( slotCascadeWindows() ));
 
   // arrange menu actions
   if (m_bDesktopEnabled && KAuthorized::authorizeKAction("editable_desktop_icons"))
   {
-     new KAction(i18n("By Name (Case Sensitive)"), 0, this, SLOT( slotArrangeByNameCS() ),
-                 m_actionCollection, "sort_ncs");
-     new KAction(i18n("By Name (Case Insensitive)"), 0, this, SLOT( slotArrangeByNameCI() ),
-                 m_actionCollection, "sort_nci");
-     new KAction(i18n("By Size"), 0, this, SLOT( slotArrangeBySize() ),
-                 m_actionCollection, "sort_size");
-     new KAction(i18n("By Type"), 0, this, SLOT( slotArrangeByType() ),
-                 m_actionCollection, "sort_type");
-     new KAction(i18n("By Date"), 0, this, SLOT( slotArrangeByDate() ),
-                 m_actionCollection, "sort_date");
+     action = new KAction(i18n("By Name (Case Sensitive)"), m_actionCollection, "sort_ncs");
+     connect(action, SIGNAL(triggered(bool) ), SLOT( slotArrangeByNameCS() ));
+     action = new KAction(i18n("By Name (Case Insensitive)"), m_actionCollection, "sort_nci");
+     connect(action, SIGNAL(triggered(bool) ), SLOT( slotArrangeByNameCI() ));
+     action = new KAction(i18n("By Size"), m_actionCollection, "sort_size");
+     connect(action, SIGNAL(triggered(bool) ), SLOT( slotArrangeBySize() ));
+     action = new KAction(i18n("By Type"), m_actionCollection, "sort_type");
+     connect(action, SIGNAL(triggered(bool) ), SLOT( slotArrangeByType() ));
+     action = new KAction(i18n("By Date"), m_actionCollection, "sort_date");
+     connect(action, SIGNAL(triggered(bool) ), SLOT( slotArrangeByDate() ));
 
      KToggleAction *aSortDirsFirst = new KToggleAction( i18n("Directories First"), m_actionCollection, "sort_directoriesfirst" );
      connect( aSortDirsFirst, SIGNAL( toggled( bool ) ),
