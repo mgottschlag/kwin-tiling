@@ -22,7 +22,7 @@
 
 #include <kiconloader.h>
 #include <qcursor.h>
-#include <qapplication.h>
+#include <kapplication.h>
 #include <qimage.h>
 #include <qbitmap.h>
 //Added by qt3to4:
@@ -32,16 +32,30 @@
 #include <X11/Xlib.h>
 #include <QX11Info>
 
-StartupId::StartupId( QObject* parent, const char* name )
-    :   QObject( parent ),
+#define KDE_STARTUP_ICON "kmenu"
+
+enum kde_startup_status_enum { StartupPre, StartupIn, StartupDone };
+static kde_startup_status_enum kde_startup_status = StartupPre;
+static Atom kde_splash_progress;
+
+StartupId::StartupId( QWidget* parent, const char* name )
+    :   QWidget( parent ),
 	startup_info( KStartupInfo::CleanOnCantDetect ),
 	startup_widget( NULL ),
 	blinking( true ),
 	bouncing( false )
     {
     setObjectName( name );
+    hide(); // is QWidget only because of x11Event()
+    if( kde_startup_status == StartupPre )
+        {
+        kde_splash_progress = XInternAtom( QX11Info::display(), "_KDE_SPLASH_PROGRESS", False );
+        XWindowAttributes attrs;
+        XGetWindowAttributes( QX11Info::display(), QX11Info::appRootWindow(), &attrs);
+        XSelectInput( QX11Info::display(), QX11Info::appRootWindow(), attrs.your_event_mask | SubstructureNotifyMask);
+        kapp->installX11EventFilter( this );
+        }
     update_timer.setSingleShot( true );
-
     connect( &update_timer, SIGNAL( timeout()), SLOT( update_startupid()));
     connect( &startup_info,
         SIGNAL( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )),
@@ -92,12 +106,43 @@ void StartupId::gotRemoveStartup( const KStartupInfoId& id_P )
     startups.remove( id_P );
     if( startups.count() == 0 )
         {
-        stop_startupid();
         current_startup = KStartupInfoId(); // null
+        if( kde_startup_status == StartupIn )
+            start_startupid( KDE_STARTUP_ICON );
+        else
+            stop_startupid();
         return;
         }
     current_startup = startups.begin().key();
     start_startupid( startups[ current_startup ] );
+    }
+
+bool StartupId::x11Event( XEvent* e )
+    {
+    if( e->type == ClientMessage && e->xclient.window == QX11Info::appRootWindow()
+        && e->xclient.message_type == kde_splash_progress )
+        {
+        const char* s = e->xclient.data.b;
+        if( strcmp( s, "kicker" ) == 0 && kde_startup_status == StartupPre )
+            {
+            kde_startup_status = StartupIn;
+            if( startups.count() == 0 )
+                start_startupid( KDE_STARTUP_ICON );
+            // 60(?) sec timeout - shouldn't be hopefully needed anyway, ksmserver should have it too
+            QTimer::singleShot( 60000, this, SLOT( finishKDEStartup()));
+            }
+        else if( strcmp( s, "session ready" ) == 0 && kde_startup_status < StartupDone )
+            QTimer::singleShot( 2000, this, SLOT( finishKDEStartup()));
+        }
+    return false;
+    }
+
+void StartupId::finishKDEStartup()
+    {
+    kde_startup_status = StartupDone;
+    kapp->removeX11EventFilter( this );
+    if( startups.count() == 0 )
+        stop_startupid();
     }
 
 void StartupId::stop_startupid()

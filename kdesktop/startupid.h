@@ -22,7 +22,7 @@
 
 #include <sys/types.h>
 
-#include <qobject.h>
+#include <qwidget.h>
 #include <qpixmap.h>
 #include <qstring.h>
 #include <qtimer.h>
@@ -32,14 +32,15 @@
 class QStyle;
 
 class StartupId
-    : public QObject
+    : public QWidget
     {
     Q_OBJECT
     public:
-        StartupId( QObject* parent = 0, const char* name = 0 );
+        StartupId( QWidget* parent = 0, const char* name = 0 );
         virtual ~StartupId();
         void configure();
     protected:
+        virtual bool x11Event( XEvent* e );
         void start_startupid( const QString& icon );
         void stop_startupid();
     protected Q_SLOTS:
@@ -47,6 +48,7 @@ class StartupId
         void gotNewStartup( const KStartupInfoId& id, const KStartupInfoData& data );
         void gotStartupChange( const KStartupInfoId& id, const KStartupInfoData& data );
         void gotRemoveStartup( const KStartupInfoId& id );
+        void finishKDEStartup();
     protected:
         KStartupInfo startup_info;
         QWidget* startup_widget;

@@ -69,7 +69,7 @@ int main( int argc, char* argv[])
         }
     XSetWindowAttributes attrs;
     attrs.override_redirect = True;
-    const int states = 7;
+    const int states = 6;
     const int frame = 3;
     const int segment = sw / 2 / states;
     const int w = segment * states + 2 * frame;
@@ -130,10 +130,8 @@ int main( int argc, char* argv[])
                     state = 4;
                 else if( strcmp( s, "kdesktop" ) == 0 && state < 5 )
                     state = 5;
-                else if( strcmp( s, "kicker" ) == 0 && state < 6 )
+                else if(( strcmp( s, "kicker" ) == 0 || strcmp( s, "session ready" ) == 0 ) && state < 6 )
                     state = 6;
-                else if( strcmp( s, "session ready" ) == 0 && state < 7 )
-                    state = 7;
                 }
             }
         if( test && time( NULL ) >= test_time )

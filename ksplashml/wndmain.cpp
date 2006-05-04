@@ -72,7 +72,7 @@ KSplash::KSplash(const char *name)
     QTimer::singleShot( 1000, this, SLOT(slotExec()));
   }
   else
-    QTimer::singleShot( 1000, this, SLOT(initDcop()));
+    QTimer::singleShot( 100, this, SLOT(initDcop()));
 
   // Make sure we don't stay up forever.
   if (!mKsTheme->managedMode())
@@ -243,21 +243,7 @@ void KSplash::upAndRunning( QString s )
     updateState( 5 );
     mStep = 5;
   }
-  else if( s == "kicker" )
-  {
-    if( mState > 6 ) return;
-    updateState( 6 );
-    mStep = 6;
-    setMaxProgress( mMaxProgress ); // show the progressbar
-  }
-//  else if( (s == "restore session") )
-//  {
-//    if( mState > 7 ) return;
-//    updateState( 7 );
-//    mStep = 7;
-//    mSessMgrCalled = true;
-//  }
-  else if( s == "session ready" )
+  else if( s == "kicker" || s == "session ready" )
   {
     updateState( 7 );
     mStep = 9;
