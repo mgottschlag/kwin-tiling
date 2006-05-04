@@ -75,7 +75,8 @@ KDMAppearanceWidget::KDMAppearanceWidget(QWidget *parent)
   grid->setColumnStretch(0, 1);
   grid->setColumnStretch(1, 1);
 
-  QHBoxLayout *hlay = new QHBoxLayout( KDialog::spacingHint() );
+  QHBoxLayout *hlay = new QHBoxLayout( );
+  hlay->setSpacing(KDialog::spacingHint());
   grid->addLayout(hlay, 1, 0, 1, 2 );
   greetstr_lined = new KLineEdit(group);
   QLabel *label = new QLabel(i18n("&Greeting:"),group);

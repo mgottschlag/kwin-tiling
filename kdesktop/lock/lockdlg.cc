@@ -580,7 +580,8 @@ void PasswordDlg::slotStartNewSession()
     QCheckBox *cb = new QCheckBox( i18n("&Do not ask again"), winFrame );
     grid->addWidget( cb, 1, 0, 1, 2 );
 
-    QBoxLayout *hbox = new QHBoxLayout( mbox );
+    QBoxLayout *hbox = new QHBoxLayout( );
+    mbox->addItem(hbox);
     hbox->setSpacing( KDialog::spacingHint() );
     hbox->addStretch( 1 );
     hbox->addWidget( okbutton );

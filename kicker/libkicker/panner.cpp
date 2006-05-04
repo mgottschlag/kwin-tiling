@@ -58,7 +58,7 @@ Panner::Panner( QWidget* parent, const char* /* name */ )
     setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 
     // layout
-    d->layout = new QBoxLayout(this, QBoxLayout::LeftToRight);
+    d->layout = new QBoxLayout(QBoxLayout::LeftToRight, this);
     d->layout->addWidget(viewport(), 1);
     setOrientation(Qt::Horizontal);
 }

@@ -600,7 +600,7 @@ KStdGreeter::KStdGreeter()
 	} else
 #endif
         {
-            main_box = new QHBoxLayout( this, 10, 10 );
+            main_box = new QHBoxLayout( this );
             main_box->setMargin( 10 );
             main_box->setSpacing( 10 );
         }

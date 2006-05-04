@@ -70,9 +70,9 @@ Lockout::Lockout( const QString& configFile, QWidget *parent, const char *name)
     setBackgroundOrigin( AncestorOrigin );
 
     if ( orientation() == Qt::Horizontal )
-        layout = new QBoxLayout( this, QBoxLayout::TopToBottom );
+        layout = new QBoxLayout( QBoxLayout::TopToBottom, this );
     else
-        layout = new QBoxLayout( this, QBoxLayout::LeftToRight );
+        layout = new QBoxLayout( QBoxLayout::LeftToRight, this );
 
     layout->setAutoAdd( true );
     layout->setMargin( 0 );

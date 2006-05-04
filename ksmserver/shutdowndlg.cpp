@@ -105,7 +105,8 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     label->setFont( fnt );
     vbox->addWidget( label, 0, Qt::AlignHCenter );
 
-    QHBoxLayout* hbox = new QHBoxLayout( vbox );
+    QHBoxLayout* hbox = new QHBoxLayout( );
+    vbox->addItem(hbox);
     hbox->setSpacing( 2 * KDialog::spacingHint() );
 
     // konqy
