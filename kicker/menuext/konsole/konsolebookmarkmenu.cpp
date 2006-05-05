@@ -131,8 +131,7 @@ void KonsoleBookmarkMenu::fillBookmarkMenu()
         // kDebug(1203) << "Creating URL bookmark menu item for " << bm.text() << endl;
         // create a normal URL item, with ID as a name
         KAction * action = new KAction( text, bm.icon(), 0,
-                                        this, SLOT( slotBookmarkSelected() ),
-                                        m_actionCollection, bm.url().url().toUtf8() );
+                                        this, SLOT( slotBookmarkSelected() ), m_actionCollection, bm.url().url() );
 
         action->setToolTip(bm.url().prettyURL());
 	m_parentMenu->addAction( action );
