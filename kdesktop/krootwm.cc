@@ -172,12 +172,10 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
      KToggleAction *aSortDirsFirst = new KToggleAction( i18n("Directories First"), m_actionCollection, "sort_directoriesfirst" );
      connect( aSortDirsFirst, SIGNAL( toggled( bool ) ),
               this, SLOT( slotToggleDirFirst( bool ) ) );
-     action = new KAction(i18n("Line Up Horizontally"), 0,
-                          this, SLOT( slotLineupIconsHoriz() ),
-                          m_actionCollection, "lineupHoriz" );
+     action = new KAction(i18n("Line Up Horizontally"), m_actionCollection, "lineupHoriz" );
+     connect(action, SIGNAL(triggered(bool) ), SLOT( slotLineupIconsHoriz() ));
      action = new KAction(i18n("Line Up Vertically"), 0,
-                          this, SLOT( slotLineupIconsVert() ),
-                          m_actionCollection, "lineupVert" );
+                          this, SLOT( slotLineupIconsVert() ), m_actionCollection, "lineupVert" );
      KToggleAction *aAutoAlign = new KToggleAction(i18n("Align to Grid"), m_actionCollection, "realign" );
      connect( aAutoAlign, SIGNAL( toggled( bool ) ),
               this, SLOT( slotToggleAutoAlign( bool ) ) );
