@@ -299,15 +299,15 @@ void KRootWm::buildMenus()
         pArrangeMenu->addAction( m_actionCollection->action("sort_nci") );
         pArrangeMenu->addAction( m_actionCollection->action("sort_size") );
         pArrangeMenu->addAction( m_actionCollection->action("sort_type") );
-        m_actionCollection->action("sort_date" )->plug( pArrangeMenu );
+	pArrangeMenu->addAction( m_actionCollection->action("sort_date" ) );
         pArrangeMenu->addSeparator();
         pArrangeMenu->addAction( m_actionCollection->action("sort_directoriesfirst") );
 
         pLineupMenu = new QMenu;
-        m_actionCollection->action( "lineupHoriz" )->plug( pLineupMenu );
-        m_actionCollection->action( "lineupVert" )->plug( pLineupMenu );
+        pLineupMenu->addAction( m_actionCollection->action( "lineupHoriz" ) );
+	pLineupMenu->addAction( m_actionCollection->action( "lineupVert" ) );
         pLineupMenu->addSeparator();
-        m_actionCollection->action( "realign" )->plug( pLineupMenu );
+	pLineupMenu->addAction( m_actionCollection->action( "realign" ) );
     }
 
     sessionsMenu = 0;
@@ -426,10 +426,10 @@ void KRootWm::buildMenus()
 
        pIconOperationsMenu->insertItem(i18n("Sort Icons"), pArrangeMenu);
        pIconOperationsMenu->addSeparator();
-       m_actionCollection->action( "lineupHoriz" )->plug( pIconOperationsMenu );
-       m_actionCollection->action( "lineupVert" )->plug( pIconOperationsMenu );
+       pIconOperationsMenu->addAction( m_actionCollection->action( "lineupHoriz" ) );
+       pIconOperationsMenu->addAction( m_actionCollection->action( "lineupVert" ) );
        pIconOperationsMenu->addSeparator();
-       m_actionCollection->action( "realign" )->plug( pIconOperationsMenu );
+       pIconOperationsMenu->addAction( m_actionCollection->action( "realign" ) );
        KAction *aLockIcons = m_actionCollection->action( "lock_icons" );
        if ( aLockIcons )
            pIconOperationsMenu->addAction( aLockIcons );

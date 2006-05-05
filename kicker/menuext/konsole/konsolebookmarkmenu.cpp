@@ -96,7 +96,7 @@ void KonsoleBookmarkMenu::fillBookmarkMenu()
       KActionMenu * actionMenu = new KActionMenu( KIcon("netscape"),
                                                   i18n("Netscape Bookmarks"),
                                                   m_actionCollection, 0L );
-      actionMenu->plug( m_parentMenu );
+      m_parentMenu->addAction( actionMenu );
       m_actions.append( actionMenu );
       KonsoleBookmarkMenu *subMenu = new KonsoleBookmarkMenu( m_pManager,
                                          m_kOwner, actionMenu->popupMenu(),
@@ -135,8 +135,8 @@ void KonsoleBookmarkMenu::fillBookmarkMenu()
                                         m_actionCollection, bm.url().url().toUtf8() );
 
         action->setToolTip(bm.url().prettyURL());
+	m_parentMenu->addAction( action );
 
-        action->plug( m_parentMenu );
         m_actions.append( action );
       }
     }
@@ -145,7 +145,7 @@ void KonsoleBookmarkMenu::fillBookmarkMenu()
       // kDebug(1203) << "Creating bookmark submenu named " << bm.text() << endl;
       KActionMenu * actionMenu = new KActionMenu( KIcon(bm.icon()), text,
                                                   m_actionCollection, 0L );
-      actionMenu->plug( m_parentMenu );
+      m_parentMenu->addAction( actionMenu );
       m_actions.append( actionMenu );
       KonsoleBookmarkMenu *subMenu = new KonsoleBookmarkMenu( m_pManager,
                                          m_kOwner, actionMenu->popupMenu(),
