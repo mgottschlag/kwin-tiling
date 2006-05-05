@@ -60,6 +60,9 @@ kde4_add_dcop_skels(kdesktop_SRCS KDesktopIface.h KScreensaverIface.h KBackgroun
 kde4_add_kdeinit_executable( kdesktop ${kdesktop_SRCS})
 
 target_link_libraries(kdeinit_kdesktop  ${KDE4_KDE3SUPPORT_LIBS} kworkspace ${KDE4_KDESU_LIBS} konq ${X11_X11_LIB} ${X11_Xext_LIB} ${X11_Xss_LIB})
+if(X11_Xcursor_FOUND)
+  target_link_libraries(kdeinit_kdesktop ${X11_Xcursor_LIB})
+endif(X11_Xcursor_FOUND)
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kdesktop )
 

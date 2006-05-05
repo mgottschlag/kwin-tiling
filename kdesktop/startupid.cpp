@@ -17,6 +17,8 @@
    Boston, MA 02110-1301, USA.
 */
 
+#include <config.h>
+
 #include "startupid.h"
 #include "klaunchsettings.h"
 
@@ -33,6 +35,10 @@
 #include <QX11Info>
 
 #define KDE_STARTUP_ICON "kmenu"
+
+#ifdef HAVE_XCURSOR
+#include <X11/Xcursor/Xcursor.h>
+#endif
 
 enum kde_startup_status_enum { StartupPre, StartupIn, StartupDone };
 static kde_startup_status_enum kde_startup_status = StartupPre;
@@ -274,6 +280,20 @@ void StartupId::update_startupid()
         return;
         }
     QPoint c_pos( x, y );
+    int cursor_size = 0;
+#ifdef HAVE_XCURSOR
+    cursor_size = XcursorGetDefaultSize( QX11Info::display());
+#endif
+    int X_DIFF;
+    if( cursor_size <= 16 )
+        X_DIFF = 8 + 7;
+    else if( cursor_size <= 32 )
+        X_DIFF = 16 + 7;
+    else if( cursor_size <= 48 )
+        X_DIFF = 24 + 7;
+    else
+        X_DIFF = 32 + 7;
+    int Y_DIFF = X_DIFF;
     if( startup_widget->x() != c_pos.x() + X_DIFF
         || startup_widget->y() != c_pos.y() + Y_DIFF + yoffset )
         startup_widget->move( c_pos.x() + X_DIFF, c_pos.y() + Y_DIFF + yoffset );
