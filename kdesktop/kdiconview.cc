@@ -416,7 +416,7 @@ void KDIconView::createActions()
         KAction *action = new KAction( i18n( "&Rename" ), &m_actionCollection, "rename" );
         connect(action, SIGNAL(triggered(bool) ), SLOT( renameSelectedItem() ));
         action->setShortcut(Qt::Key_F2);
-        KAction *action = new KAction( i18n( "&Properties" ), &m_actionCollection, "properties" );
+        action = new KAction( i18n( "&Properties" ), &m_actionCollection, "properties" );
         connect(action, SIGNAL(triggered(bool) ), SLOT( slotProperties() ));
         action->setShortcut(Qt::ALT+Qt::Key_Return);
         KAction* trash = new KAction( KIcon("edittrash"), i18n( "&Move to Trash" ), &m_actionCollection, "trash" );

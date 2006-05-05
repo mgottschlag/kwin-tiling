@@ -67,7 +67,7 @@ void KonsoleBookmarkMenu::refill()
 
   foreach (KAction* action, m_actions)
   {
-    action->unplug(m_parentMenu);
+    m_parentMenu->removeAction(action);
   }
 
   m_parentMenu->clear();
