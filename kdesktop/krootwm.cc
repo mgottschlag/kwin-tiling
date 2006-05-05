@@ -135,19 +135,21 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   }
 #endif
 
+  KAction *action;
+
   if (KAuthorized::authorizeKAction("run_command"))
   {
-     new KAction(i18n("Run Command..."), "run", 0, m_pDesktop, SLOT( slotExecuteCommand() ), m_actionCollection, "exec" );
+      action = new KAction(KIcon("run"), i18n("Run Command..."), m_actionCollection, "exec" );
+      connect(action, SIGNAL(triggered(bool)), m_pDesktop, SLOT( slotExecuteCommand() ));
   }
   if (!KGlobal::config()->isImmutable())
   {
-     new KAction(i18n("Configure Desktop..."), "configure", 0, this, SLOT( slotConfigureDesktop() ),
-                 m_actionCollection, "configdesktop" );
-     KAction *action = new KAction(i18n("Disable Desktop Menu"), m_actionCollection, "togglemenubar" );
-     connect(action, SIGNAL(triggered(bool) ), SLOT( slotToggleDesktopMenu() ));
+      action = new KAction(KIcon("configure"), i18n("Configure Desktop..."), m_actionCollection, "configdesktop" );
+      connect(action, SIGNAL(triggered(bool)), SLOT( slotConfigureDesktop() ));
+      action = new KAction(i18n("Disable Desktop Menu"), m_actionCollection, "togglemenubar" );
+      connect(action, SIGNAL(triggered(bool) ), SLOT( slotToggleDesktopMenu() ));
   }
 
-  KAction *action;
   action = new KAction(i18n("Unclutter Windows"), m_actionCollection, "unclutter" );
   connect(action, SIGNAL(triggered(bool) ), SLOT( slotUnclutterWindows() ));
   action = new KAction(i18n("Cascade Windows"), m_actionCollection, "cascade" );
@@ -170,12 +172,12 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
      KToggleAction *aSortDirsFirst = new KToggleAction( i18n("Directories First"), m_actionCollection, "sort_directoriesfirst" );
      connect( aSortDirsFirst, SIGNAL( toggled( bool ) ),
               this, SLOT( slotToggleDirFirst( bool ) ) );
-     new KAction(i18n("Line Up Horizontally"), 0,
-                 this, SLOT( slotLineupIconsHoriz() ),
-                 m_actionCollection, "lineupHoriz" );
-     new KAction(i18n("Line Up Vertically"), 0,
-                 this, SLOT( slotLineupIconsVert() ),
-                 m_actionCollection, "lineupVert" );
+     action = new KAction(i18n("Line Up Horizontally"), 0,
+                          this, SLOT( slotLineupIconsHoriz() ),
+                          m_actionCollection, "lineupHoriz" );
+     action = new KAction(i18n("Line Up Vertically"), 0,
+                          this, SLOT( slotLineupIconsVert() ),
+                          m_actionCollection, "lineupVert" );
      KToggleAction *aAutoAlign = new KToggleAction(i18n("Align to Grid"), m_actionCollection, "realign" );
      connect( aAutoAlign, SIGNAL( toggled( bool ) ),
               this, SLOT( slotToggleAutoAlign( bool ) ) );
@@ -185,14 +187,14 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   }
   if (m_bDesktopEnabled)
   {
-     new KAction(i18n("Refresh Desktop"), "desktop", 0, this, SLOT( slotRefreshDesktop() ),
-                 m_actionCollection, "refresh" );
+     KAction *action = new KAction(KIcon("desktop"), i18n("Refresh Desktop"), m_actionCollection, "refresh" );
+     connect(action, SIGNAL(triggered(bool)), SLOT( slotRefreshDesktop() ));
   }
   // Icons in sync with kicker
   if (KAuthorized::authorizeKAction("lock_screen"))
   {
-      new KAction(i18n("Lock Session"), "lock", 0, this, SLOT( slotLock() ),
-                  m_actionCollection, "lock" );
+      KAction *action = new KAction(KIcon("lock"), i18n("Lock Session"), m_actionCollection, "lock" );
+      connect(action, SIGNAL(triggered(bool)), SLOT( slotLock() ));
   }
   if (KAuthorized::authorizeKAction("logout"))
   {
@@ -202,12 +204,12 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
 
   if (KAuthorized::authorizeKAction("start_new_session") && DM().isSwitchable())
   {
-      new KAction(i18n("Start New Session"), "fork", 0, this,
-                  SLOT( slotNewSession() ), m_actionCollection, "newsession" );
+      KAction *action = new KAction(KIcon("fork"), i18n("Start New Session"), m_actionCollection, "newsession" );
+      connect(action, SIGNAL(triggered(bool)), SLOT( slotNewSession() ));
       if (KAuthorized::authorizeKAction("lock_screen"))
       {
-          new KAction(i18n("Lock Current && Start New Session"), "lock", 0, this,
-                      SLOT( slotLockNNewSession() ), m_actionCollection, "lockNnewsession" );
+          KAction *action = new KAction(KIcon("lock"), i18n("Lock Current && Start New Session"), m_actionCollection, "lockNnewsession" );
+          connect(action, SIGNAL(triggered(bool)), SLOT( slotLockNNewSession() ));
       }
   }
 

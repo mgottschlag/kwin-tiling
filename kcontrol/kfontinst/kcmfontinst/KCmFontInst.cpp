@@ -228,7 +228,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     toolbar->addSeparator();
 
-    act=new KAction(i18n("Add Fonts..."), "newfont", 0, this, SLOT(addFonts()), itsDirOp->actionCollection(), "addfonts");
+    act = new KAction(KIcon("newfont"), i18n("Add Fonts..."), itsDirOp->actionCollection(), "addfonts");
+    connect(act, SIGNAL(triggered(bool)), SLOT(addFonts()));
     toolbar->addAction( act );
     topMnu->insert(act);
 
@@ -242,11 +243,13 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     }
 
     toolbar->addSeparator();
-    act=new KAction(i18n("Configure..."), "configure", 0, this, SLOT(configure()), itsDirOp->actionCollection(), "configure");
+    act = new KAction(KIcon("configure"), i18n("Configure..."), itsDirOp->actionCollection(), "configure");
+    connect(act, SIGNAL(triggered(bool)), SLOT(configure()));
     toolbar->addAction( act );
 #ifdef HAVE_XFT
     toolbar->addSeparator();
-    act=new KAction(i18n("Print..."), "fileprint", 0, this, SLOT(print()), itsDirOp->actionCollection(), "print");
+    act = new KAction(KIcon("fileprint"), i18n("Print..."), itsDirOp->actionCollection(), "print");
+    connect(act, SIGNAL(triggered(bool)), SLOT(print()));
     toolbar->addAction( act );
 #endif
 

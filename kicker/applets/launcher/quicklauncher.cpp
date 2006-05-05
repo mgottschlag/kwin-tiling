@@ -118,8 +118,8 @@ QuickLauncher::QuickLauncher(const QString& configFile, Plasma::Type type, int a
     m_dragButtons = 0;
 
     m_actionCollection = new KActionCollection(this);
-    m_configAction = new KAction(i18n("Configure Quicklauncher..."), "configure", KShortcut(),
-                                 this, SLOT(slotConfigure()), m_actionCollection, "configure");
+    m_configAction = new KAction(KIcon("configure"), i18n("Configure Quicklauncher..."), m_actionCollection, "configure");
+    connect(m_configAction, SIGNAL(triggered(bool)), SLOT(slotConfigure()));
 
     m_saveTimer = new QTimer(this);
     connect(m_saveTimer, SIGNAL(timeout()), this, SLOT(saveConfig()));

@@ -62,10 +62,13 @@ KMenuEdit::~KMenuEdit()
 
 void KMenuEdit::setupActions()
 {
-    (void)new KAction(i18n("&New Submenu..."), "menu_new", KShortcut(), 0, 0, actionCollection(), "newsubmenu");
-    (void)new KAction(i18n("New &Item..."), "filenew", KStdAccel::openNew(), 0, 0, actionCollection(), "newitem");
-    if (!m_controlCenter)
-       (void)new KAction(i18n("New S&eparator"), "menu_new_sep", KShortcut(), 0, 0, actionCollection(), "newsep");
+    KAction *action = new KAction(KIcon("menu_new"), i18n("&New Submenu..."), actionCollection(), "newsubmenu");
+    action = new KAction(KIcon("filenew"), i18n("New &Item..."), actionCollection(), "newitem");
+    action->setShortcut(KStdAccel::openNew());
+    if (!m_controlCenter) 
+    {
+       KAction *action = new KAction(KIcon("menu_new_sep"), i18n("New S&eparator"), actionCollection(), "newsep");
+    }
 
     m_actionDelete = 0;
 
@@ -124,7 +127,8 @@ void KMenuEdit::slotChangeView()
 
     delete m_actionDelete;
 
-    m_actionDelete = new KAction(i18n("&Delete"), "editdelete", Qt::Key_Delete, 0, 0, actionCollection(), "delete");
+    m_actionDelete = new KAction(KIcon("editdelete"), i18n("&Delete"), actionCollection(), "delete");
+    m_actionDelete->setShortcut(Qt::Key_Delete);
 
     if (!m_splitter)
        setupView();
@@ -181,6 +185,6 @@ bool KMenuEdit::queryClose()
 void KMenuEdit::slotConfigureToolbars()
 {
     KEditToolbar dlg( factory() );
-      
+
     dlg.exec();
 }

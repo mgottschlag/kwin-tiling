@@ -120,8 +120,8 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
     connect(itsInstallButton, SIGNAL(clicked()), SLOT(install()));
     connect(itsFaceSelector, SIGNAL(valueChanged(int)), itsPreview, SLOT(showFace(int)));
 
-    itsChangeTextAction=new KAction(i18n("Change Text..."), "text", KShortcut(),
-                                    this, SLOT(changeText()), actionCollection(), "changeText");
+    itsChangeTextAction = new KAction(KIcon("text"), i18n("Change Text..."), actionCollection(), "changeText");
+    connect(itsChangeTextAction, SIGNAL(triggered(bool)), SLOT(changeText()));
     itsChangeTextAction->setEnabled(false);
     itsPrintAction=KStdAction::print(this, SLOT(print()), actionCollection(), "print");
     itsPrintAction->setEnabled(false);

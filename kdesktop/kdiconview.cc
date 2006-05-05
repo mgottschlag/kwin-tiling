@@ -423,7 +423,9 @@ void KDIconView::createActions()
 
         KConfig config("kdeglobals", true, false);
         config.setGroup( "KDE" );
-        (void) new KAction( i18n( "&Delete" ), "editdelete", Qt::SHIFT+Qt::Key_Delete, this, SLOT( slotDelete() ), &m_actionCollection, "del" );
+        action = new KAction(KIcon("editdelete"),  i18n( "&Delete" ), &m_actionCollection, "del" );
+        connect(action, SIGNAL(triggered(bool)), SLOT( slotDelete() ));
+        action->setShortcut(Qt::SHIFT+Qt::Key_Delete);
 
         // Initial state of the actions (cut/copy/paste/...)
         slotSelectionChanged();
