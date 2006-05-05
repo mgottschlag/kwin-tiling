@@ -175,7 +175,7 @@ void QuickLauncher::buildPopupMenu()
     QuickAddAppsMenu *addAppsMenu = new QuickAddAppsMenu(this, this);
     m_popup = new QMenu(this);
     m_popup->insertItem(i18n("Add Application"), addAppsMenu);
-    m_configAction->plug(m_popup);
+    m_popup->addAction( m_configAction );
 
     m_appletPopup = new QMenu(this);
     m_appletPopup->insertItem(i18n("Add Application"), addAppsMenu);

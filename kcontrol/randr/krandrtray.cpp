@@ -96,11 +96,11 @@ void KRandRSystemTray::contextMenuAboutToShow(KMenu* menu)
 	KAction *actPrefs = new KAction( i18n( "Configure Display..." ),
 		SmallIconSet( "configure" ), KShortcut(), this, SLOT( slotPrefs() ),
 		actionCollection(), 0 );
-	actPrefs->plug( menu );
+	menu->addAction( actPrefs );
 
 	menu->insertItem(SmallIcon("help"),KStdGuiItem::help().text(), m_help->menu());
 	KAction *quitAction = actionCollection()->action(KStdAction::name(KStdAction::Quit));
-	quitAction->plug(menu);
+	menu->addAction( quitAction );
 }
 
 void KRandRSystemTray::slotScreenActivated()

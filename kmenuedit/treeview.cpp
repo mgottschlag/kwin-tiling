@@ -219,21 +219,21 @@ void TreeView::setViewMode(bool showHidden)
 
     action = m_ac->action("edit_cut");
     if(action) {
-        action->plug(m_rmb);
+        m_rmb->addAction( action );
         action->setEnabled(false);
         connect(action, SIGNAL(activated()), SLOT(cut()));
     }
 
     action = m_ac->action("edit_copy");
     if(action) {
-        action->plug(m_rmb);
+        m_rmb->addAction( action );
         action->setEnabled(false);
         connect(action, SIGNAL(activated()), SLOT(copy()));
     }
 
     action = m_ac->action("edit_paste");
     if(action) {
-        action->plug(m_rmb);
+        m_rmb->addAction( action );
         action->setEnabled(false);
         connect(action, SIGNAL(activated()), SLOT(paste()));
     }
@@ -242,7 +242,7 @@ void TreeView::setViewMode(bool showHidden)
 
     action = m_ac->action("delete");
     if(action) {
-        action->plug(m_rmb);
+        m_rmb->addAction( action );
         action->setEnabled(false);
         connect(action, SIGNAL(activated()), SLOT(del()));
     }

@@ -325,17 +325,17 @@ void KRootWm::buildMenus()
         action = m_actionCollection->action("exec");
         if (action)
         {
-            action->plug( file );
+            file->addAction( action );
             file->addSeparator();
         }
 
         action = m_actionCollection->action("lock");
         if (action)
-            action->plug( file );
+            file->addAction( action );
 
         action = m_actionCollection->action("logout");
         if (action)
-            action->plug( file );
+            file->addAction( action );
 
         desk = new QMenu;
 
@@ -358,7 +358,7 @@ void KRootWm::buildMenus()
         {
            if (needSeparator)
               desk->addSeparator();
-           action->plug( desk );
+           desk->addAction( action );
            needSeparator = true;
         }
 
@@ -367,7 +367,7 @@ void KRootWm::buildMenus()
         {
            if (needSeparator)
               desk->addSeparator();
-           action->plug( desk );
+           desk->addAction( action );
            action->setText(i18n("Disable Desktop Menu"));
         }
     }
@@ -384,7 +384,7 @@ void KRootWm::buildMenus()
 
     if (menuNew)
     {
-       menuNew->plug( desktopMenu );
+       desktopMenu->addAction( menuNew );
        needSeparator = true;
     }
 
@@ -399,7 +399,7 @@ void KRootWm::buildMenus()
     action = m_actionCollection->action("exec");
     if (action)
     {
-       action->plug( desktopMenu );
+       desktopMenu->addAction( action );
        needSeparator = true;
     }
 
@@ -413,10 +413,10 @@ void KRootWm::buildMenus()
     {
         action = m_pDesktop->actionCollection()->action( "undo" );
         if (action)
-           action->plug( desktopMenu );
+           desktopMenu->addAction( action );
         action = m_pDesktop->actionCollection()->action( "paste" );
         if (action)
-           action->plug( desktopMenu );
+           desktopMenu->addAction( action );
         desktopMenu->addSeparator();
     }
 
@@ -432,7 +432,7 @@ void KRootWm::buildMenus()
        m_actionCollection->action( "realign" )->plug( pIconOperationsMenu );
        KAction *aLockIcons = m_actionCollection->action( "lock_icons" );
        if ( aLockIcons )
-           aLockIcons->plug( pIconOperationsMenu );
+           pIconOperationsMenu->addAction( aLockIcons );
 
        desktopMenu->insertItem(SmallIconSet("icons"), i18n("Icons"), pIconOperationsMenu);
     }
@@ -450,7 +450,7 @@ void KRootWm::buildMenus()
     action = m_actionCollection->action("configdesktop");
     if (action)
     {
-       action->plug( desktopMenu );
+       desktopMenu->addAction( action );
     }
     int lastSep = desktopMenu->insertSeparator();
 
@@ -463,14 +463,14 @@ void KRootWm::buildMenus()
     action = m_actionCollection->action("lock");
     if (action)
     {
-        action->plug( desktopMenu );
+        desktopMenu->addAction( action );
         needSeparator = true;
     }
 
     action = m_actionCollection->action("logout");
     if (action)
     {
-        action->plug( desktopMenu );
+        desktopMenu->addAction( action );
         needSeparator = true;
     }
 
@@ -792,12 +792,12 @@ void KRootWm::slotPopulateSessions()
     action = m_actionCollection->action("newsession");
     if (action && (p = dm.numReserve()) >= 0)
     {
-        action->plug( sessionsMenu );
+        sessionsMenu->addAction( action );
         action->setEnabled( p );
         action = m_actionCollection->action("lockNnewsession");
         if (action)
         {
-            action->plug( sessionsMenu );
+            sessionsMenu->addAction( action );
             action->setEnabled( p );
         }
         sessionsMenu->addSeparator();

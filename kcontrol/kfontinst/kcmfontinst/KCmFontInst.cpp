@@ -203,7 +203,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         act->disconnect(SIGNAL(activated()), itsDirOp, SLOT(forward()));
 
     if((act=itsDirOp->actionCollection()->action("reload")))
-        act->plug(toolbar);
+        toolbar->addAction( act );
 
     topMnu->insert(itsViewMenuAct);
 
@@ -211,30 +211,30 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     {
         disconnect(itsIconAct, SIGNAL(triggered(bool)), itsDirOp, SLOT(slotSimpleView()));
         connect(itsIconAct, SIGNAL(triggered(bool)), SLOT(iconView()));
-        itsIconAct->plug(toolbar);
+        toolbar->addAction( itsIconAct );
     }
 
     if((itsListAct=dynamic_cast<KToggleAction *>(itsDirOp->actionCollection()->action("detailed view"))))
     {
         disconnect(itsListAct, SIGNAL(activated()), itsDirOp, SLOT(slotDetailedView()));
         connect(itsListAct, SIGNAL(activated()), SLOT(listView()));
-        itsListAct->plug(toolbar);
+        toolbar->addAction( itsListAct );
     }
 
     itsShowBitmapAct=new KToggleAction(i18n("Show Bitmap Fonts"), "font_bitmap", 0, this, SLOT(filterFonts()),
                                        itsDirOp->actionCollection(), "showbitmap");
     itsShowBitmapAct->setChecked(showBitmap);
-    itsShowBitmapAct->plug(toolbar);
+    toolbar->addAction( itsShowBitmapAct );
 
     toolbar->addSeparator();
 
     act=new KAction(i18n("Add Fonts..."), "newfont", 0, this, SLOT(addFonts()), itsDirOp->actionCollection(), "addfonts");
-    act->plug(toolbar);
+    toolbar->addAction( act );
     topMnu->insert(act);
 
     if((itsDeleteAct=itsDirOp->actionCollection()->action("delete")))
     {
-        itsDeleteAct->plug(toolbar);
+        toolbar->addAction( itsDeleteAct );
         itsDeleteAct->setEnabled(false);
         topMnu->insert(itsDeleteAct);
         disconnect(itsDeleteAct, SIGNAL(activated()), itsDirOp, SLOT(deleteSelected()));
@@ -243,11 +243,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
 
     toolbar->addSeparator();
     act=new KAction(i18n("Configure..."), "configure", 0, this, SLOT(configure()), itsDirOp->actionCollection(), "configure");
-    act->plug(toolbar);
+    toolbar->addAction( act );
 #ifdef HAVE_XFT
     toolbar->addSeparator();
     act=new KAction(i18n("Print..."), "fileprint", 0, this, SLOT(print()), itsDirOp->actionCollection(), "print");
-    act->plug(toolbar);
+    toolbar->addAction( act );
 #endif
 
     if( (itsSepDirsAct=itsDirOp->actionCollection()->action("separate dirs")) &&
@@ -264,7 +264,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
         KActionCollection *previewCol=itsPreview->actionCollection();
 
         if(previewCol && previewCol->count()>0 && (act=previewCol->action("changeText")))
-            act->plug(toolbar);
+            toolbar->addAction( act );
     }
 #endif
 
