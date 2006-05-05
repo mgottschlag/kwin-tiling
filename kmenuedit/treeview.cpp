@@ -250,11 +250,11 @@ void TreeView::setViewMode(bool showHidden)
     m_rmb->addSeparator();
 
     if(m_ac->action("newitem"))
-	m_ac->action("newitem")->plug(m_rmb);
+	m_rmb->addAction( m_ac->action("newitem") );
     if(m_ac->action("newsubmenu"))
-	m_ac->action("newsubmenu")->plug(m_rmb);
+	m_rmb->addAction( m_ac->action("newsubmenu") );
     if(m_ac->action("newsep"))
-	m_ac->action("newsep")->plug(m_rmb);
+	m_rmb->addAction( m_ac->action("newsep") );
 
     m_showHidden = showHidden;
     readMenuFolderInfo();

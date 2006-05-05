@@ -295,13 +295,13 @@ void KRootWm::buildMenus()
     if (m_bDesktopEnabled && m_actionCollection->action("realign"))
     {
         pArrangeMenu = new QMenu;
-        m_actionCollection->action("sort_ncs")->plug( pArrangeMenu );
-        m_actionCollection->action("sort_nci")->plug( pArrangeMenu );
-        m_actionCollection->action("sort_size")->plug( pArrangeMenu );
-        m_actionCollection->action("sort_type")->plug( pArrangeMenu );
+        pArrangeMenu->addAction( m_actionCollection->action("sort_ncs") );
+        pArrangeMenu->addAction( m_actionCollection->action("sort_nci") );
+        pArrangeMenu->addAction( m_actionCollection->action("sort_size") );
+        pArrangeMenu->addAction( m_actionCollection->action("sort_type") );
         m_actionCollection->action("sort_date" )->plug( pArrangeMenu );
         pArrangeMenu->addSeparator();
-        m_actionCollection->action("sort_directoriesfirst")->plug( pArrangeMenu );
+        pArrangeMenu->addAction( m_actionCollection->action("sort_directoriesfirst") );
 
         pLineupMenu = new QMenu;
         m_actionCollection->action( "lineupHoriz" )->plug( pLineupMenu );
@@ -341,8 +341,8 @@ void KRootWm::buildMenus()
 
         if (m_bDesktopEnabled)
         {
-            m_actionCollection->action("unclutter")->plug( desk );
-            m_actionCollection->action("cascade")->plug( desk );
+            desk->addAction( m_actionCollection->action("unclutter") );
+            desk->addAction( m_actionCollection->action("cascade") );
             desk->addSeparator();
 
             if (pArrangeMenu)
@@ -350,7 +350,7 @@ void KRootWm::buildMenus()
             if (pLineupMenu)
                 desk->insertItem(i18n("Line Up Icons"), pLineupMenu );
 
-            m_actionCollection->action("refresh")->plug( desk );
+            desk->addAction( m_actionCollection->action("refresh") );
             needSeparator = true;
         }
         action = m_actionCollection->action("configdesktop");
@@ -438,13 +438,13 @@ void KRootWm::buildMenus()
     }
 
     QMenu* pWindowOperationsMenu = new QMenu;
-    m_actionCollection->action("cascade")->plug( pWindowOperationsMenu );
-    m_actionCollection->action("unclutter")->plug( pWindowOperationsMenu );
+    pWindowOperationsMenu->addAction( m_actionCollection->action("cascade") );
+    pWindowOperationsMenu->addAction( m_actionCollection->action("unclutter") );
     desktopMenu->insertItem(SmallIconSet("window_list"), i18n("Windows"), pWindowOperationsMenu);
 
     if (m_bDesktopEnabled)
     {
-       m_actionCollection->action("refresh")->plug( desktopMenu );
+       desktopMenu->addAction( m_actionCollection->action("refresh") );
     }
 
     action = m_actionCollection->action("configdesktop");
