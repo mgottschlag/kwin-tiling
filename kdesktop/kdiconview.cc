@@ -413,7 +413,9 @@ void KDIconView::createActions()
         KAction *pasteTo = KStdAction::paste( this, SLOT( slotPopupPasteTo() ), &m_actionCollection, "pasteto" );
         pasteTo->setEnabled( false ); // only enabled during popupMenu()
 
-        (void) new KAction( i18n( "&Rename" ), /*"editrename",*/ Qt::Key_F2, this, SLOT( renameSelectedItem() ), &m_actionCollection, "rename" );
+        KAction *action = new KAction( i18n( "&Rename" ), &m_actionCollection, "rename" );
+        connect(action, SIGNAL(triggered(bool) ), SLOT( renameSelectedItem() ));
+        action->setShortcut(Qt::Key_F2);
         KAction *action = new KAction( i18n( "&Properties" ), &m_actionCollection, "properties" );
         connect(action, SIGNAL(triggered(bool) ), SLOT( slotProperties() ));
         action->setShortcut(Qt::ALT+Qt::Key_Return);
