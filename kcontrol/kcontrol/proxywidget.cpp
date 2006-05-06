@@ -208,7 +208,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   _help =    new KPushButton( KStdGuiItem::help(), this );
   _default = new KPushButton( KStdGuiItem::defaults(), this );
   _apply =   new KPushButton( KStdGuiItem::apply(), this );
-  _reset =   new KPushButton( KGuiItem( i18n( "&Reset" ), "undo" ), this );
+  _reset =   new KPushButton( KStdGuiItem::reset(), this );
   _root =    new KPushButton( KGuiItem(i18n( "&Administrator Mode" )), this );
 
   bool mayModify = (!run_as_root || !_client->useRootOnlyMsg()) && !KCGlobal::isInfoCenter();
