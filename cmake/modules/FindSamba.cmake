@@ -5,6 +5,11 @@
 #  SAMBA_INCLUDE_DIR - the SAMBA include directory
 #  SAMBA_LIBRARIES - The libraries needed to use SAMBA
 
+if(SAMBA_INCLUDE_DIR AND SAMBA_LIBRARIES)
+    # Already in cache, be silent
+    set(SAMBA_FIND_QUIETLY TRUE)
+endif(SAMBA_INCLUDE_DIR AND SAMBA_LIBRARIES)
+
 FIND_PATH(SAMBA_INCLUDE_DIR libsmbclient.h
    /usr/include
    /usr/local/include

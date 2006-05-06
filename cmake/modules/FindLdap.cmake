@@ -6,6 +6,12 @@
 #  LDAP_LIBRARIES - libldap library
 #  LBER_LIBRARIES - liblber library
 
+if(LDAP_INCLUDE_DIR AND LDAP_LIBRARIES)
+    # Already in cache, be silent
+    set(LDAP_FIND_QUIETLY TRUE)
+endif(LDAP_INCLUDE_DIR AND LDAP_LIBRARIES)
+
+
 FIND_PATH(LDAP_INCLUDE_DIR ldap.h
    /usr/include
    /usr/local/include

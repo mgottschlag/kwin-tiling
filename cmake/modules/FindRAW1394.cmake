@@ -5,6 +5,10 @@
 #  RAW1394_INCLUDE_DIR - the RAW1394 include directory
 #  RAW1394_LIBRARIES - The libraries needed to use FAM
 
+if(RAW1394_INCLUDE_DIR AND RAW1394_LIBRARIES)
+   set(RAW1394_FIND_QUIETLY TRUE)
+endif(RAW1394_INCLUDE_DIR AND RAW1394_LIBRARIES)
+
 FIND_PATH(RAW1394_INCLUDE_DIR libraw1394/raw1394.h
    /usr/include
    /usr/local/include
