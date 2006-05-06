@@ -30,7 +30,7 @@ target_link_libraries(kdeinit_kaccess  ${KDE4_KDEUI_LIBS}  )
 install_targets(${LIB_INSTALL_DIR} kdeinit_kaccess )
 
 target_link_libraries( kaccess kdeinit_kaccess )
-install_targets(/bin kaccess )
+install(TARGETS kaccess DESTINATION bin)
 
 ########### install files ###############
 

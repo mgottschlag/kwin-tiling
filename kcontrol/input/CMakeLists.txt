@@ -29,7 +29,7 @@ if (X11_Xcursor_FOUND)
    target_link_libraries(kapplymousetheme ${X11_Xcursor_LIB})
 endif (X11_Xcursor_FOUND)
 
-install_targets(/bin kapplymousetheme )
+install(TARGETS kapplymousetheme DESTINATION bin)
 
 
 ########### next target ###############

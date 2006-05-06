@@ -17,7 +17,7 @@ target_link_libraries(kdeinit_khotkeys  ${KDE4_KDE3SUPPORT_LIBS} ${X11_XTest_LIB
 install_targets(${LIB_INSTALL_DIR} kdeinit_khotkeys )
 
 target_link_libraries( khotkeys kdeinit_khotkeys )
-install_targets(/bin khotkeys )
+install(TARGETS khotkeys DESTINATION bin)
 
 ########### next target ###############
 

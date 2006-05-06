@@ -24,7 +24,7 @@ target_link_libraries(kdeinit_klipper  ${KDE4_KDECORE_LIBS}  )
 install_targets(${LIB_INSTALL_DIR} kdeinit_klipper )
 
 target_link_libraries( klipper kdeinit_klipper )
-install_targets(/bin klipper )
+install(TARGETS klipper DESTINATION bin)
 
 ########### next target ###############
 

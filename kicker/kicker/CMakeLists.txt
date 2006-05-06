@@ -35,7 +35,7 @@ target_link_libraries(kdeinit_kicker  ${KDE4_KIO_LIBS} kickermain kutils kworksp
 install_targets(${LIB_INSTALL_DIR} kdeinit_kicker )
 
 target_link_libraries( kicker kdeinit_kicker )
-install_targets(/bin kicker )
+install(TARGETS kicker DESTINATION bin)
 
 ########### next target ###############
 

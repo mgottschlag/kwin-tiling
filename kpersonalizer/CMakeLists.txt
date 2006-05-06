@@ -33,7 +33,7 @@ kde4_add_executable(kpersonalizer ${kpersonalizer_SRCS})
 
 target_link_libraries(kpersonalizer  ${KDE4_KDE3SUPPORT_LIBS} )
 
-install_targets(/bin kpersonalizer )
+install(TARGETS kpersonalizer DESTINATION bin)
 
 
 ########### install files ###############

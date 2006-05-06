@@ -14,7 +14,7 @@ kde4_add_executable(kblankscrn.kss ${kblankscrn.kss_SRCS})
 
 target_link_libraries(kblankscrn.kss  ${KDE4_KDEUI_LIBS} kscreensaver m )
 
-install_targets(/bin kblankscrn.kss )
+install(TARGETS kblankscrn.kss DESTINATION bin)
 
 
 ########### install files ###############

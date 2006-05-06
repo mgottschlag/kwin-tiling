@@ -25,7 +25,7 @@ target_link_libraries(kdeinit_ksmserver  ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBR
 install_targets(${LIB_INSTALL_DIR} kdeinit_ksmserver )
 
 target_link_libraries( ksmserver kdeinit_ksmserver )
-install_targets(/bin ksmserver )
+install(TARGETS ksmserver DESTINATION bin)
 
 ########### next target ###############
 

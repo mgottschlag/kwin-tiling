@@ -26,7 +26,7 @@ kde4_add_executable(kcheckrunning ${kcheckrunning_SRCS})
 
 target_link_libraries(kcheckrunning  ${KDE4_KDECORE_LIBS} )
 
-install_targets(/bin kcheckrunning )
+install(TARGETS kcheckrunning DESTINATION bin)
 
 
 ########### next target ###############
@@ -67,7 +67,7 @@ endif(X11_Xcursor_FOUND)
 install_targets(${LIB_INSTALL_DIR} kdeinit_kdesktop )
 
 target_link_libraries( kdesktop kdeinit_kdesktop )
-install_targets(/bin kdesktop )
+install(TARGETS kdesktop DESTINATION bin)
 
 ########### subdirs ###############
 

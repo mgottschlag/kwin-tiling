@@ -34,7 +34,7 @@ target_link_libraries(kdeinit_kcontrol  ${KDE4_KDE3SUPPORT_LIBS} khtml )
 install_targets(${LIB_INSTALL_DIR} kdeinit_kcontrol )
 
 target_link_libraries( kcontrol kdeinit_kcontrol )
-install_targets(/bin kcontrol )
+install(TARGETS kcontrol DESTINATION bin)
 
 ########### install files ###############
 

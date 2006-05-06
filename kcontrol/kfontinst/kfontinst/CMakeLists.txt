@@ -23,7 +23,7 @@ set_target_properties(kfontinst_bin PROPERTIES OUTPUT_NAME kfontinst)
 
 target_link_libraries(kfontinst_bin  ${KDE4_KIO_LIBS} kfontinst fontenc )
 
-install_targets(/bin kfontinst_bin )
+install(TARGETS kfontinst_bin DESTINATION bin)
 
 
 ########### install files ###############

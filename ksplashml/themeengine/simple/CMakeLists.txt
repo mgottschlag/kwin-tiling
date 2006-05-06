@@ -17,7 +17,7 @@ if (X11_Xinerama_FOUND)
 endif (X11_Xinerama_FOUND)
 
 
-install_targets(/bin ksplashsimple )
+install(TARGETS ksplashsimple DESTINATION bin)
 
 
 ########### install files ###############

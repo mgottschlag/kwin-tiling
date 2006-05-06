@@ -14,7 +14,7 @@ kde4_add_executable(ksystraycmd ${ksystraycmd_SRCS})
 
 target_link_libraries(ksystraycmd  ${KDE4_KDEUI_LIBS} )
 
-install_targets(/bin ksystraycmd )
+install(TARGETS ksystraycmd DESTINATION bin)
 
 
 ########### install files ###############

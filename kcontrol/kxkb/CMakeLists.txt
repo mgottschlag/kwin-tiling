@@ -23,7 +23,7 @@ target_link_libraries(kdeinit_kxkb  ${KDE4_KDECORE_LIBS} xkbfile X11 Xext kdeui 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kxkb )
 
 target_link_libraries( kxkb kdeinit_kxkb )
-install_targets(/bin kxkb )
+install(TARGETS kxkb DESTINATION bin)
 
 ########### next target ###############
 

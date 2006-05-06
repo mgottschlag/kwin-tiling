@@ -20,7 +20,7 @@ kde4_add_executable(kdesktop_lock ${kdesktop_lock_SRCS} )
 
 target_link_libraries(kdesktop_lock  ${KDE4_KIO_LIBS} )
 
-install_targets(/bin kdesktop_lock )
+install(TARGETS kdesktop_lock DESTINATION bin)
 
 
 ########### install files ###############

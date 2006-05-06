@@ -41,7 +41,7 @@ kde4_add_executable(kdm ${kdm_SRCS})
 
 target_link_libraries(kdm  ${KDE4_KDECORE_LIBS} ${X11_Xdmcp_LIB} ${X11_Xau_LIB})
 
-install_targets(/bin kdm )
+install(TARGETS kdm DESTINATION bin)
 
 
 ########### install files ###############
