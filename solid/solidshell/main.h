@@ -22,7 +22,8 @@
 
 #include <QCoreApplication>
 #include <QEventLoop>
-#include <kio/jobclasses.h>
+
+class KJob;
 
 class SolidShell : public QCoreApplication
 {
@@ -44,7 +45,7 @@ private:
     int m_error;
     QString m_errorString;
 private slots:
-    void slotResult( KIO::Job *job );
+    void slotResult( KJob *job );
 };
 
 

@@ -33,6 +33,7 @@ using namespace std;
 #include <kdehw/device.h>
 #include <kdehw/volume.h>
 
+#include <kjob.h>
 
 static const char appName[] = "solidshell";
 static const char programName[] = I18N_NOOP("solidshell");
@@ -279,7 +280,7 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
         return false;
     }
 
-    KIO::Job *job = 0;
+    KJob *job = 0;
 
     switch( type )
     {
@@ -300,8 +301,10 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
         return false;
     }
 
-    connect( job, SIGNAL( result( KIO::Job* ) ),
-             this, SLOT( slotResult( KIO::Job* ) ) );
+    connect( job, SIGNAL( result( KJob* ) ),
+             this, SLOT( slotResult( KJob* ) ) );
+    
+    job->start();
     m_loop.exec();
 
     if ( m_error )
@@ -315,7 +318,7 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
     }
 }
 
-void SolidShell::slotResult( KIO::Job *job )
+void SolidShell::slotResult( KJob *job )
 {
     m_error = 0;
 
