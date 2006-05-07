@@ -163,9 +163,9 @@ void KIconConfig::initDefaults()
     mDefaultEffect[0].type = KIconEffect::NoEffect;
     mDefaultEffect[1].type = KIconEffect::NoEffect;
     mDefaultEffect[2].type = KIconEffect::ToGray;
-    mDefaultEffect[0].transparant = false;
-    mDefaultEffect[1].transparant = false;
-    mDefaultEffect[2].transparant = true;
+    mDefaultEffect[0].transparent = false;
+    mDefaultEffect[1].transparent = false;
+    mDefaultEffect[2].transparent = true;
     mDefaultEffect[0].value = 1.0;
     mDefaultEffect[1].value = 1.0;
     mDefaultEffect[2].value = 1.0;
@@ -271,7 +271,7 @@ void KIconConfig::read()
 	    mEffects[i][j].value = mpConfig->readEntry(*it2 + "Value", 0.0);
 	    mEffects[i][j].color = mpConfig->readEntry(*it2 + "Color",QColor());
 	    mEffects[i][j].color2 = mpConfig->readEntry(*it2 + "Color2", QColor());
-	    mEffects[i][j].transparant = mpConfig->readEntry(*it2 + "SemiTransparent", false);
+	    mEffects[i][j].transparent = mpConfig->readEntry(*it2 + "SemiTransparent", false);
 	}
     }
 }
@@ -324,7 +324,7 @@ void KIconConfig::preview(int i)
     Effect &effect = mEffects[viewedGroup][i];
 
     img = mpEffect->apply(img, effect.type,
-	    effect.value, effect.color, effect.color2, effect.transparant);
+	    effect.value, effect.color, effect.color2, effect.transparent);
     pm = QPixmap::fromImage(img);
     mpPreview[i]->setPixmap(pm);
 }
@@ -385,7 +385,7 @@ void KIconConfig::save()
 	    mpConfig->writeEntry(*it2 + "Value", int(mEffects[i][j].value), KConfigBase::Normal|KConfigBase::Global);
             mpConfig->writeEntry(*it2 + "Color", mEffects[i][j].color, KConfigBase::Normal|KConfigBase::Global);
             mpConfig->writeEntry(*it2 + "Color2", mEffects[i][j].color2, KConfigBase::Normal|KConfigBase::Global);
-            mpConfig->writeEntry(*it2 + "SemiTransparent", mEffects[i][j].transparant, KConfigBase::Normal|KConfigBase::Global);
+            mpConfig->writeEntry(*it2 + "SemiTransparent", mEffects[i][j].transparent, KConfigBase::Normal|KConfigBase::Global);
 	}
     }
 
@@ -621,7 +621,7 @@ void KIconEffectSetupDialog::init()
     mpEffectSlider->setValue((int) (100.0 * mEffect.value + 0.5));
     mpEColButton->setColor(mEffect.color);
     mpECol2Button->setColor(mEffect.color2);
-    mpSTCheck->setChecked(mEffect.transparant);
+    mpSTCheck->setChecked(mEffect.transparent);
 }
 
 void KIconEffectSetupDialog::slotEffectValue(int value)
@@ -656,7 +656,7 @@ void KIconEffectSetupDialog::slotEffectType(int type)
 
 void KIconEffectSetupDialog::slotSTCheck(bool b)
 {
-     mEffect.transparant = b;
+     mEffect.transparent = b;
      preview();
 }
 
@@ -672,7 +672,7 @@ void KIconEffectSetupDialog::preview()
     QPixmap pm;
     QImage img = mExample.copy();
     img = mpEffect->apply(img, mEffect.type,
-          mEffect.value, mEffect.color, mEffect.color2, mEffect.transparant);
+          mEffect.value, mEffect.color, mEffect.color2, mEffect.transparent);
     pm  = QPixmap::fromImage(img);
     mpPreview->setPixmap(pm);
 }

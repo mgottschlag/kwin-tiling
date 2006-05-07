@@ -51,7 +51,7 @@
 #define KFI_XF86CFG "XF86Config"
 #define KFI_XORGCFG "xorg.conf"
 
-static const char * getFile(const char *entry, const char **posibilities)
+static const char * getFile(const char *entry, const char **possibilities)
 {
     if(KFI::Misc::fExists(entry))
         return entry;
@@ -59,11 +59,11 @@ static const char * getFile(const char *entry, const char **posibilities)
     {
         int f;
 
-        for(f=0; posibilities[f]; ++f)
-            if(KFI::Misc::fExists(posibilities[f]))
+        for(f=0; possibilities[f]; ++f)
+            if(KFI::Misc::fExists(possibilities[f]))
                 break;
 
-        return posibilities[f];
+        return possibilities[f];
     }
 }
 
@@ -148,7 +148,7 @@ static void usage(char *app)
               << "                           create fonts.dir, fonts.scale and encodngs.dir" << std::endl
               << std::endl
               << "  -g, --configure_gs       Create Fontmap file. If run as root, then " << std::endl
-              << "                           no paramter is required as all fonts are " << std::endl
+              << "                           no parameter is required as all fonts are " << std::endl
               << "                           configured, and Fontmap placed in /etc/fonts" << std::endl
               << "                           For non-root, fonts located in FOLDER are" << std::endl
               << "                           configured, and Fontmap placed there." << std::endl
@@ -165,7 +165,7 @@ static void usage(char *app)
               << "                           create fonts.dir, fonts.scale and encodngs.dir" << std::endl
               << std::endl
               << "  -g                       Create Fontmap file. If run as root, then " << std::endl
-              << "                           no paramter is required as all fonts are " << std::endl
+              << "                           no parameter is required as all fonts are " << std::endl
               << "                           configured, and Fontmap placed in /etc/fonts" << std::endl
               << "                           For non-root, fonts located in FOLDER are" << std::endl
               << "                           configured, and Fontmap placed there." << std::endl

@@ -1825,7 +1825,7 @@ CFontEngine::TFtData::TFtData()
 {
     if(FT_Init_FreeType(&library))
     {
-        std::cerr << "ERROR: FreeType2 failed to initialise\n";
+        std::cerr << "ERROR: FreeType2 failed to initialize\n";
         exit(0);
     }
 }

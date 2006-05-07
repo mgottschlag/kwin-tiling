@@ -46,7 +46,7 @@ struct Effect
     float value;
     QColor color;
     QColor color2;
-    bool transparant;
+    bool transparent;
 };
 
 
