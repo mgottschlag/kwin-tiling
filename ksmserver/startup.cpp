@@ -231,7 +231,7 @@ void KSMServer::autoStart1Done()
         return;
     kDebug( 1218 ) << "Autostart 1 done" << endl;
     lastAppStarted = 0;
-    lastIdStarted = QString::null;
+    lastIdStarted.clear();
     state = Restoring;
     if( defaultSession()) {
         autoStart2();
