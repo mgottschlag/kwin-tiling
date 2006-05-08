@@ -43,7 +43,7 @@ class ThemeRedmond: public ThemeEngine
 {
   Q_OBJECT
 public:
-  ThemeRedmond( QWidget *, const char *, const QStringList& );
+  ThemeRedmond( QWidget *, const QStringList& );
 
   inline const QString name() { return( QString("Redmond") );  }
   static QStringList names()

@@ -33,8 +33,8 @@
 #include "wndicon.h"
 #include "wndstatus.h"
 
-ThemeStandard::ThemeStandard( QWidget *parent, const char *name, const QStringList &args )
-  :ThemeEngine( parent, name, args ), mIcon(0L), mPrevIcon(0L), mIconCount(0), mStdIconWidth(-1),
+ThemeStandard::ThemeStandard( QWidget *parent, const QStringList &args )
+  :ThemeEngine( parent, args ), mIcon(0L), mPrevIcon(0L), mIconCount(0), mStdIconWidth(-1),
   mIconPos(WndIcon::HBottomLeft), mSbAtTop(false), mSbVisible(true), mSbPbVisible(true), mSbFontName("helvetica"),
   mSbFontSz(16), mSbFontBold(true), mSbFontItalic(false), mSbFont(QFont()), mSbFg(QColor()), mSbBg(QColor()),
   mSbIcon("run"), mIconsVisible(true), mIconsJumping(true), mSplashScreen("(Default)")

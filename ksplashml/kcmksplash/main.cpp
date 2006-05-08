@@ -28,7 +28,7 @@
 class KSplashThemeMgr : public KCModule
 {
 public:
-  KSplashThemeMgr( QWidget *parent, const char *name, const QStringList &/*unused*/);
+  KSplashThemeMgr( QWidget *parent, const QStringList &/*unused*/);
   ~KSplashThemeMgr();
 
   QString quickHelp() const;
@@ -47,7 +47,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_ksplashthemes, KSplashThemeMgrFactory("ksplashth
 
 // -----------------------------------------------------------------------------------------
 
-KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const char *, const QStringList &args)
+KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const QStringList &args)
   : KCModule( KSplashThemeMgrFactory::instance(), parent, args ), mInstaller(new SplashInstaller(this))
 {
   init();

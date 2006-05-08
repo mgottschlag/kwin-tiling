@@ -83,8 +83,8 @@ CfgRedmond::CfgRedmond( QWidget *p, KConfig *c )
   lbl->setText( i18n("(Sorry, but I haven't finished writing this one yet...)") );
 }
 
-ThemeRedmond::ThemeRedmond( QWidget *parent, const char *name, const QStringList &args )
-    :ThemeEngine( parent, name, args )
+ThemeRedmond::ThemeRedmond( QWidget *parent, const QStringList &args )
+    :ThemeEngine( parent, args )
 {
   _readSettings();
   _initUi();

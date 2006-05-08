@@ -326,7 +326,7 @@ void KSplash::loadTheme( const QString& theme )
   mThemeEngine = _loadThemeEngine( mKsTheme->themeEngine(), theme );
   if (!mThemeEngine)
   {
-    mThemeEngine = new ThemeDefault( this, "", QStringList(theme) );
+    mThemeEngine = new ThemeDefault( this, QStringList(theme) );
     kDebug() << "Standard theme loaded." << endl;
   }
   // The theme engine we get may not be the theme engine we requested.
@@ -376,7 +376,7 @@ ThemeEngine *KSplash::_loadThemeEngine( const QString& pluginName, const QString
   {
     QStringList themeTitle;
     themeTitle << theme;
-    return static_cast<ThemeEngine *>(factory->create(this, "theme", objName.toLatin1(), themeTitle));
+    return static_cast<ThemeEngine *>(factory->create(this, objName.toLatin1(), themeTitle));
   }
   else
     return 0L;

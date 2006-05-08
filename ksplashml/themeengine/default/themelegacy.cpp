@@ -51,8 +51,8 @@ void DefaultConfig::save()
 
 #define BIDI 0
 
-ThemeDefault::ThemeDefault( QWidget *parent, const char *name, const QStringList &args )
-    :ThemeEngine( parent, name, args )
+ThemeDefault::ThemeDefault( QWidget *parent, const QStringList &args )
+    :ThemeEngine( parent, args )
 {
 
   mActivePixmap = mInactivePixmap = 0L;

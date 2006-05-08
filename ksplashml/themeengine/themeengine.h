@@ -55,7 +55,7 @@ class KDE_EXPORT ThemeEngine: public Q3VBox
 {
   Q_OBJECT
 public:
-  ThemeEngine( QWidget *parent, const char *name, const QStringList &args );
+  ThemeEngine( QWidget *parent, const QStringList &args );
   virtual ~ThemeEngine() = 0;
   virtual const ThemeEngineConfig *config( QWidget *, KConfig * ) { return 0L; }
   virtual ObjKsTheme *ksTheme() { return mTheme; }

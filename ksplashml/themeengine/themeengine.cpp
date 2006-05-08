@@ -42,7 +42,7 @@ struct ThemeEngine::ThemeEnginePrivate
     QList< Window > mSplashWindows;
 };
 
-ThemeEngine::ThemeEngine( QWidget *, const char *, const QStringList& args )
+ThemeEngine::ThemeEngine( QWidget *, const QStringList& args )
   : Q3VBox( 0, "wndSplash", Qt::WStyle_Customize|Qt::WX11BypassWM ), d(0)
 {
   d = new ThemeEnginePrivate;

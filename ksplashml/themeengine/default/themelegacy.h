@@ -43,7 +43,7 @@ class KDE_EXPORT ThemeDefault : public ThemeEngine
 {
   Q_OBJECT
 public:
-  ThemeDefault( QWidget *, const char *, const QStringList& );
+  ThemeDefault( QWidget *, const QStringList& );
    virtual ~ThemeDefault();
 
   inline const DefaultConfig *config( QWidget *p, KConfig *c )

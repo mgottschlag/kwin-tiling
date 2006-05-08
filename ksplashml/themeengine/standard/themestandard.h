@@ -46,7 +46,7 @@ class ThemeStandard: public ThemeEngine
 {
   Q_OBJECT
 public:
-  ThemeStandard( QWidget *, const char*, const QStringList& );
+  ThemeStandard( QWidget *, const QStringList& );
   //inline const ThemeEngineConfig *config( QWidget *p, KConfig *kc ) { return 0L; }
 
 public Q_SLOTS:
