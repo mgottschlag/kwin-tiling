@@ -81,7 +81,7 @@ KUrl *decodeImgDrop(QDropEvent *e, QWidget *wdg)
 
 KSimpleConfig *config;
 
-KDModule::KDModule(QWidget *parent, const char *name, const QStringList &)
+KDModule::KDModule(QWidget *parent, const QStringList &)
   : KCModule(KDMFactory::instance(), parent)
   , minshowuid(0)
   , maxshowuid(0)
