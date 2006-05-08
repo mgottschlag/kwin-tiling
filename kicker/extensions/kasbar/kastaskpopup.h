@@ -56,7 +56,7 @@
 #ifndef KASTASKPOPUP_H
 #define KASTASKPOPUP_H
 
-#include <kpixmap.h>
+#include <QPixmap>
 #include "kaspopup.h"
 //Added by qt3to4:
 #include <QPaintEvent>

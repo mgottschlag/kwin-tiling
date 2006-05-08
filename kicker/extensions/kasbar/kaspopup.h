@@ -58,7 +58,7 @@
 
 #include <qpointer.h>
 #include <q3hbox.h>
-#include <kpixmap.h>
+#include <QPixmap>
 
 #include "kasitem.h"
 

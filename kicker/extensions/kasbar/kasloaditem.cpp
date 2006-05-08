@@ -18,7 +18,7 @@
 #include <kglobal.h>
 #include <kwin.h>
 #include <kiconloader.h>
-#include <kpixmap.h>
+#include <QPixmap>
 #include <kpixmapeffect.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
@@ -100,7 +100,7 @@ void KasLoadItem::paint( QPainter *p )
     QColor light = kasbar()->colorGroup().highlight();
     QColor dark = light.dark();
 
-    KPixmap pix;
+    QPixmap pix;
     pix.resize( w, h );
     KPixmapEffect::gradient( pix, light, dark, KPixmapEffect::DiagonalGradient );
     p->drawPixmap( 2, extent()-2-h, pix );

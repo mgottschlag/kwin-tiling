@@ -27,7 +27,7 @@
 
 #include <QPixmap>
 #include <kpixmapeffect.h>
-#include <kpixmap.h>
+#include <QPixmap>
 #include <klocale.h>
 #include <kimageeffect.h>
 #include <kiconloader.h>
@@ -45,9 +45,9 @@ MenuPreview::MenuPreview( QWidget* parent, int opacity, PreviewMode pvm )
 	if (opacity > 100) opacity = 100;
 	menuOpacity = opacity/100.0;
 
-	pixBackground = new KPixmap();
-	pixOverlay = new KPixmap();
-	pixBlended = new KPixmap();
+	pixBackground = new QPixmap();
+	pixOverlay = new QPixmap();
+	pixBlended = new QPixmap();
 
 	createPixmaps();
 	blendPixmaps();

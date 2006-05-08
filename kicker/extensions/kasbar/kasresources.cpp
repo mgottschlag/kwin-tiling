@@ -301,11 +301,11 @@ void KasResources::setAttentionColor( const QColor &color )
 
 void KasResources::itemSizeChanged()
 {
-    actBg = KPixmap();
-    inactBg = KPixmap();
+    actBg = QPixmap();
+    inactBg = QPixmap();
 }
 
-KPixmap KasResources::activeBg()
+QPixmap KasResources::activeBg()
 {
    if ( actBg.isNull() ) {
       actBg.resize( kasbar->itemExtent(), kasbar->itemExtent() );
@@ -317,7 +317,7 @@ KPixmap KasResources::activeBg()
    return actBg;
 }
 
-KPixmap KasResources::inactiveBg()
+QPixmap KasResources::inactiveBg()
 {
    if ( inactBg.isNull() ) {
       inactBg.resize( kasbar->itemExtent(), kasbar->itemExtent() );

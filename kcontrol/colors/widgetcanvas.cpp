@@ -20,7 +20,7 @@
 #include <kglobalsettings.h>
 #include <kconfig.h>
 #include <klocale.h>
-#include <kpixmap.h>
+#include <QPixmap>
 #include <QPixmap>
 
 #include "widgetcanvas.h"
@@ -358,7 +358,7 @@ void WidgetCanvas::drawSampleWidgets()
     paint.setPen( iaTitle );
     //paint.drawRect( 20, 10, width()-60, 20 );
 
-    KPixmap pmTitle( width()-160, 20 );
+    QPixmap pmTitle( width()-160, 20 );
 
     // Switched to vertical gradient because those kwin styles that
     // use the gradient have it vertical.

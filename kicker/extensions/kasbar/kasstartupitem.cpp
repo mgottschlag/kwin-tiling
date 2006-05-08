@@ -62,7 +62,7 @@
 #include <kglobal.h>
 #include <kwin.h>
 #include <kiconloader.h>
-#include <kpixmap.h>
+#include <QPixmap>
 #include <kpixmapeffect.h>
 #include <klocale.h>
 #include <taskmanager.h>
