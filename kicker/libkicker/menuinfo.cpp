@@ -100,12 +100,12 @@ QString MenuInfo::desktopFile() const
 }
 bool MenuInfo::isValid() const    { return !d->name.isEmpty(); }
 
-KPanelMenu* MenuInfo::load(QWidget *parent, const char *name)
+KPanelMenu* MenuInfo::load(QWidget *parent)
 {
     if (d->library.isEmpty())
         return 0;
 
     return KLibLoader::createInstance<KPanelMenu>(
                QFile::encodeName( d->library ),
-               parent, name );
+               parent );
 }

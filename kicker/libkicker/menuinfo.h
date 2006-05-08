@@ -44,7 +44,7 @@ public:
     QString desktopFile() const;
     bool isValid() const;
 
-    KPanelMenu* load(QWidget *parent = 0, const char *name = 0);
+    KPanelMenu* load(QWidget *parent = 0);
 
 private:
     class Private;

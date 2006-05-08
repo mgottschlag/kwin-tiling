@@ -38,9 +38,8 @@
 K_EXPORT_KICKER_MENUEXT(remotemenu, RemoteMenu)
 
 
-RemoteMenu::RemoteMenu(QWidget *parent, const char *name,
-                       const QStringList &/*args*/)
-  : KPanelMenu(parent, name), KDirNotify()
+RemoteMenu::RemoteMenu(QWidget *parent, const QStringList &/*args*/)
+  : KPanelMenu(parent), KDirNotify()
 {
     KGlobal::dirs()->addResourceType("remote_entries",
     KStandardDirs::kde_default("data") + "remoteview");

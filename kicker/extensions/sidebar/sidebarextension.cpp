@@ -57,11 +57,9 @@ SidebarExtension::SidebarExtension(const QString& configFile,
     QStringList args;
     args << "universal";
     KParts::ReadOnlyPart *p=KParts::ComponentFactory::createPartInstanceFromLibrary<KParts::ReadOnlyPart>(
-						"konq_sidebar",
+                                                 "konq_sidebar",
                                                  m_sbWrapper,
-                                                 "SideBar_View",
                                                  this,
-                                                 "Sidebar",
                                                  args);
 
     KParts::BrowserExtension *be=KParts::BrowserExtension::childObject(p);

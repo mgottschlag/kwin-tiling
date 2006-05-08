@@ -57,7 +57,7 @@ public:
      * Construct a KPanelMenu object. This is the normal constructor to use when
      * building extrernal menu entries.
      */
-    KPanelMenu(QWidget *parent=0, const char *name=0);
+    KPanelMenu(QWidget *parent);
     /**
      * Constructor used internally by Kicker. You don't really want to use it.
      * @param startDir a directory to associate with this menu
@@ -65,7 +65,7 @@ public:
      * @param name name of the object
      * @see path(), setPath()
      */
-    KPanelMenu(const QString &startDir, QWidget *parent=0, const char *name=0);
+    KPanelMenu(const QString &startDir, QWidget *parent);
     /**
      * Destructor.
      */

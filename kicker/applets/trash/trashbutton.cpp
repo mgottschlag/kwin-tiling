@@ -23,8 +23,9 @@
 #include <qtooltip.h>
 
 #include <klocale.h>
-#include <krun.h>
 #include <kmenu.h>
+#include <krun.h>
+#include <kstdaction.h>
 
 #include <kio/netaccess.h>
 

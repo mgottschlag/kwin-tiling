@@ -40,9 +40,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 K_EXPORT_KICKER_MENUEXT(recentdocs, RecentDocsMenu)
 
-RecentDocsMenu::RecentDocsMenu(QWidget *parent, const char *name,
+RecentDocsMenu::RecentDocsMenu(QWidget *parent,
                                const QStringList &/*args*/)
-    : KPanelMenu(KRecentDocument::recentDocumentDirectory(), parent, name)
+    : KPanelMenu(KRecentDocument::recentDocumentDirectory(), parent)
 {
 }
 

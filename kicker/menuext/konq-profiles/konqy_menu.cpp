@@ -37,8 +37,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 K_EXPORT_KICKER_MENUEXT(konqueror, KonquerorProfilesMenu)
 
-KonquerorProfilesMenu::KonquerorProfilesMenu(QWidget *parent, const char *name, const QStringList & /*args*/)
-: KPanelMenu("", parent, name)
+KonquerorProfilesMenu::KonquerorProfilesMenu(QWidget *parent, const QStringList & /*args*/)
+: KPanelMenu("", parent)
 {
     static bool kdeprintIconsInitialized = false;
     if ( !kdeprintIconsInitialized ) {

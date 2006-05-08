@@ -33,7 +33,7 @@ class FindMenu : public KPanelMenu
 	Q_OBJECT
 
   public:
-    FindMenu( QWidget* parent, const char* name, const QStringList &/*args*/ );
+    FindMenu( QWidget* parent, const QStringList &/*args*/ );
     ~FindMenu();
 
   protected Q_SLOTS:

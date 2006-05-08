@@ -63,8 +63,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 QMap<QString, QPixmap> *PanelBrowserMenu::_icons = 0;
 
-PanelBrowserMenu::PanelBrowserMenu(QString path, QWidget *parent, const char *name, int startid)
-    : KPanelMenu(path, parent, name)
+PanelBrowserMenu::PanelBrowserMenu(QString path, QWidget *parent, int startid)
+    : KPanelMenu(path, parent)
     , _mimecheckTimer(0)
     , _startid(startid)
     , _dirty(false)
@@ -303,7 +303,7 @@ void PanelBrowserMenu::initialize()
             ++it;
             if( it != list.end() ) {
                 insertSeparator();
-                append(CICON("kdisknav"), i18n("More"), new PanelBrowserMenu(path(), this, 0, run_id));
+                append(CICON("kdisknav"), i18n("More"), new PanelBrowserMenu(path(), this, run_id));
             }
             break;
         }

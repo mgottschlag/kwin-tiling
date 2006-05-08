@@ -40,7 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <dcopclient.h>
 #include <kapplication.h>
 #include <kaboutkde.h>
-#include <kaction.h>
+#include <kactioncollection.h>
 #include <kbookmarkmenu.h>
 #include <kconfig.h>
 #include <kdebug.h>

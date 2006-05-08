@@ -26,9 +26,8 @@
 K_EXPORT_KICKER_MENUEXT(systemmenu, SystemMenu)
 
 
-SystemMenu::SystemMenu(QWidget *parent, const char *name,
-                       const QStringList &/*args*/)
-  : KPanelMenu( parent, name)
+SystemMenu::SystemMenu(QWidget *parent, const QStringList &/*args*/)
+  : KPanelMenu(parent)
 {
     connect( &m_dirLister, SIGNAL( completed() ),
              this, SLOT( slotCompleted() ) );

@@ -40,17 +40,15 @@ public:
     QTimer t;
 };
 
-KPanelMenu::KPanelMenu(const QString &startDir, QWidget *parent, const char *name)
+KPanelMenu::KPanelMenu(const QString &startDir, QWidget *parent)
   : KMenu(parent)
 {
-    setObjectName(name);
     init(startDir);
 }
 
-KPanelMenu::KPanelMenu(QWidget *parent, const char *name)
+KPanelMenu::KPanelMenu(QWidget *parent)
   : KMenu(parent)
 {
-    setObjectName(name);
     init();
 }
 

@@ -50,9 +50,8 @@ K_EXPORT_KICKER_MENUEXT(prefmenu, PrefMenu)
 const int idStart = 4242;
 
 PrefMenu::PrefMenu(QWidget *parent,
-                   const char *name,
                    const QStringList &/*args*/)
-    : KPanelMenu(i18n("Settings"), parent, name),
+    : KPanelMenu(i18n("Settings"), parent),
       m_clearOnClose(false)
 {
 }

@@ -34,7 +34,7 @@ class RecentDocsMenu : public KPanelMenu
 	Q_OBJECT
 
 public:
-	RecentDocsMenu(QWidget* parent, const char* name, const QStringList &/*args*/);
+	RecentDocsMenu(QWidget* parent, const QStringList &/*args*/);
     ~RecentDocsMenu();
 	void initialize();
 

@@ -32,9 +32,8 @@
 K_EXPORT_KICKER_MENUEXT( find, FindMenu )
 
 
-FindMenu::FindMenu( QWidget *parent, const char *name,
-                    const QStringList &/*args*/)
-  : KPanelMenu( "", parent, name )
+FindMenu::FindMenu( QWidget *parent, const QStringList &/*args*/)
+  : KPanelMenu( "", parent )
 {
 }
 

@@ -31,7 +31,7 @@ class PanelQuickBrowser : public KPanelMenu
     Q_OBJECT
 
 public:
-    PanelQuickBrowser(QWidget *parent=0, const char *name=0);
+    PanelQuickBrowser(QWidget *parent=0);
 
 public Q_SLOTS:
     virtual void initialize();

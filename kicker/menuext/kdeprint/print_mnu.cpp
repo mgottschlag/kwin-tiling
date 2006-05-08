@@ -43,8 +43,8 @@ K_EXPORT_KICKER_MENUEXT(kdeprint, PrintMenu)
 #define	KPRINTER_ID		5
 #define PRINTER_LIST_ID		10
 
-PrintMenu::PrintMenu(QWidget *parent, const char *name, const QStringList & /*args*/)
-: KPanelMenu("", parent, name)
+PrintMenu::PrintMenu(QWidget *parent, const QStringList & /*args*/)
+: KPanelMenu("", parent)
 {
     static bool kdeprintIconsInitialized = false;
     if ( !kdeprintIconsInitialized ) {

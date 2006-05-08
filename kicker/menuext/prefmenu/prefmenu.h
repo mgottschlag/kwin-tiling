@@ -42,7 +42,6 @@ class PrefMenu : public KPanelMenu
 
     public:
         PrefMenu(QWidget *parent,
-                 const char *name,
                  const QStringList & /*args*/);
         PrefMenu(const QString& label,
                  const QString& root,

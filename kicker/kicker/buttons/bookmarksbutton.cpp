@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <qtooltip.h>
 
-#include <kaction.h>
+#include <kactioncollection.h>
 #include <kbookmark.h>
 #include <kbookmarkmenu.h>
 #include <konqbookmarkmanager.h>

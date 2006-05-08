@@ -54,7 +54,7 @@ class KDE_EXPORT PanelServiceMenu : public KPanelMenu
 
 public:
     PanelServiceMenu(const QString & label, const QString & relPath,
-		     QWidget* parent  = 0, const char* name = 0, bool addmenumode = false,const QString &insertInlineHeader = QString());
+		     QWidget* parent  = 0, bool addmenumode = false,const QString &insertInlineHeader = QString());
 
     virtual ~PanelServiceMenu();
 
@@ -88,7 +88,7 @@ protected:
         const QString &aliasname = QString());
     virtual PanelServiceMenu * newSubMenu(const QString & label,
         const QString & relPath,
-        QWidget * parent, const char * name,
+        QWidget * parent,
         const QString & _inlineHeader=QString());
 
     virtual void mousePressEvent(QMouseEvent *);

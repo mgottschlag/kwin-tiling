@@ -34,8 +34,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "quickbrowser_mnu.h"
 #include "quickbrowser_mnu.moc"
 
-PanelQuickBrowser::PanelQuickBrowser(QWidget *parent, const char *name)
-  : KPanelMenu("", parent, name) {}
+PanelQuickBrowser::PanelQuickBrowser(QWidget *parent)
+  : KPanelMenu("", parent) {}
 
 void PanelQuickBrowser::initialize()
 {

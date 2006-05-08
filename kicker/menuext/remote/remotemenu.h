@@ -30,8 +30,7 @@ class RemoteMenu : public KPanelMenu, public KDirNotify
     K_DCOP
 
     public:
-        RemoteMenu(QWidget *parent, const char *name,
-                   const QStringList & /*args*/);
+        RemoteMenu(QWidget *parent, const QStringList & /*args*/);
         ~RemoteMenu();
 
     k_dcop:

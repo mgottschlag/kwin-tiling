@@ -62,8 +62,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "service_mnu.moc"
 
 PanelServiceMenu::PanelServiceMenu(const QString & label, const QString & relPath, QWidget * parent,
-                                   const char * name, bool addmenumode, const QString & insertInlineHeader)
-    : KPanelMenu(label, parent, name),
+                                   bool addmenumode, const QString & insertInlineHeader)
+    : KPanelMenu(label, parent),
       relPath_(relPath),
       insertInlineHeader_( insertInlineHeader ),
       clearOnClose_(false),
@@ -189,7 +189,7 @@ void PanelServiceMenu::fillMenu(KServiceGroup::Ptr& _root,
             }
 
             PanelServiceMenu * m =
-                newSubMenu(g->name(), g->relPath(), this, g->name().toUtf8(), inlineHeaderName);
+                newSubMenu(g->name(), g->relPath(), this, inlineHeaderName);
             m->setWindowTitle(groupCaption);
 
             if (separatorNeeded)
@@ -694,9 +694,9 @@ void PanelServiceMenu::dragObjectDestroyed(QObject* o)
 }
 
 PanelServiceMenu *PanelServiceMenu::newSubMenu(const QString & label, const QString & relPath,
-                                               QWidget * parent, const char * name, const QString& _inlineHeader)
+                                               QWidget * parent, const QString& _inlineHeader)
 {
-    return new PanelServiceMenu(label, relPath, parent, name, false,_inlineHeader);
+    return new PanelServiceMenu(label, relPath, parent, false,_inlineHeader);
 }
 
 void PanelServiceMenu::slotClearOnClose()

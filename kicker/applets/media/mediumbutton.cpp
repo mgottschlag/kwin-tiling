@@ -41,6 +41,7 @@
 #include <kipc.h>
 #include <kiconloader.h>
 #include <kmenu.h>
+#include <kstdaction.h>
 
 #include <konq_operations.h>
 #include <konq_popupmenu.h>

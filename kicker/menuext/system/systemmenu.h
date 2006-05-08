@@ -30,8 +30,7 @@ class SystemMenu : public KPanelMenu
     Q_OBJECT
 
     public:
-        SystemMenu(QWidget *parent, const char *name,
-                   const QStringList & /*args*/);
+        SystemMenu(QWidget *parent, const QStringList & /*args*/);
         ~SystemMenu();
 
     protected Q_SLOTS:

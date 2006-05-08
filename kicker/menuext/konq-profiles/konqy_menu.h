@@ -32,7 +32,7 @@ class KonquerorProfilesMenu : public KPanelMenu
    Q_OBJECT
 
    public:
-      KonquerorProfilesMenu(QWidget *parent, const char *name, const QStringList & /*args*/);
+      KonquerorProfilesMenu(QWidget *parent, const QStringList & /*args*/);
       ~KonquerorProfilesMenu();
 
    protected Q_SLOTS:

@@ -16,7 +16,7 @@
 
 #include <qfile.h>
 
-#include <kaction.h>
+#include <kactionmenu.h>
 #include <klocale.h>
 
 

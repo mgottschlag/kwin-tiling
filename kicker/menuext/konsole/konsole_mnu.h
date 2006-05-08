@@ -38,7 +38,7 @@ class KonsoleMenu : public KPanelMenu/*, public KPReloadObject*/
     Q_OBJECT
 
 public:
-    KonsoleMenu(QWidget *parent = 0, const char *name = 0);
+    KonsoleMenu(QWidget *parent = 0);
     ~KonsoleMenu();
     KUrl baseURL() const;
 
@@ -67,7 +67,7 @@ public:
     KonsoleMenuFactory(QObject *parent = 0, const char *name = 0);
 
 protected:
-    QObject* createObject(QObject *parent = 0, const char *name = 0, const char *classname = "QObject", const QStringList& args = QStringList());
+    QObject* createObject(QObject *parent = 0, const char *classname = "QObject", const QStringList& args = QStringList());
 };
 
 #endif

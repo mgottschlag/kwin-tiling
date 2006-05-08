@@ -34,13 +34,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "containerarea.h"
 
 PanelAddButtonMenu::PanelAddButtonMenu(ContainerArea* cArea, const QString & label,
-				       const QString & relPath, QWidget * parent, const char * name, const QString& _inlineHeader)
-    : PanelServiceMenu(label, relPath, parent, name, true, _inlineHeader), containerArea(cArea)
+				       const QString & relPath, QWidget * parent, const QString& _inlineHeader)
+    : PanelServiceMenu(label, relPath, parent, true, _inlineHeader), containerArea(cArea)
 {
 }
 
-PanelAddButtonMenu::PanelAddButtonMenu(ContainerArea* cArea, QWidget * parent, const char * name, const QString& _inlineHeader)
-    : PanelServiceMenu(QString(), QString(), parent, name, true, _inlineHeader), containerArea(cArea)
+PanelAddButtonMenu::PanelAddButtonMenu(ContainerArea* cArea, QWidget * parent, const QString& _inlineHeader)
+    : PanelServiceMenu(QString(), QString(), parent, true, _inlineHeader), containerArea(cArea)
 {
 }
 
@@ -61,9 +61,9 @@ void PanelAddButtonMenu::slotExec(int id)
 }
 
 PanelServiceMenu * PanelAddButtonMenu::newSubMenu(const QString & label, const QString & relPath,
-						QWidget * parent, const char * name, const QString& _inlineHeader)
+                                                  QWidget * parent, const QString& _inlineHeader)
 {
-    return new PanelAddButtonMenu(containerArea, label, relPath, parent, name, _inlineHeader);
+    return new PanelAddButtonMenu(containerArea, label, relPath, parent, _inlineHeader);
 }
 
 void PanelAddButtonMenu::addNonKDEApp()

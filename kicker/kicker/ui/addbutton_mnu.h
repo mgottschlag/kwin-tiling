@@ -34,8 +34,8 @@ class PanelAddButtonMenu : public PanelServiceMenu
 
 public:
     PanelAddButtonMenu(ContainerArea* cArea, const QString & label, const QString & relPath,
-		       QWidget * parent  = 0, const char * name = 0,const QString& _inlineHeader= QString());
-    PanelAddButtonMenu(ContainerArea* cArea, QWidget * parent = 0, const char * name = 0, const QString& _inlineHeader= QString());
+		       QWidget * parent  = 0, const QString& _inlineHeader= QString());
+    PanelAddButtonMenu(ContainerArea* cArea, QWidget * parent = 0, const QString& _inlineHeader= QString());
 
 protected Q_SLOTS:
     virtual void slotExec(int id);
@@ -43,7 +43,7 @@ protected Q_SLOTS:
 
 protected:
     virtual PanelServiceMenu * newSubMenu(const QString & label, const QString & relPath,
-					  QWidget * parent, const char * name, const QString & _inlineHeader=QString());
+					  QWidget * parent, const QString & _inlineHeader=QString());
 private:
     ContainerArea *containerArea;
 };

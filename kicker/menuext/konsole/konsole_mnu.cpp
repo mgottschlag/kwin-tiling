@@ -52,8 +52,8 @@ extern "C"
     }
 }
 
-KonsoleMenu::KonsoleMenu(QWidget *parent, const char *name)
-    : KPanelMenu("", parent, name),
+KonsoleMenu::KonsoleMenu(QWidget *parent)
+    : KPanelMenu("", parent),
       m_profileMenu(0),
       m_bookmarksSession(0),
       m_bookmarkHandlerSession(0)
@@ -329,9 +329,9 @@ KonsoleMenuFactory::KonsoleMenuFactory(QObject *parent, const char *name)
     KGlobal::locale()->insertCatalog("konsolemenuapplet");
 }
 
-QObject* KonsoleMenuFactory::createObject(QObject *parent, const char *name, const char*, const QStringList&)
+QObject* KonsoleMenuFactory::createObject(QObject *parent, const char*, const QStringList&)
 {
-    return new KonsoleMenu((QWidget*)parent, name);
+    return new KonsoleMenu((QWidget*)parent);
 }
 
 #include "konsole_mnu.moc"

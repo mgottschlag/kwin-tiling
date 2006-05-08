@@ -40,7 +40,7 @@ class PanelBrowserMenu : public KPanelMenu
     Q_OBJECT
 
 public:
-    PanelBrowserMenu(QString path, QWidget *parent = 0, const char *name = 0, int startid = 0);
+    PanelBrowserMenu(QString path, QWidget *parent = 0, int startid = 0);
   ~PanelBrowserMenu();
 
     void append(const QPixmap &pixmap, const QString &title, const QString &filename, bool mimecheck);
