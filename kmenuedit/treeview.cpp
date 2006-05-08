@@ -46,6 +46,7 @@
 #include <kiconloader.h>
 #include <kdesktopfile.h>
 #include <kaction.h>
+#include <kactioncollection.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
 #include <kservice.h>
