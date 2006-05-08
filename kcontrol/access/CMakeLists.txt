@@ -12,7 +12,7 @@ kde4_add_plugin(kcm_access ${kcm_access_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_access )
 
-target_link_libraries(kcm_access  ${KDE4_KDE3SUPPORT_LIBS} )
+target_link_libraries(kcm_access  ${KDE4_KDE3SUPPORT_LIBS} phononcore )
 
 install_targets(${PLUGIN_INSTALL_DIR} kcm_access )
 
@@ -25,7 +25,7 @@ kde4_automoc(${kaccess_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kaccess ${kaccess_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kaccess  ${KDE4_KDEUI_LIBS}  )
+target_link_libraries(kdeinit_kaccess  ${KDE4_KDEUI_LIBS} phononcore  )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kaccess )
 

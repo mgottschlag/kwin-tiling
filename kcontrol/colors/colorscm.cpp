@@ -92,7 +92,7 @@ QPixmap mkColorPreview(const WidgetCanvas *cs)
 
 /**** KColorScheme ****/
 
-KColorScheme::KColorScheme(QWidget *parent, const char *name, const QStringList &)
+KColorScheme::KColorScheme(QWidget *parent, const QStringList &)
     : KCModule(KolorFactory::instance(), parent)
 {
     nSysSchemes = 2;

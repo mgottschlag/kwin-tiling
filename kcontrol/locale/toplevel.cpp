@@ -44,7 +44,7 @@
 #include "kcmlocale.h"
 #include "toplevel.moc"
 
-KLocaleApplication::KLocaleApplication(QWidget *parent, const char* /*name*/,
+KLocaleApplication::KLocaleApplication(QWidget *parent,
                                        const QStringList &args)
   : KCModule( KLocaleFactory::instance(), parent, args)
 {

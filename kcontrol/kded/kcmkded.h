@@ -32,7 +32,7 @@ class KDEDConfig : public KCModule
 {
 Q_OBJECT
 public:
-	KDEDConfig(QWidget* parent, const char* name= 0L, const QStringList& foo = QStringList());
+	KDEDConfig(QWidget* parent, const QStringList& foo = QStringList());
 	~KDEDConfig() {};
 
 	void       load();

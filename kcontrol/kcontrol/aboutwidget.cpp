@@ -86,7 +86,7 @@ AboutWidget::AboutWidget(QWidget *parent, Q3ListViewItem* category, const QStrin
 
     // set qwhatsthis help
     this->setWhatsThis( i18n(intro_text));
-    _viewer = new KHTMLPart( this, "_viewer" );
+    _viewer = new KHTMLPart( this );
     _viewer->widget()->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
     connect( _viewer->browserExtension(),
              SIGNAL(openURLRequest(const KUrl&, const KParts::URLArgs&)),

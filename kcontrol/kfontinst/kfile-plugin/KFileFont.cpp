@@ -267,7 +267,7 @@ K_EXPORT_COMPONENT_FACTORY(kfile_font, KFileFontPluginFactory("kfontinst"))
 namespace KFI
 {
 
-KFileFontPlugin::KFileFontPlugin(QObject *parent, const char *name, const QStringList& args)
+KFileFontPlugin::KFileFontPlugin(QObject *parent, const QStringList& args)
                : KFilePlugin(parent, args)
 {
     KGlobal::locale()->insertCatalog(KFI_CATALOGUE);

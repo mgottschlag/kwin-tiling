@@ -13,7 +13,6 @@
 #include <kcombobox.h>
 #include <kiconloader.h>
 #include <kdebug.h>
-#include <kaudioplayer.h>
 #include <knotifyclient.h>
 #include <kconfig.h>
 #include <kglobal.h>
@@ -487,7 +486,7 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
 
   // ask artsd to ring a nice bell
   if (_artsBell && !_artsBellBlocked ) {
-    KAudioPlayer::play(_artsBellFile);
+    _player.play(_artsBellFile);
     _artsBellBlocked = true;
     artsBellTimer->start( 300 );
   }

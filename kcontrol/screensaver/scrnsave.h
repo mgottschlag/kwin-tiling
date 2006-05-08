@@ -40,7 +40,7 @@ class KScreenSaver : public KCModule
 {
     Q_OBJECT
 public:
-    KScreenSaver(QWidget *parent, const char *name, const QStringList &);
+    KScreenSaver(QWidget *parent, const QStringList &);
     ~KScreenSaver();
 
     virtual void load();

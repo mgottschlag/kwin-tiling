@@ -39,7 +39,7 @@
 typedef KGenericFactory<SMServerConfig, QWidget > SMSFactory;
 K_EXPORT_COMPONENT_FACTORY (kcm_smserver, SMSFactory("kcmsmserver") )
 
-SMServerConfig::SMServerConfig( QWidget *parent, const char* name, const QStringList & )
+SMServerConfig::SMServerConfig( QWidget *parent, const QStringList & )
   : KCModule (SMSFactory::instance(), parent)
 {
     setQuickHelp( i18n("<h1>Session Manager</h1>"

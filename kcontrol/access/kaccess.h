@@ -10,8 +10,10 @@
 
 
 #include <kuniqueapplication.h>
+#include <kurl.h>
 #include <kwinmodule.h>
 
+#include <phonon/simpleplayer.h>
 
 #include <X11/Xlib.h>
 #define explicit int_explicit        // avoid compiler name clash in XKBlib.h
@@ -63,9 +65,10 @@ private:
   unsigned int features;
   unsigned int requestedFeatures;
 
+  Phonon::SimplePlayer _player;
   bool    _systemBell, _artsBell, _visibleBell, _visibleBellInvert;
   bool    _artsBellBlocked;
-  QString _artsBellFile;
+  KUrl    _artsBellFile;
   QColor  _visibleBellColor;
   int     _visibleBellPause;
 

@@ -39,7 +39,7 @@ class KColorScheme: public KCModule
     Q_OBJECT
 
 public:
-    KColorScheme(QWidget *parent, const char *name, const QStringList &);
+    KColorScheme(QWidget *parent, const QStringList &);
     ~KColorScheme();
 
     virtual void load();

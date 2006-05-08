@@ -25,9 +25,7 @@
 #include <QPixmap>
 #include <QPaintEvent>
 
-#include <QPixmap>
 #include <kpixmapeffect.h>
-#include <QPixmap>
 #include <klocale.h>
 #include <kimageeffect.h>
 #include <kiconloader.h>
@@ -141,26 +139,25 @@ void MenuPreview::setPreviewMode( PreviewMode pvm )
 void MenuPreview::paintEvent( QPaintEvent* /* pe */ )
 {
 	// Paint the frame and blended pixmap
-        QColorGroup cg = QColorGroup( palette() );
 	int x2 = width()-1;
 	int y2 = height()-1;
 
 	QPainter p(this);
-	p.setPen(cg.dark());
+	p.setPen(palette().color( QPalette::Active, QPalette::Dark ));
 	p.drawLine(0, 0, x2, 0);
 	p.drawLine(0, 0, 0, y2);
-	p.setPen(cg.color(QPalette::Light));
+	p.setPen(palette().color( QPalette::Active, QPalette::Light));
 	p.drawLine(1, y2, x2, y2);
 	p.drawLine(x2, 1, x2, y2);
 
 	if (mode == NoEffect)
-            p.fillRect(1, 1, --x2, --y2, cg.color( QPalette::Button ) );
+            p.fillRect(1, 1, --x2, --y2, palette().color( QPalette::Active, QPalette::Button ) );
 	else if (mode != NoEffect && pixBlended)
 		p.drawPixmap(1, 1, *pixBlended, 0, 0, --x2, --y2);
 
 	QRect r = rect();
 	r.translate(6,3);
-	p.setPen( cg.text() );
+	p.setPen( palette().color( QPalette::Active, QPalette::Text ) );
 	p.drawText( r, Qt::AlignTop | Qt::AlignLeft, QString::number((int)(menuOpacity*100))+i18n("%") );
 }
 

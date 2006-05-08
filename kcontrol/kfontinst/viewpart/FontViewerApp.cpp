@@ -35,6 +35,7 @@
 #include <kglobal.h>
 #include <kfiledialog.h>
 #include <kconfig.h>
+#include <kstdaction.h>
 
 #define CFG_GROUP    "FontViewer Settings"
 #define CFG_SIZE_KEY "Window Size"
@@ -52,7 +53,7 @@ CFontViewerAppMainWindow::CFontViewerAppMainWindow()
         KStdAction::open(this, SLOT(fileOpen()), actionCollection());
         KStdAction::quit(kapp, SLOT(quit()), actionCollection());
 
-        itsPreview=(KParts::ReadOnlyPart *)factory->create(this, "fontvier", "KParts::ReadOnlyPart");
+        itsPreview=(KParts::ReadOnlyPart *)factory->create(this, "KParts::ReadOnlyPart");
 
         KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
         KUrl         openURL;

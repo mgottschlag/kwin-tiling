@@ -501,7 +501,7 @@ static QString desktopConfigName()
   return name;
 }
 
-KFonts::KFonts(QWidget *parent, const char *, const QStringList &args)
+KFonts::KFonts(QWidget *parent, const QStringList &args)
     :   KCModule(FontFactory::instance(), parent, args)
 {
   QStringList nameGroupKeyRc;

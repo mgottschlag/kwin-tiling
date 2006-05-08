@@ -18,16 +18,18 @@
   MA  02110-1301, USA.
 */
 
-#include <kstandarddirs.h>
-#include <kconfig.h>
-#include <kbugreport.h>
 #include <kaboutapplication.h>
-#include <kmessagebox.h>
+#include <kactioncollection.h>
+#include <kbugreport.h>
+#include <kconfig.h>
 #include <kinstance.h>
-#include <kaction.h>
-#include <kwin.h>
 #include <kiconloader.h>
 #include <klocale.h>
+#include <kmessagebox.h>
+#include <kstandarddirs.h>
+#include <kstdaction.h>
+#include <ktoggleaction.h>
+#include <kwin.h>
 #include <kxmlguifactory.h>
 #include <QSplitter>
 

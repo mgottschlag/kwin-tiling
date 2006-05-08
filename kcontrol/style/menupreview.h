@@ -22,8 +22,6 @@
 
 #include <qwidget.h>
 
-class KPixmap;
-
 class MenuPreview : public QWidget
 {
 	Q_OBJECT
@@ -49,9 +47,9 @@ private:
 	void createPixmaps();
 	void blendPixmaps();
 
-	KPixmap* pixBackground;
-	KPixmap* pixOverlay;
-	KPixmap* pixBlended;
+	QPixmap* pixBackground;
+	QPixmap* pixOverlay;
+	QPixmap* pixBlended;
 	float menuOpacity;
 	PreviewMode mode;
 };

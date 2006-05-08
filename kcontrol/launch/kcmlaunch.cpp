@@ -39,7 +39,7 @@ typedef KGenericFactory<LaunchConfig, QWidget> LaunchFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_launch, LaunchFactory("kcmlaunch") )
 
 
-LaunchConfig::LaunchConfig(QWidget * parent, const char * name, const QStringList &)
+LaunchConfig::LaunchConfig(QWidget * parent, const QStringList &)
   : KCModule(LaunchFactory::instance(), parent)
 {
     QVBoxLayout* Form1Layout = new QVBoxLayout( this );

@@ -54,7 +54,7 @@ K_EXPORT_COMPONENT_FACTORY( kcm_accessibility, AccessibilityFactory("kcmaccessib
 //    return false; // don't need it
 // }
 
-AccessibilityConfig::AccessibilityConfig(QWidget *parent,const char *name, const QStringList &args)
+AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QStringList &args)
   : KCModule( AccessibilityFactory::instance(), parent)
 {
 	widget = new AccessibilityConfigWidget(parent, 0L); 

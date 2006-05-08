@@ -49,7 +49,7 @@ typedef KGenericFactory<KDEDConfig, QWidget> KDEDFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_kded, KDEDFactory( "kcmkded" ) )
 
 
-KDEDConfig::KDEDConfig(QWidget* parent, const char* name, const QStringList &) :
+KDEDConfig::KDEDConfig(QWidget* parent, const QStringList &) :
 	KCModule( KDEDFactory::instance(), parent )
 {
 	KAboutData *about =

@@ -39,7 +39,7 @@ class KFileFontPlugin : public KFilePlugin
 {
     public:
 
-    KFileFontPlugin(QObject *parent, const char *name, const QStringList& args);
+    KFileFontPlugin(QObject *parent, const QStringList& args);
     virtual ~KFileFontPlugin() {}
 
     bool readInfo(KFileMetaInfo& info, uint what = KFileMetaInfo::Fastest);

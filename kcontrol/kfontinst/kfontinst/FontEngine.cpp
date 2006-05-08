@@ -57,6 +57,7 @@
 #include "FontEngine.h"
 #include "CompressedFile.h"
 #include "Misc.h"
+#include <kascii.h>
 #include <kglobal.h>
 #include <ctype.h>
 #include <string.h>

@@ -45,7 +45,7 @@ class KLocaleApplication : public KCModule
   Q_OBJECT
 
 public:
-  KLocaleApplication(QWidget *parent, const char *name, const QStringList &);
+  KLocaleApplication(QWidget *parent, const QStringList &);
   virtual ~KLocaleApplication();
 
   virtual void load();

@@ -324,7 +324,7 @@ QString OuiDb::vendor(octlet_t guid)
 extern "C"
 {
 
-   KDE_EXPORT KCModule *create_view1394(QWidget *parent, const char */*name*/)
+   KDE_EXPORT KCModule *create_view1394(QWidget *parent)
    {
       KGlobal::locale()->insertCatalog("kcmview1394");
 	  KInstance *inst = new KInstance("kcmview1394");

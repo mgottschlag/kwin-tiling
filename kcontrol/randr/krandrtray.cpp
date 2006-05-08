@@ -21,6 +21,7 @@
 //Added by qt3to4:
 #include <QMouseEvent>
 
+#include <kactioncollection.h>
 #include <kaction.h>
 #include <kapplication.h>
 #include <kcmultidialog.h>

@@ -875,7 +875,7 @@ void CKioFonts::stat(const KUrl &url)
 
     if(updateFontList() && checkUrl(url, true))
     {
-        QString path(url.path(-1));
+        QString path(url.path(KUrl::RemoveTrailingSlash));
 
         if(path.isEmpty())
         {

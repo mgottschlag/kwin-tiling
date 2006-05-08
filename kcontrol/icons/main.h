@@ -34,7 +34,7 @@ class IconModule : public KCModule
   Q_OBJECT
 
 public:
-  IconModule(QWidget *parent, const char *name, const QStringList &);
+  IconModule(QWidget *parent, const QStringList &);
 
   void load();
   void save();

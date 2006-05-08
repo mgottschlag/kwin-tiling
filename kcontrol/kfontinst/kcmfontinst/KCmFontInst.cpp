@@ -44,6 +44,8 @@
 #include <QGridLayout>
 #include <QDropEvent>
 #include <kaboutdata.h>
+#include <kactioncollection.h>
+#include <kactionmenu.h>
 #include <kgenericfactory.h>
 #include <kdiroperator.h>
 #include <kprinter.h>
@@ -77,7 +79,7 @@ K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory("kcmfontinst"))
 namespace KFI
 {
 
-CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
+CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     : KCModule( FontInstallFactory::instance(), parent),
 #ifdef HAVE_XFT
               itsPreview(NULL),
@@ -115,7 +117,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const char *, const QStringList&)
     {
         itsSplitter=new QSplitter(this);
         fontsFrame=new QFrame(itsSplitter),
-        itsPreview=(KParts::ReadOnlyPart *)factory->create(itsSplitter, "kcmfontinst", "KParts::ReadOnlyPart");
+        itsPreview=(KParts::ReadOnlyPart *)factory->create(itsSplitter, "KParts::ReadOnlyPart");
         itsSplitter->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
         QList<int> sizes(itsConfig.readEntry(CFG_SPLITTER_SIZES,QList<int>()));

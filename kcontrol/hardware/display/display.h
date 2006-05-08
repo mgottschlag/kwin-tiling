@@ -29,7 +29,7 @@ class KCMDisplay : public KCModule
   Q_OBJECT
 
   public:
-    KCMDisplay( QWidget *parent, const char *name, const QStringList& );
+    KCMDisplay( QWidget *parent, const QStringList& );
     void load();
     void save();
 

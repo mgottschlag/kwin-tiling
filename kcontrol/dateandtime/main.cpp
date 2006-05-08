@@ -41,7 +41,7 @@
 typedef KGenericFactory<KclockModule, QWidget> KlockModuleFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_clock, KlockModuleFactory("kcmkclock"))
 
-KclockModule::KclockModule(QWidget *parent, const char *name, const QStringList &)
+KclockModule::KclockModule(QWidget *parent, const QStringList &)
   : KCModule(KlockModuleFactory::instance(), parent/*, name*/)
 {
   KAboutData *about =
