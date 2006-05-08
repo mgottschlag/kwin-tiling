@@ -75,7 +75,7 @@ void KRandRModule::performApplyOnStartup()
 	}
 }
 
-KRandRModule::KRandRModule(QWidget *parent, const char *name, const QStringList&)
+KRandRModule::KRandRModule(QWidget *parent, const QStringList&)
     : KCModule(KSSFactory::instance(), parent)
     , m_changed(false)
 {

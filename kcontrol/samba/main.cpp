@@ -32,7 +32,7 @@
 class SambaContainer:public KCModule
 {
    public:
-      SambaContainer(QWidget *parent=0, const char * name=0, const QStringList &list = QStringList() );
+      SambaContainer(QWidget *parent=0, const QStringList &list = QStringList() );
       virtual ~SambaContainer();
       virtual void load();
       virtual void save();
@@ -49,7 +49,7 @@ class SambaContainer:public KCModule
 typedef KGenericFactory<SambaContainer, QWidget > SambaFactory;
 K_EXPORT_COMPONENT_FACTORY (kcm_samba, SambaFactory("kcmsamba") )
 
-SambaContainer::SambaContainer(QWidget *parent, const char* name, const QStringList&)
+SambaContainer::SambaContainer(QWidget *parent, const QStringList&)
 :KCModule(SambaFactory::instance(), parent)
 ,config("kcmsambarc",false,true)
 ,tabs(this)

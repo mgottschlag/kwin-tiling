@@ -46,7 +46,7 @@
 typedef KGenericFactory<KCMIOSlaveInfo, QWidget> SlaveFactory;
 K_EXPORT_COMPONENT_FACTORY( kcm_ioslaveinfo, SlaveFactory("kcmioslaveinfo") )
 
-KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const char *name, const QStringList &)
+KCMIOSlaveInfo::KCMIOSlaveInfo(QWidget *parent, const QStringList &)
                :KCModule(SlaveFactory::instance(), parent),m_ioslavesLb(0),m_tfj(0)
 {
    QVBoxLayout *layout=new QVBoxLayout(this);

@@ -44,7 +44,7 @@ KBackground::~KBackground( )
     delete m_pConfig;
 }
 
-KBackground::KBackground(QWidget *parent, const char *name, const QStringList &args)
+KBackground::KBackground(QWidget *parent, const QStringList &args)
     : KCModule(KBackGndFactory::instance(), parent, args)
 {
     int screen_number = 0;

@@ -31,7 +31,7 @@ class KCMNic:public KCModule
 {
    Q_OBJECT
    public:
-      KCMNic(QWidget *parent=0, const char * name=0, const QStringList &list = QStringList( ));
+      KCMNic(QWidget *parent=0, const QStringList &list = QStringList( ));
 
    protected Q_SLOTS:
       void update();
