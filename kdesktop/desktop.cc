@@ -37,6 +37,7 @@
 
 #include <netwm.h>
 #include <dcopclient.h>
+#include <kaction.h>
 #include <kcursor.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>

@@ -1278,7 +1278,7 @@ void KDIconView::slotAboutToCreate(const QPoint &pos, const QList<KIO::CopyInfo>
        m_lastDropPos = pos;
     }
 
-    QString dir = url().path(-1); // Strip trailing /
+    QString dir = url().path( KUrl::RemoveTrailingSlash ); // Strip trailing /
 
     QList<KIO::CopyInfo>::ConstIterator it = files.begin();
     int gridX = gridXValue();

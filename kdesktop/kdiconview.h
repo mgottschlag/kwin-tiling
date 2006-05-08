@@ -21,7 +21,7 @@
 #define kdiconview_h
 
 #include <konq_iconviewwidget.h>
-#include <kaction.h>
+#include <kactioncollection.h>
 #include <kfileitem.h>
 #include <kdirnotify.h>
 //Added by qt3to4:

@@ -32,23 +32,26 @@
 #include <dirent.h>
 #include <errno.h>
 
-#include <kstandarddirs.h>
-#include <kmenu.h>
-#include <kapplication.h>
-#include <kconfig.h>
-#include <kbookmarkmenu.h>
-#include <konqbookmarkmanager.h>
-#include <klocale.h>
-#include <knewmenu.h>
 #include <dcopclient.h>
 #include <dcopref.h>
-#include <khelpmenu.h>
+#include <kactioncollection.h>
+#include <kapplication.h>
+#include <kbookmarkmenu.h>
+#include <kconfig.h>
 #include <kdebug.h>
-#include <kwindowlistmenu.h>
+#include <khelpmenu.h>
+#include <kstandarddirs.h>
+#include <klocale.h>
+#include <kmenu.h>
 #include <kmenubar.h>
 #include <kmessagebox.h>
-#include <kuser.h>
+#include <knewmenu.h>
+#include <konqbookmarkmanager.h>
+#include <ktoggleaction.h>
 #include <ktoolinvocation.h>
+#include <kuser.h>
+#include <kwindowlistmenu.h>
+
 #include <qfile.h>
 
 #include "krootwm.h"

@@ -172,11 +172,11 @@ KParts::ReadOnlyPart* KWebDesktop::createPart( const QString& mimeType )
     } else {
         // Try to find an appropriate viewer component
         m_part = KParts::ComponentFactory::createPartInstanceFromQuery<KParts::ReadOnlyPart>
-                 ( mimeType, QString(), 0, 0, this, 0 );
+                 ( mimeType, QString(), 0, this, QStringList(), 0 );
         if ( !m_part )
             kWarning() << "No handler found for " << mimeType << endl;
         else {
-            kDebug() << "Loaded " << m_part->className() << endl;
+            kDebug() << "Loaded " << m_part->metaObject()->className() << endl;
             connect( m_part, SIGNAL( completed() ),
                      this, SLOT( slotCompleted() ) );
         }
