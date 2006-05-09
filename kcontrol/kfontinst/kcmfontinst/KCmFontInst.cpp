@@ -268,7 +268,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     {
         KActionCollection *previewCol=itsPreview->actionCollection();
 
-        if(previewCol && previewCol->count()>0 && (act=previewCol->action("changeText")))
+        if(previewCol && (act=previewCol->action("changeText")))
             toolbar->addAction( act );
     }
 #endif
