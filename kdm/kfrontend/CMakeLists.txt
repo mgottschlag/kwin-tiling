@@ -9,6 +9,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/workspace/kdm/backend  
 	${CMAKE_SOURCE_DIR}/workspace/kdm/
 	${CMAKE_SOURCE_DIR}/workspace/kdmlib/
+	${CMAKE_BINARY_DIR}/workspace/kdm/
 	${KDE4_INCLUDES} )
 
 
@@ -24,10 +25,10 @@ set(libkdmthemer_SRCS
 
 
 
-add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci COMMAND ${PERL_EXECUTABLE} ARGS -w ${CMAKE_SOURCE_DIR}/workspace/kdm/confproc.pl ${CMAKE_SOURCE_DIR}/workspace/kdm/config.def ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci  DEPENDS ${CMAKE_SOURCE_DIR}/workspace/kdm/config.def )
+add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/workspace/kdm/config.ci COMMAND ${PERL_EXECUTABLE} ARGS -w ${CMAKE_SOURCE_DIR}/workspace/kdm/confproc.pl ${CMAKE_SOURCE_DIR}/workspace/kdm/config.def ${CMAKE_BINARY_DIR}/workspace/kdm/config.ci  DEPENDS ${CMAKE_SOURCE_DIR}/workspace/kdm/config.def )
 
 
-macro_additional_clean_files( ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci )
+macro_additional_clean_files( ${CMAKE_BINARY_DIR}/workspace/kdm/config.ci )
 
 set(kdm_config_SRCS kdm_config.c ${kdmconfig_SRCS}  )
 
@@ -83,7 +84,7 @@ install(TARGETS krootimage DESTINATION bin)
 set(genkdmconf_SRCS genkdmconf.c )
 
 #add_file_dependencies(${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci genkdmconf.c )
-macro_add_file_dependencies(genkdmconf.c ${CMAKE_SOURCE_DIR}/workspace/kdm/config.ci )
+macro_add_file_dependencies(genkdmconf.c ${CMAKE_BINARY_DIR}/workspace/kdm/config.ci )
 
 
 kde4_automoc(${genkdmconf_SRCS})
