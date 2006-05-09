@@ -355,8 +355,11 @@ void KBackgroundManager::setPixmap(QPixmap *pm, int hash, int desk)
          // Qt eats repaint events in this case :-((
          sv->viewport()->update();
        }
-       m_pDesktop->setErasePixmap(*pm);
-       m_pDesktop->repaint();
+       QPalette pal = m_pDesktop->palette();
+       pal.setBrush(QPalette::Background, QBrush(*pm));
+       m_pDesktop->setPalette(pal);
+      // m_pDesktop->setErasePixmap(*pm);
+       //m_pDesktop->repaint();
        static bool root_cleared = false;
        if( !root_cleared )
        { // clear the root window pixmap set by kdm
