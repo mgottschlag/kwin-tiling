@@ -94,9 +94,9 @@ void KRandRSystemTray::contextMenuAboutToShow(KMenu* menu)
 
 	menu->insertSeparator();
 
-	KAction *actPrefs = new KAction( i18n( "Configure Display..." ),
-		SmallIconSet( "configure" ), KShortcut(), this, SLOT( slotPrefs() ),
-		actionCollection(), 0 );
+	KAction *actPrefs = new KAction( KIcon( "configure" ), i18n( "Configure Display..." ),
+                                         actionCollection(), QString());
+        connect( actPrefs, SIGNAL( triggered( bool ) ), SLOT( slotPrefs() ) );
 	menu->addAction( actPrefs );
 
 	menu->insertItem(SmallIcon("help"),KStdGuiItem::help().text(), m_help->menu());
