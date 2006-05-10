@@ -2,6 +2,7 @@
 
 Copyright 1988, 1998  The Open Group
 Copyright 2000-2004 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2006 Riccardo Iaconelli <ruphy@fsfe.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -164,11 +165,11 @@ AutoLogon( Time_t tdiff )
 static const struct {
   int vcode, echo, ndelay;
 } grqs[] = {
-	{ V_GET_TEXT, TRUE, FALSE },
-	{ V_GET_TEXT, FALSE, FALSE },
-	{ V_GET_TEXT, TRUE, FALSE },
-	{ V_GET_TEXT, FALSE, FALSE },
-	{ V_GET_TEXT, FALSE, TRUE },
+	{ V_GET_TEXT, true, false },
+	{ V_GET_TEXT, false, false },
+	{ V_GET_TEXT, true, false },
+	{ V_GET_TEXT, false, false },
+	{ V_GET_TEXT, false, true },
 	{ V_GET_BINARY, 0, 0 }
 };
 
@@ -183,7 +184,7 @@ conv_interact( int what, const char *prompt )
 		unsigned const char *up = (unsigned const char *)prompt;
 		int len = up[3] | (up[2] << 8) | (up[1] << 16) | (up[0] << 24);
 		GSendArr( len, prompt );
-		GSendInt( FALSE ); /* ndelay */
+		GSendInt( false ); /* ndelay */
 		return GRecvArr( &len );
 	} else {
 		GSendStr( prompt );
@@ -362,7 +363,7 @@ CtrlGreeterWait( int wreply )
 			goto doverify;
 		case G_Verify:
 			Debug( "G_Verify\n" );
-			rootok = FALSE;
+			rootok = false;
 		  doverify:
 			if (curuser) { free( curuser ); curuser = 0; }
 			if (curpass) { free( curpass ); curpass = 0; }
@@ -379,7 +380,7 @@ CtrlGreeterWait( int wreply )
 			Debug( "G_AutoLogin\n" );
 			DoAutoLogon();
 			StrDup( &curtype, "classic" );
-			if (Verify( conv_auto, FALSE )) {
+			if (Verify( conv_auto, false )) {
 				Debug( " -> return success\n" );
 				GSendInt( V_OK );
 			} else
@@ -565,7 +566,7 @@ ManageSession( struct display *d )
 	tdiff = td->autoAgain ? 
 	           1 : time( 0 ) - td->hstent->lastExit - td->openDelay;
 	if (AutoLogon( tdiff )) {
-		if (!StrDup( &curtype, "classic" ) || !Verify( conv_auto, FALSE ))
+		if (!StrDup( &curtype, "classic" ) || !Verify( conv_auto, false ))
 			goto gcont;
 		if (greeter)
 			GSendInt( V_OK );
@@ -603,16 +604,16 @@ ManageSession( struct display *d )
 			if (cmd == G_Ready)
 				break;
 			if (cmd == -2)
-				CloseGreeter( FALSE );
+				CloseGreeter( false );
 			else {
 				LogError( "Received unknown command %d from greeter\n", cmd );
-				CloseGreeter( TRUE );
+				CloseGreeter( true );
 			}
 			goto regreet;
 		}
 	}
 
-	if (CloseGreeter( FALSE ) != EX_NORMAL)
+	if (CloseGreeter( false ) != EX_NORMAL)
 		goto regreet;
 
 	DeleteXloginResources();
@@ -696,7 +697,7 @@ DeleteXloginResources()
 
 	if (!xResLoaded)
 		return;
-	xResLoaded = FALSE;
+	xResLoaded = false;
 	prop = XInternAtom( dpy, "SCREEN_RESOURCES", True );
 	XDeleteProperty( dpy, RootWindow( dpy, 0 ), XA_RESOURCE_MANAGER );
 	if (prop)

@@ -2,6 +2,7 @@
 
 Copyright 1990, 1998  The Open Group
 Copyright 2002-2004 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2006 Riccardo Iaconelli <ruphy@fsfe.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -871,14 +872,14 @@ chooseHost( int hid )
 #else
 				GSendStr( inet_ntoa( *(struct in_addr *)h->hostaddr.data ) );
 #endif
-				CloseGreeter( FALSE );
+				CloseGreeter( false );
 				SessionExit( EX_REMOTE );
 			} else {
 				GSendInt( D_ChooseHost );
 				GSendArr( td->clientAddr.length, (char *)td->clientAddr.data );
 				GSendInt( td->connectionType );
 				GSendArr( h->hostaddr.length, (char *)h->hostaddr.data );
-				CloseGreeter( FALSE );
+				CloseGreeter( false );
 				goto bout;
 			}
 			break;
@@ -901,14 +902,14 @@ directChooseHost( const char *name )
 	if ((td->displayType & d_location) == dLocal) {
 		GSendInt( D_RemoteHost );
 		GSendStr( name );
-		CloseGreeter( FALSE );
+		CloseGreeter( false );
 		SessionExit( EX_REMOTE );
 	} else {
 		GSendInt( D_ChooseHost );
 		GSendArr( td->clientAddr.length, (char *)td->clientAddr.data );
 		GSendInt( td->connectionType );
 		GSendArr( hosts->addrlen, (char *)hosts->addr );
-		CloseGreeter( FALSE );
+		CloseGreeter( false );
 		SessionExit( EX_NORMAL );
 	}
 }
@@ -1008,7 +1009,7 @@ DoChoose()
 #endif
 		if (select( n + 1, &rfds, 0, 0, to ) > 0) {
 			if (FD_ISSET( grtproc.pipe.rfd, &rfds ))
-				switch (cmd = CtrlGreeterWait( FALSE )) {
+				switch (cmd = CtrlGreeterWait( false )) {
 				case -1:
 					break;
 				case G_Ch_Refresh:

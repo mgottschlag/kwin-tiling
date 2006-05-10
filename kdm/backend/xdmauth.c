@@ -2,6 +2,7 @@
 
 Copyright 1988, 1998  The Open Group
 Copyright 2001,2003 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2006 Riccardo Iaconelli <ruphy@fsfe.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -126,7 +127,7 @@ XdmGetXdmcpAuth( struct protoDisplay *pdpy,
 	if (pdpy->fileAuthorization && pdpy->xdmcpAuthorization)
 		return;
 	xdmcpauth = XdmGetAuthHelper( authorizationNameLen, authorizationName,
-	                              FALSE );
+	                              false );
 	if (!xdmcpauth)
 		return;
 	fileauth = (Xauth *)Malloc( sizeof(Xauth) );
@@ -209,7 +210,7 @@ XdmGetKey( struct protoDisplay *pdpy, ARRAY8Ptr displayID )
 	Debug( "lookup key for %.*s\n", displayID->length, displayID->data );
 	keys = fopen( keyFile, "r" );
 	if (!keys)
-		return FALSE;
+		return false;
 	while (fgets( line, sizeof(line), keys )) {
 		if (line[0] == '#' || sscanf( line, "%s %s", id, key ) != 2)
 			continue;
@@ -234,7 +235,7 @@ XdmGetKey( struct protoDisplay *pdpy, ARRAY8Ptr displayID )
 	bzero( line, sizeof(line) );
 	bzero( key, sizeof(key) );
 	fclose( keys );
-	return FALSE;
+	return false;
 }
 
 /*ARGSUSED*/
@@ -247,15 +248,15 @@ XdmCheckAuthentication( struct protoDisplay *pdpy,
 	XdmAuthKeyPtr incoming;
 
 	if (!XdmGetKey( pdpy, displayID ))
-		return FALSE;
+		return false;
 	if (authenticationData->length != 8)
-		return FALSE;
+		return false;
 	XdmcpUnwrap( authenticationData->data, (unsigned char *)&pdpy->key,
 	             authenticationData->data, 8 );
 	Debug( "request packet auth %02[*hhx\n",
 	       authenticationData->length, authenticationData->data );
 	if (!XdmcpCopyARRAY8( authenticationData, &pdpy->authenticationData ))
-		return FALSE;
+		return false;
 	incoming = (XdmAuthKeyPtr)authenticationData->data;
 	XdmcpIncrementKey( incoming );
 	XdmcpWrap( authenticationData->data, (unsigned char *)&pdpy->key,

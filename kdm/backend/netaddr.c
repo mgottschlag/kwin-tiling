@@ -2,6 +2,7 @@
 
 Copyright 1991, 1998  The Open Group
 Copyright 2002 Sun Microsystems, Inc.  All rights reserved.
+Copyright 2006 Riccardo Iaconelli <ruphy@fsfe.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -203,17 +204,17 @@ addressEqual( char *a1, int len1, char *a2, int len2 )
 	char *part1, *part2;
 
 	if (len1 != len2)
-		return FALSE;
+		return false;
 	if (NetaddrFamily( a1 ) != NetaddrFamily( a2 ))
-		return FALSE;
+		return false;
 	part1 = NetaddrPort( a1, &partlen1 );
 	part2 = NetaddrPort( a2, &partlen2 );
 	if (partlen1 != partlen2 || memcmp( part1, part2, partlen1 ) != 0)
-		return FALSE;
+		return false;
 	part1 = NetaddrAddress( a1, &partlen1 );
 	part2 = NetaddrAddress( a2, &partlen2 );
 	if (partlen1 != partlen2 || memcmp( part1, part2, partlen1 ) != 0)
-		return FALSE;
+		return false;
 	return TRUE;
 }
 #endif

@@ -3,6 +3,7 @@
 Copyright 1990, 1998  The Open Group
 Copyright 2001,2004 Oswald Buddenhagen <ossi@kde.org>
 Copyright 2002 Sun Microsystems, Inc.  All rights reserved.
+Copyright 2006 Riccardo Iaconelli <ruphy@fsfe.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -376,8 +377,8 @@ matchAclEntry( ARRAY8Ptr clientAddress, CARD16 connectionType, int direct )
 }
 
 /*
- * calls the given function for each valid indirect entry.  Returns TRUE if
- * the local host exists on any of the lists, else FALSE
+ * calls the given function for each valid indirect entry.  Returns true if
+ * the local host exists on any of the lists, else false
  */
 int
 ForEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
@@ -399,7 +400,7 @@ ForEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
 				(*function)( connectionType, choice, closure );
 		} else
 			scanHostlist( e->hosts, e->nhosts, clientAddress, connectionType,
-			              function, closure, FALSE, &haveLocalhost );
+			              function, closure, false, &haveLocalhost );
 	}
 	return haveLocalhost;
 }

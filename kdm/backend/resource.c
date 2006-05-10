@@ -2,6 +2,7 @@
 
 Copyright 1988, 1998  The Open Group
 Copyright 2000-2005 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2006 Riccardo Iaconelli <ruphy@fsfe.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -395,7 +396,7 @@ LoadDisplayResources( struct display *d )
 
 	if (Setjmp( cnftalk.errjmp ))
 		return -1; /* may memleak */
-	if ((ret = startConfig( GC_gDisplay, &d->cfg.dep, FALSE )) <= 0)
+	if ((ret = startConfig( GC_gDisplay, &d->cfg.dep, false )) <= 0)
 		return ret;
 	GSendStr( d->name );
 	GSendStr( d->class2 );
