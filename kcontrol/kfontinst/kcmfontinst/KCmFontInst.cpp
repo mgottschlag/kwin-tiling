@@ -223,8 +223,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
         toolbar->addAction( itsListAct );
     }
 
-    itsShowBitmapAct=new KToggleAction(i18n("Show Bitmap Fonts"), "font_bitmap", 0, this, SLOT(filterFonts()),
-                                       itsDirOp->actionCollection(), "showbitmap");
+    itsShowBitmapAct = new KToggleAction(KIcon("font_bitmap"), i18n("Show Bitmap Fonts"), itsDirOp->actionCollection(), "showbitmap");
+    connect(itsShowBitmapAct, SIGNAL(triggered(bool) ), SLOT(filterFonts()));
     itsShowBitmapAct->setChecked(showBitmap);
     toolbar->addAction( itsShowBitmapAct );
 
