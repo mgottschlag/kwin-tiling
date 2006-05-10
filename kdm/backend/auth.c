@@ -2,7 +2,6 @@
 
 Copyright 1988, 1998  The Open Group
 Copyright 2000-2004 Oswald Buddenhagen <ossi@kde.org>
-Copyright 2006 Riccardo Iaconelli <ruphy@fsfe.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -134,7 +133,7 @@ ValidAuthorization( unsigned short name_length, const char *name )
 {
 	if (findProtocol( name_length, name ))
 		return TRUE;
-	return false;
+	return FALSE;
 }
 
 static Xauth *
@@ -284,12 +283,12 @@ SaveServerAuthorizations( struct display *d, Xauth **auths, int count )
 			LogError( "Cannot open X server authorization file %s\n", d->authFile );
 			free( d->authFile );
 			d->authFile = NULL;
-			return false;
+			return FALSE;
 		}
 	} else {
 		if (!(auth_file = MakeServerAuthFile( d ))) {
 			LogError( "Cannot create X server authorization file\n" );
-			return false;
+			return FALSE;
 		}
 	}
 #ifdef __OpenBSD__
@@ -327,7 +326,7 @@ SaveServerAuthorizations( struct display *d, Xauth **auths, int count )
 				          d->authFile );
 				free( d->authFile );
 				d->authFile = NULL;
-				return false;
+				return FALSE;
 			}
 	}
 	fclose( auth_file );
@@ -494,7 +493,7 @@ writeAuth( FILE *file, Xauth *auth, int *ok )
 		       auth->name_length, auth->name,
 		       auth->data_length, auth->data );
 	if (ok && !XauWriteAuth( file, auth ))
-		*ok = false;
+		*ok = FALSE;
 }
 
 static void
@@ -1096,7 +1095,7 @@ endUserAuth( FILE *old, FILE *new, const char *nname, int ok )
 		fclose( old );
 	}
 	if (fclose( new ) == EOF)
-		ok = false;
+		ok = FALSE;
 	doneAddrs();
 	return ok;
 }

@@ -2,7 +2,6 @@
 
 Copyright 1988, 1998  The Open Group
 Copyright 2001 Oswald Buddenhagen <ossi@kde.org>
-Copyright 2006 Riccardo Iaconelli <ruphy@fsfe.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -198,7 +197,7 @@ Willing( ARRAY8Ptr addr, CARD16 connectionType,
 
 	if (autoRescan && lastscan + 15 < now) {
 		lastscan = now;
-		ScanAccessDatabase( false );
+		ScanAccessDatabase( FALSE );
 	}
 	ret = AcceptableDisplayAddress( addr, connectionType, type );
 	if (!ret)

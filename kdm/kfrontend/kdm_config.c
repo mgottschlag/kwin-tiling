@@ -3,7 +3,6 @@
 Read options from kdmrc
 
 Copyright (C) 2001-2005 Oswald Buddenhagen <ossi@kde.org>
-Copyright 2006 Riccardo Iaconelli <ruphy@fsfe.org>
 
 
 This program is free software; you can redistribute it and/or modify
@@ -1186,7 +1185,7 @@ ReadAccessFile( const char *fname )
 	nHosts = nAliases = nAcls = nListens = nChars = error = 0;
 	if (!readFile( &file, fname, "XDMCP access control" ))
 		goto sendacl;
-	while ((displayOrAlias = ReadWord( &file, &len, false ))) {
+	while ((displayOrAlias = ReadWord( &file, &len, FALSE ))) {
 		if (*displayOrAlias == ALIAS_CHARACTER)
 		{
 			if (!(*aliasPtr = (AliasEntry *)Malloc( sizeof(AliasEntry)))) {

@@ -1,7 +1,6 @@
 /*
 
 Copyright 2001-2005 Oswald Buddenhagen <ossi@kde.org>
-Copyright 2006 Riccardo Iaconelli <ruphy@fsfe.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -51,12 +50,10 @@ from the copyright holder.
 #define DEBUG_VALGRIND 0x400
 #define DEBUG_STRACE   0x800
 
-#warning NOTE: These lines should be removed: I replaced FALSE with false in all the files and I'm going to do the same thing with TRUE and true (TRUE and FALSE are deprecated).
 #ifndef TRUE
 # define TRUE  1
 # define FALSE 0
-#endif 
-
+#endif
 
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
 # define ATTR_UNUSED __attribute__((unused))

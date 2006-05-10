@@ -2,7 +2,6 @@
 
 Copyright 1988, 1998  The Open Group
 Copyright 2000-2005 Oswald Buddenhagen <ossi@kde.org>
-Copyright 2006 Riccardo Iaconelli <ruphy@fsfe.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -232,7 +231,7 @@ main( int argc, char **argv )
 	/*
 	 * Step 1 - load configuration parameters
 	 */
-	if (!InitResources( opts ) || ScanConfigs( false ) < 0)
+	if (!InitResources( opts ) || ScanConfigs( FALSE ) < 0)
 		LogPanic( "Config reader failed. Aborting ...\n" );
 
 	/* SUPPRESS 560 */
@@ -889,7 +888,7 @@ ReapChildren( void )
 				if ((d->displayType & d_origin) == dFromXDMCP)
 					SendFailed( d, "cannot open display" );
 #endif
-				ExitDisplay( d, DS_RESTART, XS_RETRY, false );
+				ExitDisplay( d, DS_RESTART, XS_RETRY, FALSE );
 				break;
 			case waitCompose( SIGTERM,0,0 ):
 				/* killed before/during WaitForServer()
@@ -898,14 +897,14 @@ ReapChildren( void )
 				   - "login now" and "suicide" pipe commands (is raiser)
 				*/
 				Debug( "display exited on SIGTERM\n" );
-				ExitDisplay( d, DS_RESTART, XS_RETRY, false );
+				ExitDisplay( d, DS_RESTART, XS_RETRY, FALSE );
 				break;
 			case EX_AL_RESERVER_DPY:
 				/* - killed after WaitForServer()
 				   - Xserver dead after remote session exit
 				*/
 				Debug( "display exited with EX_AL_RESERVER_DPY\n" );
-				ExitDisplay( d, DS_RESTART, XS_RESTART, false );
+				ExitDisplay( d, DS_RESTART, XS_RESTART, FALSE );
 				break;
 			case EX_RESERVER_DPY:
 				/* induced by greeter:

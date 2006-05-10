@@ -2,7 +2,6 @@
 
 Copyright 1988, 1998  The Open Group
 Copyright 2000-2004 Oswald Buddenhagen <ossi@kde.org>
-Copyright 2006 Riccardo Iaconelli <ruphy@fsfe.org>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -288,7 +287,7 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 	struct pam_conv pconv;
 	int pretc;
 
-	pdata->abort = false;
+	pdata->abort = FALSE;
 	pconv.conv = PAM_conv;
 	pconv.appdata_ptr = (void *)pdata;
 	Debug( " PAM service %s\n", psrv );
@@ -452,7 +451,7 @@ Verify( GConvFunc gconv, int rootok )
 
 #ifdef USE_PAM
 
-	pnopass = false;
+	pnopass = FALSE;
 	if (!strcmp( curtype, "classic" )) {
 		if (!gconv( GCONV_USER, 0 ))
 			return 0;
@@ -470,7 +469,7 @@ Verify( GConvFunc gconv, int rootok )
 	} else {
 		sprintf( psrvb, "%.31s-%.31s", PAMService, curtype );
 		psrv = psrvb;
-		pdata.usecur = false;
+		pdata.usecur = FALSE;
 	}
 	pdata.gconv = gconv;
 	if (!doPAMAuth( psrv, &pdata ))
@@ -686,7 +685,7 @@ Verify( GConvFunc gconv, int rootok )
 	ReInitErrorLog();
 	Debug( " pam_acct_mgmt() returned: %s\n", pam_strerror( pamh, pretc ) );
 	if (pretc == PAM_NEW_AUTHTOK_REQD) {
-		pdata.usecur = false;
+		pdata.usecur = FALSE;
 		pdata.gconv = conv_interact;
 		/* pam will have output a message already, so no PrepErrorGreet () */
 		if (gconv != conv_interact || pnopass) {
