@@ -21,7 +21,15 @@ else (FONTCONFIG_LIBRARIES AND FONTCONFIG_DEFINITIONS)
 
   set(FONTCONFIG_DEFINITIONS ${_FONTCONFIGCflags} CACHE INTERNAL "The compilation flags for fontconfig")
 
-  FIND_LIBRARY(FONTCONFIG_LIBRARIES NAMES fontconfig
+  find_path(FONTCONFIG_INCLUDE_DIR fontconfig/fontconfig.h
+    PATHS
+    ${_FONTCONFIGIncDir}
+    /usr/include
+    /usr/local/include
+    /usr/X11/include
+  )
+
+  find_library(FONTCONFIG_LIBRARIES NAMES fontconfig
     PATHS
     ${_FONTCONFIGLinkDir}
     /usr/lib
