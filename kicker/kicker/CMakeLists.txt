@@ -18,11 +18,11 @@ include_directories(
 
 ########### next target ###############
 
-kde4_add_dcop_skels(libkicker_core_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/core/kicker.h ${CMAKE_CURRENT_SOURCE_DIR}/core/panelextension.h )
+kde4_add_dcop_skels(libkicker_core_SRCS core/kicker.h core/panelextension.h )
 
-kde4_add_ui3_files(libkicker_ui_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/ui/appletitem.ui ${CMAKE_CURRENT_SOURCE_DIR}/ui/appletview.ui ${CMAKE_CURRENT_SOURCE_DIR}/ui/nonKDEButtonSettings.ui)
+kde4_add_ui3_files(libkicker_ui_SRCS ui/appletitem.ui ui/appletview.ui ui/nonKDEButtonSettings.ui)
 
-kde4_add_dcop_skels(libkicker_ui_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/ui/k_mnu.h )
+kde4_add_dcop_skels(libkicker_ui_SRCS ui/k_mnu.h )
 
 set(kicker_KDEINIT_SRCS ${libkicker_buttons_SRCS} ${libkicker_ui_SRCS} ${libkicker_core_SRCS} ${kdmlib_SRCS} )
 
@@ -30,7 +30,7 @@ kde4_automoc(${kicker_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kicker ${kicker_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kicker  ${KDE4_KIO_LIBS} kickermain kutils kworkspace konq )
+target_link_libraries(kdeinit_kicker  ${KDE4_KIO_LIBS} kickermain ${KDE4_KUTILS_LIBS} kworkspace konq )
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_kicker )
 
