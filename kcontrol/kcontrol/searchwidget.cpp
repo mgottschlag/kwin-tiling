@@ -18,9 +18,9 @@
 
 */
 
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qregexp.h>
+#include <QLabel>
+#include <QLayout>
+#include <QRegExp>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <Q3PtrList>

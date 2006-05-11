@@ -11,7 +11,7 @@
 
 #include <qstringlist.h>
 
-#include <qlayout.h>
+#include <QLayout>
 
 class LockProcess;
 class QFrame;

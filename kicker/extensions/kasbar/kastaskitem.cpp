@@ -55,14 +55,14 @@
 
 #include <qbitmap.h>
 #include <qimage.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <qmetaobject.h>
 #include <qpainter.h>
-#include <qregexp.h>
+#include <QRegExp>
 #include <qtabwidget.h>
 #include <q3textview.h>
-#include <qtimer.h>
+#include <QTimer>
 #include <QPixmap>
 #include <QVBoxLayout>
 #include <QMouseEvent>

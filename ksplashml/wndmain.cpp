@@ -24,9 +24,9 @@
 #include <kwin.h>
 #include <dcopclient.h>
 
-#include <qdir.h>
+#include <QDir>
 #include <qpixmap.h>
-#include <qtimer.h>
+#include <QTimer>
 //Added by qt3to4:
 #include <QEvent>
 #include <Q3PtrList>

@@ -13,10 +13,10 @@
 #define GESTURE_DRAWER_H
 
 #include <qframe.h>
-#include <qstring.h>
+#include <QString>
 #include <qevent.h>
-#include <qpoint.h>
-#include <qwidget.h>
+#include <QPoint>
+#include <QWidget>
 #include <qsize.h>
 
 namespace KHotKeys

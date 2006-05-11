@@ -32,7 +32,7 @@
 #include <unistd.h>
 #include <k3colordrag.h>
 
-#include <qdir.h>
+#include <QDir>
 #include <qevent.h>
 
 #include <netwm.h>

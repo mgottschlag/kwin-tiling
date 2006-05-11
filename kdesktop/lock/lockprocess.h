@@ -13,8 +13,8 @@
 
 #include <kprocess.h>
 
-#include <qwidget.h>
-#include <qtimer.h>
+#include <QWidget>
+#include <QTimer>
 #include <QStack>
 #include <QList>
 #include <qmessagebox.h>

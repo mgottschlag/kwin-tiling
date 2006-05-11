@@ -6,14 +6,14 @@
 //
 // Ported to kcontrol2 by Geert Jansen.
 
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qdir.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDir>
+#include <QLabel>
+#include <QLayout>
+#include <QPushButton>
 #include <qsettings.h>
-#include <qtooltip.h>
+#include <QToolTip>
 
 //Added by qt3to4:
 #include <QPixmap>

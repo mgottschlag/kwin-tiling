@@ -33,7 +33,7 @@
 #include "config.h"
 #endif
 
-#include <qstring.h>
+#include <QString>
 
 #ifdef HAVE_FONT_ENC
 #include <qstringlist.h>

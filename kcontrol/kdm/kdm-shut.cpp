@@ -21,10 +21,10 @@
 #include <sys/types.h>
 
 
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLabel>
+#include <QLayout>
 
 #include <ksimpleconfig.h>
 #include <karrowbutton.h>

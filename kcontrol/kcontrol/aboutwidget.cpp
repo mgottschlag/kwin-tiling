@@ -19,9 +19,9 @@
 
 #include <qpainter.h>
 
-#include <qregexp.h>
-#include <qlayout.h>
-#include <qfile.h>
+#include <QRegExp>
+#include <QLayout>
+#include <QFile>
 //Added by qt3to4:
 #include <QTextStream>
 

@@ -20,7 +20,7 @@
 #ifndef _HISTORYSTRINGITEM_H_
 #define _HISTORYSTRINGITEM_H_
 
-#include <qstring.h>
+#include <QString>
 #include <q3dragobject.h>
 
 #include "historyitem.h"

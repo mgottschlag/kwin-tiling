@@ -17,10 +17,10 @@
  */
 
 #include <q3buttongroup.h>
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <qdesktopwidget.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <qradiobutton.h>
 
 

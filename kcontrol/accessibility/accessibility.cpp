@@ -18,7 +18,7 @@
  *                                                                          *
  ****************************************************************************/
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
 

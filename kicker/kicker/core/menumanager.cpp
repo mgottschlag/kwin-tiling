@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <qcursor.h>
 #include <qpixmap.h>
-#include <qtimer.h>
+#include <QTimer>
 #include <QDesktopWidget>
 
 #include <QByteArray>

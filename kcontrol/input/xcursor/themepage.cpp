@@ -33,15 +33,15 @@
 #include <kio/netaccess.h>
 #include <ktar.h>
 
-#include <qlayout.h>
-#include <qdir.h>
+#include <QLayout>
+#include <QDir>
 #include <qpixmap.h>
 #include <qimage.h>
-#include <qlabel.h>
+#include <QLabel>
 
 #include <qpainter.h>
 #include <qfileinfo.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 
 #include <cstdlib> // for getenv()
 

@@ -5,7 +5,7 @@
 #include <kcmodule.h>
 #include <kglobalaccel.h>
 
-#include <qstring.h>
+#include <QString>
 #include <q3listview.h>
 
 #include "rules.h"

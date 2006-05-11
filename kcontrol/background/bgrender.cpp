@@ -14,11 +14,11 @@
 #include <stdlib.h>
 #include <utime.h>
 
-#include <qtimer.h>
+#include <QTimer>
 #include <qpainter.h>
 #include <qimage.h>
 #include <qfileinfo.h>
-#include <qdir.h>
+#include <QDir>
 #include <QDesktopWidget>
 #include <QPaintEngine>
 #include <QHash>

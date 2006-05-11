@@ -20,9 +20,9 @@
 #ifndef _POPUPPROXY_H_
 #define _POPUPPROXY_H_
 
-#include <qobject.h>
-#include <qstring.h>
-#include <qregexp.h>
+#include <QObject>
+#include <QString>
+#include <QRegExp>
 
 #include <kmenu.h>
 #include <history.h>

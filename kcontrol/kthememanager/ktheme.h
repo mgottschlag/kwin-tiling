@@ -21,9 +21,9 @@
 
 #include <qdom.h>
 #include <qpointer.h>
-#include <qstring.h>
+#include <QString>
 #include <qstringlist.h>
-#include <qwidget.h>
+#include <QWidget>
 
 #include <kurl.h>
 

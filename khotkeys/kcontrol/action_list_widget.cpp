@@ -18,9 +18,9 @@
 
 #include <assert.h>
 #include <qmenu.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <q3header.h>
-#include <qlineedit.h>
+#include <QLineEdit>
 
 #include <klocale.h>
 #include <kdebug.h>

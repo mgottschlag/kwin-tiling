@@ -25,7 +25,7 @@
 #ifndef __KLOCALESAMPLE_H__
 #define __KLOCALESAMPLE_H__
 
-#include <qwidget.h>
+#include <QWidget>
 
 class QLabel;
 class QResizeEvent;

@@ -23,10 +23,10 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <qdatetime.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qtimer.h>
+#include <QDateTime>
+#include <QLabel>
+#include <QLayout>
+#include <QTimer>
 
 #include <stdio.h>
 

@@ -15,7 +15,7 @@
 #include <kservicegroup.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <qfile.h>
+#include <QFile>
 #include <dcopclient.h>
 #include <assert.h>
 

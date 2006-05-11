@@ -5,7 +5,7 @@
 
 #include <qwindowdefs.h>
 #include <qglobal.h>
-#include <qfile.h>
+#include <QFile>
 
 #include <kapplication.h>
 #include <kdebug.h>

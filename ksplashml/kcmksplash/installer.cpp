@@ -12,9 +12,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include <qdir.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QDir>
+#include <QLabel>
+#include <QLayout>
 #include <q3textedit.h>
 //Added by qt3to4:
 #include <QPixmap>

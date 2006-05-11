@@ -24,25 +24,25 @@
 #include "config.h"
 #endif
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 //Added by qt3to4:
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <kcombobox.h>
 #include <q3groupbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <qslider.h>
 #include <qstylefactory.h>
 #include <qtabwidget.h>
 
-#include <qfile.h>
+#include <QFile>
 #include <qsettings.h>
-#include <qobject.h>
+#include <QObject>
 #include <qpixmapcache.h>
 
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <QX11Info>
 
 #include <dcopclient.h>

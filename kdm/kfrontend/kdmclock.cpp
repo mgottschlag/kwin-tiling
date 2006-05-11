@@ -27,10 +27,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //#include <kapplication.h>
 //#include <kconfig.h>
 
-#include <qdatetime.h>
+#include <QDateTime>
 #include <qpixmap.h>
 #include <qpainter.h>
-#include <qtimer.h>
+#include <QTimer>
 //Added by qt3to4:
 #include <QShowEvent>
 #include <QPaintEvent>

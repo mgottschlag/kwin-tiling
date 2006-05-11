@@ -24,14 +24,14 @@
 #include "kcmsambastatistics.moc"
 
 #include <qapplication.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <q3listview.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qpushbutton.h>
-#include <qregexp.h>
+#include <QLabel>
+#include <QLineEdit>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QPushButton>
+#include <QRegExp>
 
 #include <kglobal.h>
 #include <klocale.h>

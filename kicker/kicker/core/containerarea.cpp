@@ -23,15 +23,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <unistd.h>
 
-#include <qdir.h>
-#include <qfile.h>
+#include <QDir>
+#include <QFile>
 #include <qfileinfo.h>
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qstyle.h>
 #include <QStyleOptionFocusRect>
 #include <qtextstream.h>
-#include <qtimer.h>
+#include <QTimer>
 #include <qmatrix.h>
 #include <QMenuItem>
 //Added by qt3to4:

@@ -30,9 +30,9 @@
 
 #include <qslider.h>
 #include <qfileinfo.h>
-#include <qcheckbox.h>
-#include <qstring.h>
-#include <qlayout.h>
+#include <QCheckBox>
+#include <QString>
+#include <QLayout>
 #include <qradiobutton.h>
 //Added by qt3to4:
 #include <QVBoxLayout>

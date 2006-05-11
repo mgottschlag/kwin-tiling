@@ -10,7 +10,7 @@
 #ifndef __BGManager_h_Included__
 #define __BGManager_h_Included__
 
-#include <qstring.h>
+#include <QString>
 #include <QVector>
 
 #include "KBackgroundIface.h"

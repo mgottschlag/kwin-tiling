@@ -22,7 +22,7 @@
 #include <klocale.h>
 #include <kparts/part.h>
 #include <kparts/componentfactory.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <QMouseEvent>
 #include <QFrame>
 #include <QHBoxLayout>

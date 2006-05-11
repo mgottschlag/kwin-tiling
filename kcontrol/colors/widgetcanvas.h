@@ -8,7 +8,7 @@
 #ifndef __WIDGETCANVAS_H__
 #define __WIDGETCANVAS_H__
 
-#include <qmap.h>
+#include <QMap>
 #include <kapplication.h>
 
 #define MAX_HOTSPOTS   28

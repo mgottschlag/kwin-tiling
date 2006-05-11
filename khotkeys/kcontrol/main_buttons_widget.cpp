@@ -16,7 +16,7 @@
 
 #include "main_buttons_widget.h"
 
-#include <qpushbutton.h>
+#include <QPushButton>
 
 #include "kcmkhotkeys.h"
 

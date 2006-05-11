@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <algorithm>
 
-#include <qlayout.h>
+#include <QLayout>
 #include <QMenuItem>
 //Added by qt3to4:
 #include <QPixmap>

@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef _appletwidget_h_
 #define _appletwidget_h_
 
-#include <qpoint.h>
+#include <QPoint>
 
 #include <QList>
 #include <QMouseEvent>

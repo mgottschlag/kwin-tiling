@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kio/global.h>
 #include <ksimpleconfig.h>
 
-#include <qregexp.h>
+#include <QRegExp>
 #include <qfileinfo.h>
 #include <ktoolinvocation.h>
 

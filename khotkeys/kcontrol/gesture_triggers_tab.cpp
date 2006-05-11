@@ -16,8 +16,8 @@
 
 #include "gesture_triggers_tab.h"
 
-#include <qpushbutton.h>
-#include <qlineedit.h>
+#include <QPushButton>
+#include <QLineEdit>
 
 #include <triggers.h>
 #include <actions.h> 

@@ -21,7 +21,7 @@
 #ifndef __applettab_impl_h__
 #define __applettab_impl_h__
 
-#include <qwidget.h>
+#include <QWidget>
 #include "applettab.h"
 
 class QGroupBox;

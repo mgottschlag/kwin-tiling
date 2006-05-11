@@ -31,8 +31,8 @@
 #include <kglobal.h>
 #include <kdebug.h>
 
-#include <qwidget.h>
-#include <qlayout.h>
+#include <QWidget>
+#include <QLayout>
 #include <qimage.h>
 #ifdef DRAW_OUTLINE
 # include <qpainter.h>

@@ -12,14 +12,14 @@
 #include <dcopref.h>
 
 #include <qtabwidget.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <q3groupbox.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qlineedit.h>
+#include <QLabel>
+#include <QCheckBox>
+#include <QLineEdit>
 #include <qradiobutton.h>
 #include <qslider.h>
-#include <qspinbox.h>
+#include <QSpinBox>
 #include <qx11info_x11.h>
 
 //Added by qt3to4:

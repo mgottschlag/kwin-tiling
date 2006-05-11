@@ -22,9 +22,9 @@
 #include <klocale.h>
 #include <kapplication.h>
 #include <dcopclient.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLineEdit>
+#include <QLayout>
 #include <kkeydialog.h>
 
 #include <settings.h>

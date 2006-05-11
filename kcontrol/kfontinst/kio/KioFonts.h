@@ -34,8 +34,8 @@
 #include <kio/slavebase.h>
 #include <kurl.h>
 #include <klocale.h>
-#include <qstring.h>
-#include <qmap.h>
+#include <QString>
+#include <QMap>
 #include "Misc.h"
 #include "KfiConstants.h"
 

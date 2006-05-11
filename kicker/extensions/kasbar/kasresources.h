@@ -58,14 +58,14 @@
 #define KASRESOURCES_H
 
 #include <qbitmap.h>
-#include <qcolor.h>
+#include <QColor>
 #include <qbrush.h>
 #include <qpen.h>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QPixmap>
 
-#include <qobject.h>
+#include <QObject>
 
 
 class KasBar;

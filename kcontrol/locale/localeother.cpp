@@ -21,9 +21,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <qcombobox.h>
-#include <qlayout.h>
-#include <qlabel.h>
+#include <QComboBox>
+#include <QLayout>
+#include <QLabel>
 #include <qprinter.h>
 
 #include <kdialog.h>

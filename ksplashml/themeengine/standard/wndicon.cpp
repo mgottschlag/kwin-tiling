@@ -23,11 +23,11 @@
 
 #include <qdesktopwidget.h>
 
-#include <qlabel.h>
+#include <QLabel>
 #include <qpixmap.h>
-#include <qpoint.h>
-#include <qtimer.h>
-#include <qwidget.h>
+#include <QPoint>
+#include <QTimer>
+#include <QWidget>
 //Added by qt3to4:
 #include <QBitmap>
 

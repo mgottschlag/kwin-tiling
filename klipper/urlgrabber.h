@@ -22,8 +22,8 @@
 
 #include <q3ptrlist.h>
 #include <q3intdict.h>
-#include <qregexp.h>
-#include <qstring.h>
+#include <QRegExp>
+#include <QString>
 #include <qstringlist.h>
 
 #include <kprocess.h>

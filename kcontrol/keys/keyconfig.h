@@ -8,7 +8,7 @@
 #ifndef __KEYCONFIG_H__
 #define __KEYCONFIG_H__
 
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <qlistbox.h>
 
 #include <kkeydialog.h>

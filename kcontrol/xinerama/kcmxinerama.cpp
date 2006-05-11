@@ -31,13 +31,13 @@
 #include <kmessagebox.h>
 #include <kwin.h>
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <qdesktopwidget.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qcombobox.h>
-#include <qcolor.h>
-#include <qpushbutton.h>
+#include <QLayout>
+#include <QLabel>
+#include <QComboBox>
+#include <QColor>
+#include <QPushButton>
 //Added by qt3to4:
 #include <QFrame>
 #include <QGridLayout>

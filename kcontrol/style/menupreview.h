@@ -20,7 +20,7 @@
 #ifndef __MENUPREVIEW_H
 #define __MENUPREVIEW_H
 
-#include <qwidget.h>
+#include <QWidget>
 
 class MenuPreview : public QWidget
 {

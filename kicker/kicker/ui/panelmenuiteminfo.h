@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define PANELMENUITEMINFO_H
 
 #include <QMenu>
-#include <qstring.h>
+#include <QString>
 #include <QByteArray>
 
 #include <kiconloader.h>

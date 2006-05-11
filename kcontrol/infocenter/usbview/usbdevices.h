@@ -13,7 +13,7 @@
 #define __USB_DEVICES_H__
 
 
-#include <qstring.h>
+#include <QString>
 #include <q3ptrlist.h>
 
 #ifdef Q_OS_FREEBSD

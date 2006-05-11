@@ -23,9 +23,9 @@
 
 #include <stdio.h>
 
-#include <qcolor.h>
+#include <QColor>
 #include <qpalette.h>
-#include <qstring.h>
+#include <QString>
 #include <qpainter.h>
 #include <qstyle.h>
 #include <QStyleOptionFocusRect>

@@ -19,13 +19,13 @@
 #include <stdlib.h>
 
 #include <qbuttongroup.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLabel>
+#include <QPushButton>
 #include <qslider.h>
-#include <qtooltip.h>
-#include <qtimer.h>
+#include <QToolTip>
+#include <QTimer>
 
 #include <kapplication.h>
 #include <kdebug.h>

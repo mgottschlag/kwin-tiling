@@ -20,7 +20,7 @@
 #ifndef __menuinfo_h__
 #define __menuinfo_h__
 
-#include <qstring.h>
+#include <QString>
 //Added by qt3to4:
 #include <Q3PtrList>
 

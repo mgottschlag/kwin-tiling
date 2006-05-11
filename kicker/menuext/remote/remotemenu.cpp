@@ -28,8 +28,8 @@
 #include <kservice.h>
 
 #include <qpixmap.h>
-#include <qdir.h>
-#include <qtimer.h>
+#include <QDir>
+#include <QTimer>
 
 #include "kickerSettings.h"
 

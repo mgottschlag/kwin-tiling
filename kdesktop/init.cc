@@ -29,9 +29,9 @@
 #include <kdebug.h>
 #include "kdesktopsettings.h"
 
-#include <qdir.h>
-#include <qfile.h>
-#include <qregexp.h>
+#include <QDir>
+#include <QFile>
+#include <QRegExp>
 
 #include <sys/stat.h>
 #include <sys/types.h>

@@ -35,18 +35,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kstandarddirs.h>
 #include <kuser.h>
 
-#include <qcombobox.h>
+#include <QComboBox>
 #include <qstyle.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <q3accel.h>
 #include <QMenu>
-#include <qcheckbox.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qdatetime.h>
+#include <QCheckBox>
+#include <QLineEdit>
+#include <QLabel>
+#include <QDateTime>
 #include <q3listview.h>
 #include <q3header.h>
-#include <qdatetime.h>
+#include <QDateTime>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QGridLayout>

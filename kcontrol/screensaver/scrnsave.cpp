@@ -18,14 +18,14 @@
 #include <sys/wait.h>
 
 #include <q3buttongroup.h>
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <q3header.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <q3listview.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <qslider.h>
-#include <qtimer.h>
+#include <QTimer>
 
 //Added by qt3to4:
 #include <QPixmap>

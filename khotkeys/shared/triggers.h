@@ -12,8 +12,8 @@
 #define _TRIGGERS_H_
 
 #include <q3ptrlist.h>
-#include <qtimer.h>
-#include <qmap.h>
+#include <QTimer>
+#include <QMap>
 
 #include "khotkeysglobal.h"
 

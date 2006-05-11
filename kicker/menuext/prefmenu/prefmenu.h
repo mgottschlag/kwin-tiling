@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef _prefmenu_h_
 #define _prefmenu_h_
 
-#include <qmap.h>
+#include <QMap>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QDragEnterEvent>

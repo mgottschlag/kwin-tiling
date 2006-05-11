@@ -19,8 +19,8 @@
 */
 #include <qmime.h>
 #include <q3dragobject.h>
-#include <qmap.h>
-#include <qstring.h>
+#include <QMap>
+#include <QString>
 #include <qpixmap.h>
 
 #include <kdebug.h>

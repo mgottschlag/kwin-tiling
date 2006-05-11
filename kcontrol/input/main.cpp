@@ -29,7 +29,7 @@
 #include <kglobal.h>
 #include <kconfig.h>
 #include <dcopref.h>
-#include <qfile.h>
+#include <QFile>
 
 #include "mouse.h"
 #include <QX11Info>

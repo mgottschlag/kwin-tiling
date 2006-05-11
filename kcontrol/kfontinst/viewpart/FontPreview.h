@@ -29,11 +29,11 @@
 // (C) Craig Drummond, 2001, 2002, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <qstring.h>
+#include <QString>
 #include <qpixmap.h>
 #include <qsize.h>
-#include <qwidget.h>
-#include <qcolor.h>
+#include <QWidget>
+#include <QColor>
 //Added by qt3to4:
 #include <QPaintEvent>
 #include <kurl.h>

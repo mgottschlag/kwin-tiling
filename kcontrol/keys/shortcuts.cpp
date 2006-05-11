@@ -24,8 +24,8 @@
 
 #include "shortcuts.h"
 
-#include <qdir.h>
-#include <qlayout.h>
+#include <QDir>
+#include <QLayout>
 
 //Added by qt3to4:
 #include <QVBoxLayout>

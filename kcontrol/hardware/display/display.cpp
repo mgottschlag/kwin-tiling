@@ -18,7 +18,7 @@
 */
 
 #include <qapplication.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <qtabwidget.h>
 #include <QVBoxLayout>
 #include <QDesktopWidget>

@@ -36,7 +36,7 @@
 #include "XConfig.h"
 #include "kxftconfig.h"
 #include <fontconfig/fontconfig.h>
-#include <qfile.h>
+#include <QFile>
 #include <stdio.h>
 
 //

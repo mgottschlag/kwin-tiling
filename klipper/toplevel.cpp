@@ -23,10 +23,10 @@
 
 #include <qclipboard.h>
 #include <qcursor.h>
-#include <qdatetime.h>
-#include <qfile.h>
+#include <QDateTime>
+#include <QFile>
 #include <qpainter.h>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <qmime.h>
 #include <q3dragobject.h>
 //Added by qt3to4:

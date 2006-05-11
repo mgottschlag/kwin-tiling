@@ -35,7 +35,7 @@
 #  undef INFO_PARTITIONS_FULL_INFO	/* no partitions-info */
 #endif
 
-#include <qregexp.h>
+#include <QRegExp>
 
 #include <kapplication.h>
 #include <kiconloader.h>

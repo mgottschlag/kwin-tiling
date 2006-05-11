@@ -52,7 +52,7 @@
 #include <kuser.h>
 #include <kwindowlistmenu.h>
 
-#include <qfile.h>
+#include <QFile>
 
 #include "krootwm.h"
 #include "kdiconview.h"

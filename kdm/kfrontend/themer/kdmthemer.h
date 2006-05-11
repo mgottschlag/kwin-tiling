@@ -22,7 +22,7 @@
 #ifndef KDMTHEMER_H
 #define KDMTHEMER_H
 
-#include <qobject.h>
+#include <QObject>
 #include <qdom.h>
 //Added by qt3to4:
 #include <QPixmap>

@@ -1,10 +1,10 @@
 #ifndef _MEMORY_H_KDEINFO_INCLUDED_
 #define _MEMORY_H_KDEINFO_INCLUDED_
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qtimer.h>
+#include <QWidget>
+#include <QLabel>
+#include <QPushButton>
+#include <QTimer>
 
 #include <kcmodule.h>
 #include <kaboutdata.h>

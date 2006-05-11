@@ -17,9 +17,9 @@
 #include <kmessagebox.h>
 #include <kdialog.h>
 
-#include <qlayout.h>
+#include <QLayout>
 #include <qmessagebox.h>
-#include <qlabel.h>
+#include <QLabel>
 #include <qstyle.h>
 #include <qapplication.h>
 #include <qdialog.h>

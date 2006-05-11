@@ -20,7 +20,7 @@
 #ifndef __helpwidget_h__
 #define __helpwidget_h__
 
-#include <qwidget.h>
+#include <QWidget>
 
 class QuickHelp;
 

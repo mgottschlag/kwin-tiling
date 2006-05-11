@@ -21,7 +21,7 @@
 #ifndef __khotkeys_public_h__
 #define __khotkeys_public_h__
 
-#include <qstring.h>
+#include <QString>
 #include <kservice.h>
 
 // see kdebase/khotkeys/kcontrol for info on these

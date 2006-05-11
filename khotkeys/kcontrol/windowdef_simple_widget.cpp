@@ -16,10 +16,10 @@
 
 #include "windowdef_simple_widget.h"
 
-#include <qlineedit.h>
-#include <qcombobox.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QPushButton>
 #include <kdebug.h>
 
 #include <windows.h>

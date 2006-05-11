@@ -17,9 +17,9 @@
 #include "condition_list_widget.h"
 
 #include <assert.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <q3header.h>
-#include <qlineedit.h>
+#include <QLineEdit>
 #include <qmenu.h>
 
 #include <kdebug.h>

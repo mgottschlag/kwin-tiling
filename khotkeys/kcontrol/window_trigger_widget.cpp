@@ -16,7 +16,7 @@
 
 #include "window_trigger_widget.h"
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 
 #include <triggers.h>
 #include <actions.h> 

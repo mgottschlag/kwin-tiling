@@ -1,9 +1,9 @@
 #include <qwindowdefs.h>
-#include <qfile.h>
+#include <QFile>
 #include <qtextstream.h>
-#include <qregexp.h>
+#include <QRegExp>
 #include <qstringlist.h>
-#include <qdir.h>
+#include <QDir>
 
 #include <kstandarddirs.h>
 #include <kglobal.h>

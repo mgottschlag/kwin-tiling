@@ -6,7 +6,7 @@
 #define __KBackgroundIface_h__
 
 #include <dcopobject.h>
-#include <qcolor.h>
+#include <QColor>
 
 class KBackgroundIface : virtual public DCOPObject
 {

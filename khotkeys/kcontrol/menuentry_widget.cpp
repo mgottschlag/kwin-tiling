@@ -16,9 +16,9 @@
 
 #include "menuentry_widget.h"
 
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QCheckBox>
 #include <q3groupbox.h>
 
 #include <kdebug.h>

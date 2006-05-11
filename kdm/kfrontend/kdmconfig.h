@@ -32,9 +32,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #ifdef __cplusplus
 
-#include <qstring.h>
+#include <QString>
 #include <qstringlist.h>
-#include <qfont.h>
+#include <QFont>
 
 extern QString _stsFile;
 extern bool _isLocal;

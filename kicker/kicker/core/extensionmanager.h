@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __extensionmanager_h__
 #define __extensionmanager_h__
 
-#include <qobject.h>
+#include <QObject>
 
 #include <kstaticdeleter.h>
 

@@ -20,7 +20,7 @@
 #ifndef __aboutwidget_h__
 #define __aboutwidget_h__
 
-#include <qwidget.h>
+#include <QWidget>
 #include <q3listview.h>
 
 #include <QPixmap>

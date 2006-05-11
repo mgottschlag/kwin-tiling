@@ -10,12 +10,12 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include <qapplication.h>
 #include <qcursor.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <qpainter.h>
 #include <qmenu.h>
 #include <qstyle.h>
-#include <qtimer.h>
+#include <QTimer>
 
 #include <kdebug.h>
 #include <kdialog.h>

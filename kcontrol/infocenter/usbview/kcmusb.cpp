@@ -10,11 +10,11 @@
 
 #include <q3groupbox.h>
 #include <q3header.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <q3listview.h>
 #include <qsplitter.h>
 #include <q3textview.h>
-#include <qtimer.h>
+#include <QTimer>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QList>

@@ -19,10 +19,10 @@
 #include <kconfig.h>
 
 #include <qdesktopwidget.h>
-#include <qlabel.h>
+#include <QLabel>
 #include <qpalette.h>
 #include <qpixmap.h>
-#include <qwidget.h>
+#include <QWidget>
 //Added by qt3to4:
 #include <QShowEvent>
 #include <QFrame>

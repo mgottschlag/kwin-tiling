@@ -33,9 +33,9 @@
 
 #include <qbuttongroup.h>
 #include <qdialog.h>
-#include <qlabel.h>
+#include <QLabel>
 #include <qlcdnumber.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <qradiobutton.h>
 
 #include <kapplication.h>

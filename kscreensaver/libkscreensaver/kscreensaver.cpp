@@ -19,7 +19,7 @@
 */
 
 #include <qpainter.h>
-#include <qtimer.h>
+#include <QTimer>
 #include <qx11info_x11.h>
 #include <qapplication.h>
 #include <krandom.h>

@@ -34,8 +34,8 @@
 #include "KfiPrint.h"
 #include "FcEngine.h"
 #endif
-#include <qlayout.h>
-#include <qlabel.h>
+#include <QLayout>
+#include <QLabel>
 #include <qpainter.h>
 #include <qsettings.h>
 //Added by qt3to4:

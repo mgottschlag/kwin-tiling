@@ -23,13 +23,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include <qapplication.h>
-#include <qcombobox.h>
-#include <qdir.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qlineedit.h>
+#include <QComboBox>
+#include <QDir>
+#include <QLabel>
+#include <QLayout>
+#include <QLineEdit>
 #include <qpalette.h>
-#include <qtimer.h>
+#include <QTimer>
 #include <q3tl.h>
 
 #include <QMimeData>

@@ -23,7 +23,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <qlayout.h>
+#include <QLayout>
 //Added by qt3to4:
 #include <QVBoxLayout>
 
@@ -34,7 +34,7 @@
 #include "../background/bgsettings.h"
 #include "../background/bgdialog.h"
 #include "background.h"
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <ksimpleconfig.h>
 #include <kdialog.h>
 

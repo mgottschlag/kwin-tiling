@@ -18,10 +18,10 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include <qlayout.h>
-#include <qpushbutton.h>
+#include <QLayout>
+#include <QPushButton>
 #include <q3listview.h>
-#include <qfile.h>
+#include <QFile>
 #include <qtextstream.h>
 //Added by qt3to4:
 #include <QVBoxLayout>

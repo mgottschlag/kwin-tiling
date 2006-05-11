@@ -33,7 +33,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
-#include <qstring.h>
+#include <QString>
 #include <qstringlist.h>
 #include <kurl.h>
 

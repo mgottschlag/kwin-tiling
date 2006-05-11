@@ -22,15 +22,15 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <qcombobox.h>
+#include <QComboBox>
 #include <q3groupbox.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <qpainter.h>
-#include <qlayout.h>
-#include <qlabel.h>
+#include <QLayout>
+#include <QLabel>
 
-#include <qcheckbox.h>
-#include <qregexp.h>
+#include <QCheckBox>
+#include <QRegExp>
 //Added by qt3to4:
 #include <QPaintEvent>
 #include <QGridLayout>

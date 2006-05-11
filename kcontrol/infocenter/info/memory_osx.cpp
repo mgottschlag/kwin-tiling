@@ -21,7 +21,7 @@
 
 #include <unistd.h>
 #include <stdlib.h>
-#include <qfile.h>
+#include <QFile>
 #include <mach/mach_init.h>
 #include <mach/mach_host.h>
 #include <mach/host_info.h>

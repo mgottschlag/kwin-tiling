@@ -25,7 +25,7 @@
 #include <klocale.h>
 #include <dcopclient.h>
 
-#include <qregexp.h>
+#include <QRegExp>
 
 #include <X11/Xauth.h>
 #include <X11/Xlib.h>

@@ -18,8 +18,8 @@
 #include <kwin.h>
 
 #include <qdesktopwidget.h>
-#include <qlabel.h>
-#include <qpoint.h>
+#include <QLabel>
+#include <QPoint>
 #include <qrect.h>
 #include <QProgressBar>
 #include <QPixmap>

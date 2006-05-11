@@ -21,7 +21,7 @@
 #ifndef _HISTORY_H_
 #define _HISTORY_H_
 
-#include <qobject.h>
+#include <QObject>
 #include <q3ptrlist.h>
 #include "historyitem.h"
 

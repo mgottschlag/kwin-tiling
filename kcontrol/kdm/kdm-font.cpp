@@ -22,11 +22,11 @@
 
 
 #include <qapplication.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLayout>
+#include <QLabel>
+#include <QPushButton>
 
 #include <kdialog.h>
 #include <ksimpleconfig.h>

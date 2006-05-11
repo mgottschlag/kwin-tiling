@@ -24,13 +24,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 
-#include <qlayout.h>
+#include <QLayout>
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <QMenu>
 #include <qtoolbutton.h>
 #include <qstyle.h>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <QX11Info>
 //Added by qt3to4:
 #include <QMouseEvent>

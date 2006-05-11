@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define __appletproxy_h__
 
 #include <q3cstring.h>
-#include <qobject.h>
+#include <QObject>
 //Added by qt3to4:
 #include <QPixmap>
 

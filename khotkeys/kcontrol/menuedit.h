@@ -11,7 +11,7 @@
 #ifndef _MENUEDIT_H_
 #define _MENUEDIT_H_
 
-#include <qstring.h>
+#include <QString>
 #include <kdialogbase.h>
 #include <kservice.h>
 

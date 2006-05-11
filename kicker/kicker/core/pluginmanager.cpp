@@ -21,8 +21,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qfile.h>
-#include <qtimer.h>
+#include <QFile>
+#include <QTimer>
 #include <q3tl.h>
 //Added by qt3to4:
 #include <QMenu>

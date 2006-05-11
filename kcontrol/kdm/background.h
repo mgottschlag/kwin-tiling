@@ -10,8 +10,8 @@
 #ifndef __Bgnd_h_Included__
 #define __Bgnd_h_Included__
 
-#include <qobject.h>
-#include <qwidget.h>
+#include <QObject>
+#include <QWidget>
 
 
 class KSimpleConfig;

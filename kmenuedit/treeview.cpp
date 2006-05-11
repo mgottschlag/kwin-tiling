@@ -22,14 +22,14 @@
 #include <unistd.h>
 
 #include <qcursor.h>
-#include <qdatastream.h>
-#include <qdir.h>
+#include <QDataStream>
+#include <QDir>
 #include <q3dragobject.h>
 #include <qevent.h>
 #include <qfileinfo.h>
 #include <q3header.h>
 #include <qpainter.h>
-#include <qregexp.h>
+#include <QRegExp>
 #include <qstringlist.h>
 //Added by qt3to4:
 #include <QPixmap>

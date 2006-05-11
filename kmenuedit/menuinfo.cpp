@@ -20,7 +20,7 @@
 #include "menuinfo.h"
 #include "menufile.h"
 
-#include <qregexp.h>
+#include <QRegExp>
 
 #include <kdesktopfile.h>
 #include <khotkeys.h>

@@ -8,7 +8,7 @@
 #ifndef FONTS_H
 #define FONTS_H
 
-#include <qobject.h>
+#include <QObject>
 //Added by qt3to4:
 #include <QLabel>
 #include <Q3PtrList>

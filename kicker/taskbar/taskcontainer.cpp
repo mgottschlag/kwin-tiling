@@ -26,13 +26,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <assert.h>
 
 #include <qbitmap.h>
-#include <qcolor.h>
+#include <QColor>
 #include <qcursor.h>
 #include <qimage.h>
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qstyle.h>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <q3tl.h>
 #include <QStyleOption>
 #include <QDragLeaveEvent>

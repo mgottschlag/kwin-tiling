@@ -15,7 +15,7 @@
  * License. See the file "COPYING" for the exact licensing terms.
  */
 
-#include <qlayout.h>
+#include <QLayout>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QByteArray>

@@ -26,7 +26,7 @@
 
 #include <qpixmap.h>
 #include <qimage.h>
-#include <qcolor.h>
+#include <QColor>
 
 class KShadowSettings;
 

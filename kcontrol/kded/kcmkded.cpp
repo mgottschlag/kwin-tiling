@@ -18,9 +18,9 @@
 */
 
 #include <q3header.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qtimer.h>
+#include <QLayout>
+#include <QPushButton>
+#include <QTimer>
 #include <q3groupbox.h>
 
 //Added by qt3to4:

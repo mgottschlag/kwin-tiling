@@ -21,7 +21,7 @@
 #ifndef _JOYWIDGET_H_
 #define _JOYWIDGET_H_
 
-#include <qwidget.h>
+#include <QWidget>
 
 class JoyDevice;
 

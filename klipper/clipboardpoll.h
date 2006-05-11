@@ -20,8 +20,8 @@
 #ifndef _CLIPBOARDPOLL_H_
 #define _CLIPBOARDPOLL_H_
 
-#include <qwidget.h>
-#include <qtimer.h>
+#include <QWidget>
+#include <QTimer>
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 

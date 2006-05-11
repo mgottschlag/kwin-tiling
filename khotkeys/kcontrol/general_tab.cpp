@@ -16,9 +16,9 @@
 
 #include "general_tab.h"
 
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
+#include <QLineEdit>
+#include <QCheckBox>
+#include <QComboBox>
 
 #include <klocale.h>
 #include <kdebug.h>

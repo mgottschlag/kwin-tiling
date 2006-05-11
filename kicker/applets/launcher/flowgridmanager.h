@@ -8,7 +8,7 @@
 #define __const_space_grid_h__
 
 #include <qnamespace.h>
-#include <qpoint.h>
+#include <QPoint>
 #include <qsize.h>
 
 

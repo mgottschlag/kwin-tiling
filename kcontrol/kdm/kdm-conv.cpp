@@ -23,8 +23,8 @@
 #include <sys/types.h>
 
 
-#include <qlayout.h>
-#include <qlabel.h>
+#include <QLayout>
+#include <QLabel>
 #include <q3groupbox.h>
 #include <q3buttongroup.h>
 

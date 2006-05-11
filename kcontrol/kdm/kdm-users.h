@@ -20,12 +20,12 @@
 #ifndef __KDMUSERS_H__
 #define __KDMUSERS_H__
 
-#include <qwidget.h>
-#include <qstring.h>
+#include <QWidget>
+#include <QString>
 #include <qimage.h>
 #include <q3buttongroup.h>
 #include <qradiobutton.h>
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <QStackedWidget>
 //Added by qt3to4:
 #include <QEvent>

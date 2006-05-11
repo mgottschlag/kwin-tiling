@@ -25,10 +25,10 @@
 #include <time.h>
 #include <config.h>
 
-#include <qlabel.h>
-#include <qcombobox.h>
-#include <qlayout.h>
-#include <qfile.h>
+#include <QLabel>
+#include <QComboBox>
+#include <QLayout>
+#include <QFile>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QHBoxLayout>

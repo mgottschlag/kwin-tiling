@@ -31,12 +31,12 @@
 #include "XConfig.h"
 #include "FcEngine.h"
 #include "KfiConstants.h"
-#include <qdir.h>
+#include <QDir>
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <qregexp.h>
+#include <QRegExp>
 #include <qtextstream.h>
 #include <fstream>
 #include <unistd.h>

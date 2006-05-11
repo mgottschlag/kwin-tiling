@@ -15,11 +15,11 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <qcheckbox.h>
-#include <qcombobox.h>
+#include <QCheckBox>
+#include <QComboBox>
 #include <q3groupbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 
 //Added by qt3to4:
 #include <QVBoxLayout>

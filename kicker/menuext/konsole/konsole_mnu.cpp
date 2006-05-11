@@ -27,7 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <unistd.h>
 #include <sys/stat.h>
 
-#include <qdir.h>
+#include <QDir>
 #include <qfileinfo.h>
 
 #include <kapplication.h>

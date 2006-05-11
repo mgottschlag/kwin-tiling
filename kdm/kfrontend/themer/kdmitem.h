@@ -22,7 +22,7 @@
 #ifndef KDMITEM_H
 #define KDMITEM_H
 
-#include <qobject.h>
+#include <QObject>
 #include <qrect.h>
 #include <qdom.h>
 #include <QFont>

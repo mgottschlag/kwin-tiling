@@ -20,10 +20,10 @@
 
   */
 
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
+#include <QCheckBox>
+#include <QLabel>
+#include <QLayout>
+#include <QPushButton>
 #include <qtabwidget.h>
 #include <q3groupbox.h>
 

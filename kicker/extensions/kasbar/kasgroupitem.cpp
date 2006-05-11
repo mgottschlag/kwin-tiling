@@ -53,7 +53,7 @@
 */
 #include <qpainter.h>
 #include <qbitmap.h>
-#include <qtimer.h>
+#include <QTimer>
 #include <qmatrix.h>
 //Added by qt3to4:
 #include <QMouseEvent>

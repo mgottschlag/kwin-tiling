@@ -3,7 +3,7 @@
 
 #include <q3ptrlist.h>
 #include <q3ptrstack.h>
-#include <qobject.h>
+#include <QObject>
 #include <sys/types.h>
 #include <kbookmark.h>
 #include <kbookmarkmenu.h>

@@ -25,7 +25,7 @@
 #endif
 
 #include <qstringlist.h>
-#include <qstring.h>
+#include <QString>
 #include <q3ptrlist.h>
 #include <stdio.h>
 #include <fstream>

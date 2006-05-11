@@ -27,11 +27,11 @@
 #include <kmacroexpander.h>
 #include <kdebug.h>
 
-#include <qdatetime.h>
+#include <QDateTime>
 #include <qpainter.h>
 #include <qfontmetrics.h>
-#include <qtimer.h>
-#include <qmap.h>
+#include <QTimer>
+#include <QMap>
 #include <qhash.h>
 
 #include <unistd.h>

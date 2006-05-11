@@ -22,10 +22,10 @@
 #define __KDMAPPEAR_H__
 
 
-#include <qdir.h>
+#include <QDir>
 #include <qimage.h>
 #include <qfileinfo.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 
 #include <kcolorbutton.h>
 #include <kurl.h>

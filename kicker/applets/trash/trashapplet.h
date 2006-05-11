@@ -25,7 +25,7 @@
 #endif
 
 #include <kpanelapplet.h>
-#include <qstring.h>
+#include <QString>
 #include <kurl.h>
 #include <kdirlister.h>
 

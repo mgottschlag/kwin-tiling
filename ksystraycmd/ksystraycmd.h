@@ -3,7 +3,7 @@
 #ifndef KSYSTRAYCMD_H
 #define KSYSTRAYCMD_H
 
-#include <qlabel.h>
+#include <QLabel>
 #include <kwin.h>
 
 class KShellProcess;

@@ -29,8 +29,8 @@
 #include "SettingsDialog.h"
 #include "KfiConstants.h"
 #include "Misc.h"
-#include <qlayout.h>
-#include <qcheckbox.h>
+#include <QLayout>
+#include <QCheckBox>
 #include <kvbox.h>
 
 #include <klocale.h>

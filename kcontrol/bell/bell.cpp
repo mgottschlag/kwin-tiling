@@ -19,10 +19,10 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <q3groupbox.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
+#include <QLayout>
+#include <QPushButton>
 
 //Added by qt3to4:
 #include <QVBoxLayout>

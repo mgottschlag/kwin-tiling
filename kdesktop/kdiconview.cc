@@ -47,9 +47,9 @@
 #include <fixx11h.h>
 
 #include <qclipboard.h>
-#include <qdir.h>
+#include <QDir>
 #include <qevent.h>
-#include <qregexp.h>
+#include <QRegExp>
 //Added by qt3to4:
 #include <QWheelEvent>
 #include <QDropEvent>

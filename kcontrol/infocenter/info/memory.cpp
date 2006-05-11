@@ -24,10 +24,10 @@
 
 #include <sys/param.h>		/* for BSD */
 
-#include <qlayout.h>
+#include <QLayout>
 #include <qpainter.h>
 #include <qdrawutil.h>
-#include <qtooltip.h>
+#include <QToolTip>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QLabel>

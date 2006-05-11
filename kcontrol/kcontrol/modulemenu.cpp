@@ -22,9 +22,9 @@ that is intentional :-]
 
 
 #include <q3header.h>
-#include <qstring.h>
+#include <QString>
 #include <q3ptrlist.h>
-#include <qpoint.h>
+#include <QPoint>
 #include <qcursor.h>
 
 #include <klocale.h>

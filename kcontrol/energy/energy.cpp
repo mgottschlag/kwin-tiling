@@ -22,9 +22,9 @@
 #define QT_CLEAN_NAMESPACE
 #endif
 
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QCheckBox>
+#include <QLabel>
+#include <QLayout>
 #include <kinstance.h>
 
 //Added by qt3to4:

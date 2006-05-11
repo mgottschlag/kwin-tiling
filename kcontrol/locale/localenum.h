@@ -25,7 +25,7 @@
 #ifndef __KLOCALECONFIGNUM_H__
 #define __KLOCALECONFIGNUM_H__
 
-#include <qwidget.h>
+#include <QWidget>
 
 class QCheckBox;
 class QComboBox;

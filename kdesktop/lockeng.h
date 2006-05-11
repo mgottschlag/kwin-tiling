@@ -8,7 +8,7 @@
 #ifndef __LOCKENG_H__
 #define __LOCKENG_H__
 
-#include <qwidget.h>
+#include <QWidget>
 #include <kprocess.h>
 #include <qvector.h>
 #include "KScreensaverIface.h"

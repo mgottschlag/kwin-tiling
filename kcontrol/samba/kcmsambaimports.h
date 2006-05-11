@@ -24,7 +24,7 @@
 #ifndef kcmsambaimports_h_included
 #define kcmsambaimports_h_included
  
-#include <qtimer.h>
+#include <QTimer>
 #include <q3listview.h>
 #include <kconfig.h>
 

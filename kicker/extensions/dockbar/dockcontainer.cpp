@@ -21,8 +21,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qwidget.h>
-#include <qtooltip.h>
+#include <QWidget>
+#include <QToolTip>
 #include <kwin.h>
 #include <qvalidator.h>
 #include <kinputdialog.h>

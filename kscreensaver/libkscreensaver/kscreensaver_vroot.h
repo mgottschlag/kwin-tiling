@@ -61,7 +61,7 @@
 static const char vroot_rcsid[] = "#Id: vroot.h,v 1.4 1991/09/30 19:23:16 stolcke Exp stolcke #";
 #endif
 
-#include <qwidget.h>
+#include <QWidget>
 #ifdef Q_WS_X11
 #include <X11/X.h>
 #include <X11/Xatom.h>

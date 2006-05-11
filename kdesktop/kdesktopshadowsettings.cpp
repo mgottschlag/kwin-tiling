@@ -21,7 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
  
-#include <qcolor.h>
+#include <QColor>
 #include <kdebug.h>
 #include "kdesktopshadowsettings.h"
 

@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __KPANELMENU_H__
 #define __KPANELMENU_H__
 
-#include <qstring.h>
+#include <QString>
 #include <kmenu.h>
 #include <kgenericfactory.h>
 

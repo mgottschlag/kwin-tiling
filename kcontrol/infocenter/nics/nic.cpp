@@ -35,11 +35,11 @@
 #include <kgenericfactory.h>
 #include <kglobal.h>
 
-#include <qlayout.h>
+#include <QLayout>
 #include <q3listview.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <qtabwidget.h>
-#include <qtimer.h>
+#include <QTimer>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QHBoxLayout>

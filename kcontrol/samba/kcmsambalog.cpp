@@ -22,8 +22,8 @@
  */
 
 #include <qapplication.h>
-#include <qfile.h>
-#include <qlayout.h>
+#include <QFile>
+#include <QLayout>
 
 #include <kmessagebox.h>
 #include <kdialog.h>

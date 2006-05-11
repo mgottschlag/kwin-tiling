@@ -29,18 +29,18 @@
 #include <dcopref.h>
 #include <kmessagebox.h>
 
-#include <qlayout.h>
-#include <qpushbutton.h>
+#include <QLayout>
+#include <QPushButton>
 #include <qmessagebox.h>
 #include <q3simplerichtext.h>
-#include <qlabel.h>
+#include <QLabel>
 #include <qstringlist.h>
 #include <qfontmetrics.h>
 #include <qstyle.h>
 #include <qapplication.h>
 #include <q3listview.h>
 #include <q3header.h>
-#include <qcheckbox.h>
+#include <QCheckBox>
 //Added by qt3to4:
 #include <QGridLayout>
 #include <QEvent>

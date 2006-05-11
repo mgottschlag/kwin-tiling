@@ -21,11 +21,11 @@
 #define TRASHBUTTON_H
 
 #include <panelbutton.h>
-#include <qpoint.h>
-#include <qstring.h>
+#include <QPoint>
+#include <QString>
 #include <qpixmap.h>
 #include <qcursor.h>
-#include <qtimer.h>
+#include <QTimer>
 #include <kfileitem.h>
 #include <kpanelapplet.h>
 #include <kactioncollection.h>

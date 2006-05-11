@@ -16,9 +16,9 @@
  *
  */
 
-#include <qfile.h>
+#include <QFile>
 #include <qtextstream.h>
-#include <qregexp.h>
+#include <QRegExp>
 
 #include <kdebug.h>
 #include <kglobal.h>

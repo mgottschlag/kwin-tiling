@@ -19,8 +19,8 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <qcheckbox.h>
-#include <qlayout.h>
+#include <QCheckBox>
+#include <QLayout>
 #include <qradiobutton.h>
 //Added by qt3to4:
 #include <QVBoxLayout>

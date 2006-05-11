@@ -23,11 +23,11 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <q3listbox.h>
-#include <qpushbutton.h>
-#include <qtooltip.h>
+#include <QPushButton>
+#include <QToolTip>
 
 //Added by qt3to4:
 #include <QVBoxLayout>

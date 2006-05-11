@@ -46,10 +46,10 @@
 #include <iostream.h>
 
 #include <qdict.h>
-#include <qfile.h>
+#include <QFile>
 #include <qfontmetrics.h>
 #include <qptrlist.h>
-#include <qstring.h>
+#include <QString>
 #include <qtextstream.h>
 
 #include <kdebug.h>

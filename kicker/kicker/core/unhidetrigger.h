@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #undef None
 #endif
 
-#include <qobject.h>
+#include <QObject>
 
 #include "utils.h"
 

@@ -27,7 +27,7 @@ DESCRIPTION
 
 #include <ksystemtray.h>
 #include <kuniqueapplication.h>
-#include <qstring.h>
+#include <QString>
 #include <qstringlist.h>
 #include <q3dict.h>
 #include <QQueue>

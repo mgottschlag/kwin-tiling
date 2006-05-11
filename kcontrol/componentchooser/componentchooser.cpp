@@ -19,9 +19,9 @@
 #include "componentchooser.h"
 #include "componentchooser.moc"
 
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QCheckBox>
+#include <QLabel>
+#include <QLayout>
 #include <qradiobutton.h>
 
 #include <dcopclient.h>

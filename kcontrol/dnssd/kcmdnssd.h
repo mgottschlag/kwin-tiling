@@ -21,7 +21,7 @@
 #ifndef _KCMDNSSD_H_
 #define _KCMDNSSD_H_
 
-#include <qmap.h>
+#include <QMap>
 
 #include <configdialog.h>
 #include <kaboutdata.h>

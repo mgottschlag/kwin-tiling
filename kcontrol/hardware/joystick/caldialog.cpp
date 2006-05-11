@@ -22,8 +22,8 @@
 #include "caldialog.h"
 #include "joydevice.h"
 
-#include <qlabel.h>
-#include <qtimer.h>
+#include <QLabel>
+#include <QTimer>
 #include <qapplication.h>
 
 #include <klocale.h>

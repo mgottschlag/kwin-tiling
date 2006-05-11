@@ -24,7 +24,7 @@
 #define __krootwm_h__
 
 #include <qpixmap.h>
-#include <qobject.h>
+#include <QObject>
 
 // we need Window but do not want to include X.h since it
 // #defines way too many constants

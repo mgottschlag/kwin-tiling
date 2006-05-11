@@ -20,8 +20,8 @@
  */
 
 #include <qfontdatabase.h>
-#include <qfont.h>
-#include <qstring.h>
+#include <QFont>
+#include <QString>
 #include <qstringlist.h>
 
 #include <kdebug.h>
@@ -178,7 +178,7 @@ QFont KSysInfo::getFixedWidthFont(){
 #ifdef __linux__
 ///////////////////
 
-	#include <qfile.h>
+	#include <QFile>
 	#include <math.h>
 
 	void KSysInfo::initHWInfo() {

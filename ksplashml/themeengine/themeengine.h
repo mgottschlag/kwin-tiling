@@ -14,7 +14,7 @@
 
 #include <qstringlist.h>
 #include <q3vbox.h>
-#include <qwidget.h>
+#include <QWidget>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QEvent>

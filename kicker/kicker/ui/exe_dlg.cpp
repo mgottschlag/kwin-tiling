@@ -26,10 +26,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kiconloader.h>
 
-#include <qcheckbox.h>
-#include <qdir.h>
+#include <QCheckBox>
+#include <QDir>
 #include <qfileinfo.h>
-#include <qlineedit.h>
+#include <QLineEdit>
 
 #include <kicondialog.h>
 #include <kmessagebox.h>

@@ -23,8 +23,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "menuinfo.h"
 
-#include <qfile.h>
-#include <qwidget.h>
+#include <QFile>
+#include <QWidget>
 
 #include <kapplication.h>
 #include <ksimpleconfig.h>

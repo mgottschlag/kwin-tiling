@@ -17,12 +17,12 @@
 #include <kvbox.h>
 
 #include <qapplication.h>
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <qdesktopwidget.h>
-#include <qlabel.h>
+#include <QLabel>
 #include <qpainter.h>
 #include <qpixmap.h>
-#include <qtimer.h>
+#include <QTimer>
 #include <QProgressBar>
 
 #include "objkstheme.h"

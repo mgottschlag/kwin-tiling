@@ -27,9 +27,9 @@ DESCRIPTION
 #include <stdlib.h>
 #include <assert.h>
 
-#include <qregexp.h>
-#include <qfile.h>
-#include <qtooltip.h>
+#include <QRegExp>
+#include <QFile>
+#include <QToolTip>
 #include <qstringlist.h>
 #include <qimage.h>
 //Added by qt3to4:

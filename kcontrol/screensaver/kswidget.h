@@ -2,7 +2,7 @@
 #define KSWIDGET_H
 
 #include <QX11EmbedWidget>
-#include <qwidget.h>
+#include <QWidget>
 #include <X11/X.h>
 
 class KSWidget : public QX11EmbedWidget

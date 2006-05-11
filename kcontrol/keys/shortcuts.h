@@ -23,7 +23,7 @@
 #define SHORTCUTS_MODULE_H
 
 #include <qbuttongroup.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <qradiobutton.h>
 #include <qtabwidget.h>
 #include <kcombobox.h>

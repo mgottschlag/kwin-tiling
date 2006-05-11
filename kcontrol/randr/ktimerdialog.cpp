@@ -20,11 +20,11 @@
  */
 
 
-#include <qlayout.h>
+#include <QLayout>
 
-#include <qtimer.h>
+#include <QTimer>
 #include <qprogressbar.h>
-#include <qlabel.h>
+#include <QLabel>
 
 #include <kwin.h>
 #include <kiconloader.h>

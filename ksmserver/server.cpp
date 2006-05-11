@@ -56,14 +56,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <limits.h>
 #endif
 
-#include <qfile.h>
+#include <QFile>
 #include <qtextstream.h>
-#include <qdatastream.h>
-#include <qpushbutton.h>
+#include <QDataStream>
+#include <QPushButton>
 #include <qmessagebox.h>
-#include <qtimer.h>
+#include <QTimer>
 #include <QDesktopWidget>
-#include <qregexp.h>
+#include <QRegExp>
 
 #include <klocale.h>
 #include <kglobal.h>

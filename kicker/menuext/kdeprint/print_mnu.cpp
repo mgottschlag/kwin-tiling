@@ -28,7 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kapplication.h>
 #include <krun.h>
 #include <kdeprint/kmmanager.h>
-#include <qregexp.h>
+#include <QRegExp>
 //Added by qt3to4:
 #include <Q3PtrList>
 #include <ktoolinvocation.h>

@@ -25,7 +25,7 @@
 #include <qdrawutil.h>
 #include <QMenu>
 #include <qstyle.h>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>
 #include <QDropEvent>

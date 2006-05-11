@@ -50,9 +50,9 @@
 #include <string.h>
 
 #include <q3dict.h>
-#include <qfile.h>
+#include <QFile>
 #include <q3ptrlist.h>
-#include <qstring.h>
+#include <QString>
 #include <qtextstream.h>
 
 class Device {

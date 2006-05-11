@@ -15,8 +15,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#include <qfile.h>
-#include <qregexp.h>
+#include <QFile>
+#include <QRegExp>
 //Added by qt3to4:
 #include <Q3PtrList>
 

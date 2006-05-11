@@ -28,7 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qapplication.h>
 #include <qbitmap.h>
 #include <qdesktopwidget.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <qpainter.h>
 #include <qstringlist.h>
 #include <q3tl.h>

@@ -15,8 +15,8 @@
 #include <kapplication.h>
 
 #include <q3ptrlist.h>
-#include <qstring.h>
-#include <qobject.h>
+#include <QString>
+#include <QObject>
 //Added by qt3to4:
 #include <QEvent>
 

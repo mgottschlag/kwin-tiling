@@ -22,7 +22,7 @@
 #include "terminalemulatorconfig_ui.h"
 #include "browserconfig_ui.h"
 #include <q3dict.h>
-#include <qstring.h>
+#include <QString>
 //Added by qt3to4:
 #include <QVBoxLayout>
 

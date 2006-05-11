@@ -18,7 +18,7 @@
 */
 
 #include <qimage.h>
-#include <qregexp.h>
+#include <QRegExp>
 
 #include <kconfig.h>
 #include <kiconloader.h>

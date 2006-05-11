@@ -30,7 +30,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
-#include <qstring.h>
+#include <QString>
 #include <zlib.h>
 
 namespace KFI

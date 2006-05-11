@@ -1,13 +1,13 @@
 #ifndef _INFO_H_
 #define _INFO_H_
 
-#include <qwidget.h>
+#include <QWidget>
 #include <QStackedWidget>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qtimer.h>
+#include <QLabel>
+#include <QPushButton>
+#include <QTimer>
 #include <q3listview.h>
-#include <qfile.h>
+#include <QFile>
 #include <qevent.h>
 
 #include <kcmodule.h>

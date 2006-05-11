@@ -22,7 +22,7 @@
 
 #include "historyitem.h"
 
-#include <qmap.h>
+#include <QMap>
 #include <kurl.h>
 
 /**

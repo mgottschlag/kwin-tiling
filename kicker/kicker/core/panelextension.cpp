@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include <qvalidator.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <qpainter.h>
 #include <qstyle.h>
 #include <QMouseEvent>

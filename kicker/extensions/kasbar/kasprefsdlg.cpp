@@ -52,13 +52,13 @@
 ** Bug reports and questions can be sent to kde-devel@kde.org
 */
 
-#include <qcheckbox.h>
-#include <qcombobox.h>
+#include <QCheckBox>
+#include <QComboBox>
 #include <q3grid.h>
 #include <q3groupbox.h>
-#include <qlabel.h>
+#include <QLabel>
 #include <qslider.h>
-#include <qspinbox.h>
+#include <QSpinBox>
 
 #include <kcolorbutton.h>
 #include <kconfig.h>

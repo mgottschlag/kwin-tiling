@@ -22,10 +22,10 @@
 
 #include <config.h>
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <qevent.h>
-#include <qpushbutton.h>
-#include <qspinbox.h>
+#include <QPushButton>
+#include <QSpinBox>
 //Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QDropEvent>

@@ -26,8 +26,8 @@ that is intentional :-]
 
 #include <qstringlist.h>
 #include <q3intdict.h>
-#include <qstring.h>
-#include <qwidget.h>
+#include <QString>
+#include <QWidget>
 
 #include <kmenu.h>
 

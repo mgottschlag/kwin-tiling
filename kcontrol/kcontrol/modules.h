@@ -21,7 +21,7 @@
 #define MODULES_H
 
 #include <kcmoduleinfo.h>
-#include <qobject.h>
+#include <QObject>
 #include <q3dict.h>
 //Added by qt3to4:
 #include <QVBoxLayout>

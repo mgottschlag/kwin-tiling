@@ -37,17 +37,17 @@
 #include <kauthorized.h>
 
 #include <qframe.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <qcursor.h>
-#include <qtimer.h>
-#include <qfile.h>
+#include <QTimer>
+#include <QFile>
 #include <qsocketnotifier.h>
 #include <QDesktopWidget>
 #include <QX11Info>
 #include <QTextStream>
 
-#include <qdatetime.h>
+#include <QDateTime>
 
 #include <stdlib.h>
 #include <assert.h>

@@ -1,11 +1,11 @@
 #include <unistd.h>
 
 
-#include <qtimer.h>
+#include <QTimer>
 #include <qpainter.h>
 
-#include <qlayout.h>
-#include <qlabel.h>
+#include <QLayout>
+#include <QLabel>
 #include <qdesktopwidget.h>
 
 #include <kdialogbase.h>

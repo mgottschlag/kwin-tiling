@@ -28,7 +28,7 @@
 
 #include "CompressedFile.h"
 #include <kprocess.h>
-#include <qfile.h>
+#include <QFile>
 
 namespace KFI
 {

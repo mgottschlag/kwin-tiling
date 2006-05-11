@@ -31,11 +31,11 @@
 #include <k3listview.h>
 #include <kdialog.h>
 
-#include <qlayout.h>
-#include <qdir.h>
+#include <QLayout>
+#include <QDir>
 #include <qpixmap.h>
 #include <qimage.h>
-#include <qlabel.h>
+#include <QLabel>
 
 #include "themepage.h"
 #include "themepage.moc"

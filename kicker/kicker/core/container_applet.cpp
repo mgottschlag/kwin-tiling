@@ -22,10 +22,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include <qcursor.h>
-#include <qlayout.h>
-#include <qfile.h>
-#include <qtimer.h>
-#include <qtooltip.h>
+#include <QLayout>
+#include <QFile>
+#include <QTimer>
+#include <QToolTip>
 #include <QMenuItem>
 #include <QPixmap>
 #include <QMenu>

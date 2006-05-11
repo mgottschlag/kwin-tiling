@@ -52,7 +52,7 @@
 ** Bug reports and questions can be sent to kde-devel@kde.org
 */
 #include <qapplication.h>
-#include <qtimer.h>
+#include <QTimer>
 //Added by qt3to4:
 #include <QBoxLayout>
 

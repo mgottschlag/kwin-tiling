@@ -11,7 +11,7 @@
 #ifndef _KHLISTVIEW_H_
 #define _KHLISTVIEW_H_
 
-#include <qtimer.h>
+#include <QTimer>
 //Added by qt3to4:
 #include <QDropEvent>
 

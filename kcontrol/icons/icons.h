@@ -12,7 +12,7 @@
 #ifndef __icons_h__
 #define __icons_h__
 
-#include <qcolor.h>
+#include <QColor>
 #include <qimage.h>
 //Added by qt3to4:
 #include <QGridLayout>

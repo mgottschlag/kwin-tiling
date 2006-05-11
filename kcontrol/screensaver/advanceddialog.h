@@ -2,14 +2,14 @@
 #define ADVANCEDDIALOG_H
 
 #include <kdialogbase.h>
-#include <qwidget.h>
+#include <QWidget>
 #include <kconfig.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <qwhatsthis.h>
 #include <qgroupbox.h>
-#include <qobject.h>
-#include <qcheckbox.h>
+#include <QObject>
+#include <QCheckBox>
 #include <qslider.h>
 
 #include "advanceddialogimpl.h"

@@ -32,14 +32,14 @@
 #include "KfiConstants.h"
 #include "KfiPrint.h"
 #include <klocale.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
+#include <QLayout>
+#include <QPushButton>
 #include <qframe.h>
-#include <qfile.h>
-#include <qlabel.h>
+#include <QFile>
+#include <QLabel>
 #include <qpainter.h>
 #include <qvalidator.h>
-#include <qregexp.h>
+#include <QRegExp>
 #include <qsettings.h>
 #include <qstringlist.h>
 //Added by qt3to4:

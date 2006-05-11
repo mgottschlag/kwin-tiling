@@ -23,17 +23,17 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <qregexp.h>
-#include <qfile.h>
+#include <QRegExp>
+#include <QFile>
 #include <qpaintdevice.h>
 //Added by qt3to4:
 #include <QByteArray>
 #include <Q3PtrList>
 #include <klocale.h>
 #include <kde_file.h>
-#include <qdir.h>
+#include <QDir>
 #include <qsettings.h>
-#include <qfont.h>
+#include <QFont>
 
 #ifdef HAVE_FONTCONFIG
 #include <stdarg.h>

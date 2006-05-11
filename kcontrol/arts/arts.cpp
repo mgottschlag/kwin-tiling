@@ -25,11 +25,11 @@
 
 #include <unistd.h>
 
-#include <qcombobox.h>
-#include <qdir.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qregexp.h>
+#include <QComboBox>
+#include <QDir>
+#include <QLayout>
+#include <QPushButton>
+#include <QRegExp>
 #include <qslider.h>
 #include <qtabwidget.h>
 

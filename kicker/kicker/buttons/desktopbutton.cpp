@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qtooltip.h>
+#include <QToolTip>
 #include <q3dragobject.h>
 //Added by qt3to4:
 #include <QDragEnterEvent>

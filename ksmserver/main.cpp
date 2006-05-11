@@ -14,7 +14,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include <dcopclient.h>
 #include <qmessagebox.h>
-#include <qdir.h>
+#include <QDir>
 
 #include <kapplication.h>
 #include <kcmdlineargs.h>

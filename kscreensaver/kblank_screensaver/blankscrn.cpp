@@ -9,8 +9,8 @@
 // 2006/03/12 Ported to KScreenSaverInterface by David Faure
 
 #include <stdlib.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <QFrame>
 #include <QGridLayout>
 #include <kapplication.h>

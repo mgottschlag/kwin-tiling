@@ -56,9 +56,9 @@
 #include <kmimetype.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
-#include <qdir.h>
-#include <qdatastream.h>
-#include <qregexp.h>
+#include <QDir>
+#include <QDataStream>
+#include <QRegExp>
 #include <kinstance.h>
 #include <kde_file.h>
 #include <ktempfile.h>

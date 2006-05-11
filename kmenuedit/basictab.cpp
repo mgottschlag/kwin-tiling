@@ -18,9 +18,9 @@
  */
 
 
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QCheckBox>
+#include <QLabel>
+#include <QLayout>
 #include <qfileinfo.h>
 #include <qgroupbox.h>
 

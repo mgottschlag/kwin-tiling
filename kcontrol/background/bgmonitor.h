@@ -25,8 +25,8 @@
 #ifndef _BGMONITOR_H_
 #define _BGMONITOR_H_
 
-#include <qwidget.h>
-#include <qlabel.h>
+#include <QWidget>
+#include <QLabel>
 //Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QDropEvent>

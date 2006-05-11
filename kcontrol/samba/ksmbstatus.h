@@ -19,8 +19,8 @@
 #ifndef ksmbstatus_h_included
 #define ksmbstatus_h_included
 
-#include <qtimer.h>
-#include <qlabel.h>
+#include <QTimer>
+#include <QLabel>
 #include <kprocess.h>
 #include <q3listview.h>
 #include <kconfig.h>

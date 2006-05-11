@@ -18,7 +18,7 @@
 #ifndef KSTYLEPAGE_H
 #define KSTYLEPAGE_H
 
-#include <qcolor.h>
+#include <QColor>
 #include "kstylepagedlg.h"
 
 /**Abstract class for the style page

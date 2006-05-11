@@ -26,7 +26,7 @@ Boston, MA 02110-1301, USA.
 #include <qdesktopwidget.h>
 #include <klocale.h>
 
-#include <qfile.h>
+#include <QFile>
 
 #include "krootimage.h"
 

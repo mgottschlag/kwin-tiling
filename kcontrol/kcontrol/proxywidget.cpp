@@ -20,7 +20,7 @@
 #include <unistd.h> // for getuid()
 
 #include <kpushbutton.h>
-#include <qlayout.h>
+#include <QLayout>
 //Added by qt3to4:
 #include <QByteArray>
 #include <QFrame>
@@ -38,14 +38,14 @@
 #include <dcopclient.h>
 
 
-#include <qlabel.h>
+#include <QLabel>
 
 #include "global.h"
 #include "proxywidget.h"
 #include "proxywidget.moc"
 #include <Q3WhatsThis>
 #include <kdebug.h>
-#include <qtimer.h>
+#include <QTimer>
 
 class WhatsThis : public Q3WhatsThis
 {

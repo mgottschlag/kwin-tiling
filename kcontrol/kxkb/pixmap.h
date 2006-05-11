@@ -4,7 +4,7 @@
 
 #include <qpixmap.h>
 #include <q3dict.h>
-#include <qstring.h>
+#include <QString>
 
 class LayoutIcon {
 

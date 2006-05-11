@@ -25,7 +25,7 @@
 #define __kdm_main_h
 
 #include <qtabwidget.h>
-#include <qmap.h>
+#include <QMap>
 
 #include <kcmodule.h>
 

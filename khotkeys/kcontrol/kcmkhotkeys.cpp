@@ -17,7 +17,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include <qlayout.h>
+#include <QLayout>
 #include <qsplitter.h>
 //Added by qt3to4:
 #include <QVBoxLayout>

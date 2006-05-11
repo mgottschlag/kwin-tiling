@@ -1,7 +1,7 @@
 #include <sys/sysinfo.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <qfile.h>
+#include <QFile>
 
 void KMemoryWidget::update()
 {

@@ -17,7 +17,7 @@
 #include "input.h"
 
 #include <assert.h>
-#include <qwidget.h>
+#include <QWidget>
 //Added by qt3to4:
 #include <QList>
 
@@ -27,7 +27,7 @@
 #include <kdebug.h>
 #include <kapplication.h>
 #include <kdeversion.h>
-#include <qtimer.h>
+#include <QTimer>
 
 #include "khotkeysglobal.h"
 

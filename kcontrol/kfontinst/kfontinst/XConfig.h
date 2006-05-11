@@ -31,7 +31,7 @@
 
 #include "Misc.h"
 #include <q3ptrlist.h>
-#include <qstring.h>
+#include <QString>
 #include <qstringlist.h>
 #include <time.h>
 

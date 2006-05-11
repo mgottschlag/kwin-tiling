@@ -17,12 +17,12 @@
 
 #include <unistd.h>
 
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <qstring.h>
+#include <QPushButton>
+#include <QLabel>
+#include <QString>
 #include <qstringlist.h>
-#include <qfile.h>
-#include <qtimer.h>
+#include <QFile>
+#include <QTimer>
 #include <qcursor.h>
 //Added by qt3to4:
 #include <QCloseEvent>

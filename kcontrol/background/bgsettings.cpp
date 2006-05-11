@@ -17,7 +17,7 @@
 #undef Bool
 #undef Unsorted
 
-#include <qdir.h>
+#include <QDir>
 #include <qpixmap.h>
 //Added by qt3to4:
 #include <QByteArray>

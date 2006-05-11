@@ -41,18 +41,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qeventloop.h>
 
 #undef Unsorted // x headers suck - make qdir.h work with --enable-final
-#include <qdir.h>
-#include <qfile.h>
+#include <QDir>
+#include <QFile>
 #include <qimage.h>
 #include <qmovie.h>
 #include <QMenu>
-#include <qtimer.h>
+#include <QTimer>
 #include <q3header.h>
 #include <qstyle.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qtooltip.h>
+#include <QLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QToolTip>
 #include <q3accel.h>
 #include <qeventloop.h>
 #include <QSet>

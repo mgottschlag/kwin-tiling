@@ -26,7 +26,7 @@
 #include <kapplication.h>
 #include <kuser.h>
 
-#include <qobject.h>
+#include <QObject>
 #include <q3accel.h>
 //Added by qt3to4:
 #include <QByteArray>

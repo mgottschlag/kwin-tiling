@@ -25,8 +25,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define __quickbutton_h__
 
 #include <QAbstractButton>
-#include <qpoint.h>
-#include <qstring.h>
+#include <QPoint>
+#include <QString>
 #include <qpixmap.h>
 #include <qcursor.h>
 #include <QMouseEvent>

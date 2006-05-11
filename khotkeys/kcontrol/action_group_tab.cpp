@@ -16,8 +16,8 @@
 
 #include "action_group_tab.h"
 
-#include <qlineedit.h>
-#include <qcheckbox.h>
+#include <QLineEdit>
+#include <QCheckBox>
 
 #include <klocale.h>
 #include <kmessagebox.h>

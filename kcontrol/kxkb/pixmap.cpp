@@ -1,7 +1,7 @@
 #include <qimage.h>
-#include <qfont.h>
+#include <QFont>
 #include <qpainter.h>
-#include <qregexp.h>
+#include <QRegExp>
 #include <q3dict.h>
 //Added by qt3to4:
 #include <QPixmap>

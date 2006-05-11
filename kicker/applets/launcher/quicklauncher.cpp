@@ -25,8 +25,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qpainter.h>
 #include <QMenu>
 #include <qslider.h>
-#include <qtimer.h>
-#include <qtooltip.h>
+#include <QTimer>
+#include <QToolTip>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QDragLeaveEvent>

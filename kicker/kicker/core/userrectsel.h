@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef userrectsel_h
 #define userrectsel_h
 
-#include <qwidget.h>
+#include <QWidget>
 
 #include <QVector>
 #include <QMouseEvent>

@@ -16,14 +16,14 @@
  ***************************************************************************/
 #include <stdlib.h>
 
-#include <qdir.h>
-#include <qlabel.h>
+#include <QDir>
+#include <QLabel>
 #include <q3listview.h>
-#include <qcolor.h>
+#include <QColor>
 #include <qstylefactory.h>
 #include <qpixmapcache.h>
 #include <qstyle.h>
-#include <qobject.h>
+#include <QObject>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QX11Info>

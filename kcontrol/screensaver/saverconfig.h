@@ -1,7 +1,7 @@
 #ifndef SAVERCONFIG_H
 #define SAVERCONFIG_H
 
-#include <qstring.h>
+#include <QString>
 
 class SaverConfig
 {

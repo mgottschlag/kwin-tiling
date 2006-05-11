@@ -1,7 +1,7 @@
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qfontmetrics.h>
-#include <qfile.h>
+#include <QFile>
 #include <QX11Info>
 #include <qtextstream.h>
 #include <kurl.h>

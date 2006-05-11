@@ -14,14 +14,14 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <qstring.h>
+#include <QPushButton>
+#include <QLabel>
+#include <QString>
 #include <qstringlist.h>
 #include <qslider.h>
-#include <qcolor.h>
+#include <QColor>
 #include <qsettings.h>
-#include <qfont.h>
+#include <QFont>
 #include <QDesktopWidget>
 
 #include <ksimpleconfig.h>

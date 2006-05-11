@@ -2,9 +2,9 @@
 #define __RULES_H__
 
 
-#include <qstring.h>
+#include <QString>
 #include <q3dict.h>
-#include <qmap.h>
+#include <QMap>
 
 class KeyRules
 {

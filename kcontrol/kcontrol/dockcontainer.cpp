@@ -17,10 +17,10 @@
 
 */
 
-#include <qlabel.h>
+#include <QLabel>
 
 #include <qpixmap.h>
-#include <qfont.h>
+#include <QFont>
 
 #include <qapplication.h>
 

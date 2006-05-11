@@ -11,7 +11,7 @@
 #ifndef _KHLISTBOX_H_
 #define _KHLISTBOX_H_
 
-#include <qtimer.h>
+#include <QTimer>
 
 #include <klistbox.h>
 

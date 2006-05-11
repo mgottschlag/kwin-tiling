@@ -10,7 +10,7 @@
 #include <qpainter.h>
 #include <qscrollbar.h>
 #include <qbitmap.h>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <qstyle.h>
 #include <qstyleoption.h>
 #include <qmenu.h>

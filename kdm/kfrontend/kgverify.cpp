@@ -38,11 +38,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kstdguiitem.h>
 #include <kpushbutton.h>
 
-#include <qregexp.h>
+#include <QRegExp>
 #include <QMenu>
-#include <qlayout.h>
-#include <qfile.h>
-#include <qlabel.h>
+#include <QLayout>
+#include <QFile>
+#include <QLabel>
 //Added by qt3to4:
 #include <QGridLayout>
 #include <QEvent>

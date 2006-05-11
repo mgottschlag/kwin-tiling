@@ -63,9 +63,9 @@ class QPainter;
 class QMouseEvent;
 class KasPopup;
 
-#include <qobject.h>
+#include <QObject>
 #include <qpointer.h>
-#include <qpoint.h>
+#include <QPoint>
 
 
 #include <kdemacros.h>

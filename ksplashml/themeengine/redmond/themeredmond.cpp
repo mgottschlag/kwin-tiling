@@ -28,13 +28,13 @@
 #include <kvbox.h>
 #include <khbox.h>
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <qdesktopwidget.h>
-#include <qlabel.h>
+#include <QLabel>
 #include <qpainter.h>
 #include <qrect.h>
 #include <qstringlist.h>
-#include <qwidget.h>
+#include <QWidget>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QPaintEvent>

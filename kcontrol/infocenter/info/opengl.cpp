@@ -24,10 +24,10 @@
 
 #define KCMGL_DO_GLU
 
-#include <qregexp.h>
+#include <QRegExp>
 #include <q3listview.h>
-#include <qfile.h>
-#include <qstring.h>
+#include <QFile>
+#include <QString>
 //Added by qt3to4:
 #include <QTextStream>
 

@@ -21,13 +21,13 @@
 #include <sys/types.h>
 
 #include <qstyle.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qtooltip.h>
+#include <QLayout>
+#include <QLabel>
+#include <QToolTip>
 #include <qvalidator.h>
 
 #include <q3groupbox.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 //Added by qt3to4:
 #include <QGridLayout>
 #include <QEvent>

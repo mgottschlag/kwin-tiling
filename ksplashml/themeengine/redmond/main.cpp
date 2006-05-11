@@ -12,9 +12,9 @@
 
 #include <kstandarddirs.h>
 
-#include <qlabel.h>
+#include <QLabel>
 #include <qpixmap.h>
-#include <qwidget.h>
+#include <QWidget>
 
 #include "themeredmond.h"
 

@@ -22,14 +22,14 @@
 #ifndef dtime_included
 #define dtime_included
 
-#include <qdatetime.h> 
-#include <qlineedit.h> 
-#include <qspinbox.h> 
-#include <qstring.h>
-#include <qtimer.h>
+#include <QDateTime> 
+#include <QLineEdit> 
+#include <QSpinBox> 
+#include <QString>
+#include <QTimer>
 #include <qvalidator.h>
-#include <qwidget.h>
-#include <qcheckbox.h>
+#include <QWidget>
+#include <QCheckBox>
 //Added by qt3to4:
 #include <QPaintEvent>
 

@@ -23,9 +23,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <stdlib.h>
 
-#include <qstring.h>
-#include <qfile.h>
-#include <qobject.h>
+#include <QString>
+#include <QFile>
+#include <QObject>
 #include <QPixmap>
 
 #include <kapplication.h>

@@ -24,9 +24,9 @@
 #ifndef __KLOCALECONFIGTIME_H__
 #define __KLOCALECONFIGTIME_H__
 
-#include <qwidget.h>
+#include <QWidget>
 
-#include <qmap.h>
+#include <QMap>
 
 class QCheckBox;
 class QComboBox;

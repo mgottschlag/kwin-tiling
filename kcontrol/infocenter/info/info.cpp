@@ -29,7 +29,7 @@
 
 #include <q3header.h>
 #include <klocale.h>
-#include <qlayout.h>
+#include <QLayout>
 //Added by qt3to4:
 #include <QLabel>
 #include <QHBoxLayout>

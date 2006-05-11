@@ -1,17 +1,17 @@
 #include <stdlib.h>
 
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qcombobox.h>
+#include <QLayout>
+#include <QLabel>
+#include <QComboBox>
 #include <qtabwidget.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <q3listview.h>
 #include <q3header.h>
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <qradiobutton.h>
-#include <qlineedit.h>
+#include <QLineEdit>
 #include <q3buttongroup.h>
-#include <qspinbox.h>
+#include <QSpinBox>
 //Added by qt3to4:
 #include <QVBoxLayout>
 

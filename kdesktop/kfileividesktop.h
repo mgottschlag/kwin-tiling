@@ -24,10 +24,10 @@
 #ifndef KFILE_IVI_DESKTOP
 #define KFILE_IVI_DESKTOP
 
-#include <qcolor.h>
+#include <QColor>
 #include <qpixmap.h>
 #include <qimage.h>
-#include <qstring.h>
+#include <QString>
 #include <kfileivi.h>
 
 /*

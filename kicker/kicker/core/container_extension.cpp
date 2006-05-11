@@ -25,12 +25,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <math.h>
 
 #include <qcursor.h>
-#include <qfile.h>
-#include <qlayout.h>
+#include <QFile>
+#include <QLayout>
 #include <qmovie.h>
 #include <qpainter.h>
-#include <qtimer.h>
-#include <qtooltip.h>
+#include <QTimer>
+#include <QToolTip>
 
 #include <QMenuItem>
 #include <QPaintEvent>

@@ -22,7 +22,7 @@
 
 #include <qcursor.h>
 #include <QHash>
-#include <qtimer.h>
+#include <QTimer>
 
 #include <kapplication.h>
 #include <kconfig.h>

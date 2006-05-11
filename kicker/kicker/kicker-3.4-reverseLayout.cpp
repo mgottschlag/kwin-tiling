@@ -1,7 +1,7 @@
-#include <qfile.h>
-#include <qmap.h>
-#include <qregexp.h>
-#include <qstring.h>
+#include <QFile>
+#include <QMap>
+#include <QRegExp>
+#include <QString>
 #include <qtextstream.h>
 
 #include <kapplication.h>

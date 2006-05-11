@@ -16,8 +16,8 @@
 
 #include "info_tab.h"
 
-#include <qpushbutton.h>
-#include <qlabel.h>
+#include <QPushButton>
+#include <QLabel>
 
 #include <klocale.h>
 

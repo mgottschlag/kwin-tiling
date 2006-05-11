@@ -22,11 +22,11 @@
 
 #include <sys/types.h>
 
-#include <qwidget.h>
+#include <QWidget>
 #include <qpixmap.h>
-#include <qstring.h>
-#include <qtimer.h>
-#include <qmap.h>
+#include <QString>
+#include <QTimer>
+#include <QMap>
 #include <kstartupinfo.h>
 
 class QStyle;

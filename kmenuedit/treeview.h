@@ -22,7 +22,7 @@
 #ifndef __treeview_h__
 #define __treeview_h__
 
-#include <qstring.h>
+#include <QString>
 //Added by qt3to4:
 #include <QMenu>
 #include <QDropEvent>

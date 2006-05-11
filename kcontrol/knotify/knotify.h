@@ -23,7 +23,7 @@
 #ifndef _KNOTIFY_H
 #define _KNOTIFY_H
 
-#include <qstring.h>
+#include <QString>
 //Added by qt3to4:
 #include <QLabel>
 

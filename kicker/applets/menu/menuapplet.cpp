@@ -26,9 +26,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "menuapplet.h"
 
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <qvariant.h> // avoid X11 #define's
+#include <QLayout>
+#include <QToolTip>
+#include <QVariant> // avoid X11 #define's
 #include <QList>
 
 #include <kapplication.h>

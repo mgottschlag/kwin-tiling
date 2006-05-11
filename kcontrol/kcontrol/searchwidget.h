@@ -21,9 +21,9 @@
 #ifndef __searchwidget_h__
 #define __searchwidget_h__
 
-#include <qwidget.h>
+#include <QWidget>
 #include <q3ptrlist.h>
-#include <qstring.h>
+#include <QString>
 #include <qstringlist.h>
 
 #include "modules.h"

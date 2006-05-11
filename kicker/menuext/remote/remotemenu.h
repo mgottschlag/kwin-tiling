@@ -22,7 +22,7 @@
 
 #include <kdirnotify.h>
 #include <kpanelmenu.h>
-#include <qmap.h>
+#include <QMap>
 
 class RemoteMenu : public KPanelMenu, public KDirNotify
 {

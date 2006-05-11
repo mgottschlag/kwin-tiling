@@ -11,11 +11,11 @@
 
 #include <stdlib.h>
 
-#include <qcheckbox.h>
-#include <qcombobox.h>
+#include <QCheckBox>
+#include <QComboBox>
 #include <q3groupbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QLayout>
 #include <qslider.h>
 //Added by qt3to4:
 #include <QPixmap>

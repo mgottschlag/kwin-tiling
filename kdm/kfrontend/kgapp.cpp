@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 
-#include <qtimer.h>
+#include <QTimer>
 #include <qdesktopwidget.h>
 #include <qcursor.h>
 #include <qpalette.h>

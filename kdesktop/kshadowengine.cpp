@@ -22,7 +22,7 @@
  */
 
 #include "kshadowengine.h"
-#include <qcolor.h>
+#include <QColor>
 #include "kshadowsettings.h"
 
 KShadowEngine::KShadowEngine() :

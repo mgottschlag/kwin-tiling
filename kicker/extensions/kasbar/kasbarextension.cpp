@@ -51,7 +51,7 @@
 /*
 ** Bug reports and questions can be sent to kde-devel@kde.org
 */
-#include <qlayout.h>
+#include <QLayout>
 //Added by qt3to4:
 #include <QShowEvent>
 

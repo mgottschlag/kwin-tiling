@@ -21,7 +21,7 @@
 #include <unistd.h>
 
 #include <qapplication.h>
-#include <qdir.h>
+#include <QDir>
 #include <qimage.h>
 #include <qstringlist.h>
 #include <qcursor.h>

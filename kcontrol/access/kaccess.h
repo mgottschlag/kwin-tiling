@@ -2,8 +2,8 @@
 #define __K_ACCESS_H__
 
 
-#include <qwidget.h>
-#include <qcolor.h>
+#include <QWidget>
+#include <QColor>
 //Added by qt3to4:
 #include <QLabel>
 #include <QPaintEvent>

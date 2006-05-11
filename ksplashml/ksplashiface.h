@@ -14,7 +14,7 @@
 
 #include <dcopobject.h>
 
-#include <qstring.h>
+#include <QString>
 
 /** @short DCOP interface for KSplash. */
 class KSplashIface : virtual public DCOPObject

@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __runapplet_h__
 #define __runapplet_h__
 
-#include <qstring.h>
+#include <QString>
 //Added by qt3to4:
 #include <QLabel>
 #include <QResizeEvent>

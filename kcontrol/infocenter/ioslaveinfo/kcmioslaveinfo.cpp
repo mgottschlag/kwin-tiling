@@ -22,10 +22,10 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <qfile.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qspinbox.h>
+#include <QFile>
+#include <QLabel>
+#include <QLayout>
+#include <QSpinBox>
 #include <qtabwidget.h>
 #include <qtextcodec.h>
 #include <qwhatsthis.h>

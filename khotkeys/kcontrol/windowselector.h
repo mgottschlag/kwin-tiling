@@ -11,7 +11,7 @@
 #ifndef _WINDOWSELECTOR_H_
 #define _WINDOWSELECTOR_H_
 
-#include <qwidget.h>
+#include <QWidget>
 
 namespace KHotKeys
 {

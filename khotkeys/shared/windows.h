@@ -13,8 +13,8 @@
 
 #include <sys/types.h>
 
-#include <qobject.h>
-#include <qstring.h>
+#include <QObject>
+#include <QString>
 #include <q3ptrlist.h>
 #include <qwindowdefs.h>
 

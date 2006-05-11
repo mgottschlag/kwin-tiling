@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qregexp.h>
+#include <QRegExp>
 #include <q3tl.h>
 
 #include <QList>

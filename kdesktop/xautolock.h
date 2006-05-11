@@ -8,7 +8,7 @@
 #ifndef __XAUTOLOCK_H__
 #define __XAUTOLOCK_H__
 
-#include <qwidget.h>
+#include <QWidget>
 
 #include <X11/Xlib.h>
 #include <fixx11h.h>

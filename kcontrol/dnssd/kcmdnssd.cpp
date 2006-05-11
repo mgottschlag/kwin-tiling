@@ -21,10 +21,10 @@
 #include <sys/stat.h>
 #include <config.h>
 
-#include <qlayout.h>
-#include <qfile.h>
+#include <QLayout>
+#include <QFile>
 #include <qradiobutton.h>
-#include <qtimer.h>
+#include <QTimer>
 #include <qtabwidget.h>
 //Added by qt3to4:
 #include <QTextStream>

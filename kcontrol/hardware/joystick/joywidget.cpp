@@ -24,12 +24,12 @@
 #include "caldialog.h"
 
 #include <qtablewidget.h>
-#include <qlabel.h>
-#include <qcombobox.h>
-#include <qcheckbox.h>
-#include <qtimer.h>
+#include <QLabel>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QTimer>
 #include <qfontmetrics.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 
 #include <QHeaderView>
 

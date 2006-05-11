@@ -22,11 +22,11 @@
 #ifndef __KDMCONV_H__
 #define __KDMCONV_H__
 
-#include <qstring.h>
+#include <QString>
 #include <qimage.h>
 #include <q3groupbox.h>
 #include <qradiobutton.h>
-#include <qcheckbox.h>
+#include <QCheckBox>
 //Added by qt3to4:
 #include <QLabel>
 

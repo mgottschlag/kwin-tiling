@@ -5,9 +5,9 @@
 #include "config.h"
 #endif
 
-#include <qstring.h>
+#include <QString>
 #include <QVector>
-#include <qfont.h>
+#include <QFont>
 //Added by qt3to4:
 #include <QPixmap>
 #include <kurl.h>

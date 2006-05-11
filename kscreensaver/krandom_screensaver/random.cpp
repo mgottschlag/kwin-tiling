@@ -15,9 +15,9 @@
 #include <unistd.h>
 
 #include <qtextstream.h>
-#include <qlayout.h>
-#include <qcheckbox.h>
-#include <qwidget.h>
+#include <QLayout>
+#include <QCheckBox>
+#include <QWidget>
 //Added by qt3to4:
 #include <QGridLayout>
 

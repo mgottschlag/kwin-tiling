@@ -19,7 +19,7 @@
 #ifndef KRICHTEXTLABEL_H
 #define KRICHTEXTLABEL_H
 
-#include <qlabel.h>
+#include <QLabel>
 
 #include <kdelibs_export.h>
 

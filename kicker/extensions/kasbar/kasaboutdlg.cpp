@@ -52,9 +52,9 @@
 ** Bug reports and questions can be sent to kde-devel@kde.org
 */
 
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qfile.h>
+#include <QCheckBox>
+#include <QLabel>
+#include <QFile>
 #include <qtextstream.h>
 //Added by qt3to4:
 #include <QMouseEvent>

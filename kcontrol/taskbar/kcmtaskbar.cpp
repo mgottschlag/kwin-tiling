@@ -16,10 +16,10 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qlayout.h>
-#include <qtimer.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLayout>
+#include <QTimer>
 #include <qvaluelist.h>
 
 #include <dcopclient.h>

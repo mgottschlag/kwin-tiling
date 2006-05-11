@@ -11,10 +11,10 @@
 #ifndef _INPUT_H_
 #define _INPUT_H_
 
-#include <qobject.h>
+#include <QObject>
 #include <qwindowdefs.h>
-#include <qmap.h>
-#include <qwidget.h>
+#include <QMap>
+#include <QWidget>
 
 #include <kshortcut.h>
 

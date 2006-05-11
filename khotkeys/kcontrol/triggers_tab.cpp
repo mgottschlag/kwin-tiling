@@ -17,11 +17,11 @@
 #include "triggers_tab.h"
 
 #include <assert.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
+#include <QPushButton>
+#include <QLineEdit>
 #include <qmenu.h>
-#include <qlayout.h>
-#include <qlabel.h>
+#include <QLayout>
+#include <QLabel>
 #include <q3header.h>
 //Added by qt3to4:
 #include <QVBoxLayout>

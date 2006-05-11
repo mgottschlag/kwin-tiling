@@ -1,7 +1,7 @@
-#include <qtooltip.h>
+#include <QToolTip>
 #include <qtextstream.h>
 #include <qimage.h>
-#include <qregexp.h>
+#include <QRegExp>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QLabel>

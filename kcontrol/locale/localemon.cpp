@@ -21,15 +21,15 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLabel>
+#include <QLineEdit>
 
-#include <qlayout.h>
+#include <QLayout>
 #include <q3groupbox.h>
 
-#include <qregexp.h>
+#include <QRegExp>
 //Added by qt3to4:
 #include <QGridLayout>
 #include <knuminput.h>

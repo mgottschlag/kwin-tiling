@@ -15,11 +15,11 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <qcheckbox.h>
-#include <qdir.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
+#include <QCheckBox>
+#include <QDir>
+#include <QLabel>
+#include <QLayout>
+#include <QPushButton>
 #include <qradiobutton.h>
 
 #include <kapplication.h>

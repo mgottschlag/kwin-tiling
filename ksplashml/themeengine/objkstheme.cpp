@@ -17,13 +17,13 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
 
-#include <qcolor.h>
+#include <QColor>
 #include <qcursor.h>
 #include <qdesktopwidget.h>
-#include <qfont.h>
+#include <QFont>
 #include <qpixmap.h>
 #include <qrect.h>
-#include <qstring.h>
+#include <QString>
 
 #include "objkstheme.h"
 #include "objkstheme.moc"

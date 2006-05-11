@@ -24,7 +24,7 @@
 
 #include <qmessagebox.h>
 #include <qtoolbutton.h>
-#include <qlayout.h>
+#include <QLayout>
 //Added by qt3to4:
 #include <QVBoxLayout>
 
@@ -36,7 +36,7 @@
 #include <klocale.h>
 #include <kmenu.h>
 #include <kmessagebox.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 
 extern "C"
 {

@@ -34,12 +34,12 @@
 #include <ksimpleconfig.h>
 #include <kdebug.h>
 
-#include <qfile.h>
+#include <QFile>
 #include <qfileinfo.h>
-//#include <qtimer.h>		// animation timer - TODO
-#include <qobject.h>
+//#include <QTimer>		// animation timer - TODO
+#include <QObject>
 #include <qpainter.h>
-#include <qwidget.h>
+#include <QWidget>
 #include <qregion.h>
 //Added by qt3to4:
 #include <QPixmap>

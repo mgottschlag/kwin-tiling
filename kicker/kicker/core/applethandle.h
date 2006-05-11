@@ -24,8 +24,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __applethandle_h__
 #define __applethandle_h__
 
-#include <qwidget.h>
-#include <qpushbutton.h>
+#include <QWidget>
+#include <QPushButton>
 
 #include "utils.h"
 

@@ -20,7 +20,7 @@
 #define __RANDRPASSIVEPOPUP_H__
 
 #include <kpassivepopup.h>
-#include <qtimer.h>
+#include <QTimer>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QEvent>

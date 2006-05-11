@@ -23,8 +23,8 @@
 #define __LOGITECHMOUSE_H__
 
 #include <qdialog.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
+#include <QPushButton>
+#include <QLabel>
 #include <qradiobutton.h>
 #include <qbuttongroup.h>
 

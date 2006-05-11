@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qlayout.h>
+#include <QLayout>
 //Added by qt3to4:
 #include <QHBoxLayout>
 

@@ -24,7 +24,7 @@
 #ifndef KGREETERPLUGIN_H
 #define KGREETERPLUGIN_H
 
-#include <qvariant.h>
+#include <QVariant>
 #include <qmessagebox.h>
 #include <kdemacros.h>
 

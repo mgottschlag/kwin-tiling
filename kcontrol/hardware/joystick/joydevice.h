@@ -21,7 +21,7 @@
 #ifndef _JOYDEVICE_H_
 #define _JOYDEVICE_H_
 
-#include <qstring.h>
+#include <QString>
 
 #include <sys/types.h>
 

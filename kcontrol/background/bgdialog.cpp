@@ -29,13 +29,13 @@
 
 #include <config.h>
 
-#include <qcheckbox.h>
-#include <qlabel.h>
+#include <QCheckBox>
+#include <QLabel>
 #include <qpainter.h>
 #include <qradiobutton.h>
 #include <qslider.h>
-#include <qtimer.h>
-#include <qtooltip.h>
+#include <QTimer>
+#include <QToolTip>
 
 #include <qapplication.h>
 #include <QPixmap>

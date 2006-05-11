@@ -29,11 +29,11 @@
 #include <kapplication.h>
 
 #include <qbuttongroup.h>
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
+#include <QCheckBox>
+#include <QLabel>
+#include <QLineEdit>
 #include <qradiobutton.h>
-#include <qtimer.h>
+#include <QTimer>
 
 #include <kcmodule.h>
 #include <knuminput.h>

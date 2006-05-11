@@ -35,7 +35,7 @@
 #include <stdio.h>	/* for NULL */
 #include <stdlib.h>	/* for malloc(3) */
 
-#include <qfile.h>
+#include <QFile>
 #include <qfontmetrics.h>
 #include <qstrlist.h>
 #include <qtextstream.h>

@@ -9,7 +9,7 @@
 
 ****************************************************************************/
 
-#include <qcolor.h>
+#include <QColor>
 #include <qpainter.h>
 //Added by qt3to4:
 #include <QFrame>

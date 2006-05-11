@@ -23,10 +23,10 @@
 
 #include <kcmodule.h>
 
-#include <qmap.h>
+#include <QMap>
 #include <qsocketnotifier.h>
-#include <qstring.h>
-#include <qtimer.h>
+#include <QString>
+#include <QTimer>
 //Added by qt3to4:
 #include <Q3PtrList>
 

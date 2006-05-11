@@ -24,13 +24,13 @@
 #include <kapplication.h>
 #include <kglobalaccel.h>
 #include <kmenu.h>
-#include <qmap.h>
+#include <QMap>
 #include <qpixmap.h>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <dcopobject.h>
-#include <qtimer.h>
+#include <QTimer>
 #include <kglobal.h>
 
 class QClipboard;

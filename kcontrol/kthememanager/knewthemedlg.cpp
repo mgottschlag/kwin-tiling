@@ -19,7 +19,7 @@
 #include "knewthemedlg.h"
 #include "newthemewidget.h"
 
-#include <qlineedit.h>
+#include <QLineEdit>
 #include <qtextedit.h>
 
 #include <klocale.h>

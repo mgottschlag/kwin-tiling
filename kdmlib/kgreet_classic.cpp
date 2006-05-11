@@ -31,9 +31,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kpassworddialog.h>
 #include <kuser.h>
 
-#include <qregexp.h>
-#include <qlayout.h>
-#include <qlabel.h>
+#include <QRegExp>
+#include <QLayout>
+#include <QLabel>
 
 class KDMPasswordEdit : public KPasswordEdit {
 public:

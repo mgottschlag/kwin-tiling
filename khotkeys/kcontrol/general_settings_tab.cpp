@@ -16,7 +16,7 @@
 
 #include "general_settings_tab.h"
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 
 #include "kcmkhotkeys.h"
 

@@ -23,9 +23,9 @@
 #ifndef kcmsambalog_h_included
 #define kcmsambalog_h_included
  
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
+#include <QLabel>
+#include <QCheckBox>
+#include <QPushButton>
 #include <q3listview.h>
 #include <qevent.h>
 #include <kconfig.h>

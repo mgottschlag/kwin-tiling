@@ -11,9 +11,9 @@
 #ifndef _GESTURES_H_
 #define _GESTURES_H_
 
-#include <qwidget.h>
-#include <qtimer.h>
-#include <qmap.h>
+#include <QWidget>
+#include <QTimer>
+#include <QMap>
 
 #include <X11/Xlib.h>
 #include <fixx11h.h>

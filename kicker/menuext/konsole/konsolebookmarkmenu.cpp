@@ -14,7 +14,7 @@
 #include "konsolebookmarkmenu.h"
 #include "konsolebookmarkhandler.h"
 
-#include <qfile.h>
+#include <QFile>
 
 #include <kactionmenu.h>
 #include <klocale.h>

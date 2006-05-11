@@ -27,9 +27,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "PrintDialog.h"
-#include <qlayout.h>
+#include <QLayout>
 #include <qframe.h>
-#include <qlabel.h>
+#include <QLabel>
 //Added by qt3to4:
 #include <QGridLayout>
 #include <klocale.h>

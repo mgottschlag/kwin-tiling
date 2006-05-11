@@ -21,10 +21,10 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qlayout.h>
-#include <qregexp.h>
+#include <QLabel>
+#include <QLineEdit>
+#include <QLayout>
+#include <QRegExp>
 
 #include <kdialog.h>
 #include <ksimpleconfig.h>

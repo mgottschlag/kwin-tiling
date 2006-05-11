@@ -25,7 +25,7 @@
 #ifndef __KLOCALECONFIGMON_H__
 #define __KLOCALECONFIGMON_H__
 
-#include <qwidget.h>
+#include <QWidget>
 //Added by qt3to4:
 #include <QLabel>
 

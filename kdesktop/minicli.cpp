@@ -32,14 +32,14 @@
 #include <string.h>
 #include <errno.h>
 
-#include <qlabel.h>
+#include <QLabel>
 #include <qbitmap.h>
-#include <qfile.h>
+#include <QFile>
 #include <qslider.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <qgroupbox.h>
-#include <qcheckbox.h>
-#include <qregexp.h>
+#include <QCheckBox>
+#include <QRegExp>
 #include <qwhatsthis.h>
 
 #include <dcopclient.h>

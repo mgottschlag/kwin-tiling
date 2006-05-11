@@ -21,9 +21,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qfile.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
+#include <QFile>
+#include <QLayout>
+#include <QPushButton>
 #include <QVBoxLayout>
 #include <QResizeEvent>
 #include <QString>

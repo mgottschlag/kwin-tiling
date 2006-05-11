@@ -16,10 +16,10 @@
 
 #include "command_url_widget.h"
 
-#include <qpushbutton.h>
-#include <qlineedit.h>
+#include <QPushButton>
+#include <QLineEdit>
 #include <klineedit.h>
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <q3groupbox.h>
 #include <kurlrequester.h>
 

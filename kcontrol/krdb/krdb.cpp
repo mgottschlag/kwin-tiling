@@ -23,9 +23,9 @@
 
 #undef Unsorted
 #include <qbuffer.h>
-#include <qdir.h>
+#include <QDir>
 #include <qsettings.h>
-#include <qtooltip.h>
+#include <QToolTip>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QByteArray>

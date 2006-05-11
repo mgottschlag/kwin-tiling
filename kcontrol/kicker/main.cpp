@@ -15,7 +15,7 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <qcombobox.h>
+#include <QComboBox>
 
 #include <dcopclient.h>
 #include <kaboutdata.h>

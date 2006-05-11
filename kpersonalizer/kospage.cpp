@@ -15,10 +15,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qlabel.h>
-#include <qcheckbox.h>
+#include <QLabel>
+#include <QCheckBox>
 #include <qradiobutton.h>
-#include <qmap.h>
+#include <QMap>
 
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>

@@ -20,14 +20,14 @@
 
 
 #include <qdialog.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
+#include <QPushButton>
+#include <QLabel>
 #include <qradiobutton.h>
 #include <qbuttongroup.h>
-#include <qwidget.h>
-#include <qlayout.h>
+#include <QWidget>
+#include <QLayout>
 #include <qprogressbar.h>
-#include <qtimer.h>
+#include <QTimer>
 
 #include <kdebug.h>
 #include <kdialog.h>

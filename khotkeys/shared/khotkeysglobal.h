@@ -18,7 +18,7 @@
 //#define KHOTKEYS_DEBUG
 //#endif
 
-#include <qstring.h>
+#include <QString>
 
 #include <klocale.h>
 

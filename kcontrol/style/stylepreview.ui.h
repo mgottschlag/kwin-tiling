@@ -27,7 +27,7 @@
  ** a constructor, and a destroy() slot in place of a destructor.
  *****************************************************************************/
 
-#include <qobject.h>
+#include <QObject>
 //Added by qt3to4:
 #include <QEvent>
 

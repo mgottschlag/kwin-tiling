@@ -19,7 +19,7 @@
 #ifndef KWEBDESKTOP_H
 #define KWEBDESKTOP_H
 
-#include <qobject.h>
+#include <QObject>
 #include <QByteArray>
 #include <kparts/browserextension.h>
 #include <khtml_part.h>

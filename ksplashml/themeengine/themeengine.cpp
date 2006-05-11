@@ -22,8 +22,8 @@
 #include <Q3VBox>
 
 #include <qevent.h>
-#include <qfile.h>
-#include <qwidget.h>
+#include <QFile>
+#include <QWidget>
 
 #include <X11/Xlib.h>
 

@@ -25,7 +25,7 @@
 #include <sys/vfs.h>
 #include <fstab.h>
 #include <stdlib.h>
-#include <qfile.h>
+#include <QFile>
 #include <qfontmetrics.h>
 #include <qtextstream.h>
 

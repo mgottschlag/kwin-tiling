@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <dcopobject.h>
 #include <qimage.h>
-#include <qstring.h>
+#include <QString>
 #include <QMouseEvent>
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>

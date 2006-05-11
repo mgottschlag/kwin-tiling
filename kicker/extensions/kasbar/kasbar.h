@@ -59,10 +59,10 @@
 #ifndef __KASBAR_H
 #define __KASBAR_H
 
-#include <qwidget.h>
-#include <qpoint.h>
+#include <QWidget>
+#include <QPoint>
 #include <q3ptrlist.h>
-#include <qlayout.h>
+#include <QLayout>
 #include <qnamespace.h>
 //Added by qt3to4:
 #include <QPixmap>

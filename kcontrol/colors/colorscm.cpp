@@ -12,11 +12,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qdir.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDir>
+#include <QLabel>
+#include <QLayout>
 #include <qpainter.h>
 #include <qslider.h>
 #include <q3groupbox.h>

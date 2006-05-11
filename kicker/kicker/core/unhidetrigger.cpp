@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QApplication>
 #include <QRect>
 #include <QDesktopWidget>
-#include <qtimer.h>
+#include <QTimer>
 #include <qcursor.h>
 #include <kdebug.h>
 

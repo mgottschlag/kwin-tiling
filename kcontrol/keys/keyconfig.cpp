@@ -11,12 +11,12 @@
 
 #include <unistd.h>
 
-#include <qlabel.h>
-#include <qdir.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QDir>
+#include <QLayout>
 #include <qwhatsthis.h>
-#include <qcheckbox.h>
-#include <qregexp.h>
+#include <QCheckBox>
+#include <QRegExp>
 
 #include <kdebug.h>
 #include <klocale.h>

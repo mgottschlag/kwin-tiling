@@ -18,7 +18,7 @@
 #ifndef SMSERVERCONFIGIMPL_H
 #define SMSERVERCONFIGIMPL_H
 
-#include <qwidget.h>
+#include <QWidget>
 #include "smserverconfigdlg.h"
 
 /**

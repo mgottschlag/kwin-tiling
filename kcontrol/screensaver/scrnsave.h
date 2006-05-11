@@ -9,7 +9,7 @@
 #ifndef __SCRNSAVE_H__
 #define __SCRNSAVE_H__
 
-#include <qwidget.h>
+#include <QWidget>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QLabel>

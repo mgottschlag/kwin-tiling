@@ -24,7 +24,7 @@
 #ifndef __KLOCALECONFIGOTHER_H__
 #define __KLOCALECONFIGOTHER_H__
 
-#include <qwidget.h>
+#include <QWidget>
 
 class QLabel;
 class QComboBox;

@@ -21,7 +21,7 @@
 #define _BGDIALOG_H_
 
 #include <q3ptrvector.h>
-#include <qmap.h>
+#include <QMap>
 
 #include "bgdialog_ui.h"
 #include "bgrender.h"

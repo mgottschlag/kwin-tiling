@@ -21,8 +21,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qtooltip.h>
-#include <qfile.h>
+#include <QToolTip>
+#include <QFile>
 
 #include <kdesktopfile.h>
 #include <kfileitem.h>

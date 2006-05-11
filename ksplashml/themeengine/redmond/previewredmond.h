@@ -15,9 +15,9 @@
 
 #include <kiconloader.h>
 
-#include <qcolor.h>
-#include <qfont.h>
-#include <qwidget.h>
+#include <QColor>
+#include <QFont>
+#include <QWidget>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QResizeEvent>

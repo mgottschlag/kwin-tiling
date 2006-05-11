@@ -27,7 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qpainter.h>
 #include <qdrawutil.h>
 #include <QMenu>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <QPixmap>
 #include <QPaintEvent>
 #include <QEvent>

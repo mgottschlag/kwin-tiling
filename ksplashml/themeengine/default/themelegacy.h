@@ -13,8 +13,8 @@
 #ifndef __THEMELEGACY_H__
 #define __THEMELEGACY_H__
 
-#include <qlabel.h>
-#include <qwidget.h>
+#include <QLabel>
+#include <QWidget>
 #include <QProgressBar>
 //Added by qt3to4:
 #include <QPixmap>

@@ -13,7 +13,7 @@
 
 
 #include <qstringlist.h>
-#include <qcolor.h>
+#include <QColor>
 #include <QMap>
 #include <QVector>
 

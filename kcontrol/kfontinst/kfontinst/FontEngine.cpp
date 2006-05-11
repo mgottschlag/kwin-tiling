@@ -67,8 +67,8 @@
 #include <stdio.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <qregexp.h>
-#include <qfile.h>
+#include <QRegExp>
+#include <QFile>
 //Added by qt3to4:
 #include <QByteArray>
 #include <ft2build.h>

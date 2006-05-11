@@ -25,7 +25,7 @@
 #ifndef KCMLOCALE_H
 #define KCMLOCALE_H
 
-#include <qwidget.h>
+#include <QWidget>
 #include <qstringlist.h>
 
 class KAddButton;

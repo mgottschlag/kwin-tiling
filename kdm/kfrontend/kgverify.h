@@ -29,8 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "kgreeterplugin.h"
 #include "kfdialog.h"
 
-#include <qlayout.h>
-#include <qtimer.h>
+#include <QLayout>
+#include <QTimer>
 #include <QByteArray>
 //Added by qt3to4:
 #include <QLabel>

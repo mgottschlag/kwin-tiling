@@ -23,7 +23,7 @@
 #ifndef __FX_DATA_DESKTOP
 #define __FX_DATA_DESKTOP
 
-#include <qcolor.h>
+#include <QColor>
 #include <kstandarddirs.h>
 #include <kconfig.h>
 

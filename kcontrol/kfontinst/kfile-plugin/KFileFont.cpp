@@ -28,7 +28,7 @@
 
 #include "KFileFont.h"
 #include "KfiConstants.h"
-#include <qfile.h>
+#include <QFile>
 #include <qtextstream.h>
 #include <kgenericfactory.h>
 #include <kio/netaccess.h>

@@ -15,8 +15,8 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <qlayout.h>
-#include <qtimer.h>
+#include <QLayout>
+#include <QTimer>
 
 #include <klocale.h>
 #include <kdebug.h>

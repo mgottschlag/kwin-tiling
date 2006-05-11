@@ -27,8 +27,8 @@
 
 #include <qimage.h>
 #include <qpainter.h>
-#include <qwidget.h>
-#include <qlayout.h>
+#include <QWidget>
+#include <QLayout>
 //Added by qt3to4:
 #include <QPixmap>
 

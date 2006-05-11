@@ -12,9 +12,9 @@
 #define _ACTIONS_H_
 
 
-#include <qstring.h>
+#include <QString>
 #include <q3ptrlist.h>
-#include <qtimer.h>
+#include <QTimer>
 
 #include <kservice.h>
 

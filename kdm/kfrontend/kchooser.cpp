@@ -32,12 +32,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <klocale.h>
 
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
+#include <QLayout>
+#include <QLabel>
+#include <QPushButton>
 #include <qsocketnotifier.h>
 #include <q3listview.h>
-#include <qlineedit.h>
+#include <QLineEdit>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QHBoxLayout>

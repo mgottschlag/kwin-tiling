@@ -8,9 +8,9 @@
 #ifndef __COLORSCM_H__
 #define __COLORSCM_H__
 
-#include <qcolor.h>
-#include <qobject.h>
-#include <qstring.h>
+#include <QColor>
+#include <QObject>
+#include <QString>
 #include <qstringlist.h>
 
 #include <kcmodule.h>

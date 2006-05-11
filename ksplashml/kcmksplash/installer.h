@@ -11,8 +11,8 @@
 #ifndef SPLASHINSTALLER_H
 #define SPLASHINSTALLER_H
 
-#include <qmap.h>
-#include <qpoint.h>
+#include <QMap>
+#include <QPoint>
 //Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QMouseEvent>

@@ -22,10 +22,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include <qpainter.h>
-#include <qtooltip.h>
-#include <qlineedit.h>
+#include <QToolTip>
+#include <QLineEdit>
 #include <QMenu>
-#include <qlayout.h>
+#include <QLayout>
 #include <QButtonGroup>
 #include <QDesktopWidget>
 #include <QWheelEvent>

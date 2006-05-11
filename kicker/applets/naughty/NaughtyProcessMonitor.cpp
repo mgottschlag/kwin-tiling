@@ -33,14 +33,14 @@
 #include <signal.h>
 #include <unistd.h>
 
-#include <qfile.h>
-#include <qstring.h>
+#include <QFile>
+#include <QString>
 #include <qstringlist.h>
 #include <qtextstream.h>
-#include <qdir.h>
-#include <qtimer.h>
-#include <qmap.h>
-#include <qdatetime.h>
+#include <QDir>
+#include <QTimer>
+#include <QMap>
+#include <QDateTime>
 
 #include <QByteArray>
 

@@ -16,8 +16,8 @@
 
 #include "dcop_widget.h"
 
-#include <qlineedit.h>
-#include <qpushbutton.h>
+#include <QLineEdit>
+#include <QPushButton>
 
 #include <krun.h>
 #include <kmessagebox.h>

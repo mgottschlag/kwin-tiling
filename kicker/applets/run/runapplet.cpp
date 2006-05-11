@@ -21,10 +21,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qlabel.h>
-#include <qfont.h>
+#include <QLabel>
+#include <QFont>
 #include <qstringlist.h>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <QResizeEvent>
 #include <QHBoxLayout>
 

@@ -21,7 +21,7 @@
 #define __KDMSESS_H__
 
 
-#include <qstring.h>
+#include <QString>
 
 class QComboBox;
 class QCheckBox;

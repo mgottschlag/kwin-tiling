@@ -20,7 +20,7 @@
 #ifndef CONFIGDIALOG_H
 #define CONFIGDIALOG_H
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <qevent.h>
 #include <q3header.h>
 #include <qradiobutton.h>

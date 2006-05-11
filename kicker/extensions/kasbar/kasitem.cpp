@@ -54,8 +54,8 @@
 #include <qcursor.h>
 #include <qpainter.h>
 #include <qdrawutil.h>
-#include <qregexp.h>
-#include <qtimer.h>
+#include <QRegExp>
+#include <QTimer>
 #include <QApplication>
 //Added by qt3to4:
 #include <QMouseEvent>

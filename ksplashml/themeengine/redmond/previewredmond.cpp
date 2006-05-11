@@ -14,7 +14,7 @@
 
 #include <qpainter.h>
 #include <qpixmap.h>
-#include <qwidget.h>
+#include <QWidget>
 //Added by qt3to4:
 #include <QResizeEvent>
 #include <QPaintEvent>

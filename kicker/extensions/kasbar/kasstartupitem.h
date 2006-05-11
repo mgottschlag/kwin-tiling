@@ -58,7 +58,7 @@
 #define KASSTARTUPITEM_H
 
 #include <qpixmap.h>
-#include <qstring.h>
+#include <QString>
 #include "kasitem.h"
 
 class Startup;

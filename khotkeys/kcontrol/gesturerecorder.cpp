@@ -9,7 +9,7 @@
 
 ****************************************************************************/
 
-#include <qcolor.h>
+#include <QColor>
 #include <qevent.h>
 //Added by qt3to4:
 #include <QMouseEvent>

@@ -17,9 +17,9 @@
 #include "gestures_settings_tab.h"
 
 #include <klocale.h>
-#include <qcombobox.h>
+#include <QComboBox>
 #include <knuminput.h>
-#include <qcheckbox.h>
+#include <QCheckBox>
 
 #include "kcmkhotkeys.h"
 #include "windowdef_list_widget.h"

@@ -16,7 +16,7 @@
  *  along with this program; if not, write to the Free Software
  */
 
-#include <qcheckbox.h>
+#include <QCheckBox>
 #include <qgroupbox.h>
 #include <qradiobutton.h>
 #include <qslider.h>

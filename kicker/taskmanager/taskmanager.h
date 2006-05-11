@@ -27,9 +27,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <sys/types.h>
 
-#include <qobject.h>
+#include <QObject>
 #include <qpixmap.h>
-#include <qpoint.h>
+#include <QPoint>
 #include <QMimeData>
 #include <QMap>
 #include <qpixmap.h>

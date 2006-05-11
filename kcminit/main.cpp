@@ -23,8 +23,8 @@
 
 #include <unistd.h>
 
-#include <qfile.h>
-#include <qtimer.h>
+#include <QFile>
+#include <QTimer>
 
 #include <kapplication.h>
 #include <kcmdlineargs.h>

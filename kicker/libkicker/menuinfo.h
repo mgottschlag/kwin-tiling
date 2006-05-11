@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef _menuinfo_h_
 #define _menuinfo_h_
 
-#include <qstring.h>
+#include <QString>
 
 #include <kdemacros.h>
 

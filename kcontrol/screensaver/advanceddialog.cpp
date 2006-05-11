@@ -1,12 +1,12 @@
 #include <klocale.h>
 #include <kstandarddirs.h>
-#include <qcombobox.h>
+#include <QComboBox>
 //Added by qt3to4:
 #include <QPixmap>
 #include <kdebug.h>
 
 
-#include <qstring.h>
+#include <QString>
 
 #include "advanceddialog.h"
 #include "advanceddialogimpl.h"

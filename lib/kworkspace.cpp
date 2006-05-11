@@ -23,11 +23,11 @@
 #include <kapplication.h>
 #include <dcopclient.h>
 #include <dcopref.h>
-#include <qfile.h>
+#include <QFile>
 #include <qfileinfo.h>
 #include <qtextstream.h>
 #include <klocale.h>
-#include <qdatetime.h>
+#include <QDateTime>
 #include <kstandarddirs.h>
 
 #include <stdlib.h> // getenv()

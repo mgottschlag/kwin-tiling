@@ -9,9 +9,9 @@
 
 ****************************************************************************/
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
+#include <QWidget>
+#include <QLabel>
+#include <QPushButton>
 
 #include <klocale.h>
 #include <kmessagebox.h>

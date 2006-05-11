@@ -24,7 +24,7 @@ Boston, MA 02110-1301, USA.
 
 
 #include <kapplication.h>
-#include <qtimer.h>
+#include <QTimer>
 
 #include <bgrender.h>
 

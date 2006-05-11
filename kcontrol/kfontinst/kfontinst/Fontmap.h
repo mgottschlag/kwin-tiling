@@ -29,7 +29,7 @@
 // (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <qstring.h>
+#include <QString>
 #include <qstringlist.h>
 #include <q3ptrlist.h>
 

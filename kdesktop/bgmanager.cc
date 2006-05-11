@@ -16,7 +16,7 @@
 
 #include <assert.h>
 
-#include <qtimer.h>
+#include <QTimer>
 #include <q3scrollview.h>
 //Added by qt3to4:
 #include <QPixmap>

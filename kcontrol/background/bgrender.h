@@ -11,7 +11,7 @@
 #ifndef BGRender_h_Included
 #define BGRender_h_Included
 
-#include <qobject.h>
+#include <QObject>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QImage>

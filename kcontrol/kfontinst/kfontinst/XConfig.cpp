@@ -31,8 +31,8 @@
 #include "kxftconfig.h"
 #include <fstream>
 #include <string.h>
-#include <qdir.h>
-#include <qregexp.h>
+#include <QDir>
+#include <QRegExp>
 #include <klocale.h>
 #include <sys/types.h>
 #include <signal.h>

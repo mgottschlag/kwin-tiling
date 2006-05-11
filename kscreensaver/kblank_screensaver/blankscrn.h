@@ -8,7 +8,7 @@
 #ifndef BLANKSCRN_H
 #define BLANKSCRN_H
 
-#include <qcolor.h>
+#include <QColor>
 #include <kdialogbase.h>
 #include "kscreensaver.h"
 
