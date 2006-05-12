@@ -9,6 +9,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/workspace/kdm/backend  
 	${CMAKE_SOURCE_DIR}/workspace/kdm/
 	${CMAKE_SOURCE_DIR}/workspace/kdmlib/
+	${CMAKE_BINARY_DIR}/workspace/kdm/
 	 )
 
 
