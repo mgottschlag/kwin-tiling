@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -24,7 +23,6 @@ install_files( ${DATA_INSTALL_DIR}/naughtyapplet/pics FILES naughty-happy.png na
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

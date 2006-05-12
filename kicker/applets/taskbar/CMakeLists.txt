@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/taskbar/ ${CMAKE_SOURCE_DIR}/workspace/kicker/taskmanager  )
 
 
@@ -21,7 +20,6 @@ install_targets(${PLUGIN_INSTALL_DIR} taskbar_panelapplet )
 
 install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES taskbarapplet.desktop )
 
-kde4_footer()
 
 
 

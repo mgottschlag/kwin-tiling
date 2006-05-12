@@ -1,4 +1,3 @@
-kde4_header()
 
 project(ksystraycmd)
 
@@ -20,7 +19,6 @@ install(TARGETS ksystraycmd DESTINATION bin)
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_SOURCE_DIR}/khotkeys/shared/ )
 
 
@@ -14,7 +13,6 @@ target_link_libraries( khotkeys_update ${KDE4_KIO_LIBS} ${X11_XTest_LIB})
 
 install_targets(/lib/kconf_update_bin/ khotkeys_update )
 
-kde4_footer()
 
 
 

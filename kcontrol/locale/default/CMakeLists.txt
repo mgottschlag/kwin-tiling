@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -6,7 +5,6 @@ kde4_header()
 
 install_files( ${LOCALE_INSTALL_DIR}/en_US FILES entry.desktop )
 
-kde4_footer()
 
 
 

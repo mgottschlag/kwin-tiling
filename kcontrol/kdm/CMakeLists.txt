@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_SOURCE_DIR}/libkonq   )
 
 
@@ -34,7 +33,6 @@ install_files( ${XDG_APPS_DIR} FILES kdm.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

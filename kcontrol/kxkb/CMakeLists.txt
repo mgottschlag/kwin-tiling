@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( pics ) 
 
@@ -54,7 +53,6 @@ install_files( ${SERVICES_INSTALL_DIR} FILES kxkb.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 install(FILES kxkb_groups DESTINATION ${CMAKE_INSTALL_PREFIX}${CONFIG_INSTALL_DIR} )
-kde4_footer()
 
 
 

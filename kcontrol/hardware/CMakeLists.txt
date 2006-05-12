@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( display ) 
 
@@ -7,5 +6,4 @@ if (CMAKE_SYSTEM_NAME MATCHES Linux)
    add_subdirectory( joystick ) 
 endif (CMAKE_SYSTEM_NAME MATCHES Linux)
 
-kde4_footer()
 

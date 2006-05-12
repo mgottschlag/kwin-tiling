@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -6,7 +5,6 @@ kde4_header()
 
 install_files( ${DATA_INSTALL_DIR}/kcm_componentchooser FILES kcm_kemail.desktop kcm_terminal.desktop kcm_browser.desktop )
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( pics ) 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/.. ${KDE4_INCLUDES} )
@@ -24,7 +23,6 @@ install_targets(${PLUGIN_INSTALL_DIR} ksplashredmond )
 install_files( ${DATA_INSTALL_DIR}/ksplash/Themes/Redmond FILES Theme.rc )
 install_files( ${SERVICES_INSTALL_DIR} FILES ksplashredmond.desktop )
 
-kde4_footer()
 
 
 

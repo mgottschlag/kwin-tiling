@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -6,7 +5,6 @@ kde4_header()
 
 install_files( ${DATA_INSTALL_DIR}/kthememanager/themes/KDE_Classic FILES KDE_Classic.xml KDE_Classic.preview.png )
 
-kde4_footer()
 
 
 

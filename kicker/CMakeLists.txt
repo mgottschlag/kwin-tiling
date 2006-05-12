@@ -1,4 +1,3 @@
-kde4_header()
 
 project(kicker)
 
@@ -83,7 +82,6 @@ add_subdirectory( data )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

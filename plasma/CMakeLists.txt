@@ -1,4 +1,3 @@
-kde4_header()
 
 project(plasma)
 
@@ -10,7 +9,6 @@ add_subdirectory( desktop )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

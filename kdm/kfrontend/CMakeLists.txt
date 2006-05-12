@@ -1,4 +1,3 @@
-kde4_header()
 include(MacroAddFileDependencies)
 add_subdirectory( themer ) 
 add_subdirectory( themes ) 
@@ -112,7 +111,6 @@ install(TARGETS kdmctl DESTINATION bin)
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

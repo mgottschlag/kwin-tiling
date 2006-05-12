@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( info ) 
 add_subdirectory( ioslaveinfo ) 
@@ -18,7 +17,6 @@ endif(RAW1394_FOUND)
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

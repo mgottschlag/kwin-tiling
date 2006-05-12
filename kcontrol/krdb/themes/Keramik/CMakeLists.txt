@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -6,7 +5,6 @@ kde4_header()
 
 install_files( ${DATA_INSTALL_DIR}/kthememanager/themes/Keramik FILES Keramik.xml Keramik.preview.png )
 
-kde4_footer()
 
 
 

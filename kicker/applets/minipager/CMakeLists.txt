@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/taskmanager ${CMAKE_SOURCE_DIR}/workspace/kicker/taskbar/  )
 
 
@@ -23,7 +22,6 @@ install_targets(${PLUGIN_INSTALL_DIR} minipager_panelapplet )
 
 install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES minipagerapplet.desktop )
 
-kde4_footer()
 
 
 

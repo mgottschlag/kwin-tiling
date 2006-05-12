@@ -1,4 +1,3 @@
-kde4_header()
 
 set(kdmlib_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/kdmlib/dmctl.cpp )
 
@@ -43,7 +42,6 @@ endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 install(PROGRAMS startkde DESTINATION bin)
 
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/taskbar ${CMAKE_SOURCE_DIR}/workspace/kicker/taskmanager/   )
 
 
@@ -25,7 +24,6 @@ install_files( ${DATA_INSTALL_DIR}/kicker/extensions FILES taskbarextension.desk
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

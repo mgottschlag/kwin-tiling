@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -23,7 +22,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_kdnssd )
 
 install_files( ${XDG_APPS_DIR} FILES kcm_kdnssd.desktop )
 
-kde4_footer()
 
 
 

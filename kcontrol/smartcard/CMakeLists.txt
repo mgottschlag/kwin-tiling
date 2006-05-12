@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -25,7 +24,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_smartcard )
 
 install_files( ${XDG_APPS_DIR} FILES smartcard.desktop )
 
-kde4_footer()
 
 
 

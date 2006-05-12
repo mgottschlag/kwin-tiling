@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -6,7 +5,6 @@ kde4_header()
 
 install_files( ${DATA_INSTALL_DIR}/kicker/pics/ FILES kside.png kside_tile.png )
 
-kde4_footer()
 
 
 

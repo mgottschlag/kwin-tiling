@@ -1,4 +1,3 @@
-kde4_header()
 
 project(kblankscrn)
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/kscreensaver/libkscreensaver   )
@@ -21,7 +20,6 @@ install(TARGETS kblankscrn.kss DESTINATION bin)
 
 install_files( ${APPLNK_INSTALL_DIR}/System/ScreenSavers FILES kblank.desktop )
 
-kde4_footer()
 
 
 

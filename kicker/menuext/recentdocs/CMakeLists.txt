@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -21,7 +20,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kickermenu_recentdocs )
 
 install_files( ${DATA_INSTALL_DIR}/kicker/menuext FILES recentdocs.desktop )
 
-kde4_footer()
 
 
 

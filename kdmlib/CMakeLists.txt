@@ -1,4 +1,3 @@
-kde4_header()
 
 project(kdmlib)
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend  )
@@ -40,7 +39,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kgreet_winbind )
 
 install_files( /include FILES kgreeterplugin.h )
 
-kde4_footer()
 
 
 

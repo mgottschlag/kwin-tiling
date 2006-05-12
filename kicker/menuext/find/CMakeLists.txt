@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -22,7 +21,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kickermenu_find )
 install_files( ${DATA_INSTALL_DIR}/kicker/menuext FILES find.desktop )
 install_files( ${DATA_INSTALL_DIR}/kicker/menuext/find FILES kfind.desktop websearch.desktop )
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( Templates ) 
 
@@ -9,7 +8,6 @@ add_subdirectory( Templates )
 install_files( ${DATA_INSTALL_DIR}/kdesktop/DesktopLinks FILES Home.desktop System.desktop )
 install_files( ${DATA_INSTALL_DIR}/kdesktop FILES directory.trash directory.autostart directory.templates directory.desktop )
 
-kde4_footer()
 
 
 

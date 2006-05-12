@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( about ) 
 
@@ -44,7 +43,6 @@ install_files( ${DATA_INSTALL_DIR}/kinfocenter FILES kinfocenterui.rc )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

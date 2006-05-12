@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( themes ) 
 include_directories(  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES} )
@@ -8,7 +7,6 @@ include_directories(  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${
 
 install_files( ${DATA_INSTALL_DIR}/ksplash/pics FILES splash.png )
 
-kde4_footer()
 
 
 

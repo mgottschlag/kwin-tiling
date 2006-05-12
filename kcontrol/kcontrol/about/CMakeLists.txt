@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -6,7 +5,6 @@ kde4_header()
 
 install_files( ${DATA_INSTALL_DIR}/kcontrol/about FILES top-right-kcontrol.png  	main.html  	kcontrol.css )
 
-kde4_footer()
 
 
 

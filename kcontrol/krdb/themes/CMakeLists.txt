@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( HighContrastDark ) 
 add_subdirectory( HighContrastDark-big ) 
@@ -18,7 +17,6 @@ add_subdirectory( Redmond )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

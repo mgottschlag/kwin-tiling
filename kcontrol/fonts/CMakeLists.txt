@@ -1,4 +1,3 @@
-kde4_header()
 
 
 include_directories(${FONTCONFIG_INCLUDE_DIR})
@@ -24,7 +23,6 @@ install_files( ${XDG_APPS_DIR} FILES fonts.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

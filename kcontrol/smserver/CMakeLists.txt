@@ -1,4 +1,3 @@
-kde4_header()
 
 
 ########### next target ###############
@@ -22,7 +21,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_smserver )
 
 install_files( ${XDG_APPS_DIR} FILES kcmsmserver.desktop )
 
-kde4_footer()
 
 
 

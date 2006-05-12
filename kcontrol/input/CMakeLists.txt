@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( pics ) 
 
@@ -66,7 +65,6 @@ install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES mouse_cursor_theme.upd )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

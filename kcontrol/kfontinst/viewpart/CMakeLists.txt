@@ -1,4 +1,3 @@
-kde4_header()
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../lib
     ${CMAKE_CURRENT_SOURCE_DIR}/
@@ -43,7 +42,6 @@ install_files( ${XDG_APPS_DIR} FILES kfontview.desktop )
 install_files( ${DATA_INSTALL_DIR}/kfontview FILES kfontviewpart.rc kfontviewui.rc )
 install_files( ${SERVICES_INSTALL_DIR} FILES kfontviewpart.desktop )
 
-kde4_footer()
 
 
 

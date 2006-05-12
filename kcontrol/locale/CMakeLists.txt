@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( default ) 
 add_subdirectory( pics ) 
@@ -32,7 +31,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_locale )
 
 install_files( ${XDG_APPS_DIR} FILES language.desktop )
 
-kde4_footer()
 
 
 

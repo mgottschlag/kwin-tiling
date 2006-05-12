@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -29,7 +28,6 @@ install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES kaccel.upd )
 install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES convertShortcuts.pl )
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

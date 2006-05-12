@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( pics ) 
 add_subdirectory( desktop ) 
@@ -8,7 +7,6 @@ add_subdirectory( desktop )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

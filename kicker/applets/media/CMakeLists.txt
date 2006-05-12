@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/kicker/core   )
 
 
@@ -21,7 +20,6 @@ install_targets(${PLUGIN_INSTALL_DIR} media_panelapplet )
 
 install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES mediaapplet.desktop )
 
-kde4_footer()
 
 
 

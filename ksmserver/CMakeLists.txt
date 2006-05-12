@@ -1,4 +1,3 @@
-kde4_header()
 
 project(ksmserver)
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib  )
@@ -46,7 +45,6 @@ endif(KDE4_BUILD_TESTS)
 install_files( ${DATA_INSTALL_DIR}/ksmserver/pics FILES shutdownkonq.png )
 install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES ksmserver.upd  move_session_config.sh)
 
-kde4_footer()
 
 
 

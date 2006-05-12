@@ -1,4 +1,3 @@
-kde4_header()
 
 project(khotkeys)
 
@@ -28,7 +27,6 @@ add_subdirectory( update )
 
 install_files( /share/autostart FILES khotkeys.desktop )
 
-kde4_footer()
 
 
 

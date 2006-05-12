@@ -1,4 +1,3 @@
-kde4_header()
 include_directories(
     ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/
     ${CMAKE_SOURCE_DIR}/workspace/kcontrol/fonts/
@@ -27,7 +26,6 @@ install_files( ${DATA_INSTALL_DIR}/konqsidebartng/virtual_folders/services FILES
 install_files( ${MIME_INSTALL_DIR}/fonts FILES folder.desktop system-folder.desktop package.desktop )
 install_files( ${SERVICES_INSTALL_DIR} FILES fonts.protocol )
 
-kde4_footer()
 
 
 

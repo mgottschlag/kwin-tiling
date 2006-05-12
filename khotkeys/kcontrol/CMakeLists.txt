@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( ${CMAKE_SOURCE_DIR}/khotkeys/shared ui/  )
 
@@ -74,7 +73,6 @@ install_files( ${XDG_APPS_DIR} FILES khotkeys.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

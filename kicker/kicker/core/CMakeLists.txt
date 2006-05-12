@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_SOURCE_DIR}/libkonq   )
 
 
@@ -10,7 +9,6 @@ include_directories( ${CMAKE_SOURCE_DIR}/libkonq   )
 install_files( ${DATA_INSTALL_DIR}/kicker FILES default-apps )
 install_files( ${DATA_INSTALL_DIR}/kicker/extensions FILES childpanelextension.desktop )
 
-kde4_footer()
 
 
 

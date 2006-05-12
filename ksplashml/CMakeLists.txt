@@ -1,4 +1,3 @@
-kde4_header()
 
 project(ksplash)
 
@@ -30,7 +29,6 @@ install(TARGETS ksplash DESTINATION bin)
 
 install_files( ${SERVICES_INSTALL_DIR} FILES ksplash.desktop )
 
-kde4_footer()
 
 
 

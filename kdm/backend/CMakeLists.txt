@@ -1,4 +1,3 @@
-kde4_header()
 include_directories(${CMAKE_SOURCE_DIR}/workspace/kdm/  )
 
 
@@ -47,7 +46,6 @@ install(TARGETS kdm DESTINATION bin)
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/buttons ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core ${CMAKE_SOURCE_DIR}/kicker/kicker/ui  ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui  )
 
 
@@ -42,7 +41,6 @@ install_targets(${PLUGIN_INSTALL_DIR} launcher_panelapplet )
 install_files( ${KCFG_INSTALL_DIR} FILES launcherapplet.kcfg )
 install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES quicklauncher.desktop )
 
-kde4_footer()
 
 
 

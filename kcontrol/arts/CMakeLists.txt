@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -25,7 +24,6 @@ install_files( ${XDG_APPS_DIR} FILES arts.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

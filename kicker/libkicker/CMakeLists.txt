@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -40,7 +39,6 @@ install_targets(${LIB_INSTALL_DIR} kickermain )
 install_files( ${KCFG_INSTALL_DIR} FILES kickerSettings.kcfg extensionSettings.kcfg )
 install_files( /include/plasma FILES kpanelapplet.h                                     kpanelextension.h                                     kpanelmenu.h                                     kickertip.h                                     utils.h  				   paneldrag.h )
 
-kde4_footer()
 
 
 

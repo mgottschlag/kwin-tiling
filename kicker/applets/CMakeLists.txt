@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( systemtray ) 
 add_subdirectory( minipager ) 
@@ -16,7 +15,6 @@ add_subdirectory( trash )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

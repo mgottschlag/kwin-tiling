@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -41,7 +40,6 @@ install(FILES uninstall.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}${APPLNK_INST
 
 
 
-kde4_footer()
 
 
 

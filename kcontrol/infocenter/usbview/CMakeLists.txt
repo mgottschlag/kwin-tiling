@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -22,7 +21,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_usb )
 install_files( ${XDG_APPS_DIR} FILES kcmusb.desktop )
 install_files( ${DATA_INSTALL_DIR}/kcmusb FILES usb.ids )
 
-kde4_footer()
 
 
 

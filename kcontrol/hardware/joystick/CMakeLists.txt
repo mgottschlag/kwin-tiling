@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -26,7 +25,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_joystick )
 
 install_files( ${XDG_APPS_DIR} FILES joystick.desktop )
 
-kde4_footer()
 
 
 

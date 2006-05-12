@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/plasma/lib/ ${CMAKE_SOURCE_DIR}/libkonq   )
 
 
@@ -21,7 +20,6 @@ install_targets(${PLUGIN_INSTALL_DIR} sidebar_panelextension )
 
 install_files( ${DATA_INSTALL_DIR}/kicker/extensions FILES sidebarextension.desktop )
 
-kde4_footer()
 
 
 

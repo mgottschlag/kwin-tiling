@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -6,7 +5,6 @@ kde4_header()
 
 install_files( ${DATA_INSTALL_DIR}/kthememanager/themes/HighContrastDark-big FILES HighContrastDark-big.preview.png HighContrastDark-big.xml )
 
-kde4_footer()
 
 
 

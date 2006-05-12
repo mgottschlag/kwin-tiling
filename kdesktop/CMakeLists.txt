@@ -1,4 +1,3 @@
-kde4_header()
 
 project(kdesktop)
 
@@ -85,7 +84,6 @@ install_files( ${DATA_INSTALL_DIR}/konqueror/servicemenus FILES kdesktopSetAsBac
 install_files( /include FILES KDesktopIface.h KScreensaverIface.h KBackgroundIface.h )
 install_files( ${CONFIG_INSTALL_DIR} FILES kdesktop_custom_menu1 kdesktop_custom_menu2 )
 
-kde4_footer()
 
 
 

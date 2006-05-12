@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( default ) 
 add_subdirectory( standard ) 
@@ -29,7 +28,6 @@ install_targets(${LIB_INSTALL_DIR} ksplashthemes )
 install_files( ${SERVICETYPES_INSTALL_DIR} FILES ksplashplugins.desktop )
 install_files( /include/ksplash FILES themeengine.h objkstheme.h )
 
-kde4_footer()
 
 
 

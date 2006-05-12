@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -21,7 +20,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kickermenu_systemmenu )
 
 install_files( ${DATA_INSTALL_DIR}/kicker/menuext FILES systemmenu.desktop )
 
-kde4_footer()
 
 
 

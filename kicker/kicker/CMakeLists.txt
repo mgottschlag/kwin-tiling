@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( core )
 add_subdirectory( ui )
@@ -54,7 +53,6 @@ install_files( /share/autostart FILES panel.desktop )
 install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES kickerrc.upd )
 install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES kicker-3.1-properSizeSetting.pl kicker-3.5-taskbarEnums.pl kicker-3.5-kconfigXTize.pl )
 
-kde4_footer()
 
 
 

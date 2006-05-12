@@ -1,4 +1,3 @@
-kde4_header()
 
 project(klipper)
 
@@ -54,7 +53,6 @@ install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES klipper-1-2.pl klipper-kde31.sh
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

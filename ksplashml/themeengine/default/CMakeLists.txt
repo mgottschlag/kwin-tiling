@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/.. ${KDE4_INCLUDES} )
 
 
@@ -26,7 +25,6 @@ install_targets(${PLUGIN_INSTALL_DIR} ksplashdefault )
 
 install_files( ${SERVICES_INSTALL_DIR} FILES ksplashdefault.desktop )
 
-kde4_footer()
 
 
 

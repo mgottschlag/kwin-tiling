@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -21,7 +20,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_info )
 
 install_files( ${XDG_APPS_DIR} FILES memory.desktop processor.desktop dma.desktop  	interrupts.desktop ioports.desktop opengl.desktop pci.desktop sound.desktop  	devices.desktop scsi.desktop partitions.desktop xserver.desktop )
 
-kde4_footer()
 
 
 

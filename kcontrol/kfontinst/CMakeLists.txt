@@ -1,4 +1,3 @@
-kde4_header()
 
 if (X11_XFT_FOUND)
 
@@ -29,7 +28,6 @@ endif (X11_XFT_FOUND)
 
 install_files( ${DATA_INSTALL_DIR}/konqueror/servicemenus FILES installfont.desktop )
 
-kde4_footer()
 
 
 

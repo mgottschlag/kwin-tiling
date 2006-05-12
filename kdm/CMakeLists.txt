@@ -1,4 +1,3 @@
-kde4_header()
 
 project(kdm)
 
@@ -11,7 +10,6 @@ MESSAGE(STATUS "Readd Backend when test about pam and co will add")
 
 install_files( /share/doc/kdm FILES README )
 
-kde4_footer()
 
 
 

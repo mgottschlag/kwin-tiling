@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -23,7 +22,6 @@ install_targets(${PLUGIN_INSTALL_DIR} menu_panelapplet )
 
 install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES menuapplet.desktop )
 
-kde4_footer()
 
 
 

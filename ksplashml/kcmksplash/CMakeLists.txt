@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( pics ) 
 include_directories(  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES} )
@@ -23,7 +22,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_ksplashthemes )
 
 install_files( ${XDG_APPS_DIR} FILES ksplashthememgr.desktop )
 
-kde4_footer()
 
 
 

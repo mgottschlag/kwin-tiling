@@ -1,4 +1,3 @@
-kde4_header()
 
 project(kcheckpass)
 
@@ -26,7 +25,6 @@ install(TARGETS kcheckpass DESTINATION bin)
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

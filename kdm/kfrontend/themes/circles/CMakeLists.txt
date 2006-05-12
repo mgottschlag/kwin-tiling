@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -6,7 +5,6 @@ kde4_header()
 
 install_files( ${DATA_INSTALL_DIR}/kdm/themes/circles FILES GdmGreeterTheme.desktop  	circles.xml  	background.svg  	flower.png   	help.png  	options.png  	screenshot.png )
 
-kde4_footer()
 
 
 

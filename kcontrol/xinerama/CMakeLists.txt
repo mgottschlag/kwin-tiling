@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${X11_Xinerama_INCLUDE_PATH}   )
 
 
@@ -23,7 +22,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_xinerama )
 
 install_files( ${APPLNK_INSTALL_DIR}/.hidden FILES xinerama.desktop )
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( libkscreensaver ) 
 add_subdirectory( applnk ) 
@@ -10,7 +9,6 @@ add_subdirectory( krandom_screensaver )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

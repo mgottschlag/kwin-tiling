@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -6,7 +5,6 @@ kde4_header()
 
 install_files( ${SOUND_INSTALL_DIR} FILES KDE_Beep_Ahem.wav  	KDE_Beep_Beep.wav  	KDE_Beep_Bottles.wav  	KDE_Beep_ClassicBeep.wav  	KDE_Beep_ClockChime.wav  	KDE_Beep_Connect.wav  	KDE_Beep_Door.wav  	KDE_Beep_Honk.wav  	KDE_Beep_Lightning.wav  	KDE_Beep_Pop.wav  	KDE_Beep_RimShot.wav  	KDE_Beep_RingRing.wav  	KDE_Beep_ShortBeep.wav  	KDE_Beep_Yo.wav  	KDE_Click.wav  	KDE_Close_Window.wav  	KDE_Critical_Error.wav  	KDE_Desktop1.wav  	KDE_Desktop2.wav  	KDE_Desktop3.wav  	KDE_Desktop4.wav  	KDE_Desktop5.wav  	KDE_Desktop6.wav  	KDE_Desktop7.wav  	KDE_Desktop8.wav  	KDE_Dialog_Appear.wav  	KDE_Dialog_Disappear.wav  	KDE_Error.wav  	KDE_Logout.wav  	KDE_Notify.wav  	KDE_Startup.wav  	KDE_Window_Close.wav  	KDE_Window_DeIconify.wav  	KDE_Window_Iconify.wav  	KDE_Window_Maximize.wav  	KDE_Window_Open.wav  	KDE_Window_Shade_Down.wav  	KDE_Window_Shade_Up.wav  	KDE_Window_Sticky.wav  	KDE_Window_UnMaximize.wav  	KDE_Window_UnSticky.wav  	KDE_Beep.ogg  	KDE_Beep_Car.ogg  	KDE_Beep_Classic.ogg  	KDE_Beep_Connect.ogg  	KDE_Beep_Digital_1.ogg  	KDE_Beep_Digital_2.ogg  	KDE_Beep_Double.ogg  	KDE_Beep_Harsh.ogg  	KDE_Beep_Phone_1.ogg  	KDE_Beep_Phone_2.ogg  	KDE_Bottles.ogg  	KDE_Chimes_1.ogg  	KDE_Chimes_2.ogg  	KDE_Chimes_3.ogg  	KDE_Click_1.ogg  	KDE_Click_2.ogg  	KDE_Click_3.ogg  	KDE_Desktop_1.ogg  	KDE_Desktop_2.ogg  	KDE_Desktop_3.ogg  	KDE_Desktop_4.ogg  	KDE_Desktop_5.ogg  	KDE_Desktop_6.ogg  	KDE_Desktop_7.ogg  	KDE_Desktop_8.ogg  	KDE_Dialog_Appear.ogg  	KDE_Dialog_Disappear.ogg  	KDE_Door.ogg  	KDE_Drum_Break.ogg  	KDE_Error_1.ogg  	KDE_Error_2.ogg  	KDE_Error_3.ogg  	KDE_Event_1.ogg  	KDE_Event_2.ogg  	KDE_Event_3.ogg  	KDE_Event_4.ogg  	KDE_Event_5.ogg  	KDE_Glass_Break.ogg  	KDE_Keyboard_Key_1.ogg  	KDE_Logout_1.ogg  	KDE_Logout_2.ogg  	KDE_Logout_3.ogg  	KDE_Pop.ogg  	KDE_Star_Ship_1.ogg  	KDE_Startup_1.ogg  	KDE_Startup_2.ogg  	KDE_Startup_3.ogg  	KDE_TypeWriter_Bell.ogg  	KDE_TypeWriter_End_Of_Line.ogg  	KDE_TypeWriter_Key_1.ogg  	KDE_TypeWriter_Key_2.ogg  	KDE_TypeWriter_Reload.ogg  	KDE_TypeWriter_Scroll.ogg  	KDE_Vox_Ahem.ogg  	KDE_Vox_Yo.ogg  	KDE_Warp.ogg  	KDE_Water_Drop.ogg  	KDE_Window_Close.ogg  	KDE_Window_DeIconify.ogg  	KDE_Window_Hide.ogg  	KDE_Window_Iconify.ogg  	KDE_Window_Open.ogg  	KDE_Window_Shade_Down.ogg  	KDE_Window_Shade_Up.ogg  	KDE_Window_Sticky.ogg  	KDE_Window_UnHide.ogg  	KDE_Window_UnSticky.ogg )
 
-kde4_footer()
 
 
 

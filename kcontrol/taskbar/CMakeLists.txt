@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -25,7 +24,6 @@ install_files( ${XDG_APPS_DIR} FILES kcmtaskbar.desktop )
 
 
 install(FILES uninstall.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}${APPLNK_INSTALL_DIR}/Settings/LookNFeel/ RENAME kcmtaskbar.desktop)
-kde4_footer()
 
 
 

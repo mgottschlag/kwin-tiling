@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -6,7 +5,6 @@ kde4_header()
 
 install_files( ${DATA_INSTALL_DIR}/kthememanager/themes/YellowOnBlue-big FILES YellowOnBlue-big.preview.png YellowOnBlue-big.xml )
 
-kde4_footer()
 
 
 

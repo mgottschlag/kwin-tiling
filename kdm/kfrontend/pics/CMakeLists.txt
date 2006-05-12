@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -6,7 +5,6 @@ kde4_header()
 
 install_files( ${DATA_INSTALL_DIR}/kdm/pics FILES kdelogo.png kdelogo-crystal.png shutdown.jpg default1.png default2.png default3.png root1.png )
 
-kde4_footer()
 
 
 

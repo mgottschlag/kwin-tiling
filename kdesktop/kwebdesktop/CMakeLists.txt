@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -22,7 +21,6 @@ install(TARGETS kwebdesktop DESTINATION bin)
 install_files( ${KCFG_INSTALL_DIR} FILES kwebdesktop.kcfg  )
 install_files( ${DATA_INSTALL_DIR}/kdesktop/programs FILES kwebdesktop.desktop )
 
-kde4_footer()
 
 
 

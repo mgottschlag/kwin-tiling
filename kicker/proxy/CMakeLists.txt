@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -32,7 +31,6 @@ install(TARGETS appletproxy DESTINATION bin)
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

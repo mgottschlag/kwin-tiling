@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -40,7 +39,6 @@ install_files( ${DATA_INSTALL_DIR}/kaccess/ FILES eventsrc )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

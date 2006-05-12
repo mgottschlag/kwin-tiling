@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( pics ) 
 include_directories( ${X11_dpms_INCLUDE_PATH}   )
@@ -25,7 +24,6 @@ install_files( ${APPLNK_INSTALL_DIR}/.hidden FILES energy.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

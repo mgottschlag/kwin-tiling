@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -27,7 +26,6 @@ install(PROGRAMS kdeinstallktheme DESTINATION bin)
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory(devices)
 add_subdirectory(dma)
@@ -21,7 +20,6 @@ add_subdirectory(xserver)
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

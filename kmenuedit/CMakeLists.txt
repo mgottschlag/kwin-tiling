@@ -1,4 +1,3 @@
-kde4_header()
 
 project(kmenuedit)
 
@@ -52,7 +51,6 @@ install(FILES uninstall.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}${APPLNK_INST
 
 kde4_install_icons( ${ICON_INSTALL_DIR} hicolor )
 
-kde4_footer()
 
 
 

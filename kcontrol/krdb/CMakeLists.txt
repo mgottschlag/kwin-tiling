@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( themes ) 
 add_subdirectory( kcs ) 
@@ -14,7 +13,6 @@ add_subdirectory( pics )
 
 install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES kcmdisplayrc.upd )
 
-kde4_footer()
 
 
 

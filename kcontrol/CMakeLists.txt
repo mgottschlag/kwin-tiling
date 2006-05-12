@@ -1,4 +1,3 @@
-kde4_header()
 
 project(kcontrol)
 
@@ -56,7 +55,6 @@ message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(KSMCARD_SUBDIR)")
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

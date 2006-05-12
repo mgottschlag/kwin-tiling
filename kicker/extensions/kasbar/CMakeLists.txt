@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -62,7 +61,6 @@ install(TARGETS kasbar DESTINATION bin)
 
 install_files( ${DATA_INSTALL_DIR}/kicker/extensions FILES kasbarextension.desktop )
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( componentservices ) 
 
@@ -30,7 +29,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_componentchooser )
 
 install_files( ${XDG_APPS_DIR} FILES componentchooser.desktop )
 
-kde4_footer()
 
 
 

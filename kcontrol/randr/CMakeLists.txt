@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${X11_Xrandr_INCLUDE_PATH}  )
 
 
@@ -46,7 +45,6 @@ install_files( ${APPLNK_INSTALL_DIR}/.hidden FILES randr.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

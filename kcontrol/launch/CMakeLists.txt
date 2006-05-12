@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -21,7 +20,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_launch )
 
 install_files( ${XDG_APPS_DIR} FILES kcmlaunch.desktop )
 
-kde4_footer()
 
 
 

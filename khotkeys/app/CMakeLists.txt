@@ -1,4 +1,3 @@
-kde4_header()
 include_directories(  ${CMAKE_SOURCE_DIR}/khotkeys/shared/  )
 
 
@@ -40,7 +39,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kded_khotkeys )
 
 install_files( ${SERVICES_INSTALL_DIR}/kded FILES khotkeys.desktop )
 
-kde4_footer()
 
 
 

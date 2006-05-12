@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -6,7 +5,6 @@ kde4_header()
 
 install_files( ${DATA_INSTALL_DIR}/kdewizard/pics FILES wizard_small.png )
 
-kde4_footer()
 
 
 

@@ -1,4 +1,3 @@
-kde4_header()
 
 project(kworkspacelib)
 
@@ -22,7 +21,6 @@ install_targets(${LIB_INSTALL_DIR} kworkspace )
 
 install_files( /include/libkworkspace FILES kworkspace.h )
 
-kde4_footer()
 
 
 

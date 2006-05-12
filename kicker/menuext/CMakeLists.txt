@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( find ) 
 add_subdirectory( kdeprint ) 
@@ -12,7 +11,6 @@ add_subdirectory( system )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

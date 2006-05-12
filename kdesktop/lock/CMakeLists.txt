@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/workspace/kdesktop ${CMAKE_SOURCE_DIR}/kcheckpass ${CMAKE_SOURCE_DIR}/kdmlib  )
 
 ########### next target ###############
@@ -26,7 +25,6 @@ install(TARGETS kdesktop_lock DESTINATION bin)
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

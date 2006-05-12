@@ -1,4 +1,3 @@
-kde4_header()
 
 project(kcminit)
 
@@ -43,7 +42,6 @@ install(TARGETS kcminit_startup DESTINATION bin)
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

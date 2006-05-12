@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -21,7 +20,6 @@ install_targets(${PLUGIN_INSTALL_DIR} run_panelapplet )
 
 install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES runapplet.desktop )
 
-kde4_footer()
 
 
 

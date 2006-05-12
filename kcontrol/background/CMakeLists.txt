@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( pics ) 
 include_directories( ${CMAKE_SOURCE_DIR}/libkonq   )
@@ -33,7 +32,6 @@ install_files( ${XDG_APPS_DIR} FILES background.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

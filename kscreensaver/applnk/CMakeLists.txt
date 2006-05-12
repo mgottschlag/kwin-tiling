@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -8,7 +7,6 @@ install_files( ${XDG_DIRECTORY_DIR}/menu FILES kde-screensavers.menu )
 install_files( ${XDG_DIRECTORY_DIR}/menu FILES kde-merge-screensavers.menu )
 install_files( ${XDG_DIRECTORY_DIR} FILES kde-system-screensavers.directory  )
 
-kde4_footer()
 
 
 

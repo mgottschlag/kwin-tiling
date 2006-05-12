@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -19,7 +18,6 @@ install_targets(${LIB_INSTALL_DIR} taskmanager )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

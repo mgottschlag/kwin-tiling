@@ -1,4 +1,3 @@
-kde4_header()
 
 
 
@@ -24,7 +23,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_view1394 )
 install_files( ${XDG_APPS_DIR} FILES kcmview1394.desktop )
 install_files( ${DATA_INSTALL_DIR}/kcmview1394 FILES oui.db )
 
-kde4_footer()
 
 
 

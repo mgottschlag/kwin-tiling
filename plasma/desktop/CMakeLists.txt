@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_SOURCE_DIR}/workspace/plasma/lib   )
 
 
@@ -18,7 +17,6 @@ install(TARGETS pdesktop DESTINATION bin)
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

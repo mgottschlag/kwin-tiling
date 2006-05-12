@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/
@@ -26,7 +25,6 @@ install_targets(${PLUGIN_INSTALL_DIR} fontthumbnail )
 install_files( ${SERVICES_INSTALL_DIR} FILES fontthumbnail.desktop )
 install_files( ${SERVICES_INSTALL_DIR} FILES  )
 
-kde4_footer()
 
 
 

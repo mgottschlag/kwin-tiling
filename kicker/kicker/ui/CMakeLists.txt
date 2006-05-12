@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/kdmlib   )
 
 
@@ -8,7 +7,6 @@ include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/kdmlib   )
 ########### install files ###############
 
 
-kde4_footer()
 
 
 

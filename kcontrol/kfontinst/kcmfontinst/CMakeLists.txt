@@ -1,4 +1,3 @@
-kde4_header()
 include_directories( 
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/ 
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/viewpart/ 
@@ -31,7 +30,6 @@ install_files( ${XDG_APPS_DIR} FILES kcmfontinst.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 

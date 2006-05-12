@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( keramik ) 
 
@@ -27,7 +26,6 @@ install_files( ${XDG_APPS_DIR} FILES style.desktop )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-kde4_footer()
 
 
 
