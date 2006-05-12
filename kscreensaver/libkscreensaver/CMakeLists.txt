@@ -1,7 +1,7 @@
 kde4_header()
 
 project(libkscreensaver)
-include_directories( ${KDE4_INCLUDES} )
+
 
 
 ########### next target ###############

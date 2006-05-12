@@ -4,7 +4,7 @@ add_subdirectory( themes )
 add_subdirectory( kcs ) 
 add_subdirectory( ad ) 
 add_subdirectory( pics ) 
-include_directories( ${KDE4_INCLUDES} )
+
 
 
 ########### next target ###############

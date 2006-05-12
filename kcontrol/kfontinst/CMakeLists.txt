@@ -6,6 +6,8 @@ if (X11_XFT_FOUND)
 
   set(libkfontinstprint_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/viewpart/KfiPrint.cpp )
 
+  include_directories(${FONTCONFIG_INCLUDE_DIR})
+
   add_subdirectory( lib ) 
   add_subdirectory( kcmfontinst ) 
   add_subdirectory( kfile-plugin ) 

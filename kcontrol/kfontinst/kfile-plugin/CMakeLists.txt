@@ -1,5 +1,5 @@
 kde4_header()
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/ ${KDE4_INCLUDES} )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/  )
 
 
 ########### next target ###############

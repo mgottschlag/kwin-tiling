@@ -1,15 +1,18 @@
 kde4_header()
 
 project(kcontrol)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/background/ ${KDE4_INCLUDES} )
+
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/background/  )
+
 macro_optional_find_package(Freetype)
 
 set(libkxftconfig_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/fonts/kxftconfig.cpp )
 
 
 if( X11_Xrandr_FOUND )
-	add_subdirectory( randr )
+   add_subdirectory( randr )
 endif(X11_Xrandr_FOUND )
+
 add_subdirectory( applnk ) 
 add_subdirectory( bell ) 
 add_subdirectory( background ) 

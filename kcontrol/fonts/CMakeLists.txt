@@ -1,9 +1,7 @@
 kde4_header()
-include_directories( ${KDE4_INCLUDES} )
 
 
-########### next target ###############
-
+include_directories(${FONTCONFIG_INCLUDE_DIR})
 
 ########### next target ###############
 

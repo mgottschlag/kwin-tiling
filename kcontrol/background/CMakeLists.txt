@@ -1,7 +1,7 @@
 kde4_header()
 
 add_subdirectory( pics ) 
-include_directories( ${CMAKE_SOURCE_DIR}/libkonq  ${KDE4_INCLUDES} )
+include_directories( ${CMAKE_SOURCE_DIR}/libkonq   )
 
 
 ########### next target ###############

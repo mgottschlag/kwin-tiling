@@ -8,11 +8,9 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/buttons
   ${CMAKE_SOURCE_DIR}/workspace/kdmlib
   ${CMAKE_SOURCE_DIR}/libkonq
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/core
   ${CMAKE_CURRENT_SOURCE_DIR}/ui
-  ${KDE4_INCLUDES}
+  
 )
 
 

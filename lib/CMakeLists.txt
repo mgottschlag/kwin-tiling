@@ -1,7 +1,7 @@
 kde4_header()
 
 project(kworkspacelib)
-include_directories( ${KDE4_INCLUDES} )
+
 
 
 ########### next target ###############

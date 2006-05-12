@@ -1,7 +1,7 @@
 kde4_header()
 
 add_subdirectory( Templates ) 
-include_directories( ${KDE4_INCLUDES} )
+
 
 
 ########### install files ###############

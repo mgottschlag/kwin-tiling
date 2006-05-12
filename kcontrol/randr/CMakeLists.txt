@@ -1,5 +1,5 @@
 kde4_header()
-include_directories( ${X11_Xrandr_INCLUDE_PATH} ${KDE4_INCLUDES} )
+include_directories( ${X11_Xrandr_INCLUDE_PATH}  )
 
 
 ########### next target ###############

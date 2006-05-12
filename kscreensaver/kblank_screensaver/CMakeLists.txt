@@ -1,7 +1,7 @@
 kde4_header()
 
 project(kblankscrn)
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kscreensaver/libkscreensaver  ${KDE4_INCLUDES} )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kscreensaver/libkscreensaver   )
 
 
 ########### next target ###############

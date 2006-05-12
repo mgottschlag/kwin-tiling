@@ -1,7 +1,7 @@
 kde4_header()
 
 project(kdmlib)
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend ${KDE4_INCLUDES} )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdm/kfrontend  )
 
 ########### next target ###############
 

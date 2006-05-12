@@ -2,7 +2,7 @@ kde4_header()
 
 add_subdirectory( pics ) 
 add_subdirectory( desktop ) 
-include_directories( ${KDE4_INCLUDES} )
+
 
 
 ########### install files ###############

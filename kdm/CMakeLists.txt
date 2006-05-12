@@ -1,7 +1,7 @@
 kde4_header()
 
 project(kdm)
-include_directories( ${KDE4_INCLUDES} )
+
 
 add_subdirectory( kfrontend )
 MESSAGE(STATUS "Readd Backend when test about pam and co will add")

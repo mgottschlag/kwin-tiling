@@ -1,7 +1,7 @@
 kde4_header()
 
 add_subdirectory( pics ) 
-include_directories( ${X11_dpms_INCLUDE_PATH}  ${KDE4_INCLUDES} )
+include_directories( ${X11_dpms_INCLUDE_PATH}   )
 
 
 ########### next target ###############
