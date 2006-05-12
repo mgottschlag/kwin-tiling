@@ -212,36 +212,30 @@ void TopLevel::setupActions()
 
   QActionGroup* viewModeGroup = new QActionGroup(this);
 
-  icon_view = new KToggleAction
-    (i18n("&Icon View"), 0, this, SLOT(activateIconView()),
-     actionCollection(), "activate_iconview");
+  icon_view = new KToggleAction(i18n("&Icon View"), actionCollection(), "activate_iconview");
+  connect(icon_view, SIGNAL(triggered(bool) ), SLOT(activateIconView()));
   icon_view->setActionGroup(viewModeGroup);
 
-  tree_view = new KToggleAction
-    (i18n("&Tree View"), 0, this, SLOT(activateTreeView()),
-     actionCollection(), "activate_treeview");
+  tree_view = new KToggleAction(i18n("&Tree View"), actionCollection(), "activate_treeview");
+  connect(tree_view, SIGNAL(triggered(bool) ), SLOT(activateTreeView()));
   tree_view->setActionGroup(viewModeGroup);
 
   QActionGroup* iconSizeGroup = new QActionGroup(this);
 
-  icon_small = new KToggleAction
-    (i18n("&Small"), 0, this, SLOT(activateSmallIcons()),
-     actionCollection(), "activate_smallicons");
+  icon_small = new KToggleAction(i18n("&Small"), actionCollection(), "activate_smallicons");
+  connect(icon_small, SIGNAL(triggered(bool) ), SLOT(activateSmallIcons()));
   icon_small->setActionGroup(iconSizeGroup);
 
-  icon_medium = new KToggleAction
-    (i18n("&Medium"), 0, this, SLOT(activateMediumIcons()),
-     actionCollection(), "activate_mediumicons");
+  icon_medium = new KToggleAction(i18n("&Medium"), actionCollection(), "activate_mediumicons");
+  connect(icon_medium, SIGNAL(triggered(bool) ), SLOT(activateMediumIcons()));
   icon_medium->setActionGroup(iconSizeGroup);
 
-  icon_large = new KToggleAction
-    (i18n("&Large"), 0, this, SLOT(activateLargeIcons()),
-     actionCollection(), "activate_largeicons");
+  icon_large = new KToggleAction(i18n("&Large"), actionCollection(), "activate_largeicons");
+  connect(icon_large, SIGNAL(triggered(bool) ), SLOT(activateLargeIcons()));
   icon_large->setActionGroup(iconSizeGroup);
 
-  icon_huge = new KToggleAction
-    (i18n("&Huge"), 0, this, SLOT(activateHugeIcons()),
-     actionCollection(), "activate_hugeicons");
+  icon_huge = new KToggleAction(i18n("&Huge"), actionCollection(), "activate_hugeicons");
+  connect(icon_huge, SIGNAL(triggered(bool) ), SLOT(activateHugeIcons()));
   icon_huge->setActionGroup(iconSizeGroup);
 
   about_module = new KAction(i18n("About Current Module"), actionCollection(), "help_about_module");
