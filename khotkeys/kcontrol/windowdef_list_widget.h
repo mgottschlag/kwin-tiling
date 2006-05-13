@@ -11,7 +11,7 @@
 #ifndef _WINDOWDEF_LIST_WIDGET_H_
 #define _WINDOWDEF_LIST_WIDGET_H_
 
-#include <qlistview.h>
+#include <QListView>
 
 #include <kdialogbase.h>
 

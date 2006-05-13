@@ -19,9 +19,9 @@
 */
 
 #include <q3header.h>
-#include <qimage.h>
-#include <qpainter.h>
-#include <qbitmap.h>
+#include <QImage>
+#include <QPainter>
+#include <QBitmap>
 //Added by qt3to4:
 #include <QPixmap>
 #include <Q3PtrList>
@@ -32,7 +32,7 @@
 #include <kservicegroup.h>
 #include <kdebug.h>
 #include <q3whatsthis.h>
-#include <qbitmap.h>
+#include <QBitmap>
 
 #include "moduletreeview.h"
 #include "moduletreeview.moc"

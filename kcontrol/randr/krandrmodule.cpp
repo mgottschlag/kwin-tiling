@@ -21,7 +21,7 @@
 #include <qdesktopwidget.h>
 #include <QLabel>
 #include <QLayout>
-#include <qradiobutton.h>
+#include <QRadioButton>
 
 
 //Added by qt3to4:

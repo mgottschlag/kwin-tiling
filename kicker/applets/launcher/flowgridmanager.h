@@ -9,7 +9,7 @@
 
 #include <qnamespace.h>
 #include <QPoint>
-#include <qsize.h>
+#include <QSize>
 
 
 class FlowGridManager {

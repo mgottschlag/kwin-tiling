@@ -29,8 +29,8 @@
 #include "FontPreview.h"
 #include <kapplication.h>
 #include <klocale.h>
-#include <qpainter.h>
-#include <qimage.h>
+#include <QPainter>
+#include <QImage>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QPaintEvent>

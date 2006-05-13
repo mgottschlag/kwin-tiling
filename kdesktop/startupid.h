@@ -23,7 +23,7 @@
 #include <sys/types.h>
 
 #include <QWidget>
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QString>
 #include <QTimer>
 #include <QMap>

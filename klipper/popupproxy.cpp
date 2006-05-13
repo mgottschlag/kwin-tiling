@@ -18,9 +18,9 @@
    Boston, MA 02110-1301, USA.
 */
 #include <QRegExp>
-#include <qstyle.h>
-#include <qpixmap.h>
-#include <qimage.h>
+#include <QStyle>
+#include <QPixmap>
+#include <QImage>
 #include <QStyleOption>
 
 #include <kstringhandler.h>

@@ -31,8 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QLabel>
 #include <QLayout>
-#include <qapplication.h>
-#include <qcursor.h>
+#include <QApplication>
+#include <QCursor>
 //Added by qt3to4:
 #include <QFrame>
 #include <QGridLayout>

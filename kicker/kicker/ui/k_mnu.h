@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define __k_mnu_h__
 
 #include <dcopobject.h>
-#include <qpixmap.h>
+#include <QPixmap>
 
 #include <QMouseEvent>
 #include <QResizeEvent>

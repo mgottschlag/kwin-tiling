@@ -51,8 +51,8 @@
 /*
 ** Bug reports and questions can be sent to kde-devel@kde.org
 */
-#include <qpainter.h>
-#include <qbitmap.h>
+#include <QPainter>
+#include <QBitmap>
 #include <qdrawutil.h>
 #include <QTimer>
 //Added by qt3to4:

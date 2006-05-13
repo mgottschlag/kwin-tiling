@@ -22,10 +22,10 @@
 #ifndef SHORTCUTS_MODULE_H
 #define SHORTCUTS_MODULE_H
 
-#include <qbuttongroup.h>
+#include <QButtonGroup>
 #include <QPushButton>
-#include <qradiobutton.h>
-#include <qtabwidget.h>
+#include <QRadioButton>
+#include <QTabWidget>
 #include <kcombobox.h>
 #include <kkeydialog.h>
 

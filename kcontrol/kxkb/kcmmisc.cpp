@@ -28,12 +28,12 @@
 #include <config.h>
 #include <math.h>
 
-#include <qslider.h>
-#include <qfileinfo.h>
+#include <QSlider>
+#include <QFileInfo>
 #include <QCheckBox>
 #include <QString>
 #include <QLayout>
-#include <qradiobutton.h>
+#include <QRadioButton>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QBoxLayout>

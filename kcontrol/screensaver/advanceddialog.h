@@ -6,11 +6,11 @@
 #include <kconfig.h>
 #include <QLabel>
 #include <QLayout>
-#include <qwhatsthis.h>
-#include <qgroupbox.h>
+#include <QWhatsThis>
+#include <QGroupBox>
 #include <QObject>
 #include <QCheckBox>
-#include <qslider.h>
+#include <QSlider>
 
 #include "advanceddialogimpl.h"
 

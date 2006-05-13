@@ -20,7 +20,7 @@
 #define __RANDR_H__
 
 #include <QObject>
-#include <qstringlist.h>
+#include <QStringList>
 //Added by qt3to4:
 #include <QPixmap>
 

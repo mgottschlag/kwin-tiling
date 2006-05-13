@@ -31,13 +31,13 @@
 
 #include <QLayout>
 #include <QPushButton>
-#include <qmessagebox.h>
+#include <QMessageBox>
 #include <q3simplerichtext.h>
 #include <QLabel>
-#include <qstringlist.h>
-#include <qfontmetrics.h>
-#include <qstyle.h>
-#include <qapplication.h>
+#include <QStringList>
+#include <QFontMetrics>
+#include <QStyle>
+#include <QApplication>
 #include <q3listview.h>
 #include <q3header.h>
 #include <QCheckBox>

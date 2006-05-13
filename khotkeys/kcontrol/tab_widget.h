@@ -11,7 +11,7 @@
 #ifndef _TAB_WIDGET_H_
 #define _TAB_WIDGET_H_
 
-#include <qtabwidget.h>
+#include <QTabWidget>
 
 #include <actions.h>
 

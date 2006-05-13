@@ -2,7 +2,7 @@
 #include <QMap>
 #include <QRegExp>
 #include <QString>
-#include <qtextstream.h>
+#include <QTextStream>
 
 #include <kapplication.h>
 #include <kcmdlineargs.h>

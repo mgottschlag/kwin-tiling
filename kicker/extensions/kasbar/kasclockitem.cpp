@@ -1,5 +1,5 @@
-#include <qpainter.h>
-#include <qbitmap.h>
+#include <QPainter>
+#include <QBitmap>
 #include <QDateTime>
 #include <qdrawutil.h>
 #include <qlcdnumber.h>

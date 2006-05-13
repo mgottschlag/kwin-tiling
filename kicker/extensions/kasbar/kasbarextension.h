@@ -56,7 +56,7 @@
 #ifndef KASBAREXTENSION_H
 #define KASBAREXTENSION_H
 
-#include <qpointer.h>
+#include <QPointer>
 //Added by qt3to4:
 #include <QShowEvent>
 #include <kpanelextension.h>

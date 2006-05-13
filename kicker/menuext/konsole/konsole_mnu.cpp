@@ -28,7 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <sys/stat.h>
 
 #include <QDir>
-#include <qfileinfo.h>
+#include <QFileInfo>
 
 #include <kapplication.h>
 #include <kglobal.h>

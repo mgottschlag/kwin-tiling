@@ -19,11 +19,11 @@
  */
 
 
-#include <qdialog.h>
+#include <QDialog>
 #include <QPushButton>
 #include <QLabel>
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
+#include <QRadioButton>
+#include <QButtonGroup>
 #include <QWidget>
 #include <QLayout>
 #include <qprogressbar.h>

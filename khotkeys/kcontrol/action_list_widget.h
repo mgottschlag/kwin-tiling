@@ -11,7 +11,7 @@
 #ifndef _ACTION_LIST_WIDGET_H_
 #define _ACTION_LIST_WIDGET_H_
 
-#include <qlistview.h>
+#include <QListView>
 
 #include <actions.h>
 #include <kdialogbase.h>

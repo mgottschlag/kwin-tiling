@@ -59,7 +59,7 @@ extern "C" {
 #include <klocale.h>
 #include <kpty.h>
 
-#include <qsocketnotifier.h>
+#include <QSocketNotifier>
 
 KConsole::KConsole( QWidget *_parent )
 	: inherited( _parent )

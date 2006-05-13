@@ -5,15 +5,16 @@
 // Copyright (c)  Mark Donohoe 1998
 //
 
-#include <qevent.h>
+#include <QEvent>
 #include <qdrawutil.h>
-#include <qpainter.h>
+#include <QPainter>
 #include <qscrollbar.h>
-#include <qbitmap.h>
+#include <QBitmap>
 #include <QToolTip>
-#include <qstyle.h>
+#include <QStyle>
 #include <qstyleoption.h>
-#include <qmenu.h>
+#include <QMenu>
+#include <QDragEnterEvent>
 
 #include <k3colordrag.h>
 #include <kpixmapeffect.h>

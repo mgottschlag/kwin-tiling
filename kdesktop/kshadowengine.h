@@ -24,8 +24,8 @@
 #ifndef __FX_SHADOW
 #define __FX_SHADOW
 
-#include <qpixmap.h>
-#include <qimage.h>
+#include <QPixmap>
+#include <QImage>
 #include <QColor>
 
 class KShadowSettings;

@@ -21,7 +21,7 @@
 #include <q3dragobject.h>
 #include <QMap>
 #include <QString>
-#include <qpixmap.h>
+#include <QPixmap>
 
 #include <kdebug.h>
 #include <k3urldrag.h>

@@ -53,9 +53,9 @@
 */
 #include <math.h>
 
-#include <qbitmap.h>
-#include <qcursor.h>
-#include <qpainter.h>
+#include <QBitmap>
+#include <QCursor>
+#include <QPainter>
 #include <q3memarray.h>
 #include <QTimer>
 //Added by qt3to4:

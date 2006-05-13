@@ -51,7 +51,7 @@
 /*
 ** Bug reports and questions can be sent to kde-devel@kde.org
 */
-#include <qapplication.h>
+#include <QApplication>
 
 #include "kasitem.h"
 #include "kasbar.h"

@@ -23,8 +23,8 @@
 
 
 #include <QDir>
-#include <qimage.h>
-#include <qfileinfo.h>
+#include <QImage>
+#include <QFileInfo>
 #include <QPushButton>
 
 #include <kcolorbutton.h>

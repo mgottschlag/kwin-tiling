@@ -34,7 +34,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <QString>
-#include <qstringlist.h>
+#include <QStringList>
 #include <kurl.h>
 
 class QWidget;

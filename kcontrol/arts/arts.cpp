@@ -30,8 +30,8 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QRegExp>
-#include <qslider.h>
-#include <qtabwidget.h>
+#include <QSlider>
+#include <QTabWidget>
 
 //Added by qt3to4:
 #include <QVBoxLayout>

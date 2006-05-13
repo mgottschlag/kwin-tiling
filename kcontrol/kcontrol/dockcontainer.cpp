@@ -19,10 +19,10 @@
 
 #include <QLabel>
 
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QFont>
 
-#include <qapplication.h>
+#include <QApplication>
 
 #include <kapplication.h>
 #include <kmessagebox.h>

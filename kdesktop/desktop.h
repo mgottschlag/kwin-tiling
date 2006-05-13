@@ -23,7 +23,7 @@
 #include "KDesktopIface.h"
 
 #include <QWidget>
-#include <qstringlist.h>
+#include <QStringList>
 
 #include <kworkspace.h>	// for logout parameters
 

@@ -23,10 +23,10 @@
 #include "klaunchsettings.h"
 
 #include <kiconloader.h>
-#include <qcursor.h>
+#include <QCursor>
 #include <kapplication.h>
-#include <qimage.h>
-#include <qbitmap.h>
+#include <QImage>
+#include <QBitmap>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QPainter>

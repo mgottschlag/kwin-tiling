@@ -23,7 +23,7 @@
 #include <config.h>
 
 #include <QCheckBox>
-#include <qevent.h>
+#include <QEvent>
 #include <QPushButton>
 #include <QSpinBox>
 //Added by qt3to4:

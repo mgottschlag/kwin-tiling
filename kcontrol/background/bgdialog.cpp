@@ -31,13 +31,13 @@
 
 #include <QCheckBox>
 #include <QLabel>
-#include <qpainter.h>
-#include <qradiobutton.h>
-#include <qslider.h>
+#include <QPainter>
+#include <QRadioButton>
+#include <QSlider>
 #include <QTimer>
 #include <QToolTip>
 
-#include <qapplication.h>
+#include <QApplication>
 #include <QPixmap>
 #include <QDesktopWidget>
 

@@ -2,7 +2,7 @@
 #ifndef __KDesktopIface_h__
 #define __KDesktopIface_h__
 
-#include <qstringlist.h>
+#include <QStringList>
 #include <dcopobject.h>
 #include <dcopref.h>
 

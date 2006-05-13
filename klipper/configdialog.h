@@ -21,9 +21,9 @@
 #define CONFIGDIALOG_H
 
 #include <QCheckBox>
-#include <qevent.h>
+#include <QEvent>
 #include <q3header.h>
-#include <qradiobutton.h>
+#include <QRadioButton>
 
 #include <kdialogbase.h>
 #include <keditlistbox.h>

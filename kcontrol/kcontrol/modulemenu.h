@@ -24,7 +24,7 @@ that is intentional :-]
 #define __modulemenu_h__
 
 
-#include <qstringlist.h>
+#include <QStringList>
 #include <q3intdict.h>
 #include <QString>
 #include <QWidget>

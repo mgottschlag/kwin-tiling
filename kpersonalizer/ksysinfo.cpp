@@ -19,10 +19,10 @@
  * Code partly taken from kcontrol/info and kcontrol/fonts
  */
 
-#include <qfontdatabase.h>
+#include <QFontDatabase>
 #include <QFont>
 #include <QString>
-#include <qstringlist.h>
+#include <QStringList>
 
 #include <kdebug.h>
 

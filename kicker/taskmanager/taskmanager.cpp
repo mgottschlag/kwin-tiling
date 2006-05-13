@@ -21,9 +21,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qapplication.h>
-#include <qcursor.h>
-#include <qimage.h>
+#include <QApplication>
+#include <QCursor>
+#include <QImage>
 #include <QTimer>
 #include <QX11Info>
 #include <QDesktopWidget>

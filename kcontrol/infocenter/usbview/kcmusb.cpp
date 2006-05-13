@@ -12,7 +12,7 @@
 #include <q3header.h>
 #include <QLayout>
 #include <q3listview.h>
-#include <qsplitter.h>
+#include <QSplitter>
 #include <q3textview.h>
 #include <QTimer>
 //Added by qt3to4:

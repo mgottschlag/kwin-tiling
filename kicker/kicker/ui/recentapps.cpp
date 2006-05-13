@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <time.h>
 
 #include <QRegExp>
-#include <qstringlist.h>
+#include <QStringList>
 #include <QList>
 #include <q3tl.h>
 

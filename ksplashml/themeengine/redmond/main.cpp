@@ -13,7 +13,7 @@
 #include <kstandarddirs.h>
 
 #include <QLabel>
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QWidget>
 
 #include "themeredmond.h"

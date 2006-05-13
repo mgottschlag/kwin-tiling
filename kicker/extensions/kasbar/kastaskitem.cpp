@@ -53,14 +53,14 @@
 */
 #include <errno.h>
 
-#include <qbitmap.h>
-#include <qimage.h>
+#include <QBitmap>
+#include <QImage>
 #include <QLabel>
 #include <QLayout>
-#include <qmetaobject.h>
-#include <qpainter.h>
+#include <QMetaObject>
+#include <QPainter>
 #include <QRegExp>
-#include <qtabwidget.h>
+#include <QTabWidget>
 #include <q3textview.h>
 #include <QTimer>
 #include <QPixmap>

@@ -59,7 +59,7 @@
 #ifndef KASGROUPITEM_H
 #define KASGROUPITEM_H
 
-#include <qpixmap.h>
+#include <QPixmap>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <taskmanager.h>

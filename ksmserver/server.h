@@ -11,8 +11,8 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #define QT_CLEAN_NAMESPACE 1
 #include <QObject>
 #include <QString>
-#include <qstringlist.h>
-#include <qsocketnotifier.h>
+#include <QStringList>
+#include <QSocketNotifier>
 #include <kapplication.h>
 #include <kworkspace.h>
 #include <QTimer>

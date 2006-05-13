@@ -10,7 +10,7 @@
 
 #include <QWidget>
 #include <kprocess.h>
-#include <qvector.h>
+#include <QVector>
 #include "KScreensaverIface.h"
 #include "xautolock.h"
 #include "xautolock_c.h"

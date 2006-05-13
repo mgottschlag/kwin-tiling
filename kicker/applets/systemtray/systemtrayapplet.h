@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define __systemtrayapplet_h__
 
 #include <QVector>
-#include <qstringlist.h>
+#include <QStringList>
 #include <QX11EmbedWidget>
 #include <QResizeEvent>
 

@@ -20,7 +20,7 @@
 
 #include <cstdlib>
 
-#include <qcursor.h>
+#include <QCursor>
 #include <QHash>
 #include <QTimer>
 

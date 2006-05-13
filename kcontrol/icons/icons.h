@@ -13,7 +13,7 @@
 #define __icons_h__
 
 #include <QColor>
-#include <qimage.h>
+#include <QImage>
 //Added by qt3to4:
 #include <QGridLayout>
 #include <QLabel>

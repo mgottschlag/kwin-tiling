@@ -31,9 +31,9 @@
 #include <QCheckBox>
 #include <qdesktopwidget.h>
 #include <QLabel>
-#include <qpainter.h>
-#include <qrect.h>
-#include <qstringlist.h>
+#include <QPainter>
+#include <QRect>
+#include <QStringList>
 #include <QWidget>
 //Added by qt3to4:
 #include <QPixmap>

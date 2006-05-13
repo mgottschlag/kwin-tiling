@@ -1,9 +1,9 @@
-#include <qpainter.h>
-#include <qpixmap.h>
-#include <qfontmetrics.h>
+#include <QPainter>
+#include <QPixmap>
+#include <QFontMetrics>
 #include <QFile>
 #include <QX11Info>
-#include <qtextstream.h>
+#include <QTextStream>
 #include <kurl.h>
 #include <kconfig.h>
 #include <kglobalsettings.h>

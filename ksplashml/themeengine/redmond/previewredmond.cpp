@@ -12,8 +12,8 @@
 
 #include <klocale.h>
 
-#include <qpainter.h>
-#include <qpixmap.h>
+#include <QPainter>
+#include <QPixmap>
 #include <QWidget>
 //Added by qt3to4:
 #include <QResizeEvent>

@@ -13,7 +13,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <string.h>
 
 #include <dcopclient.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
 #include <QDir>
 
 #include <kapplication.h>

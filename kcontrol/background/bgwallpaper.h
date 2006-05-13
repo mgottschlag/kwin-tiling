@@ -24,7 +24,7 @@
 #define _BGWALLPAPER_H_
 
 #include <q3listbox.h>
-#include <qstringlist.h>
+#include <QStringList>
 //Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QDropEvent>

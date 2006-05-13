@@ -22,7 +22,7 @@
 #ifndef keys_main_h
 #define keys_main_h
 
-#include <qtabwidget.h>
+#include <QTabWidget>
 #include <kcmodule.h>
 
 class ShortcutsModule;

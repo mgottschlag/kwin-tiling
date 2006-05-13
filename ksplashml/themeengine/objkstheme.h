@@ -15,7 +15,7 @@
 #include <kcmdlineargs.h>
 
 #include <QString>
-#include <qstringlist.h>
+#include <QStringList>
 
 class KConfig;
 /**

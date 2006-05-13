@@ -25,7 +25,7 @@
 #include <QComboBox>
 #include <q3groupbox.h>
 #include <QPushButton>
-#include <qpainter.h>
+#include <QPainter>
 #include <QLayout>
 #include <QLabel>
 

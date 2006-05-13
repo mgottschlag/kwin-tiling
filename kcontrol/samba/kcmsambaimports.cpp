@@ -24,7 +24,7 @@
 #include "kcmsambaimports.moc"
 
 #include <QLayout>
-#include <qwhatsthis.h>
+#include <QWhatsThis>
 
 #include <klocale.h>
 #include <kdialog.h>

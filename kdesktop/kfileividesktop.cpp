@@ -24,10 +24,10 @@
 #include <stdio.h>
 
 #include <QColor>
-#include <qpalette.h>
+#include <QPalette>
 #include <QString>
-#include <qpainter.h>
-#include <qstyle.h>
+#include <QPainter>
+#include <QStyle>
 #include <QStyleOptionFocusRect>
 //Added by qt3to4:
 #include <QPixmap>

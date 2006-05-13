@@ -35,8 +35,8 @@
 
 #include <QFile>
 #include <QString>
-#include <qstringlist.h>
-#include <qtextstream.h>
+#include <QStringList>
+#include <QTextStream>
 #include <QDir>
 #include <QTimer>
 #include <QMap>

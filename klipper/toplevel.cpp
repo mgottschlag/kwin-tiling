@@ -21,11 +21,11 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <qclipboard.h>
-#include <qcursor.h>
+#include <QClipboard>
+#include <QCursor>
 #include <QDateTime>
 #include <QFile>
-#include <qpainter.h>
+#include <QPainter>
 #include <QToolTip>
 #include <qmime.h>
 #include <q3dragobject.h>

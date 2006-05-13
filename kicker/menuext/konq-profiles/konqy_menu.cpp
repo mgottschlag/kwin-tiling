@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <ksimpleconfig.h>
 
 #include <QRegExp>
-#include <qfileinfo.h>
+#include <QFileInfo>
 #include <ktoolinvocation.h>
 
 K_EXPORT_KICKER_MENUEXT(konqueror, KonquerorProfilesMenu)

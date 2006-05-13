@@ -20,8 +20,8 @@
 
 #include <qdesktopwidget.h>
 #include <QLabel>
-#include <qpalette.h>
-#include <qpixmap.h>
+#include <QPalette>
+#include <QPixmap>
 #include <QWidget>
 //Added by qt3to4:
 #include <QShowEvent>

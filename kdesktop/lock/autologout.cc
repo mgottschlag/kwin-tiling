@@ -18,11 +18,11 @@
 #include <kdialog.h>
 
 #include <QLayout>
-#include <qmessagebox.h>
+#include <QMessageBox>
 #include <QLabel>
-#include <qstyle.h>
-#include <qapplication.h>
-#include <qdialog.h>
+#include <QStyle>
+#include <QApplication>
+#include <QDialog>
 #include <QAbstractEventDispatcher>
 #include <qprogressbar.h>
 

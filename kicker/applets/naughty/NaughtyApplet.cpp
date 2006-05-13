@@ -22,8 +22,8 @@
 #include "NaughtyProcessMonitor.h"
 #include "NaughtyConfigDialog.h"
 
-#include <qmessagebox.h>
-#include <qtoolbutton.h>
+#include <QMessageBox>
+#include <QToolButton>
 #include <QLayout>
 //Added by qt3to4:
 #include <QVBoxLayout>

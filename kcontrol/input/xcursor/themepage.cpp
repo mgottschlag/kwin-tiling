@@ -35,12 +35,12 @@
 
 #include <QLayout>
 #include <QDir>
-#include <qpixmap.h>
-#include <qimage.h>
+#include <QPixmap>
+#include <QImage>
 #include <QLabel>
 
-#include <qpainter.h>
-#include <qfileinfo.h>
+#include <QPainter>
+#include <QFileInfo>
 #include <QPushButton>
 
 #include <cstdlib> // for getenv()

@@ -38,7 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kmessagebox.h>
 #include <kpanelapplet.h>
 #include <kaboutdata.h>
-#include <qfileinfo.h>
+#include <QFileInfo>
 #include <dcopclient.h>
 #include <kwin.h>
 

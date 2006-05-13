@@ -10,7 +10,7 @@
 ****************************************************************************/
 
 #include <QColor>
-#include <qevent.h>
+#include <QEvent>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QFrame>

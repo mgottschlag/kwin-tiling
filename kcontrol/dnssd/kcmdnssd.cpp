@@ -23,9 +23,9 @@
 
 #include <QLayout>
 #include <QFile>
-#include <qradiobutton.h>
+#include <QRadioButton>
 #include <QTimer>
-#include <qtabwidget.h>
+#include <QTabWidget>
 //Added by qt3to4:
 #include <QTextStream>
 

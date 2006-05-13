@@ -19,7 +19,7 @@
 #ifndef __kcmtaskbar_h__
 #define __kcmtaskbar_h__
 
-#include <qvaluelist.h>
+#include <Q3ValueList>
 
 #include <kcmodule.h>
 

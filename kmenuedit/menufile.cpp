@@ -17,7 +17,7 @@
  */
 
 #include <QFile>
-#include <qtextstream.h>
+#include <QTextStream>
 #include <QRegExp>
 
 #include <kdebug.h>

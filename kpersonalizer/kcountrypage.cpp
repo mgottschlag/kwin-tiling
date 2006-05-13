@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <qstringlist.h>
+#include <QStringList>
 #include <QLabel>
 #include <QMap>
 //Added by qt3to4:

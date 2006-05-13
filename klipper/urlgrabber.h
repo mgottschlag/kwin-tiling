@@ -24,7 +24,7 @@
 #include <q3intdict.h>
 #include <QRegExp>
 #include <QString>
-#include <qstringlist.h>
+#include <QStringList>
 
 #include <kprocess.h>
 

@@ -36,7 +36,7 @@
 #endif
 #include <QLayout>
 #include <QLabel>
-#include <qpainter.h>
+#include <QPainter>
 #include <qsettings.h>
 //Added by qt3to4:
 #include <QVBoxLayout>
@@ -64,7 +64,7 @@
 #include <kdirlister.h>
 #include <kpushbutton.h>
 #include <kguiitem.h>
-#include <qsplitter.h>
+#include <QSplitter>
 
 #define CFG_GROUP          "Main Settings"
 #define CFG_LISTVIEW       "ListView"

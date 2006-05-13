@@ -16,7 +16,7 @@
 
 #include "windowselector.h"
 
-#include <qcursor.h>
+#include <QCursor>
 #include <kdebug.h>
 #include <kapplication.h>
 #include <X11/Xlib.h>

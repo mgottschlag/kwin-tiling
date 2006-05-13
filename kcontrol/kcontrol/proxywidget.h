@@ -30,7 +30,7 @@ class KAboutData;
 
 #include "dockcontainer.h"
 
-#include <qpointer.h>
+#include <QPointer>
 
 class ProxyView;
 

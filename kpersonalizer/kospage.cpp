@@ -17,7 +17,7 @@
 
 #include <QLabel>
 #include <QCheckBox>
-#include <qradiobutton.h>
+#include <QRadioButton>
 #include <QMap>
 
 #include <ksimpleconfig.h>

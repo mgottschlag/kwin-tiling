@@ -33,7 +33,7 @@
 
 #include <QWidget>
 #include <QLayout>
-#include <qimage.h>
+#include <QImage>
 #ifdef DRAW_OUTLINE
 # include <qpainter.h>
 //Added by qt3to4:

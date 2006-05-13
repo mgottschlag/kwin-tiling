@@ -23,9 +23,9 @@
 #define __KDMCONV_H__
 
 #include <QString>
-#include <qimage.h>
+#include <QImage>
 #include <q3groupbox.h>
-#include <qradiobutton.h>
+#include <QRadioButton>
 #include <QCheckBox>
 //Added by qt3to4:
 #include <QLabel>

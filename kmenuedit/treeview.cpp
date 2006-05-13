@@ -21,16 +21,16 @@
 
 #include <unistd.h>
 
-#include <qcursor.h>
+#include <QCursor>
 #include <QDataStream>
 #include <QDir>
 #include <q3dragobject.h>
-#include <qevent.h>
-#include <qfileinfo.h>
+#include <QEvent>
+#include <QFileInfo>
 #include <q3header.h>
-#include <qpainter.h>
+#include <QPainter>
 #include <QRegExp>
-#include <qstringlist.h>
+#include <QStringList>
 //Added by qt3to4:
 #include <QPixmap>
 #include <Q3PtrList>

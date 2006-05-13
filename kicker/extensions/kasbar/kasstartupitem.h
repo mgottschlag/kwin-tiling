@@ -57,7 +57,7 @@
 #ifndef KASSTARTUPITEM_H
 #define KASSTARTUPITEM_H
 
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QString>
 #include "kasitem.h"
 

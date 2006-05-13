@@ -51,10 +51,10 @@
 /*
 ** Bug reports and questions can be sent to kde-devel@kde.org
 */
-#include <qpainter.h>
-#include <qbitmap.h>
+#include <QPainter>
+#include <QBitmap>
 #include <QTimer>
-#include <qmatrix.h>
+#include <QMatrix>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QPixmap>

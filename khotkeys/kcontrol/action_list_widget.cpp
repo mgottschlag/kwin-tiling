@@ -17,7 +17,7 @@
 #include "action_list_widget.h"
 
 #include <assert.h>
-#include <qmenu.h>
+#include <QMenu>
 #include <QPushButton>
 #include <q3header.h>
 #include <QLineEdit>

@@ -20,11 +20,11 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <qstyle.h>
+#include <QStyle>
 #include <QLayout>
 #include <QLabel>
 #include <QToolTip>
-#include <qvalidator.h>
+#include <QValidator>
 
 #include <q3groupbox.h>
 #include <QPushButton>

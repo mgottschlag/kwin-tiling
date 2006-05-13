@@ -18,11 +18,11 @@
 #include <kstandarddirs.h>
 
 #include <QColor>
-#include <qcursor.h>
+#include <QCursor>
 #include <qdesktopwidget.h>
 #include <QFont>
-#include <qpixmap.h>
-#include <qrect.h>
+#include <QPixmap>
+#include <QRect>
 #include <QString>
 
 #include "objkstheme.h"

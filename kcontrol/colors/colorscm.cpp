@@ -17,8 +17,8 @@
 #include <QDir>
 #include <QLabel>
 #include <QLayout>
-#include <qpainter.h>
-#include <qslider.h>
+#include <QPainter>
+#include <QSlider>
 #include <q3groupbox.h>
 #include <Q3PtrList>
 

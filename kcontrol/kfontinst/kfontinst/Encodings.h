@@ -36,7 +36,7 @@
 #include <QString>
 
 #ifdef HAVE_FONT_ENC
-#include <qstringlist.h>
+#include <QStringList>
 #endif
 
 namespace KFI

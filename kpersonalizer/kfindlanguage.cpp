@@ -18,7 +18,7 @@
 #include <stdlib.h>
 
 #include <QString>
-#include <qstringlist.h>
+#include <QStringList>
 #include <QMap>
 
 #include <ksimpleconfig.h>

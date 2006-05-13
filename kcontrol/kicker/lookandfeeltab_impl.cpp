@@ -20,7 +20,7 @@
 
 #include <QCheckBox>
 #include <QLabel>
-#include <qradiobutton.h>
+#include <QRadioButton>
 #include <QRegExp>
 
 #include <kcolorbutton.h>

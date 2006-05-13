@@ -57,10 +57,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #include <QFile>
-#include <qtextstream.h>
+#include <QTextStream>
 #include <QDataStream>
 #include <QPushButton>
-#include <qmessagebox.h>
+#include <QMessageBox>
 #include <QTimer>
 #include <QDesktopWidget>
 #include <QRegExp>

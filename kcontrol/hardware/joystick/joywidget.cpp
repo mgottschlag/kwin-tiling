@@ -28,7 +28,7 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QTimer>
-#include <qfontmetrics.h>
+#include <QFontMetrics>
 #include <QPushButton>
 
 #include <QHeaderView>

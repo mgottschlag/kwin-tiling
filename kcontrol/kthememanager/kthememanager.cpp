@@ -18,9 +18,9 @@
 
 #include <QLabel>
 #include <QLayout>
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QPushButton>
-#include <qtoolbutton.h>
+#include <QToolButton>
 #include <QToolTip>
 //Added by qt3to4:
 #include <QDragEnterEvent>

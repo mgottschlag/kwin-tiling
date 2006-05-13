@@ -25,11 +25,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 #include <QLayout>
-#include <qpainter.h>
-#include <qpixmap.h>
+#include <QPainter>
+#include <QPixmap>
 #include <QMenu>
-#include <qtoolbutton.h>
-#include <qstyle.h>
+#include <QToolButton>
+#include <QStyle>
 #include <QToolTip>
 #include <QX11Info>
 //Added by qt3to4:

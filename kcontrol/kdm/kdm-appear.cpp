@@ -26,11 +26,11 @@
 #include <q3buttongroup.h>
 #include <QLabel>
 #include <QLayout>
-#include <qradiobutton.h>
+#include <QRadioButton>
 
-#include <qvalidator.h>
+#include <QValidator>
 #include <qstylefactory.h>
-#include <qstyle.h>
+#include <QStyle>
 //Added by qt3to4:
 #include <QGridLayout>
 #include <QEvent>

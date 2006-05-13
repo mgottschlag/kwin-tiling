@@ -56,7 +56,7 @@
 #ifndef KASPOPUP_H
 #define KASPOPUP_H
 
-#include <qpointer.h>
+#include <QPointer>
 #include <q3hbox.h>
 #include <QPixmap>
 

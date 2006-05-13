@@ -25,7 +25,7 @@
 #include <kdebug.h>
 
 #include <qdom.h>
-#include <qrect.h>
+#include <QRect>
 //Added by qt3to4:
 #include <QList>
 

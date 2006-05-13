@@ -25,7 +25,7 @@
 #include <sys/param.h>		/* for BSD */
 
 #include <QLayout>
-#include <qpainter.h>
+#include <QPainter>
 #include <qdrawutil.h>
 #include <QToolTip>
 //Added by qt3to4:

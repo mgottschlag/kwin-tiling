@@ -25,7 +25,7 @@
 #include <kglobalaccel.h>
 #include <kmenu.h>
 #include <QMap>
-#include <qpixmap.h>
+#include <QPixmap>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QPaintEvent>

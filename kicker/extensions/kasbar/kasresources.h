@@ -57,10 +57,10 @@
 #ifndef KASRESOURCES_H
 #define KASRESOURCES_H
 
-#include <qbitmap.h>
+#include <QBitmap>
 #include <QColor>
-#include <qbrush.h>
-#include <qpen.h>
+#include <QBrush>
+#include <QPen>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QPixmap>

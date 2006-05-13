@@ -19,8 +19,8 @@
  ****************************************************************************/
 
 #include <QCheckBox>
-#include <qradiobutton.h>
-#include <qtabwidget.h>
+#include <QRadioButton>
+#include <QTabWidget>
 
 #include <kaboutdata.h>
 #include <kcolorbutton.h>

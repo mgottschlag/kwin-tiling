@@ -51,8 +51,8 @@
 /*
 ** Bug reports and questions can be sent to kde-devel@kde.org
 */
-#include <qpainter.h>
-#include <qapplication.h>
+#include <QPainter>
+#include <QApplication>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QPaintEvent>

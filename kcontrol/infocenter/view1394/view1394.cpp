@@ -22,7 +22,7 @@
 #include <QPushButton>
 #include <q3listview.h>
 #include <QFile>
-#include <qtextstream.h>
+#include <QTextStream>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <kinstance.h>

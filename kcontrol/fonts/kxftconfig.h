@@ -24,7 +24,7 @@
 #include "config.h"
 #endif
 
-#include <qstringlist.h>
+#include <QStringList>
 #include <QString>
 #include <q3ptrlist.h>
 #include <stdio.h>

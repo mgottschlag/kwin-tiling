@@ -21,8 +21,8 @@
 
 #include <QLabel>
 #include <QLayout>
-#include <qradiobutton.h>
-#include <qslider.h>
+#include <QRadioButton>
+#include <QSlider>
 #include <QVBoxLayout>
 #include <QFrame>
 #include <QHBoxLayout>

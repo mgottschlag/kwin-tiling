@@ -20,11 +20,11 @@
 
 #include <unistd.h>
 
-#include <qapplication.h>
+#include <QApplication>
 #include <QDir>
-#include <qimage.h>
-#include <qstringlist.h>
-#include <qcursor.h>
+#include <QImage>
+#include <QStringList>
+#include <QCursor>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QFrame>

@@ -21,8 +21,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qapplication.h>
-#include <qpainter.h>
+#include <QApplication>
+#include <QPainter>
 #include <QDesktopWidget>
 
 #include "userrectsel.h"

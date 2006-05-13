@@ -33,7 +33,7 @@
 #include "config.h"
 #endif
 
-#include <qstringlist.h>
+#include <QStringList>
 //Added by qt3to4:
 #include <QLabel>
 #include <QDropEvent>

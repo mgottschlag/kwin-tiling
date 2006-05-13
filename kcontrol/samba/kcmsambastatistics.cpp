@@ -23,7 +23,7 @@
 #include "kcmsambastatistics.h"
 #include "kcmsambastatistics.moc"
 
-#include <qapplication.h>
+#include <QApplication>
 #include <QLayout>
 #include <q3listview.h>
 #include <QLabel>

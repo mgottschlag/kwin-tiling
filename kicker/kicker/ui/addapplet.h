@@ -25,8 +25,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __addapplet_h__
 #define __addapplet_h__
 
-#include <qstringlist.h>
-#include <qpixmap.h>
+#include <QStringList>
+#include <QPixmap>
 
 #include <QList>
 #include <QCloseEvent>

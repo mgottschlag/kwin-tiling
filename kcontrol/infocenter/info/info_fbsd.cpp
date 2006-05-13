@@ -53,7 +53,7 @@
 #include <QFile>
 #include <q3ptrlist.h>
 #include <QString>
-#include <qtextstream.h>
+#include <QTextStream>
 
 class Device {
 public:

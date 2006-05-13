@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QRect>
 #include <QDesktopWidget>
 #include <QTimer>
-#include <qcursor.h>
+#include <QCursor>
 #include <kdebug.h>
 
 #include "unhidetrigger.h"

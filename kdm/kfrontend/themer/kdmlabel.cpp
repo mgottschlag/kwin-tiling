@@ -28,11 +28,11 @@
 #include <kdebug.h>
 
 #include <QDateTime>
-#include <qpainter.h>
-#include <qfontmetrics.h>
+#include <QPainter>
+#include <QFontMetrics>
 #include <QTimer>
 #include <QMap>
-#include <qhash.h>
+#include <QHash>
 
 #include <unistd.h>
 #include <sys/utsname.h>

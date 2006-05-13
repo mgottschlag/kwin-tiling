@@ -22,7 +22,7 @@
 #define _HISTORYIMAGEITEM_H_
 
 #include "historyitem.h"
-#include <qpixmap.h>
+#include <QPixmap>
 #include <q3dragobject.h>
 
 /**

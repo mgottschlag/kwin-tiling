@@ -21,7 +21,7 @@
 #include <sys/types.h>
 
 
-#include <qapplication.h>
+#include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLayout>

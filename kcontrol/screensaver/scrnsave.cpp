@@ -24,7 +24,7 @@
 #include <QLayout>
 #include <q3listview.h>
 #include <QPushButton>
-#include <qslider.h>
+#include <QSlider>
 #include <QTimer>
 
 //Added by qt3to4:

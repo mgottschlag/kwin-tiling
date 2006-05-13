@@ -22,9 +22,9 @@
 
 #include <QWidget>
 #include <QString>
-#include <qimage.h>
+#include <QImage>
 #include <q3buttongroup.h>
-#include <qradiobutton.h>
+#include <QRadioButton>
 #include <QCheckBox>
 #include <QStackedWidget>
 //Added by qt3to4:

@@ -20,7 +20,7 @@
 #include <QComboBox>
 #include <QLayout>
 #include <QTimer>
-#include <qvaluelist.h>
+#include <Q3ValueList>
 
 #include <dcopclient.h>
 

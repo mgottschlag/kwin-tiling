@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define __quicklauncher_h__
 
 #include <dcopobject.h>
-#include <qimage.h>
+#include <QImage>
 #include <QString>
 #include <QMouseEvent>
 #include <QDragEnterEvent>

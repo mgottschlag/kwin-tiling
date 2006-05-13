@@ -30,8 +30,8 @@ DESCRIPTION
 #include <QRegExp>
 #include <QFile>
 #include <QToolTip>
-#include <qstringlist.h>
-#include <qimage.h>
+#include <QStringList>
+#include <QImage>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QMouseEvent>

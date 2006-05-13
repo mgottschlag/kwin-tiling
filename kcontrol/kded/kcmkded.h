@@ -19,7 +19,7 @@
 #ifndef KCMKDED_H
 #define KCMKDED_H
 
-#include <qlistview.h>
+#include <QListView>
 
 #include <kcmodule.h>
 

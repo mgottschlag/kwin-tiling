@@ -18,14 +18,14 @@
  */
 
 #include <QLayout>
-#include <qgroupbox.h>
+#include <QGroupBox>
 #include <qvbuttongroup.h>
-#include <qwhatsthis.h>
-#include <qradiobutton.h>
+#include <QWhatsThis>
+#include <QRadioButton>
 #include <QPushButton>
-#include <qtoolbutton.h>
+#include <QToolButton>
 #include <qvbox.h>
-#include <qfileinfo.h>
+#include <QFileInfo>
 
 #include <kconfig.h>
 #include <kglobal.h>

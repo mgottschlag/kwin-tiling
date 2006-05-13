@@ -31,12 +31,12 @@
 #ifndef __MOUSECONFIG_H__
 #define __MOUSECONFIG_H__
 
-#include <qbuttongroup.h>
-#include <qdialog.h>
+#include <QButtonGroup>
+#include <QDialog>
 #include <QLabel>
 #include <qlcdnumber.h>
 #include <QPushButton>
-#include <qradiobutton.h>
+#include <QRadioButton>
 
 #include <kapplication.h>
 

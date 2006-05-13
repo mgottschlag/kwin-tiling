@@ -33,8 +33,8 @@
 
 #include <QLayout>
 #include <QDir>
-#include <qpixmap.h>
-#include <qimage.h>
+#include <QPixmap>
+#include <QImage>
 #include <QLabel>
 
 #include "themepage.h"

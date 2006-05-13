@@ -19,7 +19,7 @@
 #include <assert.h>
 #include <QPushButton>
 #include <QLineEdit>
-#include <qmenu.h>
+#include <QMenu>
 #include <QLayout>
 #include <QLabel>
 #include <q3header.h>

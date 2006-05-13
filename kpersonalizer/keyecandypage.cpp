@@ -17,8 +17,8 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QString>
-#include <qstringlist.h>
-#include <qslider.h>
+#include <QStringList>
+#include <QSlider>
 #include <QColor>
 #include <qsettings.h>
 #include <QFont>

@@ -16,12 +16,12 @@
 #include <kstandarddirs.h>
 #include <kvbox.h>
 
-#include <qapplication.h>
+#include <QApplication>
 #include <QCheckBox>
 #include <qdesktopwidget.h>
 #include <QLabel>
-#include <qpainter.h>
-#include <qpixmap.h>
+#include <QPainter>
+#include <QPixmap>
 #include <QTimer>
 #include <QProgressBar>
 

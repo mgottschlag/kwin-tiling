@@ -18,7 +18,7 @@
 #include <stdlib.h>
 
 #include <QLayout>
-#include <qsplitter.h>
+#include <QSplitter>
 //Added by qt3to4:
 #include <QVBoxLayout>
 

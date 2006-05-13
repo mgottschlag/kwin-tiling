@@ -24,7 +24,7 @@
 #include <qdesktopwidget.h>
 
 #include <QLabel>
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QPoint>
 #include <QTimer>
 #include <QWidget>

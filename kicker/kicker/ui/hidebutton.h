@@ -20,7 +20,7 @@
 #ifndef HIDEBUTTON_H
 #define HIDEBUTTON_H
 
-#include <qpixmap.h>
+#include <QPixmap>
 
 #include <QAbstractButton>
 #include <QResizeEvent>

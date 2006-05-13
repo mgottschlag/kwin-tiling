@@ -37,11 +37,11 @@
 #include <qframe.h>
 #include <QFile>
 #include <QLabel>
-#include <qpainter.h>
-#include <qvalidator.h>
+#include <QPainter>
+#include <QValidator>
 #include <QRegExp>
 #include <qsettings.h>
-#include <qstringlist.h>
+#include <QStringList>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QHBoxLayout>

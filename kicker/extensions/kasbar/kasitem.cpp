@@ -51,8 +51,8 @@
 /*
 ** Bug reports and questions can be sent to kde-devel@kde.org
 */
-#include <qcursor.h>
-#include <qpainter.h>
+#include <QCursor>
+#include <QPainter>
 #include <qdrawutil.h>
 #include <QRegExp>
 #include <QTimer>

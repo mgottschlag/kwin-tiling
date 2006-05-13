@@ -14,7 +14,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include <qtextstream.h>
+#include <QTextStream>
 #include <QLayout>
 #include <QCheckBox>
 #include <QWidget>

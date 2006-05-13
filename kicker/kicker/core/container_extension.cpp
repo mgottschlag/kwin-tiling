@@ -24,11 +24,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <stdlib.h>
 #include <math.h>
 
-#include <qcursor.h>
+#include <QCursor>
 #include <QFile>
 #include <QLayout>
-#include <qmovie.h>
-#include <qpainter.h>
+#include <QMovie>
+#include <QPainter>
 #include <QTimer>
 #include <QToolTip>
 

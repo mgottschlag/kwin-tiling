@@ -7,7 +7,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #ifndef SHUTDOWNDLG_H
 #define SHUTDOWNDLG_H
 
-#include <qdialog.h>
+#include <QDialog>
 #include <kpushbutton.h>
 #include <kworkspace.h>
 

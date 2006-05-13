@@ -21,14 +21,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qfileinfo.h>
+#include <QFileInfo>
 
 #include <klocale.h>
 #include <kiconloader.h>
 
 #include <QCheckBox>
 #include <QDir>
-#include <qfileinfo.h>
+#include <QFileInfo>
 #include <QLineEdit>
 
 #include <kicondialog.h>

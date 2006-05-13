@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QMenu>
 
 #include <kapplication.h>

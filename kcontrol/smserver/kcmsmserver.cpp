@@ -21,7 +21,7 @@
 
 #include <QCheckBox>
 #include <QLayout>
-#include <qradiobutton.h>
+#include <QRadioButton>
 //Added by qt3to4:
 #include <QVBoxLayout>
 

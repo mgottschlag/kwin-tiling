@@ -17,9 +17,9 @@
  */
 
 #include <QCheckBox>
-#include <qgroupbox.h>
-#include <qradiobutton.h>
-#include <qslider.h>
+#include <QGroupBox>
+#include <QRadioButton>
+#include <QSlider>
 
 #include <kcombobox.h>
 #include <kdebug.h>

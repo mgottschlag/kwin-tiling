@@ -20,9 +20,9 @@
 #define KTHEME_H
 
 #include <qdom.h>
-#include <qpointer.h>
+#include <QPointer>
 #include <QString>
-#include <qstringlist.h>
+#include <QStringList>
 #include <QWidget>
 
 #include <kurl.h>

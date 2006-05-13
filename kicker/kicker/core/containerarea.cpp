@@ -25,14 +25,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QDir>
 #include <QFile>
-#include <qfileinfo.h>
-#include <qpainter.h>
-#include <qpixmap.h>
-#include <qstyle.h>
+#include <QFileInfo>
+#include <QPainter>
+#include <QPixmap>
+#include <QStyle>
 #include <QStyleOptionFocusRect>
-#include <qtextstream.h>
+#include <QTextStream>
 #include <QTimer>
-#include <qmatrix.h>
+#include <QMatrix>
 #include <QMenuItem>
 //Added by qt3to4:
 #include <QPaintEvent>

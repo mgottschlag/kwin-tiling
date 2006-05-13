@@ -37,7 +37,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <QRegExp>
-#include <qtextstream.h>
+#include <QTextStream>
 #include <fstream>
 #include <unistd.h>
 

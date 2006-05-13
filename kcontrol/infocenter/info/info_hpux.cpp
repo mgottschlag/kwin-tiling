@@ -26,8 +26,8 @@
 #include <fstab.h>
 #include <stdlib.h>
 #include <QFile>
-#include <qfontmetrics.h>
-#include <qtextstream.h>
+#include <QFontMetrics>
+#include <QTextStream>
 
 
 #define INFO_CPU_AVAILABLE

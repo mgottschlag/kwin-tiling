@@ -20,7 +20,7 @@
 
 #include "hidebutton.h"
 
-#include <qpainter.h>
+#include <QPainter>
 #include <QPixmap>
 #include <QResizeEvent>
 #include <QEvent>

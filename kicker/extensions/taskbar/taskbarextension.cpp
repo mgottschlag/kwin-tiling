@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QLayout>
 #include <QTimer>
-#include <qmatrix.h>
+#include <QMatrix>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QFrame>

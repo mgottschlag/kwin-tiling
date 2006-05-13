@@ -19,7 +19,7 @@
 */
 
 #include <q3header.h>
-#include <qcursor.h>
+#include <QCursor>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QKeyEvent>

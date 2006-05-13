@@ -8,7 +8,7 @@
 #include <QTimer>
 #include <q3listview.h>
 #include <QFile>
-#include <qevent.h>
+#include <QEvent>
 
 #include <kcmodule.h>
 #include <kaboutdata.h>

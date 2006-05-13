@@ -12,7 +12,7 @@
 #define __BGSettings_h_Included__
 
 
-#include <qstringlist.h>
+#include <QStringList>
 #include <QColor>
 #include <QMap>
 #include <QVector>

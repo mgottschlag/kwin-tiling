@@ -23,7 +23,7 @@
 #include <dcopobject.h> 
 
 #include <QFont>
-#include <qpalette.h>
+#include <QPalette>
 #include <QWidget>
 
 class ModuleIface : public QObject, public DCOPObject {

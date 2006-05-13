@@ -24,7 +24,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QPushButton>
-#include <qtabwidget.h>
+#include <QTabWidget>
 #include <q3groupbox.h>
 
 #include <kaboutdata.h>

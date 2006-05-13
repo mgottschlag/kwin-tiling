@@ -64,7 +64,7 @@ class QMouseEvent;
 class KasPopup;
 
 #include <QObject>
-#include <qpointer.h>
+#include <QPointer>
 #include <QPoint>
 
 

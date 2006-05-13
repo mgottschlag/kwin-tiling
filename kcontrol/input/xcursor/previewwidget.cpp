@@ -19,10 +19,10 @@
 #include <kglobal.h>
 
 #include <QWidget>
-#include <qpainter.h>
-#include <qpixmap.h>
+#include <QPainter>
+#include <QPixmap>
 #include <QString>
-#include <qcursor.h>
+#include <QCursor>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QPaintEvent>

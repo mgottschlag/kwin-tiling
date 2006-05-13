@@ -22,7 +22,7 @@
 #include <QColor>
 #include <qstylefactory.h>
 #include <qpixmapcache.h>
-#include <qstyle.h>
+#include <QStyle>
 #include <QObject>
 //Added by qt3to4:
 #include <QPixmap>

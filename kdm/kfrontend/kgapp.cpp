@@ -39,8 +39,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QTimer>
 #include <qdesktopwidget.h>
-#include <qcursor.h>
-#include <qpalette.h>
+#include <QCursor>
+#include <QPalette>
 //Added by qt3to4:
 #include <QTimerEvent>
 #include <QByteArray>

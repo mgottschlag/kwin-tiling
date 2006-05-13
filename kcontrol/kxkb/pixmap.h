@@ -2,7 +2,7 @@
 #define __PIXMAP_H__
 
 
-#include <qpixmap.h>
+#include <QPixmap>
 #include <q3dict.h>
 #include <QString>
 

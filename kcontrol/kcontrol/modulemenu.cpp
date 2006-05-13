@@ -25,7 +25,7 @@ that is intentional :-]
 #include <QString>
 #include <q3ptrlist.h>
 #include <QPoint>
-#include <qcursor.h>
+#include <QCursor>
 
 #include <klocale.h>
 #include <kglobal.h>

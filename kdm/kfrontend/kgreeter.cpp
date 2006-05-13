@@ -38,23 +38,23 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <k3listview.h>
 #include <ksimpleconfig.h>
 #include <kstringhandler.h>
-#include <qeventloop.h>
+#include <QEventLoop>
 
 #undef Unsorted // x headers suck - make qdir.h work with --enable-final
 #include <QDir>
 #include <QFile>
-#include <qimage.h>
-#include <qmovie.h>
+#include <QImage>
+#include <QMovie>
 #include <QMenu>
 #include <QTimer>
 #include <q3header.h>
-#include <qstyle.h>
+#include <QStyle>
 #include <QLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QToolTip>
 #include <q3accel.h>
-#include <qeventloop.h>
+#include <QEventLoop>
 #include <QSet>
 #include <QPixmap>
 #include <QEvent>

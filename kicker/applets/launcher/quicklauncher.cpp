@@ -22,9 +22,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qpainter.h>
+#include <QPainter>
 #include <QMenu>
-#include <qslider.h>
+#include <QSlider>
 #include <QTimer>
 #include <QToolTip>
 //Added by qt3to4:

@@ -1,6 +1,6 @@
-#include <qimage.h>
+#include <QImage>
 #include <QFont>
-#include <qpainter.h>
+#include <QPainter>
 #include <QRegExp>
 #include <q3dict.h>
 //Added by qt3to4:

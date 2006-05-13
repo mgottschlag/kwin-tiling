@@ -30,8 +30,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <QString>
-#include <qpixmap.h>
-#include <qsize.h>
+#include <QPixmap>
+#include <QSize>
 #include <QWidget>
 #include <QColor>
 //Added by qt3to4:

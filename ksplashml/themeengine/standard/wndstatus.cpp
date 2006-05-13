@@ -20,7 +20,7 @@
 #include <qdesktopwidget.h>
 #include <QLabel>
 #include <QPoint>
-#include <qrect.h>
+#include <QRect>
 #include <QProgressBar>
 #include <QPixmap>
 

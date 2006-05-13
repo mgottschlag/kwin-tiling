@@ -22,7 +22,7 @@
 #include <unistd.h>
 
 #undef Unsorted
-#include <qbuffer.h>
+#include <QBuffer>
 #include <QDir>
 #include <qsettings.h>
 #include <QToolTip>

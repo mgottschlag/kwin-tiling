@@ -27,7 +27,7 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include <q3listview.h>
-#include <qevent.h>
+#include <QEvent>
 #include <kconfig.h>
 
 #include <kurlrequester.h>

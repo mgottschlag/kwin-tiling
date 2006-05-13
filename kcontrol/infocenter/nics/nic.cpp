@@ -38,7 +38,7 @@
 #include <QLayout>
 #include <q3listview.h>
 #include <QPushButton>
-#include <qtabwidget.h>
+#include <QTabWidget>
 #include <QTimer>
 //Added by qt3to4:
 #include <QVBoxLayout>

@@ -3,12 +3,12 @@
 #include <QLayout>
 #include <QLabel>
 #include <QComboBox>
-#include <qtabwidget.h>
+#include <QTabWidget>
 #include <QPushButton>
 #include <q3listview.h>
 #include <q3header.h>
 #include <QCheckBox>
-#include <qradiobutton.h>
+#include <QRadioButton>
 #include <QLineEdit>
 #include <q3buttongroup.h>
 #include <QSpinBox>

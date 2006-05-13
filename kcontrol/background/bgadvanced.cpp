@@ -27,7 +27,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QPushButton>
-#include <qslider.h>
+#include <QSlider>
 #include <QSpinBox>
 #include <QFrame>
 #include <QGridLayout>

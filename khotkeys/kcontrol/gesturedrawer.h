@@ -14,10 +14,10 @@
 
 #include <qframe.h>
 #include <QString>
-#include <qevent.h>
+#include <QEvent>
 #include <QPoint>
 #include <QWidget>
-#include <qsize.h>
+#include <QSize>
 
 namespace KHotKeys
 {

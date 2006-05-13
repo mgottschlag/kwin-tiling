@@ -25,8 +25,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "tasklmbmenu.h"
 #include "tasklmbmenu.moc"
 
-#include <qpainter.h>
-#include <qstyle.h>
+#include <QPainter>
+#include <QStyle>
 #include <QMenuItem>
 //Added by qt3to4:
 #include <QDragLeaveEvent>

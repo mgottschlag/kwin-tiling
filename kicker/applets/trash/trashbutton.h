@@ -23,8 +23,8 @@
 #include <panelbutton.h>
 #include <QPoint>
 #include <QString>
-#include <qpixmap.h>
-#include <qcursor.h>
+#include <QPixmap>
+#include <QCursor>
 #include <QTimer>
 #include <kfileitem.h>
 #include <kpanelapplet.h>

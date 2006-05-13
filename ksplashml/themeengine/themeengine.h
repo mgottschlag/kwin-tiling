@@ -12,7 +12,7 @@
 #ifndef THEMEENGINE_H
 #define THEMEENGINE_H
 
-#include <qstringlist.h>
+#include <QStringList>
 #include <q3vbox.h>
 #include <QWidget>
 //Added by qt3to4:

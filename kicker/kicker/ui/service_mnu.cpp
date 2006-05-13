@@ -22,9 +22,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include <typeinfo>
-#include <qcursor.h>
-#include <qpixmap.h>
-#include <qimage.h>
+#include <QCursor>
+#include <QPixmap>
+#include <QImage>
 #include <QMenuItem>
 
 #include <QDragLeaveEvent>

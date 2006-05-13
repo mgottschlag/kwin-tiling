@@ -11,7 +11,7 @@
 #include <QColor>
 #include <QObject>
 #include <QString>
-#include <qstringlist.h>
+#include <QStringList>
 
 #include <kcmodule.h>
 #include <kdialogbase.h>

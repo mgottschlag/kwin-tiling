@@ -20,7 +20,7 @@
 #include <QPushButton>
 #include <q3header.h>
 #include <QLineEdit>
-#include <qmenu.h>
+#include <QMenu>
 
 #include <kdebug.h>
 #include <klocale.h>

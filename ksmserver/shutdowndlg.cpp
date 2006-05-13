@@ -8,13 +8,13 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include "shutdowndlg.h"
 
-#include <qapplication.h>
-#include <qcursor.h>
+#include <QApplication>
+#include <QCursor>
 #include <QLabel>
 #include <QLayout>
-#include <qpainter.h>
-#include <qmenu.h>
-#include <qstyle.h>
+#include <QPainter>
+#include <QMenu>
+#include <QStyle>
 #include <QTimer>
 
 #include <kdebug.h>
@@ -23,7 +23,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kpixmapeffect.h>
-#include <qpixmap.h>
+#include <QPixmap>
 #include <kseparator.h>
 #include <kstdguiitem.h>
 #include <kuser.h>

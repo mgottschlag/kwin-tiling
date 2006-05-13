@@ -39,10 +39,10 @@
 #include <qframe.h>
 #include <QLabel>
 #include <QLayout>
-#include <qcursor.h>
+#include <QCursor>
 #include <QTimer>
 #include <QFile>
-#include <qsocketnotifier.h>
+#include <QSocketNotifier>
 #include <QDesktopWidget>
 #include <QX11Info>
 #include <QTextStream>

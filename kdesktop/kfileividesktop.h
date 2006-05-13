@@ -25,8 +25,8 @@
 #define KFILE_IVI_DESKTOP
 
 #include <QColor>
-#include <qpixmap.h>
-#include <qimage.h>
+#include <QPixmap>
+#include <QImage>
 #include <QString>
 #include <kfileivi.h>
 

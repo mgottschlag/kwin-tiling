@@ -28,13 +28,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <sys/types.h>
 
 #include <QObject>
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QPoint>
 #include <QMimeData>
 #include <QMap>
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QDrag>
-#include <qrect.h>
+#include <QRect>
 #include <QVector>
 
 #include <ksharedptr.h>

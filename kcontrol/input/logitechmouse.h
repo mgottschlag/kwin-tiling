@@ -22,11 +22,11 @@
 #ifndef __LOGITECHMOUSE_H__
 #define __LOGITECHMOUSE_H__
 
-#include <qdialog.h>
+#include <QDialog>
 #include <QPushButton>
 #include <QLabel>
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
+#include <QRadioButton>
+#include <QButtonGroup>
 
 #include <kconfig.h>
 

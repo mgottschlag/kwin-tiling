@@ -24,7 +24,7 @@
 
 #include <QLabel>
 #include <QTimer>
-#include <qapplication.h>
+#include <QApplication>
 
 #include <klocale.h>
 #include <kmessagebox.h>

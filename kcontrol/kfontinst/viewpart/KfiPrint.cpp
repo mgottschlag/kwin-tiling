@@ -28,9 +28,9 @@
 
 #include "KfiPrint.h"
 #include "FcEngine.h"
-#include <qpainter.h>
+#include <QPainter>
 #include <qsettings.h>
-#include <qstringlist.h>
+#include <QStringList>
 #include <kprinter.h>
 
 namespace KFI

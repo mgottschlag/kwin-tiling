@@ -19,12 +19,12 @@
 
 #include "mediumbutton.h"
 
-#include <qapplication.h>
-#include <qclipboard.h>
-#include <qpainter.h>
+#include <QApplication>
+#include <QClipboard>
+#include <QPainter>
 #include <qdrawutil.h>
 #include <QMenu>
-#include <qstyle.h>
+#include <QStyle>
 #include <QToolTip>
 #include <QDragEnterEvent>
 #include <QDragLeaveEvent>

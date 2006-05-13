@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef PANEL_CLIENTMENU_H
 #define PANEL_CLIENTMENU_H
 
-#include <qstringlist.h>
+#include <QStringList>
 #include <QMenu>
 #include <QPixmap>
 #include <QByteArray>

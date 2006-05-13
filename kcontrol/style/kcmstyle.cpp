@@ -33,9 +33,9 @@
 #include <q3groupbox.h>
 #include <QLabel>
 #include <QLayout>
-#include <qslider.h>
+#include <QSlider>
 #include <qstylefactory.h>
-#include <qtabwidget.h>
+#include <QTabWidget>
 
 #include <QFile>
 #include <qsettings.h>

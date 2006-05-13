@@ -2,7 +2,7 @@
 
 
 #include <QTimer>
-#include <qpainter.h>
+#include <QPainter>
 
 #include <QLayout>
 #include <QLabel>

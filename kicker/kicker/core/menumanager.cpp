@@ -21,8 +21,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qcursor.h>
-#include <qpixmap.h>
+#include <QCursor>
+#include <QPixmap>
 #include <QTimer>
 #include <QDesktopWidget>
 

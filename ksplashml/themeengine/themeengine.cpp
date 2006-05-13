@@ -21,7 +21,7 @@
 #include <kwin.h>
 #include <Q3VBox>
 
-#include <qevent.h>
+#include <QEvent>
 #include <QFile>
 #include <QWidget>
 

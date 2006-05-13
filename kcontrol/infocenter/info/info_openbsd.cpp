@@ -36,9 +36,9 @@
 #include <stdlib.h>	/* for malloc(3) */
 
 #include <QFile>
-#include <qfontmetrics.h>
+#include <QFontMetrics>
 #include <qstrlist.h>
-#include <qtextstream.h>
+#include <QTextStream>
 
 #include <kdebug.h>
 

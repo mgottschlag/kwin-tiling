@@ -27,7 +27,7 @@
 #include <QSpinBox> 
 #include <QString>
 #include <QTimer>
-#include <qvalidator.h>
+#include <QValidator>
 #include <QWidget>
 #include <QCheckBox>
 //Added by qt3to4:

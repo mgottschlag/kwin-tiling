@@ -27,8 +27,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QAbstractButton>
 #include <QPoint>
 #include <QString>
-#include <qpixmap.h>
-#include <qcursor.h>
+#include <QPixmap>
+#include <QCursor>
 #include <QMouseEvent>
 #include <QResizeEvent>
 #include <QEvent>

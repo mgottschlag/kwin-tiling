@@ -38,9 +38,9 @@
 #include <fstab.h>
 
 #include <QFile>
-#include <qfontmetrics.h>
+#include <QFontMetrics>
 #include <qstrlist.h>
-#include <qtextstream.h>
+#include <QTextStream>
 
 #include <kdebug.h>
 #include <kio/global.h> /* for KIO::convertSize() */

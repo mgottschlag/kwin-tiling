@@ -26,7 +26,7 @@
 #define KCMLOCALE_H
 
 #include <QWidget>
-#include <qstringlist.h>
+#include <QStringList>
 
 class KAddButton;
 class KLanguageButton;

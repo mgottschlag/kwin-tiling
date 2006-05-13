@@ -20,7 +20,7 @@
 #include "newthemewidget.h"
 
 #include <QLineEdit>
-#include <qtextedit.h>
+#include <QTextEdit>
 
 #include <klocale.h>
 

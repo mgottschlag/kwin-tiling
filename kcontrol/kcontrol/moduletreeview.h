@@ -20,7 +20,7 @@
 #ifndef __moduletreeview_h__
 #define __moduletreeview_h__
 
-#include <qpalette.h>
+#include <QPalette>
 #include <q3ptrlist.h>
 #include <q3listview.h>
 //Added by qt3to4:

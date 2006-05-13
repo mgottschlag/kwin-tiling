@@ -19,8 +19,8 @@
 #ifndef __PANELINFO_H
 #define __PANELINFO_H
 
-#include <qvaluelist.h>
-#include <qlistview.h>
+#include <Q3ValueList>
+#include <QListView>
 #include <kpanelextension.h>
 
 class ExtensionInfo;

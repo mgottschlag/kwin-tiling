@@ -30,9 +30,9 @@
 
 #include <kdebug.h>
 
-#include <qpainter.h>
-#include <qpixmap.h>
-#include <qimage.h>
+#include <QPainter>
+#include <QPixmap>
+#include <QImage>
 
 KdmPixmap::KdmPixmap( KdmItem *parent, const QDomNode &node, const char *name )
     : KdmItem( parent, node, name )

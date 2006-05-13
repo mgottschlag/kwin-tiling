@@ -14,7 +14,7 @@
 #include <QLabel>
 #include <QDir>
 #include <QLayout>
-#include <qwhatsthis.h>
+#include <QWhatsThis>
 #include <QCheckBox>
 #include <QRegExp>
 

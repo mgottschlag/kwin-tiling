@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "quickbutton.h"
 #include "quickaddappsmenu.h"
 
-#include <qpainter.h>
+#include <QPainter>
 #include <qdrawutil.h>
 #include <QMenu>
 #include <QToolTip>

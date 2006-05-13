@@ -18,7 +18,7 @@
  *
  */
 
-#include <qsplitter.h>
+#include <QSplitter>
 
 #include <kaction.h>
 #include <kapplication.h>

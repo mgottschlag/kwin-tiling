@@ -55,7 +55,7 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QFile>
-#include <qtextstream.h>
+#include <QTextStream>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QFrame>

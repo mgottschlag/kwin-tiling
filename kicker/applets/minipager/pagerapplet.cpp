@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qpainter.h>
+#include <QPainter>
 #include <QToolTip>
 #include <QLineEdit>
 #include <QMenu>

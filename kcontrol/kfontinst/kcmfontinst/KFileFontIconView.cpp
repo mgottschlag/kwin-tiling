@@ -26,7 +26,7 @@
 // (C) Craig Drummond, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <qevent.h>
+#include <QEvent>
 //Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>

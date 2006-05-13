@@ -27,7 +27,7 @@
 #ifndef __KCMSTYLE_H
 #define __KCMSTYLE_H
 
-#include <qhash.h>
+#include <QHash>
 #include <QString>
 #include <QTimer>
 //Added by qt3to4:

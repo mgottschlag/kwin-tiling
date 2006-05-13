@@ -11,8 +11,8 @@
 
 #include <kgreeterplugin.h>
 
-#include <qdialog.h>
-#include <qstringlist.h>
+#include <QDialog>
+#include <QStringList>
 //Added by qt3to4:
 #include <QLabel>
 #include <QTimerEvent>

@@ -25,7 +25,7 @@
 
 #include <q3dict.h>
 #include <q3listview.h>
-#include <qstringlist.h>
+#include <QStringList>
 
 #include <kdialogbase.h>
 

@@ -18,7 +18,7 @@
 #ifndef __menutab_impl_h__
 #define __menutab_impl_h__
 
-#include <qlistview.h>
+#include <QListView>
 
 #include "menutab.h"
 

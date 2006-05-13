@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <qfileinfo.h>
+#include <QFileInfo>
 #include <QLayout>
 #include <QLabel>
 #include <QPushButton>

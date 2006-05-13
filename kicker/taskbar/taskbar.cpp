@@ -25,12 +25,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <math.h>
 
-#include <qapplication.h>
-#include <qbitmap.h>
+#include <QApplication>
+#include <QBitmap>
 #include <qdesktopwidget.h>
 #include <QLayout>
-#include <qpainter.h>
-#include <qstringlist.h>
+#include <QPainter>
+#include <QStringList>
 #include <q3tl.h>
 #include <QWheelEvent>
 #include <QPixmap>

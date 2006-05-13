@@ -31,7 +31,7 @@
 #include <krun.h>
 #include <kurl.h>
 #include <kvbox.h>
-#include <qcursor.h>
+#include <QCursor>
 
 extern "C"
 {

@@ -25,7 +25,7 @@
 #define KGREETERPLUGIN_H
 
 #include <QVariant>
-#include <qmessagebox.h>
+#include <QMessageBox>
 #include <kdemacros.h>
 
 class KdmThemer;

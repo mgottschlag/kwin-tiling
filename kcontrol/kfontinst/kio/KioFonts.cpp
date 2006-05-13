@@ -50,7 +50,7 @@
 #include <kio/netaccess.h>
 #include <kio/slaveinterface.h>
 #include <kio/connection.h>
-#include <qtextstream.h>
+#include <QTextStream>
 //Added by qt3to4:
 #include <QByteArray>
 #include <kmimetype.h>
@@ -78,7 +78,7 @@
 
 #ifdef KFI_FORCE_DEBUG_TO_STDERR
 
-#include <qtextstream.h>
+#include <QTextStream>
 QTextOStream ostr(stderr);
 #define KFI_DBUG ostr << "[" << (int)(getpid()) << "] "
 

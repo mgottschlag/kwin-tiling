@@ -28,9 +28,9 @@
 
 #include "FontThumbnail.h"
 #include "KfiConstants.h"
-#include <qimage.h>
-#include <qbitmap.h>
-#include <qpainter.h>
+#include <QImage>
+#include <QBitmap>
+#include <QPainter>
 #include <kiconloader.h>
 #include <kglobalsettings.h>
 #include <klocale.h>

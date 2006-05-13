@@ -37,7 +37,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdebug.h>
 #include <kpanelextension.h>
 #include <kaboutdata.h>
-#include <qfileinfo.h>
+#include <QFileInfo>
 
 #include "appletinfo.h"
 #include "extensiondebugger.h"

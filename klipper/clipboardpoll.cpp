@@ -23,7 +23,7 @@
 #include "clipboardpoll.h"
 
 #include <kapplication.h>
-#include <qclipboard.h>
+#include <QClipboard>
 #include <kdebug.h>
 #include <X11/Xatom.h>
 #include <time.h>

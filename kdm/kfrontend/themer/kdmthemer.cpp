@@ -35,10 +35,10 @@
 #include <kdebug.h>
 
 #include <QFile>
-#include <qfileinfo.h>
+#include <QFileInfo>
 //#include <QTimer>		// animation timer - TODO
 #include <QObject>
-#include <qpainter.h>
+#include <QPainter>
 #include <QWidget>
 #include <qregion.h>
 //Added by qt3to4:

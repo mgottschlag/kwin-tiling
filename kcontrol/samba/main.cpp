@@ -17,7 +17,7 @@
  */
 
 #include <QLayout>
-#include <qtabwidget.h>
+#include <QTabWidget>
 
 #include <kaboutdata.h>
 #include <kcmodule.h>

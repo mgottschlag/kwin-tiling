@@ -1,7 +1,7 @@
 #ifndef LOCKOUT_H
 #define LOCKOUT_H
 
-#include <qevent.h>
+#include <QEvent>
 #include <QString>
 //Added by qt3to4:
 #include <QMouseEvent>

@@ -25,9 +25,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __taskcontainer_h__
 #define __taskcontainer_h__
 
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QTimer>
-#include <qtoolbutton.h>
+#include <QToolButton>
 #include <QDragLeaveEvent>
 #include <QPaintEvent>
 #include <QEvent>

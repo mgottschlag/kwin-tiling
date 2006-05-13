@@ -26,9 +26,9 @@
 #include <QLabel>
 #include <QLayout>
 #include <QSpinBox>
-#include <qtabwidget.h>
-#include <qtextcodec.h>
-#include <qwhatsthis.h>
+#include <QTabWidget>
+#include <QTextCodec>
+#include <QWhatsThis>
 
 #include <kconfig.h>
 #include <kdebug.h>

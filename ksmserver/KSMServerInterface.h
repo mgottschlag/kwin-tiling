@@ -2,7 +2,7 @@
 #define KSMSERVER_INTERFACE_H
 
 #include <dcopobject.h>
-#include <qstringlist.h>
+#include <QStringList>
 
 class KSMServerInterface : virtual public DCOPObject
 {

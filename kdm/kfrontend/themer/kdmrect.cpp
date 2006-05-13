@@ -25,8 +25,8 @@
 #include <kimageeffect.h>
 #include <kdebug.h>
 
-#include <qimage.h>
-#include <qpainter.h>
+#include <QImage>
+#include <QPainter>
 #include <QWidget>
 #include <QLayout>
 //Added by qt3to4:

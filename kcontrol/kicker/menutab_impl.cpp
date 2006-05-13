@@ -20,7 +20,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QPushButton>
-#include <qradiobutton.h>
+#include <QRadioButton>
 
 #include <kapplication.h>
 #include <kdebug.h>

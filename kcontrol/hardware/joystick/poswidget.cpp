@@ -20,7 +20,7 @@
  ***************************************************************************/
 #include "poswidget.h"
 
-#include <qpainter.h>
+#include <QPainter>
 
 #define XY_WIDTH 220
 #define MARK_WIDTH 10

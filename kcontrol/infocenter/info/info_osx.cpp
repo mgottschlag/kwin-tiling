@@ -47,10 +47,10 @@
 
 #include <qdict.h>
 #include <QFile>
-#include <qfontmetrics.h>
-#include <qptrlist.h>
+#include <QFontMetrics>
+#include <Q3PtrList>
 #include <QString>
-#include <qtextstream.h>
+#include <QTextStream>
 
 #include <kdebug.h>
 

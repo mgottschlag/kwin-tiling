@@ -26,8 +26,9 @@
 #include <stdio.h>
 #include <signal.h>
 
-#include <qdialog.h>
-#include <qevent.h>
+#include <QDialog>
+#include <QEvent>
+#include <QKeyEvent>
 
 #include <klocale.h>
 #include <kglobal.h>

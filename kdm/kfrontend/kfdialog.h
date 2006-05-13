@@ -26,8 +26,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef FDIALOG_H
 #define FDIALOG_H
 
-#include <qdialog.h>
-#include <qmessagebox.h>
+#include <QDialog>
+#include <QMessageBox>
 //Added by qt3to4:
 #include <QFrame>
 #include <QResizeEvent>

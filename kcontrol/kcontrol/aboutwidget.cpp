@@ -17,7 +17,7 @@
 
 */
 
-#include <qpainter.h>
+#include <QPainter>
 
 #include <QRegExp>
 #include <QLayout>

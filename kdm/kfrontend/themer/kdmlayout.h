@@ -27,7 +27,7 @@
  * but can be treated like a usual widget
  */
 
-#include <qsize.h>
+#include <QSize>
 #include <QList>
 
 class KdmItem;

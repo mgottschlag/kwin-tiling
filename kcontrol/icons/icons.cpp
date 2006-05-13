@@ -16,7 +16,7 @@
 #include <q3groupbox.h>
 #include <QLabel>
 #include <QLayout>
-#include <qslider.h>
+#include <QSlider>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QGridLayout>

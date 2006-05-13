@@ -20,10 +20,10 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QString>
-#include <qstringlist.h>
+#include <QStringList>
 #include <QFile>
 #include <QTimer>
-#include <qcursor.h>
+#include <QCursor>
 //Added by qt3to4:
 #include <QCloseEvent>
 

@@ -26,7 +26,7 @@
 #define __MAIN_H__
 
 
-#include <qtabwidget.h>
+#include <QTabWidget>
 #include <kcmodule.h>
 
 class IconModule : public KCModule

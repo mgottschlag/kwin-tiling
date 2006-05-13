@@ -24,7 +24,7 @@
 #include <kcmodule.h>
 
 #include <QMap>
-#include <qsocketnotifier.h>
+#include <QSocketNotifier>
 #include <QString>
 #include <QTimer>
 //Added by qt3to4:

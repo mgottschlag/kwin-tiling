@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <kuser.h>
 
 #include <QComboBox>
-#include <qstyle.h>
+#include <QStyle>
 #include <QLayout>
 #include <q3accel.h>
 #include <QMenu>

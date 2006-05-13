@@ -57,7 +57,7 @@
 #ifndef KASTASKITEM_H
 #define KASTASKITEM_H
 
-#include <qpixmap.h>
+#include <QPixmap>
 //Added by qt3to4:
 #include <QMouseEvent>
 #include "kasitem.h"

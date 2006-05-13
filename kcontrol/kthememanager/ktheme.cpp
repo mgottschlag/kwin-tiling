@@ -19,11 +19,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ktheme.h"
 
 #include <QFile>
-#include <qfileinfo.h>
-#include <qimage.h>
-#include <qpixmap.h>
+#include <QFileInfo>
+#include <QImage>
+#include <QPixmap>
 #include <QRegExp>
-#include <qtextstream.h>
+#include <QTextStream>
 #include <QDir>
 
 #include <dcopclient.h>

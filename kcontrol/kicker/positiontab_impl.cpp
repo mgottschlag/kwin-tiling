@@ -18,12 +18,12 @@
 
 #include <stdlib.h>
 
-#include <qbuttongroup.h>
+#include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLabel>
 #include <QPushButton>
-#include <qslider.h>
+#include <QSlider>
 #include <QToolTip>
 #include <QTimer>
 

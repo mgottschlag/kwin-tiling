@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qtextstream.h>
+#include <QTextStream>
 //Added by qt3to4:
 #include <QByteArray>
 

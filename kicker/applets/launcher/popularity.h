@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define __popularity_h__
 
 #include <QString>
-#include <qstringlist.h>
+#include <QStringList>
 
 class PopularityStatisticsImpl;
 class Prefs;

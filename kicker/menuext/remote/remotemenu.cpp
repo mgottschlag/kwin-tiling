@@ -27,7 +27,7 @@
 #include <kdesktopfile.h>
 #include <kservice.h>
 
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QDir>
 #include <QTimer>
 

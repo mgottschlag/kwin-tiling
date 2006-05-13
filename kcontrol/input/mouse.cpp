@@ -51,10 +51,10 @@
 #include <QCheckBox>
 #undef Below
 #undef Above
-#include <qslider.h>
-#include <qwhatsthis.h>
-#include <qtabwidget.h>
-#include <qradiobutton.h>
+#include <QSlider>
+#include <QWhatsThis>
+#include <QTabWidget>
+#include <QRadioButton>
 
 #include <ktoolinvocation.h>
 #include <klocale.h>

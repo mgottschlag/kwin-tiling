@@ -57,7 +57,7 @@
 #include <q3grid.h>
 #include <q3groupbox.h>
 #include <QLabel>
-#include <qslider.h>
+#include <QSlider>
 #include <QSpinBox>
 
 #include <kcolorbutton.h>

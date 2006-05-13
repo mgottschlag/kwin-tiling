@@ -33,7 +33,7 @@
 #include <k3colordrag.h>
 
 #include <QDir>
-#include <qevent.h>
+#include <QEvent>
 
 #include <netwm.h>
 #include <dcopclient.h>

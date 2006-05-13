@@ -37,7 +37,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <QString>
-#include <qstringlist.h>
+#include <QStringList>
 
 namespace KFI
 {

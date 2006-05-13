@@ -18,10 +18,10 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <qpainter.h>
+#include <QPainter>
 #include <QTimer>
 #include <qx11info_x11.h>
-#include <qapplication.h>
+#include <QApplication>
 #include <krandom.h>
 #include "kscreensaver.h"
 #ifdef Q_WS_X11

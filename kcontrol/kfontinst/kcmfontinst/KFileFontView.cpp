@@ -33,11 +33,11 @@
 //                 2000, 2001 Carsten Pfeiffer <pfeiffer@kde.org>
 //
 
-#include <qevent.h>
+#include <QEvent>
 #include <qnamespace.h>
 #include <q3header.h>
-#include <qpainter.h>
-#include <qpixmap.h>
+#include <QPainter>
+#include <QPixmap>
 //Added by qt3to4:
 #include <QApplication>
 #include <QDragEnterEvent>

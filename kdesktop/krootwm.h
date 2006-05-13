@@ -23,7 +23,7 @@
 #ifndef __krootwm_h__
 #define __krootwm_h__
 
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QObject>
 
 // we need Window but do not want to include X.h since it

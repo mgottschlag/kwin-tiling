@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <qbuffer.h>
+#include <QBuffer>
 
 #include "paneldrag.h"
 

@@ -24,7 +24,7 @@
 #include <QComboBox>
 #include <QLayout>
 #include <QLabel>
-#include <qprinter.h>
+#include <QPrinter>
 
 #include <kdialog.h>
 #include <klocale.h>

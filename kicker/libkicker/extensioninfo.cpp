@@ -21,7 +21,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <qfileinfo.h>
+#include <QFileInfo>
 #include <kdesktopfile.h>
 #include <krandom.h>
 

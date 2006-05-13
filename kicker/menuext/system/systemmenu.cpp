@@ -21,7 +21,7 @@
 
 #include <krun.h>
 #include <kiconloader.h>
-#include <qpixmap.h>
+#include <QPixmap>
 
 K_EXPORT_KICKER_MENUEXT(systemmenu, SystemMenu)
 

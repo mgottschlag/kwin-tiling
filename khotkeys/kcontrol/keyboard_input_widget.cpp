@@ -18,7 +18,7 @@
 
 #include <q3groupbox.h>
 #include <QPushButton>
-#include <qradiobutton.h>
+#include <QRadioButton>
 
 #include <ktextedit.h>
 

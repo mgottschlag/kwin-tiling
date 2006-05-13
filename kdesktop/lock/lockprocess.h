@@ -17,8 +17,8 @@
 #include <QTimer>
 #include <QStack>
 #include <QList>
-#include <qmessagebox.h>
-#include <qpixmap.h>
+#include <QMessageBox>
+#include <QPixmap>
 
 #include <X11/Xlib.h>
 #include <fixx11h.h>

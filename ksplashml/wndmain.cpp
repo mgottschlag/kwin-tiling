@@ -25,7 +25,7 @@
 #include <dcopclient.h>
 
 #include <QDir>
-#include <qpixmap.h>
+#include <QPixmap>
 #include <QTimer>
 //Added by qt3to4:
 #include <QEvent>

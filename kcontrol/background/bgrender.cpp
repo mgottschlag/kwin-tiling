@@ -15,9 +15,9 @@
 #include <utime.h>
 
 #include <QTimer>
-#include <qpainter.h>
-#include <qimage.h>
-#include <qfileinfo.h>
+#include <QPainter>
+#include <QImage>
+#include <QFileInfo>
 #include <QDir>
 #include <QDesktopWidget>
 #include <QPaintEngine>

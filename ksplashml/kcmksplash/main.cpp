@@ -13,7 +13,7 @@
 #endif
 
 #include <QLayout>
-#include <qtabwidget.h>
+#include <QTabWidget>
 //Added by qt3to4:
 #include <QHBoxLayout>
 

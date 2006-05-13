@@ -33,7 +33,7 @@
 #include <kxmlguifactory.h>
 #include <QSplitter>
 
-#include <qtabwidget.h>
+#include <QTabWidget>
 
 
 #include "indexwidget.h"

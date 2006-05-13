@@ -18,14 +18,14 @@
 */
 
 #include "kworkspace.h"
-#include <qapplication.h>
+#include <QApplication>
 #include <QDataStream>
 #include <kapplication.h>
 #include <dcopclient.h>
 #include <dcopref.h>
 #include <QFile>
-#include <qfileinfo.h>
-#include <qtextstream.h>
+#include <QFileInfo>
+#include <QTextStream>
 #include <klocale.h>
 #include <QDateTime>
 #include <kstandarddirs.h>

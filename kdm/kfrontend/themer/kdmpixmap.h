@@ -24,8 +24,8 @@
 
 #include "kdmitem.h"
 
-//#include <qrect.h>
-#include <qpixmap.h>
+//#include <QRect>
+#include <QPixmap>
 
 /*
  * KdmPixmap. A pixmap element
