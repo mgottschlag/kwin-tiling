@@ -217,6 +217,10 @@ void TaskContainer::setLastActivated()
 
 void TaskContainer::animationTimerFired()
 {
+#ifdef __GNUC__
+#warning port animation
+#endif
+#if 0
     if (!frames.isEmpty() && taskBar->showIcon() && frames.at(currentFrame) != frames.back())
     {
         QPixmap *pm = frames.at(currentFrame);
@@ -238,6 +242,7 @@ void TaskContainer::animationTimerFired()
         else
 	    currentFrame++;
     }
+#endif
 }
 
 void TaskContainer::checkAttention(const Task::TaskPtr t)

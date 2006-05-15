@@ -429,9 +429,9 @@ void KMiniPagerButton::paintEvent(QPaintEvent *)
     {
         bp.end();
         buffer.setMask(mask);
-        erase();
 
         bp.begin(this);
+	bp.eraseRect(rect());
         bp.drawPixmap(0, 0, buffer);
     }
 

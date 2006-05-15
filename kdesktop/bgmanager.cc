@@ -367,13 +367,13 @@ void KBackgroundManager::setPixmap(QPixmap *pm, int hash, int desk)
 	  QTimer::singleShot( 0, this, SLOT( clearRoot()));
           // but make the pixmap visible until m_pDesktop is visible
           QApplication::desktop()->screen()->setErasePixmap(*pm);
-          QApplication::desktop()->screen()->erase();
+          QApplication::desktop()->screen()->update();
        }
     }
     else
     {
        QApplication::desktop()->screen()->setErasePixmap(*pm);
-       QApplication::desktop()->screen()->erase();
+       QApplication::desktop()->screen()->update();
     }
 
      // and export it via Esetroot-style for gnome/GTK apps to share in the pretties
@@ -394,7 +394,7 @@ void KBackgroundManager::setPixmap(QPixmap *pm, int hash, int desk)
 void KBackgroundManager::clearRoot()
 {
    QApplication::desktop()->screen()->setErasePixmap( QPixmap());
-   QApplication::desktop()->screen()->erase();
+   QApplication::desktop()->screen()->update();
 }
 
 /*
@@ -738,7 +738,7 @@ void KBackgroundManager::repaintBackground()
     if (m_pDesktop)
        m_pDesktop->repaint();
     else
-       QApplication::desktop()->screen()->erase();
+       QApplication::desktop()->screen()->update();
 }
 
 void KBackgroundManager::desktopResized()

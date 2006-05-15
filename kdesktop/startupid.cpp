@@ -231,7 +231,7 @@ void StartupId::start_startupid( const QString& icon_P )
 		QPalette palette;
         palette.setBrush( startup_widget->backgroundRole(), QBrush( icon_pixmap ) );
         startup_widget->setPalette( palette );
-        startup_widget->erase();
+        startup_widget->update();
         }
     update_startupid();
     }

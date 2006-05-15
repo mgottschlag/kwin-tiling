@@ -58,7 +58,6 @@ FDialog::resizeEvent( QResizeEvent *e )
 	inherited::resizeEvent( e );
 	if (winFrame) {
 		winFrame->resize( size() );
-		winFrame->erase();
 	}
 }
 
