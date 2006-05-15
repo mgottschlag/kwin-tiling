@@ -19,6 +19,10 @@ kde4_add_executable(kdesktop_lock ${kdesktop_lock_SRCS} )
 
 target_link_libraries(kdesktop_lock  ${KDE4_KIO_LIBS} )
 
+if (HAVE_XF86MISC)
+  target_link_libraries(kdesktop_lock Xxf86misc)
+endif (HAVE_XF86MISC)
+
 install(TARGETS kdesktop_lock DESTINATION bin)
 
 
