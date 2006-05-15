@@ -44,8 +44,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <kstyle.h>
 #include <QX11Info>
 
-                             KTheme::KTheme( QWidget *parent, const QString & xmlFile )
-                                 : m_parent(parent)
+KTheme::KTheme( QWidget *parent, const QString & xmlFile )
+	: m_parent(parent)
 {
     QFile file( xmlFile );
     file.open( QIODevice::ReadOnly );
