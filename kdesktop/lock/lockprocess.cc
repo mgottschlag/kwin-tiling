@@ -785,24 +785,26 @@ bool LockProcess::startHack()
             mHackProc << word;
         }
 
-	if (!mForbidden)
-	{
+	    if (!mForbidden)
+	    {
 
-		if (mHackProc.start() == true)
-		{
+		    if (mHackProc.start() == true)
+		    {
 #ifdef HAVE_SETPRIORITY
-			setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
+			    setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
 #endif
  		        //bitBlt(this, 0, 0, &mOriginal);
-	                return true;
-		}
-	}
-	else
-	// we aren't allowed to start the specified screensaver either because it didn't run for some reason
-	// according to the kiosk restrictions forbid it
-	{
-		setBackgroundColor(Qt::black);
-	}
+	            return true;
+		    }
+	    }
+	    else
+	    // we aren't allowed to start the specified screensaver either because it didn't run for some reason
+	    // according to the kiosk restrictions forbid it
+	    {
+            QPalette palette;
+            palette.setColor(backgroundRole(), Qt::black);
+            setPalette(palette);
+	    }
     }
     return false;
 }
@@ -823,7 +825,9 @@ void LockProcess::hackExited(KProcess *)
 {
 	// Hack exited while we're supposed to be saving the screen.
 	// Make sure the saver window is black.
-        setBackgroundColor(Qt::black);
+    QPalette palette;
+    palette.setColor(backgroundRole(), Qt::black);
+    setPalette(palette);
 }
 
 void LockProcess::suspend()

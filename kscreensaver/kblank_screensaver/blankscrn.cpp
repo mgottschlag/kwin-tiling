@@ -76,7 +76,9 @@ KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
 
 	preview = new QWidget( main );
 	preview->setFixedSize( 220, 165 );
-	preview->setBackgroundColor( Qt::black );
+	QPalette palette;
+	palette.setColor( preview->backgroundRole(), Qt::black );
+	preview->setPalette(palette);
 	preview->show();    // otherwise saver does not get correct size
 	saver = new KBlankSaver( preview->winId() );
 	grid->addWidget(preview, 0, 1, 3, 1);
@@ -146,7 +148,9 @@ void KBlankSaver::readSettings()
 
 void KBlankSaver::blank()
 {
-    setBackgroundColor( color );
-    erase();
+	QPalette palette;
+	palette.setColor( backgroundRole(), color );
+	setPalette(palette);
+	erase();
 }
 

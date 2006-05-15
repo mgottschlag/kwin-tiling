@@ -33,7 +33,10 @@ PosWidget::PosWidget(QWidget *parent)
 {
   setMinimumSize(XY_WIDTH, XY_WIDTH);
   setMaximumSize(XY_WIDTH, XY_WIDTH);
-  setPaletteBackgroundColor(Qt::white);
+
+  QPalette palette;
+  palette.setColor(backgroundRole(), Qt::white);
+  setPalette(palette);
 }
 
 //-----------------------------------------------------------------

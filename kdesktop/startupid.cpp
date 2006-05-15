@@ -227,7 +227,10 @@ void StartupId::start_startupid( const QString& icon_P )
             startup_widget->setMask( icon_pixmap.mask() );
         else
             startup_widget->clearMask();
-        startup_widget->setBackgroundPixmap( icon_pixmap );
+
+		QPalette palette;
+        palette.setBrush( startup_widget->backgroundRole(), QBrush( icon_pixmap ) );
+        startup_widget->setPalette( palette );
         startup_widget->erase();
         }
     update_startupid();
@@ -253,7 +256,9 @@ void StartupId::update_startupid()
     int yoffset = 0;
     if( blinking )
         {
-        startup_widget->setBackgroundPixmap( pixmaps[ color_to_pixmap[ color_index ]] );
+		QPalette palette;
+        palette.setBrush( startup_widget->backgroundRole(), QBrush( pixmaps[ color_to_pixmap[ color_index ]] ) );
+        startup_widget->setPalette( palette );
         if( ++color_index >= ( sizeof( color_to_pixmap ) / sizeof( color_to_pixmap[ 0 ] )))
             color_index = 0;
         }
@@ -261,7 +266,9 @@ void StartupId::update_startupid()
         {
         yoffset = frame_to_yoffset[ frame ];
         QPixmap pm = pixmaps[ frame_to_pixmap[ frame ] ];
-        startup_widget->setBackgroundPixmap( pm );
+		QPalette palette;
+        palette.setBrush( startup_widget->backgroundRole(), QBrush( pm ) );
+        startup_widget->setPalette( palette );
         if ( !pm.mask().isNull() )
             startup_widget->setMask( pm.mask() );
         else

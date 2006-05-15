@@ -623,7 +623,9 @@ void KScreenSaver::slotPreviewExited(KProcess *)
     delete mMonitor;
 
     mMonitor = new KSSMonitor(mMonitorLabel);
-    mMonitor->setBackgroundColor(Qt::black);
+    QPalette palette;
+    palette.setColor(mMonitor->backgroundRole(), Qt::black);
+    mMonitor->setPalette(palette);
     mMonitor->setGeometry((mMonitorLabel->width()-200)/2+23,
                           (mMonitorLabel->height()-186)/2+14, 151, 115);
     mMonitor->show();
