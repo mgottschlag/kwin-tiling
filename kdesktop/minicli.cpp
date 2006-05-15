@@ -536,6 +536,7 @@ int Minicli::runCommand()
             }
           }
         }
+        // fall-through to shell case
         case KURIFilterData::SHELL:
         {
           if (KAuthorized::authorizeKAction("shell_access"))
