@@ -226,6 +226,10 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
       path.truncate(path.length()-1);
 
     pathDb[path]=true;
+
+    if(path.contains("/lib64/"))
+        path.replace("/lib64/","/lib/");
+    pathDb[path]=true;
   }
 
   QStringList paths;
