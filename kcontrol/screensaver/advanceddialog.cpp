@@ -5,8 +5,9 @@
 #include <QPixmap>
 #include <kdebug.h>
 
-
 #include <QString>
+
+#include <config.h>
 
 #include "advanceddialog.h"
 #include "advanceddialogimpl.h"
@@ -54,6 +55,23 @@ void KScreenSaverAdvancedDialog::readSettings()
 	dialog->qcbTopRight->setCurrentIndex(config->readEntry("ActionTopRight", 0));
 	dialog->qcbBottomLeft->setCurrentIndex(config->readEntry("ActionBottomLeft", 0));
 	dialog->qcbBottomRight->setCurrentIndex(config->readEntry("ActionBottomRight", 0));
+
+	switch(mPriority)
+	{
+		case 19: // Low
+			dialog->qcbPriority->setCurrentItem(0);
+			kdDebug() << "setting low" << endl;
+			break;
+		case 10: // Medium
+			dialog->qcbPriority->setCurrentItem(1);
+			kdDebug() << "setting medium" << endl;
+			break;
+		case 0: // High
+			dialog->qcbPriority->setCurrentItem(2);
+			kdDebug() << "setting high" << endl;
+			break;
+	}
+
 	mChanged = false;
 	delete config;
 }
@@ -62,15 +80,15 @@ void KScreenSaverAdvancedDialog::slotPriorityChanged(int val)
 {
 	switch (val)
 	{
-		case 1: // Low
+		case 0: // Low
 			mPriority = 19;
 			kDebug() << "low priority" << endl;
 			break;
-		case 2: // Medium
+		case 1: // Medium
 			mPriority = 10;
 			kDebug() << "medium priority" << endl;
 			break;
-		case 3: // High
+		case 2: // High
 			mPriority = 0;
 			kDebug() << "high priority" << endl;
 			break;
