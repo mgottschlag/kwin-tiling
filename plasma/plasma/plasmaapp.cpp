@@ -33,6 +33,7 @@ PlasmaApp::PlasmaApp()
     : KUniqueApplication(),
       engines(0)
 {
+    notifyStartup(false);
     if (KCrash::crashHandler() == 0 )
     {
         // this means we've most likely crashed once. so let's see if we
@@ -53,6 +54,7 @@ PlasmaApp::PlasmaApp()
 
     m_interface = this;
     engines = new DataEngineManager();
+    notifyStartup(true);
 }
 
 void PlasmaApp::setCrashHandler()
@@ -80,4 +82,22 @@ bool PlasmaApp::loadDataEngine(const QString& name)
 
     Plasma::DataEngine* engine = engines->loadDataEngine
     return (engine != 0);
+}
+
+void PlasmaApp::notifyStartup(bool completed)
+{
+    const QString startupID("workspace desktop");
+    DCOPClient cl;
+    cl.attach();
+    DCOPRef r("ksmserver", "ksmserver");
+    r.setDCOPClient(&cl);
+
+    if (completed)
+    {
+        r.send("resumeStartup", startupID);
+    }
+    else
+    {
+        r.send("suspendStartup", startupID);
+    }
 }

@@ -35,6 +35,8 @@ class PlasmaApp : public KUniqueApplication, public PlasmaAppInterface
         static PlasmaAppInterface* self();
         bool loadDataEngine(const QString& name);
 
+        void notifyStartup(bool completed);
+
     private slots:
         void setCrashHandler();
 

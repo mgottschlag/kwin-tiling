@@ -16,7 +16,22 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <kapplication.h>
+
+#include "config.h"
+
+#include "plasmaapp.h"
+
 int main(int argc, const char* argv[])
 {
+    KAboutData aboutData( "plasma", I18N_NOOP("Plasma Workspace"),
+                          "0.0",
+                          I18N_NOOP("The KDE desktop, panels and widgets workspace application."),
+                          KAboutData::License_GPL,
+                          I18N_NOOP("(c) 2006, The KDE Team") );
+    aboutData.addAuthor("Aaron J. Seigo", I18N_NOOP("Current maintainer"), "aseigo@kde.org");
+    KCmdLineArgs::init(argc, argv, &aboutData);
+
+    PlasmaApp app;
     return app.exec();
 }
