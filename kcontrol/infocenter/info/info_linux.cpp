@@ -91,7 +91,7 @@ bool GetInfo_ReadfromFile(Q3ListView * lbox, const char *FileName,
 
     if (!file.open(QIODevice::ReadOnly)) {
 	/*   *GetInfo_ErrorString =
-	   i18n("You do not have read-access for the file %1!\nPlease ask your system-administrator for advice!")
+	   i18n("You do not have read-access to the file %1.\nPlease ask your system administrator for advice.")
 	   .arg(FileName);
 	 */
 	return false;

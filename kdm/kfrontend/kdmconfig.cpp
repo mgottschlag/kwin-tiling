@@ -136,7 +136,7 @@ void init_config( void )
 			case 's': ptr = tuname.sysname; break;
 			case 'r': ptr = tuname.release; break;
 			case 'm': ptr = tuname.machine; break;
-			default: _greetString += i18n("[fix kdmrc!]"); continue;
+			default: _greetString += i18n("[fix kdmrc]"); continue;
 			}
 			_greetString += QString::fromLocal8Bit( ptr );
 		} else

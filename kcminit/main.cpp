@@ -163,7 +163,7 @@ KCMInit::KCMInit( KCmdLineArgs* args )
     KService::Ptr serv = KService::serviceByStorageId( module );
     if ( !serv || serv->library().isEmpty() ||
 	 serv->init().isEmpty()) {
-      kError(1208) << i18n("Module %1 not found!", module) << endl;
+      kError(1208) << i18n("Module %1 not found", module) << endl;
       return;
     } else
       list.append(serv);

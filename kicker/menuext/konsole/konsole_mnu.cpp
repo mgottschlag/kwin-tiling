@@ -188,7 +188,7 @@ void KonsoleMenu::initialize()
                 ::close(fd);
                 screenList.append(QFile::decodeName(entry->d_name));
                 insertItem(SmallIconSet("konsole"),
-                           i18nc("Screen is a program controlling screens!",
+                           i18nc("Screen is a program for controlling screens",
                                 "Screen at %1", entry->d_name), id);
                 id++;
             }

@@ -118,7 +118,7 @@ void ExtensionManager::initialize()
     {
         KMessageBox::error(0, i18n("The KDE panel (kicker) could not load the main panel "
                                    "due to a problem with your installation. "),
-                           i18n("Fatal Error!"));
+                           i18n("Fatal Error"));
         exit(1);
     }
 
