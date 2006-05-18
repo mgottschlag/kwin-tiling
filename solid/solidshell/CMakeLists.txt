@@ -11,7 +11,7 @@ kde4_automoc(${solidshell_SRCS})
 
 kde4_add_executable(solidshell ${solidshell_SRCS})
 
-target_link_libraries(solidshell ${KDE4_KDECORE_LIBS} kdehw )
+target_link_libraries(solidshell ${KDE4_KDECORE_LIBS} solid )
 
 install_targets(/bin solidshell )
 

@@ -29,9 +29,9 @@ using namespace std;
 #include <kcmdlineargs.h>
 #include <klocale.h>
 
-#include <kdehw/devicemanager.h>
-#include <kdehw/device.h>
-#include <kdehw/volume.h>
+#include <solid/devicemanager.h>
+#include <solid/device.h>
+#include <solid/volume.h>
 
 #include <kjob.h>
 
@@ -224,11 +224,11 @@ bool SolidShell::doIt()
 
 bool SolidShell::hwList( bool details )
 {
-    KDEHW::DeviceManager &manager = KDEHW::DeviceManager::self();
+    Solid::DeviceManager &manager = Solid::DeviceManager::self();
 
-    KDEHW::DeviceList all = manager.allDevices();
+    Solid::DeviceList all = manager.allDevices();
 
-    foreach ( KDEHW::Device device, all )
+    foreach ( Solid::Device device, all )
     {
         cout << "udi = '" << device.udi() << "'" << endl;
 
@@ -244,8 +244,8 @@ bool SolidShell::hwList( bool details )
 
 bool SolidShell::hwProperties( const QString &udi )
 {
-    KDEHW::DeviceManager &manager = KDEHW::DeviceManager::self();
-    KDEHW::Device device = manager.findDevice( udi );
+    Solid::DeviceManager &manager = Solid::DeviceManager::self();
+    Solid::Device device = manager.findDevice( udi );
 
     cout << "udi = '" << device.udi() << "'" << endl;
     QMap<QString,QVariant> properties = device.allProperties();
@@ -256,12 +256,12 @@ bool SolidShell::hwProperties( const QString &udi )
 
 bool SolidShell::hwQuery( const QString &parentUdi, const QString &query )
 {
-    KDEHW::DeviceManager &manager = KDEHW::DeviceManager::self();
-    KDEHW::DeviceList devices = manager.findDevicesFromQuery( parentUdi,
-                                                              KDEHW::Capability::Unknown,
+    Solid::DeviceManager &manager = Solid::DeviceManager::self();
+    Solid::DeviceList devices = manager.findDevicesFromQuery( parentUdi,
+                                                              Solid::Capability::Unknown,
                                                               query );
 
-    foreach ( KDEHW::Device device, devices )
+    foreach ( Solid::Device device, devices )
     {
         cout << "udi = '" << device.udi() << "'" << endl;
     }
@@ -271,10 +271,10 @@ bool SolidShell::hwQuery( const QString &parentUdi, const QString &query )
 
 bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &udi )
 {
-    KDEHW::DeviceManager &manager = KDEHW::DeviceManager::self();
-    KDEHW::Device device = manager.findDevice( udi );
+    Solid::DeviceManager &manager = Solid::DeviceManager::self();
+    Solid::Device device = manager.findDevice( udi );
 
-    if ( !device.is<KDEHW::Volume>() )
+    if ( !device.is<Solid::Volume>() )
     {
         cerr << i18n( "Error: %1 doesn't have the capability Volume." ).arg( udi ) << endl;
         return false;
@@ -285,13 +285,13 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
     switch( type )
     {
     case Mount:
-        job = device.as<KDEHW::Volume>()->mount();
+        job = device.as<Solid::Volume>()->mount();
         break;
     case Unmount:
-        job = device.as<KDEHW::Volume>()->unmount();
+        job = device.as<Solid::Volume>()->unmount();
         break;
     case Eject:
-        job = device.as<KDEHW::Volume>()->eject();
+        job = device.as<Solid::Volume>()->eject();
         break;
     }
 
@@ -303,7 +303,7 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
 
     connect( job, SIGNAL( result( KJob* ) ),
              this, SLOT( slotResult( KJob* ) ) );
-    
+
     job->start();
     m_loop.exec();
 
