@@ -217,6 +217,12 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     }
 #endif
     
+    static XScreenSaverInfo* mitInfo = 0;
+    if (!mitInfo) mitInfo = XScreenSaverAllocInfo ();
+    XScreenSaverQueryInfo (qt_xdisplay(), DefaultRootWindow (qt_xdisplay()), mitInfo);
+    if (mitInfo->state == ScreenSaverDisabled)
+	activate = false;
+
     if(mActive && activate)
         emit timeout();
 }

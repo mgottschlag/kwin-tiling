@@ -496,14 +496,15 @@ void LockProcess::saveVRoot()
       Atom actual_type;
       int actual_format;
       unsigned long nitems, bytesafter;
-      Window *newRoot = (Window *)0;
+      unsigned char *newRoot = 0;
 
       if ((XGetWindowProperty(QX11Info::display(), children[i], gXA_VROOT, 0, 1,
           False, XA_WINDOW, &actual_type, &actual_format, &nitems, &bytesafter,
-          (unsigned char **) &newRoot) == Success) && newRoot)
+          &newRoot) == Success) && newRoot)
       {
         gVRoot = children[i];
-        gVRootData = *newRoot;
+        Window *dummy = (Window*)newRoot;
+        gVRootData = *dummy;
         XFree ((char*) newRoot);
         break;
       }
