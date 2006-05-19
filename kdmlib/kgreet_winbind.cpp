@@ -363,7 +363,7 @@ KWinbindGreeter::textPrompt( const char *prompt, bool echo, bool nonBlocking )
 			                          KGreeterPluginHandler::IsOldPassword |
 			                          KGreeterPluginHandler::IsSecret );
 			return;
-		} else if (pr.indexOf( QRegExp( "\\b(re-?(enter|type)|again|confirm)\\b",
+		} else if (pr.indexOf( QRegExp( "\\b(re-?(enter|type)|again|confirm|repeat)\\b",
 		                             Qt::CaseInsensitive ) ) >= 0)
 			exp = 3;
 		else if (pr.indexOf( QRegExp( "\\bnew\\b", Qt::CaseInsensitive ) ) >= 0)
