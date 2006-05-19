@@ -184,7 +184,7 @@ NaughtyProcessMonitor::_process(ulong pid, uint load)
   if (misbehaving)
     if (wasMisbehaving)
     {
-      d->scoreMap_.replace(pid, d->scoreMap_[pid] + 1);
+      d->scoreMap_.insert(pid, d->scoreMap_[pid] + 1);
       if (canKill(pid))
         emit(runawayProcess(pid, processName(pid)));
     }
@@ -194,7 +194,7 @@ NaughtyProcessMonitor::_process(ulong pid, uint load)
     if (wasMisbehaving)
       d->scoreMap_.remove(pid);
 
-  d->loadMap_.replace(pid, load);
+  d->loadMap_.insert(pid, load);
 }
 
 // Here begins the set of system-specific methods.
