@@ -618,12 +618,25 @@ KFonts::KFonts(QWidget *parent, const QStringList &args)
    cbAA = new QCheckBox( i18n( "Use a&nti-aliasing for fonts" ), this);
    cbAA->setWhatsThis( i18n("If this option is selected, KDE will smooth the edges of curves in "
                               "fonts."));
-   lay->addStretch();
    QPushButton *aaSettingsButton = new QPushButton( i18n( "Configure..." ), this);
    connect(aaSettingsButton, SIGNAL(clicked()), SLOT(slotCfgAa()));
    connect(cbAA, SIGNAL(toggled(bool)), aaSettingsButton, SLOT(setEnabled(bool)));
    lay->addWidget( cbAA );
    lay->addWidget( aaSettingsButton );
+   lay->addStretch();
+
+   lay = new QHBoxLayout( layout, KDialog::spacingHint());
+   cbDpi = new QCheckBox( i18n( "Force DPI" ), this );
+   lay->addWidget( cbDpi );
+   comboDpi = new QComboBox( this );
+   comboDpi->insertItem( i18n( "Normal fonts (96 DPI)" ));
+   comboDpi->insertItem( i18n( "Huge fonts (120 DPI)" ));
+   comboDpi->setDisabled( true );
+   connect( cbDpi, SIGNAL( toggled( bool )), comboDpi, SLOT( setEnabled( bool )));
+   connect( cbDpi, SIGNAL( toggled( bool )), SLOT( changed()));
+   connect( comboDpi, SIGNAL( activated( int )), SLOT( changed()));
+   lay->addWidget( comboDpi );
+   lay->addStretch();
 
    layout->addStretch(1);
 
@@ -653,6 +666,7 @@ void KFonts::defaults()
   useAA = true;
   cbAA->setChecked(useAA);
   aaSettings->defaults();
+  cbDpi->setChecked(false);
   emit changed(true);
 }
 
@@ -665,6 +679,13 @@ void KFonts::load()
   kDebug(1208) << "AA:" << useAA << endl;
   cbAA->setChecked(useAA);
 
+  KConfig cfgfonts("kcmfonts", true);
+  cfgfonts.setGroup("General");
+  int dpi = cfgfonts.readNumEntry( "fontDPI", 0 );
+  cbDpi->setChecked( dpi == 96 || dpi == 120 );
+  comboDpi->setCurrentItem( dpi == 120 ? 1 : 0 );
+  dpi_original = dpi;
+
   emit changed(false);
 }
 
@@ -673,8 +694,17 @@ void KFonts::save()
 
   for ( FontUseItem* i = fontUseList.first(); i; i = fontUseList.next() )
       i->writeFont();
-
   KGlobal::config()->sync();
+
+  KConfig cfgfonts("kcmfonts");
+  cfgfonts.setGroup("General");
+  int dpi;
+  if( !cbDpi->isChecked())
+      dpi = 0;
+  else
+      dpi = comboDpi->currentItem() == 0 ? 96 : 120;
+  cfgfonts.writeEntry( "fontDPI", dpi );
+  cfgfonts.sync();
 
   // KDE-1.x support
   KSimpleConfig* config = new KSimpleConfig( QDir::homePath() + "/.kderc" );
@@ -692,12 +722,13 @@ void KFonts::save()
 
   kapp->processEvents(); // Process font change ourselves
 
-  if(aaSettings->save( useAA ) || (useAA != useAA_original) ) {
+  if(aaSettings->save( useAA ) || (useAA != useAA_original) || dpi != dpi_original) {
     KMessageBox::information(this,
       i18n(
-        "<p>You have changed anti-aliasing related settings. This change will only affect newly started applications.</p>"
-      ), i18n("Anti-Aliasing Settings Changed"), "AAsettingsChanged", false);
+        "<p>Some changes such as anti-aliasing or DPI settings will only affect newly started applications.</p>"
+      ), i18n("Font Settings Changed"), "FontSettingsChanged", false);
     useAA_original = useAA;
+    dpi_original = dpi;
   }
 
   runRdb(KRdbExportXftSettings);

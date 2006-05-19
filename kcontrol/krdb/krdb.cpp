@@ -38,7 +38,7 @@
 #include <kdebug.h>
 #include <kglobalsettings.h>
 #include <kstandarddirs.h>
-#include <kprocess.h>
+#include <kprocio.h>
 #include <ksavefile.h>
 #include <ktempfile.h>
 #include <klocale.h>
@@ -543,6 +543,18 @@ void runRdb( uint flags )
     }
     if(!subPixel.isEmpty())
       contents += "Xft.rgba: " + subPixel + '\n';
+    KConfig cfgfonts("kcmfonts", true);
+    cfgfonts.setGroup("General");
+    if( cfgfonts.readNumEntry( "fontDPI", 0 ) != 0 )
+      contents += "Xft.dpi: " + cfgfonts.readEntry( "fontDPI" ) + '\n';
+    else
+    {
+      KProcIO proc;
+      proc << "xrdb" << "-quiet" << "-remove" << "-nocpp";
+      proc.writeStdin( QByteArray( "Xft.dpi" ), true );
+      proc.closeWhenDone();
+      proc.start( KProcess::Block );
+    }
   }
 
   if (contents.length() > 0)
