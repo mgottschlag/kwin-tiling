@@ -45,7 +45,7 @@ LogitechMouse::LogitechMouse( struct usb_device *usbDev, int mouseCapabilityFlag
     : LogitechMouseBase( parent, name, 0 )
 {
     if ( !name )
-        setName( "LogitechMouse" );
+        setObjectName( "LogitechMouse" );
 
     cordlessNameLabel->setText( i18n("Mouse type: %1", this->name() ) );
 

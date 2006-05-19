@@ -214,7 +214,7 @@ bool GetInfo_Devices(Q3ListView * lBox)
     lBox->addColumn(i18n("Major Number"));
     lBox->addColumn(i18n("Minor Number"));
 
-    file.setName(INFO_DEVICES);
+    file.setFileName(INFO_DEVICES);
     if (file.exists() && file.open(QIODevice::ReadOnly)) {
 	QTextStream stream(&file);
 	QString line;
@@ -251,7 +251,7 @@ bool GetInfo_Devices(Q3ListView * lBox)
 	return false;
     }
     
-    file.setName(INFO_MISC);
+    file.setFileName(INFO_MISC);
     if (misc && file.exists() && file.open(QIODevice::ReadOnly)) {
 	QTextStream stream(&file);
 	QString line;
