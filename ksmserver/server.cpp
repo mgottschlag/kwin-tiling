@@ -637,7 +637,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
         while( (i = display.indexOf(':')) >= 0)
            display[i] = '_';
 
-        fName += "_"+display.toLocal8Bit();
+        fName += '_'+display.toLocal8Bit();
         FILE *f;
         f = ::fopen(fName.data(), "w+");
         if (!f)
@@ -702,7 +702,7 @@ void KSMServer::cleanUp()
     while( (i = display.indexOf(':')) >= 0)
          display[i] = '_';
 
-    fName += "_"+display.toLocal8Bit();
+    fName += '_'+display.toLocal8Bit();
     ::unlink(fName.data());
 
     FreeAuthenticationData(numTransports, authDataEntries);

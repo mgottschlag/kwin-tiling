@@ -250,7 +250,7 @@ void KSMServer::restoreLegacySession( KConfig* config )
 		if( (*it) == "-session" ) {
 		    ++it;
 		    if( it != restartCommand.end()) {
-			KConfig cfg( "session/" + wm + "_" + (*it), true );
+			KConfig cfg( "session/" + wm + '_' + (*it), true );
 			cfg.setGroup( "LegacySession" );
 			restoreLegacySessionInternal( &cfg, ' ' );
 		    }

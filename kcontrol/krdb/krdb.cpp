@@ -246,7 +246,7 @@ static void applyQtSettings( KConfig& kglobals, QSettings& settings )
     if (fromKDE)
     {
       if (!path.endsWith("/"))
-        path += "/";
+        path += '/';
       kdeAdded.push_back(path); //Add for the new list -- do it here to have it in the right form..
     }
 
@@ -526,9 +526,9 @@ void runRdb( uint flags )
 
     contents += "Xft.antialias: ";
     if(QSettings().value("/qt/useXft", false).toBool())
-      contents += "1";
+      contents += '1';
     else
-      contents += "0";
+      contents += '0';
 
     contents += "\nXft.hinting: ";
     if(hintStyle.isEmpty())
@@ -536,9 +536,9 @@ void runRdb( uint flags )
     else
     {
       if(hintStyle!="hintnone")
-        contents += "1";
+        contents += '1';
       else
-        contents += "0";
+        contents += '0';
       contents += "\nXft.hintstyle: " + hintStyle + '\n';
     }
     if(!subPixel.isEmpty())

@@ -348,7 +348,7 @@ void ExtensionManager::updateMenubar()
         return;
     }
 
-    // we need to make sure the panel is tall enough to accomodate the
+    // we need to make sure the panel is tall enough to accommodate the
     // menubar! an easy way to find out the height of a menu: make one ;)
     KMenuBar tmpmenu;
     tmpmenu.insertItem("Aaron Seigo");

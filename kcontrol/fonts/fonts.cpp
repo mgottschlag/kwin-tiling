@@ -592,7 +592,7 @@ KFonts::KFonts(QWidget *parent, const QStringList &args)
     fontUseList.append(i);
     connect(i, SIGNAL(fontSelected(const QFont &)), SLOT(fontSelected()));
 
-    QLabel * fontUse = new QLabel(name+":", this);
+    QLabel * fontUse = new QLabel(name+':', this);
     fontUse->setWhatsThis( *quickHelpIt++);
 
     fontUseLayout->addWidget(fontUse, count, 0);

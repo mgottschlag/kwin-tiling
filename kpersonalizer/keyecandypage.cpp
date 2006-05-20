@@ -485,8 +485,8 @@ void KEyeCandyPage::enablePreviewOther(bool enable){
 /** as the preview entries in the rc files (konqiconviewrc and kdesktoprc) are a string list and
 this list would be overwritten by the three different possibilities, we just set bool values
 and ask them here, set the according string list here.
-kdesktoprc's stringlist holds the preview-types wich are supposed to be shown, while konquiconviewrc's
-one holds the types, wich are NOT supposed to be shown. We need to take care of that here, too.*/
+kdesktoprc's stringlist holds the preview-types which are supposed to be shown, while konquiconviewrc's
+one holds the types, which are NOT supposed to be shown. We need to take care of that here, too.*/
 void KEyeCandyPage::enablePreview(bool currSettings){
 	QStringList desktopPreviews;
 	QStringList konquerorNoPreviews;

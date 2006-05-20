@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Plasma
 {
-    // TODO: these shoudl be moved to a plasma or general definitions header at
+    // TODO: these should be moved to a plasma or general definitions header at
     // some point. they don't belong in utils.h really
     enum ScreenEdge { NoEdge = 0, TopEdge, TopRightEdge, RightEdge,
                       BottomRightEdge, BottomEdge, BottomLeftEdge, LeftEdge,
@@ -107,7 +107,7 @@ KDE_EXPORT QPoint popupPosition(Plasma::Position d,
                                 const QPoint& offset = QPoint(0, 0));
 
 /**
- * Calculate an acceptable inverse of the given color wich will be used
+ * Calculate an acceptable inverse of the given color which will be used
  * as the shadow color.
  */
 KDE_EXPORT QColor shadowColor(const QColor& c);

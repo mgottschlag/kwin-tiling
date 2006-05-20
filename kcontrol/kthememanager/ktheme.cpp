@@ -99,7 +99,7 @@ bool KTheme::load( const KUrl & url )
     setName( QFileInfo( url.fileName() ).baseName() );
 
     // unpack the tarball
-    QString location = m_kgd->saveLocation( "themes", m_name + "/" );
+    QString location = m_kgd->saveLocation( "themes", m_name + '/' );
     KTar tar( tmpFile );
     tar.open( QIODevice::ReadOnly );
     tar.directory()->copyTo( location );
@@ -345,7 +345,7 @@ QString KTheme::createYourself( bool pack )
     m_root.appendChild( fontsElem );
 
     // Save the XML
-    QFile file( m_kgd->saveLocation( "themes", m_name + "/" ) + m_name + ".xml" );
+    QFile file( m_kgd->saveLocation( "themes", m_name + '/' ) + m_name + ".xml" );
     if ( file.open( QIODevice::WriteOnly ) ) {
         QTextStream stream( &file );
         m_dom.save( stream, 2 );
@@ -359,9 +359,9 @@ QString KTheme::createYourself( bool pack )
         KTar tar( m_kgd->saveLocation( "themes" ) + m_name + ".kth", "application/x-gzip" );
         tar.open( QIODevice::WriteOnly );
 
-        kDebug() << "Packing everything under: " << m_kgd->saveLocation( "themes", m_name + "/" ) << endl;
+        kDebug() << "Packing everything under: " << m_kgd->saveLocation( "themes", m_name + '/' ) << endl;
 
-        if ( tar.addLocalDirectory( m_kgd->saveLocation( "themes", m_name + "/" ), QString() ) )
+        if ( tar.addLocalDirectory( m_kgd->saveLocation( "themes", m_name + '/' ), QString() ) )
             result = tar.fileName();
 
         tar.close();
@@ -376,7 +376,7 @@ void KTheme::apply()
 {
     kDebug() << "Going to apply theme: " << m_name << endl;
 
-    QString themeDir = m_kgd->findResourceDir( "themes", m_name + "/" + m_name + ".xml") + m_name + "/";
+    QString themeDir = m_kgd->findResourceDir( "themes", m_name + '/' + m_name + ".xml") + m_name + '/';
     kDebug() << "Theme dir: " << themeDir << endl;
 
     // 2. Background theme
@@ -789,22 +789,22 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
 
     if ( section == "desktop" )
     {
-        if ( copyFile( fi.absoluteFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/desktop/" ) + "/" + fi.fileName() ) )
+        if ( copyFile( fi.absoluteFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/desktop/" ) + '/' + fi.fileName() ) )
             return "theme:/wallpapers/desktop/" + fi.fileName();
     }
     else if ( section == "sounds" )
     {
-        if ( copyFile( fi.absoluteFilePath(), m_kgd->saveLocation( "themes", m_name + "/sounds/" ) + "/" + fi.fileName() ) )
+        if ( copyFile( fi.absoluteFilePath(), m_kgd->saveLocation( "themes", m_name + "/sounds/" ) + '/' + fi.fileName() ) )
             return "theme:/sounds/" + fi.fileName();
     }
     else if ( section == "konqueror" )
     {
-        if ( copyFile( fi.absoluteFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/konqueror/" ) + "/" + fi.fileName() ) )
+        if ( copyFile( fi.absoluteFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/konqueror/" ) + '/' + fi.fileName() ) )
             return "theme:/wallpapers/konqueror/" + fi.fileName();
     }
     else if ( section == "panel" )
     {
-        if ( copyFile( fi.absoluteFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/panel/" ) + "/" + fi.fileName() ) )
+        if ( copyFile( fi.absoluteFilePath(), m_kgd->saveLocation( "themes", m_name + "/wallpapers/panel/" ) + '/' + fi.fileName() ) )
             return "theme:/wallpapers/panel/" + fi.fileName();
     }
     else
@@ -816,7 +816,7 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
 QString KTheme::unprocessFilePath( const QString & section, QString path )
 {
     if ( path.startsWith( "theme:/" ) )
-        return path.replace( QRegExp( "^theme:/" ), m_kgd->findResourceDir( "themes", m_name + "/" + m_name + ".xml") + m_name + "/" );
+        return path.replace( QRegExp( "^theme:/" ), m_kgd->findResourceDir( "themes", m_name + '/' + m_name + ".xml") + m_name + '/' );
 
     if ( QFile::exists( path ) )
         return path;
@@ -851,7 +851,7 @@ void KTheme::setVersion( const QString & version )
 
 void KTheme::addPreview()
 {
-    QString file = m_kgd->saveLocation( "themes", m_name + "/" ) + m_name + ".preview.png";
+    QString file = m_kgd->saveLocation( "themes", m_name + '/' ) + m_name + ".preview.png";
     kDebug() << "Adding preview: " << file << endl;
     QPixmap snapshot = QPixmap::grabWindow( QX11Info::appRootWindow() );
     snapshot.save( file, "PNG" );

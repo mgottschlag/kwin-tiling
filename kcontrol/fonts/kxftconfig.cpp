@@ -444,7 +444,7 @@ KXftConfig::KXftConfig(int required, bool system)
             m_file=defaultPath;
     }
     else
-        m_file= QString(QDir::homePath()+"/"+defaultUserFile);
+        m_file= QString(QDir::homePath()+'/'+defaultUserFile);
 #endif
 #ifndef HAVE_FONTCONFIG
     m_symbolFamilies.setAutoDelete(true);

@@ -30,7 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QDropEvent>
 
 /**
- * Button that shows the deskop
+ * Button that shows the desktop
  */
 class DesktopButton : public PanelButton
 {

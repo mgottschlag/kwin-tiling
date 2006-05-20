@@ -278,7 +278,7 @@ ModuleTreeItem::ModuleTreeItem(Q3ListViewItem *parent, ConfigModule *module)
 {
   if (_module)
         {
-          setText(0, " " + module->moduleName());
+          setText(0, ' ' + module->moduleName());
           setPixmap(0, appIcon(module->icon()));
         }
 }
@@ -291,20 +291,20 @@ ModuleTreeItem::ModuleTreeItem(Q3ListView *parent, ConfigModule *module)
 {
   if (_module)
         {
-          setText(0, " " + module->moduleName());
+          setText(0, ' ' + module->moduleName());
           setPixmap(0, appIcon(module->icon()));
         }
 }
 
 ModuleTreeItem::ModuleTreeItem(Q3ListViewItem *parent, const QString& text)
-  : Q3ListViewItem(parent, " " + text)
+  : Q3ListViewItem(parent, ' ' + text)
   , _module(0)
   , _tag(QString())
   , _maxChildIconWidth(0)
   {}
 
 ModuleTreeItem::ModuleTreeItem(Q3ListView *parent, const QString& text)
-  : Q3ListViewItem(parent, " " + text)
+  : Q3ListViewItem(parent, ' ' + text)
   , _module(0)
   , _tag(QString())
   , _maxChildIconWidth(0)
@@ -364,7 +364,7 @@ void ModuleTreeItem::setGroup(const QString &path)
   if (group && group->isValid())
   {
      setPixmap(0, appIcon(group->icon()));
-     setText(0, " " + group->caption());
+     setText(0, ' ' + group->caption());
      setTag(defName);
      setCaption(group->caption());
   }
@@ -372,7 +372,7 @@ void ModuleTreeItem::setGroup(const QString &path)
   {
      // Should not happen: Installation problem
      // Let's try to fail softly.
-     setText(0, " " + defName);
+     setText(0, ' ' + defName);
      setTag(defName);
   }
 }

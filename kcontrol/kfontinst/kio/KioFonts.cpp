@@ -30,7 +30,7 @@
 
     NOTE: Large sections of this code are copied from kio_file
           -- can't just inherit from kio_file as kio_file uses "error(...);
-             return;" So there is no way to know if an error occured!
+             return;" So there is no way to know if an error occurred!
 
  ***************************************************************************/
 
@@ -1135,7 +1135,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
             }
             cmd+="cp -f ";
             cmd+=QFile::encodeName(KProcess::quote(tmpFileC));
-            cmd+=" ";
+            cmd+=' ';
             cmd+=QFile::encodeName(KProcess::quote(destC));
             cmd+=" && chmod 0644 ";
             cmd+=destC;
@@ -1356,7 +1356,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
                     {
                         cmd+="cp -f ";
                         cmd+=QFile::encodeName(KProcess::quote(fIt.key()));
-                        cmd+=" ";
+                        cmd+=' ';
                         cmd+=QFile::encodeName(KProcess::quote(itsFolders[destFolder].location+modifyName(fIt.data())));
                         int s=getSize(QFile::encodeName(fIt.key()));
                         if(s>0)
@@ -1551,15 +1551,15 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
 
                     cmd+="mv -f ";
                     cmd+=QFile::encodeName(KProcess::quote(fIt.key()));
-                    cmd+=" ";
+                    cmd+=' ';
                     cmd+=destFile;
                     cmd+=" && chmod -f 0644 ";
                     cmd+=destFile;
                     cmd+=" && chown -f ";
                     cmd+=userId;
-                    cmd+=":";
+                    cmd+=':';
                     cmd+=groupId;
-                    cmd+=" ";
+                    cmd+=' ';
                     cmd+=destFile;
 
                     QString sysDir,
@@ -1620,7 +1620,7 @@ void CKioFonts::del(const KUrl &url, bool)
                 QString file(getFcString(*it, FC_FILE));
 
                 modifiedDirs.add(Misc::getDir(file));
-                cmd+=" ";
+                cmd+=' ';
                 cmd+=QFile::encodeName(KProcess::quote(file));
 
                 KUrl::List urls;
@@ -1634,7 +1634,7 @@ void CKioFonts::del(const KUrl &url, bool)
 
                     for(uIt=urls.begin(); uIt!=uEnd; ++uIt)
                     {
-                        cmd+=" ";
+                        cmd+=' ';
                         cmd+=QFile::encodeName(KProcess::quote((*uIt).path()));
                     }
                 }
@@ -1783,7 +1783,7 @@ void CKioFonts::createRootRefreshCmd(QByteArray &cmd, const CDirList &dirs, bool
             {
                 cmd+=" && kfontinst ";
                 cmd+=tmpCmd;
-                cmd+=" ";
+                cmd+=' ';
                 cmd+=QFile::encodeName(KProcess::quote(*it));
             }
         }
@@ -1792,7 +1792,7 @@ void CKioFonts::createRootRefreshCmd(QByteArray &cmd, const CDirList &dirs, bool
     {
         cmd+=" && kfontinst ";
         cmd+=itsNrsKfiParams;
-        cmd+=" ";
+        cmd+=' ';
         cmd+=QFile::encodeName(KProcess::quote(itsFolders[FOLDER_SYS].location));
     }
 }

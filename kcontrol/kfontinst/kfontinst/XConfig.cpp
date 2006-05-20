@@ -222,7 +222,7 @@ static void processPath(char *str, QString &path, bool &unscaled)
     path=str;
 
     if(str[strlen(str)-1]!='/')
-        path+="/";
+        path+='/';
 }
 
 inline bool isWhitespace(char ch)
@@ -805,15 +805,15 @@ bool CXConfig::createFontsDotDir(const QString &dir, CFontEngine &fe)
                                      xlfd+=QFile::encodeName(fInfo.fileName());
                                      xlfd+=" -";
                                      xlfd+=fe.getFoundry().toLatin1();
-                                     xlfd+="-";
+                                     xlfd+='-';
                                      xlfd+=family.toLatin1();
-                                     xlfd+="-";
+                                     xlfd+='-';
                                      xlfd+=CFontEngine::weightStr(fe.getWeight()).toLatin1();
-                                     xlfd+="-";
+                                     xlfd+='-';
                                      xlfd+=CFontEngine::italicStr(fe.getItalic()).toLatin1();
-                                     xlfd+="-";
+                                     xlfd+='-';
                                      xlfd+=CFontEngine::widthStr(fe.getWidth()).toLatin1();
-                                     xlfd+="-";
+                                     xlfd+='-';
                                      if(!fe.getAddStyle().isEmpty())
                                          xlfd+=fe.getAddStyle().toLatin1();
                                      //CPD: TODO Bitmap only ttfs!!!
@@ -850,8 +850,8 @@ bool CXConfig::createFontsDotDir(const QString &dir, CFontEngine &fe)
                             else
                             {
                                 QByteArray entry(QFile::encodeName(fInfo.fileName()));
-    
-                                entry+=" ";
+
+                                entry+=' ';
                                 entry+=fe.getXlfdBmp().toLatin1();
                                 fdir.append(QString(entry));
                                 addedFd=true;
@@ -972,9 +972,9 @@ CXConfig::CFontsFile::CFontsFile(const char *file)
 
                     if(entry)
                         if(mod.isEmpty())
-                            entry->xlfds.append(entry->filename+" "+xlfd);
+                            entry->xlfds.append(entry->filename+' '+xlfd);
                         else
-                            entry->xlfds.append(mod+entry->filename+" "+xlfd);
+                            entry->xlfds.append(mod+entry->filename+' '+xlfd);
                 }
             }
         }

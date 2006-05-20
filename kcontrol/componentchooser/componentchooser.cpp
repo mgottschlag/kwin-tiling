@@ -350,7 +350,7 @@ void CfgBrowser::save(KConfig *) {
 	   if (m_browserService && (exec == m_browserExec))
 	      exec = m_browserService->storageId(); // Use service
 	   else
-	      exec = "!" + exec; // Litteral command
+	      exec = '!' + exec; // Litteral command
 	}
 	config->writePathEntry("BrowserApplication", exec, KConfigBase::Normal|KConfigBase::Global);
 	config->sync();

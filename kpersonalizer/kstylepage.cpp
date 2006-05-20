@@ -418,7 +418,7 @@ void KStylePage::getColors(colorSet *set, bool colorfile ){
 
 /** Test widget- and kwin- styles for availability */
 void KStylePage::getAvailability() {
-	// test, wich styles are available
+	// test, which styles are available
 	kde_keramik_exist = kde_hc_exist = kde_def_exist = cde_exist
 		= kde_plastik_exist = win_exist = platinum_exist 
 		= kde_light_exist = false;
@@ -441,7 +441,7 @@ void KStylePage::getAvailability() {
 	if (!win_exist) win->setVisible(false);
 	if (!platinum_exist) platinum->setVisible(false);
 
-	// test, wich KWin-styles are available
+	// test, which KWin-styles are available
 	kwin_keramik_exist = kwin_system_exist = kwin_plastik_exist
 			= kwin_default_exist = kwin_win_exist
 			= kwin_cde_exist = kwin_quartz_exist = false;
@@ -460,7 +460,7 @@ void KStylePage::getAvailability() {
 		kwin_quartz_exist = true;
 	kwin_default_exist = true;	// we can't check for a .desktop-file for the old default because there is none
 
-	// check, wich Icon-themes are available
+	// check, which Icon-themes are available
 	icon_crystalsvg_exist = icon_kdeclassic_exist = icon_Locolor_exist = false;
 	QStringList icons(KIconTheme::list());
 	for (QStringList::iterator it=icons.begin(); it != icons.end(); it++) {

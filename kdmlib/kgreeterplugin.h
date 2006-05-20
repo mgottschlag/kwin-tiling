@@ -272,13 +272,13 @@ public:
     virtual void revive() = 0;
 
     /**
-     * Clear any edit widgets, particularily anything set by setUser.
+     * Clear any edit widgets, particularly anything set by setUser.
      * Will be called only when not running.
      */
     virtual void clear() = 0;
 
     /**
-     * Obtain the QLayoutItem containg the widget(s) to actually handle the
+     * Obtain the QLayoutItem containing the widget(s) to actually handle the
      * conversation. See QLayout and QWidgetItem for possible implementations.
      */
     QLayoutItem *getLayoutItem() const { return layoutItem; }

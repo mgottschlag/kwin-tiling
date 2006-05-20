@@ -190,19 +190,19 @@ QString mouseKeysShortcut (Display *display) {
   HyperMask &= ~(mods | AltGrMask | MetaMask | SuperMask);
 
   if ((modifiers & AltGrMask) != 0)
-    keyname = i18n("AltGraph") + "+" + keyname;
+    keyname = i18n("AltGraph") + '+' + keyname;
   if ((modifiers & HyperMask) != 0)
-    keyname = i18n("Hyper") + "+" + keyname;
+    keyname = i18n("Hyper") + '+' + keyname;
   if ((modifiers & SuperMask) != 0)
-    keyname = i18n("Super") + "+" + keyname;
+    keyname = i18n("Super") + '+' + keyname;
   if ((modifiers & WinMask) != 0)
-    keyname = QKeySequence(Qt::META).toString() + "+" + keyname;
+    keyname = QKeySequence(Qt::META).toString() + '+' + keyname;
   if ((modifiers & AltMask) != 0)
-    keyname = QKeySequence(Qt::ALT).toString() + "+" + keyname;
+    keyname = QKeySequence(Qt::ALT).toString() + '+' + keyname;
   if ((modifiers & ControlMask) != 0)
-    keyname = QKeySequence(Qt::CTRL).toString() + "+" + keyname;
+    keyname = QKeySequence(Qt::CTRL).toString() + '+' + keyname;
   if ((modifiers & ShiftMask) != 0)
-    keyname = QKeySequence(Qt::SHIFT).toString() + "+" + keyname;
+    keyname = QKeySequence(Qt::SHIFT).toString() + '+' + keyname;
 
   QString result;
   if ((modifiers & ScrollMask) != 0)

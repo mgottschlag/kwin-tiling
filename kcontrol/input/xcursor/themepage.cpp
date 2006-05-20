@@ -384,7 +384,7 @@ const QStringList ThemePage::getThemeBaseDirs() const
 	// Get the search patch from Xcursor
 	QString path = XcursorLibraryPath();
 #endif
-	// Expand all occurences of ~ to the home dir
+	// Expand all occurrences of ~ to the home dir
 	path.replace( "~/", QDir::homePath() + '/' );
 	return path.split( ':');
 }

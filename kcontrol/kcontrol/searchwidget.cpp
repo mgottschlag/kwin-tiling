@@ -202,7 +202,7 @@ void SearchWidget::populateResultListBox(const QString& s)
 void SearchWidget::slotSearchTextChanged(const QString & s)
 {
   QString regexp = s;
-  regexp += "*";
+  regexp += '*';
   populateKeyListBox(regexp);
 }
 

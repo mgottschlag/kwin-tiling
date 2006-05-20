@@ -705,7 +705,7 @@ DefineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 		return;
 	}
 
-	/* Indicate that we want to start at the begining */
+	/* Indicate that we want to start at the beginning */
 	ifnet.ib_next = (struct ipb *)1;
 
 	while (ifnet.ib_next) {

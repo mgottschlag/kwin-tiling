@@ -167,7 +167,7 @@ class CFontEngine
     static QString spacingStr(ESpacing s);
 
     //
-    // General functions - these should be used instead of specfic ones below...
+    // General functions - these should be used instead of specific ones below...
     //
     bool            openFont(const QString &file, int face=0);
     void            closeFont();

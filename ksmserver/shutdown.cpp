@@ -259,7 +259,7 @@ void KSMServer::saveYourselfDone( KSMClient* client, bool success )
 {
     if ( state == Idle ) {
         // State saving when it's not shutdown or checkpoint. Probably
-        // a shutdown was cancelled and the client is finished saving
+        // a shutdown was canceled and the client is finished saving
         // only now. Discard the saved state in order to avoid
         // the saved data building up.
         QStringList discard = client->discardCommand();

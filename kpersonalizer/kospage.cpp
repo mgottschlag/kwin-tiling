@@ -104,7 +104,7 @@ void KOSPage::saveCheckState(bool currSettings){
 	if(currSettings){
 		// Set the path for the keysscheme resource files
 		KGlobal::dirs()->addResourceType("keys", KStandardDirs::kde_default("data")+"kcmkeys");
-		// write the settings to the configfiles, depending on wich radiobutton is checked
+		// write the settings to the configfiles, depending on which radiobutton is checked
 		if(rb_kde->isChecked()){
 			writeKDE();
 			emit selectedOS("KDE");	// send a signal to be caught by the KStylePage to set the according style by default depending on the OS selection
