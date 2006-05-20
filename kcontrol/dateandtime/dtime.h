@@ -85,11 +85,11 @@ private:
   HMSTimeWidget	*second;
 
   Kclock	*kclock;
-  
+
   QTime		time;
   QDate		date;
   QTimer	internalTimer;
-  
+
   QString	BufS;
   int		BufI;
   bool		refresh;
@@ -103,13 +103,13 @@ class Kclock : public QWidget
 public:
   Kclock( QWidget *parent=0, const char *name=0 ) 
     : QWidget(parent, name) {};
-  
+
   void setTime(const QTime&);
-  
+
 protected:
   virtual void	paintEvent( QPaintEvent *event );
-  
-  
+
+
 private:
   QTime		time;
 };
@@ -120,7 +120,7 @@ public:
   KStrictIntValidator(int bottom, int top, QWidget * parent,
 		      const char * name = 0 )
     : QIntValidator(bottom, top, parent, name) {};
-  
+
   QValidator::State validate( QString & input, int & d ) const; 
 };
 
