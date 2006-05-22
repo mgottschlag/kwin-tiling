@@ -36,7 +36,7 @@
 #include <kpushbutton.h>
 #include <kstandarddirs.h>
 #include <ktar.h>
-#include <ktrader.h>
+#include <kservicetypetrader.h>
 #include <k3urldrag.h>
 #include <kio/netaccess.h>
 
@@ -383,7 +383,7 @@ void SplashInstaller::slotSetTheme(int id)
         infoTxt += "</qt>";
 
         QString pluginName( cnf.readEntry( "Engine", "Default" ) ); // Perhaps no default is better?
-        if ((KTrader::self()->query("KSplash/Plugin", QString("[X-KSplash-PluginName] == '%1'").arg(pluginName))).isEmpty())
+        if ((KServiceTypeTrader::self()->query("KSplash/Plugin", QString("[X-KSplash-PluginName] == '%1'").arg(pluginName))).isEmpty())
         {
           enabled = false;
           error = i18n("This theme requires the plugin %1 which is not installed.", pluginName);

@@ -61,7 +61,7 @@ PanelExeDialog::PanelExeDialog(const QString& title, const QString& description,
 
     ui->m_title->setText(title);
     ui->m_description->setText(description);
-    ui->m_exec->setURL(path);
+    ui->m_exec->setUrl(path);
     ui->m_commandLine->setText(cmd);
     ui->m_inTerm->setChecked(inTerm);
     ui->m_icon->setIconType(K3Icon::Panel, K3Icon::Application);
@@ -171,7 +171,7 @@ void PanelExeDialog::slotTextChanged(const QString &str)
 void PanelExeDialog::slotReturnPressed()
 {
     if (m_partialPath2full.contains(ui->m_exec->url()))
-        ui->m_exec->setURL(m_partialPath2full[ui->m_exec->url()]);
+        ui->m_exec->setUrl(m_partialPath2full[ui->m_exec->url()]);
 }
 
 void PanelExeDialog::slotSelect(const QString& exec)

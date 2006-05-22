@@ -181,7 +181,7 @@ void ServiceButton::dropEvent( QDropEvent* ev )
         if (!uriList.isEmpty())
         {
             KWorkSpace::propagateSessionManager();
-            KRun::run( *_service, uriList );
+            KRun::run( *_service, uriList, topLevelWidget() );
         }
     }
     PanelButton::dropEvent(ev);
@@ -213,7 +213,7 @@ void ServiceButton::performExec()
 
     KUrl::List uriList;
     KWorkSpace::propagateSessionManager();
-    KRun::run( *_service, uriList );
+    KRun::run( *_service, uriList, topLevelWidget() );
 }
 
 void ServiceButton::properties()

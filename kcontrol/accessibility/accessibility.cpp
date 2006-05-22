@@ -89,7 +89,7 @@ void AccessibilityConfig::load(){
    widget->visibleBell->setChecked(bell->readEntry("VisibleBell", false));
    
    bell->setGroup("CustomBell");
-   widget->soundToPlay->setURL(bell->readPathEntry("Sound", ""));
+   widget->soundToPlay->setUrl(bell->readPathEntry("Sound", ""));
 
    bell->setGroup("Visible");
    widget->invertScreen->setChecked(bell->readEntry("Invert", true));

@@ -672,7 +672,7 @@ void KTheme::apply()
 bool KTheme::remove( const QString & name )
 {
     kDebug() << "Going to remove theme: " << name << endl;
-    return KIO::NetAccess::del( KUrl::fromPathOrUrl(KGlobal::dirs()->saveLocation( "themes", name + "/" )), 0L );
+    return KIO::NetAccess::del( KUrl(KGlobal::dirs()->saveLocation( "themes", name + "/" )), 0L );
 }
 
 void KTheme::setProperty( const QString & name, const QString & value, QDomElement parent )
@@ -860,7 +860,7 @@ void KTheme::addPreview()
 bool KTheme::copyFile( const QString & from, const QString & to )
 {
     // we overwrite b/c of restoring the "original" theme
-    return KIO::NetAccess::file_copy( KUrl::fromPathOrUrl(from), KUrl::fromPathOrUrl(to), -1, true /*overwrite*/ );
+    return KIO::NetAccess::file_copy( KUrl(from), KUrl(to), -1, true /*overwrite*/ );
 }
 
 QString KTheme::findResource( const QString & section, const QString & path )

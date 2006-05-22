@@ -39,7 +39,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
 ,configFile(config)
 ,filesCount(0)
 ,connectionsCount(0)
-,logFileName("/var/log/samba.log",this)
+,logFileName(KUrl("/var/log/samba.log"),this)
 ,label(i18n("Samba log file: "),this)
 ,viewHistory(this)
 ,showConnOpen(i18n("Show opened connections"),this)
@@ -92,7 +92,7 @@ LogView::LogView(QWidget *parent,KConfig *config, const char *name)
      " on this page. The log file (shown above) will be read to obtain the"
      " events logged by samba.") );
 
-   logFileName.setURL("/var/log/samba.log");
+   logFileName.setUrl(KUrl("/var/log/samba.log"));
 
    viewHistory.setAllColumnsShowFocus(true);
    viewHistory.setFocusPolicy(Qt::ClickFocus);
@@ -134,7 +134,7 @@ void LogView::loadSettings()
 {
    if (configFile==0) return;
    configFile->setGroup(LOGGROUPNAME);
-   logFileName.setURL(configFile->readPathEntry( "SambaLogFile", "/var/log/samba.log"));
+   logFileName.setUrl(configFile->readPathEntry( "SambaLogFile", "/var/log/samba.log"));
 
    showConnOpen.setChecked(configFile->readEntry( "ShowConnectionOpen", true));
    showConnClose.setChecked(configFile->readEntry( "ShowConnectionClose", false));

@@ -531,7 +531,7 @@ int Minicli::runCommand()
             if (service && service->isValid() && service->type() == "Application")
             {
               notifyServiceStarted(service);
-              KRun::run(*service, KUrl::List());
+              KRun::run(*service, KUrl::List(), this);
               return 0;
             }
           }
@@ -566,7 +566,7 @@ int Minicli::runCommand()
           if (service && service->isValid() && service->type() == "Application")
           {
             notifyServiceStarted(service);
-            KRun::run(*service, KUrl::List());
+            KRun::run(*service, KUrl::List(), this);
             return 0;
           }
 
@@ -574,7 +574,7 @@ int Minicli::runCommand()
           if (service && service->isValid() && service->type() == "Application")
           {
             notifyServiceStarted(service);
-            KRun::run(*service, KUrl::List());
+            KRun::run(*service, KUrl::List(), this);
             return 0;
           }
 

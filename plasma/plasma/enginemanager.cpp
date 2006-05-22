@@ -42,7 +42,7 @@ Plasma::DataEngine* DataEngineManager::engine(const QString& name)
     }
 
     // load the engine, add it to the engines
-    KTrader::OfferList offers = KTrader::self()->query("Plasma/Engine");
+    KService::List offers = KTrader::self()->query("Plasma/Engine");
 
     if (offers.isEmpty())
     {

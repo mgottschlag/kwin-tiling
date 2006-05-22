@@ -20,7 +20,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
-#include <ktrader.h>
+#include <kservicetypetrader.h>
 #include <kwin.h>
 #include <dcopclient.h>
 
@@ -359,7 +359,7 @@ ThemeEngine *KSplash::_loadThemeEngine( const QString& pluginName, const QString
   else
   {
     // Fancier way of locating plugins.
-    KService::List list= KTrader::self()->query("KSplash/Plugin", QString("[X-KSplash-PluginName] == '%1'").arg(pluginName));
+    KService::List list= KServiceTypeTrader::self()->query("KSplash/Plugin", QString("[X-KSplash-PluginName] == '%1'").arg(pluginName));
     KService::Ptr ptr;
     if (!list.isEmpty())
     {

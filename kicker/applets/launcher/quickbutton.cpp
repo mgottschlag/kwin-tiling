@@ -118,9 +118,9 @@ QuickURL::QuickURL(const QString &u)
 void QuickURL::run() const
 {  KWorkSpace::propagateSessionManager();   // is this needed?
    if (_service)
-      KRun::run(*(_service), KUrl::List());
+      KRun::run(*(_service), KUrl::List(), 0);
    else
-      new KRun(_kurl, 0, _kurl.isLocalFile());
+      new KRun(_kurl, 0, 0, _kurl.isLocalFile());
 }
 
 //similar to MimeType::pixmapForURL

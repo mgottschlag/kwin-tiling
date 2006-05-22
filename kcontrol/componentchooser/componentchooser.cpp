@@ -34,7 +34,7 @@
 #include <kopenwith.h>
 #include <ksimpleconfig.h>
 #include <kstandarddirs.h>
-#include <ktrader.h>
+#include <kmimetypetrader.h>
 #include <kurlrequester.h>
 
 class MyListBoxItem: public Q3ListBoxText
@@ -83,9 +83,9 @@ void CfgComponent::load(KConfig *cfg) {
 	QString ServiceTypeToConfigure=cfg->readEntry("ServiceTypeToConfigure");
 
 	QString MimeTypeOfInterest=cfg->readEntry("MimeTypeOfInterest");
-	KTrader::OfferList offers = KTrader::self()->query(MimeTypeOfInterest, "'"+ServiceTypeToConfigure+"' in ServiceTypes");
+	KService::List offers = KMimeTypeTrader::self()->query(MimeTypeOfInterest, "'"+ServiceTypeToConfigure+"' in ServiceTypes");
 
-	for (KTrader::OfferList::Iterator tit = offers.begin(); tit != offers.end(); ++tit)
+	for (KService::List::Iterator tit = offers.begin(); tit != offers.end(); ++tit)
         {
 		ComponentSelector->addItem((*tit)->name());
 		m_lookupDict.insert((*tit)->name(),new QString((*tit)->desktopEntryName()));

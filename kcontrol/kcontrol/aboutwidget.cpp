@@ -186,7 +186,7 @@ void AboutWidget::updatePixmap()
         }
         content += "</table>";
     }
-    _viewer->begin(KUrl::fromPathOrUrl(file ));
+    _viewer->begin(KUrl(file ));
     _viewer->write( res.arg( content ) );
     _viewer->end();
 }

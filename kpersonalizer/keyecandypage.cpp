@@ -35,7 +35,7 @@
 #include <krun.h>
 #include <kmessagebox.h>
 #include <kiconloader.h>
-#include <ktrader.h>
+#include <kservicetypetrader.h>
 #include <kglobalsettings.h>
 
 #include <stdlib.h>
@@ -490,8 +490,8 @@ one holds the types, which are NOT supposed to be shown. We need to take care of
 void KEyeCandyPage::enablePreview(bool currSettings){
 	QStringList desktopPreviews;
 	QStringList konquerorNoPreviews;
-	KTrader::OfferList plugins = KTrader::self()->query("ThumbCreator");
-	for (KTrader::OfferList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it) {
+	KService::List plugins = KServiceTypeTrader::self()->query("ThumbCreator");
+	for (KService::List::ConstIterator it = plugins.begin(); it != plugins.end(); ++it) {
 		if(prevOther){
 			desktopPreviews.append((*it)->desktopEntryName());
 			kDebug() << "Adding Preview:" << (*it)->desktopEntryName() << endl;

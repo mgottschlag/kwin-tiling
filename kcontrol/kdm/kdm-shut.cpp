@@ -181,8 +181,8 @@ void KDMSessionsWidget::save()
     writeSD(sdrcombo);
 
     config->setGroup("Shutdown");
-    config->writeEntry("HaltCmd", shutdown_lined->url(), KConfigBase::Persistent);
-    config->writeEntry("RebootCmd", restart_lined->url(), KConfigBase::Persistent);
+    config->writeEntry("HaltCmd", shutdown_lined->url().url(), KConfigBase::Persistent);
+    config->writeEntry("RebootCmd", restart_lined->url().url(), KConfigBase::Persistent);
 
     config->writeEntry("BootManager", bm_combo->currentId());
 }
@@ -209,8 +209,8 @@ void KDMSessionsWidget::load()
   readSD(sdrcombo, "Root");
 
   config->setGroup("Shutdown");
-  restart_lined->setURL(config->readEntry("RebootCmd", "/sbin/reboot"));
-  shutdown_lined->setURL(config->readEntry("HaltCmd", "/sbin/halt"));
+  restart_lined->setUrl(config->readEntry("RebootCmd", "/sbin/reboot"));
+  shutdown_lined->setUrl(config->readEntry("HaltCmd", "/sbin/halt"));
 
   bm_combo->setCurrentId(config->readEntry("BootManager", "None"));
 }
@@ -219,8 +219,8 @@ void KDMSessionsWidget::load()
 
 void KDMSessionsWidget::defaults()
 {
-  restart_lined->setURL("/sbin/reboot");
-  shutdown_lined->setURL("/sbin/halt");
+  restart_lined->setUrl(KUrl("/sbin/reboot"));
+  shutdown_lined->setUrl(KUrl("/sbin/halt"));
 
   sdlcombo->setCurrentIndex(SdAll);
   sdrcombo->setCurrentIndex(SdRoot);
