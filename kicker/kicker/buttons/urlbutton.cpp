@@ -77,7 +77,7 @@ void URLButton::initialize( const QString& _url )
        KDesktopFile df(file);
        df.writeEntry("Encoding", "UTF-8");
        df.writeEntry("Type","Link");
-       df.writeEntry("Name", url.prettyURL());
+       df.writeEntry("Name", url.prettyUrl());
        if (url.isLocalFile())
        {
           KFileItem item( KFileItem::Unknown, KFileItem::Unknown, url );
@@ -104,7 +104,7 @@ void URLButton::initialize( const QString& _url )
 
 void URLButton::saveConfig( KConfigGroup& config ) const
 {
-    config.writePathEntry("URL", fileItem->url().prettyURL());
+    config.writePathEntry("URL", fileItem->url().prettyUrl());
 }
 
 void URLButton::setToolTip()
@@ -127,8 +127,8 @@ void URLButton::setToolTip()
     }
     else
     {
-        QWidget::setToolTip(fileItem->url().prettyURL());
-        setTitle(fileItem->url().prettyURL());
+        QWidget::setToolTip(fileItem->url().prettyUrl());
+        setTitle(fileItem->url().prettyUrl());
     }
 }
 
@@ -199,7 +199,7 @@ void URLButton::properties()
          || !fileItem->url().isValid())
     {
         KMessageBox::error( 0L, i18n("The file %1 does not exist",
-	                             fileItem->url().prettyURL()) );
+	                             fileItem->url().prettyUrl()) );
         return;
     }
 

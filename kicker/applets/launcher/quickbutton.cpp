@@ -81,7 +81,7 @@ QuickURL::QuickURL(const QString &u)
          } else {
          }
       }
-   } else if (!KUrl::isRelativeURL(_menuId)) {
+   } else if (!KUrl::isRelativeUrl(_menuId)) {
       // Full URL
       _kurl = _menuId;
    } else {
@@ -110,7 +110,7 @@ QuickURL::QuickURL(const QString &u)
          m_genericName = _service->genericName();
       }
    } else {
-      _comment = _kurl.prettyURL();
+      _comment = _kurl.prettyUrl();
    }
    DEBUGSTR<<"QuickURL::QuickURL("<<u<<") END"<<endl<<flush;
 }

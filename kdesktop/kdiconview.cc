@@ -1289,7 +1289,7 @@ void KDIconView::slotAboutToCreate(const QPoint &pos, const QList<KIO::CopyInfo>
 
     for ( ; it!= files.end() ; ++it )
     {
-        kDebug(1214) << "KDIconView::saveFuturePosition x=" << m_lastDropPos.x() << " y=" << m_lastDropPos.y() << " filename=" << (*it).uDest.prettyURL() << endl;
+        kDebug(1214) << "KDIconView::saveFuturePosition x=" << m_lastDropPos.x() << " y=" << m_lastDropPos.y() << " filename=" << (*it).uDest.prettyUrl() << endl;
         if ((*it).uDest.isLocalFile() && ((*it).uDest.directory() == dir))
         {
            m_dotDirectory->setGroup( iconPositionGroupPrefix() + (*it).uDest.fileName() );

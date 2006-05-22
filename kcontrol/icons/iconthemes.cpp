@@ -165,7 +165,7 @@ void IconThemesConfig::installNewTheme()
 {
   KUrl themeURL = KUrlRequesterDlg::getURL(QString(), this,
                                            i18n("Drag or Type Theme URL"));
-  kDebug() << themeURL.prettyURL() << endl;
+  kDebug() << themeURL.prettyUrl() << endl;
 
   if (themeURL.url().isEmpty()) return;
 
@@ -176,11 +176,11 @@ void IconThemesConfig::installNewTheme()
     QString sorryText;
     if (themeURL.isLocalFile())
        sorryText = i18n("Unable to find the icon theme archive %1.",
-                        themeURL.prettyURL());
+                        themeURL.prettyUrl());
     else
        sorryText = i18n("Unable to download the icon theme archive;\n"
                         "please check that address %1 is correct.",
-                        themeURL.prettyURL());
+                        themeURL.prettyUrl());
     KMessageBox::sorry(this, sorryText);
     return;
   }

@@ -144,7 +144,7 @@ bool CFontViewPart::openURL(const KUrl &url)
         if (ret)
         {
             emit completed();
-            emit setWindowCaption(m_url.prettyURL());
+            emit setWindowCaption(m_url.prettyUrl());
         }
         return ret;
     }
@@ -160,7 +160,7 @@ bool CFontViewPart::openFile()
     if(isFonts)
         FcInitReinitialize();
 
-    itsPreview->showFont(KUrl::fromPathOrURL(isFonts ? m_url.url() :m_file));
+    itsPreview->showFont(KUrl::fromPathOrUrl(isFonts ? m_url.url() :m_file));
 
     if(!isFonts && itsPreview->engine().getNumIndexes()>1)
     {

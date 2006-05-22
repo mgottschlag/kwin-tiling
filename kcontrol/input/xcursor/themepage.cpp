@@ -214,11 +214,11 @@ void ThemePage::installClicked()
 
 		if ( url.isLocalFile() )
 			text = i18n( "Unable to find the cursor theme archive %1.",
-                                     url.prettyURL() );
+                                     url.prettyUrl() );
 		else
 			text = i18n( "Unable to download the cursor theme archive; "
 			             "please check that the address %1 is correct.",
-                                     url.prettyURL() );
+                                     url.prettyUrl() );
 
 		KMessageBox::sorry( this, text );
 		return;

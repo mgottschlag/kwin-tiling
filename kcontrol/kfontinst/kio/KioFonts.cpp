@@ -871,7 +871,7 @@ void CKioFonts::listDir(const KUrl &url)
 
 void CKioFonts::stat(const KUrl &url)
 {
-    KFI_DBUG << "stat " << url.prettyURL() << endl;
+    KFI_DBUG << "stat " << url.prettyUrl() << endl;
 
     if(updateFontList() && checkUrl(url, true))
     {
@@ -879,7 +879,7 @@ void CKioFonts::stat(const KUrl &url)
 
         if(path.isEmpty())
         {
-            error(KIO::ERR_COULD_NOT_STAT, url.prettyURL());
+            error(KIO::ERR_COULD_NOT_STAT, url.prettyUrl());
             return;
         }
 
@@ -913,7 +913,7 @@ void CKioFonts::stat(const KUrl &url)
 
         if(err)
         {
-            error(KIO::ERR_DOES_NOT_EXIST, url.prettyURL());
+            error(KIO::ERR_DOES_NOT_EXIST, url.prettyUrl());
             return;
         }
 
@@ -954,9 +954,9 @@ void CKioFonts::get(const KUrl &url)
 
             emit mimeType("text/plain");
 
-            KFI_DBUG << "hasMetaData(\"thumbnail\"), so return: " << url.prettyURL() << endl;
+            KFI_DBUG << "hasMetaData(\"thumbnail\"), so return: " << url.prettyUrl() << endl;
 
-            stream << url.prettyURL();
+            stream << url.prettyUrl();
             totalSize(array.size());
             data(array);
             processedSize(array.size());
@@ -1004,17 +1004,17 @@ void CKioFonts::get(const KUrl &url)
         KFI_DBUG << "real: " << realPathC << endl;
 
         if (-2==KDE_stat(realPathC.data(), &buff))
-            error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, url.prettyURL());
+            error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, url.prettyUrl());
         else if (S_ISDIR(buff.st_mode))
-            error(KIO::ERR_IS_DIRECTORY, url.prettyURL());
+            error(KIO::ERR_IS_DIRECTORY, url.prettyUrl());
         else if (!S_ISREG(buff.st_mode))
-            error(KIO::ERR_CANNOT_OPEN_FOR_READING, url.prettyURL());
+            error(KIO::ERR_CANNOT_OPEN_FOR_READING, url.prettyUrl());
         else
         {
             int fd = KDE_open(realPathC.data(), O_RDONLY);
 
             if (fd < 0)
-                error(KIO::ERR_CANNOT_OPEN_FOR_READING, url.prettyURL());
+                error(KIO::ERR_CANNOT_OPEN_FOR_READING, url.prettyUrl());
             else
             {
                 // Determine the mimetype of the file to be retrieved, and emit it.
@@ -1034,7 +1034,7 @@ void CKioFonts::get(const KUrl &url)
                     {
 			if (errno == EINTR)
 				continue;
-                        error(KIO::ERR_COULD_NOT_READ, url.prettyURL());
+                        error(KIO::ERR_COULD_NOT_READ, url.prettyUrl());
                         close(fd);
                         if(multiple)
                             ::unlink(realPathC);
@@ -1069,7 +1069,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
 
     if(isHidden(u))
     {
-        error(KIO::ERR_WRITE_ACCESS_DENIED, u.prettyURL());
+        error(KIO::ERR_WRITE_ACCESS_DENIED, u.prettyUrl());
         return;
     }
 
@@ -1089,7 +1089,7 @@ void CKioFonts::put(const KUrl &u, int mode, bool overwrite, bool resume)
 
     if (destExists && !overwrite && !resume)
     {
-        error(KIO::ERR_FILE_ALREADY_EXIST, url.prettyURL());
+        error(KIO::ERR_FILE_ALREADY_EXIST, url.prettyUrl());
         return;
     }
 
@@ -1310,11 +1310,11 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
     //    Copying to fonts:/
     //    Copying from fonts:/ and file:/
     //
-    KFI_DBUG << "copy " << src.prettyURL() << " - " << d.prettyURL() << endl;
+    KFI_DBUG << "copy " << src.prettyUrl() << " - " << d.prettyUrl() << endl;
 
     if(isHidden(d))
     {
-        error(KIO::ERR_WRITE_ACCESS_DENIED, d.prettyURL());
+        error(KIO::ERR_WRITE_ACCESS_DENIED, d.prettyUrl());
         return;
     }
 
@@ -1399,7 +1399,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 
                         if(-1==KDE_stat(realSrc.data(), &buffSrc))
                         {
-                            error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, src.prettyURL());
+                            error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, src.prettyUrl());
                             return;
                         }
 
@@ -1407,7 +1407,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 
                         if (srcFd<0)
                         {
-                            error(KIO::ERR_CANNOT_OPEN_FOR_READING, src.prettyURL());
+                            error(KIO::ERR_CANNOT_OPEN_FOR_READING, src.prettyUrl());
                             return;
                         }
 
@@ -1420,7 +1420,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 
                         if (destFd<0)
                         {
-                            error(EACCES==errno ? KIO::ERR_WRITE_ACCESS_DENIED : KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyURL());
+                            error(EACCES==errno ? KIO::ERR_WRITE_ACCESS_DENIED : KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
                             close(srcFd);
                             return;
                         }
@@ -1439,7 +1439,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
                             {
 				if (errno == EINTR)
 					continue;
-                                error(KIO::ERR_COULD_NOT_READ, src.prettyURL());
+                                error(KIO::ERR_COULD_NOT_READ, src.prettyUrl());
                                 close(srcFd);
                                 close(destFd);
                                 return;
@@ -1453,11 +1453,11 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
                                 close(destFd);
                                 if (ENOSPC==errno) // disk full
                                 {
-                                    error(KIO::ERR_DISK_FULL, dest.prettyURL());
+                                    error(KIO::ERR_DISK_FULL, dest.prettyUrl());
                                     remove(realDest.data());
                                 }
                                 else
-                                    error(KIO::ERR_COULD_NOT_WRITE, dest.prettyURL());
+                                    error(KIO::ERR_COULD_NOT_WRITE, dest.prettyUrl());
                                 return;
                             }
 
@@ -1469,7 +1469,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 
                         if(close(destFd))
                         {
-                            error(KIO::ERR_COULD_NOT_WRITE, dest.prettyURL());
+                            error(KIO::ERR_COULD_NOT_WRITE, dest.prettyUrl());
                             return;
                         }
 
@@ -1501,7 +1501,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, bool overwrite)
 
 void CKioFonts::rename(const KUrl &src, const KUrl &d, bool overwrite)
 {
-    KFI_DBUG << "rename " << src.prettyURL() << " - " << d.prettyURL() << ", " << overwrite << endl;
+    KFI_DBUG << "rename " << src.prettyUrl() << " - " << d.prettyUrl() << ", " << overwrite << endl;
 
     if(src.directory()==d.directory())
         error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, fonts cannot be renamed."));
@@ -2083,7 +2083,7 @@ QList<FcPattern *> * CKioFonts::getEntries(const KUrl &url)
     if(it!=itsFolders[getFolder(url)].fontMap.end())
         return &(it.data());
 
-    error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\".", url.prettyURL()));
+    error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\".", url.prettyUrl()));
     return NULL;
 }
 
@@ -2181,24 +2181,24 @@ bool CKioFonts::getSourceFiles(const KUrl &src, QStringList &files)
 
             if (-1==KDE_stat(realSrc.data(), &buffSrc))
             {
-                error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, src.prettyURL());
+                error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, src.prettyUrl());
                 return false;
             }
             if(S_ISDIR(buffSrc.st_mode))
             {
-                error(KIO::ERR_IS_DIRECTORY, src.prettyURL());
+                error(KIO::ERR_IS_DIRECTORY, src.prettyUrl());
                 return false;
             }
             if(S_ISFIFO(buffSrc.st_mode) || S_ISSOCK(buffSrc.st_mode))
             {
-                error(KIO::ERR_CANNOT_OPEN_FOR_READING, src.prettyURL());
+                error(KIO::ERR_CANNOT_OPEN_FOR_READING, src.prettyUrl());
                 return false;
             }
         }
     }
     else
     {
-        error(KIO::ERR_DOES_NOT_EXIST, src.prettyURL());
+        error(KIO::ERR_DOES_NOT_EXIST, src.prettyUrl());
         return false;
     }
 
@@ -2213,7 +2213,7 @@ bool CKioFonts::checkDestFiles(const KUrl &src, QMap<QString, QString> &map, con
     if(dest.directory()==src.directory())  // Check whether confirmUrl changed a "cp fonts:/System fonts:/"
                                            // to "cp fonts:/System fonts:/System"
     {
-        error(KIO::ERR_FILE_ALREADY_EXIST, dest.prettyURL());
+        error(KIO::ERR_FILE_ALREADY_EXIST, dest.prettyUrl());
         return false;
     }
 
@@ -2225,7 +2225,7 @@ bool CKioFonts::checkDestFiles(const KUrl &src, QMap<QString, QString> &map, con
         for(; fIt!=fEnd; ++fIt)
             if(NULL!=getEntry(destFolder, fIt.data()) || NULL!=getEntry(destFolder, modifyName(fIt.data())))
             {
-                error(KIO::ERR_FILE_ALREADY_EXIST, dest.prettyURL());
+                error(KIO::ERR_FILE_ALREADY_EXIST, dest.prettyUrl());
                 return false;
             }
     }
@@ -2283,7 +2283,7 @@ bool CKioFonts::confirmMultiple(const KUrl &url, const QStringList &files, EFold
                                                        "The other affected fonts are:</p><ul>%1</ul><p>\n Do you wish to "
                                                        "delete all of these?</p>", out)))
         {
-            error(KIO::ERR_USER_CANCELED, url.prettyURL());
+            error(KIO::ERR_USER_CANCELED, url.prettyUrl());
             return false;
         }
     }

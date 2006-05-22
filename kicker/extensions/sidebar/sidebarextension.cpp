@@ -101,7 +101,7 @@ void SidebarExtension::needLayoutUpdate(bool exp) {
 }
 
 void SidebarExtension::openURLRequest( const KUrl &url, const KParts::URLArgs &) {
-	KRun::runCommand("kfmclient openURL \""+url.prettyURL()+"\"", "kfmclient", "konqueror");
+	KRun::runCommand("kfmclient openURL \""+url.prettyUrl()+"\"", "kfmclient", "konqueror");
 
 }
 
