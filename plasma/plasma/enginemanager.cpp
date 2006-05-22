@@ -17,6 +17,7 @@
  */
 
 #include "enginemanager.h"
+#include <kservicetypetrader.h>
 
 DataEngineManager::DataEngineManager()
 {
@@ -42,13 +43,14 @@ Plasma::DataEngine* DataEngineManager::engine(const QString& name)
     }
 
     // load the engine, add it to the engines
-    KService::List offers = KTrader::self()->query("Plasma/Engine");
+    KService::List offers = KServiceTypeTrader::self()->query("Plasma/Engine");
 
     if (offers.isEmpty())
     {
         return 0;
     }
 
+    // ## why not use createInstanceFromQuery directly? (DF)
     int errorCode = 0;
     Plasma::DataEngine *engine =
             KParts::ComponentFactory::createInstanceFromService<Plasma::DataEngine>
