@@ -100,7 +100,7 @@ press Alt+F5 to display the window list.</p><br>
 <tip category="Konqueror">
 <html>
 <p>The <b>"Location" label</b> in Konqueror is draggable.</p>
-<p>This means you can create shortcuts (e.g. on the desktop or the panel)
+<p>This means you can a shortcut (e.g. on the desktop or the panel)
 by dragging it there with the mouse. You can also drop it on to Konsole or
 edit fields to get the URL typed in there (as you can with links or files
 displayed in Konqueror).</p>
@@ -239,9 +239,9 @@ use network printers);</li>
 <p>Not all print subsystems provide equal abilities
 for KDEPrint to build on.</p>
 <p>The <A HREF="http://printing.kde.org/">KDEPrinting Team</A>
-recommends installing a <A
-HREF="http://www.cups.org/"><strong>CUPS-based</strong></A>
-software as the underlying print subsystem.</p>
+recommends installing <A
+HREF="http://www.cups.org/"><strong>CUPS</strong></A>
+as the underlying print subsystem.</p>
 <p> CUPS provides easy usage, powerful features, broad printer
 support and a modern design (based on IPP, the "Internet
 Printing Protocol"). Its usefulness is proven for home users
@@ -602,9 +602,9 @@ command.</p>
 <html>
 <p>
 You can change the color of the window titlebars by clicking on the title bar of the
-color example in the <em>Appearance & Themes</em> module within the Control Center.
+example window in the <em>Appearance & Themes</em> module within the Control Center.
 </p>
-<p>This works for all of the other available colors too.</p>
+<p>You can use the other aspects of the example graphic to further customize the appearance of KDE on your computer.</p>
 </html>
 </tip>
 
@@ -647,16 +647,6 @@ kprinter -d infotec \
 The difference between window manager styles and old-fashioned themes is
 that the former even reflect window titlebar color settings from the
 Control Center and might implement different features.</p>
-</html>
-</tip>
-
-<tip category="General">
-<html>
-<p>
-The K in KDE does not stand for anything. It is the character that comes
-before L in the Latin alphabet, which stands for Linux. It was chosen
-because KDE runs on many types of UNIX (and perfectly well on FreeBSD).
-</p>
 </html>
 </tip>
 
@@ -784,7 +774,7 @@ in Konqueror. In the Konsole window, they are often colored red
 <html>
 <p>
 If you want to make your desktop look more interesting, you can find
-tons of themes, widget styles window decorations and more at <a href="http://kde-look.org/">kde-look.org</a>.
+additional themes, widget styles, window decorations and more at <a href="http://kde-look.org/">kde-look.org</a>.
 </p>
 <p align="right"><em>Contributed by Carsten Niehaus</em></p>
 </html>
@@ -879,9 +869,8 @@ The command format is:<br>
 <tip category="Panel">
 <html>
 <p>
-By holding down the <b>Shift</b> button while moving a container (button
-or applet) on the Panel, the container can then be used to push forward
-other containers.
+If you hold down the <b>Shift</b> key while moving a panel item (like a button
+or applet), it will move the other items as well.
 </p>
 </html>
 </tip>
@@ -907,7 +896,7 @@ Konqueror's location bar.
 </p>
 <p>
 In fact, all KDE applications support fish:// URLs - try entering one
-in the Open dialog of Kate, for instance
+in the Open dialog of Kate, for instance.
 </p>
 </html>
 </tip>
@@ -994,7 +983,7 @@ href="http://kdelook.org" title="kdelook">kde-look.org</a>.</p>
 <html>
 <p>Konqueror's Web Shortcuts feature lets you submit a query directly
 to a search engine without having to visit the website
-first. For example, entering <b>gg:konqueror</b> in Location bar and
+first. For example, entering <b>gg:konqueror</b> in the Location bar and
 pressing Enter will search Google for items relating to Konqueror.</p>
 
 <p>To see what further Web Shortcuts are available, and to make your
