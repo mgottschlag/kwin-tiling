@@ -1,6 +1,8 @@
 
 add_subdirectory( pics ) 
 
+configure_file (config-kcontrol-input.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kcontrol-input.h )
+
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/xcursor/ ${KDE4_INCLUDES} )
 
 if (LIBUSB_FOUND)

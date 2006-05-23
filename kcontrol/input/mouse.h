@@ -44,6 +44,7 @@
 #include <knuminput.h>
 
 #include <config.h>
+#include <config-kcontrol-input.h>
 #ifdef HAVE_LIBUSB
 #include "logitechmouse.h"
 #endif
