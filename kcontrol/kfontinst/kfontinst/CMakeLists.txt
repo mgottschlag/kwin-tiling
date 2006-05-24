@@ -1,3 +1,5 @@
+configure_file (config-kfontinst.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kfontinst.h )
+
 include_directories(
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/kfontinst/lib/ 
 	${CMAKE_SOURCE_DIR}/workspace/kcontrol/fonts/

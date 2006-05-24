@@ -36,7 +36,7 @@
 #include <klocale.h>
 #include <sys/types.h>
 #include <signal.h>
-
+#include <config-kfontinst.h>
 #if defined OS_Irix || defined OS_Solaris
 extern "C" unsigned int kfi_getPid(const char *proc, pid_t ppid);
 #else

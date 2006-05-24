@@ -29,6 +29,7 @@
 // (C) Craig Drummond, 2001, 2002, 2003, 2004
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <config-kfontinst.h>
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
