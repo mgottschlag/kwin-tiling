@@ -23,7 +23,7 @@
 #include <QPaintEngine>
 #include <QHash>
 #include <QDateTime>
-//Added by qt3to4:
+#include <QSvgRenderer>
 #include <QPixmap>
 
 #include <kapplication.h>
@@ -34,10 +34,6 @@
 #include <ktempfile.h>
 #include <kcursor.h>
 #include <kmimetype.h>
-
-#ifdef HAVE_LIBAGG
-#include <ksvgiconengine.h>
-#endif
 
 #include "bgdefaults.h"
 #include "bgrender.h"
@@ -319,9 +315,9 @@ wp_load:
         // don't want in krootimage (kdm context).
         //if ( KMimeType::findByPath( file )->is( "image/svg+xml" ) ) {
         if (file.endsWith(".svg") || file.endsWith(".svgz")) {
-#ifdef HAVE_LIBAGG
+
 	    // Special stuff for SVG icons
-	    KSVGIconEngine* svgEngine = new KSVGIconEngine();
+            QSvgRenderer renderer;
 
 	    //FIXME
 	    //ksvgiconloader doesn't seem to let us find out the
@@ -365,17 +361,17 @@ wp_load:
 	        svgWidth *= 6;
 	    }
 
-	    if (svgEngine->load(svgWidth, svgHeight, file )) {
-		m_Wallpaper = ( *svgEngine->image() );
+            QImage* img = new QImage(svgWidth, svgHeight, QImage::Format_ARGB32_Premultiplied);
+            QPainter p(img);
+
+	    if (renderer.load(file)) {
+                if (renderer.isValid())
+                   renderer.render(&p);
+                p.end();
+		m_Wallpaper = *img;
 	    } else {
 		kWarning() << "failed to load SVG file " << file << endl;
 	    }
-
-	    delete svgEngine;
-#else //not libagg
-	    kWarning() << k_funcinfo
-			<< "tried to load SVG file but libagg not installed" << endl;
-#endif
 	} else {
 	    m_Wallpaper.load(file);
 	}
