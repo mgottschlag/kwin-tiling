@@ -599,7 +599,7 @@ void SystemTrayApplet::updateTrayWindows()
         if ((wid == 0) ||
             ((*emb)->kdeTray() && !kwin_module->systemTrayWindows().contains(wid)))
         {
-            delete *emb;
+            (*emb)->deleteLater();
             emb = m_shownWins.erase(emb);
         }
         else
@@ -615,7 +615,7 @@ void SystemTrayApplet::updateTrayWindows()
         if ((wid == 0) ||
             ((*emb)->kdeTray() && !kwin_module->systemTrayWindows().contains(wid)))
         {
-            delete *emb;
+            (*emb)->deleteLater();
             emb = m_hiddenWins.erase(emb);
         }
         else
