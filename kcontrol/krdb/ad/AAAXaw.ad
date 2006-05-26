@@ -34,8 +34,3 @@
 *ShapeStyle: Rectangle
 *SmeBSB*shadowWidth: 3
 *Scrollbar*Cursor: left_ptr
-*Command.translations: \
-	<LeaveWindow>:	reset()\n\
-	<Btn1Down>:	set()\n\
-	<Btn1Up>:	notify() unset()
-
