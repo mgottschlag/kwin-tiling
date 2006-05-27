@@ -42,8 +42,7 @@ static void addEntry(int face, QString &existing, const QString &add)
 
 static int strToWeight(const QString &str)
 {
-#warning QString == NULL -> QString.isNull() ??
-    if(str.isNull())
+    if(str.isEmpty())
         return FC_WEIGHT_MEDIUM;
     else if(str.contains("Bold", Qt::CaseInsensitive))
         return FC_WEIGHT_BOLD;
