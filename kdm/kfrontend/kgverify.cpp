@@ -212,7 +212,7 @@ KGVerify::applyPreset()
 {
 	if (!presEnt.isEmpty()) {
 		Debug( "%s->presetEntity(%\"s, %d)\n", pName.data(),
-		       presEnt.toLatin1(), presFld );
+		       qPrintable( presEnt ), presFld );
 		greet->presetEntity( presEnt, presFld );
 		if (entitiesLocal()) {
 			curUser = presEnt;
@@ -228,7 +228,7 @@ KGVerify::scheduleAutoLogin( bool initial )
 {
 	if (timeable) {
 		Debug( "%s->presetEntity(%\"s, -1)\n", pName.data(),
-		       _autoLoginUser.toLatin1(), -1 );
+		       qPrintable( _autoLoginUser ), -1 );
 		greet->presetEntity( _autoLoginUser, -1 );
 		curUser = _autoLoginUser;
 		handler->verifySetUser( _autoLoginUser );
@@ -261,7 +261,7 @@ KGVerify::getEntity() const
 {
 	Debug( "%s->getEntity()\n", pName.data() );
 	QString ent = greet->getEntity();
-	Debug( "  entity: %s\n", ent.toLatin1() );
+	Debug( "  entity: %s\n", qPrintable( ent ) );
 	return ent;
 }
 
@@ -270,7 +270,7 @@ KGVerify::setUser( const QString &user )
 {
 	// assert( fixedEntity.isEmpty() );
 	curUser = user;
-	Debug( "%s->setUser(%\"s)\n", pName.data(), user.toLatin1() );
+	Debug( "%s->setUser(%\"s)\n", pName.data(), qPrintable( user ) );
 	greet->setUser( user );
 	gplugActivity();
 }
@@ -622,7 +622,7 @@ KGVerify::handleVerify()
 			curUser = user = QString::fromLocal8Bit( msg );
 			// greet needs this to be able to return something useful from
 			// getEntity(). but the backend is still unable to tell a domain ...
-			Debug( "  %s->setUser(%\"s)\n", pName.data(), user.toLatin1() );
+			Debug( "  %s->setUser(%\"s)\n", pName.data(), qPrintable( user ) );
 			greet->setUser( curUser );
 			handler->verifySetUser( curUser );
 			if (msg)
@@ -694,7 +694,7 @@ KGVerify::handleVerify()
 			if (!fixedEntity.isEmpty()) {
 				Debug( "  %s->getEntity()\n", pName.data() );
 				QString ent = greet->getEntity();
-				Debug( "  entity %\"s\n", ent.toLatin1() );
+				Debug( "  entity %\"s\n", qPrintable( ent ) );
 				if (ent != fixedEntity) {
 					Debug( "%s->failed()\n", pName.data() );
 					greet->failed();
@@ -768,7 +768,7 @@ KGVerify::gplugReturnBinary( const char *data )
 void
 KGVerify::gplugSetUser( const QString &user )
 {
-	Debug( "%s: gplugSetUser(%\"s)\n", pName.data(), user.toLatin1() );
+    Debug( "%s: gplugSetUser(%\"s)\n", pName.data(), qPrintable( user ) );
 	curUser = user;
 	handler->verifySetUser( user );
 }
@@ -799,7 +799,7 @@ KGVerify::gplugActivity()
 void
 KGVerify::gplugMsgBox( QMessageBox::Icon type, const QString &text )
 {
-	Debug( "%s: gplugMsgBox(%d, %\"s)\n", pName.data(), type, text.toLatin1() );
+    Debug( "%s: gplugMsgBox(%d, %\"s)\n", pName.data(), type, qPrintable( text ) );
 	MsgBox( type, text );
 }
 
@@ -877,7 +877,7 @@ KGVerify::init( const QStringList &plugins )
 		QString path = KLibLoader::self()->findLibrary(
 			((*it)[0] == '/' ? *it : "kgreet_" + *it ).toLatin1() );
 		if (path.isEmpty()) {
-			LogError( "GreeterPlugin %s does not exist\n", (*it).toLatin1() );
+                    LogError( "GreeterPlugin %s does not exist\n", qPrintable( *it ) );
 			continue;
 		}
 		uint i, np = greetPlugins.count();
@@ -885,23 +885,23 @@ KGVerify::init( const QStringList &plugins )
 			if (greetPlugins[i].library->fileName() == path)
 				goto next;
 		if (!(plugin.library = KLibLoader::self()->library( path.toLatin1() ))) {
-			LogError( "Cannot load GreeterPlugin %s (%s)\n", (*it).toLatin1(), path.toLatin1() );
+                    LogError( "Cannot load GreeterPlugin %s (%s)\n", qPrintable( *it ), qPrintable( path ) );
 			continue;
 		}
 		if (!plugin.library->hasSymbol( "kgreeterplugin_info" )) {
 			LogError( "GreeterPlugin %s (%s) is no valid greet widget plugin\n",
-			          (*it).toLatin1(), path.toLatin1() );
+			          qPrintable( *it ), qPrintable( path ) );
 			plugin.library->unload();
 			continue;
 		}
 		plugin.info = (kgreeterplugin_info*)plugin.library->symbol( "kgreeterplugin_info" );
 		if (!plugin.info->init( QString(), getConf, 0 )) {
 			LogError( "GreeterPlugin %s (%s) refuses to serve\n",
-			          (*it).toLatin1(), path.toLatin1() );
+			          qPrintable( *it ), qPrintable( path ) );
 			plugin.library->unload();
 			continue;
 		}
-		Debug( "GreeterPlugin %s (%s) loaded\n", (*it).toLatin1(), plugin.info->name );
+		Debug( "GreeterPlugin %s (%s) loaded\n", qPrintable( *it ), plugin.info->name );
 		greetPlugins.append( plugin );
 	  next:
 		pluginList.append( i );
