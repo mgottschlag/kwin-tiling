@@ -80,7 +80,7 @@ AppletTab::AppletTab( QWidget *parent, const char* name )
 
   QWhatsThis::add( lb_available, i18n("Here you can see a list of available applets that you"
     " currently do not trust. This does not mean you cannot use those applets, but rather that"
-    " the panel's policy using them depends on your applet security level. To move an applet"
+    " the panel's policy on using them depends on your applet security level. To move an applet"
     " from the list of available applets to the trusted ones or vice versa, select it and"
     " press the left or right buttons.") );
 

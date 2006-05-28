@@ -293,7 +293,7 @@
                         <string>Also apply to panel with menu bar</string>
                     </property>
                     <property name="whatsThis" stdset="0">
-                        <string>Normally if you have the desktop's or current application's menu bar displayed in a panel at the top of the screen (MacOS-style), transparency is disabled for this panel to avoid the desktop background clashing with the menu bar. Set this option to make it transparent anyways.</string>
+                        <string>Normally if you have the desktop's or current application's menu bar displayed in a panel at the top of the screen (MacOS-style), transparency is disabled for this panel to avoid the desktop background clashing with the menu bar. Set this option to make it transparent anyway.</string>
                     </property>
                 </widget>
             </grid>

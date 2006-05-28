@@ -32,7 +32,7 @@
                         <cstring>trusted_rb</cstring>
                     </property>
                     <property name="text">
-                        <string>Load only trusted applets internal</string>
+                        <string>Load only trusted applets internally</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -40,7 +40,7 @@
                         <cstring>new_rb</cstring>
                     </property>
                     <property name="text">
-                        <string>Load startup config applets internal</string>
+                        <string>Load startup config applets internally</string>
                     </property>
                 </widget>
                 <widget class="QRadioButton">
@@ -48,7 +48,7 @@
                         <cstring>all_rb</cstring>
                     </property>
                     <property name="text">
-                        <string>Load all applets internal</string>
+                        <string>Load all applets internally</string>
                     </property>
                 </widget>
             </vbox>

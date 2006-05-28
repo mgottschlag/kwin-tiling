@@ -326,7 +326,7 @@
                                 <number>20</number>
                             </property>
                             <property name="whatsThis" stdset="0">
-                                <string>This option allows you to define how many applications should be displayed at most in the QuickStart menu area.</string>
+                                <string>This option allows you to define the maximum number of applications that should be displaed in the QuickStart menu area.</string>
                             </property>
                         </widget>
                     </hbox>
