@@ -169,14 +169,16 @@ QSize TaskBar::sizeHint( Plasma::Position p, QSize maxSize) const
         int actualMax = minButtonHeight * containerCount() + (m_showWindowListButton ?
                                                               WINDOWLISTBUTTON_SIZE : 0);
 
+        if (containerCount() == 0)
+        {
+            actualMax = maxSize.height();
+        }
+
         if (actualMax > maxSize.height())
         {
             return maxSize;
         }
-        else
-        {
-            return QSize( maxSize.width(), actualMax );
-        }
+        return QSize( maxSize.width(), maxSize.height() );
     }
     else
     {
@@ -209,10 +211,7 @@ QSize TaskBar::sizeHint( Plasma::Position p, QSize maxSize) const
         {
            return maxSize;
         }
-        else
-        {
-           return QSize( actualMax, maxSize.height() );
-        }
+        return QSize( actualMax, maxSize.height() );
     }
 }
 
