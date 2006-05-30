@@ -25,9 +25,6 @@ install_files( /share/autostart FILES ktip.desktop )
 install_files( ${DATA_INSTALL_DIR}/kdewizard FILES tips )
 
 
-install(FILES uninstall.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}${APPLNK_INSTALL_DIR}/Toys/ RENAME ktip.desktop)
-
-
 kde4_install_icons( ${ICON_INSTALL_DIR} hicolor )
 
 

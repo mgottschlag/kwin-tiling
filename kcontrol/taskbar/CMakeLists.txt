@@ -23,9 +23,6 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_taskbar )
 install_files( ${XDG_APPS_DIR} FILES kcmtaskbar.desktop )
 
 
-install(FILES uninstall.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}${APPLNK_INSTALL_DIR}/Settings/LookNFeel/ RENAME kcmtaskbar.desktop)
-
-
 
 #original Makefile.am contents follow:
 
