@@ -148,9 +148,7 @@ void BGMultiWallpaperDialog::setEnabledMoveButtons()
 void BGMultiWallpaperDialog::slotAdd()
 {
     QStringList mimeTypes = KImageIO::mimeTypes( KImageIO::Reading );
-#ifdef HAVE_LIBART
     mimeTypes += "image/svg+xml";
-#endif
 
     KFileDialog fileDialog(KGlobal::dirs()->findDirs("wallpaper", "").first(),
 			   mimeTypes.join( " " ), this);

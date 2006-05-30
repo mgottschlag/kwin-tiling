@@ -550,11 +550,7 @@ void BGDialog::loadWallpaperFilesList() {
       }
       int slash = (*it).lastIndexOf('/') + 1;
       QString directory = (*it).left(slash);
-      bool canLoadScaleable = false;
-#ifdef HAVE_LIBART
-      canLoadScaleable = true;
-#endif
-      if ( fileConfig.readEntry("ImageType") == "pixmap" || canLoadScaleable ) {
+      if ( fileConfig.readEntry("ImageType") == "pixmap" ) {
 	      papers[lrs] = qMakePair(rs, directory + fileName);
 	      files.append(directory + fileName);
       }
@@ -657,9 +653,7 @@ void BGDialog::slotWallpaperSelection()
    dlg.setPreviewWidget(previewWidget);
 
    QStringList mimeTypes = KImageIO::mimeTypes( KImageIO::Reading );
-#ifdef HAVE_LIBART
    mimeTypes += "image/svg+xml";
-#endif
    dlg.setFilter( mimeTypes.join( " " ) );
    dlg.setMode( KFile::File | KFile::ExistingOnly | KFile::LocalOnly );
    dlg.setCaption( i18n("Select Wallpaper") );
