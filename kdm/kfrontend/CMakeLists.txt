@@ -60,7 +60,10 @@ kde4_automoc(${kdm_greet_SRCS})
 
 kde4_add_executable(kdm_greet ${kdm_greet_SRCS})
 
-target_link_libraries(kdm_greet  ${KDE4_KDEUI_LIBS} ${X11_XTest_LIB})
+target_link_libraries(kdm_greet ${KDE4_KDEUI_LIBS})
+if(X11_XTest_FOUND)
+  target_link_libraries(kdm_greet ${X11_XTest_LIB})
+endif(X11_XTest_FOUND)
 
 install(TARGETS kdm_greet DESTINATION bin)
 

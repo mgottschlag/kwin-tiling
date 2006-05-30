@@ -11,7 +11,10 @@ kde4_add_dcop_skels(khotkeys_KDEINIT_SRCS app.h )
 
 kde4_add_kdeinit_executable( khotkeys ${khotkeys_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_khotkeys  ${KDE4_KDE3SUPPORT_LIBS} ${X11_XTest_LIB} )
+target_link_libraries(kdeinit_khotkeys  ${KDE4_KDE3SUPPORT_LIBS} )
+if(X11_XTest_FOUND)
+  target_link_libraries(kdeinit_khotkeys  ${X11_XTest_LIB}  )
+endif(X11_XTest_FOUND)
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_khotkeys )
 
