@@ -50,6 +50,7 @@ ShowDesktop::ShowDesktop()
     // KDE is running with another WM without the feature.
     NETRootInfo i( QX11Info::display(), NET::Supported );
     m_wmSupport = i.isSupported( NET::WM2ShowingDesktop );
+    m_wmSupport = false;
     if( m_wmSupport )
     {
         connect( Kicker::self()->kwinModule(), SIGNAL( showingDesktopChanged( bool )),
@@ -77,8 +78,19 @@ void ShowDesktop::slotWindowAdded(WId w)
     if ((windowType == NET::Normal || windowType == NET::Unknown) &&
         inf.mappingState() == NET::Visible)
     {
-        m_activeWindow = w;
-        showDesktop(false);
+        KConfig kwincfg( "kwinrc", true ); // see in kwin
+        kwincfg.setGroup( "Windows" );
+        if( kwincfg.readEntry( "ShowDesktopIsMinimizeAll", false ))
+        {
+            m_iconifiedList.clear();
+            m_showingDesktop = false;
+            emit desktopShown(false);
+        }
+        else
+        {
+            m_activeWindow = w;
+            showDesktop(false);
+        }
     }
 }
 
