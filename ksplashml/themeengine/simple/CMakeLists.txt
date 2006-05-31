@@ -1,5 +1,6 @@
 include_directories(  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KDE4_INCLUDES} )
 
+macro_bool_to_01(X11_Xinerama_FOUND HAVE_XINERAMA)
 configure_file (config-ksplashml.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-ksplashml.h )
 
 ########### next target ###############
