@@ -268,7 +268,7 @@ void PanelServiceMenu::doInitialize()
         int mid = insertItem(Plasma::menuIconSet("ok"), i18n("Add This Menu"), id++);
         entryMap_.insert(mid, KSycocaEntry::Ptr::staticCast(root));
 
-        if (relPath_ == "")
+        if (relPath_.isEmpty())
         {
             insertItem(Plasma::menuIconSet("exec"), i18n("Add Non-KDE Application"),
                        this, SLOT(addNonKDEApp()));
@@ -555,7 +555,7 @@ void PanelServiceMenu::slotContextMenu(int selected)
 	case EditItem:
             proc = new KProcess(this);
             *proc << KStandardDirs::findExe(QString::fromLatin1("kmenuedit"));
-            *proc << "/"+relPath_ << KService::Ptr::staticCast(contextKSycocaEntry_)->menuId();
+            *proc << '/'+relPath_ << KService::Ptr::staticCast(contextKSycocaEntry_)->menuId();
             proc->start();
 	    break;
 
@@ -588,7 +588,7 @@ void PanelServiceMenu::slotContextMenu(int selected)
         case EditMenu:
             proc = new KProcess(this);
             *proc << KStandardDirs::findExe(QString::fromLatin1("kmenuedit"));
-            *proc << "/"+KServiceGroup::Ptr::staticCast(contextKSycocaEntry_)->relPath();
+            *proc << '/'+KServiceGroup::Ptr::staticCast(contextKSycocaEntry_)->relPath();
             proc->start();
 	    break;
 

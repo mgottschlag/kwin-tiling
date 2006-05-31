@@ -62,7 +62,7 @@ ServiceButton::ServiceButton(const KService::Ptr &service, QWidget* parent)
     {
        QString tmp = KGlobal::dirs()->relativeLocation("appdata", _id);
        if (!tmp.startsWith("/"))
-          _id = ":"+tmp;
+          _id = ':'+tmp;
     }
     initialize();
 }
@@ -121,7 +121,7 @@ void ServiceButton::loadServiceFromId(const QString &id)
     {
        QString tmp = KGlobal::dirs()->relativeLocation("appdata", _id);
        if (!tmp.startsWith("/"))
-          _id = ":"+tmp;
+          _id = ':'+tmp;
     }
 }
 

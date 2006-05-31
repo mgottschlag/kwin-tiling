@@ -320,7 +320,7 @@ void KOSPage::writeKeyEntrys(QString keyfile){
 	QMap<QString, QString> givenMap = scheme->entryMap("Global Shortcuts");
 	for ( QMap<QString, QString>::Iterator it = givenMap.begin(); it != givenMap.end(); ++it ) {
 		if ( (defMap[it.key()] == it.value()) && (it.value() != "none") ) {
-			cglobal->writeEntry(it.key(), "default("+it.value()+")", KConfigBase::Persistent|KConfigBase::Global);
+			cglobal->writeEntry(it.key(), "default("+it.value()+')', KConfigBase::Persistent|KConfigBase::Global);
 		} else {
 			cglobal->writeEntry(it.key(), it.value(), KConfigBase::Persistent|KConfigBase::Global);
 		}

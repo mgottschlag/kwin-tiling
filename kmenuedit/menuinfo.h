@@ -64,7 +64,7 @@ public:
     // Add entry
     void add(MenuEntryInfo *, bool initial = false);
     
-    // Remove entry (without deleteing it)
+    // Remove entry (without deleting it)
     void take(MenuEntryInfo *);
 
     // Return a unique sub-menu caption inspired by @p caption

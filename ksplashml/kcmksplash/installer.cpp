@@ -169,7 +169,7 @@ int SplashInstaller::addTheme(const QString &path, const QString &name)
   if ((i > 0) && (mThemesList->text(i-1) == tmp))
     return i-1;
   mThemesList->insertItem(tmp, i);
-  mThemesList->text2path.insert( tmp, path+"/"+name );
+  mThemesList->text2path.insert( tmp, path+'/'+name );
   return i;
 }
 
@@ -360,7 +360,7 @@ void SplashInstaller::slotSetTheme(int id)
         {
           url.setPath( path + "/theme.rc" );
           if (!KIO::NetAccess::exists(url, true, 0))
-            url.setPath( path + "/" + themeName + ".rc" );
+            url.setPath( path + '/' + themeName + ".rc" );
         }
       }
       if (KIO::NetAccess::exists(url, true, 0))
@@ -400,7 +400,7 @@ void SplashInstaller::slotSetTheme(int id)
     mText->setText(infoTxt);
     if (!enabled)
     {
-      url.setPath( path + "/" + "Preview.png" );
+      url.setPath( path + '/' + "Preview.png" );
       if (KIO::NetAccess::exists(url, true, 0))
         mPreview->setPixmap(QPixmap(url.path()));
       else
@@ -409,7 +409,7 @@ void SplashInstaller::slotSetTheme(int id)
     }
     else
     {
-      url.setPath( path + "/" + "Preview.png" );
+      url.setPath( path + '/' + "Preview.png" );
       if (KIO::NetAccess::exists(url, true, 0))
         mPreview->setPixmap(QPixmap(url.path()));
       else

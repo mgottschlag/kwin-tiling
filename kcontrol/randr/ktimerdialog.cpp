@@ -55,7 +55,7 @@ KTimerDialog::KTimerDialog( int msec, TimerStyle style, QWidget *parent,
     updateInterval = 1000;
     tStyle = style;
 	KWin::setIcons( winId(), DesktopIcon("randr"), SmallIcon("randr") );
-    // default to cancelling the dialog on timeout
+    // default to canceling the dialog on timeout
     if ( buttonMask & Cancel )
         buttonOnTimeout = Cancel;
 

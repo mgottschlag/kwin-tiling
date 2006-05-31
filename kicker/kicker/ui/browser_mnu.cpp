@@ -399,7 +399,7 @@ void PanelBrowserMenu::mouseMoveEvent(QMouseEvent *e)
 
     // start drag
     KUrl url;
-    url.setPath(path() + "/" + _filemap[id]);
+    url.setPath(path() + '/' + _filemap[id]);
     KUrl::List files(url);
     QDrag* drag = new QDrag(this);
     QMimeData* data = new QMimeData;
@@ -450,7 +450,7 @@ void PanelBrowserMenu::slotExec(int id)
     if(!_filemap.contains(id)) return;
 
     KUrl url;
-    url.setPath(path() + "/" + _filemap[id]);
+    url.setPath(path() + '/' + _filemap[id]);
     new KRun(url, 0, true); // will delete itself
     _lastpress = QPoint(-1, -1);
 }

@@ -36,7 +36,7 @@ static KCmdLineOptions options[] =
   { "tooltip <text>", I18N_NOOP( "Sets the initial tooltip for the tray icon" ), 0 },
   { "keeprunning", I18N_NOOP( "Keep the tray icon even if the client exits. This option\n"
 			 "has no effect unless startonshow is specified." ), 0 },
-  { "ownicon", I18N_NOOP( "Don't use window's icon in systray, but ksystraycmd one's\n"
+  { "ownicon", I18N_NOOP( "Do not use window's icon in systray, but ksystraycmd one's\n"
              "(should be used with --icon to specify ksystraycmd icon)" ), 0 },
   { "ontop", I18N_NOOP( "Try to keep the window above other windows"), 0 },
   { "quitonhide", I18N_NOOP( "Quit the client when we are told to hide the window.\n"
@@ -96,7 +96,7 @@ int main( int argc, char *argv[] )
   // Read the command
   QString command;
   for ( int i = 0; i < args->count(); i++ )
-    command += QString( args->arg(i) ) + " ";
+    command += QString( args->arg(i) ) + ' ';
   if ( !command.isEmpty() )
       cmd.setCommand( command );
 

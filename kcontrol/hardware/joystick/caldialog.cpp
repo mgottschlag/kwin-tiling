@@ -96,7 +96,7 @@ void CalDialog::calibrate()
     min[0] = joydev->axisMin(i);
     min[1] = joydev->axisMax(i);
 
-    if ( result() == QDialog::Rejected ) return;  // user cancelled the dialog
+    if ( result() == QDialog::Rejected ) return;  // user canceled the dialog
 
     // center position
     text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br><br>"
@@ -110,7 +110,7 @@ void CalDialog::calibrate()
     center[0] = joydev->axisMin(i);
     center[1] = joydev->axisMax(i);
 
-    if ( result() == QDialog::Rejected ) return;  // user cancelled the dialog
+    if ( result() == QDialog::Rejected ) return;  // user canceled the dialog
 
     // maximum position
     text->setText(i18n("<qt>Calibration is about to check the value range your device delivers.<br><br>"
@@ -124,7 +124,7 @@ void CalDialog::calibrate()
     max[0] = joydev->axisMin(i);
     max[1] = joydev->axisMax(i);
 
-    if ( result() == QDialog::Rejected ) return;  // user cancelled the dialog
+    if ( result() == QDialog::Rejected ) return;  // user canceled the dialog
 
     joydev->calcCorrection(i, min, center, max);
   }

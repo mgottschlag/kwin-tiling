@@ -174,7 +174,7 @@ void KonsoleMenu::initialize()
         struct dirent *entry;
         while ((entry = readdir(dir)))
         {
-            QByteArray path = screenDir + "/" + QByteArray(entry->d_name);
+            QByteArray path = screenDir + '/' + QByteArray(entry->d_name);
             struct stat st;
             if (stat(path, &st) != 0)
             {
@@ -283,7 +283,7 @@ void KonsoleMenu::launchProfile(int id)
 KUrl KonsoleMenu::baseURL() const
 {
     KUrl url;
-    /*url.setPath(se->getCwd()+"/");*/
+    /*url.setPath(se->getCwd()+'/');*/
     return url;
 }
 

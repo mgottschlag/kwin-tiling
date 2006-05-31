@@ -151,7 +151,7 @@ void kthememanager::save()
     {
         QString themeName = cur->text( 0 );
 
-        m_theme = new KTheme( this, KGlobal::dirs()->findResource( "themes", themeName + "/" + themeName + ".xml") );
+        m_theme = new KTheme( this, KGlobal::dirs()->findResource( "themes", themeName + '/' + themeName + ".xml") );
         m_theme->apply();
 
         // Save the current theme name
@@ -316,7 +316,7 @@ void kthememanager::slotThemeChanged( Q3ListViewItem * item )
         QString themeName = item->text(0);
         kDebug() << "Activated theme: " << themeName  << endl;
 
-	QString themeDir = KGlobal::dirs()->findResourceDir( "themes", themeName + "/" + themeName + ".xml") + themeName + "/";
+        QString themeDir = KGlobal::dirs()->findResourceDir( "themes", themeName + '/' + themeName + ".xml") + themeName + "/";
 
         QString pixFile = themeDir + themeName + ".preview.png";
 

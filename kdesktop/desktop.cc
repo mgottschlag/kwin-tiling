@@ -791,7 +791,7 @@ void KDesktop::slotNewWallpaper(const KUrl &url)
         QFileInfo fileInfo( fileName );
         QString ext = fileInfo.suffix();
         // Store tempfile in a place where it will still be available after a reboot
-        KTempFile tmpFile( KGlobal::dirs()->saveLocation("wallpaper"), "." + ext );
+        KTempFile tmpFile( KGlobal::dirs()->saveLocation("wallpaper"), '.' + ext );
         KUrl localURL; localURL.setPath( tmpFile.name() );
         // We pass 0 as parent window because passing the desktop is not a good idea
         KIO::NetAccess::file_copy( url, localURL, -1, true /*overwrite*/ );

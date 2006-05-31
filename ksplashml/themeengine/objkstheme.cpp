@@ -51,7 +51,7 @@ ObjKsTheme::ObjKsTheme( const QString& theme )
       if( !loadThemeRc( "Default", false ) )
         loadLocalConfig( "Default", true ); //force: we need some defaults
   loadCmdLineArgs(KCmdLineArgs::parsedArgs());
-  mThemePrefix += ( mActiveTheme + "/" );
+  mThemePrefix += ( mActiveTheme + '/' );
 }
 
 ObjKsTheme::~ObjKsTheme()
@@ -66,10 +66,10 @@ bool ObjKsTheme::loadThemeRc( const QString& activeTheme, bool force )
   KConfig *cf = 0L;
 
   // Try our best to find a theme file.
-  themeFile = locate( "appdata", prefix + activeTheme + "/" + QString("Theme.rc") );
-  themeFile = themeFile.isEmpty() ? locate("appdata",prefix+activeTheme+"/"+QString("Theme.RC")):themeFile;
-  themeFile = themeFile.isEmpty() ? locate("appdata",prefix+activeTheme+"/"+QString("theme.rc")):themeFile;
-  themeFile = themeFile.isEmpty() ? locate("appdata",prefix+activeTheme+"/"+activeTheme+QString(".rc")):themeFile;
+  themeFile = locate( "appdata", prefix + activeTheme + '/' + QString("Theme.rc") );
+  themeFile = themeFile.isEmpty() ? locate("appdata",prefix+activeTheme+'/'+QString("Theme.RC")):themeFile;
+  themeFile = themeFile.isEmpty() ? locate("appdata",prefix+activeTheme+'/'+QString("theme.rc")):themeFile;
+  themeFile = themeFile.isEmpty() ? locate("appdata",prefix+activeTheme+'/'+activeTheme+QString(".rc")):themeFile;
 
   if( !themeFile.isEmpty() )
      cf = new KConfig( themeFile );
@@ -77,7 +77,7 @@ bool ObjKsTheme::loadThemeRc( const QString& activeTheme, bool force )
   if( cf )
   {
     mActiveTheme = activeTheme;
-    mThemeDir = prefix + activeTheme+"/";
+    mThemeDir = prefix + activeTheme+'/';
     if( loadKConfig( cf, activeTheme, force ) )
     {
       mThemeConfig = cf;

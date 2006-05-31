@@ -727,7 +727,7 @@ void KCMStyle::defaults()
 	slOpacity->setValue(90);
 	cbMenuShadow->setChecked(false);
 
-	// Miscellanous
+	// Miscellaneous
 	cbHoverButtons->setChecked(true);
 	cbTransparentToolbars->setChecked(true);
 	cbEnableTooltips->setChecked(true);

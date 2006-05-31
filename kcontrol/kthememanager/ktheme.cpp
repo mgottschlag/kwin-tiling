@@ -672,7 +672,7 @@ void KTheme::apply()
 bool KTheme::remove( const QString & name )
 {
     kDebug() << "Going to remove theme: " << name << endl;
-    return KIO::NetAccess::del( KUrl(KGlobal::dirs()->saveLocation( "themes", name + "/" )), 0L );
+    return KIO::NetAccess::del( KUrl(KGlobal::dirs()->saveLocation( "themes", name + '/' )), 0L );
 }
 
 void KTheme::setProperty( const QString & name, const QString & value, QDomElement parent )
@@ -810,7 +810,7 @@ QString KTheme::processFilePath( const QString & section, const QString & path )
     else
         kWarning() << "Unsupported theme resource type" << endl;
 
-    return QString();       // an error occured or the resource doesn't exist
+    return QString();       // an error occurred or the resource doesn't exist
 }
 
 QString KTheme::unprocessFilePath( const QString & section, QString path )

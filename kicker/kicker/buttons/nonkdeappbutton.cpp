@@ -113,7 +113,7 @@ void NonKDEAppButton::initialize(const QString& name,
         // and add the command if we have one.
         if (!cmdStr.isEmpty())
         {
-            tooltip += " " + cmdStr;
+            tooltip += ' ' + cmdStr;
         }
 
         // set the title to the pathStr
@@ -185,12 +185,12 @@ void NonKDEAppButton::dropEvent(QDropEvent *ev)
             deskFile.setDesktopGroup();
 
             // ... and add it to the exec string
-            execStr += KProcess::quote(deskFile.readURL()) + " ";
+            execStr += KProcess::quote(deskFile.readURL()) + ' ';
         }
         else
         {
             // it's just a URL of some sort, add it directly to the exec
-            execStr += KProcess::quote(url.path()) + " ";
+            execStr += KProcess::quote(url.path()) + ' ';
         }
     }
 
@@ -235,14 +235,14 @@ void NonKDEAppButton::runCommand(const QString& execStr)
         QString termStr = config->readPathEntry("Terminal", "konsole");
 
         // and now we run the darn thing and store how we fared in result
-        result = KRun::runCommand(termStr + " -e " + pathStr + " " +
-                                  cmdStr + " " + execStr,
+        result = KRun::runCommand(termStr + " -e " + pathStr + ' ' +
+                                  cmdStr + ' ' + execStr,
                                   pathStr, iconStr);
     }
     else
     {
         // just run it...
-        result = KRun::runCommand(pathStr + " " + cmdStr  + " " + execStr,
+        result = KRun::runCommand(pathStr + ' ' + cmdStr  + ' ' + execStr,
                                   pathStr, iconStr);
     }
 

@@ -108,7 +108,7 @@ KdmPixmap::loadPixmap( const QString &fileName, QPixmap &map, QString &fullName 
 
 	fullName = fileName;
 	if (fullName.at( 0 ) != '/')
-		fullName = baseDir() + "/" + fileName;
+		fullName = baseDir() + '/' + fileName;
 
 	if (!fullName.endsWith( ".svg" ))	// we delay it for svgs
 		if (!map.load( fullName ))

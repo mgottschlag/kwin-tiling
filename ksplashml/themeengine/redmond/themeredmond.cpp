@@ -80,7 +80,7 @@ CfgRedmond::CfgRedmond( QWidget *p, KConfig *c )
   _preview->setIcon( c->readEntry( "User Icon", "kmenu" ) );
 
   QLabel *lbl = new QLabel( vbox );
-  lbl->setText( i18n("(Sorry, but I haven't finished writing this one yet...)") );
+  lbl->setText( i18n("(Sorry, but I have not finished writing this one yet...)") );
 }
 
 ThemeRedmond::ThemeRedmond( QWidget *parent, const QStringList &args )

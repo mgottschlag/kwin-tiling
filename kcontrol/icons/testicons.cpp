@@ -1,4 +1,4 @@
-/* Test programme for icons setup module. */
+/* Test program for icons setup module. */
 
 #include <kapplication.h>
 #include "icons.h"

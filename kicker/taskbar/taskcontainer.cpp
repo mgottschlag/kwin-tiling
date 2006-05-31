@@ -576,7 +576,7 @@ void TaskContainer::drawButton(QPainter *p)
     QString text = name();
 
     // modified overlay
-    static QString modStr = "[" + i18n( "modified" ) + "]";
+    static QString modStr = '[' + i18n( "modified" ) + ']';
     int modStrPos = text.indexOf( modStr );
     int textPos = ( taskBar->showIcon() && !pixmap.isNull() ) ? 2 + 16 + 2 : 0;
 
@@ -855,7 +855,7 @@ QString TaskContainer::name()
         // and it's as fast as using append, but cleaner looking
         text += " [";
         text += QString::number(m_filteredTasks.count());
-        text += "]";
+        text += ']';
     }
 
     return text;
@@ -1589,7 +1589,7 @@ void TaskContainer::updateTipData(KickerTip::Data& data)
     {
         details.append(i18n("Has unsaved changes"));
 
-        static QString modStr = "[" + i18n( "modified" ) + "]";
+        static QString modStr = '[' + i18n( "modified" ) + ']';
         int modStrPos = name.indexOf(modStr);
 
         if (modStrPos >= 0)

@@ -141,7 +141,7 @@ void SearchWidget::populateKeywordList(ConfigModuleList *list)
           // look if _keywords already has an entry for this keyword
           for(KeywordListEntry *k = _keywords.first(); k != 0; k = _keywords.next())
             {
-              // if there is an entry for this keyword, add the module to the entries modul list
+              // if there is an entry for this keyword, add the module to the entries module list
               if (k->moduleName() == name)
                 {
                   k->addModule(module);

@@ -256,7 +256,7 @@ BasicTab::BasicTab( QWidget *parent )
 
 void BasicTab::slotDisableAction()
 {
-    //disable all group at the begining.
+    //disable all group at the beginning.
     //because there is not file selected.
     _nameEdit->setEnabled(false);
     _descriptionEdit->setEnabled(false);

@@ -501,7 +501,7 @@ int Minicli::runCommand()
     {
       // from kdesu_stub.c
       int val = 20 - (int) (((double) m_iPriority) * 40 / 100 + 0.5);
-      cmd = "nice -n " + QString::number( val ) + " " + cmd;
+      cmd = "nice -n " + QString::number( val ) + ' ' + cmd;
     }
 
     if (useTerminal)

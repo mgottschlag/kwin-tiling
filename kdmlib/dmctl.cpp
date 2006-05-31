@@ -422,7 +422,7 @@ DM::GDMAuthenticate()
 			QString cmd( "AUTH_LOCAL " );
 			for (int i = 0; i < 16; i++)
 				cmd += QString::number( (uchar)xau->data[i], 16 ).rightJustified( 2, '0');
-			cmd += "\n";
+			cmd += '\n';
 			if (exec( cmd.toLatin1() )) {
 				XauDisposeAuth( xau );
 				break;

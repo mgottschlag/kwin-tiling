@@ -240,7 +240,7 @@ static const QString ByteString( unsigned long n )
 {
     /* explanation in BR #52640 (http://bugs.kde.org/show_bug.cgi?id=52640) */
     if (n == 1)
-	return i18n("1 Byte"); // singular form: "1 Byte" (yes, it's "1", not "%1"!)
+	return i18n("1 Byte"); // singular form: "1 Byte" (yes, it is "1", not "%1"!)
 
     return i18n("%1 Bytes", // plural form: "%1 Bytes"
 		 KGlobal::locale()->formatNumber(n,0));

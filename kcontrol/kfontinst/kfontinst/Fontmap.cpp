@@ -249,7 +249,7 @@ static QString locateFile(const char *dir, const char *file, int level=0)
                 if("."!=fInfo.fileName() && ".."!=fInfo.fileName())
                     if(fInfo.isDir())
                     {
-                        if(!(str=locateFile(QFile::encodeName(fInfo.filePath()+"/"), file, level+1)).isEmpty())
+                        if(!(str=locateFile(QFile::encodeName(fInfo.filePath()+'/'), file, level+1)).isEmpty())
                             return str;
                     }
                     else

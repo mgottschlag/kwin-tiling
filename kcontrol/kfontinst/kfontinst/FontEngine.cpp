@@ -1429,8 +1429,8 @@ void CFontEngine::createNameBmp(int pointSize, int res, const QString &enc)
 
     ptStr.setNum(pointSize/10);
     resStr.setNum(res);
-    itsFullName=itsFamily+" "+weightStr(itsWeight)+(ITALIC_ITALIC==itsItalic ? constBmpItalic : ITALIC_OBLIQUE==itsItalic
-                ? constBmpOblique : constBmpRoman)+" ("+ptStr+"pt, "+resStr+"dpi, "+enc+")";
+    itsFullName=itsFamily+' '+weightStr(itsWeight)+(ITALIC_ITALIC==itsItalic ? constBmpItalic : ITALIC_OBLIQUE==itsItalic
+                ? constBmpOblique : constBmpRoman)+" ("+ptStr+"pt, "+resStr+"dpi, "+enc+')';
 }
 
 static CFontEngine::EItalic charToItalic(char c)

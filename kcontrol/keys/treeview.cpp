@@ -217,7 +217,7 @@ QStringList AppTreeView::fileList(const QString& rPath)
     QStringList resdirlist = KGlobal::dirs()->resourceDirs("apps");
     for (QStringList::ConstIterator it = resdirlist.begin(); it != resdirlist.end(); ++it)
     {
-        QDir dir((*it) + "/" + relativePath);
+        QDir dir((*it) + '/' + relativePath);
         if(!dir.exists()) continue;
 
         dir.setFilter(QDir::Files);
@@ -234,8 +234,8 @@ QStringList AppTreeView::fileList(const QString& rPath)
                 filelist.append(*it);
             }
             else {
-                filelist.removeAll(relativePath + "/" + *it); //hack
-                filelist.append(relativePath + "/" + *it);
+                filelist.removeAll(relativePath + '/' + *it); //hack
+                filelist.append(relativePath + '/' + *it);
             }
         }
     }
@@ -256,7 +256,7 @@ QStringList AppTreeView::dirList(const QString& rPath)
     QStringList resdirlist = KGlobal::dirs()->resourceDirs("apps");
     for (QStringList::ConstIterator it = resdirlist.begin(); it != resdirlist.end(); ++it)
     {
-        QDir dir((*it) + "/" + relativePath);
+        QDir dir((*it) + '/' + relativePath);
         if(!dir.exists()) continue;
         dir.setFilter(QDir::Dirs);
 
@@ -272,8 +272,8 @@ QStringList AppTreeView::dirList(const QString& rPath)
                 dirlist.append(*it);
             }
             else {
-                dirlist.removeAll(relativePath + "/" + *it); //hack
-                dirlist.append(relativePath + "/" + *it);
+                dirlist.removeAll(relativePath + '/' + *it); //hack
+                dirlist.append(relativePath + '/' + *it);
             }
         }
     }

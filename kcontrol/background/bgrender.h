@@ -116,7 +116,7 @@ private:
 };
 
 /**
- * In xinerama mode, each screen is rendered seperately by KBackgroundRenderer.
+ * In xinerama mode, each screen is rendered separately by KBackgroundRenderer.
  * This class controls a set of renderers for a desktop, and coallates the
  * images. Usage is similar to KBackgroundRenderer: connect to the imageDone
  * signal.

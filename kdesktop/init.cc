@@ -103,7 +103,7 @@ static void copyDirectoryFile(const QString &fileName, const QString& dir, bool 
   if (force || !QFile::exists(dir + "/.directory")) {
     QString cmd = "cp ";
     cmd += KProcess::quote(locate("data", QString("kdesktop/") + fileName));
-    cmd += " ";
+    cmd += ' ';
     cmd += KProcess::quote(dir+"/.directory");
     system( QFile::encodeName(cmd) );
   }
@@ -113,7 +113,7 @@ static void copyFile( const QString& src, const QString& dest )
 {
     QByteArray cmd = "cp ";
     cmd += QFile::encodeName(KProcess::quote(src));
-    cmd += " ";
+    cmd += ' ';
     cmd += QFile::encodeName(KProcess::quote(dest));
     system( cmd );
 }

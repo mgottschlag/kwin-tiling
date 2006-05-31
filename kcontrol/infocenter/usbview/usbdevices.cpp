@@ -255,7 +255,7 @@ void USBDevice::collectData( int fd, int level, usb_device_info &di, int parent)
 	_device       = di.udi_addr;
 	_product      = QLatin1String(di.udi_product);
 	if ( _device == 1 )
-		_product += " " + QString::number( _bus );
+		_product += ' ' + QString::number( _bus );
 	_manufacturer = QLatin1String(di.udi_vendor);
 	_prodID       = di.udi_productNo;
 	_vendorID     = di.udi_vendorNo;

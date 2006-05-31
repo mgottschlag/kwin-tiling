@@ -67,8 +67,8 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QStringList &) :
 			"<p><b> Use this with care: some services are vital for KDE; do not deactivate services if you"
 			" do not know what you are doing.</b></p>"));
 
-	RUNNING = i18n("Running")+" ";
-	NOT_RUNNING = i18n("Not running")+" ";
+	RUNNING = i18n("Running")+' ';
+	NOT_RUNNING = i18n("Not running")+' ';
 
 	QVBoxLayout *lay = new QVBoxLayout( this );
 	lay->setMargin( 0 );

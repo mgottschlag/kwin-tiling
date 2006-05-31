@@ -566,7 +566,7 @@ KUrl KDIconView::desktopURL()
     Q_ASSERT( desktopURL.isValid() );
     if ( !desktopURL.isValid() ) { // should never happen
         KUrl u;
-        u.setPath(  QDir::homePath() + "/" + "Desktop" + "/" );
+        u.setPath(  QDir::homePath() + '/' + "Desktop" + '/' );
         return u;
     }
 
@@ -1420,7 +1420,7 @@ void KDIconView::setupSortKeys()
             QString strFileName = static_cast<KFileIVI *>( it )->item()->url().fileName();
             int nFind = m_itemsAlwaysFirst.indexOf(strFileName);
             if (nFind >= 0)
-                strKey = "0" + QString::number(nFind);
+                strKey = '0' + QString::number(nFind);
         }
 
         if (strKey.isEmpty())
@@ -1517,7 +1517,7 @@ void KDIconView::moveToFreePosition(Q3IconViewItem *item )
         return;
     }
 
-    //try to find a free place to put the item, honouring the m_bVertAlign property
+    //try to find a free place to put the item, honoring the m_bVertAlign property
     QRect rect=item->rect();
     if (m_bVertAlign)
     {

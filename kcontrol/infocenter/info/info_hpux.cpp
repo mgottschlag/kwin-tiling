@@ -398,7 +398,7 @@ bool GetInfo_CPU( QListView *lBox )
   
   pstat_getprocessor( &pro, sizeof(pro), 1, 0 );
   olditem = new QListViewItem(lBox, olditem, i18n("CPU Clock"),
-                              Value(pro.psp_iticksperclktick/10000) + " " + i18n("MHz"));
+                              Value(pro.psp_iticksperclktick/10000) + ' ' + i18n("MHz"));
   
   switch(sysconf(_SC_CPU_VERSION))
   {	case CPU_HP_MC68020:	str2 = "Motorola 68020";	break;

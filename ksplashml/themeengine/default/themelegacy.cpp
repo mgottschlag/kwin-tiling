@@ -299,7 +299,7 @@ QString ThemeDefault::_findPicture( const QString &pic )
   QString p = QString();
   if ((p = locate("appdata",mTheme->themeDir()+f)).isEmpty())
     if ((p = locate("appdata",mTheme->themeDir()+"pics/"+f)).isEmpty())
-      if ((p = locate("appdata", QString("pics/")+mTheme->theme()+"/"+f)).isEmpty())
+      if ((p = locate("appdata", QString("pics/")+mTheme->theme()+'/'+f)).isEmpty())
         if ((p = locate("appdata",f)).isEmpty())
           if ((p = locate("appdata",QString("pics/")+f)).isEmpty())
             if ((p = locate("data",QString("pics/")+f)).isEmpty())

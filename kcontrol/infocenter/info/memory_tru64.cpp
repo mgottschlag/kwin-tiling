@@ -52,7 +52,7 @@ void KMemoryWidget::update()
   /* this is possibly bogus - we work out total # pages by */
   /* adding up the free, active, inactive, wired down, and */
   /* zero filled. Anyone who knows a better way, TELL ME!  */
-  /* Change: dont use zero filled. */
+  /* Change: don't use zero filled. */
 
   (void) ::vm_statistics(::task_self(), &vmstats);
 

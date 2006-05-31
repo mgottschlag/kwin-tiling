@@ -58,7 +58,7 @@ public:
 	bool		applyProposed();
 
 	/**
-	 * @returns false if the user did not confirm in time, or cancelled, or the change failed
+	 * @returns false if the user did not confirm in time, or canceled, or the change failed
 	 */
 	bool		applyProposedAndConfirm();
 

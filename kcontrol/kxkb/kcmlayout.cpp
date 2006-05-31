@@ -399,7 +399,7 @@ void LayoutConfig::updateLayoutCommand()
     if( !variant.isEmpty() ) {
       setxkbmap += " -variant ";
       if( widget->chkLatin->isChecked() )
-        setxkbmap += ",";
+        setxkbmap += ',';
       setxkbmap += variant;
     }
   }
@@ -559,7 +559,7 @@ void LayoutConfig::ruleChanged()
       QString addLayout = it2.currentKey();
       item->setPixmap(0, LayoutIcon::findPixmap(addLayout, true));
       item->setText(1, i18n(it2.current()) );
-      item->setText(2, "(" + addLayout + ")" );
+      item->setText(2, '(' + addLayout + ')' );
       ++it2;
     }
   widget->listLayoutsSrc->setSorting(1);	// from Qt3 QListView sorts by language
@@ -651,17 +651,17 @@ void LayoutConfig::save()
     if( m_includes[ layout ] && m_includes[ layout ][ 0 ] != '\0' )
     {
         QString inc = layout;
-        inc += "(";
+        inc += '(';
         inc += m_includes[ layout ];
-        inc += ")";
+        inc += ')';
         incList.append(  inc );
     }
     if( m_variants[ layout ] && m_variants[ layout ][ 0 ] != '\0' )
     {
 	QString var = layout;
-	var += "(";
+	var += '(';
 	var += m_variants[ layout ];
-	var += ")";
+	var += ')';
 	varList.append( var );
     }
 
@@ -829,9 +829,9 @@ extern "C"
  I18N_NOOP("Press Right Win-key to choose 3rd level");
  I18N_NOOP("CapsLock key behavior");
  I18N_NOOP("uses internal capitalization. Shift cancels Caps.");
- I18N_NOOP("uses internal capitalization. Shift doesn't cancel Caps.");
+ I18N_NOOP("uses internal capitalization. Shift does not cancel Caps.");
  I18N_NOOP("acts as Shift with locking. Shift cancels Caps.");
- I18N_NOOP("acts as Shift with locking. Shift doesn't cancel Caps.");
+ I18N_NOOP("acts as Shift with locking. Shift does not cancel Caps.");
  I18N_NOOP("Alt/Win key behavior");
  I18N_NOOP("Add the standard behavior to Menu key.");
  I18N_NOOP("Alt and Meta on the Alt keys (default).");

@@ -371,7 +371,7 @@ void KKeyModule::readScheme( int index )
     }
 
   kksPath +=  KeyType ;
-  kksPath += "/";
+  kksPath += '/';
 
   d.setPath( kksPath );
   if ( !d.exists() )

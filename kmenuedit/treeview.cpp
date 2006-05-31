@@ -386,11 +386,11 @@ TreeItem *TreeView::createTreeItem(TreeItem *parent, Q3ListViewItem *after, Menu
    {
       if (m_detailedEntriesNamesFirst)
       {
-         name = entryInfo->caption + " (" + entryInfo->description + ")";
+         name = entryInfo->caption + " (" + entryInfo->description + ')';
       }
       else
       {
-         name = entryInfo->description + " (" + entryInfo->caption + ")";
+         name = entryInfo->description + " (" + entryInfo->caption + ')';
       }
    }
    else
@@ -469,7 +469,7 @@ void TreeView::selectMenu(const QString &menu)
 
    QString restMenu = menu.mid(1);
    if (!restMenu.endsWith("/"))
-      restMenu += "/";
+      restMenu += '/';
 
    TreeItem *item = 0;
    do
@@ -574,11 +574,11 @@ void TreeView::currentChanged(MenuEntryInfo *entryInfo)
     {
         if (m_detailedEntriesNamesFirst)
 	 {
-            name = entryInfo->caption + " (" + entryInfo->description + ")";
+            name = entryInfo->caption + " (" + entryInfo->description + ')';
         }
 	 else
         {
-            name = entryInfo->description + " (" + entryInfo->caption + ")";
+            name = entryInfo->description + " (" + entryInfo->caption + ')';
         }
     }
     else
@@ -603,7 +603,7 @@ QStringList TreeView::fileList(const QString& rPath)
     QStringList resdirlist = KGlobal::dirs()->resourceDirs("apps");
     for (QStringList::ConstIterator it = resdirlist.begin(); it != resdirlist.end(); ++it)
     {
-        QDir dir((*it) + "/" + relativePath);
+        QDir dir((*it) + '/' + relativePath);
         if(!dir.exists()) continue;
 
         dir.setFilter(QDir::Files);
@@ -620,8 +620,8 @@ QStringList TreeView::fileList(const QString& rPath)
                 filelist.append(*it);
             }
             else {
-                filelist.removeAll(relativePath + "/" + *it); //hack
-                filelist.append(relativePath + "/" + *it);
+                filelist.removeAll(relativePath + '/' + *it); //hack
+                filelist.append(relativePath + '/' + *it);
             }
         }
     }
@@ -642,7 +642,7 @@ QStringList TreeView::dirList(const QString& rPath)
     QStringList resdirlist = KGlobal::dirs()->resourceDirs("apps");
     for (QStringList::ConstIterator it = resdirlist.begin(); it != resdirlist.end(); ++it)
     {
-        QDir dir((*it) + "/" + relativePath);
+        QDir dir((*it) + '/' + relativePath);
         if(!dir.exists()) continue;
         dir.setFilter(QDir::Dirs);
 
@@ -658,8 +658,8 @@ QStringList TreeView::dirList(const QString& rPath)
                 dirlist.append(*it);
             }
             else {
-                dirlist.removeAll(relativePath + "/" + *it); //hack
-                dirlist.append(relativePath + "/" + *it);
+                dirlist.removeAll(relativePath + '/' + *it); //hack
+                dirlist.append(relativePath + '/' + *it);
             }
         }
     }

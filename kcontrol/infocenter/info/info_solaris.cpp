@@ -521,7 +521,7 @@ QString propvalue( di_prop_t prop ) {
 					QString tmp;
 					tmp.setNum( intp[i] );
 					result += tmp;
-					result += " ";
+					result += ' ';
 				}
 			}
 			break;
@@ -619,7 +619,7 @@ int dump_node( di_node_t node, void *arg ) {
 	} else {
 		for( i = 0; i < n; i++ ) {
 			compatnames += names;
-			compatnames += " ";
+			compatnames += ' ';
 			names += strlen( names ) + 1;
 		}
 	}

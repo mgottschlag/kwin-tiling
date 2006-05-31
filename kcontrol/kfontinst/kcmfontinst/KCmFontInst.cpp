@@ -594,7 +594,7 @@ void CKCmFontInst::updateInformation(int, int fonts)
 
     if(fonts>0)
     {
-        text+=" ";
+        text+=' ';
         text+=i18n("(%1 Total)", KIO::convertSize(size));
     }
     text+=" - ";

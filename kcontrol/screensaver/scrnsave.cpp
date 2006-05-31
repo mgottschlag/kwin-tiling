@@ -546,12 +546,12 @@ void KScreenSaver::findSavers()
         {
             Q3ListViewItem *item;
             if (s->category().isEmpty())
-                item = new Q3ListViewItem ( mSaverListView, s->name(), "2" + s->name() );
+                item = new Q3ListViewItem ( mSaverListView, s->name(), '2' + s->name() );
             else
             {
                 Q3ListViewItem *categoryItem = mSaverListView->findItem( s->category(), 0 );
                 if ( !categoryItem ) {
-                    categoryItem = new Q3ListViewItem ( mSaverListView, s->category(), "1" + s->category() );
+                    categoryItem = new Q3ListViewItem ( mSaverListView, s->category(), '1' + s->category() );
                     categoryItem->setPixmap ( 0, SmallIcon ( "kscreensaver" ) );
                 }
                 item = new Q3ListViewItem ( categoryItem, s->name(), s->name() );

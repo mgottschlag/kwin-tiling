@@ -102,7 +102,7 @@ bool XKBExtension::setLayout(const QString& model,
     QString fullVariant = variant;
     if( baseGr != 0 && baseGr[0] != '\0' ) {
         fullLayout = baseGr;
-        fullLayout += ",";
+        fullLayout += ',';
         fullLayout += layout;
 //    fullVariant = baseVar;
         fullVariant = ",";

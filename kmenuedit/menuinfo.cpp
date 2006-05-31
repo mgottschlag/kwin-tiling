@@ -332,7 +332,7 @@ void MenuEntryInfo::setDirty()
 
 bool MenuEntryInfo::needInsertion()
 {
-   // If entry is dirty and previously stored under applnk, then we need to be added explicity 
+   // If entry is dirty and previously stored under applnk, then we need to be added explicitly
    return dirty && !service->desktopEntryPath().startsWith("/");
 }
 

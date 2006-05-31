@@ -58,7 +58,7 @@ QString HMSTimeWidget::mapValueToText(int value)
 {
   QString s = QString::number(value);
   if( value < 10 ) {
-    s = "0" + s;
+    s = '0' + s;
   }
   return s;
 }

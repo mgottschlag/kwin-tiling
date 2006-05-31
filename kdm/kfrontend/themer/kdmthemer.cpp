@@ -316,7 +316,7 @@ KdmThemer::showStructure( QObject *obj )
 			object = it.next();
 			QString node;
 			for (int i = 1; i < counter; i++)
-				node += "-";
+				node += '-';
 
 			if (object->inherits( "KdmItem" )) {
 				KdmItem *widget = (KdmItem *)object;

@@ -185,7 +185,7 @@ void Tzone::save()
 			KMessageBox::error( 0, i18n("Error setting new timezone."),
                         		    i18n("Timezone Error"));
 
-        QString val = ":" + tz;
+        QString val = ':' + tz;
 #endif // !USE_SOLARIS
 
         setenv("TZ", val.toAscii(), 1);
