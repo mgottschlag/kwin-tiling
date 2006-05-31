@@ -33,6 +33,8 @@ using namespace std;
 #include <solid/device.h>
 #include <solid/volume.h>
 
+#include <solid/powermanager.h>
+
 #include <kjob.h>
 
 static const char appName[] = "solidshell";
@@ -152,6 +154,10 @@ int main(int argc, char **argv)
       cout << "  solidshell hardware unmount 'udi'" << endl;
       cout << "  solidshell hardware eject 'udi'" << endl;
 
+      cout << endl;
+
+      cout << "  solidshell power query (suspend)" << endl;
+      cout << "  solidshell suspend 'method'" << endl;
       return 0;
   }
 
@@ -217,7 +223,26 @@ bool SolidShell::doIt()
             return shell.hwVolumeCall( Eject, udi );
         }
     }
+    else if ( domain == "power" )
+    {
+        if ( command == "suspend" )
+        {
+            checkArgumentCount( 3, 3 );
+            QString method( args->arg( 2 ) );
 
+            return shell.powerSuspend( method );
+        }
+        else if ( command == "query" )
+        {
+            checkArgumentCount( 3, 3 );
+            QString type( args->arg( 2 ) );
+
+            if ( type == "suspend" )
+            {
+                return shell.powerQuerySuspendMethods();
+            }
+        }
+    }
 
     return false;
 }
@@ -301,8 +326,7 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
         return false;
     }
 
-    connect( job, SIGNAL( result( KJob* ) ),
-             this, SLOT( slotResult( KJob* ) ) );
+    connectJob( job );
 
     job->start();
     m_loop.exec();
@@ -316,6 +340,100 @@ bool SolidShell::hwVolumeCall( SolidShell::VolumeCallType type, const QString &u
     {
         return true;
     }
+}
+
+bool SolidShell::powerQuerySuspendMethods()
+{
+    Solid::PowerManager &manager = Solid::PowerManager::self();
+
+    Solid::PowerManager::SuspendMethods methods = manager.supportedSuspendMethods();
+
+    if ( methods & Solid::PowerManager::ToDisk )
+    {
+        cout << "to_disk" << endl;
+    }
+
+    if ( methods & Solid::PowerManager::ToRam )
+    {
+        cout << "to_ram" << endl;
+    }
+
+    if ( methods & Solid::PowerManager::Standby )
+    {
+        cout << "standby" << endl;
+    }
+
+    return true;
+}
+
+bool SolidShell::powerSuspend( const QString &strMethod )
+{
+    Solid::PowerManager &manager = Solid::PowerManager::self();
+
+    Solid::PowerManager::SuspendMethods supported = manager.supportedSuspendMethods();
+
+    Solid::PowerManager::SuspendMethod method = Solid::PowerManager::UnknownSuspendMethod;
+
+    if ( strMethod == "to_disk" && (supported & Solid::PowerManager::ToDisk) )
+    {
+        method = Solid::PowerManager::ToDisk;
+    }
+    else if ( strMethod == "to_ram" && (supported & Solid::PowerManager::ToRam) )
+    {
+        method = Solid::PowerManager::ToRam;
+    }
+    else if ( strMethod == "standby" && (supported & Solid::PowerManager::Standby) )
+    {
+        method = Solid::PowerManager::Standby;
+    }
+    else
+    {
+        cerr << i18n( "Unsupported suspend method: %1" ).arg( strMethod ) << endl;
+        return false;
+    }
+
+    KJob *job = manager.suspend( method );
+
+    if ( job==0 )
+    {
+        cerr << i18n( "Error: unsupported operation!" ) << endl;
+        return false;
+    }
+
+    connectJob( job );
+
+    job->start();
+    m_loop.exec();
+
+    if ( m_error )
+    {
+        cerr << i18n( "Error: %1" ).arg( m_errorString ) << endl;
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+void SolidShell::connectJob( KJob *job )
+{
+    connect( job, SIGNAL( result( KJob* ) ),
+             this, SLOT( slotResult( KJob* ) ) );
+    connect( job, SIGNAL( percent( KJob*, unsigned long ) ),
+             this, SLOT( slotPercent( KJob*, unsigned long ) ) );
+    connect( job, SIGNAL( infoMessage( KJob*, const QString&, const QString& ) ),
+             this, SLOT( slotInfoMessage( KJob*, const QString& ) ) );
+}
+
+void SolidShell::slotPercent( KJob */*job*/, unsigned long percent )
+{
+    cout << i18n( "Progress: %1%" ).arg( percent ) << endl;
+}
+
+void SolidShell::slotInfoMessage( KJob */*job*/, const QString &message )
+{
+    cout << i18n( "Info: %1" ).arg( message ) << endl;
 }
 
 void SolidShell::slotResult( KJob *job )

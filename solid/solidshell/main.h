@@ -40,12 +40,29 @@ public:
     enum VolumeCallType { Mount, Unmount, Eject };
     bool hwVolumeCall( VolumeCallType type, const QString &udi );
 
+
+    bool powerQuerySuspendMethods();
+    bool powerSuspend( const QString &method );
+
+    bool powerQuerySchemes();
+    bool powerCurrentScheme();
+    bool powerChangeScheme();
+
+    bool powerQueryCpuPolicies();
+    bool powerCurrentCpuPolicy();
+    bool powerChangeCpuPolicy();
+    bool powerSetCpuEnabled();
+
 private:
+    void connectJob( KJob *job );
+
     QEventLoop m_loop;
     int m_error;
     QString m_errorString;
 private slots:
     void slotResult( KJob *job );
+    void slotPercent( KJob *job, unsigned long percent );
+    void slotInfoMessage( KJob *job, const QString &message );
 };
 
 
