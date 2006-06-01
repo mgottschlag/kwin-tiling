@@ -25,14 +25,13 @@
 #include <sys/stat.h>
 #include <QRegExp>
 #include <QFile>
-#include <qpaintdevice.h>
-//Added by qt3to4:
+#include <QX11Info>
 #include <QByteArray>
 #include <Q3PtrList>
 #include <klocale.h>
 #include <kde_file.h>
 #include <QDir>
-#include <qsettings.h>
+#include <QSettings>
 #include <QFont>
 
 #ifdef HAVE_FONTCONFIG
@@ -72,12 +71,12 @@ QString KXftConfig::expandHome(QString path)
 
 static int point2Pixel(double point)
 {
-    return (int)(((point*QPaintDevice::x11AppDpiY())/72.0)+0.5);
+    return (int)(((point*QX11Info::appDpiY())/72.0)+0.5);
 }
 
 static int pixel2Point(double pixel)
 {
-    return (int)(((pixel*72.0)/(double)QPaintDevice::x11AppDpiY())+0.5);
+    return (int)(((pixel*72.0)/(double)QX11Info::appDpiY())+0.5);
 }
 
 static bool equal(double d1, double d2)
