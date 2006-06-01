@@ -18,7 +18,10 @@ kde4_automoc(${klipper_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( klipper ${klipper_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_klipper  ${KDE4_KDECORE_LIBS}  )
+target_link_libraries(kdeinit_klipper  ${KDE4_KDE3SUPPORT_LIBS}  )
+if (X11_Xfixes_FOUND)
+  target_link_libraries(kdeinit_klipper ${X11_Xfixes_LIB})
+endif (X11_Xfixes_FOUND)
 
 install_targets(${LIB_INSTALL_DIR} kdeinit_klipper )
 
@@ -27,19 +30,20 @@ install(TARGETS klipper DESTINATION bin)
 
 ########### next target ###############
 
-set(klipper_panelapplet_PART_SRCS applet.cpp ${libklipper_common_SRCS})
+message(STATUS "TODO port klipper panel applet")
+#set(klipper_panelapplet_PART_SRCS applet.cpp ${libklipper_common_SRCS})
 
-kde4_automoc(${klipper_panelapplet_PART_SRCS})
+#kde4_automoc(${klipper_panelapplet_PART_SRCS})
 
-kde4_add_dcop_skels(klipper_panelapplet_PART_SRCS applet.h )
+#kde4_add_dcop_skels(klipper_panelapplet_PART_SRCS applet.h )
 
-kde4_add_plugin(klipper_panelapplet ${klipper_panelapplet_PART_SRCS})
+#kde4_add_plugin(klipper_panelapplet ${klipper_panelapplet_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} klipper_panelapplet )
+#kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} klipper_panelapplet )
 
-target_link_libraries(klipper_panelapplet  ${KDE4_KDECORE_LIBS} )
+#target_link_libraries(klipper_panelapplet  ${KDE4_KDECORE_LIBS} )
 
-install_targets(${PLUGIN_INSTALL_DIR} klipper_panelapplet )
+#install_targets(${PLUGIN_INSTALL_DIR} klipper_panelapplet )
 
 
 ########### install files ###############

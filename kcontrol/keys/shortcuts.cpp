@@ -122,7 +122,7 @@ void ShortcutsModule::initGUI()
 #include "../../kicker/kicker/core/kickerbindings.cpp"
 #include "../../kicker/taskbar/taskbarbindings.cpp"
 #include "../../kdesktop/kdesktopbindings.cpp"
-#include "../../../klipper/klipperbindings.cpp"
+#include "../../../workspace/klipper/klipperbindings.cpp"
 #include "../kxkb/kxkbbindings.cpp"
 
 	kDebug(125) << "B-----------" << endl;

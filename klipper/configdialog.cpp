@@ -59,7 +59,7 @@ ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel,
     actionWidget = new ActionWidget( list, this, w, "actions widget" );
 
     w = addVBoxPage( i18n("&Shortcuts") );
-    keysWidget = new KKeyChooser( accel, w );
+    keysWidget = new KKeyChooser( w, KKeyChooser::GlobalAction );
 }
 
 
@@ -213,7 +213,7 @@ void ListView::rename( Q3ListViewItem* item, int c )
 #warning "qt_cast doesn't exist anymore, but tried qobject_cast but without success"
 #if 0
     KRegExpEditorInterface *iface = static_cast<KRegExpEditorInterface *>( _regExpEditor->qt_cast( "KRegExpEditorInterface" ) );
-    
+
     assert( iface );
     iface->setRegExp( item->text( 0 ) );
 
@@ -295,7 +295,7 @@ ActionWidget::ActionWidget( const ActionList *list, ConfigDialog* configWidget, 
     listView->setSorting( -1 ); // newly inserted items just append unsorted
 
     cbUseGUIRegExpEditor = new QCheckBox( i18n("&Use graphical editor for editing regular expressions" ), this );
-    if ( KTrader::self()->query("KRegExpEditor/KRegExpEditor").isEmpty() )
+    if ( KServiceTypeTrader::self()->query("KRegExpEditor/KRegExpEditor").isEmpty() )
     {
 	cbUseGUIRegExpEditor->hide();
 	cbUseGUIRegExpEditor->setChecked( false );

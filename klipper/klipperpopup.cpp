@@ -148,7 +148,7 @@ void KlipperPopup::ensureClean() {
 void KlipperPopup::buildFromScratch() {
     m_filterWidget = new KLineEditBlackKey( this );
     addTitle( SmallIcon( "klipper" ), i18n("Klipper - Clipboard Tool"));
-#warning "KlipperPopup::buildFromScratch, insertItem do not take a QWidget as first parameter"
+#warning "KlipperPopup::buildFromScratch, insertItem does not take a QWidget as first parameter"
 #if 0
     m_filterWidgetId = insertItem( m_filterWidget, m_filterWidgetId, 1 );
 #endif
@@ -162,7 +162,8 @@ void KlipperPopup::buildFromScratch() {
     QString group;
     QString defaultGroup( "default" );
     for ( KAction* action = m_actions.first(); action; action = m_actions.next() ) {
-        group = action->group();
+#warning no more group() in action, this hack needs to be revised
+        //group = action->group();
         if ( group != lastGroup ) {
             if ( lastGroup == defaultGroup ) {
                 insertItem( SmallIconSet("help"), KStdGuiItem::help().text(), helpmenu->menu() );
@@ -234,8 +235,7 @@ void KlipperPopup::keyPressEvent( QKeyEvent* e ) {
     if ( e->state() & Qt::AltModifier ) {
         QKeyEvent ke( QEvent::KeyPress,
                       e->key(),
-                      e->toAscii(),
-                      e->state() ^ Qt::AltModifier,
+                      e->modifiers() ^ Qt::AltModifier,
                       e->text(),
                       e->isAutoRepeat(),
                       e->count() );
