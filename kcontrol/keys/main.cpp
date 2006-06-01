@@ -130,7 +130,7 @@ extern "C"
 	KAction* a = 0L;
 // this should match the included files above
 #define NOSLOTS
-#include "../../../klipper/klipperbindings.cpp"
+#include "../../../workspace/klipper/klipperbindings.cpp"
 #include "../../kwin/kwinbindings.cpp"
 #define KICKER_ALL_BINDINGS
 #include "../../../workspace/kicker/kicker/core/kickerbindings.cpp"
