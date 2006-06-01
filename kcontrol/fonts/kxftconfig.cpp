@@ -124,7 +124,8 @@ static bool check(const QString &path, unsigned int fmt, bool checkW=false)
     KDE_struct_stat info;
     QByteArray        pathC(QFile::encodeName(path));
 
-    return 0==KDE_lstat(pathC, &info) && (info.st_mode&S_IFMT)==fmt && (!checkW || 0==::access(pathC, W_OK));
+    return 0==KDE_lstat(pathC, &info) && (info.st_mode&S_IFMT)==fmt &&
+           (!checkW || 0==::access(pathC, W_OK));
 }
 
 inline bool fExists(const QString &p)
@@ -194,11 +195,13 @@ QString getConfigFile(bool system)
 
         if(fExists(f))
         {
-            if(system || 0==fileSyntax(f).indexOf(home)) // For nonsystem, only consider file within $HOME
+            // For nonsystem, only consider file within $HOME
+            if(system || 0==fileSyntax(f).indexOf(home))
                 files.append(f);
         }
 #if (FC_VERSION>=20300)
-        else if(system && dExists(f) && f.contains(QRegExp("/conf\\.d/?$")))
+        if(system && dExists(f) && (f.contains(QRegExp("/conf\\.d/?$")) ||
+                                    f.contains(QRegExp("/conf\\.d?$"))) )
             return dirSyntax(f)+constKdeRootFcFile;   // This ones good enough for me!
 #endif
     }
@@ -215,8 +218,8 @@ QString getConfigFile(bool system)
                 return *it;
         return files.front();  // Just return the 1st one...
     }
-    else
-        return system ? "/etc/fonts/local.conf" : fileSyntax(home+"/.fonts.conf"); // Hmmm... no known files?
+    else // Hmmm... no known files?
+        return system ? "/etc/fonts/local.conf" : fileSyntax(home+"/.fonts.conf"); 
 }
 
 static QString getEntry(QDomElement element, const char *type, unsigned int numAttributes, ...)
@@ -529,7 +532,8 @@ bool KXftConfig::reset()
     {
         //
         // Check exclude range values - i.e. size and pixel size...
-        if(!equal(0, m_excludeRange.from) || !equal(0, m_excludeRange.to))    // If "size" range is set, ensure "pixelsize" matches...
+        // If "size" range is set, ensure "pixelsize" matches...
+        if(!equal(0, m_excludeRange.from) || !equal(0, m_excludeRange.to))    
         {
             double pFrom=(double)point2Pixel(m_excludeRange.from),
                    pTo=(double)point2Pixel(m_excludeRange.to);
@@ -542,8 +546,9 @@ bool KXftConfig::reset()
                 apply();
             }
         }
-        else if(!equal(0, m_excludePixelRange.from) || !equal(0, m_excludePixelRange.to))   // "pixelsize" set, but not "size" !!!
+        else if(!equal(0, m_excludePixelRange.from) || !equal(0, m_excludePixelRange.to))   
         {
+            // "pixelsize" set, but not "size" !!!
             m_excludeRange.from=(int)pixel2Point(m_excludePixelRange.from);
             m_excludeRange.to=(int)pixel2Point(m_excludePixelRange.to);
             m_madeChanges=true;
@@ -583,7 +588,8 @@ bool KXftConfig::apply()
 #ifdef HAVE_FONTCONFIG
             if(m_required&HintStyle)
                 newConfig.setHintStyle(m_hint.style);
-            newConfig.setAntiAliasing(m_antiAliasing.set);
+            if(m_required&AntiAlias)
+                newConfig.setAntiAliasing(m_antiAliasing.set);
 #else
             if(m_required&SymbolFamilies)
             {
@@ -609,7 +615,7 @@ bool KXftConfig::apply()
             }
     
 #ifdef HAVE_FONTCONFIG
-            FcAtomic *atomic=FcAtomicCreate((const unsigned char *)((const char *)(QFile::encodeName(m_file))));
+            FcAtomic *atomic=FcAtomicCreate((const unsigned char *)(QFile::encodeName(m_file).data()));
     
             ok=false;
             if(atomic)
@@ -629,7 +635,8 @@ bool KXftConfig::apply()
                             applySubPixelType();
                         if(m_required&HintStyle)
                             applyHintStyle();
-                        applyAntiAliasing();
+                        if(m_required&AntiAlias)
+                            applyAntiAliasing();
                         if(m_required&ExcludeRange)
                         {
                             applyExcludeRange(false);
@@ -641,7 +648,8 @@ bool KXftConfig::apply()
                         static const char * qtXmlHeader   = "<?xml version = '1.0'?>";
                         static const char * xmlHeader     = "<?xml version=\"1.0\"?>";
                         static const char * qtDocTypeLine = "<!DOCTYPE fontconfig>";
-                        static const char * docTypeLine   = "<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">";
+                        static const char * docTypeLine   = "<!DOCTYPE fontconfig SYSTEM "
+                                                            "\"fonts.dtd\">";
     
                         QString str(m_doc.toString());
                         int     idx;
@@ -677,10 +685,10 @@ bool KXftConfig::apply()
             if(f)
             {
                 ListItem *ldi=m_required&Dirs ? getLastItem(m_dirs) : NULL,
-                        *lfi=m_required&SymbolFamilies ? getLastItem(m_symbolFamilies) : NULL;
+                         *lfi=m_required&SymbolFamilies ? getLastItem(m_symbolFamilies) : NULL;
                 char     *pos=m_data;
                 bool     finished=false,
-                        pixel=false;
+                         pixel=false;
     
                 while(!finished)
                 {
@@ -689,29 +697,34 @@ bool KXftConfig::apply()
                             *ffi=NULL;
                     Item     *first=NULL;
     
-                    if(m_required&Dirs && NULL!=(fdi=getFirstItem(m_dirs)) && (NULL==first || fdi->start < first->start))
+                    if(m_required&Dirs && NULL!=(fdi=getFirstItem(m_dirs)) &&
+                       (NULL==first || fdi->start < first->start))
                     {
                         first=fdi;
                         type=Dirs;
                     }
-                    if(m_required&SymbolFamilies && NULL!=(ffi=getFirstItem(m_symbolFamilies)) && (NULL==first || ffi->start < first->start))
+                    if(m_required&SymbolFamilies && NULL!=(ffi=getFirstItem(m_symbolFamilies)) &&
+                       (NULL==first || ffi->start < first->start))
                     {
                         first=ffi;
                         type=SymbolFamilies;
                     }
-                    if(m_required&SubPixelType && NULL!=m_subPixel.start && (NULL==first || m_subPixel.start < first->start))
+                    if(m_required&SubPixelType && NULL!=m_subPixel.start &&
+                       (NULL==first || m_subPixel.start < first->start))
                     {
                         first=&m_subPixel;
                         type=SubPixelType;
                     }
                     if(m_required&ExcludeRange)
-                        if(NULL!=m_excludeRange.start && (NULL==first || m_excludeRange.start < first->start))
+                        if(NULL!=m_excludeRange.start &&
+                           (NULL==first || m_excludeRange.start < first->start))
                         {
                             first=&m_excludeRange;
                             type=ExcludeRange;
                             pixel=false;
                         }
-                        else if(NULL!=m_excludePixelRange.start && (NULL==first || m_excludePixelRange.start < first->start))
+                        else if(NULL!=m_excludePixelRange.start &&
+                                (NULL==first || m_excludePixelRange.start < first->start))
                         {
                             first=&m_excludePixelRange;
                             type=ExcludeRange;
@@ -1044,30 +1057,34 @@ void KXftConfig::readContents()
                             QDomElement ene=e.firstChild().toElement();
 
                             if(!ene.isNull() && "edit"==ene.tagName())
-                                if(!(str=getEntry(ene, "const", 2, "name", "rgba", "mode", "assign")).isNull())
+                                if(!(str=getEntry(ene, "const", 2, "name", "rgba", "mode",
+                                                  "assign")).isNull())
                                 {
                                     m_subPixel.node=n;
                                     m_subPixel.type=strToType(str.toLatin1());
                                 }
-                                else if(!(str=getEntry(ene, "const", 2, "name", "hintstyle", "mode", "assign")).isNull())
+                                else if(!(str=getEntry(ene, "const", 2, "name", "hintstyle", "mode",
+                                                       "assign")).isNull())
                                 {
                                     m_hint.node=n;
                                     m_hint.style=strToStyle(str.toLatin1());
                                 }
-                                else if(!(str=getEntry(ene, "bool", 2, "name", "hinting", "mode", "assign")).isNull())
+                                else if(!(str=getEntry(ene, "bool", 2, "name", "hinting", "mode",
+                                                       "assign")).isNull())
                                 {
                                     m_hinting.node=n;
                                     m_hinting.set=str.toLower()!="false";
                                 }
-                                else if(!(str=getEntry(ene, "bool", 2, "name", "antialias", "mode", "assign")).isNull())
+                                else if(!(str=getEntry(ene, "bool", 2, "name", "antialias", "mode",
+                                                       "assign")).isNull())
                                 {
                                     m_antiAliasing.node=n;
                                     m_antiAliasing.set=str.toLower()!="false";
                                 }
                         }
                         break;
-                    case 3:
-                        if(m_required&ExcludeRange && "font"==e.attribute("target"))  // CPD: Is target "font" or "pattern" ????
+                    case 3: // CPD: Is target "font" or "pattern" ????
+                        if(m_required&ExcludeRange && "font"==e.attribute("target"))  
                         {
                             bool     foundFalse=false;
                             QDomNode en=e.firstChild();
@@ -1084,26 +1101,39 @@ void KXftConfig::readContents()
                                 if(!ene.isNull())
                                     if("test"==ene.tagName())
                                     {
-                                        // kcmfonts used to write incorrectly more or less instead of more_eq and less_eq, so read both,
+                                        // kcmfonts used to write incorrectly more or less instead of
+                                        // more_eq and less_eq, so read both,
                                         // first the old (wrong) one then the right one
-                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "more")).isNull())
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name",
+                                                          "size", "compare", "more")).isNull())
                                             from=str.toDouble();
-                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "more_eq")).isNull())
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name",
+                                                          "size", "compare", "more_eq")).isNull())
                                             from=str.toDouble();
-                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "less")).isNull())
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name",
+                                                          "size", "compare", "less")).isNull())
                                             to=str.toDouble();
-                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "size", "compare", "less_eq")).isNull())
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name",
+                                                          "size", "compare", "less_eq")).isNull())
                                             to=str.toDouble();
-                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "pixelsize", "compare", "more")).isNull())
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name",
+                                                          "pixelsize", "compare", "more")).isNull())
                                             pixelFrom=str.toDouble();
-                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "pixelsize", "compare", "more_eq")).isNull())
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name",
+                                                          "pixelsize", "compare",
+                                                          "more_eq")).isNull())
                                             pixelFrom=str.toDouble();
-                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "pixelsize", "compare", "less")).isNull())
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name",
+                                                          "pixelsize", "compare", "less")).isNull())
                                             pixelTo=str.toDouble();
-                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name", "pixelsize", "compare", "less_eq")).isNull())
+                                        if(!(str=getEntry(ene, "double", 3, "qual", "any", "name",
+                                                          "pixelsize", "compare",
+                                                          "less_eq")).isNull())
                                             pixelTo=str.toDouble();
                                     }
-                                    else if("edit"==ene.tagName() && "false"==getEntry(ene, "bool", 2, "name", "antialias", "mode", "assign"))
+                                    else if("edit"==ene.tagName() &&
+                                            "false"==getEntry(ene, "bool", 2, "name", "antialias",
+                                                              "mode", "assign"))
                                         foundFalse=true;
 
                                 en=en.nextSibling();
@@ -1192,8 +1222,9 @@ void KXftConfig::readContents()
                             {
                                 ptr=eostr+1;
 
-                                if(skipToken(&ptr, "edit") && skipToken(&ptr, "encoding") && skipToken(&ptr, "=") && 
-                                   skipToken(&ptr, constSymEnc) && skipToken(&ptr, ";"))
+                                if(skipToken(&ptr, "edit") && skipToken(&ptr, "encoding") &&
+                                   skipToken(&ptr, "=") && skipToken(&ptr, constSymEnc) &&
+                                   skipToken(&ptr, ";"))
                                 {
                                     while(*ptr!='\n' && *ptr!='\0' && isWhiteSpace(*ptr))
                                         ptr++;
@@ -1204,10 +1235,12 @@ void KXftConfig::readContents()
                         }
                     }
                 }
-                else if(m_required&ExcludeRange && skipToken(&ptr, "size") && (skipToken(&ptr, ">")||skipToken(&ptr, "<")) && 
+                else if(m_required&ExcludeRange && skipToken(&ptr, "size") &&
+                        (skipToken(&ptr, ">")||skipToken(&ptr, "<")) && 
                         readNum(&ptr, &efrom) && skipToken(&ptr, "any") && skipToken(&ptr, "size") &&
-                        (skipToken(&ptr, "<")||skipToken(&ptr, ">")) && readNum(&ptr, &eto) && skipToken(&ptr, "edit") &&
-                        skipToken(&ptr, "antialias") && skipToken(&ptr, "=") && skipToken(&ptr, "false") && skipToken(&ptr, ";"))
+                        (skipToken(&ptr, "<")||skipToken(&ptr, ">")) && readNum(&ptr, &eto) &&
+                        skipToken(&ptr, "edit") && skipToken(&ptr, "antialias") &&
+                        skipToken(&ptr, "=") && skipToken(&ptr, "false") && skipToken(&ptr, ";"))
                 {
                     while(*ptr!='\n' && *ptr!='\0' && isWhiteSpace(*ptr))
                         ptr++;
@@ -1216,10 +1249,13 @@ void KXftConfig::readContents()
                     m_excludeRange.start=from;
                     m_excludeRange.end=ptr;
                 }
-                else if(m_required&ExcludeRange && skipToken(&ptr, "pixelsize") && (skipToken(&ptr, ">")||skipToken(&ptr, "<")) && 
-                        readNum(&ptr, &efrom) && skipToken(&ptr, "any") && skipToken(&ptr, "pixelsize") &&
-                        (skipToken(&ptr, "<")||skipToken(&ptr, ">")) && readNum(&ptr, &eto) && skipToken(&ptr, "edit") &&
-                        skipToken(&ptr, "antialias") && skipToken(&ptr, "=") && skipToken(&ptr, "false") && skipToken(&ptr, ";"))
+                else if(m_required&ExcludeRange && skipToken(&ptr, "pixelsize") &&
+                        (skipToken(&ptr, ">")||skipToken(&ptr, "<")) && 
+                        readNum(&ptr, &efrom) && skipToken(&ptr, "any") &&
+                        skipToken(&ptr, "pixelsize") &&
+                        (skipToken(&ptr, "<")||skipToken(&ptr, ">")) && readNum(&ptr, &eto) &&
+                        skipToken(&ptr, "edit") && skipToken(&ptr, "antialias") &&
+                        skipToken(&ptr, "=") && skipToken(&ptr, "false") && skipToken(&ptr, ";"))
                 {
                     while(*ptr!='\n' && *ptr!='\0' && isWhiteSpace(*ptr))
                         ptr++;
@@ -1229,7 +1265,8 @@ void KXftConfig::readContents()
                     m_excludePixelRange.end=ptr;
                 }
             }
-            else if(m_required&SubPixelType && skipToken(&ptr, "edit") && skipToken(&ptr, "rgba") && skipToken(&ptr, "="))
+            else if(m_required&SubPixelType && skipToken(&ptr, "edit") && skipToken(&ptr, "rgba") &&
+                    skipToken(&ptr, "="))
             {
                 SubPixel::Type type=SubPixel::None;
 
@@ -1398,10 +1435,10 @@ void KXftConfig::applyExcludeRange(bool pixel)
         matchNode.appendChild(fromTestNode);
         matchNode.appendChild(toTestNode);
         matchNode.appendChild(editNode);
-        if(range.node.isNull())
-            m_doc.documentElement().appendChild(matchNode);
-        else
-            m_doc.documentElement().replaceChild(matchNode, range.node);
+
+        if(!m_antiAliasing.node.isNull())
+            m_doc.documentElement().removeChild(range.node);
+        m_doc.documentElement().appendChild(matchNode);
         range.node=matchNode;
     }
 }
@@ -1433,7 +1470,8 @@ void KXftConfig::outputNewDirs(std::ofstream &f)
 
 void KXftConfig::outputSymbolFamily(std::ofstream &f, const QString &str)
 {
-    f << "match any family == \"" << str.toLocal8Bit().data() << "\" edit encoding = " << constSymEnc << ';' << endl;
+    f << "match any family == \"" << str.toLocal8Bit().data() << "\" edit encoding = " << constSymEnc
+      << ';' << endl;
 }
 
 void KXftConfig::outputNewSymbolFamilies(std::ofstream &f)
@@ -1483,8 +1521,11 @@ bool KXftConfig::getAntiAliasing() const
 
 void KXftConfig::setAntiAliasing( bool set )
 {
-    m_antiAliasing.set = set;
-    m_madeChanges = true;
+    if(set!=m_antiAliasing.set)
+    {
+        m_antiAliasing.set = set;
+        m_madeChanges = true;
+    }
 }
 
 void KXftConfig::applyAntiAliasing()
@@ -1500,10 +1541,9 @@ void KXftConfig::applyAntiAliasing()
     editNode.appendChild(typeNode);
     typeNode.appendChild(typeText);
     matchNode.appendChild(editNode);
-    if(m_antiAliasing.node.isNull())
-        m_doc.documentElement().appendChild(matchNode);
-    else
-        m_doc.documentElement().replaceChild(matchNode, m_antiAliasing.node);
+    if(!m_antiAliasing.node.isNull())
+        m_doc.documentElement().removeChild(m_antiAliasing.node);
+    m_doc.documentElement().appendChild(matchNode);
     m_antiAliasing.node=matchNode;
 }
 

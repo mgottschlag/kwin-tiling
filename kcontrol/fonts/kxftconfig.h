@@ -41,15 +41,22 @@ class KXftConfig
 
     enum RequiredData
     {
-        Dirs           = 1,
-        SubPixelType   = 2,
-        ExcludeRange   = 4,
+        Dirs           = 0x01,
+        SubPixelType   = 0x02,
+        ExcludeRange   = 0x04,
+        AntiAlias      = 0x08,
 #ifdef HAVE_FONTCONFIG
-        HintStyle      = 8
+        HintStyle      = 0x10
 #else
-        SymbolFamilies = 8
+        SymbolFamilies = 0x10
 #endif
     };
+
+#ifdef HAVE_FONTCONFIG
+    static const int constStyleSettings=SubPixelType|ExcludeRange|AntiAlias|HintStyle;
+#else
+    static const int constStyleSettings=SubPixelType|ExcludeRange|AntiAlias;
+#endif
 
     struct Item
     {
@@ -62,7 +69,8 @@ class KXftConfig
         QDomNode node;
 #else
         Item(char *s, char *e) : start(s), end(e), toBeRemoved(false) {}
-        virtual void reset()                                          { start=end=NULL; toBeRemoved=false; }
+        virtual void reset()                                          { start=end=NULL;
+                                                                        toBeRemoved=false; }
         bool         added()                                          { return NULL==start; }
 
         char *start,
@@ -217,13 +225,11 @@ class KXftConfig
     static QStringList getList(Q3PtrList<ListItem> &list);
     void        addItem(Q3PtrList<ListItem> &list, const QString &i);
     void        removeItem(Q3PtrList<ListItem> &list, ListItem *item);
-    void        removeItem(Q3PtrList<ListItem> &list, const QString &i) { removeItem(list, findItem(list, i)); }
+    void        removeItem(Q3PtrList<ListItem> &list, const QString &i)
+                    { removeItem(list, findItem(list, i)); }
     void        readContents();
 #ifdef HAVE_FONTCONFIG
     void        applyDirs();
-#if 0
-    void        applySymbolFamilies();
-#endif
     void        applySubPixelType();
     void        applyHintStyle();
     void        applyAntiAliasing();

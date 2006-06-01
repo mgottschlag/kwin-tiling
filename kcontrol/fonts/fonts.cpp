@@ -281,11 +281,7 @@ FontAASettings::FontAASettings(QWidget *parent)
 bool FontAASettings::load()
 {
   double     from, to;
-#ifdef HAVE_FONTCONFIG
-  KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType|KXftConfig::HintStyle);
-#else
-  KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType);
-#endif
+  KXftConfig xft(KXftConfig::constStyleSettings);
 
   if(xft.getExcludeRange(from, to))
      excludeRange->setChecked(true);
@@ -342,11 +338,7 @@ bool FontAASettings::load()
 
 bool FontAASettings::save( bool useAA )
 {
-#ifdef HAVE_FONTCONFIG
-  KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType|KXftConfig::HintStyle);
-#else
-  KXftConfig xft(KXftConfig::ExcludeRange|KXftConfig::SubPixelType);
-#endif
+  KXftConfig xft(KXftConfig::constStyleSettings);
   KConfig    kglobals("kdeglobals", false, false);
   kglobals.setGroup("General");
 
