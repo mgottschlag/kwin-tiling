@@ -117,7 +117,7 @@ BasicTab::BasicTab( QWidget *parent )
             SLOT(slotChanged()));
     connect(_execEdit, SIGNAL(textChanged(const QString&)),
             SLOT(slotChanged()));
-    connect(_execEdit, SIGNAL(urlSelected(const QString&)),
+    connect(_execEdit, SIGNAL(urlSelected(const KUrl&)),
             SLOT(slotExecSelected()));
     connect(_launchCB, SIGNAL(clicked()), SLOT(launchcb_clicked()));
     connect(_systrayCB, SIGNAL(clicked()), SLOT(systraycb_clicked()));
