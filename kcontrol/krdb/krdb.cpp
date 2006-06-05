@@ -32,6 +32,9 @@
 #include <QTextStream>
 #include <QDateTime>
 #include <dbus/qdbus.h>
+#include <ktoolinvocation.h>
+#include <klauncher_iface.h>
+
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -95,8 +98,7 @@ static void applyGtkStyles(bool active, int version)
    // Pass env. var to kdeinit.
    QString name = gtkEnvVar(version);
    QString value = QFile::encodeName(list.join(":"));
-   QDBusInterfacePtr klauncher("org.kde.klauncher", "/klauncher", "org.kde.klauncher");
-   klauncher->call("setLaunchEnv", name, value );
+   KToolInvocation::klauncher()->setLaunchEnv(name, value);
 }
 
 // -----------------------------------------------------------------------------
@@ -104,7 +106,6 @@ static void applyGtkStyles(bool active, int version)
 static void applyQtColors( KConfig& kglobals, QSettings& settings, QPalette& newPal )
 {
   QStringList actcg, inactcg, discg;
-
   /* export kde color settings */
   int i;
   for (i = 0; i < QPalette::NColorRoles; i++)
