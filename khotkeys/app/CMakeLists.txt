@@ -7,7 +7,6 @@ set(khotkeys_KDEINIT_SRCS app.cpp ${libshared_SRCS})
 
 kde4_automoc(${khotkeys_KDEINIT_SRCS})
 
-kde4_add_dcop_skels(khotkeys_KDEINIT_SRCS app.h )
 
 kde4_add_kdeinit_executable( khotkeys ${khotkeys_KDEINIT_SRCS})
 
@@ -27,7 +26,6 @@ set(kded_khotkeys_PART_SRCS kded.cpp ${libshared_SRCS})
 
 kde4_automoc(${kded_khotkeys_PART_SRCS})
 
-kde4_add_dcop_skels(kded_khotkeys_PART_SRCS kded.h )
 
 kde4_add_plugin(kded_khotkeys ${kded_khotkeys_PART_SRCS})
 

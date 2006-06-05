@@ -7,7 +7,6 @@ set(taskbar_panelextension_PART_SRCS taskbarextension.cpp )
 
 kde4_automoc(${taskbar_panelextension_PART_SRCS})
 
-kde4_add_dcop_skels(taskbar_panelextension_PART_SRCS taskbarextension.h )
 
 kde4_add_plugin(taskbar_panelextension ${taskbar_panelextension_PART_SRCS})
 

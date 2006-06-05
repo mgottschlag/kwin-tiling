@@ -25,7 +25,6 @@ kde4_add_ui3_files(kcm_kicker_PART_SRCS
    menutab.ui 
    advancedOptions.ui )
 
-kde4_add_dcop_skels(kcm_kicker_PART_SRCS main.h )
 
 kde4_add_plugin(kcm_kicker ${kcm_kicker_PART_SRCS})
 

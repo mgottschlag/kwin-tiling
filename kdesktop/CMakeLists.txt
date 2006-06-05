@@ -54,7 +54,6 @@ kde4_automoc(${kdesktop_SRCS})
 
 kde4_add_ui_files(kdesktop_SRCS minicli.ui )
 
-kde4_add_dcop_skels(kdesktop_SRCS KDesktopIface.h KScreensaverIface.h KBackgroundIface.h )
 
 kde4_add_kdeinit_executable( kdesktop ${kdesktop_SRCS})
 

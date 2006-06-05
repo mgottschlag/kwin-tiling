@@ -15,11 +15,9 @@ include_directories(
 
 ########### next target ###############
 
-kde4_add_dcop_skels(libkicker_core_SRCS core/kicker.h core/panelextension.h )
 
 kde4_add_ui3_files(libkicker_ui_SRCS ui/appletitem.ui ui/appletview.ui ui/nonKDEButtonSettings.ui)
 
-kde4_add_dcop_skels(libkicker_ui_SRCS ui/k_mnu.h )
 
 set(kicker_KDEINIT_SRCS ${libkicker_buttons_SRCS} ${libkicker_ui_SRCS} ${libkicker_core_SRCS} ${kdmlib_SRCS} )
 

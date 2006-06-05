@@ -7,7 +7,6 @@ set(kickermenu_remotemenu_PART_SRCS remotemenu.cpp )
 
 kde4_automoc(${kickermenu_remotemenu_PART_SRCS})
 
-kde4_add_dcop_skels(kickermenu_remotemenu_PART_SRCS remotemenu.h )
 
 kde4_add_plugin(kickermenu_remotemenu ${kickermenu_remotemenu_PART_SRCS})
 

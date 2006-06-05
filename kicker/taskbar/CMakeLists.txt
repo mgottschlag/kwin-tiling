@@ -8,7 +8,6 @@ set(taskbar_LIB_SRCS taskcontainer.cpp taskbar.cpp )
 
 kde4_automoc(${taskbar_LIB_SRCS})
 
-kde4_add_dcop_skels(taskbar_LIB_SRCS taskbar.h )
 
 kde4_add_kcfg_files(taskbar_LIB_SRCS taskbarsettings.kcfgc )
 

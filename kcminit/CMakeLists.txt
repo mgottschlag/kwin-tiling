@@ -7,7 +7,6 @@ project(kcminit)
 
 set(kcminit_KDEINIT_SRCS main.cpp )
 
-kde4_add_dcop_skels(kcminit_KDEINIT_SRCS main.h )
 
 kde4_automoc(${kcminit_KDEINIT_SRCS})
 
@@ -26,7 +25,6 @@ install(TARGETS kcminit DESTINATION bin)
 
 set(kcminit_startup_KDEINIT_SRCS main.cpp )
 
-kde4_add_dcop_skels(kcminit_startup_KDEINIT_SRCS main.h )
 
 kde4_automoc(${kcminit_startup_KDEINIT_SRCS})
 

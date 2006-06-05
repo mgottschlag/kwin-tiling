@@ -9,7 +9,6 @@ kde4_automoc(${kcm_smartcard_PART_SRCS})
 
 kde4_add_ui_files(kcm_smartcard_PART_SRCS smartcardbase.ui nosmartcardbase.ui )
 
-kde4_add_dcop_skels(kcm_smartcard_PART_SRCS smartcard.h )
 
 kde4_add_plugin(kcm_smartcard ${kcm_smartcard_PART_SRCS})
 

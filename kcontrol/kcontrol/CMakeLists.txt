@@ -24,7 +24,6 @@ set(kcontrol_KDEINIT_SRCS
 
 kde4_automoc(${kcontrol_KDEINIT_SRCS})
 
-kde4_add_dcop_skels(kcontrol_KDEINIT_SRCS moduleIface.h )
 
 kde4_add_kdeinit_executable( kcontrol ${kcontrol_KDEINIT_SRCS})
 

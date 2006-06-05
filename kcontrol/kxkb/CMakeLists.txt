@@ -13,7 +13,6 @@ set(kxkb_KDEINIT_SRCS
 
 kde4_automoc(${kxkb_KDEINIT_SRCS})
 
-kde4_add_dcop_skels(kxkb_KDEINIT_SRCS kxkb.h )
 
 kde4_add_kdeinit_executable( kxkb ${kxkb_KDEINIT_SRCS})
 

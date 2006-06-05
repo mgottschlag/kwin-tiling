@@ -11,19 +11,16 @@ set(launcher_panelapplet_PART_SRCS  ${kdmlib_SRCS}  ${libkicker_core_SRCS} ${lib
    popularity.cpp 
    configdlg.cpp )
 
-kde4_add_dcop_skels(launcher_panelapplet_PART_SRCS ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/kicker.h ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/core/panelextension.h )
 
 kde4_add_ui3_files(launcher_panelapplet_PART_SRCS ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/appletitem.ui ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/appletview.ui ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/nonKDEButtonSettings.ui)
 
 
-kde4_add_dcop_skels(launcher_panelapplet_PART_SRCS ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/k_mnu.h )
 
 
 kde4_automoc(${launcher_panelapplet_PART_SRCS})
 
 kde4_add_ui3_files(launcher_panelapplet_PART_SRCS configdlgbase.ui )
 
-kde4_add_dcop_skels(launcher_panelapplet_PART_SRCS quicklauncher.h )
 
 kde4_add_kcfg_files(launcher_panelapplet_PART_SRCS prefs.kcfgc )
 

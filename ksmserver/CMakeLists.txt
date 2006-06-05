@@ -15,7 +15,6 @@ set(ksmserver_KDEINIT_SRCS ${kdmlib_SRCS}
 
 kde4_automoc(${ksmserver_KDEINIT_SRCS})
 
-kde4_add_dcop_skels(ksmserver_KDEINIT_SRCS KSMServerInterface.h server.h )
 
 kde4_add_kdeinit_executable( ksmserver ${ksmserver_KDEINIT_SRCS})
 

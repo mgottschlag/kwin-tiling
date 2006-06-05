@@ -10,7 +10,6 @@ project(klipper)
 
 set(libklipper_common_SRCS main.cpp toplevel.cpp urlgrabber.cpp configdialog.cpp clipboardpoll.cpp history.cpp historyitem.cpp historystringitem.cpp klipperpopup.cpp popupproxy.cpp  historyimageitem.cpp historyurlitem.cpp )
 
-kde4_add_dcop_skels(libklipper_common_SRCS toplevel.h )
 
 set(klipper_KDEINIT_SRCS ${libklipper_common_SRCS})
 
@@ -35,7 +34,6 @@ message(STATUS "TODO port klipper panel applet")
 
 #kde4_automoc(${klipper_panelapplet_PART_SRCS})
 
-#kde4_add_dcop_skels(klipper_panelapplet_PART_SRCS applet.h )
 
 #kde4_add_plugin(klipper_panelapplet ${klipper_panelapplet_PART_SRCS})
 

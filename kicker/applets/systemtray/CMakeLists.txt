@@ -7,7 +7,6 @@ set(systemtray_panelapplet_PART_SRCS systemtrayapplet.cpp )
 
 kde4_automoc(${systemtray_panelapplet_PART_SRCS})
 
-kde4_add_dcop_skels(systemtray_panelapplet_PART_SRCS systemtrayapplet.h )
 
 kde4_add_plugin(systemtray_panelapplet ${systemtray_panelapplet_PART_SRCS})
 
