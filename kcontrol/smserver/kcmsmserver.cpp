@@ -25,13 +25,13 @@
 //Added by qt3to4:
 #include <QVBoxLayout>
 
-#include <dcopclient.h>
 
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kgenericfactory.h>
 #include <klineedit.h>
 #include <kworkspace.h>
+#include <dbus/qdbus.h>
 
 #include "kcmsmserver.h"
 #include "smserverconfigimpl.h"
@@ -118,8 +118,8 @@ void SMServerConfig::save()
   delete c;
 
   // update the k menu if necessary
-  QByteArray data;
-  kapp->dcopClient()->send( "kicker", "kicker", "configure()", data );
+  QDBusInterfacePtr kicker("org.kde.kicker", "/kicker", "org.kde.kicker");
+  kicker->call("configure");
 }
 
 void SMServerConfig::defaults()
