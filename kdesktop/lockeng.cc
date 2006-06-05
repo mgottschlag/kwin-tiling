@@ -43,9 +43,6 @@ SaverEngine::SaverEngine()
     XGetScreenSaver(QX11Info::display(), &mXTimeout, &mXInterval,
                     &mXBlanking, &mXExposures);
 
-    // We'll handle blanking
-    XSetScreenSaver(QX11Info::display(), 0, mXInterval, mXBlanking, mXExposures);
-
     mState = Waiting;
     mXAutoLock = 0;
     mEnabled = false;
@@ -159,6 +156,9 @@ bool SaverEngine::enable( bool e )
         mXAutoLock->setDPMS(mDPMS);
 	//mXAutoLock->changeCornerLockStatus( mLockCornerTopLeft, mLockCornerTopRight, mLockCornerBottomLeft, mLockCornerBottomRight);
 
+        // We'll handle blanking 
+        XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, mXBlanking, mXExposures);
+
         mXAutoLock->start();
 
         kDebug(1204) << "Saver Engine started, timeout: " << mTimeout << endl;
@@ -171,6 +171,7 @@ bool SaverEngine::enable( bool e )
 	    mXAutoLock = 0;
 	}
 
+	XSetScreenSaver(QX11Info::display(), 0, mXInterval, mXBlanking, mXExposures);
         kDebug(1204) << "Saver Engine disabled" << endl;
     }
 
@@ -292,7 +293,6 @@ void SaverEngine::stopLockProcess()
     kDebug(1204) << "SaverEngine: stopping lock" << endl;
     emitDCOPSignal("KDE_stop_screensaver()", QByteArray());
 
-
     mLockProcess.kill();
 
     if (mXAutoLock)
@@ -301,6 +301,7 @@ void SaverEngine::stopLockProcess()
     }
     processLockTransactions();
     mState = Waiting;
+    XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, mXBlanking, mXExposures);
 }
 
 void SaverEngine::lockProcessExited()
@@ -315,6 +316,7 @@ void SaverEngine::lockProcessExited()
     }
     processLockTransactions();
     mState = Waiting;
+    XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, mXBlanking, mXExposures);
 }
 
 //---------------------------------------------------------------------------
@@ -323,6 +325,8 @@ void SaverEngine::lockProcessExited()
 //
 void SaverEngine::idleTimeout()
 {
+    // disable X screensaver
+    XSetScreenSaver(QX11Info::display(), 0, mXInterval, mXBlanking, mXExposures);
     startLockProcess( DefaultLock );
 }
 
