@@ -31,8 +31,7 @@
 #include <QByteArray>
 #include <QTextStream>
 #include <QDateTime>
-#include <dcopclient.h>
-
+#include <dbus/qdbus.h>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>
@@ -94,14 +93,10 @@ static void applyGtkStyles(bool active, int version)
       ::unlink(QFile::encodeName(gtkkde));
 
    // Pass env. var to kdeinit.
-   DCOPCString name = gtkEnvVar(version);
-   DCOPCString value = QFile::encodeName(list.join(":"));
-   QByteArray params;
-   QDataStream stream(&params, QIODevice::WriteOnly);
-
-   stream.setVersion(QDataStream::Qt_3_1);
-   stream << name << value;
-   kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
+   QString name = gtkEnvVar(version);
+   QString value = QFile::encodeName(list.join(":"));
+   QDBusInterfacePtr klauncher("org.kde.klauncher", "/klauncher", "org.kde.klauncher");
+   klauncher->call("setLaunchEnv", name, value );
 }
 
 // -----------------------------------------------------------------------------
