@@ -27,7 +27,6 @@
 #include <QFrame>
 #include <QHBoxLayout>
 
-#include <dcopclient.h>
 
 #include <kapplication.h>
 #include <kcombobox.h>
