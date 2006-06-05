@@ -23,11 +23,11 @@
 #include <kaboutdata.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <dcopclient.h>
 #include <kgenericfactory.h>
 #include <kdialog.h>
 #include "bgdialog.h"
 
+#include <dbus/qdbus.h>
 #include "main.h"
 
 /* as late as possible, as it includes some X headers without protecting them */
@@ -95,21 +95,16 @@ void KBackground::save()
 {
     m_base->save();
 
-    // reconfigure kdesktop. kdesktop will notify all clients
-    DCOPClient *client = kapp->dcopClient();
-    if (!client->isAttached())
-	client->attach();
-
     int screen_number = 0;
     if (QX11Info::display())
 	screen_number = DefaultScreen(QX11Info::display());
     QString appname;
     if (screen_number == 0)
-	appname = "kdesktop";
+	appname = "org.kde.kdesktop";
     else 
-	appname.sprintf("kdesktop-screen-%d", screen_number);
-
-    client->send(appname.toLatin1(), "KBackgroundIface", "configure()", QByteArray());
+	appname.sprintf("org.kde.kdesktop-screen-%d", screen_number);
+    QDBusInterfacePtr kdesktop(appname, "/Background", "org.kde.kdesktop.KBackground");
+    kdesktop->call("configure");
 }
 
 void KBackground::defaults()

@@ -33,9 +33,10 @@
 
 #include <kdebug.h>
 #include <kapplication.h>
+#include <kbuildsycocaprogressdialog.h>
+#include <klocale.h>
 #include <kstandarddirs.h>
 #include <kservice.h>
-#include <klocale.h>
 #include <ksimpleconfig.h>
 #undef Unsorted
 #include <kipc.h>
@@ -444,7 +445,7 @@ void IconThemesConfig::save()
     KIPC::sendMessageAll(KIPC::IconChanged, i);
   }
 
-  KService::rebuildKSycoca(this);
+  KBuildSycocaProgressDialog::rebuildKSycoca(this);
 
   m_bChanged = false;
   m_removeButton->setEnabled(false);

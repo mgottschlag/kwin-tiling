@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <dcopref.h>
 
 #include <QTabWidget>
 #include <QLayout>

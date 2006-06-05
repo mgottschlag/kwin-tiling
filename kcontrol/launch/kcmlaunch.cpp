@@ -25,8 +25,7 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 
-#include <dcopclient.h>
-
+#include <dbus/qdbus.h>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdialog.h>
@@ -212,11 +211,10 @@ LaunchConfig::save()
 
   emit changed( false );
 
-  if (!kapp->dcopClient()->isAttached())
-     kapp->dcopClient()->attach();
-  QByteArray data;
-  kapp->dcopClient()->send( "kicker", "Panel", "restart()", data );
-  kapp->dcopClient()->send( "kdesktop", "", "configure()", data );
+  QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Desktop", "org.kde.kdesktop.Desktop");
+  kdesktop->call("configure");
+  QDBusInterfacePtr kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
+  kicker->call("restart");
 }
 
   void

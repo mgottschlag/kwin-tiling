@@ -12,11 +12,9 @@ include_directories(  ${CMAKE_CURRENT_SOURCE_DIR}/themeengine ${CMAKE_CURRENT_SO
 
 ########### next target ###############
 
-set(ksplash_SRCS wndmain.cpp main.cpp ${themedefault_PART_SRCS} )
+set(ksplash_SRCS wndmain.cpp main.cpp ksplashadaptor.cpp ${themedefault_PART_SRCS} )
 
 kde4_automoc(${ksplash_SRCS})
-
-kde4_add_dcop_skels(ksplash_SRCS ksplashiface.h )
 
 kde4_add_executable(ksplash ${ksplash_SRCS})
 

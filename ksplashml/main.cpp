@@ -23,7 +23,6 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <dcopclient.h>
 
 #include "wndmain.h"
 
@@ -32,7 +31,7 @@ static KCmdLineOptions options[] = {
   { "test", I18N_NOOP("Run in test mode"), 0 },
   { "nofork", I18N_NOOP("Do not fork into the background"), 0 },
   { "theme <argument>", I18N_NOOP("Override theme"), "" },
-  { "nodcop", I18N_NOOP("Do not attempt to start DCOP server"),0 },
+  { "nodbus", I18N_NOOP("Do not attempt to start DBus server"),0 },
   { "steps <number>", I18N_NOOP("Number of steps"), "7" },
   KCmdLineLastOption
 };
@@ -60,14 +59,16 @@ int main( int argc, char **argv )
       exit(0);
   }
 
-  if ( !( arg->isSet( "dcop" ) ) )
+  /* ####
+  if ( !( arg->isSet( "dbus" ) ) )
     KApplication::disableAutoDcopRegistration();
   else if ( KApplication::dcopClient()->attach() )
     KApplication::dcopClient()->registerAs( "ksplash", false );
+    */
 
   KApplication app;
 
-  KSplash wndMain("ksplash");
+  KSplash wndMain;
   if ( arg->isSet( "steps" ) )
   {
     int steps = qMax( arg->getOption( "steps" ).toInt(), 0 );
@@ -76,6 +77,5 @@ int main( int argc, char **argv )
   }
 
   app.setMainWidget(&wndMain);
-  app.setTopWidget(&wndMain);
   return(app.exec());
 }

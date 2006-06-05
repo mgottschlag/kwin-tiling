@@ -28,6 +28,7 @@
 #include <q3groupbox.h>
 
 #include <kaboutdata.h>
+#include <kbuildsycocaprogressdialog.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kdialog.h>
@@ -200,7 +201,7 @@ void KLocaleApplication::save()
   // rebuild the date base if language was changed
   if (langChanged)
   {
-    KService::rebuildKSycoca(this);
+    KBuildSycocaProgressDialog::rebuildKSycoca(this);
   }
 
   emit changed(false);

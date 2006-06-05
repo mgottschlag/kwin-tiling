@@ -22,7 +22,6 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-#include <dcopclient.h>
 
 #include <kacceleratormanager.h>
 #include <kapplication.h>

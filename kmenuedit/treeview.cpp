@@ -36,24 +36,25 @@
 #include <Q3PtrList>
 #include <QFrame>
 #include <QDropEvent>
+#include <QMenu>
 
-#include <kglobal.h>
-#include <kstandarddirs.h>
-#include <kinputdialog.h>
-#include <klocale.h>
-#include <ksimpleconfig.h>
-#include <kdebug.h>
-#include <kiconloader.h>
-#include <kdesktopfile.h>
 #include <kaction.h>
 #include <kactioncollection.h>
-#include <kmessagebox.h>
 #include <kapplication.h>
+#include <kbuildsycocaprogressdialog.h>
+#include <kdebug.h>
+#include <kdesktopfile.h>
+#include <kglobal.h>
+#include <kiconloader.h>
+#include <kinputdialog.h>
+#include <klocale.h>
+#include <kmessagebox.h>
 #include <kservice.h>
 #include <kservicegroup.h>
+#include <ksimpleconfig.h>
+#include <kstandarddirs.h>
 #include <k3multipledrag.h>
 #include <k3urldrag.h>
-#include <QMenu>
 
 #include "treeview.h"
 #include "treeview.moc"
@@ -1541,7 +1542,7 @@ bool TreeView::save()
 
     if (success)
     {
-       KService::rebuildKSycoca(this);
+       KBuildSycocaProgressDialog::rebuildKSycoca(this);
     }
     else
     {

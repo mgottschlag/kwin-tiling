@@ -98,7 +98,7 @@ MyApplication::slotTimeout()
 int
 main( int argc, char *argv[] )
 {
-	KApplication::disableAutoDcopRegistration();
+	//KApplication::disableAutoDcopRegistration();
 
 	KLocale::setMainCatalog( "kdesktop" );
 	KCmdLineArgs::init( argc, argv, "krootimage", I18N_NOOP( "KRootImage" ), description, version );

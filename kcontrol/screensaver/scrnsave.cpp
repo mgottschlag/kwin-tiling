@@ -37,8 +37,8 @@
 #include <QResizeEvent>
 #include <QMouseEvent>
 
-#include <dcopclient.h>
 
+#include <dbus/qdbus.h>
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kdebug.h>
@@ -499,8 +499,8 @@ void KScreenSaver::save()
     // TODO (GJ): When you changed anything, these two lines will give a segfault
     // on exit. I don't know why yet.
 
-    DCOPClient *client = kapp->dcopClient();
-    client->send("kdesktop", "KScreensaverIface", "configure()", QByteArray());
+	QDBusInterfacePtr kscreensaver("org.kde.kdesktop", "/Screensaver", "org.kde.kdesktop.KScreensaver");
+	kscreensaver->call("configure");
 
     mChanged = false;
     emit changed(false);

@@ -27,7 +27,6 @@
 #include <kglobal.h>
 #include <kapplication.h>
 #include <kiconloader.h>
-#include <dcopclient.h>
 #include <kipc.h>
 #include <kactivelabel.h>
 #include <QDesktopWidget>

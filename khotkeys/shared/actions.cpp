@@ -23,7 +23,6 @@
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <kapplication.h>
-#include <dcopclient.h>
 #include <kdesktopfile.h>
 #include <klocale.h>
 #include <kservice.h>

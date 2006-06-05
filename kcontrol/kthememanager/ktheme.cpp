@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <dcopclient.h>
 #include <kapplication.h>
+#include <kbuildsycocaprogressdialog.h>
 #include <kconfig.h>
 #include <kdatastream.h>
 #include <kdebug.h>
@@ -472,7 +473,7 @@ void KTheme::apply()
 
         for ( int i = 0; i < K3Icon::LastGroup; i++ )
             KIPC::sendMessageAll( KIPC::IconChanged, i );
-        KService::rebuildKSycoca( m_parent );
+        KBuildSycocaProgressDialog::rebuildKSycoca( m_parent );
     }
 
     // 4. Sounds

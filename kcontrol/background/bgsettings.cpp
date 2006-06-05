@@ -12,7 +12,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
-
+#include <dbus/qdbus.h>
 // Clean up after X.h/Xlib.h
 #undef Bool
 #undef Unsorted
@@ -22,7 +22,6 @@
 //Added by qt3to4:
 #include <QByteArray>
 
-#include <dcopclient.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
@@ -1280,7 +1279,7 @@ void KGlobalBackgroundSettings::writeSettings()
     dirty = false;
 
     // tell kdesktop to get it's butt in gear and pick up the new settings
-    QByteArray data;
-    kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", data);
+    QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Background", "org.kde.kdesktop.KBackground");
+    kdesktop->call("configure");
 }
 

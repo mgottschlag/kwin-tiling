@@ -20,8 +20,6 @@
 //Added by qt3to4:
 #include <QEvent>
 
-#include "ksplashiface.h"
-
 // MAKE SURE THAT THIS MATCHES WHAT'S IN ../kcmksplash/kcmksplash.h!!!
 #define N_ACTIONITEMS 8
 
@@ -38,24 +36,25 @@ class ObjKsTheme;
 class ThemeEngine;
 class KConfig;
 
-class KSplash: public QWidget, virtual public KSplashIface
+class KSplash: public QWidget
 {
   Q_OBJECT
 
 public:
-  KSplash(const char *name = "ksplash");
+  KSplash();
   ~KSplash();
 
   Q3PtrList<Action> actionList();
 
-  // DCOP interface
-  ASYNC upAndRunning( QString );
-  ASYNC setMaxProgress(int);
-  ASYNC setProgress(int);
-  ASYNC setStartupItemCount( int count );
-  ASYNC programStarted( QString programIcon, QString programName, QString description );
-  ASYNC startupComplete();
-  ASYNC close();
+public Q_SLOTS:
+  // DBus interface
+  void upAndRunning( QString );
+  void setMaxProgress(int);
+  void setProgress(int);
+  void setStartupItemCount( int count );
+  void programStarted( QString programIcon, QString programName, QString description );
+  void startupComplete();
+  void close();
 
 Q_SIGNALS:
   void stepsChanged(int);
@@ -70,7 +69,7 @@ public Q_SLOTS:
   void slotUpdateProgress( int );
 
 private Q_SLOTS:
-  void initDcop();
+  void initDbus();
   void prepareIconList();
   void prepareSplashScreen();
   void slotExec();

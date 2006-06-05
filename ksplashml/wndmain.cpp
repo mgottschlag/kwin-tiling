@@ -11,7 +11,6 @@
 
 #include <unistd.h>
 
-#include <kapplication.h>
 #include <kconfig.h>
 #include <kcursor.h>
 #include <kdebug.h>
@@ -22,7 +21,6 @@
 #include <kstandarddirs.h>
 #include <kservicetypetrader.h>
 #include <kwin.h>
-#include <dcopclient.h>
 
 #include <QDir>
 #include <QPixmap>
@@ -38,11 +36,12 @@
 
 #include "themeengine.h"
 #include "themelegacy.h"
+#include "ksplashadaptor.h"
 
 // KSplash::KSplash(): This is a hidden object. Its sole purpose
 // is to manage the other objects, which are presented on the screen.
-KSplash::KSplash(const char *name)
-    : DCOPObject( name ), QWidget( 0, name, Qt::WStyle_Customize|Qt::WStyle_NoBorder|Qt::WX11BypassWM ),
+KSplash::KSplash()
+    : QWidget( 0, 0, Qt::WStyle_Customize|Qt::WStyle_NoBorder|Qt::WX11BypassWM ),
       mState( 0 ), mMaxProgress( 0 ), mStep( 0 )
 {
   hide(); // We never show this object.
@@ -72,7 +71,7 @@ KSplash::KSplash(const char *name)
     QTimer::singleShot( 1000, this, SLOT(slotExec()));
   }
   else
-    QTimer::singleShot( 100, this, SLOT(initDcop()));
+    QTimer::singleShot( 100, this, SLOT(initDbus()));
 
   // Make sure we don't stay up forever.
   if (!mKsTheme->managedMode())
@@ -161,24 +160,25 @@ void KSplash::nextIcon()
     QTimer::singleShot( 1000, this, SLOT(nextIcon()));
 }
 
-void KSplash::initDcop()
+void KSplash::initDbus()
 {
-  disconnect( kapp->dcopClient(), SIGNAL( attachFailed(const QString&) ), kapp, SLOT( dcopFailure(const QString&) ) );
+    bool isConnected = false;
+    {
+        QDBusConnection connection = QDBusConnection::addConnection(QDBusConnection::SessionBus, "ksplash");
+        isConnected = connection.isConnected();
+        QDBusConnection::closeConnection("ksplash");
+    }
+    if (!isConnected) {
+        QTimer::singleShot(100, this, SLOT(initDbus()));
+        return;
+    }
 
-  if ( kapp->dcopClient()->isAttached() )
-    return;
-
-  if ( kapp->dcopClient()->attach() )
-  {
     if(!mKsTheme->managedMode())
-      upAndRunning( "dcop" );
-    kapp->dcopClient()->registerAs( "ksplash", false );
-    kapp->dcopClient()->setDefaultObject( objId() );
-  }
-  else
-  {
-    QTimer::singleShot( 100, this, SLOT(initDcop()) );
-  }
+      upAndRunning("dbus");
+
+    (void)new KSplashAdaptor(this);
+    QDBus::sessionBus().registerObject(QLatin1String("/KSplash"), this);
+    QDBus::sessionBus().busService()->requestName("org.kde.ksplash", /*flags=*/0);
 }
 
 void KSplash::updateState( unsigned int state )
@@ -211,7 +211,7 @@ void KSplash::upAndRunning( QString s )
   if ( close_timer->isActive() )
     close_timer->start( 60000 );
   
-  if( s == "dcop" )
+  if( s == "dbus" )
   {
     if( mState > 1 ) return;
     updateState( 1 );
@@ -346,8 +346,8 @@ ThemeEngine *KSplash::_loadThemeEngine( const QString& pluginName, const QString
   KLibFactory *factory = 0L;
   QString libName;
   QString objName;
-  // Replace this test by a "nodcop" command line option.
-  if ( /*!mKsTheme->managedMode() ||*/ !KCmdLineArgs::parsedArgs()->isSet( "dcop" ) )
+  // Replace this test by a "nodbus" command line option.
+  if ( /*!mKsTheme->managedMode() ||*/ !KCmdLineArgs::parsedArgs()->isSet( "dbus" ) )
   {
     libName = QString("ksplash%1").arg(pluginName.toLower());
     objName = QString("Theme%1").arg(pluginName);
