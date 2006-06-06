@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
 
 	Copyright (c) 1999, 2000 Chris Schlaeger <cs@kde.org>
 	Copyright (c) 2006 John Tapsell <john.tapsell@kdemail.net>
@@ -182,7 +182,7 @@ bool ProcessModel::setData(const QList<QStringList> &data)
 	for(long i = 0; i < data.size(); i++) {
 		QStringList new_pid_data = data.at(i);
 		if(new_pid_data.count() <= mPidColumn || new_pid_data.count() <= mPPidColumn) {
-			kDebug(1215) << "Something wrong with the ps data coming from ksysguardd daemon.  Ignoring it." << endl;
+			kDebug(1215) << "Something wrong with the ps data coming from kde-system-monitor-daemon daemon.  Ignoring it." << endl;
 			kDebug(1215) << new_pid_data.join(",") << endl;
 			return false; //returning false will trigger a sensor error
 		}

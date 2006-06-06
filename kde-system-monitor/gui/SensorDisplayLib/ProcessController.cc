@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
 
 	Copyright (c) 1999 - 2001 Chris Schlaeger <cs@kde.org>
 	Copyright (c) 2006 John Tapsell <john.tapsell@kdemail.net>
@@ -211,7 +211,7 @@ void ProcessController::killProcess(int pid, int sig)
 				QString("kill %1 %2" ).arg(pid).arg(sig), Kill_Command);
 
 	if ( !timerOn() )
-	    // give ksysguardd time to update its proccess list
+	    // give kde-system-monitor-daemon time to update its proccess list
 	    QTimer::singleShot(3000, this, SLOT(updateList()));
 	else
 	    updateList();
@@ -267,7 +267,7 @@ ProcessController::killProcess()
                        .arg(MENU_ID_SIGKILL), Kill_Command);
         }
 	if ( !timerOn())
-		// give ksysguardd time to update its proccess list
+		// give kde-system-monitor-daemon time to update its proccess list
 		QTimer::singleShot(3000, this, SLOT(updateList()));
 	else
 		updateList();

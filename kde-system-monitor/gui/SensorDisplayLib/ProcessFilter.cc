@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
 
 	Copyright (c) 2006 John Tapsell <john.tapsell@kdemail.net>
 

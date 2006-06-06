@@ -1,5 +1,5 @@
 /*
-    KKSysGuard, the KDE System Guard
+    Kkde-system-monitor, the KDE System Monitor
    
     Copyright (c) 1999 - 2001 Chris Schlaeger <cs@kde.org>
     

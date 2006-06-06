@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
    
     Copyright (c) 1999, 2000 Chris Schlaeger <cs@kde.org>
     
@@ -37,7 +37,7 @@ class SensorClient;
 class SensorManager;
 
 /**
-  The SensorShellAgent starts a ksysguardd process and handles the
+  The SensorShellAgent starts a kde-system-monitor-daemon process and handles the
   asynchronous communication. It keeps a list of pending requests
   that have not been answered yet by ksysguard. The current
   implementation only allowes one pending requests. Incoming requests

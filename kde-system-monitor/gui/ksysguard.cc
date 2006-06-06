@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
 
     Copyright (c) 1999 - 2001 Chris Schlaeger <cs@kde.org>
 
@@ -211,7 +211,7 @@ void TopLevel::readIntegerSensor( const QString &sensorLocator )
   DCOPClientTransaction *dcopTransaction = kapp->dcopClient()->beginTransaction();
   mDCopFIFO.prepend( dcopTransaction );
 
-  KSGRD::SensorMgr->engage( host, "", "ksysguardd" );
+  KSGRD::SensorMgr->engage( host, "", "kde-system-monitor-daemon" );
   KSGRD::SensorMgr->sendRequest( host, sensor, (KSGRD::SensorClient*)this, 133 );
 }
 
@@ -224,7 +224,7 @@ void TopLevel::readListSensor( const QString& sensorLocator )
   DCOPClientTransaction *dcopTransaction = kapp->dcopClient()->beginTransaction();
   mDCopFIFO.prepend( dcopTransaction );
 
-  KSGRD::SensorMgr->engage( host, "", "ksysguardd" );
+  KSGRD::SensorMgr->engage( host, "", "kde-system-monitor-daemon" );
   KSGRD::SensorMgr->sendRequest( host, sensor, (KSGRD::SensorClient*)this, 134 );
 }
 /*
@@ -261,7 +261,7 @@ void TopLevel::showRequestedSheets()
 
 void TopLevel::initStatusBar()
 {
-  KSGRD::SensorMgr->engage( "localhost", "", "ksysguardd" );
+  KSGRD::SensorMgr->engage( "localhost", "", "kde-system-monitor-daemon" );
   /* Request info about the swap space size and the units it is
    * measured in.  The requested info will be received by
    * answerReceived(). */

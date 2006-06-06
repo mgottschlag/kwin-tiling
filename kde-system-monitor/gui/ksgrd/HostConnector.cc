@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
 
     Copyright (c) 1999, 2000 Chris Schlaeger <cs@kde.org>
 
@@ -83,7 +83,7 @@ HostConnector::HostConnector( QWidget *parent, const char *name )
   groupLayout->addWidget( mUseDaemon, 0, 2 );
 
   mUseCustom = new QRadioButton( i18n( "Custom command" ), group );
-  mUseCustom->setWhatsThis( i18n( "Select this to use the command you entered below to start ksysguardd on the remote host." ) );
+  mUseCustom->setWhatsThis( i18n( "Select this to use the command you entered below to start kde-system-monitor-daemon on the remote host." ) );
   groupLayout->addWidget( mUseCustom, 0, 3 );
 
   label = new QLabel( i18n( "Port:" ), group );
@@ -107,11 +107,11 @@ HostConnector::HostConnector( QWidget *parent, const char *name )
   mCommands->setInsertPolicy( QComboBox::AtTop );
   mCommands->setAutoCompletion( true );
   mCommands->setDuplicatesEnabled( false );
-  mCommands->setWhatsThis( i18n( "Enter the command that runs ksysguardd on the host you want to monitor." ) );
+  mCommands->setWhatsThis( i18n( "Enter the command that runs kde-system-monitor-daemon on the host you want to monitor." ) );
   groupLayout->addWidget( mCommands, 2, 2, 1, 2 );
   label->setBuddy( mCommands );
 
-  label = new QLabel( i18n( "e.g. ssh -l root remote.host.org ksysguardd" ), group );
+  label = new QLabel( i18n( "e.g. ssh -l root remote.host.org kde-system-monitor-daemon" ), group );
   groupLayout->addWidget( label, 3, 2, 1, 2 );
 
   layout->addWidget( group, 1, 0, 1, 2 );

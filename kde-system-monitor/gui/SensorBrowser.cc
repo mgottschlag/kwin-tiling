@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
 
     Copyright (c) 1999, 2000 Chris Schlaeger <cs@kde.org>
 
@@ -217,7 +217,7 @@ void SensorBrowser::answerReceived( int id, const QStringList &answer )
       if ( !found ) {
         Q3ListViewItem* lvi = new Q3ListViewItem( parent, name );
         if ( j == absolutePath.count() - 1 ) {
-          QPixmap pix = mIconLoader->loadIcon( "ksysguardd", K3Icon::Desktop,
+          QPixmap pix = mIconLoader->loadIcon( "kde-system-monitor-daemon", K3Icon::Desktop,
                                                K3Icon::SizeSmall );
           lvi->setPixmap( 0, pix );
           lvi->setText( 1, KSGRD::SensorMgr->translateSensorType( sensorType ) );

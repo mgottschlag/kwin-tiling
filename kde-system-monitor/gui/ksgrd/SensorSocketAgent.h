@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
    
     Copyright (c) 1999, 2000 Chris Schlaeger <cs@kde.org>
     
@@ -32,7 +32,7 @@ namespace KSGRD {
 class SensorClient;
 
 /**
-  The SensorSocketAgent connects to a ksysguardd via a TCP
+  The SensorSocketAgent connects to a kde-system-monitor-daemon via a TCP
   connection. It keeps a list of pending requests that have not been
   answered yet by ksysguard. The current implementation only allowes
   one pending requests. Incoming requests are queued in an input

@@ -1,11 +1,11 @@
 
-project(ksysguard)
-message(STATUS "Building KSysGuard")
+project(kde-system-monitor)
+message(STATUS "Building kde-system-monitor")
 add_subdirectory( CContLib )
 add_subdirectory( gui )
 add_subdirectory( pics )
 add_subdirectory( example )
-add_subdirectory( ksysguardd )
+add_subdirectory( kde-system-monitor-daemon )
 
 
 
@@ -19,8 +19,8 @@ kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 #original Makefile.am contents follow:
 
-#if include_ksysguardd
-#KSYSGUARDD_DIR = ksysguardd
+#if include_kde-system-monitor-daemon
+#KSYSGUARDD_DIR = kde-system-monitor-daemon
 #endif
 #
 ## claim, which subdirectories you want to install

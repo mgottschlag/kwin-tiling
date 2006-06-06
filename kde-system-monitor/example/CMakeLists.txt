@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${SYSCONF_INSTALL_DIR} FILES ksysguarddrc )
+install_files( ${SYSCONF_INSTALL_DIR} FILES kde-system-monitor-daemonrc )
 install_files( ${DATA_INSTALL_DIR}/ksysguard FILES eventsrc )
 
 
@@ -15,4 +15,4 @@ install_files( ${DATA_INSTALL_DIR}/ksysguard FILES eventsrc )
 #ksysguard_example_data_DATA = eventsrc
 #
 #etcdir = $(sysconfdir)
-#etc_DATA = ksysguarddrc
+#etc_DATA = kde-system-monitor-daemonrc

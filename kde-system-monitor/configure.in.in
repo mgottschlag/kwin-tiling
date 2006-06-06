@@ -1,26 +1,26 @@
-dnl Check whether ksysguardd can run; 
-AC_MSG_CHECKING([if ksysguardd can be compiled])
+dnl Check whether kde-system-monitor-daemon can run; 
+AC_MSG_CHECKING([if kde-system-monitor-daemon can be compiled])
 case "$host" in 
-  *-*-linux*) ksysguardd_compile=yes; UNAME='Linux' ;;
-  *-*-freebsd*) ksysguardd_compile=yes; UNAME='FreeBSD' ;;
-  *-*-netbsd*) ksysguardd_compile=yes; UNAME='NetBSD' ;;
-  *-*-solaris*) ksysguardd_compile=yes; UNAME='Solaris' ;;
-  *-*-osf*) ksysguardd_compile=yes; UNAME='Tru64' ;;
-  *-*-irix*) ksysguardd_compile=yes; UNAME='Irix' ;;
-  *-*-openbsd*) ksysguardd_compile=yes; UNAME='OpenBSD' ;;
-  *) ksysguardd_compile=no; UNAME='' ;;
+  *-*-linux*) kde-system-monitor-daemon_compile=yes; UNAME='Linux' ;;
+  *-*-freebsd*) kde-system-monitor-daemon_compile=yes; UNAME='FreeBSD' ;;
+  *-*-netbsd*) kde-system-monitor-daemon_compile=yes; UNAME='NetBSD' ;;
+  *-*-solaris*) kde-system-monitor-daemon_compile=yes; UNAME='Solaris' ;;
+  *-*-osf*) kde-system-monitor-daemon_compile=yes; UNAME='Tru64' ;;
+  *-*-irix*) kde-system-monitor-daemon_compile=yes; UNAME='Irix' ;;
+  *-*-openbsd*) kde-system-monitor-daemon_compile=yes; UNAME='OpenBSD' ;;
+  *) kde-system-monitor-daemon_compile=no; UNAME='' ;;
 esac
 
-AC_MSG_RESULT($ksysguardd_compile)
+AC_MSG_RESULT($kde-system-monitor-daemon_compile)
 
-AM_CONDITIONAL(include_ksysguardd, test "$ksysguardd_compile" = "yes")
-AM_CONDITIONAL(include_ksysguardd_linux, test "$UNAME" = Linux)
-AM_CONDITIONAL(include_ksysguardd_freebsd, test "$UNAME" = FreeBSD)
-AM_CONDITIONAL(include_ksysguardd_netbsd, test "$UNAME" = NetBSD)
-AM_CONDITIONAL(include_ksysguardd_solaris, test "$UNAME" = Solaris)
-AM_CONDITIONAL(include_ksysguardd_tru64, test "$UNAME" = Tru64)
-AM_CONDITIONAL(include_ksysguardd_irix, test "$UNAME" = Irix)
-AM_CONDITIONAL(include_ksysguardd_openbsd, test "$UNAME" = OpenBSD)
+AM_CONDITIONAL(include_kde-system-monitor-daemon, test "$kde-system-monitor-daemon_compile" = "yes")
+AM_CONDITIONAL(include_kde-system-monitor-daemon_linux, test "$UNAME" = Linux)
+AM_CONDITIONAL(include_kde-system-monitor-daemon_freebsd, test "$UNAME" = FreeBSD)
+AM_CONDITIONAL(include_kde-system-monitor-daemon_netbsd, test "$UNAME" = NetBSD)
+AM_CONDITIONAL(include_kde-system-monitor-daemon_solaris, test "$UNAME" = Solaris)
+AM_CONDITIONAL(include_kde-system-monitor-daemon_tru64, test "$UNAME" = Tru64)
+AM_CONDITIONAL(include_kde-system-monitor-daemon_irix, test "$UNAME" = Irix)
+AM_CONDITIONAL(include_kde-system-monitor-daemon_openbsd, test "$UNAME" = OpenBSD)
 AC_SUBST(UNAME)
 
 AC_ARG_WITH(sensors,

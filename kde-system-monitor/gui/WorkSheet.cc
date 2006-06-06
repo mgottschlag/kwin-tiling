@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
 
     Copyright (c) 1999 - 2001 Chris Schlaeger <cs@kde.org>
 
@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    KSysGuard is currently maintained by Chris Schlaeger <cs@kde.org>.
+    kde-system-monitor is currently maintained by Chris Schlaeger <cs@kde.org>.
     Please do not commit any changes without consulting me first. Thanks!
 
 */
@@ -113,9 +113,9 @@ bool WorkSheet::load( const QString &fileName )
   }
 
   // Check for proper document type.
-  if ( doc.doctype().name() != "KSysGuardWorkSheet" ) {
+  if ( doc.doctype().name() != "kde-system-monitor-WorkSheet" ) {
     KMessageBox::sorry( this, i18n( "The file %1 does not contain a valid worksheet "
-                                    "definition, which must have a document type 'KSysGuardWorkSheet'.",
+                                    "definition, which must have a document type 'kde-system-monitor-WorkSheet'.",
                           mFileName ) );
     return false;
   }
@@ -183,7 +183,7 @@ bool WorkSheet::save( const QString &fileName )
   kDebug() << "SAVING - IN WORKSHEET" << endl;
   mFileName = fileName;
 
-  QDomDocument doc( "KSysGuardWorkSheet" );
+  QDomDocument doc( "kde-system-monitor-WorkSheet" );
   doc.appendChild( doc.createProcessingInstruction(
                    "xml", "version=\"1.0\" encoding=\"UTF-8\"" ) );
 
@@ -275,7 +275,7 @@ void WorkSheet::paste()
   QDomDocument doc;
   /* Get text from clipboard and check for a valid XML header and
    * proper document type. */
-  if ( !doc.setContent( clip->text() ) || doc.doctype().name() != "KSysGuardDisplay" ) {
+  if ( !doc.setContent( clip->text() ) || doc.doctype().name() != "kde-system-monitor-Display" ) {
     KMessageBox::sorry( this, i18n("The clipboard does not contain a valid display "
                         "description." ) );
     return;
@@ -676,7 +676,7 @@ QString WorkSheet::currentDisplayAsXML()
     return QString();
 
   /* We create an XML description of the current display. */
-  QDomDocument doc( "KSysGuardDisplay" );
+  QDomDocument doc( "kde-system-monitor-Display" );
   doc.appendChild( doc.createProcessingInstruction(
                    "xml", "version=\"1.0\" encoding=\"UTF-8\"" ) );
 

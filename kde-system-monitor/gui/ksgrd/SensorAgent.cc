@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
    
     Copyright (c) 1999 - 2001 Chris Schlaeger <cs@kde.org>
     
@@ -105,9 +105,9 @@ void SensorAgent::processAnswer( const char *buf, int buflen )
       continue;
     }
 
-    //The spec was supposed to be that it returned "\nksysguardd> " but some seem to forget the space, so we have to compensate.  Sigh 
-    if( (buffer.size() -i >= (signed)(sizeof("\nksysguardd>")) -1 && qstrncmp(buffer.constData()+i, "\nksysguardd>", sizeof("\nksysguardd>")-1) == 0) ||
-        (i==0 && buffer.size() >= (signed)(sizeof("ksysguardd>"))-1 && qstrncmp(buffer.constData(), "ksysguardd>", sizeof("ksysguardd>")-1) == 0) ) {
+    //The spec was supposed to be that it returned "\nkde-system-monitor-daemon> " but some seem to forget the space, so we have to compensate.  Sigh 
+    if( (buffer.size() -i >= (signed)(sizeof("\nkde-system-monitor-daemon>")) -1 && qstrncmp(buffer.constData()+i, "\nkde-system-monitor-daemon>", sizeof("\nkde-system-monitor-daemon>")-1) == 0) ||
+        (i==0 && buffer.size() >= (signed)(sizeof("kde-system-monitor-daemon>"))-1 && qstrncmp(buffer.constData(), "kde-system-monitor-daemon>", sizeof("kde-system-monitor-daemon>")-1) == 0) ) {
 	
 	QString answer = QString::fromUtf8(buffer.constData()+startOfAnswer, i-startOfAnswer);
 	if(!answer.isEmpty())
@@ -119,13 +119,13 @@ void SensorAgent::processAnswer( const char *buf, int buflen )
 #endif
 	if(buffer.at(i) == '\n')
 		i++;
-	i += sizeof("ksysguardd>") -2;  //Move i on to the next answer (if any). -2 because sizeof adds one for \0  and the for loop will increment by 1 also
+	i += sizeof("kde-system-monitor-daemon>") -2;  //Move i on to the next answer (if any). -2 because sizeof adds one for \0  and the for loop will increment by 1 also
 	if(i+1 < buffer.size() && buffer.at(i+1) == ' ') i++;
 	startOfAnswer = i+1;
 
 	//We have found the end of one reply
 	if ( !mDaemonOnLine ) {
-		/* First '\nksysguardd> ' signals that the daemon is
+		/* First '\nkde-system-monitor-daemon> ' signals that the daemon is
 	  	 * ready to serve requests now. */
 		mDaemonOnLine = true;
 #if SA_TRACE

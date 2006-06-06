@@ -1,5 +1,5 @@
 /*
-    This file is part of KSysGuard.
+    This file is part of kde-system-monitor.
     Copyright ( C ) 2002 Nadeem Hasan ( nhasan@kde.org )
 
     This library is free software; you can redistribute it and/or

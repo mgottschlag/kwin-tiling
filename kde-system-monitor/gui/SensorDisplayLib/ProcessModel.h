@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
 
 	Copyright (c) 1999, 2000 Chris Schlaeger <cs@kde.org>
 	Copyright (c) 2006 John Tapsell <john.tapsell@kdemail.net>
@@ -36,7 +36,7 @@
 
 #include <Process.h>
 
-/* These are known and used in ksysguardd so don't change unless you change there too */
+/* These are known and used in kde-system-monitor-daemon so don't change unless you change there too */
 #define DATA_COLUMN_STATUS 'S'
 #define DATA_COLUMN_LONG 'd'
 #define DATA_COLUMN_PRETTY_LONG 'D' /*Printed as e.g 100,000,000 */

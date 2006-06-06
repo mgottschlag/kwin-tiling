@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
    
     Copyright (c) 2000 Chris Schlaeger <cs@kde.org>
     
@@ -26,7 +26,7 @@
 
 /* This file is used to correlate the entries of the process popup menu
  * of the ProcessList class and the value received by the kill command
- * in ksysguardd. We limit the set of available signals to the POSIX.1
+ * in kde-system-monitor-daemon. We limit the set of available signals to the POSIX.1
  * set with job control. */
 
 #define MENU_ID_SIGABRT 11

@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
    
     Copyright (c) 1999 - 2001 Chris Schlaeger <cs@kde.org>
     
@@ -67,7 +67,7 @@ bool SensorShellAgent::start( const QString &host, const QString &shell,
   if ( !command.isEmpty() )
     cmd =  command;
   else
-    cmd = mShell + ' ' + hostName() + " ksysguardd";
+    cmd = mShell + ' ' + hostName() + " kde-system-monitor-daemon";
   *mDaemon << cmd;
 
   if ( !mDaemon->start( KProcess::NotifyOnExit, KProcess::All ) ) {

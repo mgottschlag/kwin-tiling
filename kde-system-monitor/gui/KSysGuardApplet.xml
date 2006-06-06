@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE KSysGuardApplet>
 <WorkSheet sizeRatio="1.2" dockCnt="2" interval="4" >
- <host port="-1" shell="" name="localhost" command="ksysguardd" />
+ <host port="-1" shell="" name="localhost" command="kde-system-monitor-daemon" />
  <display topBar="1" vColor="326429" title="CPU" dock="0" bColor="3223601" graphStyle="0" class="FancyPlotter" unit="" hScale="1" showUnit="0" hLines="1" hCount="2" vLines="1" autoRange="1" min="0" max="0" hColor="14606046" globalUpdate="1" pause="0" fontSize="8" labels="1" vScroll="1" vDistance="30" >
   <beam sensorName="cpu/user" hostName="localhost" color="1608191" sensorType="integer" />
   <beam sensorName="cpu/sys" hostName="localhost" color="16743688" sensorType="integer" />

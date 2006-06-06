@@ -1,5 +1,5 @@
 /*
-    KSysGuard, the KDE System Guard
+    kde-system-monitor, the KDE System Monitor
    
     Copyright (c) 1999, 2000 Chris Schlaeger <cs@kde.org>
     
@@ -37,10 +37,10 @@ class SensorRequest;
 
 /**
   The SensorAgent depending on the type of requested connection
-  starts a ksysguardd process or connects through a tcp connection to
-  a running ksysguardd and handles the asynchronous communication. It
+  starts a kde-system-monitor-daemon process or connects through a tcp connection to
+  a running kde-system-monitor-daemon and handles the asynchronous communication. It
   keeps a list of pending requests that have not been answered yet by
-  ksysguardd. The current implementation only allowes one pending
+  kde-system-monitor-daemon. The current implementation only allowes one pending
   requests. Incoming requests are queued in an input FIFO.
 */
 class KDE_EXPORT SensorAgent : public QObject
