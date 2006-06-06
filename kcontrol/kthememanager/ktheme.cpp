@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <QTextStream>
 #include <QDir>
 
-#include <dcopclient.h>
 #include <kapplication.h>
 #include <kbuildsycocaprogressdialog.h>
 #include <kconfig.h>
@@ -425,11 +424,8 @@ void KTheme::apply()
 
     desktopConf.sync();         // TODO sync and signal only if <desktop> elem present
     // reconfigure kdesktop. kdesktop will notify all clients
-    DCOPClient *client = kapp->dcopClient();
-    if ( !client->isAttached() )
-        client->attach();
-	QByteArray data;
-    client->send("kdesktop", "KBackgroundIface", "configure()", data);
+	QDBusInterfacePtr kdesktop( "org.kde.kdesktop", "/Background");
+	kdesktop->call("configure");
     // FIXME Xinerama
 
     // 3. Icons
@@ -619,8 +615,8 @@ void KTheme::apply()
                                static_cast<bool>( getProperty( panelElem, "transparent", "value" ).toUInt() ) );
 
         kickerConf.sync();
-		QByteArray data;
-        client->send("kicker", "Panel", "configure()", data);
+		QDBusInterfacePtr kicker( "org.kde.kicker", "kicker");
+		kicker->call("configure");
     }
 
     // 10. Widget style
