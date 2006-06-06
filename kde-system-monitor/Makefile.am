@@ -1,5 +1,5 @@
-if include_kde-system-monitor-daemon
-KSYSGUARDD_DIR = kde-system-monitor-daemon
+if include_ksysguardd
+KSYSGUARDD_DIR = ksysguardd
 endif
 
 # claim, which subdirectories you want to install

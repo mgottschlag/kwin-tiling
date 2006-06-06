@@ -21,7 +21,7 @@ if(XRES_LIBRARY)
 endif(XRES_LIBRARY)
 
 if(SENSORS_FOUND)
-  SET(LIBKSYSGUARDD_FILES ${LIBKSYSGUARDD_FILES} lmsensors.c)
+  SET(LIBKSYSGUARDD_FILES ${LIBKDE-SYSTEM-MONITOR-DAEMON_FILES} lmsensors.c)
 endif(SENSORS_FOUND)
 
 if(EXISTS /proc/i8k)
@@ -30,7 +30,7 @@ ENDIF(EXISTS /proc/i8k)
 
 
 ADD_LIBRARY(libkde-system-monitor-daemon STATIC 
-            ${LIBKSYSGUARDD_FILES})
+            ${LIBKDE-SYSTEM-MONITOR-DAEMON_FILES})
 if(XRES_LIBRARY)
   TARGET_LINK_LIBRARIES(libkde-system-monitor-daemon ${XRES_LIBRARY})
 endif(XRES_LIBRARY)
@@ -57,6 +57,6 @@ endif(SENSORS_FOUND)
 #
 #INCLUDES = -I$(srcdir)/../../CContLib -I$(srcdir)/.. $(KSGRD_SUPPORTS) $(all_includes)
 #
-#noinst_LIBRARIES = libkde-system-monitor-daemon.a
+#noinst_LIBRARIES = libksysguardd.a
 #libkde-system-monitor-daemon_a_SOURCES = ProcessList.c	Memory.c stat.c netdev.c apm.c acpi.c \
 #	loadavg.c cpuinfo.c lmsensors.c netstat.c diskstat.c logfile.c i8k.c

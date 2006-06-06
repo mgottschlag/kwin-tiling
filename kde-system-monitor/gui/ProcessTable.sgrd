@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE KSysGuardWorkSheet>
+<!DOCTYPE kde-system-monitor-WorkSheet>
 <WorkSheet rows="1" interval="2" columns="1" >
  <host port="-1" shell="" name="localhost" command="kde-system-monitor-daemon" />
  <display title="" class="ProcessController" row="0" unit="" sensorName="ps" column="0" filter="0" showUnit="0" sortColumn="0" hostName="localhost" globalUpdate="1" incrOrder="1" tree="0" sensorType="table" pause="0" >

@@ -60,7 +60,7 @@ static int SocketPort = -1;
 static unsigned char BindToAllInterfaces = 0;
 static int CurrentSocket;
 static const char *LockFile = "/var/run/kde-system-monitor-daemon.pid";
-static const char *ConfigFile = KSYSGUARDDRCFILE;
+static const char *ConfigFile = KDESYSTEMMONITORDAEMONRCFILE;
 
 void signalHandler( int sig );
 void makeDaemon( void );
@@ -295,7 +295,7 @@ int addClient( int client )
       fcntl( fileno( out ), F_SETFL, O_NDELAY );
       ClientList[ i ].out = out;
       printWelcome( out );
-      fprintf( out, "kde-system-monitor-daemon> " );
+      fprintf( out, "ksysguardd> " );
       fflush( out );
 
       return 0;
@@ -469,7 +469,7 @@ static void handleSocketTraffic( int socketNo, const fd_set* fds )
               CurrentClient = ClientList[ i ].out;
               fflush( stdout );
               executeCommand( cmdBuf );
-              fprintf( CurrentClient, "kde-system-monitor-daemon> " );
+              fprintf( CurrentClient, "ksysguardd> " );
               fflush( CurrentClient );
             }
           }
@@ -481,7 +481,7 @@ static void handleSocketTraffic( int socketNo, const fd_set* fds )
       exit(0);
     }
     executeCommand( cmdBuf );
-    printf( "kde-system-monitor-daemon> " );
+    printf( "ksysguardd> " );
     fflush( stdout );
   }
 }
@@ -617,7 +617,7 @@ int main( int argc, char* argv[] )
       return -1;
     resetClientList();
   } else {
-    fprintf( stdout, "kde-system-monitor-daemon> " );
+    fprintf( stdout, "ksysguardd> " );
     fflush( stdout );
     CurrentClient = stdout;
     ServerSocket = 0;

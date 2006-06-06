@@ -1,6 +1,6 @@
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../CContLib/ )
 
-ADD_DEFINITIONS( -DKSYSGUARDDRCFILE=\"\\"${CMAKE_INSTALL_PREFIX}${SYSCONF_INSTALL_DIR}/kde-system-monitor-daemonrc\\"\" )
+ADD_DEFINITIONS( -DKDESYSTEMMONITORDAEMONRCFILE=\"\\"${CMAKE_INSTALL_PREFIX}${SYSCONF_INSTALL_DIR}/kde-system-monitor-daemonrc\\"\" )
 
 ADD_DEFINITIONS(-DOSTYPE_${CMAKE_SYSTEM_NAME})
 
@@ -78,8 +78,8 @@ install(TARGETS kde-system-monitor-daemon DESTINATION bin)
 #KSYSGUARDDRCFILE=$(sysconfdir)/kde-system-monitor-daemonrc
 #INCLUDES = -DKSYSGUARDDRCFILE="\"$(KSYSGUARDDRCFILE)\"" -DOSTYPE_$(UNAME) -I$(srcdir)/../CContLib -I$(srcdir)/$(UNAME)
 #
-#bin_PROGRAMS = kde-system-monitor-daemon
+#bin_PROGRAMS = ksysguardd
 #
-#kde-system-monitor-daemon_SOURCES = Command.c conf.c kde-system-monitor-daemon.c PWUIDCache.c
+#kde-system-monitor-daemon_SOURCES = Command.c conf.c ksysguardd.c PWUIDCache.c
 #kde-system-monitor-daemon_LDFLAGS = $(all_libraries)
-#kde-system-monitor-daemon_LDADD =  $(top_builddir)/workspace/kde-system-monitor/kde-system-monitor-daemon/$(UNAME)/libkde-system-monitor-daemon.a ../CContLib/libccont.a -lkdefakes_nonpic $(LIBHOSTS)
+#kde-system-monitor-daemon_LDADD =  $(top_builddir)/workspace/kde-system-monitor/ksysguardd/$(UNAME)/libksysguardd.a ../CContLib/libccont.a -lkdefakes_nonpic $(LIBHOSTS)

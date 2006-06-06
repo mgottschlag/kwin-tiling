@@ -11,7 +11,7 @@ needed. It also allowed for an easy network support using existing
 security mechanisms (ssh).
 
 kde-system-monitor sends commands and kde-system-monitor-daemon answers to them. Each answer
-ends with the string "\nkde-system-monitor-daemon> ". Error messages are enclosed in
+ends with the string "\nksysguardd> ". Error messages are enclosed in
 ESC '\033' characters. Therefor regular messages may never contain
 ESC. The set of commands that each kde-system-monitor-daemon implementation supports
 can be very different. There are only a very few mandatory command and
@@ -34,7 +34,7 @@ mem/physical/free
 ps
 pscount
 
-Without these commands KSysGuard is not very helpful.
+Without these commands KDE System Monitor is not very helpful.
 
 The 'monitors' command returns the list of available sensors. The
 output looks like this:
@@ -43,7 +43,7 @@ output looks like this:
 mem/physical/free       integer
 ps      table
 pscount integer
-kde-system-monitor-daemon> 
+ksysguardd> 
 --------
 
 Sensor names can be hierarchical. Each level is separated by a
@@ -60,9 +60,9 @@ appended to the sensor name. It can be used to find out more about the
 sensor.
 
 --------
-kde-system-monitor-daemon> mem/physical/free?
+ksysguardd> mem/physical/free?
 Free Memory     0       260708  KB
-kde-system-monitor-daemon>
+ksysguardd> 
 --------
 
 integer and float sensor return a short description, the minimum and
@@ -71,10 +71,10 @@ tabs. The minimum and maximum values can both be 0 to trigger the
 auto-range feature of the display.
 
 --------
-kde-system-monitor-daemon> ps?
+ksysguardd> ps?
 Name    PID     PPID    UID     GID     Status  User%   System% Nice    VmSize  VmRss   Login   TracerPID       Command
 s       d       d       d       d       S       f       f       d       D       D       s       d       s
-kde-system-monitor-daemon>
+ksysguardd> 
 --------
 
 This is the output of the ps? inquiry command. The ps command is the
@@ -110,7 +110,7 @@ front-end about this, you need to send the string "RECONFIGURE\n" over
 stderr. This causes the front-end to request the list of monitors
 again and adapt it's layout accordingly. If kde-system-monitor-daemon receives a
 command it doesn't know it has to reply with "UNKNOWN
-COMMAND\nkde-system-monitor-daemon> ".
+COMMAND\nksysguardd> ".
 
 kde-system-monitor-daemon does not handle native language support. In order to have a
 minimum installation (only a single file) on the monitored machine,

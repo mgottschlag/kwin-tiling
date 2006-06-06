@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE KSysGuardWorkSheet >
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE kde-system-monitor-WorkSheet >
 <WorkSheet rows="1" columns="1">
 <host name="localhost" shell="" command="kde-system-monitor-daemon"/>
 <display row="0" column="0" class="ProcessController" hostName="localhost" sensorName="ps" sensorType="table" tree="off" pause="off" filter="0">

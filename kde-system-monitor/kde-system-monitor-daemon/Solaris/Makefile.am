@@ -6,5 +6,5 @@
 
 INCLUDES = -I$(srcdir)/../../CContLib -I$(srcdir)/..
 
-noinst_LIBRARIES = libkde-system-monitor-daemon.a
+noinst_LIBRARIES = libksysguardd.a
 libkde-system-monitor-daemon_a_SOURCES = Memory.c LoadAvg.c ProcessList.c NetDev.c

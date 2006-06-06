@@ -1,5 +1,5 @@
 /*
-    This file is part of KSysGuard.
+    This file is part of kde-system-monitor.
     Copyright ( C ) 2002 Nadeem Hasan ( nhasan@kde.org )
 
     This library is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@ kde-system-monitor-applet-settings::kde-system-monitor-applet-settings( QWidget 
     : KDialogBase( parent, name, true, QString(), Ok|Apply|Cancel,
       Ok, true )
 {
-  setCaption( i18n( "KSysGuard Applet Settings" ) );
+  setCaption( i18n( "KDE System Monitor Applet Settings" ) );
 
   QWidget *page = new QWidget( this );
   setMainWidget( page );

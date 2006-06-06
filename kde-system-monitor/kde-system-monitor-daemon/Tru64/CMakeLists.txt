@@ -20,5 +20,5 @@ ADD_LIBRARY(libkde-system-monitor-daemon STATIC
 #
 #INCLUDES = -I$(srcdir)/../../CContLib -I..
 #
-#lib_LIBRARIES = libkde-system-monitor-daemon.a
+#lib_LIBRARIES = libksysguardd.a
 #libkde-system-monitor-daemon_a_SOURCES = Memory.c LoadAvg.c NetDev.c

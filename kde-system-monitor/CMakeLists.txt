@@ -19,8 +19,8 @@ kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 #original Makefile.am contents follow:
 
-#if include_kde-system-monitor-daemon
-#KSYSGUARDD_DIR = kde-system-monitor-daemon
+#if include_ksysguardd
+#KSYSGUARDD_DIR = ksysguardd
 #endif
 #
 ## claim, which subdirectories you want to install

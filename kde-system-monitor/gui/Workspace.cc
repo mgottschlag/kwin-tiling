@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    KSysGuard is currently maintained by Chris Schlaeger <cs@kde.org>.
+    kde-system-monitor is currently maintained by Chris Schlaeger <cs@kde.org>.
     Please do not commit any changes without consulting me first. Thanks!
 
 */
@@ -87,7 +87,7 @@ void Workspace::readProperties( KConfig *cfg )
 
   if ( mWorkDir.isEmpty() ) {
     /* If workDir is not specified in the config file, it's
-     * probably the first time the user has started KSysGuard. We
+     * probably the first time the user has started kde-system-monitor. We
      * then "restore" a special default configuration. */
     KStandardDirs* kstd = KGlobal::dirs();
     kstd->addResourceType( "data", "share/apps/kde-system-monitor" );

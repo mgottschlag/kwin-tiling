@@ -1,8 +1,8 @@
 [!Global!]
 IconName=kde-system-monitor
-Comment=KDE System Guard
+Comment=KDE System Monitor
 Comment[fr]=Surveillance du système
-Comment[x-test]=xxKDE System Guardxx
+Comment[x-test]=xxKDE System Monitorxx
 
 [pattern_match]
 Name=pattern_match

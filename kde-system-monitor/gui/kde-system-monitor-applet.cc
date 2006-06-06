@@ -16,7 +16,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    KSysGuard is currently maintained by Chris Schlaeger
+    kde-system-monitor is currently maintained by Chris Schlaeger
     <cs@kde.org>. Please do not commit any changes without consulting
     me first. Thanks!
 
@@ -235,7 +235,7 @@ void kde-system-monitor-applet::dropEvent( QDropEvent *e )
         }
       } else {
         KMessageBox::sorry( this,
-          i18n( "The KSysGuard applet does not support displaying of "
+          i18n( "The KDE System Monitor applet does not support displaying of "
                 "this type of sensor. Please choose another sensor." ) );
 
         layout();
@@ -388,7 +388,7 @@ bool kde-system-monitor-applet::load()
     else if ( classType == "DancingBars" )
       newDisplay = new DancingBars( this, i18n("Dummy"), true );
     else {
-      KMessageBox::sorry( this, i18n( "The KSysGuard applet does not support displaying of "
+      KMessageBox::sorry( this, i18n( "The KDE System Monitor applet does not support displaying of "
                           "this type of sensor. Please choose another sensor." ) );
       return false;
     }
@@ -474,7 +474,7 @@ void kde-system-monitor-applet::addEmptyDisplay( QWidget **dock, uint pos )
   dock[ pos ] = new QFrame( this );
   ((QFrame*)dock[ pos ])->setFrameStyle( QFrame::WinPanel | QFrame::Sunken );
   dock[ pos ]->setToolTip(
-                 i18n( "Drag sensors from the KDE System Guard into this cell." ) );
+                 i18n( "Drag sensors from the KDE System Monitor into this cell." ) );
 
   layout();
   if ( isVisible() )

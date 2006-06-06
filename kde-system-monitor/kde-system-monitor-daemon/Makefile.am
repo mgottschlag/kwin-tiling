@@ -25,12 +25,12 @@ endif
 SUBDIRS = $(linux_SUBDIR) $(freebsd_SUBDIR) $(netbsd_SUBDIR)\
 	$(solaris_SUBDIR) $(tru64_SUBDIR) $(irix_SUBDIR) $(openbsd_SUBDIR)
 
-KSYSGUARDDRCFILE=$(sysconfdir)/kde-system-monitor-daemonrc
-INCLUDES = -DKSYSGUARDDRCFILE="\"$(KSYSGUARDDRCFILE)\"" -DOSTYPE_$(UNAME) -I$(srcdir)/../CContLib -I$(srcdir)/$(UNAME)
+KDESYSTEMMONITORDAEMONRCFILE=$(sysconfdir)/kde-system-monitor-daemonrc
+INCLUDES = -DKDESYSTEMMONITORDAEMONRCFILE="\"$(KSYSGUARDDRCFILE)\"" -DOSTYPE_$(UNAME) -I$(srcdir)/../CContLib -I$(srcdir)/$(UNAME)
 
-bin_PROGRAMS = kde-system-monitor-daemon
+bin_PROGRAMS = ksysguardd
 
-kde-system-monitor-daemon_SOURCES = Command.c conf.c kde-system-monitor-daemon.c PWUIDCache.c
+kde-system-monitor-daemon_SOURCES = Command.c conf.c ksysguardd.c PWUIDCache.c
 kde-system-monitor-daemon_LDFLAGS = $(all_libraries)
-kde-system-monitor-daemon_LDADD =  $(top_builddir)/workspace/kde-system-monitor/kde-system-monitor-daemon/$(UNAME)/libkde-system-monitor-daemon.a ../CContLib/libccont.a -lkdefakes_nonpic $(LIBHOSTS) $(LIB_XRES) $(LIB_X11) $(LIB_XEXT)
+kde-system-monitor-daemon_LDADD =  $(top_builddir)/workspace/kde-system-monitor/ksysguardd/$(UNAME)/libksysguardd.a ../CContLib/libccont.a -lkdefakes_nonpic $(LIBHOSTS) $(LIB_XRES) $(LIB_X11) $(LIB_XEXT)
 

@@ -1,4 +1,4 @@
-# /etc/kde-system-monitor-daemon.conf
+# /etc/kde-system-monitor-daemonrc.conf
 
 # LogFiles: the list of all available logfiles
 LogFiles=messages:/var/log/messages,kern:/var/log/kern.log,daemon:/var/log/daemon.log

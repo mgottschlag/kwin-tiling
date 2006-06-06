@@ -16,11 +16,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    KSysGuard is currently maintained by Chris Schlaeger
+    kde-system-monitor is currently maintained by Chris Schlaeger
     <cs@kde.org>. Please do not commit any changes without consulting
     me first. Thanks!
 
-    KSysGuard has been written with some source code and ideas from
+    kde-system-monitor has been written with some source code and ideas from
     ktop (<1.0). Early versions of ktop have been written by Bernd
     Johannes Wuebben <wuebben@math.cornell.edu> and Nicolas Leclercq
     <nicknet@planete.net>.
@@ -67,7 +67,7 @@
 //Comment out to stop kde-system-monitor from forking.  Good for debugging
 //#define FORK_KSYSGUARD
 
-static const char Description[] = I18N_NOOP( "KDE system guard" );
+static const char Description[] = I18N_NOOP( "KDE system monitor" );
 TopLevel* topLevel;
 
 /**
@@ -75,9 +75,9 @@ TopLevel* topLevel;
   TaskMan widget.
  */
 TopLevel::TopLevel( const char *name )
-  : KMainWindow( 0, name ), DCOPObject( "KSysGuardIface" )
+  : KMainWindow( 0, name ), DCOPObject( "kde-system-monitor-Iface" )
 {
-  setPlainCaption( i18n( "KDE System Guard" ) );
+  setPlainCaption( i18n( "KDE System Monitor" ) );
   mTimerId = -1;
 
   mSplitter = new QSplitter( this );
@@ -536,9 +536,9 @@ int main( int argc, char** argv )
   setsid();
 #endif
 
-  KAboutData aboutData( "kde-system-monitor", I18N_NOOP( "KDE System Guard" ),
+  KAboutData aboutData( "kde-system-monitor", I18N_NOOP( "KDE System Monitor" ),
                         KSYSGUARD_VERSION, Description, KAboutData::License_GPL,
-                        I18N_NOOP( "(c) 1996-2006 The KSysGuard Developers" ) );
+                        I18N_NOOP( "(c) 1996-2006 The KDE System Monitor Developers" ) );
   aboutData.addAuthor( "John Tapsell", "Current Maintainer", "john.tapsell@kdemail.org" );
   aboutData.addAuthor( "Greg Martyn", "Current Maintainer", "greg.martyn@gmail.com" );
   aboutData.addAuthor( "Chris Schlaeger", "Previous Maintainer", "cs@kde.org" );
@@ -579,7 +579,7 @@ int main( int argc, char** argv )
       write( initpipe[ 1 ], &c, 1 );
       close( initpipe[ 1 ] );
 #endif
-      topLevel = new TopLevel( "KSysGuard" );
+      topLevel = new TopLevel( "kde-system-monitor" );
       topLevel->beATaskManager();
       topLevel->initStatusBar();
       topLevel->show();
@@ -589,12 +589,12 @@ int main( int argc, char** argv )
       result = app->exec();
     } else {
       QByteArray data;
-      app->dcopClient()->send( "kde-system-monitor_taskmanager", "KSysGuardIface",
+      app->dcopClient()->send( "kde-system-monitor_taskmanager", "kde-system-monitor-Iface",
                                "showOnCurrentDesktop()", data );
     }
   } else {
     app->dcopClient()->registerAs( "kde-system-monitor" );
-    app->dcopClient()->setDefaultObject( "KSysGuardIface" );
+    app->dcopClient()->setDefaultObject( "kde-system-monitor-Iface" );
 
     // We have registered with DCOP, our parent can exit now.
 #ifdef FORK_KSYSGUARD
@@ -602,7 +602,7 @@ int main( int argc, char** argv )
     write( initpipe[ 1 ], &c, 1 );
     close( initpipe[ 1 ] );
 #endif
-    topLevel = new TopLevel( "KSysGuard" );
+    topLevel = new TopLevel( "kde-system-monitor" );
 
     // create top-level widget
     if ( args->count() > 0 ) {
