@@ -34,8 +34,8 @@ kde4_add_executable(kde-system-monitor-daemon ${kde-system-monitor-daemon_SRCS})
 # was kdefakes_nonpic...
 target_link_libraries(kde-system-monitor-daemon  ${KDE4_KDECORE_LIBS} kdefakes )
 
-ADD_DEPENDENCIES(kde-system-monitor-daemon libkde-system-monitor-daemon)
-TARGET_LINK_LIBRARIES(kde-system-monitor-daemon libkde-system-monitor-daemon)
+ADD_DEPENDENCIES(kde-system-monitor-daemon libkdesystemmonitordaemon)
+TARGET_LINK_LIBRARIES(kde-system-monitor-daemon libkdesystemmonitordaemon)
 
 install(TARGETS kde-system-monitor-daemon DESTINATION bin)
 

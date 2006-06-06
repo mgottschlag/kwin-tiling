@@ -1,6 +1,6 @@
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/../../CContLib ${CMAKE_CURRENT_SOURCE_DIR}/../ )
 
-ADD_LIBRARY(libkde-system-monitor-daemon STATIC 
+ADD_LIBRARY(libkdesystemmonitordaemon STATIC 
             LoadAvg.c
             Memory.c
             NetDev.c
