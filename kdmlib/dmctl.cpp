@@ -23,7 +23,7 @@
 
 #include <kapplication.h>
 #include <klocale.h>
-#include <dcopclient.h>
+#include <dbus/qdbus.h>
 
 #include <QRegExp>
 
@@ -388,7 +388,10 @@ void
 DM::lockSwitchVT( int vt )
 {
 	if (switchVT( vt ))
-		kapp->dcopClient()->send( "kdesktop", "KScreensaverIface", "lock()", QByteArray( "" ) );
+        {
+            QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Screensaver", "org.kde.kdesktop.KScreensaver");
+            kdesktop->call( "lock" );
+        }
 }
 
 void
