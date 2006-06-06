@@ -38,10 +38,10 @@
 #include <k3listview.h>
 #include <kipc.h>
 #include <ksimpleconfig.h>
-#include <dcopclient.h>
 #include <kstyle.h>
 #include <kicontheme.h>
 #include <kiconloader.h>
+#include <dbus/qdbus.h>
 
 #include "stylepreview.h"
 #include "kstylepage.h"
@@ -529,9 +529,11 @@ void KStylePage::liveUpdate() {
 	// color palette changes
 	KIPC::sendMessageAll(KIPC::PaletteChanged);
 	// kwin-style
-	kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray(""));
+#warning "kde4: reimplement kwin* dcop function into dbus" 
+	//kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray(""));
 	// kdesktop-background
-	kapp->dcopClient()->send("kdesktop", "KBackgroundIface", "configure()", QByteArray(""));
+     QDBusInterfacePtr kdesktop( "org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background" );
+	 kdesktop->call("configure");
 }
 
 /** show the previewWidget styled with the selected one */

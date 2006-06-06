@@ -27,9 +27,9 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
-#include <dcopclient.h>
 #include <kprocess.h>
 #include <klanguagebutton.h>
+#include <dbus/qdbus.h>
 
 #include "kfindlanguage.h"
 
@@ -161,24 +161,18 @@ bool KCountryPage::save(KLanguageButton *comboCountry, KLanguageButton *comboLan
 	// only make the system reload the language, if the selected one deferes from the old saved one.
 	if (b_savedLanguageChanged) {
 		// Tell kdesktop about the new language
-		DCOPCString replyType; QByteArray replyData;
-		QByteArray data, da;
-		QDataStream stream( &data, QIODevice::WriteOnly );
-
-		stream.setVersion(QDataStream::Qt_3_1);
-		stream << comboLang->current();
-		if ( !kapp->dcopClient()->isAttached() )
-			kapp->dcopClient()->attach();
 		// ksycoca needs to be rebuilt
 		KProcess proc;
 		proc << QLatin1String("kbuildsycoca");
 		proc.start(KProcess::DontCare);
 		kDebug() << "KLocaleConfig::save : sending signal to kdesktop" << endl;
 		// inform kicker and kdeskop about the new language
-		kapp->dcopClient()->send( "kicker", "Panel", "restart()", QString());
+                QDBusInterfacePtr kicker("org.kde.kicker", "/Panel", "org.kde.kdesktop.Panel");
+                kicker->call( "restart" );
 		// call, not send, so that we know it's done before coming back
 		// (we both access kdeglobals...)
-		kapp->dcopClient()->call( "kdesktop", "KDesktopIface", "languageChanged(QString)", data, replyType, replyData );
+                QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Desktop", "org.kde.kdesktop.Kdesktop");
+                kdesktop->call("languageChanged",comboLang->current() );
 	}
 	// KPersonalizer::next() probably waits for a return-value
 	return true;

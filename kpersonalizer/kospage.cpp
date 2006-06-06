@@ -24,14 +24,13 @@
 #include <kstandarddirs.h>
 #include <kapplication.h>
 #include <klocale.h>
-#include <dcopclient.h>
 #include <kipc.h>
 #include <krun.h>
 #include <kdebug.h>
 #include <kiconloader.h>
 #include <ktoolinvocation.h>
 #include <kkeyserver.h>
-
+#include <dbus/qdbus.h>
 #include "kospage.h"
 
 KOSPage::KOSPage(QWidget *parent, const char *name ) : KOSPageDlg(parent,name) {
@@ -88,12 +87,14 @@ void KOSPage::save(bool currSettings){
 	QApplication::syncX();
 	// enable/disable the mac menu, call dcop
 	// Tell kdesktop about the new config file
-	kapp->dcopClient()->send("kdesktop", "KDesktopIface", "configure()", QByteArray());
+        QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Kdesktop", "org.kde.kdesktop.KDesktop");
+        kdesktop->call( "configure" );
 	///////////////////////////////////////////
 	/// restart kwin  for window effects
-	kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray(""));
+#warning "kde4: port kwin*";
+        //kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray(""));
 	///////////////////////////////////////////
-	
+
 	// Make the kaccess daemon read the changed config file
 	KToolInvocation::startServiceByDesktopName("kaccess");
 }
@@ -483,7 +484,7 @@ void KOSPage::writeUserKeys(){
 	kDebug() << "KOSPage::writeUserKeys()" << endl;
 
 	cglobal->setGroup("Global Shortcuts");
-	QMap<QString, QString>::Iterator it;	
+	QMap<QString, QString>::Iterator it;
 	for ( it = map_GlobalUserKeys.begin(); it != map_GlobalUserKeys.end(); ++it ) {
 		cglobal->writeEntry(it.key(), it.value(), KConfigBase::Persistent|KConfigBase::Global);
 	}

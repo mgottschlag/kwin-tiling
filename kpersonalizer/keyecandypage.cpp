@@ -24,11 +24,11 @@
 #include <QFont>
 #include <QDesktopWidget>
 
+#include <dbus/qdbus.h>
 #include <ksimpleconfig.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
-#include <dcopclient.h>
 #include <kipc.h>
 #include <kapplication.h>
 #include <k3listview.h>
@@ -406,17 +406,15 @@ void KEyeCandyPage::enableIconMngAnimation(bool enable) {
 
 /** No descriptions */
 void KEyeCandyPage::enableIconEffectSizePanel(bool enable){
-	QByteArray data;
-	QDataStream stream( &data, QIODevice::WriteOnly );
 
-	stream.setVersion(QDataStream::Qt_3_1);
-
+	int size = 0;
 	if(enable)
-		stream << 56;
+		size =  56;
 	else
-		stream << panelsize;
+		size = panelsize;
 
-	kapp->dcopClient()->send( "kicker", "Panel", "setPanelSize(int)",data);
+	QDBusInterfacePtr kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
+	kicker->call("setPanelSize",size);
 }
 
 /** No descriptions */
@@ -623,13 +621,16 @@ void KEyeCandyPage::save(bool currSettings){
 	kdesktopconf->sync();
 	KGlobal::config()->sync();
 	// restart kwin  for window effects
-	kapp->dcopClient()->send("knotify", "Notify", "reconfigure()", QByteArray(""));
-	kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray(""));
+	QDBusInterfacePtr knotify("org.kde.knotify", "/Notify", "org.kde.knotify.Notify");
+	knotify->call("reconfigure");
+#warning "kde4: reimplement dcop call kwin*"
+	//kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray(""));
 	// set the display options (style effects)
 	KIPC::sendMessageAll(KIPC::SettingsChanged);
 	QApplication::syncX();
 	// kicker stuff: Iconzooming etc.
-	kapp->dcopClient()->send( "kicker", "Panel", "configure()", QByteArray("") );
+	QDBusInterfacePtr kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
+	kicker->call("configure");
 	// Icon stuff
 	for (int i=0; i<K3Icon::LastGroup; i++) {
 		KIPC::sendMessageAll(KIPC::IconChanged, i);
@@ -637,10 +638,13 @@ void KEyeCandyPage::save(bool currSettings){
 	// font stuff
 	KIPC::sendMessageAll(KIPC::FontChanged);
 	// unfortunately, the konqiconview does not re-read the configuration to restructure the previews and the background picture
-	kapp->dcopClient()->send( "konqueror*", "KonquerorIface", "reparseConfiguration()", QByteArray("") );
-	kapp->dcopClient()->send( "kdesktop", "KDesktopIface", "configure()", QByteArray("") );
-	kapp->dcopClient()->send( "kdesktop", "KBackgroundIface", "configure()", QByteArray("") );
-	kapp->dcopClient()->send( "kdesktop", "KDesktopIface", "lineupIcons()", QByteArray("") );
+#warning "kde4: reimplement dcop call konqueror*"
+	//kapp->dcopClient()->send( "konqueror*", "KonquerorIface", "reparseConfiguration()", QByteArray("") );
+	QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Kdesktop", "org.kde.kdesktop.Kdesktop");
+	kdesktop->call("configure");
+	kdesktop->call("lineupIcons");
+	QDBusInterfacePtr background("org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background");
+	kdesktop->call("configure");
 }
 
 void KEyeCandyPage::slotEyeCandyShowDetails(bool details){
@@ -674,12 +678,9 @@ void KEyeCandyPage::setDefaults(){
 
 /** retrieves the user's local values. In case he doesn't have these set, use the default values of KDE, level 4. */
 void KEyeCandyPage::getUserDefaults(){
-	QByteArray replydata;
-	QByteArray data;
-	DCOPCString replytype;
-	kapp->dcopClient()->call( "kicker", "Panel", "panelSize()",data, replytype, replydata);
-	QDataStream stream( replydata );
-	stream >> panelsize;
+	QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Panel", "org.kde.kdesktop.Panel");
+	QDBusReply<int> reply = kdesktop->call("panelSize");
+	panelsize = reply;
 
 	// Wallpaper-User-Defaults
 	kdesktopconf->setGroup("FMSettings");

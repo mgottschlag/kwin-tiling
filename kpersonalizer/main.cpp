@@ -18,7 +18,6 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <klocale.h>
-#include <dcopclient.h>
 #include <kglobal.h>
 
 #include "kpersonalizer.h"
@@ -48,8 +47,6 @@ int main(int argc, char *argv[])
 	KLocale::setMainCatalog("kpersonalizer");
 
 	KApplication a;
-	if ( !kapp->dcopClient()->isAttached() )
-		kapp->dcopClient()->attach();
 
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
