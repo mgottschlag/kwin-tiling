@@ -44,8 +44,8 @@
 
 #include <QPushButton>
 #include <QX11Info>
+#include <dbus/qdbus.h>
 
-#include <dcopclient.h>
 #include <kapplication.h>
 #include <kglobalsettings.h>
 #include <kdebug.h>
@@ -656,13 +656,15 @@ void KCMStyle::save()
 
 	if (m_bEffectsDirty) {
 		KIPC::sendMessageAll(KIPC::SettingsChanged);
-		kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray());
+#warning "kde4: port it ! Need to fix kwin"		
+		//kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray());
 	}
 
 	//update kicker to re-used tooltips kicker parameter otherwise, it overwritted
 	//by style tooltips parameters.
 	QByteArray data;
-	kapp->dcopClient()->send( "kicker", "kicker", "configure()", QByteArray() );
+	QDBusInterfacePtr kicker( "org.kde.kicker", "kicker");
+	kicker->call("configure");
 
 	// Clean up
 	m_bEffectsDirty  = false;
