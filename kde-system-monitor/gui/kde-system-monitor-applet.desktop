@@ -1,8 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=KDE System Monitor Applet
-Name[fr]=Surveillance du système
-Name[x-test]=xxKDE System Monitor Appletxx
 Comment=An applet which swallows KDE system guard displays
 Icon=kde-system-monitor
 X-KDE-Library=sysguard_panelapplet
