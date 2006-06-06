@@ -39,7 +39,7 @@ class SensorManager;
 /**
   The SensorShellAgent starts a kde-system-monitor-daemon process and handles the
   asynchronous communication. It keeps a list of pending requests
-  that have not been answered yet by ksysguard. The current
+  that have not been answered yet by kde-system-monitor. The current
   implementation only allowes one pending requests. Incoming requests
   are queued in an input FIFO.
  */

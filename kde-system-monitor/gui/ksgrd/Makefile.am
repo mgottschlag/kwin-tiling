@@ -7,7 +7,7 @@ lib_LTLIBRARIES = libksgrd.la
 libksgrd_la_LDFLAGS = -no-undefined -version-info 3:0:2 $(all_libraries)
 libksgrd_la_LIBADD = $(LIB_KDEUI)
 
-# Which sources should be compiled for ksysguard.
+# Which sources should be compiled for kde-system-monitor.
 libksgrd_la_SOURCES = \
 	HostConnector.cc \
 	SensorAgent.cc \

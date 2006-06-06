@@ -90,9 +90,9 @@ void Workspace::readProperties( KConfig *cfg )
      * probably the first time the user has started KSysGuard. We
      * then "restore" a special default configuration. */
     KStandardDirs* kstd = KGlobal::dirs();
-    kstd->addResourceType( "data", "share/apps/ksysguard" );
+    kstd->addResourceType( "data", "share/apps/kde-system-monitor" );
 
-    mWorkDir = kstd->saveLocation( "data", "ksysguard" );
+    mWorkDir = kstd->saveLocation( "data", "kde-system-monitor" );
 
     QString origFile = kstd->findResource( "data", "SystemLoad.sgrd" );
     QString newFile = mWorkDir + '/' + i18n( "System Load" ) + ".sgrd";
@@ -438,7 +438,7 @@ void Workspace::applyStyle()
 void Workspace::showProcesses()
 {
   KStandardDirs* kstd = KGlobal::dirs();
-  kstd->addResourceType( "data", "share/apps/ksysguard" );
+  kstd->addResourceType( "data", "share/apps/kde-system-monitor" );
 
   QString file = kstd->findResource( "data", "ProcessTable.sgrd" );
   if ( !file.isEmpty() )

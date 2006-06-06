@@ -79,7 +79,7 @@ HostConnector::HostConnector( QWidget *parent, const char *name )
   groupLayout->addWidget( mUseRsh, 0, 1 );
 
   mUseDaemon = new QRadioButton( i18n( "Daemon" ), group );
-  mUseDaemon->setWhatsThis( i18n( "Select this if you want to connect to a ksysguard daemon that is running on the machine you want to connect to, and is listening for client requests." ) );
+  mUseDaemon->setWhatsThis( i18n( "Select this if you want to connect to a kde-system-monitor daemon that is running on the machine you want to connect to, and is listening for client requests." ) );
   groupLayout->addWidget( mUseDaemon, 0, 2 );
 
   mUseCustom = new QRadioButton( i18n( "Custom command" ), group );
@@ -92,7 +92,7 @@ HostConnector::HostConnector( QWidget *parent, const char *name )
   mPort = new QSpinBox( 1, 65535, 1, group );
   mPort->setEnabled( false );
   mPort->setValue( 3112 );
-  mPort->setToolTip( i18n( "Enter the port number on which the ksysguard daemon is listening for connections." ) );
+  mPort->setToolTip( i18n( "Enter the port number on which the kde-system-monitor daemon is listening for connections." ) );
   groupLayout->addWidget( mPort, 1, 2 );
 
   label = new QLabel( i18n( "e.g.  3112" ), group );
@@ -216,7 +216,7 @@ bool HostConnector::useCustom() const
 
 void HostConnector::slotHelp()
 {
-  KToolInvocation::invokeHelp( "CONNECTINGTOOTHERHOSTS", "ksysguard/the-sensor-browser.html" );
+  KToolInvocation::invokeHelp( "CONNECTINGTOOTHERHOSTS", "kde-system-monitor/the-sensor-browser.html" );
 }
 
 #include "HostConnector.moc"

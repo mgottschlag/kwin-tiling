@@ -38,15 +38,15 @@ class QDropEvent;
 class QPoint;
 class KSGAppletSettings;
 
-class KSysGuardApplet : public KPanelApplet, public KSGRD::SensorBoard
+class kde-system-monitor-applet : public KPanelApplet, public KSGRD::SensorBoard
 {
 	Q_OBJECT
 
   public:
-    KSysGuardApplet( const QString& configFile, Plasma::Type type = Plasma::Normal,
+    kde-system-monitor-applet( const QString& configFile, Plasma::Type type = Plasma::Normal,
                      int actions = 0, QWidget *parent = 0,
                      const char *name = 0 );
-    virtual ~KSysGuardApplet();
+    virtual ~kde-system-monitor-applet();
 
     virtual int heightForWidth( int width ) const;
     virtual int widthForHeight( int height ) const;

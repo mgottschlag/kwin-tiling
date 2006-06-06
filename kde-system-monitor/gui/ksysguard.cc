@@ -62,9 +62,9 @@
 #include "SensorBrowser.h"
 #include "Workspace.h"
 
-#include "ksysguard.h"
+#include "kde-system-monitor.h"
 
-//Comment out to stop ksysguard from forking.  Good for debugging
+//Comment out to stop kde-system-monitor from forking.  Good for debugging
 //#define FORK_KSYSGUARD
 
 static const char Description[] = I18N_NOOP( "KDE system guard" );
@@ -155,9 +155,9 @@ void TopLevel::resetWorkSheets()
   mWorkSpace->removeAllWorkSheets();
 
   KStandardDirs* kstd = KGlobal::dirs();
-  kstd->addResourceType( "data", "share/apps/ksysguard" );
+  kstd->addResourceType( "data", "share/apps/kde-system-monitor" );
 
-  QString workDir = kstd->saveLocation( "data", "ksysguard" );
+  QString workDir = kstd->saveLocation( "data", "kde-system-monitor" );
 
   QString file = kstd->findResource( "data", "SystemLoad.sgrd" );
   QString newFile = workDir + '/' + i18n( "System Load" ) + ".sgrd";
@@ -317,7 +317,7 @@ void TopLevel::editStyle()
 void TopLevel::customEvent( QCustomEvent *e )
 {
   if ( e->type() == QEvent::User ) {
-    /* Due to the asynchronous communication between ksysguard and its
+    /* Due to the asynchronous communication between kde-system-monitor and its
      * back-ends, we sometimes need to show message boxes that were
      * triggered by objects that have died already. */
     KMessageBox::error( this, *((QString*)e->data()) );
@@ -509,7 +509,7 @@ int main( int argc, char** argv )
   int initpipe[ 2 ];
   pipe( initpipe );*/
 #endif
-  /* This forking will put ksysguard in it's own session not having a
+  /* This forking will put kde-system-monitor in it's own session not having a
    * controlling terminal attached to it. This prevents ssh from
    * using this terminal for password requests. Unfortunately you
    * now need a ssh with ssh-askpass support to popup an X dialog to
@@ -536,7 +536,7 @@ int main( int argc, char** argv )
   setsid();
 #endif
 
-  KAboutData aboutData( "ksysguard", I18N_NOOP( "KDE System Guard" ),
+  KAboutData aboutData( "kde-system-monitor", I18N_NOOP( "KDE System Guard" ),
                         KSYSGUARD_VERSION, Description, KAboutData::License_GPL,
                         I18N_NOOP( "(c) 1996-2006 The KSysGuard Developers" ) );
   aboutData.addAuthor( "John Tapsell", "Current Maintainer", "john.tapsell@kdemail.org" );
@@ -568,11 +568,11 @@ int main( int argc, char** argv )
   int result = 0;
 
   if ( args->isSet( "showprocesses" ) ) {
-    /* To avoid having multiple instances of ksysguard in
+    /* To avoid having multiple instances of kde-system-monitor in
      * taskmanager mode we check if another taskmanager is running
      * already. If so, we terminate this one immediately. */
-    if ( app->dcopClient()->registerAs( "ksysguard_taskmanager", false ) ==
-                                                    "ksysguard_taskmanager" ) {
+    if ( app->dcopClient()->registerAs( "kde-system-monitor_taskmanager", false ) ==
+                                                    "kde-system-monitor_taskmanager" ) {
       // We have registered with DCOP, our parent can exit now.
 #ifdef FORK_KSYSGUARD
       char c = 0;      
@@ -589,11 +589,11 @@ int main( int argc, char** argv )
       result = app->exec();
     } else {
       QByteArray data;
-      app->dcopClient()->send( "ksysguard_taskmanager", "KSysGuardIface",
+      app->dcopClient()->send( "kde-system-monitor_taskmanager", "KSysGuardIface",
                                "showOnCurrentDesktop()", data );
     }
   } else {
-    app->dcopClient()->registerAs( "ksysguard" );
+    app->dcopClient()->registerAs( "kde-system-monitor" );
     app->dcopClient()->setDefaultObject( "KSysGuardIface" );
 
     // We have registered with DCOP, our parent can exit now.
@@ -636,4 +636,4 @@ int main( int argc, char** argv )
   return result;
 }
 
-#include "ksysguard.moc"
+#include "kde-system-monitor.moc"

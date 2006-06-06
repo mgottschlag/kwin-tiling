@@ -54,7 +54,7 @@
 #include "KSGAppletSettings.h"
 #include "MultiMeter.h"
 
-#include "KSysGuardApplet.h"
+#include "kde-system-monitor-applet.h"
 
 #include "utils.h"
 
@@ -62,14 +62,14 @@ extern "C"
 {
   KDE_EXPORT KPanelApplet* init( QWidget *parent, const QString& configFile )
   {
-    KGlobal::locale()->insertCatalog( "ksysguard" );
-    return new KSysGuardApplet( configFile, Plasma::Normal,
+    KGlobal::locale()->insertCatalog( "kde-system-monitor" );
+    return new kde-system-monitor-applet( configFile, Plasma::Normal,
                                 Plasma::Preferences, parent,
-                                "ksysguardapplet" );
+                                "kde-system-monitorapplet" );
   }
 }
 
-KSysGuardApplet::KSysGuardApplet( const QString& configFile, Plasma::Type type,
+kde-system-monitor-applet::kde-system-monitor-applet( const QString& configFile, Plasma::Type type,
                                   int actions, QWidget *parent,
                                   const char *name )
   : KPanelApplet( configFile, type, actions, parent, name)
@@ -93,7 +93,7 @@ KSysGuardApplet::KSysGuardApplet( const QString& configFile, Plasma::Type type,
   setAcceptDrops( true );
 }
 
-KSysGuardApplet::~KSysGuardApplet()
+kde-system-monitor-applet::~kde-system-monitor-applet()
 {
   save();
 
@@ -105,22 +105,22 @@ KSysGuardApplet::~KSysGuardApplet()
 	KSGRD::SensorMgr = 0;
 }
 
-int KSysGuardApplet::widthForHeight( int height ) const
+int kde-system-monitor-applet::widthForHeight( int height ) const
 {
   return ( (int) ( height * mSizeRatio + 0.5 ) * mDockCount );
 }
 
-int KSysGuardApplet::heightForWidth( int width ) const
+int kde-system-monitor-applet::heightForWidth( int width ) const
 {
   return ( (int) ( width * mSizeRatio + 0.5 ) * mDockCount );
 }
 
-void KSysGuardApplet::resizeEvent( QResizeEvent* )
+void kde-system-monitor-applet::resizeEvent( QResizeEvent* )
 {
   layout();
 }
 
-void KSysGuardApplet::preferences()
+void kde-system-monitor-applet::preferences()
 {
   mSettingsDlg = new KSGAppletSettings( this );
 
@@ -137,7 +137,7 @@ void KSysGuardApplet::preferences()
 	mSettingsDlg = 0;
 }
 
-void KSysGuardApplet::applySettings()
+void kde-system-monitor-applet::applySettings()
 {
   updateInterval( mSettingsDlg->updateInterval() );
   mSizeRatio = mSettingsDlg->sizeRatio() / 100.0;
@@ -150,13 +150,13 @@ void KSysGuardApplet::applySettings()
   save();
 }
 
-void KSysGuardApplet::sensorDisplayModified( bool modified )
+void kde-system-monitor-applet::sensorDisplayModified( bool modified )
 {
   if ( modified )
     save();
 }
 
-void KSysGuardApplet::layout()
+void kde-system-monitor-applet::layout()
 {
   if ( orientation() == Qt::Horizontal ) {
     int h = height();
@@ -173,7 +173,7 @@ void KSysGuardApplet::layout()
   }
 }
 
-int KSysGuardApplet::findDock( const QPoint& point )
+int kde-system-monitor-applet::findDock( const QPoint& point )
 {
   if ( orientation() == Qt::Horizontal )
     return ( point.x() / (int) ( height() * mSizeRatio + 0.5 ) );
@@ -181,12 +181,12 @@ int KSysGuardApplet::findDock( const QPoint& point )
     return ( point.y() / (int) ( width() * mSizeRatio + 0.5 ) );
 }
 
-void KSysGuardApplet::dragEnterEvent( QDragEnterEvent *e )
+void kde-system-monitor-applet::dragEnterEvent( QDragEnterEvent *e )
 {
   e->setAccepted( Q3TextDrag::canDecode( e ) );
 }
 
-void KSysGuardApplet::dropEvent( QDropEvent *e )
+void kde-system-monitor-applet::dropEvent( QDropEvent *e )
 {
   QString dragObject;
 
@@ -250,7 +250,7 @@ void KSysGuardApplet::dropEvent( QDropEvent *e )
   save();
 }
 
-void KSysGuardApplet::customEvent( QCustomEvent *e )
+void kde-system-monitor-applet::customEvent( QCustomEvent *e )
 {
   if ( e->type() == QEvent::User ) {
     if ( KMessageBox::warningContinueCancel( this,
@@ -263,7 +263,7 @@ void KSysGuardApplet::customEvent( QCustomEvent *e )
   }
 }
 
-void KSysGuardApplet::removeDisplay( KSGRD::SensorDisplay *display )
+void kde-system-monitor-applet::removeDisplay( KSGRD::SensorDisplay *display )
 {
   for ( uint i = 0; i < mDockCount; ++i )
     if ( display == mDockList[i] ) {
@@ -274,7 +274,7 @@ void KSysGuardApplet::removeDisplay( KSGRD::SensorDisplay *display )
     }
 }
 
-void KSysGuardApplet::resizeDocks( uint newDockCount )
+void kde-system-monitor-applet::resizeDocks( uint newDockCount )
 {
   /* This function alters the number of available docks. The number of
    * docks can be increased or decreased. We try to preserve existing
@@ -307,11 +307,11 @@ void KSysGuardApplet::resizeDocks( uint newDockCount )
   emit updateLayout();
 }
 
-bool KSysGuardApplet::load()
+bool kde-system-monitor-applet::load()
 {
   KStandardDirs* kstd = KGlobal::dirs();
-  kstd->addResourceType( "data", "share/apps/ksysguard" );
-  QString fileName = kstd->findResource( "data", "KSysGuardApplet.xml" );
+  kstd->addResourceType( "data", "share/apps/kde-system-monitor" );
+  QString fileName = kstd->findResource( "data", "kde-system-monitor-applet.xml" );
 
   QFile file( fileName );
   if ( !file.open( QIODevice::ReadOnly ) ) {
@@ -330,9 +330,9 @@ bool KSysGuardApplet::load()
   }
 
 	// Check for proper document type.
-  if ( doc.doctype().name() != "KSysGuardApplet" ) {
+  if ( doc.doctype().name() != "kde-system-monitor-applet" ) {
     KMessageBox::sorry( this, i18n( "The file %1 does not contain a valid applet "
-                        "definition, which must have a document type 'KSysGuardApplet'." ,
+                        "definition, which must have a document type 'kde-system-monitor-applet'." ,
                           fileName ) );
     return false;
   }
@@ -409,10 +409,10 @@ bool KSysGuardApplet::load()
   return true;
 }
 
-bool KSysGuardApplet::save()
+bool kde-system-monitor-applet::save()
 {
   // Parse the XML file.
-  QDomDocument doc( "KSysGuardApplet" );
+  QDomDocument doc( "kde-system-monitor-applet" );
   doc.appendChild( doc.createProcessingInstruction(
                    "xml", "version=\"1.0\" encoding=\"UTF-8\"" ) );
 
@@ -456,9 +456,9 @@ bool KSysGuardApplet::save()
     }
 
   KStandardDirs* kstd = KGlobal::dirs();
-  kstd->addResourceType( "data", "share/apps/ksysguard" );
-  QString fileName = kstd->saveLocation( "data", "ksysguard" );
-  fileName += "/KSysGuardApplet.xml";
+  kstd->addResourceType( "data", "share/apps/kde-system-monitor" );
+  QString fileName = kstd->saveLocation( "data", "kde-system-monitor" );
+  fileName += "/kde-system-monitor-applet.xml";
 
   KSaveFile file( fileName, 0644 );
   file.textStream()->setCodec( "UTF-8" );
@@ -469,7 +469,7 @@ bool KSysGuardApplet::save()
   return true;
 }
 
-void KSysGuardApplet::addEmptyDisplay( QWidget **dock, uint pos )
+void kde-system-monitor-applet::addEmptyDisplay( QWidget **dock, uint pos )
 {
   dock[ pos ] = new QFrame( this );
   ((QFrame*)dock[ pos ])->setFrameStyle( QFrame::WinPanel | QFrame::Sunken );
@@ -481,4 +481,4 @@ void KSysGuardApplet::addEmptyDisplay( QWidget **dock, uint pos )
     dock[ pos ]->show();
 }
 
-#include "KSysGuardApplet.moc"
+#include "kde-system-monitor-applet.moc"

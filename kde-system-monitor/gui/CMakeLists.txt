@@ -40,22 +40,22 @@ kde4_add_ui3_files( libsensordisplays_SRCS
 kde4_add_ui_files( libsensordisplays_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/SensorDisplayLib/ProcessWidgetUI.ui )
 
 
-set(ksysguard_SRCS ${libsensordisplays_SRCS}
+set(kde-system-monitor_SRCS ${libsensordisplays_SRCS}
    SensorBrowser.cc 
    WorkSheet.cc
    SensorFrame.cc
    WorkSheetSettings.cc 
    Workspace.cc 
-   ksysguard.cc )
+   kde-system-monitor.cc )
 
-kde4_automoc(${ksysguard_SRCS})
+kde4_automoc(${kde-system-monitor_SRCS})
 
 
-kde4_add_executable(ksysguard ${ksysguard_SRCS})
+kde4_add_executable(kde-system-monitor ${kde-system-monitor_SRCS})
 
-target_link_libraries(ksysguard  ${KDE4_KIO_LIBS} ksgrd  )
+target_link_libraries(kde-system-monitor  ${KDE4_KIO_LIBS} ksgrd  )
 
-install(TARGETS ksysguard DESTINATION bin)
+install(TARGETS kde-system-monitor DESTINATION bin)
 
 
 ########### next target ###############
@@ -73,7 +73,7 @@ install(TARGETS kpm DESTINATION bin)
 
 ########### next target ###############
 
-set(sysguard_panelapplet_PART_SRCS KSysGuardApplet.cc KSGAppletSettings.cc ${libsensordisplays_SRCS} )
+set(sysguard_panelapplet_PART_SRCS kde-system-monitor-applet.cc KSGAppletSettings.cc ${libsensordisplays_SRCS} )
 
 kde4_automoc(${sysguard_panelapplet_PART_SRCS})
 
@@ -88,11 +88,11 @@ install_targets(${PLUGIN_INSTALL_DIR} sysguard_panelapplet )
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES ksysguard.desktop )
-install_files( ${DATA_INSTALL_DIR}/ksysguard FILES ProcessTable.sgrd SystemLoad.sgrd KSysGuardApplet.xml )
-install_files( ${MIME_INSTALL_DIR}/application FILES x-ksysguard.desktop )
-install_files( ${DATA_INSTALL_DIR}/ksysguard FILES ksysguardui.rc )
-install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES ksysguardapplet.desktop )
+install_files( ${XDG_APPS_DIR} FILES kde-system-monitor.desktop )
+install_files( ${DATA_INSTALL_DIR}/kde-system-monitor FILES ProcessTable.sgrd SystemLoad.sgrd kde-system-monitor-applet.xml )
+install_files( ${MIME_INSTALL_DIR}/application FILES x-kde-system-monitor.desktop )
+install_files( ${DATA_INSTALL_DIR}/kde-system-monitor FILES kde-system-monitorui.rc )
+install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES kde-system-monitorapplet.desktop )
 
 
 
@@ -101,15 +101,15 @@ install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES ksysguardapplet.desktop 
 
 #
 #kdemimedir = $(kde_mimedir)/application
-#kdemime_DATA = x-ksysguard.desktop
+#kdemime_DATA = x-kde-system-monitor.desktop
 #
-#rcdir = $(kde_datadir)/ksysguard
-#rc_DATA = ksysguardui.rc
+#rcdir = $(kde_datadir)/kde-system-monitor
+#rc_DATA = kde-system-monitorui.rc
 #
-#xdg_apps_DATA = ksysguard.desktop
+#xdg_apps_DATA = kde-system-monitor.desktop
 #
 #lnkdir = $(kde_datadir)/kicker/applets
-#lnk_DATA = ksysguardapplet.desktop
+#lnk_DATA = kde-system-monitorapplet.desktop
 #
 ## claim, which subdirectories you want to install
 #SUBDIRS = ksgrd SensorDisplayLib
@@ -117,34 +117,34 @@ install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES ksysguardapplet.desktop 
 ## set the include path for X, qt and KDE
 #INCLUDES = -I$(srcdir)/ksgrd -I$(srcdir)/SensorDisplayLib -ISensorDisplayLib -I$(top_srcdir)/kicker/libkicker/ $(all_includes)
 # 
-######## This part is very ksysguard specific
+######## This part is very kde-system-monitor specific
 ## you can add here more. This one gets installed 
-#bin_PROGRAMS = ksysguard kpm
+#bin_PROGRAMS = kde-system-monitor kpm
 #
-## Which sources should be compiled for ksysguard.
-#ksysguard_SOURCES = \
+## Which sources should be compiled for kde-system-monitor.
+#kde-system-monitor_SOURCES = \
 #	SensorBrowser.cc \
 #	WorkSheet.cc \
 #	WorkSheetSettings.cc \
 #	Workspace.cc \
-#	ksysguard.cc ksysguard.skel
+#	kde-system-monitor.cc kde-system-monitor.skel
 #
-#ksysguard_LDADD = \
+#kde-system-monitor_LDADD = \
 #	ksgrd/libksgrd.la \
 #	SensorDisplayLib/libsensordisplays.la \
 #	$(LIB_KDEUI) $(LIB_KIO)
-#ksysguard_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+#kde-system-monitor_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 #
 #kpm_SOURCES = kpm.c
 #
-#appdatadir = $(kde_datadir)/ksysguard
-#appdata_DATA = ProcessTable.sgrd SystemLoad.sgrd KSysGuardApplet.xml
+#appdatadir = $(kde_datadir)/kde-system-monitor
+#appdata_DATA = ProcessTable.sgrd SystemLoad.sgrd kde-system-monitor-applet.xml
 #
 ## This stuff is now for the kicker applet
 #kde_module_LTLIBRARIES = sysguard_panelapplet.la
 #
 #sysguard_panelapplet_la_SOURCES = \
-#	KSysGuardApplet.cc \
+#	kde-system-monitor-applet.cc \
 #	KSGAppletSettings.cc
 #
 #sysguard_panelapplet_la_LIBADD = \
@@ -161,4 +161,4 @@ install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES ksysguardapplet.desktop 
 #messages: rc.cpp
 #	$(EXTRACTRC) `find . -name "*.ui"` >> rc.cpp
 #	$(EXTRACTRC) `find . -name "*.sgrd"` >> rc.cpp
-#	$(XGETTEXT) `find . -name "*.cpp" -o -name "*.cc"` -o $(podir)/ksysguard.pot
+#	$(XGETTEXT) `find . -name "*.cpp" -o -name "*.cc"` -o $(podir)/kde-system-monitor.pot

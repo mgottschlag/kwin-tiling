@@ -4,6 +4,6 @@ Name=KSysGuard
 Name[fr]=Surveillance du système
 Name[x-test]=xxKSysGuardxx
 Comment=An applet which swallows KDE system guard displays
-Icon=ksysguard
+Icon=kde-system-monitor
 X-KDE-Library=sysguard_panelapplet
 X-KDE-UniqueApplet=true

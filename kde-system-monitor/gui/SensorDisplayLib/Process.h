@@ -57,7 +57,7 @@ class Process : public QObject {
 	long vmSize;   ///KiloBytes used in total by process (KiB)
 	long vmRSS;    ///KiloBytes used by actual process - the main memory it uses without shared/X/etc (KiB)
 	ProcessType processType;
-	QString name;  ///The name (e.g. "ksysguard", "konversation", "init")
+	QString name;  ///The name (e.g. "kde-system-monitor", "konversation", "init")
 	QString command; ///The command the process was launched with
 	QList<Process *> children;  ///A list of all the direct children that the process has.  Children of children are not listed here, so note that children_pids <= numChildren
 	QList<QVariant> data;  ///The column data, excluding the name, pid, ppid and uid

@@ -168,7 +168,7 @@ bool SensorDisplay::eventFilter( QObject *object, QEvent *event )
     if ( action ) {
       switch ( action->data().toInt() ) {
         case 1:
-          KRun::run(*KService::serviceByDesktopName("ksysguard"), KUrl::List(), topLevelWidget());
+          KRun::run(*KService::serviceByDesktopName("kde-system-monitor"), KUrl::List(), topLevelWidget());
           break;
         case 2:
           configureSettings();

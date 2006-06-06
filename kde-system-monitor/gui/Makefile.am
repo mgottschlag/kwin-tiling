@@ -1,14 +1,14 @@
 
 kdemimedir = $(kde_mimedir)/application
-kdemime_DATA = x-ksysguard.desktop
+kdemime_DATA = x-kde-system-monitor.desktop
 
-rcdir = $(kde_datadir)/ksysguard
-rc_DATA = ksysguardui.rc
+rcdir = $(kde_datadir)/kde-system-monitor
+rc_DATA = kde-system-monitorui.rc
 
-xdg_apps_DATA = ksysguard.desktop
+xdg_apps_DATA = kde-system-monitor.desktop
 
 lnkdir = $(kde_datadir)/kicker/applets
-lnk_DATA = ksysguardapplet.desktop
+lnk_DATA = kde-system-monitorapplet.desktop
 
 # claim, which subdirectories you want to install
 SUBDIRS = ksgrd SensorDisplayLib
@@ -16,35 +16,35 @@ SUBDIRS = ksgrd SensorDisplayLib
 # set the include path for X, qt and KDE
 INCLUDES = -I$(srcdir)/ksgrd -I$(srcdir)/SensorDisplayLib -ISensorDisplayLib -I$(top_srcdir)/workspace/kicker/libkicker/ $(all_includes)
  
-####### This part is very ksysguard specific
+####### This part is very kde-system-monitor specific
 # you can add here more. This one gets installed 
-bin_PROGRAMS = ksysguard kpm
+bin_PROGRAMS = kde-system-monitor kpm
 
-# Which sources should be compiled for ksysguard.
-ksysguard_SOURCES = \
+# Which sources should be compiled for kde-system-monitor.
+kde-system-monitor_SOURCES = \
 	SensorBrowser.cc \
 	SensorFrame.cc \
 	WorkSheet.cc \
 	WorkSheetSettings.cc \
 	Workspace.cc \
-	ksysguard.cc ksysguard.skel
+	kde-system-monitor.cc kde-system-monitor.skel
 
-ksysguard_LDADD = \
+kde-system-monitor_LDADD = \
 	ksgrd/libksgrd.la \
 	SensorDisplayLib/libsensordisplays.la \
 	$(LIB_KDEUI) $(LIB_KIO)
-ksysguard_LDFLAGS = $(all_libraries) $(KDE_RPATH)
+kde-system-monitor_LDFLAGS = $(all_libraries) $(KDE_RPATH)
 
 kpm_SOURCES = kpm.c
 
-appdatadir = $(kde_datadir)/ksysguard
-appdata_DATA = ProcessTable.sgrd SystemLoad.sgrd KSysGuardApplet.xml
+appdatadir = $(kde_datadir)/kde-system-monitor
+appdata_DATA = ProcessTable.sgrd SystemLoad.sgrd kde-system-monitor-applet.xml
 
 # This stuff is now for the kicker applet
 kde_module_LTLIBRARIES = sysguard_panelapplet.la
 
 sysguard_panelapplet_la_SOURCES = \
-	KSysGuardApplet.cc \
+	kde-system-monitor-applet.cc \
 	KSGAppletSettings.cc
 
 sysguard_panelapplet_la_LIBADD = \

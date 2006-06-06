@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="ksysguard" version="5">
+<kpartgui name="kde-system-monitor" version="5">
 <State name="showProcessState">
   <Disable>
     <Action name="new_worksheet"/>
