@@ -1,8 +1,8 @@
-This document describes the interface between ksysguard and
-kde-system-monitor-daemon. kde-system-monitor-daemon is started as a child of ksysguard, either
+This document describes the interface between kde-system-monitor and
+kde-system-monitor-daemon. kde-system-monitor-daemon is started as a child of kde-system-monitor, either
 directly or via a shell. Alternatively a kde-system-monitor-daemon can listen on a
 port and a single instance can then be used by multiple instances of
-ksysguard.
+kde-system-monitor.
 
 This client/server design was chosen, because on some operating
 systems the back-end needs elevated permissions. Since C++ programs
@@ -10,7 +10,7 @@ should NEVER have setgid/setuid permissions, a plain C back-end was
 needed. It also allowed for an easy network support using existing
 security mechanisms (ssh).
 
-ksysguard sends commands and kde-system-monitor-daemon answers to them. Each answer
+kde-system-monitor sends commands and kde-system-monitor-daemon answers to them. Each answer
 ends with the string "\nkde-system-monitor-daemon> ". Error messages are enclosed in
 ESC '\033' characters. Therefor regular messages may never contain
 ESC. The set of commands that each kde-system-monitor-daemon implementation supports
@@ -48,7 +48,7 @@ kde-system-monitor-daemon>
 
 Sensor names can be hierarchical. Each level is separated by a
 /. If you don't want a '/' character to be interpreted as a hierarchy
-delimiter, you can escape it with a preceding '\'. ksysguard uses a tree
+delimiter, you can escape it with a preceding '\'. kde-system-monitor uses a tree
 widget in the SensorBrowser to display the commands in a tree. Every
 sensor name must be followed by the type of the sensor separated by a
 tab. Currently 4 different types of sensors are supported, integer,

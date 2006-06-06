@@ -36,7 +36,7 @@ class SensorDisplay;
 class QDragEnterEvent;
 class QDropEvent;
 class QPoint;
-class KSGAppletSettings;
+class kde-system-monitor-applet-settings;
 
 class kde-system-monitor-applet : public KPanelApplet, public KSGRD::SensorBoard
 {
@@ -76,7 +76,7 @@ class kde-system-monitor-applet : public KPanelApplet, public KSGRD::SensorBoard
 
     double mSizeRatio;
     uint mDockCount;
-    KSGAppletSettings* mSettingsDlg;
+    kde-system-monitor-applet-settings* mSettingsDlg;
     QWidget** mDockList;
 };
 

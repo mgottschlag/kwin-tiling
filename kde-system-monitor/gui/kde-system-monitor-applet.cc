@@ -51,7 +51,7 @@
 
 #include "DancingBars.h"
 #include "FancyPlotter.h"
-#include "KSGAppletSettings.h"
+#include "kde-system-monitor-applet-settings.h"
 #include "MultiMeter.h"
 
 #include "kde-system-monitor-applet.h"
@@ -122,7 +122,7 @@ void kde-system-monitor-applet::resizeEvent( QResizeEvent* )
 
 void kde-system-monitor-applet::preferences()
 {
-  mSettingsDlg = new KSGAppletSettings( this );
+  mSettingsDlg = new kde-system-monitor-applet-settings( this );
 
   connect( mSettingsDlg, SIGNAL( applyClicked() ), SLOT( applySettings() ) );
 

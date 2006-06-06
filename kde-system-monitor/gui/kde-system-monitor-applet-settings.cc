@@ -25,9 +25,9 @@
 #include <klocale.h>
 #include <knuminput.h>
 
-#include "KSGAppletSettings.h"
+#include "kde-system-monitor-applet-settings.h"
 
-KSGAppletSettings::KSGAppletSettings( QWidget *parent, const char *name )
+kde-system-monitor-applet-settings::kde-system-monitor-applet-settings( QWidget *parent, const char *name )
     : KDialogBase( parent, name, true, QString(), Ok|Apply|Cancel,
       Ok, true )
 {
@@ -74,36 +74,36 @@ KSGAppletSettings::KSGAppletSettings( QWidget *parent, const char *name )
   KAcceleratorManager::manage( page );
 }
 
-KSGAppletSettings::~KSGAppletSettings()
+kde-system-monitor-applet-settings::~kde-system-monitor-applet-settings()
 {
 }
 
-int KSGAppletSettings::numDisplay() const
+int kde-system-monitor-applet-settings::numDisplay() const
 {
   return mNumDisplay->value();
 }
 
-void KSGAppletSettings::setNumDisplay( int value )
+void kde-system-monitor-applet-settings::setNumDisplay( int value )
 {
   mNumDisplay->setValue( value );
 }
 
-int KSGAppletSettings::sizeRatio() const
+int kde-system-monitor-applet-settings::sizeRatio() const
 {
   return mSizeRatio->value();
 }
 
-void KSGAppletSettings::setSizeRatio( int value )
+void kde-system-monitor-applet-settings::setSizeRatio( int value )
 {
   mSizeRatio->setValue( value );
 }
 
-int KSGAppletSettings::updateInterval() const
+int kde-system-monitor-applet-settings::updateInterval() const
 {
   return mInterval->value();
 }
 
-void KSGAppletSettings::setUpdateInterval( int value )
+void kde-system-monitor-applet-settings::setUpdateInterval( int value )
 {
   mInterval->setValue( value );
 }

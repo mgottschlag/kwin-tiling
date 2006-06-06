@@ -73,7 +73,7 @@ install(TARGETS kpm DESTINATION bin)
 
 ########### next target ###############
 
-set(sysguard_panelapplet_PART_SRCS kde-system-monitor-applet.cc KSGAppletSettings.cc ${libsensordisplays_SRCS} )
+set(sysguard_panelapplet_PART_SRCS kde-system-monitor-applet.cc kde-system-monitor-applet-settings.cc ${libsensordisplays_SRCS} )
 
 kde4_automoc(${sysguard_panelapplet_PART_SRCS})
 
@@ -145,7 +145,7 @@ install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES kde-system-monitorapplet
 #
 #sysguard_panelapplet_la_SOURCES = \
 #	kde-system-monitor-applet.cc \
-#	KSGAppletSettings.cc
+#	kde-system-monitor-applet-settings.cc
 #
 #sysguard_panelapplet_la_LIBADD = \
 #	ksgrd/libksgrd.la \

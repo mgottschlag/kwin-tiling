@@ -5,5 +5,5 @@ endif
 # claim, which subdirectories you want to install
 SUBDIRS = CContLib $(KSYSGUARDD_DIR) gui pics example
 
-KDE_ICON = ksysguard
+KDE_ICON = kde-system-monitor
 

@@ -25,11 +25,11 @@
 
 class KIntNumInput;
 
-class KSGAppletSettings : public KDialogBase
+class kde-system-monitor-applet-settings : public KDialogBase
 {
   public:
-    KSGAppletSettings( QWidget *parent = 0, const char *name = 0 );
-    ~KSGAppletSettings();
+    kde-system-monitor-applet-settings( QWidget *parent = 0, const char *name = 0 );
+    ~kde-system-monitor-applet-settings();
 
     void setNumDisplay( int );
     int numDisplay() const;

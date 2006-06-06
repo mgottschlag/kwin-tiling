@@ -82,4 +82,4 @@ install(TARGETS kde-system-monitor-daemon DESTINATION bin)
 #
 #kde-system-monitor-daemon_SOURCES = Command.c conf.c kde-system-monitor-daemon.c PWUIDCache.c
 #kde-system-monitor-daemon_LDFLAGS = $(all_libraries)
-#kde-system-monitor-daemon_LDADD =  $(top_builddir)/workspace/ksysguard/kde-system-monitor-daemon/$(UNAME)/libkde-system-monitor-daemon.a ../CContLib/libccont.a -lkdefakes_nonpic $(LIBHOSTS)
+#kde-system-monitor-daemon_LDADD =  $(top_builddir)/workspace/kde-system-monitor/kde-system-monitor-daemon/$(UNAME)/libkde-system-monitor-daemon.a ../CContLib/libccont.a -lkdefakes_nonpic $(LIBHOSTS)
