@@ -28,7 +28,6 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kconfig.h>
-#include <dcopref.h>
 #include <QFile>
 
 #include "mouse.h"
@@ -38,6 +37,8 @@
 #ifdef HAVE_XCURSOR
 #  include <X11/Xcursor/Xcursor.h>
 #endif
+#include <ktoolinvocation.h>
+#include <klauncher_iface.h>
 
 extern "C"
 {
@@ -56,8 +57,8 @@ extern "C"
 
 #ifdef HAVE_XCURSOR
     config->setGroup("Mouse");
-    DCOPCString theme = QFile::encodeName(config->readEntry("cursorTheme", QString()));
-    DCOPCString size = config->readEntry("cursorSize", QString()).toLocal8Bit();
+    QString theme = config->readEntry("cursorTheme", QString());
+    QString size = config->readEntry("cursorSize", QString());
 
     // Note: If you update this code, update kapplymousetheme as well.
 
@@ -83,11 +84,11 @@ extern "C"
 
     // Tell klauncher to set the XCURSOR_THEME and XCURSOR_SIZE environment
     // variables when launching applications.
-    DCOPRef klauncher("klauncher");
-    if( !theme.isEmpty())
-        klauncher.send("setLaunchEnv", DCOPCString("XCURSOR_THEME"), theme);
+    if(!theme.isEmpty())
+       KToolInvocation::klauncher()->setLaunchEnv("XCURSOR_THEME", theme);
     if( !size.isEmpty())
-        klauncher.send("setLaunchEnv", DCOPCString("XCURSOR_SIZE"), size);
+       KToolInvocation::klauncher()->setLaunchEnv("XCURSOR_SIZE", size);
+	
 #endif
 
     delete config;
