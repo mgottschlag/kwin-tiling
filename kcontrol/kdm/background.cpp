@@ -30,7 +30,6 @@
 #include <kdebug.h>
 #include <kdialog.h>
 #include <klocale.h>
-#include <dcopclient.h>
 #include "../background/bgsettings.h"
 #include "../background/bgdialog.h"
 #include "background.h"
