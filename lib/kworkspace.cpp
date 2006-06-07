@@ -21,15 +21,13 @@
 #include <QApplication>
 #include <QDataStream>
 #include <kapplication.h>
-#include <dcopclient.h>
-#include <dcopref.h>
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
 #include <klocale.h>
 #include <QDateTime>
 #include <kstandarddirs.h>
-
+#include <dbus/qdbus.h>
 #include <stdlib.h> // getenv()
 
 #ifdef Q_WS_X11
@@ -72,10 +70,9 @@ bool requestShutDown(
          sdtype != ShutdownTypeDefault ||
          sdmode != ShutdownModeDefault )
     {
-        QByteArray data;
-        QDataStream arg(&data, QIODevice::WriteOnly);
-        arg << (int)confirm << (int)sdtype << (int)sdmode;
-	return kapp->dcopClient()->send( "ksmserver", "ksmserver", "logout(int,int,int)", data );
+        QDBusInterfacePtr ksmserver( "org.kde.ksmserver", "/Ksmserver", "org.kde.ksmserver.ksmserver" );
+        QDBusReply<void> reply = ksmserver->call( "logout",  (int)confirm,  (int)sdtype,  (int)sdmode );
+	return reply.isSuccess();
     }
 
     if (! tmpSmcConnection) {
