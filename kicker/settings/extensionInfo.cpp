@@ -127,13 +127,13 @@ void ExtensionInfo::configChanged()
     // check to see if the new value is different from both
     // the original value and the currently set value, then it
     // must be a newly set value, external to the panel!
-    int position  = c.readEntry ("Position", _position);
+    int position  = c.readEntry ("Position", 3);
     if (position != _position && position != _orig_position)
     {
         _orig_position = _position = position;
     }
 
-    int alignment = c.readEntry ("Alignment", _alignment);
+    int alignment = c.readEntry ("Alignment", QApplication::isRightToLeft() ? 2 : 0);
     if (alignment != _alignment && alignment != _orig_alignment)
     {
         _orig_alignment = _alignment = alignment;
@@ -141,13 +141,13 @@ void ExtensionInfo::configChanged()
 
     if (_resizeable)
     {
-        int size = c.readEntry ("Size", _size);
+        int size = c.readEntry ("Size", 2);
         if (size != _size && size != _orig_size)
         {
             _orig_size = _size = size;
         }
 
-        int customSize = c.readEntry ("CustomSize", _customSize);
+        int customSize = c.readEntry ("CustomSize", 0);
         if (customSize != _customSize && customSize != _orig_customSize)
         {
             _orig_customSize = _customSize = customSize;
