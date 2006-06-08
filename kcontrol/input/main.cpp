@@ -33,12 +33,13 @@
 #include "mouse.h"
 #include <QX11Info>
 
+#include <ktoolinvocation.h>
+#include <klauncher_iface.h>
+
 #include <X11/Xlib.h>
 #ifdef HAVE_XCURSOR
 #  include <X11/Xcursor/Xcursor.h>
 #endif
-#include <ktoolinvocation.h>
-#include <klauncher_iface.h>
 
 extern "C"
 {
@@ -72,7 +73,7 @@ extern "C"
 
      // Apply the KDE cursor theme to ourselves
     if( !theme.isEmpty())
-        XcursorSetTheme(QX11Info::display(), theme.data());
+        XcursorSetTheme(QX11Info::display(), theme.toLocal8Bit());
 
     if (!size.isEmpty())
     	XcursorSetDefaultSize(QX11Info::display(), size.toUInt());
