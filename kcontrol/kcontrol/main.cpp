@@ -37,7 +37,6 @@
 #include <QDesktopWidget>
 
 #include <kcmdlineargs.h>
-#include <dcopclient.h>
 #include <kaboutdata.h>
 #include <kglobalsettings.h>
 #include <kconfig.h>

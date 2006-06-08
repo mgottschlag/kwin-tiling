@@ -12,7 +12,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <errno.h>
 #include <string.h>
 
-#include <dcopclient.h>
 #include <QMessageBox>
 #include <QDir>
 

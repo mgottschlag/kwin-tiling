@@ -27,8 +27,6 @@
 #include <QByteArray>
 #include <QVBoxLayout>
 
-#include <dcopclient.h>
-#include <dcopref.h>
 
 #include <kaboutdata.h>
 #include <kapplication.h>

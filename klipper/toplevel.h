@@ -29,7 +29,6 @@
 //Added by qt3to4:
 #include <QMouseEvent>
 #include <QPaintEvent>
-#include <dcopobject.h>
 #include <QTimer>
 #include <kglobal.h>
 
