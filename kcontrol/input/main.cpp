@@ -73,7 +73,7 @@ extern "C"
 
      // Apply the KDE cursor theme to ourselves
     if( !theme.isEmpty())
-        XcursorSetTheme(QX11Info::display(), theme.toLocal8Bit());
+        XcursorSetTheme(QX11Info::display(), QFile::encodeName(theme));
 
     if (!size.isEmpty())
     	XcursorSetDefaultSize(QX11Info::display(), size.toUInt());
