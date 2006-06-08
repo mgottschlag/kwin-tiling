@@ -206,7 +206,7 @@ void KDEDConfig::save() {
 	}
 	kdedrc.sync();
 
-	QDBusInterfacePtr kdedInterface( "org.kde.kded", "kded" );
+	QDBusInterfacePtr kdedInterface( "org.kde.kded", "/kded" );
 	kdedInterface->call( "reconfigure" );
 	QTimer::singleShot(0, this, SLOT(slotServiceRunningToggled()));
 }
@@ -230,18 +230,17 @@ void KDEDConfig::defaults()
 void KDEDConfig::getServiceStatus()
 {
 	QStringList modules;
-	QDBusInterfacePtr kdedInterface( "org.kde.kded", "kded" );
-	QDBusMessage reply = kdedInterface->call( "loadedModules"  );
+	QDBusInterfacePtr kdedInterface( "org.kde.kded", "/kded" );
+	QDBusReply<QStringList> reply = kdedInterface->call( "loadedModules"  );
 
-	if ( reply.type() != QDBusMessage::ReplyMessage )
-	{
+	if ( reply.isSuccess() ) {
+		modules = reply.value();
+	}
+	else {
 		_lvLoD->setEnabled( false );
 		_lvStartup->setEnabled( false );
 		KMessageBox::error(this, i18n("Unable to contact KDED."));
 		return;
-	}
-	else {
-		modules = reply.at(0).toStringList();
 	}
 
 	for( Q3ListViewItemIterator it( _lvLoD); it.current() != 0; ++it )
@@ -305,18 +304,18 @@ void KDEDConfig::slotStartService()
 {
 	QString service = _lvStartup->currentItem()->text(4).toLatin1();
 
-	QDBusInterfacePtr kdedInterface( "org.kde.kded", "kded" );
-	QDBusMessage reply = kdedInterface->call( "loadModule", service  );
+	QDBusInterfacePtr kdedInterface( "org.kde.kded", "/kded" );
+	QDBusReply<bool> reply = kdedInterface->call( "loadModule", service  );
 
-	if ( reply.type() == QDBusMessage::ReplyMessage )
-	{
-		if ( reply.at(0).toBool() )
+	if ( reply.isSuccess() ) {
+		if ( reply.value() )
 			slotServiceRunningToggled();
 		else
-			KMessageBox::error(this, i18n("Unable to start service."));
+			KMessageBox::error(this, "<qt>" + i18n("Unable to start server <em>service</em>.") + "</qt>");
 	}
 	else {
-		KMessageBox::error(this, i18n("Unable to contact KDED."));
+		KMessageBox::error(this, "<qt>" + i18n("Unable to start service <em>service</em>.<br><br><i>Error: %1</i>")
+											.arg(reply.error().message()) + "</qt>" );
 	}
 }
 
@@ -325,14 +324,18 @@ void KDEDConfig::slotStopService()
 	QString service = _lvStartup->currentItem()->text(4).toLatin1();
 	kDebug() << "Stopping: " << service << endl;
 
-	QDBusInterfacePtr kdedInterface( "org.kde.kded", "kded" );
-	QDBusMessage reply = kdedInterface->call( "unloadModule", service  );
+	QDBusInterfacePtr kdedInterface( "org.kde.kded", "/kded" );
+	QDBusReply<bool> reply = kdedInterface->call( "unloadModule", service  );
 
-	if ( reply.type() == QDBusMessage::ReplyMessage ) {
-		slotServiceRunningToggled();
+	if ( reply.isSuccess() ) {
+		if ( reply.value() )
+			slotServiceRunningToggled();
+		else
+			KMessageBox::error(this, "<qt>" + i18n("Unable to stop server <em>service</em>.") + "</qt>");
 	}
 	else {
-		KMessageBox::error(this, i18n("Unable to stop service."));
+		KMessageBox::error(this, "<qt>" + i18n("Unable to stop service <em>service</em>.<br><br><i>Error: %1</i>")
+											.arg(reply.error().message()) + "</qt>" );
 	}
 }
 
