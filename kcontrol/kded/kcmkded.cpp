@@ -17,16 +17,15 @@
    Boston, MA 02110-1301, USA.
 */
 
+#include <q3groupbox.h>
 #include <q3header.h>
+
+#include <QByteArray>
+#include <dbus/qdbus.h>
 #include <QLayout>
 #include <QPushButton>
 #include <QTimer>
-#include <q3groupbox.h>
-
-//Added by qt3to4:
-#include <QByteArray>
 #include <QVBoxLayout>
-
 
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -207,7 +206,8 @@ void KDEDConfig::save() {
 	}
 	kdedrc.sync();
 
-	DCOPRef( "kded", "kded" ).call( "reconfigure" );
+	QDBusInterfacePtr kdedInterface( "org.kde.kded", "kded" );
+	kdedInterface->call( "reconfigure" );
 	QTimer::singleShot(0, this, SLOT(slotServiceRunningToggled()));
 }
 
@@ -229,32 +229,26 @@ void KDEDConfig::defaults()
 
 void KDEDConfig::getServiceStatus()
 {
-	DCOPCStringList modules;
-	DCOPCString replyType;
-	QByteArray replyData;
+	QStringList modules;
+	QDBusInterfacePtr kdedInterface( "org.kde.kded", "kded" );
+	QDBusMessage reply = kdedInterface->call( "loadedModules"  );
 
-
-	if (!kapp->dcopClient()->call( "kded", "kded", "loadedModules()", QByteArray(),
-				replyType, replyData ) ) {
-
+	if ( reply.type() != QDBusMessage::ReplyMessage )
+	{
 		_lvLoD->setEnabled( false );
 		_lvStartup->setEnabled( false );
 		KMessageBox::error(this, i18n("Unable to contact KDED."));
 		return;
 	}
 	else {
-
-		if ( replyType == "QCStringList" ) {
-			QDataStream reply(replyData);
-			reply >> modules;
-		}
+		modules = reply.at(0).toStringList();
 	}
 
 	for( Q3ListViewItemIterator it( _lvLoD); it.current() != 0; ++it )
                 it.current()->setText(2, NOT_RUNNING);
 	for( Q3ListViewItemIterator it( _lvStartup); it.current() != 0; ++it )
                 it.current()->setText(3, NOT_RUNNING);
-	foreach( DCOPCString module, modules )
+	foreach( const QString& module, modules )
 	{
 		Q3ListViewItem *item = _lvLoD->findItem(module, 4);
 		if ( item )
@@ -309,27 +303,17 @@ void KDEDConfig::slotServiceRunningToggled()
 
 void KDEDConfig::slotStartService()
 {
-	DCOPCString service = _lvStartup->currentItem()->text(4).toLatin1();
+	QString service = _lvStartup->currentItem()->text(4).toLatin1();
 
-	QByteArray data, replyData;
-	DCOPCString replyType;
-	QDataStream arg( &data, QIODevice::WriteOnly );
+	QDBusInterfacePtr kdedInterface( "org.kde.kded", "kded" );
+	QDBusMessage reply = kdedInterface->call( "loadModule", service  );
 
-	arg.setVersion(QDataStream::Qt_3_1);
-	arg << service;
-	if (kapp->dcopClient()->call( "kded", "kded", "loadModule(QCString)", data, replyType, replyData ) ) {
-		QDataStream reply(replyData);
-		if ( replyType == "bool" )
-		{
-			bool result;
-			reply >> result;
-			if ( result )
-				slotServiceRunningToggled();
-			else
-				KMessageBox::error(this, i18n("Unable to start service."));
-		} else {
-			kDebug() << "loadModule() on kded returned an unexpected type of reply: " << replyType << endl;
-		}
+	if ( reply.type() == QDBusMessage::ReplyMessage )
+	{
+		if ( reply.at(0).toBool() )
+			slotServiceRunningToggled();
+		else
+			KMessageBox::error(this, i18n("Unable to start service."));
 	}
 	else {
 		KMessageBox::error(this, i18n("Unable to contact KDED."));
@@ -338,21 +322,18 @@ void KDEDConfig::slotStartService()
 
 void KDEDConfig::slotStopService()
 {
-	DCOPCString service = _lvStartup->currentItem()->text(4).toLatin1();
+	QString service = _lvStartup->currentItem()->text(4).toLatin1();
 	kDebug() << "Stopping: " << service << endl;
-	QByteArray data;
-	QDataStream arg( &data, QIODevice::WriteOnly );
 
-	arg.setVersion(QDataStream::Qt_3_1);
+	QDBusInterfacePtr kdedInterface( "org.kde.kded", "kded" );
+	QDBusMessage reply = kdedInterface->call( "unloadModule", service  );
 
-	arg << service;
-	if (kapp->dcopClient()->send( "kded", "kded", "unloadModule(QCString)", data ) ) {
+	if ( reply.type() == QDBusMessage::ReplyMessage ) {
 		slotServiceRunningToggled();
 	}
 	else {
 		KMessageBox::error(this, i18n("Unable to stop service."));
 	}
-
 }
 
 void KDEDConfig::slotItemChecked(Q3CheckListItem*)
