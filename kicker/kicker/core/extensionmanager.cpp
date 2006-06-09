@@ -25,6 +25,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <unistd.h>
 #include <stdlib.h>
 
+#include <dbus/qdbus.h>
+
 #include <QList>
 #include <QDesktopWidget>
 
@@ -38,7 +40,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kmessagebox.h>
 #include <kstandarddirs.h>
 #include <kwinmodule.h>
-#include <dcopref.h>
 
 #include "utils.h"
 #include "kicker.h"
@@ -167,8 +168,9 @@ void ExtensionManager::initialize()
 
     pm->clearUntrustedLists();
     connect(Kicker::self(), SIGNAL(configurationChanged()), SLOT(configurationChanged()));
-    DCOPRef r("ksmserver", "ksmserver");
-    r.send( "resumeStartup", QString( "kicker" ));
+
+    DBusInterfacePtr dbus("org.kde.ksmserver", "/ksmserver");
+    dbus->call("resumeStartup", "kicker");
 }
 
 void ExtensionManager::configureMenubar(bool duringInit)

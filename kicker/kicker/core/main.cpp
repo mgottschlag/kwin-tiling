@@ -29,6 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 
+#include <dbus/qdbus.h>
+
 #include <QString>
 
 #include <config.h>
@@ -37,8 +39,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdebug.h>
 #include <kaboutdata.h>
 #include <kconfig.h>
-#include <dcopclient.h>
-#include <dcopref.h>
 
 #include "kicker.h"
 
@@ -156,14 +156,12 @@ extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
         signal(SIGHUP, SIG_IGN);
     }
 
-    // send it even before KApplication ctor, because ksmserver will launch another app as soon
-    // as QApplication registers with it
-    DCOPClient* cl = new DCOPClient;
-    cl->attach();
-    DCOPRef r("ksmserver", "ksmserver");
-    r.setDCOPClient(cl);
-    r.send( "suspendStartup", QString( "kicker" ));
-    delete cl;
+    {
+        // send it even before KApplication ctor, because ksmserver will launch another app as soon
+        // as QApplication registers with it
+        DBusInterfacePtr dbus("org.kde.ksmserver", "/ksmserver");
+        dbus->call("suspendStartup", "kicker");
+    }
 
     Kicker kicker;
     return kicker.exec();

@@ -28,7 +28,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QList>
 #include <q3tl.h>
 
-#include <dcopclient.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kglobal.h>
@@ -108,14 +107,19 @@ void RecentlyLaunchedApps::save()
 
 void RecentlyLaunchedApps::appLaunched(const QString& strApp)
 {
+    /*
+    // FIXME: we need a -proper- way to share information about recent apps and docs
+
     // Inform other applications (like the quickstarter applet)
     // that an application was started
     QByteArray params;
     QDataStream stream(&params, QIODevice::WriteOnly);
     stream.setVersion(QDataStream::Qt_3_1);
     stream << launchDCOPSignalSource() << strApp;
+
     KApplication::kApplication()->dcopClient()->emitDCOPSignal("appLauncher",
         "serviceStartedByStorageId(QString,QString)", params);
+    */
 
     QList<RecentlyLaunchedAppInfo>::iterator itEnd = m_appInfos.end();
     for (QList<RecentlyLaunchedAppInfo>::iterator it = m_appInfos.begin();

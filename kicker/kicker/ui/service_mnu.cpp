@@ -22,6 +22,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include <typeinfo>
+
+#include <dbus/qdbus.h>
+
 #include <QCursor>
 #include <QPixmap>
 #include <QImage>
@@ -31,7 +34,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QDragEnterEvent>
 #include <QMouseEvent>
 
-#include <dcopclient.h>
 #include <kapplication.h>
 #include <kstandarddirs.h>
 #include <kdebug.h>
@@ -547,10 +549,11 @@ void PanelServiceMenu::slotContextMenu(int selected)
             job->setDefaultPermissions( true );
 	    break;
 
-	case AddItemToPanel:
-	    service = KService::Ptr::staticCast(contextKSycocaEntry_);
-	    DCOPRef("kicker", "Panel").send("addServiceButton", service->desktopEntryPath());
-	    break;
+        case AddItemToPanel:
+            service = KService::Ptr::staticCast(contextKSycocaEntry_);
+            QDBusInterfacePtr kickerInterface("org.kde.kicker", "/Panel");
+            kickerInterface->call("addServiceButton", service->desktopEntryPath());
+            break;
 
 	case EditItem:
             proc = new KProcess(this);
@@ -559,10 +562,11 @@ void PanelServiceMenu::slotContextMenu(int selected)
             proc->start();
 	    break;
 
-	case PutIntoRunDialog:
-	    service = KService::Ptr::staticCast(contextKSycocaEntry_);
-	    DCOPRef("kdesktop", "default").send("popupExecuteCommand", service->exec());
-	    break;
+        case PutIntoRunDialog:
+            service = KService::Ptr::staticCast(contextKSycocaEntry_);
+            QDBusInterfacePtr kickerInterface("org.kde.kdesktop", "/default");
+            kickerInterface->call("popupExecuteCommand", service->exec());
+            break;
 
 	case AddMenuToDesktop:
 	    g = KServiceGroup::Ptr::staticCast(contextKSycocaEntry_);
@@ -579,18 +583,18 @@ void PanelServiceMenu::slotContextMenu(int selected)
 
 	    break;
 
-	case AddMenuToPanel:
-	    g = KServiceGroup::Ptr::staticCast(contextKSycocaEntry_);
-#warning "Type is bogus!"
-	    DCOPRef("kicker", "Panel").send("addServiceMenuButton(QString,QString)", "foo", g->relPath());
-	    break;
+        case AddMenuToPanel:
+            g = KServiceGroup::Ptr::staticCast(contextKSycocaEntry_);
+            QDBusInterfacePtr kickerInterface("org.kde.kicker", "/Panel");
+            kickerInterface->call("addServiceMenuButton", service->desktopEntryPath());
+            break;
 
         case EditMenu:
             proc = new KProcess(this);
             *proc << KStandardDirs::findExe(QString::fromLatin1("kmenuedit"));
             *proc << '/'+KServiceGroup::Ptr::staticCast(contextKSycocaEntry_)->relPath();
             proc->start();
-	    break;
+            break;
 
 	default:
 	    break;

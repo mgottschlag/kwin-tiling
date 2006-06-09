@@ -37,7 +37,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMouseEvent>
 #include <QStyle>
 #include <QStyleOptionFrame>
-#include <dcopclient.h>
 #include <kapplication.h>
 #include <kaboutkde.h>
 #include <kactioncollection.h>
@@ -73,8 +72,6 @@ PanelKMenu::PanelKMenu()
   , bookmarkMenu(0)
   , bookmarkOwner(0)
 {
-    static const DCOPCString dcopObjId("KMenu");
-    DCOPObject::setObjId(dcopObjId);
     // set the first client id to some arbitrarily large value.
     client_id = 10000;
     // Don't automatically clear the main menu.
@@ -83,12 +80,15 @@ PanelKMenu::PanelKMenu()
     setWindowTitle(i18n("K Menu"));
     connect(Kicker::self(), SIGNAL(configurationChanged()),
             this, SLOT(configChanged()));
+
+/* FIXME: we need a proper way to file recent app/doc usage
     DCOPClient *dcopClient = KApplication::dcopClient();
     dcopClient->connectDCOPSignal(0, "appLauncher",
         "serviceStartedByStorageId(QString,QString)",
         dcopObjId,
         "slotServiceStartedByStorageId(QString,QString)",
         false);
+    */
 }
 
 PanelKMenu::~PanelKMenu()
@@ -326,10 +326,12 @@ extern int kicker_screen_number;
 
 void PanelKMenu::slotLock()
 {
-    QString appname( "kdesktop" );
+    QString interface( "org.kde.kdesktop" );
     if ( kicker_screen_number )
-        appname.sprintf("kdesktop-screen-%d", kicker_screen_number);
-    kapp->dcopClient()->send(appname.toLatin1(), "KScreensaverIface", "lock()", QByteArray());
+        interface.sprintf("org.kde.kdesktop-screen-%d", kicker_screen_number);
+
+    QDBusInterfacePtr kdesktop(interface, "/KScreensaverIface");
+    kdesktop->call("lock");
 }
 
 void PanelKMenu::slotLogout()
@@ -406,21 +408,18 @@ void PanelKMenu::doNewSession( bool lock )
 
 void PanelKMenu::slotSaveSession()
 {
-    QByteArray data;
-    kapp->dcopClient()->send( "ksmserver", "default",
-                              "saveCurrentSession()", data );
+    QDBusInterfacePtr ksmserver("org.kde.ksmserver", "/ksmserver");
+    ksmserver->call("saveCurrentSession");
 }
 
 void PanelKMenu::slotRunCommand()
 {
-    QByteArray data;
-    QString appname( "kdesktop" );
+    QString interface( "kdesktop" );
     if ( kicker_screen_number )
-        appname.sprintf("kdesktop-screen-%d", kicker_screen_number);
+        interface.sprintf("kdesktop-screen-%d", kicker_screen_number);
 
-    kapp->updateRemoteUserTimestamp( appname.toLatin1() );
-    kapp->dcopClient()->send( appname.toLatin1(), "KDesktopIface",
-                              "popupExecuteCommand()", data );
+    QDBusInterfacePtr kdesktop(interface, "/KDesktopIface");
+    kdesktop->call("popupExecuteCommand");
 }
 
 void PanelKMenu::slotEditUserContact()

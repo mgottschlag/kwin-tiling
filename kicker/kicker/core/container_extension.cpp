@@ -40,7 +40,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMenu>
 #include <QMouseEvent>
 
-#include <dcopclient.h>
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kdesktopfile.h>

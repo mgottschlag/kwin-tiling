@@ -24,7 +24,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __k_mnu_h__
 #define __k_mnu_h__
 
-#include <dcopobject.h>
 #include <QPixmap>
 
 #include <QMouseEvent>
@@ -40,13 +39,9 @@ class KActionCollection;
 class KBookmarkOwner;
 class Panel;
 
-class PanelKMenu : public PanelServiceMenu, public DCOPObject
+class PanelKMenu : public PanelServiceMenu
 {
     Q_OBJECT
-    K_DCOP
-
-k_dcop:
-    void slotServiceStartedByStorageId(QString starter, QString desktopPath);
 
 public:
     PanelKMenu();

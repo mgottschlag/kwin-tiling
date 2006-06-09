@@ -29,7 +29,6 @@
 #include <QToolTip>
 #include <QDesktopWidget>
 
-#include <dcopclient.h>
 #include <kconfig.h>
 #include <kcmdlineargs.h>
 #include <kcmultidialog.h>
@@ -97,8 +96,6 @@ Kicker::Kicker()
         KInstance::config()->reparseConfiguration();
     }
 
-    dcopClient()->setDefaultObject("Panel");
-
     disableSessionManagement();
     QString dataPathBase = KStandardDirs::kde_default("data").append("kicker/");
     KGlobal::dirs()->addResourceType("mini", dataPathBase + "pics/mini");
@@ -150,7 +147,6 @@ void Kicker::crashHandler(int /* signal */)
 {
     fprintf(stderr, "kicker: crashHandler called\n");
 
-    DCOPClient::emergencyClose();
     sleep(1);
     system("kicker --nocrashhandler &"); // try to restart
 }
@@ -218,10 +214,11 @@ void Kicker::configure()
     if (notFirstConfig)
     {
         emit configurationChanged();
-        {
-            QByteArray data;
-            emitDCOPSignal("configurationChanged()", data);
-        }
+        //{
+            // FIXME: notify out-of-process concerns that we've changed config
+            //QByteArray data;
+            //emitDCOPSignal("configurationChanged()", data);
+        //}
     }
 
     notFirstConfig = true;
@@ -314,6 +311,7 @@ void Kicker::showConfig(const QString& configPath, int page)
          connect(m_configDialog, SIGNAL(finished()), SLOT(configDialogFinished()));
     }
 
+    /* FIXME: need to let panels know we've changed
     if (!configPath.isEmpty())
     {
         QByteArray data;
@@ -323,6 +321,7 @@ void Kicker::showConfig(const QString& configPath, int page)
         stream << configPath;
         emitDCOPSignal("configSwitchToPanel(QString)", data);
     }
+    */
 
     KWin::setOnDesktop(m_configDialog->winId(), KWin::currentDesktop());
     m_configDialog->show();
