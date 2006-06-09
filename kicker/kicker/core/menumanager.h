@@ -24,12 +24,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef KICKER_MENU_MANAGER_H
 #define KICKER_MENU_MANAGER_H
 
-#include <dcopobject.h>
 #include "panelbutton.h"
 #include <QList>
 
 class PanelKMenu;
-class KickerClientMenu;
 class QMenu;
 
 typedef QList<PanelPopupButton*> KButtonList;
@@ -37,19 +35,12 @@ typedef QList<PanelPopupButton*> KButtonList;
 /**
  * The factory for menus created by other applications. Also the owner of these menus.
  */
-class MenuManager : public QObject, DCOPObject
+class MenuManager : public QObject
 {
     Q_OBJECT
 public:
     static MenuManager* self();
     ~MenuManager();
-
-    // dcop exported
-    DCOPCString createMenu(QPixmap icon, QString text);
-    void removeMenu(DCOPCString menu);
-
-    // dcop internal
-    bool process(const DCOPCString &fun, const QByteArray &data, DCOPCString& replyType, QByteArray &reply);
 
     // KMenu controls
     PanelKMenu* kmenu() { return m_kmenu; }
@@ -69,8 +60,6 @@ protected Q_SLOTS:
 
 protected:
     PanelKMenu* m_kmenu;
-    typedef QList<KickerClientMenu*> ClientMenuList;
-    ClientMenuList clientmenus;
 
 private:
     MenuManager(QObject *parent = 0);

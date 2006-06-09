@@ -269,27 +269,6 @@ void PanelKMenu::initialize()
     if (need_separator)
         insertSeparator();
 
-    // insert client menus, if any
-    if (clients.count() > 0) {
-        QHash<int, KickerClientMenu*>::iterator itEnd = clients.end();
-        for ( QHash<int, KickerClientMenu*>::iterator it = clients.begin();
-              it != itEnd;
-              ++it )
-        {
-            if (it.value()->text.at(0) != '.')
-            {
-                insertItem(
-                    it.value()->icon,
-                    it.value()->text,
-                    it.value(),
-                    it.key()
-                    );
-            }
-        }
-
-        insertSeparator();
-    }
-
     // run command
     if (KAuthorized::authorizeKAction("run_command"))
     {
@@ -341,21 +320,6 @@ void PanelKMenu::initialize()
 #endif
 
     setInitialized(true);
-}
-
-int PanelKMenu::insertClientMenu(KickerClientMenu *p)
-{
-    int id = client_id;
-    clients.insert(id, p);
-    slotClear();
-    return id;
-}
-
-void PanelKMenu::removeClientMenu(int id)
-{
-    clients.remove(id);
-    removeItem(id);
-    slotClear();
 }
 
 extern int kicker_screen_number;

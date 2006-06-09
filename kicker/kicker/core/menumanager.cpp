@@ -30,8 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMenu>
 
 #include <kapplication.h>
-#include <dcopclient.h>
-
 #include "client_mnu.h"
 #include "container_extension.h"
 #include "utils.h"
@@ -63,13 +61,9 @@ MenuManager* MenuManager::self()
 }
 
 MenuManager::MenuManager(QObject *parent)
-    : QObject(parent), DCOPObject("MenuManager")
+    : QObject(parent)
 {
-    setObjectName( "MenuManager" );
     m_kmenu = new PanelKMenu;
-    kapp->dcopClient()->setNotifications(true);
-    connect(kapp->dcopClient(), SIGNAL(applicationRemoved(const QByteArray&)),
-            this, SLOT(applicationRemoved(const QByteArray&)));
 }
 
 MenuManager::~MenuManager()
@@ -199,82 +193,3 @@ void MenuManager::kmenuAccelActivated()
     }
 }
 
-DCOPCString MenuManager::createMenu(QPixmap icon, QString text)
-{
-    static int menucount = 0;
-    menucount++;
-    QString name;
-    name.sprintf("kickerclientmenu-%d", menucount );
-    KickerClientMenu* p = new KickerClientMenu(0);
-    p->setObjectName(name);
-    clientmenus.append(p);
-    m_kmenu->initialize();
-    p->text = text;
-    p->icon = icon;
-    p->idInParentMenu = m_kmenu->insertClientMenu( p );
-    p->createdBy = kapp->dcopClient()->senderId();
-    m_kmenu->adjustSize();
-    return name.toLatin1();
-}
-
-void MenuManager::removeMenu(DCOPCString menu)
-{
-    bool iterate = true;
-    ClientMenuList::iterator it = clientmenus.begin();
-    for (; it != clientmenus.end(); iterate ? ++it : it)
-    {
-        iterate = true;
-        KickerClientMenu* m = *it;
-        if (m->objId() == menu)
-        {
-            m_kmenu->removeClientMenu(m->idInParentMenu);
-            it = clientmenus.erase(it);
-            iterate = false;
-        }
-    }
-    m_kmenu->adjustSize();
-}
-
-
-void MenuManager::applicationRemoved(const QByteArray& appRemoved)
-{
-    bool iterate = true;
-    ClientMenuList::iterator it = clientmenus.begin();
-    for (; it != clientmenus.end(); iterate ? ++it : it)
-    {
-        iterate = true;
-        KickerClientMenu* m = *it;
-        if (QByteArray(m->createdBy) == appRemoved)
-        {
-            m_kmenu->removeClientMenu(m->idInParentMenu);
-            it = clientmenus.erase(it);
-            iterate = false;
-        }
-    }
-    m_kmenu->adjustSize();
-}
-
-bool MenuManager::process(const DCOPCString &fun, const QByteArray &data,
-				DCOPCString &replyType, QByteArray &replyData)
-{
-    if ( fun == "createMenu(QPixmap,QString)" ) {
-	QDataStream dataStream( data );
-	dataStream.setVersion(QDataStream::Qt_3_1);
-	QPixmap icon;
-	QString text;
-	dataStream >> icon >> text;
-	QDataStream reply( replyData );
-	reply << createMenu( icon, text );
-	replyType = "QCString";
-	return true;
-    } else if ( fun == "removeMenu(QCString)" ) {
-	QDataStream dataStream( data );
-	dataStream.setVersion(QDataStream::Qt_3_1);
-	DCOPCString menu;
-	dataStream >> menu;
-	removeMenu( menu );
-	replyType = "void";
-	return true;
-    }
-    return false;
-}

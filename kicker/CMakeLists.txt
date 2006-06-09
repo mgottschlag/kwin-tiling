@@ -39,7 +39,6 @@ set(libkicker_ui_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/addapplet_mnu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/appletop_mnu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/browser_mnu.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/client_mnu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/exe_dlg.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/k_mnu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kicker/ui/quickbrowser_mnu.cpp

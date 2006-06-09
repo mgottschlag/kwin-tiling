@@ -35,7 +35,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "service_mnu.h"
 
-class KickerClientMenu;
 class KBookmarkMenu;
 class KActionCollection;
 class KBookmarkOwner;
@@ -52,9 +51,6 @@ k_dcop:
 public:
     PanelKMenu();
     ~PanelKMenu();
-
-    int insertClientMenu(KickerClientMenu *p);
-    void removeClientMenu(int id);
 
     virtual QSize sizeHint() const;
     virtual void setMinimumSize(const QSize &);
@@ -100,7 +96,6 @@ private:
     QPixmap                     sideTilePixmap;
     int                         client_id;
     bool                        delay_init;
-    QHash<int, KickerClientMenu*>  clients;
     KBookmarkMenu              *bookmarkMenu;
     KActionCollection          *actionCollection;
     KBookmarkOwner             *bookmarkOwner;
