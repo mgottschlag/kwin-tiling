@@ -1,0 +1,48 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.kdesktop.Background">
+    <method name="configure"/>
+    <method name="setExport">
+      <arg name="xport" type="i" direction="in"/>
+    </method>
+    <method name="isExport">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="setCommon">
+      <arg name="common" type="i" direction="in"/>
+    </method>
+    <method name="isCommon">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="setCache">
+      <arg name="bLinit" type="i" direction="in"/>
+      <arg name="size" type="i" direction="in"/>
+    </method>
+    <method name="setWallpaper">
+      <arg name="desk" type="i" direction="in"/>
+      <arg name="wallpaper" type="s" direction="in"/>
+      <arg name="mode" type="i" direction="in"/>
+    </method>
+    <method name="setWallpaper">
+      <arg name="wallpaper" type="s" direction="in"/>
+      <arg name="mode" type="i" direction="in"/>
+    </method>
+    <method name="changeWallpaper"/>
+    <method name="setBackgroundEnabled">
+      <arg name="enable" type="b" direction="in"/>
+    </method>
+    <method name="currentWallpaper">
+      <arg name="desk" type="i" direction="in"/>
+      <arg type="s" direction="out"/>
+    </method>
+    <method name="wallpaperList">
+      <arg name="desk" type="i" direction="in"/>
+      <arg type="as" direction="out"/>
+    </method>
+    <method name="wallpaperFiles">
+      <arg name="desk" type="i" direction="in"/>
+      <arg type="as" direction="out"/>
+    </method>
+  </interface>
+</node>
