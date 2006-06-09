@@ -15,7 +15,6 @@ set(kickermain_LIB_SRCS
    kshadowsettings.cpp 
    kshadowengine.cpp 
    kpanelapplet.cpp 
-   kpanelappmenu.cpp 
    kpanelextension.cpp 
    kpanelmenu.cpp 
    simplebutton.cpp 
@@ -53,7 +52,7 @@ install_files( /include/plasma FILES kpanelapplet.h                             
 #                           menuinfo.cpp panelbutton.cpp panner.cpp \
 #                           kickerSettings.kcfgc kshadowsettings.cpp \
 #                           kshadowengine.cpp \
-#                           kpanelapplet.cpp  kpanelappmenu.cpp  \
+#                           kpanelapplet.cpp  \
 #                           kpanelextension.cpp  kpanelmenu.cpp \
 #                           simplebutton.cpp extensionSettings.kcfgc \
 #			   extensioninfo.cpp paneldrag.cpp
@@ -65,7 +64,7 @@ install_files( /include/plasma FILES kpanelapplet.h                             
 #
 #libkickermain_la_includedir = $(includedir)/plasma
 #
-#noinst_HEADERS = abstractpanelmanager.h appletinfo.h kickertip.h kpanelappmenu.h \
+#noinst_HEADERS = abstractpanelmanager.h appletinfo.h kickertip.h \
 #                 kshadowsettings.h panelbutton.h panner.h \
 #                 kshadowengine.h menuinfo.h \
 #		 extensioninfo.h
