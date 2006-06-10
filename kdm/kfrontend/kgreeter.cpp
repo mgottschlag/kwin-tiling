@@ -263,7 +263,12 @@ KGreeter::insertUsers()
 	// XXX remove seteuid-voodoo when we run as nobody
 	if (!(ps = getpwnam( "nobody" )))
 		return;
-	seteuid( ps->pw_uid );
+        if (setegid( ps->pw_gid )) 
+                return;
+        if (seteuid( ps->pw_uid )) {
+                setegid(0);
+                return;
+        }
 
 	QImage default_pix;
 	if (userView) {
@@ -330,6 +335,7 @@ KGreeter::insertUsers()
 
 	// XXX remove seteuid-voodoo when we run as nobody
 	seteuid( 0 );
+        setegid( 0 );
 }
 
 void
