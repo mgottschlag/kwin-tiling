@@ -32,7 +32,10 @@
                 <string>You have a Logitech Mouse connected, and libusb was found at compile time, but it was not possible to access this mouse. This is probably caused by a permissions problem - you should consult the manual on how to fix this.</string>
             </property>
             <property name="alignment">
-                <set>WordBreak|AlignVCenter</set>
+                <set>AlignVCenter</set>
+            </property>
+            <property name="wordWrap">
+                <bool>true</bool>
             </property>
         </widget>
         <widget class="QButtonGroup" row="1" column="0">

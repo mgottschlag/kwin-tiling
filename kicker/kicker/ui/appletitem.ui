@@ -66,7 +66,10 @@
                         <enum>RichText</enum>
                     </property>
                     <property name="alignment">
-                        <set>WordBreak|AlignTop</set>
+                        <set>AlignTop</set>
+                    </property>
+                    <property name="wordWrap">
+                        <bool>true</bool>
                     </property>
                 </widget>
                 <widget class="QLabel">
@@ -88,7 +91,10 @@
                         <enum>RichText</enum>
                     </property>
                     <property name="alignment">
-                        <set>WordBreak|AlignTop</set>
+                        <set>AlignTop</set>
+                    </property>
+                    <property name="wordWrap">
+                        <bool>true</bool>
                     </property>
                 </widget>
             </vbox>
