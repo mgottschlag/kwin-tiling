@@ -12,7 +12,7 @@ if( X11_Xrandr_FOUND )
    add_subdirectory( randr )
 endif(X11_Xrandr_FOUND )
 
-add_subdirectory( applnk ) 
+add_subdirectory( menus ) 
 add_subdirectory( bell ) 
 add_subdirectory( background ) 
 add_subdirectory( samba ) 
