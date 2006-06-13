@@ -28,7 +28,7 @@
 #include <QLabel>
 
 #include <kcmodule.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class QCheckBox;
 class QLabel;

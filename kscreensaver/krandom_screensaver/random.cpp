@@ -29,7 +29,7 @@
 #include <krandomsequence.h>
 #include <kdebug.h>
 #include <kcmdlineargs.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kconfig.h>
 
 #include "kscreensaver_vroot.h"

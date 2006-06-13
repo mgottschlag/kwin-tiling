@@ -26,7 +26,6 @@
 
 #include <kapplication.h>
 #include <kconfig.h>
-#include <kdialogbase.h>
 #include <ktextedit.h>
 #include <klocale.h>
 #include <kmenu.h>

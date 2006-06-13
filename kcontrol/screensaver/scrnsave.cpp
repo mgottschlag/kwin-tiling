@@ -43,7 +43,7 @@
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kdialog.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kgenericfactory.h>
 #include <kiconloader.h>
 #include <knuminput.h>

@@ -12,7 +12,7 @@
 #define _MENUEDIT_H_
 
 #include <QString>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kservice.h>
 
 // see also kdebase/kmenuedit/khotkeys.h

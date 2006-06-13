@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QEvent>
 
 #include <klocale.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 #include "appletinfo.h"
 #include "appletitem.h"

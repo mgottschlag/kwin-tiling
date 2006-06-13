@@ -14,7 +14,7 @@
 #include <QStringList>
 
 #include <kcmodule.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 #include "widgetcanvas.h"
 

@@ -44,7 +44,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kapplication.h>
 #include <kaboutapplication.h>
 #include <kaboutdata.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kmessagebox.h>

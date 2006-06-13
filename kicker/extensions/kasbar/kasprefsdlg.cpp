@@ -62,7 +62,6 @@
 
 #include <kcolorbutton.h>
 #include <kconfig.h>
-#include <kdialogbase.h>
 #include <kglobal.h>
 #include <kiconloader.h>
 #include <klocale.h>
