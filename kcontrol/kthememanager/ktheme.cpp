@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <kapplication.h>
 #include <kbuildsycocaprogressdialog.h>
 #include <kconfig.h>
-#include <kdatastream.h>
 #include <kdebug.h>
 #include <kglobal.h>
 #include <kiconloader.h>
