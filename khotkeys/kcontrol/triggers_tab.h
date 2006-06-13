@@ -11,7 +11,7 @@
 #ifndef _TRIGGERS_TAB_H_
 #define _TRIGGERS_TAB_H_
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 #include <khlistview.h>
 
@@ -98,7 +98,7 @@ class Shortcut_trigger_widget
 typedef Shortcut_trigger_widget Shortcut_trigger_tab;
     
 class Shortcut_trigger_dialog
-    : public KDialogBase, public Trigger_dialog
+    : public KDialog, public Trigger_dialog
     {
     Q_OBJECT
     public:
@@ -111,7 +111,7 @@ class Shortcut_trigger_dialog
     };
     
 class Window_trigger_dialog
-    : public KDialogBase, public Trigger_dialog
+    : public KDialog, public Trigger_dialog
     {
     Q_OBJECT
     public:
@@ -126,7 +126,7 @@ class Window_trigger_dialog
 class GestureRecordPage;
 
 class Gesture_trigger_dialog
-    : public KDialogBase, public Trigger_dialog
+    : public KDialog, public Trigger_dialog
     {
     Q_OBJECT
     public:

@@ -56,14 +56,14 @@
 #ifndef KASABOUTDLG_H
 #define KASABOUTDLG_H
 
-#include <kdialogbase.h>
+#include <kpagedialog.h>
 
 class KasBar;
 
 /**
  * About dialog for KasBar
  */
-class KasAboutDialog : public KDialogBase
+class KasAboutDialog : public KPageDialog
 {
    Q_OBJECT
 

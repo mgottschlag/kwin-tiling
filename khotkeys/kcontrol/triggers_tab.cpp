@@ -258,9 +258,11 @@ Shortcut_trigger* Shortcut_trigger_widget::get_data( Action_data* data_P ) const
 // Shortcut_trigger_dialog
 
 Shortcut_trigger_dialog::Shortcut_trigger_dialog( Shortcut_trigger* trigger_P )
-    : KDialogBase( NULL, NULL, true, "", Ok | Cancel ), // CHECKME caption
+    : KDialog( 0 ), // CHECKME caption
         trigger( NULL )
     {
+    setModal( true );
+    setButtons( Ok | Cancel );
     widget = new Shortcut_trigger_widget( this );
     widget->set_data( trigger_P );
     setMainWidget( widget );
@@ -274,16 +276,18 @@ Trigger* Shortcut_trigger_dialog::edit_trigger()
 
 void Shortcut_trigger_dialog::accept()
     {
-    KDialogBase::accept();
+    KDialog::accept();
     trigger = widget->get_data( NULL ); // CHECKME NULL ?
     }
 
 // Window_trigger_dialog
 
 Window_trigger_dialog::Window_trigger_dialog( Window_trigger* trigger_P )
-    : KDialogBase( NULL, NULL, true, "", Ok | Cancel ), // CHECKME caption
+    : KDialog( 0 ), // CHECKME caption
         trigger( NULL )
     {
+    setModal( true );
+    setButtons( Ok | Cancel );
     widget = new Window_trigger_widget( this );
     widget->set_data( trigger_P );
     setMainWidget( widget );
@@ -297,16 +301,18 @@ Trigger* Window_trigger_dialog::edit_trigger()
 
 void Window_trigger_dialog::accept()
     {
-    KDialogBase::accept();
+    KDialog::accept();
     trigger = widget->get_data( NULL ); // CHECKME NULL ?
     }
 
 // Gesture_trigger_dialog
 
 Gesture_trigger_dialog::Gesture_trigger_dialog( Gesture_trigger* trigger_P )
-    : KDialogBase( NULL, NULL, true, "", Ok | Cancel ), // CHECKME caption
+    : KDialog( 0 ), // CHECKME caption
         _trigger( trigger_P ), _page( NULL )
     {
+    setModal( true );
+    setButtons( Ok | Cancel );
     _page = new GestureRecordPage( _trigger->gesturecode(),
                                   this, "GestureRecordPage");
 

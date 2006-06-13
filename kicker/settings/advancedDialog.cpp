@@ -32,20 +32,21 @@
 #include "main.h"
 
 advancedDialog::advancedDialog(QWidget* parent, const char* name)
-    : KDialogBase(KDialogBase::Plain,
-                  i18n("Advanced Options"),
-                  Ok|Apply|Cancel,
-                  Cancel,
-                  parent,
-                  name,
-                  false, false)
+    : KDialog( parent )
 {
+    setCaption( i18n("Advanced Options") );
+    setButtons( Ok | Apply |Cancel );
+    setDefaultButton( Cancel );
+    setObjectName( name );
+    enableButtonSeparator( false );
+
     connect(this, SIGNAL(applyClicked()),
             this, SLOT(save()));
     connect(this, SIGNAL(okClicked()),
             this, SLOT(save()));
 
-    QFrame* page = plainPage();
+    QFrame* page = new QFrame( this );
+    setMainWidget( page );
     QVBoxLayout* layout = new QVBoxLayout(page);
     m_advancedWidget = new advancedKickerOptions(page);
     layout->addWidget(m_advancedWidget);

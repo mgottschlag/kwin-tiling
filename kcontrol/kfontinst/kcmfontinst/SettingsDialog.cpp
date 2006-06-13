@@ -43,10 +43,16 @@ namespace KFI
 {
 
 CSettingsDialog::CSettingsDialog(QWidget *parent)
-               : KDialogBase(parent, "settingsdialog", true, i18n("Settings"),
-                             KDialogBase::Ok|KDialogBase::Cancel, KDialogBase::Ok, true)
+               : KDialog( parent )
 {
-    KVBox *page = makeVBoxMainWidget();
+    setObjectName( "settingsdialog" );
+    setModal( true );
+    setCaption( i18n("Settings") );
+    setButtons( Ok | Cancel );
+    enableButtonSeparator( true );
+
+    KVBox *page = new KVBox( this );
+    setMainWidget( page );
 
     itsDoX=new QCheckBox(i18n("Configure fonts for legacy X applications"), page);
     itsDoX->setWhatsThis( i18n("<p>Modern applications use a system called \"FontConfig\" to obtain the list of fonts. "
@@ -67,6 +73,8 @@ CSettingsDialog::CSettingsDialog(QWidget *parent)
 
     itsDoX->setChecked(cfg.readEntry(KFI_CFG_X_KEY, KFI_DEFAULT_CFG_X));
     itsDoGs->setChecked(cfg.readEntry(KFI_CFG_GS_KEY, KFI_DEFAULT_CFG_GS));
+
+    connect( this, SIGNAL( okClicked() ), SLOT( okClicked() ) );
 }
 
 void CSettingsDialog::slotOk()

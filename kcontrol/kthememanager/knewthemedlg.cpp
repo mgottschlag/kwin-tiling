@@ -25,8 +25,13 @@
 #include <klocale.h>
 
 KNewThemeDlg::KNewThemeDlg( QWidget * parent, const char * name )
-    : KDialogBase(parent, name, true, i18n("New Theme"), Ok|Cancel, Ok)
+    : KDialog( parent )
 {
+    setObjectName( name );
+    setModal( true );
+    setCaption( i18n("New Theme") );
+    setButtons( Ok|Cancel );
+
     m_base = new NewThemeWidget( this, "new_theme_base" );
     setMainWidget( m_base );
     connect( m_base->leName, SIGNAL( textChanged ( const QString & ) ), this, SLOT( slotThemeNameChanged( const QString & ) ) );

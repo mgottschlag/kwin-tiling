@@ -8,7 +8,7 @@
 #include <QLabel>
 #include <qdesktopwidget.h>
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kmessagebox.h>
 #include <kcombobox.h>
 #include <kiconloader.h>
@@ -589,12 +589,15 @@ QString mouseKeysShortcut (Display *display) {
 
 void KAccessApp::createDialogContents() {
    if (dialog == 0) {
-      dialog = new KDialogBase(
-            i18n("Warning"),
-            KDialogBase::Yes | KDialogBase::No,
-            KDialogBase::Yes, KDialogBase::Close,
-            0, "AccessXWarning", true, true,
-            KStdGuiItem::yes(), KStdGuiItem::no());
+      dialog = new KDialog( 0 );
+      dialog->setCaption( i18n("Warning") );
+      dialog->setButtons( KDialog::Yes | KDialog::No );
+      dialog->setButtonGuiItem( KDialog::Yes, KStdGuiItem::yes() );
+      dialog->setButtonGuiItem( KDialog::No, KStdGuiItem::no() );
+      dialog->setEscapeButton( KDialog::Close );
+      dialog->setObjectName( "AccessXWarning" );
+      dialog->setModal( true );
+      dialog->enableButtonSeparator( true );
 
       KVBox *topcontents = new KVBox (dialog);
       topcontents->setSpacing(KDialog::spacingHint()*2);

@@ -515,12 +515,17 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     const Effect &defaultEffect,
     const QString &caption, const QImage &image,
     QWidget *parent, char *name)
-    : KDialogBase(parent, name, true, caption,
-	Default|Ok|Cancel, Ok, true),
+    : KDialog( parent ),
       mEffect(effect),
       mDefaultEffect(defaultEffect),
       mExample(image)
 {
+    setObjectName( name );
+    setModal( true );
+    setCaption( caption );
+    setButtons( Default|Ok|Cancel );
+    enableButtonSeparator( true );
+
     mpEffect = new KIconEffect;
 
     QLabel *lbl;

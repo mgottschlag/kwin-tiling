@@ -261,9 +261,11 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
 void URLGrabber::editData()
 {
     myPopupKillTimer->stop();
-    KDialogBase *dlg = new KDialogBase( 0, 0, true,
-                                        i18n("Edit Contents"),
-                                        KDialogBase::Ok | KDialogBase::Cancel);
+    KDialog *dlg = new KDialog( 0 );
+    dlg->setModal( true );
+    dlg->setCaption( i18n("Edit Contents") );
+    dlg->setButtons( KDialog::Ok | KDialog::Cancel );
+
     KTextEdit *edit = new KTextEdit( dlg );
     edit->setText( myClipData );
     edit->setFocus();
@@ -271,7 +273,7 @@ void URLGrabber::editData()
     dlg->setMainWidget( edit );
     dlg->adjustSize();
 
-    if ( dlg->exec() == QDialog::Accepted ) {
+    if ( dlg->exec() == KDialog::Accepted ) {
         myClipData = edit->text();
         delete dlg;
         QTimer::singleShot( 0, this, SLOT( slotActionMenu() ) );

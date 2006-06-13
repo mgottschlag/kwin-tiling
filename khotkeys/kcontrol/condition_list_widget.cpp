@@ -336,8 +336,11 @@ QString Condition_list_item::text( int column_P ) const
 
 Active_window_condition_dialog::Active_window_condition_dialog(
     Active_window_condition* condition_P )
-    : KDialogBase( NULL, NULL, true, i18n( "Window Details" ), Ok | Cancel ), condition( NULL )
+    : KDialog( 0 ), condition( NULL )
     {
+    setModal( true );
+    setCaption( i18n( "Window Details" ) );
+    setButtons( Ok | Cancel );
     widget = new Windowdef_list_widget( this );
     widget->set_data( condition_P->window());
     setMainWidget( widget );
@@ -351,7 +354,7 @@ Condition* Active_window_condition_dialog::edit_condition()
 
 void Active_window_condition_dialog::accept()
     {
-    KDialogBase::accept();
+    KDialog::accept();
     condition = new Active_window_condition( widget->get_data(), NULL ); // CHECKME NULL ?
     }
 
@@ -359,8 +362,11 @@ void Active_window_condition_dialog::accept()
 
 Existing_window_condition_dialog::Existing_window_condition_dialog(
     Existing_window_condition* condition_P )
-    : KDialogBase( NULL, NULL, true, i18n( "Window Details" ), Ok | Cancel ), condition( NULL )
+    : KDialog( 0 ), condition( NULL )
     {
+    setModal( true );
+    setCaption( i18n( "Window Details" ) );
+    setButtons( Ok | Cancel );
     widget = new Windowdef_list_widget( this );
     widget->set_data( condition_P->window());
     setMainWidget( widget );
@@ -374,7 +380,7 @@ Condition* Existing_window_condition_dialog::edit_condition()
 
 void Existing_window_condition_dialog::accept()
     {
-    KDialogBase::accept();
+    KDialog::accept();
     condition = new Existing_window_condition( widget->get_data(), NULL ); // CHECKME NULL ?
     }
 

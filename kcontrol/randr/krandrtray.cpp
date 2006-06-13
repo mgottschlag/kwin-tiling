@@ -248,9 +248,9 @@ void KRandRSystemTray::slotRefreshRateChanged(int parameter)
 
 void KRandRSystemTray::slotPrefs()
 {
-	KCMultiDialog *kcm = new KCMultiDialog( KDialogBase::Plain, i18n( "Configure" ), this );
-
-	kcm->addModule( "display" );
+	KCMultiDialog *kcm = new KCMultiDialog( this );
+	kcm->setFaceType( KCMultiDialog::Plain );
 	kcm->setPlainCaption( i18n( "Configure Display" ) );
+	kcm->addModule( "display" );
 	kcm->exec();
 }

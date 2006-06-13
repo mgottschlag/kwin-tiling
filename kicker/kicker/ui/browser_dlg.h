@@ -24,12 +24,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __browser_dlg_h__
 #define __browser_dlg_h__
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class KIconButton;
 class KLineEdit;
 
-class PanelBrowserDialog : public KDialogBase
+class PanelBrowserDialog : public KDialog
 {
     Q_OBJECT
 
@@ -42,7 +42,7 @@ public:
 
 protected Q_SLOTS:
     void browse();
-    virtual void slotOk();
+    virtual void accept();
     void slotPathChanged( const QString &_text );
 protected:
     KIconButton *iconBtn;

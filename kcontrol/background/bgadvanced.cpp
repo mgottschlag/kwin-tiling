@@ -67,11 +67,15 @@ static QString desktopConfigname()
 BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
                                    QWidget *parent,
                                    bool m_multidesktop)
-    : KDialogBase(parent, "BGAdvancedDialog",
-                  true, i18n("Advanced Background Settings"),
-                  Ok | Cancel, Ok, true),
+    : KDialog( parent ),
       r(_r)
 {
+   setObjectName( "BGAdvancedDialog" );
+   setModal( true );
+   setCaption( i18n("Advanced Background Settings") );
+   setButtons( Ok | Cancel );
+   enableButtonSeparator( true );
+  
    dlg = new BGAdvancedBase(this);
    setMainWidget(dlg);
 
@@ -385,10 +389,16 @@ void BGAdvancedDialog::slotEnableProgram(bool b)
 /**** KProgramEditDialog ****/
 
 KProgramEditDialog::KProgramEditDialog(const QString &program, QWidget *parent, char *name)
-    : KDialogBase(parent, name, true, i18n("Configure Background Program"),
-	Ok | Cancel, Ok, true)
+    : KDialog( parent )
 {
-    QFrame *frame = makeMainWidget();
+    setObjectName( name );
+    setModal( true );
+    setCaption( i18n("Configure Background Program") );
+    setButtons( Ok | Cancel );
+    enableButtonSeparator( true );
+
+    QFrame *frame = new QFrame( this );
+    setMainWidget( frame );
 
     QGridLayout *grid = new QGridLayout(frame);
     grid->setSpacing(spacingHint());
@@ -463,7 +473,7 @@ QString KProgramEditDialog::program()const
     return m_NameEdit->text();
 }
 
-void KProgramEditDialog::slotOk()
+void KProgramEditDialog::accept()
 {
     QString s = m_NameEdit->text();
     if (s.isEmpty()) {
@@ -499,7 +509,8 @@ void KProgramEditDialog::slotOk()
     prog.setRefresh(m_RefreshEdit->value());
 
     prog.writeSettings();
-    accept();
+
+    KDialog::accept();
 }
 
 

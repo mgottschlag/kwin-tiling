@@ -136,9 +136,11 @@ void Gesture_triggers_tab::edit_gesture_pressed3()
 // Gesture_edit_dialog
 
 Gesture_edit_dialog::Gesture_edit_dialog( const QString& gesture_P )
-    : KDialogBase( NULL, NULL, true, "", Ok | Cancel ), // CHECKME caption
+    : KDialog( 0 ), // CHECKME caption
         _gesture( gesture_P ), _page( NULL )
     {
+    setModal( true );
+    setButtons( Ok | Cancel );
     _page = new GestureRecordPage( _gesture,
                                   this, "GestureRecordPage");
    

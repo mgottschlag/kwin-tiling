@@ -85,14 +85,15 @@
 #define LargeIcon(x) KGlobal::iconLoader()->loadIcon( x, K3Icon::NoGroup, K3Icon::SizeLarge )
 
 KasAboutDialog::KasAboutDialog( QWidget *parent )
-   : KDialogBase( KDialogBase::IconList, i18n("About Kasbar"),
-		  KDialogBase::Ok,
-		  KDialogBase::Ok,
-		  parent, "kasbarAboutDialog", false )
+   : KPageDialog( parent )
 {
 #ifdef USE_KSPY
   KSpy::invoke();
 #endif
+
+  setFaceType( List );
+  setCaption( i18n("About Kasbar") );
+  setButtons( Ok );
 
   addInfoPage();
   addAuthorsPage();
@@ -151,8 +152,12 @@ void KasAboutDialog::addDemoBar()
 
 void KasAboutDialog::addInfoPage()
 {
-   KVBox *aboutPage = addVBoxPage( i18n("About"), i18n("About Kasbar"), Icon( "appearance" ) );
+   KVBox *aboutPage = new KVBox( this );
    aboutPage->setSpacing( spacingHint() );
+
+   KPageWidgetItem *item = addPage( aboutPage, i18n("About") );
+   item->setHeader( i18n("About Kasbar") );
+   item->setIcon( Icon( "appearance" ) );
 
    new QLabel( i18n( "<qt><body>"
 		     "<h2>Kasbar Version: %1</h2>"
@@ -182,9 +187,11 @@ void KasAboutDialog::addInfoPage()
 
 void KasAboutDialog::addAuthorsPage()
 {
-   KVBox *authorsPage = addVBoxPage( i18n("Authors"),
-				     i18n("Kasbar Authors"), 
-				     Icon( "kuser" ) );
+   KVBox *authorsPage = new KVBox( this );
+   
+   KPageWidgetItem *item = addPage( authorsPage, i18n("Authors") );
+   item->setHeader( i18n("Kasbar Authors") );
+   item->setIcon( Icon( "kuser" ) );
 
    KTextBrowser *text = new KTextBrowser( authorsPage );
    text->setText( i18n(
@@ -212,7 +219,9 @@ void KasAboutDialog::addAuthorsPage()
 
 void KasAboutDialog::addBSDPage()
 {
-   KVBox *bsdLicense = addVBoxPage( i18n("BSD License"), QString(), Icon( "filefind" ) );
+   KVBox *bsdLicense = new KVBox( this );
+   KPageWidgetItem *item = addPage( bsdLicense, i18n("BSD License") );
+   item->setIcon( Icon( "filefind" ) );
 
    new QLabel( i18n( "Kasbar may be used under the terms of either the BSD license, "
 		     "or the GNU Public License." ), bsdLicense );
@@ -238,7 +247,10 @@ void KasAboutDialog::addBSDPage()
 
 void KasAboutDialog::addGPLPage()
 {
-   KVBox *gplPage = addVBoxPage( i18n("GPL License"), QString(), Icon( "filefind" ) );
+   KVBox *gplPage = new KVBox( this );
+   
+   KPageWidgetItem *item = addPage( gplPage, i18n("GPL License") );
+   item->setIcon( Icon( "filefind" ) );
 
    new QLabel( i18n( "Kasbar may be used under the terms of either the BSD license, "
 		     "or the GNU Public License." ), gplPage );

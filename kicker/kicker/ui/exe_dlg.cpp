@@ -49,14 +49,21 @@ PanelExeDialog::PanelExeDialog(const QString& title, const QString& description,
                                const QString &path, const QString &icon,
                                const QString &cmd, bool inTerm,
                                QWidget *parent, const char *name)
-    : KDialogBase(parent, name, false, i18n("Non-KDE Application Configuration"), Ok|Cancel, Ok, true),
+    : KDialog( parent ),
       m_icon(icon.isEmpty() ? "exec" : icon),
       m_iconChanged(false)
 {
+    setObjectName( name );
     setCaption(i18n("Non-KDE Application Configuration"));
+    setButtons( Ok|Cancel );
+    enableButtonSeparator( true );
+
     QFileInfo fi(path);
 
-    ui = new NonKDEButtonSettings(makeVBoxMainWidget());
+    KVBox *vbox = new KVBox( this );
+    setMainWidget( vbox );
+
+    ui = new NonKDEButtonSettings( vbox );
     fillCompletion();
 
     ui->m_title->setText(title);
@@ -82,11 +89,12 @@ PanelExeDialog::PanelExeDialog(const QString& title, const QString& description,
            sizeHint().height());
 }
 
-void PanelExeDialog::slotOk()
+void PanelExeDialog::accept()
 {
-    KDialogBase::slotOk();
+    KDialog::accept();
+
     // WARNING! we get delete after this, so don't do anything after it!
-    emit updateSettings(this);
+    emit updateSettings( this );
 }
 
 bool PanelExeDialog::useTerminal() const

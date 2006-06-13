@@ -33,12 +33,19 @@
 //--------------------------------------------------------------
 
 CalDialog::CalDialog(QWidget *parent, JoyDevice *joy)
-  : KDialogBase(parent, "calibrateDialog", true,
-      i18n("Calibration"),
-      KDialogBase::Cancel|KDialogBase::User1, KDialogBase::User1, true, KGuiItem(i18n("Next"))),
+  : KDialog( parent ),
     joydev(joy)
 {
-  KVBox *main = makeVBoxMainWidget();
+  setObjectName( "calibrateDialog" );
+  setModal( true );
+  setCaption( i18n("Calibration") );
+  setButtons( Cancel | User1 );
+  setDefaultButton( User1 );
+  setButtonGuiItem( User1, KGuiItem( i18n("Next") ) );
+  enableButtonSeparator( true );
+
+  KVBox *main = new KVBox( this );
+  setMainWidget( main );
 
   text = new QLabel(main);
   text->setMinimumHeight(200);

@@ -38,9 +38,16 @@ namespace KFI
 {
 
 CPrintDialog::CPrintDialog(QWidget *parent)
-            : KDialogBase(Plain, i18n("Print Font Samples"), Ok|Cancel, Ok, parent, NULL, true, false)
+            : KDialog( parent )
 {
-    QFrame      *page=plainPage();
+    setCaption( i18n("Print Font Samples") );
+    setModal( true );
+    setButtons( Ok | Cancel );
+    enableButtonSeparator( false );
+
+    QFrame *page = new QFrame( this );
+    setMainWidget( page );
+
     QGridLayout *layout=new QGridLayout(page);
     layout->setSpacing(spacingHint());
     layout->setMargin(0);

@@ -20,7 +20,7 @@
 #include <X11/XKBlib.h>
 #undef explicit
 
-class KDialogBase;
+class KDialog;
 class QLabel;
 class KComboBox;
 
@@ -83,7 +83,7 @@ private:
 
   WId _activeWindow;
 
-  KDialogBase *dialog;
+  KDialog *dialog;
   QLabel *featuresLabel;
   KComboBox *showModeCombobox;
 

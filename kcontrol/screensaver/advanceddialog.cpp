@@ -16,10 +16,14 @@
 #include "advanceddialog.moc"
 
 KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent, const char* name)
- : KDialogBase( parent, name, true, i18n( "Advanced Options" ),
-                Ok | Cancel, Ok, true )
+ : KDialog( parent )
 {
-	
+	setObjectName( name );
+  setModal( true );
+  setCaption( i18n( "Advanced Options" ) );
+  setButtons( Ok | Cancel );
+  enableButtonSeparator( true );
+
 	dialog = new AdvancedDialog(this);
 	setMainWidget(dialog);
 
@@ -96,26 +100,27 @@ void KScreenSaverAdvancedDialog::slotPriorityChanged(int val)
 	mChanged = true;
 }
 
-void KScreenSaverAdvancedDialog::slotOk()
+void KScreenSaverAdvancedDialog::accept()
 {
 	if (mChanged)
-	{
+  {
 		KConfig *config = new KConfig("kdesktoprc");
-		config->setGroup( "ScreenSaver" );
+  	config->setGroup( "ScreenSaver" );
 	
-		config->writeEntry("Priority", mPriority);
-		config->writeEntry(
-		"ActionTopLeft", dialog->qcbTopLeft->currentIndex());
-		config->writeEntry(
-		"ActionTopRight", dialog->qcbTopRight->currentIndex());
-		config->writeEntry(
+ 		config->writeEntry("Priority", mPriority);
+  	config->writeEntry(
+ 		"ActionTopLeft", dialog->qcbTopLeft->currentIndex());
+  	config->writeEntry(
+ 		"ActionTopRight", dialog->qcbTopRight->currentIndex());
+  	config->writeEntry(
 		"ActionBottomLeft", dialog->qcbBottomLeft->currentIndex());
-		config->writeEntry(
-		"ActionBottomRight", dialog->qcbBottomRight->currentIndex());
-		config->sync();
-		delete config;
-	}
-	accept();
+  	config->writeEntry(
+ 		"ActionBottomRight", dialog->qcbBottomRight->currentIndex());
+  	config->sync();
+ 		delete config;
+ 	}
+
+  KDialog::accept();
 }
 
 void KScreenSaverAdvancedDialog::slotChangeBottomRightCorner(int)

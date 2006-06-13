@@ -55,12 +55,18 @@ int main( int argc, char *argv[] )
 // dialog to setup screen saver parameters
 //
 KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
-	: KDialogBase( parent, name, true, i18n( "Setup Blank Screen Saver" ),
-		Ok|Cancel, Ok, true )
+	: KDialog( parent )
 {
+  setObjectName( name );
+  setModal( true );
+  setCaption( i18n( "Setup Blank Screen Saver" ) );
+  setButtons( Ok | Cancel );
+  enableButtonSeparator( true );
+
 	readSettings();
 
-	QFrame *main = makeMainWidget();
+	QFrame *main = new QFrame( this );
+  setMainWidget( main );
 	QGridLayout *grid = new QGridLayout(main);
 	grid->setSpacing(spacingHint());
 	grid->setMargin(0);
@@ -109,11 +115,11 @@ void KBlankSetup::slotColor( const QColor &col )
 void KBlankSetup::slotOk()
 {
 	KConfig *config = KGlobal::config();
-	config->setGroup( "Settings" );
-	config->writeEntry( "Color", color );
-	config->sync();
+  config->setGroup( "Settings" );
+ 	config->writeEntry( "Color", color );
+  config->sync();
 
-	accept();
+ 	accept();
 }
 
 //-----------------------------------------------------------------------------

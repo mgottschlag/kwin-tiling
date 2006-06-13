@@ -43,23 +43,28 @@
 
 ConfigDialog::ConfigDialog( const ActionList *list, KGlobalAccel *accel,
                             bool isApplet )
-    : KDialogBase( Tabbed, i18n("Configure"),
-                    Ok | Cancel | Help,
-                    Ok, 0L, "config dialog" )
+    : KPageDialog()
 {
+    setFaceType( Tabbed );
+    setCaption( i18n("Configure") );
+    setButtons( Ok | Cancel | Help );
+
     if ( isApplet )
         setHelp( QString(), "klipper" );
 
     KVBox *w = 0L; // the parent for the widgets
 
-    w = addVBoxPage( i18n("&General") );
+    w = new KVBox( this );
     generalWidget = new GeneralWidget( w, "general widget" );
+    addPage( w, i18n("&General") );
 
-    w = addVBoxPage( i18n("Ac&tions") );
+    w = new KVBox( this );
     actionWidget = new ActionWidget( list, this, w, "actions widget" );
+    addPage( w, i18n("Ac&tions") );
 
-    w = addVBoxPage( i18n("&Shortcuts") );
+    w = new KVBox( this );
     keysWidget = new KKeyChooser( w, KKeyChooser::GlobalAction );
+    addPage( w, i18n("&Shortcuts") );
 }
 
 
@@ -85,7 +90,7 @@ void ConfigDialog::show()
  	resize( w, h );
     }
 
-    KDialogBase::show();
+    KDialog::show();
 }
 
 void ConfigDialog::commitShortcuts()
@@ -413,17 +418,21 @@ ActionList * ActionWidget::actionList()
 
 void ActionWidget::slotAdvanced()
 {
-    KDialogBase dlg( 0L, "advanced dlg", true,
-                     i18n("Advanced Settings"),
-                     KDialogBase::Ok | KDialogBase::Cancel, KDialogBase::Ok );
-    KVBox *box = dlg.makeVBoxMainWidget();
+    KDialog dlg( 0 );
+    dlg.setModal( true );
+    dlg.setCaption( i18n("Advanced Settings") );
+    dlg.setButtons( KDialog::Ok | KDialog::Cancel );
+
+    KVBox *box = new KVBox( &dlg );
+    dlg.setMainWidget( box );
+
     AdvancedWidget *widget = new AdvancedWidget( box );
     widget->setWMClasses( m_wmClasses );
 
     dlg.resize( dlg.sizeHint().width(),
                 dlg.sizeHint().height() +40); // or we get an ugly scrollbar :(
 
-    if ( dlg.exec() == QDialog::Accepted ) {
+    if ( dlg.exec() == KDialog::Accepted ) {
         m_wmClasses = widget->wmClasses();
     }
 }

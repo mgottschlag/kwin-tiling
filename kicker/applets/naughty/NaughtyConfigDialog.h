@@ -21,12 +21,12 @@
 #ifndef NAUGHTY_CONFIG_DIALOG_H
 #define NAUGHTY_CONFIG_DIALOG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class KEditListBox;
 class KIntNumInput;
 
-class NaughtyConfigDialog : public KDialogBase
+class NaughtyConfigDialog : public KDialog
 {
   Q_OBJECT
 

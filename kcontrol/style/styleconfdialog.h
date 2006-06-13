@@ -21,10 +21,10 @@
 #ifndef STYLE_CONF_DIALOG
 #define STYLE_CONF_DIALOG
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 
-class StyleConfigDialog: public KDialogBase
+class StyleConfigDialog: public KDialog
 {
   Q_OBJECT
 public:

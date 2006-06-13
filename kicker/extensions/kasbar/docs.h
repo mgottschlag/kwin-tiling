@@ -65,7 +65,7 @@ class QLCDNumber : public QFrame
 {
 };
 
-class KDialogBase : public QDialog
+class KDialog : public QDialog
 {
 };
 

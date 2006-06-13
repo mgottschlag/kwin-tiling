@@ -38,7 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class QTimer;
 class KWinModule;
 class TrayEmbed;
-class KDialogBase;
+class KDialog;
 class KActionSelector;
 class SimpleButton;
 
@@ -97,7 +97,7 @@ private:
     bool m_showFrame;
     bool m_showHidden;
     SimpleButton *m_expandButton;
-    KDialogBase* m_settingsDialog;
+    KDialog* m_settingsDialog;
     KActionSelector* m_iconSelector;
     QTimer* m_autoRetractTimer;
     bool m_autoRetract;

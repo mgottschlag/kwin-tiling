@@ -24,12 +24,11 @@
 #define _BGWALLPAPER_H_
 
 #include <q3listbox.h>
-#include <QStringList>
-//Added by qt3to4:
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QStringList>
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class BGMultiWallpaperBase;
 class KBackgroundSettings;
@@ -45,7 +44,7 @@ public:
    void ensureSelectionVisible();
 };
 
-class BGMultiWallpaperDialog : public KDialogBase
+class BGMultiWallpaperDialog : public KDialog
 {
    Q_OBJECT
 public:

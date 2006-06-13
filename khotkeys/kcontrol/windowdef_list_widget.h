@@ -13,7 +13,7 @@
 
 #include <QListView>
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 #include <windows.h>
 #include <windowdef_list_widget_ui.h>
@@ -82,7 +82,7 @@ class Windowdef_dialog
     };
     
 class Windowdef_simple_dialog
-    : public KDialogBase, public Windowdef_dialog
+    : public KDialog, public Windowdef_dialog
     {
     Q_OBJECT
     public:

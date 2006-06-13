@@ -19,7 +19,7 @@
 #include <QLabel>
 
 #include <kcmodule.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class QCheckBox;
 class QColor;
@@ -112,7 +112,7 @@ private:
     QWidget *m_pTab1;
 };
 
-class KIconEffectSetupDialog: public KDialogBase
+class KIconEffectSetupDialog: public KDialog
 {
     Q_OBJECT
 

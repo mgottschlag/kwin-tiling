@@ -214,11 +214,16 @@ int main(int argc, char *argv[])
 
 
 KRandomSetup::KRandomSetup( QWidget *parent, const char *name )
-	: KDialogBase( parent, name, true, i18n( "Setup Random Screen Saver" ),
-			Ok|Cancel, Ok, true )
+	: KDialog( parent )
 {
+  setObjectName( name );
+  setModal( true );
+  setCaption( i18n( "Setup Random Screen Saver" ) );
+  setButtons( Ok | Cancel );
+  enableButtonSeparator( true );
 
-	QFrame *main = makeMainWidget();
+	QFrame *main = new QFrame( this );
+  setMainWidget( main );
 	QGridLayout *grid = new QGridLayout(main );
         grid->setSpacing( spacingHint() );
 
@@ -234,16 +239,18 @@ KRandomSetup::KRandomSetup( QWidget *parent, const char *name )
 	config.setGroup("Settings");
 	openGL->setChecked(config.readEntry("OpenGL", QVariant(true)).toBool());
 	manipulateScreen->setChecked(config.readEntry("ManipulateScreen", QVariant(true)).toBool());
+
+  connect( this, SIGNAL( okClicked() ), SLOT( slotOk() ) );
 }
 
 void KRandomSetup::slotOk()
 {
-	KConfig config("krandom.kssrc");
-	config.setGroup("Settings");
-	config.writeEntry("OpenGL", openGL->isChecked());
-	config.writeEntry("ManipulateScreen", manipulateScreen->isChecked());
+ 	KConfig config("krandom.kssrc");
+  config.setGroup("Settings");
+ 	config.writeEntry("OpenGL", openGL->isChecked());
+  config.writeEntry("ManipulateScreen", manipulateScreen->isChecked());
 
-	accept();
+ 	accept();
 }
 
 #include "random.moc"

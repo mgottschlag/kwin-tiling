@@ -14,7 +14,7 @@
 #include <QListView>
 
 #include <actions.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 #include <action_list_widget_ui.h>
 
@@ -84,7 +84,7 @@ class Action_dialog
     };
     
 class Command_url_action_dialog
-    : public KDialogBase, public Action_dialog
+    : public KDialog, public Action_dialog
     {
     Q_OBJECT
     public:
@@ -97,7 +97,7 @@ class Command_url_action_dialog
     };
         
 class Menuentry_action_dialog
-    : public KDialogBase, public Action_dialog
+    : public KDialog, public Action_dialog
     {
     Q_OBJECT
     public:
@@ -110,7 +110,7 @@ class Menuentry_action_dialog
     };
         
 class Dcop_action_dialog
-    : public KDialogBase, public Action_dialog
+    : public KDialog, public Action_dialog
     {
     Q_OBJECT
     public:
@@ -123,7 +123,7 @@ class Dcop_action_dialog
     };
         
 class Keyboard_input_action_dialog
-    : public KDialogBase, public Action_dialog
+    : public KDialog, public Action_dialog
     {
     Q_OBJECT
     public:
@@ -136,7 +136,7 @@ class Keyboard_input_action_dialog
     };
         
 class Activate_window_action_dialog
-    : public KDialogBase, public Action_dialog
+    : public KDialog, public Action_dialog
     {
     Q_OBJECT
     public:

@@ -21,17 +21,15 @@
 #ifndef _CALDIALOG_H_
 #define _CALDIALOG_H_
 
-#include <kdialogbase.h>
-//Added by qt3to4:
 #include <QLabel>
 
-class QLabel;
+#include <kdialog.h>
 
 class JoyDevice;
 
 // the dialog which tells the user all steps to calibrate the device
 
-class CalDialog : public KDialogBase
+class CalDialog : public KDialog
 {
   Q_OBJECT
   

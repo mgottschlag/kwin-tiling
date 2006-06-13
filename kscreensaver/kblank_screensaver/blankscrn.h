@@ -9,7 +9,7 @@
 #define BLANKSCRN_H
 
 #include <QColor>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include "kscreensaver.h"
 
 class KColorButton;
@@ -32,7 +32,7 @@ private:
 	QColor color;
 };
 
-class KBlankSetup : public KDialogBase
+class KBlankSetup : public KDialog
 {
 	Q_OBJECT
 public:

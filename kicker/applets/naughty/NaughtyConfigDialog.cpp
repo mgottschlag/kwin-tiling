@@ -35,17 +35,14 @@ NaughtyConfigDialog::NaughtyConfigDialog
  const char * name
 )
   :
-  KDialogBase
-  (
-   parent,
-   name,
-   true,
-   i18n("Configuration"),
-   KDialogBase::Ok | KDialogBase::Cancel,
-   KDialogBase::Ok,
-   true
-  )
+  KDialog( parent )
 {
+  setObjectName( name );
+  setModal( true );
+  setCaption( i18n("Configuration") );
+  setButtons( Ok | Cancel );
+  enableButtonSeparator( true );
+
   KVBox * v = new KVBox(this);
   setMainWidget(v);
 

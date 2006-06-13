@@ -58,7 +58,7 @@
 #ifndef KASPREFSDLG_H
 #define KASPREFSDLG_H
 
-#include <kdialogbase.h>
+#include <kpagedialog.h>
 
 class QComboBox;
 class QCheckBox;
@@ -74,7 +74,7 @@ class KasResources;
 /**
  * Prefs dialog for KasBar
  */
-class KasPrefsDialog : public KDialogBase
+class KasPrefsDialog : public KPageDialog
 {
    Q_OBJECT
 

@@ -1,7 +1,7 @@
 #ifndef ADVANCEDDIALOG_H
 #define ADVANCEDDIALOG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <QWidget>
 #include <kconfig.h>
 #include <QLabel>
@@ -25,14 +25,14 @@ public:
 
 /* =================================================================================================== */
 
-class KScreenSaverAdvancedDialog : public KDialogBase
+class KScreenSaverAdvancedDialog : public KDialog
 {
     Q_OBJECT
 public:
     KScreenSaverAdvancedDialog(QWidget *parent, const char* name = 0);
       
 public Q_SLOTS:
-    void slotOk();
+    virtual void accept();
          
 protected Q_SLOTS:
     void slotPriorityChanged(int val);

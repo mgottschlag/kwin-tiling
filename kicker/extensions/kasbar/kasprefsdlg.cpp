@@ -78,13 +78,14 @@
 
 
 KasPrefsDialog::KasPrefsDialog( KasTasker *kas, QWidget *parent )
-   : KDialogBase( KDialogBase::IconList, i18n("Kasbar Preferences"),
-		  KDialogBase::Ok | KDialogBase::Cancel,
-		  KDialogBase::Ok,
-		  parent, "kasbarPrefsDialog", /*true*/false ),
+   : KPageDialog( parent ),
      kasbar( kas ),
      res( kas->resources() )
 {
+   setFaceType( List );
+   setCaption( i18n("Kasbar Preferences") );
+   setButtons( Ok | Cancel );
+
    addLookPage();
    addBackgroundPage();
    addThumbsPage();
@@ -108,7 +109,10 @@ void KasPrefsDialog::itemSizeChanged( int sz )
 
 void KasPrefsDialog::addLookPage()
 {
-   KVBox *lookPage = addVBoxPage( i18n("Appearance"), QString(), Icon( "appearance" ) );
+   KVBox *lookPage = new KVBox( this );
+
+   KPageWidgetItem *item = addPage( lookPage, i18n("Appearance") );
+   item->setIcon( Icon( "appearance" ) );
 
    //
    // Item size
@@ -189,7 +193,10 @@ void KasPrefsDialog::addLookPage()
 
 void KasPrefsDialog::addBackgroundPage()
 {
-   KVBox *bgPage = addVBoxPage( i18n("Background"), QString(), Icon( "background" ) );
+   KVBox *bgPage = new KVBox( this );
+
+   KPageWidgetItem *item = addPage( bgPage, i18n("Background") );
+   item->setItem( Icon( "background" ) );
 
    transCheck = new QCheckBox( i18n("Trans&parent"), bgPage );
    transCheck->setWhatsThis( i18n( "Enables pseudo-transparent mode." ) );
@@ -237,7 +244,10 @@ void KasPrefsDialog::addBackgroundPage()
 
 void KasPrefsDialog::addThumbsPage()
 {
-   KVBox *thumbsPage = addVBoxPage( i18n("Thumbnails"), QString(), Icon( "icons" ) );
+   KVBox *thumbsPage = new KVBox( this );
+
+   KPageWidgetItem *item = addPage( thumbsPage, i18n("Thumbnails") );
+   item->setIcon( Icon( "icons" ) );
 
    thumbsCheck = new QCheckBox( i18n("Enable thu&mbnails"), thumbsPage );
    thumbsCheck->setWhatsThis(
@@ -284,7 +294,10 @@ void KasPrefsDialog::addThumbsPage()
 
 void KasPrefsDialog::addBehavePage()
 {
-   KVBox *behavePage = addVBoxPage( i18n("Behavior"), QString(), Icon( "window_list" ) );
+   KVBox *behavePage = new KVBox( this );
+
+   KPageWidgetItem *item = addPage( behavePage, i18n("Behavior") );
+   item->setIcon( Icon( "window_list" ) );
 
    groupWindowsCheck = new QCheckBox( i18n("&Group windows"), behavePage );
    groupWindowsCheck->setWhatsThis(
@@ -320,7 +333,10 @@ void KasPrefsDialog::addBehavePage()
 
 void KasPrefsDialog::addColorsPage()
 {
-   KVBox *colorsPage = addVBoxPage( i18n("Colors"), QString(), Icon( "colors" ) );
+   KVBox *colorsPage = new KVBox( this );
+
+   KPageWidgetItem *item = addPage( colorsPage, i18n("Colors") );
+   item->setIcon( Icon( "colors" ) );
 
    // Item label colors
    Q3Grid *group = new Q3Grid( 2, colorsPage );
@@ -387,7 +403,10 @@ void KasPrefsDialog::addColorsPage()
 
 void KasPrefsDialog::addIndicatorsPage()
 {
-   KVBox *indicatorsPage = addVBoxPage( i18n("Indicators"), QString(), Icon( "bell" ) );
+   KVBox *indicatorsPage = new KVBox( this );
+
+   KPageWidgetItem *item = addPage( indicatorsPage, i18n("Indicators") );
+   item->setIcon( Icon( "bell" ) );
 
    (void) new QWidget( indicatorsPage, "spacer" );
    (void) new QWidget( indicatorsPage, "spacer" );
@@ -395,7 +414,10 @@ void KasPrefsDialog::addIndicatorsPage()
 
 void KasPrefsDialog::addAdvancedPage()
 {
-   KVBox *advancedPage = addVBoxPage( i18n("Advanced"), QString(), Icon( "misc" ) );
+   KVBox *advancedPage = new KVBox( this );
+
+   KPageWidgetItem *item = addPage( advancedPage, i18n("Advanced") );
+   item->setIcon( Icon( "misc" ) );
 
    // Startup notifier
    notifierCheck = new QCheckBox( i18n("Enable &startup notifier"), advancedPage );
@@ -455,11 +477,11 @@ void KasPrefsDialog::accept()
        conf->sync();
    }
 
-   QDialog::accept();
+   KDialog::accept();
 }
 
 void KasPrefsDialog::reject()
 {
    kasbar->readConfig();
-   QDialog::reject();
+   KDialog::reject();
 }

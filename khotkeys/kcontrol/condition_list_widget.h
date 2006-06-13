@@ -14,7 +14,7 @@
 #include <q3listview.h>
 #include <q3ptrlist.h>
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 #include <conditions.h>
 #include <condition_list_widget_ui.h>
@@ -83,7 +83,7 @@ class Condition_dialog
     };
     
 class Active_window_condition_dialog
-    : public KDialogBase, public Condition_dialog
+    : public KDialog, public Condition_dialog
     {
     Q_OBJECT
     public:
@@ -96,7 +96,7 @@ class Active_window_condition_dialog
     };
         
 class Existing_window_condition_dialog
-    : public KDialogBase, public Condition_dialog
+    : public KDialog, public Condition_dialog
     {
     Q_OBJECT
     public:

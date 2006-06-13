@@ -21,7 +21,7 @@
 
 #include <QString>
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class NewThemeWidget;
 
@@ -30,7 +30,7 @@ class NewThemeWidget;
  * getters and setters used for the theme general properties
  * @author Lukas Tinkl <lukas@kde.org>
  */
-class KNewThemeDlg: public KDialogBase
+class KNewThemeDlg: public KDialog
 {
     Q_OBJECT
 public:

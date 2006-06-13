@@ -27,7 +27,7 @@
 #include <q3listview.h>
 #include <QStringList>
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class QLineEdit;
 class QSpinBox;
@@ -36,7 +36,7 @@ class BGAdvancedBase;
 class KBackgroundRenderer;
 class KBackgroundProgram;
 
-class BGAdvancedDialog : public KDialogBase
+class BGAdvancedDialog : public KDialog
 {
    Q_OBJECT
 public:
@@ -89,7 +89,7 @@ private:
 /**
  * Dialog to edit a background program.
  */
-class KProgramEditDialog: public KDialogBase
+class KProgramEditDialog: public KDialog
 {
     Q_OBJECT
 
@@ -101,7 +101,7 @@ public:
     QString program()const;
 
 public Q_SLOTS:
-    void slotOk();
+    virtual void accept();
 
 private:
     QString m_Program;

@@ -213,8 +213,11 @@ Windowdef_list_item::~Windowdef_list_item()
 
 Windowdef_simple_dialog::Windowdef_simple_dialog( Windowdef_simple* window_P, QObject* obj_P,
     const char* slot_P )
-    : KDialogBase( NULL, NULL, true, i18n( "Window Details" ), Ok | Cancel ), window( NULL )
+    : KDialog( 0 ), window( NULL )
     {
+    setModal( true );
+    setCaption( i18n( "Window Details" ) );
+    setButtons( Ok | Cancel );
     widget = new Windowdef_simple_widget( this );
     widget->set_autodetect( obj_P, slot_P );
     widget->set_data( window_P );
@@ -229,7 +232,7 @@ Windowdef* Windowdef_simple_dialog::edit_windowdef()
 
 void Windowdef_simple_dialog::accept()
     {
-    KDialogBase::accept();
+    KDialog::accept();
     window = widget->get_data(); // CHECKME NULL ?
     }
 

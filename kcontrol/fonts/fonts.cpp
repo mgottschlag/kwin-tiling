@@ -207,9 +207,15 @@ void FontUseItem::applyFontDiff( const QFont &fnt, int fontDiffFlags )
 /**** FontAASettings ****/
 
 FontAASettings::FontAASettings(QWidget *parent)
-              : KDialogBase(parent, "FontAASettings", true, i18n("Configure Anti-Alias Settings"), Ok|Cancel, Ok, true),
+              : KDialog( parent ),
                 changesMade(false)
 {
+  setObjectName( "FontAASettings" );
+  setModal( true );
+  setCaption( i18n("Configure Anti-Alias Settings") );
+  setButtons( Ok|Cancel );
+  enableButtonSeparator( true );
+
   QWidget     *mw=new QWidget(this);
   QGridLayout *layout=new QGridLayout(mw);
   layout->setSpacing(KDialog::spacingHint());
@@ -468,7 +474,7 @@ void FontAASettings::changed()
 
 int FontAASettings::exec()
 {
-    int i=KDialogBase::exec();
+    int i=KDialog::exec();
 
     if(!i)
         load(); // Reset settings...

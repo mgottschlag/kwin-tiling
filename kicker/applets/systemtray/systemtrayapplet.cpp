@@ -40,7 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobal.h>
 #include <krun.h>
 #include <kwinmodule.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kactionselector.h>
 #include <kiconloader.h>
 #include <kwin.h>
@@ -198,11 +198,13 @@ void SystemTrayApplet::preferences()
         return;
     }
 
-    m_settingsDialog = new KDialogBase(0, "systrayconfig",
-                                       false, i18n("Configure System Tray"),
-                                       KDialogBase::Ok | KDialogBase::Apply | KDialogBase::Cancel,
-                                       KDialogBase::Ok, true);
+    m_settingsDialog = new KDialog( 0 );
+    m_settingsDialog->setObjectName( "systrayconfig" );
+    m_settingsDialog->setCaption( i18n("Configure System Tray") );
+    m_settingsDialog->setButtons( KDialog::Ok, KDialog::Apply, KDialog::Cancel );
+    m_settingsDialog->enableButtonSeparator( true );
     m_settingsDialog->resize(450, 400);
+
     connect(m_settingsDialog, SIGNAL(applyClicked()), this, SLOT(applySettings()));
     connect(m_settingsDialog, SIGNAL(okClicked()), this, SLOT(applySettings()));
     connect(m_settingsDialog, SIGNAL(finished()), this, SLOT(settingsDialogFinished()));

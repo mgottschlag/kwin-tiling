@@ -29,13 +29,13 @@
 // (C) Craig Drummond, 2005
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <QComboBox>
 
 namespace KFI
 {
 
-class CPrintDialog : public KDialogBase
+class CPrintDialog : public KDialog
 {
     public:
 

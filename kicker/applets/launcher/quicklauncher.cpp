@@ -245,8 +245,8 @@ void QuickLauncher::slotConfigure()
     if (!m_configDialog)
     {
         m_configDialog = new ConfigDlg(this, "configdialog",
-            m_settings, SIZE_AUTO, KDialogBase::Plain, KDialogBase::Ok |
-            KDialogBase::Cancel | KDialogBase::Apply | KDialogBase::Default);
+            m_settings, SIZE_AUTO, KPageDialog::Plain, KDialog::Ok |
+            KDialog::Cancel | KDialog::Apply | KDialog::Default);
         connect(m_configDialog, SIGNAL(settingsChanged()),
             this, SLOT(slotSettingsDialogChanged()));
     }

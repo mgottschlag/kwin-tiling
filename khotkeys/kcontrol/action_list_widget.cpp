@@ -237,8 +237,10 @@ Action_list_item::~Action_list_item()
 // Command_url_action_dialog
 
 Command_url_action_dialog::Command_url_action_dialog( Command_url_action* action_P )
-    : KDialogBase( NULL, NULL, true, "", Ok | Cancel ), action( NULL ) // CHECKME caption
+    : KDialog( 0 ), action( NULL ) // CHECKME caption
     {
+    setModal( true );
+    setButtons( Ok | Cancel );
     widget = new Command_url_widget( this );
     widget->set_data( action_P );
     setMainWidget( widget );
@@ -252,15 +254,17 @@ Action* Command_url_action_dialog::edit_action()
 
 void Command_url_action_dialog::accept()
     {
-    KDialogBase::accept();
+    KDialog::accept();
     action = widget->get_data( NULL ); // CHECKME NULL ?
     }
 
 // Menuentry_action_dialog
 
 Menuentry_action_dialog::Menuentry_action_dialog( Menuentry_action* action_P )
-    : KDialogBase( NULL, NULL, true, "", Ok | Cancel ), action( NULL ) // CHECKME caption
+    : KDialog( 0 ), action( NULL ) // CHECKME caption
     {
+    setModal( true );
+    setButtons( Ok | Cancel );
     widget = new Menuentry_widget( this );
     widget->set_data( action_P );
     setMainWidget( widget );
@@ -274,15 +278,17 @@ Action* Menuentry_action_dialog::edit_action()
 
 void Menuentry_action_dialog::accept()
     {
-    KDialogBase::accept();
+    KDialog::accept();
     action = widget->get_data( NULL ); // CHECKME NULL ?
     }
 
 // Dcop_action_dialog
 
 Dcop_action_dialog::Dcop_action_dialog( Dcop_action* action_P )
-    : KDialogBase( NULL, NULL, true, "", Ok | Cancel ), action( NULL ) // CHECKME caption
+    : KDialog( 0 ), action( NULL ) // CHECKME caption
     {
+    setModal( true );
+    setButtons( Ok | Cancel );
     widget = new Dcop_widget( this );
     widget->set_data( action_P );
     setMainWidget( widget );
@@ -296,15 +302,17 @@ Action* Dcop_action_dialog::edit_action()
 
 void Dcop_action_dialog::accept()
     {
-    KDialogBase::accept();
+    KDialog::accept();
     action = widget->get_data( NULL ); // CHECKME NULL ?
     }
 
 // Keyboard_input_action_dialog
 
 Keyboard_input_action_dialog::Keyboard_input_action_dialog( Keyboard_input_action* action_P )
-    : KDialogBase( NULL, NULL, true, "", Ok | Cancel ), action( NULL ) // CHECKME caption
+    : KDialog( 0 ), action( NULL ) // CHECKME caption
     {
+    setModal( true );
+    setButtons( Ok | Cancel );
     widget = new Keyboard_input_widget( this );
     widget->set_data( action_P );
     setMainWidget( widget );
@@ -318,15 +326,17 @@ Action* Keyboard_input_action_dialog::edit_action()
 
 void Keyboard_input_action_dialog::accept()
     {
-    KDialogBase::accept();
+    KDialog::accept();
     action = widget->get_data( NULL ); // CHECKME NULL ?
     }
 
 // Activate_window_action_dialog
 
 Activate_window_action_dialog::Activate_window_action_dialog( Activate_window_action* action_P )
-    : KDialogBase( NULL, NULL, true, "", Ok | Cancel ), action( NULL ) // CHECKME caption
+    : KDialog( 0 ), action( NULL ) // CHECKME caption
     {
+    setModal( true );
+    setButtons( Ok | Cancel );
     widget = new Activate_window_widget( this );
     widget->set_data( action_P ? action_P->window() : NULL );
     setMainWidget( widget );
@@ -340,7 +350,7 @@ Action* Activate_window_action_dialog::edit_action()
 
 void Activate_window_action_dialog::accept()
     {
-    KDialogBase::accept();
+    KDialog::accept();
     action = new Activate_window_action( NULL, widget->get_data()); // CHECKME NULL ?
     }
 

@@ -36,11 +36,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "browser_dlg.moc"
 
 PanelBrowserDialog::PanelBrowserDialog( const QString& path, const QString &icon, QWidget *parent, const char *name )
-    :  KDialogBase( parent, name, true, i18n( "Quick Browser Configuration" ), Ok|Cancel, Ok, true )
+    :  KDialog( parent )
 {
+    setObjectName( name );
+    setModal( true );
+    setCaption( i18n( "Quick Browser Configuration" ) );
+    setButtons( Ok|Cancel );
+    enableButtonSeparator( true );
+
     setMinimumWidth( 300 );
 
-    KVBox *page = makeVBoxMainWidget();
+    KVBox *page = new KVBox( this );
+    setMainWidget( page );
 
     QWidget* widget = new QWidget(page);
     QHBoxLayout *hbox = new QHBoxLayout(widget);
@@ -104,14 +111,15 @@ void PanelBrowserDialog::browse()
     }
 }
 
-void PanelBrowserDialog::slotOk()
+void PanelBrowserDialog::accept()
 {
     QDir dir(path());
     if( !dir.exists() ) {
         KMessageBox::sorry( this, i18n("'%1' is not a valid folder.", path()) );
         return;
     }
-    KDialogBase::slotOk();
+
+    KDialog::accept();
 }
 
 const QString PanelBrowserDialog::icon()

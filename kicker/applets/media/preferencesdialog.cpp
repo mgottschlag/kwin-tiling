@@ -58,11 +58,17 @@ private:
 
 PreferencesDialog::PreferencesDialog(KFileItemList media, QWidget *parent,
                                      const char *name)
-	: KDialogBase(Tabbed, i18n("Media Applet Preferences"), Ok|Cancel|Default,
-	              Ok, parent, name, true),
+	: KPageDialog( parent ),
 	  mMedia(media)
 {
-	KVBox *types_page = addVBoxPage( i18n("Medium Types") );
+  setFaceType( Tabbed );
+  setCaption( i18n("Media Applet Preferences") );
+  setButtons( Ok|Cancel|Default );
+  setObjectName( name );
+  setModal( true );
+
+	KVBox *types_page = new KVBox( this );
+  addPage( types_page, i18n("Medium Types") );
 	mpMediumTypesListView = new K3ListView(types_page);
 
 	//mpMediumTypesListView->setFullWidth(true);
@@ -71,7 +77,8 @@ PreferencesDialog::PreferencesDialog(KFileItemList media, QWidget *parent,
 
 
 
-	KVBox *media_page = addVBoxPage( i18n("Media") );
+	KVBox *media_page = new KVBox( this );
+  addPage( media_page, i18n("Media") );
 	mpMediaListView = new K3ListView(media_page);
 
 	//mpMediaListView->setFullWidth(true);

@@ -14,7 +14,7 @@
 #include <Q3PtrList>
 
 #include <kcmodule.h>
-#include <kdialogbase.h>
+#include <kdialog.h>
 #include <kfontdialog.h>
 #include <kfontrequester.h>
 
@@ -50,7 +50,7 @@ private:
     QFont _default;
 };
 
-class FontAASettings : public KDialogBase
+class FontAASettings : public KDialog
 {
   Q_OBJECT
 

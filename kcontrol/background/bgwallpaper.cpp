@@ -99,9 +99,14 @@ void BGMultiWallpaperList::ensureSelectionVisible()
 
 BGMultiWallpaperDialog::BGMultiWallpaperDialog(KBackgroundSettings *settings,
 	QWidget *parent, const char *name)
-	: KDialogBase(parent, name, true, i18n("Setup Slide Show"),
-	Ok | Cancel, Ok, true), m_pSettings(settings)
+	: KDialog( parent ), m_pSettings(settings)
 {
+   setObjectName( name );
+   setModal( true );
+   setCaption( i18n("Setup Slide Show") );
+   setButtons( Ok | Cancel );
+   enableButtonSeparator( true );
+
    dlg = new BGMultiWallpaperBase(this);
    setMainWidget(dlg);
 
@@ -231,7 +236,8 @@ void BGMultiWallpaperDialog::slotOk()
        m_pSettings->setMultiWallpaperMode(KBackgroundSettings::Random);
     else
        m_pSettings->setMultiWallpaperMode(KBackgroundSettings::InOrder);
-    accept();
+
+    KDialog::accept();
 }
 
 

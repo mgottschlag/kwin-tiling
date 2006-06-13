@@ -20,11 +20,12 @@
  */
 
 
-#include <QLayout>
-
-#include <QTimer>
-#include <qprogressbar.h>
 #include <QLabel>
+#include <QLayout>
+#include <QPixmap>
+#include <QTimer>
+
+#include <qprogressbar.h>
 
 #include <kwin.h>
 #include <kiconloader.h>
@@ -44,9 +45,18 @@ KTimerDialog::KTimerDialog( int msec, TimerStyle style, QWidget *parent,
                  const KGuiItem &user1,
                  const KGuiItem &user2,
                  const KGuiItem &user3 )
-    : KDialogBase(parent, name, modal, caption, buttonMask, defaultButton,
-                 separator, user1, user2, user3 )
+    : KDialog( parent )
 {
+    setObjectName( name );
+    setModal( modal );
+    setCaption( caption );
+    setButtons( (ButtonCodes)buttonMask );
+    setDefaultButton( defaultButton );
+    enableButtonSeparator( separator );
+    setButtonGuiItem( User1, user1 );
+    setButtonGuiItem( User2, user2 );
+    setButtonGuiItem( User3, user3 );
+
     totalTimer = new QTimer( this );
     totalTimer->setSingleShot( true );
     updateTimer = new QTimer( this );
@@ -70,7 +80,7 @@ KTimerDialog::KTimerDialog( int msec, TimerStyle style, QWidget *parent,
     timerProgress->setRange( 0, msecTotal );
     timerProgress->setTextVisible( false );
 
-    KDialogBase::setMainWidget( mainWidget );
+    KDialog::setMainWidget( mainWidget );
 
     slotUpdateTime( false );
 }
@@ -81,7 +91,7 @@ KTimerDialog::~KTimerDialog()
 
 void KTimerDialog::show()
 {
-    KDialogBase::show();
+    KDialog::show();
     totalTimer->start( msecTotal );
     updateTimer->start( updateInterval );
 }
@@ -90,7 +100,7 @@ int KTimerDialog::exec()
 {
     totalTimer->start( msecTotal );
     updateTimer->start( updateInterval );
-    return KDialogBase::exec();
+    return KDialog::exec();
 }
 
 void KTimerDialog::setMainWidget( QWidget *widget )
@@ -108,7 +118,7 @@ void KTimerDialog::setMainWidget( QWidget *widget )
 
     delete mainWidget;
     mainWidget = newWidget;
-    KDialogBase::setMainWidget( mainWidget );
+    KDialog::setMainWidget( mainWidget );
 }
 
 void KTimerDialog::setRefreshInterval( int msec )
@@ -177,17 +187,17 @@ void KTimerDialog::slotInternalTimeout()
             slotButtonClicked(KDialog::Try);
             break;
         case Cancel:
-            slotCancel();
+            slotButtonClicked(KDialog::Cancel);
             break;
         case Close:
             slotButtonClicked(KDialog::Close);
             break;
-        /*case User1:
-            slotUser1();
+        case User1:
+            slotButtonClicked(KDialog::User1);
             break;
         case User2:
-            slotUser2();
-            break;*/
+            slotButtonClicked(KDialog::User2);
+            break;
         case User3:
             slotButtonClicked(KDialog::User3);
             break;

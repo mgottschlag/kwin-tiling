@@ -17,7 +17,7 @@
 class QWidget;
 class QCheckBox;
 
-class KRandomSetup : public KDialogBase
+class KRandomSetup : public KDialog
 {
 	Q_OBJECT
 	public:
@@ -29,8 +29,7 @@ class KRandomSetup : public KDialogBase
 		QCheckBox *openGL;
 		QCheckBox *manipulateScreen;
 
-		private Q_SLOTS:
-
+  private Q_SLOTS:
 		void slotOk();
 
 };

@@ -24,10 +24,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __exe_dlg_h__
 #define __exe_dlg_h__
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 class NonKDEButtonSettings;
 
-class PanelExeDialog : public KDialogBase
+class PanelExeDialog : public KDialog
 {
     Q_OBJECT
 public:
@@ -50,7 +50,7 @@ protected Q_SLOTS:
     void slotTextChanged(const QString &);
     void slotReturnPressed();
     void slotIconChanged(QString);
-    void slotOk();
+    virtual void accept();
 
 protected:
     void fillCompletion();

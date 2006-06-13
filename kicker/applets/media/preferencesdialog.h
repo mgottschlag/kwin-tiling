@@ -21,14 +21,14 @@
 #define PREFERENCESDIALOG_H
 
 #include <QWidget>
-#include <kdialogbase.h>
+#include <kpagedialog.h>
 #include <kfileitem.h>
 
 /**
   *@author ervin
   */
 
-class PreferencesDialog : public KDialogBase
+class PreferencesDialog : public KPageDialog
 {
    Q_OBJECT
 public:

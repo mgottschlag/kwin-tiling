@@ -29,14 +29,14 @@
 // (C) Craig Drummond, 2005
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class QCheckBox;
 
 namespace KFI
 {
 
-class CSettingsDialog : public KDialogBase
+class CSettingsDialog : public KDialog
 {
     public:
 

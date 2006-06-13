@@ -25,7 +25,7 @@
 #include <q3header.h>
 #include <QRadioButton>
 
-#include <kdialogbase.h>
+#include <kpagedialog.h>
 #include <keditlistbox.h>
 #include <kkeydialog.h>
 #include <k3listview.h>
@@ -131,7 +131,7 @@ private:
 };*/
 
 
-class ConfigDialog : public KDialogBase
+class ConfigDialog : public KPageDialog
 {
     Q_OBJECT
 

@@ -242,7 +242,7 @@ KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
 
   QVBoxLayout *main = new QVBoxLayout(this);
   main->setMargin(0);
-  main->setSpacing(KDialogBase::spacingHint());
+  main->setSpacing(KDialog::spacingHint());
   QTabWidget *tab = new QTabWidget(this);
   main->addWidget(tab);
 
@@ -250,8 +250,8 @@ KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
   QWidget *bell = new QWidget(this);
 
   QVBoxLayout *vbox = new QVBoxLayout(bell);
-  vbox->setMargin(KDialogBase::marginHint());
-  vbox->setSpacing(KDialogBase::spacingHint());
+  vbox->setMargin(KDialog::marginHint());
+  vbox->setSpacing(KDialog::spacingHint());
 
   Q3GroupBox *grp = new Q3GroupBox(i18n("Audible Bell"), bell);
   grp->setColumnLayout( 0, Qt::Horizontal );
@@ -259,7 +259,7 @@ KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
 
   QVBoxLayout *vvbox = new QVBoxLayout();
   grp->layout()->addItem( vvbox );
-  vvbox->setSpacing( KDialogBase::spacingHint() );
+  vvbox->setSpacing( KDialog::spacingHint() );
 
   systemBell = new QCheckBox(i18n("Use &system bell"), grp);
   vvbox->addWidget(systemBell);
@@ -274,7 +274,7 @@ KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
 
   QHBoxLayout *hbox = new QHBoxLayout();
   vvbox->addItem( hbox );
-  hbox->setSpacing(KDialogBase::spacingHint());
+  hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
   soundEdit = new QLineEdit(grp);
   soundLabel = new QLabel(i18n("Sound &to play:"), grp);

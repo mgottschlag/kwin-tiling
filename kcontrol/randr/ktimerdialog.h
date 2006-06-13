@@ -21,9 +21,9 @@
 #ifndef _KTIMERDIALOG_H_
 #define _KTIMERDIALOG_H_
 
-#include <kdialogbase.h>
-//Added by qt3to4:
 #include <QLabel>
+
+#include <kdialog.h>
 #include <kvbox.h>
 
 class QTimer;
@@ -40,12 +40,12 @@ class QLabel;
  * The button which is activated upon timeout can be specified, as can the
  * update interval for the dialog box.
  *
- * In addition, this class retains all of the functionality of @see KDialogBase .
+ * In addition, this class retains all of the functionality of @see KDialog.
  *
  * @short A dialog with a time limit and corresponding UI features.
  * @author Hamish Rodda <rodda@kde.org>
  */
-class KTimerDialog : public KDialogBase
+class KTimerDialog : public KDialog
 {
   Q_OBJECT
 
@@ -66,9 +66,9 @@ class KTimerDialog : public KDialogBase
 
     /**
      * Constructor for the standard mode where you must specify the main
-     * widget with @ref setMainWidget() . See @see KDialogBase for further details.
+     * widget with @ref setMainWidget() . See @see KDialog for further details.
      *
-     * For the rest of the arguments, See @see KDialogBase .
+     * For the rest of the arguments, See @see KDialog .
      */
     KTimerDialog( int msec, TimerStyle style=CountDown, QWidget *parent=0,
                  const char *name=0, bool modal=true,
@@ -118,7 +118,7 @@ class KTimerDialog : public KDialogBase
 
     /**
      * Overridden function which is used to set the main widget of the dialog.
-     * @see KDialogBase::setMainWidget.
+     * @see KDialog::setMainWidget.
      */
     void setMainWidget( QWidget *widget );
 

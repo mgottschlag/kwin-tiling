@@ -15,7 +15,7 @@
 
 #include <QString>
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 namespace KHotKeys
 {
@@ -44,7 +44,7 @@ class Gesture_triggers_tab
 class GestureRecordPage;
 
 class Gesture_edit_dialog
-    : public KDialogBase
+    : public KDialog
     {
     Q_OBJECT
     public:

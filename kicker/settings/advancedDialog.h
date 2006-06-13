@@ -20,11 +20,11 @@
 #ifndef __ADVANCEDDIALOG_H
 #define __ADVANCEDDIALOG_H
 
-#include <kdialogbase.h>
+#include <kdialog.h>
 
 class advancedKickerOptions;
 
-class advancedDialog : public KDialogBase
+class advancedDialog : public KDialog
 {
     Q_OBJECT
 
