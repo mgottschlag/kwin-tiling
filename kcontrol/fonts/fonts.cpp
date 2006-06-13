@@ -367,6 +367,8 @@ bool FontAASettings::save( bool useAA )
     kglobals.writeEntry("XftSubPixel", "");
   }
 
+  kglobals.writeEntry("XftSubPixel", "");
+
   bool mod=false;
 #ifdef HAVE_FONTCONFIG
   KXftConfig::Hint::Style hStyle(getHintStyle());

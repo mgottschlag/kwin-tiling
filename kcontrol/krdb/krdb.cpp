@@ -521,7 +521,7 @@ void runRdb( uint flags )
             subPixel(kglobals.readEntry("XftSubPixel"));
 
     contents += "Xft.antialias: ";
-    if(QSettings().value("/qt/useXft", false).toBool())
+    if(kglobals.readEntry("XftAntialias", false))
       contents += '1';
     else
       contents += '0';
