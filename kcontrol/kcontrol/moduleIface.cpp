@@ -19,13 +19,13 @@
 
 #include "moduleIface.h"
 #include "moduleIface.moc"
-
+#include <dbus/qdbusconnection.h>
 #include <kdebug.h>
 #include <kconfig.h>
 
 ModuleIface::ModuleIface(QObject *parent, const char *name) 
-	: QObject(parent), DCOPObject(name) {
-
+	: QObject(parent) {
+	QDBus::sessionBus().registerObject("/"+QString(name), this, QDBusConnection::ExportSlots);
 	setObjectName( name );
 	_parent = static_cast<QWidget *>(parent);
 
@@ -33,7 +33,8 @@ ModuleIface::ModuleIface(QObject *parent, const char *name)
 
 ModuleIface::~ModuleIface() {
 }
-
+#warning "kde4: DBUS port "
+#if 0
 QFont ModuleIface::getFont() {
 	return _parent->font(); 
 }
@@ -42,7 +43,7 @@ QPalette ModuleIface::getPalette(){
 	kDebug(1208) << "Returned Palette" << endl;
 	return _parent->palette();
 }
-
+#endif
 QString ModuleIface::getStyle() {
 	KConfig config(  "kdeglobals" );
 	config.setGroup( "General" );

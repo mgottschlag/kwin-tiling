@@ -35,8 +35,7 @@
 #include <kseparator.h>
 #include <kdialog.h>
 #include <kstdguiitem.h>
-#include <dcopclient.h>
-
+#include <dbus/qdbus.h>
 
 #include <QLabel>
 
@@ -163,12 +162,13 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   , _client(client)
 {
  setWindowTitle(title);
-
+#warning "kde4: DBUS port"
+#if 0
  if (getuid()==0 ) {
 	 // Make root modules look as similar as possible...
 	 DCOPCString replyType;
 	 QByteArray replyData;
-	 
+
 	 if (kapp->dcopClient()->call("kcontrol", "moduleIface", "getPalette()", QByteArray(),
 				 replyType, replyData))
 		 if ( replyType == "QPalette") {
@@ -182,11 +182,11 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 				 replyType, replyData))
 		 if ( replyType == "QString") {
 			 QDataStream reply( replyData, QIODevice::ReadOnly );
-			 QString style; 
+			 QString style;
 			 reply >> style;
 			 setStyle(style);
 		 }
-*/	 
+*/
 	 if (kapp->dcopClient()->call("kcontrol", "moduleIface", "getFont()", QByteArray(),
 				 replyType, replyData))
 		 if ( replyType == "QFont") {
@@ -196,7 +196,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
 			 setFont(font);
 		 }
  }
-	 
+#endif
   view = new ProxyView(client, title, this, run_as_root, "proxyview");
   (void) new WhatsThis( this );
 
@@ -242,7 +242,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   buttons->setSpacing(4);
   buttons->addWidget(_help);
   buttons->addWidget(_default);
-  if (run_as_root) 
+  if (run_as_root)
   {
     buttons->addWidget(_root);
   }
@@ -275,7 +275,10 @@ void ProxyWidget::helpClicked()
   if (getuid()!=0)
 	  emit helpRequest();
   else
-     kapp->dcopClient()->send("kcontrol", "moduleIface", "invokeHelp()", QByteArray());
+  {
+     QDBusInterfacePtr kcontrol("org.kde.kcontrol", "/KControl", "org.kde.kcontrol.kcontrol");
+     kcontrol->call( "invokeHelp" );
+  }
 }
 
 void ProxyWidget::defaultClicked()

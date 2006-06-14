@@ -20,26 +20,27 @@
 #ifndef __moduleIface_h__
 #define __moduleIface_h__
 
-#include <dcopobject.h> 
+
 
 #include <QFont>
 #include <QPalette>
 #include <QWidget>
 
-class ModuleIface : public QObject, public DCOPObject {
+class ModuleIface : public QObject {
 
 Q_OBJECT
-K_DCOP
-
+	Q_CLASSINFO("D-Bus Interface", "org.kde.kcontrol.kcontrol")
 public:
 	ModuleIface(QObject *parent, const char *name);
 	~ModuleIface();
 
-k_dcop:
-	QFont getFont();
-	QPalette getPalette();
-	QString getStyle();
-	void invokeHelp();
+public Q_SLOTS:
+#if 0		
+	Q_SCRIPTABLE QFont getFont();
+	Q_SCRIPTABLE QPalette getPalette();
+#endif	
+	Q_SCRIPTABLE QString getStyle();
+	Q_SCRIPTABLE void invokeHelp();
 
 signals:
 	void helpClicked();
