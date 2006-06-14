@@ -405,7 +405,6 @@ bool KlipperWidget::loadHistory() {
     {
         history()->forceInsert( *it );
     }
-    qDeleteAll(reverseList);
 
     if ( !history()->empty() ) {
         m_lastSelection = -1;
