@@ -44,18 +44,18 @@ class QMimeSource;
 class HistoryItem;
 class KlipperSessionManaged;
 
-class KlipperWidget : public QWidget, public DCOPObject
+class KlipperWidget : public QWidget
 {
   Q_OBJECT
-  K_DCOP
+  Q_CLASSINFO("D-Bus Interface", "org.kde.klipper.klipper")
 
-k_dcop:
-    QString getClipboardContents();
-    void setClipboardContents(QString s);
-    void clearClipboardContents();
-    void clearClipboardHistory();
-    QStringList getClipboardHistoryMenu();
-    QString getClipboardHistoryItem(int i);
+public Q_SLOTS:
+  Q_SCRIPTABLE QString getClipboardContents();
+  Q_SCRIPTABLE void setClipboardContents(QString s);
+  Q_SCRIPTABLE void clearClipboardContents();
+  Q_SCRIPTABLE void clearClipboardHistory();
+  Q_SCRIPTABLE QStringList getClipboardHistoryMenu();
+  Q_SCRIPTABLE QString getClipboardHistoryItem(int i);
 
 public:
     KlipperWidget( QWidget *parent, KConfig* config );
@@ -213,10 +213,11 @@ private:
 class Klipper : public KlipperWidget
 {
     Q_OBJECT
-    K_DCOP
-k_dcop:
-    int newInstance();
-    void quitProcess(); // not ASYNC
+
+public Q_SLOTS:
+    Q_SCRIPTABLE int newInstance();
+    Q_SCRIPTABLE void quitProcess(); 
+
 public:
     Klipper( QWidget* parent = NULL );
 };

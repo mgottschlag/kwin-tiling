@@ -53,7 +53,7 @@
 #include <kwin.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
-#include <dcopclient.h>
+#include <dbus/qdbusconnection.h>
 #include <kiconloader.h>
 #include <khelpmenu.h>
 #include <kstdguiitem.h>
@@ -134,7 +134,6 @@ static void ensureGlobalSyncOff(KConfig* config);
 // config == KGlobal::config for process, otherwise applet
 KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     : QWidget( parent )
-    , DCOPObject( "klipper" )
     , m_overflowCounter( 0 )
     , locklevel( 0 )
     , m_config( config )
@@ -142,6 +141,8 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     , session_managed( new KlipperSessionManaged( this ))
 {
     qt_qclipboard_bailout_hack = true;
+
+    QDBus::sessionBus().registerObject("/klipper", this, QDBusConnection::ExportSlots);
 
     // We don't use the clipboardsynchronizer anymore, and it confuses Klipper
     ensureGlobalSyncOff(m_config);
@@ -390,7 +391,7 @@ bool KlipperWidget::loadHistory() {
     // youngest-first to keep the most important clipboard
     // items at the top, but the history is created oldest
     // first.
-    Q3PtrList<HistoryItem> reverseList;
+    QList<HistoryItem*> reverseList;
     for ( HistoryItem* item = HistoryItem::create( *history_stream );
           item;
           item = HistoryItem::create( *history_stream ) )
@@ -398,12 +399,13 @@ bool KlipperWidget::loadHistory() {
         reverseList.prepend( item );
     }
 
-    for ( HistoryItem* item = reverseList.first();
-          item;
-          item = reverseList.next() )
+    for ( QList<HistoryItem*>::const_iterator it = reverseList.begin();
+          it != reverseList.end();
+          ++it )
     {
-        history()->forceInsert( item );
+        history()->forceInsert( *it );
     }
+    qDeleteAll(reverseList);
 
     if ( !history()->empty() ) {
         m_lastSelection = -1;
@@ -1157,7 +1159,9 @@ Klipper::Klipper( QWidget* parent )
 // find newInstance()  (which doesn't do anything in Klipper anyway)
 int Klipper::newInstance()
 {
-    kapp->dcopClient()->setPriorityCall(false); // Allow other dcop calls
+#warning replacement?
+ //   kapp->dcopClient()->setPriorityCall(false); // Allow other dcop calls
+
     return 0;
 }
 
@@ -1165,7 +1169,6 @@ int Klipper::newInstance()
 // (AKA ugly hack)
 void Klipper::quitProcess()
 {
-    kapp->dcopClient()->detach();
     kapp->quit();
 }
 
