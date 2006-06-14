@@ -1537,16 +1537,6 @@ ReadDmrc()
 
 	if (!StrApp( &fname, p->pw_dir, "/.dmrc", (char *)0 ))
 		return GE_Error;
-	if ((curdmrc = iniLoad( fname ))) {
-		free( fname );
-		return GE_Ok;
-	}
-
-	if (errno != EACCES) {
-		free( fname );
-		return GE_NoFile;
-	}
-
 	if (pipe( pfd ))
 		return GE_Error;
 	if ((pid = Fork()) < 0) {
