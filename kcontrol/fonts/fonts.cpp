@@ -345,6 +345,7 @@ bool FontAASettings::save( bool useAA )
 {
   KXftConfig xft(KXftConfig::constStyleSettings);
   KConfig    kglobals("kdeglobals", false, false);
+
   kglobals.setGroup("General");
 
   xft.setAntiAliasing( useAA );
@@ -354,20 +355,13 @@ bool FontAASettings::save( bool useAA )
   else
     xft.setExcludeRange(0, 0);
 
-  if(useSubPixel->isChecked())
-  {
-    KXftConfig::SubPixel::Type spType(getSubPixelType());
+  KXftConfig::SubPixel::Type spType(useSubPixel->isChecked()
+                                        ? getSubPixelType()
+                                        : KXftConfig::SubPixel::None);
 
-    xft.setSubPixelType(spType);
-    kglobals.writeEntry("XftSubPixel", KXftConfig::toStr(spType));
-  }
-  else
-  {
-    xft.setSubPixelType(KXftConfig::SubPixel::None);
-    kglobals.writeEntry("XftSubPixel", "");
-  }
-
-  kglobals.writeEntry("XftSubPixel", "");
+  xft.setSubPixelType(spType);
+  kglobals.writeEntry("XftSubPixel", KXftConfig::toStr(spType));
+  kglobals.writeEntry("XftAntialias", useAA);
 
   bool mod=false;
 #ifdef HAVE_FONTCONFIG
