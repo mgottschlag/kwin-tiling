@@ -43,9 +43,8 @@ class Windowdef_list_widget
         Windowdef_list_item* create_listview_item( Windowdef* window_P, Q3ListView* parent1_P,
             Q3ListViewItem* parent2_P, Q3ListViewItem* after_P, bool copy_P );
         void edit_listview_item( Windowdef_list_item* item_P );
-        enum type_t { TYPE_WINDOWDEF_SIMPLE };
     protected Q_SLOTS:
-        void new_selected( int type_P );
+        void new_selected();
         virtual void copy_pressed();
         virtual void delete_pressed();
         virtual void modify_pressed();

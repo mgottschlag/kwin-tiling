@@ -50,7 +50,7 @@ class Triggers_tab
         Trigger_list_item* selected_item;
         enum type_t { TYPE_SHORTCUT_TRIGGER, TYPE_GESTURE_TRIGGER, TYPE_WINDOW_TRIGGER };
     protected Q_SLOTS:
-        void new_selected( int type_P );
+        void new_selected( QAction* );
         virtual void copy_pressed();
         virtual void delete_pressed();
         virtual void modify_pressed();

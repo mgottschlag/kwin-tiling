@@ -43,13 +43,18 @@ Action_list_widget::Action_list_widget( QWidget* parent_P, const char* name_P )
     : Action_list_widget_ui( parent_P, name_P ), selected_item( NULL )
     {
     QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
-    popup->insertItem( i18n( "Command/URL..." ), TYPE_COMMAND_URL_ACTION );
-    popup->insertItem( i18n( "K-Menu Entry..." ), TYPE_MENUENTRY_ACTION );
-    popup->insertItem( i18n( "DCOP Call..." ), TYPE_DCOP_ACTION );
-    popup->insertItem( i18n( "Keyboard Input..." ), TYPE_KEYBOARD_INPUT_ACTION );
-    popup->insertItem( i18n( "Activate Window..." ), TYPE_ACTIVATE_WINDOW_ACTION );
-    connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
-    new_button->setPopup( popup );
+    QAction *action = popup->addAction( i18n( "Command/URL..." ) );
+    action->setData( TYPE_COMMAND_URL_ACTION );
+    action = popup->addAction( i18n( "K-Menu Entry..." ) );
+    action->setData( TYPE_MENUENTRY_ACTION );
+    action = popup->addAction( i18n( "DCOP Call..." ) );
+    action->setData( TYPE_DCOP_ACTION );
+    action = popup->addAction( i18n( "Keyboard Input..." ) );
+    action->setData( TYPE_KEYBOARD_INPUT_ACTION );
+    action = popup->addAction( i18n( "Activate Window..." ) );
+    action->setData( TYPE_ACTIVATE_WINDOW_ACTION );
+    connect( popup, SIGNAL( triggered( QAction* )), SLOT( new_selected( QAction* )));
+    new_button->setMenu( popup );
     actions_listview->header()->hide();
     actions_listview->addColumn( "" );
     actions_listview->setSorting( -1 );
@@ -76,7 +81,7 @@ Action_list_widget::Action_list_widget( QWidget* parent_P, const char* name_P )
 
 Action_list_widget::~Action_list_widget()
     {
-    delete new_button->popup();
+    delete new_button->menu();
     }
 
 void Action_list_widget::clear_data()
@@ -112,9 +117,11 @@ Action_list* Action_list_widget::get_data( Action_data* data_P ) const
     return list;
     }
 
-void Action_list_widget::new_selected( int type_P )
+void Action_list_widget::new_selected( QAction *action )
     {
     Action_dialog* dlg = NULL;
+
+    int type_P = action->data().toInt();
     switch( type_P )
         {
         case TYPE_COMMAND_URL_ACTION: // Command_url_action_dialog

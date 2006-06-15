@@ -49,7 +49,7 @@ class Action_list_widget
         enum type_t { TYPE_COMMAND_URL_ACTION, TYPE_MENUENTRY_ACTION, TYPE_DCOP_ACTION,
             TYPE_KEYBOARD_INPUT_ACTION, TYPE_ACTIVATE_WINDOW_ACTION };
     protected Q_SLOTS:
-        void new_selected( int type_P );
+        void new_selected( QAction* );
         virtual void copy_pressed();
         virtual void delete_pressed();
         virtual void modify_pressed();

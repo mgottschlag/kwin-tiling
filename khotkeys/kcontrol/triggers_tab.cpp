@@ -49,14 +49,20 @@ Triggers_tab::Triggers_tab( QWidget* parent_P, const char* name_P )
     : Triggers_tab_ui( parent_P, name_P ), selected_item( NULL )
     {
     QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
-    popup->insertItem( i18n( "Shortcut Trigger..." ), TYPE_SHORTCUT_TRIGGER );
-    popup->insertItem( i18n( "Gesture Trigger..." ), TYPE_GESTURE_TRIGGER );
-    popup->insertItem( i18n( "Window Trigger..." ), TYPE_WINDOW_TRIGGER );
-    connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
+    QAction *action = popup->addAction( i18n( "Shortcut Trigger..." ) );
+    action->setData( TYPE_SHORTCUT_TRIGGER );
+
+    action = popup->addAction( i18n( "Gesture Trigger..." ) );
+    action->setData( TYPE_GESTURE_TRIGGER );
+
+    action = popup->addAction( i18n( "Window Trigger..." ) );
+    action->setData( TYPE_WINDOW_TRIGGER );
+
+    connect( popup, SIGNAL( triggered( QAction* )), SLOT( new_selected( QAction* )));
     connect( triggers_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
              this, SLOT( modify_pressed() ) );
 
-    new_button->setPopup( popup );
+    new_button->setMenu( popup );
     copy_button->setEnabled( false );
     modify_button->setEnabled( false );
     delete_button->setEnabled( false );
@@ -80,7 +86,7 @@ Triggers_tab::Triggers_tab( QWidget* parent_P, const char* name_P )
 
 Triggers_tab::~Triggers_tab()
     {
-    delete new_button->popup(); // CHECKME
+    delete new_button->menu(); // CHECKME
     }
 
 void Triggers_tab::clear_data()
@@ -115,9 +121,11 @@ Trigger_list* Triggers_tab::get_data( Action_data* data_P ) const
     return list;
     }
 
-void Triggers_tab::new_selected( int type_P )
+void Triggers_tab::new_selected( QAction *action )
     {
     Trigger_dialog* dlg = NULL;
+
+    int type_P = action->data().toInt();
     switch( type_P )
         {
         case TYPE_SHORTCUT_TRIGGER: // Shortcut_trigger

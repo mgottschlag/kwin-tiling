@@ -24,7 +24,9 @@ GestureRecorder::GestureRecorder(QWidget *parent, const char *name)
   : QFrame(parent), _mouseButtonDown(false)
     {
     setObjectName(name);
-    setBackgroundColor( palette().color( QPalette::Base ) );
+    QPalette p;
+    p.setColor( backgroundRole(), palette().color( QPalette::Base ) );
+    setPalette( p );
     setFrameStyle(QFrame::Sunken | QFrame::Panel);
     setLineWidth(2);
     setMidLineWidth(0);

@@ -44,7 +44,7 @@ class Condition_list_widget
         void edit_listview_item( Condition_list_item* item_P );
         enum type_t { TYPE_ACTIVE_WINDOW, TYPE_EXISTING_WINDOW, TYPE_NOT, TYPE_AND, TYPE_OR };
     protected Q_SLOTS:
-        void new_selected( int type_P );
+        void new_selected( QAction* );
         virtual void copy_pressed();
         virtual void delete_pressed();
         virtual void modify_pressed();

@@ -51,8 +51,10 @@ namespace KHotKeys
 {
 
 Tab_widget::Tab_widget( QWidget* parent_P, const char* name_P )
-    : QTabWidget( parent_P, name_P )
+    : QTabWidget( parent_P )
     {
+    setObjectName( name_P );
+
     pages[ TAB_INFO ] = new Info_tab;
     pages[ TAB_GENERAL_SETTINGS ] = new General_settings_tab;
     pages[ TAB_GESTURES_SETTINGS ] = new Gestures_settings_tab;
@@ -86,7 +88,7 @@ Tab_widget::~Tab_widget()
          i < TAB_END;
          ++i )
         {
-        removePage( pages[ i ] );
+        removeTab( indexOf( pages[ i ] ) );
         delete pages[ i ];
         }
     }
@@ -424,7 +426,7 @@ void Tab_widget::show_pages( const Pages_set& pages_P )
          i < TAB_END;
          ++i )
         {
-        removePage( pages[ i ] );
+        removeTab( indexOf( pages[ i ] ) );
         if( pages_P.is_set( i )) // don't clear page contents if it stays visible
             disconnect( this, SIGNAL( clear_pages_signal()), pages[ i ], SLOT( clear_data()));
         }

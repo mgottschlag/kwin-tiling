@@ -24,7 +24,9 @@ GestureDrawer::GestureDrawer(QWidget *parent, const char *name)
   : QFrame(parent), _data(QString())
     {
     setObjectName(name);
-    setBackgroundColor( palette().color( QPalette::Base ) );
+    QPalette p;
+    p.setColor( backgroundRole(), palette().color( QPalette::Base ) );
+    setPalette( p );
     setFrameStyle(QFrame::Panel | QFrame::Sunken);
     setMinimumSize(30, 30);
     }

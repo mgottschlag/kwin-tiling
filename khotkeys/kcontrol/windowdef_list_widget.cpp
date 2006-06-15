@@ -42,12 +42,12 @@ Windowdef_list_widget::Windowdef_list_widget( QWidget* parent_P, const char* nam
         autodetect_slot( NULL ), selected_item( NULL )
     {
     QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
-    popup->insertItem( i18n( "Simple Window..." ), TYPE_WINDOWDEF_SIMPLE );
-    connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
+    QAction *action = popup->addAction( i18n( "Simple Window..." ) );
+    connect( action, SIGNAL( triggered()), SLOT( new_selected()));
 
     connect( windows_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
              this, SLOT( modify_pressed() ) );
-    new_button->setPopup( popup );
+    new_button->setMenu( popup );
     windows_listview->header()->hide();
     windows_listview->addColumn( "" );
     windows_listview->setSorting( -1 );
@@ -71,7 +71,7 @@ Windowdef_list_widget::Windowdef_list_widget( QWidget* parent_P, const char* nam
 
 Windowdef_list_widget::~Windowdef_list_widget()
     {
-    delete new_button->popup();
+    delete new_button->menu();
     }
 
 void Windowdef_list_widget::clear_data()
@@ -107,19 +107,14 @@ Windowdef_list* Windowdef_list_widget::get_data() const
     return list;
     }
 
-void Windowdef_list_widget::new_selected( int type_P )
+void Windowdef_list_widget::new_selected()
     {
     Windowdef_dialog* dlg = NULL;
-    switch( type_P )
-        {
-        case TYPE_WINDOWDEF_SIMPLE: // Windowdef_simple
-            dlg = new Windowdef_simple_dialog(
-                new Windowdef_simple( "", "", Windowdef_simple::NOT_IMPORTANT, "",
-                Windowdef_simple::NOT_IMPORTANT, "", Windowdef_simple::NOT_IMPORTANT,
-                Windowdef_simple::WINDOW_TYPE_NORMAL | Windowdef_simple::WINDOW_TYPE_DIALOG ),
-                NULL, NULL ); // CHECKME tady pak autodetect
-          break;
-        }
+    dlg = new Windowdef_simple_dialog(
+        new Windowdef_simple( "", "", Windowdef_simple::NOT_IMPORTANT, "",
+        Windowdef_simple::NOT_IMPORTANT, "", Windowdef_simple::NOT_IMPORTANT,
+        Windowdef_simple::WINDOW_TYPE_NORMAL | Windowdef_simple::WINDOW_TYPE_DIALOG ),
+        NULL, NULL ); // CHECKME tady pak autodetect
     if( dlg != NULL )
         {
         Windowdef* window = dlg->edit_windowdef();

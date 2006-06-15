@@ -44,16 +44,21 @@ Condition_list_widget::Condition_list_widget( QWidget* parent_P, const char* nam
     {
     conditions.setAutoDelete( true );
     QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
-    popup->insertItem( i18n( "Active Window..." ), TYPE_ACTIVE_WINDOW );
-    popup->insertItem( i18n( "Existing Window..." ), TYPE_EXISTING_WINDOW );
-    popup->insertItem( i18nc( "Not_condition", "Not" ), TYPE_NOT );
-    popup->insertItem( i18nc( "And_condition", "And" ), TYPE_AND );
-    popup->insertItem( i18nc( "Or_condition", "Or" ), TYPE_OR );
+    QAction *action = popup->addAction( i18n( "Active Window..." ) );
+    action->setData( TYPE_ACTIVE_WINDOW );
+    action = popup->addAction( i18n( "Existing Window..." ) );
+    action->setData( TYPE_EXISTING_WINDOW );
+    action = popup->addAction( i18nc( "Not_condition", "Not" ) );
+    action->setData( TYPE_NOT );
+    action = popup->addAction( i18nc( "And_condition", "And" ) );
+    action->setData( TYPE_AND );
+    action = popup->addAction( i18nc( "Or_condition", "Or" ) );
+    action->setData( TYPE_OR );
     connect( conditions_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
              this, SLOT( modify_pressed() ) );
 
-    connect( popup, SIGNAL( activated( int )), SLOT( new_selected( int )));
-    new_button->setPopup( popup );
+    connect( popup, SIGNAL( triggered( QAction* )), SLOT( new_selected( QAction* )));
+    new_button->setMenu( popup );
     conditions_listview->header()->hide();
     conditions_listview->addColumn( "" );
     conditions_listview->setSorting( -1 );
@@ -78,7 +83,7 @@ Condition_list_widget::Condition_list_widget( QWidget* parent_P, const char* nam
 
 Condition_list_widget::~Condition_list_widget()
     {
-    delete new_button->popup();
+    delete new_button->menu();
     }
 
 void Condition_list_widget::clear_data()
@@ -145,7 +150,7 @@ void Condition_list_widget::get_listview_items( Condition_list_base* list_P,
         }
     }
 
-void Condition_list_widget::new_selected( int type_P )
+void Condition_list_widget::new_selected( QAction *action )
     {
     Condition_list_item* parent = NULL;
     Condition_list_item* after = NULL;
@@ -175,6 +180,8 @@ void Condition_list_widget::new_selected( int type_P )
     assert( !parent || dynamic_cast< Condition_list_base* >( parent->condition()));
     Condition_dialog* dlg = NULL;
     Condition* condition = NULL;
+
+    int type_P = action->data().toInt();
     switch( type_P )
         {
         case TYPE_ACTIVE_WINDOW: // Active_window_condition
