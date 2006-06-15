@@ -22,7 +22,7 @@
        <whatsthis>If you want to draw to each screen seperately in xinerama mode enable this option.</whatsthis>
     </entry>
     <entry key="LimitCache" type="Bool">
-      <default>true</default>
+      <default>false</default>
       <label>Limit background cache</label>
       <whatsthis>Enable this option if you want to limit the cache size for the background.</whatsthis>
     </entry>

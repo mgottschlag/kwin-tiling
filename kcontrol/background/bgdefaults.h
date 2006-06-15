@@ -16,7 +16,7 @@
 #define _defCommonDesk true
 #define _defDock true
 #define _defExport false
-#define _defLimitCache true
+#define _defLimitCache false
 #define _defCacheSize 2048
 
 #define _defShm false
