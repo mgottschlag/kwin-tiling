@@ -154,12 +154,14 @@ NICList* findNICs()
    for (char* ptr = buf; ptr < buf + ifc.ifc_len; )
    {
       struct ifreq *ifr =(struct ifreq *) ptr;
-      int len = sizeof(struct sockaddr);
 #ifdef	HAVE_STRUCT_SOCKADDR_SA_LEN
+      int len = sizeof(struct sockaddr);
       if (ifr->ifr_addr.sa_len > len)
          len = ifr->ifr_addr.sa_len;		/* length > 16 */
-#endif
       ptr += sizeof(ifr->ifr_name) + len;	/* for next one in buffer */
+#else
+      ptr += sizeof(*ifr);			/* for next one in buffer */
+#endif
 
       int flags;
       struct sockaddr_in *sinptr;
