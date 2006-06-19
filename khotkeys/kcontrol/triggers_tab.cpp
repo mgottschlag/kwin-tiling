@@ -325,7 +325,7 @@ Gesture_trigger_dialog::Gesture_trigger_dialog( Gesture_trigger* trigger_P )
                                   this, "GestureRecordPage");
 
     connect(_page, SIGNAL(gestureRecorded(bool)),
-            this, SLOT(enableButtonOK(bool)));
+            this, SLOT(enableButtonOk(bool)));
 
     setMainWidget( _page );
     }

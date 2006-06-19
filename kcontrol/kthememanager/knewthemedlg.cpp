@@ -45,7 +45,7 @@ KNewThemeDlg::~KNewThemeDlg()
 
 void KNewThemeDlg::slotThemeNameChanged( const QString &_text )
 {
-     enableButtonOK( !_text.isEmpty() );
+     enableButtonOk( !_text.isEmpty() );
 }
 
 QString KNewThemeDlg::getName() const

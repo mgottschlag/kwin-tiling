@@ -145,7 +145,7 @@ Gesture_edit_dialog::Gesture_edit_dialog( const QString& gesture_P )
                                   this, "GestureRecordPage");
    
 //    connect(_page, SIGNAL(gestureRecorded(bool)), // allow clearing the gesture
-//            this, SLOT(enableButtonOK(bool)));
+//            this, SLOT(enableButtonOk(bool)));
    
     setMainWidget( _page );
     }

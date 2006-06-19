@@ -97,7 +97,7 @@ PanelBrowserDialog::~PanelBrowserDialog()
 
 void PanelBrowserDialog::slotPathChanged( const QString &_text )
 {
-    enableButtonOK( !_text.isEmpty() );
+    enableButtonOk( !_text.isEmpty() );
 }
 
 void PanelBrowserDialog::browse()
