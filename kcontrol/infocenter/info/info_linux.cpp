@@ -6,7 +6,7 @@
 
     To do (maybe?):
     - include Information about XFree86 and/or Accelerated X
-	(needs to change configure-skript, to see, if Header-files are available !)
+	(needs to change configure-script, to see, if Header-files are available !)
     - maybe also include information about the video-framebuffer devices
     - rewrite detection-routines (maybe not to use the /proc-fs)
     - more & better sound-information

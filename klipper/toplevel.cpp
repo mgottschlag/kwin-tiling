@@ -1164,7 +1164,7 @@ int Klipper::newInstance()
     return 0;
 }
 
-// this is used for quiting klipper process, if klipper is being started as an applet
+// this is used for quitting klipper process, if klipper is being started as an applet
 // (AKA ugly hack)
 void Klipper::quitProcess()
 {

@@ -138,7 +138,7 @@ private:
 
     /**
      * ensure that the number of items does not exceed max_size()
-     * Deletes items from the end as neccessary.
+     * Deletes items from the end as necessary.
      */
     void trim();
 

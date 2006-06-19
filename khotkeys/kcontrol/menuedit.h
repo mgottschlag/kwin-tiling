@@ -18,7 +18,7 @@
 // see also kdebase/kmenuedit/khotkeys.h
 extern "C"
     {
-// initializes khotkeys DSO - loads i18n catalogue
+// initializes khotkeys DSO - loads i18n catalog
 // handled automatically by KHotKeys wrapper class in kmenuedit
 KDE_EXPORT void khotkeys_init( void );
 // clean up khotkeys DSO

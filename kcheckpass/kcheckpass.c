@@ -384,7 +384,7 @@ main(int argc, char **argv)
    * the password. This delay belongs to the *previous* invocation, where
    * we can't enforce it reliably (without risking giving away the result
    * before it is due). We don't differentiate between success and failure -
-   * it's not expected to have a noticable adverse effect.
+   * it's not expected to have a noticeable adverse effect.
    */
   if ( uid != geteuid() ) {
     sprintf(fname, "/var/run/kcheckpass.%d", uid);

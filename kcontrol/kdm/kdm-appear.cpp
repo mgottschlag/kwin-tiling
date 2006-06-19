@@ -353,16 +353,16 @@ bool KDMAppearanceWidget::setLogo(QString logo)
 
 void KDMAppearanceWidget::slotLogoButtonClicked()
 {
-    KFileDialog dialogue(locate("data", QLatin1String("kdm/pics/")),
+    KFileDialog dialog(locate("data", QLatin1String("kdm/pics/")),
 			 KImageIO::pattern( KImageIO::Reading ),
 			 this);
-    dialogue.setOperationMode( KFileDialog::Opening );
-    dialogue.setMode( KFile::File | KFile::LocalOnly );
+    dialog.setOperationMode( KFileDialog::Opening );
+    dialog.setMode( KFile::File | KFile::LocalOnly );
 
-    KImageFilePreview* imagePreview = new KImageFilePreview( &dialogue );
-    dialogue.setPreviewWidget( imagePreview );
-    if (dialogue.exec() == QDialog::Accepted) {
-	if ( setLogo(dialogue.selectedFile()) ) {
+    KImageFilePreview* imagePreview = new KImageFilePreview( &dialog );
+    dialog.setPreviewWidget( imagePreview );
+    if (dialog.exec() == QDialog::Accepted) {
+	if ( setLogo(dialog.selectedFile()) ) {
 	    changed();
 	}
     }

@@ -90,13 +90,13 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
   laygroup->addWidget( m_sample );
 
 
-  // getting signals from childs
+  // getting signals from children
   connect(m_localemain, SIGNAL(localeChanged()),
           this, SIGNAL(localeChanged()));
   connect(m_localemain, SIGNAL(languageChanged()),
           this, SIGNAL(languageChanged()));
 
-  // run the slots on the childs
+  // run the slots on the children
   connect(this, SIGNAL(localeChanged()),
           m_localemain, SLOT(slotLocaleChanged()));
   connect(this, SIGNAL(localeChanged()),

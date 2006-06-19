@@ -82,7 +82,7 @@ Free use of this file is permitted for any purpose as long as
 this copyright is preserved in the header.
 
 This program implements the use of the OSF/1 C2 security extensions
-within ssh. See the file COPYING for full licensing informations.
+within ssh. See the file COPYING for full licensing information.
 
 */
 

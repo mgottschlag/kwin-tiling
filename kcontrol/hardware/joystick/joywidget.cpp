@@ -360,7 +360,7 @@ void JoyWidget::calibrateDevice()
   CalDialog dlg(this, joydev);
   dlg.calibrate();
 
-  // user cancelled somewhere during calibration, therefore the device is in a bad state
+  // user canceled somewhere during calibration, therefore the device is in a bad state
   if ( dlg.result() == QDialog::Rejected )
     joydev->restoreCorr();
 

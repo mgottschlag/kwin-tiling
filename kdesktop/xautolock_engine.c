@@ -230,9 +230,9 @@ evaluateTriggers (Display* d)
   if (lockerPid)
   {
 #if !defined (UTEKV) && !defined (SYSV) && !defined (SVR4)
-    union wait  status;      /* childs process status */
+    union wait  status;      /* child's process status */
 #else /* !UTEKV && !SYSV && !SVR4 */
-    int         status = 0;  /* childs process status */
+    int         status = 0;  /* child's process status */
 #endif /* !UTEKV && !SYSV && !SVR4 */
 
     if (unlockNow && !disabled)

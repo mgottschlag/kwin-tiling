@@ -154,7 +154,7 @@ private:
     /**
      * Creates a list of "icon" elements based on:
      * @param group The group in the KConfig object @p cfg
-     * @param object Specifier (similiar, but not identical to @p group)
+     * @param object Specifier (similar, but not identical to @p group)
      * @param parent Parent element to append to
      * @param cfg The KConfig object to work with
      */
