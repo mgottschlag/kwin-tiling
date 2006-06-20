@@ -30,6 +30,7 @@ public:
   USBDevice();
 
   void parseLine(QString line);
+  void parseSysDir(int bus, int parent, int level, QString line);
 
   int level() { return _level; };
   int device() { return _device; };
@@ -42,6 +43,7 @@ public:
   static Q3PtrList<USBDevice> &devices() { return _devices; };
   static USBDevice *find(int bus, int device);
   static bool parse(QString fname);
+  static bool parseSys(QString fname);
 
 
 private:

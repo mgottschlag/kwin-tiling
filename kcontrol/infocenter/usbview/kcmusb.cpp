@@ -125,7 +125,7 @@ void USBViewer::refresh()
   Q3IntDict<Q3ListViewItem> new_items;
 
   if (!USBDevice::parse("/proc/bus/usb/devices"))
-    USBDevice::parse("/proc/bus/usb/devices_please-use-sysfs-instead");
+    USBDevice::parseSys("/sys/bus/usb/devices");
 
   int level = 0;
   bool found = true;

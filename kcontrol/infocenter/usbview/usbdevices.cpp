@@ -26,6 +26,8 @@
 #include "usbdb.h"
 #include "usbdevices.h"
 
+#include <math.h>
+
 #ifdef Q_OS_FREEBSD
 #include <sys/ioctl.h>
 #include <sys/param.h>
@@ -49,6 +51,66 @@ USBDevice::USBDevice()
     _db = new USBDB;
 }
 
+static QString catFile(QString fname)
+{
+  char buffer[256];
+  QString result;
+  int fd = ::open(QFile::encodeName(fname), O_RDONLY);
+  if (fd<0)
+	return QString::null;
+
+  if (fd >= 0)
+    {
+      ssize_t count;
+      while ((count = ::read(fd, buffer, 256)) > 0)
+	result.append(QString(buffer).left(count));
+
+      ::close(fd);
+    }
+  return result.stripWhiteSpace();
+}
+
+void USBDevice::parseSysDir(int bus, int parent, int level, QString dname)
+{
+  _level = level;
+  _parent = parent;
+  _manufacturer = catFile(dname + "/manufacturer");
+  _product = catFile(dname + "/product");
+
+  _bus = bus;
+  _device = catFile(dname + "/devnum").toUInt();
+
+  if (_device == 1)
+    _product += QString(" (%1)").arg(_bus);
+
+  _vendorID = catFile(dname + "/idVendor").toUInt(0, 16);
+  _prodID = catFile(dname + "/idProduct").toUInt(0, 16);
+
+  _class = catFile(dname + "/bDeviceClass").toUInt(0, 16);
+  _sub = catFile(dname + "/bDeviceSubClass").toUInt(0, 16);
+  _maxPacketSize = catFile(dname + "/bMaxPacketSize0").toUInt();
+
+  _speed = catFile(dname + "/speed").toDouble();
+  _serial = catFile(dname + "/serial");
+  _channels = catFile(dname + "/maxchild").toUInt();
+
+  double version = catFile(dname + "/version").toDouble();
+  _verMajor = int(version);
+  _verMinor = int(10*(version - floor(version)));
+
+  QDir dir(dname);
+  dir.setNameFilter(QString("%1-*").arg(bus));
+  dir.setFilter(QDir::Dirs);
+  QStringList list = dir.entryList();
+
+  for(QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
+    if ((*it).contains(':'))
+      continue;
+
+    USBDevice* dev = new USBDevice();
+    dev->parseSysDir(bus, ++level, _device, dname + "/" + *it);
+  }
+}
 
 void USBDevice::parseLine(QString line)
 {
@@ -235,6 +297,27 @@ bool USBDevice::parse(QString fname)
   return true;
 }
 
+bool USBDevice::parseSys(QString dname)
+{
+   QDir d(dname);
+   d.setNameFilter("usb*");
+   QStringList list = d.entryList();
+
+   for(QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
+     USBDevice* device = new USBDevice();
+
+     int bus = 0;
+     QRegExp bus_reg("[a-z]*([0-9]+)");
+     if (bus_reg.search(*it) != -1)
+         bus = bus_reg.cap(1).toInt();
+
+
+     device->parseSysDir(bus, 0, 0, d.absPath() + "/" + *it);
+  }
+
+  return d.count();
+}
+
 #else
 
 /*
@@ -305,6 +388,7 @@ void USBDevice::collectData( int fd, int level, usb_device_info &di, int parent)
 		}
 	}
 }
+
 
 
 bool USBDevice::parse(QString fname)
