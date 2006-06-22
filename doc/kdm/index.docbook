@@ -417,7 +417,7 @@ dialog.</para>
 </listitem>
 </itemizedlist>
 
-<para>If you do not specify a logo the default
+<para>If you do not specify a logo, the default
 <filename>$<envar>KDEDIR</envar>/share/apps/kdm/pics/kdelogo.xpm</filename>
 will be displayed.</para>
 
