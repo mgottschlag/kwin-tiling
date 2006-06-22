@@ -76,7 +76,22 @@ Action_data_base* Action_data_base::create_cfg_read( KConfig& cfg_P, Action_data
     {
     QString type = cfg_P.readEntry( "Type" );
     if( type == "ACTION_DATA_GROUP" )
+        {
+        if( cfg_P.readBoolEntry( "AllowMerge", false ))
+            {
+            for( Action_data_group::Iterator it = parent_P->first_child();
+                 it;
+                 ++it )
+                {
+                if( Action_data_group* existing = dynamic_cast< Action_data_group* >( *it ))
+                    {
+                    if( cfg_P.readEntry( "Name" ) == existing->name())
+                        return existing;
+                    }
+                }
+            }
         return new Action_data_group( cfg_P, parent_P );
+        }
     if( type == "GENERIC_ACTION_DATA" )
         return new Generic_action_data( cfg_P, parent_P );
     if( type == "COMMAND_URL_SHORTCUT_ACTION_DATA" )

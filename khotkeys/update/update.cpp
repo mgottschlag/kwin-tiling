@@ -19,6 +19,7 @@
 #include <kstandarddirs.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <dcopclient.h>
 
 #include <settings.h>
 
@@ -36,7 +37,6 @@ int main( int argc, char* argv[] )
     KCmdLineArgs::init( argc, argv, "khotkeys_update", "KHotKeys Update",
 	"KHotKeys update utility", "1.0" );
     KCmdLineArgs::addCmdLineOptions( options );
-    KApplication::disableAutoDcopRegistration();
     KApplication app( true ); // X11 connection is necessary for KKey* stuff :-/
     KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
     QByteArray id = args->getOption( "id" );
@@ -56,5 +56,7 @@ int main( int argc, char* argv[] )
         return 2;
         }
     settings.write_settings();
+    QByteArray data;
+    kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
     return 0;
     }
