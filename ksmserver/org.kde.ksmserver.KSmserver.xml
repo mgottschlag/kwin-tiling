@@ -1,0 +1,30 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.ksmserver.KSmserver">
+    <method name="logout">
+      <arg name="confirm" type="i" direction="in"/>
+      <arg name="sdtype" type="i" direction="in"/>
+      <arg name="sdmode" type="i" direction="in"/>
+    </method>
+    <method name="restoreSessionInternal" />
+    <method name="restoreSessionDoneInternal" />
+    <method name="sessionList">
+      <arg type="as" direction="out"/>
+    </method>
+    <method name="currentSession">
+      <arg type="s" direction="out"/>
+    </method>
+    <method name="saveCurrentSession" />
+    <method name="saveCurrentSessionAs">
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="autoStart2" />
+    <method name="suspendStartup">
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="resumeStartup">
+      <arg name="name" type="s" direction="in"/>
+    </method>
+  </interface>
+</node>
