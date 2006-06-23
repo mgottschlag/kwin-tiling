@@ -42,6 +42,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <ktar.h>
 #include <kstyle.h>
 #include <QX11Info>
+#include <dbus/qdbus.h>
 
 KTheme::KTheme( QWidget *parent, const QString & xmlFile )
 	: m_parent(parent)
@@ -727,8 +728,8 @@ void KTheme::createIconElems( const QString & group, const QString & object,
 
             if ( (*it).contains( "Value" ) || *it == "Size" )
                 tmpCol.setAttribute( "value", cfg->readEntry( *it, 1 ) );
-	    else if ( (*it).contains( "DisabledEffect" ) ) 
-		tmpCol.setAttribute( "name", cfg->readEntry( *it, QString("togray") ) ); 
+	    else if ( (*it).contains( "DisabledEffect" ) )
+		tmpCol.setAttribute( "name", cfg->readEntry( *it, QString("togray") ) );
             else if ( (*it).contains( "Effect" ) )
                 tmpCol.setAttribute( "name", cfg->readEntry( *it, QString("none") ) );
             else

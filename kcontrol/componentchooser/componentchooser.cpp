@@ -24,7 +24,6 @@
 #include <QLayout>
 #include <QRadioButton>
 
-#include <dcopclient.h>
 
 #include <kapplication.h>
 #include <kemailsettings.h>
@@ -36,6 +35,10 @@
 #include <kstandarddirs.h>
 #include <kmimetypetrader.h>
 #include <kurlrequester.h>
+#include <ktoolinvocation.h>
+#include <klauncher_iface.h>
+#include <dbus/qdbus.h>
+
 
 class MyListBoxItem: public Q3ListBoxText
 {
@@ -167,11 +170,11 @@ void CfgEmailClient::selectEmailClient()
 	if (dlg.exec() != QDialog::Accepted) return;
 	QString client = dlg.text();
 
-	// get the preferred Terminal Application 
+	// get the preferred Terminal Application
 	KConfigGroup confGroup( KGlobal::config(), QLatin1String("General") );
 	QString preferredTerminal = confGroup.readPathEntry("TerminalApplication", QLatin1String("konsole"));
 	preferredTerminal += QLatin1String(" -e ");
-	
+
 	int len = preferredTerminal.length();
 	bool b = client.left(len) == preferredTerminal;
 	if (b) client = client.mid(len);
@@ -200,9 +203,10 @@ void CfgEmailClient::save(KConfig *)
 	QString cfgName(KGlobal::dirs()->findResource("config", "emails"));
 	if (!cfgName.isEmpty())
 		::chmod(QFile::encodeName(cfgName), 0600);
-
+#warning "kde4: dbus port"
+#if 0
 	kapp->dcopClient()->emitDCOPSignal("KDE_emailSettingsChanged()", QByteArray());
-
+#endif
 	emit changed(false);
 }
 
@@ -261,7 +265,7 @@ void CfgTerminalEmulator::save(KConfig *) {
 	delete config;
 
 	KIPC::sendMessageAll(KIPC::SettingsChanged);
-	kapp->dcopClient()->send("klauncher", "klauncher","reparseConfiguration()", QString());
+        KToolInvocation::klauncher()->reparseConfiguration();
 
 	emit changed(false);
 }
@@ -332,7 +336,7 @@ void CfgBrowser::load(KConfig *) {
   	         m_browserExec.clear();
 	   }
 	}
-	
+
 	lineExec->setText(m_browserExec);
 	delete config;
 
@@ -462,10 +466,10 @@ void ComponentChooser::slotServiceSelected(Q3ListBoxItem* it) {
 		connect(configWidget,SIGNAL(changed(bool)),this,SLOT(emitChanged(bool)));
 	        configContainer->setMinimumSize(configWidget->sizeHint());
 	}
-	
+
 	if (configWidget)
 		dynamic_cast<CfgPlugin*>(configWidget)->load(&cfg);
-	
+
 	emitChanged(false);
 	latestEditedService=static_cast<MyListBoxItem*>(it)->File;
 }

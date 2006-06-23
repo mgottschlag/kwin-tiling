@@ -44,7 +44,7 @@ namespace KFI
 {
 
 CFontViewerAppMainWindow::CFontViewerAppMainWindow()
-                        : KParts::MainWindow((QWidget *)0L)
+                        : KParts::MainWindow()
 {
     KLibFactory *factory=KLibLoader::self()->factory("libkfontviewpart");
 

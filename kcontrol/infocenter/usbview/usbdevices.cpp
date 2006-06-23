@@ -16,6 +16,7 @@
 #include <stdio.h>
 
 #include <QFile>
+#include <QDir>
 #include <QRegExp>
 //Added by qt3to4:
 #include <Q3PtrList>
@@ -234,9 +235,9 @@ QString USBDevice::dump()
 		for ( ; it != _devnodes.end(); ++it )
 			r += "<tr><td></td><td>" + *it + "</td></tr>";
 	}
-#else  
+#else
   r += i18n("<tr><td><i>Max. Packet Size</i></td><td>%1</td></tr>", _maxPacketSize);
-#endif  
+#endif
   r += "<tr><td></td></tr>";
 
   if (_hasBW)
@@ -323,8 +324,8 @@ bool USBDevice::parseSys(QString dname)
 /*
  * FreeBSD support by Markus Brueffer <markus@brueffer.de>
  *
- * Basic idea and some code fragments were taken from FreeBSD's usbdevs(8), 
- * originally developed for NetBSD, so this code should work with no or 
+ * Basic idea and some code fragments were taken from FreeBSD's usbdevs(8),
+ * originally developed for NetBSD, so this code should work with no or
  * only little modification on NetBSD.
  */
 
@@ -333,7 +334,7 @@ void USBDevice::collectData( int fd, int level, usb_device_info &di, int parent)
 	// determine data for this device
 	_level        = level;
 	_parent       = parent;
-	
+
 	_bus          = di.udi_bus;
 	_device       = di.udi_addr;
 	_product      = QLatin1String(di.udi_product);
@@ -347,7 +348,7 @@ void USBDevice::collectData( int fd, int level, usb_device_info &di, int parent)
 	_prot         = di.udi_protocol;
 	_power        = di.udi_power;
 	_channels     = di.udi_nports;
-	
+
 	// determine the speed
 #if __FreeBSD_version > 490102
 	switch (di.udi_speed) {
@@ -373,10 +374,10 @@ void USBDevice::collectData( int fd, int level, usb_device_info &di, int parent)
 		struct usb_device_info di2;
 
 		di2.udi_addr = di.udi_ports[p];
-		
+
 		if ( di2.udi_addr >= USB_MAX_DEVICES )
 			continue;
-			
+
 		if ( ioctl(fd, USB_DEVICEINFO, &di2) == -1 )
 			continue;
 
@@ -396,7 +397,7 @@ bool USBDevice::parse(QString fname)
 	static bool showErrorMessage = true;
 	bool error = false;
 	_devices.clear();
-	
+
 	QFile controller("/dev/usb0");
 	int i = 1;
 	while ( controller.exists() )
@@ -404,10 +405,10 @@ bool USBDevice::parse(QString fname)
 		// If the devicenode exists, continue with further inspection
 		if ( controller.open(QIODevice::ReadOnly) )
 		{
-			for ( int addr = 1; addr < USB_MAX_DEVICES; ++addr ) 
+			for ( int addr = 1; addr < USB_MAX_DEVICES; ++addr )
 			{
 				struct usb_device_info di;
-				
+
 				di.udi_addr = addr;
 				if ( ioctl(controller.handle(), USB_DEVICEINFO, &di) != -1 )
 				{
@@ -424,12 +425,12 @@ bool USBDevice::parse(QString fname)
 		}
 		controller.setName( QString::fromLocal8Bit("/dev/usb%1").arg(i++) );
 	}
-	
+
 	if ( showErrorMessage && error ) {
 		showErrorMessage = false;
 		KMessageBox::error( 0, i18n("Could not open one or more USB controller. Make sure, you have read access to all USB controllers that should be listed here."));
 	}
-	
+
 	return true;
 }
 #endif
