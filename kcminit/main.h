@@ -20,19 +20,21 @@
 #ifndef KCMINIT_H
 #define KCMINIT_H
 
-#include <dcopobject.h>
 #include <kservice.h>
 
 class KCmdLineArgs;
 class KLibLoader;
 
-class KCMInit : public QObject, public DCOPObject
+class KCMInit : public QObject
 {
     Q_OBJECT
-    K_DCOP
-    k_dcop:
-        void runPhase1();
-        void runPhase2();
+    Q_CLASSINFO("D-Bus Interface", "org.kde.kcminit.kcminit")
+	public Q_SLOTS: //dbus
+        Q_SCRIPTABLE void runPhase1();
+        Q_SCRIPTABLE void runPhase2();
+ signals: //dbus signal
+	void phase1Done();
+	void phase2Done();
     public:
         KCMInit( KCmdLineArgs* args );
         virtual ~KCMInit();

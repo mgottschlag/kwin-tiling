@@ -32,10 +32,11 @@
 #include <kservice.h>
 #include <klibloader.h>
 #include <kdebug.h>
-#include <dcopclient.h>
 #include <kconfig.h>
 #include <klocale.h>
-
+#include <ktoolinvocation.h>
+#include <klauncher_iface.h>
+#include <dbus/qdbus.h>
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <QX11Info>
@@ -79,7 +80,7 @@ bool KCMInit::runModule(const QString &libName, KLibLoader *loader, KService::Pt
 	if (init) {
 	    // initialize the module
 	    kDebug(1208) << "Initializing " << libName << ": " << factory << endl;
-	    
+
 	    void (*func)() = (void(*)())init;
 	    func();
 	    return true;
@@ -97,11 +98,11 @@ void KCMInit::runModules( int phase )
       it != list.end();
       ++it) {
       KService::Ptr service = (*it);
-      
+
       QString library = service->property("X-KDE-Init-Library", QVariant::String).toString();
       if (library.isEmpty())
         library = service->library();
-      
+
       if (library.isEmpty() || service->init().isEmpty())
 	continue; // Skip
 
@@ -124,15 +125,15 @@ void KCMInit::runModules( int phase )
 		  runModule(libName, loader, service);
 		  alreadyInitialized.append( libName.toAscii() );
 	      }
-	  } else 
+	  } else
 	      alreadyInitialized.append( libName.toAscii() );
       }
   }
 }
 
 KCMInit::KCMInit( KCmdLineArgs* args )
-: DCOPObject( "kcminit" )
 {
+  QDBus::sessionBus().registerObject("/kcminit", this, QDBusConnection::ExportSlots);
   QByteArray arg;
   if (args->count() == 1) {
     arg = args->arg(0);
@@ -141,7 +142,7 @@ KCMInit::KCMInit( KCmdLineArgs* args )
   if (args->isSet("list"))
   {
     list = KService::allInitServices();
-    
+
     for(KService::List::Iterator it = list.begin();
         it != list.end();
         ++it)
@@ -174,10 +175,11 @@ KCMInit::KCMInit( KCmdLineArgs* args )
     list = KService::allInitServices();
 
   }
-
+#warning "kde4: port it ?"
+#if 0
   if ( !kapp->dcopClient()->isAttached() )
     kapp->dcopClient()->attach();
-
+#endif
   // This key has no GUI apparently
   KConfig config("kcmdisplayrc", true );
   config.setGroup("X11");
@@ -188,20 +190,16 @@ KCMInit::KCMInit( KCmdLineArgs* args )
   bool multihead = false;
 #endif
   // Pass env. var to kdeinit.
-  DCOPCString name = "KDE_MULTIHEAD";
-  DCOPCString value = multihead ? "true" : "false";
-  QByteArray params;
-  QDataStream stream(&params, QIODevice::WriteOnly);
-
-  stream.setVersion(QDataStream::Qt_3_1);
-  stream << name << value;
-  kapp->dcopClient()->send("klauncher", "klauncher", "setLaunchEnv(QCString,QCString)", params);
-  setenv( name, value, 1 ); // apply effect also to itself
+  QString name = "KDE_MULTIHEAD";
+  QString value = multihead ? "true" : "false";
+  KToolInvocation::klauncher()->setLaunchEnv(name, value);
+  setenv( name.toLatin1().constData(), value.toLatin1().constData(), 1 ); // apply effect also to itself
 
   if( startup )
   {
      runModules( 0 );
-     kapp->dcopClient()->send( "ksplash", "", "upAndRunning(QString)",  QString("kcminit"));
+     QDBusInterfacePtr ksplash("org.kde.ksplash", "/KSplash", "org.kde.ksplash.KSplash");
+     ksplash->call( "upAndRunning", "kcminit" );
      sendReady();
      QTimer::singleShot( 300 * 1000, qApp, SLOT( quit())); // just in case
      qApp->exec(); // wait for runPhase1() and runPhase2()
@@ -218,13 +216,13 @@ KCMInit::~KCMInit()
 void KCMInit::runPhase1()
 {
   runModules( 1 );
-  emitDCOPSignal( "phase1Done()", QByteArray());
+  emit phase1Done();
 }
 
 void KCMInit::runPhase2()
 {
   runModules( 2 );
-  emitDCOPSignal( "phase2Done()", QByteArray());
+  emit phase2Done();
   qApp->exit( 0 );
 }
 
@@ -252,7 +250,8 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
   KApplication app;
-  app.dcopClient()->registerAs( "kcminit", false );
+#warning "kde4: port dbus"
+  //app.dcopClient()->registerAs( "kcminit", false );
   KLocale::setMainCatalog(0);
   KCMInit kcminit( KCmdLineArgs::parsedArgs());
   return 0;
