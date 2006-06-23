@@ -26,7 +26,7 @@ StyleConfigDialog::StyleConfigDialog(QWidget* parent, QString styleName)
 {
   setObjectName( "StyleConfigDialog" );
   setModal( true );
-  setCaption( i18n("Configure %1").arg( styleName ) );
+  setCaption( i18n( "Configure %1", styleName ) );
   setButtons( Default | Ok | Cancel );
   setDefaultButton( Cancel );
 
