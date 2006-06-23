@@ -175,11 +175,6 @@ KCMInit::KCMInit( KCmdLineArgs* args )
     list = KService::allInitServices();
 
   }
-#warning "kde4: port it ?"
-#if 0
-  if ( !kapp->dcopClient()->isAttached() )
-    kapp->dcopClient()->attach();
-#endif
   // This key has no GUI apparently
   KConfig config("kcmdisplayrc", true );
   config.setGroup("X11");
