@@ -424,8 +424,8 @@ void KTheme::apply()
 
     desktopConf.sync();         // TODO sync and signal only if <desktop> elem present
     // reconfigure kdesktop. kdesktop will notify all clients
-	QDBusInterfacePtr kdesktop( "org.kde.kdesktop", "/Background");
-	kdesktop->call("configure");
+    QDBusInterfacePtr kdesktop( "org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background");
+    kdesktop->call("configure");
     // FIXME Xinerama
 
     // 3. Icons

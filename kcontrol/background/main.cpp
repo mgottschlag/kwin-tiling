@@ -103,7 +103,7 @@ void KBackground::save()
 	appname = "org.kde.kdesktop";
     else 
 	appname.sprintf("org.kde.kdesktop-screen-%d", screen_number);
-    QDBusInterfacePtr kdesktop(appname, "/Background", "org.kde.kdesktop.KBackground");
+    QDBusInterfacePtr kdesktop(appname, "/Background", "org.kde.kdesktop.Background");
     kdesktop->call("configure");
 }
 

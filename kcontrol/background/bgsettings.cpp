@@ -1279,7 +1279,7 @@ void KGlobalBackgroundSettings::writeSettings()
     dirty = false;
 
     // tell kdesktop to get it's butt in gear and pick up the new settings
-    QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Background", "org.kde.kdesktop.KBackground");
+    QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background");
     kdesktop->call("configure");
 }
 
