@@ -1,5 +1,5 @@
 /* This file is part of the KDE project
-   Copyright (C) 1999 David Faure (maintainer)
+   Copyright 1999-2006 David Faure <faure@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -18,9 +18,15 @@
 */
 
 #include <config.h>
+
+#include "desktop.h"
+#include "lockeng.h"
+#include "init.h"
+#include "krootwm.h"
+#include "kdesktopsettings.h"
+
 #include <kuniqueapplication.h>
 #include <klocale.h>
-#include <dcopclient.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <kopenwith.h>
@@ -30,20 +36,14 @@
 #include <kconfig.h>
 #include <kmanagerselection.h>
 #include <kglobal.h>
-
-#include "desktop.h"
-#include "lockeng.h"
-#include "init.h"
-#include "krootwm.h"
-#include "kdesktopsettings.h"
+#include <kauthorized.h>
+#include <dbus/qdbus.h>
 
 #include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdio.h>
-//Added by qt3to4:
-#include <kauthorized.h>
 
 static const char description[] =
         I18N_NOOP("The KDE desktop");
@@ -64,7 +64,8 @@ int kdesktop_screen_number = 0;
 
 static void crashHandler(int sigId)
 {
-    DCOPClient::emergencyClose(); // unregister DCOP
+    // Unregister from DBus
+    QDBus::sessionBus().unregisterObject( "/MainApplication", QDBusConnection::UnregisterNode );
     sleep( 1 );
     system("kdesktop &"); // try to restart
     fprintf(stderr, "*** kdesktop (%ld) got signal %d\n", (long) getpid(), sigId);
@@ -165,8 +166,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
         fprintf(stderr, "kdesktop is already running!\n");
         exit(0);
     }
-    DCOPClient* cl = new DCOPClient;
-    cl->attach();
+
     DCOPRef r( "ksmserver", "ksmserver" );
     r.setDCOPClient( cl );
     r.send( "suspendStartup", QString( "kdesktop" ));
@@ -189,7 +189,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
     testLocalInstallation();
 
     // Mark kdeskop as immutable if all of its config modules have been disabled
-    if (!KGlobal::config()->isImmutable() && 
+    if (!KGlobal::config()->isImmutable() &&
         KAuthorized::authorizeControlModules(KRootWm::configModules()).isEmpty())
     {
 		KGlobal::config()->setReadOnly(true);
