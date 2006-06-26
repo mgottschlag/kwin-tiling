@@ -64,6 +64,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QTimer>
 #include <QDesktopWidget>
 #include <QRegExp>
+#include <dbus/qdbus.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -74,12 +75,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstaticdeleter.h>
 #include <ktempfile.h>
 #include <kprocess.h>
-#include <dcopclient.h>
-#include <dcopref.h>
 
 #include "server.h"
 #include "global.h"
 #include "client.h"
+#include "ksmserveradaptor.h"
 
 #include "server.moc"
 
@@ -119,11 +119,12 @@ void KSMServer::startApplication( QStringList command, const QString& clientMach
 	command.prepend( xonCommand ); // "xon" by default
     }
     int n = command.count();
-    DCOPCString app = command[0].toLatin1();
-    DCOPCStringList argList;
+    QDBusInterfacePtr klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
+    QString app = command[0].toLatin1();
+    QStringList argList;
     for ( int i=1; i < n; i++)
        argList.append( command[i].toLatin1());
-    DCOPRef( launcher ).send( "exec_blind", app, DCOPArg( argList, "QValueList<QCString>" ) );
+    klauncher->call( "exec_blind", app, argList );
 }
 
 /*! Utility function to execute a command on the local machine. Used
@@ -579,8 +580,15 @@ extern "C" int _IceTransNoListen(const char * protocol);
 #endif
 
 KSMServer::KSMServer( const QString& windowManager, bool _only_local )
-  : DCOPObject("ksmserver"), sessionGroup( "" )
+  : sessionGroup( "" )
 {
+    new KSmserverAdaptor( this );
+    QDBus::sessionBus().registerObject("/KSMServer", this);
+    klauncherSignals = QDBus::sessionBus().findInterface("org.kde.klauncher",
+        "/KLauncher", "org.kde.KLauncher" );
+    if( !klauncherSignals->isValid())
+        kWarning() << "kded not running?" << endl;
+    kcminitSignals = NULL;
     the_server = this;
     clean = false;
     wm = windowManager;
@@ -607,8 +615,6 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 #else
     only_local = false;
 #endif
-
-    launcher = KApplication::launcher();
 
     char        errormsg[256];
     if (!SmsInitialize ( (char*) KSMVendorString, (char*) KSMReleaseString,
@@ -651,7 +657,8 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
         fclose(f);
         setenv( "SESSION_MANAGER", session_manager, true  );
        // Pass env. var to kdeinit.
-       DCOPRef( launcher ).send( "setLaunchEnv", "SESSION_MANAGER", (const char*) session_manager );
+       QDBusInterfacePtr klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
+       klauncher->call( "setLaunchEnv", "SESSION_MANAGER", (const char*) session_manager );
     }
 
     if (only_local) {

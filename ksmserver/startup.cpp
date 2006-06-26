@@ -62,6 +62,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMessageBox>
 #include <QTimer>
 #include <QDesktopWidget>
+#include <dbus/qdbus.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -72,8 +73,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstaticdeleter.h>
 #include <ktempfile.h>
 #include <kprocess.h>
-#include <dcopclient.h>
-#include <dcopref.h>
 #include <kwinmodule.h>
 #include <knotifyclient.h>
 
@@ -117,12 +116,9 @@ void KSMServer::restoreSession( QString sessionName )
         wmCommands << ( QStringList() << wm );
 
     publishProgress( appsToStart, true );
-    connectDCOPSignal( launcher, launcher, "autoStart0Done()",
-                       "autoStart0Done()", true);
-    connectDCOPSignal( launcher, launcher, "autoStart1Done()",
-                       "autoStart1Done()", true);
-    connectDCOPSignal( launcher, launcher, "autoStart2Done()",
-                       "autoStart2Done()", true);
+    connect( klauncherSignals, SIGNAL( autoStart0Done()), SLOT( autoStart0Done()));
+    connect( klauncherSignals, SIGNAL( autoStart1Done()), SLOT( autoStart1Done()));
+    connect( klauncherSignals, SIGNAL( autoStart2Done()), SLOT( autoStart2Done()));
     upAndRunning( "ksmserver" );
 
     if ( !wmCommands.isEmpty() ) {
@@ -151,12 +147,9 @@ void KSMServer::startDefaultSession()
     sessionGroup = "";
     publishProgress( 0, true );
     upAndRunning( "ksmserver" );
-    connectDCOPSignal( launcher, launcher, "autoStart0Done()",
-                       "autoStart0Done()", true);
-    connectDCOPSignal( launcher, launcher, "autoStart1Done()",
-                       "autoStart1Done()", true);
-    connectDCOPSignal( launcher, launcher, "autoStart2Done()",
-                       "autoStart2Done()", true);
+    connect( klauncherSignals, SIGNAL( autoStart0Done()), SLOT( autoStart0Done()));
+    connect( klauncherSignals, SIGNAL( autoStart1Done()), SLOT( autoStart1Done()));
+    connect( klauncherSignals, SIGNAL( autoStart2Done()), SLOT( autoStart2Done()));
     startApplication( QStringList() << wm );
     QTimer::singleShot( 4000, this, SLOT( autoStart0() ) );
 }
@@ -174,25 +167,28 @@ void KSMServer::autoStart0()
     if( !checkStartupSuspend())
         return;
     state = AutoStart0;
-    DCOPRef( launcher ).send( "autoStart", (int) 0 );
+    QDBusInterfacePtr klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
+    klauncher->call( "autoStart", (int) 0 );
 }
 
 void KSMServer::autoStart0Done()
 {
     if( state != AutoStart0 )
         return;
-    disconnectDCOPSignal( launcher, launcher, "autoStart0Done()",
-                          "autoStart0Done()");
+    disconnect( klauncherSignals, SIGNAL( autoStart0Done()), this, SLOT( autoStart0Done()));
     if( !checkStartupSuspend())
         return;
     kDebug( 1218 ) << "Autostart 0 done" << endl;
     upAndRunning( "kdesktop" );
     upAndRunning( "kicker" );
-    connectDCOPSignal( "kcminit", "kcminit", "phase1Done()",
-                       "kcmPhase1Done()", true);
+    kcminitSignals = QDBus::sessionBus().findInterface("org.kde.kcminit", "/kcminit", "org.kde.KCMInit" );
+    if( !kcminitSignals->isValid())
+        kWarning() << "kcminit not running?" << endl;
+    connect( kcminitSignals, SIGNAL( phase1Done()), SLOT( phase1Done()));
     state = KcmInitPhase1;
     QTimer::singleShot( 10000, this, SLOT( kcmPhase1Timeout())); // protection
-    DCOPRef( "kcminit", "kcminit" ).send( "runPhase1" );
+    QDBusInterfacePtr kcminit( "org.kde.kcminit", "/kcminit", "org.kde.KCMInit" );
+    kcminit->call( "runPhase1" );
 }
 
 void KSMServer::kcmPhase1Done()
@@ -200,8 +196,7 @@ void KSMServer::kcmPhase1Done()
     if( state != KcmInitPhase1 )
         return;
     kDebug( 1218 ) << "Kcminit phase 1 done" << endl;
-    disconnectDCOPSignal( "kcminit", "kcminit", "phase1Done()",
-                       "kcmPhase1Done()" );
+    disconnect( kcminitSignals, SIGNAL( phase1Done()), this, SLOT( phase1Done()));
     autoStart1();
 }
 
@@ -218,15 +213,15 @@ void KSMServer::autoStart1()
     if( state != KcmInitPhase1 )
         return;
     state = AutoStart1;
-    DCOPRef( launcher ).send( "autoStart", (int) 1 );
+    QDBusInterfacePtr klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
+    klauncher->call( "autoStart", (int) 1 );
 }
 
 void KSMServer::autoStart1Done()
 {
     if( state != AutoStart1 )
         return;
-    disconnectDCOPSignal( launcher, launcher, "autoStart1Done()",
-                          "autoStart1Done()");
+    disconnect( klauncherSignals, SIGNAL( autoStart1Done()), this, SLOT( autoStart1Done()));
     if( !checkStartupSuspend())
         return;
     kDebug( 1218 ) << "Autostart 1 done" << endl;
@@ -293,13 +288,16 @@ void KSMServer::autoStart2()
     state = FinishingStartup;
     waitAutoStart2 = true;
     waitKcmInit2 = true;
-    DCOPRef( launcher ).send( "autoStart", (int) 2 );
-    DCOPRef( "kded", "kded" ).send( "loadSecondPhase" );
-    DCOPRef( "kdesktop", "KDesktopIface" ).send( "runAutoStart" );
-    connectDCOPSignal( "kcminit", "kcminit", "phase2Done()",
-                       "kcmPhase2Done()", true);
+    QDBusInterfacePtr klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
+    klauncher->call( "autoStart", (int) 2 );
+    QDBusInterfacePtr kded( "org.kde.kded", "/kded", "org.kde.kded" );
+    kded->call( "loadSecondPhase" );
+    QDBusInterfacePtr kdesktop( "org.kde.kdesktop", "/kdesktop", "org.kde.KDesktopIface" );
+    kdesktop->call( "runAutoStart" );
+    connect( kcminitSignals, SIGNAL( kcmPhase2Done()), SLOT( kcmPhase2Done()));
     QTimer::singleShot( 10000, this, SLOT( kcmPhase2Timeout())); // protection
-    DCOPRef( "kcminit", "kcminit" ).send( "runPhase2" );
+    QDBusInterfacePtr kcminit( "org.kde.kcminit", "/kcminit", "org.kde.KCMInit" );
+    kcminit->call( "runPhase2" );
     if( !defaultSession())
         restoreLegacySession( KGlobal::config());
     KNotifyClient::event( 0, "startkde" ); // this is the time KDE is up, more or less
@@ -309,8 +307,7 @@ void KSMServer::autoStart2Done()
 {
     if( state != FinishingStartup )
         return;
-    disconnectDCOPSignal( launcher, launcher, "autoStart2Done()",
-                          "autoStart2Done()");
+    disconnect( klauncherSignals, SIGNAL( autoStart2Done()), this, SLOT( autoStart2Done()));
     kDebug( 1218 ) << "Autostart 2 done" << endl;
     waitAutoStart2 = false;
     finishStartup();
@@ -321,8 +318,9 @@ void KSMServer::kcmPhase2Done()
     if( state != FinishingStartup )
         return;
     kDebug( 1218 ) << "Kcminit phase 2 done" << endl;
-    disconnectDCOPSignal( "kcminit", "kcminit", "phase2Done()",
-                          "kcmPhase2Done()");
+    disconnect( kcminitSignals, SIGNAL( phase2Done()), this, SLOT( phase2Done()));
+    delete kcminitSignals;
+    kcminitSignals = NULL;
     waitKcmInit2 = false;
     finishStartup();
 }
@@ -343,7 +341,9 @@ void KSMServer::finishStartup()
         return;
 
     upAndRunning( "session ready" );
-    DCOPRef( "knotify" ).send( "sessionReady" ); // knotify startup optimization
+    // TODO
+    QDBusInterfacePtr knotify( "org.kde.knotify", "/knotify", "org.kde.KNotify" );
+    knotify->call( "sessionReady" ); // knotify startup optimization
     state = Idle;
     setupXIOErrorHandler(); // From now on handle X errors as normal shutdown.
 }
@@ -411,13 +411,15 @@ void KSMServer::resumeStartupInternal()
 
 void KSMServer::publishProgress( int progress, bool max  )
 {
-    DCOPRef( "ksplash" ).send( max ? "setMaxProgress" : "setProgress", progress );
+    QDBusInterfacePtr ksplash( "org.kde.ksplash", "/KSplash", "org.kde.KSplash" );
+    ksplash->call( max ? "setMaxProgress" : "setProgress", progress );
 }
 
 
 void KSMServer::upAndRunning( const QString& msg )
 {
-    DCOPRef( "ksplash" ).send( "upAndRunning", msg );
+    QDBusInterfacePtr ksplash( "org.kde.ksplash", "/KSplash", "org.kde.KSplash" );
+    ksplash->call( "upAndRunning", msg );
     XEvent e;
     e.xclient.type = ClientMessage;
     e.xclient.message_type = XInternAtom( QX11Info::display(), "_KDE_SPLASH_PROGRESS", False );
@@ -427,16 +429,4 @@ void KSMServer::upAndRunning( const QString& msg )
     assert( strlen( msg.toLatin1()) < 20 );
     strcpy( e.xclient.data.b, msg.toLatin1());
     XSendEvent( QX11Info::display(), QX11Info::appRootWindow(), False, SubstructureNotifyMask, &e );
-}
-
-// these two are in the DCOP interface but I have no idea what uses them
-// Remove for KDE4
-void KSMServer::restoreSessionInternal()
-{
-    autoStart1Done();
-}
-
-void KSMServer::restoreSessionDoneInternal()
-{
-    autoStart2Done();
 }

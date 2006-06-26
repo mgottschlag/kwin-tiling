@@ -14,6 +14,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include <QMessageBox>
 #include <QDir>
+#include <dbus/qdbus.h>
 
 #include <kapplication.h>
 #include <kcmdlineargs.h>
@@ -112,6 +113,10 @@ void sanity_check( int argc, char* argv[] )
   }
   if (msg.isEmpty())
   {
+#ifdef __GNUC__
+#warning Is something like this needed for D-BUS?
+#endif
+#if 0
      path = DCOPClient::dcopServerFile();
      if (access(path.data(), R_OK) && (errno == ENOENT))
      {
@@ -119,6 +124,7 @@ void sanity_check( int argc, char* argv[] )
         if (DCOPClient::iceauthPath().isEmpty())
            msg = "Could not find 'iceauth' in path.";
      }
+#endif
   }
   if (msg.isEmpty())
   {
@@ -192,13 +198,12 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
     KApplication a(true); // Disable styles until we need them.
     fcntl(ConnectionNumber(QX11Info::display()), F_SETFD, 1);
 
-
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-    kapp->dcopClient()->registerAs("ksmserver", false);
-    if (!kapp->dcopClient()->isRegistered())
+    if( QDBus::sessionBus().busService()->requestName( "ksmserver", QDBusBusService::DoNotQueueName )
+        != QDBusBusService::PrimaryOwnerReply )
     {
-       qWarning("Could not register with DCOPServer. Aborting.");
+       qWarning("Could not register with D-BUS. Aborting.");
        return 1;
     }
 
@@ -219,7 +224,6 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
 #endif
 
     KSMServer *server = new KSMServer( QLatin1String(wm), only_local);
-    kapp->dcopClient()->setDefaultObject( server->objId() );
 
     IceSetIOErrorHandler( IoErrorHandler );
 

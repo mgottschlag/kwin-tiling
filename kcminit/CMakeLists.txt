@@ -5,7 +5,7 @@ project(kcminit)
 
 ########### next target ###############
 
-set(kcminit_KDEINIT_SRCS main.cpp )
+set(kcminit_KDEINIT_SRCS main.cpp kcminitadaptor.cpp )
 
 
 kde4_automoc(${kcminit_KDEINIT_SRCS})

@@ -42,6 +42,8 @@
 #include <QX11Info>
 #endif
 
+#include "kcminitadaptor.h"
+
 static KCmdLineOptions options[] =
 {
     { "list", I18N_NOOP("List modules that are run at startup"), 0 },
@@ -245,8 +247,6 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
   KApplication app;
-#warning "kde4: port dbus"
-  //app.dcopClient()->registerAs( "kcminit", false );
   KLocale::setMainCatalog(0);
   KCMInit kcminit( KCmdLineArgs::parsedArgs());
   return 0;

@@ -11,7 +11,8 @@ set(ksmserver_KDEINIT_SRCS ${kdmlib_SRCS}
    legacy.cpp 
    startup.cpp 
    shutdown.cpp 
-   client.cpp )
+   client.cpp
+   ksmserveradaptor.cpp )
 
 kde4_automoc(${ksmserver_KDEINIT_SRCS})
 

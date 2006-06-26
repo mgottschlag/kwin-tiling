@@ -4,24 +4,21 @@
 #include <dcopobject.h>
 #include <QStringList>
 
-class KSMServerInterface : virtual public DCOPObject
+class KSMServerInterface : public QObject
 {
-  K_DCOP
+  Q_OBJECT
+  Q_CLASSINFO("D-Bus Interface", "org.kde.KSMServerInterface")
 
-k_dcop:
-  virtual void logout(int, int, int ) = 0;
-  virtual void restoreSessionInternal() = 0;
-  virtual void restoreSessionDoneInternal() = 0;
-  virtual QStringList sessionList() = 0;
+public Q_SLOTS:
+  Q_SCRIPTABLE void logout(int, int, int );
+  Q_SCRIPTABLE QStringList sessionList();
 
-  virtual QString currentSession() = 0;
-  virtual void saveCurrentSession() = 0;
-  virtual void saveCurrentSessionAs( QString ) = 0;
+  Q_SCRIPTABLE QString currentSession();
+  Q_SCRIPTABLE void saveCurrentSession();
+  Q_SCRIPTABLE void saveCurrentSessionAs( QString );
 
-  virtual void autoStart2() = 0;
-  
-  virtual void suspendStartup( QString ) = 0;
-  virtual void resumeStartup( QString ) = 0;
+  Q_SCRIPTABLE void suspendStartup( QString );
+  Q_SCRIPTABLE void resumeStartup( QString );
 };
 
 #endif

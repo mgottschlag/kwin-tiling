@@ -18,7 +18,6 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <QTimer>
 #include <QTime>
 #include <QMap>
-#include <dcopobject.h>
 
 #include "server2.h"
 

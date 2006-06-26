@@ -62,6 +62,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMessageBox>
 #include <QTimer>
 #include <QDesktopWidget>
+#include <dbus/qdbus.h>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -72,8 +73,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstaticdeleter.h>
 #include <ktempfile.h>
 #include <kprocess.h>
-#include <dcopclient.h>
-#include <dcopref.h>
 #include <kwinmodule.h>
 #include <knotifyclient.h>
 #include <dmctl.h>
@@ -416,6 +415,14 @@ void KSMServer::completeShutdownOrCheckpoint()
 
     if ( state == Shutdown ) {
         bool waitForKNotify = true;
+#ifdef __GNUC__
+#warning KNotify TODO
+#endif
+#if 0
+        knotifySignals = QDBus::sessionBus().findInterface("org.kde.knotify",
+            "/knotify", "org.kde.KNotify" );
+        if( !knotifySignals->isValid())
+            kWarning() << "knotify not running?" << endl;
         if( !kapp->dcopClient()->connectDCOPSignal( "knotify", "",
             "notifySignal(QString,QString,QString,QString,QString,int,int,int,int)",
             "ksmserver", "notifySlot(QString,QString,QString,QString,QString,int,int,int,int)", false )) {
@@ -426,6 +433,9 @@ void KSMServer::completeShutdownOrCheckpoint()
             "ksmserver", "logoutSoundFinished(int,int)", false )) {
             waitForKNotify = false;
         }
+#else
+        waitForKNotify = false;
+#endif
         // event() can return -1 if KNotifyClient short-circuits and avoids KNotify
         logoutSoundEvent = KNotifyClient::event( 0, "exitkde" ); // KDE says good bye
         if( logoutSoundEvent <= 0 )

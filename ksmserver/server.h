@@ -19,11 +19,9 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 #include <q3cstring.h>
 #include <QTime>
 #include <QMap>
-#include <dcopobject.h>
 #include <kworkspace.h>
 
 #include "server2.h"
-#include "KSMServerInterface.h"
 
 #define SESSION_PREVIOUS_LOGOUT "saved at previous logout"
 #define SESSION_BY_USER  "saved by user"
@@ -32,6 +30,8 @@ typedef QList<Q3CString> QCStringList;
 class KSMListener;
 class KSMConnection;
 class KSMClient;
+
+class QDBusInterface;
 
 enum SMType { SM_ERROR, SM_WMCOMMAND, SM_WMSAVEYOURSELF };
 struct SMData
@@ -43,18 +43,9 @@ struct SMData
     };
 typedef QMap<WId,SMData> WindowMap;
 
-class KSMServer : public QObject, public KSMServerInterface
+class KSMServer : public QObject
 {
 Q_OBJECT
-K_DCOP
-k_dcop:
-    void notifySlot(QString,QString,QString,QString,QString,int,int,int,int);
-    void logoutSoundFinished(int,int);
-    void autoStart0Done();
-    void autoStart1Done();
-    void autoStart2Done();
-    void kcmPhase1Done();
-    void kcmPhase2Done();
 public:
     KSMServer( const QString& windowManager, bool only_local );
     ~KSMServer();
@@ -96,8 +87,6 @@ public Q_SLOTS:
 private Q_SLOTS:
     void newConnection( int socket );
     void processData( int socket );
-    void restoreSessionInternal();
-    void restoreSessionDoneInternal();
 
     void protectionTimeout();
     void timeoutQuit();
@@ -111,6 +100,14 @@ private Q_SLOTS:
     void autoStart2();
     void tryRestoreNext();
     void startupSuspendTimeout();
+
+    void notifySlot(QString,QString,QString,QString,QString,int,int,int,int);
+    void logoutSoundFinished(int,int);
+    void autoStart0Done();
+    void autoStart1Done();
+    void autoStart2Done();
+    void kcmPhase1Done();
+    void kcmPhase2Done();
 
 private:
     void handlePendingInteractions();
@@ -206,6 +203,9 @@ private:
     QStringList excludeApps;
 
     WindowMap legacyWindows;
+    
+    QDBusInterface* klauncherSignals;
+    QDBusInterface* kcminitSignals;
 };
 
 #endif

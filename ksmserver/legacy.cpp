@@ -63,6 +63,7 @@ static WindowMap* windowMapPtr = 0;
 static Atom wm_save_yourself = XNone;
 static Atom wm_protocols = XNone;
 static Atom wm_client_leader = XNone;
+static Atom sm_client_id = XNone;
 
 static int winsErrorHandler(Display *, XErrorEvent *ev)
 {
@@ -85,14 +86,15 @@ void KSMServer::performLegacySessionSave()
     // and determine which style (WM_COMMAND or WM_SAVE_YOURSELF)
     KWinModule module;
     if( wm_save_yourself == (Atom)XNone ) {
-	Atom atoms[ 3 ];
+	Atom atoms[ 4 ];
 	const char* const names[]
-	    = { "WM_SAVE_YOURSELF", "WM_PROTOCOLS", "WM_CLIENT_LEADER" };
-	XInternAtoms( QX11Info::display(), const_cast< char** >( names ), 3,
+	    = { "WM_SAVE_YOURSELF", "WM_PROTOCOLS", "WM_CLIENT_LEADER", "SM_CLIENT_ID" };
+	XInternAtoms( QX11Info::display(), const_cast< char** >( names ), 4,
 	    False, atoms );
 	wm_save_yourself = atoms[ 0 ];
 	wm_protocols = atoms[ 1 ];
 	wm_client_leader = atoms[ 2 ];
+        sm_client_id = atoms[ 3 ];
     }
     for ( QList<WId>::ConstIterator it = module.windows().begin();
 	  it != module.windows().end(); ++it) {
@@ -382,10 +384,9 @@ WId KSMServer::windowWmClientLeader(WId w)
  */
 QByteArray KSMServer::windowSessionId(WId w, WId leader)
 {
-#warning FIXME KDE4: it is wrong, someone with session management understanding look at it...
-    QByteArray result = qApp->sessionId().toAscii();
-//KDE4    if (result.isEmpty() && leader != (WId)XNone && leader != w)
-//KDE4		result = getQCStringProperty(leader, qt_sm_client_id );
+    QByteArray result = getQCStringProperty(w, sm_client_id);
+    if (result.isEmpty() && leader != (WId)None && leader != w)
+	result = getQCStringProperty(leader, sm_client_id);
     return result;
 }
 #endif
