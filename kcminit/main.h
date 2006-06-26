@@ -28,7 +28,7 @@ class KLibLoader;
 class KCMInit : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.kcminit.kcminit")
+    Q_CLASSINFO("D-Bus Interface", "org.kde.KCMInit")
 	public Q_SLOTS: //dbus
         Q_SCRIPTABLE void runPhase1();
         Q_SCRIPTABLE void runPhase2();
