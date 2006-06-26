@@ -500,8 +500,11 @@ void KTheme::apply()
 
         soundConf.sync();
         kwinSoundConf.sync();
-		QByteArray data;
-        client->send("knotify", "", "reconfigure()", data);
+
+        QDBusInterfacePtr knotify("org.kde.knotify", "/Notify", "org.kde.KNotify");
+        if ( knotify->isValid() )
+            knotify->call( "reconfigure" );
+
         // TODO signal kwin sounds change?
     }
 
@@ -578,7 +581,9 @@ void KTheme::apply()
         kwinConf.writeEntry( "BorderSize", getProperty( wmElem, "border", "size" ) );
 
         kwinConf.sync();
-        client->send( DCOPCString("kwin"), DCOPCString(""), DCOPCString("reconfigure()"), DCOPCString("") );
+        QDBusInterfacePtr kwin("org.kde.kwin", "/KWin", "org.kde.KWin");
+        if ( kwin->isValid() )
+            kwin->call( "reconfigure" );
     }
 
     // 8. Konqueror
@@ -592,8 +597,10 @@ void KTheme::apply()
         konqConf.writeEntry( "BgColor", QColor( getProperty( konqElem, "bgcolor", "rgb" ) ) );
 
         konqConf.sync();
-		QByteArray data;
-        client->send("konqueror*", "KonquerorIface", "reparseConfiguration()", data); // FIXME seems not to work :(
+
+        QDBusMessage message =
+            QDBusMessage::signal("/Konqueror", "org.kde.Konqueror", "reparseConfiguration");
+        QDBus::sessionBus().send(message);
     }
 
     // 9. Kicker
