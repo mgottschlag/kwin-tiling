@@ -85,13 +85,22 @@ void SaverEngine::lock()
 // This is done only for --forcelock .
     if( ok && mState != Saving )
     {
+#ifdef __GNUC__
+#warning port dcop transactions to dbus
+#endif
+#if 0
         DCOPClientTransaction* trans = kapp->dcopClient()->beginTransaction();
         mLockTransactions.append( trans );
+#endif
     }
 }
 
 void SaverEngine::processLockTransactions()
 {
+#ifdef __GNUC__
+#warning port dcop transactions to dbus
+#endif
+#if 0
     for( QVector< DCOPClientTransaction* >::ConstIterator it = mLockTransactions.begin();
          it != mLockTransactions.end();
          ++it )
@@ -101,6 +110,7 @@ void SaverEngine::processLockTransactions()
         kapp->dcopClient()->endTransaction( *it, replyType, arr );
     }
     mLockTransactions.clear();
+#endif
 }
 
 void SaverEngine::saverLockReady()
