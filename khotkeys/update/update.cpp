@@ -19,7 +19,6 @@
 #include <kstandarddirs.h>
 #include <kconfig.h>
 #include <kdebug.h>
-#include <dcopclient.h>
 
 #include <settings.h>
 
@@ -56,7 +55,9 @@ int main( int argc, char* argv[] )
         return 2;
         }
     settings.write_settings();
-    QByteArray data;
-    kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
+#ifdef __GNUC__
+#warning port to DBUS reread_configuration
+#endif
+    //kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
     return 0;
     }

@@ -12,6 +12,8 @@
 #define _KHOTKEYS_APP_H_
 
 #include <kuniqueapplication.h>
+#include <QtCore/QObject>
+#include <dbus/qdbus.h>
 
 namespace KHotKeys
 {
@@ -22,10 +24,9 @@ class KHotKeysApp
     : public KUniqueApplication
     {
     Q_OBJECT
-    K_DCOP
-    k_dcop:
-        ASYNC reread_configuration();
-        ASYNC quit(); 
+    public Q_SLOTS:
+        Q_ASYNC void reread_configuration();
+        Q_ASYNC void quit(); 
     public:
         KHotKeysApp();
         virtual ~KHotKeysApp();
