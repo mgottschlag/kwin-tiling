@@ -21,11 +21,11 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kapplication.h>
-#include <dcopclient.h>
 #include <QLabel>
 #include <QLineEdit>
 #include <QLayout>
 #include <kkeydialog.h>
+#include <dbus/qdbus.h>
 
 #include <settings.h>
 #include <action_data.h>
@@ -189,17 +189,18 @@ KService::Ptr khotkeys_find_menu_entry( const QString& shortcut_P )
 void khotkeys_send_reread_config()
     {
     QByteArray data;
-    if( !kapp->dcopClient()->isAttached())
-        kapp->dcopClient()->attach();
-    if( !kapp->dcopClient()->isApplicationRegistered( "khotkeys" ))
+    if( !QDBus::sessionBus().busService()->nameHasOwner( "khotkeys" ))
         {
         kDebug( 1217 ) << "launching new khotkeys daemon" << endl;
         KToolInvocation::kdeinitExec( "khotkeys" );
         }
     else
         {
-        QByteArray data;
-        kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
+#ifdef __GNUC__
+#warning port to DBUS signal reread_configuration
+#endif
+
+        //kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
         kDebug( 1217 ) << "telling khotkeys daemon to reread configuration" << endl;
         }
     }

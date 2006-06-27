@@ -33,9 +33,9 @@
 #include <gestures.h>
 
 extern "C" 
-KDE_EXPORT KDEDModule *create_khotkeys( const DCOPCString& obj )
+KDE_EXPORT KDEDModule *create_khotkeys( )
     {
-    return new KHotKeys::KHotKeysModule( obj );
+    return new KHotKeys::KHotKeysModule( );
     }
 
 namespace KHotKeys
@@ -43,23 +43,27 @@ namespace KHotKeys
 
 // KhotKeysModule
 
-KHotKeysModule::KHotKeysModule( const DCOPCString& obj )
-    : KDEDModule( obj )
+KHotKeysModule::KHotKeysModule( )
+    : KDEDModule( )
     {
     for( int i = 0;
          i < 5;
          ++i )
         {
-        if( kapp->dcopClient()->isApplicationRegistered( "khotkeys" ))
+        if( QDBus::sessionBus().busService()->nameHasOwner( "khotkeys" ))
             {
-            QByteArray data, replyData;
-            DCOPCString reply;
             // wait for it to finish
-            kapp->dcopClient()->call( "khotkeys*", "khotkeys", "quit()", data, reply, replyData );
+#ifdef __GNUC__
+#warning port to DBUS signal quit
+#endif
+            //kapp->dcopClient()->call( "khotkeys*", "khotkeys", "quit()", data, reply, replyData );
             sleep( 1 );
             }
         }
-    client.registerAs( "khotkeys", false ); // extra dcop connection (like if it was an app)
+#ifdef __GNUC__
+#warning port to DBUS registerAs
+#endif
+    //client.registerAs( "khotkeys", false ); // extra dcop connection (like if it was an app)
     init_global_data( true, this ); // grab keys
     // CHECKME triggery a dalsi vytvaret az tady za inicializaci
     actions_root = NULL;

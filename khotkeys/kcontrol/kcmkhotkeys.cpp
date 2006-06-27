@@ -28,18 +28,18 @@
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kapplication.h>
-#include <dcopclient.h>
 #include <kdebug.h>
 #include <kmessagebox.h>
 #include <kglobal.h>
 #include <ksimpleconfig.h>
 #include <kfiledialog.h>
-#include <dcopref.h>
 #include <ktoolinvocation.h>
 
 #include <input.h>
 #include <triggers.h>
 #include <action_data.h>
+
+#include <dbus/qdbus.h>
 
 #include "tab_widget.h"
 #include "actions_listview_widget.h"
@@ -70,8 +70,9 @@ extern "C"
         KToolInvocation::kdeinitExec( "khotkeys" );
     else
         {
-        DCOPRef ref( "kded", "kded" );
-        if( !ref.call( "loadModule", DCOPCString( "khotkeys" )))
+        QDBusInterfacePtr kded("org.kde.kded", "/modules/kded", "org.kde.kded.Kded");
+		QDBusReply<bool> reply = kded->call("loadModule",QString( "khotkeys" ) );
+        if( !reply.isSuccess())
             {
             kWarning( 1217 ) << "Loading of khotkeys module failed." << endl;
             KToolInvocation::kdeinitExec( "khotkeys" );
@@ -145,21 +146,26 @@ void Module::save()
     settings.write_settings();
     if( daemon_disabled())
         {
-        QByteArray data;
-        kapp->dcopClient()->send( "khotkeys*", "khotkeys", "quit()", data );
+#ifdef __GNUC__
+#warning port to DBUS signal quit
+#endif
+
+        //kapp->dcopClient()->send( "khotkeys*", "khotkeys", "quit()", data );
         kDebug( 1217 ) << "disabling khotkeys daemon" << endl;
         }
     else
         {
-        if( !kapp->dcopClient()->isApplicationRegistered( "khotkeys" ))
+        if( !QDBus::sessionBus().busService()->nameHasOwner( "khotkeys" ))
             {
             kDebug( 1217 ) << "launching new khotkeys daemon" << endl;
             KToolInvocation::kdeinitExec( "khotkeys" );
             }
         else
             {
-            QByteArray data;
-            kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
+#ifdef __GNUC__
+#warning port to DBUS signal reread_configuration
+#endif
+            //kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
             kDebug( 1217 ) << "telling khotkeys daemon to reread configuration" << endl;
             }
         }
