@@ -26,7 +26,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <kpanelextension.h>
 #include <taskmanager.h>
-#include <dcopobject.h>
 
 #include "taskcontainer.h"
 #include "panner.h"

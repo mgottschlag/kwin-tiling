@@ -169,7 +169,7 @@ void ExtensionManager::initialize()
     pm->clearUntrustedLists();
     connect(Kicker::self(), SIGNAL(configurationChanged()), SLOT(configurationChanged()));
 
-    DBusInterfacePtr dbus("org.kde.ksmserver", "/ksmserver");
+    QDBusInterfacePtr dbus("org.kde.ksmserver", "/ksmserver");
     dbus->call("resumeStartup", "kicker");
 }
 

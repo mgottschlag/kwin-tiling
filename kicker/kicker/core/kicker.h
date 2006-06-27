@@ -36,9 +36,8 @@ class PanelPopupButton;
 class Kicker : public KUniqueApplication
 {
     Q_OBJECT
-    K_DCOP
 
-k_dcop:
+public slots:
     void configure();
     void quit();
     void restart();

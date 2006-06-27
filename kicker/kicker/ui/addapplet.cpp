@@ -246,12 +246,13 @@ void AppletWidget::focusOutEvent(QFocusEvent*)
 AddAppletDialog::AddAppletDialog(ContainerArea* cArea,
                                  QWidget* parent,
                                  const char* name)
-    : KDialog(parent, i18n("Add Applet"), 0),
+    : KDialog(parent),
       m_selectedApplet(0),
       m_containerArea(cArea),
       m_insertionPoint(Kicker::self()->insertionPoint()),
       m_closing(false)
 {
+    setCaption(i18n("Add Applet"));
     Q_UNUSED(name);
     setModal(false);
 

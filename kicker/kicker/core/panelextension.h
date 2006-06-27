@@ -26,7 +26,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define _panelextension_h_
 
 #include <kpanelextension.h>
-#include <dcopobject.h>
 
 #include "appletinfo.h"
 

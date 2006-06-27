@@ -34,7 +34,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QFrame>
 
 #include <kpanelextension.h>
-#include <dcopobject.h>
 #include <netwm_def.h>
 
 

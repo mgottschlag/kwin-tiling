@@ -53,6 +53,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kio/job.h>
 #include <kauthorized.h>
 #include <kworkspace.h>
+#include <dbus/qdbus.h>
 
 #include "utils.h"
 #include "kicker.h"
@@ -550,11 +551,12 @@ void PanelServiceMenu::slotContextMenu(int selected)
 	    break;
 
         case AddItemToPanel:
+		{
             service = KService::Ptr::staticCast(contextKSycocaEntry_);
             QDBusInterfacePtr kickerInterface("org.kde.kicker", "/Panel");
             kickerInterface->call("addServiceButton", service->desktopEntryPath());
             break;
-
+		}
 	case EditItem:
             proc = new KProcess(this);
             *proc << KStandardDirs::findExe(QString::fromLatin1("kmenuedit"));
@@ -563,11 +565,12 @@ void PanelServiceMenu::slotContextMenu(int selected)
 	    break;
 
         case PutIntoRunDialog:
+			{
             service = KService::Ptr::staticCast(contextKSycocaEntry_);
             QDBusInterfacePtr kickerInterface("org.kde.kdesktop", "/default");
             kickerInterface->call("popupExecuteCommand", service->exec());
             break;
-
+			}
 	case AddMenuToDesktop:
 	    g = KServiceGroup::Ptr::staticCast(contextKSycocaEntry_);
             dest.setPath( KGlobalSettings::desktopPath() );
@@ -584,11 +587,12 @@ void PanelServiceMenu::slotContextMenu(int selected)
 	    break;
 
         case AddMenuToPanel:
+		{
             g = KServiceGroup::Ptr::staticCast(contextKSycocaEntry_);
             QDBusInterfacePtr kickerInterface("org.kde.kicker", "/Panel");
             kickerInterface->call("addServiceMenuButton", service->desktopEntryPath());
             break;
-
+		}
         case EditMenu:
             proc = new KProcess(this);
             *proc << KStandardDirs::findExe(QString::fromLatin1("kmenuedit"));

@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMenu>
 #include <QBoxLayout>
 
-#include <dcopclient.h>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdebug.h>

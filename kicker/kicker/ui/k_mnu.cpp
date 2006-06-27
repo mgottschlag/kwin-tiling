@@ -25,6 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <sys/types.h>
 #include <unistd.h>
 #include <dmctl.h>
+#include <dbus/qdbus.h>
 
 #include <QDesktopWidget>
 #include <QImage>
@@ -55,7 +56,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "utils.h"
 
-#include "client_mnu.h"
 #include "container_base.h"
 #include "kicker.h"
 #include "kickerSettings.h"
@@ -97,7 +97,7 @@ PanelKMenu::~PanelKMenu()
     delete bookmarkMenu;
     delete bookmarkOwner;
 }
-
+#if 0
 void PanelKMenu::slotServiceStartedByStorageId(QString starter,
                                                QString storageId)
 {
@@ -109,7 +109,7 @@ void PanelKMenu::slotServiceStartedByStorageId(QString starter,
         RecentlyLaunchedApps::self().updateRecentlyUsedApps(service);
     }
 }
-
+#endif
 
 bool PanelKMenu::loadSidePixmap()
 {

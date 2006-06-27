@@ -159,7 +159,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
     {
         // send it even before KApplication ctor, because ksmserver will launch another app as soon
         // as QApplication registers with it
-        DBusInterfacePtr dbus("org.kde.ksmserver", "/ksmserver");
+        QDBusInterfacePtr dbus("org.kde.ksmserver", "/ksmserver");
         dbus->call("suspendStartup", "kicker");
     }
 
