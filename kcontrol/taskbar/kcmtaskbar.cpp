@@ -21,8 +21,8 @@
 #include <QLayout>
 #include <QTimer>
 #include <Q3ValueList>
+#include <dbus/qdbus.h>
 
-#include <dcopclient.h>
 
 #include <kaboutdata.h>
 #include <kapplication.h>
@@ -257,8 +257,8 @@ void TaskbarConfig::save()
 
     KCModule::save();
 
-    QByteArray data;
-    kapp->dcopClient()->emitDCOPSignal("kdeTaskBarConfigChanged()", data);
+    QDBusMessage message = QDBusMessage::signal("/TaskBar", "org.kde.KControl", "kdeTaskBarConfigChanged");
+    QDBus::sessionBus().send(message);
 }
 
 void TaskbarConfig::defaults()
