@@ -24,6 +24,7 @@
 #include <QLayout>
 #include <QRadioButton>
 
+#include <dbus/qdbus.h>
 
 #include <kapplication.h>
 #include <kemailsettings.h>
@@ -203,10 +204,8 @@ void CfgEmailClient::save(KConfig *)
 	QString cfgName(KGlobal::dirs()->findResource("config", "emails"));
 	if (!cfgName.isEmpty())
 		::chmod(QFile::encodeName(cfgName), 0600);
-#warning "kde4: dbus port"
-#if 0
-	kapp->dcopClient()->emitDCOPSignal("KDE_emailSettingsChanged()", QByteArray());
-#endif
+	QDBusMessage message = QDBusMessage::signal("/Component", "org.kde.Kcontrol", "KDE_emailSettingsChanged");
+	QDBus::sessionBus().send(message);
 	emit changed(false);
 }
 
