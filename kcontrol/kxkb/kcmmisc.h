@@ -34,7 +34,7 @@ class KeyboardConfig : public KCModule
 {
   Q_OBJECT
 public:
-  KeyboardConfig( QWidget *parent=0, const char* name=0);
+  KeyboardConfig( KInstance *inst, QWidget *parent=0);
 
   void save();
   void load();

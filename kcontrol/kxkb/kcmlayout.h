@@ -7,7 +7,6 @@
 
 #include <QString>
 #include <q3listview.h>
-
 #include "rules.h"
 
 class OptionListItem : public Q3CheckListItem

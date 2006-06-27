@@ -25,7 +25,6 @@
 #include <kiconloader.h>
 
 #include "extension.h"
-#include "rules.h"
 #include "kcmlayout.h"
 #include "kcmlayout.moc"
 #include "pixmap.h"
@@ -33,10 +32,10 @@
 #include <kiconloader.h>
 #include "kcmlayoutwidget.h"
 
-#include <X11/Xlib.h>
 #include <QX11Info>
 #include <ktoolinvocation.h>
-
+#include <X11/Xlib.h>
+#include "rules.h"
 
 static const char* switchModes[] = {
   "Global", "WinClass", "Window"

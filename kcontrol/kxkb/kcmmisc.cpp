@@ -51,8 +51,8 @@
 #include "kcmmiscwidget.h"
 #include <X11/Xlib.h>
 
-KeyboardConfig::KeyboardConfig (QWidget * parent, const char *)
-    : KCModule (parent, "kcmlayout")
+KeyboardConfig::KeyboardConfig (KInstance *inst,QWidget * parent)
+    : KCModule (inst, parent)
 {
   QString wtstr;
   QBoxLayout* lay = new QVBoxLayout(this);

@@ -140,7 +140,6 @@ private:
 class KXKBApp : public KUniqueApplication
 {
     Q_OBJECT
-    K_DCOP
 
 public:
 
@@ -149,7 +148,7 @@ public:
 
     virtual int newInstance();
     
-k_dcop:
+public Q_SLOTS:
     bool setLayout(const QString& layout);
     QString getCurrentLayout() { return m_layout; }
     QStringList getLayoutsList() { return m_list; }

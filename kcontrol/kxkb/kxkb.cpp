@@ -55,18 +55,18 @@ DESCRIPTION
 #include <kmenu.h>
 #include <QX11Info>
 
+#include "kxkb.h"
+#include "extension.h"
+#include "rules.h"
+#include "kxkb.moc"
+#include "pixmap.h"
+
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #define explicit int_explicit        // avoid compiler name clash in XKBlib.h
 #include <X11/XKBlib.h>
 #include <ktoolinvocation.h>
 #undef explicit
-
-#include "kxkb.h"
-#include "extension.h"
-#include "rules.h"
-#include "kxkb.moc"
-#include "pixmap.h"
 
 
 TrayWindow::TrayWindow(QWidget *parent, const char *name)
