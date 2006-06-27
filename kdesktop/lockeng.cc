@@ -27,6 +27,7 @@
 #include "xautolock_c.h"
 extern xautolock_corner_t xautolock_corners[ 4 ];
 
+const char* SaverEngine::screenSaverDBusObjectPath = "/ScreenSaver";
 
 //===========================================================================
 //
@@ -40,7 +41,7 @@ SaverEngine::SaverEngine()
 {
 
     (void) new KScreenSaverAdaptor( this );
-    QDBus::sessionBus().registerObject("/ScreenSaver", this);
+    QDBus::sessionBus().registerObject( screenSaverDBusObjectPath, this );
 
     // Save X screensaver parameters
     XGetScreenSaver(QX11Info::display(), &mXTimeout, &mXInterval,

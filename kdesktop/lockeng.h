@@ -77,6 +77,8 @@ public:
      */
     void saverLockReady();
 
+    static const char* screenSaverDBusObjectPath;
+
 Q_SIGNALS:
     // DBus signals
     void screenSaverStarted();

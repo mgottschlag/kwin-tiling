@@ -68,6 +68,8 @@ public:
     QStringList wallpaperList(int desk);
     QStringList wallpaperFiles(int desk);
 
+    static const char* backgroundDBusObjectPath;
+
 Q_SIGNALS:
     void initDone();
 

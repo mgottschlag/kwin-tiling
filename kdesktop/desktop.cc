@@ -25,6 +25,7 @@
 #include "startupid.h"
 #include "kdiconview.h"
 #include "minicli.h"
+#include "lockeng.h"
 #include "kdesktopsettings.h"
 #include "klaunchsettings.h"
 #include "kdesktopadaptor.h"
@@ -890,6 +891,16 @@ bool KDesktop::event(QEvent * e)
             m_pIconView->clearSelection();
     }
     return QWidget::event(e);
+}
+
+QDBusObjectPath KDesktop::background()
+{
+    return QDBusObjectPath( KBackgroundManager::backgroundDBusObjectPath );
+}
+
+QDBusObjectPath KDesktop::screenSaver()
+{
+    return QDBusObjectPath( SaverEngine::screenSaverDBusObjectPath );
 }
 
 #include "desktop.moc"

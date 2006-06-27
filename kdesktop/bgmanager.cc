@@ -55,6 +55,8 @@ template class QVector<int>;
 static Atom prop_root;
 static bool properties_inited = false;
 
+const char* KBackgroundManager::backgroundDBusObjectPath = "/Background";
+
 /**** KBackgroundManager ****/
 
 KBackgroundManager::KBackgroundManager(QWidget *desktop, KWinModule* kwinModule)
@@ -62,7 +64,7 @@ KBackgroundManager::KBackgroundManager(QWidget *desktop, KWinModule* kwinModule)
 {
 
     (void) new KBackgroundAdaptor( this );
-    QDBus::sessionBus().registerObject("/Background", this);
+    QDBus::sessionBus().registerObject( backgroundDBusObjectPath, this );
 
     if( !properties_inited )
     {
