@@ -20,6 +20,7 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <qx11info_x11.h>
+#include <dbus/qdbus.h>
 
 //Added by qt3to4:
 #include <QVBoxLayout>
@@ -776,8 +777,11 @@ void KAccessConfig::save()
 
   else // don't need it -> kill it
   {
-      DCOPRef kaccess( "kaccess", "qt/kaccess" );
-      kaccess.send( "quit" );
+#warning "kde4: dbus port: need to test it"
+      QDBusInterfacePtr kaccess("org.kde.kaccess", "/KAccess", "org.kde.kaccess.KAccess"); 
+	  kaccess->call("quit");
+      //DCOPRef kaccess( "kaccess", "qt/kaccess" );
+      //kaccess.send( "quit" );
   }
 
   delete config;
