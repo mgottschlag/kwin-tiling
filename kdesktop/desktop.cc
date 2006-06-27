@@ -27,6 +27,7 @@
 #include "minicli.h"
 #include "kdesktopsettings.h"
 #include "klaunchsettings.h"
+#include "kdesktopadaptor.h"
 
 #include <string.h>
 #include <unistd.h>
@@ -36,7 +37,6 @@
 #include <QEvent>
 
 #include <netwm.h>
-#include <dcopclient.h>
 #include <kaction.h>
 #include <kcursor.h>
 #include <kdebug.h>
@@ -125,7 +125,6 @@ KDesktop::WheelDirection KDesktop::m_eWheelDirection = KDesktop::m_eDefaultWheel
 const char* KDesktop::m_wheelDirectionStrings[2] = { "Forward", "Reverse" };
 
 KDesktop::KDesktop( bool x_root_hack, bool wait_for_kded ) :
-    DCOPObject( "KDesktopIface" ),
     QWidget( 0L, Qt::WResizeNoErase | ( x_root_hack ? (Qt::WStyle_NoBorder) : ( Qt::WFlags )0 ) ),
     // those two WStyle_ break kdesktop when the root-hack isn't used (no Dnd)
    startup_id( NULL )
@@ -138,7 +137,10 @@ KDesktop::KDesktop( bool x_root_hack, bool wait_for_kded ) :
   KGlobal::locale()->insertCatalog("libkonq"); // needed for apps using libkonq
   KGlobal::locale()->insertCatalog("libdmctl");
 
-  setWindowTitle( "KDE Desktop");
+  setWindowTitle( "KDE Desktop" );
+
+  (void) new KDesktopAdaptor( this );
+  QDBus::sessionBus().registerObject("/Desktop", this);
 
   setAcceptDrops(true); // WStyle_Customize seems to disable that
   m_pKwinmodule = new KWinModule( this );
@@ -283,8 +285,9 @@ KDesktop::initRoot()
         connect(m_actionCollection->action("Lock Session"), SIGNAL(triggered(bool)), krootwm, SLOT(slotLock()));
      }
    } else {
-     DCOPRef r( "ksmserver", "ksmserver" );
-     r.send( "resumeStartup", QString( "kdesktop" ));
+      QDBusInterfacePtr ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
+      if ( ksmserver->isValid() )
+          ksmserver->call( "resumeStartup", QString( "kdesktop" ) );
    }
 
    KWin::setType( winId(), NET::Desktop );
@@ -309,8 +312,9 @@ KDesktop::backgroundInitDone()
        kapp->sendPostedEvents();
     }
 
-    DCOPRef r( "ksmserver", "ksmserver" );
-    r.send( "resumeStartup", QString( "kdesktop" ));
+    QDBusInterfacePtr ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
+    if ( ksmserver->isValid() )
+        ksmserver->call( "suspendStartup", QString( "kdesktop" ) );
 }
 
 void
@@ -422,22 +426,10 @@ void KDesktop::initConfig()
 
 void KDesktop::slotExecuteCommand()
 {
-    // this function needs to be duplicated since it appears that one
-    // cannot have a 'slot' be a DCOP method.  if this changes in the
-    // future, then 'slotExecuteCommand' and 'popupExecuteCommand' can
-    // merge into one slot.
-    popupExecuteCommand();
+    popupExecuteCommand( QString() );
 }
 
-/*
-  Shows minicli
- */
-void KDesktop::popupExecuteCommand()
-{
-  popupExecuteCommand("");
-}
-
-void KDesktop::popupExecuteCommand(const QString& command)
+void KDesktop::popupExecuteCommand( const QString& command )
 {
   if (m_bInit)
       return;
@@ -620,7 +612,9 @@ void KDesktop::refresh()
   m_bNeedRepaint |= 1;
   updateWorkArea();
 #endif
-  kapp->dcopClient()->send( DCOPCString("kwin"), DCOPCString(""), DCOPCString("refresh()"), QByteArray());
+  QDBusInterfacePtr kwin( "org.kde.kwin", "/KWin", "org.kde.KWin" );
+  if ( kwin->isValid() )
+      kwin->call( "refresh" );
   refreshIcons();
 }
 
@@ -799,7 +793,7 @@ void KDesktop::slotNewWallpaper(const KUrl &url)
     }
 }
 
-// for dcop interface backward compatibility
+// For the dbus interface [maybe the dbus interface should have those extra args?]
 void KDesktop::logout()
 {
     logout( KWorkSpace::ShutdownConfirmDefault,

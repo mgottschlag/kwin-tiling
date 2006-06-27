@@ -30,6 +30,7 @@ install(TARGETS kcheckrunning DESTINATION bin)
 
 ########### next target ###############
 
+# Please use .cpp for new files
 set(kdesktop_SRCS ${kdesktop_LIB_SRCS} ${kdmlib_SRCS} ${backgroundlib_SRCS}
    main.cc
    krootwm.cc
@@ -48,7 +49,11 @@ set(kdesktop_SRCS ${kdesktop_LIB_SRCS} ${kdmlib_SRCS} ${backgroundlib_SRCS}
    kshadowengine.cpp
    kshadowsettings.cpp
    kdesktopshadowsettings.cpp
-   kfileividesktop.cpp )
+   kfileividesktop.cpp
+   kbackgroundadaptor.cpp
+   kdesktopadaptor.cpp 
+   kscreensaveradaptor.cpp
+)
 
 kde4_automoc(${kdesktop_SRCS})
 
@@ -83,7 +88,8 @@ add_subdirectory( kwebdesktop )
 install_files( ${KCFG_INSTALL_DIR} FILES kdesktop.kcfg klaunch.kcfg )
 install_files( /share/autostart FILES kdesktop.desktop )
 install_files( ${DATA_INSTALL_DIR}/konqueror/servicemenus FILES kdesktopSetAsBackground.desktop )
-install_files( /include FILES KDesktopIface.h KScreensaverIface.h KBackgroundIface.h )
+# should we install the dbus xml files?
+# install_files( /include FILES KDesktopIface.h KScreensaverIface.h KBackgroundIface.h )
 install_files( ${CONFIG_INSTALL_DIR} FILES kdesktop_custom_menu1 kdesktop_custom_menu2 )
 
 

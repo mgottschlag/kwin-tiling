@@ -42,7 +42,6 @@
 #include <QRegExp>
 #include <QWhatsThis>
 
-#include <dcopclient.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
@@ -78,8 +77,8 @@
 
 #define KDESU_ERR strerror(errno)
 
-Minicli::Minicli( QWidget *parent, const char *name)
-        :KDialog( parent, name ),
+Minicli::Minicli( QWidget *parent )
+        :KDialog( parent ),
          m_autoCheckedRunInTerm(false)
 {
   setPlainCaption( i18n("Run Command") );
@@ -88,15 +87,15 @@ Minicli::Minicli( QWidget *parent, const char *name)
   QVBoxLayout* mainLayout = new QVBoxLayout( this );
   mainLayout->setMargin(0);
   mainLayout->setSpacing(KDialog::spacingHint());
-  
+
   m_dlgWidget = new QWidget(this);
   m_dlg = new Ui::MinicliDlgUI();
   m_dlg->setupUi(m_dlgWidget);
-  
+
   mainLayout->addWidget(m_dlgWidget);
 
   m_dlg->lbRunIcon->setPixmap(DesktopIcon("kmenu"));
-  
+
   m_dlg->cbCommand->setDuplicatesEnabled( false );
   m_dlg->cbCommand->setTrapReturnKey( true );
 
@@ -601,14 +600,15 @@ void Minicli::notifyServiceStarted(KService::Ptr service)
 {
     // Inform other applications (like the quickstarter applet)
     // that an application was started
-    QByteArray params;
-    QDataStream stream(&params, QIODevice::WriteOnly);
+    kDebug() << "minicli appLauncher dbus signal: " << service->storageId() << endl;
+#ifdef __GNUC__
+#warning TODO port to a dbus signal (in the Desktop dbus interface?)
+#endif
+    // the signal could be something like this:
+    // void serviceStartedByStorageId( const QString& starterService, const QString& storageId );
 
-    stream.setVersion(QDataStream::Qt_3_1);
-    stream << "minicli" << service->storageId();
-    kDebug() << "minicli appLauncher dcop signal: " << service->storageId() << endl;
-    KApplication::kApplication()->dcopClient()->emitDCOPSignal("appLauncher",
-        "serviceStartedByStorageId(QString,QString)", params);
+//    kapp->dcopClient()->emitDCOPSignal("appLauncher",
+//        "serviceStartedByStorageId", "minicli", service->storageId()
 }
 
 void Minicli::slotCmdChanged(const QString& text)
@@ -718,7 +718,7 @@ void Minicli::setIcon ()
     // for the icon and the overlay, also the overlay definately doesn't
     // have a more that one-bit alpha channel here
 #ifdef __GNUC__
-#warning "Yet another overlay thingie!"    
+#warning "Yet another overlay thingie!"
 #endif
     QPixmap overlay( locate ( "icon", KMimeType::favIconForURL( m_filterData->uri() ) + ".png" ) );
     if ( !overlay.isNull() )

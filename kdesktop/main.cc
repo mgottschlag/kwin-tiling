@@ -167,10 +167,10 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
         exit(0);
     }
 
-    DCOPRef r( "ksmserver", "ksmserver" );
-    r.setDCOPClient( cl );
-    r.send( "suspendStartup", QString( "kdesktop" ));
-    delete cl;
+    QDBusInterfacePtr ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
+    if ( ksmserver->isValid() )
+        ksmserver->call( "suspendStartup", QString( "kdesktop" ) );
+
     KUniqueApplication app;
     app.disableSessionManagement(); // Do SM, but don't restart.
 
@@ -203,8 +203,6 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
     KDesktop desktop( x_root_hack, wait_for_kded );
 
     args->clear();
-
-    app.dcopClient()->setDefaultObject( "KDesktopIface" );
 
     return app.exec();
 }

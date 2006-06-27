@@ -20,11 +20,10 @@
 #ifndef __desktop_h__
 #define __desktop_h__
 
-#include "KDesktopIface.h"
-
 #include <QWidget>
 #include <QStringList>
 
+#include <dbus/qdbus.h>
 #include <kworkspace.h>	// for logout parameters
 
 class KUrl;
@@ -58,7 +57,7 @@ Q_SIGNALS:
  * It handles the background, the screensaver and all the rest of the global stuff.
  * The icon view is a child widget of KDesktop.
  */
-class KDesktop : public QWidget, virtual public KDesktopIface
+class KDesktop : public QWidget
 {
   Q_OBJECT
 
@@ -69,23 +68,92 @@ public:
   KDesktop(bool x_root_hack, bool wait_for_kded );
   ~KDesktop();
 
-  // Implementation of the DCOP interface
-  virtual void rearrangeIcons();
-  virtual void lineupIcons();
-  virtual void selectAll();
-  virtual void unselectAll();
-  virtual void refreshIcons();
-  virtual QStringList selectedURLs();
+  // Implementation of the DBus interface
 
-  virtual void configure();
-  virtual void popupExecuteCommand();
-  virtual void popupExecuteCommand(const QString& content);
-  virtual void refresh();
-  virtual void logout();
-  virtual void clearCommandHistory();
-  virtual void runAutoStart();
+  /**
+   * Re-arrange the desktop icons.
+   */
+  void rearrangeIcons();
+  /**
+   * Lineup the desktop icons.
+   */
+  void lineupIcons();
+  /**
+   * Select all icons
+   */
+  void selectAll();
+  /**
+   * Unselect all icons
+   */
+  void unselectAll();
+  /**
+   * Refresh all icons
+   */
+  void refreshIcons();
+  /**
+   * @return the urls of selected icons
+   */
+  QStringList selectedURLs();
+  /**
+   * Re-read KDesktop's configuration
+   */
+  void configure();
+  /**
+   * Display the "Run Command" dialog (minicli) and prefill with @p content
+   */
+  void popupExecuteCommand(const QString& content);
+  /**
+   * Full refresh
+   */
+  void refresh();
+  /**
+   * Bye bye
+   */
+  void logout();
+  /**
+   * Clears the command history and completion items
+   */
+  void clearCommandHistory();
+  /**
+   * @internal
+   */
+  void runAutoStart();
 
-  virtual void switchDesktops( int delta );
+  /**
+   * Should be called by any application that wants to tell KDesktop
+   * to switch desktops e.g.  the minipager applet on kicker.
+   */
+  void switchDesktops( int delta );
+
+  /**
+   * Returns whether KDesktop uses a virtual root.
+   */
+  bool isVRoot() { return set_vroot; }
+  /**
+   * Set whether KDesktop should use a virtual root.
+   */
+  void setVRoot( bool enable );
+
+  /**
+   * Returns whether icons are enabled on the desktop
+   */
+  bool isIconsEnabled() { return m_bDesktopEnabled; }
+  /**
+   * Enable/disable icons on the desktop.
+   */
+ void setIconsEnabled( bool enable );
+
+  /**
+   * Get the dbus object path for the background interface
+   */
+  QDBusObjectPath background();
+  /**
+   * Get the dbus object path for the screensaver interface
+   */
+  QDBusObjectPath screenSaver();
+
+  // End of DBus-exported methods
+
 
   void logout( KWorkSpace::ShutdownConfirm confirm, KWorkSpace::ShutdownType sdtype );
 
@@ -157,11 +225,6 @@ protected:
 
   virtual void closeEvent(QCloseEvent *e);
 
-  virtual bool isVRoot() { return set_vroot; }
-  virtual void setVRoot( bool enable );
-
-  virtual bool isIconsEnabled() { return m_bDesktopEnabled; }
-  virtual void setIconsEnabled( bool enable );
   virtual bool event ( QEvent * e );
 
 private Q_SLOTS:

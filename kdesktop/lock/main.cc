@@ -27,7 +27,7 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
-#include <dcopref.h>
+#include <dbus/qdbus.h>
 
 #include <QList>
 
@@ -72,7 +72,7 @@ int main( int argc, char **argv )
 
     putenv(strdup("SESSION_MANAGER="));
 
-    KApplication::disableAutoDcopRegistration(); // not needed
+    //KApplication::disableAutoDcopRegistration();
 
     int kdesktop_screen_number = 0;
     int starting_screen = 0;
@@ -167,8 +167,9 @@ int main( int argc, char **argv )
 
     if( sig )
     {
-        DCOPRef ref( "kdesktop", "KScreensaverIface");
-        ref.send( "saverLockReady" );
+        QDBusInterfacePtr kdesktop("kdesktop", "/ScreenSaver", "org.kde.kdesktop.KScreensaver");
+        if ( kdesktop->isValid() )
+            kdesktop->call("saverLockReady");
     }
 
     return app.exec();

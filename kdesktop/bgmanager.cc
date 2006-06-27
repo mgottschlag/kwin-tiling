@@ -13,6 +13,7 @@
 #include "bgmanager.h"
 #include "bgdefaults.h"
 #include "kdesktopsettings.h"
+#include "kbackgroundadaptor.h"
 
 #include <assert.h>
 
@@ -57,8 +58,12 @@ static bool properties_inited = false;
 /**** KBackgroundManager ****/
 
 KBackgroundManager::KBackgroundManager(QWidget *desktop, KWinModule* kwinModule)
-    : DCOPObject("KBackgroundIface")
+    : QObject()
 {
+
+    (void) new KBackgroundAdaptor( this );
+    QDBus::sessionBus().registerObject("/Background", this);
+
     if( !properties_inited )
     {
         prop_root = XInternAtom(QX11Info::display(), "_XROOTPMAP_ID", False);
@@ -192,7 +197,7 @@ void KBackgroundManager::applyCache(bool limit, int size)
 
 /*
  * Call this when the configuration has changed.
- * This method is exported with DCOP.
+ * This method is exported with DBus.
  */
 void KBackgroundManager::configure()
 {
@@ -454,7 +459,7 @@ void KBackgroundManager::slotImageDone(int desk)
 
 void KBackgroundManager::saveImages()
 {
-    for (unsigned i=0; i<m_Renderer.size(); i++)
+    for (int i=0; i<m_Renderer.size(); i++)
     {
         m_Renderer[i]->saveCacheFile();
         m_Renderer[i]->cleanup();
@@ -618,7 +623,7 @@ int KBackgroundManager::validateDesk(int desk)
     return desk - 1;
 }
 
-// DCOP exported
+// DBus exported
 // Return current wallpaper for specified desk.
 // 0 is for the current visible desktop.
 QString KBackgroundManager::currentWallpaper(int desk)
@@ -629,7 +634,7 @@ QString KBackgroundManager::currentWallpaper(int desk)
     return r->currentWallpaper();
 }
 
-// DCOP exported
+// DBus exported
 void KBackgroundManager::changeWallpaper()
 {
     KVirtualBGRenderer *r = m_Renderer[effectiveDesktop()];
@@ -638,7 +643,7 @@ void KBackgroundManager::changeWallpaper()
     slotChangeDesktop(0);
 }
 
-// DCOP exported
+// DBus exported
 void KBackgroundManager::setExport(int _export)
 {
     kDebug() << "KBackgroundManager enabling exports.\n";
@@ -646,7 +651,7 @@ void KBackgroundManager::setExport(int _export)
     slotChangeDesktop(0);
 }
 
-// DCOP exported
+// DBus exported
 void KBackgroundManager::setCommon(int common)
 {
     applyCommon(common);
@@ -655,7 +660,7 @@ void KBackgroundManager::setCommon(int common)
     slotChangeDesktop(0);
 }
 
-// DCOP exported
+// DBus exported
 void KBackgroundManager::setWallpaper(QString wallpaper, int mode)
 {
     //TODO Is the behaviour of this function appropriate for multiple screens?
@@ -681,7 +686,7 @@ void KBackgroundManager::setWallpaper(QString wallpaper)
     setWallpaper(wallpaper, mode);
 }
 
-// DCOP exported
+// DBus exported
 // Returns the filenames of all wallpaper entries for specified desk
 // 0 is for current visible desktop.
 QStringList KBackgroundManager::wallpaperFiles(int desk)
@@ -692,7 +697,7 @@ QStringList KBackgroundManager::wallpaperFiles(int desk)
     return r->wallpaperFiles();
 }
 
-// DCOP exported
+// DBus exported
 // Returns the list of wallpaper entries (viewable in background slide
 // show window) for specified desk.  0 is for current visible desktop.
 QStringList KBackgroundManager::wallpaperList(int desk)
@@ -703,7 +708,7 @@ QStringList KBackgroundManager::wallpaperList(int desk)
     return r->wallpaperList();
 }
 
-// DCOP exported
+// DBus exported
 void KBackgroundManager::setCache( int bLimit, int size )
 {
     applyCache( bLimit, size*1024 );
@@ -712,7 +717,7 @@ void KBackgroundManager::setCache( int bLimit, int size )
     KDesktopSettings::writeConfig();
 }
 
-// DCOP exported
+// DBus exported
 void KBackgroundManager::setWallpaper(int desk, QString wallpaper, int mode)
 {
     int sdesk = validateDesk(desk);
@@ -759,7 +764,7 @@ void KBackgroundManager::desktopResized()
     slotChangeDesktop(0);
 }
 
-// DCOP exported
+// DBus exported
 void KBackgroundManager::setColor(const QColor & c, bool isColorA)
 {
     //TODO Is the behaviour of this function appropriate for multiple screens?

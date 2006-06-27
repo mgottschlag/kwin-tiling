@@ -26,7 +26,6 @@
 #include <kpassworddialog.h>
 #include <kdebug.h>
 #include <kuser.h>
-#include <dcopref.h>
 #include <kmessagebox.h>
 
 #include <QLayout>

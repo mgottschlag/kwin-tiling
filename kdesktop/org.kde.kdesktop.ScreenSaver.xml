@@ -1,7 +1,7 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
 "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
-  <interface name="org.kde.kdesktop.KScreensaver">
+  <interface name="org.kde.kdesktop.ScreenSaver">
     <method name="lock"/>
     <method name="save"/>
     <method name="quit"/>
@@ -20,5 +20,8 @@
       <arg name="blankOnly" type="b" direction="in"/>
     </method>
     <method name="saverLockReady" />
+
+    <signal name="screenSaverStarted" />
+    <signal name="screenSaverStopped" />
   </interface>
 </node>

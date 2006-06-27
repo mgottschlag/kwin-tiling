@@ -1,0 +1,52 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.kdesktop.Desktop">
+    <method name="runAutoStart">
+    </method>
+    <method name="rearrangeIcons">
+    </method>
+    <method name="lineupIcons">
+    </method>
+    <method name="selectAll">
+    </method>
+    <method name="unselectAll">
+    </method>
+    <method name="refreshIcons">
+    </method>
+    <method name="selectedURLs">
+      <arg type="as" direction="out"/>
+    </method>
+    <method name="configure">
+    </method>
+    <method name="popupExecuteCommand">
+      <arg name="command" type="s" direction="in"/>
+    </method>
+    <method name="background">
+      <arg type="o" direction="out"/>
+    </method>
+    <method name="screenSaver">
+      <arg type="o" direction="out"/>
+    </method>
+    <method name="refresh">
+    </method>
+    <method name="logout">
+    </method>
+    <method name="isVRoot">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="setVRoot">
+      <arg name="enable" type="b" direction="in"/>
+    </method>
+    <method name="clearCommandHistory">
+    </method>
+    <method name="isIconsEnabled">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="setIconsEnabled">
+      <arg name="enable" type="b" direction="in"/>
+    </method>
+    <method name="switchDesktops">
+      <arg name="delta" type="i" direction="in"/>
+    </method>
+  </interface>
+</node>

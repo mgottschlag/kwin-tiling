@@ -51,14 +51,14 @@ class Minicli : public KDialog
   Q_OBJECT
 
 public:
-  Minicli( QWidget *parent=0, const char *name=0 );
+  Minicli( QWidget *parent=0 );
   virtual ~Minicli();
 
   void setCommand(const QString& command);
   void reset();
   void saveConfig();
   void clearHistory();
-  
+
   virtual void show();
   virtual QSize sizeHint() const;
 

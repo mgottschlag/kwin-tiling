@@ -30,7 +30,7 @@ icons.* : old code, not used anymore.
   We also need to store the desktop icons position, like was done in kfm.
    and we need to do it for konqy as well.
 
-KDesktopIface* : DCOP interface for kdesktop, used by kfmclient
+*adaptor.* : DBus adaptors for kdesktop
 
 lock* : screen saver/locker
 
@@ -53,13 +53,14 @@ xscreensaver's "hacks" will work with the KDE screensaver engine.
 This makes adding new screensavers trivial, and means one less process that
 must always be running (compared to KDE 1.x).
 
-The screensaver is controlled via DCOP:
+The screensaver is controlled via DBus. The /ScreenSaver object offers the following
+methjods in the org.kde.kdesktop.KScreensaver interface:
 
-KScreensaverIface::configure()  Reloads the screensaver config from desktoprc.
-KScreensaverIface::lock()       Locks the screen immediately.
-KScreensaverIface::save()       Saves the screen immediately.
-KScreensaverIface::isEnabled()  returns true if the screensaver is enabled.
-KScreensaverIface::isBlanked()  returns true if the screen is currently blank.
+configure()  Reloads the screensaver config from desktoprc.
+lock()       Locks the screen immediately.
+save()       Saves the screen immediately.
+isEnabled()  returns true if the screensaver is enabled.
+isBlanked()  returns true if the screen is currently blank.
 
 Backgrounds
 ===========

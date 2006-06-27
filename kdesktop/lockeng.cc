@@ -8,7 +8,11 @@
 
 #include <config.h>
 
-#include <stdlib.h>
+
+#include "lockeng.h"
+#include "lockeng.moc"
+#include "kdesktopsettings.h"
+#include "kscreensaveradaptor.h"
 
 #include <kstandarddirs.h>
 #include <kapplication.h>
@@ -16,13 +20,9 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <QFile>
-#include <dcopclient.h>
-#include <assert.h>
-
-#include "lockeng.h"
-#include "lockeng.moc"
-#include "kdesktopsettings.h"
 #include <QX11Info>
+#include <assert.h>
+#include <stdlib.h>
 
 #include "xautolock_c.h"
 extern xautolock_corner_t xautolock_corners[ 4 ];
@@ -35,10 +35,13 @@ extern xautolock_corner_t xautolock_corners[ 4 ];
 // a newly started process.
 //
 SaverEngine::SaverEngine()
-    : DCOPObject("KScreensaverIface"),
-      QWidget(),
+    : QWidget(),
       mBlankOnly(false)
 {
+
+    (void) new KScreenSaverAdaptor( this );
+    QDBus::sessionBus().registerObject("/ScreenSaver", this);
+
     // Save X screensaver parameters
     XGetScreenSaver(QX11Info::display(), &mXTimeout, &mXInterval,
                     &mXBlanking, &mXExposures);
@@ -69,7 +72,7 @@ SaverEngine::~SaverEngine()
 
 //---------------------------------------------------------------------------
 
-// This should be called only using DCOP.
+// This should be called only using DBus.
 void SaverEngine::lock()
 {
     bool ok = true;
@@ -78,7 +81,7 @@ void SaverEngine::lock()
         ok = startLockProcess( ForceLock );
     }
 // It takes a while for kdesktop_lock to start and lock the screen.
-// Therefore delay the DCOP call until it tells kdesktop that the locking is in effect.
+// Therefore delay the DBus call until it tells kdesktop that the locking is in effect.
 // This is done only for --forcelock .
     if( ok && mState != Saving )
     {
@@ -156,7 +159,7 @@ bool SaverEngine::enable( bool e )
         mXAutoLock->setDPMS(mDPMS);
 	//mXAutoLock->changeCornerLockStatus( mLockCornerTopLeft, mLockCornerTopRight, mLockCornerBottomLeft, mLockCornerBottomRight);
 
-        // We'll handle blanking 
+        // We'll handle blanking
         XSetScreenSaver(QX11Info::display(), mTimeout + 10, mXInterval, mXBlanking, mXExposures);
 
         mXAutoLock->start();
@@ -196,7 +199,7 @@ void SaverEngine::configure()
 
     // create a new config obj to ensure we read the latest options
     KDesktopSettings::self()->readConfig();
-    
+
     bool e  = KDesktopSettings::screenSaverEnabled();
     mTimeout = KDesktopSettings::timeout();
     mDPMS = KDesktopSettings::dpmsDependent();
@@ -237,7 +240,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
         return true;
 
     kDebug(1204) << "SaverEngine: starting saver" << endl;
-    emitDCOPSignal("KDE_start_screensaver()", QByteArray());
+    emit screenSaverStarted(); // DBus signal
 
     if (mLockProcess.isRunning())
     {
@@ -291,7 +294,7 @@ void SaverEngine::stopLockProcess()
         return;
     }
     kDebug(1204) << "SaverEngine: stopping lock" << endl;
-    emitDCOPSignal("KDE_stop_screensaver()", QByteArray());
+    emit screenSaverStopped(); // DBus signal
 
     mLockProcess.kill();
 
@@ -309,7 +312,7 @@ void SaverEngine::lockProcessExited()
     kDebug(1204) << "SaverEngine: lock exited" << endl;
     if( mState == Waiting )
 	return;
-    emitDCOPSignal("KDE_stop_screensaver()", QByteArray());
+    emit screenSaverStopped(); // DBus signal
     if (mXAutoLock)
     {
         mXAutoLock->start();

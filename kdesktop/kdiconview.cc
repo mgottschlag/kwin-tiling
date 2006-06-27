@@ -156,6 +156,12 @@ KDIconView::KDIconView( QWidget *parent, const char* name )
     }
 
     connect( kapp->desktop(), SIGNAL( resized( int )), SLOT( desktopResized()));
+
+    OrgKdeKDirNotifyInterface *kdirnotify = QDBus::sessionBus().findInterface<org::kde::KDirNotify>(QString(), QString());
+    kdirnotify->setParent(this);
+    connect(kdirnotify, SIGNAL(FilesAdded(QString)), SLOT(slotFilesAdded(QString)));
+    connect(kdirnotify, SIGNAL(FilesChanged(QStringList)), SLOT(slotFilesChanged(QStringList)));
+    connect(kdirnotify, SIGNAL(FilesRemoved(QStringList)), SLOT(slotFilesRemoved(QStringList)));
 }
 
 KDIconView::~KDIconView()
@@ -1087,16 +1093,17 @@ void KDIconView::refreshIcons()
 }
 
 
-void KDIconView::FilesAdded( const KUrl & directory )
+void KDIconView::slotFilesAdded( const QString & directory )
 {
-    if ( directory.path().length() <= 1 && directory.protocol() == "trash" )
+    KUrl u( directory );
+    if ( u.path().length() <= 1 && u.protocol() == "trash" )
         refreshTrashIcon();
 }
 
-void KDIconView::FilesRemoved( const KUrl::List & fileList )
+void KDIconView::slotFilesRemoved( const QStringList & fileList )
 {
     if ( !fileList.isEmpty() ) {
-        const KUrl url = fileList.first();
+        const KUrl url( fileList.first() );
         if ( url.protocol() == "trash" )
             refreshTrashIcon();
     }

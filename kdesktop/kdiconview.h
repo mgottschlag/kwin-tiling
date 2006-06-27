@@ -23,8 +23,7 @@
 #include <konq_iconviewwidget.h>
 #include <kactioncollection.h>
 #include <kfileitem.h>
-#include <kdirnotify.h>
-//Added by qt3to4:
+
 #include <QMouseEvent>
 #include <QShowEvent>
 #include <QList>
@@ -45,7 +44,7 @@ class KDesktopShadowSettings;
  * The shadow is supported by the new KFileIVIDesktop objects
  * which replace KFileIVI objects.
  */
-class KDIconView : public KonqIconViewWidget, public KDirNotify
+class KDIconView : public KonqIconViewWidget
 {
     Q_OBJECT
 
@@ -102,11 +101,6 @@ public:
 
     static KUrl desktopURL();
 
-    /// KDirNotify interface, for trash:/
-    virtual void FilesAdded( const KUrl & directory );
-    virtual void FilesRemoved( const KUrl::List & fileList );
-    virtual void FilesChanged( const KUrl::List & ) {}
-
 protected Q_SLOTS:
     // slots connected to the icon view
     void slotReturnPressed( Q3IconViewItem *item );
@@ -138,6 +132,10 @@ protected Q_SLOTS:
     void slotClipboardDataChanged();
 
     void slotNewMenuActivated();
+
+    /// KDirNotify interface, for trash:/
+    void slotFilesAdded( const QString & directory );
+    void slotFilesRemoved( const QStringList & fileList );
 
     // For communication with KDesktop
 Q_SIGNALS:

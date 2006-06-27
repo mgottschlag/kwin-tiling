@@ -13,8 +13,6 @@
 #include <QString>
 #include <QVector>
 
-#include "KBackgroundIface.h"
-
 class KConfig;
 class QTimer;
 class QPixmap;
@@ -41,13 +39,11 @@ struct KBackgroundCacheEntry
  * very simple: instantiate this class once and the desktop background will
  * be painted automatically from now on.
  *
- * The background manager also has a DCOP interface to remotely control its
- * operation. See KBackgroundIface.h for details.
+ * The background manager also has a DBus interface to remotely control its
+ * operation. See kbackgroundadaptor.h.
  */
 
-class KBackgroundManager
-    : public QObject,
-      virtual public KBackgroundIface
+class KBackgroundManager : public QObject
 {
     Q_OBJECT
 
@@ -55,11 +51,12 @@ public:
     KBackgroundManager(QWidget *desktop, KWinModule* kwinModule);
     ~KBackgroundManager();
 
+    // Most of this is DBus-exported
     void configure();
     void setCommon(int);
-    bool isCommon() { return m_bCommon; };
+    bool isCommon() { return m_bCommon; }
     void setExport(int);
-    bool isExport() { return m_bExport; };
+    bool isExport() { return m_bExport; }
     void setCache(int, int);
     void setWallpaper(int desk, QString wallpaper, int mode);
     void setWallpaper(QString wallpaper, int mode);
@@ -83,7 +80,7 @@ private Q_SLOTS:
     void desktopResized();
     void clearRoot();
     void saveImages();
-    
+
 private:
     void applyCommon(bool common);
     void applyExport(bool _export);
@@ -119,7 +116,7 @@ private:
 
     KWinModule *m_pKwinmodule;
     KPixmapServer *m_pPixmapServer;
-    
+
     unsigned long m_xrootpmap;
 };
 

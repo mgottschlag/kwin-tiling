@@ -32,8 +32,6 @@
 #include <dirent.h>
 #include <errno.h>
 
-#include <dcopclient.h>
-#include <dcopref.h>
 #include <kactioncollection.h>
 #include <kapplication.h>
 #include <kbookmarkmenu.h>
@@ -59,6 +57,8 @@
 #include "desktop.h"
 #include "kcustommenu.h"
 #include "kdesktopsettings.h"
+
+#include <dbus/qdbus.h>
 
 #include <netwm.h>
 #include <X11/X.h>
@@ -571,9 +571,9 @@ void KRootWm::activateMenu( menuChoice choice, const QPoint& global )
       else
 	  appname.sprintf("kicker-screen-%d", kdesktop_screen_number);
 
-      DCOPCString name = appname.toLatin1();
-
-      DCOPRef( name, name ).send( "popupKMenu", global );
+      QDBusInterfacePtr kicker( appname, "/Kicker", "org.kde.Kicker" ); // ### check this
+      if ( kicker->isValid() )
+          kicker->call( "popupKMenu", global );
       break;
     }
     case CUSTOMMENU1:
@@ -749,8 +749,9 @@ static void sendToAppropriate(const char* baseApp, const char* iface, const char
     else
 	appname.sprintf("%s-screen-%d", baseApp, kdesktop_screen_number);
 
-    QByteArray data;
-    kapp->dcopClient()->send( DCOPCString(appname.toLatin1()), DCOPCString(iface), DCOPCString(call), QByteArray());
+    QDBusInterfacePtr kwin( appname, "/KWin", iface );
+    if ( kwin->isValid() )
+        kwin->call( call );
 }
 
 void KRootWm::slotToggleDesktopMenu()
@@ -758,26 +759,32 @@ void KRootWm::slotToggleDesktopMenu()
     KDesktopSettings::setShowMenubar( !(m_bShowMenuBar && menuBar) );
     KDesktopSettings::writeConfig();
 
-    sendToAppropriate("kdesktop", "KDesktopIface", "configure()");
+    sendToAppropriate("kdesktop", "org.kde.kdesktop.Desktop", "configure");
     // for the standalone menubar setting
-    kapp->dcopClient()->send( "menuapplet*", "menuapplet", "configure()", QByteArray() );
-    kapp->dcopClient()->send( "kicker", "kicker", "configureMenubar()", QByteArray() );
-    kapp->dcopClient()->send( "kwin*", "", "reconfigure()", QByteArray() );
+#ifdef __GNUC__
+#warning TODO port to a dbus signal
+#endif
+    // dbus signal should be emitted by kdesktop, and all that code can just connect to it.
+#if 0
+    kapp->dcopClient()->send( "menuapplet*", "menuapplet", "configure" );
+    kapp->dcopClient()->send( "kicker", "kicker", "configureMenubar" );
+    kapp->dcopClient()->send( "kwin*", "", "reconfigure()" );
+#endif
 }
 
 
 void KRootWm::slotUnclutterWindows() {
-    sendToAppropriate("kwin", "KWinInterface", "unclutterDesktop()");
+    sendToAppropriate("kwin", "org.kde.KWin", "unclutterDesktop");
 }
 
 
 void KRootWm::slotCascadeWindows() {
-    sendToAppropriate("kwin", "KWinInterface", "cascadeDesktop()");
+    sendToAppropriate("kwin", "org.kde.KWin", "cascadeDesktop");
 }
 
 
 void KRootWm::slotLock() {
-    sendToAppropriate("kdesktop", "KScreensaverInterface", "lock()");
+    sendToAppropriate("kdesktop", "org.kde.kdesktop.ScreenSaver", "lock");
 }
 
 

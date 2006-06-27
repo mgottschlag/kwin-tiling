@@ -13,7 +13,6 @@
 #include <kconfig.h>
 #include <kiconloader.h>
 #include <kdebug.h>
-#include <dcopref.h>
 #include <kmessagebox.h>
 #include <kdialog.h>
 
@@ -25,8 +24,9 @@
 #include <QDialog>
 #include <QAbstractEventDispatcher>
 #include <qprogressbar.h>
+#include <dbus/qdbus.h>
 
-#define COUNTDOWN 30 
+#define COUNTDOWN 30
 
 AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog", true,Qt::WX11BypassWM)
 {
@@ -106,8 +106,10 @@ void AutoLogout::slotActivity()
 
 void AutoLogout::logout()
 {
-	QAbstractEventDispatcher::instance()->unregisterTimers(this);
-	DCOPRef("ksmserver","ksmserver").send("logout", 0, 2, 0);
+    QAbstractEventDispatcher::instance()->unregisterTimers(this);
+    QDBusInterfacePtr ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
+    if ( ksmserver->isValid() )
+        ksmserver->call( "logout", 0, 2, 0 );
 }
 
 void AutoLogout::show()

@@ -11,72 +11,76 @@
 #include <QWidget>
 #include <kprocess.h>
 #include <QVector>
-#include "KScreensaverIface.h"
+
 #include "xautolock.h"
 #include "xautolock_c.h"
-
-class DCOPClientTransaction;
 
 //===========================================================================
 /**
  * Screen saver engine.  Handles screensaver window, starting screensaver
  * hacks, and password entry.
  */
-class SaverEngine
-    : public QWidget,
-      virtual public KScreensaverIface
+class SaverEngine : public QWidget
 {
     Q_OBJECT
 public:
     SaverEngine();
     ~SaverEngine();
 
-    /**
-     * Lock the screen
-     */
-    virtual void lock();
+    // DBus exported methods
 
     /**
-     * Save the screen
+     * Lock the screen now even if the screensaver does not lock by default.
      */
-    virtual void save();
+    void lock();
 
     /**
-     * Quit the screensaver if running
+     * Save the screen now. If the user has locking enabled, the screen is locked also.
      */
-    virtual void quit();
+    void save();
 
     /**
-     * return true if the screensaver is enabled
+     * Quit the screensaver if it is running
      */
-    virtual bool isEnabled();
+    void quit();
 
     /**
-     * enable/disable the screensaver
+     * Return true if the screensaver is enabled
      */
-    virtual bool enable( bool e );
+    bool isEnabled();
 
     /**
-     * return true if the screen is currently blanked
+     * Enable/disable the screensaver
+     * @return true if the action succeeded
      */
-    virtual bool isBlanked();
+    bool enable( bool e );
+
+    /**
+     * Return true if the screen is currently blanked
+     */
+    bool isBlanked();
 
     /**
      * Read and apply configuration.
      */
-    virtual void configure();
+    void configure();
 
     /**
      * Enable or disable "blank only" mode.  This is useful for
      * laptops where one might not want a cpu thirsty screensaver
      * draining the battery.
      */
-    virtual void setBlankOnly( bool blankOnly );
+    void setBlankOnly( bool blankOnly );
 
     /**
      * Called by kdesktop_lock when locking is in effect.
      */
-    virtual void saverLockReady();
+    void saverLockReady();
+
+Q_SIGNALS:
+    // DBus signals
+    void screenSaverStarted();
+    void screenSaverStopped();
 
 protected Q_SLOTS:
     void idleTimeout();
@@ -107,7 +111,7 @@ protected:
     int         mXExposures;
 
     bool	mBlankOnly;  // only use the blanker, not the defined saver
-    QVector< DCOPClientTransaction* > mLockTransactions;
+//    QVector< DCOPClientTransaction* > mLockTransactions;
 };
 
 #endif
