@@ -5,8 +5,9 @@ add_subdirectory( prefmenu )
 add_subdirectory( recentdocs ) 
 add_subdirectory( konsole ) 
 add_subdirectory( konq-profiles ) 
-add_subdirectory( remote ) 
-add_subdirectory( system ) 
+MESSAGE(STATUS "port remote system")
+#add_subdirectory( remote ) 
+#add_subdirectory( system ) 
 
 ########### install files ###############
 

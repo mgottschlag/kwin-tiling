@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QByteArray>
 
 #include <QListWidget>
-#include <dcopclient.h>
 #include <kapplication.h>
 #include <klocale.h>
 #include <kconfig.h>
