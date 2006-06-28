@@ -35,7 +35,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstandarddirs.h>
 #include <kmessagebox.h>
 #include <kapplication.h>
-#include <dcopclient.h>
 #include <kglobal.h>
 
 #include "dockbarextension.h"

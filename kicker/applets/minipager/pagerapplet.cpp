@@ -34,7 +34,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QList>
 #include <QResizeEvent>
 
-#include <dcopref.h>
 #include <kglobalsettings.h>
 #include <kwin.h>
 #include <kwinmodule.h>
@@ -46,7 +45,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kmenu.h>
 #include <kstandarddirs.h>
 #include <kiconloader.h>
-#include <dcopclient.h>
 #include <netwm.h>
 #include <ktoolinvocation.h>
 #include <kauthorized.h>
@@ -774,6 +772,8 @@ void KMiniPager::slotDesktopNamesChanged()
 
 void KMiniPager::showPager()
 {
+#warning "kde4: port dcop stuff"		
+#if 0		
     DCOPClient *dcop=kapp->dcopClient();
 
     if (dcop->isApplicationRegistered("kpager"))
@@ -794,6 +794,7 @@ void KMiniPager::showPager()
             process.start(KProcess::DontCare);
         }
     }
+#endif	
 }
 
 void KMiniPager::showKPager(bool toggleShow)

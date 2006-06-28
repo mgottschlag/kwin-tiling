@@ -42,6 +42,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kconfig.h>
 #include <kstdguiitem.h>
 #include <kauthorized.h>
+#include <dbus/qdbusconnection.h>
 
 #include "container_applet.h"
 #include "container_extension.h"
@@ -59,8 +60,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "panelextension.moc"
 
 PanelExtension::PanelExtension(const QString& configFile, QWidget *parent)
-    : DCOPObject(QByteArray("Panel_") + QString::number((ulong)this).toLatin1()),
-      KPanelExtension(configFile, 0, parent),
+    : KPanelExtension(configFile, 0, parent),
       m_opMenu(0),
       m_panelAddMenu(0),
       m_removeMenu(0),
@@ -69,6 +69,8 @@ PanelExtension::PanelExtension(const QString& configFile, QWidget *parent)
       m_configFile(configFile),
       m_opMenuBuilt(false)
 {
+    QString nameRegister = QString("/Panel_") + QString::number((ulong)this).toLatin1();
+    QDBus::sessionBus().registerObject(nameRegister, this, QDBusConnection::ExportSlots);
     setAcceptDrops(!Kicker::self()->isImmutable());
     setCustomMenu( opMenu() );
 
@@ -109,7 +111,8 @@ void PanelExtension::populateContainerArea()
 
     if (ExtensionManager::self()->isMainPanel(topLevelWidget()))
     {
-        setObjId("Panel");
+#warning "kde4 port it"
+        //setObjId("Panel");
         _containerArea->initialize(true);
     }
     else

@@ -55,9 +55,6 @@ public Q_SLOTS:
     void slotSetKMenuItemActive();
     void kmenuAccelActivated();
 
-protected Q_SLOTS:
-    void applicationRemoved(const QByteArray&);
-
 protected:
     PanelKMenu* m_kmenu;
 

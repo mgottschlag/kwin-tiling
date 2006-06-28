@@ -41,37 +41,36 @@ class QGridLayout;
 // This is the KPanelExtension responsible for the main kicker panel
 // Prior to KDE 3.4 it was the ChildPanelExtension
 
-class PanelExtension : public KPanelExtension, virtual public  DCOPObject
+class PanelExtension : public KPanelExtension
 {
     Q_OBJECT
-    K_DCOP
-
+    Q_CLASSINFO("D-Bus Interface", "org.kde.kicker.panelextension")
 public:
     PanelExtension(const QString& configFile, QWidget *parent = 0);
     virtual ~PanelExtension();
 
     QMenu* opMenu();
 
-k_dcop:
-    int panelSize() { return sizeInPixels(); }
-    int panelOrientation() { return static_cast<int>(orientation()); }
-    int panelPosition() { return static_cast<int>(position()); }
+public Q_SLOTS:
+    Q_SCRIPTABLE int panelSize() { return sizeInPixels(); }
+    Q_SCRIPTABLE int panelOrientation() { return static_cast<int>(orientation()); }
+    Q_SCRIPTABLE int panelPosition() { return static_cast<int>(position()); }
 
-    void setPanelSize(int size);
-    void addKMenuButton();
-    void addDesktopButton();
-    void addWindowListButton();
-    void addURLButton(const QString &url);
-    void addBrowserButton(const QString &startDir);
-    void addServiceButton(const QString &desktopEntry);
-    void addServiceMenuButton(const QString &name, const QString& relPath);
-    void addNonKDEAppButton(const QString &filePath, const QString &icon,
+    Q_SCRIPTABLE void setPanelSize(int size);
+    Q_SCRIPTABLE void addKMenuButton();
+    Q_SCRIPTABLE void addDesktopButton();
+    Q_SCRIPTABLE void addWindowListButton();
+    Q_SCRIPTABLE void addURLButton(const QString &url);
+    Q_SCRIPTABLE void addBrowserButton(const QString &startDir);
+    Q_SCRIPTABLE void addServiceButton(const QString &desktopEntry);
+    Q_SCRIPTABLE void addServiceMenuButton(const QString &name, const QString& relPath);
+    Q_SCRIPTABLE void addNonKDEAppButton(const QString &filePath, const QString &icon,
                             const QString &cmdLine, bool inTerm);
-    void addNonKDEAppButton(const QString &title, const QString &description,
+    Q_SCRIPTABLE void addNonKDEAppButton(const QString &title, const QString &description,
                             const QString &filePath, const QString &icon,
                             const QString &cmdLine, bool inTerm);
 
-    void addApplet(const QString &desktopFile);
+    Q_SCRIPTABLE void addApplet(const QString &desktopFile);
 
 public:
     QSize sizeHint(Plasma::Position, QSize maxSize) const;

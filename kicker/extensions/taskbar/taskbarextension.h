@@ -29,23 +29,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QPixmap>
 #include <QResizeEvent>
 
-#include <dcopobject.h>
 #include <kpanelextension.h>
 
 class KRootPixmap;
 class TaskBar;
 
-class TaskBarExtension : public KPanelExtension, virtual public DCOPObject
+class TaskBarExtension : public KPanelExtension
 {
     Q_OBJECT
-    K_DCOP
-
+#warning "kde4 port dcop stuff"
+/*
 k_dcop:
     int panelSize() { return sizeInPixels(); }
     int panelOrientation() { return static_cast<int>(orientation()); }
     int panelPosition() { return static_cast<int>(position()); }
     void setPanelSize(int size) { setSize(static_cast<Plasma::Size>(size),true);}///slotSetSize(size); }
-
+*/
 public:
     TaskBarExtension(const QString& configFile, int actions = 0, QWidget *parent = 0);
     ~TaskBarExtension();

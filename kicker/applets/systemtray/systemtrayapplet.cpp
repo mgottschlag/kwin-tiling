@@ -81,8 +81,9 @@ SystemTrayApplet::SystemTrayApplet(const QString& configFile, Plasma::Type type,
 
     // kApplication notifies us of settings changes. added to support
     // disabling of frame effect on mouse hover
-    kapp->dcopClient()->setNotifications(true);
-    connectDCOPSignal("kicker", "kicker", "configurationChanged()", "loadSettings()", false);
+#warning "kde4: dcop port it"
+    //kapp->dcopClient()->setNotifications(true);
+    //connectDCOPSignal("kicker", "kicker", "configurationChanged()", "loadSettings()", false);
 
     QTimer::singleShot(0, this, SLOT(initialize()));
 }
@@ -200,7 +201,7 @@ void SystemTrayApplet::preferences()
     m_settingsDialog = new KDialog( 0 );
     m_settingsDialog->setObjectName( "systrayconfig" );
     m_settingsDialog->setCaption( i18n("Configure System Tray") );
-    m_settingsDialog->setButtons( KDialog::Ok, KDialog::Apply, KDialog::Cancel );
+    m_settingsDialog->setButtons( KDialog::Ok |KDialog::Apply| KDialog::Cancel );
     m_settingsDialog->enableButtonSeparator( true );
     m_settingsDialog->resize(450, 400);
 

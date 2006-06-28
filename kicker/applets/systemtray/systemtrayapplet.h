@@ -29,7 +29,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QX11EmbedWidget>
 #include <QResizeEvent>
 
-#include <dcopobject.h>
 #include <kapplication.h>
 #include <kpanelapplet.h>
 
@@ -42,10 +41,9 @@ class KDialog;
 class KActionSelector;
 class SimpleButton;
 
-class SystemTrayApplet : public KPanelApplet, public DCOPObject
+class SystemTrayApplet : public KPanelApplet
 {
     Q_OBJECT
-    K_DCOP
     typedef QVector<TrayEmbed*> TrayEmbedList;
 
 public:
@@ -59,7 +57,7 @@ public:
     int maxIconWidth() const;
     int maxIconHeight() const;
 
-k_dcop:
+public slots: //dcop stuff
     void loadSettings();
 
 protected:

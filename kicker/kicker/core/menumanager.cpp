@@ -30,7 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMenu>
 
 #include <kapplication.h>
-#include "client_mnu.h"
 #include "container_extension.h"
 #include "utils.h"
 #include "k_mnu.h"

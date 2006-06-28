@@ -45,10 +45,9 @@ class KWindowListMenu;
 class SimpleButton;
 class QBoxLayout;
 
-class KDE_EXPORT TaskBar : public QWidget, public DCOPObject
+class KDE_EXPORT TaskBar : public QWidget
 {
     Q_OBJECT
-    K_DCOP
 
 public:
     TaskBar( QWidget *parent = 0 );
@@ -73,10 +72,11 @@ public:
     void orientationChange( Qt::Orientation );
     void popupDirectionChange( Plasma::Position );
     void preferences();
-
+#warning "kde4 port dcop stuff"	
+/*
 k_dcop:
     void configChanged();
-
+*/
 public Q_SLOTS:
     void configure();
     void showWindowListMenu();
