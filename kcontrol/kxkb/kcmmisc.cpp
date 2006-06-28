@@ -45,10 +45,10 @@
 #include <kstandarddirs.h>
 #include <kprocess.h>
 #include <kdialog.h>
-#include <QX11Info>
 
 #include "kcmmisc.h"
 #include "kcmmiscwidget.h"
+#include <QX11Info>
 #include <X11/Xlib.h>
 
 KeyboardConfig::KeyboardConfig (KInstance *inst,QWidget * parent)

@@ -11,12 +11,13 @@
 #include <kdebug.h>
 #include <config.h>
 
+
+#include "rules.h"
+#include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>
 #include <X11/extensions/XKBrules.h>
 
-#include "rules.h"
-#include <QX11Info>
 
 const char* X11DirList[2] = {"/usr/X11R6/lib/X11/", "/usr/local/X11R6/lib/X11/"};
 const char* rulesFileList[2] = {"xkb/rules/xorg", "xkb/rules/xfree86"};
