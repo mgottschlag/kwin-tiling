@@ -11,7 +11,7 @@ set(libkxftconfig_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/fonts/kxftconfig.cpp )
 if( X11_Xrandr_FOUND )
    add_subdirectory( randr )
 endif(X11_Xrandr_FOUND )
-
+add_subdirectory(kxkb) 
 add_subdirectory( menus ) 
 add_subdirectory( bell ) 
 add_subdirectory( background ) 
