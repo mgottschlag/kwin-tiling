@@ -28,6 +28,8 @@
 #include <kuser.h>
 #include <kmessagebox.h>
 
+#include <dbus/qdbus.h>
+
 #include <QLayout>
 #include <QPushButton>
 #include <QMessageBox>
@@ -75,7 +77,7 @@
 // Simple dialog for entering a password.
 //
 PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
-    : QDialog(parent, "password dialog", true, Qt::WX11BypassWM),
+    : QDialog(parent, Qt::WX11BypassWM),
       mPlugin( plugin ),
       mCapsLocked(-1),
       mUnlockingFailed(false)
@@ -156,10 +158,12 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
 
     greet->start();
 
-    DCOPRef kxkb("kxkb", "kxkb");
-    if( !kxkb.isNull() ) {
-        layoutsList = kxkb.call("getLayoutsList");
-        QString currentLayout = kxkb.call("getCurrentLayout");
+    QDBusInterfacePtr kxkb( "org.kde.kxkb", "/kxkb", "org.kde.KXKB" );
+    if( kxkb->isValid() ) {
+        QDBusReply<QStringList> replyLayouts = kxkb->call("getLayoutsList");
+        layoutsList = replyLayouts;
+        QDBusReply<QString> replyCurrentLayout = kxkb->call("getCurrentLayout");
+        QString currentLayout = replyCurrentLayout;
         if( !currentLayout.isEmpty() && layoutsList.count() > 1 ) {
             currLayout = layoutsList.indexOf(currentLayout);
             if (currLayout < 0)
@@ -187,9 +191,12 @@ void PasswordDlg::layoutClicked()
     if( ++currLayout == layoutsList.size() )
         currLayout = 0;
 
-    DCOPRef kxkb("kxkb", "kxkb");
-    setLayoutText( kxkb.call("setLayout", layoutsList.at(currLayout) ) );
-
+    QDBusInterfacePtr kxkb( "org.kde.kxkb", "/kxkb", "org.kde.KXKB" );
+    if( kxkb->isValid() ) {
+        const QString currentLayout = layoutsList.at(currLayout);
+        QDBusReply<bool> setLayoutReply = kxkb->call("setLayout", currentLayout );
+        setLayoutText( setLayoutReply ? currentLayout : "err" );
+    }
 }
 
 void PasswordDlg::setLayoutText( const QString &txt )
