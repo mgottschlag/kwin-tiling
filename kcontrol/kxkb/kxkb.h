@@ -78,11 +78,11 @@ private:
 */
 
 
-    enum SwitchingPolicy { 
+    enum SwitchingPolicy {
 	swpGlobal,
 	swpWinClass,
 	swpWindow
-    }; 
+    };
 
     struct LayoutInfo {
 
@@ -91,17 +91,17 @@ private:
 	QQueue<QString *> *lastLayout;
 
 	LayoutInfo()
-	 {}	
+	 {}
 	LayoutInfo(const QString& layout_, int group_, QQueue<QString *> *lastLayout_):
 	 layout(layout_),
 	 group(group_),
 	 lastLayout(lastLayout_)
   	 {}
-	
+
 	LayoutInfo(const LayoutInfo& info2) {
 	 layout = info2.layout; group = info2.group;
 	}
-	 
+
 	QQueue<QString *> *getLastLayout() const { return lastLayout; }
 
 	private:
@@ -127,7 +127,7 @@ private:
     // pseudo-union
 	WinLayoutMap m_winLayouts;
 	WinClassLayoutMap m_appLayouts;
-	
+
 	SwitchingPolicy m_ownerMode;
     };
 
@@ -147,14 +147,14 @@ public:
     ~KXKBApp();
 
     virtual int newInstance();
-    
-public Q_SLOTS:
+
+public Q_SLOTS: // DBus exported
     bool setLayout(const QString& layout);
     QString getCurrentLayout() { return m_layout; }
     QStringList getLayoutsList() { return m_list; }
     void forceSetXKBMap( bool set );
 
-protected Q_SLOTS:
+private Q_SLOTS:
 
     void menuActivated(int id);
     void toggled();
@@ -167,14 +167,14 @@ protected:
     // Read settings, and apply them.
     bool settingsRead();
     void layoutApply();
-    
+
 private:
 
     void precompileLayouts();
     void deletePrecompiledLayouts();
 
 private:
-    
+
     WId prevWinId;	// for tricky part of saving xkb group
     LayoutMap m_layoutOwnerMap;
 
@@ -192,7 +192,7 @@ private:
     bool m_stickySwitching;
     QQueue<QString *> *m_lastLayout;
     int m_stickySwitchingDepth;
-    
+
     XKBExtension *m_extension;
     KeyRules *m_rules;
     TrayWindow *m_tray;

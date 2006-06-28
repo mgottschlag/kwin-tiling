@@ -23,18 +23,13 @@ DESCRIPTION
     KDE Keyboard Tool. Manages XKB keyboard mappings.
 */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <assert.h>
+#include "kxkb.h"
+#include "extension.h"
+#include "rules.h"
+#include "kxkb.moc"
+#include "pixmap.h"
+#include "kxkb_adaptor.h"
 
-#include <QRegExp>
-#include <QFile>
-#include <QToolTip>
-#include <QStringList>
-#include <QImage>
-//Added by qt3to4:
-#include <QPixmap>
-#include <QMouseEvent>
 #include <kstdaction.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
@@ -54,19 +49,25 @@ DESCRIPTION
 #include <kaction.h>
 #include <kmenu.h>
 #include <kactioncollection.h>
-#include "kxkb.h"
-#include "extension.h"
-#include "rules.h"
-#include "kxkb.moc"
-#include "pixmap.h"
+#include <ktoolinvocation.h>
 
+#include <QRegExp>
+#include <QFile>
+#include <QToolTip>
+#include <QStringList>
+#include <QImage>
+#include <QPixmap>
+#include <QMouseEvent>
 #include <QX11Info>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#define explicit int_explicit        // avoid compiler name clash in XKBlib.h
 #include <X11/XKBlib.h>
-#undef explicit
-#include <ktoolinvocation.h>
+#include <fixx11h.h>
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <assert.h>
+
 
 TrayWindow::TrayWindow(QWidget *parent, const char *name)
     : KSystemTray(parent),
@@ -158,6 +159,8 @@ KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
 
     connect( this, SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)) );
     addKipcEventMask( KIPC::SettingsChanged );
+
+    new KXKBAdaptor( this );
 }
 
 
@@ -203,6 +206,7 @@ bool KXKBApp::settingsRead()
     if (!enabled)
     {
         delete config;
+        kDebug() << k_funcinfo << endl;
 	kapp->quit();
         return false;
     }

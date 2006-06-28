@@ -6,7 +6,8 @@ add_subdirectory( pics )
 ########### next target ###############
 
 set(kxkb_KDEINIT_SRCS 
-	kxkb.cpp 
+   kxkb.cpp 
+   kxkb_adaptor.cpp
    rules.cpp 
    extension.cpp 
    pixmap.cpp )
