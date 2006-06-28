@@ -35,7 +35,7 @@ class ConfigDlg : public KConfigDialog
 
 public:
     ConfigDlg(QWidget *parent, const char *name, Prefs *config, int autoSize,
-        KConfigDialog::DialogType dialogType, ButtonCodes dialogButtons);
+        KPageDialog::FaceType dialogType, ButtonCodes dialogButtons);
 
 protected:
     virtual bool hasChanged();

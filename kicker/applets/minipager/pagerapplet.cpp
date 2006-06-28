@@ -306,13 +306,14 @@ void KMiniPager::updateDesktopLayout(int o, int x, int y)
     {
       return;
     }
-
+#warning "kde4: port to dbus"
+#if 0
     if ( !(DCOPRef( "kwin", "KWinInterface" ).call( "setDesktopLayout(int, int, int) ", o, x, y) ).isValid() )
     {
         kDebug() << "KMiniPager: Call to KWinInterface::setDesktopLayout(int, int, int) failed" << endl;
         return;
     }
-
+#endif
     desktopLayoutOrientation = o;
     desktopLayoutX = x;
     desktopLayoutY = y;
@@ -772,8 +773,8 @@ void KMiniPager::slotDesktopNamesChanged()
 
 void KMiniPager::showPager()
 {
-#warning "kde4: port dcop stuff"		
-#if 0		
+#warning "kde4: port dcop stuff"
+#if 0
     DCOPClient *dcop=kapp->dcopClient();
 
     if (dcop->isApplicationRegistered("kpager"))
@@ -794,7 +795,7 @@ void KMiniPager::showPager()
             process.start(KProcess::DontCare);
         }
     }
-#endif	
+#endif
 }
 
 void KMiniPager::showKPager(bool toggleShow)
@@ -813,8 +814,8 @@ void KMiniPager::showKPager(bool toggleShow)
         default:
             pt=mapToGlobal( QPoint(x(), y()) );
     }
-
-
+#warning "kde4: port to dbus"
+#if 0
     if (toggleShow)
     {
         DCOPRef("kpager", "KPagerIface").send("toggleShow", pt.x(), pt.y());
@@ -823,14 +824,18 @@ void KMiniPager::showKPager(bool toggleShow)
     {
         DCOPRef("kpager", "KPagerIface").send("showAt", pt.x(), pt.y());
     }
+#endif
 }
 
 void KMiniPager::applicationRegistered( const QByteArray  & appName )
 {
+#warning "kde4 port to dbus"
+#if 0
     if (appName == "kpager")
     {
         disconnect( kapp->dcopClient(), SIGNAL( applicationRegistered(const QByteArray &) ),
                     this, SLOT(applicationRegistered(const QByteArray &)) );
         showKPager(false);
     }
+#endif
 }

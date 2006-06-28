@@ -34,13 +34,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "configdlg.moc"
 
 ConfigDlg::ConfigDlg(QWidget *parent, const char *name, Prefs *config,
-                     int autoSize, KConfigDialog::DialogType dialogType,
+                     int autoSize,FaceType  dialogType,
                      ButtonCodes dialogButtons) :
     KConfigDialog(parent, name, config, dialogType, dialogButtons),
     m_settings(config),
     m_autoSize(autoSize)
 {
-    m_ui = new ConfigDlgBase(this->plainPage());
+    QFrame * frame = new QFrame( this );
+    setMainWidget( frame );
+    m_ui = new ConfigDlgBase(frame);
     addPage(m_ui, i18n("Configure"), "config");
 
     m_ui->iconDim->clear();
@@ -70,7 +72,7 @@ void ConfigDlg::updateSettings()
     {
         m_settings->setIconDim(m_autoSize);
     }
-    else 
+    else
     {
         m_settings->setIconDim(m_ui->iconDim->currentText().toInt());
     }

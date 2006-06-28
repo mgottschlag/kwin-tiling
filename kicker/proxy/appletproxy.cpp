@@ -106,11 +106,12 @@ extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
 
 AppletProxy::AppletProxy(QObject* parent, const char* name)
   : QObject(parent)
-  , DCOPObject("AppletProxy")
+    //, DCOPObject("AppletProxy")
   , _info(0)
   , _applet(0)
 {
     setObjectName( name );
+#if 0
     // try to attach to DCOP server
     if (!kapp->dcopClient()->attach()) {
 	kError() << "Failed to attach to DCOP server." << endl;
@@ -127,13 +128,13 @@ AppletProxy::AppletProxy(QObject* parent, const char* name)
                            i18n("Applet Loading Error"));
 	exit(0);
     }
-
+#endif
     _bg = QPixmap();
 }
 
 AppletProxy::~AppletProxy()
 {
-    kapp->dcopClient()->detach();
+    //kapp->dcopClient()->detach();
     delete _info;
     delete _applet;
 }
@@ -223,7 +224,7 @@ void AppletProxy::repaintApplet(QWidget* widget)
         }
     }
 }
-
+#if 0
 bool AppletProxy::process(const DCOPCString &fun, const QByteArray &data,
                           DCOPCString& replyType, QByteArray &replyData)
 {
@@ -353,7 +354,7 @@ bool AppletProxy::process(const DCOPCString &fun, const QByteArray &data,
         }
     return false;
 }
-
+#endif
 void AppletProxy::showStandalone()
 {
     if (!_applet)

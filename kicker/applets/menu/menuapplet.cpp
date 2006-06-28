@@ -83,7 +83,7 @@ const long SUPPORTED_WINDOW_TYPES = NET::NormalMask | NET::DesktopMask | NET::Do
 
 Applet::Applet( const QString& configFile_P, QWidget* parent_P )
     :   KPanelApplet( configFile_P, Plasma::Normal, 0, parent_P, "menuapplet" ),
-        DCOPObject( "menuapplet" ),
+        //DCOPObject( "menuapplet" ),
         module( NULL ),
 	active_menu( NULL ),
         selection( NULL ),
@@ -91,7 +91,7 @@ Applet::Applet( const QString& configFile_P, QWidget* parent_P )
         desktop_menu( false ),
         topEdgeOffset( 0 )
     {
-    dcopclient.registerAs( "menuapplet", false );
+        //dcopclient.registerAs( "menuapplet", false );
     // toolbarAppearanceChanged(int) is sent when changing macstyle
     connect( kapp, SIGNAL( toolbarAppearanceChanged( int )),
         this, SLOT( readSettings()));

@@ -24,7 +24,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __quicklauncher_h__
 #define __quicklauncher_h__
 
-#include <dcopobject.h>
 #include <QImage>
 #include <QString>
 #include <QMouseEvent>
@@ -50,12 +49,12 @@ class KActionCollection;
 
 typedef QuickButtonGroup ButtonGroup;
 
-class QuickLauncher: public KPanelApplet, public DCOPObject
+class QuickLauncher: public KPanelApplet
 {
     Q_OBJECT
-    K_DCOP
+	//K_DCOP
 
-k_dcop:
+	public slots: //dbus
     void serviceStartedByStorageId(QString starter, QString storageId);
 
 public:

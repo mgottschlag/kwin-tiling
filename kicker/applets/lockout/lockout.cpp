@@ -37,7 +37,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QEvent>
 #include <QBoxLayout>
 
-#include <dcopclient.h>
 
 #include <kapplication.h>
 #include <kglobal.h>
@@ -115,8 +114,6 @@ Lockout::Lockout( const QString& configFile, QWidget *parent, const char *name)
     lockButton->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
     logoutButton->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 
-    if ( !kapp->dcopClient()->isAttached() )
-        kapp->dcopClient()->attach();
 
     connect( kapp, SIGNAL( iconChanged(int) ), SLOT( slotIconChanged() ));
 }
@@ -168,8 +165,10 @@ void Lockout::lock()
     {
         appname.sprintf("kdesktop-screen-%d", kicker_screen_number);
     }
-
+#warning "kde4: port it"
+#if 0
     kapp->dcopClient()->send(appname.toLatin1(), "KScreensaverIface", "lock()", QByteArray());
+#endif
 }
 
 void Lockout::logout()

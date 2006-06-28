@@ -40,13 +40,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QPixmap>
 
 #include <netwm.h>
-#include <dcopclient.h>
 
 #include <kwinmodule.h>
 #include <ksharedpixmap.h>
 #include <kpixmapeffect.h>
 #include <kstringhandler.h>
 #include <kiconloader.h>
+#include <dbus/qdbus.h>
 
 #include "utils.h"
 #include "kickertip.h"
@@ -165,17 +165,13 @@ void KMiniPagerButton::loadBgPixmap()
     if (m_pager->bgType() != PagerSettings::EnumBackgroundType::BgLive)
         return; // not needed
 
-    DCOPClient *client = kapp->dcopClient();
-    if (!client->isAttached())
-    {
-        client->attach();
-    }
 
     bool isCommon;
-    DCOPReply result = DCOPRef("kdesktop", "KBackgroundIface").call("isCommon()");
-    if (result.get(isCommon))
+    QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Background", "org.kde.kdesktop.KBackground");
+    QDBusReply<bool> reply = kdesktop->call("isCommon");
+    if (reply.isSuccess())
     {
-        m_isCommon = isCommon;
+        m_isCommon = reply;
     }
 
     if (m_isCommon)
@@ -193,7 +189,7 @@ void KMiniPagerButton::loadBgPixmap()
         }
     }
 
-    DCOPRef("kdesktop", "KBackgroundIface").send("setExport", 1);
+    kdesktop->call("setExport", 1);
 
     if (m_isCommon)
     {

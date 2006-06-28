@@ -29,14 +29,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //Added by qt3to4:
 #include <QPixmap>
 
-#include <dcopobject.h>
 
 #include "appletinfo.h"
 
 class KPanelApplet;
 class KickerPluginManager;
 
-class AppletProxy : public QObject, DCOPObject
+class AppletProxy : public QObject
 {
     Q_OBJECT
 
@@ -47,16 +46,16 @@ public:
     void loadApplet(const QString& desktopFile, const QString& configFile);
     KPanelApplet* loadApplet(const AppletInfo& info);
     void showStandalone();
-
+#warning "kde4 port it"
+#if 0
     bool process(const DCOPCString &fun, const QByteArray &data,
 		 DCOPCString& replyType, QByteArray &replyData);
-
+#endif
 private:
     void repaintApplet(QWidget* widget);
 
     AppletInfo          *_info;
     KPanelApplet        *_applet;
-    DCOPCString          _callbackID;
     QPixmap              _bg;
 };
 

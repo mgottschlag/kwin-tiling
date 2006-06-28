@@ -38,7 +38,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QDragEnterEvent>
 #include <QMouseEvent>
 
-#include <dcopclient.h>
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kapplication.h>
@@ -93,7 +92,7 @@ QuickLauncher::QuickLauncher(const QString& configFile, Plasma::Type type, int a
                              QWidget *parent, const char *name) :
     KPanelApplet(configFile, type, actions, parent, name)
 {
-    DCOPObject::setObjId("QuickLauncherApplet");
+    //DCOPObject::setObjId("QuickLauncherApplet");
     DEBUGSTR << endl << endl << endl << "------------" << flush;
     DEBUGSTR << "QuickLauncher::QuickLauncher(" << configFile << ",...)" <<
                 endl << flush;
@@ -140,13 +139,14 @@ QuickLauncher::QuickLauncher(const QString& configFile, Plasma::Type type, int a
     //this->setToolTip( i18n("Drop applications here"));
     DEBUGSTR << "    QuickLauncher::QuickLauncher(" << configFile <<
                 ",...) END" << endl << flush;
-
+#if 0
     DCOPClient *dcopClient = KApplication::dcopClient();
     dcopClient->connectDCOPSignal(0, "appLauncher",
         "serviceStartedByStorageId(QString,QString)",
         "QuickLauncherApplet",
         "serviceStartedByStorageId(QString,QString)",
         false);
+#endif
     kDebug() << "Quicklauncher registered DCOP signal" << endl;
 }
 

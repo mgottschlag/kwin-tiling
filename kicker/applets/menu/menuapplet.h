@@ -32,8 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kpanelapplet.h>
 #include <kmanagerselection.h>
 
-#include <dcopobject.h>
-#include <dcopclient.h>
 
 #include <karrowbutton.h>
 
@@ -63,16 +61,17 @@ class MenuEmbed;
  * @author Siegfried Nijssen <snijssen@liacs.nl>
  * @author Lubos Lunak <l.lunak@suse.cz>
  */
-class Applet : public KPanelApplet, public DCOPObject
+class Applet : public KPanelApplet
     {
     Q_OBJECT
-    K_DCOP
-    k_dcop:
+#warning "kde4 port it to dbus interface"
+	//K_DCOP
+    public slots:
     	/**
 	 * Called by the Kicker configuration(KCM). Does in turn call
 	 * readSettings().
 	 */
-        ASYNC configure();
+	/*Q_ASYNC*/ void configure();
     public:
 	Applet( const QString& configFile, QWidget *parent );
         virtual ~Applet();
@@ -159,8 +158,6 @@ class Applet : public KPanelApplet, public DCOPObject
 	 * with no menu is used.
 	 */
         bool desktop_menu;
-        DCOPClient dcopclient;
-
 	/**
 	 * The distance to the top of the screen.
 	 */
