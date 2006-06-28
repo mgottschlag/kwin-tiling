@@ -34,7 +34,7 @@ class LayoutConfig : public KCModule
 
 public:
 
-  LayoutConfig(QWidget *parent = 0L, const char *name = 0L);
+  LayoutConfig(KInstance *inst,QWidget *parent = 0L);
   virtual ~LayoutConfig();
 
   void load();

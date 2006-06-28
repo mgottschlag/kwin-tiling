@@ -196,7 +196,7 @@ private:
     XKBExtension *m_extension;
     KeyRules *m_rules;
     TrayWindow *m_tray;
-    KGlobalAccel *keys;
+    //KGlobalAccel *keys;
     KWinModule* kWinModule;
     bool m_forceSetXKBMap;
 };

@@ -79,8 +79,8 @@ OptionListItem * OptionListItem::findChildItem( const QString& optionName )
   return child;
 }
 
-LayoutConfig::LayoutConfig(QWidget *parent, const char *name)
-  : KCModule(parent, name), 
+LayoutConfig::LayoutConfig(KInstance *inst, QWidget *parent)
+  : KCModule(inst, parent),
     m_rules(NULL)
 {
   QVBoxLayout *main = new QVBoxLayout(this);
@@ -153,7 +153,7 @@ void LayoutConfig::add()
     Q3ListViewItem* sel = widget->listLayoutsSrc->selectedItem();
     if( sel == 0 )
 	return;
-    
+
     widget->listLayoutsSrc->takeItem(sel);
     widget->listLayoutsDst->insertItem(sel);
     if( widget->listLayoutsDst->childCount() > 1 )
@@ -258,7 +258,7 @@ void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
     QString kbdLayout = lookupLocalized( m_rules->layouts(), sel->text(1) );
 
 // need better algorithm here for determining if needs us group
-    if (  ! m_rules->isSingleGroup(kbdLayout) 
+    if (  ! m_rules->isSingleGroup(kbdLayout)
 	    || kbdLayout.startsWith("us") || kbdLayout.startsWith("en") ) {
         widget->chkLatin->setEnabled( false );
     }
@@ -719,12 +719,14 @@ extern "C"
 {
   KDE_EXPORT KCModule *create_keyboard_layout(QWidget *parent, const char *)
   {
-    return new LayoutConfig(parent, "kcmlayout");
+      KInstance *inst = new KInstance("kcmlayout");
+      return new LayoutConfig(inst, parent);
   }
 
   KDE_EXPORT KCModule *create_keyboard(QWidget *parent, const char *)
   {
-    return new KeyboardConfig(parent, "kcmlayout");
+      KInstance *inst = new KInstance("kcmlayout");
+      return new KeyboardConfig(inst, parent);
   }
 
   KDE_EXPORT void init_keyboard()
@@ -850,7 +852,7 @@ extern "C"
  I18N_NOOP( "Left Alt key changes group" );
  I18N_NOOP( "Left Ctrl key changes group" );
  I18N_NOOP( "Compose Key" );
- 
+
 //these seem to be new in XFree86 4.4.0
  I18N_NOOP("Shift with numpad keys works as in MS Windows.");
  I18N_NOOP("Special keys (Ctrl+Alt+<key>) handled in a server.");

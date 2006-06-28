@@ -35,7 +35,7 @@ DESCRIPTION
 //Added by qt3to4:
 #include <QPixmap>
 #include <QMouseEvent>
-
+#include <kstdaction.h>
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <kconfig.h>
@@ -53,7 +53,7 @@ DESCRIPTION
 #include <kipc.h>
 #include <kaction.h>
 #include <kmenu.h>
-
+#include <kactioncollection.h>
 #include "kxkb.h"
 #include "extension.h"
 #include "rules.h"
@@ -69,7 +69,7 @@ DESCRIPTION
 #undef explicit
 
 TrayWindow::TrayWindow(QWidget *parent, const char *name)
-    : KSystemTray(parent, name),
+    : KSystemTray(parent),
     mPrevMenuCount(0)
 {
 }
@@ -99,8 +99,8 @@ void TrayWindow::setLayouts(const QStringList& layouts, const KeyRules& rules)
 
     mDescriptionMap.clear();
     menu->clear();
-    menu->insertTitle( qApp->windowIcon().pixmap(IconSize(K3Icon::Small),IconSize(K3Icon::Small)), KInstance::caption() );
-    
+    menu->addTitle( qApp->windowIcon().pixmap(IconSize(K3Icon::Small),IconSize(K3Icon::Small)), KInstance::caption() );
+
     KIconEffect iconeffect;
 
     int cnt = 0;
@@ -110,7 +110,7 @@ void TrayWindow::setLayouts(const QStringList& layouts, const KeyRules& rules)
         const QPixmap pix = iconeffect.apply(LayoutIcon::findPixmap(*it, m_showFlag), K3Icon::Small, K3Icon::DefaultState);
         contextMenu()->insertItem(QIcon(pix), i18n((rules.layouts()[*it])), cnt++);
         mDescriptionMap.insert(*it, i18n((rules.layouts()[*it])));
-    }    
+    }
 
     contextMenu()->insertItem(QIcon(SmallIcon("configure")), i18n("Configure..."), cnt++);
     contextMenu()->insertSeparator();
@@ -148,9 +148,10 @@ KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
     }
 
     // keep in sync with kcmlayout.cpp
-    keys = new KGlobalAccel(this);
-#include "kxkbbindings.cpp"
-    keys->updateConnections();
+#warning "KDE4: port kglobalaccel"
+    //keys = new KGlobalAccel(this);
+    //#include "kxkbbindings.cpp"
+    //keys->updateConnections();
 
     m_lastLayout = new QQueue<QString*>;
     //m_lastLayout->setAutoDelete(TRUE);
@@ -165,7 +166,7 @@ KXKBApp::~KXKBApp()
     deletePrecompiledLayouts();
   	qDeleteAll(*m_lastLayout);
 	m_lastLayout->clear();
-    delete keys;
+        //delete keys;
     delete m_tray;
     delete m_rules;
     delete m_extension;
@@ -176,10 +177,10 @@ int KXKBApp::newInstance()
 {
     if( !m_compiledLayoutFileNames.isEmpty() )
 	deletePrecompiledLayouts();
-	
+
     if( settingsRead() )
 	layoutApply();
-	
+
     return 0;
 }
 
@@ -287,9 +288,9 @@ bool KXKBApp::settingsRead()
     delete config;
 
     KGlobal::config()->reparseConfiguration(); // kcontrol modified kdeglobals
-    keys->readSettings();
-    keys->updateConnections();
-    
+    //keys->readSettings();
+    //keys->updateConnections();
+
     return true;
 }
 
@@ -304,7 +305,7 @@ void KXKBApp::layoutApply()
 bool KXKBApp::setLayout(const QString& layout)
 {
     bool res = false;
-    const char* baseGr = m_includes[layout]; 
+    const char* baseGr = m_includes[layout];
     m_group = m_rules->getGroup(layout, baseGr);
 
     if ( m_compiledLayoutFileNames.contains(layout) && !m_forceSetXKBMap )
@@ -325,15 +326,15 @@ bool KXKBApp::setLayout(const QString& layout)
 
     if( res )
         m_layout = layout;
-    
+
     if (m_tray) {
 	if( res ) {
 	    m_tray->setCurrentLayout(layout);
 	}
-	else  
+	else
 	    m_tray->setError(layout);
     }
-    
+
     return res;
 }
 
@@ -343,14 +344,14 @@ bool KXKBApp::setLayout(const QString& layout)
 void KXKBApp::precompileLayouts()
 {
     QStringList dirs = KGlobal::dirs()->findDirs ( "tmp", "" );
-    QString tempDir = dirs.count() == 0 ? "/tmp/" : dirs[0]; 
+    QString tempDir = dirs.count() == 0 ? "/tmp/" : dirs[0];
 
     QStringList::ConstIterator end = m_list.end();
 
     for (QStringList::ConstIterator it = m_list.begin(); it != end; ++it)
     {
 	QString layout(*it);
-//	const char* baseGr = m_includes[layout]; 
+//	const char* baseGr = m_includes[layout];
 //	int group = m_rules->getGroup(layout, baseGr);
 //    	if( m_extension->setLayout(m_model, layout, m_variants[layout], group, baseGr) ) {
     	    QString compiledLayoutFileName = tempDir + layout + ".xkm";
@@ -399,15 +400,15 @@ void KXKBApp::toggled()
 	    }
 	}
 	m_lastLayout->enqueue(new QString(m_layout));
-	
+
 	// shrink queue if m_stickySwitchingDepth has been decremented
-	
+
 	while ((int)m_lastLayout->count() > m_stickySwitchingDepth)
 	{
 	    delete m_lastLayout->dequeue();
 	}
    }
-   
+
    if (!m_stickySwitching || index == original_index)
    {
  	if (++index >= m_list.count())
@@ -423,20 +424,20 @@ void KXKBApp::windowChanged(WId winId)
 {
     if( m_layoutOwnerMap.getMode() == swpGlobal )	// should not happen actually
 	return;
-    
+
 
     int group = m_extension->getGroup();
-    
+
     if( prevWinId ) {	// saving layout/group from previous window
 			// this will not work for the window activated before kxkb start :(
 	    LayoutInfo layoutInfo(m_layout, group, m_lastLayout);
 	    m_layoutOwnerMap.setLayout(prevWinId, layoutInfo);
     }
-    
+
     prevWinId = winId;
 
     const LayoutInfo& layoutInfo = m_layoutOwnerMap.getLayout(winId);
-    
+
     if( layoutInfo.layout.isEmpty() ) {	// setting default layout/group
 	m_layout = m_defaultLayout;
  	m_lastLayout = new QQueue<QString*>();
@@ -446,7 +447,7 @@ void KXKBApp::windowChanged(WId winId)
     }
 
     m_lastLayout = layoutInfo.getLastLayout();
-	
+
     if( layoutInfo.layout != m_layout ) {
 	m_layout = layoutInfo.layout;
         layoutApply();	// we have to add group parameter to settingApply() ??
@@ -494,8 +495,8 @@ void KXKBApp::slotSettingsChanged(int category)
     if ( category != KApplication::SETTINGS_SHORTCUTS) return;
 
     KGlobal::config()->reparseConfiguration(); // kcontrol modified kdeglobals
-    keys->readSettings();
-    keys->updateConnections();
+    //keys->readSettings();
+    //keys->updateConnections();
 }
 
 /*
@@ -529,7 +530,7 @@ static QString windowClass(WId winId)
   return property;
 }
 
-SwitchingPolicy LayoutMap::getMode() 
+SwitchingPolicy LayoutMap::getMode()
 {
     return m_ownerMode;
 }
@@ -563,7 +564,7 @@ const LayoutInfo& LayoutMap::getLayout(WId winId)
 	    else {
 		return it.data();
 	    }
-//kDebug("getLayout: winId %lu, pid %lu, %s", winId, pid, newLayout.toLatin1()); 
+//kDebug("getLayout: winId %lu, pid %lu, %s", winId, pid, newLayout.toLatin1());
 	}
 	break;
 
@@ -582,7 +583,7 @@ const LayoutInfo& LayoutMap::getLayout(WId winId)
 
 	default: assert( false );
     }
-    
+
     return emptyInfo;
 }
 
