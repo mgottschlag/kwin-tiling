@@ -65,8 +65,8 @@ DESCRIPTION
 #include <X11/Xatom.h>
 #define explicit int_explicit        // avoid compiler name clash in XKBlib.h
 #include <X11/XKBlib.h>
-#include <ktoolinvocation.h>
 #undef explicit
+#include <ktoolinvocation.h>
 
 TrayWindow::TrayWindow(QWidget *parent, const char *name)
     : KSystemTray(parent),
