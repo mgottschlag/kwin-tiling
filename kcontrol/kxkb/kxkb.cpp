@@ -206,7 +206,6 @@ bool KXKBApp::settingsRead()
     if (!enabled)
     {
         delete config;
-        kDebug() << k_funcinfo << endl;
 	kapp->quit();
         return false;
     }
