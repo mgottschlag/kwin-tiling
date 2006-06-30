@@ -28,13 +28,12 @@
 #include <config.h>
 #include <math.h>
 
-#include <qslider.h>
-#include <qfileinfo.h>
-#include <qcheckbox.h>
-#include <qstring.h>
-#include <qlayout.h>
-#include <qwhatsthis.h>
-#include <qradiobutton.h>
+#include <QSlider>
+#include <QFileInfo>
+#include <QCheckBox>
+#include <QString>
+#include <QLayout>
+#include <QWhatsThis>
 #include <Q3ButtonGroup>
 #include <QRadioButton>
 
@@ -507,7 +506,7 @@ void KeyboardConfig::init_keyboard()
 	}
 
 
-	int numlockState = config->readNumEntry( "NumLock", 2 );
+	int numlockState = config->readEntry( "NumLock", 2 );
 	if( numlockState != 2 )
 		numlockx_change_numlock_state( numlockState == 0 );
 

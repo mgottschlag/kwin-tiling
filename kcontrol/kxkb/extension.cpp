@@ -1,9 +1,9 @@
 #include <string.h>
 #include <errno.h>
 
-#include <qstring.h>
-#include <qmap.h>
-#include <qfile.h>
+#include <QString>
+#include <QMap>
+#include <QFile>
 #include <QX11Info>
 
 #include <kdebug.h>
