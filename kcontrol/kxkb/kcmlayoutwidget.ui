@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>510</height>
+    <width>709</width>
+    <height>563</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -26,14 +26,14 @@
     <height>510</height>
    </size>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QGridLayout" >
    <property name="margin" >
-    <number>0</number>
+    <number>11</number>
    </property>
    <property name="spacing" >
     <number>6</number>
    </property>
-   <item>
+   <item row="0" column="0" >
     <widget class="QTabWidget" name="tabWidget" >
      <property name="minimumSize" >
       <size>
@@ -77,215 +77,182 @@
           <property name="spacing" >
            <number>6</number>
           </property>
-          <item row="0" column="0" colspan="2" >
-           <layout class="QGridLayout" >
+          <item row="2" column="0" colspan="2" >
+           <widget class="QLabel" name="textLabel1_4" >
+            <property name="text" >
+             <string>Available layouts:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2" colspan="3" >
+           <widget class="QLabel" name="textLabel1_4_2" >
+            <property name="text" >
+             <string>Active layouts:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" colspan="3" >
+           <widget class="QLabel" name="textLabel1_2" >
+            <property name="text" >
+             <string>Keyboard &amp;model:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>comboModel</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" colspan="3" >
+           <widget class="QComboBox" name="comboModel" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="whatsThis" >
+             <string>Here you can choose a keyboard model. This setting is independent of your keyboard layout and refers to the "hardware" model, i.e. the way your keyboard is manufactured. Modern keyboards that come with your computer usually have two extra keys and are referred to as "104-key" models, which is probably what you want if you do not know what kind of keyboard you have.
+</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2" colspan="3" >
+           <widget class="Q3ListView" name="listLayoutsDst" >
+            <property name="whatsThis" >
+             <string>If more than one layout is present in this list, the KDE panel will offer a docked flag. By clicking on this flag you can easily switch between layouts. The first layout will be default one.</string>
+            </property>
+            <property name="allColumnsShowFocus" >
+             <bool>true</bool>
+            </property>
+            <column>
+             <property name="text" >
+              <string>1</string>
+             </property>
+            </column>
+            <column>
+             <property name="text" >
+              <string>Layout</string>
+             </property>
+            </column>
+            <column>
+             <property name="text" >
+              <string>Keymap</string>
+             </property>
+            </column>
+            <column>
+             <property name="text" >
+              <string>Variant</string>
+             </property>
+            </column>
+            <column>
+             <property name="text" >
+              <string>5</string>
+             </property>
+            </column>
+            <column>
+             <property name="text" >
+              <string>Label</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+          <item row="4" column="2" colspan="3" >
+           <layout class="QHBoxLayout" >
             <property name="margin" >
              <number>0</number>
             </property>
             <property name="spacing" >
              <number>6</number>
             </property>
-            <item row="2" column="0" >
-             <widget class="QLabel" name="textLabel1_4" >
+            <item>
+             <widget class="QPushButton" name="btnAdd" >
               <property name="text" >
-               <string>Available layouts:</string>
+               <string>Add >></string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1" >
-             <widget class="QLabel" name="textLabel1_4_2" >
+            <item>
+             <widget class="QPushButton" name="btnRemove" >
               <property name="text" >
-               <string>Active layouts:</string>
+               <string>&lt;&lt; Remove</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1" >
-             <widget class="QLabel" name="textLabel1_2" >
-              <property name="text" >
-               <string>Keyboard &amp;model:</string>
-              </property>
-              <property name="buddy" >
-               <cstring>comboModel</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <widget class="QComboBox" name="comboModel" >
+            <item>
+             <widget class="QPushButton" name="btnUp" >
               <property name="sizePolicy" >
                <sizepolicy>
-                <hsizetype>7</hsizetype>
+                <hsizetype>0</hsizetype>
                 <vsizetype>0</vsizetype>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="whatsThis" >
-               <string>Here you can choose a keyboard model. This setting is independent of your keyboard layout and refers to the "hardware" model, i.e. the way your keyboard is manufactured. Modern keyboards that come with your computer usually have two extra keys and are referred to as "104-key" models, which is probably what you want if you do not know what kind of keyboard you have.
-</string>
+              <property name="text" >
+               <string/>
               </property>
              </widget>
             </item>
-            <item row="6" column="1" >
-             <widget class="QCheckBox" name="chkLatin" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="whatsThis" >
-               <string>If after you switch to this layout some keyboard shortcuts based on latin keys do not work try to enable this option.</string>
+            <item>
+             <widget class="QPushButton" name="btnDown" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>0</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
               <property name="text" >
-               <string>Include latin layout</string>
+               <string/>
               </property>
-             </widget>
-            </item>
-            <item row="3" column="1" >
-             <widget class="Q3ListView" name="listLayoutsDst" >
-              <property name="whatsThis" >
-               <string>If more than one layout is present in this list, the KDE panel will offer a docked flag. By clicking on this flag you can easily switch between layouts. The first layout will be default one.</string>
-              </property>
-              <property name="allColumnsShowFocus" >
-               <bool>true</bool>
-              </property>
-              <column>
-               <property name="text" >
-                <string/>
-               </property>
-              </column>
-              <column>
-               <property name="text" >
-                <string>Layout</string>
-               </property>
-              </column>
-              <column>
-               <property name="text" >
-                <string>Keymap</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-            <item row="5" column="1" >
-             <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>6</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="textLabel1" >
-                <property name="text" >
-                 <string>Layout variant:</string>
-                </property>
-                <property name="buddy" >
-                 <cstring>comboVariant</cstring>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="comboVariant" >
-                <property name="whatsThis" >
-                 <string>Here you can choose a variant of selected keyboard layout. Layout variants usually represent different key maps for the same language. For example, Ukrainian layout might have four variants: basic, winkeys (as in Windows), typewriter (as in typewriters) and phonetic (each Ukrainian letter is placed on a transliterated latin one).
-</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="4" column="1" >
-             <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>6</number>
-              </property>
-              <item>
-               <widget class="QPushButton" name="btnAdd" >
-                <property name="text" >
-                 <string>Add >></string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btnRemove" >
-                <property name="text" >
-                 <string>&lt;&lt; Remove</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btnUp" >
-                <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>0</hsizetype>
-                  <vsizetype>0</vsizetype>
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text" >
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btnDown" >
-                <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>0</hsizetype>
-                  <vsizetype>0</vsizetype>
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text" >
-                 <string/>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item rowspan="4" row="3" column="0" >
-             <widget class="Q3ListView" name="listLayoutsSrc" >
-              <property name="minimumSize" >
-               <size>
-                <width>260</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="whatsThis" >
-               <string>This is the list of available keyboard layouts in your system. You can add layout to the active list by selecting it and pressing "Add" button.</string>
-              </property>
-              <property name="allColumnsShowFocus" >
-               <bool>true</bool>
-              </property>
-              <column>
-               <property name="text" >
-                <string/>
-               </property>
-              </column>
-              <column>
-               <property name="text" >
-                <string>Layout</string>
-               </property>
-              </column>
-              <column>
-               <property name="text" >
-                <string>Keymap</string>
-               </property>
-              </column>
              </widget>
             </item>
            </layout>
           </item>
-          <item row="1" column="0" >
+          <item row="8" column="0" >
            <widget class="QLabel" name="textLabel1_3" >
             <property name="text" >
              <string>Command:</string>
             </property>
+            <property name="buddy" >
+             <cstring>editCmdLine</cstring>
+            </property>
            </widget>
           </item>
-          <item row="1" column="1" >
+          <item rowspan="5" row="3" column="0" colspan="2" >
+           <widget class="Q3ListView" name="listLayoutsSrc" >
+            <property name="minimumSize" >
+             <size>
+              <width>260</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="whatsThis" >
+             <string>This is the list of available keyboard layouts in your system. You can add layout to the active list by selecting it and pressing "Add" button.</string>
+            </property>
+            <property name="allColumnsShowFocus" >
+             <bool>true</bool>
+            </property>
+            <column>
+             <property name="text" >
+              <string/>
+             </property>
+            </column>
+            <column>
+             <property name="text" >
+              <string>Layout</string>
+             </property>
+            </column>
+            <column>
+             <property name="text" >
+              <string>Keymap</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+          <item row="8" column="1" colspan="4" >
            <widget class="QLineEdit" name="editCmdLine" >
             <property name="whatsThis" >
              <string>This is the command which is executed when switching to the selected layout. It may help you if you want to debug layout switching, or if you want to switch layouts without the help of KDE.</string>
@@ -294,6 +261,89 @@
              <bool>true</bool>
             </property>
            </widget>
+          </item>
+          <item row="7" column="2" colspan="3" >
+           <widget class="QCheckBox" name="chkLatin" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="whatsThis" >
+             <string>If after you switch to this layout some keyboard shortcuts based on latin keys do not work try to enable this option.</string>
+            </property>
+            <property name="text" >
+             <string>Include latin layout</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2" >
+           <widget class="QLabel" name="textLabel1_6" >
+            <property name="text" >
+             <string>Label:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>editDisplayName</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="3" >
+           <widget class="QLineEdit" name="editDisplayName" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>3</number>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2" >
+           <widget class="QLabel" name="textLabel1" >
+            <property name="text" >
+             <string>Layout variant:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>comboVariant</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="3" >
+           <widget class="QComboBox" name="comboVariant" >
+            <property name="whatsThis" >
+             <string>Here you can choose a variant of selected keyboard layout. Layout variants usually represent different key maps for the same language. For example, Ukrainian layout might have four variants: basic, winkeys (as in Windows), typewriter (as in typewriters) and phonetic (each Ukrainian letter is placed on a transliterated latin one).
+</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="4" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>210</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="6" column="4" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>210</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -311,7 +361,7 @@
        <property name="spacing" >
         <number>6</number>
        </property>
-       <item row="3" column="0" colspan="2" >
+       <item row="1" column="0" >
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
@@ -327,75 +377,16 @@
          </property>
         </spacer>
        </item>
-       <item row="2" column="0" >
-        <widget class="Q3ButtonGroup" name="grpSwitching" >
-         <property name="whatsThis" >
-          <string>If you select "Application" or "Window" switching policy, changing the keyboard layout will only affect the current application or window.</string>
+       <item row="0" column="0" >
+        <widget class="Q3Frame" name="optionsFrame" >
+         <property name="frameShape" >
+          <enum>QFrame::StyledPanel</enum>
          </property>
-         <property name="title" >
-          <string>Switching Policy</string>
+         <property name="frameShadow" >
+          <enum>QFrame::Raised</enum>
          </property>
-         <property name="exclusive" >
-          <bool>true</bool>
-         </property>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>11</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item>
-           <widget class="QRadioButton" name="radioButton1" >
-            <property name="text" >
-             <string>&amp;Global</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radioButton1_3" >
-            <property name="text" >
-             <string>Application</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radioButton1_2" >
-            <property name="text" >
-             <string>&amp;Window</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="2" >
-        <widget class="QCheckBox" name="chkShowSingle" >
-         <property name="text" >
-          <string>Show indicator for single layout</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2" >
-        <widget class="QCheckBox" name="chkShowFlag" >
-         <property name="whatsThis" >
-          <string>Shows country flag on background of layout name in tray icon</string>
-         </property>
-         <property name="text" >
-          <string>Show country flag</string>
-         </property>
-         <property name="checked" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" >
-        <widget class="Q3GroupBox" name="groupBox5" >
-         <property name="title" >
-          <string>Sticky Switching</string>
+         <property name="lineWidth" >
+          <number>0</number>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -404,39 +395,119 @@
           <property name="spacing" >
            <number>6</number>
           </property>
-          <item row="0" column="0" colspan="2" >
-           <widget class="QCheckBox" name="chkEnableSticky" >
+          <item row="2" column="0" >
+           <widget class="Q3ButtonGroup" name="grpSwitching" >
             <property name="whatsThis" >
-             <string>If you have more than two layouts and turn this option on, switching with the keyboard shortcut or clicking on the kxkb indicator will only cycle through the last few layouts. You can specify the number of layouts to rotate below. You can still access all layouts by right-clicking on the kxkb indicator.</string>
+             <string>If you select "Application" or "Window" switching policy, changing the keyboard layout will only affect the current application or window.</string>
+            </property>
+            <property name="title" >
+             <string>Switching Policy</string>
+            </property>
+            <property name="exclusive" >
+             <bool>true</bool>
+            </property>
+            <layout class="QVBoxLayout" >
+             <property name="margin" >
+              <number>11</number>
+             </property>
+             <property name="spacing" >
+              <number>6</number>
+             </property>
+             <item>
+              <widget class="QRadioButton" name="radioButton1" >
+               <property name="text" >
+                <string>&amp;Global</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton1_3" >
+               <property name="text" >
+                <string>Application</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton1_2" >
+               <property name="text" >
+                <string>&amp;Window</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2" >
+           <widget class="QCheckBox" name="chkShowFlag" >
+            <property name="whatsThis" >
+             <string>Shows country flag on background of layout name in tray icon</string>
             </property>
             <property name="text" >
-             <string>Enable sticky switching</string>
+             <string>Show country flag</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="textLabel1_5" >
-            <property name="enabled" >
-             <bool>false</bool>
+          <item row="2" column="1" >
+           <widget class="Q3GroupBox" name="grpBoxStickySwitching" >
+            <property name="title" >
+             <string>Sticky Switching</string>
             </property>
-            <property name="text" >
-             <string>Number of layouts to rotate:</string>
-            </property>
-            <property name="buddy" >
-             <cstring>spinBox1</cstring>
-            </property>
+            <layout class="QGridLayout" >
+             <property name="margin" >
+              <number>11</number>
+             </property>
+             <property name="spacing" >
+              <number>6</number>
+             </property>
+             <item row="0" column="0" colspan="2" >
+              <widget class="QCheckBox" name="chkEnableSticky" >
+               <property name="whatsThis" >
+                <string>If you have more than two layouts and turn this option on, switching with the keyboard shortcut or clicking on the kxkb indicator will only cycle through the last few layouts. You can specify the number of layouts to rotate below. You can still access all layouts by right-clicking on the kxkb indicator.</string>
+               </property>
+               <property name="text" >
+                <string>Enable sticky switching</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" >
+              <widget class="QLabel" name="textLabel1_5" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Number of layouts to rotate:</string>
+               </property>
+               <property name="buddy" >
+                <cstring>spinBox1</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" >
+              <widget class="QSpinBox" name="spinStickyDepth" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="maximum" >
+                <number>10</number>
+               </property>
+               <property name="minimum" >
+                <number>2</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
-          <item row="1" column="1" >
-           <widget class="QSpinBox" name="spinStickyDepth" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maximum" >
-             <number>10</number>
-            </property>
-            <property name="minimum" >
-             <number>2</number>
+          <item row="0" column="0" colspan="2" >
+           <widget class="QCheckBox" name="chkShowSingle" >
+            <property name="text" >
+             <string>Show indicator for single layout</string>
             </property>
            </widget>
           </item>
@@ -522,15 +593,8 @@
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <pixmapfunction>SmallIcon</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3ButtonGroup</class>
-   <extends>Q3GroupBox</extends>
-   <header>Qt3Support/Q3ButtonGroup</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
   <customwidget>
    <class>Q3ListView</class>
    <extends>Q3Frame</extends>
@@ -539,9 +603,23 @@
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
+   <class>Q3Frame</class>
+   <extends>QFrame</extends>
+   <header>Qt3Support/Q3Frame</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
    <class>Q3GroupBox</class>
    <extends>QGroupBox</extends>
    <header>Qt3Support/Q3GroupBox</header>
+   <container>1</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>Q3ButtonGroup</class>
+   <extends>Q3GroupBox</extends>
+   <header>Qt3Support/Q3ButtonGroup</header>
    <container>1</container>
    <pixmap></pixmap>
   </customwidget>
@@ -600,6 +678,22 @@
    <sender>chkEnableSticky</sender>
    <signal>toggled(bool)</signal>
    <receiver>textLabel1_5</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkEnable</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>optionsFrame</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
