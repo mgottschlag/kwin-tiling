@@ -22,15 +22,14 @@ DESCRIPTION
 
     KDE Keyboard Tool. Manages XKB keyboard mappings.
 */
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <assert.h>
 
-#include <qregexp.h>
-#include <qfile.h>
-#include <qstringlist.h>
-#include <qimage.h>
+#include <QRegExp>
+#include <QFile>
+#include <QStringList>
+#include <QImage>
 #include <QDesktopWidget>
 
 #include <kaboutdata.h>
@@ -49,6 +48,8 @@ DESCRIPTION
 #include <kdebug.h>
 #include <kconfig.h>
 #include <ktoolinvocation.h>
+
+#include "kxkb_adaptor.h"
 
 #include "x11helper.h"
 #include "kxkb.h"
@@ -84,6 +85,9 @@ KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
 
     connect( this, SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)) );
     addKipcEventMask( KIPC::SettingsChanged );
+	
+	//TODO: don't do this if kxkb does not become a daemon
+	new KXKBAdaptor( this );
 }
 
 
