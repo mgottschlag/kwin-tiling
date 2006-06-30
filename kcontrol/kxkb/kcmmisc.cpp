@@ -28,15 +28,16 @@
 #include <config.h>
 #include <math.h>
 
-#include <QSlider>
-#include <QFileInfo>
-#include <QCheckBox>
-#include <QString>
-#include <QLayout>
+#include <qslider.h>
+#include <qfileinfo.h>
+#include <qcheckbox.h>
+#include <qstring.h>
+#include <qlayout.h>
+#include <qwhatsthis.h>
+#include <qradiobutton.h>
+#include <Q3ButtonGroup>
 #include <QRadioButton>
-//Added by qt3to4:
-#include <QVBoxLayout>
-#include <QBoxLayout>
+
 #include <klocale.h>
 #include <kconfig.h>
 #include <knuminput.h>
@@ -47,20 +48,18 @@
 #include <kdialog.h>
 
 #include "kcmmisc.h"
-#include "kcmmiscwidget.h"
-#include <QX11Info>
+#include "ui_kcmmiscwidget.h"
 #include <X11/Xlib.h>
 
-KeyboardConfig::KeyboardConfig (KInstance *inst,QWidget * parent)
-    : KCModule (inst, parent)
+KeyboardConfig::KeyboardConfig( KInstance* inst, QWidget *parent)
+	: KCModule (inst, parent)
 {
   QString wtstr;
-  QBoxLayout* lay = new QVBoxLayout(this);
-  lay->setSpacing(KDialog::spacingHint());
-  lay->setMargin(0);
-  ui = new KeyboardConfigWidget(this, "ui");
-  lay->addWidget(ui);
-  lay->addStretch();
+//   QBoxLayout* lay = new QVBoxLayout(this, 0, KDialog::spacingHint());
+  ui = new Ui_KeyboardConfigWidget();
+  ui->setupUi(this);
+//   lay->addWidget(ui);
+//   lay->addStretch();
 
   ui->click->setRange(0, 100, 10);
   ui->delay->setRange(100, 5000, 50, false);
@@ -142,7 +141,7 @@ void KeyboardConfig::load()
   bool key = config.readEntry("KeyboardRepeating", true);
   keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
   ui->delay->setValue(config.readEntry( "RepeatDelay", 660 ));
-  ui->rate->setValue(config.readEntry( "RepeatRate", 25.0 ));
+  ui->rate->setValue(config.readDoubleNumEntry( "RepeatRate", 25 ));
   clickVolume = config.readEntry("ClickVolume", kbd.key_click_percent);
   numlockState = config.readEntry( "NumLock", 2 );
 
@@ -188,7 +187,7 @@ void KeyboardConfig::defaults()
 
 QString KeyboardConfig::quickHelp() const
 {
-  return QString();
+  return QString::null;
 
   /* "<h1>Keyboard</h1> This module allows you to choose options"
      " for the way in which your keyboard works. The actual effect of"
@@ -285,7 +284,7 @@ int xkb_init()
     int xkb_lmaj = XkbMajorVersion;
     int xkb_lmin = XkbMinorVersion;
     return XkbLibraryVersion( &xkb_lmaj, &xkb_lmin )
-        && XkbQueryExtension( QX11Info::display(), &xkb_opcode, &xkb_event, &xkb_error,
+			&& XkbQueryExtension( QX11Info::display(), &xkb_opcode, &xkb_event, &xkb_error,
 			       &xkb_lmaj, &xkb_lmin );
     }
 
@@ -483,6 +482,37 @@ void set_repeatrate(int delay, double rate)
   p.start(KProcess::Block);
 }
 #endif
+
+void KeyboardConfig::init_keyboard()
+{
+	KConfig *config = new KConfig("kcminputrc", true); // Read-only, no globals
+	config->setGroup("Keyboard");
+
+	XKeyboardState   kbd;
+	XKeyboardControl kbdc;
+
+	XGetKeyboardControl(QX11Info::display(), &kbd);
+	bool key = config->readEntry("KeyboardRepeating", true);
+	kbdc.key_click_percent = config->readEntry("ClickVolume", kbd.key_click_percent);
+	kbdc.auto_repeat_mode = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
+
+	XChangeKeyboardControl(QX11Info::display(),
+						   KBKeyClickPercent | KBAutoRepeatMode,
+						   &kbdc);
+
+	if( key ) {
+		int delay_ = config->readEntry("RepeatDelay", 250);
+		double rate_ = config->readDoubleNumEntry("RepeatRate", 30);
+		set_repeatrate(delay_, rate_);
+	}
+
+
+	int numlockState = config->readNumEntry( "NumLock", 2 );
+	if( numlockState != 2 )
+		numlockx_change_numlock_state( numlockState == 0 );
+
+	delete config;
+}
 
 #include "kcmmisc.moc"
 

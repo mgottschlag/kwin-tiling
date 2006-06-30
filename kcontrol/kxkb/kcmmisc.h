@@ -28,13 +28,14 @@
 #include <kapplication.h>
 #include <kcmodule.h>
 
-class KeyboardConfigWidget;
+class KInstance;
+class Ui_KeyboardConfigWidget;
 
 class KeyboardConfig : public KCModule
 {
   Q_OBJECT
 public:
-  KeyboardConfig( KInstance *inst, QWidget *parent=0);
+  KeyboardConfig( KInstance* inst, QWidget *parent=0);
 
   void save();
   void load();
@@ -42,7 +43,9 @@ public:
 
   QString quickHelp() const;
 
-private Q_SLOTS:
+  static void init_keyboard();
+  
+private slots:
   void changed();
 
   void delaySliderChanged (int value);
@@ -64,7 +67,7 @@ private:
   int sliderMax;
   int clickVolume, keyboardRepeat;
   int numlockState; // 0 = on, 1 = off, 2 = don't change
-  KeyboardConfigWidget* ui;
+  Ui_KeyboardConfigWidget* ui;
 };
 
 void numlockx_change_numlock_state( bool set_P );

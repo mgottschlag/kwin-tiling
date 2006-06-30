@@ -3,57 +3,45 @@
 
 
 #include <kcmodule.h>
-#include <kglobalaccel.h>
 
-#include <QString>
-#include <q3listview.h>
-#include "rules.h"
+#include <qhash.h>
+#include <qstring.h>
+#include <qlistview.h>
 
-class OptionListItem : public Q3CheckListItem
-{
-public:
+#include "kxkbconfig.h"
 
-  OptionListItem(  OptionListItem *parent, const QString &text, Type tt,
-      const QString &optionName );
-  OptionListItem(  Q3ListView *parent, const QString &text, Type tt,
-      const QString &optionName );
-  ~OptionListItem() {}
 
-  QString optionName() const { return m_OptionName; }
+class QWidget;
+class OptionListItem;
+class Q3ListViewItem;
+class Ui_LayoutConfigWidget;
+class XkbRules;
 
-  OptionListItem *findChildItem(  const QString& text );
-
-protected:
-  QString m_OptionName;
-};
-
-class LayoutConfigWidget;
 class LayoutConfig : public KCModule
 {
   Q_OBJECT
 
 public:
-
-  LayoutConfig(KInstance *inst,QWidget *parent = 0L);
+  LayoutConfig(KInstance* kinst, QWidget *parent);
   virtual ~LayoutConfig();
 
   void load();
   void save();
   void defaults();
-
-  void itemStateChanged(); // must be slot?
+  void initUI();
 
 protected:
   QString createOptionString();
+  void updateIndicator(Q3ListViewItem* selLayout);
 
-protected Q_SLOTS:
-
+protected slots:
   void moveUp();
   void moveDown();
   void variantChanged();
+  void displayNameChanged(const QString& name);
   void latinChanged();
   void layoutSelChanged(Q3ListViewItem *);
-  void ruleChanged();
+  void loadRules();
   void updateLayoutCommand();
   void updateOptionsCommand();
   void add();
@@ -62,19 +50,15 @@ protected Q_SLOTS:
   void changed();
 
 private:
+  Ui_LayoutConfigWidget* widget;
 
-  enum SwitchMode { Global, Application, Window } switchMode;
-
-  LayoutConfigWidget* widget;
-
-  Q3Dict<OptionListItem> m_optionGroups;
-  Q3Dict<char> m_variants;
-  Q3Dict<char> m_includes;
-//  QString m_rule;
-  KeyRules *m_rules;
+  XkbRules *m_rules;
+  KxkbConfig m_kxkbConfig;
+  QHash<QString, OptionListItem*> m_optionGroups;
 
   QWidget* makeOptionsTab();
   void updateStickyLimit();
+  static LayoutUnit getLayoutUnitKey(Q3ListViewItem *sel);
 };
 
 

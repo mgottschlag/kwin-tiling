@@ -1,49 +1,45 @@
 #ifndef __RULES_H__
 #define __RULES_H__
 
+#include <qstring.h>
+#include <qhash.h>
+#include <qmap.h>
 
-#include <QString>
-#include <q3dict.h>
-#include <QMap>
 
-class KeyRules
+class XkbRules
 {
 public:
 
-  KeyRules();
+  XkbRules(bool layoutsOnly=false);
 
-  const Q3Dict<char> &models() const { return m_models; };
-  const Q3Dict<char> &layouts() const { return m_layouts; };
-  const Q3Dict<char> &options() const { return m_options; };
+  const QHash<QString, QString> &models() const { return m_models; };
+  const QHash<QString, QString> &layouts() const { return m_layouts; };
+  const QHash<QString, QString> &options() const { return m_options; };
+  
+  QStringList getAvailableVariants(const QString& layout);
+  unsigned int getDefaultGroup(const QString& layout, const QString& includeGroup);
 
-  void parseVariants(const QStringList& vars, Q3Dict<char>& variants, bool chkVars=true);
-//  static QStringList rules(QString path = QString());
-
-  QStringList getVariants(const QString& layout);
-  unsigned int getGroup(const QString& layout, const char* baseGr);
-
-  bool isXFree_v43() { return m_xfree43; }
-  bool isSingleGroup(const QString& layout) { return m_xfree43 && !m_oldLayouts.contains(layout)
-			     && !m_nonLatinLayouts.contains(layout); } 
+  bool isSingleGroup(const QString& layout);
 
 protected:
 
-  void loadRules(QString filename);
+  void loadRules(QString filename, bool layoutsOnly=false);
   void loadGroups(QString filename);
   void loadOldLayouts(QString filename);
 
 private:
 
-  Q3Dict<char> m_models;
-  Q3Dict<char> m_layouts;
-  Q3Dict<char> m_options;
+  QHash<QString, QString> m_models;
+  QHash<QString, QString> m_layouts;
+  QHash<QString, QString> m_options;
   QMap<QString, unsigned int> m_initialGroups;
-  Q3Dict<QStringList> m_varLists;
+  QHash<QString, QStringList*> m_varLists;
   QStringList m_oldLayouts;
   QStringList m_nonLatinLayouts;
-  bool m_xfree43;
   
   QString X11_DIR;	// pseudo-constant
+  
+//  void fixLayouts();
 };
 
 
