@@ -6,11 +6,16 @@ add_subdirectory( pics )
 ########### next target ###############
 
 set(kxkb_KDEINIT_SRCS 
-   kxkb.cpp 
-   kxkb_adaptor.cpp
-   rules.cpp 
-   extension.cpp 
-   pixmap.cpp )
+  extension.cpp
+  x11helper.cpp
+  rules.cpp
+  kxkbconfig.cpp
+  pixmap.cpp
+  layoutmap.cpp
+  kxkb.cpp
+  kxkb_adaptor.cpp
+  kxkbtraywindow.cpp
+)
 
 kde4_automoc(${kxkb_KDEINIT_SRCS})
 
@@ -27,15 +32,18 @@ install(TARGETS kxkb DESTINATION bin)
 ########### next target ###############
 
 set(kcm_keyboard_PART_SRCS 
-   extension.cpp 
-   rules.cpp 
-   kcmlayout.cpp 
-   pixmap.cpp 
-   kcmmisc.cpp )
+  extension.cpp
+  x11helper.cpp
+  rules.cpp
+  kxkbconfig.cpp
+  pixmap.cpp
+  kcmlayout.cpp
+  kcmmisc.cpp
+)
 
 kde4_automoc(${kcm_keyboard_PART_SRCS})
 
-kde4_add_ui3_files(kcm_keyboard_PART_SRCS kcmlayoutwidget.ui kcmmiscwidget.ui )
+kde4_add_ui_files(kcm_keyboard_PART_SRCS kcmlayoutwidget.ui kcmmiscwidget.ui )
 
 kde4_add_plugin(kcm_keyboard ${kcm_keyboard_PART_SRCS})
 
