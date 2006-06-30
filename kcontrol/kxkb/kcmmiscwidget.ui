@@ -235,14 +235,14 @@
   <customwidget>
    <class>KDoubleNumInput</class>
    <extends>QWidget</extends>
-   <header>kdoublenuminput.h</header>
+   <header>knuminput.h</header>
    <container>1</container>
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>KIntNumInput</class>
    <extends>QWidget</extends>
-   <header>kintnuminput.h</header>
+   <header>knuminput.h</header>
    <container>1</container>
    <pixmap></pixmap>
   </customwidget>
