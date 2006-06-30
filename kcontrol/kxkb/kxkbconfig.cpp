@@ -11,9 +11,9 @@
 //
 #include <assert.h>
 
-#include <qregexp.h>
-#include <qstringlist.h>
-#include <qhash.h>
+#include <QRegExp>
+#include <QStringList>
+#include <QHash>
 
 #include <kconfig.h>
 #include <kdebug.h>
@@ -65,11 +65,11 @@ bool KxkbConfig::load(int loadMode)
 	
 	QStringList layoutList;
 	if( config->hasKey("LayoutList") ) {
-		layoutList = config->readListEntry("LayoutList");
+		config->readEntry("LayoutList", layoutList);
 	}
 	else { // old config
 		QString mainLayout = config->readEntry("Layout", DEFAULT_LAYOUT_UNIT.toPair());
-		layoutList = config->readListEntry("Additional");
+		config->readEntry("Additional", layoutList);
 		layoutList.prepend(mainLayout);
 	}
 	if( layoutList.count() == 0 )
@@ -83,7 +83,8 @@ bool KxkbConfig::load(int loadMode)
 
 	kDebug() << "Found " << m_layouts.count() << " layouts, default is " << getDefaultLayout().toPair() << endl;
 	
-	QStringList displayNamesList = config->readListEntry("DisplayNames", ',');
+	QStringList displayNamesList;
+	config->readEntry("DisplayNames", displayNamesList, ',');
 	for(QStringList::ConstIterator it = displayNamesList.begin(); it != displayNamesList.end() ; ++it) {
 		QStringList displayNamePair = (*it).split(':');
 		if( displayNamePair.count() == 2 ) {
@@ -97,9 +98,10 @@ bool KxkbConfig::load(int loadMode)
 // 	m_includes.clear();
 	if( X11Helper::areSingleGroupsSupported() ) {
 		if( config->hasKey("IncludeGroups") ) {
-			QStringList includeList = config->readListEntry("IncludeGroups", ',');
+			QStringList includeList;
+			config->readEntry("IncludeGroups", includeList, ',');
 			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
-				QStringList includePair = QStringList::split(':', *it );
+				QStringList includePair = (*it).split(':');
 				if( includePair.count() == 2 ) {
 					LayoutUnit layoutUnit( includePair[0] );
 					if( m_layouts.contains( layoutUnit ) ) {
@@ -111,7 +113,8 @@ bool KxkbConfig::load(int loadMode)
 		}
 		else { //old includes format
 			kDebug() << "Old includes..." << endl;
-			QStringList includeList = config->readListEntry("Includes");
+			QStringList includeList;
+			config->readEntry("Includes", includeList);
 			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
 				QString layoutName = LayoutUnit::parseLayout( *it );
 				LayoutUnit layoutUnit( layoutName, "" );
@@ -312,7 +315,7 @@ const QString LayoutUnit::parseLayout(const QString &layvar)
 	static const char* LAYOUT_PATTERN = "[a-zA-Z0-9_/-]*";
 	QString varLine = layvar.trimmed();
 	QRegExp rx(LAYOUT_PATTERN);
-	int pos = rx.search(varLine, 0);
+	int pos = rx.indexIn(varLine, 0);
 	int len = rx.matchedLength();
   // check for errors
 	if( pos < 0 || len < 2 )
@@ -331,7 +334,7 @@ const QString LayoutUnit::parseVariant(const QString &layvar)
 	static const char* VARIANT_PATTERN = "\\([a-zA-Z0-9_-]*\\)";
 	QString varLine = layvar.trimmed();
 	QRegExp rx(VARIANT_PATTERN);
-	int pos = rx.search(varLine, 0);
+	int pos = rx.indexIn(varLine, 0);
 	int len = rx.matchedLength();
   // check for errors
 	if( pos < 2 || len < 2 )

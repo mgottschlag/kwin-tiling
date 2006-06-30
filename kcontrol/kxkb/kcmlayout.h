@@ -4,8 +4,8 @@
 
 #include <kcmodule.h>
 
-#include <qhash.h>
-#include <qstring.h>
+#include <QHash>
+#include <QString>
 #include <qlistview.h>
 
 #include "kxkbconfig.h"

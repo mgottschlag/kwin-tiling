@@ -15,8 +15,8 @@
 
 #include <assert.h>
 
-#include <qqueue.h>
-#include <qmap.h>
+#include <QQueue>
+#include <QMap>
 
 #include <kwinmodule.h>
 #include <kdebug.h>

@@ -1,10 +1,10 @@
 #include <qwindowdefs.h>
-#include <qfile.h>
-#include <qtextstream.h>
-#include <qregexp.h>
-#include <qstringlist.h>
-#include <qdir.h>
 #include <QX11Info>
+#include <QRegExp>
+#include <QStringList>
+#include <QTextStream>
+#include <QFile>
+#include <QDir>
 
 #include <kstandarddirs.h>
 #include <kglobal.h>

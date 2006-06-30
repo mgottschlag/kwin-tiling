@@ -1,8 +1,8 @@
 #ifndef X11HELPER_H_
 #define X11HELPER_H_
 
-#include <qhash.h>
-#include <qstringlist.h>
+#include <QHash>
+#include <QStringList>
 
 #include <kwin.h>
 

@@ -12,10 +12,10 @@
 #ifndef KXKBCONFIG_H
 #define KXKBCONFIG_H
 
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qqueue.h>
-#include <qmap.h>
+#include <QString>
+#include <QStringList>
+#include <QQueue>
+#include <QMap>
 
 
 /* Utility classes for per-window/per-application layout implementation

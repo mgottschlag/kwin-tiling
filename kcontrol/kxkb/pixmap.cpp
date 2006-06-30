@@ -1,9 +1,8 @@
-#include <qimage.h>
-//#include <qbitmap.h>
-#include <qfont.h>
-#include <qpainter.h>
-#include <qregexp.h>
-#include <qhash.h>
+#include <QImage>
+#include <QFont>
+#include <QPainter>
+#include <QRegExp>
+#include <QHash>
 
 #include <kstandarddirs.h>
 #include <klocale.h>
