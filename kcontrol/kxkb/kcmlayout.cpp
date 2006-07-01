@@ -665,7 +665,7 @@ void LayoutConfig::updateLayoutCommand()
     if( !variant.isEmpty() ) {
       setxkbmap += " -variant ";
       if( widget->chkLatin->isChecked() )
-        setxkbmap += ",";
+        setxkbmap += ',';
       setxkbmap += variant;
     }
   }

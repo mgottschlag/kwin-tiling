@@ -58,7 +58,7 @@ LayoutIcon::findPixmap(const QString& code_, bool showFlag, const QString& displ
 	if( displayName.length() > 3 )
 		displayName = displayName.left(3);
 
-	const QString pixmapKey( showFlag ? code_ + "." + displayName : displayName );
+	const QString pixmapKey( showFlag ? code_ + '.' + displayName : displayName );
 	
 	pm = m_pixmapCache[pixmapKey];
 	if( pm )

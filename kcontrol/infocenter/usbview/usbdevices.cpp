@@ -109,7 +109,7 @@ void USBDevice::parseSysDir(int bus, int parent, int level, QString dname)
       continue;
 
     USBDevice* dev = new USBDevice();
-    dev->parseSysDir(bus, ++level, _device, dname + "/" + *it);
+    dev->parseSysDir(bus, ++level, _device, dname + '/' + *it);
   }
 }
 
@@ -313,7 +313,7 @@ bool USBDevice::parseSys(QString dname)
          bus = bus_reg.cap(1).toInt();
 
 
-     device->parseSysDir(bus, 0, 0, d.absPath() + "/" + *it);
+     device->parseSysDir(bus, 0, 0, d.absPath() + '/' + *it);
   }
 
   return d.count();

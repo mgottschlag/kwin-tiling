@@ -316,7 +316,7 @@ void kthememanager::slotThemeChanged( Q3ListViewItem * item )
         QString themeName = item->text(0);
         kDebug() << "Activated theme: " << themeName  << endl;
 
-        QString themeDir = KGlobal::dirs()->findResourceDir( "themes", themeName + '/' + themeName + ".xml") + themeName + "/";
+        QString themeDir = KGlobal::dirs()->findResourceDir( "themes", themeName + '/' + themeName + ".xml") + themeName + '/';
 
         QString pixFile = themeDir + themeName + ".preview.png";
 

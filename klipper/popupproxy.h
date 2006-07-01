@@ -62,7 +62,7 @@ public Q_SLOTS:
 private:
     /**
      * Insert up to m_itemsPerMenu items from spill and a new
-     * more-menu if neccessary.
+     * more-menu if necessary.
      * @param index Items are inserted at index
      * @return number of items inserted.
      */

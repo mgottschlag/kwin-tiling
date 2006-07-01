@@ -25,7 +25,7 @@
 
 ModuleIface::ModuleIface(QObject *parent, const char *name) 
 	: QObject(parent) {
-	QDBus::sessionBus().registerObject("/"+QString(name), this, QDBusConnection::ExportSlots);
+	QDBus::sessionBus().registerObject('/'+QString(name), this, QDBusConnection::ExportSlots);
 	setObjectName( name );
 	_parent = static_cast<QWidget *>(parent);
 

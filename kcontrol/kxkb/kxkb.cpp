@@ -367,7 +367,7 @@ map from the X server into our local buffer.*/
 // //	const char* baseGr = m_includes[layout]; 
 // //	int group = m_rules->getGroup(layout, baseGr);
 // //    	if( m_extension->setLayout(m_model, layout, m_variants[layout], group, baseGr) ) {
-// 		QString compiledLayoutFileName = tempDir + layoutUnit.layout + "." + layoutUnit.variant + ".xkm";
+// 		QString compiledLayoutFileName = tempDir + layoutUnit.layout + '.' + layoutUnit.variant + ".xkm";
 // //    	    if( m_extension->getCompiledLayout(compiledLayoutFileName) )
 // 		m_compiledLayoutFileNames[layoutUnit.toPair()] = compiledLayoutFileName;
 // //	}

@@ -409,7 +409,7 @@ void KAccessApp::xkbStateNotify () {
       if (_kNotifyModifiers)
       for (int i = 0; i < 8; i++) {
          if (keys[i] != -1) {
-            if (    (modifierKeys[keys[i]].latchedText == "")
+            if ( (modifierKeys[keys[i]].latchedText == "")
                 && ( (((mods >> i) & 0x101) != 0) != (((state >> i) & 0x101) != 0) ))
             {
                if ((mods >> i) & 1) {

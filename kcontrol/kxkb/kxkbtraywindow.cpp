@@ -98,7 +98,7 @@ void KxkbLabelController::initLayoutList(const QList<LayoutUnit>& layouts, const
 		QString layoutString = rules.layouts()[layoutName];
 		QString fullName = i18n( layoutString.toLatin1().constData() );
 		if( variantName.isEmpty() == false )
-			fullName += " (" + variantName + ")";
+			fullName += " (" + variantName + ')';
 		contextMenu->insertItem(pix, fullName, START_MENU_ID + cnt, m_menuStartIndex + cnt);
 		m_descriptionMap.insert((*it).toPair(), fullName);
 		

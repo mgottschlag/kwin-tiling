@@ -26,7 +26,7 @@ QMap<QString, FILE*> XKBExtension::fileCache;	//TODO: move to class?
 
 static QString getLayoutKey(const QString& layout, const QString& variant)
 {
-	return layout + "." + variant;
+	return layout + '.' + variant;
 }
 
 QString XKBExtension::getPrecompiledLayoutFilename(const QString& layoutKey)
@@ -159,7 +159,7 @@ bool XKBExtension::setLayoutInternal(const QString& model,
     QString fullVariant = variant;
 	if( includeGroup.isEmpty() == false ) {
         fullLayout = includeGroup;
-        fullLayout += ",";
+        fullLayout += ',';
         fullLayout += layout;
 		
 //    fullVariant = baseVar;
