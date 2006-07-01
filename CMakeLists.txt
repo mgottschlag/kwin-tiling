@@ -8,8 +8,6 @@ set( backgroundlib_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgsettings.cpp
 )
 
-
-
 set( kcmbackgroundlib_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgdialog.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgadvanced.cpp

@@ -143,8 +143,9 @@ void ThemeDefault::_initUi()
     blimage.fill(Qt::black);
   }
   QLabel *bottom_label = new QLabel( vbox );
-  bottom_label->setPaletteBackgroundPixmap( blimage );
-
+  QPalette palette;
+  palette.setBrush( bottom_label->backgroundRole(), QBrush(blimage) );
+  bottom_label->setPalette( palette );
 
       mLabel = new QLabel( bottom_label );
       mLabel->setAutoFillBackground ( true );

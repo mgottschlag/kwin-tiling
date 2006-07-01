@@ -66,6 +66,7 @@ URLGrabber::URLGrabber( KConfig* config )
     readConfiguration( m_config );
 
     myPopupKillTimer = new QTimer( this );
+    myPopupKillTimer->setSingleShot( true );
     connect( myPopupKillTimer, SIGNAL( timeout() ),
              SLOT( slotKillPopupMenu() ));
 
@@ -204,7 +205,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
         myMenu->insertItem( SmallIconSet("cancel"), i18n("&Cancel"), DO_NOTHING_ITEM );
 
         if ( myPopupKillTimeout > 0 )
-            myPopupKillTimer->start( 1000 * myPopupKillTimeout, true );
+            myPopupKillTimer->start( 1000 * myPopupKillTimeout );
 
         emit sigPopup( myMenu );
     }
@@ -378,7 +379,7 @@ void URLGrabber::slotKillPopupMenu()
         if ( myMenu->geometry().contains( QCursor::pos() ) &&
              myPopupKillTimeout > 0 )
         {
-            myPopupKillTimer->start( 1000 * myPopupKillTimeout, true );
+            myPopupKillTimer->start( 1000 * myPopupKillTimeout );
             return;
         }
     }
@@ -396,7 +397,7 @@ ClipCommand::ClipCommand(const QString &_command, const QString &_description,
       description(_description),
       isEnabled(_isEnabled)
 {
-    int len = command.find(" ");
+    int len = command.indexOf(" ");
     if (len == -1)
         len = command.length();
 

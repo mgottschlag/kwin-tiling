@@ -128,7 +128,7 @@ public:
   void  setRegExp( const QString& r) 	      { myRegExp = QRegExp( r ); }
   QString regExp() 			const { return myRegExp.pattern(); }
   inline bool matches( const QString& string ) const {
-      return ( myRegExp.search( string ) != -1 );
+      return ( myRegExp.indexIn( string ) != -1 );
   }
 
   void 	setDescription( const QString& d)     { myDescription = d; }

@@ -41,7 +41,7 @@
 // KSplash::KSplash(): This is a hidden object. Its sole purpose
 // is to manage the other objects, which are presented on the screen.
 KSplash::KSplash()
-    : QWidget( 0, 0, Qt::WStyle_Customize|Qt::WStyle_NoBorder|Qt::WX11BypassWM ),
+    : QWidget( 0, Qt::WStyle_Customize|Qt::WStyle_NoBorder|Qt::WX11BypassWM ),
       mState( 0 ), mMaxProgress( 0 ), mStep( 0 )
 {
   hide(); // We never show this object.

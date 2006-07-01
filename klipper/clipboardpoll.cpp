@@ -82,6 +82,7 @@ ClipboardPoll::ClipboardPoll( QWidget* parent )
     clipboard.timestamp_atom = atoms[ 5 ];
     bool use_polling = true;
     kapp->installX11EventFilter( this );
+    timer.setSingleShot( false );
 #ifdef HAVE_XFIXES
     int dummy;
     if( XFixesQueryExtension( QX11Info::display(), &xfixes_event_base, &dummy ))
@@ -114,7 +115,7 @@ void ClipboardPoll::initPolling()
     connect( kapp->clipboard(), SIGNAL( selectionChanged() ), SLOT(qtSelectionChanged()));
     connect( kapp->clipboard(), SIGNAL( dataChanged() ), SLOT( qtClipboardChanged() ));
     connect( &timer, SIGNAL( timeout()), SLOT( timeout()));
-    timer.start( 1000, false );
+    timer.start( 1000 );
     selection.atom = XA_PRIMARY;
     clipboard.atom = xa_clipboard;
     selection.last_change = clipboard.last_change = QX11Info::appTime(); // don't trigger right after startup

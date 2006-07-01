@@ -192,11 +192,13 @@ void KlipperPopup::rebuild( const QString& filter ) {
     }
 
     QRegExp filterexp( filter );
+    QPalette palette;
     if ( filterexp.isValid() ) {
-        m_filterWidget->setPaletteForegroundColor( paletteForegroundColor() );
+        palette.setColor( m_filterWidget->foregroundRole(), palette.color(foregroundRole()) );
     } else {
-        m_filterWidget->setPaletteForegroundColor( QColor( "red" ) );
+        palette.setColor( m_filterWidget->foregroundRole(), Qt::red );
     }
+    m_filterWidget->setPalette( palette );
     n_history_items = m_popupProxy->buildParent( TOP_HISTORY_ITEM_INDEX, filterexp );
 
     if ( n_history_items == 0 ) {

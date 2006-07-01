@@ -153,6 +153,8 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 
     connect( &m_overflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
     m_overflowClearTimer.start( 1000 );
+
+    m_pendingCheckTimer.setSingleShot( true );
     connect( &m_pendingCheckTimer, SIGNAL( timeout()), SLOT( slotCheckPending()));
 
     m_history = new History( this, "main_history" );
@@ -354,10 +356,10 @@ bool KlipperWidget::loadHistory() {
     if ( !history_file.exists() ) { // backwards compatibility
         oldfile = true;
         history_file_name = ::locateLocal( "data", "klipper/history.lst" );
-        history_file.setName( history_file_name );
+        history_file.setFileName( history_file_name );
         if ( !history_file.exists() ) {
             history_file_name = ::locateLocal( "data", "kicker/history.lst" );
-            history_file.setName( history_file_name );
+            history_file.setFileName( history_file_name );
             if ( !history_file.exists() ) {
                 return false;
             }
@@ -785,7 +787,7 @@ bool KlipperWidget::blockFetchingNewData()
     if( ( buttonstate & ( Qt::ShiftModifier | Qt::LeftButton )) == Qt::ShiftModifier // #85198
         || ( buttonstate & Qt::LeftButton ) == Qt::LeftButton ) { // #80302
         m_pendingContentsCheck = true;
-        m_pendingCheckTimer.start( 100, true );
+        m_pendingCheckTimer.start( 100 );
         return true;
     }
     m_pendingContentsCheck = false;
@@ -817,8 +819,6 @@ void KlipperWidget::checkClipData( bool selectionMode )
         }
         return;
     }
-
-// debug code
 
 // debug code
 #ifdef NOISY_KLIPPER

@@ -26,10 +26,11 @@
 #include "klipperpopup.h"
 
 History::History( QWidget* parent, const char* name )
-    : QObject( parent, name ),
+    : QObject( parent ),
       m_popup( new KlipperPopup( this, parent ) ),
       m_topIsUserSelected( false )
 {
+    setObjectName( name );
     connect( this, SIGNAL( changed() ), m_popup, SLOT( slotHistoryChanged() ) );
     itemList.setAutoDelete( true );
 

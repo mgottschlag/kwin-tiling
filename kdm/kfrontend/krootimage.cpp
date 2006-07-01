@@ -61,7 +61,10 @@ MyApplication::MyApplication( const char *conf )
 void
 MyApplication::renderDone()
 {
-	desktop()->setBackgroundPixmap( renderer.pixmap() );
+	QPalette palette;
+	palette.setBrush( desktop()->backgroundRole(), QBrush( renderer.pixmap() ) );
+	desktop()->setPalette( palette );
+
 	desktop()->repaint( );
 	renderer.saveCacheFile();
 	renderer.cleanup();

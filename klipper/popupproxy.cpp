@@ -100,7 +100,7 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
     } else {
         const QSize max_size( m_menu_width,m_menu_height/4 );
         if ( image.height() > max_size.height() || image.width() > max_size.width() ) {
-            image.convertFromImage( image.toImage().smoothScale( max_size, Qt::KeepAspectRatio ) );
+            image = image.scaled( max_size, Qt::KeepAspectRatio, Qt::SmoothTransformation );
         }
         id = proxy_for_menu->insertItem( image, -1, index );
     }
