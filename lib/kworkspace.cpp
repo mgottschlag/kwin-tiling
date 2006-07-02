@@ -27,7 +27,7 @@
 #include <klocale.h>
 #include <QDateTime>
 #include <kstandarddirs.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include <stdlib.h> // getenv()
 
 #ifdef Q_WS_X11
@@ -70,9 +70,9 @@ bool requestShutDown(
          sdtype != ShutdownTypeDefault ||
          sdmode != ShutdownModeDefault )
     {
-        QDBusInterfacePtr ksmserver( "org.kde.ksmserver", "/Ksmserver", "org.kde.ksmserver.ksmserver" );
-        QDBusReply<void> reply = ksmserver->call( "logout",  (int)confirm,  (int)sdtype,  (int)sdmode );
-	return reply.isSuccess();
+        QDBusInterface ksmserver( "org.kde.ksmserver", "/Ksmserver", "org.kde.ksmserver.ksmserver" );
+        QDBusReply<void> reply = ksmserver.call( "logout",  (int)confirm,  (int)sdtype,  (int)sdmode );
+        return (reply.isSuccess());
     }
 
     if (! tmpSmcConnection) {

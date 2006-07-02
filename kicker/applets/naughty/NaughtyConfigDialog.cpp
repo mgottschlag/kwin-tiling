@@ -41,7 +41,7 @@ NaughtyConfigDialog::NaughtyConfigDialog
   setModal( true );
   setCaption( i18n("Configuration") );
   setButtons( Ok | Cancel );
-  enableButtonSeparator( true );
+  showButtonSeparator( true );
 
   KVBox * v = new KVBox(this);
   setMainWidget(v);

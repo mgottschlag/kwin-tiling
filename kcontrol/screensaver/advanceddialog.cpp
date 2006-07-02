@@ -22,7 +22,7 @@ KScreenSaverAdvancedDialog::KScreenSaverAdvancedDialog(QWidget *parent, const ch
   setModal( true );
   setCaption( i18n( "Advanced Options" ) );
   setButtons( Ok | Cancel );
-  enableButtonSeparator( true );
+  showButtonSeparator( true );
 
 	dialog = new AdvancedDialog(this);
 	setMainWidget(dialog);

@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <typeinfo>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <QCursor>
 #include <QPixmap>
@@ -53,7 +53,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kio/job.h>
 #include <kauthorized.h>
 #include <kworkspace.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include "utils.h"
 #include "kicker.h"
@@ -553,8 +553,8 @@ void PanelServiceMenu::slotContextMenu(int selected)
         case AddItemToPanel:
 		{
             service = KService::Ptr::staticCast(contextKSycocaEntry_);
-            QDBusInterfacePtr kickerInterface("org.kde.kicker", "/Panel");
-            kickerInterface->call("addServiceButton", service->desktopEntryPath());
+            QDBusInterface kickerInterface("org.kde.kicker", "/Panel");
+            kickerInterface.call("addServiceButton", service->desktopEntryPath());
             break;
 		}
 	case EditItem:
@@ -567,8 +567,8 @@ void PanelServiceMenu::slotContextMenu(int selected)
         case PutIntoRunDialog:
 			{
             service = KService::Ptr::staticCast(contextKSycocaEntry_);
-            QDBusInterfacePtr kickerInterface("org.kde.kdesktop", "/default");
-            kickerInterface->call("popupExecuteCommand", service->exec());
+            QDBusInterface kickerInterface("org.kde.kdesktop", "/default");
+            kickerInterface.call("popupExecuteCommand", service->exec());
             break;
 			}
 	case AddMenuToDesktop:
@@ -589,8 +589,8 @@ void PanelServiceMenu::slotContextMenu(int selected)
         case AddMenuToPanel:
 		{
             g = KServiceGroup::Ptr::staticCast(contextKSycocaEntry_);
-            QDBusInterfacePtr kickerInterface("org.kde.kicker", "/Panel");
-            kickerInterface->call("addServiceMenuButton", service->desktopEntryPath());
+            QDBusInterface kickerInterface("org.kde.kicker", "/Panel");
+            kickerInterface.call("addServiceMenuButton", service->desktopEntryPath());
             break;
 		}
         case EditMenu:

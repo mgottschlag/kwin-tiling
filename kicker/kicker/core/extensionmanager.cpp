@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <unistd.h>
 #include <stdlib.h>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <QList>
 #include <QDesktopWidget>
@@ -169,8 +169,8 @@ void ExtensionManager::initialize()
     pm->clearUntrustedLists();
     connect(Kicker::self(), SIGNAL(configurationChanged()), SLOT(configurationChanged()));
 
-    QDBusInterfacePtr dbus("org.kde.ksmserver", "/ksmserver");
-    dbus->call("resumeStartup", "kicker");
+    QDBusInterface dbus("org.kde.ksmserver", "/ksmserver");
+    dbus.call("resumeStartup", "kicker");
 }
 
 void ExtensionManager::configureMenubar(bool duringInit)

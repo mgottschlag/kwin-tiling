@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <ktar.h>
 #include <kstyle.h>
 #include <QX11Info>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 KTheme::KTheme( QWidget *parent, const QString & xmlFile )
 	: m_parent(parent)
@@ -424,8 +424,8 @@ void KTheme::apply()
 
     desktopConf.sync();         // TODO sync and signal only if <desktop> elem present
     // reconfigure kdesktop. kdesktop will notify all clients
-    QDBusInterfacePtr kdesktop( "org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background");
-    kdesktop->call("configure");
+    QDBusInterface kdesktop( "org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background");
+    kdesktop.call("configure");
     // FIXME Xinerama
 
     // 3. Icons
@@ -501,9 +501,9 @@ void KTheme::apply()
         soundConf.sync();
         kwinSoundConf.sync();
 
-        QDBusInterfacePtr knotify("org.kde.knotify", "/Notify", "org.kde.KNotify");
-        if ( knotify->isValid() )
-            knotify->call( "reconfigure" );
+        QDBusInterface knotify("org.kde.knotify", "/Notify", "org.kde.KNotify");
+        if ( knotify.isValid() )
+            knotify.call( "reconfigure" );
 
         // TODO signal kwin sounds change?
     }
@@ -581,9 +581,9 @@ void KTheme::apply()
         kwinConf.writeEntry( "BorderSize", getProperty( wmElem, "border", "size" ) );
 
         kwinConf.sync();
-        QDBusInterfacePtr kwin("org.kde.kwin", "/KWin", "org.kde.KWin");
-        if ( kwin->isValid() )
-            kwin->call( "reconfigure" );
+        QDBusInterface kwin("org.kde.kwin", "/KWin", "org.kde.KWin");
+        if ( kwin.isValid() )
+            kwin.call( "reconfigure" );
     }
 
     // 8. Konqueror
@@ -622,8 +622,8 @@ void KTheme::apply()
                                static_cast<bool>( getProperty( panelElem, "transparent", "value" ).toUInt() ) );
 
         kickerConf.sync();
-		QDBusInterfacePtr kicker( "org.kde.kicker", "kicker");
-		kicker->call("configure");
+		QDBusInterface kicker( "org.kde.kicker", "kicker");
+		kicker.call("configure");
     }
 
     // 10. Widget style

@@ -25,7 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <sys/types.h>
 #include <unistd.h>
 #include <dmctl.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <QDesktopWidget>
 #include <QImage>
@@ -330,8 +330,8 @@ void PanelKMenu::slotLock()
     if ( kicker_screen_number )
         interface.sprintf("org.kde.kdesktop-screen-%d", kicker_screen_number);
 
-    QDBusInterfacePtr kdesktop(interface, "/KScreensaverIface");
-    kdesktop->call("lock");
+    QDBusInterface kdesktop(interface, "/KScreensaverIface");
+    kdesktop.call("lock");
 }
 
 void PanelKMenu::slotLogout()
@@ -408,8 +408,8 @@ void PanelKMenu::doNewSession( bool lock )
 
 void PanelKMenu::slotSaveSession()
 {
-    QDBusInterfacePtr ksmserver("org.kde.ksmserver", "/ksmserver");
-    ksmserver->call("saveCurrentSession");
+    QDBusInterface ksmserver("org.kde.ksmserver", "/ksmserver");
+    ksmserver.call("saveCurrentSession");
 }
 
 void PanelKMenu::slotRunCommand()
@@ -418,8 +418,8 @@ void PanelKMenu::slotRunCommand()
     if ( kicker_screen_number )
         interface.sprintf("kdesktop-screen-%d", kicker_screen_number);
 
-    QDBusInterfacePtr kdesktop(interface, "/KDesktopIface");
-    kdesktop->call("popupExecuteCommand");
+    QDBusInterface kdesktop(interface, "/KDesktopIface");
+    kdesktop.call("popupExecuteCommand");
 }
 
 void PanelKMenu::slotEditUserContact()

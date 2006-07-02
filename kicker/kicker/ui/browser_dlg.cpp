@@ -42,7 +42,7 @@ PanelBrowserDialog::PanelBrowserDialog( const QString& path, const QString &icon
     setModal( true );
     setCaption( i18n( "Quick Browser Configuration" ) );
     setButtons( Ok|Cancel );
-    enableButtonSeparator( true );
+    showButtonSeparator( true );
 
     setMinimumWidth( 300 );
 

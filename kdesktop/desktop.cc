@@ -286,9 +286,9 @@ KDesktop::initRoot()
         connect(m_actionCollection->action("Lock Session"), SIGNAL(triggered(bool)), krootwm, SLOT(slotLock()));
      }
    } else {
-      QDBusInterfacePtr ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
-      if ( ksmserver->isValid() )
-          ksmserver->call( "resumeStartup", QString( "kdesktop" ) );
+      QDBusInterface ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
+      if ( ksmserver.isValid() )
+          ksmserver.call( "resumeStartup", QString( "kdesktop" ) );
    }
 
    KWin::setType( winId(), NET::Desktop );
@@ -313,9 +313,9 @@ KDesktop::backgroundInitDone()
        kapp->sendPostedEvents();
     }
 
-    QDBusInterfacePtr ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
-    if ( ksmserver->isValid() )
-        ksmserver->call( "suspendStartup", QString( "kdesktop" ) );
+    QDBusInterface ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
+    if ( ksmserver.isValid() )
+        ksmserver.call( "suspendStartup", QString( "kdesktop" ) );
 }
 
 void
@@ -613,9 +613,9 @@ void KDesktop::refresh()
   m_bNeedRepaint |= 1;
   updateWorkArea();
 #endif
-  QDBusInterfacePtr kwin( "org.kde.kwin", "/KWin", "org.kde.KWin" );
-  if ( kwin->isValid() )
-      kwin->call( "refresh" );
+  QDBusInterface kwin( "org.kde.kwin", "/KWin", "org.kde.KWin" );
+  if ( kwin.isValid() )
+      kwin.call( "refresh" );
   refreshIcons();
 }
 

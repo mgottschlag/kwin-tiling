@@ -56,7 +56,7 @@ PanelExeDialog::PanelExeDialog(const QString& title, const QString& description,
     setObjectName( name );
     setCaption(i18n("Non-KDE Application Configuration"));
     setButtons( Ok|Cancel );
-    enableButtonSeparator( true );
+    showButtonSeparator( true );
 
     QFileInfo fi(path);
 

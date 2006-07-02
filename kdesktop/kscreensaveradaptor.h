@@ -13,7 +13,7 @@
 #define KSCREENSAVERADAPTOR_H_108221151422193
 
 #include <QtCore/QObject>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include "lockeng.h"
 class QByteArray;
 template<class T> class QList;

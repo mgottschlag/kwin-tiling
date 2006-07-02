@@ -64,7 +64,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QTimer>
 #include <QDesktopWidget>
 #include <QRegExp>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -119,12 +119,12 @@ void KSMServer::startApplication( QStringList command, const QString& clientMach
 	command.prepend( xonCommand ); // "xon" by default
     }
     int n = command.count();
-    QDBusInterfacePtr klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
+    QDBusInterface klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
     QString app = command[0].toLatin1();
     QStringList argList;
     for ( int i=1; i < n; i++)
        argList.append( command[i].toLatin1());
-    klauncher->call( "exec_blind", app, argList );
+    klauncher.call( "exec_blind", app, argList );
 }
 
 /*! Utility function to execute a command on the local machine. Used
@@ -584,7 +584,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 {
     new KSmserverAdaptor( this );
     QDBus::sessionBus().registerObject("/KSMServer", this);
-    klauncherSignals = QDBus::sessionBus().findInterface("org.kde.klauncher",
+    klauncherSignals = QDBus::sessionBus().interface("org.kde.klauncher",
         "/KLauncher", "org.kde.KLauncher" );
     if( !klauncherSignals->isValid())
         kWarning() << "kded not running?" << endl;
@@ -657,8 +657,8 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
         fclose(f);
         setenv( "SESSION_MANAGER", session_manager, true  );
        // Pass env. var to kdeinit.
-       QDBusInterfacePtr klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
-       klauncher->call( "setLaunchEnv", "SESSION_MANAGER", (const char*) session_manager );
+       QDBusInterface klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
+       klauncher.call( "setLaunchEnv", "SESSION_MANAGER", (const char*) session_manager );
     }
 
     if (only_local) {

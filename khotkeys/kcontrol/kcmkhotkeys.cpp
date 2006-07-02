@@ -39,7 +39,7 @@
 #include <triggers.h>
 #include <action_data.h>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include "tab_widget.h"
 #include "actions_listview_widget.h"
@@ -70,9 +70,9 @@ extern "C"
         KToolInvocation::kdeinitExec( "khotkeys" );
     else
         {
-        QDBusInterfacePtr kded("org.kde.kded", "/modules/kded", "org.kde.kded.Kded");
-		QDBusReply<bool> reply = kded->call("loadModule",QString( "khotkeys" ) );
-        if( !reply.isSuccess())
+    QDBusInterface kded("org.kde.kded", "/modules/kded", "org.kde.kded.Kded");
+		QDBusReply<bool> reply = kded.call("loadModule",QString( "khotkeys" ) );
+        if( !reply.isValid())
             {
             kWarning( 1217 ) << "Loading of khotkeys module failed." << endl;
             KToolInvocation::kdeinitExec( "khotkeys" );

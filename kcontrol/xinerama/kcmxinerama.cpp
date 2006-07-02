@@ -29,7 +29,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kwin.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <QCheckBox>
 #include <qdesktopwidget.h>
@@ -171,8 +171,8 @@ void KCMXinerama::save() {
 		config->writeEntry("Unmanaged", item == _displays ? -3 : item);
 		config->sync();
 
-		QDBusInterfacePtr kwin("org.kde.kwin", "/", "org.kde.KWin");
-		kwin->call("reconfigure");
+		QDBusInterface kwin("org.kde.kwin", "/", "org.kde.KWin");
+		kwin.call("reconfigure");
 
 		ksplashrc->setGroup("Xinerama");
 		ksplashrc->writeEntry("KSplashScreen", xw->_enableXinerama->isChecked() ? xw->_ksplashDisplay->currentIndex() : -2 /* ignore Xinerama */);

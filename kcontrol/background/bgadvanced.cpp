@@ -74,7 +74,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    setModal( true );
    setCaption( i18n("Advanced Background Settings") );
    setButtons( Ok | Cancel );
-   enableButtonSeparator( true );
+   showButtonSeparator( true );
   
    dlg = new BGAdvancedBase(this);
    setMainWidget(dlg);
@@ -395,7 +395,7 @@ KProgramEditDialog::KProgramEditDialog(const QString &program, QWidget *parent, 
     setModal( true );
     setCaption( i18n("Configure Background Program") );
     setButtons( Ok | Cancel );
-    enableButtonSeparator( true );
+    showButtonSeparator( true );
 
     QFrame *frame = new QFrame( this );
     setMainWidget( frame );

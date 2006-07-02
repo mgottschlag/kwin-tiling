@@ -35,7 +35,7 @@
 #include <kseparator.h>
 #include <kdialog.h>
 #include <kstdguiitem.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <QLabel>
 
@@ -276,8 +276,8 @@ void ProxyWidget::helpClicked()
 	  emit helpRequest();
   else
   {
-     QDBusInterfacePtr kcontrol("org.kde.kcontrol", "/KControl", "org.kde.kcontrol.kcontrol");
-     kcontrol->call( "invokeHelp" );
+     QDBusInterface kcontrol("org.kde.kcontrol", "/KControl", "org.kde.kcontrol.kcontrol");
+     kcontrol.call( "invokeHelp" );
   }
 }
 

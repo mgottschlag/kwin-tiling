@@ -202,7 +202,7 @@ void SystemTrayApplet::preferences()
     m_settingsDialog->setObjectName( "systrayconfig" );
     m_settingsDialog->setCaption( i18n("Configure System Tray") );
     m_settingsDialog->setButtons( KDialog::Ok |KDialog::Apply| KDialog::Cancel );
-    m_settingsDialog->enableButtonSeparator( true );
+    m_settingsDialog->showButtonSeparator( true );
     m_settingsDialog->resize(450, 400);
 
     connect(m_settingsDialog, SIGNAL(applyClicked()), this, SLOT(applySettings()));

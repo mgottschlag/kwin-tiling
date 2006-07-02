@@ -62,7 +62,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMessageBox>
 #include <QTimer>
 #include <QDesktopWidget>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -167,8 +167,8 @@ void KSMServer::autoStart0()
     if( !checkStartupSuspend())
         return;
     state = AutoStart0;
-    QDBusInterfacePtr klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
-    klauncher->call( "autoStart", (int) 0 );
+    QDBusInterface klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
+    klauncher.call( "autoStart", (int) 0 );
 }
 
 void KSMServer::autoStart0Done()
@@ -187,8 +187,8 @@ void KSMServer::autoStart0Done()
     connect( kcminitSignals, SIGNAL( phase1Done()), SLOT( phase1Done()));
     state = KcmInitPhase1;
     QTimer::singleShot( 10000, this, SLOT( kcmPhase1Timeout())); // protection
-    QDBusInterfacePtr kcminit( "org.kde.kcminit", "/kcminit", "org.kde.KCMInit" );
-    kcminit->call( "runPhase1" );
+    QDBusInterface kcminit( "org.kde.kcminit", "/kcminit", "org.kde.KCMInit" );
+    kcminit.call( "runPhase1" );
 }
 
 void KSMServer::kcmPhase1Done()
@@ -213,8 +213,8 @@ void KSMServer::autoStart1()
     if( state != KcmInitPhase1 )
         return;
     state = AutoStart1;
-    QDBusInterfacePtr klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
-    klauncher->call( "autoStart", (int) 1 );
+    QDBusInterface klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
+    klauncher.call( "autoStart", (int) 1 );
 }
 
 void KSMServer::autoStart1Done()
@@ -288,16 +288,16 @@ void KSMServer::autoStart2()
     state = FinishingStartup;
     waitAutoStart2 = true;
     waitKcmInit2 = true;
-    QDBusInterfacePtr klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
-    klauncher->call( "autoStart", (int) 2 );
-    QDBusInterfacePtr kded( "org.kde.kded", "/kded", "org.kde.kded" );
-    kded->call( "loadSecondPhase" );
-    QDBusInterfacePtr kdesktop( "org.kde.kdesktop", "/kdesktop", "org.kde.KDesktopIface" );
-    kdesktop->call( "runAutoStart" );
+    QDBusInterface klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
+    klauncher.call( "autoStart", (int) 2 );
+    QDBusInterface kded( "org.kde.kded", "/kded", "org.kde.kded" );
+    kded.call( "loadSecondPhase" );
+    QDBusInterface kdesktop( "org.kde.kdesktop", "/kdesktop", "org.kde.KDesktopIface" );
+    kdesktop.call( "runAutoStart" );
     connect( kcminitSignals, SIGNAL( kcmPhase2Done()), SLOT( kcmPhase2Done()));
     QTimer::singleShot( 10000, this, SLOT( kcmPhase2Timeout())); // protection
-    QDBusInterfacePtr kcminit( "org.kde.kcminit", "/kcminit", "org.kde.KCMInit" );
-    kcminit->call( "runPhase2" );
+    QDBusInterface kcminit( "org.kde.kcminit", "/kcminit", "org.kde.KCMInit" );
+    kcminit.call( "runPhase2" );
     if( !defaultSession())
         restoreLegacySession( KGlobal::config());
     KNotifyClient::event( 0, "startkde" ); // this is the time KDE is up, more or less
@@ -342,8 +342,8 @@ void KSMServer::finishStartup()
 
     upAndRunning( "session ready" );
     // TODO
-    QDBusInterfacePtr knotify( "org.kde.knotify", "/knotify", "org.kde.KNotify" );
-    knotify->call( "sessionReady" ); // knotify startup optimization
+    QDBusInterface knotify( "org.kde.knotify", "/knotify", "org.kde.KNotify" );
+    knotify.call( "sessionReady" ); // knotify startup optimization
     state = Idle;
     setupXIOErrorHandler(); // From now on handle X errors as normal shutdown.
 }
@@ -411,15 +411,15 @@ void KSMServer::resumeStartupInternal()
 
 void KSMServer::publishProgress( int progress, bool max  )
 {
-    QDBusInterfacePtr ksplash( "org.kde.ksplash", "/KSplash", "org.kde.KSplash" );
-    ksplash->call( max ? "setMaxProgress" : "setProgress", progress );
+    QDBusInterface ksplash( "org.kde.ksplash", "/KSplash", "org.kde.KSplash" );
+    ksplash.call( max ? "setMaxProgress" : "setProgress", progress );
 }
 
 
 void KSMServer::upAndRunning( const QString& msg )
 {
-    QDBusInterfacePtr ksplash( "org.kde.ksplash", "/KSplash", "org.kde.KSplash" );
-    ksplash->call( "upAndRunning", msg );
+    QDBusInterface ksplash( "org.kde.ksplash", "/KSplash", "org.kde.KSplash" );
+    ksplash.call( "upAndRunning", msg );
     XEvent e;
     e.xclient.type = ClientMessage;
     e.xclient.message_type = XInternAtom( QX11Info::display(), "_KDE_SPLASH_PROGRESS", False );

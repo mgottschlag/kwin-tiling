@@ -37,7 +37,7 @@
 #include <kmanagerselection.h>
 #include <kglobal.h>
 #include <kauthorized.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <signal.h>
 #include <unistd.h>
@@ -167,9 +167,9 @@ extern "C" KDE_EXPORT int kdemain( int argc, char **argv )
         exit(0);
     }
 
-    QDBusInterfacePtr ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
-    if ( ksmserver->isValid() )
-        ksmserver->call( "suspendStartup", QString( "kdesktop" ) );
+    QDBusInterface ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
+    if ( ksmserver.isValid() )
+        ksmserver.call( "suspendStartup", QString( "kdesktop" ) );
 
     KUniqueApplication app;
     app.disableSessionManagement(); // Do SM, but don't restart.

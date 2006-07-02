@@ -24,7 +24,7 @@
 #include <QFont>
 #include <QDesktopWidget>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include <ksimpleconfig.h>
 #include <kglobal.h>
 #include <kstandarddirs.h>
@@ -413,8 +413,8 @@ void KEyeCandyPage::enableIconEffectSizePanel(bool enable){
 	else
 		size = panelsize;
 
-	QDBusInterfacePtr kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
-	kicker->call("setPanelSize",size);
+	QDBusInterface kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
+	kicker.call("setPanelSize",size);
 }
 
 /** No descriptions */
@@ -621,16 +621,16 @@ void KEyeCandyPage::save(bool currSettings){
 	kdesktopconf->sync();
 	KGlobal::config()->sync();
 	// restart kwin  for window effects
-	QDBusInterfacePtr knotify("org.kde.knotify", "/Notify", "org.kde.knotify.Notify");
-	knotify->call("reconfigure");
+	QDBusInterface knotify("org.kde.knotify", "/Notify", "org.kde.knotify.Notify");
+	knotify.call("reconfigure");
 #warning "kde4: reimplement dcop call kwin*"
 	//kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray(""));
 	// set the display options (style effects)
 	KIPC::sendMessageAll(KIPC::SettingsChanged);
 	QApplication::syncX();
 	// kicker stuff: Iconzooming etc.
-	QDBusInterfacePtr kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
-	kicker->call("configure");
+	QDBusInterface kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
+	kicker.call("configure");
 	// Icon stuff
 	for (int i=0; i<K3Icon::LastGroup; i++) {
 		KIPC::sendMessageAll(KIPC::IconChanged, i);
@@ -640,11 +640,11 @@ void KEyeCandyPage::save(bool currSettings){
 	// unfortunately, the konqiconview does not re-read the configuration to restructure the previews and the background picture
 #warning "kde4: reimplement dcop call konqueror*"
 	//kapp->dcopClient()->send( "konqueror*", "KonquerorIface", "reparseConfiguration()", QByteArray("") );
-	QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Kdesktop", "org.kde.kdesktop.Kdesktop");
-	kdesktop->call("configure");
-	kdesktop->call("lineupIcons");
-	QDBusInterfacePtr background("org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background");
-	kdesktop->call("configure");
+	QDBusInterface kdesktop("org.kde.kdesktop", "/Kdesktop", "org.kde.kdesktop.Kdesktop");
+	kdesktop.call("configure");
+	kdesktop.call("lineupIcons");
+	QDBusInterface background("org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background");
+	background.call("configure");
 }
 
 void KEyeCandyPage::slotEyeCandyShowDetails(bool details){
@@ -678,8 +678,8 @@ void KEyeCandyPage::setDefaults(){
 
 /** retrieves the user's local values. In case he doesn't have these set, use the default values of KDE, level 4. */
 void KEyeCandyPage::getUserDefaults(){
-	QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Panel", "org.kde.kdesktop.Panel");
-	QDBusReply<int> reply = kdesktop->call("panelSize");
+	QDBusInterface kdesktop("org.kde.kdesktop", "/Panel", "org.kde.kdesktop.Panel");
+	QDBusReply<int> reply = kdesktop.call("panelSize");
 	panelsize = reply;
 
 	// Wallpaper-User-Defaults

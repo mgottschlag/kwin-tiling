@@ -13,7 +13,7 @@
 
 #include <kdedmodule.h>
 #include <QtCore/QObject>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 
 namespace KHotKeys
@@ -26,8 +26,8 @@ class KHotKeysModule
     {
     Q_OBJECT
     public Q_SLOTS:
-        Q_ASYNC void reread_configuration();
-        Q_ASYNC void quit(); 
+        Q_NOREPLY void reread_configuration();
+        Q_NOREPLY void quit(); 
     public:
         KHotKeysModule( );
         virtual ~KHotKeysModule();

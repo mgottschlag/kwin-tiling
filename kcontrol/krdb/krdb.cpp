@@ -31,7 +31,7 @@
 #include <QByteArray>
 #include <QTextStream>
 #include <QDateTime>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include <ktoolinvocation.h>
 #include <klauncher_iface.h>
 

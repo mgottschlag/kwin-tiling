@@ -25,7 +25,7 @@
 //Added by qt3to4:
 #include <QVBoxLayout>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kdialog.h>
@@ -87,8 +87,8 @@ void KclockModule::save()
   tzone->save();
 
   // Tell the clock applet about the change so that it can update its timezone
-  QDBusInterfacePtr clock("org.kde.kicker", "/Applets/Clock", "org.kde.kicker.ClockApplet");
-  clock->call("reconfigure");
+  QDBusInterface clock("org.kde.kicker", "/Applets/Clock", "org.kde.kicker.ClockApplet");
+  clock.call("reconfigure");
 }
 
 void KclockModule::load()

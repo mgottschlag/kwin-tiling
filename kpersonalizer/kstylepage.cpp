@@ -41,7 +41,7 @@
 #include <kstyle.h>
 #include <kicontheme.h>
 #include <kiconloader.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include "stylepreview.h"
 #include "kstylepage.h"
@@ -532,8 +532,8 @@ void KStylePage::liveUpdate() {
 #warning "kde4: reimplement kwin* dcop function into dbus" 
 	//kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray(""));
 	// kdesktop-background
-     QDBusInterfacePtr kdesktop( "org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background" );
-	 kdesktop->call("configure");
+     QDBusInterface kdesktop( "org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background" );
+	 kdesktop.call("configure");
 }
 
 /** show the previewWidget styled with the selected one */

@@ -31,7 +31,7 @@
 #include <kgenericfactory.h>
 #include <klineedit.h>
 #include <kworkspace.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include "kcmsmserver.h"
 #include "smserverconfigimpl.h"
@@ -118,8 +118,8 @@ void SMServerConfig::save()
   delete c;
 
   // update the k menu if necessary
-  QDBusInterfacePtr kicker("org.kde.kicker", "/kicker", "org.kde.kicker");
-  kicker->call("configure");
+  QDBusInterface kicker("org.kde.kicker", "/kicker", "org.kde.kicker");
+  kicker.call("configure");
 }
 
 void SMServerConfig::defaults()

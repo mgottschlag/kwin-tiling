@@ -25,7 +25,7 @@
 #include <QLineEdit>
 #include <QLayout>
 #include <kkeydialog.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <settings.h>
 #include <action_data.h>

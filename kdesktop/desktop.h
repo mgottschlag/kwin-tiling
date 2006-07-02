@@ -23,7 +23,7 @@
 #include <QWidget>
 #include <QStringList>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include <kworkspace.h>	// for logout parameters
 
 class KUrl;

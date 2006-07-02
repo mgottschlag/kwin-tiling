@@ -164,8 +164,6 @@ protected:
      */
     void init(const QString& path = QString());
 
-protected:
-    virtual void virtual_hook( int id, void* data );
 private:
     void internalInitialize();
     class Private;

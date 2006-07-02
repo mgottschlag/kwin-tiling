@@ -12,7 +12,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 // Clean up after X.h/Xlib.h
 #undef Bool
 #undef Unsorted
@@ -1279,7 +1279,7 @@ void KGlobalBackgroundSettings::writeSettings()
     dirty = false;
 
     // tell kdesktop to get it's butt in gear and pick up the new settings
-    QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background");
-    kdesktop->call("configure");
+    QDBusInterface kdesktop("org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background");
+    kdesktop.call("configure");
 }
 

@@ -13,7 +13,7 @@
 #define KBACKGROUNDADAPTOR_H_87041151414534
 
 #include <QtCore/QObject>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include "bgmanager.h"
 class QByteArray;
 template<class T> class QList;

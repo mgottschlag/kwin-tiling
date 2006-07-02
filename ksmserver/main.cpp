@@ -14,7 +14,7 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 
 #include <QMessageBox>
 #include <QDir>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <kapplication.h>
 #include <kcmdlineargs.h>

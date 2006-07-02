@@ -29,7 +29,7 @@
 #include <kiconloader.h>
 #include <kprocess.h>
 #include <klanguagebutton.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include "kfindlanguage.h"
 
@@ -167,12 +167,12 @@ bool KCountryPage::save(KLanguageButton *comboCountry, KLanguageButton *comboLan
 		proc.start(KProcess::DontCare);
 		kDebug() << "KLocaleConfig::save : sending signal to kdesktop" << endl;
 		// inform kicker and kdeskop about the new language
-                QDBusInterfacePtr kicker("org.kde.kicker", "/Panel", "org.kde.kdesktop.Panel");
-                kicker->call( "restart" );
+                QDBusInterface kicker("org.kde.kicker", "/Panel", "org.kde.kdesktop.Panel");
+                kicker.call( "restart" );
 		// call, not send, so that we know it's done before coming back
 		// (we both access kdeglobals...)
-                QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Desktop", "org.kde.kdesktop.Kdesktop");
-                kdesktop->call("languageChanged",comboLang->current() );
+                QDBusInterface kdesktop("org.kde.kdesktop", "/Desktop", "org.kde.kdesktop.Kdesktop");
+                kdesktop.call("languageChanged",comboLang->current() );
 	}
 	// KPersonalizer::next() probably waits for a return-value
 	return true;

@@ -62,7 +62,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QMessageBox>
 #include <QTimer>
 #include <QDesktopWidget>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <klocale.h>
 #include <kglobal.h>

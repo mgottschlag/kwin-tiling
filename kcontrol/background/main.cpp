@@ -27,7 +27,7 @@
 #include <kdialog.h>
 #include "bgdialog.h"
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include "main.h"
 
 /* as late as possible, as it includes some X headers without protecting them */
@@ -103,8 +103,8 @@ void KBackground::save()
 	appname = "org.kde.kdesktop";
     else 
 	appname.sprintf("org.kde.kdesktop-screen-%d", screen_number);
-    QDBusInterfacePtr kdesktop(appname, "/Background", "org.kde.kdesktop.Background");
-    kdesktop->call("configure");
+    QDBusInterface kdesktop(appname, "/Background", "org.kde.kdesktop.Background");
+    kdesktop.call("configure");
 }
 
 void KBackground::defaults()

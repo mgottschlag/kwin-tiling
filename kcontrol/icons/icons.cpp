@@ -524,7 +524,7 @@ KIconEffectSetupDialog::KIconEffectSetupDialog(const Effect &effect,
     setModal( true );
     setCaption( caption );
     setButtons( Default|Ok|Cancel );
-    enableButtonSeparator( true );
+    showButtonSeparator( true );
 
     mpEffect = new KIconEffect;
 

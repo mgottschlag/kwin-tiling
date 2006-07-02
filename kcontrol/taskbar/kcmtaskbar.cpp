@@ -21,7 +21,7 @@
 #include <QLayout>
 #include <QTimer>
 #include <Q3ValueList>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 
 #include <kaboutdata.h>

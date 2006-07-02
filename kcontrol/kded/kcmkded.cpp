@@ -21,7 +21,7 @@
 #include <q3header.h>
 
 #include <QByteArray>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include <QLayout>
 #include <QPushButton>
 #include <QTimer>
@@ -206,8 +206,8 @@ void KDEDConfig::save() {
 	}
 	kdedrc.sync();
 
-	QDBusInterfacePtr kdedInterface( "org.kde.kded", "/kded" );
-	kdedInterface->call( "reconfigure" );
+	QDBusInterface kdedInterface( "org.kde.kded", "/kded" );
+	kdedInterface.call( "reconfigure" );
 	QTimer::singleShot(0, this, SLOT(slotServiceRunningToggled()));
 }
 
@@ -230,10 +230,10 @@ void KDEDConfig::defaults()
 void KDEDConfig::getServiceStatus()
 {
 	QStringList modules;
-	QDBusInterfacePtr kdedInterface( "org.kde.kded", "/kded" );
-	QDBusReply<QStringList> reply = kdedInterface->call( "loadedModules"  );
+	QDBusInterface kdedInterface( "org.kde.kded", "/kded" );
+	QDBusReply<QStringList> reply = kdedInterface.call( "loadedModules"  );
 
-	if ( reply.isSuccess() ) {
+	if ( reply.isValid() ) {
 		modules = reply.value();
 	}
 	else {
@@ -304,10 +304,10 @@ void KDEDConfig::slotStartService()
 {
 	QString service = _lvStartup->currentItem()->text(4).toLatin1();
 
-	QDBusInterfacePtr kdedInterface( "org.kde.kded", "/kded" );
-	QDBusReply<bool> reply = kdedInterface->call( "loadModule", service  );
+	QDBusInterface kdedInterface( "org.kde.kded", "/kded" );
+	QDBusReply<bool> reply = kdedInterface.call( "loadModule", service  );
 
-	if ( reply.isSuccess() ) {
+	if ( reply.isValid() ) {
 		if ( reply.value() )
 			slotServiceRunningToggled();
 		else
@@ -324,10 +324,10 @@ void KDEDConfig::slotStopService()
 	QString service = _lvStartup->currentItem()->text(4).toLatin1();
 	kDebug() << "Stopping: " << service << endl;
 
-	QDBusInterfacePtr kdedInterface( "org.kde.kded", "/kded" );
-	QDBusReply<bool> reply = kdedInterface->call( "unloadModule", service  );
+	QDBusInterface kdedInterface( "org.kde.kded", "/kded" );
+	QDBusReply<bool> reply = kdedInterface.call( "unloadModule", service  );
 
-	if ( reply.isSuccess() ) {
+	if ( reply.isValid() ) {
 		if ( reply.value() )
 			slotServiceRunningToggled();
 		else

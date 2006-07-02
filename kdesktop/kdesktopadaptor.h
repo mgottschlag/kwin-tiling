@@ -13,7 +13,7 @@
 #define KDESKTOPADAPTOR_H_95931151420526
 
 #include <QtCore/QObject>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include "desktop.h"
 class QByteArray;
 template<class T> class QList;

@@ -30,7 +30,7 @@
 #include <kiconloader.h>
 #include <ktoolinvocation.h>
 #include <kkeyserver.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include "kospage.h"
 
 KOSPage::KOSPage(QWidget *parent, const char *name ) : KOSPageDlg(parent,name) {
@@ -87,8 +87,8 @@ void KOSPage::save(bool currSettings){
 	QApplication::syncX();
 	// enable/disable the mac menu, call dcop
 	// Tell kdesktop about the new config file
-        QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Kdesktop", "org.kde.kdesktop.KDesktop");
-        kdesktop->call( "configure" );
+        QDBusInterface kdesktop("org.kde.kdesktop", "/Kdesktop", "org.kde.kdesktop.KDesktop");
+        kdesktop.call( "configure" );
 	///////////////////////////////////////////
 	/// restart kwin  for window effects
 #warning "kde4: port kwin*";

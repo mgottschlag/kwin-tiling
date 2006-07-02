@@ -38,7 +38,7 @@
 #include <QMouseEvent>
 
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kdebug.h>
@@ -499,8 +499,8 @@ void KScreenSaver::save()
     // TODO (GJ): When you changed anything, these two lines will give a segfault
     // on exit. I don't know why yet.
 
-	QDBusInterfacePtr kscreensaver("org.kde.kdesktop", "/Screensaver", "org.kde.kdesktop.KScreensaver");
-	kscreensaver->call("configure");
+	QDBusInterface kscreensaver("org.kde.kdesktop", "/Screensaver", "org.kde.kdesktop.KScreensaver");
+	kscreensaver.call("configure");
 
     mChanged = false;
     emit changed(false);

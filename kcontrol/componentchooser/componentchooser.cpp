@@ -24,7 +24,7 @@
 #include <QLayout>
 #include <QRadioButton>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <kapplication.h>
 #include <kemailsettings.h>
@@ -38,7 +38,7 @@
 #include <kurlrequester.h>
 #include <ktoolinvocation.h>
 #include <klauncher_iface.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 
 class MyListBoxItem: public Q3ListBoxText

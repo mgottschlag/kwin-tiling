@@ -154,6 +154,3 @@ void KPanelMenu::internalInitialize()
     setInitialized( true );
 }
 
-void KPanelMenu::virtual_hook( int id, void* data )
-{ KMenu::virtual_hook( id, data ); }
-

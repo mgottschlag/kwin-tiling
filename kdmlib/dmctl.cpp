@@ -23,7 +23,7 @@
 
 #include <kapplication.h>
 #include <klocale.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <QRegExp>
 
@@ -389,8 +389,8 @@ DM::lockSwitchVT( int vt )
 {
 	if (switchVT( vt ))
         {
-            QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Screensaver", "org.kde.kdesktop.KScreensaver");
-            kdesktop->call( "lock" );
+            QDBusInterface kdesktop("org.kde.kdesktop", "/Screensaver", "org.kde.kdesktop.KScreensaver");
+            kdesktop.call( "lock" );
         }
 }
 

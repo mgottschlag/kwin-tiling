@@ -28,7 +28,7 @@
 #include <kuser.h>
 #include <kmessagebox.h>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <QLayout>
 #include <QPushButton>
@@ -158,11 +158,11 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
 
     greet->start();
 
-    QDBusInterfacePtr kxkb( "org.kde.kxkb", "/kxkb", "org.kde.KXKB" );
-    if( kxkb->isValid() ) {
-        QDBusReply<QStringList> replyLayouts = kxkb->call("getLayoutsList");
+    QDBusInterface kxkb( "org.kde.kxkb", "/kxkb", "org.kde.KXKB" );
+    if( kxkb.isValid() ) {
+        QDBusReply<QStringList> replyLayouts = kxkb.call("getLayoutsList");
         layoutsList = replyLayouts;
-        QDBusReply<QString> replyCurrentLayout = kxkb->call("getCurrentLayout");
+        QDBusReply<QString> replyCurrentLayout = kxkb.call("getCurrentLayout");
         QString currentLayout = replyCurrentLayout;
         if( !currentLayout.isEmpty() && layoutsList.count() > 1 ) {
             currLayout = layoutsList.indexOf(currentLayout);
@@ -191,10 +191,10 @@ void PasswordDlg::layoutClicked()
     if( ++currLayout == layoutsList.size() )
         currLayout = 0;
 
-    QDBusInterfacePtr kxkb( "org.kde.kxkb", "/kxkb", "org.kde.KXKB" );
-    if( kxkb->isValid() ) {
+    QDBusInterface kxkb( "org.kde.kxkb", "/kxkb", "org.kde.KXKB" );
+    if( kxkb.isValid() ) {
         const QString currentLayout = layoutsList.at(currLayout);
-        QDBusReply<bool> setLayoutReply = kxkb->call("setLayout", currentLayout );
+        QDBusReply<bool> setLayoutReply = kxkb.call("setLayout", currentLayout );
         setLayoutText( setLayoutReply ? currentLayout : "err" );
     }
 }

@@ -38,7 +38,7 @@ advancedDialog::advancedDialog(QWidget* parent, const char* name)
     setButtons( Ok | Apply |Cancel );
     setDefaultButton( Cancel );
     setObjectName( name );
-    enableButtonSeparator( false );
+    showButtonSeparator( false );
 
     connect(this, SIGNAL(applyClicked()),
             this, SLOT(save()));

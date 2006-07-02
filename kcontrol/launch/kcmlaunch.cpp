@@ -25,7 +25,7 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kdialog.h>
@@ -211,10 +211,10 @@ LaunchConfig::save()
 
   emit changed( false );
 
-  QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Desktop", "org.kde.kdesktop.Desktop");
-  kdesktop->call("configure");
-  QDBusInterfacePtr kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
-  kicker->call("restart");
+  QDBusInterface kdesktop("org.kde.kdesktop", "/Desktop", "org.kde.kdesktop.Desktop");
+  kdesktop.call("configure");
+  QDBusInterface kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
+  kicker.call("restart");
 }
 
   void

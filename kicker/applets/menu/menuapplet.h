@@ -71,7 +71,7 @@ class Applet : public KPanelApplet
 	 * Called by the Kicker configuration(KCM). Does in turn call
 	 * readSettings().
 	 */
-	/*Q_ASYNC*/ void configure();
+	/*Q_NOREPLY*/ void configure();
     public:
 	Applet( const QString& configFile, QWidget *parent );
         virtual ~Applet();

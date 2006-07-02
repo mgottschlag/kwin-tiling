@@ -44,7 +44,7 @@
 
 #include <QPushButton>
 #include <QX11Info>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <kapplication.h>
 #include <kglobalsettings.h>
@@ -467,7 +467,7 @@ void KCMStyle::styleSpecificConfig()
 
 	//Create the container dialog
 	StyleConfigDialog* dial = new StyleConfigDialog(this, styleEntries[currentStyle()]->name);
-	dial->enableButtonSeparator(true);
+	dial->showButtonSeparator(true);
 
 	typedef QWidget*(* factoryRoutine)( QWidget* parent );
 
@@ -663,8 +663,8 @@ void KCMStyle::save()
 	//update kicker to re-used tooltips kicker parameter otherwise, it overwritted
 	//by style tooltips parameters.
 	QByteArray data;
-	QDBusInterfacePtr kicker( "org.kde.kicker", "kicker");
-	kicker->call("configure");
+	QDBusInterface kicker( "org.kde.kicker", "kicker");
+	kicker.call("configure");
 
 	// Clean up
 	m_bEffectsDirty  = false;

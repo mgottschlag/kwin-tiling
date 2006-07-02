@@ -597,7 +597,7 @@ void KAccessApp::createDialogContents() {
       dialog->setEscapeButton( KDialog::Close );
       dialog->setObjectName( "AccessXWarning" );
       dialog->setModal( true );
-      dialog->enableButtonSeparator( true );
+      dialog->showButtonSeparator( true );
 
       KVBox *topcontents = new KVBox (dialog);
       topcontents->setSpacing(KDialog::spacingHint()*2);
@@ -641,7 +641,7 @@ void KAccessApp::createDialogContents() {
       showModeCombobox->setCurrentIndex (1);
 
       dialog->setMainWidget(topcontents);
-      dialog->enableButtonSeparator(false);
+      dialog->showButtonSeparator(false);
 
       connect (dialog, SIGNAL(yesClicked()), this, SLOT(yesClicked()));
       connect (dialog, SIGNAL(noClicked()), this, SLOT(noClicked()));

@@ -46,7 +46,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kpixmapeffect.h>
 #include <kstringhandler.h>
 #include <kiconloader.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include "utils.h"
 #include "kickertip.h"
@@ -167,9 +167,9 @@ void KMiniPagerButton::loadBgPixmap()
 
 
     bool isCommon;
-    QDBusInterfacePtr kdesktop("org.kde.kdesktop", "/Background", "org.kde.kdesktop.KBackground");
-    QDBusReply<bool> reply = kdesktop->call("isCommon");
-    if (reply.isSuccess())
+    QDBusInterface kdesktop("org.kde.kdesktop", "/Background", "org.kde.kdesktop.KBackground");
+    QDBusReply<bool> reply = kdesktop.call("isCommon");
+    if (reply.isValid())
     {
         m_isCommon = reply;
     }

@@ -36,7 +36,7 @@
 #include <klocale.h>
 #include <ktoolinvocation.h>
 #include <klauncher_iface.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <QX11Info>
@@ -195,8 +195,8 @@ KCMInit::KCMInit( KCmdLineArgs* args )
   if( startup )
   {
      runModules( 0 );
-     QDBusInterfacePtr ksplash("org.kde.ksplash", "/KSplash", "org.kde.ksplash.KSplash");
-     ksplash->call( "upAndRunning", "kcminit" );
+     QDBusInterface ksplash("org.kde.ksplash", "/KSplash", "org.kde.ksplash.KSplash");
+     ksplash.call( "upAndRunning", "kcminit" );
      sendReady();
      QTimer::singleShot( 300 * 1000, qApp, SLOT( quit())); // just in case
      qApp->exec(); // wait for runPhase1() and runPhase2()

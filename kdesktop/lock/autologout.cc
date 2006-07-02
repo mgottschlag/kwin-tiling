@@ -24,7 +24,7 @@
 #include <QDialog>
 #include <QAbstractEventDispatcher>
 #include <qprogressbar.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #define COUNTDOWN 30
 
@@ -107,9 +107,9 @@ void AutoLogout::slotActivity()
 void AutoLogout::logout()
 {
     QAbstractEventDispatcher::instance()->unregisterTimers(this);
-    QDBusInterfacePtr ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
-    if ( ksmserver->isValid() )
-        ksmserver->call( "logout", 0, 2, 0 );
+    QDBusInterface ksmserver( "org.kde.ksmserver", "/KSMServer", "org.kde.KSMServerInterface" );
+    if ( ksmserver.isValid() )
+        ksmserver.call( "logout", 0, 2, 0 );
 }
 
 void AutoLogout::show()

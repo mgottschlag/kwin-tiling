@@ -220,7 +220,7 @@ KRandomSetup::KRandomSetup( QWidget *parent, const char *name )
   setModal( true );
   setCaption( i18n( "Setup Random Screen Saver" ) );
   setButtons( Ok | Cancel );
-  enableButtonSeparator( true );
+  showButtonSeparator( true );
 
 	QFrame *main = new QFrame( this );
   setMainWidget( main );

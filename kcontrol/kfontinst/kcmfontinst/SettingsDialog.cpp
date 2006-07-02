@@ -49,7 +49,7 @@ CSettingsDialog::CSettingsDialog(QWidget *parent)
     setModal( true );
     setCaption( i18n("Settings") );
     setButtons( Ok | Cancel );
-    enableButtonSeparator( true );
+    showButtonSeparator( true );
 
     KVBox *page = new KVBox( this );
     setMainWidget( page );

@@ -27,7 +27,7 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <QList>
 
@@ -167,9 +167,9 @@ int main( int argc, char **argv )
 
     if( sig )
     {
-        QDBusInterfacePtr kdesktop("kdesktop", "/ScreenSaver", "org.kde.kdesktop.KScreensaver");
-        if ( kdesktop->isValid() )
-            kdesktop->call("saverLockReady");
+        QDBusInterface kdesktop("kdesktop", "/ScreenSaver", "org.kde.kdesktop.KScreensaver");
+        if ( kdesktop.isValid() )
+            kdesktop.call("saverLockReady");
     }
 
     return app.exec();

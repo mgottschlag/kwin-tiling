@@ -43,7 +43,7 @@ CPrintDialog::CPrintDialog(QWidget *parent)
     setCaption( i18n("Print Font Samples") );
     setModal( true );
     setButtons( Ok | Cancel );
-    enableButtonSeparator( false );
+    showButtonSeparator( false );
 
     QFrame *page = new QFrame( this );
     setMainWidget( page );

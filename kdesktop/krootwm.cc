@@ -58,7 +58,7 @@
 #include "kcustommenu.h"
 #include "kdesktopsettings.h"
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <netwm.h>
 #include <X11/X.h>
@@ -571,9 +571,9 @@ void KRootWm::activateMenu( menuChoice choice, const QPoint& global )
       else
 	  appname.sprintf("kicker-screen-%d", kdesktop_screen_number);
 
-      QDBusInterfacePtr kicker( appname, "/Kicker", "org.kde.Kicker" ); // ### check this
-      if ( kicker->isValid() )
-          kicker->call( "popupKMenu", global );
+      QDBusInterface kicker( appname, "/Kicker", "org.kde.Kicker" ); // ### check this
+      if ( kicker.isValid() )
+          kicker.call( "popupKMenu", global );
       break;
     }
     case CUSTOMMENU1:
@@ -749,9 +749,9 @@ static void sendToAppropriate(const char* baseApp, const char* iface, const char
     else
 	appname.sprintf("%s-screen-%d", baseApp, kdesktop_screen_number);
 
-    QDBusInterfacePtr kwin( appname, "/KWin", iface );
-    if ( kwin->isValid() )
-        kwin->call( call );
+    QDBusInterface kwin( appname, "/KWin", iface );
+    if ( kwin.isValid() )
+        kwin.call( call );
 }
 
 void KRootWm::slotToggleDesktopMenu()

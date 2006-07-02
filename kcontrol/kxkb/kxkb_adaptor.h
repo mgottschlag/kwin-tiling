@@ -20,7 +20,7 @@
 #ifndef KXKB_ADAPTOR_H
 #define KXKB_ADAPTOR_H
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 #include "kxkb.h"
 
 // Not really an adaptor, more like the object exposed to dbus

@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 #include <QString>
 
@@ -159,8 +159,8 @@ extern "C" KDE_EXPORT int kdemain( int argc, char ** argv )
     {
         // send it even before KApplication ctor, because ksmserver will launch another app as soon
         // as QApplication registers with it
-        QDBusInterfacePtr dbus("org.kde.ksmserver", "/ksmserver");
-        dbus->call("suspendStartup", "kicker");
+        QDBusInterface dbus("org.kde.ksmserver", "/ksmserver");
+        dbus.call("suspendStartup", "kicker");
     }
 
     Kicker kicker;

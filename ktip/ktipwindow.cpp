@@ -27,7 +27,7 @@
 #include <kuniqueapplication.h>
 #include <kwin.h>
 #include <stdlib.h>
-#include <dbus/qdbus.h>
+#include <QtDBus/QtDBus>
 
 static const char description[] = I18N_NOOP("Useful tips");
 
@@ -50,8 +50,8 @@ int main(int argc, char *argv[])
 	KWin::setState(tipDialog->winId(), NET::StaysOnTop);
 #endif
 	tipDialog->setCaption(i18n("Useful Tips"));
-	QDBusInterfacePtr ksplash("org.kde.ksplash", "/KSplash", "org.kde.ksplash.KSplash");
-	ksplash->call("close"); // Close splash screen
+	QDBusInterface ksplash("org.kde.ksplash", "/KSplash", "org.kde.ksplash.KSplash");
+	ksplash.call("close"); // Close splash screen
 	tipDialog->show();
 
 	QObject::connect(qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()));
