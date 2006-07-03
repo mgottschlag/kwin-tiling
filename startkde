@@ -273,7 +273,7 @@ echo 'startkde: Starting up...'  1>&2
 if test "$kpersonalizerrc_general_firstlogin" = "true"; then
     # start only dcopserver, don't start whole kdeinit (takes too long)
     echo 'startkde: Running kpersonalizer...'  1>&2
-    dcopserver
+    eval $(dbus-launch --auto-syntax)
     kwin --lock &
     kpersonalizer --before-session
     # handle kpersonalizer restarts (language change)
@@ -299,6 +299,10 @@ esac
 # certain features such as Konqueror preloading work only with full KDE running
 KDE_FULL_SESSION=true
 export KDE_FULL_SESSION
+
+if ! kill -0 $DBUS_SESSION_BUS_PID; then
+  eval $(dbus-launch --auto-syntax)
+fi
 
 # We set LD_BIND_NOW to increase the efficiency of kdeinit.
 # kdeinit unsets this variable before loading applications.
@@ -346,7 +350,7 @@ echo 'startkde: Shutting down...'  1>&2
 
 # Clean up
 kdeinit_shutdown
-dcopserver_shutdown --wait
+#dcopserver_shutdown --wait
 #artsshell -q terminate
 
 echo 'startkde: Running shutdown scripts...'  1>&2
