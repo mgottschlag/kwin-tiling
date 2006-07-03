@@ -19,7 +19,7 @@
 
 #include "moduleIface.h"
 #include "moduleIface.moc"
-#include <dbus/qdbusconnection.h>
+#include <QtDBus/qdbusconnection.h>
 #include <kdebug.h>
 #include <kconfig.h>
 
