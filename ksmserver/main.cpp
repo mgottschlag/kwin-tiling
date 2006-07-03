@@ -200,8 +200,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
-    if( QDBus::sessionBus().busService()->requestName( "ksmserver", QDBusBusService::DoNotQueueName )
-        != QDBusBusService::PrimaryOwnerReply )
+    if( !QDBus::sessionBus().interface()->registerService( "ksmserver", QDBusConnectionInterface::DontQueueService ) )
     {
        qWarning("Could not register with D-BUS. Aborting.");
        return 1;

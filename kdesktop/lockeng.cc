@@ -12,7 +12,7 @@
 #include "lockeng.h"
 #include "lockeng.moc"
 #include "kdesktopsettings.h"
-#include "kscreensaveradaptor.h"
+#include "screensaveradaptor.h"
 
 #include <kstandarddirs.h>
 #include <kapplication.h>
@@ -40,7 +40,7 @@ SaverEngine::SaverEngine()
       mBlankOnly(false)
 {
 
-    (void) new KScreenSaverAdaptor( this );
+    (void) new ScreenSaverAdaptor( this );
     QDBus::sessionBus().registerObject( screenSaverDBusObjectPath, this );
 
     // Save X screensaver parameters

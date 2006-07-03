@@ -13,7 +13,7 @@
 #include "bgmanager.h"
 #include "bgdefaults.h"
 #include "kdesktopsettings.h"
-#include "kbackgroundadaptor.h"
+#include "backgroundadaptor.h"
 
 #include <assert.h>
 
@@ -63,7 +63,7 @@ KBackgroundManager::KBackgroundManager(QWidget *desktop, KWinModule* kwinModule)
     : QObject()
 {
 
-    (void) new KBackgroundAdaptor( this );
+    (void) new BackgroundAdaptor( this );
     QDBus::sessionBus().registerObject( backgroundDBusObjectPath, this );
 
     if( !properties_inited )

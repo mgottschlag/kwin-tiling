@@ -30,6 +30,7 @@ install(TARGETS kcheckrunning DESTINATION bin)
 
 ########### next target ###############
 
+
 # Please use .cpp for new files
 set(kdesktop_SRCS ${kdesktop_LIB_SRCS} ${kdmlib_SRCS} ${backgroundlib_SRCS}
    main.cc
@@ -50,10 +51,11 @@ set(kdesktop_SRCS ${kdesktop_LIB_SRCS} ${kdmlib_SRCS} ${backgroundlib_SRCS}
    kshadowsettings.cpp
    kdesktopshadowsettings.cpp
    kfileividesktop.cpp
-   kbackgroundadaptor.cpp
-   kdesktopadaptor.cpp 
-   kscreensaveradaptor.cpp
 )
+
+qt4_add_dbus_adaptors( kdesktop_SRCS org.kde.kdesktop.Background.xml
+                                     org.kde.kdesktop.Desktop.xml
+                                     org.kde.kdesktop.ScreenSaver.xml )
 
 kde4_automoc(${kdesktop_SRCS})
 
