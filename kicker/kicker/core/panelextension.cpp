@@ -42,7 +42,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kconfig.h>
 #include <kstdguiitem.h>
 #include <kauthorized.h>
-#include <dbus/qdbusconnection.h>
+#include <QtDBus/qdbusconnection.h>
 
 #include "container_applet.h"
 #include "container_extension.h"
