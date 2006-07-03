@@ -647,7 +647,7 @@ void BGDialog::setWallpaper(const QString &s)
 
 void BGDialog::slotWallpaperSelection()
 {
-   KFileDialog dlg( QString::null, QString::null, this);
+   KFileDialog dlg( KUrl(), QString::null, this);
 
    KImageFilePreview* previewWidget = new KImageFilePreview(&dlg);
    dlg.setPreviewWidget(previewWidget);
