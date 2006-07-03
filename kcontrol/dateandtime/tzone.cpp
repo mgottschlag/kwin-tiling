@@ -59,7 +59,7 @@ Tzone::Tzone(QWidget * parent, const char *name)
 {
     setTitle(i18n("To change the timezone, select your area from the list below"));
 
-    tzonelist = new KTimezoneWidget(this, &m_zoneDb);
+    tzonelist = new KTimeZoneWidget(this, &m_zoneDb);
     connect( tzonelist, SIGNAL(itemSelectionChanged()), SLOT(handleZoneChange()) );
 
     m_local = new QLabel(this);
@@ -85,7 +85,7 @@ void Tzone::currentZone()
     tzset();
     strftime(result.data(), result.size(), "%Z", localtime(&now));
     m_local->setText(i18n("Current local timezone: %1 (%2)",
-                          KTimezoneWidget::displayName(KSystemTimeZones::local()),
+                          KTimeZoneWidget::displayName(KSystemTimeZones::local()),
                           QLatin1String(result)));
 }
 

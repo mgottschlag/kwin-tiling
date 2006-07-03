@@ -51,7 +51,7 @@ private:
   void currentZone();
   KTimeZones m_zoneDb;
   QLabel *m_local;
-  KTimezoneWidget *tzonelist;
+  KTimeZoneWidget *tzonelist;
 };
 
 #endif // tzone_included
