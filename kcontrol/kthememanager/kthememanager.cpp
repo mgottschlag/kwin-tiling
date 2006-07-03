@@ -207,7 +207,7 @@ float kthememanager::getThemeVersion( const QString & themeName )
 
 void kthememanager::slotInstallTheme()
 {
-    addNewTheme( KFileDialog::getOpenURL( ":themes", "*.kth|" + i18n("Theme Files"), this,
+    addNewTheme( KFileDialog::getOpenURL( KUrl::fromPath(":themes"), "*.kth|" + i18n("Theme Files"), this,
                                           i18n( "Select Theme File" ) ) );
 }
 

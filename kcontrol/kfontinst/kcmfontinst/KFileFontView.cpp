@@ -629,7 +629,7 @@ void CFontListViewItem::init()
 
 void CKFileFontView::virtual_hook(int id, void *data)
 {
-    K3ListView::virtual_hook(id, data);
+    //K3ListView::virtual_hook(id, data);
     KFileView::virtual_hook(id, data);
 }
 

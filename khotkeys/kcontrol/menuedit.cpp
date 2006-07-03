@@ -189,7 +189,7 @@ KService::Ptr khotkeys_find_menu_entry( const QString& shortcut_P )
 void khotkeys_send_reread_config()
     {
     QByteArray data;
-    if( !QDBus::sessionBus().busService()->nameHasOwner( "khotkeys" ))
+    if( !QDBus::sessionBus().interface()->isServiceRegistered( "khotkeys" ))
         {
         kDebug( 1217 ) << "launching new khotkeys daemon" << endl;
         KToolInvocation::kdeinitExec( "khotkeys" );

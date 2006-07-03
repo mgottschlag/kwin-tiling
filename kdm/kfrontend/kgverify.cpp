@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <klocale.h>
 #include <klibloader.h>
 #include <kseparator.h>
+#include <kguiitem.h>
 #include <kstdguiitem.h>
 #include <kpushbutton.h>
 

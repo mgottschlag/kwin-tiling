@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <klocale.h>
 #include <kpushbutton.h>
+#include <kguiitem.h>
 #include <kstdguiitem.h>
 
 #include <QLabel>

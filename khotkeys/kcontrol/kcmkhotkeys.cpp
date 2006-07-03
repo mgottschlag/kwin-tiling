@@ -155,7 +155,7 @@ void Module::save()
         }
     else
         {
-        if( !QDBus::sessionBus().busService()->nameHasOwner( "khotkeys" ))
+        if( !QDBus::sessionBus().interface()->isServiceRegistered( "khotkeys" ))
             {
             kDebug( 1217 ) << "launching new khotkeys daemon" << endl;
             KToolInvocation::kdeinitExec( "khotkeys" );

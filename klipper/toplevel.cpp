@@ -53,7 +53,7 @@
 #include <kwin.h>
 #include <kdebug.h>
 #include <kglobalsettings.h>
-#include <dbus/qdbusconnection.h>
+#include <qdbusconnection.h>
 #include <kiconloader.h>
 #include <khelpmenu.h>
 #include <kstdguiitem.h>
