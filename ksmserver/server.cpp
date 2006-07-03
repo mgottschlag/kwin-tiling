@@ -584,8 +584,8 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 {
     new KSmserverAdaptor( this );
     QDBus::sessionBus().registerObject("/KSMServer", this);
-    klauncherSignals = QDBus::sessionBus().interface("org.kde.klauncher",
-        "/KLauncher", "org.kde.KLauncher" );
+    klauncherSignals = new QDBusInterface("org.kde.klauncher",
+        "/KLauncher", "org.kde.KLauncher", QDBus::sessionBus() );
     if( !klauncherSignals->isValid())
         kWarning() << "kded not running?" << endl;
     kcminitSignals = NULL;
