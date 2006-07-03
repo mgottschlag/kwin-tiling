@@ -29,6 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QHBoxLayout>
 
 #include <kapplication.h>
+#include <klineedit.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kconfig.h>

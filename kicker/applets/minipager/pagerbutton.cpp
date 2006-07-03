@@ -189,7 +189,7 @@ void KMiniPagerButton::loadBgPixmap()
         }
     }
 
-    kdesktop->call("setExport", 1);
+    kdesktop.call("setExport", 1);
 
     if (m_isCommon)
     {
