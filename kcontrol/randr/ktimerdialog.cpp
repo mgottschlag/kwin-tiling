@@ -210,9 +210,5 @@ void KTimerDialog::slotInternalTimeout()
         case Details:
             slotButtonClicked(KDialog::Details);
             break;
-        case Filler:
-        case Stretch:
-            kDebug() << "Cannot execute button code " << buttonOnTimeout << endl;
-            break;
     }
 }
