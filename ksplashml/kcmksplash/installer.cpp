@@ -432,8 +432,8 @@ void SplashInstaller::slotAdd()
   if (!dlg.exec())
     return;
 
-  path = dlg.baseURL().url();
-  addNewTheme(dlg.selectedURL());
+  path = dlg.baseUrl().url();
+  addNewTheme(dlg.selectedUrl());
 }
 
 //-----------------------------------------------------------------------------
