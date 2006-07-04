@@ -53,9 +53,10 @@ set(kdesktop_SRCS ${kdesktop_LIB_SRCS} ${kdmlib_SRCS} ${backgroundlib_SRCS}
    kfileividesktop.cpp
 )
 
-qt4_add_dbus_adaptor( ${kdesktop_SRCS} org.kde.kdesktop.Background.xml bgmanager.h KBackgroundManager )
-qt4_add_dbus_adaptor( ${kdesktop_SRCS} org.kde.kdesktop.Desktop.xml desktop.h KDesktop )
-qt4_add_dbus_adaptor( ${kdesktop_SRCS} org.kde.kdesktop.ScreenSaver.xml lockeng.h SaverEngine )
+qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.Background.xml bgmanager.h KBackgroundManager )
+qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.Desktop.xml desktop.h KDesktop )
+
+qt4_add_dbus_adaptor( kdesktop_SRCS org.kde.kdesktop.ScreenSaver.xml lockeng.h SaverEngine )
 
 kde4_automoc(${kdesktop_SRCS})
 
