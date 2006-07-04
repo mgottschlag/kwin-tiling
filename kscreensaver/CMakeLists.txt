@@ -8,4 +8,4 @@ add_subdirectory( krandom_screensaver )
 
 ########### install files ###############
 
-install( FILES screensaver.desktop   DESTINATION  ${SERVICETYPES_INSTALL_DIR} )
+# install( FILES screensaver.desktop   DESTINATION  ${SERVICETYPES_INSTALL_DIR} )
