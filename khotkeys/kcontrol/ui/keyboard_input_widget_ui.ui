@@ -174,6 +174,6 @@
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
     <includehint>ktextedit.h</includehint>
-    <includehint>khotkeys::windowdef_list_widget.h</includehint>
+    <includehint>windowdef_list_widget.h</includehint>
 </includehints>
 </UI>

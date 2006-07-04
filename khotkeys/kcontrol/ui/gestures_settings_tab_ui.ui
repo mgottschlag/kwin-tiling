@@ -162,6 +162,6 @@
 <includehints>
     <includehint>knuminput.h</includehint>
     <includehint>knuminput.h</includehint>
-    <includehint>khotkeys::windowdef_list_widget.h</includehint>
+    <includehint>windowdef_list_widget.h</includehint>
 </includehints>
 </UI>

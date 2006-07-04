@@ -50,7 +50,7 @@ KHotKeysModule::KHotKeysModule( )
          i < 5;
          ++i )
         {
-        if( QDBus::sessionBus().busService()->nameHasOwner( "khotkeys" ))
+        if( QDBus::sessionBus().interface()->isServiceRegistered( "khotkeys" ))
             {
             // wait for it to finish
 #ifdef __GNUC__
