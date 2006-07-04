@@ -21,6 +21,7 @@
 #include <kaboutapplication.h>
 #include <kactioncollection.h>
 #include <kbugreport.h>
+#include <kaboutdata.h>
 #include <kconfig.h>
 #include <kinstance.h>
 #include <kiconloader.h>

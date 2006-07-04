@@ -18,9 +18,7 @@
 #ifndef KPERSONALIZER_H
 #define KPERSONALIZER_H
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 #include <kapplication.h>
 #include <k3wizard.h>

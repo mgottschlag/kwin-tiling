@@ -1,7 +1,8 @@
 
 add_subdirectory( systemtray ) 
 add_subdirectory( minipager ) 
-add_subdirectory( taskbar ) 
+MESSAGE(STATUS "taskbar panel applet disable (since taskbar lib is disabled), reactivate it when we use plasma or remove it")
+#add_subdirectory( taskbar ) 
 add_subdirectory( run ) 
 add_subdirectory( launcher ) 
 add_subdirectory( naughty ) 
