@@ -45,7 +45,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class KConfig;
 class DragIndicator;
 class PanelContainer;
-class KRootPixmap;
 
 class AppletContainer;
 class ContainerAreaLayout;
@@ -149,7 +148,6 @@ private:
     BaseContainer*  _dragMoveAC;
     QPoint	    _dragMoveOffset;
     QMenu*          m_opMenu;
-    KRootPixmap*    _rootPixmap;
     bool            _transparent;
     bool            _useBgTheme;
     bool            _bgSet;

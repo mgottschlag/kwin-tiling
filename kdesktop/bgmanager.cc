@@ -33,7 +33,6 @@
 #include <kipc.h>
 #include <kmenu.h>
 #include <kwinmodule.h>
-#include <krootpixmap.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -56,6 +55,18 @@ static Atom prop_root;
 static bool properties_inited = false;
 
 const char* KBackgroundManager::backgroundDBusObjectPath = "/Background";
+
+QString pixmapName(int desk)
+{
+    QString pattern = QString("DESKTOP%1");
+#ifdef Q_WS_X11
+    int screen_number = DefaultScreen(QX11Info::display());
+    if (screen_number) {
+        pattern = QString("SCREEN%1-DESKTOP").arg(screen_number) + "%1";
+    }
+#endif
+    return pattern.arg( desk );
+}
 
 /**** KBackgroundManager ****/
 
@@ -344,7 +355,7 @@ void KBackgroundManager::exportBackground(int pixmap, int desk)
         return;
 
     m_Cache[desk]->exp_from = pixmap;
-    m_pPixmapServer->add(KRootPixmap::pixmapName(desk+1),
+    m_pPixmapServer->add(pixmapName(desk+1),
 	    m_Cache[pixmap]->pixmap);
     KIPC::sendMessageAll(KIPC::BackgroundChanged, desk+1);
 }
@@ -498,7 +509,7 @@ int KBackgroundManager::cacheSize()
 void KBackgroundManager::removeCache(int desk)
 {
     if (m_bExport)
-	m_pPixmapServer->remove(KRootPixmap::pixmapName(desk+1));
+	m_pPixmapServer->remove(pixmapName(desk+1));
     else
         delete m_Cache[desk]->pixmap;
     m_Cache[desk]->pixmap = 0L;
@@ -513,7 +524,7 @@ void KBackgroundManager::removeCache(int desk)
 	{
 	    assert(m_bExport);
 	    m_Cache[i]->exp_from = -1;
-	    m_pPixmapServer->remove(KRootPixmap::pixmapName(i+1));
+	    m_pPixmapServer->remove(pixmapName(i+1));
 	}
     }
 }

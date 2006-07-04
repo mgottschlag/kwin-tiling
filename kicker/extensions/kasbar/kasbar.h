@@ -74,8 +74,6 @@
 
 #include "kasresources.h"
 
-class KRootPixmap;
-
 class KasItem;
 class KasResources;
 
@@ -267,8 +265,6 @@ Q_SIGNALS:
    void configChanged();
 
 protected:
-    KRootPixmap *rootPixmap() const { return rootPix; }
-
    /** Displays the popup menus, hides/shows windows. */
    void mousePressEvent(QMouseEvent *ev);
 
@@ -311,7 +307,6 @@ private:
    // Implements pseudo-transparency
    bool transparent_;
    KPixmap bg;
-   KRootPixmap *rootPix;
    bool enableTint_;
    double tintAmount_;
    QColor tintColour_;

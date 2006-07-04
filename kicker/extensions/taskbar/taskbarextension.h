@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <kpanelextension.h>
 
-class KRootPixmap;
 class TaskBar;
 
 class TaskBarExtension : public KPanelExtension

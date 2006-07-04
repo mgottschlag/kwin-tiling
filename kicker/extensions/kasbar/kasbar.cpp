@@ -68,7 +68,6 @@
 
 #include <kapplication.h>
 #include <kdebug.h>
-#include <krootpixmap.h>
 #include <kpixmapio.h>
 #include <kiconloader.h>
 
@@ -97,7 +96,6 @@ KasBar::KasBar( Qt::Orientation o, QWidget *parent, const char *name, Qt::WFlags
      itemExtent_( MEDIUM_EXTENT ),
      paintInactiveFrame_( true ),
      transparent_( false ),
-     rootPix( 0 ),
      enableTint_( false ),
      tintAmount_( 0.1 ), 
      tintColour_( colorGroup().mid() ),
@@ -126,7 +124,6 @@ KasBar::KasBar( Qt::Orientation o, KasBar *master, QWidget *parent, const char *
      itemExtent_( MEDIUM_EXTENT ),
      paintInactiveFrame_( true ),
      transparent_( false ),
-     rootPix( 0 ),
      enableTint_( false ),
      tintAmount_( 0.1 ), 
      tintColour_( colorGroup().mid() ),
@@ -223,24 +220,9 @@ void KasBar::setTransparent( bool enable )
 
    if ( transparent_ ) {
        kDebug(1345) << "KasBar: Enabling transparency" << endl;
-
-       rootPix = new KRootPixmap( this );
-       connect( rootPix, SIGNAL( backgroundUpdated(const QPixmap &) ),
-		this, SLOT( setBackground(const QPixmap &) ) );
-
-       rootPix->setCustomPainting( true );
-
-       if ( enableTint_ )
-	   rootPix->setFadeEffect( tintAmount_, tintColour_ );
-
-       rootPix->start();
-   }
+  }
    else {
        kDebug(1345) << "KasBar: Disabling transparency" << endl;
-
-       rootPix->stop();
-       delete rootPix;
-       rootPix = 0;
    }
 
    emit configChanged();
@@ -253,14 +235,7 @@ void KasBar::setTint( bool enable )
 
    enableTint_ = enable;
 
-   if ( transparent_ && rootPix ) {
-      if ( enableTint_ ) {
-	 rootPix->setFadeEffect( tintAmount_, tintColour_ );
-      }
-      else {
-	 rootPix->setFadeEffect( 0.0, tintColour_ );
-      }
-
+   if ( transparent_ ) {
       emit configChanged();
       repaint( true );
    }
@@ -272,11 +247,7 @@ void KasBar::setTint( double amount, QColor color )
    tintColour_ = color;
 
    if ( transparent_ && enableTint_ ) {
-      rootPix->setFadeEffect( tintAmount_, tintColour_ );
       emit configChanged();
-
-      if ( rootPix->isAvailable() )
-	rootPix->repaint( true );
    }
 }
 

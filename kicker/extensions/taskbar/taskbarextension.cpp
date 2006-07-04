@@ -34,7 +34,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdebug.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <krootpixmap.h>
 #include <kstandarddirs.h>
 
 #include "utils.h"

@@ -55,7 +55,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kiconloader.h>
 #include <kmimetype.h>
 #include <kprocess.h>
-#include <krootpixmap.h>
 #include <klocale.h>
 #include <kio/netaccess.h>
 #include <kservice.h>
@@ -94,7 +93,6 @@ ContainerArea::ContainerArea(KConfig* _c,
       _dragMoveAC(0),
       _dragMoveOffset(QPoint(0,0)),
       m_opMenu(opMenu),
-      _rootPixmap(0),
       _useBgTheme(false),
       _bgSet(false),
       m_canAddContainers(true),
