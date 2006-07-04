@@ -320,7 +320,7 @@ void MenuEntryInfo::setDirty()
 
    dirty = true;
 
-   QString local = locateLocal("xdgdata-apps", service->menuId());
+   QString local = KStandardDirs::locateLocal("xdgdata-apps", service->menuId());
    if (local != service->desktopEntryPath())
    {
       KDesktopFile *oldDf = desktopFile();
@@ -412,10 +412,10 @@ static void freeShortcut(const KShortcut &shortCut)
       QString shortcutKey = shortCut.toString();
       if (s_newShortcuts)
          s_newShortcuts->removeAll(shortcutKey);
-      
+
       if (!s_freeShortcuts)
          s_freeShortcuts = new QStringList;
-      
+
       s_freeShortcuts->append(shortcutKey);
    }
 }
@@ -469,7 +469,7 @@ void MenuEntryInfo::setInUse(bool inUse)
    else
    {
       freeShortcut(shortcut());
-      
+
       // Add to list of deleted apps
       if (!s_deletedApps)
          s_deletedApps = new QStringList;
@@ -482,7 +482,7 @@ bool MenuEntryInfo::isShortcutAvailable(const KShortcut &_shortcut)
 {
    if (shortCut == _shortcut)
       return true;
-      
+
    QString shortcutKey = _shortcut.toString();
    bool available = true;
    if (!s_allShortcuts)

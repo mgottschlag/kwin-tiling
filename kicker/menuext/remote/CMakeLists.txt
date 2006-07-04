@@ -14,12 +14,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_remotemenu )
 
 target_link_libraries(kickermenu_remotemenu  ${KDE4_KDEUI_LIBS} kickermain )
 
-install_targets(${PLUGIN_INSTALL_DIR} kickermenu_remotemenu )
+install(TARGETS kickermenu_remotemenu  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/menuext FILES remotemenu.desktop )
+install( FILES remotemenu.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/menuext )
 
 
 

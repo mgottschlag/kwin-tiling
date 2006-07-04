@@ -5,7 +5,7 @@ include_directories(  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/ksplash/pics FILES splash.png )
+install( FILES splash.png  DESTINATION  ${DATA_INSTALL_DIR}/ksplash/pics )
 
 
 

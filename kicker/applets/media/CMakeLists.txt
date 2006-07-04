@@ -13,12 +13,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} media_panelapplet )
 
 target_link_libraries(media_panelapplet  ${KDE4_KDECORE_LIBS} konq kickermain kdeui kio kutils )
 
-install_targets(${PLUGIN_INSTALL_DIR} media_panelapplet )
+install(TARGETS media_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES mediaapplet.desktop )
+install( FILES mediaapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
 
 
 

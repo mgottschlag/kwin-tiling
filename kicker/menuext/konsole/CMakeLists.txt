@@ -13,12 +13,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_konsole )
 
 target_link_libraries(kickermenu_konsole  ${KDE4_KDE3SUPPORT_LIBS} kworkspace kickermain  ${QT_QTXML_LIBRARY} )
 
-install_targets(${PLUGIN_INSTALL_DIR} kickermenu_konsole )
+install(TARGETS kickermenu_konsole  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/menuext FILES konsolemenu.desktop )
+install( FILES konsolemenu.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/menuext )
 
 
 

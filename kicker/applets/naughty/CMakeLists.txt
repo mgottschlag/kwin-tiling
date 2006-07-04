@@ -13,13 +13,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} naughty_panelapplet )
 
 target_link_libraries(naughty_panelapplet  ${KDE4_KDEUI_LIBS} kickermain )
 
-install_targets(${PLUGIN_INSTALL_DIR} naughty_panelapplet )
+install(TARGETS naughty_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES naughtyapplet.desktop )
-install_files( ${DATA_INSTALL_DIR}/naughtyapplet/pics FILES naughty-happy.png naughty-sad.png )
+install( FILES naughtyapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
+install( FILES naughty-happy.png naughty-sad.png  DESTINATION  ${DATA_INSTALL_DIR}/naughtyapplet/pics )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

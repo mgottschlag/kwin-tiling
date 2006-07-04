@@ -13,7 +13,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_icons )
 
 target_link_libraries(kcm_icons  ${KDE4_KIO_LIBS} ${QT_QTGUI_LIBRARY} kdeui ${QT_QT3SUPPORT_LIBRARY})
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_icons )
+install(TARGETS kcm_icons  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### next target ###############
@@ -32,7 +32,7 @@ endif(KDE4_BUILD_TESTS)
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES icons.desktop )
+install( FILES icons.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

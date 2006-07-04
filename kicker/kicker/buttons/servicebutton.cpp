@@ -96,7 +96,7 @@ void ServiceButton::loadServiceFromId(const QString &id)
 
     if (_id.startsWith(":"))
     {
-       _id = locate("appdata", id.mid(1));
+       _id = KStandardDirs::locate("appdata", id.mid(1));
        if (!_id.isEmpty())
        {
           KDesktopFile df(_id, true);
@@ -193,7 +193,7 @@ void ServiceButton::startDrag()
 
     // If the path to the desktop file is relative, try to get the full
     // path from KStdDirs.
-    path = locate("apps", path);
+    path = KStandardDirs::locate("apps", path);
 
     KUrl url;
     url.setPath(path);
@@ -227,7 +227,7 @@ void ServiceButton::properties()
 
     // If the path to the desktop file is relative, try to get the full
     // path from KStdDirs.
-    path = locate("apps", path);
+    path = KStandardDirs::locate("apps", path);
     KUrl serviceURL;
     serviceURL.setPath(path);
 
@@ -252,7 +252,7 @@ void ServiceButton::slotUpdate()
 void ServiceButton::slotSaveAs(const KUrl &oldUrl, KUrl &newUrl)
 {
     QString oldPath = oldUrl.path();
-    if (locateLocal("appdata", oldUrl.fileName()) != oldPath)
+    if (KStandardDirs::locateLocal("appdata", oldUrl.fileName()) != oldPath)
     {
        QString path = Plasma::newDesktopFile(oldUrl);
        newUrl.setPath(path);

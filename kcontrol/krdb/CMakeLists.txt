@@ -11,7 +11,7 @@ add_subdirectory( pics )
 
 ########### install files ###############
 
-install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES kcmdisplayrc.upd )
+install( FILES kcmdisplayrc.upd  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 
 
 

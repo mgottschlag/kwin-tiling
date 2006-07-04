@@ -20,13 +20,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} ksplashstandard )
 
 target_link_libraries(ksplashstandard  ${KDE4_KDEUI_LIBS} ksplashthemes kdefx )
 
-install_targets(${PLUGIN_INSTALL_DIR} ksplashstandard )
+install(TARGETS ksplashstandard  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/ksplash/Themes/Standard FILES Theme.rc )
-install_files( ${SERVICES_INSTALL_DIR} FILES ksplashstandard.desktop )
+install( FILES Theme.rc  DESTINATION  ${DATA_INSTALL_DIR}/ksplash/Themes/Standard )
+install( FILES ksplashstandard.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

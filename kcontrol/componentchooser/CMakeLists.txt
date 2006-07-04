@@ -22,12 +22,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_componentchooser )
 
 target_link_libraries(kcm_componentchooser  ${KDE4_KDE3SUPPORT_LIBS})
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_componentchooser )
+install(TARGETS kcm_componentchooser  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES componentchooser.desktop )
+install( FILES componentchooser.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 
 

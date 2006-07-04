@@ -57,14 +57,14 @@ if (X11_Xrender_FOUND)
    target_link_libraries(kcm_input ${X11_Xrender_LIB})
 endif (X11_Xrender_FOUND)
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_input )
+install(TARGETS kcm_input  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES mouse.desktop )
-install_files( ${DATA_INSTALL_DIR}/kcminput FILES cursor_large_black.pcf.gz cursor_large_white.pcf.gz cursor_small_white.pcf.gz )
-install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES mouse_cursor_theme.upd )
+install( FILES mouse.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES cursor_large_black.pcf.gz cursor_large_white.pcf.gz cursor_small_white.pcf.gz  DESTINATION  ${DATA_INSTALL_DIR}/kcminput )
+install( FILES mouse_cursor_theme.upd  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

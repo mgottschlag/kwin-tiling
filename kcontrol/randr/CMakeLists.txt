@@ -15,7 +15,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_randr )
 
 target_link_libraries(kcm_randr  ${KDE4_KDEUI_LIBS} ${X11_Xrandr_LIB} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_randr )
+install(TARGETS kcm_randr  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### next target ###############
@@ -40,8 +40,8 @@ install(TARGETS krandrtray DESTINATION bin)
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES krandrtray.desktop )
-install_files( ${APPLNK_INSTALL_DIR}/.hidden FILES randr.desktop )
+install( FILES krandrtray.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES randr.desktop  DESTINATION  ${APPLNK_INSTALL_DIR}/.hidden )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

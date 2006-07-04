@@ -38,7 +38,7 @@ QuickAddAppsMenu::QuickAddAppsMenu(const QString &label, const QString &relPath,
 {
    _targetObject = target;
    _sender = sender;
-   connect(this, SIGNAL(addAppBefore(QString,QString)), 
+   connect(this, SIGNAL(addAppBefore(QString,QString)),
            target, SLOT(addAppBeforeManually(QString,QString)));
 }
 
@@ -55,7 +55,7 @@ void QuickAddAppsMenu::slotExec(int id)
 {
    if (!entryMap_.contains(id)) return;
    KService::Ptr service(KService::Ptr::staticCast(entryMap_[id]));
-   emit addAppBefore(locate("apps", service->desktopEntryPath()),_sender);
+   emit addAppBefore(KStandardDirs::locate("apps", service->desktopEntryPath()),_sender);
 }
 
 

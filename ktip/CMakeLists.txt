@@ -20,9 +20,9 @@ install(TARGETS ktip DESTINATION bin)
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES ktip.desktop )
+install( FILES ktip.desktop  DESTINATION  ${XDG_APPS_DIR} )
 install_files( /share/autostart FILES ktip.desktop )
-install_files( ${DATA_INSTALL_DIR}/kdewizard FILES tips )
+install( FILES tips  DESTINATION  ${DATA_INSTALL_DIR}/kdewizard )
 
 
 kde4_install_icons( ${ICON_INSTALL_DIR} hicolor )

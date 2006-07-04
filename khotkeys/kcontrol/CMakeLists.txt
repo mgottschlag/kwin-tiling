@@ -67,12 +67,12 @@ if(X11_XTest_FOUND)
   target_link_libraries(kcm_khotkeys  ${X11_XTest_LIB} )
 endif(X11_XTest_FOUND)
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_khotkeys )
+install(TARGETS kcm_khotkeys  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES khotkeys.desktop )
+install( FILES khotkeys.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

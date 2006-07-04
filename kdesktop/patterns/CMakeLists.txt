@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kdesktop/patterns FILES night-rock.desktop night-rock.jpg stonewall2.png      stonewall2.desktop fish.desktop fish.png flowers.desktop      flowers.png pavement.desktop pavement.png rattan.desktop rattan.png      triangles.desktop triangles.png )
+install( FILES night-rock.desktop night-rock.jpg stonewall2.png      stonewall2.desktop fish.desktop fish.png flowers.desktop      flowers.png pavement.desktop pavement.png rattan.desktop rattan.png      triangles.desktop triangles.png  DESTINATION  ${DATA_INSTALL_DIR}/kdesktop/patterns )
 
 
 

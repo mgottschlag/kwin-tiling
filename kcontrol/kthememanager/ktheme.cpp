@@ -516,7 +516,7 @@ void KTheme::apply()
         QDomNodeList colorList = colorsElem.childNodes();
         KConfig * colorConf = KGlobal::config();
 
-        QString sCurrentScheme = locateLocal("data", "kdisplay/color-schemes/thememgr.kcsrc");
+        QString sCurrentScheme = KStandardDirs::locateLocal("data", "kdisplay/color-schemes/thememgr.kcsrc");
         KSimpleConfig *colorScheme = new KSimpleConfig( sCurrentScheme );
         colorScheme->setGroup("Color Scheme" );
 

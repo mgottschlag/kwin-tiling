@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kcontrol/pics FILES logo.png mini-world.png )
+install( FILES logo.png mini-world.png  DESTINATION  ${DATA_INSTALL_DIR}/kcontrol/pics )
 
 
 

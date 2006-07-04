@@ -5,8 +5,8 @@ add_subdirectory( Templates )
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kdesktop/DesktopLinks FILES Home.desktop System.desktop )
-install_files( ${DATA_INSTALL_DIR}/kdesktop FILES directory.trash directory.autostart directory.templates directory.desktop )
+install( FILES Home.desktop System.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kdesktop/DesktopLinks )
+install( FILES directory.trash directory.autostart directory.templates directory.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kdesktop )
 
 
 

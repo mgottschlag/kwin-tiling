@@ -99,7 +99,7 @@ QuickURL::QuickURL(const QString &u)
          DEBUGSTR << "QuickURL: _service='"<<_service<<"' _service->desktopEntryPath()="<<_service->desktopEntryPath()<<endl<<flush;
          if (_kurl.path().length() == 0)
          {
-            _kurl.setPath(locate("apps", _service->desktopEntryPath()));
+            _kurl.setPath(KStandardDirs::locate("apps", _service->desktopEntryPath()));
          }
          if (!_service->menuId().isEmpty())
             _menuId = _service->menuId();

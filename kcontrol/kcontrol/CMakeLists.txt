@@ -29,16 +29,16 @@ kde4_add_kdeinit_executable( kcontrol ${kcontrol_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kcontrol  ${KDE4_KDE3SUPPORT_LIBS} khtml )
 
-install_targets(${LIB_INSTALL_DIR} kdeinit_kcontrol )
+install(TARGETS kdeinit_kcontrol  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kcontrol kdeinit_kcontrol )
 install(TARGETS kcontrol DESTINATION bin)
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES KControl.desktop kinfocenter.desktop )
-install_files( ${DATA_INSTALL_DIR}/kcontrol FILES kcontrolui.rc )
-install_files( ${DATA_INSTALL_DIR}/kinfocenter FILES kinfocenterui.rc )
+install( FILES KControl.desktop kinfocenter.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kcontrolui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kcontrol )
+install( FILES kinfocenterui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kinfocenter )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

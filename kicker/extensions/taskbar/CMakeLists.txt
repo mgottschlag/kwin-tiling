@@ -14,12 +14,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} taskbar_panelextension )
 
 target_link_libraries(taskbar_panelextension  ${KDE4_KDEUI_LIBS} kparts kickermain taskmanager taskbar )
 
-install_targets(${PLUGIN_INSTALL_DIR} taskbar_panelextension )
+install(TARGETS taskbar_panelextension  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/extensions FILES taskbarextension.desktop )
+install( FILES taskbarextension.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/extensions )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

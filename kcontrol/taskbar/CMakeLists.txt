@@ -15,12 +15,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_taskbar )
 
 target_link_libraries(kcm_taskbar  ${KDE4_KDECORE_LIBS} taskbar kdeui )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_taskbar )
+install(TARGETS kcm_taskbar  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES kcmtaskbar.desktop )
+install( FILES kcmtaskbar.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 
 

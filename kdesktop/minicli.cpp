@@ -720,7 +720,7 @@ void Minicli::setIcon ()
 #ifdef __GNUC__
 #warning "Yet another overlay thingie!"
 #endif
-    QPixmap overlay( locate ( "icon", KMimeType::favIconForURL( m_filterData->uri() ) + ".png" ) );
+    QPixmap overlay( KStandardDirs::locate ( "icon", KMimeType::favIconForURL( m_filterData->uri() ) + ".png" ) );
     if ( !overlay.isNull() )
     {
       int x = icon.width() - overlay.width();

@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/pics/ FILES kside.png kside_tile.png )
+install( FILES kside.png kside_tile.png  DESTINATION  ${DATA_INSTALL_DIR}/kicker/pics/ )
 
 
 

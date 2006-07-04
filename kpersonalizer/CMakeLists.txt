@@ -37,7 +37,7 @@ install(TARGETS kpersonalizer DESTINATION bin)
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES kpersonalizer.desktop )
+install( FILES kpersonalizer.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

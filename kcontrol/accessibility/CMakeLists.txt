@@ -15,12 +15,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_accessibility )
 
 target_link_libraries(kcm_accessibility  ${KDE4_KDE3SUPPORT_LIBS}) 
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_accessibility )
+install(TARGETS kcm_accessibility  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES accessibility.desktop )
+install( FILES accessibility.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 
 

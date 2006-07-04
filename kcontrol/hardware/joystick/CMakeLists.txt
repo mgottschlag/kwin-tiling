@@ -18,12 +18,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_joystick )
 
 target_link_libraries(kcm_joystick  ${KDE4_KDEUI_LIBS} ${QT_QTGUI_LIBRARY})
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_joystick )
+install(TARGETS kcm_joystick  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES joystick.desktop )
+install( FILES joystick.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 
 

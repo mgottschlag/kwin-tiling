@@ -25,7 +25,7 @@ install(TARGETS ksplash DESTINATION bin)
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR} FILES ksplash.desktop )
+install( FILES ksplash.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

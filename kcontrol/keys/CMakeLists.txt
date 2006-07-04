@@ -17,15 +17,15 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_keys )
 
 target_link_libraries(kcm_keys  ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTGUI_LIBRARY} ${X11_X11_LIB})
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_keys )
+install(TARGETS kcm_keys  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES keys.desktop )
-install_files( ${DATA_INSTALL_DIR}/kcmkeys FILES wm3.kksrc kde3.kksrc kde4.kksrc win3.kksrc win4.kksrc mac4.kksrc unix3.kksrc )
-install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES kaccel.upd )
-install_programs( ${KCONF_UPDATE_INSTALL_DIR} FILES convertShortcuts.pl )
+install( FILES keys.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES wm3.kksrc kde3.kksrc kde4.kksrc win3.kksrc win4.kksrc mac4.kksrc unix3.kksrc  DESTINATION  ${DATA_INSTALL_DIR}/kcmkeys )
+install( FILES kaccel.upd  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
+install(PROGRAMS convertShortcuts.pl  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
 

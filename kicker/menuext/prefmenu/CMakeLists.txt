@@ -13,12 +13,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_prefmenu )
 
 target_link_libraries(kickermenu_prefmenu  ${KDE4_KDE3SUPPORT_LIBS} kickermain kworkspace )
 
-install_targets(${PLUGIN_INSTALL_DIR} kickermenu_prefmenu )
+install(TARGETS kickermenu_prefmenu  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/menuext FILES prefmenu.desktop )
+install( FILES prefmenu.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/menuext )
 
 
 

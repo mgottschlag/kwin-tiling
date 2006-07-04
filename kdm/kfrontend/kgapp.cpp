@@ -146,7 +146,7 @@ kg_main( const char *argv0 )
 	if (!_GUIStyle.isEmpty())
 		app.setStyle( _GUIStyle );
 
-	_colorScheme = locate( "data", "kdisplay/color-schemes/" + _colorScheme + ".kcsrc" );
+	_colorScheme = KStandardDirs::locate( "data", "kdisplay/color-schemes/" + _colorScheme + ".kcsrc" );
 	if (!_colorScheme.isEmpty()) {
 		KSimpleConfig config( _colorScheme, true );
 		config.setGroup( "Color Scheme" );

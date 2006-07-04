@@ -14,7 +14,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kgreet_classic )
 
 target_link_libraries(kgreet_classic  ${KDE4_KDEUI_LIBS})
 
-install_targets(${PLUGIN_INSTALL_DIR} kgreet_classic )
+install(TARGETS kgreet_classic  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### next target ###############
@@ -29,7 +29,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kgreet_winbind )
 
 target_link_libraries(kgreet_winbind  ${KDE4_KDEUI_LIBS})
 
-install_targets(${PLUGIN_INSTALL_DIR} kgreet_winbind )
+install(TARGETS kgreet_winbind  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### next target ###############

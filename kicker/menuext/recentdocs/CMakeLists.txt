@@ -13,12 +13,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_recentdocs )
 
 target_link_libraries(kickermenu_recentdocs  ${KDE4_KDEUI_LIBS} kickermain kworkspace kde3support)
 
-install_targets(${PLUGIN_INSTALL_DIR} kickermenu_recentdocs )
+install(TARGETS kickermenu_recentdocs  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/menuext FILES recentdocs.desktop )
+install( FILES recentdocs.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/menuext )
 
 
 

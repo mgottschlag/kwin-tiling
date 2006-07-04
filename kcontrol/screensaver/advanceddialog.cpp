@@ -50,12 +50,12 @@ void KScreenSaverAdvancedDialog::readSettings()
 {
 	KConfig *config = new KConfig("kdesktoprc");
 	config->setGroup("ScreenSaver");
-	
+
 	mPriority = config->readEntry("Priority", 19);
 	if (mPriority < 0) mPriority = 0;
 	if (mPriority > 19) mPriority = 19;
-	
-	dialog->qcbTopLeft->setCurrentIndex(config->readEntry("ActionTopLeft", 0));    
+
+	dialog->qcbTopLeft->setCurrentIndex(config->readEntry("ActionTopLeft", 0));
 	dialog->qcbTopRight->setCurrentIndex(config->readEntry("ActionTopRight", 0));
 	dialog->qcbBottomLeft->setCurrentIndex(config->readEntry("ActionBottomLeft", 0));
 	dialog->qcbBottomRight->setCurrentIndex(config->readEntry("ActionBottomRight", 0));
@@ -106,7 +106,7 @@ void KScreenSaverAdvancedDialog::accept()
   {
 		KConfig *config = new KConfig("kdesktoprc");
   	config->setGroup( "ScreenSaver" );
-	
+
  		config->writeEntry("Priority", mPriority);
   	config->writeEntry(
  		"ActionTopLeft", dialog->qcbTopLeft->currentIndex());
@@ -147,7 +147,7 @@ void KScreenSaverAdvancedDialog::slotChangeTopLeftCorner(int)
 
 AdvancedDialog::AdvancedDialog(QWidget *parent, const char *name) : AdvancedDialogImpl(parent, name)
 {
-	monitorLabel->setPixmap(QPixmap(locate("data", "kcontrol/pics/monitor.png")));
+	monitorLabel->setPixmap(QPixmap(KStandardDirs::locate("data", "kcontrol/pics/monitor.png")));
 	qcbPriority->setWhatsThis( "<qt>" + i18n("Specify the priority that the screensaver will run at. A higher priority may mean that the screensaver runs faster, though may reduce the speed that other programs run at while the screensaver is active.") + "</qt>");
 	QString qsTopLeft("<qt>" +  i18n("The action to take when the mouse cursor is located in the top left corner of the screen for 15 seconds.") + "</qt>");
         QString qsTopRight("<qt>" +  i18n("The action to take when the mouse cursor is located in the top right corner of the screen for 15 seconds.") + "</qt>");
@@ -165,7 +165,7 @@ AdvancedDialog::AdvancedDialog(QWidget *parent, const char *name) : AdvancedDial
 
 AdvancedDialog::~AdvancedDialog()
 {
- 
+
 }
 
 void AdvancedDialog::setMode(QComboBox *box, int i)

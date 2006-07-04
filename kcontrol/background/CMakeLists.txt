@@ -17,7 +17,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_background )
 
 target_link_libraries(kcm_background  ${KDE4_KDE3SUPPORT_LIBS} knewstuff kdefx ${X11_X11_LIB})
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_background )
+install(TARGETS kcm_background  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### next target ###############
@@ -28,7 +28,7 @@ install_targets(${PLUGIN_INSTALL_DIR} kcm_background )
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES background.desktop )
+install( FILES background.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

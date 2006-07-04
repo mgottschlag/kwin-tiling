@@ -189,7 +189,7 @@ TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, 
     if (m_ac->action("newsep"))
         connect(m_ac->action("newsep"), SIGNAL(activated()), SLOT(newsep()));
 
-    m_menuFile = new MenuFile( locateLocal("xdgconf-menu", "applications-kmenuedit.menu"));
+    m_menuFile = new MenuFile( KStandardDirs::locateLocal("xdgconf-menu", "applications-kmenuedit.menu"));
     m_rootFolder = new MenuFolderInfo;
     m_separator = new MenuSeparatorInfo;
     m_drag = 0;
@@ -720,13 +720,13 @@ static QString createDirectoryFile(const QString &file, QStringList *excludeList
 
       if (!excludeList->contains(result))
       {
-         if (locate("xdgdata-dirs", result).isEmpty())
+         if (KStandardDirs::locate("xdgdata-dirs", result).isEmpty())
             break;
       }
       i++;
    }
    excludeList->append(result);
-   result = locateLocal("xdgdata-dirs", result);
+   result = KStandardDirs::locateLocal("xdgdata-dirs", result);
    return result;
 }
 
@@ -959,7 +959,7 @@ Q3DragObject *TreeView::dragObject()
        QString menuId = item->menuId();
        m_dragPath = item->entryInfo()->service->desktopEntryPath();
        if (!m_dragPath.isEmpty())
-          m_dragPath = locate("apps", m_dragPath);
+          m_dragPath = KStandardDirs::locate("apps", m_dragPath);
        if (!m_dragPath.isEmpty())
        {
           KUrl url;

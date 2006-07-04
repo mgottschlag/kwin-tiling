@@ -15,7 +15,7 @@ if(X11_XTest_FOUND)
   target_link_libraries(kdeinit_khotkeys  ${X11_XTest_LIB}  )
 endif(X11_XTest_FOUND)
 
-install_targets(${LIB_INSTALL_DIR} kdeinit_khotkeys )
+install(TARGETS kdeinit_khotkeys  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( khotkeys kdeinit_khotkeys )
 install(TARGETS khotkeys DESTINATION bin)
@@ -33,12 +33,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kded_khotkeys )
 
 target_link_libraries(kded_khotkeys  ${KDE4_KDE3SUPPORT_LIBS} ${X11_XTest_LIB} )
 
-install_targets(${PLUGIN_INSTALL_DIR} kded_khotkeys )
+install(TARGETS kded_khotkeys  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${SERVICES_INSTALL_DIR}/kded FILES khotkeys.desktop )
+install( FILES khotkeys.desktop  DESTINATION  ${SERVICES_INSTALL_DIR}/kded )
 
 
 

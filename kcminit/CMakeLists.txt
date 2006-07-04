@@ -14,7 +14,7 @@ kde4_add_kdeinit_executable( kcminit ${kcminit_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kcminit  ${KDE4_KIO_LIBS} kutils )
 
-install_targets(${LIB_INSTALL_DIR} kdeinit_kcminit )
+install(TARGETS kdeinit_kcminit  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kcminit kdeinit_kcminit )
 install(TARGETS kcminit DESTINATION bin)
@@ -32,7 +32,7 @@ kde4_add_kdeinit_executable( kcminit_startup ${kcminit_startup_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kcminit_startup  ${KDE4_KIO_LIBS} kutils )
 
-install_targets(${LIB_INSTALL_DIR} kdeinit_kcminit_startup )
+install(TARGETS kdeinit_kcminit_startup  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kcminit_startup kdeinit_kcminit_startup )
 install(TARGETS kcminit_startup DESTINATION bin)

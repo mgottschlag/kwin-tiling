@@ -15,12 +15,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_ksplashthemes )
 
 target_link_libraries(kcm_ksplashthemes  ${KDE4_KDE3SUPPORT_LIBS} )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_ksplashthemes )
+install(TARGETS kcm_ksplashthemes  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES ksplashthememgr.desktop )
+install( FILES ksplashthememgr.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 
 

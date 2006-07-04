@@ -298,12 +298,12 @@ QString ThemeDefault::_findPicture( const QString &pic )
   //kDebug() << "Theme directory: " << mTheme->themeDir() << endl;
   //kDebug() << "Theme name:      " << mTheme->theme() << endl;
   QString p = QString();
-  if ((p = locate("appdata",mTheme->themeDir()+f)).isEmpty())
-    if ((p = locate("appdata",mTheme->themeDir()+"pics/"+f)).isEmpty())
-      if ((p = locate("appdata", QString("pics/")+mTheme->theme()+'/'+f)).isEmpty())
-        if ((p = locate("appdata",f)).isEmpty())
-          if ((p = locate("appdata",QString("pics/")+f)).isEmpty())
-            if ((p = locate("data",QString("pics/")+f)).isEmpty())
+  if ((p = KStandardDirs::locate("appdata",mTheme->themeDir()+f)).isEmpty())
+    if ((p = KStandardDirs::locate("appdata",mTheme->themeDir()+"pics/"+f)).isEmpty())
+      if ((p = KStandardDirs::locate("appdata", QString("pics/")+mTheme->theme()+'/'+f)).isEmpty())
+        if ((p = KStandardDirs::locate("appdata",f)).isEmpty())
+          if ((p = KStandardDirs::locate("appdata",QString("pics/")+f)).isEmpty())
+            if ((p = KStandardDirs::locate("data",QString("pics/")+f)).isEmpty())
               ; // No more places to search
   return p;
 }

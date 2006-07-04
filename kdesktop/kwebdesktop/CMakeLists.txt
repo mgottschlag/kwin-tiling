@@ -18,8 +18,8 @@ install(TARGETS kwebdesktop DESTINATION bin)
 
 ########### install files ###############
 
-install_files( ${KCFG_INSTALL_DIR} FILES kwebdesktop.kcfg  )
-install_files( ${DATA_INSTALL_DIR}/kdesktop/programs FILES kwebdesktop.desktop )
+install( FILES kwebdesktop.kcfg   DESTINATION  ${KCFG_INSTALL_DIR} )
+install( FILES kwebdesktop.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kdesktop/programs )
 
 
 

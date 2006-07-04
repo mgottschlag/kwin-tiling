@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kcontrol/pics FILES monitor.png )
+install( FILES monitor.png  DESTINATION  ${DATA_INSTALL_DIR}/kcontrol/pics )
 
 
 

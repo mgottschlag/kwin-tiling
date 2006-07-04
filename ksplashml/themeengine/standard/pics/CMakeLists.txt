@@ -3,7 +3,7 @@ include_directories(  ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/ksplash/Themes/Standard FILES Preview.png )
+install( FILES Preview.png  DESTINATION  ${DATA_INSTALL_DIR}/ksplash/Themes/Standard )
 
 
 

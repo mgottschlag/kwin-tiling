@@ -32,13 +32,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kicker )
 
 target_link_libraries(kcm_kicker  ${KDE4_KDECORE_LIBS} kickermain bgnd kio kutils )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kicker )
+install(TARGETS kcm_kicker  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${APPLNK_INSTALL_DIR}/.hidden FILES kicker_config.desktop                  kicker_config_arrangement.desktop kicker_config_hiding.desktop                  kicker_config_menus.desktop kicker_config_appearance.desktop )
-install_files( ${XDG_APPS_DIR} FILES panel.desktop )
+install( FILES kicker_config.desktop                  kicker_config_arrangement.desktop kicker_config_hiding.desktop                  kicker_config_menus.desktop kicker_config_appearance.desktop  DESTINATION  ${APPLNK_INSTALL_DIR}/.hidden )
+install( FILES panel.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

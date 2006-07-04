@@ -350,15 +350,15 @@ bool KlipperWidget::loadHistory() {
     static const char* const failed_load_warning =
         "Failed to load history resource. Clipboard history cannot be read.";
     // don't use "appdata", klipper is also a kicker applet
-    QString history_file_name = ::locateLocal( "data", "klipper/history2.lst" );
+    QString history_file_name = KStandardDirs::locateLocal( "data", "klipper/history2.lst" );
     QFile history_file( history_file_name );
     bool oldfile = false;
     if ( !history_file.exists() ) { // backwards compatibility
         oldfile = true;
-        history_file_name = ::locateLocal( "data", "klipper/history.lst" );
+        history_file_name = KStandardDirs::locateLocal( "data", "klipper/history.lst" );
         history_file.setFileName( history_file_name );
         if ( !history_file.exists() ) {
-            history_file_name = ::locateLocal( "data", "kicker/history.lst" );
+            history_file_name = KStandardDirs::locateLocal( "data", "kicker/history.lst" );
             history_file.setFileName( history_file_name );
             if ( !history_file.exists() ) {
                 return false;
@@ -424,7 +424,7 @@ void KlipperWidget::saveHistory() {
     static const char* const failed_save_warning =
         "Failed to save history. Clipboard history cannot be saved.";
     // don't use "appdata", klipper is also a kicker applet
-    QString history_file_name( ::locateLocal( "data", "klipper/history2.lst" ) );
+    QString history_file_name( KStandardDirs::locateLocal( "data", "klipper/history2.lst" ) );
     if ( history_file_name.isNull() || history_file_name.isEmpty() ) {
         kWarning() << failed_save_warning << endl;
         return;

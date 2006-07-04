@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kdesktop/programs FILES xearth.desktop xglobe.desktop xplanet.desktop )
+install( FILES xearth.desktop xglobe.desktop xplanet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kdesktop/programs )
 
 
 

@@ -122,7 +122,7 @@ bool PanelKMenu::loadSidePixmap()
     QString sideTileName = KickerSettings::sideTileName();
 
     QImage image;
-    image.load(locate("data", "kicker/pics/" + sideName));
+    image.load(KStandardDirs::locate("data", "kicker/pics/" + sideName));
 
     if (image.isNull())
     {
@@ -133,7 +133,7 @@ bool PanelKMenu::loadSidePixmap()
     Plasma::colorize(image);
     sidePixmap = QPixmap::fromImage(image);
 
-    image.load(locate("data", "kicker/pics/" + sideTileName));
+    image.load(KStandardDirs::locate("data", "kicker/pics/" + sideTileName));
 
     if (image.isNull())
     {

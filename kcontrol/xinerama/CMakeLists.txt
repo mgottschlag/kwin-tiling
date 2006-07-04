@@ -15,12 +15,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_xinerama )
 
 target_link_libraries(kcm_xinerama  ${KDE4_KDE3SUPPORT_LIBS} ${X11_Xinerama_LIB})
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_xinerama )
+install(TARGETS kcm_xinerama  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${APPLNK_INSTALL_DIR}/.hidden FILES xinerama.desktop )
+install( FILES xinerama.desktop  DESTINATION  ${APPLNK_INSTALL_DIR}/.hidden )
 
 
 

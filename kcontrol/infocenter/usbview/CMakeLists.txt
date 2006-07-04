@@ -13,13 +13,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_usb )
 
 target_link_libraries(kcm_usb  ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${QT_QTGUI_LIBRARY})
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_usb )
+install(TARGETS kcm_usb  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES kcmusb.desktop )
-install_files( ${DATA_INSTALL_DIR}/kcmusb FILES usb.ids )
+install( FILES kcmusb.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES usb.ids  DESTINATION  ${DATA_INSTALL_DIR}/kcmusb )
 
 
 

@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kcontrol/about FILES top-right-kcontrol.png  	main.html  	kcontrol.css )
+install( FILES top-right-kcontrol.png  	main.html  	kcontrol.css  DESTINATION  ${DATA_INSTALL_DIR}/kcontrol/about )
 
 
 

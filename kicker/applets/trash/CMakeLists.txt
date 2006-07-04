@@ -13,12 +13,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} trash_panelapplet )
 
 target_link_libraries(trash_panelapplet  ${KDE4_KDECORE_LIBS} kickermain konq kdeui kio kutils )
 
-install_targets(${PLUGIN_INSTALL_DIR} trash_panelapplet )
+install(TARGETS trash_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES trashapplet.desktop )
+install( FILES trashapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
 
 
 

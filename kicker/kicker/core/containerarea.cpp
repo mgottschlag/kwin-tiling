@@ -61,6 +61,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kservice.h>
 #include <kmenu.h>
 #include <kauthorized.h>
+#include <kstandarddirs.h>
 
 #include "addapplet.h"
 #include "browser_dlg.h"
@@ -170,7 +171,7 @@ void ContainerArea::defaultContainerConfig()
     dsize -= 560;
     QStringList buttons;
 
-    QFile f(locate("data", "kicker/default-apps"));
+    QFile f(KStandardDirs::locate("data", "kicker/default-apps"));
     if (f.open(QIODevice::ReadOnly))
     {
         QTextStream is(&f);
@@ -201,7 +202,7 @@ void ContainerArea::defaultContainerConfig()
         if ( !service )
         {
             // look for a special button
-            QString s = locate( "appdata", it );
+            QString s = KStandardDirs::locate( "appdata", it );
             if ( s.isEmpty() )
             {
                 continue;

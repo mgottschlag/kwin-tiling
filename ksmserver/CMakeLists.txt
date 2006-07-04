@@ -21,7 +21,7 @@ kde4_add_kdeinit_executable( ksmserver ${ksmserver_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_ksmserver  ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY} kdefx ${X11_LIBRARIES})
 
-install_targets(${LIB_INSTALL_DIR} kdeinit_ksmserver )
+install(TARGETS kdeinit_ksmserver  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( ksmserver kdeinit_ksmserver )
 install(TARGETS ksmserver DESTINATION bin)
@@ -42,8 +42,8 @@ endif(KDE4_BUILD_TESTS)
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/ksmserver/pics FILES shutdownkonq.png )
-install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES ksmserver.upd  move_session_config.sh)
+install( FILES shutdownkonq.png  DESTINATION  ${DATA_INSTALL_DIR}/ksmserver/pics )
+install( FILES ksmserver.upd  move_session_config.sh DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 
 
 

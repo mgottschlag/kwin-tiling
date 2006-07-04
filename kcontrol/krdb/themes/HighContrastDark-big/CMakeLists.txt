@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kthememanager/themes/HighContrastDark-big FILES HighContrastDark-big.preview.png HighContrastDark-big.xml )
+install( FILES HighContrastDark-big.preview.png HighContrastDark-big.xml  DESTINATION  ${DATA_INSTALL_DIR}/kthememanager/themes/HighContrastDark-big )
 
 
 

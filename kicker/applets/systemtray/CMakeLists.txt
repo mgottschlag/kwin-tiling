@@ -14,12 +14,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} systemtray_panelapplet )
 
 target_link_libraries(systemtray_panelapplet  ${KDE4_KDECORE_LIBS} kickermain kdeui kio )
 
-install_targets(${PLUGIN_INSTALL_DIR} systemtray_panelapplet )
+install(TARGETS systemtray_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES systemtrayapplet.desktop )
+install( FILES systemtrayapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

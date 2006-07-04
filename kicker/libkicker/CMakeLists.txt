@@ -30,12 +30,12 @@ kde4_add_library(kickermain SHARED ${kickermain_LIB_SRCS})
 target_link_libraries(kickermain  ${KDE4_KDECORE_LIBS} kworkspace kio ${QT_QT3SUPPORT_LIBRARY} kdeui)
 
 set_target_properties(kickermain PROPERTIES VERSION 1.0.0 SOVERSION 1 )
-install_targets(${LIB_INSTALL_DIR} kickermain )
+install(TARGETS kickermain  DESTINATION ${LIB_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${KCFG_INSTALL_DIR} FILES kickerSettings.kcfg extensionSettings.kcfg )
+install( FILES kickerSettings.kcfg extensionSettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR} )
 install_files( /include/plasma FILES kpanelapplet.h                                     kpanelextension.h                                     kpanelmenu.h                                     kickertip.h                                     utils.h  				   paneldrag.h )
 
 

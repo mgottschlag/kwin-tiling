@@ -15,12 +15,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_arts )
 
 target_link_libraries(kcm_arts  ${KDE4_KIO_LIBS} kutils kmid )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_arts )
+install(TARGETS kcm_arts  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES arts.desktop )
+install( FILES arts.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

@@ -6,8 +6,8 @@ include_directories( ${CMAKE_SOURCE_DIR}/libkonq   )
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker FILES default-apps )
-install_files( ${DATA_INSTALL_DIR}/kicker/extensions FILES childpanelextension.desktop )
+install( FILES default-apps  DESTINATION  ${DATA_INSTALL_DIR}/kicker )
+install( FILES childpanelextension.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/extensions )
 
 
 

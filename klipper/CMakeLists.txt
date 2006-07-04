@@ -22,7 +22,7 @@ if (X11_Xfixes_FOUND)
   target_link_libraries(kdeinit_klipper ${X11_Xfixes_LIB})
 endif (X11_Xfixes_FOUND)
 
-install_targets(${LIB_INSTALL_DIR} kdeinit_klipper )
+install(TARGETS kdeinit_klipper  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( klipper kdeinit_klipper )
 install(TARGETS klipper DESTINATION bin)
@@ -41,16 +41,16 @@ message(STATUS "TODO port klipper panel applet")
 
 #target_link_libraries(klipper_panelapplet  ${KDE4_KDECORE_LIBS} )
 
-#install_targets(${PLUGIN_INSTALL_DIR} klipper_panelapplet )
+#install(TARGETS klipper_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES klipper.desktop )
+install( FILES klipper.desktop  DESTINATION  ${XDG_APPS_DIR} )
 install_files( /share/autostart FILES klipper.desktop )
-install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES klipper.desktop )
-install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES klipperrc.upd klippershortcuts.upd )
-install_files( ${KCONF_UPDATE_INSTALL_DIR} FILES klipper-1-2.pl klipper-kde31.sh)
+install( FILES klipper.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
+install( FILES klipperrc.upd klippershortcuts.upd  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
+install( FILES klipper-1-2.pl klipper-kde31.sh DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )

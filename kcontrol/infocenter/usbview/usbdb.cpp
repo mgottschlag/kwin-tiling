@@ -26,7 +26,7 @@
 
 USBDB::USBDB()
 {
-  QString db = locate("data", "kcmusb/usb.ids");
+  QString db = KStandardDirs::locate("data", "kcmusb/usb.ids");
   if (db.isEmpty())
     return;
 

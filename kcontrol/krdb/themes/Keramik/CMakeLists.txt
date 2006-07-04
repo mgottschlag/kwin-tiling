@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kthememanager/themes/Keramik FILES Keramik.xml Keramik.preview.png )
+install( FILES Keramik.xml Keramik.preview.png  DESTINATION  ${DATA_INSTALL_DIR}/kthememanager/themes/Keramik )
 
 
 

@@ -244,7 +244,7 @@ void ExtensionManager::migrateMenubar()
         return;
     }
 
-    if (!locate("config", "kicker_menubarpanelrc").isEmpty())
+    if (!KStandardDirs::locate("config", "kicker_menubarpanelrc").isEmpty())
     {
         // don't overwrite/override something that's already there
         return;
@@ -266,7 +266,7 @@ void ExtensionManager::migrateMenubar()
 
         config->setGroup(extensionId);
         QString extension = config->readPathEntry("ConfigFile");
-        KConfig extensionConfig(locate("config", extension));
+        KConfig extensionConfig(KStandardDirs::locate("config", extension));
         extensionConfig.setGroup("General");
 
         if (extensionConfig.hasKey("Applets2"))
@@ -288,9 +288,9 @@ void ExtensionManager::migrateMenubar()
                     QString appletFile = group.readPathEntry("DesktopFile");
                     if (appletFile.indexOf("menuapplet.desktop") != -1)
                     {
-                        QString menubarConfig = locate("config", extension);
+                        QString menubarConfig = KStandardDirs::locate("config", extension);
                         KIO::NetAccess::copy(menubarConfig,
-                                             locateLocal("config",
+                                             KStandardDirs::locateLocal("config",
                                              "kicker_menubarpanelrc"), 0);
                         elist.removeAll(appletId);
                         config->setGroup("General");

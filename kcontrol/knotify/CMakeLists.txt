@@ -15,12 +15,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_knotify )
 
 target_link_libraries(kcm_knotify  ${KDE4_KIO_LIBS} knotifyconfig ${QT_QTGUI_LIBRARY} kdeui)
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_knotify )
+install(TARGETS kcm_knotify  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES kcmnotify.desktop )
+install( FILES kcmnotify.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

@@ -13,12 +13,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} sidebar_panelextension )
 
 target_link_libraries(sidebar_panelextension  ${KDE4_KDECORE_LIBS} kickermain kdeui kparts konq )
 
-install_targets(${PLUGIN_INSTALL_DIR} sidebar_panelextension )
+install(TARGETS sidebar_panelextension  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/extensions FILES sidebarextension.desktop )
+install( FILES sidebarextension.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/extensions )
 
 
 

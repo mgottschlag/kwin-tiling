@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kdm/pics FILES kdelogo.png kdelogo-crystal.png shutdown.jpg default1.png default2.png default3.png root1.png )
+install( FILES kdelogo.png kdelogo-crystal.png shutdown.jpg default1.png default2.png default3.png root1.png  DESTINATION  ${DATA_INSTALL_DIR}/kdm/pics )
 
 
 

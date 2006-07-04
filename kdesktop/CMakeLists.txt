@@ -73,7 +73,7 @@ if(X11_Xss_LIB)
   target_link_libraries(kdeinit_kdesktop ${X11_Xss_LIB})
 endif(X11_Xss_LIB)
 
-install_targets(${LIB_INSTALL_DIR} kdeinit_kdesktop )
+install(TARGETS kdeinit_kdesktop  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kdesktop kdeinit_kdesktop )
 install(TARGETS kdesktop DESTINATION bin)
@@ -88,12 +88,12 @@ add_subdirectory( kwebdesktop )
 
 ########### install files ###############
 
-install_files( ${KCFG_INSTALL_DIR} FILES kdesktop.kcfg klaunch.kcfg )
+install( FILES kdesktop.kcfg klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR} )
 install_files( /share/autostart FILES kdesktop.desktop )
-install_files( ${DATA_INSTALL_DIR}/konqueror/servicemenus FILES kdesktopSetAsBackground.desktop )
+install( FILES kdesktopSetAsBackground.desktop  DESTINATION  ${DATA_INSTALL_DIR}/konqueror/servicemenus )
 # should we install the dbus xml files?
 # install_files( /include FILES KDesktopIface.h KScreensaverIface.h KBackgroundIface.h )
-install_files( ${CONFIG_INSTALL_DIR} FILES kdesktop_custom_menu1 kdesktop_custom_menu2 )
+install( FILES kdesktop_custom_menu1 kdesktop_custom_menu2  DESTINATION  ${CONFIG_INSTALL_DIR} )
 
 
 

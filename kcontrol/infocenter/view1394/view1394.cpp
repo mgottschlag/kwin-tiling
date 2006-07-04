@@ -166,7 +166,7 @@ void View1394::rescanBus()
       raw1394_destroy_handle(*it);
    m_handles.clear();
    m_view->m_listview->clear();
-   
+
    raw1394handle_t handle=raw1394_new_handle();
    if (handle==NULL)
    {
@@ -192,7 +192,7 @@ void View1394::rescanBus()
       connect(notif, SIGNAL(activated(int)), this, SLOT(callRaw1394EventLoop(int)));
       m_notifiers.append(notif);
       m_handles.append(handle);
-      
+
       Q3ListViewItem *card=new Q3ListViewItem(m_view->m_listview,i18n("Port %1:\"%2\"", i, p_info[i].name));
       int num_of_nodes=raw1394_get_nodecount(handle);
 
@@ -279,7 +279,7 @@ void View1394::generateBusReset()
 
 OuiDb::OuiDb()
 {
-   QString filename=locate("data","kcmview1394/oui.db");
+   QString filename=KStandardDirs::locate("data","kcmview1394/oui.db");
    if (filename.isEmpty())
       return;
    QFile f(filename);

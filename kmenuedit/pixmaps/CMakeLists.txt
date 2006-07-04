@@ -3,8 +3,8 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kmenuedit/icons FILES  )
-install_files( ${DATA_INSTALL_DIR}/kcontroledit/icons FILES  )
+install( FILES   DESTINATION  ${DATA_INSTALL_DIR}/kmenuedit/icons )
+install( FILES   DESTINATION  ${DATA_INSTALL_DIR}/kcontroledit/icons )
 
 
 

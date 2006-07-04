@@ -109,15 +109,15 @@ void AboutWidget::setCategory( Q3ListViewItem* category, const QString &caption 
 
 void AboutWidget::updatePixmap()
 {
-    QString file = locate(  "data", "kcontrol/about/main.html" );
+    QString file = KStandardDirs::locate(  "data", "kcontrol/about/main.html" );
     QFile f( file );
     f.open( QIODevice::ReadOnly );
     QTextStream t(  &f );
     QString res = t.readAll();
 
-    res = res.arg(  locate(  "data", "kdeui/about/kde_infopage.css" ) );
+    res = res.arg(  KStandardDirs::locate(  "data", "kdeui/about/kde_infopage.css" ) );
     if (  kapp->layoutDirection() == Qt::RightToLeft )
-        res = res.arg(  "@import \"%1\";" ).arg(  locate(  "data", "kdeui/about/kde_infopage_rtl.css" ) );
+        res = res.arg(  "@import \"%1\";" ).arg(  KStandardDirs::locate(  "data", "kdeui/about/kde_infopage_rtl.css" ) );
     else
         res = res.arg(  "" );
 

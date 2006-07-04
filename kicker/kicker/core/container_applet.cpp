@@ -263,7 +263,7 @@ void AppletContainer::slotRemoved(KConfig* config)
         return;
     }
 
-    QFile::remove(locateLocal("config", _configFile));
+    QFile::remove(KStandardDirs::locateLocal("config", _configFile));
 }
 
 void AppletContainer::activateWindow()

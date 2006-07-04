@@ -53,7 +53,7 @@ void ThemeStandard::_initUi()
     QString resource_prefix = "pics/";
     if ( mTheme->loColor() )
       resource_prefix += "locolor/";
-    pixName = locate( "appdata", resource_prefix + "splash.png");
+    pixName = KStandardDirs::locate( "appdata", resource_prefix + "splash.png");
   }
 
   QPixmap px = QPixmap( pixName );

@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kthememanager/themes/Sunshine FILES Sunshine.xml Sunshine.preview.png )
+install( FILES Sunshine.xml Sunshine.preview.png  DESTINATION  ${DATA_INSTALL_DIR}/kthememanager/themes/Sunshine )
 
 
 

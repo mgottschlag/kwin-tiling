@@ -76,7 +76,7 @@ K_EXPORT_COMPONENT_FACTORY (kcm_screensaver, KSSFactory("kcmscreensaver") )
 
 
 static QString findExe(const QString &exe) {
-    QString result = locate("exe", exe);
+    QString result = KStandardDirs::locate("exe", exe);
     if (result.isEmpty())
         result = KStandardDirs::findExe(exe);
     return result;
@@ -278,7 +278,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QStringList&)
 
     mMonitorLabel = new QLabel( this );
     mMonitorLabel->setAlignment( Qt::AlignCenter );
-    mMonitorLabel->setPixmap( QPixmap(locate("data",
+    mMonitorLabel->setPixmap( QPixmap(KStandardDirs::locate("data",
                          "kcontrol/pics/monitor.png")));
     rightColumnLayout->addWidget(mMonitorLabel, 0);
     mMonitorLabel->setWhatsThis( i18n("A preview of the selected screen saver.") );

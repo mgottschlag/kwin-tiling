@@ -13,12 +13,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_colors )
 
 target_link_libraries(kcm_colors  ${KDE4_KDE3SUPPORT_LIBS} kdefx )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_colors )
+install(TARGETS kcm_colors  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES colors.desktop )
+install( FILES colors.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

@@ -17,12 +17,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_style )
 
 target_link_libraries(kcm_style  ${KDE4_KDE3SUPPORT_LIBS} kdefx )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_style )
+install(TARGETS kcm_style  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES style.desktop )
+install( FILES style.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

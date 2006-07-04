@@ -20,7 +20,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kfontviewpart )
 
 target_link_libraries(kfontviewpart  ${KDE4_KPARTS_LIBS} kdeprint kfontinst )
 
-install_targets(${PLUGIN_INSTALL_DIR} kfontviewpart )
+install(TARGETS kfontviewpart  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### next target ###############
@@ -38,9 +38,9 @@ install(TARGETS kfontview DESTINATION bin)
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES kfontview.desktop )
-install_files( ${DATA_INSTALL_DIR}/kfontview FILES kfontviewpart.rc kfontviewui.rc )
-install_files( ${SERVICES_INSTALL_DIR} FILES kfontviewpart.desktop )
+install( FILES kfontview.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kfontviewpart.rc kfontviewui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kfontview )
+install( FILES kfontviewpart.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

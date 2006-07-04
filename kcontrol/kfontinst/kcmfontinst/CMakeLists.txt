@@ -21,12 +21,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_fontinst )
 
 target_link_libraries(kcm_fontinst  ${KDE4_KIO_LIBS} kfontinst kdeprint kde3support )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_fontinst )
+install(TARGETS kcm_fontinst  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES kcmfontinst.desktop )
+install( FILES kcmfontinst.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

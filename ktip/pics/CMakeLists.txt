@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kdewizard/pics FILES wizard_small.png )
+install( FILES wizard_small.png  DESTINATION  ${DATA_INSTALL_DIR}/kdewizard/pics )
 
 
 

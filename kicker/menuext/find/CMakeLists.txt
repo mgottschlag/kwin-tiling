@@ -13,13 +13,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_find )
 
 target_link_libraries(kickermenu_find  ${KDE4_KDEUI_LIBS} kickermain kworkspace )
 
-install_targets(${PLUGIN_INSTALL_DIR} kickermenu_find )
+install(TARGETS kickermenu_find  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/menuext FILES find.desktop )
-install_files( ${DATA_INSTALL_DIR}/kicker/menuext/find FILES kfind.desktop websearch.desktop )
+install( FILES find.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/menuext )
+install( FILES kfind.desktop websearch.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/menuext/find )
 
 
 

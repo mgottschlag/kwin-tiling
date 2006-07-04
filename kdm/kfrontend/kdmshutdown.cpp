@@ -492,7 +492,7 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	lfrm->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 	hbox->addWidget( lfrm, Qt::AlignCenter );
 	QLabel *icon = new QLabel( lfrm );
-	icon->setPixmap( QPixmap( locate( "data", "kdm/pics/shutdown.jpg" ) ) );
+	icon->setPixmap( QPixmap( KStandardDirs::locate( "data", "kdm/pics/shutdown.jpg" ) ) );
 	QVBoxLayout *iconlay = new QVBoxLayout( lfrm );
 	iconlay->addWidget( icon );
 

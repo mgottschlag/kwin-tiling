@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kcminput/pics FILES mouse_rh.png mouse_lh.png )
+install( FILES mouse_rh.png mouse_lh.png  DESTINATION  ${DATA_INSTALL_DIR}/kcminput/pics )
 
 
 

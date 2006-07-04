@@ -30,13 +30,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} launcher_panelapplet )
 
 target_link_libraries(launcher_panelapplet ${KDE4_KDE3SUPPORT_LIBS}  konq kickermain )
 
-install_targets(${PLUGIN_INSTALL_DIR} launcher_panelapplet )
+install(TARGETS launcher_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${KCFG_INSTALL_DIR} FILES launcherapplet.kcfg )
-install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES quicklauncher.desktop )
+install( FILES launcherapplet.kcfg  DESTINATION  ${KCFG_INSTALL_DIR} )
+install( FILES quicklauncher.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
 
 
 

@@ -86,7 +86,7 @@ bool requestShutDown(
 					      &myId,
 					      255,
 					      cerror );
-	::free( myId ); // it was alKStandardDirs::located by C
+	::free( myId ); // it was allocated by C
 	if (!tmpSmcConnection )
 	    return false;
 

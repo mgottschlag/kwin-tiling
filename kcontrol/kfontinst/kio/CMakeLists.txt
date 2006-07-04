@@ -17,14 +17,14 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kio_fonts )
 
 target_link_libraries(kio_fonts  ${KDE4_KDECORE_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KDESU_LIBS} kfontinst )
 
-install_targets(${PLUGIN_INSTALL_DIR} kio_fonts )
+install(TARGETS kio_fonts  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/konqsidebartng/virtual_folders/services FILES fonts.desktop )
-install_files( ${MIME_INSTALL_DIR}/fonts FILES folder.desktop system-folder.desktop package.desktop )
-install_files( ${SERVICES_INSTALL_DIR} FILES fonts.protocol )
+install( FILES fonts.desktop  DESTINATION  ${DATA_INSTALL_DIR}/konqsidebartng/virtual_folders/services )
+install( FILES folder.desktop system-folder.desktop package.desktop  DESTINATION  ${MIME_INSTALL_DIR}/fonts )
+install( FILES fonts.protocol  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

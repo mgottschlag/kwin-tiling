@@ -413,9 +413,9 @@ void ExtensionContainer::removeSessionConfigFile()
         return;
     }
 
-    if (QFile::exists(locate("config", _info.configFile())))
+    if (QFile::exists(KStandardDirs::locate("config", _info.configFile())))
     {
-        QFile::remove(locate("config", _info.configFile()));
+        QFile::remove(KStandardDirs::locate("config", _info.configFile()));
     }
 }
 

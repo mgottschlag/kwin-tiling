@@ -24,7 +24,7 @@ kde4_add_kdeinit_executable( kxkb ${kxkb_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kxkb  ${KDE4_KDECORE_LIBS} xkbfile X11 Xext kdeui )
 
-install_targets(${LIB_INSTALL_DIR} kdeinit_kxkb )
+install(TARGETS kdeinit_kxkb  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kxkb kdeinit_kxkb )
 install(TARGETS kxkb DESTINATION bin)
@@ -51,16 +51,16 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_keyboard )
 
 target_link_libraries(kcm_keyboard  ${KDE4_KDECORE_LIBS} xkbfile kio )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_keyboard )
+install(TARGETS kcm_keyboard  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES keyboard.desktop keyboard_layout.desktop )
-install_files( ${SERVICES_INSTALL_DIR} FILES kxkb.desktop )
+install( FILES keyboard.desktop keyboard_layout.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kxkb.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
-install(FILES kxkb_groups DESTINATION ${CMAKE_INSTALL_PREFIX}${CONFIG_INSTALL_DIR} )
+install(FILES kxkb_groups DESTINATION ${CONFIG_INSTALL_DIR} )
 
 
 

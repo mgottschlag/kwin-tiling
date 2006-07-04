@@ -13,12 +13,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_ioslaveinfo )
 
 target_link_libraries(kcm_ioslaveinfo  ${KDE4_KIO_LIBS} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_ioslaveinfo )
+install(TARGETS kcm_ioslaveinfo  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES ioslaveinfo.desktop )
+install( FILES ioslaveinfo.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 
 

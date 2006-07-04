@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kthememanager/themes/YellowOnBlue-big FILES YellowOnBlue-big.preview.png YellowOnBlue-big.xml )
+install( FILES YellowOnBlue-big.preview.png YellowOnBlue-big.xml  DESTINATION  ${DATA_INSTALL_DIR}/kthememanager/themes/YellowOnBlue-big )
 
 
 

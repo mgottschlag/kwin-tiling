@@ -13,12 +13,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} run_panelapplet )
 
 target_link_libraries(run_panelapplet  ${KDE4_KDECORE_LIBS} kworkspace kdeui kickermain )
 
-install_targets(${PLUGIN_INSTALL_DIR} run_panelapplet )
+install(TARGETS run_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/applets FILES runapplet.desktop )
+install( FILES runapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
 
 
 

@@ -104,7 +104,7 @@ void KonsoleMenu::initialize()
                                                          "konsole/*.desktop",
                                                           false, true);
 
-    QString defaultShell = locate("data", "konsole/shell.desktop");
+    QString defaultShell = KStandardDirs::locate("data", "konsole/shell.desktop");
     list.prepend(defaultShell);
 
     int id = 1;

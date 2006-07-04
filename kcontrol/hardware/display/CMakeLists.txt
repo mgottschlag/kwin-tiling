@@ -13,12 +13,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_display )
 
 target_link_libraries(kcm_display  ${KDE4_KDECORE_LIBS} kutils ${QT_QTGUI_LIBRARY} kdeui)
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_display )
+install(TARGETS kcm_display  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES display.desktop )
+install( FILES display.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 
 

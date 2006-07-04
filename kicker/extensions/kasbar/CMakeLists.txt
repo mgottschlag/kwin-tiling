@@ -26,7 +26,7 @@ kde4_add_library(kasbar SHARED ${kasbar_LIB_SRCS})
 target_link_libraries(kasbar  ${KDE4_KDEUI_LIBS} taskmanager kasbar kdeui )
 
 set_target_properties(kasbar PROPERTIES VERSION 1.0.0 SOVERSION 1 )
-install_targets(${LIB_INSTALL_DIR} kasbar )
+install(TARGETS kasbar  DESTINATION ${LIB_INSTALL_DIR} )
 
 
 ########### next target ###############
@@ -41,7 +41,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kasbar_panelextension )
 
 target_link_libraries(kasbar_panelextension  ${KDE4_KDECORE_LIBS} kasbar )
 
-install_targets(${PLUGIN_INSTALL_DIR} kasbar_panelextension )
+install(TARGETS kasbar_panelextension  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### next target ###############
@@ -59,7 +59,7 @@ install(TARGETS kasbar DESTINATION bin)
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/extensions FILES kasbarextension.desktop )
+install( FILES kasbarextension.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/extensions )
 
 
 

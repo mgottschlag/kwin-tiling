@@ -13,12 +13,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_systemmenu )
 
 target_link_libraries(kickermenu_systemmenu  ${KDE4_KIO_LIBS} kickermain )
 
-install_targets(${PLUGIN_INSTALL_DIR} kickermenu_systemmenu )
+install(TARGETS kickermenu_systemmenu  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/menuext FILES systemmenu.desktop )
+install( FILES systemmenu.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/menuext )
 
 
 

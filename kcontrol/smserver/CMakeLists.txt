@@ -14,12 +14,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_smserver )
 
 target_link_libraries(kcm_smserver  ${KDE4_KDE3SUPPORT_LIBS} )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_smserver )
+install(TARGETS kcm_smserver  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES kcmsmserver.desktop )
+install( FILES kcmsmserver.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 
 

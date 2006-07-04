@@ -353,7 +353,7 @@ void LockProcess::readSaver()
 {
     if (!mSaver.isEmpty())
     {
-        QString file = KStandardDirs::KStandardDirs::locate("scrsav", mSaver);
+        QString file = KStandardDirs::locate("scrsav", mSaver);
 
 	bool opengl = KAuthorized::authorizeKAction("opengl_screensavers");
 	bool manipulatescreen = KAuthorized::authorizeKAction("manipulatescreen_screensavers");

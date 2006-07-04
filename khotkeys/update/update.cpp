@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 2003 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _UPDATE_CPP_
@@ -39,7 +39,7 @@ int main( int argc, char* argv[] )
     KApplication app( true ); // X11 connection is necessary for KKey* stuff :-/
     KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
     QByteArray id = args->getOption( "id" );
-    QString file = locate( "data", "khotkeys/" + id + ".khotkeys" );
+    QString file = KStandardDirs::locate( "data", "khotkeys/" + id + ".khotkeys" );
     if( file.isEmpty())
         {
         kWarning() << "File " << id << " not found!" << endl;

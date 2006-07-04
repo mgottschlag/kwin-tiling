@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kthememanager/themes/Redmond FILES Redmond.xml Redmond.preview.png )
+install( FILES Redmond.xml Redmond.preview.png  DESTINATION  ${DATA_INSTALL_DIR}/kthememanager/themes/Redmond )
 
 
 

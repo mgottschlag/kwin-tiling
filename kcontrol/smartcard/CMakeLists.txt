@@ -16,12 +16,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_smartcard )
 
 target_link_libraries(kcm_smartcard  ${KDE4_KDEUI_LIBS} ksmartcard kio )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_smartcard )
+install(TARGETS kcm_smartcard  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES smartcard.desktop )
+install( FILES smartcard.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 
 

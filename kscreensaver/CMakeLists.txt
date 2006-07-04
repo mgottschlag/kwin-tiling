@@ -8,11 +8,4 @@ add_subdirectory( krandom_screensaver )
 
 ########### install files ###############
 
-
-
-
-
-#original Makefile.am contents follow:
-
-#SUBDIRS = libkscreensaver applnk kblank_screensaver krandom_screensaver
-#
+install( FILES screensaver.desktop   DESTINATION  ${SERVICETYPES_INSTALL_DIR} )

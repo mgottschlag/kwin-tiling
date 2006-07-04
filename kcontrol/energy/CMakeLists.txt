@@ -15,12 +15,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_energy )
 
 target_link_libraries(kcm_energy  ${KDE4_KIO_LIBS} )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_energy )
+install(TARGETS kcm_energy  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${APPLNK_INSTALL_DIR}/.hidden FILES energy.desktop )
+install( FILES energy.desktop  DESTINATION  ${APPLNK_INSTALL_DIR}/.hidden )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

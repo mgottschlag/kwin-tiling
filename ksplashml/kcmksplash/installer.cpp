@@ -183,7 +183,7 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   // Convert extension to lower case.
   if (i >= 0)
      filename = filename.left(i)+filename.mid(i).toLower();
-  url.setPath(locateLocal("tmp",filename));
+  url.setPath(KStandardDirs::locateLocal("tmp",filename));
 
   // Remove file from temporary directory if it aleady exists - usually the result of a failed install.
   if ( KIO::NetAccess::exists( url, true, 0 ) )
@@ -221,7 +221,7 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
 #endif
   // TODO: Make sure we put the entries into a subdirectory if the tarball does not.
   // TODO: Warn the user if we overwrite something.
-  ad->copyTo(locateLocal("ksplashthemes","/"));
+  ad->copyTo(KStandardDirs::locate("ksplashthemes","/"));
   tarFile.close();
   KIO::NetAccess::del( url, 0 );
 

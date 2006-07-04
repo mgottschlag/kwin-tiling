@@ -13,12 +13,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kickermenu_konqueror )
 
 target_link_libraries(kickermenu_konqueror  ${KDE4_KIO_LIBS} kickermain )
 
-install_targets(${PLUGIN_INSTALL_DIR} kickermenu_konqueror )
+install(TARGETS kickermenu_konqueror  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kicker/menuext FILES konquerormenu.desktop )
+install( FILES konquerormenu.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/menuext )
 
 
 

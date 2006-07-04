@@ -14,7 +14,7 @@ kde4_add_library(kworkspace SHARED ${kworkspace_LIB_SRCS})
 target_link_libraries(kworkspace  ${KDE4_KIO_LIBS} ${X11_LIBRARIES} )
 
 set_target_properties(kworkspace PROPERTIES VERSION 1.0.0 SOVERSION 1 )
-install_targets(${LIB_INSTALL_DIR} kworkspace )
+install(TARGETS kworkspace  DESTINATION ${LIB_INSTALL_DIR} )
 
 
 ########### install files ###############

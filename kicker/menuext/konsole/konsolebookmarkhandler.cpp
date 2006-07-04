@@ -27,13 +27,13 @@ KonsoleBookmarkHandler::KonsoleBookmarkHandler( KonsoleMenu *konsole, bool )
     m_menu = new KMenu(konsole);
     m_menu->setObjectName("bookmark menu");
 
-    QString file = locate( "data", "kfile/bookmarks.xml" );
+    QString file = KStandardDirs::locate( "data", "kfile/bookmarks.xml" );
     if ( file.isEmpty() )
-        file = locateLocal( "data", "kfile/bookmarks.xml" );
+        file = KStandardDirs::locateLocal( "data", "kfile/bookmarks.xml" );
 
     // import old bookmarks
     if ( !KStandardDirs::exists( file ) ) {
-        QString oldFile = locate( "data", "kfile/bookmarks.html" );
+        QString oldFile = KStandardDirs::locate( "data", "kfile/bookmarks.html" );
         if ( !oldFile.isEmpty() )
             importOldBookmarks( oldFile, file );
     }

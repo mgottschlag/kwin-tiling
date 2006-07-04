@@ -66,10 +66,10 @@ bool ObjKsTheme::loadThemeRc( const QString& activeTheme, bool force )
   KConfig *cf = 0L;
 
   // Try our best to find a theme file.
-  themeFile = locate( "appdata", prefix + activeTheme + '/' + QString("Theme.rc") );
-  themeFile = themeFile.isEmpty() ? locate("appdata",prefix+activeTheme+'/'+QString("Theme.RC")):themeFile;
-  themeFile = themeFile.isEmpty() ? locate("appdata",prefix+activeTheme+'/'+QString("theme.rc")):themeFile;
-  themeFile = themeFile.isEmpty() ? locate("appdata",prefix+activeTheme+'/'+activeTheme+QString(".rc")):themeFile;
+  themeFile = KStandardDirs::locate( "appdata", prefix + activeTheme + '/' + QString("Theme.rc") );
+  themeFile = themeFile.isEmpty() ? KStandardDirs::locate("appdata",prefix+activeTheme+'/'+QString("Theme.RC")):themeFile;
+  themeFile = themeFile.isEmpty() ? KStandardDirs::locate("appdata",prefix+activeTheme+'/'+QString("theme.rc")):themeFile;
+  themeFile = themeFile.isEmpty() ? KStandardDirs::locate("appdata",prefix+activeTheme+'/'+activeTheme+QString(".rc")):themeFile;
 
   if( !themeFile.isEmpty() )
      cf = new KConfig( themeFile );
@@ -157,12 +157,12 @@ void ObjKsTheme::loadCmdLineArgs( KCmdLineArgs *args )
 QString ObjKsTheme::locateThemeData( const QString &resource )
 {
   if ( !mLoColor )
-    return locate( "appdata", mThemePrefix+resource );
+    return KStandardDirs::locate( "appdata", mThemePrefix+resource );
   else
   {
-    QString res = locate( "appdata", mThemePrefix+"locolor/"+resource );
+    QString res = KStandardDirs::locate( "appdata", mThemePrefix+"locolor/"+resource );
     if ( res.isEmpty() )
-      res = locate( "appdata", mThemePrefix+resource );
+      res = KStandardDirs::locate( "appdata", mThemePrefix+resource );
     return res;
   }
 }

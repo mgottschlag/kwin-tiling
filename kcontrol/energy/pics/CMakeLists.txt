@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kcontrol/pics FILES energybig.png lo-energy.png )
+install( FILES energybig.png lo-energy.png  DESTINATION  ${DATA_INSTALL_DIR}/kcontrol/pics )
 
 
 

@@ -179,7 +179,7 @@ void PrefMenu::mouseMoveEvent(QMouseEvent * ev)
             QString filePath = service->desktopEntryPath();
             if (filePath[0] != '/')
             {
-                filePath = locate("apps", filePath);
+                filePath = KStandardDirs::locate("apps", filePath);
             }
             url.setPath(filePath);
             break;

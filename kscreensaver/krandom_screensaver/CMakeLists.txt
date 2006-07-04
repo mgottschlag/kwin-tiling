@@ -18,34 +18,5 @@ install(TARGETS krandom.kss DESTINATION bin)
 
 ########### install files ###############
 
-install_files( ${APPLNK_INSTALL_DIR}/System/ScreenSavers FILES krandom.desktop )
+install( FILES krandom.desktop  DESTINATION  ${SERVICES_INSTALL_DIR}/ScreenSavers )
 
-
-
-
-#original Makefile.am contents follow:
-
-## Makefile.am for krandom screensaver.
-##
-#
-#AM_CPPFLAGS = -UQT_NO_ASCII_CAST
-#
-#INCLUDES = -I$(top_srcdir)/workspace/kscreensaver/libkscreensaver $(all_includes)
-#AM_LDFLAGS = $(all_libraries) $(KDE_RPATH)
-#
-#bin_PROGRAMS = krandom.kss
-#
-#krandom_kss_SOURCES = random.cpp
-#krandom_kss_LDADD = $(LIB_KDEUI) -lm
-#
-#METASOURCES = AUTO
-#
-#messages:
-#	$(XGETTEXT) *.cpp *.h -o $(podir)/kscreensaver.pot
-#
-########### Meta objects ##########
-#
-#desktop_DATA = krandom.desktop
-#desktopdir = $(kde_appsdir)/System/ScreenSavers
-#
-#EXTRA_DIST = $(desktop_DATA)

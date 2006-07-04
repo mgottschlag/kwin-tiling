@@ -15,13 +15,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_view1394 )
 
 target_link_libraries(kcm_view1394  ${KDE4_KDE3SUPPORT_LIBS} raw1394 )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_view1394 )
+install(TARGETS kcm_view1394  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES kcmview1394.desktop )
-install_files( ${DATA_INSTALL_DIR}/kcmview1394 FILES oui.db )
+install( FILES kcmview1394.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES oui.db  DESTINATION  ${DATA_INSTALL_DIR}/kcmview1394 )
 
 
 

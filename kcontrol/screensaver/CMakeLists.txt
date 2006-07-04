@@ -21,12 +21,12 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_screensaver )
 
 target_link_libraries(kcm_screensaver  ${KDE4_KDE3SUPPORT_LIBS})
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_screensaver )
+install(TARGETS kcm_screensaver  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES screensaver.desktop )
+install( FILES screensaver.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

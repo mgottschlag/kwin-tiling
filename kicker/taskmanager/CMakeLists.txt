@@ -21,7 +21,7 @@ if (X11_Xcomposite_FOUND)
 endif (X11_Xcomposite_FOUND)
 
 set_target_properties(taskmanager PROPERTIES VERSION 1.0.0 SOVERSION 1 )
-install_targets(${LIB_INSTALL_DIR} taskmanager )
+install(TARGETS taskmanager  DESTINATION ${LIB_INSTALL_DIR} )
 
 
 ########### install files ###############

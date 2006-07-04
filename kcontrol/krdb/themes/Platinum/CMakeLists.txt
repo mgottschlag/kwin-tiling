@@ -3,7 +3,7 @@
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/kthememanager/themes/Platinum FILES Platinum.xml Platinum.preview.png )
+install( FILES Platinum.xml Platinum.preview.png  DESTINATION  ${DATA_INSTALL_DIR}/kthememanager/themes/Platinum )
 
 
 

@@ -217,7 +217,7 @@ void IconThemesConfig::installNewTheme()
 bool IconThemesConfig::installThemes(const QStringList &themes, const QString &archiveName)
 {
   bool everythingOk = true;
-  QString localThemesDir(locateLocal("icon", "./"));
+  QString localThemesDir(KStandardDirs::locateLocal("icon", "./"));
 
   KProgressDialog progressDiag(this,
                                i18n("Installing icon themes"),
@@ -301,7 +301,7 @@ void IconThemesConfig::removeSelectedTheme()
   QString question=i18n("<qt>Are you sure you want to remove the "
         "<strong>%1</strong> icon theme?<br>"
         "<br>"
-        "This will delete the files installed by this theme.</qt>", 
+        "This will delete the files installed by this theme.</qt>",
 	selected->text(0));
 
   bool deletingCurrentTheme=(selected==iconThemeItem(KIconTheme::current()));

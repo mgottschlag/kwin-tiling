@@ -26,7 +26,7 @@ endif (X11_XFT_FOUND)
 
 ########### install files ###############
 
-install_files( ${DATA_INSTALL_DIR}/konqueror/servicemenus FILES installfont.desktop )
+install( FILES installfont.desktop  DESTINATION  ${DATA_INSTALL_DIR}/konqueror/servicemenus )
 
 
 

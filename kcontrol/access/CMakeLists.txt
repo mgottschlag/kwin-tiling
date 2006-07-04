@@ -13,7 +13,7 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_access )
 
 target_link_libraries(kcm_access  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_PHONONCORE_LIBRARY} )
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_access )
+install(TARGETS kcm_access  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### next target ###############
@@ -26,16 +26,16 @@ kde4_add_kdeinit_executable( kaccess ${kaccess_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kaccess  ${KDE4_KDEUI_LIBS} ${KDE4_PHONONCORE_LIBRARY}  )
 
-install_targets(${LIB_INSTALL_DIR} kdeinit_kaccess )
+install(TARGETS kdeinit_kaccess  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kaccess kdeinit_kaccess )
 install(TARGETS kaccess DESTINATION bin)
 
 ########### install files ###############
 
-install_files( ${XDG_APPS_DIR} FILES kcmaccess.desktop )
-install_files( ${SERVICES_INSTALL_DIR} FILES kaccess.desktop )
-install_files( ${DATA_INSTALL_DIR}/kaccess/ FILES eventsrc )
+install( FILES kcmaccess.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kaccess.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
+install( FILES eventsrc  DESTINATION  ${DATA_INSTALL_DIR}/kaccess/ )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

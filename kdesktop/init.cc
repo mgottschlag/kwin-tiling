@@ -102,7 +102,7 @@ static void copyDirectoryFile(const QString &fileName, const QString& dir, bool 
 {
   if (force || !QFile::exists(dir + "/.directory")) {
     QString cmd = "cp ";
-    cmd += KProcess::quote(locate("data", QString("kdesktop/") + fileName));
+    cmd += KProcess::quote(KStandardDirs::locate("data", QString("kdesktop/") + fileName));
     cmd += ' ';
     cmd += KProcess::quote(dir+"/.directory");
     system( QFile::encodeName(cmd) );
@@ -218,7 +218,7 @@ void testLocalInstallation()
             oldIcon = trashDesktop.readIcon();
             oldEmptyIcon = trashDesktop.readEntry( "EmptyIcon" );
         }
-        copyFile( locate( "data", "kdesktop/directory.trash" ), trashDesktopPath );
+        copyFile( KStandardDirs::locate( "data", "kdesktop/directory.trash" ), trashDesktopPath );
         if ( trashDesktopExists ) {
             KDesktopFile trashDesktop( trashDesktopPath );
             trashDesktop.writeEntry( "Icon", oldIcon );
@@ -237,7 +237,7 @@ void testLocalInstallation()
         (void)KIO::NetAccess::synchronousRun( job, 0 );
 
         // OK the only thing missing is to convert the icon position...
-        KSimpleConfig cfg( locateLocal("appdata", "IconPositions") );
+        KSimpleConfig cfg( KStandardDirs::locateLocal("appdata", "IconPositions") );
         if ( cfg.hasGroup( "IconPosition::Trash" ) && !cfg.hasGroup( "IconPosition::trash.desktop" ) ) {
             const QMap<QString, QString> entries = cfg.entryMap( "IconPosition::Trash" );
             cfg.setGroup( "IconPosition::trash.desktop" );

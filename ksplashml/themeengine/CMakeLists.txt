@@ -20,12 +20,12 @@ if(X11_Xcursor_FOUND)
 endif(X11_Xcursor_FOUND)
 
 set_target_properties(ksplashthemes PROPERTIES VERSION 0.0.0 SOVERSION 0 )
-install_targets(${LIB_INSTALL_DIR} ksplashthemes )
+install(TARGETS ksplashthemes  DESTINATION ${LIB_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${SERVICETYPES_INSTALL_DIR} FILES ksplashplugins.desktop )
+install( FILES ksplashplugins.desktop  DESTINATION  ${SERVICETYPES_INSTALL_DIR} )
 install_files( /include/ksplash FILES themeengine.h objkstheme.h )
 
 

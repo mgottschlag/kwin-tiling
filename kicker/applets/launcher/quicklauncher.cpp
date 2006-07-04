@@ -921,7 +921,7 @@ void QuickLauncher::serviceStartedByStorageId(QString /*starter*/, QString stora
         kDebug() << storageId << " has no icon. Makes no sense to add it.";
         return;
     }
-    QuickURL url = QuickURL(locate("apps", service->desktopEntryPath()));
+    QuickURL url = QuickURL(KStandardDirs::locate("apps", service->desktopEntryPath()));
     QString desktopMenuId(url.menuId());
     kDebug() << "storageId=" << storageId << " desktopURL=" << desktopMenuId << endl;
     // A service was started somwhere else. If the quicklauncher contains

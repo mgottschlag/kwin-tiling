@@ -15,13 +15,13 @@ kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kthememanager )
 
 target_link_libraries(kcm_kthememanager  ${KDE4_KIO_LIBS} kde3support  ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} kdeui ${QT_QTXML_LIBRARY})
 
-install_targets(${PLUGIN_INSTALL_DIR} kcm_kthememanager )
+install(TARGETS kcm_kthememanager  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install_files( ${MIME_INSTALL_DIR}/application FILES x-ktheme.desktop )
-install_files( ${XDG_APPS_DIR} FILES kthememanager.desktop installktheme.desktop )
+install( FILES x-ktheme.desktop  DESTINATION  ${MIME_INSTALL_DIR}/application )
+install( FILES kthememanager.desktop installktheme.desktop  DESTINATION  ${XDG_APPS_DIR} )
 install(PROGRAMS kdeinstallktheme DESTINATION bin)
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
