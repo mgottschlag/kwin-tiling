@@ -177,7 +177,7 @@ void FontUseItem::writeFont()
     config->setGroup(_rcgroup);
     config->writeEntry(_rckey, font(), KConfigBase::Normal|KConfigBase::Global);
   } else {
-    config = new KSimpleConfig(locateLocal("config", _rcfile));
+    config = new KSimpleConfig(KStandardDirs::locateLocal("config", _rcfile));
     config->setGroup(_rcgroup);
     config->writeEntry(_rckey, font());
     config->sync();

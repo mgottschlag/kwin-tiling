@@ -891,7 +891,7 @@ QString KBackgroundRenderer::cacheFileName()
     QString f = fingerprint();
     f.replace ( ':', '_' ); // avoid characters that shouldn't be in filenames
     f.replace ( '/', '#' );
-    f = locateLocal( "cache", QString( "background/%1x%2_%3.png" )
+    f = KStandardDirs::locateLocal( "cache", QString( "background/%1x%2_%3.png" )
         .arg( m_Size.width()).arg( m_Size.height()).arg( f ));
     return f;
 }
@@ -938,7 +938,7 @@ void KBackgroundRenderer::saveCacheFile()
     else {
         m_Image.save( f, "PNG" );
         // remove old entries from the cache
-        QDir dir( locateLocal( "cache", "background/" ));
+        QDir dir( KStandardDirs::locateLocal( "cache", "background/" ));
         const QFileInfoList list = dir.entryInfoList( "*.png", QDir::Files, QDir::Time | QDir::Reversed );
         if( !list.isEmpty()) {
             int size = 0;

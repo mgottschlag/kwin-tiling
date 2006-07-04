@@ -47,7 +47,7 @@ public:
 MenuInfo::MenuInfo(const QString& desktopFile)
 {
     d = new Private;
-    KSimpleConfig df(locate("data", QString::fromLatin1("kicker/menuext/%1").arg(desktopFile)));
+    KSimpleConfig df(KStandardDirs::locate("data", QString::fromLatin1("kicker/menuext/%1").arg(desktopFile)));
     df.setGroup("Desktop Entry");
 
     QStringList list = df.readEntry("X-KDE-AuthorizeAction", QStringList() );

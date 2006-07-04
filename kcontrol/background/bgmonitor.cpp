@@ -164,7 +164,7 @@ BGMonitorLabel::BGMonitorLabel(QWidget *parent, const char *name)
     setObjectName( name );
     setAlignment(Qt::AlignCenter);
     setScaledContents(true);
-    setPixmap( QPixmap( locate("data",  "kcontrol/pics/monitor.png") ) );
+    setPixmap( QPixmap( KStandardDirs::locate("data",  "kcontrol/pics/monitor.png") ) );
     m_pBGMonitor = new BGMonitor(this);
     setWhatsThis( i18n("This picture of a monitor contains a preview of what the current settings will look like on your desktop.") );
 }

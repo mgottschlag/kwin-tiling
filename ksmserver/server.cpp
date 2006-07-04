@@ -635,7 +635,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 
     {
         // publish available transports.
-        QByteArray fName = QFile::encodeName(locateLocal("socket", "KSMserver"));
+        QByteArray fName = QFile::encodeName(KStandardDirs::locateLocal("socket", "KSMserver"));
         QString display = ::getenv("DISPLAY");
         // strip the screen number from the display
         display.replace(QRegExp("\\.[0-9]+$"), "");
@@ -701,7 +701,7 @@ void KSMServer::cleanUp()
     clean = true;
     IceFreeListenObjs (numTransports, listenObjs);
 
-    QByteArray fName = QFile::encodeName(locateLocal("socket", "KSMserver"));
+    QByteArray fName = QFile::encodeName(KStandardDirs::locateLocal("socket", "KSMserver"));
     QString display  = QString::fromLocal8Bit(::getenv("DISPLAY"));
     // strip the screen number from the display
     display.replace(QRegExp("\\.[0-9]+$"), "");
@@ -836,7 +836,7 @@ void KSMServer::storeSession()
     KConfig* config = KGlobal::config();
     config->reparseConfiguration(); // config may have changed in the KControl module
     config->setGroup("General" );
-    excludeApps = config->readEntry( "excludeApps" ).toLower().split( QRegExp( "[,:]" ), QString::SkipEmptyParts ); 
+    excludeApps = config->readEntry( "excludeApps" ).toLower().split( QRegExp( "[,:]" ), QString::SkipEmptyParts );
     config->setGroup( sessionGroup );
     int count =  config->readEntry( "count", 0 );
     for ( int i = 1; i <= count; i++ ) {

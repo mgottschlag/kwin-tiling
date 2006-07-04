@@ -266,7 +266,7 @@ void KLocaleConfigTime::save()
   KConfig *config = KGlobal::config();
   KConfigGroup group(config, "Locale");
 
-  KSimpleConfig ent(locate("locale",
+  KSimpleConfig ent(KStandardDirs::locate("locale",
 			   QString::fromLatin1("l10n/%1/entry.desktop")
 			   .arg(m_locale->country())), true);
   ent.setGroup("KCM Locale");

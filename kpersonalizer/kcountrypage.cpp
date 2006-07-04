@@ -125,7 +125,7 @@ void KCountryPage::loadCountryList(KLanguageButton *combo) {
 		index = tag.lastIndexOf('/');
 		tag = tag.mid(index+1);
 
-		QPixmap flag( locate( "locale", QString::fromLatin1("l10n/%1/flag.png").arg(tag) ) );
+		QPixmap flag( KStandardDirs::locate( "locale", QString::fromLatin1("l10n/%1/flag.png").arg(tag) ) );
 		QIcon icon( flag );
 		combo->insertItem( icon, name, tag, submenu );
 	}
@@ -179,7 +179,7 @@ bool KCountryPage::save(KLanguageButton *comboCountry, KLanguageButton *comboLan
 }
 
 void KCountryPage::setLangForCountry(const QString &country) {
-	KSimpleConfig ent(locate("locale", "l10n/" + country + "/entry.desktop"), true);
+	KSimpleConfig ent(KStandardDirs::locate("locale", "l10n/" + country + "/entry.desktop"), true);
 	ent.setGroup(QLatin1String("KCM Locale"));
 	langs = ent.readEntry(QLatin1String("Languages"),QStringList());
 

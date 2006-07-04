@@ -187,7 +187,7 @@ void KStylePage::saveColors(bool curSettings){
 	config->writeEntry("activeTitleBtnBg", toSave->activeTitleBtnBg, KConfigBase::Persistent|KConfigBase::Global);
 	config->writeEntry("inactiveTitleBtnBg", toSave->inactiveTitleBtnBg, KConfigBase::Persistent|KConfigBase::Global);
         config->writeEntry("alternateBackground", toSave->alternateBackground,KConfigBase::Persistent|KConfigBase::Global);
-		
+
 	////////////////////////////////////////////////////
 	// KDE-1.x support
 	KSimpleConfig *kconfig =
@@ -206,7 +206,7 @@ void KStylePage::saveColors(bool curSettings){
 	// write the color scheme filename and the contrast, default 7, otherwise from file
 	config->writeEntry("colorScheme", toSave->colorFile,KConfigBase::Persistent|KConfigBase::Global);
 	config->writeEntry("contrast", toSave->contrast, KConfigBase::Persistent|KConfigBase::Global);
-		
+
 	config->sync();
 
 	// background color changes
@@ -340,31 +340,31 @@ void KStylePage::getColors(colorSet *set, bool colorfile ){
 			set->bgMode="VerticalGradient";
 			set->usrCol1.setNamedColor ("#1E72A0");
 			set->usrCol2.setNamedColor ("#C0C0C0");
-			set->colorFile=locate("colors", "KDETwo.kcsrc");
+			set->colorFile=KStandardDirs::locate("colors", "KDETwo.kcsrc");
 		}
 		else if(keramik->isSelected()){
 			set->bgMode="VerticalGradient";
 			set->usrCol1.setNamedColor ("#1E72A0");
 			set->usrCol2.setNamedColor ("#C0C0C0");
-			set->colorFile=locate("colors","Keramik.kcsrc");
+			set->colorFile=KStandardDirs::locate("colors","Keramik.kcsrc");
 		}
 		else if(cde->isSelected()){
 			set->bgMode="Flat";
 			set->usrCol1.setNamedColor("#718BA5");
 			set->usrCol2.setNamedColor ("#C0C0C0");
-			set->colorFile=locate("colors","SolarisCDE.kcsrc");
+			set->colorFile=KStandardDirs::locate("colors","SolarisCDE.kcsrc");
 		}
 		else if(win->isSelected()){
 			set->bgMode="Flat";
 			set->usrCol1.setNamedColor("#008183");
 			set->usrCol2.setNamedColor ("#C0C0C0");
-			set->colorFile=locate("colors","Windows2000.kcsrc");
+			set->colorFile=KStandardDirs::locate("colors","Windows2000.kcsrc");
 		}
 		else if(platinum->isSelected()){
 			set->bgMode="VerticalGradient";
 			set->usrCol1.setNamedColor("#2A569D");
 			set->usrCol2.setNamedColor("#6C8BB9");
-			set->colorFile=locate("colors","EveX.kcsrc");
+			set->colorFile=KStandardDirs::locate("colors","EveX.kcsrc");
 		}
 		set->contrast=7;
 		config = new KSimpleConfig(set->colorFile, true);
@@ -420,7 +420,7 @@ void KStylePage::getColors(colorSet *set, bool colorfile ){
 void KStylePage::getAvailability() {
 	// test, which styles are available
 	kde_keramik_exist = kde_hc_exist = kde_def_exist = cde_exist
-		= kde_plastik_exist = win_exist = platinum_exist 
+		= kde_plastik_exist = win_exist = platinum_exist
 		= kde_light_exist = false;
 	QStringList styles = QStyleFactory::keys();
 	for (QStringList::iterator it = styles.begin(); it != styles.end(); it++) {
@@ -508,7 +508,7 @@ void KStylePage::initColors() {
         activeTitleBtnBg.setRgb(127,158,200);
         inactiveTitleBtnBg.setRgb(167,181,199);
         alternateBackground.setRgb(237,244,249);
-        
+
 	if (QPixmap::defaultDepth() > 8)
 		button.setRgb(221, 223, 228);
 	else
@@ -529,7 +529,7 @@ void KStylePage::liveUpdate() {
 	// color palette changes
 	KIPC::sendMessageAll(KIPC::PaletteChanged);
 	// kwin-style
-#warning "kde4: reimplement kwin* dcop function into dbus" 
+#warning "kde4: reimplement kwin* dcop function into dbus"
 	//kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray(""));
 	// kdesktop-background
      QDBusInterface kdesktop( "org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background" );

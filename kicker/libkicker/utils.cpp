@@ -117,13 +117,13 @@ QString newDesktopFile(const KUrl& url)
 
    for(int n = 1; ++n; )
    {
-      QString path = locate("appdata", file);
+      QString path = KStandardDirs::locate("appdata", file);
       if (path.isEmpty())
          break;
 
       file = QString("%2-%1.desktop").arg(n).arg(base);
    }
-   file = locateLocal("appdata", file);
+   file = KStandardDirs::locateLocal("appdata", file);
    return file;
 }
 

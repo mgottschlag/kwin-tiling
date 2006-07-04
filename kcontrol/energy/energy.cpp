@@ -183,9 +183,9 @@ KEnergy::KEnergy(KInstance *inst, QWidget *parent)
 
     KUrlLabel *logo = new KUrlLabel(this);
     logo->setUrl("http://www.energystar.gov");
-    logo->setPixmap(QPixmap(locate("data", "kcontrol/pics/energybig.png")));
+    logo->setPixmap(QPixmap(KStandardDirs::locate("data", "kcontrol/pics/energybig.png")));
     logo->setTipText(i18n("Learn more about the Energy Star program"));
-    logo->setUseTips(true); 
+    logo->setUseTips(true);
 connect(logo, SIGNAL(leftClickedURL(const QString&)), SLOT(openURL(const QString &)));
 
     hbox->addStretch();

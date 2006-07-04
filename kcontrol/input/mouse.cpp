@@ -484,11 +484,11 @@ void MouseConfig::setHandedness(int val)
   tab1->leftHanded->setChecked(false);
   if (val == RIGHT_HANDED){
     tab1->rightHanded->setChecked(true);
-    tab1->mousePix->setPixmap(locate("data", "kcminput/pics/mouse_rh.png"));
+    tab1->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_rh.png"));
   }
   else{
     tab1->leftHanded->setChecked(true);
-    tab1->mousePix->setPixmap(locate("data", "kcminput/pics/mouse_lh.png"));
+    tab1->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_lh.png"));
   }
 }
 
@@ -650,9 +650,9 @@ void MouseConfig::slotClick()
 /** No descriptions */
 void MouseConfig::slotHandedChanged(int val){
   if(val==RIGHT_HANDED)
-    tab1->mousePix->setPixmap(locate("data", "kcminput/pics/mouse_rh.png"));
+    tab1->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_rh.png"));
   else
-    tab1->mousePix->setPixmap(locate("data", "kcminput/pics/mouse_lh.png"));
+    tab1->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_lh.png"));
   settings->m_handedNeedsApply = true;
 }
 

@@ -86,7 +86,7 @@ bool requestShutDown(
 					      &myId,
 					      255,
 					      cerror );
-	::free( myId ); // it was allocated by C
+	::free( myId ); // it was alKStandardDirs::located by C
 	if (!tmpSmcConnection )
 	    return false;
 
@@ -124,7 +124,7 @@ bool requestShutDown(
 static QTime smModificationTime;
 void propagateSessionManager()
 {
-    QByteArray fName = QFile::encodeName(locateLocal("socket", "KSMserver"));
+    QByteArray fName = QFile::encodeName(KStandardDirs::locateLocal("socket", "KSMserver"));
     QString display = QString::fromLocal8Bit( ::getenv(DISPLAY) );
     // strip the screen number from the display
     display.remove(QRegExp("\\.[0-9]+$"));

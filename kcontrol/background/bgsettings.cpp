@@ -275,7 +275,7 @@ void KBackgroundProgram::init(bool force_rw)
         m_bReadOnly = false;
     } else {
         m_pConfig = new KSimpleConfig(m_File);
-        m_bReadOnly = (m_File != locateLocal("dtop_program", m_Name + ".desktop"));
+        m_bReadOnly = (m_File != KStandardDirs::locateLocal("dtop_program", m_Name + ".desktop"));
     }
     m_pConfig->setGroup("KDE Desktop Program");
 }
@@ -571,7 +571,7 @@ void KBackgroundSettings::copyConfig(const KBackgroundSettings *settings)
 void KBackgroundSettings::load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig)
 {
     m_Desk = desk;
-    m_Screen = screen;	
+    m_Screen = screen;
     m_bDrawBackgroundPerScreen = drawBackgroundPerScreen;
     readSettings(reparseConfig);
 }
@@ -877,7 +877,7 @@ void KBackgroundSettings::updateWallpaperFiles()
     QStringList::Iterator it;
     m_WallpaperFiles.clear();
     for (it=m_WallpaperList.begin(); it!=m_WallpaperList.end(); ++it) {
-        QString file = locate("wallpaper", *it);
+        QString file = KStandardDirs::locate("wallpaper", *it);
         if (file.isEmpty())
             continue;
 	QFileInfo fi(file);
@@ -1049,7 +1049,7 @@ QString KBackgroundSettings::fingerprint()
     {
         quint32 rh = KGlobal::dirs()->calcResourceHash("wallpaper", currentWallpaper(), false);
         s += QString("wp:%2:%1;").arg(rh).arg(currentWallpaper());
-        
+
     }
     s += QString("blm:%1;").arg(m_BlendMode);
     if (m_BlendMode != NoBlending) {
@@ -1138,10 +1138,10 @@ void KGlobalBackgroundSettings::setDrawBackgroundPerScreen(int desk, bool perScr
 {
     if ( desk >= int(m_bDrawBackgroundPerScreen.size()) )
         return;
-    
+
     if ( m_bDrawBackgroundPerScreen[desk] == perScreen )
         return;
-    
+
     dirty = true;
     m_bDrawBackgroundPerScreen[desk] = perScreen;
 }
@@ -1274,7 +1274,7 @@ void KGlobalBackgroundSettings::writeSettings()
     m_pConfig->writeEntry("ShadowEnabled", m_shadowEnabled);
     m_pConfig->writeEntry("TextHeight", m_textLines);
     m_pConfig->writeEntry("TextWidth", m_textWidth);
-    
+
     m_pConfig->sync();
     dirty = false;
 

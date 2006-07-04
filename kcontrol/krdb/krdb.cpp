@@ -82,7 +82,7 @@ inline const char * userGtkrc(int version)
 // -----------------------------------------------------------------------------
 static void applyGtkStyles(bool active, int version)
 {
-   QString gtkkde = locateLocal("config", 2==version?"gtkrc-2.0":"gtkrc");
+   QString gtkkde = KStandardDirs::locateLocal("config", 2==version?"gtkrc-2.0":"gtkrc");
    QByteArray gtkrc = getenv(gtkEnvVar(version));
    QStringList list = QFile::decodeName(gtkrc).split( ':');
    if (list.count() == 0)
@@ -339,7 +339,7 @@ static void createGtkrc( bool exportColors, const QColorGroup& cg, int version )
     // lukas: why does it create in ~/.kde/share/config ???
     // pfeiffer: so that we don't overwrite the user's gtkrc.
     // it is found via the GTK_RC_FILES environment variable.
-    KSaveFile saveFile( locateLocal( "config", 2==version?"gtkrc-2.0":"gtkrc" ) );
+    KSaveFile saveFile( KStandardDirs::locateLocal( "config", 2==version?"gtkrc-2.0":"gtkrc" ) );
     if ( saveFile.status() != 0 || saveFile.textStream() == 0L )
         return;
 
@@ -487,7 +487,7 @@ void runRdb( uint flags )
     }
 
     for (QStringList::ConstIterator it = list.begin(); it != list.end(); it++)
-      copyFile(tmp, locate("appdefaults", *it ), true);
+      copyFile(tmp, KStandardDirs::locate("appdefaults", *it ), true);
   }
 
   // Merge ~/.Xresources or fallback to ~/.Xdefaults

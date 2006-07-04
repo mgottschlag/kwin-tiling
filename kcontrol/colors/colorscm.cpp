@@ -594,7 +594,7 @@ void KColorScheme::slotAdd()
 
 void KColorScheme::slotImport()
 {
-	QString location = locateLocal( "data", "kdisplay/color-schemes/" );
+	QString location = KStandardDirs::locateLocal( "data", "kdisplay/color-schemes/" );
 
 	KUrl file ( KFileDialog::getOpenFileName(QString(), "*.kcsrc", this) );
 	if ( file.isEmpty() )

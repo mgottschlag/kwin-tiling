@@ -54,7 +54,7 @@ KFindLanguage::KFindLanguage() {
 	}
 
 	// get the users primary Languages
-	KSimpleConfig ent(locate("locale", QString::fromLatin1("l10n/%1/entry.desktop").arg(m_country)), true);
+	KSimpleConfig ent(KStandardDirs::locate("locale", QString::fromLatin1("l10n/%1/entry.desktop").arg(m_country)), true);
 	ent.setGroup("KCM Locale");
 	QStringList langs = ent.readEntry("Languages",QStringList());
 	if (langs.isEmpty())
@@ -63,7 +63,7 @@ KFindLanguage::KFindLanguage() {
 	// add the primary languages for the country to the list
 	QStringList prilang;
 	for ( QStringList::ConstIterator it = langs.begin(); it != langs.end(); ++it ) {
-		QString str = locate("locale", *it + "/entry.desktop");
+		QString str = KStandardDirs::locate("locale", *it + "/entry.desktop");
 		if (!str.isNull())
 			prilang << str;
 	}

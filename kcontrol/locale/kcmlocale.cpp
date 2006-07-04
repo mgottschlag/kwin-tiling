@@ -216,7 +216,7 @@ void KLocaleConfig::loadLanguageList()
         it != first.end();
         ++it )
   {
-    QString str = locate("locale", QString::fromLatin1("%1/entry.desktop")
+    QString str = KStandardDirs::locate("locale", QString::fromLatin1("%1/entry.desktop")
                          .arg(*it));
     if (!str.isNull())
       prilang << str;
@@ -301,7 +301,7 @@ void KLocaleConfig::loadCountryList()
     QString name = entry.readEntry("Name",
                                    ki18n("without name").toString(m_locale));
 
-    QString map( locate( "locale",
+    QString map( KStandardDirs::locate( "locale",
                           QString::fromLatin1( "l10n/%1.png" )
                           .arg(tag) ) );
     //kDebug() << "REGION: " << (*it) << " Tag: " << tag << " Name: " << name << " Map: " << map << endl;
@@ -330,7 +330,7 @@ void KLocaleConfig::loadCountryList()
     index = tag.lastIndexOf('/');
     tag = tag.mid(index + 1);
 
-    QString flag( locate( "locale",
+    QString flag( KStandardDirs::locate( "locale",
                           QString::fromLatin1( "l10n/%1/flag.png" )
                           .arg(tag) ) );
     //kDebug() << "COUNTRY: " << (*it) << " Tag: " << tag << " Submenu: " << submenu << " Flag: " << flag << endl;
@@ -355,7 +355,7 @@ void KLocaleConfig::readLocale(const QString &path, QString &name,
     .arg(sub)
     .arg(path);
 
-  KSimpleConfig entry(locate("locale", filepath));
+  KSimpleConfig entry(KStandardDirs::locate("locale", filepath));
   entry.setGroup("KCM Locale");
   name = entry.readEntry("Name");
 
@@ -453,7 +453,7 @@ void KLocaleConfig::slotTranslate()
 
 QStringList KLocaleConfig::languageList() const
 {
-  QString fileName = locate("locale",
+  QString fileName = KStandardDirs::locate("locale",
                             QString::fromLatin1("l10n/%1/entry.desktop")
                             .arg(m_locale->country()));
 

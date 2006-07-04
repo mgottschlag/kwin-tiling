@@ -336,7 +336,7 @@ void KDMAppearanceWidget::loadGuiStyles(KBackedComboBox *combo)
 bool KDMAppearanceWidget::setLogo(QString logo)
 {
     QString flogo = logo.isEmpty() ?
-                    locate("data", QLatin1String("kdm/pics/kdelogo.png") ) :
+                    KStandardDirs::locate("data", QLatin1String("kdm/pics/kdelogo.png") ) :
                     logo;
     QImage p(flogo);
     if (p.isNull())
@@ -353,7 +353,7 @@ bool KDMAppearanceWidget::setLogo(QString logo)
 
 void KDMAppearanceWidget::slotLogoButtonClicked()
 {
-    KFileDialog dialog(locate("data", QLatin1String("kdm/pics/")),
+    KFileDialog dialog(KStandardDirs::locate("data", QLatin1String("kdm/pics/")),
 			 KImageIO::pattern( KImageIO::Reading ),
 			 this);
     dialog.setOperationMode( KFileDialog::Opening );

@@ -51,7 +51,7 @@ LayoutIcon::findPixmap(const QString& code_, bool showFlag, const QString& displ
 	}
 
 	QString displayName(displayName_);
-	
+
 	if( displayName.isEmpty() ) {
 		displayName = KxkbConfig::getDefaultDisplayName(code_);
 	}
@@ -59,7 +59,7 @@ LayoutIcon::findPixmap(const QString& code_, bool showFlag, const QString& displ
 		displayName = displayName.left(3);
 
 	const QString pixmapKey( showFlag ? code_ + '.' + displayName : displayName );
-	
+
 	pm = m_pixmapCache[pixmapKey];
 	if( pm )
 		return *pm;
@@ -67,7 +67,7 @@ LayoutIcon::findPixmap(const QString& code_, bool showFlag, const QString& displ
 	QString flag;
 	if( showFlag ) {
 		QString countryCode = getCountryFromLayoutName( code_ );
-		flag = locate("locale", flagTemplate.arg(countryCode));
+		flag = KStandardDirs::locate("locale", flagTemplate.arg(countryCode));
 	}
 
 	if( flag.isEmpty() ) {
@@ -78,7 +78,7 @@ LayoutIcon::findPixmap(const QString& code_, bool showFlag, const QString& displ
 		pm = new QPixmap(flag);
 		dimPixmap( *pm );
 
-#if 0		
+#if 0
 		if( pm->height() < FLAG_MAX_HEIGHT ) {
 			QPixmap* pix = new QPixmap(FLAG_MAX_WIDTH, FLAG_MAX_HEIGHT);
 			pix->fill( Qt::lightGray );
@@ -86,7 +86,7 @@ LayoutIcon::findPixmap(const QString& code_, bool showFlag, const QString& displ
 //			QBitmap mask;
 //			mask.fill(1);
 //			pix->setMask(mask);
-			
+
 			int dy = (pix->height() - pm->height()) / 2;
 			copyBlt( pix, 0, dy, pm, 0, 0, -1, -1 );
 //			QPixmap* px = new QPixmap(21, 14);
@@ -116,13 +116,13 @@ LayoutIcon::findPixmap(const QString& code_, bool showFlag, const QString& displ
 QString LayoutIcon::getCountryFromLayoutName(const QString& layoutName)
 {
 	QString flag;
-	
+
 	if( X11Helper::areLayoutsClean() ) { // >= Xorg 6.9.0
 		if( layoutName == "mkd" )
 			flag = "mk";
 		else
 		if( layoutName == "srp" ) {
-			QString csFlagFile = locate("locale", flagTemplate.arg("cs"));
+			QString csFlagFile = KStandardDirs::locate("locale", flagTemplate.arg("cs"));
 			flag = csFlagFile.isEmpty() ? "yu" : "cs";
 		}
 		else
@@ -177,8 +177,8 @@ QString LayoutIcon::getCountryFromLayoutName(const QString& layoutName)
 			if( layoutName.endsWith("/jp") )
 				flag = "jp";
 		else
-			if( layoutName == "ml" || layoutName == "dev" || layoutName == "gur" 
-						 || layoutName == "guj" || layoutName == "kan" || layoutName == "ori" 
+			if( layoutName == "ml" || layoutName == "dev" || layoutName == "gur"
+						 || layoutName == "guj" || layoutName == "kan" || layoutName == "ori"
 						 || layoutName == "tel" || layoutName == "tml" || layoutName == "ben" ) // some Indian languages
 				flag = "in";
 		else {
@@ -188,8 +188,8 @@ QString LayoutIcon::getCountryFromLayoutName(const QString& layoutName)
 			if( sepPos != -1 )
 				rightCode = layoutName.mid(sepPos+1);
 //			kdDebug() << "layout name breakup: " << leftCode << ":" << rightCode << endl;
-	
-			if( rightCode.length() == 2 
+
+			if( rightCode.length() == 2
 					&& QRegExp("[A-Z][A-Z]").exactMatch(rightCode) ) {
 				flag = rightCode.toLower();
 			}
@@ -198,7 +198,7 @@ QString LayoutIcon::getCountryFromLayoutName(const QString& layoutName)
 			}
 		}
 	}
-	
+
     return flag;
 }
 

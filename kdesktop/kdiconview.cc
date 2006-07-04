@@ -182,7 +182,7 @@ void KDIconView::initDotDirectories()
        dirs.prepend(u.path());
 
     QString prefix = iconPositionGroupPrefix();
-    QString dotFileName = locateLocal("appdata", "IconPositions");
+    QString dotFileName = KStandardDirs::locateLocal("appdata", "IconPositions");
     if (kdesktop_screen_number != 0)
        dotFileName += "_Desktop" + QString::number(kdesktop_screen_number);
 
@@ -946,7 +946,7 @@ void KDIconView::slotNewItems( const KFileItemList & entries )
       if (QFile::exists(desktopPath + fileName))
          continue; // Don't duplicate entry
 
-      QString mostLocal = locate("appdata", "Desktop/"+fileName);
+      QString mostLocal = KStandardDirs::locate("appdata", "Desktop/"+fileName);
       if (!mostLocal.isEmpty() && (mostLocal != url.path()))
          continue; // Don't duplicate entry
     }

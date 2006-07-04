@@ -170,7 +170,7 @@ void KOSPage::writeKDE(){
 	cklipper->setGroup("General");
 	cklipper->writeEntry("SynchronizeClipboards", false);
 
-	writeKeyEntrys(locate("keys", "kde3.kksrc"));
+	writeKeyEntrys(KStandardDirs::locate("keys", "kde3.kksrc"));
 }
 
 
@@ -211,7 +211,7 @@ void KOSPage::writeUNIX(){
 	cklipper->setGroup("General");
 	cklipper->writeEntry("SynchronizeClipboards", true);
 
-	writeKeyEntrys(locate("keys", "unix3.kksrc"));
+	writeKeyEntrys(KStandardDirs::locate("keys", "unix3.kksrc"));
 }
 
 
@@ -254,10 +254,10 @@ void KOSPage::writeWindows(){
 
 	// set the schemefile depending on whether or not the keyboard has got Metakeys.
 	if( KKeyServer::keyboardHasMetaKey() ) {
-		writeKeyEntrys(locate("keys", "win4.kksrc"));
+		writeKeyEntrys(KStandardDirs::locate("keys", "win4.kksrc"));
 	}
 	else {
-		writeKeyEntrys(locate("keys", "win3.kksrc"));
+		writeKeyEntrys(KStandardDirs::locate("keys", "win3.kksrc"));
 	}
 }
 
@@ -299,7 +299,7 @@ void KOSPage::writeMacOS(){
 	cklipper->setGroup("General");
 	cklipper->writeEntry("SynchronizeClipboards", false);
 
-	writeKeyEntrys(locate("keys", "mac4.kksrc"));
+	writeKeyEntrys(KStandardDirs::locate("keys", "mac4.kksrc"));
 }
 
 
@@ -310,7 +310,7 @@ void KOSPage::writeKeyEntrys(QString keyfile){
 	// load the given .kksrc - file
 	KSimpleConfig* scheme = new KSimpleConfig(keyfile, true);
 	// load the default .kksrc - file
-	KSimpleConfig* defScheme = new KSimpleConfig(locate("keys", "kde3.kksrc"), true);
+	KSimpleConfig* defScheme = new KSimpleConfig(KStandardDirs::locate("keys", "kde3.kksrc"), true);
 
 	// we need the entries from the default - file, so we can compare with them
 	QMap<QString, QString> defMap = defScheme->entryMap("Global Shortcuts");

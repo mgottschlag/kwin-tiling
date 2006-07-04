@@ -28,7 +28,7 @@ XkbRules::XkbRules(bool layoutsOnly):
    	}
 
 	QString rulesFile = X11Helper::findXkbRulesFile(X11_DIR, QX11Info::display());
-	
+
 	if( rulesFile.isEmpty() ) {
   		kError() << "Cannot find rules file in " << X11_DIR << endl;
 //		throw Exception();
@@ -37,7 +37,7 @@ XkbRules::XkbRules(bool layoutsOnly):
 
 	loadRules(rulesFile, layoutsOnly);
 	loadOldLayouts(rulesFile);
-	loadGroups(::locate("config", "kxkb_groups"));
+	loadGroups(KStandardDirs::locate("config", "kxkb_groups"));
 }
 
 
@@ -73,7 +73,7 @@ void XkbRules::loadRules(QString file, bool layoutsOnly)
 // 		{ "ir", "Farsi" },
 // 		{ 0, 0 }
 // 	};
-// 	
+//
 // 	for(int i=0; fixedLayouts[i].layout != 0; i++ ) {
 // 		if( m_layouts.find(fixedLayouts[i].locale) == 0 )
 // 			m_layouts.insert(fixedLayouts[i].locale, fixedLayouts[i].layout);
@@ -116,12 +116,12 @@ void XkbRules::loadGroups(QString file)
 
     	 m_initialGroups.insert(locale, grp);
       }
-      
+
       f.close();
     }
 }
 
-unsigned int 
+unsigned int
 XkbRules::getDefaultGroup(const QString& layout, const QString& includeGroup)
 {
 // check for new one-group layouts in XFree 4.3 and older
@@ -131,7 +131,7 @@ XkbRules::getDefaultGroup(const QString& layout, const QString& includeGroup)
 		else
 			return 0;
     }
-    
+
     QMap<QString, unsigned int>::iterator it = m_initialGroups.find(layout);
     return it == m_initialGroups.end() ? 0 : it.data();
 }
