@@ -42,7 +42,6 @@
 #include <QX11Info>
 #endif
 
-#include "kcminitadaptor.h"
 
 static KCmdLineOptions options[] =
 {
