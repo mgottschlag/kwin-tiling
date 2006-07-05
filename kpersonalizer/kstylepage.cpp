@@ -55,7 +55,7 @@ KStylePage::KStylePage(QWidget *parent, const char *name ) : KStylePageDlg(paren
 	klv_styles->setAllColumnsShowFocus(true);
 
 	kde = new Q3ListViewItem( klv_styles);
-	kde->setText( 0, QPixmap::defaultDepth() > 8 ? i18n( "Plastik" ) : i18n( "Light" ) );
+	kde->setText( 0, QPixmap::defaultDepth() > 8 ? i18n( "Plastique" ) : i18n( "Light" ) );
 	kde->setText( 1, i18n( "KDE default style" ) );
 
 	classic = new Q3ListViewItem( klv_styles);
@@ -89,6 +89,7 @@ KStylePage::KStylePage(QWidget *parent, const char *name ) : KStylePageDlg(paren
 	getAvailability();
 	getUserDefaults();
 	initColors();
+	klv_styles->setSelected( klv_styles->firstChild(), true );
 }
 
 KStylePage::~KStylePage(){
@@ -284,7 +285,7 @@ void KStylePage::changeCurrentStyle() {
 	else if (kde->isSelected()) {
 		// Use the plastik style if the display supports it
 		if ( (QX11Info::appDepth() > 8) && kde_plastik_exist ) {
-			currentStyle="Plastik";
+			currentStyle="Plastique";
 		}
 		else if (kde_light_exist) {
 			currentStyle="Light, 3rd revision";
@@ -427,7 +428,7 @@ void KStylePage::getAvailability() {
 		if (*it == "Keramik") kde_keramik_exist = true;
 		else if (*it == "HighColor") kde_hc_exist = true;
 		else if (*it == "Default") kde_def_exist = true;
-		else if (*it == "Plastik") kde_plastik_exist = true;
+		else if (*it == "Plastique") kde_plastik_exist = true;
 		else if (*it == "Motif") cde_exist = true;
 		else if (*it == "Windows") win_exist = true;
 		else if (*it == "Platinum") platinum_exist = true;
