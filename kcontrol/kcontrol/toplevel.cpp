@@ -93,7 +93,7 @@ TopLevel::TopLevel(const char* name)
   _tab->setWhatsThis( i18n("Choose between Index, Search and Quick Help") );
 
   // index tab
-  _indextab = new IndexWidget(_modules, _tab);
+  _indextab = new IndexWidget(_modules, 0L);
   connect(_indextab, SIGNAL(moduleActivated(ConfigModule*)),
                   this, SLOT(activateModule(ConfigModule*)));
   _tab->addTab(_indextab, SmallIconSet("kcontrol"), i18n("&Index"));
@@ -102,7 +102,7 @@ TopLevel::TopLevel(const char* name)
                   this, SLOT(categorySelected(Q3ListViewItem*)));
 
   // search tab
-  _searchtab = new SearchWidget(_tab);
+  _searchtab = new SearchWidget(0L);
   _searchtab->populateKeywordList(_modules);
   connect(_searchtab, SIGNAL(moduleSelected(ConfigModule *)),
                   this, SLOT(activateModule(ConfigModule *)));
@@ -110,7 +110,7 @@ TopLevel::TopLevel(const char* name)
   _tab->addTab(_searchtab, SmallIconSet("find"), i18n("Sear&ch"));
 
   // help tab
-  _helptab = new HelpWidget(_tab);
+  _helptab = new HelpWidget(0L);
   _tab->addTab(_helptab, SmallIconSet("help"), i18n("Hel&p"));
 
   _tab->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Preferred ) );
