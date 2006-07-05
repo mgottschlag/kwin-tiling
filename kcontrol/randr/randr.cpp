@@ -167,7 +167,7 @@ bool RandRScreen::confirm()
 	acceptDialog->setButtonGuiItem(KDialog::Ok, KGuiItem(i18n("&Accept Configuration"), "button_ok"));
 	acceptDialog->setButtonGuiItem(KDialog::Cancel, KGuiItem(i18n("&Return to Previous Configuration"), "button_cancel"));
 
-	QLabel *label = new KActiveLabel(i18n("Your screen orientation, size and refresh rate have been changed to the requested settings. Please indicate whether you wish to keep this configuration. In 15 seconds the display will revert to your previous settings."), acceptDialog);
+	QLabel *label = new QLabel(i18n("Your screen orientation, size and refresh rate have been changed to the requested settings. Please indicate whether you wish to keep this configuration. In 15 seconds the display will revert to your previous settings."), acceptDialog);
         acceptDialog->setMainWidget(label);
 
 	KDialog::centerOnScreen(acceptDialog, m_screen);
