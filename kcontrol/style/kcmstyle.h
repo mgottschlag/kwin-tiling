@@ -71,7 +71,7 @@ class KCMStyle : public KCModule
 	Q_OBJECT
 
 public:
-	KCMStyle( KInstance *inst, QWidget* parent );
+	KCMStyle( QWidget* parent, const QStringList& );
 	~KCMStyle();
 
 	virtual void load();

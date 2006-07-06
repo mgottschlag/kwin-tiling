@@ -75,17 +75,15 @@
 
 /**** DLL Interface for kcontrol ****/
 
-// Plugin Interface
-// Danimo: Why do we use the old interface?!
+
+#include <kgenericfactory.h>
+
+typedef KGenericFactory<KCMStyle, QWidget> KCMStyleFactory;
+K_EXPORT_COMPONENT_FACTORY( style, KCMStyleFactory("kcmstyle") );
+
 extern "C"
 {
-    KDE_EXPORT KCModule *create_style(QWidget *parent, const char*)
-    {
-        KInstance *style = new KInstance( "kcmstyle" );
-        return new KCMStyle(style, parent);
-    }
-
-    KDE_EXPORT void init_style()
+    KDE_EXPORT void kcminit_style()
     {
         uint flags = KRdbExportQtSettings | KRdbExportQtColors | KRdbExportXftSettings;
         KConfig config("kcmdisplayrc", true /*readonly*/, false /*don't read kdeglobals etc.*/);
@@ -115,14 +113,8 @@ extern "C"
     }
 }
 
-/*
-typedef KGenericFactory<KWidgetSettingsModule, QWidget> GeneralFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kcmstyle, GeneralFactory )
-*/
-
-
-KCMStyle::KCMStyle( KInstance *inst, QWidget* parent )
-	: KCModule( inst, parent ), appliedStyle(NULL)
+KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
+	: KCModule( KCMStyleFactory::instance(), parent ), appliedStyle(NULL)
 {
     setQuickHelp( i18n("<h1>Style</h1>"
 			"This module allows you to modify the visual appearance "
@@ -663,7 +655,8 @@ void KCMStyle::save()
 	//update kicker to re-used tooltips kicker parameter otherwise, it overwritted
 	//by style tooltips parameters.
 	QByteArray data;
-	QDBusInterface kicker( "org.kde.kicker", "kicker");
+#warning "kde4: who is org.kde.kicker?"
+	QDBusInterface kicker( "org.kde.kicker", "/kicker");
 	kicker.call("configure");
 
 	// Clean up

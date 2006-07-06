@@ -2,13 +2,12 @@
 Encoding=UTF-8
 Exec=kcmshell style
 Icon=style
-Type=Application
+Type=Service
+ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/kcmstyle/index.html
 
-
-X-KDE-Library=style
-X-KDE-FactoryName=style
-X-KDE-Init=style
+X-KDE-Library=kcm_style
+X-KDE-Init-Symbol=kcminit_style
 X-KDE-ParentApp=kcontrol
 
 Name=Style
