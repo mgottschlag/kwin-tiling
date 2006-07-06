@@ -1,5 +1,6 @@
 
 project(kdm)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kdm.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kdm.h )
 
 
 add_subdirectory( kfrontend )
