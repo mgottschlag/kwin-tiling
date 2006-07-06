@@ -2,7 +2,7 @@ add_subdirectory( pics )
 
 OPTION(USE_XKLAVIER "Use libxklavier to get keyboard layouts configuration" OFF)
 
-MESSAGE("option ${USE_XKLAVIER}")
+MESSAGE(STATUS "option: USE_XKLAVIER  <${USE_XKLAVIER}>")
 
 if( USE_XKLAVIER STREQUAL ON )
   macro_optional_find_package(LibXKlavier)
