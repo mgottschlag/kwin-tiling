@@ -17,7 +17,6 @@
 #include <kconfig.h>
 #include <kdebug.h>
 #include <kdialog.h>
-#include <kfontcombo.h>
 #include <kgenericfactory.h>
 #include <kglobalsettings.h>
 #include <kiconloader.h>
