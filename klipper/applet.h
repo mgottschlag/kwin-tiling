@@ -21,7 +21,7 @@
 #ifndef _APPLET_H_
 #define _APPLET_H_
 
-#include <plasma/kpanelapplet.h>
+#include <kpanelapplet.h>
 
 #include "toplevel.h"
 //Added by qt3to4:

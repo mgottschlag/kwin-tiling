@@ -1,7 +1,8 @@
 
 project(klipper)
 
-
+include_directories(
+   ${CMAKE_SOURCE_DIR}/workspace/kicker/libkicker/ )
 
 ########### next target ###############
 
