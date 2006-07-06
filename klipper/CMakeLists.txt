@@ -29,19 +29,18 @@ install(TARGETS klipper DESTINATION bin)
 
 ########### next target ###############
 
-message(STATUS "TODO port klipper panel applet")
-#set(klipper_panelapplet_PART_SRCS applet.cpp ${libklipper_common_SRCS})
+set(klipper_panelapplet_PART_SRCS applet.cpp ${libklipper_common_SRCS})
 
-#kde4_automoc(${klipper_panelapplet_PART_SRCS})
+kde4_automoc(${klipper_panelapplet_PART_SRCS})
 
 
-#kde4_add_plugin(klipper_panelapplet ${klipper_panelapplet_PART_SRCS})
+kde4_add_plugin(klipper_panelapplet ${klipper_panelapplet_PART_SRCS})
 
-#kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} klipper_panelapplet )
+kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} klipper_panelapplet )
 
-#target_link_libraries(klipper_panelapplet  ${KDE4_KDECORE_LIBS} )
+target_link_libraries(klipper_panelapplet  ${KDE4_KDECORE_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kworkspace kickermain ${X11_Xfixes_LIB} )
 
-#install(TARGETS klipper_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS klipper_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############

@@ -33,7 +33,7 @@ class KlipperApplet : public KPanelApplet
 {
   Q_OBJECT
 public:
-    KlipperApplet(const QString& configFile, Type t = Normal, int actions = 0,
+    KlipperApplet(const QString& configFile, Plasma::Type t = Plasma::Normal, int actions = 0,
                   QWidget *parent = 0, const char *name = 0);
     ~KlipperApplet();
 
@@ -53,16 +53,14 @@ private:
 class KlipperAppletWidget : public KlipperWidget
 {
     Q_OBJECT
-    K_DCOP
-k_dcop:
-    int newInstance();
+    Q_CLASSINFO("D-Bus Interface", "org.kde.klipper.applet")
+public Q_SLOTS:
+    Q_SCRIPTABLE int newInstance();
 public:
     KlipperAppletWidget( QWidget* parent = NULL );
     virtual ~KlipperAppletWidget();
 private:
     void init();
-    static DCOPClient* s_dcop;
-
 };
 
 #endif

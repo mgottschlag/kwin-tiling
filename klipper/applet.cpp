@@ -23,9 +23,8 @@
 #include <kaboutapplication.h>
 #include <kglobal.h>
 #include <klocale.h>
-#include <dcopclient.h>
 #include <kconfig.h>
-
+#include <QtDBus>
 #include "toplevel.h"
 #include "history.h"
 #include "klipperpopup.h"
@@ -43,7 +42,7 @@ extern "C"
     }
 }
 
-KlipperApplet::KlipperApplet(const QString& configFile, Type t, int actions,
+KlipperApplet::KlipperApplet(const QString& configFile, Plasma::Type t, int actions,
                          QWidget *parent, const char *name)
     : KPanelApplet(configFile, t, actions, parent, name)
 {
@@ -100,7 +99,7 @@ void KlipperApplet::help()
 
 void KlipperApplet::about()
 {
-    KAboutApplication about(this, 0);
+    KAboutApplication about(0L,this);
     about.exec();
 }
 
@@ -115,24 +114,21 @@ KlipperAppletWidget::KlipperAppletWidget( QWidget* parent )
 // and request data while this instance is waiting in the DCOP call
 void KlipperAppletWidget::init()
 {
+    QDBusInterface klipper("org.kde.klipper", "/klipper", "org.kde.klipper.klipper");
+	klipper.call("quitProcess");
+
     // if there's klipper process running, quit it
-    QByteArray arg1, arg2;
-    DCOPCString str;
     // call() - wait for finishing
-    kapp->dcopClient()->call("klipper", "klipper", "quitProcess()", arg1, str, arg2 );
+#warning " kde4 need to test it"	
+    //kapp->dcopClient()->call("klipper", "klipper", "quitProcess()", arg1, str, arg2 );
     // register ourselves, so if klipper process is started,
     // it will quit immediately (KUniqueApplication)
-    s_dcop = new DCOPClient;
-    s_dcop->registerAs( "klipper", false );
+	QDBus::sessionBus().registerObject("/klipper/applet", this, QDBusConnection::ExportSlots);
 }
 
 KlipperAppletWidget::~KlipperAppletWidget()
 {
-    delete s_dcop;
-    s_dcop = 0;
 }
-
-DCOPClient* KlipperAppletWidget::s_dcop = 0;
 
 // this is just to make klipper process think we're KUniqueApplication
 // (AKA ugly hack)
