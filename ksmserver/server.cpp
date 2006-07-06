@@ -79,7 +79,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "server.h"
 #include "global.h"
 #include "client.h"
-#include "ksmserveradaptor.h"
+#include "ksmserverinterfaceadaptor.h"
 
 #include "server.moc"
 
@@ -582,7 +582,7 @@ extern "C" int _IceTransNoListen(const char * protocol);
 KSMServer::KSMServer( const QString& windowManager, bool _only_local )
   : sessionGroup( "" )
 {
-    new KSmserverAdaptor( this );
+    new KSMServerInterfaceAdaptor( this );
     QDBus::sessionBus().registerObject("/KSMServer", this);
     klauncherSignals = new QDBusInterface("org.kde.klauncher",
         "/KLauncher", "org.kde.KLauncher", QDBus::sessionBus() );

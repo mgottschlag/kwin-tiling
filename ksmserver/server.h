@@ -145,12 +145,13 @@ private:
     void resumeStartupInternal();
 
     // public dcop interface
-    void logout( int, int, int );
-    QStringList sessionList();
-    QString currentSession();
-    void saveCurrentSession();
-    void saveCurrentSessionAs( QString );
 
+ public Q_SLOTS: //public dcop interface
+	void logout( int, int, int );
+    QString currentSession();
+	void saveCurrentSession();
+	void saveCurrentSessionAs( QString );
+	QStringList sessionList();
  private:
     QList<KSMListener*> listener;
     QList<KSMClient*> clients;

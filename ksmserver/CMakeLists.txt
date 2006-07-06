@@ -11,8 +11,9 @@ set(ksmserver_KDEINIT_SRCS ${kdmlib_SRCS}
    legacy.cpp 
    startup.cpp 
    shutdown.cpp 
-   client.cpp
-   ksmserveradaptor.cpp )
+   client.cpp)
+
+qt4_add_dbus_adaptor( ksmserver_KDEINIT_SRCS org.kde.KSMServerInterface.xml server.h KSMServer )
 
 kde4_automoc(${ksmserver_KDEINIT_SRCS})
 
