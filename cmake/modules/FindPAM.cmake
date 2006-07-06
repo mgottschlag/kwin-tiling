@@ -5,6 +5,20 @@
 #  PAM_INCLUDE_DIR - the pam include directory
 #  PAM_LIBRARIES - libpam library
 
+option(KDE4_RPCAUTH "Use Sun's secure RPC for Xauth cookies in kdm." OFF)
+
+if(KDE4_RPCAUTH)
+	FIND_PATH(RPC_INCLUDE_DIR rpc/rpc.h
+   		/usr/include
+   		/usr/local/include
+	)
+	if(RPC_INCLUDE_DIR)
+		set(RPCAUTH_FOUND TRUE)
+	else(RPC_INCLUDE_DIR)
+		MESSAGE(STATUS "RPC header was not found")
+	endif(RPC_INCLUDE_DIR)
+endif(KDE4_RPCAUTH)
+
 if(PAM_INCLUDE_DIR AND PAM_LIBRARIES)
     # Already in cache, be silent
     set(PAM_FIND_QUIETLY TRUE)
@@ -42,4 +56,4 @@ else(PAM_FOUND)
 	MESSAGE(STATUS "Pam was not found")
 endif(PAM_FOUND)
 
-MARK_AS_ADVANCED(PAM_INCLUDE_DIR PAM_LIBRARIES)
+MARK_AS_ADVANCED(PAM_INCLUDE_DIR PAM_LIBRARIES RPC_INCLUDE_DIR)
