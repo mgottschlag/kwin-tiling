@@ -43,7 +43,7 @@ fi
 # kdeinit is used to fork off processes which improves memory usage
 # and startup time.
 #
-# * kdeinit starts the dcopserver and klauncher first.
+# * kdeinit starts klauncher first.
 # * Then kded is started. kded is responsible for keeping the sycoca
 #   database up to date. When an up to date database is present it goes
 #   into the background and the startup continues.
@@ -265,23 +265,24 @@ lnusertemp socket >/dev/null
 lnusertemp cache >/dev/null
 
 # In case of dcop sockets left by a previous session, cleanup
-dcopserver_shutdown
+#dcopserver_shutdown
 
 echo 'startkde: Starting up...'  1>&2
 
 # run KPersonalizer before the session, if this is the first login
 if test "$kpersonalizerrc_general_firstlogin" = "true"; then
-    # start only dcopserver, don't start whole kdeinit (takes too long)
+    # start dbus daemon [well, what if it's already running?]
+    # don't start whole kdeinit (takes too long)
     echo 'startkde: Running kpersonalizer...'  1>&2
-    eval $(dbus-launch --auto-syntax)
+    eval `dbus-launch --auto-syntax`
     kwin --lock &
     kpersonalizer --before-session
     # handle kpersonalizer restarts (language change)
     while test $? -eq 1; do
         kpersonalizer --r --before-session
     done
-    dcopquit kwin
-    dcopserver_shutdown --wait
+    dbus org.kde.kwin /MainApplication org.kde.KApplication.quit
+    #dcopserver_shutdown --wait
 fi
 
 # the splashscreen and progress indicator
@@ -292,7 +293,7 @@ case "$ksplashrc_ksplash_theme" in
      ksplashsimple 
      ;;
   *)
-     ksplash --nodcop
+     ksplash --nodbus
      ;;
 esac
 
@@ -300,8 +301,14 @@ esac
 KDE_FULL_SESSION=true
 export KDE_FULL_SESSION
 
-if ! kill -0 $DBUS_SESSION_BUS_PID; then
-  eval $(dbus-launch --auto-syntax)
+need_dbus=0
+if test -z "$DBUS_SESSION_BUS_PID"; then
+    need_dbus=1
+elif ! kill -0 $DBUS_SESSION_BUS_PID; then
+    need_dbus=1
+fi
+if test $need_dbus -eq 1; then
+  eval `dbus-launch --auto-syntax`
 fi
 
 # We set LD_BIND_NOW to increase the efficiency of kdeinit.
@@ -342,7 +349,7 @@ if test $? -eq 255; then
 fi
 
 # wait if there's any crashhandler shown
-while dcop | grep -q ^drkonqi- ; do
+while dbus | grep -q ^org.kde.drkonqi ; do
     sleep 5
 done
 
