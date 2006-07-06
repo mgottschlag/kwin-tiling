@@ -42,6 +42,7 @@
 #include <kstdaction.h>
 #include <kstandarddirs.h>
 #include <kwin.h>
+#include <kdirnotify.h>
 #include <kwinmodule.h>
 
 #include <fixx11h.h>
@@ -157,7 +158,7 @@ KDIconView::KDIconView( QWidget *parent, const char* name )
 
     connect( kapp->desktop(), SIGNAL( resized( int )), SLOT( desktopResized()));
 
-    QDBusInterface *kdirnotify = new QDBusInterface( QString(), QString(), "org.kde.KDir" );
+    OrgKdeKDirNotifyInterface *kdirnotify = new OrgKdeKDirNotifyInterface( QString(), QString(), QDBus::sessionBus() );
     kdirnotify->setParent(this);
     connect(kdirnotify, SIGNAL(FilesAdded(QString)), SLOT(slotFilesAdded(QString)));
     connect(kdirnotify, SIGNAL(FilesChanged(QStringList)), SLOT(slotFilesChanged(QStringList)));
