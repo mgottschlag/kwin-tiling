@@ -6,13 +6,12 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kdm.h.cmake ${CMAKE_CURRENT_BI
 
 
 add_subdirectory( kfrontend )
-MESSAGE(STATUS "Readd Backend when test about pam and co will add")
 add_subdirectory( backend )
 
 ########### install files ###############
 
-install_files( /share/doc/kdm FILES README )
-
+install( FILES README DESTINTION share/doc/kdm )
+MESSAGE(STATUS "Create pam service")
 
 
 
