@@ -1,6 +1,6 @@
 
 add_subdirectory( libkscreensaver ) 
-add_subdirectory( applnk ) 
+add_subdirectory( menus ) 
 add_subdirectory( kblank_screensaver ) 
 add_subdirectory( krandom_screensaver ) 
 

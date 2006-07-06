@@ -3,9 +3,9 @@
 
 ########### install files ###############
 
-install_files( ${XDG_DIRECTORY_DIR}/menu FILES kde-screensavers.menu )
-install_files( ${XDG_DIRECTORY_DIR}/menu FILES kde-merge-screensavers.menu )
-install_files( ${XDG_DIRECTORY_DIR} FILES kde-system-screensavers.directory  )
+install( FILES kde-screensavers.menu kde-merge-screensavers.menu DESTINATION ${XDG_DIRECTORY_DIR}/menus/ )
+install( FILES kde-merge-screensavers.menu DESTINATION ${XDG_DIRECTORY_DIR}/menus/applications-merged )
+install( FILES kde-system-screensavers.directory DESTINATION ${XDG_DIRECTORY_DIR}  )
 
 
 
