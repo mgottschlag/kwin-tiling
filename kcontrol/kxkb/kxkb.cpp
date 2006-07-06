@@ -48,6 +48,7 @@ DESCRIPTION
 #include <kdebug.h>
 #include <kconfig.h>
 #include <ktoolinvocation.h>
+#include <kactioncollection.h>
 
 #include "kxkb_adaptor.h"
 
@@ -76,10 +77,11 @@ KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
     }
 	
     // keep in sync with kcmlayout.cpp
-	keys = KGlobalAccel::self();
+//	keys = new KActionCollection(this);
 	//TODO:
 	//#include "kxkbbindings.cpp"
     //keys->updateConnections();
+    
 
 	m_layoutOwnerMap = new LayoutMap(kxkbConfig);
 
@@ -226,7 +228,8 @@ bool KXKBApp::setLayout(const QString& layoutPair)
 {
 	const LayoutUnit layoutUnitKey(layoutPair);
 	if( kxkbConfig.m_layouts.contains(layoutUnitKey) ) {
-		return setLayout( *kxkbConfig.m_layouts.find(layoutUnitKey) );
+		int ind = kxkbConfig.m_layouts.indexOf(layoutUnitKey);
+		return setLayout( kxkbConfig.m_layouts[ind] );
 	}
 	return false;
 }

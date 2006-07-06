@@ -205,7 +205,7 @@ QString LayoutIcon::getCountryFromLayoutName(const QString& layoutName)
 
 void LayoutIcon::dimPixmap(QPixmap& pm)
 {
-	QImage image = pm.convertToImage();
+	QImage image = pm.toImage();
 	for (int y=0; y<image.height(); y++)
 		for(int x=0; x<image.width(); x++)
 	{
@@ -213,7 +213,7 @@ void LayoutIcon::dimPixmap(QPixmap& pm)
 		QRgb dimRgb(qRgb(qRed(rgb)*3/4, qGreen(rgb)*3/4, qBlue(rgb)*3/4));
 		image.setPixel(x, y, dimRgb);
 	}
-	pm.convertFromImage(image);
+	pm = QPixmap::fromImage(image);
 }
 
 static const char* ERROR_LABEL = "err";

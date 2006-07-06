@@ -90,7 +90,7 @@ bool KxkbConfig::load(int loadMode)
 		if( displayNamePair.count() == 2 ) {
 			LayoutUnit layoutUnit( displayNamePair[0] );
 			if( m_layouts.contains( layoutUnit ) ) {
-				m_layouts[m_layouts.findIndex(layoutUnit)].displayName = displayNamePair[1].left(3);
+				m_layouts[m_layouts.indexOf(layoutUnit)].displayName = displayNamePair[1].left(3);
 			}
 		}
 	}
@@ -105,7 +105,7 @@ bool KxkbConfig::load(int loadMode)
 				if( includePair.count() == 2 ) {
 					LayoutUnit layoutUnit( includePair[0] );
 					if( m_layouts.contains( layoutUnit ) ) {
-						m_layouts[m_layouts.findIndex(layoutUnit)].includeGroup = includePair[1];
+						m_layouts[m_layouts.indexOf(layoutUnit)].includeGroup = includePair[1];
 						kDebug() << "Got inc group: " << includePair[0] << ": " << includePair[1] << endl;
 					}
 				}
@@ -121,7 +121,7 @@ bool KxkbConfig::load(int loadMode)
 				kDebug() << "old layout for inc: " << layoutUnit.toPair() << " included " << m_layouts.contains( layoutUnit ) << endl;
 				if( m_layouts.contains( layoutUnit ) ) {
 					QString variantName = LayoutUnit::parseVariant(*it);
-					m_layouts[m_layouts.findIndex(layoutUnit)].includeGroup = variantName;
+					m_layouts[m_layouts.indexOf(layoutUnit)].includeGroup = variantName;
 					kDebug() << "Got inc group: " << layoutUnit.toPair() << ": " <<  variantName << endl;
 				}
 			}
@@ -296,7 +296,7 @@ QString KxkbConfig::getDefaultDisplayName(const QString& code_)
 
 QString KxkbConfig::getDefaultDisplayName(const LayoutUnit& layoutUnit, bool single)
 {
-	if( layoutUnit.variant == "" )
+	if( layoutUnit.variant.isEmpty() )
 		return getDefaultDisplayName( layoutUnit.layout );
 	
 	QString displayName = layoutUnit.layout.left(2);

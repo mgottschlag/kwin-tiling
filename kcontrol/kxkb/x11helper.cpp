@@ -108,7 +108,7 @@ X11Helper::findXkbRulesFile(QString x11Dir, Display *dpy)
 RulesInfo*
 X11Helper::loadRules(const QString& file, bool layoutsOnly) 
 {
-	XkbRF_RulesPtr xkbRules = XkbRF_Load(QFile::encodeName(file).data(), "", true, true);
+	XkbRF_RulesPtr xkbRules = XkbRF_Load(QFile::encodeName(file).data(), (char*)"", true, true);
 
 	if (xkbRules == NULL) {
 // throw Exception
