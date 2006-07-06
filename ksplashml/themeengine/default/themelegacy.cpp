@@ -24,6 +24,7 @@
 #include <QPixmap>
 #include <QTimer>
 #include <QProgressBar>
+#include <QVBoxLayout>
 
 #include "objkstheme.h"
 #include "themelegacy.h"
@@ -54,7 +55,6 @@ void DefaultConfig::save()
 ThemeDefault::ThemeDefault( QWidget *parent, const QStringList &args )
     :ThemeEngine( parent, args )
 {
-
   mActivePixmap = mInactivePixmap = 0L;
   mState = 0;
 
@@ -85,113 +85,120 @@ ThemeDefault::~ThemeDefault()
 
 void ThemeDefault::_initUi()
 {
-  QString resource_prefix;
+    QString resource_prefix;
 
-  KVBox *vbox = new KVBox( this );
-  vbox->setAttribute(Qt::WA_NoSystemBackground, true);;
+    QVBoxLayout* layout = new QVBoxLayout( this );
+    layout->setSpacing( 0 );
+    layout->setMargin( 0 );
+    setLayout( layout );
 
+    //setAttribute(Qt::WA_NoSystemBackground, true);;
 
-  QString activePix, inactivePix;
+    QString activePix, inactivePix;
 #if BIDI
-  if ( QApplication::isRightToLeft() )
-  {
-      activePix = _findPicture(QString("splash_active_bar_bidi.png"));
-      inactivePix = _findPicture(QString("splash_inactive_bar_bidi.png"));
-  }
-  else
+    if ( QApplication::isRightToLeft() )
+    {
+        activePix = _findPicture(QString("splash_active_bar_bidi.png"));
+        inactivePix = _findPicture(QString("splash_inactive_bar_bidi.png"));
+    }
+    else
 #endif
-  {
-    activePix = _findPicture(QString("splash_active_bar.png"));
-    inactivePix = _findPicture(QString("splash_inactive_bar.png"));
-  }
-  kDebug() << "Inactive pixmap: " << inactivePix << endl;
-  kDebug() << "Active pixmap:   " <<   activePix << endl;
+    {
+        activePix = _findPicture(QString("splash_active_bar.png"));
+        inactivePix = _findPicture(QString("splash_inactive_bar.png"));
+    }
+    kDebug() << "Inactive pixmap: " << inactivePix << endl;
+    kDebug() << "Active pixmap:   " <<   activePix << endl;
 
-  mActivePixmap = new QPixmap( activePix );
-  mInactivePixmap = new QPixmap( inactivePix );
+    mActivePixmap = new QPixmap( activePix );
+    mInactivePixmap = new QPixmap( inactivePix );
 
-  if (mActivePixmap->isNull())
-  {
-    *mActivePixmap = QPixmap(200,100);
-    mActivePixmap->fill(Qt::blue);
-  }
-  if (mInactivePixmap->isNull())
-  {
-    *mInactivePixmap = QPixmap(200,100);
-    mInactivePixmap->fill(Qt::black);
-  }
+    if (mActivePixmap->isNull())
+    {
+        *mActivePixmap = QPixmap(200,100);
+        mActivePixmap->fill(Qt::blue);
+    }
+    if (mInactivePixmap->isNull())
+    {
+        *mInactivePixmap = QPixmap(200,100);
+        mInactivePixmap->fill(Qt::black);
+    }
 
-  QPixmap tlimage( _findPicture(QString("splash_top.png")) );
-  if (tlimage.isNull())
-  {
-    tlimage = QPixmap(200,100);
-    tlimage.fill(Qt::blue);
-  }
-  QLabel *top_label = new QLabel( vbox );
-  top_label->setPixmap( tlimage );
-  top_label->setFixedSize( tlimage.width(), tlimage.height() );
-  top_label->setAttribute(Qt::WA_NoSystemBackground, true);
+    QPixmap tlimage( _findPicture(QString("splash_top.png")) );
+    if (tlimage.isNull())
+    {
+        tlimage = QPixmap(200,100);
+        tlimage.fill(Qt::blue);
+    }
+    QLabel *top_label = new QLabel( this );
+    layout->addWidget( top_label );
+    top_label->setPixmap( tlimage );
+    top_label->setFixedSize( tlimage.width(), tlimage.height() );
+    //top_label->setAttribute(Qt::WA_NoSystemBackground, true);
 
-  mBarLabel = new QLabel( vbox );
-  mBarLabel->setPixmap(*mInactivePixmap);
-  mBarLabel->setAttribute(Qt::WA_NoSystemBackground, true);
+    mBarLabel = new QLabel( this );
+    layout->addWidget( mBarLabel );
+    mBarLabel->setPixmap(*mInactivePixmap);
+    //mBarLabel->setAttribute(Qt::WA_NoSystemBackground, true);
 
-  QPixmap blimage( _findPicture(QString("splash_bottom.png")) );
-  if (blimage.isNull())
-  {
-    blimage = QPixmap(200,100);
-    blimage.fill(Qt::black);
-  }
-  QLabel *bottom_label = new QLabel( vbox );
-  QPalette palette;
-  palette.setBrush( bottom_label->backgroundRole(), QBrush(blimage) );
-  bottom_label->setPalette( palette );
+    QPixmap blimage( _findPicture(QString("splash_bottom.png")) );
+    if (blimage.isNull())
+    {
+        blimage = QPixmap(200,100);
+        blimage.fill(Qt::black);
+    }
 
-      mLabel = new QLabel( bottom_label );
-      mLabel->setAutoFillBackground ( true );
-      mLabel->setBackgroundOrigin( QWidget::ParentOrigin );
-      mLabel->setPaletteForegroundColor( mLabelForeground );
-      mLabel->setPaletteBackgroundPixmap( blimage );
-      QFont f(mLabel->font());
-      f.setBold(true);
-      mLabel->setFont(f);
+    QFrame *bottom_label = new QFrame( this );
 
-      mProgressBar = new QProgressBar( mLabel );
-      int h, s, v;
-      mLabelForeground.getHsv( &h, &s, &v );
-      mProgressBar->setPalette( QPalette( v > 128 ? Qt::black : Qt::white ));
-      mProgressBar->setBackgroundOrigin( QWidget::ParentOrigin );
-      mProgressBar->setPaletteBackgroundPixmap( blimage );
+    layout->addWidget( bottom_label );
 
-      bottom_label->setFixedWidth( qMax(blimage.width(),tlimage.width()) );
-      bottom_label->setFixedHeight( mLabel->sizeHint().height()+4 );
+    QPalette palette = this->palette();
+    palette.setBrush( bottom_label->backgroundRole(), QBrush(blimage) );
+    bottom_label->setPalette( palette );
+    bottom_label->setLayout( new QHBoxLayout( bottom_label ) );
+    bottom_label->layout()->setMargin( 0 );
+    bottom_label->layout()->setSpacing( 0 );
+    bottom_label->setAttribute(Qt::WA_NoSystemBackground, true);
 
-      // 3 pixels of whitespace between the label and the progressbar.
-      mLabel->resize( bottom_label->width(), bottom_label->height() );
+    mLabel = new QLabel( bottom_label );
+    bottom_label->layout()->addWidget( mLabel );
+    mLabel->setAutoFillBackground ( true );
+    //mLabel->setBackgroundOrigin( QWidget::ParentOrigin );
+    //mLabel->setPaletteForegroundColor( mLabelForeground );
+    mLabel->setPalette( palette );
+    mLabel->setText( "Lubos too" );
+    QFont f(mLabel->font());
+    f.setBold(true);
+    mLabel->setFont(f);
 
-      mProgressBar->setFixedSize( 120, mLabel->height() );
+    mProgressBar = new QProgressBar( mLabel );
+    int h, s, v;
+    mLabelForeground.getHsv( &h, &s, &v );
+    mProgressBar->setPalette( QPalette( v > 128 ? Qt::black : Qt::white ));
+    //mProgressBar->setBackgroundOrigin( QWidget::ParentOrigin );
+    mProgressBar->setPalette( palette );
 
-      if (QApplication::isRightToLeft()){
-            mProgressBar->move( 2, 0 );
+    bottom_label->setFixedWidth( qMax(blimage.width(),tlimage.width()) );
+
+    if (QApplication::isRightToLeft()){
+        mProgressBar->move( 2, 0 );
 //	    mLabel->move( mProgressBar->width() + 4, 0);
-      }
-      else{
-            mProgressBar->move( bottom_label->width() - mProgressBar->width() - 4, 0);
-	    mLabel->move( 2, 0 );
-      }
+    }
+    else{
+        mProgressBar->move( bottom_label->width() - mProgressBar->width() - 4, 0);
+        mLabel->move( 2, 0 );
+    }
 
-      mProgressBar->hide();
+    mProgressBar->hide();
 
-  setFixedWidth( mInactivePixmap->width() );
-  setFixedHeight( mInactivePixmap->height() +
-                  top_label->height() + bottom_label->height() );
+    setFixedWidth( mInactivePixmap->width() );
 
-  const QRect rect = qApp->desktop()->screenGeometry( mTheme->xineramaScreen() );
-  // KGlobalSettings::splashScreenDesktopGeometry(); cannot be used here.
-  // kDebug() << "ThemeDefault::_initUi" << rect << endl;
+    const QRect rect = qApp->desktop()->screenGeometry( mTheme->xineramaScreen() );
+    // KGlobalSettings::splashScreenDesktopGeometry(); cannot be used here.
+    // kDebug() << "ThemeDefault::_initUi" << rect << endl;
 
-  move( rect.x() + (rect.width() - size().width())/2,
-        rect.y() + (rect.height() - size().height())/2 );
+    move( rect.x() + (rect.width() - size().width())/2,
+          rect.y() + (rect.height() - size().height())/2 );
 }
 
 // Attempt to find overrides elsewhere?

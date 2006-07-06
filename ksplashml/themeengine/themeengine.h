@@ -51,7 +51,7 @@ protected:
  * @short Base class for all theme engines. Member functions need to be
  * overridden by derived classes in order to provide actual functionality.
  */
-class KDE_EXPORT ThemeEngine: public Q3VBox
+class KDE_EXPORT ThemeEngine: public QFrame
 {
   Q_OBJECT
 public:

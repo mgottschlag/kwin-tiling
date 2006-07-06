@@ -41,8 +41,9 @@ struct ThemeEngine::ThemeEnginePrivate
 };
 
 ThemeEngine::ThemeEngine( QWidget *, const QStringList& args )
-  : Q3VBox( 0, "wndSplash", Qt::WStyle_Customize|Qt::WX11BypassWM ), d(0)
+  : QFrame( 0, Qt::WStyle_Customize|Qt::WX11BypassWM )
 {
+    setObjectName( "wndSplash" );
   d = new ThemeEnginePrivate;
   kapp->installX11EventFilter( this );
   kapp->installEventFilter( this );
