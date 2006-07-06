@@ -269,12 +269,20 @@ lnusertemp cache >/dev/null
 
 echo 'startkde: Starting up...'  1>&2
 
+need_dbus=0
+if test -z "$DBUS_SESSION_BUS_PID"; then
+    need_dbus=1
+elif ! kill -0 $DBUS_SESSION_BUS_PID; then
+    need_dbus=1
+fi
+if test $need_dbus -eq 1; then
+  eval `dbus-launch --auto-syntax`
+fi
+
 # run KPersonalizer before the session, if this is the first login
 if test "$kpersonalizerrc_general_firstlogin" = "true"; then
-    # start dbus daemon [well, what if it's already running?]
     # don't start whole kdeinit (takes too long)
     echo 'startkde: Running kpersonalizer...'  1>&2
-    eval `dbus-launch --auto-syntax`
     kwin --lock &
     kpersonalizer --before-session
     # handle kpersonalizer restarts (language change)
@@ -300,16 +308,6 @@ esac
 # certain features such as Konqueror preloading work only with full KDE running
 KDE_FULL_SESSION=true
 export KDE_FULL_SESSION
-
-need_dbus=0
-if test -z "$DBUS_SESSION_BUS_PID"; then
-    need_dbus=1
-elif ! kill -0 $DBUS_SESSION_BUS_PID; then
-    need_dbus=1
-fi
-if test $need_dbus -eq 1; then
-  eval `dbus-launch --auto-syntax`
-fi
 
 # We set LD_BIND_NOW to increase the efficiency of kdeinit.
 # kdeinit unsets this variable before loading applications.
