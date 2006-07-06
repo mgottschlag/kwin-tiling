@@ -44,6 +44,7 @@
 #include "toplevel.h"
 #include "kcmlocale.h"
 #include "toplevel.moc"
+#include "ui_toplevelbase.h"
 
 KLocaleApplication::KLocaleApplication(QWidget *parent,
                                        const QStringList &args)
@@ -63,6 +64,10 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
   m_globalConfig = new KConfig(QString(), false, true);
 
   m_locale = new KLocale(QLatin1String("kcmlocale"), m_nullConfig);
+
+  Ui_TopLevelBase ui;
+  ui.setupUi( this );
+  /*
   QVBoxLayout *l = new QVBoxLayout(this);
   l->setMargin(0);
   l->setSpacing(KDialog::spacingHint());
@@ -71,24 +76,28 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
   m_tab = new QTabWidget(this);
 
   m_localemain = new KLocaleConfig(m_locale, this);
-  m_tab->addTab( m_localemain, QString());
+
+  */
+  //m_tab->addTab( m_localemain, QString());
+#if 0
   m_localenum = new KLocaleConfigNumber(m_locale, this);
-  m_tab->addTab( m_localenum, QString() );
+  //m_tab->addTab( m_localenum, QString() );
   m_localemon = new KLocaleConfigMoney(m_locale, this);
-  m_tab->addTab( m_localemon, QString() );
+  //m_tab->addTab( m_localemon, QString() );
   m_localetime = new KLocaleConfigTime(m_locale, this);
-  m_tab->addTab( m_localetime, QString() );
+  //m_tab->addTab( m_localetime, QString() );
   m_localeother = new KLocaleConfigOther(m_locale, this);
-  m_tab->addTab( m_localeother, QString() );
+  //m_tab->addTab( m_localeother, QString() );
+#endif
 
   // Examples
+/*
   m_gbox = new Q3GroupBox(this);
   m_gbox->setOrientation(Qt::Vertical);
   QVBoxLayout *laygroup = new QVBoxLayout(m_gbox);
   laygroup->setSpacing(KDialog::spacingHint());
   m_sample = new KLocaleSample(m_locale, m_gbox);
   laygroup->addWidget( m_sample );
-
 
   // getting signals from children
   connect(m_localemain, SIGNAL(localeChanged()),
@@ -151,6 +160,7 @@ KLocaleApplication::KLocaleApplication(QWidget *parent,
           SLOT(slotChanged()));
 
   load();
+*/
 }
 
 KLocaleApplication::~KLocaleApplication()
@@ -162,6 +172,7 @@ KLocaleApplication::~KLocaleApplication()
 
 void KLocaleApplication::load()
 {
+  return;
   m_globalConfig->reparseConfiguration();
   *m_locale = KLocale(QLatin1String("kcmlocale"), m_globalConfig);
 
@@ -230,6 +241,7 @@ QString KLocaleApplication::quickHelp() const
 
 void KLocaleApplication::slotTranslate()
 {
+#if 0
   // The untranslated string for QLabel are stored in
   // the name() so we use that when retranslating
   QObjectList list = queryList("QWidget");
@@ -264,10 +276,10 @@ void KLocaleApplication::slotTranslate()
   m_tab->changeTab(m_localemon, ki18n("&Money").toString(m_locale));
   m_tab->changeTab(m_localetime, ki18n("&Time && Dates").toString(m_locale));
   m_tab->changeTab(m_localeother, ki18n("&Other").toString(m_locale));
-
   // FIXME: All widgets are done now. However, there are
   // still some problems. Popup menus from the QLabels are
   // not retranslated.
+#endif
 }
 
 void KLocaleApplication::slotChanged()

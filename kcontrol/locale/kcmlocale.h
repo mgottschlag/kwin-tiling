@@ -27,6 +27,7 @@
 
 #include <QWidget>
 #include <QStringList>
+#include "ui_language.h"
 
 class KAddButton;
 class KLanguageButton;
@@ -37,13 +38,12 @@ class QLabel;
 class Q3ListBox;
 class QPushButton;
 
-class KLocaleConfig : public QWidget
+class KLocaleConfig : public QWidget, public Ui_Language
 {
   Q_OBJECT
 
 public:
-  KLocaleConfig( KLocale *_locale,
-                 QWidget *parent = 0, const char *name = 0);
+  KLocaleConfig( KLocale *_locale, QWidget *parent = 0);
 
   void save();
 
@@ -79,17 +79,6 @@ private:
   QStringList languageList() const;
 
   KLocale *m_locale;
-
-  KLanguageButton *m_comboCountry;
-
-  QLabel *m_labCountry;
-  QLabel *m_labLang;
-
-  Q3ListBox * m_languages;
-  KLanguageButton * m_addLanguage;
-  QPushButton * m_removeLanguage;
-  QPushButton * m_upButton;
-  QPushButton * m_downButton;
 };
 
 #endif

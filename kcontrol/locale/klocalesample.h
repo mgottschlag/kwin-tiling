@@ -37,7 +37,7 @@ class KLocaleSample : public QWidget
   Q_OBJECT
 public:
   KLocaleSample(KLocale *_locale,
-                QWidget *parent = 0, const char*name = 0);
+                QWidget *parent = 0);
   virtual ~KLocaleSample();
 
 public Q_SLOTS:

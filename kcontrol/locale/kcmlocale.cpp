@@ -44,75 +44,24 @@
 #include "kcmlocale.moc"
 #include "toplevel.h"
 
-KLocaleConfig::KLocaleConfig(KLocale *locale,
-                             QWidget *parent, const char *name)
+KLocaleConfig::KLocaleConfig(KLocale *locale, QWidget *parent)
   : QWidget (parent),
     m_locale(locale)
 {
-  QGridLayout *lay = new QGridLayout(this );
-  lay->setMargin( KDialog::marginHint() );
-  lay->setSpacing( KDialog::spacingHint());
+    setupUi( this );
 
-  m_labCountry = new QLabel(this);
-  m_labCountry->setObjectName( I18N_NOOP("Country or region:") );
-  m_comboCountry = new KLanguageButton( this );
-  m_labCountry->setBuddy(m_comboCountry);
-  connect( m_comboCountry, SIGNAL(activated(const QString &)),
-           this, SLOT(changedCountry(const QString &)) );
-
-  m_labLang = new QLabel(this);
-  m_labLang->setObjectName( I18N_NOOP("Languages:") );
-  m_labLang->setAlignment( Qt::AlignTop );
-
-  m_languages = new Q3ListBox(this);
-  connect(m_languages, SIGNAL(selectionChanged()),
-          SLOT(slotCheckButtons()));
-
-  QWidget * vb = new QWidget(this);
-  QVBoxLayout * boxlay = new QVBoxLayout(vb);
-  boxlay->setMargin(0);
-  boxlay->setSpacing(KDialog::spacingHint());
-  m_addLanguage = new KLanguageButton(QString(), vb );
-  m_addLanguage->setObjectName( I18N_NOOP("Add Language") );
-  boxlay->addWidget(m_addLanguage);
-  connect(m_addLanguage, SIGNAL(activated(const QString &)),
-          SLOT(slotAddLanguage(const QString &)));
-  m_removeLanguage = new QPushButton( vb );
-  m_removeLanguage->setObjectName( I18N_NOOP("Remove Language") );
-  m_upButton = new QPushButton( vb );
-  m_upButton->setObjectName( I18N_NOOP("Move Up") );
-  m_downButton = new QPushButton( vb );
-  m_downButton->setObjectName( I18N_NOOP("Move Down") );
-  boxlay->addWidget(m_removeLanguage);
-  boxlay->addWidget(m_upButton);
-  boxlay->addWidget(m_downButton);
-  connect(m_removeLanguage, SIGNAL(clicked()),
+    connect(languageRemove, SIGNAL(clicked()),
           SLOT(slotRemoveLanguage()));
-  connect(m_upButton, SIGNAL(clicked()),
-          SLOT(slotLanguageUp()));
-  connect(m_downButton, SIGNAL(clicked()),
-          SLOT(slotLanguageDown()));
-  boxlay->insertStretch(-1);
+    connect(m_upButton, SIGNAL(clicked()),
+            SLOT(slotLanguageUp()));
+    connect(m_downButton, SIGNAL(clicked()),
+            SLOT(slotLanguageDown()));
 
-  // #### HPB: This should be implemented for KDE 3
-  //  new QLabel(this, I18N_NOOP("Encoding:"));
-  //QComboBox * cb = new QComboBox( this );
-  //cb->insertStringList( KGlobal::charsets()->descriptiveEncodingNames() );
-
-  lay->addWidget(m_labCountry, 0, 0, 1, 2 );
-  lay->addWidget(m_comboCountry, 0, 2);
-  lay->addWidget(m_labLang, 1, 0);
-  lay->addWidget(m_languages, 1, 1);
-  lay->addWidget(vb, 1, 2);
-
-  lay->setRowStretch(2, 5);
-
-  lay->setColumnStretch(1, 1);
-  lay->setColumnStretch(2, 1);
 }
 
 void KLocaleConfig::slotAddLanguage(const QString & code)
 {
+#if 0
   QStringList languageList = m_locale->languageList();
 
   int pos = m_languages->currentItem();
@@ -134,10 +83,12 @@ void KLocaleConfig::slotAddLanguage(const QString & code)
   emit localeChanged();
   if ( pos == 0 )
     emit languageChanged();
+#endif
 }
 
 void KLocaleConfig::slotRemoveLanguage()
 {
+#if 0
   QStringList languageList = m_locale->languageList();
   int pos = m_languages->currentItem();
 
@@ -153,12 +104,13 @@ void KLocaleConfig::slotRemoveLanguage()
       if ( pos == 0 )
         emit languageChanged();
     }
+#endif
 }
 
 void KLocaleConfig::slotLanguageUp()
 {
   QStringList languageList = m_locale->languageList();
-  int pos = m_languages->currentItem();
+  int pos = m_languages->currentRow();
 
   QStringList::Iterator it1 = languageList.begin() + pos - 1;
   QStringList::Iterator it2 = languageList.begin() + pos;
@@ -180,7 +132,7 @@ void KLocaleConfig::slotLanguageUp()
 void KLocaleConfig::slotLanguageDown()
 {
   QStringList languageList = m_locale->languageList();
-  int pos = m_languages->currentItem();
+  int pos = m_languages->currentRow();
 
   QStringList::Iterator it1 = languageList.begin() + pos;
   QStringList::Iterator it2 = languageList.begin() + pos + 1;
@@ -201,12 +153,13 @@ void KLocaleConfig::slotLanguageDown()
 
 void KLocaleConfig::loadLanguageList()
 {
+#if 0
   // temperary use of our locale as the global locale
   KLocale *lsave = KGlobal::_locale;
   KGlobal::_locale = m_locale;
 
   // clear the list
-  m_addLanguage->clear();
+  languageAdd->clear();
 
   QStringList first = languageList();
 
@@ -242,9 +195,9 @@ void KLocaleConfig::loadLanguageList()
   {
     if ((*it).isNull())
     {
-      m_addLanguage->insertSeparator();
+      languageAdd->insertSeparator();
       submenu = QString::fromLatin1("other");
-      m_addLanguage->insertSubmenu(ki18n("Other").toString(m_locale),
+      languageAdd->insertSubmenu(ki18n("Other").toString(m_locale),
                                    submenu, QString(), -1);
       menu_index = -2; // first entries should _not_ be sorted
       continue;
@@ -259,15 +212,17 @@ void KLocaleConfig::loadLanguageList()
     tag = tag.left(index);
     index = tag.lastIndexOf('/');
     tag = tag.mid(index + 1);
-    m_addLanguage->insertItem(name, tag, submenu, menu_index);
+    languageAdd->insertItem(name, tag, submenu, menu_index);
   }
 
   // restore the old global locale
   KGlobal::_locale = lsave;
+#endif
 }
 
 void KLocaleConfig::loadCountryList()
 {
+#if 0
   // temperary use of our locale as the global locale
   KLocale *lsave = KGlobal::_locale;
   KGlobal::_locale = m_locale;
@@ -341,6 +296,7 @@ void KLocaleConfig::loadCountryList()
 
   // restore the old global locale
   KGlobal::_locale = lsave;
+#endif
 }
 
 void KLocaleConfig::readLocale(const QString &path, QString &name,
@@ -381,10 +337,10 @@ void KLocaleConfig::save()
 
 void KLocaleConfig::slotCheckButtons()
 {
-  m_removeLanguage->setEnabled( m_languages->currentItem() != -1 );
-  m_upButton->setEnabled( m_languages->currentItem() > 0 );
-  m_downButton->setEnabled( m_languages->currentItem() != -1 &&
-                            m_languages->currentItem() < (signed)(m_languages->count() - 1) );
+  languageRemove->setEnabled( m_languages->currentRow() != -1 );
+  m_upButton->setEnabled( m_languages->currentRow() > 0 );
+  m_downButton->setEnabled( m_languages->currentRow() != -1 &&
+                            m_languages->currentRow() < (signed)(m_languages->count() - 1) );
 }
 
 void KLocaleConfig::slotLocaleChanged()
@@ -402,25 +358,26 @@ void KLocaleConfig::slotLocaleChanged()
     QString name;
     readLocale(*it, name, QString());
 
-    m_languages->insertItem(name);
+    m_languages->insertItem(0, name);
   }
   slotCheckButtons();
 
-  m_comboCountry->setCurrentItem( m_locale->country() );
+  // FIXME m_comboCountry->setCurrentItem( m_locale->country() );
 }
 
 void KLocaleConfig::slotTranslate()
 {
   kDebug() << "slotTranslate()" << endl;
 
+#if 0
   m_comboCountry->setToolTip( ki18n
         ( "This is where you live. KDE will use the defaults for "
           "this country or region.").toString(m_locale) );
-  m_addLanguage->setToolTip( ki18n
+  languageAdd->setToolTip( ki18n
         ( "This will add a language to the list. If the language is already "
           "in the list, the old one will be moved instead." ).toString(m_locale) );
 
-  m_removeLanguage->setToolTip( ki18n
+  languageRemove->setToolTip( ki18n
         ( "This will remove the highlighted language from the list." ).toString(m_locale) );
 
   m_languages->setToolTip( ki18n
@@ -447,8 +404,9 @@ void KLocaleConfig::slotTranslate()
       "in this case, they will automatically fall back to US English." ).toString(m_locale);
   m_labLang->setWhatsThis( str );
   m_languages->setWhatsThis( str );
-  m_addLanguage->setWhatsThis( str );
-  m_removeLanguage->setWhatsThis( str );
+  languageAdd->setWhatsThis( str );
+  languageRemove->setWhatsThis( str );
+#endif
 }
 
 QStringList KLocaleConfig::languageList() const

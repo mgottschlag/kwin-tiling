@@ -35,9 +35,8 @@
 #include "klocalesample.h"
 #include "klocalesample.moc"
 
-KLocaleSample::KLocaleSample(KLocale *locale,
-                             QWidget *parent, const char*name)
-  : QWidget(parent, name),
+KLocaleSample::KLocaleSample(KLocale *locale, QWidget *parent)
+  : QWidget(parent),
     m_locale(locale)
 {
   QGridLayout *lay = new QGridLayout(this);

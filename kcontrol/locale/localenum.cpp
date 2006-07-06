@@ -35,7 +35,7 @@
 #include "localenum.moc"
 
 KLocaleConfigNumber::KLocaleConfigNumber(KLocale *locale,
-					 QWidget *parent, const char*name)
+					 QWidget *parent)
   : QWidget(parent),
     m_locale(locale)
 {

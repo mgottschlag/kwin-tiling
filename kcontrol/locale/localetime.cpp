@@ -194,8 +194,8 @@ QString KLocaleConfigTime::storeToUser(const QList<StringPair> & list,
 }
 
 KLocaleConfigTime::KLocaleConfigTime(KLocale *_locale,
-				     QWidget *parent, const char*name)
- : QWidget(parent, name),
+				     QWidget *parent)
+ : QWidget(parent),
    m_locale(_locale)
 {
   // Time
