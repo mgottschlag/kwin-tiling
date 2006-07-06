@@ -34,9 +34,9 @@ add_subdirectory( ksystraycmd )
 add_subdirectory( ksplashml )
 add_subdirectory( kmenuedit )
 add_subdirectory( klipper )
-if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
+if(PAM_FOUND AND X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 	add_subdirectory( kdm )
-endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
+endif(PAM_FOUND AND X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 
 ########### install files ###############
 install(PROGRAMS startkde DESTINATION bin)
