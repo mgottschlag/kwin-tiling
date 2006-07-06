@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <QProcess>
 #include <QLabel>
 #include <QCheckBox>
 #include <QRadioButton>
@@ -28,7 +29,6 @@
 #include <krun.h>
 #include <kdebug.h>
 #include <kiconloader.h>
-#include <ktoolinvocation.h>
 #include <kkeyserver.h>
 #include <QtDBus/QtDBus>
 #include "kospage.h"
@@ -96,7 +96,12 @@ void KOSPage::save(bool currSettings){
 	///////////////////////////////////////////
 
 	// Make the kaccess daemon read the changed config file
-	KToolInvocation::startServiceByDesktopName("kaccess");
+	// Don't use KToolInvocation to avoid starting kdeinit too early
+	// since kpersonalizer is launcher in startkde
+	QString command = KStandardDirs::findExe("kaccess");
+	if ( !command.isEmpty() ){
+		QProcess::startDetached(command);
+	}
 }
 
 
