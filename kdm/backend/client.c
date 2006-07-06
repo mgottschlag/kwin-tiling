@@ -33,7 +33,7 @@ from the copyright holder.
  *
  * user verification and session initiation.
  */
-
+#include <config-kdm.h>
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"

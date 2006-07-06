@@ -72,7 +72,7 @@ from the copyright holder.
 #include <ctype.h>
 #include <string.h>
 #include <stdarg.h>
-
+#include <config-kdm.h>
 /* format flags - Bits */
 #define DP_F_MINUS     (1 << 0)
 #define DP_F_PLUS      (1 << 1)

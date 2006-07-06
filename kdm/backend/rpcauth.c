@@ -32,7 +32,7 @@ from the copyright holder.
  *
  * generate SecureRPC authorization records
  */
-
+#include <config-kdm.h>
 #include <config.h>
 
 #ifdef SECURE_RPC

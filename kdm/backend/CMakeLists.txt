@@ -1,4 +1,4 @@
-include_directories(${CMAKE_SOURCE_DIR}/workspace/kdm/  )
+include_directories(${CMAKE_SOURCE_DIR}/workspace/kdm/ ${CMAKE_BINARY_DIR}/workspace/kdm/ )
 
 
 ########### next target ###############

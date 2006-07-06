@@ -1,6 +1,7 @@
 
 project(kdm)
 OPTION(KDE4_KDM_XCONSOLE   "build kdm with built-in xconsole" OFF)
+OPTION(KDE4_VSYSLOG_SUPPORT "Build kdm with syslog support" OFF)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kdm.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kdm.h )
 
@@ -10,7 +11,7 @@ add_subdirectory( backend )
 
 ########### install files ###############
 
-install( FILES README DESTINTION share/doc/kdm )
+install( FILES README DESTINATION share/doc/kdm )
 MESSAGE(STATUS "Create pam service")
 
 
