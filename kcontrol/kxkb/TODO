@@ -1,3 +1,9 @@
+KDE4:
+  - integrate libxklavier
+  - pure modifier keyboard shortcuts (Ctrl+Shift)
+  - port deprecated Qt3 widget calls
+
+Others:
 - setting up own layout if you're not root - using xkbcomp
 
 - allowing other latin base groups instead of "us" (e.g. "dvorak")
@@ -9,8 +15,6 @@
 
 - kdesktop_lock: layouts menu, flag icons, better error handling
 
-- parse xfree86.xml instead of xfree86.lst for XFree86 4.3.0 and higher
-
 - prevent application/window list from growing endlessly
 
 - bug 59203: call kcontrol/keys/modifiers.cpp: 
@@ -20,4 +24,3 @@
 		ModifiersModule::setupMacModifierKeys();
     after each switch
     
-- 

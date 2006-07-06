@@ -15,10 +15,16 @@
 #include "x11helper.h"
 #include "rules.h"
 
+#ifdef HAVE_XKLAVIER
+#include "xklavier_adaptor.h"
+#endif
 
 XkbRules::XkbRules(bool layoutsOnly):
     m_layouts()
 {
+#ifdef HAVE_XKLAVIER
+	loadNewRules(layoutsOnly);
+#else
 	X11_DIR = X11Helper::findX11Dir();
 
    	if( X11_DIR == NULL ) {
@@ -38,8 +44,24 @@ XkbRules::XkbRules(bool layoutsOnly):
 	loadRules(rulesFile, layoutsOnly);
 	loadOldLayouts(rulesFile);
 	loadGroups(KStandardDirs::locate("config", "kxkb_groups"));
+#endif
 }
 
+#ifdef HAVE_XKLAVIER
+
+void XkbRules::loadNewRules(bool layoutsOnly)
+{
+	XKlavierAdaptor xklAdaptor;
+	xklAdaptor.xklConfig(QX11Info::display());
+
+	m_layouts = xklAdaptor.getLayouts();
+	if( layoutsOnly == false ) {
+	  m_models = xklAdaptor.getModels();
+	  m_options = xklAdaptor.getOptions();
+	}
+}
+
+#else
 
 void XkbRules::loadRules(QString file, bool layoutsOnly)
 {
@@ -51,42 +73,67 @@ void XkbRules::loadRules(QString file, bool layoutsOnly)
 	}
 
 	m_layouts= rules->layouts;
+
 	if( layoutsOnly == false ) {
 		m_models = rules->models;
 		m_options = rules->options;
 	}
-
-	//  fixLayouts();
 }
 
-// void XkbRules::fixLayouts() {
-// // THIS IS TEMPORARY!!!
-// // This should be fixed in XFree86 (and actually is fixed in XFree 4.2)
-// // some handcoded ones, because the X11 rule file doesn't get them correctly, or in case
-// // the rule file wasn't found
-// 	static struct {
-// 		const char * locale;
-// 		const char * layout;
-// 	} fixedLayouts[] = {
-// 		{ "ben", "Bengali" },
-// 		{ "ar", "Arabic" },
-// 		{ "ir", "Farsi" },
-// 		{ 0, 0 }
-// 	};
-//
-// 	for(int i=0; fixedLayouts[i].layout != 0; i++ ) {
-// 		if( m_layouts.find(fixedLayouts[i].locale) == 0 )
-// 			m_layouts.insert(fixedLayouts[i].locale, fixedLayouts[i].layout);
-// 	}
-// }
+#endif
 
 bool XkbRules::isSingleGroup(const QString& layout)
 {
+#ifdef HAVE_XKLAVIER
+	return true;
+#else
 	  return X11Helper::areSingleGroupsSupported()
 			  && !m_oldLayouts.contains(layout)
 			  && !m_nonLatinLayouts.contains(layout);
+#endif
 }
 
+unsigned int
+XkbRules::getDefaultGroup(const QString& layout, const QString& includeGroup)
+{
+// check for new one-group layouts in XFree 4.3 and older
+    if( isSingleGroup(layout) ) {
+		if( includeGroup.isEmpty() == false )
+			return 1;
+		else
+			return 0;
+    }
+
+    QMap<QString, unsigned int>::const_iterator it = m_initialGroups.find(layout);
+    return it == m_initialGroups.constEnd() ? 0 : it.value();
+}
+
+
+QStringList
+XkbRules::getAvailableVariants(const QString& layout)
+{
+    if( layout.isEmpty() || !layouts().find(layout) )
+	return QStringList();
+
+    QStringList* result1 = m_varLists[layout];
+
+#ifdef HAVE_XKLAVIER
+        return *result1;
+#else
+    if( result1 )
+        return *result1;
+
+    bool oldLayouts = m_oldLayouts.contains(layout);
+    QStringList* result = X11Helper::getVariants(layout, X11_DIR, oldLayouts);
+
+    m_varLists.insert(layout, result);
+    return *result;
+#endif
+}
+
+
+
+#ifndef HAVE_XKLAVIER
 
 // check $oldlayouts and $nonlatin groups for XFree 4.3 and later
 void XkbRules::loadOldLayouts(QString rulesFile)
@@ -121,37 +168,4 @@ void XkbRules::loadGroups(QString file)
     }
 }
 
-unsigned int
-XkbRules::getDefaultGroup(const QString& layout, const QString& includeGroup)
-{
-// check for new one-group layouts in XFree 4.3 and older
-    if( isSingleGroup(layout) ) {
-		if( includeGroup.isEmpty() == false )
-			return 1;
-		else
-			return 0;
-    }
-
-    QMap<QString, unsigned int>::iterator it = m_initialGroups.find(layout);
-    return it == m_initialGroups.end() ? 0 : it.data();
-}
-
-
-QStringList
-XkbRules::getAvailableVariants(const QString& layout)
-{
-    if( layout.isEmpty() || !layouts().find(layout) )
-	return QStringList();
-
-    QStringList* result1 = m_varLists[layout];
-    if( result1 )
-        return *result1;
-
-    bool oldLayouts = m_oldLayouts.contains(layout);
-    QStringList* result = X11Helper::getVariants(layout, X11_DIR, oldLayouts);
-
-    m_varLists.insert(layout, result);
-
-    return *result;
-}
-
+#endif

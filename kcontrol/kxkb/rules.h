@@ -21,12 +21,6 @@ public:
 
   bool isSingleGroup(const QString& layout);
 
-protected:
-
-  void loadRules(QString filename, bool layoutsOnly=false);
-  void loadGroups(QString filename);
-  void loadOldLayouts(QString filename);
-
 private:
 
   QHash<QString, QString> m_models;
@@ -34,12 +28,20 @@ private:
   QHash<QString, QString> m_options;
   QMap<QString, unsigned int> m_initialGroups;
   QHash<QString, QStringList*> m_varLists;
-  QStringList m_oldLayouts;
-  QStringList m_nonLatinLayouts;
   
   QString X11_DIR;	// pseudo-constant
-  
-//  void fixLayouts();
+
+
+#ifdef HAVE_XKLAVIER
+  void loadNewRules(bool layoutsOnly);
+#else
+  QStringList m_oldLayouts;
+  QStringList m_nonLatinLayouts;
+
+  void loadRules(QString filename, bool layoutsOnly=false);
+  void loadGroups(QString filename);
+  void loadOldLayouts(QString filename);
+#endif
 };
 
 

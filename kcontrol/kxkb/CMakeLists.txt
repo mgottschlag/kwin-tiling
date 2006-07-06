@@ -1,6 +1,25 @@
-
 add_subdirectory( pics ) 
 
+OPTION(USE_XKLAVIER "Use libxklavier to get keyboard layouts configuration" OFF)
+
+MESSAGE("option ${USE_XKLAVIER}")
+
+if( USE_XKLAVIER STREQUAL ON )
+  macro_optional_find_package(LibXKlavier)
+  #macro_optional_find_package(Glib2)
+
+  if(LIBXKLAVIER_FOUND)
+
+#MESSAGE("xklav:: ${LIBXKLAVIER_DEFINITIONS}")
+#MESSAGE("xklav:: ${LIBXKLAVIER_LIBRARIES}")
+
+	SET(XKB_SUPPORT_SRC xklavier_adaptor.cpp)
+	SET(XKB_SUPPORT_LIB ${LIBXKLAVIER_LIBRARIES} gobject-2.0)
+	ADD_DEFINITIONS(-DHAVE_XKLAVIER=1 ${LIBXKLAVIER_DEFINITIONS})
+  else(LIBXKLAVIER_FOUND)
+	MESSAGE ("Could not find glib or libxklavier - old xkbfile code will be used to get keyboard layout configuration!")
+  endif(LIBXKLAVIER_FOUND)
+endif( USE_XKLAVIER STREQUAL ON )
 
 
 ########### next target ###############
@@ -15,6 +34,7 @@ set(kxkb_KDEINIT_SRCS
   kxkb.cpp
   kxkb_adaptor.cpp
   kxkbtraywindow.cpp
+  ${XKB_SUPPORT_SRC}
 )
 
 kde4_automoc(${kxkb_KDEINIT_SRCS})
@@ -22,7 +42,7 @@ kde4_automoc(${kxkb_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kxkb ${kxkb_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kxkb  ${KDE4_KDECORE_LIBS} xkbfile X11 Xext kdeui )
+target_link_libraries(kdeinit_kxkb  ${KDE4_KDECORE_LIBS} X11 Xext kdeui xkbfile ${XKB_SUPPORT_LIB})
 
 install(TARGETS kdeinit_kxkb  DESTINATION ${LIB_INSTALL_DIR} )
 
@@ -30,6 +50,7 @@ target_link_libraries( kxkb kdeinit_kxkb )
 install(TARGETS kxkb DESTINATION bin)
 
 ########### next target ###############
+
 
 set(kcm_keyboard_PART_SRCS 
   extension.cpp
@@ -39,7 +60,9 @@ set(kcm_keyboard_PART_SRCS
   pixmap.cpp
   kcmlayout.cpp
   kcmmisc.cpp
+  ${XKB_SUPPORT_SRC}
 )
+
 
 kde4_automoc(${kcm_keyboard_PART_SRCS})
 
@@ -49,7 +72,7 @@ kde4_add_plugin(kcm_keyboard ${kcm_keyboard_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_keyboard )
 
-target_link_libraries(kcm_keyboard  ${KDE4_KDECORE_LIBS} xkbfile kio )
+target_link_libraries(kcm_keyboard  ${KDE4_KDECORE_LIBS} kio xkbfile ${XKB_SUPPORT_LIB})
 
 install(TARGETS kcm_keyboard  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
