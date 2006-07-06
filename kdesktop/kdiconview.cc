@@ -407,7 +407,7 @@ void KDIconView::createActions()
         connect( KonqUndoManager::self(), SIGNAL( undoAvailable( bool ) ),
              undo, SLOT( setEnabled( bool ) ) );
         connect( KonqUndoManager::self(), SIGNAL( undoTextChanged( const QString & ) ),
-             undo, SLOT( setText( const QString & ) ) );
+                 this, SLOT( slotUndoTextChanged( const QString & ) ) );
         undo->setEnabled( KonqUndoManager::self()->undoAvailable() );
 
         KAction* paCut = KStdAction::cut( this, SLOT( slotCut() ), &m_actionCollection, "cut" );
@@ -441,6 +441,12 @@ void KDIconView::createActions()
         //init paste action
         slotClipboardDataChanged();
     }
+}
+
+void KDIconView::slotUndoTextChanged( const QString &text )
+{
+    KAction* undo = m_actionCollection.action( "undo" );
+    undo->setText( text );
 }
 
 void KDIconView::rearrangeIcons( SortCriterion sc, bool bSortDirectoriesFirst )
@@ -1417,7 +1423,7 @@ void KDIconView::updateWorkArea( const QRect &wr )
 void KDIconView::setupSortKeys()
 {
     // can't use sorting in KFileIVI::setKey()
-    setProperty("sortDirectoriesFirst", QVariant(false, 0));
+    setProperty("sortDirectoriesFirst", QVariant(false));
 
     for (Q3IconViewItem *it = firstItem(); it; it = it->nextItem())
     {

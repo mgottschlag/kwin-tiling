@@ -130,6 +130,7 @@ protected Q_SLOTS:
     void slotProperties();
 
     void slotClipboardDataChanged();
+    void slotUndoTextChanged( const QString & );
 
     void slotNewMenuActivated();
 
