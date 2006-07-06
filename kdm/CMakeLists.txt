@@ -1,11 +1,13 @@
 
 project(kdm)
+OPTION(KDE4_KDM_XCONSOLE   "build kdm with built-in xconsole")
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-kdm.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kdm.h )
 
 
 add_subdirectory( kfrontend )
 MESSAGE(STATUS "Readd Backend when test about pam and co will add")
-#add_subdirectory( backend )
+add_subdirectory( backend )
 
 ########### install files ###############
 
