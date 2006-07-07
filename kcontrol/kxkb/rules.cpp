@@ -112,7 +112,7 @@ XkbRules::getDefaultGroup(const QString& layout, const QString& includeGroup)
 QStringList
 XkbRules::getAvailableVariants(const QString& layout)
 {
-    if( layout.isEmpty() || !layouts().find(layout) )
+    if( layout.isEmpty() || !layouts().contains(layout) )
 	return QStringList();
 
     QStringList* result1 = m_varLists[layout];

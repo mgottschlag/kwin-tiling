@@ -143,7 +143,7 @@ X11Helper::loadRules(const QString& file, bool layoutsOnly)
   XkbRF_Free(xkbRules, true);
 
 // workaround for empty 'compose' options group description
-   if( rulesInfo->options.find("compose:menu") && !rulesInfo->options.find("compose") ) {
+   if( rulesInfo->options.contains("compose:menu") && !rulesInfo->options.contains("compose") ) {
      rulesInfo->options.insert("compose", "Compose Key Position");
    }
 
@@ -155,7 +155,7 @@ X11Helper::loadRules(const QString& file, bool layoutsOnly)
 	  
 	  if( columnPos != -1 ) {
 		  QString group = option.mid(0, columnPos);
-		  if( rulesInfo->options.find(group) == NULL ) {
+		  if( !rulesInfo->options.contains(group) ) {
 			  rulesInfo->options.insert(group, group);
 			  kDebug() << "Added missing option group: " << group << endl;
 		  }
