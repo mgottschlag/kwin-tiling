@@ -60,6 +60,8 @@ Panner::Panner( QWidget* parent, const char* /* name */ )
     // layout
     d->layout = new QBoxLayout(QBoxLayout::LeftToRight, this);
     d->layout->addWidget(viewport(), 1);
+    d->layout->setMargin(0);
+
     setOrientation(Qt::Horizontal);
 }
 

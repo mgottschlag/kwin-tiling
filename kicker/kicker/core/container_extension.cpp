@@ -154,6 +154,8 @@ void ExtensionContainer::init()
     _layout->setSizeConstraint(QLayout::FreeResize);
     _layout->setRowStretch(1,10);
     _layout->setColumnStretch(1,10);
+    _layout->setMargin(0);
+    _layout->setSpacing(0);
 
     // instantiate the autohide timer
     _autohideTimer = new QTimer(this);
