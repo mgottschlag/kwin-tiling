@@ -58,7 +58,7 @@ KSplash::KSplash()
   mCurrentAction = mActionList.first();
 
   config->setGroup( "General" );
-  if ( config->readEntry( "CloseOnClick", QVariant( true )).toBool() )
+  if ( config->readEntry( "CloseOnClick",true ) )
     mThemeEngine->installEventFilter( this );
 
   connect( mThemeEngine, SIGNAL(destroyed()), this, SLOT(close()) );
@@ -163,11 +163,9 @@ void KSplash::nextIcon()
 void KSplash::initDbus()
 {
     bool isConnected = false;
-    {
-        QDBusConnection connection = QDBusConnection::addConnection(QDBusConnection::SessionBus, "ksplash");
-        isConnected = connection.isConnected();
-        QDBusConnection::closeConnection("ksplash");
-    }
+    QDBusConnection connection = QDBusConnection::addConnection(QDBusConnection::SessionBus, "ksplash");
+    isConnected = connection.isConnected();
+    QDBusConnection::closeConnection("ksplash");
     if (!isConnected) {
         QTimer::singleShot(100, this, SLOT(initDbus()));
         return;
@@ -175,7 +173,6 @@ void KSplash::initDbus()
 
     if(!mKsTheme->managedMode())
       upAndRunning("dbus");
-
     (void)new KSplashAdaptor(this);
     QDBus::sessionBus().registerObject(QLatin1String("/KSplash"), this);
     QDBus::sessionBus().addConnection(QDBusConnection::SessionBus, "org.kde.ksplash");
@@ -210,7 +207,7 @@ void KSplash::upAndRunning( QString s )
   }
   if ( close_timer->isActive() )
     close_timer->start( 60000 );
-  
+
   if( s == "dbus" )
   {
     if( mState > 1 ) return;
