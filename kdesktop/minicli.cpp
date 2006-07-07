@@ -82,6 +82,7 @@ Minicli::Minicli( QWidget *parent )
          m_autoCheckedRunInTerm(false)
 {
   setPlainCaption( i18n("Run Command") );
+  setButtons(None);
   KWin::setIcons( winId(), DesktopIcon("run"), SmallIcon("run") );
 
   QVBoxLayout* mainLayout = new QVBoxLayout( this );
@@ -93,6 +94,7 @@ Minicli::Minicli( QWidget *parent )
   m_dlg->setupUi(m_dlgWidget);
 
   mainLayout->addWidget(m_dlgWidget);
+  setMainWidget(m_dlgWidget);
 
   m_dlg->lbRunIcon->setPixmap(DesktopIcon("kmenu"));
 
