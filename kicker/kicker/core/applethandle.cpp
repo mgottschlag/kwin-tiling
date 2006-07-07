@@ -94,6 +94,7 @@ AppletHandle::AppletHandle(AppletContainer* parent)
 {
     setMinimumSize(widthForHeight(0), heightForWidth(0));
     m_layout = new QBoxLayout(QBoxLayout::BottomToTop, this);
+    m_layout->setMargin( 0 );
 
     m_dragBar = new AppletHandleDrag(this);
     m_dragBar->installEventFilter(this);

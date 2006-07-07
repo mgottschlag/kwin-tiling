@@ -37,7 +37,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QResizeEvent>
 #include <QMouseEvent>
 
-#include <dcopclient.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kglobal.h>
@@ -48,7 +47,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstandarddirs.h>
 #include <kiconloader.h>
 #include <kwindowlistmenu.h>
-
+#include <QDBusInterface>
 #include "kshadowengine.h"
 #include "kshadowsettings.h"
 #include "kickerSettings.h"
@@ -82,13 +81,15 @@ TaskBar::TaskBar( QWidget *parent )
     // setup animation frames
     for (int i = 1; i < 11; i++)
     {
-        frames.append(new QPixmap(locate("data", "kicker/pics/disk" + QString::number(i) + ".png")));
+        frames.append(new QPixmap(KStandardDirs::locate("data",
+                                                        "kicker/pics/disk" + QString::number(i) + ".png")));
     }
 
     m_layout = new QBoxLayout( QApplication::isRightToLeft() ?
                                 QBoxLayout::RightToLeft :
                                 QBoxLayout::LeftToRight,
                                 this );
+    m_layout->setMargin( 0 );
 
     m_container = new Panner(this);
     m_container->setFrameStyle( QFrame::NoFrame );
@@ -112,8 +113,11 @@ TaskBar::TaskBar( QWidget *parent )
     connect(TaskManager::self(), SIGNAL(windowChanged(Task::TaskPtr)),
             this, SLOT(windowChanged(Task::TaskPtr)));
 
+#warning dcop signal
+#if 0
     connectDCOPSignal("", "", "kdeTaskBarConfigChanged()",
                       "configChanged()", false);
+#endif
 
     isGrouping = shouldGroup();
 
@@ -1163,14 +1167,9 @@ void TaskBar::configChanged() {
 
 void TaskBar::preferences()
 {
-    QByteArray data;
-
-    if (!kapp->dcopClient()->isAttached())
-    {
-        kapp->dcopClient()->attach();
-    }
-
-    kapp->dcopClient()->send("kicker", "kicker", "showTaskBarConfig()", data);
+    QDBusInterface ref( "org.kde.kicker",
+                        "/MainApplication", "org.kde.Kicker" );
+    ref.call( "showTaskBarConfig" );
 }
 
 void TaskBar::orientationChange(Qt::Orientation o)

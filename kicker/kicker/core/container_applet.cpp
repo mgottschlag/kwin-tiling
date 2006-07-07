@@ -84,6 +84,8 @@ AppletContainer::AppletContainer(const AppletInfo& info,
         _layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     }
 
+    _layout->setMargin( 0 );
+    _layout->setSpacing( 0 );
     _layout->setSizeConstraint( QLayout::SetNoConstraint );
 
     _handle = new AppletHandle(this);

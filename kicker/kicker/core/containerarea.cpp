@@ -104,6 +104,8 @@ ContainerArea::ContainerArea(KConfig* _c,
     m_layout = new ContainerAreaLayout(m_contents);
     setWidget(m_contents);
 
+    m_layout->setMargin( 0 );
+
     // Install an event filter to propagate layout hints coming from
     // m_contents.
     m_contents->installEventFilter(this);

@@ -72,12 +72,9 @@ public:
     void orientationChange( Qt::Orientation );
     void popupDirectionChange( Plasma::Position );
     void preferences();
-#warning "kde4 port dcop stuff"	
-/*
-k_dcop:
-    void configChanged();
-*/
+
 public Q_SLOTS:
+    Q_SCRIPTABLE void configChanged();
     void configure();
     void showWindowListMenu();
     void windowListMenuAboutToHide();

@@ -59,6 +59,7 @@ TaskbarApplet::TaskbarApplet( const QString& configFile, Plasma::Type type, int 
 {
     QHBoxLayout* layout = new QHBoxLayout( this );
     layout->setMargin(0);
+
     container = new TaskBar( this );
     connect(container, SIGNAL(containerCountChanged()), this, SIGNAL(updateLayout()));
     layout->addWidget( container, 1 );
