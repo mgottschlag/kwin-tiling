@@ -589,8 +589,22 @@ void ContainerAreaLayout::moveContainerSwitch( QWidget* container, int distance 
 
 
     Item* moving = *it;
-    forward ? ++it : --it;
-    Item* next = (it != m_items.constEnd()) ? *it : 0;
+    Item* next;
+    if(forward) {
+        ++it;
+        if(it != m_items.constEnd()) {
+            next = *it;
+        } else {
+            next = 0;
+        }
+    } else {
+        if(it != m_items.constBegin()) {
+            --it;
+            next = *it;
+        } else {
+            next = 0;
+        }
+    }
     Item* last = moving;
 
     while (next)
@@ -622,8 +636,21 @@ void ContainerAreaLayout::moveContainerSwitch( QWidget* container, int distance 
         // Store 'next'. It may become null in the next iteration, but we
         // need its value later.
         last = next;
-        forward ? ++it : --it;
-        next = (it != m_items.constEnd()) ? *it : 0;
+        if(forward) {
+            ++it;
+            if(it != m_items.constEnd()) {
+                next = *it;
+            } else {
+                next = 0;
+            }
+        } else {
+            if(it != m_items.constBegin()) {
+                --it;
+                next = *it;
+            } else {
+                next = 0;
+            }
+        }
     }
 
     int newPos = moving->leftR() + distance;
