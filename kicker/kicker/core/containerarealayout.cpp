@@ -575,11 +575,11 @@ void ContainerAreaLayout::moveContainerSwitch( QWidget* container, int distance 
     const bool forward = distance > 0;
 
     // Get the iterator 'it' pointing to 'moving'.
-    ItemList::const_iterator it = m_items.constBegin();
-    ItemList::const_iterator itEnd = m_items.constEnd();
-    while (it != itEnd && (*it)->item->widget() != container)
+    int it = 0;
+    int itEnd = m_items.size();
+    while (it < itEnd && m_items.at(it)->item->widget() != container)
     {
-        ++it;
+        it++;
     }
 
     if (it == itEnd)
@@ -588,22 +588,12 @@ void ContainerAreaLayout::moveContainerSwitch( QWidget* container, int distance 
     }
 
 
-    Item* moving = *it;
-    Item* next;
-    if(forward) {
-        ++it;
-        if(it != m_items.constEnd()) {
-            next = *it;
-        } else {
-            next = 0;
-        }
-    } else {
-        if(it != m_items.constBegin()) {
-            --it;
-            next = *it;
-        } else {
-            next = 0;
-        }
+    Item* moving = m_items.at(it);
+    Item* next = 0;
+    forward ? it++ : it--;
+    if(it >= 0 && it < itEnd)
+    {
+        next = m_items.at(it);
     }
     Item* last = moving;
 
@@ -636,20 +626,14 @@ void ContainerAreaLayout::moveContainerSwitch( QWidget* container, int distance 
         // Store 'next'. It may become null in the next iteration, but we
         // need its value later.
         last = next;
-        if(forward) {
-            ++it;
-            if(it != m_items.constEnd()) {
-                next = *it;
-            } else {
-                next = 0;
-            }
-        } else {
-            if(it != m_items.constBegin()) {
-                --it;
-                next = *it;
-            } else {
-                next = 0;
-            }
+        forward ? it++ : it--;
+        if(it >= 0 && it < itEnd)
+        {
+            next = m_items.at(it);
+        }
+        else
+        {
+            next = 0;
         }
     }
 
