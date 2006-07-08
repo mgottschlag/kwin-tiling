@@ -65,11 +65,11 @@ bool KxkbConfig::load(int loadMode)
 	
 	QStringList layoutList;
 	if( config->hasKey("LayoutList") ) {
-		config->readEntry("LayoutList", layoutList);
+		layoutList = config->readEntry("LayoutList", layoutList);
 	}
 	else { // old config
 		QString mainLayout = config->readEntry("Layout", DEFAULT_LAYOUT_UNIT.toPair());
-		config->readEntry("Additional", layoutList);
+		layoutList = config->readEntry("Additional", layoutList);
 		layoutList.prepend(mainLayout);
 	}
 	if( layoutList.count() == 0 )
@@ -77,14 +77,15 @@ bool KxkbConfig::load(int loadMode)
 	
 	m_layouts.clear();
 	for(QStringList::ConstIterator it = layoutList.begin(); it != layoutList.end() ; ++it) {
-		m_layouts.append( LayoutUnit(*it) );
-		kDebug() << " layout " << LayoutUnit(*it).toPair() << " in list: " << m_layouts.contains( LayoutUnit(*it) ) << endl;
+		LayoutUnit layoutUnit(*it);
+		m_layouts.append( layoutUnit );
+		kDebug() << " added layout " << layoutUnit.toPair() << endl;
 	}
 
 	kDebug() << "Found " << m_layouts.count() << " layouts, default is " << getDefaultLayout().toPair() << endl;
 	
 	QStringList displayNamesList;
-	config->readEntry("DisplayNames", displayNamesList, ',');
+	displayNamesList = config->readEntry("DisplayNames", displayNamesList, ',');
 	for(QStringList::ConstIterator it = displayNamesList.begin(); it != displayNamesList.end() ; ++it) {
 		QStringList displayNamePair = (*it).split(':');
 		if( displayNamePair.count() == 2 ) {
@@ -99,7 +100,7 @@ bool KxkbConfig::load(int loadMode)
 	if( X11Helper::areSingleGroupsSupported() ) {
 		if( config->hasKey("IncludeGroups") ) {
 			QStringList includeList;
-			config->readEntry("IncludeGroups", includeList, ',');
+			includeList = config->readEntry("IncludeGroups", includeList, ',');
 			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
 				QStringList includePair = (*it).split(':');
 				if( includePair.count() == 2 ) {
@@ -114,7 +115,7 @@ bool KxkbConfig::load(int loadMode)
 		else { //old includes format
 			kDebug() << "Old includes..." << endl;
 			QStringList includeList;
-			config->readEntry("Includes", includeList);
+			includeList = config->readEntry("Includes", includeList);
 			for(QStringList::ConstIterator it = includeList.begin(); it != includeList.end() ; ++it) {
 				QString layoutName = LayoutUnit::parseLayout( *it );
 				LayoutUnit layoutUnit( layoutName, "" );

@@ -78,6 +78,7 @@ KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
 	
     // keep in sync with kcmlayout.cpp
 //	keys = new KActionCollection(this);
+	keys = NULL;
 	//TODO:
 	//#include "kxkbbindings.cpp"
     //keys->updateConnections();
