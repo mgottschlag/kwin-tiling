@@ -278,6 +278,8 @@ fi
 if test $need_dbus -eq 1; then
   eval `dbus-launch --auto-syntax`
 fi
+# Workaround for missing export in dbus-launch's output
+export DBUS_SESSION_BUS_PID
 
 # run KPersonalizer before the session, if this is the first login
 if test "$kpersonalizerrc_general_firstlogin" = "true"; then
