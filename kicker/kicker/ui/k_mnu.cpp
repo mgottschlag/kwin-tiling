@@ -330,8 +330,9 @@ void PanelKMenu::slotLock()
     if ( kicker_screen_number )
         interface.sprintf("org.kde.kdesktop-screen-%d", kicker_screen_number);
 
-    QDBusInterface kdesktop(interface, "/KScreensaverIface");
-    kdesktop.call("lock");
+    QDBusInterface kdesktop(interface, "/ScreenSaver", "org.kde.kdesktop.KScreensaver");
+    if ( kdesktop.isValid() )
+        kdesktop.call("lock");
 }
 
 void PanelKMenu::slotLogout()
