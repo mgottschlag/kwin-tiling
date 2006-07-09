@@ -21,6 +21,8 @@ public:
 
   bool isSingleGroup(const QString& layout);
 
+  static bool areLayoutsClean() { return m_layoutsClean; }
+
 private:
 
   QHash<QString, QString> m_models;
@@ -31,6 +33,7 @@ private:
   
   QString X11_DIR;	// pseudo-constant
 
+  static bool m_layoutsClean;
 
 #ifdef HAVE_XKLAVIER
   void loadNewRules(bool layoutsOnly);

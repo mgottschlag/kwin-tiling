@@ -9,7 +9,7 @@
 #include <kdebug.h>
 
 #include "pixmap.h"
-#include "x11helper.h"
+#include "rules.h"
 #include "kxkbconfig.h"
 
 
@@ -117,7 +117,7 @@ QString LayoutIcon::getCountryFromLayoutName(const QString& layoutName)
 {
 	QString flag;
 
-	if( X11Helper::areLayoutsClean() ) { // >= Xorg 6.9.0
+	if( XkbRules::areLayoutsClean() ) { // >= Xorg 6.9.0
 		if( layoutName == "mkd" )
 			flag = "mk";
 		else

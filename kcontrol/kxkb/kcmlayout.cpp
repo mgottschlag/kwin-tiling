@@ -737,8 +737,8 @@ QString LayoutConfig::createOptionString()
       OptionListItem *item = m_optionGroups[optionKey];
 
       if( !item ) {
-        kDebug() << "WARNING: skipping empty group for " << it.key()
-          << endl;
+        kDebug() << "WARNING: skipping empty group for " << option
+          << " - could not found group: " << optionKey << endl;
         continue;
       }
 

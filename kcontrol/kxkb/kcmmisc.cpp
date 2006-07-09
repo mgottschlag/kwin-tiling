@@ -140,7 +140,7 @@ void KeyboardConfig::load()
   bool key = config.readEntry("KeyboardRepeating", true);
   keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
   ui->delay->setValue(config.readEntry( "RepeatDelay", 660 ));
-  ui->rate->setValue(config.readDoubleNumEntry( "RepeatRate", 25 ));
+  ui->rate->setValue(config.readEntry( "RepeatRate", 25. ));
   clickVolume = config.readEntry("ClickVolume", kbd.key_click_percent);
   numlockState = config.readEntry( "NumLock", 2 );
 
@@ -501,7 +501,7 @@ void KeyboardConfig::init_keyboard()
 
 	if( key ) {
 		int delay_ = config->readEntry("RepeatDelay", 250);
-		double rate_ = config->readDoubleNumEntry("RepeatRate", 30);
+		double rate_ = config->readEntry("RepeatRate", 30.);
 		set_repeatrate(delay_, rate_);
 	}
 

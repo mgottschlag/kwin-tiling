@@ -19,6 +19,7 @@
 #include "x11helper.h"
 #include "config.h"
 
+#ifndef HAVE_XKLAVIER
 
 // Compiler will size array automatically.
 static const char* X11DirList[] =
@@ -50,13 +51,6 @@ static const char* rulesFileList[] =
 
 static const int X11_DIR_COUNT = ARRAY_SIZE(X11DirList);
 static const int X11_RULES_COUNT = ARRAY_SIZE(rulesFileList);
-
-const QString X11Helper::X11_WIN_CLASS_ROOT = "<root>";
-const QString X11Helper::X11_WIN_CLASS_UNKNOWN = "<unknown>";
-
-static const QRegExp NON_CLEAN_LAYOUT_REGEXP("[^a-z]");
-
-bool X11Helper::m_layoutsClean = true;
 
 const QString
 X11Helper::findX11Dir()
@@ -120,13 +114,6 @@ X11Helper::loadRules(const QString& file, bool layoutsOnly)
 	for (int i = 0; i < xkbRules->layouts.num_desc; ++i) {
 		QString layoutName(xkbRules->layouts.desc[i].name);
 		rulesInfo->layouts.insert( layoutName, qstrdup( xkbRules->layouts.desc[i].desc ) );
-
-		if( m_layoutsClean == true
-				  && layoutName.indexOf( QRegExp(NON_CLEAN_LAYOUT_REGEXP) ) != -1 
-				  && layoutName.endsWith("/jp") == false ) {
-			kDebug() << "Layouts are not clean (Xorg < 6.9.0 or XFree86)" << endl;
-			m_layoutsClean = false;
-		}
 	}
 
 	if( layoutsOnly == true ) {
@@ -288,6 +275,11 @@ X11Helper::getVariants(const QString& layout, const QString& x11Dir, bool oldLay
 	return result;
 }
 
+#endif
+
+const QString X11Helper::X11_WIN_CLASS_ROOT = "<root>";
+const QString X11Helper::X11_WIN_CLASS_UNKNOWN = "<unknown>";
+
 QString 
 X11Helper::getWindowClass(WId winId, Display* dpy)
 {
@@ -316,9 +308,4 @@ X11Helper::getWindowClass(WId winId, Display* dpy)
   kDebug() << "Got window class for " << winId << ": '" << property << "'" << endl;
   
   return property;
-}
-
-bool X11Helper::areSingleGroupsSupported()
-{
-	return true; //TODO:
 }

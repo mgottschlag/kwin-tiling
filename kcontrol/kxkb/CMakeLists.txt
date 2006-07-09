@@ -1,4 +1,5 @@
 add_subdirectory( pics ) 
+#add_subdirectory( tests ) 
 
 OPTION(USE_XKLAVIER "Use libxklavier to get keyboard layouts configuration" OFF)
 
@@ -83,7 +84,11 @@ install( FILES keyboard.desktop keyboard_layout.desktop  DESTINATION  ${XDG_APPS
 install( FILES kxkb.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
-install(FILES kxkb_groups DESTINATION ${CONFIG_INSTALL_DIR} )
+
+
+if(NOT LIBXKLAVIER_FOUND)
+  install(FILES kxkb_groups DESTINATION ${CONFIG_INSTALL_DIR} )
+endif(NOT LIBXKLAVIER_FOUND)
 
 
 

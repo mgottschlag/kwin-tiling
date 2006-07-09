@@ -19,8 +19,12 @@
 #include "xklavier_adaptor.h"
 #endif
 
-XkbRules::XkbRules(bool layoutsOnly):
-    m_layouts()
+
+static const QRegExp NON_CLEAN_LAYOUT_REGEXP("[^a-z]");
+
+bool XkbRules::m_layoutsClean = true;
+
+XkbRules::XkbRules(bool layoutsOnly)
 {
 #ifdef HAVE_XKLAVIER
 	loadNewRules(layoutsOnly);
@@ -45,6 +49,20 @@ XkbRules::XkbRules(bool layoutsOnly):
 	loadOldLayouts(rulesFile);
 	loadGroups(KStandardDirs::locate("config", "kxkb_groups"));
 #endif
+
+	m_layoutsClean = true;
+	
+	QHashIterator<QString, QString> it( m_layouts );
+	for( ; it.hasNext() ; ) {
+		it.next();
+	    const QString& layoutName = it.key();	
+		if( layoutName.indexOf( QRegExp(NON_CLEAN_LAYOUT_REGEXP) ) != -1 
+				  && layoutName.endsWith("/jp") == false ) {
+			kDebug() << "Layouts are not clean (Xorg < 6.9.0 or XFree86), reason: " << layoutName << endl;
+			m_layoutsClean = false;
+			break;
+		}
+	}
 }
 
 #ifdef HAVE_XKLAVIER
@@ -58,6 +76,7 @@ void XkbRules::loadNewRules(bool layoutsOnly)
 	if( layoutsOnly == false ) {
 	  m_models = xklAdaptor.getModels();
 	  m_options = xklAdaptor.getOptions();
+	  m_varLists = xklAdaptor.getVariants();
 	}
 }
 
@@ -113,7 +132,7 @@ QStringList
 XkbRules::getAvailableVariants(const QString& layout)
 {
     if( layout.isEmpty() || !layouts().contains(layout) )
-	return QStringList();
+	  return QStringList();
 
     QStringList* result1 = m_varLists[layout];
 
