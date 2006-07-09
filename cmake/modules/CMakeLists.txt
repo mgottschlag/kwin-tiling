@@ -2,7 +2,7 @@
 
 file(GLOB cmakeFiles "${CMAKE_CURRENT_SOURCE_DIR}/*.cmake")
 
-set(module_install_dir ${DATA_INSTALL_DIR}/apps/cmake/modules )
+set(module_install_dir ${DATA_INSTALL_DIR}/cmake/modules )
 
 install( FILES  ${cmakeFiles} DESTINATION ${module_install_dir} )
 # the files listed here will be removed by remove_obsoleted_cmake_files.cmake, Alex
