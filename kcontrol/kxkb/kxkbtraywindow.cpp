@@ -58,7 +58,7 @@ void KxkbLabelController::setCurrentLayout(const LayoutUnit& layoutUnit)
 
 void KxkbLabelController::setError(const QString& layoutInfo)
 {
-    QString msg = i18n("Error changing keyboard layout to '%1'").arg(layoutInfo);
+    QString msg = i18n("Error changing keyboard layout to '%1'", layoutInfo);
 	setToolTip(msg);
 
 	label->setPixmap(LayoutIcon::getInstance().findPixmap("error", m_showFlag));
