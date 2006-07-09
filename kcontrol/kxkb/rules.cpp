@@ -173,14 +173,18 @@ void XkbRules::loadGroups(QString file)
       QString locale;
       unsigned int grp;
 
-	  while ( ts.status() != QTextStream::ReadPastEnd ) {
+	  while ( ts.status() == QTextStream::Ok ) {
          ts >> locale >> grp;
-	 locale.simplified();
 
-	 if (locale[0] == '#' || locale.left(2) == "//" || locale.isEmpty())
-	    continue;
+		 if( locale.isNull() )
+			break;
 
-    	 m_initialGroups.insert(locale, grp);
+		locale.simplified();
+
+		if (locale[0] == '#' || locale.left(2) == "//" || locale.isEmpty())
+	  	  continue;
+
+    	m_initialGroups.insert(locale, grp);
       }
 
       f.close();

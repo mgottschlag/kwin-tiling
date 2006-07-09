@@ -173,16 +173,28 @@ X11Helper::loadOldLayouts(const QString& rulesFile)
       QTextStream ts(&f);
       QString line;
 
-	  while ( ts.status() != QTextStream::ReadPastEnd ) {
-	  line = ts.readLine().simplified();
+	kDebug() << "Opened file for old layouts: " << rulesFile << endl;
 
+	  while ( ts.status() == QTextStream::Ok ) {
+
+	  QString str = ts.readLine();	  
+	  if( str.isNull() )
+			break;
+
+	  line = str.simplified();
+	  
 	  if( line.indexOf(oldLayoutsTag) == 0 ) {
 
 	    line = line.mid(strlen(oldLayoutsTag));
 	    line = line.mid(line.indexOf('=')+1).simplified();
 		
-		while( ts.status() != QTextStream::ReadPastEnd && line.endsWith("\\") )
-			line = line.left(line.length()-1) + ts.readLine();
+		while( ts.status() == QTextStream::Ok && line.endsWith("\\") ) {
+		  QString str = ts.readLine();
+		  if( str.isNull() )
+			break;
+
+		  line = line.left(line.length()-1) + str;
+		}
 	    line = line.simplified();
 
 	    m_oldLayouts = line.split(QRegExp("\\s"));
@@ -197,8 +209,12 @@ X11Helper::loadOldLayouts(const QString& rulesFile)
 	    line = line.mid(strlen(nonLatinLayoutsTag)+1).simplified();
 	    line = line.mid(line.indexOf('=')+1).simplified();
 		
-		while( ts.status() != QTextStream::ReadPastEnd && line.endsWith("\\") )
-			line = line.left(line.length()-1) + ts.readLine();
+		while( ts.status() == QTextStream::Ok && line.endsWith("\\") ) {
+		QString str = ts.readLine();
+		if( str.isNull() )
+		  break;
+			line = line.left(line.length()-1) + str;
+		}
 	    line = line.simplified();
 
 	    m_nonLatinLayouts = line.split(QRegExp("\\s"));
@@ -246,9 +262,14 @@ X11Helper::getVariants(const QString& layout, const QString& x11Dir, bool oldLay
       QString line;
       QString prev_line;
 
-	  while ( ts.status() != QTextStream::ReadPastEnd ) {
-    	  prev_line = line;
-	  line = ts.readLine().simplified();
+	  while ( ts.status() == QTextStream::Ok ) {
+    	prev_line = line;
+		
+		QString str = ts.readLine();
+		if( str.isNull() )
+		  break;
+		
+		line = str.simplified();
 
 	    if (line[0] == '#' || line.left(2) == "//" || line.isEmpty())
 		continue;
