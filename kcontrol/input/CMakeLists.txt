@@ -62,7 +62,7 @@ install(TARGETS kcm_input  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES mouse.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES mouse.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES cursor_large_black.pcf.gz cursor_large_white.pcf.gz cursor_small_white.pcf.gz  DESTINATION  ${DATA_INSTALL_DIR}/kcminput )
 install( FILES mouse_cursor_theme.upd  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 

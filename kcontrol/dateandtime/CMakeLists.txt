@@ -18,7 +18,7 @@ install(TARGETS kcm_clock  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES clock.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES clock.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

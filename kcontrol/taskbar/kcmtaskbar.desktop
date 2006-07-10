@@ -1,7 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Icon=kmenu
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kcontrol/kcmtaskbar/index.html
 Exec=kcmshell kcmtaskbar
 

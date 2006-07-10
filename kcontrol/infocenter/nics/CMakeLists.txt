@@ -18,7 +18,7 @@ install(TARGETS kcm_nic  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES nic.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES nic.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

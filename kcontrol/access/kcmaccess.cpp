@@ -46,6 +46,16 @@
 
 #include "kcmaccess.moc"
 
+#include <kgenericfactory.h>
+typedef KGenericFactory<KAccessConfig, QWidget> KAccessConfigFactory;
+//K_EXPORT_COMPONENT_FACTORY( kcm_access, KAccessConfigFactory( "kcmaccess" ) );
+
+extern "C" {
+	KDE_EXPORT void *init_kcm_access() {
+		kDebug() << k_funcinfo << endl;
+		return new KAccessConfigFactory( "kcmaccess" );
+       	}
+}
 
 ExtendedIntNumInput::ExtendedIntNumInput
 				(QWidget* parent)
@@ -228,8 +238,8 @@ QString mouseKeysShortcut (Display *display) {
   return result;
 }
 
-KAccessConfig::KAccessConfig(KInstance *inst, QWidget *parent)
-  : KCModule(inst, parent)
+KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
+  : KCModule(KAccessConfigFactory::instance(), parent, args)
 {
 
   KAboutData *about =
@@ -880,12 +890,6 @@ void KAccessConfig::checkAccess()
 
 extern "C"
 {
-  KDE_EXPORT KCModule *create_access(QWidget *parent, const char *name)
-  {
-	KInstance *inst = new KInstance("kcmaccess");
-    return new KAccessConfig(inst,parent);
-  }
-
   /* This one gets called by kcminit
 
    */

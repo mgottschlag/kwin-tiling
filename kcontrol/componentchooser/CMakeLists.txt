@@ -27,7 +27,7 @@ install(TARGETS kcm_componentchooser  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES componentchooser.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES componentchooser.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

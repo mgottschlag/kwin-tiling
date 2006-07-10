@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell screensaver
 Icon=kscreensaver
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kcontrol/screensaver/index.html
 
 

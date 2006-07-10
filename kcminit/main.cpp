@@ -42,6 +42,7 @@
 #include <QX11Info>
 #endif
 
+#include <kservicetypetrader.h>
 
 static KCmdLineOptions options[] =
 {
@@ -75,12 +76,22 @@ bool KCMInit::runModule(const QString &libName, KLibLoader *loader, KService::Pt
 {
     KLibrary *lib = loader->library(QFile::encodeName(libName));
     if (lib) {
-	// get the init_ function
-	QString factory = QString("init_%1").arg(service->init());
-	void *init = lib->symbol(factory.toUtf8());
+        QVariant tmp = service->property("X-KDE-Init-Symbol", QVariant::String);
+        QString kcminit;
+        if( tmp.isValid() )
+        {
+            kcminit = tmp.toString();
+            if( !kcminit.startsWith( QLatin1String( "kcminit_" ) ) )
+                kcminit = "kcminit_" + kcminit;
+        }
+        else
+            kcminit = "kcminit_" + libName;
+
+	// get the kcminit_ function
+	void *init = lib->symbol(kcminit.toUtf8());
 	if (init) {
 	    // initialize the module
-	    kDebug(1208) << "Initializing " << libName << ": " << factory << endl;
+	    kDebug(1208) << "Initializing " << libName << ": " << kcminit << endl;
 
 	    void (*func)() = (void(*)())init;
 	    func();
@@ -94,18 +105,28 @@ bool KCMInit::runModule(const QString &libName, KLibLoader *loader, KService::Pt
 void KCMInit::runModules( int phase )
 {
   KLibLoader *loader = KLibLoader::self();
-  // look for X-KDE-Init=... entries
   for(KService::List::Iterator it = list.begin();
       it != list.end();
       ++it) {
       KService::Ptr service = (*it);
 
-      QString library = service->property("X-KDE-Init-Library", QVariant::String).toString();
-      if (library.isEmpty())
-        library = service->library();
+      QVariant tmp = service->property("X-KDE-Init-Library", QVariant::String);
+      QString library;
+      if( tmp.isValid() )
+      {
+          library = tmp.toString();
+          if( !library.startsWith( QLatin1String( "kcminit_" ) ) )
+              library = QLatin1String( "kcminit_" ) + library;
+      }
+      else
+      {
+          library = service->library();
+          if( !library.startsWith( QLatin1String( "kcm_" ) ) )
+              library = QLatin1String( "kcm_" ) + library;
+      }
 
-      if (library.isEmpty() || service->init().isEmpty())
-	continue; // Skip
+      if (library.isEmpty())
+          continue; // Skip
 
       // see ksmserver's README for the description of the phases
       QVariant vphase = service->property("X-KDE-Init-Phase", QVariant::Int );
@@ -116,18 +137,16 @@ void KCMInit::runModules( int phase )
       if( phase != -1 && libphase != phase )
           continue;
 
-      QString libName = QString("kcm_%1").arg(library);
-
       // try to load the library
-      if (! alreadyInitialized.contains( libName.toAscii() )) {
-	  if (!runModule(libName, loader, service)) {
-	      libName = QString("libkcm_%1").arg(library);
-	      if (! alreadyInitialized.contains( libName.toAscii() )) {
-		  runModule(libName, loader, service);
-		  alreadyInitialized.append( libName.toAscii() );
+      if (! alreadyInitialized.contains( library.toAscii() )) {
+	  if (!runModule(library, loader, service)) {
+	      library = QLatin1String( "lib" ) + library;
+	      if (! alreadyInitialized.contains( library.toAscii() )) {
+		  runModule(library, loader, service);
+		  alreadyInitialized.append( library.toAscii() );
 	      }
 	  } else
-	      alreadyInitialized.append( libName.toAscii() );
+	      alreadyInitialized.append( library.toAscii() );
       }
   }
 }
@@ -142,14 +161,14 @@ KCMInit::KCMInit( KCmdLineArgs* args )
 
   if (args->isSet("list"))
   {
-    list = KService::allInitServices();
+    list = KServiceTypeTrader::self()->query( "KCModuleInit" );
 
     for(KService::List::Iterator it = list.begin();
         it != list.end();
         ++it)
     {
       KService::Ptr service = (*it);
-      if (service->library().isEmpty() || service->init().isEmpty())
+      if (service->library().isEmpty())
 	continue; // Skip
       printf("%s\n", QFile::encodeName(service->desktopEntryName()).data());
     }
@@ -163,8 +182,7 @@ KCMInit::KCMInit( KCmdLineArgs* args )
        module += ".desktop";
 
     KService::Ptr serv = KService::serviceByStorageId( module );
-    if ( !serv || serv->library().isEmpty() ||
-	 serv->init().isEmpty()) {
+    if ( !serv || serv->library().isEmpty() ) {
       kError(1208) << i18n("Module %1 not found", module) << endl;
       return;
     } else
@@ -173,7 +191,7 @@ KCMInit::KCMInit( KCmdLineArgs* args )
   } else {
 
     // locate the desktop files
-    list = KService::allInitServices();
+    list = KServiceTypeTrader::self()->query( "KCModuleInit" );
 
   }
   // This key has no GUI apparently

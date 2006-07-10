@@ -1,7 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Icon=kscreensaver
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 Exec=kcmshell display
 DocPath=kcontrol/kcmdisplay/index.html
 

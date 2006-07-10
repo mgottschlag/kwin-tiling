@@ -2,13 +2,14 @@
 Encoding=UTF-8
 Exec=kcmshell bell
 Icon=bell
-Type=Application
+Type=Service
+ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/bell/index.html
 Categories=Qt;KDE;X-KDE-settings-sound;
 
 
 X-KDE-Library=bell
-X-KDE-Init=bell
+X-KDE-Init-Symbol=bell
 X-KDE-ParentApp=kcontrol
 
 Name=System Bell

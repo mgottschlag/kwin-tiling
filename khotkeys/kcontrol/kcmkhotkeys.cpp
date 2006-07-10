@@ -88,7 +88,7 @@ Module::Module( KInstance *inst, QWidget* parent_P )
     : KCModule( inst, parent_P ), _actions_root( NULL ), _current_action_data( NULL ),
         listview_is_changed( false ), deleting_action( false )
     {
-    setButtons( Help | Cancel | Apply | Ok );
+    setButtons( Help | Apply );
     module = this;
     init_global_data( false, this ); // don't grab keys
     QVBoxLayout* vbox = new QVBoxLayout( this ); 

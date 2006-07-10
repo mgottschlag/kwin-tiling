@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell kcmkded
 Icon=services
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 
 
 X-KDE-Library=kded

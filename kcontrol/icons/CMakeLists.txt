@@ -32,7 +32,7 @@ endif(KDE4_BUILD_TESTS)
 
 ########### install files ###############
 
-install( FILES icons.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES icons.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

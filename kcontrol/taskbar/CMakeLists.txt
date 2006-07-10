@@ -20,7 +20,7 @@ install(TARGETS kcm_taskbar  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES kcmtaskbar.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kcmtaskbar.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell dma
 Icon=kcmmemory
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kinfocenter/dma/index.html
 Categories=Qt;KDE;X-KDE-information;
 

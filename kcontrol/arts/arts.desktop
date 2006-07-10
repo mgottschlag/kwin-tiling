@@ -2,12 +2,13 @@
 Encoding=UTF-8
 Exec=kcmshell arts
 Icon=arts
-Type=Application
+Type=Service
+ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/arts/index.html
 
 
 X-KDE-Library=arts
-X-KDE-Init=arts
+X-KDE-Init-Symbol=arts
 X-KDE-ParentApp=kcontrol
 
 Name=Sound System

@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell language
 Icon=locale
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kcontrol/language/index.html
 
 

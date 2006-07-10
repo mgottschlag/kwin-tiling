@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell accessibility
 Icon=access
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 
 
 X-KDE-Library=accessibility
@@ -20,5 +21,3 @@ Comment[x-test]=xxImprove accessibility for disabled personsxx
 Keywords=access,accessibility,deaf,impaired,bell,audible bell,visible bell,Keyboard,keys,sticky keys,bounce keys,slow keys,mouse navigation,num pad
 Keywords[fr]=accès,accessibilité,surdité,sourd,cloche,son,cloche visuelle,cloche sonore,clavier,touches,souris,touches lentes,touches rémanentes,cloche auditive,touches répétées,répétition des touches,auto-maintien des touches,maintien des touches,navigation à la souris,pointeur de souris,émulation du clavier,clavier numérique
 Keywords[x-test]=xxaccess,accessibility,deaf,impaired,bell,audible bell,visible bell,Keyboard,keys,sticky keys,bounce keys,slow keys,mouse navigation,num padxx
-
-Categories=Qt;KDE;X-KDE-settings-accessibility;

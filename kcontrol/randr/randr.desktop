@@ -1,10 +1,10 @@
 [Desktop Entry]
 Icon=randr
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 Exec=kcmshell randr
 X-KDE-Library=randr
-#X-KDE-Init=randr
-X-KDE-Test-Module=true
+Hidden[$e]=$(if xdpyinfo|grep RANDR > /dev/null; then echo "false"; else echo "true"; fi)
 
 Name=Size & Orientation
 Name[fr]=Taille et orientation

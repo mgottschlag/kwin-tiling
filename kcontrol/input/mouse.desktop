@@ -2,13 +2,14 @@
 Encoding=UTF-8
 Exec=kcmshell mouse
 Icon=mouse
-Type=Application
+Type=Service
+ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/mouse/index.html
 
 
 X-KDE-Library=input
 X-KDE-FactoryName=mouse
-X-KDE-Init=mouse
+X-KDE-Init-Symbol=mouse
 X-KDE-ParentApp=kcontrol
 
 Name=Mouse

@@ -69,14 +69,13 @@ ProxyWidget *ConfigModule::module()
   if (_module)
     return _module;
 
-  bool run_as_root = needsRootPrivileges() && (getuid() != 0);
+#warning I expect KControl in its current form to disappear, if not a real port is needed
+  // root KCMs are gone, clean up all of the related code
+  bool run_as_root = false; //needsRootPrivileges() && (getuid() != 0);
 
   KCModule *modWidget = 0;
 
-  if (run_as_root && isHiddenByDefault()) // no need for an own instance
-      modWidget = new KCRootOnly(KGlobal::instance(), 0);
-  else
-      modWidget = KCModuleLoader::loadModule(*this,/*KCModuleLoader::None*/(KCModuleLoader::ErrorReporting)0);
+  modWidget = KCModuleLoader::loadModule(*this,/*KCModuleLoader::None*/(KCModuleLoader::ErrorReporting)0);
 
   if (modWidget)
     {

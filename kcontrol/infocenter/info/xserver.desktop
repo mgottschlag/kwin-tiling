@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell xserver
 Icon=kcmx
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kinfocenter/xserver/index.html
 
 

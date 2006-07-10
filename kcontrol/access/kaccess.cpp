@@ -94,8 +94,8 @@ static ModifierKey modifierKeys[] = {
 
 
 KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
-  : KUniqueApplication(allowStyles, GUIenabled), _artsBellBlocked(false),
-                                                 overlay(0), wm(0, KWinModule::INFO_DESKTOP),_player(Phonon::AccessibilityCategory)
+  : KUniqueApplication(allowStyles, GUIenabled),
+  overlay(0), wm(0, KWinModule::INFO_DESKTOP),_player(Phonon::AccessibilityCategory)
 {
   // verify the Xlib has matching XKB extension
   int major = XkbMajorVersion;
@@ -122,9 +122,7 @@ KAccessApp::KAccessApp(bool allowStyles, bool GUIenabled)
   _activeWindow = wm.activeWindow();
   connect(&wm, SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
 
-  artsBellTimer = new QTimer( this );
-  artsBellTimer->setSingleShot( true );
-  connect( artsBellTimer, SIGNAL( timeout() ), SLOT( slotArtsBellTimeout() ));
+  connect( &_player, SIGNAL( finished() ), SLOT( slotBellFinished() ));
 
   features = 0;
   requestedFeatures = 0;
@@ -154,7 +152,7 @@ void KAccessApp::readSettings()
   config->setGroup("Bell");
   _systemBell = config->readEntry("SystemBell", true);
   _artsBell = config->readEntry("ArtsBell", false);
-  _artsBellFile = config->readPathEntry("ArtsBellFile");
+  _player.load( config->readPathEntry("ArtsBellFile") );
   _visibleBell = config->readEntry("VisibleBell", false);
   _visibleBellInvert = config->readEntry("VisibleBellInvert", false);
   _visibleBellColor = config->readEntry("VisibleBellColor", Qt::red);
@@ -485,11 +483,8 @@ void KAccessApp::xkbBellNotify(XkbBellNotifyEvent *event)
     }
 
   // ask artsd to ring a nice bell
-  if (_artsBell && !_artsBellBlocked ) {
-    _player.play(_artsBellFile);
-    _artsBellBlocked = true;
-    artsBellTimer->start( 300 );
-  }
+  if (_artsBell && !_player.isPlaying() )
+    _player.play();
 }
 
 QString mouseKeysShortcut (Display *display) {
@@ -922,9 +917,3 @@ void KAccessApp::dialogClosed() {
 
    requestedFeatures = features;
 }
-
-void KAccessApp::slotArtsBellTimeout()
-{
-  _artsBellBlocked = false;
-}
-

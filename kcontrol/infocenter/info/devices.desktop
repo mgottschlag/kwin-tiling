@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell devices
 Icon=kcmdevices
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kinfocenter/devices/index.html
 Categories=Qt;KDE;X-KDE-information;
 

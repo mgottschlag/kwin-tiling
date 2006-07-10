@@ -18,7 +18,7 @@ install(TARGETS kcm_kded  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES kcmkded.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kcmkded.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

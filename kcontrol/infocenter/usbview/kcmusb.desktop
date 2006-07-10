@@ -1,7 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Icon=usb
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kinfocenter/usb/index.html
 Exec=kcmshell kcmusb
 

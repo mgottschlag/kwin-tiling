@@ -2,13 +2,13 @@
 Encoding=UTF-8
 Exec=kcmshell keyboard
 Icon=keyboard
-Type=Application
+Type=Service
+ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/keyboard/index.html
 
-X-KDE-ModuleType=Library
 X-KDE-Library=keyboard
 X-KDE-FactoryName=keyboard
-X-KDE-Init=keyboard
+X-KDE-Init-Symbol=keyboard
 
 Name=Keyboard
 Name[fr]=Clavier

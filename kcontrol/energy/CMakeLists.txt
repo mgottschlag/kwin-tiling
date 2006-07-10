@@ -20,31 +20,6 @@ install(TARGETS kcm_energy  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES energy.desktop  DESTINATION  ${APPLNK_INSTALL_DIR}/.hidden )
+install( FILES energy.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
-
-
-
-
-#original Makefile.am contents follow:
-
-#SUBDIRS= . pics
-#
-#AM_CPPFLAGS = $(all_includes) $(DPMSINC)
-#
-#kde_module_LTLIBRARIES = kcm_energy.la
-#
-#kcm_energy_la_SOURCES = energy.cpp
-#kcm_energy_la_LDFLAGS = -module -avoid-version $(all_libraries) -no-undefined
-#kcm_energy_la_LIBADD = $(DPMSLIB) $(LIB_KDEUI) $(LIB_KIO)
-#METASOURCES = energy.moc
-#
-#noinst_HEADERS = energy.h
-#
-#messages:
-#	$(XGETTEXT) *.cpp -o $(podir)/kcmenergy.pot
-#
-#energy_data_DATA = energy.desktop
-#energy_datadir = $(kde_appsdir)/.hidden
-#KDE_ICON=AUTO

@@ -72,7 +72,7 @@ class RootInfoWidget : public QLabel
 {
 public:
     RootInfoWidget(QWidget *parent, const char *name);
-    void setRootMsg(const QString& s) { setText(s); }
+    void setRootMessage(const QString& s) { setText(s); }
 };
 
 RootInfoWidget::RootInfoWidget(QWidget *parent, const char *name = 0)
@@ -130,13 +130,13 @@ ProxyView::ProxyView(KCModule *_client, const QString&, QWidget *parent, bool ru
 
   QVBoxLayout* vbox = new QVBoxLayout( contentWidget );
 
-  if (run_as_root && _client->useRootOnlyMsg()) // notify the user
+  if (run_as_root && _client->useRootOnlyMessage()) // notify the user
   {
       RootInfoWidget *infoBox = new RootInfoWidget(contentWidget);
       vbox->addWidget( infoBox );
-      QString msg = _client->rootOnlyMsg();
+      QString msg = _client->rootOnlyMessage();
       if (!msg.isEmpty())
-	      infoBox->setRootMsg(msg);
+	      infoBox->setRootMessage(msg);
       vbox->setSpacing(KDialog::spacingHint());
   }
   client->setParent(contentWidget);
@@ -211,7 +211,7 @@ ProxyWidget::ProxyWidget(KCModule *client, QString title, const char *name,
   _reset =   new KPushButton( KStdGuiItem::reset(), this );
   _root =    new KPushButton( KGuiItem(i18n( "&Administrator Mode" )), this );
 
-  bool mayModify = (!run_as_root || !_client->useRootOnlyMsg()) && !KCGlobal::isInfoCenter();
+  bool mayModify = (!run_as_root || !_client->useRootOnlyMessage()) && !KCGlobal::isInfoCenter();
 
   // only enable the requested buttons
   int b = _client->buttons();

@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell sound
 Icon=kcmsound
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kinfocenter/sound/index.html
 
 

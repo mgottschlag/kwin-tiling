@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell fonts
 Icon=fonts
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kcontrol/fonts/index.html
 
 

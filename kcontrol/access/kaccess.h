@@ -13,7 +13,7 @@
 #include <kurl.h>
 #include <kwinmodule.h>
 
-#include <phonon/simpleplayer.h>
+#include <phonon/audioplayer.h>
 
 #include <X11/Xlib.h>
 #define explicit int_explicit        // avoid compiler name clash in XKBlib.h
@@ -49,7 +49,6 @@ protected:
 private Q_SLOTS:
 
   void activeWindowChanged(WId wid);
-  void slotArtsBellTimeout();
   void notifyChanges();
   void applyChanges();
   void yesClicked();
@@ -65,10 +64,7 @@ private:
   unsigned int features;
   unsigned int requestedFeatures;
 
-  Phonon::SimplePlayer _player;
   bool    _systemBell, _artsBell, _visibleBell, _visibleBellInvert;
-  bool    _artsBellBlocked;
-  KUrl    _artsBellFile;
   QColor  _visibleBellColor;
   int     _visibleBellPause;
 
@@ -77,9 +73,8 @@ private:
 
   QWidget *overlay;
 
-  QTimer *artsBellTimer;
-
   KWinModule wm;
+  Phonon::AudioPlayer _player;
 
   WId _activeWindow;
 

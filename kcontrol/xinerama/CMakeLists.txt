@@ -17,31 +17,13 @@ target_link_libraries(kcm_xinerama  ${KDE4_KDE3SUPPORT_LIBS} ${X11_Xinerama_LIB}
 
 install(TARGETS kcm_xinerama  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
+########### next target ###############
+
+set(test_kcm_xinerama_SRCS test_kcm_xinerama.cpp )
+add_executable(test_kcm_xinerama ${test_kcm_xinerama_SRCS})
+target_link_libraries(test_kcm_xinerama  ${QT_QTGUI_LIBRARY})
+install(TARGETS test_kcm_xinerama  DESTINATION ${LIBEXEC_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES xinerama.desktop  DESTINATION  ${APPLNK_INSTALL_DIR}/.hidden )
-
-
-
-
-#original Makefile.am contents follow:
-
-#AM_CPPFLAGS  = $(all_includes)
-#
-#kde_module_LTLIBRARIES = kcm_xinerama.la
-#
-#kcm_xinerama_la_SOURCES = kcmxinerama.cpp xineramawidget.ui
-#
-#kcm_xinerama_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-#kcm_xinerama_la_LIBADD = -lkdeui
-#
-#METASOURCES = AUTO 
-#
-#noinst_HEADERS = kcmxinerama.h
-#
-#messages: rc.cpp
-#	$(XGETTEXT) *.cpp -o $(podir)/kcmxinerama.pot
-#
-#xinerama_datadir = $(kde_appsdir)/.hidden
-#xinerama_data_DATA = xinerama.desktop
+install( FILES xinerama.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )

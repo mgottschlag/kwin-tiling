@@ -15,7 +15,8 @@ Name[x-test]=xxProtocolsxx
 SwallowExec=
 SwallowTitle=
 Terminal=false
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 X-KDE-FactoryName=ioslaveinfo
 X-KDE-Library=ioslaveinfo
 

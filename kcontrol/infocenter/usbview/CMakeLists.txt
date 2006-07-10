@@ -18,7 +18,7 @@ install(TARGETS kcm_usb  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES kcmusb.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kcmusb.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES usb.ids  DESTINATION  ${DATA_INSTALL_DIR}/kcmusb )
 
 

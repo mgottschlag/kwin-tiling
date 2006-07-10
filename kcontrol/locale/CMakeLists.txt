@@ -30,5 +30,5 @@ install(TARGETS kcm_locale  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES language.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES language.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 

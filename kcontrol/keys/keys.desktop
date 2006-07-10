@@ -2,12 +2,13 @@
 Encoding=UTF-8
 Exec=kcmshell keys
 Icon=key_bindings
-Type=Application
+Type=Service
+ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/keys/index.html
 
 
 X-KDE-Library=keys
-X-KDE-Init=keys
+X-KDE-Init-Symbol=keys
 X-KDE-ParentApp=kcontrol
 
 Name=Keyboard Shortcuts

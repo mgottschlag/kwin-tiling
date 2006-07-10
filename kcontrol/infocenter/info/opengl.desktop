@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell opengl
 Icon=kcmopengl
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kinfocenter/opengl/index.html
 
 

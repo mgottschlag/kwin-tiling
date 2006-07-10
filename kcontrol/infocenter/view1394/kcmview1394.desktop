@@ -1,7 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Icon=ieee1394
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kinfocenter/view1394/index.html
 Exec=kcmshell kcmview1394
 

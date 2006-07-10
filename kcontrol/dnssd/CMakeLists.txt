@@ -20,7 +20,7 @@ install(TARGETS kcm_kdnssd  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES kcm_kdnssd.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kcm_kdnssd.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

@@ -17,11 +17,11 @@
 #include <QMouseEvent>
 #include <qstring.h>
 #include <qlist.h>
+#include <qlabel.h>
 
 #include "kxkbconfig.h"
 
 
-class QLabel;
 class QMenu;
 class XkbRules;
 
@@ -41,9 +41,9 @@ public:
     void initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules& rule);
     void setCurrentLayout(const LayoutUnit& layout);
 // 	void setCurrentLayout(const QString& layout, const QString &variant);
-	void setError(const QString& layoutInfo="");
+    void setError(const QString& layoutInfo="");
     void setShowFlag(bool showFlag) { m_showFlag = showFlag; }
-	void show() { label->show(); }
+    void show() { label->show(); }
 	
 // signals:
 // 

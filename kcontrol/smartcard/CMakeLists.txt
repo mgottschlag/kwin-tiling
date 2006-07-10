@@ -21,7 +21,7 @@ install(TARGETS kcm_smartcard  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES smartcard.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES smartcard.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

@@ -18,7 +18,7 @@ install(TARGETS kcm_display  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES display.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES display.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

@@ -61,6 +61,7 @@
 #include <kapplication.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
+#include <kio/jobuidelegate.h>
 #include <kdirlister.h>
 #include <kpushbutton.h>
 #include <kguiitem.h>
@@ -179,9 +180,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     layout->addWidget(itsStatusLabel);
 
     setButtons(0);
-    setRootOnlyMsg(i18n("<b>The fonts shown are your personal fonts.</b><br>To see (and install) "
+    setRootOnlyMessage(i18n("<b>The fonts shown are your personal fonts.</b><br>To see (and install) "
                         "system-wide fonts, click on the \"Administrator Mode\" button below."));
-    setUseRootOnlyMsg(true);
+    setUseRootOnlyMessage(true);
     itsDirOp->setMode(KFile::Files);
 
     //
@@ -480,8 +481,8 @@ void CKCmFontInst::removeFonts()
         {
             KIO::DeleteJob *job = KIO::del(urls, false, true);
             connect(job, SIGNAL(result(KJob *)), this, SLOT(jobResult(KJob *)));
-            job->setWindow(this);
-            job->setAutoErrorHandlingEnabled(true, this);
+            job->ui()->setWindow(this);
+            job->ui()->setAutoErrorHandlingEnabled(true);
         }
     }
 }
@@ -642,8 +643,8 @@ void CKCmFontInst::addFonts(const KUrl::List &src, const KUrl &dest)
 
         KIO::CopyJob *job=KIO::copy(copy, dest, true);
         connect(job, SIGNAL(result(KJob *)), this, SLOT(jobResult(KJob *)));
-        job->setWindow(this);
-        job->setAutoErrorHandlingEnabled(true, this);
+        job->ui()->setWindow(this);
+        job->ui()->setAutoErrorHandlingEnabled(true);
     }
 }
 

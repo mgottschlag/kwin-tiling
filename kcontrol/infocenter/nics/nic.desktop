@@ -1,7 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Exec=kcmshell nic
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kinfocenter/nics/index.html
 Icon=network
 

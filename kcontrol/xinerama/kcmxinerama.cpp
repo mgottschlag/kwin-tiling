@@ -252,10 +252,6 @@ extern "C" {
             KInstance *inst = new KInstance( "kcmxinerama" );
 	    return new KCMXinerama(inst, parent);
         }
-
-	KDE_EXPORT bool test_xinerama() {
-		return QApplication::desktop()->isVirtualDesktop();
-	}
 }
 
 

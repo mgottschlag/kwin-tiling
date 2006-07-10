@@ -19,7 +19,7 @@ install(TARGETS kcm_smserver  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES kcmsmserver.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kcmsmserver.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

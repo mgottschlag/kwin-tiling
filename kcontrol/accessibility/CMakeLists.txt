@@ -20,7 +20,7 @@ install(TARGETS kcm_accessibility  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES accessibility.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES accessibility.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

@@ -33,8 +33,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QEvent>
 #include <QResizeEvent>
 #include <QMouseEvent>
+#include <ktoggleaction.h>
 
-#include <kactionclasses.h>
 #include <kickertip.h>
 #include <klocale.h>
 #include <kdesktopfile.h>

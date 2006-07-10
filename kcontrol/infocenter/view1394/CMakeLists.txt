@@ -20,7 +20,7 @@ install(TARGETS kcm_view1394  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES kcmview1394.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kcmview1394.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES oui.db  DESTINATION  ${DATA_INSTALL_DIR}/kcmview1394 )
 
 

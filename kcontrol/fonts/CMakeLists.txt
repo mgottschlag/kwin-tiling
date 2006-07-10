@@ -19,7 +19,7 @@ install(TARGETS kcm_fonts  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES fonts.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES fonts.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

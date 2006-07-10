@@ -63,7 +63,7 @@ class KAccessConfig : public KCModule
 
 public:
 
-  KAccessConfig(KInstance *inst,QWidget *parent = 0L);
+  KAccessConfig( QWidget *parent, const QStringList& );
   virtual ~KAccessConfig();
   
   void load();

@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell pci
 Icon=kcmpci
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kinfocenter/pci/index.html
 
 

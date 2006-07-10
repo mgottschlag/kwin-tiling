@@ -3,9 +3,10 @@ Encoding=UTF-8
 Exec=kcmshell energy
 Icon=energy_star
 DocPath=kcontrol/energy/index.html
-Type=Application
+Type=Service
+ServiceTypes=KCModule,KCModuleInit
 X-KDE-Library=energy
-X-KDE-Init=energy
+X-KDE-Init-Symbol=energy
 X-KDE-ParentApp=kcontrol
 X-KDE-Init-Phase=2
 

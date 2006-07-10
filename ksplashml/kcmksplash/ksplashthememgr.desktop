@@ -4,7 +4,6 @@ Icon=ksplash
 Exec=kcmshell ksplashthememgr
 DocPath=ksplashml/themes.html
 
-X-KDE-ModuleType=Library
 X-KDE-Library=ksplashthemes
 X-KDE-FactoryName=ksplashthemes
 X-KDE-ParentApp=kcontrol

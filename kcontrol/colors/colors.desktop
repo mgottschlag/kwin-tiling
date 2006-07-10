@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell colors
 Icon=colorscm
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kcontrol/colors/index.html
 
 

@@ -4,7 +4,6 @@ Name=KHotKeys
 Name[x-test]=xxKHotKeysxx
 Type=Service
 ServiceTypes=KDEDModule
-X-KDE-ModuleType=Library
 X-KDE-Library=khotkeys
 X-KDE-FactoryName=khotkeys
 X-KDE-Kded-autoload=false

@@ -23,7 +23,7 @@ install(TARGETS kcm_joystick  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES joystick.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES joystick.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

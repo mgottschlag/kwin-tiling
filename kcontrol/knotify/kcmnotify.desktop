@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell kcmnotify
 Icon=knotify
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kcontrol/kcmnotify/index.html
 
 

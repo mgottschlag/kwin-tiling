@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell kdm
 Icon=kdmconfig
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kdm/index.html#configuring-kdm
 
 X-KDE-SubstituteUID=true

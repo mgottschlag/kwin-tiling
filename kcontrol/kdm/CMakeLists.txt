@@ -29,7 +29,7 @@ install(TARGETS kcm_kdm  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES kdm.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kdm.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

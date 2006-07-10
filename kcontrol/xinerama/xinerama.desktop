@@ -1,11 +1,13 @@
 [Desktop Entry]
 Icon=identity
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 Exec=kcmshell xinerama
 DocPath=kcontrol/multiplemonitors.html
+Hidden[$e]=$(if test_kcm_xinerama; then echo "false"; else echo "true"; fi)
 
+X-KDE-ParentApp=kcontrol
 X-KDE-Library=xinerama
-X-KDE-Test-Module=true
 Name=Multiple Monitors
 Name[fr]=Moniteurs multiples
 Name[x-test]=xxMultiple Monitorsxx

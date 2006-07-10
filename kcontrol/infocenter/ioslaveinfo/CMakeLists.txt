@@ -18,7 +18,7 @@ install(TARGETS kcm_ioslaveinfo  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES ioslaveinfo.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES ioslaveinfo.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 

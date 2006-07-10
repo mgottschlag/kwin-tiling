@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell smbstatus
 Icon=samba
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kinfocenter/samba/index.html
 
 

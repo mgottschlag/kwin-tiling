@@ -38,7 +38,7 @@ install(TARGETS kfontview DESTINATION bin)
 
 ########### install files ###############
 
-install( FILES kfontview.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kfontview.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES kfontviewpart.rc kfontviewui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kfontview )
 install( FILES kfontviewpart.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 

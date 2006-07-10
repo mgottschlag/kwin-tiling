@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell componentchooser
 Icon=misc
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 
 
 X-KDE-Library=componentchooser

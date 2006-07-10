@@ -33,7 +33,7 @@ install(TARGETS kaccess DESTINATION bin)
 
 ########### install files ###############
 
-install( FILES kcmaccess.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kcmaccess.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES kaccess.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES eventsrc  DESTINATION  ${DATA_INSTALL_DIR}/kaccess/ )
 

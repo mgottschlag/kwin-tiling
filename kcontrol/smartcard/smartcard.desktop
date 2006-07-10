@@ -1,12 +1,13 @@
 [Desktop Entry]
 Encoding=UTF-8
 Icon=identity
-Type=Application
+Type=Service
+ServiceTypes=KCModule,KCModuleInit
 Exec=kcmshell smartcard
 DocPath=kcontrol/smartcard.html
 
 X-KDE-Library=smartcard
-X-KDE-Init=smartcard
+X-KDE-Init-Symbol=smartcard
 X-KDE-ParentApp=kcontrol
 Name=Smartcards
 Name[fr]=Cartes à puce

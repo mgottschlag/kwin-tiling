@@ -36,7 +36,7 @@ install(TARGETS kcontrol DESTINATION bin)
 
 ########### install files ###############
 
-install( FILES KControl.desktop kinfocenter.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES KControl.desktop kinfocenter.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES kcontrolui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kcontrol )
 install( FILES kinfocenterui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kinfocenter )
 

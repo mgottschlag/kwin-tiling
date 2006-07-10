@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell scsi
 Icon=kcmscsi
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kinfocenter/scsi/index.html
 
 

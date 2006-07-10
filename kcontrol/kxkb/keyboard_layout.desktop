@@ -2,10 +2,10 @@
 Encoding=UTF-8
 Exec=kcmshell keyboard_layout
 Icon=keyboard
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kxkb/index.html
 
-X-KDE-ModuleType=Library
 X-KDE-Library=keyboard
 X-KDE-FactoryName=keyboard_layout
 X-KDE-ParentApp=kcontrol

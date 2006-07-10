@@ -2,7 +2,8 @@
 Encoding=UTF-8
 Exec=kcmshell ioports
 Icon=kcmmemory
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 DocPath=kinfocenter/ioports/index.html
 Categories=Qt;KDE;X-KDE-information;
 

@@ -23,7 +23,7 @@ install(TARGETS kcm_samba  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES smbstatus.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES smbstatus.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 

@@ -18,7 +18,7 @@ install(TARGETS kcm_launch  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES kcmlaunch.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES kcmlaunch.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 
