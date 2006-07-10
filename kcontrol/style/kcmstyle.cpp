@@ -79,7 +79,7 @@
 #include <kgenericfactory.h>
 
 typedef KGenericFactory<KCMStyle, QWidget> KCMStyleFactory;
-K_EXPORT_COMPONENT_FACTORY( style, KCMStyleFactory("kcmstyle") );
+K_EXPORT_COMPONENT_FACTORY( style, KCMStyleFactory("kcmstyle") )
 
 extern "C"
 {
