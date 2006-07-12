@@ -39,7 +39,7 @@ PanelRemoveAppletMenu::PanelRemoveAppletMenu(ContainerArea* cArea,
                                              const char *name)
     : QMenu(parent), m_containerArea(cArea)
 {
-    setName(name);
+    setObjectName(name);
     connect(this, SIGNAL(activated(int)), SLOT(slotExec(int)));
     connect(this, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()));
 }

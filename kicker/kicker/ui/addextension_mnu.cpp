@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 PanelAddExtensionMenu::PanelAddExtensionMenu(QWidget *parent, const char *name)
     : QMenu(parent)
 {
-    setName(name);
+    setObjectName(name);
     setCheckable(true);
     connect(this, SIGNAL(activated(int)), SLOT(slotExec(int)));
     connect(this, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()));

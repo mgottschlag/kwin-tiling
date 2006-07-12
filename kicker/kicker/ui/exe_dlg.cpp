@@ -124,7 +124,7 @@ QString PanelExeDialog::iconPath() const
 
 QString PanelExeDialog::command() const
 {
-    return ui->m_exec->url();
+    return ui->m_exec->url().toString();
 }
 
 void PanelExeDialog::updateIcon()
@@ -178,8 +178,8 @@ void PanelExeDialog::slotTextChanged(const QString &str)
 
 void PanelExeDialog::slotReturnPressed()
 {
-    if (m_partialPath2full.contains(ui->m_exec->url()))
-        ui->m_exec->setUrl(m_partialPath2full[ui->m_exec->url()]);
+    if (m_partialPath2full.contains(ui->m_exec->url().toString()))
+        ui->m_exec->setUrl(m_partialPath2full[ui->m_exec->url().toString()]);
 }
 
 void PanelExeDialog::slotSelect(const QString& exec)

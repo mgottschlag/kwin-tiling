@@ -498,7 +498,8 @@ void PasswordDlg::gplugActivity()
 
 void PasswordDlg::gplugMsgBox( QMessageBox::Icon type, const QString &text )
 {
-    QDialog dialog( this, 0, true, Qt::WX11BypassWM );
+    QDialog dialog( this, Qt::WX11BypassWM );
+    dialog.setModal( true );
     QFrame *winFrame = new QFrame( &dialog );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );
@@ -544,7 +545,9 @@ void PasswordDlg::slotStartNewSession()
     killTimer(mTimeoutTimerId);
     mTimeoutTimerId = 0;
 
-    QDialog *dialog = new QDialog( this, "warnbox", true, Qt::WX11BypassWM );
+    QDialog *dialog = new QDialog( this, Qt::WX11BypassWM );
+    dialog->setObjectName( "warnbox" );
+    dialog->setModal( true );
     QFrame *winFrame = new QFrame( dialog );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );
@@ -664,7 +667,9 @@ void PasswordDlg::slotSwitchUser()
     int p = 0;
     DM dm;
 
-    QDialog dialog( this, "sessbox", true, Qt::WX11BypassWM );
+    QDialog dialog( this, Qt::WX11BypassWM );
+    dialog.setObjectName( "sessbox" );
+    dialog.setModal( true );
     QFrame *winFrame = new QFrame( &dialog );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );

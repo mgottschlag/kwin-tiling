@@ -346,7 +346,7 @@ void LayoutConfig::updateStickyLimit()
 		maxDepth = 2;
 	}
 	
-	widget->spinStickyDepth->setMaxValue(maxDepth);
+	widget->spinStickyDepth->setMaximum(maxDepth);
 /*	if( value > maxDepth )
 		setValue(maxDepth);*/
 }
@@ -527,14 +527,14 @@ void LayoutConfig::layoutSelChanged(Q3ListViewItem *sel)
     
 	if( vars.count() > 0 ) {
 		vars.prepend(DEFAULT_VARIANT_NAME);
-		widget->comboVariant->insertStringList(vars);
+		widget->comboVariant->addItems(vars);
 	
 		QString variant = sel->text(LAYOUT_COLUMN_VARIANT);
 		if( variant != NULL && variant.isEmpty() == false ) {
 			widget->comboVariant->setCurrentText(variant);
 		}
 		else {
-			widget->comboVariant->setCurrentItem(0);
+			widget->comboVariant->setCurrentIndex(0);
 		}
 	}
     updateLayoutCommand();
@@ -698,8 +698,8 @@ void LayoutConfig::loadRules()
     modelsList.sort();
 	
 	widget->comboModel->clear();
-	widget->comboModel->insertStringList(modelsList);
-	widget->comboModel->setCurrentItem(0);
+	widget->comboModel->addItems(modelsList);
+	widget->comboModel->setCurrentIndex(0);
 
 	// fill in the additional layouts
 	widget->listLayoutsSrc->clear();

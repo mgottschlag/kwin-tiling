@@ -40,7 +40,7 @@ static const int REMOVEALLID = 1000;
 PanelRemoveExtensionMenu::PanelRemoveExtensionMenu( QWidget *parent, const char *name )
     : QMenu( parent )
 {
-    setName(name);
+    setObjectName(name);
     connect(this, SIGNAL(activated(int)), SLOT(slotExec(int)));
     connect(this, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()));
 }

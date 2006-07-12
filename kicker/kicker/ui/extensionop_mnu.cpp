@@ -35,7 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 PanelExtensionOpMenu::PanelExtensionOpMenu(const QString& extension, int actions, QWidget *parent, const char *name)
   : QMenu(parent)
 {
-    setName(name);
+    setObjectName(name);
     if (!Kicker::self()->isImmutable())
     {
         insertItem(SmallIconSet("remove"), i18n("&Remove"), Remove);

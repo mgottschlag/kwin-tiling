@@ -28,8 +28,10 @@
 
 #define COUNTDOWN 30
 
-AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, "password dialog", true,Qt::WX11BypassWM)
+AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, Qt::WX11BypassWM)
 {
+    setObjectName("password dialog");
+    setModal(true);
     frame = new QFrame(this);
     frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
     frame->setLineWidth(2);

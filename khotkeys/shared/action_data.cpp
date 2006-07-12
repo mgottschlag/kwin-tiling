@@ -77,7 +77,7 @@ Action_data_base* Action_data_base::create_cfg_read( KConfig& cfg_P, Action_data
     QString type = cfg_P.readEntry( "Type" );
     if( type == "ACTION_DATA_GROUP" )
         {
-        if( cfg_P.readBoolEntry( "AllowMerge", false ))
+        if( cfg_P.readEntry( "AllowMerge", false ))
             {
             for( Action_data_group::Iterator it = parent_P->first_child();
                  it;

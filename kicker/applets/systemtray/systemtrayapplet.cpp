@@ -358,7 +358,8 @@ void SystemTrayApplet::showExpandButton(bool show)
     {
         if (!m_expandButton)
         {
-            m_expandButton = new SimpleButton(this, "expandButton");
+            m_expandButton = new SimpleButton(this);
+            m_expandButton->setObjectName("expandButton");
             refreshExpandButton();
 
             if (orientation() == Qt::Vertical)

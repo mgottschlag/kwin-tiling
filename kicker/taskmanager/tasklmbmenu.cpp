@@ -105,7 +105,7 @@ TaskLMBMenu::TaskLMBMenu(const Task::List& tasks, QWidget *parent, const char *n
     m_lastDragId(-1),
     m_attentionState(false)
 {
-    setName(name);
+    setObjectName(name);
     fillMenu();
 
     setAcceptDrops(true); // Always enabled to activate task during drag&drop.
