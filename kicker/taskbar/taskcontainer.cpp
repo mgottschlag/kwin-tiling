@@ -787,52 +787,38 @@ QString TaskContainer::name()
     {
         // multiple tasks -> use the common part of all captions
         // if it is more descriptive than the class name
-        const QString match = m_filteredTasks.first()->visibleName();
-        int maxLength = match.length();
-        int i = 0;
-        bool stop = false;
+        Task::List::iterator it = m_filteredTasks.begin();
+        Task::List::iterator itEnd = m_filteredTasks.end();
+        const QString match = (*it)->visibleName();
+        int length = match.length();
 
         // what we do is find the right-most letter than the names do NOT have
         // in common, and then use everything UP TO that as the name in the button
-        while (i < maxLength)
+        while ((++it) != itEnd && length > 0)
         {
-            QChar check = match.at(i).toLower();
-            Task::List::iterator itEnd = m_filteredTasks.end();
-            for (Task::List::iterator it = m_filteredTasks.begin(); it != itEnd; ++it)
+            QString matchAgainst = (*it)->visibleName();
+            length = qMin(length, matchAgainst.length());
+
+            for (int i=0; i < length; ++i)
             {
-                // we're doing a lot of Utf8 -> QString conversions here
-                // by repeatedly calling visibleName() =/
-                QString matchAgainst = (*it)->visibleName();
-                if (i >= matchAgainst.length() ||
-                    check != matchAgainst.at(i).toLower())
+                if (match.at(i).toLower() != matchAgainst.at(i).toLower())
                 {
-                    if (i > 0)
-                    {
-                        --i;
-                    }
-                    stop = true;
+                    length = i;
                     break;
                 }
             }
-
-            if (stop)
-            {
-                break;
-            }
-
-            ++i;
         }
 
         // strip trailing crap
-        while (i > 0 && !match.at(i).isLetterOrNumber())
+        while (length > 0 && !match.at(length-1).isLetterOrNumber())
         {
-            --i;
+            --length;
         }
 
         // more descriptive than id()?
-        if (i > 0 && (i + 1) >= id().length())
+        if (length > 0 && length >= id().length())
         {
-            text = match.left(i + 1);
+            text = match.left(length);
         }
     }
     else if (m_startup && !m_startup->text().isEmpty())
