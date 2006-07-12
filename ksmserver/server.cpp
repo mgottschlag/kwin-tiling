@@ -779,7 +779,7 @@ void KSMServer::deleteClient( KSMClient* client )
     delete client;
     if ( state == Shutdown || state == Checkpoint )
         completeShutdownOrCheckpoint();
-    if ( state == Killing || state == Killing2 )
+    if ( state == KillingWM || state == Killing )
         completeKilling();
 }
 

@@ -90,6 +90,7 @@ private Q_SLOTS:
 
     void protectionTimeout();
     void timeoutQuit();
+    void timeoutWMQuit();
     void knotifyTimeout();
     void kcmPhase1Timeout();
     void kcmPhase2Timeout();
@@ -113,6 +114,7 @@ private:
     void handlePendingInteractions();
     void completeShutdownOrCheckpoint();
     void startKilling();
+    void performStandardKilling();
     void completeKilling();
     void cancelShutdown( KSMClient* c );
 
@@ -160,7 +162,7 @@ private:
         {
         Idle,
         LaunchingWM, AutoStart0, KcmInitPhase1, AutoStart1, Restoring, FinishingStartup, // startup
-        Shutdown, Checkpoint, Killing, Killing2, WaitingForKNotify // shutdown
+        Shutdown, Checkpoint, KillingWM, Killing, WaitingForKNotify // shutdown
         };
     State state;
     bool dialogActive;
