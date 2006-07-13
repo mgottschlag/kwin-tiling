@@ -31,7 +31,6 @@
 #include <action_data.h>
 #include <gestures.h>
 //Added by qt3to4:
-#include <Q3CString>
 
 namespace KHotKeys
 {
@@ -114,7 +113,7 @@ int KDE_EXPORT kdemain( int argc, char** argv )
 	    if ((pos = displayname.lastIndexOf('.')) != -1)
 		displayname.remove(pos, 10);
 
-	    Q3CString env;
+	    QByteArray env;
 	    if (number_of_screens != 1) {
 		for (int i = 0; i < number_of_screens; i++) {
 		    if (i != khotkeys_screen_number && fork() == 0) {
@@ -125,7 +124,7 @@ int KDE_EXPORT kdemain( int argc, char** argv )
 		    }
 		}
 
-		env.sprintf("DISPLAY=%s.%d", displayname.data(), khotkeys_screen_number);
+		env = "DISPLAY= " + displayname + QByteArray::number(khotkeys_screen_number);
 		if (putenv(strdup(env.data()))) {
 		    fprintf(stderr,
 			    "%s: WARNING: unable to set DISPLAY environment variable\n",
@@ -136,11 +135,11 @@ int KDE_EXPORT kdemain( int argc, char** argv )
 	}
         }
 
-    Q3CString appname;
+    QByteArray appname;
     if (khotkeys_screen_number == 0)
 	appname = "khotkeys";
     else
-	appname.sprintf("khotkeys-screen-%d", khotkeys_screen_number);
+	appname = "khotkeys-screen-" + QByteArray::number(khotkeys_screen_number);
 
                              // no need to i18n these, no GUI
     KCmdLineArgs::init( argc, argv, appname, I18N_NOOP( "KHotKeys" ),
