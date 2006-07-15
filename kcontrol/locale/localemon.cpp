@@ -42,12 +42,12 @@
 #include "localemon.moc"
 
 KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
-                                       QWidget *parent, const char*name)
+                                       QWidget *parent, const char *name)
   : QWidget(parent),
     m_locale(locale)
 {
   // Money
-  QGridLayout *lay = new QGridLayout(this );
+  QGridLayout *lay = new QGridLayout( this );
   lay->setMargin( KDialog::marginHint() );
   lay->setSpacing( KDialog::spacingHint());
 

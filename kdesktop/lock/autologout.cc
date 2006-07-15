@@ -46,7 +46,7 @@ AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, Qt::WX11BypassWM)
     mStatusLabel = new QLabel("<b> </b>", frame);
     mStatusLabel->setAlignment(Qt::AlignCenter);
 
-    QLabel *mProgressLabel = new QLabel("Time Remaining:", frame);
+    QLabel *mProgressLabel = new QLabel(i18n("Time Remaining:"), frame);
     mProgressRemaining = new QProgressBar(frame);
     mProgressRemaining->setTextVisible(false);
 
