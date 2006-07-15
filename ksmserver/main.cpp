@@ -47,7 +47,7 @@ void IoErrorHandler ( IceConn iceConn)
     the_server->ioError( iceConn );
 }
 
-bool writeTest(Q3CString path)
+bool writeTest(QByteArray path)
 {
    path += "/XXXXXX";
    int fd = mkstemp(path.data());

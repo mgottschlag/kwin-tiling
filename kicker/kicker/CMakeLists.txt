@@ -42,12 +42,12 @@ kde4_add_executable( kicker-3.4-reverseLayout ${kicker_reverseLayout_SRCS})
 
 target_link_libraries( kicker-3.4-reverseLayout ${KDE4_KDEUI_LIBS})
 
-install_targets(/lib/kconf_update_bin/ kicker-3.4-reverseLayout)
+install(TARGETS kicker-3.4-reverseLayout DESTINATION ${LIB_INSTALL_DIR}/kconf_update_bin/ )
 
 ########### install files ###############
 
 install( FILES kcmkicker.desktop  DESTINATION  ${XDG_APPS_DIR} )
-install_files( /share/autostart FILES panel.desktop )
+install( FILES panel.desktop DESTINATION ${DATA_INSTALL_DIR}/autostart )
 install( FILES kickerrc.upd  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 install(PROGRAMS kicker-3.1-properSizeSetting.pl kicker-3.5-taskbarEnums.pl kicker-3.5-kconfigXTize.pl  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 

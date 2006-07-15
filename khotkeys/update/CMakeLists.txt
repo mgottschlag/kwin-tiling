@@ -14,7 +14,7 @@ if(X11_XTest_FOUND)
   target_link_libraries( khotkeys_update ${X11_XTest_LIB} )
 endif(X11_XTest_FOUND)
 
-install_targets(/lib/kconf_update_bin/ khotkeys_update )
+install(TARGETS khotkeys_update DESTINATION ${LIB_INSTALL_DIR}/kconf_update_bin/ )
 
 
 

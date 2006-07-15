@@ -8,14 +8,3 @@ add_subdirectory( konq-profiles )
 MESSAGE(STATUS "port remote system")
 #add_subdirectory( remote ) 
 #add_subdirectory( system ) 
-
-########### install files ###############
-
-
-
-
-
-#original Makefile.am contents follow:
-
-#SUBDIRS = find kdeprint prefmenu recentdocs konsole konq-profiles remote system
-#
