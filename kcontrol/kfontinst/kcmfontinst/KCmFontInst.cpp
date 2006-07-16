@@ -208,7 +208,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     if((act=itsDirOp->actionCollection()->action("reload")))
         toolbar->addAction( act );
 
-    topMnu->insert(itsViewMenuAct);
+    topMnu->addAction(itsViewMenuAct);
 
     if((itsIconAct=qobject_cast<KToggleAction *>(itsDirOp->actionCollection()->action("short view"))))
     {
@@ -234,13 +234,13 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     act = new KAction(KIcon("newfont"), i18n("Add Fonts..."), itsDirOp->actionCollection(), "addfonts");
     connect(act, SIGNAL(triggered(bool)), SLOT(addFonts()));
     toolbar->addAction( act );
-    topMnu->insert(act);
+    topMnu->addAction(act);
 
     if((itsDeleteAct=itsDirOp->actionCollection()->action("delete")))
     {
         toolbar->addAction( itsDeleteAct );
         itsDeleteAct->setEnabled(false);
-        topMnu->insert(itsDeleteAct);
+        topMnu->addAction(itsDeleteAct);
         disconnect(itsDeleteAct, SIGNAL(activated()), itsDirOp, SLOT(deleteSelected()));
         connect(itsDeleteAct, SIGNAL(activated()), this, SLOT(removeFonts()));
     }
