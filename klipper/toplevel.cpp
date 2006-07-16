@@ -165,30 +165,15 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     toggleURLGrabAction = new KToggleAction( collection, "toggleUrlGrabAction" );
     toggleURLGrabAction->setEnabled( true );
     //toggleURLGrabAction->setGroup( defaultGroup );
-    clearHistoryAction = new KAction( i18n("C&lear Clipboard History"),
-                                      "history_clear",
-                                      0,
-                                      history(),
-                                      SLOT( slotClear() ),
-                                      collection,
-                                      "clearHistoryAction" );
+    clearHistoryAction = new KAction(KIcon("history_clear"),  i18n("C&lear Clipboard History"), collection, "clearHistoryAction" );
+    connect(clearHistoryAction, SIGNAL(triggered(bool) ), history(), SLOT( slotClear() ));
     connect( clearHistoryAction, SIGNAL( activated() ), SLOT( slotClearClipboard() ) );
     //clearHistoryAction->setGroup( defaultGroup );
-    configureAction = new KAction( i18n("&Configure Klipper..."),
-                                   "configure",
-                                   0,
-                                   this,
-                                   SLOT( slotConfigure() ),
-                                   collection,
-                                   "configureAction" );
-    //configureAction->setGroup( defaultGroup );
-    quitAction = new KAction( i18n("&Quit"),
-                              "exit",
-                              0,
-                              this,
-                              SLOT( slotQuit() ),
-                              collection,
-                              "quitAction" );
+    configureAction = new KAction(KIcon("configure"),  i18n("&Configure Klipper..."), collection, "configureAction" );
+    connect(configureAction, SIGNAL(triggered(bool) ), SLOT( slotConfigure() ));
+    //configureAction->setGroup( defaultGroup ); 
+    quitAction = new KAction( KIcon("exit"), i18n("&Quit"), collection, "quitAction" );
+    connect(quitAction, SIGNAL(triggered(bool) ), SLOT( slotQuit() ));
     //quitAction->setGroup( "exit" );
     myURLGrabber = 0L;
     KConfig *kc = m_config;

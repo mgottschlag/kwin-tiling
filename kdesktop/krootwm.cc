@@ -199,8 +199,10 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   }
   if (KAuthorized::authorizeKAction("logout"))
   {
-      new KAction(i18n("Log Out \"%1\"...", KUser().loginName()), "exit", 0,
-                  this, SLOT( slotLogout() ), m_actionCollection, "logout" );
+      KAction *action = new KAction(KIcon("exit"), i18n("Log Out \"%1\"...", KUser().loginName()),
+                                    m_actionCollection, "logout" );
+      connect(action, SIGNAL(triggered(bool)), SLOT( slotLogout() ));
+     
   }
 
   if (KAuthorized::authorizeKAction("start_new_session") && DM().isSwitchable())
