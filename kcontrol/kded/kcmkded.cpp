@@ -29,7 +29,7 @@
 
 #include <kaboutdata.h>
 #include <kapplication.h>
-#include <kbuttonbox.h>
+#include <kdialogbuttonbox.h>
 #include <kdebug.h>
 #include <kdesktopfile.h>
 #include <kdialog.h>
@@ -98,9 +98,9 @@ KDEDConfig::KDEDConfig(QWidget* parent, const QStringList &) :
 	_lvStartup->setAllColumnsShowFocus(true);
 	_lvStartup->header()->setStretchEnabled(true, 2);
 
-	KButtonBox *buttonBox = new KButtonBox( gb, Qt::Horizontal);
-	_pbStart = buttonBox->addButton( i18n("Start"));
-	_pbStop = buttonBox->addButton( i18n("Stop"));
+	KDialogButtonBox *buttonBox = new KDialogButtonBox( gb, Qt::Horizontal);
+	_pbStart = buttonBox->addButton( i18n("Start") , QDialogButtonBox::ActionRole  );
+	_pbStop = buttonBox->addButton( i18n("Stop") , QDialogButtonBox::ActionRole );
 
 	_pbStart->setEnabled( false );
 	_pbStop->setEnabled( false );
