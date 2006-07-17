@@ -1,3 +1,0 @@
-ACCESSIBILITY_SUBDIR=
-KDE_CHECK_HEADER(X11/extensions/XKBstr.h, ACCESSIBILITY_SUBDIR=accessibility)
-AM_CONDITIONAL(include_kcontrol_accessibility, test -n "$ACCESSIBILITY_SUBDIR")

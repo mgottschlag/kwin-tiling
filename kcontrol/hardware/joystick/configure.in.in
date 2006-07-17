@@ -1,7 +1,0 @@
-case "$host" in
-  *-*-linux*)
-	FOUND_LINUX=yes
-	;;
-esac
-
-AM_CONDITIONAL(include_kcontrol_joystick, test "$FOUND_LINUX" = "yes")
