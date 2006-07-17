@@ -622,8 +622,8 @@ KFonts::KFonts(QWidget *parent, const QStringList &args)
    cbDpi = new QCheckBox( i18n( "Force DPI" ), this );
    lay->addWidget( cbDpi );
    comboDpi = new QComboBox( this );
-   comboDpi->insertItem( i18n( "Normal fonts (96 DPI)" ));
-   comboDpi->insertItem( i18n( "Huge fonts (120 DPI)" ));
+   comboDpi->addItem( i18n( "Normal fonts (96 DPI)" ));
+   comboDpi->addItem( i18n( "Huge fonts (120 DPI)" ));
    comboDpi->setDisabled( true );
    connect( cbDpi, SIGNAL( toggled( bool )), comboDpi, SLOT( setEnabled( bool )));
    connect( cbDpi, SIGNAL( toggled( bool )), SLOT( changed()));
