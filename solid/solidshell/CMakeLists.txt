@@ -13,7 +13,7 @@ kde4_add_executable(solidshell ${solidshell_SRCS})
 
 target_link_libraries(solidshell ${KDE4_KDECORE_LIBS} solid )
 
-install_targets(/bin solidshell )
+install(TARGETS solidshell DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############
