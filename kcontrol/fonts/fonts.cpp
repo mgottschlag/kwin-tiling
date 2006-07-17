@@ -254,7 +254,7 @@ FontAASettings::FontAASettings(QWidget *parent)
   subPixelType->setWhatsThis( subPixelWhatsThis );
 
   for(int t=KXftConfig::SubPixel::None+1; t<=KXftConfig::SubPixel::Vbgr; ++t)
-    subPixelType->insertItem(aaPixmaps[t-1], i18n(KXftConfig::description((KXftConfig::SubPixel::Type)t).toUtf8()));
+    subPixelType->addItem(aaPixmaps[t-1], i18n(KXftConfig::description((KXftConfig::SubPixel::Type)t).toUtf8()));
 
 #ifdef HAVE_FONTCONFIG
   QLabel *hintingLabel=new QLabel(i18n("Hinting style: "), mw);
