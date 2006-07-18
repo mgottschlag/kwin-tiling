@@ -140,7 +140,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			connect( loginEdit, SIGNAL(textChanged( const QString & )), SLOT(slotActivity()) );
 			connect( loginEdit, SIGNAL(selectionChanged()), SLOT(slotActivity()) );
 			domainCombo->addItems( domains );
-			domainCombo->setCurrentItem( defaultDomain );
+			domainCombo->setCurrentIndex( domainCombo->findText( defaultDomain ) );
 		} else if (ctx != Login && ctx != Shutdown && grid) {
 			domainLabel = new QLabel( i18n("Domain:"), parent );
 			grid->addWidget( domainLabel, line, 0 );
