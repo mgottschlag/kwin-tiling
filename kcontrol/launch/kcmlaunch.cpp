@@ -112,7 +112,8 @@ LaunchConfig::LaunchConfig(QWidget * parent, const QStringList &)
     GroupBox2Layout->setMargin( 11 );
     GroupBox2Layout->setColumnStretch( 1, 1 );
 
-    cb_taskbarButton = new QCheckBox( GroupBox2, "cb_taskbarButton" );
+    cb_taskbarButton = new QCheckBox( GroupBox2 );
+    cb_taskbarButton->setObjectName( "cb_taskbarButton" );
     cb_taskbarButton->setText( i18n( "Enable &taskbar notification" ) );
     GroupBox2Layout->addWidget( cb_taskbarButton, 0, 0, 1, 2 );
     connect( cb_taskbarButton, SIGNAL( toggled(bool) ),

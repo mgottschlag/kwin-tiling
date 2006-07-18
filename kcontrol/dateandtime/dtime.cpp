@@ -78,7 +78,8 @@ Dtime::Dtime(QWidget * parent, const char *name)
   layout1->setSpacing( 0 );
   layout1->setMargin( 0 );
 
-  setDateTimeAuto = new QCheckBox( privateLayoutWidget, "setDateTimeAuto" );
+  setDateTimeAuto = new QCheckBox( privateLayoutWidget );
+  setDateTimeAuto->setObjectName( "setDateTimeAuto" );
   setDateTimeAuto->setText(i18n("Set date and time &automatically:"));
   connect(setDateTimeAuto, SIGNAL(toggled(bool)), this, SLOT(serverTimeCheck()));
   connect(setDateTimeAuto, SIGNAL(toggled(bool)), SLOT(configChanged()));
