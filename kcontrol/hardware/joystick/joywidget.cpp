@@ -65,7 +65,8 @@ JoyWidget::JoyWidget(QWidget *parent)
 
   KHBox *devHbox = new KHBox(mainVbox);
   new QLabel(i18n("Device:"), devHbox);
-  device = new QComboBox(true, devHbox);
+  device = new QComboBox(devHbox);
+  device->setEditable( true );
   device->setInsertPolicy(QComboBox::NoInsertion);
   connect(device, SIGNAL(activated(const QString &)), this, SLOT(deviceChanged(const QString &)));
   devHbox->setStretchFactor(device, 3);
