@@ -676,7 +676,7 @@ void KFonts::load()
   cfgfonts.setGroup("General");
   int dpi = cfgfonts.readNumEntry( "fontDPI", 0 );
   cbDpi->setChecked( dpi == 96 || dpi == 120 );
-  comboDpi->setCurrentItem( dpi == 120 ? 1 : 0 );
+  comboDpi->setCurrentIndex( dpi == 120 ? 1 : 0 );
   dpi_original = dpi;
 
   emit changed(false);
@@ -695,7 +695,7 @@ void KFonts::save()
   if( !cbDpi->isChecked())
       dpi = 0;
   else
-      dpi = comboDpi->currentItem() == 0 ? 96 : 120;
+      dpi = comboDpi->currentIndex() == 0 ? 96 : 120;
   cfgfonts.writeEntry( "fontDPI", dpi );
   cfgfonts.sync();
 
