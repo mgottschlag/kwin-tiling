@@ -101,7 +101,8 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   hbox->setLayout(hboxLayout1);
   m_labMonPosMonSignPos = new QLabel(hbox);
   m_labMonPosMonSignPos->setObjectName( I18N_NOOP("Sign position:") );
-  m_cmbMonPosMonSignPos = new QComboBox(hbox, "signpos");
+  m_cmbMonPosMonSignPos = new QComboBox(hbox);
+  m_cmbMonPosMonSignPos->setObjectName("signpos");
   connect( m_cmbMonPosMonSignPos, SIGNAL( activated(int) ),
            SLOT( slotMonPosMonSignPosChanged(int) ) );
 
@@ -115,7 +116,8 @@ KLocaleConfigMoney::KLocaleConfigMoney(KLocale *locale,
   hbox->setLayout(hboxLayout2);
   m_labMonNegMonSignPos = new QLabel(hbox);
   m_labMonNegMonSignPos->setObjectName( I18N_NOOP("Sign position:") );
-  m_cmbMonNegMonSignPos = new QComboBox(hbox, "signpos");
+  m_cmbMonNegMonSignPos = new QComboBox(hbox);
+  m_cmbMonNegMonSignPos->setObjectName("signpos");
   connect( m_cmbMonNegMonSignPos, SIGNAL( activated(int) ),
            SLOT( slotMonNegMonSignPosChanged(int) ) );
 

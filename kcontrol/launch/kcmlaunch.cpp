@@ -69,7 +69,8 @@ LaunchConfig::LaunchConfig(QWidget * parent, const QStringList &)
     GroupBox1Layout->setMargin( 11 );
     GroupBox1Layout->setColumnStretch( 1, 1 );
 
-    cb_busyCursor = new QComboBox( GroupBox1, "cb_busyCursor" );
+    cb_busyCursor = new QComboBox( GroupBox1);
+    cb_busyCursor->setObjectName( "cb_busyCursor" );
     cb_busyCursor->insertItem( 0, i18n( "No Busy Cursor" ) );
     cb_busyCursor->insertItem( 1, i18n( "Passive Busy Cursor" ) );
     cb_busyCursor->insertItem( 2, i18n( "Blinking Cursor" ) );
