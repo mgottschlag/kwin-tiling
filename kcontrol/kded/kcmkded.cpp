@@ -43,7 +43,7 @@
 #include "kcmkded.moc"
 
 typedef KGenericFactory<KDEDConfig, QWidget> KDEDFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kded, KDEDFactory( "kcmkded" ) )
+K_EXPORT_COMPONENT_FACTORY( kded, KDEDFactory( "kcmkded" ) )
 
 
 KDEDConfig::KDEDConfig(QWidget* parent, const QStringList &) :

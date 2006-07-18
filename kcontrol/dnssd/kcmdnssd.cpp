@@ -46,7 +46,7 @@
 #define MDNSD_PID "/var/run/mdnsd.pid"
 
 typedef KGenericFactory<KCMDnssd, QWidget> KCMDnssdFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_kdnssd, KCMDnssdFactory("kcmkdnssd"))
+K_EXPORT_COMPONENT_FACTORY( kdnssd, KCMDnssdFactory("kcmkdnssd"))
 
 KCMDnssd::KCMDnssd(QWidget *parent, const char *name, const QStringList&)
 		: ConfigDialog(parent, name), m_wdchanged(false)

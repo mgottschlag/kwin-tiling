@@ -44,16 +44,18 @@
 
 // DLL Interface for kcontrol
 typedef KGenericFactory<KRandRModule, QWidget > KSSFactory;
-K_EXPORT_COMPONENT_FACTORY (kcm_randr, KSSFactory("krandr") )
+K_EXPORT_COMPONENT_FACTORY (randr, KSSFactory("krandr") )
 
 extern "C"
 
 {
+#warning Porting needed
+/*
 	KDE_EXPORT void init_randr()
 	{
 		KRandRModule::performApplyOnStartup();
 	}
-
+*/
 	KDE_EXPORT bool test_randr()
 	{
 	        int eventBase, errorBase;

@@ -120,7 +120,7 @@ static QPixmap aaPixmaps[]={ QPixmap(aa_rgb_xpm), QPixmap(aa_bgr_xpm), QPixmap(a
 
 /**** DLL Interface ****/
 typedef KGenericFactory<KFonts, QWidget> FontFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_fonts, FontFactory("kcmfonts") )
+K_EXPORT_COMPONENT_FACTORY( fonts, FontFactory("kcmfonts") )
 
 /**** FontUseItem ****/
 

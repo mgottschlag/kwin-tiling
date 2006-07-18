@@ -34,7 +34,7 @@
 
 /**** DLL Interface ****/
 typedef KGenericFactory<IconModule, QWidget> IconsFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_icons, IconsFactory("kcmicons") )
+K_EXPORT_COMPONENT_FACTORY( icons, IconsFactory("kcmicons") )
 
 /**** IconModule ****/
 

@@ -47,7 +47,7 @@
 
 /**** DLL Interface ****/
 typedef KGenericFactory<KColorScheme , QWidget> KolorFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_colors, KolorFactory("kcmcolors") )
+K_EXPORT_COMPONENT_FACTORY( colors, KolorFactory("kcmcolors") )
 
 class KColorSchemeEntry {
 public:

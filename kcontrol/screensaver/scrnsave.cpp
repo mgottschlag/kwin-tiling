@@ -72,7 +72,7 @@ const uint widgetEventMask =                 // X event mask
 //===========================================================================
 // DLL Interface for kcontrol
 typedef KGenericFactory<KScreenSaver, QWidget > KSSFactory;
-K_EXPORT_COMPONENT_FACTORY (kcm_screensaver, KSSFactory("kcmscreensaver") )
+K_EXPORT_COMPONENT_FACTORY (screensaver, KSSFactory("kcmscreensaver") )
 
 
 static QString findExe(const QString &exe) {

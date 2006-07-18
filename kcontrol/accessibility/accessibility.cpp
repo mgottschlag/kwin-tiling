@@ -33,7 +33,7 @@
 #include "accessibility.moc"
 
 typedef KGenericFactory<AccessibilityConfig, QWidget> AccessibilityFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_accessibility, AccessibilityFactory("kcmaccessibility") )
+K_EXPORT_COMPONENT_FACTORY( accessibility, AccessibilityFactory("kcmaccessibility") )
 
 /**
  * This function checks if the kaccess daemon needs to be run

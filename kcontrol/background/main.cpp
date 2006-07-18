@@ -36,7 +36,7 @@
 
 /**** DLL Interface ****/
 typedef KGenericFactory<KBackground, QWidget> KBackGndFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_background, KBackGndFactory("kcmbackground"))
+K_EXPORT_COMPONENT_FACTORY( background, KBackGndFactory("kcmbackground"))
 
 /**** KBackground ****/
 KBackground::~KBackground( )

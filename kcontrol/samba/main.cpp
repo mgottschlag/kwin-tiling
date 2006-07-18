@@ -47,7 +47,7 @@ class SambaContainer:public KCModule
 };
 
 typedef KGenericFactory<SambaContainer, QWidget > SambaFactory;
-K_EXPORT_COMPONENT_FACTORY (kcm_samba, SambaFactory("kcmsamba") )
+K_EXPORT_COMPONENT_FACTORY (samba, SambaFactory("kcmsamba") )
 
 SambaContainer::SambaContainer(QWidget *parent, const QStringList&)
 :KCModule(SambaFactory::instance(), parent)

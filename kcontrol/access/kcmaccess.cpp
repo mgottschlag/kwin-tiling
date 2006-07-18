@@ -48,7 +48,7 @@
 
 #include <kgenericfactory.h>
 typedef KGenericFactory<KAccessConfig, QWidget> KAccessConfigFactory;
-//K_EXPORT_COMPONENT_FACTORY( kcm_access, KAccessConfigFactory( "kcmaccess" ) );
+//K_EXPORT_COMPONENT_FACTORY( access, KAccessConfigFactory( "kcmaccess" ) );
 
 extern "C" {
 	KDE_EXPORT void *init_kcm_access() {

@@ -75,7 +75,7 @@
 #define CFG_FONT_SIZE      "FontSize"
 
 typedef KGenericFactory<KFI::CKCmFontInst, QWidget> FontInstallFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_fontinst, FontInstallFactory("kcmfontinst"))
+K_EXPORT_COMPONENT_FACTORY(fontinst, FontInstallFactory("kcmfontinst"))
 
 namespace KFI
 {

@@ -40,7 +40,7 @@
 #include "kcmtaskbar.moc"
 
 typedef KGenericFactory<TaskbarConfig, QWidget > TaskBarFactory;
-K_EXPORT_COMPONENT_FACTORY (kcm_taskbar, TaskBarFactory("kcmtaskbar") )
+K_EXPORT_COMPONENT_FACTORY (taskbar, TaskBarFactory("kcmtaskbar") )
 
 TaskbarAppearance::TaskbarAppearance(QString name,
                                      bool drawButtons,

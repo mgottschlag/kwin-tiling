@@ -30,7 +30,7 @@
 #include "display.h"
 
 typedef KGenericFactory<KCMDisplay, QWidget> DisplayFactory;
-K_EXPORT_COMPONENT_FACTORY ( kcm_display, DisplayFactory( "display" ) )
+K_EXPORT_COMPONENT_FACTORY ( display, DisplayFactory( "display" ) )
 
 KCMDisplay::KCMDisplay( QWidget *parent, const QStringList& )
     : KCModule( DisplayFactory::instance(), parent )

@@ -33,7 +33,7 @@
 //---------------------------------------------------------------------------------------------
 
 typedef KGenericFactory<Joystick, QWidget> JoystickFactory;
-K_EXPORT_COMPONENT_FACTORY(kcm_joystick, JoystickFactory("joystick"))
+K_EXPORT_COMPONENT_FACTORY(joystick, JoystickFactory("joystick"))
 
 extern "C"
 {
