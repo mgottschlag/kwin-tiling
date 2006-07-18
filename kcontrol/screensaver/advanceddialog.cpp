@@ -63,15 +63,15 @@ void KScreenSaverAdvancedDialog::readSettings()
 	switch(mPriority)
 	{
 		case 19: // Low
-			dialog->qcbPriority->setCurrentItem(0);
+			dialog->qcbPriority->setCurrentIndex(0);
 			kDebug() << "setting low" << endl;
 			break;
 		case 10: // Medium
-			dialog->qcbPriority->setCurrentItem(1);
+			dialog->qcbPriority->setCurrentIndex(1);
 			kDebug() << "setting medium" << endl;
 			break;
 		case 0: // High
-			dialog->qcbPriority->setCurrentItem(2);
+			dialog->qcbPriority->setCurrentIndex(2);
 			kDebug() << "setting high" << endl;
 			break;
 	}
