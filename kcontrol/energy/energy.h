@@ -16,13 +16,14 @@
 
 #include <QObject>
 #include <kcmodule.h>
+#include <QStringList>
 
 class QCheckBox;
 class KIntNumInput;
 class KConfig;
 class KInstance;
 
-extern "C" void init_energy();
+extern "C" void kcminit_energy();
 
 /**
  * The Desktop/Energy tab in kcontrol.
@@ -32,7 +33,7 @@ class KEnergy: public KCModule
     Q_OBJECT
 
 public:
-    KEnergy(KInstance *inst, QWidget *parent);
+    KEnergy(QWidget *parent, const QStringList &args);
     ~KEnergy();
 
     virtual void load();
@@ -52,7 +53,7 @@ private:
     void showSettings();
 
     static void applySettings(bool, int, int, int);
-    friend void init_energy();
+    friend void kcminit_energy();
 
     bool m_bChanged, m_bDPMS, m_bEnabled, m_bMaintainSanity;
     int m_Standby, m_Suspend, m_Off;

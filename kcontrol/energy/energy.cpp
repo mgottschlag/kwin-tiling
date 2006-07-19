@@ -41,6 +41,7 @@
 #include <krun.h>
 #include <kstandarddirs.h>
 #include <kurllabel.h>
+#include <kgenericfactory.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -89,14 +90,12 @@ static const int DFLT_OFF   = 60;
 
 /**** DLL Interface ****/
 
+typedef KGenericFactory<KEnergy> KEnergyFactory;
+K_EXPORT_COMPONENT_FACTORY(energy, KEnergyFactory("kcmenergy"))
+
 extern "C" {
 
-    KDE_EXPORT KCModule *create_energy(QWidget *parent, char *) {
-        KInstance *energy = new KInstance("kcmenergy");
-	return new KEnergy(energy, parent);
-    }
-
-    KDE_EXPORT void init_energy() {
+    KDE_EXPORT void kcminit_energy() {
 #ifdef HAVE_DPMS
         KConfig *cfg = new KConfig("kcmdisplayrc", true /*readonly*/, false /*no globals*/);
         cfg->setGroup("DisplayEnergy");
@@ -138,8 +137,8 @@ extern "C" {
 
 /**** KEnergy ****/
 
-KEnergy::KEnergy(KInstance *inst, QWidget *parent)
-    : KCModule(inst, parent)
+KEnergy::KEnergy(QWidget *parent, const QStringList &args)
+    : KCModule(KEnergyFactory::instance(), parent, args)
 {
     m_bChanged = false;
     m_bEnabled = false;
