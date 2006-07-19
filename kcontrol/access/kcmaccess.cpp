@@ -48,14 +48,7 @@
 
 #include <kgenericfactory.h>
 typedef KGenericFactory<KAccessConfig, QWidget> KAccessConfigFactory;
-//K_EXPORT_COMPONENT_FACTORY( access, KAccessConfigFactory( "kcmaccess" ) );
-
-extern "C" {
-	KDE_EXPORT void *init_kcm_access() {
-		kDebug() << k_funcinfo << endl;
-		return new KAccessConfigFactory( "kcmaccess" );
-       	}
-}
+K_EXPORT_COMPONENT_FACTORY(access, KAccessConfigFactory("kcmaccess"));
 
 ExtendedIntNumInput::ExtendedIntNumInput
 				(QWidget* parent)
@@ -893,7 +886,7 @@ extern "C"
   /* This one gets called by kcminit
 
    */
-  KDE_EXPORT void init_access()
+  KDE_EXPORT void kcminit_access()
   {
     KConfig *config = new KConfig("kaccessrc", true, false);
     bool run = needToRunKAccessDaemon( config );
