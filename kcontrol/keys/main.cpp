@@ -31,10 +31,14 @@
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kglobalaccel.h>
+#include <kgenericfactory.h>
 
 #include "main.h"
 #include "shortcuts.h"
 #include "khotkeys.h"
+
+typedef KGenericFactory<KeyModule> KeyModuleFactory;
+K_EXPORT_COMPONENT_FACTORY(keys, KeyModuleFactory("kcmkeys"))
 
 /*
 | Shortcut Schemes | Modifier Keys |
@@ -51,8 +55,8 @@ o Pre-set scheme   <Remove Scheme>
 
 Global Shortcuts
 */
-KeyModule::KeyModule( KInstance *inst, QWidget *parent )
-    : KCModule( inst, parent )
+KeyModule::KeyModule(QWidget *parent, const QStringList& args)
+    : KCModule(KeyModuleFactory::instance(), parent, args)
 {
     setQuickHelp( i18n("<h1>Keyboard Shortcuts</h1> Using shortcuts you can configure certain actions to be"
     " triggered when you press a key or a combination of keys, e.g. Ctrl+C is normally bound to"
@@ -110,17 +114,7 @@ void KeyModule::resizeEvent( QResizeEvent * )
 
 extern "C"
 {
-  KDE_EXPORT KCModule *create_keys(QWidget *parent, const char * /*name*/)
-  {
-	// What does this do?  Why not insert klipper and kxkb, too? --ellis, 2002/01/15
-	KGlobal::locale()->insertCatalog("kwin");
-	KGlobal::locale()->insertCatalog("kdesktop");
-	KGlobal::locale()->insertCatalog("kicker");
-        KInstance *keys = new KInstance( "kcmkeys" );
-	return new KeyModule(keys, parent);
-  }
-
-  KDE_EXPORT void init_keys()
+  KDE_EXPORT void kcminit_keys()
   {
 	kDebug(125) << "KeyModule::init()\n";
 

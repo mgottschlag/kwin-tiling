@@ -26,12 +26,13 @@
 #include <kcmodule.h>
 
 class ShortcutsModule;
+class QStringList;
 
 class KeyModule : public KCModule
 {
 	Q_OBJECT
  public:
-	KeyModule( KInstance *inst, QWidget *parent );
+	KeyModule(QWidget *parent, const QStringList &args);
         ~KeyModule();
 
 	void load();
