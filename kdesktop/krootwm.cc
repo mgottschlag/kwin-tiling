@@ -106,7 +106,7 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
      bookmarks = new KActionMenu( KIcon("bookmark"), i18n("Bookmarks"), m_actionCollection, "bookmarks" );
      // The KBookmarkMenu is needed to fill the Bookmarks menu in the desktop menubar.
      bookmarkMenu = new KBookmarkMenu( KonqBookmarkManager::self(), new KBookmarkOwner(),
-                                    bookmarks->popupMenu(),
+                                    bookmarks->menu(),
                                     m_actionCollection,
                                     true, false );
   }
@@ -494,11 +494,11 @@ void KRootWm::buildMenus()
         }
         if (menuNew)
         {
-            menuBar->insertItem(i18n("New"), menuNew->popupMenu());
+            menuBar->insertItem(i18n("New"), menuNew->menu());
         }
         if (bookmarks)
         {
-            menuBar->insertItem(i18n("Bookmarks"), bookmarks->popupMenu());
+            menuBar->insertItem(i18n("Bookmarks"), bookmarks->menu());
         }
         menuBar->insertItem(i18n("Desktop"), desk);
         menuBar->insertItem(i18n("Windows"), windowListMenu);

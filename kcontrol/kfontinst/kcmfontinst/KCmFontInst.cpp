@@ -194,8 +194,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
     itsViewMenuAct=dynamic_cast<KActionMenu *>(itsDirOp->actionCollection()->action("view menu"));
     Q_ASSERT(itsViewMenuAct);
 
-    topMnu->popupMenu()->clear();
-    connect(topMnu->popupMenu(), SIGNAL(aboutToShow()), SLOT(setupMenu()));
+    topMnu->menu()->clear();
+    connect(topMnu->menu(), SIGNAL(aboutToShow()), SLOT(setupMenu()));
     if((act=itsDirOp->actionCollection()->action("up")))
         act->disconnect(SIGNAL(activated()), itsDirOp, SLOT(cdUp()));
     if((act=itsDirOp->actionCollection()->action("home")))
@@ -260,7 +260,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
         (itsShowHiddenAct=itsDirOp->actionCollection()->action("show hidden")))
     {
         //disconnect(itsViewMenuAct->popupMenu(), SIGNAL(aboutToShow()), itsDirOp, SLOT(insertViewDependentActions()));
-        connect(itsViewMenuAct->popupMenu(), SIGNAL(aboutToShow()), SLOT(setupViewMenu()));
+        connect(itsViewMenuAct->menu(), SIGNAL(aboutToShow()), SLOT(setupViewMenu()));
         setupViewMenu();
     }
 
