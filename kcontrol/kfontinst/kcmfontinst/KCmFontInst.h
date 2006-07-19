@@ -100,7 +100,7 @@ class CKCmFontInst : public KCModule
     KAction              *itsSepDirsAct,
                          *itsShowHiddenAct,
                          *itsDeleteAct;
-    KToggleAction         *itsListAct,
+    KAction              *itsListAct,
                          *itsIconAct;
     KActionMenu          *itsViewMenuAct;
 #ifdef HAVE_XFT

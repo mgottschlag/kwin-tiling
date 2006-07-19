@@ -71,7 +71,10 @@ namespace KFI
 
 CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
 {
-    bool kcm=0==strcmp(name, "kcmfontinst");
+    bool kcm = false;
+    if (name) {
+        kcm = (0 == strcmp(name, "kcmfontinst"));
+    }
 
     itsFrame=new QFrame(parent);
 
@@ -169,8 +172,8 @@ bool CFontViewPart::openFile()
     }
 
     itsShowInstallButton=false;
-    itsFaceLabel->setShown(showFs);
-    itsFaceSelector->setShown(showFs);
+    itsFaceLabel->setVisible(showFs);
+    itsFaceSelector->setVisible(showFs);
     itsToolsFrame->hide();
 
     if(!isFonts)
@@ -203,8 +206,8 @@ bool CFontViewPart::openFile()
 
 void CFontViewPart::previewStatus(bool st)
 {
-    itsInstallButton->setShown(st && itsShowInstallButton);
-    itsToolsFrame->setShown(!itsInstallButton->isHidden()||!itsFaceSelector->isHidden());
+    itsInstallButton->setVisible(st && itsShowInstallButton);
+    itsToolsFrame->setVisible(!itsInstallButton->isHidden()||!itsFaceSelector->isHidden());
     itsChangeTextAction->setEnabled(st);
     itsPrintAction->setEnabled(st && KFI_KIO_FONTS_PROTOCOL==m_url.protocol());
 }
@@ -252,7 +255,7 @@ void CFontViewPart::install()
                                                     m_url.path()), i18n("Success"),
                                      "FontViewPart_DisplayInstallationSuccess");
             itsShowInstallButton=false;
-            itsInstallButton->setShown(itsShowInstallButton);
+            itsInstallButton->setVisible(itsShowInstallButton);
         }
         else
             KMessageBox::error(itsFrame, i18n("Could not install %1:%2", m_url.protocol(), m_url.path()),

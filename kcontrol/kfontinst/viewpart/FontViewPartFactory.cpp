@@ -61,7 +61,7 @@ CFontViewPartFactory::~CFontViewPartFactory()
     theirInstance=0L;
 }
 
-QObject * CFontViewPartFactory::createObject(QObject *parent, const char *, const QStringList &)
+QObject * CFontViewPartFactory::createObject(QObject *parent, const char *classname, const QStringList &)
 {
     if(parent && !parent->isWidgetType())
     {
@@ -69,7 +69,7 @@ QObject * CFontViewPartFactory::createObject(QObject *parent, const char *, cons
         return 0L;
     }
 
-    return new CFontViewPart((QWidget*) parent);
+    return new CFontViewPart((QWidget*) parent, classname);
 }
 
 KInstance* CFontViewPartFactory::instance()

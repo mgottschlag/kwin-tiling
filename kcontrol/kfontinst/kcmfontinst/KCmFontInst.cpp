@@ -210,14 +210,14 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QStringList&)
 
     topMnu->addAction(itsViewMenuAct);
 
-    if((itsIconAct=qobject_cast<KToggleAction *>(itsDirOp->actionCollection()->action("short view"))))
+    if((itsIconAct=itsDirOp->actionCollection()->action("short view")))
     {
         disconnect(itsIconAct, SIGNAL(triggered(bool)), itsDirOp, SLOT(slotSimpleView()));
         connect(itsIconAct, SIGNAL(triggered(bool)), SLOT(iconView()));
         toolbar->addAction( itsIconAct );
     }
 
-    if((itsListAct=dynamic_cast<KToggleAction *>(itsDirOp->actionCollection()->action("detailed view"))))
+    if((itsListAct=itsDirOp->actionCollection()->action("detailed view")))
     {
         disconnect(itsListAct, SIGNAL(activated()), itsDirOp, SLOT(slotDetailedView()));
         connect(itsListAct, SIGNAL(activated()), SLOT(listView()));
