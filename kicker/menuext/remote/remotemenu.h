@@ -20,24 +20,22 @@
 #ifndef REMOTEMENU_H
 #define REMOTEMENU_H
 
-#include <kdirnotify.h>
 #include <kpanelmenu.h>
 #include <QMap>
 
-class RemoteMenu : public KPanelMenu, public KDirNotify
+class RemoteMenu : public KPanelMenu
 {
     Q_OBJECT
-    K_DCOP
 
     public:
         RemoteMenu(QWidget *parent, const QStringList & /*args*/);
         ~RemoteMenu();
 
-    k_dcop:
-        virtual ASYNC FilesAdded(const KUrl &directory);
-        virtual ASYNC FilesRemoved(const KUrl::List &fileList);
-        virtual ASYNC FilesChanged(const KUrl::List &fileList);
-        virtual ASYNC FilesRenamed(const KUrl &src, const KUrl &dest);
+    private Q_SLOTS:
+        void slotFilesAdded(const QString &directory);
+        void slotFilesRemoved(const QStringList &fileList);
+        void slotFilesChanged(const QStringList &fileList);
+        void slotFilesRenamed(const QString &src, const QString &dest);
 
     protected Q_SLOTS:
         void initialize();

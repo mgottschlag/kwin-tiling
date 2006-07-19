@@ -21,6 +21,7 @@
 
 #include <kdebug.h>
 #include <kglobal.h>
+#include <kdirnotify.h>
 #include <kstandarddirs.h>
 #include <krun.h>
 #include <kiconloader.h>
@@ -39,7 +40,7 @@ K_EXPORT_KICKER_MENUEXT(remotemenu, RemoteMenu)
 
 
 RemoteMenu::RemoteMenu(QWidget *parent, const QStringList &/*args*/)
-  : KPanelMenu(parent), KDirNotify()
+  : KPanelMenu(parent)
 {
     KGlobal::dirs()->addResourceType("remote_entries",
     KStandardDirs::kde_default("data") + "remoteview");
@@ -52,6 +53,12 @@ RemoteMenu::RemoteMenu(QWidget *parent, const QStringList &/*args*/)
         dir.cdUp();
         dir.mkdir("remoteview");
     }
+
+    org::kde::KDirNotify *kdirnotify = new org::kde::KDirNotify(QString(), QString(), QDBus::sessionBus(), this);
+    connect(kdirnotify, SIGNAL(FileRenamed(QString,QString)), SLOT(slotFileRenamed(QString,QString)));
+    connect(kdirnotify, SIGNAL(FilesAdded(QString)), SLOT(slotFilesAdded(QString)));
+    connect(kdirnotify, SIGNAL(FilesChanged(QStringList)), SLOT(slotFilesChanged(QStringList)));
+    connect(kdirnotify, SIGNAL(FilesRemoved(QStringList)), SLOT(slotFilesRemoved(QStringList)));
 }
 
 RemoteMenu::~RemoteMenu()
@@ -108,7 +115,7 @@ void RemoteMenu::startWizard()
 
     if (service && service->isValid())
     {
-        url.setPath(locate("apps", service->desktopEntryPath()));
+        url.setPath(KStandardDirs::locate("apps", service->desktopEntryPath()));
         new KRun(url, 0, true); // will delete itself
     }
 }
@@ -126,19 +133,19 @@ void RemoteMenu::slotExec(int id)
     }
 }
 
-ASYNC RemoteMenu::FilesAdded(const KUrl &directory)
+void RemoteMenu::slotFilesAdded(const QString &directory)
 {
-    if (directory.protocol()=="remote") reinitialize();
+    if (KUrl(directory).protocol()=="remote") reinitialize();
 }
 
-ASYNC RemoteMenu::FilesRemoved(const KUrl::List &fileList)
+void RemoteMenu::slotFilesRemoved(const QStringList &fileList)
 {
-    KUrl::List::ConstIterator it = fileList.begin();
-    KUrl::List::ConstIterator end = fileList.end();
+    QStringList::ConstIterator it = fileList.begin();
+    QStringList::ConstIterator end = fileList.end();
     
     for (; it!=end; ++it)
     {
-        if ((*it).protocol()=="remote")
+        if (KUrl(*it).protocol()=="remote")
         {
             reinitialize();
             return;
@@ -146,14 +153,14 @@ ASYNC RemoteMenu::FilesRemoved(const KUrl::List &fileList)
     }
 }
 
-ASYNC RemoteMenu::FilesChanged(const KUrl::List &fileList)
+void RemoteMenu::slotFilesChanged(const QStringList &fileList)
 {
-    FilesRemoved(fileList);
+    slotFilesRemoved(fileList);
 }
 
-ASYNC RemoteMenu::FilesRenamed(const KUrl &src, const KUrl &dest)
+void RemoteMenu::slotFilesRenamed(const QString &src, const QString &dest)
 {
-    if (src.protocol()=="remote" || dest.protocol()=="remote")
+    if (KUrl(src).protocol()=="remote" || KUrl(dest).protocol()=="remote")
         reinitialize();
 }
 
