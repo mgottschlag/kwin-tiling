@@ -43,16 +43,14 @@
 
 #include <X11/Xlib.h>
 #include <QX11Info>
+#include <kgenericfactory.h>
+
+typedef KGenericFactory<KBellConfig> KBellConfigFactory;
+K_EXPORT_COMPONENT_FACTORY(bell, KBellConfigFactory("kcmbell"))
 
 extern "C"
 {
-  KDE_EXPORT KCModule *create_bell(QWidget *parent, const char *)
-  {
-      KInstance *bell = new KInstance( "kcmbell" );
-      return new KBellConfig(bell, parent);
-  }
-
-  KDE_EXPORT void init_bell()
+  KDE_EXPORT void kcminit_bell()
   {
     XKeyboardState kbd;
     XKeyboardControl kbdc;
@@ -71,8 +69,8 @@ extern "C"
   }
 }
 
-KBellConfig::KBellConfig(KInstance *inst, QWidget *parent):
-    KCModule(inst, parent)
+KBellConfig::KBellConfig(QWidget *parent, const QStringList &args):
+    KCModule(KBellConfigFactory::instance(), parent, args)
 {
   QBoxLayout *layout = new QVBoxLayout(this);
   layout->setMargin(0);
@@ -88,7 +86,7 @@ KBellConfig::KBellConfig(KInstance *inst, QWidget *parent):
   box->layout()->addItem( grid );
   grid->setColumnStretch(0, 0);
   grid->setColumnStretch(1, 1);
-  grid->addColSpacing(0, 30);
+  grid->addItem(new QSpacerItem(30, 0), 0, 0);
 
   m_useBell = new QCheckBox( i18n("&Use system bell instead of system notification" ), box );
   m_useBell->setWhatsThis( i18n("You can use the standard system bell (PC speaker) or a "

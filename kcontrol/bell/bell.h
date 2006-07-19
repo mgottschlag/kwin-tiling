@@ -26,13 +26,14 @@
 class QCheckBox;
 class KIntNumInput;
 class QPushButton;
+class QStringList;
 
 class KBellConfig : public KCModule
 {
   Q_OBJECT
 
  public:
-  KBellConfig(KInstance *inst, QWidget *parent);
+  KBellConfig(QWidget *parent, const QStringList &args);
 
   void load();
   void save();
