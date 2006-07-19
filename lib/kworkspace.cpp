@@ -72,7 +72,7 @@ bool requestShutDown(
     {
         QDBusInterface ksmserver( "org.kde.ksmserver", "/Ksmserver", "org.kde.ksmserver.ksmserver" );
         QDBusReply<void> reply = ksmserver.call( "logout",  (int)confirm,  (int)sdtype,  (int)sdmode );
-        return (reply.isSuccess());
+        return (reply.isValid());
     }
 
     if (! tmpSmcConnection) {
