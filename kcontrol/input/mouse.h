@@ -59,6 +59,7 @@
 class QCheckBox;
 class QSlider;
 class QTabWidget;
+class QStringList;
 
 class MouseSettings
 {
@@ -94,7 +95,7 @@ class MouseConfig : public KCModule
 {
   Q_OBJECT
 public:
-  MouseConfig(KInstance *inst, QWidget *parent);
+  MouseConfig(QWidget *parent, const QStringList &args);
   ~MouseConfig();
 
   void save();

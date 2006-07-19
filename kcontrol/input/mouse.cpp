@@ -76,8 +76,13 @@
 
 #undef Below
 
-MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
-  : KCModule(inst, parent)
+#include <kgenericfactory.h>
+
+typedef KGenericFactory<MouseConfig> MouseConfigFactory;
+K_EXPORT_COMPONENT_FACTORY(mouse, MouseConfigFactory("kcminput"))
+
+MouseConfig::MouseConfig(QWidget *parent, const QStringList &args)
+  : KCModule(MouseConfigFactory::instance(), parent, args)
 {
 
 
@@ -298,7 +303,7 @@ MouseConfig::MouseConfig (KInstance *inst, QWidget * parent)
   vbox->setSpacing(KDialog::spacingHint());
 
   QVBoxLayout *vvbox = new QVBoxLayout();
-  vbox->addItem( vbox );
+  vbox->addItem( vvbox );
   vvbox->setSpacing(KDialog::spacingHint());
 
   mouseKeys = new QCheckBox(i18n("&Move pointer with keyboard (using the num pad)"), mouse);
