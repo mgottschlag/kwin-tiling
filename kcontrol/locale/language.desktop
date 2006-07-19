@@ -8,7 +8,7 @@ DocPath=kcontrol/language/index.html
 
 
 X-KDE-Library=locale
-X-KDE-FactoryName=locale
+X-KDE-FactoryName=kcm_locale
 X-KDE-ParentApp=kcontrol
 
 Name=Country/Region & Language
