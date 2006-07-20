@@ -36,6 +36,7 @@ class KConfig;
 class KCardDB;
 class KMenu;
 class K3ListViewItem;
+class QStringList;
 
 class KSmartcardConfig : public KCModule, public DCOPObject
 {
@@ -44,7 +45,7 @@ class KSmartcardConfig : public KCModule, public DCOPObject
 
 
 public:
-  KSmartcardConfig(QWidget *parent = 0L, const char *name = 0L);
+  KSmartcardConfig(QWidget *parent, const QStringList &args)
   virtual ~KSmartcardConfig();
 
   SmartcardBase *base;

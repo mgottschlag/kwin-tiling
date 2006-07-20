@@ -40,13 +40,17 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kmenu.h>
+#include <kgenericfactory.h>
 
 #include "smartcard.h"
 
-KSmartcardConfig::KSmartcardConfig(QWidget *parent, const char *name)
-  : KCModule(parent, name),DCOPObject(name)
-{
+typedef KGenericFactory<KSmartcardConfig> KSmartcardConfigFactory;
+K_EXPORT_COMPONENT_FACTORY(smartcard, KSmartcardConfigFactory("kcmsmartcard"))
 
+KSmartcardConfig::KSmartcardConfig(QWidget *parent, const QStringList &)
+  : KCModule(KSmartcardConfig::instance(), parent)
+  , DCOPObject("kcmsmartcard")
+{
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->setSpacing(KDialog::spacingHint());
   layout->setMargin(KDialog::marginHint());
@@ -395,12 +399,7 @@ QString KSmartcardConfig::quickHelp() const
 
 extern "C"
 {
-  KDE_EXPORT KCModule *create_smartcard(QWidget *parent, const char *)
-  {
-    return new KSmartcardConfig(parent, "kcmsmartcard");
-  }
-
-  KDE_EXPORT void init_smartcard()
+  KDE_EXPORT void kcminit_smartcard()
   {
     KConfig *config = new KConfig("ksmartcardrc", false, false);
     bool start = config->readEntry("Enable Support", false);
