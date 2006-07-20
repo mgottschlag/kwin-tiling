@@ -19,7 +19,7 @@ kde4_add_executable(kcheckpass ${kcheckpass_SRCS})
 
 target_link_libraries(kcheckpass  ${KDE4_KDECORE_LIBS} kdefakes )
 
-install(TARGETS kcheckpass DESTINATION bin)
+install(TARGETS kcheckpass DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############

@@ -25,7 +25,7 @@ add_subdirectory( update )
 
 ########### install files ###############
 
-install_files( /share/autostart FILES khotkeys.desktop )
+install( FILES khotkeys.desktop DESTINATION ${DATA_INSTALL_DIR}/autostart )
 
 
 

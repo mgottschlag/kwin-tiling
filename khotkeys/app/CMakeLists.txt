@@ -18,7 +18,7 @@ endif(X11_XTest_FOUND)
 install(TARGETS kdeinit_khotkeys  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( khotkeys kdeinit_khotkeys )
-install(TARGETS khotkeys DESTINATION bin)
+install(TARGETS khotkeys DESTINATION ${BIN_INSTALL_DIR})
 
 ########### next target ###############
 
