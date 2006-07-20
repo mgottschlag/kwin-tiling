@@ -30,6 +30,7 @@
 #include <kglobal.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
+#include <kgenericfactory.h>
 
 #include "view1394.h"
 
@@ -55,9 +56,11 @@ int my_reset_handler(raw1394handle_t handle, unsigned int )
    return 0;
 }
 
+typedef KGenericFactory<View1394> View1394Factory;
+K_EXPORT_COMPONENT_FACTORY(view1394, View1394Factory("kcmview1394"))
 
-View1394::View1394(KInstance *inst,QWidget *parent)
-:KCModule(inst, parent)
+View1394::View1394(QWidget *parent, const QStringList &)
+:KCModule(View1394Factory::instance(), parent)
 ,m_insideRescanBus(false)
 {
    setQuickHelp( i18n("On the right hand side you can see some information about "
@@ -320,16 +323,5 @@ QString OuiDb::vendor(octlet_t guid)
 
 
 // ------------------------------------------------------------------------
-
-extern "C"
-{
-
-   KDE_EXPORT KCModule *create_view1394(QWidget *parent)
-   {
-      KGlobal::locale()->insertCatalog("kcmview1394");
-	  KInstance *inst = new KInstance("kcmview1394");
-      return new View1394(inst,parent);
-   }
-}
 
 #include "view1394.moc"

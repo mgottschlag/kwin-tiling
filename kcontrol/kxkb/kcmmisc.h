@@ -30,12 +30,13 @@
 
 class KInstance;
 class Ui_KeyboardConfigWidget;
+class QStringList;
 
 class KeyboardConfig : public KCModule
 {
   Q_OBJECT
 public:
-  KeyboardConfig( KInstance* inst, QWidget *parent=0);
+  KeyboardConfig(QWidget *parent, const QStringList &args);
 
   void save();
   void load();

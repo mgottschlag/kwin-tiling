@@ -6,9 +6,10 @@ Type=Service
 ServiceTypes=KCModule,KCModuleInit
 DocPath=kcontrol/keyboard/index.html
 
-X-KDE-Library=keyboard
+X-KDE-Library=kcm_keyboard
 X-KDE-FactoryName=keyboard
 X-KDE-Init-Symbol=keyboard
+X-KDE-ParentApp=kcontrol
 
 Name=Keyboard
 Name[fr]=Clavier
@@ -21,5 +22,3 @@ Comment[x-test]=xxKeyboard settingsxx
 Keywords=Keyboard,Keyboard repeat,Click volume,Input Devices,repeat,volume
 Keywords[fr]=clavier,répétition,clics de touches,périphériques d'entrée,volume
 Keywords[x-test]=xxKeyboard,Keyboard repeat,Click volume,Input Devices,repeat,volumexx
-
-Categories=Qt;KDE;X-KDE-settings-hardware;

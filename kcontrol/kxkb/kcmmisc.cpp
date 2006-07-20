@@ -45,13 +45,17 @@
 #include <kstandarddirs.h>
 #include <kprocess.h>
 #include <kdialog.h>
+#include <kgenericfactory.h>
 
 #include "kcmmisc.h"
 #include "ui_kcmmiscwidget.h"
 #include <X11/Xlib.h>
 
-KeyboardConfig::KeyboardConfig( KInstance* inst, QWidget *parent)
-	: KCModule (inst, parent)
+typedef KGenericFactory<KeyboardConfig> KeyboardConfigFactory;
+K_EXPORT_COMPONENT_FACTORY(keyboard, KeyboardConfigFactory("kcmmisc"))
+
+KeyboardConfig::KeyboardConfig(QWidget *parent, const QStringList &)
+	: KCModule(KeyboardConfigFactory::instance(), parent)
 {
   QString wtstr;
 //   QBoxLayout* lay = new QVBoxLayout(this, 0, KDialog::spacingHint());

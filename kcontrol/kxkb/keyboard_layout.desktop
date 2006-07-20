@@ -6,7 +6,7 @@ Type=Service
 ServiceTypes=KCModule
 DocPath=kxkb/index.html
 
-X-KDE-Library=keyboard
+X-KDE-Library=kcm_keyboard
 X-KDE-FactoryName=keyboard_layout
 X-KDE-ParentApp=kcontrol
 
@@ -21,5 +21,3 @@ Comment[x-test]=xxKeyboard Layoutxx
 Keywords=Keyboard,Layout,International
 Keywords[fr]=clavier,disposition du clavier,périphériques d'entrée,International
 Keywords[x-test]=xxKeyboard,Layout,Internationalxx
-
-Categories=Qt;KDE;X-KDE-settings-accessibility;

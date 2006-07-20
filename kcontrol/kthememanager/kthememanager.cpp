@@ -46,9 +46,13 @@
 #include "kthememanager.h"
 #include "knewthemedlg.h"
 #include "config.h"
+#include <kgenericfactory.h>
 
-kthememanager::kthememanager( KInstance *inst, QWidget *parent )
-    : KCModule( inst, parent ), m_theme( 0 ), m_origTheme( 0 )
+typedef KGenericFactory<kthememanager> kthememanagerFactory;
+K_EXPORT_COMPONENT_FACTORY(kthememanager, kthememanagerFactory("kthememanager"))
+
+kthememanager::kthememanager( QWidget *parent, const QStringList & )
+    : KCModule( kthememanagerFactory::instance(), parent ), m_theme( 0 ), m_origTheme( 0 )
 {
 
     KAboutData *about = new KAboutData("kthememanager", I18N_NOOP("KDE Theme Manager"),
@@ -400,15 +404,6 @@ void kthememanager::updatePreview( const QString & pixFile )
          preview = preview.scaled( dlg->lbPreview->contentsRect().size(), Qt::KeepAspectRatio, Qt::SmoothTransformation );
      QPixmap pix = QPixmap::fromImage( preview );
      dlg->lbPreview->setPixmap( pix );
-}
-
-extern "C"
-{
-    KDE_EXPORT KCModule *create_kthememanager(QWidget *parent, const char *)
-    {
-        KInstance *inst = new KInstance( "kthememanager" );
-        return new kthememanager( inst, parent );
-    }
 }
 
 #include "kthememanager.moc"

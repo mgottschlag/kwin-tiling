@@ -30,6 +30,7 @@
 class QString;
 
 class KAboutData;
+class QStringList;
 
 #define ORIGINAL_THEME "original" // no i18n() here!!!
 
@@ -63,7 +64,7 @@ class kthememanager: public KCModule
 {
     Q_OBJECT
 public:
-    kthememanager( KInstance *inst, QWidget *parent );
+    kthememanager( QWidget *parent, const QStringList &args );
     virtual ~kthememanager();
 
     /**

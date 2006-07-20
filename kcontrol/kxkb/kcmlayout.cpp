@@ -27,6 +27,7 @@
 #include <kapplication.h>
 #include <kiconloader.h>
 #include <ktoolinvocation.h>
+#include <kgenericfactory.h>
 
 #include "extension.h"
 #include "kxkbconfig.h"
@@ -100,9 +101,11 @@ static Q3ListViewItem* copyLVI(const Q3ListViewItem* src, Q3ListView* parent)
     return ret;
 }
 
+typedef KGenericFactory<LayoutConfig> LayoutConfigFactory;
+K_EXPORT_COMPONENT_FACTORY(keyboard_layout, LayoutConfigFactory("kcmlayout"))
 
-LayoutConfig::LayoutConfig(KInstance* kinst, QWidget *parent)
-  : KCModule(kinst, parent), 
+LayoutConfig::LayoutConfig(QWidget *parent, const QStringList &)
+  : KCModule(LayoutConfigFactory::instance(), parent),
     m_rules(NULL)
 {
  // QVBoxLayout *main = new QVBoxLayout(this, 0, KDialog::spacingHint());
@@ -799,22 +802,9 @@ OptionListItem * OptionListItem::findChildItem( const QString& optionName )
 	return child;
 }
 
-
 extern "C"
 {
-	KDE_EXPORT KCModule *create_keyboard_layout(QWidget *parent, const char *)
-	{
-		KInstance* inst = new KInstance("kcmlayout");
-		return new LayoutConfig(inst, parent);
-	}
-	
-	KDE_EXPORT KCModule *create_keyboard(QWidget *parent, const char *)
-	{
-		KInstance* inst = new KInstance("kcmmisc");
-		return new KeyboardConfig(inst, parent);
-	}
-	
-	KDE_EXPORT void init_keyboard()
+	KDE_EXPORT void kcminit_keyboard()
 	{
 		KeyboardConfig::init_keyboard();
 		

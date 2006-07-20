@@ -22,7 +22,7 @@ class LayoutConfig : public KCModule
   Q_OBJECT
 
 public:
-  LayoutConfig(KInstance* kinst, QWidget *parent);
+  LayoutConfig(QWidget *parent, const QStringList &args);
   virtual ~LayoutConfig();
 
   void load();

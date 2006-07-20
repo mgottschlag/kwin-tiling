@@ -20,5 +20,3 @@ Comment[x-test]=xxView the IEEE 1394 devices attached to this computerxx
 Keywords=1394,Firewire,devices,viewer,control
 Keywords[fr]=1394,Firewire,périphériques,afficheur,contrôle
 Keywords[x-test]=xx1394,Firewire,devices,viewer,controlxx
-
-Categories=Qt;KDE;X-KDE-information;

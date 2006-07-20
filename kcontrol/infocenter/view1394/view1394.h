@@ -33,6 +33,7 @@
 #include "view1394widget.h"
 
 #include <libraw1394/raw1394.h>
+class QStringList;
 
 class OuiDb
 {
@@ -47,7 +48,7 @@ class View1394: public KCModule
 {
    Q_OBJECT
    public:
-      View1394(KInstance *inst,QWidget *parent = 0L);
+      View1394(QWidget *parent, const QStringList &args);
       virtual ~View1394();
 
    public Q_SLOTS: // Public slots
