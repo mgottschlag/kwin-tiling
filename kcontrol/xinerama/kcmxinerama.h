@@ -29,11 +29,12 @@
 
 class KConfig;
 class QWidget;
+class QStringList;
 
 class KCMXinerama : public KCModule {
 	Q_OBJECT
 public:
-	KCMXinerama(KInstance *inst, QWidget *parent);
+	KCMXinerama(QWidget *parent, const QStringList &args);
 	virtual ~KCMXinerama();
 
 	void load();

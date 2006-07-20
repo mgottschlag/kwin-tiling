@@ -27,12 +27,3 @@ extern "C" {
     return new KLocaleFactory("kcmlocale");
   }
 }
-
-/*
-extern "C" {
-  KCModule *create_locale(QWidget *parent, const char* name) {
-    KLocale::setMainCatalog("kcmlocale");
-    return new KLocaleApplication(parent, "kcmlocale");
-  }
-}
-*/

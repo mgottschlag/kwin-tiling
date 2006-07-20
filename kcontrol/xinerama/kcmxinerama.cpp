@@ -29,6 +29,7 @@
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kwin.h>
+#include <kgenericfactory.h>
 #include <QtDBus/QtDBus>
 
 #include <QCheckBox>
@@ -42,9 +43,11 @@
 #include <QFrame>
 #include <QGridLayout>
 
+typedef KGenericFactory<KCMXinerama> KCMXineramaFactory;
+K_EXPORT_COMPONENT_FACTORY(xinerama, KCMXineramaFactory("kcmxinerama"))
 
-KCMXinerama::KCMXinerama(KInstance *inst, QWidget *parent )
-  : KCModule(inst, parent) {
+KCMXinerama::KCMXinerama(QWidget *parent, const QStringList &)
+  : KCModule(KCMXineramaFactory::instance(), parent) {
 
 	KAboutData *about =
 	new KAboutData(I18N_NOOP("kcmxinerama"),
@@ -246,14 +249,6 @@ void KCMXinerama::clearIndicator() {
 	qDeleteAll(_indicators);
 	_indicators.clear();
 }
-
-extern "C" {
-        KDE_EXPORT KCModule *create_xinerama(QWidget *parent, const char *name) {
-            KInstance *inst = new KInstance( "kcmxinerama" );
-	    return new KCMXinerama(inst, parent);
-        }
-}
-
 
 #include "kcmxinerama.moc"
 
