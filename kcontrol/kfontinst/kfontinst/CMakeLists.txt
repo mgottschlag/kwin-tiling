@@ -25,7 +25,7 @@ if (HAVE_X11_FONTS_FONTENC_H)
 
    target_link_libraries(kfontinst_bin  ${KDE4_KIO_LIBS} kfontinst fontenc )
 
-   install(TARGETS kfontinst_bin DESTINATION bin)
+   install(TARGETS kfontinst_bin DESTINATION ${BIN_INSTALL_DIR})
 
 endif (HAVE_X11_FONTS_FONTENC_H)
 

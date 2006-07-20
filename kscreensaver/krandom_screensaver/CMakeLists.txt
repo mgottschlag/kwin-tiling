@@ -13,7 +13,7 @@ kde4_add_executable(krandom.kss ${krandom.kss_SRCS})
 
 target_link_libraries(krandom.kss  ${KDE4_KDEUI_LIBS}  m )
 
-install(TARGETS krandom.kss DESTINATION bin)
+install(TARGETS krandom.kss DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############

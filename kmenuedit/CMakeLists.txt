@@ -21,7 +21,7 @@ target_link_libraries(kdeinit_kmenuedit  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIB
 install(TARGETS kdeinit_kmenuedit  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kmenuedit kdeinit_kmenuedit )
-install(TARGETS kmenuedit DESTINATION bin)
+install(TARGETS kmenuedit DESTINATION ${BIN_INSTALL_DIR})
 
 ########### next target ###############
 
@@ -36,7 +36,7 @@ target_link_libraries(kdeinit_kcontroledit  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_
 install(TARGETS kdeinit_kcontroledit  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kcontroledit kdeinit_kcontroledit )
-install(TARGETS kcontroledit DESTINATION bin)
+install(TARGETS kcontroledit DESTINATION ${BIN_INSTALL_DIR})
 
 ########### next target ###############
 

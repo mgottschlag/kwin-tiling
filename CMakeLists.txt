@@ -39,7 +39,7 @@ if(PAM_FOUND AND X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 endif(PAM_FOUND AND X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 
 ########### install files ###############
-install(PROGRAMS startkde DESTINATION bin)
+install(PROGRAMS startkde DESTINATION ${BIN_INSTALL_DIR})
 
 
 

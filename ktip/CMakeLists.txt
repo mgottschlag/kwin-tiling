@@ -15,7 +15,7 @@ kde4_add_executable(ktip ${ktip_SRCS})
 
 target_link_libraries(ktip  ${KDE4_KDEUI_LIBS})
 
-install(TARGETS ktip DESTINATION bin)
+install(TARGETS ktip DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############

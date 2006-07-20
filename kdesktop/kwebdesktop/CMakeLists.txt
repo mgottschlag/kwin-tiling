@@ -13,7 +13,7 @@ kde4_add_executable(kwebdesktop ${kwebdesktop_SRCS})
 
 target_link_libraries(kwebdesktop  ${KDE4_KPARTS_LIBS} khtml )
 
-install(TARGETS kwebdesktop DESTINATION bin)
+install(TARGETS kwebdesktop DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############

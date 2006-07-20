@@ -54,7 +54,7 @@ kde4_add_executable(kasbar ${kasbar_SRCS})
 
 target_link_libraries(kasbar  ${KDE4_KDECORE_LIBS} )
 
-install(TARGETS kasbar DESTINATION bin)
+install(TARGETS kasbar DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############

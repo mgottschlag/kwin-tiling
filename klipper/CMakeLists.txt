@@ -26,7 +26,7 @@ endif (X11_Xfixes_FOUND)
 install(TARGETS kdeinit_klipper  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( klipper kdeinit_klipper )
-install(TARGETS klipper DESTINATION bin)
+install(TARGETS klipper DESTINATION ${BIN_INSTALL_DIR})
 
 ########### next target ###############
 

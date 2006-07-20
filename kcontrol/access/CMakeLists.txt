@@ -29,7 +29,7 @@ target_link_libraries(kdeinit_kaccess  ${KDE4_KDEUI_LIBS} ${KDE4_PHONONCORE_LIBR
 install(TARGETS kdeinit_kaccess  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kaccess kdeinit_kaccess )
-install(TARGETS kaccess DESTINATION bin)
+install(TARGETS kaccess DESTINATION ${BIN_INSTALL_DIR})
 
 ########### install files ###############
 

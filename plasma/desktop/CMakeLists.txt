@@ -11,7 +11,7 @@ kde4_add_executable(pdesktop ${pdesktop_SRCS})
 
 target_link_libraries(pdesktop  ${KDE4_KDECORE_LIBS} plasma kio )
 
-install(TARGETS pdesktop DESTINATION bin)
+install(TARGETS pdesktop DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############

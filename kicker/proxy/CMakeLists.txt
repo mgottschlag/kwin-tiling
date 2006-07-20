@@ -26,7 +26,7 @@ target_link_libraries(kdeinit_appletproxy  ${KDE4_KDEUI_LIBS} kickermain )
 install(TARGETS kdeinit_appletproxy  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( appletproxy kdeinit_appletproxy )
-install(TARGETS appletproxy DESTINATION bin)
+install(TARGETS appletproxy DESTINATION ${BIN_INSTALL_DIR})
 
 ########### install files ###############
 

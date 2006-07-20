@@ -30,7 +30,7 @@ target_link_libraries(kdeinit_kicker  ${KDE4_KIO_LIBS} kickermain ${KDE4_KUTILS_
 install(TARGETS kdeinit_kicker  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kicker kdeinit_kicker )
-install(TARGETS kicker DESTINATION bin)
+install(TARGETS kicker DESTINATION ${BIN_INSTALL_DIR})
 
 ########### next target ###############
 

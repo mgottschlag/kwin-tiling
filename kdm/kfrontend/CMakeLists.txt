@@ -38,7 +38,7 @@ kde4_add_executable(kdm_config ${kdm_config_SRCS})
 
 target_link_libraries(kdm_config  ${KDE4_KDEUI_LIBS} )
 
-install(TARGETS kdm_config DESTINATION bin)
+install(TARGETS kdm_config DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -65,7 +65,7 @@ if(X11_XTest_FOUND)
   target_link_libraries(kdm_greet ${X11_XTest_LIB})
 endif(X11_XTest_FOUND)
 
-install(TARGETS kdm_greet DESTINATION bin)
+install(TARGETS kdm_greet DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -78,7 +78,7 @@ kde4_add_executable(krootimage ${krootimage_SRCS})
 
 target_link_libraries(krootimage  ${KDE4_KIO_LIBS} )
 
-install(TARGETS krootimage DESTINATION bin)
+install(TARGETS krootimage DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -95,7 +95,7 @@ kde4_add_executable(genkdmconf ${genkdmconf_SRCS})
 
 target_link_libraries(genkdmconf  ${KDE4_KDECORE_LIBS} )
 
-install(TARGETS genkdmconf DESTINATION bin)
+install(TARGETS genkdmconf DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### next target ###############
@@ -108,7 +108,7 @@ kde4_add_executable(kdmctl ${kdmctl_SRCS})
 
 target_link_libraries(kdmctl  ${KDE4_KDECORE_LIBS} )
 
-install(TARGETS kdmctl DESTINATION bin)
+install(TARGETS kdmctl DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############

@@ -23,7 +23,7 @@ if (HAVE_XF86MISC)
   target_link_libraries(kdesktop_lock Xxf86misc)
 endif (HAVE_XF86MISC)
 
-install(TARGETS kdesktop_lock DESTINATION bin)
+install(TARGETS kdesktop_lock DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############

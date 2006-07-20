@@ -17,7 +17,7 @@ target_link_libraries(kdeinit_kcminit  ${KDE4_KIO_LIBS} kutils )
 install(TARGETS kdeinit_kcminit  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kcminit kdeinit_kcminit )
-install(TARGETS kcminit DESTINATION bin)
+install(TARGETS kcminit DESTINATION ${BIN_INSTALL_DIR})
 
 ########### next target ###############
 
@@ -35,7 +35,7 @@ target_link_libraries(kdeinit_kcminit_startup  ${KDE4_KIO_LIBS} kutils )
 install(TARGETS kdeinit_kcminit_startup  DESTINATION ${LIB_INSTALL_DIR} )
 
 target_link_libraries( kcminit_startup kdeinit_kcminit_startup )
-install(TARGETS kcminit_startup DESTINATION bin)
+install(TARGETS kcminit_startup DESTINATION ${BIN_INSTALL_DIR})
 
 ########### install files ###############
 

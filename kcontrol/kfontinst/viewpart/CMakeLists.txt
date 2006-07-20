@@ -33,7 +33,7 @@ kde4_add_executable(kfontview ${kfontview_SRCS})
 
 target_link_libraries(kfontview  ${KDE4_KPARTS_LIBS} )
 
-install(TARGETS kfontview DESTINATION bin)
+install(TARGETS kfontview DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############

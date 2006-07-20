@@ -35,7 +35,7 @@ kde4_add_executable(krandrtray ${krandrtray_SRCS})
 
 target_link_libraries(krandrtray  ${KDE4_KDECORE_LIBS} kutils ${X11_Xrandr_LIB} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
 
-install(TARGETS krandrtray DESTINATION bin)
+install(TARGETS krandrtray DESTINATION ${BIN_INSTALL_DIR})
 
 
 ########### install files ###############
