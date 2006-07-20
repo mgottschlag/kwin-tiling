@@ -48,7 +48,7 @@
 
 #include <kgenericfactory.h>
 typedef KGenericFactory<KAccessConfig, QWidget> KAccessConfigFactory;
-K_EXPORT_COMPONENT_FACTORY(access, KAccessConfigFactory("kcmaccess"));
+K_EXPORT_COMPONENT_FACTORY(access, KAccessConfigFactory("kcmaccess"))
 
 ExtendedIntNumInput::ExtendedIntNumInput
 				(QWidget* parent)
