@@ -29,126 +29,54 @@
 /* we have to include the info.cpp-file, to get the DEFINES about possible properties.
    example: we need the "define INFO_CPU_AVAILABLE" */
 #include "info.cpp"
+#include <kgenericfactory.h>
+class QStringList;
 
+#define CREATE_FACTORY(type, name, symbol) \
+class K##type##InfoWidget; \
+typedef KGenericFactory<K##type##InfoWidget> K##type##InfoWidgetFactory; \
+class K##type##InfoWidget : public KInfoListWidget \
+{ \
+    public: \
+        K##type##InfoWidget(QWidget *parent, const QStringList &) \
+            : KInfoListWidget(K##type##InfoWidgetFactory::instance(), \
+                    name, parent, GetInfo_##type) \
+        { \
+        } \
+}; \
+K_EXPORT_COMPONENT_FACTORY(symbol, K##type##InfoWidgetFactory("kcminfo"))
 
-extern "C"
-{
-
-  KDE_EXPORT KCModule *create_cpu(QWidget *parent, const char * /*name*/)
-  { 
 #ifdef INFO_CPU_AVAILABLE
-	KInstance *inst = new KInstance("kcminfo");
-    return new KInfoListWidget(inst,i18n("Processor(s)"), parent, GetInfo_CPU);
-#else
-    return 0;
+CREATE_FACTORY(CPU, i18n("Processor(s)"), cpu)
 #endif
-  }
-
-  KDE_EXPORT KCModule *create_irq(QWidget *parent, const char * /*name*/)
-  { 
 #ifdef INFO_IRQ_AVAILABLE
-	KInstance *inst = new KInstance("kcminfo");
-    return new KInfoListWidget(inst, i18n("Interrupt"), parent, GetInfo_IRQ);
-#else
-    return 0;
+CREATE_FACTORY(IRQ, i18n("Interrupt"), irq)
 #endif
-  }
-
-  KDE_EXPORT KCModule *create_pci(QWidget *parent, const char * /*name*/)
-  { 
 #ifdef INFO_PCI_AVAILABLE
-	KInstance *inst = new KInstance("kcminfo");
-    return new KInfoListWidget(inst,i18n("PCI"), parent, GetInfo_PCI);
-#else
-    return 0;
+CREATE_FACTORY(PCI, i18n("PCI"), pci)
 #endif
-  }
-
-  KDE_EXPORT KCModule *create_dma(QWidget *parent, const char * /*name*/)
-  { 
 #ifdef INFO_DMA_AVAILABLE
-	KInstance *inst = new KInstance("kcminfo");
-    return new KInfoListWidget(inst,i18n("DMA-Channel"), parent, GetInfo_DMA);
-#else
-    return 0;
+CREATE_FACTORY(DMA, i18n("DMA-Channel"), dma)
 #endif
-  }
-
-  KDE_EXPORT KCModule *create_ioports(QWidget *parent, const char * /*name*/)
-  { 
 #ifdef INFO_IOPORTS_AVAILABLE
-	KInstance *inst = new KInstance("kcminfo");
-    return new KInfoListWidget(inst,i18n("I/O-Port"), parent, GetInfo_IO_Ports);
-#else
-    return 0;
+CREATE_FACTORY(IO_Ports, i18n("I/O-Port"), ioports)
 #endif
-  }
-
-  KDE_EXPORT KCModule *create_sound(QWidget *parent, const char * /*name*/)
-  { 
 #ifdef INFO_SOUND_AVAILABLE
-	KInstance *inst = new KInstance("kcminfo");
-    return new KInfoListWidget(inst,i18n("Soundcard"), parent, GetInfo_Sound);
-#else
-    return 0;
+CREATE_FACTORY(Sound, i18n("Soundcard"), sound)
 #endif
-  }
-
-  KDE_EXPORT KCModule *create_scsi(QWidget *parent, const char * /*name*/)
-  { 
 #ifdef INFO_SCSI_AVAILABLE
-	KInstance *inst = new KInstance("kcminfo");
-    return new KInfoListWidget(inst,i18n("SCSI"), parent, GetInfo_SCSI);
-#else
-    return 0;
+CREATE_FACTORY(SCSI, i18n("SCSI"), scsi)
 #endif
-  }
-
-  KDE_EXPORT KCModule *create_devices(QWidget *parent, const char * /*name*/)
-  { 
 #ifdef INFO_DEVICES_AVAILABLE
-	KInstance *inst = new KInstance("kcminfo");
-    return new KInfoListWidget(inst,i18n("Devices"), parent, GetInfo_Devices);
-#else
-    return 0;
+CREATE_FACTORY(Devices, i18n("Devices"), devices)
 #endif
-  }
-
-  KDE_EXPORT KCModule *create_partitions(QWidget *parent, const char * /*name*/)
-  { 
 #ifdef INFO_PARTITIONS_AVAILABLE
-	KInstance *inst = new KInstance("kcminfo");
-    return new KInfoListWidget(inst,i18n("Partitions"), parent, GetInfo_Partitions);
-#else
-    return 0;
+CREATE_FACTORY(Partitions, i18n("Partitions"), partitions)
 #endif
-  }
-
-  KDE_EXPORT KCModule *create_xserver(QWidget *parent, const char * /*name*/)
-  { 
 #ifdef INFO_XSERVER_AVAILABLE
-	KInstance *inst = new KInstance("kcminfo");
-    return new KInfoListWidget(inst,i18n("X-Server"), parent, GetInfo_XServer_and_Video);
-#else
-    return 0;
+CREATE_FACTORY(XServer_and_Video, i18n("X-Server"), xserver)
 #endif
-  }
-
-  KDE_EXPORT KCModule *create_memory(QWidget *parent, const char * /*name*/)
-  { 
-	KInstance *inst = new KInstance("kcminfo");
-    return new KMemoryWidget(inst, parent);
-  }
-
-  KDE_EXPORT KCModule *create_opengl(QWidget *parent, const char * )
-  { 
+#warning INFO_OPENGL_AVAILABLE is not defined anymore (it was set in AM_CXXFLAGS with automake)
 #ifdef INFO_OPENGL_AVAILABLE
-	KInstance *inst = new KInstance("kcminfo");
-    return new KInfoListWidget(inst,i18n("OpenGL"), parent, GetInfo_OpenGL);
-#else
-    return 0;
+CREATE_FACTORY(OpenGL, i18n("OpenGL"), opengl)
 #endif
-  }
-  
-
-}

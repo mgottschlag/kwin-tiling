@@ -9,6 +9,7 @@
 #include <kcmodule.h>
 #include <kaboutdata.h>
 #include <config.h>
+class QStringList;
 
 #ifdef HAVE_LONG_LONG
 /* better to use long-long, because some 32bit-machines have more total 
@@ -26,7 +27,7 @@ class KMemoryWidget:public KCModule {
   Q_OBJECT 
 	  
   public:
-    KMemoryWidget(KInstance *inst,QWidget * parent);
+    KMemoryWidget(QWidget *parent, const QStringList &);
     ~KMemoryWidget();
 
     QString quickHelp() const;

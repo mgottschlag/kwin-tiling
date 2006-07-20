@@ -37,6 +37,7 @@
 #include <kglobal.h>
 #include <kdialog.h>
 #include <kseparator.h>
+#include <kgenericfactory.h>
 
 #include "memory.h"
 
@@ -92,8 +93,11 @@ static QString formatted_unit(t_memsize value)
         return i18n("%1 KB", KGlobal::locale()->formatNumber(value / 1024.0, 2));
 }
 
-KMemoryWidget::KMemoryWidget(KInstance *inst,QWidget * parent)
-:  KCModule(inst,parent)
+typedef KGenericFactory<KMemoryWidget> KMemoryWidgetFactory;
+K_EXPORT_COMPONENT_FACTORY(memory, KMemoryWidgetFactory("kcminfo"))
+
+KMemoryWidget::KMemoryWidget(QWidget *parent, const QStringList &)
+:  KCModule(KMemoryWidgetFactory::instance(),parent)
 {
 
     KAboutData *about =
