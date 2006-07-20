@@ -23,11 +23,14 @@
 #include <kinstance.h>
 
 #include "kcm_componentchooser.h"
+#include <kgenericfactory.h>
 #include "kcm_componentchooser.moc"
 
+typedef KGenericFactory<KCMComponentChooser> KCMComponentChooserFactory;
+K_EXPORT_COMPONENT_FACTORY(componentchooser, KCMComponentChooserFactory("kcmcomponentchooser"))
 
-KCMComponentChooser::KCMComponentChooser( KInstance *inst, QWidget *parent ):
-	KCModule(inst, parent) {
+KCMComponentChooser::KCMComponentChooser(QWidget *parent, const QStringList &):
+	KCModule(KCMComponentChooserFactory::instance(), parent) {
 
 	(new QVBoxLayout(this))->setAutoAdd(true);
 	m_chooser=new ComponentChooser(this,"ComponentChooser");
@@ -55,14 +58,3 @@ void KCMComponentChooser::save(){
 void KCMComponentChooser::defaults(){
 	m_chooser->restoreDefault();
 }
-
-
-extern "C"
-{
-    KDE_EXPORT KCModule *create_componentchooser( QWidget *parent, const char * )
-    {
-        KInstance *inst = new KInstance( "kcmcomponentchooser" );
-        return new KCMComponentChooser( inst, parent );
-    }
-}
-

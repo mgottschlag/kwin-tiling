@@ -26,7 +26,7 @@ class KCMComponentChooser : public KCModule
 {
     Q_OBJECT
 public:
-    KCMComponentChooser( KInstance *inst, QWidget *parent );
+    KCMComponentChooser(QWidget *parent, const QStringList &args);
 
     void load();
     void save();

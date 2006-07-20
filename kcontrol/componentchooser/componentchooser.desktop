@@ -5,9 +5,7 @@ Icon=misc
 Type=Service
 ServiceTypes=KCModule
 
-
-X-KDE-Library=componentchooser
-
+X-KDE-Library=kcm_componentchooser
 X-KDE-ParentApp=kcontrol
 
 Name=Component Chooser
@@ -20,5 +18,3 @@ Comment[x-test]=xxChoose the default components for various servicesxx
 Keywords=components,component chooser,resources, email client, terminal emulator
 Keywords[fr]=composant,sélecteur de composants,ressources,client de courrier,email,émulateur de terminal
 Keywords[x-test]=xxcomponents,component chooser,resources, email client, terminal emulatorxx
-
-Categories=Qt;KDE;X-KDE-settings-components;
