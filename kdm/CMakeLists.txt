@@ -11,7 +11,7 @@ add_subdirectory( backend )
 
 ########### install files ###############
 
-install( FILES README DESTINATION share/doc/kdm )
+install( FILES README DESTINATION ${DATA_INSTALL_DIR}/doc/kdm )
 MESSAGE(STATUS "Create pam service")
 
 
