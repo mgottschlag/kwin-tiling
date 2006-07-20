@@ -619,11 +619,11 @@ void KMiniPager::aboutToShowContextMenu()
     m_contextMenu->clear();
 
     m_contextMenu->insertItem(SmallIcon("kpager"), i18n("&Launch Pager"), LaunchExtPager);
-    m_contextMenu->insertSeparator();
+    m_contextMenu->addSeparator();
 
     m_contextMenu->insertItem(i18n("&Rename Desktop \"%1\"",
                                     kwin()->desktopName(m_rmbDesk)), RenameDesktop);
-    m_contextMenu->insertSeparator();
+    m_contextMenu->addSeparator();
 
     KMenu* showMenu = new KMenu(m_contextMenu);
     showMenu->setCheckable(true);

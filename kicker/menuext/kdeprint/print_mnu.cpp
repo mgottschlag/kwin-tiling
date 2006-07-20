@@ -71,10 +71,10 @@ void PrintMenu::initialize()
     insertItem(SmallIconSet("kdeprint_configmgr"), i18n("KDE Print Settings"), KDEPRINT_SETTINGS_ID);
     if (KMManager::self()->serverOperationMask() & KMManager::ServerConfigure)
         insertItem(SmallIconSet("kdeprint_configsrv"), i18n("Configure Server"), CONFIG_SERVER_ID);
-    insertSeparator();
+    addSeparator();
     insertItem(SmallIconSet("kcontrol"), i18n("Print Manager"), PRINT_MANAGER_ID);
     insertItem(SmallIconSet("konqueror"), i18n("Print Browser (Konqueror)"), PRINT_BROWSER_ID);
-    insertSeparator();
+    addSeparator();
     insertItem(SmallIconSet("fileprint"), i18n("Print File..."), KPRINTER_ID);
 
     // printer list
@@ -93,7 +93,7 @@ void PrintMenu::initialize()
             {
                 // we insert a separator only when we find the first
                 // printer
-                insertSeparator();
+                addSeparator();
                 separatorInserted = true;
             }
             insertItem(SmallIconSet(itprt->pixmap()),

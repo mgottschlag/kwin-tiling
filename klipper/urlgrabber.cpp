@@ -195,10 +195,10 @@ void URLGrabber::actionMenu( bool wm_class_check )
         // explicit Ctrl-Alt-R
         if ( wm_class_check )
         {
-            myMenu->insertSeparator();
+            myMenu->addSeparator();
             myMenu->insertItem( i18n( "Disable This Popup" ), DISABLE_POPUP );
         }
-        myMenu->insertSeparator();
+        myMenu->addSeparator();
         // add an edit-possibility
         myMenu->insertItem( SmallIcon("edit"), i18n("&Edit Contents..."),
                             URL_EDIT_ITEM );

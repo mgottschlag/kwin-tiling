@@ -55,7 +55,7 @@ void RecentDocsMenu::initialize() {
 
 	insertItem(SmallIconSet("history_clear"), i18n("Clear History"),
 	           this, SLOT(slotClearHistory()));
-	insertSeparator();
+	addSeparator();
 
 	_fileList = KRecentDocument::recentDocuments();
 

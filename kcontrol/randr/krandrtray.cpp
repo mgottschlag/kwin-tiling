@@ -92,7 +92,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KMenu* menu)
 		populateMenu(menu);
 	}
 
-	menu->insertSeparator();
+	menu->addSeparator();
 
 	KAction *actPrefs = new KAction( KIcon( "configure" ), i18n( "Configure Display..." ),
                                          actionCollection(), QString());

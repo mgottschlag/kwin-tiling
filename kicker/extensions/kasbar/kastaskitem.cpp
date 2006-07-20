@@ -330,9 +330,9 @@ void KasTaskItem::showWindowMenuAt( QPoint p )
 {
     TaskRMBMenu *tm = new TaskRMBMenu(task_, true, kasbar());
     tm->insertItem( i18n("To &Tray" ), this, SLOT( sendToTray() ) );
-    tm->insertSeparator();
+    tm->addSeparator();
     tm->insertItem( i18n("&Kasbar"), kasbar()->contextMenu() );
-    tm->insertSeparator();
+    tm->addSeparator();
     tm->insertItem( i18n("&Properties" ), this, SLOT( showPropertiesDialog() ) );
 
     mouseLeave();

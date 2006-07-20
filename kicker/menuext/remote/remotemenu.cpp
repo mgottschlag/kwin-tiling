@@ -74,7 +74,7 @@ void RemoteMenu::initialize()
     id = insertItem(SmallIconSet("kfm"), i18n("Manage Network Folders"));
     connectItem(id, this, SLOT(openRemoteDir()));
 
-    insertSeparator();
+    addSeparator();
 
     m_desktopMap.clear();
     QStringList names_found;

@@ -43,13 +43,13 @@ PanelExtensionOpMenu::PanelExtensionOpMenu(const QString& extension, int actions
 
     if (actions & Plasma::ReportBug)
     {
-        insertSeparator();
+        addSeparator();
         insertItem(i18n("Report &Bug..."), ReportBug);
     }
 
     if (actions & Plasma::Help
         || actions & Plasma::About)
-	insertSeparator();
+	addSeparator();
 
     if (actions & Plasma::About)
     {
@@ -62,7 +62,7 @@ PanelExtensionOpMenu::PanelExtensionOpMenu(const QString& extension, int actions
     }
 
     if (!Kicker::self()->isImmutable() && (actions & Plasma::Preferences)) {
-	insertSeparator();
+	addSeparator();
 	insertItem(SmallIconSet("configure"), i18n("&Configure %1...", extension), Preferences);
     }
 

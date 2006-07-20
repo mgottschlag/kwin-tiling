@@ -224,7 +224,7 @@ bool Lockout::eventFilter( QObject *o, QEvent *e )
 
                 popup->insertItem( SmallIcon( "lock" ), i18n("Lock Session"),
                                    this, SLOT( lock() ) );
-                popup->insertSeparator();
+                popup->addSeparator();
                 popup->insertItem( i18n( "&Transparent" ), 100 );
                 popup->insertItem( SmallIcon( "configure" ),
                                    i18n( "&Configure Screen Saver..." ),
@@ -245,7 +245,7 @@ bool Lockout::eventFilter( QObject *o, QEvent *e )
 
                 popup->insertItem( SmallIcon( "exit" ), i18n("&Log Out..."),
                                    this, SLOT( logout() ) );
-                popup->insertSeparator();
+                popup->addSeparator();
                 popup->insertItem( i18n( "&Transparent" ), 100 );
                 popup->insertItem( SmallIcon( "configure" ),
                                    i18n( "&Configure Session Manager..." ),

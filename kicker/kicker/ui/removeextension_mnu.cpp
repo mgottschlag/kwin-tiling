@@ -92,7 +92,7 @@ void PanelRemoveExtensionMenu::slotAboutToShow()
 
     if (m_containers.count() > 1)
     {
-        insertSeparator();
+        addSeparator();
         insertItem(i18n("All"), REMOVEALLID);
     }
 }

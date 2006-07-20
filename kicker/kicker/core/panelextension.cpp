@@ -305,7 +305,7 @@ void PanelExtension::slotBuildOpMenu()
             m_opMenu->insertItem(isMenuBar ? i18n("&Remove from Menubar")
                                          : i18n("&Remove From Panel"),
                                          m_removeMenu);
-            m_opMenu->insertSeparator();
+            m_opMenu->addSeparator();
 
             m_addExtensionMenu = new PanelAddExtensionMenu(this);
             m_opMenu->insertItem(i18n("Add New &Panel"), m_addExtensionMenu);
@@ -314,7 +314,7 @@ void PanelExtension::slotBuildOpMenu()
                                REMOVE_EXTENSION_ID);
             m_opMenu->setItemEnabled(REMOVE_EXTENSION_ID,
                             ExtensionManager::self()->containers().count() > 0);
-            m_opMenu->insertSeparator();
+            m_opMenu->addSeparator();
         }
 
         if (!isMenuBar)
@@ -325,7 +325,7 @@ void PanelExtension::slotBuildOpMenu()
             m_opMenu->insertItem(SmallIconSet("configure"),
                                i18n("&Configure Panel..."),
                                this, SLOT(showConfig()));
-            m_opMenu->insertSeparator();
+            m_opMenu->addSeparator();
         }
     }
     else if (!Kicker::self()->isKioskImmutable())

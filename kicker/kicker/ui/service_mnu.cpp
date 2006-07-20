@@ -151,7 +151,7 @@ void PanelServiceMenu::fillMenu(KServiceGroup::Ptr& _root,
                     {
                         if (separatorNeeded)
                         {
-                            insertSeparator();
+                            addSeparator();
                             separatorNeeded = false;
                         }
 
@@ -197,7 +197,7 @@ void PanelServiceMenu::fillMenu(KServiceGroup::Ptr& _root,
 
             if (separatorNeeded)
             {
-                insertSeparator();
+                addSeparator();
                 separatorNeeded = false;
             }
 
@@ -211,7 +211,7 @@ void PanelServiceMenu::fillMenu(KServiceGroup::Ptr& _root,
         {
             if (separatorNeeded)
             {
-                insertSeparator();
+                addSeparator();
                 separatorNeeded = false;
             }
 
@@ -278,7 +278,7 @@ void PanelServiceMenu::doInitialize()
         }
 
         if (list.count() > 0) {
-            insertSeparator();
+            addSeparator();
             id++;
         }
     }

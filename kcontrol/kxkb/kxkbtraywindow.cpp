@@ -109,14 +109,14 @@ void KxkbLabelController::initLayoutList(const QList<LayoutUnit>& layouts, const
 	
 	// if show config, if show help
 	if( menu->indexOf(CONFIG_MENU_ID) == -1 ) {
-		contextMenu->insertSeparator();
+		contextMenu->addSeparator();
 		contextMenu->insertItem(SmallIcon("configure"), i18n("Configure..."), CONFIG_MENU_ID);
 		if( menu->indexOf(HELP_MENU_ID) == -1 )
 			contextMenu->insertItem(SmallIcon("help"), i18n("Help"), HELP_MENU_ID);
 	}
 
 /*    if( index != -1 ) { //not first start
-		menu->insertSeparator();
+		menu->addSeparator();
 		KAction* quitAction = KStdAction::quit(this, SIGNAL(quitSelected()), actionCollection());
         if (quitAction)
     	    quitAction->plug(menu);

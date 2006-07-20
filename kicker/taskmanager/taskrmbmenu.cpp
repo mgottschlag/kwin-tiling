@@ -106,7 +106,7 @@ void TaskRMBMenu::fillMenu(Task::TaskPtr t)
     setItemChecked(id, t->isShaded());
     setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionShade));
 
-    insertSeparator();
+    addSeparator();
 
     id = insertItem(SmallIcon("fileclose"), i18n("&Close"), t.data(), SLOT(close()));
     setItemEnabled(id, !checkActions || t->info().actionSupported(NET::ActionClose));
@@ -129,7 +129,7 @@ void TaskRMBMenu::fillMenu()
 		connectItem( id, t.data(), SLOT( activateRaiseOrIconify() ) );
 	}
 
-	insertSeparator();
+	addSeparator();
 
     bool enable = false;
 
@@ -189,7 +189,7 @@ void TaskRMBMenu::fillMenu()
 	}
 	setItemEnabled( id, enable );
 
-	insertSeparator();
+	addSeparator();
 
 	enable = false;
 
@@ -235,7 +235,7 @@ QMenu* TaskRMBMenu::makeDesktopsMenu(Task::TaskPtr t)
 	m->setItemParameter( id, 0 ); // 0 means all desktops
 	m->setItemChecked( id, t->isOnAllDesktops() );
 
-	m->insertSeparator();
+	m->addSeparator();
 
 	for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
 		QString name = QString("&%1 %2").arg(i).arg(TaskManager::self()->desktopName(i).replace('&', "&&"));
@@ -255,7 +255,7 @@ QMenu* TaskRMBMenu::makeDesktopsMenu()
 	int id = m->insertItem( i18n("&All Desktops"), this, SLOT( slotAllToDesktop(int) ) );
 	m->setItemParameter( id, 0 ); // 0 means all desktops
 
-	m->insertSeparator();
+	m->addSeparator();
 
 	for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
 		QString name = QString("&%1 %2").arg(i).arg(TaskManager::self()->desktopName(i).replace('&', "&&"));

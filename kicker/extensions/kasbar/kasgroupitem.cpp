@@ -295,7 +295,7 @@ void KasGroupItem::showGroupMenuAt( const QPoint &p )
 {
     TaskRMBMenu *tm = new TaskRMBMenu(items, true, kasbar());
     tm->insertItem( i18n("&Ungroup" ), this, SLOT( ungroup() ) );
-    tm->insertSeparator();
+    tm->addSeparator();
     tm->insertItem( i18n("&Kasbar"), kasbar()->contextMenu() );
 
     setLockPopup( true );

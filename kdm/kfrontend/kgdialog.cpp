@@ -104,7 +104,7 @@ KGDialog::ensureMenu()
 		optMenu = new QMenu( this );
 		needSep = false;
 	} else if (needSep) {
-		optMenu->insertSeparator();
+		optMenu->addSeparator();
 		needSep = false;
 	}
 }

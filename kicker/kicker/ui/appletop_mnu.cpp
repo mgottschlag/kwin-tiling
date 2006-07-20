@@ -90,7 +90,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
     {
         if (needSeparator)
         {
-            insertSeparator();
+            addSeparator();
             needSeparator = false;
         }
 
@@ -101,7 +101,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
     {
         if (needSeparator)
         {
-            insertSeparator();
+            addSeparator();
         }
 
         QPixmap iconPix(kapp->iconLoader()->loadIcon(icon,
@@ -116,7 +116,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
     {
         if (needSeparator)
         {
-            insertSeparator();
+            addSeparator();
         }
 
         insertItem(SmallIconSet("help"), KStdGuiItem::help().text(), Help);
@@ -142,7 +142,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
     {
         if (needSeparator)
         {
-            insertSeparator();
+            addSeparator();
             needSeparator = false;
         }
 
@@ -169,7 +169,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
     {
         if (needSeparator)
         {
-            insertSeparator();
+            addSeparator();
             needSeparator = false;
         }
 
@@ -181,7 +181,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
     {
         if (needSeparator)
         {
-            insertSeparator();
+            addSeparator();
         }
         needSeparator = false;
 
@@ -194,7 +194,7 @@ PanelAppletOpMenu::PanelAppletOpMenu(int actions, QMenu *opMenu, const QMenu* ap
 
     if (needSeparator)
     {
-        insertSeparator();
+        addSeparator();
     }
 
     insertItem(SmallIcon("panel"), i18n("Panel Menu"), opMenu);

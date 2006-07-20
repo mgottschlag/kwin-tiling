@@ -215,7 +215,7 @@ void PanelBrowserMenu::initialize()
             // insert separator if we are the first menu entry
             if(first_entry) {
                 if (_startid == 0 && !_filesOnly)
-                    insertSeparator();
+                    addSeparator();
                 first_entry = false;
             }
 
@@ -280,13 +280,13 @@ void PanelBrowserMenu::initialize()
             // insert separator if we are the first menu entry
             if(first_entry) {
                 if(_startid == 0 && !_filesOnly)
-                    insertSeparator();
+                    addSeparator();
                 first_entry = false;
             }
 
             // insert separator if we we first file after at least one directory
             if (dirfile_separator) {
-                insertSeparator();
+                addSeparator();
                 dirfile_separator = false;
             }
 
@@ -302,7 +302,7 @@ void PanelBrowserMenu::initialize()
             // Only insert a "More" item if there are actually more items.
             ++it;
             if( it != list.end() ) {
-                insertSeparator();
+                addSeparator();
                 append(CICON("kdisknav"), i18n("More"), new PanelBrowserMenu(path(), this, run_id));
             }
             break;

@@ -230,7 +230,7 @@ void PrefMenu::initialize()
         insertItem(Plasma::menuIconSet("kcontrol"),
                    i18n("Control Center"),
                    this, SLOT(launchControlCenter()));
-        insertSeparator();
+        addSeparator();
     }
 
     // We ask KSycoca to give us all services under Settings/
@@ -292,7 +292,7 @@ void PrefMenu::initialize()
         }
         else if (e->isType(KST_KServiceSeparator))
         {
-            insertSeparator();
+            addSeparator();
         }
     }
 

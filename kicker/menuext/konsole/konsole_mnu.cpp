@@ -144,13 +144,13 @@ void KonsoleMenu::initialize()
 
         if (id == 2)
         {
-           insertSeparator();
+           addSeparator();
         }
     }
 
     m_bookmarkHandlerSession = new KonsoleBookmarkHandler(this, false);
     m_bookmarksSession = m_bookmarkHandlerSession->menu();
-    insertSeparator();
+    addSeparator();
     insertItem(SmallIconSet("keditbookmarks"),
                i18n("New Session at Bookmark"), m_bookmarksSession);
     connect(m_bookmarkHandlerSession,
@@ -235,7 +235,7 @@ void KonsoleMenu::initialize()
     }
     connect(m_profileMenu, SIGNAL(activated(int)), SLOT(launchProfile(int)));
 
-    insertSeparator();
+    addSeparator();
     insertItem(SmallIconSet("reload"),
                i18n("Reload Sessions"), this, SLOT(reinitialize()));
 }

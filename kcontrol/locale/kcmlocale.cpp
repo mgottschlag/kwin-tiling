@@ -195,7 +195,7 @@ void KLocaleConfig::loadLanguageList()
   {
     if ((*it).isNull())
     {
-      languageAdd->insertSeparator();
+      languageAdd->addSeparator();
       submenu = QString::fromLatin1("other");
       languageAdd->insertSubmenu(ki18n("Other").toString(m_locale),
                                    submenu, QString(), -1);

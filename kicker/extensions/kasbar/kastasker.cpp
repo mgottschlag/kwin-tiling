@@ -179,7 +179,7 @@ KMenu *KasTasker::contextMenu()
 	connect( showLoadAction, SIGNAL(toggled(bool)), SLOT(setShowLoad(bool)) );
 	connect( this, SIGNAL(showLoadChanged(bool)), showLoadAction, SLOT(setChecked(bool)) );
 
-	menu->insertSeparator();
+	menu->addSeparator();
 
 	if ( !standalone_ ) {
 	    toggleDetachedAction = new KToggleAction( i18n("&Floating"), KShortcut(), this, "toggle_detached" );
@@ -198,7 +198,7 @@ KMenu *KasTasker::contextMenu()
 
 	menu->insertItem( SmallIcon("reload"), i18n("&Refresh"), this, SLOT( refreshAll() ) );
 
-	menu->insertSeparator();
+	menu->addSeparator();
 
 	menu->insertItem( SmallIcon("configure"), i18n("&Configure Kasbar..."), this, SLOT( showPreferences() ) );
 
@@ -208,7 +208,7 @@ KMenu *KasTasker::contextMenu()
 	menu->insertItem( SmallIcon("help"), i18n("&Help"), help );
 
 	if ( standalone_ ) {
-	    menu->insertSeparator();
+	    menu->addSeparator();
 	    menu->insertItem( SmallIcon("exit"), i18n("&Quit"), qApp, SLOT( quit() ) );
 	}
     }

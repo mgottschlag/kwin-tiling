@@ -163,7 +163,7 @@ QuickButton::QuickButton(const QString &u, KAction* configAction,
     _popup = new QMenu(this);
     _popup->insertItem(i18n("Add Application"), addAppsMenu);
     _popup->addAction( configAction );
-        _popup->insertSeparator();
+        _popup->addSeparator();
     _popup->insertItem(SmallIcon("remove"), i18n("Remove"),
             this, SLOT(removeApp()));
 

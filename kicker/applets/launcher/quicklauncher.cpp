@@ -187,7 +187,7 @@ void QuickLauncher::buildPopupMenu()
             SLOT(removeAppManually(int)));
     m_appletPopup->insertItem(i18n("Remove Application"), m_removeAppsMenu);
 
-    m_appletPopup->insertSeparator();
+    m_appletPopup->addSeparator();
     m_appletPopup->insertItem(i18n("About"), this, SLOT(about()));
     setCustomMenu(m_appletPopup);
 }
