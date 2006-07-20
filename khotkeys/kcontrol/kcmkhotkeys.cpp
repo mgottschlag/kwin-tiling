@@ -34,6 +34,7 @@
 #include <ksimpleconfig.h>
 #include <kfiledialog.h>
 #include <ktoolinvocation.h>
+#include <kgenericfactory.h>
 
 #include <input.h>
 #include <triggers.h>
@@ -45,18 +46,12 @@
 #include "actions_listview_widget.h"
 #include "main_buttons_widget.h"
 
+typedef KGenericFactory<KHotKeys::Module> KHotKeysFactory;
+K_EXPORT_COMPONENT_FACTORY(khotkeys, KHotKeysFactory("khotkeys"))
+
 extern "C"
 {
-    KDE_EXPORT KCModule* create_khotkeys( QWidget* parent_P, const char* name )
-    {
-//    sleep( 20 ); // CHECKME DEBUG
-    KInstance *inst = new KInstance( "khotkeys");
-    KHotKeys::Module* ret = new KHotKeys::Module( inst, parent_P );
-    ret->load(); // CHECKME
-    return ret;
-    }
-
-    KDE_EXPORT void init_khotkeys()
+    KDE_EXPORT void kcminit_khotkeys()
     {
     KConfig cfg( "khotkeysrc", true );
     cfg.setGroup( "Main" );
@@ -84,8 +79,8 @@ extern "C"
 namespace KHotKeys
 {
 
-Module::Module( KInstance *inst, QWidget* parent_P )
-    : KCModule( inst, parent_P ), _actions_root( NULL ), _current_action_data( NULL ),
+Module::Module( QWidget* parent_P, const QStringList & )
+    : KCModule( KHotKeysFactory::instance(), parent_P ), _actions_root( NULL ), _current_action_data( NULL ),
         listview_is_changed( false ), deleting_action( false )
     {
     setButtons( Help | Apply );

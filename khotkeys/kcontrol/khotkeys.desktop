@@ -1,10 +1,13 @@
 [Desktop Entry]
+Encoding=UTF-8
 Exec=kcmshell khotkeys
 Icon=khotkeys
-Type=Application
+Type=Service
+ServiceTypes=KCModule
 
-X-KDE-Library=khotkeys
+X-KDE-Library=kcm_khotkeys
 X-KDE-Init-Symbol=khotkeys
+X-KDE-ParentApp=kcontrol
 
 Name=Input Actions
 Name[fr]=Actions d'entrées
@@ -17,6 +20,3 @@ Comment[x-test]=xxConfigure Hotkey settingsxx
 Keywords=Keys,Global key bindings,Key bindings,Gestures,Mouse gestures
 Keywords[fr]=touches,raccourcis clavier globaux,raccourcis clavier,gestes,gestes de la souris
 Keywords[x-test]=xxKeys,Global key bindings,Key bindings,Gestures,Mouse gesturesxx
-
-Categories=Qt;KDE;X-KDE-settings-accessibility;
-Encoding=UTF-8

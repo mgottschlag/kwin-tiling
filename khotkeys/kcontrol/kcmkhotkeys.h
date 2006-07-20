@@ -16,6 +16,8 @@
 #include <actions.h>
 #include <settings.h>
 
+class QStringList;
+
 namespace KHotKeys
 {
 
@@ -29,7 +31,7 @@ class Module
     {
     Q_OBJECT
     public:
-        Module( KInstance *inst_P, QWidget *parent_P );
+        Module( QWidget *parent_P, const QStringList &args );
         virtual ~Module();
         virtual void load();
         virtual void save();

@@ -72,7 +72,7 @@ install(TARGETS kcm_khotkeys  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES khotkeys.desktop  DESTINATION  ${XDG_APPS_DIR} )
+install( FILES khotkeys.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
