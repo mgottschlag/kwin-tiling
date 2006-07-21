@@ -55,12 +55,12 @@ extern "C"
     KDE_EXPORT KPanelApplet* init(QWidget *parent, const QString& configFile)
     {
         KGlobal::locale()->insertCatalog("lockout");
-        return new Lockout(configFile, parent, "lockout");
+        return new Lockout(configFile, parent);
     }
 }
 
-Lockout::Lockout( const QString& configFile, QWidget *parent, const char *name)
-    : KPanelApplet( configFile, Plasma::Normal, 0, parent, name ), bTransparent( false )
+Lockout::Lockout( const QString& configFile, QWidget *parent )
+    : KPanelApplet( configFile, Plasma::Normal, 0, parent ), bTransparent( false )
 {
     KConfig *conf = config();
     conf->setGroup("lockout");
@@ -77,8 +77,10 @@ Lockout::Lockout( const QString& configFile, QWidget *parent, const char *name)
     layout->setMargin( 0 );
     layout->setSpacing( 0 );
 
-    lockButton = new QToolButton( this, "lock");
-    logoutButton = new QToolButton( this, "logout");
+    lockButton = new QToolButton( this );
+    lockButton->setObjectName( "lock" );
+    logoutButton = new QToolButton( this );
+    logoutButton->setObjectName( "logout" );
 
     lockButton->setBackgroundRole( QPalette::NoRole );
     logoutButton->setBackgroundRole( QPalette::NoRole );

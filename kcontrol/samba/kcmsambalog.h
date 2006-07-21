@@ -38,7 +38,7 @@ class LogView: public QWidget
 {
    Q_OBJECT
    public:
-      LogView(QWidget *parent=0, KConfig *config=0, const char *name=0);
+      LogView(QWidget *parent=0, KConfig *config=0);
       virtual ~LogView() {};
       void saveSettings();
       void loadSettings();

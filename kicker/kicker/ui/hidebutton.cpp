@@ -34,8 +34,8 @@
 #include <kipc.h>
 #include <kstandarddirs.h>
 
-HideButton::HideButton(QWidget *parent, const char *name)
-    : QAbstractButton(parent, name),
+HideButton::HideButton(QWidget *parent)
+    : QAbstractButton(parent),
       m_highlight(false),
       m_arrow(Qt::LeftArrow)
 {

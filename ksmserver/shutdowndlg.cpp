@@ -43,9 +43,10 @@ Copyright (C) 2000 Matthias Ettrich <ettrich@kde.org>
 KSMShutdownFeedback * KSMShutdownFeedback::s_pSelf = 0L;
 
 KSMShutdownFeedback::KSMShutdownFeedback()
- : QWidget( 0L, "feedbackwidget", Qt::Popup ),
+ : QWidget( 0L, Qt::Popup ),
    m_currentY( 0 )
 {
+    setObjectName( "feedbackwidget" );
     setAttribute( Qt::WA_NoSystemBackground );
     setGeometry( QApplication::desktop()->geometry() );
     QTimer::singleShot( 10, this, SLOT( slotPaintEffect() ) );
@@ -84,10 +85,11 @@ void KSMShutdownFeedback::slotPaintEffect()
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, KWorkSpace::ShutdownType sdtype )
-  : QDialog( parent, 0, true, Qt::Popup ), targets(0)
+  : QDialog( parent, Qt::Popup ), targets(0)
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
+    setModal( true );
     QVBoxLayout* vbox = new QVBoxLayout( this );
     vbox->setMargin( 0 );
     QFrame* frame = new QFrame( this );

@@ -82,10 +82,10 @@ const long SUPPORTED_WINDOW_TYPES = NET::NormalMask | NET::DesktopMask | NET::Do
                 | NET::TopMenuMask | NET::UtilityMask | NET::SplashMask;
 
 Applet::Applet( const QString& configFile_P, QWidget* parent_P )
-    :   KPanelApplet( configFile_P, Plasma::Normal, 0, parent_P, "menuapplet" ),
+    :   KPanelApplet( configFile_P, Plasma::Normal, 0, parent_P ),
         //DCOPObject( "menuapplet" ),
         module( NULL ),
-	active_menu( NULL ),
+        active_menu( NULL ),
         selection( NULL ),
         selection_watcher( NULL ),
         desktop_menu( false ),

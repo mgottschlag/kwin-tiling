@@ -201,7 +201,7 @@ KDModule::KDModule(QWidget *parent, const QStringList &)
   tab->addTab(sessions, i18n("&Shutdown"));
   connect(sessions, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
 
-  users = new KDMUsersWidget(this, 0);
+  users = new KDMUsersWidget(this);
   tab->addTab(users, i18n("&Users"));
   connect(users, SIGNAL(changed(bool)), SIGNAL(changed(bool)));
   connect(users, SIGNAL(setMinMaxUID(int,int)), SLOT(slotMinMaxUID(int,int)));

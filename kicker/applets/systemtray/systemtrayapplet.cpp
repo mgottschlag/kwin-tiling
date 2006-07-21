@@ -58,13 +58,13 @@ extern "C"
     {
         KGlobal::locale()->insertCatalog("ksystemtrayapplet");
         return new SystemTrayApplet(configFile, Plasma::Normal,
-                                    Plasma::Preferences, parent, "ksystemtrayapplet");
+                                    Plasma::Preferences, parent);
     }
 }
 
 SystemTrayApplet::SystemTrayApplet(const QString& configFile, Plasma::Type type, int actions,
-                                   QWidget *parent, const char *name)
-  : KPanelApplet(configFile, type, actions, parent, name),
+                                   QWidget *parent)
+  : KPanelApplet(configFile, type, actions, parent),
     m_showFrame(false),
     m_showHidden(false),
     m_expandButton(0),

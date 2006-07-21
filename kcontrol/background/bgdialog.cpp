@@ -127,7 +127,7 @@ BGDialog::BGDialog(QWidget* parent, KConfig* _config, bool _multidesktop)
    // background image settings
    QIcon iconSet = SmallIconSet(QLatin1String("fileopen"));
    QPixmap pixMap = iconSet.pixmap( QIcon::Small, QIcon::Normal );
-   m_urlWallpaperButton->setIconSet( iconSet );
+   m_urlWallpaperButton->setIcon( iconSet );
    m_urlWallpaperButton->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
    m_urlWallpaperButton->setToolTip( i18n("Open file dialog"));
 
@@ -293,7 +293,7 @@ void BGDialog::load()
    m_eDesk = m_pGlobals->commonDeskBackground() ? 0 : m_desk;
    getEScreen();
 
-   for (unsigned desk = 0; desk < m_renderer.size(); ++desk)
+   for (int desk = 0; desk < m_renderer.size(); ++desk)
    {
       unsigned eDesk = desk>0 ? desk-1 : 0;
       for (unsigned screen = 0; screen < m_renderer[desk].size(); ++screen)
@@ -332,7 +332,7 @@ void BGDialog::save()
    // they both share Desktop[0] in the config file
    // similar for screen...
 
-   for (unsigned desk = 0; desk < m_renderer.size(); ++desk)
+   for (int desk = 0; desk < m_renderer.size(); ++desk)
    {
       if (desk == 0 && !m_pGlobals->commonDeskBackground())
          continue;
@@ -1294,7 +1294,7 @@ void BGDialog::slotBlendReverse(bool b)
 
 void BGDialog::desktopResized()
 {
-   for (unsigned i = 0; i < m_renderer.size(); ++i)
+   for (int i = 0; i < m_renderer.size(); ++i)
    {
       for (unsigned j = 0; j < m_renderer[i].size(); ++j )
       {

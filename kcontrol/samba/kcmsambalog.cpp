@@ -34,8 +34,8 @@
 
 #define LOG_SCREEN_XY_OFFSET 10
 
-LogView::LogView(QWidget *parent,KConfig *config, const char *name)
-: QWidget (parent, name)
+LogView::LogView(QWidget *parent,KConfig *config)
+: QWidget (parent)
 ,configFile(config)
 ,filesCount(0)
 ,connectionsCount(0)
@@ -146,7 +146,7 @@ void LogView::saveSettings()
 {
    if (configFile==0) return;
    configFile->setGroup(LOGGROUPNAME);
-   configFile->writePathEntry( "SambaLogFile", logFileName.url());
+   configFile->writePathEntry( "SambaLogFile", logFileName.url().toString());
 
    configFile->writeEntry( "ShowConnectionOpen", showConnOpen.isChecked());
    configFile->writeEntry( "ShowConnectionClose", showConnClose.isChecked());
@@ -162,7 +162,7 @@ void LogView::saveSettings()
 //caution ! high optimized code :-)
 void LogView::updateList()
 {
-   QFile logFile(logFileName.url());
+   QFile logFile(logFileName.url().toString());
    if (logFile.open(QIODevice::ReadOnly))
    {
       QApplication::setOverrideCursor(Qt::WaitCursor);

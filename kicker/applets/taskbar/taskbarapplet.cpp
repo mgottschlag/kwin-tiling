@@ -48,14 +48,14 @@ extern "C"
         if (KAuthorized::authorizeControlModule("kde-kcmtaskbar.desktop"))
            options = Plasma::Preferences;
         TaskbarApplet *taskbar = new TaskbarApplet( configFile, Plasma::Stretch,
-                                                    options, parent, "ktaskbarapplet" );
+                                                    options, parent );
 	return taskbar;
     }
 }
 
 TaskbarApplet::TaskbarApplet( const QString& configFile, Plasma::Type type, int actions,
-                             QWidget *parent, const char *name )
-    : KPanelApplet( configFile, type, actions, parent, name )
+                             QWidget *parent )
+    : KPanelApplet( configFile, type, actions, parent )
 {
     QHBoxLayout* layout = new QHBoxLayout( this );
     layout->setMargin(0);

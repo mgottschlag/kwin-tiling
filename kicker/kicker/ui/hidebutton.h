@@ -31,7 +31,7 @@ class HideButton : public QAbstractButton
   Q_OBJECT
 
   public:
-    HideButton(QWidget *parent, const char *name = 0);
+    HideButton(QWidget *parent);
     void setArrowType(Qt::ArrowType arrow);
     void setPixmap(const QPixmap &pix);
 

@@ -52,8 +52,8 @@
 
 extern KSimpleConfig *config;
 
-KDMUsersWidget::KDMUsersWidget(QWidget *parent, const char *name)
-    : QWidget(parent, name)
+KDMUsersWidget::KDMUsersWidget(QWidget *parent)
+    : QWidget(parent)
 {
 #ifdef __linux__
     struct stat st;

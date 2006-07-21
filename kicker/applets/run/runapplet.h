@@ -43,7 +43,7 @@ class RunApplet : public KPanelApplet
 
 public:
     RunApplet(const QString& configFile, Plasma::Type t = Plasma::Stretch, int actions = 0,
-	      QWidget *parent = 0, const char *name = 0);
+	      QWidget *parent = 0);
     virtual ~RunApplet();
 
     int widthForHeight(int height) const;

@@ -235,8 +235,7 @@ void LockProcess::setupSignals()
     sigaction(SIGTERM, &act, 0L);
 
     pipe(sigterm_pipe);
-    QSocketNotifier* notif = new QSocketNotifier(sigterm_pipe[0],
-	QSocketNotifier::Read, this );
+    QSocketNotifier* notif = new QSocketNotifier(sigterm_pipe[0], QSocketNotifier::Read, this);
     connect( notif, SIGNAL(activated(int)), SLOT(sigtermPipeSignal()));
 }
 
@@ -645,7 +644,7 @@ bool LockProcess::startSaver()
     saveVRoot();
 
     if (mParent) {
-        QSocketNotifier *notifier = new QSocketNotifier(mParent, QSocketNotifier::Read, this, "notifier");
+        QSocketNotifier *notifier = new QSocketNotifier(mParent, QSocketNotifier::Read, this);
         connect(notifier, SIGNAL( activated (int)), SLOT( quitSaver()));
     }
     createSaverWindow();
@@ -1101,7 +1100,8 @@ void LockProcess::unlockXF86()
 
 void LockProcess::msgBox( QMessageBox::Icon type, const QString &txt )
 {
-    QDialog box( 0, "messagebox", true, Qt::WX11BypassWM );
+    QDialog box( 0, Qt::WX11BypassWM );
+    box.setModal( true );
     QFrame *winFrame = new QFrame( &box );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );

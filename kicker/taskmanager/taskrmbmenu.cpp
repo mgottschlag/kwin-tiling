@@ -38,12 +38,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskrmbmenu.h"
 #include "taskrmbmenu.moc"
 
-TaskRMBMenu::TaskRMBMenu(const Task::List& theTasks, bool show, QWidget *parent, const char *name)
+TaskRMBMenu::TaskRMBMenu(const Task::List& theTasks, bool show, QWidget *parent)
 	: QMenu( parent )
 	, tasks( theTasks )
 	, showAll( show )
 {
-    setName(name);
     assert(tasks.count() > 0);
     if (tasks.count() == 1)
     {
@@ -55,11 +54,10 @@ TaskRMBMenu::TaskRMBMenu(const Task::List& theTasks, bool show, QWidget *parent,
     }
 }
 
-TaskRMBMenu::TaskRMBMenu(Task::TaskPtr task, bool show, QWidget *parent, const char *name)
+TaskRMBMenu::TaskRMBMenu(Task::TaskPtr task, bool show, QWidget *parent)
 	: QMenu( parent )
 	, showAll( show )
 {
-	setName(name);      
 	fillMenu(task);
 }
 

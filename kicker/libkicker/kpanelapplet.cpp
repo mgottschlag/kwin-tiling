@@ -49,8 +49,8 @@ public:
 };
 
 KPanelApplet::KPanelApplet(const QString& configFile, Plasma::Type type,
-                           int actions, QWidget *parent, const char *name, Qt::WFlags f)
-  : QFrame(parent, name, f),
+                           int actions, QWidget *parent, Qt::WFlags f)
+  : QFrame(parent, f),
     d(new Private())
 {
   d->type = type;
@@ -235,7 +235,3 @@ KSharedConfig::Ptr KPanelApplet::sharedConfig() const
 {
     return d->sharedConfig;
 }
-
-void KPanelApplet::virtual_hook( int, void* )
-{ /*BASE::virtual_hook( id, data );*/ }
-

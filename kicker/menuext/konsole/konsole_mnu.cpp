@@ -71,7 +71,7 @@ static void insertItemSorted(KMenu *menu,
 {
   const int defaultId = 1; // The id of the 'new' item.
   int index = menu->indexOf(defaultId);
-  int count = menu->count();
+  int count = menu->actions().count();
   if (index >= 0)
   {
      index++; // Skip separator
@@ -140,7 +140,7 @@ void KonsoleMenu::initialize()
         insertItemSorted(this, SmallIconSet(conf.readEntry("Icon", "konsole")),
                                             text, id++);
         QFileInfo fi(*it);
-        sessionList.append(fi.baseName(true));
+        sessionList.append(fi.completeBaseName());
 
         if (id == 2)
         {

@@ -123,7 +123,7 @@ char * safeSmsGenerateClientID( SmsConn /*c*/ )
        if (ret == NULL)
            return NULL;
 
-       sprintf(ret, "1%s%.13ld%.10d%.4d", my_addr->latin1(), (long)time(NULL),
+       sprintf(ret, "1%s%.13ld%.10d%.4d", my_addr->toLatin1(), (long)time(NULL),
            getpid(), sequence);
        sequence = (sequence + 1) % 10000;
     }

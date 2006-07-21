@@ -542,7 +542,7 @@ void KStylePage::switchPrevStyle() {
 	QStyle* style = QStyleFactory::create(currentStyle);
 	if (!style) return;
 
-	stylePreview->unsetPalette();
+	stylePreview->setPalette(QPalette());
 	QPalette palette = createPalette();
 	style->polish(palette);
 	stylePreview->setPalette(palette);

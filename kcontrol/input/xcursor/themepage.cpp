@@ -74,8 +74,8 @@ struct ThemeInfo {
 };
 
 
-ThemePage::ThemePage( QWidget* parent, const char* name )
-	: QWidget( parent, name ), selectedTheme( NULL ), currentTheme( NULL )
+ThemePage::ThemePage( QWidget* parent )
+	: QWidget( parent ), selectedTheme( NULL ), currentTheme( NULL )
 {
 	QBoxLayout *layout = new QVBoxLayout( this );
 	layout->setAutoAdd( true );

@@ -34,7 +34,7 @@ class KlipperApplet : public KPanelApplet
   Q_OBJECT
 public:
     KlipperApplet(const QString& configFile, Plasma::Type t = Plasma::Normal, int actions = 0,
-                  QWidget *parent = 0, const char *name = 0);
+                  QWidget *parent = 0);
     ~KlipperApplet();
 
     int widthForHeight(int h) const;

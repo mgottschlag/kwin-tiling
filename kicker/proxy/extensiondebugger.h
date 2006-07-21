@@ -1,5 +1,3 @@
-//Added by qt3to4:
-#include <QResizeEvent>
 /*****************************************************************
 
 Copyright (c) 2000 Matthias Elter <elter@kde.org>
@@ -26,6 +24,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef __extensiondebugger_h__
 #define __extensiondebugger_h__
 
+#include <QResizeEvent>
+
 class AppletInfo;
 class KPanelExtension;
 
@@ -34,7 +34,7 @@ class ExtensionContainer : public QWidget
     Q_OBJECT
 
 public:
-    ExtensionContainer(KPanelExtension *extension, QWidget* parent = 0, const char* name = 0);
+    ExtensionContainer( KPanelExtension *extension, QWidget* parent = 0 );
 
 protected:
     void resizeEvent( QResizeEvent *ev );

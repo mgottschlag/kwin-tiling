@@ -190,7 +190,7 @@ void StartupId::start_startupid( const QString& icon_P )
         icon_pixmap = SmallIcon( "exec" );
     if( startup_widget == NULL )
         {
-        startup_widget = new QWidget( NULL, NULL, Qt::WX11BypassWM );
+        startup_widget = new QWidget( 0, Qt::WX11BypassWM );
         XSetWindowAttributes attr;
         attr.save_under = True; // useful saveunder if possible to avoid redrawing
         XChangeWindowAttributes( QX11Info::display(), startup_widget->winId(), CWSaveUnder, &attr );

@@ -49,13 +49,13 @@ extern "C"
   KDE_EXPORT KPanelApplet* init(QWidget *parent, const QString& configFile)
   {
     KGlobal::locale()->insertCatalog("krunapplet");
-    return new RunApplet(configFile, Plasma::Stretch, 0, parent, "krunapplet");
+    return new RunApplet(configFile, Plasma::Stretch, 0, parent);
   }
 }
 
 RunApplet::RunApplet(const QString& configFile, Plasma::Type type, int actions,
-                             QWidget *parent, const char *name)
-  : KPanelApplet(configFile, type, actions, parent, name)
+                             QWidget *parent)
+  : KPanelApplet(configFile, type, actions, parent)
 {
   //  setBackgroundMode(X11ParentRelative);
     setBackgroundOrigin( AncestorOrigin );
@@ -97,7 +97,7 @@ RunApplet::RunApplet(const QString& configFile, Plasma::Type type, int actions,
     _filterData = new KURIFilterData();
 
 
-    _hbox = new QWidget( 0, 0, Qt::WStyle_Customize | Qt::WType_Popup );
+    _hbox = new QWidget( 0, Qt::WStyle_Customize | Qt::WType_Popup );
     QHBoxLayout *hboxLayout = new QHBoxLayout(_hbox);
     _hbox->setLayout(hboxLayout);
     _hbox->setFixedSize( 120, 22 );

@@ -30,7 +30,7 @@ class KDMFontWidget : public QWidget
 	Q_OBJECT
 
 public:
-	KDMFontWidget(QWidget *parent=0, const char *name=0);
+	KDMFontWidget(QWidget *parent=0);
 
         void load();
         void save();

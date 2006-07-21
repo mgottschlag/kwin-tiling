@@ -38,13 +38,12 @@ extern "C"
 	{
 		KGlobal::locale()->insertCatalog("mediaapplet");
 		return new MediaApplet(configFile, Plasma::Normal,
-			Plasma::About | Plasma::Preferences,
-			parent, "mediaapplet");
+			Plasma::About | Plasma::Preferences, parent);
 	}
 }
 
-MediaApplet::MediaApplet(const QString& configFile, Plasma::Type type, int actions, QWidget *parent, const char *name)
-	: KPanelApplet(configFile, type, actions, parent, name),
+MediaApplet::MediaApplet(const QString& configFile, Plasma::Type type, int actions, QWidget *parent)
+	: KPanelApplet(configFile, type, actions, parent),
 	mButtonSizeSum(0)
 {
 	if (!parent)

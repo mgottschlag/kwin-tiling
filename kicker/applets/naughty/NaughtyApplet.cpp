@@ -49,8 +49,7 @@ extern "C"
        configFile,
        Plasma::Normal,
        Plasma::About | Plasma::Preferences,
-       parent,
-       "naughtyapplet"
+       parent
       );
   }
 }
@@ -60,10 +59,9 @@ NaughtyApplet::NaughtyApplet
  const QString & configFile,
  Plasma::Type t,
  int actions,
- QWidget * parent,
- const char * name
+ QWidget * parent
 )
-  : KPanelApplet(configFile, t, actions, parent, name)
+  : KPanelApplet(configFile, t, actions, parent)
 {
   KGlobal::iconLoader()->addAppDir("naughtyapplet");
 //  setBackgroundMode(X11ParentRelative);

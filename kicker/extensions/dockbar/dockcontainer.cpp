@@ -41,7 +41,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 DockContainer::DockContainer( QString command, QWidget *parent,
                               QString resname, QString resclass, bool undocked_style )
-    : QFrame( parent, resname.toAscii(),
+    : QFrame( parent,
               undocked_style ? Qt::WStyle_Customize |
               Qt::WStyle_StaysOnTop | Qt::WStyle_Tool |
               Qt::WStyle_NoBorder | Qt::WX11BypassWM : Qt::Widget ),
@@ -50,6 +50,7 @@ DockContainer::DockContainer( QString command, QWidget *parent,
       _resName(resname),
       _resClass(resclass)
 {
+    setObjectName( resname );
     XSelectInput( QX11Info::display(), winId(),
 		  KeyPressMask | KeyReleaseMask |
 		  ButtonPressMask | ButtonReleaseMask |

@@ -35,7 +35,7 @@ Q_OBJECT
 
 public:
 	TrashApplet(const QString& configFile, Plasma::Type t = Plasma::Normal, int actions = 0,
-	            QWidget *parent = 0, const char *name = 0);
+	            QWidget *parent = 0);
 	~TrashApplet();
 
 	int widthForHeight(int height) const;

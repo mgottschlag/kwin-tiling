@@ -38,13 +38,13 @@ extern "C"
     {
         KGlobal::locale()->insertCatalog("klipper");
         int actions = Plasma::Preferences | Plasma::About | Plasma::Help;
-        return new KlipperApplet(configFile, Plasma::Normal, actions, parent, "klipper");
+        return new KlipperApplet(configFile, Plasma::Normal, actions, parent);
     }
 }
 
 KlipperApplet::KlipperApplet(const QString& configFile, Plasma::Type t, int actions,
-                         QWidget *parent, const char *name)
-    : KPanelApplet(configFile, t, actions, parent, name)
+                         QWidget *parent)
+    : KPanelApplet(configFile, t, actions, parent)
 {
     KlipperWidget::createAboutData();
     move( 0, 0 );

@@ -189,7 +189,8 @@ MouseConfig::MouseConfig(QWidget *parent, const QStringList &args)
     tabwidget->addTab(themetab, i18n("&Cursor Theme"));
 
     // Advanced tab
-    tab2 = new QWidget(0, "Advanced Tab");
+    tab2 = new QWidget(0);
+    tab2->setObjectName("Advanced Tab");
     tabwidget->addTab(tab2, i18n("Advanced"));
 
     QBoxLayout *lay = new QVBoxLayout(tab2);
@@ -295,7 +296,8 @@ MouseConfig::MouseConfig(QWidget *parent, const QStringList &args)
     lay->addStretch();
 
 {
-  QWidget *mouse = new QWidget(this, "Mouse Navigation");
+  QWidget *mouse = new QWidget(this);
+  mouse->setObjectName("Mouse Navigation");
   tabwidget->addTab(mouse, i18n("Mouse Navigation"));
 
   QBoxLayout *vbox = new QVBoxLayout(mouse);

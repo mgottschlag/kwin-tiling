@@ -40,8 +40,9 @@
 
 
 KPixmapServer::KPixmapServer()
-    : QWidget(0L, "shpixmap comm window")
+    : QWidget(0L)
 {
+    setObjectName("shpixmap comm window");
     kapp->installX11EventFilter(this);
     pixmap = XInternAtom(QX11Info::display(), "PIXMAP", false);
 }

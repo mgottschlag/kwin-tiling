@@ -107,12 +107,10 @@ public:
      * @param t The applet type().
      * @param actions Standard RMB menu actions supported by the applet (see action() ).
      * @param parent The pointer to the parent widget handed over in the factory function.
-     * @param name A Qt object name for your applet.
      * @param f Window control flags
      **/
     KPanelApplet(const QString& configFile, Plasma::Type t = Plasma::Normal,
-                 int actions = 0, QWidget *parent = 0, const char *name = 0,
-                 Qt::WFlags f = 0);
+                 int actions = 0, QWidget *parent = 0, Qt::WFlags f = 0);
 
     /**
      * Destructor.
@@ -364,7 +362,6 @@ protected:
     bool eventFilter(QObject *, QEvent *);
 
 protected:
-    virtual void virtual_hook( int id, void* data );
     class Private;
     Private *d;
 };

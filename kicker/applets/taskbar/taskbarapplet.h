@@ -34,7 +34,7 @@ class TaskbarApplet : public KPanelApplet
 
 public:
     TaskbarApplet( const QString& configFile, Plasma::Type t = Plasma::Normal, int actions = 0,
-		   QWidget *parent = 0, const char *name = 0 );
+		   QWidget *parent = 0 );
     ~TaskbarApplet();
 
     int widthForHeight( int h ) const;

@@ -32,8 +32,8 @@ class KDE_EXPORT TaskRMBMenu : public QMenu
 	Q_OBJECT
 
 public:
-	TaskRMBMenu(const Task::List&, bool showAll = true, QWidget *parent = 0, const char *name = 0);
-	TaskRMBMenu(Task::TaskPtr, bool showAll = true, QWidget *parent = 0, const char *name = 0);
+	TaskRMBMenu(const Task::List&, bool showAll = true, QWidget *parent = 0);
+	TaskRMBMenu(Task::TaskPtr, bool showAll = true, QWidget *parent = 0);
 
 private:
 	void fillMenu(Task::TaskPtr);

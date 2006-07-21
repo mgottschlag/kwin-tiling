@@ -35,12 +35,12 @@ extern "C"
 	{
 		KGlobal::locale()->insertCatalog("trashapplet");
 		return new TrashApplet(configFile, Plasma::Normal,
-			Plasma::About, parent, "trashapplet");
+			Plasma::About, parent);
 	}
 }
 
-TrashApplet::TrashApplet(const QString& configFile, Plasma::Type type, int actions, QWidget *parent, const char *name)
-	: KPanelApplet(configFile, type, actions, parent, name), mButton(0)
+TrashApplet::TrashApplet(const QString& configFile, Plasma::Type type, int actions, QWidget *parent)
+	: KPanelApplet(configFile, type, actions, parent), mButton(0)
 {
 	mButton = new TrashButton(this);
 

@@ -140,8 +140,8 @@ int main( int argc, char ** argv )
     return result;
 }
 
-ExtensionContainer::ExtensionContainer( KPanelExtension *extension, QWidget *parent, const char *name )
-    : QWidget( parent, name ), m_extension( extension )
+ExtensionContainer::ExtensionContainer( KPanelExtension *extension, QWidget *parent )
+    : QWidget( parent ), m_extension( extension )
 {
     ( new QVBoxLayout( this ) )->setAutoAdd( true );
 

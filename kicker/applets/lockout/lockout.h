@@ -18,8 +18,7 @@ class Lockout : public KPanelApplet
     Q_OBJECT
 
 public:
-    Lockout( const QString& configFile,
-	     QWidget *parent = 0, const char *name = 0 );
+    Lockout( const QString& configFile, QWidget *parent = 0 );
     ~Lockout();
 
     int widthForHeight(int height) const;

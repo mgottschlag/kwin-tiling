@@ -45,7 +45,7 @@ class KDMUsersWidget : public QWidget
 	Q_OBJECT
 
 public:
-	KDMUsersWidget( QWidget *parent = 0, const char *name = 0 );
+	KDMUsersWidget( QWidget *parent = 0 );
 
 	void load();
 	void save();

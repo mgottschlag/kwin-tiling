@@ -83,14 +83,13 @@ extern "C"
     {
         KGlobal::locale()->insertCatalog("quicklauncher");
         return new QuickLauncher(configFile, Plasma::Normal,
-                                 Plasma::Preferences,
-                                 parent, "quicklauncher");
+                                 Plasma::Preferences, parent);
     }
 }
 
 QuickLauncher::QuickLauncher(const QString& configFile, Plasma::Type type, int actions,
-                             QWidget *parent, const char *name) :
-    KPanelApplet(configFile, type, actions, parent, name)
+                             QWidget *parent) :
+    KPanelApplet(configFile, type, actions, parent)
 {
     //DCOPObject::setObjId("QuickLauncherApplet");
     DEBUGSTR << endl << endl << endl << "------------" << flush;

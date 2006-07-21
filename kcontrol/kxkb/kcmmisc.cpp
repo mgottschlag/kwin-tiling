@@ -68,14 +68,15 @@ KeyboardConfig::KeyboardConfig(QWidget *parent, const QStringList &)
   ui->delay->setRange(100, 5000, 50, false);
   ui->rate->setRange(0.2, 50, 5, false);
 
-  sliderMax = (int)floor (0.5
-		  + 2*(log(5000)-log(100)) / (log(5000)-log(4999)));
+  sliderMax = (int)floor (0.5 + 2*(log(5000)-log(100)) / (log(5000)-log(4999)));
   ui->delaySlider->setRange(0, sliderMax);
-  ui->delaySlider->setSteps(sliderMax/100, sliderMax/10);
+  ui->delaySlider->setSingleStep(sliderMax/100);
+  ui->delaySlider->setPageStep(sliderMax/10);
   ui->delaySlider->setTickInterval(sliderMax/10);
 
   ui->rateSlider->setRange(20, 5000);
-  ui->rateSlider->setSteps(30, 500);
+  ui->rateSlider->setSingleStep(30);
+  ui->rateSlider->setPageStep(500);
   ui->rateSlider->setTickInterval(498);
 
   connect(ui->repeatBox, SIGNAL(clicked()), this, SLOT(changed()));

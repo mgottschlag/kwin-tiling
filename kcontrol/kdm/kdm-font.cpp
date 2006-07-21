@@ -38,8 +38,8 @@
 
 extern KSimpleConfig *config;
 
-KDMFontWidget::KDMFontWidget(QWidget *parent, const char *name)
-  : QWidget(parent, name)
+KDMFontWidget::KDMFontWidget(QWidget *parent)
+  : QWidget(parent)
 {
   QGridLayout *ml = new QGridLayout(this);
   ml->setSpacing(KDialog::spacingHint());

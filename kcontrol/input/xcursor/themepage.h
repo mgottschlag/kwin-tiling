@@ -37,7 +37,7 @@ class ThemePage : public QWidget
 	Q_OBJECT
 
 	public:
-		ThemePage( QWidget* parent = 0, const char* name = 0 );
+		ThemePage( QWidget* parent = 0 );
 		~ThemePage();
 
 		// Called by the KCM

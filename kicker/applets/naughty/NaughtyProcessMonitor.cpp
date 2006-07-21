@@ -67,6 +67,7 @@ class NaughtyProcessMonitorPrivate
 
     uint interval_;
     QTimer * timer_;
+
     QMap<ulong, uint> loadMap_;
     QMap<ulong, uint> scoreMap_;
 #ifdef __OpenBSD__
@@ -98,6 +99,7 @@ NaughtyProcessMonitor::NaughtyProcessMonitor
   d->interval_ = interval * 1000;
   d->triggerLevel_ = triggerLevel;
   d->timer_ = new QTimer(this);
+  d->timer_->setSingleShot(true);
   connect(d->timer_, SIGNAL(timeout()), this, SLOT(slotTimeout()));
 }
 
@@ -109,7 +111,7 @@ NaughtyProcessMonitor::~NaughtyProcessMonitor()
   void
 NaughtyProcessMonitor::start()
 {
-  d->timer_->start(d->interval_, true);
+  d->timer_->start(d->interval_);
 }
 
   void
@@ -165,7 +167,7 @@ NaughtyProcessMonitor::slotTimeout()
     }
   }
 
-  d->timer_->start(d->interval_, true);
+  d->timer_->start(d->interval_);
 }
 
   void

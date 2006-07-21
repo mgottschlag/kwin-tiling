@@ -103,7 +103,7 @@ void KonsoleBookmarkMenu::fillBookmarkMenu()
                                          m_actionCollection, false,
 					 m_bAddBookmark, QString() );
       m_lstSubMenus.append(subMenu);
-      connect( actionMenu->popupMenu(), SIGNAL(aboutToShow()), subMenu,
+      connect( actionMenu->menu(), SIGNAL(aboutToShow()), subMenu,
                SLOT(slotNSLoad()));
     }
   }
@@ -170,7 +170,7 @@ void KonsoleBookmarkMenu::slotBookmarkSelected()
     if ( !m_pOwner ) return; // this view doesn't handle bookmarks...
     a = (KAction*)sender();
     b = a->text();
-    m_kOwner->openBookmarkURL( QString::fromUtf8(sender()->name()), /* URL */
+    m_kOwner->openBookmarkURL( sender()->objectName(), /* URL */
                                ( (KAction *)sender() )->text() /* Title */ );
 }
 
@@ -179,7 +179,7 @@ void KonsoleBookmarkMenu::slotNSBookmarkSelected()
     KAction *a;
     QString b;
 
-    QString link(sender()->name()+8);
+    QString link(sender()->objectName()+8);
     a = (KAction*)sender();
     b = a->text();
     m_kOwner->openBookmarkURL( link, /*URL */

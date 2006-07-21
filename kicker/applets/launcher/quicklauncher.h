@@ -60,13 +60,13 @@ class QuickLauncher: public KPanelApplet
 public:
     enum {DEFAULT_ICON_DIM=QuickButton::DEFAULT_ICON_DIM};
     enum {SIZE_AUTO=0};
-    
+
     struct PopularityInfo {
         float popularity;
     };
-    
+
     QuickLauncher(const QString& configFile, Plasma::Type t = Plasma::Normal, int actions = 0,
-                  QWidget *parent = 0, const char *name = 0);
+                  QWidget *parent = 0);
     ~QuickLauncher();
     int widthForHeight(int height) const;
     int heightForWidth(int width) const;

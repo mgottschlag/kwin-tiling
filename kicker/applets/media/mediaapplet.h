@@ -41,7 +41,7 @@ Q_OBJECT
 
 public:
 	MediaApplet(const QString& configFile, Plasma::Type t = Plasma::Normal, int actions = 0,
-	              QWidget *parent = 0, const char *name = 0);
+	              QWidget *parent = 0);
 	~MediaApplet();
 
 	int widthForHeight(int height) const;
