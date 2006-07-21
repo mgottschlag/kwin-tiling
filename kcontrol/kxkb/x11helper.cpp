@@ -88,7 +88,7 @@ X11Helper::findXkbRulesFile(QString x11Dir, Display *dpy)
     	for(int ii=0; ii<X11_RULES_COUNT; ii++) {
     		const char* ruleFile = rulesFileList[ii];
      		QString xruleFilePath = x11Dir + ruleFile;
-//  			kDebug() << "trying " << xruleFilePath << endl;
+  			kDebug() << "trying xrules path " << xruleFilePath << endl;
 		    if( QFile(xruleFilePath).exists() ) {
 				rulesFile = xruleFilePath;
 			break;
@@ -121,19 +121,41 @@ X11Helper::loadRules(const QString& file, bool layoutsOnly)
 		return rulesInfo;
 	}
   
-	//TODO: replace -> insert
   for (int i = 0; i < xkbRules->models.num_desc; ++i)
-      rulesInfo->models.insert(xkbRules->models.desc[i].name, qstrdup( xkbRules->models.desc[i].desc ) );
-  for (int i = 0; i < xkbRules->options.num_desc; ++i)
-      rulesInfo->options.insert(xkbRules->options.desc[i].name, qstrdup( xkbRules->options.desc[i].desc ) );
+      rulesInfo->models.insert(xkbRules->models.desc[i].name, QString( xkbRules->models.desc[i].desc ) );
+
+  for (int i = 0; i < xkbRules->options.num_desc; ++i) {
+	  QString optionName = xkbRules->options.desc[i].name;
+
+	  int colonPos = optionName.indexOf(':');
+	  QString groupName = optionName.mid(0, colonPos);
+
+	  if( colonPos != -1 ) {
+
+		if( ! rulesInfo->optionGroups.contains( groupName ) ) {
+		  rulesInfo->optionGroups.insert(groupName, createMissingGroup(groupName));
+		}
+		
+		XkbOption option;
+		option.name = optionName;
+		option.description = xkbRules->options.desc[i].desc;
+		option.group = &rulesInfo->optionGroups[ groupName ];
+
+		rulesInfo->options.insert(optionName, option);
+	  }
+	  else {
+	    XkbOptionGroup optionGroup;
+		optionGroup.name = groupName;
+		optionGroup.description = xkbRules->options.desc[i].desc;
+		optionGroup.exclusive = isGroupExclusive( groupName );
+
+		rulesInfo->optionGroups.insert(groupName, optionGroup);
+	  }
+  }
 
   XkbRF_Free(xkbRules, true);
 
-// workaround for empty 'compose' options group description
-   if( rulesInfo->options.contains("compose:menu") && !rulesInfo->options.contains("compose") ) {
-     rulesInfo->options.insert("compose", "Compose Key Position");
-   }
-
+/*
    for(QHashIterator<QString, QString> it(rulesInfo->options) ; it.hasNext();  ) {
 	  it.next();
 	   
@@ -148,13 +170,37 @@ X11Helper::loadRules(const QString& file, bool layoutsOnly)
 		  }
 	  }
   }
-  
+  */
 //   // workaround for empty misc options group description in XFree86 4.4.0
 //   if( rulesInfo->options.find("numpad:microsoft") && !rulesInfo->options.find("misc") ) {
 //     rulesInfo->options.replace("misc", "Miscellaneous compatibility options" );
 //   }
 
   return rulesInfo;
+}
+
+
+XkbOptionGroup 
+X11Helper::createMissingGroup(const QString& groupName)
+{
+// workaround for empty 'compose' options group description
+   XkbOptionGroup optionGroup;
+   optionGroup.name = groupName;
+   optionGroup.exclusive = isGroupExclusive( groupName );
+
+   if( groupName == "compose" ) {
+		optionGroup.description = "Compose Key Position";
+   }
+   return optionGroup;
+}
+
+bool
+X11Helper::isGroupExclusive(const QString& groupName)
+{
+    if( groupName == "ctrl" || groupName == "caps" || groupName == "altwin" )
+		return true;
+		
+	return false;
 }
 
 // check $oldlayouts and $nonlatin groups for XFree 4.3 and later

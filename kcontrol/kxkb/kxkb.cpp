@@ -27,7 +27,6 @@ DESCRIPTION
 #include <assert.h>
 
 #include <QRegExp>
-#include <QFile>
 #include <QStringList>
 #include <QImage>
 #include <QDesktopWidget>

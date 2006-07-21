@@ -1,7 +1,7 @@
 add_subdirectory( pics ) 
 #add_subdirectory( tests ) 
 
-OPTION(USE_XKLAVIER "Use libxklavier to get keyboard layouts configuration" OFF)
+OPTION(USE_XKLAVIER "Use libxklavier to get keyboard layouts configuration" ON)
 
 MESSAGE(STATUS "option: USE_XKLAVIER  <${USE_XKLAVIER}>")
 

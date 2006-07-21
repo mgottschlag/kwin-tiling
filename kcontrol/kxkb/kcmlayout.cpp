@@ -255,21 +255,20 @@ void LayoutConfig::initUI() {
 	QStringList options = m_kxkbConfig.m_options.split(',');
 	for (QListIterator<QString> it(options); it.hasNext(); )
 	{
-		QString option = it.next();
-		QString optionKey = option.mid(0, option.indexOf(':'));
-		QString optionName = m_rules->options()[option];
-		OptionListItem *item = m_optionGroups[i18n(optionKey)];
-		
+		QString optionName = it.next();
+		const XkbOption& option = m_rules->options()[optionName];
+		OptionListItem *item = m_optionGroups[ option.group->name ];
+
 		if (item != NULL) {
-			OptionListItem *child = item->findChildItem( option );
+			OptionListItem *child = item->findChildItem( option.name );
 
 			if ( child )
 				child->setState( Q3CheckListItem::On );
 			else
-				kDebug() << "load: Unknown option: " << option << endl;
+				kDebug() << "load: Unknown option: " << optionName << endl;
 		}
 		else {
-			kDebug() << "load: Unknown option group: " << optionKey << " of " << option << endl;
+			kDebug() << "load: Unknown option group: " << option.group->name << " of " << optionName << endl;
 		}
 	}
 
@@ -561,53 +560,50 @@ QWidget* LayoutConfig::makeOptionsTab()
   connect(widget->checkResetOld, SIGNAL(toggled(bool)), SLOT(updateOptionsCommand()));
 
   //Create controllers for all options
-  QHashIterator<QString, QString> it(m_rules->options());
-  OptionListItem *parent;
+  QHashIterator<QString, XkbOptionGroup> it( m_rules->optionGroups() );
   for (; it.hasNext(); )
   {
-	  it.next();
-    if (!it.key().contains(':'))
-    {
-      if( it.key() == "ctrl" || it.key() == "caps"
-          || it.key() == "altwin" ) {
-        parent = new OptionListItem(listView, i18n( it.value() ),
-            Q3CheckListItem::RadioButtonController, it.key());
+	  OptionListItem *parent;
+	  const XkbOptionGroup& optionGroup = it.next().value();
+  
+      if( optionGroup.exclusive ) {
+        parent = new OptionListItem(listView, i18n( optionGroup.description ),
+          		Q3CheckListItem::RadioButtonController, optionGroup.name);
         OptionListItem *item = new OptionListItem(parent, i18n( "None" ),
-            Q3CheckListItem::RadioButton, "none");
+          		Q3CheckListItem::RadioButton, "none");
         item->setState(Q3CheckListItem::On);
       }
       else {
-        parent = new OptionListItem(listView, i18n( it.value() ),
-            Q3CheckListItem::CheckBoxController, it.key());
+        parent = new OptionListItem(listView, i18n( optionGroup.description ),
+            Q3CheckListItem::CheckBoxController, optionGroup.name);
       }
+
       parent->setOpen(true);
-      m_optionGroups.insert( i18n(it.key()), parent);
-    }
+      m_optionGroups.insert( optionGroup.name, parent);
+	  kDebug() << "optionGroup insert: " << optionGroup.name << endl;
   }
 
-  it.toFront();
-  for( ; it.hasNext(); )
+
+  QHashIterator<QString, XkbOption> it2( m_rules->options() );
+  for (; it2.hasNext(); )
   {
-	  it.next();
-    QString key = it.key();
-    int pos = key.indexOf(':');
-    if (pos >= 0)
-    {
-      OptionListItem *parent = m_optionGroups[key.left(pos)];
-      if (parent == NULL )
-        parent = m_optionGroups["misc"];
-      if (parent != NULL) {
-      // workaroung for mistake in rules file for xkb options in XFree 4.2.0
-        QString text(it.value());
-        text = text.replace( "Cap$", "Caps." );
-        if( parent->type() == Q3CheckListItem::RadioButtonController )
-			new OptionListItem(parent, i18n(text.toLatin1().constData() ),
-                Q3CheckListItem::RadioButton, key);
-        else
-			new OptionListItem(parent, i18n(text.toLatin1().constData() ),
-                Q3CheckListItem::CheckBox, key);
-      }
-    }
+	  const XkbOption& option = it2.next().value();
+	  
+	  OptionListItem *parent = m_optionGroups[option.group->name];
+	  if( parent == NULL ) {
+		kError() << "no option group item for group: " << option.group->name
+			   << " for option " << option.name << endl;
+		exit(1); 
+	  }
+
+     if( parent->type() == Q3CheckListItem::RadioButtonController )
+		new OptionListItem(parent, i18n( option.description ),
+             Q3CheckListItem::RadioButton, option.name);
+     else
+	 	new OptionListItem(parent, i18n( option.description ),
+            Q3CheckListItem::CheckBox, option.name);
+
+	  kDebug() << "option insert: " << option.name << endl;
   }
 
   //scroll->setMinimumSize(450, 330);
@@ -729,23 +725,19 @@ void LayoutConfig::loadRules()
 QString LayoutConfig::createOptionString()
 {
   QString options;
-  for (QHashIterator<QString, QString> it(m_rules->options()); it.hasNext(); )
+  for (QHashIterator<QString, XkbOption> it(m_rules->options()); it.hasNext(); )
   {
-	  it.next();
-    QString option(it.key());
+    const XkbOption& option = it.next().value();
 
-    if (option.contains(':')) {
-
-      QString optionKey = option.mid(0, option.indexOf(':'));
-      OptionListItem *item = m_optionGroups[optionKey];
+      OptionListItem *item = m_optionGroups[ option.group->name ];
 
       if( !item ) {
-        kDebug() << "WARNING: skipping empty group for " << option
-          << " - could not found group: " << optionKey << endl;
+        kDebug() << "WARNING: skipping empty group for " << option.name
+          << " - could not found group: " << option.group->name << endl;
         continue;
       }
 
-      OptionListItem *child = item->findChildItem( option );
+      OptionListItem *child = item->findChildItem( option.name );
 
       if ( child ) {
         if ( child->state() == Q3CheckListItem::On ) {
@@ -759,7 +751,6 @@ QString LayoutConfig::createOptionString()
       }
       else
         kDebug() << "Empty option button for group " << it.key() << endl;
-    }
   }
   return options;
 }

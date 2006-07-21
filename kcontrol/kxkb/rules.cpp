@@ -65,6 +65,7 @@ XkbRules::XkbRules(bool layoutsOnly)
 	}
 }
 
+
 #ifdef HAVE_XKLAVIER
 
 void XkbRules::loadNewRules(bool layoutsOnly)
@@ -75,6 +76,7 @@ void XkbRules::loadNewRules(bool layoutsOnly)
 	m_layouts = xklAdaptor.getLayouts();
 	if( layoutsOnly == false ) {
 	  m_models = xklAdaptor.getModels();
+	  m_optionGroups = xklAdaptor.getOptionGroups();
 	  m_options = xklAdaptor.getOptions();
 	  m_varLists = xklAdaptor.getVariants();
 	}
@@ -98,6 +100,7 @@ void XkbRules::loadRules(QString file, bool layoutsOnly)
 		m_options = rules->options;
 	}
 }
+
 
 #endif
 
@@ -166,6 +169,7 @@ void XkbRules::loadOldLayouts(QString rulesFile)
 //    or if layout is present in $oldlayout or $nonlatin groups
 void XkbRules::loadGroups(QString file)
 {
+  kDebug() << "loading groups from " << file << endl;
   QFile f(file);
   if (f.open(IO_ReadOnly))
     {
