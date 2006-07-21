@@ -992,7 +992,7 @@ QString KBackgroundSettings::currentWallpaper() const
 	return QString();
     if (m_MultiMode == NoMulti || m_MultiMode == NoMultiRandom)
 	return m_Wallpaper;
-    if (m_CurrentWallpaper < (int) m_WallpaperFiles.count())
+    if (m_CurrentWallpaper >= 0 && m_CurrentWallpaper < (int) m_WallpaperFiles.count())
 	return m_WallpaperFiles[m_CurrentWallpaper];
     return QString();
 }
