@@ -20,7 +20,7 @@ kde4_automoc(${ksplash_SRCS})
 
 kde4_add_executable(ksplash ${ksplash_SRCS})
 
-target_link_libraries(ksplash  ${KDE4_KDEUI_LIBS} ksplashthemes kio )
+target_link_libraries(ksplash  ${KDE4_KDEUI_LIBS} ksplashthemes ${KDE4_KIO_LIBS} )
 
 install(TARGETS ksplash DESTINATION ${BIN_INSTALL_DIR})
 

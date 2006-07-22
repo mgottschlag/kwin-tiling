@@ -12,7 +12,7 @@ kde4_add_plugin(systemtray_panelapplet ${systemtray_panelapplet_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} systemtray_panelapplet )
 
-target_link_libraries(systemtray_panelapplet  ${KDE4_KDECORE_LIBS} kickermain kdeui kio )
+target_link_libraries(systemtray_panelapplet  ${KDE4_KDECORE_LIBS} kickermain ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} )
 
 install(TARGETS systemtray_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_kthememanager ${kcm_kthememanager_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kthememanager )
 
-target_link_libraries(kcm_kthememanager  ${KDE4_KIO_LIBS} kde3support  ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} kdeui ${QT_QTXML_LIBRARY})
+target_link_libraries(kcm_kthememanager  ${KDE4_KIO_LIBS} ${KDE4_KDE3SUPPORT_LIBS}  ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY})
 
 install(TARGETS kcm_kthememanager  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

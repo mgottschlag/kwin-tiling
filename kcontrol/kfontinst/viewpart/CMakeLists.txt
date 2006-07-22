@@ -18,7 +18,7 @@ kde4_add_plugin(kfontviewpart WITH_PREFIX ${kfontviewpart_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kfontviewpart )
 
-target_link_libraries(kfontviewpart  ${KDE4_KPARTS_LIBS} kdeprint kfontinst )
+target_link_libraries(kfontviewpart  ${KDE4_KPARTS_LIBS} ${KDE4_KDEPRINT_LIBS} kfontinst )
 
 install(TARGETS kfontviewpart  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

@@ -11,7 +11,7 @@ kde4_add_plugin(kcm_display ${kcm_display_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_display )
 
-target_link_libraries(kcm_display  ${KDE4_KDECORE_LIBS} kutils ${QT_QTGUI_LIBRARY} kdeui)
+target_link_libraries(kcm_display  ${KDE4_KDECORE_LIBS} kutils ${QT_QTGUI_LIBRARY} ${KDE4_KDEUI_LIBS})
 
 install(TARGETS kcm_display  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

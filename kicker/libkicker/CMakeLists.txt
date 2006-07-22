@@ -27,7 +27,7 @@ kde4_add_kcfg_files(kickermain_LIB_SRCS kickerSettings.kcfgc extensionSettings.k
 
 kde4_add_library(kickermain SHARED ${kickermain_LIB_SRCS})
 
-target_link_libraries(kickermain  ${KDE4_KDECORE_LIBS} kworkspace kio ${QT_QT3SUPPORT_LIBRARY} kdeui)
+target_link_libraries(kickermain  ${KDE4_KDECORE_LIBS} kworkspace ${KDE4_KIO_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDEUI_LIBS})
 
 set_target_properties(kickermain PROPERTIES VERSION 1.0.0 SOVERSION 1 )
 install(TARGETS kickermain  DESTINATION ${LIB_INSTALL_DIR} )

@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_taskbar ${kcm_taskbar_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_taskbar )
 
-target_link_libraries(kcm_taskbar  ${KDE4_KDECORE_LIBS} taskbar kdeui )
+target_link_libraries(kcm_taskbar  ${KDE4_KDECORE_LIBS} taskbar ${KDE4_KDEUI_LIBS} )
 
 install(TARGETS kcm_taskbar  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
