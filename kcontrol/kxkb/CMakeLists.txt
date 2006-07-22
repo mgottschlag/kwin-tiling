@@ -18,7 +18,7 @@ if( USE_XKLAVIER STREQUAL ON )
 	SET(XKB_SUPPORT_LIB ${LIBXKLAVIER_LIBRARIES} gobject-2.0)
 	ADD_DEFINITIONS(-DHAVE_XKLAVIER=1 ${LIBXKLAVIER_DEFINITIONS})
   else(LIBXKLAVIER_FOUND)
-	MESSAGE ("Could not find glib or libxklavier - old xkbfile code will be used to get keyboard layout configuration!")
+	MESSAGE ("Could not find glib or libxklavier >= 2.91 - old xkbfile code will be used to get keyboard layout configuration!")
   endif(LIBXKLAVIER_FOUND)
 endif( USE_XKLAVIER STREQUAL ON )
 

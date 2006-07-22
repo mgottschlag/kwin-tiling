@@ -17,7 +17,18 @@ else (LIBXKLAVIER_DEFINITIONS AND LIBXKLAVIER_LIBRARIES)
         # in the FIND_PATH() and FIND_LIBRARY() calls
         INCLUDE(UsePkgConfig)
         PKGCONFIG(libxklavier _LibXKlavierIncDir _LibXKlavierLinkDir _LibXKlavierLinkFlags _LibXKlavierCflags)
-        set(LIBXKLAVIER_DEFINITIONS ${_LibXKlavierCflags})
+
+	if(_LibXKlavierLinkFlags)
+		# find again pkg-config, to query it about libxklavier version
+		FIND_PROGRAM(PKGCONFIG_EXECUTABLE NAMES pkg-config PATHS /usr/bin/ /usr/local/bin )
+
+		# query pkg-config asking for a libxklavier >= 2.91
+		EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS --atleast-version=2.91 libxklavier RETURN_VALUE _return_VALUE OUTPUT_VARIABLE _pkgconfigDevNull )
+		if(_return_VALUE STREQUAL "0")
+        		set(LIBXKLAVIER_DEFINITIONS ${_LibXKlavierCflags})
+		endif(_return_VALUE STREQUAL "0")
+	endif(_LibXKlavierLinkFlags)
+
     ENDIF (NOT WIN32)
 
 #    FIND_PATH(LIBXKLAVIER_INCLUDE_DIR libxklavier/xklavier.h
