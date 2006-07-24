@@ -21,7 +21,7 @@ install(TARGETS ktip DESTINATION ${BIN_INSTALL_DIR})
 ########### install files ###############
 
 install( FILES ktip.desktop  DESTINATION  ${XDG_APPS_DIR} )
-install_files( /share/autostart FILES ktip.desktop )
+install( FILES ktip.desktop DESTINATION ${AUTOSTART_INSTALL_DIR} )
 install( FILES tips  DESTINATION  ${DATA_INSTALL_DIR}/kdewizard )
 
 

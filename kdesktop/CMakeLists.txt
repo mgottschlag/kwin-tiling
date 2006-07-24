@@ -89,7 +89,7 @@ add_subdirectory( kwebdesktop )
 ########### install files ###############
 
 install( FILES kdesktop.kcfg klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR} )
-install_files( /share/autostart FILES kdesktop.desktop )
+install( FILES kdesktop.desktop DESTINATION ${AUTOSTART_INSTALL_DIR} )
 install( FILES kdesktopSetAsBackground.desktop  DESTINATION  ${DATA_INSTALL_DIR}/konqueror/servicemenus )
 # should we install the dbus xml files?
 # install_files( /include FILES KDesktopIface.h KScreensaverIface.h KBackgroundIface.h )
