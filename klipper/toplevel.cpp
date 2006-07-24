@@ -48,7 +48,7 @@
 #include <kstandarddirs.h>
 #include <ksimpleconfig.h>
 #include <kstringhandler.h>
-#include <ksystemtray.h>
+#include <ksystemtrayicon.h>
 #include <k3urldrag.h>
 #include <kwin.h>
 #include <kdebug.h>
@@ -171,7 +171,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     //clearHistoryAction->setGroup( defaultGroup );
     configureAction = new KAction(KIcon("configure"),  i18n("&Configure Klipper..."), collection, "configureAction" );
     connect(configureAction, SIGNAL(triggered(bool) ), SLOT( slotConfigure() ));
-    //configureAction->setGroup( defaultGroup ); 
+    //configureAction->setGroup( defaultGroup );
     quitAction = new KAction( KIcon("exit"), i18n("&Quit"), collection, "quitAction" );
     connect(quitAction, SIGNAL(triggered(bool) ), SLOT( slotQuit() ));
     //quitAction->setGroup( "exit" );
@@ -190,7 +190,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
     connect( poll, SIGNAL( clipboardChanged( bool ) ),
              this, SLOT( newClipData( bool ) ) );
 
-    m_pixmap = KSystemTray::loadIcon( "klipper" );
+    m_pixmap = KSystemTrayIcon::loadIcon( "klipper" ).pixmap();
     adjustSize();
 
     globalKeys = KGlobalAccel::self();

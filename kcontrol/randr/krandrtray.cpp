@@ -38,32 +38,27 @@
 #include "krandrtray.moc"
 
 KRandRSystemTray::KRandRSystemTray(QWidget* parent)
-	: KSystemTray(parent)
+	: KSystemTrayIcon(parent)
 	, m_popupUp(false)
-	, m_help(new KHelpMenu(this, KGlobal::instance()->aboutData(), false, actionCollection()))
+	, m_help(new KHelpMenu(parent, KGlobal::instance()->aboutData(), false, actionCollection()))
 {
-	setPixmap(KSystemTray::loadIcon("randr"));
-	setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+	setIcon(KSystemTrayIcon::loadIcon("randr"));
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
 	this->setToolTip( i18n("Screen resize & rotate"));
+        prepareMenu();
 }
 
-void KRandRSystemTray::mousePressEvent(QMouseEvent* e)
+void KRandRSystemTray::slotActivated(QSystemTrayIcon::ActivationReason reason)
 {
-	// Popup the context menu with left-click
-	if (e->button() == Qt::LeftButton) {
-		contextMenuAboutToShow(contextMenu());
-		contextMenu()->popup(e->globalPos());
-		e->accept();
-		return;
-	}
-
-	KSystemTray::mousePressEvent(e);
+	if (reason == QSystemTrayIcon::Trigger)
+		contextMenu()->show();
 }
 
-void KRandRSystemTray::contextMenuAboutToShow(KMenu* menu)
+void KRandRSystemTray::prepareMenu()
 {
 	int lastIndex = 0;
+        KMenu *menu = new KMenu(parentWidget());
+        setContextMenu(menu);
 
 	menu->clear();
 
@@ -75,7 +70,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KMenu* menu)
 		m_screenPopups.clear();
 		for (int s = 0; s < numScreens() /*&& numScreens() > 1 */; s++) {
 			setCurrentScreen(s);
-			if (s == screenIndexOfWidget(this)) {
+			if (s == screenIndexOfWidget(parentWidget())) {
 				/*lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
 				menu->setItemEnabled(lastIndex, false);*/
 			} else {
@@ -88,7 +83,7 @@ void KRandRSystemTray::contextMenuAboutToShow(KMenu* menu)
 			}
 		}
 
-		setCurrentScreen(screenIndexOfWidget(this));
+		setCurrentScreen(screenIndexOfWidget(parentWidget()));
 		populateMenu(menu);
 	}
 
@@ -119,7 +114,7 @@ void KRandRSystemTray::configChanged()
 		KRandrPassivePopup::message(
 		i18n("Screen configuration has changed"),
 		currentScreen()->changedMessage(), SmallIcon("window_fullscreen"),
-		this);
+		parentWidget());
 
 	first = false;
 }
@@ -248,7 +243,7 @@ void KRandRSystemTray::slotRefreshRateChanged(int parameter)
 
 void KRandRSystemTray::slotPrefs()
 {
-	KCMultiDialog *kcm = new KCMultiDialog( this );
+	KCMultiDialog *kcm = new KCMultiDialog( parentWidget() );
 	kcm->setFaceType( KCMultiDialog::Plain );
 	kcm->setPlainCaption( i18n( "Configure Display" ) );
 	kcm->addModule( "display" );

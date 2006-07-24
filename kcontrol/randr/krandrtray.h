@@ -21,21 +21,19 @@
 
 #include <QMouseEvent>
 
-#include <ksystemtray.h>
+#include <ksystemtrayicon.h>
 
 #include "randr.h"
 
 class KHelpMenu;
-class KMenu;
+class QMenu;
 
-class KRandRSystemTray :  public KSystemTray, public RandRDisplay
+class KRandRSystemTray :  public KSystemTrayIcon, public RandRDisplay
 {
 	Q_OBJECT
 
 public:
 	KRandRSystemTray(QWidget* parent = 0);
-
-	virtual void contextMenuAboutToShow(KMenu* menu);
 
 	void configChanged();
 
@@ -45,9 +43,10 @@ protected Q_SLOTS:
 	void slotOrientationChanged(int parameter);
 	void slotRefreshRateChanged(int parameter);
 	void slotPrefs();
+	void slotActivated(QSystemTrayIcon::ActivationReason reason);
 
 protected:
-	void mousePressEvent( QMouseEvent *e );
+	void prepareMenu();
 
 private:
 	void populateMenu(KMenu* menu);

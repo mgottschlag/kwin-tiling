@@ -1,7 +1,7 @@
 //
 // C++ Implementation: kxkbtraywindow
 //
-// Description: 
+// Description:
 //
 //
 // Author: Andriy Rysin <rysin@kde.org>, (C) 2006
@@ -25,8 +25,8 @@
 #include "kxkbconfig.h"
 
 
-KxkbLabelController::KxkbLabelController(QLabel* label_, QMenu* contextMenu_) :
-    label(label_),
+KxkbLabelController::KxkbLabelController(QSystemTrayIcon* tray_, QMenu* contextMenu_) :
+    tray(tray_),
     contextMenu(contextMenu_),
  	m_menuStartIndex(contextMenu_->count()),
 	m_prevLayoutCount(0)
@@ -37,15 +37,14 @@ KxkbLabelController::KxkbLabelController(QLabel* label_, QMenu* contextMenu_) :
 
 void KxkbLabelController::setToolTip(const QString& tip)
 {
-	QToolTip::remove(label);
-	QToolTip::add(label, tip);
+    tray->setToolTip( tip );
 }
 
 void KxkbLabelController::setPixmap(const QPixmap& pixmap)
 {
 	KIconEffect iconeffect;
 // 	label->setPixmap( iconeffect.apply(pixmap, KIcon::Panel, KIcon::DefaultState) );
-	label->setPixmap( pixmap );
+	tray->setIcon( pixmap );
 }
 
 
@@ -61,7 +60,7 @@ void KxkbLabelController::setError(const QString& layoutInfo)
     QString msg = i18n("Error changing keyboard layout to '%1'", layoutInfo);
 	setToolTip(msg);
 
-	label->setPixmap(LayoutIcon::getInstance().findPixmap("error", m_showFlag));
+	tray->setIcon(LayoutIcon::getInstance().findPixmap("error", m_showFlag));
 }
 
 
@@ -81,32 +80,32 @@ void KxkbLabelController::initLayoutList(const QList<LayoutUnit>& layouts, const
 	}
 /*	menu->removeItem(CONFIG_MENU_ID);
 	menu->removeItem(HELP_MENU_ID);*/
-	
+
     KIconEffect iconeffect;
-    
+
 	int cnt = 0;
     QList<LayoutUnit>::ConstIterator it;
     for (it=layouts.begin(); it != layouts.end(); ++it)
     {
 		const QString layoutName = (*it).layout;
 		const QString variantName = (*it).variant;
-		
+
 		const QPixmap& layoutPixmap = LayoutIcon::getInstance().findPixmap(layoutName, m_showFlag, (*it).displayName);
 //         const QPixmap pix = iconeffect.apply(layoutPixmap, KIcon::Small, KIcon::DefaultState);
 		const QPixmap pix = layoutPixmap;
-		
+
 		QString layoutString = rules.layouts()[layoutName];
 		QString fullName = i18n( layoutString.toLatin1().constData() );
 		if( variantName.isEmpty() == false )
 			fullName += " (" + variantName + ')';
 		contextMenu->insertItem(pix, fullName, START_MENU_ID + cnt, m_menuStartIndex + cnt);
 		m_descriptionMap.insert((*it).toPair(), fullName);
-		
+
 		cnt++;
     }
 
 	m_prevLayoutCount = cnt;
-	
+
 	// if show config, if show help
 	if( menu->indexOf(CONFIG_MENU_ID) == -1 ) {
 		contextMenu->addSeparator();
@@ -130,4 +129,4 @@ void KxkbLabelController::initLayoutList(const QList<LayoutUnit>& layouts, const
 //     KSystemTray::mouseReleaseEvent(ev);
 // }
 
-#include "kxkbtraywindow.moc"
+//#include "kxkbtraywindow.moc"

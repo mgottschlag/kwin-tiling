@@ -15,7 +15,7 @@
 #include <kprocess.h>
 #include <kwinmodule.h>
 #include <kconfig.h>
-#include <ksystemtray.h>
+#include <ksystemtrayicon.h>
 
 #include <netwm.h>
 
@@ -57,7 +57,7 @@ bool KSysTrayCmd::start()
       checkExistingWindows();
       if ( win ) {
         // Window always on top
-        if (onTop) { 
+        if (onTop) {
           KWin::setState(win, NET::StaysOnTop);
         }
         return true;
@@ -89,16 +89,16 @@ void KSysTrayCmd::showWindow()
     return;
   XMapWindow( QX11Info::display(), win );
   // We move the window to the memorized position
-  XMoveWindow( QX11Info::display(), win, left, top);  
-  
+  XMoveWindow( QX11Info::display(), win, left, top);
+
   // Window always on top
   if (onTop)
   {
     KWin::setState(win, NET::StaysOnTop);
   }
-  
+
   KWin::activateWindow( win );
-  
+
 }
 
 void KSysTrayCmd::hideWindow()
@@ -157,11 +157,11 @@ void KSysTrayCmd::refresh()
     if (ownIcon)
     {
       // Icefox ### double check after next kdelibs snapshot merge that this does it right
-      setPixmap( KSystemTray::loadIcon( qApp->applicationName() ) );
+      setWindowIcon( KSystemTrayIcon::loadIcon( qApp->applicationName() ) );
     }
     else
     {
-      setPixmap( KWin::icon( win, iconWidth, iconWidth, true ) );
+      setWindowIcon( KWin::icon( win, iconWidth, iconWidth, true ) );
     }
 
     this->setToolTip( KWin::windowInfo( win ).name() );
@@ -175,7 +175,7 @@ void KSysTrayCmd::refresh()
       this->setToolTip( window );
 
     // Icefox ### double check after next kdelibs snapshot merge that this does it right
-    setPixmap( KSystemTray::loadIcon( qApp->applicationName() ) );
+    setIcon( KSystemTrayIcon::loadIcon( qApp->applicationName() ).pixmap() );
   }
 }
 

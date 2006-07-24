@@ -68,7 +68,7 @@ public slots:
 
 protected slots:
     void menuActivated(int id);
-    void toggled();
+    void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void windowChanged(WId winId);
 
     void slotSettingsChanged(int category);

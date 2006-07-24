@@ -201,19 +201,18 @@ void KXKBApp::initTray()
 {
 	if( !m_tray )
 	{
-		KSystemTray* sysTray = new KxkbSystemTray();
+		KSystemTrayIcon* sysTray = new KSystemTrayIcon();
 		QMenu* popupMenu = sysTray->contextMenu();
 	//	popupMenu->insertTitle( kapp->miniIcon(), kapp->caption() );
 
 		m_tray = new KxkbLabelController(sysTray, popupMenu);
  		connect(popupMenu, SIGNAL(activated(int)), this, SLOT(menuActivated(int)));
-		connect(sysTray, SIGNAL(toggled()), this, SLOT(toggled()));
+		connect(sysTray, SIGNAL(activated(int)), this, SLOT(trayActivated(int)));
 	}
 
 	m_tray->setShowFlag(kxkbConfig.m_showFlag);
 	m_tray->initLayoutList(kxkbConfig.m_layouts, *m_rules);
 	m_tray->setCurrentLayout(m_currentLayout);
-	m_tray->show();
 }
 
 // This function activates the keyboard layout specified by the
@@ -262,35 +261,38 @@ bool KXKBApp::setLayout(const LayoutUnit& layoutUnit, int group)
     return res;
 }
 
-void KXKBApp::toggled()
+void KXKBApp::trayActivated(QSystemTrayIcon::ActivationReason reason)
 {
-	const LayoutUnit& layout = m_layoutOwnerMap->getNextLayout().layoutUnit;
-	setLayout(layout);
+    if ( reason != QSystemTrayIcon::Trigger )
+        return;
+
+    const LayoutUnit& layout = m_layoutOwnerMap->getNextLayout().layoutUnit;
+    setLayout(layout);
 }
 
 void KXKBApp::menuActivated(int id)
 {
-	if( KxkbLabelController::START_MENU_ID <= id
-		   && id < KxkbLabelController::START_MENU_ID + (int)kxkbConfig.m_layouts.count() )
-	{
-		const LayoutUnit& layout = kxkbConfig.m_layouts[id - KxkbLabelController::START_MENU_ID];
-		m_layoutOwnerMap->setCurrentLayout( layout );
-		setLayout( layout );
-	}
-	else if (id == KxkbLabelController::CONFIG_MENU_ID)
+    if( KxkbLabelController::START_MENU_ID <= id
+        && id < KxkbLabelController::START_MENU_ID + (int)kxkbConfig.m_layouts.count() )
+    {
+        const LayoutUnit& layout = kxkbConfig.m_layouts[id - KxkbLabelController::START_MENU_ID];
+        m_layoutOwnerMap->setCurrentLayout( layout );
+        setLayout( layout );
+    }
+    else if (id == KxkbLabelController::CONFIG_MENU_ID)
     {
         KProcess p;
         p << "kcmshell" << "keyboard_layout";
         p.start(KProcess::DontCare);
-	}
-	else if (id == KxkbLabelController::HELP_MENU_ID)
-	{
-		KToolInvocation::invokeHelp(0, "kxkb");
-	}
-	else
-	{
-		quit();
-	}
+    }
+    else if (id == KxkbLabelController::HELP_MENU_ID)
+    {
+        KToolInvocation::invokeHelp(0, "kxkb");
+    }
+    else
+    {
+        quit();
+    }
 }
 
 // TODO: we also have to handle deleted windows

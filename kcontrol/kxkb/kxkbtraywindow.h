@@ -12,7 +12,7 @@
 #ifndef KXKBSYSTEMTRAY_H
 #define KXKBSYSTEMTRAY_H
 
-#include <ksystemtray.h>
+#include <ksystemtrayicon.h>
 
 #include <QMouseEvent>
 #include <qstring.h>
@@ -21,7 +21,7 @@
 
 #include "kxkbconfig.h"
 
-
+class QSystemTrayIcon;
 class QMenu;
 class XkbRules;
 
@@ -36,14 +36,13 @@ class KxkbLabelController: public QObject
 public:
 	enum { START_MENU_ID = 100, CONFIG_MENU_ID = 130, HELP_MENU_ID = 131 };
 
-    KxkbLabelController(QLabel *label, QMenu* contextMenu);
+	KxkbLabelController(QSystemTrayIcon *tray, QMenu* contextMenu);
 
     void initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules& rule);
     void setCurrentLayout(const LayoutUnit& layout);
 // 	void setCurrentLayout(const QString& layout, const QString &variant);
     void setError(const QString& layoutInfo="");
     void setShowFlag(bool showFlag) { m_showFlag = showFlag; }
-    void show() { label->show(); }
 	
 // signals:
 // 
@@ -55,7 +54,7 @@ public:
 //     void mouseReleaseEvent(QMouseEvent *);
 
 private:
-	QLabel* label;
+    QSystemTrayIcon* tray;
 	QMenu* contextMenu;
 	
 	const int m_menuStartIndex;
@@ -66,28 +65,5 @@ private:
 	void setToolTip(const QString& tip);
 	void setPixmap(const QPixmap& pixmap);
 };
-
-
-class KxkbSystemTray : public KSystemTray
-{
-	Q_OBJECT 
-			
-	public:
-	KxkbSystemTray():
-		KSystemTray(NULL)
-	{}
-	
-	void mouseReleaseEvent(QMouseEvent *ev)
-	{
-		if (ev->button() == Qt::LeftButton)
-			emit toggled();
-		KSystemTray::mouseReleaseEvent(ev);
-	}
-
-	signals:
- 		void menuActivated(int);
-		void toggled();
-};
-
 
 #endif
