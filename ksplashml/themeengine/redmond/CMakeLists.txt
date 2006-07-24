@@ -11,11 +11,11 @@ kde4_automoc(${ksplashredmond_PART_SRCS})
 
 kde4_add_plugin(ksplashredmond ${ksplashredmond_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} ksplashredmond )
+kde4_install_libtool_file(${PLUGIN_INSTALL_DIR} ksplashredmond)
 
-target_link_libraries(ksplashredmond  ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} kdefx ksplashthemes )
+target_link_libraries(ksplashredmond ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KDEFX_LIBS} ksplashthemes)
 
-install(TARGETS ksplashredmond  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS ksplashredmond  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############

@@ -37,7 +37,7 @@ install(TARGETS kgreet_winbind  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install_files( /include FILES kgreeterplugin.h )
+install( FILES kgreeterplugin.h DESTINATION ${INCLUDE_INSTALL_DIR} )
 
 
 

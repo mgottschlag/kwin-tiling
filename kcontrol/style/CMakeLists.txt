@@ -9,15 +9,15 @@ set(kcm_style_PART_SRCS kcmstyle.cpp menupreview.cpp styleconfdialog.cpp ${libkr
 
 kde4_automoc(${kcm_style_PART_SRCS})
 
-kde4_add_ui3_files(kcm_style_PART_SRCS stylepreview.ui )
+kde4_add_ui3_files(kcm_style_PART_SRCS stylepreview.ui)
 
 kde4_add_plugin(kcm_style ${kcm_style_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_style )
+kde4_install_libtool_file(${PLUGIN_INSTALL_DIR} kcm_style)
 
-target_link_libraries(kcm_style  ${KDE4_KDE3SUPPORT_LIBS} kdefx )
+target_link_libraries(kcm_style ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDEFX_LIBS})
 
-install(TARGETS kcm_style  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS kcm_style  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############

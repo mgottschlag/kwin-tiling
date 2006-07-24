@@ -19,7 +19,7 @@ install(TARGETS kworkspace  DESTINATION ${LIB_INSTALL_DIR} )
 
 ########### install files ###############
 
-install_files( /include/libkworkspace FILES kworkspace.h )
+install( FILES kworkspace.h DESTINATION ${INCLUDE_INSTALL_DIR}/libworkspace )
 
 
 

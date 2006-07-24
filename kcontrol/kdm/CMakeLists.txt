@@ -3,7 +3,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/libkonq   )
 
 ########### next target ###############
 
-kde4_add_ui3_files(kcmbackgroundlib_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgdialog_ui.ui ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgwallpaper_ui.ui ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgadvanced_ui.ui )
+kde4_add_ui3_files(kcmbackgroundlib_SRCS ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgdialog_ui.ui ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgwallpaper_ui.ui ${CMAKE_SOURCE_DIR}/workspace/kcontrol/background/bgadvanced_ui.ui)
 
 
 set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS} 
@@ -14,17 +14,17 @@ set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS}
    kdm-users.cpp 
    kdm-conv.cpp 
    main.cpp 
-   kbackedcombobox.cpp )
+   kbackedcombobox.cpp)
 
 kde4_automoc(${kcm_kdm_PART_SRCS})
 
 kde4_add_plugin(kcm_kdm ${kcm_kdm_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_kdm )
+kde4_install_libtool_file(${PLUGIN_INSTALL_DIR} kcm_kdm)
 
-target_link_libraries(kcm_kdm  ${KDE4_KDE3SUPPORT_LIBS}  knewstuff kdefx )
+target_link_libraries(kcm_kdm ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDEFX_LIBS} knewstuff)
 
-install(TARGETS kcm_kdm  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS kcm_kdm  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############

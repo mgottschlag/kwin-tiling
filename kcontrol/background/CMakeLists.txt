@@ -13,11 +13,11 @@ kde4_automoc(${kcm_background_PART_SRCS})
 
 kde4_add_plugin(kcm_background ${kcm_background_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_background )
+kde4_install_libtool_file(${PLUGIN_INSTALL_DIR} kcm_background)
 
-target_link_libraries(kcm_background  ${KDE4_KDE3SUPPORT_LIBS} knewstuff kdefx ${X11_X11_LIB})
+target_link_libraries(kcm_background ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDEFX_LIBS} knewstuff ${X11_X11_LIB})
 
-install(TARGETS kcm_background  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS kcm_background  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### next target ###############

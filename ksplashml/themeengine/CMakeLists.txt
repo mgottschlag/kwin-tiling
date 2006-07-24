@@ -26,7 +26,7 @@ install(TARGETS ksplashthemes  DESTINATION ${LIB_INSTALL_DIR} )
 ########### install files ###############
 
 install( FILES ksplashplugins.desktop  DESTINATION  ${SERVICETYPES_INSTALL_DIR} )
-install_files( /include/ksplash FILES themeengine.h objkstheme.h )
+install( FILES themeengine.h objkstheme.h DESTINATION ${INCLUDE_INSTALL_DIR}/ksplash )
 
 
 

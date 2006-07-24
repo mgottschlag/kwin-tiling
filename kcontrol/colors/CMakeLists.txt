@@ -9,11 +9,11 @@ kde4_automoc(${kcm_colors_PART_SRCS})
 
 kde4_add_plugin(kcm_colors ${kcm_colors_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_colors )
+kde4_install_libtool_file(${PLUGIN_INSTALL_DIR} kcm_colors)
 
-target_link_libraries(kcm_colors  ${KDE4_KDE3SUPPORT_LIBS} kdefx )
+target_link_libraries(kcm_colors ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KDEFX_LIBS})
 
-install(TARGETS kcm_colors  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS kcm_colors  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############

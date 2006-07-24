@@ -5,7 +5,7 @@ project(libkscreensaver)
 
 ########### next target ###############
 
-set(kscreensaver_LIB_SRCS main.cpp kscreensaver.cpp )
+set(kscreensaver_LIB_SRCS main.cpp kscreensaver.cpp)
 
 kde4_automoc(${kscreensaver_LIB_SRCS})
 
@@ -13,13 +13,13 @@ kde4_add_library(kscreensaver SHARED ${kscreensaver_LIB_SRCS})
 
 target_link_libraries(kscreensaver  ${KDE4_KIO_LIBS} ${X11_X11_LIB})
 
-set_target_properties(kscreensaver PROPERTIES VERSION 4.2.0 SOVERSION 4 )
-install(TARGETS kscreensaver  DESTINATION ${LIB_INSTALL_DIR} )
+set_target_properties(kscreensaver PROPERTIES VERSION 4.2.0 SOVERSION 4)
+install(TARGETS kscreensaver  DESTINATION ${LIB_INSTALL_DIR})
 
 
 ########### install files ###############
 
-install_files( /include FILES kscreensaver.h kscreensaver_vroot.h )
+install( FILES kscreensaver.h kscreensaver_vroot.h DESTINATION ${INCLUDE_INSTALL_DIR} )
 
 
 

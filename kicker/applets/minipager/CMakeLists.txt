@@ -3,19 +3,19 @@ include_directories( ${CMAKE_SOURCE_DIR}/workspace/kicker/taskmanager ${CMAKE_SO
 
 ########### next target ###############
 
-set(minipager_panelapplet_PART_SRCS pagerapplet.cpp pagerbutton.cpp )
+set(minipager_panelapplet_PART_SRCS pagerapplet.cpp pagerbutton.cpp)
 
 kde4_automoc(${minipager_panelapplet_PART_SRCS})
 
-kde4_add_kcfg_files(minipager_panelapplet_PART_SRCS pagersettings.kcfgc )
+kde4_add_kcfg_files(minipager_panelapplet_PART_SRCS pagersettings.kcfgc)
 
 kde4_add_plugin(minipager_panelapplet ${minipager_panelapplet_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} minipager_panelapplet )
+kde4_install_libtool_file(${PLUGIN_INSTALL_DIR} minipager_panelapplet)
 
-target_link_libraries(minipager_panelapplet  ${KDE4_KDEUI_LIBS} kdefx taskmanager kickermain )
+target_link_libraries(minipager_panelapplet ${KDE4_KDEUI_LIBS} ${KDE4_KDEFX_LIBS} taskmanager kickermain)
 
-install(TARGETS minipager_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS minipager_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############

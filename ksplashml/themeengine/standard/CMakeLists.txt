@@ -16,11 +16,11 @@ kde4_automoc(${ksplashstandard_PART_SRCS})
 
 kde4_add_plugin(ksplashstandard ${ksplashstandard_PART_SRCS})
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} ksplashstandard )
+kde4_install_libtool_file(${PLUGIN_INSTALL_DIR} ksplashstandard)
 
-target_link_libraries(ksplashstandard  ${KDE4_KDEUI_LIBS} ksplashthemes kdefx )
+target_link_libraries(ksplashstandard ${KDE4_KDEUI_LIBS} ${KDE4_KDEFX_LIBS} ksplashthemes)
 
-install(TARGETS ksplashstandard  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS ksplashstandard  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 
 ########### install files ###############
