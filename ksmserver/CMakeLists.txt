@@ -29,11 +29,11 @@ install(TARGETS ksmserver DESTINATION ${BIN_INSTALL_DIR})
 
 ########### next target ###############
 
+if(KDE4_BUILD_TESTS)
 set(testsh_SRCS ${kdmlib_SRCS} test.cpp shutdowndlg.cpp )
 
 kde4_automoc(${testsh_SRCS})
 
-if(KDE4_BUILD_TESTS)
 
 kde4_add_executable(testsh ${testsh_SRCS})
 

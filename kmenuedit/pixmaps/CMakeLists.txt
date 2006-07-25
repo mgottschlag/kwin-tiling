@@ -1,18 +1,5 @@
+kde4_install_icons( ${DATA_INSTALL_DIR}/kmenuedit/icons crystalsvg )
+kde4_install_icons( ${DATA_INSTALL_DIR}/kmenuedit/icons locolor )
+kde4_install_icons( ${DATA_INSTALL_DIR}/kcontroledit/icons crystalsvg )
+kde4_install_icons( ${DATA_INSTALL_DIR}/kcontroledit/icons locolor )
 
-
-
-########### install files ###############
-
-install( FILES   DESTINATION  ${DATA_INSTALL_DIR}/kmenuedit/icons )
-install( FILES   DESTINATION  ${DATA_INSTALL_DIR}/kcontroledit/icons )
-
-
-
-
-#original Makefile.am contents follow:
-
-#kmenuediticondir = $(kde_datadir)/kmenuedit/icons
-#kmenuediticon_ICON = AUTO
-#
-#kcontrolediticondir = $(kde_datadir)/kcontroledit/icons
-#kcontrolediticon_ICON = AUTO
