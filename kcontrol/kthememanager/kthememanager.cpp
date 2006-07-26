@@ -121,7 +121,12 @@ void kthememanager::init()
 void kthememanager::updateButton()
 {
     Q3ListViewItem * cur = dlg->lvThemes->currentItem();
-    dlg->btnRemove->setEnabled( cur != 0 );
+    bool enable = (cur != 0);
+    if (enable) {
+         enable = (enable && QFile(KGlobal::dirs()->saveLocation( "themes",  cur->text( 0 ) + "/"+ cur->text( 0 )+ ".xml" ,false)).exists() );
+    }
+    dlg->btnRemove->setEnabled(enable);
+
 }
 
 void kthememanager::load()
