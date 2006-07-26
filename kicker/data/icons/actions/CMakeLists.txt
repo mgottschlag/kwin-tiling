@@ -1,15 +1,2 @@
-
-
-
-########### install files ###############
-
-install( FILES   DESTINATION  ${DATA_INSTALL_DIR}/kicker/icons )
-
-
-
-
-#original Makefile.am contents follow:
-
-#kickericonsdir = $(kde_datadir)/kicker/icons
-#kickericons_ICON = AUTO
-#
+kde4_install_icons( ${DATA_INSTALL_DIR}/kicker/icons locolor )
+kde4_install_icons( ${DATA_INSTALL_DIR}/kicker/icons crystalsvg )
