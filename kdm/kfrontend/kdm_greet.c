@@ -44,8 +44,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # include <sched.h>
 #endif
 
-#if defined(HAVE_XTEST) || defined(HAVE_XKB)
 # include <X11/Xlib.h>
+#if defined(HAVE_XTEST) || defined(HAVE_XKB)
 # include <X11/keysym.h>
 #endif
 
