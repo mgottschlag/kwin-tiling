@@ -23,7 +23,6 @@ install(TARGETS fontthumbnail  DESTINATION ${PLUGIN_INSTALL_DIR} )
 ########### install files ###############
 
 install( FILES fontthumbnail.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
-install( FILES   DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 
 
