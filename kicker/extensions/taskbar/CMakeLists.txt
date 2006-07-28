@@ -12,7 +12,7 @@ kde4_add_plugin(taskbar_panelextension ${taskbar_panelextension_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} taskbar_panelextension )
 
-target_link_libraries(taskbar_panelextension  ${KDE4_KDEUI_LIBS} kparts kickermain taskmanager taskbar )
+target_link_libraries(taskbar_panelextension  ${KDE4_KDEUI_LIBS} ${KDE4_KPARTS_LIBS} kickermain taskmanager taskbar )
 
 install(TARGETS taskbar_panelextension  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

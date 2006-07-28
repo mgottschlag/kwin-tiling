@@ -27,7 +27,7 @@ kde4_automoc(${kcontrol_KDEINIT_SRCS})
 
 kde4_add_kdeinit_executable( kcontrol ${kcontrol_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_kcontrol  ${KDE4_KDE3SUPPORT_LIBS} khtml )
+target_link_libraries(kdeinit_kcontrol  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KHTML_LIBS} )
 
 install(TARGETS kdeinit_kcontrol  DESTINATION ${LIB_INSTALL_DIR} )
 
