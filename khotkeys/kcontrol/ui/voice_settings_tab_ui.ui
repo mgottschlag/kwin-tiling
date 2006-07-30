@@ -1,0 +1,107 @@
+<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
+<class>Voice_settings_tab_ui</class>
+<widget class="QWidget">
+    <property name="name">
+        <cstring>Voice_settings_tab_ui</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>473</width>
+            <height>380</height>
+        </rect>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel2</cstring>
+            </property>
+            <property name="text">
+                <string>In order to trigger a spoken action, you have to press the key (or combination of keys) configured below, speak the command and then press the same key again once you have finished speaking.</string>
+            </property>
+            <property name="alignment">
+                <set>WordBreak|AlignVCenter</set>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout4</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>textLabel1</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Shortcut:</string>
+                    </property>
+                </widget>
+                <widget class="KKeyButton">
+                    <property name="name">
+                        <cstring>keyButton</cstring>
+                    </property>
+                    <property name="text">
+                        <string>None</string>
+                    </property>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>spacer2</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Horizontal</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>241</width>
+                            <height>21</height>
+                        </size>
+                    </property>
+                </spacer>
+            </hbox>
+        </widget>
+        <spacer>
+            <property name="name">
+                <cstring>spacer3</cstring>
+            </property>
+            <property name="orientation">
+                <enum>Vertical</enum>
+            </property>
+            <property name="sizeType">
+                <enum>Expanding</enum>
+            </property>
+            <property name="sizeHint">
+                <size>
+                    <width>31</width>
+                    <height>90</height>
+                </size>
+            </property>
+        </spacer>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1_2</cstring>
+            </property>
+            <property name="text">
+                <string>&lt;b&gt;Note:&lt;/b&gt; To get voice recognition working correctly and in full duplex mode: 
+make sure &lt;i&gt;Full duplex&lt;/i&gt; is checked in your &lt;i&gt;Sound System&lt;/i&gt; options.</string>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<customwidgets>
+</customwidgets>
+<layoutdefaults spacing="6" margin="11"/>
+<includehints>
+    <includehint>kkeybutton.h</includehint>
+</includehints>
+</UI>

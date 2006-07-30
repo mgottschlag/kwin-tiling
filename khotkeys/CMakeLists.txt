@@ -12,7 +12,12 @@ set(libshared_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/conditions.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/khlistview.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/khlistbox.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/gestures.cpp )
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/gestures.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/soundrecorder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/voicesignature.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/sound.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/voices.cpp
+)
 
 
 add_subdirectory( shared ) 

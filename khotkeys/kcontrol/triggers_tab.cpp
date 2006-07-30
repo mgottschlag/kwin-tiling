@@ -39,6 +39,7 @@
 #include "windowdef_list_widget.h"
 #include "window_trigger_widget.h"
 #include "gesturerecordpage.h"
+#include "voicerecordpage.h"
 
 namespace KHotKeys
 {
@@ -48,6 +49,7 @@ namespace KHotKeys
 Triggers_tab::Triggers_tab( QWidget* parent_P, const char* name_P )
     : Triggers_tab_ui( parent_P, name_P ), selected_item( NULL )
     {
+
     QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
     QAction *action = popup->addAction( i18n( "Shortcut Trigger..." ) );
     action->setData( TYPE_SHORTCUT_TRIGGER );
@@ -57,6 +59,15 @@ Triggers_tab::Triggers_tab( QWidget* parent_P, const char* name_P )
 
     action = popup->addAction( i18n( "Window Trigger..." ) );
     action->setData( TYPE_WINDOW_TRIGGER );
+	
+#ifdef HAVE_ARTS
+    if( haveArts())
+    {
+        action = popup->addAction( i18n( "Voice Trigger..." ) );
+        action->setData( TYPE_VOICE_TRIGGER );
+    }
+#endif
+
 
     connect( popup, SIGNAL( triggered( QAction* )), SLOT( new_selected( QAction* )));
     connect( triggers_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
@@ -140,6 +151,9 @@ void Triggers_tab::new_selected( QAction *action )
             dlg = new Window_trigger_dialog( new Window_trigger( NULL, new Windowdef_list( "" ),
                 0 )); // CHECKME NULL ?
           break;
+        case TYPE_VOICE_TRIGGER: // Voice trigger
+			dlg = new Voice_trigger_dialog( new Voice_trigger(NULL,QString::null,VoiceSignature(),VoiceSignature())); // CHECKME NULL ?
+			break;
         }
     if( dlg != NULL )
         {
@@ -197,6 +211,8 @@ void Triggers_tab::edit_listview_item( Trigger_list_item* item_P )
         dlg = new Gesture_trigger_dialog( trg );
     else if( Window_trigger* trg = dynamic_cast< Window_trigger* >( item_P->trigger()))
         dlg = new Window_trigger_dialog( trg );
+    else if( Voice_trigger* trg = dynamic_cast< Voice_trigger* >( item_P->trigger()))
+        dlg = new Voice_trigger_dialog( trg );
 // CHECKME TODO dalsi
     else
         assert( false );
@@ -338,6 +354,34 @@ Trigger* Gesture_trigger_dialog::edit_trigger()
         return NULL;
     }
 
+
+// Voice_trigger_dialog
+
+Voice_trigger_dialog::Voice_trigger_dialog( Voice_trigger* trigger_P )
+: KDialog( ),
+_trigger( trigger_P ), _page( NULL )
+{
+    setButtons( Ok | Cancel ); 
+    // CHECKME caption
+	_page = new VoiceRecordPage( _trigger ? _trigger->voicecode() : QString::null ,  this, "VoiceRecordPage");
+
+	connect(_page, SIGNAL(voiceRecorded(bool)), this, SLOT(enableButtonOK(bool)));
+
+	setMainWidget( _page );
+}
+
+Trigger* Voice_trigger_dialog::edit_trigger()
+{
+	if( exec())
+		return new Voice_trigger(NULL, _page->getVoiceId(),
+								 (_page->isModifiedSignature(1) || !_trigger) ?  _page->getVoiceSignature(1) : _trigger->voicesignature(1) ,
+								 (_page->isModifiedSignature(2) || !_trigger) ?  _page->getVoiceSignature(2) : _trigger->voicesignature(2) ); 
+	else
+		return NULL;
+}
+
+
+	
 
 } // namespace KHotKeys
 

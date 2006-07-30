@@ -14,8 +14,10 @@
 #include <q3ptrlist.h>
 #include <QTimer>
 #include <QMap>
+#include <kdemacros.h>
 
 #include "khotkeysglobal.h"
+#include "voicesignature.h"
 
 #include "input.h"
 
@@ -27,7 +29,7 @@ namespace KHotKeys
 class Windowdef_list;
 class Action_data;
 
-class Trigger
+class KDE_EXPORT Trigger
     {
     public:
         Trigger( Action_data* data_P );
@@ -43,7 +45,7 @@ class Trigger
     KHOTKEYS_DISABLE_COPY( Trigger );
     };
 
-class Trigger_list
+class KDE_EXPORT Trigger_list
     : public Q3PtrList< Trigger >
     {
     public:
@@ -59,7 +61,7 @@ class Trigger_list
     KHOTKEYS_DISABLE_COPY( Trigger_list );
     };
     
-class Shortcut_trigger
+class KDE_EXPORT Shortcut_trigger
     : public Trigger, public Kbd_receiver
     {
     typedef Trigger base;
@@ -77,7 +79,7 @@ class Shortcut_trigger
         KShortcut _shortcut;
     };
 
-class Window_trigger
+class KDE_EXPORT Window_trigger
     : public QObject, public Trigger        
     {
     Q_OBJECT
@@ -119,7 +121,7 @@ class Window_trigger
         bool active;
     };
 
-class Gesture_trigger
+class KDE_EXPORT Gesture_trigger
     : public QObject, public Trigger
     {
     Q_OBJECT
@@ -138,6 +140,30 @@ class Gesture_trigger
     private:
         QString _gesturecode;
     };
+
+
+class KDE_EXPORT Voice_trigger
+    : public QObject, public Trigger
+    {
+    Q_OBJECT
+    typedef Trigger base;
+    public:
+		Voice_trigger( Action_data* data_P, const QString& Voice_P, const VoiceSignature & signature1_P, const VoiceSignature & signature2_P );
+        Voice_trigger( KConfig& cfg_P, Action_data* data_P );
+        virtual ~Voice_trigger();
+        virtual void cfg_write( KConfig& cfg_P ) const;
+        virtual Trigger* copy( Action_data* data_P ) const;
+        virtual const QString description() const;
+        const QString& voicecode() const;
+        virtual void activate( bool activate_P );
+		VoiceSignature voicesignature( int ech ) const;
+    public slots:
+        void handle_Voice(  );
+    private:
+        QString _voicecode;
+		VoiceSignature _voicesignature[2];
+    };
+
 
 //***************************************************************************
 // Inline
@@ -215,6 +241,19 @@ const QString& Gesture_trigger::gesturecode() const
     {
     return _gesturecode;
     }
+
+// Voice_trigger
+inline
+const QString& Voice_trigger::voicecode() const
+	{
+		return _voicecode;
+	}
+
+inline
+VoiceSignature Voice_trigger::voicesignature(int ech) const
+	{
+		return _voicesignature[ech-1];
+	}
 
 } // namespace KHotKeys
     

@@ -31,7 +31,7 @@ class Action_data_base;
 class Action_data;
 class Condition_list_base;
 
-class Condition
+class KDE_EXPORT Condition
     {
     public:
         Condition( Condition_list_base* parent_P );
@@ -50,7 +50,7 @@ class Condition
     KHOTKEYS_DISABLE_COPY( Condition );
     };
         
-class Condition_list_base
+class KDE_EXPORT Condition_list_base
     : public Condition, public Q3PtrList< Condition > // inheritance ?
     {
     typedef Condition base;
@@ -65,7 +65,7 @@ class Condition_list_base
         typedef Q3PtrListIterator< Condition > Iterator;
     };
 
-class Condition_list
+class KDE_EXPORT Condition_list
     : public Condition_list_base
     {
     typedef Condition_list_base base;
@@ -85,7 +85,7 @@ class Condition_list
         Action_data_base* data;
     };
 
-class Active_window_condition
+class KDE_EXPORT Active_window_condition
     : public QObject, public Condition
     {
     Q_OBJECT
@@ -112,7 +112,7 @@ class Active_window_condition
         bool is_match;
     };
             
-class Existing_window_condition
+class KDE_EXPORT Existing_window_condition
     : public QObject, public Condition
     {
     Q_OBJECT
@@ -140,7 +140,7 @@ class Existing_window_condition
         bool is_match;
     };
 
-class Not_condition
+class KDE_EXPORT Not_condition
     : public Condition_list_base
     {
     typedef Condition_list_base base;
@@ -155,7 +155,7 @@ class Not_condition
         virtual bool accepts_children() const;
     };
             
-class And_condition
+class KDE_EXPORT And_condition
     : public Condition_list_base
     {
     typedef Condition_list_base base;
@@ -168,7 +168,7 @@ class And_condition
         virtual const QString description() const;
     };
             
-class Or_condition
+class KDE_EXPORT Or_condition
     : public Condition_list_base
     {
     typedef Condition_list_base base;

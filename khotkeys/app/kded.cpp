@@ -31,6 +31,7 @@
 #include <input.h>
 #include <action_data.h>
 #include <gestures.h>
+#include <voices.h>
 
 extern "C" 
 KDE_EXPORT KDEDModule *create_khotkeys( )
@@ -87,6 +88,7 @@ void KHotKeysModule::reread_configuration()
     gesture_handler->set_timeout( settings.gesture_timeout );
     gesture_handler->enable( !settings.gestures_disabled_globally );
     gesture_handler->set_exclude( settings.gestures_exclude );
+    voice_handler->set_shortcut( settings.voice_shortcut );
 #if 0 // TEST CHECKME
     settings.write_settings();
 #endif

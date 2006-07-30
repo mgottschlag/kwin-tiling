@@ -39,6 +39,7 @@
 #include "gesture_triggers_tab.h"
 #include "gestures_settings_tab.h"
 #include "general_settings_tab.h"
+#include "voice_settings_tab.h"
 
 // CHECKME
 //nejak lip ty typeid
@@ -73,11 +74,17 @@ Tab_widget::Tab_widget( QWidget* parent_P, const char* name_P )
     pages[ TAB_DCOP ] = new Dcop_tab;
     pages[ TAB_KEYBOARD_INPUT ] = new Keyboard_input_tab;
     pages[ TAB_WINDOW ] = new Windowdef_list_tab;
+	pages[ TAB_VOICE_SETTINGS ] = new Voice_settings_tab;
     for( tab_pos_t i = TAB_FIRST;
          i < TAB_END;
          ++i )
         connect( this, SIGNAL( clear_pages_signal()), pages[ i ], SLOT( clear_data()));
-    show_pages(( TAB_INFO, TAB_GENERAL_SETTINGS, TAB_GESTURES_SETTINGS ));
+#ifdef HAVE_ARTS
+    if( haveArts())
+        show_pages(( TAB_INFO, TAB_GENERAL_SETTINGS, TAB_GESTURES_SETTINGS, TAB_VOICE_SETTINGS ));
+    else
+#endif
+        show_pages(( TAB_INFO, TAB_GENERAL_SETTINGS, TAB_GESTURES_SETTINGS ));
     current_type = NONE;
     current_data_type = TYPE_GENERIC;
     }
@@ -99,6 +106,7 @@ void Tab_widget::save_current_action_changes()
         {
         static_cast< Gestures_settings_tab* >( pages[ TAB_GESTURES_SETTINGS ] )->write_data(); // saves
         static_cast< General_settings_tab* >( pages[ TAB_GENERAL_SETTINGS ] )->write_data(); // saves
+        static_cast< Voice_settings_tab* >( pages[ TAB_VOICE_SETTINGS ] )->write_data(); // saves
         }
     else if( current_type == GROUP )
         {
@@ -228,6 +236,7 @@ void Tab_widget::load_current_action()
     if( current_type == NONE ) // info, global settings
         {
         static_cast< Gestures_settings_tab* >( pages[ TAB_GESTURES_SETTINGS ] )->read_data(); // loads
+        static_cast< Voice_settings_tab* >( pages[ TAB_VOICE_SETTINGS ] )->read_data(); // loads
         static_cast< General_settings_tab* >( pages[ TAB_GENERAL_SETTINGS ] )->read_data(); // loads
         }
     else if( current_type == GROUP )
@@ -336,7 +345,12 @@ void Tab_widget::check_action_type()
         kDebug( 1217 ) << "setting none" << endl;
         if( current_type == NONE )
             return;
-        show_pages(( TAB_INFO, TAB_GENERAL_SETTINGS, TAB_GESTURES_SETTINGS ));
+#ifdef HAVE_ARTS
+        if( haveArts())
+            show_pages(( TAB_INFO, TAB_GENERAL_SETTINGS, TAB_GESTURES_SETTINGS, TAB_VOICE_SETTINGS ));
+        else
+#endif
+            show_pages(( TAB_INFO, TAB_GENERAL_SETTINGS, TAB_GESTURES_SETTINGS ));
         current_type = NONE;
         return;
         }
@@ -416,7 +430,8 @@ const char* const Tab_widget::tab_labels[ Tab_widget::TAB_END ] = {
     I18N_NOOP( "DCOP Call Settings" ), // TAB_DCOP
     I18N_NOOP( "Keyboard Input Settings" ), // TAB_KEYBOARD_INPUT
     I18N_NOOP( "Window" ), // TAB_WINDOW
-    I18N_NOOP( "Conditions" ) // TAB_CONDITIONS
+    I18N_NOOP( "Conditions" ),  // TAB_CONDITIONS
+    I18N_NOOP( "Voices Settings" ) // TAB_VOICE_SETTINGS
     };
 
 void Tab_widget::show_pages( const Pages_set& pages_P )

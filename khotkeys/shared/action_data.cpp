@@ -283,40 +283,6 @@ void Generic_action_data::cfg_write( KConfig& cfg_P ) const
     cfg_P.writeEntry( "Type", "GENERIC_ACTION_DATA" );
     }
 
-// Simple_action_data
-
-template< typename T, typename A >
-void Simple_action_data< T, A >::set_action( A* action_P )
-    {
-    Action_list* tmp = new Action_list( "Simple_action_data" );
-    tmp->append( action_P );
-    set_actions( tmp );
-    }
-
-template< typename T, typename A >
-void Simple_action_data< T, A >::set_trigger( T* trigger_P )
-    {
-    Trigger_list* tmp = new Trigger_list( "Simple_action" );
-    tmp->append( trigger_P );
-    set_triggers( tmp );
-    }
-
-template< typename T, typename A >
-const A* Simple_action_data< T, A >::action() const
-    {
-    if( actions() == NULL || actions()->count() == 0 ) // CHECKME tohle poradne zkontrolovat
-        return NULL;
-    return static_cast< A* >( const_cast< Action_list* >( actions())->first());
-    }
-
-template< typename T, typename A >
-const T* Simple_action_data< T, A >::trigger() const
-    {
-    if( triggers() == NULL || triggers()->count() == 0 ) // CHECKME tohle poradne zkontrolovat
-        return NULL;
-    return static_cast< T* >( const_cast< Trigger_list* >( triggers())->first());
-    }
-    
 // Command_url_shortcut_action_data
 
 Command_url_shortcut_action_data::Command_url_shortcut_action_data( Action_data_group* parent_P,
@@ -329,15 +295,13 @@ Command_url_shortcut_action_data::Command_url_shortcut_action_data( Action_data_
     set_trigger( new Shortcut_trigger( this, shortcut_P ));
     }
 
-template<>
+template<> KDE_EXPORT
 void Simple_action_data< Shortcut_trigger, Command_url_action >
     ::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "COMMAND_URL_SHORTCUT_ACTION_DATA" );
     }
-
-template class Simple_action_data< Shortcut_trigger, Command_url_action >;
 
 // Menuentry_shortcut_action_data
 
@@ -351,7 +315,7 @@ Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( Action_data_grou
     set_trigger( new Shortcut_trigger( this, shortcut_P ));
     }
     
-template<>
+template<> KDE_EXPORT
 void Simple_action_data< Shortcut_trigger, Menuentry_action >
     ::cfg_write( KConfig& cfg_P ) const
     {
@@ -359,32 +323,29 @@ void Simple_action_data< Shortcut_trigger, Menuentry_action >
     cfg_P.writeEntry( "Type", "MENUENTRY_SHORTCUT_ACTION_DATA" );
     }
 
-template class Simple_action_data< Shortcut_trigger, Menuentry_action >;
-
 // Dcop_shortcut_action_data
 
-template<>
+template<> KDE_EXPORT
 void Simple_action_data< Shortcut_trigger, Dcop_action >
     ::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "DCOP_SHORTCUT_ACTION_DATA" );
     }
-template class Simple_action_data< Shortcut_trigger, Dcop_action >;
+
 // Keyboard_input_shortcut_action_data
 
-template<>
+template<> KDE_EXPORT
 void Simple_action_data< Shortcut_trigger, Keyboard_input_action >
     ::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA" );
     }
-template class Simple_action_data< Shortcut_trigger, Keyboard_input_action >;
 
 // Activate_window_shortcut_action_data
 
-template<>
+template<> KDE_EXPORT
 void Simple_action_data< Shortcut_trigger, Activate_window_action >
     ::cfg_write( KConfig& cfg_P ) const
     {
@@ -392,7 +353,6 @@ void Simple_action_data< Shortcut_trigger, Activate_window_action >
     cfg_P.writeEntry( "Type", "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA" );
     }
     
-template class Simple_action_data< Shortcut_trigger, Activate_window_action >;
 // Keyboard_input_gesture_action_data
 
 void Keyboard_input_gesture_action_data::set_action( Keyboard_input_action* action_P )

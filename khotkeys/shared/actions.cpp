@@ -162,9 +162,9 @@ void Command_url_action::execute()
 		return;
             if( !KRun::runCommand(
                 cmd + ( uri.hasArgsAndOptions() ? uri.argsAndOptions() : "" ),
-                cmd, uri.iconName()))
+                cmd, uri.iconName())) {
                 // CHECKME ?
-                ;
+             }
           break;
             }
         default: // error

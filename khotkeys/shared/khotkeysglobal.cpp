@@ -19,11 +19,14 @@
 #include <assert.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
+#include <klibloader.h>
 
 #include "input.h"
 #include "windows.h"
 #include "triggers.h"
 #include "gestures.h"
+#include "voices.h"
+#include "soundrecorder.h"
 
 namespace KHotKeys
 {
@@ -40,6 +43,7 @@ void init_global_data( bool active_P, QObject* owner_P )
     static_cast< void >( new Kbd( active_P, owner_P ));
     static_cast< void >( new Windows( active_P, owner_P ));
     static_cast< void >( new Gesture( active_P, owner_P ));
+    static_cast< void >( new Voice( active_P, owner_P ));
     khotkeys_set_active( false );
     }
     
@@ -70,6 +74,27 @@ QString get_menu_entry_from_path( const QString& path_P )
             return ret;
             }
     return path_P;
+    }
+
+static int have_arts = -1;
+
+bool haveArts()
+    {
+    if( have_arts == -1 )
+        {
+        have_arts = 0;
+        KLibrary* arts = KLibLoader::self()->library( "khotkeys_arts" );
+        if( arts == NULL )
+            kDebug( 1217 ) << "Couldn't load khotkeys_arts:" << KLibLoader::self()->lastErrorMessage() << endl;
+        if( arts != NULL && SoundRecorder::init( arts ))
+            have_arts = 1;
+        }
+    return have_arts != 0;
+    }
+
+void disableArts()
+    {
+    have_arts = 0;
     }
 
 } // namespace KHotKeys

@@ -72,3 +72,28 @@ if test "$kde_cv_working_using" = "yes"; then
 else
     AC_MSG_RESULT(no)
 fi
+
+
+dnl ---------------------------------------------------------------------------
+dnl check for arts for speech recognition
+dnl ---------------------------------------------------------------------------
+
+
+artsc_config_test_path=$prefix/bin:$exec_prefix/bin:$KDEDIR/bin:$PATH
+AC_PATH_PROG(ARTSCCONFIG, artsc-config, no, $artsc_config_test_path)
+
+if test "x$build_arts" = "xyes" && test "x$ARTSCCONFIG" != "xno" ; then
+	LIB_ARTS="-lartskde"
+	ARTS_PREFIX=[`$ARTSCCONFIG --arts-prefix`]
+	ARTS_CFLAGS="-I$ARTS_PREFIX/include/arts"
+	AC_DEFINE(HAVE_ARTS, 1, [Defined for arts support in khotkeys])
+        KHOTKEYS_ARTS_SUBDIR=arts
+else
+	LIB_ARTS=""
+	ARTS_CFLAGS=""
+        KHOTKEYS_ARTS_SUBDIR=
+fi
+
+AC_SUBST(LIB_ARTS)
+AC_SUBST(ARTS_CFLAGS)
+AC_SUBST(KHOTKEYS_ARTS_SUBDIR)

@@ -30,7 +30,10 @@ set(kcm_khotkeys_PART_SRCS ${libshared_SRCS}
    gesture_triggers_tab.cpp 
    windowselector.cpp 
    gestures_settings_tab.cpp 
-   general_settings_tab.cpp )
+   general_settings_tab.cpp
+    voice_settings_tab.cpp
+    voicerecorder.cpp
+    voicerecordpage.cpp)
 
 
 kde4_add_ui3_files(kcm_khotkeys_PART_SRCS
@@ -51,7 +54,9 @@ kde4_add_ui3_files(kcm_khotkeys_PART_SRCS
 	ui/condition_list_widget_ui.ui 
 	ui/gesture_triggers_tab_ui.ui 
 	ui/gestures_settings_tab_ui.ui 
-	ui/general_settings_tab_ui.ui )
+	ui/general_settings_tab_ui.ui
+    ui/voice_settings_tab_ui.ui
+    ui/voice_input_widget_ui.ui)
 
 # run moc on actions_listview.h and add the resulting stuff to the kcm_khotkeys_PART_SRCS list
 qt4_wrap_cpp(kcm_khotkeys_PART_SRCS actions_listview.h)

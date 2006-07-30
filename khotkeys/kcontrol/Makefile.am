@@ -1,6 +1,6 @@
 SUBDIRS = ui
 
-kde_module_LTLIBRARIES = kcm_khotkeys.la
+kde_module_LTLIBRARIES = kcm_khotkeys.la kcm_khotkeys_init.la
 
 kcm_khotkeys_la_SOURCES = \
     menuedit.cpp window_trigger_widget.cpp tab_widget.cpp main_buttons_widget.cpp \
@@ -9,10 +9,16 @@ kcm_khotkeys_la_SOURCES = \
     windowdef_simple_widget.cpp triggers_tab.cpp dcop_widget.cpp info_tab.cpp \
     action_list_widget.cpp keyboard_input_widget.cpp condition_list_widget.cpp \
     gesturedrawer.cpp gesturerecorder.cpp gesturerecordpage.cpp gesture_triggers_tab.cpp \
-    windowselector.cpp gestures_settings_tab.cpp general_settings_tab.cpp
+    windowselector.cpp gestures_settings_tab.cpp general_settings_tab.cpp \
+    voicerecorder.cpp voicerecordpage.cpp voice_settings_tab.cpp
     
-kcm_khotkeys_la_LIBADD  = ui/libui.la $(LIB_KDEUI)
+kcm_khotkeys_la_LIBADD  = ui/libui.la $(LIB_KDEUI) $(LIB_ARTS) 
 kcm_khotkeys_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
+
+kcm_khotkeys_init_la_SOURCES = init.cpp
+    
+kcm_khotkeys_init_la_LIBADD  = $(LIB_KDECORE)
+kcm_khotkeys_init_la_LDFLAGS = $(all_libraries) -module -avoid-version -no-undefined
 
 noinst_HEADERS = menuedit.h window_trigger_widget.h \
     tab_widget.h main_buttons_widget.h actions_listview.h actions_listview_widget.h menuentry_widget.h \
@@ -21,7 +27,8 @@ noinst_HEADERS = menuedit.h window_trigger_widget.h \
     action_list_widget.h keyboard_input_widget.h condition_list_widget.h \
     activate_window_widget.h \
     gesturedrawer.h gesturerecorder.h gesturerecordpage.h gesture_triggers_tab.h \
-    windowselector.h gestures_settings_tab.h general_settings_tab.h
+    windowselector.h gestures_settings_tab.h general_settings_tab.h \
+    voicerecorder.h voicerecordpage.h voice_settings_tab.h
 
 
 INCLUDES= -I$(top_srcdir)/khotkeys/shared -I$(srcdir)/ui -I./ui $(all_includes)

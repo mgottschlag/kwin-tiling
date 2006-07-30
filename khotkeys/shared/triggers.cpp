@@ -31,8 +31,8 @@
 #include "input.h"
 #include "gestures.h"
 #include "windows.h"
-//Added by qt3to4:
 #include <Q3PtrList>
+#include "voices.h"
 
 namespace KHotKeys
 {
@@ -53,6 +53,9 @@ Trigger* Trigger::create_cfg_read( KConfig& cfg_P, Action_data* data_P )
         return new Window_trigger( cfg_P, data_P );
     if( type == "GESTURE" )
         return new Gesture_trigger(cfg_P, data_P );
+    if( type == "VOICE" )
+        return new Voice_trigger (cfg_P, data_P );
+
     kWarning( 1217 ) << "Unknown Trigger type read from cfg file\n";
     return NULL;
     }
@@ -367,6 +370,65 @@ void Gesture_trigger::activate( bool activate_P )
     else
         gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString&, WId )));
     }
+
+
+// Voice_trigger
+
+	Voice_trigger::Voice_trigger( Action_data* data_P, const QString &Voicecode_P, const VoiceSignature& signature1_P, const VoiceSignature& signature2_P )
+	: Trigger( data_P ), _voicecode( Voicecode_P )
+    {
+		_voicesignature[0]=signature1_P;
+		_voicesignature[1]=signature2_P;
+    }
+
+Voice_trigger::Voice_trigger( KConfig& cfg_P, Action_data* data_P )
+	: Trigger( cfg_P, data_P )
+    {
+    _voicecode = cfg_P.readEntry( "Name" );
+	_voicesignature[0].read( &cfg_P , "Signature1" );
+	_voicesignature[1].read( &cfg_P , "Signature2" );
+    }
+
+Voice_trigger::~Voice_trigger()
+    {
+    voice_handler->unregister_handler( this );
+    }
+
+void Voice_trigger::cfg_write( KConfig& cfg_P ) const
+    {
+    base::cfg_write( cfg_P );
+    cfg_P.writeEntry( "Name", voicecode());
+    cfg_P.writeEntry( "Type", "VOICE" ); // overwrites value set in base::cfg_write()
+	_voicesignature[0].write( &cfg_P , "Signature1" );
+	_voicesignature[1].write( &cfg_P , "Signature2" );
+	}
+
+Trigger* Voice_trigger::copy( Action_data* data_P ) const
+    {
+    kDebug( 1217 ) << "Voice_trigger::copy()" << endl;
+	return new Voice_trigger( data_P ? data_P : data, voicecode(), voicesignature(1) , voicesignature(2) );
+    }
+
+const QString Voice_trigger::description() const
+    {
+    return i18n( "Voice trigger: " ) + voicecode();
+    }
+
+void Voice_trigger::handle_Voice(  )
+    {
+        windows_handler->set_action_window( 0 ); // use active window
+        data->execute();
+
+    }
+
+void Voice_trigger::activate( bool activate_P )
+    {
+    if( activate_P && khotkeys_active())
+		voice_handler->register_handler( this );
+    else
+        voice_handler->unregister_handler( this );
+    }
+
 
 } // namespace KHotKeys
 

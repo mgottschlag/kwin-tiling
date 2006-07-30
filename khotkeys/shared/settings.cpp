@@ -112,6 +112,8 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
     cfg_P.setGroup( "GesturesExclude" );
     delete gestures_exclude;
     gestures_exclude = new Windowdef_list( cfg_P );
+	cfg_P.setGroup( "Voice" );
+	voice_shortcut=KShortcut( cfg_P.readEntry("Shortcut" , "Shift+F12")  );
     return true;
     }
 
@@ -143,7 +145,11 @@ void Settings::write_settings()
         }
     else
         cfg.deleteGroup( "GesturesExclude" );
+	cfg.setGroup( "Voice" );
+	cfg.writeEntry("Shortcut" , voice_shortcut.toStringInternal() );
+
     }
+
 
 // return value means the number of enabled actions written in the cfg file
 // i.e. 'Autostart' for value > 0 should be on

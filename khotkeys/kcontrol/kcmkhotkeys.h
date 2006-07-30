@@ -12,9 +12,11 @@
 #define _KCMKHOTKEYS_H_
 
 #include <kcmodule.h>
+#include <kshortcut.h>
 
 #include <actions.h>
 #include <settings.h>
+
 
 class QStringList;
 
@@ -53,10 +55,14 @@ class Module
         void set_daemon_disabled( bool disable );
         bool daemon_disabled() const;
         void import();
+
     public Q_SLOTS:
+		KShortcut voice_shortcut() const;
+		void set_voice_shortcut( const KShortcut&) ;
         void changed();
     protected:
         void set_new_current_action( bool save_old_P );
+        void init_arts();
         Actions_listview_widget* actions_listview_widget;
         Tab_widget* tab_widget;
         Main_buttons_widget* buttons_widget;
@@ -146,6 +152,20 @@ bool Module::daemon_disabled() const
     {
     return settings.daemon_disabled;
     }
+
+
+inline
+void Module::set_voice_shortcut( const KShortcut& cut)
+   {
+    settings.voice_shortcut=cut;
+   }
+
+inline 
+KShortcut Module::voice_shortcut() const
+   {
+	return settings.voice_shortcut;
+   }
+
 
 } // namespace KHotKeys
 

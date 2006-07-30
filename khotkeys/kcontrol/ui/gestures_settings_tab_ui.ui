@@ -161,7 +161,5 @@
 <layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
 <includehints>
     <includehint>knuminput.h</includehint>
-    <includehint>knuminput.h</includehint>
-    <includehint>windowdef_list_widget.h</includehint>
 </includehints>
 </UI>

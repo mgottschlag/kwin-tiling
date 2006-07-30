@@ -48,7 +48,7 @@ class Triggers_tab
             Q3ListViewItem* after_P, bool copy_P );
         void edit_listview_item( Trigger_list_item* item_P );
         Trigger_list_item* selected_item;
-        enum type_t { TYPE_SHORTCUT_TRIGGER, TYPE_GESTURE_TRIGGER, TYPE_WINDOW_TRIGGER };
+        enum type_t { TYPE_SHORTCUT_TRIGGER, TYPE_GESTURE_TRIGGER, TYPE_WINDOW_TRIGGER, TYPE_VOICE_TRIGGER };
     protected Q_SLOTS:
         void new_selected( QAction* );
         virtual void copy_pressed();
@@ -137,7 +137,24 @@ class Gesture_trigger_dialog
         Gesture_trigger* _trigger;
         GestureRecordPage *_page;
     };        
-            
+
+
+class VoiceRecordPage;
+
+class Voice_trigger_dialog
+	: public KDialog, public Trigger_dialog
+{
+	Q_OBJECT
+	public:
+		Voice_trigger_dialog( Voice_trigger* trigger_P );
+		virtual Trigger* edit_trigger();
+	private:
+        // CHECKME accept() ?
+		Voice_trigger* _trigger;
+		VoiceRecordPage *_page;
+};
+
+	
             
 //***************************************************************************
 // Inline

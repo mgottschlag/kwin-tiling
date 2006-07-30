@@ -30,7 +30,7 @@ class Windowdef_list;
 
 // this one is a base for all "real" resulting actions, e.g. running a command,
 // Action_data instances usually contain at least one Action
-class Action
+class KDE_EXPORT Action
     {
     public:
         Action( Action_data* data_P );
@@ -46,7 +46,7 @@ class Action
     KHOTKEYS_DISABLE_COPY( Action );
     };
 
-class Action_list
+class KDE_EXPORT Action_list
     : public Q3PtrList< Action >
     {
     public:
@@ -60,7 +60,7 @@ class Action_list
     KHOTKEYS_DISABLE_COPY( Action_list );
     };
 
-class Command_url_action
+class KDE_EXPORT Command_url_action
     : public Action
     {
     typedef Action base;
@@ -78,7 +78,7 @@ class Command_url_action
         QString _command_url;
     };
     
-class Menuentry_action
+class KDE_EXPORT Menuentry_action
     : public Command_url_action
     {
     typedef Command_url_action base;
@@ -94,7 +94,7 @@ class Menuentry_action
         KService::Ptr _service;
     };
     
-class Dcop_action
+class KDE_EXPORT Dcop_action
     : public Action
     {
     typedef Action base;
@@ -117,7 +117,7 @@ class Dcop_action
         QString args;
     };
         
-class Keyboard_input_action
+class KDE_EXPORT Keyboard_input_action
     : public Action
     {
     typedef Action base;
@@ -142,7 +142,7 @@ class Keyboard_input_action
         bool _active_window;
     };
 
-class Activate_window_action
+class KDE_EXPORT Activate_window_action
     : public Action
     {
     typedef Action base;

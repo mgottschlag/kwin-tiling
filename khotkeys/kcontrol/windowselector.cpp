@@ -17,11 +17,14 @@
 #include "windowselector.h"
 
 #include <QCursor>
+#include "voices.h"
+
 #include <kdebug.h>
 #include <kapplication.h>
 #include <X11/Xlib.h>
 #include <QDesktopWidget>
 #include <QX11Info>
+#include <fixx11h.h>
 
 namespace KHotKeys
 {

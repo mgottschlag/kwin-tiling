@@ -12,6 +12,7 @@
 #define _SETTINGS_H_
 
 #include "actions.h"
+#include <kshortcut.h>
 
 class KConfig;
 
@@ -25,7 +26,7 @@ enum ImportType
     ImportSilent // if already imported before, ignore (called from the update script)
     };
 
-class Settings
+class KDE_EXPORT Settings
     {
     public:
         Settings();
@@ -38,6 +39,7 @@ class Settings
         int gesture_timeout;
         bool daemon_disabled;
         Windowdef_list* gestures_exclude;
+		KShortcut voice_shortcut;
     protected:
         bool read_settings( KConfig& cfg_P, bool include_disabled_P, ImportType import_P );
         void read_settings_v1( KConfig& cfg_P );

@@ -267,7 +267,7 @@ Condition_list_item* Condition_list_widget::create_listview_item( Condition* con
 #ifdef KHOTKEYS_DEBUG
     kDebug( 1217 ) << "Condition_list_widget::create_listview_item():" << endl;
     Condition::debug_list( conditions );
-    kDebug() << kBacktrace() << endl;
+    kDebug( 1217 ) << kBacktrace() << endl;
 #endif
     Condition* new_cond = copy_P ? condition_P->copy( parent2_P
         ? static_cast< Condition_list_base* >( parent2_P->condition()) : NULL ) : condition_P;

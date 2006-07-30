@@ -31,7 +31,7 @@ namespace KHotKeys
 
 class Action_data_group;
 
-class Action_data_base
+class KDE_EXPORT Action_data_base
     {
     public:
         Action_data_base( Action_data_group* parent_P, const QString& name_P,
@@ -61,7 +61,7 @@ class Action_data_base
     KHOTKEYS_DISABLE_COPY( Action_data_base );
     };
 
-class Action_data_group
+class KDE_EXPORT Action_data_group
     : public Action_data_base
     {
     public:
@@ -88,7 +88,7 @@ class Action_data_group
     };
         
 // this one represents a "whole" action, i.e. triggers, resulting actions, etc.
-class Action_data
+class KDE_EXPORT Action_data
     : public Action_data_base
     {
         typedef Action_data_base base;
@@ -121,7 +121,7 @@ class Action_data
 #endif
     };        
 
-class Generic_action_data
+class KDE_EXPORT Generic_action_data
     : public Action_data
     {
         typedef Action_data base;
@@ -141,7 +141,7 @@ class Generic_action_data
     };
 
 template< typename T, typename A >
-class Simple_action_data
+class KDE_EXPORT Simple_action_data
     : public Action_data
     {
         typedef Action_data base;
@@ -157,7 +157,7 @@ class Simple_action_data
         virtual void cfg_write( KConfig& cfg_P ) const;
     };
 
-class Command_url_shortcut_action_data
+class KDE_EXPORT Command_url_shortcut_action_data
     : public Simple_action_data< Shortcut_trigger, Command_url_action >
     {
         typedef Simple_action_data< Shortcut_trigger, Command_url_action > base;
@@ -170,7 +170,7 @@ class Command_url_shortcut_action_data
         Command_url_shortcut_action_data( KConfig& cfg_P, Action_data_group* parent_P );
     };
 
-class Menuentry_shortcut_action_data
+class KDE_EXPORT Menuentry_shortcut_action_data
     : public Simple_action_data< Shortcut_trigger, Menuentry_action >
     {
         typedef Simple_action_data< Shortcut_trigger, Menuentry_action > base;
@@ -189,7 +189,7 @@ typedef Simple_action_data< Shortcut_trigger, Keyboard_input_action >
 typedef Simple_action_data< Shortcut_trigger, Activate_window_action >
     Activate_window_shortcut_action_data;
 
-class Keyboard_input_gesture_action_data
+class KDE_EXPORT Keyboard_input_gesture_action_data
     : public Action_data
     {
         typedef Action_data base;
@@ -358,6 +358,38 @@ Simple_action_data< T, A >::Simple_action_data( KConfig& cfg_P, Action_data_grou
     { // CHECKME nothing ?
     } 
 
+template< typename T, typename A >
+void Simple_action_data< T, A >::set_action( A* action_P )
+    {
+    Action_list* tmp = new Action_list( "Simple_action_data" );
+    tmp->append( action_P );
+    set_actions( tmp );
+    }
+
+template< typename T, typename A >
+void Simple_action_data< T, A >::set_trigger( T* trigger_P )
+    {
+    Trigger_list* tmp = new Trigger_list( "Simple_action" );
+    tmp->append( trigger_P );
+    set_triggers( tmp );
+    }
+
+template< typename T, typename A >
+const A* Simple_action_data< T, A >::action() const
+    {
+    if( actions() == NULL || actions()->count() == 0 ) // CHECKME tohle poradne zkontrolovat
+        return NULL;
+    return static_cast< A* >( const_cast< Action_list* >( actions())->first());
+    }
+
+template< typename T, typename A >
+const T* Simple_action_data< T, A >::trigger() const
+    {
+    if( triggers() == NULL || triggers()->count() == 0 ) // CHECKME tohle poradne zkontrolovat
+        return NULL;
+    return static_cast< T* >( const_cast< Trigger_list* >( triggers())->first());
+    }
+    
 // Command_url_action_data
 
 inline

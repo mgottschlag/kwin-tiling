@@ -16,11 +16,12 @@
 #include <QDropEvent>
 
 #include <k3listview.h>
+#include <kdemacros.h>
 
 namespace KHotKeys
 {
 
-class KHListView
+class KDE_EXPORT KHListView
     : public K3ListView
     {
     Q_OBJECT
