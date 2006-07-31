@@ -73,7 +73,10 @@ kde4_add_plugin(kcm_keyboard ${kcm_keyboard_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_keyboard )
 
-target_link_libraries(kcm_keyboard  ${KDE4_KDECORE_LIBS} ${KDE4_KIO_LIBS} xkbfile ${XKB_SUPPORT_LIB})
+target_link_libraries(kcm_keyboard
+    ${KDE4_KDECORE_LIBS} ${KDE4_KIO_LIBS} xkbfile 
+    ${XKB_SUPPORT_LIB} ${X11_XTest_LIB}
+)
 
 install(TARGETS kcm_keyboard  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
