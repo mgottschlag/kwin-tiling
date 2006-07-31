@@ -1,6 +1,7 @@
 [Desktop Entry]
 Exec=khotkeys
 Name=KHotKeys
+Name[x-test]=xxKHotKeysxx
 Type=Service
 ServiceTypes=KDEDModule
 X-KDE-Library=khotkeys
