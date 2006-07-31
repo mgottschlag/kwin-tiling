@@ -41,7 +41,7 @@ private:
 };
 
 typedef KGenericFactory< KSplashThemeMgr, QWidget > KSplashThemeMgrFactory;
-K_EXPORT_COMPONENT_FACTORY( kcm_ksplashthemes, KSplashThemeMgrFactory("ksplashthemes") )
+K_EXPORT_COMPONENT_FACTORY( ksplashthemes, KSplashThemeMgrFactory("ksplashthemes") )
 
 // -----------------------------------------------------------------------------------------
 
