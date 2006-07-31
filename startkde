@@ -276,7 +276,7 @@ elif ! kill -0 $DBUS_SESSION_BUS_PID; then
     need_dbus=1
 fi
 if test $need_dbus -eq 1; then
-  eval `dbus-launch --auto-syntax`
+  eval `dbus-launch --auto-syntax --exit-with-session`
 fi
 # Workaround for missing export in dbus-launch's output
 export DBUS_SESSION_BUS_PID
