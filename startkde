@@ -147,6 +147,20 @@ Xft.dpi: 96
 EOF
 fi
 
+# Launch splash that doesn't need any KDE libraries here, before
+# KDE libraries are loaded into memory (which may take some time
+# with cold caches). Makes the splash appear sooner.
+# If kpersonalizer needs to be run splash will be started only later.
+if test "$kpersonalizerrc_general_firstlogin" != "true"; then
+    case "$ksplashrc_ksplash_theme" in 
+      Simple)
+         ksplashsimple 
+         ;;
+      *)
+         ;;
+    esac
+fi
+
 # Source scripts found in <localprefix>/env/*.sh and <prefixes>/env/*.sh
 # (where <localprefix> is $KDEHOME or ~/.kde, and <prefixes> is where KDE is installed)
 #
@@ -300,7 +314,9 @@ case "$ksplashrc_ksplash_theme" in
   None)
      ;; # nothing
   Simple)
-     ksplashsimple 
+     if test "$kpersonalizerrc_general_firstlogin" = "true"; then
+         ksplashsimple 
+     fi # otherwise started earlier
      ;;
   *)
      ksplash --nodbus
