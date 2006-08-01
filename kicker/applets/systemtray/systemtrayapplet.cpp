@@ -222,7 +222,7 @@ void SystemTrayApplet::preferences()
     TrayEmbedList::const_iterator itEnd = m_shownWins.end();
     for (; it != itEnd; ++it)
     {
-        QString name = KWin::windowInfo((*it)->containerWinId()).name();
+        QString name = KWin::windowInfo((*it)->containerWinId(), NET::WMName).name();
 	QList<QListWidgetItem *> itemlist = shownListWidget->findItems(name, Qt::MatchExactly | Qt::MatchCaseSensitive);
         if(itemlist.isEmpty() )
         {
@@ -234,7 +234,7 @@ void SystemTrayApplet::preferences()
     itEnd = m_hiddenWins.end();
     for (; it != itEnd; ++it)
     {
-        QString name = KWin::windowInfo((*it)->containerWinId()).name();
+        QString name = KWin::windowInfo((*it)->containerWinId(), NET::WMName).name();
 	QList<QListWidgetItem *> itemlist = hiddenListWidget->findItems(name, Qt::MatchExactly | Qt::MatchCaseSensitive);
         if(itemlist.isEmpty())
         {
@@ -503,7 +503,7 @@ bool SystemTrayApplet::isWinManaged(WId w)
 
 bool SystemTrayApplet::shouldHide(WId w)
 {
-    return m_hiddenIconList.contains(KWin::windowInfo(w).name());
+    return m_hiddenIconList.contains(KWin::windowInfo(w,NET::WMName).name());
 }
 
 void SystemTrayApplet::updateVisibleWins()

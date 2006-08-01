@@ -107,22 +107,17 @@ void KSysTrayCmd::hideWindow()
   if ( !win )
     return;
   //We memorize the position of the window
-  left = KWin::windowInfo(win).frameGeometry().left();
-  top=KWin::windowInfo(win).frameGeometry().top();
+  left = KWin::windowInfo(win, NET::WMFrameExtents).frameGeometry().left();
+  top=KWin::windowInfo(win, NET::WMFrameExtents).frameGeometry().top();
 
   XUnmapWindow( QX11Info::display(), win );
 }
 
 void KSysTrayCmd::setTargetWindow( WId w )
 {
-  setTargetWindow( KWin::windowInfo( w ) );
-}
-
-void KSysTrayCmd::setTargetWindow( const KWin::WindowInfo &info )
-{
   disconnect( kwinmodule, SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
   connect( kwinmodule, SIGNAL(windowChanged(WId)), SLOT(windowChanged(WId)) );
-  win = info.win();
+  win = w;
   KWin::setSystemTrayWindowFor( winId(), win );
   refresh();
   show();
@@ -164,7 +159,7 @@ void KSysTrayCmd::refresh()
       setWindowIcon( KWin::icon( win, iconWidth, iconWidth, true ) );
     }
 
-    this->setToolTip( KWin::windowInfo( win ).name() );
+    this->setToolTip( KWin::windowInfo( win, NET::WMName ).name() );
   }
   else {
     if ( !tooltip.isEmpty() )
@@ -284,7 +279,7 @@ void KSysTrayCmd::checkExistingWindows()
 
 void KSysTrayCmd::windowAdded(WId w)
 {
-  if ( !window.isEmpty() && ( QRegExp( window ).indexIn( KWin::windowInfo(w).name() ) == -1 ) )
+  if ( !window.isEmpty() && ( QRegExp( window ).indexIn( KWin::windowInfo(w,NET::WMName).name() ) == -1 ) )
     return; // no match
   setTargetWindow( w );
 }

@@ -626,7 +626,7 @@ void KDesktop::slotSetVRoot()
     if (!m_pIconView)
         return;
 
-    if (KWin::windowInfo(winId()).mappingState() == NET::Withdrawn) {
+    if (KWin::windowInfo(winId(), NET::XAWMState).mappingState() == NET::Withdrawn) {
         QTimer::singleShot(100, this, SLOT(slotSetVRoot()));
         return;
     }

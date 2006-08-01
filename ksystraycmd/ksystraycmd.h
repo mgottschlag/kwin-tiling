@@ -60,7 +60,6 @@ protected Q_SLOTS:
 protected:
   bool startClient();
   void checkExistingWindows();
-  void setTargetWindow( const KWin::WindowInfo &info );
 
   void mousePressEvent( QMouseEvent *e );
 
