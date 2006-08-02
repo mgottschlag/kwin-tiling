@@ -616,7 +616,9 @@ Task::Task(WId win, QObject *parent, const char *name)
     _active(false),
     _win(win),
     m_frameId(win),
-    _info(KWin::windowInfo(_win, 0, NET::WM2AllowedActions)),
+    _info(KWin::windowInfo(_win,
+        NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMVisibleName | NET::WMGeometry,
+        NET::WM2AllowedActions)),
     _lastWidth(0),
     _lastHeight(0),
     _lastResize(false),
@@ -734,7 +736,9 @@ void Task::refreshIcon()
 void Task::refresh(unsigned int dirty)
 {
     QString name = visibleName();
-    _info = KWin::windowInfo(_win, 0, NET::WM2AllowedActions);
+    _info = KWin::windowInfo(_win,
+        NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMVisibleName | NET::WMGeometry,
+        NET::WM2AllowedActions);
 
     if (dirty != NET::WMName || name != visibleName())
     {
