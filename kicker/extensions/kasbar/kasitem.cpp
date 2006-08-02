@@ -199,7 +199,7 @@ void KasItem::checkPopup()
     if ( !pop->isVisible() )
 	return;
 
-    QWidget *w = QApplication::widgetAt( QCursor::pos() );
+    QWidget *w = QApplication::topLevelAt( QCursor::pos() );
     if ( !w ) {
 	if ( popupTimer ) {
 	    delete popupTimer;
