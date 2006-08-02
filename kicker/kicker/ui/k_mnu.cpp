@@ -267,7 +267,7 @@ void PanelKMenu::initialize()
     }
 
     if (need_separator)
-        insertSeparator();
+        addSeparator();
 
     // run command
     if (KAuthorized::authorizeKAction("run_command"))
@@ -276,7 +276,7 @@ void PanelKMenu::initialize()
                    i18n("Run Command..."),
                    this,
                    SLOT( slotRunCommand()));
-        insertSeparator();
+        addSeparator();
     }
 
     if (DM().isSwitchable() && KAuthorized::authorizeKAction("switch_user"))
@@ -355,7 +355,7 @@ void PanelKMenu::slotPopulateSessions()
             sessionsMenu->setItemEnabled( 100, false );
             sessionsMenu->setItemEnabled( 101, false );
         }
-        sessionsMenu->insertSeparator();
+        sessionsMenu->addSeparator();
     }
     SessList sess;
     if (dm.localSessions( sess ))
@@ -594,7 +594,7 @@ void PanelKMenu::createRecentMenuItems()
                         serviceMenuEndId(), 0);
                     setItemEnabled( id, false );
                     */
-                    insertSeparator();
+                    addSeparator();
                 }
                 insertMenuItem(s, nId++, nIndex);
                 RecentlyLaunchedApps::self().m_nNumMenuItems++;
@@ -682,7 +682,7 @@ void PanelKMenu::updateRecent()
                 if (bNeedSeparator)
                 {
                     bNeedSeparator = false;
-                    insertSeparator();
+                    addSeparator();
                     /* FIXME: no more titles!
                     int id = insertTitle(
                         RecentlyLaunchedApps::self().caption(),
