@@ -31,9 +31,9 @@
 
 	new KAction( i18n("Clipboard"), actionCollection, "Program:klipper" );
 
-	DEF( I18N_NOOP("Show Klipper Popup-Menu"), Qt::META + Qt::CTRL + Qt::Key_V, slotPopupMenu() );
+	DEF( I18N_NOOP("Show Klipper Popup-Menu"), Qt::ALT+Qt::CTRL+Qt::Key_V, slotPopupMenu() );
 
-        DEF( I18N_NOOP("Manually Invoke Action on Current Clipboard"), Qt::META+Qt::CTRL+Qt::Key_R, slotRepeatAction() );
-	DEF( I18N_NOOP("Enable/Disable Clipboard Actions"), Qt::META+Qt::CTRL+Qt::Key_X, toggleURLGrabber() );
+        DEF( I18N_NOOP("Manually Invoke Action on Current Clipboard"), Qt::ALT+Qt::CTRL+Qt::Key_R, slotRepeatAction() );
+	DEF( I18N_NOOP("Enable/Disable Clipboard Actions"), Qt::ALT+Qt::CTRL+Qt::Key_X, toggleURLGrabber() );
 
 #undef DEF
