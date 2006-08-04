@@ -63,6 +63,7 @@
 #include <kio/netaccess.h>
 #include <kio/jobuidelegate.h>
 #include <kdirlister.h>
+#include <kicon.h>
 #include <kpushbutton.h>
 #include <kguiitem.h>
 #include <QSplitter>

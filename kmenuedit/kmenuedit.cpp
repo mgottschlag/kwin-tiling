@@ -26,6 +26,7 @@
 #include <kdebug.h>
 #include <kedittoolbar.h>
 #include <kglobal.h>
+#include <kicon.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kservice.h>

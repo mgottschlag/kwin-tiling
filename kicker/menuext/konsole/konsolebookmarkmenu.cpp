@@ -4,6 +4,7 @@
 #include <QTextStream>
 
 #include <kbookmarkimporter.h>
+#include <kicon.h>
 #include <kmimetype.h>
 #include <kmenu.h>
 #include <ksavefile.h>

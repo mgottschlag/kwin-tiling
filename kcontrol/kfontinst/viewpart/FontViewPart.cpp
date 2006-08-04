@@ -47,6 +47,7 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <kio/netaccess.h>
+#include <kicon.h>
 #include <kinstance.h>
 #include <kmessagebox.h>
 #include <knuminput.h>

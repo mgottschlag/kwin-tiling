@@ -42,6 +42,7 @@
 #include <kglobal.h>
 #include <kipc.h>
 #include <kkeydialog.h>
+#include <kicon.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <ksavefile.h>

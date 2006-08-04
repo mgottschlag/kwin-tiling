@@ -30,6 +30,7 @@
 #include <kdirlister.h>
 #include <kglobalsettings.h>
 #include <kpropertiesdialog.h>
+#include <kicon.h>
 #include <klocale.h>
 #include <konqbookmarkmanager.h>
 #include <konq_defaults.h>

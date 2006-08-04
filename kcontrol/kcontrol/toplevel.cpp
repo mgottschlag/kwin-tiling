@@ -24,6 +24,7 @@
 #include <kaboutdata.h>
 #include <kconfig.h>
 #include <kinstance.h>
+#include <kicon.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmessagebox.h>

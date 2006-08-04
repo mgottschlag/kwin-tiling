@@ -27,6 +27,7 @@
 #include <kcmultidialog.h>
 #include <kdebug.h>
 #include <khelpmenu.h>
+#include <kicon.h>
 #include <kiconloader.h>
 #include <klocale.h>
 #include <kmenu.h>

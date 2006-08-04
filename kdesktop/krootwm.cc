@@ -39,6 +39,7 @@
 #include <kdebug.h>
 #include <khelpmenu.h>
 #include <kstandarddirs.h>
+#include <kicon.h>
 #include <klocale.h>
 #include <kmenu.h>
 #include <kmenubar.h>
