@@ -166,7 +166,7 @@ void AppletTab::defaults()
 
 QString AppletTab::quickHelp() const
 {
-  return i18n("");
+  return QString();
 }
 
 void AppletTab::level_changed(int)

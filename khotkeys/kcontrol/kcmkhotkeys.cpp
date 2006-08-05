@@ -173,7 +173,8 @@ void Module::save()
 
 QString Module::quickHelp() const
     {
-    return i18n( "" ); // TODO CHECKME
+    // return i18n( "" ); // TODO CHECKME
+    return QString(); // TODO CHECKME
     }
 
 void Module::action_name_changed( const QString& name_P )
