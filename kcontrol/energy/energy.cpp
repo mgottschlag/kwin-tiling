@@ -185,7 +185,7 @@ KEnergy::KEnergy(QWidget *parent, const QStringList &args)
     logo->setPixmap(QPixmap(KStandardDirs::locate("data", "kcontrol/pics/energybig.png")));
     logo->setTipText(i18n("Learn more about the Energy Star program"));
     logo->setUseTips(true);
-connect(logo, SIGNAL(leftClickedURL(const QString&)), SLOT(openURL(const QString &)));
+    connect(logo, SIGNAL(leftClickedUrl(const QString&)), SLOT(openURL(const QString &)));
 
     hbox->addStretch();
     hbox->addWidget(logo);

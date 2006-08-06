@@ -445,7 +445,7 @@
 <connections>
     <connection>
         <sender>lbGet</sender>
-        <signal>leftClickedURL(const QString&amp;)</signal>
+        <signal>leftClickedUrl(const QString&amp;)</signal>
         <receiver>KThemeDlg</receiver>
         <slot>startKonqui(const QString&amp;)</slot>
     </connection>
