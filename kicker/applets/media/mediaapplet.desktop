@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Type=Plugin
 Comment=A panel applet that displays your storage media
+Comment[x-test]=xxA panel applet that displays your storage mediaxx
 Name=Storage Media
 Name[fr]=Support de stockage
 Name[x-test]=xxStorage Mediaxx

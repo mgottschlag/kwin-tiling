@@ -4,6 +4,7 @@ Name=Print System
 Name[fr]=Système d'impression
 Name[x-test]=xxPrint Systemxx
 Comment=Easy access to the print system
+Comment[x-test]=xxEasy access to the print systemxx
 Icon=fileprint
 
 X-KDE-Library=kickermenu_kdeprint

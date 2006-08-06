@@ -4,6 +4,7 @@ Name=External Taskbar
 Name[fr]=Barre des tâches externe
 Name[x-test]=xxExternal Taskbarxx
 Comment=External taskbar panel extension.
+Comment[x-test]=xxExternal taskbar panel extension.xx
 
 Icon=taskbar
 X-KDE-Library=taskbar_panelextension

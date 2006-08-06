@@ -4,6 +4,7 @@ Name=Settings
 Name[fr]=Configuration
 Name[x-test]=xxSettingsxx
 Comment=Easy access to the Control Center modules
+Comment[x-test]=xxEasy access to the Control Center modulesxx
 Icon=package_settings
 
 X-KDE-Library=kickermenu_prefmenu

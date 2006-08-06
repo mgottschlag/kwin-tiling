@@ -4,6 +4,7 @@ Name=Find
 Name[fr]=Recherche
 Name[x-test]=xxFindxx
 Comment=Quickly start a file or web search
+Comment[x-test]=xxQuickly start a file or web searchxx
 Icon=kfind
 
 X-KDE-Library=kickermenu_find

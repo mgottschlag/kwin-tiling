@@ -4,6 +4,7 @@ Name=Konqueror Profiles
 Name[fr]=Profils de Konqueror
 Name[x-test]=xxKonqueror Profilesxx
 Comment=Easy access to the Konqueror profiles
+Comment[x-test]=xxEasy access to the Konqueror profilesxx
 Icon=konqueror
 
 X-KDE-Library=kickermenu_konqueror

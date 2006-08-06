@@ -6,6 +6,7 @@ Name[fr]=Gestionnaire et aperçu des bureaux
 Name[x-test]=xxDesktop Preview & Pagerxx
 
 Comment=A virtual desktop switching panel applet
+Comment[x-test]=xxA virtual desktop switching panel appletxx
 
 Icon=kpager
 

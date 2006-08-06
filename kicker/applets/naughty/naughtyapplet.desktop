@@ -5,6 +5,7 @@ Name=Runaway Process Catcher
 Name[fr]=Détecteur de processus fous
 Name[x-test]=xxRunaway Process Catcherxx
 Comment=Runaway process catcher for the KDE panel
+Comment[x-test]=xxRunaway process catcher for the KDE panelxx
 Icon=runprocesscatcher
 X-KDE-Library=naughty_panelapplet
 X-KDE-UniqueApplet=true

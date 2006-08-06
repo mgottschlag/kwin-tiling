@@ -4,6 +4,7 @@ Name=System
 Name[fr]=Système
 Name[x-test]=xxSystemxx
 Comment=Easy access to system places
+Comment[x-test]=xxEasy access to system placesxx
 Icon=system
 
 X-KDE-Library=kickermenu_systemmenu

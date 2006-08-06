@@ -5,6 +5,7 @@ Name=Run Command
 Name[fr]=Lancer une commande
 Name[x-test]=xxRun Commandxx
 Comment=A command line applet
+Comment[x-test]=xxA command line appletxx
 Icon=exec
 X-KDE-Library=run_panelapplet
 X-KDE-UniqueApplet=true

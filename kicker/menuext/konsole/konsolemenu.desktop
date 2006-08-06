@@ -4,6 +4,7 @@ Name=Terminal Sessions
 Name[fr]=Sessions de terminal
 Name[x-test]=xxTerminal Sessionsxx
 Comment=Directly start terminal emulator with a session or bookmark
+Comment[x-test]=xxDirectly start terminal emulator with a session or bookmarkxx
 Icon=konsole
 
 X-KDE-Library=kickermenu_konsole

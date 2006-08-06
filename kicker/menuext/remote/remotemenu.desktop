@@ -4,6 +4,7 @@ Name=Network Folders
 Name[fr]=Dossiers réseau
 Name[x-test]=xxNetwork Foldersxx
 Comment=Easy access to network folders
+Comment[x-test]=xxEasy access to network foldersxx
 Icon=network
 
 X-KDE-Library=kickermenu_remotemenu

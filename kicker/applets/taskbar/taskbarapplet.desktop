@@ -6,5 +6,6 @@ Name[fr]=Barre des tâches
 Name[x-test]=xxTaskbarxx
 
 Comment=The default taskbar panel applet
+Comment[x-test]=xxThe default taskbar panel appletxx
 Icon=taskbar
 X-KDE-Library=taskbar_panelapplet
