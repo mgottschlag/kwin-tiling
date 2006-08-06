@@ -644,7 +644,7 @@ void KasTasker::readConfig( KConfig *conf )
 
    setDirection( (Direction) conf->readEntry( "Direction", QBoxLayout::LeftToRight ) );
    setOrientation( (Qt::Orientation) conf->readEntry( "Orientation", Qt::Horizontal ) );
-   setMaxBoxes( conf->readUnsignedNumEntry( "MaxBoxes", 0 ) );
+   setMaxBoxes( conf->readEntry( "MaxBoxes", 0 ) );
 
    QPoint pos(100, 100);
    setDetachedPosition( conf->readPointEntry( "DetachedPosition", &pos ) );
