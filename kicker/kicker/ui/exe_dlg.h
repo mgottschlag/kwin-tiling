@@ -46,7 +46,7 @@ Q_SIGNALS:
     void updateSettings(PanelExeDialog*);
 
 protected Q_SLOTS:
-    void slotSelect(const QString& exec);
+    void slotSelect(const KUrl& exec);
     void slotTextChanged(const QString &);
     void slotReturnPressed();
     void slotIconChanged(QString);

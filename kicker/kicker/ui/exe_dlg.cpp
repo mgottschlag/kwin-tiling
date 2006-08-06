@@ -75,8 +75,8 @@ PanelExeDialog::PanelExeDialog(const QString& title, const QString& description,
 
     updateIcon();
 
-    connect(ui->m_exec, SIGNAL(urlSelected(const QString &)),
-            this, SLOT(slotSelect(const QString &)));
+    connect(ui->m_exec, SIGNAL(urlSelected(const KUrl &)),
+            this, SLOT(slotSelect(const KUrl &)));
     connect(ui->m_exec, SIGNAL(textChanged(const QString &)),
             this, SLOT(slotTextChanged(const QString &)));
     connect(ui->m_exec, SIGNAL(returnPressed()),
@@ -182,12 +182,12 @@ void PanelExeDialog::slotReturnPressed()
         ui->m_exec->setUrl(m_partialPath2full[ui->m_exec->url().toString()]);
 }
 
-void PanelExeDialog::slotSelect(const QString& exec)
+void PanelExeDialog::slotSelect(const KUrl& exec)
 {
     if ( exec.isEmpty() )
         return;
 
-    QFileInfo fi(exec);
+    QFileInfo fi(exec.path());
     if (!fi.isExecutable())
     {
         if(KMessageBox::warningYesNo(0, i18n("The selected file is not executable.\n"

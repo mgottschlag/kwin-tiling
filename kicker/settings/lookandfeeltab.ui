@@ -547,9 +547,9 @@ This option is only active if 'Enable background image' is selected.</string>
 <connections>
     <connection>
         <sender>kcfg_BackgroundTheme</sender>
-        <signal>urlSelected(const QString&amp;)</signal>
+        <signal>urlSelected(const KUrl&amp;)</signal>
         <receiver>LookAndFeelTabBase</receiver>
-        <slot>browseTheme(const QString&amp;)</slot>
+        <slot>browseTheme(const KUrl&amp;)</slot>
     </connection>
     <connection>
         <sender>advancedOptionsButton</sender>
@@ -613,6 +613,7 @@ This option is only active if 'Enable background image' is selected.</string>
 <slots>
     <slot access="protected" specifier="pure virtual">launchAdvancedDialog()</slot>
     <slot access="protected" specifier="pure virtual">browseTheme(const QString&amp;)</slot>
+    <slot access="protected" specifier="pure virtual">browseTheme(const KUrl&amp;)</slot>
     <slot access="protected" specifier="pure virtual">enableTransparency(bool)</slot>
 </slots>
 <layoutdefaults spacing="6" margin="11"/>
