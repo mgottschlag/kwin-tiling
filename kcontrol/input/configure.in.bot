@@ -1,5 +1,0 @@
-if test "x$with_libusb" = xcheck && test "x$have_libusb" = xno; then
-  echo ""
-  echo "Logitech mouse support is disabled. Provide libusb to enable it."
-  echo ""
-fi

@@ -6,8 +6,12 @@ configure_file (config-kcontrol-input.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/xcursor/ ${KDE4_INCLUDES} )
 
+
 if (LIBUSB_FOUND)
   include_directories( ${LIBUSB_INCLUDE_DIR} )
+else( LIBUSB_FOUND)
+  #use macro_log_feature for it
+  MESSAGE(STATUS "Logitech mouse support is disabled. Provide libusb to enable it.")
 endif (LIBUSB_FOUND)
 
 if(X11_Xcursor_FOUND)
