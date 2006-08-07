@@ -175,14 +175,14 @@ QSize TaskBar::sizeHint( Plasma::Position p, QSize maxSize) const
 
         if (containerCount() == 0)
         {
-            actualMax = maxSize.height();
+            actualMax = minButtonHeight;
         }
 
         if (actualMax > maxSize.height())
         {
             return maxSize;
         }
-        return QSize( maxSize.width(), maxSize.height() );
+        return QSize( maxSize.width(), actualMax );
     }
     else
     {
@@ -205,6 +205,10 @@ QSize TaskBar::sizeHint( Plasma::Position p, QSize maxSize) const
         if (containerCount() % rows > 0)
         {
             actualMax += maxWidth;
+        }
+        if (containerCount() == 0)
+        {
+            actualMax = maxWidth;
         }
         if (containerCount() == 0)
         {
