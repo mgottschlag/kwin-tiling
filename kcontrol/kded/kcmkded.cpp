@@ -302,7 +302,7 @@ void KDEDConfig::slotServiceRunningToggled()
 
 void KDEDConfig::slotStartService()
 {
-	QString service = _lvStartup->currentItem()->text(4).toLatin1();
+	QString service = _lvStartup->currentItem()->text(4);
 
 	QDBusInterface kdedInterface( "org.kde.kded", "/kded" );
 	QDBusReply<bool> reply = kdedInterface.call( "loadModule", service  );
@@ -321,7 +321,7 @@ void KDEDConfig::slotStartService()
 
 void KDEDConfig::slotStopService()
 {
-	QString service = _lvStartup->currentItem()->text(4).toLatin1();
+	QString service = _lvStartup->currentItem()->text(4);
 	kDebug() << "Stopping: " << service << endl;
 
 	QDBusInterface kdedInterface( "org.kde.kded", "/kded" );

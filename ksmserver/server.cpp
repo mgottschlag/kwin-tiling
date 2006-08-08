@@ -120,10 +120,10 @@ void KSMServer::startApplication( QStringList command, const QString& clientMach
     }
     int n = command.count();
     QDBusInterface klauncher( "org.kde.klauncher", "/KLauncher", "org.kde.KLauncher" );
-    QString app = command[0].toLatin1();
+    QString app = command[0];
     QStringList argList;
     for ( int i=1; i < n; i++)
-       argList.append( command[i].toLatin1());
+       argList.append( command[i]);
     klauncher.call( "exec_blind", app, argList );
 }
 
