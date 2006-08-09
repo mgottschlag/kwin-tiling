@@ -1,6 +1,6 @@
 <!DOCTYPE UI><UI version="3.3" stdsetdef="1">
 <class>ConfigDialog</class>
-<widget class="KCModule">
+<widget class="QWidget">
     <property name="name">
         <cstring>ConfigDialog</cstring>
     </property>
@@ -321,11 +321,7 @@ process will be recursive.</string>
     </customwidget>
 </customwidgets>
 <includehints>
-    <includehint>kcmodule.h</includehint>
     <includehint>keditlistbox.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>klineedit.h</includehint>
-    <includehint>kpassdlg.h</includehint>
     <includehint>klineedit.h</includehint>
 </includehints>
 </UI>

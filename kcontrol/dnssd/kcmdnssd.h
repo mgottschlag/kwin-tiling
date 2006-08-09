@@ -25,14 +25,15 @@
 
 #include <configdialog.h>
 #include <kaboutdata.h>
+#include <kcmodule.h> 
 
 class KSimpleConfig;
-class KCMDnssd: public ConfigDialog
+class KCMDnssd: public KCModule
 {
 	Q_OBJECT
 
 public:
-	KCMDnssd( QWidget *parent=0, const char *name=0, const QStringList& = QStringList() );
+	KCMDnssd( QWidget *parent=0, const QStringList& = QStringList() );
 	~KCMDnssd();
 	virtual void save();
 	virtual void load();
@@ -44,6 +45,7 @@ private:
 	QMap<QString,QString> mdnsdLines;
 	bool m_wdchanged;
 	KSimpleConfig* domain;
+    ConfigDialog *widget;
 };
 
 #endif

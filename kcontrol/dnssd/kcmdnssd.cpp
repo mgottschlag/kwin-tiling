@@ -48,25 +48,31 @@
 typedef KGenericFactory<KCMDnssd, QWidget> KCMDnssdFactory;
 K_EXPORT_COMPONENT_FACTORY( kdnssd, KCMDnssdFactory("kcmkdnssd"))
 
-KCMDnssd::KCMDnssd(QWidget *parent, const char *name, const QStringList&)
-		: ConfigDialog(parent, name), m_wdchanged(false)
+KCMDnssd::KCMDnssd(QWidget *parent, const QStringList&)
+		: KCModule( KCMDnssdFactory::instance(), parent), m_wdchanged(false)
 {
-	setAboutData(new KAboutData(I18N_NOOP("kcm_kdnssd"),
+   
+    QVBoxLayout *layout = new QVBoxLayout( this );
+    layout->setMargin(0);
+    layout->setSpacing(KDialog::spacingHint());
+    widget = new ConfigDialog(this, "");
+    layout->addWidget(widget); 
+    setAboutData(new KAboutData(I18N_NOOP("kcm_kdnssd"),
 	                            I18N_NOOP("ZeroConf configuration"),0,0,KAboutData::License_GPL,
 	                            I18N_NOOP("(C) 2004,2005 Jakub Stachowski")));
 	setQuickHelp(i18n("Setup services browsing with ZeroConf"));
-	if (geteuid()!=0) tabs->removePage(tab_2); // normal user cannot change wide-area settings
+	if (geteuid()!=0) widget->tabs->removePage(widget->tab1); // normal user cannot change wide-area settings
 	// show only global things in 'administrator mode' to prevent confusion
-		else if (getenv("KDESU_USER")!=0) tabs->removePage(tab); 
+		else if (getenv("KDESU_USER")!=0) widget->tabs->removePage(widget->tab); 
 	addConfig(DNSSD::Configuration::self(),this);
 	// it is host-wide setting so it has to be in global config file
 	domain = new KSimpleConfig( QLatin1String( KDE_CONFDIR "/kdnssdrc" ));
 	domain->setGroup("publishing");
 	load();
-	connect(hostedit,SIGNAL(textChanged(const QString&)),this,SLOT(wdchanged()));
-	connect(secretedit,SIGNAL(textChanged(const QString&)),this,SLOT(wdchanged()));
-	connect(domainedit,SIGNAL(textChanged(const QString&)),this,SLOT(wdchanged()));
-	if (DNSSD::Configuration::self()->publishDomain().isEmpty()) WANButton->setEnabled(false);
+	connect(widget->hostedit,SIGNAL(textChanged(const QString&)),this,SLOT(wdchanged()));
+	connect(widget->secretedit,SIGNAL(textChanged(const QString&)),this,SLOT(wdchanged()));
+	connect(widget->domainedit,SIGNAL(textChanged(const QString&)),this,SLOT(wdchanged()));
+	if (DNSSD::Configuration::self()->publishDomain().isEmpty()) widget->WANButton->setEnabled(false);
 }
 
 KCMDnssd::~KCMDnssd()
@@ -79,7 +85,7 @@ void KCMDnssd::save()
 	KCModule::save();
 	if (geteuid()==0 && m_wdchanged) saveMdnsd(); 
 	domain->setFileWriteMode(0644); // this should be readable for everyone
-	domain->writeEntry("PublishDomain",domainedit->text());
+	domain->writeEntry("PublishDomain",widget->domainedit->text());
 	domain->sync();
 	KIPC::sendMessageAll((KIPC::Message)KIPCDomainsChanged);
 }
@@ -93,7 +99,7 @@ void KCMDnssd::load()
 // hack to work around not working isModified() for KPasswordEdit
 void KCMDnssd::wdchanged()
 {
-	WANButton->setEnabled(!domainedit->text().isEmpty() && !hostedit->text().isEmpty());
+	widget->WANButton->setEnabled(!widget->domainedit->text().isEmpty() && !widget->hostedit->text().isEmpty());
 	changed();
 	m_wdchanged=true;
 }
@@ -109,16 +115,16 @@ void KCMDnssd::loadMdnsd()
 		mdnsdLines.insert(line.section(' ',0,0,QString::SectionSkipEmpty),
 			line.section(' ',1,-1,QString::SectionSkipEmpty));
 		}
-	if (!mdnsdLines["zone"].isNull()) domainedit->setText(mdnsdLines["zone"]);
-	if (!mdnsdLines["hostname"].isNull()) hostedit->setText(mdnsdLines["hostname"]);
-	if (!mdnsdLines["secret-64"].isNull()) secretedit->setText(mdnsdLines["secret-64"]);
+	if (!mdnsdLines["zone"].isNull()) widget->domainedit->setText(mdnsdLines["zone"]);
+	if (!mdnsdLines["hostname"].isNull()) widget->hostedit->setText(mdnsdLines["hostname"]);
+	if (!mdnsdLines["secret-64"].isNull()) widget->secretedit->setText(mdnsdLines["secret-64"]);
 }		
 	
 bool KCMDnssd::saveMdnsd()
 {
-	mdnsdLines["zone"]=domainedit->text();
-	mdnsdLines["hostname"]=hostedit->text();
-	if (!secretedit->text().isEmpty()) mdnsdLines["secret-64"]=QString(secretedit->password());
+	mdnsdLines["zone"]=widget->domainedit->text();
+	mdnsdLines["hostname"]=widget->hostedit->text();
+	if (!widget->secretedit->text().isEmpty()) mdnsdLines["secret-64"]=QString(widget->secretedit->password());
 		else mdnsdLines.remove("secret-64");
 	QFile f(MDNSD_CONF);
 	bool newfile=!f.exists();
@@ -141,3 +147,4 @@ bool KCMDnssd::saveMdnsd()
 }
 	
 #include "kcmdnssd.moc"
+
