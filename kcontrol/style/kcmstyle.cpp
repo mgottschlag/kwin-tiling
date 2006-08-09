@@ -144,15 +144,15 @@ KCMStyle::KCMStyle( QWidget* parent, const QStringList& )
 	tabWidget  = new QTabWidget( this );
 	mainLayout->addWidget( tabWidget );
 
-	page1 = new QWidget( tabWidget );
+	page1 = new QWidget;
 	page1Layout = new QVBoxLayout( page1 );
 	page1Layout->setMargin( KDialog::marginHint() );
 	page1Layout->setSpacing( KDialog::spacingHint() );
-	page2 = new QWidget( tabWidget );
+	page2 = new QWidget;
 	page2Layout = new QVBoxLayout( page2 );
 	page2Layout->setMargin( KDialog::marginHint() );
 	page2Layout->setSpacing( KDialog::spacingHint() );
-	page3 = new QWidget( tabWidget );
+	page3 = new QWidget;
 	page3Layout = new QVBoxLayout( page3 );
 	page3Layout->setMargin( KDialog::marginHint() );
 	page3Layout->setSpacing( KDialog::spacingHint() );
