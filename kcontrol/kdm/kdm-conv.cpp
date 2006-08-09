@@ -198,9 +198,10 @@ KDMConvenienceWidget::KDMConvenienceWidget(QWidget *parent, const char *name)
 
 void KDMConvenienceWidget::makeReadOnly()
 {
-    ((QWidget*)alGroup->child("qt_groupbox_checkbox"))->setEnabled(false);
+#warning "kde4: comment it it crashed";
+    //((QWidget*)alGroup->child("qt_groupbox_checkbox"))->setEnabled(false);
     userlb->setEnabled(false);
-    ((QWidget*)npGroup->child("qt_groupbox_checkbox"))->setEnabled(false);
+    //((QWidget*)npGroup->child("qt_groupbox_checkbox"))->setEnabled(false);
     npuserlv->setEnabled(false);
     cbarlen->setEnabled(false);
     npRadio->setEnabled(false);
