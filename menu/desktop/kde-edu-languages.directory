@@ -3,5 +3,3 @@ Encoding=UTF-8
 Icon=edu_languages
 Type=Directory
 Name=Languages
-Name[fr]=Langues
-Name[x-test]=xxLanguagesxx
