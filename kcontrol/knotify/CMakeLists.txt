@@ -24,7 +24,7 @@ install( FILES kcmnotify.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
 
-
+install( FILES play.png DESTINATION  ${DATA_INSTALL_DIR}/kcontrol/pics)
 
 
 #original Makefile.am contents follow:
