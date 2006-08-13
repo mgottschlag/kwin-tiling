@@ -82,9 +82,12 @@ void KMenuEdit::setupActions()
 
 void KMenuEdit::setupView()
 {
-    m_splitter = new QSplitter(Qt::Horizontal, this);
-    m_tree = new TreeView(m_controlCenter, actionCollection(), m_splitter);
-    m_basicTab = new BasicTab(m_splitter);
+    m_splitter = new QSplitter;
+    m_splitter->setOrientation(Qt::Horizontal);
+    m_tree = new TreeView(m_controlCenter, actionCollection());
+    m_splitter->addWidget(m_tree);
+    m_basicTab = new BasicTab;
+    m_splitter->addWidget(m_basicTab);
 
     connect(m_tree, SIGNAL(entrySelected(MenuFolderInfo *)),
             m_basicTab, SLOT(setFolderInfo(MenuFolderInfo *)));
@@ -121,9 +124,9 @@ void KMenuEdit::slotChangeView()
 #else
     m_showHidden = false;
 #endif
-
+#warning "kde4: comment setUpdatesEnabled otherwise we can't see layout"
     // disabling the updates prevents unnecessary redraws
-    setUpdatesEnabled( false );
+    //setUpdatesEnabled( false );
     guiFactory()->removeClient( this );
 
     delete m_actionDelete;
