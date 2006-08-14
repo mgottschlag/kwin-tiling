@@ -48,7 +48,7 @@ install( FILES kcontroleditui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kcontroledit 
 install( FILES kmenueditui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmenuedit )
 
 
-kde4_install_icons( ${ICON_INSTALL_DIR} hicolor )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 
 

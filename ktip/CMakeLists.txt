@@ -25,7 +25,7 @@ install( FILES ktip.desktop DESTINATION ${AUTOSTART_INSTALL_DIR} )
 install( FILES tips  DESTINATION  ${DATA_INSTALL_DIR}/kdewizard )
 
 
-kde4_install_icons( ${ICON_INSTALL_DIR} hicolor )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 
 

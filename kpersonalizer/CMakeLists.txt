@@ -39,7 +39,7 @@ install(TARGETS kpersonalizer DESTINATION ${BIN_INSTALL_DIR})
 
 install( FILES kpersonalizer.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
-kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 
 

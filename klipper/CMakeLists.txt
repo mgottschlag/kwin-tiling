@@ -56,7 +56,7 @@ install(FILES klipperrc.upd klippershortcuts.upd  DESTINATION  ${KCONF_UPDATE_IN
 install(PROGRAMS klipper-1-2.pl klipper-kde31.sh DESTINATION  ${KCONF_UPDATE_INSTALL_DIR})
 
 
-kde4_install_icons( ${ICON_INSTALL_DIR} hicolor )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 
 

@@ -40,7 +40,7 @@ install( FILES KControl.desktop kinfocenter.desktop  DESTINATION  ${SERVICES_INS
 install( FILES kcontrolui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kcontrol )
 install( FILES kinfocenterui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kinfocenter )
 
-kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 
 

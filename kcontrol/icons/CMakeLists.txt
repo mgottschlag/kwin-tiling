@@ -34,7 +34,7 @@ endif(KDE4_BUILD_TESTS)
 
 install( FILES icons.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
-kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 
 #original Makefile.am contents follow:

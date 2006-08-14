@@ -21,7 +21,7 @@ install(TARGETS systemtray_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES systemtrayapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
 
-kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 
 

@@ -21,7 +21,7 @@ install(TARGETS naughty_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES naughtyapplet.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets )
 install( FILES naughty-happy.png naughty-sad.png  DESTINATION  ${DATA_INSTALL_DIR}/naughtyapplet/pics )
 
-kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 
 

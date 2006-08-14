@@ -22,4 +22,4 @@ install(TARGETS kcm_energy  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES energy.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
-kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )

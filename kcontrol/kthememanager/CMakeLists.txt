@@ -24,7 +24,7 @@ install( FILES x-ktheme.desktop  DESTINATION  ${MIME_INSTALL_DIR}/application )
 install( FILES kthememanager.desktop installktheme.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install(PROGRAMS kdeinstallktheme DESTINATION ${BIN_INSTALL_DIR})
 
-kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 
 

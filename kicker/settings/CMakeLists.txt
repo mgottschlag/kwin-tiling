@@ -40,7 +40,7 @@ install(TARGETS kcm_kicker  DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES kicker_config.desktop                  kicker_config_arrangement.desktop kicker_config_hiding.desktop                  kicker_config_menus.desktop kicker_config_appearance.desktop  DESTINATION  ${APPLNK_INSTALL_DIR}/.hidden )
 install( FILES panel.desktop  DESTINATION  ${XDG_APPS_DIR} )
 
-kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 
 

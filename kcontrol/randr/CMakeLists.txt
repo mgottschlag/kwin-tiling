@@ -43,4 +43,4 @@ install(TARGETS krandrtray DESTINATION ${BIN_INSTALL_DIR})
 install( FILES krandrtray.desktop  DESTINATION  ${XDG_APPS_DIR} )
 install( FILES randr.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
-kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )

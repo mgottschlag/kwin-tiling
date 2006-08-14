@@ -21,7 +21,7 @@ install(TARGETS taskbar_panelextension  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES taskbarextension.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/extensions )
 
-kde4_install_icons( ${ICON_INSTALL_DIR} crystalsvg )
+kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 
 
