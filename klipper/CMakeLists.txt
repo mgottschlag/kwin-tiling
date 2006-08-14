@@ -53,7 +53,7 @@ install(FILES klipper.desktop  DESTINATION  ${XDG_APPS_DIR})
 install(FILES klipper.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
 install(FILES klipper.desktop  DESTINATION  ${DATA_INSTALL_DIR}/kicker/applets)
 install(FILES klipperrc.upd klippershortcuts.upd  DESTINATION  ${KCONF_UPDATE_INSTALL_DIR})
-install(FILES klipper-1-2.pl klipper-kde31.sh DESTINATION  ${KCONF_UPDATE_INSTALL_DIR})
+install(PROGRAMS klipper-1-2.pl klipper-kde31.sh DESTINATION  ${KCONF_UPDATE_INSTALL_DIR})
 
 
 kde4_install_icons( ${ICON_INSTALL_DIR} hicolor )
