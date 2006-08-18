@@ -250,37 +250,36 @@ bool XKBExtension::compileCurrentLayout(const QString &layoutKey)
  */
 bool XKBExtension::setCompiledLayout(const QString &layoutKey)
 {
-	FILE *input = NULL;
-	
-	if( fileCache.contains(layoutKey) ) {
-		input = fileCache[ layoutKey ];
-	}
-	
-	if( input == NULL ) {
-		kWarning() << "setCompiledLayout trying to reopen xkb file" << endl;	// should never happen
-		const QString fileName = getPrecompiledLayoutFilename(layoutKey);
-		input = fopen(QFile::encodeName(fileName), "r");
-		
-		// 	FILE *input = fopen(QFile::encodeName(fileName), "r");
-		if ( input == NULL ) {
-			kDebug() << "Unable to open " << fileName << ": " << strerror(errno) << endl;
-			fileCache.remove(layoutKey);
-			return false;
-		}
-	}
-	else {
-		rewind(input);
-	}
+    FILE *input = NULL;
+
+    if( fileCache.contains(layoutKey) ) {
+        input = fileCache[ layoutKey ];
+    }
+
+    if( input == NULL ) {
+        kWarning() << "setCompiledLayout trying to reopen xkb file" << endl;	// should never happen
+        const QString fileName = getPrecompiledLayoutFilename(layoutKey);
+        input = fopen(QFile::encodeName(fileName), "r");
+
+        if ( input == NULL ) {
+            kDebug() << "Unable to open " << fileName << ": " << strerror(errno) << endl;
+            fileCache.remove(layoutKey);
+            return false;
+        }
+    }
+    else {
+        rewind(input);
+    }
 
     XkbFileInfo result;
     memset(&result, 0, sizeof(result));
-	if ((result.xkb = XkbAllocKeyboard())==NULL) {
-		kWarning() << "Unable to allocate memory for keyboard description" << endl;
-//      fclose(input);
-//		fileCache.remove(layoutKey);
-    	return false;
-	}
-	
+    if ((result.xkb = XkbAllocKeyboard())==NULL) {
+        kWarning() << "Unable to allocate memory for keyboard description" << endl;
+        fclose(input);
+        //		fileCache.remove(layoutKey);
+        return false;
+    }
+
     unsigned retVal = XkmReadFile(input, 0, XkmKeymapLegal, &result);
     if (retVal == XkmKeymapLegal)
     {
@@ -288,11 +287,11 @@ bool XKBExtension::setCompiledLayout(const QString &layoutKey)
         kWarning() << "Unable to load map from file" << endl;
         XkbFreeKeyboard(result.xkb, XkbAllControlsMask, True);
         fclose(input);
-		fileCache.remove(layoutKey);
-		return false;
+        fileCache.remove(layoutKey);
+        return false;
     }
 
-	//    fclose(input);	// don't close - goes in cache
+    //    fclose(input);	// don't close - goes in cache
 
     if (XkbChangeKbdDisplay(m_dpy, &result) == Success)
     {
