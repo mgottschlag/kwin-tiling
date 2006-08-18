@@ -113,7 +113,7 @@ X11Helper::loadRules(const QString& file, bool layoutsOnly)
 
 	for (int i = 0; i < xkbRules->layouts.num_desc; ++i) {
 		QString layoutName(xkbRules->layouts.desc[i].name);
-		rulesInfo->layouts.insert( layoutName, qstrdup( xkbRules->layouts.desc[i].desc ) );
+		rulesInfo->layouts.insert( layoutName, xkbRules->layouts.desc[i].desc );
 	}
 
 	if( layoutsOnly == true ) {
