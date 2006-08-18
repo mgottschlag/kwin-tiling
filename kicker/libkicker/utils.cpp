@@ -138,16 +138,16 @@ QString copyDesktopFile(const KUrl& url)
 
 QMenu* reduceMenu(QMenu *menu)
 {
-    if (menu->count() != 1)
+    if (menu->actions().count() != 1)
     {
        return menu;
     }
 
-    QMenuItem *item = menu->findItem(menu->idAt(0));
+    QAction *act = menu->actions().value(0);
 
-    if (item->menu())
+    if (act->menu())
     {
-       return reduceMenu(item->menu());
+       return reduceMenu(act->menu());
     }
 
     return menu;
@@ -277,7 +277,7 @@ void colorize(QImage& image)
     int h1, s1, v1, h2, s2, v2, h3, s3, v3;
     activeTitle.getHsv(&h1, &s1, &v1);
     inactiveTitle.getHsv(&h2, &s2, &v2);
-    QApplication::palette().active().background().getHsv(&h3, &s3, &v3);
+    QApplication::palette().color(QPalette::Active, QPalette::Window).getHsv(&h3, &s3, &v3);
 
     if ( (qAbs(h1-h3)+qAbs(s1-s3)+qAbs(v1-v3) < qAbs(h2-h3)+qAbs(s2-s3)+qAbs(v2-v3)) &&
             ((qAbs(h1-h3)+qAbs(s1-s3)+qAbs(v1-v3) < 32) || (s1 < 32)) && (s2 > s1))
@@ -377,8 +377,8 @@ QIcon menuIconSet(const QString& icon)
             active = active.scaled(20,20, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         }
 
-        iconset.setPixmap(normal, QIcon::Small, QIcon::Normal);
-        iconset.setPixmap(active, QIcon::Small, QIcon::Active);
+        iconset.addPixmap(normal, QIcon::Normal, QIcon::On);
+        iconset.addPixmap(active, QIcon::Active, QIcon::Off);
     }
 
     return iconset;
