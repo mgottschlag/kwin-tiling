@@ -84,6 +84,9 @@ RememberIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
 		    connectionType == i->connectionType)
 			return 1;
 	i = (IndirectUsersPtr)Malloc( sizeof(IndirectUsersRec) );
+	if (!i) {
+		return 0;
+	}
 	if (!XdmcpCopyARRAY8( clientAddress, &i->client )) {
 		free( (char *)i );
 		return 0;
