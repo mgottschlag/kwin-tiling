@@ -841,8 +841,8 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 					}
 					break;
 				case remoteLogin:
-					if (di->serverPid != -1 && nuke && d)
-						TerminateProcess( di->serverPid, d->termSignal );
+					if (di->serverPid != -1 && nuke)
+						TerminateProcess( di->serverPid, di->termSignal );
 					break;
 				case reserve:
 					di->status = notRunning;
