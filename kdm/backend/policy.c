@@ -34,10 +34,6 @@ from the copyright holder.
  * policy.c.  Implement site-dependent policy for XDMCP connections
  */
 
-#include <config.h>
-
-#ifdef XDMCP
-
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_socket.h"
@@ -274,5 +270,3 @@ SelectConnectionTypeIndex( ARRAY16Ptr  connectionTypes,
 	} /* for */
 	return -1;
 }
-
-#endif /* XDMCP */

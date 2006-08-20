@@ -1,4 +1,4 @@
-include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/workspace/kdesktop ${CMAKE_SOURCE_DIR}/kcheckpass ${CMAKE_SOURCE_DIR}/kdmlib  )
+include_directories( ${CMAKE_SOURCE_DIR}/workspace/kdmlib ${CMAKE_SOURCE_DIR}/workspace/kdesktop ${CMAKE_SOURCE_DIR}/workspace/kcheckpass ${CMAKE_SOURCE_DIR}/workspace/kdmlib  )
 
 ########### next target ###############
 
@@ -24,6 +24,8 @@ if (HAVE_XF86MISC)
 endif (HAVE_XF86MISC)
 
 install(TARGETS kdesktop_lock DESTINATION ${BIN_INSTALL_DIR})
+
+install_pam_service(kscreensaver)
 
 
 ########### install files ###############
@@ -51,10 +53,3 @@ install(TARGETS kdesktop_lock DESTINATION ${BIN_INSTALL_DIR})
 #METASOURCES = AUTO
 #
 #lockprocess.o: ../kdesktopsettings.h
-#
-######## Build rules
-#
-#PAM = @KSCREENSAVER_PAM_SERVICE@
-#
-#install-data-local:
-#	-@test -n "$(DESTDIR)" || test -z "$(PAM)" || $(top_srcdir)/mkpamserv $(PAM)

@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <X11/Xresource.h>
 
 #include <config.h>
+#include <config-unix.h>
+#include <config-kdm.h>
 
 #include <sys/types.h>
 #include <stdio.h>

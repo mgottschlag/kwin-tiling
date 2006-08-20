@@ -36,10 +36,6 @@ from the copyright holder.
  * and (potentially) a list of hosts to send ForwardQuery packets to
  */
 
-#include <config.h>
-
-#ifdef XDMCP
-
 #include "dm.h"
 #include "dm_error.h"
 #include "dm_socket.h"
@@ -465,4 +461,3 @@ ForEachListenAddr( ListenFunc listenfunction, ListenFunc mcastfunction,
 			                  closure );
 	}
 }
-#endif /* XDMCP */

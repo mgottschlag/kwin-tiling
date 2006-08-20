@@ -34,10 +34,6 @@ from the copyright holder.
  * generate authorization data for XDM-AUTHORIZATION-1 as per XDMCP spec
  */
 
-#include <config.h>
-
-#ifdef HASXDMAUTH
-
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
@@ -264,4 +260,3 @@ XdmCheckAuthentication( struct protoDisplay *pdpy,
 }
 
 #endif /* XDMCP */
-#endif /* HASXDMAUTH (covering the entire file) */

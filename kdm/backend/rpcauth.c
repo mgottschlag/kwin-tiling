@@ -32,10 +32,6 @@ from the copyright holder.
  *
  * generate SecureRPC authorization records
  */
-#include <config-kdm.h>
-#include <config.h>
-
-#ifdef SECURE_RPC
 
 #include "dm.h"
 #include "dm_auth.h"
@@ -85,5 +81,3 @@ SecureRPCGetAuth( unsigned short namelen, const char *name )
 	memmove( new->data, key, new->data_length );
 	return new;
 }
-
-#endif

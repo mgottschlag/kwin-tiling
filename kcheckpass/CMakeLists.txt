@@ -1,59 +1,25 @@
+include_directories( ${UNIXAUTH_INCLUDE_DIRS} )
 
-project(kcheckpass)
+project(kcheckpass C)
 
+set(kcheckpass_SRCS
+	kcheckpass.h
+	kcheckpass.c
+	checkpass_etcpasswd.c
+	checkpass_pam.c
+	checkpass_shadow.c
+	checkpass_osfc2passwd.c
+	checkpass_aix.c
+)
+kde4_add_executable(kcheckpass NOGUI ${kcheckpass_SRCS})
+if (KDE4_ENABLE_FPIE)
+	macro_add_compile_flags(kcheckpass ${KDE4_CXX_FPIE_FLAGS})
+	macro_add_link_flags(kcheckpass ${KDE4_PIE_LDFLAGS})
+endif (KDE4_ENABLE_FPIE)
+macro_add_compile_flags(kcheckpass -U_REENTRANT)
+target_link_libraries(kcheckpass kdefakes ${UNIXAUTH_LIBRARIES} ${SOCKET_LIBRARIES})
+install(TARGETS kcheckpass DESTINATION ${BIN_INSTALL_DIR} PERMISSIONS SETUID OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
 
+install_pam_service(kcheckpass)
 
-########### next target ###############
-
-set(kcheckpass_SRCS 
-   kcheckpass.c 
-   checkpass_etcpasswd.c 
-   checkpass_pam.c 
-   checkpass_shadow.c 
-   checkpass_osfc2passwd.c 
-   checkpass_aix.c )
-
-kde4_automoc(${kcheckpass_SRCS})
-
-kde4_add_executable(kcheckpass ${kcheckpass_SRCS})
-
-target_link_libraries(kcheckpass  ${KDE4_KDECORE_LIBS} kdefakes )
-
-install(TARGETS kcheckpass DESTINATION ${BIN_INSTALL_DIR})
-
-
-########### install files ###############
-
-
-
-
-
-#original Makefile.am contents follow:
-
-### Makefile.am for kcheckpass
-### written by Christian Esken
-###
-#
-#INCLUDES= $(KDE_USE_FPIE) $(all_includes)
-#KDE_CXXFLAGS = -UQT3_SUPPORT
-#
-#bin_PROGRAMS = kcheckpass
-#
-#kcheckpass_SOURCES = kcheckpass.c \
-#	checkpass_etcpasswd.c checkpass_pam.c checkpass_shadow.c \
-#	checkpass_osfc2passwd.c checkpass_aix.c
-#kcheckpass_LDADD = -lkdefakes $(PASSWDLIBS) $(LIBSOCKET)
-#kcheckpass_LDFLAGS = $(KDE_USE_PIE) $(all_libraries)
-#
-#noinst_HEADERS = kcheckpass.h
-#
 #EXTRA_DIST = README
-#
-#PAM = $(KCHECKPASS_PAM_SERVICE)
-#
-#install-data-local:
-#	-@test -n "$(DESTDIR)" || test -z "$(PAM)" || $(top_srcdir)/mkpamserv $(PAM)
-#
-#install-exec-hook:
-#	@(chown 0 $(DESTDIR)$(bindir)/kcheckpass && chmod 4755 $(DESTDIR)$(bindir)/kcheckpass) \
-#	|| echo "Error: Could not install kcheckpass as setuid root (possibly you won't be able to unlock)!!"

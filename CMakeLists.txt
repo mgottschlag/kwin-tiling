@@ -1,3 +1,5 @@
+include(ConfigureChecks.cmake)
+configure_file(config-unix.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-unix.h )
 
 set(kdmlib_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/kdmlib/dmctl.cpp )
 
@@ -15,7 +17,7 @@ set( kcmbackgroundlib_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgwallpaper.cpp
 )
 
-include_directories( ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_SOURCE_DIR}/libkonq )
+include_directories( ${CMAKE_BINARY_DIR}/workspace/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/kicker/libkicker ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_CURRENT_BINARY_DIR} )
 
 add_subdirectory( lib ) 
 add_subdirectory( kdmlib )
@@ -34,9 +36,11 @@ add_subdirectory( ksystraycmd )
 add_subdirectory( ksplashml )
 add_subdirectory( kmenuedit )
 add_subdirectory( klipper )
-if(PAM_FOUND AND X11_Xau_FOUND AND X11_Xdmcp_FOUND)
+add_subdirectory( kcheckpass )
+if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 	add_subdirectory( kdm )
-endif(PAM_FOUND AND X11_Xau_FOUND AND X11_Xdmcp_FOUND)
+# XXX should have an else macro_log_feature here
+endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 
 ########### install files ###############
 install(PROGRAMS startkde DESTINATION ${BIN_INSTALL_DIR})

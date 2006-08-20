@@ -34,10 +34,6 @@ from the copyright holder.
  * chooser backend
  */
 
-#include <config.h>
-
-#ifdef XDMCP
-
 #include "dm.h"
 #include "dm_error.h"
 #include "dm_socket.h"
@@ -745,7 +741,7 @@ AddChooserHost(
 		in6_addr.sin6_family = AF_INET6;
 		memmove( &in6_addr.sin6_addr, addr->data, 16 );
 		in6_addr.sin6_port = htons( XDM_UDP_PORT );
-#ifdef SIN6_LEN
+#ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_LEN
 		in6_addr.sin6_len = sizeof(in6_addr);
 #endif
 		registerHostaddr( (struct sockaddr *)&in6_addr, sizeof(in6_addr),
@@ -1049,5 +1045,3 @@ DoChoose()
 	}
 
 }
-
-#endif /* XDMCP */

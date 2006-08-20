@@ -34,7 +34,7 @@ authorization.
 #define _DM_AUTH_H_ 1
 
 #include "dm.h"
-#include <config-kdm.h>
+
 void MitInitAuth( unsigned short name_len, const char *name );
 Xauth *MitGetAuth( unsigned short namelen, const char *name );
 

@@ -1,18 +1,12 @@
+set(confproc ${CMAKE_SOURCE_DIR}/workspace/kdm/confproc.pl)
+set(confdef ${CMAKE_SOURCE_DIR}/workspace/kdm/config.def)
+set(confdoc ${CMAKE_CURRENT_SOURCE_DIR}/kdmrc-ref.docbook)
 
+add_custom_command(
+	OUTPUT ${confdoc}
+	COMMAND ${PERL_EXECUTABLE} -w ${confproc} --doc ${confdef} ${confdoc}
+	MAIN_DEPENDENCY ${confdef}
+	DEPENDS ${confproc}
+)
 
-
-########### install files ###############
-
-
-
-
-
-#original Makefile.am contents follow:
-
-#conf_def = $(top_srcdir)/kdm/config.def
-#conf_proc = $(top_srcdir)/kdm/confproc.pl
-#ref: $(conf_def) $(conf_proc)
-#	$(PERL) -w $(conf_proc) --doc $(conf_def) $(srcdir)/kdmrc-ref.docbook
-#
-#KDE_LANG = en
-#KDE_DOCS = AUTO
+add_custom_target(ref DEPENDS ${confdoc})

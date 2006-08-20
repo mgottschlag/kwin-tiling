@@ -35,10 +35,6 @@ from the copyright holder.
  * xdmcp.c - Support for XDMCP
  */
 
-#include <config.h>
-
-#ifdef XDMCP
-
 #include "dm.h"
 #include "dm_error.h"
 #include "dm_auth.h"
@@ -105,7 +101,7 @@ sendForward( CARD16 connectionType, ARRAY8Ptr address, char *closure )
 	case FamilyInternet6:
 		addr = (struct sockaddr *)&in6_addr;
 		bzero( (char *)&in6_addr, sizeof(in6_addr) );
-# ifdef SIN6_LEN
+# ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_LEN
 		in6_addr.sin6_len = sizeof(in6_addr);
 # endif
 		in6_addr.sin6_family = AF_INET6;
@@ -510,7 +506,7 @@ forward_respond ( struct sockaddr *from, int fromlen ATTR_UNUSED,
 					if (clientAddress.length != 16 || clientPort.length != 2)
 						goto badAddress;
 					bzero( (char *)&in6_addr, sizeof(in6_addr) );
-#ifdef SIN6_LEN
+#ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_LEN
 					in6_addr.sin6_len = sizeof(in6_addr);
 #endif
 					in6_addr.sin6_family = AF_INET6;
@@ -1155,6 +1151,4 @@ NetworkAddressToHostname( CARD16 connectionType, ARRAY8Ptr connectionAddress )
 	}
 	return 0;
 }
-
-#endif /* XDMCP */
 

@@ -38,7 +38,6 @@ from the copyright holder.
 
 #include "dm.h"
 #include "dm_error.h"
-#include <config-kdm.h>
 #include <unistd.h>
 #include <stdio.h>
 

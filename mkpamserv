@@ -1,0 +1,71 @@
+#! /bin/sh
+
+permit=false
+if test "x$1" = x-P; then
+    permit=true
+    shift
+fi
+
+if test $# != 1; then
+    echo "Usage: $0 [-P] <service>" >&2
+    exit 1
+fi
+
+if test -r /etc/pam.d/$1 || grep "^[ 	]*$1[ 	]" /etc/pam.conf >/dev/null 2>&1; then
+    echo "PAM service \"$1\" already configured."
+    exit 0
+fi
+
+oi_mods="pam_(access|env|group|issue|lastlog|limits|listfile|mkhomedir|motd|nologin|shells|tally|time)"
+oo_mods="pam_securetty"
+
+if test -d /etc/pam.d; then
+    if test ! -w /etc/pam.d; then
+	echo "Error: need write access to /etc/pam.d/ to install PAM service definition!" >&2
+	exit 1
+    fi
+    for sv in kde login; do
+	if test -r /etc/pam.d/$sv; then
+	    echo "Copying PAM service definition file \"$sv\" to \"$1\"."
+	    if $permit; then
+		echo "auth	required	pam_permit.so" > /etc/pam.d/$1
+		perl -p -e "if (/^([ \\t]*\\@include[ \\t]+([^ \\t]+)[ \\t]*)\\n/) { \$l=\$1; \$p=\$2; \$p=~m,^/, || (\$p='/etc/pam.d/'.\$p); print \"#\$l -- start\\n\"; system \"cat \$p\"; \$_ = \"#\$l -- end\\n\"; }" < /etc/pam.d/$sv |
+		    perl -p -e "s/^([ \\t]*auth[ \\t]+[a-z]+[ \\t]+([^ \\t]+\\/)?(?!$oi_mods)\\w+\\.so)/#\$1/" >> /etc/pam.d/$1
+	    else
+		perl -p -e "s/^([ \\t]*[^#].*[ \\t\\/]$oo_mods\\.so)/#\\1/" < /etc/pam.d/$sv > /etc/pam.d/$1
+	    fi
+	    exit 0
+	fi
+    done
+    echo "Error: no template PAM service file for \"$1\" found!" >&2
+    exit 1
+elif test -f /etc/pam.conf; then
+    if test ! -w /etc/pam.conf; then
+	echo "Error: need write access to /etc/pam.conf to install PAM service definition!" >&2
+	exit 1
+    fi
+    for sv in kde login; do
+	serv=`grep "^[ 	]*$sv[ 	]" /etc/pam.conf`
+	if test -n "$serv"; then
+	    echo "Copying service definition entry \"$sv\" to \"$1\"."
+	    echo >>/etc/pam.conf
+	    sb="s/^[ \\t]*$sv([ \\t])/$1\$1/"
+	    if $permit; then
+		echo "$1	auth	required	pam_permit.so" >>/etc/pam.conf
+		echo "$serv" | perl -p -e "$sb;s/^($1[ \\t]+auth[ \\t]+[a-z]+[ \\t]+([^ \\t]+\\/)?(?!$oi_mods)\\w+\\.so)/#\$1/" >>/etc/pam.conf
+	    else
+		echo "$serv" | perl -p -e "$sb;s/^(.*[ \\t\\/]$oo_mods\\.so)/#\$1/" >>/etc/pam.conf
+	    fi
+	    exit 0
+	fi
+    done
+    echo "Error: no template PAM service entry for \"$1\" found!" >&2
+    exit 1
+else
+    if test "`whoami`" != root; then
+	echo "Error: need root priviledges to install PAM service definitions!" >&2
+    else
+	echo "Error: don't know where to store the PAM service definition for \"$1\"!" >&2
+    fi
+    exit 1
+fi

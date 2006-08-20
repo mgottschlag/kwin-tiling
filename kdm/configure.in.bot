@@ -1,8 +1,0 @@
-if $kdm_no_Xau; then
-  AC_MSG_WARN([Cannot build KDM! Make sure that libXau.a is installed!])
-fi
-if $kdm_no_Xdmcp; then
-  AC_MSG_WARN([Cannot build KDM! Make sure that libXdmcp.a and Xdmcp.h 
-are installed or use --without-xdmcp to disable XDMCP support!])
-fi
-

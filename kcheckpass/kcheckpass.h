@@ -38,6 +38,7 @@
 #define KCHECKPASS_H_
 
 #include <config.h>
+#include <config-unix.h>
 
 #ifdef HAVE_CRYPT_H
 #include <crypt.h>
@@ -69,13 +70,12 @@
 /* Make sure there is only one! */
 #if defined(HAVE_PAM)
 # undef HAVE_OSF_C2_PASSWD
-# undef HAVE_SHADOW
 #elif defined(HAVE_OSF_C2_PASSWD)
-# undef HAVE_SHADOW
 #elif defined(_AIX)
 # define HAVE_AIX_AUTH
-# undef HAVE_SHADOW
-#elif !defined(HAVE_SHADOW)
+#elif defined(HAVE_GETSPNAM)
+# define HAVE_SHADOW
+#else
 # define HAVE_ETCPASSWD
 #endif
 

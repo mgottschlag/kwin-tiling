@@ -35,7 +35,6 @@ authorization.
 #define _DM_ERROR_H_ 1
 
 #include "greet.h"
-#include <config-kdm.h>
 #include <stdarg.h>
 
 void GDebug( const char *fmt, ... );

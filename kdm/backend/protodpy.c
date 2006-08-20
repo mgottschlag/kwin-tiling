@@ -35,10 +35,6 @@ from the copyright holder.
  * started.
  */
 
-#include <config.h>
-
-#ifdef XDMCP
-
 #include "dm.h"
 #include "dm_error.h"
 
@@ -137,5 +133,3 @@ DisposeProtoDisplay( pdpy )
 	free( (char *)pdpy->address );
 	free( (char *)pdpy );
 }
-
-#endif /* XDMCP */

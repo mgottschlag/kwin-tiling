@@ -34,10 +34,6 @@ from the copyright holder.
  * generate Kerberos Version 5 authorization records
  */
 
-#include <config.h>
-
-#ifdef K5AUTH
-
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
@@ -244,5 +240,3 @@ Krb5Destroy( const char *dname )
 			Debug( "kerberos ccache destroyed\n" );
 	}
 }
-
-#endif

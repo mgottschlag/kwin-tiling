@@ -37,6 +37,17 @@ from the copyright holder.
 #define GREET_H
 
 #include <config.h>
+#include <config-unix.h>
+#include <config-kdm.h>
+
+#ifdef HAVE_PAM
+# define USE_PAM
+#elif defined(HAVE_GETSPNAM)
+# define USESHADOW
+#endif
+#ifdef HAVE_VSYSLOG
+# define USE_SYSLOG
+#endif
 
 #define DEBUG_CORE     0x01
 #define DEBUG_CONFIG   0x02

@@ -190,7 +190,7 @@ CreateSocklistEntry( ARRAY8Ptr addr )
 	else if (addr->length == 16) { /* IPv6 */
 		struct sockaddr_in6 *sin6;
 		sin6 = Calloc( 1, sizeof(struct sockaddr_in6) );
-#ifdef SIN6_LEN
+#ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_LEN
 		sin6->sin6_len = sizeof(struct sockaddr_in6);
 #endif
 		s->addr = (struct sockaddr *)sin6;

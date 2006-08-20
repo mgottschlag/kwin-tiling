@@ -21,10 +21,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
-#include <config.h>
-
-#ifdef XDMCP
-
 #include "kchooser.h"
 #include "kconsole.h"
 #include "kdmconfig.h"
@@ -233,5 +229,3 @@ void ChooserDlg::slotReadPipe()
 }
 
 #include "kchooser.moc"
-
-#endif

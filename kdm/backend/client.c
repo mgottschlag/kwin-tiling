@@ -33,7 +33,6 @@ from the copyright holder.
  *
  * user verification and session initiation.
  */
-#include <config-kdm.h>
 #include "dm.h"
 #include "dm_auth.h"
 #include "dm_error.h"
@@ -72,7 +71,7 @@ extern int loginsuccess( const char *User, const char *Host, const char *Tty, ch
 # ifdef KERBEROS
 #  include <sys/param.h>
 #  include <krb.h>
-#  ifndef NO_AFS
+#  ifdef AFS
 #   include <kafs.h>
 #  endif
 # endif
@@ -132,7 +131,7 @@ static char krbtkfile[MAXPATHLEN];
 
 #ifdef USE_PAM
 
-# ifdef PAM_MESSAGE_NONCONST
+# ifndef PAM_MESSAGE_CONST
 typedef struct pam_message pam_message_type;
 typedef void *pam_gi_type;
 # else
@@ -1089,7 +1088,7 @@ StartClient()
 		free( (void *)msg );
 	}
 # else /* _AIX */
-#  if defined(KERBEROS) && !defined(NO_AFS)
+#  if defined(KERBEROS) && defined(AFS)
 	if (krbtkfile[0] != '\0') {
 		if (k_hasafs()) {
 			if (k_setpag() == -1)
@@ -1496,7 +1495,7 @@ SessionExit( int status )
 # ifdef KERBEROS
 		if (krbtkfile[0]) {
 			(void)dest_tkt();
-#  ifndef NO_AFS
+#  ifdef AFS
 			if (k_hasafs())
 				(void)k_unlog();
 #  endif
