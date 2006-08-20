@@ -355,7 +355,7 @@ access using the login manager and who can shutdown the
 computer.</para>
 
 <note><para>All settings will be written to the configuration file
-&kdmrc;, which in it's original state has many comments to help you
+&kdmrc;, which in its original state has many comments to help you
 configure &kdm;.  Using this &kcontrolcenter; module will strip these
 comments from the file.  All available options in &kdmrc; are covered
 in <xref linkend="kdm-files"/>.</para>
@@ -1464,7 +1464,7 @@ which the user sees.</para>
 
 <glossentry>
 <glossterm id="gloss-entropy">entropy</glossterm>
-<glossdef><para>The entropy of a system is the measure of it's
+<glossdef><para>The entropy of a system is the measure of its
 unpredictability.  This is used during the generation of random numbers.
 Truly r</para></glossdef>
 </glossentry>
