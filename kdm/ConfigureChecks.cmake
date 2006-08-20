@@ -1,3 +1,5 @@
+include(CheckCSourceRuns)
+
 check_struct_member("struct passwd" "pw_expire" "pwd.h" HAVE_STRUCT_PASSWD_PW_EXPIRE)
 check_struct_member("struct utmp" "ut_user" "utmp.h" HAVE_STRUCT_UTMP_UT_USER)
 
@@ -8,8 +10,17 @@ check_symbol_exists(getdomainname "unistd.h" HAVE_GETDOMAINNAME)
 check_function_exists(initgroups HAVE_INITGROUPS)
 check_function_exists(mkstemp HAVE_MKSTEMP)
 check_function_exists(getusershell HAVE_GETUSERSHELL)
-check_function_exists(setlogin HAVE_SETLOGIN)
 check_function_exists(sysinfo HAVE_SYSINFO)
+
+check_c_source_runs("
+#include <errno.h>
+#include <unistd.h>
+int main()
+{
+	setlogin(0);
+	return errno == ENOSYS;
+}
+" HAVE_SETLOGIN)
 
 # for config-kdm.h
 check_function_exists(seteuid HAVE_SETEUID)
