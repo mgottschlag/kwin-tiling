@@ -27,6 +27,7 @@ check_function_exists(seteuid HAVE_SETEUID)
 
 # for environ in config-kdm.h
 check_include_files(crt_externs.h HAVE_CRT_EXTERNS_H)
+check_include_files(sys/systeminfo.h HAVE_SYSTEMINFO_H)
 check_function_exists(_NSGetEnviron HAVE_NSGETENVIRON)
 
 find_library(UTIL_LIBRARIES util)

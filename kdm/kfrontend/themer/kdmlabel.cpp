@@ -36,7 +36,7 @@
 
 #include <unistd.h>
 #include <sys/utsname.h>
-#if !defined(HAVE_GETDOMAINNAME) && defined(HAVE_SYSINFO)
+#if !defined(HAVE_GETDOMAINNAME) && defined(HAVE_SYSTEMINFO_H)
 # include <sys/systeminfo.h>
 #endif
 
