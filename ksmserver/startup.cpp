@@ -181,7 +181,7 @@ void KSMServer::autoStart0Done()
     kDebug( 1218 ) << "Autostart 0 done" << endl;
     upAndRunning( "kdesktop" );
     upAndRunning( "kicker" );
-    kcminitSignals = new QDBusInterface("org.kde.kcminit", "/kcminit", "org.kde.KCMInit", QDBus::sessionBus(), this );
+    kcminitSignals = new QDBusInterface("org.kde.kcminit", "/kcminit", "org.kde.KCMInit", QDBusConnection::sessionBus(), this );
     if( !kcminitSignals->isValid())
         kWarning() << "kcminit not running?" << endl;
     connect( kcminitSignals, SIGNAL( phase1Done()), SLOT( phase1Done()));

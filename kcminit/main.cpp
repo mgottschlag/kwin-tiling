@@ -153,7 +153,7 @@ void KCMInit::runModules( int phase )
 
 KCMInit::KCMInit( KCmdLineArgs* args )
 {
-  QDBus::sessionBus().registerObject("/kcminit", this, QDBusConnection::ExportSlots);
+  QDBusConnection::sessionBus().registerObject("/kcminit", this, QDBusConnection::ExportScriptableSlots);
   QByteArray arg;
   if (args->count() == 1) {
     arg = args->arg(0);

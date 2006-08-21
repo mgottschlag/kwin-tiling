@@ -75,7 +75,7 @@ KBackgroundManager::KBackgroundManager(QWidget *desktop, KWinModule* kwinModule)
 {
 
     (void) new BackgroundAdaptor( this );
-    QDBus::sessionBus().registerObject( backgroundDBusObjectPath, this );
+    QDBusConnection::sessionBus().registerObject( backgroundDBusObjectPath, this );
 
     if( !properties_inited )
     {

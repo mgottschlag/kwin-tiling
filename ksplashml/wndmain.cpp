@@ -163,9 +163,9 @@ void KSplash::nextIcon()
 void KSplash::initDbus()
 {
     bool isConnected = false;
-    QDBusConnection connection = QDBusConnection::addConnection(QDBusConnection::SessionBus, "ksplash");
+    QDBusConnection connection = QDBusConnection::connectToBus(QDBusConnection::SessionBus, "ksplash");
     isConnected = connection.isConnected();
-    QDBusConnection::closeConnection("ksplash");
+    QDBusConnection::disconnectFromBus("ksplash");
     if (!isConnected) {
         QTimer::singleShot(100, this, SLOT(initDbus()));
         return;
@@ -174,8 +174,8 @@ void KSplash::initDbus()
     if(!mKsTheme->managedMode())
       upAndRunning("dbus");
     (void)new KSplashAdaptor(this);
-    QDBus::sessionBus().registerObject(QLatin1String("/KSplash"), this);
-    QDBus::sessionBus().addConnection(QDBusConnection::SessionBus, "org.kde.ksplash");
+    QDBusConnection::sessionBus().registerObject(QLatin1String("/KSplash"), this);
+    QDBusConnection::sessionBus().connectToBus(QDBusConnection::SessionBus, "org.kde.ksplash");
 }
 
 void KSplash::updateState( unsigned int state )

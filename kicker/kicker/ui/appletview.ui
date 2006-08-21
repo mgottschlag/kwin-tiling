@@ -117,7 +117,7 @@
                 </size>
             </property>
             <property name="focusPolicy">
-                <enum>NoFocus</enum>
+                <enum>Qt::NoFocus</enum>
             </property>
             <property name="whatsThis" stdset="0">
                 <string>&lt;qt&gt;This is the applet list. Select and applet and click on &lt;b&gt;Add to panel&lt;/b&gt; to add it&lt;/qt&gt;</string>

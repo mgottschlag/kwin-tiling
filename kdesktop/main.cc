@@ -65,7 +65,7 @@ int kdesktop_screen_number = 0;
 static void crashHandler(int sigId)
 {
     // Unregister from DBus
-    QDBus::sessionBus().unregisterObject( "/MainApplication", QDBusConnection::UnregisterNode );
+    QDBusConnection::sessionBus().unregisterObject( "/MainApplication", QDBusConnection::UnregisterNode );
     sleep( 1 );
     system("kdesktop &"); // try to restart
     fprintf(stderr, "*** kdesktop (%ld) got signal %d\n", (long) getpid(), sigId);

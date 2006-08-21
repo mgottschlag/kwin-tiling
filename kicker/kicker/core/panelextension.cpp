@@ -70,7 +70,7 @@ PanelExtension::PanelExtension(const QString& configFile, QWidget *parent)
       m_opMenuBuilt(false)
 {
     QString nameRegister = QString("/Panel_") + QString::number((ulong)this);
-    QDBus::sessionBus().registerObject(nameRegister, this, QDBusConnection::ExportSlots);
+    QDBusConnection::sessionBus().registerObject(nameRegister, this, QDBusConnection::ExportScriptableSlots);
     setAcceptDrops(!Kicker::self()->isImmutable());
     setCustomMenu( opMenu() );
 

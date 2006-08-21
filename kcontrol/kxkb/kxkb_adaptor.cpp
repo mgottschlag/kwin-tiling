@@ -21,7 +21,7 @@
 
 KXKBAdaptor::KXKBAdaptor( KXKBApp* app )
     : QObject( app ) {
-    QDBus::sessionBus().registerObject( "/kxkb", this, QDBusConnection::ExportSlots );
+    QDBusConnection::sessionBus().registerObject( "/kxkb", this, QDBusConnection::ExportScriptableSlots );
 }
 
 bool KXKBAdaptor::setLayout(const QString& layout)

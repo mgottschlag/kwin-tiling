@@ -143,7 +143,7 @@ KlipperWidget::KlipperWidget( QWidget *parent, KConfig* config )
 {
     qt_qclipboard_bailout_hack = true;
 
-    QDBus::sessionBus().registerObject("/klipper", this, QDBusConnection::ExportSlots);
+    QDBusConnection::sessionBus().registerObject("/klipper", this, QDBusConnection::ExportScriptableSlots);
 
     // We don't use the clipboardsynchronizer anymore, and it confuses Klipper
     ensureGlobalSyncOff(m_config);

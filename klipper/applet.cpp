@@ -123,7 +123,7 @@ void KlipperAppletWidget::init()
     //kapp->dcopClient()->call("klipper", "klipper", "quitProcess()", arg1, str, arg2 );
     // register ourselves, so if klipper process is started,
     // it will quit immediately (KUniqueApplication)
-	QDBus::sessionBus().registerObject("/klipper/applet", this, QDBusConnection::ExportSlots);
+	QDBusConnection::sessionBus().registerObject("/klipper/applet", this, QDBusConnection::ExportScriptableSlots);
 }
 
 KlipperAppletWidget::~KlipperAppletWidget()

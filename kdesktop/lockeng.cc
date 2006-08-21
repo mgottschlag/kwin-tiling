@@ -41,7 +41,7 @@ SaverEngine::SaverEngine()
 {
 
     (void) new ScreenSaverAdaptor( this );
-    QDBus::sessionBus().registerObject( screenSaverDBusObjectPath, this );
+    QDBusConnection::sessionBus().registerObject( screenSaverDBusObjectPath, this );
 
     // Save X screensaver parameters
     XGetScreenSaver(QX11Info::display(), &mXTimeout, &mXInterval,

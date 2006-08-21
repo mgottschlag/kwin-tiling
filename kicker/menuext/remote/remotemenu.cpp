@@ -54,7 +54,7 @@ RemoteMenu::RemoteMenu(QWidget *parent, const QStringList &/*args*/)
         dir.mkdir("remoteview");
     }
 
-    org::kde::KDirNotify *kdirnotify = new org::kde::KDirNotify(QString(), QString(), QDBus::sessionBus(), this);
+    org::kde::KDirNotify *kdirnotify = new org::kde::KDirNotify(QString(), QString(), QDBusConnection::sessionBus(), this);
     connect(kdirnotify, SIGNAL(FileRenamed(QString,QString)), SLOT(slotFileRenamed(QString,QString)));
     connect(kdirnotify, SIGNAL(FilesAdded(QString)), SLOT(slotFilesAdded(QString)));
     connect(kdirnotify, SIGNAL(FilesChanged(QStringList)), SLOT(slotFilesChanged(QStringList)));

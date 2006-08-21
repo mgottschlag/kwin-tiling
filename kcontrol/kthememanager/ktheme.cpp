@@ -599,8 +599,8 @@ void KTheme::apply()
         konqConf.sync();
 
         QDBusMessage message =
-            QDBusMessage::signal("/KonqMain", "org.kde.Konqueror.Main", "reparseConfiguration", QDBus::sessionBus());
-        QDBus::sessionBus().send(message);
+            QDBusMessage::createSignal("/KonqMain", "org.kde.Konqueror.Main", "reparseConfiguration");
+        QDBusConnection::sessionBus().send(message);
     }
 
     // 9. Kicker

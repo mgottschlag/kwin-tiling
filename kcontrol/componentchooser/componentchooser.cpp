@@ -204,8 +204,8 @@ void CfgEmailClient::save(KConfig *)
 	QString cfgName(KGlobal::dirs()->findResource("config", "emails"));
 	if (!cfgName.isEmpty())
 		::chmod(QFile::encodeName(cfgName), 0600);
-	QDBusMessage message = QDBusMessage::signal("/Component", "org.kde.Kcontrol", "KDE_emailSettingsChanged", QDBus::sessionBus());
-	QDBus::sessionBus().send(message);
+	QDBusMessage message = QDBusMessage::createSignal("/Component", "org.kde.Kcontrol", "KDE_emailSettingsChanged" );
+	QDBusConnection::sessionBus().send(message);
 	emit changed(false);
 }
 
