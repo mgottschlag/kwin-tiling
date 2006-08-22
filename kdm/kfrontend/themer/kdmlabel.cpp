@@ -218,7 +218,7 @@ KdmLabel::lookupText( const QString &t )
 	m['h'] = gethostname( buf, sizeof(buf) - 1 ) ? "localhost" : QString::fromLocal8Bit( buf );
 #ifdef HAVE_GETDOMAINNAME
 	m['o'] = getdomainname( buf, sizeof(buf) - 1 ) ? "localdomain" : QString::fromLocal8Bit( buf );
-#elif defined(HAVE_SYSINFO)
+#elif defined(HAVE_SYSTEMINFO)
 	m['o'] = (unsigned)sysinfo( SI_SRPC_DOMAIN, buf, sizeof(buf) ) > sizeof(buf) ? "localdomain" : QString::fromLocal8Bit( buf );
 #endif
 	m['d'] = QString::number( KThemedGreeter::timedDelay );
