@@ -5,7 +5,6 @@ check_struct_member("struct utmp" "ut_user" "utmp.h" HAVE_STRUCT_UTMP_UT_USER)
 
 check_include_files(lastlog.h HAVE_LASTLOG_H)
 
-check_symbol_exists(getdomainname "unistd.h" HAVE_GETDOMAINNAME)
 check_symbol_exists(sysinfo "sys/sysinfo.h" HAVE_SYSINFO)
 
 check_function_exists(initgroups HAVE_INITGROUPS)
