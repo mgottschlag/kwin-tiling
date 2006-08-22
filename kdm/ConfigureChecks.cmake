@@ -6,11 +6,11 @@ check_struct_member("struct utmp" "ut_user" "utmp.h" HAVE_STRUCT_UTMP_UT_USER)
 check_include_files(lastlog.h HAVE_LASTLOG_H)
 
 check_symbol_exists(getdomainname "unistd.h" HAVE_GETDOMAINNAME)
+check_symbol_exists(sysinfo "sys/sysinfo.h" HAVE_SYSINFO)
 
 check_function_exists(initgroups HAVE_INITGROUPS)
 check_function_exists(mkstemp HAVE_MKSTEMP)
 check_function_exists(getusershell HAVE_GETUSERSHELL)
-check_function_exists(sysinfo HAVE_SYSINFO)
 
 check_c_source_runs("
 #include <errno.h>
@@ -27,7 +27,6 @@ check_function_exists(seteuid HAVE_SETEUID)
 
 # for environ in config-kdm.h
 check_include_files(crt_externs.h HAVE_CRT_EXTERNS_H)
-check_include_files(sys/systeminfo.h HAVE_SYSTEMINFO_H)
 check_function_exists(_NSGetEnviron HAVE_NSGETENVIRON)
 
 find_library(UTIL_LIBRARIES util)

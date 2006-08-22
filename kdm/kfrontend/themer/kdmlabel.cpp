@@ -19,6 +19,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <config-kdm.h>
+
 #include "kdmlabel.h"
 #include <kgreeter.h>
 
@@ -36,7 +38,7 @@
 
 #include <unistd.h>
 #include <sys/utsname.h>
-#if !defined(HAVE_GETDOMAINNAME) && defined(HAVE_SYSTEMINFO_H)
+#if !defined(HAVE_GETDOMAINNAME) && defined(HAVE_SYSINFO)
 # include <sys/systeminfo.h>
 #endif
 
@@ -218,7 +220,7 @@ KdmLabel::lookupText( const QString &t )
 	m['h'] = gethostname( buf, sizeof(buf) - 1 ) ? "localhost" : QString::fromLocal8Bit( buf );
 #ifdef HAVE_GETDOMAINNAME
 	m['o'] = getdomainname( buf, sizeof(buf) - 1 ) ? "localdomain" : QString::fromLocal8Bit( buf );
-#elif defined(HAVE_SYSTEMINFO)
+#elif defined(HAVE_SYSINFO)
 	m['o'] = (unsigned)sysinfo( SI_SRPC_DOMAIN, buf, sizeof(buf) ) > sizeof(buf) ? "localdomain" : QString::fromLocal8Bit( buf );
 #endif
 	m['d'] = QString::number( KThemedGreeter::timedDelay );

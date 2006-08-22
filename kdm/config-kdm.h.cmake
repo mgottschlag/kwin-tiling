@@ -48,9 +48,6 @@
 /* Define to 1 if you have the `sysinfo' function. */
 #cmakedefine HAVE_SYSINFO 1
 
-/* Define to 1 if you have the `sys/systeminfo.h` header */
-#cmakedefine HAVE_SYSTEMINFO_H 1
-
 /* Define to 1 if you have the `arc4random' function. */
 #cmakedefine HAVE_ARC4RANDOM 1
 
