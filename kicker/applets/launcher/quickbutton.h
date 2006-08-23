@@ -52,8 +52,8 @@ public:
     KUrl kurl() const {return _kurl;};
     QString url() const {return _kurl.url();};
     QString menuId() const  {return _menuId;};
-    QString comment() const {return _comment;};
     QString genericName() const { return m_genericName; }
+    QString name() const { return m_name; }
     KService::Ptr service() const {return _service;};
     void run() const;
     QPixmap pixmap(mode_t _mode = 0, K3Icon::Group _group = K3Icon::Desktop,
@@ -62,8 +62,8 @@ public:
 private:
     KUrl _kurl;
     QString _menuId;
-    QString _comment;
     QString m_genericName;
+    QString m_name;
     KService::Ptr _service;
 };
 

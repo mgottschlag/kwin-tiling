@@ -104,13 +104,11 @@ QuickURL::QuickURL(const QString &u)
          if (!_service->menuId().isEmpty())
             _menuId = _service->menuId();
 
-         _comment = _service->comment();
-         if (_comment.isEmpty())
-            _comment = _service->name();
          m_genericName = _service->genericName();
+         m_name = _service->name();
       }
    } else {
-      _comment = _kurl.prettyUrl();
+      m_name = _kurl.prettyUrl();
    }
    DEBUGSTR<<"QuickURL::QuickURL("<<u<<") END"<<endl<<flush;
 }
@@ -155,7 +153,7 @@ QuickButton::QuickButton(const QString &u, KAction* configAction,
     _oldCursor = cursor();
     _qurl=new QuickURL(u);
 
-    this->setToolTip( _qurl->comment());
+    this->setToolTip( _qurl->name());
     resize(int(DEFAULT_ICON_DIM),int(DEFAULT_ICON_DIM));
 
     QuickAddAppsMenu *addAppsMenu = new QuickAddAppsMenu(
@@ -365,7 +363,7 @@ void QuickButton::updateTipData(KickerTip::Data &data)
     {
         return;
     }
-    data.message = _qurl->comment();
+    data.message = _qurl->name();
     data.direction = m_popupDirection;
     data.subtext = _qurl->genericName();
     if (data.subtext == QString())
