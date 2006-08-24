@@ -19,11 +19,11 @@
 #ifndef PLASMA_APP_H
 #define PLASMA_APP_H
 
-#include "plasmaappinterface.h"
+#include "lib/interface.h"
 
 #include <kuniquapplication.h>
 
-class PlasmaApp : public KUniqueApplication, public PlasmaAppInterface
+class PlasmaApp : public KUniqueApplication, public Plasma::Interface
 {
     public:
         PlasmaApp();
@@ -31,9 +31,9 @@ class PlasmaApp : public KUniqueApplication, public PlasmaAppInterface
 
         static PlasmaApp* self();
 
-        // PlasmaAppInterface
-        static PlasmaAppInterface* self();
+        // Plasma::Interface
         bool loadDataEngine(const QString& name);
+        bool unloadDataEngine(const QString& name);
 
         void notifyStartup(bool completed);
 

@@ -26,7 +26,7 @@
 
 PlasmaApp* PlasmaApp::self()
 {
-    return q_cast<PlasmaApp*>(kapp);
+    return qobject_cast<PlasmaApp*>(kapp);
 }
 
 PlasmaApp::PlasmaApp()
@@ -80,8 +80,18 @@ bool PlasmaApp::loadDataEngine(const QString& name)
         return false;
     }
 
-    Plasma::DataEngine* engine = engines->loadDataEngine
+    Plasma::DataEngine* engine = engines->loadDataEngine(name);
     return (engine != 0);
+}
+
+void PlasmaApp::unloadDataEngine(const QString& name)
+{
+    if (!engines)
+    {
+        return;
+    }
+
+    engines->unloadDataEngine(name);
 }
 
 void PlasmaApp::notifyStartup(bool completed)

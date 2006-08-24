@@ -32,7 +32,7 @@ DataEngineManager::DataEngineManager()
     engines.clear();
 }
 
-Plasma::DataEngine* DataEngineManager::engine(const QString& name)
+Plasma::DataEngine* DataEngineManager::engine(const QString& name) const
 {
     Plasma::DataEngine::Dict::iterator it = engines.find(name);
     if (it != engines.end())
@@ -42,26 +42,53 @@ Plasma::DataEngine* DataEngineManager::engine(const QString& name)
         return *it;
     }
 
+    return 0;
+}
+
+bool DataEngineManager::loadEngine(const QString& name)
+{
+    Plasma::DataEngine* engine = engine(name);
+
+    if (engine)
+    {
+        engine->ref();
+        return true;
+    }
+
     // load the engine, add it to the engines
     KService::List offers = KServiceTypeTrader::self()->query("Plasma/Engine");
 
     if (offers.isEmpty())
     {
-        return 0;
+        return false;
     }
 
-    // ## why not use createInstanceFromQuery directly? (DF)
     int errorCode = 0;
-    Plasma::DataEngine *engine =
-            KParts::ComponentFactory::createInstanceFromService<Plasma::DataEngine>
-            (offers.first(), 0, 0, QStringList(), &errorCode);
+    engine = KParts::ComponentFactory::createInstanceFromService<Plasma::DataEngine>
+                                  (offers.first(), 0, 0, QStringList(), &errorCode);
 
     if (!engine)
     {
-        return 0;
+        return false;
     }
 
-    engine->init();
     engines[name] = engine;
-    return engine;
+    return true;
 }
+
+void DataEngineManager::unloadEngine(const QString& name)
+{
+    Plasma::DataEngine* engine = engine(name);
+
+    if (engine)
+    {
+        engine->deref();
+
+        if (!engine->used())
+        {
+            engines.remove(name);
+            delete engine;
+        }
+    }
+}
+
