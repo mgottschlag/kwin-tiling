@@ -884,8 +884,6 @@ void KlipperWidget::checkClipData( bool selectionMode )
 // if this actually needs to be more configurable than only text vs all klipper knows.
         if( bIgnoreImages )
             return;
-        else
-            ; // ok
     }
     else // unknown, ignore
         return;
