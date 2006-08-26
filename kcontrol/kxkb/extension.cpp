@@ -41,8 +41,9 @@ XKBExtension::XKBExtension(Display *d)
 		d = QX11Info::display();
 	m_dpy = d;
 	
-	QStringList dirs = KGlobal::dirs()->findDirs ( "tmp", "" );
-	m_tempDir = dirs.count() == 0 ? "/tmp/" : dirs[0];
+//	QStringList dirs = KGlobal::dirs()->findDirs ( "tmp", "" );
+//	m_tempDir = dirs.count() == 0 ? "/tmp/" : dirs[0];
+	m_tempDir = locateLocal("tmp", "");
 }
 
 bool XKBExtension::init()
