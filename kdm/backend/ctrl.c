@@ -190,9 +190,7 @@ closeCtrl( struct display *d )
 		CloseNClearCloseOnFork( cr->fd );
 		cr->fd = -1;
 		unlink( cr->path );
-		c = strrchr( cr->path, '/' );
-		if (c)
-			*c = 0;
+		*strrchr( cr->path, '/' ) = 0;
 		rmdir( cr->path );
 		free( cr->path );
 		cr->path = 0;
@@ -223,8 +221,6 @@ chownCtrl( CtrlRec *cr, int uid )
 		chown( cr->fpath, uid, -1 );
 	if (cr->path) {
 		char *ptr = strrchr( cr->path, '/' );
-		if (!ptr)
-			return; /* invalid input */
 		*ptr = 0;
 		chown( cr->path, uid, -1 );
 		*ptr = '/';
@@ -829,6 +825,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 						goto bust;
 					}
 					if (ar[6]) {
+						free( args );
 					  exce:
 						fLog( d, fd, "bad", "excess argument(s)" );
 						goto bust;

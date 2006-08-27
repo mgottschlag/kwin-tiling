@@ -359,6 +359,7 @@ UpdateMcastGroup( ARRAY8Ptr addr, void **closure )
 		return;
 
 	ChangeMcastMembership( s, g, JOIN_MCAST_GROUP );
+	free( g );
 }
 
 /* Open or close listening sockets to match the current settings read in

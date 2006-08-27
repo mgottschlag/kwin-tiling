@@ -1145,7 +1145,9 @@ SetUserAuthorization( struct display *d )
 			envname = 0;
 			name = name_buf;
 		} else {
+			/* 'old' is uninitialized here */
 		  fallback:
+
 			if (strlen( d->userAuthDir ) >= NBSIZE - 13)
 				return;
 			/*

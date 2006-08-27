@@ -163,7 +163,7 @@ iniEntry( char *data, const char *section, const char *key, const char *value )
 	nlen = len - (ce - cb) + ll + sl + kl + vl + 1;
 	if (!(p = ndata = Malloc( nlen + 1 )))
 		return data;
-	apparr( p, data, cb - data );
+	apparr( p, data, cb - data ); /* zero length if data is null */
 	if (kl) {
 		if (sl) {
 			if (ll)
@@ -178,8 +178,10 @@ iniEntry( char *data, const char *section, const char *key, const char *value )
 	}
 	apparr( p, value, vl );
 	appbyte( p, '\n' );
-	apparr( p, ce, len - (ce - data) );
-	free( data );
+	if (data) {
+		apparr( p, ce, len - (ce - data) );
+		free( data );
+	}
 	appbyte( p, 0 );
 	return ndata;
 }
