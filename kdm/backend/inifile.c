@@ -178,10 +178,8 @@ iniEntry( char *data, const char *section, const char *key, const char *value )
 	}
 	apparr( p, value, vl );
 	appbyte( p, '\n' );
-	if (data) {
-		apparr( p, ce, len - (ce - data) );
-		free( data );
-	}
+	apparr( p, ce, len - (ce - data) );
+	free( data );
 	appbyte( p, 0 );
 	return ndata;
 }
