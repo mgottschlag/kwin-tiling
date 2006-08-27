@@ -185,7 +185,6 @@ closeCtrl( struct display *d )
 	CtrlRec *cr = d ? &d->ctrl : &ctrl;
 
 	if (cr->fd >= 0) {
-		//char *c;
 		UnregisterInput( cr->fd );
 		CloseNClearCloseOnFork( cr->fd );
 		cr->fd = -1;
