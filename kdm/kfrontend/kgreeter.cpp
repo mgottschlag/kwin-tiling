@@ -639,7 +639,7 @@ KStdGreeter::KStdGreeter()
 
 	switch (_logoArea) {
 		case LOGO_CLOCK:
-			clock = new KdmClock( this, "clock" );
+			clock = new KdmClock( this );
 			break;
 		case LOGO_LOGO:
 			{

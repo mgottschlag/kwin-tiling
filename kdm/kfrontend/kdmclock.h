@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef _KDM_CLOCK_H_
 #define _KDM_CLOCK_H_
 
+//#define MORE
+
 #include <QFrame>
 
 class KdmClock : public QFrame {
@@ -31,7 +33,7 @@ class KdmClock : public QFrame {
 	typedef QFrame inherited;
 
   public:
-	KdmClock( QWidget *parent=0, const char *name=0 );
+	KdmClock( QWidget *parent = 0 );
 
   protected:
 	virtual void showEvent( QShowEvent * );
@@ -40,13 +42,14 @@ class KdmClock : public QFrame {
   private Q_SLOTS:
 	void timeout();
 
+#ifdef MORE
   private:
-	QBrush mBackgroundBrush;
 	QFont  mFont;
 	bool   mSecond;
 	bool   mDigital;
 	bool   mDate;
 	bool   mBorder;
+#endif
 };
 
 #endif

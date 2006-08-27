@@ -24,34 +24,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "kdmclock.h"
 
-//#include <kapplication.h>
-//#include <kconfig.h>
-
 #include <QDateTime>
-#include <QPixmap>
 #include <QPainter>
 #include <QTimer>
-//Added by qt3to4:
 #include <QShowEvent>
 #include <QPaintEvent>
 #include <QPolygon>
 
-KdmClock::KdmClock( QWidget *parent, const char *name )
-	: inherited( parent, name )
+KdmClock::KdmClock( QWidget *parent )
+	: inherited( parent )
 {
-	// start timer
 	QTimer *timer = new QTimer( this );
 	connect( timer, SIGNAL(timeout()), SLOT(timeout()) );
 	timer->start( 1000 );
 
-	// reading rc file
-	//KConfig *config = kapp->config();
-
-	//config->setGroup( "Option" );
+#ifdef MORE
 	mDate = false;//config->readEntry( "date", FALSE );
 	mSecond = true;//config->readEntry( "second", TRUE );
 	mDigital = false;//config->readEntry( "digital", FALSE );
-	mBorder = false;//config->readEntry( "border", FALSE );
+	mBorder = true;//config->readEntry( "border", FALSE );
 
 	//config->setGroup( "Font" );
 	mFont.setFamily( QString::fromLatin1("Utopia")/*config->readEntry( "Family", "Utopia")*/ );
@@ -60,26 +51,12 @@ KdmClock::KdmClock( QWidget *parent, const char *name )
 	mFont.setItalic( TRUE/*config->readEntry( "Italic",TRUE )*/ );
 	mFont.setBold( TRUE/*config->readEntry( "Bold",TRUE )*/ );
 
+	if (mBorder)
+		setFrameStyle( WinPanel|Sunken );
+#endif
+
 	setFixedSize( 100, 100 );
 
-	if (mBorder) {
-		setLineWidth( 1 );
-		setFrameStyle( Box|Plain );
-		//setFrameStyle( WinPanel|Sunken );
-	}
-
-/*
-	if (!mDigital) {
-		if (height() < width())
-			resize( height(), height() );
-		else
-			resize( width() ,width() );
-	}
-*/
-
-	//setBackgroundOrigin( WindowOrigin );
-	mBackgroundBrush = backgroundBrush();
-	setAttribute(Qt::WA_NoSystemBackground, true);
 	repaint();
 }
 
@@ -101,17 +78,16 @@ void KdmClock::paintEvent( QPaintEvent * )
 		return;
 
 	QPainter p( this );
+#ifdef MORE
 	drawFrame( &p );
+#endif
 
-	QPixmap pm( contentsRect().size() );
-	QPainter paint;
-	paint.begin( &pm );
-	paint.fillRect( contentsRect(), mBackgroundBrush );
+	p.setPen( palette().foreground().color() );
+	p.setBrush( palette().foreground() );
 
-	// get current time
 	QTime time = QTime::currentTime();
 
-/*
+#ifdef MORE
 	if (mDigital) {
 		QString buf;
 		if (mSecond)
@@ -119,62 +95,60 @@ void KdmClock::paintEvent( QPaintEvent * )
 			             time.second() );
 		else
 			buf.sprintf( "%02d:%02d", time.hour(), time.minute() );
-		mFont.setPointSize( qMin( (int)(width()/buf.length()*1.5),height() ) );
-		paint.setFont( mFont );
-		paint.setPen( backgroundColor() );
-		paint.drawText( contentsRect(),AlignHCenter|AlignVCenter, buf,-1,0,0 );
-	} else {
-*/
-		QPolygon pts;
-		QPoint cp = contentsRect().center() - QPoint( 2,2 );
-		int d = qMin( contentsRect().width()-15,contentsRect().height()-15 );
-		paint.setPen( foregroundColor() );
-		paint.setBrush( foregroundColor() );
-
+		mFont.setPointSize( qMin( (int)(width() / buf.length() * 1.5), height() ) );
+		p.setFont( mFont );
+		p.drawText( contentsRect(), Qt::AlignCenter, buf );
+	} else
+#endif
+	{
 		QMatrix matrix;
+		QPoint cp = contentsRect().center();
 		matrix.translate( cp.x(), cp.y() );
+		int d = qMin( contentsRect().width() - 15, contentsRect().height() - 15 );
 		matrix.scale( d/1000.0F, d/1000.0F );
+
+		QPolygon pts;
 
 		// Hour
 		float h_angle = 30*(time.hour()%12-3) + time.minute()/2;
 		matrix.rotate( h_angle );
-		paint.setMatrix( matrix );
+		p.setMatrix( matrix );
 		pts.setPoints( 4, -20,0, 0,-20, 300,0, 0,20 );
-		paint.drawPolygon( pts );
+		p.drawPolygon( pts );
 		matrix.rotate( -h_angle );
 
 		// Minute
 		float m_angle = (time.minute()-15)*6;
 		matrix.rotate( m_angle );
-		paint.setMatrix( matrix );
+		p.setMatrix( matrix );
 		pts.setPoints( 4, -10,0, 0,-10, 400,0, 0,10 );
-		paint.drawPolygon( pts );
+		p.drawPolygon( pts );
 		matrix.rotate( -m_angle );
 
 		// Second
-		float s_angle = (time.second()-15)*6;
-		matrix.rotate( s_angle );
-		paint.setMatrix( matrix );
-		pts.setPoints( 4,0,0,0,0,400,0,0,0 );
+#ifdef MORE
 		if (mSecond)
-			paint.drawPolygon( pts );
-		matrix.rotate( -s_angle );
+#endif
+		{
+			float s_angle = (time.second()-15)*6;
+			matrix.rotate( s_angle );
+			p.setMatrix( matrix );
+			pts.setPoints( 4,0,0,0,0,400,0,0,0 );
+			p.drawPolygon( pts );
+			matrix.rotate( -s_angle );
+		}
 
 		// quadrante
-		for (int i=0 ; i < 60 ; i++) {
-			paint.setMatrix( matrix );
+		for (int i = 0; i < 60; i++) {
+			p.setMatrix( matrix );
 			if ((i % 5) == 0)
-				paint.drawLine( 450,0, 500,0 ); // draw hour lines
+				p.drawLine( 450,0, 500,0 ); // draw hour lines
 			else
-				paint.drawPoint( 480,0 ); // draw second lines
+				p.drawPoint( 480,0 ); // draw second lines
 			matrix.rotate( 6 );
 		}
 
-//	} // if (mDigital)
-	paint.end();
-
-	// flicker free code by Remi Guyomarch <rguyom@mail.dotcom.fr>
-	bitBlt( this, contentsRect().topLeft(), &pm );
+	} // if (mDigital)
 }
 
 #include "kdmclock.moc"
