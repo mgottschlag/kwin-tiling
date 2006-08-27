@@ -26,16 +26,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef KGAPP_H
 #define KGAPP_H
 
-#include <kapplication.h>
+#include <qapplication.h>
 //Added by qt3to4:
 #include <QTimerEvent>
 
-class GreeterApp : public KApplication {
+class GreeterApp : public QApplication {
 	Q_OBJECT
-	typedef KApplication inherited;
+	typedef QApplication inherited;
 
   public:
-	GreeterApp();
+	GreeterApp(int argc, char **argv);
 	virtual bool x11EventFilter( XEvent * );
 
   protected:

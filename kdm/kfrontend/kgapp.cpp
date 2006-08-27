@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # include "kchooser.h"
 #endif
 
+#include <kapplication.h>
 #include <kprocess.h>
 #include <kcmdlineargs.h>
 #include <kcrash.h>
@@ -64,7 +65,8 @@ sigAlarm( int )
 
 }
 
-GreeterApp::GreeterApp()
+GreeterApp::GreeterApp(int argc, char **argv) :
+	inherited(argc, argv)
 {
 	pingInterval = _isLocal ? 0 : _pingInterval;
 	if (pingInterval) {
@@ -119,8 +121,6 @@ GreeterApp::x11EventFilter( XEvent * ev )
 	return false;
 }
 
-extern bool kde_have_kipc;
-
 extern "C" {
 
 static int
@@ -133,13 +133,13 @@ void
 kg_main( const char *argv0 )
 {
 	static char *argv[] = { (char *)"kdmgreet", 0 };
-	KCmdLineArgs::init( 1, argv, *argv, 0, 0, 0, KCmdLineArgs::StdCmdLineArgs(KCmdLineArgs::CmdLineArgNone) );
 
-	kde_have_kipc = false;
-	//KApplication::disableAutoDcopRegistration();
-	KCrash::setSafer( true );
-	GreeterApp app;
+	KCrash::setFlags( KCrash::KeepFDs | KCrash::SaferDialog | KCrash::AlwaysDirectly );
+	KCrash::setApplicationName( QLatin1String( argv[0] ) );
+	KCrash::setCrashHandler( KCrash::defaultCrashHandler );
 	XSetIOErrorHandler( xIOErr );
+	KInstance inst( argv[0] );
+	GreeterApp app( 1, argv );
 
 	Display *dpy = QX11Info::display();
 
@@ -150,7 +150,7 @@ kg_main( const char *argv0 )
 	if (!_colorScheme.isEmpty()) {
 		KSimpleConfig config( _colorScheme, true );
 		config.setGroup( "Color Scheme" );
-		app.setPalette( app.createApplicationPalette( &config, 7 ) );
+		app.setPalette( KApplication::createApplicationPalette( &config, 7 ) );
 	}
 
 	app.setFont( _normalFont );
