@@ -185,11 +185,14 @@ closeCtrl( struct display *d )
 	CtrlRec *cr = d ? &d->ctrl : &ctrl;
 
 	if (cr->fd >= 0) {
+		char *c;
 		UnregisterInput( cr->fd );
 		CloseNClearCloseOnFork( cr->fd );
 		cr->fd = -1;
 		unlink( cr->path );
-		*strrchr( cr->path, '/' ) = 0;
+		c = strrchr( cr->path, '/' );
+		if (c)
+			*c = 0;
 		rmdir( cr->path );
 		free( cr->path );
 		cr->path = 0;
@@ -220,6 +223,8 @@ chownCtrl( CtrlRec *cr, int uid )
 		chown( cr->fpath, uid, -1 );
 	if (cr->path) {
 		char *ptr = strrchr( cr->path, '/' );
+		if (!ptr)
+			return; /* invalid input */
 		*ptr = 0;
 		chown( cr->path, uid, -1 );
 		*ptr = '/';
