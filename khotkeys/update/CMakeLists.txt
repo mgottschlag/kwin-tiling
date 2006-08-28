@@ -15,20 +15,3 @@ if(X11_XTest_FOUND)
 endif(X11_XTest_FOUND)
 
 install(TARGETS khotkeys_update DESTINATION ${LIB_INSTALL_DIR}/kconf_update_bin/ )
-
-
-
-
-#original Makefile.am contents follow:
-
-#kconf_PROGRAMS = khotkeys_update
-#kconfdir = $(libdir)/kconf_update_bin
-#
-#khotkeys_update_SOURCES = update.cpp
-#
-#khotkeys_update_LDADD   = ../shared/libshared.la $(LIB_KDECORE) $(KDE_RPATH)
-#khotkeys_update_LDFLAGS = $(all_libraries)
-#
-#INCLUDES = -I$(srcdir)/../shared $(all_includes)
-#
-#METASOURCES = AUTO

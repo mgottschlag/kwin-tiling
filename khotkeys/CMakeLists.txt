@@ -30,20 +30,5 @@ add_subdirectory( update )
 
 ########### install files ###############
 
-install( FILES khotkeys.desktop DESTINATION ${DATA_INSTALL_DIR}/autostart )
+install( FILES khotkeys.desktop DESTINATION ${AUTOSTART_INSTALL_DIR} )
 
-
-
-
-#original Makefile.am contents follow:
-
-#SUBDIRS = shared kcontrol app data update
-#
-#khotkeys_autostart_DATA = khotkeys.desktop
-#khotkeys_autostartdir = $(datadir)/autostart
-#
-#EXTRA_DIST = $(khotkeys_autostart_DATA) COPYING AUTHORS
-#
-#messages: rc.cpp
-#	$(EXTRACTRC) kcontrol/ui/*.ui data/*.khotkeys >> rc.cpp
-#	$(XGETTEXT) rc.cpp app/*.cpp shared/*.cpp shared/*.h kcontrol/*.cpp -o $(podir)/khotkeys.pot
