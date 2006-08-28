@@ -35,7 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class QLabel;
 class QPushButton;
 class KHistoryCombo;
-class KURIFilterData;
+class KUriFilterData;
 
 class RunApplet : public KPanelApplet
 {
@@ -60,7 +60,7 @@ protected Q_SLOTS:
 
 private:
     KHistoryCombo  *_input;
-    KURIFilterData *_filterData;
+    KUriFilterData *_filterData;
     QLabel         *_label;
     QPushButton    *_btn;
     QWidget        *_hbox;

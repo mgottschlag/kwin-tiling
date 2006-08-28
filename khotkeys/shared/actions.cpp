@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #define _ACTIONS_CPP_
@@ -42,7 +42,7 @@ namespace KHotKeys
 {
 
 // Action
-    
+
 Action* Action::create_cfg_read( KConfig& cfg_P, Action_data* data_P )
     {
     QString type = cfg_P.readEntry( "Type" );
@@ -84,7 +84,7 @@ Action_list::Action_list( KConfig& cfg_P, Action_data* data_P )
         }
     cfg_P.setGroup( save_cfg_group );
     }
-    
+
 void Action_list::cfg_write( KConfig& cfg_P ) const
     {
     QString save_cfg_group = cfg_P.group();
@@ -97,7 +97,7 @@ void Action_list::cfg_write( KConfig& cfg_P ) const
         it.current()->cfg_write( cfg_P );
         }
     cfg_P.setGroup( save_cfg_group );
-    cfg_P.writeEntry( "ActionsCount", i );     
+    cfg_P.writeEntry( "ActionsCount", i );
     }
 
 // Command_url_action
@@ -111,7 +111,7 @@ Command_url_action::Command_url_action( KConfig& cfg_P, Action_data* data_P )
 void Command_url_action::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
-    cfg_P.writeEntry( "CommandURL", command_url());    
+    cfg_P.writeEntry( "CommandURL", command_url());
     cfg_P.writeEntry( "Type", "COMMAND_URL" ); // overwrites value set in base::cfg_write()
     }
 
@@ -119,29 +119,29 @@ void Command_url_action::execute()
     {
     if( command_url().isEmpty())
         return;
-    KURIFilterData uri;
+    KUriFilterData uri;
     QString cmd = command_url();
 //    int space_pos = command_url().find( ' ' );
 //    if( command_url()[ 0 ] != '\'' && command_url()[ 0 ] != '"' && space_pos > -1
 //        && command_url()[ space_pos - 1 ] != '\\' )
 //        cmd = command_url().left( space_pos ); // get first 'word'
     uri.setData( cmd );
-    KURIFilter::self()->filterURI( uri );
+    KUriFilter::self()->filterUri( uri );
     if( uri.uri().isLocalFile() && !uri.uri().hasRef() )
         cmd = uri.uri().path();
     else
         cmd = uri.uri().url();
     switch( uri.uriType())
         {
-        case KURIFilterData::LOCAL_FILE:
-        case KURIFilterData::LOCAL_DIR:
-        case KURIFilterData::NET_PROTOCOL:
-        case KURIFilterData::HELP:
+        case KUriFilterData::LOCAL_FILE:
+        case KUriFilterData::LOCAL_DIR:
+        case KUriFilterData::NET_PROTOCOL:
+        case KUriFilterData::HELP:
             {
             ( void ) new KRun( uri.uri(),0L);
           break;
             }
-        case KURIFilterData::EXECUTABLE:
+        case KUriFilterData::EXECUTABLE:
             {
             if (!KAuthorized::authorizeKAction("shell_access"))
 		return;
@@ -156,7 +156,7 @@ void Command_url_action::execute()
                 }
             // fall though
             }
-        case KURIFilterData::SHELL:
+        case KUriFilterData::SHELL:
             {
             if (!KAuthorized::authorizeKAction("shell_access"))
 		return;
@@ -233,7 +233,7 @@ Dcop_action::Dcop_action( KConfig& cfg_P, Action_data* data_P )
     call = cfg_P.readEntry( "Call" );
     args = cfg_P.readEntry( "Arguments" );
     }
-    
+
 void Dcop_action::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -296,7 +296,7 @@ void Dcop_action::execute()
     proc << "dcop" << app << obj << call << args_list;
     proc.start( KProcess::DontCare );
     }
-    
+
 const QString Dcop_action::description() const
     {
     return i18n( "DCOP : " ) + remote_application() + "::" + remote_object() + "::"
@@ -334,7 +334,7 @@ Keyboard_input_action::~Keyboard_input_action()
     {
     delete _dest_window;
     }
-    
+
 void Keyboard_input_action::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -352,7 +352,7 @@ void Keyboard_input_action::cfg_write( KConfig& cfg_P ) const
         cfg_P.writeEntry( "IsDestinationWindow", false );
     cfg_P.writeEntry( "ActiveWindow", _active_window );
     }
-    
+
 void Keyboard_input_action::execute()
     {
     if( input().isEmpty())
@@ -389,7 +389,7 @@ void Keyboard_input_action::execute()
     keyboard_handler->send_macro_key( ks.isEmpty() ? 0 : ks[0], w ); // the rest
     XFlush( QX11Info::display());
     }
-    
+
 const QString Keyboard_input_action::description() const
     {
     QString tmp = input();
@@ -419,7 +419,7 @@ Activate_window_action::~Activate_window_action()
     {
     delete _window;
     }
-    
+
 void Activate_window_action::cfg_write( KConfig& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -429,7 +429,7 @@ void Activate_window_action::cfg_write( KConfig& cfg_P ) const
     window()->cfg_write( cfg_P );
     cfg_P.setGroup( save_cfg_group );
     }
-    
+
 void Activate_window_action::execute()
     {
     if( window()->match( windows_handler->active_window()))
@@ -438,7 +438,7 @@ void Activate_window_action::execute()
     if( win_id != None )
         windows_handler->activate_window( win_id );
     }
-    
+
 const QString Activate_window_action::description() const
     {
     return i18n( "Activate window : " ) + window()->comment();

@@ -44,7 +44,7 @@ namespace Ui
 
 class QTimer;
 class QWidget;
-class KURIFilterData;
+class KUriFilterData;
 
 class Minicli : public KDialog
 {
@@ -105,7 +105,7 @@ private:
   QWidget* m_FocusWidget;
   Ui::MinicliDlgUI* m_dlg;
   QWidget* m_dlgWidget;
-  KURIFilterData* m_filterData;
+  KUriFilterData* m_filterData;
 
   // Cached values
   QString m_prevUser;

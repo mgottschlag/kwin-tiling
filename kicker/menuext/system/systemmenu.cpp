@@ -32,7 +32,7 @@ SystemMenu::SystemMenu(QWidget *parent, const QStringList &/*args*/)
     connect( &m_dirLister, SIGNAL( completed() ),
              this, SLOT( slotCompleted() ) );
 
-    m_dirLister.openURL(KUrl("system:/"));
+    m_dirLister.openUrl(KUrl("system:/"));
 }
 
 SystemMenu::~SystemMenu()

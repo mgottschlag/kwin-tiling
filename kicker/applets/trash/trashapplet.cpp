@@ -62,7 +62,7 @@ TrashApplet::TrashApplet(const QString& configFile, Plasma::Type type, int actio
 	connect( mpDirLister, SIGNAL( deleteItem( KFileItem * ) ),
 	         this, SLOT( slotDeleteItem( KFileItem * ) ) );
 
-	mpDirLister->openURL(KUrl("trash:/"));
+	mpDirLister->openUrl(KUrl("trash:/"));
 }
 
 TrashApplet::~TrashApplet()

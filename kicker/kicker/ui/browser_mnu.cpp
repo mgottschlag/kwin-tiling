@@ -144,7 +144,7 @@ void PanelBrowserMenu::initialize()
 
     KUrl url;
     url.setPath(path());
-    if (!KAuthorized::authorizeURLAction("list", KUrl(), url))
+    if (!KAuthorized::authorizeUrlAction("list", KUrl(), url))
     {
         insertItem(i18n("Not Authorized to Read Folder"));
         return;
@@ -496,7 +496,7 @@ void PanelBrowserMenu::slotMimeCheck()
 
 //    KMimeType::Ptr mt = KMimeType::findByURL(url, 0, true, false);
 //    QString icon(mt->icon(url, true));
-    QString icon = KMimeType::iconNameForURL( url );
+    QString icon = KMimeType::iconNameForUrl( url );
 //    kDebug() << url.url() << ": " << icon << endl;
 
     file = KStringHandler::cEmSqueeze( file, fontMetrics(), 20 );

@@ -412,7 +412,7 @@ void MediaApplet::reloadList()
 
 	mpDirLister->clearMimeFilter();
 	mpDirLister->setMimeExcludeFilter(mExcludedTypesList);
-	mpDirLister->openURL(KUrl("media:/"));
+	mpDirLister->openUrl(KUrl("media:/"));
 }
 
 void MediaApplet::mousePressEvent(QMouseEvent *e)

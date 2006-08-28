@@ -80,7 +80,7 @@ PanelBrowserDialog::PanelBrowserDialog( const QString& path, const QString &icon
     {
         KUrl u;
         u.setPath(path);
-        iconBtn->setIcon(KMimeType::iconNameForURL(u));
+        iconBtn->setIcon(KMimeType::iconNameForUrl(u));
     }
     else
     {
@@ -107,7 +107,7 @@ void PanelBrowserDialog::browse()
         pathInput->setText( dir );
         KUrl u;
         u.setPath( dir );
-        iconBtn->setIcon( KMimeType::iconNameForURL( u ) );
+        iconBtn->setIcon( KMimeType::iconNameForUrl( u ) );
     }
 }
 

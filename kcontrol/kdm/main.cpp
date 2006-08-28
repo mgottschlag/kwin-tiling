@@ -60,7 +60,7 @@ KUrl *decodeImgDrop(QDropEvent *e, QWidget *wdg)
     if (K3URLDrag::decode(e, uris) && (uris.count() > 0)) {
 	KUrl *url = new KUrl(uris.first());
 
-        KMimeType::Ptr mime = KMimeType::findByURL( *url );
+        KMimeType::Ptr mime = KMimeType::findByUrl( *url );
 	if ( mime && KImageIO::isSupported( mime->name(), KImageIO::Reading ) )
 		return url;
 			    

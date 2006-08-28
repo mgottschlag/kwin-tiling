@@ -91,7 +91,7 @@ bool KRootWidget::eventFilter ( QObject *, QEvent * e )
        if ( KUrl::List::canDecode( de->mimeData() ) )
        {
          KUrl url = KUrl::List::fromMimeData( de->mimeData() ).first();
-         KMimeType::Ptr mime = KMimeType::findByURL( url );
+         KMimeType::Ptr mime = KMimeType::findByUrl( url );
          if ( mime && ( KImageIO::isSupported( mime->name(), KImageIO::Reading ) || mime->is( "image/svg+xml" ) ) )
            imageURL = true;
        }
@@ -517,7 +517,7 @@ void KDesktop::unselectAll()
 QStringList KDesktop::selectedURLs()
 {
     if (m_pIconView)
-        return m_pIconView->selectedURLs();
+        return m_pIconView->selectedUrls();
     return QStringList();
 }
 
@@ -576,7 +576,7 @@ void KDesktop::slotSettingsChanged(int category)
     {
         kDebug(1204) << "KDesktop::slotSettingsChanged SETTINGS_PATHS" << endl;
         if (m_pIconView)
-            m_pIconView->recheckDesktopURL();
+            m_pIconView->recheckDesktopUrl();
     }
     else if (category == KApplication::SETTINGS_SHORTCUTS)
     {
@@ -757,7 +757,7 @@ void KDesktop::handleImageDropEvent(QDropEvent * e)
         // We pass 0 as parent window because passing the desktop is not a good idea
         KUrl src;
         src.setPath( tmpFile.name() );
-        KUrl dest( KDIconView::desktopURL() );
+        KUrl dest( KDIconView::desktopUrl() );
         dest.addPath( filename );
         KIO::NetAccess::copy( src, dest, 0 );
         tmpFile.unlink();

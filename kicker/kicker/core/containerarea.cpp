@@ -1260,7 +1260,7 @@ void ContainerArea::dropEvent(QDropEvent *ev)
                 if (menu->exec(mapToGlobal(ev->pos())) == fileManager)
                 {
                     a = new BrowserButtonContainer(url.path(), m_opMenu,
-                                                   KMimeType::iconNameForURL(url),
+                                                   KMimeType::iconNameForUrl(url),
                                                    m_contents);
                 }
                 else
@@ -1269,7 +1269,7 @@ void ContainerArea::dropEvent(QDropEvent *ev)
                 }
                 delete menu;
 	    }
-            else if ( KMimeType::findByURL(url)->name() == "application/x-desktop" ) {
+            else if ( KMimeType::findByUrl(url)->name() == "application/x-desktop" ) {
 		// a local desktop file being dragged from an external program.
 		// Make a copy first.
 		KDesktopFile df(url.path());
@@ -1286,7 +1286,7 @@ void ContainerArea::dropEvent(QDropEvent *ev)
                 QString pixmapFile;
                 //KMimeType::pixmapForURL(url, 0, K3Icon::Panel, 0,
                 //                        K3Icon::DefaultState, &pixmapFile);
-                QString iconName = KMimeType::iconNameForURL(url);
+                QString iconName = KMimeType::iconNameForUrl(url);
                 KGlobal::iconLoader()->loadIcon(iconName, K3Icon::Panel, 0, K3Icon::DefaultState, &pixmapFile );
                 PanelExeDialog dlg(QString::null, QString::null, url.path(),
                                    pixmapFile, QString::null, false, 0);

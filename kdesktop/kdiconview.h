@@ -76,7 +76,7 @@ public:
     void setAutoAlign( bool b );
 
     void refreshIcons();
-    QStringList selectedURLs();
+    QStringList selectedUrls();
 
     /**
      * Save the icon positions
@@ -86,7 +86,7 @@ public:
     /**
      * Check if the URL to the desktop has changed
      */
-    void recheckDesktopURL();
+    void recheckDesktopUrl();
 
     /**
      * Called when the work area has changed
@@ -99,7 +99,7 @@ public:
     virtual void setWallpaper(const KUrl &url) { emit newWallpaper( url ); }
     void setLastIconPosition( const QPoint & );
 
-    static KUrl desktopURL();
+    static KUrl desktopUrl();
 
 protected Q_SLOTS:
     // slots connected to the icon view

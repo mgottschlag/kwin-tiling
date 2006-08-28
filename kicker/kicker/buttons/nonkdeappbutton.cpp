@@ -185,7 +185,7 @@ void NonKDEAppButton::dropEvent(QDropEvent *ev)
             deskFile.setDesktopGroup();
 
             // ... and add it to the exec string
-            execStr += KProcess::quote(deskFile.readURL()) + ' ';
+            execStr += KProcess::quote(deskFile.readUrl()) + ' ';
         }
         else
         {

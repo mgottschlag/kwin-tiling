@@ -119,7 +119,7 @@ void RecentDocsMenu::mouseMoveEvent(QMouseEvent* e) {
 
 	KDesktopFile f(_fileList[id], true /* read only */);
 
-	KUrl url ( f.readURL() );
+	KUrl url ( f.readUrl() );
 
 	if (url.isEmpty()) // What are we to do ?
 		return;

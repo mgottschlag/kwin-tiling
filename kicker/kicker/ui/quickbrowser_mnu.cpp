@@ -45,17 +45,17 @@ void PanelQuickBrowser::initialize()
     KUrl url;
     
     url.setPath(QDir::homePath());
-    if (KAuthorized::authorizeURLAction("list", KUrl(), url))
+    if (KAuthorized::authorizeUrlAction("list", KUrl(), url))
         insertItem(SmallIcon("kfm_home"), i18n("&Home Folder"),
                new PanelBrowserMenu(url.path(), this));
                
     url.setPath(QDir::rootPath());
-    if (KAuthorized::authorizeURLAction("list", KUrl(), url))
+    if (KAuthorized::authorizeUrlAction("list", KUrl(), url))
         insertItem(SmallIcon("folder_red"), i18n("&Root Folder"),
                new PanelBrowserMenu(url.path(), this));
                
     url.setPath(QDir::rootPath() + "etc");
-    if (KAuthorized::authorizeURLAction("list", KUrl(), url))
+    if (KAuthorized::authorizeUrlAction("list", KUrl(), url))
         insertItem(SmallIcon("folder_yellow"), i18n("System &Configuration"),
                new PanelBrowserMenu(url.path(), this));
 }

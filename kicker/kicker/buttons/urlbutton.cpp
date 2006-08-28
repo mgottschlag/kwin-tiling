@@ -85,7 +85,7 @@ void URLButton::initialize( const QString& _url )
        }
        else
        {
-          df.writeEntry("Icon", KMimeType::favIconForURL(url));
+          df.writeEntry("Icon", KMimeType::favIconForUrl(url));
        }
        df.writeEntry("URL", url.url());
        url = KUrl();
@@ -181,7 +181,7 @@ void URLButton::slotExec()
 void URLButton::updateURL()
 {
     if (pDlg->kurl() != fileItem->url()) {
-	fileItem->setURL(pDlg->kurl());
+	fileItem->setUrl(pDlg->kurl());
 	setIcon(fileItem->iconName());
 	setToolTip();
 	emit requestSave();

@@ -94,7 +94,7 @@ RunApplet::RunApplet(const QString& configFile, Plasma::Type type, int actions,
     int mode = c->readEntry( "CompletionMode", int(KGlobalSettings::completionMode()) );
     _input->setCompletionMode( (KGlobalSettings::Completion) mode );
 
-    _filterData = new KURIFilterData();
+    _filterData = new KUriFilterData();
 
 
     _hbox = new QWidget( 0, Qt::WStyle_Customize | Qt::WType_Popup );
@@ -223,7 +223,7 @@ void RunApplet::run_command(const QString& command)
     _filterData->setData( _input->currentText().trimmed() );
     QStringList filters;
     filters << "kurisearchfilter" << "kshorturifilter";
-    KURIFilter::self()->filterURI( *(_filterData), filters );
+    KUriFilter::self()->filterUri( *(_filterData), filters );
 
     _input->addToHistory(command);
     _input->clearEditText();
@@ -255,24 +255,24 @@ void RunApplet::run_command(const QString& command)
 	{
 	    switch( _filterData->uriType() )
 		{
-		case KURIFilterData::LOCAL_FILE:
-		case KURIFilterData::LOCAL_DIR:
-		case KURIFilterData::NET_PROTOCOL:
-		case KURIFilterData::HELP:
+		case KUriFilterData::LOCAL_FILE:
+		case KUriFilterData::LOCAL_DIR:
+		case KUriFilterData::NET_PROTOCOL:
+		case KUriFilterData::HELP:
 		    {
 		        (void) new KRun( _filterData->uri(), this );
 			goto hide;
 		    }
-		case KURIFilterData::EXECUTABLE:
-		case KURIFilterData::SHELL:
+		case KUriFilterData::EXECUTABLE:
+		case KUriFilterData::SHELL:
 		    {
 		        exec = cmd;
 			if( _filterData->hasArgsAndOptions() )
 			  cmd += _filterData->argsAndOptions();
 			break;
 		    }
-		case KURIFilterData::UNKNOWN:
-		case KURIFilterData::ERROR:
+		case KUriFilterData::UNKNOWN:
+		case KUriFilterData::ERROR:
 		default:
 		    KMessageBox::sorry( 0, i18n("<qt>The program name or command <b>%1</b>\n"
 						"cannot be found. Please correct the command\n"

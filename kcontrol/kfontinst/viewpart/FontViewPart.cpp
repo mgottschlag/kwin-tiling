@@ -136,7 +136,7 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
 
 bool CFontViewPart::openURL(const KUrl &url)
 {
-    if (!url.isValid() || !closeURL())
+    if (!url.isValid() || !closeUrl())
         return false;
 
     if(KFI_KIO_FONTS_PROTOCOL==url.protocol() || url.isLocalFile())
@@ -153,7 +153,7 @@ bool CFontViewPart::openURL(const KUrl &url)
         return ret;
     }
     else
-        return ReadOnlyPart::openURL(url);
+        return ReadOnlyPart::openUrl(url);
 }
 
 bool CFontViewPart::openFile()

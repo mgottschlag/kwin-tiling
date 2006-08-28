@@ -120,7 +120,7 @@ Minicli::Minicli( QWidget *parent )
   m_dlg->gbAdvanced->hide();
 
   // URI Filter meta object...
-  m_filterData = new KURIFilterData();
+  m_filterData = new KUriFilterData();
 
   // Create a timer object...
   m_parseTimer = new QTimer(this);
@@ -225,7 +225,7 @@ void Minicli::loadConfig()
   if (box)
     box->setActivateOnSelect( false );
 
-  m_finalFilters = KURIFilter::self()->pluginNames();
+  m_finalFilters = KUriFilter::self()->pluginNames();
   m_finalFilters.removeAll("kuriikwsfilter");
 
   m_middleFilters = m_finalFilters;
@@ -514,16 +514,16 @@ int Minicli::runCommand()
     {
       switch( m_filterData->uriType() )
       {
-        case KURIFilterData::LOCAL_FILE:
-        case KURIFilterData::LOCAL_DIR:
-        case KURIFilterData::NET_PROTOCOL:
-        case KURIFilterData::HELP:
+        case KUriFilterData::LOCAL_FILE:
+        case KUriFilterData::LOCAL_DIR:
+        case KUriFilterData::NET_PROTOCOL:
+        case KUriFilterData::HELP:
         {
           // No need for kfmclient, KRun does it all (David)
           (void) new KRun( m_filterData->uri(), 0 );
           return 0;
         }
-        case KURIFilterData::EXECUTABLE:
+        case KUriFilterData::EXECUTABLE:
         {
           if( !m_filterData->hasArgsAndOptions() )
           {
@@ -538,7 +538,7 @@ int Minicli::runCommand()
           }
         }
         // fall-through to shell case
-        case KURIFilterData::SHELL:
+        case KUriFilterData::SHELL:
         {
           if (KAuthorized::authorizeKAction("shell_access"))
           {
@@ -558,8 +558,8 @@ int Minicli::runCommand()
             return 1;
           }
         }
-        case KURIFilterData::UNKNOWN:
-        case KURIFilterData::ERROR:
+        case KUriFilterData::UNKNOWN:
+        case KUriFilterData::ERROR:
         default:
         {
           // Look for desktop file
@@ -676,11 +676,11 @@ void Minicli::parseLine( bool final )
   m_filterData->setData( cmd );
 
   if( final )
-    KURIFilter::self()->filterURI( *(m_filterData), m_finalFilters );
+    KUriFilter::self()->filterUri( *(m_filterData), m_finalFilters );
   else
-    KURIFilter::self()->filterURI( *(m_filterData), m_middleFilters );
+    KUriFilter::self()->filterUri( *(m_filterData), m_middleFilters );
 
-  bool isTerminalApp = ((m_filterData->uriType() == KURIFilterData::EXECUTABLE) &&
+  bool isTerminalApp = ((m_filterData->uriType() == KUriFilterData::EXECUTABLE) &&
                         m_terminalAppList.contains(m_filterData->uri().url()));
 
   if( !isTerminalApp )
@@ -722,7 +722,7 @@ void Minicli::setIcon ()
 #ifdef __GNUC__
 #warning "Yet another overlay thingie!"
 #endif
-    QPixmap overlay( KStandardDirs::locate ( "icon", KMimeType::favIconForURL( m_filterData->uri() ) + ".png" ) );
+    QPixmap overlay( KStandardDirs::locate ( "icon", KMimeType::favIconForUrl( m_filterData->uri() ) + ".png" ) );
     if ( !overlay.isNull() )
     {
       int x = icon.width() - overlay.width();

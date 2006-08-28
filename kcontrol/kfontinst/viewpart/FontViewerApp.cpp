@@ -70,7 +70,7 @@ CFontViewerAppMainWindow::CFontViewerAppMainWindow()
         createGUI(itsPreview);
 
         if(!openURL.isEmpty())
-            itsPreview->openURL(openURL);
+            itsPreview->openUrl(openURL);
 
         QSize             defSize(450, 380);
         KConfigGroup cg(KGlobal::config(), CFG_GROUP);
@@ -96,7 +96,7 @@ void CFontViewerAppMainWindow::fileOpen()
                                                     "application/x-font-bdf application/x-font-pcf ",
                                      this, i18n("Select Font to View")));
     if(url.isValid())
-        itsPreview->openURL(url);
+        itsPreview->openUrl(url);
 }
 
 CFontViewerApp::CFontViewerApp()

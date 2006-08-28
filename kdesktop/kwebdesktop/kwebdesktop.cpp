@@ -73,7 +73,7 @@ void KWebDesktopRun::slotMimetype( KIO::Job *job, const QString &_type )
     KParts::ReadOnlyPart* part = m_webDesktop->createPart( type );
     // Now open the URL in the part
     if ( part )
-        part->openURL( m_url );
+        part->openUrl( m_url );
 }
 
 void KWebDesktopRun::slotFinished( KJob * job )
@@ -120,8 +120,8 @@ int main( int argc, char **argv )
     if (url.isEmpty())
       url = KWebDesktopSettings::uRL();
     // Apply uri filter
-    KURIFilterData uridata = url;
-    KURIFilter::self()->filterURI( uridata );
+    KUriFilterData uridata = url;
+    KUriFilter::self()->filterUri( uridata );
     KUrl u = uridata.uri();
 
     // Now start getting, to ensure mimetype and possible connection

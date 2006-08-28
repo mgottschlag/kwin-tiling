@@ -125,7 +125,7 @@ KDIconView::KDIconView( QWidget *parent, const char* name )
     connect( QApplication::clipboard(), SIGNAL(dataChanged()),
              this, SLOT(slotClipboardDataChanged()) );
 
-    setURL( desktopURL() ); // sets m_url
+    setUrl( desktopUrl() ); // sets m_url
 
     m_desktopDirs = KGlobal::dirs()->findDirs( "appdata", "Desktop" );
     initDotDirectories();
@@ -179,7 +179,7 @@ KDIconView::~KDIconView()
 void KDIconView::initDotDirectories()
 {
     QStringList dirs = m_desktopDirs;
-    KUrl u = desktopURL();
+    KUrl u = desktopUrl();
     if (u.isLocalFile())
        dirs.prepend(u.path());
 
@@ -345,11 +345,11 @@ void KDIconView::start()
 
     // Start the directory lister !
     m_dirLister->setShowingDotFiles( m_bShowDot );
-    KAuthorized::allowURLAction("list", KUrl(), url());
-    m_dirLister->openURL( url() );
+    KAuthorized::allowUrlAction("list", KUrl(), url());
+    m_dirLister->openUrl( url() );
 
     // Gather the list of directories to merge into the desktop
-    // (the main URL is desktopURL(), no need for it in the m_mergeDirs list)
+    // (the main URL is desktopUrl(), no need for it in the m_mergeDirs list)
     m_mergeDirs.clear();
     for ( QStringList::ConstIterator it = m_desktopDirs.begin() ; it != m_desktopDirs.end() ; ++it )
     {
@@ -358,8 +358,8 @@ void KDIconView::start()
         u.setPath( *it );
         m_mergeDirs.append( u );
         // And start listing this dir right now
-        KAuthorized::allowURLAction("list", KUrl(), u);
-        m_dirLister->openURL( u, true );
+        KAuthorized::allowUrlAction("list", KUrl(), u);
+        m_dirLister->openUrl( u, true );
     }
     configureMedia();
     createActions();
@@ -378,7 +378,7 @@ void KDIconView::configureMedia()
 	    	if ((*it1).url()=="media:/") return;
 	    }
     	m_mergeDirs.append(KUrl("media:/"));
-    	m_dirLister->openURL(KUrl("media:/"),true);
+    	m_dirLister->openUrl(KUrl("media:/"),true);
     }
     else
     {
@@ -500,7 +500,7 @@ void KDIconView::desktopResized()
     saveIconPositions();
     resize( kapp->desktop()->size() );
     slotClear();
-    m_dirLister->openURL( url() );
+    m_dirLister->openUrl( url() );
 
     // list all desktop dirs
     m_mergeDirs.clear();
@@ -511,8 +511,8 @@ void KDIconView::desktopResized()
         u.setPath( *it );
         m_mergeDirs.append( u );
         // And start listing this dir right now
-        KAuthorized::allowURLAction("list", KUrl(), u);
-        m_dirLister->openURL( u, true );
+        KAuthorized::allowUrlAction("list", KUrl(), u);
+        m_dirLister->openUrl( u, true );
     }
     configureMedia();
 }
@@ -532,7 +532,7 @@ void KDIconView::lineupIcons(Q3IconView::Arrangement align)
 }
 
 // Only used for DCOP
-QStringList KDIconView::selectedURLs()
+QStringList KDIconView::selectedUrls()
 {
     QStringList seq;
 
@@ -546,22 +546,22 @@ QStringList KDIconView::selectedURLs()
     return seq;
 }
 
-void KDIconView::recheckDesktopURL()
+void KDIconView::recheckDesktopUrl()
 {
     // Did someone change the path to the desktop ?
-    kDebug(1204) << desktopURL().url() << endl;
+    kDebug(1204) << desktopUrl().url() << endl;
     kDebug(1204) << url().url() << endl;
-    if ( desktopURL() != url() )
+    if ( desktopUrl() != url() )
     {
         kDebug(1204) << "Desktop path changed from " << url().url() <<
-            " to " << desktopURL().url() << endl;
-        setURL( desktopURL() ); // sets m_url
+            " to " << desktopUrl().url() << endl;
+        setUrl( desktopUrl() ); // sets m_url
         initDotDirectories();
-        m_dirLister->openURL( url() );
+        m_dirLister->openUrl( url() );
     }
 }
 
-KUrl KDIconView::desktopURL()
+KUrl KDIconView::desktopUrl()
 {
     // Support both paths and URLs
     QString desktopPath = KGlobalSettings::desktopPath();
@@ -717,7 +717,7 @@ void KDIconView::slotPopupPasteTo()
  */
 bool KDIconView::deleteGlobalDesktopFiles()
 {
-    KUrl desktop_URL = desktopURL();
+    KUrl desktop_URL = desktopUrl();
     if (!desktop_URL.isLocalFile())
         return false; // Dunno how to do this.
 
@@ -936,7 +936,7 @@ void KDIconView::slotNewItems( const KFileItemList & entries )
   setIconArea( QRect(  0, 0, -1, -1 ) );
 
   QString desktopPath;
-  KUrl desktop_URL = desktopURL();
+  KUrl desktop_URL = desktopUrl();
   if (desktop_URL.isLocalFile())
     desktopPath = desktop_URL.path();
   // We have new items, so we'll need to repaint in slotCompleted
@@ -1257,7 +1257,7 @@ void KDIconView::slotItemRenamed(Q3IconViewItem* _item, const QString &name)
           {
              // first and foremost, we make sure that this is a .desktop file
              // before we write anything to it
-             KMimeType::Ptr type = KMimeType::findByURL( fileItem->item()->url() );
+             KMimeType::Ptr type = KMimeType::findByUrl( fileItem->item()->url() );
              bool bDesktopFile = false;
 
              if (type->name() == "application/x-desktop")

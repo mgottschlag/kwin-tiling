@@ -409,7 +409,7 @@ void CKCmFontInst::fileHighlighted(const KFileItem *item)
                                              : NULL;
 
         if(previewItem && list && list->contains(const_cast<KFileItem *>(previewItem)))  // OK, check its been selected - not deselected!!!
-            itsPreview->openURL(previewItem->url());
+            itsPreview->openUrl(previewItem->url());
     }
 #endif
 }

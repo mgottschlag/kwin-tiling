@@ -128,7 +128,7 @@ void MediumButton::refreshType()
 {
     KMimeType::Ptr mime = mFileItem.determineMimeType();
     this->setToolTip( mime->comment());
-    setIcon(mime->icon(KUrl()));
+    setIcon(mime->iconName(KUrl()));
 }
 
 // Activate this code only if we find a way to have both an
@@ -149,7 +149,7 @@ void MediumButton::slotCopy()
 {
   bool dummy;
   QMimeData* mimeData = new QMimeData;
-  KonqMimeData::populateMimeData( mimeData, mFileItem.url(), mFileItem.mostLocalURL(dummy) );
+  KonqMimeData::populateMimeData( mimeData, mFileItem.url(), mFileItem.mostLocalUrl(dummy) );
   QApplication::clipboard()->setMimeData( mimeData );
 }
 
