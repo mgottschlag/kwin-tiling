@@ -7,19 +7,20 @@ MESSAGE(STATUS "option: USE_XKLAVIER  <${USE_XKLAVIER}>")
 
 if( USE_XKLAVIER STREQUAL ON )
   macro_optional_find_package(LibXKlavier)
-  #macro_optional_find_package(Glib2)
+  macro_optional_find_package(GLIB2)
 
-  if(LIBXKLAVIER_FOUND)
+  if(LIBXKLAVIER_FOUND AND GLIB2_FOUND)
 
 #MESSAGE("xklav:: ${LIBXKLAVIER_DEFINITIONS}")
 #MESSAGE("xklav:: ${LIBXKLAVIER_LIBRARIES}")
 
 	SET(XKB_SUPPORT_SRC xklavier_adaptor.cpp)
 	SET(XKB_SUPPORT_LIB ${LIBXKLAVIER_LIBRARIES} gobject-2.0)
-	ADD_DEFINITIONS(-DHAVE_XKLAVIER=1 ${LIBXKLAVIER_DEFINITIONS})
-  else(LIBXKLAVIER_FOUND)
+	ADD_DEFINITIONS(-DHAVE_XKLAVIER=1 ${LIBXKLAVIER_DEFINITIONS} ${_LibGLIB2Cflags})
+	include_directories(${GLIB2_INCLUDE_DIR})
+  else(LIBXKLAVIER_FOUND AND GLIB2_FOUND)
 	MESSAGE ("Could not find glib or libxklavier >= 2.91 - old xkbfile code will be used to get keyboard layout configuration!")
-  endif(LIBXKLAVIER_FOUND)
+  endif(LIBXKLAVIER_FOUND AND GLIB2_FOUND)
 endif( USE_XKLAVIER STREQUAL ON )
 
 
@@ -89,9 +90,9 @@ install( FILES kxkb.desktop  DESTINATION  ${XDG_APPS_DIR} )
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
 
-if(NOT LIBXKLAVIER_FOUND)
+if(NOT LIBXKLAVIER_FOUND OR NOT GLIB2_FOUND )
   install(FILES kxkb_groups DESTINATION ${CONFIG_INSTALL_DIR} )
-endif(NOT LIBXKLAVIER_FOUND)
+endif(NOT LIBXKLAVIER_FOUND OR NOT GLIB2_FOUND)
 
 
 
