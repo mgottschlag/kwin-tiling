@@ -134,12 +134,9 @@ kg_main( const char *argv0 )
 {
 	static char *argv[] = { (char *)"kdmgreet", 0 };
 
-#warning OSSI - commit your stuff
-#if 0
 	KCrash::setFlags( KCrash::KeepFDs | KCrash::SaferDialog | KCrash::AlwaysDirectly );
 	KCrash::setApplicationName( QLatin1String( argv[0] ) );
 	KCrash::setCrashHandler( KCrash::defaultCrashHandler );
-#endif
 	XSetIOErrorHandler( xIOErr );
 	KInstance inst( argv[0] );
 	GreeterApp app( 1, argv );
