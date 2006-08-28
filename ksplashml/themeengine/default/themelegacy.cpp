@@ -310,7 +310,6 @@ QString ThemeDefault::_findPicture( const QString &pic )
       if ((p = KStandardDirs::locate("appdata", QString("pics/")+mTheme->theme()+'/'+f)).isEmpty())
         if ((p = KStandardDirs::locate("appdata",f)).isEmpty())
           if ((p = KStandardDirs::locate("appdata",QString("pics/")+f)).isEmpty())
-            if ((p = KStandardDirs::locate("data",QString("pics/")+f)).isEmpty())
-              ; // No more places to search
+            p = KStandardDirs::locate("data",QString("pics/")+f);
   return p;
 }
