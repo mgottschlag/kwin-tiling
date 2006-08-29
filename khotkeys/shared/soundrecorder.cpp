@@ -47,16 +47,16 @@ bool SoundRecorder::init( KLibrary* lib )
     return create_fun != NULL;
 }
 
-SoundRecorder* SoundRecorder::create( QObject* parent, const char* name )
+SoundRecorder* SoundRecorder::create( QObject* parent )
 {
 #ifdef HAVE_ARTS
     if( create_fun != NULL )
         return create_fun( parent, name );
 #endif
-    return new SoundRecorder( parent, name );
+    return new SoundRecorder( parent );
 }
 
-SoundRecorder::SoundRecorder(QObject *parent, const char *name)  : QObject(parent, name) {}
+SoundRecorder::SoundRecorder(QObject *parent)  : QObject(parent) {}
 
 SoundRecorder::~SoundRecorder()
 {
