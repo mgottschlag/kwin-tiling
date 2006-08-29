@@ -1,4 +1,3 @@
-
 add_subdirectory( HighContrastDark ) 
 add_subdirectory( HighContrastDark-big ) 
 add_subdirectory( HighContrastLight ) 
@@ -11,18 +10,3 @@ add_subdirectory( Plastik )
 add_subdirectory( Platinum ) 
 add_subdirectory( Sunshine ) 
 add_subdirectory( Redmond ) 
-
-
-
-########### install files ###############
-
-
-
-
-
-#original Makefile.am contents follow:
-
-#SUBDIRS = HighContrastDark  HighContrastDark-big \
-#          HighContrastLight HighContrastLight-big \
-#          YellowOnBlue      YellowOnBlue-big \
-#          KDE_Classic Keramik Plastik Platinum Sunshine Redmond
