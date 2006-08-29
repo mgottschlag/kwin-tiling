@@ -13,7 +13,7 @@ kde4_add_plugin(kcm_view1394 ${kcm_view1394_PART_SRCS})
 
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_view1394 )
 
-target_link_libraries(kcm_view1394  ${KDE4_KDE3SUPPORT_LIBS} raw1394 )
+target_link_libraries(kcm_view1394  ${KDE4_KDE3SUPPORT_LIBS} ${RAW1394_LIBRARIES} )
 
 install(TARGETS kcm_view1394  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
@@ -23,27 +23,3 @@ install(TARGETS kcm_view1394  DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES kcmview1394.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES oui.db  DESTINATION  ${DATA_INSTALL_DIR}/kcmview1394 )
 
-
-
-
-#original Makefile.am contents follow:
-
-#kde_module_LTLIBRARIES = kcm_view1394.la
-#
-#kcm_view1394_la_SOURCES = view1394widget.ui view1394.cpp
-#
-#kcm_view1394_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-#kcm_view1394_la_LIBADD = $(LIB_KDEUI) -lraw1394
-#
-#AM_CPPFLAGS= $(all_includes) 
-#
-#METASOURCES = AUTO
-#
-#messages: rc.cpp
-#	$(XGETTEXT) *.cpp -o $(podir)/kcmview1394.pot
-#
-#xdg_apps_DATA = kcmview1394.desktop
-#
-#view1394_vendor_DATA = oui.db
-#view1394_vendordir = $(kde_datadir)/kcmview1394
-#
