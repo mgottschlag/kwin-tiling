@@ -134,7 +134,7 @@ kg_main( const char *argv0 )
 {
 	static char *argv[] = { (char *)"kdmgreet", 0 };
 
-	//KCrash::setFlags( KCrash::KeepFDs | KCrash::SaferDialog | KCrash::AlwaysDirectly );
+	KCrash::setFlags( KCrash::KeepFDs | KCrash::SaferDialog | KCrash::AlwaysDirectly );
 	KCrash::setApplicationName( QLatin1String( argv[0] ) );
 	KCrash::setCrashHandler( KCrash::defaultCrashHandler );
 	XSetIOErrorHandler( xIOErr );
