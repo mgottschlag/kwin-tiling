@@ -134,7 +134,7 @@ CFontViewPart::CFontViewPart(QWidget *parent, const char *name)
     setWidget(itsFrame);
 }
 
-bool CFontViewPart::openURL(const KUrl &url)
+bool CFontViewPart::openUrl(const KUrl &url)
 {
     if (!url.isValid() || !closeUrl())
         return false;
