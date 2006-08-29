@@ -16,7 +16,11 @@ find_library(DL_LIBRARY dl)
 
 if (PAM_INCLUDE_DIR AND PAM_LIBRARY)
 	set(PAM_FOUND TRUE)
-	set(PAM_LIBRARIES ${PAM_LIBRARY} ${DL_LIBRARY})
+	if (DL_LIBRARY)
+		set(PAM_LIBRARIES ${PAM_LIBRARY} ${DL_LIBRARY})
+	else (DL_LIBRARY)
+		set(PAM_LIBRARIES ${PAM_LIBRARY})
+	endif (DL_LIBRARY)
 
 	if (EXISTS ${PAM_INCLUDE_DIR}/pam/pam_appl.h)
 		# darwin claims to be something special
