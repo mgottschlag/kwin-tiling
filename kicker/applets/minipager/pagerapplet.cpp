@@ -92,6 +92,16 @@ KMiniPager::KMiniPager(const QString& configFile, Plasma::Type type, int actions
       m_contextMenu(0),
       m_settings( new PagerSettings(sharedConfig()) )
 {
+    int scnum = QApplication::desktop()->screenNumber(this);
+    QRect desk = QApplication::desktop()->screenGeometry(scnum);
+    if (desk.width() <= 800)
+    {
+        KConfigSkeleton::ItemInt* item = dynamic_cast<KConfigSkeleton::ItemBool*>(m_settings->findItem("Preview"));
+        if (item)
+        {
+            item->setDefaultValue(false);
+        }
+    }
     m_settings->readConfig();
     TaskManager::self()->trackGeometry();
 
@@ -99,13 +109,6 @@ KMiniPager::KMiniPager(const QString& configFile, Plasma::Type type, int actions
     m_group->setExclusive( true );
 
     setFont( KGlobalSettings::taskbarFont() );
-
-    int scnum = QApplication::desktop()->screenNumber(this);
-    QRect desk = QApplication::desktop()->screenGeometry(scnum);
-    if (desk.width() <= 800)
-    {
-        m_settings->setPreview(false);
-    }
 
     m_kwin = new KWinModule(this);
     m_activeWindow = m_kwin->activeWindow();

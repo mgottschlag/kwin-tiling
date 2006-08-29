@@ -573,7 +573,7 @@ void KMiniPagerButton::dropEvent(QDropEvent* e)
         e->accept();
         Task::List tasks(TaskDrag::decode(e->mimeData()));
 
-        if (tasks.count() == 1)
+        if (e->source() == this && tasks.count() == 1)
         {
             Task::TaskPtr task = tasks[0];
             int dw = QApplication::desktop()->width();
