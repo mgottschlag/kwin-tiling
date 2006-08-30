@@ -121,8 +121,8 @@ private:
     void discardSession();
     void storeSession();
 
-    void startProtection() { protectionTimer.setSingleShot( true ); protectionTimer.start( 8000 ); }
-    void endProtection() { protectionTimer.stop(); }
+    void startProtection();
+    void endProtection();
 
     void startApplication( QStringList command,
         const QString& clientMachine = QString(),

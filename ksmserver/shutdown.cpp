@@ -367,6 +367,17 @@ void KSMServer::cancelShutdown( KSMClient* c )
     state = Idle;
 }
 
+void KSMServer::startProtection()
+{
+    protectionTimer.setSingleShot( true );
+    protectionTimer.start( 10000 );
+}
+
+void KSMServer::endProtection()
+{
+    protectionTimer.stop();
+}
+
 /*
    Internal protection slot, invoked when clients do not react during
   shutdown.
@@ -465,7 +476,7 @@ void KSMServer::startKilling()
     foreach( KSMClient* c, clients ) {
         if( isWM( c )) {
             kDebug( 1218 ) << "Killing WM: " << c->program() << "(" << c->clientId() << ")" << endl;
-            QTimer::singleShot( 1000, this, SLOT( timeoutWMQuit()));
+            QTimer::singleShot( 2000, this, SLOT( timeoutWMQuit()));
             SmsDie( c->connection());
             return;
         }
@@ -487,7 +498,7 @@ void KSMServer::performStandardKilling()
     kDebug( 1218 ) << " We killed all clients. We have now clients.count()=" <<
        clients.count() << endl;
     completeKilling();
-    QTimer::singleShot( 4000, this, SLOT( timeoutQuit() ) );
+    QTimer::singleShot( 10000, this, SLOT( timeoutQuit() ) );
 }
 
 void KSMServer::completeKilling()
