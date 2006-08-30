@@ -27,23 +27,3 @@ endif (X11_XFT_FOUND)
 ########### install files ###############
 
 install( FILES installfont.desktop  DESTINATION  ${DATA_INSTALL_DIR}/konqueror/servicemenus )
-
-
-
-
-#original Makefile.am contents follow:
-
-#if include_fontinst_tn
-#FONTINST_TN_SUBDIR=thumbnail
-#FONTINST_VP_SUBDIR=viewpart
-#endif
-#
-#SUBDIRS = lib $(FONTINST_TN_SUBDIR) $(FONTINST_VP_SUBDIR) kcmfontinst kfile-plugin kfontinst kio
-#
-#EXTRA_DIST = TODO
-#
-#konqservicedir = $(kde_datadir)/konqueror/servicemenus
-#konqservice_DATA = installfont.desktop
-#
-#messages: rc.cpp
-#	$(XGETTEXT) rc.cpp */*.cpp */*.h -o $(podir)/kfontinst.pot
