@@ -113,7 +113,12 @@ void XKlavierAdaptor::xklConfig(Display* dpy) {
 	}	
 	
 	void *userData = priv;
-	
+
+#ifdef HAVE_SET_CUSTOM_CHARSET
+	xkl_config_registry_set_custom_charset(priv->config, "UTF-8");
+#else
+#warning "No xkl_config_registry_set_custom_curset found - local layout names may be corrupted! Consider updating libxklavier"
+#endif	
 
 	xkl_config_registry_foreach_model(priv->config, processModel, userData);
 

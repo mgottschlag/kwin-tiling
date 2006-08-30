@@ -13,10 +13,13 @@ if( USE_XKLAVIER STREQUAL ON )
 
 #MESSAGE("xklav:: ${LIBXKLAVIER_DEFINITIONS}")
 #MESSAGE("xklav:: ${LIBXKLAVIER_LIBRARIES}")
+	SET(CMAKE_REQUIRED_DEFINITIONS ${LIBXKLAVIER_DEFINITIONS})
+	SET(CMAKE_REQUIRED_LIBRARIES ${LIBXKLAVIER_LIBRARIES})
+	CHECK_FUNCTION_EXISTS(xkl_config_registry_set_custom_charset HAVE_SET_CUSTOM_CHARSET)
 
 	SET(XKB_SUPPORT_SRC xklavier_adaptor.cpp)
 	SET(XKB_SUPPORT_LIB ${LIBXKLAVIER_LIBRARIES} gobject-2.0)
-	ADD_DEFINITIONS(-DHAVE_XKLAVIER=1 ${LIBXKLAVIER_DEFINITIONS} ${_LibGLIB2Cflags})
+	ADD_DEFINITIONS(-DHAVE_XKLAVIER=1 -DHAVE_SET_CUSTOM_CHARSET=${HAVE_SET_CUSTOM_CHARSET} ${LIBXKLAVIER_DEFINITIONS} ${_LibGLIB2Cflags})
 	include_directories(${GLIB2_INCLUDE_DIR})
   else(LIBXKLAVIER_FOUND AND GLIB2_FOUND)
 	MESSAGE ("Could not find glib or libxklavier >= 2.91 - old xkbfile code will be used to get keyboard layout configuration!")
@@ -94,46 +97,3 @@ if(NOT LIBXKLAVIER_FOUND OR NOT GLIB2_FOUND )
   install(FILES kxkb_groups DESTINATION ${CONFIG_INSTALL_DIR} )
 endif(NOT LIBXKLAVIER_FOUND OR NOT GLIB2_FOUND)
 
-
-
-#original Makefile.am contents follow:
-
-#INCLUDES= $(all_includes)
-#METASOURCES = AUTO
-#SUBDIRS = pics
-#
-## it's basicly impossible to get this done with all the X headers used ;(
-#KDE_OPTIONS = nofinal
-#
-#bin_PROGRAMS = 
-#lib_LTLIBRARIES = 
-#kdeinit_LTLIBRARIES = kxkb.la
-#kde_module_LTLIBRARIES = kcm_keyboard.la
-#
-#kcm_keyboard_la_SOURCES = extension.cpp rules.cpp kcmlayout.cpp pixmap.cpp kcmlayoutwidget.ui kcmmisc.cpp kcmmiscwidget.ui
-#kcm_keyboard_la_LDFLAGS  = $(all_libraries) -module -avoid-version -no-undefined
-#kcm_keyboard_la_LIBADD = -lxkbfile $(XTESTLIB) $(LIB_KIO)
-#
-##kxkb_la_includedir = .
-##kxkb_la_include_HEADERS = kxkb.h
-#kxkb_la_SOURCES = kxkb.cpp rules.cpp extension.cpp pixmap.cpp kxkb.skel
-#kxkb_la_LDFLAGS = $(all_libraries) -module -avoid-version
-#kxkb_la_LIBADD = -lxkbfile -lX11 -lXext $(LIB_KDEUI)
-#
-#xdg_apps_DATA = keyboard.desktop keyboard_layout.desktop
-#
-#install-data-local: 
-#	$(mkinstalldirs) $(DESTDIR)$(kde_confdir)
-#	$(INSTALL_DATA) $(srcdir)/kxkb_groups $(DESTDIR)$(kde_confdir)/kxkb_groups
-#
-#uninstall-local:
-#	-rm -f $(DESTDIR)$(kde_confdir)/kxkb_groups
-#
-#servicesdir = $(kde_servicesdir)
-#services_DATA = kxkb.desktop
-#
-#messages: rc.cpp
-#	$(XGETTEXT) kxkb.cpp rules.cpp extension.cpp pixmap.cpp kxkbbindings.cpp -o $(podir)/kxkb.pot
-#	$(XGETTEXT) rules.cpp kcmlayout.cpp pixmap.cpp kcmmisc.cpp rc.cpp kxkbbindings.cpp -o $(podir)/kcmlayout.pot 
-#
-#KDE_ICON=AUTO
