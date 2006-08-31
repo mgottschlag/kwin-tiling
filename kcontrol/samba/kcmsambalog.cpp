@@ -39,7 +39,7 @@ LogView::LogView(QWidget *parent,KConfig *config)
 ,configFile(config)
 ,filesCount(0)
 ,connectionsCount(0)
-,logFileName(KUrl("/var/log/samba.log"),this)
+,logFileName(KUrl::fromPath("/var/log/samba.log"),this)
 ,label(i18n("Samba log file: "),this)
 ,viewHistory(this)
 ,showConnOpen(i18n("Show opened connections"),this)
@@ -92,8 +92,6 @@ LogView::LogView(QWidget *parent,KConfig *config)
      " on this page. The log file (shown above) will be read to obtain the"
      " events logged by samba.") );
 
-   logFileName.setUrl(KUrl("/var/log/samba.log"));
-
    viewHistory.setAllColumnsShowFocus(true);
    viewHistory.setFocusPolicy(Qt::ClickFocus);
    viewHistory.setShowSortIndicator(true);
@@ -134,7 +132,7 @@ void LogView::loadSettings()
 {
    if (configFile==0) return;
    configFile->setGroup(LOGGROUPNAME);
-   logFileName.setUrl(configFile->readPathEntry( "SambaLogFile", "/var/log/samba.log"));
+   logFileName.setPath(configFile->readPathEntry( "SambaLogFile", "/var/log/samba.log"));
 
    showConnOpen.setChecked(configFile->readEntry( "ShowConnectionOpen", true));
    showConnClose.setChecked(configFile->readEntry( "ShowConnectionClose", false));
@@ -146,7 +144,7 @@ void LogView::saveSettings()
 {
    if (configFile==0) return;
    configFile->setGroup(LOGGROUPNAME);
-   configFile->writePathEntry( "SambaLogFile", logFileName.url().toString());
+   configFile->writePathEntry( "SambaLogFile", logFileName.url().path());
 
    configFile->writeEntry( "ShowConnectionOpen", showConnOpen.isChecked());
    configFile->writeEntry( "ShowConnectionClose", showConnClose.isChecked());
@@ -162,7 +160,7 @@ void LogView::saveSettings()
 //caution ! high optimized code :-)
 void LogView::updateList()
 {
-   QFile logFile(logFileName.url().toString());
+   QFile logFile(logFileName.url().path());
    if (logFile.open(QIODevice::ReadOnly))
    {
       QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -250,7 +248,7 @@ void LogView::updateList()
    }
    else
    {
-      QString tmp = i18n("Could not open file %1", logFileName.url());
+      QString tmp = i18n("Could not open file %1", logFileName.url().path());
       KMessageBox::error(this,tmp);
    };
 }

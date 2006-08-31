@@ -71,7 +71,7 @@ K_EXPORT_COMPONENT_FACTORY( knotify, NotifyFactory("kcmnotify") )
 
 	QWidget * app_tab = new QWidget(tab);
 	QVBoxLayout *app_layout = new QVBoxLayout( app_tab );
-	
+
 	QLabel *label = new QLabel( i18n( "Event source:" ), app_tab );
 	m_appCombo = new KComboBox( false, app_tab );
 	m_appCombo->setObjectName( "app combo" );
@@ -85,7 +85,7 @@ K_EXPORT_COMPONENT_FACTORY( knotify, NotifyFactory("kcmnotify") )
 
 //    connect( m_notifyWidget, SIGNAL( changed( bool )), SIGNAL( changed(bool)));
 	changed (true);
-	
+
 	m_playerSettings = new PlayerSettingsDialog(tab);
 
 /*	general->layout()->setMargin( KDialog::marginHint() );
@@ -100,7 +100,7 @@ K_EXPORT_COMPONENT_FACTORY( knotify, NotifyFactory("kcmnotify") )
         "kcmknotify", I18N_NOOP("KNotify"), "4.0",
         I18N_NOOP("System Notification Control Panel Module"),
         KAboutData::License_GPL, "(c) 2002-2006 KDE Team", 0, 0 );
-	
+
 	ab->addAuthor( "Olivier Goffart", 0, "ogoffart@kde.org" );
     ab->addAuthor( "Carsten Pfeiffer", 0, "pfeiffer@kde.org" );
     ab->addCredit( "Charles Samuels", I18N_NOOP("Original implementation"),
@@ -108,7 +108,7 @@ K_EXPORT_COMPONENT_FACTORY( knotify, NotifyFactory("kcmnotify") )
     setAboutData( ab );
 
     load();
-	
+
 
 }
 
@@ -156,13 +156,13 @@ void KCMKNotify::load()
 		if ( !appname.isEmpty() )
 			m_appCombo->addItem( appname );
 	}
-	/*        
+	/*
     KConfig config( "knotifyrc", true, false );
     config.setGroup( "Misc" );
     QString appDesc = config.readEntry( "LastConfiguredApp", "KDE System Notifications" );
-    
+
     if this code gets enabled again, make sure to apply r494965
-    
+
     if ( !appDesc.isEmpty() )
         m_appCombo->setCurrentItem( appDesc );
 
@@ -173,11 +173,11 @@ void KCMKNotify::load()
     setEnabled( true );
     emit changed( false );
 	*/
-	
+
 	m_playerSettings->load();
-	
+
 	emit changed(true);
-	
+
 }
 
 void KCMKNotify::save()
@@ -197,8 +197,8 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent )
 	: QWidget(parent)
 {
 
-	m_ui = new Ui::PlayerSettingsUI();
-	m_ui->setupUi( this );
+    m_ui = new Ui::PlayerSettingsUI();
+    m_ui->setupUi( this );
 
     load();
     dataChanged = false;
@@ -207,6 +207,7 @@ PlayerSettingsDialog::PlayerSettingsDialog( QWidget *parent )
     connect( m_ui->grpPlayers, SIGNAL( clicked( int ) ), this, SLOT( slotChanged() ) );
     connect( m_ui->volumeSlider, SIGNAL( valueChanged ( int ) ), this, SLOT( slotChanged() ) );
     connect( m_ui->reqExternal, SIGNAL( textChanged( const QString& ) ), this, SLOT( slotChanged() ) );
+    m_ui->reqExternal->setMode(KFile::File|KFile::ExistingOnly|KFile::LocalOnly);
 }
 
 void PlayerSettingsDialog::load()
@@ -215,7 +216,7 @@ void PlayerSettingsDialog::load()
     config.setGroup( "Misc" );
     bool useExternal = config.readEntry( "Use external player", false );
     m_ui->cbExternal->setChecked( useExternal );
-    m_ui->reqExternal->setUrl( config.readPathEntry( "External player" ) );
+    m_ui->reqExternal->setPath( config.readPathEntry( "External player" ) );
     m_ui->volumeSlider->setValue( config.readEntry( "Volume", 100 ) );
 
     if ( !m_ui->cbExternal->isChecked() )
@@ -238,7 +239,7 @@ void PlayerSettingsDialog::save()
     KConfig config( "knotifyrc", false, false );
     config.setGroup( "Misc" );
 
-    config.writePathEntry( "External player", m_ui->reqExternal->url() );
+    config.writePathEntry( "External player", m_ui->reqExternal->url().path() );
     config.writeEntry( "Use external player", m_ui->cbExternal->isChecked() );
     config.writeEntry( "Volume", m_ui->volumeSlider->value() );
 

@@ -68,7 +68,8 @@ PanelExeDialog::PanelExeDialog(const QString& title, const QString& description,
 
     ui->m_title->setText(title);
     ui->m_description->setText(description);
-    ui->m_exec->setUrl(path);
+    ui->m_exec->setPath(path);
+    ui->m_exec->setMode(KFile::File|KFile::ExistingOnly|KFile::LocalOnly);
     ui->m_commandLine->setText(cmd);
     ui->m_inTerm->setChecked(inTerm);
     ui->m_icon->setIconType(K3Icon::Panel, K3Icon::Application);
@@ -124,7 +125,7 @@ QString PanelExeDialog::iconPath() const
 
 QString PanelExeDialog::command() const
 {
-    return ui->m_exec->url().toString();
+    return ui->m_exec->url().path();
 }
 
 void PanelExeDialog::updateIcon()
@@ -146,7 +147,7 @@ void PanelExeDialog::fillCompletion()
         const QFileInfoList list = d.entryInfoList();
 
         foreach(const QFileInfo& fi, list) {
-            m_partialPath2full.insert(fi.fileName(), fi.filePath(), false);
+            m_partialPath2full.insert(fi.fileName(), fi.filePath());
             comp->addItem(fi.fileName());
             comp->addItem(fi.filePath());
         }
@@ -178,8 +179,9 @@ void PanelExeDialog::slotTextChanged(const QString &str)
 
 void PanelExeDialog::slotReturnPressed()
 {
-    if (m_partialPath2full.contains(ui->m_exec->url().toString()))
-        ui->m_exec->setUrl(m_partialPath2full[ui->m_exec->url().toString()]);
+    QString fullPath = m_partialPath2full.value(ui->m_exec->url().path());
+    if ( !fullPath.isEmpty() )
+        ui->m_exec->setPath(fullPath);
 }
 
 void PanelExeDialog::slotSelect(const KUrl& exec)
