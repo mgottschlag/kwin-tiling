@@ -323,9 +323,23 @@ case "$ksplashrc_ksplash_theme" in
      ;;
 esac
 
-# certain features such as Konqueror preloading work only with full KDE running
+# Mark that full KDE session is running (e.g. Konqueror preloading works only
+# with full KDE running). The KDE_FULL_SESSION property can be detected by
+# any X client connected to the same X session, even if not launched
+# directly from the KDE session but e.g. using "ssh -X", kdesu. $KDE_FULL_SESSION
+# however guarantees that the application is launched in the same environment
+# like the KDE session and that e.g. KDE utilities/libraries are available.
+# KDE_FULL_SESSION property is also only available since KDE 3.5.5.
+# The matching tests are:
+#   For $KDE_FULL_SESSION:
+#     if test -n "$KDE_FULL_SESSION"; then ... whatever
+#   For KDE_FULL_SESSION property:
+#     xprop -root | grep "^KDE_FULL_SESSION" >/dev/null 2>/dev/null
+#     if test $? -eq 0; then ... whatever
+#
 KDE_FULL_SESSION=true
 export KDE_FULL_SESSION
+xprop -root -f KDE_FULL_SESSION 8t -set KDE_FULL_SESSION true
 
 # We set LD_BIND_NOW to increase the efficiency of kdeinit.
 # kdeinit unsets this variable before loading applications.
@@ -384,5 +398,8 @@ for prefix in `echo "$exepath" | sed -n -e 's,/bin[^/]*/,/shutdown/,p'`; do
     test -x "$prefix$file" && "$prefix$file"
   done
 done
+
+unset KDE_FULL_SESSION
+xprop -root -remove KDE_FULL_SESSION
 
 echo 'startkde: Done.'  1>&2
