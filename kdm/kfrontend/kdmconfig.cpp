@@ -67,22 +67,23 @@ static QFont *
 Str2Font( const QString &aValue )
 {
 	uint nFontBits;
-	QFont *aRetFont;
 	QString chStr;
+	QFont *aRetFont = new QFont();
 
 	QStringList sl = aValue.split( QString::fromLatin1(","), QString::SkipEmptyParts );
 
 	if (sl.count() == 1) {
 		/* X11 font spec */
-		aRetFont = new QFont( aValue );
 		aRetFont->setRawMode( true );
+		aRetFont->setRawName( aValue );
 	} else if (sl.count() == 10) {
 		/* qt3 font spec */
-		aRetFont = new QFont();
 		aRetFont->fromString( aValue );
 	} else if (sl.count() == 6) {
 		/* backward compatible kde2 font spec */
-		aRetFont = new QFont( sl[0], sl[1].toInt(), sl[4].toUInt() );
+		aRetFont->setFamily( sl[0] );
+		aRetFont->setPointSize( sl[1].toInt() );
+		aRetFont->setWeight( sl[4].toUInt() );
 
 		aRetFont->setStyleHint( (QFont::StyleHint)sl[2].toUInt() );
 
