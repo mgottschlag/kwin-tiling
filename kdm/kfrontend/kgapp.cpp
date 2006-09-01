@@ -140,6 +140,7 @@ kg_main( const char *argv0 )
 	XSetIOErrorHandler( xIOErr );
 	KInstance inst( argv[0] );
 	GreeterApp app( 1, argv );
+	init_config_qapp();
 
 	Display *dpy = QX11Info::display();
 
@@ -153,7 +154,7 @@ kg_main( const char *argv0 )
 		app.setPalette( KApplication::createApplicationPalette( &config, 7 ) );
 	}
 
-	app.setFont( _normalFont );
+	app.setFont( *_normalFont );
 
 	setup_modifiers( dpy, _numLockStatus );
 	SecureDisplay( dpy );

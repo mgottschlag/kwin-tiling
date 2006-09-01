@@ -160,6 +160,7 @@ my %ov_loc_defs = ();
 
 my %ov_greet_conds = ();
 my $ov_greet_init = "";
+my $ov_greet_init_qapp = "";
 my @ov_greet_decls = ();
 my %ov_greet_defs = ();
 
@@ -212,7 +213,7 @@ my %th = (
   "list" => [ "C_TYPE_ARGV", "", "char\t**", "QStringList\t", "GetCfgStrArr", "GetCfgQStrList" ]
 );
 
-my @tl = ("QFont\t", "QStringList\t", "QString\t", "char\t**", "char\t*", "int\t", "bool\t");
+my @tl = ("QFont\t*", "QStringList\t", "QString\t", "char\t**", "char\t*", "int\t", "bool\t");
 
 sub init_defs($)
 {
@@ -442,19 +443,22 @@ while (<INFILE>) {
                 $ov_glob_decls .= " \\\n".$oa[2][0];
               }
             } else { # greeter(-c)?
-              my ($typ, $gtr, $isc);
+              my ($typ, $gtr, $isc, $qapp);
               if ($isfn) {
-                $typ = "QFont\t";
+                $typ = "QFont\t*";
                 $gtr = "Str2Font( GetCfgQStr( ".$kid." ) )";
                 $isc = 0;
+                $qapp = 1;
               } elsif ($user eq "greeter" && $cppget) {
                 $typ = $cpptype;
                 $gtr = $cppget."( ".$kid." )";
                 $isc = 0;
+                $qapp = 0;
               } else {
                 $typ = $ctype;
                 $gtr = $cget."( ".$kid.(($type eq "list") ? ", 0" : "")." )";
                 $isc = 1;
+                $qapp = 0;
               }
               my @oa = (
                 [ "_".$hvn." = ".$gtr.";", "GRINIT" ],
@@ -462,7 +466,11 @@ while (<INFILE>) {
                 [ "extern ".$typ."_".$hvn.";", "GRDECL" ]
               );
               add_cond($kif, $hvn, \@oa, \%ov_greet_conds);
-              $ov_greet_init .= " \\\n    ".$oa[0][0];
+              if ($qapp) {
+                  $ov_greet_init_qapp .= " \\\n    ".$oa[0][0];
+              } else {
+                  $ov_greet_init .= " \\\n    ".$oa[0][0];
+              }
               $ov_greet_defs{$typ} .= " \\\n".$oa[1][0];
               $ov_greet_decls[$isc] .= " \\\n".$oa[2][0];
             }
@@ -619,7 +627,7 @@ while (<INFILE>) {
       } else {
         $vname = "0";
       }
-	  $comm = dedb($comm);
+      $comm = dedb($comm);
       $comm =~ s/"/\\"/g;
       $comm =~ s/([^\n]*)\n/ \\\n\"# $1\\n\"/g;
       @oa = (
@@ -755,6 +763,8 @@ print OUTFILE
   emit_conds(\%ov_greet_conds).
   "#define CONF_GREET_INIT \\\n".
   $ov_greet_init."\n\n\n".
+  "#define CONF_GREET_INIT_QAPP \\\n".
+  $ov_greet_init_qapp."\n\n\n".
   "#define CONF_GREET_C_DECLS \\\n".
   $ov_greet_decls[1]."\n\n\n".
   "#define CONF_GREET_CPP_DECLS \\\n".

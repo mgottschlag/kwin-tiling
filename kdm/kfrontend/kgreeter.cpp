@@ -626,14 +626,14 @@ KStdGreeter::KStdGreeter()
 		                    "This means that anybody can connect to it,\n"
 		                    "open windows on it or intercept your input.") );
 		complainLabel->setAlignment( Qt::AlignCenter );
-		complainLabel->setFont( _failFont );
+		complainLabel->setFont( *_failFont );
 		complainLabel->setPaletteForegroundColor( Qt::red );
 		inner_box->addWidget( complainLabel );
 	}
 	if (!_greetString.isEmpty()) {
 		QLabel *welcomeLabel = new QLabel( _greetString, this );
 		welcomeLabel->setAlignment( Qt::AlignCenter );
-		welcomeLabel->setFont( _greetFont );
+		welcomeLabel->setFont( *_greetFont );
 		inner_box->addWidget( welcomeLabel );
 	}
 

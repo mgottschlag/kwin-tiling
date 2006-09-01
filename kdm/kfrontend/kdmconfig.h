@@ -45,6 +45,8 @@ CONF_GREET_CPP_DECLS
 struct dpySpec;
 void decodeSess( dpySpec *sess, QString &user, QString &loc );
 
+void init_config_qapp();
+
 extern "C"
 #endif
 void init_config( void );

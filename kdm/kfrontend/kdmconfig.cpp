@@ -63,36 +63,37 @@ GetCfgQStrList( int id )
 }
 
 // Based on kconfigbase.cpp
-static QFont
+static QFont *
 Str2Font( const QString &aValue )
 {
 	uint nFontBits;
-	QFont aRetFont;
+	QFont *aRetFont;
 	QString chStr;
 
 	QStringList sl = aValue.split( QString::fromLatin1(","), QString::SkipEmptyParts );
 
 	if (sl.count() == 1) {
 		/* X11 font spec */
-		aRetFont = QFont( aValue );
-		aRetFont.setRawMode( true );
+		aRetFont = new QFont( aValue );
+		aRetFont->setRawMode( true );
 	} else if (sl.count() == 10) {
 		/* qt3 font spec */
-		aRetFont.fromString( aValue );
+		aRetFont = new QFont();
+		aRetFont->fromString( aValue );
 	} else if (sl.count() == 6) {
 		/* backward compatible kde2 font spec */
-		aRetFont = QFont( sl[0], sl[1].toInt(), sl[4].toUInt() );
+		aRetFont = new QFont( sl[0], sl[1].toInt(), sl[4].toUInt() );
 
-		aRetFont.setStyleHint( (QFont::StyleHint)sl[2].toUInt() );
+		aRetFont->setStyleHint( (QFont::StyleHint)sl[2].toUInt() );
 
 		nFontBits = sl[5].toUInt();
-		aRetFont.setItalic( (nFontBits & 0x01) != 0 );
-		aRetFont.setUnderline( (nFontBits & 0x02) != 0 );
-		aRetFont.setStrikeOut( (nFontBits & 0x04) != 0 );
-		aRetFont.setFixedPitch( (nFontBits & 0x08) != 0 );
-		aRetFont.setRawMode( (nFontBits & 0x20) != 0 );
+		aRetFont->setItalic( (nFontBits & 0x01) != 0 );
+		aRetFont->setUnderline( (nFontBits & 0x02) != 0 );
+		aRetFont->setStrikeOut( (nFontBits & 0x04) != 0 );
+		aRetFont->setFixedPitch( (nFontBits & 0x08) != 0 );
+		aRetFont->setRawMode( (nFontBits & 0x20) != 0 );
 	}
-	aRetFont.setStyleStrategy( (QFont::StyleStrategy)
+	aRetFont->setStyleStrategy( (QFont::StyleStrategy)
 	   (QFont::PreferMatch |
 	    (_antiAliasing ? QFont::PreferAntialias : QFont::NoAntialias)) );
 
@@ -142,6 +143,11 @@ void init_config( void )
 		} else
 			_greetString += gst[i];
 	}
+}
+
+void init_config_qapp( void )
+{
+	CONF_GREET_INIT_QAPP
 }
 
 

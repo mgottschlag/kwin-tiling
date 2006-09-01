@@ -934,7 +934,7 @@ KGStdVerify::KGStdVerify( KGVerifyHandler *_handler, QWidget *_parent,
 	grid->setAlignment( Qt::AlignCenter );
 
 	failedLabel = new QLabel( parent );
-	failedLabel->setFont( _failFont );
+	failedLabel->setFont( *_failFont );
 	grid->addWidget( failedLabel, 1, 0, Qt::AlignCenter );
 
 	updateLockStatus();
