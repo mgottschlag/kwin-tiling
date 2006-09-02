@@ -190,8 +190,8 @@ bool KXKBApp::settingsRead()
 	initTray();
 
 	KGlobal::config()->reparseConfiguration(); // kcontrol modified kdeglobals
-	keys->readSettings();
 	//TODO:
+//	keys->readSettings();
 	//keys->updateConnections();
 
 	return true;
@@ -207,7 +207,7 @@ void KXKBApp::initTray()
 
 		m_tray = new KxkbLabelController(sysTray, popupMenu);
  		connect(popupMenu, SIGNAL(activated(int)), this, SLOT(menuActivated(int)));
-		connect(sysTray, SIGNAL(activated(int)), this, SLOT(trayActivated(int)));
+		connect(sysTray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(int)));
 	}
 
 	m_tray->setShowFlag(kxkbConfig.m_showFlag);
