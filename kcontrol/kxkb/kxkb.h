@@ -39,7 +39,7 @@ DESCRIPTION
 
 class XKBExtension;
 class XkbRules;
-class KGlobalAccel;
+class KActionCollection;
 class KWinModule;
 class LayoutMap;
 
@@ -92,7 +92,7 @@ private:
     XKBExtension *m_extension;
     XkbRules *m_rules;
     KxkbLabelController *m_tray;
-    KGlobalAccel *keys;
+    KActionCollection *keys;
     KWinModule* kWinModule;
     bool m_forceSetXKBMap;
 };

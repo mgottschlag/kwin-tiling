@@ -76,10 +76,14 @@ KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
     }
 
     // keep in sync with kcmlayout.cpp
-//	keys = new KActionCollection(this);
-	keys = NULL;
+	keys = new KActionCollection(this);
+    KActionCollection* actionCollection = keys;
+    KAction* a = 0L;
 	//TODO:
-	//#include "kxkbbindings.cpp"
+
+#include "kxkbbindings.cpp"
+KGlobalAccel::self()->readSettings();
+
     //keys->updateConnections();
 
 
@@ -207,7 +211,8 @@ void KXKBApp::initTray()
 
 		m_tray = new KxkbLabelController(sysTray, popupMenu);
  		connect(popupMenu, SIGNAL(activated(int)), this, SLOT(menuActivated(int)));
-		connect(sysTray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(int)));
+		connect(sysTray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), 
+					this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
 	}
 
 	m_tray->setShowFlag(kxkbConfig.m_showFlag);
