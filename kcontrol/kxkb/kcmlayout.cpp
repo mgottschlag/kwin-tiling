@@ -111,7 +111,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QStringList &)
  // QVBoxLayout *main = new QVBoxLayout(this, 0, KDialog::spacingHint());
 
   widget = new Ui_LayoutConfigWidget();
-  widget->setupUi(parent);
+  widget->setupUi(this);
 //  main->addWidget(widget);
 
   connect( widget->chkEnable, SIGNAL( toggled( bool )), this, SLOT(changed()));
