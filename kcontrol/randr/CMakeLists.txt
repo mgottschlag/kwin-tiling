@@ -33,7 +33,7 @@ kde4_automoc(${krandrtray_SRCS})
 
 kde4_add_executable(krandrtray ${krandrtray_SRCS})
 
-target_link_libraries(krandrtray  ${KDE4_KDECORE_LIBS} kutils ${X11_Xrandr_LIB} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
+target_link_libraries(krandrtray  ${KDE4_KUTILS_LIBS} ${X11_Xrandr_LIB} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
 
 install(TARGETS krandrtray DESTINATION ${BIN_INSTALL_DIR})
 

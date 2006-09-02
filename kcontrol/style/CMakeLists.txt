@@ -25,28 +25,3 @@ install(TARGETS kcm_style  DESTINATION ${PLUGIN_INSTALL_DIR})
 install( FILES style.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
-
-
-
-
-#original Makefile.am contents follow:
-
-#
-#AM_CPPFLAGS  = $(all_includes)
-#SUBDIRS = keramik . 
-#
-#kde_module_LTLIBRARIES = kcm_style.la
-#
-#kcm_style_la_SOURCES = kcmstyle.cpp stylepreview.ui menupreview.cpp styleconfdialog.cpp
-#kcm_style_la_LDFLAGS = $(KDE_RPATH) -module -avoid-version $(all_libraries) -no-undefined
-#kcm_style_la_LIBADD = $(LIB_KIO) ../krdb/libkrdb.la
-#METASOURCES = AUTO 
-#
-#noinst_HEADERS = kcmstyle.h stylepreview.h menupreview.h
-#
-#messages: rc.cpp
-#	$(XGETTEXT) *.cpp -o $(podir)/kcmstyle.pot
-#
-#xdg_apps_DATA = style.desktop
-#
-#KDE_ICON=AUTO
