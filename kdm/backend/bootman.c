@@ -164,7 +164,7 @@ getLilo( char ***opts, int *def, int *cur )
 	*opts = 0;
 	next[0] = 0;
 	for (;;) {
-		if ((len = fGets( buf, sizeof(buf), f)) == -1) {
+		if ((len = fGets( buf, sizeof(buf), f )) == -1) {
 			ret = BO_NOMAN;
 			goto out;
 		}
@@ -179,7 +179,7 @@ getLilo( char ***opts, int *def, int *cur )
 	cdef = *def = 0;
 	*cur = -1;
 	*opts = initStrArr( 0 );
-	while ((len = fGets( buf, sizeof(buf), f)) != -1)
+	while ((len = fGets( buf, sizeof(buf), f )) != -1)
 		if (buf[0] == ' ' && buf[1] == ' ' && buf[2] != ' ') {
 			if (buf[len - 1] == '*') {
 				*def = cdef;

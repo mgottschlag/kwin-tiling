@@ -108,7 +108,7 @@ getPrngdBytes( char *buf, int len,
 				af = addr_un.sun_family = AF_UNIX;
 				strncpy( addr_un.sun_path, socket_path,
 				         sizeof(addr_un.sun_path) );
-				addr_len = offsetof( struct sockaddr_un, sun_path ) + spl + 1;
+				addr_len = offsetof(struct sockaddr_un, sun_path) + spl + 1;
 				addr = (struct sockaddr *)&addr_un;
 		} else
 				return -1;

@@ -33,7 +33,7 @@
 #include <QPixmap>
 
 KdmRect::KdmRect( KdmItem *parent, const QDomNode &node, const char *name )
-    : KdmItem( parent, node, name )
+	: KdmItem( parent, node, name )
 {
 	itemType = "rect";
 
@@ -100,7 +100,7 @@ KdmRect::drawContents( QPainter *p, const QRect &r )
 		QImage backImage = backPixmap.toImage();
 		KImageEffect::blend( rClass->color, backImage, rClass->alpha );
 		p->drawImage( backRect.x(), backRect.y(), backImage );
-		//  area.translate(1,1);
+		//area.translate( 1,1 );
 	}
 }
 
@@ -126,16 +126,16 @@ KdmRect::setAttribs( QWidget *widget )
 void
 KdmRect::recursiveSetAttribs( QLayoutItem *li )
 {
-    QWidget *w;
-    QLayout *l;
+	QWidget *w;
+	QLayout *l;
 
-    if ((w = li->widget()))
-	setAttribs( w );
-    else if ((l = li->layout())) {
-	QLayoutIterator it = l->iterator();
-	for (QLayoutItem *itm = it.current(); itm; itm = ++it)
-	     recursiveSetAttribs( itm );
-    }
+	if ((w = li->widget()))
+		setAttribs( w );
+	else if ((l = li->layout())) {
+		QLayoutIterator it = l->iterator();
+		for (QLayoutItem *itm = it.current(); itm; itm = ++it)
+			recursiveSetAttribs( itm );
+	}
 }
 
 void

@@ -41,13 +41,13 @@
 #endif
 
 KdmItem::KdmItem( KdmItem *parent, const QDomNode &node, const char *name )
-    : QObject( parent )
-    , boxManager( 0 )
-    , fixedManager( 0 )
-    , image( 0 )
-    , myWidget( 0 )
-    , myLayoutItem( 0 )
-    , buttonParent( 0 )
+	: QObject( parent )
+	, boxManager( 0 )
+	, fixedManager( 0 )
+	, image( 0 )
+	, myWidget( 0 )
+	, myLayoutItem( 0 )
+	, buttonParent( 0 )
 {
 	setObjectName( name );
 
@@ -118,8 +118,8 @@ KdmItem::show( bool force )
 	if (isShown != InitialHidden && !force)
 		return;
 
-	QListIterator<KdmItem *> it(m_children);
-	while (it.hasNext())	
+	QListIterator<KdmItem *> it( m_children );
+	while (it.hasNext())
 		it.next()->show();
 
 	isShown = Shown;
@@ -142,7 +142,7 @@ KdmItem::hide( bool force )
 		return;		// no need for further action
 	}
 
-	QListIterator<KdmItem *> it(m_children);
+	QListIterator<KdmItem *> it( m_children );
 	while (it.hasNext())
 		it.next()->hide();
 
@@ -161,7 +161,7 @@ KdmItem::inheritFromButton( KdmItem *button )
 	if (button)
 		buttonParent = button;
 
-	QListIterator<KdmItem *> it(m_children);
+	QListIterator<KdmItem *> it( m_children );
 	while (it.hasNext())
 		it.next()->inheritFromButton( button );
 }
@@ -172,8 +172,8 @@ KdmItem::findNode( const QString &_id ) const
 	if (id == _id)
 		return const_cast<KdmItem *>( this );
 
-        QListIterator<KdmItem *> it(m_children);
-        while (it.hasNext()) {
+	QListIterator<KdmItem *> it( m_children );
+	while (it.hasNext()) {
 		KdmItem *t = it.next()->findNode( _id );
 		if (t)
 			return t;
@@ -193,7 +193,7 @@ KdmItem::setWidget( QWidget *widget )
 	else
 		myWidget->show();
 
-	myWidget->setGeometry(area);
+	myWidget->setGeometry( area );
 
 	connect( myWidget, SIGNAL(destroyed()), SLOT(widgetGone()) );
 }
@@ -275,8 +275,8 @@ KdmItem::paint( QPainter *p, const QRect &rect )
 		return;
 
 	// Dispatch paint events to children
-	QListIterator<KdmItem *> it(m_children);
-        while (it.hasNext())
+	QListIterator<KdmItem *> it( m_children );
+	while (it.hasNext())
 		it.next()->paint( p, rect );
 }
 
@@ -314,7 +314,7 @@ KdmItem::mouseEvent( int x, int y, bool pressed, bool released )
 	}
 
 	if (!buttonParent) {
-		QListIterator<KdmItem *> it(m_children);
+		QListIterator<KdmItem *> it( m_children );
 		while (it.hasNext())
 			it.next()->mouseEvent( x, y, pressed, released );
 	}
@@ -327,8 +327,8 @@ void
 KdmItem::statusChanged()
 {
 	if (buttonParent == this) {
-                QListIterator<KdmItem *> it(m_children);
-                while (it.hasNext()) {
+		QListIterator<KdmItem *> it( m_children );
+		while (it.hasNext()) {
 			KdmItem *o = it.next();
 			o->state = state;
 			o->statusChanged();

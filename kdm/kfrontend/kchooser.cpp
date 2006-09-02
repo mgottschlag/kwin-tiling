@@ -126,11 +126,11 @@ ChooserDlg::ChooserDlg()
 /*
 void ChooserDlg::slotHelp()
 {
-	KMessageBox::information(0,
-	                         i18n("Choose a host, you want to work on,\n"
-	                              "in the list or add one.\n\n"
-	                              "After this box, you must press cancel\n"
-	                              "in the Host Menu to enter a host. :("));
+	KMessageBox::information( 0,
+	                          i18n("Choose a host, you want to work on,\n"
+	                               "in the list or add one.\n\n"
+	                               "After this box, you must press cancel\n"
+	                               "in the Host Menu to enter a host. :("));
 	iline->setFocus();
 }
 */

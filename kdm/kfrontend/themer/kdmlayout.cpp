@@ -165,5 +165,5 @@ KdmLayoutBox::sizeHint()
 
 	// Make hint at least equal to minimum size (if set)
 	return QSize( w < box.minwidth ? box.minwidth : w,
-		      h < box.minheight ? box.minheight : h );
+	              h < box.minheight ? box.minheight : h );
 }

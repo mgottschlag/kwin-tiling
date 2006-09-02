@@ -138,7 +138,7 @@ public:
 	 */
 	void setFixedLayout( const QDomNode &node = QDomNode() );
 
-	QString type() const { return itemType;	}
+	QString type() const { return itemType; }
 	void setType( const QString &t ) { itemType = t; }
 	void setBaseDir( const QString &bd ) { basedir = bd; }
 

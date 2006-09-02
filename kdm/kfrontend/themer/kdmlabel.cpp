@@ -44,7 +44,7 @@
 #endif
 
 KdmLabel::KdmLabel( KdmItem *parent, const QDomNode &node, const char *name )
-    : KdmItem( parent, node, name )
+	: KdmItem( parent, node, name )
 {
 	itemType = "label";
 

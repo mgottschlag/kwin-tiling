@@ -1565,7 +1565,7 @@ edit_startup( File *file )
 	             "test -f $PIDFILE && kill `cat $PIDFILE`\n" )))
 		chg1 = 1;
 	if (oldver < 0x0203) {
-		chg2 = 
+		chg2 =
 #ifdef _AIX
 			delstr( file, "\n"
 "# We create a pseudodevice for finger.  (host:0 becomes [kx]dm/host_0)\n" );
@@ -1605,7 +1605,7 @@ edit_startup( File *file )
 " $USER\n" ) |
 			delstr( file, "\n"
 "exec sessreg -a -l $DISPLAY -u /var/run/utmp -x */Xservers $USER\n" );
-		putval( "UseSessReg", chg2 ? "true" : "false");
+		putval( "UseSessReg", chg2 ? "true" : "false" );
 	}
 	return chg1 | chg2;
 }
@@ -2342,7 +2342,7 @@ handleXdmVal( const char *dpy, const char *key, char *value,
 		     !strcmp( key + 1, ents[i].xname + 1 )))
 		{
 			if (ents[i].ksec == (char *)-1) {
-				ents[i].func (0, &value);
+				ents[i].func( 0, &value );
 				break;
 			}
 			sprintf( sname, ents[i].ksec, dpy );

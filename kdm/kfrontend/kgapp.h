@@ -42,7 +42,7 @@ class GreeterApp : public QApplication {
 	virtual void timerEvent( QTimerEvent * );
 
   Q_SIGNALS:
-    void activity();
+	void activity();
 
   private:
 	int pingInterval;

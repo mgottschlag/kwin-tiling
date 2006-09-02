@@ -35,7 +35,7 @@
 #include <QImage>
 
 KdmPixmap::KdmPixmap( KdmItem *parent, const QDomNode &node, const char *name )
-    : KdmItem( parent, node, name )
+	: KdmItem( parent, node, name )
 {
 	itemType = "pixmap";
 
@@ -133,8 +133,8 @@ KdmPixmap::renderSvg( PixmapStruct::PixmapClass *pClass, const QRect &area )
 
 	delete svgEngine;
 #else
-        Q_UNUSED(pClass);
-        Q_UNUSED(area);
+	Q_UNUSED( pClass );
+	Q_UNUSED( area );
 #endif
 }
 

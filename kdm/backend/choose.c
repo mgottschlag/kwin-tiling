@@ -610,11 +610,11 @@ registerBroadcastForPing( void )
 				ioc.ic_len = sizeof(broad_req);
 				ioc.ic_dp = (char *)&broad_req;
 
-				if (ioctl (ipfd, I_STR, (char *) &ioc ) != -1 &&
-#  else				/* WINTCP */
-				if (ifioctl( socketFD, SIOCGIFFLAGS, (char *)&broad_req ) !=
-				    -1 &&
-#  endif			/* WINTCP */
+				if (ioctl( ipfd, I_STR, (char *)&ioc )
+#  else /* WINTCP */
+				if (ifioctl( socketFD, SIOCGIFFLAGS, (char *)&broad_req )
+#  endif /* WINTCP */
+				      != -1 &&
 				    (broad_req.ifr_flags & IFF_BROADCAST) &&
 				    (broad_req.ifr_flags & IFF_UP))
 				{
@@ -625,11 +625,11 @@ registerBroadcastForPing( void )
 					ioc.ic_len = sizeof(broad_req);
 					ioc.ic_dp = (char *)&broad_req;
 
-					if (ioctl( ipfd, I_STR, (char *) &ioc) != -1 )
+					if (ioctl( ipfd, I_STR, (char *)&ioc )
 #  else /* WINTCP */
 					if (ifioctl( socketFD, SIOCGIFBRDADDR, (char *)&broad_req )
-					    != -1)
 #  endif /* WINTCP */
+					      != -1)
 						broad_addr = broad_req.ifr_addr;
 					else
 						continue;

@@ -213,7 +213,7 @@ GSendStr( const char *buf )
 		GWrite( &len, sizeof(len) );
 		GWrite( buf, len );
 	} else
-		GWrite( &buf, sizeof(int));
+		GWrite( &buf, sizeof(int) );
 }
 
 static void
@@ -1024,7 +1024,7 @@ ParseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 	void *addr;
 	int addr_type, addr_len;
 
-	if (!(**hostPtr = (HostEntry *)Malloc( sizeof(HostEntry))))
+	if (!(**hostPtr = (HostEntry *)Malloc( sizeof(HostEntry) )))
 		return 0;
 	if (!(parse & PARSE_NO_BCAST) && !strcmp( hostOrAlias, BROADCAST_STRING ))
 	{
@@ -1188,7 +1188,7 @@ ReadAccessFile( const char *fname )
 	while ((displayOrAlias = ReadWord( &file, &len, FALSE ))) {
 		if (*displayOrAlias == ALIAS_CHARACTER)
 		{
-			if (!(*aliasPtr = (AliasEntry *)Malloc( sizeof(AliasEntry)))) {
+			if (!(*aliasPtr = (AliasEntry *)Malloc( sizeof(AliasEntry) ))) {
 				error = 1;
 				break;
 			}
@@ -1210,7 +1210,7 @@ ReadAccessFile( const char *fname )
 		}
 		else if (!strcmp( displayOrAlias, LISTEN_STRING ))
 		{
-			if (!(*listenPtr = (ListenEntry *)Malloc( sizeof(ListenEntry)))) {
+			if (!(*listenPtr = (ListenEntry *)Malloc( sizeof(ListenEntry) ))) {
 				error = 1;
 				break;
 			}
@@ -1234,7 +1234,7 @@ ReadAccessFile( const char *fname )
 		}
 		else
 		{
-			if (!(*acPtr = (AclEntry *)Malloc( sizeof(AclEntry)))) {
+			if (!(*acPtr = (AclEntry *)Malloc( sizeof(AclEntry) ))) {
 				error = 1;
 				break;
 			}
@@ -1279,7 +1279,7 @@ ReadAccessFile( const char *fname )
 	}
 
 	if (!nListens) {
-		if (!(*listenPtr = (ListenEntry *)Malloc( sizeof(ListenEntry))))
+		if (!(*listenPtr = (ListenEntry *)Malloc( sizeof(ListenEntry) )))
 			error = 1;
 		else {
 			(*listenPtr)->iface = -1;

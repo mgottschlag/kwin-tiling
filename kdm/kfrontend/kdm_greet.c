@@ -235,7 +235,7 @@ GRecvStrArr( int *rnum )
 		*rnum = num;
 	if (!num)
 		return (char **)0;
-	if (!(argv = malloc( num * sizeof(char *))))
+	if (!(argv = malloc( num * sizeof(char *) )))
 		LogPanic( "No memory for read buffer\n" );
 	for (cargv = argv; --num >= 0; cargv++)
 		*cargv = GRecvStr();

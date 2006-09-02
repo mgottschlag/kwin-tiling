@@ -487,7 +487,7 @@ KGVerify::VInfoBox( QWidget *parent, const QString &user, const char *msg )
 		int expire = rx.cap( 1 ).toInt();
 		mesg = expire ?
 			i18np("Your account expires tomorrow.",
-			     "Your account expires in %n days.", expire) :
+			      "Your account expires in %n days.", expire) :
 			i18n("Your account expires today.");
 	} else {
 		rx.setPattern( "^Warning: your password will expire in (\\d+) day" );
@@ -495,7 +495,7 @@ KGVerify::VInfoBox( QWidget *parent, const QString &user, const char *msg )
 			int expire = rx.cap( 1 ).toInt();
 			mesg = expire ?
 				i18np("Your password expires tomorrow.",
-				     "Your password expires in %n days.", expire) :
+				      "Your password expires in %n days.", expire) :
 				i18n("Your password expires today.");
 		}
 	}
@@ -526,13 +526,13 @@ KGVerify::handleFailVerify( QWidget *parent )
 				QStringList::ConstIterator it;
 				for (it = pgs.begin(); it != pgs.end(); ++it)
 					if (*it == "classic" || *it == "modern") {
-						pgs = QStringList(*it);
+						pgs = QStringList( *it );
 						goto gotit;
 					} else if (*it == "generic") {
-						pgs = QStringList("modern");
+						pgs = QStringList( "modern" );
 						goto gotit;
 					}
-				pgs = QStringList("classic");
+				pgs = QStringList( "classic" );
 			  gotit:
 				KGChTok chtok( parent, user, init( pgs ), 0,
 				               KGreeterPlugin::AuthChAuthTok,
@@ -701,7 +701,7 @@ KGVerify::handleVerify()
 					greet->failed();
 					MsgBox( sorrybox,
 					        i18n("Authenticated user (%1) does not match requested user (%2).\n",
-					          ent, fixedEntity ) );
+					             ent, fixedEntity ) );
 					goto retry;
 				}
 			}
@@ -769,7 +769,7 @@ KGVerify::gplugReturnBinary( const char *data )
 void
 KGVerify::gplugSetUser( const QString &user )
 {
-    Debug( "%s: gplugSetUser(%\"s)\n", pName.data(), qPrintable( user ) );
+	Debug( "%s: gplugSetUser(%\"s)\n", pName.data(), qPrintable( user ) );
 	curUser = user;
 	handler->verifySetUser( user );
 }
@@ -800,7 +800,7 @@ KGVerify::gplugActivity()
 void
 KGVerify::gplugMsgBox( QMessageBox::Icon type, const QString &text )
 {
-    Debug( "%s: gplugMsgBox(%d, %\"s)\n", pName.data(), type, qPrintable( text ) );
+	Debug( "%s: gplugMsgBox(%d, %\"s)\n", pName.data(), type, qPrintable( text ) );
 	MsgBox( type, text );
 }
 
@@ -993,8 +993,8 @@ KGStdVerify::updateStatus()
 		if (nfls < 0) {
 			failedLabel->setPaletteForegroundColor( Qt::black );
 			failedLabel->setText( i18np( "Automatic login in 1 second ...",
-			                            "Automatic login in %n seconds ...",
-			                            timedLeft ) );
+			                             "Automatic login in %n seconds ...",
+			                             timedLeft ) );
 		} else {
 			switch (nfls) {
 			default:
@@ -1043,8 +1043,8 @@ KGThemedVerify::selectPlugin( int id )
 	if (themer && (l = greet->getLayoutItem())) {
 		if (!(n = themer->findNode( "talker" )))
 			MsgBox( errorbox,
-			        i18n("Theme not usable with authentication method '%1'.",
-			          i18n(greetPlugins[pluginList[id]].info->name) ) );
+			        i18n( "Theme not usable with authentication method '%1'.",
+			              i18n( greetPlugins[pluginList[id]].info->name ) ) );
 		else {
 			n->setLayoutItem( l );
 			showWidgets( l );

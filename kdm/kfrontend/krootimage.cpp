@@ -9,11 +9,11 @@ License version 2 as published by the Free Software Foundation.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program; see the file COPYING.	 If not, write to
+along with this program; see the file COPYING.  If not, write to
 the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA 02110-1301, USA.
 
@@ -47,8 +47,8 @@ static KCmdLineOptions options[] = {
 
 
 MyApplication::MyApplication( const char *conf )
-	: KApplication(),
-	  renderer( 0, new KSimpleConfig( QFile::decodeName( conf ) ) )
+	: KApplication()
+	, renderer( 0, new KSimpleConfig( QFile::decodeName( conf ) ) )
 {
 	connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
 	connect( &renderer, SIGNAL(imageDone( int )), this, SLOT(renderDone()) );
@@ -65,12 +65,11 @@ MyApplication::renderDone()
 	palette.setBrush( desktop()->backgroundRole(), QBrush( renderer.pixmap() ) );
 	desktop()->setPalette( palette );
 
-	desktop()->repaint( );
+	desktop()->repaint();
 	renderer.saveCacheFile();
 	renderer.cleanup();
-	for (unsigned i=0; i<renderer.numRenderers(); ++i)
-	{
-		KBackgroundRenderer * r = renderer.renderer(i);
+	for (unsigned i = 0; i < renderer.numRenderers(); ++i) {
+		KBackgroundRenderer *r = renderer.renderer( i );
 		if (r->backgroundMode() == KBackgroundSettings::Program ||
 		    (r->multiWallpaperMode() != KBackgroundSettings::NoMulti &&
 		     r->multiWallpaperMode() != KBackgroundSettings::NoMultiRandom))

@@ -57,9 +57,8 @@ void
 FDialog::resizeEvent( QResizeEvent *e )
 {
 	inherited::resizeEvent( e );
-	if (winFrame) {
+	if (winFrame)
 		winFrame->resize( size() );
-	}
 }
 
 void

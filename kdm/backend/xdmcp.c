@@ -52,7 +52,7 @@ from the copyright holder.
  * Forward reference
  */
 static void broadcast_respond( struct sockaddr *from, int fromlen, int length, int fd );
-static void forward_respond (struct sockaddr *from, int fromlen, int length, int fd);
+static void forward_respond( struct sockaddr *from, int fromlen, int length, int fd );
 static void manage( struct sockaddr *from, int fromlen, int length, int fd );
 static void query_respond( struct sockaddr *from, int fromlen, int length, int fd );
 static void request_respond( struct sockaddr *from, int fromlen, int length, int fd );
@@ -267,7 +267,7 @@ ProcessRequestSocket( int fd )
 		indirect_respond( (struct sockaddr *)&addr, addrlen, header.length, fd );
 		break;
 	case FORWARD_QUERY:
-		forward_respond ((struct sockaddr *)&addr, addrlen, header.length, fd);
+		forward_respond( (struct sockaddr *)&addr, addrlen, header.length, fd );
 		break;
 	case REQUEST:
 		request_respond( (struct sockaddr *)&addr, addrlen, header.length, fd );
@@ -440,8 +440,8 @@ NetworkAddressToName( CARD16 connectionType, ARRAY8Ptr connectionAddress,
 
 /*ARGSUSED*/
 static void
-forward_respond ( struct sockaddr *from, int fromlen ATTR_UNUSED,
-                 int length, int fd)
+forward_respond( struct sockaddr *from, int fromlen ATTR_UNUSED,
+                 int length, int fd )
 {
 	ARRAY8 clientAddress;
 	ARRAY8 clientPort;
@@ -564,7 +564,7 @@ static ARRAY8 Hostname;
 
 static void
 send_willing( struct sockaddr *from, int fromlen,
-             ARRAY8Ptr authenticationName, ARRAY8Ptr status, int fd )
+              ARRAY8Ptr authenticationName, ARRAY8Ptr status, int fd )
 {
 	XdmcpHeader header;
 
@@ -585,7 +585,7 @@ send_willing( struct sockaddr *from, int fromlen,
 
 static void
 send_unwilling( struct sockaddr *from, int fromlen,
-               ARRAY8Ptr authenticationName, ARRAY8Ptr status, int fd )
+                ARRAY8Ptr authenticationName, ARRAY8Ptr status, int fd )
 {
 	XdmcpHeader header;
 
@@ -766,9 +766,9 @@ request_respond( struct sockaddr *from, int fromlen, int length, int fd )
 
 static void
 send_accept( struct sockaddr *to, int tolen, CARD32 sessionID,
-            ARRAY8Ptr authenticationName, ARRAY8Ptr authenticationData,
-            ARRAY8Ptr authorizationName, ARRAY8Ptr authorizationData,
-            int fd )
+             ARRAY8Ptr authenticationName, ARRAY8Ptr authenticationData,
+             ARRAY8Ptr authorizationName, ARRAY8Ptr authorizationData,
+             int fd )
 {
 	XdmcpHeader header;
 
@@ -791,8 +791,8 @@ send_accept( struct sockaddr *to, int tolen, CARD32 sessionID,
 
 static void
 send_decline( struct sockaddr *to, int tolen,
-             ARRAY8Ptr authenticationName, ARRAY8Ptr authenticationData,
-             ARRAY8Ptr status, int fd )
+              ARRAY8Ptr authenticationName, ARRAY8Ptr authenticationData,
+              ARRAY8Ptr status, int fd )
 {
 	XdmcpHeader header;
 
@@ -963,7 +963,7 @@ SendFailed( struct display *d, const char *reason )
 
 static void
 send_failed( struct sockaddr *from, int fromlen,
-            const char *name, CARD32 sessionID, const char *reason, int fd )
+             const char *name, CARD32 sessionID, const char *reason, int fd )
 {
 	char buf[360];
 	XdmcpHeader header;

@@ -442,7 +442,7 @@ int pClose( FILE *f, int pid );
 char *locate( const char *exe );
 void TerminateProcess( int pid, int sig );
 
-void GSet( GTalk *talk);	/* call before GOpen! */
+void GSet( GTalk *talk ); /* call before GOpen! */
 int GFork( GPipe *pajp, const char *pname, char *cname,
            GPipe *ogp, char *cgname );
 void GClosen( GPipe *pajp );
@@ -499,7 +499,7 @@ extern time_t serverTimeout;
 
 void WaitForServer( struct display *d );
 void ResetServer( struct display *d );
-int PingServer(struct display *d );
+int PingServer( struct display *d );
 extern Display *dpy;
 
 /* in util.c */

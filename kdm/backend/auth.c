@@ -275,6 +275,9 @@ SaveServerAuthorizations( struct display *d, Xauth **auths, int count )
 {
 	FILE *auth_file;
 	int i;
+#ifdef __OpenBSD__
+	struct passwd *x11;
+#endif
 
 	if (!d->authFile && d->clientAuthFile && *d->clientAuthFile)
 		StrDup( &d->authFile, d->clientAuthFile );
@@ -292,23 +295,11 @@ SaveServerAuthorizations( struct display *d, Xauth **auths, int count )
 		}
 	}
 #ifdef __OpenBSD__
-    {
-	struct passwd *x11;
-	uid_t uid;
-	gid_t gid;
 	/* Give read capability to group _x11 */
-	x11 = getpwnam("_x11");
-	if (x11 == NULL) {
-	    LogError("Can't find _x11 user\n");
-	    uid = getuid();
-	    gid = getgid();
-	} else {
-	    uid = x11->pw_uid;
-	    gid = x11->pw_gid;
-	}
-
-	fchown(fileno(auth_file), uid, gid);
-    }
+	if (!(x11 = getpwnam( "_x11" )))
+		LogError( "Can't find _x11 user\n" );
+	else
+		fchown( fileno( auth_file ), x11->pw_uid, x11->pw_gid );
 #endif
 	Debug( "file: %s  auth: %p\n", d->authFile, auths );
 	for (i = 0; i < count; i++) {
@@ -735,7 +726,7 @@ DefineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 		/*
 		 * Ignore the 127.0.0.1 entry.
 		 */
-		if (IA_SIN( &ifaddr )->sin_addr.s_addr == htonl( 0x7f000001 ) )
+		if (IA_SIN( &ifaddr )->sin_addr.s_addr == htonl( 0x7f000001 ))
 			continue;
 
 		writeAddr( FamilyInternet, 4, (char *)&(IA_SIN( &ifaddr )->sin_addr),
@@ -943,7 +934,7 @@ DefineSelf( int fd, int file, int auth, int *ok )
 		inetaddr = (struct sockaddr_in *)(&(saddr.sa));
 		memmove( (char *)&(inetaddr->sin_addr), (char *)hp->h_addr,
 		         (int)hp->h_length );
-		if ( (family = ConvertAddr( &(saddr.sa), &len, &addr )) >= 0)
+		if ((family = ConvertAddr( &(saddr.sa), &len, &addr )) >= 0)
 			writeAddr( FamilyInternet, sizeof(inetaddr->sin_addr),
 			           (char *)(&inetaddr->sin_addr), file, auth, ok );
 	}

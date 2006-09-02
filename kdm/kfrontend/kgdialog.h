@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef KGDIALOG_H
 #define KGDIALOG_H
 
-#include <config.h> 
+#include <config.h>
 #include <config-kdm.h> // for WITH_KDM_XCONSOLE
 
 #include "kdmconfig.h"

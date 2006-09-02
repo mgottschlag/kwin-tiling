@@ -209,7 +209,7 @@ KGreeter::insertUser( const QImage &default_pix,
 	QString realname = KStringHandler::from8Bit( ps->pw_gecos );
 	realname.truncate( realname.indexOf( ',' ) );
 	if (realname.isEmpty() || realname == username)
-                new UserListViewItem( userView, username, QPixmap::fromImage( p ), username );
+		new UserListViewItem( userView, username, QPixmap::fromImage( p ), username );
 	else {
 		realname.append( "\n" ).append( username );
 		new UserListViewItem( userView, realname, QPixmap::fromImage( p ), username );
@@ -263,12 +263,12 @@ KGreeter::insertUsers()
 	// XXX remove seteuid-voodoo when we run as nobody
 	if (!(ps = getpwnam( "nobody" )))
 		return;
-        if (setegid( ps->pw_gid )) 
-                return;
-        if (seteuid( ps->pw_uid )) {
-                setegid(0);
-                return;
-        }
+	if (setegid( ps->pw_gid ))
+		return;
+	if (seteuid( ps->pw_uid )) {
+		setegid( 0 );
+		return;
+	}
 
 	QImage default_pix;
 	if (userView) {
@@ -335,7 +335,7 @@ KGreeter::insertUsers()
 
 	// XXX remove seteuid-voodoo when we run as nobody
 	seteuid( 0 );
-        setegid( 0 );
+	setegid( 0 );
 }
 
 void
@@ -363,7 +363,7 @@ KGreeter::insertSessions()
 				dsk.setGroup( "Desktop Entry" );
 				putSession( (*it).left( (*it).length() - 8 ),
 				            dsk.readEntry( "Name" ),
-				            (dsk.readEntry( "Hidden", QVariant(false )).toBool() ||
+				            (dsk.readEntry( "Hidden", QVariant( false ) ).toBool() ||
 				             (dsk.hasKey( "TryExec" ) &&
 				              KStandardDirs::findExe( dsk.readEntry( "TryExec" ) ).isEmpty())),
 				            dsk.readEntry( "Exec" ).toLatin1() );
@@ -597,34 +597,34 @@ KStdGreeter::KStdGreeter()
 	QBoxLayout *main_box;
 #ifdef WITH_KDM_XCONSOLE
 	if (consoleView) {
-            QBoxLayout *ex_box = new QVBoxLayout( this );
-            ex_box->setSpacing( 10 );
-            ex_box->setMargin( 10 );
-            main_box = new QHBoxLayout( ex_box );
-            main_box->setMargin( 10 );
-            ex_box->addWidget( consoleView );
+		QBoxLayout *ex_box = new QVBoxLayout( this );
+		ex_box->setSpacing( 10 );
+		ex_box->setMargin( 10 );
+		main_box = new QHBoxLayout( ex_box );
+		main_box->setMargin( 10 );
+		ex_box->addWidget( consoleView );
 	} else
 #endif
-        {
-            main_box = new QHBoxLayout( this );
-            main_box->setMargin( 10 );
-            main_box->setSpacing( 10 );
-        }
+	{
+		main_box = new QHBoxLayout( this );
+		main_box->setMargin( 10 );
+		main_box->setSpacing( 10 );
+	}
 
 	if (userView)
 		main_box->addWidget( userView );
 
-	QBoxLayout *inner_box = new QVBoxLayout(  );
-        main_box->addItem( inner_box );
-        inner_box->setMargin( 10 );
+	QBoxLayout *inner_box = new QVBoxLayout();
+	main_box->addItem( inner_box );
+	inner_box->setMargin( 10 );
 
 	if (!_authorized && _authComplain) {
 		QLabel *complainLabel = new QLabel(
 			i18n("Warning: this is an unsecured session"), this );
 		complainLabel->setToolTip(
-		               i18n("This display requires no X authorization.\n"
-		                    "This means that anybody can connect to it,\n"
-		                    "open windows on it or intercept your input.") );
+			i18n("This display requires no X authorization.\n"
+			     "This means that anybody can connect to it,\n"
+			     "open windows on it or intercept your input.") );
 		complainLabel->setAlignment( Qt::AlignCenter );
 		complainLabel->setFont( *_failFont );
 		complainLabel->setPaletteForegroundColor( Qt::red );
@@ -773,7 +773,7 @@ KThemedGreeter::KThemedGreeter()
 //	, clock( 0 )
 {
 	// We do all painting ourselves
-	setAttribute(Qt::WA_NoSystemBackground, true);
+	setAttribute( Qt::WA_NoSystemBackground, true );
 	// Allow tracking the mouse position
 	setMouseTracking( true );
 

@@ -55,9 +55,9 @@
  * KdmThemer. The main theming interface
  */
 KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *parent )
-    : QObject( parent )
-    , rootItem( 0 )
-    , backBuffer( 0 )
+	: QObject( parent )
+	, rootItem( 0 )
+	, backBuffer( 0 )
 {
 	// Set the mode we're working in
 	m_currentMode = mode;

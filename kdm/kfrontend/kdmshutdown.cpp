@@ -80,8 +80,8 @@ KDMShutdownBase::KDMShutdownBase( int _uid, QWidget *_parent )
 	, needRoot( -1 )
 	, uid( _uid )
 {
-    box->setSpacing( KDsh );
-    box->setMargin( KDmh );
+	box->setSpacing( KDsh );
+	box->setMargin( KDmh );
 }
 
 KDMShutdownBase::~KDMShutdownBase()
@@ -496,21 +496,21 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	QVBoxLayout *iconlay = new QVBoxLayout( lfrm );
 	iconlay->addWidget( icon );
 
-	QVBoxLayout *buttonlay = new QVBoxLayout(  );
-        hbox->addItem( buttonlay );
+	QVBoxLayout *buttonlay = new QVBoxLayout();
+	hbox->addItem( buttonlay );
 	buttonlay->setSpacing( KDsh );
 
 	buttonlay->addStretch( 1 );
 
 	KPushButton *btnHalt = new
-		KPushButton( KGuiItem( i18n("&Turn Off Computer"), "exit" ), this );
+	KPushButton( KGuiItem( i18n("&Turn Off Computer"), "exit" ), this );
 	buttonlay->addWidget( btnHalt );
 	connect( btnHalt, SIGNAL(clicked()), SLOT(slotHalt()) );
 
 	buttonlay->addSpacing( KDialog::spacingHint() );
 
 	KDMDelayedPushButton *btnReboot = new
-		KDMDelayedPushButton( KGuiItem( i18n("&Restart Computer"), "reload" ), this );
+	KDMDelayedPushButton( KGuiItem( i18n("&Restart Computer"), "reload" ), this );
 	buttonlay->addWidget( btnReboot );
 	connect( btnReboot, SIGNAL(clicked()), SLOT(slotReboot()) );
 
@@ -529,7 +529,7 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 			                     t, i );
 		}
 		btnReboot->setPopup( targets );
-		connect( targets, SIGNAL(activated(int)), SLOT(slotReboot(int)) );
+		connect( targets, SIGNAL(activated( int )), SLOT(slotReboot( int )) );
 	}
 	GSet( 0 );
 
@@ -537,7 +537,7 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 
 	if (_scheduledSd != SHUT_NEVER) {
 		KPushButton *btnSched = new
-			KPushButton( KGuiItem( i18n("&Schedule...") ), this );
+		KPushButton( KGuiItem( i18n("&Schedule...") ), this );
 		buttonlay->addWidget( btnSched );
 		connect( btnSched, SIGNAL(clicked()), SLOT(slotSched()) );
 
