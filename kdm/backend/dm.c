@@ -1060,7 +1060,7 @@ SigHandler( int n )
 {
 	int olderrno = errno;
 	char buf = (char)n;
-	Debug( "caught signal %d\n", n );
+	/* Debug( "caught signal %d\n", n ); this hangs in syslog() */
 	write( signalFds[1], &buf, 1 );
 #ifdef __EMX__
 	(void)Signal( n, SigHandler );
