@@ -5,6 +5,10 @@
 #include <kinstance.h>
 #include <kgenericfactory.h>
 
+#include <ksystemtrayicon.h>
+#include <kwin.h>
+#include <kdebug.h>
+
 #include "kcmlayout.h"
 
 
@@ -14,6 +18,7 @@ K_EXPORT_COMPONENT_FACTORY(keyboard_layout, LayoutConfigFactory("kcmlayout"))
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+	app.setApplicationName("kxkb.test");
 
     QWidget window;
 
@@ -25,6 +30,12 @@ int main(int argc, char *argv[])
 
 	QStringList list;
 	new LayoutConfig(&window, list);
+
+//	KSystemTrayIcon icon(&window);
+//	icon.setIcon(KSystemTrayIcon::loadIcon("kxkb"));
+//	icon.show();
+
+//KWin::setSystemTrayWindowFor( window.winId(), 0 );
 
     window.show();
     return app.exec();

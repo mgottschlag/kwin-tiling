@@ -1,14 +1,16 @@
 KDE4:
-  - integrate libxklavier
+  - KAccels
+  - libxklavier languages
+
+  - integrate libxklavier (switch groups etc...)
   - pure modifier keyboard shortcuts (Ctrl+Shift)
   - port deprecated Qt3 widget calls
 
+  - return DCOP or make KPart or Applet etc...
 Others:
 - setting up own layout if you're not root - using xkbcomp
 
 - allowing other latin base groups instead of "us" (e.g. "dvorak")
-
-- checking each layout in kxkb.cpp if it's ok for single group
 - checking each layout in kcmlayout.cpp whether it's latin and don't need latin group
 
 - check the problem with gnome apps, first switch of layout with keyboard shortcut locks input

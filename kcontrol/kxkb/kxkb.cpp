@@ -1,5 +1,6 @@
 /*
-    Copyright (C) 2001, S.R.Haque <srhaque@iee.org>. Derived from an
+    Copyright (C) 2001, S.R.Haque <srhaque@iee.org>. 
+	Copyright (C) 2006, Andriy Rysin <rysin@kde.org>. Derived from an
     original by Matthias H�zer-Klpfel released under the QPL.
     This file is part of the KDE project
 
@@ -57,6 +58,7 @@ DESCRIPTION
 #include "rules.h"
 #include "kxkbconfig.h"
 #include "layoutmap.h"
+#include "kxkbwidget.h"
 
 #include "kxkb.moc"
 
@@ -65,7 +67,7 @@ KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
     : KUniqueApplication(allowStyles, GUIenabled),
     m_prevWinId(X11Helper::UNKNOWN_WINDOW_ID),
     m_rules(NULL),
-    m_tray(NULL),
+    m_kxkbWidget(NULL),
     kWinModule(NULL),
     m_forceSetXKBMap( false )
 {
@@ -102,7 +104,7 @@ KXKBApp::~KXKBApp()
 //    deletePrecompiledLayouts();
 
     delete keys;
-    delete m_tray;
+    delete m_kxkbWidget;
     delete m_rules;
     delete m_extension;
 	delete m_layoutOwnerMap;
@@ -203,21 +205,16 @@ bool KXKBApp::settingsRead()
 
 void KXKBApp::initTray()
 {
-	if( !m_tray )
+	if( !m_kxkbWidget )
 	{
-		KSystemTrayIcon* sysTray = new KSystemTrayIcon();
-		QMenu* popupMenu = sysTray->contextMenu();
-	//	popupMenu->insertTitle( kapp->miniIcon(), kapp->caption() );
-
-		m_tray = new KxkbLabelController(sysTray, popupMenu);
- 		connect(popupMenu, SIGNAL(activated(int)), this, SLOT(menuActivated(int)));
-		connect(sysTray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), 
-					this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
+		m_kxkbWidget = new KxkbSysTrayIcon();
+ 		connect(m_kxkbWidget, SIGNAL(menuActivated(int)), this, SLOT(iconMenuActivated(int)));
+		connect(m_kxkbWidget, SIGNAL(iconToggled()), this, SLOT(iconToggled()));
 	}
 
-	m_tray->setShowFlag(kxkbConfig.m_showFlag);
-	m_tray->initLayoutList(kxkbConfig.m_layouts, *m_rules);
-	m_tray->setCurrentLayout(m_currentLayout);
+	m_kxkbWidget->setShowFlag(kxkbConfig.m_showFlag);
+	m_kxkbWidget->initLayoutList(kxkbConfig.m_layouts, *m_rules);
+	m_kxkbWidget->setCurrentLayout(m_currentLayout);
 }
 
 // This function activates the keyboard layout specified by the
@@ -256,41 +253,40 @@ bool KXKBApp::setLayout(const LayoutUnit& layoutUnit, int group)
     if( res )
         m_currentLayout = layoutUnit;
 
-    if (m_tray) {
+    if( m_kxkbWidget ) {
 		if( res )
-			m_tray->setCurrentLayout(layoutUnit);
+			m_kxkbWidget->setCurrentLayout(layoutUnit);
 		else
-			m_tray->setError(layoutUnit.toPair());
+			m_kxkbWidget->setError(layoutUnit.toPair());
 	}
 
     return res;
 }
 
-void KXKBApp::trayActivated(QSystemTrayIcon::ActivationReason reason)
+void KXKBApp::iconToggled()
 {
-    if ( reason != QSystemTrayIcon::Trigger )
-        return;
-
+//    if ( reason != QSystemTrayIcon::Trigger )
+//        return;
     const LayoutUnit& layout = m_layoutOwnerMap->getNextLayout().layoutUnit;
     setLayout(layout);
 }
 
-void KXKBApp::menuActivated(int id)
+void KXKBApp::iconMenuActivated(int id)
 {
-    if( KxkbLabelController::START_MENU_ID <= id
-        && id < KxkbLabelController::START_MENU_ID + (int)kxkbConfig.m_layouts.count() )
+    if( KxkbWidget::START_MENU_ID <= id
+        && id < KxkbWidget::START_MENU_ID + (int)kxkbConfig.m_layouts.count() )
     {
-        const LayoutUnit& layout = kxkbConfig.m_layouts[id - KxkbLabelController::START_MENU_ID];
+        const LayoutUnit& layout = kxkbConfig.m_layouts[id - KxkbWidget::START_MENU_ID];
         m_layoutOwnerMap->setCurrentLayout( layout );
         setLayout( layout );
     }
-    else if (id == KxkbLabelController::CONFIG_MENU_ID)
+    else if (id == KxkbWidget::CONFIG_MENU_ID)
     {
         KProcess p;
         p << "kcmshell" << "keyboard_layout";
         p.start(KProcess::DontCare);
     }
-    else if (id == KxkbLabelController::HELP_MENU_ID)
+    else if (id == KxkbWidget::HELP_MENU_ID)
     {
         KToolInvocation::invokeHelp(0, "kxkb");
     }

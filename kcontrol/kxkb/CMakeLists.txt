@@ -38,7 +38,7 @@ set(kxkb_KDEINIT_SRCS
   layoutmap.cpp
   kxkb.cpp
   kxkb_adaptor.cpp
-  kxkbtraywindow.cpp
+  kxkbwidget.cpp
   ${XKB_SUPPORT_SRC}
 )
 

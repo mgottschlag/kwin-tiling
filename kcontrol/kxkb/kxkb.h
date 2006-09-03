@@ -1,5 +1,6 @@
 /*
-    Copyright (C) 2001, S.R.Haque <srhaque@iee.org>. Derived from an
+    Copyright (C) 2001, S.R.Haque <srhaque@iee.org>. 
+	Copyright (C) 2006, Andriy Rysin <rysin@kde.org>. Derived from an
     original by Matthias H�zer-Klpfel released under the QPL.
     This file is part of the KDE project
 
@@ -33,15 +34,14 @@ DESCRIPTION
 
 #include <kuniqueapplication.h>
 
-#include "kxkbtraywindow.h"
 #include "kxkbconfig.h"
-
 
 class XKBExtension;
 class XkbRules;
 class KActionCollection;
 class KWinModule;
 class LayoutMap;
+class KxkbWidget;
 
 /* This is the main Kxkb class responsible for reading options
     and switching layouts
@@ -67,8 +67,8 @@ public slots:
 	void forceSetXKBMap( bool set );
 
 protected slots:
-    void menuActivated(int id);
-    void trayActivated(QSystemTrayIcon::ActivationReason reason);
+    void iconMenuActivated(int id);
+    void iconToggled();
     void windowChanged(WId winId);
 
     void slotSettingsChanged(int category);
@@ -91,7 +91,7 @@ private:
 
     XKBExtension *m_extension;
     XkbRules *m_rules;
-    KxkbLabelController *m_tray;
+    KxkbWidget *m_kxkbWidget;
     KActionCollection *keys;
     KWinModule* kWinModule;
     bool m_forceSetXKBMap;

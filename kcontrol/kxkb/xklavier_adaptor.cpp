@@ -51,10 +51,13 @@ QHash<QString, QStringList*> XKlavierAdaptor::getVariants() { return priv->m_var
 static void processModel(XklConfigRegistry*, const XklConfigItem* configItem, gpointer userData)
 {
 	QString model = configItem->name;
+	QString desc = configItem->description;
+
 #if VERBOSE == 1
-	  kDebug() << "model: " << model << " - " << configItem->description << endl;
+	  kDebug() << "model: " << model << " - " << desc << endl;
 #endif
-	((XKlavierAdaptorPriv*)userData)->m_models.insert(model, QString(configItem->description));
+
+	((XKlavierAdaptorPriv*)userData)->m_models.insert(model, desc);
 }
 
 
@@ -75,9 +78,10 @@ static void processVariants(XklConfigRegistry*, const XklConfigItem* configItem,
 static void processLayout(XklConfigRegistry*, const XklConfigItem* configItem, gpointer userData)
 {
 	QString layout = configItem->name;
+	QString desc = configItem->description;
 
-	kDebug() << "layout: " << layout << " - " << configItem->description << endl;
-	((XKlavierAdaptorPriv*)userData)->m_layouts.insert(layout, QString(configItem->description));
+	kDebug() << "layout: " << layout << " - " << desc << endl;
+	((XKlavierAdaptorPriv*)userData)->m_layouts.insert(layout, desc);
 	((XKlavierAdaptorPriv*)userData)->m_variants.insert(layout, new QStringList());
 	
 	((XKlavierAdaptorPriv*)userData)->currLayout = layout;
