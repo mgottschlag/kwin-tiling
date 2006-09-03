@@ -37,6 +37,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QGridLayout>
 #include <QEvent>
 
+class QAction;
+
 #include <sys/time.h>
 #include <time.h>
 
@@ -86,6 +88,7 @@ class KLibrary;
 struct GreeterPluginHandle {
 	KLibrary *library;
 	kgreeterplugin_info *info;
+	QAction *action;
 };
 
 typedef QVector<int> PluginList;
@@ -164,7 +167,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	void doReject( bool initial );
 
   private Q_SLOTS:
-	//virtual void slotPluginSelected( int id ) = 0;
+	//virtual void slotPluginSelected( QAction * ) = 0;
 	void slotTimeout();
 	void slotActivity();
 
@@ -201,7 +204,7 @@ class KGStdVerify : public KGVerify {
 	int failedLabelState;
 
   private Q_SLOTS:
-	void slotPluginSelected( int id );
+	void slotPluginSelected( QAction * );
 };
 
 class KGThemedVerify : public KGVerify {
@@ -222,7 +225,7 @@ class KGThemedVerify : public KGVerify {
 	void updateStatus();
 
   private Q_SLOTS:
-	void slotPluginSelected( int id );
+	void slotPluginSelected( QAction * );
 };
 
 class KGChTok : public FDialog, public KGVerifyHandler {

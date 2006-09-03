@@ -37,10 +37,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLabel>
 #include <QVBoxLayout>
 
+class QGroupBox;
+class QAction;
 class QLabel;
 class KPushButton;
-class Q3ButtonGroup;
-class Q3GroupBox;
 class QComboBox;
 class QCheckBox;
 class QLineEdit;
@@ -115,8 +115,8 @@ class KDMShutdown : public KDMShutdownBase {
 	void slotWhenChanged();
 
   private:
-	Q3ButtonGroup *howGroup;
-	Q3GroupBox *schedGroup;
+	QGroupBox *howGroup;
+	QGroupBox *schedGroup;
 	QRadioButton *restart_rb;
 	QLineEdit *le_start, *le_timeout;
 	QCheckBox *cb_force;
@@ -171,7 +171,7 @@ class KDMSlimShutdown : public FDialog {
   private Q_SLOTS:
 	void slotHalt();
 	void slotReboot();
-	void slotReboot( int );
+	void slotReboot( QAction * );
 	void slotSched();
 
   private:

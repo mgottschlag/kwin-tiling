@@ -39,22 +39,24 @@ class UserListView;
 class KdmThemer;
 class KdmItem;
 
-class K3ListView;
 class KSimpleConfig;
 
+class QAction;
 class QLabel;
 class QPushButton;
 class QMenu;
-class Q3ListViewItem;
+class QListWidget;
+class QListWidgetItem;
 
 struct SessType {
 	QString name, type;
+	QAction *action;
 	bool hid;
 	int prio;
 
 	SessType() {}
 	SessType( const QString &n, const QString &t, bool h, int p ) :
-		name( n ), type( t ), hid( h ), prio( p ) {}
+		name( n ), type( t ), action( 0 ), hid( h ), prio( p ) {}
 	bool operator<( const SessType &st ) const {
 		return hid != st.hid ? hid < st.hid :
 		       prio != st.prio ? prio < st.prio :
@@ -73,8 +75,8 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
   public Q_SLOTS:
 	void accept();
 	void reject();
-	void slotUserClicked( Q3ListViewItem * );
-	void slotSessionSelected( int );
+	void slotUserClicked( QListWidgetItem * );
+	void slotSessionSelected( QAction * );
 	void slotUserEntered();
 
   protected:
@@ -84,7 +86,7 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 	void putSession( const QString &, const QString &, bool, const char * );
 	void insertSessions();
 	virtual void pluginSetup();
-	void setPrevWM( int );
+	void setPrevWM( QAction * );
 
 	QString curUser, dName;
 	KSimpleConfig *stsFile;
@@ -93,7 +95,7 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 	QMenu *sessMenu;
 	QVector<SessType> sessionTypes;
 	int nNormals, nSpecials;
-	int curPrev, curSel;
+	QAction *curPrev, *curSel;
 	bool prevValid;
 	bool needLoad;
 

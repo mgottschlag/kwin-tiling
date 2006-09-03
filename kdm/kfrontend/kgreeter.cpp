@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kseparator.h>
-#include <k3listview.h>
 #include <ksimpleconfig.h>
 #include <kstringhandler.h>
 #include <QEventLoop>
@@ -47,13 +46,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMovie>
 #include <QMenu>
 #include <QTimer>
-#include <q3header.h>
 #include <QStyle>
 #include <QLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QToolTip>
-#include <q3accel.h>
 #include <QEventLoop>
 #include <QSet>
 #include <QPixmap>
@@ -62,10 +59,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QBoxLayout>
 #include <QHBoxLayout>
 #include <QFrame>
-#include <Q3ValueList>
 #include <QVBoxLayout>
 #include <QAbstractEventDispatcher>
-#include <q3dict.h>
+#include <QListWidget>
+#include <QListWidgetItem>
 
 #include <pwd.h>
 #include <grp.h>
@@ -75,17 +72,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <X11/Xlib.h>
 
-class UserListView : public K3ListView {
+class UserListView : public QListWidget {
   public:
 	UserListView( QWidget *parent = 0 )
-		: K3ListView( parent )
+		: QListWidget( parent )
 		, cachedSizeHint( -1, 0 )
 	{
 		setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Ignored );
-		header()->hide();
-		addColumn( QString() );
-		setColumnAlignment( 0, Qt::AlignVCenter );
-		setResizeMode( Q3ListView::LastColumn );
+		setUniformItemSizes( true );
+		setIconSize( QSize( 48, 48 ) );
+		setAlternatingRowColors( true );
 	}
 
 	mutable QSize cachedSizeHint;
@@ -95,9 +91,11 @@ class UserListView : public K3ListView {
 	{
 		if (!cachedSizeHint.isValid()) {
 			ensurePolished();
+			QStyleOptionViewItem vo( viewOptions() );
+			QAbstractListModel *md( static_cast<QAbstractListModel *>(model()) );
 			uint maxw = 0;
-			for (Q3ListViewItem *itm = firstChild(); itm; itm = itm->nextSibling()) {
-				uint thisw = itm->width( fontMetrics(), this, 0 );
+			for (int i = 0, rc = md->rowCount(); i < rc; i++) {
+				uint thisw = itemDelegate()->sizeHint( vo, md->index( i ) ).width();
 				if (thisw > maxw)
 					maxw = thisw;
 			}
@@ -107,6 +105,21 @@ class UserListView : public K3ListView {
 		}
 		return cachedSizeHint;
 	}
+};
+
+class UserListViewItem : public QListWidgetItem {
+  public:
+	UserListViewItem( UserListView *parent, const QString &text,
+	                  const QPixmap &pixmap, const QString &username )
+		: QListWidgetItem( parent )
+		, login( username )
+	{
+		setIcon( pixmap );
+		setText( text );
+		parent->cachedSizeHint.setWidth( -1 );
+	}
+
+	QString login;
 };
 
 
@@ -120,8 +133,8 @@ KGreeter::KGreeter( bool framed )
   , userList( 0 )
   , nNormals( 0 )
   , nSpecials( 0 )
-  , curPrev( -1 )
-  , curSel( -1 )
+  , curPrev( 0 )
+  , curSel( 0 )
   , prevValid( true )
   , needLoad( false )
 {
@@ -130,9 +143,9 @@ KGreeter::KGreeter( bool framed )
 
 	if (_userList) {
 		userView = new UserListView( this );
-		connect( userView, SIGNAL(clicked( Q3ListViewItem * )),
-		         SLOT(slotUserClicked( Q3ListViewItem * )) );
-		connect( userView, SIGNAL(doubleClicked( Q3ListViewItem * )),
+		connect( userView, SIGNAL(itemPressed( QListWidgetItem * )),
+		         SLOT(slotUserClicked( QListWidgetItem * )) );
+		connect( userView, SIGNAL(itemActivated( QListWidgetItem * )),
 		         SLOT(accept()) );
 	}
 	if (_userCompletion)
@@ -141,8 +154,8 @@ KGreeter::KGreeter( bool framed )
 		insertUsers();
 
 	sessMenu = new QMenu( this );
-	connect( sessMenu, SIGNAL(activated( int )),
-	         SLOT(slotSessionSelected( int )) );
+	connect( sessMenu, SIGNAL(triggered( QAction * )),
+	         SLOT(slotSessionSelected( QAction * )) );
 	insertSessions();
 
 	if (curPlugin < 0) {
@@ -158,22 +171,6 @@ KGreeter::~KGreeter()
 	delete verify;
 	delete stsFile;
 }
-
-class UserListViewItem : public K3ListViewItem {
-  public:
-	UserListViewItem( UserListView *parent, const QString &text,
-	                  const QPixmap &pixmap, const QString &username )
-		: K3ListViewItem( parent )
-		, login( username )
-	{
-		setPixmap( 0, pixmap );
-		setMultiLinesEnabled( true );
-		setText( 0, text );
-		parent->cachedSizeHint.setWidth( -1 );
-	}
-
-	QString login;
-};
 
 void
 KGreeter::insertUser( const QImage &default_pix,
@@ -199,7 +196,7 @@ KGreeter::insertUser( const QImage &default_pix,
 		if (p.load( fn + ".icon" ) || p.load( fn )) {
 			QSize ns( 48, 48 );
 			if (p.size() != ns)
-				p = p.convertDepth( 32 ).scaled( ns, Qt::KeepAspectRatio, Qt::SmoothTransformation );
+				p = p.convertToFormat( QImage::Format_RGB32 ).scaled( ns, Qt::KeepAspectRatio, Qt::SmoothTransformation );
 			goto gotit;
 		}
 		dp = 1 - dp;
@@ -207,7 +204,7 @@ KGreeter::insertUser( const QImage &default_pix,
 	p = default_pix;
   gotit:
 	QString realname = KStringHandler::from8Bit( ps->pw_gecos );
-	realname.truncate( realname.indexOf( ',' ) );
+	realname.truncate( realname.indexOf( ',' ) & (~0U >> 1) );
 	if (realname.isEmpty() || realname == username)
 		new UserListViewItem( userView, username, QPixmap::fromImage( p ), username );
 	else {
@@ -216,28 +213,16 @@ KGreeter::insertUser( const QImage &default_pix,
 	}
 }
 
-class KCStringList : public Q3ValueList<QByteArray> {
-  public:
-	bool contains( const char *str ) const
-	{
-		for (ConstIterator it = begin(); it != end(); ++it)
-			if (*it == str)
-				return true;
-		return false;
-	}
-};
-
 class UserList {
   public:
 	UserList( char **in );
 	bool hasUser( const char *str ) const { return users.contains( str ); }
-	bool hasGroup( gid_t gid ) const
-		{ return groups.find( gid ) != groups.end(); }
+	bool hasGroup( gid_t gid ) const { return groups.contains( gid ); }
 	bool hasGroups() const { return !groups.isEmpty(); }
-	KCStringList users;
 
   private:
-	Q3ValueList<gid_t> groups;
+	QSet<gid_t> groups;
+	QSet<QByteArray> users;
 };
 
 UserList::UserList( char **in )
@@ -248,11 +233,11 @@ UserList::UserList( char **in )
 		if (**in == '@') {
 			if ((grp = getgrnam( *in + 1 ))) {
 				for (; *grp->gr_mem; grp->gr_mem++)
-					users.append( *grp->gr_mem );
-				groups.append( grp->gr_gid );
+					users.insert( *grp->gr_mem );
+				groups.insert( grp->gr_gid );
 			}
 		} else
-			users.append( *in );
+			users.insert( *in );
 }
 
 void
@@ -278,7 +263,7 @@ KGreeter::insertUsers()
 		QSize ns( 48, 48 );
 		if (default_pix.size() != ns)
 			default_pix =
-			  default_pix.convertDepth( 32 ).scaled( ns, Qt::KeepAspectRatio, Qt::SmoothTransformation );
+			  default_pix.convertToFormat( QImage::Format_RGB32 ).scaled( ns, Qt::KeepAspectRatio, Qt::SmoothTransformation );
 	}
 	if (_showUsers == SHOW_ALL) {
 		UserList noUsers( _noUsers );
@@ -318,17 +303,15 @@ KGreeter::insertUsers()
 				}
 			}
 		} else {
-			KCStringList::ConstIterator it = users.users.begin();
-			for (; it != users.users.end(); ++it)
-				if ((ps = getpwnam( (*it).data() )) &&
-				    (ps->pw_uid || _showRoot))
-					insertUser( default_pix, QFile::decodeName( *it ), ps );
+			for (int i = 0; _users[i]; i++)
+				if ((ps = getpwnam( _users[i] )) && (ps->pw_uid || _showRoot))
+					insertUser( default_pix, QFile::decodeName( _users[i] ), ps );
 		}
 	}
 	endpwent();
 	if (_sortUsers) {
 		if (userView)
-			userView->sort();
+			userView->sortItems();
 		if (userList)
 			userList->sort();
 	}
@@ -374,7 +357,9 @@ KGreeter::insertSessions()
 	putSession( "failsafe", i18n("Failsafe"), false, "failsafe" );
 	qSort( sessionTypes );
 	for (int i = 0; i < sessionTypes.size() && !sessionTypes[i].hid; i++) {
-		sessMenu->insertItem( sessionTypes[i].name, i );
+		sessionTypes[i].action = sessMenu->addAction( sessionTypes[i].name );
+		sessionTypes[i].action->setData( i );
+		sessionTypes[i].action->setCheckable( true );
 		switch (sessionTypes[i].prio) {
 		case 0: case 1: nSpecials++; break;
 		case 2: nNormals++; break;
@@ -386,13 +371,14 @@ void
 KGreeter::slotUserEntered()
 {
 	if (userView) {
-		Q3ListViewItem *item;
-		for (item = userView->firstChild(); item; item = item->nextSibling())
-			if (((UserListViewItem *)item)->login == curUser) {
-				userView->setSelected( item, true );
-				userView->ensureItemVisible( item );
+		for (int i = 0, rc = userView->model()->rowCount(); i < rc; i++) {
+			UserListViewItem *item =
+				static_cast<UserListViewItem *>(userView->item( i ));
+			if (item->login == curUser) {
+				userView->setCurrentItem( item );
 				goto oke;
 			}
+		}
 		userView->clearSelection();
 	}
   oke:
@@ -403,7 +389,7 @@ KGreeter::slotUserEntered()
 }
 
 void
-KGreeter::slotUserClicked( Q3ListViewItem *item )
+KGreeter::slotUserClicked( QListWidgetItem *item )
 {
 	if (item) {
 		curUser = ((UserListViewItem *)item)->login;
@@ -413,12 +399,14 @@ KGreeter::slotUserClicked( Q3ListViewItem *item )
 }
 
 void
-KGreeter::slotSessionSelected( int id )
+KGreeter::slotSessionSelected( QAction *action )
 {
-	if (id != curSel) {
-		sessMenu->setItemChecked( curSel, false );
-		sessMenu->setItemChecked( id, true );
-		curSel = id;
+	if (action != curSel) {
+		if (curSel)
+			curSel->setChecked( false );
+		if (action)
+			action->setChecked( true );
+		curSel = action;
 		verify->gplugActivity();
 	}
 }
@@ -439,13 +427,13 @@ KGreeter::accept()
 }
 
 void // private
-KGreeter::setPrevWM( int wm )
+KGreeter::setPrevWM( QAction *wm )
 {
 	if (curPrev != wm) {
-		if (curPrev != -1)
-			sessMenu->changeItem( curPrev, sessionTypes[curPrev].name );
-		if (wm != -1)
-			sessMenu->changeItem( wm, sessionTypes[wm].name + i18n(" (previous)") );
+		if (curPrev)
+			curPrev->setText( sessionTypes[curPrev->data().toInt()].name );
+		if (wm)
+			wm->setText( sessionTypes[wm->data().toInt()].name + i18n(" (previous)") );
 		curPrev = wm;
 	}
 }
@@ -486,13 +474,13 @@ KGreeter::slotLoadPrevWM()
 				/* forge a session with this hash - default & custom more probable */
 				/* XXX - this should do a statistical analysis of the real users */
 #if 1
-				setPrevWM( crc % (nSpecials * 2 + nNormals) % (nSpecials + nNormals) );
+				setPrevWM( sessionTypes[crc % (nSpecials * 2 + nNormals) % (nSpecials + nNormals)].action );
 #else
 				i = crc % (nSpecials * 2 + nNormals);
 				if (i < nNormals)
-					setPrevWM( i + nSpecials );
+					setPrevWM( sessionTypes[i + nSpecials].action );
 				else
-					setPrevWM( (i - nNormals) / 2 );
+					setPrevWM( sessionTypes[(i - nNormals) / 2].action );
 #endif
 				return;
 			}
@@ -500,17 +488,17 @@ KGreeter::slotLoadPrevWM()
 			for (int i = 0; i < sessionTypes.count() && !sessionTypes[i].hid; i++)
 				if (sessionTypes[i].type == sess) {
 					free( sess );
-					setPrevWM( i );
+					setPrevWM( sessionTypes[i].action );
 					return;
 				}
-			if (curSel == -1)
+			if (!curSel)
 				MsgBox( sorrybox, i18n("Your saved session type '%1' is not valid any more.\n"
 				                       "Please select a new one, otherwise 'default' will be used.", sess ) );
 			free( sess );
 			prevValid = false;
 		}
 	}
-	setPrevWM( -1 );
+	setPrevWM( 0 );
 }
 
 void // protected
@@ -550,7 +538,7 @@ KGreeter::verifyClear()
 {
 	curUser.clear();
 	slotUserEntered();
-	slotSessionSelected( -1 );
+	slotSessionSelected( 0 );
 }
 
 void
@@ -561,10 +549,10 @@ KGreeter::verifyOk()
 		                       dName :
 		                       dName + '_' + verify->pluginName(),
 		                     verify->getEntity() );
-	if (curSel != -1) {
+	if (curSel) {
 		GSendInt( G_PutDmrc );
 		GSendStr( "Session" );
-		GSendStr( sessionTypes[curSel].type.toUtf8() );
+		GSendStr( sessionTypes[curSel->data().toInt()].type.toUtf8() );
 	} else if (!prevValid) {
 		GSendInt( G_PutDmrc );
 		GSendStr( "Session" );
@@ -627,7 +615,9 @@ KStdGreeter::KStdGreeter()
 			     "open windows on it or intercept your input.") );
 		complainLabel->setAlignment( Qt::AlignCenter );
 		complainLabel->setFont( *_failFont );
-		complainLabel->setPaletteForegroundColor( Qt::red );
+		QPalette p( complainLabel->palette() /* XXX try with empty */ );
+		p.setColor( complainLabel->foregroundRole(), Qt::red );
+		complainLabel->setPalette( p );
 		inner_box->addWidget( complainLabel );
 	}
 	if (!_greetString.isEmpty()) {
@@ -643,22 +633,17 @@ KStdGreeter::KStdGreeter()
 			break;
 		case LOGO_LOGO:
 			{
-				QMovie movie( _logo );
-				QAbstractEventDispatcher::instance()->processEvents( QEventLoop::ExcludeUserInput | QEventLoop::ExcludeSocketNotifiers );
-				QPixmap pixmap;
-				if (!movie.framePixmap().isNull() || pixmap.load( _logo )) {
+				QMovie *movie = new QMovie( this );
+				movie->setFileName( _logo );
+				if (movie->isValid()) {
+					movie->start();
 					pixLabel = new QLabel( this );
-					if (!movie.framePixmap().isNull()) {
-						pixLabel->setMovie( &movie );
-						if (!movie.framePixmap().hasAlpha())
-							pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-					} else {
-						pixLabel->setPixmap( pixmap );
-						if (!pixmap.hasAlpha())
-							pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-					}
+					pixLabel->setMovie( movie );
+					if (!movie->currentImage().hasAlphaChannel())
+						pixLabel->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 					pixLabel->setIndent( 0 );
-				}
+				} else
+					delete movie;
 			}
 			break;
 	}
@@ -695,6 +680,7 @@ KStdGreeter::KStdGreeter()
 		                 pluginList, KGreeterPlugin::Authenticate,
 		                 KGreeterPlugin::Login );
 	inner_box->addLayout( sverify->getLayout() );
+	QMenu *plugMenu = sverify->getPlugMenu();
 	sverify->selectPlugin( curPlugin );
 	verify = sverify;
 
@@ -708,12 +694,11 @@ KStdGreeter::KStdGreeter()
 	hbox2->addWidget( menuButton );
 	hbox2->addStretch( 1 );
 
-	if (sessMenu->count() > 1) {
+	if (sessMenu->actions().count() > 1) {
 		inserten( i18n("Session &Type"), Qt::ALT+Qt::Key_T, sessMenu );
 		needSep = true;
 	}
 
-	QMenu *plugMenu = verify->getPlugMenu();
 	if (plugMenu) {
 		inserten( i18n("&Authentication Method"), Qt::ALT+Qt::Key_A, plugMenu );
 		needSep = true;
@@ -726,7 +711,7 @@ KStdGreeter::KStdGreeter()
 #endif
 
 	if (optMenu)
-		menuButton->setPopup( optMenu );
+		menuButton->setMenu( optMenu );
 	else
 		menuButton->hide();
 
@@ -793,9 +778,10 @@ KThemedGreeter::KThemedGreeter()
 	caps_warning = themer->findNode( "caps-lock-warning" );
 	xauth_warning = themer->findNode( "xauth-warning" ); // kdm ext
 	pam_error = themer->findNode( "pam-error" );
+	KdmLabel *pam_error_label = qobject_cast<KdmLabel *>(pam_error);
+	if (pam_error_label)
+		pam_error_label->setText( i18n("Login Failed.") );
 	timed_label = themer->findNode( "timed-label" );
-	if (pam_error && pam_error->isA( "KdmLabel" ))
-		static_cast<KdmLabel*>(pam_error)->setText( i18n("Login Failed.") );
 
 	KdmItem *itm;
 	if ((itm = themer->findNode( "pam-message" ))) // done via msgboxes
@@ -837,16 +823,14 @@ KThemedGreeter::KThemedGreeter()
 
 	session_button = 0;
 	if ((itm = themer->findNode( "session_button" ))) {
-		if (sessMenu->count() <= 1)
+		if (sessMenu->actions().count() <= 1)
 			itm->hide( true );
 		else {
 			session_button = itm;
-			Q3Accel *accel = new Q3Accel( this );
-			accel->insertItem( Qt::ALT+Qt::Key_T, 0 );
-			connect( accel, SIGNAL(activated( int )), SLOT(slotSessMenu()) );
+			inserten( Qt::ALT+Qt::Key_T, SLOT(slotSessMenu()) );
 		}
 	} else {
-		if (sessMenu->count() > 1) {
+		if (sessMenu->actions().count() > 1) {
 			inserten( i18n("Session &Type"), Qt::ALT+Qt::Key_T, sessMenu );
 			needSep = true;
 		}
@@ -865,9 +849,7 @@ KThemedGreeter::KThemedGreeter()
 #endif
 
 	system_button = themer->findNode( "system_button" );
-	Q3Accel *accel = new Q3Accel( this );
-	accel->insertItem( Qt::ALT+Qt::Key_M, 0 );
-	connect( accel, SIGNAL(activated( int )), SLOT(slotActionMenu()) );
+	inserten( Qt::ALT + Qt::Key_M, SLOT(slotActionMenu()) );
 
 	pluginSetup();
 
@@ -976,7 +958,7 @@ void
 KThemedGreeter::keyPressEvent( QKeyEvent *e )
 {
 	inherited::keyPressEvent( e );
-	if (!(e->state() & Qt::KeyboardModifierMask) &&
+	if (!(e->modifiers() & Qt::KeyboardModifierMask) &&
 	    (e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter))
 		accept();
 }

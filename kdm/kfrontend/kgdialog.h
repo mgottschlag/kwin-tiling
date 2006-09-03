@@ -34,6 +34,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //Added by qt3to4:
 #include <QGridLayout>
 
+class QAction;
+class QKeySequence;
 class QMenu;
 class QGridLayout;
 class KConsole;
@@ -51,11 +53,12 @@ class KGDialog : public FDialog {
 	KGDialog( bool themed = false );
 
   public Q_SLOTS:
-	void slotActivateMenu( int id );
+	void slotActivateMenu( QAction * );
+	void slotActivateMenu( bool );
 	void slotExit();
 	void slotSwitch();
 	void slotConsole();
-	void slotShutdown( int id );
+	void slotShutdown();
 
   protected:
 #ifdef XDMCP
@@ -63,8 +66,9 @@ class KGDialog : public FDialog {
 #else
 	void completeMenu();
 #endif
-	void inserten( const QString& txt, int accel, const char *member );
-	int inserten( const QString& txt, int accel, QMenu *cmnu );
+	void inserten( const QKeySequence &shortcut, const char *member, int data = -1 );
+	void inserten( const QString &txt, const QKeySequence &shortcut, const char *member );
+	QAction *inserten( const QString &txt, const QKeySequence &shortcut, QMenu *cmnu );
 
 	bool needSep;
 	QMenu *optMenu;
@@ -74,7 +78,7 @@ class KGDialog : public FDialog {
 #endif
 
   private Q_SLOTS:
-	void slotDisplaySelected( int vt );
+	void slotDisplaySelected( QAction * );
 	void slotPopulateDisplays();
 
   private:

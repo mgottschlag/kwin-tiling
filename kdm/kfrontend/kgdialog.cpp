@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <klocale.h>
 
-#include <q3accel.h>
 #include <QLayout>
 #include <QPushButton>
 #include <QApplication>
@@ -58,14 +57,17 @@ KGDialog::completeMenu()
 #ifdef HAVE_VTS
 	if (_isLocal) {
 		dpyMenu = new QMenu( this );
-		int id = inserten( i18n("Sw&itch User"), Qt::ALT+Qt::Key_I, dpyMenu );
-		connect( dpyMenu, SIGNAL(activated( int )),
-		         SLOT(slotDisplaySelected( int )) );
+		inserten( i18n("Sw&itch User"), Qt::ALT + Qt::Key_I, dpyMenu );
+		QAction *action = new QAction( this );
+		action->setMenu( dpyMenu );
+		action->setShortcut( Qt::ALT+Qt::CTRL+Qt::Key_Insert );
+		connect( action, SIGNAL(triggered( bool )),
+		         SLOT(slotActivateMenu( bool )) );
+		addAction( action );
+		connect( dpyMenu, SIGNAL(triggered( QAction * )),
+		         SLOT(slotDisplaySelected( QAction * )) );
 		connect( dpyMenu, SIGNAL(aboutToShow()),
 		         SLOT(slotPopulateDisplays()) );
-		Q3Accel *accel = new Q3Accel( this );
-		accel->insertItem( Qt::ALT+Qt::CTRL+Qt::Key_Insert, id );
-		connect( accel, SIGNAL(activated( int )), SLOT(slotActivateMenu( int )) );
 	}
 #endif
 
@@ -84,16 +86,10 @@ KGDialog::completeMenu()
 		inserten( i18n("Co&nsole Login"), Qt::ALT+Qt::Key_N, SLOT(slotConsole()) );
 
 	if (_allowShutdown != SHUT_NONE) {
-		inserten( i18n("&Shutdown..."), Qt::ALT+Qt::Key_S, SLOT(slotShutdown( int )) );
-		Q3Accel *accel = new Q3Accel( this );
-		accel->insertItem( Qt::ALT+Qt::CTRL+Qt::Key_Delete );
-		connect( accel, SIGNAL(activated( int )), SLOT(slotShutdown( int )) );
-		accel = new Q3Accel( this );
-		accel->insertItem( Qt::SHIFT+Qt::ALT+Qt::CTRL+Qt::Key_PageUp, SHUT_REBOOT );
-		connect( accel, SIGNAL(activated( int )), SLOT(slotShutdown( int )) );
-		accel = new Q3Accel( this );
-		accel->insertItem( Qt::SHIFT+Qt::ALT+Qt::CTRL+Qt::Key_PageDown, SHUT_HALT );
-		connect( accel, SIGNAL(activated( int )), SLOT(slotShutdown( int )) );
+		inserten( i18n("&Shutdown..."),  Qt::ALT + Qt::Key_S, SLOT(slotShutdown()) );
+		inserten( Qt::ALT + Qt::CTRL + Qt::Key_Delete, SLOT(slotShutdown()) );
+		inserten( Qt::SHIFT + Qt::ALT + Qt::CTRL + Qt::Key_PageUp, SLOT(slotShutdown()), SHUT_REBOOT );
+		inserten( Qt::SHIFT + Qt::ALT + Qt::CTRL + Qt::Key_PageDown, SLOT(slotShutdown()), SHUT_HALT );
 	}
 }
 
@@ -102,6 +98,7 @@ KGDialog::ensureMenu()
 {
 	if (!optMenu) {
 		optMenu = new QMenu( this );
+		connect( optMenu, SIGNAL(triggered( QAction * )), SLOT(slotActivateMenu( QAction * )) );
 		needSep = false;
 	} else if (needSep) {
 		optMenu->addSeparator();
@@ -110,32 +107,47 @@ KGDialog::ensureMenu()
 }
 
 void
-KGDialog::inserten( const QString& txt, int accel, const char *member )
+KGDialog::inserten( const QKeySequence &shortcut, const char *member, int data )
 {
-	ensureMenu();
-	optMenu->insertItem( txt, this, member, accel );
-}
-
-int
-KGDialog::inserten( const QString& txt, int accel, QMenu *cmnu )
-{
-	ensureMenu();
-	int id = optMenu->insertItem( txt, cmnu );
-	optMenu->setAccel( accel, id );
-	optMenu->connectItem( id, this, SLOT(slotActivateMenu( int )) );
-	optMenu->setItemParameter( id, id );
-	return id;
+	QAction *action = new QAction( this );
+	action->setShortcut( shortcut );
+	if (data != -1)
+		action->setData( data );
+	connect( action, SIGNAL(triggered()), member );
+	addAction( action );
 }
 
 void
-KGDialog::slotActivateMenu( int id )
+KGDialog::inserten( const QString &txt, const QKeySequence &shortcut, const char *member )
 {
-#warning I do not get QMenu
-/*
-	QMenu *cmnu = optMenu->findItem( id )->popup();
-	QSize sh( cmnu->sizeHint() / 2 );
-	cmnu->exec( geometry().center() - QPoint( sh.width(), sh.height() ) );
-*/
+	ensureMenu();
+	optMenu->addAction( txt, this, member, shortcut );
+}
+
+QAction *
+KGDialog::inserten( const QString &txt, const QKeySequence &shortcut, QMenu *cmnu )
+{
+	ensureMenu();
+	QAction *action = optMenu->addMenu( cmnu );
+	action->setShortcut( shortcut );
+	action->setText( txt );
+	return action;
+}
+
+void
+KGDialog::slotActivateMenu( QAction *action )
+{
+	QMenu *cmnu = action->menu();
+	if (cmnu) {
+		QSize sh( cmnu->sizeHint() / 2 );
+		cmnu->exec( geometry().center() - QPoint( sh.width(), sh.height() ) );
+	}
+}
+
+void
+KGDialog::slotActivateMenu( bool )
+{
+	slotActivateMenu( static_cast<QAction *>(sender()) );
 }
 
 void
@@ -179,31 +191,32 @@ KGDialog::slotConsole()
 }
 
 void
-KGDialog::slotShutdown( int id )
+KGDialog::slotShutdown()
 {
 	if (verify)
 		verify->suspend();
-	if (id < 0) {
+	QAction *action = (QAction *)sender();
+	if (action->data().isNull()) {
 		if (_scheduledSd == SHUT_ALWAYS)
 			KDMShutdown::scheduleShutdown( this );
 		else
 			KDMSlimShutdown( this ).exec();
 	} else
-		KDMSlimShutdown::externShutdown( id, 0, -1 );
+		KDMSlimShutdown::externShutdown( action->data().toInt(), 0, -1 );
 	if (verify)
 		verify->resume();
 }
 
 void
-KGDialog::slotDisplaySelected( int vt )
+KGDialog::slotDisplaySelected( QAction *action )
 {
 #ifdef HAVE_VTS
 	GSet( 1 );
 	GSendInt( G_Activate );
-	GSendInt( vt );
+	GSendInt( action->data().toInt() );
 	GSet( 0 );
 #else
-	(void)vt;
+	(void)action;
 #endif
 }
 
@@ -216,13 +229,14 @@ KGDialog::slotPopulateDisplays()
 	QString user, loc;
 	for (dpySpec *sess = sessions; sess; sess = sess->next) {
 		decodeSess( sess, user, loc );
-		int id = dpyMenu->insertItem(
-			i18nc("session (location)", "%1 (%2)", user, loc ),
-			sess->vt ? sess->vt : -1 );
+		QAction *action = dpyMenu->addAction(
+			i18nc( "session (location)", "%1 (%2)", user, loc ) );
+		action->setData( sess->vt ? sess->vt : -1 );
+		action->setCheckable( true );
 		if (!sess->vt)
-			dpyMenu->setItemEnabled( id, false );
+			action->setEnabled( false );
 		if (sess->flags & isSelf)
-			dpyMenu->setItemChecked( id, true );
+			action->setChecked( true );
 	}
 	disposeSessions( sessions );
 #endif

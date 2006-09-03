@@ -28,8 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class QSocketNotifier;
 class QLineEdit;
-class Q3ListView;
-class Q3ListViewItem;
+class QTreeWidget;
+class ChooserListViewItem;
 
 class ChooserDlg : public KGDialog {
 	Q_OBJECT
@@ -48,9 +48,9 @@ class ChooserDlg : public KGDialog {
 
   private:
 	QString recvStr();
-	Q3ListViewItem *findItem( int id );
+	ChooserListViewItem *findItem( int id );
 
-	Q3ListView *host_view;
+	QTreeWidget *host_view;
 	QLineEdit *iline;
 	QSocketNotifier *sn;
 };

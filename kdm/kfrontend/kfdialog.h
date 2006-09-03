@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDialog>
 #include <QMessageBox>
 //Added by qt3to4:
-#include <QFrame>
 #include <QResizeEvent>
 
 class QFrame;

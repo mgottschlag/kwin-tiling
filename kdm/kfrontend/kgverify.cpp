@@ -100,7 +100,7 @@ KGVerify::KGVerify( KGVerifyHandler *_handler, KdmThemer *_themer,
 	, isClear( true )
 {
 	connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
-	connect( kapp, SIGNAL(activity()), SLOT(slotActivity()) );
+	connect( qApp, SIGNAL(activity()), SLOT(slotActivity()) );
 
 	_parent->installEventFilter( this );
 }
@@ -119,10 +119,14 @@ KGVerify::getPlugMenu()
 		uint np = pluginList.count();
 		if (np > 1) {
 			plugMenu = new QMenu( parent );
-			connect( plugMenu, SIGNAL(activated( int )),
-			         SLOT(slotPluginSelected( int )) );
-			for (uint i = 0; i < np; i++)
-				plugMenu->insertItem( i18n(greetPlugins[pluginList[i]].info->name), pluginList[i] );
+			connect( plugMenu, SIGNAL(triggered( QAction * )),
+			         SLOT(slotPluginSelected( QAction * )) );
+			for (uint i = 0; i < np; i++) {
+				int pid = pluginList[i];
+				greetPlugins[pid].action = plugMenu->addAction( i18n(greetPlugins[pid].info->name) );
+				greetPlugins[pid].action->setData( i );
+				greetPlugins[pid].action->setCheckable( true );
+			}
 		}
 	}
 	return plugMenu;
@@ -158,7 +162,7 @@ KGVerify::pluginName() const
 	QString name( greetPlugins[pluginList[curPlugin]].library->fileName() );
 	uint st = name.lastIndexOf( '/' ) + 1;
 	uint en = name.indexOf( '.', st );
-	if (en - st > 7 && QConstString( name.unicode() + st, 7 ).string() == "kgreet_")
+	if (en - st > 7 && QString::fromRawData( name.unicode() + st, 7 ) == QLatin1String("kgreet_"))
 		st += 7;
 	return name.mid( st, en - st );
 }
@@ -187,7 +191,7 @@ KGVerify::selectPlugin( int id )
 	}
 	curPlugin = id;
 	if (plugMenu)
-		plugMenu->setItemChecked( id, true );
+		greetPlugins[pluginList[id]].action->setChecked( true );
 	pName = ("greet_" + pluginName()).toLatin1();
 	Debug( "new %s\n", pName.data() );
 	greet = greetPlugins[pluginList[id]].info->create( this, themer, parent, predecessor, fixedEntity, func, ctx );
@@ -954,12 +958,13 @@ KGStdVerify::selectPlugin( int id )
 }
 
 void // private slot
-KGStdVerify::slotPluginSelected( int id )
+KGStdVerify::slotPluginSelected( QAction *action )
 {
 	if (failed)
 		return;
+	int id = action->data().toInt();
 	if (id != curPlugin) {
-		plugMenu->setItemChecked( curPlugin, false );
+		greetPlugins[pluginList[curPlugin]].action->setChecked( false );
 		parent->setUpdatesEnabled( false );
 		grid->removeItem( greet->getLayoutItem() );
 		Debug( "delete %s\n", pName.data() );
@@ -990,8 +995,9 @@ KGStdVerify::updateStatus()
 
 	if (failedLabelState != nfls) {
 		failedLabelState = nfls;
+		QPalette p( failedLabel->palette() /* XXX try with empty */ );
 		if (nfls < 0) {
-			failedLabel->setPaletteForegroundColor( Qt::black );
+			p.setColor( failedLabel->foregroundRole(), Qt::black );
 			failedLabel->setText( i18np( "Automatic login in 1 second ...",
 			                             "Automatic login in %n seconds ...",
 			                             timedLeft ) );
@@ -1001,11 +1007,11 @@ KGStdVerify::updateStatus()
 				failedLabel->clear();
 				break;
 			case 3:
-				failedLabel->setPaletteForegroundColor( Qt::red );
+				p.setColor( failedLabel->foregroundRole(), Qt::red );
 				failedLabel->setText( i18n("Warning: Caps Lock on") );
 				break;
 			case 2:
-				failedLabel->setPaletteForegroundColor( Qt::black );
+				p.setColor( failedLabel->foregroundRole(), Qt::black );
 				failedLabel->setText( authTok ?
 				                         i18n("Change failed") :
 				                         fixedEntity.isEmpty() ?
@@ -1014,6 +1020,7 @@ KGStdVerify::updateStatus()
 				break;
 			}
 		}
+		failedLabel->setPalette( p );
 	}
 }
 
@@ -1055,12 +1062,13 @@ KGThemedVerify::selectPlugin( int id )
 }
 
 void // private slot
-KGThemedVerify::slotPluginSelected( int id )
+KGThemedVerify::slotPluginSelected( QAction *action )
 {
 	if (failed)
 		return;
+	int id = action->data().toInt();
 	if (id != curPlugin) {
-		plugMenu->setItemChecked( curPlugin, false );
+		greetPlugins[pluginList[curPlugin]].action->setChecked( false );
 		Debug( "delete %s\n", pName.data() );
 		delete greet;
 		selectPlugin( id );

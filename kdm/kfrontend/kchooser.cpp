@@ -32,19 +32,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLabel>
 #include <QPushButton>
 #include <QSocketNotifier>
-#include <q3listview.h>
 #include <QLineEdit>
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QBoxLayout>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QHeaderView>
 
 #include <stdlib.h> // for free()
 
-class ChooserListViewItem : public Q3ListViewItem {
+class ChooserListViewItem : public QTreeWidgetItem {
   public:
-	ChooserListViewItem( Q3ListView* parent, int _id, const QString& nam, const QString& sts )
-		: Q3ListViewItem( parent, nam, sts ) { id = _id; };
+	ChooserListViewItem( QTreeWidget *parent, int _id, const QString &nam, const QString &sts )
+		: QTreeWidgetItem( parent, QStringList() << nam << sts ) { id = _id; };
 
 	int id;
 };
@@ -63,12 +65,14 @@ ChooserDlg::ChooserDlg()
 	title->setAlignment( Qt::AlignCenter );
 	vbox->addWidget( title );
 
-	host_view = new Q3ListView( this, "hosts" );
-	host_view->addColumn( i18n("Hostname") );
+	host_view = new QTreeWidget( this );
+	host_view->setRootIsDecorated( false );
+	host_view->setUniformRowHeights( true );
+	host_view->setEditTriggers( QAbstractItemView::NoEditTriggers );
+	host_view->setColumnCount( 2 );
+	host_view->setHeaderLabels( QStringList() << i18n("Hostname") << i18n("Status") );
 	host_view->setColumnWidth( 0, fontMetrics().width( "login.crap.net" ) );
-	host_view->addColumn( i18n("Status") );
 	host_view->setMinimumWidth( fontMetrics().width( "login.crap.com Display not authorized to connect this server" ) );
-	host_view->setResizeMode( Q3ListView::LastColumn );
 	host_view->setAllColumnsShowFocus( true );
 	vbox->addWidget( host_view );
 
@@ -99,7 +103,7 @@ ChooserDlg::ChooserDlg()
 
 	if (optMenu) {
 		QPushButton *menuButton = new QPushButton( i18n("&Menu"), this );
-		menuButton->setPopup( optMenu );
+		menuButton->setMenu( optMenu );
 		hbox->addWidget( menuButton );
 		hbox->addStretch( 1 );
 	}
@@ -118,7 +122,7 @@ ChooserDlg::ChooserDlg()
 	connect( pingButton, SIGNAL(clicked()), SLOT(pingHosts()) );
 	connect( acceptButton, SIGNAL(clicked()), SLOT(accept()) );
 //	connect( helpButton, SIGNAL(clicked()), SLOT(slotHelp()) );
-	connect( host_view, SIGNAL(doubleClicked(Q3ListViewItem *)), SLOT(accept()) );
+	connect( host_view, SIGNAL(itemActivated( QTreeWidgetItem *, int )), SLOT(accept()) );
 
 	adjustGeometry();
 }
@@ -159,7 +163,7 @@ void ChooserDlg::accept()
 		}
 		return;
 	} else /*if (focusWidget() == host_view)*/ {
-		Q3ListViewItem *item = host_view->currentItem();
+		QTreeWidgetItem *item = host_view->currentItem();
 		if (item) {
 			GSendInt( G_Ready );
 			GSendInt( ((ChooserListViewItem *)item)->id );
@@ -183,12 +187,14 @@ QString ChooserDlg::recvStr()
 		return i18n("<unknown>");
 }
 
-Q3ListViewItem *ChooserDlg::findItem( int id )
+ChooserListViewItem *ChooserDlg::findItem( int id )
 {
-	Q3ListViewItem *itm;
-	for (Q3ListViewItemIterator it( host_view ); (itm = it.current()); ++it)
-		if (((ChooserListViewItem *)itm)->id == id)
+	for (int i = 0, rc = host_view->model()->rowCount(); i < rc; i++) {
+		ChooserListViewItem *itm = static_cast<ChooserListViewItem *>(
+			host_view->topLevelItem( i ));
+		if (itm->id == id)
 			return itm;
+	}
 	return 0;
 }
 
@@ -206,10 +212,9 @@ void ChooserDlg::slotReadPipe()
 		sts = recvStr();
 		GRecvInt(); /* swallow willing for now */
 		if (cmd == G_Ch_AddHost)
-			host_view->insertItem(
-				new ChooserListViewItem( host_view, id, nam, sts ) );
+			new ChooserListViewItem( host_view, id, nam, sts );
 		else {
-			Q3ListViewItem *itm = findItem( id );
+			QTreeWidgetItem *itm = findItem( id );
 			itm->setText( 0, nam );
 			itm->setText( 1, sts );
 		}

@@ -43,10 +43,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stdio.h>
 
 FDialog::FDialog( QWidget *parent, bool framed )
-	: inherited( parent, 0, true/*, framed ? 0 : WStyle_NoBorder*/ )
+	: inherited( parent/*, framed ? 0 : WStyle_NoBorder*/ )
 {
+	setModal( true );
 	if (framed) {
-		winFrame = new QFrame( this, 0, Qt::WNoAutoErase );
+		winFrame = new QFrame( this, Qt::WNoAutoErase );
 		winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
 		winFrame->setLineWidth( 2 );
 	} else
@@ -120,13 +121,13 @@ FDialog::exec()
 	win->next = wins;
 	wins = win;
 	show();
-	setActiveWindow();
+	activateWindow();
 	inherited::exec();
 	hide();
 	wins = win->next;
 	delete win;
 	if (wins)
-		wins->win->setActiveWindow();
+		wins->win->activateWindow();
 	return result();
 }
 
