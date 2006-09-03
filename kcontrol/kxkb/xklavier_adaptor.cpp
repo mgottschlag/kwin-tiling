@@ -3,7 +3,7 @@
 #include <QString>
 #include <QStringList>
 
-//#include <kglobal.h>
+#include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
 
@@ -48,7 +48,7 @@ QHash<QString, QStringList*> XKlavierAdaptor::getVariants() { return priv->m_var
 
 
 
-static void processModel(XklConfigRegistry* reg, const XklConfigItem* configItem, gpointer userData)
+static void processModel(XklConfigRegistry*, const XklConfigItem* configItem, gpointer userData)
 {
 	QString model = configItem->name;
 #if VERBOSE == 1
@@ -57,7 +57,8 @@ static void processModel(XklConfigRegistry* reg, const XklConfigItem* configItem
 	((XKlavierAdaptorPriv*)userData)->m_models.insert(model, QString(configItem->description));
 }
 
-static void processVariants(XklConfigRegistry* reg, const XklConfigItem* configItem, gpointer userData)
+
+static void processVariants(XklConfigRegistry*, const XklConfigItem* configItem, gpointer userData)
 {
 	QString variant = configItem->name;
 	QString layout = ((XKlavierAdaptorPriv*)userData)->currLayout;
@@ -70,7 +71,8 @@ static void processVariants(XklConfigRegistry* reg, const XklConfigItem* configI
 	vars->append(variant);	//TODO: //QString(configItem->description));
 }
 
-static void processLayout(XklConfigRegistry* reg, const XklConfigItem* configItem, gpointer userData)
+
+static void processLayout(XklConfigRegistry*, const XklConfigItem* configItem, gpointer userData)
 {
 	QString layout = configItem->name;
 
@@ -84,7 +86,7 @@ static void processLayout(XklConfigRegistry* reg, const XklConfigItem* configIte
 }
 
 
-static void processOptions(XklConfigRegistry* reg, const XklConfigItem* configItem, gpointer userData)
+static void processOptions(XklConfigRegistry*, const XklConfigItem* configItem, gpointer userData)
 {
 	XkbOption option;
 	
@@ -99,7 +101,8 @@ static void processOptions(XklConfigRegistry* reg, const XklConfigItem* configIt
 	((XKlavierAdaptorPriv*)userData)->m_options.insert(option.name, option);
 }
 
-static void processOptionGroup(XklConfigRegistry* reg, const XklConfigItem* configItem, void *userData)
+
+static void processOptionGroup(XklConfigRegistry*, const XklConfigItem* configItem, void *userData)
 {
 	XkbOptionGroup group;
 	group.name = configItem->name;
@@ -119,19 +122,29 @@ static void processOptionGroup(XklConfigRegistry* reg, const XklConfigItem* conf
 					configItem->name, processOptions, userData);
 }
 
+
 void XKlavierAdaptor::loadXkbConfig(Display* dpy, bool layoutsOnly)
 {
-//kDebug() << "lang: " << KGlobal::_locale->language() << endl;
-//	setlocale(LC_ALL, "uk_UA.UTF-8");
+	QString locale = KGlobal::_locale->language();
+	if( ! KGlobal::_locale->country().isEmpty() ) {
+//		locale += KGlobal::_locale->country();
+//		locale += "UTF-8";
+	}
+	kDebug() << "Setting LC_MESSAGES for libxklavier: " << locale << endl;
+//	setlocale(LC_ALL, locale.toLatin1());
+	setlocale(LC_MESSAGES, locale.toLatin1());
 
 
 	XklEngine *engine = xkl_engine_get_instance(dpy);
-	if (engine != NULL) {
-		kDebug() << "Xklavier initialized" << endl;
-		priv->config =
-		    xkl_config_registry_get_instance(engine);
-		xkl_config_registry_load(priv->config);
-	}	
+	if (engine == NULL) {
+		kError() << "XKlavier engine cannot be initialized!" << endl;
+		return; // throw
+	}
+	
+	kDebug() << "Xklavier initialized" << endl;
+	priv->config = xkl_config_registry_get_instance(engine);
+
+	xkl_config_registry_load(priv->config);
 	
 	void *userData = priv;
 
@@ -156,22 +169,6 @@ void XKlavierAdaptor::loadXkbConfig(Display* dpy, bool layoutsOnly)
 
 XKlavierAdaptor::~XKlavierAdaptor()
 {
+//	delete priv;
 //	kDebug() << "Finalizer" << endl;
 }
-
-
-/*
-int main () {
-
-	
-	setenv("LC_MESSAGES", "uk_UA", 1);
-    setlocale(LC_MESSAGES, "");
-//	setenv("LANG", "uk_UA", 1);
-	
-	XKlavierAdaptor xklTest;
-	
-	xklTest.xklConfig();
-
-	return 0;	
-}
-*/
