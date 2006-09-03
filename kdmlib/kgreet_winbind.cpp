@@ -567,34 +567,33 @@ static bool init( const QString &,
 {
 	echoMode = getConf( ctx, "EchoMode", QVariant( -1 ) ).toInt();
 
- 	domains = getConf( ctx, "winbind.Domains", QVariant( "" ) ).toString().split( ':',
-QString::SkipEmptyParts );
- 	if (!domains.size()) {
- 		FILE *domfile = popen( "wbinfo --all-domains 2>/dev/null", "r" );
- 		if (domfile) {
- 			QString tmp;
- 			QTextStream is( domfile );
- 			while (!is.atEnd()) {
- 				is >> tmp;
- 				domains << tmp;
- 			}
- 			if (pclose( domfile )) // error
- 				domains = QStringList();
- 		}
- 		domains << "<local>";
- 	}
- 	defaultDomain = getConf( ctx, "winbind.DefaultDomain", QVariant( domains.first() ) ).toString();
- 	QString sepstr = getConf( ctx, "winbind.Separator", QVariant( QString::null ) ).toString();
- 	if (sepstr.isNull()) {
- 		FILE *sepfile = popen( "wbinfo --separator 2>/dev/null", "r" );
- 		if (sepfile) {
- 			QTextStream( sepfile ) >> sepstr;
- 			if (pclose( sepfile ))
- 				sepstr = "\\";
- 		} else
- 			sepstr = "\\";
- 	}
- 	separator = sepstr[0].toLatin1();
+	domains = getConf( ctx, "winbind.Domains", QVariant( "" ) ).toString().split( ':', QString::SkipEmptyParts );
+	if (!domains.size()) {
+		FILE *domfile = popen( "wbinfo --all-domains 2>/dev/null", "r" );
+		if (domfile) {
+			QString tmp;
+			QTextStream is( domfile );
+			while (!is.atEnd()) {
+				is >> tmp;
+				domains << tmp;
+			}
+			if (pclose( domfile )) // error
+				domains = QStringList();
+		}
+		domains << "<local>";
+	}
+	defaultDomain = getConf( ctx, "winbind.DefaultDomain", QVariant( domains.first() ) ).toString();
+	QString sepstr = getConf( ctx, "winbind.Separator", QVariant( QString::null ) ).toString();
+	if (sepstr.isNull()) {
+		FILE *sepfile = popen( "wbinfo --separator 2>/dev/null", "r" );
+		if (sepfile) {
+			QTextStream( sepfile ) >> sepstr;
+			if (pclose( sepfile ))
+				sepstr = "\\";
+		} else
+			sepstr = "\\";
+	}
+	separator = sepstr[0].toLatin1();
 
 	KGlobal::locale()->insertCatalog( "kgreet_winbind" );
 	return true;
