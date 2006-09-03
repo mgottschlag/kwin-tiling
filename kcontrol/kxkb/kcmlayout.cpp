@@ -603,7 +603,7 @@ QWidget* LayoutConfig::makeOptionsTab()
 	 	new OptionListItem(parent, i18n( option.description ),
             Q3CheckListItem::CheckBox, option.name);
 
-	  kDebug() << "option insert: " << option.name << endl;
+//	  kDebug() << "option insert: " << option.name << endl;
   }
 
   //scroll->setMinimumSize(450, 330);

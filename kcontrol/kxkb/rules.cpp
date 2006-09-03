@@ -71,7 +71,7 @@ XkbRules::XkbRules(bool layoutsOnly)
 void XkbRules::loadNewRules(bool layoutsOnly)
 {
 	XKlavierAdaptor xklAdaptor;
-	xklAdaptor.xklConfig(QX11Info::display());
+	xklAdaptor.loadXkbConfig(QX11Info::display(), layoutsOnly);
 
 	m_layouts = xklAdaptor.getLayouts();
 	if( layoutsOnly == false ) {

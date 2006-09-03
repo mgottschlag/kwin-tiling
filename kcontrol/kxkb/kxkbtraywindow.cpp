@@ -45,6 +45,8 @@ void KxkbLabelController::setPixmap(const QPixmap& pixmap)
 	KIconEffect iconeffect;
 // 	label->setPixmap( iconeffect.apply(pixmap, KIcon::Panel, KIcon::DefaultState) );
 	tray->setIcon( pixmap );
+	if( ! tray->isVisible() )
+	  tray->show();
 }
 
 

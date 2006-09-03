@@ -10,7 +10,7 @@ public:
 	XKlavierAdaptor();
 	~XKlavierAdaptor();	
 		
-	void xklConfig(Display* dpy);
+	void loadXkbConfig(Display* dpy, bool layoutsOnly);
 
 	QHash<QString, QString> getModels();
 	QHash<QString, QString> getLayouts();

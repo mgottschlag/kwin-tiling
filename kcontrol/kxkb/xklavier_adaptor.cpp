@@ -1,6 +1,10 @@
+#include <locale.h>
+
 #include <QString>
 #include <QStringList>
 
+//#include <kglobal.h>
+#include <klocale.h>
 #include <kdebug.h>
 
 #include <libxklavier/xklavier.h>
@@ -8,6 +12,8 @@
 #include "rules.h"
 #include "xklavier_adaptor.h"
 
+
+#define VERBOSE 0
 
 class XKlavierAdaptorPriv {
 public:
@@ -27,8 +33,11 @@ XklConfigRegistry *XKlavierAdaptorPriv::config;
 
 
 
-XKlavierAdaptor::XKlavierAdaptor() {
+XKlavierAdaptor::XKlavierAdaptor()
+{
   priv = new XKlavierAdaptorPriv();
+  
+  g_type_init();
 }
 
 QHash<QString, QString> XKlavierAdaptor::getModels() { return priv->m_models; }
@@ -39,17 +48,23 @@ QHash<QString, QStringList*> XKlavierAdaptor::getVariants() { return priv->m_var
 
 
 
-static void processModel(XklConfigRegistry* reg, const XklConfigItem* configItem, gpointer userData) {
+static void processModel(XklConfigRegistry* reg, const XklConfigItem* configItem, gpointer userData)
+{
 	QString model = configItem->name;
-	kDebug() << "model: " << model << " - " << configItem->description << endl;
+#if VERBOSE == 1
+	  kDebug() << "model: " << model << " - " << configItem->description << endl;
+#endif
 	((XKlavierAdaptorPriv*)userData)->m_models.insert(model, QString(configItem->description));
 }
 
-static void processVariants(XklConfigRegistry* reg, const XklConfigItem* configItem, gpointer userData) {
+static void processVariants(XklConfigRegistry* reg, const XklConfigItem* configItem, gpointer userData)
+{
 	QString variant = configItem->name;
 	QString layout = ((XKlavierAdaptorPriv*)userData)->currLayout;
 
-	kDebug() << "\tvariant: " << variant << " (parent: " << layout << ")" << endl;
+#if VERBOSE == 1
+	  kDebug() << "\tvariant: " << variant << " (parent: " << layout << ")" << endl;
+#endif
 
 	QStringList* vars = ((XKlavierAdaptorPriv*)userData)->m_variants[layout];
 	vars->append(variant);	//TODO: //QString(configItem->description));
@@ -76,7 +91,10 @@ static void processOptions(XklConfigRegistry* reg, const XklConfigItem* configIt
 	option.name = configItem->name;
 	option.description = configItem->description;
 	option.group = ((XKlavierAdaptorPriv*)userData)->currGroup;
-	kDebug() << "\toptions: " << option.name << endl;
+
+#if VERBOSE == 1
+	  kDebug() << "\toptions: " << option.name << endl;
+#endif
 
 	((XKlavierAdaptorPriv*)userData)->m_options.insert(option.name, option);
 }
@@ -89,7 +107,10 @@ static void processOptionGroup(XklConfigRegistry* reg, const XklConfigItem* conf
 	group.exclusive = ! GPOINTER_TO_INT (g_object_get_data (G_OBJECT (configItem),
 	                                                          XCI_PROP_ALLOW_MULTIPLE_SELECTION));
 	
-	kDebug() << "group: " << group.name << " - " << group.description << endl;
+#if VERBOSE == 1
+	  kDebug() << "group: " << group.name << " - " << group.description << endl;
+#endif
+
 	((XKlavierAdaptorPriv*)userData)->m_optionGroups.insert(group.name, group);
 
 	((XKlavierAdaptorPriv*)userData)->currGroup = 
@@ -98,12 +119,12 @@ static void processOptionGroup(XklConfigRegistry* reg, const XklConfigItem* conf
 					configItem->name, processOptions, userData);
 }
 
-void XKlavierAdaptor::xklConfig(Display* dpy) {
-//	XklConfigInit();
-//	bool res = XklConfigLoadRegistryFromFile("/etc/X11/xkb/rules/xorg.xml");
-//	cerr << "XklConfigLoadRegistryFromFile: " << res << endl;
-	g_type_init();
-	
+void XKlavierAdaptor::loadXkbConfig(Display* dpy, bool layoutsOnly)
+{
+//kDebug() << "lang: " << KGlobal::_locale->language() << endl;
+//	setlocale(LC_ALL, "uk_UA.UTF-8");
+
+
 	XklEngine *engine = xkl_engine_get_instance(dpy);
 	if (engine != NULL) {
 		kDebug() << "Xklavier initialized" << endl;
@@ -120,23 +141,22 @@ void XKlavierAdaptor::xklConfig(Display* dpy) {
 #warning "No xkl_config_registry_set_custom_curset found - local layout names may be corrupted! Consider updating libxklavier"
 #endif	
 
-	xkl_config_registry_foreach_model(priv->config, processModel, userData);
-
 	
 	xkl_config_registry_foreach_layout(priv->config, processLayout, userData);
 
+	if( ! layoutsOnly ) {
+	  xkl_config_registry_foreach_model(priv->config, processModel, userData);
 
-	xkl_config_registry_foreach_option_group(priv->config, processOptionGroup, userData);
+	  xkl_config_registry_foreach_option_group(priv->config, processOptionGroup, userData);
+	}
 
-
-//	xkl_config_registry_free(config);
-//	XklConfigTerm();
+	g_object_unref(priv->config);
+	g_object_unref(engine);
 }
 
-XKlavierAdaptor::~XKlavierAdaptor() {
-	kDebug() << "Finalizer" << endl;
-//	XklTerm();
-//	XCloseDisplay(display);
+XKlavierAdaptor::~XKlavierAdaptor()
+{
+//	kDebug() << "Finalizer" << endl;
 }
 
 
