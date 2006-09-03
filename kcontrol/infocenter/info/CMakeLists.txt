@@ -1,8 +1,8 @@
 
 
-if(OPENGL_FOUND)
+if(OPENGL_FOUND AND OPENGL_GLU_FOUND)
    ADD_DEFINITIONS(-DINFO_OPENGL_AVAILABLE ) # added manually
-endif(OPENGL_FOUND)
+endif(OPENGL_FOUND AND OPENGL_GLU_FOUND)
 ########### next target ###############
 
 set(kcm_info_PART_SRCS main.cpp memory.cpp opengl.cpp )
