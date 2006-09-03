@@ -14,9 +14,9 @@ kde4_add_plugin(kcm_info ${kcm_info_PART_SRCS})
 kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} kcm_info )
 
 target_link_libraries(kcm_info  ${KDE4_KDEUI_LIBS} ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${X11_X11_LIB})
-if(OPENGL_FOUND)
+if(OPENGL_FOUND AND OPENGL_GLU_FOUND)
   target_link_libraries(kcm_info ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
-endif(OPENGL_FOUND)
+endif(OPENGL_FOUND AND OPENGL_GLU_FOUND)
 
 install(TARGETS kcm_info  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
