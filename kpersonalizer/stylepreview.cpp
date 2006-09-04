@@ -1,3 +1,4 @@
+#include "stylepreview.h"
 /*
  * Style Preview Widget
  * Copyright (C) 2002 Karol Szwed <gallium@kde.org>
@@ -18,14 +19,7 @@
  * along with this program; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
- ***************************************************************************
- ** ui.h extension file, included from the uic-generated form implementation.
- **
- ** If you wish to add, delete or rename slots use Qt Designer which will
- ** update this file, preserving your code. Create an init() slot in place of
- ** a constructor, and a destroy() slot in place of a destructor.
- *****************************************************************************/
+ */
 
 #include <QList>
 
@@ -37,15 +31,18 @@
 #undef KeyRelease
 #endif
 
-void StylePreview::init()
+StylePreview::StylePreview( QWidget* parent )
+    : QWidget( parent ), Ui_StylePreview()
 {
+    setupUi( this );
+
     // Ensure that the user can't toy with the child widgets.
     // Method borrowed from Qt's qtconfig.
-	QList<QWidget*> l = findChildren<QWidget*>();
-	foreach( QWidget * w, l ) {
-			w->installEventFilter( this );
-			w->setFocusPolicy( Qt::NoFocus );
-	}
+    QList<QWidget*> l = findChildren<QWidget*>();
+    foreach( QWidget * w, l ) {
+        w->installEventFilter( this );
+        w->setFocusPolicy( Qt::NoFocus );
+    }
 }
 
 bool StylePreview::eventFilter( QObject* /* obj */, QEvent* ev )
@@ -70,3 +67,4 @@ bool StylePreview::eventFilter( QObject* /* obj */, QEvent* ev )
 }
 
 // vim: set noet ts=4:
+#include "stylepreview.moc"

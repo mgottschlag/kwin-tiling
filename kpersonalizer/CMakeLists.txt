@@ -16,12 +16,16 @@ set(kpersonalizer_SRCS
    kpersonalizer.cpp 
    main.cpp 
    kfindlanguage.cpp 
+   stylepreview.cpp
    ksysinfo.cpp )
 
 kde4_automoc(${kpersonalizer_SRCS})
 
-kde4_add_ui3_files(kpersonalizer_SRCS 
+kde4_add_ui_files(kpersonalizer_SRCS 
    stylepreview.ui 
+)
+
+kde4_add_ui3_files(kpersonalizer_SRCS 
    kcountrypagedlg.ui 
    kospagedlg.ui 
    keyecandypagedlg.ui 
