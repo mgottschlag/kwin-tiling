@@ -9,19 +9,17 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef KXKBSYSTEMTRAY_H
-#define KXKBSYSTEMTRAY_H
+#ifndef KXKBWIDGET_H
+#define KXKBWIDGET_H
+
+#include <QString>
+#include <QList>
+#include <QPixmap>
 
 #include <ksystemtrayicon.h>
 
-#include <QMouseEvent>
-#include <qstring.h>
-#include <qlist.h>
-#include <qlabel.h>
-
 #include "kxkbconfig.h"
 
-class QSystemTrayIcon;
 class QMenu;
 class XkbRules;
 
@@ -29,14 +27,12 @@ class XkbRules;
     catching keyboard/mouse events and displaying menu when selected
 */
 
-class KxkbLabelController: public QObject
+class KxkbWidget : public QObject
 {
-// 	Q_OBJECT
+ 	Q_OBJECT
 			
 public:
 	enum { START_MENU_ID = 100, CONFIG_MENU_ID = 130, HELP_MENU_ID = 131 };
-
-	KxkbLabelController(QSystemTrayIcon *tray, QMenu* contextMenu);
 
     void initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules& rule);
     void setCurrentLayout(const LayoutUnit& layout);
@@ -44,26 +40,44 @@ public:
     void setError(const QString& layoutInfo="");
     void setShowFlag(bool showFlag) { m_showFlag = showFlag; }
 	
-// signals:
-// 
-// 	void menuActivated(int);
-//     void toggled();
+signals:
+	void menuActivated(int);
+	void iconToggled();
 
-// protected:
+protected:
+	KxkbWidget();
+	virtual QMenu* contextMenu() = 0;
+	virtual void setToolTip(const QString& tip) = 0;
+	virtual void setPixmap(const QPixmap& pixmap) = 0;
 // 
 //     void mouseReleaseEvent(QMouseEvent *);
 
 private:
-    QSystemTrayIcon* tray;
-	QMenu* contextMenu;
-	
-	const int m_menuStartIndex;
+	/*const*/ int m_menuStartIndex;
 	bool m_showFlag;
 	int m_prevLayoutCount;
     QMap<QString, QString> m_descriptionMap;
-	
-	void setToolTip(const QString& tip);
+};
+
+
+class KxkbSysTrayIcon : public KxkbWidget
+{
+	Q_OBJECT
+
+public:
+	KxkbSysTrayIcon();
+	~KxkbSysTrayIcon();
+
+protected:
+	QMenu* contextMenu() { return m_tray->contextMenu(); }
+	void setToolTip(const QString& tip) { m_tray->setToolTip(tip); }
 	void setPixmap(const QPixmap& pixmap);
+
+protected slots:
+	void trayActivated(QSystemTrayIcon::ActivationReason);
+
+private:
+    KSystemTrayIcon* m_tray;
 };
 
 #endif

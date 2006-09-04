@@ -1,5 +1,5 @@
 //
-// C++ Implementation: kxkbtraywindow
+// C++ Implementation: kxkbwidget
 //
 // Description:
 //
@@ -8,68 +8,53 @@
 //
 // Copyright: See COPYING file that comes with this distribution
 //
-//
-#include <qtooltip.h>
-#include <qmenu.h>
+
+#include <QSystemTrayIcon>
+#include <QMenu>
 
 #include <kdebug.h>
 #include <klocale.h>
-#include <kiconeffect.h>
 #include <kiconloader.h>
 #include <kaction.h>
-#include <kuniqueapplication.h>
 
-#include "kxkbtraywindow.h"
 #include "pixmap.h"
 #include "rules.h"
 #include "kxkbconfig.h"
 
+#include "kxkbwidget.h"
 
-KxkbLabelController::KxkbLabelController(QSystemTrayIcon* tray_, QMenu* contextMenu_) :
-    tray(tray_),
-    contextMenu(contextMenu_),
- 	m_menuStartIndex(contextMenu_->count()),
+#include "kxkbwidget.moc"
+
+
+KxkbWidget::KxkbWidget():
+ 	m_menuStartIndex(-1),
 	m_prevLayoutCount(0)
 {
-// 	kDebug() << "Creating KxkbLabelController with " << label_ << ", " << contextMenu_ << endl;
-// 	kDebug() << "Creating KxkbLabelController with startMenuIndex " << m_menuStartIndex << endl;
+// 	kDebug() << "Creating KxkbWidget with " << label_ << ", " << contextMenu_ << endl;
+// 	kDebug() << "Creating KxkbWidget with startMenuIndex " << m_menuStartIndex << endl;
 }
 
-void KxkbLabelController::setToolTip(const QString& tip)
-{
-    tray->setToolTip( tip );
-}
-
-void KxkbLabelController::setPixmap(const QPixmap& pixmap)
-{
-	KIconEffect iconeffect;
-// 	label->setPixmap( iconeffect.apply(pixmap, KIcon::Panel, KIcon::DefaultState) );
-	tray->setIcon( pixmap );
-	if( ! tray->isVisible() )
-	  tray->show();
-}
-
-
-void KxkbLabelController::setCurrentLayout(const LayoutUnit& layoutUnit)
+void KxkbWidget::setCurrentLayout(const LayoutUnit& layoutUnit)
 {
 	setToolTip(m_descriptionMap[layoutUnit.toPair()]);
 	setPixmap( LayoutIcon::getInstance().findPixmap(layoutUnit.layout, m_showFlag, layoutUnit.displayName) );
 }
 
-
-void KxkbLabelController::setError(const QString& layoutInfo)
+void KxkbWidget::setError(const QString& layoutInfo)
 {
     QString msg = i18n("Error changing keyboard layout to '%1'", layoutInfo);
 	setToolTip(msg);
-
-	tray->setIcon(LayoutIcon::getInstance().findPixmap("error", m_showFlag));
+	setPixmap(LayoutIcon::getInstance().findPixmap("error", m_showFlag));
 }
 
 
-void KxkbLabelController::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules& rules)
+void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules& rules)
 {
-//	KPopupMenu* menu = contextMenu();
-	QMenu* menu = contextMenu;
+	QMenu* menu = contextMenu();
+
+	if( m_menuStartIndex == -1 )
+		m_menuStartIndex = menu->count();
+
 //	int index = menu->indexOf(0);
 
     m_descriptionMap.clear();
@@ -83,7 +68,7 @@ void KxkbLabelController::initLayoutList(const QList<LayoutUnit>& layouts, const
 /*	menu->removeItem(CONFIG_MENU_ID);
 	menu->removeItem(HELP_MENU_ID);*/
 
-    KIconEffect iconeffect;
+//    KIconEffect iconeffect;
 
 	int cnt = 0;
     QList<LayoutUnit>::ConstIterator it;
@@ -100,7 +85,7 @@ void KxkbLabelController::initLayoutList(const QList<LayoutUnit>& layouts, const
 		QString fullName = i18n( layoutString.toLatin1().constData() );
 		if( variantName.isEmpty() == false )
 			fullName += " (" + variantName + ')';
-		contextMenu->insertItem(pix, fullName, START_MENU_ID + cnt, m_menuStartIndex + cnt);
+		menu->insertItem(pix, fullName, START_MENU_ID + cnt, m_menuStartIndex + cnt);
 		m_descriptionMap.insert((*it).toPair(), fullName);
 
 		cnt++;
@@ -110,10 +95,10 @@ void KxkbLabelController::initLayoutList(const QList<LayoutUnit>& layouts, const
 
 	// if show config, if show help
 	if( menu->indexOf(CONFIG_MENU_ID) == -1 ) {
-		contextMenu->addSeparator();
-		contextMenu->insertItem(SmallIcon("configure"), i18n("Configure..."), CONFIG_MENU_ID);
+		menu->addSeparator();
+		menu->insertItem(SmallIcon("configure"), i18n("Configure..."), CONFIG_MENU_ID);
 		if( menu->indexOf(HELP_MENU_ID) == -1 )
-			contextMenu->insertItem(SmallIcon("help"), i18n("Help"), HELP_MENU_ID);
+			menu->insertItem(SmallIcon("help"), i18n("Help"), HELP_MENU_ID);
 	}
 
 /*    if( index != -1 ) { //not first start
@@ -124,11 +109,37 @@ void KxkbLabelController::initLayoutList(const QList<LayoutUnit>& layouts, const
     }*/
 }
 
-// void KxkbLabelController::mouseReleaseEvent(QMouseEvent *ev)
+// void KxkbWidget::mouseReleaseEvent(QMouseEvent *ev)
 // {
 //     if (ev->button() == QMouseEvent::LeftButton)
 //         emit toggled();
 //     KSystemTray::mouseReleaseEvent(ev);
 // }
 
-//#include "kxkbtraywindow.moc"
+KxkbSysTrayIcon::KxkbSysTrayIcon()
+{
+	m_tray = new KSystemTrayIcon();
+
+ 	connect(contextMenu(), SIGNAL(menuActivated(int)), this, SIGNAL(menuActivated(int)));
+	connect(m_tray, SIGNAL(trayActivated(QSystemTrayIcon::ActivationReason)), 
+					this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
+}
+
+KxkbSysTrayIcon::~KxkbSysTrayIcon()
+{
+	delete m_tray;
+}
+
+void KxkbSysTrayIcon::trayActivated(QSystemTrayIcon::ActivationReason reason)
+{
+	if( reason == QSystemTrayIcon::Trigger )
+	  emit iconToggled();
+//	  emit KxkbWidget::iconToggled();
+}
+
+void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)
+{
+	m_tray->setIcon( pixmap );
+	if( ! m_tray->isVisible() )
+		m_tray->show();
+}
