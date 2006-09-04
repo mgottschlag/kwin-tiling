@@ -159,10 +159,10 @@ void BGMultiWallpaperDialog::slotAdd()
 			   mimeTypes.join( " " ), this);
 
     fileDialog.setCaption(i18n("Select Image"));
-    KFile::Mode mode = static_cast<KFile::Mode> (KFile::Files |
-                                                 KFile::Directory |
-                                                 KFile::ExistingOnly |
-                                                 KFile::LocalOnly);
+    KFile::Modes mode = KFile::Files |
+                        KFile::Directory |
+                        KFile::ExistingOnly |
+                        KFile::LocalOnly;
     fileDialog.setMode(mode);
     fileDialog.exec();
     QStringList files = fileDialog.selectedFiles();
