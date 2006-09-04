@@ -1,9 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Icon=kcmkicker
-Type=Application
 DocPath=kcontrol/panel/index.html#panel-position
 Exec=kcmshell kicker_arrangement
+ServiceTypes=KCModule
+Exec=kcmshell randr
 
 X-KDE-Library=kicker
 X-KDE-FactoryName=kicker_arrangement
