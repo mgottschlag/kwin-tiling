@@ -37,18 +37,14 @@ BookmarksButton::BookmarksButton(QWidget* parent)
     : PanelPopupButton(parent, "BookmarksButton"),
       bookmarkParent(0),
       bookmarkMenu(0),
-      actionCollection(0),
-      bookmarkOwner(0)
+      actionCollection(0)
 {
     actionCollection = new KActionCollection( this );
     bookmarkParent = new KMenu(this);
     bookmarkParent->setObjectName("bookmarks");
-    bookmarkOwner = new KBookmarkOwner;
-    bookmarkMenu = new KBookmarkMenu(KonqBookmarkManager::self(),
-                                     bookmarkOwner,
+    bookmarkMenu = new KBookmarkMenu(KonqBookmarkManager::self(), 0, 
                                      bookmarkParent,
-                                     actionCollection,
-                                     true, false);
+                                     actionCollection );
     setPopup(bookmarkParent);
     this->setToolTip( i18n("Bookmarks"));
     setTitle(i18n("Bookmarks"));
@@ -58,7 +54,6 @@ BookmarksButton::BookmarksButton(QWidget* parent)
 BookmarksButton::~BookmarksButton()
 {
     delete bookmarkMenu;
-    delete bookmarkOwner;
 }
 
 void BookmarksButton::initPopup()

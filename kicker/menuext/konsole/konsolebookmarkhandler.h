@@ -4,7 +4,6 @@
 #define KONSOLEBOOKMARKHANDLER_H
 
 #include <kbookmarkmanager.h>
-#include "konsolebookmarkmenu.h"
 //Added by qt3to4:
 #include <QTextStream>
 #include <QByteArray>
@@ -12,7 +11,7 @@
 
 class QTextStream;
 class KMenu;
-class KonsoleBookmarkMenu;
+class KBookmarkMenu;
 class KonsoleMenu;
 
 class KonsoleBookmarkHandler : public QObject, public KBookmarkOwner
@@ -21,11 +20,7 @@ class KonsoleBookmarkHandler : public QObject, public KBookmarkOwner
 
 public:
     KonsoleBookmarkHandler( KonsoleMenu *konsole, bool toplevel );
-
-    // KBookmarkOwner interface:
-    virtual void openBookmarkURL( const QString& url, const QString& title )
-                                { emit openUrl( url, title ); }
-    virtual QString currentURL() const;
+    virtual QString currentUrl() const;
 
     KMenu *menu() const { return m_menu; }
 
@@ -34,11 +29,11 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     // for importing
+    void openBookmark( KBookmark, Qt::MouseButtons, Qt::KeyboardModifiers );
     void slotNewBookmark( const QString& text, const QByteArray& url,
                           const QString& additionalInfo );
     void slotNewFolder( const QString& text, bool open,
                         const QString& additionalInfo );
-    void slotBookmarksChanged( const QString &, const QString & caller );
     void newSeparator();
     void endFolder();
 
@@ -47,11 +42,9 @@ private:
 
     KonsoleMenu *m_konsole;
     KMenu *m_menu;
-    KonsoleBookmarkMenu *m_bookmarkMenu;
+    KBookmarkMenu *m_bookmarkMenu;
     QTextStream *m_importStream;
 
-protected:
-    virtual void virtual_hook( int id, void* data );
 private:
     class KonsoleBookmarkHandlerPrivate;
     KonsoleBookmarkHandlerPrivate *d;

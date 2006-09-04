@@ -93,7 +93,6 @@ private:
     bool                        delay_init;
     KBookmarkMenu              *bookmarkMenu;
     KActionCollection          *actionCollection;
-    KBookmarkOwner             *bookmarkOwner;
     PopupMenuList               dynamicSubMenus;
 };
 

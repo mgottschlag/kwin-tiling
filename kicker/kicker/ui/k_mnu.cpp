@@ -70,7 +70,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 PanelKMenu::PanelKMenu()
   : PanelServiceMenu(QString(), QString(), 0, "KMenu")
   , bookmarkMenu(0)
-  , bookmarkOwner(0)
 {
     // set the first client id to some arbitrarily large value.
     client_id = 10000;
@@ -95,7 +94,6 @@ PanelKMenu::~PanelKMenu()
 {
     clearSubmenus();
     delete bookmarkMenu;
-    delete bookmarkOwner;
 }
 #if 0
 void PanelKMenu::slotServiceStartedByStorageId(QString starter,
@@ -220,11 +218,9 @@ void PanelKMenu::initialize()
     {
         // Need to create a new popup each time, it's deleted by subMenus.clear()
         KMenu * bookmarkParent = new KMenu(this);
-	bookmarkParent->setObjectName("bookmarks" );
-        if(!bookmarkOwner)
-            bookmarkOwner = new KBookmarkOwner;
+        bookmarkParent->setObjectName("bookmarks" );
         delete bookmarkMenu; // can't reuse old one, the popup has been deleted
-        bookmarkMenu = new KBookmarkMenu( KonqBookmarkManager::self(), bookmarkOwner, bookmarkParent, actionCollection, true, false );
+        bookmarkMenu = new KBookmarkMenu( KonqBookmarkManager::self(), 0, bookmarkParent, actionCollection );
 
         insertItem(Plasma::menuIconSet("bookmark"),
                    i18n("Bookmarks"), bookmarkParent);

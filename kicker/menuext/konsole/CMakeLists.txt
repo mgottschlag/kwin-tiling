@@ -3,7 +3,7 @@
 
 ########### next target ###############
 
-set(kickermenu_konsole_PART_SRCS konsole_mnu.cpp konsolebookmarkhandler.cpp konsolebookmarkmenu.cpp )
+set(kickermenu_konsole_PART_SRCS konsole_mnu.cpp konsolebookmarkhandler.cpp )
 
 kde4_automoc(${kickermenu_konsole_PART_SRCS})
 

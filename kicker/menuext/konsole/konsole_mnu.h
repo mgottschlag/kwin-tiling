@@ -29,7 +29,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kpanelmenu.h>
 #include <klibloader.h>
 
-#include "konsolebookmarkmenu.h"
 #include "konsolebookmarkhandler.h"
 
 

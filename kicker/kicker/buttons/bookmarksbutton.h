@@ -51,7 +51,6 @@ protected:
     KMenu*          bookmarkParent;
     KBookmarkMenu*       bookmarkMenu;
     KActionCollection*   actionCollection;
-    KBookmarkOwner*      bookmarkOwner;
 };
 
 #endif

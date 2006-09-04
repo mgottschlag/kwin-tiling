@@ -12,9 +12,9 @@
 #include <kmenu.h>
 #include <ksavefile.h>
 #include <kstandarddirs.h>
+#include <kbookmarkmenu.h>
 
 #include "konsole_mnu.h"
-#include "konsolebookmarkmenu.h"
 #include "konsolebookmarkhandler.h"
 
 KonsoleBookmarkHandler::KonsoleBookmarkHandler( KonsoleMenu *konsole, bool )
@@ -42,14 +42,17 @@ KonsoleBookmarkHandler::KonsoleBookmarkHandler( KonsoleMenu *konsole, bool )
     manager->setUpdate( true );
     manager->setShowNSBookmarks( false );
 
-    connect( manager, SIGNAL( changed(const QString &, const QString &) ),
-             SLOT( slotBookmarksChanged(const QString &, const QString &) ) );
-    m_bookmarkMenu = new KonsoleBookmarkMenu( manager, this, m_menu,
-                             NULL, false, /*Not toplevel*/
-			     false /*No 'Add Bookmark'*/ );
+    m_bookmarkMenu = new KBookmarkMenu( manager, this, m_menu, 0 );
+    connect( m_bookmarkMenu, SIGNAL( openBookmark( KBookmark, Qt::MouseButtons, Qt::KeyboardModifiers ) ),
+             this, SLOT( openBookmark( KBookmark, Qt::MouseButtons, Qt::KeyboardModifiers )) );
 }
 
-QString KonsoleBookmarkHandler::currentURL() const
+void KonsoleBookmarkHandler::openBookmark(KBookmark bm, Qt::MouseButtons, Qt::KeyboardModifiers )
+{
+    emit openUrl( bm.url().url(), bm.text() );
+}
+
+QString KonsoleBookmarkHandler::currentUrl() const
 {
     return m_konsole->baseURL().url();
 }
@@ -98,13 +101,6 @@ void KonsoleBookmarkHandler::slotNewFolder( const QString& text, bool /*open*/,
     *m_importStream << text << "\">\n";
 }
 
-void KonsoleBookmarkHandler::slotBookmarksChanged( const QString &,
-                                                   const QString & )
-{
-    // This is called when someone changes bookmarks in konsole....
-    m_bookmarkMenu->slotBookmarksChanged("");
-}
-
 void KonsoleBookmarkHandler::newSeparator()
 {
     *m_importStream << "<separator/>\n";
@@ -114,8 +110,5 @@ void KonsoleBookmarkHandler::endFolder()
 {
     *m_importStream << "</folder>\n";
 }
-
-void KonsoleBookmarkHandler::virtual_hook( int id, void* data )
-{ KBookmarkOwner::virtual_hook( id, data ); }
 
 #include "konsolebookmarkhandler.moc"
