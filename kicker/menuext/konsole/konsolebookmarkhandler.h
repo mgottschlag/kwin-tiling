@@ -24,13 +24,13 @@ public:
 
     // KBookmarkOwner interface:
     virtual void openBookmarkURL( const QString& url, const QString& title )
-                                { emit openURL( url, title ); }
+                                { emit openUrl( url, title ); }
     virtual QString currentURL() const;
 
     KMenu *menu() const { return m_menu; }
 
 Q_SIGNALS:
-    void openURL( const QString& url, const QString& title );
+    void openUrl( const QString& url, const QString& title );
 
 private Q_SLOTS:
     // for importing

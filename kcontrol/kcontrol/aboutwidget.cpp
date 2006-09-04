@@ -89,7 +89,7 @@ AboutWidget::AboutWidget(QWidget *parent, Q3ListViewItem* category, const QStrin
     _viewer = new KHTMLPart( this );
     _viewer->widget()->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
     connect( _viewer->browserExtension(),
-             SIGNAL(openURLRequest(const KUrl&, const KParts::URLArgs&)),
+             SIGNAL(openUrlRequest(const KUrl&, const KParts::URLArgs&)),
              this, SLOT(slotModuleLinkClicked(const KUrl&)) );
     updatePixmap();
 }

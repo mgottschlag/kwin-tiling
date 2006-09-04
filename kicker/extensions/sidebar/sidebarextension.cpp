@@ -64,10 +64,10 @@ SidebarExtension::SidebarExtension(const QString& configFile,
 
     KParts::BrowserExtension *be=KParts::BrowserExtension::childObject(p);
     if (be) {
-	connect(be,SIGNAL(openURLRequest( const KUrl &, const KParts::URLArgs &)),
-                        this,SLOT(openURLRequest( const KUrl &, const KParts::URLArgs &)));
+	connect(be,SIGNAL(openUrlRequest( const KUrl &, const KParts::URLArgs &)),
+                        this,SLOT(openUrlRequest( const KUrl &, const KParts::URLArgs &)));
 	connect(be,SIGNAL(createNewWindow( const KUrl &, const KParts::URLArgs &)),
-                        this,SLOT(openURLRequest( const KUrl &, const KParts::URLArgs &)));
+                        this,SLOT(openUrlRequest( const KUrl &, const KParts::URLArgs &)));
 
     }
 
@@ -100,9 +100,8 @@ void SidebarExtension::needLayoutUpdate(bool exp) {
 	emit updateLayout();
 }
 
-void SidebarExtension::openURLRequest( const KUrl &url, const KParts::URLArgs &) {
+void SidebarExtension::openUrlRequest( const KUrl &url, const KParts::URLArgs &) {
 	KRun::runCommand("kfmclient openURL \""+url.prettyUrl()+"\"", "kfmclient", "konqueror");
-
 }
 
 

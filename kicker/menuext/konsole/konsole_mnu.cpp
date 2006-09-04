@@ -154,7 +154,7 @@ void KonsoleMenu::initialize()
     insertItem(SmallIconSet("keditbookmarks"),
                i18n("New Session at Bookmark"), m_bookmarksSession);
     connect(m_bookmarkHandlerSession,
-            SIGNAL(openURL(const QString&, const QString&)),
+            SIGNAL(openUrl(const QString&, const QString&)),
             SLOT(newSession(const QString&, const QString&)));
 
 

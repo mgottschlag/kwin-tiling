@@ -56,21 +56,21 @@ CFontViewerAppMainWindow::CFontViewerAppMainWindow()
         itsPreview=(KParts::ReadOnlyPart *)factory->create(this, "KParts::ReadOnlyPart");
 
         KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-        KUrl         openURL;
+        KUrl         openUrl;
 
         if(args->count() > 0)
         {
             KUrl url(args->url(args->count() - 1));
 
             if(url.isValid())
-                openURL = url;
+                openUrl = url;
         }
 
         setCentralWidget(itsPreview->widget());
         createGUI(itsPreview);
 
-        if(!openURL.isEmpty())
-            itsPreview->openUrl(openURL);
+        if(!openUrl.isEmpty())
+            itsPreview->openUrl(openUrl);
 
         QSize             defSize(450, 380);
         KConfigGroup cg(KGlobal::config(), CFG_GROUP);
