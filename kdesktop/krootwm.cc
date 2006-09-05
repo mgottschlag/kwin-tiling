@@ -106,10 +106,9 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
   {
      bookmarks = new KActionMenu( KIcon("bookmark"), i18n("Bookmarks"), m_actionCollection, "bookmarks" );
      // The KBookmarkMenu is needed to fill the Bookmarks menu in the desktop menubar.
-     bookmarkMenu = new KBookmarkMenu( KonqBookmarkManager::self(), new KBookmarkOwner(),
-                                    bookmarks->menu(),
-                                    m_actionCollection,
-                                    true, false );
+     bookmarkMenu = new KBookmarkMenu( KonqBookmarkManager::self(), 0,
+                                       bookmarks->menu(),
+                                       m_actionCollection );
   }
   else
   {
@@ -203,7 +202,7 @@ KRootWm::KRootWm(KDesktop* _desktop) : QObject(_desktop)
       KAction *action = new KAction(KIcon("exit"), i18n("Log Out \"%1\"...", KUser().loginName()),
                                     m_actionCollection, "logout" );
       connect(action, SIGNAL(triggered(bool)), SLOT( slotLogout() ));
-     
+
   }
 
   if (KAuthorized::authorizeKAction("start_new_session") && DM().isSwitchable())
