@@ -730,8 +730,8 @@ void KRootWm::slotRefreshDesktop() {
 
 QStringList KRootWm::configModules() {
   QStringList args;
-  args << "kde-background.desktop" << "kde-desktopbehavior.desktop"  << "kde-desktop.desktop"
-	  << "kde-screensaver.desktop" << "kde-display.desktop";
+  args << "background" << "desktopbehavior"  << "desktop"
+       << "screensaver" << "display";
   return args;
 }
 
