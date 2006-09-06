@@ -72,6 +72,8 @@ public:
 
 Q_SIGNALS:
     void initDone();
+    // DBUS signal
+    void backgroundChanged(int desk);
 
 private Q_SLOTS:
     void slotTimeout();

@@ -30,7 +30,6 @@
 #include <kwin.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kipc.h>
 #include <kmenu.h>
 #include <kwinmodule.h>
 
@@ -356,8 +355,8 @@ void KBackgroundManager::exportBackground(int pixmap, int desk)
 
     m_Cache[desk]->exp_from = pixmap;
     m_pPixmapServer->add(pixmapName(desk+1),
-	    m_Cache[pixmap]->pixmap);
-    KIPC::sendMessageAll(KIPC::BackgroundChanged, desk+1);
+                         m_Cache[pixmap]->pixmap);
+    emit backgroundChanged(desk+1);
 }
 
 

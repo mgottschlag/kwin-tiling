@@ -37,7 +37,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobalsettings.h>
 #include <kwin.h>
 #include <kwinmodule.h>
-#include <kapplication.h>
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
@@ -58,6 +57,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "pagerapplet.h"
 #include "pagerapplet.moc"
+
+#include "kdesktop_background_interface.h"
 
 #ifdef FocusOut
 #undef FocusOut
@@ -132,7 +133,10 @@ KMiniPager::KMiniPager(const QString& configFile, Plasma::Type type, int actions
     connect( m_kwin, SIGNAL( windowRemoved(WId) ), this, SLOT( slotWindowRemoved(WId) ) );
     connect( m_kwin, SIGNAL( windowChanged(WId,unsigned int) ), this, SLOT( slotWindowChanged(WId,unsigned int) ) );
     connect( m_kwin, SIGNAL( desktopNamesChanged() ), this, SLOT( slotDesktopNamesChanged() ) );
-    connect( kapp, SIGNAL(backgroundChanged(int)), SLOT(slotBackgroundChanged(int)) );
+
+    m_backgroundInterface = new org::kde::kdesktop::Background( "kdesktop", "/Background", QDBusConnection::sessionBus() );
+    connect( m_backgroundInterface, SIGNAL(backgroundChanged(int)),
+             SLOT(slotBackgroundChanged(int)) );
 
     if (KAuthorized::authorizeKAction("kicker_rmb") &&
         KAuthorized::authorizeControlModule("kde-kcmtaskbar.desktop"))

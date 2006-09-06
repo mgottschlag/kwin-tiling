@@ -43,8 +43,9 @@ class QTimer;
 class KProcess;
 class KWinModule;
 class KShadowEngine;
+class OrgKdeKdesktopBackgroundInterface;
 
-namespace KWin { 
+namespace KWin {
     class WindowInfo;
 }
 
@@ -133,6 +134,8 @@ private:
 
     KWinModule *m_kwin;
     KShadowEngine* m_shadowEngine;
+
+    OrgKdeKdesktopBackgroundInterface* m_backgroundInterface;
 
     QMenu *m_contextMenu;
     PagerSettings *m_settings;

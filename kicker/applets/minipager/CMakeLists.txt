@@ -9,6 +9,8 @@ kde4_automoc(${minipager_panelapplet_PART_SRCS})
 
 kde4_add_kcfg_files(minipager_panelapplet_PART_SRCS pagersettings.kcfgc)
 
+qt4_add_dbus_interface(minipager_panelapplet_PART_SRCS ../../../kdesktop/org.kde.kdesktop.Background.xml kdesktop_background_interface)
+
 kde4_add_plugin(minipager_panelapplet ${minipager_panelapplet_PART_SRCS})
 
 kde4_install_libtool_file(${PLUGIN_INSTALL_DIR} minipager_panelapplet)

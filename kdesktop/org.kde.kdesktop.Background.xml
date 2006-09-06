@@ -44,5 +44,8 @@
       <arg name="desk" type="i" direction="in"/>
       <arg type="as" direction="out"/>
     </method>
+    <signal name="backgroundChanged">
+      <arg name="desk" type="i" direction="out"/>
+    </signal>
   </interface>
 </node>
