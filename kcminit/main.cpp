@@ -153,7 +153,8 @@ void KCMInit::runModules( int phase )
 
 KCMInit::KCMInit( KCmdLineArgs* args )
 {
-  QDBusConnection::sessionBus().registerObject("/kcminit", this, QDBusConnection::ExportScriptableSlots);
+  QDBusConnection::sessionBus().registerObject("/kcminit", this,
+      QDBusConnection::ExportScriptableSlots|QDBusConnection::ExportScriptableSignals);
   QByteArray arg;
   if (args->count() == 1) {
     arg = args->arg(0);
@@ -264,6 +265,8 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
   KApplication app;
+  QDBusConnection::sessionBus().interface()->registerService( "org.kde.kcminit",
+      QDBusConnectionInterface::DontQueueService );
   KLocale::setMainCatalog(0);
   KCMInit kcminit( KCmdLineArgs::parsedArgs());
   return 0;

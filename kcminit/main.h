@@ -32,9 +32,9 @@ class KCMInit : public QObject
 	public Q_SLOTS: //dbus
         Q_SCRIPTABLE void runPhase1();
         Q_SCRIPTABLE void runPhase2();
- signals: //dbus signal
-	void phase1Done();
-	void phase2Done();
+    Q_SIGNALS: //dbus signal
+	Q_SCRIPTABLE void phase1Done();
+	Q_SCRIPTABLE void phase2Done();
     public:
         KCMInit( KCmdLineArgs* args );
         virtual ~KCMInit();
