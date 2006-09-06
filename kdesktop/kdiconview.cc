@@ -1219,8 +1219,11 @@ void KDIconView::slotClipboardDataChanged()
 
     QString actionText = KIO::pasteActionText();
     bool paste = !actionText.isEmpty();
-    if ( paste )
-        m_actionCollection.action( "paste" )->setText( actionText );
+    if ( paste ) {
+        KAction* pasteAction = m_actionCollection.action( "paste" );
+        if ( pasteAction )
+            pasteAction->setText( actionText );
+    }
     slotEnableAction( "paste", paste );
 }
 
