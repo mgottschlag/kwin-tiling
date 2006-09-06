@@ -184,7 +184,7 @@ void KSMServer::autoStart0Done()
     kcminitSignals = new QDBusInterface("org.kde.kcminit", "/kcminit", "org.kde.KCMInit", QDBusConnection::sessionBus(), this );
     if( !kcminitSignals->isValid())
         kWarning() << "kcminit not running?" << endl;
-    connect( kcminitSignals, SIGNAL( phase1Done()), SLOT( phase1Done()));
+    connect( kcminitSignals, SIGNAL( phase1Done()), SLOT( kcmPhase1Done()));
     state = KcmInitPhase1;
     QTimer::singleShot( 10000, this, SLOT( kcmPhase1Timeout())); // protection
     QDBusInterface kcminit( "org.kde.kcminit", "/kcminit", "org.kde.KCMInit" );
@@ -196,7 +196,7 @@ void KSMServer::kcmPhase1Done()
     if( state != KcmInitPhase1 )
         return;
     kDebug( 1218 ) << "Kcminit phase 1 done" << endl;
-    disconnect( kcminitSignals, SIGNAL( phase1Done()), this, SLOT( phase1Done()));
+    disconnect( kcminitSignals, SIGNAL( phase1Done()), this, SLOT( kcmPhase1Done()));
     autoStart1();
 }
 
@@ -294,7 +294,7 @@ void KSMServer::autoStart2()
     kded.call( "loadSecondPhase" );
     QDBusInterface kdesktop( "org.kde.kdesktop", "/kdesktop", "org.kde.KDesktopIface" );
     kdesktop.call( "runAutoStart" );
-    connect( kcminitSignals, SIGNAL( kcmPhase2Done()), SLOT( kcmPhase2Done()));
+    connect( kcminitSignals, SIGNAL( phase2Done()), SLOT( kcmPhase2Done()));
     QTimer::singleShot( 10000, this, SLOT( kcmPhase2Timeout())); // protection
     QDBusInterface kcminit( "org.kde.kcminit", "/kcminit", "org.kde.KCMInit" );
     kcminit.call( "runPhase2" );
@@ -318,7 +318,7 @@ void KSMServer::kcmPhase2Done()
     if( state != FinishingStartup )
         return;
     kDebug( 1218 ) << "Kcminit phase 2 done" << endl;
-    disconnect( kcminitSignals, SIGNAL( phase2Done()), this, SLOT( phase2Done()));
+    disconnect( kcminitSignals, SIGNAL( phase2Done()), this, SLOT( kcmPhase2Done()));
     delete kcminitSignals;
     kcminitSignals = NULL;
     waitKcmInit2 = false;
