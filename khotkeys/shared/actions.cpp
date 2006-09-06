@@ -375,18 +375,12 @@ void Keyboard_input_action::execute()
     while(( last_index = input().indexOf( ':', last_index + 1 )) != -1 ) // find next ';'
 	{
         QString key = input().mid( start, last_index - start ).trimmed();
-        QKeySequence ks( key );
-        if( key == "Enter" && ks.isEmpty() )
-            key = "Return"; // CHECKE hack
-	keyboard_handler->send_macro_key( ks.isEmpty() ? 0 : ks[0], w );
+	keyboard_handler->send_macro_key( key, w );
 	start = last_index + 1;
 	}
     // and the last one
     QString key = input().mid( start, input().length()).trimmed();
-    QKeySequence ks( key );
-    if( key == "Enter" && ks.isEmpty() )
-        key = "Return";
-    keyboard_handler->send_macro_key( ks.isEmpty() ? 0 : ks[0], w ); // the rest
+    keyboard_handler->send_macro_key( key, w ); // the rest
     XFlush( QX11Info::display());
     }
 

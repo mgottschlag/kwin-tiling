@@ -46,7 +46,7 @@ class Kbd
         void remove_item( const KShortcut& shortcut_P, Kbd_receiver* receiver_P );
         void activate_receiver( Kbd_receiver* receiver_P );
         void deactivate_receiver( Kbd_receiver* receiver_P );
-        static bool send_macro_key( unsigned int keycode, Window window_P = InputFocus );
+        static bool send_macro_key( const QString& key, Window window_P = InputFocus );
     protected:
         bool x11EventFilter( const XEvent* );                                                              
         void grab_shortcut( const KShortcut& shortcut_P );

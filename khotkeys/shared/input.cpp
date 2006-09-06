@@ -171,13 +171,22 @@ static bool xtest()
 #endif
 
 // CHECKME nevola XFlush(), musi se pak volat rucne
-bool Kbd::send_macro_key( unsigned int keycode, Window window_P )
+bool Kbd::send_macro_key( const QString& key, Window window_P )
     {
+    return false;
     int keysym;
     uint x_mod;
+#if 0
+// TODO fix this, make sure it works even with stuff like "dead_acute"
+        QKeySequence ks( key );
+        if( key == "Enter" && ks.isEmpty() )
+            key = "Return"; // CHECKE hack
+	keyboard_handler->send_macro_key( ks.isEmpty() ? 0 : ks[0], w );
+
     bool ok = KKeyServer::keyQtToSymX(keycode, keysym) && KKeyServer::keyQtToModX(keycode, x_mod);
+#endif
     KeyCode x_keycode = XKeysymToKeycode( QX11Info::display(), keysym );
-    if( !ok || x_keycode == NoSymbol )
+    if( x_keycode == NoSymbol )
 	return false;
 #ifdef HAVE_XTEST
     if( xtest() && window_P == None )
