@@ -65,6 +65,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "recentapps.h"
 
 #include "k_mnu.h"
+#include "kdesktop_interface.h"
+#include "kdesktop_screensaver_interface.h"
 #include "k_mnu.moc"
 
 PanelKMenu::PanelKMenu()
@@ -326,9 +328,9 @@ void PanelKMenu::slotLock()
     if ( kicker_screen_number )
         interface.sprintf("org.kde.kdesktop-screen-%d", kicker_screen_number);
 
-    QDBusInterface kdesktop(interface, "/ScreenSaver", "org.kde.kdesktop.KScreensaver");
-    if ( kdesktop.isValid() )
-        kdesktop.call("lock");
+    org::kde::kdesktop::ScreenSaver screenSaverInterface( interface, "/ScreenSaver", QDBusConnection::sessionBus() );
+    if ( screenSaverInterface.isValid() )
+        screenSaverInterface.lock();
 }
 
 void PanelKMenu::slotLogout()
@@ -405,18 +407,18 @@ void PanelKMenu::doNewSession( bool lock )
 
 void PanelKMenu::slotSaveSession()
 {
-    QDBusInterface ksmserver("org.kde.ksmserver", "/ksmserver");
+    QDBusInterface ksmserver("org.kde.ksmserver", "/ksmserver", "org.kde.KSMServerInterface");
     ksmserver.call("saveCurrentSession");
 }
 
 void PanelKMenu::slotRunCommand()
 {
-    QString interface( "kdesktop" );
+    QString interface( "org.kde.kdesktop" );
     if ( kicker_screen_number )
-        interface.sprintf("kdesktop-screen-%d", kicker_screen_number);
+        interface.sprintf("org.kde.kdesktop-screen-%d", kicker_screen_number);
 
-    QDBusInterface kdesktop(interface, "/KDesktopIface");
-    kdesktop.call("popupExecuteCommand");
+    org::kde::kdesktop::Desktop desktopInterface( interface, "/Desktop", QDBusConnection::sessionBus() );
+    desktopInterface.popupExecuteCommand( QString() );
 }
 
 void PanelKMenu::slotEditUserContact()

@@ -55,6 +55,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kworkspace.h>
 #include <QtDBus/QtDBus>
 
+#include "kdesktop_interface.h"
 #include "utils.h"
 #include "kicker.h"
 #include "kickerSettings.h"
@@ -567,8 +568,9 @@ void PanelServiceMenu::slotContextMenu(int selected)
         case PutIntoRunDialog:
 			{
             service = KService::Ptr::staticCast(contextKSycocaEntry_);
-            QDBusInterface kickerInterface("org.kde.kdesktop", "/default");
-            kickerInterface.call("popupExecuteCommand", service->exec());
+
+            org::kde::kdesktop::Desktop desktopInterface( "kdesktop", "/Desktop", QDBusConnection::sessionBus() );
+            desktopInterface.popupExecuteCommand( service->exec() );
             break;
 			}
 	case AddMenuToDesktop:

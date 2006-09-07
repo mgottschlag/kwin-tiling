@@ -3,6 +3,10 @@ include_directories( ${CMAKE_SOURCE_DIR}/libkonq ${CMAKE_SOURCE_DIR}/workspace/k
 
 ########### next target ###############
 
+qt4_add_dbus_interface(libkicker_ui_SRCS ../../../kdesktop/org.kde.kdesktop.Desktop.xml kdesktop_interface )
+qt4_add_dbus_interface(libkicker_ui_SRCS ../../../kdesktop/org.kde.kdesktop.ScreenSaver.xml kdesktop_screensaver_interface )
+
+#### ****** So many sources? This is recompiling all of kicker! This needs to be fixed! ****** ####
 set(launcher_panelapplet_PART_SRCS  ${kdmlib_SRCS}  ${libkicker_core_SRCS} ${libkicker_buttons_SRCS} ${libkicker_ui_SRCS}
    quicklauncher.cpp 
    quickbutton.cpp 
@@ -10,7 +14,6 @@ set(launcher_panelapplet_PART_SRCS  ${kdmlib_SRCS}  ${libkicker_core_SRCS} ${lib
    flowgridmanager.cpp 
    popularity.cpp 
    configdlg.cpp )
-
 
 kde4_add_ui3_files(launcher_panelapplet_PART_SRCS ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/appletitem.ui ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/appletview.ui ${CMAKE_SOURCE_DIR}/workspace/kicker/kicker/ui/nonKDEButtonSettings.ui)
 

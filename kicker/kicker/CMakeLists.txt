@@ -1,6 +1,5 @@
 
 add_subdirectory( core )
-add_subdirectory( ui )
 add_subdirectory( buttons )
 
 include_directories(
@@ -17,7 +16,8 @@ include_directories(
 
 
 kde4_add_ui3_files(libkicker_ui_SRCS ui/appletitem.ui ui/appletview.ui ui/nonKDEButtonSettings.ui)
-
+qt4_add_dbus_interface(libkicker_ui_SRCS ../../kdesktop/org.kde.kdesktop.Desktop.xml kdesktop_interface )
+qt4_add_dbus_interface(libkicker_ui_SRCS ../../kdesktop/org.kde.kdesktop.ScreenSaver.xml kdesktop_screensaver_interface )
 
 set(kicker_KDEINIT_SRCS ${libkicker_buttons_SRCS} ${libkicker_ui_SRCS} ${libkicker_core_SRCS} ${kdmlib_SRCS} )
 
