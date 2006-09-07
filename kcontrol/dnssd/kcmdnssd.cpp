@@ -40,7 +40,7 @@
 #include "kcmdnssd.h"
 #include <dnssd/settings.h>
 #include <dnssd/domainbrowser.h>
-#include <kipc.h>
+#include <QtDBus/QtDBus>
 
 #define MDNSD_CONF "/etc/mdnsd.conf"
 #define MDNSD_PID "/var/run/mdnsd.pid"
@@ -51,19 +51,19 @@ K_EXPORT_COMPONENT_FACTORY( kdnssd, KCMDnssdFactory("kcmkdnssd"))
 KCMDnssd::KCMDnssd(QWidget *parent, const QStringList&)
 		: KCModule( KCMDnssdFactory::instance(), parent), m_wdchanged(false)
 {
-   
+
     QVBoxLayout *layout = new QVBoxLayout( this );
     layout->setMargin(0);
     layout->setSpacing(KDialog::spacingHint());
     widget = new ConfigDialog(this, "");
-    layout->addWidget(widget); 
+    layout->addWidget(widget);
     setAboutData(new KAboutData(I18N_NOOP("kcm_kdnssd"),
 	                            I18N_NOOP("ZeroConf configuration"),0,0,KAboutData::License_GPL,
 	                            I18N_NOOP("(C) 2004,2005 Jakub Stachowski")));
 	setQuickHelp(i18n("Setup services browsing with ZeroConf"));
 	if (geteuid()!=0) widget->tabs->removePage(widget->tab1); // normal user cannot change wide-area settings
 	// show only global things in 'administrator mode' to prevent confusion
-		else if (getenv("KDESU_USER")!=0) widget->tabs->removePage(widget->tab); 
+		else if (getenv("KDESU_USER")!=0) widget->tabs->removePage(widget->tab);
 	addConfig(DNSSD::Configuration::self(),this);
 	// it is host-wide setting so it has to be in global config file
 	domain = new KSimpleConfig( QLatin1String( KDE_CONFDIR "/kdnssdrc" ));
@@ -83,11 +83,15 @@ KCMDnssd::~KCMDnssd()
 void KCMDnssd::save()
 {
 	KCModule::save();
-	if (geteuid()==0 && m_wdchanged) saveMdnsd(); 
+	if (geteuid()==0 && m_wdchanged) saveMdnsd();
 	domain->setFileWriteMode(0644); // this should be readable for everyone
 	domain->writeEntry("PublishDomain",widget->domainedit->text());
 	domain->sync();
-	KIPC::sendMessageAll((KIPC::Message)KIPCDomainsChanged);
+
+	// Send signal to all kde applications which have a DNSSD::DomainBrowserPrivate instance
+	QDBusMessage message =
+            QDBusMessage::createSignal("/libdnssd", "org.kde.DNSSD.DomainBrowser", "domainListChanged");
+	QDBusConnection::sessionBus().send(message);
 }
 
 void KCMDnssd::load()
@@ -118,8 +122,8 @@ void KCMDnssd::loadMdnsd()
 	if (!mdnsdLines["zone"].isNull()) widget->domainedit->setText(mdnsdLines["zone"]);
 	if (!mdnsdLines["hostname"].isNull()) widget->hostedit->setText(mdnsdLines["hostname"]);
 	if (!mdnsdLines["secret-64"].isNull()) widget->secretedit->setText(mdnsdLines["secret-64"]);
-}		
-	
+}
+
 bool KCMDnssd::saveMdnsd()
 {
 	mdnsdLines["zone"]=widget->domainedit->text();
@@ -128,14 +132,14 @@ bool KCMDnssd::saveMdnsd()
 		else mdnsdLines.remove("secret-64");
 	QFile f(MDNSD_CONF);
 	bool newfile=!f.exists();
-	if (!f.open(QIODevice::WriteOnly)) return false; 
+	if (!f.open(QIODevice::WriteOnly)) return false;
 	QTextStream stream(&f);
 	for (QMap<QString,QString>::ConstIterator it=mdnsdLines.begin();it!=mdnsdLines.end();
 		++it) stream << it.key() << " " << (*it) << "\n";
 	f.close();
 	// if it is new file, then make it only accessible for root as it can contain shared
-	// secret for dns server. 
-	if (newfile) chmod(MDNSD_CONF,0600); 
+	// secret for dns server.
+	if (newfile) chmod(MDNSD_CONF,0600);
 	f.setName(MDNSD_PID);
 	if (!f.open(QIODevice::ReadOnly)) return true; // it is not running so no need to signal
 	QString line;
@@ -145,6 +149,6 @@ bool KCMDnssd::saveMdnsd()
 	kill(pid,SIGHUP);
 	return true;
 }
-	
+
 #include "kcmdnssd.moc"
 
