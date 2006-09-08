@@ -2,6 +2,7 @@
 
 if(OPENGL_FOUND AND OPENGL_GLU_FOUND)
    ADD_DEFINITIONS(-DINFO_OPENGL_AVAILABLE ) # added manually
+   include_directories( ${OPENGL_INCLUDE_DIR} ${OPENGL_GLU_INCLUDE_DIR} )
 endif(OPENGL_FOUND AND OPENGL_GLU_FOUND)
 ########### next target ###############
 
