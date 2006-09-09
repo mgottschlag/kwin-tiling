@@ -63,7 +63,6 @@ protected:
 private:
 	// Method to load the pixmap given by the theme
 	void loadPixmap( const QString &fileName, PixmapStruct::PixmapClass &pc );
-	void renderSvg( PixmapStruct::PixmapClass *pClass, const QRect &area );
 };
 
 #endif

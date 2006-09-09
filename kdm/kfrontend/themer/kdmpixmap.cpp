@@ -19,14 +19,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <config.h>
-
 #include "kdmpixmap.h"
 
 #include <kimageeffect.h>
-#ifdef HAVE_LIBAGG
-#include <ksvgiconengine.h>
-#endif
 
 #include <kdebug.h>
 
@@ -110,32 +105,8 @@ KdmPixmap::loadPixmap( const QString &fileName, PixmapStruct::PixmapClass &pClas
 	if (fileName.at( 0 ) != '/')
 		pClass.fullpath = baseDir() + '/' + fileName;
 
-	if (!fileName.endsWith( ".svg" ))	// we delay it for svgs
-		if (!pClass.pixmap.load( pClass.fullpath ))
-			pClass.fullpath.clear();
-}
-
-void
-KdmPixmap::renderSvg( PixmapStruct::PixmapClass *pClass, const QRect &area )
-{
-#ifdef HAVE_LIBAGG
-	// Special stuff for SVG icons
-	KSVGIconEngine *svgEngine = new KSVGIconEngine();
-
-	if (svgEngine->load( area.width(), area.height(), pClass->fullpath )) {
-		QImage *t = svgEngine->image();
-		pClass->pixmap = *t;
-		pClass->readyPixmap.resize( 0, 0 );
-	} else {
-		kWarning() << "failed to load " << pClass->fullpath << endl;
-		pClass->fullpath.clear();
-	}
-
-	delete svgEngine;
-#else
-	Q_UNUSED( pClass );
-	Q_UNUSED( area );
-#endif
+	if (!pClass.pixmap.load( pClass.fullpath ))
+		pClass.fullpath.clear();
 }
 
 void
@@ -147,14 +118,6 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 		pClass = &pixmap.active;
 	if (state == Sprelight && pixmap.prelight.present)
 		pClass = &pixmap.prelight;
-
-	if (pClass->pixmap.isNull()) {
-		if (pClass->fullpath.isEmpty())	// if neither is set, we're empty
-			return;
-
-		kDebug() << "renderSVG\n";
-		renderSvg( pClass, area );
-	}
 
 	int px = area.left() + r.left();
 	int py = area.top() + r.top();
@@ -180,15 +143,7 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 		// use the loaded pixmap or a scaled version if needed
 
 		if (area.size() != pClass->pixmap.size()) {
-			if (pClass->fullpath.endsWith( ".svg" )) {
-				kDebug() << "renderSVG\n";
-				renderSvg( pClass, area );
-				scaledImage = pClass->pixmap.toImage();
-			} else {
-				kDebug() << "convertFromImage\n";
-				QImage tempImage = pClass->pixmap.toImage();
-				scaledImage = tempImage.scaled( area.width(), area.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
-			}
+			scaledImage = pClass->pixmap.toImage().scaled( area.width(), area.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
 		} else
 			scaledImage = pClass->pixmap.toImage();
 
