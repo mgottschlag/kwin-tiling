@@ -99,11 +99,6 @@ private:
 	 */
 	KdmItem *rootItem;
 
-	/*
-	 * The backbuffer
-	 */
-	QPixmap *backBuffer;
-
 	// methods
 
 	/*

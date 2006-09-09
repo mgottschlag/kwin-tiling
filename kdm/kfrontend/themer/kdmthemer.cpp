@@ -57,7 +57,6 @@
 KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *parent )
 	: QObject( parent )
 	, rootItem( 0 )
-	, backBuffer( 0 )
 {
 	// Set the mode we're working in
 	m_currentMode = mode;
@@ -101,7 +100,6 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *pa
 KdmThemer::~KdmThemer()
 {
 	delete rootItem;
-	delete backBuffer;
 }
 
 inline QWidget *
@@ -166,17 +164,8 @@ KdmThemer::widgetEvent( QEvent *e )
 			QRect paintRect = static_cast<QPaintEvent *>(e)->rect();
 			kDebug() << "paint on: " << paintRect << endl;
 
-			if (!backBuffer)
-				backBuffer = new QPixmap( widget()->size() );
-			if (backBuffer->size() != widget()->size())
-				*backBuffer = QPixmap( widget()->size() );
-
-			QPainter p;
-			p.begin( backBuffer );
+			QPainter p( widget() );
 			rootItem->paint( &p, paintRect );
-			p.end();
-
-			bitBlt( widget(), paintRect.topLeft(), backBuffer, paintRect );
 		}
 		break;
 	default:
