@@ -58,17 +58,17 @@ KdmPixmap::KdmPixmap( KdmItem *parent, const QDomNode &node, const char *name )
 		QString tagName = el.tagName();
 
 		if (tagName == "normal") {
-			loadPixmap( el.attribute( "file", "" ), pixmap.normal.pixmap, pixmap.normal.fullpath );
+			loadPixmap( el.attribute( "file", "" ), pixmap.normal );
 			parseColor( el.attribute( "tint", "#ffffff" ), pixmap.normal.tint );
 			pixmap.normal.alpha = el.attribute( "alpha", "1.0" ).toFloat();
 		} else if (tagName == "active") {
 			pixmap.active.present = true;
-			loadPixmap( el.attribute( "file", "" ), pixmap.active.pixmap, pixmap.active.fullpath );
+			loadPixmap( el.attribute( "file", "" ), pixmap.active );
 			parseColor( el.attribute( "tint", "#ffffff" ), pixmap.active.tint );
 			pixmap.active.alpha = el.attribute( "alpha", "1.0" ).toFloat();
 		} else if (tagName == "prelight") {
 			pixmap.prelight.present = true;
-			loadPixmap( el.attribute( "file", "" ), pixmap.prelight.pixmap, pixmap.prelight.fullpath );
+			loadPixmap( el.attribute( "file", "" ), pixmap.prelight );
 			parseColor( el.attribute( "tint", "#ffffff" ), pixmap.prelight.tint );
 			pixmap.prelight.alpha = el.attribute( "alpha", "1.0" ).toFloat();
 		}
@@ -101,18 +101,18 @@ KdmPixmap::setGeometry( const QRect &newGeometry, bool force )
 
 
 void
-KdmPixmap::loadPixmap( const QString &fileName, QPixmap &map, QString &fullName )
+KdmPixmap::loadPixmap( const QString &fileName, PixmapStruct::PixmapClass &pClass )
 {
 	if (fileName.isEmpty())
 		return;
 
-	fullName = fileName;
-	if (fullName.at( 0 ) != '/')
-		fullName = baseDir() + '/' + fileName;
+	pClass.fullpath = fileName;
+	if (fileName.at( 0 ) != '/')
+		pClass.fullpath = baseDir() + '/' + fileName;
 
-	if (!fullName.endsWith( ".svg" ))	// we delay it for svgs
-		if (!map.load( fullName ))
-			fullName.clear();
+	if (!fileName.endsWith( ".svg" ))	// we delay it for svgs
+		if (!pClass.pixmap.load( pClass.fullpath ))
+			pClass.fullpath.clear();
 }
 
 void
