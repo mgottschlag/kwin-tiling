@@ -17,6 +17,7 @@ MESSAGE( STATUS "_LibGLIB2IncDir :<${_LibGLIB2IncDir}>")
 FIND_PATH(GLIB2_INCLUDE_DIR glib.h
    /usr/include/glib-2.0
    /usr/include
+   /usr/local/include/glib-2.0
    /usr/local/include
 )
 
