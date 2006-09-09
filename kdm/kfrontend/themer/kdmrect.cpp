@@ -22,7 +22,6 @@
 #include "kdmrect.h"
 #include "kdmthemer.h"
 
-#include <kimageeffect.h>
 #include <kdebug.h>
 
 #include <QImage>
@@ -90,18 +89,9 @@ KdmRect::drawContents( QPainter *p, const QRect &r )
 	if (rClass->alpha <= 0 || !rClass->color.isValid())
 		return;
 
-	if (rClass->alpha == 1)
-		p->fillRect( area, QBrush( rClass->color ) );
-	else {
-		QRect backRect = r;
-		backRect.translate( area.x(), area.y() );
-		QPixmap backPixmap( backRect.size() );
-		bitBlt( &backPixmap, QPoint( 0, 0 ), p->device(), backRect );
-		QImage backImage = backPixmap.toImage();
-		KImageEffect::blend( rClass->color, backImage, rClass->alpha );
-		p->drawImage( backRect.x(), backRect.y(), backImage );
-		//area.translate( 1,1 );
-	}
+	p->setOpacity( rClass->alpha );
+	p->fillRect( area, QBrush( rClass->color ) );
+	p->setOpacity( 1 );
 }
 
 void
