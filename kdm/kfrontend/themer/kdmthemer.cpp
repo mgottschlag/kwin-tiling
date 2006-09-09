@@ -81,7 +81,7 @@ KdmThemer::KdmThemer( const QString &_filename, const QString &mode, QWidget *pa
 	// Set the root (screen) item
 	rootItem = new KdmRect( 0, QDomNode(), "kdm root" );
 	connect( rootItem, SIGNAL(needUpdate( int, int, int, int )),
-	         widget(), SLOT(update( int, int, int, int )) );
+	         SLOT(update( int, int, int, int )) );
 
 	rootItem->setBaseDir( QFileInfo( filename ).absolutePath() );
 
@@ -120,6 +120,12 @@ void
 KdmThemer::updateGeometry( bool force )
 {
 	rootItem->setGeometry( QRect( QPoint(), widget()->size() ), force );
+}
+
+void
+KdmThemer::update( int x, int y, int w, int h )
+{
+	widget()->update( x, y, w, h );
 }
 
 // BEGIN other functions

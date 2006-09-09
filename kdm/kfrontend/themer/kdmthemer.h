@@ -120,6 +120,10 @@ private:
 	void showStructure( QObject *obj );
 
 	QWidget *widget();
+
+private Q_SLOTS:
+	void update( int x, int y, int w, int h );
+
 };
 
 
