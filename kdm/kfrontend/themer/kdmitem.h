@@ -234,7 +234,7 @@ protected:
 	 */
 	void parseAttribute( const QString &, int &, enum DataType & );
 	void parseFont( const QString &, QFont & );
-	void parseColor( const QString &, QColor & );
+	void parseColor( const QString &col, const QString &a, QColor & );
 
 	void inheritFromButton( KdmItem *button );
 

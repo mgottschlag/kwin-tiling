@@ -37,7 +37,6 @@ KdmRect::KdmRect( KdmItem *parent, const QDomNode &node, const char *name )
 	itemType = "rect";
 
 	// Set default values for rect (note: strings are already Null)
-	rect.normal.alpha = 1;
 	rect.active.present = false;
 	rect.prelight.present = false;
 	rect.hasBorder = false;
@@ -58,18 +57,15 @@ KdmRect::KdmRect( KdmItem *parent, const QDomNode &node, const char *name )
 		QString tagName = el.tagName();
 
 		if (tagName == "normal") {
-			parseColor( el.attribute( "color", QString() ), rect.normal.color );
-			rect.normal.alpha = el.attribute( "alpha", "1.0" ).toFloat();
+			parseColor( el.attribute( "color", QString() ), el.attribute( "alpha", "1.0" ), rect.normal.color );
 			parseFont( el.attribute( "font", "Sans 14" ), rect.normal.font );
 		} else if (tagName == "active") {
 			rect.active.present = true;
-			parseColor( el.attribute( "color", QString() ), rect.active.color );
-			rect.active.alpha = el.attribute( "alpha", "1.0" ).toFloat();
+			parseColor( el.attribute( "color", QString() ), el.attribute( "alpha", "1.0" ), rect.active.color );
 			parseFont( el.attribute( "font", "Sans 14" ), rect.active.font );
 		} else if (tagName == "prelight") {
 			rect.prelight.present = true;
-			parseColor( el.attribute( "color", QString() ), rect.prelight.color );
-			rect.prelight.alpha = el.attribute( "alpha", "1.0" ).toFloat();
+			parseColor( el.attribute( "color", QString() ), el.attribute( "alpha", "1.0" ), rect.prelight.color );
 			parseFont( el.attribute( "font", "Sans 14" ), rect.prelight.font );
 		} else if (tagName == "border")
 			rect.hasBorder = true;
@@ -86,12 +82,10 @@ KdmRect::drawContents( QPainter *p, const QRect &r )
 	if (state == Sprelight && rect.prelight.present)
 		rClass = &rect.prelight;
 
-	if (rClass->alpha <= 0 || !rClass->color.isValid())
+	if (!rClass->color.isValid())
 		return;
 
-	p->setOpacity( rClass->alpha );
 	p->fillRect( area, QBrush( rClass->color ) );
-	p->setOpacity( 1 );
 }
 
 void

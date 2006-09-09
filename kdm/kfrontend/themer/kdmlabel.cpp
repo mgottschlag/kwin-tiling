@@ -75,15 +75,15 @@ KdmLabel::KdmLabel( KdmItem *parent, const QDomNode &node, const char *name )
 		if (tagName == "pos")
 			label.maximumWidth = el.attribute( "max-width", "-1" ).toInt();
 		else if (tagName == "normal") {
-			parseColor( el.attribute( "color", "#ffffff" ), label.normal.color );
+			parseColor( el.attribute( "color", "#ffffff" ), QString(), label.normal.color );
 			parseFont( el.attribute( "font", "Sans 14" ), label.normal.font );
 		} else if (tagName == "active") {
 			label.active.present = true;
-			parseColor( el.attribute( "color", "#ffffff" ), label.active.color );
+			parseColor( el.attribute( "color", "#ffffff" ), QString(), label.active.color );
 			parseFont( el.attribute( "font", "Sans 14" ), label.active.font );
 		} else if (tagName == "prelight") {
 			label.prelight.present = true;
-			parseColor( el.attribute( "color", "#ffffff" ), label.prelight.color );
+			parseColor( el.attribute( "color", "#ffffff" ), QString(), label.prelight.color );
 			parseFont( el.attribute( "font", "Sans 14" ), label.prelight.font );
 		} else if (tagName == "text" && el.attributes().count() == 0 && !stockUsed) {
 			label.text = el.text();

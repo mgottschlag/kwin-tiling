@@ -501,15 +501,18 @@ KdmItem::parseFont( const QString &s, QFont &font )
 }
 
 void
-KdmItem::parseColor( const QString &s, QColor &color )
+KdmItem::parseColor( const QString &s, const QString &a, QColor &color )
 {
 	if (s.at( 0 ) != '#')
 		return;
 	bool ok;
 	QString sCopy = s;
 	int hexColor = sCopy.remove( 0, 1 ).toInt( &ok, 16 );
-	if (ok)
+	if (ok) {
 		color.setRgb( hexColor );
+		if (!a.isNull())
+			color.setAlpha( a.toFloat() * 255 );
+	}
 }
 
 void

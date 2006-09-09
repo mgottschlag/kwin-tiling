@@ -37,7 +37,6 @@ KdmPixmap::KdmPixmap( KdmItem *parent, const QDomNode &node, const char *name )
 
 	// Set default values for pixmap (note: strings are already Null)
 	pixmap.normal.tint.setRgb( 0xFFFFFF );
-	pixmap.normal.alpha = 1.0;
 	pixmap.active.present = false;
 	pixmap.prelight.present = false;
 
@@ -55,18 +54,15 @@ KdmPixmap::KdmPixmap( KdmItem *parent, const QDomNode &node, const char *name )
 
 		if (tagName == "normal") {
 			loadPixmap( el.attribute( "file", "" ), pixmap.normal );
-			parseColor( el.attribute( "tint", "#ffffff" ), pixmap.normal.tint );
-			pixmap.normal.alpha = el.attribute( "alpha", "1.0" ).toFloat();
+			parseColor( el.attribute( "tint", "#ffffff" ), el.attribute( "alpha", "1.0" ), pixmap.normal.tint );
 		} else if (tagName == "active") {
 			pixmap.active.present = true;
 			loadPixmap( el.attribute( "file", "" ), pixmap.active );
-			parseColor( el.attribute( "tint", "#ffffff" ), pixmap.active.tint );
-			pixmap.active.alpha = el.attribute( "alpha", "1.0" ).toFloat();
+			parseColor( el.attribute( "tint", "#ffffff" ), el.attribute( "alpha", "1.0" ), pixmap.active.tint );
 		} else if (tagName == "prelight") {
 			pixmap.prelight.present = true;
 			loadPixmap( el.attribute( "file", "" ), pixmap.prelight );
-			parseColor( el.attribute( "tint", "#ffffff" ), pixmap.prelight.tint );
-			pixmap.prelight.alpha = el.attribute( "alpha", "1.0" ).toFloat();
+			parseColor( el.attribute( "tint", "#ffffff" ), el.attribute( "alpha", "1.0" ), pixmap.prelight.tint );
 		}
 	}
 }
@@ -175,10 +171,8 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 			return;
 		}
 
-		bool haveTint = pClass->tint.rgb() != 0xFFFFFF;
-		bool haveAlpha = pClass->alpha < 1.0;
-
-		if (haveTint || haveAlpha) {
+		if (pClass->tint.rgb() != 0xFFFFFFFF) {
+			qDebug("tinting");
 			// blend image(pix) with the given tint
 
 			int w = scaledImage.width();
@@ -186,7 +180,7 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 			float tint_red = float( pClass->tint.red() ) / 255;
 			float tint_green = float( pClass->tint.green() ) / 255;
 			float tint_blue = float( pClass->tint.blue() ) / 255;
-			float tint_alpha = pClass->alpha;
+			float tint_alpha = float( pClass->tint.alpha() ) / 255;
 
 			for (int y = 0; y < h; ++y) {
 				QRgb *ls = (QRgb *)scaledImage.scanLine( y );

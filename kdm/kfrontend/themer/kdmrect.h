@@ -46,7 +46,6 @@ protected:
 
 	struct RectStruct {
 		struct RectClass {
-			float alpha;
 			QColor color;
 			bool present;
 			QFont font;
