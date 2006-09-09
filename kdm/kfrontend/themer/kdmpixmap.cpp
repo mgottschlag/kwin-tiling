@@ -74,14 +74,14 @@ QSize
 KdmPixmap::sizeHint()
 {
 	// choose the correct pixmap class
-	PixmapStruct::PixmapClass * pClass = &pixmap.normal;
+	PixmapStruct::PixmapClass *pClass = &pixmap.normal;
 	if (state == Sactive && pixmap.active.present)
 		pClass = &pixmap.active;
 	if (state == Sprelight && pixmap.prelight.present)
 		pClass = &pixmap.prelight;
 	// use the pixmap size as the size hint
-	if (!pClass->pixmap.isNull())
-		return pClass->pixmap.size();
+	if (!pClass->image.isNull())
+		return pClass->image.size();
 	return KdmItem::sizeHint();
 }
 
@@ -105,8 +105,10 @@ KdmPixmap::loadPixmap( const QString &fileName, PixmapStruct::PixmapClass &pClas
 	if (fileName.at( 0 ) != '/')
 		pClass.fullpath = baseDir() + '/' + fileName;
 
-	if (!pClass.pixmap.load( pClass.fullpath ))
+	if (!pClass.image.load( pClass.fullpath ))
 		pClass.fullpath.clear();
+	else if (pClass.image.format() != QImage::Format_ARGB32)
+		pClass.image = pClass.image.convertToFormat( QImage::Format_ARGB32 );
 }
 
 void
@@ -141,11 +143,10 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 		QImage scaledImage;
 
 		// use the loaded pixmap or a scaled version if needed
-
-		if (area.size() != pClass->pixmap.size()) {
-			scaledImage = pClass->pixmap.toImage().scaled( area.width(), area.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
+		if (area.size() != pClass->image.size()) { // true for isNull
+			scaledImage = pClass->image.scaled( area.width(), area.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
 		} else
-			scaledImage = pClass->pixmap.toImage();
+			scaledImage = pClass->image;
 
 		bool haveTint = pClass->tint.rgb() != 0xFFFFFF;
 		bool haveAlpha = pClass->alpha < 1.0;

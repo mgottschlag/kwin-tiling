@@ -26,6 +26,7 @@
 
 //#include <QRect>
 #include <QPixmap>
+#include <QImage>
 
 /*
  * KdmPixmap. A pixmap element
@@ -52,7 +53,7 @@ protected:
 	struct PixmapStruct {
 		struct PixmapClass {
 			QString fullpath;
-			QPixmap pixmap;
+			QImage image;
 			QPixmap readyPixmap;
 			QColor tint;
 			float alpha;	//TODO added: not in greeter.dtd
@@ -61,7 +62,7 @@ protected:
 	} pixmap;
 
 private:
-	// Method to load the pixmap given by the theme
+	// Method to load the image given by the theme
 	void loadPixmap( const QString &fileName, PixmapStruct::PixmapClass &pc );
 };
 
