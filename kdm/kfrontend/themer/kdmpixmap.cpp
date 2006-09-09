@@ -170,6 +170,11 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 		} else
 			scaledImage = pClass->image;
 
+		if (pClass->image.isNull()) {
+			p->fillRect( px, py, sw, sh, Qt::black );
+			return;
+		}
+
 		bool haveTint = pClass->tint.rgb() != 0xFFFFFF;
 		bool haveAlpha = pClass->alpha < 1.0;
 
