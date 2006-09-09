@@ -58,6 +58,7 @@ protected:
 			QColor tint;
 			float alpha;	//TODO added: not in greeter.dtd
 			bool present;
+			bool svgImage;
 		} normal, active, prelight;
 	} pixmap;
 

@@ -28,6 +28,7 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QImage>
+#include <QSvgRenderer>
 
 KdmPixmap::KdmPixmap( KdmItem *parent, const QDomNode &node, const char *name )
 	: KdmItem( parent, node, name )
@@ -105,10 +106,16 @@ KdmPixmap::loadPixmap( const QString &fileName, PixmapStruct::PixmapClass &pClas
 	if (fileName.at( 0 ) != '/')
 		pClass.fullpath = baseDir() + '/' + fileName;
 
-	if (!pClass.image.load( pClass.fullpath ))
-		pClass.fullpath.clear();
-	else if (pClass.image.format() != QImage::Format_ARGB32)
-		pClass.image = pClass.image.convertToFormat( QImage::Format_ARGB32 );
+	if (fileName.endsWith( ".svg" ) || fileName.endsWith( ".svgz" )) // we delay it for svgs
+		pClass.svgImage = true;
+	else {
+		if (!pClass.image.load( pClass.fullpath )) {
+			kWarning() << "failed to load " << pClass.fullpath << endl;
+			pClass.fullpath.clear();
+		} else if (pClass.image.format() != QImage::Format_ARGB32)
+			pClass.image = pClass.image.convertToFormat( QImage::Format_ARGB32 );
+		pClass.svgImage = false;
+	}
 }
 
 void
@@ -144,7 +151,22 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 
 		// use the loaded pixmap or a scaled version if needed
 		if (area.size() != pClass->image.size()) { // true for isNull
-			scaledImage = pClass->image.scaled( area.width(), area.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
+			if (!pClass->fullpath.isNull()) {
+				if (pClass->svgImage) {
+					QSvgRenderer svg( pClass->fullpath );
+					if (svg.isValid()) {
+						pClass->image = QImage( area.size(), QImage::Format_ARGB32 );
+						pClass->image.fill( 0 );
+						QPainter pa( &pClass->image );
+						svg.render( &pa );
+						scaledImage = pClass->image;
+					} else {
+						kWarning() << "failed to load " << pClass->fullpath << endl;
+						pClass->fullpath.clear();
+					}
+				} else
+					scaledImage = pClass->image.scaled( area.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
+			}
 		} else
 			scaledImage = pClass->image;
 
