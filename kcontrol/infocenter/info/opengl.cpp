@@ -196,7 +196,7 @@ print_extension_list(const char *ext, Q3ListViewItem *l1)
 
    if (!ext || !ext[0])
       return;
-   QString *qext = new QString(ext);
+   QString qext = QString::fromLatin1(ext);
    Q3ListViewItem *l2 = NULL;
 
    i = j = 0;
@@ -205,8 +205,8 @@ print_extension_list(const char *ext, Q3ListViewItem *l1)
          /* found end of an extension name */
          const int len = j - i;
          /* print the extension name between ext[i] and ext[j] */
-	 if (!l2) l2 = new Q3ListViewItem(l1, qext->mid(i, len));
-	 else l2 = new Q3ListViewItem(l1, l2, qext->mid(i, len));
+	 if (!l2) l2 = new Q3ListViewItem(l1, qext.mid(i, len));
+	 else l2 = new Q3ListViewItem(l1, l2, qext.mid(i, len));
 	 i=j;
          if (ext[j] == 0) {
             break;
