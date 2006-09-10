@@ -819,6 +819,7 @@ KThemedGreeter::KThemedGreeter()
 		new KGThemedVerify( this, themer, this, prec, QString(),
 		                    pluginList, KGreeterPlugin::Authenticate,
 		                    KGreeterPlugin::Login );
+	QMenu *plugMenu = tverify->getPlugMenu();
 	tverify->selectPlugin( curPlugin );
 	verify = tverify;
 
@@ -837,7 +838,6 @@ KThemedGreeter::KThemedGreeter()
 		}
 	}
 
-	QMenu *plugMenu = verify->getPlugMenu();
 	if (plugMenu) {
 		inserten( i18n("&Authentication Method"), Qt::ALT+Qt::Key_A, plugMenu );
 		needSep = true;
