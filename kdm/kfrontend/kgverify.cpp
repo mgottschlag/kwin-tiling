@@ -1046,8 +1046,8 @@ KGThemedVerify::selectPlugin( int id )
 {
 	inherited::selectPlugin( id );
 	QLayoutItem *l;
-	KdmItem *n;
-	if (themer && (l = greet->getLayoutItem())) {
+	if ((l = greet->getLayoutItem())) {
+		KdmItem *n;
 		if (!(n = themer->findNode( "talker" )))
 			MsgBox( errorbox,
 			        i18n( "Theme not usable with authentication method '%1'.",
@@ -1057,8 +1057,7 @@ KGThemedVerify::selectPlugin( int id )
 			showWidgets( l );
 		}
 	}
-	if (themer)
-		themer->updateGeometry( true );
+	themer->updateGeometry( true );
 }
 
 void // private slot
