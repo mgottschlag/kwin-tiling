@@ -436,7 +436,7 @@ on. The back-end is at the moment available on the following flavors of
 <term>&Linux; 2.x</term>
 <listitem><para> For <application>ksysguardd</application> to work it
 is necessary to compile the &Linux; Kernel
-with the <filename>/proc</filename> Filesystem enabled. This is the default
+with the <filename>/proc</filename> File system enabled. This is the default
 setting and most &Linux; Distributions have it already.</para> </listitem>
 </varlistentry>
 <varlistentry>
