@@ -766,6 +766,7 @@ KThemedGreeter::KThemedGreeter()
 
 	themer = new KdmThemer( _theme, "console", this );
 	if (!themer->isOK()) {
+		delete themer;
 		themer = 0;
 		return;
 	}
