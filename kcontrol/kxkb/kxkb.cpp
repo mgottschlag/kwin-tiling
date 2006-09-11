@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2001, S.R.Haque <srhaque@iee.org>. 
+    Copyright (C) 2001, S.R.Haque <srhaque@iee.org>.
 	Copyright (C) 2006, Andriy Rysin <rysin@kde.org>. Derived from an
     original by Matthias H�zer-Klpfel released under the QPL.
     This file is part of the KDE project
@@ -42,12 +42,12 @@ DESCRIPTION
 #include <kwin.h>
 #include <ktempfile.h>
 #include <kstandarddirs.h>
-#include <kipc.h>
 #include <kaction.h>
 #include <kmenu.h>
 #include <kdebug.h>
 #include <kconfig.h>
 #include <ktoolinvocation.h>
+#include <kglobalsettings.h>
 #include <kactioncollection.h>
 
 #include "kxkb_adaptor.h"
@@ -65,37 +65,36 @@ DESCRIPTION
 
 KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
     : KUniqueApplication(allowStyles, GUIenabled),
-    m_prevWinId(X11Helper::UNKNOWN_WINDOW_ID),
-    m_rules(NULL),
-    m_kxkbWidget(NULL),
-    kWinModule(NULL),
-    m_forceSetXKBMap( false )
+      m_prevWinId(X11Helper::UNKNOWN_WINDOW_ID),
+      m_rules(NULL),
+      m_kxkbWidget(NULL),
+      kWinModule(NULL),
+      m_forceSetXKBMap( false )
 {
-	m_extension = new XKBExtension();
+    m_extension = new XKBExtension();
     if( !m_extension->init() ) {
-		kDebug() << "xkb initialization failed, exiting..." << endl;
-		::exit(1);
+        kDebug() << "xkb initialization failed, exiting..." << endl;
+        ::exit(1);
     }
 
     // keep in sync with kcmlayout.cpp
-	keys = new KActionCollection(this);
+    keys = new KActionCollection(this);
     KActionCollection* actionCollection = keys;
     KAction* a = 0L;
-	//TODO:
+    //TODO:
 
 #include "kxkbbindings.cpp"
-KGlobalAccel::self()->readSettings();
+    KGlobalAccel::self()->readSettings();
 
     //keys->updateConnections();
 
+    m_layoutOwnerMap = new LayoutMap(kxkbConfig);
 
-	m_layoutOwnerMap = new LayoutMap(kxkbConfig);
+    connect( KGlobalSettings::self(), SIGNAL(settingsChanged(int)),
+             this, SLOT(slotSettingsChanged(int)) );
 
-    connect( this, SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)) );
-    addKipcEventMask( KIPC::SettingsChanged );
-
-	//TODO: don't do this if kxkb does not become a daemon
-	new KXKBAdaptor( this );
+    //TODO: don't do this if kxkb does not become a daemon
+    new KXKBAdaptor( this );
 }
 
 
@@ -133,7 +132,7 @@ bool KXKBApp::settingsRead()
     }
 
     if ( kxkbConfig.m_useKxkb == false ) {
-        kapp->quit();
+        qApp->quit();
         return false;
     }
 
@@ -185,7 +184,7 @@ bool KXKBApp::settingsRead()
 		}
 
 		if( kxkbConfig.m_showSingle == false ) {
-			kapp->quit();
+			qApp->quit();
 			return false;
 		}
  	}
@@ -335,7 +334,7 @@ void KXKBApp::windowChanged(WId winId)
 
 void KXKBApp::slotSettingsChanged(int category)
 {
-    if ( category != KApplication::SETTINGS_SHORTCUTS)
+    if ( category != KGlobalSettings::SETTINGS_SHORTCUTS)
 		return;
 
     KGlobal::config()->reparseConfiguration(); // kcontrol modified kdeglobals

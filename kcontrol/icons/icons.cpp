@@ -28,9 +28,9 @@
 #include <kdebug.h>
 #include <kiconeffect.h>
 #include <kiconloader.h>
-#include <kipc.h>
 #include <klocale.h>
 #include <kseparator.h>
+#include <kglobalsettings.h>
 
 #include "icons.h"
 
@@ -398,7 +398,7 @@ void KIconConfig::save()
     {
 	if (mbChanged[i])
 	{
-	    KIPC::sendMessageAll(KIPC::IconChanged, i);
+	    KGlobalSettings::self()->emitChange(KGlobalSettings::IconChanged, i);
 	    mbChanged[i] = false;
 	}
     }

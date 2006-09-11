@@ -40,7 +40,6 @@
 #include <kapplication.h>
 #include <kconfig.h>
 #include <kglobal.h>
-#include <kipc.h>
 #include <kkeydialog.h>
 #include <kicon.h>
 #include <klocale.h>
@@ -509,7 +508,7 @@ void KlipperWidget::saveSession()
 
 void KlipperWidget::slotSettingsChanged( int category )
 {
-    if ( category == (int) KApplication::SETTINGS_SHORTCUTS ) {
+    if ( category == (int) KGlobalSettings::SETTINGS_SHORTCUTS ) {
         globalKeys->readSettings();
         //globalKeys->updateConnections();
 #warning TODO PORT ME (KGlobalAccel related)
@@ -1163,7 +1162,7 @@ static void ensureGlobalSyncOff(KConfig* config) {
         config->sync();
         KClipboardSynchronizer::setSynchronizing( false );
         KClipboardSynchronizer::setReverseSynchronizing( false );
-        KIPC::sendMessageAll( KIPC::ClipboardConfigChanged, 0 );
+        KGlobalSettings::self()->emitChange( KGlobalSettings::ClipboardConfigChanged, 0 );
     }
 
 }

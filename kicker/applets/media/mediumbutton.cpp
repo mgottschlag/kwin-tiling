@@ -38,7 +38,6 @@
 #include <kglobalsettings.h>
 #include <kcursor.h>
 #include <kapplication.h>
-#include <kipc.h>
 #include <kiconloader.h>
 #include <kmenu.h>
 #include <kstdaction.h>

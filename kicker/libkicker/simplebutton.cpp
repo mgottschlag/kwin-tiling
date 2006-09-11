@@ -31,7 +31,6 @@
 #include <kglobalsettings.h>
 #include <kiconeffect.h>
 #include <kicontheme.h>
-#include <kipc.h>
 #include <kstandarddirs.h>
 
 class SimpleButton::Private
@@ -52,30 +51,24 @@ SimpleButton::SimpleButton(QWidget *parent, const char *name)
 {
     setObjectName( name );
 
-    connect( kapp, SIGNAL( settingsChanged( int ) ),
+    connect( KGlobalSettings::self(), SIGNAL( settingsChanged( int ) ),
        SLOT( slotSettingsChanged( int ) ) );
-    connect( kapp, SIGNAL( iconChanged( int ) ),
+    connect( KGlobalSettings::self(), SIGNAL( iconChanged( int ) ),
        SLOT( slotIconChanged( int ) ) );
 
-    kapp->addKipcEventMask( KIPC::SettingsChanged );
-    kapp->addKipcEventMask( KIPC::IconChanged );
-
-    slotSettingsChanged( KApplication::SETTINGS_MOUSE );
+    slotSettingsChanged( KGlobalSettings::SETTINGS_MOUSE );
 }
 
 SimpleButton::SimpleButton(QWidget *parent)
     : QAbstractButton(parent),
       d(new Private())
 {
-    connect( kapp, SIGNAL( settingsChanged( int ) ),
+    connect( KGlobalSettings::self(), SIGNAL( settingsChanged( int ) ),
        SLOT( slotSettingsChanged( int ) ) );
-    connect( kapp, SIGNAL( iconChanged( int ) ),
+    connect( KGlobalSettings::self(), SIGNAL( iconChanged( int ) ),
        SLOT( slotIconChanged( int ) ) );
 
-    kapp->addKipcEventMask( KIPC::SettingsChanged );
-    kapp->addKipcEventMask( KIPC::IconChanged );
-
-    slotSettingsChanged( KApplication::SETTINGS_MOUSE );
+    slotSettingsChanged( KGlobalSettings::SETTINGS_MOUSE );
 }
 
 SimpleButton::~SimpleButton()
@@ -193,7 +186,7 @@ void SimpleButton::generateIcons()
 
 void SimpleButton::slotSettingsChanged(int category)
 {
-    if (category != KApplication::SETTINGS_MOUSE)
+    if (category != KGlobalSettings::SETTINGS_MOUSE)
     {
         return;
     }

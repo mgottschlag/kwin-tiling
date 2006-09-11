@@ -37,6 +37,7 @@
 #include <kdirwatch.h>
 #include <kglobal.h>
 #include <kglobalaccel.h>
+#include <kglobalsettings.h>
 #include <kactioncollection.h>
 #include <kaction.h>
 #include <kiconloader.h>
@@ -179,7 +180,7 @@ bool Kicker::desktopShowing()
 
 void Kicker::slotSettingsChanged(int category)
 {
-    if (category == (int)KApplication::SETTINGS_SHORTCUTS)
+    if (category == KGlobalSettings::SETTINGS_SHORTCUTS)
     {
         m_actionCollection->readSettings();
     }

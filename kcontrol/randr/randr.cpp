@@ -27,7 +27,6 @@
 #include <kglobal.h>
 #include <kapplication.h>
 #include <kiconloader.h>
-#include <kipc.h>
 #include <qlabel.h>
 #include <QDesktopWidget>
 #include "ktimerdialog.h"
@@ -664,7 +663,7 @@ bool RandRDisplay::loadDisplay(KConfig& config, bool loadScreens)
         	RandRScreen* s = m_screens.at(i);
         	s->load(config);
 		}
-    }	
+    }
 	return applyOnStartup(config);
 }
 

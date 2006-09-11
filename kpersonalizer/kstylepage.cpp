@@ -36,7 +36,7 @@
 #include <kdesktopfile.h>
 #include <klocale.h>
 #include <k3listview.h>
-#include <kipc.h>
+#include <kglobalsettings.h>
 #include <ksimpleconfig.h>
 #include <kstyle.h>
 #include <kicontheme.h>
@@ -523,12 +523,12 @@ void KStylePage::initColors() {
 void KStylePage::liveUpdate() {
 	// tell all apps about the changed icons
 	for (int i=0; i<K3Icon::LastGroup; i++) {
-		KIPC::sendMessageAll(KIPC::IconChanged, i);
+		KGlobalSettings::self()->emitChange(KGlobalSettings::IconChanged, i);
 	}
 	// tell all apps about the changed style
-	KIPC::sendMessageAll(KIPC::StyleChanged);
+	KGlobalSettings::self()->emitChange(KGlobalSettings::StyleChanged);
 	// color palette changes
-	KIPC::sendMessageAll(KIPC::PaletteChanged);
+	KGlobalSettings::self()->emitChange(KGlobalSettings::PaletteChanged);
 	// kwin-style
 #warning "kde4: reimplement kwin* dcop function into dbus"
 	//kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray(""));

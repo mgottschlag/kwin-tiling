@@ -44,7 +44,6 @@
 #include <kstandarddirs.h>
 #include <kimageio.h>
 #include <kinputdialog.h>
-#include <kipc.h>
 #include <klocale.h>
 #include <kio/netaccess.h>
 #include <kprocess.h>
@@ -179,12 +178,10 @@ KDesktop::KDesktop( bool x_root_hack, bool wait_for_kded ) :
   connect( qApp, SIGNAL( aboutToQuit() ),
            this, SLOT( slotShutdown() ) );
 
-  connect(kapp, SIGNAL(settingsChanged(int)),
+  connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)),
           this, SLOT(slotSettingsChanged(int)));
-  kapp->addKipcEventMask(KIPC::SettingsChanged);
 
-  kapp->addKipcEventMask(KIPC::IconChanged);
-  connect(kapp, SIGNAL(iconChanged(int)), this, SLOT(slotIconChanged(int)));
+  connect(KGlobalSettings::self(), SIGNAL(iconChanged(int)), this, SLOT(slotIconChanged(int)));
 
   connect(KSycoca::self(), SIGNAL(databaseChanged()),
           this, SLOT(slotDatabaseChanged()));
@@ -572,13 +569,13 @@ void KDesktop::configure()
 void KDesktop::slotSettingsChanged(int category)
 {
     //kDebug(1204) << "KDesktop::slotSettingsChanged" << endl;
-    if (category == KApplication::SETTINGS_PATHS)
+    if (category == KGlobalSettings::SETTINGS_PATHS)
     {
         kDebug(1204) << "KDesktop::slotSettingsChanged SETTINGS_PATHS" << endl;
         if (m_pIconView)
             m_pIconView->recheckDesktopUrl();
     }
-    else if (category == KApplication::SETTINGS_SHORTCUTS)
+    else if (category == KGlobalSettings::SETTINGS_SHORTCUTS)
     {
         kDebug(1204) << "KDesktop::slotSettingsChanged SETTINGS_SHORTCUTS" << endl;
         m_actionCollection->readSettings();

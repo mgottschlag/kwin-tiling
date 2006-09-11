@@ -71,7 +71,7 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <kipc.h>
+#include <kglobalsettings.h>
 #include <QX11Info>
 
 #undef Below
@@ -863,7 +863,7 @@ void MouseSettings::save(KConfig *config)
   }
 #endif
   config->sync();
-  KIPC::sendMessageAll(KIPC::SettingsChanged, KApplication::SETTINGS_MOUSE);
+  KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged, KGlobalSettings::SETTINGS_MOUSE);
 }
 
 void MouseConfig::slotScrollPolarityChanged()

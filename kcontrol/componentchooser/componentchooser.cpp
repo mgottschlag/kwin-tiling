@@ -28,7 +28,6 @@
 
 #include <kapplication.h>
 #include <kemailsettings.h>
-#include <kipc.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kopenwith.h>
@@ -263,7 +262,7 @@ void CfgTerminalEmulator::save(KConfig *) {
 	config->sync();
 	delete config;
 
-	KIPC::sendMessageAll(KIPC::SettingsChanged);
+	KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
         KToolInvocation::klauncher()->reparseConfiguration();
 
 	emit changed(false);
@@ -359,7 +358,7 @@ void CfgBrowser::save(KConfig *) {
 	config->sync();
 	delete config;
 
-	KIPC::sendMessageAll(KIPC::SettingsChanged);
+	KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
 
 	emit changed(false);
 }
@@ -469,7 +468,7 @@ void ComponentChooser::slotServiceSelected(Q3ListBoxItem* it) {
 	if (configWidget)
 		dynamic_cast<CfgPlugin*>(configWidget)->load(&cfg);
 
-	emitChanged(false);
+        emitChanged(false);
 	latestEditedService=static_cast<MyListBoxItem*>(it)->File;
 }
 

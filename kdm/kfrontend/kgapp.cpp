@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <kapplication.h>
 #include <kprocess.h>
+#include <kglobalsettings.h>
 #include <kcmdlineargs.h>
 #include <kcrash.h>
 #include <kstandarddirs.h>
@@ -151,7 +152,7 @@ kg_main( const char *argv0 )
 	if (!_colorScheme.isEmpty()) {
 		KSimpleConfig config( _colorScheme, true );
 		config.setGroup( "Color Scheme" );
-		app.setPalette( KApplication::createApplicationPalette( &config, 7 ) );
+		app.setPalette( KGlobalSettings::createApplicationPalette( &config, 7 ) );
 	}
 
 	app.setFont( *_normalFont );

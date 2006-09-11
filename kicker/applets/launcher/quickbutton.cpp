@@ -43,7 +43,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobalsettings.h>
 #include <kcursor.h>
 #include <kapplication.h>
-#include <kipc.h>
 #include <kiconloader.h>
 #include <k3urldrag.h>
 #include <kstandarddirs.h>
@@ -172,14 +171,12 @@ QuickButton::QuickButton(const QString &u, KAction* configAction,
     m_stickyAction->plug(_popup, 2);
     m_stickyId = _popup->idAt(2);
 
-    settingsChanged(KApplication::SETTINGS_MOUSE);
-    connect(kapp, SIGNAL(settingsChanged(int)), SLOT(settingsChanged(int)));
-    connect(kapp, SIGNAL(iconChanged(int)), SLOT(iconChanged(int)));
+    settingsChanged(KGlobalSettings::SETTINGS_MOUSE);
+    connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(settingsChanged(int)));
+    connect(KGlobalSettings::self(), SIGNAL(iconChanged(int)), SLOT(iconChanged(int)));
     connect(this, SIGNAL(clicked()), SLOT(launch()));
     connect(this, SIGNAL(removeApp(QuickButton *)), parent,
         SLOT(removeAppManually(QuickButton *)));
-    kapp->addKipcEventMask(KIPC::SettingsChanged);
-    kapp->addKipcEventMask(KIPC::IconChanged);
 }
 
 QuickButton::~QuickButton()
@@ -287,7 +284,7 @@ void QuickButton::mouseMoveEvent(QMouseEvent *e)
 
 void QuickButton::settingsChanged(int category)
 {
-   if (category != KApplication::SETTINGS_MOUSE) return;
+   if (category != KGlobalSettings::SETTINGS_MOUSE) return;
 
    _changeCursorOverItem = KGlobalSettings::changeCursorOverIcon();
 

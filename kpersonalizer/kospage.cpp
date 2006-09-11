@@ -25,7 +25,7 @@
 #include <kstandarddirs.h>
 #include <kapplication.h>
 #include <klocale.h>
-#include <kipc.h>
+#include <kglobalsettings.h>
 #include <krun.h>
 #include <kdebug.h>
 #include <kiconloader.h>
@@ -83,7 +83,7 @@ void KOSPage::save(bool currSettings){
 	ckaccess->sync();
 	///////////////////////////////////////////
 	// kcmdisplay changes
-	KIPC::sendMessageAll(KIPC::SettingsChanged);
+	KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
 	QApplication::syncX();
 	// enable/disable the mac menu, call dcop
 	// Tell kdesktop about the new config file

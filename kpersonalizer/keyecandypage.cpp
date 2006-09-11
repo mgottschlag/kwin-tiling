@@ -29,7 +29,6 @@
 #include <kglobal.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
-#include <kipc.h>
 #include <kapplication.h>
 #include <k3listview.h>
 #include <krun.h>
@@ -626,17 +625,17 @@ void KEyeCandyPage::save(bool currSettings){
 #warning "kde4: reimplement dcop call kwin*"
 	//kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray(""));
 	// set the display options (style effects)
-	KIPC::sendMessageAll(KIPC::SettingsChanged);
+	KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
 	QApplication::syncX();
 	// kicker stuff: Iconzooming etc.
 	QDBusInterface kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
 	kicker.call("configure");
 	// Icon stuff
 	for (int i=0; i<K3Icon::LastGroup; i++) {
-		KIPC::sendMessageAll(KIPC::IconChanged, i);
+		KGlobalSettings::self()->emitChange(KGlobalSettings::IconChanged, i);
 	}
 	// font stuff
-	KIPC::sendMessageAll(KIPC::FontChanged);
+	KGlobalSettings::self()->emitChange(KGlobalSettings::FontChanged);
 	// unfortunately, the konqiconview does not re-read the configuration to restructure the previews and the background picture
 #warning "kde4: reimplement dcop call konqueror*"
 	//kapp->dcopClient()->send( "konqueror*", "KonquerorIface", "reparseConfiguration()", QByteArray("") );

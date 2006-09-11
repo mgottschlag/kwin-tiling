@@ -50,7 +50,6 @@
 #include <kglobalsettings.h>
 #include <kdebug.h>
 #include <klocale.h>
-#include <kipc.h>
 #include <kaboutdata.h>
 #include <kdialog.h>
 #include <klibloader.h>
@@ -483,7 +482,7 @@ void KCMStyle::styleSpecificConfig()
 		switchStyle(currentStyle(), true);
 
 		//For now, ask all KDE apps to recreate their styles to apply the setitngs
-		KIPC::sendMessageAll(KIPC::StyleChanged);
+		KGlobalSettings::self()->emitChange(KGlobalSettings::StyleChanged);
 
 		// We call setStyleDirty here to make sure we force style re-creation
 		setStyleDirty();
@@ -639,16 +638,16 @@ void KCMStyle::save()
 
 	// Now allow KDE apps to reconfigure themselves.
 	if ( m_bStyleDirty )
-		KIPC::sendMessageAll(KIPC::StyleChanged);
+		KGlobalSettings::self()->emitChange(KGlobalSettings::StyleChanged);
 
 	if ( m_bToolbarsDirty )
 		// ##### FIXME - Doesn't apply all settings correctly due to bugs in
 		// KApplication/KToolbar
-		KIPC::sendMessageAll(KIPC::ToolbarStyleChanged);
+		KGlobalSettings::self()->emitChange(KGlobalSettings::ToolbarStyleChanged);
 
 	if (m_bEffectsDirty) {
-		KIPC::sendMessageAll(KIPC::SettingsChanged);
-#warning "kde4: port it ! Need to fix kwin"		
+		KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
+#warning "kde4: port it ! Need to fix kwin"
 		//kapp->dcopClient()->send("kwin*", "", "reconfigure()", QByteArray());
 	}
 
@@ -902,7 +901,7 @@ void KCMStyle::setStyleRecursive(QWidget* w, QStyle* s)
 	// for other styles being previewed. (e.g SGI style)
 	w->unsetPalette();
 
-	QPalette newPalette(KApplication::createApplicationPalette());
+	QPalette newPalette(KGlobalSettings::createApplicationPalette());
 	s->polish( newPalette );
 	w->setPalette(newPalette);
 

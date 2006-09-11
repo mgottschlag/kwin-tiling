@@ -44,10 +44,6 @@
 #define DISPLAY "QWS_DISPLAY"
 #endif
 
-#if defined Q_WS_X11
-#include <kipc.h>
-#endif
-
 namespace KWorkSpace
 {
 

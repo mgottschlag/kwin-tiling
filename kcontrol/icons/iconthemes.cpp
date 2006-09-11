@@ -39,7 +39,6 @@
 #include <kservice.h>
 #include <ksimpleconfig.h>
 #undef Unsorted
-#include <kipc.h>
 
 #include <k3listview.h>
 #include <kurlrequesterdlg.h>
@@ -56,6 +55,7 @@
 #endif
 
 #include "iconthemes.h"
+#include <kglobalsettings.h>
 
 IconThemesConfig::IconThemesConfig(KInstance *inst, QWidget *parent)
   : KCModule(inst, parent)
@@ -441,8 +441,7 @@ void IconThemesConfig::save()
 
   for (int i=0; i<K3Icon::LastGroup; i++)
   {
-    // TODO BUG  KAPP::KIPC::IconChanged is _NEVER_ getting called WHY?
-    KIPC::sendMessageAll(KIPC::IconChanged, i);
+    KGlobalSettings::self()->emitChange(KGlobalSettings::IconChanged, i);
   }
 
   KBuildSycocaProgressDialog::rebuildKSycoca(this);

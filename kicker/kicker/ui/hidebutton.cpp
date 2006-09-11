@@ -25,13 +25,11 @@
 #include <QResizeEvent>
 #include <QEvent>
 
-#include <kapplication.h>
 #include <kcursor.h>
 #include <kglobalsettings.h>
 #include <kiconeffect.h>
 #include <kiconloader.h>
 #include <kicontheme.h>
-#include <kipc.h>
 #include <kstandarddirs.h>
 
 HideButton::HideButton(QWidget *parent)
@@ -41,13 +39,10 @@ HideButton::HideButton(QWidget *parent)
 {
     setBackgroundOrigin(AncestorOrigin);
 
-    connect(kapp, SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
-    connect(kapp, SIGNAL(iconChanged(int)), SLOT(slotIconChanged(int)));
+    connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
+    connect(KGlobalSettings::self(), SIGNAL(iconChanged(int)), SLOT(slotIconChanged(int)));
 
-    kapp->addKipcEventMask(KIPC::SettingsChanged);
-    kapp->addKipcEventMask(KIPC::IconChanged);
-
-    slotSettingsChanged(KApplication::SETTINGS_MOUSE);
+    slotSettingsChanged(KGlobalSettings::SETTINGS_MOUSE);
 }
 
 void HideButton::paintEvent(QPaintEvent*)
@@ -159,7 +154,7 @@ void HideButton::generateIcons()
 
 void HideButton::slotSettingsChanged(int category)
 {
-    if (category != KApplication::SETTINGS_MOUSE)
+    if (category != KGlobalSettings::SETTINGS_MOUSE)
     {
         return;
     }

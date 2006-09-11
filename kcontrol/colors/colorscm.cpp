@@ -29,7 +29,6 @@
 #include <kglobalsettings.h>
 #include <kinputdialog.h>
 #include <kio/netaccess.h>
-#include <kipc.h>
 #include <kmessagebox.h>
 #include <kprocess.h>
 #include <kstandarddirs.h>
@@ -406,7 +405,7 @@ void KColorScheme::save()
     runRdb( flags );	// Save the palette to qtrc for KStyles
 
     // Notify all KDE applications
-    KIPC::sendMessageAll(KIPC::PaletteChanged);
+    KGlobalSettings::self()->emitChange(KGlobalSettings::PaletteChanged);
 
     // Update the "Current Scheme"
     int current = findSchemeByName(sCurrentScheme);

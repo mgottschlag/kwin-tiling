@@ -25,8 +25,8 @@
 
 #include <kacceleratormanager.h>
 #include <kapplication.h>
+#include <kglobalsettings.h>
 #include <kgenericfactory.h>
-#include <kipc.h>
 #include <kmessagebox.h>
 #include <knuminput.h>
 #include <ksimpleconfig.h>
@@ -711,7 +711,7 @@ void KFonts::save()
   config->sync();
   delete config;
 
-  KIPC::sendMessageAll(KIPC::FontChanged);
+  KGlobalSettings::self()->emitChange(KGlobalSettings::FontChanged);
 
   kapp->processEvents(); // Process font change ourselves
 

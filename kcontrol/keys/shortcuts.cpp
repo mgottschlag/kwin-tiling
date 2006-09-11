@@ -36,7 +36,6 @@
 
 #include <kapplication.h>
 #include <kdebug.h>
-#include <kipc.h>
 #include <kinputdialog.h>
 #include <klocale.h>
 #include <kcombobox.h>
@@ -89,7 +88,7 @@ void ShortcutsModule::save()
 
 	KGlobalAccel::self()->writeSettings();
 
-	KIPC::sendMessageAll( KIPC::SettingsChanged, KApplication::SETTINGS_SHORTCUTS );
+	KGlobalSettings::self()->emitChange( KGlobalSettings::SettingsChanged, KGlobalSettings::SETTINGS_SHORTCUTS );
 }
 
 void ShortcutsModule::defaults()

@@ -1067,7 +1067,7 @@ void TaskBar::slotActivatePreviousTask()
 
 void TaskBar::slotSettingsChanged( int category )
 {
-    if( category == (int) KApplication::SETTINGS_SHORTCUTS )
+    if( category == KGlobalSettings::SETTINGS_SHORTCUTS )
     {
         keys->readSettings();
     }

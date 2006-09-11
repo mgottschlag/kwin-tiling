@@ -40,9 +40,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QStyle>
 #include <QStyleOption>
 #include <QToolTip>
+#include <QApplication>
 
 
-#include <kapplication.h>
 #include <kconfig.h>
 #include <kcursor.h>
 #include <kdialog.h>
@@ -51,7 +51,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobalsettings.h>
 #include <kiconloader.h>
 #include <kicontheme.h>
-#include <kipc.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
 
@@ -119,14 +118,12 @@ PanelButton::PanelButton( QWidget* parent, const char* name )
 
     d->textColor = KGlobalSettings::textColor();
 
-    updateSettings(KApplication::SETTINGS_MOUSE);
-
-    kapp->addKipcEventMask(KIPC::SettingsChanged | KIPC::IconChanged);
+    updateSettings(KGlobalSettings::SETTINGS_MOUSE);
 
     installEventFilter(KickerTip::self());
 
-    connect(kapp, SIGNAL(settingsChanged(int)), SLOT(updateSettings(int)));
-    connect(kapp, SIGNAL(iconChanged(int)), SLOT(updateIcon(int)));
+    connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(updateSettings(int)));
+    connect(KGlobalSettings::self(), SIGNAL(iconChanged(int)), SLOT(updateIcon(int)));
 }
 
 PanelButton::PanelButton( QWidget* parent )
@@ -139,14 +136,12 @@ PanelButton::PanelButton( QWidget* parent )
 
     d->textColor = KGlobalSettings::textColor();
 
-    updateSettings(KApplication::SETTINGS_MOUSE);
-
-    kapp->addKipcEventMask(KIPC::SettingsChanged | KIPC::IconChanged);
+    updateSettings(KGlobalSettings::SETTINGS_MOUSE);
 
     installEventFilter(KickerTip::self());
 
-    connect(kapp, SIGNAL(settingsChanged(int)), SLOT(updateSettings(int)));
-    connect(kapp, SIGNAL(iconChanged(int)), SLOT(updateIcon(int)));
+    connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(updateSettings(int)));
+    connect(KGlobalSettings::self(), SIGNAL(iconChanged(int)), SLOT(updateIcon(int)));
 }
 
 PanelButton::~PanelButton()
@@ -196,7 +191,7 @@ void PanelButton::updateIcon(int group)
 
 void PanelButton::updateSettings(int category)
 {
-    if (category != KApplication::SETTINGS_MOUSE)
+    if (category != KGlobalSettings::SETTINGS_MOUSE)
     {
         return;
     }
@@ -916,8 +911,8 @@ void PanelPopupButton::slotExecMenu()
 
     d->pressedDuringPopup = false;
     KickerTip::enableTipping(false);
-    kapp->syncX();
-    kapp->processEvents();
+    qApp->syncX();
+    qApp->processEvents();
 
     if (!d->initialized)
     {

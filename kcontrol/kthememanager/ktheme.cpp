@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <kiconloader.h>
 #include <kio/job.h>
 #include <kio/netaccess.h>
-#include <kipc.h>
 #include <klocale.h>
 #include <kservice.h>
 #include <ksimpleconfig.h>
@@ -43,6 +42,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <kstyle.h>
 #include <QX11Info>
 #include <QtDBus/QtDBus>
+#include <kglobalsettings.h>
 
 KTheme::KTheme( QWidget *parent, const QString & xmlFile )
 	: m_parent(parent)
@@ -468,7 +468,7 @@ void KTheme::apply()
         iconConf->sync();
 
         for ( int i = 0; i < K3Icon::LastGroup; i++ )
-            KIPC::sendMessageAll( KIPC::IconChanged, i );
+            KGlobalSettings::self()->emitChange( KGlobalSettings::IconChanged, i );
         KBuildSycocaProgressDialog::rebuildKSycoca( m_parent );
     }
 
@@ -542,7 +542,7 @@ void KTheme::apply()
         colorConf->sync();
         delete colorScheme;
 
-        KIPC::sendMessageAll( KIPC::PaletteChanged );
+        KGlobalSettings::self()->emitChange( KGlobalSettings::PaletteChanged );
     }
 
     // 6.Cursors
@@ -635,7 +635,7 @@ void KTheme::apply()
         widgetConf->setGroup( "General" );
         widgetConf->writeEntry( "widgetStyle", widgetsElem.attribute( "name" ), KConfigBase::Persistent|KConfigBase::Global);
         widgetConf->sync();
-        KIPC::sendMessageAll( KIPC::StyleChanged );
+        KGlobalSettings::self()->emitChange( KGlobalSettings::StyleChanged );
     }
 
     // 12. Fonts
@@ -668,7 +668,7 @@ void KTheme::apply()
 
         fontsConf->sync();
         kde1xConf->sync();
-        KIPC::sendMessageAll( KIPC::FontChanged );
+        KGlobalSettings::self()->emitChange( KGlobalSettings::FontChanged );
     }
 
 }
