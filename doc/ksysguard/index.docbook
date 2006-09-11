@@ -17,6 +17,11 @@
 </author>
 
 <othercredit role="developer">
+John Tapsell john.tapsell@kde.org
+<!-- <contrib>Developer</contrib> -->
+</othercredit>
+
+<othercredit role="developer">
 &Chris.Schlaeger;&Chris.Schlaeger.mail;
 <!-- <contrib>Developer</contrib> -->
 </othercredit>
@@ -27,6 +32,7 @@
 </othercredit>
 
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
 
 </authorgroup>
 
