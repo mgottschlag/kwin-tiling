@@ -46,7 +46,6 @@ KdmItem::KdmItem( KdmItem *parent, const QDomNode &node, const char *name )
 	, fixedManager( 0 )
 	, image( 0 )
 	, myWidget( 0 )
-	, myLayoutItem( 0 )
 	, buttonParent( 0 )
 {
 	setObjectName( name );
@@ -126,7 +125,6 @@ KdmItem::show( bool force )
 
 	if (myWidget)
 		myWidget->show();
-	// XXX showing of layouts not implemented, prolly pointless anyway
 
 	needUpdate();
 }
@@ -150,7 +148,6 @@ KdmItem::hide( bool force )
 
 	if (myWidget)
 		myWidget->hide();
-	// XXX hiding of layouts not implemented, prolly pointless anyway
 
 	needUpdate();
 }
@@ -185,15 +182,11 @@ KdmItem::findNode( const QString &_id ) const
 void
 KdmItem::setWidget( QWidget *widget )
 {
-//	delete myWidget;	-- themer->widget() owns the widgets
+//	delete myWidget;	-- we *never* own the widget
 
 	myWidget = widget;
-	if (isHidden())
-		myWidget->hide();
-	else
-		myWidget->show();
-
 	myWidget->setGeometry( area );
+	myWidget->setHidden( isHidden() );
 
 	connect( myWidget, SIGNAL(destroyed()), SLOT(widgetGone()) );
 }
@@ -202,25 +195,6 @@ void
 KdmItem::widgetGone()
 {
 	myWidget = 0;
-}
-
-void
-KdmItem::setLayoutItem( QLayoutItem *item )
-{
-	myLayoutItem = item;
-	// XXX hiding not supported - it think it's pointless here
-	if (myLayoutItem->widget())
-		connect( myLayoutItem->widget(), SIGNAL(destroyed()),
-		         SLOT(layoutItemGone()) );
-	else if (myLayoutItem->layout())
-		connect( myLayoutItem->layout(), SIGNAL(destroyed()),
-		         SLOT(layoutItemGone()) );
-}
-
-void
-KdmItem::layoutItemGone()
-{
-	myLayoutItem = 0;
 }
 
 /* This is called as a result of KdmLayout::update, and directly on the root */
@@ -236,8 +210,6 @@ KdmItem::setGeometry( const QRect &newGeometry, bool force )
 
 	if (myWidget)
 		myWidget->setGeometry( newGeometry );
-	if (myLayoutItem)
-		myLayoutItem->setGeometry( newGeometry );
 
 	// recurr to all boxed children
 	if (boxManager && !boxManager->isEmpty())
@@ -256,7 +228,7 @@ KdmItem::paint( QPainter *p, const QRect &rect )
 	if (isHidden())
 		return;
 
-	if (myWidget || (myLayoutItem && myLayoutItem->widget()))
+	if (myWidget)
 		return;
 
 	if (area.intersects( rect )) {
@@ -270,9 +242,6 @@ KdmItem::paint( QPainter *p, const QRect &rect )
 	p->setPen( Qt::white );
 	p->drawRect( area );
 #endif
-
-	if (myLayoutItem)
-		return;
 
 	// Dispatch paint events to children
 	QListIterator<KdmItem *> it( m_children );
@@ -342,9 +311,7 @@ QSize
 KdmItem::sizeHint()
 {
 	if (myWidget)
-		return myWidget->size();
-	if (myLayoutItem)
-		return myLayoutItem->sizeHint();
+		return myWidget->sizeHint();
 	int w = pos.wType == DTpixel ? qAbs( pos.width ) : -1,
 	    h = pos.hType == DTpixel ? qAbs( pos.height ) : -1;
 	return QSize( w, h );
@@ -364,7 +331,7 @@ KdmItem::placementHint( const QRect &parentRect )
 	kDebug() << "KdmItem::placementHint parentRect=" << id << parentRect << " hintedSize=" << hintedSize << endl;
 	// check if width or height are set to "box"
 	if (pos.wType == DTbox || pos.hType == DTbox) {
-		if (myLayoutItem || myWidget)
+		if (myWidget)
 			boxHint = hintedSize;
 		else {
 			if (!boxManager)
@@ -511,7 +478,7 @@ KdmItem::parseColor( const QString &s, const QString &a, QColor &color )
 	if (ok) {
 		color.setRgb( hexColor );
 		if (!a.isNull())
-			color.setAlpha( a.toFloat() * 255 );
+			color.setAlpha( int(a.toFloat() * 255) );
 	}
 }
 

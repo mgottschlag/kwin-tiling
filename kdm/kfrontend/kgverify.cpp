@@ -167,21 +167,6 @@ KGVerify::pluginName() const
 	return name.mid( st, en - st );
 }
 
-static void
-showWidgets( QLayoutItem *li )
-{
-	QWidget *w;
-	QLayout *l;
-
-	if ((w = li->widget()))
-		w->show();
-	else if ((l = li->layout())) {
-		QLayoutIterator it = l->iterator();
-		for (QLayoutItem *itm = it.current(); itm; itm = ++it)
-			 showWidgets( itm );
-	}
-}
-
 void // public
 KGVerify::selectPlugin( int id )
 {
@@ -946,15 +931,14 @@ KGStdVerify::KGStdVerify( KGVerifyHandler *_handler, QWidget *_parent,
 
 KGStdVerify::~KGStdVerify()
 {
-	grid->removeItem( greet->getLayoutItem() );
 }
 
 void // public
 KGStdVerify::selectPlugin( int id )
 {
 	inherited::selectPlugin( id );
-	grid->addItem( greet->getLayoutItem(), 0, 0 );
-	showWidgets( greet->getLayoutItem() );
+	grid->addWidget( greet->getWidget(), 0, 0 );
+	greet->getWidget()->show();
 }
 
 void // private slot
@@ -966,7 +950,6 @@ KGStdVerify::slotPluginSelected( QAction *action )
 	if (id != curPlugin) {
 		greetPlugins[pluginList[curPlugin]].action->setChecked( false );
 		parent->setUpdatesEnabled( false );
-		grid->removeItem( greet->getLayoutItem() );
 		Debug( "delete %s\n", pName.data() );
 		delete greet;
 		selectPlugin( id );
@@ -1045,17 +1028,15 @@ void // public
 KGThemedVerify::selectPlugin( int id )
 {
 	inherited::selectPlugin( id );
-	QLayoutItem *l;
-	if ((l = greet->getLayoutItem())) {
+	QWidget *l;
+	if ((l = greet->getWidget())) {
 		KdmItem *n;
 		if (!(n = themer->findNode( "talker" )))
 			MsgBox( errorbox,
 			        i18n( "Theme not usable with authentication method '%1'.",
 			              i18n( greetPlugins[pluginList[id]].info->name ) ) );
-		else {
-			n->setLayoutItem( l );
-			showWidgets( l );
-		}
+		else
+			n->setWidget( l );
 	}
 	themer->updateGeometry( true );
 }

@@ -83,7 +83,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 	QGridLayout *grid = 0;
 
 	int line = 0;
-	layoutItem = 0;
+	widget = 0;
 
 	if (themer &&
 	    (!(user_entry = themer->findNode( "user-entry" )) ||
@@ -91,8 +91,11 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 	     !(domain_entry = themer->findNode( "domain-entry" ))))
 		themer = 0;
 
-	if (!themer)
-		layoutItem = grid = new QGridLayout();
+	widget = 0;
+	if (!themer) {
+		parent = widget = new QWidget( parent );
+		grid = new QGridLayout( widget );
+	}
 
 	domainLabel = loginLabel = passwdLabel = passwd1Label = passwd2Label = 0;
 	domainCombo = 0;
@@ -121,8 +124,6 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 				pred = loginEdit;
 			}
 			if (!grid) {
-				loginEdit->adjustSize();
-				domainCombo->adjustSize();
 				user_entry->setWidget( loginEdit );
 				domain_entry->setWidget( domainCombo );
 			} else {
@@ -211,16 +212,13 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 KWinbindGreeter::~KWinbindGreeter()
 {
 	abort();
-	if (!layoutItem) {
+	if (widget)
+		delete widget;
+	else {
 		delete loginEdit;
 		delete passwdEdit;
 		delete domainCombo;
-		return;
 	}
-	QLayoutIterator it = static_cast<QLayout *>(layoutItem)->iterator();
-	for (QLayoutItem *itm = it.current(); itm; itm = ++it)
-		delete itm->widget();
-	delete layoutItem;
 }
 
 void

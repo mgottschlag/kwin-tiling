@@ -32,7 +32,6 @@ class KdmLayoutBox;
 class KdmLayoutFixed;
 
 class QPainter;
-class QLayoutItem;
 
 /** class KdmItem
  * @short Base class for every kdmthemes' element.
@@ -151,7 +150,6 @@ public:
 
 	KdmItem *findNode( const QString &id ) const;
 	virtual void setWidget( QWidget *widget );
-	virtual void setLayoutItem( QLayoutItem *item );
 
 	virtual void hide( bool force = false );
 	virtual void show( bool force = false );
@@ -166,7 +164,6 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
 	void widgetGone();
-	void layoutItemGone();
 
 protected:
 	/**
@@ -253,7 +250,6 @@ protected:
 	QString basedir;
 
 	QWidget *myWidget;
-	QLayoutItem *myLayoutItem;
 
 	enum { InitialHidden, ExplicitlyHidden, Shown } isShown;
 

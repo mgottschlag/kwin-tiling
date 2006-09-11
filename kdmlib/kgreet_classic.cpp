@@ -63,15 +63,16 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 	QGridLayout *grid = 0;
 	int line = 0;
 
-	layoutItem = 0;
-
 	if (themer &&
 	    (!(user_entry = themer->findNode( "user-entry" )) ||
 	     !(pw_entry = themer->findNode( "pw-entry" ))))
 		themer = 0;
 
-	if (!themer)
-		layoutItem = grid = new QGridLayout();
+	widget = 0;
+	if (!themer) {
+		parent = widget = new QWidget( parent );
+		grid = new QGridLayout( widget );
+	}
 
 	loginLabel = passwdLabel = passwd1Label = passwd2Label = 0;
 	loginEdit = 0;
@@ -164,10 +165,11 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 KClassicGreeter::~KClassicGreeter()
 {
 	abort();
-	if (!layoutItem) {
+	if (widget)
+		delete widget;
+	else {
 		delete loginEdit;
 		delete passwdEdit;
-		return;
 	}
 }
 

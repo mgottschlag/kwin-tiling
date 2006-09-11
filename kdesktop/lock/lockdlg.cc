@@ -133,7 +133,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     frameLayout->setMargin( KDialog::marginHint() );
     frameLayout->addWidget( pixLabel, 0, 0, 3, 1, Qt::AlignTop );
     frameLayout->addWidget( greetLabel, 0, 1 );
-    frameLayout->addItem( greet->getLayoutItem(), 1, 1 );
+    frameLayout->addWidget( greet->getWidget(), 1, 1 );
     frameLayout->addLayout( layStatus, 2, 1 );
     frameLayout->addWidget( sep, 3, 0, 1, 2 );
     frameLayout->addLayout( layButtons, 4, 0, 1, 2 );
@@ -181,7 +181,6 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
 PasswordDlg::~PasswordDlg()
 {
     hide();
-    frameLayout->removeItem( greet->getLayoutItem() );
     delete greet;
 }
 

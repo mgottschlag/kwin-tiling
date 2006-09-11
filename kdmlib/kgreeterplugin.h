@@ -278,14 +278,13 @@ public:
     virtual void clear() = 0;
 
     /**
-     * Obtain the QLayoutItem containing the widget(s) to actually handle the
-     * conversation. See QLayout and QWidgetItem for possible implementations.
+     * Obtain the QWidget to actually handle the conversation.
      */
-    QLayoutItem *getLayoutItem() const { return layoutItem; }
+    QWidget *getWidget() const { return widget; }
 
 protected:
     KGreeterPluginHandler *handler;
-    QLayoutItem *layoutItem;
+    QWidget *widget;
 };
 
 struct KDE_EXPORT kgreeterplugin_info {

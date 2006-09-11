@@ -54,11 +54,9 @@ protected:
 	} rect;
 
 //	virtual void setWidget( QWidget *widget );
-//	virtual void setLayoutItem( QLayoutItem *item );
 
-private:
-	void setAttribs( QWidget *widget );
-	void recursiveSetAttribs( QLayoutItem *item );
+//private:
+//	void setAttribs( QWidget *widget );
 };
 
 #endif
