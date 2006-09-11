@@ -224,7 +224,8 @@ bool IconThemesConfig::installThemes(const QStringList &themes, const QString &a
                                QString(),
                                true);
   progressDiag.setAutoClose(true);
-  progressDiag.progressBar()->setMaximum(themes.count());
+  QProgressBar* progressBar = progressDiag.progressBar();
+  progressBar->setMaximum(themes.count());
   progressDiag.show();
 
   KTar archive(archiveName);
@@ -256,7 +257,7 @@ bool IconThemesConfig::installThemes(const QStringList &themes, const QString &a
     }
 
     currentTheme->copyTo(localThemesDir + *it);
-    progressDiag.progressBar()->advance(1);
+    progressBar->setValue(progressBar->value()+1);
   }
 
   archive.close();
