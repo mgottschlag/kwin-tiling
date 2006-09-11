@@ -212,10 +212,6 @@ class CKFileFontView : public K3ListView, public KFileView
     bool                                                itsBlockSortingSignal;
     KMimeTypeResolver<CFontListViewItem,CKFileFontView> *itsResolver;
 
-    protected:
-
-    virtual void virtual_hook(int id, void *data);
-
     private:
 
     class CKFileFontViewPrivate;

@@ -627,10 +627,4 @@ void CFontListViewItem::init()
     setText(COL_TYPE, itsInf->mimeComment());
 }
 
-void CKFileFontView::virtual_hook(int id, void *data)
-{
-    //K3ListView::virtual_hook(id, data);
-    KFileView::virtual_hook(id, data);
-}
-
 #include "KFileFontView.moc"
