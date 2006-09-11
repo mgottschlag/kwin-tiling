@@ -541,7 +541,7 @@ void runRdb( uint flags )
       contents += "Xft.rgba: " + subPixel + '\n';
     KConfig cfgfonts("kcmfonts", true);
     cfgfonts.setGroup("General");
-    if( cfgfonts.readNumEntry( "fontDPI", 0 ) != 0 )
+    if( cfgfonts.readEntry( "fontDPI", int(0) ) != 0 )
       contents += "Xft.dpi: " + cfgfonts.readEntry( "fontDPI" ) + '\n';
     else
     {
