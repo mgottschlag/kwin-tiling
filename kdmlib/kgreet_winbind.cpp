@@ -95,6 +95,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 	if (!themer) {
 		parent = widget = new QWidget( parent );
 		grid = new QGridLayout( widget );
+		grid->setMargin( 0 );
 	}
 
 	domainLabel = loginLabel = passwdLabel = passwd1Label = passwd2Label = 0;
