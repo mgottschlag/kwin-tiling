@@ -19,21 +19,20 @@ Boston, MA 02110-1301, USA.
 
 */
 
-#include <config.h>
+#include "krootimage.h"
 
 #include <kcmdlineargs.h>
+#include <kinstance.h>
 #include <ksimpleconfig.h>
-#include <qdesktopwidget.h>
 #include <klocale.h>
 
 #include <QFile>
-
-#include "krootimage.h"
+#include <QDesktopWidget>
+#include <QX11Info>
 
 #include <X11/Xlib.h>
 
 #include <stdlib.h>
-#include <QX11Info>
 
 static const char description[] =
 	I18N_NOOP( "Fancy desktop background for kdm" );
@@ -46,8 +45,8 @@ static KCmdLineOptions options[] = {
 };
 
 
-MyApplication::MyApplication( const char *conf )
-	: KApplication()
+MyApplication::MyApplication( const char *conf, int argc, char **argv )
+	: QApplication( argc, argv )
 	, renderer( 0, new KSimpleConfig( QFile::decodeName( conf ) ) )
 {
 	connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
@@ -64,8 +63,10 @@ MyApplication::renderDone()
 	QPalette palette;
 	palette.setBrush( desktop()->backgroundRole(), QBrush( renderer.pixmap() ) );
 	desktop()->setPalette( palette );
-
+	desktop()->setAutoFillBackground( true );
+	desktop()->show();
 	desktop()->repaint();
+
 	renderer.saveCacheFile();
 	renderer.cleanup();
 	for (unsigned i = 0; i < renderer.numRenderers(); ++i) {
@@ -100,8 +101,6 @@ MyApplication::slotTimeout()
 int
 main( int argc, char *argv[] )
 {
-	//KApplication::disableAutoDcopRegistration();
-
 	KLocale::setMainCatalog( "kdesktop" );
 	KCmdLineArgs::init( argc, argv, "krootimage", I18N_NOOP( "KRootImage" ), description, version );
 	KCmdLineArgs::addCmdLineOptions( options );
@@ -109,11 +108,11 @@ main( int argc, char *argv[] )
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 	if (!args->count())
 		args->usage();
-	MyApplication app( args->arg( 0 ) );
+	KInstance inst(KCmdLineArgs::aboutData());
+	MyApplication app( args->arg( 0 ), *KCmdLineArgs::qt_argc(), *KCmdLineArgs::qt_argv() );
 	args->clear();
 
 	app.exec();
-
 	app.flush();
 
 	// Keep color resources after termination

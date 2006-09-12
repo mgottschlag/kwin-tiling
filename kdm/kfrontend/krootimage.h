@@ -23,18 +23,18 @@ Boston, MA 02110-1301, USA.
 #define __KDMDESKTOP_H__
 
 
-#include <kapplication.h>
-#include <QTimer>
-
 #include <bgrender.h>
 
+#include <QApplication>
+#include <QTimer>
 
-class MyApplication : public KApplication
+
+class MyApplication : public QApplication
 {
 	Q_OBJECT
 
   public:
-	MyApplication( const char * );
+	MyApplication( const char *conf, int argc, char **argv );
 
   private Q_SLOTS:
 	void renderDone();
