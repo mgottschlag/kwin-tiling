@@ -852,7 +852,11 @@ KThemedGreeter::KThemedGreeter()
 #endif
 
 	system_button = themer->findNode( "system_button" );
-	inserten( Qt::ALT + Qt::Key_M, SLOT(slotActionMenu()) );
+	if (optMenu) {
+		inserten( Qt::ALT + Qt::Key_M, SLOT(slotActionMenu()) );
+		addAction( optMenu->menuAction() );
+	} else
+		system_button->hide( true );
 
 	pluginSetup();
 
