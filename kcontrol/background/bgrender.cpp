@@ -25,6 +25,7 @@
 #include <QDateTime>
 #include <QSvgRenderer>
 #include <QPixmap>
+#include <QBuffer>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -34,6 +35,7 @@
 #include <ktempfile.h>
 #include <kcursor.h>
 #include <kconfig.h>
+#include <kfilterdev.h>
 
 #include "bgdefaults.h"
 #include "bgrender.h"
@@ -317,7 +319,6 @@ wp_load:
         if (file.endsWith(".svg") || file.endsWith(".svgz")) {
 
 	    // Special stuff for SVG icons
-            QSvgRenderer renderer;
 
 	    //FIXME
 	    //ksvgiconloader doesn't seem to let us find out the
@@ -361,21 +362,28 @@ wp_load:
 	        svgWidth *= 6;
 	    }
 
-            QImage* img = new QImage(svgWidth, svgHeight, QImage::Format_ARGB32_Premultiplied);
-            QPainter p(img);
-
-	    if (renderer.load(file)) {
-                if (renderer.isValid())
-                   renderer.render(&p);
-                p.end();
-		m_Wallpaper = *img;
-	    } else {
-		kWarning() << "failed to load SVG file " << file << endl;
+            QFile fi(file);
+            if (fi.open(QIODevice::ReadOnly)) {
+                QByteArray ar = fi.readAll();
+                if (!ar.startsWith("<?xml")) {
+                    QBuffer buf(&ar);
+                    QIODevice *flt = KFilterDev::device(&buf, QString::fromLatin1("application/x-gzip"), false);
+                    flt->open(QIODevice::ReadOnly);
+                    ar = flt->readAll();
+                    delete flt;
+                }
+                QSvgRenderer renderer(ar);
+                if (renderer.isValid()) {
+                    m_Wallpaper = QImage(svgWidth, svgHeight, QImage::Format_ARGB32_Premultiplied);
+                    QPainter p(&m_Wallpaper);
+                    renderer.render(&p);
+                }
 	    }
 	} else {
 	    m_Wallpaper.load(file);
 	}
 	if (m_Wallpaper.isNull()) {
+            kWarning() << "failed to load wallpaper " << file << endl;
             if (discardCurrentWallpaper())
                goto wp_load;
 	    wpmode = NoWallpaper;
