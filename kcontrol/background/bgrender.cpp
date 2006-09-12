@@ -33,7 +33,7 @@
 #include <kprocess.h>
 #include <ktempfile.h>
 #include <kcursor.h>
-#include <kmimetype.h>
+#include <kconfig.h>
 
 #include "bgdefaults.h"
 #include "bgrender.h"
@@ -200,7 +200,7 @@ int KBackgroundRenderer::doBackground(bool quit)
 
     case Flat:
         // this can be tiled correctly without problems
-	m_Background.create( tileWidth, tileHeight, 32);
+        m_Background = QImage( tileWidth, tileHeight, QImage::Format_RGB32 );
         m_Background.fill(colorA().rgb());
         break;
 
@@ -381,7 +381,7 @@ wp_load:
 	    wpmode = NoWallpaper;
 	    goto wp_out;
 	}
-	m_Wallpaper = m_Wallpaper.convertDepth(32, Qt::DiffuseAlphaDither);
+	m_Wallpaper = m_Wallpaper.convertToFormat(QImage::Format_ARGB32_Premultiplied, Qt::DiffuseAlphaDither);
 
 	// If we're previewing, scale the wallpaper down to make the preview
 	// look more like the real desktop.
@@ -399,7 +399,7 @@ wp_load:
 wp_out:
 
     if (m_Background.isNull()) {
-	m_Background.create(8, 8, 32);
+	m_Background = QImage(8, 8, QImage::Format_RGB32);
 	m_Background.fill(colorA().rgb());
     }
 
@@ -509,7 +509,7 @@ void KBackgroundRenderer::wallpaperBlend()
     if( !enabled() || wallpaperMode() == NoWallpaper
         || (blendMode() == NoBlending &&
         ( QApplication::desktop()->paintEngine()->hasFeature(QPaintEngine::Antialiasing)
-            || !m_Wallpaper.hasAlphaBuffer()))) {
+            || !m_Wallpaper.hasAlphaChannel()))) {
         fastWallpaperBlend();
     }
     else {
@@ -529,13 +529,13 @@ void KBackgroundRenderer::fastWallpaperBlend()
         m_Pixmap = QPixmap::fromImage( m_Background );
         return;
     }
-    else if( wallpaperMode() == Tiled && !m_Wallpaper.hasAlphaBuffer() && canTile() && !m_bPreview ) {
+    else if( wallpaperMode() == Tiled && !m_Wallpaper.hasAlphaChannel() && canTile() && !m_bPreview ) {
     // tiles will be tiled by X automatically
         m_Pixmap = QPixmap::fromImage( m_Wallpaper );
         return;
     }
     else if( m_WallpaperRect.contains( QRect( QPoint( 0, 0 ), m_Size ))
-        && !m_Wallpaper.hasAlphaBuffer()) // wallpaper covers all and no blending
+        && !m_Wallpaper.hasAlphaChannel()) // wallpaper covers all and no blending
         m_Pixmap = QPixmap( m_Size );
     else if (m_Background.size() == m_Size)
         m_Pixmap = QPixmap::fromImage( m_Background );
@@ -549,11 +549,12 @@ void KBackgroundRenderer::fastWallpaperBlend()
     // paint/alpha-blend wallpaper to destination rectangle of m_pPixmap
     if (m_WallpaperRect.isValid()) {
         QPixmap wp_pixmap = QPixmap::fromImage( m_Wallpaper );
+        QPainter pa( &m_Pixmap );
         int ww = m_Wallpaper.width();
         int wh = m_Wallpaper.height();
         for (int y = m_WallpaperRect.top(); y < m_WallpaperRect.bottom(); y += wh) {
 	    for (int x = m_WallpaperRect.left(); x < m_WallpaperRect.right(); x += ww) {
-		bitBlt( &m_Pixmap, x, y, &wp_pixmap, 0, 0, ww, wh );
+		pa.drawPixmap( x, y, wp_pixmap );
 	    }
 	}
     }
@@ -570,10 +571,10 @@ void KBackgroundRenderer::fullWallpaperBlend()
 	m_Image = m_Background.copy();
 
 	if (m_Image.depth() < 32)
-	    m_Image = m_Image.convertDepth(32, Qt::DiffuseAlphaDither);
+	    m_Image = m_Image.convertToFormat(QImage::Format_ARGB32_Premultiplied, Qt::DiffuseAlphaDither);
 
     } else {
-	m_Image.create(w, h, 32);
+	m_Image = QImage(w, h, QImage::Format_RGB32);
 	tile(m_Image, QRect(0, 0, w, h), m_Background);
     }
 
@@ -939,7 +940,7 @@ void KBackgroundRenderer::saveCacheFile()
         m_Image.save( f, "PNG" );
         // remove old entries from the cache
         QDir dir( KStandardDirs::locateLocal( "cache", "background/" ));
-        const QFileInfoList list = dir.entryInfoList( "*.png", QDir::Files, QDir::Time | QDir::Reversed );
+        const QFileInfoList list = dir.entryInfoList( QStringList() << "*.png", QDir::Files, QDir::Time | QDir::Reversed );
         if( !list.isEmpty()) {
             int size = 0;
             Q_FOREACH( QFileInfo info, list )
