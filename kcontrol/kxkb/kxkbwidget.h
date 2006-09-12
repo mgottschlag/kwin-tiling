@@ -22,6 +22,7 @@
 
 class QMenu;
 class XkbRules;
+class QAction;
 
 /* This class is responsible for displaying flag/label for the layout,
     catching keyboard/mouse events and displaying menu when selected
@@ -41,7 +42,7 @@ public:
     void setShowFlag(bool showFlag) { m_showFlag = showFlag; }
 	
 signals:
-	void menuActivated(int);
+	void menuTriggered(QAction*);
 	void iconToggled();
 
 protected:
@@ -49,14 +50,12 @@ protected:
 	virtual QMenu* contextMenu() = 0;
 	virtual void setToolTip(const QString& tip) = 0;
 	virtual void setPixmap(const QPixmap& pixmap) = 0;
-// 
-//     void mouseReleaseEvent(QMouseEvent *);
 
 private:
-	/*const*/ int m_menuStartIndex;
 	bool m_showFlag;
-	int m_prevLayoutCount;
     QMap<QString, QString> m_descriptionMap;
+	QList<QAction*> m_actions;
+	QAction* m_configSeparator;
 };
 
 

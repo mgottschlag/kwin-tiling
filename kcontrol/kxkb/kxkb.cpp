@@ -207,7 +207,7 @@ void KXKBApp::initTray()
 	if( !m_kxkbWidget )
 	{
 		m_kxkbWidget = new KxkbSysTrayIcon();
- 		connect(m_kxkbWidget, SIGNAL(menuActivated(int)), this, SLOT(iconMenuActivated(int)));
+ 		connect(m_kxkbWidget, SIGNAL(menuTriggered(QAction*)), this, SLOT(iconMenuTriggered(QAction*)));
 		connect(m_kxkbWidget, SIGNAL(iconToggled()), this, SLOT(iconToggled()));
 	}
 
@@ -270,8 +270,10 @@ void KXKBApp::iconToggled()
     setLayout(layout);
 }
 
-void KXKBApp::iconMenuActivated(int id)
+void KXKBApp::iconMenuTriggered(QAction* action)
 {
+	int id = action->data().toInt();
+	
     if( KxkbWidget::START_MENU_ID <= id
         && id < KxkbWidget::START_MENU_ID + (int)kxkbConfig.m_layouts.count() )
     {

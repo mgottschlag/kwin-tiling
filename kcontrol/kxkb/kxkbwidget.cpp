@@ -27,11 +27,8 @@
 
 
 KxkbWidget::KxkbWidget():
- 	m_menuStartIndex(-1),
-	m_prevLayoutCount(0)
+	m_configSeparator(NULL)
 {
-// 	kDebug() << "Creating KxkbWidget with " << label_ << ", " << contextMenu_ << endl;
-// 	kDebug() << "Creating KxkbWidget with startMenuIndex " << m_menuStartIndex << endl;
 }
 
 void KxkbWidget::setCurrentLayout(const LayoutUnit& layoutUnit)
@@ -52,24 +49,16 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 {
 	QMenu* menu = contextMenu();
 
-	if( m_menuStartIndex == -1 )
-		m_menuStartIndex = menu->count();
-
-//	int index = menu->indexOf(0);
-
     m_descriptionMap.clear();
+
 //    menu->clear();
-//    menu->insertTitle( kapp->miniIcon(), kapp->caption() );
+//    menu->addTitle( qApp->windowIcon(), KInstance::caption() );
+//    menu->setTitle( KGlobal::instance()->aboutData()->programName() );
 
-	for(int ii=0; ii<m_prevLayoutCount; ++ii) {
-		menu->removeItem(START_MENU_ID + ii);
-		kDebug() << "remove item: " << START_MENU_ID + ii << endl;
-	}
-/*	menu->removeItem(CONFIG_MENU_ID);
-	menu->removeItem(HELP_MENU_ID);*/
-
-//    KIconEffect iconeffect;
-
+	for(QList<QAction*>::Iterator it=m_actions.begin(); it != m_actions.end(); it++ )
+			menu->removeAction(*it);
+	m_actions.clear();
+	
 	int cnt = 0;
     QList<LayoutUnit>::ConstIterator it;
     for (it=layouts.begin(); it != layouts.end(); ++it)
@@ -79,26 +68,35 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 
 		const QPixmap& layoutPixmap = LayoutIcon::getInstance().findPixmap(layoutName, m_showFlag, (*it).displayName);
 //         const QPixmap pix = iconeffect.apply(layoutPixmap, KIcon::Small, KIcon::DefaultState);
-		const QPixmap pix = layoutPixmap;
 
 		QString layoutString = rules.layouts()[layoutName];
 		QString fullName = i18n( layoutString.toLatin1().constData() );
 		if( variantName.isEmpty() == false )
 			fullName += " (" + variantName + ')';
-		menu->insertItem(pix, fullName, START_MENU_ID + cnt, m_menuStartIndex + cnt);
+//		menu->insertItem(pix, fullName, START_MENU_ID + cnt, m_menuStartIndex + cnt);
+
+		QAction* action = new QAction(layoutPixmap, fullName, menu);
+		action->setData(START_MENU_ID + cnt);
+		m_actions.append(action);
 		m_descriptionMap.insert((*it).toPair(), fullName);
 
 		cnt++;
     }
-
-	m_prevLayoutCount = cnt;
+	menu->insertActions(m_configSeparator, m_actions);
 
 	// if show config, if show help
-	if( menu->indexOf(CONFIG_MENU_ID) == -1 ) {
-		menu->addSeparator();
-		menu->insertItem(SmallIcon("configure"), i18n("Configure..."), CONFIG_MENU_ID);
-		if( menu->indexOf(HELP_MENU_ID) == -1 )
-			menu->insertItem(SmallIcon("help"), i18n("Help"), HELP_MENU_ID);
+//	if( menu->indexOf(CONFIG_MENU_ID) == -1 ) {
+	if( m_configSeparator == NULL ) { // first call
+		m_configSeparator = menu->addSeparator();
+
+		QAction* configAction = new QAction(SmallIcon("configure"), i18n("Configure..."), menu);
+		configAction->setData(CONFIG_MENU_ID);
+		menu->addAction(configAction);
+
+//		if( menu->indexOf(HELP_MENU_ID) == -1 )
+		QAction* helpAction = new QAction(SmallIcon("help"), i18n("Help"), menu);
+		helpAction->setData(HELP_MENU_ID);
+		menu->addAction(helpAction);
 	}
 
 /*    if( index != -1 ) { //not first start
@@ -109,19 +107,13 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
     }*/
 }
 
-// void KxkbWidget::mouseReleaseEvent(QMouseEvent *ev)
-// {
-//     if (ev->button() == QMouseEvent::LeftButton)
-//         emit toggled();
-//     KSystemTray::mouseReleaseEvent(ev);
-// }
 
 KxkbSysTrayIcon::KxkbSysTrayIcon()
 {
 	m_tray = new KSystemTrayIcon();
 
- 	connect(contextMenu(), SIGNAL(menuActivated(int)), this, SIGNAL(menuActivated(int)));
-	connect(m_tray, SIGNAL(trayActivated(QSystemTrayIcon::ActivationReason)), 
+ 	connect(contextMenu(), SIGNAL(triggered(QAction*)), this, SIGNAL(menuTriggered(QAction*)));
+	connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), 
 					this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
 }
 
@@ -134,7 +126,6 @@ void KxkbSysTrayIcon::trayActivated(QSystemTrayIcon::ActivationReason reason)
 {
 	if( reason == QSystemTrayIcon::Trigger )
 	  emit iconToggled();
-//	  emit KxkbWidget::iconToggled();
 }
 
 void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)

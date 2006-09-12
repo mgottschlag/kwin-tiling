@@ -42,6 +42,7 @@ class KActionCollection;
 class KWinModule;
 class LayoutMap;
 class KxkbWidget;
+class QAction;
 
 /* This is the main Kxkb class responsible for reading options
     and switching layouts
@@ -67,7 +68,7 @@ public slots:
 	void forceSetXKBMap( bool set );
 
 protected slots:
-    void iconMenuActivated(int id);
+    void iconMenuTriggered(QAction*);
     void iconToggled();
     void windowChanged(WId winId);
 
