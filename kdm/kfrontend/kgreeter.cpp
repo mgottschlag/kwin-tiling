@@ -586,25 +586,25 @@ KStdGreeter::KStdGreeter()
 #ifdef WITH_KDM_XCONSOLE
 	if (consoleView) {
 		QBoxLayout *ex_box = new QVBoxLayout( this );
-		ex_box->setSpacing( 10 );
-		ex_box->setMargin( 10 );
-		main_box = new QHBoxLayout( ex_box );
-		main_box->setMargin( 10 );
+		main_box = new QHBoxLayout();
+		ex_box->addLayout( main_box );
+		main_box->setParent( ex_box );
 		ex_box->addWidget( consoleView );
 	} else
 #endif
 	{
 		main_box = new QHBoxLayout( this );
-		main_box->setMargin( 10 );
-		main_box->setSpacing( 10 );
 	}
+	int rs = main_box->spacing();
+	main_box->setSpacing( main_box->margin() );
 
 	if (userView)
 		main_box->addWidget( userView );
 
 	QBoxLayout *inner_box = new QVBoxLayout();
-	main_box->addItem( inner_box );
-	inner_box->setMargin( 10 );
+	main_box->addLayout( inner_box );
+	inner_box->setParent( main_box );
+	inner_box->setSpacing( rs );
 
 	if (!_authorized && _authComplain) {
 		QLabel *complainLabel = new QLabel(
@@ -653,6 +653,7 @@ KStdGreeter::KStdGreeter()
 			inner_box->addWidget( clock, 0, Qt::AlignCenter );
 		else if (pixLabel)
 			inner_box->addWidget( pixLabel, 0, Qt::AlignCenter );
+		inner_box->addSpacing( inner_box->spacing() );
 	} else {
 		if (clock)
 			main_box->addWidget( clock, 0, Qt::AlignCenter );
@@ -680,6 +681,7 @@ KStdGreeter::KStdGreeter()
 		                 pluginList, KGreeterPlugin::Authenticate,
 		                 KGreeterPlugin::Login );
 	inner_box->addLayout( sverify->getLayout() );
+	sverify->getLayout()->setParent( inner_box );
 	QMenu *plugMenu = sverify->getPlugMenu();
 	sverify->selectPlugin( curPlugin );
 	verify = sverify;
@@ -687,8 +689,8 @@ KStdGreeter::KStdGreeter()
 	inner_box->addWidget( new KSeparator( Qt::Horizontal, this ) );
 
 	QBoxLayout *hbox2 = new QHBoxLayout();
-	inner_box->addItem( hbox2 );
-	hbox2->setSpacing( 10 );
+	inner_box->addLayout( hbox2 );
+	hbox2->setParent( inner_box );
 	hbox2->addWidget( goButton );
 	hbox2->addStretch( 1 );
 	hbox2->addWidget( menuButton );

@@ -58,8 +58,6 @@ ChooserDlg::ChooserDlg()
 	completeMenu( LOGIN_REMOTE_ONLY, ex_greet, i18n("&Local Login"), Qt::ALT+Qt::Key_L );
 
 	QBoxLayout *vbox = new QVBoxLayout( this );
-	vbox->setSpacing( 10 );
-	vbox->setMargin( 10 );
 
 	QLabel *title = new QLabel( i18n("XDMCP Host Menu"), this );
 	title->setAlignment( Qt::AlignCenter );
@@ -83,8 +81,8 @@ ChooserDlg::ChooserDlg()
 	QPushButton *addButton = new QPushButton( i18n("A&dd"), this );
 	connect( addButton, SIGNAL(clicked()), SLOT(addHostname()) );
 	QBoxLayout *hibox = new QHBoxLayout();
-	vbox->addItem( hibox );
-	hibox->setSpacing( 10 );
+	vbox->addLayout( hibox );
+	hibox->setParent( vbox );
 	hibox->addWidget( itxt );
 	hibox->addWidget( iline );
 	hibox->addWidget( addButton );
@@ -95,7 +93,8 @@ ChooserDlg::ChooserDlg()
 	QPushButton *pingButton = new QPushButton( i18n("&Refresh"), this );
 
 	QBoxLayout *hbox = new QHBoxLayout();
-	vbox->addItem( hbox );
+	vbox->addLayout( hbox );
+	hbox->setParent( vbox );
 	hbox->setSpacing( 20 );
 	hbox->addWidget( acceptButton );
 	hbox->addWidget( pingButton );

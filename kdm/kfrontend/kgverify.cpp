@@ -1085,16 +1085,17 @@ KGChTok::KGChTok( QWidget *_parent, const QString &user,
 	verify->selectPlugin( curPlugin );
 
 	QVBoxLayout *box = new QVBoxLayout( this );
-	box->setSpacing( 10 );
 
 	box->addWidget( new QLabel( i18n("Changing authentication token"), this ), 0, Qt::AlignHCenter );
 
 	box->addLayout( verify->getLayout() );
+	verify->getLayout()->setParent( box );
 
 	box->addWidget( new KSeparator( Qt::Horizontal, this ) );
 
 	QHBoxLayout *hlay = new QHBoxLayout();
-	box->addItem( hlay );
+	box->addLayout( hlay );
+	hlay->setParent( box );
 	hlay->addStretch( 1 );
 	hlay->addWidget( okButton );
 	hlay->addStretch( 1 );

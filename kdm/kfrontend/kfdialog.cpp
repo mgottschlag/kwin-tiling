@@ -150,7 +150,6 @@ KFMsgBox::KFMsgBox( QWidget *parent, QMessageBox::Icon type, const QString &text
 	connect( button, SIGNAL(clicked()), SLOT(accept()) );
 
 	QGridLayout *grid = new QGridLayout( this );
-	grid->setSpacing( 10 );
 	grid->addWidget( label1, 0, 0, Qt::AlignCenter );
 	grid->addWidget( label2, 0, 1, Qt::AlignCenter );
 	grid->addWidget( button, 1, 0, 1, 2, Qt::AlignCenter );

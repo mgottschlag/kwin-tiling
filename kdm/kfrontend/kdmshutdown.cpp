@@ -55,9 +55,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTreeWidgetItem>
 #include <QHeaderView>
 
-#define KDmh KDialog::marginHint()
-#define KDsh KDialog::spacingHint()
-
 #include <stdlib.h>
 
 int KDMShutdownBase::curPlugin = -1;
@@ -78,8 +75,6 @@ KDMShutdownBase::KDMShutdownBase( int _uid, QWidget *_parent )
 	, needRoot( -1 )
 	, uid( _uid )
 {
-	box->setSpacing( KDsh );
-	box->setMargin( KDmh );
 }
 
 KDMShutdownBase::~KDMShutdownBase()
@@ -109,6 +104,7 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 		                          KGreeterPlugin::Shutdown );
 		verify->selectPlugin( curPlugin );
 		box->addLayout( verify->getLayout() );
+		verify->getLayout()->setParent( box );
 		QAction *action = new QAction( this );
 		action->setShortcut( Qt::ALT+Qt::Key_A );
 		connect( action, SIGNAL(triggered( bool )), SLOT(slotActivatePlugMenu()) );
@@ -117,8 +113,8 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 	box->addWidget( new KSeparator( Qt::Horizontal, this ) );
 
 	QBoxLayout *hlay = new QHBoxLayout();
-	box->addItem( hlay );
-	hlay->setSpacing( KDsh );
+	box->addLayout( hlay );
+	hlay->setParent( box );
 	hlay->addStretch( 1 );
 	if (mayOk) {
 		okButton = new KPushButton( KStdGuiItem::ok(), this );
@@ -255,8 +251,8 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 	QSizePolicy fp( QSizePolicy::Fixed, QSizePolicy::Fixed );
 
 	QHBoxLayout *hlay = new QHBoxLayout();
-	box->addItem( hlay );
-	hlay->setSpacing( KDsh );
+	box->addLayout( hlay );
+	hlay->setParent( box );
 
 	howGroup = new QGroupBox( i18n("Shutdown Type"), this );
 	hlay->addWidget( howGroup, 0, Qt::AlignTop );
@@ -287,13 +283,12 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 		freeStrArr( tlist );
 		targets->setCurrentIndex( oldTarget == -1 ? defaultTarget : oldTarget );
 		QHBoxLayout *hb = new QHBoxLayout();
-		hb->setSpacing( KDsh );
-		hb->setMargin( 0 );
-		int spc = kapp->style()->pixelMetric( QStyle::PM_ExclusiveIndicatorWidth )
-		          + KDsh;
-		hb->addSpacing( spc );
-		hb->addWidget( targets );
 		hwlay->addLayout( hb );
+		hb->setParent( hwlay );
+		hb->addSpacing(
+			style()->pixelMetric( QStyle::PM_ExclusiveIndicatorWidth )
+			+ hb->spacing() );
+		hb->addWidget( targets );
 		connect( targets, SIGNAL(activated( int )), SLOT(slotTargetChanged()) );
 	}
 	GSet( 0 );
@@ -319,8 +314,6 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 		cb_force->setEnabled( false );
 
 	QGridLayout *grid = new QGridLayout( schedGroup );
-	grid->setSpacing( KDsh );
-	grid->setMargin( KDmh );
 	grid->addWidget( lab1, 0, 0, Qt::AlignRight );
 	grid->addWidget( le_start, 0, 1 );
 	grid->addWidget( lab2, 1, 0, Qt::AlignRight );
@@ -488,20 +481,18 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	, targetList( 0 )
 {
 	QHBoxLayout *hbox = new QHBoxLayout( this );
-	hbox->setSpacing( KDsh );
-	hbox->setMargin( KDmh );
 
 	QFrame *lfrm = new QFrame( this );
 	lfrm->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 	hbox->addWidget( lfrm, Qt::AlignCenter );
 	QLabel *icon = new QLabel( lfrm );
 	icon->setPixmap( QPixmap( KStandardDirs::locate( "data", "kdm/pics/shutdown.jpg" ) ) );
-	QVBoxLayout *iconlay = new QVBoxLayout( lfrm );
-	iconlay->addWidget( icon );
+	icon->setFixedSize( icon->sizeHint() );
+	lfrm->setFixedSize( icon->sizeHint() );
 
 	QVBoxLayout *buttonlay = new QVBoxLayout();
-	hbox->addItem( buttonlay );
-	buttonlay->setSpacing( KDsh );
+	hbox->addLayout( buttonlay );
+	buttonlay->setParent( hbox );
 
 	buttonlay->addStretch( 1 );
 
