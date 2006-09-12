@@ -163,7 +163,7 @@ kg_main( const char *argv0 )
 	if (!_grabServer) {
 		if (_useBackground) {
 			proc = new KProcess;
-			*proc << QByteArray( argv0, strrchr( argv0, '/' ) - argv0 + 2 ) + "krootimage";
+			*proc << QByteArray( argv0, strrchr( argv0, '/' ) - argv0 + 1 ) + "krootimage";
 			*proc << _backgroundCfg;
 			proc->start();
 		}
