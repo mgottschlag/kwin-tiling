@@ -614,8 +614,8 @@ void init_session_id( void )
 	 */
 	globalSessionID = (time( (Time_t *)0 ) & 0x7fff) * 16000;
 
-	Hostname.data = (char *)localHostname();
-	Hostname.length = strlen( Hostname.data );
+	Hostname.data = (unsigned char *)localHostname();
+	Hostname.length = strlen( (char *)Hostname.data );
 }
 
 static ARRAY8 outOfMemory = { (CARD16)13, (CARD8Ptr)"Out of memory" };

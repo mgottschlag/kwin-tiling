@@ -84,13 +84,13 @@ from The Open Group.
 
 #ifndef BSD_UTMP
 static unsigned
-crc32s( const unsigned char *str )
+crc32s( const char *str )
 {
 	int b;
 	unsigned crc = 0xffffffff, by;
 
 	for (; *str; str++) {
-		by = (crc & 255) ^ *str;
+		by = (crc & 255) ^ *(const unsigned char *)str;
 		for (b = 0; b < 8; b++)
 			by = (by >> 1) ^ (-(by & 1) & 0xedb88320);
 		crc = (crc >> 8) ^ by;
