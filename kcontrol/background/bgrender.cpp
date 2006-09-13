@@ -34,6 +34,7 @@
 #include <kprocess.h>
 #include <ktempfile.h>
 #include <kcursor.h>
+#include <kfilemetainfo.h>
 #include <kconfig.h>
 #include <kfilterdev.h>
 
@@ -402,6 +403,49 @@ wp_load:
             }
             if( m_WallpaperRect.size() != QSize( xs, ys ))
                 m_Wallpaper = m_Wallpaper.scaled(xs, ys, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        }
+
+        // HACK: Use KFileMetaInfo only when we have a KApplication
+        // KFileMetaInfo needs ksycoca and so on, but this code is
+        // used also in krootimage (which in turn is used by kdm).
+        if (kapp) {
+            KFileMetaInfo metaInfo(file);
+            if (metaInfo.isValid() && metaInfo.item("Orientation").isValid()) {
+                switch (metaInfo.item("Orientation").string().toInt()) {
+                    case 2:
+                        // Flipped horizontally
+                        m_Wallpaper.mirrored(true, false);
+                        break;
+                    case 3:
+                        // Rotated 180 degrees
+                        m_Wallpaper = KImageEffect::rotate(m_Wallpaper, KImageEffect::Rotate180);
+                        break;
+                    case 4:
+                        // Flipped vertically
+                        m_Wallpaper = m_Wallpaper.mirrored(false, true);
+                        break;
+                    case 5:
+                        // Rotated 90 degrees & flipped horizontally
+                        m_Wallpaper = KImageEffect::rotate(m_Wallpaper, KImageEffect::Rotate90).mirrored(true, false);
+                        break;
+                    case 6:
+                        // Rotated 90 degrees
+                        m_Wallpaper = KImageEffect::rotate(m_Wallpaper, KImageEffect::Rotate90);
+                        break;
+                    case 7:
+                        // Rotated 90 degrees & flipped vertically
+                        m_Wallpaper = KImageEffect::rotate(m_Wallpaper, KImageEffect::Rotate90).mirrored(false, true);
+                        break;
+                    case 8:
+                        // Rotated 270 degrees
+                        m_Wallpaper = KImageEffect::rotate(m_Wallpaper, KImageEffect::Rotate270);
+                        break;
+                    case 1:
+                    default:
+                        // Normal or invalid orientation
+                        break;
+                }
+            }
         }
     }
 wp_out:
